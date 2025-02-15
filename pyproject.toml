@@ -102,7 +102,7 @@ grpcio-tools = "1.67.1"
 
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core<2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
