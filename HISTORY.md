@@ -13,6 +13,8 @@
 
 #### Other
 
+* Update translations. 
+
 * Merge pull request #4 from ninjastrikers/main. 
   _chore: update translations with Fink 🐦_
 

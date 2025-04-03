@@ -96,6 +96,8 @@ class Proxy(db.Model, SerializerMixin):  # type: ignore
         dbproxy.enable = proxy['enable']
         dbproxy.name = proxy['name']
         dbproxy.proto = proxy['proto']
+        if proxy['transport']=="splithttp":
+            proxy['transport']="xhttp"
         dbproxy.transport = proxy['transport']
         dbproxy.cdn = proxy['cdn']
         dbproxy.l3 = proxy['l3']
