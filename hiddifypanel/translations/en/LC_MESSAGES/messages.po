@@ -1009,7 +1009,7 @@ msgid "app.clash_verge_rev.description"
 msgstr "app.clash_verge_rev.description"
 
 msgid "app.clash_verge_rev.title"
-msgstr "app.clash_verge_rev.title"
+msgstr "Clash Verge"
 
 msgid "app.cmfa.description"
 msgstr "app.cmfa.description"

@@ -995,7 +995,7 @@ msgid "app.clash_verge_rev.description"
 msgstr ""
 
 msgid "app.clash_verge_rev.title"
-msgstr ""
+msgstr "برنامه Clash verge"
 
 msgid "app.cmfa.description"
 msgstr ""
