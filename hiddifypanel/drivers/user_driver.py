@@ -16,7 +16,10 @@ def enabled_drivers():
 
 def get_users_usage(reset=True):
     res = {}
-    users = list(User.query.all())
+    from hiddifypanel.database import db
+    
+    users = db.session.query(User).all()
+    # users = list(User.query.all())
     res = defaultdict(lambda: {'usage': 0, 'devices': ''})
     for driver in enabled_drivers():
         try:

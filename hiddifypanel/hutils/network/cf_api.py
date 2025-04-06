@@ -1,10 +1,15 @@
-import cloudflare
-from hiddifypanel.models import hconfig, ConfigEnum
 
-__cf: cloudflare.Cloudflare   # type: ignore
+from typing import TYPE_CHECKING
+from hiddifypanel.models import hconfig, ConfigEnum
+if TYPE_CHECKING:
+    import cloudflare
+
+__cf: "cloudflare.Cloudflare"   # type: ignore
 
 
 def __prepare_cf_api_client() -> bool:
+    import cloudflare
+
     '''Prepares cloudflare client if it's not already'''
     global __cf
     if __cf and isinstance(__cf, cloudflare.Cloudflare):

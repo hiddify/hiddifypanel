@@ -48,7 +48,7 @@ class BaseAccount(db.Model, SerializerMixin, FlaskLoginUserMixin):  # type: igno
     @classmethod
     def by_id(cls, id: int):
         # return cls.query.filter(cls.id == id).first()
-        return cls.query.get(id)
+        return db.session.query(cls).get(id)
 
     @classmethod
     def by_uuid(cls, uuid: str, create: bool = False):

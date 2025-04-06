@@ -61,11 +61,11 @@ class Child(db.Model, SerializerMixin):  # type: ignore
 
     @classmethod
     def by_id(cls, id: int) -> 'Child':
-        return Child.query.filter(Child.id == id).first()
+        return db.session.query(Child).filter(Child.id == id).first() 
 
     @classmethod
     def by_unique_id(cls, unique_id: str) -> 'Child':
-        return Child.query.filter(Child.unique_id == unique_id).first()
+        return db.session.query(Child).filter(Child.unique_id == unique_id).first()
 
     @classmethod
     def current(cls) -> "Child":

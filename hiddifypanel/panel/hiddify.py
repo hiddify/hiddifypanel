@@ -41,7 +41,7 @@ def add_short_link_imp(link: str, period_min: int = 5) -> Tuple[str, datetime]:
 
     pattern = r"([^/]+)\("
 
-    with open(current_app.config['HIDDIFY_CONFIG_PATH'] + "/nginx/parts/short-link.conf", 'r') as f:
+    with open(os.environ['HIDDIFY_CONFIG_PATH'] + "/nginx/parts/short-link.conf", 'r') as f:
         for line in f:
             if link in line:
                 return re.search(pattern, line).group(1), datetime.now() + timedelta(minutes=period_min)
@@ -146,14 +146,14 @@ def get_child(unique_id):
 
 
 def dump_db_to_dict():
-    return {"childs": [u.to_dict() for u in Child.query.all()],
-            "users": [u.to_dict() for u in User.query.all()],
-            "domains": [u.to_dict() for u in Domain.query.all()],
-            "proxies": [u.to_dict() for u in Proxy.query.all()],
+    return {"childs": [u.to_dict() for u in db.session.query(Child).all()],
+            "users": [u.to_dict() for u in db.session.query(User).all()],
+            "domains": [u.to_dict() for u in db.session.query(Domain).all()],
+            "proxies": [u.to_dict() for u in db.session.query(Proxy).all()],
             # "parent_domains": [] if not hconfig(ConfigEnum.license) else [u.to_dict() for u in ParentDomain.query.all()],
-            'admin_users': [d.to_dict() for d in AdminUser.query.all()],
-            "hconfigs": [*[u.to_dict() for u in BoolConfig.query.all()],
-                         *[u.to_dict() for u in StrConfig.query.all()]]
+            'admin_users': [d.to_dict() for d in db.session.query(AdminUser).all()],
+            "hconfigs": [*[u.to_dict() for u in db.session.query(BoolConfig).all()],
+                         *[u.to_dict() for u in db.session.query(StrConfig).all()]]
             }
 
 

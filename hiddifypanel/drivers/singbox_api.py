@@ -1,3 +1,4 @@
+import os
 import xtlsapi
 from hiddifypanel.models import *
 from .abstract_driver import DriverABS
@@ -15,7 +16,7 @@ class SingboxApi(DriverABS):
         return xtlsapi.SingboxClient('127.0.0.1', 10086)
 
     def get_enabled_users(self):
-        config_dir = current_app.config['HIDDIFY_CONFIG_PATH']
+        config_dir = os.environ['HIDDIFY_CONFIG_PATH']
         with open(f"{config_dir}/singbox/configs/01_api.json") as f:
             json_data = json.load(f)
             return {u.split("@")[0]: 1 for u in json_data['experimental']['v2ray_api']['stats']['users']}

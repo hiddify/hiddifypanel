@@ -1,5 +1,6 @@
 from flask_babel import lazy_gettext as _
-import requests
+from hiddifypanel.hutils import LazyLoader
+requests=LazyLoader("requests")
 from packaging.version import Version
 import re
 import sys

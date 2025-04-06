@@ -1,4 +1,4 @@
-from flask_babel import lazy_gettext as _
+
 from sqlalchemy import func
 from typing import Dict
 import datetime
@@ -16,8 +16,8 @@ from celery import shared_task
 @shared_task(ignore_result=False)
 def update_local_usage():
     lock_key = "lock-update-local-usage"
-    if not cache.redis_client.set(lock_key, "locked", nx=True, ex=600):
-        return {"msg": "last update task is not finished yet."}
+    # if not cache.redis_client.set(lock_key, "locked", nx=True, ex=600):
+    #     return {"msg": "last update task is not finished yet."}
     try:
         res=update_local_usage_not_lock()
         cache.redis_client.set(lock_key, "locked", nx=False, ex=60)
@@ -43,7 +43,7 @@ def update_local_usage_not_lock():
 def add_users_usage_uuid(uuids_bytes: Dict[str, Dict], child_id, sync=False):
     uuids_bytes = {u: v for u, v in uuids_bytes.items() if v}
     uuids = uuids_bytes.keys()
-    users = User.query.filter(User.uuid.in_(uuids))
+    users = db.session.query(User).filter(User.uuid.in_(uuids))
     dbusers_bytes = {u: uuids_bytes.get(u.uuid, 0) for u in users}
     _add_users_usage(dbusers_bytes, child_id, sync)  # type: ignore
 
@@ -58,7 +58,7 @@ def _reset_priodic_usage():
     if datetime.datetime.now().hour > 5 and current_time - last_usage_check < 60 * 60 * 24:
         return
     logger.debug("reseting user usage if needed")
-    for user in User.query.filter(User.mode != UserMode.no_reset).all():
+    for user in db.session.query(User).filter(User.mode != UserMode.no_reset).all():
         if user.user_should_reset():
             logger.info(f"reseting user usage for {user.uuid}")
             user.reset_usage(commit=False)
@@ -76,14 +76,14 @@ def _add_users_usage(users_usage_data: Dict[User, Dict], child_id, sync=False):
     daily_usage = {}
     today = datetime.date.today()
     changes = False
-    for adm in AdminUser.query.all():
-        daily_usage[adm.id] = DailyUsage.query.filter(DailyUsage.date == today, DailyUsage.admin_id == adm.id, DailyUsage.child_id == child_id).first()
+    for adm in db.session.query(AdminUser).all():
+        daily_usage[adm.id] = db.session.query(DailyUsage).filter(DailyUsage.date == today, DailyUsage.admin_id == adm.id, DailyUsage.child_id == child_id).first()
         if daily_usage[adm.id] is None:
             logger.info(f"creating a new daily usage {today} admin={adm.id} child={child_id}")
             daily_usage[adm.id] = DailyUsage(date=today, admin_id=adm.id, child_id=child_id)
             db.session.add(daily_usage[adm.id])
             changes = True
-        daily_usage[adm.id].online = User.query.filter(User.added_by == adm.id).filter(func.DATE(User.last_online) == today).count()
+        daily_usage[adm.id].online = db.session.query(User).filter(User.added_by == adm.id).filter(func.DATE(User.last_online) == today).count()
     if changes:
         db.session.commit()
     _reset_priodic_usage()
@@ -155,7 +155,7 @@ def _add_users_usage(users_usage_data: Dict[User, Dict], child_id, sync=False):
         if uuid in res:
             continue
 
-        user = User.query.filter(User.uuid == uuid).first()
+        user = db.session.query(User).filter(User.uuid == uuid).first()
         if not user:
             user_driver.remove_client(User(uuid=uuid))
         elif not user.is_active:
@@ -178,6 +178,7 @@ def send_bot_message(user):
         return
     if not user.telegram_id:
         return
+    from flask_babel import lazy_gettext as _
     from hiddifypanel.panel.commercial.telegrambot import bot, Usage
     try:
         msg = Usage.get_usage_msg(user.uuid)

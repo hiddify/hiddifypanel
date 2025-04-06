@@ -4,9 +4,9 @@ from flask import g
 from hiddifypanel.models.usage import DailyUsage
 from sqlalchemy import event, Column, Integer, Enum, Boolean, ForeignKey
 from strenum import StrEnum
-from apiflask import abort
-from flask_babel import gettext as __
-from flask_babel import lazy_gettext as _
+
+
+
 from hiddifypanel.database import db, db_execute
 from hiddifypanel.models.role import Role
 from hiddifypanel.models.base_account import BaseAccount
@@ -150,6 +150,8 @@ class AdminUser(BaseAccount, SerializerMixin):
     def remove(self):
         if self.id == 1 or self.id == g.account.id:
             # raise ValidationError(_("Owner can not be deleted!"))
+            from flask_babel import gettext as __
+            from apiflask import abort
             abort(422, __("Owner can not be deleted!"))
         users = self.recursive_users_query().all()
         for u in users:

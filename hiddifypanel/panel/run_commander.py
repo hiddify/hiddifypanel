@@ -1,6 +1,5 @@
 from typing import List
 from strenum import StrEnum
-from flask import current_app
 import subprocess
 import os
 
@@ -34,7 +33,7 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
     base_cmd: List[str] = [
         'sudo',
         os.path.join(
-            current_app.config['HIDDIFY_CONFIG_PATH'], 'common/commander.py')
+            os.environ['HIDDIFY_CONFIG_PATH'], 'common/commander.py')
     ]
 
     if command == Command.apply:
@@ -80,6 +79,6 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
     else:
         raise Exception('WTF is happening!')
     if run_in_background:
-        subprocess.Popen(base_cmd, cwd=str(current_app.config['HIDDIFY_CONFIG_PATH']), start_new_session=True)
+        subprocess.Popen(base_cmd, cwd=str(os.environ['HIDDIFY_CONFIG_PATH']), start_new_session=True)
     else:
-        return subprocess.check_output(base_cmd, cwd=str(current_app.config['HIDDIFY_CONFIG_PATH'])).decode()
+        return subprocess.check_output(base_cmd, cwd=str(os.environ['HIDDIFY_CONFIG_PATH'])).decode()

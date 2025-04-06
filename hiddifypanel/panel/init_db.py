@@ -694,7 +694,7 @@ def make_proxy_rows(cfgs):
             yield Proxy(l3=l3, transport=transport, cdn=cdn, proto=proto, enable=enable, name=name)
 
 
-def add_config_if_not_exist(key: ConfigEnum, val: str | int, child_id: int | None = None):
+def add_config_if_not_exist(key: "ConfigEnum", val: str | int, child_id: int | None = None):
     if child_id is None:
         child_id = Child.current().id
 

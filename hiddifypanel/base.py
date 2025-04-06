@@ -8,13 +8,13 @@ import datetime
 from dotenv import dotenv_values
 import os
 import sys
-from apiflask import APIFlask
-from loguru import logger
-
-
-from dynaconf import FlaskDynaconf
 
 def create_app(*args, app_mode="web", **config):
+    from apiflask import APIFlask
+    from loguru import logger
+
+
+    from dynaconf import FlaskDynaconf
     
     app = APIFlask(__name__, static_url_path="/<proxy_path>/static/", instance_relative_config=True, version='2.2.0', title="Hiddify API",
                    openapi_blueprint_url_prefix="/<proxy_path>/api", docs_ui='elements', json_errors=False, enable_openapi=app_mode=="web")
@@ -36,7 +36,7 @@ def create_app(*args, app_mode="web", **config):
     ]
     
     if app_mode=="celery":
-        extensions.append("hiddifypanel.celery:init_app")
+        extensions=["hiddifypanel.celery:init_app"]
     elif app_mode=="cli":
         extensions.append("hiddifypanel.panel.cli:init_app")
     else:

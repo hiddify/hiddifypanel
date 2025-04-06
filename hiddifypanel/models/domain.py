@@ -3,7 +3,7 @@ import ipaddress
 import re
 from typing import Dict, List
 from flask import request
-from flask_babel import lazy_gettext as _
+
 from sqlalchemy.orm import backref
 from strenum import StrEnum
 from sqlalchemy_serializer import SerializerMixin
@@ -161,9 +161,9 @@ class Domain(db.Model, SerializerMixin):
     def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> List['Domain']:
         from hiddifypanel import hutils
         domains = []
-        domains = Domain.query.filter(Domain.mode == DomainType.sub_link_only, Domain.child_id == Child.current().id).all()
+        domains = db.session.query(Domain).filter(Domain.mode == DomainType.sub_link_only, Domain.child_id == Child.current().id).all()
         if not len(domains) or always_add_all_domains:
-            domains = Domain.query.filter(Domain.mode.notin_([DomainType.fake, DomainType.reality])).all()
+            domains = db.session.query(Domain).filter(Domain.mode.notin_([DomainType.fake, DomainType.reality])).all()
 
         if len(domains) == 0 and request:
             domains = [Domain(domain=request.host)]  # type: ignore

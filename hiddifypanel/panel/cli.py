@@ -47,7 +47,7 @@ def backup_task():
         if not bot.username:
             register_bot(True)
         
-        for admin in AdminUser.query.filter(AdminUser.mode == AdminMode.super_admin, AdminUser.telegram_id is not None,AdminUser.telegram_id!=0).all():
+        for admin in db.session.query(AdminUser).filter(AdminUser.mode == AdminMode.super_admin, AdminUser.telegram_id is not None,AdminUser.telegram_id!=0).all():
             caption = ("Backup \n" + admin_links())
             with open(dst, 'rb') as document:
                     try:

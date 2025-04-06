@@ -66,13 +66,13 @@ def hconfig(key: ConfigEnum, child_id: Optional[int] = None):  # -> str | int | 
     value = None
     try:
         if key.type == bool:
-            bool_conf = BoolConfig.query.filter(BoolConfig.key == key, BoolConfig.child_id == child_id).first()
+            bool_conf = db.session.query(BoolConfig).filter(BoolConfig.key == key, BoolConfig.child_id == child_id).first()
             if bool_conf:
                 value = bool_conf.value
             else:
                 logger.warning(f'bool {key} not found ')
         else:
-            str_conf = StrConfig.query.filter(StrConfig.key == key, StrConfig.child_id == child_id).first()
+            str_conf = db.session.query(StrConfig).filter(StrConfig.key == key, StrConfig.child_id == child_id).first()
             if str_conf:
                 value = str_conf.value
             else:
