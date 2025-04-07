@@ -19,7 +19,7 @@ def get_folder_size(folder_path: str) -> int:
 
 def top_processes() -> dict:
     # Get the process information
-    processes = [p for p in psutil.process_iter(['name', 'memory_full_info', 'cpu_percent']) if p.info['name'] != '']
+    processes = [p for p in psutil.process_iter(['pid', 'name', 'username', 'cpu_percent', 'memory_info']) if p.info['name'] != '']
     num_cores = psutil.cpu_count()
     # Calculate memory usage, RAM usage, and CPU usage for each process
     memory_usage = {}
@@ -27,20 +27,21 @@ def top_processes() -> dict:
     cpu_usage = {}
     for p in processes:
         name = p.info['name']
-        if "python3" in name or "uwsgi" in name or 'flask' in name:
+        if p.info['username']=="hiddify-panel":
             name = "Hiddify"
-        mem_info = p.info['memory_full_info']
-        if mem_info is None:
-            continue
-        mem_usage = mem_info.uss
+        # mem_info = p.info['memory_full_info']
+        # if mem_info is None:
+        #     continue
+        # mem_usage = mem_info.uss
+        mem_usage = p.info['memory_info'].rss
         cpu_percent = p.info['cpu_percent'] / num_cores
         if name in memory_usage:
             memory_usage[name] += mem_usage / (1024 ** 3)
-            ram_usage[name] += mem_info.rss / (1024 ** 3)
+            ram_usage[name] += mem_usage / (1024 ** 3)
             cpu_usage[name] += cpu_percent
         else:
             memory_usage[name] = mem_usage / (1024 ** 3)
-            ram_usage[name] = mem_info.rss / (1024 ** 3)
+            ram_usage[name] = mem_usage / (1024 ** 3)
             cpu_usage[name] = cpu_percent
 
     while len(cpu_usage) < 5:

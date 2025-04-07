@@ -40,7 +40,11 @@ def init_app(app: APIFlask):
 
     @app.errorhandler(Exception)
     def internal_server_error(e):
-        logger.exception(e)
+        if hasattr(e, 'code') and e.code == 404:
+            logger.error(f'{e} {request.url}')
+        else:
+            logger.exception(e)
+        
         if isinstance(e, Exception):
             if hutils.flask.is_api_call(request.path):
                 return jsonify({

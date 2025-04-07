@@ -8,11 +8,11 @@ from hiddifypanel.cache import cache
 from hiddifypanel.models.child import Child, ChildMode
 from sqlalchemy import Column, String, Boolean, Enum, ForeignKey, Integer
 from strenum import StrEnum
-from sqlalchemy_serializer import SerializerMixin
+
 from loguru import logger
 
 
-class BoolConfig(db.Model, SerializerMixin):
+class BoolConfig(db.Model):
     child_id = Column(Integer, ForeignKey('child.id'), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
     key = Column(Enum(ConfigEnum), primary_key=True)
@@ -35,7 +35,7 @@ class BoolConfig(db.Model, SerializerMixin):
         return HConfigSchema().load(conf_dict)
 
 
-class StrConfig(db.Model, SerializerMixin):
+class StrConfig(db.Model):
     child_id = Column(Integer, ForeignKey('child.id'), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
     key = Column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)

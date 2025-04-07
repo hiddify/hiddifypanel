@@ -9,21 +9,20 @@ import uuid
 from hiddifypanel import Events, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models import *
-from hiddifypanel.panel import hiddify
+
 from hiddifypanel.database import db, db_execute
-from flask import g
-from sqlalchemy import func, text
+
+
 from loguru import logger
 MAX_DB_VERSION = 120
 
-def _v100(child_id):
-    pass
 
-def _v98(child_id):
-    add_config_if_not_exist(ConfigEnum.path_xhttp,hutils.random.get_random_string(7, 15))
+
+def _v101(child_id):
+    add_config_if_not_exist(ConfigEnum.path_xhttp, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.xhttp_enable, False)
     db.session.bulk_save_objects(get_proxy_rows_v1())
-    
+
 
 def _v97(child_id):
     keys = hutils.crypto.generate_ssh_host_keys()
@@ -43,36 +42,33 @@ def _v97(child_id):
 
 
 def _v96(child_id):
-    result = (
-        db.session.query(
-            DailyUsage.child_id,
-            DailyUsage.admin_id,
-            DailyUsage.date,
-            func.max(DailyUsage.online).label('online'),
-            func.sum(DailyUsage.usage).label('usage'),
-            func.count(DailyUsage.usage).label('count'),
-        )
-        .group_by(DailyUsage.child_id, DailyUsage.admin_id, DailyUsage.date)
-        .all()
-    )
+    from sqlalchemy import func
+    result = (db.session.query(DailyUsage.child_id,
+                               DailyUsage.admin_id,
+                               DailyUsage.date,
+                               func.max(DailyUsage.online).label('online'),
+                               func.sum(DailyUsage.usage).label('usage'),
+                               func.count(DailyUsage.usage).label('count'),
+                               )
+              .group_by(DailyUsage.child_id, DailyUsage.admin_id, DailyUsage.date)
+              .all()
+              )
 
     for r in result:
         if r.count > 1:
             # Delete existing records for this group
-            db.session.query(DailyUsage).filter(
-                DailyUsage.child_id == r.child_id,
-                DailyUsage.admin_id == r.admin_id,
-                DailyUsage.date == r.date
-            ).delete()
+            db.session.query(DailyUsage).filter(DailyUsage.child_id == r.child_id,
+                                                DailyUsage.admin_id == r.admin_id,
+                                                DailyUsage.date == r.date
+                                                ).delete()
 
             # Add the aggregated record
-            new_record = DailyUsage(
-                child_id=r.child_id,
-                admin_id=r.admin_id,
-                date=r.date,
-                online=r.online,
-                usage=r.usage
-            )
+            new_record = DailyUsage(child_id=r.child_id,
+                                    admin_id=r.admin_id,
+                                    date=r.date,
+                                    online=r.online,
+                                    usage=r.usage
+                                    )
             db.session.add(new_record)
 
     # Commit the changes to the database
@@ -145,8 +141,7 @@ def _v79(child_id):
 
 def _v78(child_id):
     # equalize panel unique id and root child unique id
-    root_child_unique_id = Child.query.filter(
-        Child.name == "Root").first().unique_id
+    root_child_unique_id = Child.query.filter(Child.name == "Root").first().unique_id
     set_hconfig(ConfigEnum.unique_id, root_child_unique_id)
 
 
@@ -289,8 +284,7 @@ def _v55():
     set_hconfig(ConfigEnum.hysteria_port, hystria_port)
     set_hconfig(ConfigEnum.tuic_enable, True)
     set_hconfig(ConfigEnum.hysteria_enable, True)
-    Proxy.query.filter(Proxy.proto.in_(
-        ["tuic", "hysteria2", "hysteria"])).delete()
+    Proxy.query.filter(Proxy.proto.in_(["tuic", "hysteria2", "hysteria"])).delete()
     db.session.add(Proxy(l3='tls', transport='custom',
                    cdn='direct', proto='tuic', enable=True, name="TUIC"))
     db.session.add(Proxy(l3='tls', transport='custom', cdn='direct',
@@ -323,8 +317,7 @@ def _v48():
 
 
 def _v47():
-    StrConfig.query.filter(
-        StrConfig.key == ConfigEnum.ssh_server_enable).delete()
+    StrConfig.query.filter(StrConfig.key == ConfigEnum.ssh_server_enable).delete()
 
 
 def _v45():
@@ -360,8 +353,7 @@ def _v41():
 
 def _v38():
     add_config_if_not_exist(ConfigEnum.dns_server, "1.1.1.1")
-    add_config_if_not_exist(ConfigEnum.warp_mode, "all" if hconfig(
-        ConfigEnum.warp_enable) else "disable")
+    add_config_if_not_exist(ConfigEnum.warp_mode, "all" if hconfig(ConfigEnum.warp_enable) else "disable")
     add_config_if_not_exist(ConfigEnum.warp_plus_code, '')
 
 
@@ -378,14 +370,11 @@ def _v31():
     add_config_if_not_exist(ConfigEnum.reality_short_ids,
                             uuid.uuid4().hex[0:random.randint(1, 8) * 2])
     key_pair = hutils.crypto.generate_x25519_keys()
-    add_config_if_not_exist(
-        ConfigEnum.reality_private_key, key_pair['private_key'])
-    add_config_if_not_exist(
-        ConfigEnum.reality_public_key, key_pair['public_key'])
+    add_config_if_not_exist(ConfigEnum.reality_private_key, key_pair['private_key'])
+    add_config_if_not_exist(ConfigEnum.reality_public_key, key_pair['public_key'])
     db.session.bulk_save_objects(get_proxy_rows_v1())
     if not (AdminUser.query.filter(AdminUser.id == 1).first()):
-        db.session.add(AdminUser(id=1, uuid=hconfig(
-            ConfigEnum.admin_secret), name="Owner", mode=AdminMode.super_admin, comment=""))
+        db.session.add(AdminUser(id=1, uuid=hconfig(ConfigEnum.admin_secret), name="Owner", mode=AdminMode.super_admin, comment=""))
         execute("update admin_user set id=1 where name='owner'")
     for i in range(1, 10):
         for d in hutils.network.get_random_domains(50):
@@ -420,8 +409,7 @@ def _v20():
     if hconfig(ConfigEnum.domain_fronting_domain):
         fake_domains = [hconfig(ConfigEnum.domain_fronting_domain)]
 
-        direct_domain = Domain.query.filter(
-            Domain.mode in [DomainType.direct, DomainType.relay]).first()
+        direct_domain = Domain.query.filter(Domain.mode in [DomainType.direct, DomainType.relay]).first()
         if direct_domain:
             direct_host = direct_domain.domain
         else:
@@ -429,8 +417,7 @@ def _v20():
 
         for fd in fake_domains:
             if not Domain.query.filter(Domain.domain == fd).first():
-                db.session.add(Domain(
-                    domain=fd, mode='fake', alias='moved from domain fronting', cdn_ip=direct_host))
+                db.session.add(Domain(domain=fd, mode='fake', alias='moved from domain fronting', cdn_ip=direct_host))
 
 
 def _v19():
@@ -443,8 +430,7 @@ def _v19():
     set_hconfig(ConfigEnum.path_ws, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.tuic_enable, False)
     add_config_if_not_exist(ConfigEnum.shadowtls_enable, False)
-    add_config_if_not_exist(
-        ConfigEnum.shadowtls_fakedomain, "en.wikipedia.org")
+    add_config_if_not_exist(ConfigEnum.shadowtls_fakedomain, "en.wikipedia.org")
     add_config_if_not_exist(ConfigEnum.utls, "chrome")
     add_config_if_not_exist(ConfigEnum.telegram_bot_token, "")
     add_config_if_not_exist(ConfigEnum.package_mode, "release")
@@ -529,8 +515,7 @@ def _v1():
 def _v7():
     try:
         Proxy.query.filter(Proxy.name == 'tls XTLS direct trojan').delete()
-        Proxy.query.filter(
-            Proxy.name == 'tls XTLSVision direct trojan').delete()
+        Proxy.query.filter(Proxy.name == 'tls XTLSVision direct trojan').delete()
     except BaseException:
         pass
     add_config_if_not_exist(ConfigEnum.telegram_lib, "erlang")
@@ -688,8 +673,7 @@ def make_proxy_rows(cfgs):
             enable = l3 != "http" or proto == "vmess"
             enable = enable and transport != 'tcp'
             name = f'{l3} {c}'
-            # is_exist = Proxy.query.filter(Proxy.name == name).first() or Proxy.query.filter(
-            #     Proxy.l3 == l3, Proxy.transport == transport, Proxy.cdn == cdn, Proxy.proto == proto).first()
+            # is_exist = Proxy.query.filter(Proxy.name == name).first() or Proxy.query.filter(            #     Proxy.l3 == l3, Proxy.transport == transport, Proxy.cdn == cdn, Proxy.proto == proto).first()
             # if not is_exist:
             yield Proxy(l3=l3, transport=transport, cdn=cdn, proto=proto, enable=enable, name=name)
 
@@ -707,8 +691,7 @@ def add_column(column):
     try:
         column_type = column.type.compile(db.engine.dialect)
 
-        db_execute(
-            f'ALTER TABLE {column.table.name} ADD COLUMN {column.name} {column_type}', commit=True)
+        db_execute(f'ALTER TABLE {column.table.name} ADD COLUMN {column.name} {column_type}', commit=True)
     except BaseException:
         pass
 
@@ -727,21 +710,20 @@ def add_new_enum_values():
         Proxy.l3, Proxy.proto, Proxy.cdn, Proxy.transport,
         User.mode, Domain.mode, BoolConfig.key, StrConfig.key
     ]
+    from sqlalchemy import text
     for col in columns:
         enum_class = col.type.enum_class
         column_name = col.name
         table_name = col.table
 
         # Get the existing values in the enum
-        existing_values = [f'{e}' if isinstance(
-            e, ConfigEnum) else e.value for e in enum_class]
+        existing_values = [f'{e}' if isinstance(e, ConfigEnum) else e.value for e in enum_class]
 
         # Get the values in the enum column in the database
         # result = db.engine.execute(f"SELECT DISTINCT `{column_name}` FROM {table_name}")
         # db_values = {row[0] for row in result}
 
-        result = db.session.execute(
-            text(f"SHOW COLUMNS FROM {table_name} LIKE '{column_name}';")).fetchall()
+        result = db.session.execute(text(f"SHOW COLUMNS FROM {table_name} LIKE '{column_name}';")).fetchall()
         db_values = []
 
         for row in result:
@@ -761,11 +743,12 @@ def add_new_enum_values():
         # enumstr = ','.join([f"'{a}'" for a in [*existing_values, *old_values]])
         enumstr = ','.join([f"'{a}'" for a in [*existing_values]])
         expired_enumstr = ','.join([f"'{a}'" for a in [*old_values]])
-        db_execute(
-            f"delete from {table_name} where `{column_name}` in ({expired_enumstr});", commit=True)
-        db_execute(
-            f"ALTER TABLE {table_name} MODIFY COLUMN `{column_name}` ENUM({enumstr});", commit=True)
+        db_execute(f"delete from {table_name} where `{column_name}` in ({expired_enumstr});", commit=True)
+        db_execute(f"ALTER TABLE {table_name} MODIFY COLUMN `{column_name}` ENUM({enumstr});", commit=True)
 
+
+def is_db_latest():
+    return str(hconfig(ConfigEnum.db_version))==str(latest_db_version())
 
 def latest_db_version():
     for ver in range(MAX_DB_VERSION, 1, -1):
@@ -786,13 +769,13 @@ def upgrade_database():
         logger.info("no backup found...")
         return
     if os.path.isfile(sqlite_db):
-        logger.info(
-            "Finding Old Version Database... importing configs from latest backup")
+        logger.info("Finding Old Version Database... importing configs from latest backup")
         newest_file = max([(f, os.path.getmtime(os.path.join(backup_root, f)))
                           for f in os.listdir(backup_root) if os.path.isfile(os.path.join(backup_root, f))], key=lambda x: x[1])[0]
         with open(f'{backup_root}{newest_file}', 'r') as f:
             logger.info(f"importing configs from {newest_file}")
             json_data = json.load(f)
+            from hiddifypanel.panel import hiddify
             hiddify.set_db_from_json(json_data,
                                      set_users=True,
                                      set_domains=True,
@@ -805,8 +788,7 @@ def upgrade_database():
                                      override_child_unique_id=0,
                                      replace_owner_admin=True
                                      )
-            db_version = int(
-                [d['value'] for d in json_data['hconfigs'] if d['key'] == "db_version"][0])
+            db_version = int([d['value'] for d in json_data['hconfigs'] if d['key'] == "db_version"][0])
             os.rename(sqlite_db, sqlite_db + ".old")
             set_hconfig(ConfigEnum.db_version, db_version, commit=True)
 
@@ -823,6 +805,7 @@ def init_db():
     db_version = int(hconfig(ConfigEnum.db_version) or 0)
     if db_version == latest_db_version():
         return
+    from flask import g
     cache.invalidate_all_cached_functions()
     migrate(db_version)
     Child.query.filter(Child.id == 0).first().mode = ChildMode.virtual
@@ -843,8 +826,7 @@ def init_db():
             if not db_action or (start_version == 0 and ver == 10):
                 continue
 
-            logger.info(
-                f"Updating db from version {db_version} for node {child.id}")
+            logger.info(f"Updating db from version {db_version} for node {child.id}")
 
             if ver < 70:
                 if child.id != 0:
@@ -854,8 +836,7 @@ def init_db():
                 db_action(child.id)
 
             Events.db_init_event.notify(db_version=db_version)
-            logger.info(
-                f"Updated successfuly db from version {db_version} to {ver}")
+            logger.info(f"Updated successfuly db from version {db_version} to {ver}")
 
             db_version = ver
             db.session.commit()
@@ -882,8 +863,7 @@ def migrate(db_version):
         execute('ALTER TABLE child DROP INDEX `name`;')
     if db_version < 77:
         execute('ALTER TABLE user_detail DROP COLUMN connected_ips;')
-        execute(
-            'update user_detail set connected_devices="" where connected_devices IS NULL')
+        execute('update user_detail set connected_devices="" where connected_devices IS NULL')
 
     if db_version < 70:
         execute('CREATE INDEX date ON daily_usage (date);')
@@ -915,8 +895,7 @@ def migrate(db_version):
 
     if db_version < 52:
         execute(f'update domain set mode="sub_link_only", sub_link_only=false where sub_link_only = true or mode=1  or mode="1"')
-        execute(
-            f'update domain set mode="direct", sub_link_only=false where mode=0  or mode="0"')
+        execute(f'update domain set mode="direct", sub_link_only=false where mode=0  or mode="0"')
         execute(f'update proxy set transport="WS" where transport = "ws"')
         execute(f'update admin_user set mode="agent" where mode = "slave"')
         execute(f'update admin_user set mode="super_admin" where id=1')
@@ -956,12 +935,9 @@ def migrate(db_version):
             execute(f'DROP TABLE str_config')
             execute(f'ALTER TABLE str_config_old RENAME TO str_config')
 
-        execute(
-            'ALTER TABLE user RENAME COLUMN monthly_usage_limit_GB TO usage_limit_GB')
-        execute(
-            f'update admin_user set parent_admin_id=1 where parent_admin_id is NULL and 1!=id')
-        execute(
-            f'update admin_user set max_users=100,max_active_users=100 where max_users is NULL')
+        execute('ALTER TABLE user RENAME COLUMN monthly_usage_limit_GB TO usage_limit_GB')
+        execute(f'update admin_user set parent_admin_id=1 where parent_admin_id is NULL and 1!=id')
+        execute(f'update admin_user set max_users=100,max_active_users=100 where max_users is NULL')
         execute(f'update dailyusage set child_id=0 where child_id is NULL')
         execute(f'update dailyusage set admin_id=1 where admin_id is NULL')
         execute(f'update dailyusage set admin_id=1 where admin_id = 0')

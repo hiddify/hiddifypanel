@@ -6,7 +6,7 @@ from flask import request
 
 from sqlalchemy.orm import backref
 from strenum import StrEnum
-from sqlalchemy_serializer import SerializerMixin
+
 
 
 from hiddifypanel.database import db
@@ -37,7 +37,7 @@ ShowDomain = db.Table('show_domain',
                       )
 
 
-class Domain(db.Model, SerializerMixin):
+class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     child_id = db.Column(db.Integer, db.ForeignKey('child.id'), default=0)
     domain = db.Column(db.String(200), nullable=True, unique=False)

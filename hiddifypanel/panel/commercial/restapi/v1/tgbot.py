@@ -63,9 +63,8 @@ def register_bot(set_hook=False, remove_hook=False):
             if set_hook:
                 bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/{user_secret}/api/v1/tgbot/")
     except Exception as e:
-        print(e)
-        import traceback
-        traceback.print_stack()
+        logger.error(e)
+        
 
 
 def init_app(app):

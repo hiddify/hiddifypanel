@@ -133,8 +133,9 @@ class LoginView(FlaskView):
     @ route('/<secret_uuid>/manifest.webmanifest')
     def create_pwa_manifest(self):
         domain = request.host
-        account=AdminUser.by_uuid(g.uuid)
-        name = (domain if hutils.flask.is_admin_panel_call() else account.name)
+        admin_call=hutils.flask.is_admin_panel_call()
+        account=AdminUser.by_uuid(g.uuid) if admin_call else User.by_uuid(g.uuid)
+        name = (domain if admin_call  else account.name)
         return jsonify({
             "name": f"Hiddify {name}",
             "short_name": f"{name}"[:12],

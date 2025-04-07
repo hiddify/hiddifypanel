@@ -1,4 +1,4 @@
-#!/opt/hiddify-manager/.venv/bin/python
+#!/opt/hiddify-manager/.venv313/bin/python
 
 from hiddifypanel import create_app_wsgi
 from asgiref.wsgi import WsgiToAsgi

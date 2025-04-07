@@ -1,7 +1,10 @@
 import os
+import sys
 from celery import Celery, Task
 from celery.schedules import crontab
 from dotenv import dotenv_values
+from loguru import logger
+
 
 def init_app(app):
     class FlaskTask(Task):
@@ -56,6 +59,15 @@ def init_app_no_flask():
         else:
             v = True if v.lower() == "true" else (False if v.lower() == "false" else v)
         config[c] = v
+    import hiddifypanel.database 
+    hiddifypanel.database.init_no_flask()
+
+    from hiddifypanel.panel import init_db
+    if not init_db.is_db_latest():
+        logger.error("The database upgrade is required before proceeding. Terminating the process.")
+        import time
+        time.sleep(20)
+        sys.exit(1)
 
     celery_app = Celery()
     
@@ -66,7 +78,7 @@ def init_app_no_flask():
     ))
     
 
-
+    
         # Calls test('hello') every 10 seconds.
     from hiddifypanel.panel import usage
     celery_app.add_periodic_task(60.0, usage.update_local_usage.s(), name='update usage')
@@ -86,15 +98,14 @@ def init_app_no_flask():
     # )
 
     celery_app.add_periodic_task(
-        # crontab(hour="*/6", minute="0"),
-        crontab(hour="*", minute="*"),
+        crontab(hour="*/6", minute="0"),
+        # crontab(hour="*", minute="*"),
         backup_task.s(),
         name="backup_task "
     )
     
     celery_app.set_default()
-    import hiddifypanel.database 
-    hiddifypanel.database.init_no_flask()
+    
     return celery_app
 
 

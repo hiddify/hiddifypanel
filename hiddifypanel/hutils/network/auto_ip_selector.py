@@ -41,12 +41,12 @@ try:
    
     IPASN = maxminddb.open_database('GeoLite2-ASN.mmdb')
     IPCOUNTRY = maxminddb.open_database('GeoLite2-Country.mmdb')
-    __ipcity = maxminddb.open_database('GeoLite2-City.mmdb') 
+    # __ipcity = maxminddb.open_database('GeoLite2-City.mmdb') 
 except BaseException as e:
     logger.error("Error can not load maxminddb")
     IPASN = {}
     IPCOUNTRY = {}
-    __ipcity = {}
+    # __ipcity = {}
 
 __asn_map = {
     '58224': 'MKH',
@@ -104,13 +104,13 @@ def get_country(user_ip: str = '') -> Union[dict, str]:
         return 'unknown'
 
 
-def get_city(user_ip: str = '') -> Union[dict, str]:
-    try:
-        user_ip = user_ip or get_real_user_ip()
-        res = __ipcity.get(user_ip)
-        return {'city': res.get('city').get('name'), 'latitude': res.get('latitude'), 'longitude': res.get('longitude'), 'accuracy_radius': res.get('accuracy_radius')}
-    except BaseException:
-        return 'unknown'
+# def get_city(user_ip: str = '') -> Union[dict, str]:
+#     try:
+#         user_ip = user_ip or get_real_user_ip()
+#         res = __ipcity.get(user_ip)
+#         return {'city': res.get('city').get('name'), 'latitude': res.get('latitude'), 'longitude': res.get('longitude'), 'accuracy_radius': res.get('accuracy_radius')}
+#     except BaseException:
+#         return 'unknown'
 
 
 def get_real_user_ip_debug(user_ip: str = '') -> str:

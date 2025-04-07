@@ -150,7 +150,7 @@ def is_admin_panel_call(deprecated_format: bool = False) -> bool:
     if deprecated_format:
         if f'{request.path}'.startswith(f'/{hconfig(ConfigEnum.proxy_path)}/') and "admin" in f'{request.path}':
             return True
-    elif f'{request.path}'.startswith(f'/{hconfig(ConfigEnum.proxy_path_admin)}/admin/'):
+    elif f'{request.path}'.startswith(f'/{hconfig(ConfigEnum.proxy_path_admin)}/'):
         return True
     return False
 

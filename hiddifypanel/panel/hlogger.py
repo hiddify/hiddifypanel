@@ -5,6 +5,8 @@ def logger_dynamic_formatter(record) -> str:
     fmt = '<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>'
     if record['extra']:
         fmt += ' | <level>{extra}</level>'
+    if record["exception"]:
+        fmt += "{exception}\n"
     return fmt + '\n'
 
 def init_app(app):
@@ -19,7 +21,7 @@ def init_logger(app, cli):
     
     logger.remove()
     logger.add(sys.stderr if cli else sys.stdout, format=logger_dynamic_formatter, level=app.config['STDOUT_LOG_LEVEL'],
-               colorize=True, catch=True, enqueue=True, diagnose=False, backtrace=True)
+               colorize=True, catch=True, enqueue=True, diagnose=True, backtrace=True)
     logger.trace('Logger initiated :)')
 
     with app.app_context():
