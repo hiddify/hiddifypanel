@@ -701,7 +701,7 @@ def execute(query: str):
 
         db_execute(query)
     except BaseException as e:
-        logger.debug(e)
+        logger.debug(f'migrating_db: {e}')
         pass
 
 

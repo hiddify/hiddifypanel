@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import x25519, ed25519
 
@@ -62,7 +63,7 @@ def generate_ssh_host_keys():
             "ssh-keygen", "-t", key_type,
             "-f", key_file,
             "-N", "" 
-        ], check=True)
+        ], check=True,stdout=sys.stderr)
 
         keys_dict[key_type]={}
         with open(key_file, "r") as f:
