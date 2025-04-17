@@ -1,5 +1,5 @@
 import uuid
-from apiflask.fields import String, Float, Enum, Date, Integer, Boolean, DateTime
+from apiflask.fields import String, Float, Enum, Date, Integer, Boolean, Field
 from apiflask import Schema, fields
 from typing import Any, Mapping
 
@@ -11,7 +11,7 @@ from hiddifypanel import hutils
 # region user api
 
 
-class FriendlyDateTime(fields.Field):
+class FriendlyDateTime(Field):
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs):
         return hutils.convert.time_to_json(value)
 
@@ -19,7 +19,7 @@ class FriendlyDateTime(fields.Field):
         return hutils.convert.json_to_time(value)
 
 
-class FriendlyUUID(fields.Field):
+class FriendlyUUID(Field):
 
     def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs):
         if value is None or not hutils.auth.is_uuid_valid(value):
@@ -32,7 +32,7 @@ class FriendlyUUID(fields.Field):
         try:
             return str(uuid.UUID(value))
         except ValueError:
-            self.fail('Invalid uuid')
+            return self.fail('Invalid uuid')
 
     def _validated(self, value):
         if not hutils.auth.is_uuid_valid(value):
