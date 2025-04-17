@@ -1,6 +1,6 @@
 import uuid
 from apiflask.fields import String, Float, Enum, Date, Integer, Boolean, Field
-from apiflask import Schema, fields
+from apiflask import Schema
 from typing import Any, Mapping
 
 from marshmallow import ValidationError
