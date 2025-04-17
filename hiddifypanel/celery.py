@@ -63,7 +63,7 @@ def init_app_no_flask():
     hiddifypanel.database.init_no_flask()
 
     from hiddifypanel.panel import init_db
-    if not init_db.is_db_latest():
+    if not init_db.current_db_version() == init_db.latest_db_version():
         logger.error("The database upgrade is required before proceeding. Terminating the process.")
         import time
         time.sleep(20)
