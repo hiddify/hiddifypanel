@@ -252,7 +252,7 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
     else:
         alpn = "h2" if proxy.l3 in ['tls_h2'] or proxy.transport in ["grpc", 'h2'] else 'h2,http/1.1' if proxy.l3 == 'tls_h2_h1' else "http/1.1"
         if proxy.l3 in [ProxyL3.h3_quic]:
-            alpn = "h3"
+            alpn = "h3,h2,http/1.1"
 
     cdn_forced_host = domain_db.cdn_ip or (domain_db.domain if domain_db.mode != DomainType.reality else hutils.network.get_direct_host_or_ip(4))
     is_cdn = ProxyCDN.CDN == proxy.cdn or ProxyCDN.Fake == proxy.cdn
@@ -277,7 +277,7 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         'dbdomain': domain_db
     }
     if proxy.proto in ['tuic', 'hysteria2']:
-        base['alpn'] = "h3"
+        base['alpn'] = "h3,h2,http/1.1"
         if proxy.proto == 'hysteria2':
             base['hysteria_up_mbps'] = hconfigs.get(ConfigEnum.hysteria_up_mbps)
             base['hysteria_down_mbps'] = hconfigs.get(ConfigEnum.hysteria_down_mbps)
