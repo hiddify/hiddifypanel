@@ -192,4 +192,4 @@ def get_clean_ip_user(user_ip, ipliststr: str, default_asn: str = '') -> tuple[s
     else:
         selected_server = random.sample(ips, 1)[0]
     # print("selected_server",selected_server)
-    return str(selected_server), asn_short
+    return str(selected_server)
