@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v11.0.4 (2025-07-11)
+
+#### Other
+
+* Merge branch 'main' into dev. 
+
+* Merge branch 'main' of github.com:hiddify/Hiddify-Panel. 
+
+* Update translations. 
+
+* Update translations. 
+
+* Update translations. 
+
+* Use dev branch for build translation. 
+
+* Update release script. 
+
+
+
 ## v11.0.3 (2025-07-11)
 
 #### New
