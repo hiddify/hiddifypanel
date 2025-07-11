@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v11.0.8 (2025-07-11)
+
+#### Other
+
+* Update translations. 
+
+
+
 ## v11.0.7 (2025-07-11)
 
 #### Other
