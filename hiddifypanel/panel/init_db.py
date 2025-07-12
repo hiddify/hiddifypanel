@@ -652,7 +652,7 @@ def make_proxy_rows(cfgs):
             # if not is_exist:
             params_list=[('',{})]
             
-            if transport=="xhttp" and l3 != "reality":
+            if transport=="xhttp" and l3 not in [ProxyL3.reality,ProxyL3.http]:
                 params_list=[]
                 # for up in ['http/1.1"','h2','h3']:
                 if l3=="http":
