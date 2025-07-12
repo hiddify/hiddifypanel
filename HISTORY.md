@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v11.0.10 (2025-07-12)
+
+#### Other
+
+* Disable alpn for http. 
+
+* Add no headers in tcp stream and fix tcp settings in xray full. 
+
+* Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
+
+* Update translations. 
+
+
+
 ## v11.0.8 (2025-07-11)
 
 #### Other
