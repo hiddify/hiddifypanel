@@ -7,11 +7,20 @@ msgid ""
 "            Settings"
 msgstr " 搜索<inlang-LineFeed>设置"
 
+msgid "%(count)s records were successfully deleted."
+msgstr ""
+
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s 条记录已成功禁用。"
 
 msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s 条记录已成功启用。"
+
+msgid "%(count)s records were successfully reset days."
+msgstr ""
+
+msgid "%(count)s records were successfully reset usage."
+msgstr ""
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s 天"

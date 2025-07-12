@@ -9,11 +9,20 @@ msgstr ""
 " Поиск\n"
 "Настройки"
 
+msgid "%(count)s records were successfully deleted."
+msgstr ""
+
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s записей были успешно отключены."
 
 msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s записей были успешно включены."
+
+msgid "%(count)s records were successfully reset days."
+msgstr ""
+
+msgid "%(count)s records were successfully reset usage."
+msgstr ""
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s дней"

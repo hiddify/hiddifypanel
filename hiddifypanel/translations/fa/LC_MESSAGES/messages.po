@@ -9,11 +9,20 @@ msgstr ""
 " جستجو کردن\n"
 "تنظیمات"
 
+msgid "%(count)s records were successfully deleted."
+msgstr ""
+
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s رکورد با موفقیت غیرفعال شد."
 
 msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s رکوردها با موفقیت فعال شد."
+
+msgid "%(count)s records were successfully reset days."
+msgstr ""
+
+msgid "%(count)s records were successfully reset usage."
+msgstr ""
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s روز"

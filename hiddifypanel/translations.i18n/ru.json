@@ -1,7 +1,10 @@
 {
   " Search\n            Settings": " Поиск\nНастройки",
+  "%(count)s records were successfully deleted.": "",
   "%(count)s records were successfully disabled.": "%(count)s записей были успешно отключены.",
   "%(count)s records were successfully enabled.": "%(count)s записей были успешно включены.",
+  "%(count)s records were successfully reset days.": "",
+  "%(count)s records were successfully reset usage.": "",
   "%(expire_days)s days": "%(expire_days)s дней",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Последний день",

@@ -9,11 +9,20 @@ msgstr ""
 " Search\n"
 "            Settings"
 
+msgid "%(count)s records were successfully deleted."
+msgstr "%(count)s records were successfully deleted."
+
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s Records were successfully disabled."
 
 msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s Records were successfully enabled."
+
+msgid "%(count)s records were successfully reset days."
+msgstr "%(count)s records were successfully reset days."
+
+msgid "%(count)s records were successfully reset usage."
+msgstr "%(count)s records were successfully reset usage."
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s Days"

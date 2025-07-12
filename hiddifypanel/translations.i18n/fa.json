@@ -1,7 +1,10 @@
 {
   " Search\n            Settings": " جستجو کردن\nتنظیمات",
+  "%(count)s records were successfully deleted.": "",
   "%(count)s records were successfully disabled.": "%(count)s رکورد با موفقیت غیرفعال شد.",
   "%(count)s records were successfully enabled.": "%(count)s رکوردها با موفقیت فعال شد.",
+  "%(count)s records were successfully reset days.": "",
+  "%(count)s records were successfully reset usage.": "",
   "%(expire_days)s days": "%(expire_days)s روز",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "آخرین روز",

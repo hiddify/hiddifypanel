@@ -1,7 +1,10 @@
 {
   " Search\n            Settings": " 搜索<inlang-LineFeed>设置",
+  "%(count)s records were successfully deleted.": "",
   "%(count)s records were successfully disabled.": "%(count)s 条记录已成功禁用。",
   "%(count)s records were successfully enabled.": "%(count)s 条记录已成功启用。",
+  "%(count)s records were successfully reset days.": "",
+  "%(count)s records were successfully reset usage.": "",
   "%(expire_days)s days": "%(expire_days)s 天",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "最后一天",

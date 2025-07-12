@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v11.0.11 (2025-07-12)
+
+#### New
+
+* Add actions to users. 
+
+#### Other
+
+* Update translations. 
+
+
+
 ## v11.0.10 (2025-07-12)
 
 #### Other
