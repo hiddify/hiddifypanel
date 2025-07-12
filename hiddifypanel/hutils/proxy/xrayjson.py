@@ -291,7 +291,12 @@ def add_stream_settings(base: dict, proxy: dict):
 
 
 def add_tcp_stream(ss: dict, proxy: dict):
-    if proxy['l3'] == ProxyL3.http:
+    
+    if proxy.get('params',{}).get('headers',{}).get("type",'')=='none' or proxy['l3'] != ProxyL3.http:
+        ss['tcpSettings'] = {
+            'header':{'type':'none'}
+        }
+    else:    
         ss['tcpSettings'] = {
             'header': {
                 'type': 'http',
@@ -299,24 +304,18 @@ def add_tcp_stream(ss: dict, proxy: dict):
                     'path': [proxy['path']],
                     'method': 'GET',
                     "headers": {
-                        "Host": proxy.get('host'),
-                        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.122 Mobile Safari/537.36",
-                        "Accept-Encoding": "gzip, deflate",
-                        "Connection": "keep-alive",
-                        "Pragma": "no-cache"
+                        "Host": [proxy.get('host')],
+                        "User-Agent": [proxy.get('params',{}).get('headers',{}).get('User-Agent')],
+                        "Accept-Encoding": ["gzip, deflate"],
+                        "Connection": ["keep-alive"],
+                        "Pragma": proxy.get('params',{}).get('headers',{}).get('Pragma')
                     },
 
                 }
             }
         }
-        # ss['tcpSettings']['header']['request']['headers']
-    else:
-        ss['tcpSettings'] = {
-            'header': {
-                'type': 'none'
-            }
-            # 'acceptProxyProtocol': False
-        }
+    # ss['tcpSettings']['header']['request']['headers']
+
 
 
 def add_http_stream(ss: dict, proxy: dict):

@@ -151,11 +151,12 @@ def to_link(proxy: dict) -> str | dict:
         q['core']='xray'
         _add_xhttp_extra(q,proxy)
     if proxy['l3'] != 'quic':
-        if proxy.get('l3') != ProxyL3.reality and (proxy.get('transport') in {ProxyTransport.tcp, ProxyTransport.httpupgrade, ProxyTransport.xhttp}) and proxy['proto'] in [ProxyProto.vless, ProxyProto.trojan]:
-            q['headerType']='http'
-        else:
+        if proxy.get('params',{}).get('headers',{}).get("type",'')=='none' or proxy['l3'] != ProxyL3.http:
             q['headerType']='none'
-
+        else:
+            # if proxy.get('l3') != ProxyL3.reality and (proxy.get('transport') in {ProxyTransport.tcp, ProxyTransport.httpupgrade, ProxyTransport.xhttp}) and proxy['proto'] in [ProxyProto.vless, ProxyProto.trojan]:
+            q['headerType']='http'
+        
     if proxy['mode'] == 'Fake' or proxy['allow_insecure']:
         q['allowInsecure']='true'
         q['insecure']='true'
