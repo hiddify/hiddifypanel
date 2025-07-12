@@ -11,7 +11,7 @@ from flask_babel import lazy_gettext as _
 from flask import g, request  # type: ignore
 from markupsafe import Markup
 from sqlalchemy import desc, func
-
+from flask_admin.contrib.sqla import form, filters as sqla_filters, tools
 from hiddifypanel.hutils.flask import hurl_for
 from wtforms.validators import Regexp, ValidationError
 from flask import current_app
@@ -432,3 +432,57 @@ class UserAdmin(AdminLTEModelView):
         #     abort(403)
 
         return query
+
+
+    @action('disable', 'Disable', 'Are you sure you want to disable selected users?')
+    def action_disable(self, ids):
+        query = tools.get_query_for_ids(self.get_query(), self.model, ids)
+        count = query.update({'enable': False})
+
+        self.session.commit()
+        hutils.flask.flash(_('%(count)s records were successfully disabled.', count=count), 'success')
+        self.apply(query.all())
+
+    @action('enable', 'Enable', 'Are you sure you want to enable selected users?')
+    def action_enable(self, ids):
+        query = tools.get_query_for_ids(self.get_query(), self.model, ids)
+        count = query.update({'enable': True})
+
+        self.session.commit()
+        hutils.flask.flash(_('%(count)s records were successfully enabled.', count=count), 'success')
+        self.apply(query.all())
+    
+    @action('delete', 'Delete', 'Are you sure you want to delete selected users?')
+    def action_delete(self, ids):
+        query = tools.get_query_for_ids(self.get_query(), self.model, ids)
+        count = query.update({'enable': False})
+        self.session.commit()
+        self.apply(query.all())
+        count =query.delete()
+        self.session.commit()
+        hutils.flask.flash(_('%(count)s records were successfully deleted.', count=count), 'success')
+    
+    @action('reset usage', 'Reset Usage', 'Are you sure you want to reset usage of selected users?')
+    def action_reset_usage(self, ids):
+        query = tools.get_query_for_ids(self.get_query(), self.model, ids)
+        count = query.update({'current_usage': 0})
+        self.session.commit()
+        hutils.flask.flash(_('%(count)s records were successfully reset usage.', count=count), 'success')
+        self.apply(query.all())
+
+    @action('reset day', 'Reset Day', 'Are you sure you want to reset day of selected users?')
+    def action_reset_days(self, ids):
+        query = tools.get_query_for_ids(self.get_query(), self.model, ids)
+        count = query.update({'start_date': None})
+        self.session.commit()
+        hutils.flask.flash(_('%(count)s records were successfully reset days.', count=count), 'success')
+        self.apply(query.all())
+
+    def apply(self,users):
+        for user in users:
+        
+            if user.is_active:
+                user_driver.add_client(user)
+            else:
+                user_driver.remove_client(user) 
+        hiddify.quick_apply_users()

@@ -296,15 +296,14 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
 
     return base
 
-def put_default_header(parmas:dict):
-    
-    if not isinstance(parmas.get('headers'),dict):
-        parmas['headers']={}
+def put_default_header(params:dict):
+    if not isinstance(params.get('headers'),dict):
+        params['headers']={}
         
-    if not parmas['headers'].get('User-Agent'):
-        parmas['headers']['User-Agent']=hconfig(ConfigEnum.default_useragent_string)
-    if not parmas['headers'].get('Pragma'):
-        parmas['headers']['Pragma']="no-cache"
+    if not params['headers'].get('User-Agent'):
+        params['headers']['User-Agent']=hconfig(ConfigEnum.default_useragent_string)
+    if not params['headers'].get('Pragma'):
+        params['headers']['Pragma']="no-cache"
     
 
 
