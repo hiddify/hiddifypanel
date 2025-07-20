@@ -262,7 +262,7 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
     elif 'special' in domain_db.mode.value or domain_db.mode in [DomainType.fake]:
         server=hutils.network.get_direct_host_or_ip(4)
     
-    if hconfig(ConfigEnum.use_ip_in_config):
+    if domain_db.resolve_ip:
         server = str(random_or_none(hutils.network.get_domain_ips_cached(server)) or server)
 
     
@@ -276,6 +276,7 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
             
         else: 
             allow_insecure=True
+    
 
     base = {
         'sni': sni,
@@ -335,16 +336,15 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         # 'cdn': is_cdn,
         # 'mode': "CDN" if is_cdn else "direct",
         'l3': l3,
-        # 'host': domain,
+        
         'port': port,
-        # 'server': cdn_forced_host,
-        # 'sni': domain_db.servernames if is_cdn and domain_db.servernames else domain,
+        
         'uuid': str(g.account.uuid),
         'proto': proxy.proto,
         'transport': proxy.transport,
         'proxy_path': hconfigs[ConfigEnum.proxy_path],
         'alpn': alpn,
-        'extra_info': f'{domain_db.alias or domain}',
+        'extra_info': f'{domain_db.alias or domain_db.domain}',
         'fingerprint': hconfigs[ConfigEnum.utls],
         # 'allow_insecure': domain_db.mode == DomainType.fake or "Fake" in proxy.cdn,
         'dbe': proxy,
@@ -471,13 +471,13 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
     if proxy.transport in ["ws", "WS"]:
         base['transport'] = 'ws'
         base['path'] = f'/{path[base["proto"]]}{hconfigs[ConfigEnum.path_ws]}'
-        base["host"] = domain
+        
         return base
 
     if proxy.transport in [ProxyTransport.httpupgrade]:
         base['transport'] = 'httpupgrade'
         base['path'] = f'/{path[base["proto"]]}{hconfigs[ConfigEnum.path_httpupgrade]}'
-        base["host"] = domain
+        
         return base
     
     if proxy.transport in [ProxyTransport.xhttp]:
