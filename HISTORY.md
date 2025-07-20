@@ -1,6 +1,22 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Add resolve IP option to domain. 
+
+#### Fix
+
+* * in domain name. 
+
+#### Other
+
+* Update translations. 
+
+
+
 ## v11.0.11 (2025-07-12)
 
 #### New
