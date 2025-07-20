@@ -2351,6 +2351,12 @@ msgstr "模式"
 msgid "domain.reality.asn_issue"
 msgstr "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
 
+msgid "domain.resolveip.description"
+msgstr ""
+
+msgid "domain.resolveip.label"
+msgstr ""
+
 msgid "domain.show_domains_description"
 msgstr ""
 "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n"

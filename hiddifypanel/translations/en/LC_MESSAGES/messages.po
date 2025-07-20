@@ -2527,6 +2527,14 @@ msgstr ""
 "Selected Domain for REALITY is not in the same ASN. To better use of the "
 "Protocol, it is better to find a Domain in the same ASN"
 
+msgid "domain.resolveip.description"
+msgstr ""
+"Use IP instead of domain name in the proxies. Useful when there are huge "
+"noise on the DNS."
+
+msgid "domain.resolveip.label"
+msgstr "Resolve IP"
+
 msgid "domain.show_domains_description"
 msgstr ""
 "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n"

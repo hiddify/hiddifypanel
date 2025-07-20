@@ -51,7 +51,8 @@ class DomainAdmin(AdminLTEModelView):
         servernames=_('config.reality_server_names.description'),
         sub_link_only=_('This can be used for giving your users a permanent non blockable links.'),
         grpc=_('grpc-proxy.description'),
-        download_domain=_('download_domain.description')
+        download_domain=_('download_domain.description'),
+        resolve_ip=_("domain.resolveip.description")
     )
     # create_modal = True
     can_export = False
@@ -86,10 +87,11 @@ class DomainAdmin(AdminLTEModelView):
         'show_domains': _('Show Domains'),
         'alias': _('Alias'),
         'grpc': _('gRPC'),
-        "download_domain":_('download_domain.label')
+        "download_domain":_('download_domain.label'),
+        'resolve_ip':_("domain.resolveip.label"),
     }
 
-    form_columns = ['mode', 'domain','download_domain', 'alias', 'servernames', 'cdn_ip', 'show_domains']
+    form_columns = ['mode', 'domain', 'alias', 'servernames', 'cdn_ip', 'resolve_ip', 'show_domains', 'download_domain',]
 
     def _domain_admin_link(view, context, model, name):
         if model.mode == DomainType.fake:

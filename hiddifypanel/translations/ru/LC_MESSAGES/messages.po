@@ -2539,6 +2539,12 @@ msgstr ""
 "Выбранный домен для REALITY не находится в том же ASN. Для более "
 "эффективного использования протокола лучше найти Домен в том же ASN"
 
+msgid "domain.resolveip.description"
+msgstr ""
+
+msgid "domain.resolveip.label"
+msgstr ""
+
 msgid "domain.show_domains_description"
 msgstr ""
 "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n"

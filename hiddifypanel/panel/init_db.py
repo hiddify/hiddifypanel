@@ -16,6 +16,12 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 120
 
+def _v108(child_id):
+    Domain.query.filter(Domain.mode==DomainType.auto_cdn_ip).update({
+        "mode":"cdn",
+        "resolve_ip":True
+    })
+    
 def _v107(child_id):
     # set_hconfig(ConfigEnum.core_type,'xray') # disable singbox core temporary
     execute("UPDATE proxy SET params = '{}' WHERE params is NULL;")

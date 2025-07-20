@@ -2484,6 +2484,12 @@ msgstr ""
 "O domínio selecionado para REALITY não está no mesmo ASN.\n"
 "Para melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN"
 
+msgid "domain.resolveip.description"
+msgstr ""
+
+msgid "domain.resolveip.label"
+msgstr ""
+
 msgid "domain.show_domains_description"
 msgstr ""
 "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n"

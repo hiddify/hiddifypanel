@@ -61,9 +61,9 @@
         if ($("#domain").length > 0) {
             var selectElement = document.getElementById("mode");
             var groups = [
-                { label: `{{_("Direct")}}`, options: ["direct", "old_xtls_direct"] },
+                { label: `{{_("Direct")}}`, options: ["direct"] },
                 { label: `{{_("Panel Link")}}`, options: ["sub_link_only"] },
-                { label: `{{_("Bridge Servers")}}`, options: ["cdn", "auto_cdn_ip", "worker", "relay"] },
+                { label: `{{_("Bridge Servers")}}`, options: ["cdn",  "worker", "relay"] },
                 { label: `{{_("Fake")}}`, options: ["special_reality_xhttp","special_reality_tcp","special_reality_grpc", "fake"] }
             ];
 
@@ -104,6 +104,7 @@
                 $("#cdn_ip").val("")
                 //$("#mode").parent().hide();
                 $("#show_domains").parent().show()
+                $("#resolve_ip").parent().hide()
                 $("#servernames").parent().hide();
                 $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`)
                 $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`)
@@ -114,7 +115,7 @@
                 $("#cdn_ip").parent().show();
                 //$("#mode").parent().show();
                 $("#show_domains").parent().hide()
-
+                $("#resolve_ip").parent().show()
 
                 if ($("#mode").val() == 'direct') {
                     $("#cdn_ip").parent().hide();

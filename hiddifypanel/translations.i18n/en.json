@@ -1125,6 +1125,10 @@
     "reality": {
       "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN"
     },
+    "resolveip": {
+      "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",
+      "label": "Resolve IP"
+    },
     "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
   },
   "download": "Direct Download",

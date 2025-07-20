@@ -163,7 +163,7 @@ class ConfigEnum(metaclass=FastEnum):
     admin_secret = _StrConfigDscr(ConfigCategory.hidden)  # removed
 
     default_useragent_string = _StrConfigDscr(ConfigCategory.general)    
-    use_ip_in_config=_BoolConfigDscr(ConfigCategory.general)
+    use_ip_in_config=_BoolConfigDscr(ConfigCategory.hidden)
     # tls
     tls_ports = _StrConfigDscr(ConfigCategory.tls, ApplyMode.apply_config)
 
