@@ -193,19 +193,19 @@ def get_random_user_agent():
     return 
 def get_random_domains(count: int = 1, retry: int = 3) -> List[str]:
     try:
-        irurl = "https://api.ooni.io/api/v1/measurements?probe_cc=IR&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&order_by=test_start_time&limit=1000"
+        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc=IR&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(3-retry)*100}"
         # cnurl="https://api.ooni.io/api/v1/measurements?probe_cc=CN&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&order_by=test_start_time&limit=1000"
         data_ir = requests.get(irurl).json()
         # data_cn=requests.get(url).json()
 
-        domains = [urlparse(d['input']).netloc.lower() for d in data_ir['results'] if d['scores']['blocking_country'] == 0.0]
+        domains = [urlparse(d['input']).netloc.lower() for d in data_ir.get('results',{}) if d.get('scores',{}).get('blocking_country') == 0.0]
         domains = [d for d in domains if not d.endswith(".ir") and ".gov" not in d]
 
         return random.sample(domains, count)
-    except Exception as e:
+    except BaseException as e:
         print('Error, getting random domains... ', e, 'retrying...', retry)
         if retry <= 0:
-            defdomains = ["fa.wikipedia.org", 'en.wikipedia.org', 'wikipedia.org', 'yahoo.com', 'en.yahoo.com']
+            defdomains = ["fa.wikipedia.org", 'en.wikipedia.org', 'wikipedia.org', 'yahoo.com', 'en.yahoo.com',"msn.com",'foot.com',"fast.com","speedtest.net","remove.bg","flightradar24.com"]
             print('Error, using default domains')
             return random.sample(defdomains, count)
         return get_random_domains(count, retry - 1)
