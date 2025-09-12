@@ -1,10 +1,14 @@
 {
   " Search\n            Settings": " Procurar\nConfigurações",
+  "%(count)s records were successfully deleted.": "",
   "%(count)s records were successfully disabled.": "%(count)s registros foram desativados com sucesso.",
   "%(count)s records were successfully enabled.": "%(count)s registros foram ativados com sucesso.",
+  "%(count)s records were successfully reset days.": "",
+  "%(count)s records were successfully reset usage.": "",
   "%(expire_days)s days": "%(expire_days)s dias",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Último dia",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
   "Access Denied!": "Acesso negado",
   "Actions": "Ações",
   "Active": "ativo",
@@ -13,6 +17,7 @@
   "Add some text that is only visible to super_admin.": "Adicione algum texto que seja visível apenas para o superadministrador",
   "Add some text that is only visible to you.": "Você pode adicionar algum texto, será visível apenas para voce",
   "Added by": "Adicionado por",
+  "Admin Links": "",
   "Admins": "Administradores",
   "Alias": "Pseudônimo",
   "All": "Todos",
@@ -29,6 +34,7 @@
   "Bug": "Bug/recurso",
   "CPU %(cores)s Cores": "CPU %(cores)s Núcleos ",
   "Can add sub admin": "👥 Pode adicionar subadministrador",
+  "Change": "",
   "Check again": "Verifique novamente",
   "Childs": "Crianças",
   "China": "🇨🇳 China",
@@ -57,6 +63,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "Domain (%(domain)s)-> IP = %(domain_ip)s não é igual ao seu IP = %(server_ip)s . isso é necessário no modo direto",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": " O IP do domínio = %(domain_ip)s não corresponde ao seu IP = %(server_ip)s, o que é necessário no modo direto",
   "Domain can not be resolved! there is a problem in your domain": "O domínio não pode ser resolvido! Há um problema em seu domínio. Verifique as configurações do seu Domínio.",
+  "Domain cannot be resolved! Please check DNS settings": "",
   "Domain is not REALITY friendly!": "O domínio não é compatível com Reality!",
   "Domain?": "Domínio?",
   "Donation": {
@@ -84,6 +91,7 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>Recommended</span>",
   "HiddifyNG intro": "Instale o HiddifyNG a partir de um destes links: %(dl_link)s %(play_link)s.\nEm seguida, clique no link abaixo e abra-o no HiddifyNG.",
   "HiddigyN": "HiddigyN <span class='badge badge-success'>Recommended</span>",
+  "Home Link": "",
   "Hover the user to see the reason": "Hover the user to see the reason",
   "How many days this package should be available?": "Quantos dias é este pacote?",
   "How many?": "Quantos?",
@@ -115,11 +123,13 @@
   "Network": "Rede",
   "New": "Novo",
   "No children!": "sem filhos",
+  "Not Secure": "",
   "Note": "📝 Observação",
   "Offline more than 1 day": "Offline por mais de 1 dia",
   "Offline more than 1 hour": "Offline por mais de 1 hora",
   "Offline more than 1 week": "Offline há mais de uma semana",
   "Ok": "OK",
+  "Online": "",
   "Online Users": "Usuários online",
   "Only Blocked and Local websites": "☑️ Somente sites bloqueados localmente",
   "Only for sublink?": "🌍 Use apenas para link de assinatura",
@@ -144,6 +154,7 @@
   "Please type your message to send to the telegram:": "✏️ Por favor, escreva sua mensagem para enviar para o Telegram:",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "Por favor, entenda que o painel principal está em teste e o plano e as condições de uso podem mudar a qualquer momento.",
   "Please wait ": "Por favor, aguarde",
+  "Port 80 and 443 can not be selected": "",
   "Port is already used! in": "A porta já é usada em:",
   "Premium Description": "O painel Hiddify é feito para uso não comercial. Mas se você usar este painel comercialmente, ajude o projeto a crescer com uma doação. <br/>\nEm troca de seu suporte financeiro, também fornecemos facilidades especiais para seu produto comercial.\n<br/>\n<br/>\nComo:\n<ul><li>\n<li>A possibilidade de sincronizar com o Cloudflare: ou seja, adicionando um domínio no painel, as configurações relevantes também podem ser feitas no Cloudflare</li>\n<li>Possibilidade de exibir sua marca no painel</li>\n<li>Possibilidade de Utilizar o Painel Central para Gerenciar Mais de 1 Servidor em Apenas um Painel, Assim Não É Mais Necessário Cadastrar Usuários em Servidores Diferentes, E Seu Volume Será Coletado em Todos os Servidores.\n</li>\n<li>\nA possibilidade de usar o bot do Telegram\n</li>\n<li>\nCapacidade de alterar nomes de proxy\n</li>\n</ul>\n\nEntre em contato com <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> após a doação.\nEnvie uma mensagem para obter uma versão especial para usuários corporativos.",
   "ProxyPath is already used! use different proxy path": "ProxyPath já está em uso! usar caminho de proxy diferente",
@@ -151,6 +162,7 @@
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "BATER",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain não é compatível com nomes de servidores!",
+  "REALITY Fallback domain is not compatible with server names!": "",
   "Release": "✅ Liberação",
   "Remaining about %(relative)s, exactly %(days)s days": "Restam cerca de %(relative)s, exatamente %(days)s dias",
   "Remote nodes are not supported yet!": "Nós remotos ainda não são suportados!",
@@ -186,14 +198,17 @@
   "Simplifies the process of employing the link elsewhere.": "Simplifica o processo de utilização do link em outro lugar",
   "SingBox": "📦 SingBox",
   "Sort by %(name)s": "Ordenar por %(name)s",
+  "Specifying CDN IP is only valid for CDN mode": "",
   "Start Date": "Data de início",
   "Started %(days)s days ago": "Iniciado há %(days)s dias",
   "Started from %(relative)s": "Iniciado em %(relative)s",
   "Status": "Status",
+  "SubLink": "",
   "Submit": "Enviar",
   "Success": "Sucesso",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ Sucesso! Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado",
   "Telegram Bot": "Telegram Bot",
+  "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️ Link curto temporário",
   "The message has been sent.": "A mensagem foi enviada.",
   "The message was not sent to": "The message was not sent to",
@@ -275,6 +290,14 @@
   "all": "Todos",
   "android": "Android",
   "app": {
+    "clash_verge_rev": {
+      "description": "",
+      "title": ""
+    },
+    "cmfa": {
+      "description": "",
+      "title": ""
+    },
     "foxray": {
       "description": "Descrição do FoXray",
       "title": "Raio X"
@@ -324,6 +347,9 @@
     "streisand": {
       "description": "Descrição de Streisand",
       "title": "Streisand"
+    },
+    "v2rayn": {
+      "title": ""
     },
     "v2rayng": {
       "description": "Descrição do V2RayNG",
@@ -435,6 +461,10 @@
     "decoy_domain": {
       "description": "Site falso: simula um site quando alguém visita seu domínio.\nPor favor, não use sites iranianos, sites populares bem conhecidos como: Google, Yahoo, Wikipedia, etc.",
       "label": "🔀 Site Decoy"
+    },
+    "default_useragent_string": {
+      "description": "",
+      "label": ""
     },
     "dns_server": {
       "description": "✳️ Padrão 1.1.1.1 <br>\n🚧 Bloquear Malware 1.1.1.2 <br>\n🔞 Bloquear pornografia 1.1.1.3",
@@ -706,6 +736,10 @@
       "description": "Quando o GTW visitar os sites em nomes de servidor, ele será redirecionado para este domínio",
       "label": "🌍 Domínio alternativo"
     },
+    "reality_port": {
+      "description": "",
+      "label": ""
+    },
     "reality_private_key": {
       "description": "Não mude isso",
       "label": "🔑 Chave Privada"
@@ -793,6 +827,38 @@
     "ssh": {
       "description": "Um proxy SSH, também conhecido como túnel SSH ou encaminhamento de porta SSH, é um método seguro de criar um canal de comunicação seguro entre duas máquinas em uma rede insegura. Temos um aplicativo específico que é completamente diferente do servidor ssh e não pode executar nenhum comando",
       "label": "Proxy SSH"
+    },
+    "ssh_host_dsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_dsa_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ecdsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ecdsa_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ed25519_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ed25519_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_rsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_rsa_pub": {
+      "description": "",
+      "label": ""
     },
     "ssh_server_enable": {
       "description": "O proxy SSH é completamente diferente do servidor ssh original.",
@@ -938,6 +1004,10 @@
       "description": "config.unique_id.description",
       "label": "config.unique_id.label"
     },
+    "use_ip_in_config": {
+      "description": "",
+      "label": ""
+    },
     "utls": {
       "description": "Esta opção irá simular diferentes navegadores, portanto, GFW não pode detectar sua navegação",
       "label": "❇️ uTLS"
@@ -1046,9 +1116,17 @@
     "reality": {
       "asn_issue": "O domínio selecionado para REALITY não está no mesmo ASN.\nPara melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN"
     },
+    "resolveip": {
+      "description": "",
+      "label": ""
+    },
     "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis."
   },
   "download": "Download direto",
+  "download_domain": {
+    "description": "",
+    "label": ""
+  },
   "fake": "🆎 Site falso",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {

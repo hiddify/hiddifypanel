@@ -1,7 +1,7 @@
 # Changelog
 
 
-## (unreleased)
+## v11.0.12 (2025-09-11)
 
 #### New
 
@@ -12,6 +12,28 @@
 * * in domain name. 
 
 #### Other
+
+* Fix ooni issue. 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Update translations. 
 
 * Update translations. 
 
