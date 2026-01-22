@@ -1,6 +1,18 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Add h2 support, add IP certificate, 
+
+#### Other
+
+* Update translations. 
+
+
+
 ## v11.0.13 (2025-09-12)
 
 #### Other
