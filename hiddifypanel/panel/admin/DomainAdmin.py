@@ -65,7 +65,7 @@ class DomainAdmin(AdminLTEModelView):
         },
         'domain': {
             'validators': [
-                Regexp(r'^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$',message=__("Should be a valid domain"))]},
+                Regexp(r'^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$',message=__("Should be a valid domain"))]},
         "cdn_ip": {
             'validators': [
                 Regexp(r"(((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d).){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d))|^([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,}))[ \t\n,;]*\w{3}[ \t\n,;]*)*",message=__("Invalid IP or domain"))]},

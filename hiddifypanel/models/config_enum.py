@@ -252,7 +252,7 @@ class ConfigEnum(metaclass=FastEnum):
     tcp_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     quic_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     xtls_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)#deprecated 
-    h2_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)#deprecated
+    h2_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)#deprecated
 
     db_version = _StrConfigDscr(ConfigCategory.hidden)
     last_priodic_usage_check = _IntConfigDscr(ConfigCategory.hidden)

@@ -323,7 +323,12 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
     if 'reality' in proxy.l3:
         alpn = "h2" if proxy.transport in ['h2', "grpc"] else 'http/1.1'
     else:
-        alpn = "h2" if proxy.l3 in ['tls_h2'] or proxy.transport in ["grpc", 'h2'] else 'h2,http/1.1' if proxy.l3 == 'tls_h2_h1' else "http/1.1"
+        alpn="http/1.1"
+        if proxy.l3 in ['tls_h2'] or proxy.transport in ["grpc", 'h2']:
+            alpn = "h2"    
+        if proxy.l3 == 'tls_h2_h1':
+            alpn='h2,http/1.1' 
+        
         if proxy.l3 in [ProxyL3.h3_quic]:
             alpn = "h3"
 
