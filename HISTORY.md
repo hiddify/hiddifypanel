@@ -9,6 +9,14 @@
 
 #### Other
 
+* Update packages. 
+
+* Delete 1pyproject.toml. 
+
+* Delete a.txt. 
+
+* Update translations. 
+
 * Update translations. 
 
 
