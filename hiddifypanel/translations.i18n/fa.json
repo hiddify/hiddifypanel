@@ -5,6 +5,7 @@
   "%(count)s records were successfully enabled.": "%(count)s رکوردها با موفقیت فعال شد.",
   "%(count)s records were successfully reset days.": "",
   "%(count)s records were successfully reset usage.": "",
+  "%(count)s records were successfully updated.": "",
   "%(expire_days)s days": "%(expire_days)s روز",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "آخرین روز",
@@ -1109,6 +1110,7 @@
   "domain": {
     "cdn": "سی‌دی‌ان",
     "changed_in_domain_warning": "⚠️ دامنه های شما تغییر کرد. لطفا کپی لینک های مدیریت را فراموش نکنید، در غیر این صورت دیگر نمی توانید به پنل دسترسی داشته باشید",
+    "current_server_IPs": "آی‌پی‌های این سرور:",
     "description": "این فیلد باید با دقت و به درستی تکمیل شود. در غیر اینصورت پروکسی ها به مشکل بر خواهند خورد. لطفا برای دیدن راهنمای ساخت زیردامنه \n<a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'>این آدرس </a>\nرا ببینید.",
     "domain": "دامنه",
     "domain_fronting": {

@@ -5,6 +5,7 @@
   "%(count)s records were successfully enabled.": "%(count)s записей были успешно включены.",
   "%(count)s records were successfully reset days.": "",
   "%(count)s records were successfully reset usage.": "",
+  "%(count)s records were successfully updated.": "",
   "%(expire_days)s days": "%(expire_days)s дней",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Последний день",
@@ -1101,6 +1102,7 @@
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Ваши домены изменились. пожалуйста, не забудьте скопировать ссылки администратора, иначе вы больше не сможете получить доступ к панели управления",
+    "current_server_IPs": "",
     "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
     "domain_fronting": {

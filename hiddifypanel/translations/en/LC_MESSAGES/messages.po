@@ -24,6 +24,9 @@ msgstr "%(count)s records were successfully reset days."
 msgid "%(count)s records were successfully reset usage."
 msgstr "%(count)s records were successfully reset usage."
 
+msgid "%(count)s records were successfully updated."
+msgstr "%(count)s records were successfully updated."
+
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s Days"
 
@@ -2478,6 +2481,9 @@ msgid "domain.changed_in_domain_warning"
 msgstr ""
 "⚠️ Your Domains Changed. please do not forget to copy Admin links, otherwise"
 " you can not access to the panel anymore"
+
+msgid "domain.current_server_IPs"
+msgstr "Current Server IPs are"
 
 msgid "domain.description"
 msgstr ""

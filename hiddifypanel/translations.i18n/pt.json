@@ -5,6 +5,7 @@
   "%(count)s records were successfully enabled.": "%(count)s registros foram ativados com sucesso.",
   "%(count)s records were successfully reset days.": "",
   "%(count)s records were successfully reset usage.": "",
+  "%(count)s records were successfully updated.": "",
   "%(expire_days)s days": "%(expire_days)s dias",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Último dia",
@@ -1101,6 +1102,7 @@
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Seus domínios mudaram. por favor, não se esqueça de copiar os links do administrador, caso contrário, você não poderá mais acessar o painel",
+    "current_server_IPs": "",
     "description": "Por favor, preencha este campo com cuidado e corretamente. Caso contrário, os proxies terão problemas. Visite <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Ajuda</a> para aprenda como criar um subdomínio.",
     "domain": "Domínio",
     "domain_fronting": {
