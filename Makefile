@@ -105,7 +105,6 @@ ifeq ($(TAG),)
 	@echo "WARNING: This operation will create s version tag and push to github"
 	@read -p "Version? (provide the next x.y.z semver) : " TAG
 endif
-	
 	@echo "$${TAG}" > hiddifypanel/VERSION
 	@sed -i "/^version =/c version = '$${TAG}'" pyproject.toml
 	@sed -i "/^__version__ =/c __version__ = '$${TAG}'" hiddifypanel/VERSION.py

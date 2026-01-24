@@ -1,6 +1,13 @@
 {% extends 'hiddify-flask-admin/list.html' %}
 
 {% block body %}
+<div class="callout callout-info">
+    {{_('domain.current_server_IPs')}}:
+    {% for ip in hutils.network.get_ips()%}
+    <span class="badge badge-info">{{ip}}</span>
+    {%endfor%}
+</div>
+
 {{super()}}
 
 <div class="callout callout-info">

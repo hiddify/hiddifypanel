@@ -54,7 +54,8 @@ class Actions(FlaskView):
     @route('reinstall', methods=['POST'])
     def reinstall(self, complete_install=True, domain_changed=False):
         return self.reinstall2(complete_install, domain_changed)
-
+    def get_domain_ip(self,domain:str):
+        return "<br>".join([str(ip) for ip in hutils.network.get_domain_ips(domain)])
     @login_required(roles={Role.super_admin})
     def reinstall2(self, complete_install=True, domain_changed=False):
         if int(hconfig(ConfigEnum.db_version)) < 9:

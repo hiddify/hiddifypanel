@@ -264,6 +264,8 @@ def get_domain_btn_link(domain):
 def get_ssh_client_version(user):
     return 'SSH-2.0-OpenSSH_7.4p1'
 
+def is_fake_domain(model:Domain):
+        return model.mode in {DomainType.fake,DomainType.reality,DomainType.special_reality_tcp,DomainType.special_reality_grpc,DomainType.special_reality_xhttp}
 
 def get_account_panel_link(account: BaseAccount, host: str, is_https: bool = True, prefere_path_only: bool = False, child_id=None):
     if child_id is None:
