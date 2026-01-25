@@ -1,13 +1,27 @@
 # Changelog
 
 
-## (unreleased)
+## v11.0.14 (2026-01-24)
+
+#### New
+
+* Add 7 days action to users, disable ip resolving in domain page, make domain page better. 
+
+#### Other
+
+* Update translation. 
+
+
+
+## v11.0.15 (2026-01-23)
 
 #### New
 
 * Add h2 support, add IP certificate, 
 
 #### Other
+
+* Update translations. 
 
 * Update packages. 
 
