@@ -1,6 +1,7 @@
 import ipaddress
 from hiddifypanel.auth import login_required, current_account
 
+from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import *
 import re
 from flask import g  # type: ignore
@@ -72,7 +73,7 @@ class DomainAdmin(AdminLTEModelView):
         "servernames": {
             'validators': [
                 Regexp(r"^([\w-]+\.)+[\w-]+(,\s*([\w-]+\.)+[\w-]+)*$",re.IGNORECASE,_("Invalid REALITY hostnames"))]}}
-    column_list = ["domain", "alias", "mode", "domain_ip", "show_domains"]
+    column_list = ["domain", "alias", "mode",  "show_domains"]
     column_editable_list = ["alias"]
     # column_filters=["domain","mode"]
     # form_excluded_columns=['work_with']
@@ -92,9 +93,9 @@ class DomainAdmin(AdminLTEModelView):
     }
 
     form_columns = ['mode', 'domain', 'alias', 'servernames', 'cdn_ip', 'resolve_ip', 'show_domains', 'download_domain',]
-
+    
     def _domain_admin_link(view, context, model, name):
-        if model.mode == DomainType.fake:
+        if hiddify.is_fake_domain(model):
             return Markup(f"<span class='badge'>{model.domain}</span>")
         d = model.domain
         if "*" in d:
@@ -102,7 +103,8 @@ class DomainAdmin(AdminLTEModelView):
         admin_link = hiddify.get_account_panel_link(g.account, d)
         return Markup(
             f'<div class="btn-group"><a href="{admin_link}" class="btn btn-xs btn-secondary">' + _("admin link") +
-            f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{model.domain}</a></div>')
+            f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{model.domain}</a></div>'+
+            f'<a href="{hurl_for('admin.Actions:get_domain_ip',domain=model.domain)}"><i class="fa-solid fa-dharmachakra"></i></a>')
 
     def _domain_ip(view, context, model, name):
         dips = hutils.network.get_domain_ips_cached(model.domain)
@@ -125,13 +127,15 @@ class DomainAdmin(AdminLTEModelView):
         return Markup(all_res)
 
     def _show_domains_formater(view, context, model, name):
+        if hiddify.is_fake_domain(model):
+            return ""
         if not len(model.show_domains):
             return _("All")
         else:
             return Markup(" ".join([hiddify.get_domain_btn_link(d) for d in model.show_domains]))
 
     column_formatters = {
-        'domain_ip': _domain_ip,
+        # 'domain_ip': _domain_ip,
         'domain': _domain_admin_link,
         'show_domains': _show_domains_formater
     }

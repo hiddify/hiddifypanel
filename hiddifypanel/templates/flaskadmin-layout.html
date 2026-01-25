@@ -99,11 +99,16 @@
         });
         function hide_domain_elements() {
             console.log("test")
+            if (['fake','reality','special_reality_grpc','special_reality_xhttp'].includes($("#mode").val())){
+                $("#show_domains").parent().hide()
+            }else{
+                $("#show_domains").parent().show()
+            }
             if ($("#mode").val() == "sub_link_only") {
                 $("#cdn_ip").parent().hide();
                 $("#cdn_ip").val("")
                 //$("#mode").parent().hide();
-                $("#show_domains").parent().show()
+                
                 $("#resolve_ip").parent().hide()
                 $("#servernames").parent().hide();
                 $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`)
@@ -114,7 +119,7 @@
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();
                 //$("#mode").parent().show();
-                $("#show_domains").parent().hide()
+                
                 $("#resolve_ip").parent().show()
 
                 if ($("#mode").val() == 'direct') {

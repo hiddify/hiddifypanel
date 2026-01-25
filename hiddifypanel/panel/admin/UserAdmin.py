@@ -469,6 +469,25 @@ class UserAdmin(AdminLTEModelView):
         self.session.commit()
         hutils.flask.flash(_('%(count)s records were successfully reset usage.', count=count), 'success')
         self.apply(query.all())
+    
+    @action('add_days_7', 'Add 7 Days', 'Are you sure you want to add days to selected users?')
+    def action_add_days(self, ids, days=7):
+        query = tools.get_query_for_ids(self.get_query(), self.model, ids)
+
+        count = query.update(
+            {self.model.package_days: self.model.package_days + days},
+            synchronize_session=False
+        )
+
+        self.session.commit()
+
+        hutils.flask.flash(
+            _('%(count)s records were successfully updated.', count=count),
+            'success'
+        )
+
+        self.apply(query.all())
+
 
     @action('reset day', 'Reset Day', 'Are you sure you want to reset day of selected users?')
     def action_reset_days(self, ids):
