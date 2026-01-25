@@ -5,6 +5,7 @@
   "%(count)s records were successfully enabled.": "%(count)s Records were successfully enabled.",
   "%(count)s records were successfully reset days.": "%(count)s records were successfully reset days.",
   "%(count)s records were successfully reset usage.": "%(count)s records were successfully reset usage.",
+  "%(count)s records were successfully updated.": "%(count)s records were successfully updated.",
   "%(expire_days)s days": "%(expire_days)s Days",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Last Day",
@@ -1110,6 +1111,7 @@
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Your Domains Changed. please do not forget to copy Admin links, otherwise you can not access to the panel anymore",
+    "current_server_IPs": "Current Server IPs are",
     "description": "Please fill in this field carefully and correctly. Otherwise, proxies will run into problems. Please visit <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Help</a> to learn how to create a subdomain.",
     "domain": "Domain",
     "domain_fronting": {
@@ -1125,7 +1127,6 @@
     "reality": {
       "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN"
     },
-    "current_server_IPs":"Current Server IPs are",
     "resolveip": {
       "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",
       "label": "Resolve IP"

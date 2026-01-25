@@ -24,6 +24,9 @@ msgstr ""
 msgid "%(count)s records were successfully reset usage."
 msgstr ""
 
+msgid "%(count)s records were successfully updated."
+msgstr ""
+
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s дней"
 
@@ -2491,6 +2494,9 @@ msgstr ""
 "⚠️ Ваши домены изменились. пожалуйста, не забудьте скопировать ссылки "
 "администратора, иначе вы больше не сможете получить доступ к панели "
 "управления"
+
+msgid "domain.current_server_IPs"
+msgstr ""
 
 msgid "domain.description"
 msgstr ""

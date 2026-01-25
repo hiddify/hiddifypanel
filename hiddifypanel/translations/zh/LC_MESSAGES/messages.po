@@ -22,6 +22,9 @@ msgstr ""
 msgid "%(count)s records were successfully reset usage."
 msgstr ""
 
+msgid "%(count)s records were successfully updated."
+msgstr ""
+
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s 天"
 
@@ -2316,6 +2319,9 @@ msgstr "CDN"
 
 msgid "domain.changed_in_domain_warning"
 msgstr "⚠️ 您的域名已更改。请不要忘记复制管理链接，否则您将无法再访问面板"
+
+msgid "domain.current_server_IPs"
+msgstr ""
 
 msgid "domain.description"
 msgstr ""

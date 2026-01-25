@@ -5,6 +5,7 @@
   "%(count)s records were successfully enabled.": "%(count)s 条记录已成功启用。",
   "%(count)s records were successfully reset days.": "",
   "%(count)s records were successfully reset usage.": "",
+  "%(count)s records were successfully updated.": "",
   "%(expire_days)s days": "%(expire_days)s 天",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "最后一天",
@@ -1101,6 +1102,7 @@
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ 您的域名已更改。请不要忘记复制管理链接，否则您将无法再访问面板",
+    "current_server_IPs": "",
     "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
     "domain": "领域",
     "domain_fronting": {
