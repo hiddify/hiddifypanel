@@ -202,7 +202,13 @@ def get_config_form():
                 if c.key == ConfigEnum.parent_panel:
                     continue
             extra_info = ''
-            if c.key in bool_types:
+            if c.key == ConfigEnum.tls_ech_enable:
+                field = SwitchField(
+                    _("Enable TLS ECH"),
+                    default=c.value,
+                    description=_("Enable adding ECH to generated TLS subscription links.")
+                )
+            elif c.key in bool_types:
                 field = SwitchField(_(f'config.{c.key}.label'), default=c.value, description=_(f'config.{c.key}.description'))
             elif c.key == ConfigEnum.core_type:
                 field = wtf.SelectField(_(f"config.{c.key}.label"),
@@ -344,8 +350,14 @@ def get_config_form():
                 if c.key == ConfigEnum.reality_public_key and g.account.mode in [AdminMode.super_admin]:
                     extra_info = f" <a href='{hurl_for('admin.Actions:change_reality_keys')}'>{_('Change')}</a>"
 
-                field = wtf.StringField(_(f'config.{c.key}.label'), validators, default=c.value,
-                                        description=_(f'config.{c.key}.description') + extra_info, render_kw=render_kw)
+                label = _(f'config.{c.key}.label')
+                description = _(f'config.{c.key}.description')
+                if c.key == ConfigEnum.tls_ech:
+                    label = _("TLS ECH Value")
+                    description = _("ECH value in format: cloudflare-ech.com+https://8.8.8.8/dns-query")
+
+                field = wtf.StringField(label, validators, default=c.value,
+                                        description=description + extra_info, render_kw=render_kw)
             setattr(CategoryForm, f'{c.key}', field)
 
         multifield = wtf.FormField(CategoryForm, Markup('<i class="fa-solid fa-plus"></i>&nbsp' + _(f'config.{cat}.label')))

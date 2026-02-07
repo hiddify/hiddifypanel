@@ -356,6 +356,10 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         'dbdomain': domain_db,
         'params': proxy.params or {},
     }
+    ech_value = (hconfigs.get(ConfigEnum.tls_ech) or "").strip()
+    if hconfigs.get(ConfigEnum.tls_ech_enable) and ech_value:
+        base['ech'] = ech_value
+
     put_default_header(base['params'])
 
     

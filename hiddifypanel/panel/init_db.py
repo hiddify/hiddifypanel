@@ -16,6 +16,10 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 120
 
+def _v109(child_id):
+    add_config_if_not_exist(ConfigEnum.tls_ech_enable, False)
+    add_config_if_not_exist(ConfigEnum.tls_ech, "")
+
 def _v108(child_id):
     Domain.query.filter(Domain.mode==DomainType.auto_cdn_ip).update({
         "mode":"cdn",

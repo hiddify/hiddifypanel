@@ -250,6 +250,8 @@ def _add_security(base_dict, proxy, tls_info=None):
             # 'cipherSuites': '', # Go lang sets
             # 'rejectUnknownSni': '', # default is false
         }
+        if proxy.get('ech'):
+            ss['tlsSettings']['echConfigList'] = [proxy['ech']]
 
 
 def add_stream_settings(base: dict, proxy: dict):
