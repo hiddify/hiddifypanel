@@ -804,6 +804,12 @@ def init_db():
     # set_hconfig(ConfigEnum.db_version,103)
     db_version = current_db_version()
     if db_version == latest_db_version():
+        # Backfill new settings for already-upgraded installations.
+        db.create_all()
+        for child in Child.query.all():
+            add_config_if_not_exist(ConfigEnum.tls_ech_enable, False, child_id=child.id)
+            add_config_if_not_exist(ConfigEnum.tls_ech, "", child_id=child.id)
+        db.session.commit()
         return
     
     db.create_all()
