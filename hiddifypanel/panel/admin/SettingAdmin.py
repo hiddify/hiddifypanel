@@ -204,9 +204,9 @@ def get_config_form():
             extra_info = ''
             if c.key == ConfigEnum.tls_ech_enable:
                 field = SwitchField(
-                    _("Enable TLS ECH"),
+                    "🛡️ TLS ECH",
                     default=c.value,
-                    description=_("Enable adding ECH to generated TLS subscription links.")
+                    description="Adds ECH to generated TLS subscription links."
                 )
             elif c.key in bool_types:
                 field = SwitchField(_(f'config.{c.key}.label'), default=c.value, description=_(f'config.{c.key}.description'))
@@ -353,8 +353,8 @@ def get_config_form():
                 label = _(f'config.{c.key}.label')
                 description = _(f'config.{c.key}.description')
                 if c.key == ConfigEnum.tls_ech:
-                    label = _("TLS ECH Value")
-                    description = _("ECH value in format: cloudflare-ech.com+https://8.8.8.8/dns-query")
+                    label = "🧩 TLS ECH Value"
+                    description = "Example: cloudflare-ech.com+https://8.8.8.8/dns-query"
 
                 field = wtf.StringField(label, validators, default=c.value,
                                         description=description + extra_info, render_kw=render_kw)
