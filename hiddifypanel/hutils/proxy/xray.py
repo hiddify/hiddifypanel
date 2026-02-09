@@ -66,7 +66,7 @@ def to_link(proxy: dict) -> str | dict:
         #     baseurl += f'{streisand_ssh}#{name_link}'
         # else:
         hk = ",".join(proxy["host_keys"])
-        pk = proxy["private_key"].replace('\n', '')
+        pk = proxy["private_key"]
         q={
             'file':'ssh',
             'hk':hk,
