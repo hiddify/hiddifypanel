@@ -170,6 +170,7 @@ class ConfigEnum(metaclass=FastEnum):
     tls_fragment_enable = _BoolConfigDscr(ConfigCategory.tls_trick)
     tls_fragment_size = _StrConfigDscr(ConfigCategory.tls_trick)
     tls_fragment_sleep = _StrConfigDscr(ConfigCategory.tls_trick)
+    tls_fragment_packets = _StrConfigDscr(ConfigCategory.tls_trick)
     tls_mixed_case = _BoolConfigDscr(ConfigCategory.tls_trick)
     tls_padding_enable = _BoolConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
     tls_padding_length = _StrConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
