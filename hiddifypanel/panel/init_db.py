@@ -21,6 +21,10 @@ def _v108(child_id):
         "mode":"cdn",
         "resolve_ip":True
     })
+
+
+def _v109(child_id):
+    add_config_if_not_exist(ConfigEnum.tls_fragment_packets, "tlshello")
     
 def _v107(child_id):
     # set_hconfig(ConfigEnum.core_type,'xray') # disable singbox core temporary

@@ -235,7 +235,7 @@ def add_tls_tricks_to_dict(d: dict, proxy: dict):
         #     d['fragment'] = f'1,{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]}'
         # else:
 
-        d['fragment'] = f'{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]},tlshello'
+        d['fragment'] = f'{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]},{proxy.get("tls_fragment_packets", "tlshello")}'
         # if g.user_agent.get('is_streisand'):
         # else:
         #     d['fragment'] = f'tlshello,{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]}'

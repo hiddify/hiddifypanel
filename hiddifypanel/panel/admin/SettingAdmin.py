@@ -331,6 +331,8 @@ def get_config_form():
                 # tls tricks validations
                 if c.key in [ConfigEnum.tls_fragment_size, ConfigEnum.tls_fragment_sleep, ConfigEnum.tls_padding_length, ConfigEnum.wireguard_noise_trick]:
                     validators.append(wtf.validators.Regexp("^\\d+-\\d+$", re.IGNORECASE, _("config.Invalid_The_pattern_is_number-number") + f' {c.key}'))
+                if c.key == ConfigEnum.tls_fragment_packets:
+                    validators.append(wtf.validators.Regexp("^(tlshello|\\d+-\\d+)$", re.IGNORECASE, _("config.Invalid_The_pattern_is_number-number") + f' {c.key}'))
                 # mux and hysteria validations
                 if c.key in [ConfigEnum.hysteria_up_mbps, ConfigEnum.hysteria_down_mbps, ConfigEnum.mux_max_connections, ConfigEnum.mux_min_streams, ConfigEnum.mux_max_streams,
                              ConfigEnum.mux_brutal_down_mbps, ConfigEnum.mux_brutal_up_mbps]:
@@ -344,8 +346,13 @@ def get_config_form():
                 if c.key == ConfigEnum.reality_public_key and g.account.mode in [AdminMode.super_admin]:
                     extra_info = f" <a href='{hurl_for('admin.Actions:change_reality_keys')}'>{_('Change')}</a>"
 
-                field = wtf.StringField(_(f'config.{c.key}.label'), validators, default=c.value,
-                                        description=_(f'config.{c.key}.description') + extra_info, render_kw=render_kw)
+                label = _(f'config.{c.key}.label')
+                description = _(f'config.{c.key}.description') + extra_info
+                if c.key == ConfigEnum.tls_fragment_packets:
+                    label = "📦 TLS Fragment Packets"
+                    description = "Fragment packets mode (for example: tlshello or 1-3)"
+                field = wtf.StringField(label, validators, default=c.value,
+                                        description=description, render_kw=render_kw)
             setattr(CategoryForm, f'{c.key}', field)
 
         multifield = wtf.FormField(CategoryForm, Markup('<i class="fa-solid fa-plus"></i>&nbsp' + _(f'config.{cat}.label')))
