@@ -55,6 +55,8 @@ def to_link(proxy: dict) -> str | dict:
         if proxy.get('transport') in {ProxyTransport.xhttp}:
             vmess_data['core']='xray'
             _add_xhttp_extra(vmess_data,proxy)
+        if vmess_data.get('tls') == 'tls' and proxy.get('ech'):
+            vmess_data['ech'] = proxy['ech']
         add_tls_tricks_to_dict(vmess_data, proxy)
         add_mux_to_dict(vmess_data, proxy)
 
@@ -175,6 +177,8 @@ def to_link(proxy: dict) -> str | dict:
         
     elif proxy['l3'] == 'http':
         q['security']='none'
+    if q.get('security') == 'tls' and proxy.get('ech'):
+        q['ech'] = proxy['ech']
     if proxy.get('transport') not in {ProxyTransport.xhttp}:
         for k,v in proxy.get('params',{}).items():
             if k not in q and k!="download":

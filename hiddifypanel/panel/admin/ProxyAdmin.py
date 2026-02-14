@@ -79,6 +79,7 @@ def get_global_config_form(empty=False):
             continue
         if not cf.key.endswith("_enable") or cf.key in [ConfigEnum.mux_brutal_enable, ConfigEnum.mux_padding_enable, ConfigEnum.hysteria_obfs_enable]:
             continue
+        
         field = SwitchField(_(f'config.{cf.key}.label'), default=cf.value, description=_(f'config.{cf.key}.description'))
         setattr(DynamicForm, f'{cf.key}', field)
     setattr(DynamicForm, "submit_global", wtf.fields.SubmitField(_('Submit')))

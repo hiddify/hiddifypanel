@@ -16,6 +16,10 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 120
 
+def _v109(child_id):
+    add_config_if_not_exist(ConfigEnum.tls_ech_enable, False)
+    add_config_if_not_exist(ConfigEnum.tls_ech, "")
+
 def _v108(child_id):
     Domain.query.filter(Domain.mode==DomainType.auto_cdn_ip).update({
         "mode":"cdn",
@@ -804,6 +808,9 @@ def init_db():
     # set_hconfig(ConfigEnum.db_version,103)
     db_version = current_db_version()
     if db_version == latest_db_version():
+        # Backfill new settings for already-upgraded installations.
+        db.create_all()
+        db.session.commit()
         return
     
     db.create_all()
@@ -834,6 +841,7 @@ def init_db():
         g.child = child
         db_version = int(hconfig(ConfigEnum.db_version, child.id) or 0)
         start_version = db_version
+
         for ver in range(1, MAX_DB_VERSION):
             if ver <= db_version:
                 continue

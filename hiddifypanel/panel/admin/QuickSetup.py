@@ -154,6 +154,7 @@ def get_proxy_form(empty=False):
             continue
         if not cf.key.endswith("_enable") or cf.key in [ConfigEnum.hysteria_obfs_enable, ConfigEnum.tls_padding_enable]:
             continue
+        
         field = SwitchField(_(f'config.{cf.key}.label'), default=cf.value, description=_(f'config.{cf.key}.description'))
         setattr(ProxyForm, f'{cf.key}', field)
     setattr(ProxyForm, "submit_global", wtf.fields.SubmitField(_('Submit')))
