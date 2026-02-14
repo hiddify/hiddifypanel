@@ -810,9 +810,6 @@ def init_db():
     if db_version == latest_db_version():
         # Backfill new settings for already-upgraded installations.
         db.create_all()
-        for child in Child.query.all():
-            add_config_if_not_exist(ConfigEnum.tls_ech_enable, False, child_id=child.id)
-            add_config_if_not_exist(ConfigEnum.tls_ech, "", child_id=child.id)
         db.session.commit()
         return
     
@@ -844,10 +841,6 @@ def init_db():
         g.child = child
         db_version = int(hconfig(ConfigEnum.db_version, child.id) or 0)
         start_version = db_version
-        # Backward compatibility: ensure new settings exist even if db_version is
-        # already beyond the migration function version numbers.
-        add_config_if_not_exist(ConfigEnum.tls_ech_enable, False, child_id=child.id)
-        add_config_if_not_exist(ConfigEnum.tls_ech, "", child_id=child.id)
 
         for ver in range(1, MAX_DB_VERSION):
             if ver <= db_version:
