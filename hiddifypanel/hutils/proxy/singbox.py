@@ -71,7 +71,7 @@ def to_singbox(proxy: dict) -> list[dict] | dict:
             base['xray_outbound_raw'] = xp
             if proxy.get('tls_fragment_enable'):
                 base['xray_fragment'] = {
-                    'packets': "tlshello",
+                    'packets': proxy.get("tls_fragment_packets", "tlshello"),
                     'length': proxy["tls_fragment_size"],
                     'interval': proxy["tls_fragment_sleep"]
                 }

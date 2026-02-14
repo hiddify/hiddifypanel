@@ -68,7 +68,7 @@ def to_link(proxy: dict) -> str | dict:
         #     baseurl += f'{streisand_ssh}#{name_link}'
         # else:
         hk = ",".join(proxy["host_keys"])
-        pk = proxy["private_key"].replace('\n', '')
+        pk = proxy["private_key"]
         q={
             'file':'ssh',
             'hk':hk,
@@ -239,7 +239,7 @@ def add_tls_tricks_to_dict(d: dict, proxy: dict):
         #     d['fragment'] = f'1,{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]}'
         # else:
 
-        d['fragment'] = f'{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]},tlshello'
+        d['fragment'] = f'{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]},{proxy.get("tls_fragment_packets", "tlshello")}'
         # if g.user_agent.get('is_streisand'):
         # else:
         #     d['fragment'] = f'tlshello,{proxy["tls_fragment_size"]},{proxy["tls_fragment_sleep"]}'

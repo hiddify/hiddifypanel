@@ -337,6 +337,8 @@ def get_config_form():
                 # tls tricks validations
                 if c.key in [ConfigEnum.tls_fragment_size, ConfigEnum.tls_fragment_sleep, ConfigEnum.tls_padding_length, ConfigEnum.wireguard_noise_trick]:
                     validators.append(wtf.validators.Regexp("^\\d+-\\d+$", re.IGNORECASE, _("config.Invalid_The_pattern_is_number-number") + f' {c.key}'))
+                if c.key == ConfigEnum.tls_fragment_packets:
+                    validators.append(wtf.validators.Regexp("^(tlshello|\\d+-\\d+)$", re.IGNORECASE, _("config.Invalid_The_pattern_is_number-number") + f' {c.key}'))
                 # mux and hysteria validations
                 if c.key in [ConfigEnum.hysteria_up_mbps, ConfigEnum.hysteria_down_mbps, ConfigEnum.mux_max_connections, ConfigEnum.mux_min_streams, ConfigEnum.mux_max_streams,
                              ConfigEnum.mux_brutal_down_mbps, ConfigEnum.mux_brutal_up_mbps]:
@@ -352,9 +354,6 @@ def get_config_form():
 
                 label = _(f'config.{c.key}.label')
                 description = _(f'config.{c.key}.description')
-                if c.key == ConfigEnum.tls_ech:
-                    label = "🧩 TLS ECH Value"
-                    description = "Example: cloudflare-ech.com+https://8.8.8.8/dns-query"
 
                 field = wtf.StringField(label, validators, default=c.value,
                                         description=description + extra_info, render_kw=render_kw)

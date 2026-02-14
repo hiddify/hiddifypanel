@@ -53,7 +53,7 @@
         "domainStrategy": "AsIs"
         {% if hconfig(ConfigEnum.tls_fragment_enable) %}
         ,"fragment": {
-          "packets": "tlshello",
+          "packets": "{{ hconfig(ConfigEnum.tls_fragment_packets) or 'tlshello' }}",
           "length": "{{ hconfig(ConfigEnum.tls_fragment_size) }}",
           "interval": "{{ hconfig(ConfigEnum.tls_fragment_sleep) }}"
         }
