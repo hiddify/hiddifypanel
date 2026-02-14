@@ -154,14 +154,8 @@ def get_proxy_form(empty=False):
             continue
         if not cf.key.endswith("_enable") or cf.key in [ConfigEnum.hysteria_obfs_enable, ConfigEnum.tls_padding_enable]:
             continue
-        if cf.key == ConfigEnum.tls_ech_enable:
-            field = SwitchField(
-                "🛡️ TLS ECH",
-                default=cf.value,
-                description="Adds ECH to generated TLS subscription links."
-            )
-        else:
-            field = SwitchField(_(f'config.{cf.key}.label'), default=cf.value, description=_(f'config.{cf.key}.description'))
+        
+        field = SwitchField(_(f'config.{cf.key}.label'), default=cf.value, description=_(f'config.{cf.key}.description'))
         setattr(ProxyForm, f'{cf.key}', field)
     setattr(ProxyForm, "submit_global", wtf.fields.SubmitField(_('Submit')))
     form = ProxyForm(None) if empty else ProxyForm()
