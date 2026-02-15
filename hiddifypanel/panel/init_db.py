@@ -16,7 +16,23 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 120
 
-def _v109(child_id):
+def _v110(child_id):
+    add_config_if_not_exist(ConfigEnum.naive_enable, True)
+    add_config_if_not_exist(ConfigEnum.mieru_enable, True)
+
+    if p:=hutils.random.get_random_unused_port():
+        set_hconfig(ConfigEnum.mieru_tcp_ports, ",".join([f'{p+i}' for i in range(4)]))
+    if p:=hutils.random.get_random_unused_port():
+        set_hconfig(ConfigEnum.mieru_udp_ports, ",".join([f'{p+i}' for i in range(4)]))
+
+    db.session.bulk_save_objects([
+        Proxy(l3=ProxyL3.tls_h2_h1, transport=ProxyTransport.custom, cdn='direct', proto=ProxyProto.naive, enable=True, name="NaiveTLS"),
+        Proxy(l3=ProxyL3.h3_quic, transport=ProxyTransport.custom, cdn='direct', proto=ProxyProto.naive, enable=True, name="NaiveQuic"),
+        Proxy(l3=ProxyL3.custom, transport=ProxyTransport.custom, cdn='direct', proto=ProxyProto.mieru, enable=True, name="Mieru"),
+    ]    
+    )
+    add_config_if_not_exist(ConfigEnum.tls_fragment_packets, "tlshello")
+
     add_config_if_not_exist(ConfigEnum.tls_ech_enable, False)
     add_config_if_not_exist(ConfigEnum.tls_ech, "")
 
@@ -27,8 +43,7 @@ def _v108(child_id):
     })
 
 
-def _v109(child_id):
-    add_config_if_not_exist(ConfigEnum.tls_fragment_packets, "tlshello")
+
     
 def _v107(child_id):
     # set_hconfig(ConfigEnum.core_type,'xray') # disable singbox core temporary
@@ -805,7 +820,7 @@ def upgrade_database():
 
 def init_db():
     # set_hconfig(ConfigEnum.db_version, 71)
-    # set_hconfig(ConfigEnum.db_version,103)
+    # set_hconfig(ConfigEnum.db_version,109)
     db_version = current_db_version()
     if db_version == latest_db_version():
         # Backfill new settings for already-upgraded installations.

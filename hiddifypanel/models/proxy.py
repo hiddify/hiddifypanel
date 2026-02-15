@@ -45,6 +45,8 @@ class ProxyProto(StrEnum):
     hysteria = auto()
     hysteria2 = auto()
     wireguard = auto()
+    naive = auto()
+    mieru = auto()
 
 
 class ProxyL3(StrEnum):

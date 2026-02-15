@@ -33,14 +33,16 @@ def __is_port_in_range(port, start_port: int | str | None, count: int):
 
 
 def __is_in_used_port(port):
-    if __is_port_in_range(port, hconfig(ConfigEnum.reality_port), 100):
-        return True
-    if __is_port_in_range(port, hconfig(ConfigEnum.hysteria_port), 100):
-        return True
-    if __is_port_in_range(port, hconfig(ConfigEnum.tuic_port), 100):
-        return True
-    if port in [443, 80, 9000, 10085, 10086, hconfig(ConfigEnum.ssh_server_port), hconfig(ConfigEnum.shadowsocks2022_port)]:
-        return True
+    for k in ConfigEnum:
+        if "port" in k:
+                for p in (hconfig(k) or "").split(","):
+                    if p and __is_port_in_range(port, p, 100):
+                        return True
+    
+    for p in [443, 80, 9000, 10085, 10086]:
+        if __is_port_in_range(port, p, 100):
+            return True
+    return False
 
 
 def get_random_unused_port():

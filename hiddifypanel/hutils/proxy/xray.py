@@ -24,6 +24,23 @@ def to_link(proxy: dict) -> str | dict:
 
     orig_name_link = (proxy['extra_info'] + " " + proxy["name"]).strip()
     name_link = hutils.encode.url_encode(orig_name_link)
+    if proxy['proto']=="naive":
+        naive= f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1'
+        if proxy.get('quic'):
+            naive+="&quic=1"
+        return f'{naive}#{name_link}'
+
+    if proxy['proto']=="mieru":
+        mieru= f'mieru://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}/?handshake-mode={proxy["handshake"]}&mtu=1400&multiplexing={proxy["multiplexing"]}'
+        for port in proxy["tcp_ports"]:
+            if port:
+                mieru+=f"&port={port}&protocol=TCP"
+        for port in proxy["udp_ports"]:
+            if port:
+                mieru+=f"&port={port}&protocol=UDP"
+        
+        return f'{mieru}#{name_link}'
+    
     if proxy['proto'] == 'vmess':
         # print(proxy)
         vmess_type = None
