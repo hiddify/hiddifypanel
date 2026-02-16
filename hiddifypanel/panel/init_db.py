@@ -17,6 +17,8 @@ from loguru import logger
 MAX_DB_VERSION = 120
 
 def _v110(child_id):
+    set_hconfig(ConfigEnum.h2_enable,True)
+
     add_config_if_not_exist(ConfigEnum.naive_enable, True)
     add_config_if_not_exist(ConfigEnum.mieru_enable, True)
 
