@@ -25,6 +25,8 @@
 
 * Update translations. 
 
+* Update translations. 
+
 * Merge pull request #21 from Alighaemi9731/feature/ech-support. 
   _feat(ech): add TLS ECH support in generated links_
 
