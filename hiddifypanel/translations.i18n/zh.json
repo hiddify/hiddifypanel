@@ -593,6 +593,22 @@
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
+    "mieru": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_enable": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_tcp_ports": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_udp_ports": {
+      "description": "",
+      "label": ""
+    },
     "mux": {
       "description": "可以在此部分设置 MUX（多路复用）配置",
       "label": "MUX设置"
@@ -632,6 +648,10 @@
     "mux_protocol": {
       "description": "ℹ️ 多路复用协议。默认使用 'sMux'<inlang-LineFeed><br>\n➖ sMux: 流复用<inlang-LineFeed><br><inlang-LineFeed>➖ YaMux: 又一个多路复用器<inlang-LineFeed><br><inlang-LineFeed>➖ h2Mux: 通过 HTTP/2 多路复用流",
       "label": "♍️ MUX 协议"
+    },
+    "naive_enable": {
+      "description": "",
+      "label": ""
     },
     "netdata": {
       "description": "用于显示资源。使用您服务器的 CPU，但不会太多。",
@@ -945,9 +965,21 @@
       "description": "可以在此部分设置 TLS 配置。",
       "label": "TLS 设置"
     },
+    "tls_ech": {
+      "description": "",
+      "label": ""
+    },
+    "tls_ech_enable": {
+      "description": "",
+      "label": ""
+    },
     "tls_fragment_enable": {
       "description": "在某些情况下，它可以绕过 SNI 黑名单系统。 <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">（阅读更多）</a>",
       "label": "⏯ TLS Fragment"
+    },
+    "tls_fragment_packets": {
+      "description": "",
+      "label": ""
     },
     "tls_fragment_size": {
       "description": "每个数据包的大小",

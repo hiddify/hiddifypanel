@@ -1565,6 +1565,30 @@ msgstr "config.log_level.description"
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
 
+msgid "config.mieru.description"
+msgstr ""
+
+msgid "config.mieru.label"
+msgstr ""
+
+msgid "config.mieru_enable.description"
+msgstr ""
+
+msgid "config.mieru_enable.label"
+msgstr ""
+
+msgid "config.mieru_tcp_ports.description"
+msgstr ""
+
+msgid "config.mieru_tcp_ports.label"
+msgstr ""
+
+msgid "config.mieru_udp_ports.description"
+msgstr ""
+
+msgid "config.mieru_udp_ports.label"
+msgstr ""
+
 msgid "config.mux.description"
 msgstr "تنظیمات MUX (Multiplex) را می توان در این بخش تنظیم کرد"
 
@@ -1636,6 +1660,12 @@ msgstr ""
 
 msgid "config.mux_protocol.label"
 msgstr "♍️ پروتکل MUX"
+
+msgid "config.naive_enable.description"
+msgstr ""
+
+msgid "config.naive_enable.label"
+msgstr ""
 
 msgid "config.netdata.description"
 msgstr ""
@@ -2190,6 +2220,18 @@ msgstr "تنظیمات مربوط به اتصال TLS"
 msgid "config.tls.label"
 msgstr "تنظیمات TLS"
 
+msgid "config.tls_ech.description"
+msgstr ""
+
+msgid "config.tls_ech.label"
+msgstr ""
+
+msgid "config.tls_ech_enable.description"
+msgstr ""
+
+msgid "config.tls_ech_enable.label"
+msgstr ""
+
 msgid "config.tls_fragment_enable.description"
 msgstr ""
 "تحت برخی شرایط، می تواند سیستم لیست سیاه SNI را دور بزند.&nbsp;<a "
@@ -2199,6 +2241,12 @@ msgstr ""
 
 msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
+
+msgid "config.tls_fragment_packets.description"
+msgstr ""
+
+msgid "config.tls_fragment_packets.label"
+msgstr ""
 
 msgid "config.tls_fragment_size.description"
 msgstr "اندازه هر بسته"

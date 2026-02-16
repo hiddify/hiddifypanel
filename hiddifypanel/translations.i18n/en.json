@@ -594,6 +594,22 @@
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
+    "mieru": {
+      "description": "config.mieru.description",
+      "label": "Mieru"
+    },
+    "mieru_enable": {
+      "description": "Meiru is a fast Proxy.",
+      "label": "Enable Mieru"
+    },
+    "mieru_tcp_ports": {
+      "description": "Comma separated integers indicating the ports (1234,1235,1237)",
+      "label": "Mieru TCP Ports"
+    },
+    "mieru_udp_ports": {
+      "description": "Comma separated integers indicating the ports (1234,1235,1237)",
+      "label": "Mieru UDP Ports"
+    },
     "mux": {
       "description": "MUX (Multiplex) configurations could be set in this section",
       "label": "MUX Config"
@@ -633,6 +649,10 @@
     "mux_protocol": {
       "description": "ℹ️ Multiplex Protocol. 'sMux' is used by default\n<br>\n➖ sMux: Stream Multiplexing\n<br>\n➖ YaMux: Yet Another Multiplexer\n<br>\n➖ h2Mux: Multiplexing Streams Over HTTP/2",
       "label": "♍️ MUX Protocol"
+    },
+    "naive_enable": {
+      "description": "Naive is using exact chrome stack to avoid detection",
+      "label": "Enable Naive"
     },
     "netdata": {
       "description": "For displaying resources. uses your Server's CPU but it is not too much.",
@@ -954,9 +974,21 @@
       "description": "TLS Configurations could be set in this section",
       "label": "TLS Settings"
     },
+    "tls_ech": {
+      "description": "ECH value in format: cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "TLS ECH Value"
+    },
+    "tls_ech_enable": {
+      "description": "Adds ECH to generated TLS subscription links.",
+      "label": "Enable 🛡️ TLS ECH"
+    },
     "tls_fragment_enable": {
       "description": "Under some circumstances, it can bypass the SNI blacklist system. <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(Read More)</a>",
       "label": "⏯ TLS Fragment"
+    },
+    "tls_fragment_packets": {
+      "description": "Fragment packets mode (for example: tlshello or 1-3)",
+      "label": "📦 TLS Fragment Packets"
     },
     "tls_fragment_size": {
       "description": "The Size of each Packet",

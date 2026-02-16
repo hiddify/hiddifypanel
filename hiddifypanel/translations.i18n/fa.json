@@ -593,6 +593,22 @@
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
+    "mieru": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_enable": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_tcp_ports": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_udp_ports": {
+      "description": "",
+      "label": ""
+    },
     "mux": {
       "description": "تنظیمات MUX (Multiplex) را می توان در این بخش تنظیم کرد",
       "label": "تنظیمات MUX"
@@ -632,6 +648,10 @@
     "mux_protocol": {
       "description": "ℹ️ پروتکل Multiplex. 'sMux' به طور پیش فرض استفاده می شود\n<br>\n➖ sMux: مالتیپلکس کردن جریان\n<br>\n➖ YaMux: باز هم یک مولتی پلکسر دیگر\n<br>\n➖ h2Mux: جریان های چندگانه از طریق HTTP/2",
       "label": "♍️ پروتکل MUX"
+    },
+    "naive_enable": {
+      "description": "",
+      "label": ""
     },
     "netdata": {
       "description": "نت دیتا ابزاری است برای نمایش مقدار استفاده سیستم از منابع. فعالسازی آن ممکن است از اندکی از CPU شما استفاده کند.",
@@ -953,9 +973,21 @@
       "description": "تنظیمات مربوط به اتصال TLS",
       "label": "تنظیمات TLS"
     },
+    "tls_ech": {
+      "description": "",
+      "label": ""
+    },
+    "tls_ech_enable": {
+      "description": "",
+      "label": ""
+    },
     "tls_fragment_enable": {
       "description": "تحت برخی شرایط، می تواند سیستم لیست سیاه SNI را دور بزند.&nbsp;<a href=\"https://hiddify.com/fa/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(بیشتر بدانید)</a>",
       "label": "⏯ TLS Fragment"
+    },
+    "tls_fragment_packets": {
+      "description": "",
+      "label": ""
     },
     "tls_fragment_size": {
       "description": "اندازه هر بسته",

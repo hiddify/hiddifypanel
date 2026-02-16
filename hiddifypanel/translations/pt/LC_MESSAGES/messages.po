@@ -1547,6 +1547,30 @@ msgstr "config.log_level.descrição"
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
 
+msgid "config.mieru.description"
+msgstr ""
+
+msgid "config.mieru.label"
+msgstr ""
+
+msgid "config.mieru_enable.description"
+msgstr ""
+
+msgid "config.mieru_enable.label"
+msgstr ""
+
+msgid "config.mieru_tcp_ports.description"
+msgstr ""
+
+msgid "config.mieru_tcp_ports.label"
+msgstr ""
+
+msgid "config.mieru_udp_ports.description"
+msgstr ""
+
+msgid "config.mieru_udp_ports.label"
+msgstr ""
+
 msgid "config.mux.description"
 msgstr "As configurações MUX (Multiplex) podem ser definidas nesta seção"
 
@@ -1617,6 +1641,12 @@ msgstr ""
 
 msgid "config.mux_protocol.label"
 msgstr "♍️ Protocolo MUX"
+
+msgid "config.naive_enable.description"
+msgstr ""
+
+msgid "config.naive_enable.label"
+msgstr ""
 
 msgid "config.netdata.description"
 msgstr "Para exibir recursos. usa a CPU do seu servidor, mas não é muito."
@@ -2148,6 +2178,18 @@ msgstr "As configurações de TLS podem ser definidas nesta seção."
 msgid "config.tls.label"
 msgstr "Configurações de TLS"
 
+msgid "config.tls_ech.description"
+msgstr ""
+
+msgid "config.tls_ech.label"
+msgstr ""
+
+msgid "config.tls_ech_enable.description"
+msgstr ""
+
+msgid "config.tls_ech_enable.label"
+msgstr ""
+
 msgid "config.tls_fragment_enable.description"
 msgstr ""
 "Em algumas circunstâncias, pode contornar o sistema de lista negra do SNI. "
@@ -2157,6 +2199,12 @@ msgstr ""
 
 msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
+
+msgid "config.tls_fragment_packets.description"
+msgstr ""
+
+msgid "config.tls_fragment_packets.label"
+msgstr ""
 
 msgid "config.tls_fragment_size.description"
 msgstr "O tamanho de cada pacote"

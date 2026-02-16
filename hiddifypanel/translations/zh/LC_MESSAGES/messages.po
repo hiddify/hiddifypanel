@@ -1504,6 +1504,30 @@ msgstr "config.log_level.description"
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
 
+msgid "config.mieru.description"
+msgstr ""
+
+msgid "config.mieru.label"
+msgstr ""
+
+msgid "config.mieru_enable.description"
+msgstr ""
+
+msgid "config.mieru_enable.label"
+msgstr ""
+
+msgid "config.mieru_tcp_ports.description"
+msgstr ""
+
+msgid "config.mieru_tcp_ports.label"
+msgstr ""
+
+msgid "config.mieru_udp_ports.description"
+msgstr ""
+
+msgid "config.mieru_udp_ports.label"
+msgstr ""
+
 msgid "config.mux.description"
 msgstr "可以在此部分设置 MUX（多路复用）配置"
 
@@ -1568,6 +1592,12 @@ msgstr ""
 
 msgid "config.mux_protocol.label"
 msgstr "♍️ MUX 协议"
+
+msgid "config.naive_enable.description"
+msgstr ""
+
+msgid "config.naive_enable.label"
+msgstr ""
 
 msgid "config.netdata.description"
 msgstr "用于显示资源。使用您服务器的 CPU，但不会太多。"
@@ -2048,6 +2078,18 @@ msgstr "可以在此部分设置 TLS 配置。"
 msgid "config.tls.label"
 msgstr "TLS 设置"
 
+msgid "config.tls_ech.description"
+msgstr ""
+
+msgid "config.tls_ech.label"
+msgstr ""
+
+msgid "config.tls_ech_enable.description"
+msgstr ""
+
+msgid "config.tls_ech_enable.label"
+msgstr ""
+
 msgid "config.tls_fragment_enable.description"
 msgstr ""
 "在某些情况下，它可以绕过 SNI 黑名单系统。 <a href=\"https://hiddify.com/manager/basic-"
@@ -2056,6 +2098,12 @@ msgstr ""
 
 msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
+
+msgid "config.tls_fragment_packets.description"
+msgstr ""
+
+msgid "config.tls_fragment_packets.label"
+msgstr ""
 
 msgid "config.tls_fragment_size.description"
 msgstr "每个数据包的大小"
