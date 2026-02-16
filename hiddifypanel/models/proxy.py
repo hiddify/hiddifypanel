@@ -24,6 +24,7 @@ class ProxyTransport(StrEnum):
     xhttp = auto()
     custom = auto()
     shadowsocks = auto()
+    udp = auto()
 
 
 class ProxyCDN(StrEnum):

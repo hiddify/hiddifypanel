@@ -601,6 +601,14 @@
       "description": "",
       "label": ""
     },
+    "mieru_handshake": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_multiplexing": {
+      "description": "",
+      "label": ""
+    },
     "mieru_tcp_ports": {
       "description": "",
       "label": ""
@@ -653,6 +661,10 @@
       "description": "",
       "label": ""
     },
+    "naive_port": {
+      "description": "",
+      "label": ""
+    },
     "netdata": {
       "description": "用于显示资源。使用您服务器的 CPU，但不会太多。",
       "label": "Netdata"
@@ -692,6 +704,10 @@
     "path_httpupgrade": {
       "description": "应该是随机的",
       "label": "ℹ️ HTTP 升级路径"
+    },
+    "path_naive": {
+      "description": "",
+      "label": ""
     },
     "path_ss": {
       "description": "链接中的 Shadowsocks 路径",

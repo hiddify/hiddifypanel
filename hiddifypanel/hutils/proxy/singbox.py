@@ -321,6 +321,9 @@ def add_naive(base: dict, proxy: dict):
     base["password"]=proxy["password"]
     base["udp_over_tcp"]=True
     base["quic"]=proxy["quic"]
+    base["extra_headers"]={
+        "hiddify-naive-secret":proxy["path"]
+    }
 
     add_tls(base,proxy)
 

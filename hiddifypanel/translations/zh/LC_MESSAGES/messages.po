@@ -1516,6 +1516,18 @@ msgstr ""
 msgid "config.mieru_enable.label"
 msgstr ""
 
+msgid "config.mieru_handshake.description"
+msgstr ""
+
+msgid "config.mieru_handshake.label"
+msgstr ""
+
+msgid "config.mieru_multiplexing.description"
+msgstr ""
+
+msgid "config.mieru_multiplexing.label"
+msgstr ""
+
 msgid "config.mieru_tcp_ports.description"
 msgstr ""
 
@@ -1599,6 +1611,12 @@ msgstr ""
 msgid "config.naive_enable.label"
 msgstr ""
 
+msgid "config.naive_port.description"
+msgstr ""
+
+msgid "config.naive_port.label"
+msgstr ""
+
 msgid "config.netdata.description"
 msgstr "用于显示资源。使用您服务器的 CPU，但不会太多。"
 
@@ -1658,6 +1676,12 @@ msgstr "应该是随机的"
 
 msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ HTTP 升级路径"
+
+msgid "config.path_naive.description"
+msgstr ""
+
+msgid "config.path_naive.label"
+msgstr ""
 
 msgid "config.path_ss.description"
 msgstr "链接中的 Shadowsocks 路径"

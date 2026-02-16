@@ -601,6 +601,14 @@
       "description": "",
       "label": ""
     },
+    "mieru_handshake": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_multiplexing": {
+      "description": "",
+      "label": ""
+    },
     "mieru_tcp_ports": {
       "description": "",
       "label": ""
@@ -653,6 +661,10 @@
       "description": "",
       "label": ""
     },
+    "naive_port": {
+      "description": "",
+      "label": ""
+    },
     "netdata": {
       "description": "Для отображения ресурсов, используется процессор вашего сервера, но нагрузка не слишком высокая",
       "label": "Netdata"
@@ -692,6 +704,10 @@
     "path_httpupgrade": {
       "description": "должен быть случайным",
       "label": "ℹ️ Путь обновления HTTP"
+    },
+    "path_naive": {
+      "description": "",
+      "label": ""
     },
     "path_ss": {
       "description": "Путь Shadowsocks в ссылках",

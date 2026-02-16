@@ -25,7 +25,7 @@ def to_link(proxy: dict) -> str | dict:
     orig_name_link = (proxy['extra_info'] + " " + proxy["name"]).strip()
     name_link = hutils.encode.url_encode(orig_name_link)
     if proxy['proto']=="naive":
-        naive= f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1'
+        naive= f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=hiddify-naive-secret:{proxy["path"]}'
         if proxy.get('quic'):
             naive+="&quic=1"
         return f'{naive}#{name_link}'

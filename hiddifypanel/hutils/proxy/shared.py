@@ -94,6 +94,8 @@ def get_port(proxy: Proxy, hconfigs: dict, domain_db: Domain, ptls: int, phttp: 
         port = domain_db.internal_port_hysteria2
     elif l3 == 'ssh':
         port = hconfigs[ConfigEnum.ssh_server_port]
+    elif proxy.proto==ProxyProto.naive and proxy.l3==ProxyL3.h3_quic:
+        port = domain_db.internal_port_naive
     elif is_tls(l3) or proxy.proto==ProxyProto.naive:
         port = ptls
     elif l3 == "http":
@@ -238,7 +240,8 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
             options = []
             key = f'{proxy.proto}{proxy.transport}{proxy.cdn}{proxy.l3}'
 
-            if proxy.proto in [ProxyProto.ssh, ProxyProto.tuic, ProxyProto.hysteria2, ProxyProto.wireguard, ProxyProto.ss,ProxyProto.mieru]:
+            if proxy.proto in [ProxyProto.ssh, ProxyProto.tuic, ProxyProto.hysteria2, ProxyProto.wireguard, ProxyProto.ss,ProxyProto.mieru] \
+                or (proxy.proto==ProxyProto.naive and proxy.l3==ProxyL3.h3_quic) :
                 if noDomainProxies and all([x in added_ip[key] for x in ips]):
                     continue
 
@@ -260,6 +263,8 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
                     options = [{'pport': hconfigs[ConfigEnum.tuic_port]}]
                 elif proxy.proto == ProxyProto.mieru:
                     options = [{'pport':0}]
+                elif proxy.proto == ProxyProto.naive:
+                    options = [{'pport': hconfigs[ConfigEnum.naive_port]}]
                 elif proxy.proto == ProxyProto.hysteria2:
                     options = [{'pport': hconfigs[ConfigEnum.hysteria_port]}]
             else:
@@ -403,17 +408,18 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
 
     if base['proto'] in {ProxyProto.naive}:
         del base['fingerprint']
-        
+        base['path']=f'/{hconfigs[ConfigEnum.path_naive]}{hconfigs[ConfigEnum.path_tcp]}'
         base["quic"]=proxy.l3 in [ProxyL3.h3_quic]
         base['password']="h"
         return base
     
     if base['proto'] in {ProxyProto.mieru}:
         base["password"]="h"
-        base['tcp_ports']=ports_to_ranges(hconfigs.get(ConfigEnum.mieru_tcp_ports))
-        base['udp_ports']=ports_to_ranges(hconfigs.get(ConfigEnum.mieru_udp_ports))
-        base['multiplexing']="MULTIPLEXING_HIGH"
-        base['handshake']="HANDSHAKE_NO_WAIT"
+        
+        base['tcp_ports']=ports_to_ranges(hconfigs.get(ConfigEnum.mieru_tcp_ports)) if proxy.transport == ProxyTransport.tcp else []
+        base['udp_ports']=ports_to_ranges(hconfigs.get(ConfigEnum.mieru_udp_ports)) if proxy.transport == ProxyTransport.udp else []
+        base['multiplexing']=hconfigs[ConfigEnum.mieru_multiplexing]
+        base['handshake']=hconfigs[ConfigEnum.mieru_handshake]
         return base
     
     if domain_db.download_domain:

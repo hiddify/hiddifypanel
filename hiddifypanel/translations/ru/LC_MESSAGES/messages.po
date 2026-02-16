@@ -1599,6 +1599,18 @@ msgstr ""
 msgid "config.mieru_enable.label"
 msgstr ""
 
+msgid "config.mieru_handshake.description"
+msgstr ""
+
+msgid "config.mieru_handshake.label"
+msgstr ""
+
+msgid "config.mieru_multiplexing.description"
+msgstr ""
+
+msgid "config.mieru_multiplexing.label"
+msgstr ""
+
 msgid "config.mieru_tcp_ports.description"
 msgstr ""
 
@@ -1689,6 +1701,12 @@ msgstr ""
 msgid "config.naive_enable.label"
 msgstr ""
 
+msgid "config.naive_port.description"
+msgstr ""
+
+msgid "config.naive_port.label"
+msgstr ""
+
 msgid "config.netdata.description"
 msgstr ""
 "Для отображения ресурсов, используется процессор вашего сервера, но нагрузка"
@@ -1753,6 +1771,12 @@ msgstr "должен быть случайным"
 
 msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ Путь обновления HTTP"
+
+msgid "config.path_naive.description"
+msgstr ""
+
+msgid "config.path_naive.label"
+msgstr ""
 
 msgid "config.path_ss.description"
 msgstr "Путь Shadowsocks в ссылках"

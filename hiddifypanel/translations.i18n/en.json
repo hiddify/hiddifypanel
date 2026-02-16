@@ -602,6 +602,14 @@
       "description": "Meiru is a fast Proxy.",
       "label": "Enable Mieru"
     },
+    "mieru_handshake": {
+      "description": "config.mieru_handshake.description",
+      "label": "config.mieru_handshake.label"
+    },
+    "mieru_multiplexing": {
+      "description": "config.mieru_multiplexing.description",
+      "label": "config.mieru_multiplexing.label"
+    },
     "mieru_tcp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
       "label": "Mieru TCP Ports"
@@ -654,6 +662,10 @@
       "description": "Naive is using exact chrome stack to avoid detection",
       "label": "Enable Naive"
     },
+    "naive_port": {
+      "description": "config.naive_port.description",
+      "label": "config.naive_port.label"
+    },
     "netdata": {
       "description": "For displaying resources. uses your Server's CPU but it is not too much.",
       "label": "Netdata"
@@ -693,6 +705,10 @@
     "path_httpupgrade": {
       "description": "should be random",
       "label": "ℹ️ HTTP Upgrade Path"
+    },
+    "path_naive": {
+      "description": "config.path_naive.description",
+      "label": "config.path_naive.label"
     },
     "path_splithttp": {
       "description": "XHTTP path",

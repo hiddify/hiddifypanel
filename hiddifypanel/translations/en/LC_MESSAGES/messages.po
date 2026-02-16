@@ -1585,6 +1585,18 @@ msgstr "Meiru is a fast Proxy."
 msgid "config.mieru_enable.label"
 msgstr "Enable Mieru"
 
+msgid "config.mieru_handshake.description"
+msgstr "config.mieru_handshake.description"
+
+msgid "config.mieru_handshake.label"
+msgstr "config.mieru_handshake.label"
+
+msgid "config.mieru_multiplexing.description"
+msgstr "config.mieru_multiplexing.description"
+
+msgid "config.mieru_multiplexing.label"
+msgstr "config.mieru_multiplexing.label"
+
 msgid "config.mieru_tcp_ports.description"
 msgstr "Comma separated integers indicating the ports (1234,1235,1237)"
 
@@ -1677,6 +1689,12 @@ msgstr "Naive is using exact chrome stack to avoid detection"
 msgid "config.naive_enable.label"
 msgstr "Enable Naive"
 
+msgid "config.naive_port.description"
+msgstr "config.naive_port.description"
+
+msgid "config.naive_port.label"
+msgstr "config.naive_port.label"
+
 msgid "config.netdata.description"
 msgstr ""
 "For displaying resources. uses your Server's CPU but it is not too much."
@@ -1739,6 +1757,12 @@ msgstr "should be random"
 
 msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ HTTP Upgrade Path"
+
+msgid "config.path_naive.description"
+msgstr "config.path_naive.description"
+
+msgid "config.path_naive.label"
+msgstr "config.path_naive.label"
 
 msgid "config.path_splithttp.description"
 msgstr "XHTTP path"

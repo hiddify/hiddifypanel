@@ -601,6 +601,14 @@
       "description": "",
       "label": ""
     },
+    "mieru_handshake": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_multiplexing": {
+      "description": "",
+      "label": ""
+    },
     "mieru_tcp_ports": {
       "description": "",
       "label": ""
@@ -653,6 +661,10 @@
       "description": "",
       "label": ""
     },
+    "naive_port": {
+      "description": "",
+      "label": ""
+    },
     "netdata": {
       "description": "نت دیتا ابزاری است برای نمایش مقدار استفاده سیستم از منابع. فعالسازی آن ممکن است از اندکی از CPU شما استفاده کند.",
       "label": "Netdata"
@@ -692,6 +704,10 @@
     "path_httpupgrade": {
       "description": "باید تصادفی باشد",
       "label": "ℹ️ مسیر ارتقاء HTTP"
+    },
+    "path_naive": {
+      "description": "",
+      "label": ""
     },
     "path_splithttp": {
       "description": "مسیر XHTTP",

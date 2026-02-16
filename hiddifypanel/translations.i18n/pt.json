@@ -601,6 +601,14 @@
       "description": "",
       "label": ""
     },
+    "mieru_handshake": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_multiplexing": {
+      "description": "",
+      "label": ""
+    },
     "mieru_tcp_ports": {
       "description": "",
       "label": ""
@@ -653,6 +661,10 @@
       "description": "",
       "label": ""
     },
+    "naive_port": {
+      "description": "",
+      "label": ""
+    },
     "netdata": {
       "description": "Para exibir recursos. usa a CPU do seu servidor, mas não é muito.",
       "label": "Netdata"
@@ -692,6 +704,10 @@
     "path_httpupgrade": {
       "description": "deveria ser aleatório",
       "label": "ℹ️ Caminho de atualização HTTP"
+    },
+    "path_naive": {
+      "description": "",
+      "label": ""
     },
     "path_ss": {
       "description": "Caminho Shadowsocks nos Links",

@@ -27,6 +27,18 @@ class PanelMode(HEnum):
     child = auto()
 
 
+class MieruMultiplexing(HEnum):
+    MULTIPLEXING_DEFAULT = auto()
+    MULTIPLEXING_LOW = auto()
+    MULTIPLEXING_MIDDLE = auto()
+    MULTIPLEXING_HIGH = auto()
+
+class MieruHandshake(HEnum):
+    HANDSHAKE_DEFAULT = auto()
+    HANDSHAKE_NO_WAIT = auto()
+    HANDSHAKE_STANDARD = auto()
+    
+
 class LogLevel(HEnum):
     TRACE = auto()
     DEBUG = auto()
@@ -254,7 +266,10 @@ class ConfigEnum(metaclass=FastEnum):
     xhttp_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     naive_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
-    mieru_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    naive_port = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    mieru_enable = _BoolConfigDscr(ConfigCategory.mieru, ApplyMode.apply_config)
+    mieru_multiplexing =_TypedConfigDscr(MieruMultiplexing, ConfigCategory.mieru)
+    mieru_handshake =_TypedConfigDscr(MieruHandshake, ConfigCategory.mieru)
     vless_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     trojan_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     reality_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
@@ -274,6 +289,7 @@ class ConfigEnum(metaclass=FastEnum):
     path_vmess = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_vless = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_trojan = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_naive = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_v2ray = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)  # deprecated
     path_ss = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
