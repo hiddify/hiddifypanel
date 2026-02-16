@@ -1,6 +1,65 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Sperate mieru udp/tcp and customizable mieru , better naive quic support. 
+
+* Add mieru and naive. 
+
+#### Fix
+
+* Mieru tcp. 
+
+* H2. 
+
+* Translation. 
+
+* Ssh proxy. 
+
+#### Other
+
+* Update translations. 
+
+* Update translations. 
+
+* Merge pull request #21 from Alighaemi9731/feature/ech-support. 
+  _feat(ech): add TLS ECH support in generated links_
+
+* Update init_db.py. 
+
+* Update QuickSetup.py. 
+
+* Refactor SwitchField assignment for clarity. 
+
+* Merge branch 'dev' into feature/ech-support. 
+
+* Merge pull request #20 from Alighaemi9731/fix/max-active-users-zero. 
+  _fix(admin): correct max active users count in admin list_
+
+* Merge pull request #23 from Alighaemi9731/tls-fragment-packets-config-latest. 
+  _feat(tls-trick): make fragment packets configurable (latest base)_
+
+* Feat(tls-trick): make fragment packets configurable. 
+
+* Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
+
+* Update translations. 
+
+* Fix(init_db): backfill ECH settings when db is already latest. 
+
+* Fix(migration): always ensure ECH configs exist on upgraded installs. 
+
+* Fix(ui): clean ECH setting labels in admin forms. 
+
+* Feat(ech): add TLS ECH setting and inject ech into generated links. 
+
+* Fix(admin): correct max active users count in admin list. 
+
+
+
 ## v11.0.17 (2026-01-25)
 
 #### Other
