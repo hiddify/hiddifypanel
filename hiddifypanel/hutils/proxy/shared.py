@@ -187,7 +187,7 @@ def get_proxies(child_id: int = 0, only_enabled=False) -> list['Proxy']:
     if not hconfig(ConfigEnum.grpc_enable, child_id):
         proxies = [c for c in proxies if ProxyTransport.grpc not in c.transport]
     if not hconfig(ConfigEnum.tcp_enable, child_id):
-        proxies = [c for c in proxies if 'tcp' not in c.transport]
+        proxies = [c for c in proxies if 'tcp' not in c.transport or c.proto == ProxyProto.mieru]
     if not hconfig(ConfigEnum.h2_enable, child_id):
         proxies = [c for c in proxies if 'h2' not in c.transport and c.l3 not in [ProxyL3.tls_h2]]
     if not hconfig(ConfigEnum.kcp_enable, child_id):
