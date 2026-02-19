@@ -4,7 +4,7 @@ from hiddifypanel.models import hconfig, ConfigEnum
 if TYPE_CHECKING:
     import cloudflare
 
-__cf: "cloudflare.Cloudflare"   # type: ignore
+__cf: "cloudflare.Cloudflare"=None   # type: ignore
 
 
 def __prepare_cf_api_client() -> bool:
@@ -16,7 +16,7 @@ def __prepare_cf_api_client() -> bool:
         return True
 
     if hconfig(ConfigEnum.cloudflare):
-        __cf = cloudflare.Cloudflare(token=hconfig(ConfigEnum.cloudflare))
+        __cf = cloudflare.Cloudflare(api_token=hconfig(ConfigEnum.cloudflare))
         if __cf and isinstance(__cf, cloudflare.Cloudflare):
             return True
     return False
@@ -30,21 +30,18 @@ def add_or_update_dns_record(domain: str, ip: str, dns_type: str = "A", proxied:
     zone_name = __extract_root_domain(domain)
     zone = __get_zone(zone_name)
     if zone:
-        record = __get_dns_record(zone, domain)
-        dns_name = domain[:-len(zone['name'])].replace('.', '')
+        record = __get_dns_record(zone, domain,dns_type)
+        dns_name = domain[:-len(zone.name)].replace('.', '')
         # if the input domain is root itself
         dns_name = '@' if not dns_name else dns_name
-        data = {
-            'name': dns_name,
-            'type': dns_type, 'content': ip, 'proxied': proxied
-        }
+        
         if not record:
-            api_res = __cf.zones.dns_records.post(zone['id'], data=data)
+            api_res = __cf.dns.records.create(zone_id=zone.id, name=dns_name,type=dns_type,content=ip,proxied=proxied)
         else:
-            api_res = __cf.zones.dns_records.put(zone['id'], record['id'], data=data)
+            api_res = __cf.dns.records.edit(zone_id=zone.id,dns_record_id= record.id, name=dns_name,type=dns_type,content=ip,proxied=proxied)
 
         # validate api response
-        if api_res['name'] == domain and api_res['type'] == dns_type and api_res['content'] == ip:
+        if api_res.name == domain and api_res.type == dns_type and api_res.content == ip:
             return True
     return False
 
@@ -56,27 +53,31 @@ def delete_dns_record(domain: str) -> bool:
 
     zone_name = __extract_root_domain(domain)
     zone = __get_zone(zone_name)
-    record = __get_dns_record(zone, domain)
-    if zone and record:
-        api_res = __cf.zones.dns_records.delete(zone['id'], record['id'])
-        if api_res['id'] == record['id']:
-            return True
-    return False
+    records = [__get_dns_record(zone, domain,"A"),__get_dns_record(zone, domain,"AAAA")]
+    res=False
+    
+    for record in records:
+        if record and zone:
+            api_res = __cf.dns.records.delete(dns_record_id=record.id,zone_id=zone.id)
+            if api_res.id == record.id:
+                res=True
+            
+    return res
 
 
-def __get_zone(zone_name: str) -> dict | None:
-    zones = __cf.zones.get()
+def __get_zone(zone_name: str):
+    zones = __cf.zones.list()
     for z in zones:
-        if z['name'] == zone_name:
+        if z.name == zone_name:
             return z
     return None
 
 
-def __get_dns_record(zone, domain: str) -> dict | None:
+def __get_dns_record(zone, domain: str,dns_type) :
     '''Returns dns record if exists'''
-    dns_records = __cf.zones.dns_records(zone['id'])
+    dns_records = __cf.dns.records.list(zone_id=zone.id)#__cf.zones.get(zone['id']).dns_records(zone['id'])
     for r in dns_records:
-        if r['name'] == domain:
+        if r.name == domain and r.type==dns_type:
             return r
     return None
 

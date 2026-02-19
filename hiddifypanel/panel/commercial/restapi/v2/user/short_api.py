@@ -13,9 +13,9 @@ from hiddifypanel.panel import hiddify
 
 
 class ShortSchema(Schema):
-    short = String(required=True, description="the short url slug")
-    full_url = String(required=True, description="full short url")
-    expire_in = Integer(required=True, description="expire_in is in seconds")
+    short = String(required=True,  metadata={"description": "the short url slug"})
+    full_url = String(required=True,  metadata={"description": "full short url"})
+    expire_in = Integer(required=True,  metadata={"description": "expire_in is in seconds"})
 
 
 class ShortAPI(MethodView):

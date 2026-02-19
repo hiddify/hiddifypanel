@@ -66,7 +66,8 @@ def configs_as_json(domains: list[Domain], user: User, expire_days: int, remarks
             if proxy['transport'] in unsupported_transport:
                 continue
             outbound = to_xray(proxy)
-            outbounds.append(outbound)
+            if len(outbound):
+                outbounds.append(outbound)
 
         base_config = json.loads(render_template(
             'base_xray_config.json.j2', remarks=remarks))
@@ -92,6 +93,8 @@ def configs_as_json(domains: list[Domain], user: User, expire_days: int, remarks
 
 
 def to_xray(proxy: dict) -> dict:
+    if proxy['proto'] in {ProxyProto.naive,ProxyProto.mieru}:
+        return {}
     outbound = {
         'tag': f'{proxy["extra_info"]} {proxy["name"]}',
         'protocol': str(proxy['proto']),
@@ -239,7 +242,7 @@ def _add_security(base_dict, proxy, tls_info=None):
         ss['tlsSettings'] = {
             'serverName': tls_info['sni'],
             'allowInsecure': tls_info['allow_insecure'],
-            'fingerprint': proxy['fingerprint'],
+            'fingerprint': proxy.get('fingerprint'),
             'alpn': [tls_info['alpn']],
             # 'minVersion': '1.2',
             # 'disableSystemRoot': '',

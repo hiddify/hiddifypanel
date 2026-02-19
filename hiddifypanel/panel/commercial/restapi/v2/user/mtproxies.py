@@ -11,7 +11,7 @@ from hiddifypanel.models.domain import DomainType
 from hiddifypanel.models.role import Role
 
 from hiddifypanel.panel.user.user import get_common_data
-
+from apiflask import fields
 
 class MtproxySchema(Schema):
     link = String(required=True)
@@ -21,7 +21,7 @@ class MtproxySchema(Schema):
 class MTProxiesAPI(MethodView):
     decorators = [login_required({Role.user})]
 
-    @app.output(MtproxySchema(many=True))
+    @app.output(list[MtproxySchema])
     def get(self):
         c = get_common_data(g.account.uuid, 'new')
 

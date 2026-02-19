@@ -35,7 +35,7 @@ class LoginView(FlaskView):
     def index(self, force=None, next=None):
         force_arg = request.args.get('force')
         redirect_arg = request.args.get('redirect')
-        username_arg = request.args.get('user') or ''
+        username_arg = (request.args.get('user') or '').split("?")[0]
         if not current_account:
             form=LoginForm()
             form.secret_textbox.data=form.secret_textbox.data or username_arg

@@ -175,11 +175,11 @@ class DomainAdmin(AdminLTEModelView):
 
         cloudflare_updated=self._update_cloudflare(model, ipv4_list,ipv6_list)
         
-        
-        self._validate_domain_ips(model, server_ips)
+        if not cloudflare_updated:
+            self._validate_domain_ips(model, server_ips)
 
         # Handle CDN IP settings
-        if model.mode == DomainType.direct and model.cdn_ip:
+        if  model.mode == DomainType.direct and model.cdn_ip:
             model.cdn_ip = ""
             raise ValidationError(_("Specifying CDN IP is only valid for CDN mode"))
             

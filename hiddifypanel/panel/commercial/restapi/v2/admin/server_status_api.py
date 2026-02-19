@@ -11,8 +11,8 @@ from hiddifypanel import hutils
 
 
 class ServerStatusOutputSchema(Schema):
-    stats = Dict(required=True, description="System stats")
-    usage_history = Dict(required=True, description="System usage history")
+    stats = Dict(required=True,  metadata={"description": "System stats"})
+    usage_history = Dict(required=True,  metadata={"description": "System usage history"})
 
 
 class AdminServerStatusApi(MethodView):

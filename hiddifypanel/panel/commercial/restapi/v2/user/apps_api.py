@@ -1,6 +1,6 @@
 from hiddifypanel.panel import hiddify
 from flask.views import MethodView
-
+from apiflask import fields
 from flask import current_app as app
 from flask import g, request
 from apiflask import Schema, abort
@@ -34,17 +34,17 @@ class AppInstallType(StrEnum):
 
 class AppInstall(Schema):
     title = String()
-    type = Enum(AppInstallType, required=True, description='The platform that provides the app to download')
-    url = URL(required=True, description='The url to download the app')
+    type = Enum(AppInstallType, required=True,  metadata={"description": "The platform that provides the app to download"})
+    url = URL(required=True,  metadata={"description": "The url to download the app"})
 
 
 class AppSchema(Schema):
-    title = String(required=True, description='The title of the app')
-    description = String(required=True, description='The description of the app')
-    icon_url = URL(required=True, description='The icon url of the app')
-    guide_url = URL(description='The guide url of the app')
-    deeplink = URL(required=True, description='The deeplink of the app to imoprt configs')
-    install = List(Nested(AppInstall()), required=True, description='The install url of the app')
+    title = String(required=True,  metadata={"description": "The title of the app"})
+    description = String(required=True,  metadata={"description": "The description of the app"})
+    icon_url = URL(required=True,  metadata={"description": "The icon url of the app"})
+    guide_url = URL( metadata={"description": "The guide url of the app"})
+    deeplink = URL(required=True,  metadata={"description": "The deeplink of the app to imoprt configs"})
+    install = List(Nested(AppInstall()), required=True,  metadata={"description": "The install url of the app"})
 
 # this class is not a Data Transfer Object, It's just an enum
 
@@ -62,7 +62,7 @@ class Platform(StrEnum):
 class AppInSchema(Schema):
     platform = Enum(
         Platform, load_default=Platform.auto, required=False,
-        description='The platform (Operating System) to know what clients should be send. Possible values are: all, android, ios, windows, linux, mac, auto.')
+         metadata={"description": "The platform (Operating System) to know what clients should be send. Possible values are: all, android, ios, windows, linux, mac, auto."})
 # endregion
 
 
@@ -88,7 +88,7 @@ class AppAPI(MethodView):
         self.clash_meta_blocked_sites = f"https://{domain}/{g.proxy_path}/clash/meta/lite.yml?mode={c['mode']}&asn={c['asn']}&name={c['asn']}_mlite_{domain}-{c['mode']}"
 
     @app.input(AppInSchema, arg_name='data', location="query")
-    @app.output(AppSchema(many=True))
+    @app.output(list[AppSchema])
     @login_required({Role.user})
     def get(self, data):
         # parse user agent

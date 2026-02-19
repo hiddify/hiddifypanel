@@ -202,13 +202,7 @@ def get_config_form():
                 if c.key == ConfigEnum.parent_panel:
                     continue
             extra_info = ''
-            if c.key == ConfigEnum.tls_ech_enable:
-                field = SwitchField(
-                    "🛡️ TLS ECH",
-                    default=c.value,
-                    description="Adds ECH to generated TLS subscription links."
-                )
-            elif c.key in bool_types:
+            if c.key in bool_types:
                 field = SwitchField(_(f'config.{c.key}.label'), default=c.value, description=_(f'config.{c.key}.description'))
             elif c.key == ConfigEnum.core_type:
                 field = wtf.SelectField(_(f"config.{c.key}.label"),

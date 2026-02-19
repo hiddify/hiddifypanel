@@ -3,10 +3,10 @@ from apiflask import Schema, fields
 
 
 class PanelInfoOutputSchema(Schema):
-    version = fields.String(description="The panel version")
+    version = fields.String( metadata={"description": "The panel version"})
 # endregion
 
 
 class PongOutputSchema(Schema):
-    msg = fields.String(description="Pong Response")
+    msg = fields.String( metadata={"description": "Pong Response"})
 # endregion

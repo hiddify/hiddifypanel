@@ -10,12 +10,12 @@ from hiddifypanel.models import *
 
 
 class AdminInputLogfileSchema(Schema):
-    file = fields.String(description="The log file name", required=True)
+    file = fields.String( metadata={"description": "The log file name"}, required=True)
 
 
 class AdminLogApi(MethodView):
     @app.input(AdminInputLogfileSchema, arg_name="data", location='form')  # type: ignore
-    @app.output(fields.String(description="The html of the log", many=True))  # type: ignore
+    @app.output(list[fields.String(metadata={"description": "The html of the log"})]) # type: ignore
     @login_required({Role.super_admin})
     def post(self, data):
         """System: View Log file"""

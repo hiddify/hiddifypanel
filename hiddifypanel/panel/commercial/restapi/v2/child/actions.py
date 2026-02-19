@@ -46,7 +46,7 @@ class ApplyConfig(MethodView):
 
 
 class InstallSchema(Schema):
-    full = fields.Boolean(description="full install", required=True, default=True)
+    full = fields.Boolean( metadata={"description": "full install"},  load_default=True)
 
 
 class Install(MethodView):

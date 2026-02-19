@@ -8,12 +8,12 @@ from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import User
 from .user_api import UserSchema, PostUserSchema
 from . import has_permission
-
+from apiflask import fields
 
 class UsersApi(MethodView):
     decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
 
-    @app.output(UserSchema(many=True))  # type: ignore
+    @app.output(list[UserSchema])  # type: ignore
     def get(self):
         """User: List users of current admin"""
 

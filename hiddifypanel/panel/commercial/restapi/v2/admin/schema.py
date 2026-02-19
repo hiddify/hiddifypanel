@@ -40,96 +40,96 @@ class FriendlyUUID(fields.Field):
 
 
 class UserSchema(Schema):
-    uuid = FriendlyUUID(required=True, description="Unique identifier for the user")
-    name = String(required=True, description="Name of the user")
+    uuid = FriendlyUUID(required=True,  metadata={"description": "Unique identifier for the user"})
+    name = String(required=True,  metadata={"description": "Name of the user"})
 
     usage_limit_GB = Float(
         required=False,
         allow_none=True,
-        description="The data usage limit for the user in gigabytes"
+         metadata={"description": "The data usage limit for the user in gigabytes"}
     )
     package_days = Integer(
         required=False,
         allow_none=True,
-        description="The number of days in the user's package"
+         metadata={"description": "The number of days in the user's package"}
     )
     mode = Enum(UserMode,
                 required=False,
                 allow_none=True,
-                description="The mode of the user's account, which dictates access level or type"
+                 metadata={"description": "The mode of the user's account, which dictates access level or type"}
                 )
     last_online = FriendlyDateTime(
-        format="%Y-%m-%d %H:%M:%S",
+        # format="%Y-%m-%d %H:%M:%S",
         allow_none=True,
-        description="The last time the user was online, converted to a JSON-friendly format"
+         metadata={"description": "The last time the user was online, converted to a JSON-friendly format"}
     )
     start_date = Date(
-        format='%Y-%m-%d',
+        # format='%Y-%m-%d',
         allow_none=True,
-        description="The start date of the user's package, in a JSON-friendly format"
+         metadata={"description": "The start date of the user's package, in a JSON-friendly format"}
     )
     current_usage_GB = Float(
         required=False,
         allow_none=True,
-        description="The current data usage of the user in gigabytes"
+         metadata={"description": "The current data usage of the user in gigabytes"}
     )
     last_reset_time = FriendlyDateTime(
-        format='%Y-%m-%d %H:%M:%S',
-        description="The last time the user's data usage was reset, in a JSON-friendly format",
+        # format='%Y-%m-%d %H:%M:%S',
+         metadata={"description": "The last time the user's data usage was reset, in a JSON-friendly format"},
         allow_none=True
     )
     # expiry_time = Date(
     #     format='%Y-%m-%d',
-    #     description="The expiry time of the user's package, in a JSON-friendly format",
+    #      metadata={"description": "The expiry time of the user's package, in a JSON-friendly format"},
     #     allow_none=True
     # )
     comment = String(
-        missing=None,
+        load_default=None,
         allow_none=True,
-        description="An optional comment about the user"
+         metadata={"description": "An optional comment about the user"}
     )
     added_by_uuid = FriendlyUUID(
         required=False,
-        description="UUID of the admin who added this user",
+         metadata={"description": "UUID of the admin who added this user"},
         allow_none=True,
         # validate=OneOf([p.uuid for p in AdminUser.query.all()])
     )
     telegram_id = Integer(
         required=False,
-        description="The Telegram ID associated with the user",
+         metadata={"description": "The Telegram ID associated with the user"},
         allow_none=True
     )
     ed25519_private_key = String(
         required=False,
         allow_none=True,
-        description="If empty, it will be created automatically, The user's private key using the Ed25519 algorithm"
+         metadata={"description": "If empty, it will be created automatically, The user's private key using the Ed25519 algorithm"}
     )
     ed25519_public_key = String(
         required=False,
         allow_none=True,
-        description="If empty, it will be created automatically,The user's public key using the Ed25519 algorithm"
+         metadata={"description": "If empty, it will be created automatically,The user's public key using the Ed25519 algorithm"}
     )
     wg_pk = String(
         required=False,
         allow_none=True,
-        description="If empty, it will be created automatically, The user's WireGuard private key"
+         metadata={"description": "If empty, it will be created automatically, The user's WireGuard private key"}
     )
 
     wg_pub = String(
         required=False,
         allow_none=True,
-        description="If empty, it will be created automatically, The user's WireGuard public key"
+         metadata={"description": "If empty, it will be created automatically, The user's WireGuard public key"}
     )
     wg_psk = String(
         required=False,
         allow_none=True,
-        description="If empty, it will be created automatically, The user's WireGuard preshared key"
+         metadata={"description": "If empty, it will be created automatically, The user's WireGuard preshared key"}
     )
 
-    lang = Enum(Lang, required=False, allow_none=True, description="The language of the user")
-    enable = Boolean(required=False, description="Whether the user is enabled or not")
-    is_active = Boolean(required=False, description="Whether the user is active for using hiddify")
-    id = Integer(required=False, description="never use it, only for better presentation")
+    lang = Enum(Lang, required=False, allow_none=True,  metadata={"description": "The language of the user"})
+    enable = Boolean(required=False,  metadata={"description": "Whether the user is enabled or not"})
+    is_active = Boolean(required=False,  metadata={"description": "Whether the user is active for using hiddify"})
+    id = Integer(required=False,  metadata={"description": "never use it, only for better presentation"})
 
 
 class PostUserSchema(UserSchema):
@@ -157,18 +157,18 @@ class PatchUserSchema(UserSchema):
 
 
 class AdminSchema(Schema):
-    name = String(required=True, description='The name of the admin')
-    comment = String(required=False, description='A comment related to the admin', allow_none=True)
-    uuid = FriendlyUUID(required=False, allow_none=True, description='The unique identifier for the admin')
-    mode = Enum(AdminMode, required=True, description='The mode for the admin')
-    can_add_admin = Boolean(required=True, description='Whether the admin can add other admins')
-    parent_admin_uuid = FriendlyUUID(required=False, description='The unique identifier for the parent admin', allow_none=True,
+    name = String(required=True,  metadata={"description": "The name of the admin"})
+    comment = String(required=False,  metadata={"description": "A comment related to the admin"}, allow_none=True)
+    uuid = FriendlyUUID(required=False, allow_none=True,  metadata={"description": "The unique identifier for the admin"})
+    mode = Enum(AdminMode, required=True,  metadata={"description": "The mode for the admin"})
+    can_add_admin = Boolean(required=True,  metadata={"description": "Whether the admin can add other admins"})
+    parent_admin_uuid = FriendlyUUID(required=False,  metadata={"description": "The unique identifier for the parent admin"}, allow_none=True,
                                      # validate=OneOf([p.uuid for p in AdminUser.query.all()])
                                      )
-    telegram_id = Integer(required=False, description='The Telegram ID associated with the admin', allow_none=True)
+    telegram_id = Integer(required=False,  metadata={"description": "The Telegram ID associated with the admin"}, allow_none=True)
     lang = Enum(Lang, required=True)
-    max_users = Integer(required=False, description='The maximum number of users allowed', allow_none=True)
-    max_active_users = Integer(required=False, description='The maximum number of active users allowed', allow_none=True)
+    max_users = Integer(required=False,  metadata={"description": "The maximum number of users allowed"}, allow_none=True)
+    max_active_users = Integer(required=False,  metadata={"description": "The maximum number of active users allowed"}, allow_none=True)
 
 
 class PatchAdminSchema(AdminSchema):

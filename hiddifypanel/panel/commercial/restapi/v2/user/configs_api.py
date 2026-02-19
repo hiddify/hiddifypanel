@@ -8,7 +8,7 @@ from apiflask import Schema
 from apiflask.fields import String
 from hiddifypanel.panel.user.user import get_common_data
 from hiddifypanel import hutils
-
+from apiflask import fields
 
 class ConfigSchema(Schema):
     name = String(required=True)
@@ -23,7 +23,7 @@ class ConfigSchema(Schema):
 class AllConfigsAPI(MethodView):
     decorators = [login_required({Role.user})]
 
-    @app.output(ConfigSchema(many=True))  # type: ignore
+    @app.output(list[ConfigSchema])  # type: ignore
     def get(self):
         def create_item(name, domain, type, protocol, transport, security, link):
             dto = ConfigSchema()

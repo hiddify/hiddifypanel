@@ -4,7 +4,7 @@ from flask import request, g
 from hiddifypanel import hutils
 from hiddifypanel.models import ProxyTransport, ProxyL3, ProxyProto, Domain, User, ConfigEnum, hconfig
 from flask_babel import gettext as _
-from urllib.parse import urlencode,quote
+from urllib.parse import urlencode, quote
 OUTBOUND_LEVEL = 8
 
 
@@ -24,23 +24,23 @@ def to_link(proxy: dict) -> str | dict:
 
     orig_name_link = (proxy['extra_info'] + " " + proxy["name"]).strip()
     name_link = hutils.encode.url_encode(orig_name_link)
-    if proxy['proto']=="naive":
-        naive= f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=hiddify-naive-secret:{proxy["path"]}'
+    if proxy['proto'] == "naive":
+        naive = f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=hiddify-naive-secret:{proxy["path"]}'
         if proxy.get('quic'):
-            naive+="&quic=1"
+            naive += "&quic=1"
         return f'{naive}#{name_link}'
 
-    if proxy['proto']=="mieru":
-        mieru= f'mieru://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}/?handshake-mode={proxy["handshake"]}&mtu=1400&multiplexing={proxy["multiplexing"]}'
+    if proxy['proto'] == "mieru":
+        mieru = f'mieru://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}/?handshake-mode={proxy["handshake"]}&mtu=1400&multiplexing={proxy["multiplexing"]}'
         for port in proxy["tcp_ports"]:
             if port:
-                mieru+=f"&port={port}&protocol=TCP"
+                mieru += f"&port={port}&protocol=TCP"
         for port in proxy["udp_ports"]:
             if port:
-                mieru+=f"&port={port}&protocol=UDP"
-        
+                mieru += f"&port={port}&protocol=UDP"
+
         return f'{mieru}#{name_link}'
-    
+
     if proxy['proto'] == 'vmess':
         # print(proxy)
         vmess_type = None
@@ -64,20 +64,20 @@ def to_link(proxy: dict) -> str | dict:
                       "sni": proxy["sni"],
                       "fp": proxy["fingerprint"]
                       }
-        
+
         if 'reality' in proxy["l3"]:
             vmess_data['tls'] = "reality"
             vmess_data['pbk'] = proxy['reality_pbk']
             vmess_data['sid'] = proxy['reality_short_id']
         if proxy.get('transport') in {ProxyTransport.xhttp}:
-            vmess_data['core']='xray'
-            _add_xhttp_extra(vmess_data,proxy)
+            vmess_data['core'] = 'xray'
+            _add_xhttp_extra(vmess_data, proxy)
         if vmess_data.get('tls') == 'tls' and proxy.get('ech'):
             vmess_data['ech'] = proxy['ech']
         add_tls_tricks_to_dict(vmess_data, proxy)
         add_mux_to_dict(vmess_data, proxy)
 
-        return "vmess://" + hutils.encode.do_base_64(f'{json.dumps(vmess_data,cls=hutils.proxy.ProxyJsonEncoder)}')
+        return "vmess://" + hutils.encode.do_base_64(f'{json.dumps(vmess_data, cls=hutils.proxy.ProxyJsonEncoder)}')
     if proxy['proto'] == 'ssh':
         # baseurl = 'ssh://'
         # if g.user_agent.get('is_streisand'):
@@ -86,16 +86,16 @@ def to_link(proxy: dict) -> str | dict:
         # else:
         hk = ",".join(proxy["host_keys"])
         pk = proxy["private_key"]
-        q={
-            'file':'ssh',
-            'hk':hk,
-            'pk':pk,
-            'private_key':pk,
-            'authentication':0,
-            'passphrase':'',                
+        q = {
+            'file': 'ssh',
+            'hk': hk,
+            'pk': pk,
+            'private_key': pk,
+            'authentication': 0,
+            'passphrase': '',
         }
-        return f"ssh://{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}/?{urlencode(q,quote_via=quote)}#{name_link}"
-            # baseurl += f'{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}/?file=ssh&pk={pk}&hk={hk}&private_key={pk}&authentication=0&passphrase#{name_link}'
+        return f"ssh://{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}/?{urlencode(q, quote_via=quote)}#{name_link}"
+        # baseurl += f'{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}/?file=ssh&pk={pk}&hk={hk}&private_key={pk}&authentication=0&passphrase#{name_link}'
 
         # return baseurl
     if proxy['proto'] == "ssr":
@@ -126,15 +126,32 @@ def to_link(proxy: dict) -> str | dict:
         return f"{baseurl}#{name_link}"
     if proxy['proto'] == ProxyProto.wireguard:
         if g.user_agent.get('is_streisand'):
-            return f'wireguard://{proxy["server"]}:{proxy["port"]}?private_key={proxy["wg_pk"]}&peer_public_key={proxy["wg_server_pub"]}&pre_shared_key={proxy["wg_psk"]}&reserved=0,0,0#{name_link}'
+            query = {
+                "private_key": proxy["wg_pk"],
+                "peer_public_key": proxy["wg_server_pub"],
+                "pre_shared_key":   proxy["wg_psk"],
+                "reserved": "0,0,0"
+            }
+            return f'wireguard://{proxy["server"]}:{proxy["port"]}?{urlencode(query)}#{name_link}'
         else:
             # hiddify_format =
             # f'wg://{proxy["server"]}:{proxy["port"]}/?pk={proxy["wg_pk"]}&local_address={proxy["wg_ipv4"]}/32&peer_pk={proxy["wg_server_pub"]}&pre_shared_key={proxy["wg_psk"]}&workers=4&mtu=1380&reserved=0,0,0&ifp={proxy["wg_noise_trick"]}#{name_link}'
-            return f'wg://{proxy["server"]}:{proxy["port"]}?publicKey={proxy["wg_pub"]}&privateKey={proxy["wg_pk"]}=&presharedKey={proxy["wg_psk"]}&ip=10.0.0.1&mtu=1380&keepalive=30&udp=1&reserved=0,0,0&ifp={proxy["wg_noise_trick"]}#{name_link}'
 
+            query = {
+                "privateKey": proxy["wg_pk"],
+                "publicKey": proxy["wg_server_pub"],
+                "presharedKey":   proxy["wg_psk"],
+                "reserved": "0,0,0",
+                "ip":"10.0.0.1",
+                "mtu":"1380",
+                "keepalive":"30",
+                "udp":1,
+                "ifp":proxy["wg_noise_trick"]
+            }
+            return f'wg://{proxy["server"]}:{proxy["port"]}?{urlencode(query)}#{name_link}'
 
     baseurl = f'{proxy["proto"]}://{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}'
-    
+
     q = {
         'hiddify': 1,
         'sni': proxy['sni'],
@@ -145,62 +162,60 @@ def to_link(proxy: dict) -> str | dict:
     # the ray2sing supports vless, vmess and trojan tls tricks and mux
     # the vmess handled already
 
-    add_mux_to_dict(q,proxy)
-    add_tls_tricks_to_dict(q,proxy)
+    add_mux_to_dict(q, proxy)
+    add_tls_tricks_to_dict(q, proxy)
     if "path" in proxy:
-        q['path']=proxy["path"]
-    if "host" in proxy :
-        q['host']=proxy["host"]
+        q['path'] = proxy["path"]
+    if "host" in proxy:
+        q['host'] = proxy["host"]
     # infos+=f'&alpn={proxy["alpn"]}'
-    
+
     if "grpc" == proxy["transport"]:
-        q['serviceName']=proxy["grpc_service_name"]
-        q['mode']=proxy["grpc_mode"]
+        q['serviceName'] = proxy["grpc_service_name"]
+        q['mode'] = proxy["grpc_mode"]
     # print(proxy['cdn'],proxy["transport"])
     if request.args.get("fragment"):
-        q['fragment']= request.args.get("fragment")  # type: ignore
+        q['fragment'] = request.args.get("fragment")  # type: ignore
     if "ws" == proxy["transport"] and proxy['cdn'] and request.args.get("fragment_v1"):
-        q['fragment_v1']= request.args.get("fragment_v1")  # type: ignore
+        q['fragment_v1'] = request.args.get("fragment_v1")  # type: ignore
     if 'vless' == proxy['proto']:
-        q['encryption']='none'
+        q['encryption'] = 'none'
 
     if proxy.get('fingerprint', 'none') != 'none':
-        q['fp']=proxy['fingerprint']
+        q['fp'] = proxy['fingerprint']
     if proxy.get('transport') in {ProxyTransport.xhttp}:
-        q['core']='xray'
-        _add_xhttp_extra(q,proxy)
+        q['core'] = 'xray'
+        _add_xhttp_extra(q, proxy)
     if proxy['l3'] != 'quic':
-        if proxy.get('params',{}).get('headers',{}).get("type",'')=='none' or proxy['l3'] != ProxyL3.http:
-            q['headerType']='none'
+        if proxy.get('params', {}).get('headers', {}).get("type", '') == 'none' or proxy['l3'] != ProxyL3.http:
+            q['headerType'] = 'none'
         else:
             # if proxy.get('l3') != ProxyL3.reality and (proxy.get('transport') in {ProxyTransport.tcp, ProxyTransport.httpupgrade, ProxyTransport.xhttp}) and proxy['proto'] in [ProxyProto.vless, ProxyProto.trojan]:
-            q['headerType']='http'
-        
+            q['headerType'] = 'http'
+
     if proxy['mode'] == 'Fake' or proxy['allow_insecure']:
-        q['allowInsecure']='true'
-        q['insecure']='true'
+        q['allowInsecure'] = 'true'
+        q['insecure'] = 'true'
     if proxy.get('flow'):
-        q['flow']=proxy["flow"]
+        q['flow'] = proxy["flow"]
 
-    
     if 'reality' in proxy["l3"]:
-        q['security']='reality'
-        q['pbk']=proxy['reality_pbk']
-        q['sid']=proxy['reality_short_id']
+        q['security'] = 'reality'
+        q['pbk'] = proxy['reality_pbk']
+        q['sid'] = proxy['reality_short_id']
 
-        
     elif 'tls' in proxy['l3'] or "quic" in proxy['l3']:
-        q['security']='tls'
-        
+        q['security'] = 'tls'
+
     elif proxy['l3'] == 'http':
-        q['security']='none'
+        q['security'] = 'none'
     if q.get('security') == 'tls' and proxy.get('ech'):
         q['ech'] = proxy['ech']
     if proxy.get('transport') not in {ProxyTransport.xhttp}:
-        for k,v in proxy.get('params',{}).items():
-            if k not in q and k!="download":
-                q[k]=v
-    return f"{baseurl}?{urlencode(q,quote_via=quote)}#{name_link}"
+        for k, v in proxy.get('params', {}).items():
+            if k not in q and k != "download":
+                q[k] = v
+    return f"{baseurl}?{urlencode(q, quote_via=quote)}#{name_link}"
 
 
 def make_v2ray_configs(domains: list[Domain], user: User, expire_days: int, ip_debug=None) -> str:
@@ -217,9 +232,9 @@ def make_v2ray_configs(domains: list[Domain], user: User, expire_days: int, ip_d
 
         name = '⏳ ' if user.is_active else '✖ '
         if user.usage_limit_GB < 1000:
-            name += f'{round(user.current_usage_GB,3)}/{str(user.usage_limit_GB).replace(".0","")}GB'
+            name += f'{round(user.current_usage_GB, 3)}/{str(user.usage_limit_GB).replace(".0", "")}GB'
         elif user.usage_limit_GB < 100000:
-            name += f'{round(user.current_usage_GB/1000,3)}/{str(round(user.usage_limit_GB/1000,1)).replace(".0","")}TB'
+            name += f'{round(user.current_usage_GB/1000, 3)}/{str(round(user.usage_limit_GB/1000, 1)).replace(".0", "")}TB'
         else:
             res.append("#No Usage Limit")
         name += " 📅 "
@@ -283,8 +298,8 @@ def add_mux_to_dict(d: dict, proxy):
         d['muxdown'] = proxy["mux_brutal_down_mbps"]
 
 
-def _add_xhttp_extra(d:dict,proxy):
+def _add_xhttp_extra(d: dict, proxy):
     from .xrayjson import _add_xhttp_details
-    xhttp_dict={}
-    _add_xhttp_details(xhttp_dict,proxy)
-    d['extra']=json.dumps(xhttp_dict['xhttpSettings']['extra'],separators=(',', ':'))
+    xhttp_dict = {}
+    _add_xhttp_details(xhttp_dict, proxy)
+    d['extra'] = json.dumps(xhttp_dict['xhttpSettings']['extra'], separators=(',', ':'))
