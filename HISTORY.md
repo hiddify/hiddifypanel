@@ -11,6 +11,8 @@
 
 #### Fix
 
+* Ech. 
+
 * Mieru tcp. 
 
 * H2. 
@@ -20,6 +22,10 @@
 * Ssh proxy. 
 
 #### Other
+
+* Update dependenceis, fix cloudflare api, xray json , issue in user uuid. 
+
+* Update translations. 
 
 * Update translations. 
 
