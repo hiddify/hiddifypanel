@@ -189,7 +189,7 @@ class ConfigEnum(metaclass=FastEnum):
     tls_padding_enable = _BoolConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
     tls_padding_length = _StrConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
     tls_ech_enable = _BoolConfigDscr(ConfigCategory.tls, ApplyMode.apply_config)
-    tls_ech = _StrConfigDscr(ConfigCategory.tls, ApplyMode.apply_config)
+    
 
     # mux
     mux_enable = _BoolConfigDscr(ConfigCategory.mux, ApplyMode.apply_config)

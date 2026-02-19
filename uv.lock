@@ -1142,6 +1142,7 @@ dependencies = [
     { name = "click" },
     { name = "cloudflare" },
     { name = "cryptography" },
+    { name = "dnspython" },
     { name = "dynaconf" },
     { name = "fastenumplus" },
     { name = "flask" },
@@ -1219,6 +1220,7 @@ requires-dist = [
     { name = "codecov", marker = "extra == 'dev'", specifier = "==2.1.13" },
     { name = "coverage", marker = "extra == 'dev'", specifier = "==7.6.4" },
     { name = "cryptography", specifier = "<42" },
+    { name = "dnspython", specifier = ">=2.8.0" },
     { name = "dynaconf", specifier = ">=3.2.6,<4.0.0" },
     { name = "fastenumplus", specifier = "==1.4.0" },
     { name = "flake8", marker = "extra == 'dev'", specifier = "==7.3.0" },
@@ -1269,7 +1271,7 @@ requires-dist = [
     { name = "strenum", specifier = "==0.4.15" },
     { name = "user-agents", specifier = "==2.2.0" },
     { name = "werkzeug", specifier = "==3.1.5" },
-    { name = "wtforms", specifier = "==3.2.1" },
+    { name = "wtforms", specifier = "==3.1.2" },
     { name = "xtlsapi", specifier = "==3.3.0" },
 ]
 provides-extras = ["dev"]
@@ -2779,14 +2781,14 @@ wheels = [
 
 [[package]]
 name = "wtforms"
-version = "3.2.1"
+version = "3.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "markupsafe" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/01/e4/633d080897e769ed5712dcfad626e55dbd6cf45db0ff4d9884315c6a82da/wtforms-3.2.1.tar.gz", hash = "sha256:df3e6b70f3192e92623128123ec8dca3067df9cfadd43d59681e210cfb8d4682", size = 137801 }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/c7/96d10183c3470f1836846f7b9527d6cb0b6c2226ebca40f36fa29f23de60/wtforms-3.1.2.tar.gz", hash = "sha256:f8d76180d7239c94c6322f7990ae1216dae3659b7aa1cee94b6318bdffb474b9", size = 134705 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/08/c9/2088fb5645cd289c99ebe0d4cdcc723922a1d8e1beaefb0f6f76dff9b21c/wtforms-3.2.1-py3-none-any.whl", hash = "sha256:583bad77ba1dd7286463f21e11aa3043ca4869d03575921d1a1698d0715e0fd4", size = 152454 },
+    { url = "https://files.pythonhosted.org/packages/18/19/c3232f35e24dccfad372e9f341c4f3a1166ae7c66e4e1351a9467c921cc1/wtforms-3.1.2-py3-none-any.whl", hash = "sha256:bf831c042829c8cdbad74c27575098d541d039b1faa74c771545ecac916f2c07", size = 145961 },
 ]
 
 [[package]]

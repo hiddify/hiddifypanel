@@ -64,7 +64,8 @@ def to_link(proxy: dict) -> str | dict:
                       "sni": proxy["sni"],
                       "fp": proxy["fingerprint"]
                       }
-
+        if proxy.get('ech'):
+            vmess_data['ech'] = proxy['ech']
         if 'reality' in proxy["l3"]:
             vmess_data['tls'] = "reality"
             vmess_data['pbk'] = proxy['reality_pbk']
@@ -209,7 +210,7 @@ def to_link(proxy: dict) -> str | dict:
 
     elif proxy['l3'] == 'http':
         q['security'] = 'none'
-    if q.get('security') == 'tls' and proxy.get('ech'):
+    if proxy.get('ech'):
         q['ech'] = proxy['ech']
     if proxy.get('transport') not in {ProxyTransport.xhttp}:
         for k, v in proxy.get('params', {}).items():

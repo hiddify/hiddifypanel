@@ -1,6 +1,9 @@
 import glob
 from typing import List, Literal, Set, Union
 from urllib.parse import urlparse
+
+from dns.rdtypes.svcbbase import ECHParam
+
 import urllib.request
 import ipaddress
 from hiddifypanel.hutils.network.auto_ip_selector import IPASN
@@ -18,6 +21,9 @@ from typing import List, Union, Literal
 
 from hiddifypanel.models import *
 from hiddifypanel.cache import cache
+
+import dns.resolver
+import base64
 
 
 def get_domain_ip_old(domain: str, retry: int = 3, version: Literal[4, 6] | None = None) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address, None]:
@@ -413,3 +419,23 @@ def resolve_domain_with_api(domain: str) -> str:
         return ''
     endpoint = f'http://ip-api.com/json/{domain}?fields=query'
     return str(requests.get(endpoint).json().get('query'))
+
+
+
+
+@cache.cache(600)
+def get_ech_info(domain):
+    try:
+        resolver = dns.resolver.Resolver()
+        resolver.nameservers = ["1.1.1.1"]  # Cloudflare DNS
+
+        answers = resolver.resolve(domain, "HTTPS")
+        for rdata in answers:
+            for param in rdata.params.values():
+                if isinstance(param, ECHParam):
+                    ech_bytes = param.ech
+                    return base64.b64encode(ech_bytes).decode()
+    except BaseException:
+        pass
+
+    return None

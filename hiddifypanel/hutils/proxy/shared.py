@@ -400,11 +400,12 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         'dbdomain': domain_db,
         'params': proxy.params or {},
     }
-    ech_value = (hconfigs.get(ConfigEnum.tls_ech) or "").strip()
-    if hconfigs.get(ConfigEnum.tls_ech_enable) and ech_value:
-        base['ech'] = ech_value
+    
+    if hconfigs.get(ConfigEnum.tls_ech_enable) and not proxy.l3 in {ProxyL3.reality}:
+        if ech:=hutils.network.get_ech_info(base.get('sni')):
+            base['ech'] = ech
 
-    put_default_header(base['params'])
+    
 
     if base['proto'] in {ProxyProto.naive}:
         del base['fingerprint']
@@ -421,7 +422,8 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         base['multiplexing']=hconfigs[ConfigEnum.mieru_multiplexing]
         base['handshake']=hconfigs[ConfigEnum.mieru_handshake]
         return base
-    
+    if base['cdn'] or l3 == "http":
+        put_default_header(base['params'])
     if domain_db.download_domain:
         base['download'] = sni_host_server_extractor(domain_db.download_domain,hconfigs)
     else:
@@ -430,8 +432,11 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
     if 'download' not in base['params']:
         base['params']['download']={}
     base['download']['params']=base['params']['download']
-    put_default_header(base['download']['params'])
-
+    if base['download']['cdn'] or l3 == "http":
+        put_default_header(base['download']['params'])
+    if hconfigs.get(ConfigEnum.tls_ech_enable) and not proxy.l3 in {ProxyL3.reality}:
+        if ech:=hutils.network.get_ech_info(base['download'].get('sni')):
+            base['download']['ech'] = ech
     base['download']['alpn']=base['params']['download'].get('alpn',alpn)
 
         

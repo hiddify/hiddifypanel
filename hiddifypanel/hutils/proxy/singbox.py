@@ -186,8 +186,9 @@ def add_tls(base: dict, proxy: dict):
         "server_name": proxy["sni"]
     }
     if proxy.get("ech"):
-        base['ech'] = {
+        base["tls"]['ech'] = {
             "enabled": True,
+            "config":f"-----BEGIN ECH CONFIGS-----\\n{proxy.get("ech")}\\n-----END ECH CONFIGS-----"
         }   
     if proxy['proto']=="naive":
         return
