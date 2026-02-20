@@ -5,6 +5,8 @@
 
 #### New
 
+* Add accountable MTPRoxy. 
+
 * Sperate mieru udp/tcp and customizable mieru , better naive quic support. 
 
 * Add mieru and naive. 
@@ -26,6 +28,10 @@
 * Ssh proxy. 
 
 #### Other
+
+* Update translations. 
+
+* Update translations. 
 
 * Update translations. 
 
