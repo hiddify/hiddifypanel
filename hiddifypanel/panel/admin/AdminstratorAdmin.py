@@ -215,8 +215,8 @@ class AdminstratorAdmin(AdminLTEModelView):
         if g.account.mode == AdminMode.agent and model.mode != AdminMode.agent:
             raise ValidationError("Sub-Admin can not have more power!!!!")
         
-        if not model.password and not is_created:
-            model.password=AdminUser.by_id(model.id).password
+        if not model.password or model.password.strip() == "":
+            raise ValidationError("Password is required and cannot be empty.")
 
 
     def on_model_delete(self, model):
