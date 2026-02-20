@@ -12,7 +12,7 @@ from markupsafe import Markup
 
 from flask import g
 import datetime
-from wtforms import SelectField
+from wtforms import PasswordField, SelectField
 
 from hiddifypanel.panel import hiddify
 from hiddifypanel import hutils
@@ -40,7 +40,7 @@ class SubAdminsField(SelectField):
 class AdminstratorAdmin(AdminLTEModelView):
     column_hide_backrefs = False
     column_list = ["name", 'UserLinks', 'mode', 'can_add_admin', 'max_active_users', 'max_users', 'online_users', 'comment',]
-    form_columns = ["name", 'mode', 'can_add_admin', 'max_active_users', 'max_users', 'comment', "uuid", "password"]
+    form_columns = ["name", 'mode', 'can_add_admin', 'max_active_users', 'max_users', 'comment', "uuid","new_password"]
     list_template = 'model/admin_list.html'
     # column_editable_list = ['name']
     # edit_modal = True
@@ -49,6 +49,9 @@ class AdminstratorAdmin(AdminLTEModelView):
     form_overrides = {
         'mode': AdminModeField,
         'parent_admin': SubAdminsField
+    }
+    form_extra_fields = {
+        'new_password': PasswordField('New Password',description="If empty, no change")
     }
     column_labels = {
         "Actions": _("actions"),
@@ -215,16 +218,16 @@ class AdminstratorAdmin(AdminLTEModelView):
         if g.account.mode == AdminMode.agent and model.mode != AdminMode.agent:
             raise ValidationError("Sub-Admin can not have more power!!!!")
         
-        if not model.password and not is_created:
-            model.password=AdminUser.by_id(model.id).password
+        if not model.new_password and is_created:
+            raise ValidationError("Password for new admin is needed.")
+        if model.new_password:
+            model.password=model.new_password
 
 
     def on_model_delete(self, model):
         model.remove()
 
     def on_form_prefill(self, form, id=None):
-        
-        form.password.data=""
         if g.account.mode != AdminMode.super_admin:
             del form.mode
             del form.can_add_admin
