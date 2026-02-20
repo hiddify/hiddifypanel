@@ -11,6 +11,8 @@
 
 #### Fix
 
+* Wiregaurd and naive,ssh, mieru user usage. 
+
 * Ech. 
 
 * Mieru tcp. 
@@ -22,6 +24,8 @@
 * Ssh proxy. 
 
 #### Other
+
+* Update translations. 
 
 * Update dependenceis, fix cloudflare api, xray json , issue in user uuid. 
 
