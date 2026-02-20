@@ -11,6 +11,8 @@
 
 #### Fix
 
+* Password. 
+
 * Wiregaurd and naive,ssh, mieru user usage. 
 
 * Ech. 
@@ -24,6 +26,8 @@
 * Ssh proxy. 
 
 #### Other
+
+* Update translations. 
 
 * Update translations. 
 
