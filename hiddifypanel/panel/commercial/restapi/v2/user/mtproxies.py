@@ -36,6 +36,8 @@ class MTProxiesAPI(MethodView):
 
             # make mtproxy link
             raw_sec = hconfig(ConfigEnum.shared_secret, d.child_id)
+            if hconfig(ConfigEnum.telegram_lib)=="telemt":
+                raw_sec=g.account.uuid
             secret_hex = str(raw_sec).replace('-', '')
             telegram_faketls_domain_hex = hconfig(ConfigEnum.telegram_fakedomain, d.child_id).encode('utf-8').hex()
             server_link = f'tg://proxy?server={d.domain}&port=443&secret=ee{secret_hex}{telegram_faketls_domain_hex}'

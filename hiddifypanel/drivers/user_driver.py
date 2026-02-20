@@ -1,3 +1,5 @@
+from hiddifypanel.drivers.telemt_api import TelemtApi
+
 from .ssh_liberty_bridge_api import SSHLibertyBridgeApi
 from .xray_api import XrayApi
 from .singbox_api import SingboxApi
@@ -7,7 +9,7 @@ from hiddifypanel.panel import hiddify
 from collections import defaultdict
 from loguru import logger
 
-drivers = [XrayApi(), SingboxApi(), SSHLibertyBridgeApi(), WireguardApi()]
+drivers = [XrayApi(), SingboxApi(), SSHLibertyBridgeApi(), WireguardApi(),TelemtApi()]
 
 
 def enabled_drivers():

@@ -393,7 +393,13 @@
     },
     "admin_lang": {
       "description": "Выберите язык для раздела администрирования",
-      "label": "🗺️ Язык панели администратора"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ Язык панели администратора",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "admin_secret": {
       "description": "Admin Secret будет использоваться для доступа к панели администратора.",
@@ -575,7 +581,13 @@
     },
     "lang": {
       "description": "Выберите язык пользовательского интерфейса, чтобы персонализировать свой опыт использования пользовательской зоны.",
-      "label": "🗺️ Язык раздела пользователя"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ Язык раздела пользователя",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "last_hash": {
       "description": "config.last_hash.description",
@@ -590,6 +602,13 @@
       "label": "License  Code"
     },
     "log_level": {
+      "CRITICAL": "",
+      "DEBUG": "",
+      "ERROR": "",
+      "INFO": "",
+      "SUCCESS": "",
+      "TRACE": "",
+      "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
@@ -602,10 +621,17 @@
       "label": ""
     },
     "mieru_handshake": {
+      "HANDSHAKE_DEFAULT": "",
+      "HANDSHAKE_NO_WAIT": "",
+      "HANDSHAKE_STANDARD": "",
       "description": "",
       "label": ""
     },
     "mieru_multiplexing": {
+      "MULTIPLEXING_DEFAULT": "",
+      "MULTIPLEXING_HIGH": "",
+      "MULTIPLEXING_LOW": "",
+      "MULTIPLEXING_MIDDLE": "",
       "description": "",
       "label": ""
     },
@@ -682,8 +708,11 @@
       "label": "🔄 Режим обновления пакетов"
     },
     "panel_mode": {
+      "child": "",
       "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label"
+      "label": "config.panel_mode.label",
+      "parent": "",
+      "standalone": ""
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -1198,7 +1227,8 @@
     "telegram": {
       "erlang": "✴️ Erlang: хорошая производительность",
       "go": "✅ Go: Нормальный функционал – без поддержки рекламы",
-      "python": "☑️ Python: низкая производительность"
+      "python": "☑️ Python: низкая производительность",
+      "telemt": ""
     }
   },
   "log": "📄 Log",

@@ -1212,8 +1212,26 @@ msgstr "Admin Settings"
 msgid "config.admin_lang.description"
 msgstr "Choose Language For Admin Area"
 
+msgid "config.admin_lang.en"
+msgstr "config.admin_lang.en"
+
+msgid "config.admin_lang.fa"
+msgstr "config.admin_lang.fa"
+
 msgid "config.admin_lang.label"
 msgstr "🗺️ Admin Panel Language"
+
+msgid "config.admin_lang.my"
+msgstr "config.admin_lang.my"
+
+msgid "config.admin_lang.pt"
+msgstr "config.admin_lang.pt"
+
+msgid "config.admin_lang.ru"
+msgstr "config.admin_lang.ru"
+
+msgid "config.admin_lang.zh"
+msgstr "config.admin_lang.zh"
 
 msgid "config.admin_secret.description"
 msgstr "Admin secret will be used for accessing admin panel"
@@ -1546,8 +1564,26 @@ msgstr ""
 "Select the language for the user interface to personalize your experience in"
 " the user area."
 
+msgid "config.lang.en"
+msgstr "config.lang.en"
+
+msgid "config.lang.fa"
+msgstr "config.lang.fa"
+
 msgid "config.lang.label"
 msgstr "🗺️ User Area Language"
+
+msgid "config.lang.my"
+msgstr "config.lang.my"
+
+msgid "config.lang.pt"
+msgstr "config.lang.pt"
+
+msgid "config.lang.ru"
+msgstr "config.lang.ru"
+
+msgid "config.lang.zh"
+msgstr "config.lang.zh"
 
 msgid "config.last_hash.description"
 msgstr "config.last_hash.description"
@@ -1567,6 +1603,27 @@ msgstr "For commercial use of this Product, you must Purchase its License"
 msgid "config.license.label"
 msgstr "License  Code"
 
+msgid "config.log_level.CRITICAL"
+msgstr "config.log_level.CRITICAL"
+
+msgid "config.log_level.DEBUG"
+msgstr "config.log_level.DEBUG"
+
+msgid "config.log_level.ERROR"
+msgstr "config.log_level.ERROR"
+
+msgid "config.log_level.INFO"
+msgstr "config.log_level.INFO"
+
+msgid "config.log_level.SUCCESS"
+msgstr "config.log_level.SUCCESS"
+
+msgid "config.log_level.TRACE"
+msgstr "config.log_level.TRACE"
+
+msgid "config.log_level.WARNING"
+msgstr "config.log_level.WARNING"
+
 msgid "config.log_level.description"
 msgstr "config.log_level.description"
 
@@ -1585,11 +1642,32 @@ msgstr "Meiru is a fast Proxy."
 msgid "config.mieru_enable.label"
 msgstr "Enable Mieru"
 
+msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
+msgstr "config.mieru_handshake.HANDSHAKE_DEFAULT"
+
+msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+msgstr "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+
+msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
+msgstr "config.mieru_handshake.HANDSHAKE_STANDARD"
+
 msgid "config.mieru_handshake.description"
 msgstr "config.mieru_handshake.description"
 
 msgid "config.mieru_handshake.label"
 msgstr "config.mieru_handshake.label"
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+msgstr "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+msgstr "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
+msgstr "config.mieru_multiplexing.MULTIPLEXING_LOW"
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
+msgstr "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
 
 msgid "config.mieru_multiplexing.description"
 msgstr "config.mieru_multiplexing.description"
@@ -1720,11 +1798,20 @@ msgstr "Specify whether you want Released Package or Beta one"
 msgid "config.package_mode.label"
 msgstr "🔄 Package Update Mode"
 
+msgid "config.panel_mode.child"
+msgstr "config.panel_mode.child"
+
 msgid "config.panel_mode.description"
 msgstr "config.panel_mode.description"
 
 msgid "config.panel_mode.label"
 msgstr "config.panel_mode.label"
+
+msgid "config.panel_mode.parent"
+msgstr "config.panel_mode.parent"
+
+msgid "config.panel_mode.standalone"
+msgstr "config.panel_mode.standalone"
 
 msgid "config.parent_admin_proxy_path.description"
 msgstr "config.parent_admin_proxy_path.description"
@@ -2670,6 +2757,9 @@ msgstr "✅ Go : Nornal Performance - No ad Support"
 
 msgid "lib.telegram.python"
 msgstr "☑️ Python : Low Performance"
+
+msgid "lib.telegram.telemt"
+msgstr "lib.telegram.telemt"
 
 msgid "log"
 msgstr "📄 Log"

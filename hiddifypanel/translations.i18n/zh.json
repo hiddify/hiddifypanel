@@ -393,7 +393,13 @@
     },
     "admin_lang": {
       "description": "选择管理区域的语言",
-      "label": "🗺️ 管理面板语言"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ 管理面板语言",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "admin_secret": {
       "description": "管理员密码将用于访问管理面板",
@@ -575,7 +581,13 @@
     },
     "lang": {
       "description": "选择用户界面的语言来个性化您在用户区域的体验。",
-      "label": "🗺️ 用户区语言"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ 用户区语言",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "last_hash": {
       "description": "config.last_hash.描述",
@@ -590,6 +602,13 @@
       "label": "许可证代码"
     },
     "log_level": {
+      "CRITICAL": "",
+      "DEBUG": "",
+      "ERROR": "",
+      "INFO": "",
+      "SUCCESS": "",
+      "TRACE": "",
+      "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
@@ -602,10 +621,17 @@
       "label": ""
     },
     "mieru_handshake": {
+      "HANDSHAKE_DEFAULT": "",
+      "HANDSHAKE_NO_WAIT": "",
+      "HANDSHAKE_STANDARD": "",
       "description": "",
       "label": ""
     },
     "mieru_multiplexing": {
+      "MULTIPLEXING_DEFAULT": "",
+      "MULTIPLEXING_HIGH": "",
+      "MULTIPLEXING_LOW": "",
+      "MULTIPLEXING_MIDDLE": "",
       "description": "",
       "label": ""
     },
@@ -682,8 +708,11 @@
       "label": "🔄 包更新模式"
     },
     "panel_mode": {
+      "child": "",
       "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label"
+      "label": "config.panel_mode.label",
+      "parent": "",
+      "standalone": ""
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -1198,7 +1227,8 @@
     "telegram": {
       "erlang": "✴️ Erlang：性能良好",
       "go": "✅ Go：正常性能 - 不支持广告",
-      "python": "☑️ Python：性能低下"
+      "python": "☑️ Python：性能低下",
+      "telemt": ""
     }
   },
   "log": "📄 Log",

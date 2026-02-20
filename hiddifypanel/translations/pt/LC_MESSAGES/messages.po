@@ -1183,8 +1183,26 @@ msgstr "Configurações de administrador"
 msgid "config.admin_lang.description"
 msgstr "Escolha o idioma para a área administrativa"
 
+msgid "config.admin_lang.en"
+msgstr ""
+
+msgid "config.admin_lang.fa"
+msgstr ""
+
 msgid "config.admin_lang.label"
 msgstr "Idioma do Painel Administrativo"
+
+msgid "config.admin_lang.my"
+msgstr ""
+
+msgid "config.admin_lang.pt"
+msgstr ""
+
+msgid "config.admin_lang.ru"
+msgstr ""
+
+msgid "config.admin_lang.zh"
+msgstr ""
 
 msgid "config.admin_secret.description"
 msgstr ""
@@ -1520,8 +1538,26 @@ msgstr ""
 "Selecione o idioma da interface do usuário para personalizar sua experiência"
 " na área do usuário."
 
+msgid "config.lang.en"
+msgstr ""
+
+msgid "config.lang.fa"
+msgstr ""
+
 msgid "config.lang.label"
 msgstr "🗺️ Idioma da área do usuário"
+
+msgid "config.lang.my"
+msgstr ""
+
+msgid "config.lang.pt"
+msgstr ""
+
+msgid "config.lang.ru"
+msgstr ""
+
+msgid "config.lang.zh"
+msgstr ""
 
 msgid "config.last_hash.description"
 msgstr "config.last_hash.description"
@@ -1541,6 +1577,27 @@ msgstr "Para uso comercial deste produto, você deve comprar sua licença"
 msgid "config.license.label"
 msgstr "Código de licença"
 
+msgid "config.log_level.CRITICAL"
+msgstr ""
+
+msgid "config.log_level.DEBUG"
+msgstr ""
+
+msgid "config.log_level.ERROR"
+msgstr ""
+
+msgid "config.log_level.INFO"
+msgstr ""
+
+msgid "config.log_level.SUCCESS"
+msgstr ""
+
+msgid "config.log_level.TRACE"
+msgstr ""
+
+msgid "config.log_level.WARNING"
+msgstr ""
+
 msgid "config.log_level.description"
 msgstr "config.log_level.descrição"
 
@@ -1559,10 +1616,31 @@ msgstr ""
 msgid "config.mieru_enable.label"
 msgstr ""
 
+msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
+msgstr ""
+
+msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+msgstr ""
+
+msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
+msgstr ""
+
 msgid "config.mieru_handshake.description"
 msgstr ""
 
 msgid "config.mieru_handshake.label"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
 msgstr ""
 
 msgid "config.mieru_multiplexing.description"
@@ -1690,11 +1768,20 @@ msgstr "Especifique se você deseja um pacote lançado ou desenvolvido"
 msgid "config.package_mode.label"
 msgstr "🔄 Modo de atualização de pacotes"
 
+msgid "config.panel_mode.child"
+msgstr ""
+
 msgid "config.panel_mode.description"
 msgstr "config.panel_mode.descrição"
 
 msgid "config.panel_mode.label"
 msgstr "config.panel_mode.label"
+
+msgid "config.panel_mode.parent"
+msgstr ""
+
+msgid "config.panel_mode.standalone"
+msgstr ""
 
 msgid "config.parent_admin_proxy_path.description"
 msgstr "config.parent_admin_proxy_path.description"
@@ -2631,6 +2718,9 @@ msgstr "✅ Ir: alto desempenho - sem suporte de anúncios"
 
 msgid "lib.telegram.python"
 msgstr "☑️ Python: baixo desempenho"
+
+msgid "lib.telegram.telemt"
+msgstr ""
 
 msgid "log"
 msgstr "📄 Log"

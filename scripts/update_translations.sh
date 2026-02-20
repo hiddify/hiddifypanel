@@ -12,6 +12,13 @@ def print_enum(en):
   print(''.join([f'{{{{_(\"{item}\")}}}}\n' for item in en]))
 print_enum(models.DomainType)
 print_enum(models.UserMode)
+
+from hiddifypanel.models import config_enum, ConfigEnum
+for c in ConfigEnum:
+   if isinstance(c.type, type) and issubclass(c.type,config_enum.HEnum) and c.type!=str:
+       print(''.join([f'{{{{_(\"config.{c.name}.{k}\")}}}}\n' for k in c.type]))
+            
+
 " >../hiddifypanel/templates/fake.html
 
 

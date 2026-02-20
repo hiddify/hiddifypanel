@@ -1178,8 +1178,26 @@ msgstr "管理设置"
 msgid "config.admin_lang.description"
 msgstr "选择管理区域的语言"
 
+msgid "config.admin_lang.en"
+msgstr ""
+
+msgid "config.admin_lang.fa"
+msgstr ""
+
 msgid "config.admin_lang.label"
 msgstr "🗺️ 管理面板语言"
+
+msgid "config.admin_lang.my"
+msgstr ""
+
+msgid "config.admin_lang.pt"
+msgstr ""
+
+msgid "config.admin_lang.ru"
+msgstr ""
+
+msgid "config.admin_lang.zh"
+msgstr ""
 
 msgid "config.admin_secret.description"
 msgstr "管理员密码将用于访问管理面板"
@@ -1477,8 +1495,26 @@ msgstr "KCP 港口"
 msgid "config.lang.description"
 msgstr "选择用户界面的语言来个性化您在用户区域的体验。"
 
+msgid "config.lang.en"
+msgstr ""
+
+msgid "config.lang.fa"
+msgstr ""
+
 msgid "config.lang.label"
 msgstr "🗺️ 用户区语言"
+
+msgid "config.lang.my"
+msgstr ""
+
+msgid "config.lang.pt"
+msgstr ""
+
+msgid "config.lang.ru"
+msgstr ""
+
+msgid "config.lang.zh"
+msgstr ""
 
 msgid "config.last_hash.description"
 msgstr "config.last_hash.描述"
@@ -1498,6 +1534,27 @@ msgstr "要将本产品用于商业用途，您必须购买其许可证"
 msgid "config.license.label"
 msgstr "许可证代码"
 
+msgid "config.log_level.CRITICAL"
+msgstr ""
+
+msgid "config.log_level.DEBUG"
+msgstr ""
+
+msgid "config.log_level.ERROR"
+msgstr ""
+
+msgid "config.log_level.INFO"
+msgstr ""
+
+msgid "config.log_level.SUCCESS"
+msgstr ""
+
+msgid "config.log_level.TRACE"
+msgstr ""
+
+msgid "config.log_level.WARNING"
+msgstr ""
+
 msgid "config.log_level.description"
 msgstr "config.log_level.description"
 
@@ -1516,10 +1573,31 @@ msgstr ""
 msgid "config.mieru_enable.label"
 msgstr ""
 
+msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
+msgstr ""
+
+msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+msgstr ""
+
+msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
+msgstr ""
+
 msgid "config.mieru_handshake.description"
 msgstr ""
 
 msgid "config.mieru_handshake.label"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
 msgstr ""
 
 msgid "config.mieru_multiplexing.description"
@@ -1641,11 +1719,20 @@ msgstr "指定您想要发布的包还是开发的包"
 msgid "config.package_mode.label"
 msgstr "🔄 包更新模式"
 
+msgid "config.panel_mode.child"
+msgstr ""
+
 msgid "config.panel_mode.description"
 msgstr "config.panel_mode.description"
 
 msgid "config.panel_mode.label"
 msgstr "config.panel_mode.label"
+
+msgid "config.panel_mode.parent"
+msgstr ""
+
+msgid "config.panel_mode.standalone"
+msgstr ""
 
 msgid "config.parent_admin_proxy_path.description"
 msgstr "config.parent_admin_proxy_path.description"
@@ -2497,6 +2584,9 @@ msgstr "✅ Go：正常性能 - 不支持广告"
 
 msgid "lib.telegram.python"
 msgstr "☑️ Python：性能低下"
+
+msgid "lib.telegram.telemt"
+msgstr ""
 
 msgid "log"
 msgstr "📄 Log"

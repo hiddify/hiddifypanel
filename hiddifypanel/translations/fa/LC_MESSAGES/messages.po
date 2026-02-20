@@ -1200,8 +1200,26 @@ msgstr "تنظیمات ادمین"
 msgid "config.admin_lang.description"
 msgstr "در این قسمت می‌توانید زبان پنل مدیریت را انتخاب کنید"
 
+msgid "config.admin_lang.en"
+msgstr ""
+
+msgid "config.admin_lang.fa"
+msgstr ""
+
 msgid "config.admin_lang.label"
 msgstr "🗺️ زبان پنل مدیریت"
+
+msgid "config.admin_lang.my"
+msgstr ""
+
+msgid "config.admin_lang.pt"
+msgstr ""
+
+msgid "config.admin_lang.ru"
+msgstr ""
+
+msgid "config.admin_lang.zh"
+msgstr ""
 
 msgid "config.admin_secret.description"
 msgstr "رمز ادمین برای دسترسی به پنل ادمین استفاده خواهد شد. "
@@ -1538,8 +1556,26 @@ msgid "config.lang.description"
 msgstr ""
 "زبان رابط کاربری را برای شخصی سازی تجربه خود در ناحیه کاربری انتخاب کنید."
 
+msgid "config.lang.en"
+msgstr ""
+
+msgid "config.lang.fa"
+msgstr ""
+
 msgid "config.lang.label"
 msgstr "🗺️ زبان محیط کاربران"
+
+msgid "config.lang.my"
+msgstr ""
+
+msgid "config.lang.pt"
+msgstr ""
+
+msgid "config.lang.ru"
+msgstr ""
+
+msgid "config.lang.zh"
+msgstr ""
 
 msgid "config.last_hash.description"
 msgstr "-"
@@ -1559,6 +1595,27 @@ msgstr "برای استفاده تجاری از این محصول باید مج�
 msgid "config.license.label"
 msgstr "کد مجوز"
 
+msgid "config.log_level.CRITICAL"
+msgstr ""
+
+msgid "config.log_level.DEBUG"
+msgstr ""
+
+msgid "config.log_level.ERROR"
+msgstr ""
+
+msgid "config.log_level.INFO"
+msgstr ""
+
+msgid "config.log_level.SUCCESS"
+msgstr ""
+
+msgid "config.log_level.TRACE"
+msgstr ""
+
+msgid "config.log_level.WARNING"
+msgstr ""
+
 msgid "config.log_level.description"
 msgstr "config.log_level.description"
 
@@ -1577,10 +1634,31 @@ msgstr ""
 msgid "config.mieru_enable.label"
 msgstr ""
 
+msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
+msgstr ""
+
+msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+msgstr ""
+
+msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
+msgstr ""
+
 msgid "config.mieru_handshake.description"
 msgstr ""
 
 msgid "config.mieru_handshake.label"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
+msgstr ""
+
+msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
 msgstr ""
 
 msgid "config.mieru_multiplexing.description"
@@ -1714,11 +1792,20 @@ msgstr ""
 msgid "config.package_mode.label"
 msgstr "🔄 حالت به روز رسانی"
 
+msgid "config.panel_mode.child"
+msgstr ""
+
 msgid "config.panel_mode.description"
 msgstr "config.panel_mode.description"
 
 msgid "config.panel_mode.label"
 msgstr "config.panel_mode.label"
+
+msgid "config.panel_mode.parent"
+msgstr ""
+
+msgid "config.panel_mode.standalone"
+msgstr ""
 
 msgid "config.parent_admin_proxy_path.description"
 msgstr "config.parent_admin_proxy_path.description"
@@ -2671,6 +2758,9 @@ msgstr "✅ Go : عملکرد معمولی - عدم پشتیبانی از تبل
 
 msgid "lib.telegram.python"
 msgstr "☑️ پایتون : عملکرد ضعیف"
+
+msgid "lib.telegram.telemt"
+msgstr ""
 
 msgid "log"
 msgstr "📄 لاگ"

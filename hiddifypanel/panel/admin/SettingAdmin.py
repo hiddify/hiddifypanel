@@ -214,7 +214,7 @@ def get_config_form():
                                         choices=[("disable", _("Disable")), ("all", _("All")), ("custom", _("Only Blocked and Local websites"))],
                                         description=_(f"config.{c.key}.description"),
                                         default=hconfig(c.key))
-
+            
             elif c.key == ConfigEnum.lang or c.key == ConfigEnum.admin_lang:
                 field = wtf.SelectField(
                     _(f"config.{c.key}.label"),
@@ -229,6 +229,7 @@ def get_config_form():
                 if hconfig(c.key) == "develop":
                     package_modes.append(("develop", _("Develop")))
                 field = wtf.SelectField(_(f"config.{c.key}.label"), choices=package_modes, description=_(f"config.{c.key}.description"), default=hconfig(c.key))
+            
 
             # the shadowsocks2022_method is hidden now, because it only has one option to choose
             # elif c.key == ConfigEnum.shadowsocks2022_method:
@@ -256,6 +257,7 @@ def get_config_form():
                     ("erlang", _("lib.telegram.erlang")),
                     ("python", _("lib.telegram.python")),
                     ("tgo", _("lib.telegram.go")),
+                    ("telemt", _("lib.telegram.telemt")),
                     # ("orig", _("lib.telegram.orignal")),
                 ]
                 field = wtf.SelectField(_("config.telegram_lib.label"), choices=libs, description=_(
@@ -276,6 +278,10 @@ def get_config_form():
                 render_kw = {'class': "ltr", 'maxlength': 2048}
                 field = custom_widgets.CKTextAreaField(_(f'config.{c.key}.label'), validators, default=c.value,
                                                        description=_(f'config.{c.key}.description'), render_kw=render_kw)
+            elif isinstance(c2.type, type) and issubclass(c2.type,config_enum.HEnum) and c2.type!=str:
+                items=[(f'{k}', _(f'config.{c.key}.{k}')) for k in c2.type]
+                field = wtf.SelectField(_(f"config.{c.key}.label"), choices=items, description=_(f"config.{c.key}.description"), default=hconfig(c.key))
+                
             else:
                 render_kw = {'class': "ltr"}
                 validators = []

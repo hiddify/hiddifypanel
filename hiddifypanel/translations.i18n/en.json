@@ -394,7 +394,13 @@
     },
     "admin_lang": {
       "description": "Choose Language For Admin Area",
-      "label": "🗺️ Admin Panel Language"
+      "en": "config.admin_lang.en",
+      "fa": "config.admin_lang.fa",
+      "label": "🗺️ Admin Panel Language",
+      "my": "config.admin_lang.my",
+      "pt": "config.admin_lang.pt",
+      "ru": "config.admin_lang.ru",
+      "zh": "config.admin_lang.zh"
     },
     "admin_secret": {
       "description": "Admin secret will be used for accessing admin panel",
@@ -576,7 +582,13 @@
     },
     "lang": {
       "description": "Select the language for the user interface to personalize your experience in the user area.",
-      "label": "🗺️ User Area Language"
+      "en": "config.lang.en",
+      "fa": "config.lang.fa",
+      "label": "🗺️ User Area Language",
+      "my": "config.lang.my",
+      "pt": "config.lang.pt",
+      "ru": "config.lang.ru",
+      "zh": "config.lang.zh"
     },
     "last_hash": {
       "description": "config.last_hash.description",
@@ -591,6 +603,13 @@
       "label": "License  Code"
     },
     "log_level": {
+      "CRITICAL": "config.log_level.CRITICAL",
+      "DEBUG": "config.log_level.DEBUG",
+      "ERROR": "config.log_level.ERROR",
+      "INFO": "config.log_level.INFO",
+      "SUCCESS": "config.log_level.SUCCESS",
+      "TRACE": "config.log_level.TRACE",
+      "WARNING": "config.log_level.WARNING",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
@@ -603,10 +622,17 @@
       "label": "Enable Mieru"
     },
     "mieru_handshake": {
+      "HANDSHAKE_DEFAULT": "config.mieru_handshake.HANDSHAKE_DEFAULT",
+      "HANDSHAKE_NO_WAIT": "config.mieru_handshake.HANDSHAKE_NO_WAIT",
+      "HANDSHAKE_STANDARD": "config.mieru_handshake.HANDSHAKE_STANDARD",
       "description": "config.mieru_handshake.description",
       "label": "config.mieru_handshake.label"
     },
     "mieru_multiplexing": {
+      "MULTIPLEXING_DEFAULT": "config.mieru_multiplexing.MULTIPLEXING_DEFAULT",
+      "MULTIPLEXING_HIGH": "config.mieru_multiplexing.MULTIPLEXING_HIGH",
+      "MULTIPLEXING_LOW": "config.mieru_multiplexing.MULTIPLEXING_LOW",
+      "MULTIPLEXING_MIDDLE": "config.mieru_multiplexing.MULTIPLEXING_MIDDLE",
       "description": "config.mieru_multiplexing.description",
       "label": "config.mieru_multiplexing.label"
     },
@@ -683,8 +709,11 @@
       "label": "🔄 Package Update Mode"
     },
     "panel_mode": {
+      "child": "config.panel_mode.child",
       "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label"
+      "label": "config.panel_mode.label",
+      "parent": "config.panel_mode.parent",
+      "standalone": "config.panel_mode.standalone"
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -1207,7 +1236,8 @@
     "telegram": {
       "erlang": "✴️ Erlang : Good Performance",
       "go": "✅ Go : Nornal Performance - No ad Support",
-      "python": "☑️ Python : Low Performance"
+      "python": "☑️ Python : Low Performance",
+      "telemt": "lib.telegram.telemt"
     }
   },
   "log": "📄 Log",

@@ -14,11 +14,11 @@ from hiddifypanel.database import db, db_execute
 
 
 from loguru import logger
-MAX_DB_VERSION = 120
+MAX_DB_VERSION = 130
 
 
-def _v112(child_id):
-    pass
+def _v113(child_id):
+    set_hconfig(ConfigEnum.telegram_lib, "telemt")
 
 def _v111(child_id):
     set_hconfig(ConfigEnum.path_naive, hutils.random.get_random_string(7, 15))

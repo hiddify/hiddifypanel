@@ -393,7 +393,13 @@
     },
     "admin_lang": {
       "description": "Escolha o idioma para a área administrativa",
-      "label": "Idioma do Painel Administrativo"
+      "en": "",
+      "fa": "",
+      "label": "Idioma do Painel Administrativo",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "admin_secret": {
       "description": "O segredo do administrador será usado para acessar o painel de administração",
@@ -575,7 +581,13 @@
     },
     "lang": {
       "description": "Selecione o idioma da interface do usuário para personalizar sua experiência na área do usuário.",
-      "label": "🗺️ Idioma da área do usuário"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ Idioma da área do usuário",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "last_hash": {
       "description": "config.last_hash.description",
@@ -590,6 +602,13 @@
       "label": "Código de licença"
     },
     "log_level": {
+      "CRITICAL": "",
+      "DEBUG": "",
+      "ERROR": "",
+      "INFO": "",
+      "SUCCESS": "",
+      "TRACE": "",
+      "WARNING": "",
       "description": "config.log_level.descrição",
       "label": "config.log_level.label"
     },
@@ -602,10 +621,17 @@
       "label": ""
     },
     "mieru_handshake": {
+      "HANDSHAKE_DEFAULT": "",
+      "HANDSHAKE_NO_WAIT": "",
+      "HANDSHAKE_STANDARD": "",
       "description": "",
       "label": ""
     },
     "mieru_multiplexing": {
+      "MULTIPLEXING_DEFAULT": "",
+      "MULTIPLEXING_HIGH": "",
+      "MULTIPLEXING_LOW": "",
+      "MULTIPLEXING_MIDDLE": "",
       "description": "",
       "label": ""
     },
@@ -682,8 +708,11 @@
       "label": "🔄 Modo de atualização de pacotes"
     },
     "panel_mode": {
+      "child": "",
       "description": "config.panel_mode.descrição",
-      "label": "config.panel_mode.label"
+      "label": "config.panel_mode.label",
+      "parent": "",
+      "standalone": ""
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -1198,7 +1227,8 @@
     "telegram": {
       "erlang": "✴️ Erlang: Bom desempenho",
       "go": "✅ Ir: alto desempenho - sem suporte de anúncios",
-      "python": "☑️ Python: baixo desempenho"
+      "python": "☑️ Python: baixo desempenho",
+      "telemt": ""
     }
   },
   "log": "📄 Log",
