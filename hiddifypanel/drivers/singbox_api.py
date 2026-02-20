@@ -54,8 +54,8 @@ class SingboxApi(DriverABS):
 
     def get_usage_imp(self, uuid):
         xray_client = self.get_singbox_client()
-        d = xray_client.get_client_download_traffic(f'{uuid}@hiddify.com', reset=True)
-        u = xray_client.get_client_upload_traffic(f'{uuid}@hiddify.com', reset=True)
+        d = xray_client.get_client_download_traffic(f'{uuid}', reset=True)
+        u = xray_client.get_client_upload_traffic(f'{uuid}', reset=True)
 
         res = None
         if d is None:

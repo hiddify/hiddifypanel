@@ -354,7 +354,7 @@ def add_mieru(base: dict, proxy: dict):
                 
     
 def add_wireguard(base: dict, proxy: dict):
-    if hutils.flask.is_client_version(hutils.flask.ClientVersion.hiddify_next, 4, 0, 0):
+    if hutils.flask.is_client_version(hutils.flask.ClientVersion.singbox, 1, 13, 0):
         
         base["private_key"] = proxy["wg_pk"]
         base["mtu"] = 1380
@@ -363,6 +363,9 @@ def add_wireguard(base: dict, proxy: dict):
             "pre_shared_key":proxy["wg_psk"],
             "address":base['server'],
             "port":base['server_port'],
+            "allowed_ips": [
+                "0.0.0.0/0","::/0"
+            ]
             # "address" : f'{proxy["wg_ipv4"]}/32'
         }]
         del base["server_port"]
