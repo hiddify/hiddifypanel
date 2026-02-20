@@ -51,7 +51,7 @@ def hurl_for(endpoint, **values):
 def get_user_agent() -> dict:
     ua = __parse_user_agent(request.user_agent.string)
 
-    if ua.get('v', 1) < 10:
+    if ua.get('v', 1) < 11:
         __parse_user_agent.invalidate_all()  # type:ignore
         ua = __parse_user_agent(request.user_agent.string)
     return ua
@@ -72,7 +72,7 @@ def __parse_user_agent(ua: str) -> dict:
     match = re.search(ua_version_pattern, ua)
     generic_version = list(map(int, match.group(1).split('.'))) if match else [0, 0, 0]
     res = {}
-    res['v'] = 10
+    res['v'] = 11
     res["is_bot"] = uaa.is_bot
     res["is_browser"] = re.match('^Mozilla', ua, re.IGNORECASE) and True
     res['os'] = uaa.os.family
@@ -97,8 +97,11 @@ def __parse_user_agent(ua: str) -> dict:
             res['singbox_version'] = [1, 7, 0]
         elif generic_version[0] < 3:
             res['singbox_version'] = [1, 8, 0]
-        else:
+        elif generic_version[0] < 4 :
             res['singbox_version'] = [1, 10, 0]
+        else:
+            res['singbox_version'] = [1, 13, 0]
+
 
     res['is_v2ray'] = re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE) and True
 
@@ -267,6 +270,7 @@ def extract_parent_info_from_url(url) -> Tuple[str | None, str | None, str | Non
 class ClientVersion(StrEnum):
     v2ryang = 'v2rayng_version'
     hiddify_next = 'hiddify_version'
+    singbox="singbox_version"
 
 
 def is_client_version(client: ClientVersion, major_v: int = 0, minor_v: int = 0, patch_v: int = 0) -> bool:
