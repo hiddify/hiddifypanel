@@ -1,7 +1,7 @@
 # Changelog
 
 
-## (unreleased)
+## v12.0.0 (2026-02-21)
 
 #### New
 
