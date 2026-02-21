@@ -39,6 +39,8 @@
 
 * Update translations. 
 
+* Update translations. 
+
 * Update dependenceis, fix cloudflare api, xray json , issue in user uuid. 
 
 * Update translations. 
