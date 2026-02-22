@@ -401,9 +401,6 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         'params': proxy.params or {},
     }
     
-    if hconfigs.get(ConfigEnum.tls_ech_enable) and not proxy.l3 in {ProxyL3.reality}:
-        if ech:=hutils.network.get_ech_info(base.get('sni')):
-            base['ech'] = ech
 
     
 
@@ -414,6 +411,10 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         base['password']="h"
         return base
     
+    if hconfigs.get(ConfigEnum.tls_ech_enable) and not proxy.l3 in {ProxyL3.reality}:
+        if ech:=hutils.network.get_ech_info(base.get('sni')):
+            base['ech'] = ech
+
     if base['proto'] in {ProxyProto.mieru}:
         base["password"]="h"
         
