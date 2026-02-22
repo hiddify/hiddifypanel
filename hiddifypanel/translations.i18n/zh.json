@@ -1141,7 +1141,7 @@
   },
   "singbox: ssh": "歌手盒：SSH",
   "special_reality_grpc": "Reality gRPC",
-  "special_reality_tcp": "🔂 Reality TCP",
+  "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "Reality xHTTP",
   "ssh": "SSH",
   "sub_link_only": "📳 仅适用于订阅链接（可以是 Direct、Relay 或 CDN）",
