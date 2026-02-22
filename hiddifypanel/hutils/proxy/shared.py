@@ -26,9 +26,11 @@ def get_ssh_hostkeys(hconfigs, dojson=False) -> list[str] | str:
 def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
     name = proxy.name
     l3 = proxy.l3
-    
+    if proxy.proto==ProxyProto.naive and not domain_db.need_valid_ssl():
+        return {'name': name, 'msg': "naive only supports valid cert", 'type': 'error', 'proto': proxy.proto}
     if proxy.proto!=ProxyProto.mieru and not port:
         return {'name': name, 'msg': "port not defined", 'type': 'error', 'proto': proxy.proto}
+    
     if "reality" not in l3 and 'reality' in domain_db.mode:
         return {'name': name, 'msg': "1reality proxy not in reality domain", 'type': 'debug', 'proto': proxy.proto}
 

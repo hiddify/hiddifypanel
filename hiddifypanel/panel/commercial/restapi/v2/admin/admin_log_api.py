@@ -15,7 +15,7 @@ class AdminInputLogfileSchema(Schema):
 
 class AdminLogApi(MethodView):
     @app.input(AdminInputLogfileSchema, arg_name="data", location='form')  # type: ignore
-    @app.output(list[fields.String(metadata={"description": "The html of the log"})]) # type: ignore
+    # @app.output(list[fields.String(metadata={"description": "The html of the log"})]) # type: ignore
     @login_required({Role.super_admin})
     def post(self, data):
         """System: View Log file"""

@@ -50,6 +50,45 @@ class Actions(FlaskView):
 
         return res
 
+    @login_required(roles={Role.admin})
+    def all_public_ports(self):
+        tcp_ports={80,443}
+        udp_ports={443,}
+        if hconfig(ConfigEnum.wireguard_enable):
+            udp_ports.add(hconfig(ConfigEnum.wireguard_port))
+        if hconfig(ConfigEnum.shadowsocks2022_enable) and (p:=hconfig(ConfigEnum.shadowsocks2022_port)):
+            udp_ports.add(p)
+            tcp_ports.add(p)
+        if hconfig(ConfigEnum.mieru_enable):
+            for p in hconfig(ConfigEnum.mieru_tcp_ports).split(","):
+                tcp_ports.add(p)
+            for p in hconfig(ConfigEnum.mieru_udp_ports).split(","):
+                udp_ports.add(p)
+        if hconfig(ConfigEnum.ssh_server_enable):
+            tcp_ports.add(hconfig(ConfigEnum.ssh_server_port))
+        
+        for p in (hconfig(ConfigEnum.tls_ports)).split(','):
+            tcp_ports.add(p)
+            udp_ports.add(p)
+        for p in hconfig(ConfigEnum.http_ports).split(','):
+            tcp_ports.add(p)
+
+        for d in Domain.query.all():
+            udp_ports.add(d.internal_port_tuic)
+            udp_ports.add(d.internal_port_naive)
+            udp_ports.add(d.internal_port_hysteria2)
+
+        def to_int(ports):
+            r={}
+            for p in ports:
+                try:
+                    if ip:=int(p):
+                        r.add(ip)
+                except:
+                    pass
+        return {"tcp":to_int(tcp_ports),"udp":to_int(udp_ports)}
+    
+
     @login_required(roles={Role.super_admin})
     @route('reinstall', methods=['POST'])
     def reinstall(self, complete_install=True, domain_changed=False):

@@ -143,7 +143,7 @@ class Domain(db.Model):
 
     @property
     def internal_port_naive(self):
-        if self.mode not in [DomainType.direct, DomainType.relay, DomainType.fake]:
+        if self.mode not in [DomainType.direct, DomainType.relay]:
             return 0
         # TODO: check validity of the range of the port
         return int(hconfig(ConfigEnum.naive_port, self.child_id)) + self.port_index

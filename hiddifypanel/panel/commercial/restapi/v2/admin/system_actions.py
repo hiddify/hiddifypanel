@@ -29,3 +29,12 @@ class AllConfigsApi(MethodView):
     def get(self):
         """System: All Configs for configuration"""
         return json.dumps(hiddify.all_configs_for_cli(), indent=2)
+
+
+
+class AllPublicPortsApi(MethodView):
+    decorators = [login_required({Role.admin})]
+
+    def get(self):
+        """Public Ports"""
+        return json.dumps(hutils.network.all_public_ports(), indent=2)

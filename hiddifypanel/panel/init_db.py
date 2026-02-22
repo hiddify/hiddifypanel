@@ -17,6 +17,14 @@ from loguru import logger
 MAX_DB_VERSION = 130
 
 
+def _v114(child_id):
+    db.session.bulk_save_objects([
+        Proxy(l3=ProxyL3.tls_h2_h1, transport=ProxyTransport.custom, cdn=ProxyCDN.relay, proto=ProxyProto.naive, enable=True, name="NaiveTLS"),
+        Proxy(l3=ProxyL3.h3_quic, transport=ProxyTransport.custom, cdn=ProxyCDN.relay, proto=ProxyProto.naive, enable=True, name="NaiveQuic"),
+        Proxy(l3=ProxyL3.custom, transport=ProxyTransport.tcp, cdn=ProxyCDN.relay, proto=ProxyProto.mieru, enable=True, name="MieruTCP"),
+        Proxy(l3=ProxyL3.custom, transport=ProxyTransport.udp, cdn=ProxyCDN.relay, proto=ProxyProto.mieru, enable=True, name="MieruUDP"),
+    ]    
+    )
 def _v113(child_id):
     set_hconfig(ConfigEnum.telegram_lib, "telemt")
 
