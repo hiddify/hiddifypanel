@@ -50,7 +50,7 @@
   "Delete?": "删除？",
   "Develop": "⚠️开发",
   "Direct": "➖ 直接",
-  "Direct mode means you want to use your server directly (for usual use), CDN means that you use your server on behind of a CDN provider.": "➡️ <b>直接：</b>如果您在仅 DNS 模式下在 DNS 提供商上专门配置域，请选择此模式。 （CDN 或代理模式关闭）<br>\n🔀 <b>CDN：</b>如果您的服务器域使用 CDN 提供商，请选择此模式。 （代理模式开启）<br>\n☑️ <b>自动 CDN IP 选择器：</b>此模式的功能与 CDN 模式类似，但根据 <a href='https://ircf.space' target='_blank' 提供的 IP 进行自动 IP 分配>ircf.space</a>。 Auto CDN IP 模式下，从域名解析 IP 地址，CDN 模式下，返回域名。<br>\n♾️ <b>中继：</b>如果您使用一台或多台中间服务器，请选择此模式。 <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>了解更多</a>\n<br>\n✴️ <b>Cloudflare Worker：</b>此模式可以在 Cloudflare 中自动为您的域创建工作人员。通过注册此域来简化工作人员的设置和管理，因为工作人员注册的必要步骤是在 Cloudflare 中自动处理的。\n<br>\n🆎 <b>假站点：</b>如果您想使用假域名（例如 Soft98.ir）绕过 SNI 白名单代理，请选择此模式。 （不建议）\n<br>\n🔂 <b>Reality：</b> 利用 Reality 协议创建多个域。\n<br>",
+  "Direct mode means you want to use your server directly (for usual use), CDN means that you use your server on behind of a CDN provider.": "➡️ <b>直接：</b>如果您在仅 DNS 模式下在 DNS 提供商上专门配置域，请选择此模式。 （CDN 或代理模式关闭）<br>\n🔀 <b>CDN：</b>如果您的服务器域使用 CDN 提供商，请选择此模式。 （代理模式开启）<br>\n♾️ <b>中继：</b>如果您使用一台或多台中间服务器，请选择此模式。 <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>了解更多</a>\n<br>\n✴️ <b>Cloudflare Worker：</b>此模式可以在 Cloudflare 中自动为您的域创建工作人员。通过注册此域来简化工作人员的设置和管理，因为工作人员注册的必要步骤是在 Cloudflare 中自动处理的。\n<br>\n🆎 <b>假站点：</b>如果您想使用假域名（例如 Soft98.ir）绕过 SNI 白名单代理，请选择此模式。 （不建议）\n<br>\n🔂 <b>Reality：</b> 利用 Reality 协议创建多个域。\n<br>",
   "Disable": "禁用",
   "Disk": "硬盘",
   "Domain": "域名",
