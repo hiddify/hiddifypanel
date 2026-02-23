@@ -614,7 +614,7 @@
       "label": "config.log_level.label"
     },
     "mieru": {
-      "description": "config.mieru.description",
+      "description": "The Mieru protocol is a secure and decentralized communication protocol designed to facilitate data transfer in distributed networks without the need for a central server",
       "label": "⚡️ Mieru"
     },
     "mieru_enable": {
