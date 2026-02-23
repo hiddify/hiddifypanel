@@ -618,7 +618,7 @@
       "label": "⚡️ Mieru"
     },
     "mieru_enable": {
-      "description": "Meiru is a fast Proxy.",
+      "description": "Meiru is a fast Proxy",
       "label": "Enable Mieru"
     },
     "mieru_handshake": {
