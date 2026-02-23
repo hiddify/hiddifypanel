@@ -737,7 +737,7 @@
     },
     "path_naive": {
       "description": "config.path_naive.description",
-      "label": "Naive Path"
+      "label": "ℹ️ Naive Path"
     },
     "path_splithttp": {
       "description": "XHTTP path",
