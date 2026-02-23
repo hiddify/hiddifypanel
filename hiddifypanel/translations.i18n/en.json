@@ -634,7 +634,7 @@
       "MULTIPLEXING_LOW": "config.mieru_multiplexing.MULTIPLEXING_LOW",
       "MULTIPLEXING_MIDDLE": "config.mieru_multiplexing.MULTIPLEXING_MIDDLE",
       "description": "config.mieru_multiplexing.description",
-      "label": "config.mieru_multiplexing.label"
+      "label": "Mieru Multiplexing Mode"
     },
     "mieru_tcp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
