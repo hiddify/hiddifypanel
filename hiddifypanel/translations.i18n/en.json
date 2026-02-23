@@ -615,7 +615,7 @@
     },
     "mieru": {
       "description": "config.mieru.description",
-      "label": "Mieru"
+      "label": "⚡️ Mieru"
     },
     "mieru_enable": {
       "description": "Meiru is a fast Proxy.",
