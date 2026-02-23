@@ -686,7 +686,7 @@
     },
     "naive_enable": {
       "description": "Naive is using exact chrome stack to avoid detection",
-      "label": "Enable Naive"
+      "label": "💭 Enable Naive"
     },
     "naive_port": {
       "description": "config.naive_port.description",
