@@ -1024,7 +1024,7 @@
       "label": "TLS ECH Value"
     },
     "tls_ech_enable": {
-      "description": "Adds ECH to generated TLS subscription links.",
+      "description": "Adds ECH to generated TLS subscription links",
       "label": "🔐 Enable TLS ECH"
     },
     "tls_fragment_enable": {
