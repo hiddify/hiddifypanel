@@ -685,7 +685,7 @@
       "label": "♍️ MUX Protocol"
     },
     "naive_enable": {
-      "description": "Naive is using exact chrome stack to avoid detection",
+      "description": "Naive is using exact Chrome stack to avoid detection",
       "label": "💭 Enable Naive"
     },
     "naive_port": {
