@@ -1,6 +1,24 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Add additional configs. 
+
+* Add public ports for relay servers. 
+
+* Add 7 days action to users, disable ip resolving in domain page, make domain page better. 
+
+#### Other
+
+* Disable ech for naive. 
+
+* Merge branch 'main' of github.com:hiddify/Hiddify-Panel. 
+
+
+
 ## v12.0.0 (2026-02-21)
 
 #### New
