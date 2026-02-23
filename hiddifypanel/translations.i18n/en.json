@@ -472,7 +472,7 @@
     },
     "default_useragent_string": {
       "description": "config.default_useragent_string.description",
-      "label": "Default User Agent"
+      "label": "🪪 Default User Agent"
     },
     "dns_server": {
       "description": "✳️ Default 1.1.1.1 <br>\n🚧 Block Malware 1.1.1.2 <br>\n🔞 Block Porn 1.1.1.3\n",
