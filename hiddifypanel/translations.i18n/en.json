@@ -689,7 +689,7 @@
       "label": "🛡 Enable Naive"
     },
     "naive_port": {
-      "description": "config.naive_port.description",
+      "description": "This option to configure a Naive port",
       "label": "〰️ Naive Port"
     },
     "netdata": {
