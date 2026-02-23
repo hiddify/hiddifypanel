@@ -633,7 +633,7 @@
       "MULTIPLEXING_HIGH": "📈 High",
       "MULTIPLEXING_LOW": "📉 Low",
       "MULTIPLEXING_MIDDLE": "📊 Middle",
-      "description": "config.mieru_multiplexing.description",
+      "description": "Mieru multiplexing enables efficient data transfer by allowing multiple connections to be handled simultaneously",
       "label": "🔄 Mieru Multiplexing Mode"
     },
     "mieru_tcp_ports": {
