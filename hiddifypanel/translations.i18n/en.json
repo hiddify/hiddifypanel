@@ -1025,7 +1025,7 @@
     },
     "tls_ech_enable": {
       "description": "Adds ECH to generated TLS subscription links.",
-      "label": "Enable 🛡️ TLS ECH"
+      "label": "🔐 Enable TLS ECH"
     },
     "tls_fragment_enable": {
       "description": "Under some circumstances, it can bypass the SNI blacklist system. <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(Read More)</a>",
