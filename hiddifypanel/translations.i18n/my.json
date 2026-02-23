@@ -935,7 +935,7 @@
     },
     "tuic_port": {
       "description": "(63000,60000) ကဲ့သို့သော port များကို ခွဲရန် ကော်မာကိုသုံးပါ",
-      "label": "TUIC Ports"
+      "label": "🔎 TUIC Ports"
     },
     "unique_id": {
       "description": "config.unique_id.description",

@@ -950,7 +950,7 @@
     },
     "tuic_port": {
       "description": "از کاما برای جدا کردن پروت‌ها استفاده کنید مثلا 63000,60000",
-      "label": "پورت‌های TUIC"
+      "label": "🔎 پورت‌های TUIC"
     },
     "unique_id": {
       "description": "config.unique_id.description",

@@ -1085,7 +1085,7 @@
     },
     "tuic_port": {
       "description": "Use comma to separate ports like ( 63000,60000 )",
-      "label": "TUIC Ports"
+      "label": "🔎 TUIC Ports"
     },
     "unique_id": {
       "description": "config.unique_id.description",

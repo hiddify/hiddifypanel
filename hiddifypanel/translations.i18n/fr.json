@@ -934,7 +934,7 @@
     },
     "tuic_port": {
       "description": "Utilisez une virgule pour séparer les ports comme ( 63000,60000 )",
-      "label": "Ports TUIC"
+      "label": "🔎 Ports TUIC"
     },
     "unique_id": {
       "description": "config.unique_id.description",
