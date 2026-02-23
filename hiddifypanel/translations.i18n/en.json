@@ -624,7 +624,7 @@
     "mieru_handshake": {
       "HANDSHAKE_DEFAULT": "📄 Default",
       "HANDSHAKE_NO_WAIT": "⏳ No Wait",
-      "HANDSHAKE_STANDARD": "config.mieru_handshake.HANDSHAKE_STANDARD",
+      "HANDSHAKE_STANDARD": "📝 Standard",
       "description": "config.mieru_handshake.description",
       "label": "🤝 Mieru Handshake"
     },
