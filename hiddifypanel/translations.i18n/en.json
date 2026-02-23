@@ -736,7 +736,7 @@
       "label": "ℹ️ HTTP Upgrade Path"
     },
     "path_naive": {
-      "description": "config.path_naive.description",
+      "description": "For Naive Link",
       "label": "ℹ️ Naive Path"
     },
     "path_splithttp": {
