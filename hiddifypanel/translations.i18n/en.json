@@ -642,7 +642,7 @@
     },
     "mieru_udp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
-      "label": "Mieru UDP Ports"
+      "label": "🔎 Mieru UDP Ports"
     },
     "mux": {
       "description": "MUX (Multiplex) configurations could be set in this section",
