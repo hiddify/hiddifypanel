@@ -1188,7 +1188,7 @@
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Your Domains Changed. please do not forget to copy Admin links, otherwise you can not access to the panel anymore",
-    "current_server_IPs": "Current Server IPs are",
+    "current_server_IPs": "🔢 Current Server IPs are",
     "description": "Please fill in this field carefully and correctly. Otherwise, proxies will run into problems. Please visit <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Help</a> to learn how to create a subdomain.",
     "domain": "Domain",
     "domain_fronting": {
