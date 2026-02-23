@@ -72,7 +72,7 @@
     "title": "Donation"
   },
   "Download App": "<i class='fa-solid fa-download'></i> Download App",
-  "Download Domain": "Download Domain",
+  "Download Domain": "📈 Download Domain",
   "Edit": "Edit",
   "Edit Proxy Names": "✏️ Modifying Proxies",
   "Enable": "❇️ Enable",
@@ -1213,7 +1213,7 @@
   "download": "Direct Download",
   "download_domain": {
     "description": "Only for XHTTP: This allows, for example, downloads to happen from a different domain than uploads. This makes detection harder and can also improve overall quality.",
-    "label": "Download Domain"
+    "label": "📈 Download Domain"
   },
   "fake": "🆎 Fake Site",
   "gRPC": "➿ gRPC",
