@@ -638,7 +638,7 @@
     },
     "mieru_tcp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
-      "label": "🅿️ Mieru TCP Ports"
+      "label": "🔍 Mieru TCP Ports"
     },
     "mieru_udp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
