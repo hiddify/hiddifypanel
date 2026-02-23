@@ -629,10 +629,10 @@
       "label": "config.mieru_handshake.label"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "config.mieru_multiplexing.MULTIPLEXING_DEFAULT",
-      "MULTIPLEXING_HIGH": "config.mieru_multiplexing.MULTIPLEXING_HIGH",
-      "MULTIPLEXING_LOW": "config.mieru_multiplexing.MULTIPLEXING_LOW",
-      "MULTIPLEXING_MIDDLE": "config.mieru_multiplexing.MULTIPLEXING_MIDDLE",
+      "MULTIPLEXING_DEFAULT": "📄 Default",
+      "MULTIPLEXING_HIGH": "📈 High",
+      "MULTIPLEXING_LOW": "📉 Low",
+      "MULTIPLEXING_MIDDLE": "📊 Middle",
       "description": "config.mieru_multiplexing.description",
       "label": "🔄 Mieru Multiplexing Mode"
     },
