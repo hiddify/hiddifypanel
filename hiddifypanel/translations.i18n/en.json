@@ -625,7 +625,7 @@
       "HANDSHAKE_DEFAULT": "📄 Default",
       "HANDSHAKE_NO_WAIT": "⏳ No Wait",
       "HANDSHAKE_STANDARD": "📝 Standard",
-      "description": "config.mieru_handshake.description",
+      "description": "Mieru Handshake establishes a secure connection by verifying and authenticating both parties before data exchange",
       "label": "🤝 Mieru Handshake"
     },
     "mieru_multiplexing": {
