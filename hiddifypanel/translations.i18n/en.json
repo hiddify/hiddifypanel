@@ -626,7 +626,7 @@
       "HANDSHAKE_NO_WAIT": "config.mieru_handshake.HANDSHAKE_NO_WAIT",
       "HANDSHAKE_STANDARD": "config.mieru_handshake.HANDSHAKE_STANDARD",
       "description": "config.mieru_handshake.description",
-      "label": "config.mieru_handshake.label"
+      "label": "🤝 Mieru Handshake"
     },
     "mieru_multiplexing": {
       "MULTIPLEXING_DEFAULT": "📄 Default",
