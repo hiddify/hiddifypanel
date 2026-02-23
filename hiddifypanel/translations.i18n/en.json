@@ -690,7 +690,7 @@
     },
     "naive_port": {
       "description": "This option to configure a Naive port",
-      "label": "〰️ Naive Port"
+      "label": "🔎 Naive Port"
     },
     "netdata": {
       "description": "For displaying resources. uses your Server's CPU but it is not too much.",
