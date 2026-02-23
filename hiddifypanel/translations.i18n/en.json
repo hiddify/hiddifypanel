@@ -622,7 +622,7 @@
       "label": "⚡️ Enable Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "config.mieru_handshake.HANDSHAKE_DEFAULT",
+      "HANDSHAKE_DEFAULT": "📄 Default",
       "HANDSHAKE_NO_WAIT": "config.mieru_handshake.HANDSHAKE_NO_WAIT",
       "HANDSHAKE_STANDARD": "config.mieru_handshake.HANDSHAKE_STANDARD",
       "description": "config.mieru_handshake.description",
