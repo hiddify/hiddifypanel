@@ -16,7 +16,10 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 130
 
-
+def _v115(child_id):
+    set_hconfig(ConfigEnum.additional_configs_urls, "")
+    set_hconfig(ConfigEnum.additional_configs_singbox, "")
+    set_hconfig(ConfigEnum.additional_configs_xrayjson, "")
 def _v114(child_id):
     db.session.bulk_save_objects([
         Proxy(l3=ProxyL3.tls_h2_h1, transport=ProxyTransport.custom, cdn=ProxyCDN.relay, proto=ProxyProto.naive, enable=True, name="NaiveTLS"),

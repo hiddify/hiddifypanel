@@ -1208,6 +1208,30 @@ msgstr "Неверный Proxy Path Это должна быть строка AS
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Неверный токен Telegram bot"
 
+msgid "config.additional_configs.description"
+msgstr ""
+
+msgid "config.additional_configs.label"
+msgstr ""
+
+msgid "config.additional_configs_singbox.description"
+msgstr ""
+
+msgid "config.additional_configs_singbox.label"
+msgstr ""
+
+msgid "config.additional_configs_urls.description"
+msgstr ""
+
+msgid "config.additional_configs_urls.label"
+msgstr ""
+
+msgid "config.additional_configs_xrayjson.description"
+msgstr ""
+
+msgid "config.additional_configs_xrayjson.label"
+msgstr ""
+
 msgid "config.admin.description"
 msgstr ""
 "Раздел предназначен для настройки параметров, связанных с администратором."

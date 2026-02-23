@@ -387,6 +387,22 @@
     "Invalid_port": "Porta inválida. deve ser inteiro separado por vírgula, por exemplo 2052,2053",
     "Invalid_proxy_path": "Caminho de proxy inválido. Deve ser uma string ASCI (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Token do bot telegram inválido",
+    "additional_configs": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_singbox": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_urls": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_xrayjson": {
+      "description": "",
+      "label": ""
+    },
     "admin": {
       "description": "A seção Admin é para definir as configurações relacionadas ao administrador",
       "label": "Configurações de administrador"

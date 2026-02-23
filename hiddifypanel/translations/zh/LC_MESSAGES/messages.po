@@ -1169,6 +1169,30 @@ msgstr "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)"
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Telegram 机器人令牌无效"
 
+msgid "config.additional_configs.description"
+msgstr ""
+
+msgid "config.additional_configs.label"
+msgstr ""
+
+msgid "config.additional_configs_singbox.description"
+msgstr ""
+
+msgid "config.additional_configs_singbox.label"
+msgstr ""
+
+msgid "config.additional_configs_urls.description"
+msgstr ""
+
+msgid "config.additional_configs_urls.label"
+msgstr ""
+
+msgid "config.additional_configs_xrayjson.description"
+msgstr ""
+
+msgid "config.additional_configs_xrayjson.label"
+msgstr ""
+
 msgid "config.admin.description"
 msgstr "管理部分用于配置管理相关设置"
 

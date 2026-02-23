@@ -1203,6 +1203,30 @@ msgstr "Invalid Proxy Path. It should be ASCI string (a-z A-Z 0-9)"
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Invalid Telegram Bot Token"
 
+msgid "config.additional_configs.description"
+msgstr "config.additional_configs.description"
+
+msgid "config.additional_configs.label"
+msgstr "Additional Configs"
+
+msgid "config.additional_configs_singbox.description"
+msgstr "You can append other singbox outbounds to the result"
+
+msgid "config.additional_configs_singbox.label"
+msgstr "Additional Configs for Singbox"
+
+msgid "config.additional_configs_urls.description"
+msgstr "You can add http:// https:// or v2ray format porxies like vless://"
+
+msgid "config.additional_configs_urls.label"
+msgstr "Additional URLs"
+
+msgid "config.additional_configs_xrayjson.description"
+msgstr "Additional outbounds for Xray Json"
+
+msgid "config.additional_configs_xrayjson.label"
+msgstr "Additional Configs for Xray JSON"
+
 msgid "config.admin.description"
 msgstr "Admin section is for configuring admin related settings"
 
@@ -1643,37 +1667,37 @@ msgid "config.mieru_enable.label"
 msgstr "Enable Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr "config.mieru_handshake.HANDSHAKE_DEFAULT"
+msgstr "HANDSHAKE_DEFAULT"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+msgstr "HANDSHAKE_NO_WAIT"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr "config.mieru_handshake.HANDSHAKE_STANDARD"
+msgstr "HANDSHAKE_STANDARD"
 
 msgid "config.mieru_handshake.description"
 msgstr "config.mieru_handshake.description"
 
 msgid "config.mieru_handshake.label"
-msgstr "config.mieru_handshake.label"
+msgstr "Mieru Handshake"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+msgstr "MULTIPLEXING_DEFAULT"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+msgstr "MULTIPLEXING_HIGH"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_LOW"
+msgstr "MULTIPLEXING_LOW"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
+msgstr "MULTIPLEXING_MIDDLE"
 
 msgid "config.mieru_multiplexing.description"
 msgstr "config.mieru_multiplexing.description"
 
 msgid "config.mieru_multiplexing.label"
-msgstr "config.mieru_multiplexing.label"
+msgstr "Mieru Multiplexing"
 
 msgid "config.mieru_tcp_ports.description"
 msgstr "Comma separated integers indicating the ports (1234,1235,1237)"

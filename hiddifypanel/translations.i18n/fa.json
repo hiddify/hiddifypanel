@@ -387,6 +387,22 @@
     "Invalid_port": "پورت نامعتبر است. اعداد باید با کاما از هم جدا شود، مثلاً 1000,1001",
     "Invalid_proxy_path": "مسیر پروکسی نامعتبر است. باید رشته متن asci باشد. ( شامل a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "توکن ربات تلگرام نامعتبر است",
+    "additional_configs": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_singbox": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_urls": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_xrayjson": {
+      "description": "",
+      "label": ""
+    },
     "admin": {
       "description": "تنظیمات عمومی بخش مدیریت",
       "label": "تنظیمات ادمین"

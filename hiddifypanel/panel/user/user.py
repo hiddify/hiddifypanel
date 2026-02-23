@@ -1,3 +1,5 @@
+import json
+
 import user_agents
 import datetime
 import random
@@ -9,11 +11,15 @@ from flask_classful import FlaskView, route
 from flask_babel import gettext as _
 
 
+import requests
+from concurrent.futures import ThreadPoolExecutor
+
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.panel import hiddify
 from hiddifypanel.models import *
-from hiddifypanel import hutils
+from hiddifypanel import  hutils
+from hiddifypanel.cache import cache
 
 
 class UserView(FlaskView):
@@ -62,8 +68,20 @@ class UserView(FlaskView):
         # if not hconfig(ConfigEnum.sub_full_xray_json_enable):
         #     return 'The Full Xray subscription is disabled'
         c = get_common_data(g.account.uuid, mode="new")
-        configs = hutils.proxy.xrayjson.configs_as_json(c['domains'], c['user'], c['expire_days'], c['profile_title'])
-        return add_headers(configs, c, 'application/json')
+        all_configs = hutils.proxy.xrayjson.configs_as_json(c['domains'], c['user'], c['expire_days'], c['profile_title'])
+
+        
+        link_res=get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n"))
+        for item in [hconfig(ConfigEnum.additional_configs_xrayjson),*link_res]:
+                if jsitem:=parse_json(item):
+                    if isinstance(jsitem,list):
+                        all_configs.extends(jsitem)
+                    else:    
+                        all_configs.append(jsitem)
+        if len(all_configs)==1:
+            all_configs=all_configs[0]
+        json_configs = json.dumps(all_configs, indent=2, cls=hutils.proxy.ProxyJsonEncoder)        
+        return add_headers(json_configs, c, 'application/json')
 
     @route("/singbox/")
     @route("/singbox")
@@ -242,7 +260,17 @@ class UserView(FlaskView):
         if request.method == 'HEAD':
             resp = ""
         else:
-            resp = hutils.proxy.singbox.configs_as_json(**c)
+            base_config = hutils.proxy.singbox.configs_as_json(**c)
+            link_res=get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n"))
+            for item in [hconfig(ConfigEnum.additional_configs_singbox),*link_res]:
+                if jsitem:=parse_json(item):
+                    if outbounds:=jsitem.get("outbounds"):
+                        base_config.setdefault("outbounds",[]).extend(outbounds)
+                    if endpoints:=jsitem.get("endpoints"):
+                        base_config.setdefault("endpoints",[]).extend(endpoints)
+                
+
+            resp = json.dumps(base_config, indent=4, cls=hutils.proxy.ProxyJsonEncoder)
 
         return add_headers(resp, c, 'application/json')
 
@@ -283,7 +311,9 @@ class UserView(FlaskView):
         else:
             # render_template('all_configs.txt', **c, base64=hutils.encode.do_base_64)
             resp = hutils.proxy.xray.make_v2ray_configs(c['domains'], c['user'], c['expire_days'], c['ip_debug'])
-
+            link_res=get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n"))
+            resp+="\n"+"\n\n".join(link_res)
+        
         if base64:
             resp = hutils.encode.do_base_64(resp)
         return add_headers(resp, c)
@@ -431,3 +461,53 @@ def add_headers(res, c, mimetype="text/plain"):
     resp.headers['profile-title'] = 'base64:' + hutils.encode.do_base_64(c['profile_title'])
 
     return resp
+
+
+
+
+
+
+
+ 
+
+
+@cache.cache(ttl=300)
+def fetch_url(url:str):
+    if not (url.startswith("http://")or url.startswith("https://")):
+        return url
+    try:
+        resp = requests.get(url, timeout=2,headers={
+            "User-Agent":[request.user_agent.string]
+        })
+        resp.raise_for_status()
+        content = resp.text
+ 
+    
+        return content
+ 
+    except Exception:
+    
+        return ""
+ 
+def get_and_merge_urls(urls:list[str], max_workers=8):
+    if len(urls)==0 or len(urls)==1 and urls[0]=="":
+        return []
+    urls=[u.replace('{{UUID}}',g.account.uuid) for u in urls]
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        contents = list(
+            executor.map(
+                lambda url: fetch_url(url),
+                urls
+            )
+        )
+ 
+    return contents
+ 
+
+
+def parse_json(s:str):
+    try:
+        return json.loads(s)
+    except:
+        pass
+    return {}

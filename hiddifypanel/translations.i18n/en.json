@@ -388,6 +388,22 @@
     "Invalid_port": "Invalid Port. it should be comma separated Integer e.g.  2052,2053",
     "Invalid_proxy_path": "Invalid Proxy Path. It should be ASCI string (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Invalid Telegram Bot Token",
+    "additional_configs": {
+      "description": "config.additional_configs.description",
+      "label": "Additional Configs"
+    },
+    "additional_configs_singbox": {
+      "description": "You can append other singbox outbounds to the result",
+      "label": "Additional Configs for Singbox"
+    },
+    "additional_configs_urls": {
+      "description": "You can add http:// https:// or v2ray format porxies like vless://",
+      "label": "Additional URLs"
+    },
+    "additional_configs_xrayjson": {
+      "description": "Additional outbounds for Xray Json",
+      "label": "Additional Configs for Xray JSON"
+    },
     "admin": {
       "description": "Admin section is for configuring admin related settings",
       "label": "Admin Settings"
@@ -622,19 +638,19 @@
       "label": "Enable Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "config.mieru_handshake.HANDSHAKE_DEFAULT",
-      "HANDSHAKE_NO_WAIT": "config.mieru_handshake.HANDSHAKE_NO_WAIT",
-      "HANDSHAKE_STANDARD": "config.mieru_handshake.HANDSHAKE_STANDARD",
+      "HANDSHAKE_DEFAULT": "HANDSHAKE_DEFAULT",
+      "HANDSHAKE_NO_WAIT": "HANDSHAKE_NO_WAIT",
+      "HANDSHAKE_STANDARD": "HANDSHAKE_STANDARD",
       "description": "config.mieru_handshake.description",
-      "label": "config.mieru_handshake.label"
+      "label": "Mieru Handshake"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "config.mieru_multiplexing.MULTIPLEXING_DEFAULT",
-      "MULTIPLEXING_HIGH": "config.mieru_multiplexing.MULTIPLEXING_HIGH",
-      "MULTIPLEXING_LOW": "config.mieru_multiplexing.MULTIPLEXING_LOW",
-      "MULTIPLEXING_MIDDLE": "config.mieru_multiplexing.MULTIPLEXING_MIDDLE",
+      "MULTIPLEXING_DEFAULT": "MULTIPLEXING_DEFAULT",
+      "MULTIPLEXING_HIGH": "MULTIPLEXING_HIGH",
+      "MULTIPLEXING_LOW": "MULTIPLEXING_LOW",
+      "MULTIPLEXING_MIDDLE": "MULTIPLEXING_MIDDLE",
       "description": "config.mieru_multiplexing.description",
-      "label": "config.mieru_multiplexing.label"
+      "label": "Mieru Multiplexing"
     },
     "mieru_tcp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
@@ -1204,7 +1220,6 @@
     "reality": {
       "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN"
     },
-    "current_server_IPs":"Current Server IPs are",
     "resolveip": {
       "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",
       "label": "Resolve IP"

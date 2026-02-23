@@ -1173,6 +1173,30 @@ msgstr "Caminho de proxy inválido. Deve ser uma string ASCI (a-z A-Z 0-9)"
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Token do bot telegram inválido"
 
+msgid "config.additional_configs.description"
+msgstr ""
+
+msgid "config.additional_configs.label"
+msgstr ""
+
+msgid "config.additional_configs_singbox.description"
+msgstr ""
+
+msgid "config.additional_configs_singbox.label"
+msgstr ""
+
+msgid "config.additional_configs_urls.description"
+msgstr ""
+
+msgid "config.additional_configs_urls.label"
+msgstr ""
+
+msgid "config.additional_configs_xrayjson.description"
+msgstr ""
+
+msgid "config.additional_configs_xrayjson.label"
+msgstr ""
+
 msgid "config.admin.description"
 msgstr ""
 "A seção Admin é para definir as configurações relacionadas ao administrador"
