@@ -1,153 +1,969 @@
 {% extends 'admin-layout.html' %}
-
-
-
-{% block title %}Home | Admin |Hiddify{% endblock %}
-
+{% block title %}Home | Admin | Hiddify{% endblock %}
 {% block body %}
 <style>
-    .loading-icon {
-        position: relative;
-        /* width: 20px; */
-        /* height: 20px;  */
-        /* margin:50px auto; */
-        -webkit-animation: fa-spin 2s infinite linear;
-        animation: fa-spin 2s infinite linear;
+/* ========== استایل‌های پایه (دارک مود پیش‌فرض) ========== */
+body {
+    background: linear-gradient(-45deg, #0a0a1a, #1a1a3e, #16213e, #0f3460);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: #e0e0e0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(2px 2px at 60% 70%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.2), transparent);
+    background-size: 200% 200%;
+    animation: stars 30s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes stars {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-200px); }
+}
+
+.container-fluid {
+    padding: 1.8rem 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.space-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    min-height: 155px;
+}
+
+.space-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.space-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px 0 rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.space-card:hover::before {
+    opacity: 1;
+}
+
+/* گرادیانت‌های دارک مود (شفاف) */
+.gradient-purple { background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(168, 85, 247, 0.15)); }
+.gradient-blue { background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(147, 197, 253, 0.15)); }
+.gradient-green { background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(134, 239, 172, 0.15)); }
+.gradient-orange { background: linear-gradient(135deg, rgba(251, 146, 60, 0.25), rgba(253, 186, 116, 0.15)); }
+.gradient-turquoise { background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(94, 234, 212, 0.15)); }
+.gradient-red { background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(248, 113, 113, 0.15)); }
+.gradient-pink { background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(244, 114, 182, 0.15)); }
+.gradient-sky { background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(103, 232, 249, 0.15)); }
+.gradient-gray { background: linear-gradient(135deg, rgba(107, 114, 128, 0.25), rgba(156, 163, 175, 0.15)); }
+
+.card-inner {
+    padding: 1.25rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+.icon-container {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.875rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.space-card:hover .icon-container {
+    transform: rotate(-5deg) scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+.icon-container i {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.card-title-modern {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+}
+
+.card-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.625rem;
+    line-height: 1.2;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.space-card:hover .card-value {
+    text-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+}
+
+.progress-modern {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0.625rem 0;
+}
+
+.progress-bar-modern {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.9));
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar-modern::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.card-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: auto;
+    line-height: 1.5;
+}
+
+.circular-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.625rem;
+}
+
+.circular-progress {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.circular-progress svg {
+    transform: rotate(-90deg);
+    width: 60px;
+    height: 60px;
+}
+
+.circular-progress circle {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+.circular-progress .bg {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+.circular-progress .progress {
+    stroke: url(#gradient);
+    stroke-dasharray: 169.65;
+    stroke-dashoffset: 169.65;
+    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.circular-progress .progress-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.processes-list {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.process-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+}
+
+.process-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateX(3px);
+}
+
+.process-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.process-info {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.process-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.process-bar {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.process-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.9));
+    transition: width 0.5s ease;
+}
+
+.process-percent {
+    font-size: 0.675rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    min-width: 30px;
+    text-align: right;
+}
+
+.network-speed {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.625rem;
+}
+
+.speed-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.speed-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.speed-value {
+    display: flex;
+    flex-direction: column;
+}
+
+.speed-num {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.speed-unit {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 0.15rem;
+}
+
+.loading-icon {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.fade-in-update {
+    animation: fadeInUpdate 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInUpdate {
+    from { opacity: 0.5; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (min-width: 992px) {
+    .container-fluid {
+        padding: 2rem 2.5rem;
+    }
+    .space-card {
+        min-height: 150px;
+    }
+    .card-inner {
+        padding: 1.125rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .container-fluid {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.75rem;
+    }
+    .space-card {
+        min-height: 135px;
+        border-radius: 14px;
+    }
+    .card-inner {
+        padding: 1rem;
+    }
+    .icon-container {
+        width: 42px;
+        height: 42px;
+        margin-bottom: 0.75rem;
+    }
+    .icon-container i {
+        font-size: 1.25rem;
+    }
+    .card-title-modern {
+        font-size: 0.75rem;
+    }
+    .card-value {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+    .circular-progress {
+        width: 52px;
+        height: 52px;
+    }
+    .circular-progress svg {
+        width: 52px;
+        height: 52px;
+    }
+    .circular-progress circle {
+        stroke-width: 5;
+        stroke-dasharray: 147.65;
+        stroke-dashoffset: 147.65;
+    }
+    .circular-progress .progress-value {
+        font-size: 0.8rem;
+    }
+    .processes-list {
+        gap: 0.3rem;
+    }
+    .process-item {
+        padding: 0.3rem 0.4rem;
+    }
+    .network-speed {
+        gap: 0.75rem;
+    }
+    .speed-icon {
+        width: 30px;
+        height: 30px;
+    }
+    .speed-num {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-value {
+        font-size: 1.3rem;
+    }
+    .card-title-modern {
+        font-size: 0.7rem;
+    }
+    .network-speed {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .circular-progress-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.svg-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.ltr {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+.text-orange { color: #fb923c !important; }
+.text-lime { color: #86efac !important; }
+
+.row.g-5.g-xl-5 {
+    --bs-gutter-y: 1.5rem;
+}
+
+@media (min-width: 1200px) {
+    .row.g-5.g-xl-5 {
+        --bs-gutter-y: 1.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .space-card.gradient-gray, .space-card.gradient-pink {
+        min-height: 170px;
+        border-radius: 12px;
+    }
+    
+    .space-card.gradient-gray .card-inner, .space-card.gradient-pink .card-inner {
+        padding: 0.9rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .space-card.gradient-gray .card-title-modern, .space-card.gradient-pink .card-title-modern {
+        font-size: 0.78rem;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.4px;
+    }
+    
+    .space-card.gradient-gray .card-value, .space-card.gradient-pink .card-value {
+        font-size: 1.35rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .space-card.gradient-gray .circular-progress-container, .space-card.gradient-pink .circular-progress-container {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem;
+        margin-top: 0.4rem;
+    }
+    
+    .space-card.gradient-gray .circular-progress, .space-card.gradient-pink .circular-progress {
+        width: 58px;
+        height: 58px;
+        flex-shrink: 0;
+    }
+    
+    .space-card.gradient-gray .circular-progress svg, .space-card.gradient-pink .circular-progress svg {
+        width: 58px;
+        height: 58px;
+    }
+    
+    .space-card.gradient-gray .circular-progress circle, .space-card.gradient-pink .circular-progress circle {
+        cx: 29;
+        cy: 29;
+        r: 26;
+        stroke-width: 5.5;
+    }
+    
+    .space-card.gradient-gray .progress-value, .space-card.gradient-pink .progress-value {
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+    
+    .space-card.gradient-gray .processes-list, .space-card.gradient-pink .processes-list {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-left: 0.3rem;
+    }
+    
+    .space-card.gradient-gray .process-item, .space-card.gradient-pink .process-item {
+        padding: 0.25rem 0.35rem;
+        font-size: 0.68rem;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 6px;
+    }
+    
+    .space-card.gradient-gray .process-name, .space-card.gradient-pink .process-name {
+        font-size: 0.68rem;
+        font-weight: 600;
+    }
+    
+    .space-card.gradient-gray .process-percent, .space-card.gradient-pink .process-percent {
+        font-size: 0.72rem;
+        font-weight: 700;
+        min-width: 28px;
+    }
+}
+
+@media (min-width: 992px) {
+    .space-card.gradient-sky .card-desc {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.92);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 0.6rem 0.8rem;
+        border-radius: 10px;
+        margin-top: 0.6rem;
+        line-height: 1.5;
+        border-left: 3px solid rgba(103, 232, 249, 0.4);
+        box-shadow: inset 0 1px 4px rgba(0,0,0,0.15);
+    }
+    
+    .space-card.gradient-sky .card-desc strong {
+        color: #67e8f9;
+        font-weight: 700;
+    }
+}
+
+@media (min-width: 992px) {
+    .circular-progress-container {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
     }
 
-    .info-box .info-box-number {
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .circular-progress {
+        flex-shrink: 0;
+        width: 64px;
+        height: 64px;
     }
+
+    .circular-progress svg {
+        width: 64px;
+        height: 64px;
+    }
+
+    .circular-progress circle {
+        cx: 32;
+        cy: 32;
+        r: 29;
+        stroke-width: 6;
+    }
+
+    .processes-list {
+        flex-grow: 1;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 10px;
+        padding: 0.7rem 0.9rem;
+        border-left: 3px solid rgba(103, 232, 249, 0.5);
+        box-shadow: inset 0 1px 6px rgba(0,0,0,0.15);
+    }
+
+    .space-card.gradient-gray .circular-progress-container,
+    .space-card.gradient-pink .circular-progress-container,
+    .space-card.gradient-sky .circular-progress-container {
+        min-height: 80px;
+        align-items: flex-start;
+    }
+
+    .space-card.gradient-sky .processes-list {
+        font-size: 0.82rem;
+        line-height: 1.55;
+    }
+
+    .space-card.gradient-sky .processes-list strong {
+        color: #67e8f9;
+        font-weight: 700;
+    }
+}
+
+@media (max-width: 768px) {
+    .space-card.gradient-sky {
+        display: flex !important;
+        min-height: 140px;
+        border-radius: 12px;
+    }
+    
+    .space-card.gradient-sky .card-inner {
+        padding: 0.8rem;
+    }
+    
+    .space-card.gradient-sky .circular-progress {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .space-card.gradient-sky .circular-progress svg {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .space-card.gradient-sky .circular-progress circle {
+        cx: 22.5;
+        cy: 22.5;
+        r: 19.5;
+        stroke-width: 4;
+    }
+    
+    .space-card.gradient-sky .progress-value {
+        font-size: 0.7rem;
+    }
+    
+    .space-card.gradient-sky .processes-list {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.3;
+    }
+}
+
+/* ========== لایت مود با رنگ‌های کاملاً مات و پررنگ ========== */
+body.light,
+html.light body {
+    background: linear-gradient(-45deg, #f0f4f8, #d9e2ec, #bcccdc, #9bb3cf) !important;
+    color: #1e293b;
+}
+
+/* حذف تمام پس‌زمینه‌های سفید مزاحم */
+body.light .content-wrapper,
+body.light .content,
+body.light .content-header,
+body.light .container-fluid {
+    background: transparent !important;
+}
+
+body.light .space-card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+body.light .space-card::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* رنگ‌های کاملاً مات و پررنگ برای لایت مود */
+body.light .gradient-purple { background: linear-gradient(135deg, #c084fc, #d8b4fe) !important; }
+body.light .gradient-blue { background: linear-gradient(135deg, #60a5fa, #93c5fd) !important; }
+body.light .gradient-green { background: linear-gradient(135deg, #4ade80, #86efac) !important; }
+body.light .gradient-orange { background: linear-gradient(135deg, #fb923c, #fdba74) !important; }
+body.light .gradient-turquoise { background: linear-gradient(135deg, #2dd4bf, #5eead4) !important; }
+body.light .gradient-red { background: linear-gradient(135deg, #f87171, #fca5a5) !important; }
+body.light .gradient-pink { background: linear-gradient(135deg, #f472b6, #f9a8d4) !important; }
+body.light .gradient-sky { background: linear-gradient(135deg, #38bdf8, #7dd3fc) !important; }
+body.light .gradient-gray { background: linear-gradient(135deg, #9ca3af, #d1d5db) !important; }
+
+body.light .card-title-modern {
+    color: #1e293b !important;
+}
+
+body.light .card-value {
+    color: #0f172a !important;
+    text-shadow: none;
+}
+
+body.light .icon-container {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light .icon-container i {
+    color: #0f172a !important;
+}
+
+body.light .card-desc {
+    color: #334155 !important;
+}
+
+body.light .progress-modern {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.light .progress-bar-modern {
+    background: linear-gradient(90deg, #475569, #1e293b);
+}
+
+body.light .progress-bar-modern::after {
+    display: none;
+}
+
+body.light .circular-progress .bg {
+    stroke: rgba(0, 0, 0, 0.15);
+}
+
+body.light .circular-progress .progress-value {
+    color: #0f172a !important;
+}
+
+body.light .processes-list {
+    background: rgba(0, 0, 0, 0.02);
+    border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+body.light .process-item {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.light .process-item:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+body.light .process-name {
+    color: #0f172a !important;
+}
+
+body.light .process-bar {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.light .process-bar-fill {
+    background: linear-gradient(90deg, #475569, #1e293b);
+}
+
+body.light .process-percent {
+    color: #334155 !important;
+}
+
+body.light .speed-icon {
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light .speed-icon i {
+    color: #0f172a !important;
+}
+
+body.light .speed-num {
+    color: #0f172a !important;
+}
+
+body.light .speed-unit {
+    color: #475569 !important;
+}
+
+body.light .text-orange { color: #c2410c !important; }
+body.light .text-lime { color: #166534 !important; }
+
+@media (min-width: 992px) {
+    body.light .space-card.gradient-sky .card-desc {
+        background: rgba(0, 0, 0, 0.02);
+        border-left: 3px solid rgba(0, 0, 0, 0.15);
+        color: #1e293b;
+    }
+    
+    body.light .space-card.gradient-sky .card-desc strong {
+        color: #0f172a;
+    }
+}
 </style>
 
+<svg class="svg-defs">
+    <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+</svg>
 
-
-{% macro info_box(id,icon,title,number,percentage,description,coloring=False,color_class='secondary') -%}
-<div class="col-md-4  col-sm-6">
-    <a id={{id}} class="info-box {{color_class}} {{ (" bg-gradient-"+ ("danger" if percentage>90 else ("warning" if percentage>75 else ""))) if coloring else ""}} {%if "disk"==id %} d-none d-md-flex {%endif%}">
-        <span class="info-box-icon"><i class="{{icon}}"></i></span>
-        <div class="info-box-content">
-            <span class="info-box-text htitle">{{title}}</span>
-            <span class="info-box-number ltr hnumber">{{number}}</span>
-            <div class="progress">
-                <div class="progress-bar hprogress" style="width: {{percentage}}%">
+{% macro info_box(id, icon, title, number, percentage, description, coloring=False, color_class='gradient-purple') -%}
+<div class="col-xl-4 col-lg-6 col-md-6 mb-3 mb-xl-4">
+    <div id="{{id}}" class="space-card {{color_class}}">
+        <div class="card-inner">
+            <div class="icon-container">
+                <i class="{{icon}}"></i>
+            </div>
+            <div class="card-title-modern htitle">{{title}}</div>
+            <div class="card-value ltr hnumber">{{number|safe}}</div>
+            
+            {% if coloring %}
+            <div class="circular-progress-container">
+                <div class="circular-progress">
+                    <svg>
+                        <circle class="bg" cx="30" cy="30" r="27"></circle>
+                        <circle class="progress hprogress" cx="30" cy="30" r="27" style="stroke-dashoffset: 169.65; stroke: #60a5fa44;"></circle>
+                    </svg>
+                    <span class="progress-value">0%</span>
+                </div>
+                <div class="processes-list hdescription">
+                    {{description|safe}}
                 </div>
             </div>
-            <span class="progress-description hdescription">
-                {{description}}
-            </span>
-        </div>
-
-    </a>
-</div>
-{%- endmacro -%}
-
-
-{% macro info_box2(id,icon,title,number,percentage,description,coloring=False) -%}
-<div class="col-md-4  col-sm-6">
-    <div id="{{id}}" class="small-box bg-gradient-secondary {{ (" bg-gradient-"+ ("danger" if percentage>90 else ("warning" if percentage>75 else ""))) if coloring else ""}}">
-        <div class="inner">
-            <h3>{{title}}</h3>
-            <span class="info-box-number ltr">{{number}}</span>
-            <div class="progress">
-                <div class="progress-bar" style="width: {{percentage}}%">
-                </div>
+            {% else %}
+            <div class="progress-modern">
+                <div class="progress-bar-modern hprogress" style="width: {{percentage}}%;"></div>
             </div>
-            <span class="progress-description">
-                {{description}}
-            </span>
+            <div class="card-desc hdescription">{{description}}</div>
+            {% endif %}
         </div>
-        <span class="icon"><i class="{{icon}}"></i></span>
-
-
     </div>
 </div>
-{%- endmacro -%}
-<div class="row">
-    {% set onlines=usage_history['m5']['online'] %}
-    {% set total_users=usage_history['total']['users'] %}
-    {{info_box("today","fa-solid fa-calendar", _("Today Usage"),
-    ((usage_history['today']['usage']/1024**3)|round(1)) ~ " GB",
-    usage_history['today']['online']/((1,total_users)|max)*100,
-    _("Online Users") ~": "~ usage_history['today']['online'] ~ " / "~ total_users,
-    color_class="bg-h-purple"
-    )}}
-    {{info_box("yesterday","fa-solid fa-calendar-day", _("Yesterday Usage"),
-    ((usage_history['yesterday']['usage']/1024**3)|round(1)) ~ " GB",
-    usage_history['yesterday']['online']/((1,total_users)|max)*100,
-    _("Online Users") ~": "~ usage_history['yesterday']['online'] ~ " / "~ total_users,
-    color_class="bg-h-blue"
-    )}}
-    {{info_box("last_30_days","fa-solid fa-calendar-days", _("Month Usage"),
-    ((usage_history['last_30_days']['usage']/1024**3)|round(1)) ~ " GB",
-    usage_history['last_30_days']['online']/((1,total_users)|max)*100,
-    _("Online Users") ~": "~ usage_history['last_30_days']['online'] ~ " / "~ total_users,
-    color_class="bg-h-green"
-    )}}
-    {{info_box("total","fa-solid fa-chart-pie", _("Total Usage"),
-    ((usage_history['total']['usage']/1024**3)|round(1)) ~ " GB",
-    usage_history['total']['online']/((1,total_users)|max)*100,
-    _("Online Users") ~": "~ usage_history['total']['online'] ~ " / "~ total_users,
-    color_class="bg-h-orange"
-    )}}
+{%- endmacro %}
 
-
-
-
-
-
-    {{info_box("online","fa-solid fa-users",
-    _("Online Users"),
-    onlines ~ " / "~ total_users,
-    onlines/((1,total_users)|max)*100,
-    _('In 5 minutes'),
-    color_class="bg-h-turquoise"
-    )}}
-    {{info_box("network","fa-solid fa-network-wired", _("Network"),
-    ('<i class="fa-solid fa-arrow-up  text-orange"></i> <i class="fa-solid fa-spinner loading-icon"></i> <small>Mb/s</small> &nbsp;&nbsp;<i class="fa-solid fa-arrow-down text-lime"></i> <i
-        class="fa-solid fa-spinner loading-icon"></i> <small>Mb/s</small>')|safe,
-    0,
-    (stats['system']['net_sent_cumulative_GB']|round(1)) ~ "GB " ~_("From Last Restart"),
-    color_class="bg-h-red"
-    )}}
-    <!-- ((stats['system']['load_avg_1min']*100)|int) ~ " % "  , 
-(stats['system']['load_avg_1min']*100)|int,   -->
-    {{info_box("cpu","fa-solid fa-microchip", _("CPU %(cores)s Cores", cores=stats['system']['num_cpus']),
-
-    ((stats['system']['cpu_percent'])|int) ~ " % " ,
-    (stats['system']['cpu_percent'])|int,
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][0][0] ~ " &rlm;"|safe ~ ((stats['top5']['cpu'][0][1])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][1][0] ~ " &rlm;"|safe ~ ((stats['top5']['cpu'][1][1])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][2][0] ~ " &rlm;"|safe ~ ((stats['top5']['cpu'][2][1])|int) ~ "%",
-    coloring=True,
-    color_class="bg-h-grey"
-    )}}
-    {{info_box("ram","fa-solid fa-memory", _("RAM"),
-    (stats['system']['ram_used']|round(3)) ~ " / " ~ (stats['system']['ram_total']|round(3)) ~ "GB (" ~((stats['system']['ram_used']*100/stats['system']['ram_total'])|int)~" %)",
-    stats['system']['ram_used']*100/stats['system']['ram_total'],
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][0][0] ~ " &rlm;"|safe ~ ((stats['top5']['ram'][0][1]*100/stats['system']['ram_total'])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][1][0] ~ " &rlm;"|safe ~ ((stats['top5']['ram'][1][1]*100/stats['system']['ram_total'])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][2][0] ~ " &rlm;"|safe ~ ((stats['top5']['ram'][2][1]*100/stats['system']['ram_total'])|int) ~ "% ",
-    coloring=True,
-    color_class="bg-h-pink"
-    )}}
-    {#info_box("connections","fa-solid fa-signal", _("Connections/IP"),
-    stats['system']['total_unique_ips'] ~ " / " ~ stats['system']['total_connections'],
-    stats['system']['total_unique_ips']*100/stats['system']['total_connections'],
-    _("CDN make it incorrect")
-    )#}
-    {{info_box("disk","fa-solid fa-hard-drive", _("Disk"),
-    (stats['system']['disk_used']|round(1)) ~ " / "~(stats['system']['disk_total']|round(1))~"GB",
-    stats['system']['disk_used']*100/stats['system']['disk_total'],
-    _("Hiddify") ~ ": " ~ (stats['system']['hiddify_used']|round(1)) ~ "GB",
-    coloring=True,
-    color_class='bg-h-sky'
-    )}}
-
+<div class="container-fluid">
+    <div class="row g-5 g-xl-5">
+        {% set onlines=usage_history['m5']['online'] %}
+        {% set total_users=usage_history['total']['users'] %}
+        
+        {{info_box("today", "fa-solid fa-calendar-day", _("Today Usage"),
+        ((usage_history['today']['usage']/1024**3)|round(1)) ~ " GB",
+        usage_history['today']['online']/((1,total_users)|max)*100,
+        _("Online Users") ~": "~ usage_history['today']['online'] ~ " / "~ total_users,
+        color_class="gradient-purple"
+        )}}
+        
+        {{info_box("yesterday", "fa-solid fa-calendar", _("Yesterday Usage"),
+        ((usage_history['yesterday']['usage']/1024**3)|round(1)) ~ " GB",
+        usage_history['yesterday']['online']/((1,total_users)|max)*100,
+        _("Online Users") ~": "~ usage_history['yesterday']['online'] ~ " / "~ total_users,
+        color_class="gradient-blue"
+        )}}
+        
+        {{info_box("last_30_days", "fa-solid fa-calendar-week", _("Month Usage"),
+        ((usage_history['last_30_days']['usage']/1024**3)|round(1)) ~ " GB",
+        usage_history['last_30_days']['online']/((1,total_users)|max)*100,
+        _("Online Users") ~": "~ usage_history['last_30_days']['online'] ~ " / "~ total_users,
+        color_class="gradient-green"
+        )}}
+        
+        {{info_box("total", "fa-solid fa-chart-pie", _("Total Usage"),
+        ((usage_history['total']['usage']/1024**3)|round(1)) ~ " GB",
+        usage_history['total']['online']/((1,total_users)|max)*100,
+        _("Online Users") ~": "~ usage_history['total']['online'] ~ " / "~ total_users,
+        color_class="gradient-orange"
+        )}}
+        
+        {{info_box("online", "fa-solid fa-users", _("Online Users"),
+        onlines ~ " / "~ total_users,
+        onlines/((1,total_users)|max)*100,
+        _('In 5 minutes'),
+        color_class="gradient-turquoise"
+        )}}
+        
+        {{info_box("network", "fa-solid fa-network-wired", _("Network"),
+        '<div class="network-speed">
+            <div class="speed-item">
+                <div class="speed-icon" style="background: rgba(251, 146, 60, 0.25);">
+                    <i class="fa-solid fa-arrow-up text-orange"></i>
+                </div>
+                <div class="speed-value">
+                    <span class="speed-num ltr">0</span>
+                    <span class="speed-unit">Mb/s</span>
+                </div>
+            </div>
+            <div class="speed-item">
+                <div class="speed-icon" style="background: rgba(134, 239, 172, 0.25);">
+                    <i class="fa-solid fa-arrow-down text-lime"></i>
+                </div>
+                <div class="speed-value">
+                    <span class="speed-num ltr">0</span>
+                    <span class="speed-unit">Mb/s</span>
+                </div>
+            </div>
+        </div>',
+        0,
+        '0 GB ' ~ _("From Last Restart"),
+        color_class="gradient-red"
+        )}}
+        
+        {{info_box("cpu", "fa-solid fa-microchip", _("CPU %(cores)s Cores", cores=stats['system']['num_cpus']|default('?')),
+        "0%",
+        0,
+        '<div class="process-item"><i class="fa-solid fa-spinner loading-icon"></i> در حال بارگذاری...</div>',
+        coloring=True,
+        color_class="gradient-gray"
+        )}}
+        
+        {{info_box("ram", "fa-solid fa-memory", _("RAM"),
+        "0 / ? GB",
+        0,
+        '<div class="process-item"><i class="fa-solid fa-spinner loading-icon"></i> در حال بارگذاری...</div>',
+        coloring=True,
+        color_class="gradient-pink"
+        )}}
+        
+        {{info_box("disk", "fa-solid fa-hard-drive", _("Disk"),
+        "در حال بارگذاری...",
+        0,
+        '<div class="process-item"><i class="fa-solid fa-spinner loading-icon"></i> در حال بارگذاری...</div>',
+        coloring=True,
+        color_class="gradient-sky"
+        )}}
+    </div>
 </div>
 
-</div>
 {% if hutils.node.is_parent() %}
 {% include 'parent_dash.html' %}
 {% endif %}
@@ -156,142 +972,192 @@
 {% block tail_js %}
 {{super()}}
 <script>
-    var last_bytes_sent = "{{stats['system']['bytes_sent_cumulative']}}";
-    var last_bytes_recv = "{{stats['system']['bytes_recv_cumulative']}}";
-    var refresh_s = 4;
-    function update_box(id, title, number, percentage, description, coloring) {
-        if (title != undefined && title != "")
-            $("#" + id).find(".htitle").html(title)
-        $("#" + id).find(".hnumber").html(number)
-        $("#" + id).find(".hprogress").css('width', percentage + "%")
-        $("#" + id).find(".hdescription").html(description)
-        if (coloring == true) {
-            $("#" + id).removeClass('bg-gradient-danger')
-            $("#" + id).removeClass('bg-gradient-warning')
-            $("#" + id).addClass("info-box")
-            if (percentage > 90) {
-                $("#" + id).addClass("bg-gradient-danger")
-            } else if (percentage > 75) {
-                $("#" + id).addClass("bg-gradient-warning")
-            } else {
-                // $("#"+id).addClass("bg-gradient-secondary")
-            }
+// اضافه کردن کلاس light به body در صورت نبودن darkmode=true
+if (window.location.href.indexOf('darkmode=true') === -1) {
+    document.body.classList.add('light');
+}
+
+var last_bytes_sent = "{{stats['system']['bytes_sent_cumulative']|default(0)}}";
+var last_bytes_recv = "{{stats['system']['bytes_recv_cumulative']|default(0)}}";
+var refresh_s = 4;
+
+function update_box(id, title, number, percentage, description, coloring) {
+    if (title !== undefined && title !== "") {
+        $("#" + id).find(".htitle").html(title);
+    }
+    
+    var numberEl = $("#" + id).find(".hnumber");
+    numberEl.html(number);
+    numberEl.addClass("fade-in-update");
+    setTimeout(function() {
+        numberEl.removeClass("fade-in-update");
+    }, 500);
+    
+    $("#" + id).find(".hprogress").each(function() {
+        var $this = $(this);
+        if ($this.prop("tagName").toLowerCase() === "circle") {
+            var radius = parseFloat($this.attr("r"));
+            var circumference = 2 * Math.PI * radius;
+            var offset = circumference - (circumference * percentage / 100);
+            $this.css("stroke-dashoffset", offset);
+            $this.closest(".circular-progress").find(".progress-value").html(Math.round(percentage) + "%");
+        } else {
+            $this.css("width", percentage + "%");
+        }
+    });
+    
+    $("#" + id).find(".hdescription").html(description);
+    
+    if (coloring === true) {
+        var progressCircle = $("#" + id).find(".circular-progress circle.progress");
+        if (percentage > 90) {
+            progressCircle.css("stroke", "#ef4444");
+        } else if (percentage > 75) {
+            progressCircle.css("stroke", "#f59e0b");
+        } else {
+            progressCircle.css("stroke", "url(#gradient)");
         }
     }
+}
 
-    // update_box("cpu","test","23%",.83,"DDDDDD",true)
+function strband(num) {
+    if (num < 1) return num.toFixed(3);
+    if (num < 10) return num.toFixed(2);
+    if (num < 100) return num.toFixed(1);
+    return Math.round(num);
+}
 
-    function strband(num) {
-        if (num < 1)
-            return num.toFixed(3)
-        if (num < 10)
-            return num.toFixed(2)
-        if (num < 100)
-            return num.toFixed(1)
-        return Math.round(num)
-    }
+function update_from_json(data) {
+    const usage_history = data['usage_history'] || {};
+    const stats = data['stats'] || {system: {}, top5: {cpu: [], ram: []}};
+    const onlines = usage_history['m5'] ? usage_history['m5'].online : 0;
+    const total_users = usage_history['total'] ? usage_history['total'].users : 1;
 
-    function update_from_json(data) {
-        // Use local variables instead of globals
-        const usage_history = data['usage_history'];
-        const onlines = usage_history['m5']['online'];
-        const total_users = usage_history['total']['users'];
-        const stats = data['stats'];
-        
-        info_box("today", "fa-solid fa-calendar", "Today Usage",
-            ((usage_history['today']['usage'] / Math.pow(1024, 3)).toFixed(1)) + " GB",
-            usage_history['today']['online'] / Math.max(1, total_users) * 100,
-            "{{_('Online Users')}}" + ": " + usage_history['today']['online'] + " / " + total_users
-        );
-
-        info_box("yesterday", "fa-solid fa-calendar-day", "Yesterday Usage",
-            ((usage_history['yesterday']['usage'] / Math.pow(1024, 3)).toFixed(1)) + " GB",
-            usage_history['yesterday']['online'] / Math.max(1, total_users) * 100,
-            "{{_('Online Users')}}" + ": " + usage_history['yesterday']['online'] + " / " + total_users
-        );
-
-        info_box("last_30_days", "fa-solid fa-calendar-days", "Month Usage",
-            ((usage_history['last_30_days']['usage'] / Math.pow(1024, 3)).toFixed(1)) + " GB",
-            usage_history['last_30_days']['online'] / Math.max(1, total_users) * 100,
-            "{{_('Online Users')}}" + ": " + usage_history['last_30_days']['online'] + " / " + total_users
-        );
-
-        info_box("total", "fa-solid fa-chart-pie", "Total Usage",
-            ((usage_history['total']['usage'] / Math.pow(1024, 3)).toFixed(1)) + " GB",
-            usage_history['total']['online'] / Math.max(1, total_users) * 100,
-            "{{_('Online Users')}}" + ": " + usage_history['total']['online'] + " / " + total_users
-        );
-
-        info_box("online", "fa-solid fa-users", "Online Users",
-            onlines + " / " + total_users,
-            onlines / Math.max(1, total_users) * 100,
-            "{{_('In 5 minutes')}}"
-        );
-
-        info_box("cpu", "fa-solid fa-microchip", "CPU",
-            // (stats['system']['load_avg_5min'] * 100).toFixed(0) + " %",
-            // (stats['system']['load_avg_5min'] * 100).toFixed(0),
-            (stats['system']['cpu_percent']).toFixed(0) + " %",
-            (stats['system']['cpu_percent']).toFixed(0),
-            "<i class='fa-solid fa-gauge'></i> " + stats['top5']['cpu'][0][0] + " &rlm;" + (stats['top5']['cpu'][0][1]).toFixed(0) + "% &rlm; " +
-            " <i class='fa-solid fa-gauge'></i> " + stats['top5']['cpu'][1][0] + " &rlm;" + (stats['top5']['cpu'][1][1]).toFixed(0) + "% &rlm; " +
-            " <i class='fa-solid fa-gauge'></i> " + stats['top5']['cpu'][2][0] + " &rlm;" + (stats['top5']['cpu'][2][1]).toFixed(0) + "%",
-            true
-        );
-        sendstr = strband(((stats['system']['bytes_sent_cumulative'] - last_bytes_sent) * 8 / refresh_s / 1024 / 1024))
-        recvstr = strband(((stats['system']['bytes_recv_cumulative'] - last_bytes_recv) * 8 / refresh_s / 1024 / 1024))
-        last_bytes_sent = stats['system']['bytes_sent_cumulative'];
-        last_bytes_recv = stats['system']['bytes_recv_cumulative'];
-
-        info_box("network", "fa-solid fa-network-wired", "Network",
-            '<i class="fa-solid fa-arrow-up  text-orange"></i> ' + sendstr + " <small>Mb/s</small> " + ' &nbsp;<i class="fa-solid fa-arrow-down text-lime"></i> ' + recvstr + " <small>Mb/s</small>",
-            0,
-            stats['system']['net_sent_cumulative_GB'].toFixed(1) + "GB " + "{{_('From Last Restart')}}"
-        );
-
-
-        info_box("ram", "fa-solid fa-memory", "RAM",
-            stats['system']['ram_used'].toFixed(1) + " / " + stats['system']['ram_total'].toFixed(1) + "GB (" + (stats['system']['ram_used'] * 100 / stats['system']['ram_total']).toFixed(0) + " %)",
-            stats['system']['ram_used'] * 100 / stats['system']['ram_total'].toFixed(0),
-            "<i class='fa-solid fa-gauge'></i> " + stats['top5']['ram'][0][0] + " &rlm;" + (stats['top5']['ram'][0][1] * 100 / stats['system']['ram_total']).toFixed(0) + "% &rlm; " +
-            " <i class='fa-solid fa-gauge'></i> " + stats['top5']['ram'][1][0] + " &rlm;" + (stats['top5']['ram'][1][1] * 100 / stats['system']['ram_total']).toFixed(0) + "% &rlm; " +
-            " <i class='fa-solid fa-gauge'></i> " + stats['top5']['ram'][2][0] + " &rlm;" + (stats['top5']['ram'][2][1] * 100 / stats['system']['ram_total']).toFixed(0) + "% ",
-            true
-        );
-
-        // info_box("network", "fa-solid fa-network-wired", "Network",
-        // stats['system']['net_sent_cumulative_GB'].toFixed(1) + "GB",
-        // 0,
-        // "{{_('From Last Restart')}}"
-        // );
-
-        info_box("disk", "fa-solid fa-hard-drive", "Disk",
-            stats['system']['disk_used'].toFixed(1) + " / " + stats['system']['disk_total'].toFixed(1) + "GB",
-            stats['system']['disk_used'] * 100 / stats['system']['disk_total'],
-            "Hiddify" + ": " + stats['system']['hiddify_used'].toFixed(1) + "GB",
-            true
-        );
+    update_box("today",
+        "{{_('Today Usage')}}",
+        ((usage_history['today'] ? usage_history['today'].usage : 0) / Math.pow(1024, 3)).toFixed(1) + " GB",
+        (usage_history['today'] ? usage_history['today'].online : 0) / Math.max(1, total_users) * 100,
+        "{{_('Online Users')}}: " + (usage_history['today'] ? usage_history['today'].online : 0) + " / " + total_users
+    );
+    
+    update_box("yesterday",
+        "{{_('Yesterday Usage')}}",
+        ((usage_history['yesterday'] ? usage_history['yesterday'].usage : 0) / Math.pow(1024, 3)).toFixed(1) + " GB",
+        (usage_history['yesterday'] ? usage_history['yesterday'].online : 0) / Math.max(1, total_users) * 100,
+        "{{_('Online Users')}}: " + (usage_history['yesterday'] ? usage_history['yesterday'].online : 0) + " / " + total_users
+    );
+    
+    update_box("last_30_days",
+        "{{_('Month Usage')}}",
+        ((usage_history['last_30_days'] ? usage_history['last_30_days'].usage : 0) / Math.pow(1024, 3)).toFixed(1) + " GB",
+        (usage_history['last_30_days'] ? usage_history['last_30_days'].online : 0) / Math.max(1, total_users) * 100,
+        "{{_('Online Users')}}: " + (usage_history['last_30_days'] ? usage_history['last_30_days'].online : 0) + " / " + total_users
+    );
+    
+    update_box("total",
+        "{{_('Total Usage')}}",
+        ((usage_history['total'] ? usage_history['total'].usage : 0) / Math.pow(1024, 3)).toFixed(1) + " GB",
+        (usage_history['total'] ? usage_history['total'].online : 0) / Math.max(1, total_users) * 100,
+        "{{_('Online Users')}}: " + (usage_history['total'] ? usage_history['total'].online : 0) + " / " + total_users
+    );
+    
+    update_box("online",
+        "{{_('Online Users')}}",
+        onlines + " / " + total_users,
+        onlines / Math.max(1, total_users) * 100,
+        "{{_('In 5 minutes')}}"
+    );
+    
+    var bytes_sent = stats.system ? stats.system.bytes_sent_cumulative : 0;
+    var bytes_recv = stats.system ? stats.system.bytes_recv_cumulative : 0;
+    var sendstr = strband((bytes_sent - last_bytes_sent) * 8 / refresh_s / 1024 / 1024);
+    var recvstr = strband((bytes_recv - last_bytes_recv) * 8 / refresh_s / 1024 / 1024);
+    last_bytes_sent = bytes_sent;
+    last_bytes_recv = bytes_recv;
+    
+    var networkHTML = '<div class="network-speed">' +
+        '<div class="speed-item">' +
+            '<div class="speed-icon" style="background: rgba(251, 146, 60, 0.25);">' +
+                '<i class="fa-solid fa-arrow-up text-orange"></i>' +
+            '</div>' +
+            '<div class="speed-value">' +
+                '<span class="speed-num ltr">' + sendstr + '</span>' +
+                '<span class="speed-unit">Mb/s</span>' +
+            '</div>' +
+        '</div>' +
+        '<div class="speed-item">' +
+            '<div class="speed-icon" style="background: rgba(134, 239, 172, 0.25);">' +
+                '<i class="fa-solid fa-arrow-down text-lime"></i>' +
+            '</div>' +
+            '<div class="speed-value">' +
+                '<span class="speed-num ltr">' + recvstr + '</span>' +
+                '<span class="speed-unit">Mb/s</span>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+    
+    update_box("network",
+        "{{_('Network')}}",
+        networkHTML,
+        0,
+        (stats.system ? stats.system.net_sent_cumulative_GB : 0).toFixed(1) + "GB {{_('From Last Restart')}}"
+    );
+    
+    update_box("cpu",
+        "{{_('CPU %(cores)s Cores', cores=stats.system.num_cpus|default('?'))}}",
+        (stats.system ? stats.system.cpu_percent : 0).toFixed(0) + "%",
+        stats.system ? stats.system.cpu_percent : 0,
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-microchip"></i></div><div class="process-info"><div class="process-name">' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[0] ? stats.top5.cpu[0][0] : '-') + '</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[0] ? stats.top5.cpu[0][1].toFixed(0) : 0) + '%"></div></div></div><div class="process-percent">' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[0] ? stats.top5.cpu[0][1].toFixed(0) : 0) + '%</div></div>' +
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-microchip"></i></div><div class="process-info"><div class="process-name">' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[1] ? stats.top5.cpu[1][0] : '-') + '</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[1] ? stats.top5.cpu[1][1].toFixed(0) : 0) + '%"></div></div></div><div class="process-percent">' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[1] ? stats.top5.cpu[1][1].toFixed(0) : 0) + '%</div></div>' +
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-microchip"></i></div><div class="process-info"><div class="process-name">' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[2] ? stats.top5.cpu[2][0] : '-') + '</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[2] ? stats.top5.cpu[2][1].toFixed(0) : 0) + '%"></div></div></div><div class="process-percent">' + (stats.top5 && stats.top5.cpu && stats.top5.cpu[2] ? stats.top5.cpu[2][1].toFixed(0) : 0) + '%</div></div>',
+        true
+    );
+    
+    var ram_total = stats.system ? stats.system.ram_total : 1;
+    update_box("ram",
+        "{{_('RAM')}}",
+        (stats.system ? stats.system.ram_used : 0).toFixed(1) + " / " + ram_total.toFixed(1) + " GB",
+        (stats.system ? stats.system.ram_used : 0) * 100 / ram_total,
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-memory"></i></div><div class="process-info"><div class="process-name">' + (stats.top5 && stats.top5.ram && stats.top5.ram[0] ? stats.top5.ram[0][0] : '-') + '</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + ((stats.top5 && stats.top5.ram && stats.top5.ram[0] ? stats.top5.ram[0][1] * 100 / ram_total : 0).toFixed(0)) + '%"></div></div></div><div class="process-percent">' + ((stats.top5 && stats.top5.ram && stats.top5.ram[0] ? stats.top5.ram[0][1] * 100 / ram_total : 0).toFixed(0)) + '%</div></div>' +
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-memory"></i></div><div class="process-info"><div class="process-name">' + (stats.top5 && stats.top5.ram && stats.top5.ram[1] ? stats.top5.ram[1][0] : '-') + '</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + ((stats.top5 && stats.top5.ram && stats.top5.ram[1] ? stats.top5.ram[1][1] * 100 / ram_total : 0).toFixed(0)) + '%"></div></div></div><div class="process-percent">' + ((stats.top5 && stats.top5.ram && stats.top5.ram[1] ? stats.top5.ram[1][1] * 100 / ram_total : 0).toFixed(0)) + '%</div></div>' +
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-memory"></i></div><div class="process-info"><div class="process-name">' + (stats.top5 && stats.top5.ram && stats.top5.ram[2] ? stats.top5.ram[2][0] : '-') + '</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + ((stats.top5 && stats.top5.ram && stats.top5.ram[2] ? stats.top5.ram[2][1] * 100 / ram_total : 0).toFixed(0)) + '%"></div></div></div><div class="process-percent">' + ((stats.top5 && stats.top5.ram && stats.top5.ram[2] ? stats.top5.ram[2][1] * 100 / ram_total : 0).toFixed(0)) + '%</div></div>',
+        true
+    );
+    
+    var disk_total = stats.system ? stats.system.disk_total : 1;
+    var hiddify_used = stats.system ? stats.system.hiddify_used : 0;
+    var hiddify_percent = ((hiddify_used / disk_total) * 100).toFixed(0);
+    update_box("disk",
+        "{{_('Disk')}}",
+        (stats.system ? stats.system.disk_used : 0).toFixed(1) + " / " + disk_total.toFixed(1) + " GB",
+        (stats.system ? stats.system.disk_used : 0) * 100 / disk_total,
+        '<div class="process-item"><div class="process-icon"><i class="fa-solid fa-folder"></i></div><div class="process-info"><div class="process-name">{{_("Hiddify")}}</div><div class="process-bar"><div class="process-bar-fill" style="width: ' + hiddify_percent + '%"></div></div></div><div class="process-percent">' + hiddify_used.toFixed(1) + ' GB</div></div>',
+        true
+    );
+    
+    if (typeof ConvertNumberToPersion === "function") {
         ConvertNumberToPersion();
     }
-    function info_box(id, icon_class, title, number, percentage, description, coloring) {
-        update_box(id, undefined, number, percentage, description, coloring)
-    }
+}
 
-    setInterval(function () {
-        $.ajax({
-            url: "{{hurl_for('api_admin.AdminServerStatusApi',admin_id=request.args.get('admin_id'))}}",
-            method: "GET",
-            success: function (data) {
-                console.log("Success!");
-                console.log(data);
-                update_from_json(data)
-            },
-            error: function (xhr, status, error) {
-                console.log("Error!");
-                console.log(error);
-            }
-        });
-    }, refresh_s * 1000);
+setInterval(function () {
+    $.ajax({
+        url: "{{hurl_for('api_admin.AdminServerStatusApi',admin_id=request.args.get('admin_id'))}}",
+        method: "GET",
+        success: function (data) {
+            update_from_json(data);
+        },
+        error: function (xhr, status, error) {
+            console.log("Error:", error);
+        }
+    });
+}, refresh_s * 1000);
 
+$(document).ready(function() {
+    $(".space-card").addClass("fade-in-update");
+    setTimeout(function() {
+        $(".space-card").removeClass("fade-in-update");
+    }, 500);
+});
 </script>
 {% endblock %}
