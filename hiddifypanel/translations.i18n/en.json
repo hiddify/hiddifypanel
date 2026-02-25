@@ -57,7 +57,7 @@
   "Delete?": "Delete?",
   "Develop": "⚠️ Develop",
   "Direct": "➖ Direct",
-  "Direct mode means you want to use your server directly (for usual use), CDN means that you use your server on behind of a CDN provider.": "➡️ <b>Direct:</b> Select this mode if you configure your domain exclusively on your DNS provider in DNS-only mode. (CDN or Proxy Mode Off) <br>\n🔙 <b>Old Direct Mode:</b> This mode is similar to Direct mode but does not utilize gRPC for communication. Select Old Mode if you prefer to configure your domain on your DNS provider in DNS-only mode without utilizing gRPC.\n<br>\n🔀 <b>CDN:</b> Select this mode if you use a CDN provider for your server's domain. (Proxy Mode On)<br>\n☑️ <b>Automatic CDN IP Selector:</b> This mode functions similarly to CDN mode but with an automated IP assignment based on the IP provided by <a href='https://ircf.space' target='_blank'>ircf.space</a>. In Auto CDN IP mode, the IP address is resolved from the domain, while in CDN mode, the domain is returned.<br>\n♾️ <b>Relay:</b> Select this mode if you are using one or more Intermediary servers. <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>Read More</a>\n<br>\n✴️ <b>Cloudflare Worker:</b> This mode enables automatic creation of workers for your domain in Cloudflare. Simplify the setup and management of workers by registering this domain, as the necessary steps for worker registration are handled automatically within Cloudflare.\n<br>\n🔂 <b>Reality:</b> Utilize the Reality protocol to create multiple domains.\n<br>\n🆎 <b>Fake Site:</b> Select this mode if you want to use a fake Domain (e.g., Soft98.ir) to bypass SNI whitelist Proxy. (Not Recommended)\n<br>",
+  "Direct mode means you want to use your server directly (for usual use), CDN means that you use your server on behind of a CDN provider.": "➡️ <b>Direct:</b> Select this mode if you configure your domain exclusively on your DNS provider in DNS-only mode. (CDN or Proxy Mode Off) <br>\n🔀 <b>CDN:</b> Select this mode if you use a CDN provider for your server's domain. (Proxy Mode On)<br>\n♾️ <b>Relay:</b> Select this mode if you are using one or more Intermediary servers. <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>Read More</a>\n<br>\n✴️ <b>Cloudflare Worker:</b> This mode enables automatic creation of workers for your domain in Cloudflare. Simplify the setup and management of workers by registering this domain, as the necessary steps for worker registration are handled automatically within Cloudflare.\n<br>\n🆎 <b>Fake Site:</b> Select this mode if you want to use a fake Domain (e.g., Soft98.ir) to bypass SNI whitelist Proxy. (Not Recommended)\n<br>\n🔂 <b>Reality:</b> Utilize the Reality protocol to create multiple domains.\n<br>",
   "Disable": "Disable",
   "Disk": "Hard Disk",
   "Domain": "Domain",
@@ -72,7 +72,7 @@
     "title": "Donation"
   },
   "Download App": "<i class='fa-solid fa-download'></i> Download App",
-  "Download Domain": "Download Domain",
+  "Download Domain": "📈 Download Domain",
   "Edit": "Edit",
   "Edit Proxy Names": "✏️ Modifying Proxies",
   "Enable": "❇️ Enable",
@@ -472,7 +472,7 @@
     },
     "default_useragent_string": {
       "description": "config.default_useragent_string.description",
-      "label": "Default User Agent"
+      "label": "🪪 Default User Agent"
     },
     "dns_server": {
       "description": "✳️ Default 1.1.1.1 <br>\n🚧 Block Malware 1.1.1.2 <br>\n🔞 Block Porn 1.1.1.3\n",
@@ -614,35 +614,35 @@
       "label": "config.log_level.label"
     },
     "mieru": {
-      "description": "config.mieru.description",
-      "label": "Mieru"
+      "description": "The Mieru protocol is a secure and decentralized communication protocol designed to facilitate data transfer in distributed networks without the need for a central server",
+      "label": "⚡️ Mieru"
     },
     "mieru_enable": {
-      "description": "Meiru is a fast Proxy.",
-      "label": "Enable Mieru"
+      "description": "Meiru is a Fast Proxy",
+      "label": "⚡️ Enable Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "config.mieru_handshake.HANDSHAKE_DEFAULT",
-      "HANDSHAKE_NO_WAIT": "config.mieru_handshake.HANDSHAKE_NO_WAIT",
-      "HANDSHAKE_STANDARD": "config.mieru_handshake.HANDSHAKE_STANDARD",
-      "description": "config.mieru_handshake.description",
-      "label": "config.mieru_handshake.label"
+      "HANDSHAKE_DEFAULT": "📄 Default",
+      "HANDSHAKE_NO_WAIT": "⏳ No Wait",
+      "HANDSHAKE_STANDARD": "📝 Standard",
+      "description": "Mieru Handshake establishes a secure connection by verifying and authenticating both parties before data exchange",
+      "label": "🤝 Mieru Handshake"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "config.mieru_multiplexing.MULTIPLEXING_DEFAULT",
-      "MULTIPLEXING_HIGH": "config.mieru_multiplexing.MULTIPLEXING_HIGH",
-      "MULTIPLEXING_LOW": "config.mieru_multiplexing.MULTIPLEXING_LOW",
-      "MULTIPLEXING_MIDDLE": "config.mieru_multiplexing.MULTIPLEXING_MIDDLE",
-      "description": "config.mieru_multiplexing.description",
-      "label": "config.mieru_multiplexing.label"
+      "MULTIPLEXING_DEFAULT": "📄 Default",
+      "MULTIPLEXING_HIGH": "📈 High",
+      "MULTIPLEXING_LOW": "📉 Low",
+      "MULTIPLEXING_MIDDLE": "📊 Middle",
+      "description": "Mieru multiplexing enables efficient data transfer by allowing multiple connections to be handled simultaneously",
+      "label": "🔄 Mieru Multiplexing Mode"
     },
     "mieru_tcp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
-      "label": "Mieru TCP Ports"
+      "label": "🔍 Mieru TCP Ports"
     },
     "mieru_udp_ports": {
       "description": "Comma separated integers indicating the ports (1234,1235,1237)",
-      "label": "Mieru UDP Ports"
+      "label": "🔎 Mieru UDP Ports"
     },
     "mux": {
       "description": "MUX (Multiplex) configurations could be set in this section",
@@ -685,12 +685,12 @@
       "label": "♍️ MUX Protocol"
     },
     "naive_enable": {
-      "description": "Naive is using exact chrome stack to avoid detection",
-      "label": "Enable Naive"
+      "description": "Naive is using exact Chrome stack to avoid detection",
+      "label": "🛡 Enable Naive"
     },
     "naive_port": {
-      "description": "config.naive_port.description",
-      "label": "config.naive_port.label"
+      "description": "This option to configure a Naive port",
+      "label": "🔎 Naive Port"
     },
     "netdata": {
       "description": "For displaying resources. uses your Server's CPU but it is not too much.",
@@ -736,8 +736,8 @@
       "label": "ℹ️ HTTP Upgrade Path"
     },
     "path_naive": {
-      "description": "config.path_naive.description",
-      "label": "config.path_naive.label"
+      "description": "For Naive Link",
+      "label": "ℹ️ Naive Path"
     },
     "path_splithttp": {
       "description": "XHTTP path",
@@ -1024,8 +1024,8 @@
       "label": "TLS ECH Value"
     },
     "tls_ech_enable": {
-      "description": "Adds ECH to generated TLS subscription links.",
-      "label": "Enable 🛡️ TLS ECH"
+      "description": "Adds ECH to generated TLS subscription links",
+      "label": "🔐 Enable TLS ECH"
     },
     "tls_fragment_enable": {
       "description": "Under some circumstances, it can bypass the SNI blacklist system. <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(Read More)</a>",
@@ -1085,7 +1085,7 @@
     },
     "tuic_port": {
       "description": "Use comma to separate ports like ( 63000,60000 )",
-      "label": "TUIC Ports"
+      "label": "🔎 TUIC Ports"
     },
     "unique_id": {
       "description": "config.unique_id.description",
@@ -1188,7 +1188,7 @@
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Your Domains Changed. please do not forget to copy Admin links, otherwise you can not access to the panel anymore",
-    "current_server_IPs": "Current Server IPs are",
+    "current_server_IPs": "🔢 Current Server IPs are",
     "description": "Please fill in this field carefully and correctly. Otherwise, proxies will run into problems. Please visit <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Help</a> to learn how to create a subdomain.",
     "domain": "Domain",
     "domain_fronting": {
@@ -1206,14 +1206,14 @@
     },
     "resolveip": {
       "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",
-      "label": "Resolve IP"
+      "label": "🔢 Resolve IP"
     },
     "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
   },
   "download": "Direct Download",
   "download_domain": {
     "description": "Only for XHTTP: This allows, for example, downloads to happen from a different domain than uploads. This makes detection harder and can also improve overall quality.",
-    "label": "Download Domain"
+    "label": "📈 Download Domain"
   },
   "fake": "🆎 Fake Site",
   "gRPC": "➿ gRPC",
@@ -1237,7 +1237,7 @@
       "erlang": "✴️ Erlang : Good Performance",
       "go": "✅ Go : Nornal Performance - No ad Support",
       "python": "☑️ Python : Low Performance",
-      "telemt": "lib.telegram.telemt"
+      "telemt": "❇️ Telemt: Fast, Secure, Reliable"
     }
   },
   "log": "📄 Log",
@@ -1307,9 +1307,9 @@
     }
   },
   "singbox: ssh": "SingBox: SSH",
-  "special_reality_grpc": "Reality gRPC",
-  "special_reality_tcp": "Reality TCP",
-  "special_reality_xhttp": "Reality xHTTP",
+  "special_reality_grpc": "🔀 Reality gRPC",
+  "special_reality_tcp": "🔁 Reality TCP",
+  "special_reality_xhttp": "🈁 Reality xHTTP",
   "ssh": "SSH",
   "sub_link_only": "📳 Only for Subscription Link (can be Direct, Relay, or CDN)",
   "telegram": "Telegram",
