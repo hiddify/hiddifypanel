@@ -972,10 +972,14 @@ body.light .text-lime { color: #166534 !important; }
 {% block tail_js %}
 {{super()}}
 <script>
-// اضافه کردن کلاس light به body در صورت نبودن darkmode=true
-if (window.location.href.indexOf('darkmode=true') === -1) {
+// هماهنگ‌سازی با حالت قالب اصلی
+{% if g.darkmode %}
+    // حالت دارک مود - حذف کلاس light
+    document.body.classList.remove('light');
+{% else %}
+    // حالت لایت مود - اضافه کردن کلاس light
     document.body.classList.add('light');
-}
+{% endif %}
 
 var last_bytes_sent = "{{stats['system']['bytes_sent_cumulative']|default(0)}}";
 var last_bytes_recv = "{{stats['system']['bytes_recv_cumulative']|default(0)}}";
