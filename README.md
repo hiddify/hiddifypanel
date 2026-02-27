@@ -4,12 +4,7 @@
 
 ## 🌎 Translations
 
-<div align=center>
-    
-[Translation](https://fink.inlang.com/github.com/hiddify/hiddifypanel)
-</div>
-
-Improve existing languages or add new ones by manually editing the JSON files located in `/assets/translations` or by using the [Inlang online editor](https://inlang.com/editor/github.com/hiddify/hiddifypanel).
+Improve existing languages or add new ones by manually editing the JSON files located in `/assets/translations` or by using the [![Translate with Inlang](https://img.shields.io/badge/%20-%20-3ECF8E?logo=i18next&logoColor=white)](https://fink.inlang.com/github.com/hiddify/hiddifypanel) [Inlang online editor](https://fink.inlang.com/github.com/hiddify/hiddifypanel).
 
 # How to use it
 Please visit https://github.com/hiddify/hiddify-manager/wiki for the installation.
