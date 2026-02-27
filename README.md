@@ -7,7 +7,7 @@
 Improve existing languages or add new ones by manually editing the JSON files located in `/assets/translations` or by using the [![Translate with Inlang](https://img.shields.io/badge/%20-%20-3ECF8E?logo=i18next&logoColor=white)](https://fink.inlang.com/github.com/hiddify/hiddifypanel) [Inlang online editor](https://fink.inlang.com/github.com/hiddify/hiddifypanel).
 
 # How to use it
-Please visit https://github.com/hiddify/hiddify-manager/ for the installation.
+Please visit https://github.com/hiddify/hiddify-manager/ for installation.
 
 # Source Code: https://github.com/hiddify/HiddifyPanel/
 <!--
