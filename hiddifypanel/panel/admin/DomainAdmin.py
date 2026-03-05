@@ -282,7 +282,7 @@ class DomainAdmin(AdminLTEModelView):
         # Skip validation for wildcard or empty domains
         if (model.domain.startswith('*') or not model.domain) and model.mode not in [DomainType.direct]:
             return True
-        if model.mode in [DomainType.fake, DomainType.reality, DomainType.relay]:
+        if model.mode in [DomainType.fake, DomainType.reality, DomainType.relay, DomainType.dnstt]:
             return True
         if "special" in model.mode:
             return True

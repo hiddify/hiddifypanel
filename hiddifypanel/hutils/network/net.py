@@ -151,7 +151,7 @@ def get_ips(version: Literal[4, 6] | None = None) -> List[Union[ipaddress.IPv4Ad
 
     # send request
     try:
-        ip = urllib.request.urlopen(f'https://v{version}.ident.me/').read().decode('utf8')
+        ip = urllib.request.urlopen(f'https://v{version}.ident.me/',timeout=2).read().decode('utf8')
         if ip:
             addrs.append(ipaddress.ip_address(ip))
     except BaseException:
