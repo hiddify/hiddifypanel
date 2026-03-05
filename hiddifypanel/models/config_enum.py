@@ -208,6 +208,10 @@ class ConfigEnum(metaclass=FastEnum):
     kcp_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     kcp_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     decoy_domain = _StrConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
+
+    dnstt_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
+    dnstt_resolvers = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
+
     # will be deprecated
     proxy_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     proxy_path_admin = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)

@@ -17,8 +17,19 @@ from loguru import logger
 MAX_DB_VERSION = 130
 
 
+def _v114(child_id):
+    set_hconfig(ConfigEnum.dnstt_enable, True)
+    set_hconfig(ConfigEnum.dnstt_resolvers,"8.8.8.8:53,8.8.4.4:53")
+    db.session.bulk_save_objects([
+            Proxy(l3=ProxyL3.custom, transport=ProxyTransport.custom, cdn='direct', proto=ProxyProto.dnstt, enable=True, name="DNSTT"),
+    ])
+
+    
+
+
 def _v113(child_id):
     set_hconfig(ConfigEnum.telegram_lib, "telemt")
+    
 
 def _v111(child_id):
     set_hconfig(ConfigEnum.path_naive, hutils.random.get_random_string(7, 15))
@@ -831,7 +842,7 @@ def upgrade_database():
 
 
 def init_db():
-    # set_hconfig(ConfigEnum.db_version, 71)
+    # set_hconfig(ConfigEnum.db_version,113) 
     # set_hconfig(ConfigEnum.db_version,110)
     db_version = current_db_version()
     if db_version == latest_db_version():

@@ -199,17 +199,14 @@ msgid ""
 "means that you use your server on behind of a CDN provider."
 msgstr ""
 "➡️ <b>Direct:</b> Select this mode if you configure your domain exclusively on your DNS provider in DNS-only mode. (CDN or Proxy Mode Off) <br>\n"
-"🔙 <b>Old Direct Mode:</b> This mode is similar to Direct mode but does not utilize gRPC for communication. Select Old Mode if you prefer to configure your domain on your DNS provider in DNS-only mode without utilizing gRPC.\n"
-"<br>\n"
 "🔀 <b>CDN:</b> Select this mode if you use a CDN provider for your server's domain. (Proxy Mode On)<br>\n"
-"☑️ <b>Automatic CDN IP Selector:</b> This mode functions similarly to CDN mode but with an automated IP assignment based on the IP provided by <a href='https://ircf.space' target='_blank'>ircf.space</a>. In Auto CDN IP mode, the IP address is resolved from the domain, while in CDN mode, the domain is returned.<br>\n"
 "♾️ <b>Relay:</b> Select this mode if you are using one or more Intermediary servers. <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>Read More</a>\n"
 "<br>\n"
 "✴️ <b>Cloudflare Worker:</b> This mode enables automatic creation of workers for your domain in Cloudflare. Simplify the setup and management of workers by registering this domain, as the necessary steps for worker registration are handled automatically within Cloudflare.\n"
 "<br>\n"
-"🔂 <b>Reality:</b> Utilize the Reality protocol to create multiple domains.\n"
-"<br>\n"
 "🆎 <b>Fake Site:</b> Select this mode if you want to use a fake Domain (e.g., Soft98.ir) to bypass SNI whitelist Proxy. (Not Recommended)\n"
+"<br>\n"
+"🔂 <b>Reality:</b> Utilize the Reality protocol to create multiple domains.\n"
 "<br>"
 
 msgid "Disable"
@@ -299,7 +296,7 @@ msgid "Download App"
 msgstr "<i class='fa-solid fa-download'></i> Download App"
 
 msgid "Download Domain"
-msgstr "Download Domain"
+msgstr "📈 Download Domain"
 
 msgid "Edit"
 msgstr "Edit"
@@ -1369,7 +1366,7 @@ msgid "config.default_useragent_string.description"
 msgstr "config.default_useragent_string.description"
 
 msgid "config.default_useragent_string.label"
-msgstr "Default User Agent"
+msgstr "🪪 Default User Agent"
 
 msgid "config.dns_server.description"
 msgstr ""
@@ -1379,6 +1376,18 @@ msgstr ""
 
 msgid "config.dns_server.label"
 msgstr "🖥 DNS Server"
+
+msgid "config.dnstt_enable.description"
+msgstr "config.dnstt_enable.description"
+
+msgid "config.dnstt_enable.label"
+msgstr "DNSTT Enable"
+
+msgid "config.dnstt_resolvers.description"
+msgstr "config.dnstt_resolvers.description"
+
+msgid "config.dnstt_resolvers.label"
+msgstr "DNSTT Resolvers"
 
 msgid "config.domain_fronting.description"
 msgstr ""
@@ -1631,61 +1640,68 @@ msgid "config.log_level.label"
 msgstr "config.log_level.label"
 
 msgid "config.mieru.description"
-msgstr "config.mieru.description"
+msgstr ""
+"The Mieru protocol is a secure and decentralized communication protocol "
+"designed to facilitate data transfer in distributed networks without the "
+"need for a central server"
 
 msgid "config.mieru.label"
-msgstr "Mieru"
+msgstr "⚡️ Mieru"
 
 msgid "config.mieru_enable.description"
-msgstr "Meiru is a fast Proxy."
+msgstr "Meiru is a Fast Proxy"
 
 msgid "config.mieru_enable.label"
-msgstr "Enable Mieru"
+msgstr "⚡️ Enable Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr "config.mieru_handshake.HANDSHAKE_DEFAULT"
+msgstr "📄 Default"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr "config.mieru_handshake.HANDSHAKE_NO_WAIT"
+msgstr "⏳ No Wait"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr "config.mieru_handshake.HANDSHAKE_STANDARD"
+msgstr "📝 Standard"
 
 msgid "config.mieru_handshake.description"
-msgstr "config.mieru_handshake.description"
+msgstr ""
+"Mieru Handshake establishes a secure connection by verifying and "
+"authenticating both parties before data exchange"
 
 msgid "config.mieru_handshake.label"
-msgstr "config.mieru_handshake.label"
+msgstr "🤝 Mieru Handshake"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
+msgstr "📄 Default"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_HIGH"
+msgstr "📈 High"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_LOW"
+msgstr "📉 Low"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
+msgstr "📊 Middle"
 
 msgid "config.mieru_multiplexing.description"
-msgstr "config.mieru_multiplexing.description"
+msgstr ""
+"Mieru multiplexing enables efficient data transfer by allowing multiple "
+"connections to be handled simultaneously"
 
 msgid "config.mieru_multiplexing.label"
-msgstr "config.mieru_multiplexing.label"
+msgstr "🔄 Mieru Multiplexing Mode"
 
 msgid "config.mieru_tcp_ports.description"
 msgstr "Comma separated integers indicating the ports (1234,1235,1237)"
 
 msgid "config.mieru_tcp_ports.label"
-msgstr "Mieru TCP Ports"
+msgstr "🔍 Mieru TCP Ports"
 
 msgid "config.mieru_udp_ports.description"
 msgstr "Comma separated integers indicating the ports (1234,1235,1237)"
 
 msgid "config.mieru_udp_ports.label"
-msgstr "Mieru UDP Ports"
+msgstr "🔎 Mieru UDP Ports"
 
 msgid "config.mux.description"
 msgstr "MUX (Multiplex) configurations could be set in this section"
@@ -1762,16 +1778,16 @@ msgid "config.mux_protocol.label"
 msgstr "♍️ MUX Protocol"
 
 msgid "config.naive_enable.description"
-msgstr "Naive is using exact chrome stack to avoid detection"
+msgstr "Naive is using exact Chrome stack to avoid detection"
 
 msgid "config.naive_enable.label"
-msgstr "Enable Naive"
+msgstr "🛡 Enable Naive"
 
 msgid "config.naive_port.description"
-msgstr "config.naive_port.description"
+msgstr "This option to configure a Naive port"
 
 msgid "config.naive_port.label"
-msgstr "config.naive_port.label"
+msgstr "🔎 Naive Port"
 
 msgid "config.netdata.description"
 msgstr ""
@@ -1846,10 +1862,10 @@ msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ HTTP Upgrade Path"
 
 msgid "config.path_naive.description"
-msgstr "config.path_naive.description"
+msgstr "For Naive Link"
 
 msgid "config.path_naive.label"
-msgstr "config.path_naive.label"
+msgstr "ℹ️ Naive Path"
 
 msgid "config.path_splithttp.description"
 msgstr "XHTTP path"
@@ -2336,10 +2352,10 @@ msgid "config.tls_ech.label"
 msgstr "TLS ECH Value"
 
 msgid "config.tls_ech_enable.description"
-msgstr "Adds ECH to generated TLS subscription links."
+msgstr "Adds ECH to generated TLS subscription links"
 
 msgid "config.tls_ech_enable.label"
-msgstr "Enable 🛡️ TLS ECH"
+msgstr "🔐 Enable TLS ECH"
 
 msgid "config.tls_fragment_enable.description"
 msgstr ""
@@ -2443,7 +2459,7 @@ msgid "config.tuic_port.description"
 msgstr "Use comma to separate ports like ( 63000,60000 )"
 
 msgid "config.tuic_port.label"
-msgstr "TUIC Ports"
+msgstr "🔎 TUIC Ports"
 
 msgid "config.unique_id.description"
 msgstr "config.unique_id.description"
@@ -2633,6 +2649,9 @@ msgstr "Desktop"
 msgid "direct"
 msgstr "➡️ Direct"
 
+msgid "dnstt"
+msgstr "DNSTT"
+
 msgid "domain.cdn"
 msgstr "CDN"
 
@@ -2642,7 +2661,7 @@ msgstr ""
 " you can not access to the panel anymore"
 
 msgid "domain.current_server_IPs"
-msgstr "Current Server IPs are"
+msgstr "🔢 Current Server IPs are"
 
 msgid "domain.description"
 msgstr ""
@@ -2690,7 +2709,7 @@ msgstr ""
 "noise on the DNS."
 
 msgid "domain.resolveip.label"
-msgstr "Resolve IP"
+msgstr "🔢 Resolve IP"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -2708,7 +2727,7 @@ msgstr ""
 "improve overall quality."
 
 msgid "download_domain.label"
-msgstr "Download Domain"
+msgstr "📈 Download Domain"
 
 msgid "fake"
 msgstr "🆎 Fake Site"
@@ -2759,7 +2778,7 @@ msgid "lib.telegram.python"
 msgstr "☑️ Python : Low Performance"
 
 msgid "lib.telegram.telemt"
-msgstr "lib.telegram.telemt"
+msgstr "❇️ Telemt: Fast, Secure, Reliable"
 
 msgid "log"
 msgstr "📄 Log"
@@ -2885,13 +2904,13 @@ msgid "singbox: ssh"
 msgstr "SingBox: SSH"
 
 msgid "special_reality_grpc"
-msgstr "Reality gRPC"
+msgstr "🔀 Reality gRPC"
 
 msgid "special_reality_tcp"
-msgstr "Reality TCP"
+msgstr "🔁 Reality TCP"
 
 msgid "special_reality_xhttp"
-msgstr "Reality xHTTP"
+msgstr "🈁 Reality xHTTP"
 
 msgid "ssh"
 msgstr "SSH"

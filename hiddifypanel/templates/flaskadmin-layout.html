@@ -61,7 +61,7 @@
         if ($("#domain").length > 0) {
             var selectElement = document.getElementById("mode");
             var groups = [
-                { label: `{{_("Direct")}}`, options: ["direct"] },
+                { label: `{{_("Direct")}}`, options: ["direct","dnstt"] },
                 { label: `{{_("Panel Link")}}`, options: ["sub_link_only"] },
                 { label: `{{_("Bridge Servers")}}`, options: ["cdn",  "worker", "relay"] },
                 { label: `{{_("Fake")}}`, options: ["special_reality_xhttp","special_reality_tcp","special_reality_grpc", "fake"] }
@@ -99,7 +99,7 @@
         });
         function hide_domain_elements() {
             console.log("test")
-            if (['fake','reality','special_reality_grpc','special_reality_xhttp'].includes($("#mode").val())){
+            if (["dnstt",'fake','reality','special_reality_grpc','special_reality_xhttp'].includes($("#mode").val())){
                 $("#show_domains").parent().hide()
             }else{
                 $("#show_domains").parent().show()
@@ -115,6 +115,10 @@
                 $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`)
                 $("#download_domain").parent().hide();
 
+            }else if ($("#mode").val() == "dnstt") {
+                $("#resolve_ip").parent().hide()
+                $("#servernames").parent().hide();
+                $("#download_domain").parent().hide();
             } else {
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();

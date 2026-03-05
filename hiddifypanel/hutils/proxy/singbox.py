@@ -83,6 +83,10 @@ def to_singbox(proxy: dict) -> list[dict] | dict:
             return all_base
         return {'name': name, 'msg': "xray proxy does not support in this client version", 'type': 'debug'}
     base["type"] = str(proxy["proto"])
+    if proxy['proto']==ProxyProto.dnstt:
+        add_dnstt(all_base, proxy)
+        return all_base
+    
     base["server"] = proxy["server"]
     base["server_port"] = int(proxy["port"])
     # base['alpn'] = proxy['alpn'].split(',')
@@ -92,7 +96,8 @@ def to_singbox(proxy: dict) -> list[dict] | dict:
     if proxy["proto"] == ProxyProto.wireguard:
         add_wireguard(base, proxy)
         return all_base
-
+    
+    
     if proxy['proto']==ProxyProto.mieru:
         add_mieru(base, proxy)
         return all_base
@@ -304,7 +309,23 @@ def _add_xhttp_details(base: dict, proxy: dict):
         }
         add_tls(base['transport']['downloadSettings'],dls)
         
-        
+
+def add_dnstt(all_base:list,proxy:dict):
+    all_base[0]['domain']=proxy["sni"]
+    all_base[0]['publicKey']=proxy["public_key"]
+    all_base[0]['resolvers']=proxy['resolvers']
+    all_base[0]['tunnel_per_resolver']=proxy['tunnel_per_resolver']
+    tag=all_base[0]["tag"]
+    all_base[0]["tag"]+="§hide§"
+    all_base.append({
+        "type":"socks",
+        "username":proxy['uuid'],
+        "password":proxy['password'],
+        "tag":tag,
+        "detour":all_base[0]["tag"]
+    })
+    
+ 
 
 def add_ssr(base: dict, proxy: dict):
 

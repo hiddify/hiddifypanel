@@ -26,8 +26,14 @@ def get_ssh_hostkeys(hconfigs, dojson=False) -> list[str] | str:
 def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
     name = proxy.name
     l3 = proxy.l3
+    if proxy.proto==ProxyProto.dnstt and domain_db.mode!=DomainType.dnstt:
+        return {'name': name, 'msg': "dnstt needs dnstt domain", 'type': 'error', 'proto': proxy.proto}
     
-    if proxy.proto!=ProxyProto.mieru and not port:
+    if proxy.proto!=ProxyProto.dnstt and domain_db.mode==DomainType.dnstt:
+        return {'name': name, 'msg': "dnstt domain only works with dnstt protocol", 'type': 'error', 'proto': proxy.proto}
+    
+
+    if proxy.proto not in {ProxyProto.mieru,ProxyProto.dnstt} and not port:
         return {'name': name, 'msg': "port not defined", 'type': 'error', 'proto': proxy.proto}
     if "reality" not in l3 and 'reality' in domain_db.mode:
         return {'name': name, 'msg': "1reality proxy not in reality domain", 'type': 'debug', 'proto': proxy.proto}
@@ -100,7 +106,7 @@ def get_port(proxy: Proxy, hconfigs: dict, domain_db: Domain, ptls: int, phttp: 
         port = ptls
     elif l3 == "http":
         port = phttp
-    elif proxy.proto==ProxyProto.mieru:
+    elif proxy.proto in {ProxyProto.mieru, ProxyProto.dnstt}:
         port=0
     else:
         port = int(pport)  # type: ignore
@@ -143,7 +149,8 @@ def is_tls(l3) -> bool:
 def get_proxies(child_id: int = 0, only_enabled=False) -> list['Proxy']:
     proxies = Proxy.query.filter(Proxy.child_id == child_id).all()
     proxies = [c for c in proxies if 'restls' not in c.transport]
-
+    if not hconfig(ConfigEnum.dnstt_enable,child_id):
+        proxies = [c for c in proxies if c.proto != ProxyProto.dnstt]
     if not hconfig(ConfigEnum.tuic_enable, child_id):
         proxies = [c for c in proxies if c.proto != ProxyProto.tuic]
 
@@ -240,7 +247,7 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
             options = []
             key = f'{proxy.proto}{proxy.transport}{proxy.cdn}{proxy.l3}'
 
-            if proxy.proto in [ProxyProto.ssh, ProxyProto.tuic, ProxyProto.hysteria2, ProxyProto.wireguard, ProxyProto.ss,ProxyProto.mieru] \
+            if proxy.proto in [ProxyProto.dnstt,ProxyProto.ssh, ProxyProto.tuic, ProxyProto.hysteria2, ProxyProto.wireguard, ProxyProto.ss,ProxyProto.mieru] \
                 or (proxy.proto==ProxyProto.naive and proxy.l3==ProxyL3.h3_quic) :
                 if noDomainProxies and all([x in added_ip[key] for x in ips]):
                     continue
@@ -262,6 +269,8 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
                 elif proxy.proto == ProxyProto.tuic:
                     options = [{'pport': hconfigs[ConfigEnum.tuic_port]}]
                 elif proxy.proto == ProxyProto.mieru:
+                    options = [{'pport':0}]
+                elif proxy.proto == ProxyProto.dnstt:
                     options = [{'pport':0}]
                 elif proxy.proto == ProxyProto.naive:
                     options = [{'pport': hconfigs[ConfigEnum.naive_port]}]
@@ -405,7 +414,12 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         if ech:=hutils.network.get_ech_info(base.get('sni')):
             base['ech'] = ech
 
-    
+    if base["proto"]==ProxyProto.dnstt:
+        base["public_key"]=get_dnstt_public_key()
+        base['resolvers']=hconfigs[ConfigEnum.dnstt_resolvers].split(",")
+        base['tunnel_per_resolver']=4
+        base['password']="h"
+        return base
 
     if base['proto'] in {ProxyProto.naive}:
         del base['fingerprint']
@@ -602,3 +616,11 @@ class ProxyJsonEncoder(json.JSONEncoder):
         if isinstance(obj, IPv4Address) or isinstance(obj, IPv6Address):
             return str(obj)
         return super().default(obj)
+
+
+
+@cache.cache(ttl=300)
+def get_dnstt_public_key():
+    with open("/opt/hiddify-manager/other/dnstt/server.pub","r") as f:
+        return f.read()
+    

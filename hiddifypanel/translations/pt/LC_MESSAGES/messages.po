@@ -201,7 +201,6 @@ msgid ""
 msgstr ""
 "Modo <b>Direto</b>: escolha este modo se você definir seu domínio em seu provedor DNS em um modo somente DNS. (Modo CDN ou Proxy desligado) <br>\n"
 "Modo <b>CDN</b>: escolha este modo se você usar o domínio do seu servidor em um provedor CDN. (Modo proxy ativado)<br>\n"
-"Modo <b>Auto CDN IP</b>: É como o modo CDN, exceto que o IP apropriado é definido automaticamente com base no IP fornecido pelo ircf.space. Em Auto_CDN_IP, o IP será resolvido do domínio, mas no modo cdn, o domínio será retornado<br>\n"
 "Modo <b>Relay</b>: escolha este modo se estiver usando um ou mais servidores intermediários. <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>Leia mais</a>\n"
 "<br>\n"
 "Modo <b>Fake</b>: escolha este modo se quiser usar um domínio falso (por exemplo, Soft98.ir) para ignorar o proxy SNI whitelist. (Não recomendado)"
@@ -1353,6 +1352,18 @@ msgstr ""
 msgid "config.dns_server.label"
 msgstr "🖥 Servidor DNS"
 
+msgid "config.dnstt_enable.description"
+msgstr ""
+
+msgid "config.dnstt_enable.label"
+msgstr ""
+
+msgid "config.dnstt_resolvers.description"
+msgstr ""
+
+msgid "config.dnstt_resolvers.label"
+msgstr ""
+
 msgid "config.domain_fronting.description"
 msgstr ""
 "Ele é usado para simular outro site em vez do seu site no SNI. portanto, GTW não pode filtrar seu domínio\n"
@@ -2289,12 +2300,6 @@ msgstr "As configurações de TLS podem ser definidas nesta seção."
 msgid "config.tls.label"
 msgstr "Configurações de TLS"
 
-msgid "config.tls_ech.description"
-msgstr ""
-
-msgid "config.tls_ech.label"
-msgstr ""
-
 msgid "config.tls_ech_enable.description"
 msgstr ""
 
@@ -2404,7 +2409,7 @@ msgid "config.tuic_port.description"
 msgstr "Use vírgula para separar portas como 63000,60000"
 
 msgid "config.tuic_port.label"
-msgstr "Portas TUIC"
+msgstr "🔎 Portas TUIC"
 
 msgid "config.unique_id.description"
 msgstr "config.unique_id.description"
@@ -2598,6 +2603,9 @@ msgstr "Área de Trabalho"
 
 msgid "direct"
 msgstr "➡️ Direto"
+
+msgid "dnstt"
+msgstr ""
 
 msgid "domain.cdn"
 msgstr "CDN"
@@ -2844,13 +2852,13 @@ msgid "singbox: ssh"
 msgstr "caixa de som: ssh"
 
 msgid "special_reality_grpc"
-msgstr "Reality gRPC"
+msgstr "🔀 Reality gRPC"
 
 msgid "special_reality_tcp"
-msgstr "Reality TCP"
+msgstr "🔁 Reality TCP"
 
 msgid "special_reality_xhttp"
-msgstr "Reality xHTTP"
+msgstr "🈁 Reality xHTTP"
 
 msgid "ssh"
 msgstr "SSH"

@@ -478,6 +478,14 @@
       "description": "✳️ Default 1.1.1.1 <br>\n🚧 Block Malware 1.1.1.2 <br>\n🔞 Block Porn 1.1.1.3\n",
       "label": "🖥 DNS Server"
     },
+    "dnstt_enable": {
+      "description": "config.dnstt_enable.description",
+      "label": "DNSTT Enable"
+    },
+    "dnstt_resolvers": {
+      "description": "config.dnstt_resolvers.description",
+      "label": "DNSTT Resolvers"
+    },
     "domain_fronting": {
       "description": "It is used to simulate another website instead of your website in SNI. therefore, GFW can not filter your Domain\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Guide</a>. ⚠️CloudFlare does not support Domain Fronting.",
       "label": "🔒 TLS Domain Fronting"
@@ -1185,6 +1193,7 @@
   "days": "Days",
   "desktop": "Desktop",
   "direct": "➡️ Direct",
+  "dnstt": "DNSTT",
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Your Domains Changed. please do not forget to copy Admin links, otherwise you can not access to the panel anymore",

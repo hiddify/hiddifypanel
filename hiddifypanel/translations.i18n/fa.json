@@ -1,10 +1,15 @@
 {
   " Search\n            Settings": " جستجو کردن\nتنظیمات",
+  "%(count)s records were successfully deleted.": "",
   "%(count)s records were successfully disabled.": "%(count)s رکورد با موفقیت غیرفعال شد.",
   "%(count)s records were successfully enabled.": "%(count)s رکوردها با موفقیت فعال شد.",
+  "%(count)s records were successfully reset days.": "",
+  "%(count)s records were successfully reset usage.": "",
+  "%(count)s records were successfully updated.": "",
   "%(expire_days)s days": "%(expire_days)s روز",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "آخرین روز",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
   "Access Denied!": "دسترسی غیرمجاز",
   "Actions": "عملیات",
   "Active": "فعال",
@@ -13,6 +18,7 @@
   "Add some text that is only visible to super_admin.": "متنی را اضافه کنید که فقط برای سوپر ادمین ها قابل مشاهده هست",
   "Add some text that is only visible to you.": "در این قسمت یادداشتی اضافه کنید. (این یادداشت فقط برای شما قابل نمایش است.)",
   "Added by": "اضافه شده توسط",
+  "Admin Links": "",
   "Admins": "ادمین ها",
   "Alias": "نام نمایشی",
   "All": "همه",
@@ -29,6 +35,7 @@
   "Bug": "باگ/پیشنهاد",
   "CPU %(cores)s Cores": "پردازنده %(cores)s هسته",
   "Can add sub admin": "👥 امکان اضافه کردن ادمین فرعی",
+  "Change": "",
   "Check again": "بررسی مجدد",
   "Childs": "زیرمجموعه‌ها",
   "China": "🇨🇳 چین",
@@ -57,6 +64,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "دامنه (%(domain)s)-> IP=%(domain_ip)s با آی‌پی شما: ip=%(server_ip)s همخوانی ندارد. در حالت مستقیم (Direct Mode) این مورد الزامی است.",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "دامنه IP=%(domain_ip)s با ip=%(server_ip)s شما مطابقت ندارد که در حالت مستقیم مورد نیاز است",
   "Domain can not be resolved! there is a problem in your domain": "دامنه قابل دسترسی نیست! در دامنه شما مشکلی وجود دارد.",
+  "Domain cannot be resolved! Please check DNS settings": "",
   "Domain is not REALITY friendly!": "دامنه سازگار با REALITY نیست!",
   "Domain?": "دامنه؟",
   "Donation": {
@@ -84,6 +92,7 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>پیشنهادی</span>",
   "HiddifyNG intro": "📌 لطفاً HiddifyNG را از یکی از این لینک ها نصب کنید:\n<br />\n %(dl_link)s  %(play_link)s\n<br />\nسپس روی لینک زیر کلیک کنید و آن را در HiddifyNG باز کنید.\n<br />",
   "HiddigyN": "HiddifyN <span class='badge badge-success'>پیشنهادی</span>",
+  "Home Link": "",
   "Hover the user to see the reason": "روی یوزر کلیک کنید تا دلیل آن را ببینید",
   "How many days this package should be available?": "این بسته چند روزه است؟",
   "How many?": "چه تعداد؟",
@@ -146,6 +155,7 @@
   "Please type your message to send to the telegram:": "✏️  لطفا پیامی را که میخواهید با ربات تلگرام ارسال کنید بنویسید:",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "لطفاً توجه داشته باشید که پنل مادر در حال آزمایش است و طرح و شرایط استفاده ممکن است در هر زمان تغییر کند.",
   "Please wait ": "لطفا صبر کنید",
+  "Port 80 and 443 can not be selected": "",
   "Port is already used! in": "پورت قبلا استفاده شده است در",
   "Premium Description": "پنل هیدیفای برای استفاده غیرتجاری ساخته شده است. اما چنانچه از این پنل استفاده تجاری می‌کنید، از شما خواهشمندیم با دونیت کردن به رشد پروژه کمک کنید. <br/>\nدر عوض حمایت مالی شما، امکانات ویژه ای هم برای محصول تجاری شما فراهم می‌کنیم.\n<br/>\n<br/>\nاز قبیل:\n<ul>\n<li>امکان سینک شدن به کلودفلر: یعنی با افزودن دامنه در پنل، تنظیمات مربوطه در کلود فلر نیز انجام شود</li>\n<li>امکان نمایش برند شما در پنل</li>\n<li>امکان استفاده از پنل مرکزی جهت مدیریت بیش از ۱ سرور در فقط یک پنل بنابراین دیگر لازم نیست کاربران را در سرورهای مختلف ثبت کنید و همین طور حجم آنها در تمام سرورها جمع خواهد شد.\n</li>\n<li>\nامکان استفاده از بات تلگرام\n</li>\n<li>\nامکان تغییر نام پروکسی ها\n</li>\n</ul>\n\nلطفا پس از دونیت کردن به <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>\nپیام دهید تا نسخه ویژه ی کاربران تجاری به شما ارائه شود.",
   "ProxyPath is already used! use different proxy path": "ProxyPath قبلاً استفاده شده است! از مسیرهای مختلف پروکسی استفاده کنید",
@@ -194,10 +204,12 @@
   "Started %(days)s days ago": "از %(days)s روز پیش شروع شد",
   "Started from %(relative)s": "از %(relative)s شروع شد",
   "Status": "وضعیت",
+  "SubLink": "",
   "Submit": "ثبت",
   "Success": "موفقیت",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ موفقیت آمیز بود! لطفا برای اینکه مطمئن شوید بروزرسانی‌ها به درستی اعمال شده، حدود 5 دقیقه صبر کنید.",
   "Telegram Bot": "بات تلگرام",
+  "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️ لینک کوتاه موقت",
   "The message has been sent.": "پیام ارسال شده است.",
   "The message was not sent to": "پیام نتوانست به کاربران زیر ارسال شود",
@@ -279,6 +291,14 @@
   "all": "همه",
   "android": "اندروید",
   "app": {
+    "clash_verge_rev": {
+      "description": "",
+      "title": ""
+    },
+    "cmfa": {
+      "description": "",
+      "title": ""
+    },
     "foxray": {
       "description": "توضیحات FoXray",
       "title": "FoXray"
@@ -329,6 +349,9 @@
       "description": "توضیحات Streisand",
       "title": "Streisand"
     },
+    "v2rayn": {
+      "title": ""
+    },
     "v2rayng": {
       "description": "توضیحات V2RayNG",
       "title": "V2RayNG"
@@ -370,7 +393,13 @@
     },
     "admin_lang": {
       "description": "در این قسمت می‌توانید زبان پنل مدیریت را انتخاب کنید",
-      "label": "🗺️ زبان پنل مدیریت"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ زبان پنل مدیریت",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "admin_secret": {
       "description": "رمز ادمین برای دسترسی به پنل ادمین استفاده خواهد شد. ",
@@ -441,11 +470,20 @@
       "label": "📺 آدرس سایت جعلی"
     },
     "default_useragent_string": {
+      "description": "",
       "label": "🪪 یوزرایجنت پیش‌فرض"
     },
     "dns_server": {
       "description": "✳️ پیش فرض 1.1.1.1 <br>\n🚧 مسدود کردن بدافزار 1.1.1.2 <br>\n🔞 مسدود کردن پورن 1.1.1.3",
       "label": "🖥 سرور DNS"
+    },
+    "dnstt_enable": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_resolvers": {
+      "description": "",
+      "label": ""
     },
     "domain_fronting": {
       "description": "برای شبیه سازی وب سایت دیگری به جای وب سایت شما در SNI استفاده می شود. بنابراین، فیلترچی نمی تواند دامنه شما را فیلتر کند. \n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>آموزش ثبت </a>\n\n⚠️CloudFlare از دامین فرانتینگ پشتیبانی نمی کند.",
@@ -551,7 +589,13 @@
     },
     "lang": {
       "description": "زبان رابط کاربری را برای شخصی سازی تجربه خود در ناحیه کاربری انتخاب کنید.",
-      "label": "🗺️ زبان محیط کاربران"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ زبان محیط کاربران",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "last_hash": {
       "description": "-",
@@ -566,8 +610,46 @@
       "label": "کد مجوز"
     },
     "log_level": {
+      "CRITICAL": "",
+      "DEBUG": "",
+      "ERROR": "",
+      "INFO": "",
+      "SUCCESS": "",
+      "TRACE": "",
+      "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
+    },
+    "mieru": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_enable": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_handshake": {
+      "HANDSHAKE_DEFAULT": "",
+      "HANDSHAKE_NO_WAIT": "",
+      "HANDSHAKE_STANDARD": "",
+      "description": "",
+      "label": ""
+    },
+    "mieru_multiplexing": {
+      "MULTIPLEXING_DEFAULT": "",
+      "MULTIPLEXING_HIGH": "",
+      "MULTIPLEXING_LOW": "",
+      "MULTIPLEXING_MIDDLE": "",
+      "description": "",
+      "label": ""
+    },
+    "mieru_tcp_ports": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_udp_ports": {
+      "description": "",
+      "label": ""
     },
     "mux": {
       "description": "تنظیمات MUX (Multiplex) را می توان در این بخش تنظیم کرد",
@@ -609,6 +691,14 @@
       "description": "ℹ️ پروتکل Multiplex. 'sMux' به طور پیش فرض استفاده می شود\n<br>\n➖ sMux: مالتیپلکس کردن جریان\n<br>\n➖ YaMux: باز هم یک مولتی پلکسر دیگر\n<br>\n➖ h2Mux: جریان های چندگانه از طریق HTTP/2",
       "label": "♍️ پروتکل MUX"
     },
+    "naive_enable": {
+      "description": "",
+      "label": ""
+    },
+    "naive_port": {
+      "description": "",
+      "label": ""
+    },
     "netdata": {
       "description": "نت دیتا ابزاری است برای نمایش مقدار استفاده سیستم از منابع. فعالسازی آن ممکن است از اندکی از CPU شما استفاده کند.",
       "label": "Netdata"
@@ -626,8 +716,11 @@
       "label": "🔄 حالت به روز رسانی"
     },
     "panel_mode": {
+      "child": "",
       "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label"
+      "label": "config.panel_mode.label",
+      "parent": "",
+      "standalone": ""
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -648,6 +741,10 @@
     "path_httpupgrade": {
       "description": "باید تصادفی باشد",
       "label": "ℹ️ مسیر ارتقاء HTTP"
+    },
+    "path_naive": {
+      "description": "",
+      "label": ""
     },
     "path_splithttp": {
       "description": "مسیر XHTTP",
@@ -718,7 +815,8 @@
       "label": "🌍 دامنه بازگشتی ریالیتی"
     },
     "reality_port": {
-      "description": "پورت reality"
+      "description": "پورت reality",
+      "label": ""
     },
     "reality_private_key": {
       "description": "این کد را تغییر ندهید",
@@ -812,6 +910,38 @@
       "description": "پروکسی SSH که به عنوان تونل SSH یا ارسال پورت SSH نیز شناخته می شود، روشی امن برای ایجاد یک کانال ارتباطی امن بین دو ماشین در یک شبکه ناامن است. ما یک برنامه خاص داریم که کاملاً با سرور SSH متفاوت است. با این کانکشن کاربر نمی تواند هیچ دستوری را روی سرور اجرا کند",
       "label": "پروکسی SSH"
     },
+    "ssh_host_dsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_dsa_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ecdsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ecdsa_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ed25519_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ed25519_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_rsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_rsa_pub": {
+      "description": "",
+      "label": ""
+    },
     "ssh_server_enable": {
       "description": "این SSH پروکسی با SSH سرور اصلی کاملا متفاوت است و امکان اجرای دستورات را ندارد",
       "label": "✔️ پروکسی SSH"
@@ -896,9 +1026,17 @@
       "description": "تنظیمات مربوط به اتصال TLS",
       "label": "تنظیمات TLS"
     },
+    "tls_ech_enable": {
+      "description": "",
+      "label": ""
+    },
     "tls_fragment_enable": {
       "description": "تحت برخی شرایط، می تواند سیستم لیست سیاه SNI را دور بزند.&nbsp;<a href=\"https://hiddify.com/fa/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(بیشتر بدانید)</a>",
       "label": "⏯ TLS Fragment"
+    },
+    "tls_fragment_packets": {
+      "description": "",
+      "label": ""
     },
     "tls_fragment_size": {
       "description": "اندازه هر بسته",
@@ -1050,9 +1188,11 @@
   "days": "روز",
   "desktop": "دسکتاپ",
   "direct": "➡️ مستقیم (بدون واسطه)",
+  "dnstt": "",
   "domain": {
     "cdn": "سی‌دی‌ان",
     "changed_in_domain_warning": "⚠️ دامنه های شما تغییر کرد. لطفا کپی لینک های مدیریت را فراموش نکنید، در غیر این صورت دیگر نمی توانید به پنل دسترسی داشته باشید",
+    "current_server_IPs": "",
     "description": "این فیلد باید با دقت و به درستی تکمیل شود. در غیر اینصورت پروکسی ها به مشکل بر خواهند خورد. لطفا برای دیدن راهنمای ساخت زیردامنه \n<a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'>این آدرس </a>\nرا ببینید.",
     "domain": "دامنه",
     "domain_fronting": {
@@ -1100,7 +1240,8 @@
     "telegram": {
       "erlang": "✴️ Erlang : عملکرد خوب",
       "go": "✅ Go : عملکرد معمولی - عدم پشتیبانی از تبلیغات",
-      "python": "☑️ پایتون : عملکرد ضعیف"
+      "python": "☑️ پایتون : عملکرد ضعیف",
+      "telemt": ""
     }
   },
   "log": "📄 لاگ",

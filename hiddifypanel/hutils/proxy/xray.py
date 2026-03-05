@@ -24,6 +24,10 @@ def to_link(proxy: dict) -> str | dict:
 
     orig_name_link = (proxy['extra_info'] + " " + proxy["name"]).strip()
     name_link = hutils.encode.url_encode(orig_name_link)
+    if proxy['proto']=="dnstt":
+        resolvers="&".join([f"resolver={r}" for r in proxy['resolvers']])
+        dnstt=f'dnstt://?tunnel_per_resolver={proxy["tunnel_per_resolver"]}&{resolvers}&domain={proxy["sni"]}&publicKey={proxy["public_key"]}'
+        return f'socks://{proxy["uuid"]}:{proxy["password"]}@localhost:0#{name_link} -> {dnstt}'
     if proxy['proto'] == "naive":
         naive = f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=hiddify-naive-secret:{proxy["path"]}'
         if proxy.get('quic'):

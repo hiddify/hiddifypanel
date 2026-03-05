@@ -48,6 +48,7 @@ class ProxyProto(StrEnum):
     wireguard = auto()
     naive = auto()
     mieru = auto()
+    dnstt = auto()
 
 
 class ProxyL3(StrEnum):

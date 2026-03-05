@@ -203,7 +203,6 @@ msgid ""
 msgstr ""
 "⬅️ حالت <b>Direct</b>: اگر دامنه خود را روی ارائه دهنده DNS خود در حالت فقط DNS تنظیم کرده اید، این حالت را انتخاب کنید. (CDN یا پروکسی خاموش باشد.) <br>\n"
 "🔀 حالت <b>CDN</b>: اگر از دامنه خود در ارائه دهنده CDN استفاده می کنید، این حالت را انتخاب کنید. (حالت پروکسی روشن باشد.)<br>\n"
-"☑️ حالت <b>Auto CDN IP</b>: مانند حالت CDN است با این تفاوت که اتوماتیک آی پی مناسب بر اساس  آی پی ارائه شده توسط ircf.space ست می‌شود. در Auto_CDN_IP به جای دامنه IP ثبت می شود<br>\n"
 "♾️ حالت <b>Relay</b>: اگر از یک یا چند سرور واسطه استفاده می کنید، این حالت را انتخاب کنید. <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>بیشتر بخوانید.</a> \n"
 "<br>\n"
 "🆎 حالت <b>Fake</b>: اگر می‌خواهید از یک دامنه جعلی (مانند Soft98.ir) برای دور زدن پروکسی لیست سفید SNI استفاده کنید، این حالت را انتخاب کنید. (توصیه نمیشود.)\n"
@@ -1356,7 +1355,7 @@ msgid "config.default_useragent_string.description"
 msgstr ""
 
 msgid "config.default_useragent_string.label"
-msgstr "یوزرایجنت پیش‌فرض"
+msgstr "🪪 یوزرایجنت پیش‌فرض"
 
 msgid "config.dns_server.description"
 msgstr ""
@@ -1366,6 +1365,18 @@ msgstr ""
 
 msgid "config.dns_server.label"
 msgstr "🖥 سرور DNS"
+
+msgid "config.dnstt_enable.description"
+msgstr ""
+
+msgid "config.dnstt_enable.label"
+msgstr ""
+
+msgid "config.dnstt_resolvers.description"
+msgstr ""
+
+msgid "config.dnstt_resolvers.label"
+msgstr ""
 
 msgid "config.domain_fronting.description"
 msgstr ""
@@ -2331,12 +2342,6 @@ msgstr "تنظیمات مربوط به اتصال TLS"
 msgid "config.tls.label"
 msgstr "تنظیمات TLS"
 
-msgid "config.tls_ech.description"
-msgstr ""
-
-msgid "config.tls_ech.label"
-msgstr ""
-
 msgid "config.tls_ech_enable.description"
 msgstr ""
 
@@ -2444,7 +2449,7 @@ msgid "config.tuic_port.description"
 msgstr "از کاما برای جدا کردن پروت‌ها استفاده کنید مثلا 63000,60000"
 
 msgid "config.tuic_port.label"
-msgstr "پورت‌های TUIC"
+msgstr "🔎 پورت‌های TUIC"
 
 msgid "config.unique_id.description"
 msgstr "config.unique_id.description"
@@ -2635,6 +2640,9 @@ msgstr "دسکتاپ"
 msgid "direct"
 msgstr "➡️ مستقیم (بدون واسطه)"
 
+msgid "dnstt"
+msgstr ""
+
 msgid "domain.cdn"
 msgstr "سی‌دی‌ان"
 
@@ -2691,7 +2699,7 @@ msgstr ""
 "زیادی در DNS وجود دارد."
 
 msgid "domain.resolveip.label"
-msgstr "استفاده از IP"
+msgstr "🔢 استفاده از IP"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -2709,7 +2717,7 @@ msgstr ""
 " میشوید و همینطور کیفیت کلی بهتری خواهید داشتو."
 
 msgid "download_domain.label"
-msgstr "دامنه دانلود"
+msgstr "📈 دامنه دانلود"
 
 msgid "fake"
 msgstr "🆎 گمراه کننده (Fake)"
@@ -2885,13 +2893,13 @@ msgid "singbox: ssh"
 msgstr "SingBox: SSH"
 
 msgid "special_reality_grpc"
-msgstr "Reality gRPC"
+msgstr "🔀 Reality gRPC"
 
 msgid "special_reality_tcp"
-msgstr "Reality TCP"
+msgstr "🔁 Reality TCP"
 
 msgid "special_reality_xhttp"
-msgstr "Reality xHTTP"
+msgstr "🈁 Reality xHTTP"
 
 msgid "ssh"
 msgstr "SSH"

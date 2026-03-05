@@ -28,6 +28,7 @@ class DomainType(StrEnum):
     special_reality_xhttp = auto()
     special_reality_grpc = auto()
     old_xtls_direct = auto() #deprecated
+    dnstt = auto()
     # special_shadowtls = auto()
 
     # fake_cdn = "fake_cdn"
@@ -98,6 +99,7 @@ class Domain(db.Model):
             data["internal_port_tuic"] = self.internal_port_tuic
             data["internal_port_naive"] = self.internal_port_naive
             data["internal_port_special"] = self.internal_port_special
+            data["internal_port_dnstt"] = self.internal_port_dnstt
             data["need_valid_ssl"] = self.need_valid_ssl
 
         return data
@@ -133,6 +135,15 @@ class Domain(db.Model):
         # TODO: check validity of the range of the port
         # print("child_id",self.child_id)
         return int(hconfig(ConfigEnum.hysteria_port, self.child_id)) + self.port_index
+
+    @property
+    def internal_port_dnstt(self):
+        if self.mode not in [DomainType.dnstt]:
+            return 0
+        # TODO: check validity of the range of the port
+        # print("child_id",self.child_id)
+        return int(5400) + self.port_index
+
 
     @property
     def internal_port_tuic(self):

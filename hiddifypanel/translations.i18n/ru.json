@@ -1,10 +1,15 @@
 {
   " Search\n            Settings": " Поиск\nНастройки",
+  "%(count)s records were successfully deleted.": "",
   "%(count)s records were successfully disabled.": "%(count)s записей были успешно отключены.",
   "%(count)s records were successfully enabled.": "%(count)s записей были успешно включены.",
+  "%(count)s records were successfully reset days.": "",
+  "%(count)s records were successfully reset usage.": "",
+  "%(count)s records were successfully updated.": "",
   "%(expire_days)s days": "%(expire_days)s дней",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Последний день",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
   "Access Denied!": "Доступ запрещен",
   "Actions": "Действия",
   "Active": "Активный",
@@ -13,6 +18,7 @@
   "Add some text that is only visible to super_admin.": "Добавьте текст, который будет виден только суперадминистратору",
   "Add some text that is only visible to you.": "Вы можете добавить текст, который будет виден только вам.",
   "Added by": "Добавлено",
+  "Admin Links": "",
   "Admins": "Администраторы",
   "Alias": "Псевдоним",
   "All": "Все",
@@ -29,6 +35,7 @@
   "Bug": "Баги/Предложения",
   "CPU %(cores)s Cores": "CPU %(cores)s Ядро",
   "Can add sub admin": "👥 Может добавлять администраторов",
+  "Change": "",
   "Check again": "Проверить снова",
   "Childs": "Дочерние",
   "China": "🇨🇳 Китай",
@@ -57,6 +64,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "Домен (%(domain)s)-> IP = %(domain_ip)s не совпадает с вашим IP = %(server_ip)s . это требуется в режиме Direct",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "IP=%(domain_ip)s Домена не совпадает с Вашим IP Сервера, который необходим для \"Прямого Режима\"",
   "Domain can not be resolved! there is a problem in your domain": "Не возможно определить IP адрес для домена! В вашем домене возникла проблема. Пожалуйста, проверьте настройки.",
+  "Domain cannot be resolved! Please check DNS settings": "",
   "Domain is not REALITY friendly!": "Домен не подходит для использования с REALITY!",
   "Domain?": "Домен?",
   "Donation": {
@@ -84,6 +92,7 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>Рекомендуется</span>",
   "HiddifyNG intro": "📌 Установите HiddifyNG по любой из этих ссылок:\n<br />\n %(dl_link)s %(play_link)s\n<br />\nЗатем нажмите ссылку ниже и откройте ее в HiddifyNG\n<br />",
   "HiddigyN": "Рекомендуется<span class='badge Badge-success'>HiddifyN</span>",
+  "Home Link": "",
   "Hover the user to see the reason": "Наведите курсор на пользователя, чтобы увидеть причину",
   "How many days this package should be available?": "На сколько дней рассчитан этот пакет?",
   "How many?": "Сколько?",
@@ -115,11 +124,13 @@
   "Network": "Сеть",
   "New": "Новый",
   "No children!": "Нет дочерних",
+  "Not Secure": "",
   "Note": "📝 Примечание",
   "Offline more than 1 day": "Оффлайн более 1 дня",
   "Offline more than 1 hour": "Оффлайн более 1 часа",
   "Offline more than 1 week": "Офлайн более 1 недели",
   "Ok": "Хорошо",
+  "Online": "",
   "Online Users": "Пользователей в сети",
   "Only Blocked and Local websites": "☑️ Только заблокированные и локальные сайты",
   "Only for sublink?": "🌍 Используйте только для ссылки на подпискy",
@@ -144,6 +155,7 @@
   "Please type your message to send to the telegram:": "✏️ Пожалуйста, напишите свое сообщение для отправки в Telegram:",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "Обратите внимание, что родительская панель находится на стадии тестирования, поэтому план и условия использования могут измениться в любое время",
   "Please wait ": "Пожалуйста, подождите",
+  "Port 80 and 443 can not be selected": "",
   "Port is already used! in": "Порт уже используется в:",
   "Premium Description": "Панель Hiddify предназначена для некоммерческого использования. Но если вы используете эту панель в коммерческих целях, пожалуйста, помогите проекту развиваться, сделав пожертвование. <br/>\nВ обмен на вашу финансовую поддержку мы также предоставляем специальные возможности для вашего коммерческого продукта.\n<br/>\n<br/>\nТакой как:\n<ul><li>\n<li>Возможность синхронизации с Cloudflare: то есть, добавив домен в панели, соответствующие настройки также можно сделать в Cloudflare.</li>\n<li>Возможность отображения вашего бренда на панели</li>\n<li>Возможность использования центральной панели для управления более чем 1 сервером всего в одной панели, поэтому больше не нужно регистрировать пользователей на разных серверах, а их объем будет собираться на всех серверах.\n</li>\n<ли>\nВозможность использования Telegram-бота\n</li>\n<ли>\nВозможность изменения имен прокси\n</li>\n</ul>\n\nПожалуйста, свяжитесь с <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> после пожертвования.\nОтправьте сообщение, чтобы получить специальную версию для бизнес-пользователей.",
   "ProxyPath is already used! use different proxy path": "ProxyPath уже используется! используйте другой путь прокси",
@@ -151,6 +163,7 @@
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QR-код",
   "RAM": "RAM",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain несовместим с именами серверов!",
+  "REALITY Fallback domain is not compatible with server names!": "",
   "Release": "✅ Релиз",
   "Remaining about %(relative)s, exactly %(days)s days": "Осталось около %(relative)s, ровно %(days)s дней",
   "Remote nodes are not supported yet!": "Удаленные узлы пока не поддерживаются!",
@@ -186,14 +199,17 @@
   "Simplifies the process of employing the link elsewhere.": "Упрощает процесс использования ссылки в других местах",
   "SingBox": "📦 SingBox",
   "Sort by %(name)s": "Сортировать по %(name)s",
+  "Specifying CDN IP is only valid for CDN mode": "",
   "Start Date": "Дата начала",
   "Started %(days)s days ago": "Началось %(days)s дней назад",
   "Started from %(relative)s": "Началось с %(relative)s",
   "Status": "Статус",
+  "SubLink": "",
   "Submit": "Подтвердить",
   "Success": "Успешно",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️Операция завершена успешно! Пожалуйста, подождите около 5 минут, чтобы убедиться, что все обновлено.",
   "Telegram Bot": "Telegram-бот",
+  "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️ Временная ссылка",
   "The message has been sent.": "Сообщение отправлено",
   "The message was not sent to": "Сообщение не было отправлено ",
@@ -275,6 +291,14 @@
   "all": "Все",
   "android": "Android",
   "app": {
+    "clash_verge_rev": {
+      "description": "",
+      "title": ""
+    },
+    "cmfa": {
+      "description": "",
+      "title": ""
+    },
     "foxray": {
       "description": "Описание фоксрея",
       "title": "Фоксрей"
@@ -325,6 +349,9 @@
       "description": "Описание Streisand",
       "title": "Streisand"
     },
+    "v2rayn": {
+      "title": ""
+    },
     "v2rayng": {
       "description": "Описание V2RayNG",
       "title": "V2RayNG"
@@ -366,7 +393,13 @@
     },
     "admin_lang": {
       "description": "Выберите язык для раздела администрирования",
-      "label": "🗺️ Язык панели администратора"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ Язык панели администратора",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "admin_secret": {
       "description": "Admin Secret будет использоваться для доступа к панели администратора.",
@@ -436,9 +469,21 @@
       "description": "Поддельный сайт: имитирует сайт, когда кто-то напрямую посещает ваш домен.<br>\n⚠️ Не используйте финансовые, иранские и известные сайты или сайты с авторизацией, такие как Google, Yahoo, Wikipedia, PayPal.<br>\n⛔ Обязательно проверьте сайт и убедитесь, что это правильный сайт, иначе вы можете получить предупреждение о фишинге.<br>\n⛔⛔ Проверьте этот домен еще раз, чтобы не было проблем в будущем",
       "label": "📺 Сайт-приманка"
     },
+    "default_useragent_string": {
+      "description": "",
+      "label": ""
+    },
     "dns_server": {
       "description": "✳️ По умолчанию 1.1.1.1 <br>\n🚧 Блокировать вредоносное ПО 1.1.1.2 <br>\n🔞 Блокировать порно 1.1.1.3",
       "label": "🖥 DNS-сервер"
+    },
+    "dnstt_enable": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_resolvers": {
+      "description": "",
+      "label": ""
     },
     "domain_fronting": {
       "description": "Это используется для имитации другого веб-сайта вместо вашего в SNI. поэтому GTW не может фильтровать ваш домен\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>Руководство</a>. ⚠️CloudFlare не поддерживает фронтирование домена.",
@@ -544,7 +589,13 @@
     },
     "lang": {
       "description": "Выберите язык пользовательского интерфейса, чтобы персонализировать свой опыт использования пользовательской зоны.",
-      "label": "🗺️ Язык раздела пользователя"
+      "en": "",
+      "fa": "",
+      "label": "🗺️ Язык раздела пользователя",
+      "my": "",
+      "pt": "",
+      "ru": "",
+      "zh": ""
     },
     "last_hash": {
       "description": "config.last_hash.description",
@@ -559,8 +610,46 @@
       "label": "License  Code"
     },
     "log_level": {
+      "CRITICAL": "",
+      "DEBUG": "",
+      "ERROR": "",
+      "INFO": "",
+      "SUCCESS": "",
+      "TRACE": "",
+      "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
+    },
+    "mieru": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_enable": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_handshake": {
+      "HANDSHAKE_DEFAULT": "",
+      "HANDSHAKE_NO_WAIT": "",
+      "HANDSHAKE_STANDARD": "",
+      "description": "",
+      "label": ""
+    },
+    "mieru_multiplexing": {
+      "MULTIPLEXING_DEFAULT": "",
+      "MULTIPLEXING_HIGH": "",
+      "MULTIPLEXING_LOW": "",
+      "MULTIPLEXING_MIDDLE": "",
+      "description": "",
+      "label": ""
+    },
+    "mieru_tcp_ports": {
+      "description": "",
+      "label": ""
+    },
+    "mieru_udp_ports": {
+      "description": "",
+      "label": ""
     },
     "mux": {
       "description": "Настройки конфигурации MUX (Multiplex)",
@@ -602,6 +691,14 @@
       "description": "ℹ️Мультиплексный протокол. «sMux» используется по умолчанию<inlang-LineFeed><br>\n➖ sMux: мультиплексирование потоков<inlang-LineFeed><br>\n➖ YaMux: еще один мультиплексор<inlang-LineFeed><br>\n➖ h2Mux: мультиплексирование потоков через HTTP/2",
       "label": "♍️ Протокол MUX"
     },
+    "naive_enable": {
+      "description": "",
+      "label": ""
+    },
+    "naive_port": {
+      "description": "",
+      "label": ""
+    },
     "netdata": {
       "description": "Для отображения ресурсов, используется процессор вашего сервера, но нагрузка не слишком высокая",
       "label": "Netdata"
@@ -619,8 +716,11 @@
       "label": "🔄 Режим обновления пакетов"
     },
     "panel_mode": {
+      "child": "",
       "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label"
+      "label": "config.panel_mode.label",
+      "parent": "",
+      "standalone": ""
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -641,6 +741,10 @@
     "path_httpupgrade": {
       "description": "должен быть случайным",
       "label": "ℹ️ Путь обновления HTTP"
+    },
+    "path_naive": {
+      "description": "",
+      "label": ""
     },
     "path_ss": {
       "description": "Путь Shadowsocks в ссылках",
@@ -705,6 +809,10 @@
     "reality_fallback_domain": {
       "description": "При попытке контролирующих органов посетить сайт вытащенный из запроса, он будет перенаправлен на этот домен.",
       "label": "🌍 Резервный домен Reality"
+    },
+    "reality_port": {
+      "description": "",
+      "label": ""
     },
     "reality_private_key": {
       "description": "Не меняйте это",
@@ -794,6 +902,38 @@
       "description": "SSH Proxy, также известный как SSH tunnel или переадресация портов SSH, представляет собой метод создания безопасного канала связи между двумя компьютерами в незащищенной сети. У нас есть отдельное приложение, которое полностью отличается от стандартногно ssh-сервера и не может выполнять какие-либо команды.",
       "label": "SSH Proxy"
     },
+    "ssh_host_dsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_dsa_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ecdsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ecdsa_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ed25519_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_ed25519_pub": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_rsa_pk": {
+      "description": "",
+      "label": ""
+    },
+    "ssh_host_rsa_pub": {
+      "description": "",
+      "label": ""
+    },
     "ssh_server_enable": {
       "description": "SSH Proxy полностью отличается от оригинального SSH Server",
       "label": "✔️ Включить SSH Poxy"
@@ -878,9 +1018,17 @@
       "description": "В этом разделе можно установить конфигурации TLS",
       "label": "Настройки TLS"
     },
+    "tls_ech_enable": {
+      "description": "",
+      "label": ""
+    },
     "tls_fragment_enable": {
       "description": "При некоторых обстоятельствах, это позволяет обойти систему черного списка SNI. <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(подробнее)</a>",
       "label": "⏯ TLS Fragment"
+    },
+    "tls_fragment_packets": {
+      "description": "",
+      "label": ""
     },
     "tls_fragment_size": {
       "description": "Размер каждого пакета",
@@ -937,6 +1085,10 @@
     "unique_id": {
       "description": "config.unique_id.description",
       "label": "config.unique_id.label"
+    },
+    "use_ip_in_config": {
+      "description": "",
+      "label": ""
     },
     "utls": {
       "description": "Эта опция будет имитировать разные браузеры, поэтому GFW не сможет обнаружить ваш браузер",
@@ -1028,9 +1180,11 @@
   "days": "Дни",
   "desktop": "ПК",
   "direct": "➡️ На прямую",
+  "dnstt": "",
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Ваши домены изменились. пожалуйста, не забудьте скопировать ссылки администратора, иначе вы больше не сможете получить доступ к панели управления",
+    "current_server_IPs": "",
     "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
     "domain_fronting": {
@@ -1046,9 +1200,17 @@
     "reality": {
       "asn_issue": "Выбранный домен для REALITY не находится в том же ASN. Для более эффективного использования протокола лучше найти Домен в том же ASN"
     },
+    "resolveip": {
+      "description": "",
+      "label": ""
+    },
     "show_domains_description": "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n<br>\nПредложение: Для домена с IP-адресом не попадащим под фильтры, отличного от других, выберите все остальные домены (кроме текущего). В результате, поскольку этот IP-адрес используется не для прокси-сервера, а для простого веб-сайта, этот домен и IP-адрес никогда не будут заблокированы, и ваши пользователи смогут легко обновлять свои профили."
   },
   "download": "Direct Download",
+  "download_domain": {
+    "description": "",
+    "label": ""
+  },
   "fake": "🆎 Поддельный сайт",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {
@@ -1070,7 +1232,8 @@
     "telegram": {
       "erlang": "✴️ Erlang: хорошая производительность",
       "go": "✅ Go: Нормальный функционал – без поддержки рекламы",
-      "python": "☑️ Python: низкая производительность"
+      "python": "☑️ Python: низкая производительность",
+      "telemt": ""
     }
   },
   "log": "📄 Log",

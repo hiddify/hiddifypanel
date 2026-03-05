@@ -197,17 +197,14 @@ msgid ""
 "means that you use your server on behind of a CDN provider."
 msgstr ""
 "➡️ <b>直接：</b>如果您在仅 DNS 模式下在 DNS 提供商上专门配置域，请选择此模式。 （CDN 或代理模式关闭）<br>\n"
-"🔙 <b>旧 Direct 模式：</b> 该模式与 Direct 模式类似，但不使用 gRPC 进行通信。如果您希望在 DNS 提供商上以仅 DNS 模式配置域而不使用 gRPC，请选择旧模式。\n"
-"<br>\n"
 "🔀 <b>CDN：</b>如果您的服务器域使用 CDN 提供商，请选择此模式。 （代理模式开启）<br>\n"
-"☑️ <b>自动 CDN IP 选择器：</b>此模式的功能与 CDN 模式类似，但根据 <a href='https://ircf.space' target='_blank' 提供的 IP 进行自动 IP 分配>ircf.space</a>。 Auto CDN IP 模式下，从域名解析 IP 地址，CDN 模式下，返回域名。<br>\n"
 "♾️ <b>中继：</b>如果您使用一台或多台中间服务器，请选择此模式。 <a href='https://github.com/hiddify/hiddify-config/discussions/129' target='_blank'>了解更多</a>\n"
 "<br>\n"
 "✴️ <b>Cloudflare Worker：</b>此模式可以在 Cloudflare 中自动为您的域创建工作人员。通过注册此域来简化工作人员的设置和管理，因为工作人员注册的必要步骤是在 Cloudflare 中自动处理的。\n"
 "<br>\n"
-"🔂 <b>Reality：</b> 利用 Reality 协议创建多个域。\n"
-"<br>\n"
 "🆎 <b>假站点：</b>如果您想使用假域名（例如 Soft98.ir）绕过 SNI 白名单代理，请选择此模式。 （不建议）\n"
+"<br>\n"
+"🔂 <b>Reality：</b> 利用 Reality 协议创建多个域。\n"
 "<br>"
 
 msgid "Disable"
@@ -1331,6 +1328,18 @@ msgstr ""
 msgid "config.dns_server.label"
 msgstr "🖥 DNS 服务器"
 
+msgid "config.dnstt_enable.description"
+msgstr ""
+
+msgid "config.dnstt_enable.label"
+msgstr ""
+
+msgid "config.dnstt_resolvers.description"
+msgstr ""
+
+msgid "config.dnstt_resolvers.label"
+msgstr ""
+
 msgid "config.domain_fronting.description"
 msgstr ""
 "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n"
@@ -2189,12 +2198,6 @@ msgstr "可以在此部分设置 TLS 配置。"
 msgid "config.tls.label"
 msgstr "TLS 设置"
 
-msgid "config.tls_ech.description"
-msgstr ""
-
-msgid "config.tls_ech.label"
-msgstr ""
-
 msgid "config.tls_ech_enable.description"
 msgstr ""
 
@@ -2298,7 +2301,7 @@ msgid "config.tuic_port.description"
 msgstr "使用逗号分隔端口，例如 63000,60000"
 
 msgid "config.tuic_port.label"
-msgstr "TUIC 端口"
+msgstr "🔎 TUIC 端口"
 
 msgid "config.unique_id.description"
 msgstr "config.unique_id.description"
@@ -2472,6 +2475,9 @@ msgstr "桌面"
 
 msgid "direct"
 msgstr "➡️直接"
+
+msgid "dnstt"
+msgstr ""
 
 msgid "domain.cdn"
 msgstr "CDN"
@@ -2704,13 +2710,13 @@ msgid "singbox: ssh"
 msgstr "歌手盒：SSH"
 
 msgid "special_reality_grpc"
-msgstr "Reality gRPC"
+msgstr "🔀 Reality gRPC"
 
 msgid "special_reality_tcp"
-msgstr "Reality TCP"
+msgstr "🔁 Reality TCP"
 
 msgid "special_reality_xhttp"
-msgstr "Reality xHTTP"
+msgstr "🈁 Reality xHTTP"
 
 msgid "ssh"
 msgstr "SSH"
