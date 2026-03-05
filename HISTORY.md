@@ -1,6 +1,114 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Add dnstt. 
+
+#### Other
+
+* Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
+
+* Update README.md. 
+
+* Update installation link in README.md. 
+
+* Update README.md. 
+
+* Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Chore: update translations with Fink 🐦 
+
+* Update translations. 
+
+
+
 ## v12.0.0 (2026-02-21)
 
 #### New
