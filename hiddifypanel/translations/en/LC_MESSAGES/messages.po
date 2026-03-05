@@ -1200,6 +1200,30 @@ msgstr "Invalid Proxy Path. It should be ASCI string (a-z A-Z 0-9)"
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Invalid Telegram Bot Token"
 
+msgid "config.additional_configs.description"
+msgstr "config.additional_configs.description"
+
+msgid "config.additional_configs.label"
+msgstr "Additional Configs"
+
+msgid "config.additional_configs_singbox.description"
+msgstr "You can append other singbox outbounds to the result"
+
+msgid "config.additional_configs_singbox.label"
+msgstr "Additional Configs for Singbox"
+
+msgid "config.additional_configs_urls.description"
+msgstr "You can add http:// https:// or v2ray format porxies like vless://"
+
+msgid "config.additional_configs_urls.label"
+msgstr "Additional URLs"
+
+msgid "config.additional_configs_xrayjson.description"
+msgstr "Additional outbounds for Xray Json"
+
+msgid "config.additional_configs_xrayjson.label"
+msgstr "Additional Configs for Xray JSON"
+
 msgid "config.admin.description"
 msgstr "Admin section is for configuring admin related settings"
 

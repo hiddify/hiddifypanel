@@ -106,6 +106,8 @@ def get_all_proxy_form(empty=False):
             'tuic': 'other',
             'ssh': 'other',
             'hysteria2': 'other',
+            "mieru":"other"
+            
         }
         protos = sorted([c for c in {pgroup.get(c.proto, c.proto): 1 for c in cdn_proxies}])
         for proto in protos:

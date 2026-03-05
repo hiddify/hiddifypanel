@@ -388,6 +388,22 @@
     "Invalid_port": "Invalid Port. it should be comma separated Integer e.g.  2052,2053",
     "Invalid_proxy_path": "Invalid Proxy Path. It should be ASCI string (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Invalid Telegram Bot Token",
+    "additional_configs": {
+      "description": "config.additional_configs.description",
+      "label": "Additional Configs"
+    },
+    "additional_configs_singbox": {
+      "description": "You can append other singbox outbounds to the result",
+      "label": "Additional Configs for Singbox"
+    },
+    "additional_configs_urls": {
+      "description": "You can add http:// https:// or v2ray format porxies like vless://",
+      "label": "Additional URLs"
+    },
+    "additional_configs_xrayjson": {
+      "description": "Additional outbounds for Xray Json",
+      "label": "Additional Configs for Xray JSON"
+    },
     "admin": {
       "description": "Admin section is for configuring admin related settings",
       "label": "Admin Settings"

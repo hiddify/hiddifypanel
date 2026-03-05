@@ -35,6 +35,8 @@ def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
 
     if proxy.proto not in {ProxyProto.mieru,ProxyProto.dnstt} and not port:
         return {'name': name, 'msg': "port not defined", 'type': 'error', 'proto': proxy.proto}
+    if proxy.proto==ProxyProto.naive and not domain_db.need_valid_ssl:
+        return {'name': name, 'msg': "naive only supports valid cert", 'type': 'error', 'proto': proxy.proto}    
     if "reality" not in l3 and 'reality' in domain_db.mode:
         return {'name': name, 'msg': "1reality proxy not in reality domain", 'type': 'debug', 'proto': proxy.proto}
 
@@ -410,9 +412,6 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         'params': proxy.params or {},
     }
     
-    if hconfigs.get(ConfigEnum.tls_ech_enable) and not proxy.l3 in {ProxyL3.reality}:
-        if ech:=hutils.network.get_ech_info(base.get('sni')):
-            base['ech'] = ech
 
     if base["proto"]==ProxyProto.dnstt:
         base["public_key"]=get_dnstt_public_key()
@@ -428,6 +427,10 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         base['password']="h"
         return base
     
+    if hconfigs.get(ConfigEnum.tls_ech_enable) and not proxy.l3 in {ProxyL3.reality}:
+        if ech:=hutils.network.get_ech_info(base.get('sni')):
+            base['ech'] = ech
+
     if base['proto'] in {ProxyProto.mieru}:
         base["password"]="h"
         

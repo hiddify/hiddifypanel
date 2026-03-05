@@ -387,6 +387,22 @@
     "Invalid_port": "Неверный порт. это должно быть целое число, разделенное запятыми, например. 2052,2053",
     "Invalid_proxy_path": "Неверный Proxy Path Это должна быть строка ASCI (a-z A-Z 0-9).",
     "Invalid_telegram_bot_token": "Неверный токен Telegram bot",
+    "additional_configs": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_singbox": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_urls": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_xrayjson": {
+      "description": "",
+      "label": ""
+    },
     "admin": {
       "description": "Раздел предназначен для настройки параметров, связанных с администратором.",
       "label": "Настройки администратора"

@@ -8,7 +8,7 @@ from hiddifypanel.models import hconfig, ConfigEnum
 from .xray import is_muxable_agent, OUTBOUND_LEVEL
 
 
-def configs_as_json(domains: list[Domain], user: User, expire_days: int, remarks: str) -> str:
+def configs_as_json(domains: list[Domain], user: User, expire_days: int, remarks: str) -> list:
     '''Returns xray configs as json'''
     all_configs = []
 
@@ -47,8 +47,8 @@ def configs_as_json(domains: list[Domain], user: User, expire_days: int, remarks
     else:
         # TODO: seperate codes to small functions
         # TODO: check what are unsupported protocols in other apps
-        unsupported_protos = {}
-        unsupported_transport = {}
+        unsupported_protos:set[ProxyProto] = set()
+        unsupported_transport:set[ProxyTransport] = set()
         if g.user_agent.get('is_v2rayng'):
             # TODO: ensure which protocols are not supported in v2rayng
             unsupported_protos = {ProxyProto.hysteria, ProxyProto.hysteria2,
@@ -83,13 +83,12 @@ def configs_as_json(domains: list[Domain], user: User, expire_days: int, remarks
 
         else:  # single outbound
             base_config['outbounds'].insert(0, outbounds[0])
-            all_configs = base_config
+            all_configs = [base_config]
 
     if not all_configs:
-        return ''
+        return []
 
-    json_configs = json.dumps(all_configs, indent=2, cls=hutils.proxy.ProxyJsonEncoder)
-    return json_configs
+    return all_configs
 
 
 def to_xray(proxy: dict) -> dict:

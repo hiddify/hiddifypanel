@@ -439,3 +439,45 @@ def get_ech_info(domain):
         pass
 
     return None
+
+
+def all_public_ports():
+        tcp_ports={80:"http",443:"tls"}
+        udp_ports={443:"quic",}
+        log=[]
+        if hconfig(ConfigEnum.wireguard_enable):
+            udp_ports[hconfig(ConfigEnum.wireguard_port)]="wireguard"
+            
+            
+        if hconfig(ConfigEnum.shadowsocks2022_enable) and (p:=hconfig(ConfigEnum.shadowsocks2022_port)):
+            udp_ports[p]="shadowsocks_2022"
+            tcp_ports[p]="shadowsocks_2022"
+        if hconfig(ConfigEnum.mieru_enable):
+            for p in hconfig(ConfigEnum.mieru_tcp_ports).split(","):
+                tcp_ports[p]="mieru"
+            for p in hconfig(ConfigEnum.mieru_udp_ports).split(","):
+                udp_ports[p]="mieru"
+        if hconfig(ConfigEnum.ssh_server_enable):
+            tcp_ports[hconfig(ConfigEnum.ssh_server_port)]="ssh"
+        
+        for p in (hconfig(ConfigEnum.tls_ports)).split(','):
+            tcp_ports[p]="tls"
+            udp_ports[p]="quic"
+        for p in hconfig(ConfigEnum.http_ports).split(','):
+            tcp_ports[p]="http"
+
+        for d in Domain.query.all():
+            udp_ports[d.internal_port_tuic]="tuic"
+            udp_ports[d.internal_port_naive]="naive"
+            udp_ports[d.internal_port_hysteria2]="hysteria"
+
+        def to_int(ports):
+            r={}
+            for p,v in ports.items():
+                try:
+                    if ip:=int(p):
+                        r[ip]=v
+                except:
+                    pass
+            return {k:v for k,v in sorted(r.items())}
+        return {"tcp":to_int(tcp_ports),"udp":to_int(udp_ports)}

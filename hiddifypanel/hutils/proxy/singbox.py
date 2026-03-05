@@ -6,7 +6,7 @@ from hiddifypanel.hutils.proxy.xrayjson import to_xray
 from hiddifypanel.models import ProxyProto, ProxyTransport, Domain, ConfigEnum
 
 
-def configs_as_json(domains: list[Domain], **kwargs) -> str:
+def configs_as_json(domains: list[Domain], **kwargs) -> dict:
     ua = hutils.flask.get_user_agent()
     base_config = json.loads(render_template('base_singbox_config.json.j2'))
     allphttp = [p for p in request.args.get("phttp", "").split(',') if p]
@@ -43,10 +43,10 @@ def configs_as_json(domains: list[Domain], **kwargs) -> str:
         "tolerance": 200
     }
     base_config['outbounds'].insert(1, smart)
-    res = json.dumps(base_config, indent=4, cls=hutils.proxy.ProxyJsonEncoder)
+    
     # if ua['is_hiddify']:
     #     res = res[:-1]+',"experimental": {}}'
-    return res
+    return base_config
 
 
 def is_xray_proxy(proxy: dict):

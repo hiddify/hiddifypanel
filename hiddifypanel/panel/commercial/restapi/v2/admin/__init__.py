@@ -6,25 +6,33 @@ bp = APIBlueprint("api_admin", __name__, url_prefix="/<proxy_path>/api/v2/admin/
 
 
 def init_app(app):
-
+    
     with app.app_context():
         from .admin_info_api import AdminInfoApi
         from .server_status_api import AdminServerStatusApi
         from .admin_user_api import AdminUserApi
         from .admin_users_api import AdminUsersApi
         from .admin_log_api import AdminLogApi
+        from .system_actions import AllPublicPortsApi
         from .system_actions import UpdateUserUsageApi, AllConfigsApi
         bp.add_url_rule('/me/', view_func=AdminInfoApi)  # type: ignore
         bp.add_url_rule('/server_status/', view_func=AdminServerStatusApi)  # type: ignore
         bp.add_url_rule('/admin_user/<uuid:uuid>/', view_func=AdminUserApi)  # type: ignore
         bp.add_url_rule('/admin_user/', view_func=AdminUsersApi)  # type: ignore
+        
         bp.add_url_rule('/log/', view_func=AdminLogApi)  # type: ignore
         bp.add_url_rule('/update_user_usage/', view_func=UpdateUserUsageApi)  # type: ignore
         bp.add_url_rule('/all-configs/', view_func=AllConfigsApi)  # type: ignore
+        
+        bp.add_url_rule('/all-public-port/', view_func=AllPublicPortsApi)  # type: ignore
+        
         from .user_api import UserApi
         from .users_api import UsersApi
+
         bp.add_url_rule('/user/<uuid:uuid>/', view_func=UserApi)  # type: ignore
+        
         bp.add_url_rule('/user/', view_func=UsersApi)  # type: ignore
+        
     app.register_blueprint(bp)
 
 

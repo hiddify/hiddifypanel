@@ -387,6 +387,22 @@
     "Invalid_port": "端口无效。它应该是逗号分隔的整数，例如2052,2053",
     "Invalid_proxy_path": "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Telegram 机器人令牌无效",
+    "additional_configs": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_singbox": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_urls": {
+      "description": "",
+      "label": ""
+    },
+    "additional_configs_xrayjson": {
+      "description": "",
+      "label": ""
+    },
     "admin": {
       "description": "管理部分用于配置管理相关设置",
       "label": "管理设置"
