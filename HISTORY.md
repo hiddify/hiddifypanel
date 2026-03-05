@@ -5,13 +5,29 @@
 
 #### New
 
+* Add additional configs. 
+
+* Add public ports for relay servers. 
+
+* Add 7 days action to users, disable ip resolving in domain page, make domain page better. 
+
 * Add dnstt. 
 
 #### Fix
 
+* Merge. 
+
 * Issue. 
 
 #### Other
+
+* Update translations. 
+
+* Disable ech for naive. 
+
+* Merge branch 'main' of github.com:hiddify/Hiddify-Panel. 
+
+* Update translations. 
 
 * Update translations. 
 
