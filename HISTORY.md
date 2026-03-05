@@ -7,7 +7,13 @@
 
 * Add dnstt. 
 
+#### Fix
+
+* Issue. 
+
 #### Other
+
+* Update translations. 
 
 * Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
 
