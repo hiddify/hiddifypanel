@@ -15,11 +15,15 @@
 
 #### Fix
 
+* Issue. 
+
 * Merge. 
 
 * Issue. 
 
 #### Other
+
+* Update translations. 
 
 * Update translations. 
 
