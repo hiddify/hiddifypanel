@@ -16,7 +16,6 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 130
 
-
 def _v116(child_id):
     set_hconfig(ConfigEnum.dnstt_enable, True)
     set_hconfig(ConfigEnum.dnstt_resolvers,"8.8.8.8:53,8.8.4.4:53")
@@ -24,13 +23,12 @@ def _v116(child_id):
             Proxy(l3=ProxyL3.custom, transport=ProxyTransport.custom, cdn='direct', proto=ProxyProto.dnstt, enable=True, name="DNSTT"),
     ])
 
-    
-
 
 def _v115(child_id):
     set_hconfig(ConfigEnum.additional_configs_urls, "")
     set_hconfig(ConfigEnum.additional_configs_singbox, "")
     set_hconfig(ConfigEnum.additional_configs_xrayjson, "")
+
     
 def _v114(child_id):
     db.session.bulk_save_objects([
