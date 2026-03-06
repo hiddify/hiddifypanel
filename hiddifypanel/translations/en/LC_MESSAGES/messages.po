@@ -1679,13 +1679,13 @@ msgid "config.mieru_enable.label"
 msgstr "⚡️ Enable Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr "📄 Default"
+msgstr "HANDSHAKE_DEFAULT"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr "⏳ No Wait"
+msgstr "HANDSHAKE_NO_WAIT"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr "📝 Standard"
+msgstr "HANDSHAKE_STANDARD"
 
 msgid "config.mieru_handshake.description"
 msgstr ""
@@ -1693,19 +1693,19 @@ msgstr ""
 "authenticating both parties before data exchange"
 
 msgid "config.mieru_handshake.label"
-msgstr "🤝 Mieru Handshake"
+msgstr "Mieru Handshake"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr "📄 Default"
+msgstr "MULTIPLEXING_DEFAULT"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr "📈 High"
+msgstr "MULTIPLEXING_HIGH"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr "📉 Low"
+msgstr "MULTIPLEXING_LOW"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr "📊 Middle"
+msgstr "MULTIPLEXING_MIDDLE"
 
 msgid "config.mieru_multiplexing.description"
 msgstr ""
@@ -1713,7 +1713,7 @@ msgstr ""
 "connections to be handled simultaneously"
 
 msgid "config.mieru_multiplexing.label"
-msgstr "🔄 Mieru Multiplexing Mode"
+msgstr "Mieru Multiplexing"
 
 msgid "config.mieru_tcp_ports.description"
 msgstr "Comma separated integers indicating the ports (1234,1235,1237)"
