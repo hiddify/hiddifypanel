@@ -3,6 +3,7 @@
 source /opt/hiddify-manager/common/utils.sh
 activate_python_venv
 
+
 PATH=/config/.local/bin:$PATH
 
 python -c "
