@@ -493,7 +493,19 @@
       "description": "✳️默认1.1.1.1 <br>\n🚧 阻止恶意软件 1.1.1.2 <br>\n🔞 阻止色情 1.1.1.3",
       "label": "🖥 DNS 服务器"
     },
+    "dnstt": {
+      "description": "",
+      "label": ""
+    },
     "dnstt_enable": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_private_key": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_public_key": {
       "description": "",
       "label": ""
     },

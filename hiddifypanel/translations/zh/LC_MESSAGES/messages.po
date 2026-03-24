@@ -1352,10 +1352,28 @@ msgstr ""
 msgid "config.dns_server.label"
 msgstr "🖥 DNS 服务器"
 
+msgid "config.dnstt.description"
+msgstr ""
+
+msgid "config.dnstt.label"
+msgstr ""
+
 msgid "config.dnstt_enable.description"
 msgstr ""
 
 msgid "config.dnstt_enable.label"
+msgstr ""
+
+msgid "config.dnstt_private_key.description"
+msgstr ""
+
+msgid "config.dnstt_private_key.label"
+msgstr ""
+
+msgid "config.dnstt_public_key.description"
+msgstr ""
+
+msgid "config.dnstt_public_key.label"
 msgstr ""
 
 msgid "config.dnstt_resolvers.description"

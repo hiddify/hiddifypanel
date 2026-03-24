@@ -493,7 +493,19 @@
       "description": "✳️ По умолчанию 1.1.1.1 <br>\n🚧 Блокировать вредоносное ПО 1.1.1.2 <br>\n🔞 Блокировать порно 1.1.1.3",
       "label": "🖥 DNS-сервер"
     },
+    "dnstt": {
+      "description": "",
+      "label": ""
+    },
     "dnstt_enable": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_private_key": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_public_key": {
       "description": "",
       "label": ""
     },

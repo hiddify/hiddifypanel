@@ -1401,11 +1401,29 @@ msgstr ""
 msgid "config.dns_server.label"
 msgstr "🖥 DNS Server"
 
+msgid "config.dnstt.description"
+msgstr "config.dnstt.description"
+
+msgid "config.dnstt.label"
+msgstr "config.dnstt.label"
+
 msgid "config.dnstt_enable.description"
 msgstr "config.dnstt_enable.description"
 
 msgid "config.dnstt_enable.label"
 msgstr "DNSTT Enable"
+
+msgid "config.dnstt_private_key.description"
+msgstr "config.dnstt_private_key.description"
+
+msgid "config.dnstt_private_key.label"
+msgstr "config.dnstt_private_key.label"
+
+msgid "config.dnstt_public_key.description"
+msgstr "config.dnstt_public_key.description"
+
+msgid "config.dnstt_public_key.label"
+msgstr "config.dnstt_public_key.label"
 
 msgid "config.dnstt_resolvers.description"
 msgstr "config.dnstt_resolvers.description"

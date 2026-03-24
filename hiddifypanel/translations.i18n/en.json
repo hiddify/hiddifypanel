@@ -494,9 +494,21 @@
       "description": "✳️ Default 1.1.1.1 <br>\n🚧 Block Malware 1.1.1.2 <br>\n🔞 Block Porn 1.1.1.3\n",
       "label": "🖥 DNS Server"
     },
+    "dnstt": {
+      "description": "config.dnstt.description",
+      "label": "config.dnstt.label"
+    },
     "dnstt_enable": {
       "description": "config.dnstt_enable.description",
       "label": "DNSTT Enable"
+    },
+    "dnstt_private_key": {
+      "description": "config.dnstt_private_key.description",
+      "label": "config.dnstt_private_key.label"
+    },
+    "dnstt_public_key": {
+      "description": "config.dnstt_public_key.description",
+      "label": "config.dnstt_public_key.label"
     },
     "dnstt_resolvers": {
       "description": "config.dnstt_resolvers.description",

@@ -493,7 +493,19 @@
       "description": "✳️ پیش فرض 1.1.1.1 <br>\n🚧 مسدود کردن بدافزار 1.1.1.2 <br>\n🔞 مسدود کردن پورن 1.1.1.3",
       "label": "🖥 سرور DNS"
     },
+    "dnstt": {
+      "description": "",
+      "label": ""
+    },
     "dnstt_enable": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_private_key": {
+      "description": "",
+      "label": ""
+    },
+    "dnstt_public_key": {
       "description": "",
       "label": ""
     },
