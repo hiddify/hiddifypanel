@@ -1,5 +1,6 @@
 from enum import auto
 import ipaddress
+import json
 import re
 from typing import Dict, List
 from flask import request
@@ -62,7 +63,7 @@ class Domain(db.Model):
                                    )
     download_domain_id= db.Column(db.Integer, db.ForeignKey('domain.id', ondelete='SET NULL'), default=None,nullable=True)
     download_domain = db.relationship('Domain',remote_side=[id],    foreign_keys=[download_domain_id])
-    extra_params = db.Column(db.String(200), nullable=True, default='')
+    extra_params = db.Column(db.String(2000), nullable=True, default='{}')
     resolve_ip= db.Column(db.Boolean, nullable=True, default=False)
 
     def __repr__(self):
@@ -91,6 +92,7 @@ class Domain(db.Model):
             'download_domain':self.download_domain.domain if self.download_domain else "",
             'show_domains': [dd.domain for dd in self.show_domains],  # type: ignore
             "resolve_ip":self.resolve_ip,
+            "extra_params":json.loads(self.extra_params or "{}")
         }
         if dump_child_id:
             data['child_id'] = self.child_id
@@ -223,6 +225,7 @@ class Domain(db.Model):
         dbdomain.grpc = domain.get('grpc', False)
         dbdomain.servernames = domain.get('servernames', '')
         dbdomain.resolve_ip=domain.get("resolve_ip",False)
+        dbdomain.extra_params=domain.get("extra_params","")
         show_domains = domain.get('show_domains', [])
         dbdomain.show_domains = Domain.query.filter(Domain.domain.in_(show_domains)).all()
         dl_domain=domain.get("download_domain")

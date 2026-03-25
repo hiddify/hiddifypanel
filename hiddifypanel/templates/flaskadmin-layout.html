@@ -104,6 +104,7 @@
             }else{
                 $("#show_domains").parent().show()
             }
+           
             if ($("#mode").val() == "sub_link_only") {
                 $("#cdn_ip").parent().hide();
                 $("#cdn_ip").val("")
@@ -119,7 +120,12 @@
                 $("#resolve_ip").parent().hide()
                 $("#servernames").parent().hide();
                 $("#download_domain").parent().hide();
+                $("#cdn_ip").parent().hide();
+                $("#extra_params").parent().show();
+                
+
             } else {
+                
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();
                 //$("#mode").parent().show();

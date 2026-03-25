@@ -31,7 +31,7 @@ def get_wg_private_public_psk_pair():
         return None, None, None
 
 
-def generate_x25519_keys():
+def generate_x25519_keys(base_64_encode=True):
     priv = x25519.X25519PrivateKey.generate()
     pub = priv.public_key()
     priv_bytes = priv.private_bytes(
@@ -43,10 +43,13 @@ def generate_x25519_keys():
         encoding=serialization.Encoding.Raw,
         format=serialization.PublicFormat.Raw
     )
-    import base64
-    pub_str = base64.urlsafe_b64encode(pub_bytes).decode()[:-1]
-    priv_str = base64.urlsafe_b64encode(priv_bytes).decode()[:-1]
-
+    if base_64_encode:
+        import base64
+        pub_str = base64.urlsafe_b64encode(pub_bytes).decode()[:-1]
+        priv_str = base64.urlsafe_b64encode(priv_bytes).decode()[:-1]
+    else:
+        pub_str=pub_bytes.hex()
+        priv_str=priv_bytes.hex()
     return {'private_key': priv_str, 'public_key': pub_str}
 
 

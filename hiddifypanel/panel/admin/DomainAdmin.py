@@ -19,6 +19,7 @@ from hiddifypanel import hutils
 
 from loguru import logger
 from flask import current_app
+from pydantic import BaseModel, Field
 # Define a custom field type for the related domains
 
 
@@ -28,6 +29,12 @@ from flask import current_app
 #         super().__init__(label, validators,*args, **kwargs)
 #         self.choices=[(d.id,d.domain) for d in Doamin.query.filter(Domain.sub_link_only!=True).all()]
 
+class DnsTT(BaseModel):
+    mtu: int = Field(1100, description="maximum size of DNS responses (default 1232)", ge=50,le=1400)
+    keepalive: int = Field(2, description='keepalive ping interval in seconds; must be less than idle-timeout (default 2 seconds)', ge=0,le=100)
+    idle_timeout:int = Field(10, description='session idle timeout in seconds; tears down sessions with no data within this period (default 10 seconds)', ge=10,le=100)
+    clientid_size:int=Field(2, description="client ID size in bytes (ignored when dnstt_compat is true) (default 2)")
+    dnstt_compat:bool=Field(False,description="use original dnstt wire format (8-byte ClientID, padding prefixes)")
 
 class DomainAdmin(AdminLTEModelView):
     # edit_modal = False
@@ -36,12 +43,18 @@ class DomainAdmin(AdminLTEModelView):
 
     list_template = 'model/domain_list.html'
     # edit_modal = True
-    form_overrides = {'mode': custom_widgets.EnumSelectField}
+    form_overrides = {'mode': custom_widgets.EnumSelectField,
+                    # "extra_params":custom_widgets.CustomJSONField(DnsTT, "Extra Params")
+                    }
+    form_extra_fields = {
+        "extra_params": custom_widgets.CustomJSONField(DnsTT, "Extra Params")
+    }
     form_widget_args = {
         'description': {
             'rows': 100,
             'style': 'font-family: monospace; direction:ltr'
-        }
+        },
+        
     }
     column_descriptions = dict(
         domain=_("domain.description"),
@@ -54,6 +67,7 @@ class DomainAdmin(AdminLTEModelView):
         grpc=_('grpc-proxy.description'),
         download_domain=_('download_domain.description'),
         resolve_ip=_("domain.resolveip.description")
+        
     )
     # create_modal = True
     can_export = False
@@ -61,6 +75,7 @@ class DomainAdmin(AdminLTEModelView):
 
     form_args = {
         'mode': {'enum': DomainType},
+        
         'show_domains': {
             'query_factory': lambda: Domain.query.filter(     Domain.sub_link_only == False),
         },
@@ -92,7 +107,7 @@ class DomainAdmin(AdminLTEModelView):
         'resolve_ip':_("domain.resolveip.label"),
     }
 
-    form_columns = ['mode', 'domain', 'alias', 'servernames', 'cdn_ip', 'resolve_ip', 'show_domains', 'download_domain',]
+    form_columns = ['mode', 'domain', 'alias', 'servernames', 'cdn_ip', 'resolve_ip', 'show_domains', 'download_domain',"extra_params"]
     
     def _domain_admin_link(view, context, model, name):
         if hiddify.is_fake_domain(model):

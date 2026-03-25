@@ -414,7 +414,7 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
     
 
     if base["proto"]==ProxyProto.dnstt:
-        base["public_key"]=get_dnstt_public_key()
+        base["public_key"]=hconfigs[ConfigEnum.dnstt_public_key]
         base['resolvers']=hconfigs[ConfigEnum.dnstt_resolvers].split(",")
         base['tunnel_per_resolver']=4
         base['password']="h"
@@ -621,9 +621,3 @@ class ProxyJsonEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-
-@cache.cache(ttl=300)
-def get_dnstt_public_key():
-    with open("/opt/hiddify-manager/other/dnstt/server.pub","r") as f:
-        return f.read()
-    

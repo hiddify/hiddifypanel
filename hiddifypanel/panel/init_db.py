@@ -16,6 +16,15 @@ from hiddifypanel.database import db, db_execute
 from loguru import logger
 MAX_DB_VERSION = 130
 
+
+def _v118(child_id):
+    alter_column(Domain.extra_params)
+    key_pair = hutils.crypto.generate_x25519_keys(False)
+    add_config_if_not_exist(ConfigEnum.dnstt_private_key, key_pair['private_key'])
+    add_config_if_not_exist(ConfigEnum.dnstt_public_key, key_pair['public_key'])
+
+    
+
 def _v116(child_id):
     set_hconfig(ConfigEnum.dnstt_enable, True)
     set_hconfig(ConfigEnum.dnstt_resolvers,"8.8.8.8:53,8.8.4.4:53")
@@ -753,6 +762,15 @@ def add_column(column):
         column_type = column.type.compile(db.engine.dialect)
 
         db_execute(f'ALTER TABLE {column.table.name} ADD COLUMN {column.name} {column_type}', commit=True)
+    except BaseException:
+        pass
+
+
+def alter_column(column):
+    try:
+        column_type = column.type.compile(db.engine.dialect)
+
+        db_execute(f'ALTER TABLE {column.table.name} MODIFY COLUMN {column.name} {column_type}', commit=True)
     except BaseException:
         pass
 

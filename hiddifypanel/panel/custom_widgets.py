@@ -9,7 +9,7 @@ from wtforms.widgets import TextArea
 from wtforms import Field
 from wtforms.validators import ValidationError
 from wtforms.widgets import TextArea
-import json
+import json5
 
 from hiddifypanel.models import *
 
@@ -103,15 +103,12 @@ class UsageField(DecimalField):
 
 class JSONWidget(TextArea):
     def __call__(self, field, **kwargs):
-        if isinstance(field.data, dict):
-            try:
-                field.data = json.dumps(field.data, indent=2)
-            except Exception:
-                pass
         if kwargs.get('class'):
             kwargs['class'] += ' ltr json-editor'
         else:
             kwargs.setdefault('class', 'ltr json-editor')
+        
+        kwargs.setdefault("rows",10)
         
         return super().__call__(field, **kwargs)
 
@@ -119,18 +116,87 @@ class JSONField(Field):
     widget = JSONWidget()
 
     def _value(self):
-        if self.data is None:
+        if not self.data:
             return ''
         if isinstance(self.data, str):
             return self.data
         try:
-            return json.dumps(self.data, indent=2)
+            return json5.dumps(self.data, indent=2)
         except Exception:
             return str(self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
+            try:    
+                self.data = json5.loads(valuelist[0]) if valuelist[0] else ""
+            except Exception as e:
+                raise ValidationError(f'Invalid JSON: {e}')
+            
+
+
+from typing import Type, TypeVar,Generic
+from pydantic import BaseModel
+T=TypeVar("T",bound=BaseModel)
+class CustomJSONField(Field, Generic[T]):
+    widget = JSONWidget()
+
+    def __init__(self, model: Type[T], *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.model = model
+
+    def _value(self):
+        if not self.data:
+            data_dict = {}
+        else:
             try:
-                self.data = json.loads(valuelist[0])
+                if isinstance(self.data, str):
+                    data_dict = json5.loads(self.data)
+                else:
+                    data_dict = self.data
+            except Exception:
+                data_dict = {}
+
+        # Build JSON with defaults + comments
+        lines = ["{"]
+
+        for name, field in self.model.model_fields.items():
+            default = field.default
+            desc = field.description or ""
+
+            value = data_dict.get(name, default)
+
+            if isinstance(value, str):
+                value_str = f'"{value}"'
+            else:
+                value_str = json5.dumps(value)
+
+            if desc:
+                lines.append(f' "{name}": {value_str}, // {desc}')
+            else:
+                lines.append(f' "{name}": {value_str},')
+
+        if len(lines) > 1:
+            lines[-1] = lines[-1].rstrip(',')
+
+        lines.append("}")
+        return "\n".join(lines)
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                raw = valuelist[0]
+
+                if not raw:
+                    self.data = ""
+                    return
+
+                parsed = json5.loads(raw)
+
+                # Validate with Pydantic
+                model_obj = self.model(**parsed)
+
+                # Store as JSON string
+                self.data = model_obj.model_dump_json()
+
             except Exception as e:
                 raise ValidationError(f'Invalid JSON: {e}')
