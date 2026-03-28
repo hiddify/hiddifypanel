@@ -1,4 +1,5 @@
 import ipaddress
+from typing import Literal
 from hiddifypanel.auth import login_required, current_account
 
 from hiddifypanel.hutils.flask import hurl_for
@@ -30,11 +31,15 @@ from pydantic import BaseModel, Field
 #         self.choices=[(d.id,d.domain) for d in Doamin.query.filter(Domain.sub_link_only!=True).all()]
 
 class DnsTT(BaseModel):
-    mtu: int = Field(1100, description="maximum size of DNS responses (default 1232)", ge=50,le=1400)
-    keepalive: int = Field(2, description='keepalive ping interval in seconds; must be less than idle-timeout (default 2 seconds)', ge=0,le=100)
-    idle_timeout:int = Field(10, description='session idle timeout in seconds; tears down sessions with no data within this period (default 10 seconds)', ge=10,le=100)
-    clientid_size:int=Field(2, description="client ID size in bytes (ignored when dnstt_compat is true) (default 2)")
+    mtu: int = Field(0, description="maximum size of DNS responses (0-> use default 1232)")
+    keepalive: int = Field(0, description='keepalive ping interval in seconds; must be less than idle-timeout (0-> use default 2s)', ge=0,le=100)
+    idle_timeout:int = Field(0, description='session idle timeout in seconds; tears down sessions with no data within this period (0-> use default 10 seconds)', ge=10,le=100)
+    clientid_size:int=Field(0, description="client ID size in bytes (ignored when dnstt_compat is true) (0-> use default 2)")
     dnstt_compat:bool=Field(False,description="use original dnstt wire format (8-byte ClientID, padding prefixes)")
+    record_type:Literal["","txt", "cname", "a", "aaaa", "mx", "ns", "srv"] =Field("",description='DNS record type for downstream data (txt, cname, a, aaaa, mx, ns, srv) (""->default "txt")')
+    max_qname_len: int= Field(0, description='maximum total QNAME length in wire format (0 = 253 per RFC 1035) (0->default 101)')
+    open_stream_timeout: int = Field(0, description='timeout for opening an smux stream (e.g. 500ms, 3s) (0->default "10s")')
+    
 
 class DomainAdmin(AdminLTEModelView):
     # edit_modal = False

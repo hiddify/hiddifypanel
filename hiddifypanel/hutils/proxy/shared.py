@@ -411,12 +411,13 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         'dbdomain': domain_db,
         'params': proxy.params or {},
     }
-    
+    extra_params_json=domain_db.extra_params_json()
 
     if base["proto"]==ProxyProto.dnstt:
         base["public_key"]=hconfigs[ConfigEnum.dnstt_public_key]
         base['resolvers']=hconfigs[ConfigEnum.dnstt_resolvers].split(",")
         base['tunnel_per_resolver']=4
+        base.update(extra_params_json)
         base['password']="h"
         return base
 

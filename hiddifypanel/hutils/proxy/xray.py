@@ -26,7 +26,15 @@ def to_link(proxy: dict) -> str | dict:
     name_link = hutils.encode.url_encode(orig_name_link)
     if proxy['proto']=="dnstt":
         resolvers="&".join([f"resolver={r}" for r in proxy['resolvers']])
-        dnstt=f'dnstt://?tunnel_per_resolver={proxy["tunnel_per_resolver"]}&{resolvers}&domain={proxy["sni"]}&publicKey={proxy["public_key"]}'
+        params={**{
+            s.replace("_","-"):proxy[s]
+            for s in ["tunnel_per_resolver","keepalive","idle_timeout","clientid_size","dnstt_compat","record_type","max_qname_len","open_stream_timeout"]
+            if  (v:=proxy.get(s))
+        },
+        "domain":proxy["sni"],
+        "pubkey":proxy["public_key"]
+        }
+        dnstt=f'dnstt://?{urlencode(params, quote_via=quote)}&{resolvers}'
         return f'socks://{proxy["uuid"]}:{proxy["password"]}@localhost:0#{name_link} -> {dnstt}'
     if proxy['proto'] == "naive":
         naive = f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=hiddify-naive-secret:{proxy["path"]}'

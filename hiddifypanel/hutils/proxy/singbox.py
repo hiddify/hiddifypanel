@@ -314,7 +314,9 @@ def add_dnstt(all_base:list,proxy:dict):
     all_base[0]['domain']=proxy["sni"]
     all_base[0]['publicKey']=proxy["public_key"]
     all_base[0]['resolvers']=proxy['resolvers']
-    all_base[0]['tunnel_per_resolver']=proxy['tunnel_per_resolver']
+    for s in ["tunnel_per_resolver","keepalive","idle_timeout","clientid_size","dnstt_compat","record_type","max_qname_len","open_stream_timeout"]:
+        if v:= proxy.get(s):
+            all_base[0][s.replace("_","-")]=v
     tag=all_base[0]["tag"]
     all_base[0]["tag"]+="§hide§"
     all_base.append({

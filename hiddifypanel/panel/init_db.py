@@ -17,6 +17,9 @@ from loguru import logger
 MAX_DB_VERSION = 130
 
 
+def _v119(child_id):
+    set_hconfig(ConfigEnum.dnstt_resolvers,"8.8.8.8:53,8.8.4.4:53,auto")
+    
 def _v118(child_id):
     alter_column(Domain.extra_params)
     key_pair = hutils.crypto.generate_x25519_keys(False)

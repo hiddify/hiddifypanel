@@ -66,6 +66,12 @@ class Domain(db.Model):
     extra_params = db.Column(db.String(2000), nullable=True, default='{}')
     resolve_ip= db.Column(db.Boolean, nullable=True, default=False)
 
+    def extera_params_json(self):
+        import json
+        try:
+            return json.loads(self.extra_params)
+        except:
+            return {}
     def __repr__(self):
         return f'{self.domain}'
 
