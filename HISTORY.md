@@ -5,6 +5,8 @@
 
 #### New
 
+* Add support for any domain type. 
+
 * Add additional configs. 
 
 * Add public ports for relay servers. 
@@ -14,6 +16,8 @@
 * Add dnstt. 
 
 #### Fix
+
+* Bug. 
 
 * Issue. 
 
