@@ -155,7 +155,7 @@ def to_link(proxy: dict) -> str | dict:
                 "publicKey": proxy["wg_server_pub"],
                 "presharedKey":   proxy["wg_psk"],
                 "reserved": "0,0,0",
-                "ip":"10.0.0.1",
+                "ip":f'{proxy["wg_ipv4"]}/32',
                 "mtu":"1380",
                 "keepalive":"30",
                 "udp":1,
