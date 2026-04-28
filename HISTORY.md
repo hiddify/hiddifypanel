@@ -15,7 +15,7 @@
 
 * Add dnstt. 
 
-#### Fix
+* Add public ports for relay servers. 
 
 * Bug. 
 
@@ -58,103 +58,7 @@
 
 * Update translations. 
 
-* Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
-
-* Update README.md. 
-
-* Update installation link in README.md. 
-
-* Update README.md. 
-
-* Merge branch 'dev' of github.com:hiddify/Hiddify-Panel into dev. 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Chore: update translations with Fink 🐦 
-
-* Update translations. 
+* Merge branch 'main' of github.com:hiddify/Hiddify-Panel. 
 
 
 
