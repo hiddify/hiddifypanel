@@ -99,6 +99,7 @@
         });
         function hide_domain_elements() {
             console.log("test")
+            $("#extra_params").parent().hide();
             if (["dnstt",'fake','reality','special_reality_grpc','special_reality_xhttp'].includes($("#mode").val())){
                 $("#show_domains").parent().hide()
             }else{
