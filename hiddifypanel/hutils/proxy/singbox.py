@@ -381,6 +381,7 @@ def add_wireguard(base: dict, proxy: dict):
         
         base["private_key"] = proxy["wg_pk"]
         base["mtu"] = 1380
+        base["address"] = [f'{proxy["wg_ipv4"]}/32']
         base['peers']=[{
             "public_key":proxy["wg_server_pub"],
             "pre_shared_key":proxy["wg_psk"],
@@ -389,7 +390,6 @@ def add_wireguard(base: dict, proxy: dict):
             "allowed_ips": [
                 "0.0.0.0/0","::/0"
             ]
-            # "address" : f'{proxy["wg_ipv4"]}/32'
         }]
         del base["server_port"]
         del base["server"]
