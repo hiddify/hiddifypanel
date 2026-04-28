@@ -1,3 +1,4 @@
+import threading
 from typing import List
 from strenum import StrEnum
 import subprocess
@@ -79,6 +80,12 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
     else:
         raise Exception('WTF is happening!')
     if run_in_background:
-        subprocess.Popen(base_cmd, cwd=str(os.environ['HIDDIFY_CONFIG_PATH']), start_new_session=True)
+        t = threading.Thread(target=cmd_in_back, daemon=True)
+        t.start()
     else:
         return subprocess.check_output(base_cmd, cwd=str(os.environ['HIDDIFY_CONFIG_PATH'])).decode()
+
+
+def cmd_in_back(cmd):
+    p=subprocess.Popen(cmd, cwd=str(os.environ['HIDDIFY_CONFIG_PATH']), start_new_session=True)
+    p.wait()
