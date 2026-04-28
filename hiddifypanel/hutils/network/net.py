@@ -197,9 +197,10 @@ def get_random_user_agent():
     if uas:
         return random.sample(uas,1)[0]
     return 
-def get_random_domains(count: int = 1, retry: int = 3) -> List[str]:
+def get_random_domains(count: int = 1, retry: int = 6) -> List[str]:
     try:
-        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc=IR&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(3-retry)*100}"
+        region="CN" if retry<3 else "IR"
+        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc={region}&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(3-retry%3)*100}"
         # cnurl="https://api.ooni.io/api/v1/measurements?probe_cc=CN&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&order_by=test_start_time&limit=1000"
         data_ir = requests.get(irurl).json()
         # data_cn=requests.get(url).json()
@@ -211,7 +212,7 @@ def get_random_domains(count: int = 1, retry: int = 3) -> List[str]:
     except BaseException as e:
         print('Error, getting random domains... ', e, 'retrying...', retry)
         if retry <= 0:
-            defdomains = ["fa.wikipedia.org", 'en.wikipedia.org', 'wikipedia.org', 'yahoo.com', 'en.yahoo.com',"msn.com",'foot.com',"fast.com","speedtest.net","remove.bg","flightradar24.com"]
+            defdomains = ["fa.wikipedia.org",'en.wikipedia.org','wikipedia.org','yahoo.com','en.yahoo.com',"msn.com",'foot.com',"fast.com","speedtest.net","remove.bg","flightradar24.com","chess.com","supercell.com","react.dev","amazon.com","google.com","gstatic.com","mirror.nyist.edu.cn","mirror.nju.edu.cn","hcaptcha.com","sourceforge.net","github.com","www.google.com","hatgpt.com","google.com","github.com","claude.ai","dash.cloudflare.com","pages.dev","workers.dev","gemini.google.com","www.workspace.google.com","www.mail.google.com","www.gstatic.com","www.gmail.com","workspace.google.com","ss1.gstatic.com","mail.google.com","gstatic.com","gmail.com","g3.gstatic.com","g1.gstatic.com","fonts.gstatic.com","csi.gstatic.com","connectivitycheck.gstatic.com","clientservices.googleapis.com","checkin.gstatic.com","beacons.gvt2.com","beacons.gcp.gvt2.com","dash.cloudflare.com","cloudflare.com"]
             print('Error, using default domains')
             return random.sample(defdomains, count)
         return get_random_domains(count, retry - 1)
