@@ -34,7 +34,7 @@ class DnsTT(BaseModel):
     mtu: int = Field(0, description="maximum size of DNS responses (0-> use default 1232)")
     
     keepalive: int = Field(0, description='keepalive ping interval in seconds; must be less than idle-timeout (0-> use default 2s)', ge=0,le=100)
-    idle_timeout:int = Field(0, description='session idle timeout in seconds; tears down sessions with no data within this period (0-> use default 10 seconds)', ge=10,le=100)
+    idle_timeout:int = Field(0, description='session idle timeout in seconds; tears down sessions with no data within this period (0-> use default 10 seconds)', ge=0,le=100)
     clientid_size:int=Field(0, description="client ID size in bytes (ignored when dnstt_compat is true) (0-> use default 2)")
     dnstt_compat:bool=Field(False,description="use original dnstt wire format (8-byte ClientID, padding prefixes)")
     record_type:Literal["","txt", "cname", "a", "aaaa", "mx", "ns", "srv"] =Field("",description='DNS record type for downstream data (txt, cname, a, aaaa, mx, ns, srv) (""->default "txt")')
