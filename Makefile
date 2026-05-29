@@ -123,15 +123,9 @@ endif
 	@echo "Github Actions will detect the new tag and release the new version."
 
 
-
-update_beta:
-	git checkout beta 
-	git rebase dev
-	git push
-	git checkout dev
-
-update_release:
-	git checkout main
+sync_branch:
+	[ ! -z "$(BRANCH)" ] || { echo "no branch main/dev"; exit 1; } 
+	git checkout $(BRANCH)
 	git rebase dev
 	git push
 	git checkout dev
