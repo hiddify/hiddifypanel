@@ -119,12 +119,22 @@ endif
 	@echo "creating git tag : $${TAG}"
 	@git tag v$${TAG}
 	@git push  --tags
-	git checkout beta && git rebase dev && git push \ 
-	if ! echo "$${VERSION_STR}" | grep -q "b"; then \
- 		git checkout main && git rebase dev && git push \ 
-	fi
-	@git checkout dev
 	@echo "Github Actions will detect the new tag and release the new version."
+
+
+
+update_beta:
+	git checkout beta 
+	git rebase dev
+	git push
+	git checkout dev
+
+update_release:
+	git checkout main
+	git rebase dev
+	git push
+	git checkout dev
+
 
 .PHONY: docs
 docs:             ## Build the documentation.
