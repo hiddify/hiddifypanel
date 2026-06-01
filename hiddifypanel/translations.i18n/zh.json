@@ -1,43 +1,43 @@
 {
   " Search\n            Settings": " 搜索<inlang-LineFeed>设置",
-  "%(count)s records were successfully deleted.": "",
+  "%(count)s records were successfully deleted.": "%(count)s 条记录已成功删除。",
   "%(count)s records were successfully disabled.": "%(count)s 条记录已成功禁用。",
   "%(count)s records were successfully enabled.": "%(count)s 条记录已成功启用。",
-  "%(count)s records were successfully reset days.": "",
-  "%(count)s records were successfully reset usage.": "",
-  "%(count)s records were successfully updated.": "",
+  "%(count)s records were successfully reset days.": "%(count)s 条记录已成功重置天数。",
+  "%(count)s records were successfully reset usage.": "%(count)s 条记录已成功重置使用。",
+  "%(count)s records were successfully updated.": "%(count)s 条记录已成功更新。",
   "%(expire_days)s days": "%(expire_days)s 天",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "最后一天",
   "<a href=\"%(user_link)s\"> %(user)s</a>": "",
-  "Access Denied!": "拒绝访问",
-  "Actions": "行动",
-  "Active": "积极",
+  "Access Denied!": "拒绝访问！",
+  "Actions": "操作",
+  "Active": "活跃",
   "Active Users": "活跃用户",
   "Add": "添加",
   "Add some text that is only visible to super_admin.": "添加一些只有超级管理员可见的文本",
   "Add some text that is only visible to you.": "您可以添加一些只有您可见的文本",
   "Added by": "添加者",
-  "Admin Links": "",
+  "Admin Links": "管理员链接",
   "Admins": "管理员",
   "Alias": "别名",
   "All": "全部",
   "All Users": "全部用户",
   "Apply": "应用",
-  "Are you sure you want to delete \\'%(name)s\\' recursively?": "是否删除 \\'%(name)s\\' 递归函数？",
+  "Are you sure you want to delete \\'%(name)s\\' recursively?": "确定要递归删除 \\'%(name)s\\' 及其所有内容吗？",
   "Are you sure you want to delete \\'%(name)s\\'?": "是否确定删除 \\'%(name)s\\'?",
   "Are you sure you want to delete this record?": "是否确认删除该记录",
   "Are you sure you want to do this action?": "⚠️您确定要执行此操作吗？",
   "Back": "返回",
   "Backup": "备份",
   "Beta": "☑️ 测试版",
-  "Bridge Servers": "➖ 桥接服务器",
+  "Bridge Servers": "➖ 中继服务器",
   "Bug": "错误/功能",
   "CPU %(cores)s Cores": "CPU %(cores)s 核心",
   "Can add sub admin": "👥 可以添加子管理员",
-  "Change": "",
+  "Change": "修改",
   "Check again": "再检查一遍",
-  "Childs": "孩子们",
+  "Childs": "子项",
   "China": "🇨🇳中国",
   "Click here to see the complete log": "单击此处查看完整日志",
   "Click to Import": "点击导入",
@@ -47,8 +47,8 @@
   "Config file is incorrect": "配置文件不正确。",
   "Copy Link": "复制链接",
   "Couldn't find your ip addresses": "找不到您的 IP 地址",
-  "Count:": "数数：",
-  "Create": "创造",
+  "Count:": "数量：",
+  "Create": "创建",
   "Create Directory": "创建目录",
   "Create New Record": "创建新记录",
   "Create Package": "创建包",
@@ -63,9 +63,9 @@
   "Domain": "域名",
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "域 (%(domain)s)-> IP = %(domain_ip)s 与您的 IP = %(server_ip)s 不同。这在直接模式下是必需的",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "域名IP=%(domain_ip)s is not matched with your ip=%(server_ip)s需要用于直连模式",
-  "Domain can not be resolved! there is a problem in your domain": "域名无法解析！您的域有问题。请检查您的域配置。",
-  "Domain cannot be resolved! Please check DNS settings": "",
-  "Domain is not REALITY friendly!": "域名对现实不友好！",
+  "Domain can not be resolved! there is a problem in your domain": "域名无法解析！您的域名有问题。请检查您的域名配置。",
+  "Domain cannot be resolved! Please check DNS settings": "域名无法解析！请检查您的 DNS 设置。",
+  "Domain is not REALITY friendly!": "域名对 Reality 不友好！",
   "Domain?": "域名？",
   "Donation": {
     "description": "✳️ 我们需要你的帮助来开发这个项目\n    <br>\n    如果你是开发者或者编程人员请联系我们 <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ 同样我们需要财政帮以便我们长远的发展和服务器费用 (we are Non-Profit).\n    <br>\n    <h5>Payment Methods :</h5>\n    <ul>\n    <li> <div class='btn-group'>\n        <a role='button' data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' role='button' class='btn btn-info share-link'>USDT (TRC20)</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' role='button' class='btn btn-info share-link'>Ethereum</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' role='button' class='btn btn-info share-link'>Dogecoin</a> </div></li>\n    </ul>\n    \n    <br>\n    \n    我们也需要以下帮助:\n    <ul>\n    <li>👥 向其他人分享我们的软件</li>\n   <li>📝Python开发者</li>\n    <li>📝Swift 开发者</li>\n    <li>📝Flutter 开发者</li>\n    <li>📝Go 开发者</li>\n    <li>🖥内容提供者</li>\n    </ul>\n    请联系我们 <a href='mailto:info@hiddify.com'>info@hiddify.com</a> if you can help us.",
@@ -79,7 +79,7 @@
   "Error! auto cdn ip can not be find, please contact admin.": "自动 CDN IP 错误！找不到，请联系管理员",
   "Example Domains": "测试并推荐域名",
   "Expired Users": "过期用户",
-  "Export": "导入",
+  "Export": "导出",
   "Fake": "➖ 假",
   "Filter": "过滤",
   "Finished": "完成的...",
@@ -92,7 +92,7 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>推荐</span>",
   "HiddifyNG intro": "📌 请从以下任一链接安装 HiddifyNG：\n<br/>\n %(dl_link)s %(play_link)s\n<br/>\n然后单击下面的链接并在 HiddifyNG 中打开它。\n<br/>",
   "HiddigyN": "HiddifyN <span class='badge badge-success'>推荐</span>",
-  "Home Link": "",
+  "Home Link": "首页链接",
   "Hover the user to see the reason": "将鼠标悬停在用户上即可查看原因",
   "How many days this package should be available?": "这个套餐有多少天？",
   "How many?": "多少？",
@@ -104,7 +104,7 @@
   "In CDN mode, Domain IP=%(domain_ip)s should be different to your ip=%(server_ip)s": "在CDN模式，域名IP=%(domain_ip)s应该与你的IP不同=%(server_ip)s",
   "Incorrect Password": "⚠️密码错误",
   "Install": "安装",
-  "Install Hiddify Application": "Hiddify 管理器安装",
+  "Install Hiddify Application": "安装 Hiddify 应用程序",
   "Invalid IP or domain": "错误的IP或域名",
   "Invalid REALITY hostnames": "无效的 REALITY 主机名",
   "Invalid admin link": "管理员链接无效",
@@ -124,13 +124,13 @@
   "Network": "网络",
   "New": "新",
   "No children!": "没有孩子",
-  "Not Secure": "",
+  "Not Secure": "不安全",
   "Note": "📝 注意",
   "Offline more than 1 day": "离线超过1天",
   "Offline more than 1 hour": "离线1小时以上",
   "Offline more than 1 week": "离线超过1周",
   "Ok": "好的",
-  "Online": "",
+  "Online": "在线",
   "Online Users": "在线用户",
   "Only Blocked and Local websites": "☑️ 仅屏蔽和本地网站",
   "Only for sublink?": "🌍 仅用于订阅链接",
@@ -138,12 +138,12 @@
   "Open in Application": "在应用程序中打开",
   "Others": "🇺🇳其他",
   "Override Root Admin": "🔁 覆盖备份中的所有者",
-  "Owner can not be deleted!": "拥有者可以被删除",
+  "Owner can not be deleted!": "不能删除所有者账户！",
   "Package Days": "📆 套餐日",
   "Package ended!": "套餐已结束",
   "Package not started yet.": "套餐还没开始。",
   "Panel Link": "➖ 面板链接",
-  "Parent Panel": "家长小组",
+  "Parent Panel": "上级面板 / 父面板",
   "Please Wait": "请稍等...",
   "Please click on %(install)s to save the user page.": "单击 %(install)s 保存用户页面。",
   "Please connect your telegram account to the panel to be informed about latest news.": "请将您的 Telegram 帐户连接到面板以获取最新消息。",
@@ -153,17 +153,17 @@
   "Please select at least one user": "请至少选择一位用户",
   "Please select one of the following applications:": "📍请选择以下应用程序之一：\n<br/>\n<br/>",
   "Please type your message to send to the telegram:": "✏️ 请写下您要发送到 Telegram 的消息：",
-  "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "请理解，家长面板正在测试中，计划和使用条件可能随时发生变化。",
+  "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "请理解，父面板功能目前仍处于测试阶段，计划和使用条件可能随时发生变化。",
   "Please wait ": "请稍等",
-  "Port 80 and 443 can not be selected": "",
+  "Port 80 and 443 can not be selected": "端口 80 和 443 不能被选择",
   "Port is already used! in": "端口已用于：",
   "Premium Description": "Hiddify Manager 仅供非商业用途。但如果您将此面板用于商业用途，请通过捐赠来帮助该项目发展。 <br/>\n为了换取您的财务支持，我们还为您的商业产品提供特殊设施。\n<br/>\n<br/>\n例如：\n<ul><li>\n<li>同步到Cloudflare的可能性：即通过在面板中添加域名，也可以在Cloudflare中进行相关设置</li>\n<li>可以在面板中显示您的品牌</li>\n<li>可以使用中央面板在一个面板中管理多于一台服务器，因此不再需要在不同服务器中注册用户，并且用户的数量将在所有服务器中收集。\n</li>\n<li>\n使用 Telegram 机器人的可能性\n</li>\n<li>\n能够更改代理名称\n</li>\n</ul>\n\n捐赠后请联系<a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>。\n发送消息获取商业用户专用版本。",
   "ProxyPath is already used! use different proxy path": "ProxyPath 已被使用！使用不同的代理路径",
   "QR code": "🧾 二维码",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "内存",
-  "REALITY Fallback domain is not compaitble with server names!": "REALITY 后备域与服务器名称不兼容！",
-  "REALITY Fallback domain is not compatible with server names!": "",
+  "REALITY Fallback domain is not compaitble with server names!": "REALITY 回落域名与服务器名称不兼容！",
+  "REALITY Fallback domain is not compatible with server names!": "REALITY 回落域名与服务器名称不兼容！",
   "Release": "✅ 发布",
   "Remaining about %(relative)s, exactly %(days)s days": "还剩下大约 %(relative)s，正好 %(days)s 天",
   "Remote nodes are not supported yet!": "尚不支持远程节点！",
@@ -183,7 +183,7 @@
   "Restore Settings description": "恢复所有设置说明",
   "Restore Users": "👥 恢复用户",
   "Restore Users description": "选择此选项可恢复所有用户",
-  "Root": "根用户",
+  "Root": "超级管理员",
   "Russia": "俄罗斯",
   "Save": "保存",
   "Save & Add More": "保存并添加更多",
@@ -197,19 +197,19 @@
   "Should be a valid uuid": "应该是有效UUID",
   "Show Domains": "显示域的配置",
   "Simplifies the process of employing the link elsewhere.": "简化了在其他地方使用链接的过程",
-  "SingBox": "📦 歌盒",
+  "SingBox": "📦 SingBox",
   "Sort by %(name)s": "以%(name)s排序",
-  "Specifying CDN IP is only valid for CDN mode": "",
+  "Specifying CDN IP is only valid for CDN mode": "仅在 CDN 模式下才能指定 CDN IP。",
   "Start Date": "开始日期",
   "Started %(days)s days ago": "已于 %(days)s 天前开始",
   "Started from %(relative)s": "从 %(relative)s 开始",
-  "Status": "地位",
-  "SubLink": "",
+  "Status": "状态",
+  "SubLink": "订阅链接",
   "Submit": "提交",
   "Success": "成功",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新",
   "Telegram Bot": "Telegram 机器人",
-  "Telegram Bot Link": "",
+  "Telegram Bot Link": "Telegram 机器人链接",
   "Temporary Short Link": "⏱️临时短链接",
   "The message has been sent.": "消息已发送。",
   "The message was not sent to": "该消息未发送至",
@@ -232,7 +232,7 @@
   "Welcome %(user)s": "欢迎%(user)s",
   "Why Going to Premium?": "为什么要选择高级版？",
   "Will Start in %(days)s days": "将在 %(days)s 天内开始",
-  "Windows": "视窗",
+  "Windows": "Windows",
   "With selected": "选定",
   "Xray": "☢️ XRay",
   "Yesterday Usage": "昨天",
@@ -242,8 +242,8 @@
   "You have used this domain in: ": "您已在以下位置使用过该域名：",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "您的 Hiddify 实例信息\n领域： {}\n使用限制：{} GB\n当前使用情况：{} GB\n到期时间：{}\n剩余天数：{}\n\n\n祝你好运！ 🎉🎉🎉",
   "[Admin only visible message:] You can change this message from settings": "[管理员专用消息]：可通过设置自定义。",
-  "actions": "行动",
-  "admin link": "行政",
+  "actions": "操作",
+  "admin link": "管理员链接",
   "admin": {
     "Actions:apply_configs": "应用配置",
     "action_done_sucess": "✅ 行动成功完成。您现在可以离开此页面",
@@ -251,7 +251,7 @@
       "apply_configs": "应用配置",
       "reinstall": "重新安装",
       "reset": "重启系统",
-      "status": "地位",
+      "status": "状态",
       "title": "行动",
       "update": "更新",
       "viewlogs": "查看日志"
@@ -270,7 +270,7 @@
       "proxy": "代理",
       "proxy_stats": "代理状态",
       "support": "帮助",
-      "telegram": "电报",
+      "telegram": "Telegram",
       "user": "用户"
     },
     "no_user_warning": "看来您尚未创建任何用户。默认用户链接：%(default_link)s",
@@ -367,16 +367,16 @@
   "cf-delete": {
     "failed": "cf-删除失败"
   },
-  "child has been removed!": "孩子已被移走！",
+  "child has been removed!": "子用户已被移除！",
   "child": {
-    "register-failed": "child.register-失败",
-    "register-success": "child.register-success",
-    "sync-failed": "child.sync-失败"
+    "register-failed": "子用户注册失败",
+    "register-success": "子用户注册成功",
+    "sync-failed": "子用户同步失败"
   },
   "clickable copy": "社交媒体链接",
   "close": "关闭",
   "cloudflare": {
-    "error": "cloudflare.error"
+    "error": "Cloudflare 错误"
   },
   "config": {
     "Domain_already_used": "域存在于域部分。使用另一个域",
@@ -583,7 +583,7 @@
     },
     "hysteria_enable": {
       "description": "启用基于 UDP 的 Hysteria 协议",
-      "label": "启用歇斯底里2"
+      "label": "Hysteria2"
     },
     "hysteria_obfs_enable": {
       "description": " 启用 Hysteria 混淆（Salamander）",
@@ -598,36 +598,36 @@
       "label": "⬆️ Hysteria  上传 (mbps)"
     },
     "invalid-pattern-for-warp-sites": "⚠️ 输入的 Warp 站点与指定的模板不匹配",
-    "invalid_uuid": "UUID 秘密无效。示例：6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
+    "invalid_uuid": "UUID 密钥无效。示例：6098ea35-8cb2-4a08-ba15-2be25bc49cb6\n\n",
     "is_parent": {
       "description": "config.is_parent.description",
-      "label": "家长小组"
+      "label": "父面板"
     },
     "kcp": {
       "description": "KCP 配置可以在此部分中设置。",
-      "label": "韩国共产党"
+      "label": "KCP"
     },
     "kcp_enable": {
-      "description": "它是基于UDP的协议",
+      "description": "它是基于 UDP 的协议",
       "label": "KCP"
     },
     "kcp_ports": {
       "description": "逗号分隔的整数，指示用作 KCP 连接的端口。",
-      "label": "KCP 港口"
+      "label": "KCP 端口"
     },
     "lang": {
       "description": "选择用户界面的语言来个性化您在用户区域的体验。",
-      "en": "",
-      "fa": "",
+      "en": "英文",
+      "fa": "波斯语",
       "label": "🗺️ 用户区语言",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "马来语",
+      "pt": "葡萄牙语",
+      "ru": "俄语",
+      "zh": "中文"
     },
     "last_hash": {
       "description": "config.last_hash.描述",
-      "label": "配置.last_hash.label"
+      "label": "配置哈希值"
     },
     "last_priodic_usage_check": {
       "description": "配置.last_priodic_usage_check.description",
@@ -638,13 +638,13 @@
       "label": "许可证代码"
     },
     "log_level": {
-      "CRITICAL": "",
-      "DEBUG": "",
-      "ERROR": "",
-      "INFO": "",
-      "SUCCESS": "",
-      "TRACE": "",
-      "WARNING": "",
+      "CRITICAL": "严重错误",
+      "DEBUG": "调试",
+      "ERROR": "错误",
+      "INFO": "信息",
+      "SUCCESS": "成功",
+      "TRACE": "跟踪",
+      "WARNING": "警告",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
@@ -971,19 +971,19 @@
       "label": "↔️ SSH 代理端口"
     },
     "ssh_server_redis_url": {
-      "description": "不曾用过",
-      "label": "SSH用户数据库地址"
+      "description": "未使用",
+      "label": "SSH 用户数据库地址"
     },
     "ssr": {
-      "description": "ShadowsocksR是原始Shadowsocks项目的一个分支，号称在安全性和稳定性方面更胜一筹。",
+      "description": "ShadowsocksR 是原始 Shadowsocks 项目的 Fork，号称在安全性和稳定性方面更胜一筹。",
       "label": "SSR"
     },
     "ssr_enable": {
-      "description": "ShadowsocksR 是原始 Shadowsocks 项目的 Fork，号称在安全性和稳定性方面更胜一筹。未测试。不支持记账。",
-      "label": "S​​SR"
+      "description": "ShadowsocksR 是原始 Shadowsocks 项目的 Fork，号称在安全性和稳定性方面更胜一筹。未测试。不支持账号。",
+      "label": "SSR"
     },
     "ssr_fakedomain": {
-      "description": "请在您的数据中心使用众所周知的域。例如，如果您在 Azure 数据中心，microsoft-update.com 就是一个很好的例子",
+      "description": "请使用在您的数据中心里众所周知的域名。例如，如果您在 Azure 数据中心，microsoft-update.com 就是一个很好的例子。",
       "label": "SSR 假域名"
     },
     "sub_full_clash_enable": {
@@ -1223,7 +1223,7 @@
       "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
     },
     "intro": "1️⃣ 在此部分，您可以添加您的域。<inlang-LineFeed><br>\n2️⃣如果您想减少拥有脏IP的概率，您可以添加多个中继服务器<a href='https://github.com/hiddify/hiddify-config/discussions/129'>阅读更多</a>。<inlang-LineFeed><br>\n3️⃣如果您的面板中有多个 IPv4 或 IPv6，则必须将指向它们的域添加为中继。",
-    "ip": "知识产权",
+    "ip": "IP 地址",
     "mode": "模式",
     "reality": {
       "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
@@ -1308,7 +1308,7 @@
     "invalid-parent-url": "parent.invalid-parent-url",
     "sync-req-failed": "parent.sync-req-failed"
   },
-  "previous": "以前的",
+  "previous": "上一页",
   "quicksetup": {
     "cdn_domain": {
       "description": "设置 CDN 域名是可选的。仅当您已经配置了 CDN 时才使用它。",
@@ -1322,7 +1322,7 @@
     }
   },
   "reality": "🔂 Reality",
-  "relay": "♾️ Relay （使用中间节点连接）",
+  "relay": "♾️ 中继",
   "search": "搜索",
   "see the log in the bellow screen": "📑 查看以下屏幕中的日志",
   "serverssh": {
@@ -1330,7 +1330,7 @@
       "warning": "您的服务器很容易受到滥用，因为您的 SSH 中启用了密码身份验证。为了保护您的服务器，请切换到密钥身份验证机制并关闭PasswordAuthentication。<a href='https://github.com/hiddify/Hiddify-Manager/wiki/Disable-SSH-Password-Authentication'>阅读更多...</a>"
     }
   },
-  "singbox: ssh": "歌手盒：SSH",
+  "singbox: ssh": "SingBox：SSH",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",
@@ -1357,10 +1357,10 @@
         "type": "类型"
       },
       "allconfigs": {
-        "expect_vless": "除了VLess"
+        "expect_vless": "除了 VLess 协议，其他协议都支持"
       },
       "android": {
-        "intro": "请从 %(dl_link)s %(play_link)s 安装 Hiddify Android。\n\n<!--\n<div class='callout callout-danger'>\n    <b>将 Hiddify Android 更新至版本 0.14</b>\n</div>-->\n<详情>\n<summary>为什么要隐藏 Android？</summary>\n<div class='callout callout-info'>\n\n        Hiddify Android 是 Clash 的开源分支，支持更多协议。\n        <br>\n        它的源代码存在于\n        <a href='https://github.com/hiddify/HiddifyProxyAndroid'>GitHub</a>。\n        \n        <br>\n        因此，它是安全的。\n\n        <详情>\n            <summary>替代方案：正常冲突</summary>\n            <div class='btn-group'>\n                <a href='https://play.google.com/store/apps/details?id=com.github.kr328.clash'\n                    class='btn btn-warning orig-link'>Google Play 中的冲突</a>\n            </div>\n            <div class='btn-group'>\n                <a href='/{{hconfigs[ConfigEnum.proxy_path]}}/gh/Kr328/ClashForAndroid/releases/download/v2.5.12/cfa-2.5.12-premium-universal-release.apk'\n                    class='btn btn-warning orig-link'>直接下载</a>\n            </div>\n\n            <div class='警报警报-危险'>\n            Clash 不支持 VLess 协议。因此，我们需要为其添加另一个链接。\n            </div>\n            \n\n        </详情>\n    </div>\n</详情>"
+        "intro": "请从 %(dl_link)s %(play_link)s 安装 Hiddify Android。\n\n<!--\n<div class='callout callout-danger'>\n    <b>将 Hiddify Android 更新至版本 0.14</b>\n</div>-->\n<details>\n<summary>为什么要隐藏 Android？</summary>\n<div class='callout callout-info'>\n\n        Hiddify Android 是 Clash 的开源分支，支持更多协议。\n        <br>\n        它的源代码存在于\n        <a href='https://github.com/hiddify/HiddifyProxyAndroid'>GitHub</a>。\n        \n        <br>\n        因此，它是安全的。\n\n        <details>\n            <summary>替代方案：正常冲突</summary>\n            <div class='btn-group'>\n                <a href='https://play.google.com/store/apps/details?id=com.github.kr328.clash'\n                    class='btn btn-warning orig-link'>Google Play 中的冲突</a>\n            </div>\n            <div class='btn-group'>\n                <a href='/{{hconfigs[ConfigEnum.proxy_path]}}/gh/Kr328/ClashForAndroid/releases/download/v2.5.12/cfa-2.5.12-premium-universal-release.apk'\n                    class='btn btn-warning orig-link'>直接下载</a>\n            </div>\n\n            <div class='警报警报-危险'>\n            Clash 不支持 VLess 协议。因此，我们需要为其添加另一个链接。\n            </div>\n            \n\n        </details>\n    </div>\n</details>"
       },
       "branding": {
         "linktitle": "支持页面链接",
@@ -1435,7 +1435,7 @@
         "title": "⏳ 流量使用"
       },
       "windows": {
-        "intro": "首先，根据您的操作系统下载并安装 Hiddify Desktop 软件。\n<br/>\n%(hiddify_desktop_links)s\n\n<详情>\n<summary>为什么选择 Hiddify Desktop？</summary>\n<div class='callout callout-info'>\n\n        Hiddify Desktop 是 Clash 的一个安全开源分支，支持更多 VLESS 和 UTLS 指纹识别。\n        <br>\n<br/>\n        其源代码存在于\n        <a href='https://github.com/hiddify/HiddifyDesktop'>GitHub</a>。\n        \n\n        <详情>\n            <summary>替代方案：正常冲突</summary>\n            %(normal_clash_link)s\n\n            <div class='警报警报-危险'>\n            Clash 不支持浏览器指纹识别和 VLESS 协议。因此，我们需要为其添加另一个链接。\n            </div>\n            \n\n        </详情>\n</div>\n        </详情>\n<br/>\n现在，根据您的需要，您可以单击其中一个按钮。通过在浏览器中查看该窗口，只需单击<b>打开</b>选项即可自动将服务器链接添加到 Hiddify Desktop。"
+        "intro": "首先，根据您的操作系统下载并安装 Hiddify Desktop 软件。\n<br/>\n%(hiddify_desktop_links)s\n\n<details>\n<summary>为什么选择 Hiddify Desktop？</summary>\n<div class='callout callout-info'>\n\n        Hiddify Desktop 是 Clash 的一个安全开源分支，支持更多 VLESS 和 UTLS 指纹识别。\n        <br>\n<br/>\n        其源代码存在于\n        <a href='https://github.com/hiddify/HiddifyDesktop'>GitHub</a>。\n        \n\n        <details>\n            <summary>替代方案：正常冲突</summary>\n            %(normal_clash_link)s\n\n            <div class='警报警报-危险'>\n            Clash 不支持浏览器指纹识别和 VLESS 协议。因此，我们需要为其添加另一个链接。\n            </div>\n            \n\n        </details>\n</div>\n        </details>\n<br/>\n现在，根据您的需要，您可以单击其中一个按钮。通过在浏览器中查看该窗口，只需单击<b>打开</b>选项即可自动将服务器链接添加到 Hiddify Desktop。"
       }
     },
     "last_reset_time": "最后使用日期重置",
