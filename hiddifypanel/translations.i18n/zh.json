@@ -9,7 +9,6 @@
   "%(expire_days)s days": "%(expire_days)s 天",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "最后一天",
-  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
   "Access Denied!": "拒绝访问！",
   "Actions": "操作",
   "Active": "活跃",
@@ -291,14 +290,6 @@
   "all": "全部",
   "android": "安卓",
   "app": {
-    "clash_verge_rev": {
-      "description": "",
-      "title": ""
-    },
-    "cmfa": {
-      "description": "",
-      "title": ""
-    },
     "foxray": {
       "description": "福克斯射线描述",
       "title": "福克斯X射线"
@@ -349,9 +340,6 @@
       "description": "Streisand描述",
       "title": "Streisand"
     },
-    "v2rayn": {
-      "title": ""
-    },
     "v2rayng": {
       "description": "V2RayNG 说明",
       "title": "V2RayNG"
@@ -387,35 +375,13 @@
     "Invalid_port": "端口无效。它应该是逗号分隔的整数，例如2052,2053",
     "Invalid_proxy_path": "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Telegram 机器人令牌无效",
-    "additional_configs": {
-      "description": "",
-      "label": ""
-    },
-    "additional_configs_singbox": {
-      "description": "",
-      "label": ""
-    },
-    "additional_configs_urls": {
-      "description": "",
-      "label": ""
-    },
-    "additional_configs_xrayjson": {
-      "description": "",
-      "label": ""
-    },
     "admin": {
       "description": "管理部分用于配置管理相关设置",
       "label": "管理设置"
     },
     "admin_lang": {
       "description": "选择管理区域的语言",
-      "en": "",
-      "fa": "",
-      "label": "🗺️ 管理面板语言",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "label": "🗺️ 管理面板语言"
     },
     "admin_secret": {
       "description": "管理员密码将用于访问管理面板",
@@ -485,33 +451,9 @@
       "description": "假网站：当有人直接访问您的域时模拟网站。<br>\n⚠️ 不要使用金融、伊朗和著名网站或需要登录的网站，例如 Google、Yahoo、Wikipedia、PayPal。<br>\n⛔ 请务必检查该网站并确保它是正确的网站，否则您可能会收到网络钓鱼警告。<br>\n⛔⛔ 再次检查该域名，以免以后出现问题",
       "label": "📺 诱饵网站"
     },
-    "default_useragent_string": {
-      "description": "",
-      "label": ""
-    },
     "dns_server": {
       "description": "✳️默认1.1.1.1 <br>\n🚧 阻止恶意软件 1.1.1.2 <br>\n🔞 阻止色情 1.1.1.3",
       "label": "🖥 DNS 服务器"
-    },
-    "dnstt": {
-      "description": "",
-      "label": ""
-    },
-    "dnstt_enable": {
-      "description": "",
-      "label": ""
-    },
-    "dnstt_private_key": {
-      "description": "",
-      "label": ""
-    },
-    "dnstt_public_key": {
-      "description": "",
-      "label": ""
-    },
-    "dnstt_resolvers": {
-      "description": "",
-      "label": ""
     },
     "domain_fronting": {
       "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
@@ -648,37 +590,6 @@
       "description": "config.log_level.description",
       "label": "config.log_level.label"
     },
-    "mieru": {
-      "description": "",
-      "label": ""
-    },
-    "mieru_enable": {
-      "description": "",
-      "label": ""
-    },
-    "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "",
-      "HANDSHAKE_NO_WAIT": "",
-      "HANDSHAKE_STANDARD": "",
-      "description": "",
-      "label": ""
-    },
-    "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "",
-      "MULTIPLEXING_HIGH": "",
-      "MULTIPLEXING_LOW": "",
-      "MULTIPLEXING_MIDDLE": "",
-      "description": "",
-      "label": ""
-    },
-    "mieru_tcp_ports": {
-      "description": "",
-      "label": ""
-    },
-    "mieru_udp_ports": {
-      "description": "",
-      "label": ""
-    },
     "mux": {
       "description": "可以在此部分设置 MUX（多路复用）配置",
       "label": "MUX设置"
@@ -719,14 +630,6 @@
       "description": "ℹ️ 多路复用协议。默认使用 'sMux'<inlang-LineFeed><br>\n➖ sMux: 流复用<inlang-LineFeed><br><inlang-LineFeed>➖ YaMux: 又一个多路复用器<inlang-LineFeed><br><inlang-LineFeed>➖ h2Mux: 通过 HTTP/2 多路复用流",
       "label": "♍️ MUX 协议"
     },
-    "naive_enable": {
-      "description": "",
-      "label": ""
-    },
-    "naive_port": {
-      "description": "",
-      "label": ""
-    },
     "netdata": {
       "description": "用于显示资源。使用您服务器的 CPU，但不会太多。",
       "label": "Netdata"
@@ -744,11 +647,8 @@
       "label": "🔄 包更新模式"
     },
     "panel_mode": {
-      "child": "",
       "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label",
-      "parent": "",
-      "standalone": ""
+      "label": "config.panel_mode.label"
     },
     "parent_admin_proxy_path": {
       "description": "config.parent_admin_proxy_path.description",
@@ -769,10 +669,6 @@
     "path_httpupgrade": {
       "description": "应该是随机的",
       "label": "ℹ️ HTTP 升级路径"
-    },
-    "path_naive": {
-      "description": "",
-      "label": ""
     },
     "path_ss": {
       "description": "链接中的 Shadowsocks 路径",
@@ -837,10 +733,6 @@
     "reality_fallback_domain": {
       "description": "当 GFW 访问服务器名称中的网站时，将被重定向到该域。",
       "label": "🌍 现实后备域"
-    },
-    "reality_port": {
-      "description": "",
-      "label": ""
     },
     "reality_private_key": {
       "description": "不要改变它",
@@ -930,38 +822,6 @@
       "description": "ℹ️ SSH 代理，也称为 SSH 隧道或 SSH 端口转发，是一种通过不安全网络在两台计算机之间创建安全通信通道的安全方法。我们有一个与 ssh 服务器完全不同的特定应用程序，无法执行任何命令",
       "label": "SSH 代理"
     },
-    "ssh_host_dsa_pk": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_dsa_pub": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_ecdsa_pk": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_ecdsa_pub": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_ed25519_pk": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_ed25519_pub": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_rsa_pk": {
-      "description": "",
-      "label": ""
-    },
-    "ssh_host_rsa_pub": {
-      "description": "",
-      "label": ""
-    },
     "ssh_server_enable": {
       "description": "SSH Proxy 与原来的 SSH Server 完全不同",
       "label": "✔️ 启用 SSH 代理"
@@ -1046,17 +906,9 @@
       "description": "可以在此部分设置 TLS 配置。",
       "label": "TLS 设置"
     },
-    "tls_ech_enable": {
-      "description": "",
-      "label": ""
-    },
     "tls_fragment_enable": {
       "description": "在某些情况下，它可以绕过 SNI 黑名单系统。 <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">（阅读更多）</a>",
       "label": "⏯ TLS Fragment"
-    },
-    "tls_fragment_packets": {
-      "description": "",
-      "label": ""
     },
     "tls_fragment_size": {
       "description": "每个数据包的大小",
@@ -1113,10 +965,6 @@
     "unique_id": {
       "description": "config.unique_id.description",
       "label": "config.unique_id.label"
-    },
-    "use_ip_in_config": {
-      "description": "",
-      "label": ""
     },
     "utls": {
       "description": "此选项将模拟不同的浏览器，因此 GFW 无法检测到您的浏览",
@@ -1208,11 +1056,9 @@
   "days": "天",
   "desktop": "桌面",
   "direct": "➡️直接",
-  "dnstt": "",
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ 您的域名已更改。请不要忘记复制管理链接，否则您将无法再访问面板",
-    "current_server_IPs": "",
     "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
     "domain": "领域",
     "domain_fronting": {
@@ -1228,17 +1074,9 @@
     "reality": {
       "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
     },
-    "resolveip": {
-      "description": "",
-      "label": ""
-    },
     "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。"
   },
   "download": "直接下载",
-  "download_domain": {
-    "description": "",
-    "label": ""
-  },
   "fake": "🆎 假网站",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {
@@ -1260,8 +1098,7 @@
     "telegram": {
       "erlang": "✴️ Erlang：性能良好",
       "go": "✅ Go：正常性能 - 不支持广告",
-      "python": "☑️ Python：性能低下",
-      "telemt": ""
+      "python": "☑️ Python：性能低下"
     }
   },
   "log": "📄 Log",
