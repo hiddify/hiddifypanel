@@ -71,7 +71,7 @@ class UserView(FlaskView):
         all_configs = hutils.proxy.xrayjson.configs_as_json(c['domains'], c['user'], c['expire_days'], c['profile_title'])
 
         
-        link_res=get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n"))
+        link_res = get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n") if hconfig(ConfigEnum.additional_configs_urls) else [])
         for item in [hconfig(ConfigEnum.additional_configs_xrayjson),*link_res]:
                 if jsitem:=parse_json(item):
                     if isinstance(jsitem,list):
@@ -261,7 +261,7 @@ class UserView(FlaskView):
             resp = ""
         else:
             base_config = hutils.proxy.singbox.configs_as_json(**c)
-            link_res=get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n"))
+            link_res = get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n") if hconfig(ConfigEnum.additional_configs_urls) else [])
             for item in [hconfig(ConfigEnum.additional_configs_singbox),*link_res]:
                 if jsitem:=parse_json(item):
                     if outbounds:=jsitem.get("outbounds"):
@@ -311,7 +311,7 @@ class UserView(FlaskView):
         else:
             # render_template('all_configs.txt', **c, base64=hutils.encode.do_base_64)
             resp = hutils.proxy.xray.make_v2ray_configs(c['domains'], c['user'], c['expire_days'], c['ip_debug'])
-            link_res=get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n"))
+            link_res = get_and_merge_urls(hconfig(ConfigEnum.additional_configs_urls).split("\n") if hconfig(ConfigEnum.additional_configs_urls) else [])
             resp+="\n"+"\n\n".join(link_res)
         
         if base64:
