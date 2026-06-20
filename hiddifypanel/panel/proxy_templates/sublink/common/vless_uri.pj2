@@ -1,0 +1,1 @@
+vless://{{ user.uuid }}@{{ proxy.server }}:{{ proxy.port }}/?

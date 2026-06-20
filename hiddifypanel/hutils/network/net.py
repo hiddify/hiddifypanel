@@ -181,7 +181,7 @@ def get_ip(version: Literal[4, 6], retry: int = 5) -> ipaddress.IPv4Address | ip
 
     if ip is None:
         try:
-            ip = urllib.request.urlopen(f'https://v{version}.ident.me/').read().decode('utf8')
+            ip = urllib.request.urlopen(f'https://v{version}.ident.me/', timeout=2).read().decode('utf8')
             if ip:
                 ip = ipaddress.ip_address(ip)
         except BaseException:

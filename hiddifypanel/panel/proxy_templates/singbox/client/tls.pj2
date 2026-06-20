@@ -1,0 +1,5 @@
+"tls": {
+  "enabled": true,
+  "server_name": "{{ domain.sni }}",
+  "insecure": false
+}

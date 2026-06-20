@@ -1,0 +1,5 @@
+{% block inbounds %}
+{
+  {% include 'hiddify-core/server/snippets/listen' %}
+}
+{% endblock %}

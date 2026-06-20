@@ -1,0 +1,23 @@
+{% skip() if not hconfig.mieru_enable %}
+{% include 'hiddify-core/server/snippets/listen' %},
+"type": "mieru",
+"portBindings": [
+  {% for protocol,ports in [("TCP",proxy.tcp_port_ranges),("UDP",proxy.udp_port_ranges)] %}
+  {% for entry in ports%}
+  {
+    "protocol": "{{protocol}}",
+    {% if entry is number %}
+    "port": {{ entry }}
+    {% else %}
+    "portRange": "{{ entry }}"
+    {% endif %}
+  },
+  {% endfor %}
+  {% endfor %}
+],
+{% include 'hiddify-core/server/snippets/inbound_meta' %},
+"users": [
+  {% for user in users %}
+  {"username": "{{ user.uuid }}", "password": "h"},
+  {% endfor %}
+]

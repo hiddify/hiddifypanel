@@ -1,0 +1,50 @@
+# =====================
+# Core routing backends (nginx, panel, stats, xray force)
+# =====================
+
+backend to_https_in_http_mode
+    server s abns@https_in_http_mode send-proxy-v2
+
+backend to_http_in_h2_http
+    mode http
+    server s abns@http_in_h2 send-proxy-v2 tfo proto h2
+
+backend to_httpmode
+    server s abns@http_in_h2 send-proxy-v2
+
+backend to_https_in_ssl
+    server s abns@https_in_ssl send-proxy-v2 tfo
+
+backend generate_204
+    mode http
+    http-request return status 204
+
+backend nginx_dispatcher_h2
+    server nginx unix@/opt/hiddify-manager/nginx/run/h2.sock send-proxy-v2 tfo
+
+backend nginx_dispatcher
+    server nginx unix@/opt/hiddify-manager/nginx/run/h1.sock send-proxy-v2 tfo
+
+backend nginx_dispatcher_http
+    mode http
+    server nginx unix@/opt/hiddify-manager/nginx/run/h1.sock send-proxy-v2 tfo
+
+backend nginx_dispatcher_http_h2
+    mode http
+    server nginx unix@/opt/hiddify-manager/nginx/run/h2.sock send-proxy-v2 tfo proto h2
+
+backend hiddifypanel
+    mode http
+    http-request set-header X-Forwarded-For %[src]
+    server hpanel 127.0.0.1:9000
+
+backend proxy_stats_ui_backend
+    mode http
+    http-request set-path %[path,regsub(^/{{ hconfigs['proxy_path_admin'] }}/proxy-stats/,/ui/)]
+    server proxy_stats_ui 127.0.0.1:16756
+
+backend proxy_stats_api_backend
+    mode http
+    http-request set-path %[path,regsub(^/{{ hconfigs['proxy_path_admin'] }}/proxy-stats/api/,/)]
+    server proxy_stats_api 127.0.0.1:16756
+

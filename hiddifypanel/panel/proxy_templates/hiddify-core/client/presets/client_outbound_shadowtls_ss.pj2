@@ -1,0 +1,13 @@
+
+{
+  {% include 'hiddify-core/client/tag' %},
+  {% with detour=TAG ~ "_shadowtls-out §hide§" %}
+   {% include '__PROTO_SLUG__' %}
+  {% endwith %}
+},
+{
+  {% with POSTFIX= "_shadowtls-out §hide§" %}
+   {% include 'hiddify-core/client/tag' %},
+  {% endwith %}
+  {% include '__SHADOWTLS_SLUG__' %}
+},

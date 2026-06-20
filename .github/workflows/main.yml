@@ -15,29 +15,33 @@ on:
 permissions:
   contents: write
 jobs:
-  linter:
+  prepare:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9]
+        python-version: ['3.13']
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Prepare
+      - name: Update translations
         run: make prepare
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: hiddifypanel/admin_v2/package-lock.json
+      - name: Build Admin V2 UI
+        working-directory: hiddifypanel/admin_v2
+        run: npm ci && npm run build
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Update translations
-
-      
+          commit_message: Update translations and admin v2 UI
 
       # - name: Install project
       #   run: make install
       # - name: Run linter
       #   run: make lint
-
-  

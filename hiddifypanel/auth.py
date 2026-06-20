@@ -151,8 +151,33 @@ def login_by_uuid(uuid,password:str, is_admin: bool)->bool:
     return login_user(account, force=True)
 
 
+def _account_id_from_session_token(token: str) -> int | None:
+    if not token:
+        return None
+    if '_' in token:
+        try:
+            return int(token.split('_', 1)[1])
+        except (ValueError, IndexError):
+            return None
+    try:
+        return int(token)
+    except ValueError:
+        return None
+
+
+def _is_webmanifest_request() -> bool:
+    """PWA manifest only — avoid broad substring bypass on arbitrary paths."""
+    path = request.path.rstrip('/')
+    return path.endswith('/manifest.webmanifest') or path == 'manifest.webmanifest'
+
+
 def auth_before_request():
-    if ".webmanifest" in request.path:
+    if _is_webmanifest_request():
+        return
+
+    from hiddifypanel.health_check import is_health_secret_request
+
+    if is_health_secret_request(request.path, g.child.id):
         return
 
     # print("before_request")
@@ -197,12 +222,18 @@ def auth_before_request():
 
     elif (session_user := session.get('_user_id')) and not is_admin_path:
         # print('session_user', session_user)
-        account = User.by_id(int(session_user.split("_")[1]))  # type: ignore
+        user_id = _account_id_from_session_token(session_user)
+        if user_id is None:
+            return logout_redirect()
+        account = User.by_id(user_id)  # type: ignore
         if not account:
             return logout_redirect()
     elif (session_admin := session.get('_admin_id')) and is_admin_path:
         # print('session_admin', session_admin)
-        account = AdminUser.by_id(int(session_admin.split("_")[1]))  # type: ignore
+        admin_id = _account_id_from_session_token(session_admin)
+        if admin_id is None:
+            return logout_redirect()
+        account = AdminUser.by_id(admin_id)  # type: ignore
         if not account:
             return logout_redirect()
 
@@ -218,7 +249,7 @@ def auth_before_request():
             return
         if not g.user_agent['is_browser']:
             return
-        if ".webmanifest" in request.path:
+        if _is_webmanifest_request():
             return
 
         return redirect(next_url)

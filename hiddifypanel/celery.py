@@ -59,14 +59,17 @@ def init_app_no_flask():
         else:
             v = True if v.lower() == "true" else (False if v.lower() == "false" else v)
         config[c] = v
-    import hiddifypanel.database 
+    import hiddifypanel.database
     hiddifypanel.database.init_no_flask()
 
     from hiddifypanel.panel import init_db
     while not init_db.is_db_latest():
         logger.error("The database upgrade is required before proceeding. Retrying...")
+        hiddifypanel.database.db.session.close()
+        hiddifypanel.database.db.engine.dispose()
         import time
         time.sleep(20)
+        hiddifypanel.database.init_no_flask()
     
     logger.info("Starting background tasks")
 

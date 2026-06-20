@@ -1,0 +1,14 @@
+{% skip() if not hconfig.tuic_enable %}
+{% include 'hiddify-core/server/snippets/listen' %},
+{% include 'hiddify-core/server/snippets/inbound_meta' %},
+"type": "tuic",
+"congestion_control": "cubic",
+"auth_timeout": "3s",
+"zero_rtt_handshake": true,
+"heartbeat": "10s",
+"users": [
+  {% for user in users %}
+  {"name": "{{ user.uuid }}@hiddify.com", "uuid": "{{ user.uuid }}", "password": "{{ user.uuid }}"},
+  {% endfor %}
+],
+{% include 'hiddify-core/server/tls/tls' %}

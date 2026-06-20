@@ -1,0 +1,7 @@
+{% skip() if not hconfig.tcp_enable %}
+"transport": {
+    "type": "http",
+    "path": "/{{ proxy.path }}",
+    "idle_timeout": "15s",
+    "ping_timeout": "15s"
+},

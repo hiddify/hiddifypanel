@@ -51,7 +51,7 @@ def hurl_for(endpoint, **values):
 def get_user_agent() -> dict:
     ua = __parse_user_agent(request.user_agent.string)
 
-    if ua.get('v', 1) < 11:
+    if ua.get('v', 1) < 12:
         __parse_user_agent.invalidate_all()  # type:ignore
         ua = __parse_user_agent(request.user_agent.string)
     return ua
@@ -60,19 +60,27 @@ def get_user_agent() -> dict:
 ua_version_pattern = re.compile(r'/(\d+\.\d+(\.\d+)?)')
 
 
+def parse_user_agent(ua: str) -> dict:
+    """Parse a client User-Agent string for template platform variables."""
+    return __parse_user_agent(ua or '')
+
+
 @cache.cache()
 def __parse_user_agent(ua: str) -> dict:
     # Example: SFA/1.8.0 (239; sing-box 1.8.0)
     # Example: SFA/1.7.0 (239; sing-box 1.7.0)
     # Example: HiddifyNext/0.13.6 (android) like ClashMeta v2ray sing-box
+    # Example: HiddifyNext/4.2.0 (android) like ClashMeta v2ray sing-box
+    # Example: xray/26.3.27
     if ua=="v2rayNG/1.8.23": #temporary fix for xray sub in hiddifynext
         ua="HiddifyNextX/3.0.0 (android) like ClashMeta v2ray sing-box"
     uaa = user_agents.parse(ua)
 
     match = re.search(ua_version_pattern, ua)
     generic_version = list(map(int, match.group(1).split('.'))) if match else [0, 0, 0]
+    singbox_match = re.search(r'sing-box\s+(\d+\.\d+(?:\.\d+)?)', ua, re.IGNORECASE)
     res = {}
-    res['v'] = 11
+    res['v'] = 12
     res["is_bot"] = uaa.is_bot
     res["is_browser"] = re.match('^Mozilla', ua, re.IGNORECASE) and True
     res['os'] = uaa.os.family
@@ -85,11 +93,20 @@ def __parse_user_agent(ua: str) -> dict:
     res['is_streisand'] = re.match('^(Streisand)', ua, re.IGNORECASE) and True
     res['is_shadowrocket'] = re.match('^(Shadowrocket)', ua, re.IGNORECASE) and True
     res['is_v2rayng'] = re.match('^(v2rayNG)', ua, re.IGNORECASE) and True
+    res['is_xray'] = re.match(r'^xray/', ua, re.IGNORECASE) and True
+    res['is_foxray'] = re.match(r'^FoXray', ua, re.IGNORECASE) and True
+
+    xray_match = re.match(r'^xray/(\d+\.\d+(?:\.\d+)?)', ua, re.IGNORECASE)
+    if res['is_xray'] and xray_match:
+        res['xray_version'] = list(map(int, xray_match.group(1).split('.')))
 
     if res['is_v2rayng']:
         res['v2rayng_version'] = generic_version
     if res['is_singbox']:
-        res['singbox_version'] = generic_version
+        if singbox_match:
+            res['singbox_version'] = list(map(int, singbox_match.group(1).split('.')))
+        else:
+            res['singbox_version'] = generic_version
 
     if res['is_hiddify']:
         res['hiddify_version'] = generic_version
@@ -103,14 +120,18 @@ def __parse_user_agent(ua: str) -> dict:
             res['singbox_version'] = [1, 13, 0]
 
 
-    res['is_v2ray'] = re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE) and True
+    res['is_v2ray'] = re.match(
+        '^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|xray)',
+        ua,
+        re.IGNORECASE,
+    ) and True
 
     if res['os'] == 'Other':
         if re.match('^(FoXray|Fair|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE):
             res['os'] = 'iOS'
             # res['os_version']
 
-    for a in ['Hiddify', 'FoXray', 'Fair', 'v2rayNG', 'SagerNet', 'Shadowrocket', 'V2Box', 'Loon', 'Liberty', 'Clash', 'Meta', 'Stash', 'SFI', 'SFA', 'HiddifyNext']:
+    for a in ['Hiddify', 'FoXray', 'Fair', 'v2rayNG', 'SagerNet', 'Shadowrocket', 'V2Box', 'Loon', 'Liberty', 'Clash', 'Meta', 'Stash', 'SFI', 'SFA', 'HiddifyNext', 'xray']:
         if a.lower() in ua.lower():
             res['app'] = a
     if res["is_browser"]:

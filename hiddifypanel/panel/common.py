@@ -163,6 +163,7 @@ def init_app(app: APIFlask):
         if g.user_agent['is_bot']:
             abort(400, "invalid")
 
+        
         g.proxy_path = hutils.flask.get_proxy_path_from_url(request.url)
         hutils.flask.proxy_path_validator(g.proxy_path)
 

@@ -1,0 +1,11 @@
+# Panel-only domains → redirect to HTTPS HTTP mode
+{% for d in domains if d['mode'] == 'sub_link_only' %}
+{{ d['domain'] }} to_https_in_http_mode
+{% endfor %}
+
+
+{% for d in domains if d.internal_port_special %}
+{{ d.name }} sp_{{ d.mode }}_{{ d.internal_port_special }}
+{% endfor %}
+
+

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="{{ locale }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HiddifyManager</title>
+    <script>
+      window.__API_BASE__ = {{ api_base | tojson }};
+      window.__ROUTER_BASE__ = {{ router_base | tojson }};
+      window.__LOCALE__ = {{ locale | tojson }};
+      window.__PROXY_PATH__ = {{ proxy_path | tojson }};
+      window.__PANEL_VERSION__ = {{ panel_version | tojson }};
+      window.__PANEL_LOGO_URL__ = {{ panel_logo_url | tojson }};
+      window.__ADMIN_MENU__ = {{ admin_menu | tojson }};
+      window.__ADMIN_NOTICES__ = {{ admin_notices | tojson }};
+    </script>
+    <link rel="stylesheet" crossorigin href="{{ static_css }}">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" crossorigin src="{{ static_js }}"></script>
+  </body>
+</html>

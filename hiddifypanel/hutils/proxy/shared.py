@@ -468,6 +468,8 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
             base['hysteria_obfs_enable'] = hconfigs.get(ConfigEnum.hysteria_obfs_enable)
             base['hysteria_obfs_password'] = hconfigs.get(ConfigEnum.proxy_path)  # TODO: it should not be correct
         return base
+    if proxy.proto in [ProxyProto.anytls]:
+        return base
     if proxy.proto in ['wireguard']:
         base['wg_pub'] = g.account.wg_pub
         base['wg_pk'] = g.account.wg_pk

@@ -1,0 +1,1 @@
+"name": "{{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",

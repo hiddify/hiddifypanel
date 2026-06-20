@@ -1,0 +1,173 @@
+{% set region = {
+    'zh': 'cn',
+    'cn': 'cn',
+    'ir': 'ir',
+    'ru': 'ru'
+}.get(hconfig.country, 'cn') %}
+
+{% set geo_sites=['spotify','speedtest','google','netflix','nvidia','bytedance','tiktok','unity','reddit','openai'] %}
+{
+  "log": {
+    {% if hconfig.log_level == 'CRITICAL' %}
+    "disabled": true,
+    {% endif %}
+    "level": "{{ (hconfig.log_level or 'warning') | lower }}",
+    "timestamp": false
+  },
+  "experimental": {
+    "v2ray_api": {
+      "listen": "127.0.0.1:10086",
+      "stats": {
+        "enabled": true,
+        "inbounds": [],
+        "outbounds": ["WARP", "freedom", "blackhole"],
+        "users": [
+          {% for u in users %}
+          "{{ u.uuid }}",
+          {% endfor %}
+        ]
+      }
+    },
+    "cache_file": {
+      "enabled": true,
+      "path": "cache.db",
+      "store_warp_config": true
+    },
+    "monitoring": {
+      "interval": "10m0s",
+      "urls": [
+        "https://google.com/generate_204"
+      ],
+      "debounce_window": "500ms",
+      "idle_timeout": "18ms"
+    }
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "cloudflare",
+        "type": "udp",
+        "server": "{{ hconfig.dns_server or '1.1.1.1' }}"
+      }
+    ],
+    "final": "cloudflare",
+    "strategy": "prefer_ipv4"
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "listen_port": 2000,
+      "type": "socks",
+      "tag": "socks-in"
+    },
+    {% block inbounds %}{% endblock %}
+  ],
+  "outbounds": [
+    {
+      "tag": "freedom",
+      "type": "direct"
+    },
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "WARP",
+      "type": "direct",
+      "bind_interface": "warp"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    },
+    {% block outbounds %}{% endblock %}
+  ],
+  "route": {
+    "rule_set": [
+      {
+        "tag": "geoip-{{ region }}",
+        "type": "remote",
+        "format": "binary",
+        "update_interval": "1d",
+        "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-{{ region }}.srs"
+      },
+      {
+        "tag": "geosite-{{ region }}",
+        "type": "remote",
+        "format": "binary",
+        "update_interval": "1d",
+        "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-{{ region }}.srs"
+      },
+      {% for site in geo_sites %}
+      {
+        "tag": "geosite-{{ site }}",
+        "type": "remote",
+        "format": "binary",
+        "update_interval": "1d",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/{{ site }}.srs"
+      },
+      {% endfor %}
+    ],
+    "final": {% if hconfig.warp_mode == 'all' %}"WARP"{% else %}"freedom"{% endif %},
+    "rules": [
+      {"action": "sniff"},
+      {
+        "action": "hijack-dns",
+        "port": [53]
+      },
+      {
+        "action": "hijack-dns",
+        "protocol": "dns"
+      },
+      {
+        "protocol": "quic",
+        "port": [443],
+        "action": "reject",
+        "method": "default"
+      },
+      {% if hconfig.block_iran_sites %}
+      {
+        "action": "reject",
+        "method": "default",
+        "rule_set": [
+          "geoip-{{ region }}",
+          "geosite-{{ region }}"
+        ]
+      },
+      {% else %}
+      {
+        "outbound": {% if hconfig.warp_mode == 'disable' %}"forbidden_sites"{% else %}"WARP"{% endif %},
+        "rule_set": [
+          "geoip-{{ region }}",
+          "geosite-{{ region }}"
+        ]
+      },
+      {% endif %}
+      {% if hconfig.warp_mode != 'disable' %}
+      {
+        "outbound": "WARP",
+        "rule_set": [
+          {% for site in geo_sites %}
+          "geosite-{{ site }}",
+          {% endfor %}
+        ]
+      },
+      {% set warp_domains = (hconfig.warp_sites or '').split('\n') %}
+      {% if warp_domains[0].strip() != '' %}
+      {
+        "outbound": "WARP",
+        "domain": [
+          {% for d in warp_domains %}
+          "{{ d.strip() }}",
+          {% endfor %}
+        ]
+      },
+      {% endif %}
+      {% endif %}
+      {
+        "action": "reject",
+        "ip_is_private": true
+      }
+    ]
+  }
+}

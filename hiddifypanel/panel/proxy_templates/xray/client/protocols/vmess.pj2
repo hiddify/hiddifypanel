@@ -1,0 +1,11 @@
+"protocol": "vmess",
+"settings": {
+  "vnext": [{
+    "address": "{{ DOMAIN }}",
+    "port": {{ PORT }},
+    "users": [{
+      "id": "{{ USER.uuid }}",
+      "security": "auto"
+    }]
+  }]
+}

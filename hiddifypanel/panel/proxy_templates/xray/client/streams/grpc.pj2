@@ -1,0 +1,5 @@
+"network": "grpc",
+"grpcSettings": {
+  "serviceName": "{{ PATH }}",
+  "multiMode": false
+}

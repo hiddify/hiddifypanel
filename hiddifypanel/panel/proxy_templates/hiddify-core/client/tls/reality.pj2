@@ -1,0 +1,27 @@
+{% skip() if not hconfig.reality_enable %}
+"tls": {
+  "enabled": true,
+  "engine": "{{ hconfig.singbox_tls_engine }}",
+  "disable_sni": false,
+  "server_name": "{{ domain.sni }}",
+  "insecure": {% if domain.insecure %}false{% else %}true{% endif %},
+  "alpn": [],
+  {% if hconfig.tls_ech_enable %}
+  ,"ech": {
+    "enabled": true,
+    "config": [],
+    "config_path": "",
+    "query_server_name": "{{ domain.sni }}"
+  }
+  {% endif %}
+  ,"utls": {
+    "enabled": true,
+    "fingerprint": "{{hconfig.fingerprint}}"
+  },
+  "reality": {
+    "enabled": true,
+    "public_key": "{{ hconfig.reality_public_key }}",
+    "short_id": "{{ hconfig.reality_short_ids|choose_random }}"
+  }
+},
+"packet_encoding": "xudp"

@@ -1,0 +1,33 @@
+{
+  "log": {
+    "loglevel": "{{ hconfigs.log_level or 'warning' | lower }}"
+  },
+  "api": {
+    "tag": "api",
+    "services": ["HandlerService", "LoggerService", "StatsService"]
+  },
+  "dns": {},
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "domainMatcher": "hybrid",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": ["api"],
+        "outboundTag": "api"
+      }
+    ]
+  },
+  "policy": {},
+  "inbounds": [
+    {% block inbound %}{% endblock %}
+  ],
+  "outbounds": [
+    {"tag": "freedom", "protocol": "freedom"},
+    {"tag": "blackhole", "protocol": "blackhole"},
+    {"tag": "DNS-Internal", "protocol": "dns"}
+  ],
+  "transport": {},
+  "stats": {},
+  "reverse": {}
+}

@@ -141,6 +141,8 @@ def to_singbox(proxy: dict) -> list[dict] | dict:
         add_tuic(base, proxy)
     elif proxy["proto"] == "hysteria2":
         add_hysteria(base, proxy)
+    elif proxy["proto"] == "anytls":
+        add_anytls(base, proxy)
     else:
         add_transport(base, proxy)
 
@@ -193,7 +195,7 @@ def add_tls(base: dict, proxy: dict):
     if proxy.get("ech"):
         base["tls"]['ech'] = {
             "enabled": True,
-            "config":f"-----BEGIN ECH CONFIGS-----\\n{proxy.get("ech")}\\n-----END ECH CONFIGS-----"
+            "config": f"-----BEGIN ECH CONFIGS-----\\n{proxy.get('ech')}\\n-----END ECH CONFIGS-----"
         }   
     if proxy['proto']=="naive":
         return
@@ -297,9 +299,9 @@ def _add_xhttp_details(base: dict, proxy: dict):
     
     if pdl:=proxy.get("download"):
         base['transport']['downloadSettings']={
-            "path": proxy["path"],
+            "path": pdl.get("path") or proxy.get("path"),
             'host': pdl.get("server"),
-            "headers":pdl.get("headers")            
+            "headers": pdl.get("headers") or pdl.get("params", {}).get("headers", {})
         }
         dls={
             'l3':proxy['l3'],
@@ -346,7 +348,7 @@ def add_naive(base: dict, proxy: dict):
     base["udp_over_tcp"]=True
     base["quic"]=proxy["quic"]
     base["extra_headers"]={
-        "hiddify-naive-secret":proxy["path"]
+        "X-API-Key": proxy["path"]
     }
 
     add_tls(base,proxy)
@@ -482,3 +484,10 @@ def add_hysteria(base: dict, proxy: dict):
             "password": proxy.get('hysteria_obfs_password')
         }
     base['password'] = proxy['uuid']
+
+
+def add_anytls(base: dict, proxy: dict):
+    base['password'] = proxy.get('uuid') or proxy.get('password')
+    base['idle_session_check_interval'] = '30s'
+    base['idle_session_timeout'] = '120s'
+    base['min_idle_session'] = 1

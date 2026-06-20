@@ -1,0 +1,7 @@
+{% skip() if not hconfig.hysteria_enable %}
+"type": "hysteria2",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"password": "{{ user.uuid }}",
+"up_mbps": {{ hconfig.hysteria_up_mbps }},
+"down_mbps": {{ hconfig.hysteria_down_mbps }},

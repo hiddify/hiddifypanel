@@ -1,0 +1,10 @@
+# =====================
+# Stats (loopback only)
+# =====================
+listen stats
+    bind 127.0.0.1:8181
+    mode http
+    option httplog
+    stats enable
+    stats admin if TRUE
+    stats refresh 5m

@@ -37,7 +37,7 @@ def to_link(proxy: dict) -> str | dict:
         dnstt=f'dnstt://?{urlencode(params, quote_via=quote)}&{resolvers}'
         return f'socks://{proxy["uuid"]}:{proxy["password"]}@localhost:0#{name_link} -> {dnstt}'
     if proxy['proto'] == "naive":
-        naive = f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=hiddify-naive-secret:{proxy["path"]}'
+        naive = f'naive://{proxy["uuid"]}:{proxy["password"]}@{proxy["server"]}:{proxy["port"]}/?security=tls&sni={proxy["sni"]}&uot=1&header=x-api-key:{proxy["path"]}'
         if proxy.get('quic'):
             naive += "&quic=1"
         return f'{naive}#{name_link}'
@@ -107,7 +107,7 @@ def to_link(proxy: dict) -> str | dict:
             'authentication': 0,
             'passphrase': '',
         }
-        return f"ssh://{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}/?{urlencode(q, quote_via=quote)}#{name_link}"
+        return f"ssh://{proxy['uuid']}@{proxy['server']}:{proxy['port']}/?{urlencode(q, quote_via=quote)}#{name_link}"
         # baseurl += f'{proxy["uuid"]}@{proxy["server"]}:{proxy["port"]}/?file=ssh&pk={pk}&hk={hk}&private_key={pk}&authentication=0&passphrase#{name_link}'
 
         # return baseurl

@@ -1,0 +1,6 @@
+"type": "socks",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"version": "5",
+"username": "{{ user.uuid }}",
+"password": "h",

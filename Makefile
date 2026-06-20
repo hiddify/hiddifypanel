@@ -14,6 +14,10 @@ prepare:             ## Show the help.
 	cd scripts
 	./update_translations.sh
 
+.PHONY: build-admin-v2
+build-admin-v2:      ## Build Admin V2 UI into hiddifypanel/static/admin-v2/
+	cd hiddifypanel/admin_v2 && bash scripts/build.sh
+
 
 update_req:
 	upgrade-requirements 

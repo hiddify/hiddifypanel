@@ -125,7 +125,7 @@ class DomainAdmin(AdminLTEModelView):
         return Markup(
             f'<div class="btn-group"><a href="{admin_link}" class="btn btn-xs btn-secondary">' + _("admin link") +
             f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{model.domain}</a></div>'+
-            f'<a href="{hurl_for('admin.Actions:get_domain_ip',domain=model.domain)}"><i class="fa-solid fa-dharmachakra"></i></a>')
+            f'<a href="{hurl_for("admin.Actions:get_domain_ip", domain=model.domain)}"><i class="fa-solid fa-dharmachakra"></i></a>')
 
     def _domain_ip(view, context, model, name):
         dips = hutils.network.get_domain_ips_cached(model.domain)

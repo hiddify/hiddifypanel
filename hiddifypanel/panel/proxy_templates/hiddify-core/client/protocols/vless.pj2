@@ -1,0 +1,6 @@
+{% skip() if not hconfig.vless_enable %}
+"type": "vless",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"uuid": "{{ user.uuid }}",
+"flow": "{{ hconfig.vless_flow }}",

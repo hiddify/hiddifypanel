@@ -1,0 +1,5 @@
+global
+    limited-quic
+    {% if hconfigs['log_level'] != 'CRITICAL' %}
+    log /opt/hiddify-manager/log/system/haproxy.err.log local0 warning
+    {% endif %}

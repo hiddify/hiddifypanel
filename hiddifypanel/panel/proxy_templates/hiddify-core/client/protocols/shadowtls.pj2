@@ -1,0 +1,14 @@
+{% skip() if not hconfig.shadowtls_enable %}
+"type": "shadowtls",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"version": 3,
+"password": "{{ hconfig.shared_secret }}",
+"tls": {
+  "enabled": true,
+  "server_name": "{{ hconfig.shadowtls_fakedomain }}",
+  "utls": {
+    "enabled": true,
+    "fingerprint": "none"
+  }
+},

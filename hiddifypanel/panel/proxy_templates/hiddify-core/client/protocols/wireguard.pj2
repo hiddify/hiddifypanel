@@ -1,0 +1,31 @@
+{% skip() if not hconfig.wireguard_enable %}
+"type": "wireguard",
+{% if platform.app == "hiddify" and platform.app_version >= "4.2.0" %}
+  "private_key": "{{ user.wg_pk }}",
+  "mtu": 1380,
+  "address": ["{{ user.wg_ipv4 }}/32"],
+  "peers": [{
+    "public_key": "{{ hconfig.wireguard_public_key }}",
+    "pre_shared_key": "{{ user.wg_psk }}",
+    "address": "{{ proxy.server }}",
+    "port": {{ proxy.port }},
+    "allowed_ips": ["0.0.0.0/0", "::/0"]
+  }],
+  "noise": {
+    "fake_packet": {
+      "enabled": true,
+      "count": {{ hconfig.wireguard_noise_trick }}
+    }
+  },
+{% else %}
+  "server": "{{ proxy.server }}",
+  "server_port": {{ proxy.port }},
+  "local_address": "{{ user.wg_ipv4 }}/32",
+  "private_key": "{{ user.wg_pk }}",
+  "peer_public_key": "{{ hconfig.wireguard_public_key }}",
+  "pre_shared_key": "{{ user.wg_psk }}",
+  "mtu": 1380,
+    {% if platform.app == "hiddify" and platform.app_version > "0.15.0" %}
+    "fake_packets": {{ hconfig.wireguard_noise_trick }},
+    {% endif %}
+  {% endif %}

@@ -1,0 +1,5 @@
+"network": "xhttp",
+"xhttpSettings": {
+  "path": "/{{ PATH }}",
+  "host": "{{ DOMAIN }}"
+}

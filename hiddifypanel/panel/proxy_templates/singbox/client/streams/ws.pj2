@@ -1,0 +1,5 @@
+"transport": {
+  "type": "ws",
+  "path": "/{{ proxy.path }}",
+  "headers": { "Host": "{{ domain.host }}" }
+},

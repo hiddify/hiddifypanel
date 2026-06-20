@@ -1,0 +1,5 @@
+{% block inbound %}
+{
+  {% include 'xray/inbound/listen' %}
+}
+{% endblock %}

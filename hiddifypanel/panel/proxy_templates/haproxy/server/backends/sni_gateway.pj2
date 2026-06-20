@@ -1,0 +1,10 @@
+{% for d in domains if d.internal_port_special %}
+backend sp_{{d.mode}}_{{d.internal_port_special}}
+  mode tcp
+  server s 127.0.0.1:{{d.internal_port_special}} send-proxy-v2 
+
+backend sp_{{d['mode']}}_http_{{port}}
+  mode http
+  server s {{domain}}:80 
+{%endfor%}
+

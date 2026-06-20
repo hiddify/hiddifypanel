@@ -1,0 +1,4 @@
+{% skip() if not hconfig.v2ray_enable %}
+{% with plugin="v2ray-plugin", plugin_opts="mode=websocket;path=" ~ proxy.path ~ ";host=" ~ domain.host ~ ";tls" %}
+{% include 'hiddify-core/client/protocols/ss' %}
+{% endwith %}

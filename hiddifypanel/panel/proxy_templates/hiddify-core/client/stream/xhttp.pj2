@@ -1,0 +1,26 @@
+{% skip() if not hconfig.xhttp_enable %}
+"transport": {
+  "type": "xhttp",
+  "path": "/{{ proxy.path }}",
+  "host": "{{ domain.host }}",
+  "mode": "auto",
+  {% if domain.download and proxy.download_alpn %}
+  "downloadSettings": {
+    "path": "/{{ proxy.path }}",
+    "host": "{{ domain.download.server }}",
+    "headers": {},
+    {%if proxy.download_alpn.startswith('tls_')%}
+    "tls": {
+      "enabled": "true",
+      "server_name": "{{ domain.download.sni }}",
+      "insecure": {% if domain.download.allow_insecure %}true{% else %}false{% endif %},
+      "alpn": [
+        {% for alpn in proxy.download_alpn_list %}
+        "{{ alpn }}",
+        {% endfor %}
+      ]    
+    }
+    {% endif %}
+  }
+  {% endif %}
+},

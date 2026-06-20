@@ -117,7 +117,7 @@ class ConfigEnum(metaclass=FastEnum):
 
     @classmethod
     def dbvalues(cls):
-        return {c.name: c for c in ConfigEnum}
+        return {c.name: c for c in config_enum_members()}
     create_easysetup_link = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.nothing, hide_in_virtual_child=True)
     wireguard_enable = _BoolConfigDscr(ConfigCategory.wireguard, ApplyMode.reinstall, hide_in_virtual_child=True)
     wireguard_port = _StrConfigDscr(ConfigCategory.wireguard, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -150,7 +150,7 @@ class ConfigEnum(metaclass=FastEnum):
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
     show_usage_in_sublink = _BoolConfigDscr(ConfigCategory.general)
     cloudflare = _StrConfigDscr(ConfigCategory.too_advanced)
-    license = _StrConfigDscr(ConfigCategory.hidden)
+    # license = _StrConfigDscr(ConfigCategory.hidden)
     country = _StrConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     package_mode = _StrConfigDscr(ConfigCategory.advanced, hide_in_virtual_child=True)
     utls = _StrConfigDscr(ConfigCategory.advanced)
@@ -224,6 +224,7 @@ class ConfigEnum(metaclass=FastEnum):
     proxy_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     proxy_path_admin = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
     proxy_path_client = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
+    health_secret_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     firewall = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
     netdata = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall)  # removed
     http_proxy_enable = _BoolConfigDscr(ConfigCategory.http)
@@ -283,6 +284,9 @@ class ConfigEnum(metaclass=FastEnum):
     mieru_multiplexing =_TypedConfigDscr(MieruMultiplexing, ConfigCategory.mieru)
     mieru_handshake =_TypedConfigDscr(MieruHandshake, ConfigCategory.mieru)
     vless_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    vless_flow = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
+    vless_encryption = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
+    vless_decryption = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
     trojan_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     reality_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     tcp_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
@@ -357,3 +361,14 @@ class ConfigEnum(metaclass=FastEnum):
 
     def startswith(self, other):
         return self.name.startswith(other)  # type: ignore
+
+
+def config_enum_members() -> list['ConfigEnum']:
+    """Real config keys only — skips dbvalues and non-member entries."""
+    members: list[ConfigEnum] = []
+    for cfg in ConfigEnum:
+        name = getattr(cfg, 'name', None)
+        if not name or name == 'dbvalues':
+            continue
+        members.append(cfg)
+    return members

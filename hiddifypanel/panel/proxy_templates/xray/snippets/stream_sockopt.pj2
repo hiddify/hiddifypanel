@@ -1,0 +1,4 @@
+"sockopt": {
+  "acceptProxyProtocol": true,
+  "tcpFastOpen": true
+}

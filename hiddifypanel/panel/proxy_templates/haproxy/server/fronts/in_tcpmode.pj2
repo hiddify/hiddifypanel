@@ -1,0 +1,20 @@
+# =====================
+# TCP Frontend
+# =====================
+frontend in-tcpmode
+    {% for port in (["80"] + hconfigs['http_ports'].split(',')) | unique %}
+    bind :{{ port }},:::{{ port }} v4v6 tfo
+    {% endfor %}
+    bind abns@https_in_ssl tfo accept-proxy ssl crt /opt/hiddify-manager/ssl/ alpn h2,http/1.1,h3 allow-0rtt
+    acl h2 ssl_fc_alpn -i h2
+    acl h3 ssl_fc_alpn -i h3
+    tcp-request inspect-delay 5s
+    tcp-request content accept if HTTP h2
+    use_backend to_httpmode if h2
+    use_backend to_httpmode if h3
+
+    use_backend %[req.hdr(host),map_dom({{ include_path('haproxy/server/maps/http_domain') }})] if { req.hdr(host),map_dom({{ include_path('haproxy/server/maps/http_domain') }}) -m found }
+    use_backend %[req.hdr(x-api-key),map_str({{ include_path('haproxy/server/maps/token_header') }})] if { req.hdr(x-api-key),map_str({{ include_path('haproxy/server/maps/token_header') }}) -m found }
+    use_backend %[path,map_beg({{ include_path('haproxy/server/maps/path_v10') }})] if { path,map_beg({{ include_path('haproxy/server/maps/path_v10') }}) -m found }
+
+    default_backend to_httpmode

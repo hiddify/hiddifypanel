@@ -1,0 +1,12 @@
+"protocol": "vless",
+"settings": {
+  "vnext": [{
+    "address": "{{ DOMAIN }}",
+    "port": {{ PORT }},
+    "users": [{
+      "id": "{{ USER.uuid }}",
+      "encryption": "none",
+      "flow": "{{ FLOW or '' }}"
+    }]
+  }]
+}

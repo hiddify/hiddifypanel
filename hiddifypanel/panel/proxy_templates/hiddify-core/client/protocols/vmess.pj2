@@ -1,0 +1,9 @@
+{% skip() if not hconfig.vmess_enable %}
+"type": "vmess",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"uuid": "{{ user.uuid }}",
+"security": "auto",
+"alter_id": 0,
+"global_padding": false,
+"authenticated_length": true,

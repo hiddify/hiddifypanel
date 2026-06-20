@@ -186,6 +186,7 @@
           {{ render_nav_item('admin.ProxyAdmin:index',
           icon('solid','arrow-down-up-lock','nav-icon')+_('admin.menu.proxy'),_use_li=True) }}
           {% if g.account.mode=='super_admin' %}
+          {{ render_nav_item('admin.admin_v2', icon('solid','gauge-high','nav-icon')+_('admin.menu.dashboard_v2'), _use_li=True) }}
           {{ render_nav_item('admin.SettingAdmin:index',icon('solid','gears','nav-icon')+
           _('admin.menu.config'),_use_li=True) }}
           {{ render_nav_item('admin.Backup:index',icon('solid','floppy-disk','nav-icon')+ _('Backup'), _use_li=True) }}

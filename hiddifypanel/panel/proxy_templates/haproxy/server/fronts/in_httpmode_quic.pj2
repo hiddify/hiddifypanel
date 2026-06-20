@@ -1,0 +1,15 @@
+# =====================
+# QUIC/H3 Frontend
+# =====================
+frontend in-httpmode-quic
+  {% for port in (["443"] + hconfigs['tls_ports'].split(',')) | unique %}
+  bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/ssl/ alpn h3
+  {% endfor %}
+  mode http
+
+  http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path('haproxy/server/maps/http_domain') }},default)
+  http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path('haproxy/server/maps/token_header') }},default) if { var(txn.backend) -m str default }
+  http-request set-var(txn.backend) path,map_beg({{ include_path('haproxy/server/maps/path_v10') }},nginx_dispatcher_http_h2) if { var(txn.backend) -m str default }
+
+  use_backend %[var(txn.backend)]
+  default_backend nginx_dispatcher_http_h2

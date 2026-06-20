@@ -1,0 +1,16 @@
+# =====================
+# SNI Proxy Frontend
+# =====================
+frontend https-in
+    {% for port in (["443"] + hconfigs['tls_ports'].split(',')) | unique %}
+    bind :{{ port }},:::{{ port }} v4v6 tfo
+    {% endfor %}
+    tcp-request inspect-delay 5s
+    tcp-request content accept if { req.ssl_hello_type 1 }
+
+    acl is_cdn src -f /opt/hiddify-manager/haproxy/iplists/cloudflare.lst -f /opt/hiddify-manager/haproxy/iplists/arvan.lst -f /opt/hiddify-manager/haproxy/iplists/cloudfront.lst
+    use_backend to_https_in_ssl if is_cdn
+
+    use_backend %[req.ssl_sni,map_str({{ include_path('haproxy/server/maps/sni') }})] if { req.ssl_sni,map_str({{ include_path('haproxy/server/maps/sni') }}) -m found }
+
+    default_backend to_https_in_ssl

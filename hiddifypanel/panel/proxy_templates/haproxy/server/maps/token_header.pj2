@@ -1,0 +1,11 @@
+# x-api-key routing map (QUIC/H3 and TCP frontends)
+# Add lines: <api-key-value> <backend-name>
+
+# L7 gateway proxy paths
+{% for proxy in custom_proxies if proxy.enable and proxy.server_tag %}
+{% if proxy.mode == 'domains_l7_gateway'  %}
+{% if proxy.custom_path %}
+{{ proxy.custom_path }} {{ proxy.server_tag }}-{{proxy.id}}-http
+{% endif %}
+{% endif %}
+{% endfor %}

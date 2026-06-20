@@ -1,0 +1,10 @@
+{% skip() if not hconfig.tuic_enable %}
+"type": "tuic",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"uuid": "{{ user.uuid }}",
+"password": "{{ user.uuid }}",
+"congestion_control": "cubic",
+"udp_relay_mode": "native",
+"zero_rtt_handshake": true,
+"heartbeat": "10s",

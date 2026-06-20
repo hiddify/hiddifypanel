@@ -1,0 +1,8 @@
+{
+  {% include 'singbox/client/tag' %}
+  {% include '__PROTO_SLUG__' %}
+  {% include '__STREAM_SLUG__' %}
+  {% if proxy.tls %}
+  {% include 'singbox/client/tls' %}
+  {% endif %}
+}

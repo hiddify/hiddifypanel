@@ -42,6 +42,7 @@ def create_app(*args, app_mode="web", **config):
     else:
         extensions.extend([
             "hiddifypanel.base_setup:init_app",
+            "hiddifypanel.health_check:init_app",
             "hiddifypanel.panel.common:init_app",
             "hiddifypanel.panel.common_bp:init_app",
             "hiddifypanel.panel.admin:init_app",
@@ -65,7 +66,7 @@ def create_app_wsgi(*args, **kwargs):
     # to be passed to create_app
     # https://github.com/pallets/flask/issues/4170
     cli = ("hiddifypanel" in sys.argv[0] ) or (sys.argv[1] in ["update-usage", "all-configs", "admin_links", "admin_path"])
-
+    # cli=True
     app = create_app(app_mode="cli" if cli else "web")
     return app
 

@@ -30,6 +30,7 @@ class DomainType(StrEnum):
     special_reality_grpc = auto()
     old_xtls_direct = auto() #deprecated
     dnstt = auto()
+    special=auto()
     # special_shadowtls = auto()
 
     # fake_cdn = "fake_cdn"
@@ -65,6 +66,15 @@ class Domain(db.Model):
     download_domain = db.relationship('Domain',remote_side=[id],    foreign_keys=[download_domain_id])
     extra_params = db.Column(db.String(2000), nullable=True, default='{}')
     resolve_ip= db.Column(db.Boolean, nullable=True, default=False)
+
+    custom_proxy_id = db.Column(db.Integer, db.ForeignKey('custom_proxy.id', ondelete='SET NULL'), default=None,nullable=True)
+    custom_proxy = db.relationship('CustomProxy')
+    certificate = db.relationship(
+        'TlsStore',
+        back_populates='domain',
+        uselist=False,
+        cascade='all, delete-orphan',
+    )
 
     def extra_params_json(self):
         import json
@@ -140,6 +150,9 @@ class Domain(db.Model):
     def port_index(self):
         return self.id
 
+    @property
+    def name(self):
+        return self.domain
     @property
     def internal_port_hysteria2(self):
         if self.mode not in [DomainType.direct, DomainType.relay, DomainType.fake]:

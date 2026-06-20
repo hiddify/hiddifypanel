@@ -59,6 +59,7 @@ import sqlalchemy as sa
     #         self._set_rel_query(kwargs)
     #         return sa_orm.relationship(*args, **kwargs)
 from flask_sqlalchemy import SQLAlchemy
+from loguru import logger
     
 
 db = SQLAlchemy()
@@ -90,4 +91,34 @@ def db_execute(query: str, return_val: bool = False, commit: bool = False, **par
     #     res = connection.execute(text(query), params)
     #     connection.commit()s
     # return res
+
+
+def db_execute_ddl(
+    query: str,
+    *,
+    max_attempts: int = 12,
+    wait_seconds: float = 5.0,
+    lock_wait_timeout: int = 5,
+) -> None:
+    """Run DDL on a dedicated connection (avoids blocking on the Flask session pool)."""
+    import time
+
+    last_err: BaseException | None = None
+    for attempt in range(1, max_attempts + 1):
+        conn = db.engine.connect()
+        try:
+            conn.execute(text(f'SET SESSION lock_wait_timeout = {int(lock_wait_timeout)}'))
+            conn.execute(text(query))
+            conn.commit()
+            return
+        except BaseException as exc:
+            last_err = exc
+            conn.rollback()
+            logger.warning('DDL attempt {}/{} failed: {}', attempt, max_attempts, exc)
+            if attempt < max_attempts:
+                time.sleep(wait_seconds)
+        finally:
+            conn.close()
+    if last_err is not None:
+        raise last_err
 

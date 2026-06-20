@@ -1,0 +1,8 @@
+"protocol": "trojan",
+"settings": {
+  "servers": [{
+    "address": "{{ DOMAIN }}",
+    "port": {{ PORT }},
+    "password": "{{ USER.uuid }}"
+  }]
+}

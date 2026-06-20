@@ -139,3 +139,13 @@ development.db
 .idea/
 
 hiddify_usages.json
+
+# Admin V2 (Vue / Vite) — production bundle: hiddifypanel/static/admin-v2/
+hiddifypanel/admin_v2/node_modules/
+hiddifypanel/admin_v2/dist/
+hiddifypanel/admin_v2/.vite/
+hiddifypanel/admin_v2/public/
+hiddifypanel/admin_v2/.env
+hiddifypanel/admin_v2/.env.*
+!hiddifypanel/admin_v2/.env.example
+hiddifypanel/admin_v2/*.tsbuildinfo

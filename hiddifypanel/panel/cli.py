@@ -211,6 +211,75 @@ def init_app(app):
         except Exception as e:
             print(f'failed to import xui data: Error: {e}')
 
+    def _run_sync_builtin_catalog(child_id: int) -> None:
+        from hiddifypanel.panel.template_catalog.seed import sync_builtin_catalog
+
+        stats = sync_builtin_catalog(child_id)
+        click.echo(
+            f"synced builtin catalog (child_id={stats['child_id']}): "
+            f"{stats['builtin_templates']} templates, "
+            f"{stats['builtin_base_configs']} base configs, "
+            f"{stats['builtin_custom_proxies']} custom proxies"
+        )
+
+    @app.cli.command('sync-builtin-configs')
+    @click.option('--child-id', '-c', default=0, show_default=True, type=int)
+    def sync_builtin_configs(child_id):
+        """Refresh builtin proxy templates, base configs, and preset rows from disk."""
+        _run_sync_builtin_catalog(child_id)
+
+    @app.cli.command('sync-builtin-proxies')
+    @click.option('--child-id', '-c', default=0, show_default=True, type=int)
+    def sync_builtin_proxies(child_id):
+        """Alias for sync-builtin-configs."""
+        _run_sync_builtin_catalog(child_id)
+
+    @app.cli.command('sync-tls-store')
+    @click.option('--domain', '-d', default=None, help='Sync by domain hostname')
+    @click.option('--domain-id', default=None, type=int, help='Sync by domain.id')
+    @click.option('--child-id', '-c', default=0, show_default=True, type=int)
+    def sync_tls_store(domain, domain_id, child_id):
+        """Import TLS certificates from /opt/hiddify-manager/ssl/ into tls_store."""
+        from hiddifypanel.hutils.ssl.tls_store_sync import (
+            sync_tls_store_all,
+            sync_tls_store_for_domain,
+            sync_tls_store_for_domain_id,
+        )
+
+        if domain_id is not None:
+            row = sync_tls_store_for_domain_id(domain_id)
+            if row:
+                host = row.domain.domain if row.domain else domain_id
+                click.echo(
+                    f'synced certificate for domain_id={row.domain_id} ({host}) issuer={row.issuer}'
+                )
+            else:
+                click.echo(f'no certificate files found for domain_id={domain_id}', err=True)
+            return
+        if domain:
+            row = sync_tls_store_for_domain(domain, child_id=child_id)
+            if row:
+                host = row.domain.domain if row.domain else domain
+                click.echo(
+                    f'synced certificate for domain_id={row.domain_id} ({host}) issuer={row.issuer}'
+                )
+            else:
+                click.echo(f'no certificate files found for {domain}', err=True)
+            return
+        count = sync_tls_store_all(child_id)
+        click.echo(f'synced {count} tls_store row(s)')
+
+    @app.cli.command('reset-wip-proxy-db')
+    @click.option('--child-id', '-c', default=0, show_default=True, type=int)
+    def reset_wip_proxy_db(child_id):
+        """Drop WIP proxy/TLS tables and set db_version=129 for fresh _v130 migration."""
+        from hiddifypanel.models import ConfigEnum, set_hconfig
+        from hiddifypanel.panel.init_db import _drop_wip_proxy_tables
+
+        _drop_wip_proxy_tables()
+        set_hconfig(ConfigEnum.db_version, 129, child_id=child_id, commit=True)
+        click.echo('WIP tables dropped; db_version set to 129. Restart panel to run _v130.')
+
     @ app.cli.command()
     def tgbot_info():
         if not hconfig(ConfigEnum.telegram_bot_token):
