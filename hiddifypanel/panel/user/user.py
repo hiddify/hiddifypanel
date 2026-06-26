@@ -157,7 +157,7 @@ class UserView(FlaskView):
             return None
 
         ua = request.user_agent.string
-        if g.user_agent['is_singbox'] or re.match('^(HiddifyNext|Dart|SFI|SFA)', ua, re.IGNORECASE):
+        if g.user_agent['is_singbox'] or re.match('^(HiddifyNext|Dart|SFI|SFA|InHive)', ua, re.IGNORECASE):
             return self.full_singbox_imp()
 
         if re.match('^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)', ua, re.IGNORECASE):
