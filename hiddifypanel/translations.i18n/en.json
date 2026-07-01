@@ -270,7 +270,7 @@
       "home": "Dashboard",
       "proxy": "Proxies",
       "proxy_stats": "Proxies' Status",
-      "dashboard_v2": "Dashboard v2",
+      "dashboard_v2": "New Dashboard",
       "support": "Help",
       "telegram": "Telegram",
       "user": "Users"
@@ -1483,7 +1483,8 @@
   "adminV2": {
     "appTitle": "HiddifyManager",
     "menu": {
-      "sectionV2": "Dashboard v2",
+      "sectionNew": "New",
+      "sectionV2": "New",
       "sectionMain": "Main",
       "dashboard": "Dashboard",
       "proxyEditor": "Proxy Editor",
@@ -1499,7 +1500,7 @@
       "title": "Dashboard",
       "subtitle": "Hiddify panel administration",
       "welcomePanel": "Welcome",
-      "underConstruction": "Welcome to Hiddify Dashboard v2 — under construction."
+      "underConstruction": "Welcome to the new Hiddify dashboard — under construction."
     },
     "theme": {
       "dark": "Dark mode",
@@ -1532,7 +1533,13 @@
       "includeTemplate": "Include template",
       "noVariables": "No variables match your search",
       "exportBundle": "Export bundle",
-      "excludeBuiltinTemplates": "Exclude built-in templates from export"
+      "excludeBuiltinTemplates": "Exclude built-in templates from export",
+      "preview": "Preview",
+      "previewParams": "Preview parameters",
+      "previewTitle": "Template preview",
+      "previewOk": "Preview generated successfully",
+      "previewPartial": "Preview generated with warnings",
+      "previewFailed": "Preview request failed"
     },
     "proxy": {
       "listTitle": "Custom Proxies",
@@ -1611,9 +1618,17 @@
       "serverBuiltinCustomized": "Custom server config",
       "clientBuiltinDefault": "Using catalog default client config",
       "clientBuiltinCustomized": "Custom client config",
+      "fieldOverride": "Override",
+      "resetToBuiltin": "Reset to catalog default",
       "generateExample": "Generate example",
       "generateExampleOk": "Example generated successfully",
       "generateExamplePartial": "Example generated with warnings or errors",
+      "renderErrorDetail": "Render error details",
+      "renderErrorDetailTitle": "Render error: {label}",
+      "renderErrorRenderedSource": "Rendered output",
+      "renderErrorTemplateSource": "Template source",
+      "renderErrorNoDetail": "No additional context is available for this error.",
+      "renderErrorClickHint": "Click for details",
       "generateBundle": "Generate all configs",
       "generateBundleOk": "Bundle generated successfully",
       "generateBundlePartial": "Bundle generated with warnings or errors",
@@ -1621,6 +1636,8 @@
       "exampleDomain": "Domain",
       "exampleDomainPick": "Pick from panel",
       "exampleDomainCustom": "Custom domain",
+      "exampleDomainAll": "All domains",
+      "exampleDomainAllHint": "Include every domain that matches this proxy (same as subscription output).",
       "exampleUser": "User",
       "exampleUserSample": "Sample user",
       "exampleUserPick": "Pick panel user",
@@ -1634,11 +1651,33 @@
       "exampleContextUser": "User",
       "exampleContextIp": "IP",
       "exampleContextUa": "User-Agent",
-      "sublinkFormatRaw": "Raw sublink",
-      "sublinkFormatVless": "VLESS (JSON + URI)",
-      "sublinkFormatVmess": "VMess (JSON + vmess://)",
+      "sublinkFormatRaw": "Rendered link",
+      "sublinkFormatUri": "URI format",
+      "sublinkFormatRawLink": "Raw link",
+      "sublinkFormatBase64": "Base64 format",
       "clashFormatJson": "JSON",
-      "clashFormatYaml": "YAML"
+      "clashFormatYaml": "YAML",
+      "ignoreSkip": "Ignore skip tags",
+      "ignoreSkipHint": "Render config even when a template skip block would normally skip a fragment",
+      "autoClient": "auto",
+      "sublinkFormat": "Link format",
+      "sublinkUriDetail": "URI detail",
+      "sublinkBase64Detail": "Base64 detail",
+      "sublinkUri": {
+        "protocol": "uri.protocol",
+        "user": "uri.user",
+        "password": "uri.password",
+        "host": "uri.host",
+        "port": "uri.port",
+        "path": "uri.path",
+        "fragment": "uri.fragment",
+        "query_params": "uri.query_params (JSON)"
+      },
+      "sublinkBase64": {
+        "protocol": "uri.protocol",
+        "content": "Content",
+        "formatJson": "Format JSON"
+      }
     },
     "baseConfig": {
       "listTitle": "Base Configs",

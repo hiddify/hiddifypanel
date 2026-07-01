@@ -1,0 +1,3 @@
+{% set qp.type = 'httpupgrade' %}
+{% set qp.path = '/' ~ proxy.path %}
+{% set qp.host = domain.host %}

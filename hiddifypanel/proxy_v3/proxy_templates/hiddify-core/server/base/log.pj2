@@ -1,0 +1,7 @@
+"log": {
+  {% if hconfig.log_level == 'CRITICAL' %}
+  "disabled": true,
+  {% endif %}
+  "level": "{{ (hconfig.log_level or 'warning') | lower }}",
+  "timestamp": false
+}

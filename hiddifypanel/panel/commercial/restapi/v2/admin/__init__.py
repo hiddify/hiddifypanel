@@ -33,13 +33,14 @@ def init_app(app):
         
         bp.add_url_rule('/user/', view_func=UsersApi)  # type: ignore
 
-        from .custom_proxy_api import (
+        from hiddifypanel.proxy_v3.api.custom_proxy_api import (
             CustomProxiesApi,
             CustomProxyApi,
             CustomProxyEnableApi,
             CustomProxyDuplicateApi,
             CustomProxyValidateApi,
             CustomProxyValidateByIdApi,
+            CustomProxyPreviewApi,
             CustomProxyGenerateExampleApi,
             CustomProxyGenerateExampleByIdApi,
             CustomProxyGenerateBundleApi,
@@ -47,22 +48,24 @@ def init_app(app):
             CustomProxyExportApi,
             CustomProxyImportApi,
         )
-        from .proxy_template_api import ProxyTemplatesApi, ProxyTemplateApi, ProxyTemplateDuplicateApi
-        from .proxy_base_config_api import (
+        from hiddifypanel.proxy_v3.api.proxy_template_api import ProxyTemplatesApi, ProxyTemplateApi, ProxyTemplateDuplicateApi
+        from hiddifypanel.proxy_v3.api.proxy_base_config_api import (
             ProxyBaseConfigsApi,
             ProxyBaseConfigApi,
             ProxyBaseConfigDuplicateApi,
             ProxyBaseConfigMetaApi,
             ProxyBaseConfigValidateApi,
+            ProxyBaseConfigPreviewApi,
             ProxyBaseConfigExportApi,
             ProxyBaseConfigImportApi,
         )
-        from .template_variables_api import TemplateVariablesApi
+        from hiddifypanel.proxy_v3.api.template_variables_api import TemplateVariablesApi
         from .domain_api import DomainsOptionsApi, DomainsQuickAddApi
 
         bp.add_url_rule('/custom-proxies/', view_func=CustomProxiesApi)  # type: ignore
         bp.add_url_rule('/custom-proxies/meta/', view_func=CustomProxyMetaApi)  # type: ignore
         bp.add_url_rule('/custom-proxies/validate/', view_func=CustomProxyValidateApi)  # type: ignore
+        bp.add_url_rule('/custom-proxies/preview/', view_func=CustomProxyPreviewApi)  # type: ignore
         bp.add_url_rule('/custom-proxies/generate-example/', view_func=CustomProxyGenerateExampleApi)  # type: ignore
         bp.add_url_rule('/custom-proxies/generate-bundle/', view_func=CustomProxyGenerateBundleApi)  # type: ignore
         bp.add_url_rule('/custom-proxies/export/', view_func=CustomProxyExportApi)  # type: ignore
@@ -77,6 +80,7 @@ def init_app(app):
         bp.add_url_rule('/proxy-templates/<int:template_id>/duplicate/', view_func=ProxyTemplateDuplicateApi)  # type: ignore
         bp.add_url_rule('/proxy-base-configs/meta/', view_func=ProxyBaseConfigMetaApi)  # type: ignore
         bp.add_url_rule('/proxy-base-configs/validate/', view_func=ProxyBaseConfigValidateApi)  # type: ignore
+        bp.add_url_rule('/proxy-base-configs/preview/', view_func=ProxyBaseConfigPreviewApi)  # type: ignore
         bp.add_url_rule('/proxy-base-configs/export/', view_func=ProxyBaseConfigExportApi)  # type: ignore
         bp.add_url_rule('/proxy-base-configs/import/', view_func=ProxyBaseConfigImportApi)  # type: ignore
         bp.add_url_rule('/proxy-base-configs/', view_func=ProxyBaseConfigsApi)  # type: ignore

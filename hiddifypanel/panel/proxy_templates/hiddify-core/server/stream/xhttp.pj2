@@ -1,6 +1,0 @@
-{% skip() if not hconfig.xhttp_enable %}
-"transport": {
-  "type": "xhttp",
-  "path": "/{{ proxy.path }}",
-  "mode": "auto"
-},

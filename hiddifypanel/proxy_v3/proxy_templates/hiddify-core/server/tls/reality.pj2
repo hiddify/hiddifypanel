@@ -1,0 +1,20 @@
+{% skip("reality_enable = " ~ hconfig.reality_enable) if not hconfig.reality_enable %}
+"tls": {
+  "enabled": true,
+  "server_name": "{{ domain.sni }}",
+  "reality": {
+    "enabled": true,
+    "handshake": {
+      "server": "{{ domain.sni }}",
+      "server_port": 443
+    },
+    "private_key": "{{ hconfig.reality_private_key }}",
+    "short_id": [
+      "",
+      {% for sid in (hconfig.reality_short_ids or '').split(',') %}
+      "{{ sid }}",
+      {% endfor %}
+    ],
+    "max_time_difference": "2h"
+  }
+},

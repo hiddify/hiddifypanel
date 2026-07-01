@@ -6,7 +6,7 @@ from flask import current_app as app
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import Domain, DomainType
 from hiddifypanel.models.role import Role
-from hiddifypanel.hutils.proxy.domain_mode_filter import domain_matches_modes
+from hiddifypanel.proxy_v3.domain_mode_filter import domain_matches_modes
 
 from .custom_proxy_schema import DomainOptionSchema, PostDomainSchema
 

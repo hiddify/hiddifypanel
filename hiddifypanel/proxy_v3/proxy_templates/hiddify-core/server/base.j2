@@ -1,0 +1,35 @@
+{
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "listen_port": 2000,
+      "type": "socks",
+      "tag": "socks-in"
+    },
+    {% block inbounds %}{% endblock %}
+  ],
+  "outbounds": [
+    {
+      "tag": "freedom",
+      "type": "direct"
+    },
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "WARP",
+      "type": "direct",
+      "bind_interface": "warp"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    },
+    {% block outbounds %}{% endblock %}
+  ],
+  {% include 'hiddify-core/server/base/route' %},
+  {% include 'hiddify-core/server/base/log' %},
+  {% include 'hiddify-core/server/base/experimental' %},
+  {% include 'hiddify-core/server/base/dns' %},
+}

@@ -1,1 +1,0 @@
-{% include 'sublink/common/vless_uri' %}{% include 'sublink/common/vless_encryption' %}&{% include 'sublink/common/tls_params' %}#{{ proxy.tag }}

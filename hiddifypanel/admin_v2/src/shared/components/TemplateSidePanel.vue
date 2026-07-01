@@ -13,6 +13,7 @@ import {
   parseReferencedTemplateSlugs,
   sortTemplatesByIncluded,
   templateDisplayName,
+  asTemplateSlugList,
 } from '@/shared/utils/template-slug'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import TemplateViewDialog from '@/shared/components/TemplateViewDialog.vue'
@@ -50,12 +51,13 @@ const selected = ref<ProxyTemplate | null>(null)
 const expandedSlugs = ref<string[]>([])
 
 const directReferencedSlugs = computed(() =>
-  parseReferencedTemplateSlugs(props.templateText ?? '', props.explicitSlugs ?? []),
+  parseReferencedTemplateSlugs(props.templateText ?? '', asTemplateSlugList(props.explicitSlugs)),
 )
 
-const referencedSlugs = computed(() =>
-  expandedSlugs.value.length ? expandedSlugs.value : directReferencedSlugs.value,
-)
+const referencedSlugs = computed(() => {
+  const seeds = expandedSlugs.value.length ? expandedSlugs.value : directReferencedSlugs.value
+  return asTemplateSlugList(seeds)
+})
 
 const templates = computed(() => {
   const sorted = sortTemplatesByIncluded(raw.value, referencedSlugs.value)
@@ -182,7 +184,7 @@ onMounted(() => {
   void load()
 })
 watch(
-  () => [props.core, props.category, props.listScope, props.explicitSlugs?.join('|'), props.templateText],
+  () => [props.core, props.category, props.listScope, asTemplateSlugList(props.explicitSlugs).join('|'), props.templateText],
   () => {
     void load()
   },

@@ -1,0 +1,9 @@
+{% set data.net = 'xhttp' %}
+{% set data.type = 'none' %}
+{% if proxy.xhttp_host %}
+{% set data.host = proxy.xhttp_host %}
+{% endif %}
+{% if proxy.xhttp_path %}
+{% set data.path = proxy.xhttp_path %}
+{% endif %}
+{% include 'sublink/vmess/xhttp_extra' %}

@@ -17,6 +17,41 @@ export function effectiveTemplateContent(
   return item.content ?? fallback
 }
 
+type BuiltinSaveFields = BuiltinContentFields & {
+  name?: string
+  description?: string
+}
+
+/** Build PATCH body for a built-in template/base-config content save. */
+export function buildBuiltinContentPatch(
+  item: BuiltinSaveFields,
+  currentContent: string,
+): {
+  name?: string
+  description?: string
+  builtin_override: boolean
+  content?: string
+} {
+  const builtinContent = item.builtin_content ?? ''
+  const editedContent = currentContent ?? item.content ?? ''
+  const contentChanged = editedContent.trim() !== builtinContent.trim()
+  const override = Boolean(item.builtin_override) || contentChanged
+  const patch: {
+    name?: string
+    description?: string
+    builtin_override: boolean
+    content?: string
+  } = {
+    name: item.name,
+    description: item.description,
+    builtin_override: override,
+  }
+  if (override) {
+    patch.content = editedContent
+  }
+  return patch
+}
+
 /** Prefix portion of slug: core/server/ (e.g. xray/inbound/). */
 export function templateSlugPrefix(core: string, category: string): string {
   const server = category.replace(/^server_/, '').replace(/^client_/, '').replace(/^base_/, '')
@@ -53,8 +88,18 @@ export function templateDisplayName(
   return `${t.core}/${server}/${tail}`
 }
 
-export function parseIncludedTemplateSlugs(templateText: string, explicitSlugs: string[] = []): string[] {
-  const found = new Set(explicitSlugs.filter(Boolean))
+export function asTemplateSlugList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string' && Boolean(v.trim()))
+  }
+  if (typeof value === 'string' && value.trim()) {
+    return value.split(/[,\s]+/).map((part) => part.trim()).filter(Boolean)
+  }
+  return []
+}
+
+export function parseIncludedTemplateSlugs(templateText: string, explicitSlugs: string[] | unknown = []): string[] {
+  const found = new Set(asTemplateSlugList(explicitSlugs))
   const includeRe = /\{%-?\s*include\s+['"]([^'"]+)['"]/g
   let match: RegExpExecArray | null
   while ((match = includeRe.exec(templateText)) !== null) {
@@ -118,7 +163,7 @@ export function sortTemplatesByIncluded<T extends { slug: string }>(
 }
 
 export function buildIncludeSnippet(slug: string): string {
-  return `{% include '${slug}' %}`
+  return `{%- include '${slug}' -%}`
 }
 
 /** Slug path: core/server/custom_path (e.g. xray/inbound/my-template). */

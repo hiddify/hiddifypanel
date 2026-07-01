@@ -1,0 +1,26 @@
+{% skip('h2_enable is false') if proxy.alpn in ['tls_h2', 'tls_h1_h2', 'tls_h1_h2_h3', 'h2'] and not hconfig.h2_enable %}
+
+{% if proxy.tls %}
+    {% skip('quic_enable is false') if proxy.alpn in ['tls_h3', 'tls_h1_h2_h3'] and not hconfig.quic_enable %}
+
+    {% set qp.security = 'tls' %}
+
+    {% if proxy.fingerprint and proxy.fingerprint != 'none' %}
+        {% set qp.fp = proxy.fingerprint %}
+    {% endif %}
+    
+    {% if domain.mode == 'Fake' or proxy.allow_insecure %}
+        {% set qp.allowInsecure = 'true' %}
+        {% set qp.insecure = 'true' %}
+    {% endif %}
+
+    {% if domain.ech %}
+        {% set qp.ech = domain.ech %}
+    {% endif %}
+
+    {% set qp.alpn = proxy.alpn %}
+    {% set qp.sni = domain.sni %}
+{% else %}
+    {% skip('http_proxy_enable = ' ~ hconfig.http_proxy_enable) if  not hconfig.http_proxy_enable %}
+    {% set qp.security = 'none' %}
+{% endif %}

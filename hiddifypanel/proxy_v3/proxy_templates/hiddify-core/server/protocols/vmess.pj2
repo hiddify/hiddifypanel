@@ -1,0 +1,7 @@
+{% skip("vmess_enable = " ~ hconfig.vmess_enable) if not hconfig.vmess_enable %}
+"type": "vmess",
+"users": [
+  {% for user in users %}
+  {"uuid": "{{ user.uuid }}",    "name": "{{ user.uuid }}",     "alterId": 0},
+  {% endfor %}
+]

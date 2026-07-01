@@ -30,7 +30,7 @@
     <div class="min-w-0 flex flex-col gap-4">
       <Panel :header="t('baseConfig.listTitle')">
         <HorizontalField :label="t('common.enabled')" input-id="bc-enable">
-          <ToggleSwitch id="bc-enable" v-model="form.enable!" />
+          <ToggleSwitch id="bc-enable" v-model="form.enable!" :disabled="isBuiltin" />
         </HorizontalField>
         <HorizontalField :label="t('baseConfig.name')" input-id="bc-name">
           <InputText id="bc-name" v-model="form.name" class="w-full" />
@@ -55,13 +55,6 @@
       </Panel>
 
       <Panel :header="t('baseConfig.content')">
-        <BuiltinStateBar
-          v-if="isBuiltin"
-          :override="Boolean(form.builtin_override)"
-          show-toggle
-          @update:override="onOverrideToggle"
-        />
-        <div :class="{ 'builtin-locked': contentLocked }">
         <TemplatedEditor
           v-model="editorContent"
           :variant="usesJsonTemplate(form.core) ? 'json' : 'plain'"
@@ -69,11 +62,18 @@
           :rows="24"
           :core="form.core"
           :category="templateCategory"
-          :explicit-slugs="form.template_slugs ?? []"
+          :explicit-slugs="referencedTemplateSlugs"
           :read-only="contentLocked"
+          :show-override="isBuiltin"
+          :overridden="Boolean(form.builtin_override)"
+          override-field="base-config-content"
+          show-preview
+          :ua-presets="previewMeta?.example_user_agents ?? []"
           @insert-template="onInsertTemplate"
+          @update:overridden="onOverrideToggle"
+          @reset="onOverrideToggle(false)"
+          @preview="onBasePreview"
         />
-        </div>
       </Panel>
 
       <ValidationPanel v-if="validation" :result="validation" />
@@ -85,7 +85,7 @@
       :category="templateCategory"
       list-scope="core"
       :template-text="effectiveTemplateText"
-      :explicit-slugs="form.template_slugs ?? []"
+      :explicit-slugs="referencedTemplateSlugs"
       :section-label="`${form.side}/${form.core}`"
       :allow-create="!structureLocked || form.builtin_override"
       :read-only="contentLocked"
@@ -95,10 +95,15 @@
   </div>
 
   <BundleExportDialog v-model:visible="exportDialogVisible" @confirm="runExport" />
+  <TemplatePreviewDialog
+    v-model:visible="previewDialogVisible"
+    :loading="previewLoading"
+    :result="previewResult"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -110,25 +115,29 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import SysBadge from '@/shared/components/SysBadge.vue'
-import BuiltinStateBar from '@/shared/components/BuiltinStateBar.vue'
 import ToggleSwitch from 'primevue/toggleswitch'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import ValidationPanel from '@/shared/components/ValidationPanel.vue'
 import TemplateSidePanel from '@/shared/components/TemplateSidePanel.vue'
 import BundleExportDialog from '@/shared/components/BundleExportDialog.vue'
+import TemplatePreviewDialog from '@/shared/components/TemplatePreviewDialog.vue'
 import {
   buildIncludeSnippet,
+  buildBuiltinContentPatch,
   effectiveTemplateContent,
   parseReferencedTemplateSlugs,
 } from '@/shared/utils/template-slug'
 import { usesJsonTemplate } from '@/shared/utils/core-template'
 import { downloadJson, pickFile } from '@/shared/utils/custom-proxy-bundle'
 import {
+  customProxiesApi,
   proxyBaseConfigsApi,
+  type CustomProxyMeta,
   type ProxyBaseConfig,
   type ProxyBaseConfigMeta,
   type ProxyTemplate,
+  type TemplatePreviewResult,
   type ValidationResult,
 } from '@/core/api/generated'
 
@@ -142,6 +151,10 @@ const isNew = computed(() => route.name === 'base-config-new' || !props.id)
 const saving = ref(false)
 const validation = ref<ValidationResult | null>(null)
 const exportDialogVisible = ref(false)
+const previewDialogVisible = ref(false)
+const previewLoading = ref(false)
+const previewResult = ref<TemplatePreviewResult | null>(null)
+const previewMeta = ref<CustomProxyMeta | null>(null)
 
 const form = reactive<ProxyBaseConfig>({
   side: 'client',
@@ -150,7 +163,6 @@ const form = reactive<ProxyBaseConfig>({
   name: '',
   description: '',
   content: '{}',
-  template_slugs: [],
   enable: true,
   builtin_override: false,
   builtin_content: '',
@@ -170,6 +182,10 @@ const contentFallback = computed(() => (usesJsonTemplate(form.core) ? '{}' : '')
 
 const effectiveTemplateText = computed(() =>
   effectiveTemplateContent(form, contentFallback.value),
+)
+
+const referencedTemplateSlugs = computed(() =>
+  parseReferencedTemplateSlugs(effectiveTemplateText.value, []),
 )
 
 const editorContent = computed({
@@ -195,15 +211,7 @@ function onSideChange() {
   }
 }
 
-function ensureTemplateSlug(slug: string) {
-  const slugs = form.template_slugs ?? []
-  if (!slugs.includes(slug)) {
-    form.template_slugs = [...slugs, slug]
-  }
-}
-
 function onInsertTemplate(tpl: ProxyTemplate) {
-  ensureTemplateSlug(tpl.slug)
   const snippet = buildIncludeSnippet(tpl.slug)
   const tplText = form.content ?? ''
   if (!tplText.includes(snippet)) {
@@ -211,25 +219,21 @@ function onInsertTemplate(tpl: ProxyTemplate) {
   }
 }
 
-function syncTemplateSlugsFromContent() {
-  form.template_slugs = parseReferencedTemplateSlugs(
-    effectiveTemplateText.value,
-    form.template_slugs ?? [],
-  )
-}
-
 async function load() {
   meta.value = await proxyBaseConfigsApi.meta()
+  try {
+    previewMeta.value = await customProxiesApi.meta()
+  } catch {
+    previewMeta.value = null
+  }
   if (!isNew.value && props.id) {
     const data = await proxyBaseConfigsApi.get(Number(props.id))
     Object.assign(form, data)
     if (form.enable === undefined) form.enable = true
-    if (!form.template_slugs) form.template_slugs = []
     if (!form.content) form.content = '{}'
     if (!form.builtin_content && data.content) {
       form.builtin_content = data.builtin_content ?? data.content
     }
-    syncTemplateSlugsFromContent()
   }
 }
 
@@ -252,6 +256,29 @@ async function runValidate() {
   }
 }
 
+async function onBasePreview(params: Record<string, unknown>) {
+  previewDialogVisible.value = true
+  previewLoading.value = true
+  previewResult.value = null
+  try {
+    previewResult.value = await proxyBaseConfigsApi.preview({
+      ...params,
+      side: form.side,
+      core: form.core,
+      version: form.version,
+      content: editorContent.value,
+    })
+  } catch {
+    previewResult.value = {
+      ok: false,
+      rendered: '',
+      error: t('editor.previewFailed'),
+    }
+  } finally {
+    previewLoading.value = false
+  }
+}
+
 async function save() {
   if (!isBuiltin.value) {
     await runValidate()
@@ -264,13 +291,8 @@ async function save() {
   try {
     const patch: Partial<ProxyBaseConfig> = isBuiltin.value
       ? {
-          name: form.name,
+          ...buildBuiltinContentPatch(form, editorContent.value),
           enable: form.enable,
-          description: form.description,
-          builtin_override: form.builtin_override,
-          ...(form.builtin_override
-            ? { content: form.content, template_slugs: form.template_slugs }
-            : {}),
         }
       : form
     if (isNew.value) {
@@ -308,7 +330,6 @@ async function runImport() {
     const result = await proxyBaseConfigsApi.importBundle(bundle)
     const config = result.base_config
     Object.assign(form, config)
-    if (!form.template_slugs) form.template_slugs = []
     if (!form.content) form.content = '{}'
     toast.add({
       severity: 'success',
@@ -321,13 +342,6 @@ async function runImport() {
 }
 
 onMounted(load)
-
-watch(
-  () => [form.content, form.builtin_content, form.builtin_override] as const,
-  () => {
-    syncTemplateSlugsFromContent()
-  },
-)
 </script>
 
 <style scoped>

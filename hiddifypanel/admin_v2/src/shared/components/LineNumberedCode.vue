@@ -3,6 +3,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   text: string
+  highlightLine?: number
 }>()
 
 const lines = computed(() => props.text.split('\n'))
@@ -12,7 +13,11 @@ const lines = computed(() => props.text.split('\n'))
   <div class="line-numbered-code">
     <table class="line-numbered-code__table">
       <tbody>
-        <tr v-for="(line, index) in lines" :key="index">
+        <tr
+          v-for="(line, index) in lines"
+          :key="index"
+          :class="{ 'line-numbered-code__row--highlight': highlightLine === index + 1 }"
+        >
           <td class="line-numbered-code__gutter">{{ index + 1 }}</td>
           <td class="line-numbered-code__line">
             <code>{{ line || ' ' }}</code>
@@ -58,5 +63,10 @@ const lines = computed(() => props.text.split('\n'))
 .line-numbered-code__line code {
   font-family: inherit;
   white-space: pre;
+}
+
+.line-numbered-code__row--highlight .line-numbered-code__gutter,
+.line-numbered-code__row--highlight .line-numbered-code__line {
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 12%, transparent);
 }
 </style>

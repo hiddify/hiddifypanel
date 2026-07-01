@@ -269,7 +269,7 @@
       "home": "داشبورد",
       "proxy": "پروکسی‌ها",
       "proxy_stats": "وضعیت پروکسی ها",
-      "dashboard_v2": "داشبورد نسخه ۲",
+      "dashboard_v2": "داشبورد جدید",
       "support": "راهنما",
       "telegram": "تلگرام",
       "user": "کاربران"
@@ -1464,9 +1464,10 @@
   "weekly": "📅 هفتگی",
   "worker": "✴️ ورکر کلودفلر",
   "adminV2": {
-    "appTitle": "پنل ادمین هیدیفای نسخه ۲",
+    "appTitle": "هیدیفای — جدید",
     "menu": {
-      "sectionV2": "داشبورد نسخه ۲",
+      "sectionNew": "جدید",
+      "sectionV2": "جدید",
       "sectionMain": "اصلی",
       "dashboard": "داشبورد",
       "proxyEditor": "ویرایشگر پروکسی",
@@ -1515,7 +1516,13 @@
       "includeTemplate": "شامل کردن قالب",
       "noVariables": "متغیری با این جستجو یافت نشد",
       "exportBundle": "خروجی بسته",
-      "excludeBuiltinTemplates": "حذف قالب‌های داخلی از خروجی"
+      "excludeBuiltinTemplates": "حذف قالب‌های داخلی از خروجی",
+      "preview": "پیش‌نمایش",
+      "previewParams": "پارامترهای پیش‌نمایش",
+      "previewTitle": "پیش‌نمایش قالب",
+      "previewOk": "پیش‌نمایش با موفقیت تولید شد",
+      "previewPartial": "پیش‌نمایش با هشدار تولید شد",
+      "previewFailed": "درخواست پیش‌نمایش ناموفق بود"
     },
     "proxy": {
       "listTitle": "پروکسی‌های سفارشی",
@@ -1582,6 +1589,8 @@
       "serverBuiltinCustomized": "پیکربندی سرور سفارشی",
       "clientBuiltinDefault": "استفاده از پیکربندی پیش‌فرض کلاینت کاتالوگ",
       "clientBuiltinCustomized": "پیکربندی کلاینت سفارشی",
+      "fieldOverride": "بازنویسی",
+      "resetToBuiltin": "بازگردانی به پیش‌فرض کاتالوگ",
       "generateExample": "تولید نمونه",
       "generateExampleOk": "نمونه با موفقیت تولید شد",
       "generateExamplePartial": "نمونه با هشدار یا خطا تولید شد",
@@ -1592,6 +1601,8 @@
       "exampleDomain": "دامنه",
       "exampleDomainPick": "انتخاب از پنل",
       "exampleDomainCustom": "دامنه دلخواه",
+      "exampleDomainAll": "همه دامنه‌ها",
+      "exampleDomainAllHint": "همه دامنه‌های منطبق با این پروکسی در خروجی گنجانده می‌شوند (مثل اشتراک).",
       "exampleUser": "کاربر",
       "exampleUserSample": "کاربر نمونه",
       "exampleUserPick": "انتخاب کاربر پنل",
@@ -1605,11 +1616,33 @@
       "exampleContextUser": "کاربر",
       "exampleContextIp": "IP",
       "exampleContextUa": "User-Agent",
-      "sublinkFormatRaw": "ساب‌لینک خام",
-      "sublinkFormatVless": "VLESS (JSON + URI)",
-      "sublinkFormatVmess": "VMess (JSON + vmess://)",
+      "sublinkFormatRaw": "لینک تولیدشده",
+      "sublinkFormatUri": "فرمت URI",
+      "sublinkFormatRawLink": "لینک خام",
+      "sublinkFormatBase64": "فرمت Base64",
       "clashFormatJson": "JSON",
-      "clashFormatYaml": "YAML"
+      "clashFormatYaml": "YAML",
+      "ignoreSkip": "نادیده گرفتن skip",
+      "ignoreSkipHint": "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود",
+      "autoClient": "خودکار",
+      "sublinkFormat": "فرمت لینک",
+      "sublinkUriDetail": "جزئیات URI",
+      "sublinkBase64Detail": "جزئیات Base64",
+      "sublinkUri": {
+        "protocol": "uri.protocol",
+        "user": "uri.user",
+        "password": "uri.password",
+        "host": "uri.host",
+        "port": "uri.port",
+        "path": "uri.path",
+        "fragment": "uri.fragment",
+        "query_params": "uri.query_params (JSON)"
+      },
+      "sublinkBase64": {
+        "protocol": "uri.protocol",
+        "content": "محتوا",
+        "formatJson": "قالب‌بندی JSON"
+      }
     },
     "baseConfig": {
       "listTitle": "پیکربندی‌های پایه",

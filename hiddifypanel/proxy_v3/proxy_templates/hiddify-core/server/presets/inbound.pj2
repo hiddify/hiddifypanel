@@ -1,0 +1,13 @@
+{% block inbounds %}
+{% for alpn in proxy.alpns %}
+{% set proxy = proxy.with_alpn(alpn) %}
+{
+  {% include 'hiddify-core/server/snippets/listen' %},
+  {% include '__PROTO_SLUG__' %},
+  {% include '__STREAM_SLUG__' %},
+  {% include '__TLS_SLUG__' %},
+  {% include 'hiddify-core/server/snippets/inbound_meta' %}, 
+  {% include 'hiddify-core/server/snippets/multiplex' %},
+},
+{% endfor %}
+{% endblock %}

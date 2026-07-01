@@ -1,0 +1,11 @@
+{% skip("tcp_enable = " ~ hconfig.tcp_enable) if not hconfig.tcp_enable %}
+"network": "tcp",
+"transport": {
+  "type": "http",
+  "path": "/{{ proxy.path }}",
+  "idle_timeout": "15s",
+  "ping_timeout": "15s",
+  "headers":{
+    "User-Agent": "{{default_useragent_string}}"
+  },
+},

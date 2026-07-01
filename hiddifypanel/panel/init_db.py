@@ -46,10 +46,10 @@ def _v130(child_id):
     from hiddifypanel.models.proxy_base_config import ProxyBaseConfig
     from hiddifypanel.models.tls_store import TlsStore
     from hiddifypanel.models.server_ip import ServerIp
-    from hiddifypanel.panel.template_catalog.custom_proxy_presets import (
+    from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
         seed_custom_proxy_presets,
     )
-    from hiddifypanel.panel.template_catalog.seed import seed_proxy_catalog
+    from hiddifypanel.proxy_v3.builtin_proxy_sync import seed_proxy_catalog
     from hiddifypanel.hutils.ssl.tls_store_sync import sync_tls_store_all
     from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
 
@@ -62,22 +62,62 @@ def _v130(child_id):
         ServerIp,
     ):
         model.__table__.create(db.engine, checkfirst=True)
-
+    add_config_if_not_exist(ConfigEnum.anytls_enable, True)
+    add_config_if_not_exist(ConfigEnum.dnstt_enable, True)
+    add_config_if_not_exist(ConfigEnum.path_vless, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_vmess, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_trojan, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_ss, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_grpc, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_tcp, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_ws, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_xhttp, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_naive, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.vless_flow, "")
-    add_config_if_not_exist(ConfigEnum.vless_encryption, "none")
+    add_config_if_not_exist(ConfigEnum.vless_encryption, "")
     add_config_if_not_exist(ConfigEnum.vless_decryption, "")
     add_config_if_not_exist(ConfigEnum.health_secret_path, hutils.random.get_random_string())
+    add_config_if_not_exist(ConfigEnum.shared_secret, str(uuid.uuid4()))
+    add_config_if_not_exist(ConfigEnum.shadowsocks2022_enable, True)
+    add_config_if_not_exist(ConfigEnum.shadowsocks2022_method, "2022-blake3-aes-256-gcm")
+    add_config_if_not_exist(ConfigEnum.shadowtls_enable, True)
+    add_config_if_not_exist(ConfigEnum.tuic_enable, True)
+    add_config_if_not_exist(ConfigEnum.hysteria_enable, True)
+    add_config_if_not_exist(ConfigEnum.hysteria_up_mbps, "150")
+    add_config_if_not_exist(ConfigEnum.hysteria_down_mbps, "300")
+    add_config_if_not_exist(ConfigEnum.ssh_server_enable, True)
+    add_config_if_not_exist(ConfigEnum.mieru_enable, True)
+    if not hconfig(ConfigEnum.mieru_tcp_ports):
+        _p = hutils.random.get_random_unused_port() or 30000
+        add_config_if_not_exist(ConfigEnum.mieru_tcp_ports, ",".join(str(_p + i) for i in range(4)))
+    if not hconfig(ConfigEnum.mieru_udp_ports):
+        _p = hutils.random.get_random_unused_port() or 31000
+        add_config_if_not_exist(ConfigEnum.mieru_udp_ports, ",".join(str(_p + i) for i in range(4)))
+    add_config_if_not_exist(ConfigEnum.mux_enable, True)
+    add_config_if_not_exist(ConfigEnum.mux_padding_enable, False)
+    add_config_if_not_exist(ConfigEnum.mux_brutal_enable, False)
+    add_config_if_not_exist(ConfigEnum.mux_brutal_up_mbps, "100")
+    add_config_if_not_exist(ConfigEnum.mux_brutal_down_mbps, "100")
+    if not hconfig(ConfigEnum.ssh_host_rsa_pk):
+        keys = hutils.crypto.generate_ssh_host_keys()
+        add_config_if_not_exist(ConfigEnum.ssh_host_rsa_pk, keys["rsa"]["pk"])
+        add_config_if_not_exist(ConfigEnum.ssh_host_rsa_pub, keys["rsa"]["pub"])
+        add_config_if_not_exist(ConfigEnum.ssh_host_ed25519_pk, keys["ed25519"]["pk"])
+        add_config_if_not_exist(ConfigEnum.ssh_host_ed25519_pub, keys["ed25519"]["pub"])
+        add_config_if_not_exist(ConfigEnum.ssh_host_ecdsa_pk, keys["ecdsa"]["pk"])
+        add_config_if_not_exist(ConfigEnum.ssh_host_ecdsa_pub, keys["ecdsa"]["pub"])
 
     seed_proxy_catalog(child_id, refresh_builtin_base_configs=True)
     seed_custom_proxy_presets(child_id)
     try:
         sync_tls_store_all(child_id)
     except Exception as exc:
-        logger.warning('TLS store sync skipped during _v130: {}', exc)
+        logger.warning("TLS store sync skipped during _v130: {}", exc)
     try:
         sync_server_ips(child_id)
     except Exception as exc:
-        logger.warning('Server IP sync skipped during _v130: {}', exc)
+        logger.warning("Server IP sync skipped during _v130: {}", exc)
     logger.info("WIP proxy stack v130: fresh tables, catalog, TLS and server IPs")
 
 
@@ -1041,7 +1081,7 @@ def get_proxy_rows_v1():
 
 
 def make_proxy_rows(cfgs):
-    from hiddifypanel.panel.template_catalog.proxy_matrix import iter_proxy_combinations
+    from hiddifypanel.proxy_v3.template_catalog.proxy_matrix import iter_proxy_combinations
 
     for combo in iter_proxy_combinations(cfgs):
         yield Proxy(
@@ -1137,6 +1177,7 @@ def add_new_enum_values():
         StrConfig.key,
         ProxyTemplate.category,
         CustomProxy.mode,
+        CustomProxy.proto,
     ]
     from sqlalchemy import text
 
@@ -1228,6 +1269,7 @@ def upgrade_database():
 
 def init_db():
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
+    _drop_wip_proxy_tables()
     db_version = current_db_version()
     if db_version == latest_db_version():
         # Backfill new settings for already-upgraded installations.

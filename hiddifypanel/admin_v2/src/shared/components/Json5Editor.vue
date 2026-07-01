@@ -19,6 +19,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
+  focus: []
 }>()
 
 const container = ref<HTMLElement | null>(null)
@@ -68,6 +69,9 @@ onMounted(() => {
     const v = editor!.getValue()
     emit('update:modelValue', v)
     validateLocal(v)
+  })
+  editor.onDidFocusEditorWidget(() => {
+    emit('focus')
   })
   validateLocal(props.modelValue ?? '')
 })

@@ -1,0 +1,4 @@
+{% set data.net = 'ws' %}
+{% set data.type = 'none' %}
+{% set data.host = domain.host %}
+{% set data.path = '/' ~ proxy.path %}

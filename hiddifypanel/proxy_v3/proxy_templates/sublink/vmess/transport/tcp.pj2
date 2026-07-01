@@ -1,0 +1,2 @@
+{% set data.net = 'tcp' %}
+{% set data.type = 'http' %}

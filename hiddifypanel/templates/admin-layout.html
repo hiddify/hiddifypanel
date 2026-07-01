@@ -84,6 +84,10 @@
                  with font-awesome or any other icon font library -->
           {{ render_nav_item('admin.Dashboard:index', icon('solid','house','nav-icon')+(_("Parent Panel") if hutils.node.is_parent() else _('admin.menu.home')),_use_li=True)}}
 
+          {% if g.account.mode=="super_admin" %}
+          {{ render_nav_item('admin.admin_v2', icon('solid','gauge-high','nav-icon')+_('admin.menu.dashboard_v2'), _use_li=True) }}
+          {% endif %}
+
           {% if hutils.node.is_child() %}
           {{ render_nav_item(hconfig(ConfigEnum.parent_panel)+"admin/user/",icon('solid','user-secret','nav-icon')+_('admin.menu.user'),_badge=_('in parent panel') ,_use_li=True) }}
           {% else %}

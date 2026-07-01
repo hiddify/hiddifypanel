@@ -1,7 +1,0 @@
-{% skip() if not hconfig.grpc_enable %}
-"transport": {
-    "type": "grpc",
-    "service_name": "{{ proxy.path }}",
-    "idle_timeout": "15s",
-    "ping_timeout": "15s"
-},

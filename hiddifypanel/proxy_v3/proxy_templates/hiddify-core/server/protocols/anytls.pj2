@@ -1,0 +1,9 @@
+"type": "anytls",
+{% include 'hiddify-core/server/snippets/listen' %},
+{% include 'hiddify-core/server/snippets/inbound_meta' %},
+"users": [
+  {% for user in users %}
+  {"name": "{{ user.uuid }}", "password": "{{ user.uuid }}"},
+  {% endfor %}
+],
+{% include 'hiddify-core/server/tls/tls' %}

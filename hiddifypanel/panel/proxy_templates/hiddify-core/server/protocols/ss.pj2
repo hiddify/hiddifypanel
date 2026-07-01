@@ -1,9 +1,0 @@
-{% skip() if not hconfig.shadowsocks2022_enable %}
-"type": "shadowsocks",
-"method": "{{ hconfig.shadowsocks2022_method }}",
-"password": "{{ hconfig.shared_secret.replace('-','')|b64encode }}",
-"users": [
-  {% for user in users %}
-  {"name": "{{ user.uuid }}", "password": "{{ user.uuid_hex|b64encode }}"},
-  {% endfor %}
-]

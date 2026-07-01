@@ -1,0 +1,7 @@
+{% skip("trojan_enable = " ~ hconfig.trojan_enable) if not hconfig.trojan_enable %}
+"type": "trojan",
+"users": [
+  {% for user in users %}
+  {"name": "{{ user.uuid }}", "password": "{{ user.uuid }}"},
+  {% endfor %}
+]

@@ -14,6 +14,7 @@ import {
   parseReferencedTemplateSlugs,
   sortTemplatesByIncluded,
   templateDisplayName,
+  asTemplateSlugList,
 } from '@/shared/utils/template-slug'
 
 const props = withDefaults(
@@ -42,7 +43,7 @@ const loading = ref(false)
 const expandedSlugs = ref<string[]>([])
 
 const directReferencedSlugs = computed(() =>
-  parseReferencedTemplateSlugs(props.templateText ?? '', props.explicitSlugs ?? []),
+  parseReferencedTemplateSlugs(props.templateText ?? '', asTemplateSlugList(props.explicitSlugs)),
 )
 
 const referencedSlugs = computed(() =>
@@ -128,7 +129,7 @@ onMounted(() => {
   void load()
 })
 watch(
-  () => [props.core, props.category, props.listScope, props.explicitSlugs?.join('|'), props.templateText],
+  () => [props.core, props.category, props.listScope, asTemplateSlugList(props.explicitSlugs).join('|'), props.templateText],
   () => {
     void load()
   },

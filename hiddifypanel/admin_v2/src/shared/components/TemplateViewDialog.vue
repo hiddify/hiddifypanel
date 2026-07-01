@@ -5,14 +5,14 @@ import { useToast } from 'primevue/usetoast'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
 import Tag from 'primevue/tag'
-import ToggleSwitch from 'primevue/toggleswitch'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import SysBadge from '@/shared/components/SysBadge.vue'
+import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import { proxyTemplatesApi, type ProxyTemplate } from '@/core/api/generated'
+import { usesJsonTemplate } from '@/shared/utils/core-template'
 import {
   buildIncludeSnippet,
   effectiveTemplateContent,
@@ -22,6 +22,7 @@ import {
   templateSlugPrefix,
   slugSuffixFromFullSlug,
   buildTemplateSlugFromSuffix,
+  buildBuiltinContentPatch,
 } from '@/shared/utils/template-slug'
 
 const props = defineProps<{
@@ -126,6 +127,10 @@ function onInsert() {
   if (activeTemplate.value) emit('insert', activeTemplate.value)
 }
 
+function insertTemplateSnippet(tpl: ProxyTemplate) {
+  insertIncludeSnippet(tpl.slug)
+}
+
 function insertIncludeSnippet(slug: string) {
   if (!editDraft.value || contentReadOnly.value) return
   const snippet = buildIncludeSnippet(slug)
@@ -201,12 +206,7 @@ async function saveEdits() {
     const desc = (editDraft.value.description || '').trim()
     editDraft.value.name = desc || slugSuffix.value || 'template'
     const patch: Partial<ProxyTemplate> = editDraft.value.is_builtin
-      ? {
-          name: editDraft.value.name,
-          description: editDraft.value.description,
-          builtin_override: editDraft.value.builtin_override,
-          ...(editDraft.value.builtin_override ? { content: editDraft.value.content } : {}),
-        }
+      ? buildBuiltinContentPatch(editDraft.value, displayContent.value)
       : {
           name: editDraft.value.name,
           slug: editDraft.value.slug,
@@ -264,14 +264,6 @@ async function saveEdits() {
         </InputGroup>
       </HorizontalField>
 
-      <HorizontalField v-if="isBuiltin && !editMode" :label="t('template.customContent')" input-id="view-tpl-override">
-        <ToggleSwitch
-          id="view-tpl-override"
-          :model-value="Boolean(editDraft?.builtin_override)"
-          @update:model-value="onOverrideToggle"
-        />
-      </HorizontalField>
-
       <HorizontalField v-if="isBuiltin && !editMode" :label="t('template.cloneDescription')" input-id="clone-desc">
         <InputText id="clone-desc" v-model="cloneDescription" class="w-full" />
       </HorizontalField>
@@ -290,7 +282,7 @@ async function saveEdits() {
               @click="openReferencedTemplate(slug)"
             />
             <Button
-              v-if="editMode && !contentReadOnly"
+              v-if="!contentReadOnly"
               icon="pi pi-plus"
               size="small"
               text
@@ -301,14 +293,23 @@ async function saveEdits() {
         </div>
       </div>
 
-      <HorizontalField :label="t('template.content')">
-        <Textarea
-          v-model="displayContent"
-          :readonly="contentReadOnly"
-          rows="14"
-          class="w-full font-mono text-sm template-content-textarea"
-        />
-      </HorizontalField>
+      <TemplatedEditor
+        v-model="displayContent"
+        :variant="usesJsonTemplate(activeTemplate.core) ? 'json' : 'plain'"
+        :height="usesJsonTemplate(activeTemplate.core) ? '360px' : undefined"
+        :rows="14"
+        :core="activeTemplate.core"
+        :category="activeTemplate.category"
+        :read-only="contentReadOnly"
+        :show-include="!contentReadOnly"
+        :show-override="isBuiltin"
+        :overridden="Boolean(editDraft?.builtin_override)"
+        override-field="dialog-template-content"
+        list-scope="core"
+        @insert-template="insertTemplateSnippet"
+        @update:overridden="onOverrideToggle"
+        @reset="onOverrideToggle(false)"
+      />
     </div>
 
     <template #footer>
@@ -332,6 +333,7 @@ async function saveEdits() {
   </Dialog>
 
   <TemplateViewDialog
+    v-if="nestedVisible"
     v-model:visible="nestedVisible"
     :template="nestedTemplate"
     :read-only="readOnly"
@@ -343,12 +345,6 @@ async function saveEdits() {
 </template>
 
 <style scoped>
-.template-content-textarea {
-  max-height: 24rem;
-  overflow-y: auto;
-  user-select: text;
-}
-
 .template-referenced-list {
   max-height: 8rem;
   overflow-y: auto;

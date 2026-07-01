@@ -1,0 +1,17 @@
+{% for domain in domains %}
+  {% set proxy = proxy.with_domain(domain) %}
+  {% set uri = namespace(
+    protocol = 'trojan',
+    password = user.uuid,
+    host=proxy.server,
+    port=proxy.port,
+    query_params=namespace(hiddify='1'),
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+
+  {% set qp = uri.query_params %}
+  {% include '__TLS_SLUG__' %}
+  {% include '__TRANSPORT_SLUG__' %}
+
+  {% include 'sublink/uri/final_link_maker' %} {#making trojan://uri.....#}
+{% endfor %}

@@ -4,21 +4,45 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import VariableInsertDialog from '@/shared/components/VariableInsertDialog.vue'
 import TemplateIncludeMenu from '@/shared/components/TemplateIncludeMenu.vue'
+import BuiltinFieldOverride from '@/shared/components/BuiltinFieldOverride.vue'
+import EditorPreviewButton from '@/shared/components/EditorPreviewButton.vue'
 import type { ProxyTemplate } from '@/core/api/generated'
+import type { UaPreset } from '@/shared/composables/usePreviewSettings'
 
-defineProps<{
-  core?: string
-  category?: string
-  templateText?: string
-  explicitSlugs?: string[]
-  showInclude?: boolean
-  readOnly?: boolean
-  listScope?: 'category' | 'core'
-}>()
+withDefaults(
+  defineProps<{
+    core?: string
+    category?: string
+    templateText?: string
+    explicitSlugs?: string[]
+    showInclude?: boolean
+    readOnly?: boolean
+    listScope?: 'category' | 'core'
+    showOverride?: boolean
+    overridden?: boolean
+    overrideField?: string
+    showPreview?: boolean
+    requirePreviewUser?: boolean
+    uaPresets?: UaPreset[]
+    previewDisabled?: boolean
+  }>(),
+  {
+    showOverride: false,
+    overridden: false,
+    overrideField: 'field',
+    showPreview: false,
+    requirePreviewUser: false,
+    uaPresets: () => [],
+    previewDisabled: false,
+  },
+)
 
 const emit = defineEmits<{
   'insert-variable': [snippet: string]
   'insert-template': [template: ProxyTemplate]
+  'update:overridden': [value: boolean]
+  reset: []
+  preview: [params: Record<string, unknown>]
 }>()
 
 const { t } = useI18n()
@@ -49,5 +73,19 @@ function onVariable(snippet: string) {
       @select="emit('insert-template', $event)"
     />
     <VariableInsertDialog v-model:visible="varDialogVisible" @select="onVariable" />
+    <BuiltinFieldOverride
+      v-if="showOverride"
+      :field-id="overrideField"
+      :overridden="overridden"
+      @update:overridden="emit('update:overridden', $event)"
+      @reset="emit('reset')"
+    />
+    <EditorPreviewButton
+      v-if="showPreview"
+      :require-user="requirePreviewUser"
+      :ua-presets="uaPresets"
+      :disabled="previewDisabled"
+      @preview="emit('preview', $event)"
+    />
   </div>
 </template>

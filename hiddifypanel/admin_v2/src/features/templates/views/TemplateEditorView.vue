@@ -50,14 +50,8 @@
   </Panel>
 
   <Panel :header="t('template.content')" class="mt-4">
-    <BuiltinStateBar
-      v-if="isBuiltin"
-      :override="Boolean(form.builtin_override)"
-      show-toggle
-      @update:override="onOverrideToggle"
-    />
     <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_19rem] gap-4 items-start">
-      <div :class="{ 'builtin-locked': contentLocked }">
+      <div>
         <TemplatedEditor
           v-model="editorContent"
           :variant="usesJsonTemplate(form.core) ? 'json' : 'plain'"
@@ -67,8 +61,13 @@
           :category="form.category"
           :show-include="!contentLocked"
           :read-only="contentLocked"
+          :show-override="isBuiltin"
+          :overridden="Boolean(form.builtin_override)"
+          override-field="template-content"
           list-scope="core"
           @insert-template="onInsertTemplate"
+          @update:overridden="onOverrideToggle"
+          @reset="onOverrideToggle(false)"
         />
       </div>
       <TemplateSidePanel
@@ -100,7 +99,6 @@ import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import Message from 'primevue/message'
 import SysBadge from '@/shared/components/SysBadge.vue'
-import BuiltinStateBar from '@/shared/components/BuiltinStateBar.vue'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import TemplateSidePanel from '@/shared/components/TemplateSidePanel.vue'
@@ -108,6 +106,7 @@ import {
   buildIncludeSnippet,
   buildTemplateSlug,
   buildTemplateSlugFromSuffix,
+  buildBuiltinContentPatch,
   effectiveTemplateContent,
   slugSuffixFromFullSlug,
   templateSlugPrefix,
@@ -218,7 +217,9 @@ async function load() {
       slugTouched.value = true
       const data = await proxyTemplatesApi.get(Number(props.id))
       Object.assign(form, data)
-      if (!form.builtin_content && data.content) {
+      if (data.builtin_content) {
+        form.builtin_content = data.builtin_content
+      } else if (!form.builtin_override && data.content) {
         form.builtin_content = data.content
       }
     } else {
@@ -238,18 +239,17 @@ async function duplicateBuiltin() {
 function buildPatch(): Partial<ProxyTemplate> {
   syncNameFromDescription()
   if (isBuiltin.value) {
-    const patch: Partial<ProxyTemplate> = {
-      name: form.name,
-      description: form.description,
-      builtin_override: form.builtin_override,
-    }
-    if (form.builtin_override) {
-      patch.content = form.content
-    }
-    return patch
+    return buildBuiltinContentPatch(form, editorContent.value)
   }
   ensureSlugBeforeSave()
-  return { ...form }
+  return {
+    slug: form.slug,
+    core: form.core,
+    category: form.category,
+    name: form.name,
+    description: form.description,
+    content: form.content,
+  }
 }
 
 async function save() {
@@ -263,6 +263,9 @@ async function save() {
     } else {
       const updated = await proxyTemplatesApi.update(Number(props.id), patch)
       Object.assign(form, updated)
+      if (!form.builtin_content && updated.builtin_content) {
+        form.builtin_content = updated.builtin_content
+      }
       toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
     }
   } catch (err: unknown) {
@@ -281,10 +284,3 @@ watch(() => form.description, () => syncSlugFromDescription())
 
 onMounted(load)
 </script>
-
-<style scoped>
-.builtin-locked {
-  opacity: 0.72;
-  pointer-events: none;
-}
-</style>

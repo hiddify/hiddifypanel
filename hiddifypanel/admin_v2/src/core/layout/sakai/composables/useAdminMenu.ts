@@ -27,7 +27,7 @@ export function useAdminMenu() {
 
   const v2Groups = computed<AdminMenuGroup[]>(() => [
     {
-      label: t('menu.sectionV2'),
+      label: t('menu.sectionNew'),
       items: [
         { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
         {

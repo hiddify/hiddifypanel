@@ -1,0 +1,23 @@
+{% for domain in domains %}
+  {% set proxy = proxy.with_domain(domain) %}
+  {% set uri = namespace(
+    protocol = 'vless',
+    user=user.uuid,
+    host=proxy.server,
+    port=proxy.port,
+    query_params=namespace(hiddify='1'),
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  
+  {% set qp = uri.query_params %}
+  {% include 'sublink/uri/security/tls_http' %}
+  {% include 'sublink/uri/transport/xhttp' %}
+  {% if hconfig.vless_flow%}
+    {% set qp.flow=hconfig.vless_flow %}
+  {% endif%}
+
+  {% if hconfig.vless_encryption%}
+    {% set qp.encryption=hconfig.vless_encryption %}
+  {% endif%}
+  {% include 'sublink/uri/final_link_maker' %} {#making vless://uri.....#}
+{% endfor %}

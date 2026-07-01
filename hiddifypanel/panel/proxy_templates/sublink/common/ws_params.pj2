@@ -1,1 +1,0 @@
-type=ws&path=%2F{{ proxy.path }}&host={{ domain.hostname }}

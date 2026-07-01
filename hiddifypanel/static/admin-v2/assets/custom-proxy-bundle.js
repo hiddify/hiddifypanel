@@ -1,1 +1,74 @@
-import{d as V,u as $,o as i,p as u,w as n,b as e,z as w,A as x,f as m,e as f,c as b,F as h,C as _,l as g,a as y,_ as C,b0 as U,y as j,h as B,D as E,b1 as L,E as N}from"./index.js";import{s as F}from"./index2.js";import{s as k,a as O}from"./index6.js";import{s as R}from"./index8.js";const D={class:"validation-preview-pre"},M=V({__name:"ValidationPanel",props:{result:{}},setup(t){const{t:a}=$();return(l,o)=>t.result?(i(),u(e(F),{key:0,header:e(a)("validation.title")},{default:n(()=>{var s,r;return[t.result.ok?(i(),u(e(w),{key:0,severity:"success"},{default:n(()=>[x(m(e(a)("common.validationOk")),1)]),_:1})):(i(),u(e(w),{key:1,severity:"error"},{default:n(()=>[x(m(e(a)("common.validationFailed")),1)]),_:1})),(s=t.result.errors)!=null&&s.length?(i(),u(e(k),{key:2,legend:e(a)("validation.errors")},{default:n(()=>[f("ul",null,[(i(!0),b(h,null,_(t.result.errors,(p,c)=>(i(),b("li",{key:"e"+c},m(p.message),1))),128))])]),_:1},8,["legend"])):g("",!0),(r=t.result.warnings)!=null&&r.length?(i(),u(e(k),{key:3,legend:e(a)("validation.warnings")},{default:n(()=>[f("ul",null,[(i(!0),b(h,null,_(t.result.warnings,(p,c)=>(i(),b("li",{key:"w"+c},m(p.message),1))),128))])]),_:1},8,["legend"])):g("",!0),t.result.compiled_preview?(i(),u(e(k),{key:4,legend:e(a)("validation.preview")},{default:n(()=>[y(e(O),{class:"config-scroll-panel",style:{width:"100%",height:"240px"}},{default:n(()=>[f("pre",D,m(t.result.compiled_preview),1)]),_:1})]),_:1},8,["legend"])):g("",!0)]}),_:1},8,["header"])):g("",!0)}}),A=C(M,[["__scopeId","data-v-0585d984"]]),P={class:"flex items-start gap-2"},I={for:"exclude-builtin",class:"cursor-pointer text-sm"},q=V({__name:"BundleExportDialog",props:{visible:{type:Boolean,default:!1},visibleModifiers:{}},emits:L(["confirm"],["update:visible"]),setup(t,{emit:a}){const l=U(t,"visible"),o=a,{t:s}=$(),r=N(!0);j(l,c=>{c&&(r.value=!0)});function p(){o("confirm",r.value),l.value=!1}return(c,d)=>(i(),u(e(E),{visible:l.value,"onUpdate:visible":d[2]||(d[2]=v=>l.value=v),modal:"",header:e(s)("editor.exportBundle"),style:{width:"min(28rem, 96vw)"}},{footer:n(()=>[y(e(B),{label:e(s)("common.cancel"),text:"",onClick:d[1]||(d[1]=v=>l.value=!1)},null,8,["label"]),y(e(B),{label:e(s)("proxy.export"),icon:"pi pi-download",onClick:p},null,8,["label"])]),default:n(()=>[f("div",P,[y(e(R),{modelValue:r.value,"onUpdate:modelValue":d[0]||(d[0]=v=>r.value=v),"input-id":"exclude-builtin",binary:""},null,8,["modelValue"]),f("label",I,m(e(s)("editor.excludeBuiltinTemplates")),1)])]),_:1},8,["visible","header"]))}});function G(t,a){const l=new Blob([JSON.stringify(t,null,2)],{type:"application/json"}),o=URL.createObjectURL(l),s=document.createElement("a");s.href=o,s.download=a,s.click(),URL.revokeObjectURL(o)}function H(t=".json,application/json"){return new Promise(a=>{const l=document.createElement("input");l.type="file",l.accept=t,l.onchange=()=>{var o;return a(((o=l.files)==null?void 0:o[0])??null)},l.click()})}export{A as V,q as _,G as d,H as p};
+import{d as B,u as P,o as s,p as u,w as l,b as t,A as y,C as k,f,e as h,c,F as $,D as S,l as g,a as b,_ as N,aT as O,y as D,h as V,z as T,aU as U,E as L,B as j,i as I,g as w,G as E}from"./index.js";import{s as M}from"./index2.js";import{s as x,a as _,L as F}from"./LineNumberedCode.js";import{i as J}from"./index5.js";const R={class:"validation-preview-pre"},W=B({__name:"ValidationPanel",props:{result:{}},setup(e){const{t:r}=P();return(n,d)=>e.result?(s(),u(t(M),{key:0,header:t(r)("validation.title")},{default:l(()=>{var i,a;return[e.result.ok?(s(),u(t(y),{key:0,severity:"success"},{default:l(()=>[k(f(t(r)("common.validationOk")),1)]),_:1})):(s(),u(t(y),{key:1,severity:"error"},{default:l(()=>[k(f(t(r)("common.validationFailed")),1)]),_:1})),(i=e.result.errors)!=null&&i.length?(s(),u(t(x),{key:2,legend:t(r)("validation.errors")},{default:l(()=>[h("ul",null,[(s(!0),c($,null,S(e.result.errors,(o,p)=>(s(),c("li",{key:"e"+p},f(o.message),1))),128))])]),_:1},8,["legend"])):g("",!0),(a=e.result.warnings)!=null&&a.length?(s(),u(t(x),{key:3,legend:t(r)("validation.warnings")},{default:l(()=>[h("ul",null,[(s(!0),c($,null,S(e.result.warnings,(o,p)=>(s(),c("li",{key:"w"+p},f(o.message),1))),128))])]),_:1},8,["legend"])):g("",!0),e.result.compiled_preview?(s(),u(t(x),{key:4,legend:t(r)("validation.preview")},{default:l(()=>[b(t(_),{class:"config-scroll-panel",style:{width:"100%",height:"240px"}},{default:l(()=>[h("pre",R,f(e.result.compiled_preview),1)]),_:1})]),_:1},8,["legend"])):g("",!0)]}),_:1},8,["header"])):g("",!0)}}),le=N(W,[["__scopeId","data-v-0585d984"]]),A={class:"flex items-start gap-2"},K={for:"exclude-builtin",class:"cursor-pointer text-sm"},ae=B({__name:"BundleExportDialog",props:{visible:{type:Boolean,default:!1},visibleModifiers:{}},emits:U(["confirm"],["update:visible"]),setup(e,{emit:r}){const n=O(e,"visible"),d=r,{t:i}=P(),a=L(!0);D(n,p=>{p&&(a.value=!0)});function o(){d("confirm",a.value),n.value=!1}return(p,m)=>(s(),u(t(T),{visible:n.value,"onUpdate:visible":m[2]||(m[2]=v=>n.value=v),modal:"",header:t(i)("editor.exportBundle"),style:{width:"min(28rem, 96vw)"}},{footer:l(()=>[b(t(V),{label:t(i)("common.cancel"),text:"",onClick:m[1]||(m[1]=v=>n.value=!1)},null,8,["label"]),b(t(V),{label:t(i)("proxy.export"),icon:"pi pi-download",onClick:o},null,8,["label"])]),default:l(()=>[h("div",A,[b(t(J),{modelValue:a.value,"onUpdate:modelValue":m[0]||(m[0]=v=>a.value=v),"input-id":"exclude-builtin",binary:""},null,8,["modelValue"]),h("label",K,f(t(i)("editor.excludeBuiltinTemplates")),1)])]),_:1},8,["visible","header"]))}});var z=`
+    .p-progressspinner {
+        position: relative;
+        margin: 0 auto;
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+    }
+
+    .p-progressspinner::before {
+        content: '';
+        display: block;
+        padding-top: 100%;
+    }
+
+    .p-progressspinner-spin {
+        height: 100%;
+        transform-origin: center center;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        animation: p-progressspinner-rotate 2s linear infinite;
+    }
+
+    .p-progressspinner-circle {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: 0;
+        stroke: dt('progressspinner.colorOne');
+        animation:
+            p-progressspinner-dash 1.5s ease-in-out infinite,
+            p-progressspinner-color 6s ease-in-out infinite;
+        stroke-linecap: round;
+    }
+
+    @keyframes p-progressspinner-rotate {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    @keyframes p-progressspinner-dash {
+        0% {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -35px;
+        }
+        100% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -124px;
+        }
+    }
+    @keyframes p-progressspinner-color {
+        100%,
+        0% {
+            stroke: dt('progressspinner.color.one');
+        }
+        40% {
+            stroke: dt('progressspinner.color.two');
+        }
+        66% {
+            stroke: dt('progressspinner.color.three');
+        }
+        80%,
+        90% {
+            stroke: dt('progressspinner.color.four');
+        }
+    }
+`,G={root:"p-progressspinner",spin:"p-progressspinner-spin",circle:"p-progressspinner-circle"},q=j.extend({name:"progressspinner",style:z,classes:G}),H={name:"BaseProgressSpinner",extends:I,props:{strokeWidth:{type:String,default:"2"},fill:{type:String,default:"none"},animationDuration:{type:String,default:"2s"}},style:q,provide:function(){return{$pcProgressSpinner:this,$parentInstance:this}}},C={name:"ProgressSpinner",extends:H,inheritAttrs:!1,computed:{svgStyle:function(){return{"animation-duration":this.animationDuration}}}},Q=["fill","stroke-width"];function X(e,r,n,d,i,a){return s(),c("div",w({class:e.cx("root"),role:"progressbar"},e.ptmi("root")),[(s(),c("svg",w({class:e.cx("spin"),viewBox:"25 25 50 50",style:a.svgStyle},e.ptm("spin")),[h("circle",w({class:e.cx("circle"),cx:"50",cy:"50",r:"20",fill:e.fill,"stroke-width":e.strokeWidth,strokeMiterlimit:"10"},e.ptm("circle")),null,16,Q)],16))],16)}C.render=X;const Y={key:0,class:"flex justify-center py-8"},Z={key:1,class:"flex flex-col gap-3"},ee={key:4,class:"m-0 pl-4 text-sm"},te=B({__name:"TemplatePreviewDialog",props:U({loading:{type:Boolean},result:{}},{visible:{type:Boolean,default:!1},visibleModifiers:{}}),emits:["update:visible"],setup(e){const r=e,n=O(e,"visible"),{t:d}=P(),i=E(()=>{if(!r.result)return"";if(r.result.skipped)return"SKIP";const a=r.result.rendered??"",o=a.trim();if(!o.startsWith("{")&&!o.startsWith("["))return a;try{return JSON.stringify(JSON.parse(o),null,2)}catch{return a}});return(a,o)=>(s(),u(t(T),{visible:n.value,"onUpdate:visible":o[0]||(o[0]=p=>n.value=p),modal:"",class:"w-full max-w-3xl",header:t(d)("editor.previewTitle")},{default:l(()=>{var p;return[e.loading?(s(),c("div",Y,[b(t(C),{style:{width:"2.5rem",height:"2.5rem"}})])):e.result?(s(),c("div",Z,[e.result.skipped?(s(),u(t(y),{key:0,severity:"info",closable:!1},{default:l(()=>[...o[1]||(o[1]=[k(" SKIP ",-1)])]),_:1})):e.result.error?(s(),u(t(y),{key:1,severity:"error",closable:!1},{default:l(()=>[k(f(e.result.error),1)]),_:1})):e.result.ok?(s(),u(t(y),{key:2,severity:"success",closable:!1},{default:l(()=>[k(f(t(d)("editor.previewOk")),1)]),_:1})):(s(),u(t(y),{key:3,severity:"warn",closable:!1},{default:l(()=>[k(f(t(d)("editor.previewPartial")),1)]),_:1})),(p=e.result.warnings)!=null&&p.length?(s(),c("ul",ee,[(s(!0),c($,null,S(e.result.warnings,(m,v)=>(s(),c("li",{key:v},f(m.message),1))),128))])):g("",!0),i.value?(s(),u(t(_),{key:5,class:"preview-scroll-panel",style:{width:"100%",height:"420px"}},{default:l(()=>[b(F,{text:i.value},null,8,["text"])]),_:1})):g("",!0)])):g("",!0)]}),_:1},8,["visible","header"]))}}),oe=N(te,[["__scopeId","data-v-b51e3a88"]]);function de(e,r){const n=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),d=URL.createObjectURL(n),i=document.createElement("a");i.href=d,i.download=r,i.click(),URL.revokeObjectURL(d)}function ue(e=".json,application/json"){return new Promise(r=>{const n=document.createElement("input");n.type="file",n.accept=e,n.onchange=()=>{var d;return r(((d=n.files)==null?void 0:d[0])??null)},n.click()})}export{oe as T,le as V,ae as _,de as d,ue as p};

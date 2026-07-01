@@ -1,0 +1,10 @@
+{% block outbouds %}  
+    {% for ctx in ctx.iter_ctx_domain_alpns() %}
+      {
+        {% include 'hiddify-core/client/tag' %}
+        {% include '__PROTO_SLUG__' %}
+        {% include '__STREAM_SLUG__' %}
+        {% include '__TLS_SLUG__' %}
+      },
+  {% endfor %}
+{% endblock %}

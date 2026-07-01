@@ -8,7 +8,7 @@ from fast_enum import FastEnum
 
 class HEnum(StrEnum):
     @classmethod
-    def from_str(cls, key: str) -> 'HEnum':
+    def from_str(cls, key: str) -> "HEnum":
         return cls[key]
 
 
@@ -33,11 +33,12 @@ class MieruMultiplexing(HEnum):
     MULTIPLEXING_MIDDLE = auto()
     MULTIPLEXING_HIGH = auto()
 
+
 class MieruHandshake(HEnum):
     HANDSHAKE_DEFAULT = auto()
     HANDSHAKE_NO_WAIT = auto()
     HANDSHAKE_STANDARD = auto()
-    
+
 
 class LogLevel(HEnum):
     TRACE = auto()
@@ -76,8 +77,8 @@ class ConfigCategory(StrEnum):
     reality = auto()
     wireguard = auto()
     shadowsocks = auto()
-    additional_configs=auto()
-    dnstt=auto()
+    additional_configs = auto()
+    dnstt = auto()
 
 
 class ApplyMode(StrEnum):
@@ -104,7 +105,7 @@ def _TypedConfigDscr(ctype: type, category: ConfigCategory, apply_mode: ApplyMod
 
 class ConfigEnum(metaclass=FastEnum):
     # category: ConfigCategory
-    __slots__ = ('name', 'value', 'category', 'apply_mode', 'type', 'show_in_parent', 'hide_in_virtual_child')
+    __slots__ = ("name", "value", "category", "apply_mode", "type", "show_in_parent", "hide_in_virtual_child")
 
     def __init__(self, category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.apply_config, ctype=type, show_in_parent: bool = True, hide_in_virtual_child=False, name=auto):
         self.value = name
@@ -118,6 +119,7 @@ class ConfigEnum(metaclass=FastEnum):
     @classmethod
     def dbvalues(cls):
         return {c.name: c for c in config_enum_members()}
+
     create_easysetup_link = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.nothing, hide_in_virtual_child=True)
     wireguard_enable = _BoolConfigDscr(ConfigCategory.wireguard, ApplyMode.reinstall, hide_in_virtual_child=True)
     wireguard_port = _StrConfigDscr(ConfigCategory.wireguard, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -144,7 +146,6 @@ class ConfigEnum(metaclass=FastEnum):
     reality_public_key = _StrConfigDscr(ConfigCategory.reality, ApplyMode.apply_config, hide_in_virtual_child=True)
     reality_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     special_port = _StrConfigDscr(ConfigCategory.reality, ApplyMode.apply_config, hide_in_virtual_child=True)
-    
 
     restls1_2_domain = _StrConfigDscr(ConfigCategory.hidden)
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
@@ -156,10 +157,10 @@ class ConfigEnum(metaclass=FastEnum):
     utls = _StrConfigDscr(ConfigCategory.advanced)
     telegram_bot_token = _StrConfigDscr(ConfigCategory.telegram, hide_in_virtual_child=True)
 
-    additional_configs_urls =  _StrConfigDscr(ConfigCategory.additional_configs)
-    additional_configs_singbox =  _StrConfigDscr(ConfigCategory.additional_configs)
-    additional_configs_xrayjson =  _StrConfigDscr(ConfigCategory.additional_configs)
-    
+    additional_configs_urls = _StrConfigDscr(ConfigCategory.additional_configs)
+    additional_configs_singbox = _StrConfigDscr(ConfigCategory.additional_configs)
+    additional_configs_xrayjson = _StrConfigDscr(ConfigCategory.additional_configs)
+
     # region child-parent
     # deprecated
     is_parent = _BoolConfigDscr(ConfigCategory.hidden)
@@ -182,8 +183,8 @@ class ConfigEnum(metaclass=FastEnum):
     admin_lang = _TypedConfigDscr(Lang, ConfigCategory.admin)
     admin_secret = _StrConfigDscr(ConfigCategory.hidden)  # removed
 
-    default_useragent_string = _StrConfigDscr(ConfigCategory.general)    
-    use_ip_in_config=_BoolConfigDscr(ConfigCategory.hidden)
+    default_useragent_string = _StrConfigDscr(ConfigCategory.general)
+    use_ip_in_config = _BoolConfigDscr(ConfigCategory.hidden)
     # tls
     tls_ports = _StrConfigDscr(ConfigCategory.tls, ApplyMode.apply_config)
 
@@ -195,7 +196,6 @@ class ConfigEnum(metaclass=FastEnum):
     tls_padding_enable = _BoolConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
     tls_padding_length = _StrConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
     tls_ech_enable = _BoolConfigDscr(ConfigCategory.tls, ApplyMode.apply_config)
-    
 
     # mux
     mux_enable = _BoolConfigDscr(ConfigCategory.mux, ApplyMode.apply_config)
@@ -217,8 +217,8 @@ class ConfigEnum(metaclass=FastEnum):
 
     dnstt_enable = _BoolConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
     dnstt_resolvers = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
-    dnstt_private_key=_StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
-    dnstt_public_key=_StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
+    dnstt_private_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
+    dnstt_public_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     # will be deprecated
     proxy_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -230,7 +230,7 @@ class ConfigEnum(metaclass=FastEnum):
     http_proxy_enable = _BoolConfigDscr(ConfigCategory.http)
     block_iran_sites = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
     allow_invalid_sni = _BoolConfigDscr(ConfigCategory.tls, ApplyMode.apply_config, hide_in_virtual_child=True)
-    auto_update = _BoolConfigDscr(ConfigCategory.hidden if os.environ.get('HIDDIFY_DISABLE_UPDATE',"").lower() in {'1',"true"} else ConfigCategory.general, ApplyMode.apply_config, True, hide_in_virtual_child=True)
+    auto_update = _BoolConfigDscr(ConfigCategory.hidden if os.environ.get("HIDDIFY_DISABLE_UPDATE", "").lower() in {"1", "true"} else ConfigCategory.general, ApplyMode.apply_config, True, hide_in_virtual_child=True)
     speed_test = _BoolConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     only_ipv4 = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
 
@@ -281,8 +281,8 @@ class ConfigEnum(metaclass=FastEnum):
     naive_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     naive_port = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     mieru_enable = _BoolConfigDscr(ConfigCategory.mieru, ApplyMode.apply_config)
-    mieru_multiplexing =_TypedConfigDscr(MieruMultiplexing, ConfigCategory.mieru)
-    mieru_handshake =_TypedConfigDscr(MieruHandshake, ConfigCategory.mieru)
+    mieru_multiplexing = _TypedConfigDscr(MieruMultiplexing, ConfigCategory.mieru)
+    mieru_handshake = _TypedConfigDscr(MieruHandshake, ConfigCategory.mieru)
     vless_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     vless_flow = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
     vless_encryption = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -291,9 +291,9 @@ class ConfigEnum(metaclass=FastEnum):
     reality_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     tcp_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     quic_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
-    
-    xtls_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)#deprecated 
-    h2_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)#deprecated
+
+    xtls_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)  # deprecated
+    h2_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)  # deprecated
 
     db_version = _StrConfigDscr(ConfigCategory.hidden)
     last_priodic_usage_check = _IntConfigDscr(ConfigCategory.hidden)
@@ -324,8 +324,7 @@ class ConfigEnum(metaclass=FastEnum):
     sub_full_clash_enable = _BoolConfigDscr(ConfigCategory.hidden)
     sub_full_clash_meta_enable = _BoolConfigDscr(ConfigCategory.hidden)
 
-
-    #ssh host keys
+    # ssh host keys
     ssh_host_rsa_pk = _StrConfigDscr(ConfigCategory.hidden)
     ssh_host_rsa_pub = _StrConfigDscr(ConfigCategory.hidden)
     ssh_host_ed25519_pk = _StrConfigDscr(ConfigCategory.hidden)
@@ -334,9 +333,8 @@ class ConfigEnum(metaclass=FastEnum):
     ssh_host_ecdsa_pub = _StrConfigDscr(ConfigCategory.hidden)
     ssh_host_dsa_pk = _StrConfigDscr(ConfigCategory.hidden)
     ssh_host_dsa_pub = _StrConfigDscr(ConfigCategory.hidden)
-    
-    
-    
+
+    anytls_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     hiddifycli_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall)
 
@@ -351,7 +349,7 @@ class ConfigEnum(metaclass=FastEnum):
         return self.name
 
     def __eq__(self, other):
-        return f'{self}' == f'{other}'
+        return f"{self}" == f"{other}"
 
     def __neg__(self, other):
         return not self.__eq__(other)
@@ -363,12 +361,12 @@ class ConfigEnum(metaclass=FastEnum):
         return self.name.startswith(other)  # type: ignore
 
 
-def config_enum_members() -> list['ConfigEnum']:
+def config_enum_members() -> list["ConfigEnum"]:
     """Real config keys only — skips dbvalues and non-member entries."""
     members: list[ConfigEnum] = []
     for cfg in ConfigEnum:
-        name = getattr(cfg, 'name', None)
-        if not name or name == 'dbvalues':
+        name = getattr(cfg, "name", None)
+        if not name or name == "dbvalues":
             continue
         members.append(cfg)
     return members

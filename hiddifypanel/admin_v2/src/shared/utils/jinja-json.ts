@@ -11,6 +11,13 @@ const SAMPLE_VALUES: Record<string, string> = {
 const SAMPLE_OBJECT_PATHS: Record<string, string> = {
   'USER.uuid': SAMPLE_VALUES.TAG,
   USER: '{"uuid":"00000000-0000-0000-0000-000000000001"}',
+  'proxy.port': SAMPLE_VALUES.PORT,
+  'proxy.tcp_port': SAMPLE_VALUES.PORT,
+  'proxy.udp_port': SAMPLE_VALUES.PORT,
+  'proxy.server': SAMPLE_VALUES.IP,
+  'proxy.tag': SAMPLE_VALUES.TAG,
+  'domain.server': SAMPLE_VALUES.IP,
+  'user.uuid': SAMPLE_VALUES.TAG,
 }
 
 const PROXY_URI_LINE = /^\s*[a-z][a-z0-9+.-]*:\/\/\S*\s*$/gm
@@ -40,7 +47,9 @@ function replaceJinjaVariables(text: string): string {
   })
   // Unquoted placeholders, e.g. "port": {{PORT}}
   out = out.replace(/\{\{\s*([A-Za-z0-9_.]+)\s*\}\}/g, (_, key: string) => {
-    if (key === 'PORT') return SAMPLE_VALUES.PORT
+    if (key === 'PORT' || key.endsWith('.port') || key.endsWith('_port')) {
+      return SAMPLE_VALUES.PORT
+    }
     const sample = sampleForKey(key)
     return sample !== undefined ? JSON.stringify(sample) : '"__JINJA__"'
   })
@@ -64,18 +73,41 @@ function replaceJinjaBlocks(text: string): string {
   return out
 }
 
+export function fixDuplicateJsonCommas(text: string): string {
+  let out = text.replace(/\[\s*,/g, '[').replace(/,\s*]/g, ']').replace(/,\s*}/g, '}')
+  let prev: string | null = null
+  while (prev !== out) {
+    prev = out
+    out = out.replace(/,(?:\s*,)+/g, ',')
+  }
+  return out
+}
+
+function trimLeadingEmptyLines(text: string): string {
+  if (!text) return text
+  const lines = text.split('\n')
+  let start = 0
+  while (start < lines.length && !lines[start].trim()) {
+    start += 1
+  }
+  if (start === 0) return text
+  const trimmed = lines.slice(start).join('\n')
+  return text.endsWith('\n') && !trimmed.endsWith('\n') ? `${trimmed}\n` : trimmed
+}
+
 export function stripJinjaForJsonParse(text: string): string {
   let out = replaceJinjaBlocks(text)
   out = out.replace(PROXY_URI_LINE, '""')
   out = replaceJinjaVariables(out)
-  out = out.replace(/,\s*([}\]])/g, '$1')
-  return out
+  out = fixDuplicateJsonCommas(out)
+  return trimLeadingEmptyLines(out)
 }
 
 export function wrapJsonFragment(text: string): string {
-  const trimmed = text.trim()
+  const trimmed = text.trim().replace(/,\s*$/, '')
   if (!trimmed) return '{}'
   if (trimmed.startsWith('{') || trimmed.startsWith('[')) return trimmed
+  if (/\}\s*,\s*\{/.test(trimmed)) return `[\n${trimmed}\n]`
   return `{\n${trimmed}\n}`
 }
 

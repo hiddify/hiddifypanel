@@ -23,8 +23,20 @@ import {
   type GeneratedSection,
   type GenerateBundleResult,
   type PanelUserOption,
+  type RenderErrorDetail,
   type SublinkFormats,
+  type ValidationIssue,
 } from '@/core/api/generated'
+import {
+  formatSectionText,
+  sectionSupportsFormatToggle,
+  type ConfigFormatView,
+} from '@/shared/utils/config-format'
+import {
+  detailFromIssue,
+  detailFromSection,
+} from '@/shared/utils/render-error-detail'
+import RenderErrorDetailDialog from './RenderErrorDetailDialog.vue'
 
 const props = defineProps<{
   visible: boolean
@@ -42,7 +54,7 @@ const result = ref<GenerateBundleResult | null>(null)
 const domains = ref<DomainOption[]>([])
 const users = ref<PanelUserOption[]>([])
 
-const domainMode = ref<'pick' | 'custom'>('pick')
+const domainMode = ref<'pick' | 'custom' | 'all'>('pick')
 const userMode = ref<'pick' | 'sample'>('sample')
 const uaMode = ref<'preset' | 'custom'>('preset')
 
@@ -56,8 +68,10 @@ const customUa = ref('')
 const activeResultGroup = ref<'servers' | 'clients'>('servers')
 const activeDetailTab = ref('0')
 const activeXrayConfigByTab = ref<Record<string, number>>({})
-const sublinkView = ref<'raw' | 'vless' | 'vmess'>('raw')
-const clashView = ref<'json' | 'yaml'>('json')
+const sublinkView = ref<'raw' | 'uri' | 'base64'>('raw')
+const configFormatView = ref<ConfigFormatView>('json')
+const errorDetailVisible = ref(false)
+const selectedErrorDetail = ref<RenderErrorDetail | null>(null)
 
 const uaPresets = computed(() => props.meta?.example_user_agents ?? [])
 
@@ -84,13 +98,13 @@ const uaOptions = computed(() =>
 
 const sublinkViewOptions = computed(() => [
   { value: 'raw', label: t('proxy.sublinkFormatRaw') },
-  { value: 'vless', label: t('proxy.sublinkFormatVless') },
-  { value: 'vmess', label: t('proxy.sublinkFormatVmess') },
+  { value: 'uri', label: t('proxy.sublinkFormatUri') },
+  { value: 'base64', label: t('proxy.sublinkFormatBase64') },
 ])
 
-const clashViewOptions = computed(() => [
-  { value: 'json', label: t('proxy.clashFormatJson') },
-  { value: 'yaml', label: t('proxy.clashFormatYaml') },
+const configFormatOptions = computed(() => [
+  { value: 'json' as const, label: t('proxy.clashFormatJson') },
+  { value: 'yaml' as const, label: t('proxy.clashFormatYaml') },
 ])
 
 const serverTabs = computed(() =>
@@ -135,7 +149,7 @@ function buildPayload() {
     payload.domain_id = selectedDomainId.value
     const picked = domains.value.find((d) => d.id === selectedDomainId.value)
     if (picked) payload.domain = picked.domain
-  } else if (customDomain.value.trim()) {
+  } else if (domainMode.value === 'custom' && customDomain.value.trim()) {
     payload.domain = customDomain.value.trim()
   }
   if (userMode.value === 'pick' && selectedUserId.value) {
@@ -271,20 +285,48 @@ function displayText(section: GeneratedSection | null | undefined): string {
   if (isSublinkSection(section)) {
     return sublinkDisplay(section.sublink_formats, sublinkView.value)
   }
-  if (isClashSection(section) && clashView.value === 'yaml') {
-    return section.clash_yaml || ''
-  }
-  if (section.parsed != null) {
-    return formatJsonValue(section.parsed)
-  }
-  return tryPrettyJson(section.rendered || '')
+  return formatSectionText(section, configFormatView.value, formatJsonValue, tryPrettyJson)
 }
 
-function sublinkDisplay(formats: SublinkFormats, view: 'raw' | 'vless' | 'vmess'): string {
+function openErrorDetail(detail: RenderErrorDetail | null | undefined) {
+  if (!detail) return
+  selectedErrorDetail.value = detail
+  errorDetailVisible.value = true
+}
+
+function openIssueDetail(issue: ValidationIssue) {
+  const section = sectionForIssue(issue)
+  openErrorDetail(detailFromIssue(issue, section) ?? { message: issue.message })
+}
+
+function sectionForIssue(issue: ValidationIssue): GeneratedSection | null | undefined {
+  if (!result.value) return null
+  const colon = issue.message.indexOf(': ')
+  const prefix = colon >= 0 ? issue.message.slice(0, colon) : ''
+  if (!prefix) return null
+  const server = result.value.servers.find((item) => item.label === prefix || item.core === prefix)
+  if (server) return server
+  return result.value.clients.find((item) => item.label === prefix || item.core === prefix) ?? null
+}
+
+function openSectionDetail(section: GeneratedSection | null | undefined) {
+  if (!section?.error) return
+  openErrorDetail(detailFromSection(section))
+}
+
+function issueHasDetail(issue: ValidationIssue): boolean {
+  return Boolean(issue.message)
+}
+
+function sectionHasDetail(section: GeneratedSection | null | undefined): boolean {
+  return Boolean(section?.error)
+}
+
+function sublinkDisplay(formats: SublinkFormats, view: 'raw' | 'uri' | 'base64'): string {
   if (view === 'raw') {
     return formats.raw || ''
   }
-  if (view === 'vless') {
+  if (view === 'uri') {
     return JSON.stringify(
       {
         json: formats.vless_json,
@@ -327,12 +369,12 @@ watch(activeResultGroup, () => {
   const tabs = activeResultGroup.value === 'servers' ? serverTabs.value : clientTabs.value
   activeDetailTab.value = tabs[0]?.value ?? '0'
   sublinkView.value = 'raw'
-  clashView.value = 'json'
+  configFormatView.value = 'json'
 })
 
 watch(activeDetailTab, () => {
   sublinkView.value = 'raw'
-  clashView.value = 'json'
+  configFormatView.value = 'json'
 })
 </script>
 
@@ -342,6 +384,7 @@ watch(activeDetailTab, () => {
     modal
     class="w-full max-w-3xl"
     :header="t('proxy.generateBundle')"
+    :close-on-escape="!errorDetailVisible"
     @update:visible="emit('update:visible', $event)"
   >
     <div class="flex flex-col gap-4">
@@ -353,6 +396,7 @@ watch(activeDetailTab, () => {
             :options="[
               { value: 'pick', label: t('proxy.exampleDomainPick') },
               { value: 'custom', label: t('proxy.exampleDomainCustom') },
+              { value: 'all', label: t('proxy.exampleDomainAll') },
             ]"
             option-label="label"
             option-value="value"
@@ -367,7 +411,15 @@ watch(activeDetailTab, () => {
             :placeholder="t('proxy.exampleDomainPick')"
             class="w-full"
           />
-          <InputText v-else v-model="customDomain" :placeholder="t('proxy.exampleDomainCustom')" class="w-full" />
+          <InputText
+            v-else-if="domainMode === 'custom'"
+            v-model="customDomain"
+            :placeholder="t('proxy.exampleDomainCustom')"
+            class="w-full"
+          />
+          <Message v-else severity="secondary" :closable="false" class="w-full">
+            {{ t('proxy.exampleDomainAllHint') }}
+          </Message>
         </div>
       </HorizontalField>
 
@@ -451,7 +503,17 @@ watch(activeDetailTab, () => {
 
         <Fieldset v-if="result.errors?.length" :legend="t('validation.errors')">
           <ul class="m-0 pl-4">
-            <li v-for="(e, i) in result.errors" :key="'err-' + i">{{ e.message }}</li>
+            <li
+              v-for="(e, i) in result.errors"
+              :key="'err-' + i"
+              :class="{ 'render-error-link': issueHasDetail(e) }"
+              @click="openIssueDetail(e)"
+            >
+              {{ e.message }}
+              <span v-if="issueHasDetail(e)" class="render-error-link__hint">
+                {{ t('proxy.renderErrorClickHint') }}
+              </span>
+            </li>
           </ul>
         </Fieldset>
 
@@ -480,8 +542,16 @@ watch(activeDetailTab, () => {
                       severity="error"
                       :closable="false"
                       class="mb-2"
+                      :class="{ 'render-error-banner': sectionHasDetail(sectionForTab('servers', tab.value)) }"
+                      @click="openSectionDetail(sectionForTab('servers', tab.value))"
                     >
                       {{ sectionForTab('servers', tab.value)?.error }}
+                      <span
+                        v-if="sectionHasDetail(sectionForTab('servers', tab.value))"
+                        class="render-error-link__hint"
+                      >
+                        {{ t('proxy.renderErrorClickHint') }}
+                      </span>
                     </Message>
                     <div v-if="isXrayMultiConfig(sectionForTab('servers', tab.value))" class="mb-3">
                       <Select
@@ -491,6 +561,18 @@ watch(activeDetailTab, () => {
                         option-value="value"
                         class="w-full"
                         @update:model-value="setXrayConfigIndexForTab(xrayConfigKey('servers', tab.value), $event)"
+                      />
+                    </div>
+                    <div
+                      v-if="sectionSupportsFormatToggle(serverSectionForTab(tab.value))"
+                      class="mb-3"
+                    >
+                      <Select
+                        v-model="configFormatView"
+                        :options="configFormatOptions"
+                        option-label="label"
+                        option-value="value"
+                        class="w-full max-w-xs"
                       />
                     </div>
                     <ScrollPanel class="config-scroll-panel" :style="{ width: '100%', height: '320px' }">
@@ -520,8 +602,16 @@ watch(activeDetailTab, () => {
                       severity="error"
                       :closable="false"
                       class="mb-2"
+                      :class="{ 'render-error-banner': sectionHasDetail(clientSectionForTab(tab.value)) }"
+                      @click="openSectionDetail(clientSectionForTab(tab.value))"
                     >
                       {{ clientSectionForTab(tab.value)?.error }}
+                      <span
+                        v-if="sectionHasDetail(clientSectionForTab(tab.value))"
+                        class="render-error-link__hint"
+                      >
+                        {{ t('proxy.renderErrorClickHint') }}
+                      </span>
                     </Message>
                     <Message
                       v-else-if="isSublinkSection(clientSectionForTab(tab.value)) && clientSectionForTab(tab.value)?.sublink_formats?.parse_error"
@@ -550,10 +640,13 @@ watch(activeDetailTab, () => {
                         class="w-full max-w-xs"
                       />
                     </div>
-                    <div v-else-if="isClashSection(clientSectionForTab(tab.value))" class="mb-3">
+                    <div
+                      v-else-if="sectionSupportsFormatToggle(clientSectionForTab(tab.value))"
+                      class="mb-3"
+                    >
                       <Select
-                        v-model="clashView"
-                        :options="clashViewOptions"
+                        v-model="configFormatView"
+                        :options="configFormatOptions"
                         option-label="label"
                         option-value="value"
                         class="w-full max-w-xs"
@@ -571,10 +664,30 @@ watch(activeDetailTab, () => {
       </template>
     </div>
   </Dialog>
+
+  <RenderErrorDetailDialog v-model:visible="errorDetailVisible" :detail="selectedErrorDetail" />
 </template>
 
 <style scoped>
 .config-scroll-panel :deep(.p-scrollpanel-content) {
   user-select: text;
+}
+
+.render-error-link {
+  cursor: pointer;
+}
+
+.render-error-link:hover {
+  text-decoration: underline;
+}
+
+.render-error-link__hint {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.render-error-banner {
+  cursor: pointer;
 }
 </style>

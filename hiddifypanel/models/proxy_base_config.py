@@ -11,7 +11,7 @@ from strenum import StrEnum
 
 from hiddifypanel.database import db
 
-from hiddifypanel.panel.template_catalog.base_configs import default_base_content as _catalog_base_content
+from hiddifypanel.proxy_v3.template_catalog.base_configs import default_base_content as _catalog_base_content
 
 _PANEL_TEMPLATES = Path(__file__).resolve().parent.parent / 'panel' / 'user' / 'templates'
 
@@ -57,12 +57,7 @@ DEFAULT_SERVER_HIDDIFY_BASE = (
 
 DEFAULT_CLIENT_HIDDIFY_BASE = DEFAULT_CLIENT_SINGBOX_BASE
 
-DEFAULT_CLIENT_SUBLINK_BASE = (
-    '{\n'
-    '  "links": []\n'
-    '}'
-)
-
+DEFAULT_CLIENT_SUBLINK_BASE = _catalog_base_content(BaseConfigSide.client.value, 'sublink')
 
 def default_base_content(side: str, core: str) -> str:
     try:
@@ -104,12 +99,11 @@ class ProxyBaseConfig(db.Model):  # type: ignore
     content = Column(Text, nullable=False, default='')
     builtin_content = Column(Text, nullable=False, default='')
     builtin_override = Column(Boolean, default=False, nullable=False)
-    template_slugs = Column(JSON, default=list)
     is_builtin = Column(Boolean, default=False, nullable=False)
     enable = Column(Boolean, default=True, nullable=False)
 
     def effective_content(self) -> str:
-        from hiddifypanel.panel.template_catalog.builtin_sync import effective_base_config_content
+        from hiddifypanel.proxy_v3.builtin_proxy_sync import effective_base_config_content
         return effective_base_config_content(self)
 
     def to_dict(self) -> dict[str, Any]:
@@ -124,7 +118,6 @@ class ProxyBaseConfig(db.Model):  # type: ignore
             'content': self.effective_content(),
             'builtin_content': self.builtin_content or '',
             'builtin_override': bool(self.builtin_override),
-            'template_slugs': self.template_slugs or [],
             'is_builtin': bool(self.is_builtin),
             'enable': bool(self.enable),
         }
@@ -153,21 +146,23 @@ class ProxyBaseConfig(db.Model):  # type: ignore
             db.session.add(row)
 
         if row.is_builtin:
-            from hiddifypanel.panel.template_catalog.builtin_sync import apply_builtin_override_base_config
+            from hiddifypanel.proxy_v3.builtin_proxy_sync import apply_builtin_override_base_config
             if 'name' in data:
                 row.name = data['name']
             if 'enable' in data:
-                row.enable = bool(data['enable'])
+                row.enable = True
             if 'description' in data:
                 row.description = data.get('description') or ''
-            if 'builtin_override' in data:
-                apply_builtin_override_base_config(row, override=bool(data['builtin_override']))
             if 'content' in data:
                 new_content = data.get('content') or ''
-                if not row.builtin_override and new_content != (row.builtin_content or ''):
+                if new_content != (row.builtin_content or ''):
                     apply_builtin_override_base_config(row, override=True)
+                elif 'builtin_override' in data:
+                    apply_builtin_override_base_config(row, override=bool(data['builtin_override']))
                 if row.builtin_override:
                     row.content = new_content
+            elif 'builtin_override' in data:
+                apply_builtin_override_base_config(row, override=bool(data['builtin_override']))
             if commit:
                 db.session.commit()
             return row
@@ -179,8 +174,6 @@ class ProxyBaseConfig(db.Model):  # type: ignore
         row.name = data.get('name', row.name)
         row.description = data.get('description', row.description) or ''
         row.content = data.get('content', row.content) or ''
-        if 'template_slugs' in data:
-            row.template_slugs = data['template_slugs'] or []
         if 'enable' in data:
             row.enable = bool(data['enable'])
 
@@ -190,17 +183,17 @@ class ProxyBaseConfig(db.Model):  # type: ignore
 
     def duplicate(self, child_id: int | None = None) -> 'ProxyBaseConfig':
         child_id = child_id if child_id is not None else self.child_id
-        base_version = f'{self.version}-copy'
-        version = base_version
+        base_version = self.version
         i = 1
+        version = f'{base_version}-{i}'
         while ProxyBaseConfig.query.filter(
             ProxyBaseConfig.child_id == child_id,
             ProxyBaseConfig.side == self.side,
             ProxyBaseConfig.core == self.core,
             ProxyBaseConfig.version == version,
         ).first():
-            version = f'{base_version}-{i}'
             i += 1
+            version = f'{base_version}-{i}'
         return ProxyBaseConfig.add_or_update(
             child_id=child_id,
             side=self.side,
@@ -209,7 +202,6 @@ class ProxyBaseConfig(db.Model):  # type: ignore
             name=f'{self.name} (copy)',
             description=self.description,
             content=self.effective_content(),
-            template_slugs=list(self.template_slugs or []),
             enable=self.enable,
             is_builtin=False,
             builtin_override=False,
@@ -271,40 +263,6 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
 
 
 def seed_proxy_base_configs(child_id: int = 0, *, refresh_builtin: bool = False) -> None:
-    from hiddifypanel.panel.template_catalog.builtin_sync import sync_builtin_base_config
+    from hiddifypanel.proxy_v3.builtin_proxy_sync import sync_base_configs
 
-    for spec in BUILTIN_BASE_CONFIGS:
-        side = spec['side']
-        core = spec['core']
-        version = spec['version']
-        existing = ProxyBaseConfig.query.filter(
-            ProxyBaseConfig.child_id == child_id,
-            ProxyBaseConfig.side == side,
-            ProxyBaseConfig.core == core,
-            ProxyBaseConfig.version == version,
-        ).first()
-        catalog_content = default_base_content(side.value, core)
-        catalog = {
-            **spec,
-            'content': catalog_content,
-            'side': side.value,
-        }
-        if existing:
-            if refresh_builtin and existing.is_builtin:
-                sync_builtin_base_config(existing, catalog)
-            continue
-        db.session.add(ProxyBaseConfig(
-            child_id=child_id,
-            side=side,
-            core=core,
-            version=version,
-            name=spec['name'],
-            description=spec['description'],
-            content=catalog_content,
-            builtin_content=catalog_content,
-            builtin_override=False,
-            template_slugs=[],
-            is_builtin=True,
-            enable=True,
-        ))
-    db.session.commit()
+    sync_base_configs(child_id, refresh_builtin=refresh_builtin)

@@ -1,5 +1,0 @@
-{% skip() if not hconfig.trojan_enable %}
-"type": "trojan",
-"server": "{{ proxy.server }}",
-"server_port": {{ proxy.port }},
-"password": "{{ user.uuid }}",

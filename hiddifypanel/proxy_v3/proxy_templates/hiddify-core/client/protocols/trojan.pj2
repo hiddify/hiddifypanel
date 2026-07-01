@@ -1,0 +1,5 @@
+{% skip("trojan_enable = " ~ hconfig.trojan_enable) if not hconfig.trojan_enable %}
+"type": "trojan",
+"server": "{{ ctx.domain.server }}",
+"server_port": {{ ctx.proxy.port }},
+"password": "{{ ctx.user.uuid }}",

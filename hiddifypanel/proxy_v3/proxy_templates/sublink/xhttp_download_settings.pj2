@@ -1,0 +1,20 @@
+{
+  "address": "{{ proxy.download.server }}",
+  "port": {{ proxy.port }},
+  "network": "xhttp",
+  "xhttpSettings": {
+    "path": "{{ proxy.path }}",
+    "host": "{{ proxy.host }}",
+    "mode": "{{ proxy.xhttp_mode }}",
+    "extra": {
+      "headers": {{ proxy.params.headers|default({})|compactjson }}
+    }
+  },
+  "security": "tls",
+  "tlsSettings": {
+    "serverName": "{{ proxy.download.sni|default(domain.sni) }}",
+    "allowInsecure": {{ 'true' if proxy.download.allow_insecure else 'false' }},
+    "fingerprint": "{{ proxy.fingerprint|default('') }}",
+    "alpn": ["{{ proxy.download_alpn|default('h2') }}"]
+  }
+}

@@ -1,0 +1,25 @@
+
+{% for domain in domains %}
+  {% set proxy = proxy.with_domain(domain) %}
+  {% set data = namespace(
+    v='2',
+    add=proxy.server,
+    port=proxy.port,
+    id=user.uuid,
+    aid=0,
+    scy=proxy.cipher|default('auto'),
+    net=proxy.transport|default('tcp'),
+    type='none',
+    host=proxy.host|default(''),
+    alpn=proxy.alpn|default('h2,http/1.1'),
+    path=proxy.path|default(''),
+    sni=domain.sni,
+    fp=proxy.fingerprint|default(''),
+  ) %}
+  {% set data.ps %}{% include 'sublink/tag' %}{% endset %}
+  {% include '__VMESS_TRANSPORT_SLUG__' %}
+  {% include '__VMESS_SECURITY_SLUG__' %}
+  
+  vmess://{{ data|compactjson|b64encode }}
+{% endfor %}
+

@@ -1,0 +1,18 @@
+{% skip("shadowsocks2022_enable = " ~ hconfig.shadowsocks2022_enable) if not hconfig.shadowsocks2022_enable %}
+"type": "shadowsocks",
+{% if detour|default('') %}
+"detour": "{{ detour }}",
+{% else %}
+"server": "{{ domain.server }}",
+"server_port": {{ proxy.port }},
+{% endif %}
+"method": "{{ hconfig.shadowsocks2022_method }}",
+"password": "{{ hconfigs['shared_secret'].replace('-','')|b64encode }}:{{ user.uuid_hex|b64encode }}",
+"udp_over_tcp": {
+  "enabled": true,
+  "version": 2
+},
+{% if plugin %}
+"plugin": "{{ plugin }}",
+"plugin_opts": "{{ plugin_opts }}",
+{% endif %}

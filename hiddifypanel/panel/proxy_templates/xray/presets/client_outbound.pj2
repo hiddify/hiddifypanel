@@ -1,9 +1,0 @@
-{
-  "tag": "{{ TAG }}",
-  {% include '__PROTO_SLUG__' %},
-  "streamSettings": {
-    {% set PATH = custom_path[1:] if custom_path and custom_path.startswith('/') else (custom_path or '') %}
-    {% include '__STREAM_SLUG__' %},
-    {% include '__SECURITY_SLUG__' %}
-  }
-}

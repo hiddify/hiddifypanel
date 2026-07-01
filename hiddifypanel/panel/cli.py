@@ -212,14 +212,14 @@ def init_app(app):
             print(f'failed to import xui data: Error: {e}')
 
     def _run_sync_builtin_catalog(child_id: int) -> None:
-        from hiddifypanel.panel.template_catalog.seed import sync_builtin_catalog
+        from hiddifypanel.proxy_v3.builtin_proxy_sync import sync_all as sync_builtin_catalog
 
         stats = sync_builtin_catalog(child_id)
         click.echo(
-            f"synced builtin catalog (child_id={stats['child_id']}): "
-            f"{stats['builtin_templates']} templates, "
-            f"{stats['builtin_base_configs']} base configs, "
-            f"{stats['builtin_custom_proxies']} custom proxies"
+            f"synced builtin catalog (child_id={stats.child_id}): "
+            f"{stats.builtin_templates} templates, "
+            f"{stats.builtin_base_configs} base configs, "
+            f"{stats.builtin_custom_proxies} custom proxies"
         )
 
     @app.cli.command('sync-builtin-configs')
@@ -279,6 +279,41 @@ def init_app(app):
         _drop_wip_proxy_tables()
         set_hconfig(ConfigEnum.db_version, 129, child_id=child_id, commit=True)
         click.echo('WIP tables dropped; db_version set to 129. Restart panel to run _v130.')
+
+    @app.cli.command('generate-example-configs')
+    @click.option('--output', 'output', type=click.Path(), default=None)
+    @click.option('--child-id', '-c', default=0, show_default=True, type=int)
+    @click.option('--domain', default='94.242.53.78.sslip.io', show_default=True)
+    @click.option('--ip', default='94.242.53.78', show_default=True)
+    @click.option('--user-uuid', default='1c26bc0e-6dc4-4fd9-819e-2540c46b9edf', show_default=True)
+    @click.option('--refresh-db', is_flag=True, help='Rebuild local sqlite catalog from disk')
+    def generate_example_configs(output, child_id, domain, ip, user_uuid, refresh_db):
+        """Write bundled client/server configs to examples/new/."""
+        import sys
+        from pathlib import Path
+
+        examples_dir = Path(__file__).resolve().parents[3] / 'examples'
+        if str(examples_dir) not in sys.path:
+            sys.path.insert(0, str(examples_dir))
+        from generate_examples import EXAMPLES_ROOT, generate_configs
+
+        out = output or (EXAMPLES_ROOT / 'new')
+        result = generate_configs(
+            output_root=Path(out),
+            child_id=child_id,
+            domain=domain,
+            ip=ip,
+            user_uuid=user_uuid,
+            refresh_db=refresh_db,
+        )
+        for rel, size in sorted(result['written'].items()):
+            click.echo(f'wrote {rel} ({size} bytes)')
+        for item in result['missing']:
+            click.echo(f'missing {item}', err=True)
+        for err in result['errors']:
+            click.echo(f"error: {err.get('message', err)}", err=True)
+        if not result['ok'] or result['missing']:
+            raise SystemExit(1)
 
     @ app.cli.command()
     def tgbot_info():

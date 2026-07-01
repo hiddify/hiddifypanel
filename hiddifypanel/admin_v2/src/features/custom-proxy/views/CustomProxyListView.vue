@@ -42,6 +42,26 @@
           <span>{{ data.name }}</span>
         </template>
       </Column>
+      <Column field="proto" sortable>
+        <template #header>
+          <div class="flex items-center gap-1">
+            <span>{{ t('proxy.protocol') }}</span>
+            <Button
+              icon="pi pi-filter"
+              text
+              rounded
+              size="small"
+              :severity="filterProto ? 'primary' : 'secondary'"
+              :aria-label="t('common.filter')"
+              @click="(e: Event) => protoPopover.toggle(e)"
+            />
+          </div>
+        </template>
+        <template #body="{ data }">
+          <Tag v-if="data.proto" :value="String(data.proto).toUpperCase()" severity="info" />
+          <span v-else>—</span>
+        </template>
+      </Column>
       <Column field="mode" sortable>
         <template #header>
           <div class="flex items-center gap-1">
@@ -187,6 +207,12 @@
       </IconField>
     </div>
   </Popover>
+  <Popover ref="protoPopover">
+    <div class="flex flex-col gap-2 min-w-44">
+      <label class="text-sm font-medium">{{ t('proxy.protocol') }}</label>
+      <Select v-model="filterProto" :options="protoOptions" option-label="label" option-value="value" show-clear class="w-full" />
+    </div>
+  </Popover>
   <Popover ref="modePopover">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('proxy.mode') }}</label>
@@ -255,6 +281,7 @@ const meta = ref<CustomProxyMeta | null>(null)
 const bundleDialogVisible = ref(false)
 const loading = ref(false)
 const modeOptions = ref<{ label: string; value: string }[]>([])
+const protoOptions = ref<{ label: string; value: string }[]>([])
 const coreOptions = ref<string[]>([])
 const clientCoreOptions = ref<string[]>([])
 
@@ -262,6 +289,7 @@ const filterTags = ref<string[]>([])
 const tagOptions = ref<string[]>([])
 
 const filterName = ref('')
+const filterProto = ref<string | null>(null)
 const filterMode = ref<string | null>(null)
 const filterCore = ref<string | null>(null)
 const filterClientCore = ref<string | null>(null)
@@ -269,6 +297,7 @@ const filterEnabled = ref<boolean | null>(null)
 
 const tagsPopover = ref()
 const namePopover = ref()
+const protoPopover = ref()
 const modePopover = ref()
 const corePopover = ref()
 const clientPopover = ref()
@@ -287,10 +316,12 @@ function modeLabel(mode: string | undefined) {
 const filteredProxies = computed(() =>
   proxies.value.filter((p) => {
     const mode = p.mode ?? (p as { protocol?: string }).protocol
+    const proto = p.proto ?? (p as { protocol?: string }).protocol
     const nameQ = filterName.value.trim().toLowerCase()
     if (nameQ && !(p.name || '').toLowerCase().includes(nameQ) && !(p.slug || '').toLowerCase().includes(nameQ)) {
       return false
     }
+    if (filterProto.value && proto !== filterProto.value) return false
     if (filterMode.value && mode !== filterMode.value) return false
     if (filterCore.value && p.server_core !== filterCore.value) return false
     if (filterClientCore.value && !(p.client_cores || []).includes(filterClientCore.value)) return false
@@ -309,6 +340,10 @@ async function load() {
     modeOptions.value = (metaRes.modes ?? []).map((m) => ({
       label: t(`proxy.modeLabels.${m}`, m),
       value: m,
+    }))
+    protoOptions.value = (metaRes.protos ?? []).map((p) => ({
+      label: p.toUpperCase(),
+      value: p,
     }))
     const cores = new Set<string>()
     const clientCores = new Set<string>(metaRes.client_cores ?? [])

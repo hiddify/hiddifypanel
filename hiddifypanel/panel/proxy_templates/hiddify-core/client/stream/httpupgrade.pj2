@@ -1,6 +1,0 @@
-{% skip() if not hconfig.httpupgrade_enable %}
-"network": "tcp",
-"transport": {
-  "type": "httpupgrade",
-  "path": "/{{ proxy.path }}"
-},

@@ -1,0 +1,6 @@
+{% skip("ws_enable = " ~ hconfig.ws_enable) if not hconfig.ws_enable %}
+"transport": {
+    "type": "ws",
+    "path": "/{{ proxy.path }}",
+    "early_data_header_name": "Sec-WebSocket-Protocol"
+},

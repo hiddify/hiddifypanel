@@ -23,9 +23,10 @@ export interface ClientCoreConfig {
   version?: string | null
   min_version?: string | null
   max_version?: string | null
+  slug?: string | null
+  is_builtin?: boolean
   outbounds_template?: string
-  do_base64_after?: boolean
-  template_slugs?: string[]
+  override?: boolean
 }
 
 export interface ClientConfig {
@@ -40,12 +41,30 @@ export interface ClientConfig {
 
 export type L7Proto = 'h1' | 'h2' | 'h3'
 
+export type ProxyProto =
+  | 'vless'
+  | 'trojan'
+  | 'vmess'
+  | 'ss'
+  | 'v2ray'
+  | 'ssr'
+  | 'ssh'
+  | 'tuic'
+  | 'hysteria'
+  | 'hysteria2'
+  | 'wireguard'
+  | 'naive'
+  | 'mieru'
+  | 'anytls'
+  | 'dnstt'
+
 export interface CustomProxy {
   id?: number
   name: string
   slug?: string
   enable?: boolean
   mode: CustomProxyMode
+  proto?: ProxyProto
   l7_proto?: L7Proto | null
   alpns?: string[]
   download_alpns?: string[]
@@ -62,6 +81,8 @@ export interface CustomProxy {
   is_builtin?: boolean
   server_override?: boolean
   client_override?: boolean
+  builtin?: Record<string, unknown>
+  builtin_overrides?: Record<string, boolean>
   builtin_server_config?: string
   builtin_client_config?: ClientConfig
 }
@@ -86,9 +107,22 @@ export interface DomainOption {
   mode?: string
 }
 
+export interface RenderErrorDetail {
+  phase?: string | null
+  line?: number | null
+  column?: number | null
+  message?: string | null
+  source?: string | null
+  excerpt?: string | null
+  template_source?: string | null
+  template_excerpt?: string | null
+  label?: string | null
+}
+
 export interface ValidationIssue {
   code: string
   message: string
+  detail?: RenderErrorDetail | null
 }
 
 export interface ValidationResult {
@@ -97,6 +131,16 @@ export interface ValidationResult {
   warnings: ValidationIssue[]
   compiled_preview?: string
   compiled_json?: unknown
+}
+
+export interface TemplatePreviewResult {
+  ok: boolean
+  rendered: string
+  parsed?: unknown
+  skipped?: boolean
+  error?: string | null
+  error_detail?: RenderErrorDetail | null
+  warnings?: ValidationIssue[]
 }
 
 export interface GeneratedSection {
@@ -108,10 +152,13 @@ export interface GeneratedSection {
   parsed?: unknown
   skipped: boolean
   error?: string | null
+  error_detail?: RenderErrorDetail | null
+  auto?: boolean
   variant_label?: string | null
   configs?: GeneratedSection[] | null
   sublink_formats?: SublinkFormats | null
   clash_yaml?: string | null
+  config_yaml?: string | null
 }
 
 export interface SublinkFormats {
@@ -130,6 +177,9 @@ export interface GenerateExampleResult {
   context: Record<string, unknown>
   server?: GeneratedSection | null
   clients: GeneratedSection[]
+  auto_client_cores?: string[]
+  auto_client_core?: string | null
+  default_client_core?: string | null
 }
 
 export interface GenerateExampleInput {
@@ -140,6 +190,23 @@ export interface GenerateExampleInput {
   user_uuid?: string
   ip?: string
   user_agent?: string
+  ignore_skip?: boolean
+}
+
+export interface CustomProxyPreviewInput extends Partial<GenerateExampleInput> {
+  proxy: Partial<CustomProxy>
+  proxy_id?: number
+  side: string
+  core: string
+  template: string
+  require_user?: boolean
+}
+
+export interface BaseConfigPreviewInput extends Partial<GenerateExampleInput> {
+  side: string
+  core: string
+  version?: string
+  content: string
 }
 
 export interface GenerateBundleInput {
@@ -168,6 +235,7 @@ export interface PanelUserOption {
 
 export interface CustomProxyMeta {
   modes: string[]
+  protos: string[]
   alpns: string[]
   l7_protos: string[]
   domain_modes: string[]
@@ -193,6 +261,8 @@ export const customProxiesApi = {
     getHttp().post<ValidationResult>('/custom-proxies/validate/', data).then((r) => r.data),
   validateById: (id: number, data?: Partial<CustomProxy> & { sections?: string[] }) =>
     getHttp().post<ValidationResult>(`/custom-proxies/${id}/validate/`, data ?? {}).then((r) => r.data),
+  preview: (data: CustomProxyPreviewInput) =>
+    getHttp().post<TemplatePreviewResult>('/custom-proxies/preview/', data).then((r) => r.data),
   generateExample: (data: GenerateExampleInput) =>
     getHttp().post<GenerateExampleResult>('/custom-proxies/generate-example/', data).then((r) => r.data),
   generateExampleById: (id: number, data?: GenerateExampleInput) =>
@@ -233,7 +303,7 @@ export const proxyTemplatesApi = {
   get: (id: number) => getHttp().get<ProxyTemplate>(`/proxy-templates/${id}/`).then((r) => r.data),
   create: (data: ProxyTemplate) => getHttp().post<ProxyTemplate>('/proxy-templates/', data).then((r) => r.data),
   update: (id: number, data: Partial<ProxyTemplate>) =>
-    getHttp().patch<ProxyTemplate>(`/proxy-templates/${id}/`).then((r) => r.data),
+    getHttp().patch<ProxyTemplate>(`/proxy-templates/${id}/`, data).then((r) => r.data),
   delete: (id: number) => getHttp().delete(`/proxy-templates/${id}/`),
   duplicate: (id: number) => getHttp().post<ProxyTemplate>(`/proxy-templates/${id}/duplicate/`).then((r) => r.data),
 }
@@ -257,7 +327,6 @@ export interface ProxyBaseConfig {
   name: string
   description?: string
   content?: string
-  template_slugs?: string[]
   is_builtin?: boolean
   enable?: boolean
   builtin_override?: boolean
@@ -298,6 +367,8 @@ export const proxyBaseConfigsApi = {
   meta: () => getHttp().get<ProxyBaseConfigMeta>('/proxy-base-configs/meta/').then((r) => r.data),
   validate: (data: Partial<ProxyBaseConfig>) =>
     getHttp().post<BaseConfigValidationResult>('/proxy-base-configs/validate/', data).then((r) => r.data),
+  preview: (data: BaseConfigPreviewInput) =>
+    getHttp().post<TemplatePreviewResult>('/proxy-base-configs/preview/', data).then((r) => r.data),
   exportBundle: (data: Partial<ProxyBaseConfig> & { exclude_builtin_templates?: boolean }) =>
     getHttp().post<ProxyBaseConfigBundle>('/proxy-base-configs/export/', data).then((r) => r.data),
   importBundle: (data: ProxyBaseConfigBundle) =>
