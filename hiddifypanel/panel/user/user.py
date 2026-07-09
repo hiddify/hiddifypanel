@@ -157,7 +157,7 @@ class UserView(FlaskView):
             return None
 
         ua = request.user_agent.string
-        if g.user_agent['is_singbox'] or re.match('^(HiddifyNext|Dart|SFI|SFA|InHive)', ua, re.IGNORECASE):
+        if g.user_agent['is_singbox'] or re.match('^(HiddifyNext|Dart|SFI|SFA)', ua, re.IGNORECASE):
             return self.full_singbox_imp()
 
         if re.match('^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)', ua, re.IGNORECASE):
@@ -172,7 +172,7 @@ class UserView(FlaskView):
             elif g.user_agent.get('is_streisand'):
                 return self.xray()
 
-        if re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|Streisand)', ua, re.IGNORECASE):
+        if re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|Streisand|InHive)', ua, re.IGNORECASE):
             return self.links_imp(base64=True)
 
     @route('/clash/<meta_or_normal>/proxies.yml')

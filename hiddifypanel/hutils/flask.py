@@ -79,7 +79,7 @@ def __parse_user_agent(ua: str) -> dict:
     res['os_version'] = uaa.os.version
     res['is_clash'] = re.match('^(Clash|Stash)', ua, re.IGNORECASE) and True
     res['is_clash_meta'] = re.match('^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)', ua, re.IGNORECASE) and True
-    res['is_singbox'] = re.match('^(HiddifyNext|Dart|SFI|SFA|InHive)', ua, re.IGNORECASE) and True
+    res['is_singbox'] = re.match('^(HiddifyNext|Dart|SFI|SFA)', ua, re.IGNORECASE) and True
     res['is_hiddify'] = re.match('^(HiddifyNext)', ua, re.IGNORECASE) and True
     res['is_hiddify_prefere_xray'] = re.match('^(HiddifyNextX)', ua, re.IGNORECASE) and True
     res['is_streisand'] = re.match('^(Streisand)', ua, re.IGNORECASE) and True
@@ -103,10 +103,10 @@ def __parse_user_agent(ua: str) -> dict:
             res['singbox_version'] = [1, 13, 0]
 
 
-    res['is_v2ray'] = re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE) and True
+    res['is_v2ray'] = re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|InHive)', ua, re.IGNORECASE) and True
 
     if res['os'] == 'Other':
-        if re.match('^(FoXray|Fair|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE):
+        if re.match('^(FoXray|Fair|Shadowrocket|V2Box|Loon|Liberty|InHive)', ua, re.IGNORECASE):
             res['os'] = 'iOS'
             # res['os_version']
 
