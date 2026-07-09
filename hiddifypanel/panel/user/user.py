@@ -172,7 +172,7 @@ class UserView(FlaskView):
             elif g.user_agent.get('is_streisand'):
                 return self.xray()
 
-        if re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|Streisand)', ua, re.IGNORECASE):
+        if re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|Streisand|InHive)', ua, re.IGNORECASE):
             return self.links_imp(base64=True)
 
     @route('/clash/<meta_or_normal>/proxies.yml')

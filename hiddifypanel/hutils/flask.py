@@ -103,10 +103,10 @@ def __parse_user_agent(ua: str) -> dict:
             res['singbox_version'] = [1, 13, 0]
 
 
-    res['is_v2ray'] = re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE) and True
+    res['is_v2ray'] = re.match('^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|InHive)', ua, re.IGNORECASE) and True
 
     if res['os'] == 'Other':
-        if re.match('^(FoXray|Fair|Shadowrocket|V2Box|Loon|Liberty)', ua, re.IGNORECASE):
+        if re.match('^(FoXray|Fair|Shadowrocket|V2Box|Loon|Liberty|InHive)', ua, re.IGNORECASE):
             res['os'] = 'iOS'
             # res['os_version']
 
