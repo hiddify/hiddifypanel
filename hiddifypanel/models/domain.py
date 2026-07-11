@@ -86,6 +86,10 @@ class Domain(db.Model):
         return res
 
     def to_dict(self, dump_ports=False, dump_child_id=False):
+        try:
+            extra=json.loads(self.extra_params or "{}")
+        except:
+            extra={}
         data = {
             'domain': self.domain.lower(),
             'mode': self.mode,
@@ -98,7 +102,7 @@ class Domain(db.Model):
             'download_domain':self.download_domain.domain if self.download_domain else "",
             'show_domains': [dd.domain for dd in self.show_domains],  # type: ignore
             "resolve_ip":self.resolve_ip,
-            "extra_params":json.loads(self.extra_params or "{}")
+            "extra_params":extra
         }
         if dump_child_id:
             data['child_id'] = self.child_id
