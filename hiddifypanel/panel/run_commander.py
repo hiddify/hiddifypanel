@@ -80,7 +80,7 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
     else:
         raise Exception('WTF is happening!')
     if run_in_background:
-        t = threading.Thread(target=cmd_in_back, daemon=True)
+        t = threading.Thread(target=cmd_in_back, args=(base_cmd,), daemon=True)
         t.start()
     else:
         return subprocess.check_output(base_cmd, cwd=str(os.environ['HIDDIFY_CONFIG_PATH'])).decode()
