@@ -40,7 +40,7 @@ import Select from 'primevue/select'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import { domainsApi, type DomainOption } from '@/core/api/generated'
 
-const ALL_MODES = ['direct', 'cdn', 'relay', 'fake', 'special'] as const
+const ALL_MODES = ['direct', 'cdn', 'relay', 'fake', 'reality'] as const
 
 const props = defineProps<{
   visible: boolean

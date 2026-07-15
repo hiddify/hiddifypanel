@@ -1,4 +1,4 @@
-{% skip("httpupgrade_enable = " ~ hconfig.httpupgrade_enable) if not hconfig.httpupgrade_enable %}
+{{ skip("httpupgrade_enable = " ~ ctx.hconfig.httpupgrade_enable) if not ctx.hconfig.httpupgrade_enable }}
 "network": "tcp",
 "transport": {
   "type": "httpupgrade",

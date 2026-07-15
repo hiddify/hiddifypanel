@@ -69,7 +69,7 @@ class ProxyTemplatesApi(MethodView):
 
     @app.output(list[ProxyTemplateOut])  # type: ignore
     def get(self):
-        from hiddifypanel.proxy_v3.builtin_proxy_sync import sync_templates
+        from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_templates
 
         sync_templates(_child_id())
         from flask import request

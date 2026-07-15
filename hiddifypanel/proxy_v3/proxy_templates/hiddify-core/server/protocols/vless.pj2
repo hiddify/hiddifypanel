@@ -1,7 +1,10 @@
-{% skip("vless_enable = " ~ hconfig.vless_enable) if not hconfig.vless_enable %}
 "type": "vless",
 "users": [
-  {% for user in users %}
-  {"name": "{{ user.uuid }}",    "uuid": "{{ user.uuid }}",    "flow": "{{ hconfig.vless_flow }}"},
+  {% for user in ctx.users %}
+  {
+    "name": "{{ user.uuid }}",
+    "uuid": "{{ user.uuid }}",
+    "flow": "{{ ctx.hconfig.vless_flow }}"
+  },
   {% endfor %}
 ]

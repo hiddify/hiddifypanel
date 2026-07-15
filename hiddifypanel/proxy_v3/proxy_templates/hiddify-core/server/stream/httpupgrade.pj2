@@ -1,5 +1,4 @@
-{% skip("httpupgrade_enable = " ~ hconfig.httpupgrade_enable) if not hconfig.httpupgrade_enable %}
 "transport": {
     "type": "httpupgrade",
-    "path": "/{{ proxy.path }}"
+    "path": "/{{ ctx.proxy.path }}"
 },

@@ -1,15 +1,15 @@
 {% set _alpn = proxy.alpn|default('') %}
-{% skip('h2_enable is false') if _alpn in ['tls_h2', 'tls_h1_h2', 'tls_h1_h2_h3', 'h2'] and not hconfig.h2_enable %}
-{% skip('quic_enable is false') if _alpn in ['tls_h3', 'tls_h1_h2_h3'] and not hconfig.quic_enable %}
+{{ skip('h2_enable is false') if _alpn in ['tls_h2', 'tls_h1_h2', 'tls_h1_h2_h3', 'h2'] and not ctx.hconfig.h2_enable }}
+{{ skip('quic_enable is false') if _alpn in ['tls_h3', 'tls_h1_h2_h3'] and not ctx.hconfig.quic_enable }}
 {% if proxy.tls %}
 {% set data.tls = 'tls' %}
-{% set data.sni = domain.sni %}
+{% set data.sni = ctx.domain.sni %}
 {% if proxy.fingerprint and proxy.fingerprint != 'none' %}
 {% set data.fp = proxy.fingerprint %}
 {% endif %}
-{% if domain.ech %}
-{% set data.ech = domain.ech %}
+{% if ctx.domain.ech %}
+{% set data.ech = ctx.domain.ech %}
 {% endif %}
 {% else %}
-{% skip('http_proxy_enable is false') if not hconfig.http_proxy_enable %}
+{{ skip('http_proxy_enable is false') if not ctx.hconfig.http_proxy_enable }}
 {% endif %}

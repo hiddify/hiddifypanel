@@ -2,6 +2,20 @@
 # Core routing backends (nginx, panel, stats, xray force)
 # =====================
 
+backend panel
+  mode http
+  option forwardfor header X-Forwarded-For
+  http-request set-header X-Real-IP %[src]
+  http-request set-header X-Forwarded-Proto https
+  http-response set-header X-Robots-Tag "noindex, nofollow"
+  server s 127.0.0.1:9000 
+
+backend default_decoy
+  mode http
+  server s {{ctx.hconfig.decoy_domain}}:80
+
+
+
 backend to_https_in_http_mode
     server s abns@https_in_http_mode send-proxy-v2
 
@@ -40,11 +54,11 @@ backend hiddifypanel
 
 backend proxy_stats_ui_backend
     mode http
-    http-request set-path %[path,regsub(^/{{ hconfigs['proxy_path_admin'] }}/proxy-stats/,/ui/)]
+    http-request set-path %[path,regsub(^/{{ ctx.hconfig.proxy_path_admin }}/proxy-stats/,/ui/)]
     server proxy_stats_ui 127.0.0.1:16756
 
 backend proxy_stats_api_backend
     mode http
-    http-request set-path %[path,regsub(^/{{ hconfigs['proxy_path_admin'] }}/proxy-stats/api/,/)]
+    http-request set-path %[path,regsub(^/{{ ctx.hconfig.proxy_path_admin }}/proxy-stats/api/,/)]
     server proxy_stats_api 127.0.0.1:16756
 

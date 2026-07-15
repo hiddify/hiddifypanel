@@ -7,6 +7,21 @@ from flask import g
 from flask.views import MethodView
 
 from hiddifypanel.auth import login_required
+from hiddifypanel.models.custom_proxy import (
+    TEMPLATE_CATEGORIES_ACTIVE,
+    ClientCore,
+    CustomProxy,
+    CustomProxyMode,
+    InboundTcpUdp,
+    CustomProxyTransport,
+    ServerCore,
+    TlsLayer,
+    normalize_custom_path,
+    validate_tls_layer_domain_modes,
+    _parse_tls_layer,
+)
+from hiddifypanel.models.proxy import ProxyProto
+from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3.custom_proxy_validate import (
     EXAMPLE_USER_AGENTS,
     generate_enabled_proxies_bundle,
@@ -14,16 +29,6 @@ from hiddifypanel.proxy_v3.custom_proxy_validate import (
     preview_proxy_template_fragment,
     validate_proxy_payload,
 )
-from hiddifypanel.models.custom_proxy import (
-    TEMPLATE_CATEGORIES_ACTIVE,
-    ClientCore,
-    CustomProxy,
-    CustomProxyMode,
-    ServerCore,
-    normalize_custom_path,
-)
-from hiddifypanel.models.proxy import ProxyProto
-from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3.template_catalog.template_defaults import (
     default_server_inbound_template,
     default_sublink_link_template,
@@ -76,28 +81,25 @@ def _proxy_mode_value(data: dict) -> str | None:
     return mode
 
 
-def _sync_server_alpn(data: dict) -> dict:
+def _prepare_server_config(data: dict) -> dict:
     data = dict(data)
     server_config = dict(data.get("server_config") or {})
-    allowed = [p.strip() for p in (data.get("alpns") or []) if p and str(p).strip()]
-    data["alpns"] = allowed
-    server_config["tag"] = allowed[0] if allowed else (server_config.get("tag") or "")
-    server_config.pop("tags", None)
+    server_config.pop("categories", None)
     data["server_config"] = server_config
-    tags = [t.strip() for t in (data.get("tags") or []) if t and str(t).strip()]
-    data["tags"] = tags
+    categories = [t.strip() for t in (data.get("categories") or []) if t and str(t).strip()]
+    data["categories"] = categories
     return data
 
 
-def _collect_suggested_tags(child_id: int) -> list[str]:
+def _collect_suggested_categories(child_id: int) -> list[str]:
     seen: set[str] = set()
     ordered: list[str] = []
     for proxy in CustomProxy.query.filter(CustomProxy.child_id == child_id).all():
-        for raw in proxy.tags or []:
-            tag = (raw or "").strip()
-            if tag and tag not in seen:
-                seen.add(tag)
-                ordered.append(tag)
+        for raw in proxy.categories or []:
+            category = (raw or "").strip()
+            if category and category not in seen:
+                seen.add(category)
+                ordered.append(category)
     return ordered
 
 
@@ -106,6 +108,7 @@ def _default_server_config() -> dict:
         "core": ServerCore.xray.value,
         "inbound_tcp_ports": [],
         "inbound_udp_ports": [],
+        "tcp_udp": "both",
         "tag": "",
         "direct_port_access": False,
         "inbound_template": default_server_inbound_template(),
@@ -129,7 +132,7 @@ def _prepare_create_data(data: dict) -> dict:
     data = dict(data)
     if not data.get("server_config"):
         data["server_config"] = _default_server_config()
-    data = _sync_server_alpn(data)
+    data = _prepare_server_config(data)
     if not data.get("client_config"):
         data["client_config"] = _default_client_config()
     mode = _proxy_mode_value(data)
@@ -138,22 +141,21 @@ def _prepare_create_data(data: dict) -> dict:
         if not path or path == "/random_auto":
             data["custom_path"] = _generate_custom_path()
     if mode == CustomProxyMode.domains_sni_gateway.value:
-        data["domain_modes"] = ["special"]
+        if not data.get("domain_modes"):
+            data["domain_modes"] = ["direct", "relay"]
         data["custom_path"] = ""
     if mode == CustomProxyMode.domains_auto_public_ports.value:
-        data["alpns"] = ["custom"]
         data["custom_path"] = ""
         if not data.get("domain_modes"):
-            data["domain_modes"] = ["special"]
+            data["domain_modes"] = ["direct", "relay"]
         server = dict(data.get("server_config") or {})
         server["inbound_tcp_ports"] = []
         server["inbound_udp_ports"] = []
         data["server_config"] = server
     if mode == CustomProxyMode.domains_single_public_port.value:
-        data["alpns"] = ["custom"]
         data["custom_path"] = ""
         if not data.get("domain_modes"):
-            data["domain_modes"] = ["special"]
+            data["domain_modes"] = ["direct", "relay"]
     if mode in (
         CustomProxyMode.domains_l7_gateway.value,
         CustomProxyMode.domains_sni_gateway.value,
@@ -377,22 +379,22 @@ class CustomProxyMetaApi(MethodView):
 
     @app.output(CustomProxyMetaSchema)  # type: ignore
     def get(self):
-        from hiddifypanel.proxy_v3.builtin_proxy_sync import sync_all
-
-        sync_all(_child_id(), refresh_base_configs=True)
         from hiddifypanel.proxy_v3.template_catalog.template_defaults import default_sublink_link_template
+
         return {
             "modes": [p.value for p in CustomProxyMode],
             "protos": [p.value for p in ProxyProto],
-            "alpns": ["h1", "tls_h1", "tls_h2", "tls_h1_h2", "tls_h3", "tls_h1_h2_h3"],
-            "l7_protos": ["h1", "h2", "h3"],
-            "domain_modes": ["direct", "cdn", "relay", "fake", "special"],
-            "server_cores": ["hiddify-core", "xray", "haproxy", "nginx"],
+            "transports": [t.value for t in CustomProxyTransport],
+            "tls_layers": [layer.value for layer in TlsLayer],
+            "l7_reverse_protos": ["h1", "h2", "h3"],
+            "domain_modes": ["direct", "cdn", "relay", "fake", "reality"],
+            "server_cores": ["hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4"],
             "client_cores": ["sublink", "xray", "singbox", "hiddify-core", "clash"],
             "template_categories": [c.value for c in TEMPLATE_CATEGORIES_ACTIVE],
-            "suggested_tags": _collect_suggested_tags(_child_id()),
+            "suggested_categories": _collect_suggested_categories(_child_id()),
             "default_sublink_link": default_sublink_link_template(),
             "example_user_agents": EXAMPLE_USER_AGENTS,
+            "tcp_udp_options": [p.value for p in InboundTcpUdp],
         }
 
 

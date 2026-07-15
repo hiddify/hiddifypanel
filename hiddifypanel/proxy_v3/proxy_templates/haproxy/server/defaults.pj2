@@ -9,9 +9,4 @@ defaults
     default-server init-addr none
     default-server inter 15s fastinter 2s downinter 5s rise 3 fall 3
     mode tcp
-    # Custom error pages hide server identity from active probers
-    errorfile 400 /opt/hiddify-manager/haproxy/errors/400.http
-    errorfile 403 /opt/hiddify-manager/haproxy/errors/403.http
-    errorfile 500 /opt/hiddify-manager/haproxy/errors/500.http
-    errorfile 502 /opt/hiddify-manager/haproxy/errors/502.http
-    errorfile 503 /opt/hiddify-manager/haproxy/errors/503.http
+    

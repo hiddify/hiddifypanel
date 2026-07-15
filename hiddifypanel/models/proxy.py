@@ -38,7 +38,8 @@ class ProxyProto(StrEnum):
     vless = auto()
     trojan = auto()
     vmess = auto()
-    ss = auto()
+    shadowsocks = auto()
+    socks = auto()
     v2ray = auto()
     ssr = auto()
     ssh = auto()
@@ -50,6 +51,7 @@ class ProxyProto(StrEnum):
     mieru = auto()
     anytls = auto()
     dnstt = auto()
+    snell = auto()
 
 
 class ProxyL3(StrEnum):

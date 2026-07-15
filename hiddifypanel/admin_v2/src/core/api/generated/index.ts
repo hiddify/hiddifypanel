@@ -7,11 +7,15 @@ export type CustomProxyMode =
   | 'domains_single_public_port'
   | 'ip'
 
+export type InboundTcpUdp = 'tcp' | 'udp' | 'both'
+
 export interface ServerConfig {
   core?: string
   inbound_tcp_ports?: number[]
   inbound_udp_ports?: number[]
   inbound_port?: number | null
+  tcp_udp?: InboundTcpUdp
+  download_tcp_udp?: InboundTcpUdp | null
   tag?: string
   direct_port_access?: boolean
   template_slugs?: string[]
@@ -45,7 +49,8 @@ export type ProxyProto =
   | 'vless'
   | 'trojan'
   | 'vmess'
-  | 'ss'
+  | 'shadowsocks'
+  | 'socks'
   | 'v2ray'
   | 'ssr'
   | 'ssh'
@@ -57,6 +62,11 @@ export type ProxyProto =
   | 'mieru'
   | 'anytls'
   | 'dnstt'
+  | 'snell'
+
+export type ProxyTransport = 'tcp' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | 'other'
+
+export type TlsLayer = 'http' | 'tls'
 
 export interface CustomProxy {
   id?: number
@@ -65,10 +75,12 @@ export interface CustomProxy {
   enable?: boolean
   mode: CustomProxyMode
   proto?: ProxyProto
-  l7_proto?: L7Proto | null
-  alpns?: string[]
-  download_alpns?: string[]
-  tags?: string[]
+  transport?: ProxyTransport
+  tls_layer?: TlsLayer | null
+  l7_reverse_proto?: L7Proto | null
+  download_tls_layer?: TlsLayer | null
+  download_domain_modes?: string[]
+  categories?: string[]
   domain_modes?: string[]
   custom_path?: string
   domain_ids?: number[]
@@ -236,15 +248,17 @@ export interface PanelUserOption {
 export interface CustomProxyMeta {
   modes: string[]
   protos: string[]
-  alpns: string[]
-  l7_protos: string[]
+  transports: string[]
+  tls_layers: string[]
+  l7_reverse_protos: string[]
   domain_modes: string[]
   server_cores: string[]
   client_cores: string[]
   template_categories: string[]
-  suggested_tags?: string[]
+  suggested_categories?: string[]
   default_sublink_link?: string
   example_user_agents?: Array<{ id: string; label: string; value: string }>
+  tcp_udp_options?: InboundTcpUdp[]
 }
 
 export const customProxiesApi = {

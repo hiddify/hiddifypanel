@@ -1,21 +1,10 @@
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import { panelNotices, type PanelNotice } from '@/core/panelShell'
 
-export type PanelNoticeSeverity = 'success' | 'info' | 'warn' | 'error'
+export type PanelNoticeSeverity = PanelNotice['severity']
 
-export interface PanelNotice {
-  severity: PanelNoticeSeverity
-  summary: string
-  detail?: string
-  toast?: boolean
-  id?: string
-}
-
-declare global {
-  interface Window {
-    __ADMIN_NOTICES__?: PanelNotice[]
-  }
-}
+export type { PanelNotice }
 
 function noticeKey(notice: PanelNotice, index: number): string {
   return notice.id ?? `${notice.severity}:${notice.summary.slice(0, 48)}:${index}`
@@ -23,12 +12,9 @@ function noticeKey(notice: PanelNotice, index: number): string {
 
 export function usePanelNotifications() {
   const toast = useToast()
-  const notices = ref<PanelNotice[]>([])
+  const notices = panelNotices
   const dismissed = ref<Set<string>>(new Set())
-
-  function loadNotices() {
-    notices.value = [...(window.__ADMIN_NOTICES__ ?? [])]
-  }
+  const toasted = ref<Set<string>>(new Set())
 
   function dismiss(notice: PanelNotice, index: number) {
     dismissed.value = new Set(dismissed.value).add(noticeKey(notice, index))
@@ -38,9 +24,12 @@ export function usePanelNotifications() {
     notices.value.filter((n, i) => !dismissed.value.has(noticeKey(n, i))),
   )
 
-  function showToasts() {
-    for (const notice of notices.value) {
+  function showToasts(items: PanelNotice[] = notices.value) {
+    for (const [index, notice] of items.entries()) {
       if (!notice.toast) continue
+      const key = noticeKey(notice, index)
+      if (toasted.value.has(key)) continue
+      toasted.value = new Set(toasted.value).add(key)
       toast.add({
         severity: notice.severity,
         summary: notice.summary.replace(/<[^>]+>/g, ''),
@@ -51,9 +40,12 @@ export function usePanelNotifications() {
   }
 
   onMounted(() => {
-    loadNotices()
     showToasts()
   })
 
-  return { notices, visibleNotices, dismiss, showToasts, loadNotices }
+  watch(notices, (items) => {
+    showToasts(items)
+  })
+
+  return { notices, visibleNotices, dismiss, showToasts }
 }

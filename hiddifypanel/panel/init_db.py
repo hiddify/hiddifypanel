@@ -1,24 +1,31 @@
-import datetime
 import json
 import os
 import random
 import sys
 import uuid
 
+from loguru import logger
 
 from hiddifypanel import Events, hutils
 from hiddifypanel.cache import cache
-from hiddifypanel.models import *
-
 from hiddifypanel.database import db, db_execute, db_execute_ddl
+from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
+from hiddifypanel.models import *
+from hiddifypanel.models import *
+from hiddifypanel.models.proxy_base_config import ProxyBaseConfig
+from hiddifypanel.models.server_ip import ServerIp
+from hiddifypanel.models.tls_store import TlsStore
+from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_catalog
+from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
+    seed_custom_proxy_presets,
+)
+from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-
-from loguru import logger
-
-MAX_DB_VERSION = 130
+MAX_DB_VERSION = 132
 
 
 def _drop_wip_proxy_tables() -> None:
+
     for table in (
         "custom_proxy_client_core",
         "custom_proxy",
@@ -31,37 +38,14 @@ def _drop_wip_proxy_tables() -> None:
             db_execute(f"DROP TABLE IF EXISTS `{table}`", commit=True)
         except BaseException as exc:
             logger.warning("drop {}: {}", table, exc)
+    db.create_all()
 
     set_hconfig(ConfigEnum.db_version, 129)
 
 
 def _v130(child_id):
     """Fresh proxy catalog, TLS store, and server IPs (WIP — no incremental migrations)."""
-    from hiddifypanel.models import ConfigEnum
-    from hiddifypanel.models.custom_proxy import (
-        CustomProxy,
-        CustomProxyClientCore,
-        ProxyTemplate,
-    )
-    from hiddifypanel.models.proxy_base_config import ProxyBaseConfig
-    from hiddifypanel.models.tls_store import TlsStore
-    from hiddifypanel.models.server_ip import ServerIp
-    from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
-        seed_custom_proxy_presets,
-    )
-    from hiddifypanel.proxy_v3.builtin_proxy_sync import seed_proxy_catalog
-    from hiddifypanel.hutils.ssl.tls_store_sync import sync_tls_store_all
-    from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
 
-    for model in (
-        ProxyTemplate,
-        ProxyBaseConfig,
-        CustomProxy,
-        CustomProxyClientCore,
-        TlsStore,
-        ServerIp,
-    ):
-        model.__table__.create(db.engine, checkfirst=True)
     add_config_if_not_exist(ConfigEnum.anytls_enable, True)
     add_config_if_not_exist(ConfigEnum.dnstt_enable, True)
     add_config_if_not_exist(ConfigEnum.path_vless, hutils.random.get_random_string(7, 15))
@@ -87,7 +71,11 @@ def _v130(child_id):
     add_config_if_not_exist(ConfigEnum.hysteria_up_mbps, "150")
     add_config_if_not_exist(ConfigEnum.hysteria_down_mbps, "300")
     add_config_if_not_exist(ConfigEnum.ssh_server_enable, True)
+    add_config_if_not_exist(ConfigEnum.ssh_use_tls_port, False)
+    add_config_if_not_exist(ConfigEnum.wireguard_use_quic_port, False)
     add_config_if_not_exist(ConfigEnum.mieru_enable, True)
+    add_config_if_not_exist(ConfigEnum.snell_enable, True)
+    add_config_if_not_exist(ConfigEnum.socks_enable, True)
     if not hconfig(ConfigEnum.mieru_tcp_ports):
         _p = hutils.random.get_random_unused_port() or 30000
         add_config_if_not_exist(ConfigEnum.mieru_tcp_ports, ",".join(str(_p + i) for i in range(4)))
@@ -270,8 +258,6 @@ def _v106(child_id):
         set_hconfig(ConfigEnum.special_port, rport)
     StrConfig.query.filter(StrConfig.key == ConfigEnum.reality_port).delete()
     set_hconfig(ConfigEnum.default_useragent_string, hutils.network.get_random_user_agent())
-    for d in Domain.query.filter(Domain.mode == DomainType.reality, Domain.child_id == child_id).all():
-        d.mode = DomainType.special_reality_tcp
     set_hconfig(ConfigEnum.h2_enable, False)
     db.session.bulk_save_objects(get_proxy_rows_v1())
 
@@ -348,14 +334,7 @@ def _v96(child_id):
     from sqlalchemy import func
 
     result = (
-        db.session.query(
-            DailyUsage.child_id,
-            DailyUsage.admin_id,
-            DailyUsage.date,
-            func.max(DailyUsage.online).label("online"),
-            func.sum(DailyUsage.usage).label("usage"),
-            func.count(DailyUsage.usage).label("count"),
-        )
+        db.session.query(DailyUsage.child_id, DailyUsage.admin_id, DailyUsage.date, func.max(DailyUsage.online).label("online"), func.sum(DailyUsage.usage).label("usage"), func.count(DailyUsage.usage).label("count"))
         .group_by(DailyUsage.child_id, DailyUsage.admin_id, DailyUsage.date)
         .all()
     )
@@ -580,26 +559,8 @@ def _v55():
     set_hconfig(ConfigEnum.tuic_enable, True)
     set_hconfig(ConfigEnum.hysteria_enable, True)
     Proxy.query.filter(Proxy.proto.in_(["tuic", "hysteria2", "hysteria"])).delete()
-    db.session.add(
-        Proxy(
-            l3="tls",
-            transport="custom",
-            cdn="direct",
-            proto="tuic",
-            enable=True,
-            name="TUIC",
-        )
-    )
-    db.session.add(
-        Proxy(
-            l3="tls",
-            transport="custom",
-            cdn="direct",
-            proto="hysteria2",
-            enable=True,
-            name="Hysteria2",
-        )
-    )
+    db.session.add(Proxy(l3="tls", transport="custom", cdn="direct", proto="tuic", enable=True, name="TUIC"))
+    db.session.add(Proxy(l3="tls", transport="custom", cdn="direct", proto="hysteria2", enable=True, name="Hysteria2"))
 
 
 def _v52():
@@ -675,7 +636,8 @@ def _v41():
             Domain(
                 domain=hconfig(ConfigEnum.reality_fallback_domain),
                 servernames=hconfig(ConfigEnum.reality_server_names),
-                mode=DomainType.reality,
+                mode=DomainType.direct,
+                fake_mode=FakeMode.reality,
             )
         )
 
@@ -814,10 +776,7 @@ def _v1():
         BoolConfig(key=ConfigEnum.allow_invalid_sni, value=True),
         BoolConfig(key=ConfigEnum.kcp_enable, value=False),
         StrConfig(key=ConfigEnum.kcp_ports, value="88"),
-        BoolConfig(
-            key=ConfigEnum.auto_update,
-            value=os.environ.get("HIDDIFY_DISABLE_UPDATE", "").lower() not in {"1", "true"},
-        ),
+        BoolConfig(key=ConfigEnum.auto_update, value=os.environ.get("HIDDIFY_DISABLE_UPDATE", "").lower() not in {"1", "true"}),
         BoolConfig(key=ConfigEnum.speed_test, value=True),
         BoolConfig(key=ConfigEnum.only_ipv4, value=False),
         BoolConfig(key=ConfigEnum.vmess_enable, value=True),
@@ -944,128 +903,20 @@ def get_proxy_rows_v1():
             ]
         )
     )
-    rows.append(
-        Proxy(
-            l3=ProxyL3.custom,
-            transport=ProxyTransport.shadowsocks,
-            cdn="direct",
-            proto="ss",
-            enable=True,
-            name="ShadowSocks2022",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3=ProxyL3.custom,
-            transport=ProxyTransport.shadowsocks,
-            cdn="relay",
-            proto="ss",
-            enable=True,
-            name="ShadowSocks2022 Relay",
-        )
-    )
+    rows.append(Proxy(l3=ProxyL3.custom, transport=ProxyTransport.shadowsocks, cdn="direct", proto="shadowsocks", enable=True, name="ShadowSocks2022"))
+    rows.append(Proxy(l3=ProxyL3.custom, transport=ProxyTransport.shadowsocks, cdn="relay", proto="shadowsocks", enable=True, name="ShadowSocks2022 Relay"))
 
-    rows.append(
-        Proxy(
-            l3=ProxyL3.tls,
-            transport=ProxyTransport.shadowtls,
-            cdn="direct",
-            proto="ss",
-            enable=True,
-            name="ShadowTLS",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3=ProxyL3.tls,
-            transport=ProxyTransport.shadowtls,
-            cdn="relay",
-            proto="ss",
-            enable=True,
-            name="ShadowTLS Relay",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3="ssh",
-            transport="ssh",
-            cdn="direct",
-            proto="ssh",
-            enable=True,
-            name="SSH",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3="ssh",
-            transport=ProxyTransport.ssh,
-            cdn=ProxyCDN.relay,
-            proto=ProxyProto.ssh,
-            enable=True,
-            name="SSH Relay",
-        )
-    )
+    rows.append(Proxy(l3=ProxyL3.tls, transport=ProxyTransport.shadowtls, cdn="direct", proto="shadowsocks", enable=True, name="ShadowTLS"))
+    rows.append(Proxy(l3=ProxyL3.tls, transport=ProxyTransport.shadowtls, cdn="relay", proto="shadowsocks", enable=True, name="ShadowTLS Relay"))
+    rows.append(Proxy(l3="ssh", transport="ssh", cdn="direct", proto="ssh", enable=True, name="SSH"))
+    rows.append(Proxy(l3="ssh", transport=ProxyTransport.ssh, cdn=ProxyCDN.relay, proto=ProxyProto.ssh, enable=True, name="SSH Relay"))
 
-    rows.append(
-        Proxy(
-            l3="tls",
-            transport="custom",
-            cdn="direct",
-            proto="tuic",
-            enable=True,
-            name="TUIC",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3="tls",
-            transport="custom",
-            cdn="relay",
-            proto="tuic",
-            enable=True,
-            name="TUIC Relay",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3="tls",
-            transport="custom",
-            cdn="direct",
-            proto="hysteria2",
-            enable=True,
-            name="Hysteria2",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3="tls",
-            transport="custom",
-            cdn="relay",
-            proto="hysteria2",
-            enable=True,
-            name="Hysteria2 Relay",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3=ProxyL3.udp,
-            transport=ProxyTransport.custom,
-            cdn=ProxyCDN.direct,
-            proto=ProxyProto.wireguard,
-            enable=True,
-            name="WireGuard",
-        )
-    )
-    rows.append(
-        Proxy(
-            l3=ProxyL3.udp,
-            transport=ProxyTransport.custom,
-            cdn=ProxyCDN.relay,
-            proto=ProxyProto.wireguard,
-            enable=True,
-            name="WireGuard Relay",
-        )
-    )
+    rows.append(Proxy(l3="tls", transport="custom", cdn="direct", proto="tuic", enable=True, name="TUIC"))
+    rows.append(Proxy(l3="tls", transport="custom", cdn="relay", proto="tuic", enable=True, name="TUIC Relay"))
+    rows.append(Proxy(l3="tls", transport="custom", cdn="direct", proto="hysteria2", enable=True, name="Hysteria2"))
+    rows.append(Proxy(l3="tls", transport="custom", cdn="relay", proto="hysteria2", enable=True, name="Hysteria2 Relay"))
+    rows.append(Proxy(l3=ProxyL3.udp, transport=ProxyTransport.custom, cdn=ProxyCDN.direct, proto=ProxyProto.wireguard, enable=True, name="WireGuard"))
+    rows.append(Proxy(l3=ProxyL3.udp, transport=ProxyTransport.custom, cdn=ProxyCDN.relay, proto=ProxyProto.wireguard, enable=True, name="WireGuard Relay"))
     for p in rows:
         is_exist = (
             Proxy.query.filter(Proxy.name == p.name).first()
@@ -1084,15 +935,7 @@ def make_proxy_rows(cfgs):
     from hiddifypanel.proxy_v3.template_catalog.proxy_matrix import iter_proxy_combinations
 
     for combo in iter_proxy_combinations(cfgs):
-        yield Proxy(
-            l3=combo.l3,
-            transport=combo.transport,
-            cdn=combo.cdn,
-            proto=combo.proto,
-            enable=combo.enable,
-            name=combo.name,
-            params=combo.params,
-        )
+        yield Proxy(l3=combo.l3, transport=combo.transport, cdn=combo.cdn, proto=combo.proto, enable=combo.enable, name=combo.name, params=combo.params)
 
 
 def add_config_if_not_exist(key: "ConfigEnum", val: str | int, child_id: int | None = None):
@@ -1108,10 +951,7 @@ def add_column(column):
     try:
         column_type = column.type.compile(db.engine.dialect)
 
-        db_execute(
-            f"ALTER TABLE {column.table.name} ADD COLUMN {column.name} {column_type}",
-            commit=True,
-        )
+        db_execute(f"ALTER TABLE {column.table.name} ADD COLUMN {column.name} {column_type}", commit=True)
     except BaseException:
         pass
 
@@ -1120,10 +960,7 @@ def alter_column(column):
     try:
         column_type = column.type.compile(db.engine.dialect)
 
-        db_execute(
-            f"ALTER TABLE {column.table.name} MODIFY COLUMN {column.name} {column_type}",
-            commit=True,
-        )
+        db_execute(f"ALTER TABLE {column.table.name} MODIFY COLUMN {column.name} {column_type}", commit=True)
     except BaseException:
         pass
 
@@ -1173,6 +1010,7 @@ def add_new_enum_values():
         Proxy.transport,
         User.mode,
         Domain.mode,
+        Domain.fake_mode,
         BoolConfig.key,
         StrConfig.key,
         ProxyTemplate.category,
@@ -1238,11 +1076,8 @@ def upgrade_database():
         return
     if os.path.isfile(sqlite_db):
         logger.info("Finding Old Version Database... importing configs from latest backup")
-        newest_file = max(
-            [(f, os.path.getmtime(os.path.join(backup_root, f))) for f in os.listdir(backup_root) if os.path.isfile(os.path.join(backup_root, f))],
-            key=lambda x: x[1],
-        )[0]
-        with open(f"{backup_root}{newest_file}", "r") as f:
+        newest_file = max([(f, os.path.getmtime(os.path.join(backup_root, f))) for f in os.listdir(backup_root) if os.path.isfile(os.path.join(backup_root, f))], key=lambda x: x[1])[0]
+        with open(f"{backup_root}{newest_file}") as f:
             logger.info(f"importing configs from {newest_file}")
             json_data = json.load(f)
             from hiddifypanel.panel import hiddify
@@ -1269,14 +1104,30 @@ def upgrade_database():
 
 def init_db():
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
-    _drop_wip_proxy_tables()
+    # _drop_wip_proxy_tables()
     db_version = current_db_version()
     if db_version == latest_db_version():
-        # Backfill new settings for already-upgraded installations.
-        db.create_all()
-        db.session.commit()
         return
+    if db_version < 130:
+        from hiddifypanel.models.domain import FakeMode
 
+        execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
+        execute(
+            """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
+            'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'
+            )"""
+        )
+        execute("UPDATE domain SET fake_mode='valid' WHERE fake_mode IS NULL OR fake_mode=''")
+
+        Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker, DomainType.sub_link_only])).update(  # noqa: E712
+            {"fake_mode": FakeMode.valid},
+            synchronize_session=False,
+        )
+        db.session.commit()
+
+    add_new_enum_values()
+    execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
+    db.session.commit()
     db.create_all()
 
     # temporary fix
@@ -1341,6 +1192,8 @@ def migrate(db_version):
         for column in table_obj.columns:
             add_column(column)
     Events.db_prehook.notify()
+    # execute("UPDATE custom_proxy SET proto='shadowsocks' WHERE proto='ss'")
+    # execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
     if db_version < 100:
         execute('update str_config set `key`="xhttp_enable" where `key`="splithttp_enable";')
         execute('update str_config set `key`="path_xhttp" where `key`="path_splithttp";')
@@ -1382,12 +1235,12 @@ def migrate(db_version):
         # add_column(Domain.extra_params)
 
     if db_version < 52:
-        execute(f'update domain set mode="sub_link_only", sub_link_only=false where sub_link_only = true or mode=1  or mode="1"')
-        execute(f'update domain set mode="direct", sub_link_only=false where mode=0  or mode="0"')
-        execute(f'update proxy set transport="WS" where transport = "ws"')
-        execute(f'update admin_user set mode="agent" where mode = "slave"')
-        execute(f'update admin_user set mode="super_admin" where id=1')
-        execute(f'DELETE from proxy where transport = "h1"')
+        execute('update domain set mode="sub_link_only", sub_link_only=false where sub_link_only = true or mode=1  or mode="1"')
+        execute('update domain set mode="direct", sub_link_only=false where mode=0  or mode="0"')
+        execute('update proxy set transport="WS" where transport = "ws"')
+        execute('update admin_user set mode="agent" where mode = "slave"')
+        execute('update admin_user set mode="super_admin" where id=1')
+        execute('DELETE from proxy where transport = "h1"')
         # add_column(Domain.grpc)
         # add_column(ParentDomain.alias)
         # add_column(User.ed25519_private_key)
@@ -1417,28 +1270,28 @@ def migrate(db_version):
         # add_column(User.lang)
 
         if len(Domain.query.all()) != 0 and BoolConfig.query.count() == 0:
-            execute(f"DROP TABLE bool_config")
-            execute(f"ALTER TABLE bool_config_old RENAME TO bool_config")
+            execute("DROP TABLE bool_config")
+            execute("ALTER TABLE bool_config_old RENAME TO bool_config")
         if len(Domain.query.all()) != 0 and StrConfig.query.count() == 0:
-            execute(f"DROP TABLE str_config")
-            execute(f"ALTER TABLE str_config_old RENAME TO str_config")
+            execute("DROP TABLE str_config")
+            execute("ALTER TABLE str_config_old RENAME TO str_config")
 
         execute("ALTER TABLE user RENAME COLUMN monthly_usage_limit_GB TO usage_limit_GB")
-        execute(f"update admin_user set parent_admin_id=1 where parent_admin_id is NULL and 1!=id")
-        execute(f"update admin_user set max_users=100,max_active_users=100 where max_users is NULL")
-        execute(f"update dailyusage set child_id=0 where child_id is NULL")
-        execute(f"update dailyusage set admin_id=1 where admin_id is NULL")
-        execute(f"update dailyusage set admin_id=1 where admin_id = 0")
-        execute(f"update user set added_by=1 where added_by = 1")
-        execute(f'update user set enable=True, mode="no_reset" where enable is NULL')
-        execute(f'update user set enable=False, mode="no_reset" where mode = "disable"')
-        execute(f"update user set added_by=1 where added_by is NULL")
-        execute(f"update user set max_ips=10000 where max_ips is NULL")
-        execute(f"update str_config set child_id=0 where child_id is NULL")
-        execute(f"update bool_config set child_id=0 where child_id is NULL")
-        execute(f"update domain set child_id=0 where child_id is NULL")
-        execute(f"update domain set sub_link_only=False where sub_link_only is NULL")
-        execute(f"update proxy set child_id=0 where child_id is NULL")
+        execute("update admin_user set parent_admin_id=1 where parent_admin_id is NULL and 1!=id")
+        execute("update admin_user set max_users=100,max_active_users=100 where max_users is NULL")
+        execute("update dailyusage set child_id=0 where child_id is NULL")
+        execute("update dailyusage set admin_id=1 where admin_id is NULL")
+        execute("update dailyusage set admin_id=1 where admin_id = 0")
+        execute("update user set added_by=1 where added_by = 1")
+        execute('update user set enable=True, mode="no_reset" where enable is NULL')
+        execute('update user set enable=False, mode="no_reset" where mode = "disable"')
+        execute("update user set added_by=1 where added_by is NULL")
+        execute("update user set max_ips=10000 where max_ips is NULL")
+        execute("update str_config set child_id=0 where child_id is NULL")
+        execute("update bool_config set child_id=0 where child_id is NULL")
+        execute("update domain set child_id=0 where child_id is NULL")
+        execute("update domain set sub_link_only=False where sub_link_only is NULL")
+        execute("update proxy set child_id=0 where child_id is NULL")
 
     add_new_enum_values()
 

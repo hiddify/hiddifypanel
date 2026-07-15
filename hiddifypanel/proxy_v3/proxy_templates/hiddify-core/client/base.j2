@@ -2,10 +2,11 @@
 {
   "outbounds": [
     
-    {% if user.is_active %}
+    {% if ctx.user.is_active %}
       {% block proxy_group %}
-      {% include 'hiddify-core/client/proxies_group' %},
+        {% include 'hiddify-core/client/proxies_group' %},
       {% endblock %}
+      
       {% block outbounds %}{% endblock %},
     {% endif %}
     {"tag": "direct", "type": "direct"},
@@ -13,7 +14,7 @@
     {"tag": "dns-out", "type": "dns"}
   ],
   "endpoints": [
-    {% if user.is_active %}
+    {% if ctx.user.is_active %}
     {% block endpoints %}{% endblock %}
     {% endif %}
   ]

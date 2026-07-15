@@ -6,11 +6,13 @@ from typing import Any
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyClientCore
 
 GENERAL_OVERRIDE_FIELDS: tuple[str, ...] = (
-    'alpns',
-    'download_alpns',
     'custom_path',
     'domain_modes',
-    'l7_proto',
+    'download_domain_modes',
+    'l7_reverse_proto',
+    'transport',
+    'tls_layer',
+    'download_tls_layer',
 )
 
 SERVER_OVERRIDE_FIELDS: tuple[str, ...] = (
@@ -20,6 +22,12 @@ SERVER_OVERRIDE_FIELDS: tuple[str, ...] = (
     'server_inbound_udp_ports',
     'server_config',
 )
+
+# Always computed from builtin preset rules; never stored in builtin/override catalog.
+DERIVED_BUILTIN_FIELDS: frozenset[str] = frozenset({
+    'server_inbound_tcp_udp',
+    'server_inbound_download_tcp_udp',
+})
 
 
 def client_override_key(core: str) -> str:
@@ -57,6 +65,11 @@ def ensure_builtin_migrated(row: CustomProxy) -> None:
     if row.server_override and not overrides.get('server_config'):
         overrides['server_config'] = True
         changed = True
+
+    overrides.pop('server_inbound_tcp_udp', None)
+    overrides.pop('server_inbound_download_tcp_udp', None)
+    builtin.pop('server_inbound_tcp_udp', None)
+    builtin.pop('server_inbound_download_tcp_udp', None)
 
     for field in GENERAL_OVERRIDE_FIELDS + SERVER_OVERRIDE_FIELDS:
         if field == 'server_config':
@@ -108,10 +121,25 @@ def _apply_live(row: CustomProxy, key: str, value: Any) -> None:
     if key == 'server_core':
         row.server_core = _parse_server_core(value)
         return
-    if key == 'l7_proto':
-        from hiddifypanel.models.custom_proxy import _parse_l7_proto
+    if key == 'l7_reverse_proto' or key == 'l7_proto':
+        from hiddifypanel.models.custom_proxy import _parse_l7_reverse_proto
 
-        row.l7_proto = _parse_l7_proto(value) if value else None
+        row.l7_reverse_proto = _parse_l7_reverse_proto(value) if value else None
+        return
+    if key == 'tls_layer':
+        from hiddifypanel.models.custom_proxy import _parse_tls_layer
+
+        row.tls_layer = _parse_tls_layer(value) if value else None
+        return
+    if key == 'download_tls_layer':
+        from hiddifypanel.models.custom_proxy import _parse_tls_layer
+
+        row.download_tls_layer = _parse_tls_layer(value) if value else None
+        return
+    if key == 'transport':
+        from hiddifypanel.models.custom_proxy import _parse_transport
+
+        row.transport = _parse_transport(value)
         return
     if key.startswith('client:'):
         core_name = key.split(':', 1)[1]
@@ -138,6 +166,10 @@ def _live_value(row: CustomProxy, key: str, *, default: Any = None) -> Any:
         return row.server_config or default
     if key == 'server_core':
         return row.server_core.value if row.server_core else default
+    if key == 'tls_layer':
+        return row.tls_layer.value if row.tls_layer else default
+    if key == 'download_tls_layer':
+        return row.download_tls_layer.value if row.download_tls_layer else default
     if key.startswith('client:'):
         core_name = key.split(':', 1)[1]
         from hiddifypanel.models.custom_proxy import _parse_client_core
@@ -149,6 +181,8 @@ def _live_value(row: CustomProxy, key: str, *, default: Any = None) -> Any:
 
 
 def set_field_override(row: CustomProxy, key: str, enabled: bool) -> None:
+    if key in DERIVED_BUILTIN_FIELDS:
+        return
     ensure_builtin_migrated(row)
     if enabled:
         if key not in (row.builtin or {}):
@@ -204,18 +238,5 @@ def overrides_payload(row: CustomProxy) -> dict[str, bool]:
     return copy.deepcopy(row.builtin_overrides or {})
 
 
-def catalog_body_to_builtin_fields(body: dict[str, Any]) -> dict[str, Any]:
-    out: dict[str, Any] = {}
-    for field in GENERAL_OVERRIDE_FIELDS:
-        if field in body:
-            out[field] = copy.deepcopy(body[field])
-    for field in SERVER_OVERRIDE_FIELDS:
-        if field in body:
-            out[field] = copy.deepcopy(body[field])
-    for item in body.get('client_cores') or []:
-        core = str(item.get('core') or '').strip()
-        if core:
-            out[client_override_key(core)] = str(
-                item.get('outbounds_template') or item.get('link_template') or ''
-            )
-    return out
+def catalog_fields_from_snapshot(snapshot) -> dict[str, Any]:
+    return dict(snapshot.iter_builtin_fields())

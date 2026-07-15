@@ -1,4 +1,4 @@
-{% skip("reality_enable = " ~ hconfig.reality_enable) if not hconfig.reality_enable %}
+{% set domain = domain or ctx.domain %}
 "tls": {
   "enabled": true,
   "server_name": "{{ domain.sni }}",
@@ -8,10 +8,10 @@
       "server": "{{ domain.sni }}",
       "server_port": 443
     },
-    "private_key": "{{ hconfig.reality_private_key }}",
+    "private_key": "{{ ctx.hconfig.reality_private_key }}",
     "short_id": [
       "",
-      {% for sid in (hconfig.reality_short_ids or '').split(',') %}
+      {% for sid in (ctx.hconfig.reality_short_ids or '').split(',') %}
       "{{ sid }}",
       {% endfor %}
     ],

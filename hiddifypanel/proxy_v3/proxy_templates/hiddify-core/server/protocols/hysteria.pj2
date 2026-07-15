@@ -1,19 +1,20 @@
-{% skip("hysteria_enable = " ~ hconfig.hysteria_enable) if not hconfig.hysteria_enable %}
-{% include 'hiddify-core/server/snippets/listen' %},
-"type": "hysteria2",
-{% include 'hiddify-core/server/snippets/inbound_meta' %},
-"up_mbps": {{ hconfig.hysteria_up_mbps }},
-"down_mbps": {{ hconfig.hysteria_down_mbps }},
-{% if hconfig.hysteria_obfs_enable %}
-"obfs": {
-  "type": "salamander",
-  "password": "{{ hconfig.proxy_path }}"
-},
+"type": "hysteria",
+
+"up_mbps": {{ ctx.hconfig.hysteria_up_mbps }},
+"down_mbps": {{ ctx.hconfig.hysteria_down_mbps }},
+
+{% if ctx.hconfig.hysteria_obfs_enable %}
+  "obfs": "{{ ctx.hconfig.proxy_path }}",
 {% endif %}
+
 "users": [
-  {% for user in users %}
-  {"name": "{{ user.uuid }}@hiddify.com", "password": "{{ user.uuid }}"},
+  {% for user in ctx.users %}
+    {
+      "name": "{{ user.uuid }}", 
+      "auth_str": "{{ user.uuid }}"
+    },
   {% endfor %}
 ],
-"masquerade": "http://{{ domain.name }}:80/",
+
+
 {% include 'hiddify-core/server/tls/tls' %}

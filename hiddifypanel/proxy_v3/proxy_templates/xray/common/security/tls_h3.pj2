@@ -1,5 +1,5 @@
 "security": "tls",
 "tlsSettings": {
-  "serverName": "{{ domain.sni }}",
+  "serverName": "{{ ctx.domain.sni }}",
   "alpn": ["h3"]
 }

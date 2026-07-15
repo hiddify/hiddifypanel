@@ -1,15 +1,15 @@
-{% if hconfig.show_usage_in_sublink and not platform.is_hiddify %}
-{% set name = '⏳ ' if user.is_active else '✖ ' %}
-{% if user.usage_limit_GB < 1000 %}
-{% set name = name ~ (user.current_usage_GB|round(3)) ~ '/' ~ (user.usage_limit_GB|string|replace('.0', '')) ~ 'GB' %}
-{% elif user.usage_limit_GB < 100000 %}
-{% set name = name ~ ((user.current_usage_GB / 1000)|round(3)) ~ '/' ~ (((user.usage_limit_GB / 1000)|round(1))|string|replace('.0', '')) ~ 'TB' %}
+{% if ctx.hconfig.show_usage_in_sublink and not ctx.platform.is_hiddify %}
+{% set name = '⏳ ' if ctx.user.is_active else '✖ ' %}
+{% if ctx.user.usage_limit_GB < 1000 %}
+{% set name = name ~ (ctx.user.current_usage_GB|round(3)) ~ '/' ~ (ctx.user.usage_limit_GB|string|replace('.0', '')) ~ 'GB' %}
+{% elif ctx.user.usage_limit_GB < 100000 %}
+{% set name = name ~ ((ctx.user.current_usage_GB / 1000)|round(3)) ~ '/' ~ (((ctx.user.usage_limit_GB / 1000)|round(1))|string|replace('.0', '')) ~ 'TB' %}
 {% else %}
 #No Usage Limit
 {% endif %}
 {% set name = name ~ ' 📅 ' %}
-{% if user.expire_days < 1000 %}
-{% set name = name ~ i18n('%(expire_days)s days', expire_days=user.expire_days) %}
+{% if ctx.user.expire_days < 1000 %}
+{% set name = name ~ i18n('%(expire_days)s days', expire_days=ctx.user.expire_days) %}
 {% else %}
 #No Time Limit
 {% endif %}
@@ -18,6 +18,6 @@
 trojan://1@{{ fake_ip_for_sub_link }}?sni=fake_ip_for_sub_link&security=tls#{{ name|urlencoded }}
 {% endif %}
 {% endif %}
-{% if not user.is_active %}
+{% if not ctx.user.is_active %}
 trojan://1@1.1.1.1#{{ i18n('✖ Package Ended')|urlencoded }}
 {% endif %}

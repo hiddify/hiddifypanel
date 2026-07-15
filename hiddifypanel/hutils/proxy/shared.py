@@ -8,7 +8,7 @@ from flask import g, request
 
 from hiddifypanel import hutils
 from hiddifypanel.cache import cache
-from hiddifypanel.models import ConfigEnum, Domain, DomainType, Proxy, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport, get_hconfigs, hconfig
+from hiddifypanel.models import ConfigEnum, Domain, DomainType, FakeMode, Proxy, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport, get_hconfigs, hconfig
 
 
 def get_ssh_hostkeys(hconfigs, dojson=False) -> list[str] | str:
@@ -77,7 +77,7 @@ def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
     # if l3 == "http" and ProxyTransport.XTLS in proxy.transport:
     #     return {'name': name, 'msg': "http and xtls???", 'type': 'warning', 'proto': proxy.proto}
 
-    if l3 == "http" and proxy.proto in [ProxyProto.ss, ProxyProto.ssr]:
+    if l3 == "http" and proxy.proto in [ProxyProto.shadowsocks, ProxyProto.ssr]:
         return {"name": name, "msg": "http and ss or ssr???", "type": "warning", "proto": proxy.proto}
 
     return
@@ -93,13 +93,19 @@ def get_port(proxy: Proxy, hconfigs: dict, domain_db: Domain, ptls: int, phttp: 
     if l3 == "kcp":
         port = hconfigs[ConfigEnum.kcp_ports].split(",")[0]
     elif proxy.proto == ProxyProto.wireguard:
-        port = hconfigs[ConfigEnum.wireguard_port]
+        if hconfigs.get(ConfigEnum.wireguard_use_quic_port):
+            port = ptls or 443
+        else:
+            port = hconfigs[ConfigEnum.wireguard_port]
     elif proxy.proto == "tuic":
         port = domain_db.internal_port_tuic
     elif proxy.proto == "hysteria2":
         port = domain_db.internal_port_hysteria2
     elif l3 == "ssh":
-        port = hconfigs[ConfigEnum.ssh_server_port]
+        if hconfigs.get(ConfigEnum.ssh_use_tls_port):
+            port = ptls or 443
+        else:
+            port = hconfigs[ConfigEnum.ssh_server_port]
     elif proxy.proto == ProxyProto.naive and proxy.l3 == ProxyL3.h3_quic:
         port = domain_db.internal_port_naive
     elif is_tls(l3) or proxy.proto == ProxyProto.naive:
@@ -242,28 +248,36 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
             noDomainProxies = False
             if proxy.proto in [ProxyProto.ssh, ProxyProto.wireguard, ProxyProto.mieru]:
                 noDomainProxies = True
-            if proxy.proto in [ProxyProto.ss] and proxy.transport not in [ProxyTransport.grpc, ProxyTransport.h2, ProxyTransport.WS, ProxyTransport.httpupgrade, ProxyTransport.xhttp]:
+            if proxy.proto in [ProxyProto.shadowsocks] and proxy.transport not in [ProxyTransport.grpc, ProxyTransport.h2, ProxyTransport.WS, ProxyTransport.httpupgrade, ProxyTransport.xhttp]:
                 noDomainProxies = True
             options = []
             key = f"{proxy.proto}{proxy.transport}{proxy.cdn}{proxy.l3}"
 
-            if proxy.proto in [ProxyProto.dnstt, ProxyProto.ssh, ProxyProto.tuic, ProxyProto.hysteria2, ProxyProto.wireguard, ProxyProto.ss, ProxyProto.mieru] or (proxy.proto == ProxyProto.naive and proxy.l3 == ProxyL3.h3_quic):
+            if proxy.proto in [ProxyProto.dnstt, ProxyProto.ssh, ProxyProto.tuic, ProxyProto.hysteria2, ProxyProto.wireguard, ProxyProto.shadowsocks, ProxyProto.mieru] or (proxy.proto == ProxyProto.naive and proxy.l3 == ProxyL3.h3_quic):
                 if noDomainProxies and all([x in added_ip[key] for x in ips]):
                     continue
 
                 for x in ips:
                     added_ip[key].add(x)
 
-                if proxy.proto in [ProxyProto.ssh, ProxyProto.wireguard, ProxyProto.ss]:
+                if proxy.proto in [ProxyProto.ssh, ProxyProto.wireguard, ProxyProto.shadowsocks]:
                     # if domain.mode == 'fake':
                     #     continue
                     if proxy.proto in [ProxyProto.ssh]:
-                        options = [{"pport": hconfigs[ConfigEnum.ssh_server_port]}]
+                        if hconfigs.get(ConfigEnum.ssh_use_tls_port):
+                            ports = ["443"] + [p.strip() for p in str(hconfigs.get(ConfigEnum.tls_ports) or "").split(",") if p.strip()]
+                            options = [{"pport": p} for p in dict.fromkeys(ports)]
+                        else:
+                            options = [{"pport": hconfigs[ConfigEnum.ssh_server_port]}]
                     elif proxy.proto in [ProxyProto.wireguard]:
-                        options = [{"pport": hconfigs[ConfigEnum.wireguard_port]}]
+                        if hconfigs.get(ConfigEnum.wireguard_use_quic_port):
+                            ports = ["443"] + [p.strip() for p in str(hconfigs.get(ConfigEnum.tls_ports) or "").split(",") if p.strip()]
+                            options = [{"pport": p} for p in dict.fromkeys(ports)]
+                        else:
+                            options = [{"pport": hconfigs[ConfigEnum.wireguard_port]}]
                     elif proxy.transport in [ProxyTransport.shadowsocks]:
                         options = [{"pport": hconfigs[ConfigEnum.shadowsocks2022_port]}]
-                    elif proxy.proto in [ProxyProto.ss]:
+                    elif proxy.proto in [ProxyProto.shadowsocks]:
                         options = [{"pport": 443}]
                 elif proxy.proto == ProxyProto.tuic:
                     options = [{"pport": hconfigs[ConfigEnum.tuic_port]}]
@@ -305,8 +319,10 @@ def random_or_none(inp: list):
 split_pattern = re.compile(r"[ \t\r\n;,]+")
 
 
-def attach_domain_ech(base: dict, hconfigs: dict) -> None:
+def attach_domain_ech(base: dict, hconfigs: dict, *, enabled: bool = True) -> None:
     """Populate domain.ech from DNS HTTPS records when ECH is enabled."""
+    if not enabled:
+        return
     if not hconfigs.get(ConfigEnum.tls_ech_enable):
         return
     sni = base.get("sni") or base.get("host")
@@ -327,7 +343,7 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
     is_cdn = domain_db.mode in [DomainType.cdn, DomainType.auto_cdn_ip]
     if auto_ip := domain_db.auto_cdn_ip():
         server = auto_ip[0]
-    elif "special" in domain_db.mode.value or domain_db.mode in [DomainType.fake]:
+    elif domain_db.fake_mode in (FakeMode.fake, FakeMode.reality):
         server = hutils.network.get_direct_host_or_ip(4)
 
     if domain_db.resolve_ip:
@@ -336,7 +352,7 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
     allow_insecure = not domain_db.need_valid_ssl
     if all_snis := split_pattern.split((domain_db.servernames or "").strip()):
         sni = random_or_none(all_snis) or sni
-        if "reality" in domain_db.mode:
+        if domain_db.is_reality():
             allow_insecure = False
             if hconfigs[ConfigEnum.core_type] == "singbox":  # TODO
                 sni = all_snis[0]
@@ -352,7 +368,8 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
         "allow_insecure": allow_insecure,
         "cdn": is_cdn,
     }
-    if "reality" in domain_db.mode:
+    attach_domain_ech(base, hconfigs, enabled=bool(domain_db.ech) and domain_db.mode.is_cdn())
+    if domain_db.fake_mode == FakeMode.reality:
         base["reality_short_id"] = random.sample(hconfigs[ConfigEnum.reality_short_ids].split(","), 1)[0]
         # base['flow']="xtls-rprx-vision"
         base["reality_pbk"] = hconfigs[ConfigEnum.reality_public_key]
@@ -437,10 +454,6 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         base["password"] = "h"
         return base
 
-    if hconfigs.get(ConfigEnum.tls_ech_enable) and proxy.l3 not in {ProxyL3.reality}:
-        if ech := hutils.network.get_ech_info(base.get("sni")):
-            base["ech"] = ech
-
     if base["proto"] in {ProxyProto.mieru}:
         base["password"] = "h"
 
@@ -461,9 +474,6 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
     base["download"]["params"] = base["params"]["download"]
     if base["download"]["cdn"] or l3 == "http":
         put_default_header(base["download"]["params"])
-    if hconfigs.get(ConfigEnum.tls_ech_enable) and proxy.l3 not in {ProxyL3.reality}:
-        if ech := hutils.network.get_ech_info(base["download"].get("sni")):
-            base["download"]["ech"] = ech
     base["download"]["alpn"] = base["params"]["download"].get("alpn", alpn)
 
     if proxy.proto in ["tuic", "hysteria2"]:
@@ -494,7 +504,7 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
 
     path = {"vless": f"{hconfigs[ConfigEnum.path_vless]}", "trojan": f"{hconfigs[ConfigEnum.path_trojan]}", "vmess": f"{hconfigs[ConfigEnum.path_vmess]}", "ss": f"{hconfigs[ConfigEnum.path_ss]}", "v2ray": f"{hconfigs[ConfigEnum.path_ss]}"}
 
-    if base["proto"] in ["v2ray", "ss", "ssr"]:
+    if base["proto"] in ["v2ray", "ss", "shadowsocks", "ssr"]:
         base["cipher"] = hconfigs[ConfigEnum.shadowsocks2022_method]
         base["password"] = f"{hutils.encode.do_base_64(hconfigs[ConfigEnum.shared_secret].replace('-', ''))}:{hutils.encode.do_base_64(g.account.uuid.replace('-', ''))}"
 

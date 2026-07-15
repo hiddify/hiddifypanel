@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
+from ..alpn_helpers import alpn_list_for_tag, alpn_tag_uses_tls
+
 from .fragment_loader import load_template_slug
+from .paths import preset_shell_slug
 from .inbound_builder import (
     _client_proto_file,
     _proto_file,
@@ -23,10 +27,7 @@ _HIDDIFY_CLIENT_ROOT = "hiddify-core"
 
 
 def _client_proto_stem(combo: ProxyCombination) -> str | None:
-    proto = _client_proto_file(combo.proto)
-    if combo.proto == "hysteria2":
-        return "hysteria"
-    return proto
+    return _client_proto_file(combo.proto)
 
 
 def _uses_v2ray_transport_client(combo: ProxyCombination) -> bool:
@@ -34,12 +35,28 @@ def _uses_v2ray_transport_client(combo: ProxyCombination) -> bool:
     return _uses_v2ray_transport_proto(proto)
 
 
+def _xhttp_combo_alpn_tags(combo: ProxyCombination) -> tuple[str, str]:
+    upload = combo.params.get("upload_alpn")
+    download = combo.params.get("download_alpn")
+    if not upload or not download:
+        default = "http" if str(combo.l3).lower() == "http" else "tls_h2"
+        upload = upload or default
+        download = download or default
+    return str(upload), str(download)
+
+
+def _xhttp_with_replacements(combo: ProxyCombination) -> dict[str, str]:
+    upload_tag, download_tag = _xhttp_combo_alpn_tags(combo)
+    return {
+        "__ALPNS__": json.dumps(alpn_list_for_tag(upload_tag)),
+        "__DOWNLOAD_ALPNS__": json.dumps(alpn_list_for_tag(download_tag)),
+        "__TLS_MODE__": "true" if alpn_tag_uses_tls(upload_tag) else "false",
+        "__DOWNLOAD_TLS_MODE__": "true" if alpn_tag_uses_tls(download_tag) else "false",
+    }
+
+
 def _render_shell(core: str, shell_name: str, replacements: dict[str, str]) -> str:
-    if core == _HIDDIFY_CLIENT_ROOT and shell_name.startswith("client_outbound"):
-        shell_path = f"{core}/client/presets/{shell_name}"
-    else:
-        shell_path = f"{core}/presets/{shell_name}"
-    shell = load_template_slug(shell_path, normalize=False)
+    shell = load_template_slug(preset_shell_slug(core, "client", shell_name), normalize=False)
     for key, value in replacements.items():
         shell = shell.replace(key, value)
     return shell
@@ -51,7 +68,7 @@ def _hiddify_client_streams_slug(combo: ProxyCombination) -> str | None:
     transport = _transport_file(combo.transport)
     if not transport:
         return None
-    if combo.l3 == "reality" and transport == "tcp":
+    if transport == "tcp":
         return f"{_HIDDIFY_CLIENT_ROOT}/client/stream/none"
     slug = f"{_HIDDIFY_CLIENT_ROOT}/client/stream/{transport}"
     try:
@@ -81,8 +98,6 @@ def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
 
 
 def _hiddify_client_tls_slug(combo: ProxyCombination) -> str:
-    if combo.l3 == "reality":
-        return f"{_HIDDIFY_CLIENT_ROOT}/client/tls/reality"
     return f"{_HIDDIFY_CLIENT_ROOT}/client/tls/tls_http"
 
 
@@ -242,25 +257,6 @@ def _xray_client_proto_slug(proto: str) -> str | None:
         return None
 
 
-def _unwrap_json_array_shell(body: str) -> str:
-    stripped = (body or "").strip()
-    if stripped.startswith("[") and stripped.endswith("]"):
-        return stripped[1:-1].strip()
-    return stripped
-
-
-def _client_outbound_block_name(core: str, combo: ProxyCombination) -> str:
-    if _client_proto_file(combo.proto) == "wireguard":
-        return "endpoints"
-    return "outbounds"
-
-
-def _wrap_client_outbound_block(body: str, core: str, combo: ProxyCombination) -> str:
-    block = _client_outbound_block_name(core, combo)
-    inner = _unwrap_json_array_shell((body or "").strip())
-    return f"{{% block {block} %}}\n{inner}\n{{% endblock %}}"
-
-
 def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
     proto_slug = _xray_client_proto_slug(combo.proto)
     stream_slug = _xray_client_streams_slug(combo.transport)
@@ -268,10 +264,8 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
         raise ValueError(f"Unsupported xray client preset: {combo.name}")
     security_slug = _xray_security_slug(combo)
     slugs = [proto_slug, stream_slug, security_slug, "xray/snippets/stream_sockopt", "xray/snippets/sniffing"]
-    flow_line = ""
     alpn_line = ""
-    if combo.proto == "vless":
-        flow_line = "{% set FLOW = hconfig.vless_flow %}"
+
     if security_slug == "xray/common/security/tls_alpn":
         alpn = combo.params["download"]["alpn"]
         alpn_line = f'{{% set ALPN = "{alpn}" %}}'
@@ -284,12 +278,11 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
             "__SECURITY_SLUG__": security_slug,
         },
     )
-    if flow_line:
-        content = flow_line + "\n" + content
+
     if alpn_line:
         sec_inc = f"{{% include '{security_slug}' %}}"
         content = content.replace(sec_inc, f"{alpn_line}\n    {sec_inc}")
-    return _wrap_client_outbound_block(f"[{content}]", "xray", combo), slugs
+    return content, slugs
 
 
 def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
@@ -300,13 +293,13 @@ def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
     slugs = [proto_slug, stream_slug, f"{_SINGBOX_CLIENT_ROOT}/client/tls"]
     content = _render_shell(
         _SINGBOX_CLIENT_ROOT,
-        "client_outbound_v2ray",
+        "client_outbound",
         {
             "__PROTO_SLUG__": proto_slug,
             "__STREAM_SLUG__": stream_slug,
         },
     )
-    return _wrap_client_outbound_block(f"[{content}]", "singbox", combo), slugs
+    return content, slugs
 
 
 def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
@@ -318,18 +311,19 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
         shadowtls_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/shadowtls"
         is_shadowtls_ss = _raw_transport(combo.transport) == "shadowtls" and _client_proto_file(combo.proto) == "ss"
         slugs = [proto_slug]
-        shell_name = "client_outbound_standalone"
+        if _client_proto_file(combo.proto) == "wireguard":
+            shell_name = "endpoint_general"
+        else:
+            shell_name = "outbound_general"
         replacements = {"__PROTO_SLUG__": proto_slug, "__TLS_SLUG__": tls_slug}
         if is_shadowtls_ss:
-            shell_name = "client_outbound_shadowtls_ss"
+            shell_name = "outbound_with_detour"
             slugs.append(shadowtls_slug)
             replacements["__SHADOWTLS_SLUG__"] = shadowtls_slug
         else:
             slugs.append(tls_slug)
         content = _render_shell(_HIDDIFY_CLIENT_ROOT, shell_name, replacements)
-        if is_shadowtls_ss:
-            return _wrap_client_outbound_block(content, _HIDDIFY_CLIENT_ROOT, combo), slugs
-        return _wrap_client_outbound_block(f"[{content}]", _HIDDIFY_CLIENT_ROOT, combo), slugs
+        return content, slugs
     stream_slug = _hiddify_client_streams_slug(combo)
     if not stream_slug:
         raise ValueError(f"Unsupported hiddify-core client preset: {combo.name}")
@@ -341,7 +335,7 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
         slugs.append(shadowtls_slug)
     else:
         slugs.extend([stream_slug, tls_slug])
-    shell_name = "client_outbound_shadowtls_ss" if is_shadowtls_ss else "client_outbound_v2ray"
+    shell_name = "outbound_with_detour" if is_shadowtls_ss else ("outbound_xhttp" if combo.transport.lower() == "xhttp" else "outbound_v2ray")
     replacements = {
         "__PROTO_SLUG__": proto_slug,
         "__STREAM_SLUG__": stream_slug,
@@ -349,10 +343,10 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
     }
     if is_shadowtls_ss:
         replacements["__SHADOWTLS_SLUG__"] = shadowtls_slug
+    if combo.transport.lower() == "xhttp":
+        replacements.update(_xhttp_with_replacements(combo))
     content = _render_shell(_HIDDIFY_CLIENT_ROOT, shell_name, replacements)
-    if is_shadowtls_ss:
-        return _wrap_client_outbound_block(content, _HIDDIFY_CLIENT_ROOT, combo), slugs
-    return _wrap_client_outbound_block(f"[{content}]", _HIDDIFY_CLIENT_ROOT, combo), slugs
+    return content, slugs
 
 
 def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:

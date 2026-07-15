@@ -19,14 +19,13 @@ from jinja2.utils import Namespace
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import parse_user_agent
 from hiddifypanel.models import ConfigEnum, CustomProxy, CustomProxyMode, ProxyTemplate
-from hiddifypanel.models.proxy_base_config import BaseConfigSide, ProxyBaseConfig, default_base_content
+from hiddifypanel.models.proxy_base_config import BaseConfigSide, default_base_content
 
 from .alpn_helpers import (
     alpn_http_for_tag,
     alpn_list_for_tag,
     alpn_tls_for_tag,
     alpns_for_combo,
-    is_xhttp_proxy_data,
     normalize_alpn_tag,
     normalize_alpn_tags,
 )
@@ -42,27 +41,27 @@ def _client_outbounds_template(cc: dict[str, Any]) -> str:
     return str(cc.get("outbounds_template") or cc.get("link_template") or "")
 
 
-from .custom_proxy_ports import (
-    mode_requires_static_ports,
-    mode_uses_auto_ports,
-    mode_uses_gateway_port,
-    normalize_port_list,
-    resolve_inbound_ports,
-)
-from .jinja_context import SkipExtension, TemplateSkip, build_template_context
+from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
+from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
+from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+
+from .custom_proxy_ports import mode_requires_static_ports, mode_uses_auto_ports, mode_uses_gateway_port, normalize_port_list, primary_resolved_port, resolve_inbound_ports
+from .jinja_context import TemplateSkip, build_template_context
 from .outbound_tags import deduplicate_client_tags
-from hiddifypanel.proxy_v3.context_vars import (
-    TemplateVersion,
-    _PlatformPart,
+from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
+from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
+from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    extract_block_body as _extract_block_body,
+    fragment_block_body as _fragment_block_body,
+    inject_named_fragment_blocks as _inject_named_fragment_blocks,
+    inject_template_block as _inject_template_block,
 )
-from .template_variables import (
-    build_domain_context,
-    build_user_context,
-)
+from .template_variables import build_domain_context, build_user_context
 
 SAMPLE_UUID = "00000000-0000-0000-0000-000000000001"
 
-SERVER_BUNDLE_CORES: tuple[str, ...] = ("hiddify-core", "xray", "haproxy", "nginx")
+SERVER_BUNDLE_CORES: tuple[str, ...] = ("hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4")
 
 
 @dataclass(frozen=True)
@@ -197,6 +196,22 @@ def build_render_context(
     download_alpn_list: list[str] = []
     alpn_tags = normalize_alpn_tags(data.get("alpns") or [])
     download_alpn_tags = normalize_alpn_tags(data.get("download_alpns") or [])
+    if not alpn_tags:
+        from hiddifypanel.models import get_hconfigs
+
+        from ..alpn_helpers import resolve_proxy_alpn_pairs
+        from ..context_vars.hconfig import HConfigVar
+
+        hconfigs = HConfigVar(get_hconfigs(child_id), server_side=server_side)
+        pairs = resolve_proxy_alpn_pairs(
+            tls_layer=str(data.get("tls_layer") or "").lower() or None,
+            transport=_infer_proxy_transport(data),
+            proto=_infer_proxy_proto(data),
+            hconfigs=hconfigs,
+            categories=list(data.get("categories") or []),
+        )
+        alpn_tags = [upload.to_tag() for upload, _ in pairs if upload.to_tag()]
+        download_alpn_tags = [download.to_tag() for _, download in pairs if download and download.to_tag()]
     if server_side and effective_proxy_id:
         resolved_tag = _proxy_server_tag(data, int(effective_proxy_id))
         proxy_l3 = _infer_proxy_l3(data)
@@ -237,21 +252,23 @@ def build_render_context(
             protocol,
             int(effective_proxy_id),
             domain_id=effective_domain_id,
-            stored_tcp_ports=stored_tcp,
-            stored_udp_ports=stored_udp,
+            db_tcp_ports=stored_tcp,
+            db_udp_ports=stored_udp,
+            server_side=server_side,
         )
     else:
         resolved_ports = resolve_inbound_ports(
             protocol,
             0,
             domain_id=effective_domain_id,
-            stored_tcp_ports=stored_tcp,
-            stored_udp_ports=stored_udp,
+            db_tcp_ports=stored_tcp,
+            db_udp_ports=stored_udp,
+            server_side=server_side,
         )
     if port is not None:
         resolved_port = port
     else:
-        resolved_port = resolved_ports.tcp_port or resolved_ports.udp_port or 2080
+        resolved_port = primary_resolved_port(resolved_ports)
     domain_data = build_domain_context(
         child_id,
         domain_id=domain_id,
@@ -306,6 +323,9 @@ def build_render_context(
             "reality": proxy_l3 == "reality",
             "transport": _infer_proxy_transport(data),
             "proto": _infer_proxy_proto(data),
+            "tls_layer": str(data.get("tls_layer") or "").lower() or None,
+            "download_tls_layer": str(data.get("download_tls_layer") or "").lower() or None,
+            "download_domain_modes": list(data.get("download_domain_modes") or []),
             "domain_modes": list(data.get("domain_modes") or []),
             "server_inbound_tcp_ports": stored_tcp,
             "server_inbound_udp_ports": stored_udp,
@@ -313,16 +333,21 @@ def build_render_context(
     )
     ctx["alpns"] = alpn_list
     if server_side and core:
-        version = (core_version or "").strip() or "1.0.0"
+        version = TemplateVersion((core_version or "").strip() or "1.0.0")
         platform = ctx.get("platform")
         if platform is not None and hasattr(platform, "_data"):
             platform._data["app"] = _PlatformPart(core, version)
-            platform._data["app_version"] = TemplateVersion(version)
+            platform._data["app_version"] = version
     if not server_side:
         outbound_tag = (outbound_tag or base_tag or "").strip()
         ctx["client_proxy_tags"] = [outbound_tag] if outbound_tag else []
         if resolved_alpn:
             ctx["alpn_builtin_value"] = resolved_alpn
+        download_tls_layer = str(data.get("download_tls_layer") or "").lower()
+        if download_tls_layer:
+            ctx["download_tls"] = download_tls_layer == "tls"
+        elif download_alpn:
+            ctx["download_tls"] = alpn_tls_for_tag(download_alpn)
     return ctx
 
 
@@ -379,12 +404,14 @@ def _jinja_env(child_id: int = 0) -> Environment:
     cached = _jinja_env_cache.get(child_id)
     if cached and now - cached[0] < _JINJA_CACHE_TTL:
         return cached[1]
+    from hiddifypanel.proxy_v3.jinja_context import skip_proxy
+
     env = Environment(
         loader=DictLoader(_cached_template_map(child_id)),
         keep_trailing_newline=True,
-        extensions=[SkipExtension],
     )
     env.globals["enumerate"] = enumerate
+    env.globals["skip"] = skip_proxy
     env.globals["_"] = _jinja_gettext
     env.filters["i18n"] = _jinja_gettext
     env.filters["tojson"] = lambda value: json.dumps(_to_dict_normalized(value), ensure_ascii=False)
@@ -474,19 +501,6 @@ def render_template_text(template_text: str, child_id: int = 0, context: dict[st
     ctx = context or build_sample_context(child_id=child_id)
     env = _jinja_env(child_id)
     return env.from_string(template_text).render(**ctx)
-
-
-def fix_duplicate_json_commas(text: str) -> str:
-    """Collapse `, ,` / `,,` artifacts from adjacent Jinja includes into one comma."""
-    text = re.sub(r"\[\s*,", "[", text)
-    text = re.sub(r",\s*\]", "]", text)
-    text = re.sub(r",\s*\}", "}", text)
-    pattern = re.compile(r",(?:\s*,)+")
-    prev = None
-    while prev != text:
-        prev = text
-        text = pattern.sub(",", text)
-    return text
 
 
 def _trim_leading_empty_lines(text: str) -> str:
@@ -797,13 +811,23 @@ def validate_proxy_payload(
     tag = server_config.get("tag") or data.get("slug") or "validate-tag"
     stored_tcp = normalize_port_list(server_config.get("inbound_tcp_ports") or server_config.get("inbound_port"))
     stored_udp = normalize_port_list(server_config.get("inbound_udp_ports"))
-    resolved_ports = resolve_inbound_ports(
+    proxy_row_id = int(proxy_id or data.get("id") or 0)
+    client_ports = resolve_inbound_ports(
         protocol or "",
-        int(proxy_id or data.get("id") or 0),
-        stored_tcp_ports=stored_tcp,
-        stored_udp_ports=stored_udp,
+        proxy_row_id,
+        db_tcp_ports=stored_tcp,
+        db_udp_ports=stored_udp,
+        server_side=False,
     )
-    port = resolved_ports.tcp_port or resolved_ports.udp_port or 2080
+    server_ports = resolve_inbound_ports(
+        protocol or "",
+        proxy_row_id,
+        db_tcp_ports=stored_tcp,
+        db_udp_ports=stored_udp,
+        server_side=True,
+    )
+    client_port = primary_resolved_port(client_ports)
+    server_port = primary_resolved_port(server_ports)
     core = server_config.get("core") or "xray"
     direct_port_access = bool(server_config.get("direct_port_access"))
     resolved_ip = "203.0.113.1"
@@ -811,7 +835,7 @@ def validate_proxy_payload(
         child_id,
         data,
         tag=tag,
-        port=port,
+        port=client_port,
         ip=resolved_ip,
         custom_path=data.get("custom_path") or "test-path",
         domain_binding=binding,
@@ -823,7 +847,7 @@ def validate_proxy_payload(
         child_id,
         data,
         tag=tag,
-        port=port,
+        port=server_port,
         ip=resolved_ip,
         custom_path=data.get("custom_path") or "test-path",
         domain_binding=binding,
@@ -845,7 +869,7 @@ def validate_proxy_payload(
                     errors.append({"code": "json5_parse", "message": parse_err})
                 else:
                     warnings.extend(validate_listen_rules(protocol, compiled_preview, direct_port_access))
-                    errors.extend(validate_port_rules(compiled_preview, port))
+                    errors.extend(validate_port_rules(compiled_preview, server_port))
             except TemplateSkip:
                 warnings.append(
                     {
@@ -953,30 +977,6 @@ def validate_proxy_payload(
 
     if "general" in sections:
         domain_ids = [int(v) for v in (data.get("domain_ids") or []) if v is not None]
-        if protocol == CustomProxyMode.domains_single_public_port.value:
-            if len(domain_ids) > 1:
-                errors.append(
-                    {
-                        "code": "single_domain_multiple_domains",
-                        "message": "Single-domain static port mode supports only one selected domain",
-                    }
-                )
-            elif not domain_ids:
-                from hiddifypanel.models import Domain
-
-                modes = [str(m).strip() for m in (data.get("domain_modes") or []) if str(m).strip()]
-                if modes:
-                    count = Domain.query.filter(
-                        Domain.child_id == child_id,
-                        Domain.mode.in_(modes),
-                    ).count()
-                    if count > 1:
-                        warnings.append(
-                            {
-                                "code": "single_domain_multiple_domains",
-                                "message": "Multiple domains match this proxy; single-domain static port allows only one domain",
-                            }
-                        )
         if mode_requires_static_ports(protocol):
             if not stored_tcp:
                 errors.append(
@@ -994,22 +994,100 @@ def validate_proxy_payload(
                     }
                 )
         if protocol == CustomProxyMode.domains_l7_gateway.value:
-            allowed = {"direct", "cdn", "relay", "fake"}
+            allowed = {"direct", "cdn", "relay"}
             invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
             if invalid:
                 errors.append(
                     {
                         "code": "invalid_domain_modes",
-                        "message": "L7 gateway domain modes must be direct, cdn, relay, or fake",
+                        "message": "L7 gateway domain modes must be direct, cdn, or relay",
+                    }
+                )
+            try:
+                from hiddifypanel.models.custom_proxy import (
+                    validate_tls_layer_domain_modes,
+                    xhttp_download_is_quic,
+                    xhttp_upload_is_quic,
+                    _parse_tls_layer,
+                )
+
+                validate_tls_layer_domain_modes(
+                    _parse_tls_layer(data.get("tls_layer")),
+                    list(data.get("domain_modes") or []),
+                )
+                categories = list(data.get("categories") or [])
+                if xhttp_upload_is_quic(categories) and "reality" in (data.get("domain_modes") or []):
+                    errors.append(
+                        {
+                            "code": "invalid_domain_modes",
+                            "message": "REALITY is incompatible with QUIC upload in xhttp",
+                        }
+                    )
+            except ValueError as exc:
+                errors.append({"code": "invalid_tls_layer_domain_modes", "message": str(exc)})
+            transport_key = _infer_proxy_transport(data)
+            l7_key = str(data.get("l7_reverse_proto") or "").lower()
+            if transport_key == "xhttp" and l7_key == "h2":
+                allowed_dl_modes = {"direct", "cdn", "relay"}
+                dl_modes = [str(m).strip().lower() for m in (data.get("download_domain_modes") or []) if str(m).strip()]
+                invalid_dl = [m for m in dl_modes if m not in allowed_dl_modes]
+                if invalid_dl:
+                    errors.append(
+                        {
+                            "code": "invalid_download_domain_modes",
+                            "message": "download_domain_modes must be direct, cdn, or relay",
+                        }
+                    )
+                dl_tls = str(data.get("download_tls_layer") or "").strip().lower()
+                if dl_tls == "http" and "reality" in dl_modes:
+                    errors.append(
+                        {
+                            "code": "invalid_download_tls_layer",
+                            "message": "HTTP download TLS layer is incompatible with reality domain modes",
+                        }
+                    )
+                if xhttp_download_is_quic(categories) and "reality" in dl_modes:
+                    errors.append(
+                        {
+                            "code": "invalid_download_domain_modes",
+                            "message": "REALITY is incompatible with QUIC download in xhttp",
+                        }
+                    )
+            elif data.get("download_tls_layer") or data.get("download_domain_modes"):
+                errors.append(
+                    {
+                        "code": "invalid_download_xhttp_fields",
+                        "message": "download_tls_layer and download_domain_modes apply only to xhttp with l7_reverse_proto=h2",
                     }
                 )
         elif protocol == CustomProxyMode.domains_sni_gateway.value:
-            modes = list(data.get("domain_modes") or [])
-            if modes != ["special"]:
-                warnings.append(
+            allowed = {"fake", "direct", "relay", "reality"}
+            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
+            if invalid:
+                errors.append(
                     {
-                        "code": "domain_modes_forced_special",
-                        "message": "Domain mode is forced to special for SNI gateway mode",
+                        "code": "invalid_domain_modes",
+                        "message": "SNI gateway domain modes must be fake, direct, relay, or reality",
+                    }
+                )
+        elif protocol == CustomProxyMode.domains_auto_public_ports.value:
+            allowed = {"direct", "relay"}
+            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
+            if invalid:
+                errors.append(
+                    {
+                        "code": "invalid_domain_modes",
+                        "message": "Auto public port domain modes must be direct or relay",
+                    }
+                )
+        elif protocol == CustomProxyMode.domains_single_public_port.value:
+            allowed = {"direct", "relay"}
+            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
+            if invalid:
+                errors.append(
+                    {
+                        "code": "invalid_domain_modes",
+                        "message": "Single public port domain modes must be direct or relay",
                     }
                 )
         elif protocol == CustomProxyMode.ip.value:
@@ -1159,10 +1237,11 @@ def preview_proxy_template_fragment(
         protocol or "",
         int(proxy_id or data.get("id") or 0),
         domain_id=domain_id,
-        stored_tcp_ports=stored_tcp,
-        stored_udp_ports=stored_udp,
+        db_tcp_ports=stored_tcp,
+        db_udp_ports=stored_udp,
+        server_side=server_side,
     )
-    port = resolved_ports.tcp_port or resolved_ports.udp_port or 2080
+    port = primary_resolved_port(resolved_ports)
 
     server_domain_id = domain_id
     server_domain_host = domain
@@ -1305,7 +1384,7 @@ def preview_base_config_content(
             return {"ok": False, "rendered": "", "parsed": None, "skipped": False, "error": str(e), "warnings": []}
 
     base = _extract_block_body(content, "base_config") or content
-    as_json = core not in ("haproxy", "nginx")
+    as_json = core not in ("haproxy", "nginx", "rust-rpxy-l4")
     section = _render_section(base, child_id, ctx, as_json_object=as_json)
     parsed = section.get("parsed")
     if isinstance(parsed, dict):
@@ -1572,32 +1651,47 @@ def _proxy_mode_value(data: dict[str, Any]) -> str:
 
 
 def _infer_proxy_l3(data: dict[str, Any]) -> str:
-    for token in data.get("tags") or []:
+    explicit = data.get("tls_layer")
+    if explicit not in (None, ""):
+        if str(explicit).lower() == "http":
+            return "http"
+    for token in data.get("categories") or []:
         key = str(token).lower()
-        if key in ("reality", "h3_quic", "tls_h2", "tls", "http", "ssh", "udp"):
-            return key
+        if key == "reality":
+            return "reality"
+        if key == "http":
+            return "http"
+        if key == "quic":
+            return "h3_quic"
     return "tls"
 
 
-_TRANSPORT_TAGS = frozenset({"ws", "grpc", "tcp", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
-_PROTO_TAGS = frozenset({"vless", "vmess", "trojan", "ss", "v2ray", "tuic", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls"})
+_TRANSPORT_CATEGORIES = frozenset({"ws", "grpc", "tcp", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
+_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "snell"})
 
 
 def _infer_proxy_transport(data: dict[str, Any]) -> str:
-    for token in data.get("tags") or []:
+    from hiddifypanel.models.custom_proxy import _parse_transport
+
+    explicit = data.get("transport")
+    if explicit not in (None, ""):
+        return _parse_transport(explicit).value.lower()
+    for token in data.get("categories") or []:
         key = str(token).lower()
-        if key in _TRANSPORT_TAGS:
+        if key in _TRANSPORT_CATEGORIES:
             return key
     return "tcp"
 
 
 def _infer_proxy_proto(data: dict[str, Any]) -> str:
-    explicit = str(data.get("proto") or "").strip().lower()
+    from hiddifypanel.models.custom_proxy import _normalize_proto_key
+
+    explicit = _normalize_proto_key(str(data.get("proto") or "").strip().lower())
     if explicit:
         return explicit
-    for token in data.get("tags") or []:
-        key = str(token).lower()
-        if key in _PROTO_TAGS:
+    for token in data.get("categories") or []:
+        key = _normalize_proto_key(str(token).lower())
+        if key in _PROTO_CATEGORIES:
             return key
     return "vless"
 
@@ -1607,19 +1701,30 @@ def _client_uses_template_alpn_loop(core_name: str) -> bool:
 
 
 def _client_render_variants(data: dict[str, Any]) -> list[_ClientRenderVariant]:
-    allowed = normalize_alpn_tags(data.get("alpns") or [])
+    from hiddifypanel.models import get_hconfigs
+
+    from ..alpn_helpers import resolve_proxy_alpn_pairs
+    from ..context_vars.hconfig import HConfigVar
+
+    hconfigs = HConfigVar(get_hconfigs(0), server_side=False)
+    pairs = resolve_proxy_alpn_pairs(
+        tls_layer=str(data.get("tls_layer") or "").lower() or None,
+        transport=_infer_proxy_transport(data),
+        proto=_infer_proxy_proto(data),
+        hconfigs=hconfigs,
+        categories=list(data.get("categories") or []),
+    )
+    if pairs:
+        return [
+            _ClientRenderVariant(
+                alpn_tag=upload.to_tag(),
+                download_alpn_tag=download.to_tag() if download else None,
+            )
+            for upload, download in pairs
+            if upload.to_tag()
+        ]
     default = normalize_alpn_tag(str((data.get("server_config") or {}).get("tag") or data.get("slug") or "tls_h2"))
-    main_alpns = allowed or [default]
-    download_allowed = normalize_alpn_tags(data.get("download_alpns") or [])
-    if is_xhttp_proxy_data(data):
-        if download_allowed:
-            variants: list[_ClientRenderVariant] = []
-            for alpn in main_alpns:
-                for dl in download_allowed:
-                    variants.append(_ClientRenderVariant(alpn_tag=alpn, download_alpn_tag=dl))
-            return variants
-        return [_ClientRenderVariant(alpn_tag=tag, download_alpn_tag=tag) for tag in main_alpns]
-    return [_ClientRenderVariant(alpn_tag=tag) for tag in main_alpns]
+    return [_ClientRenderVariant(alpn_tag=default)]
 
 
 def _variant_context_kwargs(variant: _ClientRenderVariant) -> dict[str, Any]:
@@ -1660,6 +1765,40 @@ def _build_proxy_context(
     core: str | None = None,
     core_version: str | None = None,
 ) -> dict[str, Any]:
+    if server_side:
+        from hiddifypanel.proxy_v3.context_vars.builder.server_builder import (
+            build_proxy_jinja_context,
+            resolve_custom_proxy,
+        )
+
+        pid = proxy_id if proxy_id is not None else data.get("id")
+        proxy = resolve_custom_proxy(child_id, int(pid) if pid is not None else None)
+        if proxy is None:
+            return build_render_context(
+                child_id,
+                data,
+                user_id=user_id,
+                user_uuid=user_uuid,
+                user_agent=user_agent,
+                server_side=True,
+                skip_network_lookup=True,
+                ip=(ip or "").strip() or "203.0.113.1",
+                proxy_id=proxy_id,
+                domain_id=domain_id,
+                domain_host=domain_host,
+                core=core,
+                core_version=core_version,
+            )
+        return build_proxy_jinja_context(
+            child_id,
+            proxy,
+            core=core or "xray",
+            domain_id=domain_id,
+            domain_host=domain_host,
+            user_id=user_id,
+            user_uuid=user_uuid,
+        )
+
     protocol = _proxy_mode_value(data)
     binding = "ip" if protocol == CustomProxyMode.ip.value else "domain"
     resolved_ip = (ip or "").strip() or "203.0.113.1"
@@ -1706,6 +1845,17 @@ def _build_bundle_context(
     user_agent: str | None,
     server_side: bool = False,
 ) -> dict[str, Any]:
+    if server_side:
+        from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_bundle_jinja_context
+
+        return build_bundle_jinja_context(
+            child_id,
+            domain_id=domain_id,
+            domain_host=domain_host,
+            user_id=user_id,
+            user_uuid=user_uuid,
+        )
+
     ctx = build_render_context(
         child_id,
         {},
@@ -1737,7 +1887,7 @@ def _render_base_section(
 ) -> dict[str, Any]:
     base = resolve_base_config_content(child_id, side, core, version)
     base = _extract_block_body(base, "base_config") or base
-    as_json = core not in ("haproxy", "nginx")
+    as_json = core not in ("haproxy", "nginx", "rust-rpxy-l4")
     section = _render_section(base, child_id, context, as_json_object=as_json)
     parsed = section.get("parsed")
     if isinstance(parsed, dict):
@@ -1775,64 +1925,8 @@ def _attach_config_yaml(section: dict[str, Any]) -> dict[str, Any]:
     return section
 
 
-_BLOCK_OPEN_RE = re.compile(r"\{%-?\s*block\s+(\w+)\s*-?%\}")
-_BLOCK_CLOSE_RE = re.compile(r"\{%-?\s*endblock\s*-?%\}")
-_EMPTY_BLOCK_RE = re.compile(
-    r"\{%-?\s*block\s+(\w+)\s*-?%\}\s*\{%-?\s*endblock\s*-?%\}",
-)
-
-
-def _balanced_block_body(text: str, start_pos: int) -> str | None:
-    depth = 1
-    pos = start_pos
-    while pos < len(text) and depth > 0:
-        next_open = _BLOCK_OPEN_RE.search(text, pos)
-        next_close = _BLOCK_CLOSE_RE.search(text, pos)
-        if next_close is None:
-            return None
-        if next_open is not None and next_open.start() < next_close.start():
-            depth += 1
-            pos = next_open.end()
-            continue
-        depth -= 1
-        if depth == 0:
-            return text[start_pos:next_close.start()]
-        pos = next_close.end()
-    return None
-
-
-def _extract_block_body(fragment: str, block_name: str) -> str | None:
-    text = (fragment or "").strip()
-    if not text:
-        return None
-    for open_match in _BLOCK_OPEN_RE.finditer(text):
-        if open_match.group(1) != block_name:
-            continue
-        body = _balanced_block_body(text, open_match.end())
-        if body is not None:
-            return body.strip()
-    return None
-
-
-def _fragment_block_body(fragment: str, block_name: str) -> str:
-    body = _extract_block_body(fragment, block_name)
-    if body is not None:
-        return body
-    stripped = (fragment or "").strip()
-    if stripped.startswith("[") and stripped.endswith("]"):
-        inner = stripped[1:-1].strip().rstrip(",")
-        return f"{inner},\n" if inner else ""
-    return stripped
-
-
-def _inject_template_block(base: str, block_name: str, fragment: str) -> tuple[str, bool]:
-    body = _fragment_block_body(fragment, block_name)
-    replacement = f"{{% block {block_name} %}}\n{body}\n{{% endblock %}}"
-    pattern = re.compile(
-        rf"\{{%\-?\s*block\s+{re.escape(block_name)}\s*\-?%\}}\s*\{{%\-?\s*endblock\s*\-?%\}}",
-    )
-    merged, count = pattern.subn(replacement, base, count=1)
-    return merged, count > 0
+def _inject_client_fragment_blocks(base: str, fragment: str) -> tuple[str, bool]:
+    return _inject_named_fragment_blocks(base, fragment, ("outbounds", "endpoints"))
 
 
 def _rendered_client_block_body(items: list[dict]) -> str:
@@ -1845,6 +1939,10 @@ def _normalize_fragment_body(rendered: str) -> str:
     return (rendered or "").strip().rstrip(",")
 
 
+def _template_has_client_blocks(template: str) -> bool:
+    return "{% block outbounds %}" in template or "{% block endpoints %}" in template
+
+
 def _build_client_block_fragment(
     outbound_template: str,
     *,
@@ -1853,6 +1951,9 @@ def _build_client_block_fragment(
     outbound_body: str | None = None,
     endpoint_body: str | None = None,
 ) -> str:
+    if outbound_body is None and outbound_items is None and endpoint_body is None and endpoint_items is None and _template_has_client_blocks(outbound_template):
+        return outbound_template
+
     parts: list[str] = []
     if outbound_body is not None:
         parts.append(f"{{% block outbounds %}}\n{outbound_body}\n{{% endblock %}}")
@@ -1881,32 +1982,6 @@ def _build_client_block_fragment(
     if parts:
         return "\n".join(parts)
     return outbound_template
-
-
-def _inject_named_fragment_blocks(
-    base: str,
-    fragment: str,
-    block_names: tuple[str, ...],
-) -> tuple[str, bool]:
-    merged = base
-    any_ok = False
-    for block_name in block_names:
-        body = _extract_block_body(fragment, block_name)
-        if body is None:
-            continue
-        injected, ok = _inject_template_block(merged, block_name, body)
-        if ok:
-            merged = injected
-            any_ok = True
-    if any_ok:
-        return merged, True
-    if len(block_names) == 1:
-        return _inject_template_block(merged, block_names[0], fragment)
-    return merged, False
-
-
-def _inject_client_fragment_blocks(base: str, fragment: str) -> tuple[str, bool]:
-    return _inject_named_fragment_blocks(base, fragment, ("outbounds", "endpoints"))
 
 
 def _compose_singbox_client_config(
@@ -2086,11 +2161,7 @@ def _collect_client_fragment_bodies(
     endpoint_parts: list[str] = []
     last_error_section: dict[str, Any] | None = None
     proxy_label = data.get("name") or data.get("slug") or str(proxy_id or "")
-    variants = (
-        [_ClientRenderVariant(alpn_tag="", download_alpn_tag=None)]
-        if _client_uses_template_alpn_loop(core_name)
-        else _client_render_variants(data)
-    )
+    variants = [_ClientRenderVariant(alpn_tag="", download_alpn_tag=None)] if _client_uses_template_alpn_loop(core_name) else _client_render_variants(data)
     for variant in variants:
         alpn_ctx = _build_proxy_context(
             child_id,
@@ -2268,49 +2339,7 @@ def _catalog_shell_base(side: str, core: str) -> str:
         return default_base_content(side, core)
 
 
-def _resolve_fragment_block_name(fragment: str, block_name: str | None) -> str:
-    preferred = block_name or "outbounds"
-    raw = (fragment or "").strip()
-    if _extract_block_body(raw, preferred) is not None:
-        return preferred
-    if _extract_block_body(raw, "endpoints") is not None:
-        return "endpoints"
-    return preferred
-
-
-def _render_fragment_section(
-    child_id: int,
-    context: dict[str, Any],
-    fragment: str,
-    block_name: str | None,
-    *,
-    parse_json: bool = True,
-) -> dict[str, Any]:
-    raw = (fragment or "").strip()
-    resolved_block = _resolve_fragment_block_name(raw, block_name)
-    extracted = _extract_block_body(raw, resolved_block) if resolved_block else None
-    if extracted is not None:
-        body = extracted
-    elif raw.startswith("[") and raw.endswith("]"):
-        body = raw
-    elif resolved_block:
-        body = _fragment_block_body(fragment, resolved_block)
-    else:
-        body = raw
-    if body.strip().startswith("["):
-        return _render_section(body, child_id, context, as_json_object=False, parse_json=parse_json)
-    if body.strip().startswith("{") and not _looks_like_jinja_template(body):
-        return _render_section(body, child_id, context, as_json_object=True, parse_json=parse_json)
-    if _looks_like_jinja_template(body):
-        return _render_section(body, child_id, context, as_json_object=False, parse_json=parse_json)
-    return _render_section(_wrap_as_json_object(body), child_id, context, as_json_object=True, parse_json=parse_json)
-
-
-def _merge_rendered_sections(
-    base_section: dict[str, Any],
-    frag_section: dict[str, Any],
-    block_name: str | None,
-) -> dict[str, Any]:
+def _merge_rendered_sections(base_section: dict[str, Any], frag_section: dict[str, Any], block_name: str | None) -> dict[str, Any]:
     if frag_section.get("skipped"):
         return base_section
     if frag_section.get("error"):
@@ -2372,38 +2401,6 @@ def _merge_rendered_sections(
         "skipped": False,
         "error": None,
     }
-
-
-def resolve_base_config_content(
-    child_id: int,
-    side: str,
-    core: str,
-    version: str = "",
-) -> str:
-    side_val = side.value if hasattr(side, "value") else side
-    version = (version or "").strip()
-
-    def _query(ver: str):
-        return (
-            ProxyBaseConfig.query.filter(
-                ProxyBaseConfig.enable.is_(True),
-                ProxyBaseConfig.side == side_val,
-                ProxyBaseConfig.core == core,
-                ProxyBaseConfig.version == ver,
-                (ProxyBaseConfig.child_id == child_id) | (ProxyBaseConfig.child_id == 0),
-            )
-            .order_by(ProxyBaseConfig.child_id.desc())
-            .first()
-        )
-
-    row = _query(version) if version else None
-    if not row:
-        row = _query("1.0.0")
-    if not row:
-        row = _query("")
-    if row:
-        return row.effective_content()
-    return default_base_content(side_val, core)
 
 
 def _base_usable_for_compose(base: str) -> bool:
@@ -2666,76 +2663,28 @@ def _compose_sublink_full_config(
     return full_section, formats
 
 
-def _render_section(
-    template_text: str,
-    child_id: int,
-    context: dict[str, Any],
-    *,
-    as_json_object: bool = True,
-    parse_json: bool = True,
-) -> dict[str, Any]:
-    if not (template_text or "").strip():
-        return {
-            "rendered": "",
-            "parsed": None,
-            "skipped": False,
-            "error": None,
-        }
-    try:
-        rendered = render_template_text(template_text, child_id, context)
-        if as_json_object and rendered.strip() and not rendered.strip().startswith(("[", "{")):
-            wrapped = _wrap_as_json_object(rendered)
-        else:
-            wrapped = rendered
-        wrapped = _trim_leading_empty_lines(wrapped)
-        if wrapped.strip().startswith(("{", "[")):
-            wrapped = fix_duplicate_json_commas(wrapped)
-        parsed = None
-        parse_err = None
-        error_detail = None
-        if parse_json and wrapped.strip().startswith(("{", "[")):
-            to_parse = _json5_text_for_parse(wrapped)
-            parsed, parse_err = parse_json5(to_parse)
-            if parse_err:
-                error_detail = _render_error_detail(parse_err, source=wrapped, phase="json5")
-            elif as_json_object and isinstance(parsed, list) and len(parsed) == 1 and isinstance(parsed[0], dict):
-                parsed = parsed[0]
-                wrapped = json.dumps(parsed, indent=2, ensure_ascii=False)
-        return _ensure_section_error_detail(
-            {
-                "rendered": wrapped,
-                "parsed": parsed,
-                "skipped": False,
-                "error": parse_err,
-                "error_detail": error_detail,
-            }
-        )
-    except TemplateSkip:
-        return {
-            "rendered": "SKIP",
-            "parsed": None,
-            "skipped": True,
-            "error": None,
-            "error_detail": None,
-        }
-    except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
-        message = str(e)
-        lineno = getattr(e, "lineno", None) or _infer_jinja_error_line(template_text, message)
-        return _ensure_section_error_detail(
-            {
-                "rendered": "",
-                "parsed": None,
-                "skipped": False,
-                "error": message,
-                "error_detail": _render_error_detail(
-                    message,
-                    template_source=template_text,
-                    phase="jinja",
-                    line=lineno,
-                    column=getattr(e, "colno", None),
-                ),
-            }
-        )
+def _render_section(template_text: str, child_id: int, context: dict[str, Any], *, as_json_object: bool = True, parse_json: bool = True) -> dict[str, Any]:
+    return _ensure_section_error_detail(
+        _render_section_impl(
+            template_text,
+            child_id,
+            context,
+            as_json_object=as_json_object,
+            parse_json=parse_json,
+        ).model_dump()
+    )
+
+
+def _render_fragment_section(child_id: int, context: dict[str, Any], fragment: str, block_name: str | None, *, parse_json: bool = True) -> dict[str, Any]:
+    return _ensure_section_error_detail(
+        _render_fragment_section_impl(
+            child_id,
+            context,
+            fragment,
+            block_name,
+            parse_json=parse_json,
+        ).model_dump()
+    )
 
 
 def generate_proxy_example(
@@ -2769,14 +2718,26 @@ def generate_proxy_example(
     client_config = data.get("client_config") or {}
     tag = server_config.get("tag") or data.get("slug") or "example-tag"
     protocol = _proxy_mode_value(data)
-    resolved_ports = resolve_inbound_ports(
+    stored_tcp = normalize_port_list(server_config.get("inbound_tcp_ports") or server_config.get("inbound_port"))
+    stored_udp = normalize_port_list(server_config.get("inbound_udp_ports"))
+    client_ports = resolve_inbound_ports(
         protocol,
         proxy_id,
         domain_id=domain_id,
-        stored_tcp_ports=normalize_port_list(server_config.get("inbound_tcp_ports") or server_config.get("inbound_port")),
-        stored_udp_ports=normalize_port_list(server_config.get("inbound_udp_ports")),
+        db_tcp_ports=stored_tcp,
+        db_udp_ports=stored_udp,
+        server_side=False,
     )
-    port = resolved_ports.tcp_port or resolved_ports.udp_port or 2080
+    server_ports = resolve_inbound_ports(
+        protocol,
+        proxy_id,
+        domain_id=domain_id,
+        db_tcp_ports=stored_tcp,
+        db_udp_ports=stored_udp,
+        server_side=True,
+    )
+    client_port = primary_resolved_port(client_ports)
+    server_port = primary_resolved_port(server_ports)
     core = server_config.get("core") or "xray"
     binding = "ip" if protocol == CustomProxyMode.ip.value else "domain"
     resolved_ip = (ip or "").strip() or "203.0.113.1"
@@ -3131,7 +3092,8 @@ def generate_proxy_example(
             "user_agent": resolved_ua,
             "user_agent_parsed": ua_parsed,
             "tag": tag,
-            "port": port,
+            "port": client_port,
+            "server_port": server_port,
             "domain_binding": binding,
         },
         "server": server_result,
@@ -3187,6 +3149,24 @@ def _merge_server_bundle(
     errors: list[dict[str, str]],
     warnings: list[dict[str, str]],
 ) -> dict[str, Any]:
+    from hiddifypanel.models.proxy_base_config import BaseConfigSide
+    from hiddifypanel.proxy_v3.config_builder.registry import get_config_builder_driver
+
+    driver = get_config_builder_driver(core, BaseConfigSide.server)
+    if driver is not None and hasattr(driver, "merge_bundle"):
+        return driver.merge_bundle(
+            child_id,
+            proxies,
+            domain_id=domain_id,
+            domain_host=domain_host,
+            ip=ip,
+            user_id=user_id,
+            user_uuid=user_uuid,
+            user_agent=user_agent,
+            errors=errors,
+            warnings=warnings,
+        )
+
     bundle_ctx = _build_bundle_context(
         child_id,
         domain_id=domain_id,
@@ -3214,34 +3194,24 @@ def _merge_server_bundle(
         }
 
     for proxy in proxies:
-        data = proxy.to_dict()
-        if (data.get("server_config") or {}).get("core") != core:
+        if (proxy.server_core.value if proxy.server_core else "xray") != core:
             continue
-        inbound_tpl = (data.get("server_config") or {}).get("inbound_template") or ""
+        inbound_tpl = proxy.effective_server_config_text()
         if not inbound_tpl.strip():
             continue
-        protocol = _proxy_mode_value(data)
-        server_domain_id = domain_id
-        server_domain_host = domain_host
-        if protocol in (CustomProxyMode.domains_l7_gateway.value, CustomProxyMode.domains_auto_public_ports.value):
-            server_domain_id = None
-            server_domain_host = None
-        ctx = _build_proxy_context(
+        from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_proxy_jinja_context
+
+        ctx = build_proxy_jinja_context(
             child_id,
-            data,
-            domain_id=server_domain_id,
-            domain_host=server_domain_host,
-            ip=ip,
+            proxy,
+            core=core,
+            domain_id=domain_id if proxy.mode not in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_auto_public_ports) else None,
+            domain_host=domain_host if proxy.mode not in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_auto_public_ports) else None,
             user_id=user_id,
             user_uuid=user_uuid,
-            user_agent=user_agent,
-            server_side=True,
-            proxy_id=proxy.id,
-            core=core,
-            core_version="",
         )
         frag = _render_fragment_section(child_id, ctx, inbound_tpl, block_name)
-        proxy_label = data.get("name") or data.get("slug") or str(proxy.id)
+        proxy_label = proxy.name or proxy.slug or str(proxy.id)
         if frag.get("skipped"):
             warnings.append({"code": "server_skip", "message": f"{proxy_label}: server skipped (SKIP)"})
             continue
@@ -3328,7 +3298,7 @@ def _merge_client_outbound_bundle(
         user_uuid=user_uuid,
         user_agent=user_agent,
     )
-    if core in ("hiddify-core", "singbox"):
+    if core in ("singbox", "hiddify-core"):
         all_outbound_parts: list[str] = []
         all_endpoint_parts: list[str] = []
         last_error: dict[str, Any] | None = None

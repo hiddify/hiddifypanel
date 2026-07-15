@@ -1,0 +1,9 @@
+{% block endpoints %}
+{% for ctx in ctx.iter_ctx_domains() %}
+{
+  {% include 'hiddify-core/client/tag' %}
+  {% include '__PROTO_SLUG__' %}
+  {% include '__TLS_SLUG__' %}
+},
+{% endfor %}
+{% endblock %}

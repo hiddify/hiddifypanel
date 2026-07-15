@@ -53,16 +53,22 @@ PROXY_CFG_STRINGS: list[str] = [
 ]
 
 EXTRA_PROXY_ROWS: list[dict[str, Any]] = [
-    {'l3': ProxyL3.custom, 'transport': ProxyTransport.shadowsocks, 'cdn': 'direct', 'proto': 'ss', 'name': 'ShadowSocks2022'},
-    {'l3': ProxyL3.custom, 'transport': ProxyTransport.shadowsocks, 'cdn': 'relay', 'proto': 'ss', 'name': 'ShadowSocks2022 Relay'},
-    {'l3': ProxyL3.tls, 'transport': ProxyTransport.shadowtls, 'cdn': 'direct', 'proto': 'ss', 'name': 'ShadowTLS'},
-    {'l3': ProxyL3.tls, 'transport': ProxyTransport.shadowtls, 'cdn': 'relay', 'proto': 'ss', 'name': 'ShadowTLS Relay'},
+    {'l3': ProxyL3.custom, 'transport': ProxyTransport.shadowsocks, 'cdn': 'direct', 'proto': 'shadowsocks', 'name': 'ShadowSocks2022'},
+    {'l3': ProxyL3.custom, 'transport': ProxyTransport.shadowsocks, 'cdn': 'relay', 'proto': 'shadowsocks', 'name': 'ShadowSocks2022 Relay'},
+    {'l3': ProxyL3.tls, 'transport': ProxyTransport.shadowtls, 'cdn': 'direct', 'proto': 'shadowsocks', 'name': 'ShadowTLS'},
+    {'l3': ProxyL3.tls, 'transport': ProxyTransport.shadowtls, 'cdn': 'relay', 'proto': 'shadowsocks', 'name': 'ShadowTLS Relay'},
     {'l3': 'ssh', 'transport': 'ssh', 'cdn': 'direct', 'proto': 'ssh', 'name': 'SSH'},
     {'l3': 'ssh', 'transport': ProxyTransport.ssh, 'cdn': ProxyCDN.relay, 'proto': ProxyProto.ssh, 'name': 'SSH Relay'},
     {'l3': ProxyL3.h3_quic, 'transport': 'custom', 'cdn': 'direct', 'proto': 'tuic', 'name': 'TUIC'},
     {'l3': ProxyL3.h3_quic, 'transport': 'custom', 'cdn': 'relay', 'proto': 'tuic', 'name': 'TUIC Relay'},
     {'l3': ProxyL3.h3_quic, 'transport': 'custom', 'cdn': 'direct', 'proto': 'hysteria2', 'name': 'Hysteria2'},
     {'l3': ProxyL3.h3_quic, 'transport': 'custom', 'cdn': 'relay', 'proto': 'hysteria2', 'name': 'Hysteria2 Relay'},
+    {'l3': ProxyL3.h3_quic, 'transport': 'custom', 'cdn': 'direct', 'proto': 'hysteria', 'name': 'Hysteria'},
+    {'l3': ProxyL3.h3_quic, 'transport': 'custom', 'cdn': 'relay', 'proto': 'hysteria', 'name': 'Hysteria Relay'},
+    {'l3': ProxyL3.custom, 'transport': ProxyTransport.custom, 'cdn': ProxyCDN.direct, 'proto': ProxyProto.dnstt, 'name': 'DNSTT'},
+    {'l3': ProxyL3.custom, 'transport': ProxyTransport.custom, 'cdn': ProxyCDN.relay, 'proto': ProxyProto.dnstt, 'name': 'DNSTT Relay'},
+    {'l3': ProxyL3.tls, 'transport': 'custom', 'cdn': 'direct', 'proto': 'snell', 'name': 'Snell'},
+    {'l3': ProxyL3.tls, 'transport': 'custom', 'cdn': 'relay', 'proto': 'snell', 'name': 'Snell Relay'},
     {'l3': ProxyL3.udp, 'transport': ProxyTransport.custom, 'cdn': ProxyCDN.direct, 'proto': ProxyProto.wireguard, 'name': 'WireGuard'},
     {'l3': ProxyL3.udp, 'transport': ProxyTransport.custom, 'cdn': ProxyCDN.relay, 'proto': ProxyProto.wireguard, 'name': 'WireGuard Relay'},
     {'l3': 'tls', 'transport': 'custom', 'cdn': 'direct', 'proto': 'naive', 'name': 'Naive'},
@@ -126,6 +132,9 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
             if proto == 'trojan' and l3_s not in ('tls', 'xtls', 'tls_h2', 'h3_quic'):
                 continue
             if transport in ('grpc', 'XTLS', 'faketls') and l3_s == 'http':
+                if proto not in ('vless', 'vmess'):
+                    continue
+            if transport == 'faketls' and l3_s != 'tls':
                 continue
             if transport in ('h2',) and l3_s != 'reality':
                 continue
@@ -133,12 +142,13 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
                 continue
             if transport in (ProxyTransport.httpupgrade, ProxyTransport.WS):
                 if l3_s == 'http':
-                    continue
-                if l3_s != 'tls':
+                    if proto not in ('vless', 'vmess'):
+                        continue
+                elif l3_s != 'tls':
                     continue
 
-            enable = l3_s != 'http' or proto == 'vmess'
-            enable = enable and (transport != 'tcp' or l3_s == 'reality')
+            enable = l3_s != 'http' or proto in ('vless', 'vmess')
+            enable = enable and (transport != 'tcp' or l3_s in ('reality', 'http', 'tls'))
             name = f'{l3_s} {c}'
 
             params_list: list[tuple[str, dict[str, Any]]] = [('', {})]

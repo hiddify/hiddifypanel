@@ -1,7 +1,7 @@
 "protocol": "vless",
 "settings": {
     "clients": [
-        {% for u in users %}
+        {% for u in ctx.users %}
             {
                 "id": "{{ u['uuid'] }}", 
                 "email": "{{ u['uuid'] }}@hiddify.com",

@@ -2,7 +2,7 @@
 {
   "outbounds": [
     {% include 'singbox/client/subscription_status' %}
-    {% if user.is_active %}
+    {% if ctx.user.is_active %}
     {% include 'hiddify-core/client/proxies_group' %}
     {% block outbounds %}{% endblock %}
     {% endif %}
@@ -11,13 +11,13 @@
     {"tag": "dns-out", "type": "dns"}
   ],
   "endpoints": [
-    {% if user.is_active %}
+    {% if ctx.user.is_active %}
     {% block endpoints %}{% endblock %}
     {% endif %}
   ],
   "route": {
     "auto_detect_interface": true,
-    "override_android_vpn": {%if platform.os == "android" %}true{%else%}false{%endif%},
+    "override_android_vpn": {%if ctx.platform.os == "android" %}true{%else%}false{%endif%},
     "final": "Select",
     "rules": []
   }

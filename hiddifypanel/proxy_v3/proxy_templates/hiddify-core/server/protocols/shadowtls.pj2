@@ -1,19 +1,17 @@
-{% skip("shadowtls_enable = " ~ hconfig.shadowtls_enable) if not hconfig.shadowtls_enable %}
+{{ skip("shadowtls_enable = " ~ ctx.hconfig.shadowtls_enable) if not ctx.hconfig.shadowtls_enable }}
 "type": "shadowtls",
 {% include 'hiddify-core/server/snippets/listen' %},
-{% set _ss_cp = custom_proxies | selectattr("server_tag", "equalto", "ss-shadowsocks") | first | default(none) %}
-{% if _ss_cp %}"detour": "{{ _ss_cp.inbound_tag }}",{% endif %}
 "version": 3,
 "users": [
-  {"password": "{{ hconfig.shared_secret }}"}
+  {"password": "{{ ctx.hconfig.shared_secret }}"}
 ],
 "handshake": {
-  "server": "{{ domain.sni }}",
+  "server": "{{ ctx.domain.sni }}",
   "server_port": 443
 },
 "handshake_for_server_name": {
-  "{{ domain.sni }}": {
-    "server": "{{ domain.sni}}",
+  "{{ ctx.domain.sni }}": {
+    "server": "{{ ctx.domain.sni}}",
     "server_port": 443
   }
 },

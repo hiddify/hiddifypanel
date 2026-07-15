@@ -36,27 +36,150 @@
 <script src1="{{ js_url }}" type="text/javascript"></script>
 {% endfor %}
 {% endif %}
-<!-- Include the default stylesheet -->
 <link rel="stylesheet" href="https://unpkg.com/multiple-select@2.1.1/dist/multiple-select.min.css">
-
-<!-- Latest compiled and minified JavaScript -->
 <script src="https://unpkg.com/multiple-select@2.1.1/dist/multiple-select.min.js"></script>
 <link href="https://unpkg.com/multiple-select@2.1.1/dist/themes/bootstrap.min.css" rel="stylesheet">
-<!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.0.0/dist/css/select2.min.css" rel="stylesheet" /> -->
-<!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>     -->
+<script src="{{ static_url_for(filename='plugins/select2/select2.min.js') }}"></script>
 
 {%endblock%}
 {%block last%}
 <script src="{{ static_url_for( filename='plugins/bootstrap4-editable/js/bootstrap-editable.min.js' ) }}"></script>
 <script>
-    
+    const CDN_MODES = new Set(['cdn', 'auto_cdn_ip', 'worker']);
+    const PROXY_OPTIONS_URL = "{{ hurl_for('admin.Actions:domain_proxy_options') }}";
+    const PROXY_GROUP_LABELS = {
+        sni_gateway: `{{_("domain.custom_proxy.group.sni_gateway")}}`,
+        ip_based: `{{_("domain.custom_proxy.group.ip_based")}}`,
+        other: `{{_("domain.custom_proxy.group.other")}}`,
+    };
+    const PROXY_GROUP_ORDER = ['sni_gateway', 'ip_based', 'other'];
+
+    function isRealityFakeMode() {
+        return currentFakeMode() === 'reality';
+    }
+
+    function destroyCustomProxySelect2() {
+        const proxyEl = $('#custom_proxy');
+        if (!proxyEl.length) return;
+        if (proxyEl.data('select2')) {
+            proxyEl.select2('destroy');
+        }
+        proxyEl.removeClass('select2-hidden-accessible');
+        proxyEl.removeAttr('aria-hidden');
+        proxyEl.removeAttr('tabindex');
+        proxyEl.siblings('.select2-container').remove();
+    }
+
+    function initCustomProxySelect2() {
+        const proxyEl = $('#custom_proxy');
+        if (!proxyEl.length) return;
+        destroyCustomProxySelect2();
+        proxyEl.select2({
+            width: '100%',
+            placeholder: '—',
+            allowClear: !isRealityFakeMode(),
+        });
+    }
+
+    function optionValueExists(selectEl, value) {
+        if (!value) return false;
+        return Array.from(selectEl.querySelectorAll('option')).some((opt) => opt.value === value);
+    }
+
+    function rebuildCustomProxySelect(proxies, selected) {
+        const proxyEl = document.getElementById("custom_proxy");
+        if (!proxyEl) return;
+        const previous = selected || proxyEl.value || '';
+        destroyCustomProxySelect2();
+        proxyEl.innerHTML = '';
+
+        if (!isRealityFakeMode()) {
+            const empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = '—';
+            proxyEl.appendChild(empty);
+        }
+
+        const grouped = {};
+        (proxies || []).forEach((proxy) => {
+            const key = proxy.group || 'other';
+            grouped[key] = grouped[key] || [];
+            grouped[key].push(proxy);
+        });
+
+        PROXY_GROUP_ORDER.forEach((groupKey) => {
+            const items = grouped[groupKey];
+            if (!items || !items.length) return;
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = PROXY_GROUP_LABELS[groupKey] || groupKey;
+            items.forEach((proxy) => {
+                const option = document.createElement('option');
+                option.value = String(proxy.id);
+                option.textContent = proxy.name;
+                optgroup.appendChild(option);
+            });
+            proxyEl.appendChild(optgroup);
+        });
+
+        let nextValue = previous;
+        if (isRealityFakeMode() && proxies.length === 1) {
+            nextValue = String(proxies[0].id);
+        }
+        if (optionValueExists(proxyEl, nextValue)) {
+            proxyEl.value = nextValue;
+        } else if (!isRealityFakeMode()) {
+            proxyEl.value = '';
+        }
+        initCustomProxySelect2();
+    }
+
+    async function refreshProxyOptions() {
+        const proxyEl = document.getElementById("custom_proxy");
+        if (!proxyEl) return;
+        const $proxy = $('#custom_proxy');
+        const selected = ($proxy.data('select2') ? $proxy.val() : proxyEl.value) || '';
+        const mode = isSubLinkOnly() ? 'sub_link_only' : currentMode();
+        const fakeMode = currentFakeMode();
+        const url = `${PROXY_OPTIONS_URL}?mode=${encodeURIComponent(mode)}&fake_mode=${encodeURIComponent(fakeMode)}`;
+        try {
+            const response = await fetch(url, { credentials: 'same-origin' });
+            const payload = await response.json();
+            rebuildCustomProxySelect(payload.proxies || [], selected);
+        } catch (err) {
+            console.warn('proxy options refresh failed', err);
+        }
+    }
+
+    function currentMode() {
+        const modeEl = document.getElementById("mode");
+        return modeEl ? String(modeEl.value || '').trim() : '';
+    }
+
+    function currentFakeMode() {
+        const fakeModeEl = document.getElementById("fake_mode");
+        return fakeModeEl ? String(fakeModeEl.value || 'valid').trim() : 'valid';
+    }
+
+    function isSubLinkOnly() {
+        return $("#sub_link_only").is(':checked') || currentMode() === 'sub_link_only';
+    }
+
+    function syncFakeModeConstraints() {
+        const mode = currentMode();
+        const fakeModeEl = document.getElementById("fake_mode");
+        if (!fakeModeEl) return;
+
+        if (isSubLinkOnly() || CDN_MODES.has(mode)) {
+            fakeModeEl.value = 'valid';
+            fakeModeEl.disabled = true;
+        } else {
+            fakeModeEl.disabled = false;
+        }
+    }
+
     function update_hiddify_ui() {
-        
-        $("#show_domains").multipleSelect({ width: '100%',      filter: true });
-        // $("#download_domain").select2()
-        $("#download_domain").multipleSelect({ width: '100%',      filter: true });
+        $("#show_domains").multipleSelect({ width: '100%', filter: true });
+        $("#download_domain").multipleSelect({ width: '100%', filter: true });
 
         if ($("#domain").length > 0) {
             var selectElement = document.getElementById("mode");
@@ -64,11 +187,9 @@
                 { label: `{{_("Direct")}}`, options: ["direct","dnstt"] },
                 { label: `{{_("Panel Link")}}`, options: ["sub_link_only"] },
                 { label: `{{_("Bridge Servers")}}`, options: ["cdn",  "worker", "relay"] },
-                { label: `{{_("Fake")}}`, options: ["special_reality_xhttp","special_reality_tcp","special_reality_grpc", "fake"] }
             ];
 
             var options = Array.from($("#mode option"));
-            // Remove existing options
             while (selectElement.firstChild) {
                 selectElement.removeChild(selectElement.firstChild);
             }
@@ -76,17 +197,12 @@
                 var group = groups[i];
                 var optgroup = document.createElement("optgroup");
                 optgroup.label = group.label;
-
-
-                for (var j = 0; j < group.options.length; j++) {
-                    for (var j = 0; j < options.length; j++) {
-                        var option = options[j];
-                        if (group.options.includes(option.value)) {
-                            optgroup.appendChild(option.cloneNode(true));
-                        }
+                for (var j = 0; j < options.length; j++) {
+                    var option = options[j];
+                    if (group.options.includes(option.value)) {
+                        optgroup.appendChild(option.cloneNode(true));
                     }
                 }
-
                 selectElement.appendChild(optgroup);
             }
         }
@@ -98,118 +214,87 @@
             $(this).parent('.custom-control').append('<label class="custom-control-label" for="' + $(this).attr('id') + '">' + label + '</label>');
         });
         function hide_domain_elements() {
-            console.log("test")
             $("#extra_params").parent().hide();
-            if (["dnstt",'fake','reality','special_reality_grpc','special_reality_xhttp'].includes($("#mode").val())){
-                $("#show_domains").parent().hide()
-            }else{
-                $("#show_domains").parent().show()
-            }
-           
-            if ($("#mode").val() == "sub_link_only") {
-                $("#cdn_ip").parent().hide();
-                $("#cdn_ip").val("")
-                //$("#mode").parent().hide();
-                
-                $("#resolve_ip").parent().hide()
-                $("#servernames").parent().hide();
-                $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`)
-                $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`)
-                $("#download_domain").parent().hide();
+            syncFakeModeConstraints();
 
-            }else if ($("#mode").val() == "dnstt") {
-                $("#resolve_ip").parent().hide()
+            const fakeMode = currentFakeMode();
+            const mode = currentMode();
+            const hideShowDomains = mode === 'dnstt' || fakeMode === 'fake' || fakeMode === 'reality';
+            if (hideShowDomains) {
+                $("#show_domains").parent().hide();
+            } else {
+                $("#show_domains").parent().show();
+            }
+
+            if (mode == "sub_link_only" || isSubLinkOnly()) {
+                $("#cdn_ip").parent().hide();
+                $("#cdn_ip").val("");
+                $("#resolve_ip").parent().hide();
+                $("#servernames").parent().hide();
+                $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`);
+                $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`);
+                $("#download_domain").parent().hide();
+            } else if (mode == "dnstt") {
+                $("#resolve_ip").parent().hide();
                 $("#servernames").parent().hide();
                 $("#download_domain").parent().hide();
                 $("#cdn_ip").parent().hide();
                 $("#extra_params").parent().show();
-                
-
             } else {
-                
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();
-                //$("#mode").parent().show();
-                
-                $("#resolve_ip").parent().show()
+                $("#resolve_ip").parent().show();
 
-                if ($("#mode").val() == 'direct') {
+                if (mode == 'direct') {
                     $("#cdn_ip").parent().hide();
                 } else {
                     $("#cdn_ip").parent().show();
                 }
                 {% autoescape false %}
-                if (($("#mode").val()?? "").indexOf('reality')>=0) {
-
-                    //$("#servernames").parent().hide();
+                if (fakeMode === 'reality') {
                     $("#servernames").parent().show();
-                    $("#servernames").parent().find(".control-label").html(`{{_('config.reality_server_names.label')}}`)
-                    $("#servernames").parent().find(".help-block").html(`{{_('config.reality_server_names.description')}}`)
-
-                    // $("#grpc").parent().parent().show()
-                    $("#domain").parent().find(".control-label").html(`{{_('config.reality_fallback_domain.label')}}`)
-                    $("#domain").parent().find(".help-block").html(`{{_('config.reality_fallback_domain.description')+("<a target='_blank' href='" +hurl_for('admin.Actions:get_some_random_reality_friendly_domain',test_domain=domain)+"'>"+_('Example Domains')+"</a>")}}`)
+                    $("#servernames").parent().find(".control-label").html(`{{_('config.reality_server_names.label')}}`);
+                    $("#servernames").parent().find(".help-block").html(`{{_('config.reality_server_names.description')}}`);
+                    $("#domain").parent().find(".control-label").html(`{{_('config.reality_fallback_domain.label')}}`);
+                    $("#domain").parent().find(".help-block").html(`{{_('config.reality_fallback_domain.description')+("<a target='_blank' href='" +hurl_for('admin.Actions:get_some_random_reality_friendly_domain',test_domain=domain)+"'>"+_('Example Domains')+"</a>")}}`);
                     $("#download_domain").parent().hide();
                 } else {
-                    
-                    if ($("#mode").val() == 'cdn' || $("#mode").val() == 'auto_cdn_ip') {
+                    if (mode == 'cdn' || mode == 'auto_cdn_ip') {
                         $("#servernames").parent().show();
-                        $("#servernames").parent().find(".control-label").html(`{{_('domain.domain_fronting.label')}}`)
-                        $("#servernames").parent().find(".help-block").html(`{{_('domain.domain_fronting.description')}}`)
+                        $("#servernames").parent().find(".control-label").html(`{{_('domain.domain_fronting.label')}}`);
+                        $("#servernames").parent().find(".help-block").html(`{{_('domain.domain_fronting.description')}}`);
                     } else {
                         $("#servernames").parent().hide();
                     }
-
-                    
-                    $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`)
-                    $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`)
+                    $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`);
+                    $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`);
                 }
-
                 {% endautoescape %}
-
             }
+            refreshProxyOptions();
         }
-        $("#sub_link_only").on('change', hide_domain_elements)
-        $("#mode").on('change', hide_domain_elements)
-        hide_domain_elements()
+        $("#sub_link_only").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
+        $("#mode").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
+        $("#fake_mode").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
+        hide_domain_elements();
         ConvertNumberToPersion(document.getElementById('fa_modal_window'));
-        
     }
-    
-    update_hiddify_ui()
 
-    
-      $('body').off('click.modal.data-api')//remove flaskadminlte
-      $('body').on('click.modal.data-api', '[data-toggle="modal"]', function () {
-        
+    update_hiddify_ui();
+
+    $('body').off('click.modal.data-api');
+    $('body').on('click.modal.data-api', '[data-toggle="modal"]', function () {
         $($(this).data("target") + ' .modal-content').load($(this).attr('href'),function(){
-            setTimeout(update_hiddify_ui,100)
+            setTimeout(update_hiddify_ui,100);
         });
-      });
-    
-    // Initialize the observer with the callback function
-    
-
-    // Observe changes in the container element and its descendants
-    
+    });
 </script>
 
 {% endblock %}
 
-
-
-
-
-
-
-
-
-
 {% block body %}
-{# store the jinja2 context for form_rules rendering logic #}
 {% set render_ctx = h.resolve_ctx() %}
 {% endblock %}
-
 
 {% block rtl_styles %}
 {{super()}}
@@ -228,5 +313,4 @@
         text-align: right;
     }
 </style>
-
 {% endblock %}

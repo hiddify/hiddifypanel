@@ -1,0 +1,7 @@
+{{ skip("hiddify_coreversion " ~ ctx.platform.hiddifycore_version ~ " ") if  ctx.platform.hiddifycore_version < "4.1.0" }}
+
+"type": "dnstt",
+{% include 'hiddify-core/server/snippets/listen' %},
+{% include 'hiddify-core/server/snippets/inbound_meta' %},
+"public_key": "{{ ctx.hconfig.dnstt_public_key }}",
+"resolvers": {{ ctx.hconfig.dnstt_resolvers.split(',') | tojson }}

@@ -58,7 +58,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag v-if="data.proto" :value="String(data.proto).toUpperCase()" severity="info" />
+          <Tag v-if="data.proto" :value="protoLabel(data.proto)" severity="info" />
           <span v-else>—</span>
         </template>
       </Column>
@@ -81,30 +81,30 @@
           {{ modeLabel(data.mode ?? data.protocol) }}
         </template>
       </Column>
-      <Column field="tags">
+      <Column field="categories">
         <template #header>
           <div class="flex items-center gap-1">
-            <span>{{ t('proxy.tags') }}</span>
+            <span>{{ t('proxy.categories') }}</span>
             <Button
               icon="pi pi-filter"
               text
               rounded
               size="small"
-              :severity="filterTags.length ? 'primary' : 'secondary'"
+              :severity="filterCategories.length ? 'primary' : 'secondary'"
               :aria-label="t('common.filter')"
-              @click="(e: Event) => tagsPopover.toggle(e)"
+              @click="(e: Event) => categoriesPopover.toggle(e)"
             />
           </div>
         </template>
         <template #body="{ data }">
           <Tag
-            v-for="tag in data.tags || []"
-            :key="tag"
-            :value="tag"
+            v-for="category in data.categories || []"
+            :key="category"
+            :value="category"
             class="mr-1 mb-1"
             severity="secondary"
           />
-          <span v-if="!(data.tags || []).length">—</span>
+          <span v-if="!(data.categories || []).length">—</span>
         </template>
       </Column>
       <Column field="server_core" sortable>
@@ -184,17 +184,17 @@
     </DataTable>
   </Panel>
 
-  <Popover ref="tagsPopover">
+  <Popover ref="categoriesPopover">
     <div class="flex flex-col gap-2 min-w-52">
-      <label class="text-sm font-medium">{{ t('proxy.tags') }}</label>
+      <label class="text-sm font-medium">{{ t('proxy.categories') }}</label>
       <MultiSelect
-        v-model="filterTags"
-        :options="tagOptions"
+        v-model="filterCategories"
+        :options="categoryOptions"
         display="chip"
         filter
         show-clear
         class="w-full"
-        :placeholder="t('proxy.tagsFilter')"
+        :placeholder="t('proxy.categoriesFilter')"
       />
     </div>
   </Popover>
@@ -285,8 +285,8 @@ const protoOptions = ref<{ label: string; value: string }[]>([])
 const coreOptions = ref<string[]>([])
 const clientCoreOptions = ref<string[]>([])
 
-const filterTags = ref<string[]>([])
-const tagOptions = ref<string[]>([])
+const filterCategories = ref<string[]>([])
+const categoryOptions = ref<string[]>([])
 
 const filterName = ref('')
 const filterProto = ref<string | null>(null)
@@ -295,7 +295,7 @@ const filterCore = ref<string | null>(null)
 const filterClientCore = ref<string | null>(null)
 const filterEnabled = ref<boolean | null>(null)
 
-const tagsPopover = ref()
+const categoriesPopover = ref()
 const namePopover = ref()
 const protoPopover = ref()
 const modePopover = ref()
@@ -307,6 +307,12 @@ const enabledOptions = [
   { label: t('common.enabled'), value: true },
   { label: 'Disabled', value: false },
 ]
+
+function protoLabel(proto: string | undefined) {
+  if (!proto) return '—'
+  if (proto === 'shadowsocks') return 'Shadowsocks'
+  return proto.toUpperCase()
+}
 
 function modeLabel(mode: string | undefined) {
   if (!mode) return '—'
@@ -325,7 +331,7 @@ const filteredProxies = computed(() =>
     if (filterMode.value && mode !== filterMode.value) return false
     if (filterCore.value && p.server_core !== filterCore.value) return false
     if (filterClientCore.value && !(p.client_cores || []).includes(filterClientCore.value)) return false
-    if (filterTags.value.length && !filterTags.value.some((tag) => (p.tags || []).includes(tag))) return false
+    if (filterCategories.value.length && !filterCategories.value.some((category) => (p.categories || []).includes(category))) return false
     if (filterEnabled.value !== null && Boolean(p.enable) !== filterEnabled.value) return false
     return true
   }),
@@ -342,21 +348,21 @@ async function load() {
       value: m,
     }))
     protoOptions.value = (metaRes.protos ?? []).map((p) => ({
-      label: p.toUpperCase(),
+      label: p === 'shadowsocks' ? 'Shadowsocks' : p.toUpperCase(),
       value: p,
     }))
     const cores = new Set<string>()
     const clientCores = new Set<string>(metaRes.client_cores ?? [])
-    const tags = new Set<string>(metaRes.suggested_tags ?? [])
+    const categories = new Set<string>(metaRes.suggested_categories ?? [])
     for (const p of list) {
       if (p.server_core) cores.add(p.server_core)
       for (const c of p.client_cores ?? []) clientCores.add(c)
-      for (const tag of p.tags ?? []) tags.add(tag)
+      for (const category of p.categories ?? []) categories.add(category)
     }
     for (const c of metaRes.server_cores ?? []) cores.add(c)
     coreOptions.value = [...cores].sort()
     clientCoreOptions.value = [...clientCores].sort()
-    tagOptions.value = [...tags].sort()
+    categoryOptions.value = [...categories].sort()
   } catch {
     toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 5000 })
   } finally {
@@ -373,7 +379,7 @@ async function toggleEnable(row: CustomProxy, enable: boolean) {
 async function duplicate(id: number) {
   const copy = await customProxiesApi.duplicate(id)
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
-  router.push({ name: 'custom-proxy-edit', params: { id: copy.id } })
+  await router.push({ name: 'custom-proxy-edit', params: { id: String(copy.id) } })
 }
 
 function confirmDelete(row: CustomProxy) {

@@ -1,8 +1,8 @@
-{% for domain in domains %}
-  {% set proxy = proxy.with_domain(domain) %}
+{% for domain in ctx.domains %}
+  {% set proxy = ctx.proxy.with_domain(domain) %}
   {% set uri = namespace(
     protocol = 'trojan',
-    password = user.uuid,
+    password = ctx.user.uuid,
     host=proxy.server,
     port=proxy.port,
     query_params=namespace(hiddify='1'),

@@ -1,26 +1,8 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
 
-export interface AdminMenuItem {
-  label: string
-  icon?: string
-  to?: string
-  url?: string
-  target?: string
-  badge?: string
-  items?: AdminMenuItem[]
-}
-
-export interface AdminMenuGroup {
-  label: string
-  items: AdminMenuItem[]
-}
-
-declare global {
-  interface Window {
-    __ADMIN_MENU__?: AdminMenuGroup[]
-  }
-}
+export type { AdminMenuGroup, AdminMenuItem }
 
 export function useAdminMenu() {
   const { t } = useI18n()
@@ -44,7 +26,7 @@ export function useAdminMenu() {
     },
   ])
 
-  const legacyGroups = computed(() => window.__ADMIN_MENU__ ?? [])
+  const legacyGroups = legacyMenu
 
   const menuGroups = computed(() => [...v2Groups.value, ...legacyGroups.value])
 

@@ -1,0 +1,15 @@
+{% block inbounds %}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set tag %}{%- include 'hiddify-core/server/tag' -%}{% endset %}
+{
+  "tag":"{{tag}}",
+  "detour":"{{tag}}_detour",
+  {% include 'hiddify-core/server/snippets/listen' %},
+  {% include '__PROTO_SLUG__' %},
+},
+{
+  "tag":"{{tag}}_detour",
+  {% include 'hiddify-core/server/protocols/ss' %}
+},
+{%endfor%}
+{% endblock %}

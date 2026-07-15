@@ -1,4 +1,3 @@
-{% skip("ssh_server_enable = " ~ hconfig.ssh_server_enable) if not hconfig.ssh_server_enable %}
 "type": "ssh",
 "server": "{{ ctx.proxy.server }}",
 "server_port": {{ ctx.proxy.port }},

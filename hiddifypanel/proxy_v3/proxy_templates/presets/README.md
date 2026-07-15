@@ -9,15 +9,15 @@ Presets are composition shells used at **proxy generation time** by the template
 ## Layout
 
 ```
-{core}/presets/           # xray, singbox, hiddify-core
-{core}/{side}/presets/    # hiddify-core client/server presets
+{core}/{server|client}/presets/{name}.pj2
 ```
 
 Examples:
 
-- `xray/presets/inbound.pj2` — assembles a full xray server inbound from fragments
-- `hiddify-core/client/presets/client_outbound_v2ray.pj2` — client outbound for v2ray-compatible apps
-- `singbox/presets/client_outbound.pj2` — sing-box client outbound shell
+- `xray/server/presets/inbound.pj2` — assembles a full xray server inbound from fragments
+- `hiddify-core/server/presets/inbound_v2ray.pj2` — sing-box server inbound for vless/vmess/trojan
+- `hiddify-core/client/presets/outbound_v2ray.pj2` — client outbound for v2ray-compatible apps
+- `singbox/client/presets/client_outbound.pj2` — sing-box client outbound shell
 
 ## When to add a preset
 

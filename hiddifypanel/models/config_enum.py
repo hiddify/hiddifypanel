@@ -123,6 +123,7 @@ class ConfigEnum(metaclass=FastEnum):
     create_easysetup_link = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.nothing, hide_in_virtual_child=True)
     wireguard_enable = _BoolConfigDscr(ConfigCategory.wireguard, ApplyMode.reinstall, hide_in_virtual_child=True)
     wireguard_port = _StrConfigDscr(ConfigCategory.wireguard, ApplyMode.apply_config, hide_in_virtual_child=True)
+    wireguard_use_quic_port = _BoolConfigDscr(ConfigCategory.wireguard, ApplyMode.apply_config, hide_in_virtual_child=True)
     wireguard_ipv6 = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     wireguard_ipv4 = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     wireguard_private_key = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -131,6 +132,7 @@ class ConfigEnum(metaclass=FastEnum):
 
     ssh_server_redis_url = _StrConfigDscr(ConfigCategory.hidden, hide_in_virtual_child=True)
     ssh_server_port = _StrConfigDscr(ConfigCategory.ssh, ApplyMode.apply_config, hide_in_virtual_child=True)
+    ssh_use_tls_port = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.apply_config, hide_in_virtual_child=True)
     ssh_server_enable = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.reinstall)
     first_setup = _BoolConfigDscr(ConfigCategory.hidden)
     core_type = _StrConfigDscr(ConfigCategory.advanced, ApplyMode.reinstall, hide_in_virtual_child=True)
@@ -335,6 +337,8 @@ class ConfigEnum(metaclass=FastEnum):
     ssh_host_dsa_pub = _StrConfigDscr(ConfigCategory.hidden)
 
     anytls_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    snell_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    socks_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     hiddifycli_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall)
 

@@ -1,11 +1,10 @@
+{% set domain = domain or ctx.domain %}
 "tls": {
   "enabled": true,
   "server_name": "{{ domain.sni }}",
-  "alpn": {{ proxy.alpn_list | tojson if proxy.alpn_list else '["h2", "http/1.1"]' }},
-  "min_version": "1.2",
-  "max_version": "1.3",
-  "cipher_suites": [],
-  "curve_preferences": [],
+  {%if alpns %}
+    "alpn": {{alpns | tojson}},
+  {%endif%}
   {% if domain.cert.cert_lines %}
   "certificate": {{ domain.cert.cert_lines | tojson }},
   "key": {{ domain.cert.key_lines | tojson }},

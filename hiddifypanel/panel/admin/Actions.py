@@ -12,6 +12,7 @@ from hiddifypanel import hutils
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify, usage
 from hiddifypanel.panel.run_commander import commander, Command
+from hiddifypanel.proxy_v3.domain_proxy_options import list_domain_proxy_options
 
 
 class Actions(FlaskView):
@@ -54,7 +55,7 @@ class Actions(FlaskView):
     def all_public_ports(self):
         tcp_ports={80,443}
         udp_ports={443,}
-        if hconfig(ConfigEnum.wireguard_enable):
+        if hconfig(ConfigEnum.wireguard_enable) and not hconfig(ConfigEnum.wireguard_use_quic_port):
             udp_ports.add(hconfig(ConfigEnum.wireguard_port))
         if hconfig(ConfigEnum.shadowsocks2022_enable) and (p:=hconfig(ConfigEnum.shadowsocks2022_port)):
             udp_ports.add(p)
@@ -64,7 +65,7 @@ class Actions(FlaskView):
                 tcp_ports.add(p)
             for p in hconfig(ConfigEnum.mieru_udp_ports).split(","):
                 udp_ports.add(p)
-        if hconfig(ConfigEnum.ssh_server_enable):
+        if hconfig(ConfigEnum.ssh_server_enable) and not hconfig(ConfigEnum.ssh_use_tls_port):
             tcp_ports.add(hconfig(ConfigEnum.ssh_server_port))
         
         for p in (hconfig(ConfigEnum.tls_ports)).split(','):
@@ -181,6 +182,25 @@ class Actions(FlaskView):
                                log_file_url=get_log_api_url(),
                                log_file="update.log",
                                domains=get_domains())
+
+    @login_required(roles={Role.super_admin})
+    @route('domain_proxy_options', methods=['GET'])
+    def domain_proxy_options(self):
+        mode = request.args.get('mode') or DomainType.direct.value
+        fake_mode = request.args.get('fake_mode') or FakeMode.valid.value
+        try:
+            domain_mode = DomainType(mode)
+            domain_fake_mode = FakeMode(fake_mode)
+        except ValueError:
+            return {'proxies': []}
+        child_id = g.child.id if g.child else 0
+        return {
+            'proxies': list_domain_proxy_options(
+                child_id=child_id,
+                mode=domain_mode,
+                fake_mode=domain_fake_mode,
+            )
+        }
 
     def get_some_random_reality_friendly_domain(self):
         test_domain = request.args.get("test_domain")

@@ -104,7 +104,7 @@ def to_singbox(proxy: dict) -> list[dict] | dict:
     if proxy['proto']==ProxyProto.naive:
         add_naive(base, proxy)
         return all_base
-    if proxy["proto"] in ["ss", "v2ray"]:
+    if proxy["proto"] in ["ss", "shadowsocks", "v2ray"]:
         add_shadowsocks_base(all_base, proxy)
         return all_base
     if proxy["proto"] == "ssh":

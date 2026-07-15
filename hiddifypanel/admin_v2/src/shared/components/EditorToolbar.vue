@@ -54,16 +54,18 @@ function onVariable(snippet: string) {
 </script>
 
 <template>
-  <div class="editor-toolbar flex flex-wrap items-center gap-2 py-1">
+  <div class="editor-toolbar">
     <Button
       icon="pi pi-code"
       :label="t('editor.insertVariable')"
       severity="secondary"
       size="small"
+      class="editor-toolbar-control"
       @click="varDialogVisible = true"
     />
     <TemplateIncludeMenu
       v-if="showInclude !== false"
+      class="editor-toolbar-control"
       :core="core"
       :category="category"
       :template-text="templateText"
@@ -75,6 +77,7 @@ function onVariable(snippet: string) {
     <VariableInsertDialog v-model:visible="varDialogVisible" @select="onVariable" />
     <BuiltinFieldOverride
       v-if="showOverride"
+      class="editor-toolbar-control"
       :field-id="overrideField"
       :overridden="overridden"
       @update:overridden="emit('update:overridden', $event)"
@@ -82,6 +85,7 @@ function onVariable(snippet: string) {
     />
     <EditorPreviewButton
       v-if="showPreview"
+      class="editor-toolbar-control"
       :require-user="requirePreviewUser"
       :ua-presets="uaPresets"
       :disabled="previewDisabled"
@@ -89,3 +93,30 @@ function onVariable(snippet: string) {
     />
   </div>
 </template>
+
+<style scoped>
+.editor-toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  padding-block: 0.25rem;
+}
+
+.editor-toolbar-control {
+  flex: 0 0 auto;
+}
+
+.editor-toolbar :deep(.p-button) {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.editor-toolbar :deep(.p-inputgroup) {
+  flex: 0 0 auto;
+  width: auto;
+}
+</style>

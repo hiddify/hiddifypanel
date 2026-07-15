@@ -1,0 +1,35 @@
+{% extends 'flask-admin/model/edit.html' %}
+
+{% block tail %}
+{{ super() }}
+<script>
+(function () {
+  const cdnModes = new Set(['cdn', 'auto_cdn_ip']);
+
+  function fieldRow(name) {
+    const input = document.querySelector('[name="' + name + '"]');
+    if (!input) return null;
+    return input.closest('.form-group') || input.closest('.mb-3') || input.parentElement;
+  }
+
+  function currentMode() {
+    const modeEl = document.querySelector('[name="mode"]');
+    return modeEl ? String(modeEl.value || '').trim() : '';
+  }
+
+  function updateCdnOnlyFields() {
+    const isCdn = cdnModes.has(currentMode());
+    const echRow = fieldRow('ech');
+    if (echRow) echRow.style.display = isCdn ? '' : 'none';
+    const echInput = document.querySelector('[name="ech"]');
+    if (echInput && !isCdn) echInput.checked = false;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const modeEl = document.querySelector('[name="mode"]');
+    if (modeEl) modeEl.addEventListener('change', updateCdnOnlyFields);
+    updateCdnOnlyFields();
+  });
+})();
+</script>
+{% endblock %}

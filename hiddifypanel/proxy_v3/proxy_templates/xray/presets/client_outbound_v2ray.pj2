@@ -1,8 +1,0 @@
-{
-  "tag": "{{ TAG }}",
-  {% include '__PROTO_SLUG__' %},
-  "streamSettings": {
-    {% include '__STREAM_SLUG__' %},
-    {% include '__SECURITY_SLUG__' %}
-  }
-}

@@ -1,23 +1,24 @@
 from __future__ import annotations
-from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
-from hiddifypanel.proxy_v3.context_vars.proxy import ProxyVar
-from hiddifypanel.models.proxy import ProxyProto
+
 import copy
-from typing import Any
-from hiddifypanel.models.config_enum import ConfigEnum
 from dataclasses import dataclass
+from typing import Any
+
+from hiddifypanel.models import ConfigEnum
+from hiddifypanel.models.proxy import ProxyProto
+from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
 DEFAULT_OUTBOUND_TAG_TEMPLATE = "{{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}"
 
-XHTTP_ALPN_TAGS = [
-    "h1",
+XHTTP_ALPN_TAGS = (
+    "http",
     "tls_h1",
     "tls_h2",
     "tls_h3",
     "tls_h3_h2",
     "tls_h3_h2_h1",
     "tls_h2_h1",
-]
+)
 
 
 @dataclass
@@ -29,7 +30,7 @@ class AlpnTags:
 
     def to_tag(self) -> str:
         if self.h1 and not any((self.tls_h1, self.tls_h2, self.tls_h3)):
-            return "h1"
+            return "http"
         parts: list[str] = []
         if self.tls_h1:
             parts.append("h1")
@@ -71,7 +72,7 @@ class AlpnTags:
             alpns.h1 = False
         if protocol == ProxyProto.trojan:
             alpns.h1 = False
-        if protocol in {ProxyProto.hysteria2, ProxyProto.tuic}:
+        if protocol in {ProxyProto.hysteria, ProxyProto.hysteria2, ProxyProto.tuic}:
             alpns.h1 = False
             alpns.tls_h1 = False
             alpns.tls_h2 = False
@@ -82,7 +83,7 @@ class AlpnTags:
         normalized = normalize_alpn_tag(tag)
         tls = "tls" in normalized
         return cls(
-            h1="h1" in normalized and not tls,
+            h1=normalized == "http",
             tls_h3=tls and "h3" in normalized,
             tls_h2=tls and "h2" in normalized,
             tls_h1=tls and "h1" in normalized,
@@ -90,7 +91,8 @@ class AlpnTags:
 
 
 def normalize_alpn_tag(tag: str | None) -> str:
-    return str(tag or "").strip().lower()
+    value = str(tag or "").strip().lower()
+    return "http" if value == "h1" else value
 
 
 def alpn_list_for_tag(tag: str | None) -> list[str]:
@@ -100,13 +102,17 @@ def alpn_list_for_tag(tag: str | None) -> list[str]:
     return alpn.to_tls_alpn_list() + alpn.to_http_alpn_list()
 
 
+def alpn_tag_uses_tls(tag: str | None) -> bool:
+    return normalize_alpn_tag(tag) != "http"
+
+
 def alpn_http_for_tag(tag: str | None) -> bool:
     return AlpnTags.from_tag(normalize_alpn_tag(tag)).h1
 
 
 def _filter_trojan_alpns(tags: list[str], proto: str) -> list[str]:
     if proto == "trojan":
-        return [t for t in tags if not (normalize_alpn_tag(t) == "h1")]
+        return [t for t in tags if normalize_alpn_tag(t) != "http"]
     return list(tags)
 
 
@@ -114,14 +120,10 @@ def alpns_for_l3(l3: str) -> list[str]:
     l3_key = str(l3).lower()
     if l3_key in ("quic", "udp"):
         return ["tls_h3"]
-    return ["h1", "tls_h1", "tls_h2"]
+    return ["http", "tls_h1", "tls_h2"]
 
 
-def resolve_alpn_tags(
-    tags: list[str] | tuple[str, ...] | None,
-    hconfigs: HConfigVar,
-    protocol: ProxyProto = ProxyProto.vless,
-) -> list[AlpnTags]:
+def resolve_alpn_tags(tags: list[str] | tuple[str, ...] | None, hconfigs: HConfigVar, protocol: ProxyProto) -> list[AlpnTags]:
     seen: dict[str, AlpnTags] = {}
     for tag in tags or []:
         normalized = normalize_alpn_tag(tag)
@@ -133,11 +135,7 @@ def resolve_alpn_tags(
     return list(seen.values())
 
 
-def normalize_alpn_tags(
-    tags: list[str] | tuple[str, ...] | None,
-    hconfigs: dict[ConfigEnum, Any] | None = None,
-    protocol: str = "",
-) -> list[str]:
+def normalize_alpn_tags(tags: list[str] | tuple[str, ...] | None, hconfigs: dict[ConfigEnum, Any], protocol: str = "") -> list[str]:
     """Normalize ALPN tag strings, optionally filtered by panel hconfigs."""
     if hconfigs is not None or protocol:
         return [t.to_tag() or normalize_alpn_tag(t.to_tag()) for t in resolve_alpn_tags(tags, hconfigs, protocol) if t.to_tag()]
@@ -156,9 +154,9 @@ def alpns_for_combo(l3: str, transport: str, proto: str = "") -> list[str]:
     if transport_key == "grpc":
         tags = ["tls_h2"]
     elif transport_key in ("ws", "httpupgrade", "tcp"):
-        tags = ["h1", "tls_h1"]
+        tags = ["http", "tls_h1"]
     elif transport_key == "xhttp":
-        tags = list(["h1", "tls_h1", "tls_h2", "tls_h3", "tls_h3_h2", "tls_h3_h2_h1", "tls_h2_h1"])
+        tags = list(XHTTP_ALPN_TAGS)
     else:
         tags = alpns_for_l3(l3)
 
@@ -167,13 +165,100 @@ def alpns_for_combo(l3: str, transport: str, proto: str = "") -> list[str]:
 
 def download_alpns_for_combo(transport: str) -> list[str]:
     if str(transport).lower() == "xhttp":
-        return normalize_alpn_tags(list(XHTTP_ALPN_TAGS))
+        return normalize_alpn_tags(list(XHTTP_ALPN_TAGS), {})
     return []
 
 
+XHTTP_ALPN_PAIRS: tuple[tuple[str, str], ...] = (
+    ("tls_h1", "http"),
+    ("tls_h1", "tls_h1"),
+    ("tls_h1", "tls_h2"),
+    ("tls_h1", "tls_h3"),
+    ("tls_h2", "http"),
+    ("tls_h2", "tls_h1"),
+    ("tls_h2", "tls_h2"),
+    ("tls_h2", "tls_h3"),
+    ("http", "http"),
+    ("http", "tls_h1"),
+    ("http", "tls_h2"),
+    ("http", "tls_h3"),
+)
+
+
+def tls_layer_from_l3(l3: str) -> str:
+    return "http" if str(l3).lower() == "http" else "tls"
+
+
+def alpn_tag_to_category(token: str) -> str:
+    key = str(token).strip().lower()
+    return {
+        "h3_quic": "quic",
+        "tls_h3": "quic",
+        "tls_h3_h2": "quic",
+        "tls_h3_h2_h1": "quic",
+    }.get(key, key)
+
+
+def category_to_alpn_tag(token: str) -> str:
+    key = str(token).strip().lower()
+    return {
+        "quic": "tls_h3",
+        "h3": "tls_h3",
+        "h1": "tls_h1",
+        "h2": "tls_h2",
+    }.get(key, key)
+
+
+def _xhttp_alpns_from_categories(categories: list[str] | tuple[str, ...] | None) -> tuple[str | None, str | None]:
+    upload = download = None
+    for raw in categories or ():
+        token = str(raw)
+        if token.startswith("up:"):
+            upload = category_to_alpn_tag(token.split(":", 1)[1])
+        elif token.startswith("down:"):
+            download = category_to_alpn_tag(token.split(":", 1)[1])
+    return upload, download
+
+
+def resolve_proxy_alpn_pairs(
+    *,
+    tls_layer: str | None,
+    transport: str,
+    proto: str,
+    hconfigs: HConfigVar,
+    categories: list[str] | tuple[str, ...] | None = None,
+) -> list[tuple[AlpnTags, AlpnTags | None]]:
+    layer = str(tls_layer or "tls").lower()
+    transport_key = str(transport).lower()
+    proto_key = str(proto).lower()
+
+    try:
+        proto_enum = ProxyProto(proto_key)
+    except ValueError:
+        proto_enum = ProxyProto.vless
+
+    if transport_key == "xhttp":
+        upload_tag, download_tag = _xhttp_alpns_from_categories(categories)
+        if not upload_tag or not download_tag:
+            return []
+        upload = AlpnTags.from_tag(upload_tag).filter(hconfigs, proto_enum)
+        download = AlpnTags.from_tag(download_tag).filter(hconfigs, proto_enum)
+        if not upload.to_tag():
+            return []
+        return [(upload, download if download.to_tag() else None)]
+
+    if layer == "http":
+        upload = AlpnTags.from_tag("http").filter(hconfigs, proto_enum)
+        return [(upload, None)] if upload.to_tag() else []
+
+    upload_tags = alpns_for_combo(layer, transport_key, proto_key)
+    uploads = resolve_alpn_tags(upload_tags, hconfigs, proto_enum)
+    return [(tag, None) for tag in uploads if tag.to_tag()]
+
+
 def is_xhttp_proxy_data(data: dict) -> bool:
-    tags = [str(t).lower() for t in (data.get("tags") or [])]
-    if "xhttp" in tags:
+    categories = [str(t).lower() for t in (data.get("categories") or [])]
+    if "xhttp" in categories:
         return True
     name = str(data.get("name") or "").lower()
     slug = str(data.get("slug") or "").lower()

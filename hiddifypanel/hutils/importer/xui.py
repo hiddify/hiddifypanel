@@ -98,7 +98,8 @@ def __create_hiddify_domain_from_xui_values(domain: str, values: Dict[str, Any])
     d = Domain()
     d.domain = domain
     d.grpc = values['network'] == 'grpc'
-    d.mode = DomainType.reality
+    d.mode = DomainType.direct
+    d.fake_mode = FakeMode.reality
     return d
 
 

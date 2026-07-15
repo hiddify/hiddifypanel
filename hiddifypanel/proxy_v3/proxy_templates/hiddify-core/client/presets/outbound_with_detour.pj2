@@ -1,0 +1,16 @@
+{% block outbounds %}
+{% for ctx in ctx.iter_ctx_domain() %}      
+{%set tag%}"{%- include 'hiddify-core/client/tag' -%}{%endset%}
+{%set detour=tag ~ "_out §hide§" %}
+  {
+    "tag":"{{tag}}",
+    {% include 'hiddify-core/client/tag' %},
+    {% include '__PROTO_SLUG__' %}
+  },
+  {
+    "tag":"{{detour}}",
+    {% include '__SHADOWTLS_SLUG__' %}
+  },
+
+{%endfor%}
+{% endblock %}

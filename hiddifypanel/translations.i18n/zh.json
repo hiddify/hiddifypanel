@@ -966,6 +966,10 @@
       "description": "SSH Proxy 与原来的 SSH Server 完全不同",
       "label": "✔️ 启用 SSH 代理"
     },
+    "ssh_use_tls_port": {
+      "description": "启用后，SSH 将通过 L4 多路复用共享 TLS/HTTPS 端口（如 443），而不是使用独立的公开 SSH 端口。客户端连接到相同的 TLS 端口；边缘多路复用器识别 SSH 流量并将其转发到 SSH 代理后端。",
+      "label": "🔀 在 TLS 端口上多路复用 SSH"
+    },
     "ssh_server_port": {
       "description": "这与你原来的 SSH 服务器完全不同。这是一个专用程序。",
       "label": "↔️ SSH 代理端口"
@@ -1181,6 +1185,10 @@
     "wireguard_port": {
       "description": "定义 WireGuard 的端口 ",
       "label": "↔️ WireGuard 端口"
+    },
+    "wireguard_use_quic_port": {
+      "description": "启用后，WireGuard 将通过 L4 多路复用共享 QUIC/UDP TLS 端口（如 443），而不是使用独立的公开 WireGuard 端口。客户端连接到相同的 UDP/QUIC 端口；边缘多路复用器识别 WireGuard 流量并将其转发到 WireGuard 后端。",
+      "label": "🔀 在 QUIC 端口上多路复用 WireGuard"
     },
     "wireguard_private_key": {
       "description": "为 WireGuard 指定私钥",

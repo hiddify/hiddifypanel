@@ -19,6 +19,7 @@ class DomainSchema(Schema):
     mode = fields.Enum(DomainType, required=True,  metadata={"description": "The domain type"})
     cdn_ip = fields.String( metadata={"description": "The cdn ip"}, allow_none=True)
     grpc = fields.Boolean(required=True,  metadata={"description": "Is the domain grpc"})
+    ech = fields.Boolean(required=False, load_default=False, metadata={"description": "Enable ECH for CDN domain"})
     servernames = fields.String( metadata={"description": "The servernames"}, allow_none=True)
     show_domains = fields.List(fields.String(),  metadata={"description":"The list of domains to show"})
 

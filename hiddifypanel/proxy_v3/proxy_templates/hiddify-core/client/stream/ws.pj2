@@ -1,4 +1,4 @@
-{% skip("ws_enable = " ~ hconfig.ws_enable) if not hconfig.ws_enable %}
+{{ skip("ws_enable = " ~ ctx.hconfig.ws_enable) if not ctx.hconfig.ws_enable }}
 "network": "tcp",
 "transport": {
   "type": "ws",

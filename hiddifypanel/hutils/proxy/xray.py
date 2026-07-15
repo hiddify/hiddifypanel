@@ -113,7 +113,7 @@ def to_link(proxy: dict) -> str | dict:
     if proxy["proto"] == "ssr":
         baseurl = f"ssr://{proxy['cipher']}:{proxy['uuid']}@{proxy['server']}:{proxy['port']}"
         return baseurl
-    if proxy["proto"] in ["ss", "v2ray"]:
+    if proxy["proto"] in ["ss", "shadowsocks", "v2ray"]:
         baseurl = f"ss://{hutils.encode.do_base_64(proxy['cipher'] + ':' + proxy['password'])}@{proxy['server']}:{proxy['port']}"
 
         if proxy["transport"] == "shadowsocks":

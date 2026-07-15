@@ -1,5 +1,5 @@
 "type": "tuic",
-"server": "{{ ctx.domain.server }}",
+"server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
 "password": "{{ ctx.user.uuid }}",

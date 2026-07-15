@@ -1,4 +1,4 @@
-{% skip("tcp_enable = " ~ hconfig.tcp_enable) if not hconfig.tcp_enable %}
+{{ skip("tcp_enable = " ~ ctx.hconfig.tcp_enable) if not ctx.hconfig.tcp_enable }}
 "network": "tcp",
 "transport": {
   "type": "http",

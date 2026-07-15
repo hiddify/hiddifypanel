@@ -6,6 +6,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 from .version import PlatformPart, TemplateVersion
+from hiddifypanel import hutils
 
 
 class PlatformVar(BaseModel):
@@ -57,9 +58,9 @@ class PlatformVar(BaseModel):
         return lv._compare(right)
 
     @classmethod
-    def from_user_agent(cls, ua: str | None = None, parsed: dict[str, Any] | None = None) -> PlatformVar:
+    def from_user_agent(cls, ua: str) -> PlatformVar:
         raw = (ua or "").strip()
-        info = dict(parsed or {})
+        info = dict(hutils.flask.parse_user_agent(raw) or {})
         os_family = cls._detect_os(raw, info)
         app = cls._detect_app(raw, info)
         app_group = cls._detect_app_group(raw, info, app)

@@ -1,11 +1,11 @@
 
-{% for domain in domains %}
-  {% set proxy = proxy.with_domain(domain) %}
+{% for domain in ctx.domains %}
+  {% set proxy = ctx.proxy.with_domain(domain) %}
   {% set data = namespace(
     v='2',
     add=proxy.server,
     port=proxy.port,
-    id=user.uuid,
+    id=ctx.user.uuid,
     aid=0,
     scy=proxy.cipher|default('auto'),
     net=proxy.transport|default('tcp'),

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from hiddifypanel.models import CustomProxyMode, L7Proto, ProxyProto, TemplateCategory
+from hiddifypanel.models import CustomProxyMode, CustomProxyTransport, L7Proto, ProxyProto, TemplateCategory
+from hiddifypanel.models.custom_proxy import TlsLayer
 
 
 class ProxyTemplateOut(BaseModel):
@@ -14,11 +15,11 @@ class ProxyTemplateOut(BaseModel):
     core: str
     category: TemplateCategory
     name: str
-    description: str = ''
-    content: str = ''
+    description: str = ""
+    content: str = ""
     is_builtin: bool = False
     builtin_override: bool = False
-    builtin_content: str = ''
+    builtin_content: str = ""
 
 
 class ProxyTemplateIn(BaseModel):
@@ -26,8 +27,8 @@ class ProxyTemplateIn(BaseModel):
     core: str
     category: TemplateCategory
     name: str
-    description: str = ''
-    content: str = ''
+    description: str = ""
+    content: str = ""
 
 
 class PatchProxyTemplateIn(BaseModel):
@@ -47,23 +48,23 @@ class ProxyBaseConfigOut(BaseModel):
     child_id: int
     side: str
     core: str
-    version: str = '1.0.0'
+    version: str = "1.0.0"
     name: str
-    description: str = ''
-    content: str = ''
+    description: str = ""
+    content: str = ""
     is_builtin: bool = False
     enable: bool = True
     builtin_override: bool = False
-    builtin_content: str = ''
+    builtin_content: str = ""
 
 
 class ProxyBaseConfigIn(BaseModel):
     side: str
     core: str
-    version: str = '1.0.0'
+    version: str = "1.0.0"
     name: str
-    description: str = ''
-    content: str = ''
+    description: str = ""
+    content: str = ""
     enable: bool = True
 
 
@@ -105,6 +106,7 @@ class ServerConfigIn(BaseModel):
     inbound_tcp_ports: list[int] = Field(default_factory=list)
     inbound_udp_ports: list[int] = Field(default_factory=list)
     inbound_port: int | None = None
+    tcp_udp: str = "both"
     tag: str | None = None
     direct_port_access: bool = False
     template_slugs: list[str] = Field(default_factory=list)
@@ -136,12 +138,14 @@ class CustomProxyOut(BaseModel):
     enable: bool = True
     mode: CustomProxyMode
     proto: ProxyProto | None = None
-    l7_proto: L7Proto | None = None
-    alpns: list[str] = Field(default_factory=list)
-    download_alpns: list[str] = Field(default_factory=list)
-    tags: list[str] = Field(default_factory=list)
+    transport: CustomProxyTransport | None = None
+    tls_layer: TlsLayer | None = None
+    l7_reverse_proto: L7Proto | None = None
+    download_tls_layer: TlsLayer | None = None
+    download_domain_modes: list[str] | None = None
+    categories: list[str] = Field(default_factory=list)
     domain_modes: list[str] = Field(default_factory=list)
-    custom_path: str = ''
+    custom_path: str = ""
     domain_ids: list[int] = Field(default_factory=list)
     server_config: ServerConfigIn | dict = Field(default_factory=dict)
     client_config: ClientConfigIn | dict = Field(default_factory=dict)

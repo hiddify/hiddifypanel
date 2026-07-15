@@ -20,13 +20,47 @@ from hiddifypanel.proxy_v3.custom_proxy_ports import (
 )
 
 
-class L7Proto(StrEnum):
+class JinjaEnum(StrEnum):
+    def __str__(self) -> str:
+        return self.value
+
+    def __repr__(self) -> str:
+        return self.value
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __eq__(self, other: Any) -> bool:
+        return self.value == other
+
+    def __ne__(self, other: Any) -> bool:
+        return self.value != other
+
+    def __lt__(self, other: Any) -> bool:
+        return self.value < other
+
+
+class L7Proto(JinjaEnum):
     h1 = auto()
     h2 = auto()
     tls_h3_quic = auto()
 
 
-class CustomProxyMode(StrEnum):
+class TlsLayer(JinjaEnum):
+    http = auto()
+    tls = auto()
+
+
+class CustomProxyTransport(JinjaEnum):
+    tcp = auto()
+    ws = auto()
+    httpupgrade = auto()
+    grpc = auto()
+    xhttp = auto()
+    other = auto()
+
+
+class CustomProxyMode(JinjaEnum):
     domains_l7_gateway = auto()
     domains_sni_gateway = auto()
     domains_dns_gateway = auto()
@@ -46,24 +80,43 @@ class CustomProxyMode(StrEnum):
         ]
 
 
-class ServerCore(StrEnum):
+class InboundTcpUdp(JinjaEnum):
+    tcp = auto()
+    udp = auto()
+    both = auto()
+
+
+class ServerCore(JinjaEnum):
     xray = "xray"
     hiddify_core = "hiddify-core"
     haproxy = "haproxy"
     nginx = "nginx"
+    rust_rpxy_l4 = "rust-rpxy-l4"
     dns_gateway = "dns_gateway"
     dnstt = "dnstt"
 
+    def __eq__(self, other: Any) -> bool:
+        return str(self) == str(other)
 
-class ClientCore(StrEnum):
+    def __hash__(self) -> int:
+        return hash(str(self))
+
+
+class ClientCore(JinjaEnum):
     sublink = "sublink"
     xray = "xray"
     singbox = "singbox"
     hiddify_core = "hiddify-core"
     clash = "clash"
 
+    def __eq__(self, other: Any) -> bool:
+        return str(self) == str(other)
 
-class TemplateCore(StrEnum):
+    def __hash__(self) -> int:
+        return hash(str(self))
+
+
+class TemplateCore(JinjaEnum):
     xray = "xray"
     hiddify_core = "hiddify-core"
     singbox = "singbox"
@@ -71,11 +124,18 @@ class TemplateCore(StrEnum):
     haproxy = "haproxy"
     clash = "clash"
     nginx = "nginx"
+    rust_rpxy_l4 = "rust-rpxy-l4"
     dnstt = "dnstt"
     dns_gateway = "dns_gateway"
 
+    def __eq__(self, other: Any) -> bool:
+        return str(self) == str(other)
 
-class TemplateCategory(StrEnum):
+    def __hash__(self) -> int:
+        return hash(str(self))
+
+
+class TemplateCategory(JinjaEnum):
     server_inbound = auto()
     client_outbound = auto()
     base_config = auto()
@@ -108,7 +168,7 @@ class ProxyTemplate(db.Model):  # type: ignore
     is_builtin = Column(Boolean, default=False, nullable=False)
 
     def effective_content(self) -> str:
-        from hiddifypanel.proxy_v3.builtin_proxy_sync import effective_template_content
+        from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import effective_template_content
 
         return effective_template_content(self)
 
@@ -154,7 +214,7 @@ class ProxyTemplate(db.Model):  # type: ignore
         if db_tpl.is_builtin:
             if "slug" in data and data.get("slug") != db_tpl.slug:
                 raise ValueError("Built-in template slug cannot be changed")
-            from hiddifypanel.proxy_v3.builtin_proxy_sync import apply_builtin_override_template
+            from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_builtin_override_template
 
             if "name" in data:
                 db_tpl.name = data["name"]
@@ -239,16 +299,18 @@ class CustomProxy(db.Model):  # type: ignore
     enable = Column(Boolean, default=True, nullable=False)
     mode = Column(Enum(CustomProxyMode), nullable=False)
     proto = Column(Enum(ProxyProto), nullable=True)
-    l7_proto = Column(Enum(L7Proto), nullable=True)
-    alpns = Column(JSON, default=list)
-    download_alpns = Column(JSON, default=list)
-    tags = Column(JSON, default=list)
+    transport = Column(Enum(CustomProxyTransport), nullable=True)
+    tls_layer = Column(Enum(TlsLayer), nullable=True)
+    l7_reverse_proto = Column(Enum(L7Proto), nullable=True)
+    categories = Column(JSON, default=list)
     domain_modes = Column(JSON, default=list)
     custom_path = Column(String(500), default="")
     server_core = Column(Enum(ServerCore), nullable=False, default=ServerCore.xray)
 
     server_inbound_tcp_ports = Column(JSON, default=list)
     server_inbound_udp_ports = Column(JSON, default=list)
+    server_inbound_tcp_udp = Column(Enum(InboundTcpUdp), nullable=False, default=InboundTcpUdp.both)
+    server_inbound_download_tcp_udp = Column(Enum(InboundTcpUdp), nullable=True)
     server_config = Column(Text, nullable=False, default="")
     builtin = Column(JSON, default=dict)
     builtin_overrides = Column(JSON, default=dict)
@@ -256,6 +318,9 @@ class CustomProxy(db.Model):  # type: ignore
     server_override = Column(Boolean, default=False, nullable=False)
     sort_order = Column(Integer, default=0)
     is_builtin = Column(Boolean, default=False, nullable=False)
+
+    download_tls_layer = Column(Enum(TlsLayer), nullable=True)
+    download_domain_modes = Column(JSON, default=list)
 
     client_cores = relationship(
         "CustomProxyClientCore",
@@ -274,7 +339,22 @@ class CustomProxy(db.Model):  # type: ignore
     def effective_proto(self) -> ProxyProto:
         if self.proto:
             return self.proto
-        return infer_proto_from_tags(self.tags)
+        return infer_proto_from_categories(self.categories)
+
+    def effective_transport(self) -> CustomProxyTransport:
+        if self.transport:
+            return self.transport
+        return infer_transport_from_categories(self.categories)
+
+    def effective_server_tcp_udp(self) -> InboundTcpUdp:
+        """Firewall/ports view: for xhttp, union of upload (tcp_udp) and download."""
+        if uses_xhttp_download_settings(self):
+            upload = self.server_inbound_tcp_udp or InboundTcpUdp.tcp
+            download = self.server_inbound_download_tcp_udp or InboundTcpUdp.tcp
+            if upload != download:
+                return InboundTcpUdp.both
+            return upload
+        return self.server_inbound_tcp_udp or InboundTcpUdp.both
 
     def to_dict(self) -> dict[str, Any]:
         from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
@@ -304,18 +384,25 @@ class CustomProxy(db.Model):  # type: ignore
             "enable": bool(self.enable),
             "mode": self.mode.value if self.mode else None,
             "proto": self.effective_proto().value,
-            "l7_proto": self.l7_proto.value if self.l7_proto else None,
-            "alpns": list(self.alpns or []),
-            "download_alpns": list(self.download_alpns or []),
-            "tags": self.tags or [],
+            "transport": self.effective_transport().value,
+            "tls_layer": self.tls_layer.value if self.tls_layer else None,
+            "l7_reverse_proto": self.l7_reverse_proto.value if self.l7_reverse_proto else None,
+            "download_tls_layer": self.download_tls_layer.value if self.download_tls_layer else None,
+            "download_domain_modes": list(self.download_domain_modes or []),
+            "categories": self.categories or [],
             "domain_modes": list(self.domain_modes or []),
             "custom_path": self.custom_path or "",
             "server_config": {
                 "core": self.server_core.value if self.server_core else None,
                 "inbound_template": self.effective_server_config_text(),
-                "tag": self.server_tag or "",
                 "inbound_tcp_ports": list(self.server_inbound_tcp_ports or []),
                 "inbound_udp_ports": list(self.server_inbound_udp_ports or []),
+                "tcp_udp": (self.server_inbound_tcp_udp or InboundTcpUdp.both).value,
+                "download_tcp_udp": (
+                    self.server_inbound_download_tcp_udp.value
+                    if self.server_inbound_download_tcp_udp
+                    else None
+                ),
             },
             "client_config": {"core_configs": client_configs},
             "builtin": builtin_payload(self) if self.is_builtin else {},
@@ -367,9 +454,13 @@ class CustomProxy(db.Model):  # type: ignore
             if "proto" in data and data.get("proto") not in (None, ""):
                 dbproxy.proto = _parse_proto(data.get("proto"))
             elif not dbproxy.proto:
-                dbproxy.proto = infer_proto_from_tags(data.get("tags") or dbproxy.tags)
+                dbproxy.proto = infer_proto_from_categories(data.get("categories") or dbproxy.categories)
+            if "transport" in data and data.get("transport") not in (None, ""):
+                dbproxy.transport = _parse_transport(data.get("transport"))
+            elif not dbproxy.transport:
+                dbproxy.transport = infer_transport_from_categories(data.get("categories") or dbproxy.categories)
 
-            from hiddifypanel.proxy_v3.builtin_proxy_sync import apply_custom_proxy_general, apply_server_override
+            from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general, apply_server_override
             from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
                 client_override_key,
                 set_field_override,
@@ -382,28 +473,29 @@ class CustomProxy(db.Model):  # type: ignore
                 dbproxy.name = data["name"]
             if "enable" in data:
                 dbproxy.enable = bool(data["enable"])
-            if "tags" in data:
-                dbproxy.tags = list(data.get("tags") or [])
+            if "categories" in data:
+                dbproxy.categories = list(data.get("categories") or [])
             if "builtin_overrides" in data:
                 for key, enabled in (data.get("builtin_overrides") or {}).items():
                     set_field_override(dbproxy, str(key), bool(enabled))
             if "server_override" in data:
                 set_field_override(dbproxy, "server_config", bool(data["server_override"]))
-            if "l7_proto" in data and data.get("l7_proto") not in (None, ""):
-                if "l7_proto" in (data.get("builtin_overrides") or {}) or data.get("server_override") is not None:
-                    dbproxy.l7_proto = _parse_l7_proto(data.get("l7_proto"))
-                else:
-                    dbproxy.l7_proto = _parse_l7_proto(data.get("l7_proto"))
+            if "l7_reverse_proto" in data and data.get("l7_reverse_proto") not in (None, ""):
+                dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_reverse_proto"))
+            elif "l7_proto" in data and data.get("l7_proto") not in (None, ""):
+                dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_proto"))
+            _apply_download_xhttp_fields(dbproxy, data)
+            if "tls_layer" in data and data.get("tls_layer") not in (None, ""):
+                dbproxy.tls_layer = _parse_tls_layer(data.get("tls_layer"))
             apply_server = bool((data.get("builtin_overrides") or {}).get("server_config") or dbproxy.server_override or dbproxy.id is None)
             if "server_config" in data and apply_server:
                 payload = data["server_config"] or {}
                 if "core" in payload:
                     dbproxy.server_core = _parse_server_core(payload["core"])
-                if "tag" in payload:
-                    dbproxy.server_tag = str(payload.get("tag") or "")
                 if "inbound_template" in payload:
                     dbproxy.server_config = payload.get("inbound_template") or ""
                 _apply_server_ports(dbproxy, payload)
+                _apply_server_tcp_udp(dbproxy, payload)
             if "client_config" in data and dbproxy.id is not None:
                 cls._sync_builtin_client_overrides(dbproxy, data.get("client_config") or {})
             general_keys = tuple(GENERAL_OVERRIDE_FIELDS)
@@ -435,15 +527,20 @@ class CustomProxy(db.Model):  # type: ignore
         if "proto" in data and data.get("proto") not in (None, ""):
             dbproxy.proto = _parse_proto(data.get("proto"))
         elif not dbproxy.proto:
-            dbproxy.proto = infer_proto_from_tags(data.get("tags") or dbproxy.tags)
-        if "l7_proto" in data and data.get("l7_proto") not in (None, ""):
-            dbproxy.l7_proto = _parse_l7_proto(data.get("l7_proto"))
-        if "alpns" in data:
-            dbproxy.alpns = [str(v).strip() for v in (data.get("alpns") or []) if str(v).strip()]
-        if "download_alpns" in data:
-            dbproxy.download_alpns = [str(v).strip() for v in (data.get("download_alpns") or []) if str(v).strip()]
-        if "tags" in data:
-            dbproxy.tags = list(data.get("tags") or [])
+            dbproxy.proto = infer_proto_from_categories(data.get("categories") or dbproxy.categories)
+        if "transport" in data and data.get("transport") not in (None, ""):
+            dbproxy.transport = _parse_transport(data.get("transport"))
+        elif not dbproxy.transport:
+            dbproxy.transport = infer_transport_from_categories(data.get("categories") or dbproxy.categories)
+        if "tls_layer" in data and data.get("tls_layer") not in (None, ""):
+            dbproxy.tls_layer = _parse_tls_layer(data.get("tls_layer"))
+        if "l7_reverse_proto" in data and data.get("l7_reverse_proto") not in (None, ""):
+            dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_reverse_proto"))
+        elif "l7_proto" in data and data.get("l7_proto") not in (None, ""):
+            dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_proto"))
+        _apply_download_xhttp_fields(dbproxy, data)
+        if "categories" in data:
+            dbproxy.categories = list(data.get("categories") or [])
         if "domain_modes" in data:
             _apply_domain_modes(dbproxy, list(data.get("domain_modes") or []))
         if "custom_path" in data:
@@ -452,11 +549,10 @@ class CustomProxy(db.Model):  # type: ignore
             payload = data["server_config"] or {}
             if "core" in payload:
                 dbproxy.server_core = _parse_server_core(payload["core"])
-            if "tag" in payload:
-                dbproxy.server_tag = str(payload.get("tag") or "")
             if "inbound_template" in payload:
                 dbproxy.server_config = payload.get("inbound_template") or ""
             _apply_server_ports(dbproxy, payload)
+            _apply_server_tcp_udp(dbproxy, payload)
         if "client_config" in data:
             core_configs = list((data.get("client_config") or {}).get("core_configs") or [])
             if not core_configs:
@@ -588,7 +684,7 @@ def seed_default_proxy_shells(child_id: int = 0) -> None:
 
 
 def seed_proxy_templates(child_id: int = 0) -> None:
-    from hiddifypanel.proxy_v3.builtin_proxy_sync import sync_custom_proxy_presets, sync_templates
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_custom_proxy_presets, sync_templates
 
     sync_templates(child_id)
     sync_custom_proxy_presets(child_id)
@@ -598,14 +694,61 @@ def normalize_custom_path(path: str | None) -> str:
     return (path or "").strip().lstrip("/")
 
 
-def infer_proto_from_tags(tags: list[str] | None) -> ProxyProto:
-    for tag in tags or []:
-        key = str(tag).strip().lower()
+def infer_proto_from_categories(categories: list[str] | None) -> ProxyProto:
+    for tag in categories or []:
+        key = _normalize_proto_key(str(tag).strip().lower())
+        if not key:
+            continue
         try:
             return ProxyProto(key)
         except ValueError:
             continue
     return ProxyProto.vless
+
+
+def _normalize_proto_key(value: str) -> str:
+    aliases = {"ss": "shadowsocks"}
+    return aliases.get(value, value)
+
+
+_TRANSPORT_TAG_ALIASES: dict[str, CustomProxyTransport] = {
+    "ws": CustomProxyTransport.ws,
+    "splithttp": CustomProxyTransport.xhttp,
+    "shadowtls": CustomProxyTransport.other,
+    "faketls": CustomProxyTransport.other,
+    "ssh": CustomProxyTransport.other,
+    "shadowsocks": CustomProxyTransport.other,
+    "udp": CustomProxyTransport.other,
+    "custom": CustomProxyTransport.other,
+}
+
+
+def infer_transport_from_categories(categories: list[str] | None) -> CustomProxyTransport:
+    for tag in categories or []:
+        key = str(tag).strip().lower()
+        if key in _TRANSPORT_TAG_ALIASES:
+            return _TRANSPORT_TAG_ALIASES[key]
+        try:
+            return _parse_transport(key)
+        except ValueError:
+            continue
+    return CustomProxyTransport.tcp
+
+
+def _parse_transport(value: Any) -> CustomProxyTransport:
+    if isinstance(value, CustomProxyTransport):
+        return value
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return CustomProxyTransport.tcp
+    text = str(value).strip()
+    key = text.lower()
+    if key in _TRANSPORT_TAG_ALIASES:
+        return _TRANSPORT_TAG_ALIASES[key]
+    for member in CustomProxyTransport:
+        if member.value.lower() == key or member.name.lower() == key:
+            return member
+    allowed = ", ".join(m.value for m in CustomProxyTransport)
+    raise ValueError(f"Invalid transport {value!r}. Must be one of: {allowed}")
 
 
 def _parse_mode(value: Any) -> CustomProxyMode:
@@ -626,22 +769,119 @@ def _parse_proto(value: Any) -> ProxyProto:
     if value is None or (isinstance(value, str) and not value.strip()):
         raise ValueError("proto is required")
     try:
-        return ProxyProto(str(value).strip().lower())
+        return ProxyProto(_normalize_proto_key(str(value).strip().lower()))
     except ValueError as exc:
         allowed = ", ".join(m.value for m in ProxyProto)
         raise ValueError(f"Invalid proto {value!r}. Must be one of: {allowed}") from exc
 
 
-def _parse_l7_proto(value: Any) -> L7Proto | None:
+def _parse_l7_reverse_proto(value: Any) -> L7Proto | None:
     if value is None or value == "":
         return None
     if isinstance(value, L7Proto):
         return value
+    raw = str(value).strip().lower()
+    if raw == "h3":
+        raw = "tls_h3_quic"
     try:
-        return L7Proto(str(value).strip().lower())
+        return L7Proto(raw)
     except ValueError as exc:
         allowed = ", ".join(m.value for m in L7Proto)
-        raise ValueError(f"Invalid l7_proto {value!r}. Must be one of: {allowed}") from exc
+        raise ValueError(f"Invalid l7_reverse_proto {value!r}. Must be one of: {allowed}") from exc
+
+
+def _parse_l7_proto(value: Any) -> L7Proto | None:
+    return _parse_l7_reverse_proto(value)
+
+
+def _parse_tls_layer(value: Any) -> TlsLayer | None:
+    if value is None or value == "":
+        return None
+    if isinstance(value, TlsLayer):
+        return value
+    try:
+        return TlsLayer(str(value).strip().lower())
+    except ValueError as exc:
+        allowed = ", ".join(m.value for m in TlsLayer)
+        raise ValueError(f"Invalid tls_layer {value!r}. Must be one of: {allowed}") from exc
+
+
+def domain_modes_use_reality(domain_modes: list[str] | None) -> bool:
+    modes = {str(m).strip().lower() for m in (domain_modes or []) if str(m).strip()}
+    return bool(modes & {"reality"})
+
+
+def validate_tls_layer_domain_modes(tls_layer: TlsLayer | None, domain_modes: list[str] | None) -> None:
+    if tls_layer == TlsLayer.http and domain_modes_use_reality(domain_modes):
+        raise ValueError("HTTP TLS layer is incompatible with reality/special domain modes")
+
+
+def uses_xhttp_download_settings(proxy: CustomProxy) -> bool:
+    transport = proxy.effective_transport()
+    return transport == CustomProxyTransport.xhttp
+
+
+def xhttp_upload_is_quic(categories: list[str] | None) -> bool:
+    return any(str(category).lower() == "up:quic" for category in (categories or []))
+
+
+def xhttp_download_is_quic(categories: list[str] | None) -> bool:
+    return any(str(category).lower() == "down:quic" for category in (categories or []))
+
+
+def xhttp_alpn_is_quic(alpn: str | None) -> bool:
+    return bool(alpn and str(alpn).lower() in {"tls_h3", "h3"})
+
+
+def filter_domain_modes_without_reality(domain_modes: list[str] | tuple[str, ...]) -> list[str]:
+    return [mode for mode in domain_modes if mode != "reality"]
+
+
+def effective_server_tcp_udp(proxy: CustomProxy) -> InboundTcpUdp:
+    return proxy.effective_server_tcp_udp()
+
+
+def validate_xhttp_domain_modes(proxy: CustomProxy) -> None:
+    if not uses_xhttp_download_settings(proxy):
+        return
+    categories = list(proxy.categories or [])
+    if xhttp_upload_is_quic(categories) and "reality" in (proxy.domain_modes or []):
+        raise ValueError("REALITY is incompatible with QUIC upload in xhttp")
+    if xhttp_download_is_quic(categories) and "reality" in (proxy.download_domain_modes or []):
+        raise ValueError("REALITY is incompatible with QUIC download in xhttp")
+
+
+def _apply_download_xhttp_fields(dbproxy: CustomProxy, data: dict[str, Any]) -> None:
+    if not uses_xhttp_download_settings(dbproxy):
+        if any(key in data for key in ("download_tls_layer", "download_domain_modes")):
+            dbproxy.download_tls_layer = None
+            dbproxy.download_domain_modes = []
+        return
+    if "download_tls_layer" in data:
+        raw = data.get("download_tls_layer")
+        dbproxy.download_tls_layer = _parse_tls_layer(raw) if raw not in (None, "") else None
+    if "download_domain_modes" in data:
+        _apply_download_domain_modes(dbproxy, list(data.get("download_domain_modes") or []))
+    validate_download_xhttp_fields(dbproxy)
+    validate_xhttp_domain_modes(dbproxy)
+
+
+def _apply_download_domain_modes(dbproxy: CustomProxy, domain_modes: list[str]) -> None:
+    allowed = {"direct", "cdn", "relay", "fake", "reality"}
+    dbproxy.download_domain_modes = [m for m in domain_modes if m in allowed] or ["direct"]
+    validate_download_xhttp_fields(dbproxy)
+
+
+def validate_download_xhttp_fields(proxy: CustomProxy) -> None:
+    if not uses_xhttp_download_settings(proxy):
+        return
+    allowed_modes = {"direct", "cdn", "relay", "fake", "reality"}
+    modes = list(proxy.download_domain_modes or [])
+    invalid = [m for m in modes if m not in allowed_modes]
+    if invalid:
+        raise ValueError(f"Invalid download_domain_modes: {invalid!r}")
+    if proxy.download_tls_layer == TlsLayer.http and domain_modes_use_reality(modes):
+        raise ValueError("HTTP download TLS layer is incompatible with reality domain modes")
 
 
 def _parse_server_core(value: Any) -> ServerCore:
@@ -687,6 +927,35 @@ def _parse_client_core(value: Any) -> ClientCore:
         raise ValueError(f"Invalid client core {value!r}. Must be one of: {allowed}") from exc
 
 
+def _parse_tcp_udp(value: Any) -> InboundTcpUdp:
+    if isinstance(value, InboundTcpUdp):
+        return value
+    if value is None or (isinstance(value, str) and not value.strip()):
+        return InboundTcpUdp.both
+    try:
+        return InboundTcpUdp(str(value).strip())
+    except ValueError as exc:
+        allowed = ", ".join(m.value for m in InboundTcpUdp)
+        raise ValueError(f"Invalid tcp_udp {value!r}. Must be one of: {allowed}") from exc
+
+
+def _apply_server_tcp_udp(dbproxy: CustomProxy, payload: dict[str, Any]) -> None:
+    if dbproxy.is_builtin:
+        return
+    if uses_xhttp_download_settings(dbproxy):
+        # Upload uses server_inbound_tcp_udp; accept legacy upload_tcp_udp as alias.
+        if "tcp_udp" in payload:
+            dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(payload.get("tcp_udp"))
+        elif "upload_tcp_udp" in payload:
+            dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(payload.get("upload_tcp_udp"))
+        if "download_tcp_udp" in payload:
+            dbproxy.server_inbound_download_tcp_udp = _parse_tcp_udp(payload.get("download_tcp_udp"))
+        return
+    dbproxy.server_inbound_download_tcp_udp = None
+    if "tcp_udp" in payload:
+        dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(payload.get("tcp_udp"))
+
+
 def _apply_server_ports(dbproxy: CustomProxy, payload: dict[str, Any]) -> None:
     mode = dbproxy.mode
     if mode_uses_gateway_port(mode) or mode_uses_auto_ports(mode):
@@ -708,16 +977,26 @@ def _apply_server_ports(dbproxy: CustomProxy, payload: dict[str, Any]) -> None:
 def _apply_domain_modes(dbproxy: CustomProxy, domain_modes: list[str] | None) -> None:
     if domain_modes is None:
         dbproxy.domain_modes = default_domain_modes_for_mode(dbproxy.mode)
-        return
-    if dbproxy.mode == CustomProxyMode.domains_l7_gateway:
-        allowed = {"direct", "cdn", "relay", "fake"}
+    elif dbproxy.mode == CustomProxyMode.domains_l7_gateway:
+        allowed = {"direct", "cdn", "relay"}
         dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct"]
-        return
-    if dbproxy.mode == CustomProxyMode.ip:
+        validate_tls_layer_domain_modes(dbproxy.tls_layer, dbproxy.domain_modes)
+    elif dbproxy.mode == CustomProxyMode.domains_sni_gateway:
+        allowed = {"fake", "direct", "relay", "reality"}
+        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct", "relay"]
+        validate_tls_layer_domain_modes(dbproxy.tls_layer, dbproxy.domain_modes)
+    elif dbproxy.mode in (
+        CustomProxyMode.domains_auto_public_ports,
+        CustomProxyMode.domains_single_public_port,
+    ):
+        allowed = {"direct", "relay"}
+        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct", "relay"]
+    elif dbproxy.mode == CustomProxyMode.ip:
         allowed = {"direct", "relay"}
         dbproxy.domain_modes = [m for m in domain_modes if m in allowed]
-        return
-    dbproxy.domain_modes = default_domain_modes_for_mode(dbproxy.mode)
+    else:
+        dbproxy.domain_modes = default_domain_modes_for_mode(dbproxy.mode)
+    validate_xhttp_domain_modes(dbproxy)
 
 
 def proxy_slug(name: str) -> str:

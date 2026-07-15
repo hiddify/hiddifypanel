@@ -1,10 +1,11 @@
-{% skip("shadowsocks2022_enable = " ~ hconfig.shadowsocks2022_enable) if not hconfig.shadowsocks2022_enable %}
 "type": "shadowsocks",
-"method": "{{ hconfig.shadowsocks2022_method }}",
-"password": "{{ hconfig.shared_secret.replace('-','')|b64encode }}",
+"method": "{{ ctx.hconfig.shadowsocks2022_method }}",
+"password": "{{ ctx.hconfig.shared_secret.replace('-','')|b64encode }}",
 "users": [
-  {% for user in users %}
-  {"name": "{{ user.uuid }}", "password": "{{ user.uuid_hex|b64encode }}"},
+  {% for user in ctx.users %}
+  {
+    "name": "{{ user.uuid }}", 
+    "password": "{{ user.uuid_hex|b64encode }}"
+  },
   {% endfor %}
 ]
-{% include 'hiddify-core/server/snippets/multiplex' %}

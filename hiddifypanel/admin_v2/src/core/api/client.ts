@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance } from 'axios'
+import { applyBootstrapResponse, legacyMenu } from '@/core/panelShell'
 
 declare global {
   interface Window {
@@ -13,6 +14,19 @@ declare global {
 
 const BOOTSTRAP_PATH = '/__admin_v2_bootstrap'
 const STORAGE_KEY = 'hiddify_admin_proxy_path'
+
+function resolveProxyPathForBootstrap(): string | null {
+  return (
+    devProxyPath() ||
+    normalizeProxyPath(window.__PROXY_PATH__) ||
+    normalizeProxyPath(sessionStorage.getItem(STORAGE_KEY))
+  )
+}
+
+function bootstrapPath(): string {
+  const proxyPath = resolveProxyPathForBootstrap()
+  return proxyPath ? `/${proxyPath}/__admin_v2_bootstrap` : BOOTSTRAP_PATH
+}
 
 function normalizeProxyPath(value: string | null | undefined): string | null {
   if (!value) return null
@@ -33,6 +47,44 @@ function proxyPathFromQuery(): string | null {
   return normalizeProxyPath(params.get('proxy_path') || params.get('pp'))
 }
 
+function proxyPathFromBaseUrl(): string | null {
+  const match = import.meta.env.BASE_URL.match(/^\/([^/]+)\/admin\/v2\/?$/)
+  return match ? match[1] : null
+}
+
+function devProxyPath(): string | null {
+  return (
+    normalizeProxyPath(window.__PROXY_PATH__) ||
+    proxyPathFromQuery() ||
+    normalizeProxyPath(sessionStorage.getItem(STORAGE_KEY)) ||
+    proxyPathFromBaseUrl() ||
+    normalizeProxyPath(import.meta.env.VITE_PROXY_PATH)
+  )
+}
+
+function bootstrapFromProxyPath(proxyPath: string) {
+  return {
+    apiBase: apiBaseFromProxyPath(proxyPath),
+    routerBase: routerBaseFromProxyPath(proxyPath),
+  }
+}
+
+async function tryFetchBootstrapExtras(): Promise<boolean> {
+  try {
+    const res = await fetch(bootstrapPath(), { credentials: 'include' })
+    if (!res.ok) return false
+    const boot = await res.json()
+    applyBootstrapResponse(boot)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function applyBootstrapPayload(boot: Awaited<ReturnType<typeof fetchBootstrap>>) {
+  applyBootstrapResponse(boot)
+}
+
 async function fetchBootstrap(): Promise<{
   proxy_path: string
   api_base: string
@@ -43,7 +95,7 @@ async function fetchBootstrap(): Promise<{
   menu?: unknown[]
   notices?: unknown[]
 }> {
-  const res = await fetch(BOOTSTRAP_PATH, { credentials: 'include' })
+  const res = await fetch(bootstrapPath(), { credentials: 'include' })
   if (!res.ok) {
     throw new Error(
       'Could not resolve proxy_path. Start the Flask panel and open Admin V2 from the panel, or use ?proxy_path=YOUR_PATH in the URL.',
@@ -61,66 +113,46 @@ function rememberProxyPath(proxyPath: string, routerBase?: string) {
 }
 
 async function resolveBootstrap(): Promise<{ apiBase: string; routerBase: string }> {
+  let result: { apiBase: string; routerBase: string }
+
   if (import.meta.env.VITE_API_BASE) {
-    const pp = normalizeProxyPath(window.__PROXY_PATH__ || sessionStorage.getItem(STORAGE_KEY))
-    return {
+    const pp =
+      devProxyPath() ||
+      normalizeProxyPath(window.__PROXY_PATH__ || sessionStorage.getItem(STORAGE_KEY))
+    result = {
       apiBase: import.meta.env.VITE_API_BASE,
       routerBase: pp ? routerBaseFromProxyPath(pp) : import.meta.env.BASE_URL,
     }
-  }
-
-  if (!import.meta.env.DEV) {
-    return {
+  } else if (!import.meta.env.DEV) {
+    result = {
       apiBase: window.__API_BASE__ ?? '../api/v2/admin/',
       routerBase: window.__ROUTER_BASE__ ?? import.meta.env.BASE_URL,
     }
-  }
-
-  const fromWindow = normalizeProxyPath(window.__PROXY_PATH__)
-  if (fromWindow) {
-    rememberProxyPath(fromWindow, routerBaseFromProxyPath(fromWindow))
-    return {
-      apiBase: apiBaseFromProxyPath(fromWindow),
-      routerBase: routerBaseFromProxyPath(fromWindow),
+  } else {
+    const proxyPath = devProxyPath()
+    if (proxyPath) {
+      rememberProxyPath(proxyPath, routerBaseFromProxyPath(proxyPath))
+      result = bootstrapFromProxyPath(proxyPath)
+    } else {
+      const boot = await fetchBootstrap()
+      rememberProxyPath(boot.proxy_path, boot.router_base || routerBaseFromProxyPath(boot.proxy_path))
+      applyBootstrapPayload(boot)
+      return {
+        apiBase: boot.api_base || apiBaseFromProxyPath(boot.proxy_path),
+        routerBase: boot.router_base || routerBaseFromProxyPath(boot.proxy_path),
+      }
     }
   }
 
-  const fromQuery = proxyPathFromQuery()
-  if (fromQuery) {
-    rememberProxyPath(fromQuery, routerBaseFromProxyPath(fromQuery))
-    return {
-      apiBase: apiBaseFromProxyPath(fromQuery),
-      routerBase: routerBaseFromProxyPath(fromQuery),
-    }
+  if (import.meta.env.DEV && !legacyMenuHasItems()) {
+    await tryFetchBootstrapExtras()
   }
 
-  const cached = normalizeProxyPath(sessionStorage.getItem(STORAGE_KEY))
-  if (cached) {
-    rememberProxyPath(cached, routerBaseFromProxyPath(cached))
-    return {
-      apiBase: apiBaseFromProxyPath(cached),
-      routerBase: routerBaseFromProxyPath(cached),
-    }
-  }
+  return result
+}
 
-  const boot = await fetchBootstrap()
-  rememberProxyPath(boot.proxy_path, boot.router_base || routerBaseFromProxyPath(boot.proxy_path))
-  if (boot.menu) {
-    window.__ADMIN_MENU__ = boot.menu as Window['__ADMIN_MENU__']
-  }
-  if (boot.notices) {
-    window.__ADMIN_NOTICES__ = boot.notices as Window['__ADMIN_NOTICES__']
-  }
-  if (boot.panel_version) {
-    window.__PANEL_VERSION__ = boot.panel_version
-  }
-  if (boot.panel_logo_url) {
-    window.__PANEL_LOGO_URL__ = boot.panel_logo_url
-  }
-  return {
-    apiBase: boot.api_base || apiBaseFromProxyPath(boot.proxy_path),
-    routerBase: boot.router_base || routerBaseFromProxyPath(boot.proxy_path),
-  }
+function legacyMenuHasItems(): boolean {
+  return legacyMenu.value.length > 0
 }
 
 let httpClient: AxiosInstance | null = null

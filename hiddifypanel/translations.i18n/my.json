@@ -801,6 +801,10 @@
       "description": "SSH ပရောက်စီသည် မူရင်း SSH ဆာဗာနှင့် လုံးဝကွဲပြားသည်။",
       "label": "✔️ SSH ပရောက်စီ"
     },
+    "ssh_use_tls_port": {
+      "description": "ဖွင့်ထားပါက SSH သည် သီးခြားအများပြည်သူ SSH Port အစား TLS/HTTPS Port များ (ဥပမာ 443) ကို L4 multiplex ဖြင့် မျှဝေအသုံးပြုသည်။ Client များသည် တူညီသော TLS Port သို့ချိတ်ဆက်ပြီး edge multiplexer က SSH ကိုရှာဖွေ၍ SSH proxy backend သို့ပို့သည်။",
+      "label": "🔀 TLS Port တွင် SSH Multiplex"
+    },
     "ssh_server_port": {
       "description": "၎င်းသည် သင်၏ မူရင်း SSH ဆာဗာနှင့် လုံးဝကွဲပြားသည်။ ၎င်းသည် သီးသန့်အစီအစဉ်တစ်ခုဖြစ်သည်။",
       "label": "↔️ SSH ပရောက်စီ Port"
@@ -1004,6 +1008,10 @@
     "wireguard_port": {
       "description": "WireGuard အတွက် Port ကို သတ်မှတ်ရန်",
       "label": "↔️ WireGuard Port"
+    },
+    "wireguard_use_quic_port": {
+      "description": "ဖွင့်ထားပါက WireGuard သည် သီးခြားအများပြည်သူ WireGuard Port အစား QUIC/UDP TLS Port များ (ဥပမာ 443) ကို L4 multiplex ဖြင့် မျှဝေအသုံးပြုသည်။ Client များသည် တူညီသော UDP/QUIC Port သို့ချိတ်ဆက်ပြီး edge multiplexer က WireGuard ကိုရှာဖွေ၍ WireGuard backend သို့ပို့သည်။",
+      "label": "🔀 QUIC Port တွင် WireGuard Multiplex"
     },
     "wireguard_private_key": {
       "description": "သီးသန့်သော့ကို WireGuard တွင် သတ်မှတ်ထားသည်။",

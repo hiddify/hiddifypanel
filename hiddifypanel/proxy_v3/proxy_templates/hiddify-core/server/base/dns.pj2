@@ -3,7 +3,7 @@
     {
       "tag": "cloudflare",
       "type": "udp",
-      "server": "{{ hconfig.dns_server or '1.1.1.1' }}"
+      "server": "{{ ctx.hconfig.dns_server or '1.1.1.1' }}"
     }
   ],
   "final": "cloudflare",

@@ -110,7 +110,7 @@ export function parseIncludedTemplateSlugs(templateText: string, explicitSlugs: 
 
 export function parseIncludePathSlugs(templateText: string): string[] {
   const found = new Set<string>()
-  const includePathRe = /include_path\s*\(\s*['"]([^'"]+)['"]/g
+  const includePathRe = /include_path\s*\(\s*(?:\w+\s*,\s*)?['"]([^'"]+)['"]/g
   let match: RegExpExecArray | null
   while ((match = includePathRe.exec(templateText)) !== null) {
     found.add(match[1]!)
@@ -118,8 +118,8 @@ export function parseIncludePathSlugs(templateText: string): string[] {
   return [...found]
 }
 
-/** Direct {% include %} and include_path('slug') references in template text. */
-export function parseReferencedTemplateSlugs(templateText: string, explicitSlugs: string[] = []): string[] {
+/** Direct {% include %} and include_path(ctx, 'slug') references in template text. */
+export function parseReferencedTemplateSlugs(templateText: string, explicitSlugs: string[] | unknown = []): string[] {
   const found = new Set<string>()
   for (const slug of parseIncludedTemplateSlugs(templateText, explicitSlugs)) {
     found.add(slug)

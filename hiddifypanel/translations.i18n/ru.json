@@ -966,6 +966,10 @@
       "description": "SSH Proxy полностью отличается от оригинального SSH Server",
       "label": "✔️ Включить SSH Poxy"
     },
+    "ssh_use_tls_port": {
+      "description": "Если включено, SSH использует общие TLS/HTTPS-порты (например, 443) через L4-мультиплексирование вместо отдельного публичного SSH-порта. Клиенты подключаются к тому же TLS-порту; краевой мультиплексор определяет SSH и перенаправляет трафик на SSH-прокси.",
+      "label": "🔀 Мультиплекс SSH на TLS-порту"
+    },
     "ssh_server_port": {
       "description": "Это не ваш  SSH-сервер. Это отдельная программа",
       "label": "↔️ SSHproxy-порт"
@@ -1181,6 +1185,10 @@
     "wireguard_port": {
       "description": "Определяет порт для WireGuard ",
       "label": "↔️ Порт WireGuard"
+    },
+    "wireguard_use_quic_port": {
+      "description": "Если включено, WireGuard использует общие QUIC/UDP TLS-порты (например, 443) через L4-мультиплексирование вместо отдельного публичного порта WireGuard. Клиенты подключаются к тому же UDP/QUIC-порту; краевой мультиплексор определяет WireGuard и перенаправляет трафик на бэкенд WireGuard.",
+      "label": "🔀 Мультиплекс WireGuard на QUIC-порту"
     },
     "wireguard_private_key": {
       "description": "Для WireGuard указан закрытый ключ.",

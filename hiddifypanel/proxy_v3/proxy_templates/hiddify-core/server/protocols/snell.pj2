@@ -1,0 +1,12 @@
+{{ skip("hiddify_core version " ~ ctx.platform.hiddifycore_version ~ " does not support snell") if  ctx.platform.hiddifycore_version < "4.1.0"  }}
+"type": "snell",
+"version": 4,
+"psk": "{{ ctx.hconfig.proxy_path }}",
+"users": [
+  {% for user in ctx.users %}
+  {
+    "name": "{{ user.uuid }}", 
+    "userkey": "{{ user.uuid }}"
+  },
+  {% endfor %}
+]

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Dialog from 'primevue/dialog'
@@ -41,6 +42,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const router = useRouter()
 
 const cloneDescription = ref('')
 const cloning = ref(false)
@@ -188,10 +190,10 @@ async function cloneTemplate() {
       slug,
       content: cloned.content,
     })
-    editDraft.value = { ...updated, is_builtin: false }
-    editMode.value = true
     toast.add({ severity: 'success', summary: t('template.cloned'), life: 3000 })
-    emit('cloned', editDraft.value)
+    emit('cloned', updated)
+    close()
+    await router.push({ name: 'template-edit', params: { id: String(updated.id) } })
   } catch {
     toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 4000 })
   } finally {

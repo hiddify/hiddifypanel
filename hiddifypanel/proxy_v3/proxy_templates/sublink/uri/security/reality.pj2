@@ -1,6 +1,6 @@
 {% set qp.security = 'reality' %}
-{% set qp.pbk = domain.reality_pbk %}
-{% set qp.sid = domain.reality_short_id %}
+{% set qp.pbk = ctx.domain.reality_pbk %}
+{% set qp.sid = ctx.domain.reality_short_id %}
 
 {% if proxy.fingerprint and proxy.fingerprint != 'none' %}
     {% set qp.fp = proxy.fingerprint %}

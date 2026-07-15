@@ -1,4 +1,4 @@
-{% skip("xhttp_enable = " ~ hconfig.xhttp_enable) if not hconfig.xhttp_enable %}
+{{ skip("xhttp_enable = " ~ ctx.hconfig.xhttp_enable) if not ctx.hconfig.xhttp_enable }}
 "transport": {
   "type": "xhttp",
   "path": "/{{ proxy.path }}",
@@ -7,22 +7,16 @@
   "headers":{
     "User-Agent": "{{default_useragent_string}}"
   },
-  {% if domain.download and proxy.download %}
+  {% if domain.download %}
   "downloadSettings": {
     "path": "/{{ proxy.path }}",
     "host": "{{ domain.download.server }}",
     "headers": {
       "User-Agent": "{{default_useragent_string}}"
     },
-    {%if proxy.download.tls %}
-    "tls": {
-      "enabled": "true",
-      "server_name": "{{ domain.download.sni }}",
-      "insecure": {% if domain.download.allow_insecure %}true{% else %}false{% endif %},
-      "alpn": {{proxy.download.alpn_list | tojson }}
-      
-    }
-    {% endif %}
+    {% with domain=domain.download, alpns=download_alpns, tls=download_tls %}
+      {% include 'hiddify-core/client/tls/tls_http' %}
+    {% endwith %}
   }
   {% endif %}
 },

@@ -1,4 +1,4 @@
 {% set qp.type = 'grpc' %}
 {% set qp.serviceName = proxy.path %}
 {% set qp.mode = 'multigun' %}
-{% set qp.host = domain.host %}
+{% set qp.host = ctx.domain.host %}

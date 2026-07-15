@@ -8,7 +8,7 @@ from strenum import StrEnum
 from sqlalchemy import event
 
 from hiddifypanel.database import db
-from hiddifypanel.models import Lang
+from hiddifypanel.models.config_enum import Lang
 from hiddifypanel.models.base_account import BaseAccount
 from hiddifypanel.models.admin import AdminUser
 

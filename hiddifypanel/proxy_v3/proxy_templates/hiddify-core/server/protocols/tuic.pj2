@@ -1,4 +1,3 @@
-{% skip("tuic_enable = " ~ hconfig.tuic_enable) if not hconfig.tuic_enable %}
 {% include 'hiddify-core/server/snippets/listen' %},
 {% include 'hiddify-core/server/snippets/inbound_meta' %},
 "type": "tuic",
@@ -7,8 +6,12 @@
 "zero_rtt_handshake": true,
 "heartbeat": "10s",
 "users": [
-  {% for user in users %}
-  {"name": "{{ user.uuid }}@hiddify.com", "uuid": "{{ user.uuid }}", "password": "{{ user.uuid }}"},
+  {% for user in ctx.users %}
+  {
+    "name": "{{ user.uuid }}", 
+    "uuid": "{{ user.uuid }}", 
+    "password": "{{ user.uuid }}"
+  },
   {% endfor %}
 ],
 {% include 'hiddify-core/server/tls/tls' %}

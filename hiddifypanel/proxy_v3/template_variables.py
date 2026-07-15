@@ -10,8 +10,8 @@ from hiddifypanel import hutils
 from hiddifypanel.models import Domain, User, get_hconfigs
 from hiddifypanel.models.config_enum import config_enum_members
 
-from .jinja_context import wrap_hconfigs
-from hiddifypanel.proxy_v3.context_vars import DomainIPVar, ProxyVar
+from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
+from hiddifypanel.proxy_v3.context_vars.proxy import ProxyVar
 
 _TRANSLATIONS_ROOT = Path(__file__).resolve().parents[2] / "translations.i18n"
 
@@ -42,7 +42,7 @@ CONTEXT_ROOT_VARS: list[tuple[str, str]] = [
     ("remarks", "Client config profile title"),
     ("exec", "Shell command helper (server templates only)"),
     ("enumerate", "Python enumerate in templates"),
-    ("include_path", 'Deployed sidecar path: include_path("haproxy/server/maps/path_v10")'),
+    ("include_path", 'Deployed sidecar path: include_path(ctx, "haproxy/server/maps/path_v10")'),
     ("skip", "Callable — {{ skip() }} skips rendering this proxy"),
     ("SKIP", "Literal marker — output SKIP to skip this proxy"),
 ]
@@ -173,17 +173,6 @@ LOOP_VARS: list[tuple[str, str]] = [
     ("region", "Geo routing region"),
     ("site", "Geo site rule tag"),
 ]
-
-
-_STATIC_PROXY_SAMPLE: dict[str, Any] = ProxyVar(
-    tag="tls_h2",
-    path="test-path",
-    domain=DomainIPVar(name="example.com", server="example.com", port=443),
-).to_dict()
-
-
-def _config_enum_members() -> list[Any]:
-    return config_enum_members()
 
 
 @lru_cache(maxsize=8)
@@ -318,6 +307,20 @@ def _clone_catalog(lang: str) -> list[dict[str, Any]]:
     return [dict(g, variables=[dict(v) for v in g["variables"]]) for g in _build_static_catalog(lang)]
 
 
+_STATIC_DOMAIN_SAMPLE: dict[str, Any] = {
+    "name": "example.com",
+    "sni": "example.com",
+    "host": "example.com",
+    "server": "203.0.113.1",
+    "port": 443,
+    "ip": "203.0.113.1",
+    "ipv4": "203.0.113.1",
+    "ipv6": "2001:db8::1",
+    "mode": "direct",
+    "alias": "example",
+}
+
+
 def _first_sample_user() -> User | None:
     return User.query.filter(User.enable.is_(True)).order_by(User.id).first()
 
@@ -326,21 +329,60 @@ def _first_sample_domain(child_id: int) -> Domain | None:
     return Domain.query.filter(Domain.child_id == child_id).order_by(Domain.id).first()
 
 
+def _domain_dict_from_db(
+    domain_db: Domain,
+    *,
+    child_id: int,
+    server_ip: str | None = None,
+    skip_network_lookup: bool = False,
+) -> dict[str, Any]:
+    hconfigs = get_hconfigs(child_id)
+    extracted = hutils.proxy.sni_host_server_extractor(domain_db, hconfigs)
+    if skip_network_lookup:
+        server_ipv4 = server_ip or "203.0.113.1"
+        server_ipv6 = "2001:db8::1"
+    else:
+        server_ipv4 = server_ip or hutils.network.get_ip_str(4) or "203.0.113.1"
+        server_ipv6 = hutils.network.get_ip_str(6) or "2001:db8::1"
+    port = (
+        domain_db.internal_port_special
+        or domain_db.internal_port_tuic
+        or domain_db.internal_port_hysteria2
+        or 443
+    )
+    server = server_ip or extracted.get("server") or domain_db.domain
+    base = domain_db.to_dict(dump_ports=True, dump_child_id=True)
+    base.update(
+        {
+            "name": str(domain_db.domain or "").lower(),
+            "id": domain_db.id,
+            "domain_id": domain_db.id,
+            "sni": extracted.get("sni"),
+            "host": extracted.get("host"),
+            "server": server,
+            "port": port,
+            "ip": server,
+            "ipv4": server_ipv4,
+            "ipv6": server_ipv6,
+            "ips": [server],
+            "ipsv4": [server_ipv4] if server_ipv4 else [],
+            "ipsv6": [server_ipv6] if server_ipv6 else [],
+            "allow_insecure": extracted.get("allow_insecure"),
+            "cdn": extracted.get("cdn"),
+        }
+    )
+    if "reality_pbk" in extracted:
+        base["reality_pbk"] = extracted["reality_pbk"]
+    if "reality_short_id" in extracted:
+        base["reality_short_id"] = extracted["reality_short_id"]
+    return base
+
+
 def build_domain_sample(child_id: int = 0) -> dict[str, Any]:
     domain_db = _first_sample_domain(child_id)
     if not domain_db:
-        raise ValueError("No sample domain found")
-    hconfigs = get_hconfigs(child_id)
-    server_ipv4 = hutils.network.get_ip_str(4) or "203.0.113.1"
-    server_ipv6 = hutils.network.get_ip_str(6) or "2001:db8::1"
-    port = domain_db.internal_port_special or domain_db.internal_port_tuic or domain_db.internal_port_hysteria2 or 443
-    return DomainIPVar.from_domain(
-        domain_db,
-        hconfigs,
-        ipv4=server_ipv4,
-        ipv6=server_ipv6,
-        port=port,
-    ).to_dict()
+        return dict(_STATIC_DOMAIN_SAMPLE)
+    return _domain_dict_from_db(domain_db, child_id=child_id)
 
 
 def build_domain_context(
@@ -359,28 +401,32 @@ def build_domain_context(
             Domain.child_id == child_id,
             Domain.domain == domain_host.strip(),
         ).first()
-    if not domain_db:
-        return {}
 
-    hconfigs = get_hconfigs(child_id)
-    if skip_network_lookup:
-        server_ipv4 = server_ip or "203.0.113.1"
-        server_ipv6 = "2001:db8::1"
-    else:
-        server_ipv4 = server_ip or hutils.network.get_ip_str(4) or "203.0.113.1"
-        server_ipv6 = hutils.network.get_ip_str(6) or "2001:db8::1"
-    port = domain_db.internal_port_special or domain_db.internal_port_tuic or domain_db.internal_port_hysteria2 or 443
-    var = DomainIPVar.from_domain(
-        domain_db,
-        hconfigs,
-        ipv4=server_ipv4,
-        ipv6=server_ipv6,
-        port=port,
-    )
-    if server_ip:
-        var = var.model_copy(update={"server": server_ip})
-        var.ipsv4 = [server_ip]
-    return var.to_dict()
+    if domain_db:
+        return _domain_dict_from_db(
+            domain_db,
+            child_id=child_id,
+            server_ip=server_ip,
+            skip_network_lookup=skip_network_lookup,
+        )
+
+    host = (domain_host or "").strip() or str(_STATIC_DOMAIN_SAMPLE.get("name") or "example.com")
+    server = server_ip or host
+    return {
+        "name": host,
+        "sni": host,
+        "host": host,
+        "server": server,
+        "port": 443,
+        "ip": server,
+        "ipv4": server_ip or server,
+        "ipv6": "2001:db8::1",
+        "ips": [server],
+        "ipsv4": [server_ip or server],
+        "ipsv6": [],
+        "mode": "direct",
+        "alias": host,
+    }
 
 
 def build_user_context(
@@ -397,7 +443,6 @@ def build_user_context(
         user_db = _first_sample_user()
     if user_db:
         user_dict = user_db.to_dict(dump_id=True)
-        user_dict["expire_days"] = user_db.remaining_days
         return user_dict, [user_dict]
     sample = {
         "uuid": "00000000-0000-0000-0000-000000000001",
@@ -407,118 +452,12 @@ def build_user_context(
         "wg_pk": "wg-private-key-sample",
         "wg_psk": "wg-psk-sample",
         "wg_ipv4": "10.90.0.2",
-        "is_active": True,
-        "usage_limit_GB": 1000,
-        "current_usage_GB": 0,
-        "expire_days": 90,
-        "lang": "en",
     }
     return sample, [sample]
 
 
-def _fetch_hconfigs_direct(child_id: int) -> dict:
-    """Load hconfigs from DB without Redis cache (avoids slow/hung cache lookups)."""
-    from hiddifypanel.models.config import BoolConfig, StrConfig
-
-    out: dict = {}
-    for row in BoolConfig.query.filter(BoolConfig.child_id == child_id).all():
-        if row.key is not None:
-            out[row.key] = row.value
-    for row in StrConfig.query.filter(StrConfig.child_id == child_id).all():
-        if row.key is None:
-            continue
-        val = row.value
-        if row.key.type == int and val is not None:
-            val = int(val)
-        out[row.key] = val
-    return out
-
-
-def _sample_values(child_id: int) -> dict[str, Any]:
-    """Lightweight live values — no Redis, no DNS, no template rendering."""
-    raw_hconfigs = _fetch_hconfigs_direct(child_id)
-    hconfigs = wrap_hconfigs(raw_hconfigs)
-
-    sample_user = _first_sample_user()
-    user_dict = sample_user.to_dict(dump_id=True) if sample_user else {}
-
-    active_users = [u.to_dict(dump_id=True) for u in User.query.filter(User.enable.is_(True)).order_by(User.id).limit(5).all()]
-    users_serialized = _serialize(active_users)
-
-    values: dict[str, Any] = {}
-
-    for cfg_enum in _config_enum_members():
-        key = getattr(cfg_enum, "name", None) or str(cfg_enum)
-        current = raw_hconfigs.get(cfg_enum)
-        if current is None:
-            current = raw_hconfigs.get(key)
-        if current is None:
-            current = hconfigs.get(key)
-        values[f"hconfigs.{key}"] = _mask_value(key, _serialize(current))
-
-    for field, _ in USER_DICT_KEYS:
-        val = user_dict.get(field)
-        if field == "uuid_hex" and not val:
-            val = str(user_dict.get("uuid") or "").replace("-", "")
-        values[f"user.{field}"] = _mask_value(field, _serialize(val))
-
-    values["users"] = users_serialized
-    values["users"] = users_serialized
-
-    for name, _ in CUSTOM_PROXY_VARS:
-        values[f"{{{{ {name} }}}}"] = "…"
-    values["custom_path"] = "test-path"
-
-    for field, _ in PROXY_VAR_KEYS:
-        values[f"proxy.{field}"] = _serialize(_STATIC_PROXY_SAMPLE.get(field))
-    for field, _ in PROXY_INFO_KEYS:
-        values[f"proxy.{field}"] = "—"
-
-    context_values: dict[str, Any] = {
-        "users": users_serialized,
-        "domains": "…",
-        "hconfigs": f"({len(raw_hconfigs)} settings)",
-        "chconfigs": "…",
-        "ConfigEnum": "ConfigEnum",
-        "remarks": "…",
-        "exec": "shell helper",
-        "enumerate": "enumerate()",
-        "skip": "skip()",
-    }
-    for name, _ in CONTEXT_ROOT_VARS:
-        values[name] = context_values.get(name, "…")
-
-    for name, _ in LOOP_VARS:
-        values[name] = "—"
-
-    return values
-
-
-def _attach_values(groups: list[dict[str, Any]], values: dict[str, Any]) -> None:
-    for group in groups:
-        for var in group.get("variables") or []:
-            var["value"] = values.get(var["access"])
-
-
-def _enrich_catalog_with_values(child_id: int, lang: str) -> list[dict[str, Any]]:
-    cache_key = (child_id, lang)
-    now = time.monotonic()
-    cached = _values_cache.get(cache_key)
-    if cached and (now - cached[0]) < _VALUES_CACHE_TTL:
-        return cached[1]
-
-    groups = _clone_catalog(lang)
-    _attach_values(groups, _sample_values(child_id))
-    sample_user = _first_sample_user()
-    if sample_user:
-        display = (sample_user.name or sample_user.username or "").strip()
-        if display:
-            for group in groups:
-                if group.get("id") == "user":
-                    group["label"] = f"User (sample: {display})"
-                    break
-    _values_cache[cache_key] = (now, groups)
-    return groups
+def _config_enum_members() -> list[Any]:
+    return [c for c in config_enum_members() if getattr(c, "name", "") != "dbvalues"]
 
 
 def build_template_variables(
@@ -527,14 +466,19 @@ def build_template_variables(
     *,
     include_values: bool = False,
 ) -> list[dict[str, Any]]:
-    if include_values:
-        return _enrich_catalog_with_values(child_id, lang)
-    return _clone_catalog(lang)
+    groups = _clone_catalog(lang)
+    if not include_values:
+        return groups
 
-
-def flatten_template_variables(groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    flat: list[dict[str, Any]] = []
+    sample_domain = build_domain_sample(child_id)
+    user_dict, users = build_user_context()
     for group in groups:
         for var in group.get("variables") or []:
-            flat.append({**var, "category_label": group.get("label"), "category": var.get("category") or group.get("id")})
-    return flat
+            access = str(var.get("access") or "")
+            if access.startswith("domain."):
+                var["value"] = sample_domain.get(access.split(".", 1)[1])
+            elif access == "users":
+                var["value"] = users
+            elif access.startswith("user."):
+                var["value"] = user_dict.get(access.split(".", 1)[1])
+    return groups

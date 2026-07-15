@@ -2,5 +2,5 @@
 "server": "{{ proxy.server }}",
 "server_port": {{ proxy.port }},
 "version": "5",
-"username": "{{ user.uuid }}",
+"username": "{{ ctx.user.uuid }}",
 "password": "h",

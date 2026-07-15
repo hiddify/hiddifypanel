@@ -1,4 +1,3 @@
-{% skip("wireguard_enable = " ~ hconfig.wireguard_enable) if not hconfig.wireguard_enable %}
 "type": "wireguard",
 {% if ctx.platform.app == "hiddify" and ctx.platform.app_version >= "4.2.0" %}
   "private_key": "{{ ctx.user.wg_pk }}",
@@ -7,7 +6,7 @@
   "peers": [{
     "public_key": "{{ ctx.hconfig.wireguard_public_key }}",
     "pre_shared_key": "{{ ctx.user.wg_psk }}",
-    "address": "{{ ctx.domain.server }}",
+    "address": "{{ proxy.server }}",
     "port": {{ ctx.proxy.port }},
     "allowed_ips": ["0.0.0.0/0", "::/0"]
   }],
@@ -18,7 +17,7 @@
     }
   },
 {% else %}
-  "server": "{{ ctx.domain.server }}",
+  "server": "{{ proxy.server }}",
   "server_port": {{ ctx.proxy.port }},
   "local_address": "{{ ctx.user.wg_ipv4 }}/32",
   "private_key": "{{ ctx.user.wg_pk }}",

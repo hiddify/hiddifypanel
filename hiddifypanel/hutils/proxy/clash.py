@@ -87,7 +87,7 @@ def to_clash(proxy, meta_or_normal):
         base["protocol"] = proxy["ssr-protocol"]
         base["obfs-param"] = proxy["fakedomain"]
         return base
-    elif proxy["proto"] in ["ss", "v2ray"]:
+    elif proxy["proto"] in ["ss", "shadowsocks", "v2ray"]:
         base["cipher"] = proxy["cipher"]
         base["password"] = proxy["password"]
         base["udp_over_tcp"] = True

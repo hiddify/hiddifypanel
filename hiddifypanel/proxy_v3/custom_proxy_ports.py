@@ -1,157 +1,150 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
-
-from .alpn_helpers import stable_proxy_port
-
-
-@dataclass(frozen=True)
-class ResolvedInboundPorts:
-    tcp_ports: list[int]
-    udp_ports: list[int]
-    tcp_port: int | None
-    udp_port: int | None
-
-
-def normalize_port_list(value: Any) -> list[int]:
-    if value is None:
-        return []
-    if isinstance(value, bool):
-        return []
-    if isinstance(value, int):
-        return [value] if value > 0 else []
-    if isinstance(value, str):
-        text = value.strip()
-        if not text:
-            return []
-        parts = [p.strip() for p in text.replace(";", ",").split(",") if p.strip()]
-        return [int(p) for p in parts if int(p) > 0]
-    if isinstance(value, (list, tuple)):
-        out: list[int] = []
-        for item in value:
-            if item is None or item == "":
-                continue
-            port = int(item)
-            if port > 0 and port not in out:
-                out.append(port)
-        return out
-    return []
+# Backward-compatible re-exports for modules outside context_vars.
+from hiddifypanel.proxy_v3.context_vars.ports import (
+    GATEWAY_CLIENT_PORT,
+    ResolvedInboundPorts,
+    coerce_proxy_mode,
+    mode_value,
+    normalize_port_list,
+    ports_list_to_ranges,
+    primary_resolved_port,
+    resolve_inbound_ports,
+)
 
 
-def mode_value(mode: Any) -> str:
-    if mode is None:
-        return ""
-    if hasattr(mode, "value"):
-        return str(mode.value)
-    return str(mode)
+def mode_requires_static_ports(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
+
+    mode = coerce_proxy_mode(mode)
+    return mode in (CustomProxyMode.domains_single_public_port, CustomProxyMode.ip)
 
 
-def mode_requires_static_ports(mode: Any) -> bool:
-    value = mode_value(mode)
-    return value in (MODE_DOMAINS_SINGLE_PUBLIC_PORT, MODE_IP)
+def mode_uses_auto_ports(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
+
+    return coerce_proxy_mode(mode) == CustomProxyMode.domains_auto_public_ports
 
 
-def mode_uses_auto_ports(mode: Any) -> bool:
-    return mode_value(mode) == MODE_DOMAINS_AUTO_PUBLIC_PORTS
+def mode_uses_gateway_port(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
 
-
-def mode_uses_gateway_port(mode: Any) -> bool:
-    value = mode_value(mode)
-    return value in (MODE_DOMAINS_L7_GATEWAY, MODE_DOMAINS_SNI_GATEWAY)
-
-
-def mode_port_requires_domain(mode: Any) -> bool:
-    return mode_value(mode) in (MODE_DOMAINS_AUTO_PUBLIC_PORTS, MODE_DOMAINS_SNI_GATEWAY)
-
-
-def mode_allows_domain_mode_selection(mode: Any) -> bool:
-    value = mode_value(mode)
-    return value in (MODE_DOMAINS_L7_GATEWAY, MODE_DOMAINS_AUTO_PUBLIC_PORTS, MODE_DOMAINS_SINGLE_PUBLIC_PORT)
-
-
-def mode_allows_ip_domain_modes(mode: Any) -> bool:
-    return mode_value(mode) == MODE_IP
-
-
-def default_domain_modes_for_mode(mode: Any) -> list[str]:
-    if mode_allows_domain_mode_selection(mode):
-        if mode_value(mode) == MODE_DOMAINS_L7_GATEWAY:
-            return ["direct"]
-        return ["special"]
-    if mode_value(mode) == MODE_DOMAINS_SNI_GATEWAY:
-        return ["special"]
-    if mode_value(mode) == MODE_IP:
-        return []
-    return ["special"]
-
-
-def resolve_inbound_ports(
-    mode: Any,
-    proxy_id: int | None,
-    *,
-    domain_id: int | None = None,
-    stored_tcp_ports: list[int] | None = None,
-    stored_udp_ports: list[int] | None = None,
-) -> ResolvedInboundPorts:
-    value = mode_value(mode)
-    pid = int(proxy_id or 0)
-
-    if value in (MODE_DOMAINS_L7_GATEWAY, MODE_DOMAINS_SNI_GATEWAY):
-        port = stable_proxy_port(pid, 0)
-        return ResolvedInboundPorts([port], [port], port, port)
-
-    if value == MODE_DOMAINS_AUTO_PUBLIC_PORTS:
-        port = stable_proxy_port(pid, int(domain_id or 0))
-        return ResolvedInboundPorts([port], [port], port, port)
-
-    tcp_ports = list(stored_tcp_ports or [])
-    udp_ports = list(stored_udp_ports or [])
-    if not udp_ports and tcp_ports:
-        udp_ports = list(tcp_ports)
-    return ResolvedInboundPorts(
-        tcp_ports,
-        udp_ports,
-        tcp_ports[0] if tcp_ports else None,
-        udp_ports[0] if udp_ports else None,
+    mode = coerce_proxy_mode(mode)
+    return mode in (
+        CustomProxyMode.domains_l7_gateway,
+        CustomProxyMode.domains_sni_gateway,
+        CustomProxyMode.domains_dns_gateway,
     )
 
 
-def ports_list_to_ranges(ports: list[int]) -> list[int | str]:
-    """Collapse sorted consecutive ports into single ports or inclusive ranges (e.g. 1000-2000)."""
-    cleaned = sorted({int(port) for port in ports if int(port) > 0})
-    if not cleaned:
-        return []
+def mode_port_requires_domain(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
 
-    ranges: list[int | str] = []
-    start = prev = cleaned[0]
-    for port in cleaned[1:]:
-        if port == prev + 1:
-            prev = port
-            continue
-        ranges.append(start if start == prev else f"{start}-{prev}")
-        start = prev = port
-    ranges.append(start if start == prev else f"{start}-{prev}")
-    return ranges
+    mode = coerce_proxy_mode(mode)
+    return mode in (
+        CustomProxyMode.domains_auto_public_ports,
+        CustomProxyMode.domains_sni_gateway,
+        CustomProxyMode.domains_dns_gateway,
+    )
+
+
+def mode_allows_domain_mode_selection(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
+
+    mode = coerce_proxy_mode(mode)
+    return mode in (
+        CustomProxyMode.domains_l7_gateway,
+        CustomProxyMode.domains_auto_public_ports,
+        CustomProxyMode.domains_single_public_port,
+    )
+
+
+def mode_allows_ip_domain_modes(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
+
+    return coerce_proxy_mode(mode) == CustomProxyMode.ip
+
+
+def default_domain_modes_for_mode(mode) -> list[str]:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
+
+    mode = coerce_proxy_mode(mode)
+    if mode in (
+        CustomProxyMode.domains_l7_gateway,
+        CustomProxyMode.domains_auto_public_ports,
+        CustomProxyMode.domains_single_public_port,
+    ):
+        if mode == CustomProxyMode.domains_l7_gateway:
+            return ["direct"]
+        return ["direct", "relay"]
+    if mode == CustomProxyMode.domains_sni_gateway:
+        return ["direct", "relay"]
+    if mode == CustomProxyMode.ip:
+        return []
+    return ["direct", "relay"]
 
 
 def ports_for_proxy_row(
-    row: Any,
+    row,
     *,
     domain_id: int | None = None,
+    server_side: bool = True,
 ) -> ResolvedInboundPorts:
+    from hiddifypanel.models.custom_proxy import effective_server_tcp_udp
+
     return resolve_inbound_ports(
         row.mode,
         row.id,
         domain_id=domain_id,
-        stored_tcp_ports=normalize_port_list(getattr(row, "server_inbound_tcp_ports", None)),
-        stored_udp_ports=normalize_port_list(getattr(row, "server_inbound_udp_ports", None)),
+        db_tcp_ports=normalize_port_list(getattr(row, "server_inbound_tcp_ports", None)),
+        db_udp_ports=normalize_port_list(getattr(row, "server_inbound_udp_ports", None)),
+        server_side=server_side,
+        tcp_udp=effective_server_tcp_udp(row),
     )
 
 
-def ports_dict_for_proxy_row(row: Any, *, domain_id: int | None = None) -> dict[str, Any]:
-    resolved = ports_for_proxy_row(row, domain_id=domain_id)
-    primary = resolved.tcp_port or resolved.udp_port or 0
+def mode_uses_firewall_ports(mode) -> bool:
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
+
+    mode = coerce_proxy_mode(mode)
+    return mode not in (
+        CustomProxyMode.domains_l7_gateway,
+        CustomProxyMode.domains_sni_gateway,
+        CustomProxyMode.domains_dns_gateway,
+    )
+
+
+def firewall_protocols(tcp_udp) -> list[str]:
+    from hiddifypanel.models.custom_proxy import InboundTcpUdp
+
+    if isinstance(tcp_udp, str):
+        tcp_udp = InboundTcpUdp(tcp_udp)
+    if tcp_udp == InboundTcpUdp.tcp:
+        return ["tcp"]
+    if tcp_udp == InboundTcpUdp.udp:
+        return ["udp"]
+    return ["tcp", "udp"]
+
+
+def firewall_protocols_for_proxy(row) -> list[str]:
+    from hiddifypanel.models.custom_proxy import uses_xhttp_download_settings
+
+    if uses_xhttp_download_settings(row):
+        protocols: list[str] = []
+        for value in (
+            getattr(row, "server_inbound_tcp_udp", None),
+            getattr(row, "server_inbound_download_tcp_udp", None),
+        ):
+            for protocol in firewall_protocols(value or "tcp"):
+                if protocol not in protocols:
+                    protocols.append(protocol)
+        return protocols or ["tcp"]
+    return firewall_protocols(getattr(row, "server_inbound_tcp_udp", None) or "both")
+
+
+def ports_dict_for_proxy_row(row, *, domain_id: int | None = None, server_side: bool = True) -> dict:
+    resolved = ports_for_proxy_row(row, domain_id=domain_id, server_side=server_side)
+    primary = primary_resolved_port(resolved)
     data = {
         "server_inbound_tcp_ports": resolved.tcp_ports,
         "server_inbound_udp_ports": resolved.udp_ports,
@@ -161,6 +154,10 @@ def ports_dict_for_proxy_row(row: Any, *, domain_id: int | None = None) -> dict[
         "udp_port": resolved.udp_port,
         "server_inbound_port": primary,
     }
+    if mode_uses_firewall_ports(row.mode):
+        tcp_udp = getattr(row, "server_inbound_tcp_udp", None)
+        data["tcp_udp"] = (tcp_udp.value if tcp_udp else "both")
+        data["firewall_protocols"] = firewall_protocols_for_proxy(row)
     if not mode_port_requires_domain(row.mode):
         data["port"] = primary
     return data

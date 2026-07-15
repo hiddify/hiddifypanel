@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -233,7 +233,8 @@ async function load() {
 async function duplicateBuiltin() {
   if (!props.id) return
   const copy = await proxyTemplatesApi.duplicate(Number(props.id))
-  router.push({ name: 'template-edit', params: { id: copy.id } })
+  toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
+  await router.push({ name: 'template-edit', params: { id: String(copy.id) } })
 }
 
 function buildPatch(): Partial<ProxyTemplate> {
@@ -282,5 +283,11 @@ async function save() {
 
 watch(() => form.description, () => syncSlugFromDescription())
 
-onMounted(load)
+watch(
+  () => props.id,
+  () => {
+    void load()
+  },
+  { immediate: true },
+)
 </script>

@@ -1,8 +1,7 @@
-{% skip("naive_enable = " ~ hconfig.naive_enable) if not hconfig.naive_enable %}
 "type": "naive",
 "server": "{{ proxy.server }}",
 "server_port": {{ proxy.port }},
-"username": "{{ user.uuid }}",
+"username": "{{ ctx.user.uuid }}",
 "password": "h",
 "extra_headers":{
     "X-API-Key":"{{proxy.path}}"

@@ -4,17 +4,11 @@ from apiflask import abort
 from flask import current_app as app
 
 from hiddifypanel.auth import login_required
-from hiddifypanel.models import Domain, DomainType
+from hiddifypanel.models import Domain, DomainType, FakeMode
 from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_matches_modes
 
-from .custom_proxy_schema import DomainOptionSchema, PostDomainSchema
-
-_SPECIAL_DOMAIN_TYPES = {
-    DomainType.special_reality_tcp,
-    DomainType.special_reality_xhttp,
-    DomainType.special_reality_grpc,
-}
+from hiddifypanel.proxy_v3.api.custom_proxy_schema import DomainOptionSchema, PostDomainSchema
 
 
 def _child_id() -> int:
@@ -44,6 +38,7 @@ class DomainsOptionsApi(MethodView):
                 'domain': d.domain,
                 'alias': d.alias,
                 'mode': d.mode.value if d.mode else None,
+                'fake_mode': d.fake_mode.value if d.fake_mode else None,
             }
             for d in domains
         ]
@@ -56,20 +51,27 @@ class DomainsQuickAddApi(MethodView):
     @app.output(DomainOptionSchema)  # type: ignore
     def post(self, data):
         mode_str = data.get('mode') or 'direct'
-        if mode_str == 'special':
-            mode_str = DomainType.special_reality_tcp.value
+        fake_mode_str = data.get('fake_mode') or FakeMode.valid.value
+        if mode_str in ('fake', 'reality', 'special'):
+            fake_mode_str = 'reality' if mode_str in ('reality', 'special') else 'fake'
+            mode_str = 'direct'
         try:
             mode = DomainType(mode_str)
+            fake_mode = FakeMode(fake_mode_str)
         except ValueError:
             abort(400, 'Invalid domain mode')
+        if mode.is_cdn() and fake_mode != FakeMode.valid:
+            abort(400, 'CDN domains require valid fake mode')
         domain = Domain.add_or_update(
             child_id=_child_id(),
             domain=data['domain'].strip(),
             alias=data.get('alias') or data['domain'].strip(),
             mode=mode,
+            fake_mode=fake_mode,
             sub_link_only=False,
             cdn_ip='',
             grpc=False,
+            ech=False,
             servernames='',
             show_domains=[],
         )
@@ -78,4 +80,5 @@ class DomainsQuickAddApi(MethodView):
             'domain': domain.domain,
             'alias': domain.alias,
             'mode': domain.mode.value if domain.mode else None,
+            'fake_mode': domain.fake_mode.value if domain.fake_mode else None,
         }

@@ -800,6 +800,10 @@
       "description": "Le proxy SSH est complètement différent du serveur SSH d'origine",
       "label": "✔️ Proxy SSH"
     },
+    "ssh_use_tls_port": {
+      "description": "Lorsqu'il est activé, SSH partage les ports TLS/HTTPS (tels que 443) via le multiplexage L4 au lieu d'utiliser un port SSH public dédié. Les clients se connectent au même port TLS ; le multiplexeur périphérique détecte SSH et transfère le trafic vers le backend du proxy SSH.",
+      "label": "🔀 Multiplexer SSH sur le port TLS"
+    },
     "ssh_server_port": {
       "description": "Ceci est complètement différent de votre serveur SSH d'origine. C'est un programme dédié.",
       "label": "↔️ Port proxy SSH"
@@ -1003,6 +1007,10 @@
     "wireguard_port": {
       "description": "Définit le port pour WireGuard ",
       "label": "↔️ Port WireGuard"
+    },
+    "wireguard_use_quic_port": {
+      "description": "Lorsqu'il est activé, WireGuard partage les ports QUIC/UDP TLS (tels que 443) via le multiplexage L4 au lieu d'utiliser un port WireGuard public dédié. Les clients se connectent au même port UDP/QUIC ; le multiplexeur périphérique détecte WireGuard et transfère le trafic vers le backend WireGuard.",
+      "label": "🔀 Multiplexer WireGuard sur le port QUIC"
     },
     "wireguard_private_key": {
       "description": "Une clé privée est spécifiée à WireGuard",

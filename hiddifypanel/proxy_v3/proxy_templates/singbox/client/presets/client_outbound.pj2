@@ -1,0 +1,10 @@
+{% block outbounds %}
+{
+  {% include 'singbox/client/tag' %},
+  {% include '__PROTO_SLUG__' %},
+  {% include '__STREAM_SLUG__' %},
+  {% if ctx.proxy.tls %}
+    {% include 'singbox/client/tls' %},
+  {% endif %}
+}
+{% endblock %}

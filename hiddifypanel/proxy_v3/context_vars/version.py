@@ -2,66 +2,82 @@ from __future__ import annotations
 
 from typing import Any
 
+from packaging.version import Version
+from pydantic import BaseModel, Field
+
 
 class TemplateVersion:
     """Semantic version for Jinja comparisons: platform.app.version < \"1.2.3\"."""
 
-    def __init__(self, version: str | list | tuple | None = None):
-        if isinstance(version, (list, tuple)):
-            parts = [str(x) for x in version if x is not None and str(x) != '']
-            version = '.'.join(parts)
-        self._version = str(version or '0')
+    version: Version
+
+    def __init__(self, version: Version | str | None = "0.0.0"):
+        if version is None or version == "":
+            version = "0.0.0"
+        self.version = Version(version) if isinstance(version, str) else version
 
     def _other_str(self, other: Any) -> str:
         if isinstance(other, TemplateVersion):
-            return other._version
+            return other.version
         return str(other)
 
-    def _compare(self, other: Any) -> int:
-        from hiddifypanel import hutils
-
-        return hutils.utils.compare_versions(self._version, self._other_str(other))
+    def get_other_version(self, other: Any) -> int:
+        if isinstance(other, TemplateVersion):
+            return other.version
+        if isinstance(other, Version):
+            return other
+        return Version(str(other))
 
     def __str__(self) -> str:
-        return self._version
+        return self.version._str
 
     def __repr__(self) -> str:
-        return f'TemplateVersion({self._version!r})'
+        return f"TemplateVersion({self.version!r})"
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, (TemplateVersion, str)):
-            return NotImplemented
-        return self._compare(other) == 0
+        other_version = self.get_other_version(other)
+        return other_version == self.version
 
     def __ne__(self, other: object) -> bool:
-        if not isinstance(other, (TemplateVersion, str)):
-            return NotImplemented
-        return self._compare(other) != 0
+        return self.version != other
 
     def __lt__(self, other: Any) -> bool:
-        return self._compare(other) == -1
+        other_version = self.get_other_version(other)
+        return self.version < other_version
 
     def __le__(self, other: Any) -> bool:
-        return self._compare(other) in (-1, 0)
+        other_version = self.get_other_version(other)
+        return self.version <= other_version
 
     def __gt__(self, other: Any) -> bool:
-        return self._compare(other) == 1
+        other_version = self.get_other_version(other)
+        return self.version > other_version
 
     def __ge__(self, other: Any) -> bool:
-        return self._compare(other) in (0, 1)
+        other_version = self.get_other_version(other)
+        return self.version >= other_version
 
 
-class PlatformPart:
+class PlatformPart(BaseModel):
     """Named platform facet with comparable version (platform.app.version)."""
 
-    __slots__ = ('name', 'version')
+    class Config:
+        arbitrary_types_allowed = True
 
-    def __init__(self, name: str, version: str | list | tuple | TemplateVersion | None = None):
-        self.name = name or ''
-        self.version = version if isinstance(version, TemplateVersion) else TemplateVersion(version)
+    name: str = "linux"
+    version: TemplateVersion = Field(default_factory=TemplateVersion)
+
+    def __init__(self, name: str = "linux", version: str | TemplateVersion | None = None, **data: Any) -> None:
+        if version is None:
+            resolved_version = TemplateVersion("0.0.0")
+        elif isinstance(version, TemplateVersion):
+            resolved_version = version
+        else:
+            resolved_version = TemplateVersion(version)
+        super().__init__(name=name, version=resolved_version, **data)
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, str):
+        if isinstance(other, (str, PlatformPart)):
             return self.name == other
         return NotImplemented
 

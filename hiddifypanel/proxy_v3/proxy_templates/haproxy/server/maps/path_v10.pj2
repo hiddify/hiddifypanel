@@ -1,25 +1,21 @@
-# L7 gateway proxy paths
-{% for proxy in custom_proxies if proxy.enable and proxy.server_tag %}
-{% if proxy.mode == 'domains_l7_gateway' and proxy.server_tag %}
-{% set path = proxy.custom_path %}
-{% if path %}
-/{{ path }} {{ proxy.server_tag }}-http
-{% endif %}
-{% endif %}
-{% endfor %}
+############## L7 gateway proxy paths ##############
+{%- for proxy in ctx.proxies if proxy.mode == 'domains_l7_gateway' %}
+/{{ proxy.path |ljust(30)}} http_{{proxy.id}}_{{ proxy.path | slugify |ljust(40)}} #{{proxy.slug}}
+{%- endfor %}
+############## end of L7 gateway ##############
 
 # Panel and static paths
-/{{ hconfigs['proxy_path_client'] }}/generate_204 generate_204
-/{{ hconfigs['proxy_path'] }}/generate_204 generate_204
+/{{ ctx.hconfig.proxy_path_client}}/generate_204 generate_204
+/{{ ctx.hconfig.proxy_path}}/generate_204 generate_204
 
-/{{ hconfigs['proxy_path_admin'] }}/proxy-stats/api/ proxy_stats_api_backend
-/{{ hconfigs['proxy_path_admin'] }}/proxy-stats/ proxy_stats_ui_backend
+/{{ ctx.hconfig.proxy_path_admin }}/proxy-stats/api/ proxy_stats_api_backend
+/{{ ctx.hconfig.proxy_path_admin }}/proxy-stats/ proxy_stats_ui_backend
 
-/{{ hconfigs['proxy_path_client'] }}/static/ nginx_dispatcher_http_h2
-/{{ hconfigs['proxy_path_client'] }}/ hiddifypanel
-/{{ hconfigs['proxy_path_admin'] }}/ hiddifypanel
-/{{ hconfigs['proxy_path'] }}/ hiddifypanel
+/{{ ctx.hconfig.proxy_path_client}}/static/ panel
+/{{ ctx.hconfig.proxy_path_client}}/ panel
+/{{ ctx.hconfig.proxy_path_admin }}/ panel
+/{{ ctx.hconfig.proxy_path}}/ panel
 
-/{{ hconfigs['health_secret_path'] }}/ hiddifypanel
+/{{ ctx.hconfig.health_secret_path }}/ panel
 
 /.well-known/ nginx_dispatcher_http_h2

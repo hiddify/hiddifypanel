@@ -980,6 +980,10 @@
       "description": "This is completely different from your original SSH server. It is a dedicated program.",
       "label": "↔️ SSH Proxy Port"
     },
+    "ssh_use_tls_port": {
+      "description": "When enabled, SSH shares the TLS/HTTPS ports (such as 443) via L4 multiplexing instead of using a dedicated public SSH port. Clients connect to the same TLS port; the edge multiplexer detects SSH and forwards it to the SSH proxy backend.",
+      "label": "🔀 Multiplex SSH on TLS Port"
+    },
     "ssh_server_redis_url": {
       "description": "Not Used",
       "label": "SSH user database address"
@@ -1208,6 +1212,10 @@
       "description": "Defines Port for WireGuard ",
       "label": "↔️ WireGuard Port"
     },
+    "wireguard_use_quic_port": {
+      "description": "When enabled, WireGuard shares the QUIC/UDP TLS ports (such as 443) via L4 multiplexing instead of using a dedicated public WireGuard port. Clients connect to the same UDP/QUIC port; the edge multiplexer detects WireGuard and forwards it to the WireGuard backend.",
+      "label": "🔀 Multiplex WireGuard on QUIC Port"
+    },
     "wireguard_private_key": {
       "description": "A private key is specified to WireGuard",
       "label": "WireGuard Private Key"
@@ -1251,12 +1259,31 @@
     "intro": "1️⃣ In this section, you can add your Domain. \n<br>\n2️⃣ If you want to lessen the probability of having dirty IP, you can add Multiple Relay Server <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Read More</a>.\n<br>\n3️⃣ If you have Multiple IPv4 or IPv6 in your Panel you have to add the domain pointed to them as Relay.",
     "ip": "IP",
     "mode": "Mode",
+    "fake_mode": {
+      "label": "TLS mode",
+      "description": "Valid uses a real certificate. Fake and Reality are for decoy TLS and REALITY protocols."
+    },
+    "custom_proxy": {
+      "label": "Custom proxy",
+      "description": "Optional proxy binding. Only proxies that support this domain's mode combination are listed.",
+      "group": {
+        "sni_gateway": "SNI gateway",
+        "ip_based": "IP based",
+        "other": "Other"
+      },
+      "reality_required": "REALITY domains require the REALITY Termination proxy",
+      "reality_only": "REALITY domains must use the REALITY Termination proxy"
+    },
     "reality": {
       "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN"
     },
     "resolveip": {
       "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",
       "label": "🔢 Resolve IP"
+    },
+    "ech": {
+      "description": "Fetch and use Encrypted Client Hello (ECH) for this CDN domain. Requires TLS ECH to be enabled in panel settings.",
+      "label": "🔐 ECH"
     },
     "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
   },
@@ -1548,13 +1575,48 @@
       "slug": "Slug",
       "protocol": "Protocol",
       "mode": "Mode",
+      "linkSettings": "Link settings",
+      "modeSettings": "Mode & routing",
+      "transport": "Transport",
+      "transportLabels": {
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "httpupgrade": "HTTP Upgrade",
+        "grpc": "gRPC",
+        "xhttp": "xHTTP",
+        "other": "Other"
+      },
+      "alpnLabels": {
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h3": "QUIC",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "custom": "Custom"
+      },
       "modeLabels": {
         "domains_l7_gateway": "Domain L7 gateway",
         "domains_sni_gateway": "Domain SNI gateway",
         "domains_auto_public_ports": "Multi-domain auto ports",
-        "domains_single_public_port": "Single-domain static port",
+        "domains_single_public_port": "Multi-domain static port",
         "ip": "IP-based"
       },
+      "l7Proto": "L7 Reverse Proxy Protocol",
+      "inboundTcpPorts": "Inbound TCP ports",
+      "inboundTcpPortsHint": "Comma-separated static TCP ports",
+      "inboundUdpPorts": "Inbound UDP ports",
+      "inboundUdpPortsHint": "Comma-separated static UDP ports; defaults to TCP ports when empty",
+      "tcpUdp": "TCP or UDP",
+      "tcpUdpHint": "Transport protocol for resolved inbound ports",
+      "uploadTcpUdp": "Upload TCP or UDP",
+      "downloadTcpUdp": "Download TCP or UDP",
+      "tcpUdpLabels": {
+        "tcp": "TCP",
+        "udp": "UDP",
+        "both": "TCP + UDP"
+      },
+      "inboundPortAutoCalculated": "Ports are calculated automatically per domain",
       "alpn": "ALPN",
       "clientCores": "Client cores",
       "domains": "Domains",
@@ -1564,20 +1626,37 @@
       "tabClients": "Clients",
       "tabClient": "Client",
       "allowedProtocols": "Allowed protocols",
-      "tags": "Tags",
-      "tagsFilter": "Filter by tags",
+      "categories": "Categories",
+      "categoriesFilter": "Filter by categories",
       "downloadAlpns": "Download ALPNs",
       "downloadAlpnsHint": "xHTTP only. Empty = same as main ALPN. Config variants = main × download ALPN.",
       "outboundTagTemplate": "Outbound tag template",
       "outboundTagTemplateHint": "Jinja for each client outbound tag. Default: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
-      "tagsHint": "Select existing tags or add a new one from the dropdown footer",
-      "tagsPlaceholder": "Select tags",
-      "tagsHeader": "Available tags",
-      "tagsAddPlaceholder": "New tag",
-      "tagsAdd": "Add tag",
-      "tagsAddNew": "Add New",
-      "tagsRemoveAll": "Remove All",
+      "categoriesHint": "Select existing categories or add a new one from the dropdown footer",
+      "categoriesPlaceholder": "Select categories",
+      "categoriesHeader": "Available categories",
+      "categoriesAddPlaceholder": "New category",
+      "categoriesAdd": "Add category",
+      "categoriesAddNew": "Add New",
+      "categoriesRemoveAll": "Remove All",
       "domainModes": "Domain modes",
+      "domainModeLabels": {
+        "direct": "Direct",
+        "cdn": "CDN",
+        "relay": "Relay",
+        "fake": "Fake TLS",
+        "special": "Special (REALITY)",
+        "reality": "REALITY"
+      },
+      "tlsLayer": "TLS layer",
+      "tlsLayerLabels": {
+        "http": "HTTP",
+        "tls": "TLS"
+      },
+      "tlsLayerSpecialConflict": "HTTP TLS layer is not compatible with REALITY domain modes",
+      "l7ReverseProto": "L7 reverse proxy protocol",
+      "downloadTlsLayer": "Download TLS layer",
+      "downloadDomainModes": "Download domain modes",
       "customPath": "Custom path",
       "customPathAuto": "Generated automatically for HTTP proxies",
       "regeneratePath": "Regenerate path",

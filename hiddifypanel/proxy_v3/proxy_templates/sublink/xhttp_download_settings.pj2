@@ -12,7 +12,7 @@
   },
   "security": "tls",
   "tlsSettings": {
-    "serverName": "{{ proxy.download.sni|default(domain.sni) }}",
+    "serverName": "{{ proxy.download.sni|default(ctx.domain.sni) }}",
     "allowInsecure": {{ 'true' if proxy.download.allow_insecure else 'false' }},
     "fingerprint": "{{ proxy.fingerprint|default('') }}",
     "alpn": ["{{ proxy.download_alpn|default('h2') }}"]

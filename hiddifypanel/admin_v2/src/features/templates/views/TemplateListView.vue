@@ -205,7 +205,8 @@ async function load() {
 
 async function duplicate(id: number) {
   const copy = await proxyTemplatesApi.duplicate(id)
-  router.push({ name: 'template-edit', params: { id: copy.id } })
+  toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
+  await router.push({ name: 'template-edit', params: { id: String(copy.id) } })
 }
 
 function confirmDelete(row: ProxyTemplate) {

@@ -106,6 +106,7 @@ async function onPopoverShow() {
 </script>
 
 <template>
+  <span class="editor-preview-wrap">
   <InputGroup class="editor-preview-button">
     <Button
       icon="pi pi-eye"
@@ -218,10 +219,17 @@ async function onPopoverShow() {
       </HorizontalField>
     </div>
   </Popover>
+  </span>
 </template>
 
 <style scoped>
+.editor-preview-wrap {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
 .editor-preview-button :deep(.p-button) {
   flex-shrink: 0;
+  white-space: nowrap;
 }
 </style>

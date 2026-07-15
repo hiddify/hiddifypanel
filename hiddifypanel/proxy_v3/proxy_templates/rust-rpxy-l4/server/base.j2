@@ -1,0 +1,90 @@
+{# rust-rpxy-l4 server base — TLS/QUIC SNI gateway to local proxy ports #}
+
+{% set tls_ports = (["443"] + ctx.hconfig.tls_ports.split(',')) | map('trim') | list | unique %}
+#listen_port = {{ tls_ports[0] }}
+listen_port = 443
+listen_ipv6 = true
+tcp_backlog = 4096
+tcp_max_connections = 8192
+udp_max_connections = 2048
+tcp_send_proxy_protocol = "v2"
+
+
+udp_target = ["127.0.0.1:901"]
+tcp_target = ["127.0.0.1:901"]
+
+[protocols."quic_service"]
+protocol = "quic"
+target = ["127.0.0.1:901"]
+
+
+[protocols."tls_service0"]
+protocol = "tls"
+target = ["127.0.0.1:901"]
+
+
+{% if ctx.hconfig.ssh_server_enable and ctx.hconfig.ssh_use_tls_port %}
+[protocols."ssh_service"]
+protocol = "ssh"
+target = ["127.0.0.1:{{ctx.hconfig.ssh_server_port}}"]
+{% endif %}
+
+{% if ctx.hconfig.wireguard_enable and ctx.hconfig.wireguard_use_quic_port %}
+[protocols."wireguard_service"]
+protocol = "wireguard"
+target = ["127.0.0.1:{{ctx.hconfig.wireguard_port}}"]
+idle_lifetime = 30
+{% endif %}
+
+############## Telegram / FakeTLS SNI gateway ##############
+{% if ctx.hconfig.ssfaketls_enable and ctx.hconfig.ssfaketls_fakedomain %}
+[protocols."ssfaketls"]
+protocol = "tls"
+server_names = ["{{ ctx.hconfig.ssfaketls_fakedomain }}"]
+target = ["127.0.0.1:1010"]
+send_proxy_protocol = "v2"
+load_balance = "none"
+{% endif %}
+
+{% if ctx.hconfig.telegram_enable and ctx.hconfig.telegram_fakedomain %}
+[protocols."telegram"]
+protocol = "tls"
+server_names = ["{{ ctx.hconfig.telegram_fakedomain }}"]
+target = ["127.0.0.1:1001"]
+load_balance = "none"
+{% endif %}
+
+{% if ctx.hconfig.shadowtls_enable and ctx.hconfig.shadowtls_fakedomain %}
+[protocols."shadowtls"]
+protocol = "tls"
+server_names = ["{{ ctx.hconfig.shadowtls_fakedomain }}"]
+target = ["127.0.0.1:1030"]
+send_proxy_protocol = "v2"
+load_balance = "none"
+{% endif %}
+
+############## SNI gateway (domains_sni_gateway) ##############
+{% for p in ctx.proxies if p.mode == "domains_sni_gateway" %}
+{% for pd in p.iter_proxies_with_domain() %}
+[protocols."sp_{{ p.id }}_{{ pd.domain.name|slugify }}_tls"]
+protocol = "tls"
+server_names = ["{{ pd.domain.sni }}"]
+{%- if pd.tcp_port %}
+target = ["127.0.0.1:{{ pd.tcp_port }}"]
+{%- else %}
+target = ["{{ pd.domain.sni }}:443"]
+{% endif %}
+
+[protocols."sp_{{ p.id }}_{{ pd.domain.name|slugify }}_quic"]
+protocol = "quic"
+server_names = ["{{ pd.domain.sni }}"]
+{%- if pd.udp_port %}
+target = ["127.0.0.1:{{ pd.udp_port }}"]
+{%- else %}
+target = ["{{ pd.domain.sni }}:443"]
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+
+############## end of SNI gateway ##############

@@ -975,6 +975,10 @@
       "description": "این SSH پروکسی با SSH سرور اصلی کاملا متفاوت است و امکان اجرای دستورات را ندارد",
       "label": "✔️ پروکسی SSH"
     },
+    "ssh_use_tls_port": {
+      "description": "در صورت فعال بودن، SSH به‌جای پورت عمومی جداگانه روی پورت‌های TLS/HTTPS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت TLS متصل می‌شوند و مالتی‌پلکسر ترافیک SSH را تشخیص داده و به بک‌اند پروکسی SSH ارسال می‌کند.",
+      "label": "🔀 مالتی‌پلکس SSH روی پورت TLS"
+    },
     "ssh_server_port": {
       "description": "این پورت کاملا با پورت سرور اصلی SSH شما متفاوت است. این یک برنامه اختصاصی است",
       "label": "↔️ پورت پروکسی SSH"
@@ -1191,6 +1195,10 @@
       "description": "پورت را برای WireGuard تعریف می کند ",
       "label": "↔️ پورت وایرگارد"
     },
+    "wireguard_use_quic_port": {
+      "description": "در صورت فعال بودن، WireGuard به‌جای پورت عمومی جداگانه روی پورت‌های QUIC/UDP مربوط به TLS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت UDP/QUIC متصل می‌شوند و مالتی‌پلکسر ترافیک WireGuard را تشخیص داده و به بک‌اند WireGuard ارسال می‌کند.",
+      "label": "🔀 مالتی‌پلکس WireGuard روی پورت QUIC"
+    },
     "wireguard_private_key": {
       "description": "یک کلید خصوصی برای WireGuard مشخص شده است",
       "label": "کلید خصوصی WireGuard"
@@ -1240,6 +1248,10 @@
     "resolveip": {
       "description": "به جای نام دامنه از IP در پروکسی‌ها استفاده شود. زمانی مفید است که نویز زیادی در DNS وجود دارد.",
       "label": "🔢 استفاده از IP"
+    },
+    "ech": {
+      "description": "برای این دامنه CDN، ECH از رکورد HTTPS دریافت و استفاده شود. نیاز به فعال بودن TLS ECH در تنظیمات پنل دارد.",
+      "label": "🔐 ECH"
     },
     "show_domains_description": "مشخص کنید کاربرانی که با این دامنه، پنل کاربری را مشاهده می‌کنند، کانفیگ‌های مربوط به کدام دامنه‌ها را مشاهده کنند.\n<br>\nپیشنهاد: برای یک دامنه با IP فیلتر نشده و متفاوت با بقیه، همه دامنه های دیگر (به جز دامنه فعلی) را انتخاب کنید. در نتیجه از آنجایی که از این IP برای فیلترشکن استفاده نمی‌شود و یک وبسایت ساده است، این دامنه و آی پی هرگز مسدود نمی‌شود و کاربران شما به راحتی می توانند پروفایل های جدید را به روز کنند."
   },
@@ -1531,12 +1543,40 @@
       "slug": "شناسه",
       "protocol": "پروتکل",
       "mode": "حالت",
+      "linkSettings": "تنظیمات لینک",
+      "modeSettings": "حالت و مسیریابی",
+      "transport": "ترابری",
+      "transportLabels": {
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "httpupgrade": "HTTP Upgrade",
+        "grpc": "gRPC",
+        "xhttp": "xHTTP",
+        "other": "سایر"
+      },
+      "alpnLabels": {
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h3": "QUIC",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "custom": "سفارشی"
+      },
       "modeLabels": {
         "domains_l7_gateway": "درگاه L7 دامنه",
         "domains_sni_gateway": "درگاه SNI دامنه",
+        "domains_auto_public_ports": "پورت خودکار چند دامنه",
+        "domains_single_public_port": "پورت ثابت چند دامنه",
         "domain_native": "بومی دامنه",
         "ip": "مبتنی بر IP"
       },
+      "l7Proto": "L7 Reverse Proxy Protocol",
+      "inboundTcpPorts": "پورت‌های TCP ورودی",
+      "inboundTcpPortsHint": "پورت‌های TCP ثابت با کاما",
+      "inboundUdpPorts": "پورت‌های UDP ورودی",
+      "inboundUdpPortsHint": "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP",
+      "inboundPortAutoCalculated": "پورت‌ها به ازای هر دامنه خودکار محاسبه می‌شوند",
       "alpn": "ALPN",
       "clientCores": "هسته‌های کلاینت",
       "domains": "دامنه‌ها",
@@ -1546,13 +1586,35 @@
       "tabClients": "کلاینت‌ها",
       "tabClient": "کلاینت",
       "allowedProtocols": "پروتکل‌های مجاز",
-      "tags": "برچسب‌ها",
-      "tagsFilter": "فیلتر بر اساس برچسب",
+      "categories": "دسته‌بندی‌ها",
+      "categoriesFilter": "فیلتر بر اساس دسته‌بندی",
+      "categoriesHint": "دسته‌بندی موجود را انتخاب کنید یا از پایین منو یک مورد جدید اضافه کنید",
+      "categoriesPlaceholder": "انتخاب دسته‌بندی",
+      "categoriesHeader": "دسته‌بندی‌های موجود",
+      "categoriesAddPlaceholder": "دسته‌بندی جدید",
+      "categoriesAddNew": "افزودن",
       "downloadAlpns": "ALPN دانلود",
       "downloadAlpnsHint": "فقط xHTTP. خالی = همان ALPN اصلی.",
       "outboundTagTemplate": "قالب تگ outbound",
       "outboundTagTemplateHint": "Jinja برای تگ هر outbound کلاینت",
       "domainModes": "حالت دامنه",
+      "domainModeLabels": {
+        "direct": "مستقیم",
+        "cdn": "CDN",
+        "relay": "Relay",
+        "fake": "Fake TLS",
+        "special": "ویژه (REALITY)",
+        "reality": "REALITY"
+      },
+      "tlsLayer": "لایه TLS",
+      "tlsLayerLabels": {
+        "http": "HTTP",
+        "tls": "TLS"
+      },
+      "tlsLayerSpecialConflict": "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست",
+      "l7ReverseProto": "پروتکل L7 reverse proxy",
+      "downloadTlsLayer": "لایه TLS دانلود",
+      "downloadDomainModes": "حالت‌های دامنه دانلود",
       "customPath": "مسیر سفارشی",
       "domainIds": "دامنه‌ها",
       "domainIdsEmptyAll": "خالی = همه دامنه‌های منطبق؛ پروکسی IP‌محور دامنه ندارد",

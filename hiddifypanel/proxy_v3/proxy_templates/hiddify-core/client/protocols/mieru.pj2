@@ -1,9 +1,8 @@
-{% skip("mieru_enable = " ~ hconfig.mieru_enable) if not hconfig.mieru_enable %}
 "type": "mieru",
-"server": "{{ domain.server }}",
-"multiplexing": "{{ hconfig.mieru_multiplexing }}",
-"handshake_mode": "{{ hconfig.mieru_handshake }}",
-"username": "{{ user.uuid }}",
+"server": "{{ proxy.server }}",
+"multiplexing": "{{ ctx.hconfig.mieru_multiplexing }}",
+"handshake_mode": "{{ ctx.hconfig.mieru_handshake }}",
+"username": "{{ ctx.user.uuid }}",
 "password": "h",
 "portBindings": [
   {% for protocol,ports in [("TCP",proxy.tcp_port_ranges),("UDP",proxy.udp_port_ranges)] %}

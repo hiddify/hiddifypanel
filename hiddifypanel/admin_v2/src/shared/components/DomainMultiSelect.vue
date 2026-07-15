@@ -35,7 +35,7 @@ import { domainsApi, type DomainOption } from '@/core/api/generated'
 
 const props = defineProps<{
   modelValue: number[]
-  /** Filter domains by proxy domain_modes (direct, cdn, relay, fake, special). */
+  /** Filter domains by proxy domain_modes (direct, cdn, relay, fake, special, reality). */
   domainModes?: string[]
 }>()
 

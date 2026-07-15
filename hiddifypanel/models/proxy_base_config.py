@@ -22,7 +22,7 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'rust-rpxy-l4'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
@@ -103,7 +103,7 @@ class ProxyBaseConfig(db.Model):  # type: ignore
     enable = Column(Boolean, default=True, nullable=False)
 
     def effective_content(self) -> str:
-        from hiddifypanel.proxy_v3.builtin_proxy_sync import effective_base_config_content
+        from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import effective_base_config_content
         return effective_base_config_content(self)
 
     def to_dict(self) -> dict[str, Any]:
@@ -146,7 +146,7 @@ class ProxyBaseConfig(db.Model):  # type: ignore
             db.session.add(row)
 
         if row.is_builtin:
-            from hiddifypanel.proxy_v3.builtin_proxy_sync import apply_builtin_override_base_config
+            from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_builtin_override_base_config
             if 'name' in data:
                 row.name = data['name']
             if 'enable' in data:
@@ -259,10 +259,17 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'name': 'Server HAProxy Base',
         'description': 'Full HAProxy gateway config (frontends, backends, routing)',
     },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'rust-rpxy-l4',
+        'version': '1.0.0',
+        'name': 'Server rust-rpxy-l4 Base',
+        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway, Telegram, FakeTLS, ShadowTLS)',
+    },
 ]
 
 
 def seed_proxy_base_configs(child_id: int = 0, *, refresh_builtin: bool = False) -> None:
-    from hiddifypanel.proxy_v3.builtin_proxy_sync import sync_base_configs
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_base_configs
 
     sync_base_configs(child_id, refresh_builtin=refresh_builtin)

@@ -3,7 +3,7 @@
     'cn': 'cn',
     'ir': 'ir',
     'ru': 'ru'
-}.get(hconfig.country, 'cn') %}
+}.get(ctx.hconfig.country, 'cn') %}
 
 {% set geo_sites=['spotify','speedtest','google','netflix','nvidia','bytedance','tiktok','unity','reddit','openai'] %}
 
@@ -33,7 +33,7 @@
     },
     {% endfor %}
   ],
-  "final": {% if hconfig.warp_mode == 'all' %}"WARP"{% else %}"freedom"{% endif %},
+  "final": {% if ctx.hconfig.warp_mode == 'all' %}"WARP"{% else %}"freedom"{% endif %},
   "rules": [
     {"action": "sniff"},
     {
@@ -50,7 +50,7 @@
       "action": "reject",
       "method": "default"
     },
-    {% if hconfig.block_iran_sites %}
+    {% if ctx.hconfig.block_iran_sites %}
     {
       "action": "reject",
       "method": "default",
@@ -61,14 +61,14 @@
     },
     {% else %}
     {
-      "outbound": {% if hconfig.warp_mode == 'disable' %}"forbidden_sites"{% else %}"WARP"{% endif %},
+      "outbound": {% if ctx.hconfig.warp_mode == 'disable' %}"forbidden_sites"{% else %}"WARP"{% endif %},
       "rule_set": [
         "geoip-{{ region }}",
         "geosite-{{ region }}"
       ]
     },
     {% endif %}
-    {% if hconfig.warp_mode != 'disable' %}
+    {% if ctx.hconfig.warp_mode != 'disable' %}
     {
       "outbound": "WARP",
       "rule_set": [
@@ -77,7 +77,7 @@
         {% endfor %}
       ]
     },
-    {% set warp_domains = (hconfig.warp_sites or '').split('\n') %}
+    {% set warp_domains = (ctx.hconfig.warp_sites or '').split('\n') %}
     {% if warp_domains[0].strip() != '' %}
     {
       "outbound": "WARP",

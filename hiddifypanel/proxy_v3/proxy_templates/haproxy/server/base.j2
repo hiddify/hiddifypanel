@@ -1,0 +1,25 @@
+{# HAProxy server base config — composed from includes (see haproxy/server/*) #}
+
+{% include 'haproxy/server/global' %}
+{% include 'haproxy/server/defaults' %}
+
+{# Shared naive-proxy path/tag for HTTP and QUIC frontends #}
+{% set ns = namespace(naive_path='', naive_tag='naive') %}
+{% for proxy in ctx.custom_proxies if proxy.server_tag %}
+{% if proxy.mode == 'domains_l7_gateway' and 'naive' in (proxy.server_tag or '') %}
+{% set ns.naive_path = proxy.custom_path %}
+{% set ns.naive_tag = proxy.server_tag %}
+{% endif %}
+{% endfor %}
+{% set naive_path = ns.naive_path or (ctx.hconfig.path_naive ~ ctx.hconfig.path_tcp) %}
+
+{% include 'haproxy/server/fronts/in_httpmode' %}
+{# include 'haproxy/server/fronts/in_httpmode_quic' #}
+{# include 'haproxy/server/fronts/in_tcpmode' #}
+{# include 'haproxy/server/fronts/https_in' #}
+{% include 'haproxy/server/fronts/stats' %}
+
+{% include 'haproxy/server/backends/routing' %}
+{% include 'haproxy/server/backends/l7_gateway' %}
+{% include 'haproxy/server/backends/sni_gateway' %}
+{% include 'haproxy/server/backends/special_domains' %}

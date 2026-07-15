@@ -1,4 +1,4 @@
-{% skip("grpc_enable = " ~ hconfig.grpc_enable) if not hconfig.grpc_enable %}
+{{ skip("grpc_enable = " ~ ctx.hconfig.grpc_enable) if not ctx.hconfig.grpc_enable }}
 "network": "tcp",
 "transport": {
   "type": "grpc",

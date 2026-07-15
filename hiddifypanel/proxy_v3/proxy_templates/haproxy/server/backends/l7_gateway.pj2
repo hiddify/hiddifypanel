@@ -4,20 +4,17 @@
 # Alt-Svc per-backend so regular web traffic (nginx) is unaffected
 # =====================
 
-{% for proxy in custom_proxies if proxy.enable and proxy.server_tag %}
-{% if proxy.mode == 'domains_l7_gateway' %}
-{% set tag = proxy.server_tag %}
-{% set port = proxy.port %}
-{% set proto = proxy.l7_proto or 'h2' %}
-{% set is_xray = proxy.server_core == 'xray' %}
-backend {{ tag }}
-    server s 127.0.0.1:{{ port }} send-proxy-v2 tfo
+{% for proxy in ctx.proxies if proxy.mode =="domains_l7_gateway" %}
+backend {{proxy.id}}_{{ proxy.path | slugify}}
+    server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo
 
-
-backend {{ tag }}-http
+backend http_{{proxy.id}}_{{ proxy.path | slugify }}
     mode http
     http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'
-    server s 127.0.0.1:{{ port }} send-proxy-v2 tfo proto {{ proto }}
+    {%if proxy.l7_reverse_proto == "tls_h3_quic"%}
+        server s quic4@127.0.0.1:{{ proxy.udp_port }} ssl verify none 
+    {%else%}
+        server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo proto {{ proxy.l7_reverse_proto }}
+    {%endif%}
 
-{% endif %}
 {% endfor %}

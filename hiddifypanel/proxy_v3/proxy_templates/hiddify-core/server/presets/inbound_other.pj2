@@ -1,0 +1,11 @@
+{% block inbounds %}
+{% set tag %}{%- include 'hiddify-core/server/tag' -%}{% endset %}
+{
+  "tag":"{{tag}}",
+  {% include 'hiddify-core/server/snippets/listen' %},
+  {% include '__PROTO_SLUG__' %},
+  
+  {% include 'hiddify-core/server/snippets/inbound_meta' %}, 
+  {% include 'hiddify-core/server/snippets/multiplex' %},
+},
+{% endblock %}

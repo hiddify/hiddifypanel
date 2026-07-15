@@ -1,5 +1,5 @@
 "transport": {
   "type": "ws",
   "path": "/{{ proxy.path }}",
-  "headers": { "Host": "{{ domain.host }}" }
+  "headers": { "Host": "{{ ctx.domain.host }}" }
 },

@@ -291,8 +291,8 @@ async function toggleEnable(row: ProxyBaseConfig, enable: boolean) {
 
 async function duplicate(id: number) {
   const dup = await proxyBaseConfigsApi.duplicate(id)
-  toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
-  router.push({ name: 'base-config-edit', params: { id: dup.id } })
+  toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
+  await router.push({ name: 'base-config-edit', params: { id: String(dup.id) } })
 }
 
 function confirmDelete(row: ProxyBaseConfig) {

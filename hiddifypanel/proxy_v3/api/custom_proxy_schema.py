@@ -1,7 +1,8 @@
 from apiflask import Schema, fields
 from marshmallow import EXCLUDE, ValidationError, pre_load
 
-from hiddifypanel.models import CustomProxyMode, L7Proto, ProxyProto, TemplateCategory, TEMPLATE_CATEGORIES_ACTIVE
+from hiddifypanel.models import CustomProxyMode, CustomProxyTransport, L7Proto, ProxyProto, TemplateCategory, TEMPLATE_CATEGORIES_ACTIVE
+from hiddifypanel.models.custom_proxy import InboundTcpUdp, TlsLayer
 
 
 class StrEnumField(fields.Field):
@@ -26,15 +27,17 @@ class StrEnumField(fields.Field):
             return value
         text = str(value)
         if text not in self._values:
-            raise ValidationError(f'Must be one of: {", ".join(self._values)}')
+            raise ValidationError(f"Must be one of: {', '.join(self._values)}")
         return self.enum_class(text)
 
 
 class ServerConfigSchema(Schema):
-    core = fields.String(metadata={'description': 'Server core: xray, hiddify-core, dnstt'})
+    core = fields.String(metadata={"description": "Server core: xray, hiddify-core, dnstt"})
     inbound_tcp_ports = fields.List(fields.Integer(), load_default=list)
     inbound_udp_ports = fields.List(fields.Integer(), load_default=list)
     inbound_port = fields.Integer(allow_none=True, load_default=None)
+    tcp_udp = StrEnumField(InboundTcpUdp, load_default=InboundTcpUdp.both)
+    download_tcp_udp = StrEnumField(InboundTcpUdp, allow_none=True, load_default=None)
     tag = fields.String(allow_none=True)
     direct_port_access = fields.Boolean(load_default=False)
     template_slugs = fields.List(fields.String())
@@ -45,8 +48,8 @@ class ServerConfigSchema(Schema):
         if not isinstance(data, dict):
             return data
         payload = dict(data)
-        if not payload.get('inbound_tcp_ports') and payload.get('inbound_port') is not None:
-            payload['inbound_tcp_ports'] = [payload['inbound_port']]
+        if not payload.get("inbound_tcp_ports") and payload.get("inbound_port") is not None:
+            payload["inbound_tcp_ports"] = [payload["inbound_port"]]
         return payload
 
 
@@ -62,7 +65,7 @@ class ClientCoreConfigSchema(Schema):
 
 
 class SublinkConfigSchema(Schema):
-    core = fields.String(load_default='sublink')
+    core = fields.String(load_default="sublink")
     version = fields.String(allow_none=True)
     outbounds_template = fields.String(allow_none=True)
 
@@ -79,12 +82,14 @@ class CustomProxySchema(Schema):
     enable = fields.Boolean(load_default=True)
     mode = StrEnumField(CustomProxyMode, required=True)
     proto = StrEnumField(ProxyProto, allow_none=True, load_default=None)
-    l7_proto = StrEnumField(L7Proto, allow_none=True, load_default=None)
-    alpns = fields.List(fields.String(), load_default=list)
-    download_alpns = fields.List(fields.String(), load_default=list)
-    tags = fields.List(fields.String(), load_default=list)
+    transport = StrEnumField(CustomProxyTransport, allow_none=True, load_default=None)
+    tls_layer = StrEnumField(TlsLayer, allow_none=True, load_default=None)
+    l7_reverse_proto = StrEnumField(L7Proto, allow_none=True, load_default=None)
+    download_tls_layer = StrEnumField(TlsLayer, allow_none=True, load_default=None)
+    download_domain_modes = fields.List(fields.String(), load_default=list)
+    categories = fields.List(fields.String(), load_default=list)
     domain_modes = fields.List(fields.String(), load_default=list)
-    custom_path = fields.String(allow_none=True, load_default='')
+    custom_path = fields.String(allow_none=True, load_default="")
     domain_ids = fields.List(fields.Integer(), load_default=list)
     server_config = fields.Nested(ServerConfigSchema, load_default=dict)
     client_config = fields.Nested(ClientConfigSchema, load_default=dict)
@@ -106,10 +111,12 @@ class PatchCustomProxySchema(Schema):
     enable = fields.Boolean()
     mode = StrEnumField(CustomProxyMode)
     proto = StrEnumField(ProxyProto, allow_none=True, load_default=None)
-    l7_proto = StrEnumField(L7Proto, allow_none=True, load_default=None)
-    alpns = fields.List(fields.String())
-    download_alpns = fields.List(fields.String())
-    tags = fields.List(fields.String())
+    transport = StrEnumField(CustomProxyTransport, allow_none=True, load_default=None)
+    tls_layer = StrEnumField(TlsLayer, allow_none=True, load_default=None)
+    l7_reverse_proto = StrEnumField(L7Proto, allow_none=True, load_default=None)
+    download_tls_layer = StrEnumField(TlsLayer, allow_none=True, load_default=None)
+    download_domain_modes = fields.List(fields.String())
+    categories = fields.List(fields.String())
     domain_modes = fields.List(fields.String())
     custom_path = fields.String(allow_none=True)
     domain_ids = fields.List(fields.Integer())
@@ -119,6 +126,7 @@ class PatchCustomProxySchema(Schema):
     server_override = fields.Boolean()
     client_override = fields.Boolean()
     builtin_overrides = fields.Dict(keys=fields.String(), values=fields.Boolean(), load_default=dict)
+
 
 class CustomProxyEnableSchema(Schema):
     enable = fields.Boolean(required=True)
@@ -139,7 +147,7 @@ class CustomProxyValidateSchema(Schema):
     server_override = fields.Boolean(load_default=False)
     client_override = fields.Boolean(load_default=False)
     is_builtin = fields.Boolean(load_default=False)
-    sections = fields.List(fields.String(), load_default=lambda: ['general', 'server', 'client'])
+    sections = fields.List(fields.String(), load_default=lambda: ["general", "server", "client"])
 
 
 class RenderErrorDetailSchema(Schema):
@@ -245,8 +253,8 @@ class CustomProxyGenerateExampleSchema(Schema):
         if not isinstance(data, dict):
             return data
         data = dict(data)
-        if data.get('custom_proxy_id') is None and data.get('id') is not None:
-            data['custom_proxy_id'] = data['id']
+        if data.get("custom_proxy_id") is None and data.get("id") is not None:
+            data["custom_proxy_id"] = data["id"]
         return data
 
 
@@ -302,8 +310,8 @@ class ProxyTemplateSchema(Schema):
     core = fields.String(required=True)
     category = StrEnumField(TemplateCategory, required=True)
     name = fields.String(required=True)
-    description = fields.String(allow_none=True, load_default='')
-    content = fields.String(allow_none=True, load_default='')
+    description = fields.String(allow_none=True, load_default="")
+    content = fields.String(allow_none=True, load_default="")
     is_builtin = fields.Boolean(dump_only=True)
     builtin_override = fields.Boolean(dump_only=True)
     builtin_content = fields.String(dump_only=True)
@@ -329,21 +337,23 @@ class DomainOptionSchema(Schema):
 class PostDomainSchema(Schema):
     domain = fields.String(required=True)
     alias = fields.String(allow_none=True)
-    mode = fields.String(load_default='direct')
+    mode = fields.String(load_default="direct")
 
 
 class CustomProxyMetaSchema(Schema):
     modes = fields.List(fields.String())
     protos = fields.List(fields.String())
-    alpns = fields.List(fields.String())
-    l7_protos = fields.List(fields.String())
+    transports = fields.List(fields.String())
+    tls_layers = fields.List(fields.String())
+    l7_reverse_protos = fields.List(fields.String())
     domain_modes = fields.List(fields.String())
     server_cores = fields.List(fields.String())
     client_cores = fields.List(fields.String())
     template_categories = fields.List(fields.String())
-    suggested_tags = fields.List(fields.String())
+    suggested_categories = fields.List(fields.String())
     default_sublink_link = fields.String()
     example_user_agents = fields.List(fields.Dict())
+    tcp_udp_options = fields.List(fields.String())
 
 
 class CustomProxyExportInputSchema(Schema):
@@ -352,10 +362,12 @@ class CustomProxyExportInputSchema(Schema):
     enable = fields.Boolean(allow_none=True)
     mode = StrEnumField(CustomProxyMode, allow_none=True)
     proto = StrEnumField(ProxyProto, allow_none=True, load_default=None)
-    l7_proto = StrEnumField(L7Proto, allow_none=True, load_default=None)
-    alpns = fields.List(fields.String(), load_default=list)
-    download_alpns = fields.List(fields.String(), load_default=list)
-    tags = fields.List(fields.String(), load_default=list)
+    transport = StrEnumField(CustomProxyTransport, allow_none=True, load_default=None)
+    tls_layer = StrEnumField(TlsLayer, allow_none=True, load_default=None)
+    l7_reverse_proto = StrEnumField(L7Proto, allow_none=True, load_default=None)
+    download_tls_layer = StrEnumField(TlsLayer, allow_none=True, load_default=None)
+    download_domain_modes = fields.List(fields.String(), load_default=list)
+    categories = fields.List(fields.String(), load_default=list)
     domain_modes = fields.List(fields.String(), load_default=list)
     custom_path = fields.String(allow_none=True)
     server_config = fields.Nested(ServerConfigSchema, load_default=dict)
@@ -380,8 +392,8 @@ class CustomProxyBundleTemplateSchema(Schema):
     core = fields.String(required=True)
     category = StrEnumField(TemplateCategory, required=True)
     name = fields.String(required=True)
-    description = fields.String(allow_none=True, load_default='')
-    content = fields.String(allow_none=True, load_default='')
+    description = fields.String(allow_none=True, load_default="")
+    content = fields.String(allow_none=True, load_default="")
 
 
 class ProxyBaseConfigBundleSchema(Schema):
@@ -413,10 +425,10 @@ class ProxyBaseConfigSchema(Schema):
     child_id = fields.Integer(dump_only=True)
     side = fields.String(required=True)
     core = fields.String(required=True)
-    version = fields.String(load_default='1.0.0')
+    version = fields.String(load_default="1.0.0")
     name = fields.String(required=True)
-    description = fields.String(allow_none=True, load_default='')
-    content = fields.String(allow_none=True, load_default='')
+    description = fields.String(allow_none=True, load_default="")
+    content = fields.String(allow_none=True, load_default="")
     is_builtin = fields.Boolean(dump_only=True)
     enable = fields.Boolean(load_default=True)
     builtin_override = fields.Boolean(dump_only=True)

@@ -1,0 +1,19 @@
+{% block inbounds %}
+{% set proxy = ctx.proxy %}
+{
+  {% include 'xray/inbound/listen' %},
+  {% include '__PROTO_SLUG__' %},
+  "streamSettings": {
+    {% if ctx.proxy.path %}
+    {% set PATH = ctx.proxy.path[1:] if ctx.proxy.path.startswith('/') else ctx.proxy.path %}
+    {% else %}
+    {% set PATH = ctx.hconfig.path___PROTO_KEY__ ~ ctx.hconfig.path___TRANSPORT_KEY__ %}
+    {% endif %}
+    __FLOW_LINE__
+    {% include '__STREAM_SLUG__' %},
+    {% include '__SECURITY_SLUG__' %},
+    {% include 'xray/snippets/stream_sockopt' %}
+  },
+  {% include 'xray/snippets/sniffing' %}
+}
+{% endblock %}

@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -241,7 +241,7 @@ async function duplicateBuiltin() {
   if (!props.id) return
   const dup = await proxyBaseConfigsApi.duplicate(Number(props.id))
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
-  router.push({ name: 'base-config-edit', params: { id: dup.id } })
+  await router.push({ name: 'base-config-edit', params: { id: String(dup.id) } })
 }
 
 async function runValidate() {
@@ -341,7 +341,13 @@ async function runImport() {
   }
 }
 
-onMounted(load)
+watch(
+  () => props.id,
+  () => {
+    void load()
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>

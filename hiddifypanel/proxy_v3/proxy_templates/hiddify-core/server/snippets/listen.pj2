@@ -1,6 +1,7 @@
-"listen": "{{ ('::' if not hconfig.only_ipv4 else '0.0.0.0') if proxy.public_access else '127.0.0.1' }}",
-"listen_port": {{proxy.port}},
-"tag": "{{proxy.tag}}",
-{% if not proxy.public_access %}
+"listen": "{{ ('::' if not ctx.hconfig.only_ipv4 else '0.0.0.0') if ctx.proxy.public_access else '127.0.0.1' }}",
+{% if ctx.proxy.proto!="mieru" %}
+"listen_port": {{ ctx.proxy.tcp_port or ctx.proxy.udp_port }},
+{%endif%}
+{% if not ctx.proxy.public_access %}
 "proxy_protocol": true,
 {% endif %}

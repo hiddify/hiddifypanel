@@ -6,6 +6,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
 from hiddifypanel.models.custom_proxy import TemplateCategory, TemplateCore
+from hiddifypanel.models.proxy_base_config import BUILTIN_BASE_CONFIGS, default_base_content
 
 from ..template_catalog.fragment_loader import load_template_slug
 from .discovery import iter_template_files
@@ -23,6 +24,15 @@ class BuiltinTemplateRecord(BaseModel):
     content: str
 
 
+class BuiltinBaseConfigRecord(BaseModel):
+    core: str
+    side: str
+    version: str
+    name: str
+    description: str
+    content: str
+
+
 def _infer_template_meta(slug: str) -> tuple[TemplateCore, TemplateCategory, str, str]:
     core_str = slug.split('/')[0]
     try:
@@ -31,9 +41,8 @@ def _infer_template_meta(slug: str) -> tuple[TemplateCore, TemplateCategory, str
         core = TemplateCore.xray
     leaf = slug.rsplit('/', 1)[-1]
 
-    if slug.endswith('/base') or '/base/' in slug:
-        side = leaf
-        return core, TemplateCategory.base_config, f'{core_str} base {side}', f'Base {side} shell'
+    if '/base/' in slug and not slug.endswith('/base'):
+        return core, TemplateCategory.base_config, f'{core_str} base {leaf}', f'Base fragment: {leaf}'
 
     if '/client/' in slug:
         category = TemplateCategory.client_outbound
@@ -75,7 +84,8 @@ def _load_content(slug: str, path: Path) -> str:
     return load_template_slug(slug, normalize=normalize)
 
 
-def discover_builtin_templates() -> list[BuiltinTemplateRecord]:
+@lru_cache(maxsize=1)
+def discover_builtin_templates() -> tuple[BuiltinTemplateRecord, ...]:
     records: list[BuiltinTemplateRecord] = []
     for slug, path in iter_template_files():
         core_str = slug.split('/')[0]
@@ -90,17 +100,39 @@ def discover_builtin_templates() -> list[BuiltinTemplateRecord]:
             description=description,
             content=_load_content(slug, path),
         ))
-    return records
+    return tuple(records)
 
 
 @lru_cache(maxsize=1)
-def build_builtin_templates() -> tuple[BuiltinTemplateRecord, ...]:
-    return tuple(discover_builtin_templates())
-
-
-def get_builtin_templates() -> list[BuiltinTemplateRecord]:
-    return list(build_builtin_templates())
+def discover_base_configs() -> tuple[BuiltinBaseConfigRecord, ...]:
+    records: list[BuiltinBaseConfigRecord] = []
+    for spec in BUILTIN_BASE_CONFIGS:
+        side = spec['side']
+        core = spec['core']
+        side_val = side.value if hasattr(side, 'value') else str(side)
+        records.append(BuiltinBaseConfigRecord(
+            core=core,
+            side=side_val,
+            version=spec['version'],
+            name=spec['name'],
+            description=spec['description'],
+            content=default_base_content(side_val, core),
+        ))
+    return tuple(records)
 
 
 def clear_builtin_template_cache() -> None:
-    build_builtin_templates.cache_clear()
+    discover_builtin_templates.cache_clear()
+    discover_base_configs.cache_clear()
+
+
+def build_builtin_templates() -> tuple[BuiltinTemplateRecord, ...]:
+    return discover_builtin_templates()
+
+
+def get_builtin_templates() -> list[BuiltinTemplateRecord]:
+    return list(discover_builtin_templates())
+
+
+def get_builtin_base_configs() -> list[BuiltinBaseConfigRecord]:
+    return list(discover_base_configs())

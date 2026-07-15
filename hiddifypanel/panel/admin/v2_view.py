@@ -20,23 +20,28 @@ def _panel_logo_url(proxy_path: str) -> str:
     return f'/{proxy_path}/{static_path.lstrip("/")}'
 
 
+def _admin_v2_bootstrap_payload() -> dict:
+    proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
+    return {
+        'proxy_path': proxy_path,
+        'api_base': f'/{proxy_path}/api/v2/admin/',
+        'router_base': f'/{proxy_path}/admin/v2/',
+        'locale': hconfig(ConfigEnum.admin_lang) or 'en',
+        'panel_version': _panel_version(),
+        'panel_logo_url': _panel_logo_url(proxy_path),
+        'menu': build_admin_v2_menu(),
+        'notices': build_admin_v2_notices(),
+    }
+
+
 def register_v2_routes(flask_app, admin_bp):
     @flask_app.route('/__admin_v2_bootstrap')
+    @flask_app.route('/<proxy_path>/__admin_v2_bootstrap')
     @flask_app.doc(hide=True)
     @login_required(roles={Role.super_admin})
-    def admin_v2_bootstrap():
-        """Fixed-path bootstrap for Admin V2 dev (proxy_path is random per installation)."""
-        proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
-        return jsonify({
-            'proxy_path': proxy_path,
-            'api_base': f'/{proxy_path}/api/v2/admin/',
-            'router_base': f'/{proxy_path}/admin/v2/',
-            'locale': hconfig(ConfigEnum.admin_lang) or 'en',
-            'panel_version': _panel_version(),
-            'panel_logo_url': _panel_logo_url(proxy_path),
-            'menu': build_admin_v2_menu(),
-            'notices': build_admin_v2_notices(),
-        })
+    def admin_v2_bootstrap(**_values):
+        """Bootstrap for Admin V2 dev (menu, notices, paths)."""
+        return jsonify(_admin_v2_bootstrap_payload())
 
     @admin_bp.route('/v2/')
     @admin_bp.route('/v2/<path:subpath>')

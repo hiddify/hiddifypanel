@@ -23,11 +23,11 @@ class IPVar(BaseModel):
         return cls()
 
     @classmethod
-    def from_strings(cls, *values: str) -> IPVar:
+    def from_strings(cls, *values: str | ipaddress.IPv4Address | ipaddress.IPv6Address) -> IPVar:
         v4: set[str] = set()
         v6: set[str] = set()
 
-        def add(ipstr: str) -> None:
+        def add(ipstr: str | ipaddress.IPv4Address | ipaddress.IPv6Address) -> None:
             ip = _normalize_ip(ipstr)
             if not ip:
                 return
@@ -48,7 +48,9 @@ class IPVar(BaseModel):
         return self
 
 
-def _normalize_ip(value: str | None) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
+def _normalize_ip(value: str | ipaddress.IPv4Address | ipaddress.IPv6Address | None) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
+    if isinstance(value, ipaddress.IPv4Address) or isinstance(value, ipaddress.IPv6Address):
+        return value
     text = str(value or "").strip()
     if not text:
         return None

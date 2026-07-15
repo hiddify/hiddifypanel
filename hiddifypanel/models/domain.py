@@ -15,6 +15,12 @@ from .child import Child
 from hiddifypanel.models.config_enum import ConfigEnum
 
 
+class FakeMode(StrEnum):
+    valid = auto()
+    fake = auto()
+    reality = auto()
+
+
 class DomainType(StrEnum):
     direct = auto()
     sub_link_only = auto()
@@ -22,29 +28,16 @@ class DomainType(StrEnum):
     auto_cdn_ip = auto()
     relay = auto()
     worker = auto()
-    fake = auto()
 
-    reality = auto()  # deprecated
-    special_reality_tcp = auto()
-    special_reality_xhttp = auto()
-    special_reality_grpc = auto()
     old_xtls_direct = auto()  # deprecated
     dnstt = auto()
     special = auto()
-    # special_shadowtls = auto()
-
-    # fake_cdn = "fake_cdn"
-    # telegram_faketls = "telegram_faketls"
-    # ss_faketls = "ss_faketls"
 
     def is_cdn(self) -> bool:
         return self in [DomainType.cdn, DomainType.auto_cdn_ip]
 
     def is_direct(self) -> bool:
-        return self in [DomainType.direct, DomainType.fake, DomainType.reality] or "special" in self.value
-
-    def is_special(self) -> bool:
-        return self in [DomainType.reality] or "special" in self.value
+        return self in [DomainType.direct, DomainType.old_xtls_direct]
 
     def is_dnstt(self) -> bool:
         return self == DomainType.dnstt
@@ -72,9 +65,11 @@ class Domain(db.Model):
     alias = db.Column(db.String(200))
     sub_link_only = db.Column(db.Boolean, nullable=False, default=False)
     mode = db.Column(db.Enum(DomainType), nullable=False, default=DomainType.direct)
+    fake_mode = db.Column(db.Enum(FakeMode), nullable=False, default=FakeMode.valid)
     cdn_ip = db.Column(db.Text(2000), nullable=True, default="")
     # port_index=db.Column(db.Integer, nullable=True, default=0)
     grpc = db.Column(db.Boolean, nullable=True, default=False)
+    ech = db.Column(db.Boolean, nullable=False, default=False)
     servernames = db.Column(db.String(1000), nullable=True, default="")
     # show_all=db.Column(db.Boolean, nullable=True)
     show_domains = db.relationship("Domain", secondary=ShowDomain, primaryjoin=id == ShowDomain.c.domain_id, secondaryjoin=id == ShowDomain.c.related_id, backref=backref("showed_by_domains", lazy="dynamic"))
@@ -91,6 +86,17 @@ class Domain(db.Model):
         uselist=False,
         cascade="all, delete-orphan",
     )
+
+    def is_reality(self) -> bool:
+        return self.fake_mode == FakeMode.reality
+
+    def is_fake_tls(self) -> bool:
+        return self.fake_mode == FakeMode.fake
+
+    def is_accessible(self) -> bool:
+        if self.mode in (DomainType.direct, DomainType.relay):
+            return self.fake_mode == FakeMode.valid
+        return self.fake_mode == FakeMode.valid
 
     def extra_params_json(self):
         import json
@@ -121,16 +127,19 @@ class Domain(db.Model):
         data = {
             "domain": self.domain.lower(),
             "mode": self.mode,
+            "fake_mode": self.fake_mode,
             "alias": self.alias,
             "sub_link_only": self.sub_link_only,
             "child_unique_id": self.child.unique_id if self.child else "",  # type: ignore
             "cdn_ip": self.cdn_ip,
             "servernames": self.servernames,
             "grpc": self.grpc,
+            "ech": bool(self.ech),
             "download_domain": self.download_domain.domain if self.download_domain else "",
             "show_domains": [dd.domain for dd in self.show_domains],  # type: ignore
             "resolve_ip": self.resolve_ip,
             "extra_params": extra,
+            "custom_proxy_id": self.custom_proxy_id,
         }
         if dump_child_id:
             data["child_id"] = self.child_id
@@ -163,7 +172,17 @@ class Domain(db.Model):
 
     @property
     def need_valid_ssl(self):
-        return self.mode in [DomainType.direct, DomainType.cdn, DomainType.worker, DomainType.relay, DomainType.auto_cdn_ip, DomainType.old_xtls_direct, DomainType.sub_link_only]
+        if self.fake_mode != FakeMode.valid:
+            return False
+        return self.mode in [
+            DomainType.direct,
+            DomainType.cdn,
+            DomainType.worker,
+            DomainType.relay,
+            DomainType.auto_cdn_ip,
+            DomainType.old_xtls_direct,
+            DomainType.sub_link_only,
+        ]
 
     @property
     def port_index(self):
@@ -175,39 +194,36 @@ class Domain(db.Model):
 
     @property
     def internal_port_hysteria2(self):
-        if self.mode not in [DomainType.direct, DomainType.relay, DomainType.fake]:
+        if self.fake_mode == FakeMode.reality:
             return 0
-        # TODO: check validity of the range of the port
-        # print("child_id",self.child_id)
+        if self.mode not in [DomainType.direct, DomainType.relay]:
+            return 0
         return int(hconfig(ConfigEnum.hysteria_port, self.child_id)) + self.port_index
 
     @property
     def internal_port_dnstt(self):
         if self.mode not in [DomainType.dnstt]:
             return 0
-        # TODO: check validity of the range of the port
-        # print("child_id",self.child_id)
         return int(5400) + self.port_index
 
     @property
     def internal_port_tuic(self):
-        if self.mode not in [DomainType.direct, DomainType.relay, DomainType.fake]:
+        if self.fake_mode == FakeMode.reality:
             return 0
-        # TODO: check validity of the range of the port
+        if self.mode not in [DomainType.direct, DomainType.relay]:
+            return 0
         return int(hconfig(ConfigEnum.tuic_port, self.child_id)) + self.port_index
 
     @property
     def internal_port_naive(self):
         if self.mode not in [DomainType.direct, DomainType.relay]:
             return 0
-        # TODO: check validity of the range of the port
         return int(hconfig(ConfigEnum.naive_port, self.child_id)) + self.port_index
 
     @property
     def internal_port_special(self):
-        if self.mode != DomainType.reality and "special" not in self.mode.value:
+        if self.fake_mode != FakeMode.reality:
             return 0
-        # TODO: check validity of the range of the port
         return int(hconfig(ConfigEnum.special_port, self.child_id)) + self.port_index
 
     @classmethod
@@ -230,7 +246,19 @@ class Domain(db.Model):
         if child_id is None:
             child_id = Child.current().id  # type: ignore
         domains = Domain.query.filter(
-            Domain.mode.in_([DomainType.direct, DomainType.cdn, DomainType.worker, DomainType.relay, DomainType.auto_cdn_ip, DomainType.old_xtls_direct, DomainType.sub_link_only]), Domain.child_id == child_id
+            Domain.mode.in_(
+                [
+                    DomainType.direct,
+                    DomainType.cdn,
+                    DomainType.worker,
+                    DomainType.relay,
+                    DomainType.auto_cdn_ip,
+                    DomainType.old_xtls_direct,
+                    DomainType.sub_link_only,
+                ]
+            ),
+            Domain.fake_mode == FakeMode.valid,
+            Domain.child_id == child_id,
         ).all()
         if not domains:
             return None
@@ -241,9 +269,14 @@ class Domain(db.Model):
         from hiddifypanel import hutils
 
         domains = []
-        domains = db.session.query(Domain).filter(Domain.mode == DomainType.sub_link_only, Domain.child_id == Child.current().id).all()
+        domains = db.session.query(Domain).filter(
+            Domain.mode == DomainType.sub_link_only,
+            Domain.child_id == Child.current().id,
+        ).all()
         if not len(domains) or always_add_all_domains:
-            domains = db.session.query(Domain).filter(Domain.mode.notin_([DomainType.fake, DomainType.reality, DomainType.special_reality_tcp, DomainType.special_reality_xhttp, DomainType.special_reality_grpc])).all()
+            domains = db.session.query(Domain).filter(
+                Domain.fake_mode == FakeMode.valid,
+            ).all()
 
         if len(domains) == 0 and request:
             domains = [Domain(domain=request.host)]  # type: ignore
@@ -262,9 +295,14 @@ class Domain(db.Model):
         dbdomain.mode = domain["mode"]
         if str(domain.get("sub_link_only", False)).lower() == "true":
             dbdomain.mode = DomainType.sub_link_only
+        if domain.get("fake_mode") is not None:
+            dbdomain.fake_mode = domain["fake_mode"]
+        if domain.get("custom_proxy_id") is not None:
+            dbdomain.custom_proxy_id = domain.get("custom_proxy_id") or None
         dbdomain.cdn_ip = domain.get("cdn_ip", "")
         dbdomain.alias = domain.get("alias", "")
         dbdomain.grpc = domain.get("grpc", False)
+        dbdomain.ech = bool(domain.get("ech", False))
         dbdomain.servernames = domain.get("servernames", "")
         dbdomain.resolve_ip = domain.get("resolve_ip", False)
         dbdomain.extra_params = domain.get("extra_params", "")

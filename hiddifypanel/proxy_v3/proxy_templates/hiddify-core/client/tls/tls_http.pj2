@@ -1,22 +1,25 @@
-{% set _alpn = proxy.alpn|default('') %}
-{% skip('h2_enable is false') if _alpn in ['tls_h2', 'tls_h1_h2', 'tls_h1_h2_h3', 'h2'] and not hconfig.h2_enable %}
-{% skip('quic_enable is false') if _alpn in ['tls_h3', 'tls_h1_h2_h3'] and not hconfig.quic_enable %}
-{% skip('http_proxy_enable = ' ~ hconfig.http_proxy_enable) if not proxy.tls and not hconfig.http_proxy_enable %}
-{% if proxy.tls %}
+
+{% set domain=domain or ctx.domain}
+{%set tls=tls or ctx.proxy.tls%}
+{% if tls %}
 "tls": {
   "enabled": true,
-  "engine": "{{ hconfig.singbox_tls_engine }}",
+  {%if ctx.platform.version >= 5.0.0 %}
+    "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
+  {%endif%}  
   "disable_sni": {{ not domain.sni |jsbool}},
   "server_name": "{{ domain.sni }}",
   "insecure": {{domain.insecure |jsbool }},
-  "alpn": {{proxy.alpn_list | tojson }}
-  "certificate": "",
+  {%if alpns %}
+  "alpn": {{alpns | tojson}},
+  {%endif%}
+  
   "certificate_public_key_sha256": [
     {% for pin in domain.cert.pinnedPeerCertSha256 %}
     "{{ pin }}",
     {% endfor %}
   ],
-  {% if hconfig.tls_ech_enable %}
+  {% if ctx.hconfig.tls_ech_enable %}
   "ech": {
     "enabled": true,
     "config": [],
@@ -25,8 +28,15 @@
   },
   {% endif %}
   "utls": {
-    "enabled": {{ len(hconfig.fingerprint) |jsbool }},
-    "fingerprint": "{{hconfig.fingerprint}}"
+    "enabled": {{ len(ctx.hconfig.fingerprint) |jsbool }},
+    "fingerprint": "{{ctx.hconfig.fingerprint}}"
+  },
+  {%if domain.is_reality() %}
+  "reality": {
+    "enabled": true,
+    "public_key": "{{ ctx.hconfig.reality_public_key }}",
+    "short_id": "{{ ctx.hconfig.reality_short_ids|choose_random }}"
   }
+  {%endif%}
 },
 {% endif %}

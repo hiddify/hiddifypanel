@@ -19,7 +19,7 @@
     />
     <AddDomainDialog
       v-model:visible="showDialog"
-      :allowed-modes="['special']"
+      :allowed-modes="resolvedDomainModes"
       @created="onDomainCreated"
     />
   </div>
@@ -35,6 +35,7 @@ import { domainsApi, type DomainOption } from '@/core/api/generated'
 
 const props = defineProps<{
   modelValue: string[]
+  domainModes?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -42,8 +43,12 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const specialDomains = ref<string[]>([])
+const matchingDomains = ref<string[]>([])
 const showDialog = ref(false)
+
+const resolvedDomainModes = computed(
+  () => (props.domainModes?.filter(Boolean).length ? props.domainModes! : ['fake', 'direct', 'relay']),
+)
 
 const selected = computed({
   get: () => props.modelValue ?? [],
@@ -51,13 +56,13 @@ const selected = computed({
 })
 
 const domainOptions = computed(() =>
-  specialDomains.value.map((d) => ({ label: d, value: d })),
+  matchingDomains.value.map((d) => ({ label: d, value: d })),
 )
 
 async function load() {
-  const rows = await domainsApi.options({ modes: ['special'] })
-  specialDomains.value = rows.map((d) => d.domain).filter(Boolean) as string[]
-  const allowed = new Set(specialDomains.value)
+  const rows = await domainsApi.options({ modes: resolvedDomainModes.value })
+  matchingDomains.value = rows.map((d) => d.domain).filter(Boolean) as string[]
+  const allowed = new Set(matchingDomains.value)
   const filtered = (props.modelValue ?? []).filter((d) => allowed.has(d))
   if (filtered.length !== (props.modelValue ?? []).length) {
     emit('update:modelValue', filtered)
@@ -72,5 +77,5 @@ async function onDomainCreated(created: DomainOption) {
 }
 
 onMounted(load)
-watch(() => props.modelValue, load)
+watch(() => [props.modelValue, props.domainModes] as const, load, { deep: true })
 </script>

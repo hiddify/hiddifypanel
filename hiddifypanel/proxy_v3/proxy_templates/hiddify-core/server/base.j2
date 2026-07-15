@@ -1,4 +1,5 @@
 {
+  {% include 'hiddify-core/server/base/log' %},
   "inbounds": [
     {
       "listen": "127.0.0.1",
@@ -29,7 +30,6 @@
     {% block outbounds %}{% endblock %}
   ],
   {% include 'hiddify-core/server/base/route' %},
-  {% include 'hiddify-core/server/base/log' %},
   {% include 'hiddify-core/server/base/experimental' %},
   {% include 'hiddify-core/server/base/dns' %},
 }

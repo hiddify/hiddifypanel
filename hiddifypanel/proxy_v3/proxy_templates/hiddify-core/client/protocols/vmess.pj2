@@ -1,6 +1,5 @@
-{% skip("vmess_enable = " ~ hconfig.vmess_enable) if not hconfig.vmess_enable %}
 "type": "vmess",
-"server": "{{ ctx.domain.server }}",
+"server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
 "security": "auto",

@@ -123,7 +123,7 @@ def to_xray(proxy: dict) -> dict:
 def add_proto_settings(base: dict, proxy: dict):
     if proxy['proto'] == ProxyProto.wireguard:
         add_wireguard_settings(base, proxy)
-    elif proxy['proto'] == ProxyProto.ss:
+    elif proxy['proto'] == ProxyProto.shadowsocks:
         add_shadowsocks_settings(base, proxy)
     elif proxy['proto'] == ProxyProto.vless:
         add_vless_settings(base, proxy)
@@ -237,7 +237,7 @@ def _add_security(base_dict, proxy, tls_info=None):
     if ss['security'] == 'reality':
         # ss['network'] = proxy['transport']
         add_reality_stream(ss, proxy, tls_info)
-    elif ss['security'] in ['tls', "xtls"] and proxy['proto'] != ProxyProto.ss:
+    elif ss['security'] in ['tls', "xtls"] and proxy['proto'] != ProxyProto.shadowsocks:
         ss['tlsSettings'] = {
             'serverName': tls_info['sni'],
             'allowInsecure': tls_info['allow_insecure'],
@@ -267,7 +267,7 @@ def add_stream_settings(base: dict, proxy: dict):
     if proxy['l3'] == ProxyL3.h3_quic:
         add_quic_stream(ss, proxy)
 
-    if (proxy['transport'] == 'tcp' and ss['security'] != 'reality') or (ss['security'] == 'none' and proxy['transport'] not in [ProxyTransport.httpupgrade, ProxyTransport.WS] and proxy['proto'] != ProxyProto.ss):
+    if (proxy['transport'] == 'tcp' and ss['security'] != 'reality') or (ss['security'] == 'none' and proxy['transport'] not in [ProxyTransport.httpupgrade, ProxyTransport.WS] and proxy['proto'] != ProxyProto.shadowsocks):
         ss['network'] = proxy['transport']
         add_tcp_stream(ss, proxy)
     if proxy['transport'] == ProxyTransport.h2 and ss['security'] == 'none' and ss['security'] != 'reality':
@@ -287,7 +287,7 @@ def add_stream_settings(base: dict, proxy: dict):
         ss['network'] = proxy['transport']
         add_ws_stream(ss, proxy)
 
-    if proxy['proto'] == ProxyProto.ss:
+    if proxy['proto'] == ProxyProto.shadowsocks:
         ss['network'] = 'tcp'
 
     # tls fragmentaion

@@ -137,15 +137,16 @@ watch(
 </script>
 
 <template>
-  <Button
-    icon="pi pi-file-import"
-    :label="t('editor.includeTemplate')"
-    severity="secondary"
-    size="small"
-    :disabled="!core"
-    @click="toggle"
-  />
-  <Popover ref="popoverRef" class="template-include-popover" @show="onShow">
+  <span class="template-include-menu">
+    <Button
+      icon="pi pi-file-import"
+      :label="t('editor.includeTemplate')"
+      severity="secondary"
+      size="small"
+      :disabled="!core"
+      @click="toggle"
+    />
+    <Popover ref="popoverRef" class="template-include-popover" @show="onShow">
     <div class="w-72 max-w-[90vw] flex flex-col gap-2">
       <IconField class="w-full">
         <InputIcon class="pi pi-search" />
@@ -180,4 +181,12 @@ watch(
       </ul>
     </div>
   </Popover>
+  </span>
 </template>
+
+<style scoped>
+.template-include-menu {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+</style>

@@ -1,4 +1,3 @@
-{% skip("shadowsocks2022_enable = " ~ hconfig.shadowsocks2022_enable) if not hconfig.shadowsocks2022_enable %}
-{% with plugin="obfs-local", plugin_opts="obfs=tls;obfs-host=" ~ hconfig.ssfaketls_fakedomain %}
+{% with plugin="obfs-local", plugin_opts="obfs=tls;obfs-host=" ~ ctx.hconfig.ssfaketls_fakedomain %}
 {% include 'hiddify-core/client/protocols/ss' %}
 {% endwith %}
