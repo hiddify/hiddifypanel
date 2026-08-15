@@ -1,6 +1,6 @@
 "type": "tuic",
 "server": "{{ proxy.server }}",
-"server_port": {{ ctx.proxy.port }},
+"server_port": {{ ctx.proxy.udp_port }},
 "uuid": "{{ ctx.user.uuid }}",
 "password": "{{ ctx.user.uuid }}",
 "congestion_control": "cubic",

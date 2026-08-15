@@ -1,13 +1,14 @@
 "type": "ssh",
 "host_key": [
-  "{{ ctx.hconfig.ssh_host_rsa_pk | replace('\n', '\\n') }}",
-  "{{ ctx.hconfig.ssh_host_ecdsa_pk | replace('\n', '\\n') }}",
-  "{{ ctx.hconfig.ssh_host_ed25519_pk | replace('\n', '\\n') }}"
+  {{ ctx.hconfig.ssh_host_rsa_pk | tojson }},
+  {{ ctx.hconfig.ssh_host_ecdsa_pk | tojson }},
+  {{ ctx.hconfig.ssh_host_ed25519_pk | tojson }}
 ],
 "users": [
   {% for user in ctx.users %}
   {
-    "user": "{{ user.uuid }}", 
-    "public_key": "{{ user.ed25519_public_key }}"},
+    "user": "{{ user.uuid }}",
+    "public_key": {{ (user.ed25519_public_key or "") | tojson }}
+  },
   {% endfor %}
 ]

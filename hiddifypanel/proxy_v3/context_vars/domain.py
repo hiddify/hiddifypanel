@@ -52,10 +52,6 @@ class DomainIPVar(BaseModel):
         return self.fake_mode == FakeMode.fake
 
     @property
-    def server(self) -> str:
-        return self.host or self.name
-
-    @property
     def allow_insecure(self) -> bool:
         return (self.cert is not None) and not self.cert.valid_cert
 
@@ -112,10 +108,10 @@ class DomainIPVar(BaseModel):
         # var._extracted = extracted_data
         return var
 
-    def server(self, force_ip: bool) -> str:
+    def server(self, force_ip: bool = False) -> str:
         if force_ip or self.resolve_ip or not self.mode.name_is_real():
             return random_or_none(self.ips.ips) or self.name
-        return self.name
+        return self.host or self.name
 
 
 def get_ips(domain_db: Domain) -> IPVar:

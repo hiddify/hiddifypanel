@@ -3,7 +3,7 @@
 {% if proxy.udp_port_ranges %}
     "server_ports": {{ proxy.udp_port_ranges | tojson }},
 {% else %}
-    "server_port": {{ proxy.port }},
+    "server_port": {{ proxy.udp_port }},
 {% endif %}
     "auth_str": "{{ ctx.user.uuid }}",
     "up_mbps": {{ ctx.hconfig.hysteria_up_mbps }},

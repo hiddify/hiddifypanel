@@ -55,7 +55,9 @@ def inject_template_block(base: str, block_name: str, fragment: str) -> tuple[st
     pattern = re.compile(
         rf"\{{%\-?\s*block\s+{re.escape(block_name)}\s*\-?%\}}\s*\{{%\-?\s*endblock\s*\-?%\}}",
     )
-    merged, count = pattern.subn(replacement, base, count=1)
+    # Use a callable repl: re.sub interprets backslashes in string replacements
+    # (e.g. JSON "\\n"), which would corrupt escaped sequences inside fragment bodies.
+    merged, count = pattern.subn(lambda _m: replacement, base, count=1)
     return merged, count > 0
 
 

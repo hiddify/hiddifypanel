@@ -1,6 +1,6 @@
 "type": "anytls",
 "server": "{{ proxy.server }}",
-"server_port": {{ proxy.port }},
+"server_port": {{ proxy.tcp_port }},
 "password": "{{ ctx.user.uuid }}",
 "idle_session_check_interval": "30s",
 "idle_session_timeout": "120s",

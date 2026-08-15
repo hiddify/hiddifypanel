@@ -356,7 +356,7 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
         l7_gateway = _preset_protocol(primary) == CustomProxyMode.domains_l7_gateway
         if supports_xray_preset(primary):
             try:
-                inbound, slugs = build_xray_inbound_template(primary)
+                inbound, slugs = build_xray_inbound_template(primary, l7_gateway=l7_gateway)
                 rows.append(_build_preset(slot, "xray", inbound, slugs, child_id))
             except ValueError:
                 pass

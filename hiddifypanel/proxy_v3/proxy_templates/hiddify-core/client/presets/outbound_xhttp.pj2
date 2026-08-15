@@ -1,9 +1,11 @@
 {% block outbounds %}
   {% for ctx in ctx.iter_ctx_domains() %}
+    {% set proxy = ctx.proxy %}
+    {% set domain = ctx.proxy.domain %}
     {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__, tls=__TLS_MODE__, download_tls=__DOWNLOAD_TLS_MODE__ %}
-      {%set tag%}"{%- include 'hiddify-core/client/tag' -%}{%endset%}
+      {% set tag %}{%- include 'hiddify-core/client/tag' -%}{% endset %}
       {
-        "tag":"{{tag}}",
+        "tag": "{{ tag | trim }}",
         {% include '__PROTO_SLUG__' %},
         {% include '__STREAM_SLUG__' %},
         {% include '__TLS_SLUG__' %}

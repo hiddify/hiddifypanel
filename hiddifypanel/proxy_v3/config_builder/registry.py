@@ -31,10 +31,13 @@ def _load_drivers() -> None:
     from .hiddify_core import server as hiddify_core_server
     from .nginx import server as nginx_server
     from .rust_rpxy_l4 import server as rust_rpxy_l4_server
+    from .singbox.client import SingboxClientDriver
     from .xray import server as xray_server
-
+    from .xray.client import XrayClientDriver
     _register(hiddify_core_server.HiddifyCoreServerDriver())
     _register(hiddify_core_client.HiddifyCoreClientDriver())
+    _register(SingboxClientDriver())
+    _register(XrayClientDriver())
     _register(xray_server.XrayServerDriver())
     _register(haproxy_server.HaproxyServerDriver())
     _register(nginx_server.NginxServerDriver())

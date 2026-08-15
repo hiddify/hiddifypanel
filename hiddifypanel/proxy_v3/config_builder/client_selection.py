@@ -13,4 +13,7 @@ def select_client_config(configs: list[ConfigVar], core: TemplateCore, platform_
         return None
 
     compatible = [cfg for cfg in candidates if cfg.version <= platform_version]
+    if not compatible:
+        # Prefer any available template over skipping the proxy entirely.
+        return max(candidates, key=lambda cfg: cfg.version, default=None)
     return max(compatible, key=lambda cfg: cfg.version, default=None)

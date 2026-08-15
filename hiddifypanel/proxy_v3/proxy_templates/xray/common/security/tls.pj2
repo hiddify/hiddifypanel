@@ -1,5 +1,12 @@
+{# Server TLS — alpns optional (mirrors hiddify-core/server/tls/tls.pj2). #}
 "security": "tls",
 "tlsSettings": {
   "serverName": "{{ ctx.domain.sni }}",
+  {% if alpns is defined and alpns %}
+  "alpn": {{ alpns | tojson }}
+  {% elif ALPN is defined %}
+  "alpn": ["{{ ALPN }}"]
+  {% else %}
   "alpn": ["h2", "http/1.1"]
+  {% endif %}
 }

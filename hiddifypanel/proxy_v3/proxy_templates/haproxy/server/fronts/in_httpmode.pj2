@@ -2,7 +2,7 @@
 # HTTP/2 Frontend
 # =====================
 frontend in-httpmode
-  bind abns@http_in_h2 accept-proxy allow-0rtt
+  bind abns@http_in_h2 accept-proxy
   bind abns@https_in_http_mode accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/ssl/ alpn h2,http/1.1
   #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/ssl/ alpn h3
   bind quic4@127.0.0.1:901 ssl crt /opt/hiddify-manager/ssl/ alpn h3
@@ -11,10 +11,12 @@ frontend in-httpmode
 
   mode http
 
-  http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default)
-  http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default) if { var(txn.backend) -m str default }
-  http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},nginx_dispatcher_http_h2) if { var(txn.backend) -m str default }
+  http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy)
+  http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.backend) -m str default_decoy }
+  http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},default_decoy) if { var(txn.backend) -m str default_decoy }
 
-  
-  use_backend %[var(txn.backend)]
+  http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
+
+  use_backend %[var(txn.backend)] 
+
   default_backend default_decoy

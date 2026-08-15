@@ -1,19 +1,19 @@
 "transport": {
   "type": "xhttp",
   "path": "{{ proxy.path }}",
-  "host": "{{ ctx.domain.host }}",
+  "host": "{{ ctx.proxy.domain.host }}",
   "mode": "{{ proxy.xhttp_mode | default('auto') }}",
   "headers": {},
-  {% if ctx.domain.download and proxy.download_alpn %}
+  {% if ctx.proxy.domain.download and proxy.download_alpn %}
   "downloadSettings": {
     "path": "{{ proxy.path }}",
-    "host": "{{ ctx.domain.download.server }}",
+    "host": "{{ ctx.proxy.domain.download.server() }}",
     "headers": {},
     {% if proxy.download_alpn.startswith('tls_') %}
     "tls": {
       "enabled": "true",
-      "server_name": "{{ ctx.domain.download.sni }}",
-      "insecure": {% if ctx.domain.download.allow_insecure %}true{% else %}false{% endif %},
+      "server_name": "{{ ctx.proxy.domain.download.sni }}",
+      "insecure": {% if ctx.proxy.domain.download.allow_insecure %}true{% else %}false{% endif %},
       "alpn": [
         {% for alpn in proxy.download_alpn_list %}
         "{{ alpn }}",

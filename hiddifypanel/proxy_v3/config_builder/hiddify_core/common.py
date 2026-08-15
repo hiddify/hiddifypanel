@@ -56,7 +56,7 @@ def render_template_blocks(child_id: int, jinja_ctx: dict[str, Any], template: s
         if content:
             blocks.append(ProxyBlock(block_name=block_name, content=content))
 
-    return extract_tags_convert_unique_ids(blocks)
+    return extract_tags_convert_unique_ids(blocks, messages=messages, proxy_label=proxy_label)
 
 
 def compose_config_from_blocks(
@@ -93,12 +93,36 @@ def compose_config_from_blocks(
     return ConfigBuilderModel(core=core, side=side, config=section.rendered or "", messages=messages)
 
 
-def extract_tags_convert_unique_ids(blocks: list[ProxyBlock]) -> list[ProxyBlock]:
+def extract_tags_convert_unique_ids(
+    blocks: list[ProxyBlock],
+    *,
+    messages: list[MessageModel] | None = None,
+    proxy_label: str = "",
+) -> list[ProxyBlock]:
     names: set[str] = set()
+    kept: list[ProxyBlock] = []
     for block in blocks:
-        data = load_json5(f"[{block.content}]")
+        try:
+            data = load_json5(f"[{block.content}]")
+        except Exception as exc:
+            if messages is not None:
+                messages.append(
+                    MessageModel(
+                        level="warning",
+                        message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON ({exc})",
+                        data={"content": block.content},
+                    )
+                )
+            continue
+        if not isinstance(data, list):
+            kept.append(block)
+            messages.append(MessageModel(level="warning", message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON ({item})"))
+            continue
         block_names: dict[str, str] = {}
         for item in data:
+            if not isinstance(item, dict):
+                messages.append(MessageModel(level="warning", message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON ({item})"))
+                continue
             if tag := item.get("tag"):
                 newtag = tag
                 if tag in names:
@@ -111,8 +135,9 @@ def extract_tags_convert_unique_ids(blocks: list[ProxyBlock]) -> list[ProxyBlock
                 names.add(newtag)
                 item["tag"] = newtag
         for item in data:
-            if "detour" in item and (new_detour := block_names.get(item["detour"])):
+            if isinstance(item, dict) and "detour" in item and (new_detour := block_names.get(item["detour"])):
                 item["detour"] = new_detour
         if block_names:
             block.content = f"[{json.dumps(data, ensure_ascii=False).strip('[]')}]"
-    return blocks
+        kept.append(block)
+    return kept

@@ -1,12 +1,10 @@
-
 "network": "tcp",
 "tcpSettings": {
-    "header": {
-        "type": "http",
-        "request": {
-            "path": [
-                "/{{ path }}",
-            ]
-        }
+  "acceptProxyProtocol": true,
+  "header": {
+    "type": "http",
+    "request": {
+      "path": ["/{{ ctx.proxy.path }}"]
     }
+  }
 }

@@ -1,16 +1,16 @@
-
-{% for domain in ctx.domains %}
-  {% set proxy = ctx.proxy.with_domain(domain) %}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set domain = ctx.proxy.domain %}
   {% set data = namespace(
     v='2',
     add=proxy.server,
-    port=proxy.port,
+    port=proxy.tcp_port,
     id=ctx.user.uuid,
     aid=0,
     scy=proxy.cipher|default('auto'),
     net=proxy.transport|default('tcp'),
     type='none',
-    host=proxy.host|default(''),
+    host=domain.host|default(''),
     alpn=proxy.alpn|default('h2,http/1.1'),
     path=proxy.path|default(''),
     sni=domain.sni,
@@ -22,4 +22,3 @@
   
   vmess://{{ data|compactjson|b64encode }}
 {% endfor %}
-

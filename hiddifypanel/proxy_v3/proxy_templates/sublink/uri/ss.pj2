@@ -1,0 +1,31 @@
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set method = ctx.hconfig.shadowsocks2022_method %}
+  {% set password = (ctx.hconfig.shared_secret.replace('-','')|b64encode) ~ ':' ~ (ctx.user.uuid_hex|b64encode) %}
+  {% if 'shadowtls' in (proxy.slug or '') %}
+    {{ skip('ShadowTLS is not supported as an ss:// sublink for this platform') }}
+  {% endif %}
+  {% if 'faketls' in (proxy.slug or '') %}
+    {% set uri = namespace(
+      protocol='ss',
+      user=(method ~ ':' ~ password)|b64encode,
+      host=proxy.server,
+      port=proxy.tcp_port,
+      query_params={
+        'hiddify': '1',
+        'plugin': 'obfs-local;obfs=tls;obfs-host=' ~ ctx.hconfig.ssfaketls_fakedomain,
+        'udp-over-tcp': 'true',
+      },
+    ) %}
+  {% else %}
+    {% set uri = namespace(
+      protocol='ss',
+      user=(method ~ ':' ~ password)|b64encode,
+      host=proxy.server,
+      port=proxy.tcp_port,
+      query_params=namespace(hiddify='1'),
+    ) %}
+  {% endif %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

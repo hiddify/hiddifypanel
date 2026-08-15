@@ -13,7 +13,7 @@ from .inbound_builder import (
     _raw_transport,
     _transport_file,
     _uses_v2ray_transport_proto,
-    _xray_security_slug,
+    _xray_client_security_slug,
     supports_hiddify_preset,
     supports_xray_preset,
 )
@@ -122,6 +122,8 @@ _URI_LINK_BODIES = frozenset(
 
 
 def _sublink_link_body_slug(combo: ProxyCombination) -> str:
+    if combo.proto in ("ss", "shadowsocks", "v2ray"):
+        return "sublink/uri/ss"
     if combo.proto == "vmess":
         return "sublink/vmess/base"
     if combo.proto == "trojan":
@@ -186,6 +188,9 @@ def build_sublink_client(combo: ProxyCombination) -> tuple[str, list[str]]:
     body_slug = _sublink_link_body_slug(combo)
     tls_slug = _sublink_tls_slug(combo)
     slugs = ["sublink/tag", body_slug]
+    if body_slug == "sublink/uri/ss":
+        content = load_template_slug(body_slug)
+        return content, slugs
     if body_slug in _URI_LINK_BODIES:
         slugs.extend(
             [
@@ -262,47 +267,58 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
     stream_slug = _xray_client_streams_slug(combo.transport)
     if not proto_slug or not stream_slug:
         raise ValueError(f"Unsupported xray client preset: {combo.name}")
-    security_slug = _xray_security_slug(combo)
-    slugs = [proto_slug, stream_slug, security_slug, "xray/snippets/stream_sockopt", "xray/snippets/sniffing"]
-    alpn_line = ""
-
-    if security_slug == "xray/common/security/tls_alpn":
-        alpn = combo.params["download"]["alpn"]
-        alpn_line = f'{{% set ALPN = "{alpn}" %}}'
-    content = _render_shell(
-        "xray",
-        "client_outbound_v2ray",
-        {
-            "__PROTO_SLUG__": proto_slug,
-            "__STREAM_SLUG__": stream_slug,
-            "__SECURITY_SLUG__": security_slug,
-        },
-    )
-
-    if alpn_line:
+    security_slug = _xray_client_security_slug(combo)
+    slugs = [
+        proto_slug,
+        stream_slug,
+        security_slug,
+        "xray/client/tag",
+        "xray/client/snippets/mux",
+        "xray/client/snippets/fragment",
+    ]
+    shell_name = "outbound_xhttp" if str(combo.transport).lower() == "xhttp" else "outbound_v2ray"
+    replacements = {
+        "__PROTO_SLUG__": proto_slug,
+        "__STREAM_SLUG__": stream_slug,
+        "__SECURITY_SLUG__": security_slug,
+    }
+    if shell_name == "outbound_xhttp":
+        replacements.update(_xhttp_with_replacements(combo))
+    content = _render_shell("xray", shell_name, replacements)
+    if shell_name != "outbound_xhttp" and str(combo.l3).lower() == "h3_quic":
         sec_inc = f"{{% include '{security_slug}' %}}"
-        content = content.replace(sec_inc, f"{alpn_line}\n    {sec_inc}")
+        content = content.replace(sec_inc, '{% set alpns = ["h3"] %}\n    ' + sec_inc)
     return content, slugs
+
+
+# Sing-box client outbounds reuse hiddify-core (same JSON dialect) unless a core-specific
+# template is needed. Drivers resolve this marker to the proxy's hiddify-core client config.
+USE_HIDDIFY_CORE_PLACEHOLDER = "{#use_hiddify_core()#}"
 
 
 def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    proto_slug = _singbox_client_proto_slug(combo.proto)
-    stream_slug = _singbox_client_streams_slug(combo.transport)
-    if not proto_slug or not stream_slug:
-        raise ValueError(f"Unsupported sing-box client preset: {combo.name}")
-    slugs = [proto_slug, stream_slug, f"{_SINGBOX_CLIENT_ROOT}/client/tls"]
+    """Sing-box client: reuse hiddify-core via placeholder; mieru is not supported in sing-box."""
+    if _client_proto_file(combo.proto) == "mieru":
+        return "skip('mieru is not supported by sing-box')\n", []
+    content = f"{{% block outbounds %}}\n{USE_HIDDIFY_CORE_PLACEHOLDER}\n{{% endblock %}}\n"
+    return content, []
+
+
+def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
+    """Mieru lives on sing-box only (hiddify-core client config is empty)."""
+    proto_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/mieru"
+    tls_slug = _hiddify_client_tls_slug(combo)
     content = _render_shell(
-        _SINGBOX_CLIENT_ROOT,
-        "client_outbound",
-        {
-            "__PROTO_SLUG__": proto_slug,
-            "__STREAM_SLUG__": stream_slug,
-        },
+        _HIDDIFY_CLIENT_ROOT,
+        "outbound_general",
+        {"__PROTO_SLUG__": proto_slug, "__TLS_SLUG__": tls_slug},
     )
-    return content, slugs
+    return content, [proto_slug, tls_slug]
 
 
 def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
+    if _client_proto_file(combo.proto) == "mieru":
+        return _build_mieru_hiddify_client_outbound(combo)
     proto_slug = _hiddify_client_proto_slug(combo)
     if not proto_slug:
         raise ValueError(f"Unsupported hiddify-core client preset: {combo.name}")
@@ -353,22 +369,13 @@ def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]
     """Mihomo/Clash JSON proxy entry (YAML grammar JSON subset)."""
     network = _transport_file(combo.transport) or "tcp"
     proto = _proto_file(combo.proto) or "vless"
-    content = (
-        "{\n"
-        '  "proxies": [\n'
-        "    {\n"
-        "      {% include 'clash/client/tag' %}\n"
-        f'      "type": "{proto}",\n'
-        '      "server": "{{ proxy.server }}",\n'
-        '      "port": {{ proxy.tcp_port or proxy.udp_port }},\n'
-        '      "uuid": "{{ user.uuid }}",\n'
-        f'      "network": "{network}",\n'
-        '      "tls": {% if proxy.tls %}true{% else %}false{% endif %},\n'
-        '      "servername": "{{ domain.sni }}",\n'
-        '      "udp": true\n'
-        "    }\n"
-        "  ]\n"
-        "}"
+    content = _render_shell(
+        "clash",
+        "outbound_general",
+        {
+            "__PROTO__": proto,
+            "__NETWORK__": network,
+        },
     )
     return content, ["clash/client/tag"]
 
@@ -394,19 +401,22 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
         except ValueError:
             pass
 
-    if supports_hiddify_preset(combo) or supports_xray_preset(combo):
+    if supports_hiddify_preset(combo) or supports_xray_preset(combo) or combo.proto == "mieru":
         try:
             outbound, _slugs = build_singbox_client_outbound(combo)
             configs.append(_builtin_client_core_entry("singbox", outbound))
         except ValueError:
             pass
 
-    if supports_hiddify_preset(combo) or combo.proto == "wireguard":
+    # Always pair singbox's use_hiddify_core() marker with a hiddify-core client config
+    # (mieru gets an empty hiddify-core template).
+    if supports_hiddify_preset(combo) or combo.proto in ("wireguard", "mieru") or supports_xray_preset(combo):
         try:
             outbound, _slugs = build_hiddify_client_outbound(combo)
             configs.append(_builtin_client_core_entry("hiddify-core", outbound))
         except ValueError:
-            pass
+            if combo.proto == "mieru":
+                configs.append(_builtin_client_core_entry("hiddify-core", "{% block outbounds %}\n{% endblock %}\n"))
 
     try:
         link, _slugs = build_sublink_client(combo)

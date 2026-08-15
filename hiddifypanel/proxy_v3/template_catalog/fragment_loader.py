@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .paths import FRAGMENT_CORES, FRAGMENT_KINDS, TEMPLATES_ROOT
 
+# hiddify-core uses server|client/stream/; xray uses common/streams/.
 _HIDDIFY_KIND_ALIASES = {"streams": "stream"}
 
 
@@ -33,12 +34,14 @@ def load_template_slug(slug: str, *, normalize: bool = True) -> str:
     return normalize_fragment(text) if normalize and path.suffix == ".pj2" else text.strip()
 
 
-def _normalize_kind(kind: str) -> str:
-    return _HIDDIFY_KIND_ALIASES.get(kind, kind)
+def _normalize_kind(core: str, kind: str) -> str:
+    if core == "hiddify-core":
+        return _HIDDIFY_KIND_ALIASES.get(kind, kind)
+    return kind
 
 
 def _fragment_folder(core: str, kind: str, side: str = "server") -> Path:
-    kind = _normalize_kind(kind)
+    kind = _normalize_kind(core, kind)
     if core == "hiddify-core":
         return TEMPLATES_ROOT / core / side / kind
     return TEMPLATES_ROOT / core / "common" / kind
@@ -47,7 +50,7 @@ def _fragment_folder(core: str, kind: str, side: str = "server") -> Path:
 def fragment_path(core: str, kind: str, name: str, side: str = "server") -> Path:
     if core not in FRAGMENT_CORES:
         raise ValueError(f"Unknown core: {core}")
-    kind = _normalize_kind(kind)
+    kind = _normalize_kind(core, kind)
     if kind not in FRAGMENT_KINDS and kind not in ("stream", "tls"):
         raise ValueError(f"Unknown fragment kind: {kind}")
     return _fragment_folder(core, kind, side) / f"{name}.pj2"
@@ -58,7 +61,7 @@ def load_fragment(core: str, kind: str, name: str, side: str = "server") -> str:
 
 
 def fragment_slug(core: str, kind: str, name: str, side: str = "server") -> str:
-    kind = _normalize_kind(kind)
+    kind = _normalize_kind(core, kind)
     if core == "hiddify-core":
         return f"{core}/{side}/{kind}/{name}"
     return f"{core}/common/{kind}/{name}"

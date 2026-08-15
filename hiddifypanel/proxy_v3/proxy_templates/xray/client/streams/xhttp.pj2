@@ -1,5 +1,39 @@
 "network": "xhttp",
 "xhttpSettings": {
-  "path": "/{{ PATH }}",
-  "host": "{{ DOMAIN }}"
-}
+  "mode": "{{ mode|default('auto') }}",
+  "path": "/{{ proxy.path }}",
+  "host": "{{ ctx.proxy.domain.host }}",
+  "extra": {
+    {% if ctx.proxy.domain.download and ctx.proxy.domain.download.name != ctx.proxy.domain.name %}
+    "downloadSettings": {
+      "address": "{{ ctx.proxy.domain.download.server() }}",
+      "port": {{ ctx.proxy.domain.download.port or ctx.proxy.tcp_port }},
+      "network": "xhttp",
+      "security": {% if download_tls|default(true) %}"tls"{% else %}"none"{% endif %},
+      {% if download_tls|default(true) %}
+      "tlsSettings": {
+        "serverName": "{{ ctx.proxy.domain.download.sni or ctx.proxy.domain.sni }}",
+        "allowInsecure": {{ ctx.proxy.domain.download.allow_insecure | tojson }},
+        "fingerprint": "{{ ctx.hconfig.fingerprint }}",
+        "alpn": {{ (download_alpns if download_alpns is defined else ["h2", "http/1.1"]) | tojson }}
+      },
+      {% endif %}
+      "xhttpSettings": {
+        "path": "/{{ proxy.path }}",
+        "host": "{{ ctx.proxy.domain.download.host }}",
+        "mode": "{{ mode|default('auto') }}"
+      }
+    },
+    {% endif %}
+    "scMaxEachPostBytes": {{ sc_max_each_post|default(1000000) }},
+    "scMinPostsIntervalMs": {{ sc_min_posts_interval|default(30) }},
+    "xmux": {
+      "maxConcurrency": {{ xmux_max_concurrency|default('"16-32"') }},
+      "maxConnections": {{ xmux_max_connections|default(0) }},
+      "cMaxReuseTimes": {{ xmux_c_max_reuse|default(0) }},
+      "hMaxRequestTimes": {{ xmux_h_max_request|default('"600-900"') }},
+      "hMaxReusableSecs": {{ xmux_h_max_reusable|default('"1000-2000"') }},
+      "hKeepAlivePeriod": {{ xmux_h_keepalive|default(0) }}
+    }
+  }
+},

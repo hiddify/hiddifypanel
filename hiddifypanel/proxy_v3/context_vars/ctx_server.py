@@ -69,6 +69,9 @@ class ServerContextProxyVar(ServerContextVar):
     def iter_ctx_domains(self) -> Iterator[ServerContextDomainVar]:
         return self.iter_domains()
 
+    def iter_ctx_domain(self) -> Iterator[ServerContextDomainVar]:
+        return self.iter_domains()
+
 
 class ServerContextDomainVar(ServerContextProxyVar):
     """Server context bound to one domain."""

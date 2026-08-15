@@ -1,8 +1,12 @@
 "protocol": "vmess",
 "settings": {
-    "clients": [
-        {% for u in ctx.users %}
-            {"id": "{{ u['uuid'] }}", "email": "{{ u['uuid'] }}@hiddify.com", "alterId": 0},
-        {% endfor %}
-    ]
+  "clients": [
+    {% for u in ctx.users %}
+    {
+      "id": "{{ u.uuid }}",
+      "email": "{{ u.uuid }}@hiddify.com",
+      "alterId": 0
+    },
+    {% endfor %}
+  ]
 }

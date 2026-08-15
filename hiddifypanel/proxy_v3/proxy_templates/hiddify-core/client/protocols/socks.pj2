@@ -1,6 +1,6 @@
 "type": "socks",
 "server": "{{ proxy.server }}",
-"server_port": {{ proxy.port }},
+"server_port": {{ proxy.tcp_port }},
 "version": "5",
 "username": "{{ ctx.user.uuid }}",
 "password": "h",

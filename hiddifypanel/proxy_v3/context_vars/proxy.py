@@ -174,9 +174,7 @@ class ProxyDomainVar(ProxyVar):
 
     @property
     def server(self) -> str:
-        if self.mode == CustomProxyMode.ip:
-            return self.domain.ip or self.domain.ipv4 or self.domain.name
-        return self.domain.host or self.domain.name
+        return self.domain.server(self.mode == CustomProxyMode.ip)
 
     @property
     def is_reality(self) -> bool:
@@ -205,7 +203,6 @@ class ClientBuilderProxyVar(ProxyVar):
         base = ProxyVar.from_custom_proxy(proxy, hconfig, server_side=False)
         return cls(
             **base.model_dump(),
-            tag=str(proxy.name),
             client_configs=client_configs,
         )
 
@@ -247,9 +244,19 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
         )
         return cls(
             domain=domain,
-            **proxy.model_dump(exclude={"domain", "server_config", "tcp_ports", "udp_ports"}),
+            **proxy.model_dump(exclude={"domain", "server_config", "tcp_ports", "udp_ports", "domains"}),
             tcp_ports=list(resolved.tcp_ports),
             udp_ports=list(resolved.udp_ports),
-            db_tcp_ports=list(proxy.db_tcp_ports),
-            db_udp_ports=list(proxy.db_udp_ports),
         )
+
+    @property
+    def server(self) -> str:
+        return self.domain.server(self.mode == CustomProxyMode.ip)
+
+    @property
+    def is_reality(self) -> bool:
+        if self.proto not in {ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess}:
+            return False
+        if self.tls_layer != TlsLayer.tls:
+            return False
+        return self.domain.is_reality()

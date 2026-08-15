@@ -1,19 +1,19 @@
 {
-  "address": "{{ proxy.download.server }}",
-  "port": {{ proxy.port }},
+  "address": "{{ proxy.domain.download.server() if proxy.domain.download else proxy.domain.server() }}",
+  "port": {{ proxy.tcp_port }},
   "network": "xhttp",
   "xhttpSettings": {
     "path": "{{ proxy.path }}",
-    "host": "{{ proxy.host }}",
-    "mode": "{{ proxy.xhttp_mode }}",
+    "host": "{{ proxy.domain.host }}",
+    "mode": "auto",
     "extra": {
-      "headers": {{ proxy.params.headers|default({})|compactjson }}
+      "headers": {}
     }
   },
   "security": "tls",
   "tlsSettings": {
-    "serverName": "{{ proxy.download.sni|default(ctx.domain.sni) }}",
-    "allowInsecure": {{ 'true' if proxy.download.allow_insecure else 'false' }},
+    "serverName": "{{ (proxy.domain.download.sni if proxy.domain.download else proxy.domain.sni) }}",
+    "allowInsecure": {{ 'true' if (proxy.domain.download.allow_insecure if proxy.domain.download else proxy.domain.allow_insecure) else 'false' }},
     "fingerprint": "{{ proxy.fingerprint|default('') }}",
     "alpn": ["{{ proxy.download_alpn|default('h2') }}"]
   }

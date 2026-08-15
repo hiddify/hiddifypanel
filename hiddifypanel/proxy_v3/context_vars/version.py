@@ -12,21 +12,29 @@ class TemplateVersion:
     version: Version
 
     def __init__(self, version: Version | str | None = "0.0.0"):
-        if version is None or version == "":
-            version = "0.0.0"
-        self.version = Version(version) if isinstance(version, str) else version
+        self.version = TemplateVersion.str_to_version(version)
 
     def _other_str(self, other: Any) -> str:
         if isinstance(other, TemplateVersion):
             return other.version
         return str(other)
 
-    def get_other_version(self, other: Any) -> int:
+    @staticmethod
+    def str_to_version(other: Any) -> Version:
         if isinstance(other, TemplateVersion):
             return other.version
         if isinstance(other, Version):
             return other
-        return Version(str(other))
+        if other is None or other == "":
+            return Version("0.0.0")
+        # Jinja Undefined and other empty-ish values stringify to "" but are not == "".
+        text = str(other).strip()
+        if not text or text in {"Undefined", "None"}:
+            return Version("0.0.0")
+        try:
+            return Version(text)
+        except Exception:
+            return Version("0.0.0")
 
     def __str__(self) -> str:
         return self.version._str
@@ -35,26 +43,26 @@ class TemplateVersion:
         return f"TemplateVersion({self.version!r})"
 
     def __eq__(self, other: object) -> bool:
-        other_version = self.get_other_version(other)
+        other_version = self.str_to_version(other)
         return other_version == self.version
 
     def __ne__(self, other: object) -> bool:
         return self.version != other
 
     def __lt__(self, other: Any) -> bool:
-        other_version = self.get_other_version(other)
+        other_version = self.str_to_version(other)
         return self.version < other_version
 
     def __le__(self, other: Any) -> bool:
-        other_version = self.get_other_version(other)
+        other_version = self.str_to_version(other)
         return self.version <= other_version
 
     def __gt__(self, other: Any) -> bool:
-        other_version = self.get_other_version(other)
+        other_version = self.str_to_version(other)
         return self.version > other_version
 
     def __ge__(self, other: Any) -> bool:
-        other_version = self.get_other_version(other)
+        other_version = self.str_to_version(other)
         return self.version >= other_version
 
 

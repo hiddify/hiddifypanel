@@ -1,5 +1,5 @@
 "tls": {
   "enabled": true,
-  "server_name": "{{ ctx.domain.sni }}",
+  "server_name": "{{ ctx.proxy.domain.sni }}",
   "insecure": false
 }

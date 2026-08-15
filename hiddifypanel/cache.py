@@ -34,6 +34,7 @@ class CustomRedisCache(RedisCache):
                 logger.error("Failed to invalidate all cached functions")
             return False
 
+
 if TYPE_CHECKING:
     from collections.abc import Callable
     from functools import wraps
@@ -42,13 +43,8 @@ if TYPE_CHECKING:
     P = ParamSpec("P")
     R = TypeVar("R")
 
-
     class Cache:
-        def cache(
-            self,
-            *decorator_args: Any,
-            **decorator_kwargs: Any
-        ) -> Callable[[Callable[P, R]], Callable[P, R]]:
+        def cache(self, *decorator_args: Any, **decorator_kwargs: Any) -> Callable[[Callable[P, R]], Callable[P, R]]:
             def decorator(func: Callable[P, R]) -> Callable[P, R]:
                 @wraps(func)
                 def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
@@ -60,9 +56,9 @@ if TYPE_CHECKING:
 
             return decorator
 
+        def invalidate_all_cached_functions(self): ...
 
     cache = Cache()
-
 
     # (name: str, times: int = 1) -> str
 else:

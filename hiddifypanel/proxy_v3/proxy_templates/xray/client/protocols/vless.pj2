@@ -1,12 +1,13 @@
 "protocol": "vless",
 "settings": {
   "vnext": [{
-    "address": "{{ DOMAIN }}",
-    "port": {{ PORT }},
+    "address": "{{ ctx.proxy.server }}",
+    "port": {{ ctx.proxy.tcp_port }},
     "users": [{
-      "id": "{{ USER.uuid }}",
+      "id": "{{ ctx.user.uuid }}",
       "encryption": "none",
-      "flow": "{{ FLOW or '' }}"
+      "flow": "{% if ctx.proxy.is_reality and ctx.proxy.transport == 'tcp' %}{{ ctx.hconfig.vless_flow or 'xtls-rprx-vision' }}{% else %}{{ ctx.hconfig.vless_flow }}{% endif %}",
+      "level": 8
     }]
   }]
 }

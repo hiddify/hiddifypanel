@@ -1,5 +1,5 @@
 "network": "httpupgrade",
 "httpupgradeSettings": {
-  "path": "/{{ PATH }}",
-  "host": "{{ DOMAIN }}"
-}
+  "path": "/{{ proxy.path }}",
+  "host": "{{ ctx.proxy.domain.host }}"
+},

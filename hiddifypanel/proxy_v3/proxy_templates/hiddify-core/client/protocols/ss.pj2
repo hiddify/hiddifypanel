@@ -3,7 +3,7 @@
 "detour": "{{ detour }}",
 {% else %}
 "server": "{{ proxy.server }}",
-"server_port": {{ proxy.port }},
+"server_port": {{ proxy.tcp_port }},
 {% endif %}
 "method": "{{ ctx.hconfig.shadowsocks2022_method }}",
 "password": "{{ ctx.hconfig.shared_secret.replace('-','')|b64encode }}:{{ ctx.user.uuid_hex|b64encode }}",

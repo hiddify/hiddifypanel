@@ -1,4 +1,4 @@
 "type": "trojan",
 "server": "{{ proxy.server }}",
-"server_port": {{ ctx.proxy.port }},
+"server_port": {{ ctx.proxy.tcp_port }},
 "password": "{{ ctx.user.uuid }}",

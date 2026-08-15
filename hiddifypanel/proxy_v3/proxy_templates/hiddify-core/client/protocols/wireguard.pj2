@@ -7,7 +7,7 @@
     "public_key": "{{ ctx.hconfig.wireguard_public_key }}",
     "pre_shared_key": "{{ ctx.user.wg_psk }}",
     "address": "{{ proxy.server }}",
-    "port": {{ ctx.proxy.port }},
+    "port": {{ ctx.proxy.udp_port }},
     "allowed_ips": ["0.0.0.0/0", "::/0"]
   }],
   "noise": {
@@ -18,7 +18,7 @@
   },
 {% else %}
   "server": "{{ proxy.server }}",
-  "server_port": {{ ctx.proxy.port }},
+  "server_port": {{ ctx.proxy.udp_port }},
   "local_address": "{{ ctx.user.wg_ipv4 }}/32",
   "private_key": "{{ ctx.user.wg_pk }}",
   "peer_public_key": "{{ ctx.hconfig.wireguard_public_key }}",

@@ -1,1 +1,1 @@
-{{ ctx.proxy.tag }} {{ ctx.domain.alias }} {{POSTFIX}}
+{{ ctx.proxy.tag }} {{ ctx.proxy.domain.alias }} {{POSTFIX}}

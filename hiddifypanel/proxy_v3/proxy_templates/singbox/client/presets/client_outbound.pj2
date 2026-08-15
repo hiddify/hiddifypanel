@@ -1,10 +1,14 @@
 {% block outbounds %}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set proxy = ctx.proxy %}
+{% set domain = ctx.proxy.domain %}
 {
   {% include 'singbox/client/tag' %},
   {% include '__PROTO_SLUG__' %},
   {% include '__STREAM_SLUG__' %},
-  {% if ctx.proxy.tls %}
+  {% if proxy.uses_tls %}
     {% include 'singbox/client/tls' %},
   {% endif %}
-}
+},
+{% endfor %}
 {% endblock %}

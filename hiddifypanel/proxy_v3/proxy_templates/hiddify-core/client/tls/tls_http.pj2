@@ -1,19 +1,17 @@
-
-{% set domain=domain or ctx.domain}
-{%set tls=tls or ctx.proxy.tls%}
+{% set domain = domain or ctx.proxy.domain %}
+{% set tls = tls if tls is defined else ctx.proxy.uses_tls %}
 {% if tls %}
 "tls": {
   "enabled": true,
-  {%if ctx.platform.version >= 5.0.0 %}
+  {% if ctx.platform.singbox.version >= "1.14.0" %}
     "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
-  {%endif%}  
-  "disable_sni": {{ not domain.sni |jsbool}},
+  {% endif %}
+  "disable_sni": {{ (not domain.sni) | jsbool }},
   "server_name": "{{ domain.sni }}",
-  "insecure": {{domain.insecure |jsbool }},
-  {%if alpns %}
-  "alpn": {{alpns | tojson}},
-  {%endif%}
-  
+  "insecure": {{ domain.allow_insecure | jsbool }},
+  {% if alpns %}
+  "alpn": {{ alpns | tojson }},
+  {% endif %}
   "certificate_public_key_sha256": [
     {% for pin in domain.cert.pinnedPeerCertSha256 %}
     "{{ pin }}",
@@ -27,16 +25,17 @@
     "query_server_name": "{{ domain.sni }}"
   },
   {% endif %}
+  {% set fp = ctx.hconfig.fingerprint or "" %}
   "utls": {
-    "enabled": {{ len(ctx.hconfig.fingerprint) |jsbool }},
-    "fingerprint": "{{ctx.hconfig.fingerprint}}"
+    "enabled": {{ (fp and fp != "none") | jsbool }},
+    "fingerprint": "{{ fp }}"
   },
-  {%if domain.is_reality() %}
+  {% if domain.is_reality() %}
   "reality": {
     "enabled": true,
     "public_key": "{{ ctx.hconfig.reality_public_key }}",
-    "short_id": "{{ ctx.hconfig.reality_short_ids|choose_random }}"
+    "short_id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
   }
-  {%endif%}
+  {% endif %}
 },
 {% endif %}

@@ -194,13 +194,13 @@ def build_render_context(
     effective_proxy_id = proxy_id if proxy_id is not None else data.get("id")
     download_alpn = ""
     download_alpn_list: list[str] = []
-    alpn_tags = normalize_alpn_tags(data.get("alpns") or [])
-    download_alpn_tags = normalize_alpn_tags(data.get("download_alpns") or [])
+    alpn_tags = normalize_alpn_tags(data.get("alpns") or [], {})
+    download_alpn_tags = normalize_alpn_tags(data.get("download_alpns") or [], {})
     if not alpn_tags:
         from hiddifypanel.models import get_hconfigs
 
-        from ..alpn_helpers import resolve_proxy_alpn_pairs
-        from ..context_vars.hconfig import HConfigVar
+        from hiddifypanel.proxy_v3.alpn_helpers import resolve_proxy_alpn_pairs
+        from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
         hconfigs = HConfigVar(get_hconfigs(child_id), server_side=server_side)
         pairs = resolve_proxy_alpn_pairs(
@@ -247,7 +247,11 @@ def build_render_context(
     effective_domain_id = domain_id
     stored_tcp = normalize_port_list(server_config.get("inbound_tcp_ports") or server_config.get("inbound_port"))
     stored_udp = normalize_port_list(server_config.get("inbound_udp_ports"))
-    if effective_proxy_id:
+    if not protocol:
+        from hiddifypanel.proxy_v3.context_vars.ports import ResolvedInboundPorts
+
+        resolved_ports = ResolvedInboundPorts([443], [443], 443, 443)
+    elif effective_proxy_id:
         resolved_ports = resolve_inbound_ports(
             protocol,
             int(effective_proxy_id),
@@ -332,22 +336,33 @@ def build_render_context(
         },
     )
     ctx["alpns"] = alpn_list
+    adapted = ctx.get("ctx")
     if server_side and core:
         version = TemplateVersion((core_version or "").strip() or "1.0.0")
-        platform = ctx.get("platform")
+        platform = adapted.get("platform") if adapted is not None else None
         if platform is not None and hasattr(platform, "_data"):
             platform._data["app"] = _PlatformPart(core, version)
             platform._data["app_version"] = version
     if not server_side:
         outbound_tag = (outbound_tag or base_tag or "").strip()
-        ctx["client_proxy_tags"] = [outbound_tag] if outbound_tag else []
-        if resolved_alpn:
-            ctx["alpn_builtin_value"] = resolved_alpn
-        download_tls_layer = str(data.get("download_tls_layer") or "").lower()
-        if download_tls_layer:
-            ctx["download_tls"] = download_tls_layer == "tls"
-        elif download_alpn:
-            ctx["download_tls"] = alpn_tls_for_tag(download_alpn)
+        if adapted is not None:
+            adapted["client_proxy_tags"] = [outbound_tag] if outbound_tag else []
+            if resolved_alpn:
+                adapted["alpn_builtin_value"] = resolved_alpn
+            download_tls_layer = str(data.get("download_tls_layer") or "").lower()
+            if download_tls_layer:
+                adapted["download_tls"] = download_tls_layer == "tls"
+            elif download_alpn:
+                adapted["download_tls"] = alpn_tls_for_tag(download_alpn)
+        else:
+            ctx["client_proxy_tags"] = [outbound_tag] if outbound_tag else []
+            if resolved_alpn:
+                ctx["alpn_builtin_value"] = resolved_alpn
+            download_tls_layer = str(data.get("download_tls_layer") or "").lower()
+            if download_tls_layer:
+                ctx["download_tls"] = download_tls_layer == "tls"
+            elif download_alpn:
+                ctx["download_tls"] = alpn_tls_for_tag(download_alpn)
     return ctx
 
 
@@ -373,9 +388,19 @@ def build_sample_context(
         user_agent="HiddifyNext/3.0.0 (android) like ClashMeta v2ray sing-box",
     )
     if proxy_data:
-        merged = dict(ctx.get("proxy") or {})
+        adapted = ctx.get("ctx")
+        existing = adapted.get("proxy") if adapted is not None else ctx.get("proxy")
+        if existing is not None and hasattr(existing, "model_dump"):
+            merged = existing.model_dump()
+        elif isinstance(existing, dict):
+            merged = dict(existing)
+        else:
+            merged = {}
         merged.update(proxy_data)
-        ctx["proxy"] = merged
+        if adapted is not None:
+            adapted["proxy"] = merged
+        else:
+            ctx["proxy"] = merged
     return ctx
 
 
@@ -446,12 +471,21 @@ def _strip_empty_link_lines(text: str) -> str:
 @pass_context
 def _jinja_gettext(ctx: dict[str, Any], message: str, **kwargs: Any) -> str:
     user = ctx.get("user")
+    if user is None:
+        nested = ctx.get("ctx")
+        if nested is not None:
+            user = getattr(nested, "user", None)
+            if user is None and hasattr(nested, "get"):
+                user = nested.get("user")
     lang = None
     if user is not None:
         lang = getattr(user, "lang", None)
         if not lang and hasattr(user, "get"):
             lang = user.get("lang")
     child_id = int(ctx.get("child_id") or 0)
+    if not child_id and ctx.get("ctx") is not None:
+        nested = ctx["ctx"]
+        child_id = int(getattr(nested, "get", lambda *_: 0)("child_id") or getattr(getattr(nested, "hconfig", None), "child_id", 0) or 0)
     if not lang:
         from hiddifypanel.models import hconfig
 
@@ -762,21 +796,26 @@ def validate_port_rules(compiled_text: str, port: int | None = None) -> list[dic
 def validate_core_placeholders(template_text: str, core: str | None) -> list[dict[str, str]]:
     errors: list[dict[str, str]] = []
     has_tag = "proxy.tag" in template_text or "{{TAG}}" in template_text or "{{ TAG }}" in template_text
-    has_port = "proxy.port" in template_text or "{{PORT}}" in template_text or "{{ PORT }}" in template_text
+    has_port = (
+        "proxy.tcp_port" in template_text
+        or "proxy.udp_port" in template_text
+        or "{{PORT}}" in template_text
+        or "{{ PORT }}" in template_text
+    )
     if core == "xray":
         if not has_tag:
             errors.append({"code": "missing_tag", "message": "Xray template must include proxy.tag (or {{TAG}})"})
         if not has_port:
-            errors.append({"code": "missing_port", "message": "Xray template must include proxy.port (or {{PORT}})"})
-        if re.search(r'"port"\s*:\s*\d+', template_text) and "proxy.port" not in template_text and "{{PORT}}" not in template_text:
-            errors.append({"code": "hardcoded_port", "message": "Use proxy.port instead of a numeric port for xray"})
+            errors.append({"code": "missing_port", "message": "Xray template must include proxy.tcp_port or proxy.udp_port (or {{PORT}})"})
+        if re.search(r'"port"\s*:\s*\d+', template_text) and not has_port:
+            errors.append({"code": "hardcoded_port", "message": "Use proxy.tcp_port or proxy.udp_port instead of a numeric port for xray"})
     elif core == "hiddify-core":
         if not has_tag:
             errors.append({"code": "missing_tag", "message": "Hiddify-core template must include proxy.tag (or {{TAG}})"})
         if not has_port:
-            errors.append({"code": "missing_listen_port", "message": "Hiddify-core template must include proxy.port (or {{PORT}}) for listen_port"})
-        if re.search(r'"listen_port"\s*:\s*\d+', template_text) and "proxy.port" not in template_text and "{{PORT}}" not in template_text:
-            errors.append({"code": "hardcoded_port", "message": "Use proxy.port instead of a numeric listen_port"})
+            errors.append({"code": "missing_listen_port", "message": "Hiddify-core template must include proxy.tcp_port or proxy.udp_port (or {{PORT}}) for listen_port"})
+        if re.search(r'"listen_port"\s*:\s*\d+', template_text) and not has_port:
+            errors.append({"code": "hardcoded_port", "message": "Use proxy.tcp_port or proxy.udp_port instead of a numeric listen_port"})
     return errors
 
 
@@ -1703,8 +1742,8 @@ def _client_uses_template_alpn_loop(core_name: str) -> bool:
 def _client_render_variants(data: dict[str, Any]) -> list[_ClientRenderVariant]:
     from hiddifypanel.models import get_hconfigs
 
-    from ..alpn_helpers import resolve_proxy_alpn_pairs
-    from ..context_vars.hconfig import HConfigVar
+    from hiddifypanel.proxy_v3.alpn_helpers import resolve_proxy_alpn_pairs
+    from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
     hconfigs = HConfigVar(get_hconfigs(0), server_side=False)
     pairs = resolve_proxy_alpn_pairs(
@@ -2121,7 +2160,11 @@ def _scope_example_context(
     domain_host: str | None,
     server_side: bool,
 ) -> None:
-    domains = ctx.get("domains") or []
+    del proxy_id, server_side
+    target = ctx.get("ctx") if isinstance(ctx.get("ctx"), object) and hasattr(ctx.get("ctx"), "get") else ctx
+    if not hasattr(target, "get") and not isinstance(target, dict):
+        return
+    domains = target.get("domains") or []
     if not domains:
         return
     if domain_id is not None:
@@ -2132,11 +2175,14 @@ def _scope_example_context(
     else:
         return
     if scoped_domains:
-        ctx["domains"] = scoped_domains
+        target["domains"] = scoped_domains
     else:
-        fallback = ctx.get("domain")
+        fallback = target.get("domain")
         if fallback is not None:
-            ctx["domains"] = [fallback]
+            target["domains"] = [fallback]
+    proxy = target.get("proxy")
+    if proxy is not None and hasattr(proxy, "domains"):
+        proxy.domains = list(target.get("domains") or [])
 
 
 def _collect_client_fragment_bodies(
@@ -2201,6 +2247,8 @@ def _collect_client_fragment_bodies(
         body = _normalize_fragment_body(frag.get("rendered") or "")
         if not body:
             continue
+        from hiddifypanel.proxy_v3.config_builder.render import _resolve_fragment_block_name
+
         resolved_block = _resolve_fragment_block_name(tpl, block_name)
         if resolved_block == "endpoints":
             endpoint_parts.append(body)
@@ -3918,6 +3966,7 @@ def _generate_enabled_proxies_bundle_for_domain(
     user_uuid: str | None = None,
     ip: str | None = None,
     user_agent: str | None = None,
+    include_servers: bool = True,
 ) -> dict[str, Any]:
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
@@ -3960,23 +4009,24 @@ def _generate_enabled_proxies_bundle_for_domain(
             client_groups.setdefault((core_name, version), []).append((proxy, cc))
 
     servers: list[dict[str, Any]] = []
-    for server_index, core in enumerate(SERVER_BUNDLE_CORES):
-        core_proxies = server_groups.get(core, [])
-        entry = _merge_server_bundle(
-            child_id,
-            core,
-            core_proxies,
-            domain_id=domain_id,
-            domain_host=domain,
-            ip=resolved_ip,
-            user_id=user_id,
-            user_uuid=user_uuid,
-            user_agent=resolved_ua,
-            errors=errors,
-            warnings=warnings,
-        )
-        entry["index"] = server_index
-        servers.append(entry)
+    if include_servers:
+        for server_index, core in enumerate(SERVER_BUNDLE_CORES):
+            core_proxies = server_groups.get(core, [])
+            entry = _merge_server_bundle(
+                child_id,
+                core,
+                core_proxies,
+                domain_id=domain_id,
+                domain_host=domain,
+                ip=resolved_ip,
+                user_id=user_id,
+                user_uuid=user_uuid,
+                user_agent=resolved_ua,
+                errors=errors,
+                warnings=warnings,
+            )
+            entry["index"] = server_index
+            servers.append(entry)
 
     clients: list[dict[str, Any]] = []
     client_index = 0
@@ -4040,6 +4090,7 @@ def _generate_enabled_proxies_bundle_for_domain(
             "proxy_count": len(proxies),
             "domain": domain_data.get("name") or domain,
             "user": user.get("name") or user.get("uuid"),
+            "user_uuid": user.get("uuid"),
             "ip": resolved_ip,
             "user_agent": resolved_ua,
             "user_agent_parsed": ua_parsed,
@@ -4060,6 +4111,7 @@ def generate_enabled_proxies_bundle(
     user_uuid: str | None = None,
     ip: str | None = None,
     user_agent: str | None = None,
+    include_servers: bool = True,
 ) -> dict[str, Any]:
     resolved_ip = (ip or "").strip() or "203.0.113.1"
     resolved_ua = (user_agent or "").strip() or EXAMPLE_USER_AGENTS[0]["value"]
@@ -4081,6 +4133,7 @@ def generate_enabled_proxies_bundle(
             user_uuid=user_uuid,
             ip=resolved_ip,
             user_agent=resolved_ua,
+            include_servers=include_servers,
         )
 
     bundles = [
@@ -4092,6 +4145,7 @@ def generate_enabled_proxies_bundle(
             user_uuid=user_uuid,
             ip=resolved_ip,
             user_agent=resolved_ua,
+            include_servers=include_servers,
         )
         for target_domain_id, target_domain_host in targets
     ]

@@ -1,12 +1,13 @@
 {% block outbounds %}
-  {% for ctx in ctx.iter_ctx_domain() %}
-    {%set tag%}"{%- include 'hiddify-core/client/tag' -%}{%endset%}
+  {% for ctx in ctx.iter_ctx_domains() %}
+    {% set proxy = ctx.proxy %}
+    {% set domain = ctx.proxy.domain %}
+    {% set tag %}{%- include 'hiddify-core/client/tag' -%}{% endset %}
     {
-      "tag":"{{tag}}",
+      "tag": "{{ tag | trim }}",
       {% include '__PROTO_SLUG__' %},
       {% include '__STREAM_SLUG__' %},
       {% include '__TLS_SLUG__' %}
-
     },
   {% endfor %}
 {% endblock %}

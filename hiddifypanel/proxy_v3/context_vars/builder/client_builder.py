@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import selectinload
 
 from hiddifypanel.cache import cache
@@ -18,7 +18,7 @@ from .utils import protocol_config_map, transport_config_map
 
 
 def build_client_template_context(user: User, sublink_domain: str, user_agent: str) -> list[ClientContextVar]:
-    """Full Jinja context with UserVar, DomainVar, HConfigVar, PlatformVar, ProxyVar."""
+    """One ``ClientContextVar`` per enabled proxy (domains already filtered on proxy)."""
     bases = get_bases(sublink_domain)
     user_var = UserVar.from_user(user)
     platform_var = get_platform_var(user_agent)
@@ -26,11 +26,13 @@ def build_client_template_context(user: User, sublink_domain: str, user_agent: s
 
 
 class BaseVar(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     proxy: ClientBuilderProxyVar
     hconfig: HConfigVar
 
 
-@cache.cache(600)
+# @cache.cache(600)
 def get_bases(sublink_domain: str) -> list[BaseVar]:
     proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).all()
     child_hconfigs: dict[int, HConfigVar] = get_all_hconfigs()
@@ -68,28 +70,25 @@ def filter_proxy(base: BaseVar) -> bool:
     if (cfg := base.hconfig.get(transport_config_map.get(base.proxy.transport))) and cfg is False:
         return False
 
-    # if not base.proxy.availble_alpns:
-    #     return False
-
     return True
 
 
-@cache.cache(600)
+# @cache.cache(600)
 def get_client_hconfigs_child(child_id: int | None):
     return HConfigVar(get_hconfigs_json(child_id), server_side=False)
 
 
-@cache.cache(600)
+# @cache.cache(600)
 def get_all_hconfigs():
     return {child.id: HConfigVar(get_hconfigs_json(child.id), server_side=False) for child in Child.query.all()}
 
 
-@cache.cache(600)
+# @cache.cache(600)
 def get_platform_var(user_agent: str) -> PlatformVar:
     return PlatformVar.from_user_agent(user_agent)
 
 
-@cache.cache(600)
+# @cache.cache(600)
 def get_availble_domains(sublink_domain: str | None):
     if not sublink_domain:
         domains = Domain.query.all()

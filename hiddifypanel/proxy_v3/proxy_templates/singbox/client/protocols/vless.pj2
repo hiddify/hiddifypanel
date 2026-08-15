@@ -1,5 +1,5 @@
 "type": "vless",
 "server": "{{ proxy.server }}",
-"server_port": {{ proxy.port }},
+"server_port": {{ proxy.tcp_port }},
 "uuid": "{{ ctx.user.uuid }}",
 "flow": "{{ ctx.hconfig.vless_flow or '' }}",

@@ -1,0 +1,27 @@
+{% if not ctx.proxy.uses_tls %}
+"security": "none"
+{% elif ctx.proxy.is_reality %}
+"security": "reality",
+"realitySettings": {
+  "serverName": "{{ ctx.proxy.domain.sni }}",
+  "fingerprint": "{{ ctx.hconfig.fingerprint }}",
+  "shortId": "{{ ctx.hconfig.reality_short_ids | choose_random }}",
+  "publicKey": "{{ ctx.hconfig.reality_public_key }}",
+  "show": false
+}
+{% else %}
+"security": "tls",
+"tlsSettings": {
+  "serverName": "{{ ctx.proxy.domain.sni }}",
+  "allowInsecure": {{ ctx.proxy.domain.allow_insecure | tojson }},
+  "fingerprint": "{{ ctx.hconfig.fingerprint }}",
+  {% if alpns is defined and alpns %}
+  "alpn": {{ alpns | tojson }}
+  {% else %}
+  "alpn": ["h2", "http/1.1"]
+  {% endif %}
+  {% if ctx.hconfig.tls_ech_enable and ctx.proxy.domain.echinfo %}
+  ,"echConfigList": ["{{ ctx.proxy.domain.echinfo }}"]
+  {% endif %}
+}
+{% endif %}

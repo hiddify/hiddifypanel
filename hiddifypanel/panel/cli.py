@@ -236,9 +236,14 @@ def init_app(app):
             print(f"failed to import xui data: Error: {e}")
 
     def _run_sync_builtin_catalog(child_id: int) -> None:
+        from hiddifypanel.cache import cache
         from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all as sync_builtin_catalog
+        from hiddifypanel.proxy_v3.config_builder import jinja_render
 
         stats = sync_builtin_catalog(child_id)
+        cache.invalidate_all_cached_functions()
+        jinja_render._template_map_cache.clear()
+        jinja_render._jinja_env_cache.clear()
         click.echo(f"synced builtin catalog (child_id={stats.child_id}): {stats.builtin_templates} templates, {stats.builtin_base_configs} base configs, {stats.builtin_custom_proxies} custom proxies")
 
     @app.cli.command("sync-builtin-configs")
@@ -381,8 +386,11 @@ def init_app(app):
             _run_sync_builtin_catalog(child_id)
 
         result = dump_all_server_configs(output_dir, child_id, pretty=not compact)
+        from hiddifypanel.proxy_v3.config_builder.dump import format_dump_stats
+
         for filename, size in sorted(result.written.items()):
-            click.echo(f"wrote {Path(output_dir) / filename} ({size} bytes)")
+            detail = format_dump_stats(filename, size, result.stats.get(filename))
+            click.echo(f"wrote {Path(output_dir) / filename} ({detail})")
         for item in result.messages:
             level = item.get("level", "info")
             core = item.get("core", "")
@@ -390,6 +398,57 @@ def init_app(app):
             click.echo(f"{level}: [{core}] {text}", err=level == "error")
             data = item.get("data") or {}
             if level == "error" and data.get("stacktrace"):
+                click.echo(data["stacktrace"], err=True)
+        if not result.ok:
+            raise SystemExit(1)
+
+    @app.cli.command("dump-client-configs")
+    @click.argument("output_dir", type=click.Path(file_okay=False, dir_okay=True, writable=True))
+    @click.option("--child-id", "-c", default=0, show_default=True, type=int)
+    @click.option(
+        "--user-uuid",
+        default=None,
+        help="User UUID to render for (default: first enabled user)",
+    )
+    @click.option("--refresh-db", is_flag=True, help="Sync builtin proxy catalog from disk before rendering")
+    @click.option("--compact", is_flag=True, help="Emit compact JSON instead of indented output")
+    def dump_client_configs(output_dir, child_id, user_uuid, refresh_db, compact):
+        """Render client configs for one user: hiddify-core, xray, sublink, clash, singbox."""
+        from pathlib import Path
+
+        from hiddifypanel.proxy_v3.config_builder.dump import dump_all_client_configs, format_client_dump_stats
+
+        if refresh_db:
+            _run_sync_builtin_catalog(child_id)
+
+        try:
+            result = dump_all_client_configs(
+                output_dir,
+                child_id,
+                user_uuid=user_uuid,
+                pretty=not compact,
+            )
+        except ValueError as exc:
+            click.echo(f"error: {exc}", err=True)
+            raise SystemExit(1)
+
+        user_label = result.user_name or result.user_uuid or "unknown"
+        click.echo(f"user={user_label} uuid={result.user_uuid}")
+        for filename, size in sorted(result.written.items()):
+            detail = format_client_dump_stats(filename, size, result.stats.get(filename))
+            click.echo(f"wrote {Path(output_dir) / filename} ({detail})")
+        for filename in result.missing:
+            click.echo(f"missing {Path(output_dir) / filename}", err=True)
+        errors = [item for item in result.messages if item.get("level") == "error"]
+        warnings = [item for item in result.messages if item.get("level") == "warning"]
+        if warnings:
+            click.echo(f"warnings: {len(warnings)} (skip/partial renders)", err=True)
+        for item in errors:
+            core = item.get("core", "")
+            text = item.get("message", "")
+            click.echo(f"error: [{core}] {text}", err=True)
+            data = item.get("data") or {}
+            if data.get("stacktrace"):
                 click.echo(data["stacktrace"], err=True)
         if not result.ok:
             raise SystemExit(1)

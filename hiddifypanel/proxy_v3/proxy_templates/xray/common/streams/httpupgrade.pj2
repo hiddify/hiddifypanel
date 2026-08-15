@@ -1,5 +1,5 @@
-
 "network": "httpupgrade",
-"httpupgradeSettings": {		
-    "path": "/{{ path }}", 
+"httpupgradeSettings": {
+  "path": "/{{ ctx.proxy.path }}",
+  "acceptProxyProtocol": true
 }

@@ -21,6 +21,15 @@ def _to_json_value(value: Any) -> Any:
         return {str(key): _to_json_value(val) for key, val in value.items()}
     if isinstance(value, (list, tuple)):
         return [_to_json_value(item) for item in value]
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    # Jinja ``namespace(...)`` — attrs live under a private dict.
+    try:
+        raw = object.__getattribute__(value, "__dict__")
+        if isinstance(raw, dict) and "_Namespace__attrs" in raw:
+            return _to_json_value(raw["_Namespace__attrs"])
+    except Exception:
+        pass
     if hasattr(value, "dict") and callable(value.dict):
         return _to_json_value(value.dict())
     if hasattr(value, "model_dump") and callable(value.model_dump):
@@ -41,6 +50,12 @@ def _jinja_choose_random(value: Any) -> str:
 
 def _jinja_trim_no_line(value: Any) -> str:
     return re.sub(r"\s+", "", str(value or ""))
+
+
+def _jinja_compact_json(value: Any) -> str:
+    from hiddifypanel.hutils.proxy.shared import ProxyJsonEncoder
+
+    return json.dumps(_to_json_value(value), ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
 
 
 def _jinja_urlencode(value: Any) -> str:
@@ -83,12 +98,14 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["skip"] = skip_proxy
     env.globals["include_path"] = include_path
     env.globals["enumerate"] = enumerate
+    env.globals["len"] = len
     env.globals["ConfigEnum"] = ConfigEnum
     env.filters["jsbool"] = jsbool
     env.filters["tojson"] = _jinja_tojson
     env.filters["b64encode"] = hutils.encode.do_base_64
     env.filters["urlencoded"] = _jinja_urlencode
     env.filters["trim_no_line"] = _jinja_trim_no_line
+    env.filters["compactjson"] = _jinja_compact_json
     env.filters["choose_random"] = _jinja_choose_random
     env.filters["ljust"] = ljust
 

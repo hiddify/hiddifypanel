@@ -1,23 +1,24 @@
 import sys
+
 from pydantic import BaseModel, ConfigDict
 
 from hiddifypanel import hutils
-from hiddifypanel.cache import cache
 from hiddifypanel.models.config import get_hconfigs_json
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
-from hiddifypanel.models.domain import Domain, DomainType, FakeMode
+from hiddifypanel.models.domain import Domain, FakeMode
+from hiddifypanel.models.proxy import ProxyTransport
 from hiddifypanel.models.user import User
-from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextVar
+from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context, protocol_config_map, transport_config_map
+from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextProxyVar, ServerContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 from hiddifypanel.proxy_v3.context_vars.proxy import ProxyVar, ServerBuilderProxyVar
 from hiddifypanel.proxy_v3.context_vars.server_platform_var import ServerPlatformVar, get_server_platform_var
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
+from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
 
-from hiddifypanel.models.proxy import ProxyTransport
 from ..ip import IPVar
-from .utils import protocol_config_map, transport_config_map
 
 
 def build_server_template_context(child_id: int = 0) -> ServerContextVar:
@@ -49,7 +50,6 @@ class ServerBase(BaseModel):
     platform: ServerPlatformVar
 
 
-# @cache.cache(600)
 def get_server_base(child_id: int) -> ServerBase:
     hconfig: HConfigVar = get_server_hconfigs_child(child_id)
     platform = get_server_platform_var()
@@ -117,3 +117,100 @@ def get_server_builder_proxies(child_id: int = 0) -> list[ServerBuilderProxyVar]
 # @cache.cache(600)
 def get_server_hconfigs_child(child_id: int | None) -> HConfigVar:
     return HConfigVar(get_hconfigs_json(child_id), server_side=True)
+
+
+def resolve_custom_proxy(child_id: int, proxy_id: int | None) -> CustomProxy | None:
+    if proxy_id is None:
+        return None
+    return CustomProxy.query.filter(CustomProxy.id == int(proxy_id), CustomProxy.child_id == child_id).first()
+
+
+def _domains_for_custom_proxy(proxy: CustomProxy, child_id: int) -> list[DomainIPVar]:
+    domain_rows = [
+        row
+        for row in Domain.query.filter(
+            Domain.child_id == child_id,
+            Domain.sub_link_only == False,  # noqa: E712
+        ).all()
+        if not row.custom_proxy_id or int(row.custom_proxy_id) == int(proxy.id or 0)
+    ]
+    matched = _domains_for_proxy_row(proxy, domain_rows)
+    return [DomainIPVar.from_domain(domain) for domain in matched]
+
+
+def _filter_domains(
+    domains: list[DomainIPVar],
+    *,
+    domain_id: int | None = None,
+    domain_host: str | None = None,
+) -> list[DomainIPVar]:
+    if domain_id is not None:
+        return [domain for domain in domains if domain.id == int(domain_id)]
+    host = str(domain_host or "").strip().lower()
+    if host:
+        return [domain for domain in domains if domain.name == host or domain.host == host]
+    return domains
+
+
+def build_proxy_jinja_context(
+    child_id: int,
+    proxy: CustomProxy,
+    *,
+    core: str = "xray",
+    domain_id: int | None = None,
+    domain_host: str | None = None,
+    user_id: int | None = None,
+    user_uuid: str | None = None,
+) -> dict:
+    del core, user_id, user_uuid
+    hconfig = get_server_hconfigs_child(child_id)
+    all_users = User.query.all()
+    users = [UserVar.from_user(user) for user in all_users if user.is_active]
+    inactive_users = [UserVar.from_user(user) for user in all_users if not user.is_active]
+    platform = get_server_platform_var()
+    ips = IPVar.from_strings(*hutils.network.net.get_ips())
+    domains = _filter_domains(
+        _domains_for_custom_proxy(proxy, child_id),
+        domain_id=domain_id,
+        domain_host=domain_host,
+    )
+    proxy_var = ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig)
+    proxy_var.domains = domains
+    ctx = ServerContextProxyVar(
+        child_id=child_id,
+        users=users,
+        inactive_users=inactive_users,
+        domains=domains,
+        hconfig=hconfig,
+        proxies=[proxy_var],
+        proxy=proxy_var,
+        ips=ips,
+        platform=platform,
+    )
+    return make_jinja_context(ctx)
+
+
+def build_bundle_jinja_context(
+    child_id: int,
+    *,
+    domain_id: int | None = None,
+    domain_host: str | None = None,
+    user_id: int | None = None,
+    user_uuid: str | None = None,
+) -> dict:
+    del user_id, user_uuid
+    ctx = build_server_template_context(child_id)
+    domains = _filter_domains(list(ctx.domains), domain_id=domain_id, domain_host=domain_host)
+    return make_jinja_context(
+        ServerContextVar(
+            child_id=ctx.child_id,
+            users=ctx.users,
+            inactive_users=ctx.inactive_users,
+            domains=domains,
+            hconfig=ctx.hconfig,
+            proxies=ctx.proxies,
+            ips=ctx.ips,
+            platform=ctx.platform,
+            client_proxy_tags=list(ctx.client_proxy_tags),
+        )
+    )

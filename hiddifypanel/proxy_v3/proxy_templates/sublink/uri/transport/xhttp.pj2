@@ -2,6 +2,6 @@
 {% set qp.mode = "auto" %}
 {% set qp.path = '/' ~ proxy.path %}
 
-{% if proxy.download %}
+{% if proxy.domain.download %}
 {% set qp.extra %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
 {% endif %}

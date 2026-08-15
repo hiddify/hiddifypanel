@@ -176,17 +176,71 @@ def skip_proxy(reason: Any = "") -> str:
     raise TemplateSkip(str(reason) if reason else "")
 
 
-def jsbool(value: Any) -> bool:
+def jsbool(value: Any) -> str:
+    """Return JSON boolean literals for embedding in config templates."""
     if isinstance(value, bool):
-        return value
-    if isinstance(value, (int, float)):
-        return bool(value)
-    if isinstance(value, str):
+        truthy = value
+    elif isinstance(value, (int, float)):
+        truthy = bool(value)
+    elif isinstance(value, str):
         lowered = value.lower()
-        if lowered in ("false", "0", "no", "n", "off"):
-            return False
-        return lowered in ("true", "1", "yes", "y", "on")
-    return bool(value)
+        if lowered in ("false", "0", "no", "n", "off", ""):
+            truthy = False
+        elif lowered in ("true", "1", "yes", "y", "on"):
+            truthy = True
+        else:
+            truthy = bool(value.strip())
+    else:
+        truthy = bool(value)
+    return "true" if truthy else "false"
+
+
+class RenderContextAdapter:
+    """Expose dict template context with typed-style ``iter_ctx_domains()``."""
+
+    def __init__(self, data: dict[str, Any]) -> None:
+        object.__setattr__(self, "_data", data)
+
+    def __getattr__(self, name: str) -> Any:
+        if name.startswith("_"):
+            raise AttributeError(name)
+        try:
+            return self._data[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name == "_data":
+            object.__setattr__(self, name, value)
+            return
+        self._data[name] = value
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self._data[key] = value
+
+    def __getitem__(self, key: str) -> Any:
+        return self._data[key]
+
+    def __contains__(self, key: object) -> bool:
+        return key in self._data
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._data.get(key, default)
+
+    def iter_ctx_domains(self):
+        proxy = self._data.get("proxy")
+        domains = list(self._data.get("domains") or [])
+        if not domains and self._data.get("domain") is not None:
+            domains = [self._data["domain"]]
+        for domain in domains:
+            child = dict(self._data)
+            child["domain"] = domain
+            if proxy is not None and hasattr(proxy, "with_domain"):
+                child["proxy"] = proxy.with_domain(domain)
+            yield RenderContextAdapter(child)
+
+    def iter_ctx_domain(self):
+        return self.iter_ctx_domains()
 
 
 def build_template_context(
@@ -251,8 +305,11 @@ def build_template_context(
         else:
             ctx["domains"] = []
 
+    if hasattr(proxy_var, "domains"):
+        proxy_var.domains = list(ctx["domains"])
+
     return {
-        "ctx": ctx,
+        "ctx": RenderContextAdapter(ctx),
         "skip": skip_proxy,
         "enumerate": enumerate,
         "include_path": include_path,

@@ -1,1 +1,1 @@
-"name": "{{ proxy.tag }} {{ ctx.domain.alias or ctx.domain.name }} {{ proxy.alpn }}",
+"name": "{{ ctx.proxy.tag }} {{ ctx.proxy.domain.alias or ctx.proxy.domain.name }}",

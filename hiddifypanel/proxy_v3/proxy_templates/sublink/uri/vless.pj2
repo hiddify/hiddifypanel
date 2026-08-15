@@ -1,23 +1,23 @@
-{% for domain in ctx.domains %}
-  {% set proxy = ctx.proxy.with_domain(domain) %}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
   {% set uri = namespace(
     protocol = 'vless',
-    ctx.user=ctx.user.uuid,
+    user=ctx.user.uuid,
     host=proxy.server,
-    port=proxy.port,
+    port=proxy.tcp_port,
     query_params=namespace(hiddify='1'),
   ) %}
   {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
   
   {% set qp = uri.query_params %}
-  {% include 'sublink/uri/security/tls_http' %}
-  {% include 'sublink/uri/transport/xhttp' %}
-  {% if ctx.hconfig.vless_flow%}
+  {% include '__TLS_SLUG__' %}
+  {% include '__TRANSPORT_SLUG__' %}
+  {% if ctx.hconfig.vless_flow %}
     {% set qp.flow=ctx.hconfig.vless_flow %}
-  {% endif%}
+  {% endif %}
 
-  {% if ctx.hconfig.vless_encryption%}
+  {% if ctx.hconfig.vless_encryption %}
     {% set qp.encryption=ctx.hconfig.vless_encryption %}
-  {% endif%}
-  {% include 'sublink/uri/final_link_maker' %} {#making vless://uri.....#}
+  {% endif %}
+  {% include 'sublink/uri/final_link_maker' %}
 {% endfor %}

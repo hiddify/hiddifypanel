@@ -5,16 +5,15 @@
 # =====================
 
 {% for proxy in ctx.proxies if proxy.mode =="domains_l7_gateway" %}
-backend {{proxy.id}}_{{ proxy.path | slugify}}
+{#backend {{proxy.id}}_{{ proxy.path | slugify}}
     server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo
-
+#}
 backend http_{{proxy.id}}_{{ proxy.path | slugify }}
     mode http
-    http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'
-    {%if proxy.l7_reverse_proto == "tls_h3_quic"%}
-        server s quic4@127.0.0.1:{{ proxy.udp_port }} ssl verify none 
-    {%else%}
-        server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo proto {{ proxy.l7_reverse_proto }}
-    {%endif%}
+{%-if proxy.l7_reverse_proto == "tls_h3_quic"%}
+    server s quic4@127.0.0.1:{{ proxy.udp_port }} ssl verify none 
+{%-else%}
+    server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo proto {{ proxy.l7_reverse_proto }}
+{%-endif%}
 
 {% endfor %}

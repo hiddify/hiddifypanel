@@ -1,7 +1,7 @@
 {% set data.tls = 'reality' %}
-{% set data.sni = ctx.domain.sni %}
+{% set data.sni = ctx.proxy.domain.sni %}
 {% if proxy.fingerprint and proxy.fingerprint != 'none' %}
 {% set data.fp = proxy.fingerprint %}
 {% endif %}
-{% set data.pbk = ctx.domain.reality_pbk %}
-{% set data.sid = ctx.domain.reality_short_id %}
+{% set data.pbk = ctx.hconfig.reality_public_key %}
+{% set data.sid = ctx.hconfig.reality_short_ids | choose_random %}

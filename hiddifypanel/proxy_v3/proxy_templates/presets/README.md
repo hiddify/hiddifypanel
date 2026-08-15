@@ -15,8 +15,10 @@ Presets are composition shells used at **proxy generation time** by the template
 Examples:
 
 - `xray/server/presets/inbound.pj2` — assembles a full xray server inbound from fragments
+- `xray/client/presets/outbound_v2ray.pj2` / `outbound_xhttp.pj2` — xray client outbounds
 - `hiddify-core/server/presets/inbound_v2ray.pj2` — sing-box server inbound for vless/vmess/trojan
 - `hiddify-core/client/presets/outbound_v2ray.pj2` — client outbound for v2ray-compatible apps
+- `clash/client/presets/outbound_general.pj2` — Clash/Mihomo client proxy entry shell
 - `singbox/client/presets/client_outbound.pj2` — sing-box client outbound shell
 
 ## When to add a preset

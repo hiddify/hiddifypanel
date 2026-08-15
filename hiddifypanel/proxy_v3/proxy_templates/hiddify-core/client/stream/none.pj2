@@ -1,6 +1,6 @@
 "network": "tcp",
-"transport":{
-  "headers":{
-    "User-Agent": "{{default_useragent_string}}"
-  },
+"transport": {
+  "headers": {
+    "User-Agent": "{{ default_useragent_string }}"
+  }
 }
