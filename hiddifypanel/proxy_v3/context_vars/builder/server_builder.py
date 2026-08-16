@@ -3,6 +3,7 @@ import sys
 from pydantic import BaseModel, ConfigDict
 
 from hiddifypanel import hutils
+from hiddifypanel.cache import cache
 from hiddifypanel.models.config import get_hconfigs_json
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain, FakeMode
@@ -102,19 +103,19 @@ def filter_server_proxy(proxy: ProxyVar, hconfig: HConfigVar) -> bool:
     return True
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_server_domains(child_id: int = 0) -> list[DomainIPVar]:
     return [DomainIPVar.from_domain(domain) for domain in Domain.query.filter(Domain.child_id == child_id).all()]
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_server_builder_proxies(child_id: int = 0) -> list[ServerBuilderProxyVar]:
     hconfig = get_server_hconfigs_child(child_id)
     custom_proxies = CustomProxy.query.filter(CustomProxy.enable == True, CustomProxy.child_id == child_id).all()
     return [ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig) for proxy in custom_proxies]
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_server_hconfigs_child(child_id: int | None) -> HConfigVar:
     return HConfigVar(get_hconfigs_json(child_id), server_side=True)
 

@@ -33,7 +33,7 @@ class DomainIPVar(BaseModel):
 
     cert: CertVar = Field(default_factory=CertVar.empty)
     download: DomainIPVar | None = None
-
+    dst_server: str | None = None
     extra: dict[str, Any] = Field(default_factory=dict)
 
     # _domain: Domain | None = PrivateAttr(default=None)
@@ -77,12 +77,13 @@ class DomainIPVar(BaseModel):
 
         extra = domain_db.extra_params_json()
         extra.update(extracted_data.get("extra_params") or {})
-
+        ips = get_ips(domain_db)
         var = cls(
             id=domain_db.id,
             name=hostname,
             host=extracted_data.get("host") or hostname,
             sni=extracted_data.get("sni") or hostname,
+            dst_server=domain_db.get_server(),
             mode=domain_db.mode,
             fake_mode=domain_db.fake_mode,
             alias=domain_db.alias or domain_db.name,
@@ -93,6 +94,7 @@ class DomainIPVar(BaseModel):
             extra=extra,
             resolve_ip=bool(domain_db.resolve_ip),
             custom_proxy_id=domain_db.custom_proxy_id,
+            ips=ips,
         )
         # if var.mode.is_special():
         #     var.mode = DomainType.special
@@ -109,22 +111,34 @@ class DomainIPVar(BaseModel):
         return var
 
     def server(self, force_ip: bool = False) -> str:
-        if force_ip or self.resolve_ip or not self.mode.name_is_real():
-            return random_or_none(self.ips.ips) or self.name
-        return self.host or self.name
+        # if self.server_domain:
+        #     return self.server_domain
+        dst_domain = self.dst_server or self.host or self.name
+        if force_ip or self.resolve_ip:
+            return random_or_none(self.ips.ips) or dst_domain
+        return dst_domain
 
 
 def get_ips(domain_db: Domain) -> IPVar:
     ips = IPVar.empty()
-    if auto_ips := domain_db.auto_cdn_ip():
-        ips.merge(auto_ips)
-    elif domain_db.mode.is_direct():
-        ips.merge(hutils.network.get_ips())
-
-    if domain_db.mode.name_is_real():
-        ips.merge(hutils.network.get_domain_ips_cached(domain_db.domain))
+    if server := domain_db.get_server():
+        ips.merge(hutils.network.get_domain_ips_cached(server))
+    if not ips.ips:
+        if domain_db.mode.name_is_real():
+            ips.merge(hutils.network.get_domain_ips_cached(domain_db.domain))
+        elif domain_db.mode.is_direct():
+            ips.merge(hutils.network.get_ips())
 
     return ips
+    # if auto_ips := domain_db.auto_cdn_ip():
+    #     ips.merge(auto_ips)
+    # elif domain_db.mode.is_direct():
+    #     ips.merge(hutils.network.get_ips())
+
+    # if domain_db.mode.name_is_real():
+    #     ips.merge(hutils.network.get_domain_ips_cached(domain_db.domain))
+
+    # return ips
 
 
 def sni_host_ip_extractor(domain_db: Domain):

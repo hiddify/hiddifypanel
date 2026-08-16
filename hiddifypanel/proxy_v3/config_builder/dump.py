@@ -124,12 +124,39 @@ def build_hiddify_core_server_config(child_id: int = 0) -> ConfigBuilderModel:
     return build_server_config_for_core(child_id, "hiddify-core")
 
 
+def _is_empty_dump_value(value: Any) -> bool:
+    return value is None or value == "" or value == [] or value == {}
+
+
+def _omit_empty_values(value: Any) -> Any:
+    """Drop null/empty-string/empty-container leaves from dumped JSON/YAML trees."""
+    if isinstance(value, dict):
+        out: dict[str, Any] = {}
+        for key, item in value.items():
+            pruned = _omit_empty_values(item)
+            if _is_empty_dump_value(pruned):
+                continue
+            out[key] = pruned
+        return out
+    if isinstance(value, list):
+        out_list: list[Any] = []
+        for item in value:
+            pruned = _omit_empty_values(item)
+            if _is_empty_dump_value(pruned):
+                continue
+            out_list.append(pruned)
+        return out_list
+    return value
+
+
 def _pretty_json_config(rendered: str, *, pretty: bool) -> str:
-    if not pretty or not rendered.strip():
+    if not rendered.strip():
         return rendered
     try:
-        parsed = json.loads(rendered)
-        return json.dumps(parsed, indent=2, ensure_ascii=False)
+        parsed = _omit_empty_values(json.loads(rendered))
+        if pretty:
+            return json.dumps(parsed, indent=2, ensure_ascii=False)
+        return json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
     except json.JSONDecodeError:
         return rendered
 
@@ -310,9 +337,25 @@ def _resolve_sublink_domain(child_id: int = 0) -> str:
     return row.domain if row else ""
 
 
-def _append_driver_messages(dump: ClientConfigDumpResult, core: str, messages: list[Any]) -> None:
+@dataclass
+class ClientConfigRenderResult:
+    configs: dict[str, str] = field(default_factory=dict)
+    messages: list[dict[str, Any]] = field(default_factory=list)
+    user_uuid: str | None = None
+    user_name: str | None = None
+
+    @property
+    def errors(self) -> list[dict[str, Any]]:
+        return error_messages(self.messages)
+
+    @property
+    def ok(self) -> bool:
+        return not self.errors
+
+
+def _append_render_messages(result: ClientConfigRenderResult, core: str, messages: list[Any]) -> None:
     for message in messages:
-        dump.messages.append(
+        result.messages.append(
             {
                 "core": core,
                 "level": getattr(message, "level", None) or (message.get("level") if isinstance(message, dict) else "info"),
@@ -320,6 +363,155 @@ def _append_driver_messages(dump: ClientConfigDumpResult, core: str, messages: l
                 "data": getattr(message, "data", None) or ((message.get("data") if isinstance(message, dict) else None) or {}),
             }
         )
+
+
+def render_client_configs(
+    *,
+    user: Any | None = None,
+    user_uuid: str | None = None,
+    child_id: int = 0,
+    sublink_domain: str | None = None,
+    user_agent: str | None = None,
+    pretty: bool = True,
+    cores: tuple[str, ...] | None = None,
+    invalidate_cache: bool = False,
+) -> ClientConfigRenderResult:
+    """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy)."""
+    from hiddifypanel.cache import cache
+    from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
+
+    if invalidate_cache:
+        cache.invalidate_all_cached_functions()
+
+    user_obj = user if user is not None else _resolve_dump_user_obj(user_uuid=user_uuid)
+    result = ClientConfigRenderResult(
+        user_uuid=str(getattr(user_obj, "uuid", "") or ""),
+        user_name=getattr(user_obj, "name", None),
+    )
+
+    ua = (user_agent or "").strip() or DEFAULT_CLIENT_UA
+    domain = (sublink_domain or "").strip() or _resolve_sublink_domain(child_id)
+    wanted = cores or tuple(core for core, _filename in CLIENT_CONFIG_FILES)
+
+    try:
+        contexts = build_client_template_context(user_obj, domain, ua)
+    except Exception as exc:
+        result.messages.append(
+            {
+                "core": "*",
+                "level": "error",
+                "message": str(exc),
+                "data": {"stacktrace": traceback.format_exc()},
+            }
+        )
+        return result
+
+    if not contexts:
+        result.messages.append(
+            {
+                "core": "*",
+                "level": "error",
+                "message": "No client proxies available for this user/domain",
+            }
+        )
+        return result
+
+    for core in ("hiddify-core", "xray", "singbox"):
+        if core not in wanted:
+            continue
+        try:
+            built = _build_merged_json_client_config(child_id, contexts, core=core)
+        except Exception as exc:
+            result.messages.append(
+                {
+                    "core": core,
+                    "level": "error",
+                    "message": str(exc),
+                    "data": {"stacktrace": traceback.format_exc()},
+                }
+            )
+            continue
+        _append_render_messages(result, core, built.messages)
+        result.configs[core] = _pretty_json_config(built.config or "", pretty=pretty)
+
+    if "clash" in wanted:
+        try:
+            clash_text, clash_msgs = _build_clash_client_config(child_id, contexts)
+            _append_render_messages(result, "clash", clash_msgs)
+            result.configs["clash"] = clash_text
+        except Exception as exc:
+            result.messages.append(
+                {
+                    "core": "clash",
+                    "level": "error",
+                    "message": str(exc),
+                    "data": {"stacktrace": traceback.format_exc()},
+                }
+            )
+
+    if "sublink" in wanted:
+        try:
+            sublink_text, sublink_msgs = _build_sublink_client_config(child_id, contexts)
+            _append_render_messages(result, "sublink", sublink_msgs)
+            result.configs["sublink"] = sublink_text
+        except Exception as exc:
+            result.messages.append(
+                {
+                    "core": "sublink",
+                    "level": "error",
+                    "message": str(exc),
+                    "data": {"stacktrace": traceback.format_exc()},
+                }
+            )
+
+    return result
+
+
+def dump_all_client_configs(
+    output_dir: str | Path,
+    child_id: int = 0,
+    *,
+    user_uuid: str | None = None,
+    pretty: bool = True,
+    ip: str | None = None,
+    user_agent: str | None = None,
+) -> ClientConfigDumpResult:
+    """Render client configs for one user and write them under ``output_dir``."""
+    del ip  # reserved; domains are resolved by client_builder
+
+    target = Path(output_dir)
+    target.mkdir(parents=True, exist_ok=True)
+
+    rendered = render_client_configs(
+        user_uuid=user_uuid,
+        child_id=child_id,
+        user_agent=user_agent,
+        pretty=pretty,
+        invalidate_cache=True,
+    )
+    dump = ClientConfigDumpResult(
+        output_dir=target,
+        child_id=child_id,
+        user_uuid=rendered.user_uuid,
+        user_name=rendered.user_name,
+        messages=list(rendered.messages),
+    )
+
+    for core, filename in CLIENT_CONFIG_FILES:
+        text = rendered.configs.get(core) or ""
+        if not text.strip():
+            dump.missing.append(filename)
+            continue
+        out_path = target / filename
+        with open(out_path, "w", encoding="utf-8") as fp:
+            fp.write(text)
+            if text and not text.endswith("\n"):
+                fp.write("\n")
+                text += "\n"
+        dump.written[filename] = len(text.encode("utf-8"))
+        dump.stats[filename] = summarize_client_dumped_config(core, filename, text)
+
+    return dump
 
 
 def _build_merged_json_client_config(child_id: int, contexts: list[Any], *, core: str) -> ConfigBuilderModel:
@@ -431,6 +623,7 @@ def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str,
                 proxies.append(item)
 
     parsed["proxies"] = proxies
+    parsed = _omit_empty_values(parsed)
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
 
 
@@ -464,121 +657,3 @@ def _build_sublink_client_config(child_id: int, contexts: list[Any]) -> tuple[st
             if text and "://" in text:
                 links.append(text)
     return "\n".join(links), messages
-
-
-def dump_all_client_configs(
-    output_dir: str | Path,
-    child_id: int = 0,
-    *,
-    user_uuid: str | None = None,
-    pretty: bool = True,
-    ip: str | None = None,
-    user_agent: str | None = None,
-) -> ClientConfigDumpResult:
-    """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy)."""
-    del ip  # reserved; domains are resolved by client_builder
-
-    from hiddifypanel.cache import cache
-    from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
-
-    # Client bases / domains are Redis-cached; always refresh so dumps see latest templates.
-    cache.invalidate_all_cached_functions()
-
-    target = Path(output_dir)
-    target.mkdir(parents=True, exist_ok=True)
-
-    user = _resolve_dump_user_obj(user_uuid=user_uuid)
-    dump = ClientConfigDumpResult(
-        output_dir=target,
-        child_id=child_id,
-        user_uuid=str(user.uuid),
-        user_name=getattr(user, "name", None),
-    )
-
-    ua = (user_agent or "").strip() or DEFAULT_CLIENT_UA
-    sublink_domain = _resolve_sublink_domain(child_id)
-
-    try:
-        contexts = build_client_template_context(user, sublink_domain, ua)
-    except Exception as exc:
-        dump.messages.append(
-            {
-                "core": "*",
-                "level": "error",
-                "message": str(exc),
-                "data": {"stacktrace": traceback.format_exc()},
-            }
-        )
-        return dump
-
-    if not contexts:
-        dump.messages.append(
-            {
-                "core": "*",
-                "level": "error",
-                "message": "No client proxies available for this user/domain",
-            }
-        )
-        return dump
-
-    rendered_by_core: dict[str, str] = {}
-
-    for core in ("hiddify-core", "xray", "singbox"):
-        try:
-            result = _build_merged_json_client_config(child_id, contexts, core=core)
-        except Exception as exc:
-            dump.messages.append(
-                {
-                    "core": core,
-                    "level": "error",
-                    "message": str(exc),
-                    "data": {"stacktrace": traceback.format_exc()},
-                }
-            )
-            continue
-        _append_driver_messages(dump, core, result.messages)
-        rendered_by_core[core] = _pretty_json_config(result.config or "", pretty=pretty)
-
-    try:
-        clash_text, clash_msgs = _build_clash_client_config(child_id, contexts)
-        _append_driver_messages(dump, "clash", clash_msgs)
-        rendered_by_core["clash"] = clash_text
-    except Exception as exc:
-        dump.messages.append(
-            {
-                "core": "clash",
-                "level": "error",
-                "message": str(exc),
-                "data": {"stacktrace": traceback.format_exc()},
-            }
-        )
-
-    try:
-        sublink_text, sublink_msgs = _build_sublink_client_config(child_id, contexts)
-        _append_driver_messages(dump, "sublink", sublink_msgs)
-        rendered_by_core["sublink"] = sublink_text
-    except Exception as exc:
-        dump.messages.append(
-            {
-                "core": "sublink",
-                "level": "error",
-                "message": str(exc),
-                "data": {"stacktrace": traceback.format_exc()},
-            }
-        )
-
-    for core, filename in CLIENT_CONFIG_FILES:
-        text = rendered_by_core.get(core) or ""
-        if not text.strip():
-            dump.missing.append(filename)
-            continue
-        out_path = target / filename
-        with open(out_path, "w", encoding="utf-8") as fp:
-            fp.write(text)
-            if text and not text.endswith("\n"):
-                fp.write("\n")
-                text += "\n"
-        dump.written[filename] = len(text.encode("utf-8"))
-        dump.stats[filename] = summarize_client_dumped_config(core, filename, text)
-
-    return dump

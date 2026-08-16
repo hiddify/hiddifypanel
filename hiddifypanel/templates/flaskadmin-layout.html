@@ -43,6 +43,20 @@
 
 {%endblock%}
 {%block last%}
+<div class="modal fade" id="domainIpModal" tabindex="-1" aria-labelledby="domainIpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="domainIpModalLabel">Domain / IP Info</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="domainIpModalBody">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="{{ static_url_for( filename='plugins/bootstrap4-editable/js/bootstrap-editable.min.js' ) }}"></script>
 <script>
     const CDN_MODES = new Set(['cdn', 'auto_cdn_ip', 'worker']);
@@ -184,9 +198,9 @@
         if ($("#domain").length > 0) {
             var selectElement = document.getElementById("mode");
             var groups = [
-                { label: `{{_("Direct")}}`, options: ["direct","dnstt"] },
+                { label: `{{_("Direct")}}`, options: ["direct", "dnstt"] },
                 { label: `{{_("Panel Link")}}`, options: ["sub_link_only"] },
-                { label: `{{_("Bridge Servers")}}`, options: ["cdn",  "worker", "relay"] },
+                { label: `{{_("Bridge Servers")}}`, options: ["cdn", "worker", "relay"] },
             ];
 
             var options = Array.from($("#mode option"));
@@ -247,8 +261,15 @@
 
                 if (mode == 'direct') {
                     $("#cdn_ip").parent().hide();
+                    $("#cdn_ip").val("");
                 } else {
                     $("#cdn_ip").parent().show();
+                }
+                if (mode == 'direct' && fakeMode == 'valid') {
+                    $("#server_domain").parent().hide();
+                    $("#server_domain").val("");
+                } else {
+                    $("#server_domain").parent().show();
                 }
                 {% autoescape false %}
                 if (fakeMode === 'reality') {
@@ -284,8 +305,84 @@
 
     $('body').off('click.modal.data-api');
     $('body').on('click.modal.data-api', '[data-toggle="modal"]', function () {
-        $($(this).data("target") + ' .modal-content').load($(this).attr('href'),function(){
-            setTimeout(update_hiddify_ui,100);
+        $($(this).data("target") + ' .modal-content').load($(this).attr('href'), function () {
+            setTimeout(update_hiddify_ui, 100);
+        });
+    });
+
+    $(document).ready(function () {
+        const $modal = new bootstrap.Modal(document.getElementById('domainIpModal'));
+        const $modalBody = $('#domainIpModalBody');
+
+        $(document).on('click', '.domain-ip-link', function (e) {
+            e.preventDefault();
+
+            const url = $(this).attr('href');
+            $("#domainIpModalLabel").text($(this).data().domain);
+            $modalBody.html(`
+      <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 mb-0">Loading...</p>
+      </div>
+    `);
+
+            $modal.show();
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json' // change to 'html' or 'text' if your API returns something else
+            })
+                .done(function (response) {
+                    // Adjust this based on your actual response shape
+                    if (!Array.isArray(response) || response.length === 0) {
+                        $modalBody.html(`
+            <div class="alert alert-secondary mb-0" role="alert">
+              No IP data found.
+            </div>
+          `);
+                        return;
+                    }
+
+                    const rows = response.map(function (item) {
+                        const isServerIp = item.is_server_ip;
+                        const version = item.version;
+
+                        const alertClass = isServerIp ? 'alert-success' : 'alert-warning';
+                        const icon = isServerIp
+                            ? '<i class="bi bi-check-circle-fill me-2"></i>'
+                            : '<i class="bi bi-exclamation-triangle-fill me-2"></i>';
+                        const statusText = isServerIp ? 'is Server IP' : 'Not a server IP';
+
+                        const versionChip = version == 6
+                            ? '<span class="badge rounded-pill bg-info text-dark">v6</span>'
+                            : '<span class="badge rounded-pill bg-secondary">v4</span>';
+
+                        return `
+            <div class="alert ${alertClass} d-flex justify-content-between align-items-center mb-2" role="alert">
+              <div class="d-flex align-items-center">
+                ${icon}
+                <div>
+                  <strong>${item.ip}</strong>
+                  <div class="small">${statusText}</div>
+                </div>
+              </div>
+              ${versionChip}
+            </div>
+          `;
+                    }).join('');
+
+                    $modalBody.html(rows);
+                })
+                .fail(function (jqXHR, textStatus) {
+                    $modalBody.html(`
+          <div class="alert alert-danger mb-0" role="alert">
+            Failed to load data: ${textStatus}
+          </div>
+        `);
+                });
         });
     });
 </script>
@@ -294,6 +391,8 @@
 
 {% block body %}
 {% set render_ctx = h.resolve_ctx() %}
+<!-- Bootstrap 5 Modal -->
+
 {% endblock %}
 
 {% block rtl_styles %}

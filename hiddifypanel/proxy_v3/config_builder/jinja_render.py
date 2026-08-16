@@ -14,6 +14,7 @@ from jinja2.loaders import DictLoader
 from hiddifypanel import hutils
 from hiddifypanel.models.custom_proxy import ProxyTemplate
 from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, include_path, jsbool, skip_proxy
+from hiddifypanel.proxy_v3.jinja_download import download
 
 
 def _to_json_value(value: Any) -> Any:
@@ -49,13 +50,50 @@ def _jinja_choose_random(value: Any) -> str:
 
 
 def _jinja_trim_no_line(value: Any) -> str:
-    return re.sub(r"\s+", "", str(value or ""))
+    return re.sub(r"\s+", " ", str(value or ""))
+
+
+def _omit_empty_json_values(value: Any) -> Any:
+    """Drop null/empty-string/empty-container leaves before compact JSON emit."""
+    if isinstance(value, dict):
+        out: dict[str, Any] = {}
+        for key, item in value.items():
+            pruned = _omit_empty_json_values(item)
+            if pruned is None or pruned == "" or pruned == [] or pruned == {}:
+                continue
+            out[key] = pruned
+        return out
+    if isinstance(value, list):
+        out_list: list[Any] = []
+        for item in value:
+            pruned = _omit_empty_json_values(item)
+            if pruned is None or pruned == "" or pruned == [] or pruned == {}:
+                continue
+            out_list.append(pruned)
+        return out_list
+    return value
 
 
 def _jinja_compact_json(value: Any) -> str:
+    """Serialize to minified JSON.
+
+    Accepts dict/list/namespace objects, or a JSON text block (as produced by
+    ``{% set x | compactjson %}...{% endset %}``) which is parsed then re-dumped.
+    """
     from hiddifypanel.hutils.proxy.shared import ProxyJsonEncoder
 
-    return json.dumps(_to_json_value(value), ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return ""
+        try:
+            value = json.loads(text)
+        except json.JSONDecodeError:
+            # Not JSON — collapse whitespace rather than double-encode.
+            return re.sub(r"\s+", " ", text).strip()
+
+    value = _omit_empty_json_values(_to_json_value(value))
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
 
 
 def _jinja_urlencode(value: Any) -> str:
@@ -97,6 +135,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     )
     env.globals["skip"] = skip_proxy
     env.globals["include_path"] = include_path
+    env.globals["download"] = download
     env.globals["enumerate"] = enumerate
     env.globals["len"] = len
     env.globals["ConfigEnum"] = ConfigEnum

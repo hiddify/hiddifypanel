@@ -1,6 +1,7 @@
 {% for ctx in ctx.iter_ctx_domains() %}
+{%set tag%}{%- include 'clash/client/tag' -%}{%endset%}
 {
-  {% include 'clash/client/tag' %}
+  "name": "{{tag|trim_no_line}}",
   "type": "__PROTO__",
   "server": "{{ ctx.proxy.server }}",
   "port": {{ ctx.proxy.tcp_port or ctx.proxy.udp_port }},

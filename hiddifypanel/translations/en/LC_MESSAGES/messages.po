@@ -108,6 +108,9 @@ msgstr "➖ Bridge Servers"
 msgid "Bug"
 msgstr "Bug/Feature"
 
+msgid "CDN and worker domains must use valid fake mode"
+msgstr "CDN and worker domains must use valid fake mode"
+
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s Core"
 
@@ -306,6 +309,9 @@ msgstr "✏️ Modifying Proxies"
 
 msgid "Enable"
 msgstr "❇️ Enable"
+
+msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
+msgstr "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ Error in Auto CDN Format"
@@ -638,6 +644,9 @@ msgstr "REALITY Fallback Domain is not compaitble with Server names!"
 msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr "REALITY Fallback domain is not compatible with server names!"
 
+msgid "Relay domains with non-valid fake mode require an IP address"
+msgstr "Relay domains with non-valid fake mode require an IP address"
+
 msgid "Release"
 msgstr "✅ Release"
 
@@ -715,6 +724,9 @@ msgstr "Select all records"
 
 msgid "Select record"
 msgstr "Select record"
+
+msgid "Selected proxy does not support this domain mode combination"
+msgstr "Selected proxy does not support this domain mode combination"
 
 msgid "Seleted Users"
 msgstr "Seleted Users"
@@ -971,6 +983,9 @@ msgstr "API"
 msgid "admin.menu.config"
 msgstr "Settings"
 
+msgid "admin.menu.dashboard_v2"
+msgstr "New Dashboard"
+
 msgid "admin.menu.domain"
 msgstr "Domains"
 
@@ -1024,6 +1039,840 @@ msgid "admin.waiting_for_update"
 msgstr ""
 "⚠️ Please wait about 5 minutes to make sure everything is updated. during "
 "this time, please copy and save your Proxy links which are:"
+
+msgid "adminV2.appTitle"
+msgstr "HiddifyManager"
+
+msgid "adminV2.baseConfig.builtinReadOnly"
+msgstr ""
+"Built-in base config — only name and enabled state can be changed. Duplicate"
+" to edit fully."
+
+msgid "adminV2.baseConfig.content"
+msgstr "Full config"
+
+msgid "adminV2.baseConfig.core"
+msgstr "Core"
+
+msgid "adminV2.baseConfig.description"
+msgstr "Description"
+
+msgid "adminV2.baseConfig.listTitle"
+msgstr "Base Configs"
+
+msgid "adminV2.baseConfig.name"
+msgstr "Name"
+
+msgid "adminV2.baseConfig.new"
+msgstr "New Base Config"
+
+msgid "adminV2.baseConfig.side"
+msgstr "Side"
+
+msgid "adminV2.baseConfig.version"
+msgstr "Version"
+
+msgid "adminV2.common.actions"
+msgstr "Actions"
+
+msgid "adminV2.common.add"
+msgstr "Add"
+
+msgid "adminV2.common.back"
+msgstr "Back"
+
+msgid "adminV2.common.cancel"
+msgstr "Cancel"
+
+msgid "adminV2.common.confirmDelete"
+msgstr "Are you sure you want to delete this item?"
+
+msgid "adminV2.common.delete"
+msgstr "Delete"
+
+msgid "adminV2.common.deleted"
+msgstr "Deleted successfully"
+
+msgid "adminV2.common.duplicate"
+msgstr "Duplicate"
+
+msgid "adminV2.common.edit"
+msgstr "Edit"
+
+msgid "adminV2.common.enabled"
+msgstr "Enabled"
+
+msgid "adminV2.common.format"
+msgstr "Format"
+
+msgid "adminV2.common.loadFailed"
+msgstr "Failed to load data"
+
+msgid "adminV2.common.save"
+msgstr "Save"
+
+msgid "adminV2.common.saved"
+msgstr "Saved successfully"
+
+msgid "adminV2.common.search"
+msgstr "Search..."
+
+msgid "adminV2.common.validate"
+msgstr "Validate"
+
+msgid "adminV2.common.validationFailed"
+msgstr "Validation failed"
+
+msgid "adminV2.common.validationOk"
+msgstr "Validation passed"
+
+msgid "adminV2.dashboard.subtitle"
+msgstr "Hiddify panel administration"
+
+msgid "adminV2.dashboard.title"
+msgstr "Dashboard"
+
+msgid "adminV2.dashboard.underConstruction"
+msgstr "Welcome to the new Hiddify dashboard — under construction."
+
+msgid "adminV2.dashboard.welcomePanel"
+msgstr "Welcome"
+
+msgid "adminV2.domain.addFailed"
+msgstr "Could not add domain"
+
+msgid "adminV2.domain.addTitle"
+msgstr "Add domain"
+
+msgid "adminV2.domain.alias"
+msgstr "Alias"
+
+msgid "adminV2.domain.domain"
+msgstr "Domain"
+
+msgid "adminV2.domain.mode"
+msgstr "Mode"
+
+msgid "adminV2.editor.cannotFormatJinja"
+msgstr "Cannot auto-format while Jinja tags are present"
+
+msgid "adminV2.editor.excludeBuiltinTemplates"
+msgstr "Exclude built-in templates from export"
+
+msgid "adminV2.editor.exportBundle"
+msgstr "Export bundle"
+
+msgid "adminV2.editor.includeTemplate"
+msgstr "Include template"
+
+msgid "adminV2.editor.insertVariable"
+msgstr "Insert variable"
+
+msgid "adminV2.editor.jinjaHint"
+msgstr ""
+"JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}"
+
+msgid "adminV2.editor.noVariables"
+msgstr "No variables match your search"
+
+msgid "adminV2.editor.preview"
+msgstr "Preview"
+
+msgid "adminV2.editor.previewFailed"
+msgstr "Preview request failed"
+
+msgid "adminV2.editor.previewOk"
+msgstr "Preview generated successfully"
+
+msgid "adminV2.editor.previewParams"
+msgstr "Preview parameters"
+
+msgid "adminV2.editor.previewPartial"
+msgstr "Preview generated with warnings"
+
+msgid "adminV2.editor.previewTitle"
+msgstr "Template preview"
+
+msgid "adminV2.footer.text"
+msgstr "HiddifyManager"
+
+msgid "adminV2.menu.baseConfigs"
+msgstr "Base Configs"
+
+msgid "adminV2.menu.customProxies"
+msgstr "Custom Proxies"
+
+msgid "adminV2.menu.dashboard"
+msgstr "Dashboard"
+
+msgid "adminV2.menu.proxyEditor"
+msgstr "Proxy Editor"
+
+msgid "adminV2.menu.sectionMain"
+msgstr "Main"
+
+msgid "adminV2.menu.sectionNew"
+msgstr "New"
+
+msgid "adminV2.menu.sectionV2"
+msgstr "New"
+
+msgid "adminV2.menu.templateVariables"
+msgstr "Template Variables"
+
+msgid "adminV2.menu.templates"
+msgstr "Templates"
+
+msgid "adminV2.proxy.addClient"
+msgstr "Add client"
+
+msgid "adminV2.proxy.addClientConfig"
+msgstr "Add config for this core"
+
+msgid "adminV2.proxy.addCoreConfig"
+msgstr "Add core config"
+
+msgid "adminV2.proxy.allowedProtocols"
+msgstr "Allowed protocols"
+
+msgid "adminV2.proxy.alpn"
+msgstr "ALPN"
+
+msgid "adminV2.proxy.alpnLabels.custom"
+msgstr "Custom"
+
+msgid "adminV2.proxy.alpnLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2"
+msgstr "TLS H1 + H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2_h3"
+msgstr "TLS H1 + H2 + QUIC"
+
+msgid "adminV2.proxy.alpnLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h3"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.autoClient"
+msgstr "auto"
+
+msgid "adminV2.proxy.baseConfigTemplate"
+msgstr "Base config override"
+
+msgid "adminV2.proxy.baseConfigTemplateHint"
+msgstr ""
+"Optional full xray client shell in {% block base_config %}. Leave empty to "
+"use the global base config."
+
+msgid "adminV2.proxy.builtinDefaultHint"
+msgstr ""
+"Built-in preset synced from catalog. Enable custom content on Server or "
+"Client tabs to edit those sides."
+
+msgid "adminV2.proxy.builtinReadOnly"
+msgstr ""
+"Built-in preset — only name and enabled state can be changed. Duplicate to "
+"edit fully."
+
+msgid "adminV2.proxy.bundleContextProxyCount"
+msgstr "Enabled proxies"
+
+msgid "adminV2.proxy.categories"
+msgstr "Categories"
+
+msgid "adminV2.proxy.categoriesAdd"
+msgstr "Add category"
+
+msgid "adminV2.proxy.categoriesAddNew"
+msgstr "Add New"
+
+msgid "adminV2.proxy.categoriesAddPlaceholder"
+msgstr "New category"
+
+msgid "adminV2.proxy.categoriesFilter"
+msgstr "Filter by categories"
+
+msgid "adminV2.proxy.categoriesHeader"
+msgstr "Available categories"
+
+msgid "adminV2.proxy.categoriesHint"
+msgstr "Select existing categories or add a new one from the dropdown footer"
+
+msgid "adminV2.proxy.categoriesPlaceholder"
+msgstr "Select categories"
+
+msgid "adminV2.proxy.categoriesRemoveAll"
+msgstr "Remove All"
+
+msgid "adminV2.proxy.clashFormatJson"
+msgstr "JSON"
+
+msgid "adminV2.proxy.clashFormatYaml"
+msgstr "YAML"
+
+msgid "adminV2.proxy.clientBuiltinCustomized"
+msgstr "Custom client config"
+
+msgid "adminV2.proxy.clientBuiltinDefault"
+msgstr "Using catalog default client config"
+
+msgid "adminV2.proxy.clientConfigDefault"
+msgstr "Client config"
+
+msgid "adminV2.proxy.clientCoreConfigs"
+msgstr "Client core configs"
+
+msgid "adminV2.proxy.clientCores"
+msgstr "Client cores"
+
+msgid "adminV2.proxy.core"
+msgstr "Core"
+
+msgid "adminV2.proxy.customPath"
+msgstr "Custom path"
+
+msgid "adminV2.proxy.customPathAuto"
+msgstr "Generated automatically for HTTP proxies"
+
+msgid "adminV2.proxy.directPortAccess"
+msgstr "Direct port access"
+
+msgid "adminV2.proxy.directPortAccessHint"
+msgstr ""
+"Use with care — may make your server discoverable on the public interface"
+
+msgid "adminV2.proxy.doBase64After"
+msgstr "Base64 after render"
+
+msgid "adminV2.proxy.domainIds"
+msgstr "Domains"
+
+msgid "adminV2.proxy.domainIdsEmptyAll"
+msgstr "Empty = all matching domains; IP-based proxies ignore domains"
+
+msgid "adminV2.proxy.domainModeLabels.cdn"
+msgstr "CDN"
+
+msgid "adminV2.proxy.domainModeLabels.direct"
+msgstr "Direct"
+
+msgid "adminV2.proxy.domainModeLabels.fake"
+msgstr "Fake TLS"
+
+msgid "adminV2.proxy.domainModeLabels.reality"
+msgstr "REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay"
+msgstr "Relay"
+
+msgid "adminV2.proxy.domainModeLabels.special"
+msgstr "Special (REALITY)"
+
+msgid "adminV2.proxy.domainModes"
+msgstr "Domain modes"
+
+msgid "adminV2.proxy.domains"
+msgstr "Domains"
+
+msgid "adminV2.proxy.downloadAlpns"
+msgstr "Download ALPNs"
+
+msgid "adminV2.proxy.downloadAlpnsHint"
+msgstr ""
+"xHTTP only. Empty = same as main ALPN. Config variants = main × download "
+"ALPN."
+
+msgid "adminV2.proxy.downloadDomainModes"
+msgstr "Download domain modes"
+
+msgid "adminV2.proxy.downloadTcpUdp"
+msgstr "Download TCP or UDP"
+
+msgid "adminV2.proxy.downloadTlsLayer"
+msgstr "Download TLS layer"
+
+msgid "adminV2.proxy.exampleContext"
+msgstr "Render context"
+
+msgid "adminV2.proxy.exampleContextDomain"
+msgstr "Domain"
+
+msgid "adminV2.proxy.exampleContextIp"
+msgstr "IP"
+
+msgid "adminV2.proxy.exampleContextProxy"
+msgstr "Proxy ID"
+
+msgid "adminV2.proxy.exampleContextUa"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleContextUser"
+msgstr "User"
+
+msgid "adminV2.proxy.exampleDomain"
+msgstr "Domain"
+
+msgid "adminV2.proxy.exampleDomainAll"
+msgstr "All domains"
+
+msgid "adminV2.proxy.exampleDomainAllHint"
+msgstr ""
+"Include every domain that matches this proxy (same as subscription output)."
+
+msgid "adminV2.proxy.exampleDomainCustom"
+msgstr "Custom domain"
+
+msgid "adminV2.proxy.exampleDomainPick"
+msgstr "Pick from panel"
+
+msgid "adminV2.proxy.exampleIp"
+msgstr "IP address"
+
+msgid "adminV2.proxy.exampleUaCustom"
+msgstr "Custom User-Agent"
+
+msgid "adminV2.proxy.exampleUaPreset"
+msgstr "Preset"
+
+msgid "adminV2.proxy.exampleUser"
+msgstr "User"
+
+msgid "adminV2.proxy.exampleUserAgent"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleUserPick"
+msgstr "Pick panel user"
+
+msgid "adminV2.proxy.exampleUserSample"
+msgstr "Sample user"
+
+msgid "adminV2.proxy.export"
+msgstr "Export"
+
+msgid "adminV2.proxy.exportFailed"
+msgstr "Export failed"
+
+msgid "adminV2.proxy.faketlsDomains"
+msgstr "Faketls domains"
+
+msgid "adminV2.proxy.faketlsSpecialHint"
+msgstr "Select from special (REALITY) domains in the panel"
+
+msgid "adminV2.proxy.fieldOverride"
+msgstr "Override"
+
+msgid "adminV2.proxy.generateBundle"
+msgstr "Generate all configs"
+
+msgid "adminV2.proxy.generateBundleOk"
+msgstr "Bundle generated successfully"
+
+msgid "adminV2.proxy.generateBundlePartial"
+msgstr "Bundle generated with warnings or errors"
+
+msgid "adminV2.proxy.generateExample"
+msgstr "Generate example"
+
+msgid "adminV2.proxy.generateExampleOk"
+msgstr "Example generated successfully"
+
+msgid "adminV2.proxy.generateExamplePartial"
+msgstr "Example generated with warnings or errors"
+
+msgid "adminV2.proxy.ignoreSkip"
+msgstr "Ignore skip tags"
+
+msgid "adminV2.proxy.ignoreSkipHint"
+msgstr ""
+"Render config even when a template skip block would normally skip a fragment"
+
+msgid "adminV2.proxy.import"
+msgstr "Import"
+
+msgid "adminV2.proxy.importFailed"
+msgstr "Import failed"
+
+msgid "adminV2.proxy.importSuccess"
+msgstr "Imported successfully ({count} templates)"
+
+msgid "adminV2.proxy.inboundPort"
+msgstr "Inbound port"
+
+msgid "adminV2.proxy.inboundPortAuto"
+msgstr "Leave empty for auto"
+
+msgid "adminV2.proxy.inboundPortAutoCalculated"
+msgstr "Ports are calculated automatically per domain"
+
+msgid "adminV2.proxy.inboundTcpPorts"
+msgstr "Inbound TCP ports"
+
+msgid "adminV2.proxy.inboundTcpPortsHint"
+msgstr "Comma-separated static TCP ports"
+
+msgid "adminV2.proxy.inboundTemplate"
+msgstr "Inbound template"
+
+msgid "adminV2.proxy.inboundUdpPorts"
+msgstr "Inbound UDP ports"
+
+msgid "adminV2.proxy.inboundUdpPortsHint"
+msgstr "Comma-separated static UDP ports; defaults to TCP ports when empty"
+
+msgid "adminV2.proxy.l7Proto"
+msgstr "L7 Reverse Proxy Protocol"
+
+msgid "adminV2.proxy.l7ReverseProto"
+msgstr "L7 reverse proxy protocol"
+
+msgid "adminV2.proxy.linkSettings"
+msgstr "Link settings"
+
+msgid "adminV2.proxy.linkTemplate"
+msgstr "Link template"
+
+msgid "adminV2.proxy.listTitle"
+msgstr "Custom Proxies"
+
+msgid "adminV2.proxy.mode"
+msgstr "Mode"
+
+msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
+msgstr "Multi-domain auto ports"
+
+msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
+msgstr "Domain L7 gateway"
+
+msgid "adminV2.proxy.modeLabels.domains_single_public_port"
+msgstr "Multi-domain static port"
+
+msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
+msgstr "Domain SNI gateway"
+
+msgid "adminV2.proxy.modeLabels.ip"
+msgstr "IP-based"
+
+msgid "adminV2.proxy.modeSettings"
+msgstr "Mode & routing"
+
+msgid "adminV2.proxy.name"
+msgstr "Name"
+
+msgid "adminV2.proxy.new"
+msgstr "New Proxy"
+
+msgid "adminV2.proxy.noClientConfigs"
+msgstr "No client configs yet. Add a client to get started."
+
+msgid "adminV2.proxy.outboundTagTemplate"
+msgstr "Outbound tag template"
+
+msgid "adminV2.proxy.outboundTagTemplateHint"
+msgstr ""
+"Jinja for each client outbound tag. Default: {{ proxy.tag }} {{ domain.alias"
+" or domain.name }} {{ proxy.alpn }}"
+
+msgid "adminV2.proxy.outboundsTemplate"
+msgstr "Outbounds template"
+
+msgid "adminV2.proxy.protocol"
+msgstr "Protocol"
+
+msgid "adminV2.proxy.regeneratePath"
+msgstr "Regenerate path"
+
+msgid "adminV2.proxy.renderErrorClickHint"
+msgstr "Click for details"
+
+msgid "adminV2.proxy.renderErrorDetail"
+msgstr "Render error details"
+
+msgid "adminV2.proxy.renderErrorDetailTitle"
+msgstr "Render error: {label}"
+
+msgid "adminV2.proxy.renderErrorNoDetail"
+msgstr "No additional context is available for this error."
+
+msgid "adminV2.proxy.renderErrorRenderedSource"
+msgstr "Rendered output"
+
+msgid "adminV2.proxy.renderErrorTemplateSource"
+msgstr "Template source"
+
+msgid "adminV2.proxy.resetToBuiltin"
+msgstr "Reset to catalog default"
+
+msgid "adminV2.proxy.serverBuiltinCustomized"
+msgstr "Custom server config"
+
+msgid "adminV2.proxy.serverBuiltinDefault"
+msgstr "Using catalog default server config"
+
+msgid "adminV2.proxy.serverCore"
+msgstr "Server core"
+
+msgid "adminV2.proxy.slug"
+msgstr "Slug"
+
+msgid "adminV2.proxy.sublink"
+msgstr "Sublink"
+
+msgid "adminV2.proxy.sublinkBase64.content"
+msgstr "Content"
+
+msgid "adminV2.proxy.sublinkBase64.formatJson"
+msgstr "Format JSON"
+
+msgid "adminV2.proxy.sublinkBase64.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkBase64Detail"
+msgstr "Base64 detail"
+
+msgid "adminV2.proxy.sublinkFormat"
+msgstr "Link format"
+
+msgid "adminV2.proxy.sublinkFormatBase64"
+msgstr "Base64 format"
+
+msgid "adminV2.proxy.sublinkFormatRaw"
+msgstr "Rendered link"
+
+msgid "adminV2.proxy.sublinkFormatRawLink"
+msgstr "Raw link"
+
+msgid "adminV2.proxy.sublinkFormatUri"
+msgstr "URI format"
+
+msgid "adminV2.proxy.sublinkUri.fragment"
+msgstr "uri.fragment"
+
+msgid "adminV2.proxy.sublinkUri.host"
+msgstr "uri.host"
+
+msgid "adminV2.proxy.sublinkUri.password"
+msgstr "uri.password"
+
+msgid "adminV2.proxy.sublinkUri.path"
+msgstr "uri.path"
+
+msgid "adminV2.proxy.sublinkUri.port"
+msgstr "uri.port"
+
+msgid "adminV2.proxy.sublinkUri.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkUri.query_params"
+msgstr "uri.query_params (JSON)"
+
+msgid "adminV2.proxy.sublinkUri.user"
+msgstr "uri.user"
+
+msgid "adminV2.proxy.sublinkUriDetail"
+msgstr "URI detail"
+
+msgid "adminV2.proxy.tabClient"
+msgstr "Client"
+
+msgid "adminV2.proxy.tabClients"
+msgstr "Clients"
+
+msgid "adminV2.proxy.tabGeneral"
+msgstr "General"
+
+msgid "adminV2.proxy.tabServer"
+msgstr "Server"
+
+msgid "adminV2.proxy.tabServers"
+msgstr "Servers"
+
+msgid "adminV2.proxy.tag"
+msgstr "Tag"
+
+msgid "adminV2.proxy.tcpUdp"
+msgstr "TCP or UDP"
+
+msgid "adminV2.proxy.tcpUdpHint"
+msgstr "Transport protocol for resolved inbound ports"
+
+msgid "adminV2.proxy.tcpUdpLabels.both"
+msgstr "TCP + UDP"
+
+msgid "adminV2.proxy.tcpUdpLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.tcpUdpLabels.udp"
+msgstr "UDP"
+
+msgid "adminV2.proxy.templateSlugs"
+msgstr "Template includes"
+
+msgid "adminV2.proxy.tlsLayer"
+msgstr "TLS layer"
+
+msgid "adminV2.proxy.tlsLayerLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS"
+
+msgid "adminV2.proxy.tlsLayerSpecialConflict"
+msgstr "HTTP TLS layer is not compatible with REALITY domain modes"
+
+msgid "adminV2.proxy.transport"
+msgstr "Transport"
+
+msgid "adminV2.proxy.transportLabels.grpc"
+msgstr "gRPC"
+
+msgid "adminV2.proxy.transportLabels.httpupgrade"
+msgstr "HTTP Upgrade"
+
+msgid "adminV2.proxy.transportLabels.other"
+msgstr "Other"
+
+msgid "adminV2.proxy.transportLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.transportLabels.ws"
+msgstr "WebSocket"
+
+msgid "adminV2.proxy.transportLabels.xhttp"
+msgstr "xHTTP"
+
+msgid "adminV2.proxy.uploadTcpUdp"
+msgstr "Upload TCP or UDP"
+
+msgid "adminV2.proxy.version"
+msgstr "Version"
+
+msgid "adminV2.template.builtin"
+msgstr "Built-in"
+
+msgid "adminV2.template.builtinReadOnly"
+msgstr "Built-in template — duplicate to create an editable copy."
+
+msgid "adminV2.template.category"
+msgstr "Category"
+
+msgid "adminV2.template.clone"
+msgstr "Clone as custom"
+
+msgid "adminV2.template.cloneDescription"
+msgstr "Custom description"
+
+msgid "adminV2.template.cloneName"
+msgstr "Custom name"
+
+msgid "adminV2.template.cloned"
+msgstr "Template cloned"
+
+msgid "adminV2.template.content"
+msgstr "Content"
+
+msgid "adminV2.template.core"
+msgstr "Core"
+
+msgid "adminV2.template.description"
+msgstr "Description"
+
+msgid "adminV2.template.editable"
+msgstr "Editable"
+
+msgid "adminV2.template.empty"
+msgstr "No templates for this core"
+
+msgid "adminV2.template.included"
+msgstr "Included"
+
+msgid "adminV2.template.insert"
+msgstr "Insert into editor"
+
+msgid "adminV2.template.listTitle"
+msgstr "Templates"
+
+msgid "adminV2.template.name"
+msgstr "Name"
+
+msgid "adminV2.template.new"
+msgstr "New Template"
+
+msgid "adminV2.template.notFound"
+msgstr "Template not found"
+
+msgid "adminV2.template.referenced"
+msgstr "Referenced"
+
+msgid "adminV2.template.referencedTemplates"
+msgstr "Referenced templates"
+
+msgid "adminV2.template.sidePanel"
+msgstr "Templates"
+
+msgid "adminV2.template.sidePanelHint"
+msgstr "Open Server or Client tab to browse templates"
+
+msgid "adminV2.template.slug"
+msgstr "Slug"
+
+msgid "adminV2.template.slugDuplicate"
+msgstr "This template slug is already in use. Choose a different slug."
+
+msgid "adminV2.template.slugHint"
+msgstr "Only the part after core/category can be edited"
+
+msgid "adminV2.templateVariables.access"
+msgstr "Access"
+
+msgid "adminV2.templateVariables.currentValue"
+msgstr "Current value"
+
+msgid "adminV2.templateVariables.description"
+msgstr "Description"
+
+msgid "adminV2.templateVariables.group"
+msgstr "Group"
+
+msgid "adminV2.templateVariables.label"
+msgstr "Label"
+
+msgid "adminV2.templateVariables.listTitle"
+msgstr "Template Variables"
+
+msgid "adminV2.templateVariables.loadValues"
+msgstr "Load current values"
+
+msgid "adminV2.templateVariables.name"
+msgstr "Name"
+
+msgid "adminV2.templateVariables.skipHint"
+msgstr ""
+"Output SKIP or call skip() to skip rendering this proxy when a condition is "
+"not met"
+
+msgid "adminV2.theme.dark"
+msgstr "Dark mode"
+
+msgid "adminV2.theme.light"
+msgstr "Light mode"
+
+msgid "adminV2.validation.errors"
+msgstr "Errors"
+
+msgid "adminV2.validation.preview"
+msgstr "Compiled preview"
+
+msgid "adminV2.validation.title"
+msgstr "Validation"
+
+msgid "adminV2.validation.warnings"
+msgstr "Warnings"
 
 msgid "adminuser.force_update_usage"
 msgstr ""
@@ -1276,6 +2125,12 @@ msgstr ""
 msgid "config.allow_invalid_sni.label"
 msgstr "🆗 Allow Invalid SNI"
 
+msgid "config.anytls_enable.description"
+msgstr "config.anytls_enable.description"
+
+msgid "config.anytls_enable.label"
+msgstr "config.anytls_enable.label"
+
 msgid "config.auto_update.description"
 msgstr ""
 "Every day at 3:00 AM, we will check for a new update. if there is a new "
@@ -1330,7 +2185,7 @@ msgstr ""
 "Use <a target='_blank' href='https://ip-format.hiddify.com'>this link</a> to set personal IPs."
 
 msgid "config.cdn_forced_host.label"
-msgstr "🔂 Force Config to Use Following IPs"
+msgstr "🔂 Force Config to Use Following IPs/Domains"
 
 msgid "config.cloudflare.description"
 msgstr ""
@@ -1494,6 +2349,12 @@ msgstr "Enable HTTP/2 Protocol"
 
 msgid "config.h2_enable.label"
 msgstr "🔵 h2"
+
+msgid "config.health_secret_path.description"
+msgstr "config.health_secret_path.description"
+
+msgid "config.health_secret_path.label"
+msgstr "config.health_secret_path.label"
 
 msgid "config.hidden.description"
 msgstr "config.hidden.description"
@@ -2131,6 +2992,18 @@ msgstr ""
 msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ Show Usage in Sublink"
 
+msgid "config.snell_enable.description"
+msgstr "config.snell_enable.description"
+
+msgid "config.snell_enable.label"
+msgstr "config.snell_enable.label"
+
+msgid "config.socks_enable.description"
+msgstr "config.socks_enable.description"
+
+msgid "config.socks_enable.label"
+msgstr "config.socks_enable.label"
+
 msgid "config.special_port.description"
 msgstr ""
 "You can set a customized port for your reality server to reduce the system's"
@@ -2254,6 +3127,16 @@ msgstr "Not Used"
 
 msgid "config.ssh_server_redis_url.label"
 msgstr "SSH user database address"
+
+msgid "config.ssh_use_tls_port.description"
+msgstr ""
+"When enabled, SSH shares the TLS/HTTPS ports (such as 443) via L4 "
+"multiplexing instead of using a dedicated public SSH port. Clients connect "
+"to the same TLS port; the edge multiplexer detects SSH and forwards it to "
+"the SSH proxy backend."
+
+msgid "config.ssh_use_tls_port.label"
+msgstr "🔀 Multiplex SSH on TLS Port"
 
 msgid "config.ssr.description"
 msgstr ""
@@ -2542,11 +3425,29 @@ msgstr ""
 msgid "config.validation-success-no-reset"
 msgstr " ✅ Configs have been changed successfully"
 
+msgid "config.vless_decryption.description"
+msgstr "VLESS decryption parameter for share links"
+
+msgid "config.vless_decryption.label"
+msgstr "VLESS decryption"
+
 msgid "config.vless_enable.description"
 msgstr "Enable VLess Protocol"
 
 msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
+
+msgid "config.vless_encryption.description"
+msgstr "VLESS encryption method for share links"
+
+msgid "config.vless_encryption.label"
+msgstr "VLESS encryption"
+
+msgid "config.vless_flow.description"
+msgstr "VLESS flow control (e.g. xtls-rprx-vision)"
+
+msgid "config.vless_flow.label"
+msgstr "VLESS flow"
 
 msgid "config.vmess_enable.description"
 msgstr "Active VMess Protocol"
@@ -2656,6 +3557,16 @@ msgstr "A public key is specified to WireGuard"
 msgid "config.wireguard_public_key.label"
 msgstr "WireGuard Public Key"
 
+msgid "config.wireguard_use_quic_port.description"
+msgstr ""
+"When enabled, WireGuard shares the QUIC/UDP TLS ports (such as 443) via L4 "
+"multiplexing instead of using a dedicated public WireGuard port. Clients "
+"connect to the same UDP/QUIC port; the edge multiplexer detects WireGuard "
+"and forwards it to the WireGuard backend."
+
+msgid "config.wireguard_use_quic_port.label"
+msgstr "🔀 Multiplex WireGuard on QUIC Port"
+
 msgid "config.ws_enable.description"
 msgstr "Websocket creates a tunnel over HTTP that is useful to be used in CDN"
 
@@ -2705,6 +3616,29 @@ msgstr ""
 msgid "domain.current_server_IPs"
 msgstr "🔢 Current Server IPs are"
 
+msgid "domain.custom_proxy.description"
+msgstr ""
+"Optional proxy binding. Only proxies that support this domain's mode "
+"combination are listed."
+
+msgid "domain.custom_proxy.group.ip_based"
+msgstr "IP based"
+
+msgid "domain.custom_proxy.group.other"
+msgstr "Other"
+
+msgid "domain.custom_proxy.group.sni_gateway"
+msgstr "SNI gateway"
+
+msgid "domain.custom_proxy.label"
+msgstr "Custom proxy"
+
+msgid "domain.custom_proxy.reality_only"
+msgstr "REALITY domains must use the REALITY Termination proxy"
+
+msgid "domain.custom_proxy.reality_required"
+msgstr "REALITY domains require the REALITY Termination proxy"
+
 msgid "domain.description"
 msgstr ""
 "Please fill in this field carefully and correctly. Otherwise, proxies will "
@@ -2723,8 +3657,24 @@ msgstr ""
 msgid "domain.domain_fronting.label"
 msgstr "🔒 TLS Domain Fronting"
 
+msgid "domain.ech.description"
+msgstr ""
+"Fetch and use Encrypted Client Hello (ECH) for this CDN domain. Requires TLS"
+" ECH to be enabled in panel settings."
+
+msgid "domain.ech.label"
+msgstr "🔐 ECH"
+
 msgid "domain.empty.allowed_for_fake_only"
 msgstr "domain.empty.allowed_for_fake_only"
+
+msgid "domain.fake_mode.description"
+msgstr ""
+"Valid uses a real certificate. Fake and Reality are for decoy TLS and "
+"REALITY protocols."
+
+msgid "domain.fake_mode.label"
+msgstr "TLS mode"
 
 msgid "domain.intro"
 msgstr ""
@@ -2752,6 +3702,12 @@ msgstr ""
 
 msgid "domain.resolveip.label"
 msgstr "🔢 Resolve IP"
+
+msgid "domain.server_domain.description"
+msgstr "domain.server_domain.description"
+
+msgid "domain.server_domain.label"
+msgstr "domain.server_domain.label"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -2944,6 +3900,9 @@ msgstr ""
 
 msgid "singbox: ssh"
 msgstr "SingBox: SSH"
+
+msgid "special"
+msgstr "special"
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

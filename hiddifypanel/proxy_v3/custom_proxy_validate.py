@@ -430,6 +430,7 @@ def _jinja_env(child_id: int = 0) -> Environment:
     if cached and now - cached[0] < _JINJA_CACHE_TTL:
         return cached[1]
     from hiddifypanel.proxy_v3.jinja_context import skip_proxy
+    from hiddifypanel.proxy_v3.jinja_download import download
 
     env = Environment(
         loader=DictLoader(_cached_template_map(child_id)),
@@ -437,6 +438,7 @@ def _jinja_env(child_id: int = 0) -> Environment:
     )
     env.globals["enumerate"] = enumerate
     env.globals["skip"] = skip_proxy
+    env.globals["download"] = download
     env.globals["_"] = _jinja_gettext
     env.filters["i18n"] = _jinja_gettext
     env.filters["tojson"] = lambda value: json.dumps(_to_dict_normalized(value), ensure_ascii=False)
@@ -498,7 +500,17 @@ def _jinja_gettext(ctx: dict[str, Any], message: str, **kwargs: Any) -> str:
 
 
 def _jinja_compact_json(value: Any) -> str:
+    """Serialize to minified JSON (objects or JSON text blocks)."""
     from hiddifypanel.hutils.proxy.shared import ProxyJsonEncoder
+
+    if isinstance(value, str):
+        text = value.strip()
+        if not text:
+            return ""
+        try:
+            value = json.loads(text)
+        except json.JSONDecodeError:
+            return re.sub(r"\s+", " ", text).strip()
 
     value = _to_dict_normalized(value)
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
@@ -528,7 +540,7 @@ def _jinja_urlencode(value: Any) -> str:
 
 
 def _jinja_trim_no_line(value: Any) -> str:
-    return re.sub(r"\s+", "", str(value or ""))
+    return re.sub(r"\s+", " ", str(value or "")).strip()
 
 
 def render_template_text(template_text: str, child_id: int = 0, context: dict[str, Any] | None = None) -> str:
@@ -796,12 +808,7 @@ def validate_port_rules(compiled_text: str, port: int | None = None) -> list[dic
 def validate_core_placeholders(template_text: str, core: str | None) -> list[dict[str, str]]:
     errors: list[dict[str, str]] = []
     has_tag = "proxy.tag" in template_text or "{{TAG}}" in template_text or "{{ TAG }}" in template_text
-    has_port = (
-        "proxy.tcp_port" in template_text
-        or "proxy.udp_port" in template_text
-        or "{{PORT}}" in template_text
-        or "{{ PORT }}" in template_text
-    )
+    has_port = "proxy.tcp_port" in template_text or "proxy.udp_port" in template_text or "{{PORT}}" in template_text or "{{ PORT }}" in template_text
     if core == "xray":
         if not has_tag:
             errors.append({"code": "missing_tag", "message": "Xray template must include proxy.tag (or {{TAG}})"})

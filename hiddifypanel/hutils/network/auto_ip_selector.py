@@ -1,16 +1,15 @@
-from flask_babel import gettext as _
-from typing import List, Union
-from flask import request
-from loguru import logger
-import maxminddb
 import random
-import os
 import re
-import sys
+
+import maxminddb
+from flask import has_request_context, request
+from flask_babel import gettext as _
+from loguru import logger
+
+from hiddifypanel import hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
-from hiddifypanel import hutils
 
 DEFAULT_IPs = """
 mci.ircf.space		MCI
@@ -38,39 +37,38 @@ apt.ircf.space		APT
 """
 
 try:
-
-    IPASN = maxminddb.open_database('GeoLite2-ASN.mmdb')
-    IPCOUNTRY = maxminddb.open_database('GeoLite2-Country.mmdb')
+    IPASN = maxminddb.open_database("GeoLite2-ASN.mmdb")
+    IPCOUNTRY = maxminddb.open_database("GeoLite2-Country.mmdb")
     # __ipcity = maxminddb.open_database('GeoLite2-City.mmdb')
-except BaseException as e:
+except BaseException:
     logger.error("Error can not load maxminddb")
     IPASN = {}
     IPCOUNTRY = {}
     # __ipcity = {}
 
 __asn_map = {
-    '58224': 'MKH',
-    '197207': 'MCI',
-    '12880': 'ITC',
-    '44244': 'MTN',
-    '57218': 'RTL',
-    '16322': 'PRS',
-    '56402': 'HWB',
-    '41689': 'AST',
-    '43754': 'AST',
-    '31549': 'SHT',
-    '205647': 'SHT',
-    '50810': 'MBT',
-    '39308': 'ASK',
-    '205207': 'RSP',
-    '25184': 'AFR',
-    '394510': 'ZTL',
-    '206065': 'ZTL',
-    '49100': 'PSM'
+    "58224": "MKH",
+    "197207": "MCI",
+    "12880": "ITC",
+    "44244": "MTN",
+    "57218": "RTL",
+    "16322": "PRS",
+    "56402": "HWB",
+    "41689": "AST",
+    "43754": "AST",
+    "31549": "SHT",
+    "205647": "SHT",
+    "50810": "MBT",
+    "39308": "ASK",
+    "205207": "RSP",
+    "25184": "AFR",
+    "394510": "ZTL",
+    "206065": "ZTL",
+    "49100": "PSM",
 }
 
 
-def get_asn_short_name(user_ip: str = '') -> str:
+def get_asn_short_name(user_ip: str = "") -> str:
     return __get_asn_short_name_imp(user_ip or get_real_user_ip())
 
 
@@ -83,7 +81,7 @@ def __get_asn_short_name_imp(user_ip: str) -> str:
         return "unknown"
 
 
-def get_asn_id(user_ip: str = '') -> str:
+def get_asn_id(user_ip: str = "") -> str:
     return __get_asn_id_imp(user_ip or get_real_user_ip())
 
 
@@ -91,17 +89,17 @@ def get_asn_id(user_ip: str = '') -> str:
 def __get_asn_id_imp(user_ip: str) -> str:
     try:
         asnres = IPASN.get(user_ip)
-        return asnres['autonomous_system_number']
+        return asnres["autonomous_system_number"]
     except BaseException:
         return "unknown"
 
 
-def get_country(user_ip: str = '') -> Union[dict, str]:
+def get_country(user_ip: str = "") -> dict | str:
     try:
         user_ip = user_ip or get_real_user_ip()
-        return (IPCOUNTRY.get(user_ip) or {}).get('country', {}).get('iso_code', 'unknown')
+        return (IPCOUNTRY.get(user_ip) or {}).get("country", {}).get("iso_code", "unknown")
     except BaseException:
-        return 'unknown'
+        return "unknown"
 
 
 # def get_city(user_ip: str = '') -> Union[dict, str]:
@@ -113,26 +111,28 @@ def get_country(user_ip: str = '') -> Union[dict, str]:
 #         return 'unknown'
 
 
-def get_real_user_ip_debug(user_ip: str = '') -> str:
+def get_real_user_ip_debug(user_ip: str = "") -> str:
     return __get_real_user_ip_debug_imp(user_ip or get_real_user_ip())
 
 
 @cache.cache()
 def __get_real_user_ip_debug_imp(user_ip) -> str:
-    if type(user_ip) is str and ',' in user_ip:
-        user_ip = user_ip.split(',')[0]
+    if type(user_ip) is str and "," in user_ip:
+        user_ip = user_ip.split(",")[0]
     asnres = IPASN.get(user_ip) or {}
-    asn = f"{asnres.get('autonomous_system_number','unknown')}" if asnres else "unknown"
-    asn_dscr = f"{asnres.get('autonomous_system_organization','unknown')}" if asnres else "unknown"
+    asn = f"{asnres.get('autonomous_system_number', 'unknown')}" if asnres else "unknown"
+    asn_dscr = f"{asnres.get('autonomous_system_organization', 'unknown')}" if asnres else "unknown"
     asn_short = get_asn_short_name(user_ip)
     country = get_country(user_ip)
     default = __get_host_base_on_asn(DEFAULT_IPs, asn_short).replace(".ircf.space", "")
-    return f'{user_ip} {country} {asn} {asn_short} {"ERROR" if asn_short=="unknown" else ""} fullname={asn_dscr} default:{default}'
+    return f"{user_ip} {country} {asn} {asn_short} {'ERROR' if asn_short == 'unknown' else ''} fullname={asn_dscr} default:{default}"
 
 
 def get_real_user_ip() -> str:
+    if not has_request_context():
+        return ""
     user_ip = request.remote_addr
-    for header in ['CF-Connecting-IP', 'ar-real-ip', 'X-Forwarded-For', "X-Real-IP"]:
+    for header in ["CF-Connecting-IP", "ar-real-ip", "X-Forwarded-For", "X-Real-IP"]:
         if header in request.headers:
             user_ip = request.headers.get(header)
             break
@@ -140,15 +140,15 @@ def get_real_user_ip() -> str:
     return str(user_ip)
 
 
-def __get_host_base_on_asn(ips: Union[str, List[str]], asn_short: str) -> str:
+def __get_host_base_on_asn(ips: str | list[str], asn_short: str) -> str:
     if type(ips) == str:
-        ips = re.split('[ \t\r\n;,]+', ips.strip())
+        ips = re.split("[ \t\r\n;,]+", ips.strip())
     valid_hosts = [ip for ip in ips if len(ip) > 5]
 
     if len(ips) % 2 != 0 or len(valid_hosts) == 0:
         hutils.flask.flash(_("Error! auto cdn ip can not be find, please contact admin."))
         if len(valid_hosts) == 0:
-            return ''
+            return ""
 
     all_hosts = []
     for i in range(0, len(ips), 2):
@@ -163,17 +163,17 @@ def __get_host_base_on_asn(ips: Union[str, List[str]], asn_short: str) -> str:
     return selected
 
 
-def get_clean_ip(ips: Union[str, List[str]], resolve: bool = False) -> str:
+def get_clean_ip(ips: str | list[str], resolve: bool = False) -> str:
     user_ip = get_real_user_ip()
-    default_asn = request.args.get("asn", '')
+    default_asn = request.args.get("asn", "") if has_request_context() else ""
     return get_clean_ip_user(user_ip, ips, default_asn)
 
 
-split_pattern = re.compile(r'[ \t\r\n;,]+')
+split_pattern = re.compile(r"[ \t\r\n;,]+")
 
 
 @cache.cache(300)
-def get_clean_ip_user(user_ip, ipliststr: str, default_asn: str = '') -> tuple[str, str]:
+def get_clean_ip_user(user_ip, ipliststr: str, default_asn: str = "") -> tuple[str, str]:
     ipliststr = ipliststr.strip()
     if not ipliststr:
         ipliststr = DEFAULT_IPs.strip()

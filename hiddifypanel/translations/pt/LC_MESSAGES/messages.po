@@ -109,6 +109,9 @@ msgstr "➖ Servidores Bridge"
 msgid "Bug"
 msgstr "Bug/recurso"
 
+msgid "CDN and worker domains must use valid fake mode"
+msgstr ""
+
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s Núcleos "
 
@@ -273,6 +276,9 @@ msgstr "✏️ Modificando Proxies"
 
 msgid "Enable"
 msgstr "❇️ Habilitar"
+
+msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
+msgstr ""
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ Erro no formato CDN automático"
@@ -603,6 +609,9 @@ msgstr "REALITY Fallback Domain não é compatível com nomes de servidores!"
 msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr ""
 
+msgid "Relay domains with non-valid fake mode require an IP address"
+msgstr ""
+
 msgid "Release"
 msgstr "✅ Liberação"
 
@@ -680,6 +689,9 @@ msgstr "Selecionar todos os registros"
 
 msgid "Select record"
 msgstr "Selecionar registro"
+
+msgid "Selected proxy does not support this domain mode combination"
+msgstr ""
 
 msgid "Seleted Users"
 msgstr "Usuários selecionados"
@@ -941,6 +953,9 @@ msgstr "API"
 
 msgid "admin.menu.config"
 msgstr "Configurações"
+
+msgid "admin.menu.dashboard_v2"
+msgstr ""
 
 msgid "admin.menu.domain"
 msgstr "domínios"
@@ -1250,6 +1265,12 @@ msgstr ""
 msgid "config.allow_invalid_sni.label"
 msgstr "🆗 Permitir SNI inválido"
 
+msgid "config.anytls_enable.description"
+msgstr ""
+
+msgid "config.anytls_enable.label"
+msgstr ""
+
 msgid "config.auto_update.description"
 msgstr ""
 "Todos os dias às 3:00 da manhã, verificaremos se há uma nova atualização. se"
@@ -1471,6 +1492,12 @@ msgstr "Habilitar protocolo HTTP/2"
 
 msgid "config.h2_enable.label"
 msgstr "🔵h2"
+
+msgid "config.health_secret_path.description"
+msgstr ""
+
+msgid "config.health_secret_path.label"
+msgstr ""
 
 msgid "config.hidden.description"
 msgstr "config.hidden.description"
@@ -2096,6 +2123,18 @@ msgstr ""
 msgid "config.show_usage_in_sublink.label"
 msgstr "💬 Mostrar uso no sublink"
 
+msgid "config.snell_enable.description"
+msgstr ""
+
+msgid "config.snell_enable.label"
+msgstr ""
+
+msgid "config.socks_enable.description"
+msgstr ""
+
+msgid "config.socks_enable.label"
+msgstr ""
+
 msgid "config.special_port.description"
 msgstr ""
 "Você pode definir uma porta personalizada para seu servidor de Reality para "
@@ -2212,6 +2251,16 @@ msgstr "Não usado"
 
 msgid "config.ssh_server_redis_url.label"
 msgstr "Endereço do banco de dados do usuário SSH"
+
+msgid "config.ssh_use_tls_port.description"
+msgstr ""
+"Quando ativado, o SSH compartilha as portas TLS/HTTPS (como 443) via "
+"multiplexação L4 em vez de usar uma porta SSH pública dedicada. Os clientes "
+"conectam-se à mesma porta TLS; o multiplexador de borda detecta o SSH e "
+"encaminha o tráfego para o backend do proxy SSH."
+
+msgid "config.ssh_use_tls_port.label"
+msgstr "🔀 Multiplexar SSH na porta TLS"
 
 msgid "config.ssr.description"
 msgstr ""
@@ -2490,11 +2539,29 @@ msgstr ""
 msgid "config.validation-success-no-reset"
 msgstr "✅ As configurações foram alteradas com sucesso"
 
+msgid "config.vless_decryption.description"
+msgstr ""
+
+msgid "config.vless_decryption.label"
+msgstr ""
+
 msgid "config.vless_enable.description"
 msgstr "Habilitar protocolo VLess"
 
 msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
+
+msgid "config.vless_encryption.description"
+msgstr ""
+
+msgid "config.vless_encryption.label"
+msgstr ""
+
+msgid "config.vless_flow.description"
+msgstr ""
+
+msgid "config.vless_flow.label"
+msgstr ""
 
 msgid "config.vmess_enable.description"
 msgstr ""
@@ -2613,6 +2680,16 @@ msgstr "Uma chave pública é especificada para WireGuard"
 msgid "config.wireguard_public_key.label"
 msgstr "Chave pública WireGuard"
 
+msgid "config.wireguard_use_quic_port.description"
+msgstr ""
+"Quando ativado, o WireGuard compartilha as portas QUIC/UDP TLS (como 443) "
+"via multiplexação L4 em vez de usar uma porta WireGuard pública dedicada. Os"
+" clientes conectam-se à mesma porta UDP/QUIC; o multiplexador de borda "
+"detecta o WireGuard e encaminha o tráfego para o backend WireGuard."
+
+msgid "config.wireguard_use_quic_port.label"
+msgstr "🔀 Multiplexar WireGuard na porta QUIC"
+
 msgid "config.ws_enable.description"
 msgstr "Websocket cria um túnel sobre HTTP que é útil para ser usado em CDN"
 
@@ -2660,6 +2737,27 @@ msgstr ""
 msgid "domain.current_server_IPs"
 msgstr ""
 
+msgid "domain.custom_proxy.description"
+msgstr ""
+
+msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.other"
+msgstr ""
+
+msgid "domain.custom_proxy.group.sni_gateway"
+msgstr ""
+
+msgid "domain.custom_proxy.label"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_only"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
 msgid "domain.description"
 msgstr ""
 "Por favor, preencha este campo com cuidado e corretamente. Caso contrário, "
@@ -2679,8 +2777,20 @@ msgstr ""
 msgid "domain.domain_fronting.label"
 msgstr "🔒 Fronting de domínio de TLS"
 
+msgid "domain.ech.description"
+msgstr ""
+
+msgid "domain.ech.label"
+msgstr ""
+
 msgid "domain.empty.allowed_for_fake_only"
 msgstr "domain.empty.allowed_for_fake_only"
+
+msgid "domain.fake_mode.description"
+msgstr ""
+
+msgid "domain.fake_mode.label"
+msgstr ""
 
 msgid "domain.intro"
 msgstr ""
@@ -2703,6 +2813,12 @@ msgid "domain.resolveip.description"
 msgstr ""
 
 msgid "domain.resolveip.label"
+msgstr ""
+
+msgid "domain.server_domain.description"
+msgstr ""
+
+msgid "domain.server_domain.label"
 msgstr ""
 
 msgid "domain.show_domains_description"
@@ -2892,6 +3008,9 @@ msgstr ""
 
 msgid "singbox: ssh"
 msgstr "caixa de som: ssh"
+
+msgid "special"
+msgstr ""
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

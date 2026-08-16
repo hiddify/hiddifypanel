@@ -108,6 +108,9 @@ msgstr "➖ Bridge серверы"
 msgid "Bug"
 msgstr "Баги/Предложения"
 
+msgid "CDN and worker domains must use valid fake mode"
+msgstr ""
+
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s Ядро"
 
@@ -301,6 +304,9 @@ msgstr "✏️ Изменить прокси"
 
 msgid "Enable"
 msgstr "❇️ Включить"
+
+msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
+msgstr ""
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ Ошибка в формате Auto CDN"
@@ -635,6 +641,9 @@ msgstr "REALITY Fallback Domain несовместим с именами сер�
 msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr ""
 
+msgid "Relay domains with non-valid fake mode require an IP address"
+msgstr ""
+
 msgid "Release"
 msgstr "✅ Релиз"
 
@@ -712,6 +721,9 @@ msgstr "Выбрать все записи"
 
 msgid "Select record"
 msgstr "Выберите запись"
+
+msgid "Selected proxy does not support this domain mode combination"
+msgstr ""
 
 msgid "Seleted Users"
 msgstr "Выбранные пользователи"
@@ -972,6 +984,9 @@ msgstr "API"
 
 msgid "admin.menu.config"
 msgstr "Настройки"
+
+msgid "admin.menu.dashboard_v2"
+msgstr ""
 
 msgid "admin.menu.domain"
 msgstr "Домены"
@@ -1283,6 +1298,12 @@ msgstr ""
 msgid "config.allow_invalid_sni.label"
 msgstr "🆗 Разрешить неверный SNI"
 
+msgid "config.anytls_enable.description"
+msgstr ""
+
+msgid "config.anytls_enable.label"
+msgstr ""
+
 msgid "config.auto_update.description"
 msgstr "Система автоматически обновится в 3:00 утра при наличии обновлений"
 
@@ -1505,6 +1526,12 @@ msgstr "Включить протокол HTTP/2"
 
 msgid "config.h2_enable.label"
 msgstr "🔵 h2"
+
+msgid "config.health_secret_path.description"
+msgstr ""
+
+msgid "config.health_secret_path.label"
+msgstr ""
 
 msgid "config.hidden.description"
 msgstr "config.hidden.description"
@@ -2137,6 +2164,18 @@ msgstr ""
 msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ Показать использование в доп.ссылке"
 
+msgid "config.snell_enable.description"
+msgstr ""
+
+msgid "config.snell_enable.label"
+msgstr ""
+
+msgid "config.socks_enable.description"
+msgstr ""
+
+msgid "config.socks_enable.label"
+msgstr ""
+
 msgid "config.special_port.description"
 msgstr ""
 "Вы можете установить индивидуальный порт для вашего сервера Reality, чтобы "
@@ -2253,6 +2292,16 @@ msgstr "Не используется"
 
 msgid "config.ssh_server_redis_url.label"
 msgstr "Адрес базы данных пользователей SSH"
+
+msgid "config.ssh_use_tls_port.description"
+msgstr ""
+"Если включено, SSH использует общие TLS/HTTPS-порты (например, 443) через "
+"L4-мультиплексирование вместо отдельного публичного SSH-порта. Клиенты "
+"подключаются к тому же TLS-порту; краевой мультиплексор определяет SSH и "
+"перенаправляет трафик на SSH-прокси."
+
+msgid "config.ssh_use_tls_port.label"
+msgstr "🔀 Мультиплекс SSH на TLS-порту"
 
 msgid "config.ssr.description"
 msgstr ""
@@ -2537,11 +2586,29 @@ msgstr ""
 msgid "config.validation-success-no-reset"
 msgstr "✅ Конфигурации успешно изменены"
 
+msgid "config.vless_decryption.description"
+msgstr ""
+
+msgid "config.vless_decryption.label"
+msgstr ""
+
 msgid "config.vless_enable.description"
 msgstr "Включить протокол VLess"
 
 msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
+
+msgid "config.vless_encryption.description"
+msgstr ""
+
+msgid "config.vless_encryption.label"
+msgstr ""
+
+msgid "config.vless_flow.description"
+msgstr ""
+
+msgid "config.vless_flow.label"
+msgstr ""
 
 msgid "config.vmess_enable.description"
 msgstr ""
@@ -2653,6 +2720,16 @@ msgstr "Для WireGuard указан открытый ключ."
 msgid "config.wireguard_public_key.label"
 msgstr "Открытый ключ WireGuard"
 
+msgid "config.wireguard_use_quic_port.description"
+msgstr ""
+"Если включено, WireGuard использует общие QUIC/UDP TLS-порты (например, 443)"
+" через L4-мультиплексирование вместо отдельного публичного порта WireGuard. "
+"Клиенты подключаются к тому же UDP/QUIC-порту; краевой мультиплексор "
+"определяет WireGuard и перенаправляет трафик на бэкенд WireGuard."
+
+msgid "config.wireguard_use_quic_port.label"
+msgstr "🔀 Мультиплекс WireGuard на QUIC-порту"
+
 msgid "config.ws_enable.description"
 msgstr ""
 "Websocket создает туннель поверх HTTP, который будет полезно использовать в "
@@ -2705,6 +2782,27 @@ msgstr ""
 msgid "domain.current_server_IPs"
 msgstr ""
 
+msgid "domain.custom_proxy.description"
+msgstr ""
+
+msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.other"
+msgstr ""
+
+msgid "domain.custom_proxy.group.sni_gateway"
+msgstr ""
+
+msgid "domain.custom_proxy.label"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_only"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
 msgid "domain.description"
 msgstr ""
 "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у"
@@ -2724,8 +2822,20 @@ msgstr ""
 msgid "domain.domain_fronting.label"
 msgstr "🔒 Фронтирование домена TLS"
 
+msgid "domain.ech.description"
+msgstr ""
+
+msgid "domain.ech.label"
+msgstr ""
+
 msgid "domain.empty.allowed_for_fake_only"
 msgstr "domain.empty.allowed_for_fake_only"
+
+msgid "domain.fake_mode.description"
+msgstr ""
+
+msgid "domain.fake_mode.label"
+msgstr ""
 
 msgid "domain.intro"
 msgstr ""
@@ -2748,6 +2858,12 @@ msgid "domain.resolveip.description"
 msgstr ""
 
 msgid "domain.resolveip.label"
+msgstr ""
+
+msgid "domain.server_domain.description"
+msgstr ""
+
+msgid "domain.server_domain.label"
 msgstr ""
 
 msgid "domain.show_domains_description"
@@ -2942,6 +3058,9 @@ msgstr ""
 
 msgid "singbox: ssh"
 msgstr "SingBox: SSH"
+
+msgid "special"
+msgstr ""
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

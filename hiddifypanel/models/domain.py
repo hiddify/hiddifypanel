@@ -67,6 +67,9 @@ class Domain(db.Model):
     mode = db.Column(db.Enum(DomainType), nullable=False, default=DomainType.direct)
     fake_mode = db.Column(db.Enum(FakeMode), nullable=False, default=FakeMode.valid)
     cdn_ip = db.Column(db.Text(2000), nullable=True, default="")
+    server_domain_id = db.Column(db.Integer, db.ForeignKey("domain.id"), nullable=True, default=None)
+    server_domain = db.relationship("Domain", remote_side=[id], foreign_keys=[server_domain_id])
+
     # port_index=db.Column(db.Integer, nullable=True, default=0)
     grpc = db.Column(db.Boolean, nullable=True, default=False)
     ech = db.Column(db.Boolean, nullable=False, default=False)
@@ -153,6 +156,18 @@ class Domain(db.Model):
 
         return data
 
+    def get_server(self):
+        if self.server_domain_id:
+            return self.server_domain.domain
+        if cdn_ip := self.auto_cdn_ip():
+            return cdn_ip[0]
+        if self.fake_mode != FakeMode.valid:
+            from hiddifypanel import hutils
+
+            return str(hutils.proxy.shared.random_or_none(hutils.network.get_ips()))
+
+        return self.domain
+
     @staticmethod
     def from_schema(schema):
         return schema.dump(Domain())
@@ -166,7 +181,7 @@ class Domain(db.Model):
     def auto_cdn_ip(self):
         from hiddifypanel import hutils
 
-        if self.cdn_ip:
+        if self.cdn_ip.strip():
             return hutils.network.auto_ip_selector.get_clean_ip(self.cdn_ip)
         return None
 
@@ -269,14 +284,22 @@ class Domain(db.Model):
         from hiddifypanel import hutils
 
         domains = []
-        domains = db.session.query(Domain).filter(
-            Domain.mode == DomainType.sub_link_only,
-            Domain.child_id == Child.current().id,
-        ).all()
+        domains = (
+            db.session.query(Domain)
+            .filter(
+                Domain.mode == DomainType.sub_link_only,
+                Domain.child_id == Child.current().id,
+            )
+            .all()
+        )
         if not len(domains) or always_add_all_domains:
-            domains = db.session.query(Domain).filter(
-                Domain.fake_mode == FakeMode.valid,
-            ).all()
+            domains = (
+                db.session.query(Domain)
+                .filter(
+                    Domain.fake_mode == FakeMode.valid,
+                )
+                .all()
+            )
 
         if len(domains) == 0 and request:
             domains = [Domain(domain=request.host)]  # type: ignore

@@ -1,0 +1,25 @@
+{#
+  Builtin additional_config (hiddify-core / sing-box JSON).
+  Disabled by default — enable the "Additional Config" custom proxy and edit URLs.
+#}
+{% set additional_configs = download(
+     "json",
+     "1h",
+     "https://example.com/singbox/" ~ ctx.user.uuid,
+     "https://example2.com/singbox/" ~ ctx.user.uuid
+) %}
+{% block outbounds %}
+     {% for conf in additional_configs if conf %}
+          {% for outbound in conf.get("outbounds", []) %}
+               {{ outbound | tojson }},
+          {% endfor %}
+     {% endfor %}
+{% endblock %}
+
+{% block endpoints %}
+     {% for conf in additional_configs if conf %}
+          {% for endpoint in conf.get("endpoints", []) %}
+               {{ endpoint | tojson }},
+          {% endfor %}
+     {% endfor %}
+{% endblock %}

@@ -3,5 +3,6 @@
 {% set qp.path = '/' ~ proxy.path %}
 
 {% if proxy.domain.download %}
-{% set qp.extra %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
+{% set qp.extra | compactjson %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
+
 {% endif %}

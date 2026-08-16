@@ -61,34 +61,40 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
 
 
 def filter_proxy(base: BaseVar) -> bool:
-    if not base.proxy.domains and base.proxy.mode != CustomProxyMode.ip:
+    # additional_config is client-only and has no domain bindings.
+    if base.proxy.slug != "additional-config" and not base.proxy.domains and base.proxy.mode != CustomProxyMode.ip:
         return False
 
-    if (cfg := base.hconfig.get(protocol_config_map[base.proxy.proto])) and cfg is False:
+    if base.proxy.slug == "additional-config":
+        return True
+
+    proto_key = protocol_config_map.get(base.proxy.proto)
+    if proto_key is not None and base.hconfig.get(proto_key) is False:
         return False
 
-    if (cfg := base.hconfig.get(transport_config_map.get(base.proxy.transport))) and cfg is False:
+    transport_key = transport_config_map.get(base.proxy.transport)
+    if transport_key is not None and base.hconfig.get(transport_key) is False:
         return False
 
     return True
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_client_hconfigs_child(child_id: int | None):
     return HConfigVar(get_hconfigs_json(child_id), server_side=False)
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_all_hconfigs():
     return {child.id: HConfigVar(get_hconfigs_json(child.id), server_side=False) for child in Child.query.all()}
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_platform_var(user_agent: str) -> PlatformVar:
     return PlatformVar.from_user_agent(user_agent)
 
 
-# @cache.cache(600)
+@cache.cache(600)
 def get_availble_domains(sublink_domain: str | None):
     if not sublink_domain:
         domains = Domain.query.all()

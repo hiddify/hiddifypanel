@@ -49,6 +49,14 @@ XHTTP_QUIC_ALPN_TAGS = frozenset({"tls_h3", "h3"})
 
 REALITY_TERMINATION_TEMPLATE_SLUG = "xray/server/presets/reality_termination"
 REALITY_TERMINATION_TAG = "reality-termination"
+ADDITIONAL_CONFIG_SLUG = "additional-config"
+ADDITIONAL_CONFIG_SERVER_SLUG = "hiddify-core/server/additional_config"
+ADDITIONAL_CONFIG_CLIENT_SLUGS = {
+    "hiddify-core": "hiddify-core/client/additional_config",
+    "xray": "xray/client/additional_config",
+    "clash": "clash/client/additional_config",
+    "sublink": "sublink/additional_config",
+}
 
 
 def build_reality_termination_preset(child_id: int = 0) -> CustomProxyPreset:
@@ -74,6 +82,66 @@ def build_reality_termination_preset(child_id: int = 0) -> CustomProxyPreset:
         ),
         client_cores=(),
         tcp_udp=InboundTcpUdp.tcp,
+    )
+
+
+def build_additional_config_preset(child_id: int = 0) -> CustomProxyPreset:
+    """Client-only proxy that merges remote configs via Jinja ``download()``. Disabled by default."""
+    del child_id  # presets are child-agnostic; sync applies child_id
+    server_template = load_template_slug(ADDITIONAL_CONFIG_SERVER_SLUG)
+    client_cores = (
+        PresetClientCore(
+            core="hiddify-core",
+            version="",
+            slug="client-hiddify-core",
+            outbounds_template=load_template_slug(ADDITIONAL_CONFIG_CLIENT_SLUGS["hiddify-core"]),
+        ),
+        PresetClientCore(
+            core="singbox",
+            version="",
+            slug="client-singbox",
+            # Reuse hiddify-core client template (avoids a second download pass).
+            outbounds_template="{#use_hiddify_core()#}",
+        ),
+        PresetClientCore(
+            core="xray",
+            version="",
+            slug="client-xray",
+            outbounds_template=load_template_slug(ADDITIONAL_CONFIG_CLIENT_SLUGS["xray"]),
+        ),
+        PresetClientCore(
+            core="clash",
+            version="",
+            slug="client-clash",
+            outbounds_template=load_template_slug(ADDITIONAL_CONFIG_CLIENT_SLUGS["clash"]),
+        ),
+        PresetClientCore(
+            core="sublink",
+            version="",
+            slug="client-sublink",
+            outbounds_template=load_template_slug(ADDITIONAL_CONFIG_CLIENT_SLUGS["sublink"]),
+        ),
+    )
+    return CustomProxyPreset(
+        name="Additional Config",
+        slug=ADDITIONAL_CONFIG_SLUG,
+        enable=False,
+        mode=CustomProxyMode.ip,
+        proto="vless",
+        transport="other",
+        tls_layer="http",
+        l7_reverse_proto=None,
+        categories=("additional_config",),
+        domain_modes=(),
+        custom_path="",
+        server_config=PresetServerConfig(
+            core="hiddify-core",
+            inbound_template=server_template,
+            template_slugs=(ADDITIONAL_CONFIG_SERVER_SLUG,),
+            tag="additional-config",
+        ),
+        client_cores=client_cores,
+        tcp_udp=InboundTcpUdp.both,
     )
 
 
@@ -367,6 +435,7 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
             except ValueError:
                 pass
     rows.append(build_reality_termination_preset(child_id))
+    rows.append(build_additional_config_preset(child_id))
     return rows
 
 

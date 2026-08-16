@@ -2,25 +2,29 @@
 "xhttpSettings": {
   "mode": "{{ mode|default('auto') }}",
   "path": "/{{ proxy.path }}",
-  "host": "{{ ctx.proxy.domain.host }}",
+  "host": "{{ proxy.domain.host }}",
   "extra": {
-    {% if ctx.proxy.domain.download and ctx.proxy.domain.download.name != ctx.proxy.domain.name %}
+    {% if proxy.domain.download %}
     "downloadSettings": {
-      "address": "{{ ctx.proxy.domain.download.server() }}",
-      "port": {{ ctx.proxy.domain.download.port or ctx.proxy.tcp_port }},
+      "address": "{{ proxy.domain.download.server() }}",
+      "port": {{ proxy.domain.download.port or proxy.tcp_port }},
       "network": "xhttp",
-      "security": {% if download_tls|default(true) %}"tls"{% else %}"none"{% endif %},
-      {% if download_tls|default(true) %}
+      "security": {% if download_tls %}"tls"{% else %}"none"{% endif %},
+      {% if download_tls %}
       "tlsSettings": {
-        "serverName": "{{ ctx.proxy.domain.download.sni or ctx.proxy.domain.sni }}",
-        "allowInsecure": {{ ctx.proxy.domain.download.allow_insecure | tojson }},
+        "serverName": "{{ proxy.domain.download.sni or proxy.domain.sni }}",
+        {%if proxy.domain.download.allow_insecure%}
+        "allowInsecure": true,
+        {%endif%}
         "fingerprint": "{{ ctx.hconfig.fingerprint }}",
-        "alpn": {{ (download_alpns if download_alpns is defined else ["h2", "http/1.1"]) | tojson }}
+        {%if download_alpns%}
+          "alpn": {{ download_alpns | tojson }}
+        {%endif%}
       },
       {% endif %}
       "xhttpSettings": {
         "path": "/{{ proxy.path }}",
-        "host": "{{ ctx.proxy.domain.download.host }}",
+        "host": "{{ proxy.domain.download.host }}",
         "mode": "{{ mode|default('auto') }}"
       }
     },

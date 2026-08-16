@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from hiddifypanel.models import DomainType, FakeMode
 from hiddifypanel.models.custom_proxy import (
     CustomProxyMode,
     CustomProxyTransport,
@@ -14,7 +15,6 @@ from hiddifypanel.models.custom_proxy import (
     normalize_custom_path,
 )
 from hiddifypanel.models.proxy import ProxyProto
-from hiddifypanel.models.domain import DomainType
 
 if TYPE_CHECKING:
     from hiddifypanel.models.custom_proxy import CustomProxy
@@ -165,16 +165,15 @@ class ProxyDomainVar(ProxyVar):
         )
         return cls(
             domain=domain,
-            **proxy.model_dump(
-                exclude={"domain", "server_config", "client_configs", "tcp_ports", "udp_ports", "domains"},
-            ),
+            **proxy.model_dump(exclude={"domain", "server_config", "client_configs", "tcp_ports", "udp_ports", "domains"}),
             tcp_ports=list(resolved.tcp_ports),
             udp_ports=list(resolved.udp_ports),
         )
 
     @property
     def server(self) -> str:
-        return self.domain.server(self.mode == CustomProxyMode.ip)
+        return self.domain.server()
+        # return self.domain.server(self.mode == CustomProxyMode.ip or self.domain.fake_mode != FakeMode.valid)
 
     @property
     def is_reality(self) -> bool:

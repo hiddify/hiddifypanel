@@ -33,6 +33,7 @@
   "Beta": "☑️ 测试版",
   "Bridge Servers": "➖ 桥接服务器",
   "Bug": "错误/功能",
+  "CDN and worker domains must use valid fake mode": "",
   "CPU %(cores)s Cores": "CPU %(cores)s 核心",
   "Can add sub admin": "👥 可以添加子管理员",
   "Change": "",
@@ -75,6 +76,7 @@
   "Edit": "编辑",
   "Edit Proxy Names": "✏️ 修改代理",
   "Enable": "❇️启用",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
   "Error in auto cdn format": "⚠️ 自动 CDN 格式错误",
   "Error! auto cdn ip can not be find, please contact admin.": "自动 CDN IP 错误！找不到，请联系管理员",
   "Example Domains": "测试并推荐域名",
@@ -164,6 +166,7 @@
   "RAM": "内存",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY 后备域与服务器名称不兼容！",
   "REALITY Fallback domain is not compatible with server names!": "",
+  "Relay domains with non-valid fake mode require an IP address": "",
   "Release": "✅ 发布",
   "Remaining about %(relative)s, exactly %(days)s days": "还剩下大约 %(relative)s，正好 %(days)s 天",
   "Remote nodes are not supported yet!": "尚不支持远程节点！",
@@ -190,6 +193,7 @@
   "Save Link": "保存链接",
   "Select all records": "选择所有记录",
   "Select record": "选择记录",
+  "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "选定用户",
   "Send Message to User's Telegram": "📣 向用户的 Telegram 发送消息",
   "Sending": "正在发送...",
@@ -265,6 +269,7 @@
     "menu": {
       "api": "应用程序编程接口",
       "config": "设置",
+      "dashboard_v2": "",
       "domain": "域名",
       "home": "仪表板",
       "proxy": "代理",
@@ -429,6 +434,10 @@
       "description": "如果您允许无效的SNI，您可以使用任何域而不是原始域来访问代理（不推荐）",
       "label": "🆗 允许无效的 SNI"
     },
+    "anytls_enable": {
+      "description": "",
+      "label": ""
+    },
     "auto_update": {
       "description": "每天凌晨 3:00，我们都会检查是否有新更新。如果有新的更新可用，我们将自动更新系统",
       "label": "🔄 自动更新"
@@ -548,6 +557,10 @@
     "h2_enable": {
       "description": "启用 HTTP/2 协议",
       "label": "🔵 h2"
+    },
+    "health_secret_path": {
+      "description": "",
+      "label": ""
     },
     "hidden": {
       "description": "配置.隐藏.描述",
@@ -906,6 +919,14 @@
       "description": "此选项会在用户的子链接中创建一个假配置，显示用户的剩余音量",
       "label": "👁️‍🗨️ 在子链接中显示用法"
     },
+    "snell_enable": {
+      "description": "",
+      "label": ""
+    },
+    "socks_enable": {
+      "description": "",
+      "label": ""
+    },
     "special_port": {
       "description": "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）",
       "label": "↔️ 直接 Reality 端口"
@@ -966,10 +987,6 @@
       "description": "SSH Proxy 与原来的 SSH Server 完全不同",
       "label": "✔️ 启用 SSH 代理"
     },
-    "ssh_use_tls_port": {
-      "description": "启用后，SSH 将通过 L4 多路复用共享 TLS/HTTPS 端口（如 443），而不是使用独立的公开 SSH 端口。客户端连接到相同的 TLS 端口；边缘多路复用器识别 SSH 流量并将其转发到 SSH 代理后端。",
-      "label": "🔀 在 TLS 端口上多路复用 SSH"
-    },
     "ssh_server_port": {
       "description": "这与你原来的 SSH 服务器完全不同。这是一个专用程序。",
       "label": "↔️ SSH 代理端口"
@@ -977,6 +994,10 @@
     "ssh_server_redis_url": {
       "description": "不曾用过",
       "label": "SSH用户数据库地址"
+    },
+    "ssh_use_tls_port": {
+      "description": "启用后，SSH 将通过 L4 多路复用共享 TLS/HTTPS 端口（如 443），而不是使用独立的公开 SSH 端口。客户端连接到相同的 TLS 端口；边缘多路复用器识别 SSH 流量并将其转发到 SSH 代理后端。",
+      "label": "🔀 在 TLS 端口上多路复用 SSH"
     },
     "ssr": {
       "description": "ShadowsocksR是原始Shadowsocks项目的一个分支，号称在安全性和稳定性方面更胜一筹。",
@@ -1133,9 +1154,21 @@
     "validation-error": "其中一个字段有错误。",
     "validation-success": "配置已成功更改。单击 %(link)s 应用配置。申请可能需要 2 分钟",
     "validation-success-no-reset": "✅ 配置已成功更改",
+    "vless_decryption": {
+      "description": "",
+      "label": ""
+    },
     "vless_enable": {
       "description": "启用 VLess 协议",
       "label": "⚫️ VLess"
+    },
+    "vless_encryption": {
+      "description": "",
+      "label": ""
+    },
+    "vless_flow": {
+      "description": "",
+      "label": ""
     },
     "vmess_enable": {
       "description": "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐",
@@ -1186,10 +1219,6 @@
       "description": "定义 WireGuard 的端口 ",
       "label": "↔️ WireGuard 端口"
     },
-    "wireguard_use_quic_port": {
-      "description": "启用后，WireGuard 将通过 L4 多路复用共享 QUIC/UDP TLS 端口（如 443），而不是使用独立的公开 WireGuard 端口。客户端连接到相同的 UDP/QUIC 端口；边缘多路复用器识别 WireGuard 流量并将其转发到 WireGuard 后端。",
-      "label": "🔀 在 QUIC 端口上多路复用 WireGuard"
-    },
     "wireguard_private_key": {
       "description": "为 WireGuard 指定私钥",
       "label": "WireGuard 私钥"
@@ -1197,6 +1226,10 @@
     "wireguard_public_key": {
       "description": "为 WireGuard 指定一个公钥",
       "label": "WireGuard 公钥"
+    },
+    "wireguard_use_quic_port": {
+      "description": "启用后，WireGuard 将通过 L4 多路复用共享 QUIC/UDP TLS 端口（如 443），而不是使用独立的公开 WireGuard 端口。客户端连接到相同的 UDP/QUIC 端口；边缘多路复用器识别 WireGuard 流量并将其转发到 WireGuard 后端。",
+      "label": "🔀 在 QUIC 端口上多路复用 WireGuard"
     },
     "ws_enable": {
       "description": "Websocket 通过 HTTP 创建一个隧道，可用于 CDN",
@@ -1221,14 +1254,33 @@
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ 您的域名已更改。请不要忘记复制管理链接，否则您将无法再访问面板",
     "current_server_IPs": "",
+    "custom_proxy": {
+      "description": "",
+      "group": {
+        "ip_based": "",
+        "other": "",
+        "sni_gateway": ""
+      },
+      "label": "",
+      "reality_only": "",
+      "reality_required": ""
+    },
     "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
     "domain": "领域",
     "domain_fronting": {
       "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
       "label": "🔒 TLS 的域前端"
     },
+    "ech": {
+      "description": "",
+      "label": ""
+    },
     "empty": {
       "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+    },
+    "fake_mode": {
+      "description": "",
+      "label": ""
     },
     "intro": "1️⃣ 在此部分，您可以添加您的域。<inlang-LineFeed><br>\n2️⃣如果您想减少拥有脏IP的概率，您可以添加多个中继服务器<a href='https://github.com/hiddify/hiddify-config/discussions/129'>阅读更多</a>。<inlang-LineFeed><br>\n3️⃣如果您的面板中有多个 IPv4 或 IPv6，则必须将指向它们的域添加为中继。",
     "ip": "知识产权",
@@ -1237,6 +1289,10 @@
       "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
     },
     "resolveip": {
+      "description": "",
+      "label": ""
+    },
+    "server_domain": {
       "description": "",
       "label": ""
     },
@@ -1339,6 +1395,7 @@
     }
   },
   "singbox: ssh": "歌手盒：SSH",
+  "special": "",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",

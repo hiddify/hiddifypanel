@@ -33,6 +33,7 @@
   "Beta": "☑️Beta",
   "Bridge Servers": "➖ Servidores Bridge",
   "Bug": "Bug/recurso",
+  "CDN and worker domains must use valid fake mode": "",
   "CPU %(cores)s Cores": "CPU %(cores)s Núcleos ",
   "Can add sub admin": "👥 Pode adicionar subadministrador",
   "Change": "",
@@ -75,6 +76,7 @@
   "Edit": "Editar",
   "Edit Proxy Names": "✏️ Modificando Proxies",
   "Enable": "❇️ Habilitar",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
   "Error in auto cdn format": "⚠️ Erro no formato CDN automático",
   "Error! auto cdn ip can not be find, please contact admin.": "Erro no Auto CDN IP! Não pode ser encontrado, entre em contato com o administrador",
   "Example Domains": "Test and Suggest Domain ",
@@ -164,6 +166,7 @@
   "RAM": "BATER",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain não é compatível com nomes de servidores!",
   "REALITY Fallback domain is not compatible with server names!": "",
+  "Relay domains with non-valid fake mode require an IP address": "",
   "Release": "✅ Liberação",
   "Remaining about %(relative)s, exactly %(days)s days": "Restam cerca de %(relative)s, exatamente %(days)s dias",
   "Remote nodes are not supported yet!": "Nós remotos ainda não são suportados!",
@@ -190,6 +193,7 @@
   "Save Link": "Link salvo",
   "Select all records": "Selecionar todos os registros",
   "Select record": "Selecionar registro",
+  "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "Usuários selecionados",
   "Send Message to User's Telegram": "📣 Enviar mensagem para o telegram do usuário",
   "Sending": "Enviando...",
@@ -265,6 +269,7 @@
     "menu": {
       "api": "API",
       "config": "Configurações",
+      "dashboard_v2": "",
       "domain": "domínios",
       "home": "Painel",
       "proxy": "Proxies",
@@ -429,6 +434,10 @@
       "description": "Se você permitir SNI inválido, poderá usar qualquer Domínio em vez do seu Domínio original para acessar o Proxy (Não Recomendado)",
       "label": "🆗 Permitir SNI inválido"
     },
+    "anytls_enable": {
+      "description": "",
+      "label": ""
+    },
     "auto_update": {
       "description": "Todos os dias às 3:00 da manhã, verificaremos se há uma nova atualização. se houver uma nova atualização disponível, atualizaremos o sistema automaticamente",
       "label": "🔄 Atualização automática"
@@ -548,6 +557,10 @@
     "h2_enable": {
       "description": "Habilitar protocolo HTTP/2",
       "label": "🔵h2"
+    },
+    "health_secret_path": {
+      "description": "",
+      "label": ""
     },
     "hidden": {
       "description": "config.hidden.description",
@@ -906,6 +919,14 @@
       "description": "Esta opção cria uma configuração falsa no sublink do usuário que mostra o volume restante do usuário",
       "label": "💬 Mostrar uso no sublink"
     },
+    "snell_enable": {
+      "description": "",
+      "label": ""
+    },
+    "socks_enable": {
+      "description": "",
+      "label": ""
+    },
     "special_port": {
       "description": "Você pode definir uma porta personalizada para seu servidor de Reality para reduzir a sobrecarga do sistema. (Permitir conexão direta com proxies deve ser sim)",
       "label": "↔️ Porto de Realidade Direta"
@@ -966,10 +987,6 @@
       "description": "O proxy SSH é completamente diferente do servidor ssh original.",
       "label": "✔️ Proxy SSH"
     },
-    "ssh_use_tls_port": {
-      "description": "Quando ativado, o SSH compartilha as portas TLS/HTTPS (como 443) via multiplexação L4 em vez de usar uma porta SSH pública dedicada. Os clientes conectam-se à mesma porta TLS; o multiplexador de borda detecta o SSH e encaminha o tráfego para o backend do proxy SSH.",
-      "label": "🔀 Multiplexar SSH na porta TLS"
-    },
     "ssh_server_port": {
       "description": "Isso é completamente diferente do seu servidor ssh original. É um programa dedicado.",
       "label": "↔️ Porta Proxy SSH"
@@ -977,6 +994,10 @@
     "ssh_server_redis_url": {
       "description": "Não usado",
       "label": "Endereço do banco de dados do usuário SSH"
+    },
+    "ssh_use_tls_port": {
+      "description": "Quando ativado, o SSH compartilha as portas TLS/HTTPS (como 443) via multiplexação L4 em vez de usar uma porta SSH pública dedicada. Os clientes conectam-se à mesma porta TLS; o multiplexador de borda detecta o SSH e encaminha o tráfego para o backend do proxy SSH.",
+      "label": "🔀 Multiplexar SSH na porta TLS"
     },
     "ssr": {
       "description": "ShadowsocksR é um fork do projeto Shadowsocks original, considerado superior em termos de segurança e estabilidade.",
@@ -1133,9 +1154,21 @@
     "validation-error": "Há um erro em um dos campos.",
     "validation-success": "As configurações foram alteradas com sucesso. Clique em %(link)s para aplicar as configurações. Pode levar 2 minutos para aplicar",
     "validation-success-no-reset": "✅ As configurações foram alteradas com sucesso",
+    "vless_decryption": {
+      "description": "",
+      "label": ""
+    },
     "vless_enable": {
       "description": "Habilitar protocolo VLess",
       "label": "⚫️ VLess"
+    },
+    "vless_encryption": {
+      "description": "",
+      "label": ""
+    },
+    "vless_flow": {
+      "description": "",
+      "label": ""
     },
     "vmess_enable": {
       "description": "É relatado por várias pessoas que o VMess faz com que o sistema seja detectado pelo governo. Então não é recomendado",
@@ -1186,10 +1219,6 @@
       "description": "Define porta para WireGuard ",
       "label": "↔️ Porta WireGuard"
     },
-    "wireguard_use_quic_port": {
-      "description": "Quando ativado, o WireGuard compartilha as portas QUIC/UDP TLS (como 443) via multiplexação L4 em vez de usar uma porta WireGuard pública dedicada. Os clientes conectam-se à mesma porta UDP/QUIC; o multiplexador de borda detecta o WireGuard e encaminha o tráfego para o backend WireGuard.",
-      "label": "🔀 Multiplexar WireGuard na porta QUIC"
-    },
     "wireguard_private_key": {
       "description": "Uma chave privada é especificada para WireGuard",
       "label": "Chave privada WireGuard"
@@ -1197,6 +1226,10 @@
     "wireguard_public_key": {
       "description": "Uma chave pública é especificada para WireGuard",
       "label": "Chave pública WireGuard"
+    },
+    "wireguard_use_quic_port": {
+      "description": "Quando ativado, o WireGuard compartilha as portas QUIC/UDP TLS (como 443) via multiplexação L4 em vez de usar uma porta WireGuard pública dedicada. Os clientes conectam-se à mesma porta UDP/QUIC; o multiplexador de borda detecta o WireGuard e encaminha o tráfego para o backend WireGuard.",
+      "label": "🔀 Multiplexar WireGuard na porta QUIC"
     },
     "ws_enable": {
       "description": "Websocket cria um túnel sobre HTTP que é útil para ser usado em CDN",
@@ -1221,14 +1254,33 @@
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Seus domínios mudaram. por favor, não se esqueça de copiar os links do administrador, caso contrário, você não poderá mais acessar o painel",
     "current_server_IPs": "",
+    "custom_proxy": {
+      "description": "",
+      "group": {
+        "ip_based": "",
+        "other": "",
+        "sni_gateway": ""
+      },
+      "label": "",
+      "reality_only": "",
+      "reality_required": ""
+    },
     "description": "Por favor, preencha este campo com cuidado e corretamente. Caso contrário, os proxies terão problemas. Visite <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Ajuda</a> para aprenda como criar um subdomínio.",
     "domain": "Domínio",
     "domain_fronting": {
       "description": "É usado para simular outro site em vez do seu site no SNI. portanto, o GFW não pode filtrar seu domínio\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Guia</a>. ⚠️CloudFlare não suporta fronting de domínio.",
       "label": "🔒 Fronting de domínio de TLS"
     },
+    "ech": {
+      "description": "",
+      "label": ""
+    },
     "empty": {
       "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+    },
+    "fake_mode": {
+      "description": "",
+      "label": ""
     },
     "intro": "1️⃣ Nesta seção, você pode adicionar seu domínio.\\n<br>\n2️⃣ Se você deseja diminuir a probabilidade de ter um IP sujo, pode adicionar Multiple Relay Server <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Leia mais</a>.\\n<br>\n3️⃣ Se você tiver Múltiplos IPv4 ou IPv6 em seu Painel, deverá adicionar o domínio apontado para eles como Relay.\"",
     "ip": "IP",
@@ -1237,6 +1289,10 @@
       "asn_issue": "O domínio selecionado para REALITY não está no mesmo ASN.\nPara melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN"
     },
     "resolveip": {
+      "description": "",
+      "label": ""
+    },
+    "server_domain": {
       "description": "",
       "label": ""
     },
@@ -1339,6 +1395,7 @@
     }
   },
   "singbox: ssh": "caixa de som: ssh",
+  "special": "",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",

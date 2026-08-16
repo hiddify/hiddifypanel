@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ipaddress
-from typing import Any, Literal
+from typing import Any, Literal, Iterable
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -41,8 +41,10 @@ class IPVar(BaseModel):
         return cls(ipsv4=v4, ipsv6=v6)
 
     def merge(self, other: IPVar | list[str]):
-        if isinstance(other, list):
+        if isinstance(other, Iterable):
             other = IPVar.from_strings(*other)
+        if isinstance(other, str):
+            other = IPVar.from_strings(other)
         self.ipsv4.update(other.ipsv4)
         self.ipsv6.update(other.ipsv6)
         return self

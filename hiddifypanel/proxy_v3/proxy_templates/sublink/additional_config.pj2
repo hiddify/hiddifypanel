@@ -1,0 +1,14 @@
+{#
+  Builtin additional_config (subscription links).
+  Each URL should return plain-text share links (one per line).
+  Disabled by default — enable the "Additional Config" custom proxy and edit URLs.
+#}
+{% set additional_configs = download(
+     "txt",
+     "1h",
+     "https://example.com/sub/" ~ ctx.user.uuid,
+     "https://example2.com/sub/" ~ ctx.user.uuid
+) %}
+{% for conf in additional_configs if conf %}
+{{ conf }}
+{% endfor %}

@@ -33,6 +33,7 @@
   "Beta": "☑️ نسخه آزمایشی",
   "Bridge Servers": "➖ سرور های میانی",
   "Bug": "باگ/پیشنهاد",
+  "CDN and worker domains must use valid fake mode": "",
   "CPU %(cores)s Cores": "پردازنده %(cores)s هسته",
   "Can add sub admin": "👥 امکان اضافه کردن ادمین فرعی",
   "Change": "",
@@ -75,6 +76,7 @@
   "Edit": "ویرایش",
   "Edit Proxy Names": "✏️ ویرایش پروکسی‌ها",
   "Enable": "❇️ فعال",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
   "Error in auto cdn format": "⚠️ خطا در ورود IP ها به صورت دستی",
   "Error! auto cdn ip can not be find, please contact admin.": "خطا! آی پی اتوماتیک نتوانست پیدا شود. لطفا با مدیر تماس بگیرید",
   "Example Domains": "بررسی و پیشنهاد دامنه",
@@ -164,6 +166,7 @@
   "RAM": "رم",
   "REALITY Fallback domain is not compaitble with server names!": "دامنه بازگشتی REALITY با نام سرور سازگار نیست!",
   "REALITY Fallback domain is not compatible with server names!": "ریالتی: دامنه جایگزین با نام سرورها سازگار نیست!",
+  "Relay domains with non-valid fake mode require an IP address": "",
   "Release": "✅ پایدار",
   "Remaining about %(relative)s, exactly %(days)s days": "حدود %(relative)s و دقیقا %(days)s روز باقی مانده است",
   "Remote nodes are not supported yet!": "گره های راه دور هنوز پشتیبانی نمی شوند!",
@@ -190,6 +193,7 @@
   "Save Link": "این لینک را در محلی ذخیره نمایید.",
   "Select all records": "انتخاب همه رکوردها",
   "Select record": "انتخاب رکورد",
+  "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "کاربران انتخاب شده",
   "Send Message to User's Telegram": "📣 ارسال پیام به تلگرام کاربر",
   "Sending": "در حال ارسال...",
@@ -265,11 +269,11 @@
     "menu": {
       "api": "API",
       "config": "تنظیمات",
+      "dashboard_v2": "داشبورد جدید",
       "domain": "دامنه‌ها",
       "home": "داشبورد",
       "proxy": "پروکسی‌ها",
       "proxy_stats": "وضعیت پروکسی ها",
-      "dashboard_v2": "داشبورد جدید",
       "support": "راهنما",
       "telegram": "تلگرام",
       "user": "کاربران"
@@ -285,6 +289,296 @@
     "quicksetup_intro": "آی‌پی‌های سرور شما عبارتند از: <div >IPv4: %(ipv4)s <br> IPv6: %(ipv6)s\n</div>\nدامنه یا زیر دامنه خود را با این آی‌پی‌ها تنظیم کنید و سپس دامنه یا زیر دامنه تنظیم شده را در کادر زیر وارد کنید.",
     "save_panel_link": "توجه داشته باشید که تنها از طریق لینک زیر  می‌توانید به پنل مدیریت دسترسی داشته باشید. لطفا این لینک را کپی و برای استفاده‌های بعدی ذخیره نمایید.\n\n<p class='ltr'>\n<a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "⚠️ لطفا برای اینکه مطمئن شوید تغییرات به درستی اعمال شده، حدود 5 دقیقه صبر کنید. در این فاصله لینک‌های زیر را کپی کرده و در جایی برای خود ذخیره نمایید:"
+  },
+  "adminV2": {
+    "appTitle": "هیدیفای — جدید",
+    "baseConfig": {
+      "content": "پیکربندی کامل",
+      "core": "هسته",
+      "description": "توضیحات",
+      "listTitle": "پیکربندی‌های پایه",
+      "name": "نام",
+      "new": "پیکربندی پایه جدید",
+      "side": "سمت",
+      "version": "نسخه"
+    },
+    "common": {
+      "actions": "عملیات",
+      "add": "افزودن",
+      "back": "بازگشت",
+      "cancel": "انصراف",
+      "confirmDelete": "آیا از حذف این مورد مطمئن هستید؟",
+      "delete": "حذف",
+      "deleted": "با موفقیت حذف شد",
+      "duplicate": "کپی",
+      "edit": "ویرایش",
+      "enabled": "فعال",
+      "format": "قالب‌بندی",
+      "loadFailed": "بارگذاری داده ناموفق بود",
+      "save": "ذخیره",
+      "saved": "با موفقیت ذخیره شد",
+      "search": "جستجو...",
+      "validate": "اعتبارسنجی",
+      "validationFailed": "اعتبارسنجی ناموفق",
+      "validationOk": "اعتبارسنجی موفق"
+    },
+    "dashboard": {
+      "subtitle": "مدیریت پنل هیدیفای",
+      "title": "داشبورد",
+      "underConstruction": "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت.",
+      "welcomePanel": "خوش آمدید"
+    },
+    "domain": {
+      "addTitle": "افزودن دامنه",
+      "alias": "نام مستعار",
+      "domain": "دامنه",
+      "mode": "حالت"
+    },
+    "editor": {
+      "cannotFormatJinja": "قالب‌بندی خودکار با تگ‌های Jinja ممکن نیست",
+      "excludeBuiltinTemplates": "حذف قالب‌های داخلی از خروجی",
+      "exportBundle": "خروجی بسته",
+      "includeTemplate": "شامل کردن قالب",
+      "insertVariable": "درج متغیر",
+      "jinjaHint": "JSON5 + Jinja: از {{ proxy.port }}، {{ proxy.tag }}، {% for %}…{% endfor %} استفاده کنید",
+      "noVariables": "متغیری با این جستجو یافت نشد",
+      "preview": "پیش‌نمایش",
+      "previewFailed": "درخواست پیش‌نمایش ناموفق بود",
+      "previewOk": "پیش‌نمایش با موفقیت تولید شد",
+      "previewParams": "پارامترهای پیش‌نمایش",
+      "previewPartial": "پیش‌نمایش با هشدار تولید شد",
+      "previewTitle": "پیش‌نمایش قالب"
+    },
+    "footer": {
+      "text": "پنل ادمین هیدیفای نسخه ۲"
+    },
+    "menu": {
+      "baseConfigs": "پیکربندی پایه",
+      "customProxies": "پروکسی‌های سفارشی",
+      "dashboard": "داشبورد",
+      "proxyEditor": "ویرایشگر پروکسی",
+      "sectionMain": "اصلی",
+      "sectionNew": "جدید",
+      "sectionV2": "جدید",
+      "templateVariables": "متغیرهای قالب",
+      "templates": "قالب‌ها"
+    },
+    "proxy": {
+      "addClient": "افزودن کلاینت",
+      "addClientConfig": "افزودن کانفیگ برای این هسته",
+      "addCoreConfig": "افزودن کانفیگ هسته",
+      "allowedProtocols": "پروتکل‌های مجاز",
+      "alpn": "ALPN",
+      "alpnLabels": {
+        "custom": "سفارشی",
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "tls_h2": "TLS H2",
+        "tls_h3": "QUIC"
+      },
+      "autoClient": "خودکار",
+      "baseConfigTemplate": "بازنویسی پیکربندی پایه",
+      "baseConfigTemplateHint": "اختیاری: پوسته کامل xray داخل {% block base_config %}. خالی بگذارید تا از پیکربندی پایه سراسری استفاده شود.",
+      "builtinDefaultHint": "پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را در تب سرور یا کلاینت فعال کنید.",
+      "bundleContextProxyCount": "پروکسی‌های فعال",
+      "categories": "دسته‌بندی‌ها",
+      "categoriesAddNew": "افزودن",
+      "categoriesAddPlaceholder": "دسته‌بندی جدید",
+      "categoriesFilter": "فیلتر بر اساس دسته‌بندی",
+      "categoriesHeader": "دسته‌بندی‌های موجود",
+      "categoriesHint": "دسته‌بندی موجود را انتخاب کنید یا از پایین منو یک مورد جدید اضافه کنید",
+      "categoriesPlaceholder": "انتخاب دسته‌بندی",
+      "clashFormatJson": "JSON",
+      "clashFormatYaml": "YAML",
+      "clientBuiltinCustomized": "پیکربندی کلاینت سفارشی",
+      "clientBuiltinDefault": "استفاده از پیکربندی پیش‌فرض کلاینت کاتالوگ",
+      "clientConfigDefault": "کانفیگ کلاینت",
+      "clientCoreConfigs": "کانفیگ هسته کلاینت",
+      "clientCores": "هسته‌های کلاینت",
+      "core": "هسته",
+      "customPath": "مسیر سفارشی",
+      "directPortAccess": "دسترسی مستقیم به پورت",
+      "directPortAccessHint": "با احتیاط استفاده کنید — ممکن است سرور شما قابل کشف باشد",
+      "doBase64After": "Base64 بعد از رندر",
+      "domainIds": "دامنه‌ها",
+      "domainIdsEmptyAll": "خالی = همه دامنه‌های منطبق؛ پروکسی IP‌محور دامنه ندارد",
+      "domainModeLabels": {
+        "cdn": "CDN",
+        "direct": "مستقیم",
+        "fake": "Fake TLS",
+        "reality": "REALITY",
+        "relay": "Relay",
+        "special": "ویژه (REALITY)"
+      },
+      "domainModes": "حالت دامنه",
+      "domains": "دامنه‌ها",
+      "downloadAlpns": "ALPN دانلود",
+      "downloadAlpnsHint": "فقط xHTTP. خالی = همان ALPN اصلی.",
+      "downloadDomainModes": "حالت‌های دامنه دانلود",
+      "downloadTlsLayer": "لایه TLS دانلود",
+      "exampleContext": "زمینه رندر",
+      "exampleContextDomain": "دامنه",
+      "exampleContextIp": "IP",
+      "exampleContextProxy": "شناسه پروکسی",
+      "exampleContextUa": "User-Agent",
+      "exampleContextUser": "کاربر",
+      "exampleDomain": "دامنه",
+      "exampleDomainAll": "همه دامنه‌ها",
+      "exampleDomainAllHint": "همه دامنه‌های منطبق با این پروکسی در خروجی گنجانده می‌شوند (مثل اشتراک).",
+      "exampleDomainCustom": "دامنه دلخواه",
+      "exampleDomainPick": "انتخاب از پنل",
+      "exampleIp": "آدرس IP",
+      "exampleUaCustom": "User-Agent دلخواه",
+      "exampleUaPreset": "از پیش‌تعریف‌شده",
+      "exampleUser": "کاربر",
+      "exampleUserAgent": "User-Agent",
+      "exampleUserPick": "انتخاب کاربر پنل",
+      "exampleUserSample": "کاربر نمونه",
+      "export": "خروجی",
+      "exportFailed": "خروجی ناموفق",
+      "faketlsDomains": "دامنه‌های faketls",
+      "fieldOverride": "بازنویسی",
+      "generateBundle": "تولید همه پیکربندی‌ها",
+      "generateBundleOk": "بسته پیکربندی با موفقیت تولید شد",
+      "generateBundlePartial": "بسته پیکربندی با هشدار یا خطا تولید شد",
+      "generateExample": "تولید نمونه",
+      "generateExampleOk": "نمونه با موفقیت تولید شد",
+      "generateExamplePartial": "نمونه با هشدار یا خطا تولید شد",
+      "ignoreSkip": "نادیده گرفتن skip",
+      "ignoreSkipHint": "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود",
+      "import": "ورود",
+      "importFailed": "ورود ناموفق",
+      "importSuccess": "با موفقیت وارد شد ({count} قالب)",
+      "inboundPort": "پورت inbound",
+      "inboundPortAuto": "خالی = خودکار",
+      "inboundPortAutoCalculated": "پورت‌ها به ازای هر دامنه خودکار محاسبه می‌شوند",
+      "inboundTcpPorts": "پورت‌های TCP ورودی",
+      "inboundTcpPortsHint": "پورت‌های TCP ثابت با کاما",
+      "inboundTemplate": "قالب inbound",
+      "inboundUdpPorts": "پورت‌های UDP ورودی",
+      "inboundUdpPortsHint": "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP",
+      "l7Proto": "L7 Reverse Proxy Protocol",
+      "l7ReverseProto": "پروتکل L7 reverse proxy",
+      "linkSettings": "تنظیمات لینک",
+      "linkTemplate": "قالب لینک",
+      "listTitle": "پروکسی‌های سفارشی",
+      "mode": "حالت",
+      "modeLabels": {
+        "domain_native": "بومی دامنه",
+        "domains_auto_public_ports": "پورت خودکار چند دامنه",
+        "domains_l7_gateway": "درگاه L7 دامنه",
+        "domains_single_public_port": "پورت ثابت چند دامنه",
+        "domains_sni_gateway": "درگاه SNI دامنه",
+        "ip": "مبتنی بر IP"
+      },
+      "modeSettings": "حالت و مسیریابی",
+      "name": "نام",
+      "new": "پروکسی جدید",
+      "noClientConfigs": "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید.",
+      "outboundTagTemplate": "قالب تگ outbound",
+      "outboundTagTemplateHint": "Jinja برای تگ هر outbound کلاینت",
+      "outboundsTemplate": "قالب outbounds",
+      "protocol": "پروتکل",
+      "resetToBuiltin": "بازگردانی به پیش‌فرض کاتالوگ",
+      "serverBuiltinCustomized": "پیکربندی سرور سفارشی",
+      "serverBuiltinDefault": "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ",
+      "serverCore": "هسته سرور",
+      "slug": "شناسه",
+      "sublink": "ساب‌لینک",
+      "sublinkBase64": {
+        "content": "محتوا",
+        "formatJson": "قالب‌بندی JSON",
+        "protocol": "uri.protocol"
+      },
+      "sublinkBase64Detail": "جزئیات Base64",
+      "sublinkFormat": "فرمت لینک",
+      "sublinkFormatBase64": "فرمت Base64",
+      "sublinkFormatRaw": "لینک تولیدشده",
+      "sublinkFormatRawLink": "لینک خام",
+      "sublinkFormatUri": "فرمت URI",
+      "sublinkUri": {
+        "fragment": "uri.fragment",
+        "host": "uri.host",
+        "password": "uri.password",
+        "path": "uri.path",
+        "port": "uri.port",
+        "protocol": "uri.protocol",
+        "query_params": "uri.query_params (JSON)",
+        "user": "uri.user"
+      },
+      "sublinkUriDetail": "جزئیات URI",
+      "tabClient": "کلاینت",
+      "tabClients": "کلاینت‌ها",
+      "tabGeneral": "عمومی",
+      "tabServer": "سرور",
+      "tabServers": "سرورها",
+      "tag": "تگ",
+      "templateSlugs": "قالب‌های include",
+      "tlsLayer": "لایه TLS",
+      "tlsLayerLabels": {
+        "http": "HTTP",
+        "tls": "TLS"
+      },
+      "tlsLayerSpecialConflict": "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست",
+      "transport": "ترابری",
+      "transportLabels": {
+        "grpc": "gRPC",
+        "httpupgrade": "HTTP Upgrade",
+        "other": "سایر",
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "xhttp": "xHTTP"
+      },
+      "version": "نسخه"
+    },
+    "template": {
+      "builtin": "سیستمی",
+      "category": "دسته",
+      "clone": "کپی به‌عنوان سفارشی",
+      "cloneDescription": "توضیحات سفارشی",
+      "cloneName": "نام سفارشی",
+      "cloned": "قالب کپی شد",
+      "content": "محتوا",
+      "core": "هسته",
+      "description": "توضیحات",
+      "editable": "قابل ویرایش",
+      "empty": "قالبی برای این هسته وجود ندارد",
+      "included": "شامل شده",
+      "insert": "درج در ویرایشگر",
+      "listTitle": "قالب‌ها",
+      "name": "نام",
+      "new": "قالب جدید",
+      "notFound": "قالب پیدا نشد",
+      "referenced": "ارجاع شده",
+      "referencedTemplates": "قالب‌های ارجاع‌شده",
+      "sidePanel": "قالب‌ها",
+      "sidePanelHint": "برای مرور قالب‌ها تب سرور یا کلاینت را باز کنید",
+      "slug": "شناسه",
+      "slugDuplicate": "این شناسه قالب قبلاً استفاده شده است.",
+      "slugHint": "فقط بخش بعد از هسته/دسته قابل ویرایش است"
+    },
+    "templateVariables": {
+      "access": "دسترسی",
+      "currentValue": "مقدار فعلی",
+      "description": "توضیحات",
+      "group": "گروه",
+      "label": "برچسب",
+      "listTitle": "متغیرهای قالب",
+      "loadValues": "بارگذاری مقادیر فعلی",
+      "name": "نام"
+    },
+    "theme": {
+      "dark": "حالت تاریک",
+      "light": "حالت روشن"
+    },
+    "validation": {
+      "errors": "خطاها",
+      "preview": "پیش‌نمایش کامپایل",
+      "title": "اعتبارسنجی",
+      "warnings": "هشدارها"
+    }
   },
   "adminuser": {
     "force_update_usage": "ℹ️ مصرف کاربر ها هر 6 دقیقه یکبار به روز می شود. برای به روز رسانی فوری <a href=\"%(link)s\" class=\"btn btn-info\"> اینجا </a> را کلیک کنید"
@@ -430,6 +724,10 @@
       "description": "اگر به SNI نامعتبر اجازه دهید، می‌توانید از هر دامنه‌ای به جای دامنه اصلی خود برای دسترسی به پروکسی استفاده کنید (توصیه نمی‌شود)",
       "label": "🆗 اجازه دادن به SNI نامعتبر"
     },
+    "anytls_enable": {
+      "description": "",
+      "label": ""
+    },
     "auto_update": {
       "description": "هر روز راس ساعت ۳ صبح، سیستم برای به‌روز‌ رسانی جدید چک می‌شود. در صورتی که به‌روز‌ رسانی جدیدی موجود باشد به صورت خودکار سیستم به‌روز‌ رسانی خواهد شد",
       "label": "🔄 به‌روز‌ رسانی خودکار"
@@ -456,7 +754,7 @@
     },
     "cdn_forced_host": {
       "description": "در این قسمت می توانید از چندین دامنه یا IP اختصاصی استفاده کنید تا در لینک های کاربری جایگزین شود. \nدر صورتی که در <a href='https://ircf.space/export.php'>این قالب </a> استفاده کنید با توجه به اپراتور آی پی مربوطه انتخاب میشود و در صورتی که رنجی از آی پی ها را قرار دهید به صورت تصادفی آی پی از ان رنج انتخاب می‌شود.\nجهت قراردادن آی پی های شخصی از <a target='_blank' href='https://ip-format.hiddify.com'>این لینک</a> استفاده کنید.",
-      "label": "🔂 اجبار به استفاده‌ از آی پی‌های زیر برای کانفیگ"
+      "label": "🔂 اجبار به استفاده‌ از آی پی/دامنه های زیر برای کانفیگ"
     },
     "cloudflare": {
       "description": "لطفاً <a href='https://github.com/hiddify/hiddify-config/wiki/%DA%AF%D8%B1%D9%81%D8%AA%D9%86-%DA%A9%D9%84%DB%8C%D8%AF-%D8%AA%D9%88%D8%B3%D8%B9%D9%87-%DA%A9%D9%84%D9%88%D8%AF%D9%81%D9%84%D8%B1' target='_blank'>دستورالعمل</a> را دنبال کنید و کلید توسعه کلودفلر را جای‌گذاری کنید",
@@ -549,6 +847,10 @@
     "h2_enable": {
       "description": "فعال کردن پروتکل HTTP/2",
       "label": "🔵 h2"
+    },
+    "health_secret_path": {
+      "description": "",
+      "label": ""
     },
     "hidden": {
       "description": "-",
@@ -911,6 +1213,14 @@
       "description": "این گزینه یک کانفیگ فیک در لینک ساب کاربر ایجاد میکند که حجم باقیمانده و تاریخ انقضا کاربر را نشان می‌دهد",
       "label": "👁️‍🗨️ نمایش حجم و تاریخ انقضا در کانفیگ ها"
     },
+    "snell_enable": {
+      "description": "",
+      "label": ""
+    },
+    "socks_enable": {
+      "description": "",
+      "label": ""
+    },
     "special_port": {
       "description": "شما می توانید یک پورت سفارشی برای سرور ریالیتی خود تنظیم کنید تا پردازش سیستم را کاهش دهید. (اجازه اتصال مستقیم به پروکسی ها باید بله باشد)",
       "label": "↔️  پورت ریالیتی"
@@ -975,10 +1285,6 @@
       "description": "این SSH پروکسی با SSH سرور اصلی کاملا متفاوت است و امکان اجرای دستورات را ندارد",
       "label": "✔️ پروکسی SSH"
     },
-    "ssh_use_tls_port": {
-      "description": "در صورت فعال بودن، SSH به‌جای پورت عمومی جداگانه روی پورت‌های TLS/HTTPS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت TLS متصل می‌شوند و مالتی‌پلکسر ترافیک SSH را تشخیص داده و به بک‌اند پروکسی SSH ارسال می‌کند.",
-      "label": "🔀 مالتی‌پلکس SSH روی پورت TLS"
-    },
     "ssh_server_port": {
       "description": "این پورت کاملا با پورت سرور اصلی SSH شما متفاوت است. این یک برنامه اختصاصی است",
       "label": "↔️ پورت پروکسی SSH"
@@ -986,6 +1292,10 @@
     "ssh_server_redis_url": {
       "description": "استفاده نشده",
       "label": "آدرس پایگاه داده کاربر SSH"
+    },
+    "ssh_use_tls_port": {
+      "description": "در صورت فعال بودن، SSH به‌جای پورت عمومی جداگانه روی پورت‌های TLS/HTTPS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت TLS متصل می‌شوند و مالتی‌پلکسر ترافیک SSH را تشخیص داده و به بک‌اند پروکسی SSH ارسال می‌کند.",
+      "label": "🔀 مالتی‌پلکس SSH روی پورت TLS"
     },
     "ssr": {
       "description": "ShadowsocksR ورژنی از پروژه اصلی Shadowsocks است که ادعا می‌شود از نظر امنیت و ثبات نسبت به آن بهتر است.",
@@ -1142,9 +1452,21 @@
     "validation-error": "یکی از فیلدها دچار خطا شده است.",
     "validation-success": "تنظیمات با موفقیت ذخیره شدند. لطفا بر روی این لینک: %(link)s کلیک کنید تا بر روی سیستم اعمال شوند. این کار ممکن است 2 دقیقه طول بکشد",
     "validation-success-no-reset": " ✅ تنظیمات با موفقیت تغییر کرد",
+    "vless_decryption": {
+      "description": "",
+      "label": ""
+    },
     "vless_enable": {
       "description": "فعال کردن پروتکل VLess",
       "label": "⚫️ VLess"
+    },
+    "vless_encryption": {
+      "description": "",
+      "label": ""
+    },
+    "vless_flow": {
+      "description": "",
+      "label": ""
     },
     "vmess_enable": {
       "description": "فعال کردن پروتکل VMess",
@@ -1195,10 +1517,6 @@
       "description": "پورت را برای WireGuard تعریف می کند ",
       "label": "↔️ پورت وایرگارد"
     },
-    "wireguard_use_quic_port": {
-      "description": "در صورت فعال بودن، WireGuard به‌جای پورت عمومی جداگانه روی پورت‌های QUIC/UDP مربوط به TLS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت UDP/QUIC متصل می‌شوند و مالتی‌پلکسر ترافیک WireGuard را تشخیص داده و به بک‌اند WireGuard ارسال می‌کند.",
-      "label": "🔀 مالتی‌پلکس WireGuard روی پورت QUIC"
-    },
     "wireguard_private_key": {
       "description": "یک کلید خصوصی برای WireGuard مشخص شده است",
       "label": "کلید خصوصی WireGuard"
@@ -1206,6 +1524,10 @@
     "wireguard_public_key": {
       "description": "یک کلید عمومی برای WireGuard مشخص شده است",
       "label": "کلید عمومی WireGuard"
+    },
+    "wireguard_use_quic_port": {
+      "description": "در صورت فعال بودن، WireGuard به‌جای پورت عمومی جداگانه روی پورت‌های QUIC/UDP مربوط به TLS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت UDP/QUIC متصل می‌شوند و مالتی‌پلکسر ترافیک WireGuard را تشخیص داده و به بک‌اند WireGuard ارسال می‌کند.",
+      "label": "🔀 مالتی‌پلکس WireGuard روی پورت QUIC"
     },
     "ws_enable": {
       "description": "Websocket یک تونل روی HTTP ایجاد می کند که برای استفاده در CDN مفید است",
@@ -1230,14 +1552,33 @@
     "cdn": "سی‌دی‌ان",
     "changed_in_domain_warning": "⚠️ دامنه های شما تغییر کرد. لطفا کپی لینک های مدیریت را فراموش نکنید، در غیر این صورت دیگر نمی توانید به پنل دسترسی داشته باشید",
     "current_server_IPs": "",
+    "custom_proxy": {
+      "description": "",
+      "group": {
+        "ip_based": "",
+        "other": "",
+        "sni_gateway": ""
+      },
+      "label": "",
+      "reality_only": "",
+      "reality_required": ""
+    },
     "description": "این فیلد باید با دقت و به درستی تکمیل شود. در غیر اینصورت پروکسی ها به مشکل بر خواهند خورد. لطفا برای دیدن راهنمای ساخت زیردامنه \n<a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'>این آدرس </a>\nرا ببینید.",
     "domain": "دامنه",
     "domain_fronting": {
       "description": "برای شبیه سازی وب سایت دیگری به جای وب سایت شما در SNI استفاده می شود. بنابراین، فیلترچی نمی تواند دامنه شما را فیلتر کند. \n<a href='https://github.com/hiddify/hiddify-config/wiki/استفاده-از-دامین-فرانتینگ'>آموزش ثبت </a>\n\n⚠️CloudFlare از دامین فرانتینگ پشتیبانی نمی کند.",
       "label": "🔒 فعال کردن دامین فرانتینگ در اتصال TLS"
     },
+    "ech": {
+      "description": "برای این دامنه CDN، ECH از رکورد HTTPS دریافت و استفاده شود. نیاز به فعال بودن TLS ECH در تنظیمات پنل دارد.",
+      "label": "🔐 ECH"
+    },
     "empty": {
       "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+    },
+    "fake_mode": {
+      "description": "",
+      "label": ""
     },
     "intro": "1️⃣ در این قسمت می توانید دامنه خود را اضافه کنید.<inlang-LineFeed><br>\n2️⃣ اگر می خواهید احتمال داشتن IP کثیف را کاهش دهید، می توانید سرور رله چندگانه را اضافه کنید <a href='https://github.com/hiddify/hiddify-config/discussions/129'>ادامه مطلب</a> .<inlang-LineFeed><br>\n3️⃣ اگر چندین IPv4 یا IPv6 در پنل خود دارید، باید دامنه ای که به آنها اشاره شده است را به عنوان Relay اضافه کنید.",
     "ip": "آی‌پی",
@@ -1249,9 +1590,9 @@
       "description": "به جای نام دامنه از IP در پروکسی‌ها استفاده شود. زمانی مفید است که نویز زیادی در DNS وجود دارد.",
       "label": "🔢 استفاده از IP"
     },
-    "ech": {
-      "description": "برای این دامنه CDN، ECH از رکورد HTTPS دریافت و استفاده شود. نیاز به فعال بودن TLS ECH در تنظیمات پنل دارد.",
-      "label": "🔐 ECH"
+    "server_domain": {
+      "description": "",
+      "label": ""
     },
     "show_domains_description": "مشخص کنید کاربرانی که با این دامنه، پنل کاربری را مشاهده می‌کنند، کانفیگ‌های مربوط به کدام دامنه‌ها را مشاهده کنند.\n<br>\nپیشنهاد: برای یک دامنه با IP فیلتر نشده و متفاوت با بقیه، همه دامنه های دیگر (به جز دامنه فعلی) را انتخاب کنید. در نتیجه از آنجایی که از این IP برای فیلترشکن استفاده نمی‌شود و یک وبسایت ساده است، این دامنه و آی پی هرگز مسدود نمی‌شود و کاربران شما به راحتی می توانند پروفایل های جدید را به روز کنند."
   },
@@ -1352,6 +1693,7 @@
     }
   },
   "singbox: ssh": "SingBox: SSH",
+  "special": "",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",
@@ -1474,295 +1816,5 @@
     "notallowed": "لطفاً بدون استفاده از VPN از این صفحه بازدید کنید. باید از کشور %(expected_country)s به آن دسترسی داشته باشید، اما در حال حاضر از %(your_country)s به آن دسترسی دارید."
   },
   "weekly": "📅 هفتگی",
-  "worker": "✴️ ورکر کلودفلر",
-  "adminV2": {
-    "appTitle": "هیدیفای — جدید",
-    "menu": {
-      "sectionNew": "جدید",
-      "sectionV2": "جدید",
-      "sectionMain": "اصلی",
-      "dashboard": "داشبورد",
-      "proxyEditor": "ویرایشگر پروکسی",
-      "customProxies": "پروکسی‌های سفارشی",
-      "baseConfigs": "پیکربندی پایه",
-      "templates": "قالب‌ها",
-      "templateVariables": "متغیرهای قالب"
-    },
-    "footer": {
-      "text": "پنل ادمین هیدیفای نسخه ۲"
-    },
-    "dashboard": {
-      "title": "داشبورد",
-      "subtitle": "مدیریت پنل هیدیفای",
-      "welcomePanel": "خوش آمدید",
-      "underConstruction": "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت."
-    },
-    "theme": {
-      "dark": "حالت تاریک",
-      "light": "حالت روشن"
-    },
-    "common": {
-      "save": "ذخیره",
-      "cancel": "انصراف",
-      "delete": "حذف",
-      "duplicate": "کپی",
-      "validate": "اعتبارسنجی",
-      "add": "افزودن",
-      "edit": "ویرایش",
-      "back": "بازگشت",
-      "actions": "عملیات",
-      "enabled": "فعال",
-      "confirmDelete": "آیا از حذف این مورد مطمئن هستید؟",
-      "saved": "با موفقیت ذخیره شد",
-      "deleted": "با موفقیت حذف شد",
-      "validationFailed": "اعتبارسنجی ناموفق",
-      "validationOk": "اعتبارسنجی موفق",
-      "format": "قالب‌بندی",
-      "loadFailed": "بارگذاری داده ناموفق بود",
-      "search": "جستجو..."
-    },
-    "editor": {
-      "cannotFormatJinja": "قالب‌بندی خودکار با تگ‌های Jinja ممکن نیست",
-      "jinjaHint": "JSON5 + Jinja: از {{ proxy.port }}، {{ proxy.tag }}، {% for %}…{% endfor %} استفاده کنید",
-      "insertVariable": "درج متغیر",
-      "includeTemplate": "شامل کردن قالب",
-      "noVariables": "متغیری با این جستجو یافت نشد",
-      "exportBundle": "خروجی بسته",
-      "excludeBuiltinTemplates": "حذف قالب‌های داخلی از خروجی",
-      "preview": "پیش‌نمایش",
-      "previewParams": "پارامترهای پیش‌نمایش",
-      "previewTitle": "پیش‌نمایش قالب",
-      "previewOk": "پیش‌نمایش با موفقیت تولید شد",
-      "previewPartial": "پیش‌نمایش با هشدار تولید شد",
-      "previewFailed": "درخواست پیش‌نمایش ناموفق بود"
-    },
-    "proxy": {
-      "listTitle": "پروکسی‌های سفارشی",
-      "new": "پروکسی جدید",
-      "name": "نام",
-      "slug": "شناسه",
-      "protocol": "پروتکل",
-      "mode": "حالت",
-      "linkSettings": "تنظیمات لینک",
-      "modeSettings": "حالت و مسیریابی",
-      "transport": "ترابری",
-      "transportLabels": {
-        "tcp": "TCP",
-        "ws": "WebSocket",
-        "httpupgrade": "HTTP Upgrade",
-        "grpc": "gRPC",
-        "xhttp": "xHTTP",
-        "other": "سایر"
-      },
-      "alpnLabels": {
-        "http": "HTTP",
-        "tls_h1": "TLS H1",
-        "tls_h2": "TLS H2",
-        "tls_h1_h2": "TLS H1 + H2",
-        "tls_h3": "QUIC",
-        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
-        "custom": "سفارشی"
-      },
-      "modeLabels": {
-        "domains_l7_gateway": "درگاه L7 دامنه",
-        "domains_sni_gateway": "درگاه SNI دامنه",
-        "domains_auto_public_ports": "پورت خودکار چند دامنه",
-        "domains_single_public_port": "پورت ثابت چند دامنه",
-        "domain_native": "بومی دامنه",
-        "ip": "مبتنی بر IP"
-      },
-      "l7Proto": "L7 Reverse Proxy Protocol",
-      "inboundTcpPorts": "پورت‌های TCP ورودی",
-      "inboundTcpPortsHint": "پورت‌های TCP ثابت با کاما",
-      "inboundUdpPorts": "پورت‌های UDP ورودی",
-      "inboundUdpPortsHint": "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP",
-      "inboundPortAutoCalculated": "پورت‌ها به ازای هر دامنه خودکار محاسبه می‌شوند",
-      "alpn": "ALPN",
-      "clientCores": "هسته‌های کلاینت",
-      "domains": "دامنه‌ها",
-      "tabGeneral": "عمومی",
-      "tabServer": "سرور",
-      "tabServers": "سرورها",
-      "tabClients": "کلاینت‌ها",
-      "tabClient": "کلاینت",
-      "allowedProtocols": "پروتکل‌های مجاز",
-      "categories": "دسته‌بندی‌ها",
-      "categoriesFilter": "فیلتر بر اساس دسته‌بندی",
-      "categoriesHint": "دسته‌بندی موجود را انتخاب کنید یا از پایین منو یک مورد جدید اضافه کنید",
-      "categoriesPlaceholder": "انتخاب دسته‌بندی",
-      "categoriesHeader": "دسته‌بندی‌های موجود",
-      "categoriesAddPlaceholder": "دسته‌بندی جدید",
-      "categoriesAddNew": "افزودن",
-      "downloadAlpns": "ALPN دانلود",
-      "downloadAlpnsHint": "فقط xHTTP. خالی = همان ALPN اصلی.",
-      "outboundTagTemplate": "قالب تگ outbound",
-      "outboundTagTemplateHint": "Jinja برای تگ هر outbound کلاینت",
-      "domainModes": "حالت دامنه",
-      "domainModeLabels": {
-        "direct": "مستقیم",
-        "cdn": "CDN",
-        "relay": "Relay",
-        "fake": "Fake TLS",
-        "special": "ویژه (REALITY)",
-        "reality": "REALITY"
-      },
-      "tlsLayer": "لایه TLS",
-      "tlsLayerLabels": {
-        "http": "HTTP",
-        "tls": "TLS"
-      },
-      "tlsLayerSpecialConflict": "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست",
-      "l7ReverseProto": "پروتکل L7 reverse proxy",
-      "downloadTlsLayer": "لایه TLS دانلود",
-      "downloadDomainModes": "حالت‌های دامنه دانلود",
-      "customPath": "مسیر سفارشی",
-      "domainIds": "دامنه‌ها",
-      "domainIdsEmptyAll": "خالی = همه دامنه‌های منطبق؛ پروکسی IP‌محور دامنه ندارد",
-      "faketlsDomains": "دامنه‌های faketls",
-      "serverCore": "هسته سرور",
-      "inboundPort": "پورت inbound",
-      "inboundPortAuto": "خالی = خودکار",
-      "directPortAccess": "دسترسی مستقیم به پورت",
-      "directPortAccessHint": "با احتیاط استفاده کنید — ممکن است سرور شما قابل کشف باشد",
-      "tag": "تگ",
-      "templateSlugs": "قالب‌های include",
-      "inboundTemplate": "قالب inbound",
-      "sublink": "ساب‌لینک",
-      "doBase64After": "Base64 بعد از رندر",
-      "linkTemplate": "قالب لینک",
-      "clientCoreConfigs": "کانفیگ هسته کلاینت",
-      "core": "هسته",
-      "version": "نسخه",
-      "outboundsTemplate": "قالب outbounds",
-      "baseConfigTemplate": "بازنویسی پیکربندی پایه",
-      "baseConfigTemplateHint": "اختیاری: پوسته کامل xray داخل {% block base_config %}. خالی بگذارید تا از پیکربندی پایه سراسری استفاده شود.",
-      "addCoreConfig": "افزودن کانفیگ هسته",
-      "addClient": "افزودن کلاینت",
-      "addClientConfig": "افزودن کانفیگ برای این هسته",
-      "clientConfigDefault": "کانفیگ کلاینت",
-      "noClientConfigs": "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید.",
-      "import": "ورود",
-      "export": "خروجی",
-      "importSuccess": "با موفقیت وارد شد ({count} قالب)",
-      "importFailed": "ورود ناموفق",
-      "exportFailed": "خروجی ناموفق",
-      "builtinDefaultHint": "پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را در تب سرور یا کلاینت فعال کنید.",
-      "serverBuiltinDefault": "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ",
-      "serverBuiltinCustomized": "پیکربندی سرور سفارشی",
-      "clientBuiltinDefault": "استفاده از پیکربندی پیش‌فرض کلاینت کاتالوگ",
-      "clientBuiltinCustomized": "پیکربندی کلاینت سفارشی",
-      "fieldOverride": "بازنویسی",
-      "resetToBuiltin": "بازگردانی به پیش‌فرض کاتالوگ",
-      "generateExample": "تولید نمونه",
-      "generateExampleOk": "نمونه با موفقیت تولید شد",
-      "generateExamplePartial": "نمونه با هشدار یا خطا تولید شد",
-      "generateBundle": "تولید همه پیکربندی‌ها",
-      "generateBundleOk": "بسته پیکربندی با موفقیت تولید شد",
-      "generateBundlePartial": "بسته پیکربندی با هشدار یا خطا تولید شد",
-      "bundleContextProxyCount": "پروکسی‌های فعال",
-      "exampleDomain": "دامنه",
-      "exampleDomainPick": "انتخاب از پنل",
-      "exampleDomainCustom": "دامنه دلخواه",
-      "exampleDomainAll": "همه دامنه‌ها",
-      "exampleDomainAllHint": "همه دامنه‌های منطبق با این پروکسی در خروجی گنجانده می‌شوند (مثل اشتراک).",
-      "exampleUser": "کاربر",
-      "exampleUserSample": "کاربر نمونه",
-      "exampleUserPick": "انتخاب کاربر پنل",
-      "exampleIp": "آدرس IP",
-      "exampleUserAgent": "User-Agent",
-      "exampleUaPreset": "از پیش‌تعریف‌شده",
-      "exampleUaCustom": "User-Agent دلخواه",
-      "exampleContext": "زمینه رندر",
-      "exampleContextProxy": "شناسه پروکسی",
-      "exampleContextDomain": "دامنه",
-      "exampleContextUser": "کاربر",
-      "exampleContextIp": "IP",
-      "exampleContextUa": "User-Agent",
-      "sublinkFormatRaw": "لینک تولیدشده",
-      "sublinkFormatUri": "فرمت URI",
-      "sublinkFormatRawLink": "لینک خام",
-      "sublinkFormatBase64": "فرمت Base64",
-      "clashFormatJson": "JSON",
-      "clashFormatYaml": "YAML",
-      "ignoreSkip": "نادیده گرفتن skip",
-      "ignoreSkipHint": "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود",
-      "autoClient": "خودکار",
-      "sublinkFormat": "فرمت لینک",
-      "sublinkUriDetail": "جزئیات URI",
-      "sublinkBase64Detail": "جزئیات Base64",
-      "sublinkUri": {
-        "protocol": "uri.protocol",
-        "user": "uri.user",
-        "password": "uri.password",
-        "host": "uri.host",
-        "port": "uri.port",
-        "path": "uri.path",
-        "fragment": "uri.fragment",
-        "query_params": "uri.query_params (JSON)"
-      },
-      "sublinkBase64": {
-        "protocol": "uri.protocol",
-        "content": "محتوا",
-        "formatJson": "قالب‌بندی JSON"
-      }
-    },
-    "baseConfig": {
-      "listTitle": "پیکربندی‌های پایه",
-      "new": "پیکربندی پایه جدید",
-      "name": "نام",
-      "side": "سمت",
-      "core": "هسته",
-      "version": "نسخه",
-      "description": "توضیحات",
-      "content": "پیکربندی کامل"
-    },
-    "template": {
-      "listTitle": "قالب‌ها",
-      "new": "قالب جدید",
-      "slug": "شناسه",
-      "core": "هسته",
-      "category": "دسته",
-      "name": "نام",
-      "description": "توضیحات",
-      "content": "محتوا",
-      "builtin": "سیستمی",
-      "sidePanel": "قالب‌ها",
-      "sidePanelHint": "برای مرور قالب‌ها تب سرور یا کلاینت را باز کنید",
-      "included": "شامل شده",
-      "referenced": "ارجاع شده",
-      "referencedTemplates": "قالب‌های ارجاع‌شده",
-      "notFound": "قالب پیدا نشد",
-      "empty": "قالبی برای این هسته وجود ندارد",
-      "insert": "درج در ویرایشگر",
-      "clone": "کپی به‌عنوان سفارشی",
-      "cloneName": "نام سفارشی",
-      "cloneDescription": "توضیحات سفارشی",
-      "editable": "قابل ویرایش",
-      "slugHint": "فقط بخش بعد از هسته/دسته قابل ویرایش است",
-      "cloned": "قالب کپی شد",
-      "slugDuplicate": "این شناسه قالب قبلاً استفاده شده است."
-    },
-    "templateVariables": {
-      "listTitle": "متغیرهای قالب",
-      "group": "گروه",
-      "name": "نام",
-      "access": "دسترسی",
-      "currentValue": "مقدار فعلی",
-      "label": "برچسب",
-      "description": "توضیحات",
-      "loadValues": "بارگذاری مقادیر فعلی"
-    },
-    "domain": {
-      "addTitle": "افزودن دامنه",
-      "domain": "دامنه",
-      "alias": "نام مستعار",
-      "mode": "حالت"
-    },
-    "validation": {
-      "title": "اعتبارسنجی",
-      "errors": "خطاها",
-      "warnings": "هشدارها",
-      "preview": "پیش‌نمایش کامپایل"
-    }
-  }
+  "worker": "✴️ ورکر کلودفلر"
 }

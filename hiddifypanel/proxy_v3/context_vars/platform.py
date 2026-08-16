@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, PrivateAttr
+from pydantic import BaseModel, ConfigDict, PrivateAttr, Field
 
 from .version import PlatformPart, TemplateVersion
 from hiddifypanel import hutils
@@ -21,41 +21,13 @@ class PlatformVar(BaseModel):
     tls_engine: str = "go"
     is_hiddify: bool = False
 
-    _os: PlatformPart = PrivateAttr(default_factory=lambda: PlatformPart("linux"))
-    _app: PlatformPart = PrivateAttr(default_factory=lambda: PlatformPart("unknown"))
-    _app_group: PlatformPart = PrivateAttr(default_factory=lambda: PlatformPart("singbox"))
-    _singbox: PlatformPart = PrivateAttr(default_factory=lambda: PlatformPart("singbox"))
-    _hiddify: PlatformPart = PrivateAttr(default_factory=lambda: PlatformPart("hiddify"))
-    _app_version: TemplateVersion = PrivateAttr(default_factory=TemplateVersion)
-
-    @property
-    def os(self) -> PlatformPart:
-        return self._os
-
-    @property
-    def app(self) -> PlatformPart:
-        return self._app
-
-    @property
-    def app_group(self) -> PlatformPart:
-        return self._app_group
-
-    @property
-    def singbox(self) -> PlatformPart:
-        return self._singbox
-
-    @property
-    def hiddify(self) -> PlatformPart:
-        return self._hiddify
-
-    @property
-    def app_version(self) -> TemplateVersion:
-        return self._app_version
-
-    @staticmethod
-    def version_compare(left: str | TemplateVersion, right: str | TemplateVersion) -> int:
-        lv = left if isinstance(left, TemplateVersion) else TemplateVersion(left)
-        return lv._compare(right)
+    os: PlatformPart = Field(default_factory=lambda: PlatformPart("linux"))
+    app: PlatformPart = Field(default_factory=lambda: PlatformPart("unknown"))
+    app_group: PlatformPart = Field(default_factory=lambda: PlatformPart("singbox"))
+    singbox: PlatformPart = Field(default_factory=lambda: PlatformPart("singbox"))
+    hiddify: PlatformPart = Field(default_factory=lambda: PlatformPart("hiddify"))
+    xray: PlatformPart = Field(default_factory=lambda: PlatformPart("xray"))
+    app_version: TemplateVersion = Field(default_factory=TemplateVersion)
 
     @classmethod
     def from_user_agent(cls, ua: str) -> PlatformVar:
@@ -69,6 +41,7 @@ class PlatformVar(BaseModel):
         os_version = ".".join(str(x) for x in (info.get("os_version") or []) if x) or ""
         singbox_version = ".".join(str(x) for x in (info.get("singbox_version") or []) if x) or ""
         hiddify_version = ".".join(str(x) for x in (info.get("hiddify_version") or []) if x) or ""
+        xray_version = ".".join(str(x) for x in (info.get("xray_version") or []) if x) or ""
         var = cls(
             os_version=os_version,
             root_access=bool(info.get("root_access", False)),
@@ -77,17 +50,14 @@ class PlatformVar(BaseModel):
             tls_engine=cls._tls_engine(os_family),
             is_hiddify=bool(info.get("is_hiddify")),
         )
-        var._os = PlatformPart(os_family, os_version)
-        var._app = PlatformPart(app, app_version)
-        var._app_version = TemplateVersion(app_version)
-        var._app_group = PlatformPart(app_group, group_version or singbox_version)
-        var._singbox = PlatformPart("singbox", singbox_version)
-        var._hiddify = PlatformPart("hiddify", hiddify_version)
+        var.os = PlatformPart(os_family, os_version)
+        var.app = PlatformPart(app, app_version)
+        var.app_version = TemplateVersion(app_version)
+        var.app_group = PlatformPart(app_group, group_version or singbox_version)
+        var.singbox = PlatformPart("singbox", singbox_version)
+        var.hiddify = PlatformPart("hiddify", hiddify_version)
+        var.xray = PlatformPart("xray", xray_version)
         return var
-
-    @property
-    def compare_version(self):
-        return self.version_compare
 
     @staticmethod
     def _detect_os(ua: str, info: dict[str, Any]) -> str:

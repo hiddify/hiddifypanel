@@ -106,6 +106,9 @@ msgstr "➖ 桥接服务器"
 msgid "Bug"
 msgstr "错误/功能"
 
+msgid "CDN and worker domains must use valid fake mode"
+msgstr ""
+
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s 核心"
 
@@ -302,6 +305,9 @@ msgstr "✏️ 修改代理"
 
 msgid "Enable"
 msgstr "❇️启用"
+
+msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
+msgstr ""
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ 自动 CDN 格式错误"
@@ -620,6 +626,9 @@ msgstr "REALITY 后备域与服务器名称不兼容！"
 msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr ""
 
+msgid "Relay domains with non-valid fake mode require an IP address"
+msgstr ""
+
 msgid "Release"
 msgstr "✅ 发布"
 
@@ -697,6 +706,9 @@ msgstr "选择所有记录"
 
 msgid "Select record"
 msgstr "选择记录"
+
+msgid "Selected proxy does not support this domain mode combination"
+msgstr ""
 
 msgid "Seleted Users"
 msgstr "选定用户"
@@ -947,6 +959,9 @@ msgstr "应用程序编程接口"
 
 msgid "admin.menu.config"
 msgstr "设置"
+
+msgid "admin.menu.dashboard_v2"
+msgstr ""
 
 msgid "admin.menu.domain"
 msgstr "域名"
@@ -1238,6 +1253,12 @@ msgstr "如果您允许无效的SNI，您可以使用任何域而不是原始域
 msgid "config.allow_invalid_sni.label"
 msgstr "🆗 允许无效的 SNI"
 
+msgid "config.anytls_enable.description"
+msgstr ""
+
+msgid "config.anytls_enable.label"
+msgstr ""
+
 msgid "config.auto_update.description"
 msgstr "每天凌晨 3:00，我们都会检查是否有新更新。如果有新的更新可用，我们将自动更新系统"
 
@@ -1437,6 +1458,12 @@ msgstr "启用 HTTP/2 协议"
 
 msgid "config.h2_enable.label"
 msgstr "🔵 h2"
+
+msgid "config.health_secret_path.description"
+msgstr ""
+
+msgid "config.health_secret_path.label"
+msgstr ""
 
 msgid "config.hidden.description"
 msgstr "配置.隐藏.描述"
@@ -2023,6 +2050,18 @@ msgstr "此选项会在用户的子链接中创建一个假配置，显示用户
 msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ 在子链接中显示用法"
 
+msgid "config.snell_enable.description"
+msgstr ""
+
+msgid "config.snell_enable.label"
+msgstr ""
+
+msgid "config.socks_enable.description"
+msgstr ""
+
+msgid "config.socks_enable.label"
+msgstr ""
+
 msgid "config.special_port.description"
 msgstr "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）"
 
@@ -2126,6 +2165,14 @@ msgstr "不曾用过"
 
 msgid "config.ssh_server_redis_url.label"
 msgstr "SSH用户数据库地址"
+
+msgid "config.ssh_use_tls_port.description"
+msgstr ""
+"启用后，SSH 将通过 L4 多路复用共享 TLS/HTTPS 端口（如 443），而不是使用独立的公开 SSH 端口。客户端连接到相同的 TLS "
+"端口；边缘多路复用器识别 SSH 流量并将其转发到 SSH 代理后端。"
+
+msgid "config.ssh_use_tls_port.label"
+msgstr "🔀 在 TLS 端口上多路复用 SSH"
 
 msgid "config.ssr.description"
 msgstr "ShadowsocksR是原始Shadowsocks项目的一个分支，号称在安全性和稳定性方面更胜一筹。"
@@ -2378,11 +2425,29 @@ msgstr "配置已成功更改。单击 %(link)s 应用配置。申请可能需�
 msgid "config.validation-success-no-reset"
 msgstr "✅ 配置已成功更改"
 
+msgid "config.vless_decryption.description"
+msgstr ""
+
+msgid "config.vless_decryption.label"
+msgstr ""
+
 msgid "config.vless_enable.description"
 msgstr "启用 VLess 协议"
 
 msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
+
+msgid "config.vless_encryption.description"
+msgstr ""
+
+msgid "config.vless_encryption.label"
+msgstr ""
+
+msgid "config.vless_flow.description"
+msgstr ""
+
+msgid "config.vless_flow.label"
+msgstr ""
 
 msgid "config.vmess_enable.description"
 msgstr "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐"
@@ -2485,6 +2550,14 @@ msgstr "为 WireGuard 指定一个公钥"
 msgid "config.wireguard_public_key.label"
 msgstr "WireGuard 公钥"
 
+msgid "config.wireguard_use_quic_port.description"
+msgstr ""
+"启用后，WireGuard 将通过 L4 多路复用共享 QUIC/UDP TLS 端口（如 443），而不是使用独立的公开 WireGuard "
+"端口。客户端连接到相同的 UDP/QUIC 端口；边缘多路复用器识别 WireGuard 流量并将其转发到 WireGuard 后端。"
+
+msgid "config.wireguard_use_quic_port.label"
+msgstr "🔀 在 QUIC 端口上多路复用 WireGuard"
+
 msgid "config.ws_enable.description"
 msgstr "Websocket 通过 HTTP 创建一个隧道，可用于 CDN"
 
@@ -2530,6 +2603,27 @@ msgstr "⚠️ 您的域名已更改。请不要忘记复制管理链接，否�
 msgid "domain.current_server_IPs"
 msgstr ""
 
+msgid "domain.custom_proxy.description"
+msgstr ""
+
+msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.other"
+msgstr ""
+
+msgid "domain.custom_proxy.group.sni_gateway"
+msgstr ""
+
+msgid "domain.custom_proxy.label"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_only"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
 msgid "domain.description"
 msgstr ""
 "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-"
@@ -2546,8 +2640,20 @@ msgstr ""
 msgid "domain.domain_fronting.label"
 msgstr "🔒 TLS 的域前端"
 
+msgid "domain.ech.description"
+msgstr ""
+
+msgid "domain.ech.label"
+msgstr ""
+
 msgid "domain.empty.allowed_for_fake_only"
 msgstr "domain.empty.allowed_for_fake_only"
+
+msgid "domain.fake_mode.description"
+msgstr ""
+
+msgid "domain.fake_mode.label"
+msgstr ""
 
 msgid "domain.intro"
 msgstr ""
@@ -2568,6 +2674,12 @@ msgid "domain.resolveip.description"
 msgstr ""
 
 msgid "domain.resolveip.label"
+msgstr ""
+
+msgid "domain.server_domain.description"
+msgstr ""
+
+msgid "domain.server_domain.label"
 msgstr ""
 
 msgid "domain.show_domains_description"
@@ -2750,6 +2862,9 @@ msgstr ""
 
 msgid "singbox: ssh"
 msgstr "歌手盒：SSH"
+
+msgid "special"
+msgstr ""
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

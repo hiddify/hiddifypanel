@@ -66,6 +66,7 @@ class DomainAdmin(AdminLTEModelView):
         resolve_ip=_("domain.resolveip.description"),
         ech=_("domain.ech.description"),
         custom_proxy=_("domain.custom_proxy.description"),
+        server_domain=_("domain.server_domain.description"),
     )
     can_export = False
     form_widget_args = {"show_domains": {"class": "form-control ltr"}, "download_domain": {"class": "form-control ltr"}}
@@ -85,8 +86,9 @@ class DomainAdmin(AdminLTEModelView):
         "domain": {"validators": [Regexp(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$", message=__("Should be a valid domain"))]},
         "cdn_ip": {"validators": [Regexp(r"(((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d).){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d))|^([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,}))[ \t\n,;]*\w{3}[ \t\n,;]*)*", message=__("Invalid IP or domain"))]},
         "servernames": {"validators": [Regexp(r"^([\w-]+\.)+[\w-]+(,\s*([\w-]+\.)+[\w-]+)*$", re.IGNORECASE, _("Invalid REALITY hostnames"))]},
+        "server_domain": {"query_factory": lambda: Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.valid)},
     }
-    column_list = ["domain", "alias", "mode", "fake_mode", "custom_proxy", "show_domains"]
+    column_list = ["domain", "alias", "mode", "custom_proxy", "show_domains"]
     column_editable_list = ["alias"]
     column_searchable_list = ["domain", "mode"]
     column_labels = {
@@ -97,6 +99,7 @@ class DomainAdmin(AdminLTEModelView):
         "cdn_ip": _("config.cdn_forced_host.label"),
         "domain_ip": _("domain.ip"),
         "servernames": _("config.reality_server_names.label"),
+        "server_domain": _("domain.server_domain.label"),
         "show_domains": _("Show Domains"),
         "alias": _("Alias"),
         "grpc": _("gRPC"),
@@ -114,6 +117,7 @@ class DomainAdmin(AdminLTEModelView):
         "alias",
         "custom_proxy",
         "servernames",
+        "server_domain",
         "cdn_ip",
         "resolve_ip",
         "ech",
@@ -123,23 +127,23 @@ class DomainAdmin(AdminLTEModelView):
     ]
 
     def _domain_admin_link(view, context, model, name):
+        server = model.get_server()
+        domain_tag = model.domain
+        if domain_tag != server:
+            domain_tag = f"{domain_tag} → {server}"
+        domain_ip = f'<a data-domain="{domain_tag}" href="{hurl_for("admin.Actions:get_domain_ip", domain=server)}" class="domain-ip-link"><i class="fa-solid fa-dharmachakra"></i></a>'
         if hiddify.is_fake_domain(model) or not model.is_accessible():
             badge = model.fake_mode.value if model.fake_mode else ""
-            return Markup(f"<span class='badge'>{model.domain or badge}</span>")
+            return Markup(f"<span class='badge'>{model.domain or badge}</span>" + domain_ip)
         d = model.domain
         if "*" in d:
             d = d.replace("*", hutils.random.get_random_string(5, 15))
         admin_link = hiddify.get_account_panel_link(g.account, d)
-        return Markup(
-            f'<div class="btn-group"><a href="{admin_link}" class="btn btn-xs btn-secondary">'
-            + _("admin link")
-            + f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{model.domain}</a></div>'
-            + f'<a href="{hurl_for("admin.Actions:get_domain_ip", domain=model.domain)}"><i class="fa-solid fa-dharmachakra"></i></a>'
-        )
+        return Markup(f'<div class="btn-group"><a href="{admin_link}" class="btn btn-xs btn-secondary">' + _("admin link") + f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{model.domain}</a></div>' + domain_ip)
 
     def _domain_ip(view, context, model, name):
-        dips = hutils.network.get_domain_ips_cached(model.domain)
         myips = set(hutils.network.get_ips())
+        dips = hutils.network.get_domain_ips_cached(model.get_server())
         all_res = ""
         for dip in dips:
             if dip in myips and model.mode in [DomainType.direct, DomainType.sub_link_only]:
@@ -162,7 +166,20 @@ class DomainAdmin(AdminLTEModelView):
         else:
             return Markup(" ".join([hiddify.get_domain_btn_link(d) for d in model.show_domains]))
 
-    column_formatters = {"domain": _domain_admin_link, "show_domains": _show_domains_formater}
+    def _mode_formater(view, context, model, name):
+        return f"{model.mode.value} ({model.fake_mode.value})"
+
+    def _custom_proxy_formater(view, context, model, name):
+        if not model.custom_proxy:
+            return ""
+        return Markup(f"<a href='{hurl_for('admin.admin_v2')}custom-proxies/{model.custom_proxy.id}' target='_blank'>{model.custom_proxy.name}</a> ")
+
+    column_formatters = {
+        "domain": _domain_admin_link,
+        "show_domains": _show_domains_formater,
+        "mode": _mode_formater,
+        "custom_proxy": _custom_proxy_formater,
+    }
 
     def search_placeholder(self):
         return f"{_('search')} {_('domain.domain')} {_('domain.mode')}"
@@ -170,6 +187,9 @@ class DomainAdmin(AdminLTEModelView):
     def on_model_change(self, form, model: Domain, is_created):
         model.domain = (model.domain or "").lower().strip()
         model.mode = DomainType(model.mode)
+        if model.server_domain:
+            model.cdn_ip = ""
+
         if model.download_domain and model.domain == model.download_domain.domain:
             model.download_domain_id = None
             model.download_domain = None

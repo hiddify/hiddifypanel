@@ -69,6 +69,7 @@ dependencies = [
     "setuptools>=83.0.0",
     "dnspython>=2.8.0",
     "granian>=2.7.9",
+    "polib>=1.2.0",
 ]
 
 [project.optional-dependencies]

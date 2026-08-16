@@ -1,8 +1,8 @@
 {% if ctx.hconfig.mux_enable == 'xray' %}
-,"mux": {
+"mux": {
   "enabled": true,
   "concurrency": {{ ctx.hconfig.mux_max_connections or 8 }},
   "xudpConcurrency": {{ ctx.hconfig.mux_xudp_concurrency or 16 }},
   "xudpProxyUDP443": "reject"
-}
+},
 {% endif %}

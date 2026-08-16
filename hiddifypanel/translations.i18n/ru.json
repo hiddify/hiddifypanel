@@ -33,6 +33,7 @@
   "Beta": "☑️ Бета",
   "Bridge Servers": "➖ Bridge серверы",
   "Bug": "Баги/Предложения",
+  "CDN and worker domains must use valid fake mode": "",
   "CPU %(cores)s Cores": "CPU %(cores)s Ядро",
   "Can add sub admin": "👥 Может добавлять администраторов",
   "Change": "",
@@ -75,6 +76,7 @@
   "Edit": "Изменить",
   "Edit Proxy Names": "✏️ Изменить прокси",
   "Enable": "❇️ Включить",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
   "Error in auto cdn format": "⚠️ Ошибка в формате Auto CDN",
   "Error! auto cdn ip can not be find, please contact admin.": "Ошибка в IP-адресе Auto CDN! Невозможно найти, обратитесь к администратору",
   "Example Domains": "Тестируйте и предложите домеy",
@@ -164,6 +166,7 @@
   "RAM": "RAM",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain несовместим с именами серверов!",
   "REALITY Fallback domain is not compatible with server names!": "",
+  "Relay domains with non-valid fake mode require an IP address": "",
   "Release": "✅ Релиз",
   "Remaining about %(relative)s, exactly %(days)s days": "Осталось около %(relative)s, ровно %(days)s дней",
   "Remote nodes are not supported yet!": "Удаленные узлы пока не поддерживаются!",
@@ -190,6 +193,7 @@
   "Save Link": "Сохранить ссылку",
   "Select all records": "Выбрать все записи",
   "Select record": "Выберите запись",
+  "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "Выбранные пользователи",
   "Send Message to User's Telegram": "📣 Отправить сообщение в Telegram пользователя",
   "Sending": "Отправка...",
@@ -265,6 +269,7 @@
     "menu": {
       "api": "API",
       "config": "Настройки",
+      "dashboard_v2": "",
       "domain": "Домены",
       "home": "Панель управления",
       "proxy": "Прокси",
@@ -429,6 +434,10 @@
       "description": "Если вы разрешите неверный SNI, вы можете использовать любой домен, а не исходный домен, для доступа к прокси (не рекомендуется).",
       "label": "🆗 Разрешить неверный SNI"
     },
+    "anytls_enable": {
+      "description": "",
+      "label": ""
+    },
     "auto_update": {
       "description": "Система автоматически обновится в 3:00 утра при наличии обновлений",
       "label": "🔄 Автоматическое обновление"
@@ -548,6 +557,10 @@
     "h2_enable": {
       "description": "Включить протокол HTTP/2",
       "label": "🔵 h2"
+    },
+    "health_secret_path": {
+      "description": "",
+      "label": ""
     },
     "hidden": {
       "description": "config.hidden.description",
@@ -906,6 +919,14 @@
       "description": "Этот параметр создает поддельную конфигурацию в дополнительной ссылке пользователя, которая показывает оставшийся объем трафика для пользователя.",
       "label": "👁️‍🗨️ Показать использование в доп.ссылке"
     },
+    "snell_enable": {
+      "description": "",
+      "label": ""
+    },
+    "socks_enable": {
+      "description": "",
+      "label": ""
+    },
     "special_port": {
       "description": "Вы можете установить индивидуальный порт для вашего сервера Reality, чтобы снизить нагрузку на систему. (Разрешить прямое подключение к прокси должно быть да)",
       "label": "↔️ Порт Direct Reality"
@@ -966,10 +987,6 @@
       "description": "SSH Proxy полностью отличается от оригинального SSH Server",
       "label": "✔️ Включить SSH Poxy"
     },
-    "ssh_use_tls_port": {
-      "description": "Если включено, SSH использует общие TLS/HTTPS-порты (например, 443) через L4-мультиплексирование вместо отдельного публичного SSH-порта. Клиенты подключаются к тому же TLS-порту; краевой мультиплексор определяет SSH и перенаправляет трафик на SSH-прокси.",
-      "label": "🔀 Мультиплекс SSH на TLS-порту"
-    },
     "ssh_server_port": {
       "description": "Это не ваш  SSH-сервер. Это отдельная программа",
       "label": "↔️ SSHproxy-порт"
@@ -977,6 +994,10 @@
     "ssh_server_redis_url": {
       "description": "Не используется",
       "label": "Адрес базы данных пользователей SSH"
+    },
+    "ssh_use_tls_port": {
+      "description": "Если включено, SSH использует общие TLS/HTTPS-порты (например, 443) через L4-мультиплексирование вместо отдельного публичного SSH-порта. Клиенты подключаются к тому же TLS-порту; краевой мультиплексор определяет SSH и перенаправляет трафик на SSH-прокси.",
+      "label": "🔀 Мультиплекс SSH на TLS-порту"
     },
     "ssr": {
       "description": "ShadowsocksR — это форк оригинального проекта Shadowsocks, который считается превосходным с точки зрения безопасности и стабильности.",
@@ -1133,9 +1154,21 @@
     "validation-error": "В одном из полей ошибка.",
     "validation-success": "Конфигурации успешно изменены. Нажмите %(link)s, чтобы применить их. Это может занять 2 минуты",
     "validation-success-no-reset": "✅ Конфигурации успешно изменены",
+    "vless_decryption": {
+      "description": "",
+      "label": ""
+    },
     "vless_enable": {
       "description": "Включить протокол VLess",
       "label": "⚫️ VLess"
+    },
+    "vless_encryption": {
+      "description": "",
+      "label": ""
+    },
+    "vless_flow": {
+      "description": "",
+      "label": ""
     },
     "vmess_enable": {
       "description": "Несколько человек сообщили, что VMess позволляет правительствам обнаруживать систему.  Не рекомендуется",
@@ -1186,10 +1219,6 @@
       "description": "Определяет порт для WireGuard ",
       "label": "↔️ Порт WireGuard"
     },
-    "wireguard_use_quic_port": {
-      "description": "Если включено, WireGuard использует общие QUIC/UDP TLS-порты (например, 443) через L4-мультиплексирование вместо отдельного публичного порта WireGuard. Клиенты подключаются к тому же UDP/QUIC-порту; краевой мультиплексор определяет WireGuard и перенаправляет трафик на бэкенд WireGuard.",
-      "label": "🔀 Мультиплекс WireGuard на QUIC-порту"
-    },
     "wireguard_private_key": {
       "description": "Для WireGuard указан закрытый ключ.",
       "label": "Закрытый ключ WireGuard"
@@ -1197,6 +1226,10 @@
     "wireguard_public_key": {
       "description": "Для WireGuard указан открытый ключ.",
       "label": "Открытый ключ WireGuard"
+    },
+    "wireguard_use_quic_port": {
+      "description": "Если включено, WireGuard использует общие QUIC/UDP TLS-порты (например, 443) через L4-мультиплексирование вместо отдельного публичного порта WireGuard. Клиенты подключаются к тому же UDP/QUIC-порту; краевой мультиплексор определяет WireGuard и перенаправляет трафик на бэкенд WireGuard.",
+      "label": "🔀 Мультиплекс WireGuard на QUIC-порту"
     },
     "ws_enable": {
       "description": "Websocket создает туннель поверх HTTP, который будет полезно использовать в CDN",
@@ -1221,14 +1254,33 @@
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Ваши домены изменились. пожалуйста, не забудьте скопировать ссылки администратора, иначе вы больше не сможете получить доступ к панели управления",
     "current_server_IPs": "",
+    "custom_proxy": {
+      "description": "",
+      "group": {
+        "ip_based": "",
+        "other": "",
+        "sni_gateway": ""
+      },
+      "label": "",
+      "reality_only": "",
+      "reality_required": ""
+    },
     "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
     "domain_fronting": {
       "description": "Он используется для имитации другого веб-сайта вместо вашего веб-сайта в SNI следовательно, GTW не может отфильтровать ваш домен\n<<a href='https://github.com/hibbity/hibbity-config/wiki/Guide-for-domain-fronting '>Руководство</a>. ⚠CloudFlare не поддерживает подключение к домену.",
       "label": "🔒 Фронтирование домена TLS"
     },
+    "ech": {
+      "description": "",
+      "label": ""
+    },
     "empty": {
       "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+    },
+    "fake_mode": {
+      "description": "",
+      "label": ""
     },
     "intro": "1️⃣ В этом разделе вы можете добавить свой Домен.<inlang-LineFeed><br>\n2. Если вы хотите уменьшить вероятность использования грязного IP-адреса, вы можете добавить сервер с несколькими ретрансляторами. <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Подробнее</a> .<inlang-LineFeed><br>\n3. Если у вас в Panel несколько IPv4 или IPv6, вам необходимо добавить указанный на них домен в качестве ретранслятора.",
     "ip": "IP",
@@ -1237,6 +1289,10 @@
       "asn_issue": "Выбранный домен для REALITY не находится в том же ASN. Для более эффективного использования протокола лучше найти Домен в том же ASN"
     },
     "resolveip": {
+      "description": "",
+      "label": ""
+    },
+    "server_domain": {
       "description": "",
       "label": ""
     },
@@ -1339,6 +1395,7 @@
     }
   },
   "singbox: ssh": "SingBox: SSH",
+  "special": "",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",

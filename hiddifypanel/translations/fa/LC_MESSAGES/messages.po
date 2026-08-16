@@ -109,6 +109,9 @@ msgstr "➖ سرور های میانی"
 msgid "Bug"
 msgstr "باگ/پیشنهاد"
 
+msgid "CDN and worker domains must use valid fake mode"
+msgstr ""
+
 msgid "CPU %(cores)s Cores"
 msgstr "پردازنده %(cores)s هسته"
 
@@ -299,6 +302,9 @@ msgstr "✏️ ویرایش پروکسی‌ها"
 
 msgid "Enable"
 msgstr "❇️ فعال"
+
+msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
+msgstr ""
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ خطا در ورود IP ها به صورت دستی"
@@ -625,6 +631,9 @@ msgstr "دامنه بازگشتی REALITY با نام سرور سازگار نی
 msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr "ریالتی: دامنه جایگزین با نام سرورها سازگار نیست!"
 
+msgid "Relay domains with non-valid fake mode require an IP address"
+msgstr ""
+
 msgid "Release"
 msgstr "✅ پایدار"
 
@@ -702,6 +711,9 @@ msgstr "انتخاب همه رکوردها"
 
 msgid "Select record"
 msgstr "انتخاب رکورد"
+
+msgid "Selected proxy does not support this domain mode combination"
+msgstr ""
 
 msgid "Seleted Users"
 msgstr "کاربران انتخاب شده"
@@ -962,6 +974,9 @@ msgstr "API"
 msgid "admin.menu.config"
 msgstr "تنظیمات"
 
+msgid "admin.menu.dashboard_v2"
+msgstr "داشبورد جدید"
+
 msgid "admin.menu.domain"
 msgstr "دامنه‌ها"
 
@@ -1015,6 +1030,764 @@ msgid "admin.waiting_for_update"
 msgstr ""
 "⚠️ لطفا برای اینکه مطمئن شوید تغییرات به درستی اعمال شده، حدود 5 دقیقه صبر "
 "کنید. در این فاصله لینک‌های زیر را کپی کرده و در جایی برای خود ذخیره نمایید:"
+
+msgid "adminV2.appTitle"
+msgstr "هیدیفای — جدید"
+
+msgid "adminV2.baseConfig.content"
+msgstr "پیکربندی کامل"
+
+msgid "adminV2.baseConfig.core"
+msgstr "هسته"
+
+msgid "adminV2.baseConfig.description"
+msgstr "توضیحات"
+
+msgid "adminV2.baseConfig.listTitle"
+msgstr "پیکربندی‌های پایه"
+
+msgid "adminV2.baseConfig.name"
+msgstr "نام"
+
+msgid "adminV2.baseConfig.new"
+msgstr "پیکربندی پایه جدید"
+
+msgid "adminV2.baseConfig.side"
+msgstr "سمت"
+
+msgid "adminV2.baseConfig.version"
+msgstr "نسخه"
+
+msgid "adminV2.common.actions"
+msgstr "عملیات"
+
+msgid "adminV2.common.add"
+msgstr "افزودن"
+
+msgid "adminV2.common.back"
+msgstr "بازگشت"
+
+msgid "adminV2.common.cancel"
+msgstr "انصراف"
+
+msgid "adminV2.common.confirmDelete"
+msgstr "آیا از حذف این مورد مطمئن هستید؟"
+
+msgid "adminV2.common.delete"
+msgstr "حذف"
+
+msgid "adminV2.common.deleted"
+msgstr "با موفقیت حذف شد"
+
+msgid "adminV2.common.duplicate"
+msgstr "کپی"
+
+msgid "adminV2.common.edit"
+msgstr "ویرایش"
+
+msgid "adminV2.common.enabled"
+msgstr "فعال"
+
+msgid "adminV2.common.format"
+msgstr "قالب‌بندی"
+
+msgid "adminV2.common.loadFailed"
+msgstr "بارگذاری داده ناموفق بود"
+
+msgid "adminV2.common.save"
+msgstr "ذخیره"
+
+msgid "adminV2.common.saved"
+msgstr "با موفقیت ذخیره شد"
+
+msgid "adminV2.common.search"
+msgstr "جستجو..."
+
+msgid "adminV2.common.validate"
+msgstr "اعتبارسنجی"
+
+msgid "adminV2.common.validationFailed"
+msgstr "اعتبارسنجی ناموفق"
+
+msgid "adminV2.common.validationOk"
+msgstr "اعتبارسنجی موفق"
+
+msgid "adminV2.dashboard.subtitle"
+msgstr "مدیریت پنل هیدیفای"
+
+msgid "adminV2.dashboard.title"
+msgstr "داشبورد"
+
+msgid "adminV2.dashboard.underConstruction"
+msgstr "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت."
+
+msgid "adminV2.dashboard.welcomePanel"
+msgstr "خوش آمدید"
+
+msgid "adminV2.domain.addTitle"
+msgstr "افزودن دامنه"
+
+msgid "adminV2.domain.alias"
+msgstr "نام مستعار"
+
+msgid "adminV2.domain.domain"
+msgstr "دامنه"
+
+msgid "adminV2.domain.mode"
+msgstr "حالت"
+
+msgid "adminV2.editor.cannotFormatJinja"
+msgstr "قالب‌بندی خودکار با تگ‌های Jinja ممکن نیست"
+
+msgid "adminV2.editor.excludeBuiltinTemplates"
+msgstr "حذف قالب‌های داخلی از خروجی"
+
+msgid "adminV2.editor.exportBundle"
+msgstr "خروجی بسته"
+
+msgid "adminV2.editor.includeTemplate"
+msgstr "شامل کردن قالب"
+
+msgid "adminV2.editor.insertVariable"
+msgstr "درج متغیر"
+
+msgid "adminV2.editor.jinjaHint"
+msgstr ""
+"JSON5 + Jinja: از {{ proxy.port }}، {{ proxy.tag }}، {% for %}…{% endfor %} "
+"استفاده کنید"
+
+msgid "adminV2.editor.noVariables"
+msgstr "متغیری با این جستجو یافت نشد"
+
+msgid "adminV2.editor.preview"
+msgstr "پیش‌نمایش"
+
+msgid "adminV2.editor.previewFailed"
+msgstr "درخواست پیش‌نمایش ناموفق بود"
+
+msgid "adminV2.editor.previewOk"
+msgstr "پیش‌نمایش با موفقیت تولید شد"
+
+msgid "adminV2.editor.previewParams"
+msgstr "پارامترهای پیش‌نمایش"
+
+msgid "adminV2.editor.previewPartial"
+msgstr "پیش‌نمایش با هشدار تولید شد"
+
+msgid "adminV2.editor.previewTitle"
+msgstr "پیش‌نمایش قالب"
+
+msgid "adminV2.footer.text"
+msgstr "پنل ادمین هیدیفای نسخه ۲"
+
+msgid "adminV2.menu.baseConfigs"
+msgstr "پیکربندی پایه"
+
+msgid "adminV2.menu.customProxies"
+msgstr "پروکسی‌های سفارشی"
+
+msgid "adminV2.menu.dashboard"
+msgstr "داشبورد"
+
+msgid "adminV2.menu.proxyEditor"
+msgstr "ویرایشگر پروکسی"
+
+msgid "adminV2.menu.sectionMain"
+msgstr "اصلی"
+
+msgid "adminV2.menu.sectionNew"
+msgstr "جدید"
+
+msgid "adminV2.menu.sectionV2"
+msgstr "جدید"
+
+msgid "adminV2.menu.templateVariables"
+msgstr "متغیرهای قالب"
+
+msgid "adminV2.menu.templates"
+msgstr "قالب‌ها"
+
+msgid "adminV2.proxy.addClient"
+msgstr "افزودن کلاینت"
+
+msgid "adminV2.proxy.addClientConfig"
+msgstr "افزودن کانفیگ برای این هسته"
+
+msgid "adminV2.proxy.addCoreConfig"
+msgstr "افزودن کانفیگ هسته"
+
+msgid "adminV2.proxy.allowedProtocols"
+msgstr "پروتکل‌های مجاز"
+
+msgid "adminV2.proxy.alpn"
+msgstr "ALPN"
+
+msgid "adminV2.proxy.alpnLabels.custom"
+msgstr "سفارشی"
+
+msgid "adminV2.proxy.alpnLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2"
+msgstr "TLS H1 + H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2_h3"
+msgstr "TLS H1 + H2 + QUIC"
+
+msgid "adminV2.proxy.alpnLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h3"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.autoClient"
+msgstr "خودکار"
+
+msgid "adminV2.proxy.baseConfigTemplate"
+msgstr "بازنویسی پیکربندی پایه"
+
+msgid "adminV2.proxy.baseConfigTemplateHint"
+msgstr ""
+"اختیاری: پوسته کامل xray داخل {% block base_config %}. خالی بگذارید تا از "
+"پیکربندی پایه سراسری استفاده شود."
+
+msgid "adminV2.proxy.builtinDefaultHint"
+msgstr ""
+"پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را "
+"در تب سرور یا کلاینت فعال کنید."
+
+msgid "adminV2.proxy.bundleContextProxyCount"
+msgstr "پروکسی‌های فعال"
+
+msgid "adminV2.proxy.categories"
+msgstr "دسته‌بندی‌ها"
+
+msgid "adminV2.proxy.categoriesAddNew"
+msgstr "افزودن"
+
+msgid "adminV2.proxy.categoriesAddPlaceholder"
+msgstr "دسته‌بندی جدید"
+
+msgid "adminV2.proxy.categoriesFilter"
+msgstr "فیلتر بر اساس دسته‌بندی"
+
+msgid "adminV2.proxy.categoriesHeader"
+msgstr "دسته‌بندی‌های موجود"
+
+msgid "adminV2.proxy.categoriesHint"
+msgstr ""
+"دسته‌بندی موجود را انتخاب کنید یا از پایین منو یک مورد جدید اضافه کنید"
+
+msgid "adminV2.proxy.categoriesPlaceholder"
+msgstr "انتخاب دسته‌بندی"
+
+msgid "adminV2.proxy.clashFormatJson"
+msgstr "JSON"
+
+msgid "adminV2.proxy.clashFormatYaml"
+msgstr "YAML"
+
+msgid "adminV2.proxy.clientBuiltinCustomized"
+msgstr "پیکربندی کلاینت سفارشی"
+
+msgid "adminV2.proxy.clientBuiltinDefault"
+msgstr "استفاده از پیکربندی پیش‌فرض کلاینت کاتالوگ"
+
+msgid "adminV2.proxy.clientConfigDefault"
+msgstr "کانفیگ کلاینت"
+
+msgid "adminV2.proxy.clientCoreConfigs"
+msgstr "کانفیگ هسته کلاینت"
+
+msgid "adminV2.proxy.clientCores"
+msgstr "هسته‌های کلاینت"
+
+msgid "adminV2.proxy.core"
+msgstr "هسته"
+
+msgid "adminV2.proxy.customPath"
+msgstr "مسیر سفارشی"
+
+msgid "adminV2.proxy.directPortAccess"
+msgstr "دسترسی مستقیم به پورت"
+
+msgid "adminV2.proxy.directPortAccessHint"
+msgstr "با احتیاط استفاده کنید — ممکن است سرور شما قابل کشف باشد"
+
+msgid "adminV2.proxy.doBase64After"
+msgstr "Base64 بعد از رندر"
+
+msgid "adminV2.proxy.domainIds"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.proxy.domainIdsEmptyAll"
+msgstr "خالی = همه دامنه‌های منطبق؛ پروکسی IP‌محور دامنه ندارد"
+
+msgid "adminV2.proxy.domainModeLabels.cdn"
+msgstr "CDN"
+
+msgid "adminV2.proxy.domainModeLabels.direct"
+msgstr "مستقیم"
+
+msgid "adminV2.proxy.domainModeLabels.fake"
+msgstr "Fake TLS"
+
+msgid "adminV2.proxy.domainModeLabels.reality"
+msgstr "REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay"
+msgstr "Relay"
+
+msgid "adminV2.proxy.domainModeLabels.special"
+msgstr "ویژه (REALITY)"
+
+msgid "adminV2.proxy.domainModes"
+msgstr "حالت دامنه"
+
+msgid "adminV2.proxy.domains"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.proxy.downloadAlpns"
+msgstr "ALPN دانلود"
+
+msgid "adminV2.proxy.downloadAlpnsHint"
+msgstr "فقط xHTTP. خالی = همان ALPN اصلی."
+
+msgid "adminV2.proxy.downloadDomainModes"
+msgstr "حالت‌های دامنه دانلود"
+
+msgid "adminV2.proxy.downloadTlsLayer"
+msgstr "لایه TLS دانلود"
+
+msgid "adminV2.proxy.exampleContext"
+msgstr "زمینه رندر"
+
+msgid "adminV2.proxy.exampleContextDomain"
+msgstr "دامنه"
+
+msgid "adminV2.proxy.exampleContextIp"
+msgstr "IP"
+
+msgid "adminV2.proxy.exampleContextProxy"
+msgstr "شناسه پروکسی"
+
+msgid "adminV2.proxy.exampleContextUa"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleContextUser"
+msgstr "کاربر"
+
+msgid "adminV2.proxy.exampleDomain"
+msgstr "دامنه"
+
+msgid "adminV2.proxy.exampleDomainAll"
+msgstr "همه دامنه‌ها"
+
+msgid "adminV2.proxy.exampleDomainAllHint"
+msgstr ""
+"همه دامنه‌های منطبق با این پروکسی در خروجی گنجانده می‌شوند (مثل اشتراک)."
+
+msgid "adminV2.proxy.exampleDomainCustom"
+msgstr "دامنه دلخواه"
+
+msgid "adminV2.proxy.exampleDomainPick"
+msgstr "انتخاب از پنل"
+
+msgid "adminV2.proxy.exampleIp"
+msgstr "آدرس IP"
+
+msgid "adminV2.proxy.exampleUaCustom"
+msgstr "User-Agent دلخواه"
+
+msgid "adminV2.proxy.exampleUaPreset"
+msgstr "از پیش‌تعریف‌شده"
+
+msgid "adminV2.proxy.exampleUser"
+msgstr "کاربر"
+
+msgid "adminV2.proxy.exampleUserAgent"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleUserPick"
+msgstr "انتخاب کاربر پنل"
+
+msgid "adminV2.proxy.exampleUserSample"
+msgstr "کاربر نمونه"
+
+msgid "adminV2.proxy.export"
+msgstr "خروجی"
+
+msgid "adminV2.proxy.exportFailed"
+msgstr "خروجی ناموفق"
+
+msgid "adminV2.proxy.faketlsDomains"
+msgstr "دامنه‌های faketls"
+
+msgid "adminV2.proxy.fieldOverride"
+msgstr "بازنویسی"
+
+msgid "adminV2.proxy.generateBundle"
+msgstr "تولید همه پیکربندی‌ها"
+
+msgid "adminV2.proxy.generateBundleOk"
+msgstr "بسته پیکربندی با موفقیت تولید شد"
+
+msgid "adminV2.proxy.generateBundlePartial"
+msgstr "بسته پیکربندی با هشدار یا خطا تولید شد"
+
+msgid "adminV2.proxy.generateExample"
+msgstr "تولید نمونه"
+
+msgid "adminV2.proxy.generateExampleOk"
+msgstr "نمونه با موفقیت تولید شد"
+
+msgid "adminV2.proxy.generateExamplePartial"
+msgstr "نمونه با هشدار یا خطا تولید شد"
+
+msgid "adminV2.proxy.ignoreSkip"
+msgstr "نادیده گرفتن skip"
+
+msgid "adminV2.proxy.ignoreSkipHint"
+msgstr "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود"
+
+msgid "adminV2.proxy.import"
+msgstr "ورود"
+
+msgid "adminV2.proxy.importFailed"
+msgstr "ورود ناموفق"
+
+msgid "adminV2.proxy.importSuccess"
+msgstr "با موفقیت وارد شد ({count} قالب)"
+
+msgid "adminV2.proxy.inboundPort"
+msgstr "پورت inbound"
+
+msgid "adminV2.proxy.inboundPortAuto"
+msgstr "خالی = خودکار"
+
+msgid "adminV2.proxy.inboundPortAutoCalculated"
+msgstr "پورت‌ها به ازای هر دامنه خودکار محاسبه می‌شوند"
+
+msgid "adminV2.proxy.inboundTcpPorts"
+msgstr "پورت‌های TCP ورودی"
+
+msgid "adminV2.proxy.inboundTcpPortsHint"
+msgstr "پورت‌های TCP ثابت با کاما"
+
+msgid "adminV2.proxy.inboundTemplate"
+msgstr "قالب inbound"
+
+msgid "adminV2.proxy.inboundUdpPorts"
+msgstr "پورت‌های UDP ورودی"
+
+msgid "adminV2.proxy.inboundUdpPortsHint"
+msgstr "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP"
+
+msgid "adminV2.proxy.l7Proto"
+msgstr "L7 Reverse Proxy Protocol"
+
+msgid "adminV2.proxy.l7ReverseProto"
+msgstr "پروتکل L7 reverse proxy"
+
+msgid "adminV2.proxy.linkSettings"
+msgstr "تنظیمات لینک"
+
+msgid "adminV2.proxy.linkTemplate"
+msgstr "قالب لینک"
+
+msgid "adminV2.proxy.listTitle"
+msgstr "پروکسی‌های سفارشی"
+
+msgid "adminV2.proxy.mode"
+msgstr "حالت"
+
+msgid "adminV2.proxy.modeLabels.domain_native"
+msgstr "بومی دامنه"
+
+msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
+msgstr "پورت خودکار چند دامنه"
+
+msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
+msgstr "درگاه L7 دامنه"
+
+msgid "adminV2.proxy.modeLabels.domains_single_public_port"
+msgstr "پورت ثابت چند دامنه"
+
+msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
+msgstr "درگاه SNI دامنه"
+
+msgid "adminV2.proxy.modeLabels.ip"
+msgstr "مبتنی بر IP"
+
+msgid "adminV2.proxy.modeSettings"
+msgstr "حالت و مسیریابی"
+
+msgid "adminV2.proxy.name"
+msgstr "نام"
+
+msgid "adminV2.proxy.new"
+msgstr "پروکسی جدید"
+
+msgid "adminV2.proxy.noClientConfigs"
+msgstr "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید."
+
+msgid "adminV2.proxy.outboundTagTemplate"
+msgstr "قالب تگ outbound"
+
+msgid "adminV2.proxy.outboundTagTemplateHint"
+msgstr "Jinja برای تگ هر outbound کلاینت"
+
+msgid "adminV2.proxy.outboundsTemplate"
+msgstr "قالب outbounds"
+
+msgid "adminV2.proxy.protocol"
+msgstr "پروتکل"
+
+msgid "adminV2.proxy.resetToBuiltin"
+msgstr "بازگردانی به پیش‌فرض کاتالوگ"
+
+msgid "adminV2.proxy.serverBuiltinCustomized"
+msgstr "پیکربندی سرور سفارشی"
+
+msgid "adminV2.proxy.serverBuiltinDefault"
+msgstr "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ"
+
+msgid "adminV2.proxy.serverCore"
+msgstr "هسته سرور"
+
+msgid "adminV2.proxy.slug"
+msgstr "شناسه"
+
+msgid "adminV2.proxy.sublink"
+msgstr "ساب‌لینک"
+
+msgid "adminV2.proxy.sublinkBase64.content"
+msgstr "محتوا"
+
+msgid "adminV2.proxy.sublinkBase64.formatJson"
+msgstr "قالب‌بندی JSON"
+
+msgid "adminV2.proxy.sublinkBase64.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkBase64Detail"
+msgstr "جزئیات Base64"
+
+msgid "adminV2.proxy.sublinkFormat"
+msgstr "فرمت لینک"
+
+msgid "adminV2.proxy.sublinkFormatBase64"
+msgstr "فرمت Base64"
+
+msgid "adminV2.proxy.sublinkFormatRaw"
+msgstr "لینک تولیدشده"
+
+msgid "adminV2.proxy.sublinkFormatRawLink"
+msgstr "لینک خام"
+
+msgid "adminV2.proxy.sublinkFormatUri"
+msgstr "فرمت URI"
+
+msgid "adminV2.proxy.sublinkUri.fragment"
+msgstr "uri.fragment"
+
+msgid "adminV2.proxy.sublinkUri.host"
+msgstr "uri.host"
+
+msgid "adminV2.proxy.sublinkUri.password"
+msgstr "uri.password"
+
+msgid "adminV2.proxy.sublinkUri.path"
+msgstr "uri.path"
+
+msgid "adminV2.proxy.sublinkUri.port"
+msgstr "uri.port"
+
+msgid "adminV2.proxy.sublinkUri.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkUri.query_params"
+msgstr "uri.query_params (JSON)"
+
+msgid "adminV2.proxy.sublinkUri.user"
+msgstr "uri.user"
+
+msgid "adminV2.proxy.sublinkUriDetail"
+msgstr "جزئیات URI"
+
+msgid "adminV2.proxy.tabClient"
+msgstr "کلاینت"
+
+msgid "adminV2.proxy.tabClients"
+msgstr "کلاینت‌ها"
+
+msgid "adminV2.proxy.tabGeneral"
+msgstr "عمومی"
+
+msgid "adminV2.proxy.tabServer"
+msgstr "سرور"
+
+msgid "adminV2.proxy.tabServers"
+msgstr "سرورها"
+
+msgid "adminV2.proxy.tag"
+msgstr "تگ"
+
+msgid "adminV2.proxy.templateSlugs"
+msgstr "قالب‌های include"
+
+msgid "adminV2.proxy.tlsLayer"
+msgstr "لایه TLS"
+
+msgid "adminV2.proxy.tlsLayerLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS"
+
+msgid "adminV2.proxy.tlsLayerSpecialConflict"
+msgstr "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست"
+
+msgid "adminV2.proxy.transport"
+msgstr "ترابری"
+
+msgid "adminV2.proxy.transportLabels.grpc"
+msgstr "gRPC"
+
+msgid "adminV2.proxy.transportLabels.httpupgrade"
+msgstr "HTTP Upgrade"
+
+msgid "adminV2.proxy.transportLabels.other"
+msgstr "سایر"
+
+msgid "adminV2.proxy.transportLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.transportLabels.ws"
+msgstr "WebSocket"
+
+msgid "adminV2.proxy.transportLabels.xhttp"
+msgstr "xHTTP"
+
+msgid "adminV2.proxy.version"
+msgstr "نسخه"
+
+msgid "adminV2.template.builtin"
+msgstr "سیستمی"
+
+msgid "adminV2.template.category"
+msgstr "دسته"
+
+msgid "adminV2.template.clone"
+msgstr "کپی به‌عنوان سفارشی"
+
+msgid "adminV2.template.cloneDescription"
+msgstr "توضیحات سفارشی"
+
+msgid "adminV2.template.cloneName"
+msgstr "نام سفارشی"
+
+msgid "adminV2.template.cloned"
+msgstr "قالب کپی شد"
+
+msgid "adminV2.template.content"
+msgstr "محتوا"
+
+msgid "adminV2.template.core"
+msgstr "هسته"
+
+msgid "adminV2.template.description"
+msgstr "توضیحات"
+
+msgid "adminV2.template.editable"
+msgstr "قابل ویرایش"
+
+msgid "adminV2.template.empty"
+msgstr "قالبی برای این هسته وجود ندارد"
+
+msgid "adminV2.template.included"
+msgstr "شامل شده"
+
+msgid "adminV2.template.insert"
+msgstr "درج در ویرایشگر"
+
+msgid "adminV2.template.listTitle"
+msgstr "قالب‌ها"
+
+msgid "adminV2.template.name"
+msgstr "نام"
+
+msgid "adminV2.template.new"
+msgstr "قالب جدید"
+
+msgid "adminV2.template.notFound"
+msgstr "قالب پیدا نشد"
+
+msgid "adminV2.template.referenced"
+msgstr "ارجاع شده"
+
+msgid "adminV2.template.referencedTemplates"
+msgstr "قالب‌های ارجاع‌شده"
+
+msgid "adminV2.template.sidePanel"
+msgstr "قالب‌ها"
+
+msgid "adminV2.template.sidePanelHint"
+msgstr "برای مرور قالب‌ها تب سرور یا کلاینت را باز کنید"
+
+msgid "adminV2.template.slug"
+msgstr "شناسه"
+
+msgid "adminV2.template.slugDuplicate"
+msgstr "این شناسه قالب قبلاً استفاده شده است."
+
+msgid "adminV2.template.slugHint"
+msgstr "فقط بخش بعد از هسته/دسته قابل ویرایش است"
+
+msgid "adminV2.templateVariables.access"
+msgstr "دسترسی"
+
+msgid "adminV2.templateVariables.currentValue"
+msgstr "مقدار فعلی"
+
+msgid "adminV2.templateVariables.description"
+msgstr "توضیحات"
+
+msgid "adminV2.templateVariables.group"
+msgstr "گروه"
+
+msgid "adminV2.templateVariables.label"
+msgstr "برچسب"
+
+msgid "adminV2.templateVariables.listTitle"
+msgstr "متغیرهای قالب"
+
+msgid "adminV2.templateVariables.loadValues"
+msgstr "بارگذاری مقادیر فعلی"
+
+msgid "adminV2.templateVariables.name"
+msgstr "نام"
+
+msgid "adminV2.theme.dark"
+msgstr "حالت تاریک"
+
+msgid "adminV2.theme.light"
+msgstr "حالت روشن"
+
+msgid "adminV2.validation.errors"
+msgstr "خطاها"
+
+msgid "adminV2.validation.preview"
+msgstr "پیش‌نمایش کامپایل"
+
+msgid "adminV2.validation.title"
+msgstr "اعتبارسنجی"
+
+msgid "adminV2.validation.warnings"
+msgstr "هشدارها"
 
 msgid "adminuser.force_update_usage"
 msgstr ""
@@ -1266,6 +2039,12 @@ msgstr ""
 msgid "config.allow_invalid_sni.label"
 msgstr "🆗 اجازه دادن به SNI نامعتبر"
 
+msgid "config.anytls_enable.description"
+msgstr ""
+
+msgid "config.anytls_enable.label"
+msgstr ""
+
 msgid "config.auto_update.description"
 msgstr ""
 "هر روز راس ساعت ۳ صبح، سیستم برای به‌روز‌ رسانی جدید چک می‌شود. در صورتی که "
@@ -1319,7 +2098,7 @@ msgstr ""
 "جهت قراردادن آی پی های شخصی از <a target='_blank' href='https://ip-format.hiddify.com'>این لینک</a> استفاده کنید."
 
 msgid "config.cdn_forced_host.label"
-msgstr "🔂 اجبار به استفاده‌ از آی پی‌های زیر برای کانفیگ"
+msgstr "🔂 اجبار به استفاده‌ از آی پی/دامنه های زیر برای کانفیگ"
 
 msgid "config.cloudflare.description"
 msgstr ""
@@ -1485,6 +2264,12 @@ msgstr "فعال کردن پروتکل HTTP/2"
 
 msgid "config.h2_enable.label"
 msgstr "🔵 h2"
+
+msgid "config.health_secret_path.description"
+msgstr ""
+
+msgid "config.health_secret_path.label"
+msgstr ""
 
 msgid "config.hidden.description"
 msgstr "-"
@@ -2124,6 +2909,18 @@ msgstr ""
 msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ نمایش حجم و تاریخ انقضا در کانفیگ ها"
 
+msgid "config.snell_enable.description"
+msgstr ""
+
+msgid "config.snell_enable.label"
+msgstr ""
+
+msgid "config.socks_enable.description"
+msgstr ""
+
+msgid "config.socks_enable.label"
+msgstr ""
+
 msgid "config.special_port.description"
 msgstr ""
 "شما می توانید یک پورت سفارشی برای سرور ریالیتی خود تنظیم کنید تا پردازش "
@@ -2250,6 +3047,16 @@ msgstr "استفاده نشده"
 
 msgid "config.ssh_server_redis_url.label"
 msgstr "آدرس پایگاه داده کاربر SSH"
+
+msgid "config.ssh_use_tls_port.description"
+msgstr ""
+"در صورت فعال بودن، SSH به‌جای پورت عمومی جداگانه روی پورت‌های TLS/HTTPS (مثل"
+" ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به همان پورت TLS "
+"متصل می‌شوند و مالتی‌پلکسر ترافیک SSH را تشخیص داده و به بک‌اند پروکسی SSH "
+"ارسال می‌کند."
+
+msgid "config.ssh_use_tls_port.label"
+msgstr "🔀 مالتی‌پلکس SSH روی پورت TLS"
 
 msgid "config.ssr.description"
 msgstr ""
@@ -2532,11 +3339,29 @@ msgstr ""
 msgid "config.validation-success-no-reset"
 msgstr " ✅ تنظیمات با موفقیت تغییر کرد"
 
+msgid "config.vless_decryption.description"
+msgstr ""
+
+msgid "config.vless_decryption.label"
+msgstr ""
+
 msgid "config.vless_enable.description"
 msgstr "فعال کردن پروتکل VLess"
 
 msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
+
+msgid "config.vless_encryption.description"
+msgstr ""
+
+msgid "config.vless_encryption.label"
+msgstr ""
+
+msgid "config.vless_flow.description"
+msgstr ""
+
+msgid "config.vless_flow.label"
+msgstr ""
 
 msgid "config.vmess_enable.description"
 msgstr "فعال کردن پروتکل VMess"
@@ -2646,6 +3471,16 @@ msgstr "یک کلید عمومی برای WireGuard مشخص شده است"
 msgid "config.wireguard_public_key.label"
 msgstr "کلید عمومی WireGuard"
 
+msgid "config.wireguard_use_quic_port.description"
+msgstr ""
+"در صورت فعال بودن، WireGuard به‌جای پورت عمومی جداگانه روی پورت‌های QUIC/UDP"
+" مربوط به TLS (مثل ۴۴۳) از طریق مالتی‌پلکس لایه ۴ قرار می‌گیرد. کلاینت‌ها به"
+" همان پورت UDP/QUIC متصل می‌شوند و مالتی‌پلکسر ترافیک WireGuard را تشخیص "
+"داده و به بک‌اند WireGuard ارسال می‌کند."
+
+msgid "config.wireguard_use_quic_port.label"
+msgstr "🔀 مالتی‌پلکس WireGuard روی پورت QUIC"
+
 msgid "config.ws_enable.description"
 msgstr ""
 "Websocket یک تونل روی HTTP ایجاد می کند که برای استفاده در CDN مفید است"
@@ -2696,6 +3531,27 @@ msgstr ""
 msgid "domain.current_server_IPs"
 msgstr ""
 
+msgid "domain.custom_proxy.description"
+msgstr ""
+
+msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.other"
+msgstr ""
+
+msgid "domain.custom_proxy.group.sni_gateway"
+msgstr ""
+
+msgid "domain.custom_proxy.label"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_only"
+msgstr ""
+
+msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
 msgid "domain.description"
 msgstr ""
 "این فیلد باید با دقت و به درستی تکمیل شود. در غیر اینصورت پروکسی ها به مشکل بر خواهند خورد. لطفا برای دیدن راهنمای ساخت زیردامنه \n"
@@ -2715,8 +3571,22 @@ msgstr ""
 msgid "domain.domain_fronting.label"
 msgstr "🔒 فعال کردن دامین فرانتینگ در اتصال TLS"
 
+msgid "domain.ech.description"
+msgstr ""
+"برای این دامنه CDN، ECH از رکورد HTTPS دریافت و استفاده شود. نیاز به فعال "
+"بودن TLS ECH در تنظیمات پنل دارد."
+
+msgid "domain.ech.label"
+msgstr "🔐 ECH"
+
 msgid "domain.empty.allowed_for_fake_only"
 msgstr "domain.empty.allowed_for_fake_only"
+
+msgid "domain.fake_mode.description"
+msgstr ""
+
+msgid "domain.fake_mode.label"
+msgstr ""
 
 msgid "domain.intro"
 msgstr ""
@@ -2742,6 +3612,12 @@ msgstr ""
 
 msgid "domain.resolveip.label"
 msgstr "🔢 استفاده از IP"
+
+msgid "domain.server_domain.description"
+msgstr ""
+
+msgid "domain.server_domain.label"
+msgstr ""
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -2933,6 +3809,9 @@ msgstr ""
 
 msgid "singbox: ssh"
 msgstr "SingBox: SSH"
+
+msgid "special"
+msgstr ""
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

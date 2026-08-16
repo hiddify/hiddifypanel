@@ -1,3 +1,3 @@
 {% if proxy.domain.download %}
-{% set data.extra %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
+{% set data.extra | compactjson %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
 {% endif %}

@@ -6,6 +6,8 @@
 {{_("config.wireguard_enable.description")}}
 {{_("config.wireguard_port.label")}}
 {{_("config.wireguard_port.description")}}
+{{_("config.wireguard_use_quic_port.label")}}
+{{_("config.wireguard_use_quic_port.description")}}
 {{_("config.wireguard_ipv6.label")}}
 {{_("config.wireguard_ipv6.description")}}
 {{_("config.wireguard_ipv4.label")}}
@@ -20,6 +22,8 @@
 {{_("config.ssh_server_redis_url.description")}}
 {{_("config.ssh_server_port.label")}}
 {{_("config.ssh_server_port.description")}}
+{{_("config.ssh_use_tls_port.label")}}
+{{_("config.ssh_use_tls_port.description")}}
 {{_("config.ssh_server_enable.label")}}
 {{_("config.ssh_server_enable.description")}}
 {{_("config.first_setup.label")}}
@@ -58,8 +62,6 @@
 {{_("config.show_usage_in_sublink.description")}}
 {{_("config.cloudflare.label")}}
 {{_("config.cloudflare.description")}}
-{{_("config.license.label")}}
-{{_("config.license.description")}}
 {{_("config.country.label")}}
 {{_("config.country.description")}}
 {{_("config.package_mode.label")}}
@@ -164,6 +166,8 @@
 {{_("config.proxy_path_admin.description")}}
 {{_("config.proxy_path_client.label")}}
 {{_("config.proxy_path_client.description")}}
+{{_("config.health_secret_path.label")}}
+{{_("config.health_secret_path.description")}}
 {{_("config.firewall.label")}}
 {{_("config.firewall.description")}}
 {{_("config.netdata.label")}}
@@ -254,6 +258,12 @@
 {{_("config.mieru_handshake.description")}}
 {{_("config.vless_enable.label")}}
 {{_("config.vless_enable.description")}}
+{{_("config.vless_flow.label")}}
+{{_("config.vless_flow.description")}}
+{{_("config.vless_encryption.label")}}
+{{_("config.vless_encryption.description")}}
+{{_("config.vless_decryption.label")}}
+{{_("config.vless_decryption.description")}}
 {{_("config.trojan_enable.label")}}
 {{_("config.trojan_enable.description")}}
 {{_("config.reality_enable.label")}}
@@ -330,6 +340,12 @@
 {{_("config.ssh_host_dsa_pk.description")}}
 {{_("config.ssh_host_dsa_pub.label")}}
 {{_("config.ssh_host_dsa_pub.description")}}
+{{_("config.anytls_enable.label")}}
+{{_("config.anytls_enable.description")}}
+{{_("config.snell_enable.label")}}
+{{_("config.snell_enable.description")}}
+{{_("config.socks_enable.label")}}
+{{_("config.socks_enable.description")}}
 {{_("config.hiddifycli_enable.label")}}
 {{_("config.hiddifycli_enable.description")}}
 
@@ -368,13 +384,9 @@
 {{_("auto_cdn_ip")}}
 {{_("relay")}}
 {{_("worker")}}
-{{_("fake")}}
-{{_("reality")}}
-{{_("special_reality_tcp")}}
-{{_("special_reality_xhttp")}}
-{{_("special_reality_grpc")}}
 {{_("old_xtls_direct")}}
 {{_("dnstt")}}
+{{_("special")}}
 
 {{_("no_reset")}}
 {{_("monthly")}}

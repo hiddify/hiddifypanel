@@ -3,39 +3,48 @@
 {% if tls %}
 "tls": {
   "enabled": true,
-  {% if ctx.platform.singbox.version >= "1.14.0" %}
-    "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
-  {% endif %}
-  "disable_sni": {{ (not domain.sni) | jsbool }},
+  {%if not domain.sni%} "disable_sni": true {%endif%},
   "server_name": "{{ domain.sni }}",
-  "insecure": {{ domain.allow_insecure | jsbool }},
+  {%if domain.allow_insecure%} 
+    "insecure": true,
+  {%endif%}
+
+
   {% if alpns %}
-  "alpn": {{ alpns | tojson }},
+    "alpn": {{ alpns | tojson }},
   {% endif %}
-  "certificate_public_key_sha256": [
-    {% for pin in domain.cert.pinnedPeerCertSha256 %}
-    "{{ pin }}",
-    {% endfor %}
-  ],
-  {% if ctx.hconfig.tls_ech_enable %}
-  "ech": {
-    "enabled": true,
-    "config": [],
-    "config_path": "",
-    "query_server_name": "{{ domain.sni }}"
-  },
-  {% endif %}
+
   {% set fp = ctx.hconfig.fingerprint or "" %}
+  {% if fp and fp!="none" %}
   "utls": {
-    "enabled": {{ (fp and fp != "none") | jsbool }},
+    "enabled": true,
     "fingerprint": "{{ fp }}"
   },
+  {% endif %}
+
   {% if domain.is_reality() %}
-  "reality": {
-    "enabled": true,
-    "public_key": "{{ ctx.hconfig.reality_public_key }}",
-    "short_id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
-  }
+    "reality": {
+      "enabled": true,
+      "public_key": "{{ ctx.hconfig.reality_public_key }}",
+      "short_id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
+    }
+  {% else %}
+    {% if ctx.platform.singbox.version >= "1.14.0" %}
+      "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
+    {% endif %}
+    "certificate_public_key_sha256": [
+      {% for pin in domain.cert.pinnedPeerCertSha256 %}
+      "{{ pin }}",
+      {% endfor %}
+    ],
+    {% if ctx.hconfig.tls_ech_enable %}
+    "ech": {
+      "enabled": true,
+      "config": [],
+      "config_path": "",
+      "query_server_name": "{{ domain.sni }}"
+    },
+    {% endif %}
   {% endif %}
 },
 {% endif %}

@@ -5,7 +5,7 @@
     "request": {
       "path": ["/{{ proxy.path }}"],
       "headers": {
-        "Host": ["{{ ctx.proxy.domain.host }}"]
+        "Host": ["{{ proxy.domain.host }}"]
       }
     }
   }

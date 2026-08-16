@@ -33,6 +33,7 @@
   "Beta": "☑️ Beta",
   "Bridge Servers": "➖ Bridge Servers",
   "Bug": "Bug/Feature",
+  "CDN and worker domains must use valid fake mode": "CDN and worker domains must use valid fake mode",
   "CPU %(cores)s Cores": "CPU %(cores)s Core",
   "Can add sub admin": "👥 Can Add Sub Admin",
   "Change": "Change",
@@ -76,6 +77,7 @@
   "Edit": "Edit",
   "Edit Proxy Names": "✏️ Modifying Proxies",
   "Enable": "❇️ Enable",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "Enable TLS ECH in panel settings before using ECH on a CDN domain",
   "Error in auto cdn format": "⚠️ Error in Auto CDN Format",
   "Error! auto cdn ip can not be find, please contact admin.": "Error In Auto CDN IP! It Can Not Be Find, Please Contact Admin",
   "Example Domains": "Test and Suggest Domain ",
@@ -165,6 +167,7 @@
   "RAM": "RAM",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain is not compaitble with Server names!",
   "REALITY Fallback domain is not compatible with server names!": "REALITY Fallback domain is not compatible with server names!",
+  "Relay domains with non-valid fake mode require an IP address": "Relay domains with non-valid fake mode require an IP address",
   "Release": "✅ Release",
   "Remaining about %(relative)s, exactly %(days)s days": "Remaining about %(relative)s, exactly %(days)s days",
   "Remote nodes are not supported yet!": "Remote nodes are not supported yet!",
@@ -191,6 +194,7 @@
   "Save Link": "Save Link",
   "Select all records": "Select all records",
   "Select record": "Select record",
+  "Selected proxy does not support this domain mode combination": "Selected proxy does not support this domain mode combination",
   "Seleted Users": "Seleted Users",
   "Send Message to User's Telegram": "📣 Send Message to User's Telegram",
   "Sending": "Sending...",
@@ -266,11 +270,11 @@
     "menu": {
       "api": "API",
       "config": "Settings",
+      "dashboard_v2": "New Dashboard",
       "domain": "Domains",
       "home": "Dashboard",
       "proxy": "Proxies",
       "proxy_stats": "Proxies' Status",
-      "dashboard_v2": "New Dashboard",
       "support": "Help",
       "telegram": "Telegram",
       "user": "Users"
@@ -286,6 +290,320 @@
     "quicksetup_intro": "Your Server's IPs are: \n<div >\nIPv4: %(ipv4)s <br> IPv6: %(ipv6)s\n</div>\nSet these IPs on your Domain or Subdomain and enter your Domain or Subdomain in the bellow box.\n",
     "save_panel_link": "Please note that your panel can be accessed only via the following link. please save this link.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p> ",
     "waiting_for_update": "⚠️ Please wait about 5 minutes to make sure everything is updated. during this time, please copy and save your Proxy links which are:"
+  },
+  "adminV2": {
+    "appTitle": "HiddifyManager",
+    "baseConfig": {
+      "builtinReadOnly": "Built-in base config — only name and enabled state can be changed. Duplicate to edit fully.",
+      "content": "Full config",
+      "core": "Core",
+      "description": "Description",
+      "listTitle": "Base Configs",
+      "name": "Name",
+      "new": "New Base Config",
+      "side": "Side",
+      "version": "Version"
+    },
+    "common": {
+      "actions": "Actions",
+      "add": "Add",
+      "back": "Back",
+      "cancel": "Cancel",
+      "confirmDelete": "Are you sure you want to delete this item?",
+      "delete": "Delete",
+      "deleted": "Deleted successfully",
+      "duplicate": "Duplicate",
+      "edit": "Edit",
+      "enabled": "Enabled",
+      "format": "Format",
+      "loadFailed": "Failed to load data",
+      "save": "Save",
+      "saved": "Saved successfully",
+      "search": "Search...",
+      "validate": "Validate",
+      "validationFailed": "Validation failed",
+      "validationOk": "Validation passed"
+    },
+    "dashboard": {
+      "subtitle": "Hiddify panel administration",
+      "title": "Dashboard",
+      "underConstruction": "Welcome to the new Hiddify dashboard — under construction.",
+      "welcomePanel": "Welcome"
+    },
+    "domain": {
+      "addFailed": "Could not add domain",
+      "addTitle": "Add domain",
+      "alias": "Alias",
+      "domain": "Domain",
+      "mode": "Mode"
+    },
+    "editor": {
+      "cannotFormatJinja": "Cannot auto-format while Jinja tags are present",
+      "excludeBuiltinTemplates": "Exclude built-in templates from export",
+      "exportBundle": "Export bundle",
+      "includeTemplate": "Include template",
+      "insertVariable": "Insert variable",
+      "jinjaHint": "JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}",
+      "noVariables": "No variables match your search",
+      "preview": "Preview",
+      "previewFailed": "Preview request failed",
+      "previewOk": "Preview generated successfully",
+      "previewParams": "Preview parameters",
+      "previewPartial": "Preview generated with warnings",
+      "previewTitle": "Template preview"
+    },
+    "footer": {
+      "text": "HiddifyManager"
+    },
+    "menu": {
+      "baseConfigs": "Base Configs",
+      "customProxies": "Custom Proxies",
+      "dashboard": "Dashboard",
+      "proxyEditor": "Proxy Editor",
+      "sectionMain": "Main",
+      "sectionNew": "New",
+      "sectionV2": "New",
+      "templateVariables": "Template Variables",
+      "templates": "Templates"
+    },
+    "proxy": {
+      "addClient": "Add client",
+      "addClientConfig": "Add config for this core",
+      "addCoreConfig": "Add core config",
+      "allowedProtocols": "Allowed protocols",
+      "alpn": "ALPN",
+      "alpnLabels": {
+        "custom": "Custom",
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "tls_h2": "TLS H2",
+        "tls_h3": "QUIC"
+      },
+      "autoClient": "auto",
+      "baseConfigTemplate": "Base config override",
+      "baseConfigTemplateHint": "Optional full xray client shell in {% block base_config %}. Leave empty to use the global base config.",
+      "builtinDefaultHint": "Built-in preset synced from catalog. Enable custom content on Server or Client tabs to edit those sides.",
+      "builtinReadOnly": "Built-in preset — only name and enabled state can be changed. Duplicate to edit fully.",
+      "bundleContextProxyCount": "Enabled proxies",
+      "categories": "Categories",
+      "categoriesAdd": "Add category",
+      "categoriesAddNew": "Add New",
+      "categoriesAddPlaceholder": "New category",
+      "categoriesFilter": "Filter by categories",
+      "categoriesHeader": "Available categories",
+      "categoriesHint": "Select existing categories or add a new one from the dropdown footer",
+      "categoriesPlaceholder": "Select categories",
+      "categoriesRemoveAll": "Remove All",
+      "clashFormatJson": "JSON",
+      "clashFormatYaml": "YAML",
+      "clientBuiltinCustomized": "Custom client config",
+      "clientBuiltinDefault": "Using catalog default client config",
+      "clientConfigDefault": "Client config",
+      "clientCoreConfigs": "Client core configs",
+      "clientCores": "Client cores",
+      "core": "Core",
+      "customPath": "Custom path",
+      "customPathAuto": "Generated automatically for HTTP proxies",
+      "directPortAccess": "Direct port access",
+      "directPortAccessHint": "Use with care — may make your server discoverable on the public interface",
+      "doBase64After": "Base64 after render",
+      "domainIds": "Domains",
+      "domainIdsEmptyAll": "Empty = all matching domains; IP-based proxies ignore domains",
+      "domainModeLabels": {
+        "cdn": "CDN",
+        "direct": "Direct",
+        "fake": "Fake TLS",
+        "reality": "REALITY",
+        "relay": "Relay",
+        "special": "Special (REALITY)"
+      },
+      "domainModes": "Domain modes",
+      "domains": "Domains",
+      "downloadAlpns": "Download ALPNs",
+      "downloadAlpnsHint": "xHTTP only. Empty = same as main ALPN. Config variants = main × download ALPN.",
+      "downloadDomainModes": "Download domain modes",
+      "downloadTcpUdp": "Download TCP or UDP",
+      "downloadTlsLayer": "Download TLS layer",
+      "exampleContext": "Render context",
+      "exampleContextDomain": "Domain",
+      "exampleContextIp": "IP",
+      "exampleContextProxy": "Proxy ID",
+      "exampleContextUa": "User-Agent",
+      "exampleContextUser": "User",
+      "exampleDomain": "Domain",
+      "exampleDomainAll": "All domains",
+      "exampleDomainAllHint": "Include every domain that matches this proxy (same as subscription output).",
+      "exampleDomainCustom": "Custom domain",
+      "exampleDomainPick": "Pick from panel",
+      "exampleIp": "IP address",
+      "exampleUaCustom": "Custom User-Agent",
+      "exampleUaPreset": "Preset",
+      "exampleUser": "User",
+      "exampleUserAgent": "User-Agent",
+      "exampleUserPick": "Pick panel user",
+      "exampleUserSample": "Sample user",
+      "export": "Export",
+      "exportFailed": "Export failed",
+      "faketlsDomains": "Faketls domains",
+      "faketlsSpecialHint": "Select from special (REALITY) domains in the panel",
+      "fieldOverride": "Override",
+      "generateBundle": "Generate all configs",
+      "generateBundleOk": "Bundle generated successfully",
+      "generateBundlePartial": "Bundle generated with warnings or errors",
+      "generateExample": "Generate example",
+      "generateExampleOk": "Example generated successfully",
+      "generateExamplePartial": "Example generated with warnings or errors",
+      "ignoreSkip": "Ignore skip tags",
+      "ignoreSkipHint": "Render config even when a template skip block would normally skip a fragment",
+      "import": "Import",
+      "importFailed": "Import failed",
+      "importSuccess": "Imported successfully ({count} templates)",
+      "inboundPort": "Inbound port",
+      "inboundPortAuto": "Leave empty for auto",
+      "inboundPortAutoCalculated": "Ports are calculated automatically per domain",
+      "inboundTcpPorts": "Inbound TCP ports",
+      "inboundTcpPortsHint": "Comma-separated static TCP ports",
+      "inboundTemplate": "Inbound template",
+      "inboundUdpPorts": "Inbound UDP ports",
+      "inboundUdpPortsHint": "Comma-separated static UDP ports; defaults to TCP ports when empty",
+      "l7Proto": "L7 Reverse Proxy Protocol",
+      "l7ReverseProto": "L7 reverse proxy protocol",
+      "linkSettings": "Link settings",
+      "linkTemplate": "Link template",
+      "listTitle": "Custom Proxies",
+      "mode": "Mode",
+      "modeLabels": {
+        "domains_auto_public_ports": "Multi-domain auto ports",
+        "domains_l7_gateway": "Domain L7 gateway",
+        "domains_single_public_port": "Multi-domain static port",
+        "domains_sni_gateway": "Domain SNI gateway",
+        "ip": "IP-based"
+      },
+      "modeSettings": "Mode & routing",
+      "name": "Name",
+      "new": "New Proxy",
+      "noClientConfigs": "No client configs yet. Add a client to get started.",
+      "outboundTagTemplate": "Outbound tag template",
+      "outboundTagTemplateHint": "Jinja for each client outbound tag. Default: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
+      "outboundsTemplate": "Outbounds template",
+      "protocol": "Protocol",
+      "regeneratePath": "Regenerate path",
+      "renderErrorClickHint": "Click for details",
+      "renderErrorDetail": "Render error details",
+      "renderErrorDetailTitle": "Render error: {label}",
+      "renderErrorNoDetail": "No additional context is available for this error.",
+      "renderErrorRenderedSource": "Rendered output",
+      "renderErrorTemplateSource": "Template source",
+      "resetToBuiltin": "Reset to catalog default",
+      "serverBuiltinCustomized": "Custom server config",
+      "serverBuiltinDefault": "Using catalog default server config",
+      "serverCore": "Server core",
+      "slug": "Slug",
+      "sublink": "Sublink",
+      "sublinkBase64": {
+        "content": "Content",
+        "formatJson": "Format JSON",
+        "protocol": "uri.protocol"
+      },
+      "sublinkBase64Detail": "Base64 detail",
+      "sublinkFormat": "Link format",
+      "sublinkFormatBase64": "Base64 format",
+      "sublinkFormatRaw": "Rendered link",
+      "sublinkFormatRawLink": "Raw link",
+      "sublinkFormatUri": "URI format",
+      "sublinkUri": {
+        "fragment": "uri.fragment",
+        "host": "uri.host",
+        "password": "uri.password",
+        "path": "uri.path",
+        "port": "uri.port",
+        "protocol": "uri.protocol",
+        "query_params": "uri.query_params (JSON)",
+        "user": "uri.user"
+      },
+      "sublinkUriDetail": "URI detail",
+      "tabClient": "Client",
+      "tabClients": "Clients",
+      "tabGeneral": "General",
+      "tabServer": "Server",
+      "tabServers": "Servers",
+      "tag": "Tag",
+      "tcpUdp": "TCP or UDP",
+      "tcpUdpHint": "Transport protocol for resolved inbound ports",
+      "tcpUdpLabels": {
+        "both": "TCP + UDP",
+        "tcp": "TCP",
+        "udp": "UDP"
+      },
+      "templateSlugs": "Template includes",
+      "tlsLayer": "TLS layer",
+      "tlsLayerLabels": {
+        "http": "HTTP",
+        "tls": "TLS"
+      },
+      "tlsLayerSpecialConflict": "HTTP TLS layer is not compatible with REALITY domain modes",
+      "transport": "Transport",
+      "transportLabels": {
+        "grpc": "gRPC",
+        "httpupgrade": "HTTP Upgrade",
+        "other": "Other",
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "xhttp": "xHTTP"
+      },
+      "uploadTcpUdp": "Upload TCP or UDP",
+      "version": "Version"
+    },
+    "template": {
+      "builtin": "Built-in",
+      "builtinReadOnly": "Built-in template — duplicate to create an editable copy.",
+      "category": "Category",
+      "clone": "Clone as custom",
+      "cloneDescription": "Custom description",
+      "cloneName": "Custom name",
+      "cloned": "Template cloned",
+      "content": "Content",
+      "core": "Core",
+      "description": "Description",
+      "editable": "Editable",
+      "empty": "No templates for this core",
+      "included": "Included",
+      "insert": "Insert into editor",
+      "listTitle": "Templates",
+      "name": "Name",
+      "new": "New Template",
+      "notFound": "Template not found",
+      "referenced": "Referenced",
+      "referencedTemplates": "Referenced templates",
+      "sidePanel": "Templates",
+      "sidePanelHint": "Open Server or Client tab to browse templates",
+      "slug": "Slug",
+      "slugDuplicate": "This template slug is already in use. Choose a different slug.",
+      "slugHint": "Only the part after core/category can be edited"
+    },
+    "templateVariables": {
+      "access": "Access",
+      "currentValue": "Current value",
+      "description": "Description",
+      "group": "Group",
+      "label": "Label",
+      "listTitle": "Template Variables",
+      "loadValues": "Load current values",
+      "name": "Name",
+      "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
+    },
+    "theme": {
+      "dark": "Dark mode",
+      "light": "Light mode"
+    },
+    "validation": {
+      "errors": "Errors",
+      "preview": "Compiled preview",
+      "title": "Validation",
+      "warnings": "Warnings"
+    }
   },
   "adminuser": {
     "force_update_usage": "ℹ️ Every 6 Minutes the usage is being updated. For updating it now <a href=\"%(link)s\" class=\"btn btn-info\">Press Here</a>"
@@ -431,6 +749,10 @@
       "description": "If you allow invalid SNI, you can use any Domain rather than your original Domain to access the Proxy (Not Recommended)",
       "label": "🆗 Allow Invalid SNI"
     },
+    "anytls_enable": {
+      "description": "config.anytls_enable.description",
+      "label": "config.anytls_enable.label"
+    },
     "auto_update": {
       "description": "Every day at 3:00 AM, we will check for a new update. if there is a new update available, we will update the system automatically",
       "label": "🔄 Auto Update"
@@ -457,7 +779,7 @@
     },
     "cdn_forced_host": {
       "description": "In this part you can use a set of specific domains or IPs for your server to be override in the user links. \n\nIf you use <a href='https://ircf.space/export.php'>this template </a>, the relevant IP will be selected according to the user's operator, and if you put a range of IPs The IP will be randomly selected from that range.\nUse <a target='_blank' href='https://ip-format.hiddify.com'>this link</a> to set personal IPs.",
-      "label": "🔂 Force Config to Use Following IPs"
+      "label": "🔂 Force Config to Use Following IPs/Domains"
     },
     "cloudflare": {
       "description": "Please follow <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>the instruction</a> and paste the Cloudflare API Key",
@@ -550,6 +872,10 @@
     "h2_enable": {
       "description": "Enable HTTP/2 Protocol",
       "label": "🔵 h2"
+    },
+    "health_secret_path": {
+      "description": "config.health_secret_path.description",
+      "label": "config.health_secret_path.label"
     },
     "hidden": {
       "description": "config.hidden.description",
@@ -912,6 +1238,14 @@
       "description": "This option creates a Fake Config in the user's sub link that shows the user's remaining volume",
       "label": "👁️‍🗨️ Show Usage in Sublink"
     },
+    "snell_enable": {
+      "description": "config.snell_enable.description",
+      "label": "config.snell_enable.label"
+    },
+    "socks_enable": {
+      "description": "config.socks_enable.description",
+      "label": "config.socks_enable.label"
+    },
     "special_port": {
       "description": "You can set a customized port for your reality server to reduce the system's overhead. (Allow direct connection to proxies should be yes)",
       "label": "↔️  Direct Reality Port"
@@ -980,13 +1314,13 @@
       "description": "This is completely different from your original SSH server. It is a dedicated program.",
       "label": "↔️ SSH Proxy Port"
     },
-    "ssh_use_tls_port": {
-      "description": "When enabled, SSH shares the TLS/HTTPS ports (such as 443) via L4 multiplexing instead of using a dedicated public SSH port. Clients connect to the same TLS port; the edge multiplexer detects SSH and forwards it to the SSH proxy backend.",
-      "label": "🔀 Multiplex SSH on TLS Port"
-    },
     "ssh_server_redis_url": {
       "description": "Not Used",
       "label": "SSH user database address"
+    },
+    "ssh_use_tls_port": {
+      "description": "When enabled, SSH shares the TLS/HTTPS ports (such as 443) via L4 multiplexing instead of using a dedicated public SSH port. Clients connect to the same TLS port; the edge multiplexer detects SSH and forwards it to the SSH proxy backend.",
+      "label": "🔀 Multiplex SSH on TLS Port"
     },
     "ssr": {
       "description": "ShadowsocksR is a fork of the original Shadowsocks project, claimed to be superior in terms of security and stability.",
@@ -1147,21 +1481,21 @@
     "validation-error": "There is an error in one of the fields.",
     "validation-success": "Configs have been changed successfully. Click %(link)s to apply the configs. It may take 2 minutes to apply",
     "validation-success-no-reset": " ✅ Configs have been changed successfully",
+    "vless_decryption": {
+      "description": "VLESS decryption parameter for share links",
+      "label": "VLESS decryption"
+    },
     "vless_enable": {
       "description": "Enable VLess Protocol",
       "label": "⚫️ VLess"
-    },
-    "vless_flow": {
-      "description": "VLESS flow control (e.g. xtls-rprx-vision)",
-      "label": "VLESS flow"
     },
     "vless_encryption": {
       "description": "VLESS encryption method for share links",
       "label": "VLESS encryption"
     },
-    "vless_decryption": {
-      "description": "VLESS decryption parameter for share links",
-      "label": "VLESS decryption"
+    "vless_flow": {
+      "description": "VLESS flow control (e.g. xtls-rprx-vision)",
+      "label": "VLESS flow"
     },
     "vmess_enable": {
       "description": "Active VMess Protocol",
@@ -1212,10 +1546,6 @@
       "description": "Defines Port for WireGuard ",
       "label": "↔️ WireGuard Port"
     },
-    "wireguard_use_quic_port": {
-      "description": "When enabled, WireGuard shares the QUIC/UDP TLS ports (such as 443) via L4 multiplexing instead of using a dedicated public WireGuard port. Clients connect to the same UDP/QUIC port; the edge multiplexer detects WireGuard and forwards it to the WireGuard backend.",
-      "label": "🔀 Multiplex WireGuard on QUIC Port"
-    },
     "wireguard_private_key": {
       "description": "A private key is specified to WireGuard",
       "label": "WireGuard Private Key"
@@ -1223,6 +1553,10 @@
     "wireguard_public_key": {
       "description": "A public key is specified to WireGuard",
       "label": "WireGuard Public Key"
+    },
+    "wireguard_use_quic_port": {
+      "description": "When enabled, WireGuard shares the QUIC/UDP TLS ports (such as 443) via L4 multiplexing instead of using a dedicated public WireGuard port. Clients connect to the same UDP/QUIC port; the edge multiplexer detects WireGuard and forwards it to the WireGuard backend.",
+      "label": "🔀 Multiplex WireGuard on QUIC Port"
     },
     "ws_enable": {
       "description": "Websocket creates a tunnel over HTTP that is useful to be used in CDN",
@@ -1247,33 +1581,37 @@
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Your Domains Changed. please do not forget to copy Admin links, otherwise you can not access to the panel anymore",
     "current_server_IPs": "🔢 Current Server IPs are",
+    "custom_proxy": {
+      "description": "Optional proxy binding. Only proxies that support this domain's mode combination are listed.",
+      "group": {
+        "ip_based": "IP based",
+        "other": "Other",
+        "sni_gateway": "SNI gateway"
+      },
+      "label": "Custom proxy",
+      "reality_only": "REALITY domains must use the REALITY Termination proxy",
+      "reality_required": "REALITY domains require the REALITY Termination proxy"
+    },
     "description": "Please fill in this field carefully and correctly. Otherwise, proxies will run into problems. Please visit <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Help</a> to learn how to create a subdomain.",
     "domain": "Domain",
     "domain_fronting": {
       "description": "It is used to simulate another website instead of your website in SNI. therefore, GFW can not filter your Domain\n<a href='https://github.com/hiddify/hiddify-config/wiki/Guide-for-domain-fronting'>Guide</a>. ⚠️CloudFlare does not support Domain Fronting.",
       "label": "🔒 TLS Domain Fronting"
     },
+    "ech": {
+      "description": "Fetch and use Encrypted Client Hello (ECH) for this CDN domain. Requires TLS ECH to be enabled in panel settings.",
+      "label": "🔐 ECH"
+    },
     "empty": {
       "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+    },
+    "fake_mode": {
+      "description": "Valid uses a real certificate. Fake and Reality are for decoy TLS and REALITY protocols.",
+      "label": "TLS mode"
     },
     "intro": "1️⃣ In this section, you can add your Domain. \n<br>\n2️⃣ If you want to lessen the probability of having dirty IP, you can add Multiple Relay Server <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Read More</a>.\n<br>\n3️⃣ If you have Multiple IPv4 or IPv6 in your Panel you have to add the domain pointed to them as Relay.",
     "ip": "IP",
     "mode": "Mode",
-    "fake_mode": {
-      "label": "TLS mode",
-      "description": "Valid uses a real certificate. Fake and Reality are for decoy TLS and REALITY protocols."
-    },
-    "custom_proxy": {
-      "label": "Custom proxy",
-      "description": "Optional proxy binding. Only proxies that support this domain's mode combination are listed.",
-      "group": {
-        "sni_gateway": "SNI gateway",
-        "ip_based": "IP based",
-        "other": "Other"
-      },
-      "reality_required": "REALITY domains require the REALITY Termination proxy",
-      "reality_only": "REALITY domains must use the REALITY Termination proxy"
-    },
     "reality": {
       "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN"
     },
@@ -1281,9 +1619,9 @@
       "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",
       "label": "🔢 Resolve IP"
     },
-    "ech": {
-      "description": "Fetch and use Encrypted Client Hello (ECH) for this CDN domain. Requires TLS ECH to be enabled in panel settings.",
-      "label": "🔐 ECH"
+    "server_domain": {
+      "description": "domain.server_domain.description",
+      "label": "domain.server_domain.label"
     },
     "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
   },
@@ -1384,6 +1722,7 @@
     }
   },
   "singbox: ssh": "SingBox: SSH",
+  "special": "special",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",
@@ -1506,319 +1845,5 @@
     "notallowed": "Please visit this page without using a VPN. You need to access it from the country %(expected_country)s, but you're currently accessing it from %(your_country)s."
   },
   "weekly": "📅 Weekly",
-  "worker": "✴️ Cloudflare Worker",
-  "adminV2": {
-    "appTitle": "HiddifyManager",
-    "menu": {
-      "sectionNew": "New",
-      "sectionV2": "New",
-      "sectionMain": "Main",
-      "dashboard": "Dashboard",
-      "proxyEditor": "Proxy Editor",
-      "customProxies": "Custom Proxies",
-      "baseConfigs": "Base Configs",
-      "templates": "Templates",
-      "templateVariables": "Template Variables"
-    },
-    "footer": {
-      "text": "HiddifyManager"
-    },
-    "dashboard": {
-      "title": "Dashboard",
-      "subtitle": "Hiddify panel administration",
-      "welcomePanel": "Welcome",
-      "underConstruction": "Welcome to the new Hiddify dashboard — under construction."
-    },
-    "theme": {
-      "dark": "Dark mode",
-      "light": "Light mode"
-    },
-    "common": {
-      "save": "Save",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "duplicate": "Duplicate",
-      "validate": "Validate",
-      "add": "Add",
-      "edit": "Edit",
-      "back": "Back",
-      "actions": "Actions",
-      "enabled": "Enabled",
-      "confirmDelete": "Are you sure you want to delete this item?",
-      "saved": "Saved successfully",
-      "deleted": "Deleted successfully",
-      "validationFailed": "Validation failed",
-      "validationOk": "Validation passed",
-      "format": "Format",
-      "loadFailed": "Failed to load data",
-      "search": "Search..."
-    },
-    "editor": {
-      "cannotFormatJinja": "Cannot auto-format while Jinja tags are present",
-      "jinjaHint": "JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}",
-      "insertVariable": "Insert variable",
-      "includeTemplate": "Include template",
-      "noVariables": "No variables match your search",
-      "exportBundle": "Export bundle",
-      "excludeBuiltinTemplates": "Exclude built-in templates from export",
-      "preview": "Preview",
-      "previewParams": "Preview parameters",
-      "previewTitle": "Template preview",
-      "previewOk": "Preview generated successfully",
-      "previewPartial": "Preview generated with warnings",
-      "previewFailed": "Preview request failed"
-    },
-    "proxy": {
-      "listTitle": "Custom Proxies",
-      "new": "New Proxy",
-      "name": "Name",
-      "slug": "Slug",
-      "protocol": "Protocol",
-      "mode": "Mode",
-      "linkSettings": "Link settings",
-      "modeSettings": "Mode & routing",
-      "transport": "Transport",
-      "transportLabels": {
-        "tcp": "TCP",
-        "ws": "WebSocket",
-        "httpupgrade": "HTTP Upgrade",
-        "grpc": "gRPC",
-        "xhttp": "xHTTP",
-        "other": "Other"
-      },
-      "alpnLabels": {
-        "http": "HTTP",
-        "tls_h1": "TLS H1",
-        "tls_h2": "TLS H2",
-        "tls_h1_h2": "TLS H1 + H2",
-        "tls_h3": "QUIC",
-        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
-        "custom": "Custom"
-      },
-      "modeLabels": {
-        "domains_l7_gateway": "Domain L7 gateway",
-        "domains_sni_gateway": "Domain SNI gateway",
-        "domains_auto_public_ports": "Multi-domain auto ports",
-        "domains_single_public_port": "Multi-domain static port",
-        "ip": "IP-based"
-      },
-      "l7Proto": "L7 Reverse Proxy Protocol",
-      "inboundTcpPorts": "Inbound TCP ports",
-      "inboundTcpPortsHint": "Comma-separated static TCP ports",
-      "inboundUdpPorts": "Inbound UDP ports",
-      "inboundUdpPortsHint": "Comma-separated static UDP ports; defaults to TCP ports when empty",
-      "tcpUdp": "TCP or UDP",
-      "tcpUdpHint": "Transport protocol for resolved inbound ports",
-      "uploadTcpUdp": "Upload TCP or UDP",
-      "downloadTcpUdp": "Download TCP or UDP",
-      "tcpUdpLabels": {
-        "tcp": "TCP",
-        "udp": "UDP",
-        "both": "TCP + UDP"
-      },
-      "inboundPortAutoCalculated": "Ports are calculated automatically per domain",
-      "alpn": "ALPN",
-      "clientCores": "Client cores",
-      "domains": "Domains",
-      "tabGeneral": "General",
-      "tabServer": "Server",
-      "tabServers": "Servers",
-      "tabClients": "Clients",
-      "tabClient": "Client",
-      "allowedProtocols": "Allowed protocols",
-      "categories": "Categories",
-      "categoriesFilter": "Filter by categories",
-      "downloadAlpns": "Download ALPNs",
-      "downloadAlpnsHint": "xHTTP only. Empty = same as main ALPN. Config variants = main × download ALPN.",
-      "outboundTagTemplate": "Outbound tag template",
-      "outboundTagTemplateHint": "Jinja for each client outbound tag. Default: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
-      "categoriesHint": "Select existing categories or add a new one from the dropdown footer",
-      "categoriesPlaceholder": "Select categories",
-      "categoriesHeader": "Available categories",
-      "categoriesAddPlaceholder": "New category",
-      "categoriesAdd": "Add category",
-      "categoriesAddNew": "Add New",
-      "categoriesRemoveAll": "Remove All",
-      "domainModes": "Domain modes",
-      "domainModeLabels": {
-        "direct": "Direct",
-        "cdn": "CDN",
-        "relay": "Relay",
-        "fake": "Fake TLS",
-        "special": "Special (REALITY)",
-        "reality": "REALITY"
-      },
-      "tlsLayer": "TLS layer",
-      "tlsLayerLabels": {
-        "http": "HTTP",
-        "tls": "TLS"
-      },
-      "tlsLayerSpecialConflict": "HTTP TLS layer is not compatible with REALITY domain modes",
-      "l7ReverseProto": "L7 reverse proxy protocol",
-      "downloadTlsLayer": "Download TLS layer",
-      "downloadDomainModes": "Download domain modes",
-      "customPath": "Custom path",
-      "customPathAuto": "Generated automatically for HTTP proxies",
-      "regeneratePath": "Regenerate path",
-      "domainIds": "Domains",
-      "domainIdsEmptyAll": "Empty = all matching domains; IP-based proxies ignore domains",
-      "faketlsDomains": "Faketls domains",
-      "faketlsSpecialHint": "Select from special (REALITY) domains in the panel",
-      "serverCore": "Server core",
-      "inboundPort": "Inbound port",
-      "inboundPortAuto": "Leave empty for auto",
-      "directPortAccess": "Direct port access",
-      "directPortAccessHint": "Use with care — may make your server discoverable on the public interface",
-      "tag": "Tag",
-      "templateSlugs": "Template includes",
-      "inboundTemplate": "Inbound template",
-      "sublink": "Sublink",
-      "doBase64After": "Base64 after render",
-      "linkTemplate": "Link template",
-      "clientCoreConfigs": "Client core configs",
-      "core": "Core",
-      "version": "Version",
-      "outboundsTemplate": "Outbounds template",
-      "baseConfigTemplate": "Base config override",
-      "baseConfigTemplateHint": "Optional full xray client shell in {% block base_config %}. Leave empty to use the global base config.",
-      "addCoreConfig": "Add core config",
-      "addClient": "Add client",
-      "addClientConfig": "Add config for this core",
-      "clientConfigDefault": "Client config",
-      "noClientConfigs": "No client configs yet. Add a client to get started.",
-      "import": "Import",
-      "export": "Export",
-      "importSuccess": "Imported successfully ({count} templates)",
-      "importFailed": "Import failed",
-      "exportFailed": "Export failed",
-      "builtinReadOnly": "Built-in preset — only name and enabled state can be changed. Duplicate to edit fully.",
-      "builtinDefaultHint": "Built-in preset synced from catalog. Enable custom content on Server or Client tabs to edit those sides.",
-      "serverBuiltinDefault": "Using catalog default server config",
-      "serverBuiltinCustomized": "Custom server config",
-      "clientBuiltinDefault": "Using catalog default client config",
-      "clientBuiltinCustomized": "Custom client config",
-      "fieldOverride": "Override",
-      "resetToBuiltin": "Reset to catalog default",
-      "generateExample": "Generate example",
-      "generateExampleOk": "Example generated successfully",
-      "generateExamplePartial": "Example generated with warnings or errors",
-      "renderErrorDetail": "Render error details",
-      "renderErrorDetailTitle": "Render error: {label}",
-      "renderErrorRenderedSource": "Rendered output",
-      "renderErrorTemplateSource": "Template source",
-      "renderErrorNoDetail": "No additional context is available for this error.",
-      "renderErrorClickHint": "Click for details",
-      "generateBundle": "Generate all configs",
-      "generateBundleOk": "Bundle generated successfully",
-      "generateBundlePartial": "Bundle generated with warnings or errors",
-      "bundleContextProxyCount": "Enabled proxies",
-      "exampleDomain": "Domain",
-      "exampleDomainPick": "Pick from panel",
-      "exampleDomainCustom": "Custom domain",
-      "exampleDomainAll": "All domains",
-      "exampleDomainAllHint": "Include every domain that matches this proxy (same as subscription output).",
-      "exampleUser": "User",
-      "exampleUserSample": "Sample user",
-      "exampleUserPick": "Pick panel user",
-      "exampleIp": "IP address",
-      "exampleUserAgent": "User-Agent",
-      "exampleUaPreset": "Preset",
-      "exampleUaCustom": "Custom User-Agent",
-      "exampleContext": "Render context",
-      "exampleContextProxy": "Proxy ID",
-      "exampleContextDomain": "Domain",
-      "exampleContextUser": "User",
-      "exampleContextIp": "IP",
-      "exampleContextUa": "User-Agent",
-      "sublinkFormatRaw": "Rendered link",
-      "sublinkFormatUri": "URI format",
-      "sublinkFormatRawLink": "Raw link",
-      "sublinkFormatBase64": "Base64 format",
-      "clashFormatJson": "JSON",
-      "clashFormatYaml": "YAML",
-      "ignoreSkip": "Ignore skip tags",
-      "ignoreSkipHint": "Render config even when a template skip block would normally skip a fragment",
-      "autoClient": "auto",
-      "sublinkFormat": "Link format",
-      "sublinkUriDetail": "URI detail",
-      "sublinkBase64Detail": "Base64 detail",
-      "sublinkUri": {
-        "protocol": "uri.protocol",
-        "user": "uri.user",
-        "password": "uri.password",
-        "host": "uri.host",
-        "port": "uri.port",
-        "path": "uri.path",
-        "fragment": "uri.fragment",
-        "query_params": "uri.query_params (JSON)"
-      },
-      "sublinkBase64": {
-        "protocol": "uri.protocol",
-        "content": "Content",
-        "formatJson": "Format JSON"
-      }
-    },
-    "baseConfig": {
-      "listTitle": "Base Configs",
-      "new": "New Base Config",
-      "name": "Name",
-      "side": "Side",
-      "core": "Core",
-      "version": "Version",
-      "description": "Description",
-      "content": "Full config",
-      "builtinReadOnly": "Built-in base config — only name and enabled state can be changed. Duplicate to edit fully."
-    },
-    "template": {
-      "listTitle": "Templates",
-      "new": "New Template",
-      "slug": "Slug",
-      "core": "Core",
-      "category": "Category",
-      "name": "Name",
-      "description": "Description",
-      "content": "Content",
-      "builtin": "Built-in",
-      "builtinReadOnly": "Built-in template — duplicate to create an editable copy.",
-      "sidePanel": "Templates",
-      "sidePanelHint": "Open Server or Client tab to browse templates",
-      "included": "Included",
-      "referenced": "Referenced",
-      "referencedTemplates": "Referenced templates",
-      "notFound": "Template not found",
-      "empty": "No templates for this core",
-      "insert": "Insert into editor",
-      "clone": "Clone as custom",
-      "cloneName": "Custom name",
-      "cloneDescription": "Custom description",
-      "editable": "Editable",
-      "slugHint": "Only the part after core/category can be edited",
-      "cloned": "Template cloned",
-      "slugDuplicate": "This template slug is already in use. Choose a different slug."
-    },
-    "templateVariables": {
-      "listTitle": "Template Variables",
-      "group": "Group",
-      "name": "Name",
-      "access": "Access",
-      "currentValue": "Current value",
-      "label": "Label",
-      "description": "Description",
-      "loadValues": "Load current values",
-      "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
-    },
-    "domain": {
-      "addTitle": "Add domain",
-      "addFailed": "Could not add domain",
-      "domain": "Domain",
-      "alias": "Alias",
-      "mode": "Mode"
-    },
-    "validation": {
-      "title": "Validation",
-      "errors": "Errors",
-      "warnings": "Warnings",
-      "preview": "Compiled preview"
-    }
-  }
+  "worker": "✴️ Cloudflare Worker"
 }

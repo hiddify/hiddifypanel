@@ -10,7 +10,9 @@
   {% if domain.download %}
   "downloadSettings": {
     "path": "/{{ proxy.path }}",
-    "host": "{{ domain.download.server() }}",
+    "host": "{{ domain.download.host }}",
+    "server": "{{ domain.download.server() }}",
+
     "headers": {
       "User-Agent": "{{default_useragent_string}}"
     },
