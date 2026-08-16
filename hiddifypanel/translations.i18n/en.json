@@ -475,6 +475,7 @@
       "listTitle": "Custom Proxies",
       "mode": "Mode",
       "modeLabels": {
+        "domain_native": "Domain native",
         "domains_auto_public_ports": "Multi-domain auto ports",
         "domains_l7_gateway": "Domain L7 gateway",
         "domains_single_public_port": "Multi-domain static port",
@@ -612,12 +613,12 @@
   "android": "Android",
   "app": {
     "clash_verge_rev": {
-      "description": "app.clash_verge_rev.description",
-      "title": "app.clash_verge_rev.title"
+      "description": "Clash Verge Rev client for desktop",
+      "title": "Clash Verge Rev"
     },
     "cmfa": {
-      "description": "app.cmfa.description",
-      "title": "app.cmfa.title"
+      "description": "Clash Meta for Android",
+      "title": "Clash Meta for Android"
     },
     "foxray": {
       "description": "FoXray Description",
@@ -670,7 +671,7 @@
       "title": "Streisand"
     },
     "v2rayn": {
-      "title": "app.v2rayn.title"
+      "title": "v2rayN"
     },
     "v2rayng": {
       "description": "V2RayNG Description",
@@ -685,18 +686,18 @@
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {
-    "failed": "cf-delete.failed"
+    "failed": "Cloudflare delete failed"
   },
   "child has been removed!": "Child Has Been Removed!",
   "child": {
-    "register-failed": "child.register-failed",
-    "register-success": "child.register-success",
-    "sync-failed": "child.sync-failed"
+    "register-failed": "Child registration failed",
+    "register-success": "Child registered successfully",
+    "sync-failed": "Child sync failed"
   },
   "clickable copy": "Link for Social Media",
   "close": "Close",
   "cloudflare": {
-    "error": "cloudflare.error"
+    "error": "Cloudflare error"
   },
   "config": {
     "Domain_already_used": "Domain is exist in domains section. Use another Domain",
@@ -708,7 +709,7 @@
     "Invalid_proxy_path": "Invalid Proxy Path. It should be ASCI string (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Invalid Telegram Bot Token",
     "additional_configs": {
-      "description": "config.additional_configs.description",
+      "description": "Merge extra configs into generated subscriptions",
       "label": "Additional Configs"
     },
     "additional_configs_singbox": {
@@ -729,13 +730,13 @@
     },
     "admin_lang": {
       "description": "Choose Language For Admin Area",
-      "en": "config.admin_lang.en",
-      "fa": "config.admin_lang.fa",
+      "en": "🇺🇸 English",
+      "fa": "🇮🇷 Persian - فارسی",
       "label": "🗺️ Admin Panel Language",
-      "my": "config.admin_lang.my",
-      "pt": "config.admin_lang.pt",
-      "ru": "config.admin_lang.ru",
-      "zh": "config.admin_lang.zh"
+      "my": "🇲🇲 Burmese",
+      "pt": "🇧🇷 Portuguese",
+      "ru": "🇷🇺 Russian",
+      "zh": "🇨🇳 Chinese"
     },
     "admin_secret": {
       "description": "Admin secret will be used for accessing admin panel",
@@ -750,8 +751,8 @@
       "label": "🆗 Allow Invalid SNI"
     },
     "anytls_enable": {
-      "description": "config.anytls_enable.description",
-      "label": "config.anytls_enable.label"
+      "description": "Enable AnyTLS protocol",
+      "label": "AnyTLS"
     },
     "auto_update": {
       "description": "Every day at 3:00 AM, we will check for a new update. if there is a new update available, we will update the system automatically",
@@ -794,23 +795,23 @@
       "label": "🌍 Country"
     },
     "create_easysetup_link": {
-      "description": "config.create_easysetup_link.description",
-      "label": "config.create_easysetup_link.label"
+      "description": "Create an easy-setup link for first-time configuration",
+      "label": "Create Easy Setup Link"
     },
     "db_version": {
       "description": "Database Version Description",
       "label": "Database Version Label"
     },
     "dbvalues": {
-      "description": "config.dbvalues.description",
-      "label": "config.dbvalues.label"
+      "description": "Internal database values (advanced)",
+      "label": "DB Values"
     },
     "decoy_domain": {
       "description": "Fake Site: simulates a site when someone visits your domain directly.<br>\n⚠️ Do not use financial, Iranian and famous sites or sites with login such as Google, Yahoo, Wikipedia, PayPal.<br>\n⛔ Be sure to check the site and make sure that it is the right site, otherwise you may receive a phishing warning.<br>\n⛔⛔ Check this domain again so that there is no problem in the future",
       "label": "📺 Decoy Site"
     },
     "default_useragent_string": {
-      "description": "config.default_useragent_string.description",
+      "description": "Default User-Agent string used in generated client configs",
       "label": "🪪 Default User Agent"
     },
     "dns_server": {
@@ -818,23 +819,23 @@
       "label": "🖥 DNS Server"
     },
     "dnstt": {
-      "description": "config.dnstt.description",
-      "label": "config.dnstt.label"
+      "description": "DNSTT tunnel settings",
+      "label": "DNSTT"
     },
     "dnstt_enable": {
-      "description": "config.dnstt_enable.description",
+      "description": "Enable DNSTT protocol",
       "label": "DNSTT Enable"
     },
     "dnstt_private_key": {
-      "description": "config.dnstt_private_key.description",
-      "label": "config.dnstt_private_key.label"
+      "description": "DNSTT private key",
+      "label": "DNSTT Private Key"
     },
     "dnstt_public_key": {
-      "description": "config.dnstt_public_key.description",
-      "label": "config.dnstt_public_key.label"
+      "description": "DNSTT public key",
+      "label": "DNSTT Public Key"
     },
     "dnstt_resolvers": {
-      "description": "config.dnstt_resolvers.description",
+      "description": "Comma-separated DNS resolvers for DNSTT",
       "label": "DNSTT Resolvers"
     },
     "domain_fronting": {
@@ -858,8 +859,8 @@
       "label": "🛡️ Firewall"
     },
     "first_setup": {
-      "description": "config.first_setup.description",
-      "label": "config.first_setup.label"
+      "description": "Whether the panel is in first-setup mode",
+      "label": "First Setup"
     },
     "general": {
       "description": "It is General System Configurations",
@@ -874,16 +875,16 @@
       "label": "🔵 h2"
     },
     "health_secret_path": {
-      "description": "config.health_secret_path.description",
-      "label": "config.health_secret_path.label"
+      "description": "Secret path for health checks",
+      "label": "Health Secret Path"
     },
     "hidden": {
-      "description": "config.hidden.description",
-      "label": "config.hidden.label"
+      "description": "Hidden internal setting",
+      "label": "Hidden"
     },
     "hiddifycli_enable": {
-      "description": "config.hiddifycli_enable.description",
-      "label": "config.hiddifycli_enable.label"
+      "description": "Enable Hiddify CLI features",
+      "label": "Enable Hiddify CLI"
     },
     "http": {
       "description": "HTTP Configurations could be set in this section",
@@ -928,7 +929,7 @@
     "invalid-pattern-for-warp-sites": "⚠️ The Site entered for the Warp does not match the specified template",
     "invalid_uuid": "Invalid UUID secret. example: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6\n\n",
     "is_parent": {
-      "description": "config.is_parent.description",
+      "description": "Whether this panel acts as a parent panel",
       "label": "Parent Panel"
     },
     "kcp": {
@@ -945,36 +946,36 @@
     },
     "lang": {
       "description": "Select the language for the user interface to personalize your experience in the user area.",
-      "en": "config.lang.en",
-      "fa": "config.lang.fa",
+      "en": "🇺🇸 English",
+      "fa": "🇮🇷 Persian - فارسی",
       "label": "🗺️ User Area Language",
-      "my": "config.lang.my",
-      "pt": "config.lang.pt",
-      "ru": "config.lang.ru",
-      "zh": "config.lang.zh"
+      "my": "🇲🇲 Burmese",
+      "pt": "🇧🇷 Portuguese",
+      "ru": "🇷🇺 Russian",
+      "zh": "🇨🇳 Chinese"
     },
     "last_hash": {
-      "description": "config.last_hash.description",
-      "label": "config.last_hash.label"
+      "description": "Last applied configuration hash",
+      "label": "Last Hash"
     },
     "last_priodic_usage_check": {
-      "description": "config.last_priodic_usage_check.description",
-      "label": "config.last_priodic_usage_check.label"
+      "description": "Timestamp of the last periodic usage check",
+      "label": "Last Periodic Usage Check"
     },
     "license": {
       "description": "For commercial use of this Product, you must Purchase its License",
       "label": "License  Code"
     },
     "log_level": {
-      "CRITICAL": "config.log_level.CRITICAL",
-      "DEBUG": "config.log_level.DEBUG",
-      "ERROR": "config.log_level.ERROR",
-      "INFO": "config.log_level.INFO",
-      "SUCCESS": "config.log_level.SUCCESS",
-      "TRACE": "config.log_level.TRACE",
-      "WARNING": "config.log_level.WARNING",
-      "description": "config.log_level.description",
-      "label": "config.log_level.label"
+      "CRITICAL": "Critical",
+      "DEBUG": "Debug",
+      "ERROR": "Error",
+      "INFO": "Info",
+      "SUCCESS": "Success",
+      "TRACE": "Trace",
+      "WARNING": "Warning",
+      "description": "Panel log verbosity level",
+      "label": "Log Level"
     },
     "mieru": {
       "description": "The Mieru protocol is a secure and decentralized communication protocol designed to facilitate data transfer in distributed networks without the need for a central server",
@@ -1072,19 +1073,19 @@
       "label": "🔄 Package Update Mode"
     },
     "panel_mode": {
-      "child": "config.panel_mode.child",
-      "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label",
-      "parent": "config.panel_mode.parent",
-      "standalone": "config.panel_mode.standalone"
+      "child": "Child",
+      "description": "Panel operation mode: standalone, parent, or child",
+      "label": "Panel Mode",
+      "parent": "Parent",
+      "standalone": "Standalone"
     },
     "parent_admin_proxy_path": {
-      "description": "config.parent_admin_proxy_path.description",
-      "label": "config.parent_admin_proxy_path.label"
+      "description": "Admin proxy path on the parent panel",
+      "label": "Parent Admin Proxy Path"
     },
     "parent_domain": {
-      "description": "config.parent_domain.description",
-      "label": "config.parent_domain.label"
+      "description": "Domain of the parent panel",
+      "label": "Parent Domain"
     },
     "parent_panel": {
       "description": "You can Connect to the Central Panel to define only one user and the usage of all Servers will be added cumulatively.",
@@ -1172,7 +1173,7 @@
     },
     "reality_port": {
       "description": "Reality Port",
-      "label": "config.reality_port.label"
+      "label": "REALITY Port"
     },
     "reality_private_key": {
       "description": "Do Not Change It",
@@ -1191,16 +1192,16 @@
       "label": "🆔 Short IDs"
     },
     "restls": {
-      "description": "config.restls.description",
+      "description": "RestLS protocol settings",
       "label": "RestTLS"
     },
     "restls1_2_domain": {
-      "description": "config.restls1_2_domain.description",
-      "label": "config.restls1_2_domain.label"
+      "description": "Domain used for RestLS 1.2",
+      "label": "RestLS 1.2 Domain"
     },
     "restls1_3_domain": {
-      "description": "config.restls1_3_domain.description",
-      "label": "config.restls1_3_domain.label"
+      "description": "Domain used for RestLS 1.3",
+      "label": "RestLS 1.3 Domain"
     },
     "shadowsocks": {
       "description": "Shadowsocks is a fast tunnel proxy that helps you bypass firewalls",
@@ -1239,12 +1240,12 @@
       "label": "👁️‍🗨️ Show Usage in Sublink"
     },
     "snell_enable": {
-      "description": "config.snell_enable.description",
-      "label": "config.snell_enable.label"
+      "description": "Enable Snell protocol",
+      "label": "Snell"
     },
     "socks_enable": {
-      "description": "config.socks_enable.description",
-      "label": "config.socks_enable.label"
+      "description": "Enable SOCKS protocol",
+      "label": "SOCKS"
     },
     "special_port": {
       "description": "You can set a customized port for your reality server to reduce the system's overhead. (Allow direct connection to proxies should be yes)",
@@ -1275,36 +1276,36 @@
       "label": "SSH Proxy"
     },
     "ssh_host_dsa_pk": {
-      "description": "config.ssh_host_dsa_pk.description",
-      "label": "config.ssh_host_dsa_pk.label"
+      "description": "SSH host DSA private key",
+      "label": "SSH Host DSA Private Key"
     },
     "ssh_host_dsa_pub": {
-      "description": "config.ssh_host_dsa_pub.description",
-      "label": "config.ssh_host_dsa_pub.label"
+      "description": "SSH host DSA public key",
+      "label": "SSH Host DSA Public Key"
     },
     "ssh_host_ecdsa_pk": {
-      "description": "config.ssh_host_ecdsa_pk.description",
-      "label": "config.ssh_host_ecdsa_pk.label"
+      "description": "SSH host ECDSA private key",
+      "label": "SSH Host ECDSA Private Key"
     },
     "ssh_host_ecdsa_pub": {
-      "description": "config.ssh_host_ecdsa_pub.description",
-      "label": "config.ssh_host_ecdsa_pub.label"
+      "description": "SSH host ECDSA public key",
+      "label": "SSH Host ECDSA Public Key"
     },
     "ssh_host_ed25519_pk": {
-      "description": "config.ssh_host_ed25519_pk.description",
-      "label": "config.ssh_host_ed25519_pk.label"
+      "description": "SSH host Ed25519 private key",
+      "label": "SSH Host Ed25519 Private Key"
     },
     "ssh_host_ed25519_pub": {
-      "description": "config.ssh_host_ed25519_pub.description",
-      "label": "config.ssh_host_ed25519_pub.label"
+      "description": "SSH host Ed25519 public key",
+      "label": "SSH Host Ed25519 Public Key"
     },
     "ssh_host_rsa_pk": {
-      "description": "config.ssh_host_rsa_pk.description",
-      "label": "config.ssh_host_rsa_pk.label"
+      "description": "SSH host RSA private key",
+      "label": "SSH Host RSA Private Key"
     },
     "ssh_host_rsa_pub": {
-      "description": "config.ssh_host_rsa_pub.description",
-      "label": "config.ssh_host_rsa_pub.label"
+      "description": "SSH host RSA public key",
+      "label": "SSH Host RSA Public Key"
     },
     "ssh_server_enable": {
       "description": "SSH Proxy is completely different than original SSH Server",
@@ -1335,32 +1336,32 @@
       "label": "SSR FakeDomain"
     },
     "sub_full_clash_enable": {
-      "description": "config.sub_full_clash_enable.description",
-      "label": "config.sub_full_clash_enable.label"
+      "description": "Enable full Clash subscription endpoint",
+      "label": "Enable Full Clash Sub"
     },
     "sub_full_clash_meta_enable": {
-      "description": "config.sub_full_clash_meta_enable.description",
-      "label": "config.sub_full_clash_meta_enable.label"
+      "description": "Enable full Clash Meta subscription endpoint",
+      "label": "Enable Full Clash Meta Sub"
     },
     "sub_full_links_b64_enable": {
-      "description": "config.sub_full_links_b64_enable.description",
-      "label": "config.sub_full_links_b64_enable.label"
+      "description": "Enable base64 subscription links endpoint",
+      "label": "Enable Full Links (Base64)"
     },
     "sub_full_links_enable": {
-      "description": "config.sub_full_links_enable.description",
-      "label": "config.sub_full_links_enable.label"
+      "description": "Enable plain subscription links endpoint",
+      "label": "Enable Full Links"
     },
     "sub_full_singbox_enable": {
-      "description": "config.sub_full_singbox_enable.description",
-      "label": "config.sub_full_singbox_enable.label"
+      "description": "Enable full Sing-box subscription endpoint",
+      "label": "Enable Full Sing-box Sub"
     },
     "sub_full_xray_json_enable": {
       "description": "XRay full link provides comprehensive configuration options for XRay-specific settings. This includes custom fragmentation and multiplexing (mux) in applications such as v2rayNG that support XRay protocols for fine-tuned control over XRay proxy setup.",
       "label": "⚙️ XRay Full Config Link"
     },
     "sub_singbox_ssh_enable": {
-      "description": "config.sub_singbox_ssh_enable.description",
-      "label": "config.sub_singbox_ssh_enable.label"
+      "description": "Enable Sing-box SSH subscription endpoint",
+      "label": "Enable Sing-box SSH Sub"
     },
     "tcp_enable": {
       "description": "Enables TCP Protocol",
@@ -1463,8 +1464,8 @@
       "label": "🔎 TUIC Ports"
     },
     "unique_id": {
-      "description": "config.unique_id.description",
-      "label": "config.unique_id.label"
+      "description": "Unique identifier of this panel instance",
+      "label": "Unique ID"
     },
     "use_ip_in_config": {
       "description": "This help to reduce the issue may heppen in resolving server IP. This will use a random IP of the selected domain.",
@@ -1501,7 +1502,7 @@
       "description": "Active VMess Protocol",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "config.warp-https-domain-for-warp-site",
+    "warp-https-domain-for-warp-site": "HTTPS domain used for WARP site routing",
     "warp": {
       "description": "Warp is a tool that hides your server IP in outbound traffic. It means if the users are visiting a website the Warp IP is exposed instead of our server IP.\n<br>\nFor example, if you have a problem with captcha on Google, it might be fixed this way.",
       "label": "WARP➕"
@@ -1603,7 +1604,7 @@
       "label": "🔐 ECH"
     },
     "empty": {
-      "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+      "allowed_for_fake_only": "Empty domain is only allowed for fake mode"
     },
     "fake_mode": {
       "description": "Valid uses a real certificate. Fake and Reality are for decoy TLS and REALITY protocols.",
@@ -1620,8 +1621,8 @@
       "label": "🔢 Resolve IP"
     },
     "server_domain": {
-      "description": "domain.server_domain.description",
-      "label": "domain.server_domain.label"
+      "description": "Upstream server domain used for this entry",
+      "label": "Server Domain"
     },
     "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
   },
@@ -1676,7 +1677,7 @@
   "next": "Next",
   "no_reset": "⭐️ Without Reset",
   "node": {
-    "diff-version": "node.diff-version",
+    "diff-version": "Node panel version differs from this panel",
     "mode": {
       "dscr": "This field defines mode for Node",
       "label": "Node Mode"
@@ -1696,8 +1697,8 @@
   "package days?": "package days?",
   "package size?": "package size?",
   "parent": {
-    "invalid-parent-url": "parent.invalid-parent-url",
-    "sync-req-failed": "parent.sync-req-failed"
+    "invalid-parent-url": "Invalid parent panel URL",
+    "sync-req-failed": "Parent sync request failed"
   },
   "previous": "Previous",
   "quicksetup": {

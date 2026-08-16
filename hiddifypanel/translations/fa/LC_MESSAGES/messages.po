@@ -10,7 +10,7 @@ msgstr ""
 "تنظیمات"
 
 msgid "%(count)s records were successfully deleted."
-msgstr ""
+msgstr "%(count)s رکورد با موفقیت حذف شد."
 
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s رکورد با موفقیت غیرفعال شد."
@@ -19,13 +19,13 @@ msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s رکوردها با موفقیت فعال شد."
 
 msgid "%(count)s records were successfully reset days."
-msgstr ""
+msgstr "%(count)s رکورد با موفقیت روزهایشان ریست شد."
 
 msgid "%(count)s records were successfully reset usage."
-msgstr ""
+msgstr "%(count)s رکورد با موفقیت مصرفشان ریست شد."
 
 msgid "%(count)s records were successfully updated."
-msgstr ""
+msgstr "%(count)s رکورد با موفقیت به‌روزرسانی شد."
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s روز"
@@ -37,7 +37,7 @@ msgid "0 - Last day"
 msgstr "آخرین روز"
 
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
-msgstr ""
+msgstr "<a href=\"%(user_link)s\"> %(user)s</a>"
 
 msgid "Access Denied!"
 msgstr "دسترسی غیرمجاز"
@@ -65,7 +65,7 @@ msgid "Added by"
 msgstr "اضافه شده توسط"
 
 msgid "Admin Links"
-msgstr ""
+msgstr "لینک‌های ادمین"
 
 msgid "Admins"
 msgstr "ادمین ها"
@@ -110,7 +110,7 @@ msgid "Bug"
 msgstr "باگ/پیشنهاد"
 
 msgid "CDN and worker domains must use valid fake mode"
-msgstr ""
+msgstr "دامنه‌های CDN و ورکر باید از حالت فیک معتبر استفاده کنند"
 
 msgid "CPU %(cores)s Cores"
 msgstr "پردازنده %(cores)s هسته"
@@ -119,7 +119,7 @@ msgid "Can add sub admin"
 msgstr "👥 امکان اضافه کردن ادمین فرعی"
 
 msgid "Change"
-msgstr ""
+msgstr "تغییر"
 
 msgid "Check again"
 msgstr "بررسی مجدد"
@@ -239,7 +239,7 @@ msgid "Domain can not be resolved! there is a problem in your domain"
 msgstr "دامنه قابل دسترسی نیست! در دامنه شما مشکلی وجود دارد."
 
 msgid "Domain cannot be resolved! Please check DNS settings"
-msgstr ""
+msgstr "دامنه قابل resolve نیست! تنظیمات DNS را بررسی کنید"
 
 msgid "Domain is not REALITY friendly!"
 msgstr "دامنه سازگار با REALITY نیست!"
@@ -294,6 +294,9 @@ msgstr "حمایت"
 msgid "Download App"
 msgstr "<i class='fa-solid fa-download'></i> دانلود"
 
+msgid "Download Domain"
+msgstr "📈 دامنه دانلود"
+
 msgid "Edit"
 msgstr "ویرایش"
 
@@ -305,6 +308,7 @@ msgstr "❇️ فعال"
 
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
+"قبل از استفاده از ECH روی دامنه CDN، TLS ECH را در تنظیمات پنل فعال کنید"
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ خطا در ورود IP ها به صورت دستی"
@@ -370,7 +374,7 @@ msgid "HiddigyN"
 msgstr "HiddifyN <span class='badge badge-success'>پیشنهادی</span>"
 
 msgid "Home Link"
-msgstr ""
+msgstr "لینک خانه"
 
 msgid "Hover the user to see the reason"
 msgstr "روی یوزر کلیک کنید تا دلیل آن را ببینید"
@@ -585,7 +589,7 @@ msgid "Please wait "
 msgstr "لطفا صبر کنید"
 
 msgid "Port 80 and 443 can not be selected"
-msgstr ""
+msgstr "پورت‌های ۸۰ و ۴۴۳ قابل انتخاب نیستند"
 
 msgid "Port is already used! in"
 msgstr "پورت قبلا استفاده شده است در"
@@ -632,7 +636,7 @@ msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr "ریالتی: دامنه جایگزین با نام سرورها سازگار نیست!"
 
 msgid "Relay domains with non-valid fake mode require an IP address"
-msgstr ""
+msgstr "دامنه‌های رله با حالت فیک نامعتبر نیاز به آدرس IP دارند"
 
 msgid "Release"
 msgstr "✅ پایدار"
@@ -713,7 +717,7 @@ msgid "Select record"
 msgstr "انتخاب رکورد"
 
 msgid "Selected proxy does not support this domain mode combination"
-msgstr ""
+msgstr "پراکسی انتخاب‌شده از این ترکیب حالت دامنه پشتیبانی نمی‌کند"
 
 msgid "Seleted Users"
 msgstr "کاربران انتخاب شده"
@@ -758,7 +762,7 @@ msgid "Status"
 msgstr "وضعیت"
 
 msgid "SubLink"
-msgstr ""
+msgstr "ساب‌لینک"
 
 msgid "Submit"
 msgstr "ثبت"
@@ -776,7 +780,7 @@ msgid "Telegram Bot"
 msgstr "بات تلگرام"
 
 msgid "Telegram Bot Link"
-msgstr ""
+msgstr "لینک ربات تلگرام"
 
 msgid "Temporary Short Link"
 msgstr "⏱️ لینک کوتاه موقت"
@@ -1034,6 +1038,11 @@ msgstr ""
 msgid "adminV2.appTitle"
 msgstr "هیدیفای — جدید"
 
+msgid "adminV2.baseConfig.builtinReadOnly"
+msgstr ""
+"کانفیگ پایه داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل "
+"کپی بگیرید."
+
 msgid "adminV2.baseConfig.content"
 msgstr "پیکربندی کامل"
 
@@ -1123,6 +1132,9 @@ msgstr "به داشبورد هیدیفای نسخه ۲ خوش آمدید — د�
 
 msgid "adminV2.dashboard.welcomePanel"
 msgstr "خوش آمدید"
+
+msgid "adminV2.domain.addFailed"
+msgstr "افزودن دامنه ناموفق بود"
 
 msgid "adminV2.domain.addTitle"
 msgstr "افزودن دامنه"
@@ -1259,11 +1271,19 @@ msgstr ""
 "پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را "
 "در تب سرور یا کلاینت فعال کنید."
 
+msgid "adminV2.proxy.builtinReadOnly"
+msgstr ""
+"پریست داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل کپی "
+"بگیرید."
+
 msgid "adminV2.proxy.bundleContextProxyCount"
 msgstr "پروکسی‌های فعال"
 
 msgid "adminV2.proxy.categories"
 msgstr "دسته‌بندی‌ها"
+
+msgid "adminV2.proxy.categoriesAdd"
+msgstr "افزودن دسته"
 
 msgid "adminV2.proxy.categoriesAddNew"
 msgstr "افزودن"
@@ -1283,6 +1303,9 @@ msgstr ""
 
 msgid "adminV2.proxy.categoriesPlaceholder"
 msgstr "انتخاب دسته‌بندی"
+
+msgid "adminV2.proxy.categoriesRemoveAll"
+msgstr "حذف همه"
 
 msgid "adminV2.proxy.clashFormatJson"
 msgstr "JSON"
@@ -1310,6 +1333,9 @@ msgstr "هسته"
 
 msgid "adminV2.proxy.customPath"
 msgstr "مسیر سفارشی"
+
+msgid "adminV2.proxy.customPathAuto"
+msgstr "برای پراکسی‌های HTTP به‌صورت خودکار ساخته می‌شود"
 
 msgid "adminV2.proxy.directPortAccess"
 msgstr "دسترسی مستقیم به پورت"
@@ -1358,6 +1384,9 @@ msgstr "فقط xHTTP. خالی = همان ALPN اصلی."
 
 msgid "adminV2.proxy.downloadDomainModes"
 msgstr "حالت‌های دامنه دانلود"
+
+msgid "adminV2.proxy.downloadTcpUdp"
+msgstr "TCP یا UDP دانلود"
 
 msgid "adminV2.proxy.downloadTlsLayer"
 msgstr "لایه TLS دانلود"
@@ -1425,6 +1454,9 @@ msgstr "خروجی ناموفق"
 
 msgid "adminV2.proxy.faketlsDomains"
 msgstr "دامنه‌های faketls"
+
+msgid "adminV2.proxy.faketlsSpecialHint"
+msgstr "از دامنه‌های ویژه (REALITY) در پنل انتخاب کنید"
 
 msgid "adminV2.proxy.fieldOverride"
 msgstr "بازنویسی"
@@ -1546,6 +1578,27 @@ msgstr "قالب outbounds"
 msgid "adminV2.proxy.protocol"
 msgstr "پروتکل"
 
+msgid "adminV2.proxy.regeneratePath"
+msgstr "بازتولید مسیر"
+
+msgid "adminV2.proxy.renderErrorClickHint"
+msgstr "برای جزئیات کلیک کنید"
+
+msgid "adminV2.proxy.renderErrorDetail"
+msgstr "جزئیات خطای رندر"
+
+msgid "adminV2.proxy.renderErrorDetailTitle"
+msgstr "خطای رندر: {label}"
+
+msgid "adminV2.proxy.renderErrorNoDetail"
+msgstr "جزئیات بیشتری برای این خطا موجود نیست."
+
+msgid "adminV2.proxy.renderErrorRenderedSource"
+msgstr "خروجی رندر شده"
+
+msgid "adminV2.proxy.renderErrorTemplateSource"
+msgstr "منبع قالب"
+
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "بازگردانی به پیش‌فرض کاتالوگ"
 
@@ -1636,6 +1689,21 @@ msgstr "سرورها"
 msgid "adminV2.proxy.tag"
 msgstr "تگ"
 
+msgid "adminV2.proxy.tcpUdp"
+msgstr "TCP یا UDP"
+
+msgid "adminV2.proxy.tcpUdpHint"
+msgstr "پروتکل انتقال برای پورت‌های inbound محاسبه‌شده"
+
+msgid "adminV2.proxy.tcpUdpLabels.both"
+msgstr "TCP + UDP"
+
+msgid "adminV2.proxy.tcpUdpLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.tcpUdpLabels.udp"
+msgstr "UDP"
+
 msgid "adminV2.proxy.templateSlugs"
 msgstr "قالب‌های include"
 
@@ -1672,11 +1740,17 @@ msgstr "WebSocket"
 msgid "adminV2.proxy.transportLabels.xhttp"
 msgstr "xHTTP"
 
+msgid "adminV2.proxy.uploadTcpUdp"
+msgstr "TCP یا UDP آپلود"
+
 msgid "adminV2.proxy.version"
 msgstr "نسخه"
 
 msgid "adminV2.template.builtin"
 msgstr "سیستمی"
+
+msgid "adminV2.template.builtinReadOnly"
+msgstr "قالب داخلی — برای ایجاد نسخه قابل ویرایش کپی بگیرید."
 
 msgid "adminV2.template.category"
 msgstr "دسته"
@@ -1771,6 +1845,11 @@ msgstr "بارگذاری مقادیر فعلی"
 msgid "adminV2.templateVariables.name"
 msgstr "نام"
 
+msgid "adminV2.templateVariables.skipHint"
+msgstr ""
+"خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی "
+"رندر نشود"
+
 msgid "adminV2.theme.dark"
 msgstr "حالت تاریک"
 
@@ -1801,16 +1880,16 @@ msgid "android"
 msgstr "اندروید"
 
 msgid "app.clash_verge_rev.description"
-msgstr ""
+msgstr "کلاینت Clash Verge Rev برای دسکتاپ"
 
 msgid "app.clash_verge_rev.title"
-msgstr ""
+msgstr "Clash Verge Rev"
 
 msgid "app.cmfa.description"
-msgstr ""
+msgstr "Clash Meta برای اندروید"
 
 msgid "app.cmfa.title"
-msgstr ""
+msgstr "Clash Meta برای اندروید"
 
 msgid "app.foxray.description"
 msgstr "توضیحات FoXray"
@@ -1889,7 +1968,7 @@ msgid "app.streisand.title"
 msgstr "Streisand"
 
 msgid "app.v2rayn.title"
-msgstr ""
+msgstr "v2rayN"
 
 msgid "app.v2rayng.description"
 msgstr "توضیحات V2RayNG"
@@ -1916,19 +1995,19 @@ msgid "cdn"
 msgstr "🔀 سی‌دی‌ان (پروکسی کلودفلر و ...)"
 
 msgid "cf-delete.failed"
-msgstr "cf-delete.failed"
+msgstr "حذف کلودفلر ناموفق بود"
 
 msgid "child has been removed!"
 msgstr "پنل زیر مجموعه حذف شد"
 
 msgid "child.register-failed"
-msgstr "child.register-failed"
+msgstr "ثبت‌نام پنل فرزند ناموفق بود"
 
 msgid "child.register-success"
-msgstr "کودک.ثبت نام-موفقیت"
+msgstr "پنل فرزند با موفقیت ثبت شد"
 
 msgid "child.sync-failed"
-msgstr "child.syn-failed"
+msgstr "همگام‌سازی پنل فرزند ناموفق بود"
 
 msgid "clickable copy"
 msgstr "لینک برای شبکه‌های اجتماعی"
@@ -1937,7 +2016,7 @@ msgid "close"
 msgstr "بستن"
 
 msgid "cloudflare.error"
-msgstr "cloudflare.error"
+msgstr "خطای کلودفلر"
 
 msgid "config.Domain_already_used"
 msgstr "دامنه در بخش دامنه‌ها وجود دارد. از دامنه دیگری استفاده کنید."
@@ -1964,28 +2043,30 @@ msgid "config.Invalid_telegram_bot_token"
 msgstr "توکن ربات تلگرام نامعتبر است"
 
 msgid "config.additional_configs.description"
-msgstr ""
+msgstr "ادغام کانفیگ‌های اضافی در اشتراک‌های تولیدشده"
 
 msgid "config.additional_configs.label"
-msgstr ""
+msgstr "کانفیگ‌های اضافی"
 
 msgid "config.additional_configs_singbox.description"
-msgstr ""
+msgstr "می‌توانید outboundهای دیگر sing-box را به نتیجه اضافه کنید"
 
 msgid "config.additional_configs_singbox.label"
-msgstr ""
+msgstr "کانفیگ‌های اضافی برای Singbox"
 
 msgid "config.additional_configs_urls.description"
 msgstr ""
+"می‌توانید آدرس‌های http://، https:// یا پروکسی‌های فرمت v2ray مثل vless:// "
+"اضافه کنید"
 
 msgid "config.additional_configs_urls.label"
-msgstr ""
+msgstr "آدرس‌های اضافی"
 
 msgid "config.additional_configs_xrayjson.description"
-msgstr ""
+msgstr "Outboundهای اضافی برای Xray JSON"
 
 msgid "config.additional_configs_xrayjson.label"
-msgstr ""
+msgstr "کانفیگ‌های اضافی برای Xray JSON"
 
 msgid "config.admin.description"
 msgstr "تنظیمات عمومی بخش مدیریت"
@@ -1997,25 +2078,25 @@ msgid "config.admin_lang.description"
 msgstr "در این قسمت می‌توانید زبان پنل مدیریت را انتخاب کنید"
 
 msgid "config.admin_lang.en"
-msgstr ""
+msgstr "🇺🇸 انگلیسی"
 
 msgid "config.admin_lang.fa"
-msgstr ""
+msgstr "🇮🇷 فارسی"
 
 msgid "config.admin_lang.label"
 msgstr "🗺️ زبان پنل مدیریت"
 
 msgid "config.admin_lang.my"
-msgstr ""
+msgstr "🇲🇲 برمه‌ای"
 
 msgid "config.admin_lang.pt"
-msgstr ""
+msgstr "🇧🇷 پرتغالی"
 
 msgid "config.admin_lang.ru"
-msgstr ""
+msgstr "🇷🇺 روسی"
 
 msgid "config.admin_lang.zh"
-msgstr ""
+msgstr "🇨🇳 چینی"
 
 msgid "config.admin_secret.description"
 msgstr "رمز ادمین برای دسترسی به پنل ادمین استفاده خواهد شد. "
@@ -2040,10 +2121,10 @@ msgid "config.allow_invalid_sni.label"
 msgstr "🆗 اجازه دادن به SNI نامعتبر"
 
 msgid "config.anytls_enable.description"
-msgstr ""
+msgstr "فعال‌سازی پروتکل AnyTLS"
 
 msgid "config.anytls_enable.label"
-msgstr ""
+msgstr "AnyTLS"
 
 msgid "config.auto_update.description"
 msgstr ""
@@ -2127,10 +2208,10 @@ msgid "config.country.label"
 msgstr "🌍 کشور"
 
 msgid "config.create_easysetup_link.description"
-msgstr "-"
+msgstr "ایجاد لینک راه‌اندازی آسان برای پیکربندی اولیه"
 
 msgid "config.create_easysetup_link.label"
-msgstr "-"
+msgstr "ایجاد لینک راه‌اندازی آسان"
 
 msgid "config.db_version.description"
 msgstr "توضیحات ورژن دیتابیس"
@@ -2139,10 +2220,10 @@ msgid "config.db_version.label"
 msgstr "ورژن دیتابیس"
 
 msgid "config.dbvalues.description"
-msgstr "-"
+msgstr "مقادیر داخلی دیتابیس (پیشرفته)"
 
 msgid "config.dbvalues.label"
-msgstr "-"
+msgstr "مقادیر دیتابیس"
 
 msgid "config.decoy_domain.description"
 msgstr ""
@@ -2155,7 +2236,7 @@ msgid "config.decoy_domain.label"
 msgstr "📺 آدرس سایت جعلی"
 
 msgid "config.default_useragent_string.description"
-msgstr ""
+msgstr "رشته User-Agent پیش‌فرض در کانفیگ‌های کلاینت"
 
 msgid "config.default_useragent_string.label"
 msgstr "🪪 یوزرایجنت پیش‌فرض"
@@ -2170,34 +2251,34 @@ msgid "config.dns_server.label"
 msgstr "🖥 سرور DNS"
 
 msgid "config.dnstt.description"
-msgstr ""
+msgstr "تنظیمات تانل DNSTT"
 
 msgid "config.dnstt.label"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "config.dnstt_enable.description"
-msgstr ""
+msgstr "فعال‌سازی پروتکل DNSTT"
 
 msgid "config.dnstt_enable.label"
-msgstr ""
+msgstr "فعال‌سازی DNSTT"
 
 msgid "config.dnstt_private_key.description"
-msgstr ""
+msgstr "کلید خصوصی DNSTT"
 
 msgid "config.dnstt_private_key.label"
-msgstr ""
+msgstr "کلید خصوصی DNSTT"
 
 msgid "config.dnstt_public_key.description"
-msgstr ""
+msgstr "کلید عمومی DNSTT"
 
 msgid "config.dnstt_public_key.label"
-msgstr ""
+msgstr "کلید عمومی DNSTT"
 
 msgid "config.dnstt_resolvers.description"
-msgstr ""
+msgstr "Resolverهای DNS برای DNSTT (با کاما جدا شوند)"
 
 msgid "config.dnstt_resolvers.label"
-msgstr ""
+msgstr "Resolverهای DNSTT"
 
 msgid "config.domain_fronting.description"
 msgstr ""
@@ -2240,10 +2321,10 @@ msgid "config.firewall.label"
 msgstr "🛡️ فایروال"
 
 msgid "config.first_setup.description"
-msgstr "-"
+msgstr "آیا پنل در حالت راه‌اندازی اولیه است"
 
 msgid "config.first_setup.label"
-msgstr "-"
+msgstr "راه‌اندازی اولیه"
 
 msgid "config.general.description"
 msgstr "تنظیمات عمومی سیستم در این بخش قابل انجام است"
@@ -2266,22 +2347,22 @@ msgid "config.h2_enable.label"
 msgstr "🔵 h2"
 
 msgid "config.health_secret_path.description"
-msgstr ""
+msgstr "مسیر محرمانه برای بررسی سلامت سرویس"
 
 msgid "config.health_secret_path.label"
-msgstr ""
+msgstr "مسیر محرمانه سلامت"
 
 msgid "config.hidden.description"
-msgstr "-"
+msgstr "تنظیم داخلی مخفی"
 
 msgid "config.hidden.label"
-msgstr "-"
+msgstr "مخفی"
 
 msgid "config.hiddifycli_enable.description"
-msgstr "config.hiddifycli_enable.description"
+msgstr "فعال‌سازی قابلیت‌های Hiddify CLI"
 
 msgid "config.hiddifycli_enable.label"
-msgstr "config.hiddifycli_enable.label"
+msgstr "فعال‌سازی Hiddify CLI"
 
 msgid "config.http.description"
 msgstr "تنظیمات مربوط به اتصال HTTP"
@@ -2365,7 +2446,7 @@ msgstr ""
 "رمز UUID نامعتبر است. به عنوان مثال: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6"
 
 msgid "config.is_parent.description"
-msgstr "-"
+msgstr "آیا این پنل به‌عنوان پنل والد عمل می‌کند"
 
 msgid "config.is_parent.label"
 msgstr "پنل مرکزی"
@@ -2395,37 +2476,37 @@ msgstr ""
 "زبان رابط کاربری را برای شخصی سازی تجربه خود در ناحیه کاربری انتخاب کنید."
 
 msgid "config.lang.en"
-msgstr ""
+msgstr "🇺🇸 انگلیسی"
 
 msgid "config.lang.fa"
-msgstr ""
+msgstr "🇮🇷 فارسی"
 
 msgid "config.lang.label"
 msgstr "🗺️ زبان محیط کاربران"
 
 msgid "config.lang.my"
-msgstr ""
+msgstr "🇲🇲 برمه‌ای"
 
 msgid "config.lang.pt"
-msgstr ""
+msgstr "🇧🇷 پرتغالی"
 
 msgid "config.lang.ru"
-msgstr ""
+msgstr "🇷🇺 روسی"
 
 msgid "config.lang.zh"
-msgstr ""
+msgstr "🇨🇳 چینی"
 
 msgid "config.last_hash.description"
-msgstr "-"
+msgstr "آخرین هش کانفیگ اعمال‌شده"
 
 msgid "config.last_hash.label"
-msgstr "-"
+msgstr "آخرین هش"
 
 msgid "config.last_priodic_usage_check.description"
-msgstr "config.last_priodic_usage_check.description"
+msgstr "زمان آخرین بررسی دوره‌ای مصرف"
 
 msgid "config.last_priodic_usage_check.label"
-msgstr "config.last_priodic_usage_check.label"
+msgstr "آخرین بررسی دوره‌ای مصرف"
 
 msgid "config.license.description"
 msgstr "برای استفاده تجاری از این محصول باید مجوز آن را خریداری کنید"
@@ -2434,88 +2515,93 @@ msgid "config.license.label"
 msgstr "کد مجوز"
 
 msgid "config.log_level.CRITICAL"
-msgstr ""
+msgstr "بحرانی"
 
 msgid "config.log_level.DEBUG"
-msgstr ""
+msgstr "دیباگ"
 
 msgid "config.log_level.ERROR"
-msgstr ""
+msgstr "خطا"
 
 msgid "config.log_level.INFO"
-msgstr ""
+msgstr "اطلاعات"
 
 msgid "config.log_level.SUCCESS"
-msgstr ""
+msgstr "موفق"
 
 msgid "config.log_level.TRACE"
-msgstr ""
+msgstr "ردیابی"
 
 msgid "config.log_level.WARNING"
-msgstr ""
+msgstr "هشدار"
 
 msgid "config.log_level.description"
-msgstr "config.log_level.description"
+msgstr "سطح جزئیات لاگ پنل"
 
 msgid "config.log_level.label"
-msgstr "config.log_level.label"
+msgstr "سطح لاگ"
 
 msgid "config.mieru.description"
 msgstr ""
+"پروتکل Mieru یک پروتکل ارتباطی امن و غیرمتمرکز برای انتقال داده در شبکه‌های "
+"توزیع‌شده است"
 
 msgid "config.mieru.label"
-msgstr ""
+msgstr "⚡️ Mieru"
 
 msgid "config.mieru_enable.description"
-msgstr ""
+msgstr "Mieru یک پروکسی سریع است"
 
 msgid "config.mieru_enable.label"
-msgstr ""
+msgstr "⚡️ فعال‌سازی Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr ""
+msgstr "📄 پیش‌فرض"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr ""
+msgstr "⏳ بدون انتظار"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr ""
+msgstr "📝 استاندارد"
 
 msgid "config.mieru_handshake.description"
 msgstr ""
+"Handshake میرو قبل از تبادل داده، ارتباط امن را با احراز هویت طرفین برقرار "
+"می‌کند"
 
 msgid "config.mieru_handshake.label"
-msgstr ""
+msgstr "🤝 Handshake میرو"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr ""
+msgstr "📄 پیش‌فرض"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr ""
+msgstr "📈 بالا"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr ""
+msgstr "📉 پایین"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr ""
+msgstr "📊 متوسط"
 
 msgid "config.mieru_multiplexing.description"
 msgstr ""
+"Multiplexing میرو با مدیریت هم‌زمان چند اتصال، انتقال داده را بهینه می‌کند"
 
 msgid "config.mieru_multiplexing.label"
-msgstr ""
+msgstr "🔄 حالت Multiplexing میرو"
 
 msgid "config.mieru_tcp_ports.description"
-msgstr ""
+msgstr "پورت‌های TCP با کاما جدا شوند (مثلاً 1234,1235,1237)"
 
 msgid "config.mieru_tcp_ports.label"
-msgstr ""
+msgstr "🔍 پورت‌های TCP میرو"
 
 msgid "config.mieru_udp_ports.description"
-msgstr ""
+msgstr "پورت‌های UDP با کاما جدا شوند (مثلاً 1234,1235,1237)"
 
 msgid "config.mieru_udp_ports.label"
-msgstr ""
+msgstr "🔎 پورت‌های UDP میرو"
 
 msgid "config.mux.description"
 msgstr "تنظیمات MUX (Multiplex) را می توان در این بخش تنظیم کرد"
@@ -2590,16 +2676,16 @@ msgid "config.mux_protocol.label"
 msgstr "♍️ پروتکل MUX"
 
 msgid "config.naive_enable.description"
-msgstr ""
+msgstr "Naive با استفاده از استک دقیق کروم از شناسایی جلوگیری می‌کند"
 
 msgid "config.naive_enable.label"
-msgstr ""
+msgstr "🛡 فعال‌سازی Naive"
 
 msgid "config.naive_port.description"
-msgstr ""
+msgstr "پورت پروتکل Naive"
 
 msgid "config.naive_port.label"
-msgstr ""
+msgstr "🔎 پورت Naive"
 
 msgid "config.netdata.description"
 msgstr ""
@@ -2631,31 +2717,31 @@ msgid "config.package_mode.label"
 msgstr "🔄 حالت به روز رسانی"
 
 msgid "config.panel_mode.child"
-msgstr ""
+msgstr "فرزند"
 
 msgid "config.panel_mode.description"
-msgstr "config.panel_mode.description"
+msgstr "حالت پنل: مستقل، والد یا فرزند"
 
 msgid "config.panel_mode.label"
-msgstr "config.panel_mode.label"
+msgstr "حالت پنل"
 
 msgid "config.panel_mode.parent"
-msgstr ""
+msgstr "والد"
 
 msgid "config.panel_mode.standalone"
-msgstr ""
+msgstr "مستقل"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "config.parent_admin_proxy_path.description"
+msgstr "مسیر پروکسی ادمین در پنل والد"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "config.parent_admin_proxy_path.label"
+msgstr "مسیر پروکسی ادمین والد"
 
 msgid "config.parent_domain.description"
-msgstr "config.parent_domain.description"
+msgstr "دامنه پنل والد"
 
 msgid "config.parent_domain.label"
-msgstr "config.parent_domain.label"
+msgstr "دامنه والد"
 
 msgid "config.parent_panel.description"
 msgstr ""
@@ -2678,10 +2764,10 @@ msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ مسیر ارتقاء HTTP"
 
 msgid "config.path_naive.description"
-msgstr ""
+msgstr "برای لینک Naive"
 
 msgid "config.path_naive.label"
-msgstr ""
+msgstr "ℹ️ مسیر Naive"
 
 msgid "config.path_splithttp.description"
 msgstr "مسیر XHTTP"
@@ -2795,7 +2881,7 @@ msgid "config.reality_port.description"
 msgstr "پورت reality"
 
 msgid "config.reality_port.label"
-msgstr ""
+msgstr "پورت REALITY"
 
 msgid "config.reality_private_key.description"
 msgstr "این کد را تغییر ندهید"
@@ -2822,22 +2908,22 @@ msgid "config.reality_short_ids.label"
 msgstr "🆔 شناسه های کوتاه"
 
 msgid "config.restls.description"
-msgstr "config.restls.description"
+msgstr "تنظیمات پروتکل RestLS"
 
 msgid "config.restls.label"
 msgstr "RestTLS"
 
 msgid "config.restls1_2_domain.description"
-msgstr "config.restls1_2_domain.description"
+msgstr "دامنه استفاده‌شده برای RestLS 1.2"
 
 msgid "config.restls1_2_domain.label"
-msgstr "config.restls1_2_domain.label"
+msgstr "دامنه RestLS 1.2"
 
 msgid "config.restls1_3_domain.description"
-msgstr "config.restls1_3_domain.description"
+msgstr "دامنه استفاده‌شده برای RestLS 1.3"
 
 msgid "config.restls1_3_domain.label"
-msgstr "config.restls1_3_domain.label"
+msgstr "دامنه RestLS 1.3"
 
 msgid "config.shadowsocks.description"
 msgstr ""
@@ -2910,16 +2996,16 @@ msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ نمایش حجم و تاریخ انقضا در کانفیگ ها"
 
 msgid "config.snell_enable.description"
-msgstr ""
+msgstr "فعال‌سازی پروتکل Snell"
 
 msgid "config.snell_enable.label"
-msgstr ""
+msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr ""
+msgstr "فعال‌سازی پروتکل SOCKS"
 
 msgid "config.socks_enable.label"
-msgstr ""
+msgstr "SOCKS"
 
 msgid "config.special_port.description"
 msgstr ""
@@ -2979,52 +3065,52 @@ msgid "config.ssh.label"
 msgstr "پروکسی SSH"
 
 msgid "config.ssh_host_dsa_pk.description"
-msgstr ""
+msgstr "کلید خصوصی DSA میزبان SSH"
 
 msgid "config.ssh_host_dsa_pk.label"
-msgstr ""
+msgstr "کلید خصوصی DSA میزبان SSH"
 
 msgid "config.ssh_host_dsa_pub.description"
-msgstr ""
+msgstr "کلید عمومی DSA میزبان SSH"
 
 msgid "config.ssh_host_dsa_pub.label"
-msgstr ""
+msgstr "کلید عمومی DSA میزبان SSH"
 
 msgid "config.ssh_host_ecdsa_pk.description"
-msgstr ""
+msgstr "کلید خصوصی ECDSA میزبان SSH"
 
 msgid "config.ssh_host_ecdsa_pk.label"
-msgstr ""
+msgstr "کلید خصوصی ECDSA میزبان SSH"
 
 msgid "config.ssh_host_ecdsa_pub.description"
-msgstr ""
+msgstr "کلید عمومی ECDSA میزبان SSH"
 
 msgid "config.ssh_host_ecdsa_pub.label"
-msgstr ""
+msgstr "کلید عمومی ECDSA میزبان SSH"
 
 msgid "config.ssh_host_ed25519_pk.description"
-msgstr ""
+msgstr "کلید خصوصی Ed25519 میزبان SSH"
 
 msgid "config.ssh_host_ed25519_pk.label"
-msgstr ""
+msgstr "کلید خصوصی Ed25519 میزبان SSH"
 
 msgid "config.ssh_host_ed25519_pub.description"
-msgstr ""
+msgstr "کلید عمومی Ed25519 میزبان SSH"
 
 msgid "config.ssh_host_ed25519_pub.label"
-msgstr ""
+msgstr "کلید عمومی Ed25519 میزبان SSH"
 
 msgid "config.ssh_host_rsa_pk.description"
-msgstr ""
+msgstr "کلید خصوصی RSA میزبان SSH"
 
 msgid "config.ssh_host_rsa_pk.label"
-msgstr ""
+msgstr "کلید خصوصی RSA میزبان SSH"
 
 msgid "config.ssh_host_rsa_pub.description"
-msgstr ""
+msgstr "کلید عمومی RSA میزبان SSH"
 
 msgid "config.ssh_host_rsa_pub.label"
-msgstr ""
+msgstr "کلید عمومی RSA میزبان SSH"
 
 msgid "config.ssh_server_enable.description"
 msgstr ""
@@ -3083,34 +3169,34 @@ msgid "config.ssr_fakedomain.label"
 msgstr "دامنه جعلی برای SSR"
 
 msgid "config.sub_full_clash_enable.description"
-msgstr "config.sub_full_clash_enable.description"
+msgstr "فعال‌سازی اندپوینت اشتراک کامل Clash"
 
 msgid "config.sub_full_clash_enable.label"
-msgstr "config.sub_full_clash_enable.label"
+msgstr "فعال‌سازی ساب کامل Clash"
 
 msgid "config.sub_full_clash_meta_enable.description"
-msgstr "config.sub_full_clash_meta_enable.description"
+msgstr "فعال‌سازی اندپوینت اشتراک کامل Clash Meta"
 
 msgid "config.sub_full_clash_meta_enable.label"
-msgstr "config.sub_full_clash_meta_enable.label"
+msgstr "فعال‌سازی ساب کامل Clash Meta"
 
 msgid "config.sub_full_links_b64_enable.description"
-msgstr "config.sub_full_links_b64_enable.description"
+msgstr "فعال‌سازی اندپوینت لینک‌های اشتراک Base64"
 
 msgid "config.sub_full_links_b64_enable.label"
-msgstr "config.sub_full_links_b64_enable.label"
+msgstr "فعال‌سازی لینک کامل (Base64)"
 
 msgid "config.sub_full_links_enable.description"
-msgstr "config.sub_full_links_enable.description"
+msgstr "فعال‌سازی اندپوینت لینک‌های اشتراک ساده"
 
 msgid "config.sub_full_links_enable.label"
-msgstr "config.sub_full_links_enable.label"
+msgstr "فعال‌سازی لینک کامل"
 
 msgid "config.sub_full_singbox_enable.description"
-msgstr "config.sub_full_singbox_enable.description"
+msgstr "فعال‌سازی اندپوینت اشتراک کامل Sing-box"
 
 msgid "config.sub_full_singbox_enable.label"
-msgstr "config.sub_full_singbox_enable.label"
+msgstr "فعال‌سازی ساب کامل Sing-box"
 
 msgid "config.sub_full_xray_json_enable.description"
 msgstr ""
@@ -3123,10 +3209,10 @@ msgid "config.sub_full_xray_json_enable.label"
 msgstr "⚙️ لینک پیکربندی کامل XRay"
 
 msgid "config.sub_singbox_ssh_enable.description"
-msgstr "config.sub_singbox_ssh_enable.description"
+msgstr "فعال‌سازی اندپوینت اشتراک SSH در Sing-box"
 
 msgid "config.sub_singbox_ssh_enable.label"
-msgstr "config.sub_singbox_ssh_enable.label"
+msgstr "فعال‌سازی ساب SSH Sing-box"
 
 msgid "config.tcp_enable.description"
 msgstr "پروتکل TCP را فعال می‌کند"
@@ -3191,11 +3277,17 @@ msgstr "تنظیمات مربوط به اتصال TLS"
 msgid "config.tls.label"
 msgstr "تنظیمات TLS"
 
+msgid "config.tls_ech.description"
+msgstr "مقدار ECH به فرمت: cloudflare-ech.com+https://8.8.8.8/dns-query"
+
+msgid "config.tls_ech.label"
+msgstr "مقدار TLS ECH"
+
 msgid "config.tls_ech_enable.description"
-msgstr ""
+msgstr "افزودن ECH به لینک‌های اشتراک TLS تولیدشده"
 
 msgid "config.tls_ech_enable.label"
-msgstr ""
+msgstr "🔐 فعال‌سازی TLS ECH"
 
 msgid "config.tls_fragment_enable.description"
 msgstr ""
@@ -3208,10 +3300,10 @@ msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
 
 msgid "config.tls_fragment_packets.description"
-msgstr ""
+msgstr "حالت بسته‌های Fragment (مثلاً tlshello یا 1-3)"
 
 msgid "config.tls_fragment_packets.label"
-msgstr ""
+msgstr "📦 بسته‌های TLS Fragment"
 
 msgid "config.tls_fragment_size.description"
 msgstr "اندازه هر بسته"
@@ -3301,10 +3393,10 @@ msgid "config.tuic_port.label"
 msgstr "🔎 پورت‌های TUIC"
 
 msgid "config.unique_id.description"
-msgstr "config.unique_id.description"
+msgstr "شناسه یکتای این نمونه پنل"
 
 msgid "config.unique_id.label"
-msgstr "config.unique_id.label"
+msgstr "شناسه یکتا"
 
 msgid "config.use_ip_in_config.description"
 msgstr ""
@@ -3340,10 +3432,10 @@ msgid "config.validation-success-no-reset"
 msgstr " ✅ تنظیمات با موفقیت تغییر کرد"
 
 msgid "config.vless_decryption.description"
-msgstr ""
+msgstr "پارامتر decryption در لینک‌های اشتراک VLESS"
 
 msgid "config.vless_decryption.label"
-msgstr ""
+msgstr "VLESS decryption"
 
 msgid "config.vless_enable.description"
 msgstr "فعال کردن پروتکل VLess"
@@ -3352,16 +3444,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr ""
+msgstr "روش encryption در لینک‌های اشتراک VLESS"
 
 msgid "config.vless_encryption.label"
-msgstr ""
+msgstr "VLESS encryption"
 
 msgid "config.vless_flow.description"
-msgstr ""
+msgstr "کنترل flow در VLESS (مثلاً xtls-rprx-vision)"
 
 msgid "config.vless_flow.label"
-msgstr ""
+msgstr "VLESS flow"
 
 msgid "config.vmess_enable.description"
 msgstr "فعال کردن پروتکل VMess"
@@ -3370,7 +3462,7 @@ msgid "config.vmess_enable.label"
 msgstr "🟣 VMess"
 
 msgid "config.warp-https-domain-for-warp-site"
-msgstr "config.warp-https-domain-for-warp-site"
+msgstr "دامنه HTTPS برای مسیریابی سایت‌های WARP"
 
 msgid "config.warp.description"
 msgstr ""
@@ -3518,7 +3610,7 @@ msgid "direct"
 msgstr "➡️ مستقیم (بدون واسطه)"
 
 msgid "dnstt"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "domain.cdn"
 msgstr "سی‌دی‌ان"
@@ -3529,28 +3621,30 @@ msgstr ""
 " این صورت دیگر نمی توانید به پنل دسترسی داشته باشید"
 
 msgid "domain.current_server_IPs"
-msgstr ""
+msgstr "🔢 IPهای فعلی سرور"
 
 msgid "domain.custom_proxy.description"
 msgstr ""
+"اتصال اختیاری به پراکسی. فقط پراکسی‌هایی که از ترکیب حالت این دامنه پشتیبانی"
+" می‌کنند نمایش داده می‌شوند."
 
 msgid "domain.custom_proxy.group.ip_based"
-msgstr ""
+msgstr "مبتنی بر IP"
 
 msgid "domain.custom_proxy.group.other"
-msgstr ""
+msgstr "سایر"
 
 msgid "domain.custom_proxy.group.sni_gateway"
-msgstr ""
+msgstr "درگاه SNI"
 
 msgid "domain.custom_proxy.label"
-msgstr ""
+msgstr "پراکسی سفارشی"
 
 msgid "domain.custom_proxy.reality_only"
-msgstr ""
+msgstr "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند"
 
 msgid "domain.custom_proxy.reality_required"
-msgstr ""
+msgstr "دامنه‌های REALITY به پراکسی REALITY Termination نیاز دارند"
 
 msgid "domain.description"
 msgstr ""
@@ -3580,13 +3674,15 @@ msgid "domain.ech.label"
 msgstr "🔐 ECH"
 
 msgid "domain.empty.allowed_for_fake_only"
-msgstr "domain.empty.allowed_for_fake_only"
+msgstr "دامنه خالی فقط در حالت fake مجاز است"
 
 msgid "domain.fake_mode.description"
 msgstr ""
+"Valid از گواهی واقعی استفاده می‌کند. Fake و Reality برای TLS فریب و "
+"پروتکل‌های REALITY هستند."
 
 msgid "domain.fake_mode.label"
-msgstr ""
+msgstr "حالت TLS"
 
 msgid "domain.intro"
 msgstr ""
@@ -3614,10 +3710,10 @@ msgid "domain.resolveip.label"
 msgstr "🔢 استفاده از IP"
 
 msgid "domain.server_domain.description"
-msgstr ""
+msgstr "دامنه سرور بالادستی برای این مورد"
 
 msgid "domain.server_domain.label"
-msgstr ""
+msgstr "دامنه سرور"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -3686,7 +3782,7 @@ msgid "lib.telegram.python"
 msgstr "☑️ پایتون : عملکرد ضعیف"
 
 msgid "lib.telegram.telemt"
-msgstr ""
+msgstr "❇️ Telemt: سریع، امن، پایدار"
 
 msgid "log"
 msgstr "📄 لاگ"
@@ -3725,7 +3821,7 @@ msgid "no_reset"
 msgstr "⭐️ بدون ریست شدن"
 
 msgid "node.diff-version"
-msgstr "node.diff-version"
+msgstr "نسخه پنل نود با این پنل متفاوت است"
 
 msgid "node.mode.dscr"
 msgstr "این فیلد حالت را برای Node تعریف می کند"
@@ -3762,10 +3858,10 @@ msgid "package size?"
 msgstr "حجم بسته"
 
 msgid "parent.invalid-parent-url"
-msgstr "parent.invalid-parent-url"
+msgstr "آدرس پنل والد نامعتبر است"
 
 msgid "parent.sync-req-failed"
-msgstr "parent.sync-req-failed"
+msgstr "درخواست همگام‌سازی با پنل والد ناموفق بود"
 
 msgid "previous"
 msgstr "قبلی"
@@ -3811,7 +3907,7 @@ msgid "singbox: ssh"
 msgstr "SingBox: SSH"
 
 msgid "special"
-msgstr ""
+msgstr "ویژه"
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

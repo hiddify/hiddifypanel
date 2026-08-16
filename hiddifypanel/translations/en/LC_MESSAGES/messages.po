@@ -1543,6 +1543,9 @@ msgstr "Custom Proxies"
 msgid "adminV2.proxy.mode"
 msgstr "Mode"
 
+msgid "adminV2.proxy.modeLabels.domain_native"
+msgstr "Domain native"
+
 msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
 msgstr "Multi-domain auto ports"
 
@@ -1886,16 +1889,16 @@ msgid "android"
 msgstr "Android"
 
 msgid "app.clash_verge_rev.description"
-msgstr "app.clash_verge_rev.description"
+msgstr "Clash Verge Rev client for desktop"
 
 msgid "app.clash_verge_rev.title"
-msgstr "app.clash_verge_rev.title"
+msgstr "Clash Verge Rev"
 
 msgid "app.cmfa.description"
-msgstr "app.cmfa.description"
+msgstr "Clash Meta for Android"
 
 msgid "app.cmfa.title"
-msgstr "app.cmfa.title"
+msgstr "Clash Meta for Android"
 
 msgid "app.foxray.description"
 msgstr "FoXray Description"
@@ -1974,7 +1977,7 @@ msgid "app.streisand.title"
 msgstr "Streisand"
 
 msgid "app.v2rayn.title"
-msgstr "app.v2rayn.title"
+msgstr "v2rayN"
 
 msgid "app.v2rayng.description"
 msgstr "V2RayNG Description"
@@ -2001,19 +2004,19 @@ msgid "cdn"
 msgstr "🔀 CDN (Cloudflare Proxy, ...)"
 
 msgid "cf-delete.failed"
-msgstr "cf-delete.failed"
+msgstr "Cloudflare delete failed"
 
 msgid "child has been removed!"
 msgstr "Child Has Been Removed!"
 
 msgid "child.register-failed"
-msgstr "child.register-failed"
+msgstr "Child registration failed"
 
 msgid "child.register-success"
-msgstr "child.register-success"
+msgstr "Child registered successfully"
 
 msgid "child.sync-failed"
-msgstr "child.sync-failed"
+msgstr "Child sync failed"
 
 msgid "clickable copy"
 msgstr "Link for Social Media"
@@ -2022,7 +2025,7 @@ msgid "close"
 msgstr "Close"
 
 msgid "cloudflare.error"
-msgstr "cloudflare.error"
+msgstr "Cloudflare error"
 
 msgid "config.Domain_already_used"
 msgstr "Domain is exist in domains section. Use another Domain"
@@ -2050,7 +2053,7 @@ msgid "config.Invalid_telegram_bot_token"
 msgstr "Invalid Telegram Bot Token"
 
 msgid "config.additional_configs.description"
-msgstr "config.additional_configs.description"
+msgstr "Merge extra configs into generated subscriptions"
 
 msgid "config.additional_configs.label"
 msgstr "Additional Configs"
@@ -2083,25 +2086,25 @@ msgid "config.admin_lang.description"
 msgstr "Choose Language For Admin Area"
 
 msgid "config.admin_lang.en"
-msgstr "config.admin_lang.en"
+msgstr "🇺🇸 English"
 
 msgid "config.admin_lang.fa"
-msgstr "config.admin_lang.fa"
+msgstr "🇮🇷 Persian - فارسی"
 
 msgid "config.admin_lang.label"
 msgstr "🗺️ Admin Panel Language"
 
 msgid "config.admin_lang.my"
-msgstr "config.admin_lang.my"
+msgstr "🇲🇲 Burmese"
 
 msgid "config.admin_lang.pt"
-msgstr "config.admin_lang.pt"
+msgstr "🇧🇷 Portuguese"
 
 msgid "config.admin_lang.ru"
-msgstr "config.admin_lang.ru"
+msgstr "🇷🇺 Russian"
 
 msgid "config.admin_lang.zh"
-msgstr "config.admin_lang.zh"
+msgstr "🇨🇳 Chinese"
 
 msgid "config.admin_secret.description"
 msgstr "Admin secret will be used for accessing admin panel"
@@ -2126,10 +2129,10 @@ msgid "config.allow_invalid_sni.label"
 msgstr "🆗 Allow Invalid SNI"
 
 msgid "config.anytls_enable.description"
-msgstr "config.anytls_enable.description"
+msgstr "Enable AnyTLS protocol"
 
 msgid "config.anytls_enable.label"
-msgstr "config.anytls_enable.label"
+msgstr "AnyTLS"
 
 msgid "config.auto_update.description"
 msgstr ""
@@ -2214,10 +2217,10 @@ msgid "config.country.label"
 msgstr "🌍 Country"
 
 msgid "config.create_easysetup_link.description"
-msgstr "config.create_easysetup_link.description"
+msgstr "Create an easy-setup link for first-time configuration"
 
 msgid "config.create_easysetup_link.label"
-msgstr "config.create_easysetup_link.label"
+msgstr "Create Easy Setup Link"
 
 msgid "config.db_version.description"
 msgstr "Database Version Description"
@@ -2226,10 +2229,10 @@ msgid "config.db_version.label"
 msgstr "Database Version Label"
 
 msgid "config.dbvalues.description"
-msgstr "config.dbvalues.description"
+msgstr "Internal database values (advanced)"
 
 msgid "config.dbvalues.label"
-msgstr "config.dbvalues.label"
+msgstr "DB Values"
 
 msgid "config.decoy_domain.description"
 msgstr ""
@@ -2242,7 +2245,7 @@ msgid "config.decoy_domain.label"
 msgstr "📺 Decoy Site"
 
 msgid "config.default_useragent_string.description"
-msgstr "config.default_useragent_string.description"
+msgstr "Default User-Agent string used in generated client configs"
 
 msgid "config.default_useragent_string.label"
 msgstr "🪪 Default User Agent"
@@ -2257,31 +2260,31 @@ msgid "config.dns_server.label"
 msgstr "🖥 DNS Server"
 
 msgid "config.dnstt.description"
-msgstr "config.dnstt.description"
+msgstr "DNSTT tunnel settings"
 
 msgid "config.dnstt.label"
-msgstr "config.dnstt.label"
+msgstr "DNSTT"
 
 msgid "config.dnstt_enable.description"
-msgstr "config.dnstt_enable.description"
+msgstr "Enable DNSTT protocol"
 
 msgid "config.dnstt_enable.label"
 msgstr "DNSTT Enable"
 
 msgid "config.dnstt_private_key.description"
-msgstr "config.dnstt_private_key.description"
+msgstr "DNSTT private key"
 
 msgid "config.dnstt_private_key.label"
-msgstr "config.dnstt_private_key.label"
+msgstr "DNSTT Private Key"
 
 msgid "config.dnstt_public_key.description"
-msgstr "config.dnstt_public_key.description"
+msgstr "DNSTT public key"
 
 msgid "config.dnstt_public_key.label"
-msgstr "config.dnstt_public_key.label"
+msgstr "DNSTT Public Key"
 
 msgid "config.dnstt_resolvers.description"
-msgstr "config.dnstt_resolvers.description"
+msgstr "Comma-separated DNS resolvers for DNSTT"
 
 msgid "config.dnstt_resolvers.label"
 msgstr "DNSTT Resolvers"
@@ -2325,10 +2328,10 @@ msgid "config.firewall.label"
 msgstr "🛡️ Firewall"
 
 msgid "config.first_setup.description"
-msgstr "config.first_setup.description"
+msgstr "Whether the panel is in first-setup mode"
 
 msgid "config.first_setup.label"
-msgstr "config.first_setup.label"
+msgstr "First Setup"
 
 msgid "config.general.description"
 msgstr "It is General System Configurations"
@@ -2351,22 +2354,22 @@ msgid "config.h2_enable.label"
 msgstr "🔵 h2"
 
 msgid "config.health_secret_path.description"
-msgstr "config.health_secret_path.description"
+msgstr "Secret path for health checks"
 
 msgid "config.health_secret_path.label"
-msgstr "config.health_secret_path.label"
+msgstr "Health Secret Path"
 
 msgid "config.hidden.description"
-msgstr "config.hidden.description"
+msgstr "Hidden internal setting"
 
 msgid "config.hidden.label"
-msgstr "config.hidden.label"
+msgstr "Hidden"
 
 msgid "config.hiddifycli_enable.description"
-msgstr "config.hiddifycli_enable.description"
+msgstr "Enable Hiddify CLI features"
 
 msgid "config.hiddifycli_enable.label"
-msgstr "config.hiddifycli_enable.label"
+msgstr "Enable Hiddify CLI"
 
 msgid "config.http.description"
 msgstr "HTTP Configurations could be set in this section"
@@ -2447,7 +2450,7 @@ msgstr ""
 "\n"
 
 msgid "config.is_parent.description"
-msgstr "config.is_parent.description"
+msgstr "Whether this panel acts as a parent panel"
 
 msgid "config.is_parent.label"
 msgstr "Parent Panel"
@@ -2477,37 +2480,37 @@ msgstr ""
 " the user area."
 
 msgid "config.lang.en"
-msgstr "config.lang.en"
+msgstr "🇺🇸 English"
 
 msgid "config.lang.fa"
-msgstr "config.lang.fa"
+msgstr "🇮🇷 Persian - فارسی"
 
 msgid "config.lang.label"
 msgstr "🗺️ User Area Language"
 
 msgid "config.lang.my"
-msgstr "config.lang.my"
+msgstr "🇲🇲 Burmese"
 
 msgid "config.lang.pt"
-msgstr "config.lang.pt"
+msgstr "🇧🇷 Portuguese"
 
 msgid "config.lang.ru"
-msgstr "config.lang.ru"
+msgstr "🇷🇺 Russian"
 
 msgid "config.lang.zh"
-msgstr "config.lang.zh"
+msgstr "🇨🇳 Chinese"
 
 msgid "config.last_hash.description"
-msgstr "config.last_hash.description"
+msgstr "Last applied configuration hash"
 
 msgid "config.last_hash.label"
-msgstr "config.last_hash.label"
+msgstr "Last Hash"
 
 msgid "config.last_priodic_usage_check.description"
-msgstr "config.last_priodic_usage_check.description"
+msgstr "Timestamp of the last periodic usage check"
 
 msgid "config.last_priodic_usage_check.label"
-msgstr "config.last_priodic_usage_check.label"
+msgstr "Last Periodic Usage Check"
 
 msgid "config.license.description"
 msgstr "For commercial use of this Product, you must Purchase its License"
@@ -2516,31 +2519,31 @@ msgid "config.license.label"
 msgstr "License  Code"
 
 msgid "config.log_level.CRITICAL"
-msgstr "config.log_level.CRITICAL"
+msgstr "Critical"
 
 msgid "config.log_level.DEBUG"
-msgstr "config.log_level.DEBUG"
+msgstr "Debug"
 
 msgid "config.log_level.ERROR"
-msgstr "config.log_level.ERROR"
+msgstr "Error"
 
 msgid "config.log_level.INFO"
-msgstr "config.log_level.INFO"
+msgstr "Info"
 
 msgid "config.log_level.SUCCESS"
-msgstr "config.log_level.SUCCESS"
+msgstr "Success"
 
 msgid "config.log_level.TRACE"
-msgstr "config.log_level.TRACE"
+msgstr "Trace"
 
 msgid "config.log_level.WARNING"
-msgstr "config.log_level.WARNING"
+msgstr "Warning"
 
 msgid "config.log_level.description"
-msgstr "config.log_level.description"
+msgstr "Panel log verbosity level"
 
 msgid "config.log_level.label"
-msgstr "config.log_level.label"
+msgstr "Log Level"
 
 msgid "config.mieru.description"
 msgstr ""
@@ -2718,31 +2721,31 @@ msgid "config.package_mode.label"
 msgstr "🔄 Package Update Mode"
 
 msgid "config.panel_mode.child"
-msgstr "config.panel_mode.child"
+msgstr "Child"
 
 msgid "config.panel_mode.description"
-msgstr "config.panel_mode.description"
+msgstr "Panel operation mode: standalone, parent, or child"
 
 msgid "config.panel_mode.label"
-msgstr "config.panel_mode.label"
+msgstr "Panel Mode"
 
 msgid "config.panel_mode.parent"
-msgstr "config.panel_mode.parent"
+msgstr "Parent"
 
 msgid "config.panel_mode.standalone"
-msgstr "config.panel_mode.standalone"
+msgstr "Standalone"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "config.parent_admin_proxy_path.description"
+msgstr "Admin proxy path on the parent panel"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "config.parent_admin_proxy_path.label"
+msgstr "Parent Admin Proxy Path"
 
 msgid "config.parent_domain.description"
-msgstr "config.parent_domain.description"
+msgstr "Domain of the parent panel"
 
 msgid "config.parent_domain.label"
-msgstr "config.parent_domain.label"
+msgstr "Parent Domain"
 
 msgid "config.parent_panel.description"
 msgstr ""
@@ -2879,7 +2882,7 @@ msgid "config.reality_port.description"
 msgstr "Reality Port"
 
 msgid "config.reality_port.label"
-msgstr "config.reality_port.label"
+msgstr "REALITY Port"
 
 msgid "config.reality_private_key.description"
 msgstr "Do Not Change It"
@@ -2906,22 +2909,22 @@ msgid "config.reality_short_ids.label"
 msgstr "🆔 Short IDs"
 
 msgid "config.restls.description"
-msgstr "config.restls.description"
+msgstr "RestLS protocol settings"
 
 msgid "config.restls.label"
 msgstr "RestTLS"
 
 msgid "config.restls1_2_domain.description"
-msgstr "config.restls1_2_domain.description"
+msgstr "Domain used for RestLS 1.2"
 
 msgid "config.restls1_2_domain.label"
-msgstr "config.restls1_2_domain.label"
+msgstr "RestLS 1.2 Domain"
 
 msgid "config.restls1_3_domain.description"
-msgstr "config.restls1_3_domain.description"
+msgstr "Domain used for RestLS 1.3"
 
 msgid "config.restls1_3_domain.label"
-msgstr "config.restls1_3_domain.label"
+msgstr "RestLS 1.3 Domain"
 
 msgid "config.shadowsocks.description"
 msgstr "Shadowsocks is a fast tunnel proxy that helps you bypass firewalls"
@@ -2993,16 +2996,16 @@ msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ Show Usage in Sublink"
 
 msgid "config.snell_enable.description"
-msgstr "config.snell_enable.description"
+msgstr "Enable Snell protocol"
 
 msgid "config.snell_enable.label"
-msgstr "config.snell_enable.label"
+msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr "config.socks_enable.description"
+msgstr "Enable SOCKS protocol"
 
 msgid "config.socks_enable.label"
-msgstr "config.socks_enable.label"
+msgstr "SOCKS"
 
 msgid "config.special_port.description"
 msgstr ""
@@ -3061,52 +3064,52 @@ msgid "config.ssh.label"
 msgstr "SSH Proxy"
 
 msgid "config.ssh_host_dsa_pk.description"
-msgstr "config.ssh_host_dsa_pk.description"
+msgstr "SSH host DSA private key"
 
 msgid "config.ssh_host_dsa_pk.label"
-msgstr "config.ssh_host_dsa_pk.label"
+msgstr "SSH Host DSA Private Key"
 
 msgid "config.ssh_host_dsa_pub.description"
-msgstr "config.ssh_host_dsa_pub.description"
+msgstr "SSH host DSA public key"
 
 msgid "config.ssh_host_dsa_pub.label"
-msgstr "config.ssh_host_dsa_pub.label"
+msgstr "SSH Host DSA Public Key"
 
 msgid "config.ssh_host_ecdsa_pk.description"
-msgstr "config.ssh_host_ecdsa_pk.description"
+msgstr "SSH host ECDSA private key"
 
 msgid "config.ssh_host_ecdsa_pk.label"
-msgstr "config.ssh_host_ecdsa_pk.label"
+msgstr "SSH Host ECDSA Private Key"
 
 msgid "config.ssh_host_ecdsa_pub.description"
-msgstr "config.ssh_host_ecdsa_pub.description"
+msgstr "SSH host ECDSA public key"
 
 msgid "config.ssh_host_ecdsa_pub.label"
-msgstr "config.ssh_host_ecdsa_pub.label"
+msgstr "SSH Host ECDSA Public Key"
 
 msgid "config.ssh_host_ed25519_pk.description"
-msgstr "config.ssh_host_ed25519_pk.description"
+msgstr "SSH host Ed25519 private key"
 
 msgid "config.ssh_host_ed25519_pk.label"
-msgstr "config.ssh_host_ed25519_pk.label"
+msgstr "SSH Host Ed25519 Private Key"
 
 msgid "config.ssh_host_ed25519_pub.description"
-msgstr "config.ssh_host_ed25519_pub.description"
+msgstr "SSH host Ed25519 public key"
 
 msgid "config.ssh_host_ed25519_pub.label"
-msgstr "config.ssh_host_ed25519_pub.label"
+msgstr "SSH Host Ed25519 Public Key"
 
 msgid "config.ssh_host_rsa_pk.description"
-msgstr "config.ssh_host_rsa_pk.description"
+msgstr "SSH host RSA private key"
 
 msgid "config.ssh_host_rsa_pk.label"
-msgstr "config.ssh_host_rsa_pk.label"
+msgstr "SSH Host RSA Private Key"
 
 msgid "config.ssh_host_rsa_pub.description"
-msgstr "config.ssh_host_rsa_pub.description"
+msgstr "SSH host RSA public key"
 
 msgid "config.ssh_host_rsa_pub.label"
-msgstr "config.ssh_host_rsa_pub.label"
+msgstr "SSH Host RSA Public Key"
 
 msgid "config.ssh_server_enable.description"
 msgstr "SSH Proxy is completely different than original SSH Server"
@@ -3164,34 +3167,34 @@ msgid "config.ssr_fakedomain.label"
 msgstr "SSR FakeDomain"
 
 msgid "config.sub_full_clash_enable.description"
-msgstr "config.sub_full_clash_enable.description"
+msgstr "Enable full Clash subscription endpoint"
 
 msgid "config.sub_full_clash_enable.label"
-msgstr "config.sub_full_clash_enable.label"
+msgstr "Enable Full Clash Sub"
 
 msgid "config.sub_full_clash_meta_enable.description"
-msgstr "config.sub_full_clash_meta_enable.description"
+msgstr "Enable full Clash Meta subscription endpoint"
 
 msgid "config.sub_full_clash_meta_enable.label"
-msgstr "config.sub_full_clash_meta_enable.label"
+msgstr "Enable Full Clash Meta Sub"
 
 msgid "config.sub_full_links_b64_enable.description"
-msgstr "config.sub_full_links_b64_enable.description"
+msgstr "Enable base64 subscription links endpoint"
 
 msgid "config.sub_full_links_b64_enable.label"
-msgstr "config.sub_full_links_b64_enable.label"
+msgstr "Enable Full Links (Base64)"
 
 msgid "config.sub_full_links_enable.description"
-msgstr "config.sub_full_links_enable.description"
+msgstr "Enable plain subscription links endpoint"
 
 msgid "config.sub_full_links_enable.label"
-msgstr "config.sub_full_links_enable.label"
+msgstr "Enable Full Links"
 
 msgid "config.sub_full_singbox_enable.description"
-msgstr "config.sub_full_singbox_enable.description"
+msgstr "Enable full Sing-box subscription endpoint"
 
 msgid "config.sub_full_singbox_enable.label"
-msgstr "config.sub_full_singbox_enable.label"
+msgstr "Enable Full Sing-box Sub"
 
 msgid "config.sub_full_xray_json_enable.description"
 msgstr ""
@@ -3204,10 +3207,10 @@ msgid "config.sub_full_xray_json_enable.label"
 msgstr "⚙️ XRay Full Config Link"
 
 msgid "config.sub_singbox_ssh_enable.description"
-msgstr "config.sub_singbox_ssh_enable.description"
+msgstr "Enable Sing-box SSH subscription endpoint"
 
 msgid "config.sub_singbox_ssh_enable.label"
-msgstr "config.sub_singbox_ssh_enable.label"
+msgstr "Enable Sing-box SSH Sub"
 
 msgid "config.tcp_enable.description"
 msgstr "Enables TCP Protocol"
@@ -3387,10 +3390,10 @@ msgid "config.tuic_port.label"
 msgstr "🔎 TUIC Ports"
 
 msgid "config.unique_id.description"
-msgstr "config.unique_id.description"
+msgstr "Unique identifier of this panel instance"
 
 msgid "config.unique_id.label"
-msgstr "config.unique_id.label"
+msgstr "Unique ID"
 
 msgid "config.use_ip_in_config.description"
 msgstr ""
@@ -3456,7 +3459,7 @@ msgid "config.vmess_enable.label"
 msgstr "🟣 VMess"
 
 msgid "config.warp-https-domain-for-warp-site"
-msgstr "config.warp-https-domain-for-warp-site"
+msgstr "HTTPS domain used for WARP site routing"
 
 msgid "config.warp.description"
 msgstr ""
@@ -3666,7 +3669,7 @@ msgid "domain.ech.label"
 msgstr "🔐 ECH"
 
 msgid "domain.empty.allowed_for_fake_only"
-msgstr "domain.empty.allowed_for_fake_only"
+msgstr "Empty domain is only allowed for fake mode"
 
 msgid "domain.fake_mode.description"
 msgstr ""
@@ -3704,10 +3707,10 @@ msgid "domain.resolveip.label"
 msgstr "🔢 Resolve IP"
 
 msgid "domain.server_domain.description"
-msgstr "domain.server_domain.description"
+msgstr "Upstream server domain used for this entry"
 
 msgid "domain.server_domain.label"
-msgstr "domain.server_domain.label"
+msgstr "Server Domain"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -3816,7 +3819,7 @@ msgid "no_reset"
 msgstr "⭐️ Without Reset"
 
 msgid "node.diff-version"
-msgstr "node.diff-version"
+msgstr "Node panel version differs from this panel"
 
 msgid "node.mode.dscr"
 msgstr "This field defines mode for Node"
@@ -3854,10 +3857,10 @@ msgid "package size?"
 msgstr "package size?"
 
 msgid "parent.invalid-parent-url"
-msgstr "parent.invalid-parent-url"
+msgstr "Invalid parent panel URL"
 
 msgid "parent.sync-req-failed"
-msgstr "parent.sync-req-failed"
+msgstr "Parent sync request failed"
 
 msgid "previous"
 msgstr "Previous"

@@ -1,15 +1,15 @@
 {
   " Search\n            Settings": " جستجو کردن\nتنظیمات",
-  "%(count)s records were successfully deleted.": "",
+  "%(count)s records were successfully deleted.": "%(count)s رکورد با موفقیت حذف شد.",
   "%(count)s records were successfully disabled.": "%(count)s رکورد با موفقیت غیرفعال شد.",
   "%(count)s records were successfully enabled.": "%(count)s رکوردها با موفقیت فعال شد.",
-  "%(count)s records were successfully reset days.": "",
-  "%(count)s records were successfully reset usage.": "",
-  "%(count)s records were successfully updated.": "",
+  "%(count)s records were successfully reset days.": "%(count)s رکورد با موفقیت روزهایشان ریست شد.",
+  "%(count)s records were successfully reset usage.": "%(count)s رکورد با موفقیت مصرفشان ریست شد.",
+  "%(count)s records were successfully updated.": "%(count)s رکورد با موفقیت به‌روزرسانی شد.",
   "%(expire_days)s days": "%(expire_days)s روز",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "آخرین روز",
-  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "<a href=\"%(user_link)s\"> %(user)s</a>",
   "Access Denied!": "دسترسی غیرمجاز",
   "Actions": "عملیات",
   "Active": "فعال",
@@ -18,7 +18,7 @@
   "Add some text that is only visible to super_admin.": "متنی را اضافه کنید که فقط برای سوپر ادمین ها قابل مشاهده هست",
   "Add some text that is only visible to you.": "در این قسمت یادداشتی اضافه کنید. (این یادداشت فقط برای شما قابل نمایش است.)",
   "Added by": "اضافه شده توسط",
-  "Admin Links": "",
+  "Admin Links": "لینک‌های ادمین",
   "Admins": "ادمین ها",
   "Alias": "نام نمایشی",
   "All": "همه",
@@ -33,10 +33,10 @@
   "Beta": "☑️ نسخه آزمایشی",
   "Bridge Servers": "➖ سرور های میانی",
   "Bug": "باگ/پیشنهاد",
-  "CDN and worker domains must use valid fake mode": "",
+  "CDN and worker domains must use valid fake mode": "دامنه‌های CDN و ورکر باید از حالت فیک معتبر استفاده کنند",
   "CPU %(cores)s Cores": "پردازنده %(cores)s هسته",
   "Can add sub admin": "👥 امکان اضافه کردن ادمین فرعی",
-  "Change": "",
+  "Change": "تغییر",
   "Check again": "بررسی مجدد",
   "Childs": "زیرمجموعه‌ها",
   "China": "🇨🇳 چین",
@@ -65,7 +65,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "دامنه (%(domain)s)-> IP=%(domain_ip)s با آی‌پی شما: ip=%(server_ip)s همخوانی ندارد. در حالت مستقیم (Direct Mode) این مورد الزامی است.",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "دامنه IP=%(domain_ip)s با ip=%(server_ip)s شما مطابقت ندارد که در حالت مستقیم مورد نیاز است",
   "Domain can not be resolved! there is a problem in your domain": "دامنه قابل دسترسی نیست! در دامنه شما مشکلی وجود دارد.",
-  "Domain cannot be resolved! Please check DNS settings": "",
+  "Domain cannot be resolved! Please check DNS settings": "دامنه قابل resolve نیست! تنظیمات DNS را بررسی کنید",
   "Domain is not REALITY friendly!": "دامنه سازگار با REALITY نیست!",
   "Domain?": "دامنه؟",
   "Donation": {
@@ -73,10 +73,11 @@
     "title": "حمایت"
   },
   "Download App": "<i class='fa-solid fa-download'></i> دانلود",
+  "Download Domain": "📈 دامنه دانلود",
   "Edit": "ویرایش",
   "Edit Proxy Names": "✏️ ویرایش پروکسی‌ها",
   "Enable": "❇️ فعال",
-  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "قبل از استفاده از ECH روی دامنه CDN، TLS ECH را در تنظیمات پنل فعال کنید",
   "Error in auto cdn format": "⚠️ خطا در ورود IP ها به صورت دستی",
   "Error! auto cdn ip can not be find, please contact admin.": "خطا! آی پی اتوماتیک نتوانست پیدا شود. لطفا با مدیر تماس بگیرید",
   "Example Domains": "بررسی و پیشنهاد دامنه",
@@ -94,7 +95,7 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>پیشنهادی</span>",
   "HiddifyNG intro": "📌 لطفاً HiddifyNG را از یکی از این لینک ها نصب کنید:\n<br />\n %(dl_link)s  %(play_link)s\n<br />\nسپس روی لینک زیر کلیک کنید و آن را در HiddifyNG باز کنید.\n<br />",
   "HiddigyN": "HiddifyN <span class='badge badge-success'>پیشنهادی</span>",
-  "Home Link": "",
+  "Home Link": "لینک خانه",
   "Hover the user to see the reason": "روی یوزر کلیک کنید تا دلیل آن را ببینید",
   "How many days this package should be available?": "این بسته چند روزه است؟",
   "How many?": "چه تعداد؟",
@@ -157,7 +158,7 @@
   "Please type your message to send to the telegram:": "✏️  لطفا پیامی را که میخواهید با ربات تلگرام ارسال کنید بنویسید:",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "لطفاً توجه داشته باشید که پنل مادر در حال آزمایش است و طرح و شرایط استفاده ممکن است در هر زمان تغییر کند.",
   "Please wait ": "لطفا صبر کنید",
-  "Port 80 and 443 can not be selected": "",
+  "Port 80 and 443 can not be selected": "پورت‌های ۸۰ و ۴۴۳ قابل انتخاب نیستند",
   "Port is already used! in": "پورت قبلا استفاده شده است در",
   "Premium Description": "پنل هیدیفای برای استفاده غیرتجاری ساخته شده است. اما چنانچه از این پنل استفاده تجاری می‌کنید، از شما خواهشمندیم با دونیت کردن به رشد پروژه کمک کنید. <br/>\nدر عوض حمایت مالی شما، امکانات ویژه ای هم برای محصول تجاری شما فراهم می‌کنیم.\n<br/>\n<br/>\nاز قبیل:\n<ul>\n<li>امکان سینک شدن به کلودفلر: یعنی با افزودن دامنه در پنل، تنظیمات مربوطه در کلود فلر نیز انجام شود</li>\n<li>امکان نمایش برند شما در پنل</li>\n<li>امکان استفاده از پنل مرکزی جهت مدیریت بیش از ۱ سرور در فقط یک پنل بنابراین دیگر لازم نیست کاربران را در سرورهای مختلف ثبت کنید و همین طور حجم آنها در تمام سرورها جمع خواهد شد.\n</li>\n<li>\nامکان استفاده از بات تلگرام\n</li>\n<li>\nامکان تغییر نام پروکسی ها\n</li>\n</ul>\n\nلطفا پس از دونیت کردن به <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>\nپیام دهید تا نسخه ویژه ی کاربران تجاری به شما ارائه شود.",
   "ProxyPath is already used! use different proxy path": "ProxyPath قبلاً استفاده شده است! از مسیرهای مختلف پروکسی استفاده کنید",
@@ -166,7 +167,7 @@
   "RAM": "رم",
   "REALITY Fallback domain is not compaitble with server names!": "دامنه بازگشتی REALITY با نام سرور سازگار نیست!",
   "REALITY Fallback domain is not compatible with server names!": "ریالتی: دامنه جایگزین با نام سرورها سازگار نیست!",
-  "Relay domains with non-valid fake mode require an IP address": "",
+  "Relay domains with non-valid fake mode require an IP address": "دامنه‌های رله با حالت فیک نامعتبر نیاز به آدرس IP دارند",
   "Release": "✅ پایدار",
   "Remaining about %(relative)s, exactly %(days)s days": "حدود %(relative)s و دقیقا %(days)s روز باقی مانده است",
   "Remote nodes are not supported yet!": "گره های راه دور هنوز پشتیبانی نمی شوند!",
@@ -193,7 +194,7 @@
   "Save Link": "این لینک را در محلی ذخیره نمایید.",
   "Select all records": "انتخاب همه رکوردها",
   "Select record": "انتخاب رکورد",
-  "Selected proxy does not support this domain mode combination": "",
+  "Selected proxy does not support this domain mode combination": "پراکسی انتخاب‌شده از این ترکیب حالت دامنه پشتیبانی نمی‌کند",
   "Seleted Users": "کاربران انتخاب شده",
   "Send Message to User's Telegram": "📣 ارسال پیام به تلگرام کاربر",
   "Sending": "در حال ارسال...",
@@ -208,12 +209,12 @@
   "Started %(days)s days ago": "از %(days)s روز پیش شروع شد",
   "Started from %(relative)s": "از %(relative)s شروع شد",
   "Status": "وضعیت",
-  "SubLink": "",
+  "SubLink": "ساب‌لینک",
   "Submit": "ثبت",
   "Success": "موفقیت",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ موفقیت آمیز بود! لطفا برای اینکه مطمئن شوید بروزرسانی‌ها به درستی اعمال شده، حدود 5 دقیقه صبر کنید.",
   "Telegram Bot": "بات تلگرام",
-  "Telegram Bot Link": "",
+  "Telegram Bot Link": "لینک ربات تلگرام",
   "Temporary Short Link": "⏱️ لینک کوتاه موقت",
   "The message has been sent.": "پیام ارسال شده است.",
   "The message was not sent to": "پیام نتوانست به کاربران زیر ارسال شود",
@@ -293,6 +294,7 @@
   "adminV2": {
     "appTitle": "هیدیفای — جدید",
     "baseConfig": {
+      "builtinReadOnly": "کانفیگ پایه داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل کپی بگیرید.",
       "content": "پیکربندی کامل",
       "core": "هسته",
       "description": "توضیحات",
@@ -329,6 +331,7 @@
       "welcomePanel": "خوش آمدید"
     },
     "domain": {
+      "addFailed": "افزودن دامنه ناموفق بود",
       "addTitle": "افزودن دامنه",
       "alias": "نام مستعار",
       "domain": "دامنه",
@@ -382,14 +385,17 @@
       "baseConfigTemplate": "بازنویسی پیکربندی پایه",
       "baseConfigTemplateHint": "اختیاری: پوسته کامل xray داخل {% block base_config %}. خالی بگذارید تا از پیکربندی پایه سراسری استفاده شود.",
       "builtinDefaultHint": "پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را در تب سرور یا کلاینت فعال کنید.",
+      "builtinReadOnly": "پریست داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل کپی بگیرید.",
       "bundleContextProxyCount": "پروکسی‌های فعال",
       "categories": "دسته‌بندی‌ها",
+      "categoriesAdd": "افزودن دسته",
       "categoriesAddNew": "افزودن",
       "categoriesAddPlaceholder": "دسته‌بندی جدید",
       "categoriesFilter": "فیلتر بر اساس دسته‌بندی",
       "categoriesHeader": "دسته‌بندی‌های موجود",
       "categoriesHint": "دسته‌بندی موجود را انتخاب کنید یا از پایین منو یک مورد جدید اضافه کنید",
       "categoriesPlaceholder": "انتخاب دسته‌بندی",
+      "categoriesRemoveAll": "حذف همه",
       "clashFormatJson": "JSON",
       "clashFormatYaml": "YAML",
       "clientBuiltinCustomized": "پیکربندی کلاینت سفارشی",
@@ -399,6 +405,7 @@
       "clientCores": "هسته‌های کلاینت",
       "core": "هسته",
       "customPath": "مسیر سفارشی",
+      "customPathAuto": "برای پراکسی‌های HTTP به‌صورت خودکار ساخته می‌شود",
       "directPortAccess": "دسترسی مستقیم به پورت",
       "directPortAccessHint": "با احتیاط استفاده کنید — ممکن است سرور شما قابل کشف باشد",
       "doBase64After": "Base64 بعد از رندر",
@@ -417,6 +424,7 @@
       "downloadAlpns": "ALPN دانلود",
       "downloadAlpnsHint": "فقط xHTTP. خالی = همان ALPN اصلی.",
       "downloadDomainModes": "حالت‌های دامنه دانلود",
+      "downloadTcpUdp": "TCP یا UDP دانلود",
       "downloadTlsLayer": "لایه TLS دانلود",
       "exampleContext": "زمینه رندر",
       "exampleContextDomain": "دامنه",
@@ -439,6 +447,7 @@
       "export": "خروجی",
       "exportFailed": "خروجی ناموفق",
       "faketlsDomains": "دامنه‌های faketls",
+      "faketlsSpecialHint": "از دامنه‌های ویژه (REALITY) در پنل انتخاب کنید",
       "fieldOverride": "بازنویسی",
       "generateBundle": "تولید همه پیکربندی‌ها",
       "generateBundleOk": "بسته پیکربندی با موفقیت تولید شد",
@@ -481,6 +490,13 @@
       "outboundTagTemplateHint": "Jinja برای تگ هر outbound کلاینت",
       "outboundsTemplate": "قالب outbounds",
       "protocol": "پروتکل",
+      "regeneratePath": "بازتولید مسیر",
+      "renderErrorClickHint": "برای جزئیات کلیک کنید",
+      "renderErrorDetail": "جزئیات خطای رندر",
+      "renderErrorDetailTitle": "خطای رندر: {label}",
+      "renderErrorNoDetail": "جزئیات بیشتری برای این خطا موجود نیست.",
+      "renderErrorRenderedSource": "خروجی رندر شده",
+      "renderErrorTemplateSource": "منبع قالب",
       "resetToBuiltin": "بازگردانی به پیش‌فرض کاتالوگ",
       "serverBuiltinCustomized": "پیکربندی سرور سفارشی",
       "serverBuiltinDefault": "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ",
@@ -515,6 +531,13 @@
       "tabServer": "سرور",
       "tabServers": "سرورها",
       "tag": "تگ",
+      "tcpUdp": "TCP یا UDP",
+      "tcpUdpHint": "پروتکل انتقال برای پورت‌های inbound محاسبه‌شده",
+      "tcpUdpLabels": {
+        "both": "TCP + UDP",
+        "tcp": "TCP",
+        "udp": "UDP"
+      },
       "templateSlugs": "قالب‌های include",
       "tlsLayer": "لایه TLS",
       "tlsLayerLabels": {
@@ -531,10 +554,12 @@
         "ws": "WebSocket",
         "xhttp": "xHTTP"
       },
+      "uploadTcpUdp": "TCP یا UDP آپلود",
       "version": "نسخه"
     },
     "template": {
       "builtin": "سیستمی",
+      "builtinReadOnly": "قالب داخلی — برای ایجاد نسخه قابل ویرایش کپی بگیرید.",
       "category": "دسته",
       "clone": "کپی به‌عنوان سفارشی",
       "cloneDescription": "توضیحات سفارشی",
@@ -567,7 +592,8 @@
       "label": "برچسب",
       "listTitle": "متغیرهای قالب",
       "loadValues": "بارگذاری مقادیر فعلی",
-      "name": "نام"
+      "name": "نام",
+      "skipHint": "خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی رندر نشود"
     },
     "theme": {
       "dark": "حالت تاریک",
@@ -587,12 +613,12 @@
   "android": "اندروید",
   "app": {
     "clash_verge_rev": {
-      "description": "",
-      "title": ""
+      "description": "کلاینت Clash Verge Rev برای دسکتاپ",
+      "title": "Clash Verge Rev"
     },
     "cmfa": {
-      "description": "",
-      "title": ""
+      "description": "Clash Meta برای اندروید",
+      "title": "Clash Meta برای اندروید"
     },
     "foxray": {
       "description": "توضیحات FoXray",
@@ -645,7 +671,7 @@
       "title": "Streisand"
     },
     "v2rayn": {
-      "title": ""
+      "title": "v2rayN"
     },
     "v2rayng": {
       "description": "توضیحات V2RayNG",
@@ -660,18 +686,18 @@
   },
   "cdn": "🔀 سی‌دی‌ان (پروکسی کلودفلر و ...)",
   "cf-delete": {
-    "failed": "cf-delete.failed"
+    "failed": "حذف کلودفلر ناموفق بود"
   },
   "child has been removed!": "پنل زیر مجموعه حذف شد",
   "child": {
-    "register-failed": "child.register-failed",
-    "register-success": "کودک.ثبت نام-موفقیت",
-    "sync-failed": "child.syn-failed"
+    "register-failed": "ثبت‌نام پنل فرزند ناموفق بود",
+    "register-success": "پنل فرزند با موفقیت ثبت شد",
+    "sync-failed": "همگام‌سازی پنل فرزند ناموفق بود"
   },
   "clickable copy": "لینک برای شبکه‌های اجتماعی",
   "close": "بستن",
   "cloudflare": {
-    "error": "cloudflare.error"
+    "error": "خطای کلودفلر"
   },
   "config": {
     "Domain_already_used": "دامنه در بخش دامنه‌ها وجود دارد. از دامنه دیگری استفاده کنید.",
@@ -683,20 +709,20 @@
     "Invalid_proxy_path": "مسیر پروکسی نامعتبر است. باید رشته متن asci باشد. ( شامل a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "توکن ربات تلگرام نامعتبر است",
     "additional_configs": {
-      "description": "",
-      "label": ""
+      "description": "ادغام کانفیگ‌های اضافی در اشتراک‌های تولیدشده",
+      "label": "کانفیگ‌های اضافی"
     },
     "additional_configs_singbox": {
-      "description": "",
-      "label": ""
+      "description": "می‌توانید outboundهای دیگر sing-box را به نتیجه اضافه کنید",
+      "label": "کانفیگ‌های اضافی برای Singbox"
     },
     "additional_configs_urls": {
-      "description": "",
-      "label": ""
+      "description": "می‌توانید آدرس‌های http://، https:// یا پروکسی‌های فرمت v2ray مثل vless:// اضافه کنید",
+      "label": "آدرس‌های اضافی"
     },
     "additional_configs_xrayjson": {
-      "description": "",
-      "label": ""
+      "description": "Outboundهای اضافی برای Xray JSON",
+      "label": "کانفیگ‌های اضافی برای Xray JSON"
     },
     "admin": {
       "description": "تنظیمات عمومی بخش مدیریت",
@@ -704,13 +730,13 @@
     },
     "admin_lang": {
       "description": "در این قسمت می‌توانید زبان پنل مدیریت را انتخاب کنید",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 انگلیسی",
+      "fa": "🇮🇷 فارسی",
       "label": "🗺️ زبان پنل مدیریت",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 برمه‌ای",
+      "pt": "🇧🇷 پرتغالی",
+      "ru": "🇷🇺 روسی",
+      "zh": "🇨🇳 چینی"
     },
     "admin_secret": {
       "description": "رمز ادمین برای دسترسی به پنل ادمین استفاده خواهد شد. ",
@@ -725,8 +751,8 @@
       "label": "🆗 اجازه دادن به SNI نامعتبر"
     },
     "anytls_enable": {
-      "description": "",
-      "label": ""
+      "description": "فعال‌سازی پروتکل AnyTLS",
+      "label": "AnyTLS"
     },
     "auto_update": {
       "description": "هر روز راس ساعت ۳ صبح، سیستم برای به‌روز‌ رسانی جدید چک می‌شود. در صورتی که به‌روز‌ رسانی جدیدی موجود باشد به صورت خودکار سیستم به‌روز‌ رسانی خواهد شد",
@@ -769,23 +795,23 @@
       "label": "🌍 کشور"
     },
     "create_easysetup_link": {
-      "description": "-",
-      "label": "-"
+      "description": "ایجاد لینک راه‌اندازی آسان برای پیکربندی اولیه",
+      "label": "ایجاد لینک راه‌اندازی آسان"
     },
     "db_version": {
       "description": "توضیحات ورژن دیتابیس",
       "label": "ورژن دیتابیس"
     },
     "dbvalues": {
-      "description": "-",
-      "label": "-"
+      "description": "مقادیر داخلی دیتابیس (پیشرفته)",
+      "label": "مقادیر دیتابیس"
     },
     "decoy_domain": {
       "description": "زمانی که فیلترچی دامنه شما را در مرورگر وارد کند، تا ببیند واقعا چه سایتی هست، یک سایت جعلی را نمایش می‌دهد. <br>\n⚠️ از سایت های دارای صفحه لاگین، سایت های مالی، سایت های ایرانی و سایت های معروف مانند گوگل، یاهو، ویکی پدیا، پی پال استفاده نکنید.<br>\n⛔حتما سایت را چک کنید و مطمئن شوید که سایت مناسبی است وگرنه ممکن است اخطار فیشینگ دریافت کنید.<br>\n⛔⛔ مجددا چک کنید این دامنه را تا مشکلی در آینده پیش نیاد",
       "label": "📺 آدرس سایت جعلی"
     },
     "default_useragent_string": {
-      "description": "",
+      "description": "رشته User-Agent پیش‌فرض در کانفیگ‌های کلاینت",
       "label": "🪪 یوزرایجنت پیش‌فرض"
     },
     "dns_server": {
@@ -793,24 +819,24 @@
       "label": "🖥 سرور DNS"
     },
     "dnstt": {
-      "description": "",
-      "label": ""
+      "description": "تنظیمات تانل DNSTT",
+      "label": "DNSTT"
     },
     "dnstt_enable": {
-      "description": "",
-      "label": ""
+      "description": "فعال‌سازی پروتکل DNSTT",
+      "label": "فعال‌سازی DNSTT"
     },
     "dnstt_private_key": {
-      "description": "",
-      "label": ""
+      "description": "کلید خصوصی DNSTT",
+      "label": "کلید خصوصی DNSTT"
     },
     "dnstt_public_key": {
-      "description": "",
-      "label": ""
+      "description": "کلید عمومی DNSTT",
+      "label": "کلید عمومی DNSTT"
     },
     "dnstt_resolvers": {
-      "description": "",
-      "label": ""
+      "description": "Resolverهای DNS برای DNSTT (با کاما جدا شوند)",
+      "label": "Resolverهای DNSTT"
     },
     "domain_fronting": {
       "description": "برای شبیه سازی وب سایت دیگری به جای وب سایت شما در SNI استفاده می شود. بنابراین، فیلترچی نمی تواند دامنه شما را فیلتر کند. \n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>آموزش ثبت </a>\n\n⚠️CloudFlare از دامین فرانتینگ پشتیبانی نمی کند.",
@@ -833,8 +859,8 @@
       "label": "🛡️ فایروال"
     },
     "first_setup": {
-      "description": "-",
-      "label": "-"
+      "description": "آیا پنل در حالت راه‌اندازی اولیه است",
+      "label": "راه‌اندازی اولیه"
     },
     "general": {
       "description": "تنظیمات عمومی سیستم در این بخش قابل انجام است",
@@ -849,16 +875,16 @@
       "label": "🔵 h2"
     },
     "health_secret_path": {
-      "description": "",
-      "label": ""
+      "description": "مسیر محرمانه برای بررسی سلامت سرویس",
+      "label": "مسیر محرمانه سلامت"
     },
     "hidden": {
-      "description": "-",
-      "label": "-"
+      "description": "تنظیم داخلی مخفی",
+      "label": "مخفی"
     },
     "hiddifycli_enable": {
-      "description": "config.hiddifycli_enable.description",
-      "label": "config.hiddifycli_enable.label"
+      "description": "فعال‌سازی قابلیت‌های Hiddify CLI",
+      "label": "فعال‌سازی Hiddify CLI"
     },
     "http": {
       "description": "تنظیمات مربوط به اتصال HTTP",
@@ -903,7 +929,7 @@
     "invalid-pattern-for-warp-sites": "⚠️ سایت وارد شده برای وارپ با الگوی تعیین شده مطابقت ندارد",
     "invalid_uuid": "رمز UUID نامعتبر است. به عنوان مثال: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
     "is_parent": {
-      "description": "-",
+      "description": "آیا این پنل به‌عنوان پنل والد عمل می‌کند",
       "label": "پنل مرکزی"
     },
     "kcp": {
@@ -920,67 +946,67 @@
     },
     "lang": {
       "description": "زبان رابط کاربری را برای شخصی سازی تجربه خود در ناحیه کاربری انتخاب کنید.",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 انگلیسی",
+      "fa": "🇮🇷 فارسی",
       "label": "🗺️ زبان محیط کاربران",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 برمه‌ای",
+      "pt": "🇧🇷 پرتغالی",
+      "ru": "🇷🇺 روسی",
+      "zh": "🇨🇳 چینی"
     },
     "last_hash": {
-      "description": "-",
-      "label": "-"
+      "description": "آخرین هش کانفیگ اعمال‌شده",
+      "label": "آخرین هش"
     },
     "last_priodic_usage_check": {
-      "description": "config.last_priodic_usage_check.description",
-      "label": "config.last_priodic_usage_check.label"
+      "description": "زمان آخرین بررسی دوره‌ای مصرف",
+      "label": "آخرین بررسی دوره‌ای مصرف"
     },
     "license": {
       "description": "برای استفاده تجاری از این محصول باید مجوز آن را خریداری کنید",
       "label": "کد مجوز"
     },
     "log_level": {
-      "CRITICAL": "",
-      "DEBUG": "",
-      "ERROR": "",
-      "INFO": "",
-      "SUCCESS": "",
-      "TRACE": "",
-      "WARNING": "",
-      "description": "config.log_level.description",
-      "label": "config.log_level.label"
+      "CRITICAL": "بحرانی",
+      "DEBUG": "دیباگ",
+      "ERROR": "خطا",
+      "INFO": "اطلاعات",
+      "SUCCESS": "موفق",
+      "TRACE": "ردیابی",
+      "WARNING": "هشدار",
+      "description": "سطح جزئیات لاگ پنل",
+      "label": "سطح لاگ"
     },
     "mieru": {
-      "description": "",
-      "label": ""
+      "description": "پروتکل Mieru یک پروتکل ارتباطی امن و غیرمتمرکز برای انتقال داده در شبکه‌های توزیع‌شده است",
+      "label": "⚡️ Mieru"
     },
     "mieru_enable": {
-      "description": "",
-      "label": ""
+      "description": "Mieru یک پروکسی سریع است",
+      "label": "⚡️ فعال‌سازی Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "",
-      "HANDSHAKE_NO_WAIT": "",
-      "HANDSHAKE_STANDARD": "",
-      "description": "",
-      "label": ""
+      "HANDSHAKE_DEFAULT": "📄 پیش‌فرض",
+      "HANDSHAKE_NO_WAIT": "⏳ بدون انتظار",
+      "HANDSHAKE_STANDARD": "📝 استاندارد",
+      "description": "Handshake میرو قبل از تبادل داده، ارتباط امن را با احراز هویت طرفین برقرار می‌کند",
+      "label": "🤝 Handshake میرو"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "",
-      "MULTIPLEXING_HIGH": "",
-      "MULTIPLEXING_LOW": "",
-      "MULTIPLEXING_MIDDLE": "",
-      "description": "",
-      "label": ""
+      "MULTIPLEXING_DEFAULT": "📄 پیش‌فرض",
+      "MULTIPLEXING_HIGH": "📈 بالا",
+      "MULTIPLEXING_LOW": "📉 پایین",
+      "MULTIPLEXING_MIDDLE": "📊 متوسط",
+      "description": "Multiplexing میرو با مدیریت هم‌زمان چند اتصال، انتقال داده را بهینه می‌کند",
+      "label": "🔄 حالت Multiplexing میرو"
     },
     "mieru_tcp_ports": {
-      "description": "",
-      "label": ""
+      "description": "پورت‌های TCP با کاما جدا شوند (مثلاً 1234,1235,1237)",
+      "label": "🔍 پورت‌های TCP میرو"
     },
     "mieru_udp_ports": {
-      "description": "",
-      "label": ""
+      "description": "پورت‌های UDP با کاما جدا شوند (مثلاً 1234,1235,1237)",
+      "label": "🔎 پورت‌های UDP میرو"
     },
     "mux": {
       "description": "تنظیمات MUX (Multiplex) را می توان در این بخش تنظیم کرد",
@@ -1023,12 +1049,12 @@
       "label": "♍️ پروتکل MUX"
     },
     "naive_enable": {
-      "description": "",
-      "label": ""
+      "description": "Naive با استفاده از استک دقیق کروم از شناسایی جلوگیری می‌کند",
+      "label": "🛡 فعال‌سازی Naive"
     },
     "naive_port": {
-      "description": "",
-      "label": ""
+      "description": "پورت پروتکل Naive",
+      "label": "🔎 پورت Naive"
     },
     "netdata": {
       "description": "نت دیتا ابزاری است برای نمایش مقدار استفاده سیستم از منابع. فعالسازی آن ممکن است از اندکی از CPU شما استفاده کند.",
@@ -1047,19 +1073,19 @@
       "label": "🔄 حالت به روز رسانی"
     },
     "panel_mode": {
-      "child": "",
-      "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label",
-      "parent": "",
-      "standalone": ""
+      "child": "فرزند",
+      "description": "حالت پنل: مستقل، والد یا فرزند",
+      "label": "حالت پنل",
+      "parent": "والد",
+      "standalone": "مستقل"
     },
     "parent_admin_proxy_path": {
-      "description": "config.parent_admin_proxy_path.description",
-      "label": "config.parent_admin_proxy_path.label"
+      "description": "مسیر پروکسی ادمین در پنل والد",
+      "label": "مسیر پروکسی ادمین والد"
     },
     "parent_domain": {
-      "description": "config.parent_domain.description",
-      "label": "config.parent_domain.label"
+      "description": "دامنه پنل والد",
+      "label": "دامنه والد"
     },
     "parent_panel": {
       "description": "می‌توانید به پنل مرکزی وصل شوید، تا فقط یک یوزر را تعریف کنید و میزان استفاده همه سرورها به صورت تجمعی اضافه می‌شود.",
@@ -1074,8 +1100,8 @@
       "label": "ℹ️ مسیر ارتقاء HTTP"
     },
     "path_naive": {
-      "description": "",
-      "label": ""
+      "description": "برای لینک Naive",
+      "label": "ℹ️ مسیر Naive"
     },
     "path_splithttp": {
       "description": "مسیر XHTTP",
@@ -1147,7 +1173,7 @@
     },
     "reality_port": {
       "description": "پورت reality",
-      "label": ""
+      "label": "پورت REALITY"
     },
     "reality_private_key": {
       "description": "این کد را تغییر ندهید",
@@ -1166,16 +1192,16 @@
       "label": "🆔 شناسه های کوتاه"
     },
     "restls": {
-      "description": "config.restls.description",
+      "description": "تنظیمات پروتکل RestLS",
       "label": "RestTLS"
     },
     "restls1_2_domain": {
-      "description": "config.restls1_2_domain.description",
-      "label": "config.restls1_2_domain.label"
+      "description": "دامنه استفاده‌شده برای RestLS 1.2",
+      "label": "دامنه RestLS 1.2"
     },
     "restls1_3_domain": {
-      "description": "config.restls1_3_domain.description",
-      "label": "config.restls1_3_domain.label"
+      "description": "دامنه استفاده‌شده برای RestLS 1.3",
+      "label": "دامنه RestLS 1.3"
     },
     "shadowsocks": {
       "description": "Shadowsocks یک پروکسی تونل سریع است که به شما کمک می کند فایروال ها را دور بزنید",
@@ -1214,12 +1240,12 @@
       "label": "👁️‍🗨️ نمایش حجم و تاریخ انقضا در کانفیگ ها"
     },
     "snell_enable": {
-      "description": "",
-      "label": ""
+      "description": "فعال‌سازی پروتکل Snell",
+      "label": "Snell"
     },
     "socks_enable": {
-      "description": "",
-      "label": ""
+      "description": "فعال‌سازی پروتکل SOCKS",
+      "label": "SOCKS"
     },
     "special_port": {
       "description": "شما می توانید یک پورت سفارشی برای سرور ریالیتی خود تنظیم کنید تا پردازش سیستم را کاهش دهید. (اجازه اتصال مستقیم به پروکسی ها باید بله باشد)",
@@ -1250,36 +1276,36 @@
       "label": "پروکسی SSH"
     },
     "ssh_host_dsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "کلید خصوصی DSA میزبان SSH",
+      "label": "کلید خصوصی DSA میزبان SSH"
     },
     "ssh_host_dsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "کلید عمومی DSA میزبان SSH",
+      "label": "کلید عمومی DSA میزبان SSH"
     },
     "ssh_host_ecdsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "کلید خصوصی ECDSA میزبان SSH",
+      "label": "کلید خصوصی ECDSA میزبان SSH"
     },
     "ssh_host_ecdsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "کلید عمومی ECDSA میزبان SSH",
+      "label": "کلید عمومی ECDSA میزبان SSH"
     },
     "ssh_host_ed25519_pk": {
-      "description": "",
-      "label": ""
+      "description": "کلید خصوصی Ed25519 میزبان SSH",
+      "label": "کلید خصوصی Ed25519 میزبان SSH"
     },
     "ssh_host_ed25519_pub": {
-      "description": "",
-      "label": ""
+      "description": "کلید عمومی Ed25519 میزبان SSH",
+      "label": "کلید عمومی Ed25519 میزبان SSH"
     },
     "ssh_host_rsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "کلید خصوصی RSA میزبان SSH",
+      "label": "کلید خصوصی RSA میزبان SSH"
     },
     "ssh_host_rsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "کلید عمومی RSA میزبان SSH",
+      "label": "کلید عمومی RSA میزبان SSH"
     },
     "ssh_server_enable": {
       "description": "این SSH پروکسی با SSH سرور اصلی کاملا متفاوت است و امکان اجرای دستورات را ندارد",
@@ -1310,32 +1336,32 @@
       "label": "دامنه جعلی برای SSR"
     },
     "sub_full_clash_enable": {
-      "description": "config.sub_full_clash_enable.description",
-      "label": "config.sub_full_clash_enable.label"
+      "description": "فعال‌سازی اندپوینت اشتراک کامل Clash",
+      "label": "فعال‌سازی ساب کامل Clash"
     },
     "sub_full_clash_meta_enable": {
-      "description": "config.sub_full_clash_meta_enable.description",
-      "label": "config.sub_full_clash_meta_enable.label"
+      "description": "فعال‌سازی اندپوینت اشتراک کامل Clash Meta",
+      "label": "فعال‌سازی ساب کامل Clash Meta"
     },
     "sub_full_links_b64_enable": {
-      "description": "config.sub_full_links_b64_enable.description",
-      "label": "config.sub_full_links_b64_enable.label"
+      "description": "فعال‌سازی اندپوینت لینک‌های اشتراک Base64",
+      "label": "فعال‌سازی لینک کامل (Base64)"
     },
     "sub_full_links_enable": {
-      "description": "config.sub_full_links_enable.description",
-      "label": "config.sub_full_links_enable.label"
+      "description": "فعال‌سازی اندپوینت لینک‌های اشتراک ساده",
+      "label": "فعال‌سازی لینک کامل"
     },
     "sub_full_singbox_enable": {
-      "description": "config.sub_full_singbox_enable.description",
-      "label": "config.sub_full_singbox_enable.label"
+      "description": "فعال‌سازی اندپوینت اشتراک کامل Sing-box",
+      "label": "فعال‌سازی ساب کامل Sing-box"
     },
     "sub_full_xray_json_enable": {
       "description": "لینک کامل XRay  گزینه های پیکربندی جامعی را برای تنظیمات خاص XRay فراهم می کند. این شامل تقسیم بندی سفارشی و چندگانه سازی (mux) در برنامه هایی مانند v2rayNG است که از پروتکل های XRay برای کنترل دقیق تنظیم پراکسی XRay پشتیبانی می کند.",
       "label": "⚙️ لینک پیکربندی کامل XRay"
     },
     "sub_singbox_ssh_enable": {
-      "description": "config.sub_singbox_ssh_enable.description",
-      "label": "config.sub_singbox_ssh_enable.label"
+      "description": "فعال‌سازی اندپوینت اشتراک SSH در Sing-box",
+      "label": "فعال‌سازی ساب SSH Sing-box"
     },
     "tcp_enable": {
       "description": "پروتکل TCP را فعال می‌کند",
@@ -1369,17 +1395,21 @@
       "description": "تنظیمات مربوط به اتصال TLS",
       "label": "تنظیمات TLS"
     },
+    "tls_ech": {
+      "description": "مقدار ECH به فرمت: cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "مقدار TLS ECH"
+    },
     "tls_ech_enable": {
-      "description": "",
-      "label": ""
+      "description": "افزودن ECH به لینک‌های اشتراک TLS تولیدشده",
+      "label": "🔐 فعال‌سازی TLS ECH"
     },
     "tls_fragment_enable": {
       "description": "تحت برخی شرایط، می تواند سیستم لیست سیاه SNI را دور بزند.&nbsp;<a href=\"https://hiddify.com/fa/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(بیشتر بدانید)</a>",
       "label": "⏯ TLS Fragment"
     },
     "tls_fragment_packets": {
-      "description": "",
-      "label": ""
+      "description": "حالت بسته‌های Fragment (مثلاً tlshello یا 1-3)",
+      "label": "📦 بسته‌های TLS Fragment"
     },
     "tls_fragment_size": {
       "description": "اندازه هر بسته",
@@ -1434,8 +1464,8 @@
       "label": "🔎 پورت‌های TUIC"
     },
     "unique_id": {
-      "description": "config.unique_id.description",
-      "label": "config.unique_id.label"
+      "description": "شناسه یکتای این نمونه پنل",
+      "label": "شناسه یکتا"
     },
     "use_ip_in_config": {
       "description": "این به کاهش مشکلاتی که ممکن است در حل مشکل IP سرور رخ دهد کمک می‌کند. این از یک IP تصادفی از دامنه انتخاب شده استفاده می‌کند.",
@@ -1453,26 +1483,26 @@
     "validation-success": "تنظیمات با موفقیت ذخیره شدند. لطفا بر روی این لینک: %(link)s کلیک کنید تا بر روی سیستم اعمال شوند. این کار ممکن است 2 دقیقه طول بکشد",
     "validation-success-no-reset": " ✅ تنظیمات با موفقیت تغییر کرد",
     "vless_decryption": {
-      "description": "",
-      "label": ""
+      "description": "پارامتر decryption در لینک‌های اشتراک VLESS",
+      "label": "VLESS decryption"
     },
     "vless_enable": {
       "description": "فعال کردن پروتکل VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "",
-      "label": ""
+      "description": "روش encryption در لینک‌های اشتراک VLESS",
+      "label": "VLESS encryption"
     },
     "vless_flow": {
-      "description": "",
-      "label": ""
+      "description": "کنترل flow در VLESS (مثلاً xtls-rprx-vision)",
+      "label": "VLESS flow"
     },
     "vmess_enable": {
       "description": "فعال کردن پروتکل VMess",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "config.warp-https-domain-for-warp-site",
+    "warp-https-domain-for-warp-site": "دامنه HTTPS برای مسیریابی سایت‌های WARP",
     "warp": {
       "description": "وارپ ابزاری هست که آی پی سرور شما را در ترافیک خروجی مخفی می‌کند. بدین صورت وقتی کاربران از وبسایتی بازدید می‌کنند، آیپی وارپ به جای آیپی سرور شما نمایش داده می‌شود.\n<br>\nبرای مثال اگر با کپچای گوگل مشکل دارید با استفاده از این ابزار مشکل رفع شود",
       "label": "WARP"
@@ -1547,21 +1577,21 @@
   "days": "روز",
   "desktop": "دسکتاپ",
   "direct": "➡️ مستقیم (بدون واسطه)",
-  "dnstt": "",
+  "dnstt": "DNSTT",
   "domain": {
     "cdn": "سی‌دی‌ان",
     "changed_in_domain_warning": "⚠️ دامنه های شما تغییر کرد. لطفا کپی لینک های مدیریت را فراموش نکنید، در غیر این صورت دیگر نمی توانید به پنل دسترسی داشته باشید",
-    "current_server_IPs": "",
+    "current_server_IPs": "🔢 IPهای فعلی سرور",
     "custom_proxy": {
-      "description": "",
+      "description": "اتصال اختیاری به پراکسی. فقط پراکسی‌هایی که از ترکیب حالت این دامنه پشتیبانی می‌کنند نمایش داده می‌شوند.",
       "group": {
-        "ip_based": "",
-        "other": "",
-        "sni_gateway": ""
+        "ip_based": "مبتنی بر IP",
+        "other": "سایر",
+        "sni_gateway": "درگاه SNI"
       },
-      "label": "",
-      "reality_only": "",
-      "reality_required": ""
+      "label": "پراکسی سفارشی",
+      "reality_only": "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند",
+      "reality_required": "دامنه‌های REALITY به پراکسی REALITY Termination نیاز دارند"
     },
     "description": "این فیلد باید با دقت و به درستی تکمیل شود. در غیر اینصورت پروکسی ها به مشکل بر خواهند خورد. لطفا برای دیدن راهنمای ساخت زیردامنه \n<a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'>این آدرس </a>\nرا ببینید.",
     "domain": "دامنه",
@@ -1574,11 +1604,11 @@
       "label": "🔐 ECH"
     },
     "empty": {
-      "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+      "allowed_for_fake_only": "دامنه خالی فقط در حالت fake مجاز است"
     },
     "fake_mode": {
-      "description": "",
-      "label": ""
+      "description": "Valid از گواهی واقعی استفاده می‌کند. Fake و Reality برای TLS فریب و پروتکل‌های REALITY هستند.",
+      "label": "حالت TLS"
     },
     "intro": "1️⃣ در این قسمت می توانید دامنه خود را اضافه کنید.<inlang-LineFeed><br>\n2️⃣ اگر می خواهید احتمال داشتن IP کثیف را کاهش دهید، می توانید سرور رله چندگانه را اضافه کنید <a href='https://github.com/hiddify/hiddify-config/discussions/129'>ادامه مطلب</a> .<inlang-LineFeed><br>\n3️⃣ اگر چندین IPv4 یا IPv6 در پنل خود دارید، باید دامنه ای که به آنها اشاره شده است را به عنوان Relay اضافه کنید.",
     "ip": "آی‌پی",
@@ -1591,8 +1621,8 @@
       "label": "🔢 استفاده از IP"
     },
     "server_domain": {
-      "description": "",
-      "label": ""
+      "description": "دامنه سرور بالادستی برای این مورد",
+      "label": "دامنه سرور"
     },
     "show_domains_description": "مشخص کنید کاربرانی که با این دامنه، پنل کاربری را مشاهده می‌کنند، کانفیگ‌های مربوط به کدام دامنه‌ها را مشاهده کنند.\n<br>\nپیشنهاد: برای یک دامنه با IP فیلتر نشده و متفاوت با بقیه، همه دامنه های دیگر (به جز دامنه فعلی) را انتخاب کنید. در نتیجه از آنجایی که از این IP برای فیلترشکن استفاده نمی‌شود و یک وبسایت ساده است، این دامنه و آی پی هرگز مسدود نمی‌شود و کاربران شما به راحتی می توانند پروفایل های جدید را به روز کنند."
   },
@@ -1623,7 +1653,7 @@
       "erlang": "✴️ Erlang : عملکرد خوب",
       "go": "✅ Go : عملکرد معمولی - عدم پشتیبانی از تبلیغات",
       "python": "☑️ پایتون : عملکرد ضعیف",
-      "telemt": ""
+      "telemt": "❇️ Telemt: سریع، امن، پایدار"
     }
   },
   "log": "📄 لاگ",
@@ -1647,7 +1677,7 @@
   "next": "بعدی",
   "no_reset": "⭐️ بدون ریست شدن",
   "node": {
-    "diff-version": "node.diff-version",
+    "diff-version": "نسخه پنل نود با این پنل متفاوت است",
     "mode": {
       "dscr": "این فیلد حالت را برای Node تعریف می کند",
       "label": "حالت نود"
@@ -1667,8 +1697,8 @@
   "package days?": "تعداد روز؟",
   "package size?": "حجم بسته",
   "parent": {
-    "invalid-parent-url": "parent.invalid-parent-url",
-    "sync-req-failed": "parent.sync-req-failed"
+    "invalid-parent-url": "آدرس پنل والد نامعتبر است",
+    "sync-req-failed": "درخواست همگام‌سازی با پنل والد ناموفق بود"
   },
   "previous": "قبلی",
   "quicksetup": {
@@ -1693,7 +1723,7 @@
     }
   },
   "singbox: ssh": "SingBox: SSH",
-  "special": "",
+  "special": "ویژه",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",
