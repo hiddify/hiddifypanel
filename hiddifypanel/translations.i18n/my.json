@@ -223,7 +223,7 @@
   "With selected": "ရွေးချယ်ထားခြင်းဖြင့်",
   "Xray": "☢️ XRay",
   "Yesterday Usage": "မနေ့",
-  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 ဟစ်ဒီဖိုင်း မန်နေဂျာသည် ၆ နာရီတိုင်း အရန်သိမ်းဆည်းမှုကို အလိုအလျောက် ရယူသည်။ ဆာဗာရှိ အရန်ဖိုင်များ လမ်းကြောင်း- ⬇️\n<br>\n💿 /opt/hiddify-manager/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ အောက်ပါ ခလုတ်ကို နှိပ်ခြင်းဖြင့် ဖွဲ့စည်းမှုပုံစံ၏ JSON ဖိုင်ကို ဒေါင်းလုဒ်လုပ်နိုင်ပါသည်။\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>အရန်သိမ်းဆည်းမှုဖိုင်ကို ဒေါင်းလုဒ်လုပ်ပါ။</a>",
+  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 ဟစ်ဒီဖိုင်း မန်နေဂျာသည် ၆ နာရီတိုင်း အရန်သိမ်းဆည်းမှုကို အလိုအလျောက် ရယူသည်။ ဆာဗာရှိ အရန်ဖိုင်များ လမ်းကြောင်း- ⬇️\n<br>\n💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ အောက်ပါ ခလုတ်ကို နှိပ်ခြင်းဖြင့် ဖွဲ့စည်းမှုပုံစံ၏ JSON ဖိုင်ကို ဒေါင်းလုဒ်လုပ်နိုင်ပါသည်။\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>အရန်သိမ်းဆည်းမှုဖိုင်ကို ဒေါင်းလုဒ်လုပ်ပါ။</a>",
   "You can restore your configs from previously downloaded configs": "ℹ️ ယခင်က ဒေါင်းလုဒ်လုပ်ထားသော အရန်ဖိုင်မှ သင့် configuration ကို ပြန်လည်ရယူနိုင်သည်။",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "သင့်တွင် အသုံးပြုသူများ အလွန်များပါသည်။ သင့်တွင် အသုံးပြုသူ %(active)s ဦးနှင့် အသုံးပြုသူ %(total)s ဦးသာ ရှိနိုင်ပါသည်။",
   "You have used this domain in: ": "သင်သည် ဤဒိုမိန်းကို အသုံးပြုပြီးဖြစ်သည်- ",

@@ -1,6 +1,6 @@
 global
     #limited-quic
     {% if ctx.hconfig.log_level != 'CRITICAL' %}
-    log /opt/hiddify-manager/log/system/haproxy.err.log local0 warning
+    log /opt/hiddify-manager/data/log/system/haproxy.err.log local0 warning
     {% endif %}
     expose-experimental-directives

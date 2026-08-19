@@ -1,6 +1,6 @@
 #!/bin/bash
 # source .env
-source /opt/hiddify-manager/common/utils.sh
+source /opt/hiddify-manager/scripts/common/utils.sh
 activate_python_venv
 
 

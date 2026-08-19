@@ -134,8 +134,8 @@ def init_app(app: APIFlask):
     @app.doc(hide=True)
     def videos(file):
         print("file", file, app.config['HIDDIFY_CONFIG_PATH'] +
-              '/hiddify-panel/videos/' + file)
-        return send_from_directory(app.config['HIDDIFY_CONFIG_PATH'] + '/hiddify-panel/videos/', file)
+              '/services/hiddify-panel/videos/' + file)
+        return send_from_directory(app.config['HIDDIFY_CONFIG_PATH'] + '/services/hiddify-panel/videos/', file)
 
     @app.url_value_preprocessor
     def pull_default(endpoint, values):

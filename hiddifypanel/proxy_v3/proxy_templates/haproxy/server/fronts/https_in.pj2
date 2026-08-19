@@ -8,7 +8,7 @@ frontend https-in
     tcp-request inspect-delay 5s
     tcp-request content accept if { req.ssl_hello_type 1 }
 
-    acl is_cdn src -f /opt/hiddify-manager/haproxy/iplists/cloudflare.lst -f /opt/hiddify-manager/haproxy/iplists/arvan.lst -f /opt/hiddify-manager/haproxy/iplists/cloudfront.lst
+    acl is_cdn src -f {{ include_path(ctx, 'haproxy/server/iplists/cloudflare') }} -f {{ include_path(ctx, 'haproxy/server/iplists/arvan') }} -f {{ include_path(ctx, 'haproxy/server/iplists/cloudfront') }}
     use_backend to_https_in_ssl if is_cdn
 
     use_backend %[req.ssl_sni,map_str({{ include_path(ctx, 'haproxy/server/maps/sni') }},to_https_in_ssl)] 

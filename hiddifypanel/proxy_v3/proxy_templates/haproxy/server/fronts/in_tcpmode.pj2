@@ -5,7 +5,7 @@ frontend in-tcpmode
     {% for port in (["80"] + ctx.hconfig.http_ports.split(',')) | unique %}
     bind :{{ port }},:::{{ port }} v4v6 tfo
     {% endfor %}
-    bind abns@https_in_ssl tfo accept-proxy ssl crt /opt/hiddify-manager/ssl/ alpn h2,http/1.1,h3 allow-0rtt
+    bind abns@https_in_ssl tfo accept-proxy ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1,h3 allow-0rtt
     acl h2 ssl_fc_alpn -i h2
     acl h3 ssl_fc_alpn -i h3
     tcp-request inspect-delay 5s

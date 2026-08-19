@@ -17,7 +17,7 @@ class SingboxApi(DriverABS):
 
     def get_enabled_users(self):
         config_dir = os.environ['HIDDIFY_CONFIG_PATH']
-        with open(f"{config_dir}/singbox/configs/01_api.json") as f:
+        with open(f"{config_dir}/generated/hiddify-core.json") as f:
             json_data = json.load(f)
             return {u.split("@")[0]: 1 for u in json_data['experimental']['v2ray_api']['stats']['users']}
 

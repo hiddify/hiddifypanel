@@ -42,7 +42,7 @@ def get_haproxy_version() -> TemplateVersion:
 
 def get_xray_version() -> TemplateVersion:
     try:
-        version = subprocess.check_output(["/opt/hiddify-manager/xray/bin/xray", "version"]).decode("utf-8").split(" ")[1]
+        version = subprocess.check_output(["/opt/hiddify-manager/services/xray/bin/xray", "version"]).decode("utf-8").split(" ")[1]
         return TemplateVersion(version)
     except Exception as e:
         logger.error(f"Error getting xray version: {e}")
@@ -55,7 +55,7 @@ def _first_output_line(cmd: list[str]) -> str:
 
 def get_hiddifycore_version() -> TemplateVersion:
     try:
-        line = _first_output_line(["/opt/hiddify-manager/singbox/hiddify-core", "version"])
+        line = _first_output_line(["/opt/hiddify-manager/services/hiddify-core/hiddify-core", "version"])
         parts = line.split()
         version = parts[2].lstrip("v") if len(parts) > 2 else "0.0.0"
         return TemplateVersion(version)
@@ -66,7 +66,7 @@ def get_hiddifycore_version() -> TemplateVersion:
 
 def get_singbox_version() -> TemplateVersion:
     try:
-        line = _first_output_line(["/opt/hiddify-manager/singbox/hiddify-core", "version"])
+        line = _first_output_line(["/opt/hiddify-manager/services/hiddify-core/hiddify-core", "version"])
         parts = line.split()
         version = parts[-1] if len(parts) > 5 else "0.0.0"
         return TemplateVersion(version)

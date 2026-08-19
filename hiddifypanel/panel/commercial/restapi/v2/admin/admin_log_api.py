@@ -20,7 +20,7 @@ class AdminLogApi(MethodView):
     def post(self, data):
         """System: View Log file"""
         file_name = data.get('file') or abort(400, "Parameter issue: 'file'")
-        log_dir = f"{app.config['HIDDIFY_CONFIG_PATH']}log/system/"
+        log_dir = f"{app.config['HIDDIFY_CONFIG_PATH']}data/log/system/"
         log_files = hutils.flask.list_dir_files(log_dir)
 
         file_path = f"{log_dir}{file_name}"

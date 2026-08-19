@@ -34,7 +34,7 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
     base_cmd: List[str] = [
         'sudo',
         os.path.join(
-            os.environ['HIDDIFY_CONFIG_PATH'], 'common/commander.py')
+            os.environ['HIDDIFY_CONFIG_PATH'], 'scripts/common/commander.py')
     ]
 
     if command == Command.apply:

@@ -19,6 +19,8 @@ def default_base_content(side: str, core: str) -> str:
         return load_base_config_file("haproxy", side)
     if core == "rust-rpxy-l4":
         return load_base_config_file("rust-rpxy-l4", side)
+    if core == "nginx":
+        return load_base_config_file("nginx", side)
     if core == "sublink" and side == "client":
         return load_base_config_file("sublink", side)
     return "{}"

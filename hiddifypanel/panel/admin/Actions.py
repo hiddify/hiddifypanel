@@ -22,7 +22,7 @@ class Actions(FlaskView):
 
     @login_required(roles={Role.super_admin})
     def viewlogs(self):
-        log_files = hutils.flask.list_dir_files(f"{app.config['HIDDIFY_CONFIG_PATH']}log/system/")
+        log_files = hutils.flask.list_dir_files(f"{app.config['HIDDIFY_CONFIG_PATH']}data/log/system/")
         return render_template("view_logs.html", log_files=log_files)
 
     @login_required(roles={Role.super_admin})

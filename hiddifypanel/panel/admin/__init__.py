@@ -15,7 +15,7 @@ from flask_adminlte3 import AdminLTE3
 flask_bp = APIBlueprint("flask", __name__, template_folder="templates", enable_openapi=False)
 admin_bp = APIBlueprint("admin", __name__, template_folder="templates", enable_openapi=False)
 
-flaskadmin = Admin(endpoint="admin", base_template="flaskadmin-layout.html", translations_path="/opt/hiddify-develop/hiddify-panel/src/hiddifypanel/translations/")
+flaskadmin = Admin(endpoint="admin", base_template="flaskadmin-layout.html", translations_path="./hiddifypanel/translations/")
 
 
 def init_app(app):

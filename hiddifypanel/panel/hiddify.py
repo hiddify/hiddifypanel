@@ -21,7 +21,7 @@ to_gig_d = 1000 * 1000 * 1000
 # def add_temporary_access():
 #     random_port = random.randint(30000, 50000)
 #     # exec_command(
-#     #     f'sudo /opt/hiddify-manager/hiddify-panel/temporary_access.sh {random_port} &')
+#     #     f'sudo /opt/hiddify-manager/services/hiddify-panel/temporary_access.sh {random_port} &')
 
 #     # run temporary_access.sh
 #     commander(Command.temporary_access, port=random_port)
@@ -42,14 +42,14 @@ def add_short_link_imp(link: str, period_min: int = 5) -> Tuple[str, datetime]:
 
     pattern = r"([^/]+)\("
 
-    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/nginx/parts/short-link.conf", "r") as f:
+    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/data/services/nginx/parts/short-link.conf", "r") as f:
         for line in f:
             if link in line:
                 return re.search(pattern, line).group(1), datetime.now() + timedelta(minutes=period_min)
 
     short_code = hutils.random.get_random_string(6, 10).lower()
     # exec_command(
-    #     f'sudo /opt/hiddify-manager/nginx/add2shortlink.sh {link} {short_code} {period_min} &')
+    #     f'sudo /opt/hiddify-manager/services/nginx/add2shortlink.sh {link} {short_code} {period_min} &')
 
     commander(Command.temporary_short_link, url=link, slug=short_code, period=period_min)
 

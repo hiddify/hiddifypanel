@@ -3,10 +3,10 @@
 # =====================
 frontend in-httpmode
   bind abns@http_in_h2 accept-proxy
-  bind abns@https_in_http_mode accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/ssl/ alpn h2,http/1.1
-  #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/ssl/ alpn h3
-  bind quic4@127.0.0.1:901 ssl crt /opt/hiddify-manager/ssl/ alpn h3
-  bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/ssl/ alpn h2,http/1.1
+  bind abns@https_in_http_mode accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1
+  #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
+  bind quic4@127.0.0.1:901 ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
+  bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1
   bind :80,:::80 v4v6 tfo
 
   mode http

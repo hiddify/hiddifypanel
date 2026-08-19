@@ -150,15 +150,15 @@ def _proxy_var(
     return ProxyVar.model_validate(data)
 
 
-def include_path(ctx: Any, slug: str, prefix: str = ".cache/") -> str:
+def include_path(ctx: Any, slug: str, prefix: str = "include/") -> str:
     """Render a template slug to a sidecar file and return its deployed absolute path."""
     rel = (slug or "").strip().lstrip("/")
     if not rel:
         raise ValueError("slug is required")
 
-    rel_prefix = (prefix or ".cache/").strip().strip("/")
+    rel_prefix = (prefix or "include/").strip().strip("/")
     rel = f"{rel_prefix}/{rel}" if rel_prefix else rel
-    abs_path = f"{HIDDIFY_MANAGER_ROOT}/{rel}"
+    abs_path = f"{HIDDIFY_MANAGER_ROOT}/generated/{rel}"
     parent_dir = os.path.dirname(abs_path)
     if parent_dir:
         os.makedirs(parent_dir, exist_ok=True)

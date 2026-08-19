@@ -13,7 +13,7 @@ from loguru import logger
 from hiddifypanel.database import db
 from hiddifypanel.models.tls_store import TlsStore
 
-SSL_ROOT = Path('/opt/hiddify-manager/ssl')
+SSL_ROOT = Path('/opt/hiddify-manager/data/ssl')
 
 
 def domain_file_key(domain: str) -> str:

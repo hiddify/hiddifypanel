@@ -3,9 +3,9 @@
 # =====================
 frontend in-httpmode-quic
   {% for port in (["443"] + ctx.hconfig.tls_ports.split(',')) | unique %}
-  #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/ssl/ alpn h3
+  #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
   {% endfor %}
-#  bind quic4@:901 ssl crt /opt/hiddify-manager/ssl/ alpn h3
+#  bind quic4@:901 ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
 
   mode http
 

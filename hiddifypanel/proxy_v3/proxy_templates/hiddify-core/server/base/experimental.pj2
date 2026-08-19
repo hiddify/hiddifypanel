@@ -14,7 +14,7 @@
   },
   "cache_file": {
     "enabled": true,
-    "path": "cache.db",
+    "path": "/opt/hiddify-manager/data/hiddify-core/cache.db",
     "store_warp_config": true
   },
   "monitoring": {

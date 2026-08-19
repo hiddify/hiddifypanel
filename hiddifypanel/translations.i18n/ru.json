@@ -240,7 +240,7 @@
   "With selected": "С выбранным",
   "Xray": "☢️ XRay",
   "Yesterday Usage": "Вчера",
-  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 Панель Hiddify автоматически создает резервную копию каждые 6 часов. Путь к файлам резервной копии на сервере: ⬇️\n<br>\n💿 /opt/hiddify-manager/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ Вы можете скачать файл конфигураций в формате JSON, нажав кнопку ниже.\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>Загрузить файл резервной копии</a>",
+  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 Панель Hiddify автоматически создает резервную копию каждые 6 часов. Путь к файлам резервной копии на сервере: ⬇️\n<br>\n💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ Вы можете скачать файл конфигураций в формате JSON, нажав кнопку ниже.\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>Загрузить файл резервной копии</a>",
   "You can restore your configs from previously downloaded configs": "ℹ️ Вы можете восстановить свои конфигурации из ранее скачанного файла резервной копии.",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "У вас слишком много пользователей! У вас может быть только %(active) активных пользователей и %(total) пользователей.",
   "You have used this domain in: ": "Вы уже используете этот домен в:",

@@ -34,18 +34,18 @@ backend generate_204
     http-request return status 204
 
 backend nginx_dispatcher_h2
-    server nginx unix@/opt/hiddify-manager/nginx/run/h2.sock send-proxy-v2 tfo
+    server nginx unix@/opt/hiddify-manager/services/nginx/run/h2.sock send-proxy-v2 tfo
 
 backend nginx_dispatcher
-    server nginx unix@/opt/hiddify-manager/nginx/run/h1.sock send-proxy-v2 tfo
+    server nginx unix@/opt/hiddify-manager/services/nginx/run/h1.sock send-proxy-v2 tfo
 
 backend nginx_dispatcher_http
     mode http
-    server nginx unix@/opt/hiddify-manager/nginx/run/h1.sock send-proxy-v2 tfo
+    server nginx unix@/opt/hiddify-manager/services/nginx/run/h1.sock send-proxy-v2 tfo
 
 backend nginx_dispatcher_http_h2
     mode http
-    server nginx unix@/opt/hiddify-manager/nginx/run/h2.sock send-proxy-v2 tfo proto h2
+    server nginx unix@/opt/hiddify-manager/services/nginx/run/h2.sock send-proxy-v2 tfo proto h2
 
 backend hiddifypanel
     mode http

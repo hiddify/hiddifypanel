@@ -241,7 +241,7 @@
   "With selected": "با انتخاب شده ها",
   "Xray": "☢️ XRay",
   "Yesterday Usage": "استفاده دیروز",
-  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 پنل هیدیفای به صورت خودکار هر ۶ ساعت یک Backup میگیرد. مسیر فایل های Backup روی سرور: ⬇️\n<br>\n💿 /opt/hiddify-manager/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ می‌توانید با کلیک بر روی دکمه زیر تنظیمات را با فرمت JSON دریافت کنید.\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>دریافت فایل پشتیبان</a>",
+  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 پنل هیدیفای به صورت خودکار هر ۶ ساعت یک Backup میگیرد. مسیر فایل های Backup روی سرور: ⬇️\n<br>\n💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ می‌توانید با کلیک بر روی دکمه زیر تنظیمات را با فرمت JSON دریافت کنید.\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>دریافت فایل پشتیبان</a>",
   "You can restore your configs from previously downloaded configs": "ℹ️ در این قسمت می‌توانید تنظیمات قبلی خود را (که قبلا از قسمت پشتیبان گیری دانلود کرده‌اید.) بازگردانی نمایید.",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "شما کاربران زیادی دارید! شما می توانید تنها %(active)s کاربر فعال و %(total)s کاربر داشته باشید",
   "You have used this domain in: ": "شما از این دامنه در بخش زیر استفاده کرده اید: ",

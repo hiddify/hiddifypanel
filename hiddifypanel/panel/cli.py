@@ -29,7 +29,7 @@ def downgrade():
         ).delete()
         Proxy.query.filter(Proxy.l3.in_([ProxyL3.ssh, ProxyL3.h3_quic, ProxyL3.custom])).delete()
         db.session.commit()
-        os.rename("/opt/hiddify-manager/hiddify-panel/hiddifypanel.db.old", "/opt/hiddify-manager/hiddify-panel/hiddifypanel.db")
+        os.rename("/opt/hiddify-manager/services/hiddify-panel/hiddifypanel.db.old", "/opt/hiddify-manager/services/hiddify-panel/hiddifypanel.db")
 
 
 from celery import shared_task
@@ -263,7 +263,7 @@ def init_app(app):
     @click.option("--domain-id", default=None, type=int, help="Sync by domain.id")
     @click.option("--child-id", "-c", default=0, show_default=True, type=int)
     def sync_tls_store(domain, domain_id, child_id):
-        """Import TLS certificates from /opt/hiddify-manager/ssl/ into tls_store."""
+        """Import TLS certificates from /opt/hiddify-manager/data/ssl/ into tls_store."""
         from hiddifypanel.proxy_v3.tls_store_sync import (
             sync_tls_store_all,
             sync_tls_store_for_domain,
