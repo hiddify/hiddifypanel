@@ -150,6 +150,25 @@ def _proxy_var(
     return ProxyVar.model_validate(data)
 
 
+def _chown_generated_path(path: str) -> None:
+    """Make dump sidecars writable by the panel even if this process is root."""
+    try:
+        os.chmod(path, 0o775 if os.path.isdir(path) else 0o640)
+    except OSError:
+        pass
+    if os.geteuid() != 0:
+        return
+    try:
+        import grp
+        import pwd
+
+        uid = pwd.getpwnam("hiddify-panel").pw_uid
+        gid = grp.getgrnam("hiddify-common").gr_gid
+        os.chown(path, uid, gid)
+    except (KeyError, OSError):
+        pass
+
+
 def include_path(ctx: Any, slug: str, prefix: str = "include/") -> str:
     """Render a template slug to a sidecar file and return its deployed absolute path."""
     rel = (slug or "").strip().lstrip("/")
@@ -161,13 +180,21 @@ def include_path(ctx: Any, slug: str, prefix: str = "include/") -> str:
     abs_path = f"{HIDDIFY_MANAGER_ROOT}/generated/{rel}"
     parent_dir = os.path.dirname(abs_path)
     if parent_dir:
-        os.makedirs(parent_dir, exist_ok=True)
+        os.makedirs(parent_dir, mode=0o775, exist_ok=True)
+        _chown_generated_path(parent_dir)
 
     from hiddifypanel.proxy_v3.config_builder.jinja_render import render_slug_template
 
     rendered = render_slug_template(slug, 0, {"ctx": ctx})
-    with open(abs_path, "w", encoding="utf-8") as handle:
-        handle.write(rendered)
+    try:
+        with open(abs_path, "w", encoding="utf-8") as handle:
+            handle.write(rendered)
+    except PermissionError:
+        # Directory may be writable even if a leftover root-owned file is not.
+        os.unlink(abs_path)
+        with open(abs_path, "w", encoding="utf-8") as handle:
+            handle.write(rendered)
+    _chown_generated_path(abs_path)
     return abs_path
 
 

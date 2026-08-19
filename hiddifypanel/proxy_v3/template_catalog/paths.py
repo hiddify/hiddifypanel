@@ -9,7 +9,7 @@ TEMPLATES_ROOT = Path(__file__).resolve().parents[1] / 'proxy_templates'
 FRAGMENT_CORES = ('xray', 'hiddify-core')
 
 # All cores that may appear in discovered template slugs (includes singbox client TLS).
-TEMPLATE_CORES = ('xray', 'hiddify-core', 'singbox', 'sublink', 'haproxy', 'clash', 'rust-rpxy-l4')
+TEMPLATE_CORES = ('xray', 'hiddify-core', 'singbox', 'sublink', 'haproxy', 'clash', 'rust-rpxy-l4', 'nginx')
 
 FRAGMENT_KINDS = ('protocols', 'streams', 'stream', 'tls')
 

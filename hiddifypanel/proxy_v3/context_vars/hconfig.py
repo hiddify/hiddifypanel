@@ -51,6 +51,7 @@ class HConfigVar:
         if name in _HCONFIG_BLOCKED:
             if self._server_side:
                 return name in {
+                    "admin_secret",
                     "reality_private_key",
                     "ssh_host_rsa_pk",
                     "ssh_host_ecdsa_pk",

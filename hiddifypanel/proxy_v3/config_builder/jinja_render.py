@@ -4,6 +4,7 @@ from wcwidth import ljust
 import json
 import random
 import re
+import subprocess
 import time
 from typing import Any
 from urllib.parse import quote, urlencode
@@ -96,6 +97,13 @@ def _jinja_compact_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
 
 
+def _jinja_exec(command: str) -> str:
+    try:
+        return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
+    except subprocess.CalledProcessError:
+        return ""
+
+
 def _jinja_urlencode(value: Any) -> str:
     normalized = _to_json_value(value)
     if isinstance(normalized, dict):
@@ -138,6 +146,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["download"] = download
     env.globals["enumerate"] = enumerate
     env.globals["len"] = len
+    env.globals["exec"] = _jinja_exec
     env.globals["ConfigEnum"] = ConfigEnum
     env.filters["jsbool"] = jsbool
     env.filters["tojson"] = _jinja_tojson

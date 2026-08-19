@@ -22,7 +22,7 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'rust-rpxy-l4'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
@@ -258,6 +258,13 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'version': '1.0.0',
         'name': 'Server HAProxy Base',
         'description': 'Full HAProxy gateway config (frontends, backends, routing)',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'nginx',
+        'version': '1.0.0',
+        'name': 'Server Nginx Base',
+        'description': 'Nginx HTTP dispatcher (panel, decoy, gRPC/WS/xHTTP paths, speedtest)',
     },
     {
         'side': BaseConfigSide.server,

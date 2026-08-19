@@ -6,7 +6,7 @@ from pathlib import Path
 TEMPLATES_ROOT = Path(__file__).resolve().parents[1] / 'proxy_templates'
 
 FRAGMENT_CORES = ('xray', 'hiddify-core')
-TEMPLATE_CORES = ('xray', 'hiddify-core', 'singbox', 'sublink', 'haproxy', 'clash')
+TEMPLATE_CORES = ('xray', 'hiddify-core', 'singbox', 'sublink', 'haproxy', 'clash', 'rust-rpxy-l4', 'nginx')
 FRAGMENT_KINDS = ('protocols', 'streams', 'stream', 'tls')
 
 # Slug path markers excluded from ProxyTemplate DB seed.
