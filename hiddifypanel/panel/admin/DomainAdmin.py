@@ -1,28 +1,24 @@
-import ipaddress
-from typing import Literal
-from hiddifypanel.auth import login_required, current_account
-
-from hiddifypanel.hutils.flask import hurl_for
-from hiddifypanel.models import *
 import re
-from flask import g  # type: ignore
-from markupsafe import Markup
+from typing import Literal
 
+from flask import g  # type: ignore
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
-from hiddifypanel.panel.run_commander import Command, commander
+from loguru import logger
+from markupsafe import Markup
+from pydantic import BaseModel, Field
 from wtforms.validators import Regexp, ValidationError
 
-from hiddifypanel.models import *
-from hiddifypanel.panel import hiddify, custom_widgets
-from .adminlte import AdminLTEModelView
 from hiddifypanel import hutils
-
-from loguru import logger
-from flask import current_app
-from pydantic import BaseModel, Field
+from hiddifypanel.auth import login_required
+from hiddifypanel.hutils.flask import hurl_for
+from hiddifypanel.models import *
+from hiddifypanel.panel import custom_widgets, hiddify
+from hiddifypanel.panel.run_commander import Command, commander
 from hiddifypanel.proxy_v3.domain_mode_filter import proxy_buckets_for_domain
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
+
+from .adminlte import AdminLTEModelView
 
 
 class DnsTT(BaseModel):
@@ -336,7 +332,7 @@ class DomainAdmin(AdminLTEModelView):
 
         for td in Domain.query.filter(Domain.fake_mode == FakeMode.reality, Domain.domain != model.domain).all():
             if td.servernames and (model.domain in td.servernames.split(",")):
-                raise ValidationError(_("You have used this domain in: ") + _(f"config.reality_server_names.label") + td.domain)
+                raise ValidationError(_("You have used this domain in: ") + _("config.reality_server_names.label") + td.domain)
 
         if is_created and Domain.query.filter(Domain.domain == model.domain, Domain.child_id == model.child_id).count() > 1:
             raise ValidationError(_("You have used this domain in: "))
@@ -371,7 +367,7 @@ class DomainAdmin(AdminLTEModelView):
 
     def on_model_delete(self, model):
         if len(Domain.query.all()) <= 1:
-            raise ValidationError(f"at least one domain should exist")
+            raise ValidationError("at least one domain should exist")
         if hconfig(ConfigEnum.cloudflare) and model.fake_mode == FakeMode.valid and model.mode not in [DomainType.relay]:
             if not hutils.network.cf_api.delete_dns_record(model.domain):
                 hutils.flask.flash(_("cf-delete.failed"), "warning")  # type: ignore

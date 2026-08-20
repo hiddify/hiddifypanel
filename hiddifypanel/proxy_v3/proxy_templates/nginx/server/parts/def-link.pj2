@@ -1,0 +1,28 @@
+location = / {
+	error_page 301 302 307 = @handle_redirect;
+	proxy_set_header Host {{ ctx.hconfig.decoy_domain }};
+	set $upstream {{ ctx.hconfig.decoy_domain }};
+	proxy_pass https://$upstream;
+        proxy_ssl_server_name on;
+        proxy_ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+}
+location / {
+    proxy_intercept_errors on;
+	error_page 301 302 307 = @handle_redirect;
+	proxy_set_header Host {{ ctx.hconfig.decoy_domain }};
+	set $upstream {{ ctx.hconfig.decoy_domain }};
+	proxy_pass https://$upstream;
+        proxy_ssl_server_name on;
+        proxy_ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+}
+{% if ctx.hconfig.first_setup and ctx.hconfig.create_easysetup_link %}
+location /hiddify {
+		{% set nextH = exec("printf '%02d' $(($(date '+%H') + 1))") %}
+		{% set nowDatetime = exec('date "+%Y-%m-%dT(%H|"') %}
+		{% set TEMP_LINK_VALID_TIME = nowDatetime + nextH + ")" %}
+		if ($time_iso8601 ~ "^{{ TEMP_LINK_VALID_TIME }}" ) {
+			add_header Content-Type text/html;
+			return 200 "/{{ ctx.hconfig.proxy_path_admin }}/{{ ctx.hconfig.admin_secret }}/quick-setup/ <script> document.location='/{{ ctx.hconfig.proxy_path_admin }}/{{ ctx.hconfig.admin_secret }}/quick-setup/?changepw=true'</script>";
+		}
+}
+{% endif %}

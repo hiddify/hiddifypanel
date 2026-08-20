@@ -1,0 +1,8 @@
+location @handle_redirect {
+    set $saved_redirect_location '$upstream_http_location';
+    proxy_pass $saved_redirect_location;
+}
+include /opt/hiddify-manager/data/services/nginx/parts/acme.conf;
+include {{ include_path(ctx, 'nginx/server/parts/def-link') }};
+include {{ include_path(ctx, 'nginx/server/parts/common') }};
+include /opt/hiddify-manager/data/services/nginx/parts/short-link.conf;
