@@ -150,3 +150,6 @@ hiddifypanel/admin_v2/.env
 hiddifypanel/admin_v2/.env.*
 !hiddifypanel/admin_v2/.env.example
 hiddifypanel/admin_v2/*.tsbuildinfo
+
+
+node_modules

@@ -4,6 +4,7 @@
   },
   "api": {
     "tag": "api",
+ 		"listen":"127.0.0.1:10085",
     "services": ["HandlerService", "LoggerService", "StatsService"]
   },
   "dns": {},
@@ -18,16 +19,30 @@
       }
     ]
   },
-  "policy": {},
+  "policy": {
+    "levels": {
+      "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+      }
+    },
+    "system": {
+      "statsInboundUplink": true,
+      "statsInboundDownlink": true,
+      "statsOutboundUplink": true,
+      "statsOutboundDownlink": true
+    }
+  },
   "inbounds": [
     {% block inbounds %}{% endblock %}
   ],
   "outbounds": [
+    
     {"tag": "freedom", "protocol": "freedom"},
     {"tag": "blackhole", "protocol": "blackhole"},
     {"tag": "DNS-Internal", "protocol": "dns"}
   ],
   "transport": {},
-  "stats": {},
+  "stats": {"keep": true},
   "reverse": {}
 }

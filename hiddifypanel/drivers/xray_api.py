@@ -143,18 +143,18 @@ class XrayApi(DriverABS):
                 pass
 
     def get_all_usage(self)->dict:
-        xray_client = self.get_xray_client()
-        usages = xray_client.stats_query('user', reset=True)
-        # uuid_user_map = {u.uuid: u for u in users}
         res = defaultdict(int)
+        try:
+            xray_client = self.get_xray_client()
+            usages = xray_client.stats_query('user', reset=True)
+        except Exception as e:
+            logger.warning(f"xray stats unavailable: {e}")
+            return res
         for use in usages:
             if "user>>>" not in use.name:
                 continue
             uuid = use.name.split(">>>")[1].split("@")[0]
-            # if u := uuid_user_map.get(uuid):
             res[uuid] += use.value
-            # else:
-            #     self._remove_client(uuid)
         return res
 
     def get_usage_imp(self, uuid):
