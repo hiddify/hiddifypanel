@@ -1109,9 +1109,6 @@ def init_db():
     if db_version == latest_db_version():
         return
 
-    add_new_enum_values()
-    execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
-    db.session.commit()
     db.create_all()
 
     # temporary fix
@@ -1175,6 +1172,9 @@ def migrate(db_version):
     for table_name, table_obj in db.metadata.tables.items():
         for column in table_obj.columns:
             add_column(column)
+
+    add_new_enum_values()
+    execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
     Events.db_prehook.notify()
     # execute("UPDATE custom_proxy SET proto='shadowsocks' WHERE proto='ss'")
     # execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
