@@ -259,7 +259,7 @@ def _v106(child_id):
     StrConfig.query.filter(StrConfig.key == ConfigEnum.reality_port).delete()
     set_hconfig(ConfigEnum.default_useragent_string, hutils.network.get_random_user_agent())
     set_hconfig(ConfigEnum.h2_enable, False)
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+    # db.session.bulk_save_objects(get_proxy_rows_v1())
 
 
 def _v103(child_id):
@@ -371,8 +371,8 @@ def _v93(child_id):
     set_hconfig(ConfigEnum.xhttp_enable, True)
 
 
-def _v92(child_id):
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+# def _v92(child_id):
+#     db.session.bulk_save_objects(get_proxy_rows_v1())
 
 
 def _v89(child_id):
@@ -447,7 +447,7 @@ def _v74(child_id):
     set_hconfig(ConfigEnum.shadowsocks2022_method, "2022-blake3-aes-256-gcm")
     set_hconfig(ConfigEnum.shadowsocks2022_enable, False)
     set_hconfig(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+    # db.session.bulk_save_objects(get_proxy_rows_v1())
 
     for i in range(1, 10):
         for d in hutils.network.get_random_domains(50):
@@ -480,7 +480,7 @@ def _v70(child_id):
 
 
 def _v69():
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+    # db.session.bulk_save_objects(get_proxy_rows_v1())
     add_config_if_not_exist(ConfigEnum.wireguard_enable, True)
     add_config_if_not_exist(ConfigEnum.wireguard_port, hutils.random.get_random_unused_port())
     add_config_if_not_exist(ConfigEnum.wireguard_ipv4, "10.90.0.1")
@@ -563,8 +563,8 @@ def _v55():
     db.session.add(Proxy(l3="tls", transport="custom", cdn="direct", proto="hysteria2", enable=True, name="Hysteria2"))
 
 
-def _v52():
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+# def _v52():
+#     db.session.bulk_save_objects(get_proxy_rows_v1())
 
 
 def _v51():
@@ -662,7 +662,7 @@ def _v31():
     key_pair = hutils.crypto.generate_x25519_keys()
     add_config_if_not_exist(ConfigEnum.reality_private_key, key_pair["private_key"])
     add_config_if_not_exist(ConfigEnum.reality_public_key, key_pair["public_key"])
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+    # db.session.bulk_save_objects(get_proxy_rows_v1())
     if not (AdminUser.query.filter(AdminUser.id == 1).first()):
         db.session.add(
             AdminUser(
@@ -699,8 +699,8 @@ def _v26():
     add_config_if_not_exist(ConfigEnum.license, "")
 
 
-def _v21():
-    db.session.bulk_save_objects(get_proxy_rows_v1())
+# def _v21():
+#     db.session.bulk_save_objects(get_proxy_rows_v1())
 
 
 def _v20():
@@ -791,7 +791,7 @@ def _v1():
         BoolConfig(key=ConfigEnum.domain_fronting_http_enable, value=False),
         StrConfig(key=ConfigEnum.domain_fronting_domain, value=""),
         # BoolConfig(key=ConfigEnum.torrent_block,value=False),
-        *get_proxy_rows_v1(),
+        # *get_proxy_rows_v1(),
     ]
     # fake_domains=['speedtest.net']
     # for fd in fake_domains:
