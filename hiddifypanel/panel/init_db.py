@@ -1108,22 +1108,6 @@ def init_db():
     db_version = current_db_version()
     if db_version == latest_db_version():
         return
-    if db_version < 130:
-        from hiddifypanel.models.domain import FakeMode
-
-        execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
-        execute(
-            """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
-            'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'
-            )"""
-        )
-        execute("UPDATE domain SET fake_mode='valid' WHERE fake_mode IS NULL OR fake_mode=''")
-
-        Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker, DomainType.sub_link_only])).update(  # noqa: E712
-            {"fake_mode": FakeMode.valid},
-            synchronize_session=False,
-        )
-        db.session.commit()
 
     add_new_enum_values()
     execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
@@ -1292,6 +1276,22 @@ def migrate(db_version):
         execute("update domain set child_id=0 where child_id is NULL")
         execute("update domain set sub_link_only=False where sub_link_only is NULL")
         execute("update proxy set child_id=0 where child_id is NULL")
+    if db_version < 130:
+        from hiddifypanel.models.domain import FakeMode
+
+        execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
+        execute(
+            """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
+            'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'
+            )"""
+        )
+        execute("UPDATE domain SET fake_mode='valid' WHERE fake_mode IS NULL OR fake_mode=''")
+
+        Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker, DomainType.sub_link_only])).update(  # noqa: E712
+            {"fake_mode": FakeMode.valid},
+            synchronize_session=False,
+        )
+        db.session.commit()
 
     add_new_enum_values()
 
