@@ -103,6 +103,9 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
     ensure_builtin_migrated(row)
     snapshot = catalog.snapshot()
     changed = False
+    if row.name != catalog.name:
+        row.name = catalog.name
+        changed = True
 
     proto = _parse_proto(catalog.proto)
     if row.proto != proto:

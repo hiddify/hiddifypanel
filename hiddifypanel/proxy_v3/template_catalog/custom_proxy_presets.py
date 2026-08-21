@@ -340,6 +340,8 @@ def _build_preset(
     primary = slot.primary
     display_name = preset_display_name(slot)
     slug = proxy_slug(f"{core}-{display_name}")
+    if core == "hiddify-core":
+        display_name = f"{display_name} HC"
     mode = _preset_protocol(primary)
     custom_path = _preset_custom_path(primary, child_id)
     domain_modes = _group_domain_modes(slot.related)
@@ -439,7 +441,7 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     return rows
 
 
-def seed_custom_proxy_presets(child_id: int = 0) -> int:
+def sync_builtin_custom_proxy_presets(child_id: int = 0) -> int:
     from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_custom_proxy_presets
 
     added, _updated, _removed, _demoted = sync_custom_proxy_presets(child_id)

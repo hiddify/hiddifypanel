@@ -14,7 +14,7 @@ from hiddifypanel.models import *
 from hiddifypanel.models import ConfigEnum
 from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_catalog
 from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
-    seed_custom_proxy_presets,
+    sync_builtin_custom_proxy_presets,
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
@@ -38,6 +38,10 @@ def _drop_wip_proxy_tables() -> None:
     db.create_all()
 
     set_hconfig(ConfigEnum.db_version, 129)
+
+
+def _v132(child_id):
+    sync_builtin_custom_proxy_presets(child_id)
 
 
 def _v131(child_id):
@@ -106,7 +110,7 @@ def _v130(child_id):
         add_config_if_not_exist(ConfigEnum.ssh_host_ecdsa_pub, keys["ecdsa"]["pub"])
 
     seed_proxy_catalog(child_id, refresh_builtin_base_configs=True)
-    seed_custom_proxy_presets(child_id)
+    sync_builtin_custom_proxy_presets(child_id)
     try:
         sync_tls_store_all(child_id)
     except Exception as exc:
