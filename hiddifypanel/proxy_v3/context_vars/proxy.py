@@ -23,7 +23,7 @@ from hiddifypanel.models.custom_proxy import TemplateCore
 
 from .domain import DomainIPVar
 from .hconfig import HConfigVar
-from .ports import normalize_port_list, ports_list_to_ranges, resolve_inbound_ports
+from .ports import gateway_client_port, normalize_port_list, ports_list_to_ranges, resolve_inbound_ports
 from .version import TemplateVersion
 
 
@@ -67,13 +67,20 @@ class ProxyVar(BaseModel):
 
     @property
     def uses_tls(self) -> bool:
-        return self.tls_layer is None or self.tls_layer == TlsLayer.tls
+        return self.tls_layer is None or self.tls_layer != TlsLayer.http
 
     @property
     def download_uses_tls(self) -> bool:
         if self.download_tls_layer is not None:
-            return self.download_tls_layer == TlsLayer.tls
+            return self.download_tls_layer != TlsLayer.http
         return self.uses_tls
+
+    @property
+    def download_port(self) -> int:
+        if self.mode == CustomProxyMode.domains_l7_gateway:
+            layer = self.download_tls_layer if self.download_tls_layer is not None else self.tls_layer
+            return gateway_client_port(layer)
+        return self.tcp_port or self.udp_port
 
     @property
     def tcp_port(self) -> int:
@@ -82,6 +89,10 @@ class ProxyVar(BaseModel):
     @property
     def udp_port(self) -> int:
         return int(self.udp_ports[0]) if self.udp_ports else 0
+
+    @property
+    def port(self) -> int:
+        return self.tcp_port or self.udp_port
 
     @property
     def tcp_port_ranges(self) -> list[int | str]:
@@ -110,6 +121,7 @@ class ProxyVar(BaseModel):
             db_udp_ports=db_udp_ports,
             server_side=server_side,
             tcp_udp=tcp_udp,
+            tls_layer=proxy.tls_layer,
         )
         return cls(
             id=proxy_id,
@@ -149,8 +161,31 @@ def resolve_domain_type(domain_mode: str) -> DomainType:
         raise ValueError(f"Invalid domain mode: {domain_mode}") from exc
 
 
+def _l7_client_domain_ports(domain: DomainIPVar, proxy: ProxyVar) -> DomainIPVar:
+    if proxy.mode != CustomProxyMode.domains_l7_gateway:
+        return domain
+    upload_port = gateway_client_port(proxy.tls_layer)
+    download_layer = proxy.download_tls_layer if proxy.download_tls_layer is not None else proxy.tls_layer
+    download_port = gateway_client_port(download_layer)
+    download = domain.download
+    if download is not None:
+        download = download.model_copy(update={"port": download_port, "download": None})
+    return domain.model_copy(update={"port": upload_port, "download": download})
+
+
 class ProxyDomainVar(ProxyVar):
     domain: DomainIPVar
+
+    def is_download_upload_different(self) -> bool:
+        if self.domain.download is None:
+            return False
+        if self.domain.download.name != self.domain.name:
+            return True
+        if self.download_tls_layer != self.tls_layer:
+            return True
+        if self.domain.download.server() != self.domain.server():
+            return True
+        return False
 
     @classmethod
     def from_proxy(cls, proxy: ProxyVar, domain: DomainIPVar, *, server_side: bool = True) -> ProxyDomainVar:
@@ -162,6 +197,7 @@ class ProxyDomainVar(ProxyVar):
             db_udp_ports=list(proxy.db_udp_ports),
             server_side=server_side,
             tcp_udp=proxy.tcp_udp,
+            tls_layer=proxy.tls_layer,
         )
         return cls(
             domain=domain,
@@ -228,6 +264,17 @@ class ServerBuilderProxyVar(ProxyVar):
 class ClientProxyDomainVar(ClientBuilderProxyVar):
     """Proxy bound to a domain."""
 
+    def is_download_upload_different(self) -> bool:
+        if self.domain.download is None:
+            return False
+        if self.domain.download.name != self.domain.name:
+            return True
+        if self.download_tls_layer != self.tls_layer:
+            return True
+        if self.domain.download.server() != self.domain.server():
+            return True
+        return False
+
     domain: DomainIPVar
 
     @classmethod
@@ -240,9 +287,10 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
             db_udp_ports=list(proxy.db_udp_ports),
             server_side=False,
             tcp_udp=proxy.tcp_udp,
+            tls_layer=proxy.tls_layer,
         )
         return cls(
-            domain=domain,
+            domain=_l7_client_domain_ports(domain, proxy),
             **proxy.model_dump(exclude={"domain", "server_config", "tcp_ports", "udp_ports", "domains"}),
             tcp_ports=list(resolved.tcp_ports),
             udp_ports=list(resolved.udp_ports),

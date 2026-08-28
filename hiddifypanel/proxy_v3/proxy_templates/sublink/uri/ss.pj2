@@ -10,7 +10,7 @@
       protocol='ss',
       user=(method ~ ':' ~ password)|b64encode,
       host=proxy.server,
-      port=proxy.tcp_port,
+      port=proxy.port,
       query_params={
         'hiddify': '1',
         'plugin': 'obfs-local;obfs=tls;obfs-host=' ~ ctx.hconfig.ssfaketls_fakedomain,
@@ -22,7 +22,7 @@
       protocol='ss',
       user=(method ~ ':' ~ password)|b64encode,
       host=proxy.server,
-      port=proxy.tcp_port,
+      port=proxy.port,
       query_params=namespace(hiddify='1'),
     ) %}
   {% endif %}

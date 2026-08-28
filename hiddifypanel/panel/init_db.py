@@ -14,11 +14,11 @@ from hiddifypanel.models import *
 from hiddifypanel.models import ConfigEnum
 from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_catalog
 from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
-    sync_builtin_custom_proxy_presets,
+    sync_builtin_presets,
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 132
+MAX_DB_VERSION = 139
 
 
 def _drop_wip_proxy_tables() -> None:
@@ -40,8 +40,8 @@ def _drop_wip_proxy_tables() -> None:
     set_hconfig(ConfigEnum.db_version, 129)
 
 
-def _v132(child_id):
-    sync_builtin_custom_proxy_presets(child_id)
+def _v133(child_id):
+    sync_builtin_presets(child_id)
 
 
 def _v131(child_id):
@@ -110,7 +110,7 @@ def _v130(child_id):
         add_config_if_not_exist(ConfigEnum.ssh_host_ecdsa_pub, keys["ecdsa"]["pub"])
 
     seed_proxy_catalog(child_id, refresh_builtin_base_configs=True)
-    sync_builtin_custom_proxy_presets(child_id)
+    sync_builtin_presets(child_id)
     try:
         sync_tls_store_all(child_id)
     except Exception as exc:
@@ -1029,6 +1029,8 @@ def add_new_enum_values():
         ProxyTemplate.category,
         CustomProxy.mode,
         CustomProxy.proto,
+        CustomProxy.tls_layer,
+        CustomProxy.download_tls_layer,
     ]
     from sqlalchemy import text
 
@@ -1118,6 +1120,7 @@ def upgrade_database():
 def init_db():
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
+    # set_hconfig(ConfigEnum.db_version, 132, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

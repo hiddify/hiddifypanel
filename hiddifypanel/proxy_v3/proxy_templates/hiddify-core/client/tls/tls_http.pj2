@@ -1,20 +1,17 @@
-{% set domain = domain or ctx.proxy.domain %}
-{% set tls = tls if tls is defined else ctx.proxy.uses_tls %}
-{% if tls %}
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}
+{% if tls_layer != 'http' %}
 "tls": {
   "enabled": true,
   {%if not domain.sni%} "disable_sni": true {%endif%},
   "server_name": "{{ domain.sni }}",
-  {%if domain.allow_insecure%} 
-    "insecure": true,
-  {%endif%}
-
+  
 
   {% if alpns %}
     "alpn": {{ alpns | tojson }},
   {% endif %}
 
-  {% set fp = ctx.hconfig.fingerprint or "" %}
+  {% set fp = ctx.hconfig.utls or "" %}
   {% if fp and fp!="none" %}
   "utls": {
     "enabled": true,
@@ -32,11 +29,15 @@
     {% if ctx.platform.singbox.version >= "1.14.0" %}
       "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
     {% endif %}
-    "certificate_public_key_sha256": [
-      {% for pin in domain.cert.pinnedPeerCertSha256 %}
-      "{{ pin }}",
-      {% endfor %}
-    ],
+    {%if domain.allow_insecure%} 
+      "insecure": true,
+      "certificate_public_key_sha256": [
+        {% for pin in domain.cert.pinnedPeerCertSha256 %}
+        "{{ pin }}",
+        {% endfor %}
+      ],
+    {%endif%}
+
     {% if ctx.hconfig.tls_ech_enable %}
     "ech": {
       "enabled": true,

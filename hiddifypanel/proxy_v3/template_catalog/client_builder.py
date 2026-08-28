@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from ..alpn_helpers import alpn_list_for_tag, alpn_tag_uses_tls
+from ..alpn_helpers import alpn_list_for_tag
 
 from .fragment_loader import load_template_slug
 from .paths import preset_shell_slug
@@ -50,8 +50,6 @@ def _xhttp_with_replacements(combo: ProxyCombination) -> dict[str, str]:
     return {
         "__ALPNS__": json.dumps(alpn_list_for_tag(upload_tag)),
         "__DOWNLOAD_ALPNS__": json.dumps(alpn_list_for_tag(download_tag)),
-        "__TLS_MODE__": "true" if alpn_tag_uses_tls(upload_tag) else "false",
-        "__DOWNLOAD_TLS_MODE__": "true" if alpn_tag_uses_tls(download_tag) else "false",
     }
 
 
@@ -132,8 +130,8 @@ def _sublink_link_body_slug(combo: ProxyCombination) -> str:
 
 
 def _sublink_tls_slug(combo: ProxyCombination) -> str:
-    if str(combo.l3).lower() == "reality":
-        return "sublink/uri/security/reality"
+    # if str(combo.l3).lower() == "reality":
+    #     return "sublink/uri/security/reality"
     return "sublink/uri/security/tls_http"
 
 
@@ -168,8 +166,13 @@ def _apply_sublink_vmess_placeholders(body: str, combo: ProxyCombination) -> str
 def _apply_sublink_body_placeholders(body: str, combo: ProxyCombination) -> str:
     transport_slug = _sublink_transport_slug(combo.transport)
     tls_slug = _sublink_tls_slug(combo)
-    body = body.replace("{% include '__TLS_SLUG__' %}", f"{{% include '{tls_slug}' %}}")
-    body = body.replace("{% include '__TRANSPORT_SLUG__' %}", f"{{% include '{transport_slug}' %}}")
+    body = body.replace("__TLS_SLUG__", tls_slug)
+    body = body.replace("__TRANSPORT_SLUG__", transport_slug)
+
+    upload_tag, download_tag = _xhttp_combo_alpn_tags(combo)
+    body = body.replace("__ALPNS__", json.dumps(alpn_list_for_tag(upload_tag)))
+    body = body.replace("__DOWNLOAD_ALPNS__", json.dumps(alpn_list_for_tag(download_tag)))
+
     return body
 
 

@@ -527,6 +527,7 @@ import {
   type CustomProxyMeta,
   type ProxyTemplate,
   type ProxyTransport,
+  type TlsLayer,
   type TemplatePreviewResult,
   type ValidationResult,
 } from '@/core/api/generated'
@@ -885,14 +886,12 @@ const tcpUdpOptions = computed(() =>
   })),
 )
 
-function defaultTlsLayerForProxy(): 'http' | 'tls' {
-  const categories = (form.categories ?? []).map((category) => String(category).toLowerCase())
-  if (categories.includes('http') || categories.includes('reality')) return 'tls'
+function defaultTlsLayerForProxy(): TlsLayer {
   return 'tls'
 }
 
 const tlsLayerOptions = computed(() =>
-  (meta.value?.tls_layers ?? ['http', 'tls']).map((layer) => ({
+  (meta.value?.tls_layers ?? ['http', 'tls', 'quic_tls', 'quic_tcp_tls']).map((layer) => ({
     value: layer,
     label: t(`proxy.tlsLayerLabels.${layer}`, layer.toUpperCase()),
   })),

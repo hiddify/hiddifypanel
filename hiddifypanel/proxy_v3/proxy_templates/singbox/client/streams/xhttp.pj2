@@ -8,6 +8,7 @@
   "downloadSettings": {
     "path": "{{ proxy.path }}",
     "host": "{{ ctx.proxy.domain.download.server() }}",
+    "server_port": {{ ctx.proxy.domain.download.port or ctx.proxy.download_port }},
     "headers": {},
     {% if proxy.download_alpn.startswith('tls_') %}
     "tls": {

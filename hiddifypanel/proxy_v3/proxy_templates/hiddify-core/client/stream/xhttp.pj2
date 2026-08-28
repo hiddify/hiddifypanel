@@ -7,16 +7,17 @@
   "headers":{
     "User-Agent": "{{default_useragent_string}}"
   },
-  {% if domain.download %}
+  {% if proxy.is_download_upload_different() or alpns != download_alpns %}
   "downloadSettings": {
     "path": "/{{ proxy.path }}",
     "host": "{{ domain.download.host }}",
     "server": "{{ domain.download.server() }}",
+    "server_port": {{ domain.download.port or proxy.download_port }},
 
     "headers": {
       "User-Agent": "{{default_useragent_string}}"
     },
-    {% with domain=domain.download, alpns=download_alpns, tls=download_tls %}
+    {% with domain=domain.download, alpns=download_alpns, tls_layer=proxy.download_tls_layer %}
       {% include 'hiddify-core/client/tls/tls_http' %}
     {% endwith %}
   }

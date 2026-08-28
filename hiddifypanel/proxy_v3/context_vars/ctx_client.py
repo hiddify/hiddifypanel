@@ -4,6 +4,8 @@ from collections.abc import Iterator
 
 from pydantic import BaseModel, ConfigDict
 
+from hiddifypanel.models.custom_proxy import TlsLayer
+
 from .hconfig import HConfigVar
 from .platform import PlatformVar
 from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar
@@ -22,6 +24,12 @@ class ClientContextVar(BaseModel):
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         for domain in self.proxy.domains:
+            if domain.is_reality() and self.proxy.tls_layer in [TlsLayer.quic_tls, TlsLayer.http]:
+                # logger.warning(f"Domain {domain.domain} is reality but proxy {self.proxy.slug} is using quic_tls")
+                continue
+            if domain.download and domain.download.is_reality() and self.proxy.download_tls_layer in [TlsLayer.quic_tls, TlsLayer.http]:
+                # logger.warning(f"Domain {domain.domain} is reality but proxy {self.proxy.slug} is using quic_tls")
+                continue
             yield ClientContextDomainVar(
                 user=self.user,
                 hconfig=self.hconfig,

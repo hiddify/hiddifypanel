@@ -2,23 +2,18 @@ from __future__ import annotations
 
 import copy
 import json
-import random
 import re
-import time
 from dataclasses import dataclass
 from typing import Any
-from urllib.parse import quote, urlencode
 
 import json5
 import yaml
-from flask_babel import force_locale, gettext
-from jinja2 import DictLoader, Environment, TemplateSyntaxError, UndefinedError, pass_context
+from jinja2 import TemplateSyntaxError, UndefinedError
 from jinja2.exceptions import TemplateError
-from jinja2.utils import Namespace
 
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import parse_user_agent
-from hiddifypanel.models import ConfigEnum, CustomProxy, CustomProxyMode, ProxyTemplate
+from hiddifypanel.models import CustomProxy, CustomProxyMode
 from hiddifypanel.models.proxy_base_config import BaseConfigSide, default_base_content
 
 from .alpn_helpers import (
@@ -49,6 +44,7 @@ from .custom_proxy_ports import mode_requires_static_ports, mode_uses_auto_ports
 from .jinja_context import TemplateSkip, build_template_context
 from .outbound_tags import deduplicate_client_tags
 from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
+from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
 from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
 from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
@@ -259,6 +255,7 @@ def build_render_context(
             db_tcp_ports=stored_tcp,
             db_udp_ports=stored_udp,
             server_side=server_side,
+            tls_layer=data.get("tls_layer"),
         )
     else:
         resolved_ports = resolve_inbound_ports(
@@ -268,6 +265,7 @@ def build_render_context(
             db_tcp_ports=stored_tcp,
             db_udp_ports=stored_udp,
             server_side=server_side,
+            tls_layer=data.get("tls_layer"),
         )
     if port is not None:
         resolved_port = port
@@ -351,7 +349,7 @@ def build_render_context(
                 adapted["alpn_builtin_value"] = resolved_alpn
             download_tls_layer = str(data.get("download_tls_layer") or "").lower()
             if download_tls_layer:
-                adapted["download_tls"] = download_tls_layer == "tls"
+                adapted["download_tls"] = download_tls_layer != "http"
             elif download_alpn:
                 adapted["download_tls"] = alpn_tls_for_tag(download_alpn)
         else:
@@ -360,7 +358,7 @@ def build_render_context(
                 ctx["alpn_builtin_value"] = resolved_alpn
             download_tls_layer = str(data.get("download_tls_layer") or "").lower()
             if download_tls_layer:
-                ctx["download_tls"] = download_tls_layer == "tls"
+                ctx["download_tls"] = download_tls_layer != "http"
             elif download_alpn:
                 ctx["download_tls"] = alpn_tls_for_tag(download_alpn)
     return ctx
@@ -404,61 +402,6 @@ def build_sample_context(
     return ctx
 
 
-def _template_map(child_id: int = 0) -> dict[str, str]:
-    templates = ProxyTemplate.query.filter((ProxyTemplate.child_id == child_id) | (ProxyTemplate.child_id == 0)).all()
-    return {t.slug: t.effective_content() for t in templates}
-
-
-_template_map_cache: dict[int, tuple[float, dict[str, str]]] = {}
-_jinja_env_cache: dict[int, tuple[float, Environment]] = {}
-_JINJA_CACHE_TTL = 60.0
-
-
-def _cached_template_map(child_id: int = 0) -> dict[str, str]:
-    now = time.monotonic()
-    cached = _template_map_cache.get(child_id)
-    if cached and now - cached[0] < _JINJA_CACHE_TTL:
-        return cached[1]
-    mapping = _template_map(child_id)
-    _template_map_cache[child_id] = (now, mapping)
-    return mapping
-
-
-def _jinja_env(child_id: int = 0) -> Environment:
-    now = time.monotonic()
-    cached = _jinja_env_cache.get(child_id)
-    if cached and now - cached[0] < _JINJA_CACHE_TTL:
-        return cached[1]
-    from hiddifypanel.proxy_v3.jinja_context import skip_proxy
-    from hiddifypanel.proxy_v3.jinja_download import download
-
-    env = Environment(
-        loader=DictLoader(_cached_template_map(child_id)),
-        keep_trailing_newline=True,
-    )
-    env.globals["enumerate"] = enumerate
-    env.globals["skip"] = skip_proxy
-    env.globals["download"] = download
-    env.globals["_"] = _jinja_gettext
-    env.filters["i18n"] = _jinja_gettext
-    env.filters["tojson"] = lambda value: json.dumps(_to_dict_normalized(value), ensure_ascii=False)
-    env.filters["asdict"] = _to_dict_normalized
-    env.filters["compactjson"] = _jinja_compact_json
-    env.filters["b64encode"] = hutils.encode.do_base_64
-    env.filters["urlencoded"] = _jinja_urlencode
-    env.filters["trim_no_line"] = _jinja_trim_no_line
-    env.filters["choose_random"] = _jinja_choose_random
-    _jinja_env_cache[child_id] = (now, env)
-    return env
-
-
-def _jinja_choose_random(value: Any) -> str:
-    parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
-    if not parts:
-        return ""
-    return random.choice(parts)
-
-
 def _client_core_label(core_name: str, version: str) -> str:
     ver = (version or "").strip()
     if core_name == "hiddify-core":
@@ -470,83 +413,9 @@ def _strip_empty_link_lines(text: str) -> str:
     return "\n".join(line for line in (text or "").splitlines() if line.strip())
 
 
-@pass_context
-def _jinja_gettext(ctx: dict[str, Any], message: str, **kwargs: Any) -> str:
-    user = ctx.get("user")
-    if user is None:
-        nested = ctx.get("ctx")
-        if nested is not None:
-            user = getattr(nested, "user", None)
-            if user is None and hasattr(nested, "get"):
-                user = nested.get("user")
-    lang = None
-    if user is not None:
-        lang = getattr(user, "lang", None)
-        if not lang and hasattr(user, "get"):
-            lang = user.get("lang")
-    child_id = int(ctx.get("child_id") or 0)
-    if not child_id and ctx.get("ctx") is not None:
-        nested = ctx["ctx"]
-        child_id = int(getattr(nested, "get", lambda *_: 0)("child_id") or getattr(getattr(nested, "hconfig", None), "child_id", 0) or 0)
-    if not lang:
-        from hiddifypanel.models import hconfig
-
-        lang = hconfig(ConfigEnum.lang, child_id)
-    with force_locale(lang or "en"):
-        text = gettext(message)
-    if kwargs:
-        return text % kwargs
-    return text
-
-
-def _jinja_compact_json(value: Any) -> str:
-    """Serialize to minified JSON (objects or JSON text blocks)."""
-    from hiddifypanel.hutils.proxy.shared import ProxyJsonEncoder
-
-    if isinstance(value, str):
-        text = value.strip()
-        if not text:
-            return ""
-        try:
-            value = json.loads(text)
-        except json.JSONDecodeError:
-            return re.sub(r"\s+", " ", text).strip()
-
-    value = _to_dict_normalized(value)
-    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
-
-
-def _to_dict_normalized(value: Any) -> Any:
-    if isinstance(value, dict):
-        source = value
-    elif isinstance(value, Namespace) and (data := object.__getattribute__(value, "__dict__")) and "_Namespace__attrs" in data:
-        source = data["_Namespace__attrs"]
-    elif isinstance(value, bool):
-        return f"{value}".lower()
-    else:
-        return value
-
-    out: dict[str, Any] = {}
-    for key, val in source.items():
-        out[str(key)] = _to_dict_normalized(val)
-    return out
-
-
-def _jinja_urlencode(value: Any) -> str:
-    value = _to_dict_normalized(value)
-    if isinstance(value, dict):
-        return urlencode(value)
-    return quote(str(value or ""), safe="")
-
-
-def _jinja_trim_no_line(value: Any) -> str:
-    return re.sub(r"\s+", " ", str(value or "")).strip()
-
-
 def render_template_text(template_text: str, child_id: int = 0, context: dict[str, Any] | None = None) -> str:
     ctx = context or build_sample_context(child_id=child_id)
-    env = _jinja_env(child_id)
-    return env.from_string(template_text).render(**ctx)
+    return _render_template_text(template_text, child_id, ctx)
 
 
 def _trim_leading_empty_lines(text: str) -> str:
@@ -864,6 +733,7 @@ def validate_proxy_payload(
         db_tcp_ports=stored_tcp,
         db_udp_ports=stored_udp,
         server_side=False,
+        tls_layer=data.get("tls_layer"),
     )
     server_ports = resolve_inbound_ports(
         protocol or "",
@@ -871,6 +741,7 @@ def validate_proxy_payload(
         db_tcp_ports=stored_tcp,
         db_udp_ports=stored_udp,
         server_side=True,
+        tls_layer=data.get("tls_layer"),
     )
     client_port = primary_resolved_port(client_ports)
     server_port = primary_resolved_port(server_ports)
@@ -1286,6 +1157,7 @@ def preview_proxy_template_fragment(
         db_tcp_ports=stored_tcp,
         db_udp_ports=stored_udp,
         server_side=server_side,
+        tls_layer=data.get("tls_layer"),
     )
     port = primary_resolved_port(resolved_ports)
 
@@ -2782,6 +2654,7 @@ def generate_proxy_example(
         db_tcp_ports=stored_tcp,
         db_udp_ports=stored_udp,
         server_side=False,
+        tls_layer=data.get("tls_layer"),
     )
     server_ports = resolve_inbound_ports(
         protocol,
@@ -2790,6 +2663,7 @@ def generate_proxy_example(
         db_tcp_ports=stored_tcp,
         db_udp_ports=stored_udp,
         server_side=True,
+        tls_layer=data.get("tls_layer"),
     )
     client_port = primary_resolved_port(client_ports)
     server_port = primary_resolved_port(server_ports)

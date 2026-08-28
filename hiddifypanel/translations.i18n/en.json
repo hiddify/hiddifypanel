@@ -542,7 +542,9 @@
       "tlsLayer": "TLS layer",
       "tlsLayerLabels": {
         "http": "HTTP",
-        "tls": "TLS"
+        "tls": "TCP TLS",
+        "quic_tls": "QUIC TLS",
+        "quic_tcp_tls": "QUIC + TCP TLS"
       },
       "tlsLayerSpecialConflict": "HTTP TLS layer is not compatible with REALITY domain modes",
       "transport": "Transport",

@@ -1,24 +1,26 @@
-{{ skip('h2_enable is false') if proxy.alpn in ['tls_h2', 'tls_h1_h2', 'tls_h1_h2_h3', 'h2'] and not ctx.hconfig.h2_enable }}
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}
 
-{% if proxy.uses_tls %}
-    {% set qp.security = 'tls' %}
+{% if tls_layer != 'http' %}
 
-    {% if proxy.fingerprint and proxy.fingerprint != 'none' %}
-        {% set qp.fp = proxy.fingerprint %}
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set qp.fp = ctx.hconfig.utls %}{% endif %}
+    {% set qp.sni = domain.sni %}
+    {% if domain.is_reality() %}
+        {% set qp.security = 'reality' %}
+        {% set qp.pbk = ctx.hconfig.reality_public_key %}
+        {% set qp.sid = ctx.hconfig.reality_short_ids | choose_random %}
+    {%else%}
+        {% set qp.security = 'tls' %}
+        {% if alpns is defined %}{% set qp.alpn = ",".join(alpns) %}{% endif %}
+        {% if domain.is_fake_tls() or domain.allow_insecure %}
+            {% set qp.allowInsecure = 'true' %}
+            {% set qp.insecure = 'true' %}
+        {% endif %}
+
+        {% if domain.echinfo %}
+            {% set qp.ech = domain.echinfo %}
+        {% endif %}       
     {% endif %}
-    
-    {% if ctx.proxy.domain.is_fake_tls() or ctx.proxy.domain.allow_insecure %}
-        {% set qp.allowInsecure = 'true' %}
-        {% set qp.insecure = 'true' %}
-    {% endif %}
-
-    {% if ctx.proxy.domain.echinfo %}
-        {% set qp.ech = ctx.proxy.domain.echinfo %}
-    {% endif %}
-
-    {% set qp.alpn = proxy.alpn %}
-    {% set qp.sni = ctx.proxy.domain.sni %}
 {% else %}
-    {{ skip('http_proxy_enable = ' ~ ctx.hconfig.http_proxy_enable) if  not ctx.hconfig.http_proxy_enable }}
     {% set qp.security = 'none' %}
 {% endif %}

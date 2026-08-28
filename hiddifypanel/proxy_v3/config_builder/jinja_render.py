@@ -9,8 +9,11 @@ import time
 from typing import Any
 from urllib.parse import quote, urlencode
 
-from jinja2 import Environment
+from flask_babel import force_locale, gettext
+from jinja2 import Environment, pass_context
 from jinja2.loaders import DictLoader
+from jinja2.runtime import Undefined
+from jinja2.utils import Namespace
 
 from hiddifypanel import hutils
 from hiddifypanel.models.custom_proxy import ProxyTemplate
@@ -18,24 +21,42 @@ from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, include_path, jsbool
 from hiddifypanel.proxy_v3.jinja_download import download
 
 
+def _namespace_attrs(value: Any) -> dict[str, Any] | None:
+    if isinstance(value, Namespace):
+        return object.__getattribute__(value, "_Namespace__attrs")
+    try:
+        raw = object.__getattribute__(value, "__dict__")
+    except Exception:
+        return None
+    if isinstance(raw, dict) and "_Namespace__attrs" in raw:
+        attrs = raw["_Namespace__attrs"]
+        return attrs if isinstance(attrs, dict) else None
+    return None
+
+
 def _to_json_value(value: Any) -> Any:
+    if isinstance(value, Undefined):
+        return None
     if isinstance(value, dict):
         return {str(key): _to_json_value(val) for key, val in value.items()}
     if isinstance(value, (list, tuple)):
         return [_to_json_value(item) for item in value]
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
-    # Jinja ``namespace(...)`` — attrs live under a private dict.
-    try:
-        raw = object.__getattribute__(value, "__dict__")
-        if isinstance(raw, dict) and "_Namespace__attrs" in raw:
-            return _to_json_value(raw["_Namespace__attrs"])
-    except Exception:
-        pass
-    if hasattr(value, "dict") and callable(value.dict):
-        return _to_json_value(value.dict())
-    if hasattr(value, "model_dump") and callable(value.model_dump):
-        return _to_json_value(value.model_dump())
+    attrs = _namespace_attrs(value)
+    if attrs is not None:
+        return _to_json_value(attrs)
+    # Use the type's method so Jinja Undefined does not raise on hasattr().
+    for name in ("model_dump", "dict"):
+        method = getattr(type(value), name, None)
+        if not callable(method):
+            continue
+        try:
+            dumped = method(value)
+        except Exception:
+            continue
+        if dumped is not value:
+            return _to_json_value(dumped)
     return value
 
 
@@ -88,7 +109,9 @@ def _jinja_compact_json(value: Any) -> str:
         if not text:
             return ""
         try:
-            value = json.loads(text)
+            from hiddifypanel.proxy_v3.config_builder.render import _parse_json5
+
+            value, _ = _parse_json5(text)
         except json.JSONDecodeError:
             # Not JSON — collapse whitespace rather than double-encode.
             return re.sub(r"\s+", " ", text).strip()
@@ -107,8 +130,48 @@ def _jinja_exec(command: str) -> str:
 def _jinja_urlencode(value: Any) -> str:
     normalized = _to_json_value(value)
     if isinstance(normalized, dict):
-        return urlencode(normalized)
-    return quote(str(normalized or ""), safe="")
+        items: list[tuple[str, Any]] = []
+        for key, val in normalized.items():
+            if val is None or val == "":
+                continue
+            if isinstance(val, bool):
+                val = "true" if val else "false"
+            elif isinstance(val, (dict, list)):
+                val = json.dumps(val, ensure_ascii=False, separators=(",", ":"))
+            items.append((str(key), val))
+        return urlencode(items, quote_via=quote)
+    if normalized is None:
+        return ""
+    return quote(str(normalized), safe="")
+
+
+@pass_context
+def _jinja_gettext(ctx: dict[str, Any], message: str, **kwargs: Any) -> str:
+    user = ctx.get("user")
+    if user is None:
+        nested = ctx.get("ctx")
+        if nested is not None:
+            user = getattr(nested, "user", None)
+            if user is None and hasattr(nested, "get"):
+                user = nested.get("user")
+    lang = None
+    if user is not None:
+        lang = getattr(user, "lang", None)
+        if not lang and hasattr(user, "get"):
+            lang = user.get("lang")
+    child_id = int(ctx.get("child_id") or 0)
+    if not child_id and ctx.get("ctx") is not None:
+        nested = ctx["ctx"]
+        child_id = int(getattr(nested, "get", lambda *_: 0)("child_id") or getattr(getattr(nested, "hconfig", None), "child_id", 0) or 0)
+    if not lang:
+        from hiddifypanel.models import hconfig
+
+        lang = hconfig(ConfigEnum.lang, child_id)
+    with force_locale(lang or "en"):
+        text = gettext(message)
+    if kwargs:
+        return text % kwargs
+    return text
 
 
 _template_map_cache: dict[int, tuple[float, dict[str, str]]] = {}
@@ -148,8 +211,11 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["len"] = len
     env.globals["exec"] = _jinja_exec
     env.globals["ConfigEnum"] = ConfigEnum
+    env.globals["_"] = _jinja_gettext
+    env.filters["i18n"] = _jinja_gettext
     env.filters["jsbool"] = jsbool
     env.filters["tojson"] = _jinja_tojson
+    env.filters["asdict"] = _to_json_value
     env.filters["b64encode"] = hutils.encode.do_base_64
     env.filters["urlencoded"] = _jinja_urlencode
     env.filters["trim_no_line"] = _jinja_trim_no_line

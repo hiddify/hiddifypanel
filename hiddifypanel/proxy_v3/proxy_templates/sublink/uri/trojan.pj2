@@ -4,7 +4,7 @@
     protocol = 'trojan',
     password = ctx.user.uuid,
     host=proxy.server,
-    port=proxy.tcp_port,
+    port=proxy.port,
     query_params=namespace(hiddify='1'),
   ) %}
   {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}

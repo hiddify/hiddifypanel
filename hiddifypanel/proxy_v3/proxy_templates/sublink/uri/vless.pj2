@@ -1,17 +1,22 @@
+{# https://github.com/XTLS/Xray-core/discussions/4877  #}
+{# https://github.com/XTLS/Xray-core/discussions/716  #}
+
 {% for ctx in ctx.iter_ctx_domains() %}
   {% set proxy = ctx.proxy %}
   {% set uri = namespace(
     protocol = 'vless',
     user=ctx.user.uuid,
     host=proxy.server,
-    port=proxy.tcp_port,
+    port=proxy.port,
     query_params=namespace(hiddify='1'),
   ) %}
   {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
   
   {% set qp = uri.query_params %}
-  {% include '__TLS_SLUG__' %}
-  {% include '__TRANSPORT_SLUG__' %}
+  {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__ %}
+    {% include '__TLS_SLUG__' %}
+    {% include '__TRANSPORT_SLUG__' %}
+  {%endwith%}
   {% if ctx.hconfig.vless_flow %}
     {% set qp.flow=ctx.hconfig.vless_flow %}
   {% endif %}

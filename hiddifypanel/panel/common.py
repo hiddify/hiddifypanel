@@ -38,8 +38,15 @@ def init_app(app: APIFlask):
             response.headers['WWW-Authenticate'] = 'Basic realm="Hiddify"'
         return response
 
+    from werkzeug.exceptions import HTTPException
     @app.errorhandler(Exception)
     def internal_server_error(e):
+        if isinstance(e, HTTPException) and e.code and e.code < 500:
+            if hutils.flask.is_api_call(request.path):
+                return jsonify({'msg': getattr(e, 'description', str(e))}), e.code
+            if e.code == 404:
+                return jsonify({'message': 'Not Found'}), 404
+            return render_template('error.html', error=e), e.code
         if hasattr(e, 'code') and e.code == 404:
             logger.error(f'{e} {request.url}')
         else:

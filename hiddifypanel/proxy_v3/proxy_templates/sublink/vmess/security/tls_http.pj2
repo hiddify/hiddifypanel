@@ -1,15 +1,22 @@
 {% set _alpn = proxy.alpn|default('') %}
-{{ skip('h2_enable is false') if _alpn in ['tls_h2', 'tls_h1_h2', 'tls_h1_h2_h3', 'h2'] and not ctx.hconfig.h2_enable }}
-{{ skip('quic_enable is false') if _alpn in ['tls_h3', 'tls_h1_h2_h3'] and not ctx.hconfig.quic_enable }}
+
 {% if proxy.uses_tls %}
-{% set data.tls = 'tls' %}
-{% set data.sni = ctx.proxy.domain.sni %}
-{% if proxy.fingerprint and proxy.fingerprint != 'none' %}
-{% set data.fp = proxy.fingerprint %}
-{% endif %}
-{% if ctx.proxy.domain.echinfo %}
-{% set data.ech = ctx.proxy.domain.echinfo %}
-{% endif %}
+    {% set data.sni = ctx.proxy.domain.sni %}
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set data.fp = ctx.hconfig.utls %}{% endif %}
+
+    
+    {% if ctx.proxy.domain.is_reality() %}
+        {{skip("reality do not support quic") if proxy.tls_layer == "quic_tls"}}
+        {% set data.tls = 'reality' %}
+        {% set data.pbk = ctx.hconfig.reality_public_key %}
+        {% set data.sid = ctx.hconfig.reality_short_ids | choose_random %}
+    {%else%}
+        {% if proxy.alpn %}{% set data.alpn = ",".join(proxy.alpn) %}{% endif %}
+        {% set data.tls = 'tls' %}    
+        {% if ctx.proxy.domain.echinfo %}
+            {% set data.ech = ctx.proxy.domain.echinfo %}
+        {% endif %}
+    {% endif %}
 {% else %}
-{{ skip('http_proxy_enable is false') if not ctx.hconfig.http_proxy_enable }}
+    
 {% endif %}

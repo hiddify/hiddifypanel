@@ -2,7 +2,7 @@
 "settings": {
   "servers": [{
     "address": "{{ ctx.proxy.server }}",
-    "port": {{ ctx.proxy.tcp_port }},
+    "port": {{ ctx.proxy.port }},
     "method": "{{ ctx.hconfig.shadowsocks2022_method }}",
     "password": "{{ ctx.hconfig.shared_secret.replace('-','')|b64encode }}:{{ ctx.user.uuid_hex|b64encode }}",
     "uot": true,

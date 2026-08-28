@@ -1,28 +1,33 @@
-{% if not proxy.uses_tls %}
-  "security": "none"
-{% elif proxy.is_reality %}
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}
+{% if tls_layer == 'http' %}
+  "security": "none",
+{% elif domain.is_reality() %}
   "security": "reality",
   "realitySettings": {
-    "serverName": "{{ proxy.domain.sni }}",
-    "fingerprint": "{{ ctx.hconfig.fingerprint }}",
+    "serverName": "{{ domain.sni }}",
+    "fingerprint": "{{ ctx.hconfig.utls }}",
     "shortId": "{{ ctx.hconfig.reality_short_ids | choose_random }}",
     "publicKey": "{{ ctx.hconfig.reality_public_key }}",
     "show": false
-  }
+  },
 {% else %}
   "security": "tls",
   "tlsSettings": {
-    "serverName": "{{ proxy.domain.sni }}",
-    "allowInsecure": {{ proxy.domain.allow_insecure | tojson }},
-    {%if ctx.platform.xray.version<"26.1.1" %}
-      "insecure": true,     
-    {%else%}
-      "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",
+    "serverName": "{{ domain.sni }}",
+    {%if domain.allow_insecure %}
+      {%if ctx.platform.xray.version<"26.1.1" %}
+        "allowInsecure": true,
+      {%else%}
+        "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",
+      {%endif%}
     {%endif%}
-    "fingerprint": "{{ ctx.hconfig.fingerprint }}",
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}"fingerprint": "{{ ctx.hconfig.utls }}",{% endif %}
+
+    
     {% if alpns is defined and alpns %}"alpn": {{ alpns | tojson }},{% endif %}
-    {% if ctx.hconfig.tls_ech_enable and proxy.domain.echinfo %}
-    "echConfigList": ["{{ proxy.domain.echinfo }}"],
+    {% if ctx.hconfig.tls_ech_enable and domain.echinfo %}
+    "echConfigList": ["{{ domain.echinfo }}"],
     {% endif %}
-  }
+  },
 {% endif %}

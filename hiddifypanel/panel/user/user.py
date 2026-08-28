@@ -9,6 +9,7 @@ from apiflask import abort
 from flask import Response, g, render_template, request
 from flask_babel import gettext as _
 from flask_classful import FlaskView, route
+from loguru import logger
 
 from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
@@ -246,6 +247,9 @@ class UserView(FlaskView):
             cores=(core,),
             invalidate_cache=False,
         )
+        if result.errors:
+            for error in result.errors:
+                print(f"Error rendering client configs: {error}")
         return result.configs.get(core) or ""
 
     @route("/offline.html")

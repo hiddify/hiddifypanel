@@ -1,9 +1,5 @@
 {% set data.net = 'xhttp' %}
-{% set data.type = 'none' %}
-{% if proxy.xhttp_host %}
-{% set data.host = proxy.xhttp_host %}
+{% set data.type = 'auto' %}
+{% if proxy.is_download_upload_different() or alpns != download_alpns %}
+{% set data.extra | compactjson %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
 {% endif %}
-{% if proxy.xhttp_path %}
-{% set data.path = proxy.xhttp_path %}
-{% endif %}
-{% include 'sublink/vmess/xhttp_extra' %}

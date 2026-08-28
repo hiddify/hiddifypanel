@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
 
-from hiddifypanel.proxy_v3.alpn_helpers import tls_layer_from_l3
+from hiddifypanel.proxy_v3.alpn_helpers import XHTTP_ALPN_PAIRS, XHTTP_DIRECTION_TAGS, tls_layer_from_l3
 
 from .inbound_builder import _raw_transport
 from .proxy_matrix import ProxyCombination, iter_proxy_combinations
@@ -13,7 +13,7 @@ V2RAY_GATEWAY_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "tcp"})
 H3_PROTOS = frozenset({"tuic", "hysteria", "hysteria2"})
 HTTP_CAPABLE_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "tcp"})
 
-XHTTP_ALPN_TAGS = ("http", "tls_h1", "tls_h2", "tls_h3")
+XHTTP_ALPN_TAGS = XHTTP_DIRECTION_TAGS
 XHTTP_ALPN_LABEL = {
     "http": "HTTP",
     "tls_h1": "TLS H1",
@@ -77,22 +77,40 @@ def _xhttp_params(upload: str, download: str) -> dict:
     }
 
 
+def tls_layer_for_xhttp_alpn(alpn: str | None, *, reality: bool = False) -> str:
+    """Map an xhttp ALPN tag to the TLS layer for that direction.
+
+    Upload HTTP → ``tls_layer=http``; download HTTP → ``download_tls_layer=http``.
+    Reality cannot carry cleartext HTTP, so HTTP ALPN still maps to ``http``.
+    """
+    tag = str(alpn or "").lower()
+    if tag == "http":
+        return "http"
+    if reality:
+        return "tls"
+    if tag in ("tls_h3", "h3"):
+        return "quic_tls"
+    return "tls"
+
+
 def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombination, str, str | None, str | None, str | None]]:
     """Return (effective_combo, tls_layer, upload_alpn, download_alpn, l7_reverse_proto)."""
     proto = combo.proto.lower()
     transport = _raw_transport(combo.transport)
 
-    if transport == "xhttp" and proto in ("vless", "vmess"):
+    if transport == "xhttp" and proto in ("vless", "vmess", "trojan"):
         variants: list[tuple[ProxyCombination, str, str | None, str | None, str | None]] = []
-        for upload in XHTTP_ALPN_TAGS:
-            for download in XHTTP_ALPN_TAGS:
-                effective = _with_l3(combo, combo.l3, params=_xhttp_params(upload, download))
-                if str(combo.l3).lower() == "reality":
-                    layer = "tls"
-                else:
-                    layer = "http" if upload == "http" and download == "http" else "tls"
-                l7 = "h2"
-                variants.append((effective, layer, upload, download, l7))
+        reality = str(combo.l3).lower() == "reality"
+        pairs = tuple((tag, tag) for tag in XHTTP_ALPN_TAGS)
+        if proto == "vless":
+            pairs = pairs + XHTTP_ALPN_PAIRS
+        for upload, download in pairs:
+            if reality and (upload == "http" or download == "http"):
+                continue
+            effective = _with_l3(combo, combo.l3, params=_xhttp_params(upload, download))
+            layer = tls_layer_for_xhttp_alpn(upload, reality=reality)
+            l7 = "h2"
+            variants.append((effective, layer, upload, download, l7))
         return variants
 
     if proto == "naive":
@@ -136,10 +154,11 @@ def iter_grouped_preset_slots() -> list[PresetSlot]:
             continue
         for variant in _expand_combo_variants(combo):
             effective, layer, upload, download, l7 = variant
+            l3_key = "" if (upload or download) else str(effective.l3).lower()
             key = (
                 effective.proto.lower(),
                 _raw_transport(effective.transport),
-                str(effective.l3).lower(),
+                l3_key,
                 layer,
                 upload or "",
                 download or "",
@@ -150,7 +169,14 @@ def iter_grouped_preset_slots() -> list[PresetSlot]:
     slots: list[PresetSlot] = []
     for items in buckets.values():
         combos = [item[0] for item in items]
-        primary = min(combos, key=lambda c: ({"direct": 0, "relay": 1, "cdn": 2, "CDN": 2}.get(str(c.cdn).lower(), 9), c.name))
+        primary = min(
+            combos,
+            key=lambda c: (
+                1 if str(c.l3).lower() == "reality" else 0,
+                {"direct": 0, "relay": 1, "cdn": 2, "CDN": 2}.get(str(c.cdn).lower(), 9),
+                c.name,
+            ),
+        )
         _, layer, upload, download, l7 = items[0]
         slots.append(
             PresetSlot(
@@ -165,7 +191,7 @@ def iter_grouped_preset_slots() -> list[PresetSlot]:
     return slots
 
 
-def preset_display_name(slot: PresetSlot) -> str:
+def _preset_base_name(slot: PresetSlot) -> str:
     parts = slot.primary.name.split()
     skip = {
         "direct",
@@ -182,13 +208,22 @@ def preset_display_name(slot: PresetSlot) -> str:
         "custom",
     }
     filtered = [part for part in parts if part.lower() not in skip]
-    base = " ".join(filtered) if filtered else slot.primary.name
+    return " ".join(filtered) if filtered else slot.primary.name
+
+
+def _xhttp_direction_suffix(slot: PresetSlot) -> str:
+    up = XHTTP_ALPN_LABEL[slot.upload_alpn]
+    down = XHTTP_ALPN_LABEL[slot.download_alpn]
+    if slot.upload_alpn == slot.download_alpn:
+        return up
+    return f"📤{up} 📥{down}"
+
+
+def _preset_title(slot: PresetSlot) -> str:
+    base = _preset_base_name(slot)
 
     if slot.upload_alpn and slot.download_alpn:
-        up = XHTTP_ALPN_LABEL[slot.upload_alpn]
-        down = XHTTP_ALPN_LABEL[slot.download_alpn]
-        suffix = up if slot.upload_alpn == slot.download_alpn else f"📤{up} 📥{down}"
-        return f"{base} {suffix}".strip()
+        return f"{base} {_xhttp_direction_suffix(slot)}".strip()
 
     if slot.primary.proto.lower() == "naive":
         if slot.primary.l3 == "http":
@@ -205,3 +240,12 @@ def preset_display_name(slot: PresetSlot) -> str:
         return f"{base} QUIC".strip()
 
     return base
+
+
+def preset_display_name(slot: PresetSlot) -> str:
+    return _preset_title(slot)
+
+
+def preset_slug_name(slot: PresetSlot) -> str:
+    """Same as display: upload then download."""
+    return _preset_title(slot)

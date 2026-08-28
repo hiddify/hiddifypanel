@@ -4,24 +4,15 @@
   "path": "/{{ proxy.path }}",
   "host": "{{ proxy.domain.host }}",
   "extra": {
-    {% if proxy.domain.download %}
+    {% if proxy.is_download_upload_different() or alpns != download_alpns %}
+
     "downloadSettings": {
       "address": "{{ proxy.domain.download.server() }}",
-      "port": {{ proxy.domain.download.port or proxy.tcp_port }},
+      "port": {{ proxy.domain.download.port or proxy.download_port }},
       "network": "xhttp",
-      "security": {% if download_tls %}"tls"{% else %}"none"{% endif %},
-      {% if download_tls %}
-      "tlsSettings": {
-        "serverName": "{{ proxy.domain.download.sni or proxy.domain.sni }}",
-        {%if proxy.domain.download.allow_insecure%}
-        "allowInsecure": true,
-        {%endif%}
-        "fingerprint": "{{ ctx.hconfig.fingerprint }}",
-        {%if download_alpns%}
-          "alpn": {{ download_alpns | tojson }}
-        {%endif%}
-      },
-      {% endif %}
+      {% with domain=proxy.domain.download, alpns=download_alpns, tls_layer=proxy.download_tls_layer %}
+        {% include 'xray/client/security/tls' %}
+      {% endwith %}
       "xhttpSettings": {
         "path": "/{{ proxy.path }}",
         "host": "{{ proxy.domain.download.host }}",
@@ -29,15 +20,6 @@
       }
     },
     {% endif %}
-    "scMaxEachPostBytes": {{ sc_max_each_post|default(1000000) }},
-    "scMinPostsIntervalMs": {{ sc_min_posts_interval|default(30) }},
-    "xmux": {
-      "maxConcurrency": {{ xmux_max_concurrency|default('"16-32"') }},
-      "maxConnections": {{ xmux_max_connections|default(0) }},
-      "cMaxReuseTimes": {{ xmux_c_max_reuse|default(0) }},
-      "hMaxRequestTimes": {{ xmux_h_max_request|default('"600-900"') }},
-      "hMaxReusableSecs": {{ xmux_h_max_reusable|default('"1000-2000"') }},
-      "hKeepAlivePeriod": {{ xmux_h_keepalive|default(0) }}
-    }
+    
   }
 },

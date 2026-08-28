@@ -2,7 +2,7 @@
 "settings": {
   "vnext": [{
     "address": "{{ ctx.proxy.server }}",
-    "port": {{ ctx.proxy.tcp_port }},
+    "port": {{ ctx.proxy.port }},
     "users": [{
       "id": "{{ ctx.user.uuid }}",
       "security": "auto",

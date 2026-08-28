@@ -303,9 +303,7 @@ def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
                 "inbound_udp_ports": list(server.inbound_udp_ports),
                 "sni_domains": list(server.sni_domains),
                 "tcp_udp": preset.tcp_udp.value,
-                "download_tcp_udp": (
-                    preset.download_tcp_udp.value if preset.download_tcp_udp else None
-                ),
+                "download_tcp_udp": (preset.download_tcp_udp.value if preset.download_tcp_udp else None),
             },
         )
         db.session.flush()

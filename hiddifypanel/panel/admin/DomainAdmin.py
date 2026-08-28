@@ -302,7 +302,8 @@ class DomainAdmin(AdminLTEModelView):
 
         for d in domains_to_check:
             if not hutils.network.is_domain_reality_friendly(d):
-                raise ValidationError(_("Domain is not REALITY friendly!") + f" {d}")
+                # raise ValidationError(_("Domain is not REALITY friendly!") + f" {d}")
+                hutils.flask.flash(_("Domain is not REALITY friendly!") + f" {d}", "warning")
 
             try:
                 if not hutils.network.is_in_same_asn(d, server_ips[0]):

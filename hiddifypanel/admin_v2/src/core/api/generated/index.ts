@@ -66,7 +66,7 @@ export type ProxyProto =
 
 export type ProxyTransport = 'tcp' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | 'other'
 
-export type TlsLayer = 'http' | 'tls'
+export type TlsLayer = 'http' | 'tls' | 'quic_tls' | 'quic_tcp_tls'
 
 export interface CustomProxy {
   id?: number

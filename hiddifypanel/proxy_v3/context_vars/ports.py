@@ -6,7 +6,35 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from hiddifypanel.models.custom_proxy import CustomProxyMode, InboundTcpUdp
 
-GATEWAY_CLIENT_PORT = 443
+GATEWAY_CLIENT_TLS_PORT = 443
+GATEWAY_CLIENT_HTTP_PORT = 80
+
+
+def _tls_layer_key(tls_layer: Any) -> str:
+    value = tls_layer.value if hasattr(tls_layer, "value") else tls_layer
+    key = str(value or "tls").strip().lower().replace("-", "_").replace("+", "_")
+    return {
+        "tcp_tls": "tls",
+        "quic_tcp_tls": "quic_tcp_tls",
+        "quic_plus_tcp_tls": "quic_tcp_tls",
+    }.get(key, key)
+
+
+def gateway_client_ports(tls_layer: Any = None) -> tuple[int | None, int | None]:
+    """Return (tcp_port, udp_port) for L7 client-facing ports."""
+    key = _tls_layer_key(tls_layer)
+    if key == "http":
+        return GATEWAY_CLIENT_HTTP_PORT, None
+    if key == "quic_tls":
+        return None, GATEWAY_CLIENT_TLS_PORT
+    if key == "quic_tcp_tls":
+        return GATEWAY_CLIENT_TLS_PORT, GATEWAY_CLIENT_TLS_PORT
+    return GATEWAY_CLIENT_TLS_PORT, None
+
+
+def gateway_client_port(tls_layer: Any = None) -> int:
+    tcp_port, udp_port = gateway_client_ports(tls_layer)
+    return tcp_port or udp_port or GATEWAY_CLIENT_TLS_PORT
 
 
 @dataclass(frozen=True)
@@ -64,6 +92,12 @@ def primary_resolved_port(resolved: ResolvedInboundPorts, *, default: int = 2080
     if resolved.udp_port is not None:
         return resolved.udp_port
     return default
+
+
+def _resolved_optional(tcp_port: int | None, udp_port: int | None) -> ResolvedInboundPorts:
+    tcp_ports = [tcp_port] if tcp_port else []
+    udp_ports = [udp_port] if udp_port else []
+    return ResolvedInboundPorts(tcp_ports, udp_ports, tcp_port, udp_port)
 
 
 def _resolved_lists(port: int) -> ResolvedInboundPorts:
@@ -125,6 +159,7 @@ def resolve_inbound_ports(
     db_udp_ports: list[int] | None = None,
     server_side: bool = True,
     tcp_udp: Any = None,
+    tls_layer: Any = None,
 ) -> ResolvedInboundPorts:
     from hiddifypanel.models.custom_proxy import CustomProxyMode
     from hiddifypanel.proxy_v3.alpn_helpers import stable_proxy_port
@@ -139,15 +174,15 @@ def resolve_inbound_ports(
     if mode == CustomProxyMode.domains_l7_gateway:
         if server_side:
             resolved = _resolved_lists(stable_proxy_port(pid, 0))
-        else:
-            resolved = _resolved_lists(GATEWAY_CLIENT_PORT)
-        return _apply_tcp_udp_filter(resolved, protocol)
+            return _apply_tcp_udp_filter(resolved, protocol)
+        tcp_port, udp_port = gateway_client_ports(tls_layer)
+        return _resolved_optional(tcp_port, udp_port)
 
     if mode == CustomProxyMode.domains_sni_gateway:
         if server_side:
             resolved = _resolved_lists(stable_proxy_port(pid, did))
         else:
-            resolved = _resolved_lists(GATEWAY_CLIENT_PORT)
+            resolved = _resolved_lists(GATEWAY_CLIENT_TLS_PORT)
         return _apply_tcp_udp_filter(resolved, protocol)
 
     if mode == CustomProxyMode.domains_dns_gateway:

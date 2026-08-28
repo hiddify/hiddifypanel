@@ -130,16 +130,14 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
     if row.server_inbound_tcp_udp != tcp_udp:
         row.server_inbound_tcp_udp = tcp_udp
         changed = True
-    download_tcp_udp = (
-        _parse_tcp_udp(snapshot.server_inbound_download_tcp_udp)
-        if snapshot.server_inbound_download_tcp_udp
-        else None
-    )
+    download_tcp_udp = _parse_tcp_udp(snapshot.server_inbound_download_tcp_udp) if snapshot.server_inbound_download_tcp_udp else None
     if row.server_inbound_download_tcp_udp != download_tcp_udp:
         row.server_inbound_download_tcp_udp = download_tcp_udp
         changed = True
 
     for key, value in catalog_fields_from_snapshot(snapshot).items():
+        if key == "custom_path":
+            continue
         if sync_catalog_field(row, key, value):
             changed = True
 

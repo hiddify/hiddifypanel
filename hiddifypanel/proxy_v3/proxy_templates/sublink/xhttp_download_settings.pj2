@@ -1,45 +1,16 @@
 {
   "address": "{{ proxy.domain.download.server() if proxy.domain.download else proxy.domain.server() }}",
-  "port": {{ proxy.tcp_port }},
+  "port": {{ proxy.download_port }},
   "network": "xhttp",
+  {% with domain=proxy.domain.download, alpns=download_alpns, tls_layer=proxy.download_tls_layer %}
+    {% include 'xray/client/security/tls' %}
+  {% endwith %}
   "xhttpSettings": {
     "path": "/{{ proxy.path }}",
     "host": "{{ proxy.domain.host }}",
     "mode": "auto",
-    "extra": {
-      "headers": {}
+    "headers": {
+        {%if ctx.hconfig.default_useragent_string %}"User-Agent": "{{ctx.hconfig.default_useragent_string}}" {%endif%}
     }
-  },
-  {% if not proxy.uses_tls %}
-    "security": "none"
-  {% elif proxy.is_reality %}
-    "security": "reality",
-    "realitySettings": {
-      "serverName": "{{ proxy.domain.sni }}",
-      "fingerprint": "{{ ctx.hconfig.fingerprint }}",
-      "shortId": "{{ ctx.hconfig.reality_short_ids | choose_random }}",
-      "publicKey": "{{ ctx.hconfig.reality_public_key }}",
-      "show": false
-    }
-  {% else %}
-    "security": "tls",
-    "tlsSettings": {
-      "serverName": "{{ proxy.domain.sni }}",
-      "allowInsecure": {{ proxy.domain.allow_insecure | tojson }},
-      {%if ctx.platform.xray.version<"26.1.1" %}
-        "insecure": true,     
-      {%else%}
-        "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",
-      {%endif%}
-      "fingerprint": "{{ ctx.hconfig.fingerprint }}",
-      {% if alpns is defined and alpns %}"alpn": {{ alpns | tojson }},{% endif %}
-      {% if ctx.hconfig.tls_ech_enable and proxy.domain.echinfo %}
-      "echConfigList": ["{{ proxy.domain.echinfo }}"],
-      {% endif %}
-    }
-  {% endif %}
-
-
-
-  
+  }
 }

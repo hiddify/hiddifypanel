@@ -48,7 +48,18 @@ class L7Proto(JinjaEnum):
 
 class TlsLayer(JinjaEnum):
     http = auto()
-    tls = auto()
+    tls = auto()  # TCP TLS
+    quic_tls = auto()
+    quic_tcp_tls = auto()
+
+    def uses_tls(self) -> bool:
+        return self != TlsLayer.http
+
+    def uses_tcp(self) -> bool:
+        return self in (TlsLayer.http, TlsLayer.tls, TlsLayer.quic_tcp_tls)
+
+    def uses_udp(self) -> bool:
+        return self in (TlsLayer.quic_tls, TlsLayer.quic_tcp_tls)
 
 
 class CustomProxyTransport(JinjaEnum):
@@ -398,11 +409,7 @@ class CustomProxy(db.Model):  # type: ignore
                 "inbound_tcp_ports": list(self.server_inbound_tcp_ports or []),
                 "inbound_udp_ports": list(self.server_inbound_udp_ports or []),
                 "tcp_udp": (self.server_inbound_tcp_udp or InboundTcpUdp.both).value,
-                "download_tcp_udp": (
-                    self.server_inbound_download_tcp_udp.value
-                    if self.server_inbound_download_tcp_udp
-                    else None
-                ),
+                "download_tcp_udp": (self.server_inbound_download_tcp_udp.value if self.server_inbound_download_tcp_udp else None),
             },
             "client_config": {"core_configs": client_configs},
             "builtin": builtin_payload(self) if self.is_builtin else {},
@@ -794,13 +801,24 @@ def _parse_l7_proto(value: Any) -> L7Proto | None:
     return _parse_l7_reverse_proto(value)
 
 
+_TLS_LAYER_ALIASES = {
+    "tcp_tls": "tls",
+    "tcp-tls": "tls",
+    "quic+tcp_tls": "quic_tcp_tls",
+    "quic+tcp-tls": "quic_tcp_tls",
+    "quic-tcp-tls": "quic_tcp_tls",
+}
+
+
 def _parse_tls_layer(value: Any) -> TlsLayer | None:
     if value is None or value == "":
         return None
     if isinstance(value, TlsLayer):
         return value
+    raw = str(value).strip().lower()
+    raw = _TLS_LAYER_ALIASES.get(raw, raw)
     try:
-        return TlsLayer(str(value).strip().lower())
+        return TlsLayer(raw)
     except ValueError as exc:
         allowed = ", ".join(m.value for m in TlsLayer)
         raise ValueError(f"Invalid tls_layer {value!r}. Must be one of: {allowed}") from exc

@@ -1,7 +1,7 @@
 {{ skip("hiddify_core version " ~ ctx.platform.hiddify.version ~ " ") if  ctx.platform.hiddify.version < "4.1.0" }}
 "type": "snell",
 "server": "{{ proxy.server }}",
-"server_port": {{ proxy.tcp_port }},
+"server_port": {{ proxy.port }},
 "version": 4,
 "psk": "{{ ctx.hconfig.proxy_path }}",
 "userkey": "{{ ctx.user.uuid }}"

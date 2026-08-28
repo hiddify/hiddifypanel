@@ -1,6 +1,6 @@
 {% block outbounds %}
   {% for ctx in ctx.iter_ctx_domains() %}
-    {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__, tls=__TLS_MODE__, download_tls=__DOWNLOAD_TLS_MODE__ %}
+    {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__ %}
       {% set proxy = ctx.proxy %}
       {% set tag %}{%- include 'xray/client/tag' -%}{% endset %}
       {

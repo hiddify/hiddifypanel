@@ -4,7 +4,7 @@
   {% set data = namespace(
     v='2',
     add=proxy.server,
-    port=proxy.tcp_port,
+    port=proxy.port,
     id=ctx.user.uuid,
     aid=0,
     scy=proxy.cipher|default('auto'),
@@ -12,9 +12,9 @@
     type='none',
     host=domain.host|default(''),
     alpn=proxy.alpn|default('h2,http/1.1'),
-    path=proxy.path|default(''),
+    path="/"~proxy.path|default(''),
     sni=domain.sni,
-    fp=proxy.fingerprint|default(''),
+    fp=ctx.hconfig.utls|default(''),
   ) %}
   {% set data.ps %}{% include 'sublink/tag' %}{% endset %}
   {% include '__VMESS_TRANSPORT_SLUG__' %}

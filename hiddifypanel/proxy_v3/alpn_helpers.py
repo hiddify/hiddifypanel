@@ -20,6 +20,15 @@ XHTTP_ALPN_TAGS = (
     "tls_h2_h1",
 )
 
+# Independent upload/download layers for xhttp (builtin vless mixed pairs).
+XHTTP_DIRECTION_TAGS = ("http", "tls_h1", "tls_h2", "tls_h3")
+XHTTP_ALPN_PAIRS: tuple[tuple[str, str], ...] = tuple(
+    (upload, download)
+    for upload in XHTTP_DIRECTION_TAGS
+    for download in XHTTP_DIRECTION_TAGS
+    if upload != download
+)
+
 
 @dataclass
 class AlpnTags:
@@ -167,22 +176,6 @@ def download_alpns_for_combo(transport: str) -> list[str]:
     if str(transport).lower() == "xhttp":
         return normalize_alpn_tags(list(XHTTP_ALPN_TAGS), {})
     return []
-
-
-XHTTP_ALPN_PAIRS: tuple[tuple[str, str], ...] = (
-    ("tls_h1", "http"),
-    ("tls_h1", "tls_h1"),
-    ("tls_h1", "tls_h2"),
-    ("tls_h1", "tls_h3"),
-    ("tls_h2", "http"),
-    ("tls_h2", "tls_h1"),
-    ("tls_h2", "tls_h2"),
-    ("tls_h2", "tls_h3"),
-    ("http", "http"),
-    ("http", "tls_h1"),
-    ("http", "tls_h2"),
-    ("http", "tls_h3"),
-)
 
 
 def tls_layer_from_l3(l3: str) -> str:

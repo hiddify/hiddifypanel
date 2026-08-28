@@ -2,9 +2,12 @@ from __future__ import annotations
 
 # Backward-compatible re-exports for modules outside context_vars.
 from hiddifypanel.proxy_v3.context_vars.ports import (
-    GATEWAY_CLIENT_PORT,
+    GATEWAY_CLIENT_HTTP_PORT,
+    GATEWAY_CLIENT_TLS_PORT,
     ResolvedInboundPorts,
     coerce_proxy_mode,
+    gateway_client_port,
+    gateway_client_ports,
     mode_value,
     normalize_port_list,
     ports_list_to_ranges,
@@ -100,6 +103,7 @@ def ports_for_proxy_row(
         db_udp_ports=normalize_port_list(getattr(row, "server_inbound_udp_ports", None)),
         server_side=server_side,
         tcp_udp=effective_server_tcp_udp(row),
+        tls_layer=getattr(row, "tls_layer", None),
     )
 
 
@@ -156,7 +160,7 @@ def ports_dict_for_proxy_row(row, *, domain_id: int | None = None, server_side: 
     }
     if mode_uses_firewall_ports(row.mode):
         tcp_udp = getattr(row, "server_inbound_tcp_udp", None)
-        data["tcp_udp"] = (tcp_udp.value if tcp_udp else "both")
+        data["tcp_udp"] = tcp_udp.value if tcp_udp else "both"
         data["firewall_protocols"] = firewall_protocols_for_proxy(row)
     if not mode_port_requires_domain(row.mode):
         data["port"] = primary

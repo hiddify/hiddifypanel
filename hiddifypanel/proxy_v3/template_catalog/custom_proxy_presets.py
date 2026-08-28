@@ -26,7 +26,7 @@ from .inbound_builder import (
     supports_hiddify_preset,
     supports_xray_preset,
 )
-from .preset_slots import H3_PROTOS, PresetSlot, iter_grouped_preset_slots, preset_display_name
+from .preset_slots import H3_PROTOS, PresetSlot, iter_grouped_preset_slots, preset_display_name, preset_slug_name, tls_layer_for_xhttp_alpn
 from ..alpn_helpers import alpn_tag_to_category
 from hiddifypanel import hutils
 
@@ -199,10 +199,13 @@ def _download_domain_modes_for_combo(combo) -> list[str]:
     return ["cdn" if cdn == "cdn" else cdn]
 
 
+def _tls_layer_for_alpn(alpn: str | None, combo=None) -> str:
+    reality = combo is not None and str(combo.l3).lower() == "reality"
+    return tls_layer_for_xhttp_alpn(alpn, reality=reality)
+
+
 def _download_tls_layer_for_alpn(alpn: str | None, combo=None) -> str:
-    if combo is not None and str(combo.l3).lower() == "reality":
-        return "tls"
-    return "http" if str(alpn or "").lower() == "http" else "tls"
+    return _tls_layer_for_alpn(alpn, combo)
 
 
 def _xhttp_alpn_is_quic(alpn: str | None) -> bool:
@@ -339,7 +342,7 @@ def _build_preset(
 ) -> CustomProxyPreset:
     primary = slot.primary
     display_name = preset_display_name(slot)
-    slug = proxy_slug(f"{core}-{display_name}")
+    slug = proxy_slug(f"{core}-{preset_slug_name(slot)}")
     if core == "hiddify-core":
         display_name = f"{display_name} HC"
     mode = _preset_protocol(primary)
@@ -349,6 +352,8 @@ def _build_preset(
     raw_transport = _raw_transport(primary.transport)
     transport_value = _parse_transport(primary.transport).value
     tls_layer = slot.tls_layer
+    if proto in UDP_ONLY_PROTOS or str(primary.l3).lower() == "h3_quic":
+        tls_layer = "quic_tls"
     if mode == CustomProxyMode.domains_l7_gateway and proto in V2RAY_GATEWAY_PROTOS:
         domain_modes = list(_v2ray_l7_domain_modes(transport_value, tls_layer))
     elif raw_transport in ("shadowtls", "faketls"):
@@ -361,7 +366,10 @@ def _build_preset(
     download_domain_modes: tuple[str, ...] = ()
     download_tcp_udp = None
     if transport_value == "xhttp":
-        download_tls_layer = _download_tls_layer_for_alpn(slot.download_alpn, primary)
+        tls_layer = _tls_layer_for_alpn(slot.upload_alpn, primary)
+        download_tls_layer = _tls_layer_for_alpn(slot.download_alpn, primary)
+        if mode == CustomProxyMode.domains_l7_gateway and proto in V2RAY_GATEWAY_PROTOS:
+            domain_modes = list(_v2ray_l7_domain_modes(transport_value, tls_layer))
         if proto in V2RAY_GATEWAY_PROTOS:
             download_domain_modes = _v2ray_l7_domain_modes(
                 transport_value,
@@ -441,8 +449,14 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     return rows
 
 
-def sync_builtin_custom_proxy_presets(child_id: int = 0) -> int:
-    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_custom_proxy_presets
+def sync_builtin_presets(child_id: int = 0) -> int:
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import (
+        sync_base_configs,
+        sync_custom_proxy_presets,
+        sync_templates,
+    )
 
+    sync_templates(child_id)
+    sync_base_configs(child_id, refresh_builtin=True)
     added, _updated, _removed, _demoted = sync_custom_proxy_presets(child_id)
     return added

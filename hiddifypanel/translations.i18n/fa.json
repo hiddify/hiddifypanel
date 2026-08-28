@@ -542,7 +542,9 @@
       "tlsLayer": "لایه TLS",
       "tlsLayerLabels": {
         "http": "HTTP",
-        "tls": "TLS"
+        "tls": "TCP TLS",
+        "quic_tls": "QUIC TLS",
+        "quic_tcp_tls": "QUIC + TCP TLS"
       },
       "tlsLayerSpecialConflict": "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست",
       "transport": "ترابری",

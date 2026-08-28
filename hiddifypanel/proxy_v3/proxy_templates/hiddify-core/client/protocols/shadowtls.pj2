@@ -1,6 +1,6 @@
 "type": "shadowtls",
 "server": "{{ proxy.server }}",
-"server_port": {{ proxy.tcp_port }},
+"server_port": {{ proxy.port }},
 "version": 3,
 "password": "{{ ctx.hconfig.shared_secret }}",
 "tls": {

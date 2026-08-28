@@ -1,6 +1,6 @@
 "type": "ssh",
 "server": "{{ ctx.proxy.server }}",
-"server_port": {{ ctx.proxy.tcp_port }},
+"server_port": {{ ctx.proxy.port }},
 "user": "{{ ctx.user.uuid }}",
 "private_key": "{{ ctx.user.ed25519_private_key | replace('\n', '\\n') }}",
 "host_key": [

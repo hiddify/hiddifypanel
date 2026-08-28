@@ -1,5 +1,0 @@
-"security": "tls",
-"tlsSettings": {
-  "serverName": "{{ DOMAIN }}",
-  "allowInsecure": false
-}
