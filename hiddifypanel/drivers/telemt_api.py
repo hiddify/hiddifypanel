@@ -1,10 +1,10 @@
 import json
 import os
-import re
 
 import requests
 
 from .abstract_driver import DriverABS
+from .telegram_metrics import parse_usage_metrics
 from hiddifypanel.models import User, hconfig, ConfigEnum
 from hiddifypanel.panel.run_commander import Command, commander
 import redis
@@ -21,7 +21,7 @@ class TelemtApi(DriverABS):
         return self.redis_client
 
     def is_enabled(self) -> bool:
-        return hconfig(ConfigEnum.telegram_enable) and hconfig(ConfigEnum.telegram_lib)=="telemt"
+        return hconfig(ConfigEnum.telegram_enable) and hconfig(ConfigEnum.telegram_lib) in {"telemt", "telego"}
 
     def __init__(self) -> None:
         super().__init__()
@@ -50,34 +50,7 @@ class TelemtApi(DriverABS):
         return resp.text
 
     def __get_tg_usages(self) -> dict:
-        raw_output = self.get_metric()
-        data = {}
-
-        # Example lines:
-        # telemt_user_octets_from_client{user="uuid"} 1983
-        # telemt_user_octets_to_client{user="uuid"} 2171
-
-        pattern = re.compile(
-            r'telemt_user_octets_(from_client|to_client)\{user="([^"]+)"\}\s+(\d+)'
-        )
-
-        for line in raw_output.splitlines():
-            match = pattern.search(line)
-            if not match:
-                continue
-
-            direction, user, value = match.groups()
-            value = int(value)
-
-            if user not in data:
-                data[user] = {"down": 0, "up": 0}
-
-            if direction == "from_client":
-                data[user]["up"] = value
-            else:  # to_client
-                data[user]["down"] = value
-
-        return data
+        return parse_usage_metrics(self.get_metric(), hconfig(ConfigEnum.telegram_lib))
 
     def __get_local_usage(self) -> dict:
         usage_data = self.get_redis_client() .get(USERS_USAGE)

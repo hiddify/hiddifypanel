@@ -255,6 +255,7 @@ def get_config_form():
                     ("python", _("lib.telegram.python")),
                     ("tgo", _("lib.telegram.go")),
                     ("telemt", _("lib.telegram.telemt")),
+                    ("telego", "telEgo (no ad tag)"),
                     # ("orig", _("lib.telegram.orignal")),
                 ]
                 field = wtf.SelectField(_("config.telegram_lib.label"), choices=libs, description=_("config.telegram_lib.description"), default=hconfig(ConfigEnum.telegram_lib))

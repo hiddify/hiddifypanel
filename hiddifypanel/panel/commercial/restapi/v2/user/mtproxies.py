@@ -36,7 +36,7 @@ class MTProxiesAPI(MethodView):
 
             # make mtproxy link
             raw_sec = hconfig(ConfigEnum.shared_secret, d.child_id)
-            if hconfig(ConfigEnum.telegram_lib)=="telemt":
+            if hconfig(ConfigEnum.telegram_lib) in {"telemt", "telego"}:
                 raw_sec=g.account.uuid
             secret_hex = str(raw_sec).replace('-', '')
             telegram_faketls_domain_hex = hconfig(ConfigEnum.telegram_fakedomain, d.child_id).encode('utf-8').hex()
