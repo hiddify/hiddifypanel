@@ -3,23 +3,29 @@ from sqlalchemy.orm import selectinload
 
 from hiddifypanel.cache import cache
 from hiddifypanel.models.child import Child
-from hiddifypanel.models.config import get_hconfigs_json
+from hiddifypanel.models.config import get_hconfigs_json, hconfig
+from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.user import User
+from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, normalize_common_proxy_core
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 from hiddifypanel.proxy_v3.context_vars.platform import PlatformVar
 from hiddifypanel.proxy_v3.context_vars.proxy import ClientBuilderProxyVar, ProxyVar
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
+from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
+from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
-from .utils import protocol_config_map, transport_config_map
+
+def _common_proxy_core_cache_token() -> str:
+    return ",".join(f"{child.id}:{normalize_common_proxy_core(hconfig(ConfigEnum.common_proxy_core, child.id))}" for child in Child.query.all())
 
 
 def build_client_template_context(user: User, sublink_domain: str, user_agent: str) -> list[ClientContextVar]:
     """One ``ClientContextVar`` per enabled proxy (domains already filtered on proxy)."""
-    bases = get_bases(sublink_domain)
+    bases = get_bases(sublink_domain, _common_proxy_core_cache_token())
     user_var = UserVar.from_user(user)
     platform_var = get_platform_var(user_agent)
     return [ClientContextVar(user=user_var, platform=platform_var, hconfig=b.hconfig, proxy=b.proxy) for b in bases]
@@ -32,18 +38,24 @@ class BaseVar(BaseModel):
     hconfig: HConfigVar
 
 
-# @cache.cache(600)
-def get_bases(sublink_domain: str) -> list[BaseVar]:
+@cache.cache(600)
+def get_bases(sublink_domain: str, common_core_token: str = "") -> list[BaseVar]:
+    del common_core_token  # cache key only; selection is re-read from hconfig below
     proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).all()
     child_hconfigs: dict[int, HConfigVar] = get_all_hconfigs()
     domains: list[DomainIPVar] = get_availble_domains(sublink_domain)
     all_bases = []
     for p in proxies:
-        proxy_var = ClientBuilderProxyVar.from_custom_proxy(p, child_hconfigs[int(p.child_id)])
+        child_id = int(p.child_id or 0)
+        if not p.enable:
+            continue
+        if common_proxy_core_blocks(bool(p.is_common_proxy), p.server_core.value if p.server_core else None, hconfig(ConfigEnum.common_proxy_core, child_id)):
+            continue
+        proxy_var = ClientBuilderProxyVar.from_custom_proxy(p, child_hconfigs[child_id])
         proxy_var.domains = [d for d in domains if filter_domain_for_proxy(d, proxy_var)]
         base = BaseVar(
             proxy=proxy_var,
-            hconfig=child_hconfigs[int(p.child_id)],
+            hconfig=child_hconfigs[child_id],
         )
         all_bases.append(base)
 
@@ -51,29 +63,30 @@ def get_bases(sublink_domain: str) -> list[BaseVar]:
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
+    if proxy.slug == REALITY_TERMINATION_SLUG:
+        return d.is_reality()
+
     if d.custom_proxy_id == proxy.id:
         return True
-    if d.mode in proxy.domain_modes:
-        if d.download is None or d.download.mode in proxy.download_domain_modes:
-            return True
-
-    return False
+    if not d.is_reality() and d.custom_proxy_id is not None and d.custom_proxy_id != proxy.id:
+        return False
+    if not domain_ip_matches_modes(d, proxy.domain_modes):
+        return False
+    # Every DomainIPVar has a download copy of itself. Only a *different*
+    # download domain is constrained by download_domain_modes (xhttp).
+    if not proxy.download_domain_modes:
+        return True
+    if d.download is None or d.download.name == d.name:
+        return True
+    return domain_ip_matches_modes(d.download, proxy.download_domain_modes)
 
 
 def filter_proxy(base: BaseVar) -> bool:
     # additional_config is client-only and has no domain bindings.
-    if base.proxy.slug != "additional-config" and not base.proxy.domains and base.proxy.mode != CustomProxyMode.ip:
-        return False
-
     if base.proxy.slug == "additional-config":
         return True
 
-    proto_key = protocol_config_map.get(base.proxy.proto)
-    if proto_key is not None and base.hconfig.get(proto_key) is False:
-        return False
-
-    transport_key = transport_config_map.get(base.proxy.transport)
-    if transport_key is not None and base.hconfig.get(transport_key) is False:
+    if not base.proxy.domains and base.proxy.mode != CustomProxyMode.ip:
         return False
 
     return True

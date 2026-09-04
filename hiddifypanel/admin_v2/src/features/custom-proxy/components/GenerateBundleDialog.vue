@@ -37,6 +37,8 @@ import {
   detailFromSection,
 } from '@/shared/utils/render-error-detail'
 import RenderErrorDetailDialog from './RenderErrorDetailDialog.vue'
+import SublinkEditor from '@/features/utils/components/SublinkEditor.vue'
+import { parseSublinks, type PrettyLink } from '@/shared/utils/sublink-pretty'
 
 const props = defineProps<{
   visible: boolean
@@ -68,7 +70,7 @@ const customUa = ref('')
 const activeResultGroup = ref<'servers' | 'clients'>('servers')
 const activeDetailTab = ref('0')
 const activeXrayConfigByTab = ref<Record<string, number>>({})
-const sublinkView = ref<'raw' | 'uri' | 'base64'>('raw')
+const sublinkView = ref<'decoded' | 'raw'>('decoded')
 const configFormatView = ref<ConfigFormatView>('json')
 const errorDetailVisible = ref(false)
 const selectedErrorDetail = ref<RenderErrorDetail | null>(null)
@@ -97,9 +99,8 @@ const uaOptions = computed(() =>
 )
 
 const sublinkViewOptions = computed(() => [
+  { value: 'decoded', label: t('proxy.sublinkFormatDecoded') },
   { value: 'raw', label: t('proxy.sublinkFormatRaw') },
-  { value: 'uri', label: t('proxy.sublinkFormatUri') },
-  { value: 'base64', label: t('proxy.sublinkFormatBase64') },
 ])
 
 const configFormatOptions = computed(() => [
@@ -191,7 +192,7 @@ async function runGenerate() {
       activeResultGroup.value = 'clients'
       activeDetailTab.value = clientTabs.value[0]?.value ?? '0'
     }
-    sublinkView.value = 'raw'
+    sublinkView.value = 'decoded'
   } finally {
     loading.value = false
   }
@@ -283,7 +284,7 @@ function serverSectionForTab(tab: string): GeneratedSection | null | undefined {
 function displayText(section: GeneratedSection | null | undefined): string {
   if (!section) return ''
   if (isSublinkSection(section)) {
-    return sublinkDisplay(section.sublink_formats, sublinkView.value)
+    return section.sublink_formats.raw || section.rendered || ''
   }
   return formatSectionText(section, configFormatView.value, formatJsonValue, tryPrettyJson)
 }
@@ -322,28 +323,9 @@ function sectionHasDetail(section: GeneratedSection | null | undefined): boolean
   return Boolean(section?.error)
 }
 
-function sublinkDisplay(formats: SublinkFormats, view: 'raw' | 'uri' | 'base64'): string {
-  if (view === 'raw') {
-    return formats.raw || ''
-  }
-  if (view === 'uri') {
-    return JSON.stringify(
-      {
-        json: formats.vless_json,
-        uri: formats.vless_uri,
-      },
-      null,
-      2,
-    )
-  }
-  return JSON.stringify(
-    {
-      json: formats.vmess_json,
-      uri: formats.vmess_uri,
-    },
-    null,
-    2,
-  )
+function parsedSublinkLinks(section: GeneratedSection | null | undefined): PrettyLink[] {
+  if (!isSublinkSection(section)) return []
+  return parseSublinks(section.sublink_formats.raw || section.rendered || '')
 }
 
 watch(
@@ -368,12 +350,12 @@ watch(uaPresets, (list) => {
 watch(activeResultGroup, () => {
   const tabs = activeResultGroup.value === 'servers' ? serverTabs.value : clientTabs.value
   activeDetailTab.value = tabs[0]?.value ?? '0'
-  sublinkView.value = 'raw'
+  sublinkView.value = 'decoded'
   configFormatView.value = 'json'
 })
 
 watch(activeDetailTab, () => {
-  sublinkView.value = 'raw'
+  sublinkView.value = 'decoded'
   configFormatView.value = 'json'
 })
 </script>
@@ -382,7 +364,7 @@ watch(activeDetailTab, () => {
   <Dialog
     :visible="visible"
     modal
-    class="w-full max-w-3xl"
+    class="w-full max-w-5xl"
     :header="t('proxy.generateBundle')"
     :close-on-escape="!errorDetailVisible"
     @update:visible="emit('update:visible', $event)"
@@ -652,7 +634,13 @@ watch(activeDetailTab, () => {
                         class="w-full max-w-xs"
                       />
                     </div>
-                    <ScrollPanel class="config-scroll-panel" :style="{ width: '100%', height: '320px' }">
+                    <SublinkEditor
+                      v-if="isSublinkSection(clientSectionForTab(tab.value)) && sublinkView === 'decoded'"
+                      :links="parsedSublinkLinks(clientSectionForTab(tab.value))"
+                      :id-prefix="`bundle-${tab.value}-`"
+                      readonly
+                    />
+                    <ScrollPanel v-else class="config-scroll-panel" :style="{ width: '100%', height: '320px' }">
                       <LineNumberedCode :text="displayText(clientSectionForTab(tab.value))" />
                     </ScrollPanel>
                   </TabPanel>

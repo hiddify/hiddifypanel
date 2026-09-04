@@ -23,6 +23,7 @@ class TlsStore(db.Model):  # type: ignore
     private_key = Column(Text, nullable=False, default='')
     expires_at = Column(DateTime, nullable=True)
     valid_cert = Column(Boolean, default=False, nullable=False)
+    self_signed = Column(Boolean, default=False, nullable=False)
     issuer = Column(String(500), default='')
     fingerprint = Column(String(128), default='')
     auto_renew = Column(Boolean, default=True, nullable=False)
@@ -38,6 +39,7 @@ class TlsStore(db.Model):  # type: ignore
             'certificate': self.certificate or '',
             'expires_at': self.expires_at.isoformat() if self.expires_at else None,
             'valid_cert': bool(self.valid_cert),
+            'self_signed': bool(self.self_signed),
             'issuer': self.issuer or '',
             'fingerprint': self.fingerprint or '',
             'auto_renew': bool(self.auto_renew),

@@ -1,0 +1,7 @@
+############## L7 gateway proxy paths ##############
+{%- for proxy in ctx.proxies if proxy.mode == 'domains_l7_gateway' %}
+#{{proxy.slug}}
+/{{ proxy.path |ljust(30)}} tcp_{{proxy.id}}_{{ proxy.path | slugify |ljust(40)}}
+{%- endfor %}
+############## end of L7 gateway ##############
+

@@ -10,12 +10,7 @@ _CDN_MODES = {DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker}
 _DIRECT_MODES = {DomainType.direct, DomainType.old_xtls_direct, DomainType.dnstt}
 
 
-class _DomainLike(Protocol):
-    mode: DomainType
-    fake_mode: FakeMode
-
-
-def _domain_matches_bucket(domain: _DomainLike, bucket: str) -> bool:
+def _domain_matches_bucket(domain: DomainIPVar, bucket: str) -> bool:
     bucket = (bucket or "").strip().lower()
     if not bucket:
         return False
@@ -27,11 +22,11 @@ def _domain_matches_bucket(domain: _DomainLike, bucket: str) -> bool:
     if bucket in ("reality", "special"):
         return fm == FakeMode.reality
     if bucket == "direct":
-        return fm == FakeMode.valid and mode in (_DIRECT_MODES | {DomainType.sub_link_only})
+        return domain.mode == DomainType.direct
     if bucket == "relay":
-        return fm == FakeMode.valid and mode == DomainType.relay
+        return mode == DomainType.relay
     if bucket == "cdn":
-        return fm == FakeMode.valid and mode in _CDN_MODES
+        return mode in _CDN_MODES
     return False
 
 

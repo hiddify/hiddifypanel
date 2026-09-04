@@ -309,6 +309,8 @@
       "add": "افزودن",
       "back": "بازگشت",
       "cancel": "انصراف",
+      "copy": "کپی",
+      "copied": "کپی شد",
       "confirmDelete": "آیا از حذف این مورد مطمئن هستید؟",
       "delete": "حذف",
       "deleted": "با موفقیت حذف شد",
@@ -364,7 +366,8 @@
       "sectionNew": "جدید",
       "sectionV2": "جدید",
       "templateVariables": "متغیرهای قالب",
-      "templates": "قالب‌ها"
+      "templates": "قالب‌ها",
+      "utils": "ابزارها"
     },
     "proxy": {
       "addClient": "افزودن کلاینت",
@@ -484,6 +487,9 @@
       },
       "modeSettings": "حالت و مسیریابی",
       "name": "نام",
+      "needGlobalEnable": "برای فعال‌سازی این پروکسی باید ابتدا {names} را به‌صورت سراسری فعال کنید. می‌خواهید تنظیمات را در تب جدید باز کنید؟",
+      "cannotEnable": "امکان فعال‌سازی این پروکسی نیست",
+      "goToSettings": "رفتن به تنظیمات",
       "new": "پروکسی جدید",
       "noClientConfigs": "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید.",
       "outboundTagTemplate": "قالب تگ outbound",
@@ -510,6 +516,7 @@
       },
       "sublinkBase64Detail": "جزئیات Base64",
       "sublinkFormat": "فرمت لینک",
+      "sublinkFormatDecoded": "فیلدهای رمزگشایی‌شده",
       "sublinkFormatBase64": "فرمت Base64",
       "sublinkFormatRaw": "لینک تولیدشده",
       "sublinkFormatRawLink": "لینک خام",
@@ -596,6 +603,42 @@
       "loadValues": "بارگذاری مقادیر فعلی",
       "name": "نام",
       "skipHint": "خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی رندر نشود"
+    },
+    "utils": {
+      "addQuery": "افزودن پارامتر",
+      "base64Tab": "Base64",
+      "decode": "رمزگشایی",
+      "emptyLinks": "لینک‌ها را سمت چپ بچسبانید تا اینجا نمایش داده شوند.",
+      "encode": "رمزگذاری",
+      "extraHint": "JSON رمزگشایی‌شده از URL. برای حذف extra از لینک خالی بگذارید.",
+      "extraJson": "extra (JSON)",
+      "fragment": "Fragment",
+      "input": "ورودی",
+      "links": "لینک‌ها",
+      "linksPlaceholder": "یک یا چند لینک vless://، vmess://، ss://، trojan:// (یا سابسکریپشن base64) بچسبانید",
+      "method": "متد",
+      "noQuery": "پارامتر کوئری نیست. با افزودن پارامتر یکی اضافه کنید.",
+      "output": "خروجی",
+      "pass": "رمز",
+      "path": "مسیر",
+      "port": "پورت",
+      "pretty": "رمزگشایی‌شده",
+      "protocol": "پروتکل",
+      "queryKey": "کلید",
+      "queryParams": "پارامترهای کوئری",
+      "queryValue": "مقدار",
+      "server": "سرور",
+      "sublinkHint": "لینک‌ها را سمت چپ بچسبانید. سمت راست فیلدهای رمزگشایی‌شده را نشان می‌دهد. پارامترهای کوئری ردیف‌های قابل ویرایش هستند و extra به صورت JSON است. تغییر سمت راست لینک را بازنویسی می‌کند.",
+      "sublinkTab": "ساب‌لینک",
+      "subtitle": "رمزگذاری، رمزگشایی و بررسی لینک‌ها فقط در مرورگر — چیزی به سرور فرستاده نمی‌شود.",
+      "swap": "جابه‌جا",
+      "title": "ابزارها",
+      "unwrappedSubscription": "سابسکریپشن base64 شناسایی و به لینک‌های جداگانه تبدیل شد.",
+      "urlSafe": "URL-safe",
+      "urlTab": "URL",
+      "user": "کاربر",
+      "vmessJson": "JSON وی‌مس",
+      "vmessObject": "JSON وی‌مس باید یک آبجکت باشد"
     },
     "theme": {
       "dark": "حالت تاریک",
@@ -787,6 +830,13 @@
     "cloudflare": {
       "description": "لطفاً <a href='https://github.com/hiddify/hiddify-config/wiki/%DA%AF%D8%B1%D9%81%D8%AA%D9%86-%DA%A9%D9%84%DB%8C%D8%AF-%D8%AA%D9%88%D8%B3%D8%B9%D9%87-%DA%A9%D9%84%D9%88%D8%AF%D9%81%D9%84%D8%B1' target='_blank'>دستورالعمل</a> را دنبال کنید و کلید توسعه کلودفلر را جای‌گذاری کنید",
       "label": "🔑 کلید توسعه کلودفلر"
+    },
+    "common_proxy_core": {
+      "description": "اگر پروتکل روی هر دو هسته باشد، فقط هسته انتخاب‌شده فعال می‌ماند. هر دو را برای فعال ماندن هر دو انتخاب کنید.",
+      "label": "🎛️ هسته پروکسی مشترک",
+      "xray": "Xray",
+      "hiddify_core": "Hiddify Core (singbox)",
+      "both": "هر دو"
     },
     "core_type": {
       "description": "☢️ XRay : یک هسته کامل است\n<br>\n📦 Singbox : توسعه یافته توسط SagerNet. همچنین هسته خوبی است",

@@ -212,7 +212,6 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["exec"] = _jinja_exec
     env.globals["ConfigEnum"] = ConfigEnum
     env.globals["_"] = _jinja_gettext
-    env.filters["i18n"] = _jinja_gettext
     env.filters["jsbool"] = jsbool
     env.filters["tojson"] = _jinja_tojson
     env.filters["asdict"] = _to_json_value

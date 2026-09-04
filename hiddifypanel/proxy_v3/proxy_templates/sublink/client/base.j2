@@ -1,7 +1,4 @@
 {% include 'sublink/subscription_header' %}
 {% if ctx.user.is_active %}
-    {% block links %}
-    {% endblock %}
-{%else%}
-    #no active user
-{%endif%}
+{{ links }}
+{% endif %}

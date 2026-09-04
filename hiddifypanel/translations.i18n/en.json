@@ -309,6 +309,8 @@
       "add": "Add",
       "back": "Back",
       "cancel": "Cancel",
+      "copy": "Copy",
+      "copied": "Copied",
       "confirmDelete": "Are you sure you want to delete this item?",
       "delete": "Delete",
       "deleted": "Deleted successfully",
@@ -364,7 +366,8 @@
       "sectionNew": "New",
       "sectionV2": "New",
       "templateVariables": "Template Variables",
-      "templates": "Templates"
+      "templates": "Templates",
+      "utils": "Utils"
     },
     "proxy": {
       "addClient": "Add client",
@@ -484,6 +487,9 @@
       },
       "modeSettings": "Mode & routing",
       "name": "Name",
+      "needGlobalEnable": "You need to enable {names} globally to enable this proxy. Do you want to open settings?",
+      "cannotEnable": "Cannot enable this proxy",
+      "goToSettings": "Go to settings",
       "new": "New Proxy",
       "noClientConfigs": "No client configs yet. Add a client to get started.",
       "outboundTagTemplate": "Outbound tag template",
@@ -510,6 +516,7 @@
       },
       "sublinkBase64Detail": "Base64 detail",
       "sublinkFormat": "Link format",
+      "sublinkFormatDecoded": "Decoded fields",
       "sublinkFormatBase64": "Base64 format",
       "sublinkFormatRaw": "Rendered link",
       "sublinkFormatRawLink": "Raw link",
@@ -596,6 +603,42 @@
       "loadValues": "Load current values",
       "name": "Name",
       "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
+    },
+    "utils": {
+      "addQuery": "Add query",
+      "base64Tab": "Base64",
+      "decode": "Decode",
+      "emptyLinks": "Paste share links on the left to inspect them here.",
+      "encode": "Encode",
+      "extraHint": "URL-decoded JSON. Leave empty to omit extra from the link.",
+      "extraJson": "extra (JSON)",
+      "fragment": "Name",
+      "input": "Input",
+      "links": "Share links",
+      "linksPlaceholder": "Paste one or more vless://, vmess://, ss://, trojan:// links (or a base64 subscription)",
+      "method": "Method",
+      "noQuery": "No query parameters. Use Add query to insert one.",
+      "output": "Output",
+      "pass": "Pass",
+      "path": "UrlPath",
+      "port": "Port",
+      "pretty": "Decoded",
+      "protocol": "Protocol",
+      "queryKey": "Key",
+      "queryParams": "Query parameters",
+      "queryValue": "Value",
+      "server": "Server",
+      "sublinkHint": "Paste links on the left. The right side shows decoded fields. Query params are editable rows; extra is JSON. Changes on the right rewrite the links.",
+      "sublinkTab": "Sublink",
+      "subtitle": "Encode, decode, and inspect share links in the browser — nothing is sent to the server.",
+      "swap": "Swap",
+      "title": "Utils",
+      "unwrappedSubscription": "Detected a base64 subscription and decoded it into individual links.",
+      "urlSafe": "URL-safe",
+      "urlTab": "URL",
+      "user": "User",
+      "vmessJson": "vmess JSON",
+      "vmessObject": "vmess JSON must be an object"
     },
     "theme": {
       "dark": "Dark mode",
@@ -787,6 +830,13 @@
     "cloudflare": {
       "description": "Please follow <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>the instruction</a> and paste the Cloudflare API Key",
       "label": "🔑 Cloudflare API"
+    },
+    "common_proxy_core": {
+      "description": "When a protocol exists on both Xray and Hiddify Core, only the selected core stays enabled. Choose Both to keep both.",
+      "label": "🎛️ Common Proxy Core",
+      "xray": "Xray",
+      "hiddify_core": "Hiddify Core (singbox)",
+      "both": "Both"
     },
     "core_type": {
       "description": "☢️ XRay : Is a Complete Core\n<br>\n📦 Singbox : Developed by SagerNet. It is also a good core",

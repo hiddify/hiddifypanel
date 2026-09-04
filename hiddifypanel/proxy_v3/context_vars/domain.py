@@ -53,7 +53,9 @@ class DomainIPVar(BaseModel):
 
     @property
     def allow_insecure(self) -> bool:
-        return (self.cert is not None) and not self.cert.valid_cert
+        if self.cert is None:
+            return False
+        return (not self.cert.valid_cert) or self.cert.self_signed
 
     @classmethod
     def from_name(cls, name: str, *, child_id: int = 0) -> DomainIPVar:

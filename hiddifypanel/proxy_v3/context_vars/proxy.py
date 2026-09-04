@@ -62,6 +62,9 @@ class ProxyVar(BaseModel):
 
     domain_modes: list[str] = Field(default_factory=list)
     download_domain_modes: list[str] = Field(default_factory=list)
+    categories: list[str] = Field(default_factory=list)
+    is_common_proxy: bool = False
+    server_core: str = ""
 
     domains: list[DomainIPVar] = Field(default_factory=list)
 
@@ -135,12 +138,15 @@ class ProxyVar(BaseModel):
             download_tls_layer=proxy.download_tls_layer,  # type: ignore
             domain_modes=[str(m) for m in (proxy.domain_modes or [])],
             download_domain_modes=[str(m) for m in (proxy.download_domain_modes or [])],
-            proto=proxy.effective_proto(),
+            categories=[str(c) for c in (proxy.categories or [])],
+            proto=proxy.proto,
             transport=proxy.transport or None,  # type: ignore
             db_tcp_ports=db_tcp_ports,
             db_udp_ports=db_udp_ports,
             tcp_udp=tcp_udp,  # type: ignore
             slug=proxy.slug or "",
+            is_common_proxy=bool(getattr(proxy, "is_common_proxy", False)),
+            server_core=str(proxy.server_core.value if getattr(proxy, "server_core", None) else ""),
         )
 
     def direct_port_access(self) -> bool:

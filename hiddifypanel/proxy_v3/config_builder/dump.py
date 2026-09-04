@@ -8,12 +8,34 @@ from pathlib import Path
 from typing import Any
 
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
-from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
+from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4HttpServerDriver, RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
+from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks
+
+
+def _common_proxy_skip_ctx(ctx: Any) -> bool:
+    proxy = getattr(ctx, "proxy", None)
+    hcfg = getattr(ctx, "hconfig", None)
+    return common_proxy_core_blocks(
+        bool(getattr(proxy, "is_common_proxy", False)),
+        getattr(proxy, "server_core", None),
+        getattr(hcfg, "common_proxy_core", None),
+    )
+
+
+def _common_proxy_skip_client_core(ctx: Any, client_core: str) -> bool:
+    proxy = getattr(ctx, "proxy", None)
+    hcfg = getattr(ctx, "hconfig", None)
+    return common_proxy_core_blocks(
+        bool(getattr(proxy, "is_common_proxy", False)),
+        client_core,
+        getattr(hcfg, "common_proxy_core", None),
+    )
+
 
 SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "hiddify-core": HiddifyCoreServerDriver,
@@ -21,6 +43,7 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "haproxy": HaproxyServerDriver,
     "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
+    "rust-rpxy-l4-http": RustRpxyL4HttpServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -29,6 +52,7 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("haproxy", "haproxy.cfg"),
     ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
+    ("rust-rpxy-l4-http", "rust-rpxy-l4-http.toml"),
 )
 
 
@@ -78,7 +102,7 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
     elif core == "haproxy":
         stats["frontends"] = len(re.findall(r"(?m)^\s*frontend\s+\S+", text))
         stats["backends"] = len(re.findall(r"(?m)^\s*backend\s+\S+", text))
-    elif core == "rust-rpxy-l4":
+    elif core in ("rust-rpxy-l4", "rust-rpxy-l4-http"):
         stats["services"] = len(re.findall(r"(?m)^\s*\[protocols\.[^\]]+\]", text))
 
     return stats
@@ -656,4 +680,42 @@ def _build_sublink_client_config(child_id: int, contexts: list[Any]) -> tuple[st
             text = line.strip().strip('"')
             if text and "://" in text:
                 links.append(text)
-    return "\n".join(links), messages
+    links_text = "\n".join(links)
+    if not contexts:
+        return links_text, messages
+    try:
+        from hiddifypanel.models.custom_proxy import TemplateCore
+        from hiddifypanel.models.proxy_base_config import BaseConfigSide
+        from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
+        from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+
+        base = resolve_base_config_content(
+            child_id,
+            BaseConfigSide.client,
+            TemplateCore.sublink,
+            TemplateVersion("0.0.0"),
+        )
+        base = extract_base_config_shell(base) or base
+        base = re.sub(
+            r"\{%\s*block\s+links\s*%\}.*?\{%\s*endblock\s*%\}",
+            "{{ links }}",
+            base or "",
+            flags=re.DOTALL,
+        )
+        if "{{ links }}" in (base or "") or "{{links}}" in (base or ""):
+            compose_ctx = make_jinja_context(contexts[0])
+            compose_ctx["links"] = links_text
+            wrapped = render_section(base, child_id, compose_ctx, as_json_object=False, parse_json=False)
+            if wrapped.error:
+                messages.append(
+                    MessageModel(
+                        level="error",
+                        message=f"sublink base: {wrapped.error}",
+                        data={"details": wrapped.error_detail.model_dump() if wrapped.error_detail else {}},
+                    )
+                )
+            elif wrapped.rendered and not wrapped.skipped:
+                return wrapped.rendered.strip(), messages
+    except Exception as exc:
+        messages.append(MessageModel(level="error", message=f"sublink base: {exc}", data={}))
+    return links_text, messages

@@ -18,9 +18,12 @@ protocol = "quic"
 target = ["127.0.0.1:902"]
 
 
-[protocols."tls_service0"]
+[protocols."tls_service"]
 protocol = "tls"
 target = ["127.0.0.1:901"]
+
+
+
 
 
 {% if ctx.hconfig.ssh_server_enable and ctx.hconfig.ssh_use_tls_port %}

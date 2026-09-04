@@ -16,6 +16,9 @@ class UserVar(BaseModel):
     username: str = ""
     id: int | None = None
     lang: str = ""
+    usage_limit_GB: float = 0.0
+    current_usage_GB: float = 0.0
+    expire_days: int = 0
     is_active: bool = True
     enable: bool = True
     ed25519_public_key: str = ""
@@ -49,7 +52,10 @@ class UserVar(BaseModel):
             username=user.username or user.name or "",
             id=user.id,
             lang=lang,
-            is_active=bool(getattr(user, "is_active", True)),
+            usage_limit_GB=float(user.usage_limit_GB or 0),
+            current_usage_GB=float(user.current_usage_GB or 0),
+            expire_days=int(user.remaining_days),
+            is_active=bool(user.is_active),
             enable=bool(user.enable),
             ed25519_public_key=user.ed25519_public_key or "",
             ed25519_private_key=user.ed25519_private_key or "",

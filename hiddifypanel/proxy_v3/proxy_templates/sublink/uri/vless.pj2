@@ -1,6 +1,6 @@
 {# https://github.com/XTLS/Xray-core/discussions/4877  #}
 {# https://github.com/XTLS/Xray-core/discussions/716  #}
-
+{#https://xray-checker.kutovoy.dev/configuration/subscription/#}
 {% for ctx in ctx.iter_ctx_domains() %}
   {% set proxy = ctx.proxy %}
   {% set uri = namespace(

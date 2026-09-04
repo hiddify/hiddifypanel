@@ -82,10 +82,11 @@ DOMAIN_CERT_KEYS: list[tuple[str, str]] = [
     ("cert_path", "TLS certificate file path"),
     ("key_path", "TLS private key file path"),
     ("verifyPeerCertByName", "Verify server certificate hostname"),
-    ("pinnedPeerCertSha256", "Pinned server cert public-key SHA-256 (base64)"),
-    ("public_key_sha256", "Server cert public-key SHA-256 (base64)"),
-    ("fingerprint", "Certificate public-key SHA-256 fingerprint (base64)"),
+    ("pinnedPeerCertSha256", "Xray pinnedPeerCertSha256: SHA-256 of the leaf cert (lowercase hex)"),
+    ("public_key_sha256", "sing-box certificate_public_key_sha256: SPKI SHA-256 (base64)"),
+    ("fingerprint", "Xray certificate SHA-256 fingerprint (lowercase hex)"),
     ("valid_cert", "Whether stored certificate is valid and not expired"),
+    ("self_signed", "Whether the certificate is self-signed"),
     ("expires_at", "Certificate expiry (ISO datetime)"),
     ("issuer", "Certificate issuer / CA name"),
     ("auto_renew", "Whether certificate is eligible for automatic renewal"),
@@ -116,6 +117,7 @@ USER_DICT_KEYS: list[tuple[str, str]] = [
     ("lang", "User language"),
     ("usage_limit_GB", "Traffic limit in GB"),
     ("current_usage_GB", "Current usage in GB"),
+    ("expire_days", "Days remaining until expiry"),
     ("package_days", "Package duration days"),
     ("mode", "Reset mode (daily, weekly, …)"),
     ("is_active", "Whether user can connect"),
@@ -344,12 +346,7 @@ def _domain_dict_from_db(
     else:
         server_ipv4 = server_ip or hutils.network.get_ip_str(4) or "203.0.113.1"
         server_ipv6 = hutils.network.get_ip_str(6) or "2001:db8::1"
-    port = (
-        domain_db.internal_port_special
-        or domain_db.internal_port_tuic
-        or domain_db.internal_port_hysteria2
-        or 443
-    )
+    port = domain_db.internal_port_special or domain_db.internal_port_tuic or domain_db.internal_port_hysteria2 or 443
     server = server_ip or extracted.get("server") or domain_db.domain
     base = domain_db.to_dict(dump_ports=True, dump_child_id=True)
     base.update(

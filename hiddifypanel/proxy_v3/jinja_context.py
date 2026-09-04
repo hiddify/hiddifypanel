@@ -28,6 +28,12 @@ class TemplateSkip(Exception):
 HIDDIFY_MANAGER_ROOT = "/opt/hiddify-manager"
 
 
+def fake_ip_for_sub_link() -> str:
+    from datetime import datetime
+
+    return datetime.now().strftime("%H.%M--%Y.%m.%d.time:%H%M")
+
+
 class HconfigsAccessor(dict):
     """Legacy panel settings dict for templates that still read hconfigs."""
 
@@ -73,6 +79,9 @@ def _user_var(user: User | UserVar | dict[str, Any] | None) -> UserVar:
             username=str(user.get("username") or user.get("name") or ""),
             id=user.get("id"),
             lang=str(user.get("lang") or ""),
+            usage_limit_GB=float(user.get("usage_limit_GB") or 0),
+            current_usage_GB=float(user.get("current_usage_GB") or 0),
+            expire_days=int(user.get("expire_days") or user.get("remaining_days") or user.get("package_days") or 0),
             enable=bool(user.get("enable", True)),
             is_active=bool(user.get("is_active", True)),
             ed25519_public_key=str(user.get("ed25519_public_key") or ""),
@@ -313,6 +322,7 @@ def build_template_context(
         "jsbool": jsbool,
         "ConfigEnum": ConfigEnum,
         "ljust": ljust,
+        "fake_ip_for_sub_link": fake_ip_for_sub_link(),
     }
 
     if server_side:
@@ -342,4 +352,5 @@ def build_template_context(
         "include_path": include_path,
         "jsbool": jsbool,
         "ConfigEnum": ConfigEnum,
+        "fake_ip_for_sub_link": fake_ip_for_sub_link(),
     }

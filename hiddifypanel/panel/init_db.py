@@ -18,7 +18,7 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 139
+MAX_DB_VERSION = 140
 
 
 def _drop_wip_proxy_tables() -> None:
@@ -40,8 +40,22 @@ def _drop_wip_proxy_tables() -> None:
     set_hconfig(ConfigEnum.db_version, 129)
 
 
-def _v133(child_id):
+def _v134(child_id):
     sync_builtin_presets(child_id)
+
+
+def _v133(child_id):
+    set_hconfig(ConfigEnum.vless_flow, value="xtls-rprx-vision")
+    vless_encryption, vless_decryption = hutils.crypto.vless_encryption_decryption(quantum=False)
+    set_hconfig(ConfigEnum.vless_encryption, vless_encryption)
+    set_hconfig(ConfigEnum.vless_decryption, vless_decryption)
+    if core_type := hconfig(ConfigEnum.core_type):
+        if core_type == "singbox":
+            add_config_if_not_exist(ConfigEnum.common_proxy_core, "hiddify_core")
+        elif core_type == "xray":
+            add_config_if_not_exist(ConfigEnum.common_proxy_core, "xray")
+    else:
+        add_config_if_not_exist(ConfigEnum.common_proxy_core, "both")
 
 
 def _v131(child_id):
@@ -89,6 +103,7 @@ def _v130(child_id):
     add_config_if_not_exist(ConfigEnum.mieru_enable, True)
     add_config_if_not_exist(ConfigEnum.snell_enable, True)
     add_config_if_not_exist(ConfigEnum.socks_enable, True)
+    add_config_if_not_exist(ConfigEnum.common_proxy_core, "both")
     if not hconfig(ConfigEnum.mieru_tcp_ports):
         _p = hutils.random.get_random_unused_port() or 30000
         add_config_if_not_exist(ConfigEnum.mieru_tcp_ports, ",".join(str(_p + i) for i in range(4)))
@@ -1120,7 +1135,7 @@ def upgrade_database():
 def init_db():
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 132, commit=True)
+    # set_hconfig(ConfigEnum.db_version, 133, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

@@ -1,0 +1,16 @@
+{# rust-rpxy-l4 HTTP gateway — port 80 to local HAProxy #}
+
+{% set http_ports = (["80"] + (ctx.hconfig.http_ports or "80").split(',')) | map('trim') | list | unique %}
+#listen_port = {{ http_ports[0] }}
+listen_port = 80
+listen_ipv6 = true
+tcp_backlog = 4096
+tcp_max_connections = 8192
+udp_max_connections = 2048
+tcp_send_proxy_protocol = "v2"
+
+tcp_target = ["127.0.0.1:801"] #use vless tcp none port
+
+[protocols."http_service"]
+protocol = "http"
+target = ["127.0.0.1:801"]

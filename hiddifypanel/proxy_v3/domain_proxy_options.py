@@ -54,7 +54,7 @@ def list_domain_proxy_options(
             CustomProxy.child_id == child_id,
             CustomProxy.slug == REALITY_TERMINATION_SLUG,
         ).first()
-        return [_proxy_payload(proxy)] if proxy else []
+        return [_proxy_payload(proxy)] if proxy and proxy.enable else []
 
     buckets = set(proxy_buckets_for_domain(mode, fake_mode))
     rows: list[CustomProxy] = []
@@ -63,7 +63,7 @@ def list_domain_proxy_options(
         CustomProxy.child_id == child_id,
     ).all():
         proxy_buckets = {str(m).strip().lower() for m in (proxy.domain_modes or [])}
-        if buckets & proxy_buckets:
+        if proxy.enable and buckets & proxy_buckets:
             rows.append(proxy)
 
     rows.sort(key=_proxy_sort_key)

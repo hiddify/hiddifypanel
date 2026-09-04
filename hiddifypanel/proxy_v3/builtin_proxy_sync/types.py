@@ -53,6 +53,7 @@ class CustomProxyPreset:
     sort_order: int = 0
     tcp_udp: InboundTcpUdp = InboundTcpUdp.both
     download_tcp_udp: InboundTcpUdp | None = None
+    is_common_proxy: bool = False
 
     def snapshot(self) -> CustomProxySnapshot:
         return CustomProxySnapshot.from_preset(self)
@@ -109,9 +110,7 @@ class CustomProxySnapshot:
             server_inbound_tcp_ports=list(server.inbound_tcp_ports),
             server_inbound_udp_ports=list(server.inbound_udp_ports),
             server_inbound_tcp_udp=preset.tcp_udp.value,
-            server_inbound_download_tcp_udp=(
-                preset.download_tcp_udp.value if preset.download_tcp_udp else None
-            ),
+            server_inbound_download_tcp_udp=(preset.download_tcp_udp.value if preset.download_tcp_udp else None),
             server_config=server.inbound_template,
             client_cores=tuple(ClientCoreSnapshot.from_preset_core(cc) for cc in preset.client_cores),
         )
@@ -123,7 +122,7 @@ class CustomProxySnapshot:
         return cls(
             custom_path=normalize_custom_path(row.custom_path),
             domain_modes=list(row.domain_modes or []),
-            transport=row.effective_transport().value if row.transport else None,
+            transport=row.transport.value if row.transport else None,
             tls_layer=row.tls_layer.value if row.tls_layer else None,
             l7_reverse_proto=row.l7_reverse_proto.value if row.l7_reverse_proto else None,
             download_tls_layer=row.download_tls_layer.value if row.download_tls_layer else None,
@@ -132,16 +131,8 @@ class CustomProxySnapshot:
             server_tag=str(effective_field(row, "server_tag") or row.slug or ""),
             server_inbound_tcp_ports=normalize_port_list(row.server_inbound_tcp_ports),
             server_inbound_udp_ports=normalize_port_list(row.server_inbound_udp_ports),
-            server_inbound_tcp_udp=(
-                row.server_inbound_tcp_udp.value
-                if row.server_inbound_tcp_udp
-                else InboundTcpUdp.both.value
-            ),
-            server_inbound_download_tcp_udp=(
-                row.server_inbound_download_tcp_udp.value
-                if row.server_inbound_download_tcp_udp
-                else None
-            ),
+            server_inbound_tcp_udp=(row.server_inbound_tcp_udp.value if row.server_inbound_tcp_udp else InboundTcpUdp.both.value),
+            server_inbound_download_tcp_udp=(row.server_inbound_download_tcp_udp.value if row.server_inbound_download_tcp_udp else None),
             server_config=row.effective_server_config_text(),
             client_cores=tuple(
                 ClientCoreSnapshot(

@@ -109,7 +109,7 @@ def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombinati
                 continue
             effective = _with_l3(combo, combo.l3, params=_xhttp_params(upload, download))
             layer = tls_layer_for_xhttp_alpn(upload, reality=reality)
-            l7 = "h2"
+            l7 = _l7_for_xhttp_alpn(upload)
             variants.append((effective, layer, upload, download, l7))
         return variants
 
@@ -132,6 +132,16 @@ def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombinati
     layer = tls_layer_from_l3(combo.l3)
     l7 = _default_l7(transport, layer) if layer == "http" else None
     return [(combo, layer, None, None, l7)]
+
+
+def _l7_for_xhttp_alpn(alpn: str | None) -> str:
+    """HAProxy reverse-proto for the xhttp *upload* direction."""
+    tag = str(alpn or "").lower()
+    if tag in ("http", "tls_h1", "h1"):
+        return "h1"
+    if tag in ("tls_h3", "h3"):
+        return "h3"
+    return "h2"
 
 
 def _default_l7(transport: str, layer: str) -> str | None:

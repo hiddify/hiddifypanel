@@ -49,6 +49,11 @@ const routes = [
         component: () => import('@/features/template-variables/views/TemplateVariablesView.vue'),
       },
       {
+        path: 'utils',
+        name: 'utils',
+        component: () => import('@/features/utils/views/UtilsView.vue'),
+      },
+      {
         path: 'base-configs',
         name: 'base-config-list',
         component: () => import('@/features/base-config/views/BaseConfigListView.vue'),

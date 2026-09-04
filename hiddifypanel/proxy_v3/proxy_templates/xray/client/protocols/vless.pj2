@@ -5,8 +5,8 @@
     "port": {{ ctx.proxy.port }},
     "users": [{
       "id": "{{ ctx.user.uuid }}",
-      "encryption": "none",
-      "flow": "{% if ctx.proxy.is_reality and ctx.proxy.transport == 'tcp' %}{{ ctx.hconfig.vless_flow or 'xtls-rprx-vision' }}{% else %}{{ ctx.hconfig.vless_flow }}{% endif %}",
+      "encryption": "{{ctx.hconfig.vless_encryption}}",
+      "flow": "{{ ctx.hconfig.vless_flow }}",
       "level": 8
     }]
   }]

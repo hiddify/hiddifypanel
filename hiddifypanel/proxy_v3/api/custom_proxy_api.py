@@ -54,6 +54,24 @@ from .custom_proxy_schema import (
 )
 
 
+def _parent_enable_conflict(proxy: CustomProxy) -> dict:
+    from flask_babel import gettext as _
+
+    blocked = proxy.blocked_parent_enables()
+    names = ", ".join(item.get("label") or item.get("key") or "" for item in blocked)
+    return {
+        "message": _("You need to enable %(names)s globally to enable this proxy.", names=names),
+        "blocked_by": blocked,
+        "settings_url": _parent_enable_settings_url(),
+    }
+
+
+def _parent_enable_settings_url() -> str:
+    from hiddifypanel.hutils.flask import hurl_for
+
+    return hurl_for("admin.ProxyAdmin:index")
+
+
 def _child_id() -> int:
     return g.child.id if g.child else 0
 
@@ -202,7 +220,8 @@ class CustomProxyApi(MethodView):
         merged.update(data)
         merged["id"] = proxy_id
         merged = _prepare_create_data(merged)
-        proxy = CustomProxy.add_or_update(child_id=_child_id(), **merged)
+
+        proxy = CustomProxy.add_or_update(**merged)
         return proxy.to_dict()
 
     def delete(self, proxy_id: int):
@@ -223,6 +242,9 @@ class CustomProxyEnableApi(MethodView):
     @app.output(CustomProxySchema)  # type: ignore
     def patch(self, proxy_id: int, data):
         proxy = _get_proxy_or_404(proxy_id)
+        if data["enable"] and proxy.blocked_parent_enables():
+            conflict = _parent_enable_conflict(proxy)
+            abort(409, conflict["message"], extra_data=conflict)
         proxy.enable = data["enable"]
         from hiddifypanel.database import db
 
@@ -395,6 +417,7 @@ class CustomProxyMetaApi(MethodView):
             "default_sublink_link": default_sublink_link_template(),
             "example_user_agents": EXAMPLE_USER_AGENTS,
             "tcp_udp_options": [p.value for p in InboundTcpUdp],
+            "parent_enable_settings_url": _parent_enable_settings_url(),
         }
 
 

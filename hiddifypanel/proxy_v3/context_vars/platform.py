@@ -38,10 +38,17 @@ class PlatformVar(BaseModel):
         app_group = cls._detect_app_group(raw, info, app)
         app_version = cls._detect_app_version(raw, info, app, app_group)
         group_version = cls._detect_group_version(info, app_group)
+
         os_version = ".".join(str(x) for x in (info.get("os_version") or []) if x) or ""
         singbox_version = ".".join(str(x) for x in (info.get("singbox_version") or []) if x) or ""
         hiddify_version = ".".join(str(x) for x in (info.get("hiddify_version") or []) if x) or ""
         xray_version = ".".join(str(x) for x in (info.get("xray_version") or []) if x) or ""
+        if app == "v2rayn" and xray_version == "" and app_version:
+            if TemplateVersion(app_version) >= "7.20.0":
+                xray_version = "26.3.27"
+            else:
+                xray_version = "25.12.31"
+
         var = cls(
             os_version=os_version,
             root_access=bool(info.get("root_access", False)),
@@ -105,6 +112,10 @@ class PlatformVar(BaseModel):
             return "singbox"
         if "xray" in lowered:
             return "xray"
+        if "v2rayng" in lowered:
+            return "v2rayng"
+        if "v2rayn" in lowered:
+            return "v2rayn"
         return "unknown"
 
     @staticmethod
@@ -139,6 +150,7 @@ class PlatformVar(BaseModel):
 
     @staticmethod
     def _detect_group_version(info: dict[str, Any], group: str) -> str:
+
         if group == "singbox" and info.get("singbox_version"):
             return ".".join(str(x) for x in info["singbox_version"])
         if group == "xray" and info.get("v2rayng_version"):

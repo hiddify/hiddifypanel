@@ -5,8 +5,7 @@ from pathlib import Path
 
 from .paths import FRAGMENT_CORES, FRAGMENT_KINDS, TEMPLATES_ROOT
 
-# hiddify-core uses server|client/stream/; xray uses common/streams/.
-_HIDDIFY_KIND_ALIASES = {"streams": "stream"}
+_STREAM_KIND_ALIASES = {"stream": "streams", "streams": "stream"}
 
 
 def normalize_fragment(content: str) -> str:
@@ -15,15 +14,25 @@ def normalize_fragment(content: str) -> str:
     return text.strip()
 
 
+def _stream_kind_alias_slug(slug: str) -> str:
+    parts = slug.split("/")
+    if len(parts) >= 3 and parts[2] in _STREAM_KIND_ALIASES:
+        aliased = parts.copy()
+        aliased[2] = _STREAM_KIND_ALIASES[parts[2]]
+        return "/".join(aliased)
+    return slug
+
+
 def slug_to_path(slug: str) -> Path:
     """Map template slug to file under proxy_templates/ (.pj2 or .j2)."""
-    pj2 = TEMPLATES_ROOT / f"{slug}.pj2"
-    if pj2.is_file():
-        return pj2
-    j2 = TEMPLATES_ROOT / f"{slug}.j2"
-    if j2.is_file():
-        return j2
-    return pj2
+    for candidate in (slug, _stream_kind_alias_slug(slug)):
+        pj2 = TEMPLATES_ROOT / f"{candidate}.pj2"
+        if pj2.is_file():
+            return pj2
+        j2 = TEMPLATES_ROOT / f"{candidate}.j2"
+        if j2.is_file():
+            return j2
+    return TEMPLATES_ROOT / f"{slug}.pj2"
 
 
 def load_template_slug(slug: str, *, normalize: bool = True) -> str:
@@ -34,24 +43,14 @@ def load_template_slug(slug: str, *, normalize: bool = True) -> str:
     return normalize_fragment(text) if normalize and path.suffix == ".pj2" else text.strip()
 
 
-def _normalize_kind(core: str, kind: str) -> str:
-    if core == "hiddify-core":
-        return _HIDDIFY_KIND_ALIASES.get(kind, kind)
-    return kind
-
-
 def _fragment_folder(core: str, kind: str, side: str = "server") -> Path:
-    kind = _normalize_kind(core, kind)
-    if core == "hiddify-core":
-        return TEMPLATES_ROOT / core / side / kind
-    return TEMPLATES_ROOT / core / "common" / kind
+    return TEMPLATES_ROOT / core / side / kind
 
 
 def fragment_path(core: str, kind: str, name: str, side: str = "server") -> Path:
     if core not in FRAGMENT_CORES:
         raise ValueError(f"Unknown core: {core}")
-    kind = _normalize_kind(core, kind)
-    if kind not in FRAGMENT_KINDS and kind not in ("stream", "tls"):
+    if kind not in FRAGMENT_KINDS and kind not in ("streams", "tls"):
         raise ValueError(f"Unknown fragment kind: {kind}")
     return _fragment_folder(core, kind, side) / f"{name}.pj2"
 
@@ -61,14 +60,14 @@ def load_fragment(core: str, kind: str, name: str, side: str = "server") -> str:
 
 
 def fragment_slug(core: str, kind: str, name: str, side: str = "server") -> str:
-    kind = _normalize_kind(core, kind)
-    if core == "hiddify-core":
-        return f"{core}/{side}/{kind}/{name}"
-    return f"{core}/common/{kind}/{name}"
+    return f"{core}/{side}/{kind}/{name}"
 
 
 def list_fragments(core: str, kind: str, side: str = "server") -> list[str]:
     folder = _fragment_folder(core, kind, side)
+    if not folder.is_dir():
+        alt = _STREAM_KIND_ALIASES.get(kind)
+        folder = _fragment_folder(core, alt, side) if alt else folder
     if not folder.is_dir():
         return []
     return sorted(p.stem for p in folder.glob("*.pj2"))

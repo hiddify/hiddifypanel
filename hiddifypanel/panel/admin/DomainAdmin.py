@@ -240,6 +240,8 @@ class DomainAdmin(AdminLTEModelView):
                 proxy_buckets = {str(m).strip().lower() for m in (proxy.domain_modes or [])}
                 if not buckets & proxy_buckets:
                     raise ValidationError(_("Selected proxy does not support this domain mode combination"))
+            else:
+                model.custom_proxy_id = None
 
         cloudflare_updated = self._update_cloudflare(model, ipv4_list, ipv6_list)
 

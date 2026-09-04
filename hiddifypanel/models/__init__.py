@@ -1,4 +1,4 @@
-from .config_enum import ApplyMode, ConfigCategory, ConfigEnum, Lang, LogLevel, MieruHandshake, MieruMultiplexing, PanelMode
+from .config_enum import ApplyMode, CommonProxyCore, ConfigCategory, ConfigEnum, Lang, LogLevel, MieruHandshake, MieruMultiplexing, PanelMode
 from .role import AccountType, Role
 from .base_account import BaseAccount
 from .admin import AdminMode, AdminUser

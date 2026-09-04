@@ -5,6 +5,7 @@ from typing import Any
 
 from slugify import slugify
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import JSON
 from strenum import StrEnum
@@ -307,7 +308,7 @@ class CustomProxy(db.Model):  # type: ignore
     child_id = Column(Integer, ForeignKey("child.id"), default=0, nullable=False)
     name = Column(String(200), nullable=False)
     slug = Column(String(200), nullable=False)
-    enable = Column(Boolean, default=True, nullable=False)
+    _enable = Column("enable", Boolean, default=True, nullable=False)
     mode = Column(Enum(CustomProxyMode), nullable=False)
     proto = Column(Enum(ProxyProto), nullable=True)
     transport = Column(Enum(CustomProxyTransport), nullable=True)
@@ -329,6 +330,7 @@ class CustomProxy(db.Model):  # type: ignore
     server_override = Column(Boolean, default=False, nullable=False)
     sort_order = Column(Integer, default=0)
     is_builtin = Column(Boolean, default=False, nullable=False)
+    is_common_proxy = Column(Boolean, default=False, nullable=False, server_default="0")
 
     download_tls_layer = Column(Enum(TlsLayer), nullable=True)
     download_domain_modes = Column(JSON, default=list)
@@ -347,16 +349,6 @@ class CustomProxy(db.Model):  # type: ignore
             return str(effective_field(self, "server_config") or "")
         return self.server_config or ""
 
-    def effective_proto(self) -> ProxyProto:
-        if self.proto:
-            return self.proto
-        return infer_proto_from_categories(self.categories)
-
-    def effective_transport(self) -> CustomProxyTransport:
-        if self.transport:
-            return self.transport
-        return infer_transport_from_categories(self.categories)
-
     def effective_server_tcp_udp(self) -> InboundTcpUdp:
         """Firewall/ports view: for xhttp, union of upload (tcp_udp) and download."""
         if uses_xhttp_download_settings(self):
@@ -366,6 +358,47 @@ class CustomProxy(db.Model):  # type: ignore
                 return InboundTcpUdp.both
             return upload
         return self.server_inbound_tcp_udp or InboundTcpUdp.both
+
+    @hybrid_property
+    def enable(self) -> bool:
+        return bool(self._enable) and not self.blocked_parent_enables()
+
+    @enable.inplace.setter
+    def _set_enable(self, value: bool) -> None:
+        self._enable = bool(value)
+
+    @enable.inplace.expression
+    def _enable_expression(cls):
+        return cls._enable
+
+    def blocked_parent_enables(self) -> list[dict[str, str]]:
+        from flask_babel import gettext
+
+        def _(text: str) -> str:
+            try:
+                return gettext(text)
+            except Exception:
+                # print(e)
+                return text
+
+        from hiddifypanel.models.config import hconfig
+        from hiddifypanel.models.config_enum import ConfigEnum
+        from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, parent_enable_keys_for, parent_enable_off
+
+        child_id = int(self.child_id or 0)
+
+        def flag(key: ConfigEnum) -> bool | None:
+            value = hconfig(key, child_id)
+            return value if isinstance(value, bool) else None
+
+        keys = parent_enable_off(parent_enable_keys_for(self), flag)
+        blocked = [{"key": key.name, "label": str(_(f"config.{key.name}.label"))} for key in keys]
+        if common_proxy_core_blocks(bool(self.is_common_proxy), self.server_core.value if self.server_core else None, hconfig(ConfigEnum.common_proxy_core, child_id)):
+            blocked.append({"key": ConfigEnum.common_proxy_core.name, "label": str(_(f"config.{ConfigEnum.common_proxy_core.name}.label"))})
+        return blocked
+
+    def is_effectively_enabled(self) -> bool:
+        return bool(self.enable)
 
     def to_dict(self) -> dict[str, Any]:
         from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
@@ -387,15 +420,19 @@ class CustomProxy(db.Model):  # type: ignore
             }
             for row in self.client_cores
         ]
+        blocked = self.blocked_parent_enables()
+        stored_enable = bool(self._enable)
         return {
             "id": self.id,
             "child_id": self.child_id,
             "name": self.name,
             "slug": self.slug,
-            "enable": bool(self.enable),
+            "enable": stored_enable,
+            "effective_enable": stored_enable and not blocked,
+            "blocked_by": blocked,
             "mode": self.mode.value if self.mode else None,
-            "proto": self.effective_proto().value,
-            "transport": self.effective_transport().value,
+            "proto": self.proto.value,
+            "transport": self.transport.value,
             "tls_layer": self.tls_layer.value if self.tls_layer else None,
             "l7_reverse_proto": self.l7_reverse_proto.value if self.l7_reverse_proto else None,
             "download_tls_layer": self.download_tls_layer.value if self.download_tls_layer else None,
@@ -420,6 +457,7 @@ class CustomProxy(db.Model):  # type: ignore
             "client_override": any((self.builtin_overrides or {}).get(client_override_key(row.core.value)) for row in self.client_cores),
             "sort_order": self.sort_order or 0,
             "is_builtin": bool(self.is_builtin),
+            "is_common_proxy": bool(self.is_common_proxy),
             "client_cores": [row.core.value for row in self.client_cores if row.core],
             "server_core": self.server_core.value if self.server_core else None,
         }
@@ -443,6 +481,7 @@ class CustomProxy(db.Model):  # type: ignore
             dbproxy.child_id = child_id
             dbproxy.is_builtin = bool(data.get("is_builtin", False))
             dbproxy.server_override = bool(data.get("server_override", False))
+            dbproxy.is_common_proxy = bool(data.get("is_common_proxy", False))
             db.session.add(dbproxy)
 
         if dbproxy.is_builtin:
@@ -464,8 +503,6 @@ class CustomProxy(db.Model):  # type: ignore
                 dbproxy.proto = infer_proto_from_categories(data.get("categories") or dbproxy.categories)
             if "transport" in data and data.get("transport") not in (None, ""):
                 dbproxy.transport = _parse_transport(data.get("transport"))
-            elif not dbproxy.transport:
-                dbproxy.transport = infer_transport_from_categories(data.get("categories") or dbproxy.categories)
 
             from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general, apply_server_override
             from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
@@ -480,6 +517,8 @@ class CustomProxy(db.Model):  # type: ignore
                 dbproxy.name = data["name"]
             if "enable" in data:
                 dbproxy.enable = bool(data["enable"])
+            if "is_common_proxy" in data:
+                dbproxy.is_common_proxy = bool(data["is_common_proxy"])
             if "categories" in data:
                 dbproxy.categories = list(data.get("categories") or [])
             if "builtin_overrides" in data:
@@ -537,8 +576,7 @@ class CustomProxy(db.Model):  # type: ignore
             dbproxy.proto = infer_proto_from_categories(data.get("categories") or dbproxy.categories)
         if "transport" in data and data.get("transport") not in (None, ""):
             dbproxy.transport = _parse_transport(data.get("transport"))
-        elif not dbproxy.transport:
-            dbproxy.transport = infer_transport_from_categories(data.get("categories") or dbproxy.categories)
+
         if "tls_layer" in data and data.get("tls_layer") not in (None, ""):
             dbproxy.tls_layer = _parse_tls_layer(data.get("tls_layer"))
         if "l7_reverse_proto" in data and data.get("l7_reverse_proto") not in (None, ""):
@@ -701,18 +739,6 @@ def normalize_custom_path(path: str | None) -> str:
     return (path or "").strip().lstrip("/")
 
 
-def infer_proto_from_categories(categories: list[str] | None) -> ProxyProto:
-    for tag in categories or []:
-        key = _normalize_proto_key(str(tag).strip().lower())
-        if not key:
-            continue
-        try:
-            return ProxyProto(key)
-        except ValueError:
-            continue
-    return ProxyProto.vless
-
-
 def _normalize_proto_key(value: str) -> str:
     aliases = {"ss": "shadowsocks"}
     return aliases.get(value, value)
@@ -728,18 +754,6 @@ _TRANSPORT_TAG_ALIASES: dict[str, CustomProxyTransport] = {
     "udp": CustomProxyTransport.other,
     "custom": CustomProxyTransport.other,
 }
-
-
-def infer_transport_from_categories(categories: list[str] | None) -> CustomProxyTransport:
-    for tag in categories or []:
-        key = str(tag).strip().lower()
-        if key in _TRANSPORT_TAG_ALIASES:
-            return _TRANSPORT_TAG_ALIASES[key]
-        try:
-            return _parse_transport(key)
-        except ValueError:
-            continue
-    return CustomProxyTransport.tcp
 
 
 def _parse_transport(value: Any) -> CustomProxyTransport:
@@ -835,8 +849,7 @@ def validate_tls_layer_domain_modes(tls_layer: TlsLayer | None, domain_modes: li
 
 
 def uses_xhttp_download_settings(proxy: CustomProxy) -> bool:
-    transport = proxy.effective_transport()
-    return transport == CustomProxyTransport.xhttp
+    return proxy.transport == CustomProxyTransport.xhttp
 
 
 def xhttp_upload_is_quic(categories: list[str] | None) -> bool:

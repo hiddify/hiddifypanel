@@ -163,7 +163,11 @@
           </div>
         </template>
         <template #body="{ data }">
-          <ToggleSwitch :model-value="data.enable" @update:model-value="(v: boolean) => toggleEnable(data, v)" />
+          <ToggleSwitch
+            :key="`${data.id}-${enableSwitchEpoch}`"
+            :model-value="isEffectivelyEnabled(data)"
+            @update:model-value="(v: boolean) => toggleEnable(data, v)"
+          />
         </template>
       </Column>
       <Column header="" class="w-52 shrink-0">
@@ -270,11 +274,14 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import GenerateBundleDialog from '@/features/custom-proxy/components/GenerateBundleDialog.vue'
 import { customProxiesApi, type CustomProxy, type CustomProxyMeta } from '@/core/api/generated'
+import { isEffectivelyEnabled, blockedParentEnables, isBlockedByParent, parentEnableConflict, useParentEnablePrompt } from '@/features/custom-proxy/parent-enable'
 
 const { t } = useI18n()
 const router = useRouter()
 const confirm = useConfirm()
 const toast = useToast()
+const { promptParentEnable } = useParentEnablePrompt()
+const enableSwitchEpoch = ref(0)
 
 const proxies = ref<CustomProxy[]>([])
 const meta = ref<CustomProxyMeta | null>(null)
@@ -332,7 +339,7 @@ const filteredProxies = computed(() =>
     if (filterCore.value && p.server_core !== filterCore.value) return false
     if (filterClientCore.value && !(p.client_cores || []).includes(filterClientCore.value)) return false
     if (filterCategories.value.length && !filterCategories.value.some((category) => (p.categories || []).includes(category))) return false
-    if (filterEnabled.value !== null && Boolean(p.enable) !== filterEnabled.value) return false
+    if (filterEnabled.value !== null && isEffectivelyEnabled(p) !== filterEnabled.value) return false
     return true
   }),
 )
@@ -370,10 +377,34 @@ async function load() {
   }
 }
 
+function rejectBlockedEnable(row: CustomProxy) {
+  enableSwitchEpoch.value += 1
+  promptParentEnable(blockedParentEnables(row), meta.value?.parent_enable_settings_url)
+}
+
 async function toggleEnable(row: CustomProxy, enable: boolean) {
   if (!row.id) return
-  await customProxiesApi.enable(row.id, enable)
-  row.enable = enable
+  if (enable && isBlockedByParent(row)) {
+    rejectBlockedEnable(row)
+    return
+  }
+  try {
+    const updated = await customProxiesApi.enable(row.id, enable)
+    if (enable && isBlockedByParent(updated)) {
+      rejectBlockedEnable({ ...row, ...updated })
+      return
+    }
+    Object.assign(row, updated)
+  } catch (err: unknown) {
+    const conflict = parentEnableConflict(err)
+    if (conflict) {
+      enableSwitchEpoch.value += 1
+      promptParentEnable(conflict.blocked_by, conflict.settings_url)
+      return
+    }
+    enableSwitchEpoch.value += 1
+    toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 5000 })
+  }
 }
 
 async function duplicate(id: number) {

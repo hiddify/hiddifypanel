@@ -50,6 +50,12 @@ class LogLevel(HEnum):
     CRITICAL = auto()
 
 
+class CommonProxyCore(HEnum):
+    xray = auto()
+    hiddify_core = auto()
+    both = auto()
+
+
 class ConfigCategory(StrEnum):
     admin = auto()
     branding = auto()
@@ -135,7 +141,8 @@ class ConfigEnum(metaclass=FastEnum):
     ssh_use_tls_port = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.apply_config, hide_in_virtual_child=True)
     ssh_server_enable = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.reinstall)
     first_setup = _BoolConfigDscr(ConfigCategory.hidden)
-    core_type = _StrConfigDscr(ConfigCategory.advanced, ApplyMode.reinstall, hide_in_virtual_child=True)
+    core_type = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
+    common_proxy_core = _TypedConfigDscr(CommonProxyCore, ConfigCategory.advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
     warp_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
     warp_mode = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)
     warp_plus_code = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)

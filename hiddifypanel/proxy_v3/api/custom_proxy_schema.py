@@ -80,6 +80,8 @@ class CustomProxySchema(Schema):
     name = fields.String(required=True)
     slug = fields.String(allow_none=True)
     enable = fields.Boolean(load_default=True)
+    effective_enable = fields.Boolean(dump_only=True)
+    blocked_by = fields.List(fields.Dict(), dump_only=True)
     mode = StrEnumField(CustomProxyMode, required=True)
     proto = StrEnumField(ProxyProto, allow_none=True, load_default=None)
     transport = StrEnumField(CustomProxyTransport, allow_none=True, load_default=None)
@@ -97,6 +99,7 @@ class CustomProxySchema(Schema):
     client_cores = fields.List(fields.String(), dump_only=True)
     server_core = fields.String(dump_only=True)
     is_builtin = fields.Boolean(dump_only=True)
+    is_common_proxy = fields.Boolean(dump_only=True)
     server_override = fields.Boolean(load_default=False)
     client_override = fields.Boolean(load_default=False)
     builtin = fields.Dict(dump_only=True)
@@ -354,6 +357,7 @@ class CustomProxyMetaSchema(Schema):
     default_sublink_link = fields.String()
     example_user_agents = fields.List(fields.Dict())
     tcp_udp_options = fields.List(fields.String())
+    parent_enable_settings_url = fields.String()
 
 
 class CustomProxyExportInputSchema(Schema):

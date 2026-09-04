@@ -62,7 +62,7 @@ def _infer_template_meta(slug: str) -> tuple[TemplateCore, TemplateCategory, str
         return core, category, f'{core_str} {leaf}', f'Stream: {leaf}'
     if '/tls/' in slug:
         return core, category, f'{core_str} {leaf} TLS', f'TLS: {leaf}'
-    if '/common/security/' in slug:
+    if '/security/' in slug:
         return core, category, f'{core_str} {leaf} security', f'Security: {leaf}'
     if '/snippets/' in slug:
         return core, category, f'{core_str} {leaf}', f'Snippet: {leaf}'

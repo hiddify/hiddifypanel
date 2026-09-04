@@ -25,7 +25,7 @@ Examples:
 
 Add a preset when you need a **reusable composition** referenced by `custom_proxy_presets` or builders, not a standalone editable template in the admin UI.
 
-For admin-editable fragments, place `.pj2` files outside `presets/` (e.g. `{core}/common/protocols/vless.pj2`).
+For admin-editable fragments, place `.pj2` files outside `presets/` (e.g. `{core}/server/protocols/vless.pj2`).
 
 ## Base configs vs presets vs templates
 

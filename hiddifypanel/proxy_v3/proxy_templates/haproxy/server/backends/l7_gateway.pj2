@@ -16,4 +16,9 @@ backend http_{{proxy.id}}_{{ proxy.path | slugify }}
     server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo proto {{ proxy.l7_reverse_proto }}
 {%-endif%}
 
+
+backend tcp_{{proxy.id}}_{{ proxy.path | slugify }}
+    mode tcp
+    server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo 
+
 {% endfor %}

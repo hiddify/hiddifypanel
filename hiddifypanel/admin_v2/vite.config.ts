@@ -49,9 +49,10 @@ export default defineConfig(({ mode }) => {
   const devBase = resolveDevBase(env)
   const proxyPath = readProxyPath(env)
 
-  if (devBase !== '/') {
+  const base = mode === 'production' ? './' : devBase
+  if (mode !== 'production' && devBase !== '/') {
     console.log(`[admin-v2] Vite base: ${devBase}`)
-  } else {
+  } else if (mode !== 'production') {
     console.warn(
       '[admin-v2] Could not resolve proxy_path — run `python -m hiddifypanel get-setting proxy_path_admin` or set VITE_PROXY_PATH',
     )
@@ -73,7 +74,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    base: devBase,
+    base,
     define: devDefines,
     plugins: [
       vue(),

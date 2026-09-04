@@ -274,7 +274,10 @@ def init_app(app):
             row = sync_tls_store_for_domain_id(domain_id)
             if row:
                 host = row.domain.domain if row.domain else domain_id
-                click.echo(f"synced certificate for domain_id={row.domain_id} ({host}) issuer={row.issuer}")
+                click.echo(
+                    f"synced certificate for domain_id={row.domain_id} ({host}) "
+                    f"issuer={row.issuer} self_signed={bool(row.self_signed)}"
+                )
             else:
                 click.echo(f"no certificate files found for domain_id={domain_id}", err=True)
             return
@@ -282,7 +285,10 @@ def init_app(app):
             row = sync_tls_store_for_domain(domain, child_id=child_id)
             if row:
                 host = row.domain.domain if row.domain else domain
-                click.echo(f"synced certificate for domain_id={row.domain_id} ({host}) issuer={row.issuer}")
+                click.echo(
+                    f"synced certificate for domain_id={row.domain_id} ({host}) "
+                    f"issuer={row.issuer} self_signed={bool(row.self_signed)}"
+                )
             else:
                 click.echo(f"no certificate files found for {domain}", err=True)
             return

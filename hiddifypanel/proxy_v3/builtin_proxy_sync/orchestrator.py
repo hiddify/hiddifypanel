@@ -284,6 +284,7 @@ def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
             name=preset.name,
             slug=slug,
             enable=preset.enable,
+            is_common_proxy=preset.is_common_proxy,
             mode=preset.mode.value,
             proto=preset.proto,
             transport=preset.transport,

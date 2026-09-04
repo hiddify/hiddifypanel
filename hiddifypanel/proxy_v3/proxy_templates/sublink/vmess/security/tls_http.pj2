@@ -1,5 +1,5 @@
 {% set _alpn = proxy.alpn|default('') %}
-
+{% set domain=ctx.proxy.domain%}
 {% if proxy.uses_tls %}
     {% set data.sni = ctx.proxy.domain.sni %}
     {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set data.fp = ctx.hconfig.utls %}{% endif %}
@@ -16,6 +16,14 @@
         {% if ctx.proxy.domain.echinfo %}
             {% set data.ech = ctx.proxy.domain.echinfo %}
         {% endif %}
+        {%if domain.allow_insecure %}
+            {%if ctx.platform.xray.version>"0.0.0" and ctx.platform.xray.version<"26.1.1" %}
+                {%set data.allowInsecure= true %}
+                {%set data.insecure= true %}
+            {%else%}
+                {%set data.pcs=",".join(domain.cert.pinnedPeerCertSha256)%}
+            {%endif%}
+        {%endif%}
     {% endif %}
 {% else %}
     

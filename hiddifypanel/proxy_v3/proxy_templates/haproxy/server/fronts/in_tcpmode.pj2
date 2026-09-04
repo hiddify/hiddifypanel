@@ -2,8 +2,11 @@
 # TCP Frontend
 # =====================
 frontend in-tcpmode
-    {% for port in (["80"] + ctx.hconfig.http_ports.split(',')) | unique %}
+    {# Public :80 is owned by rust-rpxy-l4-http → 127.0.0.1:801 #}
+    {% for port in (ctx.hconfig.http_ports.split(',')) | map('trim') | unique %}
+    {% if port and port != '80' %}
     bind :{{ port }},:::{{ port }} v4v6 tfo
+    {% endif %}
     {% endfor %}
     bind abns@https_in_ssl tfo accept-proxy ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1,h3 allow-0rtt
     acl h2 ssl_fc_alpn -i h2

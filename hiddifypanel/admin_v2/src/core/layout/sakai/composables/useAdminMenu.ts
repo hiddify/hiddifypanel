@@ -12,6 +12,7 @@ export function useAdminMenu() {
       label: t('menu.sectionNew'),
       items: [
         { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
+        { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
         {
           label: t('menu.proxyEditor'),
           icon: 'pi pi-fw pi-server',

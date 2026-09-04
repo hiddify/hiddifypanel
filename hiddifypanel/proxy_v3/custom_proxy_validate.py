@@ -36,7 +36,15 @@ def _client_outbounds_template(cc: dict[str, Any]) -> str:
     return str(cc.get("outbounds_template") or cc.get("link_template") or "")
 
 
-from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
+def _keep_common_proxy_client_core(data: dict[str, Any], core_name: str, child_id: int) -> bool:
+    if not data.get("is_common_proxy"):
+        return True
+    return not common_proxy_core_blocks(True, core_name, hconfig(ConfigEnum.common_proxy_core, child_id))
+
+
+from hiddifypanel.models.config import hconfig
+from hiddifypanel.models.config_enum import ConfigEnum
+from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, fix_duplicate_json_commas
 from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 
@@ -2524,8 +2532,21 @@ def _xray_client_entry_from_sections(
     }
 
 
+def _normalize_sublink_base(base: str) -> str:
+    text = base or ""
+    if "{{ links }}" in text or "{{links}}" in text:
+        return text
+    return re.sub(
+        r"\{%\s*block\s+links\s*%\}.*?\{%\s*endblock\s*%\}",
+        "{{ links }}",
+        text,
+        flags=re.DOTALL,
+    )
+
+
 def _sublink_base_uses_links_var(base: str) -> bool:
-    return "{{ links }}" in (base or "") or "{{links}}" in (base or "")
+    text = _normalize_sublink_base(base)
+    return "{{ links }}" in text or "{{links}}" in text
 
 
 def _compose_sublink_full_config(
@@ -2546,7 +2567,9 @@ def _compose_sublink_full_config(
         return link_section, formats
 
     link_value = link_section.get("rendered") or ""
-    base = resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version)
+    base = _normalize_sublink_base(
+        resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version)
+    )
     if _base_usable_for_compose(base) and link_value:
         if _sublink_base_uses_links_var(base):
             compose_ctx = {**context, "links": link_value}
@@ -2734,7 +2757,11 @@ def generate_proxy_example(
     )
 
     auto_client_cores = resolve_auto_client_cores(resolved_ua, ua_parsed, child_id)
-    core_configs = client_config.get("core_configs") or []
+    core_configs = [
+        cc
+        for cc in (client_config.get("core_configs") or [])
+        if _keep_common_proxy_client_core(data, str(cc.get("core") or ""), child_id)
+    ]
     configured_cores = [str(cc.get("core") or "").strip() for cc in core_configs if str(cc.get("core") or "").strip()]
     primary_auto = resolve_primary_auto_client_core(resolved_ua, ua_parsed, child_id, configured_cores)
     default_client_core = resolve_default_client_core(configured_cores, child_id)
@@ -3123,6 +3150,8 @@ def _merge_server_bundle(
         }
 
     for proxy in proxies:
+        if not proxy.enable:
+            continue
         if (proxy.server_core.value if proxy.server_core else "xray") != core:
             continue
         inbound_tpl = proxy.effective_server_config_text()
@@ -3540,7 +3569,9 @@ def _merge_sublink_bundle(
         user_uuid=user_uuid,
         user_agent=user_agent,
     )
-    base = resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version)
+    base = _normalize_sublink_base(
+        resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version)
+    )
     links_text = "\n".join(links)
     if _base_usable_for_compose(base) and _sublink_base_uses_links_var(base):
         compose_ctx = {**bundle_ctx, "links": links_text}
@@ -3877,7 +3908,11 @@ def _generate_enabled_proxies_bundle_for_domain(
     client_groups: dict[tuple[str, str], list[tuple[CustomProxy, dict[str, Any]]]] = {}
 
     for proxy in proxies:
+        if not proxy.enable:
+            continue
         data = proxy.to_dict()
+        if common_proxy_core_blocks(bool(data.get("is_common_proxy")), data.get("server_core"), hconfig(ConfigEnum.common_proxy_core, child_id)):
+            continue
         server_core = (data.get("server_config") or {}).get("core") or "xray"
         server_groups.setdefault(server_core, []).append(proxy)
 
@@ -3885,6 +3920,8 @@ def _generate_enabled_proxies_bundle_for_domain(
         for cc in client_config.get("core_configs") or []:
             core_name = cc.get("core") or ""
             if not core_name:
+                continue
+            if not _keep_common_proxy_client_core(data, core_name, child_id):
                 continue
             version = cc.get("version") or ""
             client_groups.setdefault((core_name, version), []).append((proxy, cc))

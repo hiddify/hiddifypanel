@@ -9,7 +9,7 @@ from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain, FakeMode
 from hiddifypanel.models.proxy import ProxyTransport
 from hiddifypanel.models.user import User
-from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context, protocol_config_map, transport_config_map
+from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
 from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextProxyVar, ServerContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
@@ -55,14 +55,13 @@ def get_server_base(child_id: int) -> ServerBase:
     hconfig: HConfigVar = get_server_hconfigs_child(child_id)
     platform = get_server_platform_var()
 
-    child_hconfigs: HConfigVar = get_server_hconfigs_child(0)
     domains: list[DomainIPVar] = get_server_domains(child_id=child_id)
     ips: IPVar = IPVar.from_strings(*hutils.network.net.get_ips())
 
     proxies: list[ServerBuilderProxyVar] = get_server_builder_proxies(child_id)
     for proxy in proxies:
         proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy)]
-    proxies = [b for b in proxies if filter_server_proxy(b, child_hconfigs)]
+    proxies = [b for b in proxies if filter_server_proxy(b)]
     return ServerBase(domains=domains, hconfig=hconfig, proxies=proxies, ips=ips, platform=platform)
 
 
@@ -90,14 +89,8 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     return False
 
 
-def filter_server_proxy(proxy: ProxyVar, hconfig: HConfigVar) -> bool:
+def filter_server_proxy(proxy: ProxyVar) -> bool:
     if not proxy.domains and proxy.mode != CustomProxyMode.ip:
-        return False
-
-    if (cfg := hconfig.get(protocol_config_map[proxy.proto])) and cfg is False:
-        return False
-
-    if (cfg := hconfig.get(transport_config_map.get(proxy.transport))) and cfg is False:
         return False
 
     return True
@@ -112,7 +105,7 @@ def get_server_domains(child_id: int = 0) -> list[DomainIPVar]:
 def get_server_builder_proxies(child_id: int = 0) -> list[ServerBuilderProxyVar]:
     hconfig = get_server_hconfigs_child(child_id)
     custom_proxies = CustomProxy.query.filter(CustomProxy.enable == True, CustomProxy.child_id == child_id).all()
-    return [ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig) for proxy in custom_proxies]
+    return [ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig) for proxy in custom_proxies if proxy.enable]
 
 
 @cache.cache(600)

@@ -1,4 +1,4 @@
-import{k as a}from"./index5.js";import{B as s,j as r,o as c,c as g,e as d,g as l,k as h}from"./index.js";var u=`
+import{b as a}from"./index6.js";import{B as s,j as r,o as c,c as g,e as d,g as l,k as h}from"./index.js";var u=`
     .p-toggleswitch {
         display: inline-block;
         width: dt('toggleswitch.width');

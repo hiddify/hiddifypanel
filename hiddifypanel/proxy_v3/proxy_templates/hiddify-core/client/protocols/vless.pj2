@@ -2,4 +2,4 @@
 "server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
-"flow": "{{ ctx.hconfig.vless_flow }}",
+//"flow": "{{ ctx.hconfig.vless_flow }}",

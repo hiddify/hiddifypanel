@@ -145,6 +145,9 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
     if row.server_core != server_core:
         row.server_core = server_core
         changed = True
+    if bool(row.is_common_proxy) != bool(catalog.is_common_proxy):
+        row.is_common_proxy = bool(catalog.is_common_proxy)
+        changed = True
 
     if snapshot.client_cores:
         _replace_client_core_rows(row, snapshot.client_cores, builtin=True)

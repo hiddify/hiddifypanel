@@ -67,8 +67,9 @@ def _hiddify_client_streams_slug(combo: ProxyCombination) -> str | None:
     if not transport:
         return None
     if transport == "tcp":
-        return f"{_HIDDIFY_CLIENT_ROOT}/client/stream/none"
-    slug = f"{_HIDDIFY_CLIENT_ROOT}/client/stream/{transport}"
+        slug = f"{_HIDDIFY_CLIENT_ROOT}/client/streams/none"
+    else:
+        slug = f"{_HIDDIFY_CLIENT_ROOT}/client/streams/{transport}"
     try:
         load_template_slug(slug)
         return slug

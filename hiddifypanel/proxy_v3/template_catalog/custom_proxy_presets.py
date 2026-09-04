@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from hiddifypanel.models import ConfigEnum, hconfig
 from hiddifypanel.models.custom_proxy import (
     CustomProxyMode,
@@ -82,6 +84,7 @@ def build_reality_termination_preset(child_id: int = 0) -> CustomProxyPreset:
         ),
         client_cores=(),
         tcp_udp=InboundTcpUdp.tcp,
+        is_common_proxy=False,
     )
 
 
@@ -154,6 +157,8 @@ def _preset_l7_reverse_proto(
 ) -> str | None:
     if mode != CustomProxyMode.domains_l7_gateway:
         return None
+    if slot_l7:
+        return slot_l7
     if str(proto or "").lower() == "naive":
         return "h2"
     if transport == "xhttp":
@@ -162,7 +167,7 @@ def _preset_l7_reverse_proto(
         return "h1"
     if transport == "grpc":
         return "h2"
-    return slot_l7
+    return "h2"
 
 
 def _v2ray_l7_domain_modes(
@@ -339,6 +344,8 @@ def _build_preset(
     inbound_template: str,
     template_slugs: list[str],
     child_id: int = 0,
+    *,
+    is_common_proxy: bool = False,
 ) -> CustomProxyPreset:
     primary = slot.primary
     display_name = preset_display_name(slot)
@@ -424,6 +431,7 @@ def _build_preset(
         client_cores=client_cores,
         tcp_udp=tcp_udp,
         download_tcp_udp=download_tcp_udp,
+        is_common_proxy=is_common_proxy,
     )
 
 
@@ -432,21 +440,55 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     for slot in iter_grouped_preset_slots():
         primary = slot.primary
         l7_gateway = _preset_protocol(primary) == CustomProxyMode.domains_l7_gateway
+        xray_built: tuple[str, list[str]] | None = None
+        hiddify_built: tuple[str, list[str]] | None = None
         if supports_xray_preset(primary):
             try:
-                inbound, slugs = build_xray_inbound_template(primary, l7_gateway=l7_gateway)
-                rows.append(_build_preset(slot, "xray", inbound, slugs, child_id))
+                xray_built = build_xray_inbound_template(primary, l7_gateway=l7_gateway)
             except ValueError:
                 pass
         if supports_hiddify_preset(primary) or primary.proto == "wireguard":
             try:
-                inbound, slugs = build_hiddify_inbound_template(primary, l7_gateway=l7_gateway)
-                rows.append(_build_preset(slot, "hiddify-core", inbound, slugs, child_id))
+                hiddify_built = build_hiddify_inbound_template(primary, l7_gateway=l7_gateway)
             except ValueError:
                 pass
+        is_common_proxy = xray_built is not None and hiddify_built is not None
+        if xray_built:
+            inbound, slugs = xray_built
+            rows.append(_build_preset(slot, "xray", inbound, slugs, child_id, is_common_proxy=is_common_proxy))
+        if hiddify_built:
+            inbound, slugs = hiddify_built
+            rows.append(_build_preset(slot, "hiddify-core", inbound, slugs, child_id, is_common_proxy=is_common_proxy))
     rows.append(build_reality_termination_preset(child_id))
     rows.append(build_additional_config_preset(child_id))
-    return rows
+    return _mark_common_proxies(rows)
+
+
+def _common_proxy_slot_key(slug: str, server_core: str | None) -> str | None:
+    raw = str(slug or "")
+    if server_core == "hiddify-core" and raw.startswith("hiddify-core-"):
+        return raw[len("hiddify-core-") :]
+    if server_core == "xray" and raw.startswith("xray-"):
+        return raw[len("xray-") :]
+    return None
+
+
+def _mark_common_proxies(rows: list[CustomProxyPreset]) -> list[CustomProxyPreset]:
+    cores: dict[str, set[str]] = {}
+    for row in rows:
+        core = row.server_config.core
+        if core not in {"xray", "hiddify-core"}:
+            continue
+        key = _common_proxy_slot_key(row.slug, core)
+        if key:
+            cores.setdefault(key, set()).add(core)
+    marked: list[CustomProxyPreset] = []
+    for row in rows:
+        core = row.server_config.core
+        key = _common_proxy_slot_key(row.slug, core) if core in {"xray", "hiddify-core"} else None
+        is_common = bool(key) and cores.get(key) == {"xray", "hiddify-core"}
+        marked.append(row if row.is_common_proxy == is_common else replace(row, is_common_proxy=is_common))
+    return marked
 
 
 def sync_builtin_presets(child_id: int = 0) -> int:
@@ -455,7 +497,9 @@ def sync_builtin_presets(child_id: int = 0) -> int:
         sync_custom_proxy_presets,
         sync_templates,
     )
+    from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
+    sync_tls_store_all(child_id)
     sync_templates(child_id)
     sync_base_configs(child_id, refresh_builtin=True)
     added, _updated, _removed, _demoted = sync_custom_proxy_presets(child_id)

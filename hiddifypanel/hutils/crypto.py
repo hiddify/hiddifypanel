@@ -1,8 +1,16 @@
+import base64
 import os
 import subprocess
 import sys
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import x25519, ed25519
+
+_VLESS_ENC_METHOD = "mlkem768x25519plus"
+_VLESS_ENC_MODE = "native"
+
+
+def _b64url_nopad(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).decode().rstrip("=")
 
 
 def get_ed25519_private_public_pair():
@@ -44,14 +52,33 @@ def generate_x25519_keys(base_64_encode=True):
         format=serialization.PublicFormat.Raw
     )
     if base_64_encode:
-        import base64
-        pub_str = base64.urlsafe_b64encode(pub_bytes).decode()[:-1]
-        priv_str = base64.urlsafe_b64encode(priv_bytes).decode()[:-1]
+        pub_str = _b64url_nopad(pub_bytes)
+        priv_str = _b64url_nopad(priv_bytes)
     else:
         pub_str=pub_bytes.hex()
         priv_str=priv_bytes.hex()
     return {'private_key': priv_str, 'public_key': pub_str}
 
+
+def vless_encryption_decryption(quantum: bool = False) -> tuple[str, str]:
+    """Return Xray ``vlessenc`` client encryption and server decryption strings.
+
+    Matches ``executeVLESSEnc``: X25519 when ``quantum`` is false, ML-KEM-768 when true.
+    The two authentications must not be mixed. Ephemeral exchange is post-quantum either way.
+    """
+    if quantum:
+        from cryptography.hazmat.primitives.asymmetric.mlkem import MLKEM768PrivateKey
+
+        key = MLKEM768PrivateKey.generate()
+        server_key = _b64url_nopad(key.private_bytes_raw())
+        client_key = _b64url_nopad(key.public_key().public_bytes_raw())
+    else:
+        pair = generate_x25519_keys(base_64_encode=True)
+        server_key = pair["private_key"]
+        client_key = pair["public_key"]
+    decryption = ".".join((_VLESS_ENC_METHOD, _VLESS_ENC_MODE, "600s", server_key))
+    encryption = ".".join((_VLESS_ENC_METHOD, _VLESS_ENC_MODE, "0rtt", client_key))
+    return encryption, decryption
 
 
 def generate_ssh_host_keys():

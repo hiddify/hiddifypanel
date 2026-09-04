@@ -11,16 +11,20 @@
                 "fallbacks": [
                     {
                     "alpn": "h2",
-                    "dest": "@http_in_h2",
+                    "dest": "@@http_in_h2",
                     "xver":2
                     },
+                    
                     {
-                    "dest": "@http_in_h2",
+                    "dest": "@@tcp_in_reality_h1",
                     "xver":2
                     },
                 ]
             },
             "streamSettings": {  
+                "tcpSettings": {
+                "acceptProxyProtocol": true
+                },
                 "security": "reality",
                 "realitySettings": {
                     "show": false, 

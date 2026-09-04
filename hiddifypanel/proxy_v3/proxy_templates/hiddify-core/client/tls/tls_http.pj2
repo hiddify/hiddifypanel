@@ -31,11 +31,7 @@
     {% endif %}
     {%if domain.allow_insecure%} 
       "insecure": true,
-      "certificate_public_key_sha256": [
-        {% for pin in domain.cert.pinnedPeerCertSha256 %}
-        "{{ pin }}",
-        {% endfor %}
-      ],
+      "certificate_public_key_sha256": {{domain.cert.pinnedPeerCertSha256 |tojson}},
     {%endif%}
 
     {% if ctx.hconfig.tls_ech_enable %}

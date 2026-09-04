@@ -15,6 +15,7 @@
         {% if domain.is_fake_tls() or domain.allow_insecure %}
             {% set qp.allowInsecure = 'true' %}
             {% set qp.insecure = 'true' %}
+            {% set qp.pcs = ",".join(domain.cert.pinnedPeerCertSha256)%}
         {% endif %}
 
         {% if domain.echinfo %}

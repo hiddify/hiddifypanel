@@ -16,7 +16,7 @@
   "tlsSettings": {
     "serverName": "{{ domain.sni }}",
     {%if domain.allow_insecure %}
-      {%if ctx.platform.xray.version<"26.1.1" %}
+      {%if ctx.platform.xray.version>"0.0.0" and ctx.platform.xray.version<"26.1.1" %}
         "allowInsecure": true,
       {%else%}
         "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",

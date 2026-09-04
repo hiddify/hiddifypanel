@@ -39,8 +39,24 @@
           <TabPanel value="0">
             <Panel :header="t('proxy.tabGeneral')">
               <HorizontalField :label="t('common.enabled')" input-id="proxy-enable">
-                <ToggleSwitch id="proxy-enable" v-model="form.enable!" />
+                <ToggleSwitch
+                  :key="enableSwitchEpoch"
+                  id="proxy-enable"
+                  :model-value="displayedEnable"
+                  @update:model-value="onEnableToggle"
+                />
               </HorizontalField>
+              <Message v-if="blockedParent.length" severity="warn" :closable="false" class="mb-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span>{{ t('proxy.needGlobalEnable', { names: blockedParent.map((item) => item.label).join(', ') }) }}</span>
+                  <Button
+                    v-if="meta?.parent_enable_settings_url"
+                    size="small"
+                    :label="t('proxy.goToSettings')"
+                    @click="openParentSettings"
+                  />
+                </div>
+              </Message>
               <HorizontalField :label="t('proxy.name')" input-id="proxy-name">
                 <InputText id="proxy-name" v-model="form.name" class="w-full" @blur="onNameBlur" />
               </HorizontalField>
@@ -480,6 +496,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import { blockedParentEnables, isBlockedByParent, isEffectivelyEnabled, useParentEnablePrompt } from '@/features/custom-proxy/parent-enable'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -537,6 +554,8 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const { promptParentEnable } = useParentEnablePrompt()
+const enableSwitchEpoch = ref(0)
 
 const isNew = computed(() => route.name === 'custom-proxy-new' || !props.id)
 const isBuiltin = computed(() => Boolean(form.is_builtin) && !isNew.value)
@@ -811,6 +830,27 @@ function ensureClientCores() {
 }
 
 const form = reactive<CustomProxy>(defaultForm())
+
+const blockedParent = computed(() => blockedParentEnables(form))
+const displayedEnable = computed(() => isEffectivelyEnabled(form))
+
+function onEnableToggle(value: boolean) {
+  if (value) {
+    if (isBlockedByParent(form)) {
+      enableSwitchEpoch.value += 1
+      promptParentEnable(blockedParent.value, meta.value?.parent_enable_settings_url)
+      return
+    }
+    form.enable = true
+    return
+  }
+  form.enable = false
+}
+
+function openParentSettings() {
+  const url = meta.value?.parent_enable_settings_url
+  if (url) window.open(url, '_blank', 'noopener,noreferrer')
+}
 
 const domainModeOptions = computed(() => {
   let modes: string[]
@@ -1633,7 +1673,10 @@ async function save() {
   }
   saving.value = true
   try {
-    const payload = isBuiltin.value ? buildBuiltinPatch() : form
+    const payload = isBuiltin.value ? buildBuiltinPatch() : { ...form }
+    if (isBlockedByParent(form)) {
+      payload.enable = false
+    }
     if (isNew.value) {
       const created = await customProxiesApi.create(payload as CustomProxy)
       toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })

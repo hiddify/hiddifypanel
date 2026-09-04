@@ -32,7 +32,11 @@ def is_health_secret_request(path: str, child_id: int = 0) -> bool:
 def first_valid_cert_domain(child_id: int = 0) -> str | None:
     row = (
         TlsStore.query.join(Domain, TlsStore.domain_id == Domain.id)
-        .filter(Domain.child_id == child_id, TlsStore.valid_cert == True)  # noqa: E712
+        .filter(
+            Domain.child_id == child_id,
+            TlsStore.valid_cert == True,  # noqa: E712
+            TlsStore.self_signed == False,  # noqa: E712
+        )
         .order_by(Domain.id)
         .first()
     )
@@ -80,7 +84,7 @@ def run_domain_health_check(domain_id: int, child_id: int = 0) -> dict[str, Any]
     if not domain or not domain.name:
         return {'ok': False, 'error': 'domain not found'}
     cert = domain.certificate
-    if not cert or not cert.valid_cert:
+    if not cert or not cert.valid_cert or cert.self_signed:
         probe_host = first_valid_cert_domain(child_id)
         if not probe_host:
             return {'ok': False, 'error': 'no domain with valid certificate for domain probe'}

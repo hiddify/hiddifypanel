@@ -68,11 +68,18 @@ export type ProxyTransport = 'tcp' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | '
 
 export type TlsLayer = 'http' | 'tls' | 'quic_tls' | 'quic_tcp_tls'
 
+export interface ParentEnableBlock {
+  key: string
+  label: string
+}
+
 export interface CustomProxy {
   id?: number
   name: string
   slug?: string
   enable?: boolean
+  effective_enable?: boolean
+  blocked_by?: ParentEnableBlock[]
   mode: CustomProxyMode
   proto?: ProxyProto
   transport?: ProxyTransport
@@ -91,6 +98,7 @@ export interface CustomProxy {
   client_cores?: string[]
   server_core?: string
   is_builtin?: boolean
+  is_common_proxy?: boolean
   server_override?: boolean
   client_override?: boolean
   builtin?: Record<string, unknown>
@@ -259,6 +267,7 @@ export interface CustomProxyMeta {
   default_sublink_link?: string
   example_user_agents?: Array<{ id: string; label: string; value: string }>
   tcp_udp_options?: InboundTcpUdp[]
+  parent_enable_settings_url?: string
 }
 
 export const customProxiesApi = {

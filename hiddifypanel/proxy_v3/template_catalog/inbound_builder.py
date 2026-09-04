@@ -143,19 +143,19 @@ def supports_hiddify_preset(combo: ProxyCombination) -> bool:
     transport = _transport_file(combo.transport)
     if not proto or not transport:
         return False
-    return proto in list_fragments("hiddify-core", "protocols", side="server") and transport in list_fragments("hiddify-core", "stream", side="server")
+    return proto in list_fragments("hiddify-core", "protocols", side="server") and transport in list_fragments("hiddify-core", "streams", side="server")
 
 
 def _xray_security_slug(combo: ProxyCombination, *, l7_gateway: bool = False) -> str:
     # Behind HAProxy / L7 gateway, Xray terminates PROXY protocol only (TLS already stripped).
     if l7_gateway and combo.l3 != "reality":
-        return "xray/common/security/none"
+        return "xray/server/security/none"
     security = L3_STREAM_SECURITY.get(combo.l3, "tls")
     if security == "none":
-        return "xray/common/security/none"
+        return "xray/server/security/none"
     if security == "reality":
-        return "xray/common/security/reality"
-    return "xray/common/security/tls"
+        return "xray/server/security/reality"
+    return "xray/server/security/tls"
 
 
 def _xray_client_security_slug(combo: ProxyCombination) -> str:
@@ -175,7 +175,7 @@ def _render_preset_shell(
     alpn_line: str = "",
     tls_slug: str | None = None,
 ) -> str:
-    resolved_security = security_slug or "xray/common/security/none"
+    resolved_security = security_slug or "xray/server/security/none"
     shell = load_template_slug(_preset_shell_slug(core, shell_name), normalize=False)
     replacements = {
         "__PROTO_SLUG__": proto_slug,
@@ -209,7 +209,7 @@ def build_xray_inbound_template(combo: ProxyCombination, *, l7_gateway: bool = F
     slugs = [listen_slug, proto_slug, stream_slug, security_slug, sockopt_slug, sniffing_slug]
 
     alpn_line = ""
-    if security_slug == "xray/common/security/tls":
+    if security_slug == "xray/server/security/tls":
         download_alpn = (combo.params.get("download") or {}).get("alpn")
         if download_alpn:
             alpn_line = f'{{% set ALPN = "{download_alpn}" %}}'
@@ -275,7 +275,7 @@ def build_hiddify_inbound_template(combo: ProxyCombination, *, l7_gateway: bool 
 
     proto_key, transport_key = _path_keys(combo.proto, combo.transport)
     proto_slug = fragment_slug("hiddify-core", "protocols", proto, side="server")
-    stream_slug = fragment_slug("hiddify-core", "stream", transport, side="server")
+    stream_slug = fragment_slug("hiddify-core", "streams", transport, side="server")
     tls_slug = "hiddify-core/server/tls/none" if l7_gateway else _hiddify_tls_slug(combo)
     listen_slug = "hiddify-core/server/snippets/listen"
     meta_slug = "hiddify-core/server/snippets/inbound_meta"
