@@ -10,7 +10,7 @@ frontend in-httpmode-ssl
 
 frontend in-reality-tcpmode
   bind abns@tcp_in_reality_h1 accept-proxy
-  bind 127.0.0.1:801 accept-proxy tfo
+  bind :80,:::80 v4v6 tfo
   mode tcp
   use_backend %[path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_tcp')}},to_httpmode)]
   
@@ -23,7 +23,6 @@ frontend in-httpmode
   #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
   bind quic4@127.0.0.1:902 ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
  
-  #bind :80,:::80 v4v6 tfo
 
   mode http
 

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
-from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4HttpServerDriver, RustRpxyL4ServerDriver
+from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
@@ -43,7 +43,6 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "haproxy": HaproxyServerDriver,
     "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
-    "rust-rpxy-l4-http": RustRpxyL4HttpServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -52,7 +51,6 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("haproxy", "haproxy.cfg"),
     ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
-    ("rust-rpxy-l4-http", "rust-rpxy-l4-http.toml"),
 )
 
 
@@ -102,7 +100,7 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
     elif core == "haproxy":
         stats["frontends"] = len(re.findall(r"(?m)^\s*frontend\s+\S+", text))
         stats["backends"] = len(re.findall(r"(?m)^\s*backend\s+\S+", text))
-    elif core in ("rust-rpxy-l4", "rust-rpxy-l4-http"):
+    elif core == "rust-rpxy-l4":
         stats["services"] = len(re.findall(r"(?m)^\s*\[protocols\.[^\]]+\]", text))
 
     return stats
