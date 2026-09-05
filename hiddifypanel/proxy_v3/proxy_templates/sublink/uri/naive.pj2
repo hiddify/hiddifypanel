@@ -1,0 +1,27 @@
+{# https://github.com/klzgrad/naiveproxy/issues/86 #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set domain = proxy.domain %}
+  {% set layer = (proxy.tls_layer or 'http') | string %}
+  {% if layer in ('quic_tls', 'quic_tcp_tls') %}
+    {% set scheme = 'naive+quic' %}
+  {% elif layer != 'http' %}
+    {% set scheme = 'naive+https' %}
+  {% else %}
+    {% set scheme = 'naive' %}
+  {% endif %}
+  {% set uri = namespace(
+    protocol=scheme,
+    user=ctx.user.uuid,
+    password='h',
+    host=proxy.server,
+    port=proxy.port,
+    query_params={
+      'padding': 'true',
+      'extra-headers': ('X-API-Key:' ~ proxy.path) ,
+      'sni': domain.sni if (layer != 'http' and domain.sni) else '',
+    },
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

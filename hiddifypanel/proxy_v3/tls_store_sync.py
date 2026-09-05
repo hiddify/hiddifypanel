@@ -11,6 +11,7 @@ from typing import Any
 from loguru import logger
 
 from hiddifypanel.database import db
+from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.tls_store import TlsStore
 
 SSL_ROOT = Path("/opt/hiddify-manager/data/ssl")
@@ -228,8 +229,8 @@ def read_tls_files(domain: str) -> dict[str, Any] | None:
     }
 
 
-def _hostname_for_domain_db(domain_db: Any) -> str:
-    return domain_file_key(getattr(domain_db, "domain", "") or "")
+def _hostname_for_domain_db(domain_db: Domain) -> str:
+    return domain_file_key(domain_db.domain or "")
 
 
 def _tls_material_from_row(row: TlsStore, hostname: str) -> dict[str, Any]:
@@ -257,16 +258,15 @@ def _tls_material_from_row(row: TlsStore, hostname: str) -> dict[str, Any]:
     }
 
 
-def _lookup_domain(hostname: str, child_id: int = 0) -> Any | None:
-    from hiddifypanel.models.domain import Domain
-
+def _lookup_domain(hostname: str, child_id: int = 0) -> Domain | None:
     name = domain_file_key(hostname)
     if not name:
         return None
-    return Domain.query.filter(
+    row = Domain.query.filter(
         Domain.child_id == child_id,
         db.func.lower(Domain.domain) == name,
     ).first()
+    return row if isinstance(row, Domain) else None
 
 
 def tls_material_for_domain(
@@ -349,7 +349,7 @@ def sync_tls_store_for_domain(domain: str, child_id: int = 0, *, commit: bool = 
     return _sync_tls_store_row(domain_db, commit=commit)
 
 
-def _sync_tls_store_row(domain_db: Any, *, commit: bool = True) -> TlsStore | None:
+def _sync_tls_store_row(domain_db: Domain, *, commit: bool = True) -> TlsStore | None:
     hostname = _hostname_for_domain_db(domain_db)
     if not hostname:
         return None

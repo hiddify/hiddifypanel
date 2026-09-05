@@ -6,7 +6,8 @@ import json5
 from pydantic import BaseModel
 
 from hiddifypanel.models import ConfigEnum
-from hiddifypanel.models.custom_proxy import CustomProxyTransport, TlsLayer
+from hiddifypanel.models.config_enum import CommonProxyCore
+from hiddifypanel.models.custom_proxy import CustomProxyTransport, ServerCore, TlsLayer
 from hiddifypanel.models.proxy import ProxyProto
 from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, fake_ip_for_sub_link, include_path, jsbool, skip_proxy
 
@@ -67,6 +68,7 @@ protocol_config_map: dict[ProxyProto, ConfigEnum] = {
 
 transport_config_map: dict[CustomProxyTransport, ConfigEnum] = {
     CustomProxyTransport.tcp: ConfigEnum.tcp_enable,
+    CustomProxyTransport.http: ConfigEnum.tcp_enable,
     CustomProxyTransport.ws: ConfigEnum.ws_enable,
     CustomProxyTransport.httpupgrade: ConfigEnum.httpupgrade_enable,
     CustomProxyTransport.grpc: ConfigEnum.grpc_enable,
@@ -150,8 +152,14 @@ def parent_enable_off(keys: Sequence[ConfigEnum], getter: ConfigFlagGetter) -> l
     return [key for key in keys if getter(key) is False]
 
 
-def normalize_common_proxy_core(value: object) -> str:
-    raw = str(getattr(value, "name", None) or value or "both").strip().lower().replace("-", "_")
+def normalize_common_proxy_core(value: CommonProxyCore | str | None) -> str:
+    if isinstance(value, CommonProxyCore):
+        raw = value.name
+    elif value is None:
+        raw = "both"
+    else:
+        raw = value
+    raw = raw.strip().lower().replace("-", "_")
     if raw in {"hiddify_core", "hiddifycore", "singbox"}:
         return "hiddify-core"
     if raw == "xray":
@@ -159,13 +167,21 @@ def normalize_common_proxy_core(value: object) -> str:
     return "both"
 
 
-def common_proxy_core_blocks(is_common_proxy: bool, server_core: str | None, selected: object) -> bool:
+def normalize_server_core(value: ServerCore | str | None) -> str:
+    if isinstance(value, ServerCore):
+        return value.value
+    if value is None:
+        return ""
+    return value.strip().lower()
+
+
+def common_proxy_core_blocks(is_common_proxy: bool, server_core: ServerCore | str | None, selected: CommonProxyCore | str | None) -> bool:
     if not is_common_proxy:
         return False
     chosen = normalize_common_proxy_core(selected)
     if chosen == "both":
         return False
-    core = str(server_core or "")
+    core = normalize_server_core(server_core)
     if chosen == "xray":
         return core == "hiddify-core"
     if chosen == "hiddify-core":

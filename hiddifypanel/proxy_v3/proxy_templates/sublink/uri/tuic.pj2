@@ -1,0 +1,26 @@
+{# TUIC v5: https://sing-box.sagernet.org/configuration/outbound/tuic/ #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set domain = proxy.domain %}
+  {% set uri = namespace(
+    protocol='tuic',
+    user=ctx.user.uuid,
+    password=ctx.user.uuid,
+    host=proxy.server,
+    port=proxy.udp_port or proxy.port,
+    query_params=namespace(
+      alpn='h3',
+      congestion_control='cubic',
+      udp_relay_mode='native',
+    ),
+  ) %}
+  {% set qp = uri.query_params %}
+  {% if domain.sni %}
+    {% set qp.sni = domain.sni %}
+  {% endif %}
+  {% if domain.is_fake_tls() or domain.allow_insecure %}
+    {% set qp.allow_insecure = '1' %}
+  {% endif %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

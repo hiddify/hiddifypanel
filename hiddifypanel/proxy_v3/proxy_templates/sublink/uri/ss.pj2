@@ -2,25 +2,35 @@
   {% set proxy = ctx.proxy %}
   {% set method = ctx.hconfig.shadowsocks2022_method %}
   {% set password = (ctx.hconfig.shared_secret.replace('-','')|b64encode) ~ ':' ~ (ctx.user.uuid_hex|b64encode) %}
-  {% if 'shadowtls' in (proxy.slug or '') %}
-    {{ skip('ShadowTLS is not supported as an ss:// sublink for this platform') }}
-  {% endif %}
-  {% if 'faketls' in (proxy.slug or '') %}
+  {% set userinfo = (method ~ ':' ~ password)|b64encode %}
+  {% if proxy.proto == 'v2ray' %}
     {% set uri = namespace(
       protocol='ss',
-      user=(method ~ ':' ~ password)|b64encode,
+      user=userinfo,
       host=proxy.server,
       port=proxy.port,
       query_params={
-        'hiddify': '1',
+        'plugin': 'v2ray-plugin;mode=websocket;path=' ~ proxy.path ~ ';host=' ~ proxy.domain.host ~ ';tls',
+        'udp-over-tcp': 'true',
+        'hiddify':'1'
+      },
+    ) %}
+  {% elif 'faketls' in (proxy.categories or []) or 'faketls' in (proxy.slug or '') %}
+    {% set uri = namespace(
+      protocol='ss',
+      user=userinfo,
+      host=proxy.server,
+      port=proxy.port,
+      query_params={
         'plugin': 'obfs-local;obfs=tls;obfs-host=' ~ ctx.hconfig.ssfaketls_fakedomain,
         'udp-over-tcp': 'true',
+        'hiddify':'1'
       },
     ) %}
   {% else %}
     {% set uri = namespace(
       protocol='ss',
-      user=(method ~ ':' ~ password)|b64encode,
+      user=userinfo,
       host=proxy.server,
       port=proxy.port,
       query_params=namespace(hiddify='1'),

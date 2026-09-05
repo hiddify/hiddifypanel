@@ -2,11 +2,5 @@
 "security": "tls",
 "tlsSettings": {
   "serverName": "{{ ctx.domain.sni }}",
-  {% if alpns is defined and alpns %}
-  "alpn": {{ alpns | tojson }}
-  {% elif ALPN is defined %}
-  "alpn": ["{{ ALPN }}"]
-  {% else %}
-  "alpn": ["h2", "http/1.1"]
-  {% endif %}
+  "alpn": {{ tls_layer.alpns() }}
 }

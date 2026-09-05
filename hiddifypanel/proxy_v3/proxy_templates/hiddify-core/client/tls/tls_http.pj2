@@ -7,9 +7,9 @@
   "server_name": "{{ domain.sni }}",
   
 
-  {% if alpns %}
-    "alpn": {{ alpns | tojson }},
-  {% endif %}
+
+    "alpn": {{ tls_layer.alpns }},
+
 
   {% set fp = ctx.hconfig.utls or "" %}
   {% if fp and fp!="none" %}

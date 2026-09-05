@@ -5,6 +5,7 @@
         <Button icon="pi pi-arrow-left" text :label="t('common.back')" @click="router.push({ name: 'custom-proxy-list' })" />
         <h2 class="text-2xl font-semibold m-0">{{ isNew ? t('proxy.new') : form.name }}</h2>
         <SysBadge v-if="isBuiltin" :customized="Boolean(form.server_override || form.client_override)" />
+        <Tag v-if="isCommonProxy" :value="t('proxy.commonProxyBadge')" severity="info" />
       </div>
       <div class="flex flex-wrap gap-2">
         <Button
@@ -45,6 +46,14 @@
                   :model-value="displayedEnable"
                   @update:model-value="onEnableToggle"
                 />
+              </HorizontalField>
+              <HorizontalField
+                v-if="!isNew"
+                :label="t('proxy.isCommonProxy')"
+                input-id="proxy-common"
+                :hint="t('proxy.isCommonProxyHint')"
+              >
+                <ToggleSwitch id="proxy-common" :model-value="Boolean(form.is_common_proxy)" disabled />
               </HorizontalField>
               <Message v-if="blockedParent.length" severity="warn" :closable="false" class="mb-3">
                 <div class="flex flex-wrap items-center justify-between gap-2">
@@ -207,6 +216,7 @@
                 </Message>
               </HorizontalField>
               <HorizontalField
+                v-if="showTcpUdp"
                 :label="showXhttpDownloadSettings ? t('proxy.uploadTcpUdp') : t('proxy.tcpUdp')"
                 input-id="proxy-tcp-udp"
                 :hint="t('proxy.tcpUdpHint')"
@@ -222,7 +232,7 @@
                 />
               </HorizontalField>
               <HorizontalField
-                v-if="showXhttpDownloadSettings"
+                v-if="showTcpUdp && showXhttpDownloadSettings"
                 :label="t('proxy.downloadTcpUdp')"
                 input-id="proxy-download-tcp-udp"
                 :hint="t('proxy.tcpUdpHint')"
@@ -559,6 +569,7 @@ const enableSwitchEpoch = ref(0)
 
 const isNew = computed(() => route.name === 'custom-proxy-new' || !props.id)
 const isBuiltin = computed(() => Boolean(form.is_builtin) && !isNew.value)
+const isCommonProxy = computed(() => Boolean(form.is_common_proxy) && !isNew.value)
 const structureLocked = computed(() => isBuiltin.value)
 const serverLocked = computed(() => isBuiltin.value && !isFieldOverridden('server_config'))
 const meta = ref<CustomProxyMeta | null>(null)
@@ -682,6 +693,7 @@ function inferTransportFromCategories(categories: string[]): ProxyTransport | ''
   if (lower.some((tag) => tag.includes('httpupgrade'))) return 'httpupgrade'
   if (lower.some((tag) => tag.includes('ws'))) return 'ws'
   if (lower.some((tag) => tag.includes('tcp'))) return 'tcp'
+  if (lower.some((tag) => tag === 'http')) return 'http'
   return ''
 }
 
@@ -898,6 +910,7 @@ const showTlsLayer = computed(
   () => isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value,
 )
 const showStaticPorts = computed(() => isMultiDomainStatic.value || isIpBased.value)
+const showTcpUdp = computed(() => !isL7Gateway.value)
 const showAutoPortsHint = computed(
   () => isMultiDomainAuto.value || isL7Gateway.value || isSniGateway.value,
 )
@@ -931,10 +944,12 @@ function defaultTlsLayerForProxy(): TlsLayer {
 }
 
 const tlsLayerOptions = computed(() =>
-  (meta.value?.tls_layers ?? ['http', 'tls', 'quic_tls', 'quic_tcp_tls']).map((layer) => ({
-    value: layer,
-    label: t(`proxy.tlsLayerLabels.${layer}`, layer.toUpperCase()),
-  })),
+  (meta.value?.tls_layers ?? ['http', 'tls_h1', 'tls_h2', 'tls', 'quic_tls', 'quic_tcp_tls'])
+    .filter((layer) => form.proto !== 'naive' || layer !== 'http')
+    .map((layer) => ({
+      value: layer,
+      label: layer === 'http' ? '-' : t(`proxy.tlsLayerLabels.${layer}`, layer.toUpperCase()),
+    })),
 )
 
 const l7ReverseProtoOptions = computed(() =>
@@ -1001,7 +1016,7 @@ const protoOptions = computed(() =>
 )
 
 const transportOptions = computed(() =>
-  (meta.value?.transports ?? ['tcp', 'ws', 'httpupgrade', 'grpc', 'xhttp', 'other']).map((tr) => ({
+  (meta.value?.transports ?? ['tcp', 'http', 'ws', 'httpupgrade', 'grpc', 'xhttp', 'other']).map((tr) => ({
     value: tr,
     label: t(`proxy.transportLabels.${tr}`, tr),
   })),
@@ -1245,6 +1260,9 @@ function onLinkSettingsChange() {
   if (!form.tls_layer && showTlsLayer.value) {
     form.tls_layer = defaultTlsLayerForProxy()
   }
+  if (form.proto === 'naive' && form.tls_layer === 'http') {
+    form.tls_layer = defaultTlsLayerForProxy()
+  }
 }
 
 function onTlsLayerChange() {
@@ -1252,13 +1270,25 @@ function onTlsLayerChange() {
     form.tls_layer = 'tls'
     toast.add({ severity: 'warn', summary: t('proxy.tlsLayerSpecialConflict'), life: 4000 })
   }
+  if (form.proto === 'naive' && form.tls_layer === 'http') {
+    form.tls_layer = defaultTlsLayerForProxy()
+  }
+}
+
+function withoutReality(modes: string[] | undefined | null): string[] {
+  return (modes ?? []).filter((mode) => mode !== 'reality')
+}
+
+function sameModes(left: string[] | undefined | null, right: string[]): boolean {
+  const current = left ?? []
+  return current.length === right.length && current.every((mode, index) => mode === right[index])
 }
 
 function ensureXhttpDownloadDefaults() {
   if (!showXhttpDownloadSettings.value) {
-    form.download_tls_layer = null
-    form.download_domain_modes = []
-    if (form.server_config) {
+    if (form.download_tls_layer != null) form.download_tls_layer = null
+    if (form.download_domain_modes?.length) form.download_domain_modes = []
+    if (form.server_config?.download_tcp_udp != null) {
       form.server_config.download_tcp_udp = undefined
     }
     return
@@ -1276,10 +1306,12 @@ function ensureXhttpDownloadDefaults() {
     form.server_config!.download_tcp_udp = 'tcp'
   }
   if (xhttpUploadIsQuic(form.categories ?? [])) {
-    form.domain_modes = (form.domain_modes ?? []).filter((mode) => mode !== 'reality')
+    const next = withoutReality(form.domain_modes)
+    if (!sameModes(form.domain_modes, next)) form.domain_modes = next
   }
   if (xhttpDownloadIsQuic(form.categories ?? [])) {
-    form.download_domain_modes = (form.download_domain_modes ?? []).filter((mode) => mode !== 'reality')
+    const next = withoutReality(form.download_domain_modes)
+    if (!sameModes(form.download_domain_modes, next)) form.download_domain_modes = next
   }
 }
 

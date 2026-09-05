@@ -19,6 +19,7 @@ class ProxyTransport(StrEnum):
     # h1=auto()
     WS = auto()
     tcp = auto()
+    http = auto()
     ssh = auto()
     httpupgrade = auto()
     xhttp = auto()

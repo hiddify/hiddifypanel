@@ -1,4 +1,5 @@
 "network": "grpc",
 "grpcSettings": {
+  {% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
   "serviceName": "{{ ctx.proxy.path }}"
 }

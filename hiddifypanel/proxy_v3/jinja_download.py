@@ -11,8 +11,10 @@ from urllib.parse import urlparse
 
 import requests
 from jinja2 import pass_context
+from jinja2.runtime import Context
 
 from hiddifypanel.cache import redis_client
+from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 
 _CACHE_RE = re.compile(r"^(\d+)\s*([smhdSMHD])?$")
 _DEFAULT_TIMEOUT = 8
@@ -46,12 +48,14 @@ def _normalize_content_type(content_type: str) -> str:
     return "txt"
 
 
-def _caller_user_agent(context: Any) -> str:
-    ctx = context.get("ctx") if context is not None else None
-    platform = getattr(ctx, "platform", None) if ctx is not None else None
-    ua = getattr(platform, "useragent", None) if platform is not None else None
-    if isinstance(ua, str) and ua.strip():
-        return ua.strip()
+def _caller_user_agent(context: Context | None) -> str:
+    if context is None:
+        return "HiddifyPanel/download"
+    ctx = context.get("ctx")
+    if isinstance(ctx, ClientContextVar):
+        ua = ctx.platform.useragent
+        if ua.strip():
+            return ua.strip()
     return "HiddifyPanel/download"
 
 

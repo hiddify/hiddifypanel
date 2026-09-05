@@ -1,11 +1,10 @@
 {{ skip("ws_enable = " ~ ctx.hconfig.ws_enable) if not ctx.hconfig.ws_enable }}
-"network": "tcp",
 "transport": {
   "type": "ws",
   "path": "/{{ proxy.path }}",
   "early_data_header_name": "Sec-WebSocket-Protocol",
   "headers": {
-      "User-Agent": "{{default_useragent_string}}"
+    {% include 'hiddify-core/client/default_headers' %}
   },
 
 },

@@ -21,6 +21,9 @@ def _domain_matches_bucket(domain: DomainIPVar, bucket: str) -> bool:
         return fm == FakeMode.fake
     if bucket in ("reality", "special"):
         return fm == FakeMode.reality
+    # Fake / REALITY hostnames are not direct, relay, or CDN bindings.
+    if fm in (FakeMode.fake, FakeMode.reality):
+        return False
     if bucket == "direct":
         return domain.mode == DomainType.direct
     if bucket == "relay":

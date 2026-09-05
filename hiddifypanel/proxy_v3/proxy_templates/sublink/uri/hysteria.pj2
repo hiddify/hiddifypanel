@@ -1,0 +1,29 @@
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set domain = proxy.domain %}
+  {% set uri = namespace(
+    protocol='hysteria',
+    host=proxy.server,
+    port=(proxy.udp_port_ranges or [proxy.udp_port or proxy.port]) | join(','),
+    query_params=namespace(
+      auth=ctx.user.uuid,
+      protocol='udp',
+      alpn='h3',
+      upmbps=ctx.hconfig.hysteria_up_mbps,
+      downmbps=ctx.hconfig.hysteria_down_mbps,
+    ),
+  ) %}
+  {% set qp = uri.query_params %}
+  {% if domain.sni %}
+    {% set qp.sni = domain.sni %}
+    {% set qp.peer = domain.sni %}
+  {% endif %}
+  {% if domain.is_fake_tls() or domain.allow_insecure %}
+    {% set qp.insecure = '1' %}
+  {% endif %}
+  {% if ctx.hconfig.hysteria_obfs_enable %}
+    {% set qp.obfs = ctx.hconfig.proxy_path %}
+  {% endif %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

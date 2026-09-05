@@ -145,8 +145,8 @@ class ProxyVar(BaseModel):
             db_udp_ports=db_udp_ports,
             tcp_udp=tcp_udp,  # type: ignore
             slug=proxy.slug or "",
-            is_common_proxy=bool(getattr(proxy, "is_common_proxy", False)),
-            server_core=str(proxy.server_core.value if getattr(proxy, "server_core", None) else ""),
+            is_common_proxy=bool(proxy.is_common_proxy),
+            server_core=proxy.server_core.value if proxy.server_core else "",
         )
 
     def direct_port_access(self) -> bool:
@@ -221,7 +221,7 @@ class ProxyDomainVar(ProxyVar):
     def is_reality(self) -> bool:
         if self.proto not in {ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess}:
             return False
-        if not self.tls_layer == TlsLayer.tls:
+        if self.tls_layer not in (TlsLayer.tls_h2, TlsLayer.tls):
             return False
         if not self.domain.is_reality():
             return False
@@ -310,6 +310,6 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
     def is_reality(self) -> bool:
         if self.proto not in {ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess}:
             return False
-        if self.tls_layer != TlsLayer.tls:
+        if self.tls_layer not in (TlsLayer.tls_h2, TlsLayer.tls):
             return False
         return self.domain.is_reality()

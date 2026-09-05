@@ -1,0 +1,31 @@
+{# https://github.com/enfein/mieru/blob/main/docs/client-install.md #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set qs = [
+    ['profile', 'default'],
+    ['mtu', '1400'],
+    ['multiplexing', ctx.hconfig.mieru_multiplexing],
+    ['handshake-mode', ctx.hconfig.mieru_handshake],
+  ] %}
+  {% for entry in proxy.tcp_port_ranges %}
+    {% set _ = qs.append(['port', entry]) %}
+    {% set _ = qs.append(['protocol', "TCP"]) %}
+  {% endfor %}
+  {% for entry in proxy.udp_port_ranges %}
+    {% set _ = qs.append(['port', entry]) %}
+    {% set _ = qs.append(['protocol', "UDP"]) %}
+  {% endfor %}
+  {% if not proxy.tcp_port_ranges and not proxy.udp_port_ranges and proxy.port %}
+    {% set _ = qs.append(['port', proxy.port]) %}
+    {% set _ = qs.append(['protocol', 'UDP' if proxy.transport == 'udp' else 'TCP']) %}
+  {% endif %}
+  {% set uri = namespace(
+    protocol='mierus',
+    user=ctx.user.uuid,
+    password='h',
+    host=proxy.server,
+    query_params=qs,
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

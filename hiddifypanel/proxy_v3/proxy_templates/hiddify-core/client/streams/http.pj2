@@ -1,0 +1,10 @@
+"transport": {
+  "type": "http",
+  "path": "/{{ proxy.path }}",
+  "host": ["{{ proxy.domain.host }}"],
+  "idle_timeout": "15s",
+  "ping_timeout": "15s",
+  "headers":{
+    {% include 'hiddify-core/client/default_headers' %}
+  },
+},

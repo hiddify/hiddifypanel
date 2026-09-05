@@ -1,0 +1,7 @@
+"transport": {
+    "type": "http",
+    "method": "GET",
+    "path": "/{{ ctx.proxy.path }}",
+    "idle_timeout": "15s",
+    "ping_timeout": "15s"
+},

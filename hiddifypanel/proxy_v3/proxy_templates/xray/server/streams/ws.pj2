@@ -1,5 +1,5 @@
 "network": "ws",
 "wsSettings": {
   "path": "/{{ ctx.proxy.path }}",
-  "acceptProxyProtocol": true
+  {% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
 }

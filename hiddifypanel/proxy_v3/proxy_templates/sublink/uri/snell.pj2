@@ -1,0 +1,13 @@
+{# https://manual.nssurge.com/policies/snell.html #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set uri = namespace(
+    protocol='snell',
+    user=ctx.hconfig.proxy_path,
+    host=proxy.server,
+    port=proxy.port,
+    query_params=namespace(version='4'),
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

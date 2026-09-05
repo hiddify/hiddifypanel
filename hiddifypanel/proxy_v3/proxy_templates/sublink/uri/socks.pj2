@@ -1,0 +1,13 @@
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set uri = namespace(
+    protocol='socks',
+    user=ctx.user.uuid,
+    password='h',
+    host=proxy.server,
+    port=proxy.port,
+    query_params=namespace(),
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

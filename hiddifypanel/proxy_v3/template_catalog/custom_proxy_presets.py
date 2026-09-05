@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import zlib
 from dataclasses import replace
 
 from hiddifypanel.models import ConfigEnum, hconfig
@@ -44,11 +45,8 @@ DIRECT_RELAY_DOMAIN_MODES = ("direct", "relay")
 CDN_CAPABLE_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "xhttp"})
 UDP_ONLY_PROTOS = frozenset({"tuic", "hysteria", "hysteria2", "wireguard"})
 TCP_ONLY_PROTOS = frozenset({"ssh", "anytls"})
-TCP_ONLY_TRANSPORTS = frozenset({"grpc", "httpupgrade", "tcp", "ws"})
+TCP_ONLY_TRANSPORTS = frozenset({"grpc", "http", "httpupgrade", "tcp", "ws"})
 BOTH_PROTOS = frozenset({"mieru", "socks", "shadowsocks", "ss"})
-XHTTP_QUIC_ALPN_TAGS = frozenset({"tls_h3", "h3"})
-
-
 REALITY_TERMINATION_TEMPLATE_SLUG = "xray/server/presets/reality_termination"
 REALITY_TERMINATION_TAG = "reality-termination"
 ADDITIONAL_CONFIG_SLUG = "additional-config"
@@ -163,7 +161,7 @@ def _preset_l7_reverse_proto(
         return "h2"
     if transport == "xhttp":
         return "h2"
-    if transport in ("ws", "httpupgrade"):
+    if transport in ("ws", "httpupgrade", "http"):
         return "h1"
     if transport == "grpc":
         return "h2"
@@ -213,19 +211,6 @@ def _download_tls_layer_for_alpn(alpn: str | None, combo=None) -> str:
     return _tls_layer_for_alpn(alpn, combo)
 
 
-def _xhttp_alpn_is_quic(alpn: str | None) -> bool:
-    return bool(alpn and str(alpn).lower() in XHTTP_QUIC_ALPN_TAGS)
-
-
-def _preset_xhttp_tcp_udp(
-    upload_alpn: str | None,
-    download_alpn: str | None,
-) -> tuple[InboundTcpUdp, InboundTcpUdp]:
-    upload = InboundTcpUdp.udp if _xhttp_alpn_is_quic(upload_alpn) else InboundTcpUdp.tcp
-    download = InboundTcpUdp.udp if _xhttp_alpn_is_quic(download_alpn) else InboundTcpUdp.tcp
-    return upload, download
-
-
 def _preset_tcp_udp(
     proto: str,
     *,
@@ -253,18 +238,17 @@ def _preset_protocol(combo) -> CustomProxyMode:
     raw_transport = _raw_transport(combo.transport)
     if proto in SNI_GATEWAY_PROTOS or raw_transport in ("shadowtls", "faketls"):
         return CustomProxyMode.domains_sni_gateway
-    if proto in (
-        "wireguard",
-        "ssh",
-        "mieru",
-        "socks",
-        "shadowsocks",
-        "ss",
-        "dnstt",
-        "snell",
-    ):
+    if proto == "dnstt":
         return CustomProxyMode.domains_auto_public_ports
+    if proto in ("shadowsocks", "ss", "socks", "wireguard", "ssh", "mieru", "snell") or raw_transport == "tcp":
+        return CustomProxyMode.ip
     return CustomProxyMode.domains_l7_gateway
+
+
+def _stable_public_port(slug: str) -> int:
+    """Deterministic public port in [10000, 50000] from the builtin slug."""
+    mixed = zlib.crc32(slug.encode("utf-8")) % 40_001
+    return 10_000 + mixed
 
 
 used_paths = set()
@@ -293,9 +277,9 @@ def _preset_custom_path(combo, child_id: int = 0) -> str:
 def _backend_tag(combo, core: str) -> str:
     proto = combo.proto.lower()
     transport = str(combo.transport).lower()
-    if core == "xray" and proto in ("vless", "vmess", "trojan") and transport in ("ws", "grpc", "tcp", "httpupgrade", "xhttp"):
+    if core == "xray" and proto in ("vless", "vmess", "trojan") and transport in ("ws", "grpc", "tcp", "http", "httpupgrade", "xhttp"):
         idx = {"vless": 0, "vmess": 1, "trojan": 2}[proto]
-        tidx = {"ws": 0, "grpc": 1, "tcp": 2, "httpupgrade": 3, "xhttp": 4}[transport]
+        tidx = {"ws": 0, "grpc": 1, "tcp": 2, "http": 5, "httpupgrade": 3, "xhttp": 4}[transport]
         return f"v10-{proto}-{transport}"
     if transport == "custom" or proto == transport:
         return proto
@@ -361,6 +345,8 @@ def _build_preset(
     tls_layer = slot.tls_layer
     if proto in UDP_ONLY_PROTOS or str(primary.l3).lower() == "h3_quic":
         tls_layer = "quic_tls"
+    if proto in ("shadowsocks", "ss", "socks") and raw_transport not in ("shadowtls", "faketls"):
+        tls_layer = "http"
     if mode == CustomProxyMode.domains_l7_gateway and proto in V2RAY_GATEWAY_PROTOS:
         domain_modes = list(_v2ray_l7_domain_modes(transport_value, tls_layer))
     elif raw_transport in ("shadowtls", "faketls"):
@@ -368,6 +354,8 @@ def _build_preset(
     elif proto in SNI_GATEWAY_PROTOS or proto == "naive":
         domain_modes = list(DIRECT_RELAY_DOMAIN_MODES)
     elif mode == CustomProxyMode.domains_auto_public_ports:
+        domain_modes = list(DIRECT_RELAY_DOMAIN_MODES)
+    elif mode == CustomProxyMode.ip:
         domain_modes = list(DIRECT_RELAY_DOMAIN_MODES)
     download_tls_layer = None
     download_domain_modes: tuple[str, ...] = ()
@@ -388,7 +376,8 @@ def _build_preset(
             domain_modes = filter_domain_modes_without_reality(domain_modes)
         if xhttp_alpn_is_quic(slot.download_alpn):
             download_domain_modes = tuple(filter_domain_modes_without_reality(download_domain_modes))
-        tcp_udp, download_tcp_udp = _preset_xhttp_tcp_udp(slot.upload_alpn, slot.download_alpn)
+        # L7 terminates client QUIC; xray/hiddify-core inbound is TCP + h2.
+        tcp_udp, download_tcp_udp = InboundTcpUdp.tcp, InboundTcpUdp.tcp
     else:
         tcp_udp = _preset_tcp_udp(
             proto,
@@ -397,6 +386,14 @@ def _build_preset(
         )
     tag = _backend_tag(primary, core)
     l7_reverse = _preset_l7_reverse_proto(transport_value, mode, slot.l7_reverse_proto, proto=proto)
+    inbound_tcp_ports: tuple[int, ...] = ()
+    inbound_udp_ports: tuple[int, ...] = ()
+    if mode == CustomProxyMode.ip:
+        public_port = _stable_public_port(slug)
+        if tcp_udp != InboundTcpUdp.udp:
+            inbound_tcp_ports = (public_port,)
+        if tcp_udp != InboundTcpUdp.tcp:
+            inbound_udp_ports = (public_port,)
 
     client_cores = tuple(
         PresetClientCore(
@@ -411,7 +408,7 @@ def _build_preset(
     return CustomProxyPreset(
         name=display_name,
         slug=slug,
-        enable=bool(primary.enable),
+        enable=False if proto == "socks" else bool(primary.enable),
         mode=mode,
         proto=primary.proto.lower(),
         transport=_parse_transport(primary.transport).value,
@@ -427,6 +424,8 @@ def _build_preset(
             inbound_template=inbound_template,
             template_slugs=tuple(template_slugs),
             tag=tag,
+            inbound_tcp_ports=inbound_tcp_ports,
+            inbound_udp_ports=inbound_udp_ports,
         ),
         client_cores=client_cores,
         tcp_udp=tcp_udp,
@@ -464,29 +463,54 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     return _mark_common_proxies(rows)
 
 
-def _common_proxy_slot_key(slug: str, server_core: str | None) -> str | None:
-    raw = str(slug or "")
-    if server_core == "hiddify-core" and raw.startswith("hiddify-core-"):
-        return raw[len("hiddify-core-") :]
-    if server_core == "xray" and raw.startswith("xray-"):
-        return raw[len("xray-") :]
-    return None
+_COMMON_PROXY_CORES = frozenset({"xray", "hiddify-core"})
+_COMMON_PROXY_SKIP_SLUGS = frozenset({"additional-config", "xray-reality-termination"})
+
+
+def _preset_slot_key(preset: CustomProxyPreset) -> str | None:
+    slug = preset.slug.strip().lower()
+    core = preset.server_config.core
+    if core == "hiddify-core" and slug.startswith("hiddify-core-"):
+        key = slug[len("hiddify-core-") :]
+    elif core == "xray" and slug.startswith("xray-"):
+        key = slug[len("xray-") :]
+    else:
+        return None
+    if key.endswith("-hc"):
+        key = key[: -len("-hc")]
+    return key or None
+
+
+def _preset_name_key(preset: CustomProxyPreset) -> str:
+    raw = " ".join(preset.name.split())
+    if raw.endswith(" HC"):
+        raw = raw[: -len(" HC")].rstrip()
+    return raw.casefold()
 
 
 def _mark_common_proxies(rows: list[CustomProxyPreset]) -> list[CustomProxyPreset]:
-    cores: dict[str, set[str]] = {}
+    cores_by_slot: dict[str, set[str]] = {}
+    cores_by_name: dict[str, set[str]] = {}
     for row in rows:
         core = row.server_config.core
-        if core not in {"xray", "hiddify-core"}:
+        if core not in _COMMON_PROXY_CORES or row.slug in _COMMON_PROXY_SKIP_SLUGS:
             continue
-        key = _common_proxy_slot_key(row.slug, core)
-        if key:
-            cores.setdefault(key, set()).add(core)
+        slot = _preset_slot_key(row)
+        if slot:
+            cores_by_slot.setdefault(slot, set()).add(core)
+        name = _preset_name_key(row)
+        if name:
+            cores_by_name.setdefault(name, set()).add(core)
     marked: list[CustomProxyPreset] = []
     for row in rows:
-        core = row.server_config.core
-        key = _common_proxy_slot_key(row.slug, core) if core in {"xray", "hiddify-core"} else None
-        is_common = bool(key) and cores.get(key) == {"xray", "hiddify-core"}
+        if row.slug in _COMMON_PROXY_SKIP_SLUGS:
+            is_common = False
+        else:
+            slot = _preset_slot_key(row)
+            name = _preset_name_key(row)
+            is_common = (slot is not None and cores_by_slot.get(slot) == _COMMON_PROXY_CORES) or (
+                bool(name) and cores_by_name.get(name) == _COMMON_PROXY_CORES
+            )
         marked.append(row if row.is_common_proxy == is_common else replace(row, is_common_proxy=is_common))
     return marked
 

@@ -18,6 +18,9 @@ PROXY_CFG_STRINGS: list[str] = [
     'tcp direct vless',
     'tcp direct trojan',
     'tcp direct vmess',
+    'http direct vless',
+    'http direct trojan',
+    'http direct vmess',
     'grpc direct vless',
     'grpc direct trojan',
     'grpc direct vmess',
@@ -34,6 +37,9 @@ PROXY_CFG_STRINGS: list[str] = [
     'tcp relay vless',
     'tcp relay trojan',
     'tcp relay vmess',
+    'http relay vless',
+    'http relay trojan',
+    'http relay vmess',
     'grpc relay vless',
     'grpc relay trojan',
     'grpc relay vmess',
@@ -77,8 +83,8 @@ EXTRA_PROXY_ROWS: list[dict[str, Any]] = [
     {'l3': 'tls', 'transport': 'udp', 'cdn': 'direct', 'proto': 'mieru', 'name': 'Mieru UDP'},
     {'l3': 'tls', 'transport': 'tcp', 'cdn': 'relay', 'proto': 'mieru', 'name': 'Mieru TCP Relay'},
     {'l3': 'tls', 'transport': 'udp', 'cdn': 'relay', 'proto': 'mieru', 'name': 'Mieru UDP Relay'},
-    {'l3': 'tls', 'transport': 'custom', 'cdn': 'direct', 'proto': 'socks', 'name': 'SOCKS'},
-    {'l3': 'tls', 'transport': 'custom', 'cdn': 'relay', 'proto': 'socks', 'name': 'SOCKS Relay'},
+    {'l3': 'tls', 'transport': 'custom', 'cdn': 'direct', 'proto': 'socks', 'name': 'SOCKS', 'enable': False},
+    {'l3': 'tls', 'transport': 'custom', 'cdn': 'relay', 'proto': 'socks', 'name': 'SOCKS Relay', 'enable': False},
     {'l3': 'tls', 'transport': 'custom', 'cdn': 'direct', 'proto': 'anytls', 'name': 'AnyTLS'},
     {'l3': 'tls', 'transport': 'custom', 'cdn': 'relay', 'proto': 'anytls', 'name': 'AnyTLS Relay'},
 ]
@@ -127,7 +133,7 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
                 continue
             if l3_s in ('kcp', 'reality') and cdn != 'direct':
                 continue
-            if l3_s == 'reality' and (transport not in ('tcp', 'grpc', 'XTLS', ProxyTransport.xhttp) or proto != 'vless'):
+            if l3_s == 'reality' and (transport not in ('tcp', 'XTLS', ProxyTransport.xhttp) or proto != 'vless'):
                 continue
             if proto == 'trojan' and l3_s not in ('tls', 'xtls', 'tls_h2', 'h3_quic'):
                 continue
@@ -149,6 +155,7 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
 
             enable = l3_s != 'http' or proto in ('vless', 'vmess')
             enable = enable and (transport != 'tcp' or l3_s in ('reality', 'http', 'tls'))
+            enable = enable and (transport != 'http' or l3_s in ('http', 'tls'))
             name = f'{l3_s} {c}'
 
             params_list: list[tuple[str, dict[str, Any]]] = [('', {})]
@@ -170,6 +177,6 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
             transport=_enum_val(row['transport']),
             cdn=_enum_val(row['cdn']),
             proto=_enum_val(row['proto']),
-            enable=True,
+            enable=bool(row.get('enable', True)),
             name=row['name'],
         )

@@ -1200,7 +1200,7 @@ msgid "adminV2.menu.baseConfigs"
 msgstr "Base Configs"
 
 msgid "adminV2.menu.customProxies"
-msgstr "Custom Proxies"
+msgstr "Proxies"
 
 msgid "adminV2.menu.dashboard"
 msgstr "Dashboard"
@@ -1538,7 +1538,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "Link template"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "Custom Proxies"
+msgstr "Proxies"
 
 msgid "adminV2.proxy.mode"
 msgstr "Mode"
@@ -3634,7 +3634,7 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "SNI gateway"
 
 msgid "domain.custom_proxy.label"
-msgstr "Custom proxy"
+msgstr "Proxy"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr "REALITY domains must use the REALITY Termination proxy"

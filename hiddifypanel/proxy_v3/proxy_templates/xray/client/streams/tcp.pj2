@@ -1,12 +1,6 @@
 "network": "tcp",
 "tcpSettings": {
   "header": {
-    "type": "http",
-    "request": {
-      "path": ["/{{ proxy.path }}"],
-      "headers": {
-        "Host": ["{{ proxy.domain.host }}"]
-      }
-    }
+    "type": "none"
   }
 },

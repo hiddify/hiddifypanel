@@ -8,7 +8,7 @@ from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.user import User
-from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, normalize_common_proxy_core
+from hiddifypanel.proxy_v3.context_vars.builder.utils import normalize_common_proxy_core
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
@@ -20,7 +20,13 @@ from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
 
 def _common_proxy_core_cache_token() -> str:
-    return ",".join(f"{child.id}:{normalize_common_proxy_core(hconfig(ConfigEnum.common_proxy_core, child.id))}" for child in Child.query.all())
+    tokens: list[str] = []
+    for child in Child.query.all():
+        selected = hconfig(ConfigEnum.common_proxy_core, child.id)
+        tokens.append(
+            f"{child.id}:{normalize_common_proxy_core(selected if isinstance(selected, str) or selected is None else None)}"
+        )
+    return ",".join(tokens)
 
 
 def build_client_template_context(user: User, sublink_domain: str, user_agent: str) -> list[ClientContextVar]:
@@ -46,11 +52,9 @@ def get_bases(sublink_domain: str, common_core_token: str = "") -> list[BaseVar]
     domains: list[DomainIPVar] = get_availble_domains(sublink_domain)
     all_bases = []
     for p in proxies:
-        child_id = int(p.child_id or 0)
         if not p.enable:
             continue
-        if common_proxy_core_blocks(bool(p.is_common_proxy), p.server_core.value if p.server_core else None, hconfig(ConfigEnum.common_proxy_core, child_id)):
-            continue
+        child_id = int(p.child_id or 0)
         proxy_var = ClientBuilderProxyVar.from_custom_proxy(p, child_hconfigs[child_id])
         proxy_var.domains = [d for d in domains if filter_domain_for_proxy(d, proxy_var)]
         base = BaseVar(
@@ -65,6 +69,9 @@ def get_bases(sublink_domain: str, common_core_token: str = "") -> list[BaseVar]
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
+
+    if proxy.mode == CustomProxyMode.domains_sni_gateway:
+        return d.custom_proxy_id is not None and d.custom_proxy_id == proxy.id
 
     if d.custom_proxy_id == proxy.id:
         return True

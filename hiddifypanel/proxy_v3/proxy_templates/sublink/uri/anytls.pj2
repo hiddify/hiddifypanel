@@ -1,0 +1,19 @@
+{# https://github.com/anytls/anytls-go/blob/main/docs/uri_scheme.md #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set domain = proxy.domain %}
+  {% set uri = namespace(
+    protocol='anytls',
+    password=ctx.user.uuid,
+    host=proxy.server,
+    port=proxy.port,
+    query_params=namespace(),
+  ) %}
+  {% set qp = uri.query_params %}
+  {% if domain.sni %}
+    {% set qp.sni = domain.sni %}
+  {% endif %}
+  {% set qp.insecure = '1' if (domain.is_fake_tls() or domain.allow_insecure) else '0' %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

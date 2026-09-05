@@ -2,7 +2,6 @@
   {% for ctx in ctx.iter_ctx_domains() %}
     {% set proxy = ctx.proxy %}
     {% set domain = ctx.proxy.domain %}
-    {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__ %}
         {% set tag %}{%- include 'hiddify-core/client/tag' -%}{% endset %}
         {
           "tag": "{{ tag | trim_no_line }}",
@@ -10,6 +9,5 @@
           {% include '__STREAM_SLUG__' %},
           {% include '__TLS_SLUG__' %}
         },
-    {% endwith %}
   {% endfor %}
 {% endblock %}

@@ -2,7 +2,7 @@
   "address": "{{ proxy.domain.download.server() if proxy.domain.download else proxy.domain.server() }}",
   "port": {{ proxy.download_port }},
   "network": "xhttp",
-  {% with domain=proxy.domain.download, alpns=download_alpns, tls_layer=proxy.download_tls_layer %}
+  {% with domain=proxy.domain.download, tls_layer=proxy.download_tls_layer %}
     {% include 'xray/client/security/tls' %}
   {% endwith %}
   "xhttpSettings": {

@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import json
 from typing import Any
-
-from ..alpn_helpers import alpn_list_for_tag
 
 from .fragment_loader import load_template_slug
 from .paths import preset_shell_slug
@@ -35,22 +32,8 @@ def _uses_v2ray_transport_client(combo: ProxyCombination) -> bool:
     return _uses_v2ray_transport_proto(proto)
 
 
-def _xhttp_combo_alpn_tags(combo: ProxyCombination) -> tuple[str, str]:
-    upload = combo.params.get("upload_alpn")
-    download = combo.params.get("download_alpn")
-    if not upload or not download:
-        default = "http" if str(combo.l3).lower() == "http" else "tls_h2"
-        upload = upload or default
-        download = download or default
-    return str(upload), str(download)
-
-
 def _xhttp_with_replacements(combo: ProxyCombination) -> dict[str, str]:
-    upload_tag, download_tag = _xhttp_combo_alpn_tags(combo)
-    return {
-        "__ALPNS__": json.dumps(alpn_list_for_tag(upload_tag)),
-        "__DOWNLOAD_ALPNS__": json.dumps(alpn_list_for_tag(download_tag)),
-    }
+    return {}
 
 
 def _render_shell(core: str, shell_name: str, replacements: dict[str, str]) -> str:
@@ -66,15 +49,25 @@ def _hiddify_client_streams_slug(combo: ProxyCombination) -> str | None:
     transport = _transport_file(combo.transport)
     if not transport:
         return None
-    if transport == "tcp":
-        slug = f"{_HIDDIFY_CLIENT_ROOT}/client/streams/none"
-    else:
-        slug = f"{_HIDDIFY_CLIENT_ROOT}/client/streams/{transport}"
+    slug = f"{_HIDDIFY_CLIENT_ROOT}/client/streams/{transport}"
     try:
         load_template_slug(slug)
         return slug
     except FileNotFoundError:
         return None
+
+
+def _is_plain_ss2022(combo: ProxyCombination) -> bool:
+    proto = combo.proto.lower()
+    if proto == "v2ray":
+        return False
+    if _raw_transport(combo.transport) in ("faketls", "shadowtls"):
+        return False
+    return proto in ("shadowsocks", "ss")
+
+
+def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
+    return combo.proto.lower() == "socks" or _is_plain_ss2022(combo)
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
@@ -107,6 +100,7 @@ def _sublink_transport_slug(transport: str) -> str:
         "httpupgrade": "sublink/uri/transport/httpupgrade",
         "grpc": "sublink/uri/transport/grpc",
         "tcp": "sublink/uri/transport/tcp",
+        "http": "sublink/uri/transport/http",
         "xhttp": "sublink/uri/transport/xhttp",
     }
     return slugs.get(mapped, "sublink/uri/transport/tcp")
@@ -119,15 +113,44 @@ _URI_LINK_BODIES = frozenset(
     }
 )
 
+_STANDALONE_URI_BODIES = frozenset(
+    {
+        "sublink/uri/naive",
+        "sublink/uri/anytls",
+        "sublink/uri/mieru",
+        "sublink/uri/socks",
+        "sublink/uri/tuic",
+        "sublink/uri/hysteria",
+        "sublink/uri/hysteria2",
+        "sublink/uri/snell",
+        "sublink/uri/wireguard",
+        "sublink/uri/ss",
+        "sublink/uri/ssh",
+    }
+)
+
+_SUBLINK_PROTO_BODIES: dict[str, str] = {
+    "ss": "sublink/uri/ss",
+    "shadowsocks": "sublink/uri/ss",
+    "v2ray": "sublink/uri/ss",
+    "vmess": "sublink/vmess/base",
+    "trojan": "sublink/uri/trojan",
+    "vless": "sublink/uri/vless",
+    "naive": "sublink/uri/naive",
+    "anytls": "sublink/uri/anytls",
+    "mieru": "sublink/uri/mieru",
+    "socks": "sublink/uri/socks",
+    "tuic": "sublink/uri/tuic",
+    "hysteria": "sublink/uri/hysteria",
+    "hysteria2": "sublink/uri/hysteria2",
+    "snell": "sublink/uri/snell",
+    "wireguard": "sublink/uri/wireguard",
+    "ssh": "sublink/uri/ssh",
+}
+
 
 def _sublink_link_body_slug(combo: ProxyCombination) -> str:
-    if combo.proto in ("ss", "shadowsocks", "v2ray"):
-        return "sublink/uri/ss"
-    if combo.proto == "vmess":
-        return "sublink/vmess/base"
-    if combo.proto == "trojan":
-        return "sublink/uri/trojan"
-    return "sublink/uri/vless"
+    return _SUBLINK_PROTO_BODIES.get(combo.proto.lower(), "sublink/uri/vless")
 
 
 def _sublink_tls_slug(combo: ProxyCombination) -> str:
@@ -140,6 +163,7 @@ def _vmess_transport_slug(combo: ProxyCombination) -> str:
     transport = str(_transport_file(combo.transport) or "tcp").lower()
     slugs = {
         "tcp": "sublink/vmess/transport/tcp",
+        "http": "sublink/vmess/transport/http",
         "ws": "sublink/vmess/transport/ws",
         "grpc": "sublink/vmess/transport/grpc",
         "httpupgrade": "sublink/vmess/transport/httpupgrade",
@@ -170,10 +194,6 @@ def _apply_sublink_body_placeholders(body: str, combo: ProxyCombination) -> str:
     body = body.replace("__TLS_SLUG__", tls_slug)
     body = body.replace("__TRANSPORT_SLUG__", transport_slug)
 
-    upload_tag, download_tag = _xhttp_combo_alpn_tags(combo)
-    body = body.replace("__ALPNS__", json.dumps(alpn_list_for_tag(upload_tag)))
-    body = body.replace("__DOWNLOAD_ALPNS__", json.dumps(alpn_list_for_tag(download_tag)))
-
     return body
 
 
@@ -192,7 +212,8 @@ def build_sublink_client(combo: ProxyCombination) -> tuple[str, list[str]]:
     body_slug = _sublink_link_body_slug(combo)
     tls_slug = _sublink_tls_slug(combo)
     slugs = ["sublink/tag", body_slug]
-    if body_slug == "sublink/uri/ss":
+    if body_slug in _STANDALONE_URI_BODIES:
+        slugs.append("sublink/uri/final_link_maker")
         content = load_template_slug(body_slug)
         return content, slugs
     if body_slug in _URI_LINK_BODIES:
@@ -330,6 +351,7 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
         tls_slug = _hiddify_client_tls_slug(combo)
         shadowtls_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/shadowtls"
         is_shadowtls_ss = _raw_transport(combo.transport) == "shadowtls" and _client_proto_file(combo.proto) == "ss"
+        is_plain_ss = _skips_hiddify_client_tls(combo)
         slugs = [proto_slug]
         if _client_proto_file(combo.proto) == "wireguard":
             shell_name = "endpoint_general"
@@ -340,9 +362,11 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
             shell_name = "outbound_with_detour"
             slugs.append(shadowtls_slug)
             replacements["__SHADOWTLS_SLUG__"] = shadowtls_slug
-        else:
+        elif not is_plain_ss:
             slugs.append(tls_slug)
         content = _render_shell(_HIDDIFY_CLIENT_ROOT, shell_name, replacements)
+        if is_plain_ss:
+            content = content.replace(f"{{% include '{tls_slug}' %}}", "")
         return content, slugs
     stream_slug = _hiddify_client_streams_slug(combo)
     if not stream_slug:
@@ -372,6 +396,8 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
 def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
     """Mihomo/Clash JSON proxy entry (YAML grammar JSON subset)."""
     network = _transport_file(combo.transport) or "tcp"
+    if network == "http":
+        network = "tcp"
     proto = _proto_file(combo.proto) or "vless"
     content = _render_shell(
         "clash",

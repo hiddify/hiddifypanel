@@ -40,8 +40,18 @@ def _drop_wip_proxy_tables() -> None:
     set_hconfig(ConfigEnum.db_version, 129)
 
 
-def _v134(child_id):
-    sync_builtin_presets(child_id)
+def _v135(child_id):
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
+    from hiddifypanel.proxy_v3.config_builder import jinja_render
+
+    sync_all(child_id)
+    cache.invalidate_all_cached_functions()
+    jinja_render._template_map_cache.clear()
+    jinja_render._jinja_env_cache.clear()
+
+
+# def _v134(child_id):
+#     sync_builtin_presets(child_id)
 
 
 def _v133(child_id):
@@ -81,6 +91,7 @@ def _v130(child_id):
     add_config_if_not_exist(ConfigEnum.path_ss, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_grpc, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_tcp, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_http, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_ws, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_xhttp, hutils.random.get_random_string(7, 15))
@@ -1044,6 +1055,7 @@ def add_new_enum_values():
         ProxyTemplate.category,
         CustomProxy.mode,
         CustomProxy.proto,
+        CustomProxy.transport,
         CustomProxy.tls_layer,
         CustomProxy.download_tls_layer,
     ]

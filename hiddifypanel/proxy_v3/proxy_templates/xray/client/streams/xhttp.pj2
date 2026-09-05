@@ -4,13 +4,13 @@
   "path": "/{{ proxy.path }}",
   "host": "{{ proxy.domain.host }}",
   "extra": {
-    {% if proxy.is_download_upload_different() or alpns != download_alpns %}
+    {% if proxy.is_download_upload_different()  %}
 
     "downloadSettings": {
       "address": "{{ proxy.domain.download.server() }}",
       "port": {{ proxy.domain.download.port or proxy.download_port }},
       "network": "xhttp",
-      {% with domain=proxy.domain.download, alpns=download_alpns, tls_layer=proxy.download_tls_layer %}
+      {% with domain=proxy.domain.download, tls_layer=proxy.download_tls_layer %}
         {% include 'xray/client/security/tls' %}
       {% endwith %}
       "xhttpSettings": {

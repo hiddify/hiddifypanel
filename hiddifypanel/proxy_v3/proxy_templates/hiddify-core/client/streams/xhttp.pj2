@@ -5,9 +5,9 @@
   "host": "{{ domain.host }}",
   "mode": "auto",
   "headers":{
-    "User-Agent": "{{default_useragent_string}}"
+    {% include 'hiddify-core/client/default_headers' %}
   },
-  {% if proxy.is_download_upload_different() or alpns != download_alpns %}
+  {% if proxy.is_download_upload_different()  %}
   "downloadSettings": {
     "path": "/{{ proxy.path }}",
     "host": "{{ domain.download.host }}",
@@ -15,9 +15,9 @@
     "server_port": {{ domain.download.port or proxy.download_port }},
 
     "headers": {
-      "User-Agent": "{{default_useragent_string}}"
+      {% include 'hiddify-core/client/default_headers' %}
     },
-    {% with domain=domain.download, alpns=download_alpns, tls_layer=proxy.download_tls_layer %}
+    {% with domain=domain.download, tls_layer=proxy.download_tls_layer %}
       {% include 'hiddify-core/client/tls/tls_http' %}
     {% endwith %}
   }

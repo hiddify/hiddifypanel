@@ -1,4 +1,2 @@
 {% set qp.type = 'tcp' %}
-{% set qp.path = '/' ~ proxy.path %}
-{% set qp.host = ctx.proxy.domain.host %}
-{% set qp.headerType = 'http' %}
+{% set qp.headerType = 'none' %}

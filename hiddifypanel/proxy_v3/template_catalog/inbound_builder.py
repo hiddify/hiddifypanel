@@ -16,6 +16,7 @@ TRANSPORT_SLUG: dict[str, str] = {
     "h2": "tcp",
     "grpc": "grpc",
     "tcp": "tcp",
+    "http": "http",
     "httpupgrade": "httpupgrade",
     "xhttp": "xhttp",
     "faketls": "tcp",
@@ -63,7 +64,7 @@ def _inbound_proto_file(combo: ProxyCombination) -> str | None:
 
 
 def _raw_transport(transport: str) -> str:
-    return str(getattr(transport, "value", transport) or transport).lower()
+    return transport.lower()
 
 
 def _transport_file(transport: str) -> str | None:
@@ -135,6 +136,9 @@ def _is_standalone_hiddify_server(combo: ProxyCombination) -> bool:
 
 def supports_hiddify_preset(combo: ProxyCombination) -> bool:
     if combo.proto == "wireguard":
+        return False
+    # sing-box / hiddify-core has no raw TCP stream (header none / IP).
+    if _uses_v2ray_transport_proto(_server_proto_stem(combo)) and _raw_transport(combo.transport) == "tcp":
         return False
     if _is_standalone_hiddify_server(combo):
         proto = _server_proto_stem(combo)

@@ -49,22 +49,40 @@ class L7Proto(JinjaEnum):
 
 class TlsLayer(JinjaEnum):
     http = auto()
-    tls = auto()  # TCP TLS
+    tls_h1 = auto()
+    tls_h2 = auto()
+    tls = auto()  # TCP TLS h2 h1
     quic_tls = auto()
-    quic_tcp_tls = auto()
+    quic_tcp_tls = auto()  # QUIC + TLS h2 h1
 
     def uses_tls(self) -> bool:
         return self != TlsLayer.http
 
     def uses_tcp(self) -> bool:
-        return self in (TlsLayer.http, TlsLayer.tls, TlsLayer.quic_tcp_tls)
+        return self in (TlsLayer.http, TlsLayer.tls_h1, TlsLayer.tls_h2, TlsLayer.tls, TlsLayer.quic_tcp_tls)
 
     def uses_udp(self) -> bool:
         return self in (TlsLayer.quic_tls, TlsLayer.quic_tcp_tls)
 
+    def alpns(self) -> list[str]:
+        if self == TlsLayer.http:
+            return ["http/1.1"]
+        if self == TlsLayer.tls_h1:
+            return ["http/1.1"]
+        elif self == TlsLayer.tls_h2:
+            return ["h2"]
+        elif self == TlsLayer.tls:
+            return ["h2", "http/1.1"]
+        elif self == TlsLayer.quic_tls:
+            return ["h3"]
+        elif self == TlsLayer.quic_tcp_tls:
+            return ["h3", "h2", "http/1.1"]
+        raise ValueError(f"Invalid TLS layer: {self}")
+
 
 class CustomProxyTransport(JinjaEnum):
     tcp = auto()
+    http = auto()
     ws = auto()
     httpupgrade = auto()
     grpc = auto()
@@ -393,7 +411,8 @@ class CustomProxy(db.Model):  # type: ignore
 
         keys = parent_enable_off(parent_enable_keys_for(self), flag)
         blocked = [{"key": key.name, "label": str(_(f"config.{key.name}.label"))} for key in keys]
-        if common_proxy_core_blocks(bool(self.is_common_proxy), self.server_core.value if self.server_core else None, hconfig(ConfigEnum.common_proxy_core, child_id)):
+        selected = hconfig(ConfigEnum.common_proxy_core, child_id)
+        if common_proxy_core_blocks(self.is_common_proxy, self.server_core, selected):
             blocked.append({"key": ConfigEnum.common_proxy_core.name, "label": str(_(f"config.{ConfigEnum.common_proxy_core.name}.label"))})
         return blocked
 
@@ -554,6 +573,7 @@ class CustomProxy(db.Model):  # type: ignore
                 _apply_domain_modes(dbproxy, list(data.get("domain_modes") or []))
             elif "mode" in data and "domain_modes" not in data:
                 _apply_domain_modes(dbproxy, None)
+            validate_naive_tls_layer(dbproxy.proto, dbproxy.tls_layer)
             if commit:
                 db.session.commit()
             return dbproxy
@@ -620,6 +640,7 @@ class CustomProxy(db.Model):  # type: ignore
             dbproxy.sort_order = int(data["sort_order"])
 
         _validate_required_server_ports(dbproxy)
+        validate_naive_tls_layer(dbproxy.proto, dbproxy.tls_layer)
 
         if commit:
             db.session.commit()
@@ -818,6 +839,10 @@ def _parse_l7_proto(value: Any) -> L7Proto | None:
 _TLS_LAYER_ALIASES = {
     "tcp_tls": "tls",
     "tcp-tls": "tls",
+    "tls_h2_h1": "tls",
+    "tls-h2-h1": "tls",
+    "tls-h1": "tls_h1",
+    "tls-h2": "tls_h2",
     "quic+tcp_tls": "quic_tcp_tls",
     "quic+tcp-tls": "quic_tcp_tls",
     "quic-tcp-tls": "quic_tcp_tls",
@@ -846,6 +871,14 @@ def domain_modes_use_reality(domain_modes: list[str] | None) -> bool:
 def validate_tls_layer_domain_modes(tls_layer: TlsLayer | None, domain_modes: list[str] | None) -> None:
     if tls_layer == TlsLayer.http and domain_modes_use_reality(domain_modes):
         raise ValueError("HTTP TLS layer is incompatible with reality/special domain modes")
+
+
+def validate_naive_tls_layer(proto: ProxyProto | str | None, tls_layer: TlsLayer | None) -> None:
+    if proto is None or proto == "":
+        return
+    parsed = proto if isinstance(proto, ProxyProto) else _parse_proto(proto)
+    if parsed == ProxyProto.naive and tls_layer == TlsLayer.http:
+        raise ValueError("Naive cannot use HTTP TLS layer")
 
 
 def uses_xhttp_download_settings(proxy: CustomProxy) -> bool:
@@ -1024,7 +1057,7 @@ def _apply_domain_modes(dbproxy: CustomProxy, domain_modes: list[str] | None) ->
         dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct", "relay"]
     elif dbproxy.mode == CustomProxyMode.ip:
         allowed = {"direct", "relay"}
-        dbproxy.domain_modes = [m for m in domain_modes if m in allowed]
+        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or default_domain_modes_for_mode(dbproxy.mode)
     else:
         dbproxy.domain_modes = default_domain_modes_for_mode(dbproxy.mode)
     validate_xhttp_domain_modes(dbproxy)

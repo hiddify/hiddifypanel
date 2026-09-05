@@ -6,7 +6,8 @@ frontend in-httpmode-ssl
   # there is a bug in haproxy or xray in which when http/1.1 is set it send alpn as h2 and therefore it makes a confusion for haproxy in http mode so i seperate them
   mode tcp
   bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1
-  use_backend to_httpmode
+  use_backend %[path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_tcp')}},to_httpmode)]
+  default_backend to_httpmode
 
 frontend in-reality-tcpmode
   bind abns@tcp_in_reality_h1 accept-proxy

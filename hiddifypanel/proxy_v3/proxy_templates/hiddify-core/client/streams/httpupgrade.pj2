@@ -1,9 +1,8 @@
 {{ skip("httpupgrade_enable = " ~ ctx.hconfig.httpupgrade_enable) if not ctx.hconfig.httpupgrade_enable }}
-"network": "tcp",
 "transport": {
   "type": "httpupgrade",
   "path": "/{{ proxy.path }}",
   "headers":{
-    "User-Agent": "{{default_useragent_string}}"
+    {% include 'hiddify-core/client/default_headers' %}
   },
 },

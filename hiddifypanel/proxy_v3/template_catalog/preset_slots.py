@@ -9,9 +9,13 @@ from .inbound_builder import _raw_transport
 from .proxy_matrix import ProxyCombination, iter_proxy_combinations
 
 V2RAY_GATEWAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
-V2RAY_GATEWAY_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "tcp"})
+V2RAY_GATEWAY_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "tcp", "http"})
 H3_PROTOS = frozenset({"tuic", "hysteria", "hysteria2"})
-HTTP_CAPABLE_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "tcp"})
+HTTP_CAPABLE_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "tcp", "http"})
+TRANSPORT_DISPLAY_NAME = {
+    "tcp": "raw",
+    "http": "rawhttp",
+}
 
 XHTTP_ALPN_TAGS = XHTTP_DIRECTION_TAGS
 XHTTP_ALPN_LABEL = {
@@ -22,7 +26,6 @@ XHTTP_ALPN_LABEL = {
 }
 
 NAIVE_L3_VARIANTS: tuple[tuple[str, str, str | None], ...] = (
-    ("http", "http", "h2"),
     ("tls_h2", "tls", "h2"),
     ("h3_quic", "tls", "h2"),
 )
@@ -78,16 +81,15 @@ def _xhttp_params(upload: str, download: str) -> dict:
 
 
 def tls_layer_for_xhttp_alpn(alpn: str | None, *, reality: bool = False) -> str:
-    """Map an xhttp ALPN tag to the TLS layer for that direction.
-
-    Upload HTTP → ``tls_layer=http``; download HTTP → ``download_tls_layer=http``.
-    Reality cannot carry cleartext HTTP, so HTTP ALPN still maps to ``http``.
-    """
+    """Map an xhttp ALPN tag to the TLS layer used in the title and editor."""
+    del reality
     tag = str(alpn or "").lower()
     if tag == "http":
         return "http"
-    if reality:
-        return "tls"
+    if tag in ("tls_h1", "h1"):
+        return "tls_h1"
+    if tag in ("tls_h2", "h2"):
+        return "tls_h2"
     if tag in ("tls_h3", "h3"):
         return "quic_tls"
     return "tls"
@@ -122,7 +124,15 @@ def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombinati
     if proto in H3_PROTOS:
         return [(combo, "tls", None, None, "h3")]
 
+    # ShadowSocks2022 / SOCKS are IP-based with no TLS wrapper.
+    if proto in ("shadowsocks", "ss", "socks") and transport not in ("shadowtls", "faketls"):
+        return [(combo, "http", None, None, None)]
+
     if proto in V2RAY_GATEWAY_PROTOS and transport in V2RAY_GATEWAY_TRANSPORTS:
+        if transport == "tcp":
+            if str(combo.l3).lower() == "reality":
+                return [(combo, "tls", None, None, None)]
+            return [(_with_l3(combo, "http"), "http", None, None, None)]
         tls_combo = combo if combo.l3 in ("reality", "tls", "tls_h2", "tls_h2_h1", "h3_quic") else _with_l3(combo, "tls")
         variants = [(tls_combo, "tls", None, None, _default_l7(transport, "tls"))]
         if proto != "trojan":
@@ -135,19 +145,21 @@ def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombinati
 
 
 def _l7_for_xhttp_alpn(alpn: str | None) -> str:
-    """HAProxy reverse-proto for the xhttp *upload* direction."""
+    """HAProxy reverse-proto for the xhttp *upload* direction.
+
+    Client QUIC/H3 is terminated at the L7 gateway; the backend is always
+    HTTP/1 or HTTP/2 over TCP.
+    """
     tag = str(alpn or "").lower()
     if tag in ("http", "tls_h1", "h1"):
         return "h1"
-    if tag in ("tls_h3", "h3"):
-        return "h3"
     return "h2"
 
 
 def _default_l7(transport: str, layer: str) -> str | None:
     if transport == "xhttp":
         return "h2"
-    if transport in ("ws", "httpupgrade"):
+    if transport in ("ws", "httpupgrade", "http"):
         return "h1"
     if transport == "grpc":
         return "h2"
@@ -201,7 +213,7 @@ def iter_grouped_preset_slots() -> list[PresetSlot]:
     return slots
 
 
-def _preset_base_name(slot: PresetSlot) -> str:
+def _preset_base_name(slot: PresetSlot, *, include_custom_transport: bool = True) -> str:
     parts = slot.primary.name.split()
     skip = {
         "direct",
@@ -218,6 +230,15 @@ def _preset_base_name(slot: PresetSlot) -> str:
         "custom",
     }
     filtered = [part for part in parts if part.lower() not in skip]
+    transport = _raw_transport(slot.primary.transport)
+    proto = slot.primary.proto.lower()
+    # raw / rawhttp names are only for vless/vmess/trojan TCP shapes
+    display = TRANSPORT_DISPLAY_NAME.get(transport, transport) if proto in V2RAY_GATEWAY_PROTOS else transport
+    if proto in V2RAY_GATEWAY_PROTOS:
+        filtered = [part for part in filtered if part.lower() != transport]
+    # "custom" is a matrix placeholder. Keep it in slugs for identity; omit from display names.
+    if display and display.lower() not in {p.lower() for p in filtered} and (include_custom_transport or display.lower() != "custom"):
+        filtered.insert(0, display)
     return " ".join(filtered) if filtered else slot.primary.name
 
 
@@ -229,22 +250,23 @@ def _xhttp_direction_suffix(slot: PresetSlot) -> str:
     return f"📤{up} 📥{down}"
 
 
-def _preset_title(slot: PresetSlot) -> str:
-    base = _preset_base_name(slot)
+def _preset_title(slot: PresetSlot, *, include_custom_transport: bool = True) -> str:
+    base = _preset_base_name(slot, include_custom_transport=include_custom_transport)
 
     if slot.upload_alpn and slot.download_alpn:
         return f"{base} {_xhttp_direction_suffix(slot)}".strip()
 
     if slot.primary.proto.lower() == "naive":
-        if slot.primary.l3 == "http":
-            return f"{base} HTTP".strip()
         if slot.primary.l3 == "tls_h2":
             return f"{base} H2".strip()
         if slot.primary.l3 == "h3_quic":
             return f"{base} QUIC".strip()
 
-    if slot.tls_layer == "http":
+    if slot.tls_layer == "http" and slot.primary.proto.lower() in V2RAY_GATEWAY_PROTOS and _raw_transport(slot.primary.transport) != "tcp":
         return f"{base} HTTP".strip()
+
+    if str(slot.primary.l3).lower() == "reality":
+        return f"{base} REALITY".strip()
 
     if slot.primary.l3 == "h3_quic":
         return f"{base} QUIC".strip()
@@ -253,9 +275,9 @@ def _preset_title(slot: PresetSlot) -> str:
 
 
 def preset_display_name(slot: PresetSlot) -> str:
-    return _preset_title(slot)
+    return _preset_title(slot, include_custom_transport=False)
 
 
 def preset_slug_name(slot: PresetSlot) -> str:
-    """Same as display: upload then download."""
-    return _preset_title(slot)
+    """Same title shape as display, but keeps a `custom` transport token for stable slugs."""
+    return _preset_title(slot, include_custom_transport=True)

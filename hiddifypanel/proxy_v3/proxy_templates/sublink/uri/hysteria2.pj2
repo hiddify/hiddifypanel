@@ -1,0 +1,19 @@
+{# https://v2.hysteria.network/docs/developers/URI-Scheme/ #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set domain = proxy.domain %}
+  {% set uri = namespace(
+    protocol='hy2',
+    user=ctx.user.uuid,
+    host=proxy.server,
+    port=(proxy.udp_port_ranges or [proxy.udp_port or proxy.port]) | join(','),
+    query_params={
+      'sni': domain.sni or '',
+      'insecure': '1' if (domain.is_fake_tls() or domain.allow_insecure) else '',
+      'obfs': 'salamander' if ctx.hconfig.hysteria_obfs_enable else '',
+      'obfs-password': ctx.hconfig.proxy_path if ctx.hconfig.hysteria_obfs_enable else '',
+    },
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

@@ -1196,7 +1196,7 @@ msgid "adminV2.menu.baseConfigs"
 msgstr "پیکربندی پایه"
 
 msgid "adminV2.menu.customProxies"
-msgstr "پروکسی‌های سفارشی"
+msgstr "پروکسی‌ها"
 
 msgid "adminV2.menu.dashboard"
 msgstr "داشبورد"
@@ -1531,7 +1531,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "قالب لینک"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "پروکسی‌های سفارشی"
+msgstr "پروکسی‌ها"
 
 msgid "adminV2.proxy.mode"
 msgstr "حالت"
@@ -3638,7 +3638,7 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "درگاه SNI"
 
 msgid "domain.custom_proxy.label"
-msgstr "پراکسی سفارشی"
+msgstr "پراکسی"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند"

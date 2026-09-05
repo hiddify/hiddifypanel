@@ -13,10 +13,9 @@
   {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
   
   {% set qp = uri.query_params %}
-  {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__ %}
     {% include '__TLS_SLUG__' %}
     {% include '__TRANSPORT_SLUG__' %}
-  {%endwith%}
+
   {% if ctx.hconfig.vless_flow %}
     {% set qp.flow=ctx.hconfig.vless_flow %}
   {% endif %}

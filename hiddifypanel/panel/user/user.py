@@ -237,7 +237,11 @@ class UserView(FlaskView):
         return add_headers(resp, c)
 
     def _render_core_config(self, core: str, common: dict, *, pretty: bool) -> str:
-        child_id = int(getattr(common.get("db_domain"), "child_id", 0) or 0)
+        db_domain = common["db_domain"]
+        if not isinstance(db_domain, Domain):
+            child_id = 0
+        else:
+            child_id = int(db_domain.child_id or 0)
         result = render_client_configs(
             user=common["user"],
             child_id=child_id,

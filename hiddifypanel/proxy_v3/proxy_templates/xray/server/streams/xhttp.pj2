@@ -1,5 +1,7 @@
 "network": "xhttp",
 "xhttpSettings": {
+  {% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
   "mode": "auto",
   "path": "/{{ ctx.proxy.path }}"
+  
 }

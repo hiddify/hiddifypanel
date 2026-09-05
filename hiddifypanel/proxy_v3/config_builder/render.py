@@ -219,10 +219,9 @@ def render_section(
 def _resolve_fragment_block_name(fragment: str, block_name: str | None) -> str:
     preferred = block_name or "outbounds"
     raw = (fragment or "").strip()
-    if extract_block_body(raw, preferred) is not None:
-        return preferred
-    if extract_block_body(raw, "endpoints") is not None:
-        return "endpoints"
+    for name in (preferred, "inbounds", "inbound", "endpoints", "outbounds"):
+        if extract_block_body(raw, name) is not None:
+            return name
     return preferred
 
 
@@ -235,7 +234,8 @@ def render_fragment_section(
     parse_json: bool = True,
 ) -> RenderSectionResult:
     raw = (fragment or "").strip()
-    body = extract_block_body(raw, block_name)
+    resolved = _resolve_fragment_block_name(raw, block_name)
+    body = extract_block_body(raw, resolved)
     if body is None:
         return RenderSectionResult(skipped=True)
 

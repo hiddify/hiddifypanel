@@ -127,18 +127,29 @@ def _jinja_exec(command: str) -> str:
         return ""
 
 
+def _urlencode_pair(key: Any, val: Any) -> tuple[str, Any] | None:
+    if val is None or val == "":
+        return None
+    if isinstance(val, bool):
+        val = "true" if val else "false"
+    elif isinstance(val, (dict, list)):
+        val = json.dumps(val, ensure_ascii=False, separators=(",", ":"))
+    return (str(key), val)
+
+
 def _jinja_urlencode(value: Any) -> str:
     normalized = _to_json_value(value)
     if isinstance(normalized, dict):
+        items = [pair for key, val in normalized.items() if (pair := _urlencode_pair(key, val))]
+        return urlencode(items, quote_via=quote)
+    if isinstance(normalized, list):
         items: list[tuple[str, Any]] = []
-        for key, val in normalized.items():
-            if val is None or val == "":
+        for item in normalized:
+            if not isinstance(item, (list, tuple)) or len(item) < 2:
                 continue
-            if isinstance(val, bool):
-                val = "true" if val else "false"
-            elif isinstance(val, (dict, list)):
-                val = json.dumps(val, ensure_ascii=False, separators=(",", ":"))
-            items.append((str(key), val))
+            pair = _urlencode_pair(item[0], item[1])
+            if pair:
+                items.append(pair)
         return urlencode(items, quote_via=quote)
     if normalized is None:
         return ""
@@ -217,6 +228,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.filters["asdict"] = _to_json_value
     env.filters["b64encode"] = hutils.encode.do_base_64
     env.filters["urlencoded"] = _jinja_urlencode
+
     env.filters["trim_no_line"] = _jinja_trim_no_line
     env.filters["compactjson"] = _jinja_compact_json
     env.filters["choose_random"] = _jinja_choose_random

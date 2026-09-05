@@ -1,0 +1,2 @@
+{{ skip("tcp_enable = " ~ ctx.hconfig.tcp_enable) if not ctx.hconfig.tcp_enable }}
+"network": "tcp",

@@ -14,6 +14,8 @@ from jinja2.exceptions import TemplateError
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import parse_user_agent
 from hiddifypanel.models import CustomProxy, CustomProxyMode
+from hiddifypanel.models.domain import Domain
+from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.models.proxy_base_config import BaseConfigSide, default_base_content
 
 from .alpn_helpers import (
@@ -36,14 +38,21 @@ def _client_outbounds_template(cc: dict[str, Any]) -> str:
     return str(cc.get("outbounds_template") or cc.get("link_template") or "")
 
 
-def _keep_common_proxy_client_core(data: dict[str, Any], core_name: str, child_id: int) -> bool:
-    if not data.get("is_common_proxy"):
-        return True
-    return not common_proxy_core_blocks(True, core_name, hconfig(ConfigEnum.common_proxy_core, child_id))
-
-
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
+from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
+from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
+from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
+from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    extract_block_body as _extract_block_body,
+)
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    fragment_block_body as _fragment_block_body,
+)
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    inject_named_fragment_blocks as _inject_named_fragment_blocks,
+)
 from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, fix_duplicate_json_commas
 from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
@@ -51,21 +60,19 @@ from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 from .custom_proxy_ports import mode_requires_static_ports, mode_uses_auto_ports, mode_uses_gateway_port, normalize_port_list, primary_resolved_port, resolve_inbound_ports
 from .jinja_context import TemplateSkip, build_template_context
 from .outbound_tags import deduplicate_client_tags
-from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
-from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
-from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
-from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
-from hiddifypanel.proxy_v3.config_builder.template_blocks import (
-    extract_block_body as _extract_block_body,
-    fragment_block_body as _fragment_block_body,
-    inject_named_fragment_blocks as _inject_named_fragment_blocks,
-    inject_template_block as _inject_template_block,
-)
 from .template_variables import build_domain_context, build_user_context
 
 SAMPLE_UUID = "00000000-0000-0000-0000-000000000001"
 
 SERVER_BUNDLE_CORES: tuple[str, ...] = ("hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4")
+
+
+def _keep_common_proxy_client_core(is_common_proxy: bool, core_name: str, child_id: int) -> bool:
+
+    if not is_common_proxy:
+        return True
+    selected = hconfig(ConfigEnum.common_proxy_core, child_id)
+    return not common_proxy_core_blocks(True, core_name, selected)
 
 
 @dataclass(frozen=True)
@@ -202,7 +209,6 @@ def build_render_context(
     download_alpn_tags = normalize_alpn_tags(data.get("download_alpns") or [], {})
     if not alpn_tags:
         from hiddifypanel.models import get_hconfigs
-
         from hiddifypanel.proxy_v3.alpn_helpers import resolve_proxy_alpn_pairs
         from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
@@ -930,16 +936,19 @@ def validate_proxy_payload(
                 )
             try:
                 from hiddifypanel.models.custom_proxy import (
+                    _parse_tls_layer,
+                    validate_naive_tls_layer,
                     validate_tls_layer_domain_modes,
                     xhttp_download_is_quic,
                     xhttp_upload_is_quic,
-                    _parse_tls_layer,
                 )
 
+                tls_layer = _parse_tls_layer(data.get("tls_layer"))
                 validate_tls_layer_domain_modes(
-                    _parse_tls_layer(data.get("tls_layer")),
+                    tls_layer,
                     list(data.get("domain_modes") or []),
                 )
+                validate_naive_tls_layer(data.get("proto"), tls_layer)
                 categories = list(data.get("categories") or [])
                 if xhttp_upload_is_quic(categories) and "reality" in (data.get("domain_modes") or []):
                     errors.append(
@@ -1323,8 +1332,8 @@ def preview_base_config_content(
     return {**_preview_result_from_section(section), "warnings": []}
 
 
-def _server_block_name(core: str) -> str:
-    return "inbounds" if core == "hiddify-core" else "inbound"
+def _server_block_name(_core: str) -> str:
+    return "inbounds"
 
 
 def _client_block_name(core: str) -> str:
@@ -1592,7 +1601,7 @@ def _infer_proxy_l3(data: dict[str, Any]) -> str:
     return "tls"
 
 
-_TRANSPORT_CATEGORIES = frozenset({"ws", "grpc", "tcp", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
+_TRANSPORT_CATEGORIES = frozenset({"ws", "grpc", "tcp", "http", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
 _PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "snell"})
 
 
@@ -1628,7 +1637,6 @@ def _client_uses_template_alpn_loop(core_name: str) -> bool:
 
 def _client_render_variants(data: dict[str, Any]) -> list[_ClientRenderVariant]:
     from hiddifypanel.models import get_hconfigs
-
     from hiddifypanel.proxy_v3.alpn_helpers import resolve_proxy_alpn_pairs
     from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
@@ -2021,22 +2029,27 @@ def _compose_server_config(
     )
 
 
-def _domain_var_id(domain: Any) -> int | None:
-    data = getattr(domain, "_data", None)
-    if isinstance(data, dict):
+def _domain_var_id(domain: DomainIPVar | Domain | dict[str, Any]) -> int | None:
+    if isinstance(domain, DomainIPVar):
+        return int(domain.id) if domain.id is not None else None
+    if isinstance(domain, Domain):
+        return int(domain.id) if domain.id is not None else None
+    if isinstance(domain, dict):
         for key in ("id", "domain_id"):
-            val = data.get(key)
+            val = domain.get(key)
             if val is not None:
                 return int(val)
-    raw = getattr(domain, "id", None)
-    return int(raw) if raw is not None else None
+    return None
 
 
-def _domain_var_host(domain: Any) -> str:
-    data = getattr(domain, "_data", None)
-    if isinstance(data, dict):
-        return str(data.get("name") or data.get("domain") or data.get("host") or "").strip().lower()
-    return str(getattr(domain, "domain", None) or getattr(domain, "name", None) or "").strip().lower()
+def _domain_var_host(domain: DomainIPVar | Domain | dict[str, Any]) -> str:
+    if isinstance(domain, DomainIPVar):
+        return str(domain.name or domain.host or "").strip().lower()
+    if isinstance(domain, Domain):
+        return str(domain.domain or "").strip().lower()
+    if isinstance(domain, dict):
+        return str(domain.get("name") or domain.get("domain") or domain.get("host") or "").strip().lower()
+    return ""
 
 
 def _scope_example_context(
@@ -2567,9 +2580,7 @@ def _compose_sublink_full_config(
         return link_section, formats
 
     link_value = link_section.get("rendered") or ""
-    base = _normalize_sublink_base(
-        resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version)
-    )
+    base = _normalize_sublink_base(resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version))
     if _base_usable_for_compose(base) and link_value:
         if _sublink_base_uses_links_var(base):
             compose_ctx = {**context, "links": link_value}
@@ -2757,11 +2768,7 @@ def generate_proxy_example(
     )
 
     auto_client_cores = resolve_auto_client_cores(resolved_ua, ua_parsed, child_id)
-    core_configs = [
-        cc
-        for cc in (client_config.get("core_configs") or [])
-        if _keep_common_proxy_client_core(data, str(cc.get("core") or ""), child_id)
-    ]
+    core_configs = [cc for cc in (client_config.get("core_configs") or []) if _keep_common_proxy_client_core(bool(data.get("is_common_proxy", False)), str(cc.get("core") or ""), child_id)]
     configured_cores = [str(cc.get("core") or "").strip() for cc in core_configs if str(cc.get("core") or "").strip()]
     primary_auto = resolve_primary_auto_client_core(resolved_ua, ua_parsed, child_id, configured_cores)
     default_client_core = resolve_default_client_core(configured_cores, child_id)
@@ -3569,9 +3576,7 @@ def _merge_sublink_bundle(
         user_uuid=user_uuid,
         user_agent=user_agent,
     )
-    base = _normalize_sublink_base(
-        resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version)
-    )
+    base = _normalize_sublink_base(resolve_base_config_content(child_id, BaseConfigSide.client.value, "sublink", version))
     links_text = "\n".join(links)
     if _base_usable_for_compose(base) and _sublink_base_uses_links_var(base):
         compose_ctx = {**bundle_ctx, "links": links_text}
@@ -3911,9 +3916,7 @@ def _generate_enabled_proxies_bundle_for_domain(
         if not proxy.enable:
             continue
         data = proxy.to_dict()
-        if common_proxy_core_blocks(bool(data.get("is_common_proxy")), data.get("server_core"), hconfig(ConfigEnum.common_proxy_core, child_id)):
-            continue
-        server_core = (data.get("server_config") or {}).get("core") or "xray"
+        server_core = proxy.server_core.value if proxy.server_core else "xray"
         server_groups.setdefault(server_core, []).append(proxy)
 
         client_config = data.get("client_config") or {}
@@ -3921,7 +3924,7 @@ def _generate_enabled_proxies_bundle_for_domain(
             core_name = cc.get("core") or ""
             if not core_name:
                 continue
-            if not _keep_common_proxy_client_core(data, core_name, child_id):
+            if not _keep_common_proxy_client_core(bool(proxy.is_common_proxy), str(core_name), child_id):
                 continue
             version = cc.get("version") or ""
             client_groups.setdefault((core_name, version), []).append((proxy, cc))

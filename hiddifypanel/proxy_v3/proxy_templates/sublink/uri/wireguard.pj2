@@ -1,0 +1,20 @@
+{# https://github.com/hiddify/hiddify-app/issues/1712 #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set uri = namespace(
+    protocol='wg',
+    host=proxy.server,
+    port=proxy.udp_port or proxy.port,
+    query_params={
+      'pk': ctx.user.wg_pk,
+      'local_address': (ctx.user.wg_ipv4 ~ '/32') if ctx.user.wg_ipv4 else '',
+      'peer_pk': ctx.hconfig.wireguard_public_key,
+      'pre_shared_key': ctx.user.wg_psk,
+      'mtu': '1380',
+      'reserved': '0,0,0',
+      'ifp': ctx.hconfig.wireguard_noise_trick,
+    },
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

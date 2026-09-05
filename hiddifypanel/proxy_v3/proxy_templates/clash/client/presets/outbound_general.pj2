@@ -9,6 +9,13 @@
   "network": "__NETWORK__",
   "tls": {{ ctx.proxy.uses_tls|tojson }},
   "servername": "{{ ctx.proxy.domain.sni }}",
-  "udp": true
+  "udp": true,
+  {% if ctx.proxy.transport == 'http' %}
+  "http-opts": {
+    "path": ["/{{ ctx.proxy.path }}"],
+    "headers": {
+      "Host": ["{{ ctx.proxy.domain.host }}"]
+    }
+  }{% endif %}
 },
 {% endfor %}

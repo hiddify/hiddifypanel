@@ -72,8 +72,8 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if d.fake_mode == FakeMode.reality and d.custom_proxy_id is None:
         print(f"Domain {d.name} is reality but has no custom proxy", file=sys.stderr)
         return False
-    if proxy.mode == CustomProxyMode.domains_sni_gateway and d.custom_proxy_id is None:
-        return False
+    if proxy.mode == CustomProxyMode.domains_sni_gateway:
+        return d.custom_proxy_id is not None and d.custom_proxy_id == proxy.id
 
     if d.custom_proxy_id is not None and d.custom_proxy_id != proxy.id:
         return False

@@ -22,12 +22,7 @@ XHTTP_ALPN_TAGS = (
 
 # Independent upload/download layers for xhttp (builtin vless mixed pairs).
 XHTTP_DIRECTION_TAGS = ("http", "tls_h1", "tls_h2", "tls_h3")
-XHTTP_ALPN_PAIRS: tuple[tuple[str, str], ...] = tuple(
-    (upload, download)
-    for upload in XHTTP_DIRECTION_TAGS
-    for download in XHTTP_DIRECTION_TAGS
-    if upload != download
-)
+XHTTP_ALPN_PAIRS: tuple[tuple[str, str], ...] = tuple((upload, download) for upload in XHTTP_DIRECTION_TAGS for download in XHTTP_DIRECTION_TAGS if upload != download)
 
 
 @dataclass
@@ -99,9 +94,16 @@ class AlpnTags:
         )
 
 
+_QUIC_ALPN_ALIASES = frozenset({"quic", "h3", "quic_tls", "h3_quic", "tls_h3"})
+
+
 def normalize_alpn_tag(tag: str | None) -> str:
     value = str(tag or "").strip().lower()
-    return "http" if value == "h1" else value
+    if value == "h1":
+        return "http"
+    if value in _QUIC_ALPN_ALIASES:
+        return "tls_h3"
+    return value
 
 
 def alpn_list_for_tag(tag: str | None) -> list[str]:
@@ -127,7 +129,7 @@ def _filter_trojan_alpns(tags: list[str], proto: str) -> list[str]:
 
 def alpns_for_l3(l3: str) -> list[str]:
     l3_key = str(l3).lower()
-    if l3_key in ("quic", "udp"):
+    if l3_key in _QUIC_ALPN_ALIASES or l3_key == "udp":
         return ["tls_h3"]
     return ["http", "tls_h1", "tls_h2"]
 
@@ -162,8 +164,15 @@ def alpns_for_combo(l3: str, transport: str, proto: str = "") -> list[str]:
 
     if transport_key == "grpc":
         tags = ["tls_h2"]
-    elif transport_key in ("ws", "httpupgrade", "tcp"):
-        tags = ["http", "tls_h1"]
+    elif transport_key in ("ws", "httpupgrade", "tcp", "http"):
+        if l3 in ("tls", "tls_h2_h1"):
+            tags = ["tls_h2", "tls_h1"]
+        elif l3 == "tls_h2":
+            tags = ["tls_h2"]
+        elif l3 == "tls_h1":
+            tags = ["tls_h1"]
+        else:
+            tags = ["http", "tls_h1"]
     elif transport_key == "xhttp":
         tags = list(XHTTP_ALPN_TAGS)
     else:
@@ -232,6 +241,9 @@ def resolve_proxy_alpn_pairs(
 
     if transport_key == "xhttp":
         upload_tag, download_tag = _xhttp_alpns_from_categories(categories)
+        if layer in _QUIC_ALPN_ALIASES:
+            upload_tag = upload_tag or "tls_h3"
+            download_tag = download_tag or upload_tag
         if not upload_tag or not download_tag:
             return []
         upload = AlpnTags.from_tag(upload_tag).filter(hconfigs, proto_enum)
@@ -242,6 +254,9 @@ def resolve_proxy_alpn_pairs(
 
     if layer == "http":
         upload = AlpnTags.from_tag("http").filter(hconfigs, proto_enum)
+        return [(upload, None)] if upload.to_tag() else []
+    if layer in _QUIC_ALPN_ALIASES:
+        upload = AlpnTags.from_tag("tls_h3").filter(hconfigs, proto_enum)
         return [(upload, None)] if upload.to_tag() else []
 
     upload_tags = alpns_for_combo(layer, transport_key, proto_key)
@@ -259,7 +274,7 @@ def is_xhttp_proxy_data(data: dict) -> bool:
 
 
 def alpn_tls_for_tag(tag: str | None) -> bool:
-    return "tls" in tag
+    return "tls" in normalize_alpn_tag(tag)
 
 
 def alpn_variant_skip_reason(alpn_tag: str | None, child_id: int = 0) -> str | None:

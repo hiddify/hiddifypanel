@@ -12,14 +12,24 @@
     >
       <template #header>
         <div class="flex justify-between items-center flex-wrap gap-3">
-          <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('common.search')" @click="load" />
-          <Button
-            icon="pi pi-file-export"
-            :label="t('proxy.generateBundle')"
-            severity="secondary"
-            @click="bundleDialogVisible = true"
-          />
-          <Button icon="pi pi-plus" :label="t('proxy.new')" @click="router.push({ name: 'custom-proxy-new' })" />
+          <IconField class="min-w-56 flex-1 max-w-xl">
+            <InputIcon class="pi pi-search" />
+            <InputText
+              v-model="filterSearch"
+              :placeholder="t('proxy.searchAll')"
+              class="w-full"
+            />
+          </IconField>
+          <div class="flex flex-wrap gap-2">
+            <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('common.search')" @click="load" />
+            <Button
+              icon="pi pi-file-export"
+              :label="t('proxy.generateBundle')"
+              severity="secondary"
+              @click="bundleDialogVisible = true"
+            />
+            <Button icon="pi pi-plus" :label="t('proxy.new')" @click="router.push({ name: 'custom-proxy-new' })" />
+          </div>
         </div>
       </template>
 
@@ -127,24 +137,27 @@
           <span v-else>—</span>
         </template>
       </Column>
-      <Column >
+      <Column field="tls_layer" sortable>
         <template #header>
-          <div class="flex items-center gap-1">
-            <span>{{ t('proxy.clientCores') }}</span>
-            <Button
-              icon="pi pi-filter"
-              text
-              rounded
-              size="small"
-              :severity="filterClientCore ? 'primary' : 'secondary'"
-              :aria-label="t('common.filter')"
-              @click="(e: Event) => clientPopover.toggle(e)"
-            />
-          </div>
+          <span>{{ t('proxy.tlsLayer') }}</span>
         </template>
         <template #body="{ data }">
-          <Tag v-for="c in data.client_cores || []" :key="c" :value="c" class="mr-1" />
-          <span v-if="!(data.client_cores || []).length">—</span>
+          <span>{{ tlsLayerDisplay(data) }}</span>
+        </template>
+      </Column>
+      <Column field="domain_modes">
+        <template #header>
+          <span>{{ t('proxy.domainModes') }}</span>
+        </template>
+        <template #body="{ data }">
+          <Tag
+            v-for="mode in data.domain_modes || []"
+            :key="mode"
+            :value="t(`proxy.domainModeLabels.${mode}`, mode)"
+            class="mr-1 mb-1"
+            severity="secondary"
+          />
+          <span v-if="!(data.domain_modes || []).length">—</span>
         </template>
       </Column>
       <Column field="enable" sortable>
@@ -172,6 +185,7 @@
       </Column>
       <Column header="" class="w-52 shrink-0">
         <template #body="{ data }">
+          <Tag v-if="data.is_common_proxy" icon="pi pi-asterisk" v-tooltip="t('proxy.commonProxyBadge')" severity="info" class="mr-1" />
           <SysBadge v-if="data.is_builtin" :customized="Boolean(data.server_override || data.client_override)" icon-only class="inline-flex mr-1" />
           <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'custom-proxy-edit', params: { id: data.id } })" />
           <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
@@ -229,12 +243,6 @@
       <Select v-model="filterCore" :options="coreOptions" show-clear class="w-full" />
     </div>
   </Popover>
-  <Popover ref="clientPopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.clientCores') }}</label>
-      <Select v-model="filterClientCore" :options="clientCoreOptions" show-clear class="w-full" />
-    </div>
-  </Popover>
   <Popover ref="enabledPopover">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('common.enabled') }}</label>
@@ -290,16 +298,15 @@ const loading = ref(false)
 const modeOptions = ref<{ label: string; value: string }[]>([])
 const protoOptions = ref<{ label: string; value: string }[]>([])
 const coreOptions = ref<string[]>([])
-const clientCoreOptions = ref<string[]>([])
 
 const filterCategories = ref<string[]>([])
 const categoryOptions = ref<string[]>([])
 
+const filterSearch = ref('')
 const filterName = ref('')
 const filterProto = ref<string | null>(null)
 const filterMode = ref<string | null>(null)
 const filterCore = ref<string | null>(null)
-const filterClientCore = ref<string | null>(null)
 const filterEnabled = ref<boolean | null>(null)
 
 const categoriesPopover = ref()
@@ -307,7 +314,6 @@ const namePopover = ref()
 const protoPopover = ref()
 const modePopover = ref()
 const corePopover = ref()
-const clientPopover = ref()
 const enabledPopover = ref()
 
 const enabledOptions = [
@@ -326,10 +332,60 @@ function modeLabel(mode: string | undefined) {
   return t(`proxy.modeLabels.${mode}`, mode)
 }
 
+const TLS_LAYER_SHORT: Record<string, string> = {
+  http: '-',
+  tls_h1: 'TLS H1',
+  tls_h2: 'TLS H2',
+  tls: 'TLS H2 H1',
+  quic_tls: 'QUIC',
+  quic_tcp_tls: 'QUIC+TLS',
+}
+
+function tlsLayerShort(layer: string | null | undefined): string {
+  if (!layer) return ''
+  return TLS_LAYER_SHORT[layer] || t(`proxy.tlsLayerLabels.${layer}`, layer)
+}
+
+function tlsLayerDisplay(row: CustomProxy): string {
+  const up = row.tls_layer
+  const down = row.download_tls_layer
+  if (!up && !down) return '—'
+  if (down && up && down !== up) {
+    return `📤${tlsLayerShort(up)} 📥${tlsLayerShort(down)}`
+  }
+  return tlsLayerShort(up || down)
+}
+
+function proxySearchHaystack(row: CustomProxy): string {
+  const mode = row.mode ?? (row as { protocol?: string }).protocol
+  const proto = row.proto ?? (row as { protocol?: string }).protocol
+  const parts = [
+    row.name,
+    row.slug,
+    proto,
+    protoLabel(proto),
+    mode,
+    modeLabel(mode),
+    ...(row.categories ?? []),
+    row.server_core,
+    row.tls_layer,
+    row.download_tls_layer,
+    tlsLayerDisplay(row),
+    ...(row.domain_modes ?? []),
+    ...(row.domain_modes ?? []).map((domainMode) => t(`proxy.domainModeLabels.${domainMode}`, domainMode)),
+    isEffectivelyEnabled(row) ? t('common.enabled') : 'Disabled',
+    row.is_common_proxy ? t('proxy.commonProxyBadge') : '',
+    row.is_builtin ? 'SYS' : '',
+  ]
+  return parts.filter((part): part is string => Boolean(part)).join(' ').toLowerCase()
+}
+
 const filteredProxies = computed(() =>
   proxies.value.filter((p) => {
     const mode = p.mode ?? (p as { protocol?: string }).protocol
     const proto = p.proto ?? (p as { protocol?: string }).protocol
+    const searchQ = filterSearch.value.trim().toLowerCase()
+    if (searchQ && !proxySearchHaystack(p).includes(searchQ)) return false
     const nameQ = filterName.value.trim().toLowerCase()
     if (nameQ && !(p.name || '').toLowerCase().includes(nameQ) && !(p.slug || '').toLowerCase().includes(nameQ)) {
       return false
@@ -337,7 +393,6 @@ const filteredProxies = computed(() =>
     if (filterProto.value && proto !== filterProto.value) return false
     if (filterMode.value && mode !== filterMode.value) return false
     if (filterCore.value && p.server_core !== filterCore.value) return false
-    if (filterClientCore.value && !(p.client_cores || []).includes(filterClientCore.value)) return false
     if (filterCategories.value.length && !filterCategories.value.some((category) => (p.categories || []).includes(category))) return false
     if (filterEnabled.value !== null && isEffectivelyEnabled(p) !== filterEnabled.value) return false
     return true
@@ -359,16 +414,13 @@ async function load() {
       value: p,
     }))
     const cores = new Set<string>()
-    const clientCores = new Set<string>(metaRes.client_cores ?? [])
     const categories = new Set<string>(metaRes.suggested_categories ?? [])
     for (const p of list) {
       if (p.server_core) cores.add(p.server_core)
-      for (const c of p.client_cores ?? []) clientCores.add(c)
       for (const category of p.categories ?? []) categories.add(category)
     }
     for (const c of metaRes.server_cores ?? []) cores.add(c)
     coreOptions.value = [...cores].sort()
-    clientCoreOptions.value = [...clientCores].sort()
     categoryOptions.value = [...categories].sort()
   } catch {
     toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 5000 })

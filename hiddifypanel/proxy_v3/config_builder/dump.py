@@ -5,36 +5,19 @@ import re
 import traceback
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
-from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel
+from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
-from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks
+from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 
-
-def _common_proxy_skip_ctx(ctx: Any) -> bool:
-    proxy = getattr(ctx, "proxy", None)
-    hcfg = getattr(ctx, "hconfig", None)
-    return common_proxy_core_blocks(
-        bool(getattr(proxy, "is_common_proxy", False)),
-        getattr(proxy, "server_core", None),
-        getattr(hcfg, "common_proxy_core", None),
-    )
-
-
-def _common_proxy_skip_client_core(ctx: Any, client_core: str) -> bool:
-    proxy = getattr(ctx, "proxy", None)
-    hcfg = getattr(ctx, "hconfig", None)
-    return common_proxy_core_blocks(
-        bool(getattr(proxy, "is_common_proxy", False)),
-        client_core,
-        getattr(hcfg, "common_proxy_core", None),
-    )
+if TYPE_CHECKING:
+    from hiddifypanel.models.user import User
 
 
 SERVER_CONFIG_DRIVERS: dict[str, type] = {
@@ -331,17 +314,17 @@ def format_client_dump_stats(filename: str, size: int, stats: dict[str, int] | N
     return ", ".join(parts)
 
 
-def _resolve_dump_user_obj(*, user_uuid: str | None):
+def _resolve_dump_user_obj(*, user_uuid: str | None) -> User:
     from hiddifypanel.models.user import User
 
     if user_uuid:
         user = User.by_uuid(user_uuid, create=False)
-        if user is None:
+        if not isinstance(user, User):
             raise ValueError(f"User not found for uuid={user_uuid}")
         return user
 
     user = User.query.filter(User.enable.is_(True)).order_by(User.id).first()
-    if user is None:
+    if not isinstance(user, User):
         raise ValueError("No enabled user found")
     return user
 
@@ -375,14 +358,14 @@ class ClientConfigRenderResult:
         return not self.errors
 
 
-def _append_render_messages(result: ClientConfigRenderResult, core: str, messages: list[Any]) -> None:
+def _append_render_messages(result: ClientConfigRenderResult, core: str, messages: list[MessageModel]) -> None:
     for message in messages:
         result.messages.append(
             {
                 "core": core,
-                "level": getattr(message, "level", None) or (message.get("level") if isinstance(message, dict) else "info"),
-                "message": getattr(message, "message", None) or (message.get("message") if isinstance(message, dict) else ""),
-                "data": getattr(message, "data", None) or ((message.get("data") if isinstance(message, dict) else None) or {}),
+                "level": message.level,
+                "message": message.message,
+                "data": message.data,
             }
         )
 
@@ -400,15 +383,16 @@ def render_client_configs(
 ) -> ClientConfigRenderResult:
     """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy)."""
     from hiddifypanel.cache import cache
+    from hiddifypanel.models.user import User
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
 
     if invalidate_cache:
         cache.invalidate_all_cached_functions()
 
-    user_obj = user if user is not None else _resolve_dump_user_obj(user_uuid=user_uuid)
+    user_obj = user if isinstance(user, User) else _resolve_dump_user_obj(user_uuid=user_uuid)
     result = ClientConfigRenderResult(
-        user_uuid=str(getattr(user_obj, "uuid", "") or ""),
-        user_name=getattr(user_obj, "name", None),
+        user_uuid=str(user_obj.uuid or ""),
+        user_name=user_obj.name,
     )
 
     ua = (user_agent or "").strip() or DEFAULT_CLIENT_UA
@@ -536,7 +520,7 @@ def dump_all_client_configs(
     return dump
 
 
-def _build_merged_json_client_config(child_id: int, contexts: list[Any], *, core: str) -> ConfigBuilderModel:
+def _build_merged_json_client_config(child_id: int, contexts: list[ClientContextVar], *, core: str) -> ConfigBuilderModel:
     """Render each proxy with typed ClientContextVar, then compose one core config."""
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.models.proxy_base_config import BaseConfigSide
@@ -591,7 +575,7 @@ def _build_merged_json_client_config(child_id: int, contexts: list[Any], *, core
     )
 
 
-def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str, list[Any]]:
+def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.models.proxy_base_config import BaseConfigSide
     from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
@@ -649,7 +633,7 @@ def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str,
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
 
 
-def _build_sublink_client_config(child_id: int, contexts: list[Any]) -> tuple[str, list[Any]]:
+def _build_sublink_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel

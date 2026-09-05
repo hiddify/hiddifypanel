@@ -1,0 +1,4 @@
+{% set data.net = 'tcp' %}
+{% set data.type = 'http' %}
+{% set data.path = '/' ~ proxy.path %}
+{% set data.host = ctx.proxy.domain.host %}

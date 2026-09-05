@@ -1,6 +1,5 @@
 {% block outbounds %}
   {% for ctx in ctx.iter_ctx_domains() %}
-    {% with alpns=__ALPNS__, download_alpns=__DOWNLOAD_ALPNS__ %}
       {% set proxy = ctx.proxy %}
       {% set tag %}{%- include 'xray/client/tag' -%}{% endset %}
       {
@@ -13,6 +12,6 @@
         },
         {% include 'xray/client/snippets/mux' %},
       },
-    {% endwith %}
+
   {% endfor %}
 {% endblock %}

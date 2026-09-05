@@ -64,9 +64,9 @@ export type ProxyProto =
   | 'dnstt'
   | 'snell'
 
-export type ProxyTransport = 'tcp' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | 'other'
+export type ProxyTransport = 'tcp' | 'http' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | 'other'
 
-export type TlsLayer = 'http' | 'tls' | 'quic_tls' | 'quic_tcp_tls'
+export type TlsLayer = 'http' | 'tls_h1' | 'tls_h2' | 'tls' | 'quic_tls' | 'quic_tcp_tls'
 
 export interface ParentEnableBlock {
   key: string

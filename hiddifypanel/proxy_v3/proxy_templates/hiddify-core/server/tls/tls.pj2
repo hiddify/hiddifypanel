@@ -2,9 +2,8 @@
 "tls": {
   "enabled": true,
   "server_name": "{{ domain.sni }}",
-  {%if alpns %}
-    "alpn": {{alpns | tojson}},
-  {%endif%}
+  "alpn": {{ tls_layer.alpns() }},
+
   {% if domain.cert.cert_lines %}
   "certificate": {{ domain.cert.cert_lines | tojson }},
   "key": {{ domain.cert.key_lines | tojson }},
