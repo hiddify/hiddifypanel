@@ -42,22 +42,15 @@ def get_wg_private_public_psk_pair():
 def generate_x25519_keys(base_64_encode=True):
     priv = x25519.X25519PrivateKey.generate()
     pub = priv.public_key()
-    priv_bytes = priv.private_bytes(
-        encoding=serialization.Encoding.Raw,
-        format=serialization.PrivateFormat.Raw,
-        encryption_algorithm=serialization.NoEncryption()
-    )
-    pub_bytes = pub.public_bytes(
-        encoding=serialization.Encoding.Raw,
-        format=serialization.PublicFormat.Raw
-    )
+    priv_bytes = priv.private_bytes(encoding=serialization.Encoding.Raw, format=serialization.PrivateFormat.Raw, encryption_algorithm=serialization.NoEncryption())
+    pub_bytes = pub.public_bytes(encoding=serialization.Encoding.Raw, format=serialization.PublicFormat.Raw)
     if base_64_encode:
         pub_str = _b64url_nopad(pub_bytes)
         priv_str = _b64url_nopad(priv_bytes)
     else:
-        pub_str=pub_bytes.hex()
-        priv_str=priv_bytes.hex()
-    return {'private_key': priv_str, 'public_key': pub_str}
+        pub_str = pub_bytes.hex()
+        priv_str = priv_bytes.hex()
+    return {"private_key": priv_str, "public_key": pub_str}
 
 
 def vless_encryption_decryption(quantum: bool = False) -> tuple[str, str]:
@@ -88,19 +81,18 @@ def generate_ssh_host_keys():
     # Generate and read keys
     for key_type in key_types:
         key_file = f"ssh_host_{key_type}_key"
+        try:
+            subprocess.run(["ssh-keygen", "-t", key_type, "-f", key_file, "-N", ""], check=True, stdout=sys.stderr)
 
-        subprocess.run([
-            "ssh-keygen", "-t", key_type,
-            "-f", key_file,
-            "-N", "" 
-        ], check=True,stdout=sys.stderr)
+            keys_dict[key_type] = {}
+            with open(key_file, "r") as f:
+                keys_dict[key_type]["pk"] = f.read()
+            with open(f"{key_file}.pub", "r") as f:
+                keys_dict[key_type]["pub"] = f.read()
 
-        keys_dict[key_type]={}
-        with open(key_file, "r") as f:
-            keys_dict[key_type]['pk'] = f.read()
-        with open(f"{key_file}.pub", "r") as f:
-            keys_dict[key_type]['pub'] = f.read()
+            os.remove(key_file)
+            os.remove(f"{key_file}.pub")  # Remove the public key if not needed
+        except subprocess.CalledProcessError as e:
+            print(f"Error: {e}")
 
-        os.remove(key_file)
-        os.remove(f"{key_file}.pub")  # Remove the public key if not needed
     return keys_dict
