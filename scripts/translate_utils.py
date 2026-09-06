@@ -60,9 +60,24 @@ def json_to_po(json_path, po_path):
     json_data = loadI18N(json_path)
     flattened_data = flatten(json_data)
 
-    po = polib.POFile()
+    lang = os.path.basename(json_path).removesuffix(".json")
+    po = polib.POFile(encoding="utf-8")
+    # Full header is required: without charset=UTF-8, gettext defaults to ascii and
+    # crashes on emoji / non-ascii msgstr values when loading messages.mo.
+    po.metadata = {
+        "Project-Id-Version": "hiddifypanel",
+        "Language": lang,
+        "Language-Team": lang,
+        "MIME-Version": "1.0",
+        "Content-Type": "text/plain; charset=UTF-8",
+        "Content-Transfer-Encoding": "8bit",
+        "Plural-Forms": "nplurals=2; plural=(n != 1);",
+    }
     for key, value in flattened_data.items():
-        if isinstance(value, str):
+        if isinstance(value, str) and key.strip():
+            # Skip corrupt/empty msgids that can overwrite the PO header in .mo files.
+            if key == "" or (key.startswith(" ") and "\n" in key):
+                continue
             entry = polib.POEntry(msgid=key, msgstr=value)
             po.append(entry)
     po.save(po_path)

@@ -925,15 +925,19 @@ def validate_proxy_payload(
                     }
                 )
         if protocol == CustomProxyMode.domains_l7_gateway.value:
-            allowed = {"direct", "cdn", "relay"}
-            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
+            from hiddifypanel.proxy_v3.domain_mode_filter import DOMAIN_MODE_VALUES, domain_modes_use_reality
+
+            allowed = set(DOMAIN_MODE_VALUES)
+            invalid = [m for m in (data.get("domain_modes") or []) if str(m).strip().lower() not in allowed and str(m).strip().lower() not in {"direct", "cdn", "relay", "fake", "reality", "special"}]
             if invalid:
                 errors.append(
                     {
                         "code": "invalid_domain_modes",
-                        "message": "L7 gateway domain modes must be direct, cdn, or relay",
+                        "message": "L7 gateway domain modes must be direct-valid, direct-fake, direct-reality, relay-valid, relay-fake, relay-reality, or cdn",
                     }
                 )
+            transport_key = _infer_proxy_transport(data)
+            categories = list(data.get("categories") or [])
             try:
                 from hiddifypanel.models.custom_proxy import (
                     _parse_tls_layer,
@@ -947,10 +951,10 @@ def validate_proxy_payload(
                 validate_tls_layer_domain_modes(
                     tls_layer,
                     list(data.get("domain_modes") or []),
+                    data.get("transport") or transport_key,
                 )
                 validate_naive_tls_layer(data.get("proto"), tls_layer)
-                categories = list(data.get("categories") or [])
-                if xhttp_upload_is_quic(categories) and "reality" in (data.get("domain_modes") or []):
+                if xhttp_upload_is_quic(categories) and domain_modes_use_reality(list(data.get("domain_modes") or [])):
                     errors.append(
                         {
                             "code": "invalid_domain_modes",
@@ -959,28 +963,29 @@ def validate_proxy_payload(
                     )
             except ValueError as exc:
                 errors.append({"code": "invalid_tls_layer_domain_modes", "message": str(exc)})
-            transport_key = _infer_proxy_transport(data)
             l7_key = str(data.get("l7_reverse_proto") or "").lower()
             if transport_key == "xhttp" and l7_key == "h2":
-                allowed_dl_modes = {"direct", "cdn", "relay"}
+                allowed_dl_modes = set(DOMAIN_MODE_VALUES)
                 dl_modes = [str(m).strip().lower() for m in (data.get("download_domain_modes") or []) if str(m).strip()]
-                invalid_dl = [m for m in dl_modes if m not in allowed_dl_modes]
+                invalid_dl = [m for m in dl_modes if m not in allowed_dl_modes and m not in {"direct", "cdn", "relay", "fake", "reality", "special"}]
                 if invalid_dl:
                     errors.append(
                         {
                             "code": "invalid_download_domain_modes",
-                            "message": "download_domain_modes must be direct, cdn, or relay",
+                            "message": "download_domain_modes must be direct-valid, direct-fake, direct-reality, relay-valid, relay-fake, relay-reality, or cdn",
                         }
                     )
                 dl_tls = str(data.get("download_tls_layer") or "").strip().lower()
-                if dl_tls == "http" and "reality" in dl_modes:
+                from hiddifypanel.proxy_v3.domain_mode_filter import transport_tls_supports_reality
+
+                if domain_modes_use_reality(dl_modes) and not transport_tls_supports_reality("xhttp", dl_tls):
                     errors.append(
                         {
                             "code": "invalid_download_tls_layer",
-                            "message": "HTTP download TLS layer is incompatible with reality domain modes",
+                            "message": "REALITY download is only supported on xHTTP H2",
                         }
                     )
-                if xhttp_download_is_quic(categories) and "reality" in dl_modes:
+                if xhttp_download_is_quic(categories) and domain_modes_use_reality(dl_modes):
                     errors.append(
                         {
                             "code": "invalid_download_domain_modes",
@@ -994,44 +999,21 @@ def validate_proxy_payload(
                         "message": "download_tls_layer and download_domain_modes apply only to xhttp with l7_reverse_proto=h2",
                     }
                 )
-        elif protocol == CustomProxyMode.domains_sni_gateway.value:
-            allowed = {"fake", "direct", "relay", "reality"}
-            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
+        elif protocol in (
+            CustomProxyMode.domains_sni_gateway.value,
+            CustomProxyMode.domains_auto_public_ports.value,
+            CustomProxyMode.domains_single_public_port.value,
+            CustomProxyMode.ip.value,
+        ):
+            from hiddifypanel.proxy_v3.domain_mode_filter import DOMAIN_MODE_VALUES
+
+            allowed = set(DOMAIN_MODE_VALUES)
+            invalid = [m for m in (data.get("domain_modes") or []) if str(m).strip().lower() not in allowed and str(m).strip().lower() not in {"direct", "relay", "fake", "reality", "special"}]
             if invalid:
                 errors.append(
                     {
                         "code": "invalid_domain_modes",
-                        "message": "SNI gateway domain modes must be fake, direct, relay, or reality",
-                    }
-                )
-        elif protocol == CustomProxyMode.domains_auto_public_ports.value:
-            allowed = {"direct", "relay"}
-            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
-            if invalid:
-                errors.append(
-                    {
-                        "code": "invalid_domain_modes",
-                        "message": "Auto public port domain modes must be direct or relay",
-                    }
-                )
-        elif protocol == CustomProxyMode.domains_single_public_port.value:
-            allowed = {"direct", "relay"}
-            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
-            if invalid:
-                errors.append(
-                    {
-                        "code": "invalid_domain_modes",
-                        "message": "Single public port domain modes must be direct or relay",
-                    }
-                )
-        elif protocol == CustomProxyMode.ip.value:
-            allowed = {"direct", "relay"}
-            invalid = [m for m in (data.get("domain_modes") or []) if m not in allowed]
-            if invalid:
-                errors.append(
-                    {
-                        "code": "invalid_domain_modes",
-                        "message": "IP mode domain modes must be direct or relay",
+                        "message": "Domain modes must be direct-valid, direct-fake, direct-reality, relay-valid, relay-fake, or relay-reality",
                     }
                 )
 

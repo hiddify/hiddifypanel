@@ -52,7 +52,16 @@ class DomainsQuickAddApi(MethodView):
     def post(self, data):
         mode_str = data.get('mode') or 'direct'
         fake_mode_str = data.get('fake_mode') or FakeMode.valid.value
-        if mode_str in ('fake', 'reality', 'special'):
+        if '-' in mode_str and mode_str in (
+            'direct-valid',
+            'direct-fake',
+            'direct-reality',
+            'relay-valid',
+            'relay-fake',
+            'relay-reality',
+        ):
+            mode_str, fake_mode_str = mode_str.split('-', 1)
+        elif mode_str in ('fake', 'reality', 'special'):
             fake_mode_str = 'reality' if mode_str in ('reality', 'special') else 'fake'
             mode_str = 'direct'
         try:

@@ -233,7 +233,14 @@ def build_xray_inbound_template(combo: ProxyCombination, *, l7_gateway: bool = F
     return content, slugs
 
 
-_DOMAIN_LOOP_PROTOS: frozenset[str] = frozenset({"tuic", "hysteria", "hysteria2", "shadowtls"})
+def _standalone_uses_sni_domain_loop(combo: ProxyCombination) -> bool:
+    """SNI gateways bind a distinct local port per domain; the inbound must loop domains."""
+    proto = (combo.proto or "").lower()
+    raw_transport = _raw_transport(combo.transport)
+    l3 = str(combo.l3 or "").lower()
+    if proto == "anytls" or raw_transport in ("shadowtls", "faketls"):
+        return True
+    return proto == "naive" and l3 == "h3_quic"
 
 
 def build_hiddify_standalone_inbound(combo: ProxyCombination) -> tuple[str, list[str]]:
@@ -242,8 +249,21 @@ def build_hiddify_standalone_inbound(combo: ProxyCombination) -> tuple[str, list
         raise ValueError(f"Unsupported hiddify-core standalone preset: {combo.name}")
     proto_slug = fragment_slug("hiddify-core", "protocols", proto, side="server")
     slugs = [proto_slug]
-    if proto in _DOMAIN_LOOP_PROTOS:
-        content = f"{{% block inbounds %}}\n{{% for ctx in ctx.iter_domains() %}}\n{{\n  {{% include '{proto_slug}' %}}\n}}\n{{%- if not loop.last %}},{{%- endif %}}\n{{% endfor %}}\n{{% endblock %}}"
+    if _standalone_uses_sni_domain_loop(combo):
+        proto_key, transport_key = _path_keys(combo.proto, combo.transport)
+        listen_slug = "hiddify-core/server/snippets/listen"
+        meta_slug = "hiddify-core/server/snippets/inbound_meta"
+        tag_slug = "hiddify-core/server/tag"
+        slugs = [listen_slug, proto_slug, meta_slug, tag_slug]
+        content = _render_preset_shell(
+            "hiddify-core",
+            shell_name="inbound_domain_loop",
+            proto_slug=proto_slug,
+            stream_slug="",
+            security_slug=None,
+            proto_key=proto_key,
+            transport_key=transport_key,
+        )
         return content, slugs
 
     listen_slug = "hiddify-core/server/snippets/listen"

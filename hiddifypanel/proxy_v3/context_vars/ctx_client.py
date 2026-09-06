@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from hiddifypanel.models import FakeMode
-from hiddifypanel.models.custom_proxy import L7Proto, TlsLayer, CustomProxyTransport, ProxyProto, CustomProxyMode
+from hiddifypanel.models.custom_proxy import CustomProxyMode, CustomProxyTransport, L7Proto, ProxyProto, TlsLayer
+from hiddifypanel.proxy_v3.context_vars.ip import IPVar
 
+from .cert import CertVar
 from .domain import DomainIPVar
 from .hconfig import HConfigVar
 from .platform import PlatformVar
@@ -23,6 +25,7 @@ class ClientContextVar(BaseModel):
     hconfig: HConfigVar
     platform: PlatformVar
     proxy: ClientBuilderProxyVar
+    shared_cert: CertVar = Field(default_factory=CertVar.empty)
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]
@@ -34,6 +37,7 @@ class ClientContextVar(BaseModel):
                 hconfig=self.hconfig,
                 platform=self.platform,
                 proxy=self.proxy.with_domain(domain),
+                shared_cert=self.shared_cert,
             )
 
 
@@ -60,16 +64,32 @@ def _ip_mode_domain_rank(domain: DomainIPVar) -> tuple[int, str]:
 
 
 def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIPVar]) -> list[DomainIPVar]:
-    """IP-mode clients connect by address:port; keep one domain per endpoint."""
+    """IP-mode clients connect by address:port; emit one entry per distinct IP."""
     unique: list[DomainIPVar] = []
     seen: set[tuple[str, int]] = set()
     for domain in sorted(domains, key=_ip_mode_domain_rank):
         bound = proxy.with_domain(domain)
-        key = (bound.server, bound.port)
-        if key in seen:
-            continue
-        seen.add(key)
-        unique.append(domain)
+        port = int(bound.port or 0)
+        candidates = [str(ip).strip() for ip in (domain.ips.ips if domain.ips else []) if str(ip).strip()]
+        if not candidates:
+            server = str(bound.server or "").strip()
+            if server:
+                candidates = [server]
+        for ip in candidates:
+            key = (ip, port)
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(
+                domain.model_copy(
+                    update={
+                        "dst_server": ip,
+                        "ips": IPVar.from_strings(ip),
+                        "resolve_ip": False,
+                        "download": None,
+                    }
+                )
+            )
     return unique
 
 

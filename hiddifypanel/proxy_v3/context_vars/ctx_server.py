@@ -4,6 +4,7 @@ from collections.abc import Iterator
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .cert import CertVar
 from .domain import DomainIPVar
 from .hconfig import HConfigVar
 from .ip import IPVar
@@ -26,6 +27,7 @@ class ServerContextVar(BaseModel):
     ips: IPVar
     platform: ServerPlatformVar | None = None
     client_proxy_tags: list[str] = Field(default_factory=list)
+    shared_cert: CertVar = Field(default_factory=CertVar.empty)
 
     def use_proxy(self, proxy: ServerBuilderProxyVar) -> ServerContextProxyVar:
         return ServerContextProxyVar(
@@ -38,6 +40,7 @@ class ServerContextVar(BaseModel):
             proxy=proxy,
             ips=self.ips,
             platform=self.platform,
+            shared_cert=self.shared_cert,
         )
 
 
@@ -52,7 +55,7 @@ class ServerContextProxyVar(ServerContextVar):
     def domain(self) -> DomainIPVar | None:
         return self.domains[0] if self.domains else None
 
-    def iter_domains(self) -> Iterator[ServerContextDomainVar]:
+    def iter_ctx_domains(self) -> Iterator[ServerContextDomainVar]:
         for domain in self.proxy.domains:
             yield ServerContextDomainVar(
                 child_id=self.child_id,
@@ -64,13 +67,8 @@ class ServerContextProxyVar(ServerContextVar):
                 proxies=self.proxies,
                 ips=self.ips,
                 platform=self.platform,
+                shared_cert=self.shared_cert,
             )
-
-    def iter_ctx_domains(self) -> Iterator[ServerContextDomainVar]:
-        return self.iter_domains()
-
-    def iter_ctx_domain(self) -> Iterator[ServerContextDomainVar]:
-        return self.iter_domains()
 
 
 class ServerContextDomainVar(ServerContextProxyVar):

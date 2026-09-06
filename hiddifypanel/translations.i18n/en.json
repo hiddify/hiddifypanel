@@ -1,5 +1,4 @@
 {
-  " Search\n            Settings": " Search\n            Settings",
   "%(count)s records were successfully deleted.": "%(count)s records were successfully deleted.",
   "%(count)s records were successfully disabled.": "%(count)s Records were successfully disabled.",
   "%(count)s records were successfully enabled.": "%(count)s Records were successfully enabled.",
@@ -420,9 +419,15 @@
       "domainModeLabels": {
         "cdn": "CDN",
         "direct": "Direct",
+        "direct-valid": "Direct valid",
+        "direct-fake": "Direct fake",
+        "direct-reality": "Direct REALITY",
         "fake": "Fake TLS",
         "reality": "REALITY",
         "relay": "Relay",
+        "relay-valid": "Relay valid",
+        "relay-fake": "Relay fake",
+        "relay-reality": "Relay REALITY",
         "special": "Special (REALITY)"
       },
       "domainModes": "Domain modes",
@@ -1682,7 +1687,16 @@
       "description": "Upstream server domain used for this entry",
       "label": "Server Domain"
     },
-    "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
+    "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles.",
+    "tls_status": {
+      "description": "Certificate stored for this domain: valid CA, self-signed, expired, invalid, or missing.",
+      "expired": "Expired",
+      "invalid": "Invalid",
+      "label": "TLS",
+      "missing": "No certificate",
+      "self_signed": "Self-signed",
+      "valid": "Valid"
+    }
   },
   "download": "Direct Download",
   "download_domain": {
@@ -1904,5 +1918,6 @@
     "notallowed": "Please visit this page without using a VPN. You need to access it from the country %(expected_country)s, but you're currently accessing it from %(your_country)s."
   },
   "weekly": "📅 Weekly",
-  "worker": "✴️ Cloudflare Worker"
+  "worker": "✴️ Cloudflare Worker",
+  "Search Settings": "Search Settings"
 }

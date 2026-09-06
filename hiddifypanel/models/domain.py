@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import auto
 import ipaddress
 import json
@@ -198,6 +199,17 @@ class Domain(db.Model):
             DomainType.old_xtls_direct,
             DomainType.sub_link_only,
         ]
+
+    @property
+    def tls_status(self) -> str:
+        cert = self.certificate
+        if not cert or not str(cert.certificate or "").strip():
+            return "missing"
+        if cert.valid_cert:
+            return "self_signed" if cert.self_signed else "valid"
+        if cert.expires_at and cert.expires_at < datetime.utcnow():
+            return "expired"
+        return "invalid"
 
     @property
     def port_index(self):

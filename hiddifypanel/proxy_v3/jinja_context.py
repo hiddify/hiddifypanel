@@ -1,12 +1,14 @@
 from __future__ import annotations
-from wcwidth import ljust
-import os
 
+import os
 from typing import Any
+
+from wcwidth import ljust
 
 from hiddifypanel.models import ConfigEnum, Domain, DomainType, get_hconfigs
 from hiddifypanel.models.custom_proxy import CustomProxyMode, normalize_custom_path
 from hiddifypanel.models.user import User
+from hiddifypanel.proxy_v3.context_vars.cert import select_shared_certificate
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 from hiddifypanel.proxy_v3.context_vars.ip import IPVar
@@ -274,9 +276,6 @@ class RenderContextAdapter:
             if proxy is not None and hasattr(proxy, "with_domain"):
                 child["proxy"] = proxy.with_domain(domain)
             yield RenderContextAdapter(child)
-
-    def iter_ctx_domain(self):
-        return self.iter_ctx_domains()
 
 
 def build_template_context(

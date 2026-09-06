@@ -14,4 +14,6 @@
   },
   {% endfor %}
 ],
-{% include 'hiddify-core/server/tls/tls' %}
+{%with cert=ctx.shared_cert%}
+  {% include 'hiddify-core/server/tls/tls' %}
+{%endwith%}

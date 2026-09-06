@@ -7,11 +7,20 @@ from hiddifypanel.models import ConfigEnum, hconfig
 from hiddifypanel.models.custom_proxy import (
     CustomProxyMode,
     InboundTcpUdp,
-    filter_domain_modes_without_reality,
     normalize_custom_path,
     proxy_slug,
     xhttp_alpn_is_quic,
     _parse_transport,
+)
+from hiddifypanel.proxy_v3.domain_mode_filter import (
+    CDN_CAPABLE_TRANSPORTS,
+    DOMAIN_MODE_CDN,
+    REALITY_DIRECT_RELAY_DOMAIN_MODES,
+    VALID_DIRECT_RELAY_DOMAIN_MODES,
+    VALID_FAKE_DIRECT_RELAY_DOMAIN_MODES,
+    V2RAY_ALL_DOMAIN_MODES,
+    filter_domain_modes_without_reality,
+    transport_tls_supports_reality,
 )
 from hiddifypanel.proxy_v3.builtin_proxy_sync.types import (
     CustomProxyPreset,
@@ -34,15 +43,11 @@ from ..alpn_helpers import alpn_tag_to_category
 from hiddifypanel import hutils
 
 V2RAY_GATEWAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
-V2RAY_GATEWAY_DOMAIN_MODES_WITH_CDN = ("direct", "cdn", "relay")
-V2RAY_GATEWAY_DOMAIN_MODES_NO_CDN = ("direct", "relay")
-V2RAY_GATEWAY_DOMAIN_MODES_HTTP_WITH_CDN = ("direct", "cdn", "relay")
-V2RAY_GATEWAY_DOMAIN_MODES_HTTP_NO_CDN = ("direct", "relay")
 
-SNI_GATEWAY_PROTOS = frozenset({"anytls", "tuic", "hysteria", "hysteria2"})
-FAKE_ONLY_DOMAIN_MODES = ("fake",)
-DIRECT_RELAY_DOMAIN_MODES = ("direct", "relay")
-CDN_CAPABLE_TRANSPORTS = frozenset({"ws", "httpupgrade", "grpc", "xhttp"})
+SNI_GATEWAY_PROTOS = frozenset({"anytls"})
+# Direct UDP listeners with a single public port (IP-based).
+IP_BASED_UDP_PROTOS = frozenset({"tuic", "hysteria", "hysteria2"})
+DIRECT_RELAY_DOMAIN_MODES = VALID_DIRECT_RELAY_DOMAIN_MODES
 UDP_ONLY_PROTOS = frozenset({"tuic", "hysteria", "hysteria2", "wireguard"})
 TCP_ONLY_PROTOS = frozenset({"ssh", "anytls"})
 TCP_ONLY_TRANSPORTS = frozenset({"grpc", "http", "httpupgrade", "tcp", "ws"})
@@ -72,7 +77,7 @@ def build_reality_termination_preset(child_id: int = 0) -> CustomProxyPreset:
         tls_layer="tls",
         l7_reverse_proto=None,
         categories=("vless", "tcp", "reality", "sni"),
-        domain_modes=("reality",),
+        domain_modes=REALITY_DIRECT_RELAY_DOMAIN_MODES,
         custom_path="",
         server_config=PresetServerConfig(
             core="xray",
@@ -168,38 +173,25 @@ def _preset_l7_reverse_proto(
     return "h2"
 
 
-def _v2ray_l7_domain_modes(
-    transport: str,
-    tls_layer: str,
-) -> tuple[str, ...]:
-    transport_key = str(transport or "").lower()
-    cdn_ok = transport_key in CDN_CAPABLE_TRANSPORTS
-    if str(tls_layer or "").lower() == "http":
-        return V2RAY_GATEWAY_DOMAIN_MODES_HTTP_WITH_CDN if cdn_ok else V2RAY_GATEWAY_DOMAIN_MODES_HTTP_NO_CDN
-    if cdn_ok:
-        return V2RAY_GATEWAY_DOMAIN_MODES_WITH_CDN
-    return V2RAY_GATEWAY_DOMAIN_MODES_NO_CDN
+def _v2ray_domain_modes(tls_layer: str, transport: str = "") -> tuple[str, ...]:
+    modes = list(V2RAY_ALL_DOMAIN_MODES)
+    if not transport_tls_supports_reality(transport, tls_layer):
+        modes = filter_domain_modes_without_reality(modes)
+    if str(transport or "").lower() in CDN_CAPABLE_TRANSPORTS and DOMAIN_MODE_CDN not in modes:
+        modes.append(DOMAIN_MODE_CDN)
+    return tuple(modes)
 
 
 def _group_domain_modes(combos) -> list[str]:
     if any(str(combo.l3).lower() == "reality" for combo in combos):
-        return ["reality"]
-    modes: list[str] = []
-    seen: set[str] = set()
-    for combo in combos:
-        cdn = (combo.cdn or "direct").lower()
-        normalized = "cdn" if cdn == "cdn" else cdn
-        if normalized in ("direct", "relay", "cdn", "fake") and normalized not in seen:
-            seen.add(normalized)
-            modes.append(normalized)
-    return modes
+        return list(REALITY_DIRECT_RELAY_DOMAIN_MODES)
+    return list(VALID_DIRECT_RELAY_DOMAIN_MODES)
 
 
 def _download_domain_modes_for_combo(combo) -> list[str]:
     if str(combo.l3).lower() == "reality":
-        return ["reality"]
-    cdn = (combo.cdn or "direct").lower()
-    return ["cdn" if cdn == "cdn" else cdn]
+        return list(REALITY_DIRECT_RELAY_DOMAIN_MODES)
+    return list(VALID_DIRECT_RELAY_DOMAIN_MODES)
 
 
 def _tls_layer_for_alpn(alpn: str | None, combo=None) -> str:
@@ -222,6 +214,8 @@ def _preset_tcp_udp(
 
     if str(l3).lower() == "reality":
         return InboundTcpUdp.tcp
+    if str(l3).lower() == "h3_quic":
+        return InboundTcpUdp.udp
     if proto_key in BOTH_PROTOS:
         return InboundTcpUdp.both
     if proto_key in UDP_ONLY_PROTOS:
@@ -236,11 +230,19 @@ def _preset_tcp_udp(
 def _preset_protocol(combo) -> CustomProxyMode:
     proto = (combo.proto or "").lower()
     raw_transport = _raw_transport(combo.transport)
+    l3 = str(combo.l3 or "").lower()
     if proto in SNI_GATEWAY_PROTOS or raw_transport in ("shadowtls", "faketls"):
+        return CustomProxyMode.domains_sni_gateway
+    # Naive QUIC is SNI-routed; Naive H2 stays on the L7 gateway.
+    if proto == "naive" and l3 == "h3_quic":
         return CustomProxyMode.domains_sni_gateway
     if proto == "dnstt":
         return CustomProxyMode.domains_auto_public_ports
-    if proto in ("shadowsocks", "ss", "socks", "wireguard", "ssh", "mieru", "snell") or raw_transport == "tcp":
+    if (
+        proto in IP_BASED_UDP_PROTOS
+        or proto in ("shadowsocks", "ss", "socks", "wireguard", "ssh", "mieru", "snell")
+        or raw_transport == "tcp"
+    ):
         return CustomProxyMode.ip
     return CustomProxyMode.domains_l7_gateway
 
@@ -347,10 +349,10 @@ def _build_preset(
         tls_layer = "quic_tls"
     if proto in ("shadowsocks", "ss", "socks") and raw_transport not in ("shadowtls", "faketls"):
         tls_layer = "http"
-    if mode == CustomProxyMode.domains_l7_gateway and proto in V2RAY_GATEWAY_PROTOS:
-        domain_modes = list(_v2ray_l7_domain_modes(transport_value, tls_layer))
+    if proto in V2RAY_GATEWAY_PROTOS:
+        domain_modes = list(_v2ray_domain_modes(tls_layer, transport_value))
     elif raw_transport in ("shadowtls", "faketls"):
-        domain_modes = list(FAKE_ONLY_DOMAIN_MODES)
+        domain_modes = list(VALID_FAKE_DIRECT_RELAY_DOMAIN_MODES)
     elif proto in SNI_GATEWAY_PROTOS or proto == "naive":
         domain_modes = list(DIRECT_RELAY_DOMAIN_MODES)
     elif mode == CustomProxyMode.domains_auto_public_ports:
@@ -363,13 +365,9 @@ def _build_preset(
     if transport_value == "xhttp":
         tls_layer = _tls_layer_for_alpn(slot.upload_alpn, primary)
         download_tls_layer = _tls_layer_for_alpn(slot.download_alpn, primary)
-        if mode == CustomProxyMode.domains_l7_gateway and proto in V2RAY_GATEWAY_PROTOS:
-            domain_modes = list(_v2ray_l7_domain_modes(transport_value, tls_layer))
         if proto in V2RAY_GATEWAY_PROTOS:
-            download_domain_modes = _v2ray_l7_domain_modes(
-                transport_value,
-                download_tls_layer or tls_layer,
-            )
+            domain_modes = list(_v2ray_domain_modes(tls_layer, transport_value))
+            download_domain_modes = _v2ray_domain_modes(download_tls_layer or tls_layer, transport_value)
         else:
             download_domain_modes = tuple(_download_domain_modes_for_combo(primary))
         if xhttp_alpn_is_quic(slot.upload_alpn):

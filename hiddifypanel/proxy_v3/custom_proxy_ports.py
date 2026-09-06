@@ -75,11 +75,12 @@ def mode_allows_ip_domain_modes(mode: CustomProxyMode | str) -> bool:
 
 def default_domain_modes_for_mode(mode: CustomProxyMode | str) -> list[str]:
     from hiddifypanel.models.custom_proxy import CustomProxyMode
+    from hiddifypanel.proxy_v3.domain_mode_filter import VALID_DIRECT_RELAY_DOMAIN_MODES, V2RAY_ALL_DOMAIN_MODES
 
     parsed = coerce_proxy_mode(mode)
     if parsed == CustomProxyMode.domains_l7_gateway:
-        return ["direct"]
-    return ["direct", "relay"]
+        return list(V2RAY_ALL_DOMAIN_MODES)
+    return list(VALID_DIRECT_RELAY_DOMAIN_MODES)
 
 
 def ports_for_proxy_row(

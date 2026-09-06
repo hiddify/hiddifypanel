@@ -12,7 +12,7 @@
     {%else%}
         {% set qp.security = 'tls' %}
         {% set qp.alpn = ",".join(tls_layer.alpns()) %}
-        {% if domain.is_fake_tls() or domain.allow_insecure %}
+        {% if domain.allow_insecure %}
             {% set qp.allowInsecure = 'true' %}
             {% set qp.insecure = 'true' %}
             {% set qp.pcs = ",".join(domain.cert.pinnedPeerCertSha256)%}

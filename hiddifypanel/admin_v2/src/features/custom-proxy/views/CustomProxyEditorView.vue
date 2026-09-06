@@ -252,7 +252,9 @@
                   <MultiSelect
                     id="proxy-modes"
                     v-model="form.domain_modes"
-                    :options="domainModeOptions"
+                    :options="domainModeSelectOptions"
+                    option-label="label"
+                    option-value="value"
                     display="chip"
                     class="flex-1 min-w-0"
                     :disabled="isBuiltin && !isFieldOverridden('domain_modes')"
@@ -279,7 +281,9 @@
                   <MultiSelect
                     id="proxy-download-domain-modes"
                     v-model="form.download_domain_modes"
-                    :options="downloadDomainModeOptions"
+                    :options="downloadDomainModeSelectOptions"
+                    option-label="label"
+                    option-value="value"
                     display="chip"
                     class="flex-1 min-w-0"
                     :disabled="isBuiltin && !isFieldOverridden('download_domain_modes')"
@@ -798,7 +802,7 @@ const defaultForm = (): CustomProxy => ({
   download_tls_layer: null,
   download_domain_modes: [],
   categories: [],
-  domain_modes: ['direct'],
+  domain_modes: ['direct-valid'],
   custom_path: generateCustomPath(),
   domain_ids: [],
   faketls_domains: [],
@@ -864,31 +868,70 @@ function openParentSettings() {
   if (url) window.open(url, '_blank', 'noopener,noreferrer')
 }
 
+const ALL_DOMAIN_MODES = [
+  'direct-valid',
+  'direct-fake',
+  'direct-reality',
+  'relay-valid',
+  'relay-fake',
+  'relay-reality',
+  'cdn',
+] as const
+const CDN_CAPABLE_TRANSPORTS = new Set(['xhttp', 'grpc', 'ws', 'httpupgrade'])
+
+function isCdnCapableTransport(transport: string | undefined | null): boolean {
+  return CDN_CAPABLE_TRANSPORTS.has(String(transport || '').toLowerCase())
+}
+
 const domainModeOptions = computed(() => {
-  let modes: string[]
-  if (form.mode === 'domains_sni_gateway') modes = ['fake', 'direct', 'relay', 'reality']
-  else if (form.mode === 'domains_l7_gateway') {
-    modes = meta.value?.domain_modes ?? ['direct', 'cdn', 'relay']
-  } else if (form.mode === 'ip') {
-    modes = ['direct', 'relay']
-  } else if (form.mode === 'domains_auto_public_ports' || form.mode === 'domains_single_public_port') {
-    modes = ['direct', 'relay']
-  } else {
-    modes = ['direct', 'relay']
+  let modes = [...(meta.value?.domain_modes?.length ? meta.value.domain_modes : ALL_DOMAIN_MODES)]
+  if (!isCdnCapableTransport(form.transport)) {
+    modes = modes.filter((mode) => mode !== 'cdn')
   }
-  if (isXhttpTransport.value && xhttpUploadIsQuic(form.categories ?? [])) {
-    modes = modes.filter((mode) => mode !== 'reality')
+  if (!transportTlsSupportsReality(form.transport, form.tls_layer) || xhttpUploadIsQuic(form.categories ?? [])) {
+    modes = modes.filter((mode) => !isRealityDomainMode(mode))
   }
   return modes
 })
 
 const downloadDomainModeOptions = computed(() => {
-  let modes = [...domainModeOptions.value]
-  if (xhttpDownloadIsQuic(form.categories ?? [])) {
-    modes = modes.filter((mode) => mode !== 'reality')
+  let modes = [...(meta.value?.domain_modes?.length ? meta.value.domain_modes : ALL_DOMAIN_MODES)]
+  if (!isCdnCapableTransport(form.transport)) {
+    modes = modes.filter((mode) => mode !== 'cdn')
+  }
+  if (!transportTlsSupportsReality('xhttp', form.download_tls_layer) || xhttpDownloadIsQuic(form.categories ?? [])) {
+    modes = modes.filter((mode) => !isRealityDomainMode(mode))
   }
   return modes
 })
+
+const domainModeSelectOptions = computed(() =>
+  domainModeOptions.value.map((value) => ({
+    value,
+    label: t(`proxy.domainModeLabels.${value}`, value),
+  })),
+)
+
+const downloadDomainModeSelectOptions = computed(() =>
+  downloadDomainModeOptions.value.map((value) => ({
+    value,
+    label: t(`proxy.domainModeLabels.${value}`, value),
+  })),
+)
+
+function isRealityDomainMode(mode: string): boolean {
+  return mode === 'reality' || mode === 'special' || mode.endsWith('-reality')
+}
+
+function transportTlsSupportsReality(transport: string | undefined | null, layer: string | undefined | null): boolean {
+  const t = String(transport || '').toLowerCase()
+  const l = String(layer || '').toLowerCase()
+  if (!t || l === 'http' || l === 'tls_h1' || l === 'quic_tls' || l === 'quic_tcp_tls') return false
+  if (t === 'grpc') return l === 'tls' || l === 'tls_h2'
+  if (t === 'xhttp') return l === 'tls_h2'
+  if (t === 'http') return l === 'tls' || l === 'tls_h2'
+  return false
+}
 
 function xhttpUploadIsQuic(categories: string[]): boolean {
   return categories.some((category) => String(category).toLowerCase() === 'up:quic')
@@ -923,12 +966,9 @@ const showXhttpDownloadSettings = computed(
 
 
 function onDownloadTlsLayerChange() {
-  if (
-    form.download_tls_layer === 'http'
-    && (form.download_domain_modes ?? []).some((m) => m === 'reality')
-  ) {
-    form.download_tls_layer = 'tls'
-    toast.add({ severity: 'warn', summary: t('proxy.tlsLayerSpecialConflict'), life: 4000 })
+  if (!transportTlsSupportsReality('xhttp', form.download_tls_layer)) {
+    const next = withoutReality(form.download_domain_modes)
+    if (!sameModes(form.download_domain_modes, next)) form.download_domain_modes = next
   }
 }
 
@@ -1266,9 +1306,9 @@ function onLinkSettingsChange() {
 }
 
 function onTlsLayerChange() {
-  if (form.tls_layer === 'http' && (form.domain_modes ?? []).some((m) => m === 'reality')) {
-    form.tls_layer = 'tls'
-    toast.add({ severity: 'warn', summary: t('proxy.tlsLayerSpecialConflict'), life: 4000 })
+  if (!transportTlsSupportsReality(form.transport, form.tls_layer)) {
+    const next = withoutReality(form.domain_modes)
+    if (!sameModes(form.domain_modes, next)) form.domain_modes = next
   }
   if (form.proto === 'naive' && form.tls_layer === 'http') {
     form.tls_layer = defaultTlsLayerForProxy()
@@ -1276,7 +1316,7 @@ function onTlsLayerChange() {
 }
 
 function withoutReality(modes: string[] | undefined | null): string[] {
-  return (modes ?? []).filter((mode) => mode !== 'reality')
+  return (modes ?? []).filter((mode) => !isRealityDomainMode(mode))
 }
 
 function sameModes(left: string[] | undefined | null, right: string[]): boolean {
@@ -1297,7 +1337,7 @@ function ensureXhttpDownloadDefaults() {
     form.download_tls_layer = 'tls'
   }
   if (!form.download_domain_modes?.length) {
-    form.download_domain_modes = [...(form.domain_modes ?? ['direct'])]
+    form.download_domain_modes = [...(form.domain_modes ?? ['direct-valid'])]
   }
   if (!form.server_config!.tcp_udp) {
     form.server_config!.tcp_udp = 'tcp'
@@ -1332,7 +1372,7 @@ function onModeChange() {
     }
   } else if (form.mode === 'domains_sni_gateway') {
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct', 'relay']
+      form.domain_modes = ['direct-valid', 'relay-valid']
     }
     form.custom_path = ''
     form.l7_reverse_proto = null
@@ -1343,7 +1383,7 @@ function onModeChange() {
     form.l7_reverse_proto = null
     form.domain_ids = []
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct']
+      form.domain_modes = ['direct-valid']
     }
   } else if (form.mode === 'domains_auto_public_ports') {
     form.custom_path = ''
@@ -1352,7 +1392,7 @@ function onModeChange() {
       form.tls_layer = defaultTlsLayerForProxy()
     }
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct', 'relay']
+      form.domain_modes = ['direct-valid', 'relay-valid']
     }
     form.server_config!.inbound_tcp_ports = []
     form.server_config!.inbound_udp_ports = []
@@ -1363,7 +1403,7 @@ function onModeChange() {
       form.tls_layer = defaultTlsLayerForProxy()
     }
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct', 'relay']
+      form.domain_modes = ['direct-valid', 'relay-valid']
     }
   } else if (isL7Gateway.value || isSniGateway.value) {
     form.server_config!.inbound_tcp_ports = []
@@ -1734,11 +1774,8 @@ watch(
 watch(
   () => form.download_domain_modes,
   (modes) => {
-    if (
-      form.download_tls_layer === 'http'
-      && (modes ?? []).some((m) => m === 'special' || m === 'reality')
-    ) {
-      form.download_tls_layer = 'tls'
+    if (!transportTlsSupportsReality('xhttp', form.download_tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
+      form.download_domain_modes = withoutReality(modes)
     }
   },
   { deep: true },
@@ -1747,6 +1784,18 @@ watch(
 watch(
   () => [form.transport, form.categories, form.l7_reverse_proto] as const,
   () => {
+    if (!isCdnCapableTransport(form.transport)) {
+      if (form.domain_modes?.includes('cdn')) {
+        form.domain_modes = form.domain_modes.filter((mode) => mode !== 'cdn')
+      }
+      if (form.download_domain_modes?.includes('cdn')) {
+        form.download_domain_modes = form.download_domain_modes.filter((mode) => mode !== 'cdn')
+      }
+    }
+    if (!transportTlsSupportsReality(form.transport, form.tls_layer)) {
+      const next = withoutReality(form.domain_modes)
+      if (!sameModes(form.domain_modes, next)) form.domain_modes = next
+    }
     ensureXhttpDownloadDefaults()
   },
   { deep: true },
@@ -1755,8 +1804,8 @@ watch(
 watch(
   () => form.domain_modes,
   (modes) => {
-    if (form.tls_layer === 'http' && (modes ?? []).some((m) => m === 'reality')) {
-      form.tls_layer = 'tls'
+    if (!transportTlsSupportsReality(form.transport, form.tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
+      form.domain_modes = withoutReality(modes)
     }
     ensureXhttpDownloadDefaults()
   },

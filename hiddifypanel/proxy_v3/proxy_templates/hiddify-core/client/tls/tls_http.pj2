@@ -1,14 +1,12 @@
 {% set domain = domain if domain is defined else ctx.proxy.domain %}
 {% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}
+
 {% if tls_layer != 'http' %}
 "tls": {
   "enabled": true,
   {%if not domain.sni%} "disable_sni": true {%endif%},
   "server_name": "{{ domain.sni }}",
-  
-
-
-    "alpn": {{ tls_layer.alpns }},
+  "alpn": {{ tls_layer.alpns }},
 
 
   {% set fp = ctx.hconfig.utls or "" %}

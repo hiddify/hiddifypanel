@@ -3,5 +3,6 @@
 
 # L7 gateway proxy paths
 {%- for proxy in ctx.proxies if proxy.mode == 'domains_l7_gateway'  %}
-{{ proxy.path |ljust(30)}} http_{{proxy.id}}_{{ proxy.path | slugify |ljust(40)}} #{{proxy.slug}}
+#{{proxy.slug}}
+{{ proxy.path |ljust(30)}} http_{{proxy.id}}_{{ proxy.path | slugify |ljust(40)}} 
 {%- endfor %}

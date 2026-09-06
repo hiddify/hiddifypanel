@@ -1,13 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr ""
-" جستجو کردن\n"
-"تنظیمات"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: fa\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr "%(count)s رکورد با موفقیت حذف شد."
@@ -875,7 +875,7 @@ msgid ""
 msgstr ""
 "🔄 پنل هیدیفای به صورت خودکار هر ۶ ساعت یک Backup میگیرد. مسیر فایل های Backup روی سرور: ⬇️\n"
 "<br>\n"
-"💿 /opt/hiddify-manager/hiddify-panel/backup/\n"
+"💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n"
 "<br>\n"
 "<br>\n"
 "<br>\n"
@@ -1079,6 +1079,12 @@ msgstr "بازگشت"
 msgid "adminV2.common.cancel"
 msgstr "انصراف"
 
+msgid "adminV2.common.copy"
+msgstr "کپی"
+
+msgid "adminV2.common.copied"
+msgstr "کپی شد"
+
 msgid "adminV2.common.confirmDelete"
 msgstr "آیا از حذف این مورد مطمئن هستید؟"
 
@@ -1196,7 +1202,7 @@ msgid "adminV2.menu.baseConfigs"
 msgstr "پیکربندی پایه"
 
 msgid "adminV2.menu.customProxies"
-msgstr "پروکسی‌ها"
+msgstr "پروکسی‌های سفارشی"
 
 msgid "adminV2.menu.dashboard"
 msgstr "داشبورد"
@@ -1218,6 +1224,9 @@ msgstr "متغیرهای قالب"
 
 msgid "adminV2.menu.templates"
 msgstr "قالب‌ها"
+
+msgid "adminV2.menu.utils"
+msgstr "ابزارها"
 
 msgid "adminV2.proxy.addClient"
 msgstr "افزودن کلاینت"
@@ -1328,8 +1337,19 @@ msgstr "کانفیگ هسته کلاینت"
 msgid "adminV2.proxy.clientCores"
 msgstr "هسته‌های کلاینت"
 
+msgid "adminV2.proxy.commonProxyBadge"
+msgstr "مشترک"
+
 msgid "adminV2.proxy.core"
 msgstr "هسته"
+
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "پروکسی مشترک"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"این پروتکل روی هر دو هسته Xray و Hiddify Core وجود دارد. تنظیم هسته پروکسی "
+"مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد."
 
 msgid "adminV2.proxy.customPath"
 msgstr "مسیر سفارشی"
@@ -1358,6 +1378,15 @@ msgstr "CDN"
 msgid "adminV2.proxy.domainModeLabels.direct"
 msgstr "مستقیم"
 
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "مستقیم معتبر"
+
+msgid "adminV2.proxy.domainModeLabels.direct-fake"
+msgstr "مستقیم جعلی"
+
+msgid "adminV2.proxy.domainModeLabels.direct-reality"
+msgstr "مستقیم REALITY"
+
 msgid "adminV2.proxy.domainModeLabels.fake"
 msgstr "Fake TLS"
 
@@ -1366,6 +1395,15 @@ msgstr "REALITY"
 
 msgid "adminV2.proxy.domainModeLabels.relay"
 msgstr "Relay"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "Relay معتبر"
+
+msgid "adminV2.proxy.domainModeLabels.relay-fake"
+msgstr "Relay جعلی"
+
+msgid "adminV2.proxy.domainModeLabels.relay-reality"
+msgstr "Relay REALITY"
 
 msgid "adminV2.proxy.domainModeLabels.special"
 msgstr "ویژه (REALITY)"
@@ -1531,7 +1569,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "قالب لینک"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "پروکسی‌ها"
+msgstr "پروکسی‌های سفارشی"
 
 msgid "adminV2.proxy.mode"
 msgstr "حالت"
@@ -1559,6 +1597,17 @@ msgstr "حالت و مسیریابی"
 
 msgid "adminV2.proxy.name"
 msgstr "نام"
+
+msgid "adminV2.proxy.needGlobalEnable"
+msgstr ""
+"برای فعال‌سازی این پروکسی باید ابتدا {names} را به‌صورت سراسری فعال کنید. "
+"می‌خواهید تنظیمات را در تب جدید باز کنید؟"
+
+msgid "adminV2.proxy.cannotEnable"
+msgstr "امکان فعال‌سازی این پروکسی نیست"
+
+msgid "adminV2.proxy.goToSettings"
+msgstr "رفتن به تنظیمات"
 
 msgid "adminV2.proxy.new"
 msgstr "پروکسی جدید"
@@ -1599,6 +1648,9 @@ msgstr "خروجی رندر شده"
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "منبع قالب"
 
+msgid "adminV2.proxy.searchAll"
+msgstr "جستجو در همه ستون‌ها..."
+
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "بازگردانی به پیش‌فرض کاتالوگ"
 
@@ -1631,6 +1683,9 @@ msgstr "جزئیات Base64"
 
 msgid "adminV2.proxy.sublinkFormat"
 msgstr "فرمت لینک"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "فیلدهای رمزگشایی‌شده"
 
 msgid "adminV2.proxy.sublinkFormatBase64"
 msgstr "فرمت Base64"
@@ -1711,10 +1766,22 @@ msgid "adminV2.proxy.tlsLayer"
 msgstr "لایه TLS"
 
 msgid "adminV2.proxy.tlsLayerLabels.http"
-msgstr "HTTP"
+msgstr "-"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
+msgstr "TLS H2"
 
 msgid "adminV2.proxy.tlsLayerLabels.tls"
-msgstr "TLS"
+msgstr "TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
 
 msgid "adminV2.proxy.tlsLayerSpecialConflict"
 msgstr "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست"
@@ -1849,6 +1916,115 @@ msgid "adminV2.templateVariables.skipHint"
 msgstr ""
 "خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی "
 "رندر نشود"
+
+msgid "adminV2.utils.addQuery"
+msgstr "افزودن پارامتر"
+
+msgid "adminV2.utils.base64Tab"
+msgstr "Base64"
+
+msgid "adminV2.utils.decode"
+msgstr "رمزگشایی"
+
+msgid "adminV2.utils.emptyLinks"
+msgstr "لینک‌ها را سمت چپ بچسبانید تا اینجا نمایش داده شوند."
+
+msgid "adminV2.utils.encode"
+msgstr "رمزگذاری"
+
+msgid "adminV2.utils.extraHint"
+msgstr "JSON رمزگشایی‌شده از URL. برای حذف extra از لینک خالی بگذارید."
+
+msgid "adminV2.utils.extraJson"
+msgstr "extra (JSON)"
+
+msgid "adminV2.utils.fragment"
+msgstr "Fragment"
+
+msgid "adminV2.utils.input"
+msgstr "ورودی"
+
+msgid "adminV2.utils.links"
+msgstr "لینک‌ها"
+
+msgid "adminV2.utils.linksPlaceholder"
+msgstr ""
+"یک یا چند لینک vless://، vmess://، ss://، trojan:// (یا سابسکریپشن base64) "
+"بچسبانید"
+
+msgid "adminV2.utils.method"
+msgstr "متد"
+
+msgid "adminV2.utils.noQuery"
+msgstr "پارامتر کوئری نیست. با افزودن پارامتر یکی اضافه کنید."
+
+msgid "adminV2.utils.output"
+msgstr "خروجی"
+
+msgid "adminV2.utils.pass"
+msgstr "رمز"
+
+msgid "adminV2.utils.path"
+msgstr "مسیر"
+
+msgid "adminV2.utils.port"
+msgstr "پورت"
+
+msgid "adminV2.utils.pretty"
+msgstr "رمزگشایی‌شده"
+
+msgid "adminV2.utils.protocol"
+msgstr "پروتکل"
+
+msgid "adminV2.utils.queryKey"
+msgstr "کلید"
+
+msgid "adminV2.utils.queryParams"
+msgstr "پارامترهای کوئری"
+
+msgid "adminV2.utils.queryValue"
+msgstr "مقدار"
+
+msgid "adminV2.utils.server"
+msgstr "سرور"
+
+msgid "adminV2.utils.sublinkHint"
+msgstr ""
+"لینک‌ها را سمت چپ بچسبانید. سمت راست فیلدهای رمزگشایی‌شده را نشان می‌دهد. "
+"پارامترهای کوئری ردیف‌های قابل ویرایش هستند و extra به صورت JSON است. تغییر "
+"سمت راست لینک را بازنویسی می‌کند."
+
+msgid "adminV2.utils.sublinkTab"
+msgstr "ساب‌لینک"
+
+msgid "adminV2.utils.subtitle"
+msgstr ""
+"رمزگذاری، رمزگشایی و بررسی لینک‌ها فقط در مرورگر — چیزی به سرور فرستاده "
+"نمی‌شود."
+
+msgid "adminV2.utils.swap"
+msgstr "جابه‌جا"
+
+msgid "adminV2.utils.title"
+msgstr "ابزارها"
+
+msgid "adminV2.utils.unwrappedSubscription"
+msgstr "سابسکریپشن base64 شناسایی و به لینک‌های جداگانه تبدیل شد."
+
+msgid "adminV2.utils.urlSafe"
+msgstr "URL-safe"
+
+msgid "adminV2.utils.urlTab"
+msgstr "URL"
+
+msgid "adminV2.utils.user"
+msgstr "کاربر"
+
+msgid "adminV2.utils.vmessJson"
+msgstr "JSON وی‌مس"
+
+msgid "adminV2.utils.vmessObject"
+msgstr "JSON وی‌مس باید یک آبجکت باشد"
 
 msgid "adminV2.theme.dark"
 msgstr "حالت تاریک"
@@ -2190,6 +2366,23 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 کلید توسعه کلودفلر"
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+"اگر پروتکل روی هر دو هسته باشد، فقط هسته انتخاب‌شده فعال می‌ماند. هر دو را "
+"برای فعال ماندن هر دو انتخاب کنید."
+
+msgid "config.common_proxy_core.label"
+msgstr "🎛️ هسته پروکسی مشترک"
+
+msgid "config.common_proxy_core.xray"
+msgstr "Xray"
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr "Hiddify Core (singbox)"
+
+msgid "config.common_proxy_core.both"
+msgstr "هر دو"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -3638,7 +3831,7 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "درگاه SNI"
 
 msgid "domain.custom_proxy.label"
-msgstr "پراکسی"
+msgstr "پراکسی سفارشی"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند"
@@ -3720,6 +3913,29 @@ msgstr ""
 "مشخص کنید کاربرانی که با این دامنه، پنل کاربری را مشاهده می‌کنند، کانفیگ‌های مربوط به کدام دامنه‌ها را مشاهده کنند.\n"
 "<br>\n"
 "پیشنهاد: برای یک دامنه با IP فیلتر نشده و متفاوت با بقیه، همه دامنه های دیگر (به جز دامنه فعلی) را انتخاب کنید. در نتیجه از آنجایی که از این IP برای فیلترشکن استفاده نمی‌شود و یک وبسایت ساده است، این دامنه و آی پی هرگز مسدود نمی‌شود و کاربران شما به راحتی می توانند پروفایل های جدید را به روز کنند."
+
+msgid "domain.tls_status.description"
+msgstr ""
+"گواهی ذخیره‌شده برای این دامنه: معتبر، خودامضا، منقضی، نامعتبر یا بدون "
+"گواهی."
+
+msgid "domain.tls_status.expired"
+msgstr "منقضی"
+
+msgid "domain.tls_status.invalid"
+msgstr "نامعتبر"
+
+msgid "domain.tls_status.label"
+msgstr "TLS"
+
+msgid "domain.tls_status.missing"
+msgstr "بدون گواهی"
+
+msgid "domain.tls_status.self_signed"
+msgstr "خودامضا"
+
+msgid "domain.tls_status.valid"
+msgstr "معتبر"
 
 msgid "download"
 msgstr "دانلود مستقیم"
@@ -4287,3 +4503,6 @@ msgstr "📅 هفتگی"
 
 msgid "worker"
 msgstr "✴️ ورکر کلودفلر"
+
+msgid "Search Settings"
+msgstr "جستجوی تنظیمات"

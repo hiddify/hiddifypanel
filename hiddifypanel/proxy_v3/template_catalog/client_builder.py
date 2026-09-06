@@ -90,6 +90,9 @@ def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
 
 
 def _hiddify_client_tls_slug(combo: ProxyCombination) -> str:
+    proto = (combo.proto or "").lower()
+    if proto in ("tuic", "hysteria", "hysteria2"):
+        return f"{_HIDDIFY_CLIENT_ROOT}/client/tls/shared_cert_tls"
     return f"{_HIDDIFY_CLIENT_ROOT}/client/tls/tls_http"
 
 

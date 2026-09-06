@@ -9,6 +9,7 @@ from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.user import User
 from hiddifypanel.proxy_v3.context_vars.builder.utils import normalize_common_proxy_core
+from hiddifypanel.proxy_v3.context_vars.cert import CertVar, select_shared_certificate
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
@@ -23,9 +24,7 @@ def _common_proxy_core_cache_token() -> str:
     tokens: list[str] = []
     for child in Child.query.all():
         selected = hconfig(ConfigEnum.common_proxy_core, child.id)
-        tokens.append(
-            f"{child.id}:{normalize_common_proxy_core(selected if isinstance(selected, str) or selected is None else None)}"
-        )
+        tokens.append(f"{child.id}:{normalize_common_proxy_core(selected if isinstance(selected, str) or selected is None else None)}")
     return ",".join(tokens)
 
 
@@ -34,7 +33,16 @@ def build_client_template_context(user: User, sublink_domain: str, user_agent: s
     bases = get_bases(sublink_domain, _common_proxy_core_cache_token())
     user_var = UserVar.from_user(user)
     platform_var = get_platform_var(user_agent)
-    return [ClientContextVar(user=user_var, platform=platform_var, hconfig=b.hconfig, proxy=b.proxy) for b in bases]
+    return [
+        ClientContextVar(
+            user=user_var,
+            platform=platform_var,
+            hconfig=b.hconfig,
+            proxy=b.proxy,
+            shared_cert=b.shared_cert,
+        )
+        for b in bases
+    ]
 
 
 class BaseVar(BaseModel):
@@ -42,6 +50,7 @@ class BaseVar(BaseModel):
 
     proxy: ClientBuilderProxyVar
     hconfig: HConfigVar
+    shared_cert: CertVar
 
 
 @cache.cache(600)
@@ -50,6 +59,7 @@ def get_bases(sublink_domain: str, common_core_token: str = "") -> list[BaseVar]
     proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).all()
     child_hconfigs: dict[int, HConfigVar] = get_all_hconfigs()
     domains: list[DomainIPVar] = get_availble_domains(sublink_domain)
+    shared_cert = select_shared_certificate()
     all_bases = []
     for p in proxies:
         if not p.enable:
@@ -60,6 +70,7 @@ def get_bases(sublink_domain: str, common_core_token: str = "") -> list[BaseVar]
         base = BaseVar(
             proxy=proxy_var,
             hconfig=child_hconfigs[child_id],
+            shared_cert=shared_cert,
         )
         all_bases.append(base)
 

@@ -1,13 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr ""
-" Search\n"
-"            Settings"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: en\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr "%(count)s records were successfully deleted."
@@ -882,7 +882,7 @@ msgid ""
 msgstr ""
 "🔄 Hiddify Manager automatically takes a Backup every 6 Hours. The path of the Backup files on the server: ⬇️\n"
 "<br>\n"
-"💿 /opt/hiddify-manager/hiddify-panel/backup/\n"
+"💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n"
 "<br>\n"
 "<br>\n"
 "<br>\n"
@@ -1084,6 +1084,12 @@ msgstr "Back"
 msgid "adminV2.common.cancel"
 msgstr "Cancel"
 
+msgid "adminV2.common.copy"
+msgstr "Copy"
+
+msgid "adminV2.common.copied"
+msgstr "Copied"
+
 msgid "adminV2.common.confirmDelete"
 msgstr "Are you sure you want to delete this item?"
 
@@ -1223,6 +1229,9 @@ msgstr "Template Variables"
 msgid "adminV2.menu.templates"
 msgstr "Templates"
 
+msgid "adminV2.menu.utils"
+msgstr "Utils"
+
 msgid "adminV2.proxy.addClient"
 msgstr "Add client"
 
@@ -1331,8 +1340,19 @@ msgstr "Client core configs"
 msgid "adminV2.proxy.clientCores"
 msgstr "Client cores"
 
+msgid "adminV2.proxy.commonProxyBadge"
+msgstr "Common"
+
 msgid "adminV2.proxy.core"
 msgstr "Core"
+
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "Common proxy"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"This protocol exists on both Xray and Hiddify Core. The Common Proxy Core "
+"setting keeps only the selected core enabled."
 
 msgid "adminV2.proxy.customPath"
 msgstr "Custom path"
@@ -1362,6 +1382,15 @@ msgstr "CDN"
 msgid "adminV2.proxy.domainModeLabels.direct"
 msgstr "Direct"
 
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "Direct valid"
+
+msgid "adminV2.proxy.domainModeLabels.direct-fake"
+msgstr "Direct fake"
+
+msgid "adminV2.proxy.domainModeLabels.direct-reality"
+msgstr "Direct REALITY"
+
 msgid "adminV2.proxy.domainModeLabels.fake"
 msgstr "Fake TLS"
 
@@ -1370,6 +1399,15 @@ msgstr "REALITY"
 
 msgid "adminV2.proxy.domainModeLabels.relay"
 msgstr "Relay"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "Relay valid"
+
+msgid "adminV2.proxy.domainModeLabels.relay-fake"
+msgstr "Relay fake"
+
+msgid "adminV2.proxy.domainModeLabels.relay-reality"
+msgstr "Relay REALITY"
 
 msgid "adminV2.proxy.domainModeLabels.special"
 msgstr "Special (REALITY)"
@@ -1538,7 +1576,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "Link template"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "Proxies"
+msgstr "Custom Proxies"
 
 msgid "adminV2.proxy.mode"
 msgstr "Mode"
@@ -1566,6 +1604,17 @@ msgstr "Mode & routing"
 
 msgid "adminV2.proxy.name"
 msgstr "Name"
+
+msgid "adminV2.proxy.needGlobalEnable"
+msgstr ""
+"You need to enable {names} globally to enable this proxy. Do you want to "
+"open settings?"
+
+msgid "adminV2.proxy.cannotEnable"
+msgstr "Cannot enable this proxy"
+
+msgid "adminV2.proxy.goToSettings"
+msgstr "Go to settings"
 
 msgid "adminV2.proxy.new"
 msgstr "New Proxy"
@@ -1608,6 +1657,9 @@ msgstr "Rendered output"
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "Template source"
 
+msgid "adminV2.proxy.searchAll"
+msgstr "Search all columns..."
+
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "Reset to catalog default"
 
@@ -1640,6 +1692,9 @@ msgstr "Base64 detail"
 
 msgid "adminV2.proxy.sublinkFormat"
 msgstr "Link format"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "Decoded fields"
 
 msgid "adminV2.proxy.sublinkFormatBase64"
 msgstr "Base64 format"
@@ -1720,10 +1775,22 @@ msgid "adminV2.proxy.tlsLayer"
 msgstr "TLS layer"
 
 msgid "adminV2.proxy.tlsLayerLabels.http"
-msgstr "HTTP"
+msgstr "-"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
+msgstr "TLS H2"
 
 msgid "adminV2.proxy.tlsLayerLabels.tls"
-msgstr "TLS"
+msgstr "TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
 
 msgid "adminV2.proxy.tlsLayerSpecialConflict"
 msgstr "HTTP TLS layer is not compatible with REALITY domain modes"
@@ -1858,6 +1925,114 @@ msgid "adminV2.templateVariables.skipHint"
 msgstr ""
 "Output SKIP or call skip() to skip rendering this proxy when a condition is "
 "not met"
+
+msgid "adminV2.utils.addQuery"
+msgstr "Add query"
+
+msgid "adminV2.utils.base64Tab"
+msgstr "Base64"
+
+msgid "adminV2.utils.decode"
+msgstr "Decode"
+
+msgid "adminV2.utils.emptyLinks"
+msgstr "Paste share links on the left to inspect them here."
+
+msgid "adminV2.utils.encode"
+msgstr "Encode"
+
+msgid "adminV2.utils.extraHint"
+msgstr "URL-decoded JSON. Leave empty to omit extra from the link."
+
+msgid "adminV2.utils.extraJson"
+msgstr "extra (JSON)"
+
+msgid "adminV2.utils.fragment"
+msgstr "Name"
+
+msgid "adminV2.utils.input"
+msgstr "Input"
+
+msgid "adminV2.utils.links"
+msgstr "Share links"
+
+msgid "adminV2.utils.linksPlaceholder"
+msgstr ""
+"Paste one or more vless://, vmess://, ss://, trojan:// links (or a base64 "
+"subscription)"
+
+msgid "adminV2.utils.method"
+msgstr "Method"
+
+msgid "adminV2.utils.noQuery"
+msgstr "No query parameters. Use Add query to insert one."
+
+msgid "adminV2.utils.output"
+msgstr "Output"
+
+msgid "adminV2.utils.pass"
+msgstr "Pass"
+
+msgid "adminV2.utils.path"
+msgstr "UrlPath"
+
+msgid "adminV2.utils.port"
+msgstr "Port"
+
+msgid "adminV2.utils.pretty"
+msgstr "Decoded"
+
+msgid "adminV2.utils.protocol"
+msgstr "Protocol"
+
+msgid "adminV2.utils.queryKey"
+msgstr "Key"
+
+msgid "adminV2.utils.queryParams"
+msgstr "Query parameters"
+
+msgid "adminV2.utils.queryValue"
+msgstr "Value"
+
+msgid "adminV2.utils.server"
+msgstr "Server"
+
+msgid "adminV2.utils.sublinkHint"
+msgstr ""
+"Paste links on the left. The right side shows decoded fields. Query params "
+"are editable rows; extra is JSON. Changes on the right rewrite the links."
+
+msgid "adminV2.utils.sublinkTab"
+msgstr "Sublink"
+
+msgid "adminV2.utils.subtitle"
+msgstr ""
+"Encode, decode, and inspect share links in the browser — nothing is sent to "
+"the server."
+
+msgid "adminV2.utils.swap"
+msgstr "Swap"
+
+msgid "adminV2.utils.title"
+msgstr "Utils"
+
+msgid "adminV2.utils.unwrappedSubscription"
+msgstr "Detected a base64 subscription and decoded it into individual links."
+
+msgid "adminV2.utils.urlSafe"
+msgstr "URL-safe"
+
+msgid "adminV2.utils.urlTab"
+msgstr "URL"
+
+msgid "adminV2.utils.user"
+msgstr "User"
+
+msgid "adminV2.utils.vmessJson"
+msgstr "vmess JSON"
+
+msgid "adminV2.utils.vmessObject"
+msgstr "vmess JSON must be an object"
 
 msgid "adminV2.theme.dark"
 msgstr "Dark mode"
@@ -2198,6 +2373,23 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 Cloudflare API"
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+"When a protocol exists on both Xray and Hiddify Core, only the selected core"
+" stays enabled. Choose Both to keep both."
+
+msgid "config.common_proxy_core.label"
+msgstr "🎛️ Common Proxy Core"
+
+msgid "config.common_proxy_core.xray"
+msgstr "Xray"
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr "Hiddify Core (singbox)"
+
+msgid "config.common_proxy_core.both"
+msgstr "Both"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -3634,7 +3826,7 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "SNI gateway"
 
 msgid "domain.custom_proxy.label"
-msgstr "Proxy"
+msgstr "Custom proxy"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr "REALITY domains must use the REALITY Termination proxy"
@@ -3717,6 +3909,29 @@ msgstr ""
 "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n"
 "<br>\n"
 "Suggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles."
+
+msgid "domain.tls_status.description"
+msgstr ""
+"Certificate stored for this domain: valid CA, self-signed, expired, invalid,"
+" or missing."
+
+msgid "domain.tls_status.expired"
+msgstr "Expired"
+
+msgid "domain.tls_status.invalid"
+msgstr "Invalid"
+
+msgid "domain.tls_status.label"
+msgstr "TLS"
+
+msgid "domain.tls_status.missing"
+msgstr "No certificate"
+
+msgid "domain.tls_status.self_signed"
+msgstr "Self-signed"
+
+msgid "domain.tls_status.valid"
+msgstr "Valid"
 
 msgid "download"
 msgstr "Direct Download"
@@ -4282,3 +4497,6 @@ msgstr "📅 Weekly"
 
 msgid "worker"
 msgstr "✴️ Cloudflare Worker"
+
+msgid "Search Settings"
+msgstr "Search Settings"

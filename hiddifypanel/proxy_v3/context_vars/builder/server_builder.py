@@ -10,6 +10,7 @@ from hiddifypanel.models.domain import Domain, FakeMode
 from hiddifypanel.models.proxy import ProxyTransport
 from hiddifypanel.models.user import User
 from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
+from hiddifypanel.proxy_v3.context_vars.cert import CertVar, select_shared_certificate
 from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextProxyVar, ServerContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
@@ -38,6 +39,7 @@ def build_server_template_context(child_id: int = 0) -> ServerContextVar:
         proxies=base.proxies,
         ips=base.ips,
         platform=base.platform,
+        shared_cert=base.shared_cert,
     )
 
 
@@ -49,6 +51,7 @@ class ServerBase(BaseModel):
     proxies: list[ServerBuilderProxyVar]
     ips: IPVar
     platform: ServerPlatformVar
+    shared_cert: CertVar
 
 
 def get_server_base(child_id: int) -> ServerBase:
@@ -57,12 +60,20 @@ def get_server_base(child_id: int) -> ServerBase:
 
     domains: list[DomainIPVar] = get_server_domains(child_id=child_id)
     ips: IPVar = IPVar.from_strings(*hutils.network.net.get_ips())
+    shared_cert = select_shared_certificate()
 
     proxies: list[ServerBuilderProxyVar] = get_server_builder_proxies(child_id)
     for proxy in proxies:
         proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy)]
     proxies = [b for b in proxies if filter_server_proxy(b)]
-    return ServerBase(domains=domains, hconfig=hconfig, proxies=proxies, ips=ips, platform=platform)
+    return ServerBase(
+        domains=domains,
+        hconfig=hconfig,
+        proxies=proxies,
+        ips=ips,
+        platform=platform,
+        shared_cert=shared_cert,
+    )
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
@@ -180,6 +191,7 @@ def build_proxy_jinja_context(
         proxy=proxy_var,
         ips=ips,
         platform=platform,
+        shared_cert=select_shared_certificate(),
     )
     return make_jinja_context(ctx)
 
@@ -206,5 +218,6 @@ def build_bundle_jinja_context(
             ips=ctx.ips,
             platform=ctx.platform,
             client_proxy_tags=list(ctx.client_proxy_tags),
+            shared_cert=ctx.shared_cert,
         )
     )

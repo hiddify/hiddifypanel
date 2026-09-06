@@ -18,7 +18,7 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 140
+MAX_DB_VERSION = 141
 
 
 def _drop_wip_proxy_tables() -> None:
@@ -40,7 +40,7 @@ def _drop_wip_proxy_tables() -> None:
     set_hconfig(ConfigEnum.db_version, 129)
 
 
-def _v135(child_id):
+def _v136(child_id):
     from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
     from hiddifypanel.proxy_v3.config_builder import jinja_render
 
@@ -49,9 +49,8 @@ def _v135(child_id):
     jinja_render._template_map_cache.clear()
     jinja_render._jinja_env_cache.clear()
 
-
-# def _v134(child_id):
-#     sync_builtin_presets(child_id)
+    # def _v134(child_id):
+    # sync_builtin_presets(child_id)
 
 
 def _v133(child_id):
@@ -1147,7 +1146,7 @@ def upgrade_database():
 def init_db():
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 133, commit=True)
+    # set_hconfig(ConfigEnum.db_version, 134, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

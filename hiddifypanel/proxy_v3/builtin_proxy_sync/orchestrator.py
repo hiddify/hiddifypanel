@@ -387,6 +387,9 @@ def sync_all(child_id: int = 0, *, refresh_base_configs: bool = True) -> SyncSta
         stats.builtin_base_configs,
         stats.builtin_custom_proxies,
     )
+    from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
+
+    sync_tls_store_all(child_id)
     return stats
 
 

@@ -13,13 +13,14 @@
   {% set uri = namespace(
     protocol=scheme,
     user=ctx.user.uuid,
-    password='h',
+    password=ctx.proxy.path,
     host=proxy.server,
     port=proxy.port,
     query_params={
       'padding': 'true',
       'extra-headers': ('X-API-Key:' ~ proxy.path) ,
-      'sni': domain.sni if (layer != 'http' and domain.sni) else '',
+      'host': domain.host,
+      'sni': domain.sni,
     },
   ) %}
   {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}

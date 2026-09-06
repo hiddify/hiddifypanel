@@ -3,11 +3,12 @@
   {% for user in ctx.users %}
     {
       "username": "{{ user.uuid }}", 
-      "password": "h"
+      "password": "{{ ctx.proxy.path }}"
     },
   {% endfor %}
 ],
-"network": "tcp",
-{% if ctx.proxy.public_access %}
+"network": "{{ 'udp' if ctx.proxy.tls_layer == 'quic_tls' else 'tcp' }}",
+{# L7 gateway terminates TLS; SNI gateway / direct listen keep TLS on the inbound. #}
+{% if ctx.proxy.mode != 'domains_l7_gateway' %}
 {% include 'hiddify-core/server/tls/tls' %}
 {% endif %}

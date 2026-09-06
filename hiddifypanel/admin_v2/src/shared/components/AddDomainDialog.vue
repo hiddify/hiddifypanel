@@ -40,7 +40,15 @@ import Select from 'primevue/select'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import { domainsApi, type DomainOption } from '@/core/api/generated'
 
-const ALL_MODES = ['direct', 'cdn', 'relay', 'fake', 'reality'] as const
+const ALL_MODES = [
+  'direct-valid',
+  'direct-fake',
+  'direct-reality',
+  'relay-valid',
+  'relay-fake',
+  'relay-reality',
+  'cdn',
+] as const
 
 const props = defineProps<{
   visible: boolean
@@ -56,7 +64,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const toast = useToast()
 const saving = ref(false)
-const form = ref({ domain: '', alias: '', mode: 'direct' })
+const form = ref({ domain: '', alias: '', mode: 'direct-valid' })
 
 const resolvedModes = computed(() => {
   const modes = props.allowedModes?.filter(Boolean) ?? []
@@ -64,11 +72,14 @@ const resolvedModes = computed(() => {
 })
 
 const modeOptions = computed(() =>
-  resolvedModes.value.map((value) => ({ label: value, value })),
+  resolvedModes.value.map((value) => ({
+    label: t(`proxy.domainModeLabels.${value}`, value),
+    value,
+  })),
 )
 
 function defaultMode(): string {
-  return resolvedModes.value[0] ?? 'direct'
+  return resolvedModes.value[0] ?? 'direct-valid'
 }
 
 function resetForm() {

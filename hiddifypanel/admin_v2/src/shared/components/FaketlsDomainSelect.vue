@@ -47,7 +47,7 @@ const matchingDomains = ref<string[]>([])
 const showDialog = ref(false)
 
 const resolvedDomainModes = computed(
-  () => (props.domainModes?.filter(Boolean).length ? props.domainModes! : ['fake', 'direct', 'relay']),
+  () => (props.domainModes?.filter(Boolean).length ? props.domainModes! : ['direct-fake', 'relay-fake']),
 )
 
 const selected = computed({

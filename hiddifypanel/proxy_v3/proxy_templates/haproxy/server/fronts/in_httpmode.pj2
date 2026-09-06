@@ -30,11 +30,12 @@ frontend in-httpmode
  
 
   mode http
-
+  http-request set-var(txn.backend) str(default_decoy)
   http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},default_decoy)
   http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { req.hdr(x-api-key) -m found } { var(txn.backend) -m str default_decoy }
+  http-request set-var(txn.naive_pass) req.hdr(Proxy-Authorization),field(2," "),b64dec,field(2,":") if { req.hdr(Proxy-Authorization) -m found } { var(txn.backend) -m str default_decoy }
+  http-request set-var(txn.backend) var(txn.naive_pass),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.naive_pass) -m found }
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
-
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
 

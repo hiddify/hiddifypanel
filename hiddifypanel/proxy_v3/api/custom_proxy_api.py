@@ -160,12 +160,12 @@ def _prepare_create_data(data: dict) -> dict:
             data["custom_path"] = _generate_custom_path()
     if mode == CustomProxyMode.domains_sni_gateway.value:
         if not data.get("domain_modes"):
-            data["domain_modes"] = ["direct", "relay"]
+            data["domain_modes"] = ["direct-valid", "relay-valid"]
         data["custom_path"] = ""
     if mode == CustomProxyMode.domains_auto_public_ports.value:
         data["custom_path"] = ""
         if not data.get("domain_modes"):
-            data["domain_modes"] = ["direct", "relay"]
+            data["domain_modes"] = ["direct-valid", "relay-valid"]
         server = dict(data.get("server_config") or {})
         server["inbound_tcp_ports"] = []
         server["inbound_udp_ports"] = []
@@ -173,7 +173,7 @@ def _prepare_create_data(data: dict) -> dict:
     if mode == CustomProxyMode.domains_single_public_port.value:
         data["custom_path"] = ""
         if not data.get("domain_modes"):
-            data["domain_modes"] = ["direct", "relay"]
+            data["domain_modes"] = ["direct-valid", "relay-valid"]
     if mode in (
         CustomProxyMode.domains_l7_gateway.value,
         CustomProxyMode.domains_sni_gateway.value,
@@ -183,8 +183,9 @@ def _prepare_create_data(data: dict) -> dict:
         server["inbound_udp_ports"] = []
         data["server_config"] = server
     if mode == CustomProxyMode.ip.value:
-        modes = [m for m in (data.get("domain_modes") or []) if m in ("direct", "relay")]
-        data["domain_modes"] = modes
+        from hiddifypanel.proxy_v3.domain_mode_filter import normalize_domain_modes
+
+        data["domain_modes"] = normalize_domain_modes(data.get("domain_modes"), default=("direct-valid", "relay-valid"))
     data["custom_path"] = normalize_custom_path(data.get("custom_path"))
     return data
 
@@ -409,7 +410,15 @@ class CustomProxyMetaApi(MethodView):
             "transports": [t.value for t in CustomProxyTransport],
             "tls_layers": [layer.value for layer in TlsLayer],
             "l7_reverse_protos": ["h1", "h2", "h3"],
-            "domain_modes": ["direct", "cdn", "relay", "fake", "reality"],
+            "domain_modes": [
+                "direct-valid",
+                "direct-fake",
+                "direct-reality",
+                "relay-valid",
+                "relay-fake",
+                "relay-reality",
+                "cdn",
+            ],
             "server_cores": ["hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4"],
             "client_cores": ["sublink", "xray", "singbox", "hiddify-core", "clash"],
             "template_categories": [c.value for c in TEMPLATE_CATEGORIES_ACTIVE],

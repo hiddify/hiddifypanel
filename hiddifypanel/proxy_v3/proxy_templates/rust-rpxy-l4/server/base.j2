@@ -69,23 +69,21 @@ load_balance = "none"
 ############## SNI gateway (domains_sni_gateway) ##############
 {% for p in ctx.proxies if p.mode == "domains_sni_gateway" %}
 {% for pd in p.iter_proxies_with_domain() %}
+
+{% if pd.tcp_udp !="udp" and pd.tcp_port %}
 [protocols."sp_{{ p.id }}_{{ pd.domain.name|slugify }}_tls"]
 protocol = "tls"
 server_names = ["{{ pd.domain.sni }}"]
-{%- if pd.tcp_port %}
 target = ["127.0.0.1:{{ pd.tcp_port }}"]
-{%- else %}
-target = ["{{ pd.domain.sni }}:443"]
 {% endif %}
 
+{% if pd.tcp_udp !="tcp" and pd.udp_port %}
 [protocols."sp_{{ p.id }}_{{ pd.domain.name|slugify }}_quic"]
 protocol = "quic"
 server_names = ["{{ pd.domain.sni }}"]
-{%- if pd.udp_port %}
 target = ["127.0.0.1:{{ pd.udp_port }}"]
-{%- else %}
-target = ["{{ pd.domain.sni }}:443"]
 {% endif %}
+
 {% endfor %}
 {% endfor %}
 

@@ -19,6 +19,12 @@ from hiddifypanel.proxy_v3.custom_proxy_ports import (
     mode_uses_gateway_port,
     normalize_port_list,
 )
+from hiddifypanel.proxy_v3.domain_mode_filter import (
+    ALLOWED_DOMAIN_MODES,
+    domain_modes_use_reality,
+    normalize_domain_modes,
+    transport_tls_supports_reality,
+)
 
 
 class JinjaEnum(StrEnum):
@@ -863,14 +869,17 @@ def _parse_tls_layer(value: Any) -> TlsLayer | None:
         raise ValueError(f"Invalid tls_layer {value!r}. Must be one of: {allowed}") from exc
 
 
-def domain_modes_use_reality(domain_modes: list[str] | None) -> bool:
-    modes = {str(m).strip().lower() for m in (domain_modes or []) if str(m).strip()}
-    return bool(modes & {"reality"})
-
-
-def validate_tls_layer_domain_modes(tls_layer: TlsLayer | None, domain_modes: list[str] | None) -> None:
-    if tls_layer == TlsLayer.http and domain_modes_use_reality(domain_modes):
-        raise ValueError("HTTP TLS layer is incompatible with reality/special domain modes")
+def validate_tls_layer_domain_modes(
+    tls_layer: TlsLayer | None,
+    domain_modes: list[str] | None,
+    transport: CustomProxyTransport | str | None = None,
+) -> None:
+    if not domain_modes_use_reality(domain_modes):
+        return
+    layer = tls_layer.value if isinstance(tls_layer, TlsLayer) else tls_layer
+    transport_key = transport.value if isinstance(transport, CustomProxyTransport) else transport
+    if not transport_tls_supports_reality(transport_key, layer):
+        raise ValueError("REALITY is only supported on gRPC, xHTTP H2, and raw HTTP with TLS")
 
 
 def validate_naive_tls_layer(proto: ProxyProto | str | None, tls_layer: TlsLayer | None) -> None:
@@ -897,10 +906,6 @@ def xhttp_alpn_is_quic(alpn: str | None) -> bool:
     return bool(alpn and str(alpn).lower() in {"tls_h3", "h3"})
 
 
-def filter_domain_modes_without_reality(domain_modes: list[str] | tuple[str, ...]) -> list[str]:
-    return [mode for mode in domain_modes if mode != "reality"]
-
-
 def effective_server_tcp_udp(proxy: CustomProxy) -> InboundTcpUdp:
     return proxy.effective_server_tcp_udp()
 
@@ -909,9 +914,9 @@ def validate_xhttp_domain_modes(proxy: CustomProxy) -> None:
     if not uses_xhttp_download_settings(proxy):
         return
     categories = list(proxy.categories or [])
-    if xhttp_upload_is_quic(categories) and "reality" in (proxy.domain_modes or []):
+    if xhttp_upload_is_quic(categories) and domain_modes_use_reality(list(proxy.domain_modes or [])):
         raise ValueError("REALITY is incompatible with QUIC upload in xhttp")
-    if xhttp_download_is_quic(categories) and "reality" in (proxy.download_domain_modes or []):
+    if xhttp_download_is_quic(categories) and domain_modes_use_reality(list(proxy.download_domain_modes or [])):
         raise ValueError("REALITY is incompatible with QUIC download in xhttp")
 
 
@@ -931,21 +936,21 @@ def _apply_download_xhttp_fields(dbproxy: CustomProxy, data: dict[str, Any]) -> 
 
 
 def _apply_download_domain_modes(dbproxy: CustomProxy, domain_modes: list[str]) -> None:
-    allowed = {"direct", "cdn", "relay", "fake", "reality"}
-    dbproxy.download_domain_modes = [m for m in domain_modes if m in allowed] or ["direct"]
+    dbproxy.download_domain_modes = normalize_domain_modes(domain_modes, default=("direct-valid",))
     validate_download_xhttp_fields(dbproxy)
 
 
 def validate_download_xhttp_fields(proxy: CustomProxy) -> None:
     if not uses_xhttp_download_settings(proxy):
         return
-    allowed_modes = {"direct", "cdn", "relay", "fake", "reality"}
-    modes = list(proxy.download_domain_modes or [])
-    invalid = [m for m in modes if m not in allowed_modes]
+    modes = normalize_domain_modes(proxy.download_domain_modes)
+    invalid = [m for m in (proxy.download_domain_modes or []) if str(m).strip().lower() not in ALLOWED_DOMAIN_MODES and str(m).strip().lower() not in {"direct", "relay", "fake", "reality", "special"}]
     if invalid:
         raise ValueError(f"Invalid download_domain_modes: {invalid!r}")
-    if proxy.download_tls_layer == TlsLayer.http and domain_modes_use_reality(modes):
-        raise ValueError("HTTP download TLS layer is incompatible with reality domain modes")
+    proxy.download_domain_modes = modes or ["direct-valid"]
+    download_layer = proxy.download_tls_layer.value if proxy.download_tls_layer else None
+    if domain_modes_use_reality(list(proxy.download_domain_modes or [])) and not transport_tls_supports_reality("xhttp", download_layer):
+        raise ValueError("REALITY download is only supported on xHTTP H2")
 
 
 def _parse_server_core(value: Any) -> ServerCore:
@@ -1039,27 +1044,12 @@ def _apply_server_ports(dbproxy: CustomProxy, payload: dict[str, Any]) -> None:
 
 
 def _apply_domain_modes(dbproxy: CustomProxy, domain_modes: list[str] | None) -> None:
+    fallback = default_domain_modes_for_mode(dbproxy.mode)
     if domain_modes is None:
-        dbproxy.domain_modes = default_domain_modes_for_mode(dbproxy.mode)
-    elif dbproxy.mode == CustomProxyMode.domains_l7_gateway:
-        allowed = {"direct", "cdn", "relay"}
-        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct"]
-        validate_tls_layer_domain_modes(dbproxy.tls_layer, dbproxy.domain_modes)
-    elif dbproxy.mode == CustomProxyMode.domains_sni_gateway:
-        allowed = {"fake", "direct", "relay", "reality"}
-        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct", "relay"]
-        validate_tls_layer_domain_modes(dbproxy.tls_layer, dbproxy.domain_modes)
-    elif dbproxy.mode in (
-        CustomProxyMode.domains_auto_public_ports,
-        CustomProxyMode.domains_single_public_port,
-    ):
-        allowed = {"direct", "relay"}
-        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or ["direct", "relay"]
-    elif dbproxy.mode == CustomProxyMode.ip:
-        allowed = {"direct", "relay"}
-        dbproxy.domain_modes = [m for m in domain_modes if m in allowed] or default_domain_modes_for_mode(dbproxy.mode)
+        dbproxy.domain_modes = list(fallback)
     else:
-        dbproxy.domain_modes = default_domain_modes_for_mode(dbproxy.mode)
+        dbproxy.domain_modes = normalize_domain_modes(domain_modes, default=fallback)
+    validate_tls_layer_domain_modes(dbproxy.tls_layer, dbproxy.domain_modes, dbproxy.transport)
     validate_xhttp_domain_modes(dbproxy)
 
 

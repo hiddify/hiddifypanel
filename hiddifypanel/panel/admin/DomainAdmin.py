@@ -5,7 +5,7 @@ from flask import g  # type: ignore
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
 from loguru import logger
-from markupsafe import Markup
+from markupsafe import Markup, escape
 from pydantic import BaseModel, Field
 from wtforms.validators import Regexp, ValidationError
 
@@ -15,7 +15,7 @@ from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import *
 from hiddifypanel.panel import custom_widgets, hiddify
 from hiddifypanel.panel.run_commander import Command, commander
-from hiddifypanel.proxy_v3.domain_mode_filter import proxy_buckets_for_domain
+from hiddifypanel.proxy_v3.domain_mode_filter import expand_domain_mode_tokens, proxy_buckets_for_domain
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
 from .adminlte import AdminLTEModelView
@@ -63,6 +63,7 @@ class DomainAdmin(AdminLTEModelView):
         ech=_("domain.ech.description"),
         custom_proxy=_("domain.custom_proxy.description"),
         server_domain=_("domain.server_domain.description"),
+        tls_status=_("domain.tls_status.description"),
     )
     can_export = False
     form_widget_args = {"show_domains": {"class": "form-control ltr"}, "download_domain": {"class": "form-control ltr"}}
@@ -84,9 +85,10 @@ class DomainAdmin(AdminLTEModelView):
         "servernames": {"validators": [Regexp(r"^([\w-]+\.)+[\w-]+(,\s*([\w-]+\.)+[\w-]+)*$", re.IGNORECASE, _("Invalid REALITY hostnames"))]},
         "server_domain": {"query_factory": lambda: Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.valid)},
     }
-    column_list = ["domain", "alias", "mode", "custom_proxy", "show_domains"]
+    column_list = ["domain", "alias", "mode", "tls_status", "custom_proxy", "show_domains"]
     column_editable_list = ["alias"]
     column_searchable_list = ["domain", "mode"]
+    column_sortable_list = ["domain", "alias", "mode"]
     column_labels = {
         "domain": _("domain.domain"),
         "sub_link_only": _("Only for sublink?"),
@@ -103,6 +105,7 @@ class DomainAdmin(AdminLTEModelView):
         "resolve_ip": _("domain.resolveip.label"),
         "ech": _("domain.ech.label"),
         "custom_proxy": _("domain.custom_proxy.label"),
+        "tls_status": _("TLS"),
     }
 
     form_columns = [
@@ -170,11 +173,41 @@ class DomainAdmin(AdminLTEModelView):
             return ""
         return Markup(f"<a href='{hurl_for('admin.admin_v2')}custom-proxies/{model.custom_proxy.id}' target='_blank'>{model.custom_proxy.name}</a> ")
 
+    def _tls_status_formater(view, context, model, name):
+        status = model.tls_status
+        badges = {
+            "valid": "success",
+            "self_signed": "warning",
+            "expired": "danger",
+            "invalid": "danger",
+            "missing": "secondary",
+        }
+        labels = {
+            "valid": _("Valid"),
+            "self_signed": _("Self-signed"),
+            "expired": _("Expired"),
+            "invalid": _("Invalid"),
+            "missing": _("No certificate"),
+        }
+        label = labels.get(status, status)
+        cert = model.certificate
+        hint_parts = []
+        if cert and cert.issuer:
+            hint_parts.append(str(cert.issuer))
+        if cert and cert.expires_at:
+            hint_parts.append(cert.expires_at.strftime("%Y-%m-%d"))
+        if cert and cert.last_renewal_error:
+            hint_parts.append(str(cert.last_renewal_error))
+        title = " — ".join(hint_parts)
+        title_attr = f' title="{escape(title)}"' if title else ""
+        return Markup(f'<span class="badge badge-{badges.get(status, "secondary")}"{title_attr}>{escape(str(label))}</span>')
+
     column_formatters = {
         "domain": _domain_admin_link,
         "show_domains": _show_domains_formater,
         "mode": _mode_formater,
         "custom_proxy": _custom_proxy_formater,
+        "tls_status": _tls_status_formater,
     }
 
     def search_placeholder(self):
@@ -237,7 +270,7 @@ class DomainAdmin(AdminLTEModelView):
             proxy = CustomProxy.query.filter(CustomProxy.id == model.custom_proxy_id).first()
             if proxy:
                 buckets = set(proxy_buckets_for_domain(model.mode, model.fake_mode))
-                proxy_buckets = {str(m).strip().lower() for m in (proxy.domain_modes or [])}
+                proxy_buckets = expand_domain_mode_tokens(proxy.domain_modes)
                 if not buckets & proxy_buckets:
                     raise ValidationError(_("Selected proxy does not support this domain mode combination"))
             else:
@@ -395,5 +428,7 @@ class DomainAdmin(AdminLTEModelView):
         return True
 
     def get_query(self):
+        from sqlalchemy.orm import joinedload
+
         query = super().get_query()
-        return query.filter(Domain.child_id == Child.current().id)
+        return query.options(joinedload(Domain.certificate)).filter(Domain.child_id == Child.current().id)

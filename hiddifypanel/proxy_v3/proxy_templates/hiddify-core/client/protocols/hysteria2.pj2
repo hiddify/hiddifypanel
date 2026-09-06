@@ -14,4 +14,3 @@
     "password": "{{ ctx.hconfig.proxy_path }}"
   },
 {% endif %}
-{% include 'hiddify-core/client/tls/tls_http' %}
