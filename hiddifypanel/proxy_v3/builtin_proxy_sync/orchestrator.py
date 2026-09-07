@@ -277,36 +277,40 @@ def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
                 updated += 1
             continue
         server = preset.server_config
-        row = CustomProxy.add_or_update(
-            child_id=child_id,
-            commit=False,
-            is_builtin=True,
-            name=preset.name,
-            slug=slug,
-            enable=preset.enable,
-            is_common_proxy=preset.is_common_proxy,
-            mode=preset.mode.value,
-            proto=preset.proto,
-            transport=preset.transport,
-            tls_layer=preset.tls_layer,
-            l7_reverse_proto=preset.l7_reverse_proto,
-            download_tls_layer=preset.download_tls_layer,
-            download_domain_modes=list(preset.download_domain_modes),
-            categories=list(preset.categories),
-            domain_modes=list(preset.domain_modes),
-            custom_path=preset.custom_path,
-            server_config={
-                "core": server.core,
-                "inbound_template": server.inbound_template,
-                "template_slugs": list(server.template_slugs),
-                "tag": server.tag,
-                "inbound_tcp_ports": list(server.inbound_tcp_ports),
-                "inbound_udp_ports": list(server.inbound_udp_ports),
-                "sni_domains": list(server.sni_domains),
-                "tcp_udp": preset.tcp_udp.value,
-                "download_tcp_udp": (preset.download_tcp_udp.value if preset.download_tcp_udp else None),
-            },
-        )
+        try:
+            row = CustomProxy.add_or_update(
+                child_id=child_id,
+                commit=False,
+                is_builtin=True,
+                name=preset.name,
+                slug=slug,
+                enable=preset.enable,
+                is_common_proxy=preset.is_common_proxy,
+                mode=preset.mode.value,
+                proto=preset.proto,
+                transport=preset.transport,
+                tls_layer=preset.tls_layer,
+                l7_reverse_proto=preset.l7_reverse_proto,
+                download_tls_layer=preset.download_tls_layer,
+                download_domain_modes=list(preset.download_domain_modes),
+                categories=list(preset.categories),
+                domain_modes=list(preset.domain_modes),
+                custom_path=preset.custom_path,
+                server_config={
+                    "core": server.core,
+                    "inbound_template": server.inbound_template,
+                    "template_slugs": list(server.template_slugs),
+                    "tag": server.tag,
+                    "inbound_tcp_ports": list(server.inbound_tcp_ports),
+                    "inbound_udp_ports": list(server.inbound_udp_ports),
+                    "sni_domains": list(server.sni_domains),
+                    "tcp_udp": preset.tcp_udp.value,
+                    "download_tcp_udp": (preset.download_tcp_udp.value if preset.download_tcp_udp else None),
+                },
+            )
+        except Exception as e:
+            logger.error(f"Error adding or updating custom proxy preset {preset.slug}: {e}")
+            continue
         db.session.flush()
         sync_builtin_custom_proxy(row, preset)
         added += 1
