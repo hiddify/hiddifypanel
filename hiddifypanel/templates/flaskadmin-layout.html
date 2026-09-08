@@ -228,7 +228,7 @@
             $(this).parent('.custom-control').append('<label class="custom-control-label" for="' + $(this).attr('id') + '">' + label + '</label>');
         });
         function hide_domain_elements() {
-            $("#extra_params").parent().hide();
+            // $("#extra_params").parent().hide();
             syncFakeModeConstraints();
 
             const fakeMode = currentFakeMode();
@@ -253,7 +253,7 @@
                 $("#servernames").parent().hide();
                 $("#download_domain").parent().hide();
                 $("#cdn_ip").parent().hide();
-                $("#extra_params").parent().show();
+                // $("#extra_params").parent().show();
             } else {
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();

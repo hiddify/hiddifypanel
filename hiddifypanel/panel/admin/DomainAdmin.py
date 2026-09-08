@@ -6,7 +6,6 @@ from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
 from loguru import logger
 from markupsafe import Markup, escape
-from pydantic import BaseModel, Field
 from wtforms.validators import Regexp, ValidationError
 
 from hiddifypanel import hutils
@@ -21,18 +20,6 @@ from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 from .adminlte import AdminLTEModelView
 
 
-class DnsTT(BaseModel):
-    mtu: int = Field(0, description="maximum size of DNS responses (0-> use default 1232)")
-
-    keepalive: int = Field(0, description="keepalive ping interval in seconds; must be less than idle-timeout (0-> use default 2s)", ge=0, le=100)
-    idle_timeout: int = Field(0, description="session idle timeout in seconds; tears down sessions with no data within this period (0-> use default 10 seconds)", ge=0, le=100)
-    clientid_size: int = Field(0, description="client ID size in bytes (ignored when dnstt_compat is true) (0-> use default 2)")
-    dnstt_compat: bool = Field(False, description="use original dnstt wire format (8-byte ClientID, padding prefixes)")
-    record_type: Literal["", "txt", "cname", "a", "aaaa", "mx", "ns", "srv"] = Field("", description='DNS record type for downstream data (txt, cname, a, aaaa, mx, ns, srv) (""->default "txt")')
-    max_qname_len: int = Field(0, description="maximum total QNAME length in wire format (253 per RFC 1035) (0->default 101)")
-    open_stream_timeout: int = Field(0, description='timeout for opening an smux stream (e.g. 500ms, 3s) (0->default "10s")')
-
-
 class DomainAdmin(AdminLTEModelView):
     column_hide_backrefs = False
 
@@ -43,8 +30,8 @@ class DomainAdmin(AdminLTEModelView):
     form_overrides = {
         "mode": custom_widgets.EnumSelectField,
         "fake_mode": custom_widgets.EnumSelectField,
+        "extra_params": custom_widgets.JSONField,
     }
-    form_extra_fields = {"extra_params": custom_widgets.CustomJSONField(DnsTT, "Extra Params")}
     form_widget_args = {
         "description": {"rows": 100, "style": "font-family: monospace; direction:ltr"},
     }

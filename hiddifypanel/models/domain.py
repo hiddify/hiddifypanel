@@ -1,3 +1,4 @@
+import json5
 from datetime import datetime
 from enum import auto
 import ipaddress
@@ -104,10 +105,9 @@ class Domain(db.Model):
         return self.fake_mode == FakeMode.valid
 
     def extra_params_json(self):
-        import json
 
         try:
-            return json.loads(self.extra_params)
+            return json5.loads(self.extra_params)
         except:
             return {}
 
