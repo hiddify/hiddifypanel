@@ -8,14 +8,17 @@ REALITY_TERMINATION_SLUG = "xray-reality-termination"
 
 _PROXY_GROUP_ORDER = (
     ("sni_gateway", 0),
-    ("ip_based", 1),
-    ("other", 2),
+    ("dns_gateway", 1),
+    ("ip_based", 2),
+    ("other", 3),
 )
 
 
 def proxy_mode_group(mode: CustomProxyMode | None) -> str:
     if mode == CustomProxyMode.domains_sni_gateway:
         return "sni_gateway"
+    if mode == CustomProxyMode.domains_dns_gateway:
+        return "dns_gateway"
     if mode in (
         CustomProxyMode.ip,
         CustomProxyMode.domains_auto_public_ports,

@@ -162,6 +162,15 @@ def _prepare_create_data(data: dict) -> dict:
         if not data.get("domain_modes"):
             data["domain_modes"] = ["direct-valid", "relay-valid"]
         data["custom_path"] = ""
+    if mode == CustomProxyMode.domains_dns_gateway.value:
+        if not data.get("domain_modes"):
+            data["domain_modes"] = ["direct-dns"]
+        data["custom_path"] = ""
+        data["l7_reverse_proto"] = None
+        server = dict(data.get("server_config") or {})
+        server["inbound_tcp_ports"] = []
+        server["inbound_udp_ports"] = []
+        data["server_config"] = server
     if mode == CustomProxyMode.domains_auto_public_ports.value:
         data["custom_path"] = ""
         if not data.get("domain_modes"):
@@ -177,6 +186,7 @@ def _prepare_create_data(data: dict) -> dict:
     if mode in (
         CustomProxyMode.domains_l7_gateway.value,
         CustomProxyMode.domains_sni_gateway.value,
+        CustomProxyMode.domains_dns_gateway.value,
     ):
         server = dict(data.get("server_config") or {})
         server["inbound_tcp_ports"] = []
@@ -414,6 +424,7 @@ class CustomProxyMetaApi(MethodView):
                 "direct-valid",
                 "direct-fake",
                 "direct-reality",
+                "direct-dns",
                 "relay-valid",
                 "relay-fake",
                 "relay-reality",

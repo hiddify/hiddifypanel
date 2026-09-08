@@ -1,0 +1,25 @@
+{# VayDNS / DNSTT CLI args — one argv token per line (mapfile in run-instance.sh).
+   https://github.com/net2share/vaydns
+   Expects: params (namespace from server_config), ctx (domain-bound)
+#}
+-udp
+{{ '127.0.0.1:' ~ ctx.proxy.udp_port }}
+-privkey
+{{ ctx.hconfig.dnstt_private_key }}
+-mtu
+{{ params.mtu | default(1232) }}
+-clientid-size
+{{ params.clientid_size | default(2) }}
+-domain
+{{ ctx.domain.name }}
+-upstream
+{{ '127.0.0.1:2001' }}
+-keepalive
+{{ params.keepalive | default('2s') }}
+-idle-timeout
+{{ params.idle_timeout | default('10s') }}
+-record-type
+{{ params.record_type | default('txt') }}
+{%- if params.dnstt_compat %}
+-dnstt-compat
+{%- endif %}

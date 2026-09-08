@@ -44,6 +44,7 @@ const ALL_MODES = [
   'direct-valid',
   'direct-fake',
   'direct-reality',
+  'direct-dns',
   'relay-valid',
   'relay-fake',
   'relay-reality',

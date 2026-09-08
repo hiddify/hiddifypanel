@@ -5,6 +5,7 @@ from typing import Any, Iterable, Protocol
 DOMAIN_MODE_DIRECT_VALID = "direct-valid"
 DOMAIN_MODE_DIRECT_FAKE = "direct-fake"
 DOMAIN_MODE_DIRECT_REALITY = "direct-reality"
+DOMAIN_MODE_DIRECT_DNS = "direct-dns"
 DOMAIN_MODE_RELAY_VALID = "relay-valid"
 DOMAIN_MODE_RELAY_FAKE = "relay-fake"
 DOMAIN_MODE_RELAY_REALITY = "relay-reality"
@@ -14,6 +15,7 @@ DOMAIN_MODE_VALUES: tuple[str, ...] = (
     DOMAIN_MODE_DIRECT_VALID,
     DOMAIN_MODE_DIRECT_FAKE,
     DOMAIN_MODE_DIRECT_REALITY,
+    DOMAIN_MODE_DIRECT_DNS,
     DOMAIN_MODE_RELAY_VALID,
     DOMAIN_MODE_RELAY_FAKE,
     DOMAIN_MODE_RELAY_REALITY,
@@ -33,6 +35,7 @@ VALID_FAKE_DIRECT_RELAY_DOMAIN_MODES = (
     DOMAIN_MODE_RELAY_FAKE,
 )
 REALITY_DIRECT_RELAY_DOMAIN_MODES = (DOMAIN_MODE_DIRECT_REALITY, DOMAIN_MODE_RELAY_REALITY)
+DNS_DIRECT_DOMAIN_MODES = (DOMAIN_MODE_DIRECT_DNS,)
 
 _CDN_TYPES = frozenset({"cdn", "auto_cdn_ip", "worker"})
 _DIRECT_TYPES = frozenset({"direct", "old_xtls_direct", "dnstt", "sub_link_only"})
@@ -43,6 +46,7 @@ _LEGACY_EXPAND: dict[str, tuple[str, ...]] = {
     "fake": FAKE_DIRECT_RELAY_DOMAIN_MODES,
     "reality": REALITY_DIRECT_RELAY_DOMAIN_MODES,
     "special": REALITY_DIRECT_RELAY_DOMAIN_MODES,
+    "dns": DNS_DIRECT_DOMAIN_MODES,
 }
 
 

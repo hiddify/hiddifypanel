@@ -56,13 +56,19 @@ class DomainsQuickAddApi(MethodView):
             'direct-valid',
             'direct-fake',
             'direct-reality',
+            'direct-dns',
             'relay-valid',
             'relay-fake',
             'relay-reality',
         ):
             mode_str, fake_mode_str = mode_str.split('-', 1)
-        elif mode_str in ('fake', 'reality', 'special'):
-            fake_mode_str = 'reality' if mode_str in ('reality', 'special') else 'fake'
+        elif mode_str in ('fake', 'reality', 'special', 'dns'):
+            if mode_str in ('reality', 'special'):
+                fake_mode_str = 'reality'
+            elif mode_str == 'dns':
+                fake_mode_str = 'dns'
+            else:
+                fake_mode_str = 'fake'
             mode_str = 'direct'
         try:
             mode = DomainType(mode_str)

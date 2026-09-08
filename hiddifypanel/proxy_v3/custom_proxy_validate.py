@@ -1001,6 +1001,7 @@ def validate_proxy_payload(
                 )
         elif protocol in (
             CustomProxyMode.domains_sni_gateway.value,
+            CustomProxyMode.domains_dns_gateway.value,
             CustomProxyMode.domains_auto_public_ports.value,
             CustomProxyMode.domains_single_public_port.value,
             CustomProxyMode.ip.value,
@@ -1008,12 +1009,12 @@ def validate_proxy_payload(
             from hiddifypanel.proxy_v3.domain_mode_filter import DOMAIN_MODE_VALUES
 
             allowed = set(DOMAIN_MODE_VALUES)
-            invalid = [m for m in (data.get("domain_modes") or []) if str(m).strip().lower() not in allowed and str(m).strip().lower() not in {"direct", "relay", "fake", "reality", "special"}]
+            invalid = [m for m in (data.get("domain_modes") or []) if str(m).strip().lower() not in allowed and str(m).strip().lower() not in {"direct", "relay", "fake", "reality", "special", "dns"}]
             if invalid:
                 errors.append(
                     {
                         "code": "invalid_domain_modes",
-                        "message": "Domain modes must be direct-valid, direct-fake, direct-reality, relay-valid, relay-fake, or relay-reality",
+                        "message": "Domain modes must be direct-valid, direct-fake, direct-reality, direct-dns, relay-valid, relay-fake, or relay-reality",
                     }
                 )
 
@@ -1584,7 +1585,7 @@ def _infer_proxy_l3(data: dict[str, Any]) -> str:
 
 
 _TRANSPORT_CATEGORIES = frozenset({"ws", "grpc", "tcp", "http", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
-_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "snell"})
+_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "slipstream", "masterdns", "snell"})
 
 
 def _infer_proxy_transport(data: dict[str, Any]) -> str:

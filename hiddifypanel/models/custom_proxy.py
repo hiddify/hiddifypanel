@@ -129,6 +129,7 @@ class ServerCore(JinjaEnum):
     nginx = "nginx"
     rust_rpxy_l4 = "rust-rpxy-l4"
     dns_gateway = "dns_gateway"
+    dns_proxy = "dns_proxy"
     dnstt = "dnstt"
 
     def __eq__(self, other: Any) -> bool:
@@ -163,6 +164,7 @@ class TemplateCore(JinjaEnum):
     rust_rpxy_l4 = "rust-rpxy-l4"
     dnstt = "dnstt"
     dns_gateway = "dns_gateway"
+    dns_proxy = "dns_proxy"
 
     def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)

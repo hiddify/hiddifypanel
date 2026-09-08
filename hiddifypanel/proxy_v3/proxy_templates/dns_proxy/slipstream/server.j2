@@ -1,0 +1,7 @@
+{# Slipstream — server_config (CustomProxy inbound_template). #}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set params = namespace(
+  upstream='127.0.0.1:2001',
+) %}
+{{ include_path(ctx, 'dns_proxy/slipstream/args', 'dns_proxy/slipstream/' ~ (ctx.domain.name|slugify)) }}
+{% endfor %}

@@ -180,14 +180,9 @@ def _chown_generated_path(path: str) -> None:
         pass
 
 
-def include_path(ctx: Any, slug: str, prefix: str = "include/") -> str:
+def include_path(ctx: Any, slug: str, output_dir: str = "") -> str:
     """Render a template slug to a sidecar file and return its deployed absolute path."""
-    rel = (slug or "").strip().lstrip("/")
-    if not rel:
-        raise ValueError("slug is required")
-
-    rel_prefix = (prefix or "include/").strip().strip("/")
-    rel = f"{rel_prefix}/{rel}" if rel_prefix else rel
+    rel = (output_dir or f"include/{slug}").strip().lstrip("/")
     abs_path = f"{HIDDIFY_MANAGER_ROOT}/generated/{rel}"
     parent_dir = os.path.dirname(abs_path)
     if parent_dir:

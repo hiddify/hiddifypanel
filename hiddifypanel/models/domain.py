@@ -20,6 +20,7 @@ class FakeMode(StrEnum):
     valid = auto()
     fake = auto()
     reality = auto()
+    dns = auto()
 
 
 class DomainType(StrEnum):

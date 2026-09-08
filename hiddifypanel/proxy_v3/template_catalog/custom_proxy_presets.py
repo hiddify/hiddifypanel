@@ -14,6 +14,7 @@ from hiddifypanel.models.custom_proxy import (
 )
 from hiddifypanel.proxy_v3.domain_mode_filter import (
     CDN_CAPABLE_TRANSPORTS,
+    DNS_DIRECT_DOMAIN_MODES,
     DOMAIN_MODE_CDN,
     REALITY_DIRECT_RELAY_DOMAIN_MODES,
     VALID_DIRECT_RELAY_DOMAIN_MODES,
@@ -45,10 +46,12 @@ from hiddifypanel import hutils
 V2RAY_GATEWAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
 
 SNI_GATEWAY_PROTOS = frozenset({"anytls"})
+DNS_GATEWAY_PROTOS = frozenset({"dnstt", "slipstream", "masterdns"})
 # Direct UDP listeners with a single public port (IP-based).
 IP_BASED_UDP_PROTOS = frozenset({"tuic", "hysteria", "hysteria2"})
 DIRECT_RELAY_DOMAIN_MODES = VALID_DIRECT_RELAY_DOMAIN_MODES
-UDP_ONLY_PROTOS = frozenset({"tuic", "hysteria", "hysteria2", "wireguard"})
+DIRECT_DNS_DOMAIN_MODES = DNS_DIRECT_DOMAIN_MODES
+UDP_ONLY_PROTOS = frozenset({"tuic", "hysteria", "hysteria2", "wireguard", "dnstt", "slipstream", "masterdns"})
 TCP_ONLY_PROTOS = frozenset({"ssh", "anytls"})
 TCP_ONLY_TRANSPORTS = frozenset({"grpc", "http", "httpupgrade", "tcp", "ws"})
 BOTH_PROTOS = frozenset({"mieru", "socks", "shadowsocks", "ss"})
@@ -236,13 +239,9 @@ def _preset_protocol(combo) -> CustomProxyMode:
     # Naive QUIC is SNI-routed; Naive H2 stays on the L7 gateway.
     if proto == "naive" and l3 == "h3_quic":
         return CustomProxyMode.domains_sni_gateway
-    if proto == "dnstt":
-        return CustomProxyMode.domains_auto_public_ports
-    if (
-        proto in IP_BASED_UDP_PROTOS
-        or proto in ("shadowsocks", "ss", "socks", "wireguard", "ssh", "mieru", "snell")
-        or raw_transport == "tcp"
-    ):
+    if proto in DNS_GATEWAY_PROTOS:
+        return CustomProxyMode.domains_dns_gateway
+    if proto in IP_BASED_UDP_PROTOS or proto in ("shadowsocks", "ss", "socks", "wireguard", "ssh", "mieru", "snell") or raw_transport == "tcp":
         return CustomProxyMode.ip
     return CustomProxyMode.domains_l7_gateway
 
@@ -355,6 +354,8 @@ def _build_preset(
         domain_modes = list(VALID_FAKE_DIRECT_RELAY_DOMAIN_MODES)
     elif proto in SNI_GATEWAY_PROTOS or proto == "naive":
         domain_modes = list(DIRECT_RELAY_DOMAIN_MODES)
+    elif mode == CustomProxyMode.domains_dns_gateway:
+        domain_modes = list(DIRECT_DNS_DOMAIN_MODES)
     elif mode == CustomProxyMode.domains_auto_public_ports:
         domain_modes = list(DIRECT_RELAY_DOMAIN_MODES)
     elif mode == CustomProxyMode.ip:
@@ -432,10 +433,54 @@ def _build_preset(
     )
 
 
+def _dns_gateway_server_template(proto: str) -> str:
+    from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
+
+    return load_template_slug(f"dns_proxy/{proto}/server", normalize=False)
+
+
+def _build_dns_gateway_preset(slot, child_id: int = 0) -> CustomProxyPreset:
+    primary = slot.primary
+    proto = primary.proto.lower()
+    display_name = preset_display_name(slot)
+    slug = proxy_slug(f"dns-proxy-{preset_slug_name(slot)}")
+    inbound = _dns_gateway_server_template(proto)
+    return CustomProxyPreset(
+        name=display_name,
+        slug=slug,
+        enable=False,
+        mode=CustomProxyMode.domains_dns_gateway,
+        proto=proto,
+        transport=_parse_transport(primary.transport).value,
+        tls_layer="http",
+        l7_reverse_proto=None,
+        download_tls_layer=None,
+        download_domain_modes=(),
+        categories=_build_categories(slot),
+        domain_modes=tuple(DIRECT_DNS_DOMAIN_MODES),
+        custom_path=_preset_custom_path(primary, child_id),
+        server_config=PresetServerConfig(
+            core="dns_proxy",
+            inbound_template=inbound,
+            template_slugs=(f"dns_proxy/{proto}/server", f"dns_proxy/{proto}/args"),
+            tag=proxy_slug(display_name),
+            inbound_tcp_ports=(),
+            inbound_udp_ports=(),
+        ),
+        client_cores=(),
+        tcp_udp=InboundTcpUdp.udp,
+        download_tcp_udp=None,
+        is_common_proxy=False,
+    )
+
+
 def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     rows: list[CustomProxyPreset] = []
     for slot in iter_grouped_preset_slots():
         primary = slot.primary
+        if primary.proto.lower() in DNS_GATEWAY_PROTOS:
+            rows.append(_build_dns_gateway_preset(slot, child_id))
+            continue
         l7_gateway = _preset_protocol(primary) == CustomProxyMode.domains_l7_gateway
         xray_built: tuple[str, list[str]] | None = None
         hiddify_built: tuple[str, list[str]] | None = None
@@ -506,9 +551,7 @@ def _mark_common_proxies(rows: list[CustomProxyPreset]) -> list[CustomProxyPrese
         else:
             slot = _preset_slot_key(row)
             name = _preset_name_key(row)
-            is_common = (slot is not None and cores_by_slot.get(slot) == _COMMON_PROXY_CORES) or (
-                bool(name) and cores_by_name.get(name) == _COMMON_PROXY_CORES
-            )
+            is_common = (slot is not None and cores_by_slot.get(slot) == _COMMON_PROXY_CORES) or (bool(name) and cores_by_name.get(name) == _COMMON_PROXY_CORES)
         marked.append(row if row.is_common_proxy == is_common else replace(row, is_common_proxy=is_common))
     return marked
 

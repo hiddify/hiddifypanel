@@ -62,6 +62,8 @@ protocol_config_map: dict[ProxyProto, ConfigEnum] = {
     ProxyProto.mieru: ConfigEnum.mieru_enable,
     ProxyProto.anytls: ConfigEnum.anytls_enable,
     ProxyProto.dnstt: ConfigEnum.dnstt_enable,
+    ProxyProto.slipstream: ConfigEnum.dnstt_enable,
+    ProxyProto.masterdns: ConfigEnum.dnstt_enable,
     ProxyProto.snell: ConfigEnum.snell_enable,
     ProxyProto.socks: ConfigEnum.socks_enable,
 }

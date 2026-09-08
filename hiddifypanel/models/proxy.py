@@ -52,6 +52,8 @@ class ProxyProto(StrEnum):
     mieru = auto()
     anytls = auto()
     dnstt = auto()
+    slipstream = auto()
+    masterdns = auto()
     snell = auto()
 
 

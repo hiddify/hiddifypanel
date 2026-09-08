@@ -1,0 +1,9 @@
+{# MasterDNS — server_config (CustomProxy inbound_template). #}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set params = namespace(
+  data_encryption_method=1,
+  forward_ip='127.0.0.1',
+  forward_port=2001,
+) %}
+{{ include_path(ctx, 'dns_proxy/masterdns/server_config.toml', 'dns_proxy/masterdns/' ~ (ctx.domain.name|slugify)) }}
+{% endfor %}

@@ -273,6 +273,13 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'name': 'Server rust-rpxy-l4 Base',
         'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway, Telegram, FakeTLS, ShadowTLS)',
     },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'dns_proxy',
+        'version': '1.0.0',
+        'name': 'Server DNSTM Base',
+        'description': 'DNSTM DNS router config (tunnels for DNS-gateway proxies)',
+    },
 ]
 
 

@@ -228,6 +228,7 @@ class ConfigEnum(metaclass=FastEnum):
     dnstt_resolvers = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
     dnstt_private_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
     dnstt_public_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
+    master_dns_encrypt_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     # will be deprecated
     proxy_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)

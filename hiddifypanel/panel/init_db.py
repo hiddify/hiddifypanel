@@ -18,29 +18,15 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 141
+MAX_DB_VERSION = 136
 
 
-def _drop_wip_proxy_tables() -> None:
+def _v137(child_id):
+    """MasterDNS payload encrypt key (used by dns_proxy/masterdns templates)."""
+    import secrets
 
-    for table in (
-        "custom_proxy_client_core",
-        "custom_proxy",
-        "proxy_template",
-        "proxy_base_config",
-        "tls_store",
-        "server_ip",
-    ):
-        try:
-            db_execute(f"DROP TABLE IF EXISTS `{table}`", commit=True)
-        except BaseException as exc:
-            logger.warning("drop {}: {}", table, exc)
-    db.create_all()
+    add_config_if_not_exist(ConfigEnum.master_dns_encrypt_key, secrets.token_hex(32))
 
-    set_hconfig(ConfigEnum.db_version, 129)
-
-
-def _v136(child_id):
     from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
     from hiddifypanel.proxy_v3.config_builder import jinja_render
 
@@ -81,9 +67,11 @@ def _v131(child_id):
 
 def _v130(child_id):
     """Fresh proxy catalog, TLS store, and server IPs (WIP — no incremental migrations)."""
+    import secrets
 
     add_config_if_not_exist(ConfigEnum.anytls_enable, True)
     add_config_if_not_exist(ConfigEnum.dnstt_enable, True)
+    add_config_if_not_exist(ConfigEnum.master_dns_encrypt_key, secrets.token_hex(32))
     add_config_if_not_exist(ConfigEnum.path_vless, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_vmess, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_trojan, hutils.random.get_random_string(7, 15))

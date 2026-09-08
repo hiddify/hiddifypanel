@@ -418,17 +418,18 @@
       "domainIdsEmptyAll": "خالی = همه دامنه‌های منطبق؛ پروکسی IP‌محور دامنه ندارد",
       "domainModeLabels": {
         "cdn": "CDN",
-        "direct": "مستقیم",
-        "direct-valid": "مستقیم معتبر",
-        "direct-fake": "مستقیم جعلی",
-        "direct-reality": "مستقیم REALITY",
+        "direct": "Direct",
+        "direct-valid": "Direct Valid",
+        "direct-fake": "Direct Fake",
+        "direct-reality": "Direct Reality",
+        "direct-dns": "Direct DNS",
         "fake": "Fake TLS",
         "reality": "REALITY",
         "relay": "Relay",
-        "relay-valid": "Relay معتبر",
-        "relay-fake": "Relay جعلی",
-        "relay-reality": "Relay REALITY",
-        "special": "ویژه (REALITY)"
+        "relay-valid": "Relay Valid",
+        "relay-fake": "Relay Fake",
+        "relay-reality": "Relay Reality",
+        "special": "Special (REALITY)"
       },
       "domainModes": "حالت دامنه",
       "domains": "دامنه‌ها",
@@ -488,9 +489,10 @@
       "modeLabels": {
         "domain_native": "بومی دامنه",
         "domains_auto_public_ports": "پورت خودکار چند دامنه",
-        "domains_l7_gateway": "درگاه L7 دامنه",
+        "domains_dns_gateway": "Domain DNS Gateway",
+        "domains_l7_gateway": "Domain L7 Gateway",
         "domains_single_public_port": "پورت ثابت چند دامنه",
-        "domains_sni_gateway": "درگاه SNI دامنه",
+        "domains_sni_gateway": "Domain SNI Gateway",
         "ip": "مبتنی بر IP"
       },
       "modeSettings": "حالت و مسیریابی",
@@ -900,6 +902,10 @@
     "dnstt_resolvers": {
       "description": "Resolverهای DNS برای DNSTT (با کاما جدا شوند)",
       "label": "Resolverهای DNSTT"
+    },
+    "master_dns_encrypt_key": {
+      "description": "کلید رمزنگاری payload برای MasterDNS (hex)",
+      "label": "کلید رمزنگاری MasterDNS"
     },
     "domain_fronting": {
       "description": "برای شبیه سازی وب سایت دیگری به جای وب سایت شما در SNI استفاده می شود. بنابراین، فیلترچی نمی تواند دامنه شما را فیلتر کند. \n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>آموزش ثبت </a>\n\n⚠️CloudFlare از دامین فرانتینگ پشتیبانی نمی کند.",

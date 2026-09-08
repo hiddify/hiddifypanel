@@ -9,12 +9,14 @@ from typing import TYPE_CHECKING, Any
 
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
+from hiddifypanel.proxy_v3.config_builder.dns_proxy.server import DnsProxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
+from hiddifypanel.proxy_v3.jinja_context import HIDDIFY_MANAGER_ROOT
 
 if TYPE_CHECKING:
     from hiddifypanel.models.user import User
@@ -26,6 +28,7 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "haproxy": HaproxyServerDriver,
     "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
+    "dns_proxy": DnsProxyServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -34,6 +37,7 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("haproxy", "haproxy.cfg"),
     ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
+    ("dns_proxy", "dnstm.json"),
 )
 
 
@@ -69,17 +73,24 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
     stats: dict[str, int] = {"lines": _line_count(rendered)}
     text = rendered or ""
 
-    if core in ("xray", "hiddify-core"):
+    if core in ("xray", "hiddify-core", "dns_proxy"):
         try:
             data = json.loads(text) if text.strip() else {}
         except json.JSONDecodeError:
             data = {}
         if isinstance(data, dict):
-            for key in ("inbounds", "outbounds", "endpoints"):
-                value = data.get(key)
-                stats[key] = len(value) if isinstance(value, list) else 0
+            if core == "dns_proxy":
+                tunnels = data.get("tunnels")
+                stats["tunnels"] = len(tunnels) if isinstance(tunnels, list) else 0
+            else:
+                for key in ("inbounds", "outbounds", "endpoints"):
+                    value = data.get(key)
+                    stats[key] = len(value) if isinstance(value, list) else 0
         else:
-            stats.update(inbounds=0, outbounds=0, endpoints=0)
+            if core == "dns_proxy":
+                stats["tunnels"] = 0
+            else:
+                stats.update(inbounds=0, outbounds=0, endpoints=0)
     elif core == "haproxy":
         stats["frontends"] = len(re.findall(r"(?m)^\s*frontend\s+\S+", text))
         stats["backends"] = len(re.findall(r"(?m)^\s*backend\s+\S+", text))
@@ -98,13 +109,16 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
 
     parts = [f"{size} bytes", _n(stats.get("lines", 0), "line")]
     if filename.endswith(".json"):
-        parts.extend(
-            [
-                _n(stats.get("inbounds", 0), "inbound"),
-                _n(stats.get("outbounds", 0), "outbound"),
-                _n(stats.get("endpoints", 0), "endpoint"),
-            ]
-        )
+        if filename == "dnstm.json":
+            parts.append(_n(stats.get("tunnels", 0), "tunnel"))
+        else:
+            parts.extend(
+                [
+                    _n(stats.get("inbounds", 0), "inbound"),
+                    _n(stats.get("outbounds", 0), "outbound"),
+                    _n(stats.get("endpoints", 0), "endpoint"),
+                ]
+            )
     elif filename == "haproxy.cfg":
         parts.extend(
             [
@@ -186,6 +200,8 @@ def dump_all_server_configs(
     target.mkdir(parents=True, exist_ok=True)
 
     dump = ServerConfigDumpResult(output_dir=target, child_id=child_id)
+    _clear_dns_proxy_generated(target)
+
     for core, filename in SERVER_CONFIG_FILES:
         try:
             result = build_server_config_for_core(child_id, core)
@@ -201,7 +217,7 @@ def dump_all_server_configs(
             continue
 
         rendered = result.config or ""
-        if core in ("xray", "hiddify-core"):
+        if core in ("xray", "hiddify-core", "dns_proxy"):
             rendered = _pretty_json_config(rendered, pretty=pretty)
 
         for message in result.messages:
@@ -223,7 +239,38 @@ def dump_all_server_configs(
         dump.written[filename] = len(rendered.encode("utf-8"))
         dump.stats[filename] = summarize_dumped_config(core, rendered)
 
+        if core == "dns_proxy":
+            _collect_dns_proxy_sidecars(dump, target)
+
     return dump
+
+
+def _clear_dns_proxy_generated(target: Path) -> None:
+    import shutil
+
+    manager_gen = Path(HIDDIFY_MANAGER_ROOT) / "generated" / "dns_proxy"
+    dump_gen = target / "dns_proxy"
+    for path in {manager_gen, dump_gen}:
+        if path.exists():
+            shutil.rmtree(path)
+        path.mkdir(parents=True, exist_ok=True)
+
+
+def _collect_dns_proxy_sidecars(dump: ServerConfigDumpResult, target: Path) -> None:
+    """Record sizes of include_path sidecars under generated/dns_proxy/."""
+    manager_gen = Path(HIDDIFY_MANAGER_ROOT) / "generated" / "dns_proxy"
+    dump_gen = target / "dns_proxy"
+    for gen_root in (manager_gen, dump_gen):
+        if not gen_root.is_dir():
+            continue
+        for path in gen_root.rglob("*"):
+            if not path.is_file():
+                continue
+            try:
+                rel = str(path.relative_to(target))
+            except ValueError:
+                rel = str(path.relative_to(gen_root.parent))
+            dump.written[rel] = path.stat().st_size
 
 
 def format_builder_messages(result: ConfigBuilderModel) -> list[dict[str, Any]]:

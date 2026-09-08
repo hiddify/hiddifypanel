@@ -3,6 +3,7 @@ import { getHttp } from '../client'
 export type CustomProxyMode =
   | 'domains_l7_gateway'
   | 'domains_sni_gateway'
+  | 'domains_dns_gateway'
   | 'domains_auto_public_ports'
   | 'domains_single_public_port'
   | 'ip'

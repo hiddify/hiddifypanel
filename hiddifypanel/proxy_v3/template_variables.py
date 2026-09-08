@@ -42,7 +42,7 @@ CONTEXT_ROOT_VARS: list[tuple[str, str]] = [
     ("remarks", "Client config profile title"),
     ("exec", "Shell command helper (server templates only)"),
     ("enumerate", "Python enumerate in templates"),
-    ("include_path", 'Deployed sidecar path: include_path(ctx, "haproxy/server/maps/path_v10")'),
+    ("include_path", 'Sidecar path: include_path(ctx, "haproxy/server/maps/path_v10") or include_path(ctx, "dns_proxy/dnstt/args", "dns_proxy/dnstt/" ~ (ctx.domain.name|slugify))'),
     ("skip", "Callable — {{ skip() }} skips rendering this proxy"),
     ("SKIP", "Literal marker — output SKIP to skip this proxy"),
 ]

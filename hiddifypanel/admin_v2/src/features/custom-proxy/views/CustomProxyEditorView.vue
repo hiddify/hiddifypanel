@@ -872,6 +872,7 @@ const ALL_DOMAIN_MODES = [
   'direct-valid',
   'direct-fake',
   'direct-reality',
+  'direct-dns',
   'relay-valid',
   'relay-fake',
   'relay-reality',
@@ -955,9 +956,9 @@ const showTlsLayer = computed(
 const showStaticPorts = computed(() => isMultiDomainStatic.value || isIpBased.value)
 const showTcpUdp = computed(() => !isL7Gateway.value)
 const showAutoPortsHint = computed(
-  () => isMultiDomainAuto.value || isL7Gateway.value || isSniGateway.value,
+  () => isMultiDomainAuto.value || isL7Gateway.value || isSniGateway.value || isDnsGateway.value,
 )
-const showDirectPortAccess = computed(() => !isL7Gateway.value && !isSniGateway.value)
+const showDirectPortAccess = computed(() => !isL7Gateway.value && !isSniGateway.value && !isDnsGateway.value)
 const showL7Proto = computed(() => isL7Gateway.value)
 const isXhttpTransport = computed(() => effectiveTransport() === 'xhttp')
 const showXhttpDownloadSettings = computed(
@@ -1378,6 +1379,16 @@ function onModeChange() {
     form.l7_reverse_proto = null
     form.tls_layer = 'tls'
     form.domain_ids = []
+  } else if (form.mode === 'domains_dns_gateway') {
+    if (!form.domain_modes?.length) {
+      form.domain_modes = ['direct-dns']
+    }
+    form.custom_path = ''
+    form.l7_reverse_proto = null
+    form.tls_layer = 'http'
+    form.domain_ids = []
+    form.server_config!.inbound_tcp_ports = []
+    form.server_config!.inbound_udp_ports = []
   } else if (form.mode === 'ip') {
     form.custom_path = ''
     form.l7_reverse_proto = null
