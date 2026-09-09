@@ -1,19 +1,14 @@
 from __future__ import annotations
 
-import copy
 from enum import auto
-from pathlib import Path
 from typing import Any
 
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text, UniqueConstraint
-from sqlalchemy.types import JSON
 from strenum import StrEnum
 
 from hiddifypanel.database import db
 
 from hiddifypanel.proxy_v3.template_catalog.base_configs import default_base_content as _catalog_base_content
-
-_PANEL_TEMPLATES = Path(__file__).resolve().parent.parent / 'panel' / 'user' / 'templates'
 
 
 class BaseConfigSide(StrEnum):
@@ -22,66 +17,14 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4', 'dns_proxy'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
 
-def _load_panel_template(name: str, fallback: str = '{}') -> str:
-    path = _PANEL_TEMPLATES / name
-    if path.is_file():
-        return path.read_text(encoding='utf-8')
-    return fallback
-
-
-DEFAULT_SERVER_XRAY_BASE = _load_panel_template(
-    'base_xray_config.json.j2',
-    '{\n  "log": {"loglevel": "warning"},\n  "inbounds": [],\n  "outbounds": [],\n  "routing": {"rules": []}\n}',
-)
-
-DEFAULT_CLIENT_XRAY_BASE = DEFAULT_SERVER_XRAY_BASE
-
-DEFAULT_CLIENT_SINGBOX_BASE = _load_panel_template(
-    'base_singbox_config.json.j2',
-    '{\n  "outbounds": [],\n  "route": {"rules": []}\n}',
-)
-
-DEFAULT_SERVER_HIDDIFY_BASE = (
-    '{\n'
-    '  "log": {"level": "warn"},\n'
-    '  "inbounds": [],\n'
-    '  "outbounds": [{"type": "direct", "tag": "direct"}],\n'
-    '  "route": {"rules": []}\n'
-    '}'
-)
-
-DEFAULT_CLIENT_HIDDIFY_BASE = DEFAULT_CLIENT_SINGBOX_BASE
-
-DEFAULT_CLIENT_SUBLINK_BASE = _catalog_base_content(BaseConfigSide.client.value, 'sublink')
-
 def default_base_content(side: str, core: str) -> str:
-    try:
-        return _catalog_base_content(side, core)
-    except FileNotFoundError:
-        pass
-    if side == BaseConfigSide.server.value:
-        if core == 'xray':
-            return copy.deepcopy(DEFAULT_SERVER_XRAY_BASE)
-        if core == 'hiddify-core':
-            return copy.deepcopy(DEFAULT_SERVER_HIDDIFY_BASE)
-        if core == 'haproxy':
-            return ''
-    if side == BaseConfigSide.client.value:
-        if core == 'xray':
-            return copy.deepcopy(DEFAULT_CLIENT_XRAY_BASE)
-        if core == 'singbox':
-            return copy.deepcopy(DEFAULT_CLIENT_SINGBOX_BASE)
-        if core == 'hiddify-core':
-            return copy.deepcopy(DEFAULT_CLIENT_HIDDIFY_BASE)
-        if core == 'sublink':
-            return copy.deepcopy(DEFAULT_CLIENT_SUBLINK_BASE)
-    return '{}'
-
+    """Builtin base shell from proxy_templates/{core}/{side}/base.j2 only."""
+    return _catalog_base_content(side, core)
 
 class ProxyBaseConfig(db.Model):  # type: ignore
     __tablename__ = 'proxy_base_config'

@@ -10,7 +10,7 @@ from hiddifypanel.models.proxy_base_config import BaseConfigSide
 from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel, ProxyBlock
 from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section, render_section
-from hiddifypanel.proxy_v3.config_builder.template_blocks import inject_named_fragment_blocks
+from hiddifypanel.proxy_v3.config_builder.template_blocks import extract_block_body, inject_named_fragment_blocks
 from hiddifypanel.proxy_v3.context_vars.builder.utils import load_json5, make_jinja_context
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 
@@ -33,15 +33,13 @@ def render_template_blocks(child_id: int, jinja_ctx: dict[str, Any], template: s
 
     blocks: list[ProxyBlock] = []
     for block_name in block_names:
+        # Only extract the requested block. Falling back to another block name
+        # (e.g. outbounds when asking for endpoints) would mis-label proxy
+        # fragments and inject vless/vmess into the endpoints array.
+        if extract_block_body(outbound_tpl, block_name) is None:
+            continue
         frag = render_fragment_section(child_id, jinja_ctx, outbound_tpl, block_name, parse_json=False)
         if frag.skipped:
-            # messages.append(
-            #     MessageModel(
-            #         level="warning",
-            #         message=f"{proxy_label}/{block_name}: {frag.skipped}",
-            #         data={"block": block_name, "content": outbound_tpl, "details": frag.skipped},
-            #     )
-            # )
             continue
         if frag.error:
             messages.append(
@@ -116,12 +114,24 @@ def extract_tags_convert_unique_ids(
             continue
         if not isinstance(data, list):
             kept.append(block)
-            messages.append(MessageModel(level="warning", message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON ({item})"))
+            if messages is not None:
+                messages.append(
+                    MessageModel(
+                        level="warning",
+                        message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON (expected list)",
+                    )
+                )
             continue
-        block_names: dict[str, str] = {}
+        renamed: dict[str, str] = {}
         for item in data:
             if not isinstance(item, dict):
-                messages.append(MessageModel(level="warning", message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON ({item})"))
+                if messages is not None:
+                    messages.append(
+                        MessageModel(
+                            level="warning",
+                            message=f"{proxy_label or 'proxy'}/{block.block_name}: invalid fragment JSON ({item})",
+                        )
+                    )
                 continue
             if tag := item.get("tag"):
                 newtag = tag
@@ -130,14 +140,18 @@ def extract_tags_convert_unique_ids(
                         if f"{tag}-{i}" not in names:
                             newtag = f"{tag}§{i}"
                             break
-                    block_names[tag] = newtag
+                    renamed[tag] = newtag
                 block.extracted_tags.append(newtag)
                 names.add(newtag)
                 item["tag"] = newtag
         for item in data:
-            if isinstance(item, dict) and "detour" in item and (new_detour := block_names.get(item["detour"])):
+            if isinstance(item, dict) and "detour" in item and (new_detour := renamed.get(item["detour"])):
                 item["detour"] = new_detour
-        if block_names:
-            block.content = f"[{json.dumps(data, ensure_ascii=False).strip('[]')}]"
+        if renamed:
+            # Emit array elements only — base shells already wrap these in
+            # "outbounds": [ ... ] / "endpoints": [ ... ].
+            block.content = ",\n".join(
+                json.dumps(item, ensure_ascii=False) for item in data if isinstance(item, dict)
+            )
         kept.append(block)
     return kept

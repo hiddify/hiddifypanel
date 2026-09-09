@@ -6,7 +6,7 @@
   "enabled": true,
   {%if not domain.sni%} "disable_sni": true {%endif%},
   "server_name": "{{ domain.sni }}",
-  "alpn": {{ tls_layer.alpns }},
+  "alpn": {{ tls_layer.alpns() }},
 
 
   {% set fp = ctx.hconfig.utls or "" %}

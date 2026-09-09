@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 from hiddifypanel import hutils
 from hiddifypanel.hutils.network.auto_ip_selector import split_pattern
@@ -11,6 +11,7 @@ from hiddifypanel.models import Domain, DomainType, FakeMode
 
 from .cert import CertVar
 from .ip import IPVar
+from .json_map import JsonMap
 
 
 class DomainIPVar(BaseModel):
@@ -34,12 +35,22 @@ class DomainIPVar(BaseModel):
     cert: CertVar = Field(default_factory=CertVar.empty)
     download: DomainIPVar | None = None
     dst_server: str | None = None
-    extra: dict[str, Any] = Field(default_factory=dict)
+    extra_params: JsonMap = Field(default_factory=JsonMap)
 
     # _domain: Domain | None = PrivateAttr(default=None)
     # _extracted: dict[str, Any] = PrivateAttr(default_factory=dict)
 
     custom_proxy_id: int | None = None
+
+    @field_validator("extra_params", mode="before")
+    @classmethod
+    def _coerce_extra_params(cls, value: Any) -> JsonMap:
+        return JsonMap.from_any(value)
+
+    @property
+    def extra(self) -> JsonMap:
+        """Alias for ``extra_params`` (legacy templates)."""
+        return self.extra_params
 
     @property
     def special(self) -> bool:
@@ -77,7 +88,7 @@ class DomainIPVar(BaseModel):
 
         cert = CertVar.for_domain(domain_db)
 
-        extra = domain_db.extra_params_json()
+        extra = JsonMap.from_any(domain_db.extra_params_json())
         extra.update(extracted_data.get("extra_params") or {})
         ips = get_ips(domain_db)
         var = cls(
@@ -93,7 +104,7 @@ class DomainIPVar(BaseModel):
             child_id=int(domain_db.child_id or 0),
             echinfo=_resolve_domain_ech(domain_db),
             cert=cert,
-            extra=extra,
+            extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
             custom_proxy_id=domain_db.custom_proxy_id,
             ips=ips,

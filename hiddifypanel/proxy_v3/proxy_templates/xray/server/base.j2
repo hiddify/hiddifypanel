@@ -8,17 +8,7 @@
     "services": ["HandlerService", "LoggerService", "StatsService"]
   },
   "dns": {},
-  "routing": {
-    "domainStrategy": "IPOnDemand",
-    "domainMatcher": "hybrid",
-    "rules": [
-      {
-        "type": "field",
-        "inboundTag": ["api"],
-        "outboundTag": "api"
-      }
-    ]
-  },
+  "routing": {% include 'xray/server/base/route' %},
   "policy": {
     "levels": {
       "0": {
@@ -34,13 +24,11 @@
     }
   },
   "inbounds": [
+    {% include 'xray/server/base/builtin_inbounds' %},  
     {% block inbounds %}{% endblock %}
   ],
   "outbounds": [
-    
-    {"tag": "freedom", "protocol": "freedom"},
-    {"tag": "blackhole", "protocol": "blackhole"},
-    {"tag": "DNS-Internal", "protocol": "dns"}
+    {% include 'xray/server/base/outbounds' %}
   ],
   "transport": {},
   "stats": {"keep": true},

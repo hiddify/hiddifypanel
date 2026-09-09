@@ -50,6 +50,14 @@
       "action": "reject",
       "method": "default"
     },
+    {%set outbound_users_map={tag:[u.uuid for u in ctx.users if u.extra.get("outbound")] for tag in ["WARP","direct"]}%}
+    {%for tag,users in outbound_users_map.items() if len(users)%}
+      {
+        "auth_user": {{users|tojson}},
+        "outbound":"{{tag}}",
+
+      },
+    {%endfor%}
     {% if ctx.hconfig.block_iran_sites %}
     {
       "action": "reject",

@@ -1,0 +1,35 @@
+{
+    "listen": "127.0.0.1",
+    "listen_port": 2000,
+    "type": "socks",
+    "tag": "socks-in"
+},
+{
+    "type": "socks",
+    "tag": "socks_for_proxies",
+    "listen": "127.0.0.1",
+    "listen_port": 2001,
+    "users": [
+        {% for user in ctx.users %}
+        {
+            "username": "{{ user.uuid }}", 
+            "password": "h"},
+        {% endfor %}
+    ]
+},
+{
+    "type": "shadowsocks",
+    "tag": "shadowsocks_for_proxies",
+    "listen": "127.0.0.1",
+    "listen_port": 2001,
+    "method": "{{ ctx.hconfig.shadowsocks2022_method }}",
+    "password": "{{ ctx.hconfig.shared_secret|b64encode }}",
+    "users": [
+        {% for user in ctx.users %}
+        {
+            "name": "{{ user.uuid }}", 
+            "password": "{{ user.uuid_hex|b64encode }}"
+        },
+        {% endfor %}
+    ]
+}

@@ -38,6 +38,36 @@ def _client_outbounds_template(cc: dict[str, Any]) -> str:
     return str(cc.get("outbounds_template") or cc.get("link_template") or "")
 
 
+_USE_HIDDIFY_CORE_RE = re.compile(r"\{#\s*use_hiddify_core\s*\(\s*\)\s*#\}")
+
+
+def _template_uses_hiddify_core(template: str) -> bool:
+    """True when a singbox stub delegates rendering to the hiddify-core client template."""
+    return bool(_USE_HIDDIFY_CORE_RE.search(template or ""))
+
+
+def _hiddify_core_outbounds_template(data: dict[str, Any]) -> str:
+    for cc in (data.get("client_config") or {}).get("core_configs") or []:
+        if str(cc.get("core") or "") == "hiddify-core":
+            return str(cc.get("outbounds_template") or "")
+    return ""
+
+
+def _resolve_singbox_outbound_template(data: dict[str, Any], template: str) -> str | None:
+    """
+    Resolve a singbox outbounds template.
+
+    Returns:
+      - original template when it is a real singbox fragment
+      - hiddify-core outbounds template when the stub is ``{# use_hiddify_core() #}``
+      - None when the stub should be skipped (no hiddify-core template available)
+    """
+    if not _template_uses_hiddify_core(template):
+        return template
+    resolved = _hiddify_core_outbounds_template(data)
+    return resolved if resolved.strip() else None
+
+
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
@@ -709,6 +739,17 @@ def validate_core_placeholders(template_text: str, core: str | None) -> list[dic
     return errors
 
 
+def _client_core_config_label(cc: dict[str, Any] | None, idx: int) -> str:
+    """Human label for a client core_configs entry (prefer core name over index)."""
+    core = str((cc or {}).get("core") or "").strip()
+    version = str((cc or {}).get("version") or "").strip()
+    if core and version:
+        return f"{core} (≥{version})"
+    if core:
+        return core
+    return f"core_configs[{idx}]"
+
+
 def validate_proxy_payload(
     data: dict[str, Any],
     child_id: int = 0,
@@ -814,6 +855,7 @@ def validate_proxy_payload(
     if "client" in sections and validate_client:
         for idx, cc in enumerate(client_config.get("core_configs") or []):
             core_name = cc.get("core") or ""
+            core_label = _client_core_config_label(cc, idx)
             if core_name == "sublink":
                 tpl = _client_outbounds_template(cc)
                 if tpl.strip():
@@ -828,23 +870,26 @@ def validate_proxy_payload(
                             errors.append(
                                 {
                                     "code": "sublink_jinja_error",
-                                    "message": f"core_configs[{idx}]: {section['error']}",
+                                    "message": f"{core_label}: {section['error']}",
                                 }
                             )
                         elif formats.get("parse_error"):
                             warnings.append(
                                 {
                                     "code": "sublink_parse",
-                                    "message": f"core_configs[{idx}]: {formats['parse_error']}",
+                                    "message": f"{core_label}: {formats['parse_error']}",
                                 }
                             )
                     except TemplateSkip:
                         pass
                     except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
-                        errors.append({"code": "sublink_jinja_error", "message": f"core_configs[{idx}]: {e}"})
+                        errors.append({"code": "sublink_jinja_error", "message": f"{core_label}: {e}"})
                 continue
             tpl = cc.get("outbounds_template") or ""
             if not tpl.strip():
+                continue
+            if core_name == "singbox" and _template_uses_hiddify_core(tpl):
+                # Marker-only stub: real outbound JSON lives on the hiddify-core entry.
                 continue
             if core_name in ("hiddify-core", "singbox"):
                 try:
@@ -863,7 +908,7 @@ def validate_proxy_payload(
                         user_agent=None,
                         errors=errors,
                         warnings=warnings,
-                        label=f"core_configs[{idx}]",
+                        label=core_label,
                     )
                     section = _compose_singbox_client_config(
                         child_id,
@@ -878,20 +923,20 @@ def validate_proxy_payload(
                         errors.append(
                             {
                                 "code": "client_json5_parse",
-                                "message": f"core_configs[{idx}]: {section['error']}",
+                                "message": f"{core_label}: {section['error']}",
                             }
                         )
                     elif err_section and err_section.get("error") and not section.get("parsed"):
                         errors.append(
                             {
                                 "code": "client_jinja_error",
-                                "message": f"core_configs[{idx}]: {err_section['error']}",
+                                "message": f"{core_label}: {err_section['error']}",
                             }
                         )
                 except TemplateSkip:
                     pass
                 except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
-                    errors.append({"code": "client_jinja_error", "message": f"core_configs[{idx}]: {e}"})
+                    errors.append({"code": "client_jinja_error", "message": f"{core_label}: {e}"})
                 continue
             try:
                 block_name = _client_block_name(core_name)
@@ -900,11 +945,11 @@ def validate_proxy_payload(
                 wrapped = _wrap_as_json_object(rendered)
                 _, parse_err = parse_json5(wrapped)
                 if parse_err:
-                    errors.append({"code": "client_json5_parse", "message": f"core_configs[{idx}]: {parse_err}"})
+                    errors.append({"code": "client_json5_parse", "message": f"{core_label}: {parse_err}"})
             except TemplateSkip:
                 pass
             except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
-                errors.append({"code": "client_jinja_error", "message": f"core_configs[{idx}]: {e}"})
+                errors.append({"code": "client_jinja_error", "message": f"{core_label}: {e}"})
 
     if "general" in sections:
         domain_ids = [int(v) for v in (data.get("domain_ids") or []) if v is not None]
@@ -2263,11 +2308,10 @@ def _render_singbox_style_client_for_proxy(
 def _catalog_shell_base(side: str, core: str) -> str:
     from hiddifypanel.proxy_v3.template_catalog.base_configs import load_base_config_file
 
-    file_core = "hiddify-core" if core in ("hiddify-core", "singbox") else core
     try:
-        return load_base_config_file(file_core, side)
+        return load_base_config_file(core, side)
     except FileNotFoundError:
-        return default_base_content(side, core)
+        return ""
 
 
 def _merge_rendered_sections(base_section: dict[str, Any], frag_section: dict[str, Any], block_name: str | None) -> dict[str, Any]:
@@ -2888,6 +2932,30 @@ def generate_proxy_example(
                 }
             )
             continue
+        if core_name == "singbox":
+            resolved = _resolve_singbox_outbound_template(data, tpl)
+            if resolved is None:
+                clients.append(
+                    {
+                        "core": core_name,
+                        "version": version or None,
+                        "label": label,
+                        "index": idx,
+                        "auto": _client_is_auto(core_name),
+                        "rendered": "",
+                        "parsed": None,
+                        "skipped": True,
+                        "error": None,
+                    }
+                )
+                warnings.append(
+                    {
+                        "code": "client_skip",
+                        "message": f"{label}: use_hiddify_core stub but no hiddify-core client template",
+                    }
+                )
+                continue
+            tpl = resolved
         if core_name == "xray":
             xray_sections = _compose_xray_client_configs_for_proxy(
                 child_id,
@@ -3255,6 +3323,17 @@ def _merge_client_outbound_bundle(
             tpl = cc.get("outbounds_template") or ""
             if not tpl.strip():
                 continue
+            if core == "singbox":
+                resolved = _resolve_singbox_outbound_template(data, tpl)
+                if resolved is None:
+                    warnings.append(
+                        {
+                            "code": "client_skip",
+                            "message": f"{label}: use_hiddify_core stub with no hiddify-core template",
+                        }
+                    )
+                    continue
+                tpl = resolved
             outbound_body, endpoint_body, err_section = _collect_client_fragment_bodies(
                 child_id,
                 data,

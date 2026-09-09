@@ -60,7 +60,12 @@ const referencedSlugs = computed(() => {
 })
 
 const templates = computed(() => {
-  const sorted = sortTemplatesByIncluded(raw.value, referencedSlugs.value)
+  let pool = raw.value
+  if (props.readOnly) {
+    const allowed = new Set(referencedSlugs.value)
+    pool = pool.filter((tpl) => allowed.has(tpl.slug))
+  }
+  const sorted = sortTemplatesByIncluded(pool, referencedSlugs.value)
   for (const slug of referencedSlugs.value) {
     if (slug && !sorted.some((tpl) => tpl.slug === slug)) {
       sorted.push({
@@ -184,7 +189,7 @@ onMounted(() => {
   void load()
 })
 watch(
-  () => [props.core, props.category, props.listScope, asTemplateSlugList(props.explicitSlugs).join('|'), props.templateText],
+  () => [props.core, props.category, props.listScope, props.readOnly, asTemplateSlugList(props.explicitSlugs).join('|'), props.templateText],
   () => {
     void load()
   },

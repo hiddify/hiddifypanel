@@ -40,28 +40,25 @@ def classify_path(rel: str) -> ProxyPathKind:
 
 
 def iter_template_files() -> Iterator[tuple[str, Path]]:
-    """Discover fragment templates: .pj2 files and non-base-shell .j2 files."""
+    """Discover syncable fragment templates under proxy_templates/ (*.j2, excluding base shells and presets)."""
     if not TEMPLATES_ROOT.is_dir():
         return
-    for path in sorted(TEMPLATES_ROOT.rglob("*")):
+    for path in sorted(TEMPLATES_ROOT.rglob("*.j2")):
         if not path.is_file():
             continue
         rel = _rel_path(path)
         kind = classify_path(rel)
-        if kind == "preset":
+        if kind in ("preset", "base"):
             continue
-        if path.suffix == ".pj2":
-            slug = str(path.relative_to(TEMPLATES_ROOT).with_suffix("")).replace("\\", "/")
-            yield slug, path
-        elif path.suffix == ".j2" and kind == "template":
-            slug = str(path.relative_to(TEMPLATES_ROOT).with_suffix("")).replace("\\", "/")
-            yield slug, path
+        slug = str(path.relative_to(TEMPLATES_ROOT).with_suffix("")).replace("\\", "/")
+        yield slug, path
 
 
 def iter_base_config_files() -> Iterator[tuple[str, str, Path]]:
-    """Discover {core}/{client|server}/base.j2 shells for ProxyBaseConfig sync."""
+    """Discover {core}/{client|server}/base.j2 shells."""
     if not TEMPLATES_ROOT.is_dir():
         return
+    seen: set[tuple[str, str]] = set()
     for path in sorted(TEMPLATES_ROOT.rglob("base.j2")):
         if not path.is_file():
             continue
@@ -72,4 +69,8 @@ def iter_base_config_files() -> Iterator[tuple[str, str, Path]]:
         core, side = parsed
         if side not in BASE_CONFIG_SIDES:
             continue
+        key = (core, side)
+        if key in seen:
+            continue
+        seen.add(key)
         yield core, side, path

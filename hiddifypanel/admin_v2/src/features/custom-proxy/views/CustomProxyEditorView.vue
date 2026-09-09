@@ -28,6 +28,8 @@
     {{ t('proxy.builtinDefaultHint') }}
   </Message>
 
+  <ValidationPanel :result="validation" />
+
   <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_19rem] gap-4 items-start">
     <div class="min-w-0">
       <Tabs v-model:value="activeTab">
@@ -451,8 +453,6 @@
           </TabPanel>
         </TabPanels>
       </Tabs>
-
-      <ValidationPanel :result="validation" />
     </div>
 
     <TemplateSidePanel
@@ -536,6 +536,7 @@ import SysBadge from '@/shared/components/SysBadge.vue'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import ValidationPanel from '@/shared/components/ValidationPanel.vue'
+import { validationToastDetail } from '@/shared/utils/validation-toast'
 import DomainMultiSelect from '@/shared/components/DomainMultiSelect.vue'
 import ProxyCategoriesMultiSelect from '@/shared/components/ProxyCategoriesMultiSelect.vue'
 import FaketlsDomainSelect from '@/shared/components/FaketlsDomainSelect.vue'
@@ -1076,7 +1077,9 @@ const showTemplatePanel = computed(() => activeTab.value === '1' || showClientTe
 
 const templatePanelReadOnly = computed(() => {
   if (!isBuiltin.value) return false
-  return activeTab.value === '1' ? !form.server_override : !form.client_override
+  if (activeTab.value === '1') return !form.server_override
+  const core = clientCoreAt(activeClientIndex.value).core
+  return core ? !clientCoreOverridden(core) : !form.client_override
 })
 
 const templatePanelAllowCreate = computed(() => !templatePanelReadOnly.value)
@@ -1600,6 +1603,14 @@ async function runValidate() {
   validation.value = props.id
     ? await customProxiesApi.validateById(Number(props.id), payload)
     : await customProxiesApi.validate(payload)
+  if (validation.value && !validation.value.ok) {
+    toast.add({
+      severity: 'error',
+      summary: t('common.validationFailed'),
+      detail: validationToastDetail(validation.value),
+      life: 8000,
+    })
+  }
 }
 
 function effectiveServerInboundTemplate(): string {
@@ -1750,7 +1761,6 @@ async function save() {
     ensureClientCores()
     await runValidate()
     if (validation.value && !validation.value.ok) {
-      toast.add({ severity: 'error', summary: t('common.validationFailed'), life: 4000 })
       return
     }
   }

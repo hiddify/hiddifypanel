@@ -77,12 +77,7 @@ class DnsProxyServerDriver(BaseConfigBuilderDriver):
             messages=messages,
         )
 
-    def _render_proxy(
-        self,
-        child_id: int,
-        ctx: ServerContextProxyVar,
-        messages: list[MessageModel],
-    ) -> None:
+    def _render_proxy(self, child_id: int, ctx: ServerContextProxyVar, messages: list[MessageModel]) -> None:
         proxy_row = ctx.proxy
         if not proxy_row:
             return

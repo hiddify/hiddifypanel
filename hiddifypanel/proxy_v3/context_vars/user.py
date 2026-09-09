@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 from hiddifypanel.models.user import User
+
+from .json_map import JsonMap
 
 
 class UserVar(BaseModel):
@@ -27,17 +29,19 @@ class UserVar(BaseModel):
     wg_pub: str = ""
     wg_psk: str = ""
     password: str = ""
-    extra: dict[str, Any] = Field(default_factory=dict)
+    extra_params: JsonMap = Field(default_factory=JsonMap)
 
     _user: User | None = PrivateAttr(default=None)
 
-    @property
-    def wg_ipv4(self) -> str:
-        return str(self.extra.get("wg_ipv4") or "")
+    @field_validator("extra_params", mode="before")
+    @classmethod
+    def _coerce_extra_params(cls, value: Any) -> JsonMap:
+        return JsonMap.from_any(value)
 
     @property
-    def wg_ipv6(self) -> str:
-        return str(self.extra.get("wg_ipv6") or "")
+    def extra(self) -> JsonMap:
+        """Alias for ``extra_params`` (legacy templates)."""
+        return self.extra_params
 
     @classmethod
     def from_user(cls, user: User | None) -> UserVar:
@@ -63,7 +67,7 @@ class UserVar(BaseModel):
             wg_pub=user.wg_pub or "",
             wg_psk=user.wg_psk or "",
             password=uuid,
-            extra={},
+            extra_params=JsonMap.from_any(user.extra_params_json()),
         )
         var._user = user
         return var

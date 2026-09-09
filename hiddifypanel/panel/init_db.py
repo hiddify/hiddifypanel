@@ -18,7 +18,7 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 136
+MAX_DB_VERSION = 137
 
 
 def _v137(child_id):
@@ -1023,11 +1023,15 @@ def _enum_column_values(col) -> list[str]:
         return _config_enum_key_names(bool_only=True)
     if table_name == "str_config" and col.name == "key":
         return _config_enum_key_names(bool_only=False)
-    return [e.value for e in enum_class]
+    # SQLAlchemy Enum(PEP435) persists member *names* (e.g. hiddify_core), not values
+    # (hiddify-core). Prefer the dialect enums list so MySQL stays in sync.
+    if getattr(col.type, "enums", None):
+        return list(col.type.enums)
+    return [e.name for e in enum_class]
 
 
 def add_new_enum_values():
-    from hiddifypanel.models.custom_proxy import CustomProxy
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyClientCore
 
     columns = [
         Proxy.l3,
@@ -1040,11 +1044,14 @@ def add_new_enum_values():
         BoolConfig.key,
         StrConfig.key,
         ProxyTemplate.category,
+        ProxyTemplate.core,
         CustomProxy.mode,
         CustomProxy.proto,
         CustomProxy.transport,
         CustomProxy.tls_layer,
         CustomProxy.download_tls_layer,
+        CustomProxy.server_core,
+        CustomProxyClientCore.core,
     ]
     from sqlalchemy import text
 
@@ -1134,7 +1141,7 @@ def upgrade_database():
 def init_db():
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 136, commit=True)
+    set_hconfig(ConfigEnum.db_version, 135, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

@@ -26,6 +26,8 @@
     {{ form.builtin_override ? t('baseConfig.builtinReadOnly') : t('baseConfig.builtinDefaultHint') }}
   </Message>
 
+  <ValidationPanel v-if="validation" :result="validation" />
+
   <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_19rem] gap-4 items-start">
     <div class="min-w-0 flex flex-col gap-4">
       <Panel :header="t('baseConfig.listTitle')">
@@ -75,8 +77,6 @@
           @preview="onBasePreview"
         />
       </Panel>
-
-      <ValidationPanel v-if="validation" :result="validation" />
     </div>
 
     <TemplateSidePanel
@@ -130,6 +130,7 @@ import {
 } from '@/shared/utils/template-slug'
 import { usesJsonTemplate } from '@/shared/utils/core-template'
 import { downloadJson, pickFile } from '@/shared/utils/custom-proxy-bundle'
+import { validationToastDetail } from '@/shared/utils/validation-toast'
 import {
   customProxiesApi,
   proxyBaseConfigsApi,
@@ -252,7 +253,12 @@ async function runValidate() {
     warnings: result.warnings,
   }
   if (!result.ok) {
-    toast.add({ severity: 'error', summary: t('common.validationFailed'), life: 4000 })
+    toast.add({
+      severity: 'error',
+      summary: t('common.validationFailed'),
+      detail: validationToastDetail(validation.value),
+      life: 8000,
+    })
   }
 }
 

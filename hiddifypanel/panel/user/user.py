@@ -195,7 +195,8 @@ class UserView(FlaskView):
             return add_headers("", c, "application/json")
 
         # HiddifyNext / sing-box clients use the hiddify-core client shell.
-        data = self._render_core_config("hiddify-core", c, pretty=True)
+        core = "singbox" if g.user_agent["app"][:2] == "SF" else "hiddify-core"
+        data = self._render_core_config(core, c, pretty=True)
         return add_headers(data, c, "application/json")
 
     @route("/singbox.json", methods=["GET", "HEAD"])

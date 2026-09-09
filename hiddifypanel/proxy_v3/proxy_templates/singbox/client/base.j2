@@ -1,0 +1,107 @@
+{% block base_config %}
+{
+  
+  "outbounds": [
+    {% if ctx.user.is_active %}
+    
+      {% block proxy_group %}
+        {% include 'singbox/client/proxies_group' %},
+      {% endblock %}
+      
+      {% block outbounds %}{% endblock %},
+    {%else%}
+        {% include 'singbox/client/subscription_status' %}
+    {% endif %}
+    {"tag": "direct", "type": "direct"},
+    {"tag": "block", "type": "block"},
+    {"tag": "dns-out", "type": "dns"}
+  ],
+  "endpoints": [
+    {% if ctx.user.is_active %}
+    {% block endpoints %}{% endblock %}
+    {% endif %}
+  ],
+  "route": {
+    "auto_detect_interface": true,
+    "override_android_vpn": {%if ctx.platform.os == "android" %}true{%else%}false{%endif%},
+    "final": "Select",
+    "rules": []
+  },
+      "log": {
+        "disabled": false,
+        "level": "warn",
+        "timestamp": false
+    },
+    "experimental": {
+        "clash_api": {
+            "external_controller": "127.0.0.1:9090",
+            "store_selected": true,
+            "cache_file": "clash.db"
+        }
+    },
+    "dns": {
+        "servers": [
+            {
+                "address": "tcp://1.1.1.1",
+                "address_resolver": "dns-local",
+                "strategy": "prefer_ipv4",
+                "tag": "dns-remote",
+                "detour": "ssh-out"
+            },
+            {
+                "address": "local",
+                "detour": "direct",
+                "tag": "dns-local"
+            },
+            {
+                "address": "rcode:\/\/success",
+                "tag": "dns-block"
+            }
+        ],
+        "rules": [
+            {
+                "domain_suffix": [
+                    "ir"
+                ],
+                "server": "dns-local"
+            },
+            {
+                "outbound": "direct",
+                "server": "dns-local"
+            }
+        ],
+        "final": "dns-remote",
+        "reverse_mapping": true,
+        "strategy": "prefer_ipv4",
+        "independent_cache": true
+    },
+    "inbounds": [
+        {%if ctx.platform.os in ["android","ios"]}
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "domain_strategy": "prefer_ipv4",
+            "interface_name": "tun0",
+            "inet4_address": "172.19.0.1\/30",
+            "mtu": 9000,
+            "auto_route": true,
+            "strict_route": true,
+            "stack": "system",
+            "endpoint_independent_nat": true,
+            "sniff": true,
+            "sniff_override_destination": false
+        },
+        {%else%}
+        {
+            "domain_strategy": "prefer_ipv4",
+            "listen": "127.0.0.1",
+            "listen_port": 2080,
+            "sniff": true,
+            "sniff_override_destination": false,
+            "tag": "mixed-in",
+            "type": "mixed"
+        }
+        {%endif%}
+    ]
+}
+{% endblock %}

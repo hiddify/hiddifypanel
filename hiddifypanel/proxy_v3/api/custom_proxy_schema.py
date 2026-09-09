@@ -307,6 +307,9 @@ class CustomProxyGenerateBundleResultSchema(Schema):
 
 
 class ProxyTemplateSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     id = fields.Integer(dump_only=True)
     child_id = fields.Integer(dump_only=True)
     slug = fields.String(required=True)
@@ -321,6 +324,9 @@ class ProxyTemplateSchema(Schema):
 
 
 class PatchProxyTemplateSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     slug = fields.String()
     core = fields.String()
     category = StrEnumField(TemplateCategory)
@@ -425,6 +431,9 @@ class CustomProxyImportResultSchema(Schema):
 
 
 class ProxyBaseConfigSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     id = fields.Integer(dump_only=True)
     child_id = fields.Integer(dump_only=True)
     side = fields.String(required=True)
@@ -440,6 +449,9 @@ class ProxyBaseConfigSchema(Schema):
 
 
 class PatchProxyBaseConfigSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     side = fields.String()
     core = fields.String()
     version = fields.String()

@@ -64,13 +64,12 @@ function onVariable(snippet: string) {
       @click="varDialogVisible = true"
     />
     <TemplateIncludeMenu
-      v-if="showInclude !== false"
+      v-if="showInclude !== false && !readOnly"
       class="editor-toolbar-control"
       :core="core"
       :category="category"
       :template-text="templateText"
       :explicit-slugs="explicitSlugs"
-      :read-only="readOnly"
       :list-scope="listScope"
       @select="emit('insert-template', $event)"
     />
