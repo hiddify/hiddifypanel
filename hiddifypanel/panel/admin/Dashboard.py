@@ -1,4 +1,4 @@
-from flask import render_template, request, g, redirect
+from flask import render_template, request, redirect
 from hiddifypanel.hutils.flask import hurl_for
 from flask_classful import FlaskView, route
 from flask_babel import lazy_gettext as _
@@ -10,7 +10,7 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.panel import hiddify
 from hiddifypanel.models import *
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 import hiddifypanel
 
 

@@ -1,20 +1,19 @@
-import json5
-from datetime import datetime
-from enum import auto
 import ipaddress
 import json
 import re
-from typing import Dict, List
-from flask import request
+from datetime import datetime
+from enum import auto
 
+import json5
+from flask import request
 from sqlalchemy.orm import backref
 from strenum import StrEnum
 
-
 from hiddifypanel.database import db
 from hiddifypanel.models.config import hconfig
-from .child import Child
 from hiddifypanel.models.config_enum import ConfigEnum
+
+from .child import Child
 
 
 class FakeMode(StrEnum):
@@ -135,13 +134,13 @@ class Domain(db.Model):
             "fake_mode": self.fake_mode,
             "alias": self.alias,
             "sub_link_only": self.sub_link_only,
-            "child_unique_id": self.child.unique_id if self.child else "",  # type: ignore
+            "child_unique_id": self.child.unique_id if self.child else "",
             "cdn_ip": self.cdn_ip,
             "servernames": self.servernames,
             "grpc": self.grpc,
             "ech": bool(self.ech),
             "download_domain": self.download_domain.domain if self.download_domain else "",
-            "show_domains": [dd.domain for dd in self.show_domains],  # type: ignore
+            "show_domains": [dd.domain for dd in self.show_domains],
             "resolve_ip": self.resolve_ip,
             "extra_params": extra,
             "custom_proxy_id": self.custom_proxy_id,
@@ -178,7 +177,7 @@ class Domain(db.Model):
         domain_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import DomainSchema
 
-        return DomainSchema().load(domain_dict)
+        return DomainSchema.model_validate(domain_dict)
 
     def auto_cdn_ip(self):
         from hiddifypanel import hutils
@@ -232,7 +231,7 @@ class Domain(db.Model):
     def internal_port_dnstt(self):
         if self.mode not in [DomainType.dnstt]:
             return 0
-        return int(5400) + self.port_index
+        return 5400 + self.port_index
 
     @property
     def internal_port_tuic(self):
@@ -255,14 +254,14 @@ class Domain(db.Model):
         return int(hconfig(ConfigEnum.special_port, self.child_id)) + self.port_index
 
     @classmethod
-    def by_mode(cls, mode: DomainType) -> List["Domain"]:
+    def by_mode(cls, mode: DomainType) -> list["Domain"]:
         domains = Domain.query.filter(Domain.mode == mode).all()
         if domains:
             return [d.domain for d in domains]
         return []
 
     @classmethod
-    def modes_and_domains(cls) -> Dict[DomainType, List["Domain"]]:
+    def modes_and_domains(cls) -> dict[DomainType, list["Domain"]]:
         return {mode: cls.by_mode(mode) for mode in DomainType}
 
     @classmethod
@@ -272,7 +271,7 @@ class Domain(db.Model):
     @classmethod
     def get_panel_link(cls, child_id: int | None = None) -> str | None:
         if child_id is None:
-            child_id = Child.current().id  # type: ignore
+            child_id = Child.current().id
         domains = Domain.query.filter(
             Domain.mode.in_(
                 [
@@ -293,7 +292,7 @@ class Domain(db.Model):
         return domains[0].domain
 
     @classmethod
-    def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> List["Domain"]:
+    def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> list["Domain"]:
         from hiddifypanel import hutils
 
         domains = []
@@ -315,16 +314,16 @@ class Domain(db.Model):
             )
 
         if len(domains) == 0 and request:
-            domains = [Domain(domain=request.host)]  # type: ignore
+            domains = [Domain(domain=request.host)]
         if len(domains) == 0 or always_add_ip:
-            domains += [Domain(domain=hutils.network.get_ip_str(4))]  # type: ignore
+            domains += [Domain(domain=hutils.network.get_ip_str(4))]
         return domains
 
     @classmethod
     def add_or_update(cls, commit=True, child_id=0, **domain):
         dbdomain = Domain.query.filter(Domain.domain == domain["domain"]).first()
         if not dbdomain:
-            dbdomain = Domain(domain=domain["domain"])  # type: ignore
+            dbdomain = Domain(domain=domain["domain"])
             db.session.add(dbdomain)
         dbdomain.child_id = child_id
 
@@ -348,7 +347,7 @@ class Domain(db.Model):
         if dl_domain:
             dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()
             if not dbdldomain:
-                dbdldomain = Domain(domain=dl_domain)  # type: ignore
+                dbdldomain = Domain(domain=dl_domain)
                 db.session.add(dbdldomain)
                 db.session.commit()
                 dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()

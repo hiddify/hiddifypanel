@@ -8,6 +8,7 @@ def init_app(app):
     with app.app_context():
         from .info import PanelInfoApi
         from .ping_pong import PingPongApi
-        bp.add_url_rule('/info/', view_func=PanelInfoApi)
-        bp.add_url_rule('/ping/', view_func=PingPongApi)
+
+        bp.add_url_rule("/info/", view_func=PanelInfoApi.as_view("panel_info"))
+        bp.add_url_rule("/ping/", view_func=PingPongApi.as_view("ping_pong"))
     app.register_blueprint(bp)

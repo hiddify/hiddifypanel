@@ -1,23 +1,23 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Literal
 
-from apiflask import Schema, fields
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field
 
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.proxy_v3.config_builder.dump import CLIENT_CONFIG_FILES
 
 CLIENT_CORES = tuple(core for core, _filename in CLIENT_CONFIG_FILES)
 ClientCore = Literal["hiddify-core", "xray", "sublink", "clash", "singbox"]
 
 
-class RegisterWithParentInputSchema(Schema):
-    parent_panel = fields.String(required=True, metadata={"description": "The parent panel url"})
-    name = fields.String(required=True, metadata={"description": "The child's name in the parent panel"})
-    apikey = fields.String(metadata={"description": "The parent's apikey"})
+class RegisterWithParentInputSchema(ApiModel):
+    parent_panel: str = Field(description="The parent panel url")
+    name: str = Field(description="The child's name in the parent panel")
+    apikey: str = Field(description="The parent's apikey")
 
 
-class ClientConfigsIn(BaseModel):
+class ClientConfigsIn(ApiModel):
     core: ClientCore = Field(description=f"The client core to render, one of {list(CLIENT_CORES)}")
     user_uuid: str = Field(description="The uuid of the user to render the configs for")
     domains: list[str] = Field(description="The domains to build the configs from; unknown domains are ignored", min_length=1)
@@ -25,7 +25,7 @@ class ClientConfigsIn(BaseModel):
     pretty: bool = Field(default=True, description="Indent the json based cores")
 
 
-class ClientConfigsOut(BaseModel):
+class ClientConfigsOut(ApiModel):
     status: int = 200
     msg: str = "ok"
     core: ClientCore

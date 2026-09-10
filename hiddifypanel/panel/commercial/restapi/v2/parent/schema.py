@@ -1,120 +1,124 @@
-from apiflask import fields, Schema
-from marshmallow import ValidationError
+from __future__ import annotations
 
-from hiddifypanel.models import DomainType, ProxyProto, ProxyL3, ProxyTransport, ProxyCDN, ConfigEnum, ChildMode
-from hiddifypanel.panel.commercial.restapi.v2.admin.schema import UserSchema, AdminSchema
+from typing import Any
+from uuid import UUID
 
+from pydantic import Field, field_validator, model_validator
 
-def hconfig_key_validator(value):
-    if value not in [c.name for c in ConfigEnum]:
-        raise ValidationError(f"{value} is not a valid hconfig key.")
-    return value
-
-
-class DomainSchema(Schema):
-    child_unique_id = fields.String( metadata={"description": "The child's unique id"})
-    domain = fields.String(required=True,  metadata={"description": "The domain name"})
-    alias = fields.String( metadata={"description": "The domain alias"}, allow_none=True)
-    sub_link_only = fields.Boolean(required=True,  metadata={"description": "Is the domain sub link only"})
-    mode = fields.Enum(DomainType, required=True,  metadata={"description": "The domain type"})
-    cdn_ip = fields.String( metadata={"description": "The cdn ip"}, allow_none=True)
-    grpc = fields.Boolean(required=True,  metadata={"description": "Is the domain grpc"})
-    ech = fields.Boolean(required=False, load_default=False, metadata={"description": "Enable ECH for CDN domain"})
-    servernames = fields.String( metadata={"description": "The servernames"}, allow_none=True)
-    show_domains = fields.List(fields.String(),  metadata={"description":"The list of domains to show"})
+from hiddifypanel.models import ChildMode, ConfigEnum, DomainType, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
+from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema, UserSchema
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 
-class ProxySchema(Schema):
-    child_unique_id = fields.String( metadata={"description": "The child's unique id"})
-    name = fields.String(required=True,  metadata={"description": "The proxy name"})
-    enable = fields.Boolean(required=True,  metadata={"description": "Is the proxy enabled"})
-    proto = fields.Enum(ProxyProto, required=True,  metadata={"description": "The proxy protocol"})
-    l3 = fields.Enum(ProxyL3, required=True,  metadata={"description": "The proxy l3"})
-    transport = fields.Enum(ProxyTransport, required=True,  metadata={"description": "The proxy transport"})
-    cdn = fields.Enum(ProxyCDN, required=True,  metadata={"description": "The proxy cdn"})
+class DomainSchema(ApiModel):
+    child_unique_id: str | None = Field(default=None, description="The child's unique id")
+    domain: str = Field(description="The domain name")
+    alias: str | None = Field(default=None, description="The domain alias")
+    sub_link_only: bool = Field(description="Is the domain sub link only")
+    mode: DomainType = Field(description="The domain type")
+    cdn_ip: str | None = Field(default=None, description="The cdn ip")
+    grpc: bool = Field(description="Is the domain grpc")
+    ech: bool = Field(default=False, description="Enable ECH for CDN domain")
+    servernames: str | None = Field(default=None, description="The servernames")
+    show_domains: list[str] | None = Field(default=None, description="The list of domains to show")
 
 
-class StringOrBooleanField(fields.Field):
-    def _deserialize(self, value, attr, data, **kwargs):
-        if isinstance(value, (str, bool)):
-            return str(value)
-        else:
-            raise ValidationError("Value must be a string or a boolean.")
+class ProxySchema(ApiModel):
+    child_unique_id: str | None = Field(default=None, description="The child's unique id")
+    name: str = Field(description="The proxy name")
+    enable: bool = Field(description="Is the proxy enabled")
+    proto: ProxyProto = Field(description="The proxy protocol")
+    l3: ProxyL3 = Field(description="The proxy l3")
+    transport: ProxyTransport = Field(description="The proxy transport")
+    cdn: ProxyCDN = Field(description="The proxy cdn")
 
-    def _serialize(self, value, attr, obj, **kwargs):
+
+class HConfigSchema(ApiModel):
+    child_unique_id: str | None = Field(default=None, description="The child's unique id")
+    key: str = Field(description="The config key")
+    value: str | bool = Field(description="The config value")
+
+    @field_validator("key")
+    @classmethod
+    def _hconfig_key(cls, value: str) -> str:
+        if value not in [c.name for c in ConfigEnum]:
+            raise ValueError(f"{value} is not a valid hconfig key.")
         return value
 
-
-class HConfigSchema(Schema):
-    child_unique_id = fields.String( metadata={"description": "The child's unique id"})
-    key = fields.String(required=True,  metadata={"description": "The config key"}, validate=hconfig_key_validator)  # type: ignore
-    value = StringOrBooleanField(required=True,  metadata={"description": "The config value"})
-
-
-# region usage
-class UsageData(Schema):
-    uuid = fields.UUID(required=True,  metadata={"description": "The user uuid"})
-    usage = fields.Integer(required=True,  metadata={"description": "The user usage in bytes"})
-    devices = fields.List(fields.String(required=True,  metadata={"description": "The user connected devices"}))
+    @field_validator("value", mode="before")
+    @classmethod
+    def _coerce_value(cls, value: Any) -> str | bool:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            return value
+        return str(value)
 
 
-class UsageInputOutputSchema(Schema):
-    usages = fields.List(fields.Nested(UsageData), required=True,  metadata={"description": "The list of usages"})
-# endregion
+class UsageData(ApiModel):
+    uuid: UUID | str | None = Field(default=None, description="The user uuid")
+    usage: int = Field(default=0, description="The user usage in bytes")
+    devices: list[str] | str | None = Field(default_factory=list, description="The user connected devices")
+
+    @field_validator("devices", mode="before")
+    @classmethod
+    def _coerce_devices(cls, value: Any) -> list[str]:
+        if value is None or value == "":
+            return []
+        if isinstance(value, dict):
+            return [str(key) for key in value.keys()]
+        if isinstance(value, str):
+            return [part for part in value.split(",") if part]
+        if isinstance(value, (list, tuple, set)):
+            return [str(item) for item in value]
+        return [str(value)]
 
 
-# region sync
-class SyncInputSchema(Schema):
-    domains = fields.List(fields.Nested(DomainSchema), required=False,  metadata={"description": "The list of domains"})
-    proxies = fields.List(fields.Nested(ProxySchema), required=False,  metadata={"description": "The list of proxies"})
-    hconfigs = fields.List(fields.Nested(HConfigSchema), required=False,  metadata={"description": "The list of configs"})
-    # users = fields.List(fields.Nested(UserSchema),required=True, metadata={"description": "The list of users"})
-    # admin_users = fields.List(fields.Nested(AdminSchema),required=True, metadata={"description": "The list of admin users"})
-
-    def validate(self, data, **kwargs):
-        if not (data.get("domains") or data.get("proxies") or data.get("hconfigs")):
-            raise ValidationError("At least one field must exist (domains, proxies, or hconfigs)")
-        return data
+class UsageInputOutputSchema(ApiModel):
+    usages: list[UsageData] = Field(default_factory=list, description="The list of usages")
 
 
-class SyncOutputSchema(Schema):
-    users = fields.List(fields.Nested(UserSchema), required=True,  metadata={"description": "The list of users"})
-    admin_users = fields.List(fields.Nested(AdminSchema), required=True,  metadata={"description": "The list of admin users"})
+class SyncInputSchema(ApiModel):
+    domains: list[DomainSchema] | None = Field(default=None, description="The list of domains")
+    proxies: list[ProxySchema] | None = Field(default=None, description="The list of proxies")
+    hconfigs: list[HConfigSchema] | None = Field(default=None, description="The list of configs")
 
-# endregion
-
-
-# region child status
-class ChildStatusInputSchema(Schema):
-    child_unique_id = fields.String(required=True,  metadata={"description": "The child's unique id"})
-
-
-class ChildStatusOutputSchema(Schema):
-    existance = fields.Boolean(required=True,  metadata={"description": "Whether child exists"})
-
-# end region
+    @model_validator(mode="after")
+    def _at_least_one(self) -> SyncInputSchema:
+        if not (self.domains or self.proxies or self.hconfigs):
+            raise ValueError("At least one field must exist (domains, proxies, or hconfigs)")
+        return self
 
 
-# region register
-
-class RegisterDataSchema(Schema):
-    users = fields.List(fields.Nested(UserSchema), required=True,  metadata={"description": "The list of users"})
-    domains = fields.List(fields.Nested(DomainSchema), required=True,  metadata={"description": "The list of domains"})
-    proxies = fields.List(fields.Nested(ProxySchema), required=True,  metadata={"description": "The list of proxies"})
-    admin_users = fields.List(fields.Nested(AdminSchema), required=True,  metadata={"description": "The list of admin users"})
-    hconfigs = fields.List(fields.Nested(HConfigSchema), required=True,  metadata={"description": "The list of configs"})
+class SyncOutputSchema(ApiModel):
+    users: list[UserSchema] = Field(default_factory=list, description="The list of users")
+    admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")
 
 
-class RegisterInputSchema(Schema):
-    panel_data = fields.Nested(RegisterDataSchema, required=True,  metadata={"description": "The child's data"})
-    unique_id = fields.String(required=True,  metadata={"description": "The child's unique id"})
-    name = fields.String(required=True,  metadata={"description": "The child's name"})
-    mode = fields.Enum(ChildMode, required=True,  metadata={"description": "The child's mode"})
+class ChildStatusInputSchema(ApiModel):
+    child_unique_id: str = Field(description="The child's unique id")
 
 
-class RegisterOutputSchema(Schema):
-    parent_unique_id = fields.String( metadata={"description": "The parent's unique id"})
-    users = fields.List(fields.Nested(UserSchema), required=True,  metadata={"description": "The list of users"})
-    admin_users = fields.List(fields.Nested(AdminSchema), required=True,  metadata={"description": "The list of admin users"})
+class ChildStatusOutputSchema(ApiModel):
+    existance: bool = Field(default=False, description="Whether child exists")
 
-# endregion
+
+class RegisterDataSchema(ApiModel):
+    users: list[UserSchema] = Field(description="The list of users")
+    domains: list[DomainSchema] = Field(description="The list of domains")
+    proxies: list[ProxySchema] = Field(description="The list of proxies")
+    admin_users: list[AdminSchema] = Field(description="The list of admin users")
+    hconfigs: list[HConfigSchema] = Field(description="The list of configs")
+
+
+class RegisterInputSchema(ApiModel):
+    panel_data: RegisterDataSchema = Field(description="The child's data")
+    unique_id: str = Field(description="The child's unique id")
+    name: str = Field(description="The child's name")
+    mode: ChildMode = Field(description="The child's mode")
+
+
+class RegisterOutputSchema(ApiModel):
+    parent_unique_id: str | None = Field(default=None, description="The parent's unique id")
+    users: list[UserSchema] = Field(default_factory=list, description="The list of users")
+    admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")

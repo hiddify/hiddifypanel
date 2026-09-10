@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, g
+from flask import render_template, request, jsonify
 from flask_wtf.file import FileField, FileRequired
 from flask_bootstrap import SwitchField
 from flask_babel import gettext as _
@@ -13,7 +13,7 @@ import json
 from hiddifypanel.auth import login_required
 from hiddifypanel.panel import hiddify
 from hiddifypanel.models import *
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 
 
 class Backup(FlaskView):

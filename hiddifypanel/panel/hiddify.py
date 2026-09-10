@@ -3,7 +3,6 @@ import subprocess
 
 from datetime import datetime
 from typing import Tuple
-from flask import current_app, g
 from flask_babel import lazy_gettext as _
 from datetime import timedelta
 import os
@@ -11,7 +10,7 @@ from hiddifypanel.cache import cache
 from hiddifypanel.models import *
 from hiddifypanel.database import db
 from hiddifypanel.hutils.utils import *
-from hiddifypanel import hutils
+from hiddifypanel import g, current_app, hutils
 from hiddifypanel.panel.run_commander import commander, Command
 import subprocess
 

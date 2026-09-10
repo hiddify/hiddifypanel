@@ -1,10 +1,11 @@
-from flask import jsonify, render_template, g
+from flask import jsonify, render_template
 import hiddifypanel
 from hiddifypanel.auth import login_required
 from hiddifypanel.hutils import flask as hutils_flask
 from hiddifypanel.models import ConfigEnum, Role, hconfig
 
 from .v2_menu import build_admin_v2_menu, build_admin_v2_notices
+from hiddifypanel import g
 
 
 def _panel_version() -> str:

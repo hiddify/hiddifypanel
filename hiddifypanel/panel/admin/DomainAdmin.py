@@ -1,14 +1,12 @@
 import re
 from typing import Literal
-
-from flask import g  # type: ignore
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
 from loguru import logger
 from markupsafe import Markup, escape
 from wtforms.validators import Regexp, ValidationError
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import *

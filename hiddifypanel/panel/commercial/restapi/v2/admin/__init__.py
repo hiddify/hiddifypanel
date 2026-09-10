@@ -1,6 +1,6 @@
 from apiflask import APIBlueprint
-from flask import g
 from hiddifypanel.models import AdminUser, User
+from hiddifypanel import g
 
 bp = APIBlueprint("api_admin", __name__, url_prefix="/<proxy_path>/api/v2/admin/", enable_openapi=True)
 

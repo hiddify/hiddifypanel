@@ -1,5 +1,6 @@
-from flask import g, send_from_directory
+from flask import send_from_directory
 from hiddifypanel.hutils.flask import hurl_for
+from hiddifypanel import g
 
 
 def send_static(path):

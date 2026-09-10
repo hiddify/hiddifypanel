@@ -2,11 +2,11 @@ import os
 import xtlsapi
 from hiddifypanel.models import *
 from .abstract_driver import DriverABS
-from flask import current_app
 import json
 from collections import defaultdict
 from hiddifypanel.cache import cache
 from loguru import logger
+from hiddifypanel import current_app
 
 
 class SingboxApi(DriverABS):

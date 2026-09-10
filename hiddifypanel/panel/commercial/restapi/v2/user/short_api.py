@@ -1,21 +1,21 @@
 
 from urllib.parse import urlparse
-from apiflask import Schema
-from flask import g, request
-from apiflask.fields import String, Integer
-from flask import current_app as app
+from pydantic import Field
+from flask import request
 from flask.views import MethodView
 from hiddifypanel.auth import login_required
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
+from hiddifypanel import g, current_app as app
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 
-class ShortSchema(Schema):
-    short = String(required=True,  metadata={"description": "the short url slug"})
-    full_url = String(required=True,  metadata={"description": "full short url"})
-    expire_in = Integer(required=True,  metadata={"description": "expire_in is in seconds"})
+class ShortSchema(ApiModel):
+    short: str = Field(default="", description="the short url slug")
+    full_url: str = Field(default="", description="full short url")
+    expire_in: int = Field(default=0, description="expire_in is in seconds")
 
 
 class ShortAPI(MethodView):

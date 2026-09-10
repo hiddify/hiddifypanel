@@ -1,18 +1,24 @@
-from apiflask import Schema, fields, abort
-from flask.views import MethodView
-from hiddifypanel.models.role import Role
-from flask import current_app as app, make_response, g, request
 import os
 import re
+
 from ansi2html import Ansi2HTMLConverter
+from apiflask import abort
+from flask import make_response, request
+from flask.views import MethodView
+from pydantic import Field
+
+from hiddifypanel import current_app as app
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
-from hiddifypanel.models import *
+from hiddifypanel.models import ConfigEnum, hconfig
+from hiddifypanel.models.role import Role
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 _LOG_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 
-class AdminInputLogfileSchema(Schema):
-    file = fields.String(metadata={"description": "The log file name"}, required=True)
+class AdminInputLogfileSchema(ApiModel):
+    file: str = Field(description="The log file name")
 
 
 class AdminLogApi(MethodView):
@@ -25,7 +31,7 @@ class AdminLogApi(MethodView):
         if os.path.commonpath([log_dir, file_path]) != log_dir or not os.path.isfile(file_path):
             abort(404, "Invalid log file")
 
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             logs = "".join(f)
 
         conv = Ansi2HTMLConverter()
@@ -34,11 +40,11 @@ class AdminLogApi(MethodView):
         resp.headers["Access-Control-Allow-Origin"] = "*"
         return resp
 
-    @app.input(AdminInputLogfileSchema, arg_name="data", location="form")  # type: ignore
+    @app.input(AdminInputLogfileSchema, arg_name="data", location="form")
     @login_required({Role.super_admin})
-    def post(self, data):
+    def post(self, data: AdminInputLogfileSchema):
         """System: View Log file"""
-        return self._read_log(data.get("file"))
+        return self._read_log(data.file)
 
     @login_required({Role.super_admin})
     def get(self):

@@ -1,12 +1,12 @@
 import traceback
 
 from apiflask import APIFlask, HTTPError, abort
-from flask import g, jsonify, render_template, request, send_from_directory, session
+from flask import jsonify, render_template, request, send_from_directory, session
 from loguru import logger
 
 import hiddifypanel
 import hiddifypanel.auth as auth
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import current_account
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify

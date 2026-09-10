@@ -2,7 +2,7 @@ import re
 import flask_babel
 import uuid
 # from flask_babelex import lazy_gettext as _
-from flask import render_template, g, request
+from flask import render_template, request
 from flask_babel import gettext as _
 from markupsafe import Markup
 import wtforms as wtf
@@ -16,7 +16,7 @@ from wtforms.validators import ValidationError, Length, InputRequired
 from hiddifypanel.models import Domain, DomainType, StrConfig, ConfigEnum, get_hconfigs
 from hiddifypanel.database import db
 from hiddifypanel.auth import login_required
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.models import *
 
 

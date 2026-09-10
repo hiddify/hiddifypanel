@@ -1,14 +1,13 @@
 import urllib.request
 import json
 from flask_classful import FlaskView, route
-from flask import render_template, request, redirect, g
+from flask import render_template, request, redirect
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.auth import login_required
-from flask import current_app as app
 from flask_babel import gettext as _
 
 
-from hiddifypanel import hutils
+from hiddifypanel import g, current_app as app, hutils
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify, usage
 from hiddifypanel.panel.run_commander import commander, Command

@@ -1,12 +1,14 @@
-
-from flask import g, redirect, request, session
-from hiddifypanel.hutils.flask import hurl_for
-from flask_login.utils import _get_user
 from functools import wraps
-from hiddifypanel.models import *
+
 from apiflask import abort as json_abort
-from hiddifypanel import hutils
+from flask import redirect, request, session
+from flask_login.utils import _get_user
 from werkzeug.local import LocalProxy
+
+from hiddifypanel import current_app, g, hutils
+from hiddifypanel.hutils.flask import hurl_for
+from hiddifypanel.models import *
+
 current_account: "BaseAccount" = LocalProxy(lambda: _get_user())
 
 
@@ -52,15 +54,15 @@ def _get_user():
 
 
 def admin_session_is_exist():
-    return '_admin_id' in session
+    return "_admin_id" in session
 
 
 def logout_user():
     g.__account_store = None
-    if '_user_id' in session:
-        session.pop('_user_id')
-    if '_admin_id' in session:
-        session.pop('_admin_id')
+    if "_user_id" in session:
+        session.pop("_user_id")
+    if "_admin_id" in session:
+        session.pop("_admin_id")
 
 
 def login_user(user: AdminUser | User, remember=False, duration=None, force=False, fresh=True):
@@ -100,19 +102,21 @@ def login_user(user: AdminUser | User, remember=False, duration=None, force=Fals
 def login_required(roles: set[Role] | None = None, node_auth: bool = False):
 
     def decorator(func):
-        from flask import has_app_context, current_app
+        from flask import has_app_context
+
         # Conditionally apply x if has_app_context() is true
         if has_app_context():
-            func = current_app.doc(security='Hiddify-API-Key')(func)
+            func = current_app.doc(security=[{"Hiddify-API-Key": []}])(func)
 
         # Always apply y
         func = login_required2(roles, node_auth)(func)
         return func
+
     return decorator
 
 
 def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
-    '''When both roles and node_auth is set, means authentication can be done by either uuid or unique_id'''
+    """When both roles and node_auth is set, means authentication can be done by either uuid or unique_id"""
 
     def wrapper(fn):
 
@@ -120,7 +124,7 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
         def decorated_view(*args, **kwargs):
             # print('xxxx', current_account)
             if node_auth and not Child.node and not roles:
-                json_abort(403, 'Unauthorized node')
+                json_abort(403, "Unauthorized node")
             if not current_account and not node_auth:
                 return redirect_to_login()  # type: ignore
             if roles and not Child.node:
@@ -128,7 +132,9 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
                 if account_role not in roles:
                     return redirect_to_login()  # type: ignore
             return fn(*args, **kwargs)
+
         return decorated_view
+
     return wrapper
 
 
@@ -139,14 +145,14 @@ def get_account_by_api_key(api_key, is_admin):
 
 
 def get_account_by_uuid(uuid, is_admin):
-    return AdminUser.by_uuid(f'{uuid}') if is_admin else User.by_uuid(f'{uuid}')
+    return AdminUser.by_uuid(f"{uuid}") if is_admin else User.by_uuid(f"{uuid}")
 
 
-def login_by_uuid(uuid,password:str, is_admin: bool)->bool:
+def login_by_uuid(uuid, password: str, is_admin: bool) -> bool:
     account = get_account_by_uuid(uuid, is_admin)
     if not account:
         return False
-    if account.password!=password:
+    if account.password != password:
         return False
     return login_user(account, force=True)
 
@@ -154,9 +160,9 @@ def login_by_uuid(uuid,password:str, is_admin: bool)->bool:
 def _account_id_from_session_token(token: str) -> int | None:
     if not token:
         return None
-    if '_' in token:
+    if "_" in token:
         try:
-            return int(token.split('_', 1)[1])
+            return int(token.split("_", 1)[1])
         except (ValueError, IndexError):
             return None
     try:
@@ -167,8 +173,8 @@ def _account_id_from_session_token(token: str) -> int | None:
 
 def _is_webmanifest_request() -> bool:
     """PWA manifest only — avoid broad substring bypass on arbitrary paths."""
-    path = request.path.rstrip('/')
-    return path.endswith('/manifest.webmanifest') or path == 'manifest.webmanifest'
+    path = request.path.rstrip("/")
+    return path.endswith("/manifest.webmanifest") or path == "manifest.webmanifest"
 
 
 def auth_before_request():
@@ -190,12 +196,12 @@ def auth_before_request():
         # print("uuid", g.uuid, is_admin_path)
         account = get_account_by_uuid(g.uuid, is_admin_path)
         # print(account)
-        if not account or account.password!="":
+        if not account or account.password != "":
             return logout_redirect()
         if is_admin_path:
             next_url = request.url
-            next_url = next_url.replace(f'/{g.uuid}/', '/admin/')
-            next_url = next_url.replace("/admin/admin/", '/admin/')
+            next_url = next_url.replace(f"/{g.uuid}/", "/admin/")
+            next_url = next_url.replace("/admin/admin/", "/admin/")
             next_url = next_url.replace("http://", "https://")
 
     elif apikey := request.headers.get("Hiddify-API-Key"):
@@ -220,7 +226,7 @@ def auth_before_request():
         if not account:
             return logout_redirect()
 
-    elif (session_user := session.get('_user_id')) and not is_admin_path:
+    elif (session_user := session.get("_user_id")) and not is_admin_path:
         # print('session_user', session_user)
         user_id = _account_id_from_session_token(session_user)
         if user_id is None:
@@ -228,7 +234,7 @@ def auth_before_request():
         account = User.by_id(user_id)  # type: ignore
         if not account:
             return logout_redirect()
-    elif (session_admin := session.get('_admin_id')) and is_admin_path:
+    elif (session_admin := session.get("_admin_id")) and is_admin_path:
         # print('session_admin', session_admin)
         admin_id = _account_id_from_session_token(session_admin)
         if admin_id is None:
@@ -247,7 +253,7 @@ def auth_before_request():
             return
         if next_url is None:
             return
-        if not g.user_agent['is_browser']:
+        if not g.user_agent["is_browser"]:
             return
         if _is_webmanifest_request():
             return
@@ -263,13 +269,14 @@ def logout_redirect():
 
 def redirect_to_login():
     if hutils.flask.is_api_call(request.path):
-        json_abort(403, 'Unathorized')
+        json_abort(403, "Unathorized")
     # if g.user_agent['is_browser']:
     # return redirect(hurl_for('common_bp.LoginView:basic_0', force=1, next=request.path))
-    return redirect(hurl_for('common_bp.LoginView:index', force=1, next=request.path.replace(f'{g.uuid}/',''),user=g.uuid))
+    return redirect(hurl_for("common_bp.LoginView:index", force=1, next=request.path.replace(f"{g.uuid}/", ""), user=g.uuid))
 
     # else:
     #     abort(401, "Unauthorized")
     # return f'/{request.path.split("/")[1]}/?force=1&redirect={request.path}'
+
 
 # @login_manager.request_loader

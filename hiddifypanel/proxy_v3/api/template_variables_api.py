@@ -1,12 +1,12 @@
-from flask import g, request
+from flask import request
 from flask.views import MethodView
-from flask import current_app as app
 
 from hiddifypanel.auth import login_required
 from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3.template_variables import build_template_variables
 
 from .schemas import TemplateVariablesOut
+from hiddifypanel import g, current_app as app
 
 
 def _child_id() -> int:

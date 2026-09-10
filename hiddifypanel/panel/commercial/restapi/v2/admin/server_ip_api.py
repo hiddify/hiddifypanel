@@ -1,7 +1,5 @@
-from flask import g
 from flask.views import MethodView
-from apiflask import Schema, fields
-from flask import current_app as app
+from pydantic import Field
 
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
@@ -9,31 +7,40 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.models.server_ip import ServerIp
 from hiddifypanel.health_check import run_domain_health_check, run_ip_health_check
 from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
+from hiddifypanel import g, current_app as app
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 
 def _child_id() -> int:
     return g.child.id if g.child else 0
 
 
-class ServerIpSchema(Schema):
-    id = fields.Integer(dump_only=True)
-    child_id = fields.Integer()
-    address = fields.String(required=True)
-    version = fields.Integer(load_default=4)
-    enabled = fields.Boolean(load_default=True)
-    is_auto = fields.Boolean(dump_only=True)
-    label = fields.String(load_default='')
-    health_status = fields.String(dump_only=True)
-    last_health_check = fields.String(dump_only=True)
-    last_health_error = fields.String(dump_only=True)
+class ServerIpSchema(ApiModel):
+    id: int | None = None
+    child_id: int | None = None
+    address: str
+    version: int = 4
+    enabled: bool = True
+    is_auto: bool | None = None
+    label: str = ''
+    health_status: str | None = None
+    last_health_check: str | None = None
+    last_health_error: str | None = None
 
 
-class HealthCheckResultSchema(Schema):
-    ok = fields.Boolean()
-    url = fields.String()
-    result = fields.String()
-    error = fields.String()
-    probe_host = fields.String()
+class PatchServerIpSchema(ApiModel):
+    address: str | None = None
+    version: int | None = None
+    enabled: bool | None = None
+    label: str | None = None
+
+
+class HealthCheckResultSchema(ApiModel):
+    ok: bool | None = None
+    url: str | None = None
+    result: str | None = None
+    error: str | None = None
+    probe_host: str | None = None
 
 
 class ServerIpsApi(MethodView):
@@ -47,14 +54,15 @@ class ServerIpsApi(MethodView):
 
     @app.input(ServerIpSchema, arg_name='data')  # type: ignore
     @app.output(ServerIpSchema)  # type: ignore
-    def post(self, data):
+    def post(self, data: ServerIpSchema):
+        payload = data.model_dump(exclude_unset=True)
         row = ServerIp(
             child_id=_child_id(),
-            address=str(data['address']).strip(),
-            version=int(data.get('version') or 4),
-            enabled=bool(data.get('enabled', True)),
+            address=str(payload['address']).strip(),
+            version=int(payload.get('version') or 4),
+            enabled=bool(payload.get('enabled', True)),
             is_auto=False,
-            label=str(data.get('label') or ''),
+            label=str(payload.get('label') or ''),
         )
         db.session.add(row)
         db.session.commit()
@@ -72,21 +80,22 @@ class ServerIpApi(MethodView):
             abort(404, 'Server IP not found')
         return row.to_dict()
 
-    @app.input(ServerIpSchema(partial=True), arg_name='data')  # type: ignore
+    @app.input(PatchServerIpSchema, arg_name='data')  # type: ignore
     @app.output(ServerIpSchema)  # type: ignore
-    def patch(self, ip_id: int, data):
+    def patch(self, ip_id: int, data: PatchServerIpSchema):
         row = ServerIp.query.filter(ServerIp.id == ip_id, ServerIp.child_id == _child_id()).first()
         if not row:
             from apiflask import abort
             abort(404, 'Server IP not found')
-        if 'address' in data:
-            row.address = str(data['address']).strip()
-        if 'version' in data:
-            row.version = int(data['version'])
-        if 'enabled' in data:
-            row.enabled = bool(data['enabled'])
-        if 'label' in data:
-            row.label = str(data['label'] or '')
+        payload = data.model_dump(exclude_unset=True)
+        if 'address' in payload:
+            row.address = str(payload['address']).strip()
+        if 'version' in payload:
+            row.version = int(payload['version'])
+        if 'enabled' in payload:
+            row.enabled = bool(payload['enabled'])
+        if 'label' in payload:
+            row.label = str(payload['label'] or '')
         db.session.commit()
         return row.to_dict()
 

@@ -1,18 +1,15 @@
-import json5
 import datetime
 from enum import auto
 from uuid import uuid4
-from hiddifypanel.models.role import Role
-from dateutil import relativedelta
 
-from strenum import StrEnum
+import json5
 from sqlalchemy import event
+from strenum import StrEnum
 
 from hiddifypanel.database import db
-from hiddifypanel.models.config_enum import Lang
-from hiddifypanel.models.base_account import BaseAccount
 from hiddifypanel.models.admin import AdminUser
-
+from hiddifypanel.models.base_account import BaseAccount
+from hiddifypanel.models.role import Role
 
 ONE_GIG = 1024 * 1024 * 1024
 
@@ -304,10 +301,9 @@ class User(BaseAccount):
         return schema.dump(User())
 
     def to_schema(self):
-        user_dict = self.to_dict(dump_id=True)
-        from hiddifypanel.panel.commercial.restapi.v2.admin.user_api import UserSchema
+        from hiddifypanel.panel.commercial.restapi.v2.admin.schema import UserSchema
 
-        return UserSchema().load(user_dict)
+        return UserSchema.model_validate(self.to_dict(dump_id=True))
 
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
         base = super().to_dict()
@@ -316,7 +312,7 @@ class User(BaseAccount):
         if dump_id:
             base["id"] = self.id
         if not base.get("lang"):
-            from hiddifypanel.models import hconfig, ConfigEnum
+            from hiddifypanel.models import ConfigEnum, hconfig
 
             base["lang"] = hconfig(ConfigEnum.lang)
         return {

@@ -1,11 +1,11 @@
-
-from strenum import StrEnum
 from enum import auto
-from sqlalchemy import Column, String, Integer, Boolean, Enum, ForeignKey
+
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped
+from sqlalchemy.types import JSON
+from strenum import StrEnum
 
 from hiddifypanel.database import db
-
-from sqlalchemy.types import JSON
 
 
 class ProxyTransport(StrEnum):
@@ -70,16 +70,16 @@ class ProxyL3(StrEnum):
     custom = auto()
 
 
-class Proxy(db.Model):  # type: ignore
+class Proxy(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    child_id = Column(Integer, ForeignKey('child.id'), default=0)
+    child_id: Mapped[int] = Column(Integer, ForeignKey("child.id"), default=0)
     name = Column(String(200), nullable=False, unique=False)
     enable = Column(Boolean, nullable=False)
     proto = Column(Enum(ProxyProto), nullable=False)
     l3 = Column(Enum(ProxyL3), nullable=False)
     transport = Column(Enum(ProxyTransport), nullable=False)
     cdn = Column(Enum(ProxyCDN), nullable=False)
-    params = Column(JSON,default={})
+    params = Column(JSON, default={})
 
     @property
     def enabled(self):
@@ -87,14 +87,14 @@ class Proxy(db.Model):  # type: ignore
 
     def to_dict(self):
         return {
-            'name': self.name,
-            'enable': self.enable,
-            'proto': self.proto,
-            'l3': self.l3,
-            'transport': self.transport,
-            'cdn': self.cdn,
-            'child_unique_id': self.child.unique_id if self.child else '',
-            'params': self.params
+            "name": self.name,
+            "enable": self.enable,
+            "proto": self.proto,
+            "l3": self.l3,
+            "transport": self.transport,
+            "cdn": self.cdn,
+            "child_unique_id": self.child.unique_id if self.child else "",
+            "params": self.params,
         }
 
     def __str__(self):
@@ -102,22 +102,22 @@ class Proxy(db.Model):  # type: ignore
 
     @staticmethod
     def add_or_update(commit=True, child_id=0, **proxy):
-        dbproxy = Proxy.query.filter(Proxy.name == proxy['name']).first()
+        dbproxy = Proxy.query.filter(Proxy.name == proxy["name"]).first()
         if not dbproxy:
             dbproxy = Proxy()
-            db.session.add(dbproxy)  # type: ignore
-        dbproxy.enable = proxy['enable']
-        dbproxy.name = proxy['name']
-        dbproxy.proto = proxy['proto']
-        if proxy['transport']=="splithttp":
-            proxy['transport']="xhttp"
-        dbproxy.transport = proxy['transport']
-        dbproxy.cdn = proxy['cdn']
-        dbproxy.l3 = proxy['l3']
-        dbproxy.params=proxy['params']
+            db.session.add(dbproxy)
+        dbproxy.enable = proxy["enable"]
+        dbproxy.name = proxy["name"]
+        dbproxy.proto = proxy["proto"]
+        if proxy["transport"] == "splithttp":
+            proxy["transport"] = "xhttp"
+        dbproxy.transport = proxy["transport"]
+        dbproxy.cdn = proxy["cdn"]
+        dbproxy.l3 = proxy["l3"]
+        dbproxy.params = proxy["params"]
         dbproxy.child_id = child_id
         if commit:
-            db.session.commit()  # type: ignore
+            db.session.commit()
 
     @staticmethod
     def from_schema(schema):
@@ -126,13 +126,15 @@ class Proxy(db.Model):  # type: ignore
     def to_schema(self):
         proxy_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import ProxySchema
-        return ProxySchema().load(proxy_dict)
+
+        return ProxySchema.model_validate(proxy_dict)
 
     @staticmethod
     def bulk_register(proxies, commit=True, force_child_unique_id: str | None = None):
         from hiddifypanel.panel import hiddify
+
         for proxy in proxies:
             child_id = hiddify.get_child(unique_id=force_child_unique_id)
             Proxy.add_or_update(commit=False, child_id=child_id, **proxy)
         if commit:
-            db.session.commit()  # type: ignore
+            db.session.commit()

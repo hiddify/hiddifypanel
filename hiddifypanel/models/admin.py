@@ -1,14 +1,14 @@
 from enum import auto
 from uuid import uuid4
-from hiddifypanel import g
-from hiddifypanel.models.usage import DailyUsage
-from sqlalchemy import event, Column, Integer, Enum, Boolean, ForeignKey
+
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, event
 from strenum import StrEnum
 
-
+from hiddifypanel import g
 from hiddifypanel.database import db, db_execute
-from hiddifypanel.models.role import Role
 from hiddifypanel.models.base_account import BaseAccount
+from hiddifypanel.models.role import Role
+from hiddifypanel.models.usage import DailyUsage
 
 
 class AdminMode(StrEnum):
@@ -35,10 +35,10 @@ class AdminUser(BaseAccount):
     can_add_admin = Column(Boolean, default=False, nullable=False)
     max_users = Column(Integer, default=100, nullable=False)
     max_active_users = Column(Integer, default=100, nullable=False)
-    users = db.relationship("User", backref="admin")  # type: ignore
-    usages = db.relationship("DailyUsage", backref="admin")  # type: ignore
+    users = db.relationship("User", backref="admin")
+    usages = db.relationship("DailyUsage", backref="admin")
     parent_admin_id = Column(Integer, ForeignKey("admin_user.id"), default=1)
-    parent_admin = db.relationship("AdminUser", remote_side=[id], backref="sub_admins")  # type: ignore
+    parent_admin = db.relationship("AdminUser", remote_side=[id], backref="sub_admins")
 
     @property
     def role(self) -> Role | None:
@@ -56,10 +56,9 @@ class AdminUser(BaseAccount):
         return schema.dump(AdminUser())
 
     def to_schema(self):
-        admin_dict = self.to_dict()
-        from hiddifypanel.panel.commercial.restapi.v2.admin.admin_user_api import AdminSchema
+        from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema
 
-        return AdminSchema().load(admin_dict)
+        return AdminSchema.model_validate(self.to_dict())
 
     def get_id(self) -> str | None:
         return f"admin_{self.id}"
@@ -69,7 +68,7 @@ class AdminUser(BaseAccount):
         if dump_id:
             base["id"] = self.id
         if not base.get("lang"):
-            from hiddifypanel.models import hconfig, ConfigEnum
+            from hiddifypanel.models import ConfigEnum, hconfig
 
             base["lang"] = hconfig(ConfigEnum.admin_lang)
         return {
@@ -99,7 +98,7 @@ class AdminUser(BaseAccount):
         return account
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, **data):
+    def add_or_update(cls, commit: bool = True, old_uuid=None, **data):
 
         dbuser = super().add_or_update(commit=commit, **data)
 
@@ -109,7 +108,7 @@ class AdminUser(BaseAccount):
                 parent_admin = cls.current_admin_or_owner()
             else:
                 parent_admin = cls.by_uuid(parent, create=True)
-            dbuser.parent_admin_id = parent_admin.id  # type: ignore
+            dbuser.parent_admin_id = parent_admin.id
         if data.get("mode") is not None:
             dbuser.mode = data.get("mode", AdminMode.agent)
         if data.get("can_add_admin") is not None:
@@ -155,8 +154,8 @@ class AdminUser(BaseAccount):
     def remove(self):
         if self.id == 1 or self.id == g.account.id:
             # raise ValidationError(_("Owner can not be deleted!"))
-            from flask_babel import gettext as __
             from apiflask import abort
+            from flask_babel import gettext as __
 
             abort(422, __("Owner can not be deleted!"))
         users = self.recursive_users_query().all()

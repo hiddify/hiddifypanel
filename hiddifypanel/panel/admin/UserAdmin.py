@@ -3,7 +3,7 @@ import re
 import uuid
 
 from apiflask import abort
-from flask import g, request  # type: ignore
+from flask import request  # type: ignore
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import tools
 from flask_babel import gettext as __
@@ -12,7 +12,7 @@ from flask_bootstrap import SwitchField
 from markupsafe import Markup
 from wtforms.validators import NumberRange, Regexp, ValidationError
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.hutils.flask import hurl_for

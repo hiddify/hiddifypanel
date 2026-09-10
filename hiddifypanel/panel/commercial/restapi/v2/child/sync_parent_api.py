@@ -1,12 +1,11 @@
 from apiflask import abort
 from flask.views import MethodView
 from flask_babel import lazy_gettext as _
-from flask import g
 from loguru import logger
 
 from hiddifypanel.models.child import Child
 from hiddifypanel.auth import login_required
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 
 
 class SyncWithParentApi(MethodView):

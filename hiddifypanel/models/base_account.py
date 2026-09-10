@@ -1,22 +1,23 @@
-import datetime
 import uuid
-from hiddifypanel.models.role import Role
-from sqlalchemy import Column, String, BigInteger, Enum
 
 from flask_login import UserMixin as FlaskLoginUserMixin
-from hiddifypanel.models.config_enum import Lang
+from sqlalchemy import BigInteger, Column, Enum, String
+from sqlalchemy.orm import Mapped, mapped_column
+
 from hiddifypanel.database import db
+from hiddifypanel.models.config_enum import Lang
+from hiddifypanel.models.role import Role
 
 
-class BaseAccount(db.Model, FlaskLoginUserMixin):  # type: ignore
+class BaseAccount(db.Model, FlaskLoginUserMixin):
     __abstract__ = True
-    uuid = Column(String(36), default=lambda: str(uuid.uuid4()), nullable=False, unique=True, index=True)
-    name = Column(String(512), nullable=False, default="")
-    username = Column(String(100), nullable=True, default="", index=True)
-    password = Column(String(100), nullable=True, default="")
-    comment = Column(String(512), nullable=True, default="")
-    telegram_id = Column(BigInteger, nullable=True, default=None, index=True)
-    lang = Column(Enum(Lang), default=None)
+    uuid: Mapped[str] = Column(String(36), default=lambda: str(uuid.uuid4()), nullable=False, unique=True, index=True)
+    name: Mapped[str] = Column(String(512), nullable=False, default="")
+    username: Mapped[str] = Column(String(100), nullable=True, default="", index=True)
+    password: Mapped[str] = Column(String(100), nullable=True, default="")
+    comment: Mapped[str] = Column(String(512), nullable=True, default="")
+    telegram_id: Mapped[int | None] = Column(BigInteger, nullable=True, default=None, index=True)
+    lang: Mapped[Lang] = mapped_column(Enum(Lang), default=None)
 
     @property
     def role(self) -> Role | None:
@@ -45,7 +46,7 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):  # type: ignore
         return db.session.query(cls).get(id)
 
     @classmethod
-    def by_uuid(cls, uuid: str, create: bool = False):
+    def by_uuid(cls, uuid: str | None, create: bool = False):
         if not isinstance(uuid, str):
             uuid = str(uuid)
         account = cls.query.filter(cls.uuid == uuid).first()
@@ -58,24 +59,25 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):  # type: ignore
         return cls.query.filter(cls.username == username, cls.password == password).first()
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, old_uuid=None, **data):
+    def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data):
+
         db_account: BaseAccount = cls.by_uuid(old_uuid or data.get("uuid"), create=True)
         from hiddifypanel import hutils
 
-        if hutils.auth.is_uuid_valid(data.get("uuid")):
+        if (uuid := data.get("uuid")) and hutils.auth.is_uuid_valid(uuid):
             db_account.uuid = data["uuid"]
 
-        if data.get("name") is not None:
-            db_account.name = data.get("name")
+        if (name := data.get("name")) and isinstance(name, str):
+            db_account.name = name
 
-        if data.get("comment") is not None:
-            db_account.comment = data.get("comment")
-        if data.get("telegram_id") is not None:
-            db_account.telegram_id = hutils.convert.to_int(data.get("telegram_id"))
-        if data.get("lang") is not None:
-            db_account.lang = data.get("lang")
+        if (comment := data.get("comment")) and isinstance(comment, str):
+            db_account.comment = comment
+        if (telegram_id := data.get("telegram_id")) and isinstance(telegram_id, int):
+            db_account.telegram_id = hutils.convert.to_int(telegram_id)
+        if (lang := data.get("lang")) and isinstance(lang, Lang):
+            db_account.lang = lang
         if commit:
-            db.session.commit()  # type: ignore
+            db.session.commit()
         return db_account
 
     @classmethod
@@ -86,6 +88,6 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):  # type: ignore
             dd = {str(u["uuid"]): 1 for u in accounts}
             for d in cls.query.all():
                 if d.uuid not in dd:
-                    db.session.delete(d)  # type: ignore
+                    db.session.delete(d)
         if commit:
-            db.session.commit()  # type: ignore
+            db.session.commit()

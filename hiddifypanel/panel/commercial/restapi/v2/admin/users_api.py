@@ -1,37 +1,40 @@
-from flask.views import MethodView
-from flask import current_app as app, g
 from apiflask import abort
+from flask.views import MethodView
+
+from hiddifypanel import current_app as app
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
-from hiddifypanel.models.role import Role
-from hiddifypanel.panel import hiddify
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import User
-from .user_api import UserSchema, PostUserSchema
-from . import has_permission
-from apiflask import fields
+from hiddifypanel.models.role import Role
+from hiddifypanel.panel import hiddify
+
+from .schema import PostUserSchema, UserSchema
+
 
 class UsersApi(MethodView):
     decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
 
-    @app.output(list[UserSchema])  # type: ignore
+    @app.output(list[UserSchema])
     def get(self):
         """User: List users of current admin"""
 
         users = User.query.filter(User.added_by.in_(g.account.recursive_sub_admins_ids())).all() or abort(404, "You have no user")
-        return [user.to_schema() for user in users]  # type: ignore
+        return [user.to_schema() for user in users]
 
-    @app.input(PostUserSchema, arg_name="data")  # type: ignore
-    @app.output(UserSchema)  # type: ignore
-    def post(self, data):
+    @app.input(PostUserSchema, arg_name="data")
+    @app.output(UserSchema)
+    def post(self, data: PostUserSchema):
         """User: Create a user"""
+        payload = data.model_dump(exclude_none=True)
 
-        if data.get("uuid") and User.by_uuid(data['uuid']):
-            abort(400, 'The user exists')
+        if payload.get("uuid") and User.by_uuid(payload["uuid"]):
+            abort(400, "The user exists")
 
-        if not data.get('added_by_uuid'):
-            data['added_by_uuid'] = g.account.uuid
+        if not payload.get("added_by_uuid"):
+            payload["added_by_uuid"] = g.account.uuid
 
-        dbuser = User.add_or_update(**data) or abort(502, "Unknown issue: User is not added")
+        dbuser = User.add_or_update(**payload) or abort(502, "Unknown issue: User is not added")
         user_driver.add_client(dbuser)
         hiddify.quick_apply_users()
         return dbuser.to_schema()

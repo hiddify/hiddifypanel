@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from flask import g, request
+from flask import request
 from flask_babel import gettext as _, get_locale
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.hutils.flask import get_proxy_stats_url, hurl_for
 from hiddifypanel.models import ConfigEnum, Domain, User, hconfig
 from hiddifypanel.panel import hiddify

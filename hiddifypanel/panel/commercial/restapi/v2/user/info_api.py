@@ -1,45 +1,42 @@
-from urllib.parse import urlparse
+from flask import request
 from flask.views import MethodView
-from apiflask import Schema
-from apiflask.fields import Integer, String, Float, URL, Enum, Boolean
-from flask import g, request
-from flask import current_app as app
-from hiddifypanel import hutils, auth
-from hiddifypanel.auth import login_required
-
 from flask_babel import gettext as _
+
+from hiddifypanel import auth, g, hutils
+from hiddifypanel import current_app as app
+from hiddifypanel.auth import login_required
+from hiddifypanel.database import db
 from hiddifypanel.models import Lang
-from hiddifypanel.models.role import Role
-from hiddifypanel.models.user import User
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
-from hiddifypanel.database import db
+from hiddifypanel.models.role import Role
+from hiddifypanel.models.user import User
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.panel.user.user import get_common_data
-from hiddifypanel.panel import hiddify
 
 
-class ProfileSchema(Schema):
-    profile_title = String(required=True)
-    profile_url = URL(required=True)
-    profile_usage_current = Float(required=True)
-    profile_usage_total = Float(required=True)
-    profile_remaining_days = Integer(required=True)
-    profile_reset_days = Integer()
-    telegram_bot_url = String()
-    telegram_id = Integer()
-    admin_message_html = String()
-    admin_message_url = URL()
-    brand_title = String()
-    brand_icon_url = URL()
-    doh = URL()
-    lang = Enum(Lang, required=True)
-    speedtest_enable = Boolean(required=True)
-    telegram_proxy_enable = Boolean(required=True)
+class ProfileSchema(ApiModel):
+    profile_title: str = ""
+    profile_url: str = ""
+    profile_usage_current: float = 0
+    profile_usage_total: float = 0
+    profile_remaining_days: int = 0
+    profile_reset_days: int | None = None
+    telegram_bot_url: str = ""
+    telegram_id: int | None = None
+    admin_message_html: str = ""
+    admin_message_url: str = ""
+    brand_title: str = ""
+    brand_icon_url: str = ""
+    doh: str = ""
+    lang: Lang = Lang.en
+    speedtest_enable: bool = False
+    telegram_proxy_enable: bool = False
 
 
-class UserInfoChangableSchema(Schema):
-    language = Enum(Lang, required=False)
-    telegram_id = Integer(required=False)
+class UserInfoChangableSchema(ApiModel):
+    language: Lang | None = None
+    telegram_id: int | None = None
 
 
 class InfoAPI(MethodView):
@@ -77,15 +74,15 @@ class InfoAPI(MethodView):
 
     @app.input(UserInfoChangableSchema, arg_name='data')
     def patch(self, data: UserInfoChangableSchema):
-        if data['telegram_id'] and hutils.convert.is_int(data['telegram_id']):
+        if data.telegram_id:
             user = User.by_uuid(g.account.uuid)
-            if user.telegram_id != data['telegram_id']:
-                user.telegram_id = data['telegram_id']
+            if user.telegram_id != data.telegram_id:
+                user.telegram_id = data.telegram_id
                 db.session.commit()
 
-        if data['language']:
+        if data.language:
             user = User.by_uuid(g.account.uuid)
-            if user.lang != data['language']:
-                user.lang = data['language']
+            if user.lang != data.language:
+                user.lang = data.language
                 db.session.commit()
         return {'message': 'ok'}

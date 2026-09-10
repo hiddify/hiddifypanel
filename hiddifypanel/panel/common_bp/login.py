@@ -1,9 +1,8 @@
 from flask_classful import FlaskView, route
-from hiddifypanel import hutils
+from hiddifypanel import g, current_app as app, hutils
 from hiddifypanel.auth import login_required, current_account, login_user, logout_user, login_by_uuid
-from flask import redirect, request, g, render_template, flash, jsonify
+from flask import redirect, request, render_template, flash, jsonify
 from hiddifypanel.hutils.flask import hurl_for
-from flask import current_app as app
 from flask_babel import lazy_gettext as _
 from apiflask import abort
 import hiddifypanel.panel.hiddify as hiddify

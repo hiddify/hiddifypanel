@@ -1,5 +1,5 @@
 from hiddifypanel.cache import cache
-from hiddifypanel import __version__
+from hiddifypanel import g, current_app as app, __version__
 from hiddifypanel.panel import hiddify, custom_widgets
 from hiddifypanel.database import db
 from hiddifypanel.models import *
@@ -10,11 +10,10 @@ import flask_babel
 from flask_babel import lazy_gettext as _
 
 # from flask_babelex import gettext as _
-from flask import render_template, g  # type: ignore
+from flask import render_template  # type: ignore
 from markupsafe import Markup
 
 from hiddifypanel.hutils.flask import hurl_for
-from flask import current_app as app
 from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 import wtforms as wtf

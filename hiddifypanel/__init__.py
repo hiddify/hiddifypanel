@@ -18,6 +18,15 @@ from . import Events
 from .base import create_app, create_app_wsgi
 from .VERSION import __release_time__, __version__, is_released_version
 
-__all__ = ["create_app", "create_app_wsgi", "current_app", "__release_time__", "__version__", "is_released_version", "Events"]
+__all__ = [
+    "create_app",
+    "create_app_wsgi",
+    "current_app",
+    "g",
+    "__release_time__",
+    "__version__",
+    "is_released_version",
+    "Events",
+]
 
 # application = create_app_wsgi()

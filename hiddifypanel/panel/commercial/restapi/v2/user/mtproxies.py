@@ -1,21 +1,20 @@
+from apiflask import abort
 from flask.views import MethodView
-from apiflask import Schema, abort
-from flask import g
-from flask import current_app as app
-from apiflask.fields import String
-from hiddifypanel.auth import login_required
 
-from hiddifypanel.models.config import get_hconfigs, hconfig
+from hiddifypanel import current_app as app
+from hiddifypanel import g
+from hiddifypanel.auth import login_required
+from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.domain import DomainType
 from hiddifypanel.models.role import Role
-
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.panel.user.user import get_common_data
-from apiflask import fields
 
-class MtproxySchema(Schema):
-    link = String(required=True)
-    title = String(required=True)
+
+class MtproxySchema(ApiModel):
+    link: str = ""
+    title: str = ""
 
 
 class MTProxiesAPI(MethodView):
@@ -23,24 +22,24 @@ class MTProxiesAPI(MethodView):
 
     @app.output(list[MtproxySchema])
     def get(self):
-        c = get_common_data(g.account.uuid, 'new')
+        c = get_common_data(g.account.uuid, "new")
 
-        if not c['telegram_enable']:
+        if not c["telegram_enable"]:
             abort(status_code=404, message="Telegram mtproxy is not enable")
 
         dtos = []
         # TODO: Remove duplicated domains mapped to a same ipv4 and v6
-        for d in c['domains']:
+        for d in c["domains"]:
             if d.mode not in [DomainType.direct, DomainType.relay, DomainType.old_xtls_direct]:
                 continue
 
             # make mtproxy link
             raw_sec = hconfig(ConfigEnum.shared_secret, d.child_id)
-            if hconfig(ConfigEnum.telegram_lib)=="telemt":
-                raw_sec=g.account.uuid
-            secret_hex = str(raw_sec).replace('-', '')
-            telegram_faketls_domain_hex = hconfig(ConfigEnum.telegram_fakedomain, d.child_id).encode('utf-8').hex()
-            server_link = f'tg://proxy?server={d.domain}&port=443&secret=ee{secret_hex}{telegram_faketls_domain_hex}'
+            if hconfig(ConfigEnum.telegram_lib) == "telemt":
+                raw_sec = g.account.uuid
+            secret_hex = str(raw_sec).replace("-", "")
+            telegram_faketls_domain_hex = hconfig(ConfigEnum.telegram_fakedomain, d.child_id).encode("utf-8").hex()
+            server_link = f"tg://proxy?server={d.domain}&port=443&secret=ee{secret_hex}{telegram_faketls_domain_hex}"
 
             dto = MtproxySchema()
             dto.title = d.alias or d.domain

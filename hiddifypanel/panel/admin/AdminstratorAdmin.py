@@ -9,13 +9,11 @@ from wtforms.validators import Regexp
 from flask_babel import gettext as __
 from flask import request  # type: ignore
 from markupsafe import Markup
-
-from flask import g
 import datetime
 from wtforms import PasswordField, SelectField
 
 from hiddifypanel.panel import hiddify
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 
 
 class AdminModeField(SelectField):

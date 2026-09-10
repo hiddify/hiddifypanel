@@ -1,12 +1,12 @@
 from typing import List
-from flask import g, request
+from flask import request
 from apiflask import abort
 from flask_restful import Resource
 # from flask_simplelogin import login_required
 import datetime
 
 from hiddifypanel.auth import login_required
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.models import *
 from .tgbot import bot
 

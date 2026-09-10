@@ -2,23 +2,21 @@ import secrets
 import string
 
 from apiflask import abort
-from flask import current_app as app
-from flask import g
 from flask.views import MethodView
 
+from hiddifypanel import current_app as app
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.models.custom_proxy import (
     TEMPLATE_CATEGORIES_ACTIVE,
     ClientCore,
     CustomProxy,
     CustomProxyMode,
-    InboundTcpUdp,
     CustomProxyTransport,
+    InboundTcpUdp,
     ServerCore,
     TlsLayer,
     normalize_custom_path,
-    validate_tls_layer_domain_modes,
-    _parse_tls_layer,
 )
 from hiddifypanel.models.proxy import ProxyProto
 from hiddifypanel.models.role import Role
@@ -203,13 +201,13 @@ def _prepare_create_data(data: dict) -> dict:
 class CustomProxiesApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.output(list[CustomProxySchema])  # type: ignore
+    @app.output(list[CustomProxySchema])
     def get(self):
         proxies = CustomProxy.query.filter(CustomProxy.child_id == _child_id()).order_by(CustomProxy.sort_order, CustomProxy.id).all()
         return [p.to_dict() for p in proxies]
 
-    @app.input(CustomProxySchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxySchema)  # type: ignore
+    @app.input(CustomProxySchema, arg_name="data")
+    @app.output(CustomProxySchema)
     def post(self, data):
         data = _prepare_create_data(data)
         proxy = CustomProxy.add_or_update(child_id=_child_id(), **data)
@@ -219,12 +217,12 @@ class CustomProxiesApi(MethodView):
 class CustomProxyApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.output(CustomProxySchema)  # type: ignore
+    @app.output(CustomProxySchema)
     def get(self, proxy_id: int):
         return _get_proxy_or_404(proxy_id).to_dict()
 
-    @app.input(PatchCustomProxySchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxySchema)  # type: ignore
+    @app.input(PatchCustomProxySchema, arg_name="data")
+    @app.output(CustomProxySchema)
     def patch(self, proxy_id: int, data):
         proxy = _get_proxy_or_404(proxy_id)
         merged = proxy.to_dict()
@@ -249,8 +247,8 @@ class CustomProxyApi(MethodView):
 class CustomProxyEnableApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyEnableSchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxySchema)  # type: ignore
+    @app.input(CustomProxyEnableSchema, arg_name="data")
+    @app.output(CustomProxySchema)
     def patch(self, proxy_id: int, data):
         proxy = _get_proxy_or_404(proxy_id)
         if data["enable"] and proxy.blocked_parent_enables():
@@ -266,7 +264,7 @@ class CustomProxyEnableApi(MethodView):
 class CustomProxyDuplicateApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.output(CustomProxySchema)  # type: ignore
+    @app.output(CustomProxySchema)
     def post(self, proxy_id: int):
         proxy = _get_proxy_or_404(proxy_id)
         new_proxy = proxy.duplicate(child_id=_child_id())
@@ -276,8 +274,8 @@ class CustomProxyDuplicateApi(MethodView):
 class CustomProxyValidateApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyValidateSchema, arg_name="data")  # type: ignore
-    @app.output(ValidationResultSchema)  # type: ignore
+    @app.input(CustomProxyValidateSchema, arg_name="data")
+    @app.output(ValidationResultSchema)
     def post(self, data):
         try:
             return validate_proxy_payload(data, child_id=_child_id(), proxy_id=data.get("id"))
@@ -294,8 +292,8 @@ class CustomProxyValidateApi(MethodView):
 class CustomProxyValidateByIdApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyValidateSchema, arg_name="data")  # type: ignore
-    @app.output(ValidationResultSchema)  # type: ignore
+    @app.input(CustomProxyValidateSchema, arg_name="data")
+    @app.output(ValidationResultSchema)
     def post(self, proxy_id: int, data):
         try:
             proxy = _get_proxy_or_404(proxy_id)
@@ -343,8 +341,8 @@ def _generate_example_response(proxy_id: int, context: dict | None):
 class CustomProxyPreviewApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyPreviewSchema, arg_name="data")  # type: ignore
-    @app.output(TemplatePreviewResultSchema)  # type: ignore
+    @app.input(CustomProxyPreviewSchema, arg_name="data")
+    @app.output(TemplatePreviewResultSchema)
     def post(self, data):
         payload = dict(data or {})
         proxy = dict(payload.get("proxy") or {})
@@ -369,8 +367,8 @@ class CustomProxyPreviewApi(MethodView):
 class CustomProxyGenerateExampleApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyGenerateExampleWithIdSchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxyGenerateResultSchema)  # type: ignore
+    @app.input(CustomProxyGenerateExampleWithIdSchema, arg_name="data")
+    @app.output(CustomProxyGenerateResultSchema)
     def post(self, data):
         proxy_id = _resolve_generate_proxy_id(None, data)
         _get_proxy_or_404(proxy_id)
@@ -380,8 +378,8 @@ class CustomProxyGenerateExampleApi(MethodView):
 class CustomProxyGenerateExampleByIdApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyGenerateExampleByIdInputSchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxyGenerateResultSchema)  # type: ignore
+    @app.input(CustomProxyGenerateExampleByIdInputSchema, arg_name="data")
+    @app.output(CustomProxyGenerateResultSchema)
     def post(self, proxy_id: int, data):
         resolved_id = _resolve_generate_proxy_id(proxy_id, data)
         _get_proxy_or_404(resolved_id)
@@ -391,8 +389,8 @@ class CustomProxyGenerateExampleByIdApi(MethodView):
 class CustomProxyGenerateBundleApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyGenerateBundleSchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxyGenerateBundleResultSchema)  # type: ignore
+    @app.input(CustomProxyGenerateBundleSchema, arg_name="data")
+    @app.output(CustomProxyGenerateBundleResultSchema)
     def post(self, data):
         return generate_enabled_proxies_bundle(
             child_id=_child_id(),
@@ -410,7 +408,7 @@ class CustomProxyGenerateBundleApi(MethodView):
 class CustomProxyMetaApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.output(CustomProxyMetaSchema)  # type: ignore
+    @app.output(CustomProxyMetaSchema)
     def get(self):
         from hiddifypanel.proxy_v3.template_catalog.template_defaults import default_sublink_link_template
 
@@ -444,7 +442,7 @@ class CustomProxyMetaApi(MethodView):
 class CustomProxyExportApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyExportInputSchema, arg_name="data")  # type: ignore
+    @app.input(CustomProxyExportInputSchema, arg_name="data")
     def post(self, data):
         from hiddifypanel.proxy_v3.custom_proxy_bundle import build_export_bundle
 
@@ -455,8 +453,8 @@ class CustomProxyExportApi(MethodView):
 class CustomProxyImportApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
-    @app.input(CustomProxyImportSchema, arg_name="data")  # type: ignore
-    @app.output(CustomProxyImportResultSchema)  # type: ignore
+    @app.input(CustomProxyImportSchema, arg_name="data")
+    @app.output(CustomProxyImportResultSchema)
     def post(self, data):
         from hiddifypanel.proxy_v3.custom_proxy_bundle import import_bundle
 

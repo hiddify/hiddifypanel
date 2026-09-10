@@ -1,8 +1,7 @@
-from flask import g
 from flask_babel import lazy_gettext as _
 from loguru import logger
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.child.schema import RegisterWithParentInputSchema

@@ -1,7 +1,6 @@
-from flask import g, request
+from flask import request
 from flask.views import MethodView
 from apiflask import abort
-from flask import current_app as app
 
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import Domain, DomainType, FakeMode
@@ -9,6 +8,7 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_matches_modes
 
 from hiddifypanel.proxy_v3.api.custom_proxy_schema import DomainOptionSchema, PostDomainSchema
+from hiddifypanel import g, current_app as app
 
 
 def _child_id() -> int:

@@ -6,12 +6,12 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import user_agents
 from apiflask import abort
-from flask import Response, g, render_template, request
+from flask import Response, render_template, request
 from flask_babel import gettext as _
 from flask_classful import FlaskView, route
 from loguru import logger
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.models import *

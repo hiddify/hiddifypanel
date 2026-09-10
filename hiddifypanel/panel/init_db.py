@@ -6,7 +6,7 @@ import uuid
 
 from loguru import logger
 
-from hiddifypanel import Events, hutils
+from hiddifypanel import g, Events, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db, db_execute, db_execute_ddl
 from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
@@ -1151,8 +1151,6 @@ def init_db():
     # temporary fix
     add_column(Child.mode)
     add_column(Child.name)
-
-    from flask import g
 
     cache.invalidate_all_cached_functions()
     migrate(db_version)

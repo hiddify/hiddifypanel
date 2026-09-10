@@ -3,26 +3,24 @@ from __future__ import annotations
 from typing import Any
 from urllib.parse import urlparse
 
-from apiflask import Schema
-from apiflask.fields import String
-from flask import current_app as app
-from flask import g, request
+from flask import request
 from flask.views import MethodView
 
-from hiddifypanel import hutils
+from hiddifypanel import g, current_app as app, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import ConfigEnum, Role, hconfig
 from hiddifypanel.panel.user.user import get_common_data
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 
-class ConfigSchema(Schema):
-    name = String(required=True)
-    domain = String(required=True)
-    link = String(required=True)
-    protocol = String(required=True)
-    transport = String(required=True)
-    security = String(required=True)
-    type = String(required=True)
+class ConfigSchema(ApiModel):
+    name: str = ""
+    domain: str = ""
+    link: str = ""
+    protocol: str = ""
+    transport: str = ""
+    security: str = ""
+    type: str = ""
 
 
 def _enum_str(value: Any) -> str:

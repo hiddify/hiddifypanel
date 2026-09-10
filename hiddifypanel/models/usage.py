@@ -1,11 +1,10 @@
 import datetime
 from datetime import timedelta, date
-
-from flask import g
 from sqlalchemy import func
 
 
 from hiddifypanel.database import db
+from hiddifypanel import g
 
 
 

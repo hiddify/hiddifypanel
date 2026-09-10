@@ -1,15 +1,14 @@
-from typing import Optional, Any
-from hiddifypanel.models.config_enum import ConfigEnum, LogLevel, PanelMode, Lang
-from flask import g
-
-from hiddifypanel import Events
-from hiddifypanel.database import db
-from hiddifypanel.cache import cache
-from hiddifypanel.models.child import Child, ChildMode
-from sqlalchemy import Column, String, Boolean, Enum, ForeignKey, Integer
-from strenum import StrEnum
+from typing import Any
 
 from loguru import logger
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped
+
+from hiddifypanel import Events
+from hiddifypanel.cache import cache
+from hiddifypanel.database import db
+from hiddifypanel.models.child import Child, ChildMode
+from hiddifypanel.models.config_enum import ConfigEnum
 
 
 class BoolConfig(db.Model):
@@ -29,14 +28,14 @@ class BoolConfig(db.Model):
         conf_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import HConfigSchema
 
-        return HConfigSchema().load(conf_dict)
+        return HConfigSchema.model_validate(conf_dict)
 
 
 class StrConfig(db.Model):
     child_id = Column(Integer, ForeignKey("child.id"), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
-    key = Column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
-    value = Column(String(3072))
+    key: Mapped[ConfigEnum] = Column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
+    value: Mapped[str] = Column(String(3072))
 
     def to_dict(self: "StrConfig"):
         return {"key": str(self.key), "value": self.value, "child_unique_id": self.child.unique_id if self.child else ""}
@@ -49,11 +48,11 @@ class StrConfig(db.Model):
         conf_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import HConfigSchema
 
-        return HConfigSchema().load(conf_dict)
+        return HConfigSchema.model_validate(conf_dict)
 
 
 @cache.cache(ttl=500)
-def hconfig(key: ConfigEnum, child_id: Optional[int] = None):  # -> str | int | StrEnum | None:
+def hconfig(key: ConfigEnum, child_id: int | None = None):  # -> str | int | StrEnum | None:
     if child_id is None:
         child_id = Child.current().id
 
@@ -87,7 +86,7 @@ def set_hconfig(key: ConfigEnum, value: str | int | bool, child_id: int | None =
     if child_id is None:
         child_id = Child.current().id
 
-    if key.type == int and value != None:
+    if key.type is int and value is not None:
         int(value)  # for testing int
 
     # hconfig.invalidate(key, child_id)

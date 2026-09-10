@@ -1,6 +1,6 @@
 import re
 import uuid
-from hiddifypanel import hutils
+from hiddifypanel import current_app, hutils
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
 from hiddifypanel.auth import login_required
@@ -9,7 +9,6 @@ from wtforms.validators import ValidationError
 
 from hiddifypanel.models import ConfigEnum, Domain
 from .adminlte import AdminLTEModelView
-from flask import current_app
 
 
 class ConfigAdmin(AdminLTEModelView):

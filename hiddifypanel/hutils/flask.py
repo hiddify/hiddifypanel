@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from flask import current_app, flash as flask_flash, g, request
+from flask import flash as flask_flash, request
 from wtforms.validators import ValidationError
 from apiflask import abort as apiflask_abort
 from flask_babel import gettext as _
@@ -15,7 +15,7 @@ import os
 
 from hiddifypanel.cache import cache
 from hiddifypanel.models import *
-from hiddifypanel import hutils
+from hiddifypanel import g, current_app, hutils
 
 
 def flash(message: str, category: str = "message"):

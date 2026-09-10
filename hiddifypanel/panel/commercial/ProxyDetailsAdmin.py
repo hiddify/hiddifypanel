@@ -2,7 +2,7 @@ from hiddifypanel.models import *
 from hiddifypanel.panel.admin.adminlte import AdminLTEModelView
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
-from flask import g, redirect
+from flask import redirect
 from markupsafe import Markup
 from hiddifypanel.auth import login_required
 from flask_admin.actions import action
@@ -11,7 +11,7 @@ from flask_admin import expose
 from hiddifypanel.panel import  custom_widgets
 
 # Define a custom field type for the related domains
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 
 from wtforms.widgets import TextArea
 import json

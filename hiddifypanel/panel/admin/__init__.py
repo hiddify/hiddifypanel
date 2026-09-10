@@ -1,8 +1,8 @@
-from flask import render_template, request, redirect, g
+from flask import render_template, request, redirect
 from . import fix_flaskadmin_babel
 import flask_admin
 from flask_admin import Admin
-from hiddifypanel import Events
+from hiddifypanel import g, Events
 from .DomainAdmin import DomainAdmin
 from .AdminstratorAdmin import AdminstratorAdmin
 
