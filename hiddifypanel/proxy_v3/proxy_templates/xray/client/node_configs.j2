@@ -1,0 +1,13 @@
+{#
+  Builtin node_configs (xray JSON).
+  Pulls client configs from child nodes via get_nodes_configs().
+  Enabled by default on parent panels (fetches child node configs).
+#}
+{% block outbounds %}
+  {% set node_configs = get_nodes_configs("xray", "1h") %}
+  {% for conf in node_configs if conf %}
+    {% for outbound in conf.get("outbounds", []) %}
+      {{ outbound | tojson }},
+    {% endfor %}
+  {% endfor %}
+{% endblock %}

@@ -23,14 +23,12 @@ class ClientConfigsIn(ApiModel):
     domains: list[str] = Field(description="The domains to build the configs from; unknown domains are ignored", min_length=1)
     user_agent: str = Field(default="", description="The client user agent, used to pick the template version")
     pretty: bool = Field(default=True, description="Indent the json based cores")
+    raw: bool = Field(default=False, description="When true, return the config body only (no JSON envelope)")
 
 
 class ClientConfigsOut(ApiModel):
     status: int = 200
     msg: str = "ok"
-    core: ClientCore
     config: str = ""
     user_uuid: str | None = None
     user_name: str | None = None
-    domains: list[str] = Field(default_factory=list)
-    ignored_domains: list[str] = Field(default_factory=list)

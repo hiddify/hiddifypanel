@@ -6,11 +6,12 @@ from urllib.parse import urlparse
 from flask import request
 from flask.views import MethodView
 
-from hiddifypanel import g, current_app as app, hutils
+from hiddifypanel import current_app as app
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import ConfigEnum, Role, hconfig
-from hiddifypanel.panel.user.user import get_common_data
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
+from hiddifypanel.panel.user.user import get_common_data
 
 
 class ConfigSchema(ApiModel):
@@ -68,7 +69,7 @@ def iter_proxy_v3_config_items(user, *, sublink_domain: str, user_agent: str, ch
     contexts = build_client_template_context(user, sublink_domain, user_agent)
     items: list[dict[str, str]] = []
     for ctx in contexts:
-        if (ctx.proxy.slug or "") == "additional-config":
+        if (ctx.proxy.slug or "") in {"additional-config", "node-configs"}:
             continue
         for dctx in ctx.iter_ctx_domains():
             domain = dctx.proxy.domain

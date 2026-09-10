@@ -52,12 +52,12 @@ def _serialize_friendly_date(value: date | None) -> str | None:
 
 FriendlyUUID = Annotated[str | None, BeforeValidator(_parse_uuid)]
 FriendlyDateTime = Annotated[
-    datetime | None,
+    datetime,
     BeforeValidator(_parse_friendly_time),
     PlainSerializer(_serialize_friendly_time, when_used="json"),
 ]
 FriendlyDate = Annotated[
-    date | None,
+    date,
     BeforeValidator(_parse_friendly_date),
     PlainSerializer(_serialize_friendly_date, when_used="json"),
 ]
@@ -70,6 +70,7 @@ class UserSchema(ApiModel):
     package_days: int | None = Field(default=None, description="The number of days in the user's package")
     mode: UserMode | None = Field(default=None, description="The mode of the user's account, which dictates access level or type")
     last_online: FriendlyDateTime = Field(default=None, description="The last time the user was online, converted to a JSON-friendly format")
+    last_modified_time: FriendlyDateTime = Field(default=None, description="The last time the user record was modified")
     start_date: FriendlyDate = Field(default=None, description="The start date of the user's package, in a JSON-friendly format")
     current_usage_GB: float | None = Field(default=None, description="The current data usage of the user in gigabytes")
     last_reset_time: FriendlyDateTime = Field(default=None, description="The last time the user's data usage was reset, in a JSON-friendly format")
@@ -83,6 +84,7 @@ class UserSchema(ApiModel):
     wg_psk: str | None = Field(default=None, description="If empty, it will be created automatically, The user's WireGuard preshared key")
     lang: Lang | None = Field(default=None, description="The language of the user")
     enable: bool | None = Field(default=None, description="Whether the user is enabled or not")
+    deleted: bool | None = Field(default=None, description="Whether the user is soft-deleted")
     is_active: bool | None = Field(default=None, description="Whether the user is active for using hiddify")
     id: int | None = Field(default=None, description="never use it, only for better presentation")
 

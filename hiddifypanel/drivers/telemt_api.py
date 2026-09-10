@@ -2,13 +2,13 @@ import json
 import os
 import re
 
+import redis
 import requests
 
-from .abstract_driver import DriverABS
-from hiddifypanel.models import User, hconfig, ConfigEnum
-from hiddifypanel.panel.run_commander import Command, commander
-import redis
+from hiddifypanel.models import ConfigEnum, User, hconfig
+from hiddifypanel.models.usage_data import UsageData
 
+from .abstract_driver import DriverABS
 
 USERS_USAGE = "tele:users-usage"
 
@@ -144,14 +144,15 @@ class TelemtApi(DriverABS):
     def remove_client(self, user):
         pass
 
-    def get_all_usage(self, reset=True):
+    def get_all_usage(self, reset=True) -> dict[str, UsageData]:
         if not self.is_enabled():
             return {}
         all_usages = self.__sync_local_usages()
-        res = {}
+        res: dict[str, UsageData] = {}
         for uuid, use in all_usages.items():
-            # if use := all_usages.get(u.wg_pub):
-            res[uuid] = use["up"] + use["down"]
-        # else:
-        #     res[u] = 0
+            res[str(uuid)] = UsageData(
+                uuid=str(uuid),
+                upload=int(use.get("up") or 0),
+                download=int(use.get("down") or 0),
+            )
         return res

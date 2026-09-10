@@ -1,28 +1,28 @@
-from hiddifypanel.cache import cache
-from hiddifypanel import g, current_app as app, __version__
-from hiddifypanel.panel import hiddify, custom_widgets
-from hiddifypanel.database import db
-from hiddifypanel.models import *
-from hiddifypanel.models import BoolConfig, StrConfig, ConfigEnum, hconfig, ConfigCategory
 import re
+
 import flask_babel
-import flask_babel
-from flask_babel import lazy_gettext as _
+import wtforms as wtf
+from bleach import ALLOWED_TAGS as BLEACH_ALLOWED_TAGS
+from bleach import clean as bleach_clean
 
 # from flask_babelex import gettext as _
 from flask import render_template  # type: ignore
-from markupsafe import Markup
-
-from hiddifypanel.hutils.flask import hurl_for
-from hiddifypanel import hutils
-from hiddifypanel.auth import login_required
-import wtforms as wtf
+from flask_babel import lazy_gettext as _
 from flask_bootstrap import SwitchField
 
 # from gettext import gettext as _
 from flask_classful import FlaskView
 from flask_wtf import FlaskForm
-from bleach import clean as bleach_clean, ALLOWED_TAGS as BLEACH_ALLOWED_TAGS
+from markupsafe import Markup
+
+from hiddifypanel import g, hutils
+from hiddifypanel.auth import login_required
+from hiddifypanel.cache import cache
+from hiddifypanel.database import db
+from hiddifypanel.hutils.flask import hurl_for
+from hiddifypanel.models import *
+from hiddifypanel.models import BoolConfig, ConfigCategory, ConfigEnum, StrConfig, hconfig
+from hiddifypanel.panel import custom_widgets, hiddify
 
 ALLOWED_TAGS = set([*BLEACH_ALLOWED_TAGS, "h1", "h2", "h3", "h4", "p"])
 
@@ -91,8 +91,10 @@ class SettingAdmin(FlaskView):
                     hutils.flask.flash(_("parent.invalid-parent-url"), "danger")  # type: ignore
                     return render_template("config.html", form=form)
                 else:
-                    set_hconfig(ConfigEnum.parent_domain, domain)
-                    set_hconfig(ConfigEnum.parent_admin_proxy_path, proxy_path)
+                    # set_hconfig(ConfigEnum.parent_domain, domain)
+                    # set_hconfig(ConfigEnum.parent_admin_proxy_path, proxy_path)
+                    set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
+
                     parent_apikey = uuid
 
             for k, v in changed_configs.items():
@@ -121,18 +123,21 @@ class SettingAdmin(FlaskView):
             register_bot(set_hook=True)
 
             # sync with parent if needed
+            if parent_apikey:  # if parent_apikey is not empty, means parent_panel changed and we need to reregister
+                if not hutils.node.child.register_to_parent(hconfig(ConfigEnum.unique_id), parent_apikey, mode=ChildMode.remote):
+                    hutils.flask.flash(_("child.register-failed"), "danger")
             if hutils.node.is_child():
                 if hutils.node.child.is_registered():
                     hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
-                else:
-                    name = hconfig(ConfigEnum.unique_id)
-                    parent_info = hutils.node.get_panel_info(hconfig(ConfigEnum.parent_domain), hconfig(ConfigEnum.parent_admin_proxy_path), parent_apikey)
-                    if parent_info.get("version") != __version__:
-                        hutils.flask.flash(_("node.diff-version"), "danger")  # type: ignore
-                    if not hutils.node.child.register_to_parent(name, parent_apikey, mode=ChildMode.remote):
-                        hutils.flask.flash(_("child.register-failed"), "danger")  # type: ignore
-                    else:  # TODO: it's just for debuging
-                        hutils.flask.flash(_("child.register-success"))  # type: ignore
+                # else:
+                #     name = hconfig(ConfigEnum.unique_id)
+                #     parent_info = hutils.node.get_panel_info(hconfig(ConfigEnum.parent_domain), hconfig(ConfigEnum.parent_admin_proxy_path), parent_apikey)
+                #     if parent_info.get("version") != __version__:
+                #         hutils.flask.flash(_("node.diff-version"), "danger")  # type: ignore
+                #     if not hutils.node.child.register_to_parent(name, parent_apikey, mode=ChildMode.remote):
+                #         hutils.flask.flash(_("child.register-failed"), "danger")  # type: ignore
+                #     else:  # TODO: it's just for debuging
+                #         hutils.flask.flash(_("child.register-success"))  # type: ignore
 
             reset_action = hiddify.check_need_reset(old_configs)
 
@@ -198,7 +203,7 @@ def get_config_form():
             description_for_fieldset = wtf.TextAreaField("", description=_(f"config.{cat}.description"), render_kw={"class": "d-none"})
 
         for c2 in cat_configs:
-            if not (c2 in configs_key):
+            if c2 not in configs_key:
                 continue
             c = configs_key[c2]
             if hutils.node.is_parent():
@@ -365,6 +370,6 @@ def get_config_form():
 
         setattr(DynamicForm, cat, multifield)
 
-    setattr(DynamicForm, "submit", wtf.SubmitField(_("Submit")))
+    DynamicForm.submit = wtf.SubmitField(_("Submit"))
 
     return DynamicForm()

@@ -3,9 +3,10 @@ import re
 import uuid
 
 from apiflask import abort
-from flask import request  # type: ignore
+from flask import request
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import tools
+from flask_admin.helpers import is_form_submitted
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
 from flask_bootstrap import SwitchField
@@ -16,9 +17,9 @@ from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.hutils.flask import hurl_for
-from hiddifypanel.models import *
+from hiddifypanel.models import AdminUser, ConfigEnum, Domain, Role, User, UserMode, hconfig, set_hconfig
 from hiddifypanel.panel import custom_widgets, hiddify
-from pydantic import BaseModel
+
 from .adminlte import AdminLTEModelView
 
 
@@ -38,6 +39,7 @@ class UserAdmin(AdminLTEModelView):
     list_template = "model/user_list.html"
     # "max_ips",
     form_columns = ["name", "comment", "usage_limit", "reset_usage", "package_days", "reset_days", "mode", "uuid", "enable", "extra_params"]
+    form_excluded_columns = ["deleted", "details", "admin", "added_by", "current_usage", "last_online", "last_modified_time"]
     # form_excluded_columns = ['current_usage', 'monthly', 'telegram_id', 'last_online', 'expiry_time', 'last_reset_time', 'current_usage_GB',
     #  'start_date', 'added_by', 'admin', 'details', 'max_ips', 'ed25519_private_key', 'ed25519_public_key', 'username', 'password']
     page_size = 50
@@ -207,11 +209,22 @@ class UserAdmin(AdminLTEModelView):
         "is_active": _enable_formatter,
     }
 
-    def on_model_delete(self, model):
-        if len(User.query.all()) <= 1:
-            raise ValidationError("at least one user should exist")
-        user_driver.remove_client(model)
-        # hutils.flask.flash_config_success()
+    # def on_model_delete(self, model):
+    #     if User.query.filter(User.deleted.is_(False)).count() <= 1:
+    #         raise ValidationError("at least one user should exist")
+    # Soft-delete is handled in delete_model / action_delete.
+
+    def delete_model(self, model):
+        """Soft-delete instead of removing the row."""
+        self.on_model_delete(model)
+        model.remove(commit=False)
+        self.session.commit()
+        self.after_model_delete(model)
+
+    def after_model_delete(self, model):
+        hiddify.quick_apply_users()
+        if hutils.node.is_parent():
+            hutils.node.run_node_op_in_bg(hutils.node.parent.request_childs_to_sync)
 
     def is_accessible(self):
         if login_required(roles={Role.super_admin, Role.admin, Role.agent})(lambda: True)() != True:
@@ -267,6 +280,20 @@ class UserAdmin(AdminLTEModelView):
         # if user and user.start_date:
         #     form.reset = SwitchField("Reset")
         return form
+
+    def validate_form(self, form):
+        # Flask-Admin Unique validator runs before on_model_change; purge soft-deleted
+        # users that still hold the UUID so validation/create can succeed.
+        if is_form_submitted():
+            uuid_field = getattr(form, "uuid", None)
+            if uuid_field and uuid_field.data:
+                id = getattr(form, "id", None) or getattr(getattr(form, "_obj", None), "id", None)
+                query = User.query.filter(User.uuid == uuid_field.data, User.deleted.is_(True), User.id != id)
+                existing = query.first()
+                if existing:
+                    existing.purge(commit=False)
+
+        return super().validate_form(form)
 
     def on_model_change(self, form, model, is_created):
         # Validate max_ips
@@ -337,13 +364,6 @@ class UserAdmin(AdminLTEModelView):
         if hutils.node.is_parent():
             hutils.node.run_node_op_in_bg(hutils.node.parent.request_childs_to_sync)
 
-    def after_model_delete(self, model):
-        user_driver.remove_client(model)
-        hiddify.quick_apply_users()
-
-        if hutils.node.is_parent():
-            hutils.node.run_node_op_in_bg(hutils.node.parent.request_childs_to_sync)
-
     def get_list(self, page, sort_column, sort_desc, search, filters, page_size=50, *args, **kwargs):
         res = None
         self._auto_joins = {}
@@ -399,6 +419,7 @@ class UserAdmin(AdminLTEModelView):
             abort(403)
 
         query = query.filter(User.added_by.in_(admin.recursive_sub_admins_ids()))
+        query = query.filter(User.deleted.is_(False))
 
         return query
 
@@ -418,6 +439,7 @@ class UserAdmin(AdminLTEModelView):
             abort(403)
 
         query = query.filter(User.added_by.in_(admin.recursive_sub_admins_ids()))
+        query = query.filter(User.deleted.is_(False))
 
         # admin_id=int(request.args.get("admin_id") or g.account.id)
         # if admin_id not in g.account.recursive_sub_admins_ids():
@@ -449,12 +471,15 @@ class UserAdmin(AdminLTEModelView):
     @action("delete", "Delete", "Are you sure you want to delete selected users?")
     def action_delete(self, ids):
         query = tools.get_query_for_ids(self.get_query(), self.model, ids)
-        count = query.update({"enable": False})
+        users = query.all()
+        if User.query.filter(User.deleted.is_(False)).count() - len(users) < 1:
+            hutils.flask.flash(_("at least one user should exist"), "error")
+            return
+        for user in users:
+            user.remove(commit=False)
         self.session.commit()
-        self.apply(query.all())
-        count = query.delete()
-        self.session.commit()
-        hutils.flask.flash(_("%(count)s records were successfully deleted.", count=count), "success")
+        hiddify.quick_apply_users()
+        hutils.flask.flash(_("%(count)s records were successfully deleted.", count=len(users)), "success")
 
     @action("reset usage", "Reset Usage", "Are you sure you want to reset usage of selected users?")
     def action_reset_usage(self, ids):

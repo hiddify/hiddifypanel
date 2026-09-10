@@ -62,6 +62,7 @@ class User(BaseAccount):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     last_online = db.Column(db.DateTime, nullable=False, default=datetime.datetime.min)
+    last_modified_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     # removed
     # expiry_time = db.Column(db.Date, default=datetime.date.today() + relativedelta.relativedelta(months=6))
     usage_limit = db.Column(db.BigInteger, default=1000 * ONE_GIG, nullable=False)
@@ -79,7 +80,7 @@ class User(BaseAccount):
         backref="user",
         lazy="dynamic",
     )
-    enable = db.Column(db.Boolean, default=True, nullable=False)
+
     ed25519_private_key = db.Column(db.String(500), default="")
     ed25519_public_key = db.Column(db.String(100), default="")
     wg_pk = db.Column(db.String(50), default="")
@@ -123,22 +124,24 @@ class User(BaseAccount):
         "disable", if their usage limit hasn't been exceeded, and if there are remaining days on their account. The
         function returns a boolean value indicating whether the user is active or not.
         """
-        is_active = True
+
         if not self:
-            is_active = False
-        elif not self.enable:
-            is_active = False
+            return False
+        if self.deleted:
+            return False
+        if not self.enable:
+            return False
         elif self.usage_limit < self.current_usage:
-            is_active = False
+            return False
         elif self.remaining_days < 0:
-            is_active = False
+            return False
         # elif len(self.devices) > max(3, self.max_ips):
         #     is_active = False
-        return is_active
+        return True
 
     @property
-    def devices(self):
-        res = {}
+    def devices(self) -> list[str]:
+        res = []
         return res
         for detail in UserDetail.query.filter(UserDetail.user_id == self.id):
             for device in detail.devices:
@@ -200,19 +203,54 @@ class User(BaseAccount):
             res = self.package_days
         return min(res, 10000)
 
-    def remove(self, commit=True) -> None:
+    def remove(self, commit: bool = True) -> None:
+        """Soft-delete the user (keep the row; hide from admin/API lists)."""
+        from hiddifypanel.drivers import user_driver
+
+        user_driver.remove_client(self)
+        self.deleted = True
+        self.enable = False
+        if commit:
+            db.session.commit()
+
+    def purge(self, commit: bool = True) -> None:
+        """Permanently remove the user row (frees the UUID for reuse)."""
         from hiddifypanel.drivers import user_driver
 
         user_driver.remove_client(self)
         db.session.delete(self)
         if commit:
             db.session.commit()
+        else:
+            db.session.flush()
+
+    def undelete(self, commit: bool = True) -> None:
+        self.deleted = False
+        if commit:
+            db.session.commit()
 
     @classmethod
-    def by_uuid(cls, uuid: str, create: bool = False) -> "User":
+    def purge_by_uuid(cls, uuid: str, commit: bool = True) -> bool:
+        """Hard-delete any user (including soft-deleted) with this UUID. Returns True if a row was removed."""
+        dbuser = cls.query.filter(cls.uuid == uuid).first()
+        if not dbuser:
+            return False
+        dbuser.purge(commit=commit)
+        return True
+
+    @classmethod
+    def by_uuid(cls, uuid: str, create: bool = False, include_deleted: bool = False) -> "User":
         if not isinstance(uuid, str):
             uuid = str(uuid)
-        account = User.query.filter(User.uuid == uuid).first()
+        query = User.query.filter(User.uuid == uuid)
+        account = query.first()
+        if account and account.deleted and not include_deleted and not create:
+            return None  # type: ignore[return-value]
+        if account and account.deleted and create:
+            account.deleted = False
+            account.enable = True
+            db.session.commit()
+            return account
         if not account and create:
             from hiddifypanel import hutils
 
@@ -226,9 +264,23 @@ class User(BaseAccount):
         return account
 
     @classmethod
-    def remove_by_uuid(cls, uuid: str, commit=True):
-        dbuser = User.by_uuid(uuid)
-        dbuser.remove(dbuser, commit)
+    def remove_by_uuid(cls, uuid: str, commit: bool = True):
+        dbuser = User.by_uuid(uuid, include_deleted=True)
+        if dbuser:
+            dbuser.remove(commit=commit)
+
+    @classmethod
+    def bulk_register(cls, accounts: list = [], commit: bool = True, remove: bool = False):
+        for u in accounts:
+            data = {**u.model_dump(), "deleted": False}
+            cls.add_or_update(commit=False, **data)
+        if remove:
+            keep = {str(u.get("uuid")) for u in accounts if u.get("uuid")}
+            for d in cls.query.filter(cls.deleted.is_(False)).all():
+                if d.uuid not in keep:
+                    d.remove(commit=False)
+        if commit:
+            db.session.commit()
 
     @classmethod
     def add_or_update(cls, commit: bool = True, **data):
@@ -273,6 +325,9 @@ class User(BaseAccount):
         if data.get("enable") is not None:
             dbuser.enable = data["enable"]
 
+        if data.get("deleted") is not None:
+            dbuser.deleted = bool(data["deleted"])
+
         if data.get("ed25519_private_key", "") and data.get("ed25519_public_key", ""):
             dbuser.ed25519_private_key = data.get("ed25519_private_key", "")
             dbuser.ed25519_public_key = data.get("ed25519_public_key", "")
@@ -292,6 +347,8 @@ class User(BaseAccount):
 
         if data.get("last_online") is not None:
             dbuser.last_online = hutils.convert.json_to_time(data.get("last_online")) or datetime.datetime.min
+        if data.get("last_modified_time") is not None:
+            dbuser.last_modified_time = hutils.convert.json_to_time(data.get("last_modified_time")) or datetime.datetime.now()
         if commit:
             db.session.commit()
         return dbuser
@@ -318,6 +375,7 @@ class User(BaseAccount):
         return {
             **base,
             "last_online": hutils.convert.time_to_json(self.last_online) if convert_date else self.last_online,
+            "last_modified_time": hutils.convert.time_to_json(self.last_modified_time) if convert_date else self.last_modified_time,
             "usage_limit_GB": self.usage_limit_GB,
             "package_days": self.package_days,
             "mode": self.mode,
@@ -333,6 +391,7 @@ class User(BaseAccount):
             "wg_psk": self.wg_psk,
             "is_active": self.is_active,
             "enable": self.enable,
+            "deleted": bool(self.deleted),
         }
 
     # @staticmethod
@@ -365,3 +424,10 @@ def on_user_insert(mapper, connection, target):
     # hutils.model.gen_password(target)
     hutils.model.gen_ed25519_keys(target)
     hutils.model.gen_wg_keys(target)
+    target.last_modified_time = datetime.datetime.now()
+
+
+@event.listens_for(User, "before_update")
+def on_user_update(mapper, connection, target):
+    """Bump last_modified_time on any ORM attribute change (admin edits, usage via ORM, etc.)."""
+    target.last_modified_time = datetime.datetime.now()

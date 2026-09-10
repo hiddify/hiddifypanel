@@ -1,9 +1,8 @@
-from enum import auto, Enum
 import os
-from typing import Union
+from enum import auto
 
-from strenum import StrEnum
 from fast_enum import FastEnum
+from strenum import StrEnum
 
 
 class HEnum(StrEnum):
@@ -174,9 +173,9 @@ class ConfigEnum(metaclass=FastEnum):
     # deprecated
     is_parent = _BoolConfigDscr(ConfigCategory.hidden)
     # parent panel domain
-    parent_panel = _StrConfigDscr(ConfigCategory.hidden)  # should be able to change by user
-    parent_domain = _StrConfigDscr(ConfigCategory.hidden)
-    parent_admin_proxy_path = _StrConfigDscr(ConfigCategory.hidden)
+    parent_panel = _StrConfigDscr(ConfigCategory.admin)
+    parent_domain = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
+    parent_admin_proxy_path = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
 
     # the panel mode could be one of these: "parent", "child", "standalone"
     # this config value would be 'standalone' by default. and would be set by panel itself
@@ -307,6 +306,7 @@ class ConfigEnum(metaclass=FastEnum):
 
     db_version = _StrConfigDscr(ConfigCategory.hidden)
     last_priodic_usage_check = _IntConfigDscr(ConfigCategory.hidden)
+    last_users_sync = _StrConfigDscr(ConfigCategory.hidden)
 
     branding_title = _StrConfigDscr(ConfigCategory.branding)
     branding_site = _StrConfigDscr(ConfigCategory.branding)

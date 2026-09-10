@@ -1,11 +1,15 @@
 import os
-from .abstract_driver import DriverABS
-from hiddifypanel.models import *
+
 import redis
+from loguru import logger
+
+from hiddifypanel.models import ConfigEnum, hconfig
+from hiddifypanel.models.usage_data import UsageData
+
+from .abstract_driver import DriverABS
 
 USERS_SET = "ssh-server:users"
 USERS_USAGE = "ssh-server:users-usage"
-from loguru import logger
 
 
 class SSHLibertyBridgeApi(DriverABS):
@@ -41,26 +45,34 @@ class SSHLibertyBridgeApi(DriverABS):
         redis_client.hdel(USERS_USAGE, f"{user.uuid}")
         redis_client.save()
 
-    def get_all_usage(self):
+    def get_all_usage(self) -> dict[str, UsageData]:
         redis_client = self.get_ssh_redis_client()
-        allusage = redis_client.hgetall(USERS_USAGE)
+        allusage = redis_client.hgetall(USERS_USAGE) or {}
         redis_client.delete(USERS_USAGE)
-        return allusage
-        # return {u: int(allusage.get(u.uuid) or 0) for u in users}
-        # return {u: self.get_usage_imp(u.uuid) for u in users}
+        res: dict[str, UsageData] = {}
+        for uuid, value in allusage.items():
+            # SSH bridge only reports total bytes — treat as download.
+            try:
+                total = max(0, int(value or 0))
+            except (TypeError, ValueError):
+                total = 0
+            if total:
+                res[str(uuid)] = UsageData(uuid=str(uuid), upload=0, download=total)
+        return res
 
-    def get_usage_imp(self, client_uuid: str, reset: bool = True) -> int:
+    def get_usage_imp(self, client_uuid: str, reset: bool = True) -> UsageData:
         redis_client = self.get_ssh_redis_client()
         value = redis_client.hget(USERS_USAGE, client_uuid)
 
-        if value is None:
-            return 0
+        try:
+            total = max(0, int(value or 0))
+        except (TypeError, ValueError):
+            total = 0
 
-        value = int(value)
-
-        if reset:
-            redis_client.hincrby(USERS_USAGE, client_uuid, -value)
+        if reset and total:
+            redis_client.hincrby(USERS_USAGE, client_uuid, -total)
             redis_client.save()
-        if value:
-            logger.debug(f"ssh usage {client_uuid} {value}")
-        return value
+        row = UsageData(uuid=str(client_uuid), upload=0, download=total)
+        if row.usage:
+            logger.debug(f"ssh usage {client_uuid} {row.usage}")
+        return row

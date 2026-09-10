@@ -6,7 +6,7 @@
     {% for u in ctx.users %}
     {
       "password": "{{ u.uuid_hex|b64encode }}",
-      "email": "{{ u.uuid }}@hiddify.com"
+      "email": "{{ u.uuid }}"
     },
     {% endfor %}
   ],

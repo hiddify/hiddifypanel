@@ -104,8 +104,8 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
 
 
 def filter_proxy(base: BaseVar) -> bool:
-    # additional_config is client-only and has no domain bindings.
-    if base.proxy.slug == "additional-config":
+    # additional_config / node_configs are client-only and have no domain bindings.
+    if base.proxy.slug in {"additional-config", "node-configs"}:
         return True
 
     if not base.proxy.domains and base.proxy.mode != CustomProxyMode.ip:

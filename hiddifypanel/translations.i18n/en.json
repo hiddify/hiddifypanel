@@ -1031,6 +1031,10 @@
       "description": "Timestamp of the last periodic usage check",
       "label": "Last Periodic Usage Check"
     },
+    "last_users_sync": {
+      "description": "Timestamp of the last successful users sync with the parent panel",
+      "label": "Last Users Sync"
+    },
     "license": {
       "description": "For commercial use of this Product, you must Purchase its License",
       "label": "License  Code"

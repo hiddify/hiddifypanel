@@ -19,7 +19,9 @@ class UsersApi(MethodView):
     def get(self):
         """User: List users of current admin"""
 
-        users = User.query.filter(User.added_by.in_(g.account.recursive_sub_admins_ids())).all() or abort(404, "You have no user")
+        users = User.query.filter(
+            User.added_by.in_(g.account.recursive_sub_admins_ids()),
+        ).all() or abort(404, "You have no user")
         return [user.to_schema() for user in users]
 
     @app.input(PostUserSchema, arg_name="data")
@@ -28,8 +30,12 @@ class UsersApi(MethodView):
         """User: Create a user"""
         payload = data.model_dump(exclude_none=True)
 
-        if payload.get("uuid") and User.by_uuid(payload["uuid"]):
-            abort(400, "The user exists")
+        if payload.get("uuid"):
+            existing = User.query.filter(User.uuid == payload["uuid"]).first()
+            if existing and not existing.deleted:
+                abort(400, "The user exists")
+            if existing and existing.deleted:
+                existing.purge(commit=False)
 
         if not payload.get("added_by_uuid"):
             payload["added_by_uuid"] = g.account.uuid

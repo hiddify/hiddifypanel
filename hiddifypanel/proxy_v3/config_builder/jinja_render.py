@@ -1,5 +1,4 @@
 from __future__ import annotations
-from wcwidth import ljust
 
 import json
 import random
@@ -14,11 +13,13 @@ from jinja2 import Environment, pass_context
 from jinja2.loaders import DictLoader
 from jinja2.runtime import Undefined
 from jinja2.utils import Namespace
+from wcwidth import ljust
 
 from hiddifypanel import hutils
 from hiddifypanel.models.custom_proxy import ProxyTemplate
 from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, include_path, jsbool, skip_proxy
 from hiddifypanel.proxy_v3.jinja_download import download
+from hiddifypanel.proxy_v3.jinja_nodes_configs import get_nodes_configs
 
 
 def _namespace_attrs(value: Any) -> dict[str, Any] | None:
@@ -218,6 +219,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["skip"] = skip_proxy
     env.globals["include_path"] = include_path
     env.globals["download"] = download
+    env.globals["get_nodes_configs"] = get_nodes_configs
     env.globals["enumerate"] = enumerate
     env.globals["len"] = len
     env.globals["exec"] = _jinja_exec

@@ -1,0 +1,11 @@
+{#
+  Builtin node_configs (clash / mihomo).
+  Expects each child to return JSON with a top-level "proxies" array.
+  Enabled by default on parent panels (fetches child node configs).
+#}
+{% set node_configs = get_nodes_configs("clash", "1h") %}
+{% for conf in node_configs if conf %}
+  {% for proxy in conf.get("proxies", []) %}
+   {{ proxy | tojson }},
+  {% endfor %}
+{% endfor %}

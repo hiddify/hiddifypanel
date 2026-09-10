@@ -36,6 +36,7 @@ from .proxy_base_config import (
 )
 from .server_ip import ServerIp
 from .tls_store import TlsStore
-from .usage import DailyUsage
+from .usage import DailyUsage, UnsyncedUsage
+from .usage_data import UsageData
 from .user import ONE_GIG, User, UserDetail, UserMode
 # from .report import Report, ReportDetail

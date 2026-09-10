@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 import threading
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
+from typing import Any
 
 from flask import copy_current_request_context
 from loguru import logger
 
-from hiddifypanel.models import ConfigEnum, PanelMode, User, hconfig
-from hiddifypanel.panel.commercial.restapi.v2.panel.schema import PanelInfoOutputSchema
-from hiddifypanel.panel.commercial.restapi.v2.parent.schema import UsageData, UsageInputOutputSchema
+from hiddifypanel.models import ConfigEnum, PanelMode, hconfig
+from hiddifypanel.panel.commercial.restapi.v2.panel.schema import PanelInfoOutputSchema, PongOutputSchema
+from hiddifypanel.panel.commercial.restapi.v2.parent.schema import UsageInputOutputSchema
 
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
@@ -22,56 +25,40 @@ def is_parent() -> bool:
 # region usage
 
 
-def get_users_usage_data_for_api() -> UsageInputOutputSchema:
-    res = UsageInputOutputSchema()
-    res.usages = []
-    for u in User.query.all():
-        usage_data = UsageData()
-        usage_data.uuid = u.uuid
-        usage_data.usage = u.current_usage
-        usage_data.devices = u.devices
-        res.usages.append(usage_data)
-    return res
-
-
-def convert_usage_api_response_to_dict(data: dict | UsageInputOutputSchema) -> dict:
-    if isinstance(data, UsageInputOutputSchema):
-        data = data.model_dump(mode="json")
-    converted = {}
-    for i in data["usages"]:
-        devices = i.get("devices") or []
-        if isinstance(devices, str):
-            devices_str = devices
-        else:
-            devices_str = ",".join(devices)
-        converted[str(i["uuid"])] = {
-            "usage": i["usage"],
-            "devices": devices_str,
+def convert_usage_api_response_to_dict(
+    data: UsageInputOutputSchema | Mapping[str, Any] | dict[str, Any],
+) -> dict[str, dict[str, int | str]]:
+    """Legacy {uuid: {usage, upload, download, devices}} map for callers that still expect a plain dict."""
+    schema = data if isinstance(data, UsageInputOutputSchema) else UsageInputOutputSchema.model_validate(data)
+    converted: dict[str, dict[str, int | str]] = {}
+    for item in schema.usages:
+        converted[item.uuid] = {
+            "usage": int(item.usage or 0),
+            "upload": int(item.upload or 0),
+            "download": int(item.download or 0),
+            "devices": ",".join(item.devices),
         }
     return converted
 
 
 # endregion
 
-# TODO: use cache for these functions in release
-# @cache.cache(ttl=150)
-
 
 def is_panel_active(domain: str, proxy_path: str, apikey: str | None = None) -> bool:
     base_url = f"https://{domain}/{proxy_path}"
-    res = NodeApiClient(base_url, apikey).get("/api/v2/panel/ping/", dict)
+
+    res = NodeApiClient(base_url, apikey).get("/api/v2/panel/ping/", PongOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while checking if panel is active: {res.msg}")
         return False
-    if "PONG" in res["msg"]:
-        logger.debug(f"Panel is active: {res['msg']}")
+    if isinstance(res, PongOutputSchema) and "PONG" in str(res.msg):
+        logger.debug(f"Panel is active: {res.msg}")
         return True
     logger.debug("Panel is not active")
     return False
 
 
-# @cache.cache(300)
-def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> dict | None:
+def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> dict | PanelInfoOutputSchema | None:
     base_url = f"https://{domain}/{proxy_path}"
     res = NodeApiClient(base_url, apikey).get("/api/v2/panel/info/", PanelInfoOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
@@ -80,9 +67,9 @@ def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> d
     return res
 
 
-def run_node_op_in_bg(op: Callable, *args, **kwargs):
+def run_node_op_in_bg(op: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
     @copy_current_request_context
-    def wrapped_op():
+    def wrapped_op() -> None:
         op(*args, **kwargs)
 
     threading.Thread(target=wrapped_op).start()

@@ -6,7 +6,7 @@ import uuid
 
 from loguru import logger
 
-from hiddifypanel import g, Events, hutils
+from hiddifypanel import Events, g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db, db_execute, db_execute_ddl
 from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
@@ -18,7 +18,60 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 137
+MAX_DB_VERSION = 140
+
+
+def _v139(child_id):
+    add_config_if_not_exist(ConfigEnum.last_users_sync, "0001-01-01 00:00:00", child_id)
+
+    execute("UPDATE user SET deleted=0 WHERE deleted IS NULL")
+
+    """Add user.last_modified_time and bump it from add_usage_json."""
+    execute("UPDATE user SET last_modified_time=COALESCE(last_online, NOW()) WHERE last_modified_time IS NULL OR last_modified_time < '1971-01-01'")
+
+    add_usage_proc = """
+DROP PROCEDURE IF EXISTS add_usage_json;
+
+CREATE PROCEDURE add_usage_json(IN usage_data JSON, IN cur_time DATETIME)
+BEGIN
+  DECLARE u_id INT DEFAULT NULL;
+  DECLARE u_uuid CHAR(36) DEFAULT NULL;
+  DECLARE u_usage BIGINT;
+  DECLARE done BOOL DEFAULT FALSE;
+  DECLARE cur_date DATE;
+
+
+  DECLARE cur CURSOR FOR
+    SELECT  jt.uuid, jt.usage FROM JSON_TABLE(
+      usage_data, '$[*]' COLUMNS (
+        uuid CHAR(36) PATH '$.uuid', `usage` BIGINT PATH '$.usage')) AS jt;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  SET cur_date = DATE(cur_time);
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO  u_uuid, u_usage;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+
+    UPDATE `user`
+    SET current_usage = current_usage + u_usage,
+        last_online = cur_time,
+        last_modified_time = cur_time,
+        start_date = CASE WHEN start_date IS NULL THEN cur_date ELSE start_date END
+    WHERE uuid = u_uuid;
+
+
+    COMMIT;
+  END LOOP;
+
+  CLOSE cur;
+END
+    """
+    db_execute(add_usage_proc, commit=True)
 
 
 def _v137(child_id):
@@ -288,52 +341,6 @@ def _v106(child_id):
     # db.session.bulk_save_objects(get_proxy_rows_v1())
 
 
-def _v103(child_id):
-
-    add_usage_proc = """
-DROP PROCEDURE IF EXISTS add_usage_json;
-
-CREATE PROCEDURE add_usage_json(IN usage_data JSON, IN cur_time DATETIME)
-BEGIN
-  DECLARE u_id INT DEFAULT NULL;
-  DECLARE u_uuid CHAR(36) DEFAULT NULL;
-  DECLARE u_usage BIGINT;
-  DECLARE done BOOL DEFAULT FALSE;
-  DECLARE cur_date DATE;
-
-
-  DECLARE cur CURSOR FOR
-    SELECT  jt.uuid, jt.usage FROM JSON_TABLE(
-      usage_data, '$[*]' COLUMNS (
-        uuid CHAR(36) PATH '$.uuid', `usage` BIGINT PATH '$.usage')) AS jt;
-
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-  SET cur_date = DATE(cur_time);
-  OPEN cur;
-
-  read_loop: LOOP
-    FETCH cur INTO  u_uuid, u_usage;
-    IF done THEN
-      LEAVE read_loop;
-    END IF;
-
-    
-    UPDATE `user`
-    SET current_usage = current_usage + u_usage, last_online = cur_time, start_date = CASE WHEN start_date IS NULL THEN cur_date ELSE start_date END
-    WHERE uuid = u_uuid;
-
-
-    COMMIT;
-  END LOOP;
-
-  CLOSE cur;
-END
-
-    """
-
-    db_execute(add_usage_proc, commit=True)
-
-
 def _v101(child_id):
     add_config_if_not_exist(ConfigEnum.path_xhttp, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.xhttp_enable, False)
@@ -441,9 +448,9 @@ def _v82(child_id):
     set_hconfig(ConfigEnum.h2_enable, True)
 
 
-def _v80(child_id):
-    set_hconfig(ConfigEnum.parent_domain, "")
-    set_hconfig(ConfigEnum.parent_admin_proxy_path, "")
+# def _v80(child_id):
+#     set_hconfig(ConfigEnum.parent_domain, "")
+#     set_hconfig(ConfigEnum.parent_admin_proxy_path, "")
 
 
 def _v79(child_id):

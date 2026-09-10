@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
-from uuid import UUID
 
 from pydantic import Field, field_validator, model_validator
 
 from hiddifypanel.models import ChildMode, ConfigEnum, DomainType, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
-from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema, UserSchema
+from hiddifypanel.models.usage_data import UsageData
+from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema, FriendlyDateTime, UserSchema
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 
@@ -55,27 +56,20 @@ class HConfigSchema(ApiModel):
         return str(value)
 
 
-class UsageData(ApiModel):
-    uuid: UUID | str | None = Field(default=None, description="The user uuid")
-    usage: int = Field(default=0, description="The user usage in bytes")
-    devices: list[str] | str | None = Field(default_factory=list, description="The user connected devices")
-
-    @field_validator("devices", mode="before")
-    @classmethod
-    def _coerce_devices(cls, value: Any) -> list[str]:
-        if value is None or value == "":
-            return []
-        if isinstance(value, dict):
-            return [str(key) for key in value.keys()]
-        if isinstance(value, str):
-            return [part for part in value.split(",") if part]
-        if isinstance(value, (list, tuple, set)):
-            return [str(item) for item in value]
-        return [str(value)]
+class UsageResponseSchema(ApiModel):
+    users: list[UserSchema] = Field(default_factory=list, description="The list of updated users")
+    admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of updated admin users")
+    response_time: FriendlyDateTime = Field(default_factory=datetime.now, description="The date of the usage")
 
 
 class UsageInputOutputSchema(ApiModel):
     usages: list[UsageData] = Field(default_factory=list, description="The list of usages")
+    request_time: FriendlyDateTime = Field(default_factory=datetime.now, description="The date of the usage")
+    last_users_sync: FriendlyDateTime = Field(description="The date of the latest users sync")
+
+    def by_uuid(self) -> dict[str, UsageData]:
+        """Index usages by uuid string (last wins on duplicates)."""
+        return {item.uuid: item for item in self.usages if item.uuid}
 
 
 class SyncInputSchema(ApiModel):

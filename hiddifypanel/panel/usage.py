@@ -1,62 +1,54 @@
+import datetime
+import json
+from collections.abc import Callable
+from typing import Any
 
 from celery import shared_task
-from sqlalchemy import func
-from typing import Dict
-import datetime
-
-from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import *
-from hiddifypanel.panel import hiddify
-from hiddifypanel.database import db, db_execute, text
-from hiddifypanel import cache, hutils
 from loguru import logger
-import json
+from sqlalchemy import func
+
+from hiddifypanel import cache, hutils
+from hiddifypanel.database import db, db_execute
+from hiddifypanel.drivers import user_driver
+from hiddifypanel.models import AdminUser, ConfigEnum, DailyUsage, UsageData, User, hconfig, set_hconfig
+from hiddifypanel.panel import hiddify
+
 to_gig_d = 1024**3
 
 
 @shared_task(ignore_result=False)
 def update_local_usage():
-    lock_key = "lock-update-local-usage"
-    # if not cache.redis_client.set(lock_key, "locked", nx=True, ex=600):
-    #     return {"msg": "last update task is not finished yet."}
-    try:
-        res = update_local_usage_not_lock()
-        cache.redis_client.set(lock_key, "locked", nx=False, ex=60)
-
-        return res
-    except Exception as e:
-        cache.redis_client.set(lock_key, "locked", nx=False, ex=60)
-        logger.exception("Exception in update usage")
-        raise
-        return {"msg": f"Exception in update usage: {e}"}
-
+    return locked_execute(update_local_usage_not_lock)
     # return {"status": 'success', "comments":res}
 
 
-def update_local_usage_not_lock():
+def locked_execute(func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    lock_key = "lock-update-local-usage"
+    if not cache.redis_client.set(lock_key, "locked", nx=True, ex=60):
+        return {"msg": "last update task is not finished yet."}
+    try:
+        return func(*args, **kwargs)
+    finally:
+        cache.redis_client.delete(lock_key)
 
+
+def update_local_usage_not_lock():
     try:
         res = user_driver.get_users_usage(reset=True)
-        return add_users_usage_new([{'uuid': uuid, "usage": uinfo['usage']} for uuid, uinfo in res.items()], child_id=0)
-        # add_users_usage_uuid({"66ac79b8-8c03-4084-81c7-a2b1b3e9eefe":{"usage":1000000000}},child_id=0)
-        # json_data=json.dumps([{ "uuid": uuid, "usage": uinfo["usage"]}for uuid, uinfo in {"66ac79b8-8c03-4084-81c7-a2b1b3e9eefe":{"usage":1000000000}}.items()])
-        # db_execute("CALL add_usage_json(:usage_data)", usage_data= json_data, commit=True)
-    except Exception as e:
+        usages = [uinfo for uinfo in res.values() if uinfo and uinfo.usage > 0]
+        if hutils.node.is_child():
+            hutils.node.child.sync_users_usage_with_parent(usages)
+        else:
+            return _add_users_usage_new_impl(usages, child_id=0)
+    except Exception:
         raise
-
-
-def add_users_usage_uuid(uuids_bytes: Dict[str, Dict], child_id, sync=False):
-    uuids_bytes = {u: v for u, v in uuids_bytes.items() if v and v.get('usage', 0) > 0}
-    uuids = uuids_bytes.keys()
-    users = db.session.query(User).filter(User.uuid.in_(uuids))
-    dbusers_bytes = {u: uuids_bytes.get(u.uuid, {"usage": 0}) for u in users}
-    _add_users_usage(dbusers_bytes, child_id, sync)  # type: ignore
 
 
 def _reset_priodic_usage() -> bool:
     apply_changes = False
     last_usage_check: int = hconfig(ConfigEnum.last_priodic_usage_check) or 0
     import time
+
     current_time = int(time.time())
     if current_time - last_usage_check < 60 * 60 * 6:
         return apply_changes
@@ -72,7 +64,7 @@ def _reset_priodic_usage() -> bool:
     today = datetime.date.today()
 
     db_change = False
-    for user in db.session.query(User).filter(User.mode != UserMode.no_reset, User.start_date != None, User.start_date+User.package_days >= today).all():
+    for user in db.session.query(User).filter(User.mode != UserMode.no_reset, User.start_date != None, User.start_date + User.package_days >= today).all():
         if user.user_should_reset():
             logger.info(f"reseting user usage for {user.uuid}")
             old_active = user.is_active
@@ -88,7 +80,7 @@ def _reset_priodic_usage() -> bool:
     if db_change:
         db.session.commit()
 
-    for user in db.session.query(User).filter(User.start_date != None, User.start_date+User.package_days < today).all():
+    for user in db.session.query(User).filter(User.start_date != None, User.start_date + User.package_days < today).all():
         logger.info(f"Removing enabled client {user.uuid} ")
         if not user.is_active:
             user_driver.remove_client(user)
@@ -98,18 +90,23 @@ def _reset_priodic_usage() -> bool:
     return apply_changes
 
 
-def add_users_usage_new(usages: list[dict], child_id, sync=False):
-    usages = [use for use in usages if use['usage'] > 0]
-    # usages[0]['usage']=1000000000000
+def add_users_usage_new(usages: list[UsageData], child_id: int) -> dict[str, Any]:
+    """Apply usage deltas under the global usage lock."""
+    return locked_execute(_add_users_usage_new_impl, usages, child_id)
+
+
+def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[str, Any]:
+    usages = [use for use in usages if use.usage > 0]
     before_enabled_users = user_driver.get_enabled_users()
 
-    daily_usage = {}
-    cur_time=datetime.datetime.now()
+    daily_usage: dict[int, DailyUsage] = {}
+    cur_time = datetime.datetime.now()
     today = cur_time.date()
     db_changes = False
     for adm in db.session.query(AdminUser).all():
-        daily_usage[adm.id] = db.session.query(DailyUsage).filter(DailyUsage.date == today, DailyUsage.admin_id == adm.id, DailyUsage.child_id == child_id).first()
-        if daily_usage[adm.id] is None:
+        if du := db.session.query(DailyUsage).filter(DailyUsage.date == today, DailyUsage.admin_id == adm.id, DailyUsage.child_id == child_id).first():
+            daily_usage[adm.id] = du
+        else:
             logger.info(f"creating a new daily usage {today} admin={adm.id} child={child_id}")
             daily_usage[adm.id] = DailyUsage(date=today, admin_id=adm.id, child_id=child_id, usage=0)
             db.session.add(daily_usage[adm.id])
@@ -119,18 +116,32 @@ def add_users_usage_new(usages: list[dict], child_id, sync=False):
         db.session.commit()
 
     apply_changes = _reset_priodic_usage()
-    
-    db_execute("CALL add_usage_json(:usage_data,:cur_time)", usage_data=json.dumps(usages),cur_time=cur_time.strftime('%Y-%m-%d %H:%M:%S'), commit=True)
 
-    usage_map = {u['uuid']: u for u in usages}
-    
+    usage_payload = [
+        {
+            "uuid": use.uuid,
+            "usage": use.usage,
+            # "upload": use.upload,
+            # "download": use.download,
+        }
+        for use in usages
+    ]
+    db_execute(
+        "CALL add_usage_json(:usage_data,:cur_time)",
+        usage_data=json.dumps(usage_payload),
+        cur_time=cur_time.strftime("%Y-%m-%d %H:%M:%S"),
+        commit=True,
+    )
+
+    usage_map = {use.uuid: use for use in usages}
+
     users = db.session.query(User).filter(User.uuid.in_(set(usage_map.keys()))).all()
 
     all_users_uuids = set()
     for user in users:
         all_users_uuids.add(user.uuid)
 
-        user_before_active = before_enabled_users.get(user.uuid,False)
+        user_before_active = before_enabled_users.get(user.uuid, False)
         user_active = user.is_active
 
         if not user_before_active and user_active:
@@ -144,15 +155,15 @@ def add_users_usage_new(usages: list[dict], child_id, sync=False):
             send_bot_message(user)
             apply_changes = True
 
-        daily_usage.get(user.added_by, daily_usage[1]).usage += usage_map[user.uuid]['usage']
+        daily_usage.get(user.added_by, daily_usage[1]).usage += usage_map[user.uuid].usage
 
     db.session.commit()
 
     if len(users) != len(usage_map):
         # check for zombie-users
-        check_users = set(before_enabled_users.keys())-all_users_uuids
+        check_users = set(before_enabled_users.keys()) - all_users_uuids
         all_db_users = {u.uuid for u in db.session.query(User).filter(User.uuid.in_(check_users)).all()}
-        zombie_users = check_users-all_db_users
+        zombie_users = check_users - all_db_users
 
         for uuid in zombie_users:
             logger.info(f"Remove zombiee users {uuid} ")
@@ -162,7 +173,7 @@ def add_users_usage_new(usages: list[dict], child_id, sync=False):
     if apply_changes:
         hiddify.quick_apply_users()
 
-    return {"status": 'success', "comments": usages, "date": hutils.convert.time_to_json(cur_time)}
+    return {"status": "success", "comments": usage_payload, "date": hutils.convert.time_to_json(cur_time)}
 
 
 # def _add_users_usage(users_usage_data: Dict[User, Dict], child_id, sync=False):
@@ -276,7 +287,9 @@ def send_bot_message(user):
     if not user.telegram_id:
         return
     from flask_babel import lazy_gettext as _
-    from hiddifypanel.panel.commercial.telegrambot import bot, Usage
+
+    from hiddifypanel.panel.commercial.telegrambot import Usage, bot
+
     try:
         msg = Usage.get_usage_msg(user.uuid)
         msg = _("User activated!") if user.is_active else _("Package ended!") + "\n" + msg

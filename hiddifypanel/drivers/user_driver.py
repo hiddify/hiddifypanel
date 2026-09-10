@@ -1,63 +1,68 @@
-from hiddifypanel.drivers.telemt_api import TelemtApi
+from __future__ import annotations
 
-from .ssh_liberty_bridge_api import SSHLibertyBridgeApi
-from .xray_api import XrayApi
-from .singbox_api import SingboxApi
-from .wireguard_api import WireguardApi
-from hiddifypanel.models import *
-from hiddifypanel.panel import hiddify
 from collections import defaultdict
+
 from loguru import logger
 
-drivers = [XrayApi(), SingboxApi(), SSHLibertyBridgeApi(), WireguardApi(),TelemtApi()]
+from hiddifypanel.drivers.telemt_api import TelemtApi
+from hiddifypanel.models import User
+from hiddifypanel.models.usage_data import UsageData
+from hiddifypanel.panel import hiddify
+
+from .singbox_api import SingboxApi
+from .ssh_liberty_bridge_api import SSHLibertyBridgeApi
+from .wireguard_api import WireguardApi
+from .xray_api import XrayApi
+
+drivers = [
+    XrayApi(),
+    SingboxApi(),
+    SSHLibertyBridgeApi(),
+    WireguardApi(),
+    TelemtApi(),
+]
 
 
 def enabled_drivers():
     return [d for d in drivers if d.is_enabled()]
 
 
-def get_users_usage(reset=True):
-    res = {}
-    from hiddifypanel.database import db
-
-    # users = db.session.query(User).all()
-    # users = list(User.query.all())
-    res = defaultdict(lambda: {'usage': 0, 'devices': ''})
+def get_users_usage(reset: bool = True) -> dict[str, UsageData]:
+    """Aggregate upload/download usage across all enabled drivers."""
+    del reset  # drivers currently always reset/consume counters where applicable
+    res: dict[str, UsageData] = {}
     for driver in enabled_drivers():
         try:
             all_usage = driver.get_all_usage()
             for uuid, usage in all_usage.items():
-                # print(f"{driver.__class__.__name__} {uuid} usage={usage}")
-                if usage:
-                    res[uuid]['usage'] += usage
-                # res[user]['devices'] +=usage
+                if not usage or not usage.usage:
+                    continue
+                key = str(uuid)
+                row = usage if usage.uuid else UsageData(uuid=key, upload=usage.upload, download=usage.download, devices=usage.devices)
+                res[key] = res[key].add(row) if key in res else row
         except Exception as e:
             print(driver)
-            hiddify.error(f'ERROR! {driver.__class__.__name__} has error in update usage {e}')
-            logger.exception(f'ERROR! {driver.__class__.__name__} has error in update usage {e}')
+            hiddify.error(f"ERROR! {driver.__class__.__name__} has error in update usage {e}")
+            logger.exception(f"ERROR! {driver.__class__.__name__} has error in update usage {e}")
     return res
 
 
 def get_enabled_users():
-    from collections import defaultdict
-    d = defaultdict(int)
+    d: dict[str, int] = defaultdict(int)
     total = 0
     for driver in enabled_drivers():
         try:
             for u, v in driver.get_enabled_users().items():
-                # print(u, "enabled", v, driver)
                 if not v:
                     continue
                 d[u] += 1
             total += 1
         except Exception as e:
             print(driver)
-            hiddify.error(f'ERROR! {driver.__class__.__name__} has error in get_enabled users {e}')
-            logger.exception(f'ERROR! {driver.__class__.__name__} has error in get_enabled users {e}')
-    # print(d, total)
-    res = defaultdict(bool)
+            hiddify.error(f"ERROR! {driver.__class__.__name__} has error in get_enabled users {e}")
+            logger.exception(f"ERROR! {driver.__class__.__name__} has error in get_enabled users {e}")
+    res: dict[str, bool] = defaultdict(bool)
     for u, v in d.items():
-        # res[u] = v >= total  # ignore singbox
         res[u] = v >= 1
     return res
 
@@ -67,8 +72,8 @@ def add_client(user: User):
         try:
             driver.add_client(user)
         except Exception as e:
-            hiddify.error(f'ERROR! {driver.__class__.__name__} has error {e} in add client for user={user.uuid} {e}')
-            logger.exception(f'ERROR! {driver.__class__.__name__} has error {e} in add client for user={user.uuid} {e}')
+            hiddify.error(f"ERROR! {driver.__class__.__name__} has error {e} in add client for user={user.uuid} {e}")
+            logger.exception(f"ERROR! {driver.__class__.__name__} has error {e} in add client for user={user.uuid} {e}")
 
 
 def remove_client(user: User):
@@ -76,5 +81,5 @@ def remove_client(user: User):
         try:
             driver.remove_client(user)
         except Exception as e:
-            hiddify.error(f'ERROR! {driver.__class__.__name__} has error {e} in remove client for user={user.uuid}')
-            logger.exception(f'ERROR! {driver.__class__.__name__} has error {e} in remove client for user={user.uuid}')
+            hiddify.error(f"ERROR! {driver.__class__.__name__} has error {e} in remove client for user={user.uuid}")
+            logger.exception(f"ERROR! {driver.__class__.__name__} has error {e} in remove client for user={user.uuid}")

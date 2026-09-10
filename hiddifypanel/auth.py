@@ -123,11 +123,12 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
             # print('xxxx', current_account)
-            if node_auth and not Child.node and not roles:
+            if node_auth and not g.get("node") and not roles:
                 json_abort(403, "Unauthorized node")
+
             if not current_account and not node_auth:
                 return redirect_to_login()  # type: ignore
-            if roles and not Child.node:
+            if roles and not node_auth:
                 account_role = current_account.role
                 if account_role not in roles:
                     return redirect_to_login()  # type: ignore

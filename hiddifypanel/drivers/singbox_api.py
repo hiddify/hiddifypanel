@@ -1,12 +1,14 @@
-import os
-import xtlsapi
-from hiddifypanel.models import *
-from .abstract_driver import DriverABS
 import json
-from collections import defaultdict
-from hiddifypanel.cache import cache
+import os
+
+import xtlsapi
 from loguru import logger
-from hiddifypanel import current_app
+
+from hiddifypanel.cache import cache
+from hiddifypanel.models import *
+from hiddifypanel.models.usage_data import UsageData
+
+from .abstract_driver import DriverABS
 
 
 class SingboxApi(DriverABS):
@@ -39,8 +41,8 @@ class SingboxApi(DriverABS):
     def remove_client(self, user):
         pass
 
-    def get_all_usage(self):
-        res = defaultdict(int)
+    def get_all_usage(self) -> dict[str, UsageData]:
+        res: dict[str, UsageData] = {}
         try:
             xray_client = self.get_singbox_client()
             usages = xray_client.stats_query("user", reset=True)
@@ -50,23 +52,22 @@ class SingboxApi(DriverABS):
         for use in usages:
             if "user>>>" not in use.name:
                 continue
-            uuid = use.name.split(">>>")[1].split("@")[0]
-            res[uuid] += use.value  # uplink + downlink
+            parts = use.name.split(">>>")
+            if len(parts) < 2:
+                continue
+            uuid = parts[1].split("@")[0]
+            direction = parts[-1].lower() if len(parts) >= 4 else ""
+            upload = int(use.value or 0) if direction == "uplink" else 0
+            download = int(use.value or 0) if direction != "uplink" else 0
+            row = UsageData(uuid=uuid, upload=upload, download=download)
+            res[uuid] = res[uuid].add(row) if uuid in res else row
         return res
-        # return {u: self.get_usage_imp(u.uuid) for u in users}
 
     def get_usage_imp(self, uuid):
         xray_client = self.get_singbox_client()
         d = xray_client.get_client_download_traffic(f"{uuid}", reset=True)
         u = xray_client.get_client_upload_traffic(f"{uuid}", reset=True)
-
-        res = None
-        if d is None:
-            res = u
-        elif u is None:
-            res = d
-        else:
-            res = d + u
-        if res:
-            logger.debug(f"singbox {uuid} d={d} u={u} sum={res}")
-        return res
+        row = UsageData(uuid=str(uuid), upload=int(u or 0), download=int(d or 0))
+        if row.usage:
+            logger.debug(f"singbox {uuid} d={d} u={u} sum={row.usage}")
+        return row

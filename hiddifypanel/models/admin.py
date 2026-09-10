@@ -2,6 +2,7 @@ from enum import auto
 from uuid import uuid4
 
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, event
+from sqlalchemy.orm import Mapped
 from strenum import StrEnum
 
 from hiddifypanel import g
@@ -30,7 +31,7 @@ class AdminUser(BaseAccount):
     account expiration date, usage limit, package days, mode, start date, current usage, last reset time, and comment.
     """
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     mode = Column(Enum(AdminMode), default=AdminMode.agent, nullable=False)
     can_add_admin = Column(Boolean, default=False, nullable=False)
     max_users = Column(Integer, default=100, nullable=False)

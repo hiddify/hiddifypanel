@@ -77,8 +77,9 @@ class Child(db.Model):  # type: ignore
         #     child = Child.by_id(0)
         return child
 
-    @classmethod
-    @property
-    def node(cls) -> Child | None:
+    @staticmethod
+    def node() -> Child | None:
+        """Authenticated peer node from ``g.node`` (parent/child API key auth)."""
         if has_app_context() and hasattr(g, "node"):
-            return g.node
+            return getattr(g, "node", None)
+        return None
