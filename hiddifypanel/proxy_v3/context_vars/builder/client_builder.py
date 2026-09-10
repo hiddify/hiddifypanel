@@ -28,9 +28,13 @@ def _common_proxy_core_cache_token() -> str:
     return ",".join(tokens)
 
 
-def build_client_template_context(user: User, sublink_domain: str, user_agent: str) -> list[ClientContextVar]:
-    """One ``ClientContextVar`` per enabled proxy (domains already filtered on proxy)."""
-    bases = get_bases(sublink_domain, _common_proxy_core_cache_token())
+def build_client_template_context(user: User, sublink_domain: str, user_agent: str, domain_names: list[str] | None = None) -> list[ClientContextVar]:
+    """One ``ClientContextVar`` per enabled proxy (domains already filtered on proxy).
+
+    When ``domain_names`` is given, those domains are used instead of the ones the
+    sublink domain would expose.
+    """
+    bases = get_bases(sublink_domain, _common_proxy_core_cache_token(), domain_names)
     user_var = UserVar.from_user(user)
     platform_var = get_platform_var(user_agent)
     return [
@@ -54,11 +58,11 @@ class BaseVar(BaseModel):
 
 
 @cache.cache(600)
-def get_bases(sublink_domain: str, common_core_token: str = "") -> list[BaseVar]:
+def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: list[str] | None = None) -> list[BaseVar]:
     del common_core_token  # cache key only; selection is re-read from hconfig below
     proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).all()
     child_hconfigs: dict[int, HConfigVar] = get_all_hconfigs()
-    domains: list[DomainIPVar] = get_availble_domains(sublink_domain)
+    domains: list[DomainIPVar] = get_domains_by_name(domain_names) if domain_names else get_availble_domains(sublink_domain)
     shared_cert = select_shared_certificate()
     all_bases = []
     for p in proxies:
@@ -123,6 +127,26 @@ def get_all_hconfigs():
 @cache.cache(600)
 def get_platform_var(user_agent: str) -> PlatformVar:
     return PlatformVar.from_user_agent(user_agent)
+
+
+def normalize_domain_names(domain_names: list[str] | None) -> list[str]:
+    """Trim/lowercase the given names, dropping blanks and duplicates but keeping order."""
+    cleaned = (str(name or "").strip().lower() for name in (domain_names or []))
+    return list({name for name in cleaned if name})
+
+
+def find_domains_by_name(domain_names: list[str] | None) -> list[Domain]:
+    """Db rows for the given names, in the requested order. Unknown names are ignored."""
+    wanted = normalize_domain_names(domain_names)
+    if not wanted:
+        return []
+    found = {str(d.domain or "").lower(): d for d in Domain.query.filter(Domain.domain.in_(wanted)).all()}
+    return list(found.values())
+
+
+@cache.cache(600)
+def get_domains_by_name(domain_names: list[str] | None) -> list[DomainIPVar]:
+    return [DomainIPVar.from_domain(d) for d in find_domains_by_name(domain_names)]
 
 
 @cache.cache(600)

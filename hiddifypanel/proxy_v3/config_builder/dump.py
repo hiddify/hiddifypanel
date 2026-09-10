@@ -61,7 +61,6 @@ class ServerConfigDumpResult:
 def error_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [message for message in messages if message.get("level") == "error"]
 
-
 def _line_count(text: str) -> int:
     if not text:
         return 0
@@ -423,12 +422,17 @@ def render_client_configs(
     user_uuid: str | None = None,
     child_id: int = 0,
     sublink_domain: str | None = None,
+    domains: list[str] | None = None,
     user_agent: str | None = None,
     pretty: bool = True,
     cores: tuple[str, ...] | None = None,
     invalidate_cache: bool = False,
 ) -> ClientConfigRenderResult:
-    """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy)."""
+    """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy).
+
+    ``domains`` renders an explicit list of domain names instead of the ones
+    ``sublink_domain`` exposes; names with no matching domain are ignored.
+    """
     from hiddifypanel.cache import cache
     from hiddifypanel.models.user import User
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
@@ -443,11 +447,13 @@ def render_client_configs(
     )
 
     ua = (user_agent or "").strip() or DEFAULT_CLIENT_UA
-    domain = (sublink_domain or "").strip() or _resolve_sublink_domain(child_id)
+    domain = (sublink_domain or "").strip()
+    if not domain and not domains:
+        domain = _resolve_sublink_domain(child_id)
     wanted = cores or tuple(core for core, _filename in CLIENT_CONFIG_FILES)
 
     try:
-        contexts = build_client_template_context(user_obj, domain, ua)
+        contexts = build_client_template_context(user_obj, domain, ua, domains)
     except Exception as exc:
         result.messages.append(
             {

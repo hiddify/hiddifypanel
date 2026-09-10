@@ -4,9 +4,9 @@ import re
 from collections import defaultdict
 from ipaddress import IPv4Address, IPv6Address
 
-from flask import g, request
+from flask import request
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models import ConfigEnum, Domain, DomainType, FakeMode, Proxy, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport, get_hconfigs, hconfig
 
