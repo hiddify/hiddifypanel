@@ -22,6 +22,7 @@ class DomainSchema(ApiModel):
     ech: bool = Field(default=False, description="Enable ECH for CDN domain")
     servernames: str | None = Field(default=None, description="The servernames")
     show_domains: list[str] | None = Field(default=None, description="The list of domains to show")
+    custom_proxy_slugs: list[str] | None = Field(default=None, description="Bound custom proxy slugs")
 
 
 class ProxySchema(ApiModel):

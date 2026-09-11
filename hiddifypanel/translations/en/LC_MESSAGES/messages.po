@@ -3879,10 +3879,16 @@ msgstr "🔢 Current Server IPs are"
 msgid "domain.custom_proxy.description"
 msgstr ""
 "Optional proxy binding. Only proxies that support this domain's mode "
-"combination are listed."
+"combination are listed. Leave empty to use all matching proxies."
+
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr "DNS gateway"
 
 msgid "domain.custom_proxy.group.ip_based"
 msgstr "IP based"
+
+msgid "domain.custom_proxy.group.l7_gateway"
+msgstr "L7 gateway"
 
 msgid "domain.custom_proxy.group.other"
 msgstr "Other"
@@ -3891,13 +3897,19 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "SNI gateway"
 
 msgid "domain.custom_proxy.label"
-msgstr "Custom proxy"
+msgstr "Custom proxies"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr "REALITY domains must use the REALITY Termination proxy"
 
 msgid "domain.custom_proxy.reality_required"
 msgstr "REALITY domains require the REALITY Termination proxy"
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr "SNI gateway and L7 gateway cannot be selected together for one domain"
+
+msgid "domain.custom_proxy.sni_single_only"
+msgstr "Only one SNI gateway can be selected for a domain"
 
 msgid "domain.description"
 msgstr ""

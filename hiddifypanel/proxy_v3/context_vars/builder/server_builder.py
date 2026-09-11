@@ -80,14 +80,16 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.slug == "xray-reality-termination":
         return d.is_reality()
 
-    if d.fake_mode == FakeMode.reality and d.custom_proxy_id is None:
+    proxy_id = proxy.id
+
+    if d.fake_mode == FakeMode.reality and not d.custom_proxy_ids:
         print(f"Domain {d.name} is reality but has no custom proxy", file=sys.stderr)
         return False
     if proxy.mode in (CustomProxyMode.domains_sni_gateway, CustomProxyMode.domains_dns_gateway):
-        return d.custom_proxy_id is not None and d.custom_proxy_id == proxy.id
+        return proxy_id in d.custom_proxy_ids
 
-    if d.custom_proxy_id is not None and d.custom_proxy_id != proxy.id:
-        return False
+    if d.custom_proxy_ids:
+        return proxy_id in d.custom_proxy_ids
 
     if not domain_ip_matches_modes(d, proxy.domain_modes):
         return False
@@ -131,13 +133,15 @@ def resolve_custom_proxy(child_id: int, proxy_id: int | None) -> CustomProxy | N
 
 
 def _domains_for_custom_proxy(proxy: CustomProxy, child_id: int) -> list[DomainIPVar]:
+
+    proxy_id = proxy.id
     domain_rows = [
         row
         for row in Domain.query.filter(
             Domain.child_id == child_id,
             Domain.sub_link_only == False,  # noqa: E712
         ).all()
-        if not row.custom_proxy_id or int(row.custom_proxy_id) == int(proxy.id or 0)
+        if not row.custom_proxy_ids or proxy_id in row.custom_proxy_ids
     ]
     matched = _domains_for_proxy_row(proxy, domain_rows)
     return [DomainIPVar.from_domain(domain) for domain in matched]

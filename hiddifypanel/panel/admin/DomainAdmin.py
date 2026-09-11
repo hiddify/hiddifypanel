@@ -47,11 +47,12 @@ class DomainAdmin(AdminLTEModelView):
         resolve_ip=_("domain.resolveip.description"),
         ech=_("domain.ech.description"),
         custom_proxy=_("domain.custom_proxy.description"),
+        custom_proxies=_("domain.custom_proxy.description"),
         server_domain=_("domain.server_domain.description"),
         tls_status=_("domain.tls_status.description"),
     )
     can_export = False
-    form_widget_args = {"show_domains": {"class": "form-control ltr"}, "download_domain": {"class": "form-control ltr"}}
+    form_widget_args = {"show_domains": {"class": "form-control ltr"}, "download_domain": {"class": "form-control ltr"}, "custom_proxies": {"class": "form-control ltr"}}
 
     form_args = {
         "mode": {"enum": DomainType},
@@ -60,18 +61,19 @@ class DomainAdmin(AdminLTEModelView):
             "query_factory": lambda: Domain.query.filter(Domain.sub_link_only == False).order_by(Domain.child_id, Domain.domain),
             "get_label": lambda d: DomainAdmin._domain_option_label(d),
         },
-        "custom_proxy": {
+        "custom_proxies": {
             "query_factory": lambda: CustomProxy.query.filter(
                 CustomProxy.enable == True,
                 CustomProxy.child_id == Child.current().id,
             ).order_by(CustomProxy.sort_order, CustomProxy.name),
+            "get_label": lambda p: p.name,
         },
         "domain": {"validators": [Regexp(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$", message=__("Should be a valid domain"))]},
         "cdn_ip": {"validators": [Regexp(r"(((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d).){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d))|^([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,}))[ \t\n,;]*\w{3}[ \t\n,;]*)*", message=__("Invalid IP or domain"))]},
         "servernames": {"validators": [Regexp(r"^([\w-]+\.)+[\w-]+(,\s*([\w-]+\.)+[\w-]+)*$", re.IGNORECASE, _("Invalid REALITY hostnames"))]},
         "server_domain": {"query_factory": lambda: Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.valid)},
     }
-    column_list = ["domain", "alias", "mode", "tls_status", "custom_proxy", "show_domains"]
+    column_list = ["domain", "alias", "mode", "tls_status", "custom_proxies", "show_domains"]
     column_editable_list = ["alias"]
     column_searchable_list = ["domain", "mode"]
     column_sortable_list = ["domain", "alias", "mode"]
@@ -90,7 +92,7 @@ class DomainAdmin(AdminLTEModelView):
         "download_domain": _("download_domain.label"),
         "resolve_ip": _("domain.resolveip.label"),
         "ech": _("domain.ech.label"),
-        "custom_proxy": _("domain.custom_proxy.label"),
+        "custom_proxies": _("domain.custom_proxy.label"),
         "tls_status": _("TLS"),
     }
 
@@ -100,7 +102,7 @@ class DomainAdmin(AdminLTEModelView):
         "sub_link_only",
         "domain",
         "alias",
-        "custom_proxy",
+        "custom_proxies",
         "servernames",
         "server_domain",
         "cdn_ip",
@@ -164,10 +166,13 @@ class DomainAdmin(AdminLTEModelView):
     def _mode_formater(view, context, model, name):
         return f"{model.mode.value} ({model.fake_mode.value})"
 
-    def _custom_proxy_formater(view, context, model, name):
-        if not model.custom_proxy:
+    def _custom_proxies_formater(view, context, model, name):
+        if not model.custom_proxies:
             return ""
-        return Markup(f"<a href='{hurl_for('admin.admin_v2')}custom-proxies/{model.custom_proxy.id}' target='_blank'>{model.custom_proxy.name}</a> ")
+        links = []
+        for proxy in model.custom_proxies:
+            links.append(f"<a href='{hurl_for('admin.admin_v2')}custom-proxies/{proxy.id}' target='_blank'>{escape(proxy.name)}</a>")
+        return Markup(" ".join(links))
 
     def _tls_status_formater(view, context, model, name):
         status = model.tls_status
@@ -202,7 +207,7 @@ class DomainAdmin(AdminLTEModelView):
         "domain": _domain_admin_link,
         "show_domains": _show_domains_formater,
         "mode": _mode_formater,
-        "custom_proxy": _custom_proxy_formater,
+        "custom_proxies": _custom_proxies_formater,
         "tls_status": _tls_status_formater,
     }
 
@@ -248,29 +253,33 @@ class DomainAdmin(AdminLTEModelView):
             raise ValidationError(_("Relay domains with non-valid fake mode require an IP address"))
 
         if model.fake_mode == FakeMode.reality:
-            if not model.custom_proxy_id:
+            selected = list(model.custom_proxies or [])
+            if not selected:
                 termination = CustomProxy.query.filter(
                     CustomProxy.child_id == Child.current().id,
                     CustomProxy.slug == REALITY_TERMINATION_SLUG,
                     CustomProxy.enable == True,
                 ).first()
                 if termination:
-                    model.custom_proxy_id = termination.id
+                    model.set_custom_proxies_by_slugs([REALITY_TERMINATION_SLUG])
                 else:
                     raise ValidationError(_("domain.custom_proxy.reality_required"))
-            else:
-                proxy = CustomProxy.query.filter(CustomProxy.id == model.custom_proxy_id).first()
-                if not proxy or proxy.slug != REALITY_TERMINATION_SLUG:
-                    raise ValidationError(_("domain.custom_proxy.reality_only"))
-        elif model.custom_proxy_id:
-            proxy = CustomProxy.query.filter(CustomProxy.id == model.custom_proxy_id).first()
-            if proxy:
-                buckets = set(proxy_buckets_for_domain(model.mode, model.fake_mode))
+            elif any(p.slug != REALITY_TERMINATION_SLUG for p in selected):
+                raise ValidationError(_("domain.custom_proxy.reality_only"))
+        elif model.custom_proxies:
+            sni_count = sum(1 for p in model.custom_proxies if p and p.mode == CustomProxyMode.domains_sni_gateway)
+            has_l7 = any(p and p.mode == CustomProxyMode.domains_l7_gateway for p in model.custom_proxies)
+            if sni_count > 1:
+                raise ValidationError(_("domain.custom_proxy.sni_single_only"))
+            if sni_count and has_l7:
+                raise ValidationError(_("domain.custom_proxy.sni_l7_mutex"))
+            buckets = set(proxy_buckets_for_domain(model.mode, model.fake_mode))
+            valid = []
+            for proxy in model.custom_proxies:
                 proxy_buckets = expand_domain_mode_tokens(proxy.domain_modes)
-                if not buckets & proxy_buckets:
-                    raise ValidationError(_("Selected proxy does not support this domain mode combination"))
-            else:
-                model.custom_proxy_id = None
+                if buckets & proxy_buckets:
+                    valid.append(proxy)
+            model.custom_proxies = valid
 
         cloudflare_updated = self._update_cloudflare(model, ipv4_list, ipv6_list)
 

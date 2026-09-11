@@ -39,7 +39,7 @@ def __get_register_data_for_api(name: str, mode: ChildMode) -> RegisterInputSche
         panel_data=RegisterDataSchema(
             admin_users=[admin_user.to_schema() for admin_user in AdminUser.query.all()],
             users=[user.to_schema() for user in User.query.all()],
-            domains=[domain.to_schema() for domain in Domain.query.all()],
+            domains=[domain.to_schema(for_parent=True) for domain in Domain.query.all()],
             # proxies=[proxy.to_schema() for proxy in Proxy.query.all()],
             # hconfigs=[*[u.to_schema() for u in StrConfig.query.all()], *[u.to_schema() for u in BoolConfig.query.all()]],
         ),

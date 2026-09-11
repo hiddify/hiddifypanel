@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TypedDict
 
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from hiddifypanel import hutils
 from hiddifypanel.hutils.network.auto_ip_selector import split_pattern
@@ -12,6 +12,11 @@ from hiddifypanel.models import Domain, DomainType, FakeMode
 from .cert import CertVar
 from .ip import IPVar
 from .json_map import JsonMap
+
+
+class _ExtractedSniHost(TypedDict):
+    sni: str
+    host: str
 
 
 class DomainIPVar(BaseModel):
@@ -37,14 +42,11 @@ class DomainIPVar(BaseModel):
     dst_server: str | None = None
     extra_params: JsonMap = Field(default_factory=JsonMap)
 
-    # _domain: Domain | None = PrivateAttr(default=None)
-    # _extracted: dict[str, Any] = PrivateAttr(default_factory=dict)
-
-    custom_proxy_id: int | None = None
+    custom_proxy_ids: list[int] = Field(default_factory=list)
 
     @field_validator("extra_params", mode="before")
     @classmethod
-    def _coerce_extra_params(cls, value: Any) -> JsonMap:
+    def _coerce_extra_params(cls, value: object) -> JsonMap:
         return JsonMap.from_any(value)
 
     @property
@@ -89,13 +91,12 @@ class DomainIPVar(BaseModel):
         cert = CertVar.for_domain(domain_db)
 
         extra = JsonMap.from_any(domain_db.extra_params_json())
-        extra.update(extracted_data.get("extra_params") or {})
         ips = get_ips(domain_db)
         var = cls(
             id=domain_db.id,
             name=hostname,
-            host=extracted_data.get("host") or hostname,
-            sni=extracted_data.get("sni") or hostname,
+            host=extracted_data["host"] or hostname,
+            sni=extracted_data["sni"] or hostname,
             dst_server=domain_db.get_server(),
             mode=domain_db.mode,
             fake_mode=domain_db.fake_mode,
@@ -106,26 +107,18 @@ class DomainIPVar(BaseModel):
             cert=cert,
             extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
-            custom_proxy_id=domain_db.custom_proxy_id,
+            custom_proxy_ids=list(domain_db.custom_proxy_ids),
             ips=ips,
         )
-        # if var.mode.is_special():
-        #     var.mode = DomainType.special
         if domain_db.download_domain:
             var.download = cls.from_domain(domain_db.download_domain)
         else:
             # Same-domain download without a self-reference (breaks pydantic model_dump).
             var.download = var.model_copy(update={"download": None})
 
-        # if var.download and var.alias != var.download.alias:
-        #     var.alias = var.alias + " 📥" + var.download.alias
-        # var._domain = domain_db
-        # var._extracted = extracted_data
         return var
 
     def server(self, force_ip: bool = False) -> str:
-        # if self.server_domain:
-        #     return self.server_domain
         dst_domain = self.dst_server or self.host or self.name
         if force_ip or self.resolve_ip:
             return random_or_none(self.ips.ips) or dst_domain
@@ -143,19 +136,9 @@ def get_ips(domain_db: Domain) -> IPVar:
             ips.merge(hutils.network.get_ips())
 
     return ips
-    # if auto_ips := domain_db.auto_cdn_ip():
-    #     ips.merge(auto_ips)
-    # elif domain_db.mode.is_direct():
-    #     ips.merge(hutils.network.get_ips())
-
-    # if domain_db.mode.name_is_real():
-    #     ips.merge(hutils.network.get_domain_ips_cached(domain_db.domain))
-
-    # return ips
 
 
-def sni_host_ip_extractor(domain_db: Domain):
-
+def sni_host_ip_extractor(domain_db: Domain) -> _ExtractedSniHost:
     sni = host = domain_db.domain.replace("*", hutils.random.get_random_string(5, 15))
     if all_snis := split_pattern.split((domain_db.servernames or "").strip()):
         if domain_db.fake_mode == FakeMode.reality:
@@ -163,12 +146,7 @@ def sni_host_ip_extractor(domain_db: Domain):
         else:
             sni = random_or_none(all_snis) or sni
 
-    base = {
-        "sni": sni,
-        "host": host,
-    }
-
-    return base
+    return {"sni": sni, "host": host}
 
 
 def _resolve_domain_ech(domain_db: Domain) -> str:

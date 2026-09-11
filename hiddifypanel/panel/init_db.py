@@ -19,7 +19,7 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 140
+MAX_DB_VERSION = 141
 
 
 def _v139(child_id):
@@ -111,13 +111,8 @@ def _v133(child_id):
 def _v131(child_id):
     from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
-    termination = CustomProxy.query.filter(
-        CustomProxy.child_id == Child.current().id,
-        CustomProxy.slug == REALITY_TERMINATION_SLUG,
-        CustomProxy.enable == True,
-    ).first()
     for d in Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.reality).all():
-        d.custom_proxy_id = termination.id
+        d.set_custom_proxies_by_slugs([REALITY_TERMINATION_SLUG])
 
 
 def _v130(child_id):

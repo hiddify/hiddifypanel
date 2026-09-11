@@ -85,13 +85,13 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
 
-    if proxy.mode == CustomProxyMode.domains_sni_gateway:
-        return d.custom_proxy_id is not None and d.custom_proxy_id == proxy.id
+    proxy_id = proxy.id
 
-    if d.custom_proxy_id == proxy.id:
-        return True
-    if not d.is_reality() and d.custom_proxy_id is not None and d.custom_proxy_id != proxy.id:
-        return False
+    if proxy.mode == CustomProxyMode.domains_sni_gateway:
+        return proxy_id in d.custom_proxy_ids
+
+    if d.custom_proxy_ids:
+        return proxy_id in d.custom_proxy_ids
     if not domain_ip_matches_modes(d, proxy.domain_modes):
         return False
     # Every DomainIPVar has a download copy of itself. Only a *different*

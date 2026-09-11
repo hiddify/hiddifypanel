@@ -3883,10 +3883,16 @@ msgstr "🔢 IPهای فعلی سرور"
 msgid "domain.custom_proxy.description"
 msgstr ""
 "اتصال اختیاری به پراکسی. فقط پراکسی‌هایی که از ترکیب حالت این دامنه پشتیبانی"
-" می‌کنند نمایش داده می‌شوند."
+" می‌کنند نمایش داده می‌شوند. خالی بگذارید تا همه پراکسی‌های سازگار استفاده شوند."
+
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr "درگاه DNS"
 
 msgid "domain.custom_proxy.group.ip_based"
 msgstr "مبتنی بر IP"
+
+msgid "domain.custom_proxy.group.l7_gateway"
+msgstr "درگاه L7"
 
 msgid "domain.custom_proxy.group.other"
 msgstr "سایر"
@@ -3895,13 +3901,19 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "درگاه SNI"
 
 msgid "domain.custom_proxy.label"
-msgstr "پراکسی سفارشی"
+msgstr "پراکسی‌های سفارشی"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند"
 
 msgid "domain.custom_proxy.reality_required"
 msgstr "دامنه‌های REALITY به پراکسی REALITY Termination نیاز دارند"
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr "برای یک دامنه نمی‌توان همزمان درگاه SNI و درگاه L7 را انتخاب کرد"
+
+msgid "domain.custom_proxy.sni_single_only"
+msgstr "برای هر دامنه فقط یک درگاه SNI قابل انتخاب است"
 
 msgid "domain.description"
 msgstr ""

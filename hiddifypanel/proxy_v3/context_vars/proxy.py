@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from hiddifypanel.models import DomainType, FakeMode
+from hiddifypanel.models import DomainType
 from hiddifypanel.models.custom_proxy import (
     CustomProxyMode,
     CustomProxyTransport,
@@ -41,7 +41,7 @@ class ProxyVar(BaseModel):
 
     model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
 
-    id: int | None = None
+    id: int = 0
     mode: CustomProxyMode = CustomProxyMode.domains_l7_gateway
     slug: str = ""
     tag: str = ""

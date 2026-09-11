@@ -31,11 +31,7 @@ class ProxyRenderCache:
                 continue
             cache.domains.append(_domain_dict_for_proxy(domain_db, hconfigs))
 
-        rows = (
-            CustomProxy.query.filter(CustomProxy.child_id == child_id)
-            .order_by(CustomProxy.sort_order, CustomProxy.id)
-            .all()
-        )
+        rows = CustomProxy.query.filter(CustomProxy.child_id == child_id).order_by(CustomProxy.sort_order, CustomProxy.id).all()
         domain_rows = [
             d
             for d in Domain.query.filter(Domain.child_id == child_id, Domain.sub_link_only == False).all()  # noqa: E712
@@ -88,8 +84,8 @@ def _domain_dict_for_proxy(domain_db: Domain, hconfigs: dict) -> dict[str, Any]:
 
 def _domains_for_proxy_row(proxy: CustomProxy, all_domains: list[Domain]) -> list[Domain]:
     if mode_value(proxy.mode) == CustomProxyMode.domains_sni_gateway.value:
-        pid = int(proxy.id or 0)
-        return [d for d in all_domains if d.custom_proxy_id is not None and int(d.custom_proxy_id) == pid]
+        proxy_id = int(proxy.id)
+        return [domain for domain in all_domains if proxy_id in domain.custom_proxy_ids]
     if mode_value(proxy.mode) == CustomProxyMode.ip.value:
         buckets = [m for m in (proxy.domain_modes or []) if m in ("direct", "relay")]
         if not buckets:
@@ -102,18 +98,18 @@ def _domains_for_proxy_row(proxy: CustomProxy, all_domains: list[Domain]) -> lis
 def client_domain_vars_for_proxy(child_id: int, proxy_id: int) -> list[DomainIPVar]:
     """Domain list for client presets; SNI-gateway proxies only use assigned domains."""
     proxy = CustomProxy.query.filter(
-        CustomProxy.id == int(proxy_id),
+        CustomProxy.id == proxy_id,
         CustomProxy.child_id == child_id,
     ).first()
     if not proxy:
         return []
 
     domain_rows = [
-        d
-        for d in Domain.query.filter(
+        domain
+        for domain in Domain.query.filter(
             Domain.child_id == child_id,
             Domain.sub_link_only == False,  # noqa: E712
         ).all()
-        if not d.custom_proxy_id or int(d.custom_proxy_id) == int(proxy_id)
+        if not domain.custom_proxy_ids or proxy_id in domain.custom_proxy_ids
     ]
     return [DomainIPVar.from_domain(domain_db) for domain_db in _domains_for_proxy_row(proxy, domain_rows)]

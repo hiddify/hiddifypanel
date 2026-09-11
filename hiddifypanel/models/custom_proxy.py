@@ -6,7 +6,7 @@ from typing import Any
 from slugify import slugify
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.types import JSON
 from strenum import StrEnum
 
@@ -330,7 +330,7 @@ class CustomProxy(db.Model):  # type: ignore
     __tablename__ = "custom_proxy"
     __table_args__ = (UniqueConstraint("child_id", "slug", name="uq_custom_proxy_child_slug"),)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     child_id = Column(Integer, ForeignKey("child.id"), default=0, nullable=False)
     name = Column(String(200), nullable=False)
     slug = Column(String(200), nullable=False)
@@ -531,13 +531,10 @@ class CustomProxy(db.Model):  # type: ignore
             if "transport" in data and data.get("transport") not in (None, ""):
                 dbproxy.transport = _parse_transport(data.get("transport"))
 
-            from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general, apply_server_override
+            from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general
             from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
-                client_override_key,
-                set_field_override,
-                sync_catalog_field,
                 GENERAL_OVERRIDE_FIELDS,
-                SERVER_OVERRIDE_FIELDS,
+                set_field_override,
             )
 
             if "name" in data:

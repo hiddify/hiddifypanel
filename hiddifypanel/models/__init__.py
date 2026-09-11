@@ -25,7 +25,7 @@ from .custom_proxy import (
 )
 
 # from .parent_domain import ParentDomain
-from .domain import Domain, DomainType, FakeMode, ShowDomain
+from .domain import Domain, DomainCustomProxy, DomainType, FakeMode, ShowDomain
 from .proxy import Proxy, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
 from .proxy_base_config import (
     BASE_CONFIG_MATRIX,

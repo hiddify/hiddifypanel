@@ -1,12 +1,14 @@
 import ipaddress
 import json
 import re
+from collections.abc import Sequence
 from datetime import datetime
 from enum import auto
+from typing import TYPE_CHECKING
 
 import json5
 from flask import request
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import Mapped, backref
 from strenum import StrEnum
 
 from hiddifypanel.database import db
@@ -14,6 +16,9 @@ from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 
 from .child import Child
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.custom_proxy import CustomProxy
 
 
 class FakeMode(StrEnum):
@@ -59,6 +64,12 @@ class DomainType(StrEnum):
 
 ShowDomain = db.Table("show_domain", db.Column("domain_id", db.Integer, db.ForeignKey("domain.id"), primary_key=True), db.Column("related_id", db.Integer, db.ForeignKey("domain.id"), primary_key=True))
 
+DomainCustomProxy = db.Table(
+    "domain_custom_proxy",
+    db.Column("domain_id", db.Integer, db.ForeignKey("domain.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("custom_proxy_id", db.Integer, db.ForeignKey("custom_proxy.id", ondelete="CASCADE"), primary_key=True),
+)
+
 
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -83,8 +94,7 @@ class Domain(db.Model):
     extra_params = db.Column(db.String(2000), nullable=True, default="{}")
     resolve_ip = db.Column(db.Boolean, nullable=True, default=False)
 
-    custom_proxy_id = db.Column(db.Integer, db.ForeignKey("custom_proxy.id", ondelete="SET NULL"), default=None, nullable=True)
-    custom_proxy = db.relationship("CustomProxy")
+    custom_proxies: Mapped[list["CustomProxy"]] = db.relationship("CustomProxy", secondary=DomainCustomProxy, lazy="selectin")
     certificate = db.relationship(
         "TlsStore",
         back_populates="domain",
@@ -97,6 +107,28 @@ class Domain(db.Model):
 
     def is_fake_tls(self) -> bool:
         return self.fake_mode == FakeMode.fake
+
+    @property
+    def custom_proxy_ids(self) -> list[int]:
+        return [proxy.id for proxy in self.custom_proxies]
+
+    @property
+    def custom_proxy_slugs(self) -> list[str]:
+        return [proxy.slug for proxy in self.custom_proxies if proxy.slug]
+
+    def set_custom_proxies_by_slugs(self, slugs: Sequence[str] | None) -> None:
+        from hiddifypanel.models.custom_proxy import CustomProxy
+
+        wanted = [slug for slug in (slugs or []) if slug]
+        if not wanted:
+            self.custom_proxies = []
+            return
+        proxies = CustomProxy.query.filter(
+            CustomProxy.child_id == self.child_id,
+            CustomProxy.slug.in_(wanted),
+        ).all()
+        by_slug = {proxy.slug: proxy for proxy in proxies if proxy.slug}
+        self.custom_proxies = [by_slug[slug] for slug in wanted if slug in by_slug]
 
     def is_accessible(self) -> bool:
         if self.mode in (DomainType.direct, DomainType.relay):
@@ -123,7 +155,7 @@ class Domain(db.Model):
                 pass
         return res
 
-    def to_dict(self, dump_ports=False, dump_child_id=False):
+    def to_dict(self, dump_ports=False, dump_child_id=False, for_parent=False):
         try:
             extra = json.loads(self.extra_params or "{}")
         except:
@@ -140,10 +172,10 @@ class Domain(db.Model):
             "grpc": self.grpc,
             "ech": bool(self.ech),
             "download_domain": self.download_domain.domain if self.download_domain else "",
-            "show_domains": [dd.domain for dd in self.show_domains],
+            "show_domains": [dd.domain for dd in self.show_domains] if not for_parent else None,
             "resolve_ip": self.resolve_ip,
             "extra_params": extra,
-            "custom_proxy_id": self.custom_proxy_id,
+            "custom_proxy_slugs": self.custom_proxy_slugs if not for_parent else None,
         }
         if dump_child_id:
             data["child_id"] = self.child_id
@@ -173,8 +205,8 @@ class Domain(db.Model):
     def from_schema(schema):
         return schema.dump(Domain())
 
-    def to_schema(self):
-        domain_dict = self.to_dict()
+    def to_schema(self, for_parent=False):
+        domain_dict = self.to_dict(for_parent=for_parent)
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import DomainSchema
 
         return DomainSchema.model_validate(domain_dict)
@@ -333,8 +365,10 @@ class Domain(db.Model):
             dbdomain.mode = DomainType.sub_link_only
         if domain.get("fake_mode") is not None:
             dbdomain.fake_mode = domain["fake_mode"]
-        if domain.get("custom_proxy_id") is not None:
-            dbdomain.custom_proxy_id = domain.get("custom_proxy_id") or None
+        if "custom_proxy_slugs" in domain:
+            raw_slugs = domain["custom_proxy_slugs"]
+            slugs = [str(slug) for slug in raw_slugs] if isinstance(raw_slugs, list) else []
+            dbdomain.set_custom_proxies_by_slugs(slugs)
         dbdomain.cdn_ip = domain.get("cdn_ip", "")
         dbdomain.alias = domain.get("alias", "")
         dbdomain.grpc = domain.get("grpc", False)
