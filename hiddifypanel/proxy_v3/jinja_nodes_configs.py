@@ -7,7 +7,7 @@ from typing import Any
 from jinja2 import pass_context
 from loguru import logger
 
-from hiddifypanel.models import Child, ConfigEnum, Domain, hconfig
+from hiddifypanel.models import Child, ConfigEnum, hconfig
 from hiddifypanel.models.child import ChildMode
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.jinja_download import download
@@ -34,13 +34,7 @@ def get_context(context: Any) -> ClientContextVar | None:
 
 
 def _child_base_url(child: Child) -> str | None:
-    domain = Domain.get_panel_link(child.id)
-    if not domain:
-        return None
-    admin_path = hconfig(ConfigEnum.proxy_path_admin, child.id)
-    if not admin_path:
-        return None
-    return f"https://{domain}/{admin_path}"
+    return child.node_base_url
 
 
 def _node_config_urls() -> list[str]:
@@ -98,6 +92,8 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
         return []
 
     content_type = "txt" if core_name == "sublink" else "json"
+
+    domains = get_domains(context)
     return download(
         context,
         content_type,
@@ -111,5 +107,12 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
             "user_agent": _caller_user_agent(context),
             "pretty": False,
             "raw": True,
+            "domains": domains,
         },
     )
+
+
+def get_domains(context: Any) -> list[str]:
+    if ctx := get_context(context):
+        return [domain.name for domain in ctx.proxy.domains]
+    return []

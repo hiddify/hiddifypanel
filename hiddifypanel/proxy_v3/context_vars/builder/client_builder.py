@@ -82,6 +82,10 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
+    if proxy.slug != "node-configs":
+        if not d.child_id == Child.current().id:
+            return False
+
     if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
 
@@ -152,7 +156,7 @@ def get_domains_by_name(domain_names: list[str] | None) -> list[DomainIPVar]:
 @cache.cache(600)
 def get_availble_domains(sublink_domain: str | None):
     if not sublink_domain:
-        domains = Domain.query.all()
+        domains = Domain.query.filter(Domain.child_id == Child.current().id).all()
     else:
         db_domain = Domain.query.filter(Domain.domain == sublink_domain).first()
 
