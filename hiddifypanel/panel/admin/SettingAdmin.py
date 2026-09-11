@@ -6,7 +6,7 @@ from bleach import ALLOWED_TAGS as BLEACH_ALLOWED_TAGS
 from bleach import clean as bleach_clean
 
 # from flask_babelex import gettext as _
-from flask import render_template  # type: ignore
+from flask import render_template
 from flask_babel import lazy_gettext as _
 from flask_bootstrap import SwitchField
 
@@ -69,9 +69,6 @@ class SettingAdmin(FlaskView):
                                             if "port" in k2 and k.name != k2 and isinstance(v2, str) and p in v2.strip().split(","):
                                                 hutils.flask.flash(_("Port is already used! in") + f" {k2} {k}", "error")
                                                 return render_template("config.html", form=form)
-                            if k == ConfigEnum.parent_panel and v != "":
-                                # v=(v+"/").replace("/admin",'')
-                                v = re.sub("(/admin/.*)", "/", v) + ("/" if not v.endswith("/") else "")
 
                         if old_configs[k] != v:
                             changed_configs[k] = v
@@ -80,21 +77,19 @@ class SettingAdmin(FlaskView):
 
             merged_configs = {**old_configs, **changed_configs}
             if len(set([merged_configs[ConfigEnum.proxy_path], merged_configs[ConfigEnum.proxy_path_client], merged_configs[ConfigEnum.proxy_path_admin]])) != 3:
-                hutils.flask.flash(_("ProxyPath is already used! use different proxy path"), "error")  # type: ignore
+                hutils.flask.flash(_("ProxyPath is already used! use different proxy path"), "error")
                 return render_template("config.html", form=form)
-
-            # validate parent_panel value
             parent_apikey = ""
             if p_p := changed_configs.get(ConfigEnum.parent_panel):
-                domain, proxy_path, uuid = hutils.flask.extract_parent_info_from_url(p_p)
-                if not domain or not proxy_path or not uuid or not hutils.node.is_panel_active(domain, proxy_path, uuid):
-                    hutils.flask.flash(_("parent.invalid-parent-url"), "danger")  # type: ignore
+                parent_baseurl, uuid = hutils.flask.extract_parent_info_from_url(p_p)
+                if not parent_baseurl or not uuid:
+                    hutils.flask.flash(_("parent.invalid-parent-url"), "danger")
+                    return render_template("config.html", form=form)
+                elif (activeres := hutils.node.is_panel_active(parent_baseurl, uuid)) and not activeres[0]:
+                    hutils.flask.flash(_("parent.panel-not-active") + f": {activeres[1]}", "danger")
                     return render_template("config.html", form=form)
                 else:
-                    # set_hconfig(ConfigEnum.parent_domain, domain)
-                    # set_hconfig(ConfigEnum.parent_admin_proxy_path, proxy_path)
-                    set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
-
+                    changed_configs[ConfigEnum.parent_panel] = parent_baseurl
                     parent_apikey = uuid
 
             for k, v in changed_configs.items():
@@ -106,15 +101,18 @@ class SettingAdmin(FlaskView):
             db.session.commit()
             flask_babel.refresh()
 
-            # set panel mode
-            p_mode = hconfig(ConfigEnum.panel_mode)
-            if p_mode != PanelMode.parent:
-                if hconfig(ConfigEnum.parent_panel):
-                    if p_mode == PanelMode.standalone:
-                        set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
+            if parent_apikey or changed_configs.get(ConfigEnum.node_name):
+                node_name = hconfig(ConfigEnum.node_name)
+                # Register while still standalone/parent — flipping to child first makes the
+                # parent endpoint reject the request (and self-register would always fail).
+                sucess, msg = hutils.node.child.register_to_parent(node_name, parent_apikey or hconfig(ConfigEnum.unique_id), mode=ChildMode.remote)
+                if not sucess:
+                    hutils.flask.flash(_("child.register-failed") + f": {msg}", "danger")
+                    set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
                 else:
-                    if p_mode != PanelMode.standalone:
-                        set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
+                    set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
+            else:
+                set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
 
             cache.invalidate_all_cached_functions()
             # hutils.proxy.get_proxies.invalidate_all()
@@ -123,31 +121,29 @@ class SettingAdmin(FlaskView):
             register_bot(set_hook=True)
 
             # sync with parent if needed
-            if parent_apikey:  # if parent_apikey is not empty, means parent_panel changed and we need to reregister
-                if not hutils.node.child.register_to_parent(hconfig(ConfigEnum.unique_id), parent_apikey, mode=ChildMode.remote):
-                    hutils.flask.flash(_("child.register-failed"), "danger")
-            if hutils.node.is_child():
-                if hutils.node.child.is_registered():
-                    hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
-                # else:
-                #     name = hconfig(ConfigEnum.unique_id)
-                #     parent_info = hutils.node.get_panel_info(hconfig(ConfigEnum.parent_domain), hconfig(ConfigEnum.parent_admin_proxy_path), parent_apikey)
-                #     if parent_info.get("version") != __version__:
-                #         hutils.flask.flash(_("node.diff-version"), "danger")  # type: ignore
-                #     if not hutils.node.child.register_to_parent(name, parent_apikey, mode=ChildMode.remote):
-                #         hutils.flask.flash(_("child.register-failed"), "danger")  # type: ignore
-                #     else:  # TODO: it's just for debuging
-                #         hutils.flask.flash(_("child.register-success"))  # type: ignore
+
+            # if hutils.node.is_child():
+            # if hutils.node.child.is_registered():
+            # hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
+            # else:
+            #     name = hconfig(ConfigEnum.unique_id)
+            #     parent_info = hutils.node.get_panel_info(hconfig(ConfigEnum.parent_domain), hconfig(ConfigEnum.parent_admin_proxy_path), parent_apikey)
+            #     if parent_info.get("version") != __version__:
+            #         hutils.flask.flash(_("node.diff-version"), "danger")
+            #     if not hutils.node.child.register_to_parent(name, parent_apikey, mode=ChildMode.remote):
+            #         hutils.flask.flash(_("child.register-failed"), "danger")
+            #     else:  # TODO: it's just for debuging
+            #         hutils.flask.flash(_("child.register-success"))
 
             reset_action = hiddify.check_need_reset(old_configs)
 
             if old_configs[ConfigEnum.admin_lang] != hconfig(ConfigEnum.admin_lang):
                 form = get_config_form()
         else:
-            hutils.flask.flash(_("config.validation-error"), "danger")  # type: ignore
+            hutils.flask.flash(_("config.validation-error"), "danger")
             for field, errors in form.errors.items():
                 for error in errors:
-                    hutils.flask.flash(error, "danger")  # type: ignore
+                    hutils.flask.flash(error, "danger")
 
         return reset_action or render_template("config.html", form=form)
 

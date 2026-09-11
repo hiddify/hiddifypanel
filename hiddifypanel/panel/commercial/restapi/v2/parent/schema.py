@@ -100,9 +100,9 @@ class ChildStatusOutputSchema(ApiModel):
 class RegisterDataSchema(ApiModel):
     users: list[UserSchema] = Field(description="The list of users")
     domains: list[DomainSchema] = Field(description="The list of domains")
-    proxies: list[ProxySchema] = Field(description="The list of proxies")
+    # proxies: list[ProxySchema] = Field(description="The list of proxies")
     admin_users: list[AdminSchema] = Field(description="The list of admin users")
-    hconfigs: list[HConfigSchema] = Field(description="The list of configs")
+    # hconfigs: list[HConfigSchema] = Field(description="The list of configs")
 
 
 class RegisterInputSchema(ApiModel):
@@ -110,6 +110,7 @@ class RegisterInputSchema(ApiModel):
     unique_id: str = Field(description="The child's unique id")
     name: str = Field(description="The child's name")
     mode: ChildMode = Field(description="The child's mode")
+    node_base_url: str | None = Field(default=None, description="The child's node base url")
 
 
 class RegisterOutputSchema(ApiModel):

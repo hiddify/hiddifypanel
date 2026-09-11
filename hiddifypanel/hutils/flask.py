@@ -1,24 +1,27 @@
-from typing import List, Tuple
-from flask import flash as flask_flash, request
-from wtforms.validators import ValidationError
-from apiflask import abort as apiflask_abort
-from flask_babel import gettext as _
-from flask import url_for  # type: ignore
-from flask import abort as flask_abort
-from markupsafe import Markup
+import os
+import re
 from urllib.parse import urlparse
-from strenum import StrEnum
 
 import user_agents
-import re
-import os
+from apiflask import abort as apiflask_abort
+from flask import abort as flask_abort
+from flask import flash as flask_flash
+from flask import (
+    request,
+    url_for,  # type: ignore
+)
+from flask_babel import gettext as _
+from flask_babel.speaklater import LazyString
+from markupsafe import Markup
+from strenum import StrEnum
+from wtforms.validators import ValidationError
 
+from hiddifypanel import current_app, g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models import *
-from hiddifypanel import g, current_app, hutils
 
 
-def flash(message: str, category: str = "message"):
+def flash(message: str | Markup | LazyString, category: str = "message"):
     if not isinstance(message, str):
         message = str(message)
     return flask_flash(message, category)
@@ -255,7 +258,7 @@ def proxy_path_validator(proxy_path: str) -> None:
             return flask_abort(400, Markup(f"Invalid Proxy Path <a href=/{client_proxy_path}/admin>User Panel</a>")) if dbg_mode else apiflask_abort(400, "invalid request")
 
 
-def list_dir_files(dir_path: str) -> List[str]:
+def list_dir_files(dir_path: str) -> list[str]:
     return sorted([f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))])
 
 
@@ -274,17 +277,20 @@ def get_proxy_stats_url():
     return f"{proxy_stats_url}?{params}"
 
 
-def extract_parent_info_from_url(url) -> Tuple[str | None, str | None, str | None]:
-    pattern = r"^https?://([^/]+)/([^/]+)/([^/]+)/.*$"
+def extract_parent_info_from_url(url) -> tuple[str | None, str | None]:
+    pattern = r"^https://(?P<domain>[^/:]+)(?::(?P<port>[0-9]+))?/(?P<proxy_path>[^/]+)/(?P<admin_uuid>[^/]+)/.*$"
     match = re.match(pattern, url)
 
     if match:
-        domain = match.group(1)
-        proxy_path = match.group(2)
-        admin_uuid = match.group(3)
-        return domain, proxy_path, admin_uuid
+        domain = match.group("domain")
+        port = match.group("port")
+        proxy_path = match.group("proxy_path")
+        admin_uuid = match.group("admin_uuid")
+        host = f"{domain}:{port}" if port else domain
+        baseurl = f"https://{host}/{proxy_path}/"
+        return baseurl, admin_uuid
     else:
-        return None, None, None
+        return None, None
 
 
 class ClientVersion(StrEnum):

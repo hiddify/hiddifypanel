@@ -69,15 +69,24 @@ class NodeApiClient:
             except requests.HTTPError as e:
                 status_code = response.status_code if response is not None else 0
                 reason = (response.reason or "") if response is not None else ""
+                body = ""
+                if response is not None:
+                    try:
+                        body = (response.text or "")[:2000]
+                    except Exception:
+                        body = ""
                 if retry_count >= self.max_retry:
                     stack_trace = traceback.format_exc()
+                    msg = str(e)
+                    if body:
+                        msg = f"{msg} | body={body}"
                     err = NodeApiErrorSchema(
-                        msg=str(e),
+                        msg=msg,
                         stacktrace=stack_trace,
                         code=status_code,
                         reason=reason,
                     )
-                    with logger.contextualize(status_code=err.code, reason=err.reason, stack_trace=stack_trace, payload=payload):
+                    with logger.contextualize(status_code=err.code, reason=err.reason, stack_trace=stack_trace, payload=payload, body=body):
                         logger.error(f"HTTP error after {self.max_retry} retries")
                         logger.exception(e)
                     return err

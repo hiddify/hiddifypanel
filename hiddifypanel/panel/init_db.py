@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import socket
 import sys
 import uuid
 
@@ -23,6 +24,7 @@ MAX_DB_VERSION = 140
 
 def _v139(child_id):
     add_config_if_not_exist(ConfigEnum.last_users_sync, "0001-01-01 00:00:00", child_id)
+    add_config_if_not_exist(ConfigEnum.node_name, f"{socket.gethostname()}-{hconfig(ConfigEnum.unique_id)}", child_id)
 
     execute("UPDATE user SET deleted=0 WHERE deleted IS NULL")
 
@@ -1146,6 +1148,7 @@ def upgrade_database():
 
 
 def init_db():
+
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
     # set_hconfig(ConfigEnum.db_version, 135, commit=True)
@@ -1154,10 +1157,6 @@ def init_db():
         return
 
     db.create_all()
-
-    # temporary fix
-    add_column(Child.mode)
-    add_column(Child.name)
 
     cache.invalidate_all_cached_functions()
     migrate(db_version)
@@ -1211,6 +1210,7 @@ def init_db():
 
 
 def migrate(db_version):
+
     for table_name, table_obj in db.metadata.tables.items():
         for column in table_obj.columns:
             add_column(column)

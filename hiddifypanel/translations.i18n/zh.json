@@ -80,6 +80,7 @@
   "Error in auto cdn format": "⚠️ 自动 CDN 格式错误",
   "Error! auto cdn ip can not be find, please contact admin.": "自动 CDN IP 错误！找不到，请联系管理员",
   "Example Domains": "测试并推荐域名",
+  "Expired": "",
   "Expired Users": "过期用户",
   "Export": "导入",
   "Fake": "➖ 假",
@@ -107,6 +108,7 @@
   "Incorrect Password": "⚠️密码错误",
   "Install": "安装",
   "Install Hiddify Application": "Hiddify 管理器安装",
+  "Invalid": "",
   "Invalid IP or domain": "错误的IP或域名",
   "Invalid REALITY hostnames": "无效的 REALITY 主机名",
   "Invalid admin link": "管理员链接无效",
@@ -125,7 +127,10 @@
   "More Applications": "更多应用",
   "Network": "网络",
   "New": "新",
+  "No certificate": "",
   "No children!": "没有孩子",
+  "No main domains found, please add at least one domain with valid certificate": "",
+  "Nodes": "",
   "Not Secure": "",
   "Note": "📝 注意",
   "Offline more than 1 day": "离线超过1天",
@@ -191,10 +196,12 @@
   "Save": "保存",
   "Save & Add More": "保存并添加更多",
   "Save Link": "保存链接",
+  "Search Settings": "",
   "Select all records": "选择所有记录",
   "Select record": "选择记录",
   "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "选定用户",
+  "Self-signed": "",
   "Send Message to User's Telegram": "📣 向用户的 Telegram 发送消息",
   "Sending": "正在发送...",
   "Should be a valid domain": "应该是有效域名",
@@ -212,6 +219,7 @@
   "Submit": "提交",
   "Success": "成功",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新",
+  "TLS": "",
   "Telegram Bot": "Telegram 机器人",
   "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️临时短链接",
@@ -231,6 +239,7 @@
   "User is inactive": "用户处于非活动状态",
   "V2rayNG": "替代 v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br/>\n<br/>",
   "V2rayNG intro": "请从以下任一链接安装 v2rayNG：%(dl_link)s %(play_link)s。\n然后按照视频教程复制下面的链接粘贴到v2rayNG中 <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -问题'></i> </按钮>。\n<br/>",
+  "Valid": "",
   "View in Telegram": "在电报中查看",
   "Want to enjoy more with telegram?": "ℹ️ 将您的帐户连接到 Telegram",
   "Welcome %(user)s": "欢迎%(user)s",
@@ -244,6 +253,7 @@
   "You can restore your configs from previously downloaded configs": "ℹ️您可以从以前下载的备份文件恢复您的配置",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "你的用户太多了！您只能拥有 %(active)s 个活跃用户和 %(total)s 个用户",
   "You have used this domain in: ": "您已在以下位置使用过该域名：",
+  "You need to enable %(names)s globally to enable this proxy.": "",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "您的 Hiddify 实例信息\n领域： {}\n使用限制：{} GB\n当前使用情况：{} GB\n到期时间：{}\n剩余天数：{}\n\n\n祝你好运！ 🎉🎉🎉",
   "[Admin only visible message:] You can change this message from settings": "[管理员专用消息]：可通过设置自定义。",
   "actions": "行动",
@@ -362,6 +372,7 @@
       "title": "V2RayNG"
     }
   },
+  "at least one user should exist": "",
   "auto": "自动",
   "auto_cdn_ip": "☑️ 自动 CDN IP 选择器",
   "bot": {
@@ -469,6 +480,13 @@
     "cloudflare": {
       "description": "请按照<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>说明</a>并粘贴 Cloudflare API 密钥",
       "label": "🔑 Cloudflare API"
+    },
+    "common_proxy_core": {
+      "both": "",
+      "description": "",
+      "hiddify_core": "",
+      "label": "",
+      "xray": ""
     },
     "core_type": {
       "description": "☢️ XRay：是一个完整的核心\n<br>\n📦 Singbox：由 SagerNet 开发。也是一个不错的核心",
@@ -646,6 +664,10 @@
       "description": "配置.last_priodic_usage_check.description",
       "label": "config.last_priodic_usage_check.标签"
     },
+    "last_users_sync": {
+      "description": "",
+      "label": ""
+    },
     "license": {
       "description": "要将本产品用于商业用途，您必须购买其许可证",
       "label": "许可证代码"
@@ -660,6 +682,10 @@
       "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
+    },
+    "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
     },
     "mieru": {
       "description": "",
@@ -744,6 +770,10 @@
       "description": "用于显示资源。使用您服务器的 CPU，但不会太多。",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "",
+      "label": ""
+    },
     "not_found": {
       "description": "未找到配置",
       "label": "未找到配置"
@@ -778,6 +808,10 @@
     "path_grpc": {
       "description": "配置中的 gRPC 路径",
       "label": "ℹ️ gRPC 路径"
+    },
+    "path_http": {
+      "description": "",
+      "label": ""
     },
     "path_httpupgrade": {
       "description": "应该是随机的",
@@ -1296,7 +1330,10 @@
       "description": "",
       "label": ""
     },
-    "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。"
+    "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。",
+    "tls_status": {
+      "description": ""
+    }
   },
   "download": "直接下载",
   "download_domain": {
@@ -1308,6 +1345,7 @@
   "grpc-proxy": {
     "description": "ℹ️ gRPC 是一个基于 H2 的协议。也许对你来说更快！"
   },
+  "in\n          parent panel": "",
   "in parent panel": "在中央面板",
   "install from google play": "<i class='fa-brands fa-google-play'></i> Google Play",
   "ios": "iOS",
@@ -1370,6 +1408,7 @@
   "package size?": "包装尺寸？",
   "parent": {
     "invalid-parent-url": "parent.invalid-parent-url",
+    "panel-not-active": "",
     "sync-req-failed": "parent.sync-req-failed"
   },
   "previous": "以前的",

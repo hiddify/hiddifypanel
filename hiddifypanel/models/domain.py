@@ -309,6 +309,7 @@ class Domain(db.Model):
                 db.session.query(Domain)
                 .filter(
                     Domain.fake_mode == FakeMode.valid,
+                    Domain.child_id == Child.current().id,
                 )
                 .all()
             )
@@ -321,7 +322,7 @@ class Domain(db.Model):
 
     @classmethod
     def add_or_update(cls, commit=True, child_id=0, **domain):
-        dbdomain = Domain.query.filter(Domain.domain == domain["domain"]).first()
+        dbdomain = Domain.query.filter(Domain.domain == domain["domain"], Domain.child_id == child_id).first()
         if not dbdomain:
             dbdomain = Domain(domain=domain["domain"])
             db.session.add(dbdomain)
@@ -362,11 +363,12 @@ class Domain(db.Model):
 
         child_ids = {}
         for domain in domains:
+            row = domain.model_dump() if hasattr(domain, "model_dump") else domain
             child_id = hiddify.get_child(unique_id=force_child_unique_id)
             child_ids[child_id] = 1
-            cls.add_or_update(commit=False, child_id=child_id, **domain)
+            cls.add_or_update(commit=False, child_id=child_id, **row)
         if remove and len(child_ids):
-            dd = {d["domain"]: 1 for d in domains}
+            dd = {d.domain if hasattr(d, "domain") else d["domain"]: 1 for d in domains}
             for d in Domain.query.filter(Domain.child_id.in_(child_ids)):
                 if d.domain not in dd:
                     db.session.delete(d)

@@ -319,6 +319,9 @@ msgstr "خطا! آی پی اتوماتیک نتوانست پیدا شود. لط�
 msgid "Example Domains"
 msgstr "بررسی و پیشنهاد دامنه"
 
+msgid "Expired"
+msgstr ""
+
 msgid "Expired Users"
 msgstr "کاربران منقضی شده"
 
@@ -423,6 +426,9 @@ msgstr "نصب"
 msgid "Install Hiddify Application"
 msgstr "نصب پنل هیدیفای"
 
+msgid "Invalid"
+msgstr ""
+
 msgid "Invalid IP or domain"
 msgstr "IP یا دامنه نامعتبر است"
 
@@ -483,8 +489,18 @@ msgstr "شبکه"
 msgid "New"
 msgstr "تازه"
 
+msgid "No certificate"
+msgstr ""
+
 msgid "No children!"
 msgstr "هیچ زیر مجموعه ای یافت نشد"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
 
 msgid "Not Secure"
 msgstr "ناامن"
@@ -710,6 +726,9 @@ msgstr "ذخیره و افزودن مورد دیگر"
 msgid "Save Link"
 msgstr "این لینک را در محلی ذخیره نمایید."
 
+msgid "Search Settings"
+msgstr "جستجوی تنظیمات"
+
 msgid "Select all records"
 msgstr "انتخاب همه رکوردها"
 
@@ -721,6 +740,9 @@ msgstr "پراکسی انتخاب‌شده از این ترکیب حالت دا�
 
 msgid "Seleted Users"
 msgstr "کاربران انتخاب شده"
+
+msgid "Self-signed"
+msgstr ""
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 ارسال پیام به تلگرام کاربر"
@@ -775,6 +797,9 @@ msgid ""
 msgstr ""
 "✔️ موفقیت آمیز بود! لطفا برای اینکه مطمئن شوید بروزرسانی‌ها به درستی اعمال "
 "شده، حدود 5 دقیقه صبر کنید."
+
+msgid "TLS"
+msgstr ""
 
 msgid "Telegram Bot"
 msgstr "بات تلگرام"
@@ -842,6 +867,9 @@ msgstr ""
 "در v2rayNG قرار دهید.\n"
 "<br />"
 
+msgid "Valid"
+msgstr ""
+
 msgid "View in Telegram"
 msgstr "مشاهده جزییات در تلگرام"
 
@@ -898,6 +926,9 @@ msgstr ""
 
 msgid "You have used this domain in: "
 msgstr "شما از این دامنه در بخش زیر استفاده کرده اید: "
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr ""
 
 msgid ""
 "Your hiddify instance information \n"
@@ -979,7 +1010,7 @@ msgid "admin.menu.config"
 msgstr "تنظیمات"
 
 msgid "admin.menu.dashboard_v2"
-msgstr "داشبورد جدید"
+msgstr "Next"
 
 msgid "admin.menu.domain"
 msgstr "دامنه‌ها"
@@ -1079,14 +1110,14 @@ msgstr "بازگشت"
 msgid "adminV2.common.cancel"
 msgstr "انصراف"
 
-msgid "adminV2.common.copy"
-msgstr "کپی"
+msgid "adminV2.common.confirmDelete"
+msgstr "آیا از حذف این مورد مطمئن هستید؟"
 
 msgid "adminV2.common.copied"
 msgstr "کپی شد"
 
-msgid "adminV2.common.confirmDelete"
-msgstr "آیا از حذف این مورد مطمئن هستید؟"
+msgid "adminV2.common.copy"
+msgstr "کپی"
 
 msgid "adminV2.common.delete"
 msgstr "حذف"
@@ -1288,6 +1319,9 @@ msgstr ""
 msgid "adminV2.proxy.bundleContextProxyCount"
 msgstr "پروکسی‌های فعال"
 
+msgid "adminV2.proxy.cannotEnable"
+msgstr "امکان فعال‌سازی این پروکسی نیست"
+
 msgid "adminV2.proxy.categories"
 msgstr "دسته‌بندی‌ها"
 
@@ -1343,14 +1377,6 @@ msgstr "مشترک"
 msgid "adminV2.proxy.core"
 msgstr "هسته"
 
-msgid "adminV2.proxy.isCommonProxy"
-msgstr "پروکسی مشترک"
-
-msgid "adminV2.proxy.isCommonProxyHint"
-msgstr ""
-"این پروتکل روی هر دو هسته Xray و Hiddify Core وجود دارد. تنظیم هسته پروکسی "
-"مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد."
-
 msgid "adminV2.proxy.customPath"
 msgstr "مسیر سفارشی"
 
@@ -1376,16 +1402,19 @@ msgid "adminV2.proxy.domainModeLabels.cdn"
 msgstr "CDN"
 
 msgid "adminV2.proxy.domainModeLabels.direct"
-msgstr "مستقیم"
+msgstr "Direct"
 
-msgid "adminV2.proxy.domainModeLabels.direct-valid"
-msgstr "مستقیم معتبر"
+msgid "adminV2.proxy.domainModeLabels.direct-dns"
+msgstr "Direct DNS"
 
 msgid "adminV2.proxy.domainModeLabels.direct-fake"
-msgstr "مستقیم جعلی"
+msgstr "Direct Fake"
 
 msgid "adminV2.proxy.domainModeLabels.direct-reality"
-msgstr "مستقیم REALITY"
+msgstr "Direct Reality"
+
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "Direct Valid"
 
 msgid "adminV2.proxy.domainModeLabels.fake"
 msgstr "Fake TLS"
@@ -1396,17 +1425,17 @@ msgstr "REALITY"
 msgid "adminV2.proxy.domainModeLabels.relay"
 msgstr "Relay"
 
-msgid "adminV2.proxy.domainModeLabels.relay-valid"
-msgstr "Relay معتبر"
-
 msgid "adminV2.proxy.domainModeLabels.relay-fake"
-msgstr "Relay جعلی"
+msgstr "Relay Fake"
 
 msgid "adminV2.proxy.domainModeLabels.relay-reality"
-msgstr "Relay REALITY"
+msgstr "Relay Reality"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "Relay Valid"
 
 msgid "adminV2.proxy.domainModeLabels.special"
-msgstr "ویژه (REALITY)"
+msgstr "Special (REALITY)"
 
 msgid "adminV2.proxy.domainModes"
 msgstr "حالت دامنه"
@@ -1517,6 +1546,9 @@ msgstr "نمونه با موفقیت تولید شد"
 msgid "adminV2.proxy.generateExamplePartial"
 msgstr "نمونه با هشدار یا خطا تولید شد"
 
+msgid "adminV2.proxy.goToSettings"
+msgstr "رفتن به تنظیمات"
+
 msgid "adminV2.proxy.ignoreSkip"
 msgstr "نادیده گرفتن skip"
 
@@ -1556,6 +1588,14 @@ msgstr "پورت‌های UDP ورودی"
 msgid "adminV2.proxy.inboundUdpPortsHint"
 msgstr "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP"
 
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "پروکسی مشترک"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"این پروتکل روی هر دو هسته Xray و Hiddify Core وجود دارد. تنظیم هسته پروکسی "
+"مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد."
+
 msgid "adminV2.proxy.l7Proto"
 msgstr "L7 Reverse Proxy Protocol"
 
@@ -1580,14 +1620,17 @@ msgstr "بومی دامنه"
 msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
 msgstr "پورت خودکار چند دامنه"
 
+msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
+msgstr "Domain DNS Gateway"
+
 msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
-msgstr "درگاه L7 دامنه"
+msgstr "Domain L7 Gateway"
 
 msgid "adminV2.proxy.modeLabels.domains_single_public_port"
 msgstr "پورت ثابت چند دامنه"
 
 msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
-msgstr "درگاه SNI دامنه"
+msgstr "Domain SNI Gateway"
 
 msgid "adminV2.proxy.modeLabels.ip"
 msgstr "مبتنی بر IP"
@@ -1602,12 +1645,6 @@ msgid "adminV2.proxy.needGlobalEnable"
 msgstr ""
 "برای فعال‌سازی این پروکسی باید ابتدا {names} را به‌صورت سراسری فعال کنید. "
 "می‌خواهید تنظیمات را در تب جدید باز کنید؟"
-
-msgid "adminV2.proxy.cannotEnable"
-msgstr "امکان فعال‌سازی این پروکسی نیست"
-
-msgid "adminV2.proxy.goToSettings"
-msgstr "رفتن به تنظیمات"
 
 msgid "adminV2.proxy.new"
 msgstr "پروکسی جدید"
@@ -1648,11 +1685,11 @@ msgstr "خروجی رندر شده"
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "منبع قالب"
 
-msgid "adminV2.proxy.searchAll"
-msgstr "جستجو در همه ستون‌ها..."
-
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "بازگردانی به پیش‌فرض کاتالوگ"
+
+msgid "adminV2.proxy.searchAll"
+msgstr "جستجو در همه ستون‌ها..."
 
 msgid "adminV2.proxy.serverBuiltinCustomized"
 msgstr "پیکربندی سرور سفارشی"
@@ -1684,11 +1721,11 @@ msgstr "جزئیات Base64"
 msgid "adminV2.proxy.sublinkFormat"
 msgstr "فرمت لینک"
 
-msgid "adminV2.proxy.sublinkFormatDecoded"
-msgstr "فیلدهای رمزگشایی‌شده"
-
 msgid "adminV2.proxy.sublinkFormatBase64"
 msgstr "فرمت Base64"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "فیلدهای رمزگشایی‌شده"
 
 msgid "adminV2.proxy.sublinkFormatRaw"
 msgstr "لینک تولیدشده"
@@ -1768,20 +1805,20 @@ msgstr "لایه TLS"
 msgid "adminV2.proxy.tlsLayerLabels.http"
 msgstr "-"
 
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS H2 H1"
+
 msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
 msgstr "TLS H1"
 
 msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
 msgstr "TLS H2"
-
-msgid "adminV2.proxy.tlsLayerLabels.tls"
-msgstr "TLS H2 H1"
-
-msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
-msgstr "QUIC"
-
-msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
-msgstr "QUIC + TLS H2 H1"
 
 msgid "adminV2.proxy.tlsLayerSpecialConflict"
 msgstr "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست"
@@ -1917,6 +1954,12 @@ msgstr ""
 "خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی "
 "رندر نشود"
 
+msgid "adminV2.theme.dark"
+msgstr "حالت تاریک"
+
+msgid "adminV2.theme.light"
+msgstr "حالت روشن"
+
 msgid "adminV2.utils.addQuery"
 msgstr "افزودن پارامتر"
 
@@ -2025,12 +2068,6 @@ msgstr "JSON وی‌مس"
 
 msgid "adminV2.utils.vmessObject"
 msgstr "JSON وی‌مس باید یک آبجکت باشد"
-
-msgid "adminV2.theme.dark"
-msgstr "حالت تاریک"
-
-msgid "adminV2.theme.light"
-msgstr "حالت روشن"
 
 msgid "adminV2.validation.errors"
 msgstr "خطاها"
@@ -2151,6 +2188,9 @@ msgstr "توضیحات V2RayNG"
 
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
+
+msgid "at least one user should exist"
+msgstr ""
 
 msgid "auto"
 msgstr "خودکار"
@@ -2367,22 +2407,22 @@ msgstr ""
 msgid "config.cloudflare.label"
 msgstr "🔑 کلید توسعه کلودفلر"
 
+msgid "config.common_proxy_core.both"
+msgstr "هر دو"
+
 msgid "config.common_proxy_core.description"
 msgstr ""
 "اگر پروتکل روی هر دو هسته باشد، فقط هسته انتخاب‌شده فعال می‌ماند. هر دو را "
 "برای فعال ماندن هر دو انتخاب کنید."
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr "Hiddify Core (singbox)"
 
 msgid "config.common_proxy_core.label"
 msgstr "🎛️ هسته پروکسی مشترک"
 
 msgid "config.common_proxy_core.xray"
 msgstr "Xray"
-
-msgid "config.common_proxy_core.hiddify_core"
-msgstr "Hiddify Core (singbox)"
-
-msgid "config.common_proxy_core.both"
-msgstr "هر دو"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -2701,6 +2741,12 @@ msgstr "زمان آخرین بررسی دوره‌ای مصرف"
 msgid "config.last_priodic_usage_check.label"
 msgstr "آخرین بررسی دوره‌ای مصرف"
 
+msgid "config.last_users_sync.description"
+msgstr ""
+
+msgid "config.last_users_sync.label"
+msgstr ""
+
 msgid "config.license.description"
 msgstr "برای استفاده تجاری از این محصول باید مجوز آن را خریداری کنید"
 
@@ -2733,6 +2779,12 @@ msgstr "سطح جزئیات لاگ پنل"
 
 msgid "config.log_level.label"
 msgstr "سطح لاگ"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr "کلید رمزنگاری payload برای MasterDNS (hex)"
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr "کلید رمزنگاری MasterDNS"
 
 msgid "config.mieru.description"
 msgstr ""
@@ -2888,6 +2940,12 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr ""
+
+msgid "config.node_name.label"
+msgstr ""
+
 msgid "config.not_found.description"
 msgstr "تنظیمات پیدا نشد."
 
@@ -2949,6 +3007,12 @@ msgstr "مسیر gRPC در کانفیگ ها"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ مسیر gRPC"
+
+msgid "config.path_http.description"
+msgstr ""
+
+msgid "config.path_http.label"
+msgstr ""
 
 msgid "config.path_httpupgrade.description"
 msgstr "باید تصادفی باشد"
@@ -3958,6 +4022,11 @@ msgstr "➿ gRPC"
 msgid "grpc-proxy.description"
 msgstr "gRPC ℹ️ یک پروتکل مبتنی بر H2 است. شاید برای شما سریعتر باشد!"
 
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
+
 msgid "in parent panel"
 msgstr "در پنل مرکزی"
 
@@ -4075,6 +4144,9 @@ msgstr "حجم بسته"
 
 msgid "parent.invalid-parent-url"
 msgstr "آدرس پنل والد نامعتبر است"
+
+msgid "parent.panel-not-active"
+msgstr ""
 
 msgid "parent.sync-req-failed"
 msgstr "درخواست همگام‌سازی با پنل والد ناموفق بود"
@@ -4503,6 +4575,3 @@ msgstr "📅 هفتگی"
 
 msgid "worker"
 msgstr "✴️ ورکر کلودفلر"
-
-msgid "Search Settings"
-msgstr "جستجوی تنظیمات"

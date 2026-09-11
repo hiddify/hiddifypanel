@@ -85,9 +85,10 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
     @classmethod
     def bulk_register(cls, accounts: list = [], commit: bool = True, remove: bool = False):
         for u in accounts:
-            cls.add_or_update(commit=False, **u)
+            row = u.model_dump() if hasattr(u, "model_dump") else u
+            cls.add_or_update(commit=False, **row)
         if remove:
-            dd = {str(u["uuid"]): 1 for u in accounts}
+            dd = {str(u.uuid if hasattr(u, "uuid") else u["uuid"]): 1 for u in accounts}
             for d in cls.query.all():
                 if d.uuid not in dd:
                     db.session.delete(d)

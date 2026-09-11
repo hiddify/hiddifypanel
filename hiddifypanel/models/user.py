@@ -272,10 +272,11 @@ class User(BaseAccount):
     @classmethod
     def bulk_register(cls, accounts: list = [], commit: bool = True, remove: bool = False):
         for u in accounts:
-            data = {**u.model_dump(), "deleted": False}
+            row = u.model_dump() if hasattr(u, "model_dump") else u
+            data = {**row, "deleted": False}
             cls.add_or_update(commit=False, **data)
         if remove:
-            keep = {str(u.get("uuid")) for u in accounts if u.get("uuid")}
+            keep = {str(u.uuid if hasattr(u, "uuid") else u.get("uuid")) for u in accounts if (getattr(u, "uuid", None) or (isinstance(u, dict) and u.get("uuid")))}
             for d in cls.query.filter(cls.deleted.is_(False)).all():
                 if d.uuid not in keep:
                     d.remove(commit=False)

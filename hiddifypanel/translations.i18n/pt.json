@@ -80,6 +80,7 @@
   "Error in auto cdn format": "⚠️ Erro no formato CDN automático",
   "Error! auto cdn ip can not be find, please contact admin.": "Erro no Auto CDN IP! Não pode ser encontrado, entre em contato com o administrador",
   "Example Domains": "Test and Suggest Domain ",
+  "Expired": "",
   "Expired Users": "Usuários expirados",
   "Export": "Exportar",
   "Fake": "➖ Falso",
@@ -107,6 +108,7 @@
   "Incorrect Password": "⚠️ Senha incorreta",
   "Install": "Instalar",
   "Install Hiddify Application": "Instalação do Painel Hidify",
+  "Invalid": "",
   "Invalid IP or domain": "IP ou domínio inválido",
   "Invalid REALITY hostnames": "Nomes de host REALITY inválidos",
   "Invalid admin link": "Link de administrador inválido",
@@ -125,7 +127,10 @@
   "More Applications": "Mais aplicativos",
   "Network": "Rede",
   "New": "Novo",
+  "No certificate": "",
   "No children!": "sem filhos",
+  "No main domains found, please add at least one domain with valid certificate": "",
+  "Nodes": "",
   "Not Secure": "",
   "Note": "📝 Observação",
   "Offline more than 1 day": "Offline por mais de 1 dia",
@@ -191,10 +196,12 @@
   "Save": "Salvar",
   "Save & Add More": "Salvar e adicionar mais",
   "Save Link": "Link salvo",
+  "Search Settings": "",
   "Select all records": "Selecionar todos os registros",
   "Select record": "Selecionar registro",
   "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "Usuários selecionados",
+  "Self-signed": "",
   "Send Message to User's Telegram": "📣 Enviar mensagem para o telegram do usuário",
   "Sending": "Enviando...",
   "Should be a valid domain": "Deve ser um domínio válido",
@@ -212,6 +219,7 @@
   "Submit": "Enviar",
   "Success": "Sucesso",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ Sucesso! Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado",
+  "TLS": "",
   "Telegram Bot": "Telegram Bot",
   "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️ Link curto temporário",
@@ -231,6 +239,7 @@
   "User is inactive": "O usuário está inativo",
   "V2rayNG": "Alternativa v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>",
   "V2rayNG intro": "Instale o v2rayNG a partir de um destes links: %(dl_link)s %(play_link)s.\nEntão copie o link abaixo e cole no v2rayNG conforme o vídeo tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -question'></i> </button>.\n<br />",
+  "Valid": "",
   "View in Telegram": "Ver no Telegram",
   "Want to enjoy more with telegram?": "Conecte sua conta ao Telegram",
   "Welcome %(user)s": "Bem-vindo %(user)s",
@@ -244,6 +253,7 @@
   "You can restore your configs from previously downloaded configs": "Você pode restaurar suas configurações do arquivo de backup baixado anteriormente",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "Você tem muitos usuários! Você pode ter apenas %(active)s usuários ativos e %(total)s usuários",
   "You have used this domain in: ": "Já utilizou este Domínio em:",
+  "You need to enable %(names)s globally to enable this proxy.": "",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Suas informações de instância do Hiddify\nDomínio: {}\nLimite de uso: {} GB\nUso atual: {} GB\nExpira em: {}\nDias restantes: {}\n\n\nBoa sorte! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Mensagem visível apenas pelo administrador]: Você pode alterar esta mensagem nas configurações.",
   "actions": "Ações",
@@ -362,6 +372,7 @@
       "title": "V2RayNG"
     }
   },
+  "at least one user should exist": "",
   "auto": "Auto",
   "auto_cdn_ip": "Seletor automático de CDN IP",
   "bot": {
@@ -469,6 +480,13 @@
     "cloudflare": {
       "description": "Por favor, siga <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>a instrução</a> e cole a chave de API Cloudflare",
       "label": "🔑 API Cloudflare"
+    },
+    "common_proxy_core": {
+      "both": "",
+      "description": "",
+      "hiddify_core": "",
+      "label": "",
+      "xray": ""
     },
     "core_type": {
       "description": "☢️ XRay: é um núcleo completo\n<br>\n📦 Singbox: Desenvolvido por SagerNet. Também é um bom núcleo",
@@ -646,6 +664,10 @@
       "description": "config.last_priodic_usage_check.description",
       "label": "config.last_priodic_usage_check.label"
     },
+    "last_users_sync": {
+      "description": "",
+      "label": ""
+    },
     "license": {
       "description": "Para uso comercial deste produto, você deve comprar sua licença",
       "label": "Código de licença"
@@ -660,6 +682,10 @@
       "WARNING": "",
       "description": "config.log_level.descrição",
       "label": "config.log_level.label"
+    },
+    "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
     },
     "mieru": {
       "description": "",
@@ -744,6 +770,10 @@
       "description": "Para exibir recursos. usa a CPU do seu servidor, mas não é muito.",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "",
+      "label": ""
+    },
     "not_found": {
       "description": "Configuração não encontrada",
       "label": "Configuração não encontrada"
@@ -778,6 +808,10 @@
     "path_grpc": {
       "description": "Caminho gRPC nas configurações",
       "label": "ℹ️ caminho gRPC"
+    },
+    "path_http": {
+      "description": "",
+      "label": ""
     },
     "path_httpupgrade": {
       "description": "deveria ser aleatório",
@@ -1296,7 +1330,10 @@
       "description": "",
       "label": ""
     },
-    "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis."
+    "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis.",
+    "tls_status": {
+      "description": ""
+    }
   },
   "download": "Download direto",
   "download_domain": {
@@ -1308,6 +1345,7 @@
   "grpc-proxy": {
     "description": "ℹ️ gRPC é um protocolo baseado em H2. Talvez seja mais rápido para você!"
   },
+  "in\n          parent panel": "",
   "in parent panel": "No Painel Central",
   "install from google play": "<i class='fa-brands fa-google-play'></i>Google Play",
   "ios": "iOS",
@@ -1370,6 +1408,7 @@
   "package size?": "tamanho do pacote?",
   "parent": {
     "invalid-parent-url": "parent.invalid-parent-url",
+    "panel-not-active": "",
     "sync-req-failed": "parent.sync-req-failed"
   },
   "previous": "Anterior",

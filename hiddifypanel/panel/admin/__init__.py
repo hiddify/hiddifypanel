@@ -43,7 +43,7 @@ def init_app(app):
     flaskadmin.add_view(AdminstratorAdmin(AdminUser, db.session))
     from .NodeAdmin import NodeAdmin
 
-    flaskadmin.add_view(NodeAdmin(Child, db.session))
+    flaskadmin.add_view(NodeAdmin(Child, db.session, endpoint="node", url="node", name="Node"))
     from .Dashboard import Dashboard
     from .SettingAdmin import SettingAdmin
     from .commercial_info import CommercialInfo

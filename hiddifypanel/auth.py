@@ -127,11 +127,11 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
                 json_abort(403, "Unauthorized node")
 
             if not current_account and not node_auth:
-                return redirect_to_login()  # type: ignore
+                return redirect_to_login()
             if roles and not node_auth:
                 account_role = current_account.role
                 if account_role not in roles:
-                    return redirect_to_login()  # type: ignore
+                    return redirect_to_login()
             return fn(*args, **kwargs)
 
         return decorated_view

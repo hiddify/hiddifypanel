@@ -25,6 +25,7 @@ class Child(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: str = Column(String(200), nullable=False, unique=False)
     mode = Column(Enum(ChildMode), nullable=False, default=ChildMode.virtual)
+    node_base_url: Mapped[str] = Column(String(200), nullable=False, unique=False)
     # ip = db.Column(db.String(200), nullable=False, unique=True)
     unique_id = Column(String(200), nullable=False, default=lambda: str(uuid.uuid4()), unique=True)
     domains = db.relationship("Domain", cascade="all,delete", backref="child")  # type: ignore

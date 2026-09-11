@@ -44,18 +44,17 @@ def convert_usage_api_response_to_dict(
 # endregion
 
 
-def is_panel_active(domain: str, proxy_path: str, apikey: str | None = None) -> bool:
-    base_url = f"https://{domain}/{proxy_path}"
+def is_panel_active(base_url: str, apikey: str | None = None) -> tuple[bool, str]:
 
     res = NodeApiClient(base_url, apikey).get("/api/v2/panel/ping/", PongOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while checking if panel is active: {res.msg}")
-        return False
+        return False, res.msg
     if isinstance(res, PongOutputSchema) and "PONG" in str(res.msg):
         logger.debug(f"Panel is active: {res.msg}")
-        return True
+        return True, ""
     logger.debug("Panel is not active")
-    return False
+    return False, f"Panel is not active: {res.msg}"
 
 
 def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> dict | PanelInfoOutputSchema | None:

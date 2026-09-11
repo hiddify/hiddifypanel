@@ -1,15 +1,15 @@
 import random
 import re
 
-import maxminddb
 from flask import has_request_context, request
 from flask_babel import gettext as _
-from loguru import logger
 
 from hiddifypanel import hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
+
+from . import maxmind
 
 DEFAULT_IPs = """
 mci.ircf.space		MCI
@@ -36,79 +36,17 @@ dbn.ircf.space		DBN
 apt.ircf.space		APT
 """
 
-try:
-    IPASN = maxminddb.open_database("GeoLite2-ASN.mmdb")
-    IPCOUNTRY = maxminddb.open_database("GeoLite2-Country.mmdb")
-    # __ipcity = maxminddb.open_database('GeoLite2-City.mmdb')
-except BaseException:
-    logger.error("Error can not load maxminddb")
-    IPASN = {}
-    IPCOUNTRY = {}
-    # __ipcity = {}
-
-__asn_map = {
-    "58224": "MKH",
-    "197207": "MCI",
-    "12880": "ITC",
-    "44244": "MTN",
-    "57218": "RTL",
-    "16322": "PRS",
-    "56402": "HWB",
-    "41689": "AST",
-    "43754": "AST",
-    "31549": "SHT",
-    "205647": "SHT",
-    "50810": "MBT",
-    "39308": "ASK",
-    "205207": "RSP",
-    "25184": "AFR",
-    "394510": "ZTL",
-    "206065": "ZTL",
-    "49100": "PSM",
-}
-
 
 def get_asn_short_name(user_ip: str = "") -> str:
-    return __get_asn_short_name_imp(user_ip or get_real_user_ip())
-
-
-@cache.cache()
-def __get_asn_short_name_imp(user_ip: str) -> str:
-    try:
-        asn_id = get_asn_id(user_ip)
-        return __asn_map.get(str(asn_id), "unknown")
-    except BaseException:
-        return "unknown"
+    return maxmind.get_ip_info(user_ip or get_real_user_ip()).short_name
 
 
 def get_asn_id(user_ip: str = "") -> str:
-    return __get_asn_id_imp(user_ip or get_real_user_ip())
+    return maxmind.get_ip_info(user_ip or get_real_user_ip()).asn
 
 
-@cache.cache()
-def __get_asn_id_imp(user_ip: str) -> str:
-    try:
-        asnres = IPASN.get(user_ip)
-        return asnres["autonomous_system_number"]
-    except BaseException:
-        return "unknown"
-
-
-def get_country(user_ip: str = "") -> dict | str:
-    try:
-        user_ip = user_ip or get_real_user_ip()
-        return (IPCOUNTRY.get(user_ip) or {}).get("country", {}).get("iso_code", "unknown")
-    except BaseException:
-        return "unknown"
-
-
-# def get_city(user_ip: str = '') -> Union[dict, str]:
-#     try:
-#         user_ip = user_ip or get_real_user_ip()
-#         res = __ipcity.get(user_ip)
-#         return {'city': res.get('city').get('name'), 'latitude': res.get('latitude'), 'longitude': res.get('longitude'), 'accuracy_radius': res.get('accuracy_radius')}
-#     except BaseException:
-#         return 'unknown'
+def get_country(user_ip: str = "") -> str:
+    return maxmind.get_ip_info(user_ip or get_real_user_ip()).country
 
 
 def get_real_user_ip_debug(user_ip: str = "") -> str:
@@ -116,16 +54,11 @@ def get_real_user_ip_debug(user_ip: str = "") -> str:
 
 
 @cache.cache()
-def __get_real_user_ip_debug_imp(user_ip) -> str:
-    if type(user_ip) is str and "," in user_ip:
-        user_ip = user_ip.split(",")[0]
-    asnres = IPASN.get(user_ip) or {}
-    asn = f"{asnres.get('autonomous_system_number', 'unknown')}" if asnres else "unknown"
-    asn_dscr = f"{asnres.get('autonomous_system_organization', 'unknown')}" if asnres else "unknown"
-    asn_short = get_asn_short_name(user_ip)
-    country = get_country(user_ip)
-    default = __get_host_base_on_asn(DEFAULT_IPs, asn_short).replace(".ircf.space", "")
-    return f"{user_ip} {country} {asn} {asn_short} {'ERROR' if asn_short == 'unknown' else ''} fullname={asn_dscr} default:{default}"
+def __get_real_user_ip_debug_imp(user_ip: str) -> str:
+    info = maxmind.get_ip_info(user_ip)
+    default = __get_host_base_on_asn(DEFAULT_IPs, info.short_name).replace(".ircf.space", "")
+    err = "ERROR" if info.short_name == "unknown" else ""
+    return f"{info.ip} {info.country} {info.asn} {info.short_name} {err} fullname={info.asn_org} default:{default}"
 
 
 def get_real_user_ip() -> str:
@@ -180,10 +113,11 @@ def get_clean_ip_user(user_ip, ipliststr: str, default_asn: str = "") -> tuple[s
 
     ips = split_pattern.split(ipliststr)
 
-    asn_short = get_asn_short_name(user_ip)
-    country = get_country(user_ip)
+    info = maxmind.get_ip_info(user_ip)
+    asn_short = info.short_name
+    country = info.country
     # print("Real user ip",get_real_user_ip_debug(), user_ip,asn_short,country)
-    is_morteza_format = any([format for format in __asn_map.values() if format in ips])
+    is_morteza_format = any(name in ips for name in maxmind.ASN_SHORT_NAMES)
     # print("IPs",ips)
     if is_morteza_format:
         if str(country).lower() != hconfig(ConfigEnum.country) and default_asn:

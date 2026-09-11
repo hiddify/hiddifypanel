@@ -134,7 +134,8 @@ class Proxy(db.Model):
         from hiddifypanel.panel import hiddify
 
         for proxy in proxies:
+            row = proxy.model_dump() if hasattr(proxy, "model_dump") else proxy
             child_id = hiddify.get_child(unique_id=force_child_unique_id)
-            Proxy.add_or_update(commit=False, child_id=child_id, **proxy)
+            Proxy.add_or_update(commit=False, child_id=child_id, **row)
         if commit:
             db.session.commit()

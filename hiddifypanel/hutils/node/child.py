@@ -1,14 +1,14 @@
-import socket
 from datetime import datetime
 
 from loguru import logger
 from strenum import StrEnum
 
-from hiddifypanel import hutils
+# region private
+from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, BoolConfig, Child, ChildMode, ConfigEnum, Domain, Proxy, StrConfig, UnsyncedUsage, UsageData, User, hconfig, set_hconfig
-from hiddifypanel.panel import usage
+from hiddifypanel.panel import hiddify, usage
 
 # import schmeas
 from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
@@ -25,21 +25,23 @@ from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
 
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
-# region private
-
 
 def __get_register_data_for_api(name: str, mode: ChildMode) -> RegisterInputSchema:
-
+    main_domains = Domain.get_domains()
+    if not main_domains:
+        raise ValueError(_("No main domains found, please add at least one domain with valid certificate"))
+    base_url, uuid = hutils.flask.extract_parent_info_from_url(hiddify.get_account_panel_link(g.account, main_domains[0].domain))
     register_data = RegisterInputSchema(
         unique_id=hconfig(ConfigEnum.unique_id),
         name=name,
         mode=mode,
+        node_base_url=base_url,
         panel_data=RegisterDataSchema(
             admin_users=[admin_user.to_schema() for admin_user in AdminUser.query.all()],
             users=[user.to_schema() for user in User.query.all()],
             domains=[domain.to_schema() for domain in Domain.query.all()],
-            proxies=[proxy.to_schema() for proxy in Proxy.query.all()],
-            hconfigs=[*[u.to_schema() for u in StrConfig.query.all()], *[u.to_schema() for u in BoolConfig.query.all()]],
+            # proxies=[proxy.to_schema() for proxy in Proxy.query.all()],
+            # hconfigs=[*[u.to_schema() for u in StrConfig.query.all()], *[u.to_schema() for u in BoolConfig.query.all()]],
         ),
     )
 
@@ -72,11 +74,7 @@ def __get_sync_data_for_api(*fields: SyncFields) -> SyncInputSchema:
 
 
 def __get_parent_panel_url() -> str:
-    domain, proxy_path, uuid = hutils.flask.extract_parent_info_from_url(hconfig(ConfigEnum.parent_panel))
-    if not domain or not proxy_path or not uuid:
-        return ""
-    url = "https://" + f"{domain}/{proxy_path.removesuffix('/')}"
-    return url
+    return hconfig(ConfigEnum.parent_panel)
 
 
 # endregion
@@ -107,31 +105,31 @@ def is_registered() -> bool:
         return False
 
 
-def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remote) -> bool:
+def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remote) -> tuple[bool, str]:
     # get parent link its format is "https://panel.hiddify.com/<admin_proxy_path>/"
     p_url = __get_parent_panel_url()
     if not p_url:
         logger.error("Parent url is empty")
-        return False
+        return False, "Parent url is empty"
 
     payload = __get_register_data_for_api(name, mode)
     res = NodeApiClient(p_url, apikey).put("/api/v2/parent/register/", payload, RegisterOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while registering to parent: {res.msg}")
-        return False
+        return False, res.msg
 
     # TODO: change the bulk_register and such methods to accept models instead of dict
     AdminUser.bulk_register(res.admin_users, commit=False)
     User.bulk_register(res.users, commit=False)
 
     # add new child as parent
-    db.session.add(Child(unique_id=res.parent_unique_id, name=socket.gethostname() or res.parent_unique_id, mode=ChildMode.parent))
+    db.session.add(Child(unique_id=res.parent_unique_id, name=res.parent_unique_id, mode=ChildMode.parent))
 
     db.session.commit()
 
     logger.success("Successfully registered to parent")
     cache.invalidate_all_cached_functions()
-    return True
+    return True, ""
 
 
 def sync_with_parent(*fields: SyncFields) -> bool:

@@ -316,7 +316,8 @@ def get_common_data(user_uuid, mode, no_domain=False, filter_domain=None):
     expire_s = int((datetime.date.today() + datetime.timedelta(days=expire_days) - datetime.date(1970, 1, 1)).total_seconds())
 
     user_ip = hutils.network.auto_ip_selector.get_real_user_ip()
-    asn = hutils.network.auto_ip_selector.get_asn_short_name(user_ip)
+    ip_info = hutils.network.maxmind.get_ip_info(user_ip)
+    asn = ip_info.short_name
     profile_title = f"{db_domain.alias or db_domain.domain} {user.name}"
     profile_url = hiddify.get_account_panel_link(user, request.host)
     if has_auto_cdn and asn != "unknown":
@@ -346,7 +347,7 @@ def get_common_data(user_uuid, mode, no_domain=False, filter_domain=None):
         "ip": user_ip,
         "ip_debug": hutils.network.auto_ip_selector.get_real_user_ip_debug(user_ip),
         "asn": asn,
-        "country": hutils.network.auto_ip_selector.get_country(user_ip),
+        "country": ip_info.country,
         "has_auto_cdn": has_auto_cdn,
         "profile_url": profile_url,
     }

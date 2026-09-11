@@ -6,7 +6,6 @@ from dns.rdtypes.svcbbase import ECHParam
 
 import urllib.request
 import ipaddress
-from hiddifypanel.hutils.network.auto_ip_selector import IPASN
 import requests
 import random
 import socket
@@ -21,6 +20,7 @@ from typing import List, Union, Literal
 
 from hiddifypanel.models import *
 from hiddifypanel.cache import cache
+from hiddifypanel.hutils.network import maxmind
 
 import dns.resolver
 import base64
@@ -442,14 +442,10 @@ def is_in_same_asn(domain_or_ip: str, domain_or_ip_target: str) -> bool:
 
 @cache.cache(600)
 def get_ip_asn(ip: ipaddress.IPv4Address | ipaddress.IPv6Address | str) -> str:
-    if not IPASN:
+    info = maxmind.get_ip_info(str(ip))
+    if not info.db_available:
         return __get_ip_asn_api(ip)
-    try:
-        if asn := IPASN.get(str(ip)):
-            return str(asn.get("autonomous_system_organization", ""))
-        return ""
-    except:
-        return ""
+    return "" if info.asn_org == "unknown" else info.asn_org
 
 
 def __get_ip_asn_api(ip: ipaddress.IPv4Address | ipaddress.IPv6Address | str) -> str:

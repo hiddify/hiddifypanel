@@ -80,6 +80,7 @@
   "Error in auto cdn format": "⚠️ Error in Auto CDN Format",
   "Error! auto cdn ip can not be find, please contact admin.": "Error In Auto CDN IP! It Can Not Be Find, Please Contact Admin",
   "Example Domains": "Test and Suggest Domain ",
+  "Expired": "Expired",
   "Expired Users": "Expired Users",
   "Export": "Export",
   "Fake": "➖ Fake",
@@ -107,6 +108,7 @@
   "Incorrect Password": "⚠️ Incorrect Password",
   "Install": "Install",
   "Install Hiddify Application": "Hiddify Manager Installation",
+  "Invalid": "Invalid",
   "Invalid IP or domain": "Invalid IP or domain",
   "Invalid REALITY hostnames": "Invalid REALITY Hostnames",
   "Invalid admin link": "Invalid Admin Link",
@@ -125,7 +127,10 @@
   "More Applications": "More Applications",
   "Network": "Network",
   "New": "New",
+  "No certificate": "No certificate",
   "No children!": "No Children",
+  "No main domains found, please add at least one domain with valid certificate": "No main domains found, please add at least one domain with valid certificate",
+  "Nodes": "Nodes",
   "Not Secure": "Not Secure",
   "Note": "📝 Note",
   "Offline more than 1 day": "Offline More Than 1 Day",
@@ -191,10 +196,12 @@
   "Save": "Save",
   "Save & Add More": "Save & Add More",
   "Save Link": "Save Link",
+  "Search Settings": "Search Settings",
   "Select all records": "Select all records",
   "Select record": "Select record",
   "Selected proxy does not support this domain mode combination": "Selected proxy does not support this domain mode combination",
   "Seleted Users": "Seleted Users",
+  "Self-signed": "Self-signed",
   "Send Message to User's Telegram": "📣 Send Message to User's Telegram",
   "Sending": "Sending...",
   "Should be a valid domain": "Should be a valid domain",
@@ -212,6 +219,7 @@
   "Submit": "Submit",
   "Success": "Success",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ Success! Please Wait around 5 minutes to make sure everything is updated",
+  "TLS": "TLS",
   "Telegram Bot": "Telegram Bot",
   "Telegram Bot Link": "Telegram Bot Link",
   "Temporary Short Link": "⏱️ Temporary Short Link",
@@ -231,6 +239,7 @@
   "User is inactive": "User Is Inactive",
   "V2rayNG": "Alternative v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br />\n<br />",
   "V2rayNG intro": "Please install v2rayNG from either of these links: %(dl_link)s  %(play_link)s.\nThen copy the link below and paste it in v2rayNG according to the video tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>.\n<br />",
+  "Valid": "Valid",
   "View in Telegram": "View in Telegram",
   "Want to enjoy more with telegram?": "ℹ️ Connect Your Account to Telegram",
   "Welcome %(user)s": "Welcome %(user)s",
@@ -244,6 +253,7 @@
   "You can restore your configs from previously downloaded configs": "ℹ️ You can restore your configs from previously downloaded backup file",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "You have too much users! You can have only %(active)s active users and %(total)s users",
   "You have used this domain in: ": "You have already used this Domain in: ",
+  "You need to enable %(names)s globally to enable this proxy.": "You need to enable %(names)s globally to enable this proxy.",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Your Hiddify instance information \nDomain: {} \nUsage Limit: {} GB\nCurrent Usage: {} GB\nExpires at: {} \nRemaining Days: {} \n\n\nGood Luck! 🎉 🎉 🎉 \n",
   "[Admin only visible message:] You can change this message from settings": "[Admin Exclusive Message]: Customizable via Settings",
   "actions": "Actions",
@@ -269,7 +279,7 @@
     "menu": {
       "api": "API",
       "config": "Settings",
-      "dashboard_v2": "New Dashboard",
+      "dashboard_v2": "Next",
       "domain": "Domains",
       "home": "Dashboard",
       "proxy": "Proxies",
@@ -308,9 +318,9 @@
       "add": "Add",
       "back": "Back",
       "cancel": "Cancel",
-      "copy": "Copy",
-      "copied": "Copied",
       "confirmDelete": "Are you sure you want to delete this item?",
+      "copied": "Copied",
+      "copy": "Copy",
       "delete": "Delete",
       "deleted": "Deleted successfully",
       "duplicate": "Duplicate",
@@ -389,6 +399,7 @@
       "builtinDefaultHint": "Built-in preset synced from catalog. Enable custom content on Server or Client tabs to edit those sides.",
       "builtinReadOnly": "Built-in preset — only name and enabled state can be changed. Duplicate to edit fully.",
       "bundleContextProxyCount": "Enabled proxies",
+      "cannotEnable": "Cannot enable this proxy",
       "categories": "Categories",
       "categoriesAdd": "Add category",
       "categoriesAddNew": "Add New",
@@ -407,8 +418,6 @@
       "clientCores": "Client cores",
       "commonProxyBadge": "Common",
       "core": "Core",
-      "isCommonProxy": "Common proxy",
-      "isCommonProxyHint": "This protocol exists on both Xray and Hiddify Core. The Common Proxy Core setting keeps only the selected core enabled.",
       "customPath": "Custom path",
       "customPathAuto": "Generated automatically for HTTP proxies",
       "directPortAccess": "Direct port access",
@@ -419,16 +428,16 @@
       "domainModeLabels": {
         "cdn": "CDN",
         "direct": "Direct",
-        "direct-valid": "Direct valid",
+        "direct-dns": "Direct DNS",
         "direct-fake": "Direct fake",
         "direct-reality": "Direct REALITY",
-        "direct-dns": "Direct DNS",
+        "direct-valid": "Direct valid",
         "fake": "Fake TLS",
         "reality": "REALITY",
         "relay": "Relay",
-        "relay-valid": "Relay valid",
         "relay-fake": "Relay fake",
         "relay-reality": "Relay REALITY",
+        "relay-valid": "Relay valid",
         "special": "Special (REALITY)"
       },
       "domainModes": "Domain modes",
@@ -467,6 +476,7 @@
       "generateExample": "Generate example",
       "generateExampleOk": "Example generated successfully",
       "generateExamplePartial": "Example generated with warnings or errors",
+      "goToSettings": "Go to settings",
       "ignoreSkip": "Ignore skip tags",
       "ignoreSkipHint": "Render config even when a template skip block would normally skip a fragment",
       "import": "Import",
@@ -480,6 +490,8 @@
       "inboundTemplate": "Inbound template",
       "inboundUdpPorts": "Inbound UDP ports",
       "inboundUdpPortsHint": "Comma-separated static UDP ports; defaults to TCP ports when empty",
+      "isCommonProxy": "Common proxy",
+      "isCommonProxyHint": "This protocol exists on both Xray and Hiddify Core. The Common Proxy Core setting keeps only the selected core enabled.",
       "l7Proto": "L7 Reverse Proxy Protocol",
       "l7ReverseProto": "L7 reverse proxy protocol",
       "linkSettings": "Link settings",
@@ -498,8 +510,6 @@
       "modeSettings": "Mode & routing",
       "name": "Name",
       "needGlobalEnable": "You need to enable {names} globally to enable this proxy. Do you want to open settings?",
-      "cannotEnable": "Cannot enable this proxy",
-      "goToSettings": "Go to settings",
       "new": "New Proxy",
       "noClientConfigs": "No client configs yet. Add a client to get started.",
       "outboundTagTemplate": "Outbound tag template",
@@ -513,8 +523,8 @@
       "renderErrorNoDetail": "No additional context is available for this error.",
       "renderErrorRenderedSource": "Rendered output",
       "renderErrorTemplateSource": "Template source",
-      "searchAll": "Search all columns...",
       "resetToBuiltin": "Reset to catalog default",
+      "searchAll": "Search all columns...",
       "serverBuiltinCustomized": "Custom server config",
       "serverBuiltinDefault": "Using catalog default server config",
       "serverCore": "Server core",
@@ -527,8 +537,8 @@
       },
       "sublinkBase64Detail": "Base64 detail",
       "sublinkFormat": "Link format",
-      "sublinkFormatDecoded": "Decoded fields",
       "sublinkFormatBase64": "Base64 format",
+      "sublinkFormatDecoded": "Decoded fields",
       "sublinkFormatRaw": "Rendered link",
       "sublinkFormatRawLink": "Raw link",
       "sublinkFormatUri": "URI format",
@@ -560,11 +570,11 @@
       "tlsLayer": "TLS layer",
       "tlsLayerLabels": {
         "http": "-",
-        "tls_h1": "TLS H1",
-        "tls_h2": "TLS H2",
-        "tls": "TLS H2 H1",
+        "quic_tcp_tls": "QUIC + TLS H2 H1",
         "quic_tls": "QUIC",
-        "quic_tcp_tls": "QUIC + TLS H2 H1"
+        "tls": "TLS H2 H1",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2"
       },
       "tlsLayerSpecialConflict": "HTTP TLS layer is not compatible with REALITY domain modes",
       "transport": "Transport",
@@ -617,6 +627,10 @@
       "name": "Name",
       "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
     },
+    "theme": {
+      "dark": "Dark mode",
+      "light": "Light mode"
+    },
     "utils": {
       "addQuery": "Add query",
       "base64Tab": "Base64",
@@ -652,10 +666,6 @@
       "user": "User",
       "vmessJson": "vmess JSON",
       "vmessObject": "vmess JSON must be an object"
-    },
-    "theme": {
-      "dark": "Dark mode",
-      "light": "Light mode"
     },
     "validation": {
       "errors": "Errors",
@@ -736,6 +746,7 @@
       "title": "V2RayNG"
     }
   },
+  "at least one user should exist": "at least one user should exist",
   "auto": "Auto",
   "auto_cdn_ip": "☑️ Automatic CDN IP Selector",
   "bot": {
@@ -845,11 +856,11 @@
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
+      "both": "Both",
       "description": "When a protocol exists on both Xray and Hiddify Core, only the selected core stays enabled. Choose Both to keep both.",
-      "label": "🎛️ Common Proxy Core",
-      "xray": "Xray",
       "hiddify_core": "Hiddify Core (singbox)",
-      "both": "Both"
+      "label": "🎛️ Common Proxy Core",
+      "xray": "Xray"
     },
     "core_type": {
       "description": "☢️ XRay : Is a Complete Core\n<br>\n📦 Singbox : Developed by SagerNet. It is also a good core",
@@ -902,10 +913,6 @@
     "dnstt_resolvers": {
       "description": "Comma-separated DNS resolvers for DNSTT",
       "label": "DNSTT Resolvers"
-    },
-    "master_dns_encrypt_key": {
-      "description": "MasterDNS payload encryption key (hex)",
-      "label": "MasterDNS Encrypt Key"
     },
     "domain_fronting": {
       "description": "It is used to simulate another website instead of your website in SNI. therefore, GFW can not filter your Domain\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>Guide</a>. ⚠️CloudFlare does not support Domain Fronting.",
@@ -1050,6 +1057,10 @@
       "description": "Panel log verbosity level",
       "label": "Log Level"
     },
+    "master_dns_encrypt_key": {
+      "description": "MasterDNS payload encryption key (hex)",
+      "label": "MasterDNS Encrypt Key"
+    },
     "mieru": {
       "description": "The Mieru protocol is a secure and decentralized communication protocol designed to facilitate data transfer in distributed networks without the need for a central server",
       "label": "⚡️ Mieru"
@@ -1133,6 +1144,10 @@
       "description": "For displaying resources. uses your Server's CPU but it is not too much.",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "config.node_name.description",
+      "label": "config.node_name.label"
+    },
     "not_found": {
       "description": "Config Not Found",
       "label": "Config Not Found"
@@ -1167,6 +1182,10 @@
     "path_grpc": {
       "description": "gRPC Path In Configs",
       "label": "ℹ️ gRPC Path"
+    },
+    "path_http": {
+      "description": "config.path_http.description",
+      "label": "config.path_http.label"
     },
     "path_httpupgrade": {
       "description": "should be random",
@@ -1718,6 +1737,7 @@
   "grpc-proxy": {
     "description": "ℹ️ gRPC is a H2 based Protocol. Maybe it is faster for you!"
   },
+  "in\n          parent panel": "in\n          parent panel",
   "in parent panel": "In Central Panel",
   "install from google play": "<i class='fa-brands fa-google-play'></i> Google Play",
   "ios": "iOS",
@@ -1780,6 +1800,7 @@
   "package size?": "package size?",
   "parent": {
     "invalid-parent-url": "Invalid parent panel URL",
+    "panel-not-active": "parent.panel-not-active",
     "sync-req-failed": "Parent sync request failed"
   },
   "previous": "Previous",
@@ -1928,6 +1949,5 @@
     "notallowed": "Please visit this page without using a VPN. You need to access it from the country %(expected_country)s, but you're currently accessing it from %(your_country)s."
   },
   "weekly": "📅 Weekly",
-  "worker": "✴️ Cloudflare Worker",
-  "Search Settings": "Search Settings"
+  "worker": "✴️ Cloudflare Worker"
 }

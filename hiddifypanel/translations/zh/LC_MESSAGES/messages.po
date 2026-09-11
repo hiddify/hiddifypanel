@@ -1,11 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr " 搜索<inlang-LineFeed>设置"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: zh\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr ""
@@ -318,6 +320,9 @@ msgstr "自动 CDN IP 错误！找不到，请联系管理员"
 msgid "Example Domains"
 msgstr "测试并推荐域名"
 
+msgid "Expired"
+msgstr ""
+
 msgid "Expired Users"
 msgstr "过期用户"
 
@@ -419,6 +424,9 @@ msgstr "安装"
 msgid "Install Hiddify Application"
 msgstr "Hiddify 管理器安装"
 
+msgid "Invalid"
+msgstr ""
+
 msgid "Invalid IP or domain"
 msgstr "错误的IP或域名"
 
@@ -476,8 +484,18 @@ msgstr "网络"
 msgid "New"
 msgstr "新"
 
+msgid "No certificate"
+msgstr ""
+
 msgid "No children!"
 msgstr "没有孩子"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
 
 msgid "Not Secure"
 msgstr ""
@@ -701,6 +719,9 @@ msgstr "保存并添加更多"
 msgid "Save Link"
 msgstr "保存链接"
 
+msgid "Search Settings"
+msgstr ""
+
 msgid "Select all records"
 msgstr "选择所有记录"
 
@@ -712,6 +733,9 @@ msgstr ""
 
 msgid "Seleted Users"
 msgstr "选定用户"
+
+msgid "Self-signed"
+msgstr ""
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 向用户的 Telegram 发送消息"
@@ -764,6 +788,9 @@ msgstr "成功"
 msgid ""
 "Success! Please wait around 5 minutes to make sure everything is updated."
 msgstr "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新"
+
+msgid "TLS"
+msgstr ""
 
 msgid "Telegram Bot"
 msgstr "Telegram 机器人"
@@ -829,6 +856,9 @@ msgstr ""
 "然后按照视频教程复制下面的链接粘贴到v2rayNG中 <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -问题'></i> </按钮>。\n"
 "<br/>"
 
+msgid "Valid"
+msgstr ""
+
 msgid "View in Telegram"
 msgstr "在电报中查看"
 
@@ -881,6 +911,9 @@ msgstr "你的用户太多了！您只能拥有 %(active)s 个活跃用户和 %(
 
 msgid "You have used this domain in: "
 msgstr "您已在以下位置使用过该域名："
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr ""
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1115,6 +1148,9 @@ msgstr "V2RayNG 说明"
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
+msgid "at least one user should exist"
+msgstr ""
+
 msgid "auto"
 msgstr "自动"
 
@@ -1314,6 +1350,21 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 Cloudflare API"
+
+msgid "config.common_proxy_core.both"
+msgstr ""
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr ""
+
+msgid "config.common_proxy_core.label"
+msgstr ""
+
+msgid "config.common_proxy_core.xray"
+msgstr ""
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1606,6 +1657,12 @@ msgstr "配置.last_priodic_usage_check.description"
 msgid "config.last_priodic_usage_check.label"
 msgstr "config.last_priodic_usage_check.标签"
 
+msgid "config.last_users_sync.description"
+msgstr ""
+
+msgid "config.last_users_sync.label"
+msgstr ""
+
 msgid "config.license.description"
 msgstr "要将本产品用于商业用途，您必须购买其许可证"
 
@@ -1638,6 +1695,12 @@ msgstr "config.log_level.description"
 
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr ""
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr ""
 
 msgid "config.mieru.description"
 msgstr ""
@@ -1779,6 +1842,12 @@ msgstr "用于显示资源。使用您服务器的 CPU，但不会太多。"
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr ""
+
+msgid "config.node_name.label"
+msgstr ""
+
 msgid "config.not_found.description"
 msgstr "未找到配置"
 
@@ -1835,6 +1904,12 @@ msgstr "配置中的 gRPC 路径"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ gRPC 路径"
+
+msgid "config.path_http.description"
+msgstr ""
+
+msgid "config.path_http.label"
+msgstr ""
 
 msgid "config.path_httpupgrade.description"
 msgstr "应该是随机的"
@@ -2688,6 +2763,9 @@ msgstr ""
 "<br>\n"
 "建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。"
 
+msgid "domain.tls_status.description"
+msgstr ""
+
 msgid "download"
 msgstr "直接下载"
 
@@ -2705,6 +2783,11 @@ msgstr "➿ gRPC"
 
 msgid "grpc-proxy.description"
 msgstr "ℹ️ gRPC 是一个基于 H2 的协议。也许对你来说更快！"
+
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
 
 msgid "in parent panel"
 msgstr "在中央面板"
@@ -2822,6 +2905,9 @@ msgstr "包装尺寸？"
 
 msgid "parent.invalid-parent-url"
 msgstr "parent.invalid-parent-url"
+
+msgid "parent.panel-not-active"
+msgstr ""
 
 msgid "parent.sync-req-failed"
 msgstr "parent.sync-req-failed"

@@ -80,6 +80,7 @@
   "Error in auto cdn format": "⚠️ خطا در ورود IP ها به صورت دستی",
   "Error! auto cdn ip can not be find, please contact admin.": "خطا! آی پی اتوماتیک نتوانست پیدا شود. لطفا با مدیر تماس بگیرید",
   "Example Domains": "بررسی و پیشنهاد دامنه",
+  "Expired": "",
   "Expired Users": "کاربران منقضی شده",
   "Export": "خروجی گرفتن",
   "Fake": "➖ جعلی",
@@ -107,6 +108,7 @@
   "Incorrect Password": "⚠️ رمز عبور اشتباه است",
   "Install": "نصب",
   "Install Hiddify Application": "نصب پنل هیدیفای",
+  "Invalid": "",
   "Invalid IP or domain": "IP یا دامنه نامعتبر است",
   "Invalid REALITY hostnames": "نام‌های میزبان REALITY نامعتبر است",
   "Invalid admin link": "لینک ادمین نامعتبر است",
@@ -125,7 +127,10 @@
   "More Applications": "نرم افزارهای بیشتر",
   "Network": "شبکه",
   "New": "تازه",
+  "No certificate": "",
   "No children!": "هیچ زیر مجموعه ای یافت نشد",
+  "No main domains found, please add at least one domain with valid certificate": "",
+  "Nodes": "",
   "Not Secure": "ناامن",
   "Note": "📝 یادداشت",
   "Offline more than 1 day": "آفلاین بیش از 1 روز",
@@ -191,10 +196,12 @@
   "Save": "ذخیره",
   "Save & Add More": "ذخیره و افزودن مورد دیگر",
   "Save Link": "این لینک را در محلی ذخیره نمایید.",
+  "Search Settings": "جستجوی تنظیمات",
   "Select all records": "انتخاب همه رکوردها",
   "Select record": "انتخاب رکورد",
   "Selected proxy does not support this domain mode combination": "پراکسی انتخاب‌شده از این ترکیب حالت دامنه پشتیبانی نمی‌کند",
   "Seleted Users": "کاربران انتخاب شده",
+  "Self-signed": "",
   "Send Message to User's Telegram": "📣 ارسال پیام به تلگرام کاربر",
   "Sending": "در حال ارسال...",
   "Should be a valid domain": "باید یک دامنه معتبر باشد",
@@ -212,6 +219,7 @@
   "Submit": "ثبت",
   "Success": "موفقیت",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ موفقیت آمیز بود! لطفا برای اینکه مطمئن شوید بروزرسانی‌ها به درستی اعمال شده، حدود 5 دقیقه صبر کنید.",
+  "TLS": "",
   "Telegram Bot": "بات تلگرام",
   "Telegram Bot Link": "لینک ربات تلگرام",
   "Temporary Short Link": "⏱️ لینک کوتاه موقت",
@@ -231,6 +239,7 @@
   "User is inactive": "کاربر غیر فعال است",
   "V2rayNG": "نرم افزار جایگزین  v2rayNG  <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br />",
   "V2rayNG intro": "لطفاً v2rayNG را از %(dl_link)s   %(play_link)s نصب کنید.\nسپس لینک زیر را کپی کرده و مطابق فیلم آموزش <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i>  </button>\nدر v2rayNG قرار دهید.\n<br />",
+  "Valid": "",
   "View in Telegram": "مشاهده جزییات در تلگرام",
   "Want to enjoy more with telegram?": "ℹ️ وصل کردن حساب کاربری به تلگرام",
   "Welcome %(user)s": "%(user)s عزیز خوش آمدی",
@@ -244,6 +253,7 @@
   "You can restore your configs from previously downloaded configs": "ℹ️ در این قسمت می‌توانید تنظیمات قبلی خود را (که قبلا از قسمت پشتیبان گیری دانلود کرده‌اید.) بازگردانی نمایید.",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "شما کاربران زیادی دارید! شما می توانید تنها %(active)s کاربر فعال و %(total)s کاربر داشته باشید",
   "You have used this domain in: ": "شما از این دامنه در بخش زیر استفاده کرده اید: ",
+  "You need to enable %(names)s globally to enable this proxy.": "",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "اطلاعات اکانت هیدیفای شما\nدامنه : {} \nمقدار حجم مجاز : {} گیگابایت\nحجم مصرف شده : {} گیگابایت\nتاریخ انقضا : {} \nروزهای باقی ‌مانده : {} \n\n\nبا آرزوی موفقیت. 🎉 🎉 🎉 ",
   "[Admin only visible message:] You can change this message from settings": "[پیام اختصاصی ادمین]: قابل تنظیم از طریق تنظیمات",
   "actions": "عملیات",
@@ -269,7 +279,7 @@
     "menu": {
       "api": "API",
       "config": "تنظیمات",
-      "dashboard_v2": "داشبورد جدید",
+      "dashboard_v2": "Next",
       "domain": "دامنه‌ها",
       "home": "داشبورد",
       "proxy": "پروکسی‌ها",
@@ -308,9 +318,9 @@
       "add": "افزودن",
       "back": "بازگشت",
       "cancel": "انصراف",
-      "copy": "کپی",
-      "copied": "کپی شد",
       "confirmDelete": "آیا از حذف این مورد مطمئن هستید؟",
+      "copied": "کپی شد",
+      "copy": "کپی",
       "delete": "حذف",
       "deleted": "با موفقیت حذف شد",
       "duplicate": "کپی",
@@ -389,6 +399,7 @@
       "builtinDefaultHint": "پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را در تب سرور یا کلاینت فعال کنید.",
       "builtinReadOnly": "پریست داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل کپی بگیرید.",
       "bundleContextProxyCount": "پروکسی‌های فعال",
+      "cannotEnable": "امکان فعال‌سازی این پروکسی نیست",
       "categories": "دسته‌بندی‌ها",
       "categoriesAdd": "افزودن دسته",
       "categoriesAddNew": "افزودن",
@@ -407,8 +418,6 @@
       "clientCores": "هسته‌های کلاینت",
       "commonProxyBadge": "مشترک",
       "core": "هسته",
-      "isCommonProxy": "پروکسی مشترک",
-      "isCommonProxyHint": "این پروتکل روی هر دو هسته Xray و Hiddify Core وجود دارد. تنظیم هسته پروکسی مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد.",
       "customPath": "مسیر سفارشی",
       "customPathAuto": "برای پراکسی‌های HTTP به‌صورت خودکار ساخته می‌شود",
       "directPortAccess": "دسترسی مستقیم به پورت",
@@ -419,16 +428,16 @@
       "domainModeLabels": {
         "cdn": "CDN",
         "direct": "Direct",
-        "direct-valid": "Direct Valid",
+        "direct-dns": "Direct DNS",
         "direct-fake": "Direct Fake",
         "direct-reality": "Direct Reality",
-        "direct-dns": "Direct DNS",
+        "direct-valid": "Direct Valid",
         "fake": "Fake TLS",
         "reality": "REALITY",
         "relay": "Relay",
-        "relay-valid": "Relay Valid",
         "relay-fake": "Relay Fake",
         "relay-reality": "Relay Reality",
+        "relay-valid": "Relay Valid",
         "special": "Special (REALITY)"
       },
       "domainModes": "حالت دامنه",
@@ -467,6 +476,7 @@
       "generateExample": "تولید نمونه",
       "generateExampleOk": "نمونه با موفقیت تولید شد",
       "generateExamplePartial": "نمونه با هشدار یا خطا تولید شد",
+      "goToSettings": "رفتن به تنظیمات",
       "ignoreSkip": "نادیده گرفتن skip",
       "ignoreSkipHint": "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود",
       "import": "ورود",
@@ -480,6 +490,8 @@
       "inboundTemplate": "قالب inbound",
       "inboundUdpPorts": "پورت‌های UDP ورودی",
       "inboundUdpPortsHint": "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP",
+      "isCommonProxy": "پروکسی مشترک",
+      "isCommonProxyHint": "این پروتکل روی هر دو هسته Xray و Hiddify Core وجود دارد. تنظیم هسته پروکسی مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد.",
       "l7Proto": "L7 Reverse Proxy Protocol",
       "l7ReverseProto": "پروتکل L7 reverse proxy",
       "linkSettings": "تنظیمات لینک",
@@ -498,8 +510,6 @@
       "modeSettings": "حالت و مسیریابی",
       "name": "نام",
       "needGlobalEnable": "برای فعال‌سازی این پروکسی باید ابتدا {names} را به‌صورت سراسری فعال کنید. می‌خواهید تنظیمات را در تب جدید باز کنید؟",
-      "cannotEnable": "امکان فعال‌سازی این پروکسی نیست",
-      "goToSettings": "رفتن به تنظیمات",
       "new": "پروکسی جدید",
       "noClientConfigs": "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید.",
       "outboundTagTemplate": "قالب تگ outbound",
@@ -513,8 +523,8 @@
       "renderErrorNoDetail": "جزئیات بیشتری برای این خطا موجود نیست.",
       "renderErrorRenderedSource": "خروجی رندر شده",
       "renderErrorTemplateSource": "منبع قالب",
-      "searchAll": "جستجو در همه ستون‌ها...",
       "resetToBuiltin": "بازگردانی به پیش‌فرض کاتالوگ",
+      "searchAll": "جستجو در همه ستون‌ها...",
       "serverBuiltinCustomized": "پیکربندی سرور سفارشی",
       "serverBuiltinDefault": "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ",
       "serverCore": "هسته سرور",
@@ -527,8 +537,8 @@
       },
       "sublinkBase64Detail": "جزئیات Base64",
       "sublinkFormat": "فرمت لینک",
-      "sublinkFormatDecoded": "فیلدهای رمزگشایی‌شده",
       "sublinkFormatBase64": "فرمت Base64",
+      "sublinkFormatDecoded": "فیلدهای رمزگشایی‌شده",
       "sublinkFormatRaw": "لینک تولیدشده",
       "sublinkFormatRawLink": "لینک خام",
       "sublinkFormatUri": "فرمت URI",
@@ -560,11 +570,11 @@
       "tlsLayer": "لایه TLS",
       "tlsLayerLabels": {
         "http": "-",
-        "tls_h1": "TLS H1",
-        "tls_h2": "TLS H2",
-        "tls": "TLS H2 H1",
+        "quic_tcp_tls": "QUIC + TLS H2 H1",
         "quic_tls": "QUIC",
-        "quic_tcp_tls": "QUIC + TLS H2 H1"
+        "tls": "TLS H2 H1",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2"
       },
       "tlsLayerSpecialConflict": "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست",
       "transport": "ترابری",
@@ -617,6 +627,10 @@
       "name": "نام",
       "skipHint": "خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی رندر نشود"
     },
+    "theme": {
+      "dark": "حالت تاریک",
+      "light": "حالت روشن"
+    },
     "utils": {
       "addQuery": "افزودن پارامتر",
       "base64Tab": "Base64",
@@ -652,10 +666,6 @@
       "user": "کاربر",
       "vmessJson": "JSON وی‌مس",
       "vmessObject": "JSON وی‌مس باید یک آبجکت باشد"
-    },
-    "theme": {
-      "dark": "حالت تاریک",
-      "light": "حالت روشن"
     },
     "validation": {
       "errors": "خطاها",
@@ -736,6 +746,7 @@
       "title": "V2RayNG"
     }
   },
+  "at least one user should exist": "",
   "auto": "خودکار",
   "auto_cdn_ip": "☑️ انتخاب کننده آی‌پی CDN به صورت خودکار",
   "bot": {
@@ -845,11 +856,11 @@
       "label": "🔑 کلید توسعه کلودفلر"
     },
     "common_proxy_core": {
+      "both": "هر دو",
       "description": "اگر پروتکل روی هر دو هسته باشد، فقط هسته انتخاب‌شده فعال می‌ماند. هر دو را برای فعال ماندن هر دو انتخاب کنید.",
-      "label": "🎛️ هسته پروکسی مشترک",
-      "xray": "Xray",
       "hiddify_core": "Hiddify Core (singbox)",
-      "both": "هر دو"
+      "label": "🎛️ هسته پروکسی مشترک",
+      "xray": "Xray"
     },
     "core_type": {
       "description": "☢️ XRay : یک هسته کامل است\n<br>\n📦 Singbox : توسعه یافته توسط SagerNet. همچنین هسته خوبی است",
@@ -902,10 +913,6 @@
     "dnstt_resolvers": {
       "description": "Resolverهای DNS برای DNSTT (با کاما جدا شوند)",
       "label": "Resolverهای DNSTT"
-    },
-    "master_dns_encrypt_key": {
-      "description": "کلید رمزنگاری payload برای MasterDNS (hex)",
-      "label": "کلید رمزنگاری MasterDNS"
     },
     "domain_fronting": {
       "description": "برای شبیه سازی وب سایت دیگری به جای وب سایت شما در SNI استفاده می شود. بنابراین، فیلترچی نمی تواند دامنه شما را فیلتر کند. \n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA%DB%8C%D9%86%DA%AF'>آموزش ثبت </a>\n\n⚠️CloudFlare از دامین فرانتینگ پشتیبانی نمی کند.",
@@ -1031,6 +1038,10 @@
       "description": "زمان آخرین بررسی دوره‌ای مصرف",
       "label": "آخرین بررسی دوره‌ای مصرف"
     },
+    "last_users_sync": {
+      "description": "",
+      "label": ""
+    },
     "license": {
       "description": "برای استفاده تجاری از این محصول باید مجوز آن را خریداری کنید",
       "label": "کد مجوز"
@@ -1045,6 +1056,10 @@
       "WARNING": "هشدار",
       "description": "سطح جزئیات لاگ پنل",
       "label": "سطح لاگ"
+    },
+    "master_dns_encrypt_key": {
+      "description": "کلید رمزنگاری payload برای MasterDNS (hex)",
+      "label": "کلید رمزنگاری MasterDNS"
     },
     "mieru": {
       "description": "پروتکل Mieru یک پروتکل ارتباطی امن و غیرمتمرکز برای انتقال داده در شبکه‌های توزیع‌شده است",
@@ -1129,6 +1144,10 @@
       "description": "نت دیتا ابزاری است برای نمایش مقدار استفاده سیستم از منابع. فعالسازی آن ممکن است از اندکی از CPU شما استفاده کند.",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "",
+      "label": ""
+    },
     "not_found": {
       "description": "تنظیمات پیدا نشد.",
       "label": "تنظیمات پیدا نشد."
@@ -1163,6 +1182,10 @@
     "path_grpc": {
       "description": "مسیر gRPC در کانفیگ ها",
       "label": "ℹ️ مسیر gRPC"
+    },
+    "path_http": {
+      "description": "",
+      "label": ""
     },
     "path_httpupgrade": {
       "description": "باید تصادفی باشد",
@@ -1714,6 +1737,7 @@
   "grpc-proxy": {
     "description": "gRPC ℹ️ یک پروتکل مبتنی بر H2 است. شاید برای شما سریعتر باشد!"
   },
+  "in\n          parent panel": "",
   "in parent panel": "در پنل مرکزی",
   "install from google play": "<i class='fa-brands fa-google-play'></i> گوگل‌پلی",
   "ios": "آی‌او‌اس",
@@ -1776,6 +1800,7 @@
   "package size?": "حجم بسته",
   "parent": {
     "invalid-parent-url": "آدرس پنل والد نامعتبر است",
+    "panel-not-active": "",
     "sync-req-failed": "درخواست همگام‌سازی با پنل والد ناموفق بود"
   },
   "previous": "قبلی",
@@ -1924,6 +1949,5 @@
     "notallowed": "لطفاً بدون استفاده از VPN از این صفحه بازدید کنید. باید از کشور %(expected_country)s به آن دسترسی داشته باشید، اما در حال حاضر از %(your_country)s به آن دسترسی دارید."
   },
   "weekly": "📅 هفتگی",
-  "worker": "✴️ ورکر کلودفلر",
-  "Search Settings": "جستجوی تنظیمات"
+  "worker": "✴️ ورکر کلودفلر"
 }

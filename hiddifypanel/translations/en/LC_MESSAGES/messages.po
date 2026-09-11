@@ -322,6 +322,9 @@ msgstr "Error In Auto CDN IP! It Can Not Be Find, Please Contact Admin"
 msgid "Example Domains"
 msgstr "Test and Suggest Domain "
 
+msgid "Expired"
+msgstr "Expired"
+
 msgid "Expired Users"
 msgstr "Expired Users"
 
@@ -429,6 +432,9 @@ msgstr "Install"
 msgid "Install Hiddify Application"
 msgstr "Hiddify Manager Installation"
 
+msgid "Invalid"
+msgstr "Invalid"
+
 msgid "Invalid IP or domain"
 msgstr "Invalid IP or domain"
 
@@ -490,8 +496,19 @@ msgstr "Network"
 msgid "New"
 msgstr "New"
 
+msgid "No certificate"
+msgstr "No certificate"
+
 msgid "No children!"
 msgstr "No Children"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+"No main domains found, please add at least one domain with valid certificate"
+
+msgid "Nodes"
+msgstr "Nodes"
 
 msgid "Not Secure"
 msgstr "Not Secure"
@@ -719,6 +736,9 @@ msgstr "Save & Add More"
 msgid "Save Link"
 msgstr "Save Link"
 
+msgid "Search Settings"
+msgstr "Search Settings"
+
 msgid "Select all records"
 msgstr "Select all records"
 
@@ -730,6 +750,9 @@ msgstr "Selected proxy does not support this domain mode combination"
 
 msgid "Seleted Users"
 msgstr "Seleted Users"
+
+msgid "Self-signed"
+msgstr "Self-signed"
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 Send Message to User's Telegram"
@@ -783,6 +806,9 @@ msgid ""
 "Success! Please wait around 5 minutes to make sure everything is updated."
 msgstr ""
 "✔️ Success! Please Wait around 5 minutes to make sure everything is updated"
+
+msgid "TLS"
+msgstr "TLS"
 
 msgid "Telegram Bot"
 msgstr "Telegram Bot"
@@ -849,6 +875,9 @@ msgstr ""
 "Then copy the link below and paste it in v2rayNG according to the video tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>.\n"
 "<br />"
 
+msgid "Valid"
+msgstr "Valid"
+
 msgid "View in Telegram"
 msgstr "View in Telegram"
 
@@ -904,6 +933,9 @@ msgstr ""
 
 msgid "You have used this domain in: "
 msgstr "You have already used this Domain in: "
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr "You need to enable %(names)s globally to enable this proxy."
 
 msgid ""
 "Your hiddify instance information \n"
@@ -984,7 +1016,7 @@ msgid "admin.menu.config"
 msgstr "Settings"
 
 msgid "admin.menu.dashboard_v2"
-msgstr "New Dashboard"
+msgstr "Next"
 
 msgid "admin.menu.domain"
 msgstr "Domains"
@@ -1084,14 +1116,14 @@ msgstr "Back"
 msgid "adminV2.common.cancel"
 msgstr "Cancel"
 
-msgid "adminV2.common.copy"
-msgstr "Copy"
+msgid "adminV2.common.confirmDelete"
+msgstr "Are you sure you want to delete this item?"
 
 msgid "adminV2.common.copied"
 msgstr "Copied"
 
-msgid "adminV2.common.confirmDelete"
-msgstr "Are you sure you want to delete this item?"
+msgid "adminV2.common.copy"
+msgstr "Copy"
 
 msgid "adminV2.common.delete"
 msgstr "Delete"
@@ -1292,6 +1324,9 @@ msgstr ""
 msgid "adminV2.proxy.bundleContextProxyCount"
 msgstr "Enabled proxies"
 
+msgid "adminV2.proxy.cannotEnable"
+msgstr "Cannot enable this proxy"
+
 msgid "adminV2.proxy.categories"
 msgstr "Categories"
 
@@ -1346,14 +1381,6 @@ msgstr "Common"
 msgid "adminV2.proxy.core"
 msgstr "Core"
 
-msgid "adminV2.proxy.isCommonProxy"
-msgstr "Common proxy"
-
-msgid "adminV2.proxy.isCommonProxyHint"
-msgstr ""
-"This protocol exists on both Xray and Hiddify Core. The Common Proxy Core "
-"setting keeps only the selected core enabled."
-
 msgid "adminV2.proxy.customPath"
 msgstr "Custom path"
 
@@ -1382,14 +1409,17 @@ msgstr "CDN"
 msgid "adminV2.proxy.domainModeLabels.direct"
 msgstr "Direct"
 
-msgid "adminV2.proxy.domainModeLabels.direct-valid"
-msgstr "Direct valid"
+msgid "adminV2.proxy.domainModeLabels.direct-dns"
+msgstr "Direct DNS"
 
 msgid "adminV2.proxy.domainModeLabels.direct-fake"
 msgstr "Direct fake"
 
 msgid "adminV2.proxy.domainModeLabels.direct-reality"
 msgstr "Direct REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "Direct valid"
 
 msgid "adminV2.proxy.domainModeLabels.fake"
 msgstr "Fake TLS"
@@ -1400,14 +1430,14 @@ msgstr "REALITY"
 msgid "adminV2.proxy.domainModeLabels.relay"
 msgstr "Relay"
 
-msgid "adminV2.proxy.domainModeLabels.relay-valid"
-msgstr "Relay valid"
-
 msgid "adminV2.proxy.domainModeLabels.relay-fake"
 msgstr "Relay fake"
 
 msgid "adminV2.proxy.domainModeLabels.relay-reality"
 msgstr "Relay REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "Relay valid"
 
 msgid "adminV2.proxy.domainModeLabels.special"
 msgstr "Special (REALITY)"
@@ -1523,6 +1553,9 @@ msgstr "Example generated successfully"
 msgid "adminV2.proxy.generateExamplePartial"
 msgstr "Example generated with warnings or errors"
 
+msgid "adminV2.proxy.goToSettings"
+msgstr "Go to settings"
+
 msgid "adminV2.proxy.ignoreSkip"
 msgstr "Ignore skip tags"
 
@@ -1563,6 +1596,14 @@ msgstr "Inbound UDP ports"
 msgid "adminV2.proxy.inboundUdpPortsHint"
 msgstr "Comma-separated static UDP ports; defaults to TCP ports when empty"
 
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "Common proxy"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"This protocol exists on both Xray and Hiddify Core. The Common Proxy Core "
+"setting keeps only the selected core enabled."
+
 msgid "adminV2.proxy.l7Proto"
 msgstr "L7 Reverse Proxy Protocol"
 
@@ -1587,6 +1628,9 @@ msgstr "Domain native"
 msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
 msgstr "Multi-domain auto ports"
 
+msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
+msgstr "Domain DNS gateway"
+
 msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
 msgstr "Domain L7 gateway"
 
@@ -1609,12 +1653,6 @@ msgid "adminV2.proxy.needGlobalEnable"
 msgstr ""
 "You need to enable {names} globally to enable this proxy. Do you want to "
 "open settings?"
-
-msgid "adminV2.proxy.cannotEnable"
-msgstr "Cannot enable this proxy"
-
-msgid "adminV2.proxy.goToSettings"
-msgstr "Go to settings"
 
 msgid "adminV2.proxy.new"
 msgstr "New Proxy"
@@ -1657,11 +1695,11 @@ msgstr "Rendered output"
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "Template source"
 
-msgid "adminV2.proxy.searchAll"
-msgstr "Search all columns..."
-
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "Reset to catalog default"
+
+msgid "adminV2.proxy.searchAll"
+msgstr "Search all columns..."
 
 msgid "adminV2.proxy.serverBuiltinCustomized"
 msgstr "Custom server config"
@@ -1693,11 +1731,11 @@ msgstr "Base64 detail"
 msgid "adminV2.proxy.sublinkFormat"
 msgstr "Link format"
 
-msgid "adminV2.proxy.sublinkFormatDecoded"
-msgstr "Decoded fields"
-
 msgid "adminV2.proxy.sublinkFormatBase64"
 msgstr "Base64 format"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "Decoded fields"
 
 msgid "adminV2.proxy.sublinkFormatRaw"
 msgstr "Rendered link"
@@ -1777,20 +1815,20 @@ msgstr "TLS layer"
 msgid "adminV2.proxy.tlsLayerLabels.http"
 msgstr "-"
 
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS H2 H1"
+
 msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
 msgstr "TLS H1"
 
 msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
 msgstr "TLS H2"
-
-msgid "adminV2.proxy.tlsLayerLabels.tls"
-msgstr "TLS H2 H1"
-
-msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
-msgstr "QUIC"
-
-msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
-msgstr "QUIC + TLS H2 H1"
 
 msgid "adminV2.proxy.tlsLayerSpecialConflict"
 msgstr "HTTP TLS layer is not compatible with REALITY domain modes"
@@ -1926,6 +1964,12 @@ msgstr ""
 "Output SKIP or call skip() to skip rendering this proxy when a condition is "
 "not met"
 
+msgid "adminV2.theme.dark"
+msgstr "Dark mode"
+
+msgid "adminV2.theme.light"
+msgstr "Light mode"
+
 msgid "adminV2.utils.addQuery"
 msgstr "Add query"
 
@@ -2033,12 +2077,6 @@ msgstr "vmess JSON"
 
 msgid "adminV2.utils.vmessObject"
 msgstr "vmess JSON must be an object"
-
-msgid "adminV2.theme.dark"
-msgstr "Dark mode"
-
-msgid "adminV2.theme.light"
-msgstr "Light mode"
 
 msgid "adminV2.validation.errors"
 msgstr "Errors"
@@ -2159,6 +2197,9 @@ msgstr "V2RayNG Description"
 
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
+
+msgid "at least one user should exist"
+msgstr "at least one user should exist"
 
 msgid "auto"
 msgstr "Auto"
@@ -2374,22 +2415,22 @@ msgstr ""
 msgid "config.cloudflare.label"
 msgstr "🔑 Cloudflare API"
 
+msgid "config.common_proxy_core.both"
+msgstr "Both"
+
 msgid "config.common_proxy_core.description"
 msgstr ""
 "When a protocol exists on both Xray and Hiddify Core, only the selected core"
 " stays enabled. Choose Both to keep both."
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr "Hiddify Core (singbox)"
 
 msgid "config.common_proxy_core.label"
 msgstr "🎛️ Common Proxy Core"
 
 msgid "config.common_proxy_core.xray"
 msgstr "Xray"
-
-msgid "config.common_proxy_core.hiddify_core"
-msgstr "Hiddify Core (singbox)"
-
-msgid "config.common_proxy_core.both"
-msgstr "Both"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -2704,6 +2745,12 @@ msgstr "Timestamp of the last periodic usage check"
 msgid "config.last_priodic_usage_check.label"
 msgstr "Last Periodic Usage Check"
 
+msgid "config.last_users_sync.description"
+msgstr "Timestamp of the last successful users sync with the parent panel"
+
+msgid "config.last_users_sync.label"
+msgstr "Last Users Sync"
+
 msgid "config.license.description"
 msgstr "For commercial use of this Product, you must Purchase its License"
 
@@ -2736,6 +2783,12 @@ msgstr "Panel log verbosity level"
 
 msgid "config.log_level.label"
 msgstr "Log Level"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr "MasterDNS payload encryption key (hex)"
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr "MasterDNS Encrypt Key"
 
 msgid "config.mieru.description"
 msgstr ""
@@ -2894,6 +2947,12 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr "config.node_name.description"
+
+msgid "config.node_name.label"
+msgstr "config.node_name.label"
+
 msgid "config.not_found.description"
 msgstr "Config Not Found"
 
@@ -2952,6 +3011,12 @@ msgstr "gRPC Path In Configs"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ gRPC Path"
+
+msgid "config.path_http.description"
+msgstr "config.path_http.description"
+
+msgid "config.path_http.label"
+msgstr "config.path_http.label"
 
 msgid "config.path_httpupgrade.description"
 msgstr "should be random"
@@ -3954,6 +4019,13 @@ msgstr "➿ gRPC"
 msgid "grpc-proxy.description"
 msgstr "ℹ️ gRPC is a H2 based Protocol. Maybe it is faster for you!"
 
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
+"in\n"
+"          parent panel"
+
 msgid "in parent panel"
 msgstr "In Central Panel"
 
@@ -4073,6 +4145,9 @@ msgstr "package size?"
 
 msgid "parent.invalid-parent-url"
 msgstr "Invalid parent panel URL"
+
+msgid "parent.panel-not-active"
+msgstr "parent.panel-not-active"
 
 msgid "parent.sync-req-failed"
 msgstr "Parent sync request failed"
@@ -4497,6 +4572,3 @@ msgstr "📅 Weekly"
 
 msgid "worker"
 msgstr "✴️ Cloudflare Worker"
-
-msgid "Search Settings"
-msgstr "Search Settings"

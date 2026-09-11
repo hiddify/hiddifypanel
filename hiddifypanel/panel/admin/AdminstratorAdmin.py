@@ -1,30 +1,32 @@
-from hiddifypanel.auth import login_required
-
-from wtforms.validators import Regexp
-from hiddifypanel.models import *
-from wtforms.validators import Regexp, ValidationError
-from .adminlte import AdminLTEModelView
-from flask_babel import lazy_gettext as _
-from wtforms.validators import Regexp
-from flask_babel import gettext as __
-from flask import request  # type: ignore
-from markupsafe import Markup
 import datetime
-from wtforms import PasswordField, SelectField
 
-from hiddifypanel.panel import hiddify
+from flask import request  # type: ignore
+from flask_babel import gettext as __
+from flask_babel import lazy_gettext as _
+from markupsafe import Markup
+from wtforms import PasswordField, SelectField
+from wtforms.validators import Regexp, ValidationError
+
 from hiddifypanel import g, hutils
+from hiddifypanel.auth import login_required
+from hiddifypanel.models import *
+from hiddifypanel.panel import hiddify
+
+from .adminlte import AdminLTEModelView
 
 
 class AdminModeField(SelectField):
     def __init__(self, label=None, validators=None, **kwargs):
-        super(AdminModeField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         if g.account.mode in [AdminMode.agent, AdminMode.admin]:
-            self.choices = [(AdminMode.agent.value, 'agent')]
+            self.choices = [(AdminMode.agent.value, "agent")]
         elif g.account.mode == AdminMode.admin:
-            self.choices = [(AdminMode.agent.value, 'agent'), (AdminMode.admin.value, 'Admin'),]
+            self.choices = [
+                (AdminMode.agent.value, "agent"),
+                (AdminMode.admin.value, "Admin"),
+            ]
         elif g.account.mode == AdminMode.super_admin:
-            self.choices = [(AdminMode.agent.value, 'agent'), (AdminMode.admin.value, 'Admin'), (AdminMode.super_admin.value, 'Super Admin')]
+            self.choices = [(AdminMode.agent.value, "agent"), (AdminMode.admin.value, "Admin"), (AdminMode.super_admin.value, "Super Admin")]
 
 
 class SubAdminsField(SelectField):
@@ -37,20 +39,24 @@ class SubAdminsField(SelectField):
 
 class AdminstratorAdmin(AdminLTEModelView):
     column_hide_backrefs = False
-    column_list = ["name", 'UserLinks', 'mode', 'can_add_admin', 'max_active_users', 'max_users', 'online_users', 'comment',]
-    form_columns = ["name", 'mode', 'can_add_admin', 'max_active_users', 'max_users', 'comment', "uuid","new_password"]
-    list_template = 'model/admin_list.html'
+    column_list = [
+        "name",
+        "UserLinks",
+        "mode",
+        "can_add_admin",
+        "max_active_users",
+        "max_users",
+        "online_users",
+        "comment",
+    ]
+    form_columns = ["name", "mode", "can_add_admin", "max_active_users", "max_users", "comment", "uuid", "new_password"]
+    list_template = "model/admin_list.html"
     # column_editable_list = ['name']
     # edit_modal = True
     # form_overrides = {'work_with': Select2Field}
 
-    form_overrides = {
-        'mode': AdminModeField,
-        'parent_admin': SubAdminsField
-    }
-    form_extra_fields = {
-        'new_password': PasswordField('New Password',description="If empty, no change")
-    }
+    form_overrides = {"mode": AdminModeField, "parent_admin": SubAdminsField}
+    form_extra_fields = {"new_password": PasswordField("New Password", description="If empty, no change")}
     column_labels = {
         "Actions": _("actions"),
         "UserLinks": _("user.user_links"),
@@ -58,19 +64,19 @@ class AdminstratorAdmin(AdminLTEModelView):
         "mode": _("Mode"),
         "uuid": _("user.UUID"),
         "comment": _("Note"),
-        'max_active_users': _("Max Active Users"),
-        'max_users': _('Max Users'),
-        "password":_("user.password.title"),
+        "max_active_users": _("Max Active Users"),
+        "max_users": _("Max Users"),
+        "password": _("user.password.title"),
         "online_users": _("Online Users"),
-        'can_add_admin': _("Can add sub admin")
-
+        "can_add_admin": _("Can add sub admin"),
     }
     form_args = {
-        'uuid': {
-            'validators': [Regexp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', message=__("Should be a valid uuid"))]
+        "uuid": {
+            "validators": [Regexp(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", message=__("Should be a valid uuid"))]
             #     'label': 'First Name',
             #     'validators': [required()]
-        }}
+        }
+    }
 
     column_descriptions = dict(
         comment=_("Add some text that is only visible to super_admin."),
@@ -99,8 +105,7 @@ class AdminstratorAdmin(AdminLTEModelView):
 
         d = request.host
         if d:
-
-            href = hiddify.get_account_panel_link(model, d) + f'#{hutils.encode.url_encode(model.name)}'
+            href = hiddify.get_account_panel_link(model, d) + f"#{hutils.encode.url_encode(model.name)}"
             link = f"<a target='_blank' class='share-link' data-copy='{href}' href='{href}'>{model.name} <i class='fa-solid fa-arrow-up-right-from-square'></i></a>"
             if model.parent_admin:
                 return Markup(model.parent_admin.name + "&rlm;&lrm; / &rlm;&lrm;" + link)
@@ -117,12 +122,12 @@ class AdminstratorAdmin(AdminLTEModelView):
         # onlines=[p for p in  users  if p.last_online and p.last_online>last_day]
         # return Markup(f"<a class='btn btn-xs btn-default' href='{hurl_for('flask.user.index_view',admin_id=model.id)}'> {_('Online')}: {onlines}</a>")
         rate = round(u * 100 / (t + 0.000001))
-        state = "danger" if u >= t else ('warning' if rate > 80 else 'success')
-        color = "#ff7e7e" if u >= t else ('#ffc107' if rate > 80 else '#9ee150')
+        state = "danger" if u >= t else ("warning" if rate > 80 else "success")
+        color = "#ff7e7e" if u >= t else ("#ffc107" if rate > 80 else "#9ee150")
         return Markup(f"""
         <div class="progress progress-lg position-relative" style="min-width: 100px;">
           <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {rate}%;background-color: {color};" aria-valuenow="{rate}" aria-valuemin="0" aria-valuemax="100"></div>
-              <span class='badge position-absolute' style="left:auto;right:auto;width: 100%;font-size:1em">{u} {_('user.home.usage.from')} {t}</span>
+              <span class='badge position-absolute' style="left:auto;right:auto;width: 100%;font-size:1em">{u} {_("user.home.usage.from")} {t}</span>
 
         </div>
         """)
@@ -133,12 +138,12 @@ class AdminstratorAdmin(AdminLTEModelView):
             return f"{u} / ∞"
         t = model.max_users
         rate = round(u * 100 / (t + 0.000001))
-        state = "danger" if u >= t else ('warning' if rate > 80 else 'success')
-        color = "#ff7e7e" if u >= t else ('#ffc107' if rate > 80 else '#9ee150')
+        state = "danger" if u >= t else ("warning" if rate > 80 else "success")
+        color = "#ff7e7e" if u >= t else ("#ffc107" if rate > 80 else "#9ee150")
         return Markup(f"""
         <div class="progress progress-lg position-relative" style="min-width: 100px;">
           <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {rate}%;background-color: {color};" aria-valuenow="{rate}" aria-valuemin="0" aria-valuemax="100"></div>
-              <span class='badge position-absolute' style="left:auto;right:auto;width: 100%;font-size:1em">{u} {_('user.home.usage.from')} {t}</span>
+              <span class='badge position-absolute' style="left:auto;right:auto;width: 100%;font-size:1em">{u} {_("user.home.usage.from")} {t}</span>
 
         </div>
         """)
@@ -151,24 +156,17 @@ class AdminstratorAdmin(AdminLTEModelView):
             return f"{active_count} / ∞"
         t = model.max_active_users
         rate = round(active_count * 100 / (t + 0.000001))
-        color = "#ff7e7e" if active_count >= t else ('#ffc107' if rate > 80 else '#9ee150')
-        
+        color = "#ff7e7e" if active_count >= t else ("#ffc107" if rate > 80 else "#9ee150")
+
         return Markup(f"""
         <div class="progress progress-lg position-relative" style="min-width: 100px;">
           <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {rate}%;background-color: {color};" aria-valuenow="{rate}" aria-valuemin="0" aria-valuemax="100"></div>
-              <span class='badge position-absolute' style="left:auto;right:auto;width: 100%;font-size:1em">{active_count} {_('user.home.usage.from')} {t}</span>
+              <span class='badge position-absolute' style="left:auto;right:auto;width: 100%;font-size:1em">{active_count} {_("user.home.usage.from")} {t}</span>
 
         </div>
         """)
 
-    column_formatters = {
-        'name': _name_formatter,
-        'online_users': _online_users_formatter,
-        'max_users': _max_users_formatter,
-        'max_active_users': _max_active_users_formatter,
-        'UserLinks': _ul_formatter
-
-    }
+    column_formatters = {"name": _name_formatter, "online_users": _online_users_formatter, "max_users": _max_users_formatter, "max_active_users": _max_active_users_formatter, "UserLinks": _ul_formatter}
 
     def search_placeholder(self):
         return f"{_('search')} {_('user.UUID')} {_('user.name')}"
@@ -206,7 +204,7 @@ class AdminstratorAdmin(AdminLTEModelView):
         # else:
         #     model.parent_admin_id=1
         #     model.parent_admin=AdminUser.query.filter(AdminUser.id==1).first()
-        
+
         if model.id != 1 and model.parent_admin is None:
             model.parent_admin_id = g.account.id
             model.parent_admin = g.account
@@ -215,12 +213,11 @@ class AdminstratorAdmin(AdminLTEModelView):
             raise ValidationError("Sub-Admin can not have more power!!!!")
         if g.account.mode == AdminMode.agent and model.mode != AdminMode.agent:
             raise ValidationError("Sub-Admin can not have more power!!!!")
-        
+
         if not model.new_password and is_created:
             raise ValidationError("Password for new admin is needed.")
         if model.new_password:
-            model.password=model.new_password
-
+            model.password = model.new_password
 
     def on_model_delete(self, model):
         model.remove()
@@ -235,7 +232,7 @@ class AdminstratorAdmin(AdminLTEModelView):
             del form.max_active_users
             del form.comment
             del form.can_add_admin
-            if getattr(form, 'mode'):
+            if form.mode:
                 del form.mode
         elif form._obj.mode == AdminMode.super_admin:
             del form.max_users

@@ -174,6 +174,7 @@ class ConfigEnum(metaclass=FastEnum):
     is_parent = _BoolConfigDscr(ConfigCategory.hidden)
     # parent panel domain
     parent_panel = _StrConfigDscr(ConfigCategory.admin)
+    node_name = _StrConfigDscr(ConfigCategory.admin)
     parent_domain = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
     parent_admin_proxy_path = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
 

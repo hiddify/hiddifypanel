@@ -9,6 +9,10 @@ from hiddifypanel.panel.commercial.restapi.v2.child.schema import RegisterWithPa
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
+def get_child_base_url(child: Child) -> str:
+    return child.node_base_url
+
+
 def request_childs_to_sync():
     for c in Child.query.filter(Child.id != 0).all():
         if not request_child_to_sync(c):

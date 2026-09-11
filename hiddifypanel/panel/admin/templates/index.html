@@ -25,7 +25,8 @@
 
 {% macro info_box(id,icon,title,number,percentage,description,coloring=False,color_class='secondary') -%}
 <div class="col-md-4  col-sm-6">
-    <a id={{id}} class="info-box {{color_class}} {{ (" bg-gradient-"+ ("danger" if percentage>90 else ("warning" if percentage>75 else ""))) if coloring else ""}} {%if "disk"==id %} d-none d-md-flex {%endif%}">
+    <a id={{id}} class="info-box {{color_class}} {{ (" bg-gradient-"+ ("danger" if percentage>90 else ("warning" if
+        percentage>75 else ""))) if coloring else ""}} {%if "disk"==id %} d-none d-md-flex {%endif%}">
         <span class="info-box-icon"><i class="{{icon}}"></i></span>
         <div class="info-box-content">
             <span class="info-box-text htitle">{{title}}</span>
@@ -46,7 +47,8 @@
 
 {% macro info_box2(id,icon,title,number,percentage,description,coloring=False) -%}
 <div class="col-md-4  col-sm-6">
-    <div id="{{id}}" class="small-box bg-gradient-secondary {{ (" bg-gradient-"+ ("danger" if percentage>90 else ("warning" if percentage>75 else ""))) if coloring else ""}}">
+    <div id="{{id}}" class="small-box bg-gradient-secondary {{ (" bg-gradient-"+ ("danger" if percentage>90 else
+        ("warning" if percentage>75 else ""))) if coloring else ""}}">
         <div class="inner">
             <h3>{{title}}</h3>
             <span class="info-box-number ltr">{{number}}</span>
@@ -105,7 +107,8 @@
     color_class="bg-h-turquoise"
     )}}
     {{info_box("network","fa-solid fa-network-wired", _("Network"),
-    ('<i class="fa-solid fa-arrow-up  text-orange"></i> <i class="fa-solid fa-spinner loading-icon"></i> <small>Mb/s</small> &nbsp;&nbsp;<i class="fa-solid fa-arrow-down text-lime"></i> <i
+    ('<i class="fa-solid fa-arrow-up  text-orange"></i> <i class="fa-solid fa-spinner loading-icon"></i>
+    <small>Mb/s</small> &nbsp;&nbsp;<i class="fa-solid fa-arrow-down text-lime"></i> <i
         class="fa-solid fa-spinner loading-icon"></i> <small>Mb/s</small>')|safe,
     0,
     (stats['system']['net_sent_cumulative_GB']|round(1)) ~ "GB " ~_("From Last Restart"),
@@ -117,18 +120,25 @@
 
     ((stats['system']['cpu_percent'])|int) ~ " % " ,
     (stats['system']['cpu_percent'])|int,
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][0][0] ~ " &rlm;"|safe ~ ((stats['top5']['cpu'][0][1])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][1][0] ~ " &rlm;"|safe ~ ((stats['top5']['cpu'][1][1])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][2][0] ~ " &rlm;"|safe ~ ((stats['top5']['cpu'][2][1])|int) ~ "%",
+    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][0][0] ~ " &rlm;"|safe ~
+    ((stats['top5']['cpu'][0][1])|int) ~ "% &rlm;"|safe~
+    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][1][0] ~ " &rlm;"|safe ~
+    ((stats['top5']['cpu'][1][1])|int) ~ "% &rlm;"|safe~
+    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['cpu'][2][0] ~ " &rlm;"|safe ~
+    ((stats['top5']['cpu'][2][1])|int) ~ "%",
     coloring=True,
     color_class="bg-h-grey"
     )}}
     {{info_box("ram","fa-solid fa-memory", _("RAM"),
-    (stats['system']['ram_used']|round(3)) ~ " / " ~ (stats['system']['ram_total']|round(3)) ~ "GB (" ~((stats['system']['ram_used']*100/stats['system']['ram_total'])|int)~" %)",
+    (stats['system']['ram_used']|round(3)) ~ " / " ~ (stats['system']['ram_total']|round(3)) ~ "GB ("
+    ~((stats['system']['ram_used']*100/stats['system']['ram_total'])|int)~" %)",
     stats['system']['ram_used']*100/stats['system']['ram_total'],
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][0][0] ~ " &rlm;"|safe ~ ((stats['top5']['ram'][0][1]*100/stats['system']['ram_total'])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][1][0] ~ " &rlm;"|safe ~ ((stats['top5']['ram'][1][1]*100/stats['system']['ram_total'])|int) ~ "% &rlm;"|safe~
-    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][2][0] ~ " &rlm;"|safe ~ ((stats['top5']['ram'][2][1]*100/stats['system']['ram_total'])|int) ~ "% ",
+    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][0][0] ~ " &rlm;"|safe ~
+    ((stats['top5']['ram'][0][1]*100/stats['system']['ram_total'])|int) ~ "% &rlm;"|safe~
+    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][1][0] ~ " &rlm;"|safe ~
+    ((stats['top5']['ram'][1][1]*100/stats['system']['ram_total'])|int) ~ "% &rlm;"|safe~
+    ('<i class="fa-solid fa-gauge"></i> '|safe) ~ stats['top5']['ram'][2][0] ~ " &rlm;"|safe ~
+    ((stats['top5']['ram'][2][1]*100/stats['system']['ram_total'])|int) ~ "% ",
     coloring=True,
     color_class="bg-h-pink"
     )}}
@@ -148,11 +158,12 @@
 </div>
 
 </div>
+{#
 {% if hutils.node.is_parent() %}
 {% include 'parent_dash.html' %}
 {% endif %}
 {% endblock %}
-
+#}
 {% block tail_js %}
 {{super()}}
 <script>
@@ -197,7 +208,7 @@
         const onlines = usage_history['m5']['online'];
         const total_users = usage_history['total']['users'];
         const stats = data['stats'];
-        
+
         info_box("today", "fa-solid fa-calendar", "Today Usage",
             ((usage_history['today']['usage'] / Math.pow(1024, 3)).toFixed(1)) + " GB",
             usage_history['today']['online'] / Math.max(1, total_users) * 100,

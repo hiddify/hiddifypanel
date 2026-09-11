@@ -193,13 +193,12 @@ class Actions(FlaskView):
     def get_some_random_reality_friendly_domain(self):
         test_domain = request.args.get("test_domain")
         import ping3
-        from hiddifypanel.hutils.network.auto_ip_selector import IPASN, IPCOUNTRY
+        from hiddifypanel.hutils.network.maxmind import get_ip_info
 
         ipv4 = hutils.network.get_ip_str(4)
-        server_country = (IPCOUNTRY.get(ipv4) or {}).get("country", {}).get("iso_code", "unknown")
-        server_asn = (IPASN.get(ipv4) or {}).get("autonomous_system_organization", "unknown")
+        server = get_ip_info(ipv4 or "")
         res = "<table><tr><th>Domain</th><th>IP</th><th>Country</th><th>ASN</th><th>Ping (ms)</th><th>TCP ping (ms)</th></tr>"
-        res += f"<tr><td>Your Server</td><td>{ipv4}</td><td>{server_country}</td><td>{server_asn}</td><td>0</td></tr>"
+        res += f"<tr><td>Your Server</td><td>{ipv4}</td><td>{server.country}</td><td>{server.asn_org}</td><td>0</td></tr>"
         import time
 
         start = time.time()
@@ -212,8 +211,8 @@ class Actions(FlaskView):
             tcp_ping = hutils.network.is_domain_reality_friendly(d)
             if tcp_ping:
                 dip = str(hutils.network.get_domain_ip(d))
-                dip_country = (IPCOUNTRY.get(dip) or {}).get("country", {}).get("iso_code", "unknown")
-                if dip_country == "IR":
+                dip_info = get_ip_info(dip)
+                if dip_info.country == "IR":
                     continue
                 response_time = -1
                 try:
@@ -222,8 +221,7 @@ class Actions(FlaskView):
                         response_time = int(response_time)
                 except BaseException:
                     pass
-                dip_asn = (IPASN.get(dip) or {}).get("autonomous_system_organization", "unknown")
-                res += f"<tr><td>{d}</td><td>{dip}</td><td>{dip_country}</td><td>{dip_asn}</td><td>{response_time}</td><td>{tcp_ping}<td></tr>"
+                res += f"<tr><td>{d}</td><td>{dip}</td><td>{dip_info.country}</td><td>{dip_info.asn_org}</td><td>{response_time}</td><td>{tcp_ping}<td></tr>"
 
         return res + "</table>"
 

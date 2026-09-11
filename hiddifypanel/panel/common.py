@@ -166,10 +166,12 @@ def init_app(app: APIFlask):
 
             g.__child_id = values.pop("child_id", 0)
         g.child = Child.by_id(g.__child_id) or abort(404, "Child not found")
+        g.node = g.child
         g.account = current_account
 
     @app.before_request
     def base_middleware():
+
         if "generate_204" in request.path:
             return "", 204
         if request.endpoint == "static" or request.endpoint == "videos":

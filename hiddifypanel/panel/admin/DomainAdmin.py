@@ -57,7 +57,8 @@ class DomainAdmin(AdminLTEModelView):
         "mode": {"enum": DomainType},
         "fake_mode": {"enum": FakeMode},
         "show_domains": {
-            "query_factory": lambda: Domain.query.filter(Domain.sub_link_only == False),
+            "query_factory": lambda: Domain.query.filter(Domain.sub_link_only == False).order_by(Domain.child_id, Domain.domain),
+            "get_label": lambda d: DomainAdmin._domain_option_label(d),
         },
         "custom_proxy": {
             "query_factory": lambda: CustomProxy.query.filter(
@@ -109,6 +110,16 @@ class DomainAdmin(AdminLTEModelView):
         "download_domain",
         "extra_params",
     ]
+
+    @staticmethod
+    def _domain_option_label(d: Domain) -> str:
+        child_name = d.child.name if d.child else ""
+        alias = d.alias or ""
+        mode = d.mode.value if d.mode else ""
+        fake_mode = d.fake_mode.value if d.fake_mode else ""
+        if d.child_id == Child.current().id:
+            return f"{alias} [{d.domain}] {mode}({fake_mode})"
+        return f"Node[{child_name}] {alias} [{d.domain}] {mode}({fake_mode})"
 
     def _domain_admin_link(view, context, model, name):
         server = model.get_server()
@@ -417,3 +428,8 @@ class DomainAdmin(AdminLTEModelView):
 
         query = super().get_query()
         return query.options(joinedload(Domain.certificate)).filter(Domain.child_id == Child.current().id)
+
+    def get_count_query(self):
+
+        query = super().get_count_query()
+        return query.filter(Domain.child_id == Child.current().id)
