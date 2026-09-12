@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import ipaddress
 import json
 import re
@@ -8,7 +10,8 @@ from typing import TYPE_CHECKING
 
 import json5
 from flask import request
-from sqlalchemy.orm import Mapped, backref
+from sqlalchemy import Enum, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
 from strenum import StrEnum
 
 from hiddifypanel.database import db
@@ -19,6 +22,7 @@ from .child import Child
 
 if TYPE_CHECKING:
     from hiddifypanel.models.custom_proxy import CustomProxy
+    from hiddifypanel.models.tls_store import TlsStore
 
 
 class FakeMode(StrEnum):
@@ -72,30 +76,36 @@ DomainCustomProxy = db.Table(
 
 
 class Domain(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    child_id = db.Column(db.Integer, db.ForeignKey("child.id"), default=0)
-    domain = db.Column(db.String(200), nullable=True, unique=False)
-    alias = db.Column(db.String(200))
-    sub_link_only = db.Column(db.Boolean, nullable=False, default=False)
-    mode = db.Column(db.Enum(DomainType), nullable=False, default=DomainType.direct)
-    fake_mode = db.Column(db.Enum(FakeMode), nullable=False, default=FakeMode.valid)
-    cdn_ip = db.Column(db.Text(2000), nullable=True, default="")
-    server_domain_id = db.Column(db.Integer, db.ForeignKey("domain.id"), nullable=True, default=None)
-    server_domain = db.relationship("Domain", remote_side=[id], foreign_keys=[server_domain_id])
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int | None] = mapped_column(ForeignKey("child.id"), default=0)
+    domain: Mapped[str | None] = mapped_column(String(200))
+    alias: Mapped[str | None] = mapped_column(String(200))
+    sub_link_only: Mapped[bool] = mapped_column(default=False)
+    mode: Mapped[DomainType] = mapped_column(Enum(DomainType), default=DomainType.direct)
+    fake_mode: Mapped[FakeMode] = mapped_column(Enum(FakeMode), default=FakeMode.valid)
+    cdn_ip: Mapped[str | None] = mapped_column(Text(2000), default="")
+    server_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id"), default=None)
+    server_domain: Mapped[Domain | None] = relationship("Domain", remote_side=[id], foreign_keys=[server_domain_id])
 
     # port_index=db.Column(db.Integer, nullable=True, default=0)
-    grpc = db.Column(db.Boolean, nullable=True, default=False)
-    ech = db.Column(db.Boolean, nullable=False, default=False)
-    servernames = db.Column(db.String(1000), nullable=True, default="")
+    grpc: Mapped[bool | None] = mapped_column(default=False)
+    ech: Mapped[bool] = mapped_column(default=False)
+    servernames: Mapped[str | None] = mapped_column(String(1000), default="")
     # show_all=db.Column(db.Boolean, nullable=True)
-    show_domains = db.relationship("Domain", secondary=ShowDomain, primaryjoin=id == ShowDomain.c.domain_id, secondaryjoin=id == ShowDomain.c.related_id, backref=backref("showed_by_domains", lazy="dynamic"))
-    download_domain_id = db.Column(db.Integer, db.ForeignKey("domain.id", ondelete="SET NULL"), default=None, nullable=True)
-    download_domain = db.relationship("Domain", remote_side=[id], foreign_keys=[download_domain_id])
-    extra_params = db.Column(db.String(2000), nullable=True, default="{}")
-    resolve_ip = db.Column(db.Boolean, nullable=True, default=False)
+    show_domains: Mapped[list[Domain]] = relationship(
+        "Domain",
+        secondary=ShowDomain,
+        primaryjoin=id == ShowDomain.c.domain_id,
+        secondaryjoin=id == ShowDomain.c.related_id,
+        backref=backref("showed_by_domains", lazy="dynamic"),
+    )
+    download_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id", ondelete="SET NULL"), default=None)
+    download_domain: Mapped[Domain | None] = relationship("Domain", remote_side=[id], foreign_keys=[download_domain_id])
+    extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
+    resolve_ip: Mapped[bool | None] = mapped_column(default=False)
 
-    custom_proxies: Mapped[list["CustomProxy"]] = db.relationship("CustomProxy", secondary=DomainCustomProxy, lazy="selectin")
-    certificate = db.relationship(
+    custom_proxies: Mapped[list[CustomProxy]] = relationship("CustomProxy", secondary=DomainCustomProxy, lazy="selectin")
+    certificate: Mapped[TlsStore | None] = relationship(
         "TlsStore",
         back_populates="domain",
         uselist=False,

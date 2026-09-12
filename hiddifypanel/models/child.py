@@ -2,14 +2,21 @@ from __future__ import annotations
 
 import uuid
 from enum import auto
+from typing import TYPE_CHECKING
 
 from flask import has_app_context
-from sqlalchemy import Column, Enum, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Enum, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from strenum import StrEnum
 
 from hiddifypanel import g
 from hiddifypanel.database import db
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.config import BoolConfig, StrConfig
+    from hiddifypanel.models.domain import Domain
+    from hiddifypanel.models.proxy import Proxy
+    from hiddifypanel.models.usage import DailyUsage
 
 
 class ChildMode(StrEnum):
@@ -23,16 +30,16 @@ class ChildMode(StrEnum):
 
 class Child(db.Model):  # type: ignore
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: str = Column(String(200), nullable=False, unique=False)
-    mode = Column(Enum(ChildMode), nullable=False, default=ChildMode.virtual)
-    node_base_url: Mapped[str] = Column(String(200), nullable=False, unique=False, default="")
+    name: Mapped[str] = mapped_column(String(200))
+    mode: Mapped[ChildMode] = mapped_column(Enum(ChildMode), default=ChildMode.virtual)
+    node_base_url: Mapped[str] = mapped_column(String(200), default="")
     # ip = db.Column(db.String(200), nullable=False, unique=True)
-    unique_id = Column(String(200), nullable=False, default=lambda: str(uuid.uuid4()), unique=True)
-    domains = db.relationship("Domain", cascade="all,delete", backref="child")  # type: ignore
-    proxies = db.relationship("Proxy", cascade="all,delete", backref="child")  # type: ignore
-    boolconfigs = db.relationship("BoolConfig", cascade="all,delete", backref="child")  # type: ignore
-    strconfigs = db.relationship("StrConfig", cascade="all,delete", backref="child")  # type: ignore
-    dailyusages = db.relationship("DailyUsage", cascade="all,delete", backref="child")  # type: ignore
+    unique_id: Mapped[str] = mapped_column(String(200), default=lambda: str(uuid.uuid4()), unique=True)
+    domains: Mapped[list[Domain]] = relationship("Domain", cascade="all,delete", backref="child")
+    proxies: Mapped[list[Proxy]] = relationship("Proxy", cascade="all,delete", backref="child")
+    boolconfigs: Mapped[list[BoolConfig]] = relationship("BoolConfig", cascade="all,delete", backref="child")
+    strconfigs: Mapped[list[StrConfig]] = relationship("StrConfig", cascade="all,delete", backref="child")
+    dailyusages: Mapped[list[DailyUsage]] = relationship("DailyUsage", cascade="all,delete", backref="child")
 
     def to_dict(self):
         return {"id": self.id, "name": self.name, "mode": self.mode, "unique_id": self.unique_id}

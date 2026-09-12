@@ -3,7 +3,8 @@ from __future__ import annotations
 from enum import auto
 from typing import Any
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Enum, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 from strenum import StrEnum
 
 from hiddifypanel.database import db
@@ -32,18 +33,18 @@ class ProxyBaseConfig(db.Model):  # type: ignore
         UniqueConstraint('child_id', 'side', 'core', 'version', name='uq_proxy_base_config_child_side_core_ver'),
     )
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    child_id = Column(Integer, ForeignKey('child.id'), default=0, nullable=False)
-    side = Column(Enum(BaseConfigSide), nullable=False)
-    core = Column(String(50), nullable=False)
-    version = Column(String(50), nullable=False, default='')
-    name = Column(String(200), nullable=False)
-    description = Column(String(500), default='')
-    content = Column(Text, nullable=False, default='')
-    builtin_content = Column(Text, nullable=False, default='')
-    builtin_override = Column(Boolean, default=False, nullable=False)
-    is_builtin = Column(Boolean, default=False, nullable=False)
-    enable = Column(Boolean, default=True, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
+    side: Mapped[BaseConfigSide] = mapped_column(Enum(BaseConfigSide))
+    core: Mapped[str] = mapped_column(String(50))
+    version: Mapped[str] = mapped_column(String(50), default="")
+    name: Mapped[str] = mapped_column(String(200))
+    description: Mapped[str | None] = mapped_column(String(500), default="")
+    content: Mapped[str] = mapped_column(Text, default="")
+    builtin_content: Mapped[str] = mapped_column(Text, default="")
+    builtin_override: Mapped[bool] = mapped_column(default=False)
+    is_builtin: Mapped[bool] = mapped_column(default=False)
+    enable: Mapped[bool] = mapped_column(default=True)
 
     def effective_content(self) -> str:
         from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import effective_base_config_content

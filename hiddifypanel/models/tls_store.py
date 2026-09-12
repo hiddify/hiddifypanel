@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from hiddifypanel.database import db
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.domain import Domain
 
 
 class TlsStore(db.Model):  # type: ignore
@@ -15,20 +18,20 @@ class TlsStore(db.Model):  # type: ignore
     __tablename__ = "tls_store"
     __table_args__ = (UniqueConstraint("domain_id", name="uq_tls_store_domain_id"),)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    domain_id = Column(Integer, ForeignKey("domain.id", ondelete="CASCADE"), unique=True, nullable=False)
-    certificate = Column(Text, nullable=False, default="")
-    private_key = Column(Text, nullable=False, default="")
-    expires_at = Column(DateTime, nullable=True)
-    valid_cert = Column(Boolean, default=False, nullable=False)
-    self_signed = Column(Boolean, default=False, nullable=False)
-    issuer = Column(String(500), default="")
-    fingerprint = Column(String(128), default="")
-    auto_renew = Column(Boolean, default=True, nullable=False)
-    last_renewal_error = Column(Text, nullable=True)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    domain_id: Mapped[int] = mapped_column(ForeignKey("domain.id", ondelete="CASCADE"), unique=True)
+    certificate: Mapped[str] = mapped_column(Text, default="")
+    private_key: Mapped[str] = mapped_column(Text, default="")
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime)
+    valid_cert: Mapped[bool] = mapped_column(default=False)
+    self_signed: Mapped[bool] = mapped_column(default=False)
+    issuer: Mapped[str] = mapped_column(String(500), default="")
+    fingerprint: Mapped[str] = mapped_column(String(128), default="")
+    auto_renew: Mapped[bool] = mapped_column(default=True)
+    last_renewal_error: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    domain = relationship("Domain", back_populates="certificate")
+    domain: Mapped[Domain] = relationship("Domain", back_populates="certificate")
 
     def to_dict(self, *, include_private_key: bool = False) -> dict[str, Any]:
         data: dict[str, Any] = {

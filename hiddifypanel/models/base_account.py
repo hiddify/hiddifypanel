@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import uuid
 
 from flask_login import UserMixin as FlaskLoginUserMixin
-from sqlalchemy import BigInteger, Column, Enum, String
+from sqlalchemy import BigInteger, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel.database import db
@@ -11,15 +13,15 @@ from hiddifypanel.models.role import Role
 
 class BaseAccount(db.Model, FlaskLoginUserMixin):
     __abstract__ = True
-    uuid: Mapped[str] = Column(String(36), default=lambda: str(uuid.uuid4()), nullable=False, unique=True, index=True)
-    name: Mapped[str] = Column(String(512), nullable=False, default="")
-    username: Mapped[str] = Column(String(100), nullable=True, default="", index=True)
-    password: Mapped[str] = Column(String(100), nullable=True, default="")
-    comment: Mapped[str] = Column(String(512), nullable=True, default="")
-    telegram_id: Mapped[int | None] = Column(BigInteger, nullable=True, default=None, index=True)
-    lang: Mapped[Lang | None] = mapped_column(Enum(Lang), default=None, nullable=True)
-    deleted = db.Column(db.Boolean, default=False, nullable=False, index=True)
-    enable = db.Column(db.Boolean, default=True, nullable=False)
+    uuid: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(512), default="")
+    username: Mapped[str | None] = mapped_column(String(100), default="", index=True)
+    password: Mapped[str | None] = mapped_column(String(100), default="")
+    comment: Mapped[str | None] = mapped_column(String(512), default="")
+    telegram_id: Mapped[int | None] = mapped_column(BigInteger, default=None, index=True)
+    lang: Mapped[Lang | None] = mapped_column(Enum(Lang), default=None)
+    deleted: Mapped[bool] = mapped_column(default=False, index=True)
+    enable: Mapped[bool] = mapped_column(default=True)
 
     @property
     def role(self) -> Role | None:

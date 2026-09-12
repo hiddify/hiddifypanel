@@ -1,8 +1,8 @@
 import datetime
 from datetime import date, timedelta
 
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped
+from sqlalchemy import BigInteger, Date, ForeignKey, String, func
+from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel import g
 from hiddifypanel.database import db
@@ -11,12 +11,12 @@ from .usage_data import UsageData
 
 
 class DailyUsage(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    date = db.Column(db.Date, default=datetime.date.today(), index=True)
-    usage = db.Column(db.BigInteger, default=0, nullable=False)
-    online: Mapped[int] = db.Column(db.Integer, default=0, nullable=False)
-    admin_id = db.Column(db.Integer, db.ForeignKey("admin_user.id"), default=0, nullable=False)
-    child_id = db.Column(db.Integer, db.ForeignKey("child.id"), default=0, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    date: Mapped[datetime.date | None] = mapped_column(Date, default=datetime.date.today(), index=True)
+    usage: Mapped[int] = mapped_column(BigInteger, default=0)
+    online: Mapped[int] = mapped_column(default=0)
+    admin_id: Mapped[int] = mapped_column(ForeignKey("admin_user.id"), default=0)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
 
     # def __str__(self):
     #     return str([id,date,usage,online,admin_id,child_id])
@@ -89,9 +89,9 @@ class UnsyncedUsage(db.Model):
 
     __tablename__ = "unsynced_usages"
 
-    uuid = db.Column(db.String(36), primary_key=True, nullable=False)
-    upload = db.Column(db.BigInteger, default=0, nullable=False)
-    download = db.Column(db.BigInteger, default=0, nullable=False)
+    uuid: Mapped[str] = mapped_column(String(36), primary_key=True)
+    upload: Mapped[int] = mapped_column(BigInteger, default=0)
+    download: Mapped[int] = mapped_column(BigInteger, default=0)
 
     def to_usage_data(self) -> UsageData:
         return UsageData(uuid=self.uuid, upload=int(self.upload or 0), download=int(self.download or 0))

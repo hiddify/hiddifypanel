@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from enum import auto
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, event
-from sqlalchemy.orm import Mapped
+from sqlalchemy import Enum, ForeignKey, event
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from strenum import StrEnum
 
 from hiddifypanel import g
@@ -10,6 +13,9 @@ from hiddifypanel.database import db, db_execute
 from hiddifypanel.models.base_account import BaseAccount
 from hiddifypanel.models.role import Role
 from hiddifypanel.models.usage import DailyUsage
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.user import User
 
 
 class AdminMode(StrEnum):
@@ -31,15 +37,15 @@ class AdminUser(BaseAccount):
     account expiration date, usage limit, package days, mode, start date, current usage, last reset time, and comment.
     """
 
-    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    mode = Column(Enum(AdminMode), default=AdminMode.agent, nullable=False)
-    can_add_admin = Column(Boolean, default=False, nullable=False)
-    max_users = Column(Integer, default=100, nullable=False)
-    max_active_users = Column(Integer, default=100, nullable=False)
-    users = db.relationship("User", backref="admin")
-    usages = db.relationship("DailyUsage", backref="admin")
-    parent_admin_id = Column(Integer, ForeignKey("admin_user.id"), default=1)
-    parent_admin = db.relationship("AdminUser", remote_side=[id], backref="sub_admins")
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    mode: Mapped[AdminMode] = mapped_column(Enum(AdminMode), default=AdminMode.agent)
+    can_add_admin: Mapped[bool] = mapped_column(default=False)
+    max_users: Mapped[int] = mapped_column(default=100)
+    max_active_users: Mapped[int] = mapped_column(default=100)
+    users: Mapped[list[User]] = relationship("User", backref="admin")
+    usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
+    parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)
+    parent_admin: Mapped[AdminUser | None] = relationship("AdminUser", remote_side=[id], backref="sub_admins")
 
     @property
     def role(self) -> Role | None:

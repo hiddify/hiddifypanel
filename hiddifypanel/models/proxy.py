@@ -1,7 +1,8 @@
 from enum import auto
+from typing import Any
 
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped
+from sqlalchemy import Enum, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import JSON
 from strenum import StrEnum
 
@@ -71,15 +72,15 @@ class ProxyL3(StrEnum):
 
 
 class Proxy(db.Model):
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    child_id: Mapped[int] = Column(Integer, ForeignKey("child.id"), default=0)
-    name = Column(String(200), nullable=False, unique=False)
-    enable = Column(Boolean, nullable=False)
-    proto = Column(Enum(ProxyProto), nullable=False)
-    l3 = Column(Enum(ProxyL3), nullable=False)
-    transport = Column(Enum(ProxyTransport), nullable=False)
-    cdn = Column(Enum(ProxyCDN), nullable=False)
-    params = Column(JSON, default={})
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int | None] = mapped_column(ForeignKey("child.id"), default=0)
+    name: Mapped[str] = mapped_column(String(200))
+    enable: Mapped[bool] = mapped_column()
+    proto: Mapped[ProxyProto] = mapped_column(Enum(ProxyProto))
+    l3: Mapped[ProxyL3] = mapped_column(Enum(ProxyL3))
+    transport: Mapped[ProxyTransport] = mapped_column(Enum(ProxyTransport))
+    cdn: Mapped[ProxyCDN] = mapped_column(Enum(ProxyCDN))
+    params: Mapped[dict[str, Any] | None] = mapped_column(JSON, default=dict)
 
     @property
     def enabled(self):

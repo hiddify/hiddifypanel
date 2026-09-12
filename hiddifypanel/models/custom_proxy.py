@@ -4,9 +4,9 @@ from enum import auto
 from typing import Any
 
 from slugify import slugify
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Enum, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 from strenum import StrEnum
 
@@ -193,17 +193,17 @@ class ProxyTemplate(db.Model):  # type: ignore
     __tablename__ = "proxy_template"
     __table_args__ = (UniqueConstraint("child_id", "slug", name="uq_proxy_template_child_slug"),)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    child_id = Column(Integer, ForeignKey("child.id"), default=0, nullable=False)
-    slug = Column(String(200), nullable=False)
-    core = Column(Enum(TemplateCore), nullable=False)
-    category = Column(Enum(TemplateCategory), nullable=False)
-    name = Column(String(200), nullable=False)
-    description = Column(String(500), default="")
-    content = Column(Text, nullable=False, default="")
-    builtin_content = Column(Text, nullable=False, default="")
-    builtin_override = Column(Boolean, default=False, nullable=False)
-    is_builtin = Column(Boolean, default=False, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
+    slug: Mapped[str] = mapped_column(String(200))
+    core: Mapped[TemplateCore] = mapped_column(Enum(TemplateCore))
+    category: Mapped[TemplateCategory] = mapped_column(Enum(TemplateCategory))
+    name: Mapped[str] = mapped_column(String(200))
+    description: Mapped[str | None] = mapped_column(String(500), default="")
+    content: Mapped[str] = mapped_column(Text, default="")
+    builtin_content: Mapped[str] = mapped_column(Text, default="")
+    builtin_override: Mapped[bool] = mapped_column(default=False)
+    is_builtin: Mapped[bool] = mapped_column(default=False)
 
     def effective_content(self) -> str:
         from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import effective_template_content
@@ -296,17 +296,17 @@ class CustomProxyClientCore(db.Model):  # type: ignore
     __tablename__ = "custom_proxy_client_core"
     __table_args__ = (UniqueConstraint("custom_proxy_id", "core", "version", name="uq_custom_proxy_client_core"),)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    custom_proxy_id = Column(Integer, ForeignKey("custom_proxy.id", ondelete="CASCADE"), nullable=False)
-    core = Column(Enum(ClientCore), nullable=False)
-    version = Column(String(50), nullable=False, default="")
-    slug = Column(String(200), nullable=False, default="")
-    outbounds_template = Column(Text, nullable=False, default="")
-    is_builtin = Column(Boolean, default=False, nullable=False)
-    builtin_outbounds_template = Column(Text, nullable=False, default="")
-    override = Column(Boolean, default=False, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    custom_proxy_id: Mapped[int] = mapped_column(ForeignKey("custom_proxy.id", ondelete="CASCADE"))
+    core: Mapped[ClientCore] = mapped_column(Enum(ClientCore))
+    version: Mapped[str] = mapped_column(String(50), default="")
+    slug: Mapped[str] = mapped_column(String(200), default="")
+    outbounds_template: Mapped[str] = mapped_column(Text, default="")
+    is_builtin: Mapped[bool] = mapped_column(default=False)
+    builtin_outbounds_template: Mapped[str] = mapped_column(Text, default="")
+    override: Mapped[bool] = mapped_column(default=False)
 
-    proxy = relationship("CustomProxy", back_populates="client_cores")
+    proxy: Mapped[CustomProxy] = relationship("CustomProxy", back_populates="client_cores")
 
     def effective_outbounds_template(self) -> str:
         if self.override and (self.outbounds_template or "").strip():
@@ -330,38 +330,38 @@ class CustomProxy(db.Model):  # type: ignore
     __tablename__ = "custom_proxy"
     __table_args__ = (UniqueConstraint("child_id", "slug", name="uq_custom_proxy_child_slug"),)
 
-    id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    child_id = Column(Integer, ForeignKey("child.id"), default=0, nullable=False)
-    name = Column(String(200), nullable=False)
-    slug = Column(String(200), nullable=False)
-    _enable = Column("enable", Boolean, default=True, nullable=False)
-    mode = Column(Enum(CustomProxyMode), nullable=False)
-    proto = Column(Enum(ProxyProto), nullable=True)
-    transport = Column(Enum(CustomProxyTransport), nullable=True)
-    tls_layer = Column(Enum(TlsLayer), nullable=True)
-    l7_reverse_proto = Column(Enum(L7Proto), nullable=True)
-    categories = Column(JSON, default=list)
-    domain_modes = Column(JSON, default=list)
-    custom_path = Column(String(500), default="")
-    server_core = Column(Enum(ServerCore), nullable=False, default=ServerCore.xray)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
+    name: Mapped[str] = mapped_column(String(200))
+    slug: Mapped[str] = mapped_column(String(200))
+    _enable: Mapped[bool] = mapped_column("enable", default=True)
+    mode: Mapped[CustomProxyMode] = mapped_column(Enum(CustomProxyMode))
+    proto: Mapped[ProxyProto | None] = mapped_column(Enum(ProxyProto))
+    transport: Mapped[CustomProxyTransport | None] = mapped_column(Enum(CustomProxyTransport))
+    tls_layer: Mapped[TlsLayer | None] = mapped_column(Enum(TlsLayer))
+    l7_reverse_proto: Mapped[L7Proto | None] = mapped_column(Enum(L7Proto))
+    categories: Mapped[list[Any] | None] = mapped_column(JSON, default=list)
+    domain_modes: Mapped[list[Any] | None] = mapped_column(JSON, default=list)
+    custom_path: Mapped[str | None] = mapped_column(String(500), default="")
+    server_core: Mapped[ServerCore] = mapped_column(Enum(ServerCore), default=ServerCore.xray)
 
-    server_inbound_tcp_ports = Column(JSON, default=list)
-    server_inbound_udp_ports = Column(JSON, default=list)
-    server_inbound_tcp_udp = Column(Enum(InboundTcpUdp), nullable=False, default=InboundTcpUdp.both)
-    server_inbound_download_tcp_udp = Column(Enum(InboundTcpUdp), nullable=True)
-    server_config = Column(Text, nullable=False, default="")
-    builtin = Column(JSON, default=dict)
-    builtin_overrides = Column(JSON, default=dict)
-    builtin_server_config = Column(Text, nullable=False, default="")
-    server_override = Column(Boolean, default=False, nullable=False)
-    sort_order = Column(Integer, default=0)
-    is_builtin = Column(Boolean, default=False, nullable=False)
-    is_common_proxy = Column(Boolean, default=False, nullable=False, server_default="0")
+    server_inbound_tcp_ports: Mapped[list[Any] | None] = mapped_column(JSON, default=list)
+    server_inbound_udp_ports: Mapped[list[Any] | None] = mapped_column(JSON, default=list)
+    server_inbound_tcp_udp: Mapped[InboundTcpUdp] = mapped_column(Enum(InboundTcpUdp), default=InboundTcpUdp.both)
+    server_inbound_download_tcp_udp: Mapped[InboundTcpUdp | None] = mapped_column(Enum(InboundTcpUdp))
+    server_config: Mapped[str] = mapped_column(Text, default="")
+    builtin: Mapped[dict[str, Any] | None] = mapped_column(JSON, default=dict)
+    builtin_overrides: Mapped[dict[str, Any] | None] = mapped_column(JSON, default=dict)
+    builtin_server_config: Mapped[str] = mapped_column(Text, default="")
+    server_override: Mapped[bool] = mapped_column(default=False)
+    sort_order: Mapped[int | None] = mapped_column(default=0)
+    is_builtin: Mapped[bool] = mapped_column(default=False)
+    is_common_proxy: Mapped[bool] = mapped_column(default=False, server_default="0")
 
-    download_tls_layer = Column(Enum(TlsLayer), nullable=True)
-    download_domain_modes = Column(JSON, default=list)
+    download_tls_layer: Mapped[TlsLayer | None] = mapped_column(Enum(TlsLayer))
+    download_domain_modes: Mapped[list[Any] | None] = mapped_column(JSON, default=list)
 
-    client_cores = relationship(
+    client_cores: Mapped[list[CustomProxyClientCore]] = relationship(
         "CustomProxyClientCore",
         back_populates="proxy",
         cascade="all, delete-orphan",

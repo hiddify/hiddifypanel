@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import datetime
 from enum import auto
 from uuid import uuid4
 
 import json5
-from sqlalchemy import event
+from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, event
+from sqlalchemy.orm import DynamicMapped, Mapped, mapped_column, relationship
 from strenum import StrEnum
 
 from hiddifypanel.database import db
@@ -33,12 +36,12 @@ package_mode_dic = {UserMode.daily: 1, UserMode.weekly: 7, UserMode.monthly: 30}
 
 
 class UserDetail(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), default=0, nullable=False)
-    child_id = db.Column(db.Integer, db.ForeignKey("child.id"), default=0, nullable=False)
-    last_online = db.Column(db.DateTime, nullable=False, default=datetime.datetime.min)
-    current_usage = db.Column(db.BigInteger, default=0, nullable=False)
-    connected_devices = db.Column(db.String(512), default="", nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), default=0)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
+    last_online: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.min)
+    current_usage: Mapped[int] = mapped_column(BigInteger, default=0)
+    connected_devices: Mapped[str] = mapped_column(String(512), default="")
 
     @property
     def current_usage_GB(self):
@@ -60,33 +63,33 @@ class User(BaseAccount):
     account expiration date, usage limit, package days, mode, start date, current usage, last reset time, and comment.
     """
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    last_online = db.Column(db.DateTime, nullable=False, default=datetime.datetime.min)
-    last_modified_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    last_online: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.min)
+    last_modified_time: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.now)
     # removed
     # expiry_time = db.Column(db.Date, default=datetime.date.today() + relativedelta.relativedelta(months=6))
-    usage_limit = db.Column(db.BigInteger, default=1000 * ONE_GIG, nullable=False)
-    package_days = db.Column(db.Integer, default=90, nullable=False)
-    mode = db.Column(db.Enum(UserMode), default=UserMode.no_reset, nullable=False)
-    monthly = db.Column(db.Boolean, default=False)  # removed
-    start_date = db.Column(db.Date, nullable=True)
-    current_usage = db.Column(db.BigInteger, default=0, nullable=False)
-    last_reset_time = db.Column(db.Date, default=datetime.date.today())
-    added_by = db.Column(db.Integer, db.ForeignKey("admin_user.id"), default=1)
-    max_ips = db.Column(db.Integer, default=100, nullable=False)
-    details = db.relationship(
+    usage_limit: Mapped[int] = mapped_column(BigInteger, default=1000 * ONE_GIG)
+    package_days: Mapped[int] = mapped_column(default=90)
+    mode: Mapped[UserMode] = mapped_column(Enum(UserMode), default=UserMode.no_reset)
+    monthly: Mapped[bool | None] = mapped_column(default=False)  # removed
+    start_date: Mapped[datetime.date | None] = mapped_column(Date)
+    current_usage: Mapped[int] = mapped_column(BigInteger, default=0)
+    last_reset_time: Mapped[datetime.date | None] = mapped_column(Date, default=datetime.date.today())
+    added_by: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)
+    max_ips: Mapped[int] = mapped_column(default=100)
+    details: DynamicMapped[UserDetail] = relationship(
         "UserDetail",
         cascade="all,delete",
         backref="user",
         lazy="dynamic",
     )
 
-    ed25519_private_key = db.Column(db.String(500), default="")
-    ed25519_public_key = db.Column(db.String(100), default="")
-    wg_pk = db.Column(db.String(50), default="")
-    wg_pub = db.Column(db.String(50), default="")
-    wg_psk = db.Column(db.String(50), default="")
-    extra_params = db.Column(db.String(2000), nullable=True, default="{}")
+    ed25519_private_key: Mapped[str | None] = mapped_column(String(500), default="")
+    ed25519_public_key: Mapped[str | None] = mapped_column(String(100), default="")
+    wg_pk: Mapped[str | None] = mapped_column(String(50), default="")
+    wg_pub: Mapped[str | None] = mapped_column(String(50), default="")
+    wg_psk: Mapped[str | None] = mapped_column(String(50), default="")
+    extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
 
     def extra_params_json(self):
         try:

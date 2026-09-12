@@ -1,8 +1,8 @@
 from typing import Any
 
 from loguru import logger
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped
+from sqlalchemy import Boolean, Enum, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel import Events
 from hiddifypanel.cache import cache
@@ -12,10 +12,10 @@ from hiddifypanel.models.config_enum import ConfigEnum
 
 
 class BoolConfig(db.Model):
-    child_id = Column(Integer, ForeignKey("child.id"), primary_key=True, default=0)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
-    key = Column(Enum(ConfigEnum), primary_key=True)
-    value = Column(Boolean)
+    key: Mapped[ConfigEnum] = mapped_column(Enum(ConfigEnum), primary_key=True)
+    value: Mapped[bool | None] = mapped_column(Boolean)
 
     def to_dict(d):
         return {"key": str(d.key), "value": d.value, "child_unique_id": d.child.unique_id if d.child else ""}
@@ -32,10 +32,10 @@ class BoolConfig(db.Model):
 
 
 class StrConfig(db.Model):
-    child_id = Column(Integer, ForeignKey("child.id"), primary_key=True, default=0)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
-    key: Mapped[ConfigEnum] = Column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
-    value: Mapped[str] = Column(String(3072))
+    key: Mapped[ConfigEnum] = mapped_column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
+    value: Mapped[str | None] = mapped_column(String(3072))
 
     def to_dict(self: "StrConfig"):
         return {"key": str(self.key), "value": self.value, "child_unique_id": self.child.unique_id if self.child else ""}
