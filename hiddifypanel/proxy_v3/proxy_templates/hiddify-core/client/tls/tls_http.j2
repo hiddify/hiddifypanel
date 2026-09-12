@@ -6,17 +6,18 @@
   "enabled": true,
   {%if not domain.sni%} "disable_sni": true {%endif%},
   "server_name": "{{ domain.sni }}",
-  "alpn": {{ tls_layer.alpns() | tojson }},
+  {% if ctx.proxy.proto not in ["naive"] %}
+    "alpn": {{ tls_layer.alpns() | tojson }},
+    
 
-
-  {% set fp = ctx.hconfig.utls or "" %}
-  {% if fp and fp!="none" %}
-  "utls": {
-    "enabled": true,
-    "fingerprint": "{{ fp }}"
-  },
+    {% set fp = ctx.hconfig.utls or "" %}
+    {% if fp and fp!="none" %}
+      "utls": {
+        "enabled": true,
+        "fingerprint": "{{ fp }}"
+      },
+    {% endif %}
   {% endif %}
-
   {% if domain.is_reality() %}
     "reality": {
       "enabled": true,
@@ -28,11 +29,15 @@
       "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
     {% endif %}
     {%if domain.allow_insecure%} 
-      "insecure": true,
-      "certificate_public_key_sha256": {{domain.cert.pinnedPeerCertSha256 |tojson}},
+      {% if ctx.platform.singbox.version >= "1.13.0" %}
+        "certificate_public_key_sha256": "{{domain.cert.public_key_sha256}}",
+      {% else %}
+        "insecure": true,
+      {%endif%}
+
     {%endif%}
 
-    {% if ctx.hconfig.tls_ech_enable %}
+    {% if ctx.hconfig.tls_ech_enable and domain.mode=="cdn" %}
     "ech": {
       "enabled": true,
       "config": [],

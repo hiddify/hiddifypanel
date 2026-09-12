@@ -32,6 +32,8 @@ class UsageApi(MethodView):
             logger.info(f"Adding increased usages to parent for child_id={g.node.id}")
             add_users_usage_new(increased, int(g.node.id))
 
+        g.node.mark_node_to_parent(commit=True)
+
         return get_users_usage_data_for_api(from_time=data.last_users_sync - timedelta(minutes=1), include_uuids={u.uuid for u in data.usages})
 
 

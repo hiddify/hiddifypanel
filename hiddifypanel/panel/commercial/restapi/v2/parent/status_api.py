@@ -21,5 +21,6 @@ class StatusApi(MethodView):
         if child:
             logger.info(f"Child with unique_id: {data.child_unique_id} exists")
             res.existance = True
+            child.mark_node_to_parent(commit=True)
 
         return res

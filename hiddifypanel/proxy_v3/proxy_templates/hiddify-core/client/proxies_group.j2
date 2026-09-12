@@ -1,10 +1,11 @@
-{% if client_proxy_tags %}
+{% set proxy_tags = ctx.client_proxy_tags or client_proxy_tags %}
+{% if proxy_tags %}
 {
   "type": "selector",
   "tag": "Select",
   "outbounds": [
     "Auto",
-    {% for tag in client_proxy_tags %}
+    {% for tag in proxy_tags %}
     "{{ tag }}",
     {% endfor %}
   ],
@@ -14,7 +15,7 @@
   "type": "urltest",
   "tag": "Auto",
   "outbounds": [
-    {% for tag in client_proxy_tags %}
+    {% for tag in proxy_tags %}
     "{{ tag }}",
     {% endfor %}
   ],

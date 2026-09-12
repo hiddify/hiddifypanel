@@ -4,6 +4,15 @@ import re
 
 _BLOCK_OPEN_RE = re.compile(r"\{%-?\s*block\s+(\w+)\s*-?%\}")
 _BLOCK_CLOSE_RE = re.compile(r"\{%-?\s*endblock\s*-?%\}")
+_IF_WRAPS_CLIENT_BLOCK_RE = re.compile(
+    r"\{%-?\s*if\b.*?%\}\s*\{%-?\s*block\s+(?:endpoints|outbounds)\b",
+    re.DOTALL,
+)
+
+
+def if_wraps_client_blocks(template: str) -> bool:
+    """True when ``{% if %}`` chooses between client ``endpoints`` / ``outbounds`` blocks."""
+    return bool(_IF_WRAPS_CLIENT_BLOCK_RE.search(template or ""))
 
 
 def _balanced_block_body(text: str, start_pos: int) -> str | None:

@@ -1,107 +1,167 @@
 {% block base_config %}
 {
-  
   "outbounds": [
     {% if ctx.user.is_active %}
-    
       {% block proxy_group %}
         {% include 'singbox/client/proxies_group' %},
       {% endblock %}
-      
       {% block outbounds %}{% endblock %},
-    {%else%}
+    {% else %}
         {% include 'singbox/client/subscription_status' %}
     {% endif %}
+
     {"tag": "direct", "type": "direct"},
-    {"tag": "block", "type": "block"},
-    {"tag": "dns-out", "type": "dns"}
+    {% if ctx.platform.singbox.version < "1.11.0" %}
+        {"tag": "block", "type": "block"},
+        {"tag": "dns-out", "type": "dns"},
+    {% endif %}
   ],
   "endpoints": [
     {% if ctx.user.is_active %}
-    {% block endpoints %}{% endblock %}
+        {% block endpoints %}{% endblock %}
     {% endif %}
   ],
   "route": {
-    "auto_detect_interface": true,
-    "override_android_vpn": {%if ctx.platform.os == "android" %}true{%else%}false{%endif%},
+    "auto_detect_interface": {{(ctx.hconfig.log_level!="DEBUG")|jsbool}},
+    "override_android_vpn": {{(ctx.platform.os == "android")|jsbool}},
     "final": "Select",
-    "rules": []
+    {% if ctx.platform.singbox.version >= "1.12.0" %}
+        "default_domain_resolver": {
+            "server": "dns-local"
+        },
+    {% endif %}
+    "rules": [
+        {% if ctx.platform.singbox.version >= "1.11.0" %}
+            
+            {
+                "inbound": [
+                {% if ctx.platform.os in ["android", "ios"] %} "tun-in",{% endif %}
+                "mixed-in"],
+                "action": "sniff",
+                "timeout": "1s"
+            },
+            {
+                "protocol": "dns",
+                "action": "hijack-dns"
+            },
+        {% else %}
+            {
+                "port": [53],
+                "outbound": "dns-out"
+            },
+            {
+                "inbound": ["dns-in"],
+                "outbound": "dns-out"
+            },
+        {% endif %}
+       {
+            "protocol": "quic",
+            "port": [
+                443
+            ],
+            {% if ctx.platform.singbox.version < "1.10.0" %}
+                "outbound": "block"
+            {% else %}
+                "action": "reject"
+            {% endif %}
+        }
+    ]
   },
       "log": {
         "disabled": false,
-        "level": "warn",
+        "level": "{{"warn" if ctx.hconfig.log_level!="DEBUG" else "debug"}}",
         "timestamp": false
     },
     "experimental": {
         "clash_api": {
             "external_controller": "127.0.0.1:9090",
-            "store_selected": true,
-            "cache_file": "clash.db"
+        },
+        "cache_file": {
+            "enabled": true,
+            {% if ctx.platform.singbox.version >= "1.14.0" %}
+            "store_dns": true,
+            {% else %}
+            "store_rdrc": true,
+            {% endif %}
         }
     },
     "dns": {
         "servers": [
+        
             {
+            {%if ctx.platform.singbox.version >= "1.12.0"%}
+                "type": "tcp",
+                "server": "1.1.1.1",
+            {%else%}
                 "address": "tcp://1.1.1.1",
-                "address_resolver": "dns-local",
-                "strategy": "prefer_ipv4",
+            {%endif%}
+                
+                
                 "tag": "dns-remote",
-                "detour": "ssh-out"
+                "detour": "Select"
             },
             {
+            {%if ctx.platform.singbox.version >= "1.12.0"%}
+                "type": "local",
+            {%else%}
                 "address": "local",
-                "detour": "direct",
+            {%endif%}
                 "tag": "dns-local"
-            },
-            {
-                "address": "rcode:\/\/success",
-                "tag": "dns-block"
             }
+            
         ],
         "rules": [
+          {% if ctx.platform.singbox.version >= "1.12.0" %}
             {
                 "domain_suffix": [
                     "ir"
                 ],
-                "server": "dns-local"
-            },
-            {
-                "outbound": "direct",
+                "action": "route",
                 "server": "dns-local"
             }
+            
+          {% endif %}
         ],
         "final": "dns-remote",
         "reverse_mapping": true,
         "strategy": "prefer_ipv4",
-        "independent_cache": true
+        {% if ctx.platform.singbox.version < "1.14.0" %}
+            "independent_cache": true
+        {% endif %}
     },
     "inbounds": [
-        {%if ctx.platform.os in ["android","ios"] %}
+        {% if ctx.platform.os in ["android", "ios"] %}
         {
             "type": "tun",
             "tag": "tun-in",
             "domain_strategy": "prefer_ipv4",
             "interface_name": "tun0",
-            "inet4_address": "172.19.0.1\/30",
+            {% if ctx.platform.singbox.version >= "1.11.0" %}
+               "address": ["172.19.0.1/30"],
+            {% else %}
+                "inet4_address": "172.19.0.1/30",
+                "sniff": true,
+                "sniff_override_destination": false,
+            {% endif %}
             "mtu": 9000,
             "auto_route": true,
             "strict_route": true,
             "stack": "system",
-            "endpoint_independent_nat": true,
-            "sniff": true,
-            "sniff_override_destination": false
+            "endpoint_independent_nat": true
         },
-        {%else%}
+        {% else %}
         {
-            "domain_strategy": "prefer_ipv4",
             "listen": "127.0.0.1",
             "listen_port": 2080,
-            "sniff": true,
-            "sniff_override_destination": false,
+            {% if ctx.platform.singbox.version < "1.11.0" %}
+                "domain_strategy": "prefer_ipv4",
+                "sniff": true,
+                "sniff_override_destination": false,
+            {% endif %}
             "tag": "mixed-in",
             "type": "mixed"
         }
-        {%endif%}
+        {% endif %}
     ]
 }
 {% endblock %}

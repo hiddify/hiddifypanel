@@ -55,6 +55,7 @@ class SyncApi(MethodView):
                 logger.info("Proxies field is empty")
 
             logger.info("Commit changes to database")
+            child.mark_node_to_parent()
             db.session.commit()
         except Exception as err:
             with logger.contextualize(error=err):

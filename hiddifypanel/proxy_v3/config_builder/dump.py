@@ -211,16 +211,29 @@ def _omit_empty_values(value: Any) -> Any:
     return value
 
 
+def _parse_json_for_dump(rendered: str) -> Any:
+    text = (rendered or "").strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    import json5
+
+    from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
+
+    return json5.loads(fix_duplicate_json_commas(text))
+
+
 def _pretty_json_config(rendered: str, *, pretty: bool) -> str:
     if not rendered.strip():
         return rendered
     try:
-        parsed = _omit_empty_values(json.loads(rendered))
-        if pretty:
-            return json.dumps(parsed, indent=2, ensure_ascii=False)
-        return json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
-    except json.JSONDecodeError:
+        parsed = _omit_empty_values(_parse_json_for_dump(rendered))
+    except Exception:
         return rendered
+    if pretty:
+        return json.dumps(parsed, indent=2, ensure_ascii=False)
+    return json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
 
 
 def dump_hiddify_core_server_config(
@@ -619,57 +632,16 @@ def dump_all_client_configs(
 
 def _build_merged_json_client_config(child_id: int, contexts: list[ClientContextVar], *, core: str) -> ConfigBuilderModel:
     """Render each proxy with typed ClientContextVar, then compose one core config."""
-    from hiddifypanel.models.custom_proxy import TemplateCore
-    from hiddifypanel.models.proxy_base_config import BaseConfigSide
     from hiddifypanel.proxy_v3.config_builder.hiddify_core.client import HiddifyCoreClientDriver
-
     from hiddifypanel.proxy_v3.config_builder.singbox.client import SingboxClientDriver
     from hiddifypanel.proxy_v3.config_builder.xray.client import XrayClientDriver
-    from hiddifypanel.proxy_v3.config_builder.hiddify_core.common import compose_config_from_blocks
-    from hiddifypanel.proxy_v3.config_builder.models import MessageModel, ProxyBlock
-    from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 
     drivers = {
         "hiddify-core": HiddifyCoreClientDriver(),
         "singbox": SingboxClientDriver(),
         "xray": XrayClientDriver(),
     }
-    driver = drivers[core]
-    messages: list[MessageModel] = []
-    blocks: list[ProxyBlock] = []
-    min_version = TemplateVersion("0.0.0")
-
-    for ctx in contexts:
-        client_config = driver._select_client_config(ctx)
-        if client_config is None:
-            continue
-        min_version = driver._min_version(ctx)
-        try:
-            blocks.extend(driver.build_proxy_config(child_id, ctx, messages, client_config=client_config))
-        except Exception as exc:
-            messages.append(
-                MessageModel(
-                    level="error",
-                    message=f"{ctx.proxy.tag or ctx.proxy.id}: {exc}",
-                    data={"stacktrace": traceback.format_exc()},
-                )
-            )
-
-    if not contexts:
-        messages.append(MessageModel(level="error", message=f"No client proxies for {core}"))
-        return ConfigBuilderModel(core=TemplateCore(core), side=BaseConfigSide.client, config="", messages=messages)
-
-    # Base shells are versioned independently of the UA; use 0.0.0 like server drivers.
-    return compose_config_from_blocks(
-        child_id,
-        contexts[0],
-        blocks,
-        core=TemplateCore(core),
-        side=BaseConfigSide.client,
-        block_names=driver.block_names,
-        min_version=TemplateVersion("0.0.0"),
-        messages=messages,
-    )
+    return drivers[core].build_all(child_id, contexts)
 
 
 def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:

@@ -211,6 +211,8 @@ def auth_before_request():
             # when parent/child panel needs to call another parent/child api, it will pass its unique id in the header as apikey
             if node := Child.by_unique_id(apikey):
                 g.node = node
+                if "/api/v2/child/" in (request.path or ""):
+                    node.mark_parent_to_node(commit=True)
                 return
 
         if not account:

@@ -188,9 +188,11 @@ def render_section(
             parsed, parse_err = _parse_json5(to_parse)
             if parse_err:
                 error_detail = _build_error_detail(parse_err, source=wrapped, phase="json5")
-            elif as_json_object and isinstance(parsed, list) and len(parsed) == 1 and isinstance(parsed[0], dict):
-                parsed = parsed[0]
-                wrapped = json.dumps(parsed, indent=2, ensure_ascii=False)
+            else:
+                if as_json_object and isinstance(parsed, list) and len(parsed) == 1 and isinstance(parsed[0], dict):
+                    parsed = parsed[0]
+                if as_json_object and isinstance(parsed, (dict, list)):
+                    wrapped = json.dumps(parsed, indent=2, ensure_ascii=False)
 
         return RenderSectionResult(
             rendered=wrapped,

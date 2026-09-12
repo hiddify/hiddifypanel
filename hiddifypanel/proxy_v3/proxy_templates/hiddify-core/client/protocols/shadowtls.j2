@@ -6,8 +6,11 @@
 "tls": {
   "enabled": true,
   "server_name": "{{ ctx.hconfig.shadowtls_fakedomain }}",
+  {% set fp = ctx.hconfig.utls or "" %}
+  {% if fp and fp!="none" %}
   "utls": {
     "enabled": true,
-    "fingerprint": "none"
-  }
+    "fingerprint": "{{ fp }}"
+  },
+  {% endif %}
 },

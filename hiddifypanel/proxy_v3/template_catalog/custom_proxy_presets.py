@@ -118,7 +118,7 @@ def build_additional_config_preset(child_id: int = 0) -> CustomProxyPreset:
             version="",
             slug="client-singbox",
             # Reuse hiddify-core client template (avoids a second download pass).
-            outbounds_template="{#use_hiddify_core()#}",
+            outbounds_template="{# use_hiddify_core() #}",
         ),
         PresetClientCore(
             core="xray",
@@ -178,7 +178,7 @@ def build_node_configs_preset(child_id: int = 0) -> CustomProxyPreset:
             version="",
             slug="client-singbox",
             # Reuse hiddify-core client template (same JSON shape).
-            outbounds_template="{#use_hiddify_core()#}",
+            outbounds_template="{# use_hiddify_core() #}",
         ),
         PresetClientCore(
             core="xray",

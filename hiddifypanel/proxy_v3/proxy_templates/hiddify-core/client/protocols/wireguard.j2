@@ -1,5 +1,5 @@
 "type": "wireguard",
-{% if ctx.platform.app == "hiddify" and ctx.platform.app_version >= "4.2.0" %}
+{% if ctx.platform.singbox.version >= "1.12.0" %}
   "private_key": "{{ ctx.user.wg_pk }}",
   "mtu": 1380,
   "address": ["{{ ctx.user.wg_ipv4 }}/32"],

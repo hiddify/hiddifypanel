@@ -22,7 +22,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 141
 
 
-def _v139(child_id):
+def _v140(child_id):
     set_hconfig(ConfigEnum.ssfaketls_enable, False)
     set_hconfig(ConfigEnum.dnstt_enable, False)
     add_config_if_not_exist(ConfigEnum.last_users_sync, "0001-01-01 00:00:00", child_id)

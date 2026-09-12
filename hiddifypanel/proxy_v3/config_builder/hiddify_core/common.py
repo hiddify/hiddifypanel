@@ -10,7 +10,10 @@ from hiddifypanel.models.proxy_base_config import BaseConfigSide
 from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel, ProxyBlock
 from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section, render_section
-from hiddifypanel.proxy_v3.config_builder.template_blocks import extract_block_body, inject_named_fragment_blocks
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    extract_block_body,
+    inject_named_fragment_blocks,
+)
 from hiddifypanel.proxy_v3.context_vars.builder.utils import load_json5, make_jinja_context
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 
@@ -24,6 +27,21 @@ def merge_fragment(blocks: list[ProxyBlock], block_names: tuple[str, ...]) -> st
         body = ",\n".join(bodies)
         parts.append(f"{{% block {block_name} %}}\n{body}\n{{% endblock %}}")
     return "\n".join(parts)
+
+
+def client_selector_tags(blocks: list[ProxyBlock]) -> list[str]:
+    """Outbound/endpoint tags that belong in client Select/Auto groups."""
+    tags: list[str] = []
+    seen: set[str] = set()
+    for block in blocks:
+        for tag in block.extracted_tags:
+            if not tag or "§hide§" in tag:
+                continue
+            if tag in seen:
+                continue
+            seen.add(tag)
+            tags.append(tag)
+    return tags
 
 
 def render_template_blocks(child_id: int, jinja_ctx: dict[str, Any], template: str, block_names: tuple[str, ...], proxy_label: str, messages: list[MessageModel]) -> list[ProxyBlock]:
@@ -150,8 +168,6 @@ def extract_tags_convert_unique_ids(
         if renamed:
             # Emit array elements only — base shells already wrap these in
             # "outbounds": [ ... ] / "endpoints": [ ... ].
-            block.content = ",\n".join(
-                json.dumps(item, ensure_ascii=False) for item in data if isinstance(item, dict)
-            )
+            block.content = ",\n".join(json.dumps(item, ensure_ascii=False) for item in data if isinstance(item, dict))
         kept.append(block)
     return kept

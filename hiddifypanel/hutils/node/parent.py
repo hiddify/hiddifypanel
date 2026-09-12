@@ -36,6 +36,7 @@ def request_child_to_sync(child: Child) -> bool:
         return False
     if res["msg"] == "ok":
         logger.success(f"Successfully requested child {child.name} to sync")
+        child.mark_parent_to_node(commit=True)
         cache.invalidate_all_cached_functions()
         return True
 

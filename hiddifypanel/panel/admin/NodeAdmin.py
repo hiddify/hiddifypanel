@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import request
 from flask_babel import lazy_gettext as _
 from markupsafe import Markup
@@ -14,9 +16,15 @@ from .adminlte import AdminLTEModelView
 
 class NodeAdmin(AdminLTEModelView):
     column_hide_backrefs = False
-    column_list = ["name", "mode", "unique_id"]
+    column_list = ["name", "mode", "unique_id", "last_node_to_parent_time", "last_parent_to_node_time"]
     form_columns = ["name", "mode", "unique_id"]
-    column_labels = {"name": _("node.name.label"), "mode": _("node.mode.label"), "unique_id": _("node.uuid.label")}
+    column_labels = {
+        "name": _("node.name.label"),
+        "mode": _("node.mode.label"),
+        "unique_id": _("node.uuid.label"),
+        "last_node_to_parent_time": _("Last node to parent"),
+        "last_parent_to_node_time": _("Last parent to node"),
+    }
     column_descriptions = {"name": _("node.name.dscr"), "mode": _("node.mode.dscr"), "unique_id": _("node.uuid.dscr")}
 
     def name_formater(view, context, model, name):
@@ -25,8 +33,23 @@ class NodeAdmin(AdminLTEModelView):
         href = f"{model.node_base_url}/{g.account.uuid}/admin/"
         return Markup(f"<a href='{href}'>{model.name}</a>")
 
+    def relative_time_formater(view, context, model, name):
+        value = getattr(model, name, None)
+        if not value:
+            return Markup("-")
+        diff = value - datetime.now()
+
+        if diff.days < -1000:
+            return Markup("-")
+        if diff.total_seconds() > -60 * 2:
+            return Markup(f"<span class='badge badge-success'>{_('Online')}</span>")
+        state = "danger" if diff.days < -3 else ("success" if diff.days >= -1 else "warning")
+        return Markup(f"<span class='badge badge-{state}'>{hutils.convert.format_timedelta(diff, granularity='min')}</span>")
+
     column_formatters = {
         "name": name_formater,
+        "last_node_to_parent_time": relative_time_formater,
+        "last_parent_to_node_time": relative_time_formater,
     }
     can_export = False
 

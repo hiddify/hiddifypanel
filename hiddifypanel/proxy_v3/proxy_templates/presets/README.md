@@ -18,8 +18,10 @@ Examples:
 - `xray/client/presets/outbound_v2ray.j2` / `outbound_xhttp.j2` — xray client outbounds
 - `hiddify-core/server/presets/inbound_v2ray.j2` — sing-box server inbound for vless/vmess/trojan
 - `hiddify-core/client/presets/outbound_v2ray.j2` — client outbound for v2ray-compatible apps
+- `hiddify-core/client/presets/wireguard.j2` — WireGuard client: `endpoints` when sing-box ≥ 1.11, else `outbounds`
 - `clash/client/presets/outbound_general.j2` — Clash/Mihomo client proxy entry shell
-- `singbox/client/presets/client_outbound.j2` — sing-box client outbound shell
+
+Sing-box client outbounds are not fragment files. `build_singbox_client_outbound` emits `{# use_hiddify_core() #}` for supported proto/transport combinations, or `{# skip("unsupported") #}` otherwise.
 
 ## When to add a preset
 

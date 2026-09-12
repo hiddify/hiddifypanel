@@ -36,6 +36,7 @@ class RegisterApi(MethodView):
         if not child:
             logger.info("Adding new child with unique_id: {}", data.unique_id)
             child = Child(unique_id=data.unique_id, name=data.name, mode=data.mode, node_base_url=data.node_base_url)
+            child.mark_node_to_parent()
             db.session.add(child)
             db.session.commit()
             child = Child.query.filter(Child.unique_id == data.unique_id).first()
@@ -46,6 +47,7 @@ class RegisterApi(MethodView):
             child.name = data.name
             child.mode = data.mode
             child.node_base_url = data.node_base_url
+            child.mark_node_to_parent()
             db.session.commit()
 
         try:

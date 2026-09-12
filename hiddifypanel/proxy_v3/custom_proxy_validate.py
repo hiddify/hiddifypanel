@@ -24,6 +24,7 @@ from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section 
 from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
     extract_block_body as _extract_block_body,
+    if_wraps_client_blocks,
 )
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
     fragment_block_body as _fragment_block_body,
@@ -35,6 +36,7 @@ from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_b
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+from hiddifypanel.proxy_v3.template_catalog.client_builder import singbox_client_is_unsupported, template_skips_unsupported
 
 from .alpn_helpers import (
     alpn_http_for_tag,
@@ -81,16 +83,26 @@ def _resolve_singbox_outbound_template(data: dict[str, Any], template: str) -> s
 
     Returns:
       - original template when it is a real singbox fragment
-      - hiddify-core outbounds template when the stub is ``{# use_hiddify_core() #}``
-      - None when the stub should be skipped (unsupported transport or no hiddify-core template)
+      - hiddify-core outbounds template when empty or the stub is ``{# use_hiddify_core() #}``
+      - None when unsupported (proto/transport or ``{# skip("unsupported") #}``) or no hiddify-core template
     """
-    transport = str(data.get("transport") or "").lower()
-    if transport in ("xhttp", "splithttp"):
+    if template_skips_unsupported(template):
         return None
-    if not _template_uses_hiddify_core(template):
+    if singbox_client_is_unsupported(proto=str(data.get("proto") or ""), transport=str(data.get("transport") or "")):
+        return None
+    if (template or "").strip() and not _template_uses_hiddify_core(template):
         return template
     resolved = _hiddify_core_outbounds_template(data)
     return resolved if resolved.strip() else None
+
+
+def _singbox_skip_warning(label: str, data: dict[str, Any], template: str) -> str:
+    if template_skips_unsupported(template) or singbox_client_is_unsupported(
+        proto=str(data.get("proto") or ""),
+        transport=str(data.get("transport") or ""),
+    ):
+        return f"{label}: skipped (unsupported)"
+    return f"{label}: use_hiddify_core stub but no hiddify-core client template"
 
 
 SAMPLE_UUID = "00000000-0000-0000-0000-000000000001"
@@ -1387,7 +1399,23 @@ def _ua_version_gte(ua_parsed: dict, version_key: str, major: int, minor: int = 
 
 
 def _wireguard_to_endpoints(ua_parsed: dict) -> bool:
-    return _ua_version_gte(ua_parsed, "hiddify_version", 4, 0, 0)
+    return _ua_version_gte(ua_parsed, "singbox_version", 1, 11, 0)
+
+
+def _ctx_uses_wireguard_endpoints(context: dict[str, Any]) -> bool:
+    ctx = context.get("ctx")
+    platform = getattr(ctx, "platform", None) if ctx is not None else None
+    if platform is None and isinstance(ctx, dict):
+        platform = ctx.get("platform")
+    singbox = getattr(platform, "singbox", None) if platform is not None else None
+    if singbox is None and isinstance(platform, dict):
+        singbox = platform.get("singbox")
+    version = getattr(singbox, "version", None) if singbox is not None else None
+    if version is None and isinstance(singbox, dict):
+        version = singbox.get("version")
+    if version is None:
+        return False
+    return TemplateVersion(version) >= "1.11.0"
 
 
 def _split_outbounds(outbounds: list) -> tuple[list, list, list]:
@@ -2152,9 +2180,12 @@ def _collect_client_fragment_bodies(
             **_variant_context_kwargs(variant),
         )
         alpn_ctx["client_core"] = core_name
-        frag = _render_fragment_section(child_id, alpn_ctx, tpl, block_name, parse_json=False)
         alpn_label = _variant_label(variant)
         full_label = f"{proxy_label}/{alpn_label}" if proxy_label else alpn_label
+        if if_wraps_client_blocks(tpl):
+            frag = _render_section(tpl, child_id, alpn_ctx, as_json_object=False, parse_json=False)
+        else:
+            frag = _render_fragment_section(child_id, alpn_ctx, tpl, block_name, parse_json=False)
         if frag.get("skipped"):
             warnings.append(
                 {
@@ -2175,6 +2206,12 @@ def _collect_client_fragment_bodies(
             continue
         body = _normalize_fragment_body(frag.get("rendered") or "")
         if not body:
+            continue
+        if if_wraps_client_blocks(tpl):
+            if _ctx_uses_wireguard_endpoints(alpn_ctx):
+                endpoint_parts.append(body)
+            else:
+                outbound_parts.append(body)
             continue
         from hiddifypanel.proxy_v3.config_builder.render import _resolve_fragment_block_name
 
@@ -2226,7 +2263,10 @@ def _collect_client_fragment_items(
             **_variant_context_kwargs(variant),
         )
         alpn_ctx["client_core"] = core_name
-        frag = _render_fragment_section(child_id, alpn_ctx, tpl, block_name)
+        if if_wraps_client_blocks(tpl):
+            frag = _render_section(tpl, child_id, alpn_ctx, as_json_object=False, parse_json=True)
+        else:
+            frag = _render_fragment_section(child_id, alpn_ctx, tpl, block_name)
         alpn_label = _variant_label(variant)
         full_label = f"{proxy_label}/{alpn_label}" if proxy_label else alpn_label
         if frag.get("skipped"):
@@ -2952,7 +2992,7 @@ def generate_proxy_example(
                 warnings.append(
                     {
                         "code": "client_skip",
-                        "message": f"{label}: use_hiddify_core stub but no hiddify-core client template",
+                        "message": _singbox_skip_warning(label, data, tpl),
                     }
                 )
                 continue
@@ -3330,7 +3370,7 @@ def _merge_client_outbound_bundle(
                     warnings.append(
                         {
                             "code": "client_skip",
-                            "message": f"{label}: use_hiddify_core stub with no hiddify-core template",
+                            "message": _singbox_skip_warning(label, data, tpl),
                         }
                     )
                     continue

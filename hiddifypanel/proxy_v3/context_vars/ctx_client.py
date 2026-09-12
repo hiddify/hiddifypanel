@@ -26,6 +26,7 @@ class ClientContextVar(BaseModel):
     platform: PlatformVar
     proxy: ClientBuilderProxyVar
     shared_cert: CertVar = Field(default_factory=CertVar.empty)
+    client_proxy_tags: list[str] = Field(default_factory=list)
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]
@@ -38,6 +39,7 @@ class ClientContextVar(BaseModel):
                 platform=self.platform,
                 proxy=self.proxy.with_domain(domain),
                 shared_cert=self.shared_cert,
+                client_proxy_tags=list(self.client_proxy_tags),
             )
 
 

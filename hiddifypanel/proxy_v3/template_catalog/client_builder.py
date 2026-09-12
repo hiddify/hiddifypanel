@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import re
 from typing import Any
+
+from hiddifypanel.proxy_v3.alpn_helpers import tls_layer_from_l3
 
 from .fragment_loader import load_template_slug
 from .inbound_builder import (
@@ -14,12 +17,12 @@ from .inbound_builder import (
     supports_xray_preset,
 )
 from .paths import preset_shell_slug
+from .preset_slots import TRANSPORT_DISPLAY_NAME, V2RAY_GATEWAY_PROTOS
 from .proxy_matrix import ProxyCombination
 from .template_defaults import default_sublink_link_template
 
 CLIENT_CORES = ("xray", "singbox", "hiddify-core", "clash", "sublink")
 
-_SINGBOX_CLIENT_ROOT = "singbox"
 _HIDDIFY_CLIENT_ROOT = "hiddify-core"
 
 
@@ -243,30 +246,6 @@ def build_sublink_client(combo: ProxyCombination) -> tuple[str, list[str]]:
     return content, slugs
 
 
-def _singbox_client_streams_slug(transport: str) -> str | None:
-    mapped = _transport_file(transport)
-    if not mapped:
-        return None
-    slug = f"{_SINGBOX_CLIENT_ROOT}/client/streams/{mapped}"
-    try:
-        load_template_slug(slug)
-        return slug
-    except FileNotFoundError:
-        return None
-
-
-def _singbox_client_proto_slug(proto: str) -> str | None:
-    mapped = _proto_file(proto)
-    if not mapped:
-        return None
-    slug = f"{_SINGBOX_CLIENT_ROOT}/client/protocols/{mapped}"
-    try:
-        load_template_slug(slug)
-        return slug
-    except FileNotFoundError:
-        return None
-
-
 def _xray_client_streams_slug(transport: str) -> str | None:
     mapped = _transport_file(transport)
     if not mapped:
@@ -322,27 +301,61 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
 
 # Sing-box client outbounds reuse hiddify-core (same JSON dialect) unless a core-specific
 # template is needed. Drivers resolve this marker to the proxy's hiddify-core client config.
-USE_HIDDIFY_CORE_PLACEHOLDER = "{#use_hiddify_core()#}"
+USE_HIDDIFY_CORE_PLACEHOLDER = "{# use_hiddify_core() #}"
+SKIP_UNSUPPORTED_PLACEHOLDER = '{# skip("unsupported") #}'
+HIDDIFY_RAWHTTP_TLS_SKIP = (
+    '{{ skip("singbox send h2 header need to fix client") if "rawhttp" in ctx.proxy.tag|lower and tls_layer != "http" }}'
+)
+_SKIP_UNSUPPORTED_RE = re.compile(r"""\{#\s*skip\s*\(\s*["']unsupported["']\s*\)\s*#\}""")
+_SINGBOX_UNSUPPORTED_PROTOS = frozenset({"mieru"})
+_SINGBOX_UNSUPPORTED_TRANSPORTS = frozenset({"xhttp", "splithttp"})
+
+
+def template_skips_unsupported(template: str) -> bool:
+    return bool(_SKIP_UNSUPPORTED_RE.search(template or ""))
+
+
+def singbox_client_is_unsupported(*, proto: str = "", transport: str = "") -> bool:
+    if str(proto or "").lower() in _SINGBOX_UNSUPPORTED_PROTOS:
+        return True
+    return _raw_transport(transport) in _SINGBOX_UNSUPPORTED_TRANSPORTS
+
+
+def _hiddify_rawhttp_tls_skip_template() -> str:
+    return (
+        "{% block outbounds %}\n"
+        "{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}\n"
+        f"{HIDDIFY_RAWHTTP_TLS_SKIP}\n"
+        "{% endblock %}\n"
+    )
+
+
+def _combo_title_is_rawhttp(combo: ProxyCombination) -> bool:
+    if "rawhttp" in str(combo.name or "").lower():
+        return True
+    transport = _raw_transport(combo.transport)
+    proto = str(combo.proto or "").lower()
+    display = TRANSPORT_DISPLAY_NAME.get(transport, transport) if proto in V2RAY_GATEWAY_PROTOS else transport
+    return str(display).lower() == "rawhttp"
+
+
+def _is_rawhttp_with_tls(combo: ProxyCombination) -> bool:
+    return _combo_title_is_rawhttp(combo) and tls_layer_from_l3(combo.l3) != "http"
+
+
+def _singbox_outbound_stub(body: str) -> str:
+    return f"{{% block outbounds %}}\n{body}\n{{% endblock %}}\n"
 
 
 def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Sing-box client: reuse hiddify-core via placeholder; mieru/xhttp are not supported."""
-    if _client_proto_file(combo.proto) == "mieru":
-        return (
-            "{% block outbounds %}\n{{ skip('mieru is not supported by sing-box') }}\n{% endblock %}\n",
-            [],
-        )
-    if _raw_transport(combo.transport) == "xhttp":
-        return (
-            "{% block outbounds %}\n{{ skip('xhttp is not supported by sing-box') }}\n{% endblock %}\n",
-            [],
-        )
-    content = f"{{% block outbounds %}}\n{USE_HIDDIFY_CORE_PLACEHOLDER}\n{{% endblock %}}\n"
-    return content, []
+    """Sing-box client outbounds are stubs: reuse hiddify-core, or skip unsupported proto/transport."""
+    if singbox_client_is_unsupported(proto=combo.proto, transport=combo.transport):
+        return _singbox_outbound_stub(SKIP_UNSUPPORTED_PLACEHOLDER), []
+    return _singbox_outbound_stub(USE_HIDDIFY_CORE_PLACEHOLDER), []
 
 
 def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Mieru lives on sing-box only (hiddify-core client config is empty)."""
+    """Mieru client outbound for hiddify-core (sing-box skips this proto)."""
     proto_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/mieru"
     tls_slug = _hiddify_client_tls_slug(combo)
     content = _render_shell(
@@ -354,18 +367,23 @@ def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, 
 
 
 def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
+    if _is_rawhttp_with_tls(combo):
+        return _hiddify_rawhttp_tls_skip_template(), []
     if _client_proto_file(combo.proto) == "mieru":
         return _build_mieru_hiddify_client_outbound(combo)
     proto_slug = _hiddify_client_proto_slug(combo)
     if not proto_slug:
         raise ValueError(f"Unsupported hiddify-core client preset: {combo.name}")
+    if _client_proto_file(combo.proto) == "wireguard":
+        content = _render_shell(_HIDDIFY_CLIENT_ROOT, "wireguard", {})
+        return content, [proto_slug]
     if not _uses_v2ray_transport_client(combo):
         tls_slug = _hiddify_client_tls_slug(combo)
         shadowtls_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/shadowtls"
         is_shadowtls_ss = _raw_transport(combo.transport) == "shadowtls" and _client_proto_file(combo.proto) == "ss"
         is_plain_ss = _skips_hiddify_client_tls(combo)
         slugs = [proto_slug]
-        if _client_proto_file(combo.proto) == "wireguard":
+        if _client_proto_file(combo.proto) == "open-connect":
             shell_name = "endpoint_general"
         else:
             shell_name = "outbound_general"
@@ -443,16 +461,16 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
         except ValueError:
             pass
 
-    if supports_hiddify_preset(combo) or supports_xray_preset(combo) or combo.proto == "mieru":
-        try:
-            outbound, _slugs = build_singbox_client_outbound(combo)
-            configs.append(_builtin_client_core_entry("singbox", outbound))
-        except ValueError:
-            pass
+    outbound, _slugs = build_singbox_client_outbound(combo)
+    configs.append(_builtin_client_core_entry("singbox", outbound))
 
-    # Always pair singbox's use_hiddify_core() marker with a hiddify-core client config
-    # (mieru gets an empty hiddify-core template).
-    if supports_hiddify_preset(combo) or combo.proto in ("wireguard", "mieru") or supports_xray_preset(combo):
+    # Pair singbox's use_hiddify_core() stub with a real hiddify-core client config.
+    if (
+        supports_hiddify_preset(combo)
+        or combo.proto in ("wireguard", "mieru")
+        or supports_xray_preset(combo)
+        or _is_rawhttp_with_tls(combo)
+    ):
         try:
             outbound, _slugs = build_hiddify_client_outbound(combo)
             configs.append(_builtin_client_core_entry("hiddify-core", outbound))
@@ -477,7 +495,7 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
     if "sublink" not in present:
         link = default_sublink_link_template()
         configs.append(_builtin_client_core_entry("sublink", link))
-    for core in ("xray", "singbox", "hiddify-core", "clash"):
+    for core in ("xray", "hiddify-core", "clash"):
         if core not in present and server_core in ("xray", "hiddify-core"):
             configs.append(_builtin_client_core_entry(core, "[]"))
 

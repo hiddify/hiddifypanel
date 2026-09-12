@@ -7,8 +7,9 @@
 "tls": {
   "enabled": true,
   "server_name": "{{ server_name }}",
-  
-  "alpn": {{ proxy.tls_layer.alpns() }},
+    {% if ctx.proxy.proto not in ["hysteria","tuic"] %}
+      "alpn": {{ proxy.tls_layer.alpns() | tojson }},
+    {% endif %}
   
 
 
