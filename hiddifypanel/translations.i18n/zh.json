@@ -38,7 +38,7 @@
   "Can add sub admin": "👥 可以添加子管理员",
   "Change": "修改",
   "Check again": "再检查一遍",
-  "Childs": "子项",
+  "Childs": "子面板",
   "China": "🇨🇳中国",
   "Click here to see the complete log": "单击此处查看完整日志",
   "Click to Import": "点击导入",
@@ -128,7 +128,7 @@
   "Network": "网络",
   "New": "新",
   "No certificate": "",
-  "No children!": "没有孩子",
+  "No children!": "暂无子面板",
   "No main domains found, please add at least one domain with valid certificate": "",
   "Nodes": "",
   "Not Secure": "不安全",
@@ -160,7 +160,7 @@
   "Please select at least one user": "请至少选择一位用户",
   "Please select one of the following applications:": "📍请选择以下应用程序之一：\n<br/>\n<br/>",
   "Please type your message to send to the telegram:": "✏️ 请写下您要发送到 Telegram 的消息：",
-  "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "请理解，家长面板正在测试中，计划和使用条件可能随时发生变化。",
+  "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "请理解，父面板功能目前仍处于测试阶段，计划和使用条件可能随时发生变化。",
   "Please wait ": "请稍等",
   "Port 80 and 443 can not be selected": "端口 80 和 443 不能被选择",
   "Port is already used! in": "端口已用于：",
@@ -383,11 +383,11 @@
   "cf-delete": {
     "failed": "cf-删除失败"
   },
-  "child has been removed!": "子用户已被移除！",
+  "child has been removed!": "子面板已被移除！",
   "child": {
-    "register-failed": "子用户注册失败",
-    "register-success": "子用户注册成功",
-    "sync-failed": "子用户同步失败"
+    "register-failed": "子面板注册失败",
+    "register-success": "子面板注册成功",
+    "sync-failed": "子面板同步失败"
   },
   "clickable copy": "社交媒体链接",
   "close": "关闭",
@@ -631,7 +631,7 @@
     "invalid-pattern-for-warp-sites": "⚠️ 输入的 Warp 站点与指定的模板不匹配",
     "invalid_uuid": "UUID 密钥无效。示例：6098ea35-8cb2-4a08-ba15-2be25bc49cb6\n\n",
     "is_parent": {
-      "description": "config.is_parent.description",
+      "description": "此面板是否作为父面板运行",
       "label": "父面板"
     },
     "kcp": {
@@ -787,22 +787,22 @@
       "label": "🔄 包更新模式"
     },
     "panel_mode": {
-      "child": "",
+      "child": "子面板",
       "description": "config.panel_mode.description",
       "label": "config.panel_mode.label",
-      "parent": "",
+      "parent": "父面板",
       "standalone": ""
     },
     "parent_admin_proxy_path": {
-      "description": "config.parent_admin_proxy_path.description",
-      "label": "config.parent_admin_proxy_path.label"
+      "description": "父面板上的管理员代理路径",
+      "label": "父面板管理员代理路径"
     },
     "parent_domain": {
-      "description": "config.parent_domain.description",
-      "label": "config.parent_domain.label"
+      "description": "父面板的域名",
+      "label": "父面板域名"
     },
     "parent_panel": {
-      "description": "您可以连接到中央面板仅定义一个用户，所有服务器的使用情况将累积添加。",
+      "description": "可连接至中央面板（父面板），只需定义一个用户，所有服务器的用量将累计计算。",
       "label": "父面板（多服务器）"
     },
     "path_grpc": {
@@ -1407,9 +1407,9 @@
   "package days?": "包天数？",
   "package size?": "包装尺寸？",
   "parent": {
-    "invalid-parent-url": "parent.invalid-parent-url",
-    "panel-not-active": "",
-    "sync-req-failed": "parent.sync-req-failed"
+    "invalid-parent-url": "父面板 URL 无效",
+    "panel-not-active": "父面板未激活",
+    "sync-req-failed": "父面板同步请求失败"
   },
   "previous": "上一页",
   "quicksetup": {
