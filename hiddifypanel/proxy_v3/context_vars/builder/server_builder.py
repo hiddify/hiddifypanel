@@ -1,5 +1,3 @@
-import sys
-
 from pydantic import BaseModel, ConfigDict
 
 from hiddifypanel import hutils
@@ -83,7 +81,7 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     proxy_id = proxy.id
 
     if d.fake_mode == FakeMode.reality and not d.custom_proxy_ids:
-        print(f"Domain {d.name} is reality but has no custom proxy", file=sys.stderr)
+        # print(f"Domain {d.name} is reality but has no custom proxy", file=sys.stderr)
         return False
     if proxy.mode in (CustomProxyMode.domains_sni_gateway, CustomProxyMode.domains_dns_gateway):
         return proxy_id in d.custom_proxy_ids
