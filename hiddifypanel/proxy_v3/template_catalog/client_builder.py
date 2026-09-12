@@ -67,7 +67,8 @@ def _is_plain_ss2022(combo: ProxyCombination) -> bool:
 
 
 def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
-    return combo.proto.lower() == "socks" or _is_plain_ss2022(combo)
+    proto = combo.proto.lower()
+    return proto in ("socks", "ssh") or _is_plain_ss2022(combo)
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:

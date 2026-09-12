@@ -6,7 +6,7 @@
   "enabled": true,
   {%if not domain.sni%} "disable_sni": true {%endif%},
   "server_name": "{{ domain.sni }}",
-  "alpn": {{ tls_layer.alpns() }},
+  "alpn": {{ tls_layer.alpns() | tojson }},
 
 
   {% set fp = ctx.hconfig.utls or "" %}
@@ -24,7 +24,7 @@
       "short_id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
     }
   {% else %}
-    {% if ctx.platform.singbox.version >= "1.14.0" %}
+    {% if ctx.platform.singbox.version >= "1.14.0" and ctx.hconfig.singbox_tls_engine %}
       "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
     {% endif %}
     {%if domain.allow_insecure%} 
