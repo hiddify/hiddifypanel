@@ -61,6 +61,50 @@ class ServerConfigDumpResult:
 def error_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [message for message in messages if message.get("level") == "error"]
 
+
+def serialize_message_data(data: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize builder message payloads for CLI / JSON (RenderErrorDetail → dict)."""
+    if not data:
+        return {}
+    out: dict[str, Any] = dict(data)
+    details = out.get("details")
+    if details is not None and hasattr(details, "model_dump"):
+        out["details"] = details.model_dump()
+    return out
+
+
+def format_message_detail_lines(data: dict[str, Any] | None) -> list[str]:
+    """Human-readable detail lines for dump-* CLI error output."""
+    data = serialize_message_data(data)
+    if not data:
+        return []
+    lines: list[str] = []
+    details = data.get("details")
+    if isinstance(details, dict):
+        loc: list[str] = []
+        if details.get("phase"):
+            loc.append(f"phase={details['phase']}")
+        if details.get("line") is not None:
+            loc.append(f"line={details['line']}")
+        if details.get("column") is not None:
+            loc.append(f"column={details['column']}")
+        if details.get("label"):
+            loc.append(f"label={details['label']}")
+        if loc:
+            lines.append("  " + ", ".join(loc))
+        excerpt = details.get("excerpt") or details.get("template_excerpt") or ""
+        if excerpt:
+            for eline in str(excerpt).rstrip("\n").splitlines():
+                lines.append(f"  | {eline}")
+        elif details.get("message") and details["message"] not in (data.get("message") or ""):
+            lines.append(f"  detail: {details['message']}")
+    if data.get("block"):
+        lines.append(f"  block={data['block']}")
+    if data.get("stacktrace"):
+        lines.append(str(data["stacktrace"]).rstrip("\n"))
+    return lines
+
+
 def _line_count(text: str) -> int:
     if not text:
         return 0
@@ -225,7 +269,7 @@ def dump_all_server_configs(
                     "core": core,
                     "level": message.level,
                     "message": message.message,
-                    "data": message.data,
+                    "data": serialize_message_data(message.data),
                 }
             )
 
@@ -411,7 +455,7 @@ def _append_render_messages(result: ClientConfigRenderResult, core: str, message
                 "core": core,
                 "level": message.level,
                 "message": message.message,
-                "data": message.data,
+                "data": serialize_message_data(message.data),
             }
         )
 

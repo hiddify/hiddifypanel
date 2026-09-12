@@ -50,14 +50,19 @@
       "action": "reject",
       "method": "default"
     },
-    {%set outbound_users_map={tag:[u.uuid for u in ctx.users if u.extra.get("outbound")] for tag in ["WARP","direct"]}%}
-    {%for tag,users in outbound_users_map.items() if len(users)%}
+    {% set outbound_users = namespace(uuids=[]) %}
+    {% for u in ctx.users if u.extra.get("outbound") %}
+      {% if outbound_users.uuids.append(u.uuid) %}{% endif %}
+    {% endfor %}
+    {% if outbound_users.uuids %}
+    {% for tag in ["WARP", "direct"] %}
       {
-        "auth_user": {{users|tojson}},
-        "outbound":"{{tag}}",
+        "auth_user": {{ outbound_users.uuids|tojson }},
+        "outbound":"{{ tag }}",
 
       },
-    {%endfor%}
+    {% endfor %}
+    {% endif %}
     {% if ctx.hconfig.block_iran_sites %}
     {
       "action": "reject",

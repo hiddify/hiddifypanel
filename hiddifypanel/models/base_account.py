@@ -17,7 +17,7 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
     password: Mapped[str] = Column(String(100), nullable=True, default="")
     comment: Mapped[str] = Column(String(512), nullable=True, default="")
     telegram_id: Mapped[int | None] = Column(BigInteger, nullable=True, default=None, index=True)
-    lang: Mapped[Lang] = mapped_column(Enum(Lang), default=None)
+    lang: Mapped[Lang | None] = mapped_column(Enum(Lang), default=None, nullable=True)
     deleted = db.Column(db.Boolean, default=False, nullable=False, index=True)
     enable = db.Column(db.Boolean, default=True, nullable=False)
 

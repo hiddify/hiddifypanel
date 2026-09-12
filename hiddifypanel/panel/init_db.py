@@ -23,6 +23,7 @@ MAX_DB_VERSION = 141
 
 
 def _v139(child_id):
+    set_hconfig(ConfigEnum.dnstt_enable, False)
     add_config_if_not_exist(ConfigEnum.last_users_sync, "0001-01-01 00:00:00", child_id)
     add_config_if_not_exist(ConfigEnum.node_name, f"{socket.gethostname()}-{hconfig(ConfigEnum.unique_id)}", child_id)
 
@@ -786,7 +787,7 @@ def _v19():
 
 def _v1():
     external_ip = str(hutils.network.get_ip_str(4))
-    rnd_domains = hutils.network.get_random_domains(5)
+    # rnd_domains = hutils.network.get_random_domains(5)
 
     data = [
         StrConfig(key=ConfigEnum.db_version, value=1),
@@ -1159,7 +1160,7 @@ def init_db():
     child = Child.by_id(0)
     if child is None:
         tmp_uuid = str(uuid.uuid4())
-        db.session.add(Child(id=0, unique_id=tmp_uuid, name="Root"))
+        db.session.add(Child(id=0, unique_id=tmp_uuid, name="Root", node_base_url=""))
         db.session.commit()
         db_execute(f"update child set id=0 where unique_id='{tmp_uuid}'", commit=True)
         child = Child.by_id(0)

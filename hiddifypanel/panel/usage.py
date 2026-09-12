@@ -10,7 +10,7 @@ from sqlalchemy import func
 from hiddifypanel import cache, hutils
 from hiddifypanel.database import db, db_execute
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import AdminUser, ConfigEnum, DailyUsage, UsageData, User, hconfig, set_hconfig
+from hiddifypanel.models import AdminUser, ConfigEnum, DailyUsage, UsageData, User, UserMode, hconfig, set_hconfig
 from hiddifypanel.panel import hiddify
 
 to_gig_d = 1024**3
@@ -91,7 +91,7 @@ def _reset_priodic_usage() -> bool:
 
 
 def add_users_usage_new(usages: list[UsageData], child_id: int) -> dict[str, Any]:
-    """Apply usage deltas under the global usage lock."""
+    """Apply usage deltas under the globzal usage lock."""
     return locked_execute(_add_users_usage_new_impl, usages, child_id)
 
 
@@ -286,7 +286,7 @@ def send_bot_message(user):
         return
     if not user.telegram_id:
         return
-    from flask_babel import lazy_gettext as _
+    from flask_babel import gettext as _
 
     from hiddifypanel.panel.commercial.telegrambot import Usage, bot
 

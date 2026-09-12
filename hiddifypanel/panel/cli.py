@@ -392,7 +392,7 @@ def init_app(app):
             _run_sync_builtin_catalog(child_id)
 
         result = dump_all_server_configs(output_dir, child_id, pretty=not compact)
-        from hiddifypanel.proxy_v3.config_builder.dump import format_dump_stats
+        from hiddifypanel.proxy_v3.config_builder.dump import format_dump_stats, format_message_detail_lines
 
         for filename, size in sorted(result.written.items()):
             detail = format_dump_stats(filename, size, result.stats.get(filename))
@@ -402,9 +402,8 @@ def init_app(app):
             core = item.get("core", "")
             text = item.get("message", "")
             click.echo(f"{level}: [{core}] {text}", err=level == "error")
-            data = item.get("data") or {}
-            if level == "error" and data.get("stacktrace"):
-                click.echo(data["stacktrace"], err=True)
+            for line in format_message_detail_lines(item.get("data")):
+                click.echo(line, err=level == "error")
         if not result.ok:
             raise SystemExit(1)
 
@@ -422,7 +421,7 @@ def init_app(app):
         """Render client configs for one user: hiddify-core, xray, sublink, clash, singbox."""
         from pathlib import Path
 
-        from hiddifypanel.proxy_v3.config_builder.dump import dump_all_client_configs, format_client_dump_stats
+        from hiddifypanel.proxy_v3.config_builder.dump import dump_all_client_configs, format_client_dump_stats, format_message_detail_lines
 
         if refresh_db:
             _run_sync_builtin_catalog(child_id)
@@ -453,9 +452,8 @@ def init_app(app):
             core = item.get("core", "")
             text = item.get("message", "")
             click.echo(f"error: [{core}] {text}", err=True)
-            data = item.get("data") or {}
-            if data.get("stacktrace"):
-                click.echo(data["stacktrace"], err=True)
+            for line in format_message_detail_lines(item.get("data")):
+                click.echo(line, err=True)
         if not result.ok:
             raise SystemExit(1)
 

@@ -203,12 +203,26 @@ def render_section(
         return RenderSectionResult(rendered="SKIP", skipped=True)
     except (TemplateError, TemplateSyntaxError, UndefinedError) as exc:
         message = str(exc)
-        lineno = getattr(exc, "lineno", None) or _infer_jinja_error_line(template_text, message)
+        lineno = getattr(exc, "lineno", None)
+        include_name = getattr(exc, "name", None)
+        template_source = template_text
+        if include_name:
+            message = f"{include_name}: {message}"
+            try:
+                from hiddifypanel.proxy_v3.config_builder.jinja_render import _cached_template_map
+
+                included = _cached_template_map(child_id).get(include_name)
+                if included:
+                    template_source = included
+            except Exception:
+                pass
+        if not lineno:
+            lineno = _infer_jinja_error_line(template_source, message)
         return RenderSectionResult(
             error=message,
             error_detail=_build_error_detail(
                 message,
-                template_source=template_text,
+                template_source=template_source,
                 phase="jinja",
                 line=lineno,
                 column=getattr(exc, "colno", None),
