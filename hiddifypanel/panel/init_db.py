@@ -1318,6 +1318,7 @@ def migrate(db_version):
         from hiddifypanel.models.domain import FakeMode
 
         execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
+        execute("UPDATE child SET node_base_url=''")
         execute(
             """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
             'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'

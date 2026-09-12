@@ -159,7 +159,7 @@ class ConfigEnum(metaclass=FastEnum):
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
     show_usage_in_sublink = _BoolConfigDscr(ConfigCategory.general)
     cloudflare = _StrConfigDscr(ConfigCategory.too_advanced)
-    # license = _StrConfigDscr(ConfigCategory.hidden)
+    license = _StrConfigDscr(ConfigCategory.hidden)
     country = _StrConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     package_mode = _StrConfigDscr(ConfigCategory.advanced, hide_in_virtual_child=True)
     utls = _StrConfigDscr(ConfigCategory.advanced)
