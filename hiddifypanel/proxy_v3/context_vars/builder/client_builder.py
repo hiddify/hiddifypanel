@@ -82,10 +82,10 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
-    if proxy.slug != "node-configs":
-        if not d.child_id == Child.current().id:
-            return False
-
+    if d.child_id != Child.current().id:
+        return proxy.slug == "node-configs"
+    if proxy.slug == "node-configs":
+        return False
     if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
 

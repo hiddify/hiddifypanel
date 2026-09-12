@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 import os
 import re
+from collections.abc import Iterator, Mapping
+from dataclasses import asdict, dataclass, field, fields
+from typing import Any
 from urllib.parse import urlparse
 
 import user_agents
 from apiflask import abort as apiflask_abort
 from flask import abort as flask_abort
 from flask import flash as flask_flash
-from flask import (
-    request,
-    url_for,  # type: ignore
-)
+from flask import request, url_for
 from flask_babel import gettext as _
 from flask_babel.speaklater import LazyString
 from markupsafe import Markup
@@ -18,7 +20,7 @@ from wtforms.validators import ValidationError
 
 from hiddifypanel import current_app, g, hutils
 from hiddifypanel.cache import cache
-from hiddifypanel.models import *
+from hiddifypanel.models import AdminUser, ApplyMode, Child, ConfigEnum, Role, hconfig
 
 
 def flash(message: str | Markup | LazyString, category: str = "message"):
@@ -31,9 +33,9 @@ def flash_config_success(restart_mode: ApplyMode = ApplyMode.nothing, domain_cha
     if restart_mode != ApplyMode.nothing:
         url = hurl_for("admin.Actions:reinstall", complete_install=restart_mode == ApplyMode.reinstall, domain_changed=domain_changed)
         apply_btn = f"<a href='{url}' class='btn btn-primary form_post'>" + _("admin.config.apply_configs") + "</a>"
-        flash((_("config.validation-success", link=apply_btn)), "success")  # type: ignore
+        flash((_("config.validation-success", link=apply_btn)), "success")
     else:
-        flash((_("config.validation-success-no-reset")), "success")  # type: ignore
+        flash((_("config.validation-success-no-reset")), "success")
 
 
 def static_url_for(**values):
@@ -49,21 +51,94 @@ def hurl_for(endpoint, **values):
     return url_for(endpoint, **values)
 
 
-def get_user_agent() -> dict:
+@dataclass(slots=True)
+class UserAgentInfo(Mapping[str, Any]):
+    """Parsed client User-Agent. Supports ``.attr``, ``["attr"]``, and ``.get("attr")``."""
+
+    v: int = 12
+    is_bot: bool = False
+    is_browser: bool = False
+    os: str = ""
+    os_version: list[int] = field(default_factory=list)
+    is_clash: bool = False
+    is_clash_meta: bool = False
+    is_singbox: bool = False
+    is_hiddify: bool = False
+    is_hiddify_prefere_xray: bool = False
+    is_streisand: bool = False
+    is_shadowrocket: bool = False
+    is_v2rayng: bool = False
+    is_xray: bool = False
+    is_foxray: bool = False
+    is_v2ray: bool = False
+    app: str = ""
+    xray_version: list[int] | None = None
+    v2rayng_version: list[int] | None = None
+    singbox_version: list[int] | None = None
+    hiddify_version: list[int] | None = None
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any] | None) -> UserAgentInfo:
+        raw = dict(data or {})
+        known = {f.name for f in fields(cls)}
+        kwargs: dict[str, Any] = {}
+        for name in known:
+            if name not in raw:
+                continue
+            value = raw[name]
+            if name.startswith("is_") or name == "is_bot":
+                kwargs[name] = bool(value)
+            elif name.endswith("_version") and name != "os_version":
+                kwargs[name] = list(value) if value else None
+            elif name == "os_version":
+                kwargs[name] = list(value) if value else []
+            elif name == "v":
+                kwargs[name] = int(value or 0)
+            else:
+                kwargs[name] = value if value is not None else ""
+        return cls(**kwargs)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        name = str(key)
+        if name not in self:
+            return default
+        value = getattr(self, name)
+        return default if value is None else value
+
+    def __getitem__(self, key: str) -> Any:
+        name = str(key)
+        if name not in self:
+            raise KeyError(name)
+        return getattr(self, name)
+
+    def __iter__(self) -> Iterator[str]:
+        return (f.name for f in fields(self))
+
+    def __len__(self) -> int:
+        return len(fields(self))
+
+    def __contains__(self, key: object) -> bool:
+        return isinstance(key, str) and key in {f.name for f in fields(self)}
+
+
+def get_user_agent() -> UserAgentInfo:
     return parse_user_agent(request.user_agent.string or "")
 
 
 ua_version_pattern = re.compile(r"/(\d+\.\d+(\.\d+)?)")
 
 
-def parse_user_agent(ua: str) -> dict:
+def parse_user_agent(ua: str) -> UserAgentInfo:
     """Parse a client User-Agent string for template platform variables."""
-    ua = __parse_user_agent(ua)
+    data = __parse_user_agent(ua)
 
-    if ua.get("v", 1) < 12:
-        __parse_user_agent.invalidate_all()  # type:ignore
-        ua = __parse_user_agent(request.user_agent.string)
-    return ua
+    if data.get("v", 1) < 12:
+        __parse_user_agent.invalidate_all()
+        data = __parse_user_agent(request.user_agent.string)
+    return UserAgentInfo.from_dict(data)
 
 
 @cache.cache()
@@ -80,22 +155,23 @@ def __parse_user_agent(ua: str) -> dict:
     match = re.search(ua_version_pattern, ua)
     generic_version = list(map(int, match.group(1).split("."))) if match else [0, 0, 0]
     singbox_match = re.search(r"sing-box\s+(\d+\.\d+(?:\.\d+)?)", ua, re.IGNORECASE)
-    res = {}
+    res: dict[str, Any] = {}
     res["v"] = 12
-    res["is_bot"] = uaa.is_bot
-    res["is_browser"] = re.match("^Mozilla", ua, re.IGNORECASE) and True
+    res["is_bot"] = bool(uaa.is_bot)
+    res["is_browser"] = bool(re.match("^Mozilla", ua, re.IGNORECASE))
     res["os"] = uaa.os.family
-    res["os_version"] = uaa.os.version
-    res["is_clash"] = re.match("^(Clash|Stash)", ua, re.IGNORECASE) and True
-    res["is_clash_meta"] = re.match("^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)", ua, re.IGNORECASE) and True
-    res["is_singbox"] = re.match("^(HiddifyNext|Dart|SFI|SFA)", ua, re.IGNORECASE) and True
-    res["is_hiddify"] = re.match("^(HiddifyNext)", ua, re.IGNORECASE) and True
-    res["is_hiddify_prefere_xray"] = re.match("^(HiddifyNextX)", ua, re.IGNORECASE) and True
-    res["is_streisand"] = re.match("^(Streisand)", ua, re.IGNORECASE) and True
-    res["is_shadowrocket"] = re.match("^(Shadowrocket)", ua, re.IGNORECASE) and True
-    res["is_v2rayng"] = re.match("^(v2rayNG)", ua, re.IGNORECASE) and True
-    res["is_xray"] = re.match(r"^xray/", ua, re.IGNORECASE) and True
-    res["is_foxray"] = re.match(r"^FoXray", ua, re.IGNORECASE) and True
+    res["os_version"] = list(uaa.os.version or [])
+    res["is_clash"] = bool(re.match("^(Clash|Stash)", ua, re.IGNORECASE))
+    res["is_clash_meta"] = bool(re.match("^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)", ua, re.IGNORECASE))
+    res["is_singbox"] = bool(re.match("^(HiddifyNext|Dart|SFI|SFA)", ua, re.IGNORECASE))
+    res["is_hiddify"] = bool(re.match("^(HiddifyNext)", ua, re.IGNORECASE))
+    res["is_hiddify_prefere_xray"] = bool(re.match("^(HiddifyNextX)", ua, re.IGNORECASE))
+    res["is_streisand"] = bool(re.match("^(Streisand)", ua, re.IGNORECASE))
+    res["is_shadowrocket"] = bool(re.match("^(Shadowrocket)", ua, re.IGNORECASE))
+    res["is_v2rayng"] = bool(re.match("^(v2rayNG)", ua, re.IGNORECASE))
+    res["is_xray"] = bool(re.match(r"^xray/", ua, re.IGNORECASE))
+    res["is_foxray"] = bool(re.match(r"^FoXray", ua, re.IGNORECASE))
+    res["app"] = uaa.browser.family
 
     xray_match = re.match(r"^xray/(\d+\.\d+(?:\.\d+)?)", ua, re.IGNORECASE)
     if res["is_xray"] and xray_match:
@@ -120,14 +196,7 @@ def __parse_user_agent(ua: str) -> dict:
         else:
             res["singbox_version"] = [1, 13, 0]
 
-    res["is_v2ray"] = (
-        re.match(
-            "^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|xray)",
-            ua,
-            re.IGNORECASE,
-        )
-        and True
-    )
+    res["is_v2ray"] = bool(re.match("^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|xray)", ua, re.IGNORECASE))
 
     if res["os"] == "Other":
         if re.match("^(FoXray|Fair|Shadowrocket|V2Box|Loon|Liberty)", ua, re.IGNORECASE):

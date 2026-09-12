@@ -14,9 +14,27 @@ from jinja2.exceptions import TemplateError
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import parse_user_agent
 from hiddifypanel.models import CustomProxy, CustomProxyMode
+from hiddifypanel.models.config import hconfig
+from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.domain import Domain
+from hiddifypanel.models.proxy_base_config import BaseConfigSide
+from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
+from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
+from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
+from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    extract_block_body as _extract_block_body,
+)
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    fragment_block_body as _fragment_block_body,
+)
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    inject_named_fragment_blocks as _inject_named_fragment_blocks,
+)
+from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, fix_duplicate_json_commas
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
-from hiddifypanel.models.proxy_base_config import BaseConfigSide, default_base_content
+from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
+from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 
 from .alpn_helpers import (
     alpn_http_for_tag,
@@ -31,7 +49,11 @@ from .client_core_auto import (
     resolve_default_client_core,
     resolve_primary_auto_client_core,
 )
+from .custom_proxy_ports import mode_requires_static_ports, mode_uses_auto_ports, mode_uses_gateway_port, normalize_port_list, primary_resolved_port, resolve_inbound_ports
+from .jinja_context import TemplateSkip, build_template_context
+from .outbound_tags import deduplicate_client_tags
 from .sublink_format import build_sublink_formats
+from .template_variables import build_domain_context, build_user_context
 
 
 def _client_outbounds_template(cc: dict[str, Any]) -> str:
@@ -60,37 +82,16 @@ def _resolve_singbox_outbound_template(data: dict[str, Any], template: str) -> s
     Returns:
       - original template when it is a real singbox fragment
       - hiddify-core outbounds template when the stub is ``{# use_hiddify_core() #}``
-      - None when the stub should be skipped (no hiddify-core template available)
+      - None when the stub should be skipped (unsupported transport or no hiddify-core template)
     """
+    transport = str(data.get("transport") or "").lower()
+    if transport in ("xhttp", "splithttp"):
+        return None
     if not _template_uses_hiddify_core(template):
         return template
     resolved = _hiddify_core_outbounds_template(data)
     return resolved if resolved.strip() else None
 
-
-from hiddifypanel.models.config import hconfig
-from hiddifypanel.models.config_enum import ConfigEnum
-from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
-from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
-from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
-from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
-from hiddifypanel.proxy_v3.config_builder.template_blocks import (
-    extract_block_body as _extract_block_body,
-)
-from hiddifypanel.proxy_v3.config_builder.template_blocks import (
-    fragment_block_body as _fragment_block_body,
-)
-from hiddifypanel.proxy_v3.config_builder.template_blocks import (
-    inject_named_fragment_blocks as _inject_named_fragment_blocks,
-)
-from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, fix_duplicate_json_commas
-from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
-from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
-
-from .custom_proxy_ports import mode_requires_static_ports, mode_uses_auto_ports, mode_uses_gateway_port, normalize_port_list, primary_resolved_port, resolve_inbound_ports
-from .jinja_context import TemplateSkip, build_template_context
-from .outbound_tags import deduplicate_client_tags
-from .template_variables import build_domain_context, build_user_context
 
 SAMPLE_UUID = "00000000-0000-0000-0000-000000000001"
 

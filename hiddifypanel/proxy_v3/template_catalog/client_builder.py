@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 from .fragment_loader import load_template_slug
-from .paths import preset_shell_slug
 from .inbound_builder import (
     _client_proto_file,
     _proto_file,
@@ -14,6 +13,7 @@ from .inbound_builder import (
     supports_hiddify_preset,
     supports_xray_preset,
 )
+from .paths import preset_shell_slug
 from .proxy_matrix import ProxyCombination
 from .template_defaults import default_sublink_link_template
 
@@ -325,9 +325,17 @@ USE_HIDDIFY_CORE_PLACEHOLDER = "{#use_hiddify_core()#}"
 
 
 def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Sing-box client: reuse hiddify-core via placeholder; mieru is not supported in sing-box."""
+    """Sing-box client: reuse hiddify-core via placeholder; mieru/xhttp are not supported."""
     if _client_proto_file(combo.proto) == "mieru":
-        return "skip('mieru is not supported by sing-box')\n", []
+        return (
+            "{% block outbounds %}\n{{ skip('mieru is not supported by sing-box') }}\n{% endblock %}\n",
+            [],
+        )
+    if _raw_transport(combo.transport) == "xhttp":
+        return (
+            "{% block outbounds %}\n{{ skip('xhttp is not supported by sing-box') }}\n{% endblock %}\n",
+            [],
+        )
     content = f"{{% block outbounds %}}\n{USE_HIDDIFY_CORE_PLACEHOLDER}\n{{% endblock %}}\n"
     return content, []
 

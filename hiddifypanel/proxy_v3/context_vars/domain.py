@@ -42,7 +42,7 @@ class DomainIPVar(BaseModel):
     dst_server: str | None = None
     extra_params: JsonMap = Field(default_factory=JsonMap)
 
-    custom_proxy_ids: list[int] = Field(default_factory=list)
+    custom_proxy_ids: set[int] = Field(default_factory=set)
 
     @field_validator("extra_params", mode="before")
     @classmethod
@@ -107,7 +107,7 @@ class DomainIPVar(BaseModel):
             cert=cert,
             extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
-            custom_proxy_ids=list(domain_db.custom_proxy_ids),
+            custom_proxy_ids=set(domain_db.custom_proxy_ids),
             ips=ips,
         )
         if domain_db.download_domain:

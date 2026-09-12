@@ -4,13 +4,14 @@ import hashlib
 import re
 import subprocess
 from base64 import b64encode
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from loguru import logger
 
 from hiddifypanel.database import db
+from hiddifypanel.models import Child
 from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.tls_store import TlsStore
 
@@ -167,8 +168,8 @@ def _parse_cert_expiry(cert_pem: str) -> datetime | None:
         except ValueError:
             dt = datetime.fromisoformat(raw.replace(" GMT", "+00:00"))
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).replace(tzinfo=None)
+            dt = dt.replace(tzinfo=UTC)
+        return dt.astimezone(UTC).replace(tzinfo=None)
     except (OSError, ValueError):
         return None
 
@@ -334,7 +335,7 @@ def _apply_tls_payload(row: TlsStore, payload: dict[str, Any]) -> None:
 def sync_tls_store_for_domain_id(domain_id: int, *, commit: bool = True) -> TlsStore | None:
     from hiddifypanel.models.domain import Domain
 
-    domain_db = Domain.query.filter(Domain.id == int(domain_id)).first()
+    domain_db = Domain.query.filter(Domain.id == int(domain_id), Domain.child_id == Child.current().id).first()
     if not domain_db or not domain_db.domain:
         logger.warning("TLS store sync skipped: domain id={} not found", domain_id)
         return None
@@ -386,9 +387,9 @@ def _sync_tls_store_row(domain_db: Domain, *, commit: bool = True) -> TlsStore |
 def sync_tls_store_all(child_id: int | None = None, *, commit: bool = True) -> int:
     from hiddifypanel.models.domain import Domain
 
-    query = Domain.query.order_by(Domain.id)
-    if child_id is not None:
-        query = query.filter(Domain.child_id == child_id)
+    if child_id is None:
+        child_id = Child.current().id
+    query = Domain.query.filter(Domain.child_id == child_id).order_by(Domain.id)
     synced = 0
     for domain_db in query.all():
         if _sync_tls_store_row(domain_db, commit=False):

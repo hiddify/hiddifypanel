@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 from apiflask import APIFlask
 
 if TYPE_CHECKING:
+    from hiddifypanel.hutils.flask import UserAgentInfo
     from hiddifypanel.models.admin import BaseAccount
     from hiddifypanel.models.child import Child
     from hiddifypanel.models.user import User
@@ -33,7 +34,7 @@ class TypedFlaskContext:
     child: Child
 
     # client / UI
-    user_agent: dict[str, Any]
+    user_agent: UserAgentInfo
     darkmode: bool
     install_pwa: bool
     pwa: bool
