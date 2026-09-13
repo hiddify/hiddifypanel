@@ -3,7 +3,7 @@
 {% if ctx.user.usage_limit_GB < 1000 %}
 {% set tag = tag ~ (ctx.user.current_usage_GB|round(3)) ~ '/' ~ (ctx.user.usage_limit_GB|string|replace('.0', '')) ~ 'GB' %}
 {% elif ctx.user.usage_limit_GB < 100000 %}
-{% set tag = tag ~ (ctx.user.current_usage_GB / 1000|round(3)) ~ '/' ~ ((ctx.user.usage_limit_GB / 1000)|round(1)|string|replace('.0', '')) ~ 'TB' %}
+{% set tag = tag ~ ((ctx.user.current_usage_GB / 1000)|round(3)) ~ '/' ~ ((ctx.user.usage_limit_GB / 1000)|round(1)|string|replace('.0', '')) ~ 'TB' %}
 {% else %}
 {% set tag = tag ~ '#No Usage Limit' %}
 {% endif %}
