@@ -132,7 +132,6 @@ def init_app(app):
         d = Domain()
         d.domain = domain
         d.mode = mode
-        d.sub_link_only = True if mode == DomainType.sub_link_only else False
         db.session.add(d)
         db.session.commit()
         return "success"
@@ -382,7 +381,8 @@ def init_app(app):
     @click.option("--child-id", "-c", default=0, show_default=True, type=int)
     @click.option("--refresh-db", is_flag=True, help="Sync builtin proxy catalog from disk before rendering")
     @click.option("--compact", is_flag=True, help="Emit compact JSON instead of indented output")
-    def dump_server_configs(output_dir, child_id, refresh_db, compact):
+    @click.option("--no-invalidate-cache", is_flag=True, help="Do not flush Redis/Jinja caches (used by apply_users)")
+    def dump_server_configs(output_dir, child_id, refresh_db, compact, no_invalidate_cache):
         """Render and write xray, hiddify-core, haproxy, and nginx server configs to a directory."""
         from pathlib import Path
 
@@ -391,7 +391,8 @@ def init_app(app):
         if refresh_db:
             _run_sync_builtin_catalog(child_id)
 
-        result = dump_all_server_configs(output_dir, child_id, pretty=not compact)
+        invalidate_cache = False if no_invalidate_cache else None
+        result = dump_all_server_configs(output_dir, child_id, pretty=not compact, invalidate_cache=invalidate_cache)
         from hiddifypanel.proxy_v3.config_builder.dump import format_dump_stats, format_message_detail_lines
 
         for filename, size in sorted(result.written.items()):

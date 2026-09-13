@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import traceback
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
-from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.dns_proxy.server import DnsProxyServerDriver
+from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
+from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
@@ -246,12 +247,27 @@ def dump_hiddify_core_server_config(
     return rendered, result
 
 
+def invalidate_config_caches() -> None:
+    """Drop Redis function caches and in-memory Jinja template maps before a dump."""
+    from hiddifypanel.cache import cache
+    from hiddifypanel.proxy_v3.config_builder.jinja_render import clear_jinja_template_caches
+
+    cache.invalidate_all_cached_functions()
+    clear_jinja_template_caches()
+
+
 def dump_all_server_configs(
     output_dir: str | Path,
     child_id: int = 0,
     *,
     pretty: bool = True,
+    invalidate_cache: bool | None = None,
 ) -> ServerConfigDumpResult:
+    # apply_users only refreshes user lists; wiping Redis/Jinja would stall the panel.
+    if invalidate_cache is None:
+        invalidate_cache = os.environ.get("MODE") != "apply_users"
+    if invalidate_cache:
+        invalidate_config_caches()
     target = Path(output_dir)
     target.mkdir(parents=True, exist_ok=True)
 
@@ -433,10 +449,10 @@ def _resolve_dump_user_obj(*, user_uuid: str | None) -> User:
 
 
 def _resolve_sublink_domain(child_id: int = 0) -> str:
-    from hiddifypanel.models.domain import Domain
+    from hiddifypanel.models.domain import Domain, DomainType
 
     row = (
-        Domain.query.filter(Domain.child_id == child_id, Domain.sub_link_only != True)  # noqa: E712
+        Domain.query.filter(Domain.child_id == child_id, Domain.mode == DomainType.sub_link_only)
         .order_by(Domain.id)
         .first()
     )
@@ -490,12 +506,11 @@ def render_client_configs(
     ``domains`` renders an explicit list of domain names instead of the ones
     ``sublink_domain`` exposes; names with no matching domain are ignored.
     """
-    from hiddifypanel.cache import cache
     from hiddifypanel.models.user import User
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
 
     if invalidate_cache:
-        cache.invalidate_all_cached_functions()
+        invalidate_config_caches()
 
     user_obj = user if isinstance(user, User) else _resolve_dump_user_obj(user_uuid=user_uuid)
     result = ClientConfigRenderResult(
@@ -645,6 +660,8 @@ def _build_merged_json_client_config(child_id: int, contexts: list[ClientContext
 
 
 def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
+    import yaml
+
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.models.proxy_base_config import BaseConfigSide
     from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
@@ -652,8 +669,6 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
     from hiddifypanel.proxy_v3.config_builder.render import render_section
     from hiddifypanel.proxy_v3.context_vars.builder.utils import load_json5, make_jinja_context
-
-    import yaml
 
     messages: list[MessageModel] = []
     if not contexts:
