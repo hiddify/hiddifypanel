@@ -350,15 +350,12 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
         server = str(random_or_none(hutils.network.get_domain_ips_cached(server)) or server)
 
     allow_insecure = not domain_db.need_valid_ssl
-    if all_snis := split_pattern.split((domain_db.servernames or "").strip()):
+    if all_snis := [s for s in split_pattern.split((domain_db.servernames or "").strip()) if s]:
         sni = random_or_none(all_snis) or sni
         if domain_db.is_reality():
             allow_insecure = False
             if hconfigs[ConfigEnum.core_type] == "singbox":  # TODO
                 sni = all_snis[0]
-
-        else:
-            allow_insecure = True
 
     base = {
         "sni": sni,
