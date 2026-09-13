@@ -22,13 +22,11 @@ def request_childs_to_sync():
 
 def request_child_to_sync(child: Child) -> bool:
     """Requests to a child to sync itself with the current panel"""
-    child_domain = Domain.get_panel_link(child.id)  # type:ignore
-    if not child_domain:
-        logger.error(f"Child {child.name} has no valid domain")
+    base_url = get_child_base_url(child)
+    if not base_url:
+        logger.error(f"Child {child.name} has no node_base_url")
         return False
 
-    child_admin_proxy_path = hconfig(ConfigEnum.proxy_path_admin, child.id)
-    base_url = f"https://{child_domain}/{child_admin_proxy_path}"
     path = "/api/v2/child/sync-parent/"
     res = NodeApiClient(base_url).post(path, payload=None, output=dict)
     if isinstance(res, NodeApiErrorSchema):
