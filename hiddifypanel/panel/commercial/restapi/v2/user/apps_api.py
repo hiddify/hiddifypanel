@@ -5,7 +5,7 @@ import user_agents
 from apiflask import abort
 from flask import request
 from flask.views import MethodView
-from flask_babel import lazy_gettext as _
+from flask_babel import gettext as _
 from pydantic import Field
 from strenum import StrEnum
 
