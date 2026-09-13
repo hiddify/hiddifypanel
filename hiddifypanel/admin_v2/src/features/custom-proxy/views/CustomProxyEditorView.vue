@@ -943,7 +943,7 @@ function xhttpDownloadIsQuic(categories: string[]): boolean {
   return categories.some((category) => String(category).toLowerCase() === 'down:quic')
 }
 
-const showDomains = computed(() => !isIpBased.value)
+const showDomains = computed(() => !isIpBased.value && !isNoInbound.value)
 
 const isL7Gateway = computed(() => form.mode === 'domains_l7_gateway')
 const isSniGateway = computed(() => form.mode === 'domains_sni_gateway')
@@ -951,15 +951,16 @@ const isDnsGateway = computed(() => form.mode === 'domains_dns_gateway')
 const isMultiDomainAuto = computed(() => form.mode === 'domains_auto_public_ports')
 const isMultiDomainStatic = computed(() => form.mode === 'domains_single_public_port')
 const isIpBased = computed(() => form.mode === 'ip')
+const isNoInbound = computed(() => form.mode === 'no_inbound')
 const showTlsLayer = computed(
   () => isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value,
 )
 const showStaticPorts = computed(() => isMultiDomainStatic.value || isIpBased.value)
-const showTcpUdp = computed(() => !isL7Gateway.value)
+const showTcpUdp = computed(() => !isL7Gateway.value && !isNoInbound.value)
 const showAutoPortsHint = computed(
   () => isMultiDomainAuto.value || isL7Gateway.value || isSniGateway.value || isDnsGateway.value,
 )
-const showDirectPortAccess = computed(() => !isL7Gateway.value && !isSniGateway.value && !isDnsGateway.value)
+const showDirectPortAccess = computed(() => !isL7Gateway.value && !isSniGateway.value && !isDnsGateway.value && !isNoInbound.value)
 const showL7Proto = computed(() => isL7Gateway.value)
 const isXhttpTransport = computed(() => effectiveTransport() === 'xhttp')
 const showXhttpDownloadSettings = computed(
@@ -1419,6 +1420,13 @@ function onModeChange() {
     if (!form.domain_modes?.length) {
       form.domain_modes = ['direct-valid', 'relay-valid']
     }
+  } else if (form.mode === 'no_inbound') {
+    form.custom_path = ''
+    form.l7_reverse_proto = null
+    form.domain_ids = []
+    form.domain_modes = []
+    form.server_config!.inbound_tcp_ports = []
+    form.server_config!.inbound_udp_ports = []
   } else if (isL7Gateway.value || isSniGateway.value) {
     form.server_config!.inbound_tcp_ports = []
     form.server_config!.inbound_udp_ports = []

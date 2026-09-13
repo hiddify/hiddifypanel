@@ -7,15 +7,9 @@ if TYPE_CHECKING:
 
 # Backward-compatible re-exports for modules outside context_vars.
 from hiddifypanel.proxy_v3.context_vars.ports import (
-    GATEWAY_CLIENT_HTTP_PORT,
-    GATEWAY_CLIENT_TLS_PORT,
     ResolvedInboundPorts,
     coerce_proxy_mode,
-    gateway_client_port,
-    gateway_client_ports,
-    mode_value,
     normalize_port_list,
-    ports_list_to_ranges,
     primary_resolved_port,
     resolve_inbound_ports,
 )
@@ -75,13 +69,11 @@ def mode_allows_ip_domain_modes(mode: CustomProxyMode | str) -> bool:
 
 def default_domain_modes_for_mode(mode: CustomProxyMode | str) -> list[str]:
     from hiddifypanel.models.custom_proxy import CustomProxyMode
-    from hiddifypanel.proxy_v3.domain_mode_filter import (
-        DNS_DIRECT_DOMAIN_MODES,
-        VALID_DIRECT_RELAY_DOMAIN_MODES,
-        V2RAY_ALL_DOMAIN_MODES,
-    )
+    from hiddifypanel.proxy_v3.domain_mode_filter import DNS_DIRECT_DOMAIN_MODES, V2RAY_ALL_DOMAIN_MODES, VALID_DIRECT_RELAY_DOMAIN_MODES
 
     parsed = coerce_proxy_mode(mode)
+    if parsed == CustomProxyMode.no_inbound:
+        return []
     if parsed == CustomProxyMode.domains_l7_gateway:
         return list(V2RAY_ALL_DOMAIN_MODES)
     if parsed == CustomProxyMode.domains_dns_gateway:
@@ -114,6 +106,7 @@ def mode_uses_firewall_ports(mode: CustomProxyMode | str) -> bool:
 
     parsed = coerce_proxy_mode(mode)
     return parsed not in (
+        CustomProxyMode.no_inbound,
         CustomProxyMode.domains_l7_gateway,
         CustomProxyMode.domains_sni_gateway,
         CustomProxyMode.domains_dns_gateway,

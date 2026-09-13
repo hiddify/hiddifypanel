@@ -7,6 +7,7 @@ export type CustomProxyMode =
   | 'domains_auto_public_ports'
   | 'domains_single_public_port'
   | 'ip'
+  | 'no_inbound'
 
 export type InboundTcpUdp = 'tcp' | 'udp' | 'both'
 

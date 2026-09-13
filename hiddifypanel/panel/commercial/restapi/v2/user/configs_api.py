@@ -63,13 +63,14 @@ def _render_sublink_for_context(child_id: int, ctx: Any) -> str | None:
 
 def iter_proxy_v3_config_items(user, *, sublink_domain: str, user_agent: str, child_id: int = 0) -> list[dict[str, str]]:
     """Build per-proxy share-link rows from proxy_v3 client contexts."""
+    from hiddifypanel.models.custom_proxy import CustomProxyMode
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
     from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 
     contexts = build_client_template_context(user, sublink_domain, user_agent)
     items: list[dict[str, str]] = []
     for ctx in contexts:
-        if (ctx.proxy.slug or "") in {"additional-config", "node-configs"}:
+        if ctx.proxy.mode == CustomProxyMode.no_inbound:
             continue
         for dctx in ctx.iter_ctx_domains():
             domain = dctx.proxy.domain

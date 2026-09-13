@@ -195,6 +195,9 @@ def resolve_inbound_ports(
     if mode == CustomProxyMode.domains_auto_public_ports:
         return _apply_tcp_udp_filter(_resolved_lists(stable_proxy_port(pid, did)), protocol)
 
+    if mode == CustomProxyMode.no_inbound:
+        return ResolvedInboundPorts([], [], None, None)
+
     if mode in (CustomProxyMode.domains_single_public_port, CustomProxyMode.ip):
         tcp_ports, udp_ports = _stored_or_stable_lists(pid, db_tcp, db_udp)
         resolved = ResolvedInboundPorts(

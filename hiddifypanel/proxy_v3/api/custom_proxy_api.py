@@ -194,6 +194,13 @@ def _prepare_create_data(data: dict) -> dict:
         from hiddifypanel.proxy_v3.domain_mode_filter import normalize_domain_modes
 
         data["domain_modes"] = normalize_domain_modes(data.get("domain_modes"), default=("direct-valid", "relay-valid"))
+    if mode == CustomProxyMode.no_inbound.value:
+        data["custom_path"] = ""
+        data["domain_modes"] = []
+        server = dict(data.get("server_config") or {})
+        server["inbound_tcp_ports"] = []
+        server["inbound_udp_ports"] = []
+        data["server_config"] = server
     data["custom_path"] = normalize_custom_path(data.get("custom_path"))
     return data
 
