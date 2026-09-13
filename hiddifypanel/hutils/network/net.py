@@ -1,32 +1,27 @@
+import base64
 import glob
-from typing import List, Literal, Set, Union
+import ipaddress
+import os
+import random
+import re
+import socket
+import ssl
+import time
+import urllib.request
+from typing import Literal
 from urllib.parse import urlparse
 
+import dns.resolver
+import psutil
+import requests
 from dns.rdtypes.svcbbase import ECHParam
 
-import urllib.request
-import ipaddress
-import requests
-import random
-import socket
-import time
-import ssl
-import re
-import os
-import ipaddress
-import psutil
-import socket
-from typing import List, Union, Literal
-
-from hiddifypanel.models import *
 from hiddifypanel.cache import cache
 from hiddifypanel.hutils.network import maxmind
-
-import dns.resolver
-import base64
+from hiddifypanel.models import *
 
 
-def get_domain_ip_old(domain: str, retry: int = 3, version: Literal[4, 6] | None = None) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address, None]:
+def get_domain_ip_old(domain: str, retry: int = 3, version: Literal[4, 6] | None = None) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     res = None
     if not version:
         try:
@@ -55,7 +50,7 @@ def get_domain_ip_old(domain: str, retry: int = 3, version: Literal[4, 6] | None
     return ipaddress.ip_address(res)
 
 
-def get_domain_ip(domain: str, retry: int = 3, version: Literal[4, 6] | None = None) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address, None]:
+def get_domain_ip(domain: str, retry: int = 3, version: Literal[4, 6] | None = None) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     ips = get_domain_ips_cached(domain)
     ips = [ip for ip in ips if version == None or (version == 4 and isinstance(ip, ipaddress.IPv4Address)) or (version == 6 and isinstance(ip, ipaddress.IPv6Address))]
     if ips:
@@ -64,14 +59,14 @@ def get_domain_ip(domain: str, retry: int = 3, version: Literal[4, 6] | None = N
 
 
 @cache.cache(300)
-def get_domain_ips_cached(domain: str, retry: int = 3) -> Set[Union[ipaddress.IPv4Address, ipaddress.IPv6Address]]:
+def get_domain_ips_cached(domain: str, retry: int = 3) -> set[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     try:
         return set(ipaddress.ip_address(domain))
-    except:
+    except:  # if not ip
         return get_domain_ips(domain, retry)
 
 
-def get_domain_ips(domain: str, retry: int = 3) -> Set[Union[ipaddress.IPv4Address, ipaddress.IPv6Address]]:
+def get_domain_ips(domain: str, retry: int = 3) -> set[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     res = set()
     if retry < 0:
         return res
@@ -97,7 +92,7 @@ def get_domain_ips(domain: str, retry: int = 3) -> Set[Union[ipaddress.IPv4Addre
     return res or get_domain_ips(domain, retry=retry - 1)
 
 
-def get_socket_public_ip(version: Literal[4, 6]) -> Union[ipaddress.IPv4Address, ipaddress.IPv6Address, None]:
+def get_socket_public_ip(version: Literal[4, 6]) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         if version == 6:
@@ -107,11 +102,11 @@ def get_socket_public_ip(version: Literal[4, 6]) -> Union[ipaddress.IPv4Address,
         ip_address = ipaddress.ip_address(s.getsockname()[0])
         s.close()
         return ip_address if ip_address.is_global else None
-    except socket.error:
+    except OSError:
         return None
 
 
-def get_interface_public_ip(version: Literal[4, 6]) -> List[Union[ipaddress.IPv4Address, ipaddress.IPv6Address]]:
+def get_interface_public_ip(version: Literal[4, 6]) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     addresses = []
     try:
         interfaces = psutil.net_if_addrs()
@@ -138,7 +133,7 @@ def get_interface_public_ip(version: Literal[4, 6]) -> List[Union[ipaddress.IPv4
 
 
 @cache.cache(ttl=600)
-def get_ips(version: Literal[4, 6] | None = None) -> List[Union[ipaddress.IPv4Address, ipaddress.IPv6Address]]:
+def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     if not version:
         return [*get_ips(4), *get_ips(6)]
     addrs = []
@@ -201,7 +196,7 @@ def get_random_user_agent():
     return
 
 
-def get_random_domains(count: int = 1, retry: int = 6) -> List[str]:
+def get_random_domains(count: int = 1, retry: int = 6) -> list[str]:
     try:
         region = "CN" if retry < 3 else "IR"
         irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc={region}&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(3 - retry % 3) * 100}"
@@ -345,9 +340,7 @@ def is_domain_use_letsencrypt(domain: str) -> bool:
 def get_direct_host_or_ip(prefer_version: int) -> str:
     from hiddifypanel.models import Domain
 
-    direct = Domain.query.filter(Domain.mode == DomainType.direct, Domain.sub_link_only == False).first()
-    if not direct:
-        direct = Domain.query.filter(Domain.mode == DomainType.direct).first()
+    direct = Domain.query.filter(Domain.mode == DomainType.direct).first()
     if direct:
         return direct.domain
 
@@ -371,7 +364,7 @@ def is_ssh_password_authentication_enabled() -> bool:
     def check_file(file_path: str) -> bool:
         if os.path.isfile(file_path):
             try:
-                with open(file_path, "r") as f:
+                with open(file_path) as f:
                     for line in f.readlines():
                         line = line.strip()
                         if line.startswith("#"):
@@ -470,6 +463,33 @@ def resolve_domain_with_api(domain: str) -> str:
         return ""
     endpoint = f"http://ip-api.com/json/{domain}?fields=query"
     return str(requests.get(endpoint).json().get("query"))
+
+
+@cache.cache(ttl=3600)
+def get_tls_peer_pins(host: str, server_name: str, port: int = 443) -> tuple[str, str]:
+    """Leaf cert SHA-256 hex and SPKI SHA-256 b64 as seen by a TLS client.
+
+    Used for CDN domain-fronting pins (edge cert), not the origin cert on disk.
+    """
+    from hiddifypanel.proxy_v3.tls_store_sync import cert_sha256_hex_from_pem, public_key_sha256_from_pem
+
+    connect_host = str(host or "").strip().strip("[]")
+    sni = str(server_name or "").strip()
+    if not connect_host or not sni or "*" in connect_host:
+        return ("", "")
+    try:
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        with socket.create_connection((connect_host, int(port or 443)), timeout=5) as sock:
+            with context.wrap_socket(sock, server_hostname=sni) as ssock:
+                der = ssock.getpeercert(binary_form=True)
+    except Exception:
+        return ("", "")
+    if not der:
+        return ("", "")
+    pem = ssl.DER_cert_to_PEM_cert(der)
+    return (cert_sha256_hex_from_pem(pem) or "", public_key_sha256_from_pem(pem) or "")
 
 
 @cache.cache(600)
