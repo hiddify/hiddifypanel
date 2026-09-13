@@ -29,9 +29,6 @@ def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
     if proxy.proto == ProxyProto.naive and not domain_db.need_valid_ssl:
         return {"name": name, "msg": "naive only supports valid cert", "type": "error", "proto": proxy.proto}
 
-    if proxy.proto != ProxyProto.dnstt and domain_db.mode == DomainType.dnstt:
-        return {"name": name, "msg": "dnstt domain only works with dnstt protocol", "type": "error", "proto": proxy.proto}
-
     if proxy.proto not in {ProxyProto.mieru, ProxyProto.dnstt} and not port:
         return {"name": name, "msg": "port not defined", "type": "error", "proto": proxy.proto}
     if proxy.proto == ProxyProto.naive and not domain_db.need_valid_ssl:
@@ -49,11 +46,11 @@ def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
             return {"name": name, "msg": f"reality {p} proxy not in reality {p} domain", "type": "debug", "proto": proxy.proto}
 
     is_cdn = ProxyCDN.CDN == proxy.cdn or ProxyCDN.Fake == proxy.cdn
-    if is_cdn and domain_db.mode not in [DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker]:
+    if is_cdn and domain_db.mode not in [DomainType.cdn, DomainType.worker]:
         # print("cdn proxy not in cdn domain", domain, name)
         return {"name": name, "msg": "cdn proxy not in cdn domain", "type": "debug", "proto": proxy.proto}
 
-    if not is_cdn and domain_db.mode in [DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker]:
+    if not is_cdn and domain_db.mode in [DomainType.cdn, DomainType.worker]:
         # print("not cdn proxy  in cdn domain", domain, name, proxy.cdn)
         return {"name": name, "msg": "not cdn proxy  in cdn domain", "type": "debug", "proto": proxy.proto}
 
@@ -65,11 +62,6 @@ def is_proxy_valid(proxy: Proxy, domain_db: Domain, port: int) -> dict | None:
 
     if domain_db.mode == DomainType.worker and proxy.transport == ProxyTransport.grpc:
         return {"name": name, "msg": "worker does not support grpc", "type": "debug", "proto": proxy.proto}
-
-    if domain_db.mode == DomainType.old_xtls_direct:
-        return {"name": name, "msg": "unsupported", "type": "debug", "proto": proxy.proto}
-    # if domain_db.mode != DomainType.old_xtls_direct and "tls" in proxy.l3 and proxy.cdn == ProxyCDN.direct and proxy.transport in [ProxyTransport.tcp, ProxyTransport.XTLS]:
-    # return {'name': name, 'msg': "only  old_xtls_direct  support this", 'type': 'debug', 'proto': proxy.proto}
 
     if proxy.proto == "trojan" and not is_tls(l3):
         return {"name": name, "msg": "trojan but not tls", "type": "warning", "proto": proxy.proto}
@@ -212,13 +204,13 @@ def get_proxies(child_id: int = 0, only_enabled=False) -> list["Proxy"]:
     if not hconfig(ConfigEnum.http_proxy_enable, child_id):
         proxies = [c for c in proxies if "http" != c.l3]
 
-    if not Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip])).first():
+    if not Domain.query.filter(Domain.mode == DomainType.cdn).first():
         proxies = [c for c in proxies if c.cdn != "CDN"]
 
     if not Domain.query.filter(Domain.mode.in_([DomainType.relay])).first():
         proxies = [c for c in proxies if c.cdn != ProxyCDN.relay]
 
-    if not Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip]), Domain.servernames != "", Domain.servernames != Domain.domain).first():
+    if not Domain.query.filter(Domain.mode == DomainType.cdn, Domain.servernames != "", Domain.servernames != Domain.domain).first():
         proxies = [c for c in proxies if "Fake" not in c.cdn]
 
     # proxies = [c for c in proxies if not ('vless' == c.proto and ProxyTransport.tcp == c.transport and c.cdn == ProxyCDN.direct)]
@@ -340,7 +332,7 @@ def attach_domain_ech(base: dict, hconfigs: dict, *, enabled: bool = True) -> No
 def sni_host_server_extractor(domain_db: Domain, hconfigs):
 
     server = sni = host = domain_db.domain.replace("*", hutils.random.get_random_string(5, 15))
-    is_cdn = domain_db.mode in [DomainType.cdn, DomainType.auto_cdn_ip]
+    is_cdn = domain_db.mode == DomainType.cdn
     if auto_ip := domain_db.auto_cdn_ip():
         server = auto_ip[0]
     elif domain_db.fake_mode in (FakeMode.fake, FakeMode.reality):

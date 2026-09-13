@@ -29,7 +29,7 @@ class DomainsOptionsApi(MethodView):
         domains = (
             Domain.query.filter(
                 Domain.child_id == _child_id(),
-                Domain.sub_link_only == False,  # noqa: E712
+                Domain.mode != DomainType.sub_link_only,
             )
             .order_by(Domain.domain)
             .all()
@@ -74,6 +74,10 @@ class DomainsQuickAddApi(MethodView):
             else:
                 fake_mode_str = "fake"
             mode_str = "direct"
+        elif mode_str == "old_xtls_direct":
+            mode_str = "direct"
+        elif mode_str == "auto_cdn_ip":
+            mode_str = "cdn"
         try:
             mode = DomainType(mode_str)
             fake_mode = FakeMode(fake_mode_str)
@@ -87,7 +91,6 @@ class DomainsQuickAddApi(MethodView):
             alias=data.get("alias") or data["domain"].strip(),
             mode=mode,
             fake_mode=fake_mode,
-            sub_link_only=False,
             cdn_ip="",
             grpc=False,
             ech=False,

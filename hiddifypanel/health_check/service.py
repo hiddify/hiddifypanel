@@ -8,7 +8,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from hiddifypanel.database import db
-from hiddifypanel.models import ConfigEnum, Domain, hconfig
+from hiddifypanel.models import ConfigEnum, Domain, DomainType, hconfig
 from hiddifypanel.models.server_ip import ServerIp
 from hiddifypanel.models.tls_store import TlsStore
 
@@ -43,7 +43,7 @@ def first_valid_cert_domain(child_id: int = 0) -> str | None:
     if row and row.domain and row.domain.domain:
         return str(row.domain.domain).strip().lower()
     domain = (
-        Domain.query.filter(Domain.child_id == child_id, Domain.sub_link_only == False)  # noqa: E712
+        Domain.query.filter(Domain.child_id == child_id, Domain.mode != DomainType.sub_link_only)
         .order_by(Domain.id)
         .first()
     )

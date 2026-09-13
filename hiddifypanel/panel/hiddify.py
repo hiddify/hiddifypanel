@@ -89,8 +89,8 @@ def get_html_user_link(model: BaseAccount, domain: Domain):
     text = domain.alias or domain.domain
     color_cls = "info"
 
-    if isinstance(domain, Domain) and not domain.sub_link_only and domain.mode in [DomainType.cdn, DomainType.auto_cdn_ip]:
-        auto_cdn = (domain.mode == DomainType.auto_cdn_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
+    if isinstance(domain, Domain) and not domain.is_sub_link_only() and domain.mode == DomainType.cdn:
+        auto_cdn = bool(domain.resolve_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
         color_cls = "success" if auto_cdn else "warning"
         text = f'<span class="badge badge-secondary" >{"Auto" if auto_cdn else "CDN"}</span> ' + text
 
@@ -263,8 +263,8 @@ def set_db_from_json(
 def get_domain_btn_link(domain):
     text = domain.alias or domain.domain
     color_cls = "info"
-    if domain.mode in [DomainType.cdn, DomainType.auto_cdn_ip]:
-        auto_cdn = (domain.mode == DomainType.auto_cdn_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
+    if domain.mode == DomainType.cdn:
+        auto_cdn = bool(domain.resolve_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
         color_cls = "success" if auto_cdn else "warning"
         text = f'<span class="badge badge-secondary" >{"Auto" if auto_cdn else "CDN"}</span> ' + text
     res = f"<a target='_blank' href='#' class='btn btn-xs btn-{color_cls} ltr' ><i class='fa-solid fa-arrow-up-right-from-square d-none'></i> {text}</a>"
@@ -309,7 +309,7 @@ def is_telegram_proxy_enable(domains=None) -> bool:
     if not hconfig(ConfigEnum.telegram_enable):
         return False
 
-    valid_domain_types = [DomainType.direct, DomainType.relay, DomainType.old_xtls_direct]
+    valid_domain_types = [DomainType.direct, DomainType.relay]
     res = False
     if domains:
         res = any(d.mode in valid_domain_types for d in domains)

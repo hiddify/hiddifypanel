@@ -30,7 +30,7 @@ class MTProxiesAPI(MethodView):
         dtos = []
         # TODO: Remove duplicated domains mapped to a same ipv4 and v6
         for d in c["domains"]:
-            if d.mode not in [DomainType.direct, DomainType.relay, DomainType.old_xtls_direct]:
+            if d.mode not in [DomainType.direct, DomainType.relay]:
                 continue
 
             # make mtproxy link

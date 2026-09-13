@@ -15,7 +15,6 @@ class DomainSchema(ApiModel):
     child_unique_id: str | None = Field(default=None, description="The child's unique id")
     domain: str = Field(description="The domain name")
     alias: str | None = Field(default=None, description="The domain alias")
-    sub_link_only: bool = Field(description="Is the domain sub link only")
     mode: DomainType = Field(description="The domain type")
     cdn_ip: str | None = Field(default=None, description="The cdn ip")
     grpc: bool = Field(description="Is the domain grpc")
@@ -23,6 +22,18 @@ class DomainSchema(ApiModel):
     servernames: str | None = Field(default=None, description="The servernames")
     show_domains: list[str] | None = Field(default=None, description="The list of domains to show")
     custom_proxy_slugs: list[str] | None = Field(default=None, description="Bound custom proxy slugs")
+
+    @field_validator("mode", mode="before")
+    @classmethod
+    def _coerce_legacy_mode(cls, value: Any) -> Any:
+        raw = str(getattr(value, "value", value) or "").strip().lower()
+        if raw == "old_xtls_direct":
+            return DomainType.direct
+        if raw == "auto_cdn_ip":
+            return DomainType.cdn
+        if raw == "special":
+            return DomainType.direct
+        return value
 
 
 class ProxySchema(ApiModel):
