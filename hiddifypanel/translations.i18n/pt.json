@@ -228,6 +228,7 @@
   "The name shown in the configs for this domain.": "O nome que será mostrado nas Configs deste Domínio.",
   "This can be used for giving your users a permanent non blockable links.": "Isso pode ser usado para fornecer aos seus usuários links permanentes não bloqueáveis.",
   "This domain does not exist in the panel!": "Este Domínio não existe no Painel!",
+  "This domain %(domain_name)s is invalid": "O domínio %(domain_name)s é inválido",
   "Today Usage": "Hoje",
   "Too many Connected IPs": "Muitos IPs conectados",
   "Total Usage": "Uso total",

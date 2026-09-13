@@ -228,6 +228,7 @@
   "The name shown in the configs for this domain.": "将显示在该域的配置中的名称。",
   "This can be used for giving your users a permanent non blockable links.": "这可用于为您的用户提供永久的不可阻止链接。",
   "This domain does not exist in the panel!": "该域名在面板中不存在！",
+  "This domain %(domain_name)s is invalid": "域名 %(domain_name)s 无效",
   "Today Usage": "今天",
   "Too many Connected IPs": "连接的IP太多",
   "Total Usage": "总使用量",

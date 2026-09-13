@@ -228,6 +228,7 @@
   "The name shown in the configs for this domain.": "Имя, которое будет отображаться в конфигурациях этого домена.",
   "This can be used for giving your users a permanent non blockable links.": "Это можно использовать для предоставления вашим пользователям постоянных неблокируемых ссылок.",
   "This domain does not exist in the panel!": "Этого домена не существует в панели управления!",
+  "This domain %(domain_name)s is invalid": "Домен %(domain_name)s недействителен",
   "Today Usage": "Сегодня",
   "Too many Connected IPs": "Слишком много подключенных IP-адресов",
   "Total Usage": "Общее использование",

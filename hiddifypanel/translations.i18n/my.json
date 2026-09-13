@@ -203,6 +203,7 @@
   "The name shown in the configs for this domain.": "ဤဒိုမိန်းအတွက် အပြင်အဆင်တွင် ပြသပေးမည့် အမည်",
   "This can be used for giving your users a permanent non blockable links.": "သင့်အသုံးပြုသူများကို အမြဲတမ်းပိတ်ဆို့၍မရသော လင့်ခ်များပေးရန်အတွက် ၎င်းကို အသုံးပြုနိုင်သည်။",
   "This domain does not exist in the panel!": "ဤဒိုမိန်းသည် ထိန်းချုပ်ခုံတွင် မရှိနေပါ။",
+  "This domain %(domain_name)s is invalid": "ဒိုမိန်း %(domain_name)s သည် မမှန်ကန်ပါ",
   "Today Usage": "ယနေ့",
   "Too many Connected IPs": "ချိတ်ဆက်ထားသော အိုင်ပီ များပြားလွန်းသည်",
   "Total Usage": "စုစုပေါင်း သုံးစွဲမှု",

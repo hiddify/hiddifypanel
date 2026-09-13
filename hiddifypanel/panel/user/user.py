@@ -12,11 +12,132 @@ from flask_classful import FlaskView, route
 from loguru import logger
 
 from hiddifypanel import g, hutils
-from hiddifypanel.auth import login_required
+from hiddifypanel.auth import admin_session_is_exist, login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3.config_builder.dump import render_client_configs
+
+_PLACEHOLDER_JSON_TYPES = frozenset({"direct", "block", "dns", "selector", "urltest", "freedom", "blackhole"})
+_PLACEHOLDER_JSON_TAGS = frozenset({"direct", "block", "dns-out", "dns", "proxy", "fragment", "socks", "http"})
+
+
+def _log_client_render_errors(core: str, errors: list[dict]) -> None:
+    for error in errors:
+        logger.error("Error rendering {} client config: {}", core, error.get("message") or "")
+        stack = (error.get("data") or {}).get("stacktrace")
+        if stack:
+            logger.error("{}", stack)
+
+
+def _format_client_render_error_detail(errors: list[dict]) -> str:
+    parts: list[str] = []
+    for error in errors:
+        msg = str(error.get("message") or "").strip()
+        core = error.get("core")
+        if core and core != "*":
+            msg = f"[{core}] {msg}" if msg else f"[{core}]"
+        stack = str((error.get("data") or {}).get("stacktrace") or "").strip()
+        if stack:
+            msg = f"{msg}\n{stack}" if msg else stack
+        if msg:
+            parts.append(msg)
+    return "\n\n".join(parts)
+
+
+def _json_entry_is_real_proxy(entry: object) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    tag = str(entry.get("tag") or "")
+    kind = str(entry.get("type") or entry.get("protocol") or "").lower()
+    if tag in _PLACEHOLDER_JSON_TAGS:
+        return False
+    if kind in _PLACEHOLDER_JSON_TYPES or not kind:
+        return False
+    return True
+
+
+def client_config_has_proxies(core: str, text: str) -> bool:
+    raw = (text or "").strip()
+    if not raw:
+        return False
+    if core == "sublink":
+        return any("://" in line and not line.lstrip().startswith("#") for line in raw.splitlines() if line.strip())
+    if core == "clash":
+        try:
+            import yaml
+
+            data = yaml.safe_load(raw) or {}
+        except Exception:
+            return False
+        proxies = data.get("proxies") if isinstance(data, dict) else None
+        return bool(proxies)
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return True
+    if isinstance(data, list):
+        for item in data:
+            if _json_entry_is_real_proxy(item):
+                return True
+            if isinstance(item, dict):
+                for outbound in item.get("outbounds") or []:
+                    if _json_entry_is_real_proxy(outbound):
+                        return True
+        return False
+    if not isinstance(data, dict):
+        return False
+    for key in ("outbounds", "endpoints", "proxies"):
+        value = data.get(key)
+        if isinstance(value, list) and any(_json_entry_is_real_proxy(item) for item in value):
+            return True
+    return False
+
+
+def error_status_config(core: str, title: str, detail: str = "") -> str:
+    label = f"{title}\n{detail}".strip() if detail else title
+    if core == "sublink":
+        lines = [f"#{title}"]
+        if detail:
+            lines.extend(f"#{line}" if line else "#" for line in detail.splitlines())
+        lines.append(f"trojan://1@1.1.1.1#{hutils.encode.url_encode(title)}")
+        return "\n".join(lines) + "\n"
+    if core in ("singbox", "hiddify-core"):
+        return json.dumps(
+            {
+                "outbounds": [
+                    {"tag": label, "type": "block"},
+                    {"tag": "direct", "type": "direct"},
+                ]
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    if core == "xray":
+        return json.dumps(
+            {
+                "remarks": label,
+                "log": {"access": "", "error": "", "loglevel": "warning"},
+                "inbounds": [
+                    {
+                        "tag": "socks",
+                        "port": 10808,
+                        "listen": "127.0.0.1",
+                        "protocol": "socks",
+                        "sniffing": {"enabled": True, "destOverride": ["http", "tls"]},
+                        "settings": {"auth": "noauth", "udp": True},
+                    }
+                ],
+                "outbounds": [{"tag": "proxy", "protocol": "blackhole", "settings": {}}],
+                "routing": {"domainStrategy": "AsIs", "rules": []},
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    if core == "clash":
+        comment = "\n".join(f"# {line}" for line in (detail.splitlines() or [title]))
+        return f'{comment}\nproxies:\n  - name: {json.dumps(title, ensure_ascii=False)}\n    type: trojan\n    server: 1.1.1.1\n    port: 443\n    password: "1"\n'
+    return label
 
 
 class UserView(FlaskView):
@@ -238,14 +359,12 @@ class UserView(FlaskView):
         return add_headers(resp, c)
 
     def _render_core_config(self, core: str, common: dict, *, pretty: bool) -> str:
-        db_domain = common["db_domain"]
-        if not isinstance(db_domain, Domain):
-            child_id = 0
-        else:
-            child_id = int(db_domain.child_id or 0)
+        db_domain: Domain = common["db_domain"]
+        if Domain.child_has_sub_link_only(0) and not db_domain.is_sub_link_only():
+            return error_status_config(core, _("This domain %(domain_name)s is invalid", domain_name=request.host))
         result = render_client_configs(
             user=common["user"],
-            child_id=child_id,
+            child_id=0,
             sublink_domain=request.host,
             user_agent=request.user_agent.string,
             pretty=pretty,
@@ -253,9 +372,13 @@ class UserView(FlaskView):
             invalidate_cache=False,
         )
         if result.errors:
-            for error in result.errors:
-                print(f"Error rendering client configs: {error}")
-        return result.configs.get(core) or ""
+            _log_client_render_errors(core, result.errors)
+        text = result.configs.get(core) or ""
+        if result.errors and not client_config_has_proxies(core, text):
+            title = _("Error in Config Generation")
+            detail = _format_client_render_error_detail(result.errors) if admin_session_is_exist() else ""
+            return error_status_config(core, title, detail)
+        return text
 
     @route("/offline.html")
     @login_required(roles={Role.user})
@@ -289,7 +412,11 @@ def get_domain_information(no_domain=False, filter_domain=None, alternative=None
             db_domain = Domain(domain=domain, show_domains=[])
             hutils.flask.flash(_("This domain does not exist in the panel!" + domain))
 
-        domains = db_domain.show_domains or Domain.query.filter(Domain.sub_link_only != True).all()
+        if Domain.child_has_sub_link_only(0) and not db_domain.is_sub_link_only():
+            return [], db_domain, False
+
+        domains = db_domain.show_domains or Domain.query.filter(Domain.mode != DomainType.sub_link_only).all()
+        domains = [d for d in domains if not d.is_sub_link_only()]
 
     has_auto_cdn = False
 
