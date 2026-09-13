@@ -6,4 +6,4 @@
 {% set query = uri.query_params|urlencoded %}
 {% set path_part = ('/' ~ uripath) if uripath else ('/' if query else '') %}
 {% set query_part = ('?' ~ query) if query else '' %}
-{{ uri.protocol }}://{{ auth }}{{ host }}{{ port_part }}{{ path_part }}{{ query_part }}#{{ uri.fragment|urlencoded }}
+{{ uri.protocol }}://{{ auth }}{{ host }}{{ port_part }}{{ path_part }}{{ query_part }}#{{ uri.fragment|trim_no_line|urlencoded }}

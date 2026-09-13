@@ -1,1 +1,4 @@
-{{ ctx.proxy.tag }} {{ ctx.proxy.domain.alias or ctx.proxy.domain.name }}{% if POSTFIX %} {{ POSTFIX }}{% endif %}
+{{ ctx.proxy.tag }}
+{{ ctx.proxy.domain.alias or ctx.proxy.domain.name }}
+{% if ctx.proxy.domain.ip_version %} {{ ctx.proxy.domain.ip_version }}{% endif %}
+{% if POSTFIX %} {{ POSTFIX }}{% endif %}

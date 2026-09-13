@@ -16,7 +16,7 @@
     sni=domain.sni,
     fp=ctx.hconfig.utls|default(''),
   ) %}
-  {% set data.ps %}{% include 'sublink/tag' %}{% endset %}
+  {% set data.ps |trim_no_line %}{% include 'sublink/tag' %}{% endset %}
   {% include '__VMESS_TRANSPORT_SLUG__' %}
   {% include '__VMESS_SECURITY_SLUG__' %}
   

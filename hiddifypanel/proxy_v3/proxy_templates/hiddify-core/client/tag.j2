@@ -1,1 +1,4 @@
-{{ ctx.proxy.tag }} {{ ctx.proxy.domain.alias }} {{POSTFIX}}
+{{ ctx.proxy.tag }}
+{{ ctx.proxy.domain.alias}}
+{% if ctx.proxy.domain.ip_version %} {{ ctx.proxy.domain.ip_version }}{% endif %} 
+{{POSTFIX}}

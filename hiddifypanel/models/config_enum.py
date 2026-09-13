@@ -243,6 +243,7 @@ class ConfigEnum(metaclass=FastEnum):
     auto_update = _BoolConfigDscr(ConfigCategory.hidden if os.environ.get("HIDDIFY_DISABLE_UPDATE", "").lower() in {"1", "true"} else ConfigCategory.general, ApplyMode.apply_config, True, hide_in_virtual_child=True)
     speed_test = _BoolConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     only_ipv4 = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
+    max_proxy_ips_per_version = _IntConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     shared_secret = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
 
