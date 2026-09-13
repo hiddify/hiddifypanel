@@ -387,7 +387,13 @@ class Domain(db.Model):
         dbdomain.ech = bool(domain.get("ech", False))
         dbdomain.servernames = domain.get("servernames", "")
         dbdomain.resolve_ip = domain.get("resolve_ip", False)
-        dbdomain.extra_params = domain.get("extra_params", "")
+        raw_extra = domain.get("extra_params", "")
+        if isinstance(raw_extra, (dict, list)):
+            dbdomain.extra_params = json.dumps(raw_extra)
+        elif raw_extra is None:
+            dbdomain.extra_params = "{}"
+        else:
+            dbdomain.extra_params = raw_extra
         show_domains = domain.get("show_domains", [])
 
         dbdomain.show_domains = Domain.query.filter(Domain.domain.in_(show_domains)).all() if show_domains else []

@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import Field, field_validator, model_validator
 
-from hiddifypanel.models import ChildMode, ConfigEnum, DomainType, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
+from hiddifypanel.models import ChildMode, ConfigEnum, DomainType, FakeMode, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
 from hiddifypanel.models.usage_data import UsageData
 from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema, FriendlyDateTime, UserSchema
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
@@ -16,12 +16,16 @@ class DomainSchema(ApiModel):
     domain: str = Field(description="The domain name")
     alias: str | None = Field(default=None, description="The domain alias")
     mode: DomainType = Field(description="The domain type")
+    fake_mode: FakeMode | None = Field(default=None, description="The domain fake/reality mode")
     cdn_ip: str | None = Field(default=None, description="The cdn ip")
     grpc: bool = Field(description="Is the domain grpc")
     ech: bool = Field(default=False, description="Enable ECH for CDN domain")
     servernames: str | None = Field(default=None, description="The servernames")
     show_domains: list[str] | None = Field(default=None, description="The list of domains to show")
     custom_proxy_slugs: list[str] | None = Field(default=None, description="Bound custom proxy slugs")
+    extra_params: dict[str, Any] | str | None = Field(default=None, description="Extra domain params")
+    resolve_ip: bool | None = Field(default=None, description="Resolve domain to IP on the client")
+    download_domain: str | None = Field(default=None, description="Download/mux domain name")
 
     @field_validator("mode", mode="before")
     @classmethod
