@@ -111,7 +111,7 @@ class SettingAdmin(FlaskView):
                     set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
                 else:
                     set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
-            else:
+            elif hconfig(ConfigEnum.parent_panel) and hconfig(ConfigEnum.panel_mode) != PanelMode.parent:
                 set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
 
             cache.invalidate_all_cached_functions()
