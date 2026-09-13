@@ -191,6 +191,11 @@ _jinja_env_cache: dict[int, tuple[float, Environment]] = {}
 _JINJA_CACHE_TTL = 60.0
 
 
+def clear_jinja_template_caches() -> None:
+    _template_map_cache.clear()
+    _jinja_env_cache.clear()
+
+
 def _template_map(child_id: int = 0) -> dict[str, str]:
     templates = ProxyTemplate.query.filter((ProxyTemplate.child_id == child_id) | (ProxyTemplate.child_id == 0)).all()
     return {template.slug: template.effective_content() for template in templates}

@@ -258,6 +258,7 @@ def sync_base_configs(child_id: int = 0, *, refresh_builtin: bool = True) -> tup
 def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
     """Sync programmatic custom-proxy presets with unified stale handling."""
     from hiddifypanel.models.custom_proxy import normalize_custom_path
+
     from ..template_catalog.custom_proxy_presets import iter_custom_proxy_presets
 
     presets = iter_custom_proxy_presets(child_id)
@@ -394,6 +395,10 @@ def sync_all(child_id: int = 0, *, refresh_base_configs: bool = True) -> SyncSta
     from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
     sync_tls_store_all(child_id)
+    from hiddifypanel.cache import cache
+    from hiddifypanel.proxy_v3.config_builder import jinja_render
+    cache.invalidate_all_cached_functions()
+    jinja_render.clear_jinja_template_caches()
     return stats
 
 

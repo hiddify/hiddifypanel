@@ -40,3 +40,4 @@ from .usage import DailyUsage, UnsyncedUsage
 from .usage_data import UsageData
 from .user import ONE_GIG, User, UserDetail, UserMode
 # from .report import Report, ReportDetail
+from . import cache_events as _cache_events  # noqa: F401  # registers cache invalidation listeners
