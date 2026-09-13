@@ -19,22 +19,15 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 141
+MAX_DB_VERSION = 143
 
 
 def _v141(child_id):
-    """MasterDNS payload encrypt key (used by dns_proxy/masterdns templates)."""
+    """Cap how many IPv4/IPv6 addresses are emitted per proxy domain."""
+    add_config_if_not_exist(ConfigEnum.max_proxy_ips_per_version, 3, child_id)
 
-    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
-    from hiddifypanel.proxy_v3.config_builder import jinja_render
-
-    sync_all(child_id)
-    cache.invalidate_all_cached_functions()
-    jinja_render._template_map_cache.clear()
-    jinja_render._jinja_env_cache.clear()
-
-    # def _v134(child_id):
-    # sync_builtin_presets(child_id)
+    for d in Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.reality).all():
+        d.set_custom_proxies_by_slugs([])
 
 
 def _v140(child_id):
@@ -108,13 +101,6 @@ def _v133(child_id):
             add_config_if_not_exist(ConfigEnum.common_proxy_core, "xray")
     else:
         add_config_if_not_exist(ConfigEnum.common_proxy_core, "both")
-
-
-def _v131(child_id):
-    from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
-
-    for d in Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.reality).all():
-        d.set_custom_proxies_by_slugs([REALITY_TERMINATION_SLUG])
 
 
 def _v130(child_id):
@@ -321,7 +307,7 @@ def _v111(child_id):
 
 
 def _v108(child_id):
-    Domain.query.filter(Domain.mode == DomainType.auto_cdn_ip).update({"mode": "cdn", "resolve_ip": True})
+    Domain.query.filter(Domain.mode == "auto_cdn_ip").update({"mode": "cdn", "resolve_ip": True})
 
 
 def _v107(child_id):
@@ -1024,11 +1010,11 @@ def _config_enum_key_names(*, bool_only: bool | None = None) -> list[str]:
 
 def _enum_column_values(col) -> list[str]:
     enum_class = col.type.enum_class
-    table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
-    if table_name == "bool_config" and col.name == "key":
-        return _config_enum_key_names(bool_only=True)
-    if table_name == "str_config" and col.name == "key":
-        return _config_enum_key_names(bool_only=False)
+    # table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
+    # if table_name == "bool_config" and col.name == "key":
+    #     return _config_enum_key_names(bool_only=True)
+    # if table_name == "str_config" and col.name == "key":
+    #     return _config_enum_key_names(bool_only=False)
     # SQLAlchemy Enum(PEP435) persists member *names* (e.g. hiddify_core), not values
     # (hiddify-core). Prefer the dialect enums list so MySQL stays in sync.
     if getattr(col.type, "enums", None):
@@ -1036,35 +1022,38 @@ def _enum_column_values(col) -> list[str]:
     return [e.name for e in enum_class]
 
 
-def add_new_enum_values():
-    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyClientCore
+from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyClientCore
 
-    columns = [
-        Proxy.l3,
-        Proxy.proto,
-        Proxy.cdn,
-        Proxy.transport,
-        User.mode,
-        Domain.mode,
-        Domain.fake_mode,
-        BoolConfig.key,
-        StrConfig.key,
-        ProxyTemplate.category,
-        ProxyTemplate.core,
-        CustomProxy.mode,
-        CustomProxy.proto,
-        CustomProxy.transport,
-        CustomProxy.tls_layer,
-        CustomProxy.download_tls_layer,
-        CustomProxy.server_core,
-        CustomProxyClientCore.core,
-    ]
+enum_columns = [
+    Proxy.l3,
+    Proxy.proto,
+    Proxy.cdn,
+    Proxy.transport,
+    User.mode,
+    Domain.mode,
+    Domain.fake_mode,
+    BoolConfig.key,
+    StrConfig.key,
+    ProxyTemplate.category,
+    ProxyTemplate.core,
+    CustomProxy.mode,
+    CustomProxy.proto,
+    CustomProxy.transport,
+    CustomProxy.tls_layer,
+    CustomProxy.download_tls_layer,
+    CustomProxy.server_core,
+    CustomProxyClientCore.core,
+]
+
+
+def remove_old_enum_values():
+
     from sqlalchemy import text
 
-    for col in columns:
+    for col in enum_columns:
         column_name = col.name
         table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
-        existing_values = _enum_column_values(col)
+        current_values = _enum_column_values(col)
 
         result = db.session.execute(text(f"SHOW COLUMNS FROM {table_name} LIKE '{column_name}';")).fetchall()
         db_values: list[str] = []
@@ -1075,11 +1064,34 @@ def add_new_enum_values():
                 break
         db_values = [value.strip().strip("'") for value in db_values if value.strip()]
 
-        new_values = set(existing_values) - set(db_values)
+        if should_removed := set(db_values) - set(current_values):
+            logger.info(f"Removing enum {table_name}.{column_name}: {should_removed}")
+            db_execute_ddl(f"DELETE FROM `{table_name}` WHERE `{column_name}` IN ({','.join([f"'{a}'" for a in should_removed])})")
+
+
+def add_new_enum_values():
+
+    from sqlalchemy import text
+
+    for col in enum_columns:
+        column_name = col.name
+        table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
+        current_values = _enum_column_values(col)
+
+        result = db.session.execute(text(f"SHOW COLUMNS FROM {table_name} LIKE '{column_name}';")).fetchall()
+        db_values: list[str] = []
+
+        for row in result:
+            if "enum" in str(row[1]).lower():
+                db_values = row[1].split("(", 1)[1].rsplit(")", 1)[0].split(",")
+                break
+        db_values = [value.strip().strip("'") for value in db_values if value.strip()]
+
+        new_values = set(current_values) - set(db_values)
         if not new_values:
             continue
 
-        merged = sorted(set(db_values) | set(existing_values))
+        merged = sorted(set(db_values) | set(current_values))
         enumstr = ",".join([f"'{a}'" for a in merged])
         logger.info("Expanding enum {}.{} (+{})", table_name, column_name, ",".join(sorted(new_values)))
         db_execute_ddl(f"ALTER TABLE {table_name} MODIFY COLUMN `{column_name}` ENUM({enumstr});")
@@ -1166,6 +1178,9 @@ def init_db():
         db_execute(f"update child set id=0 where unique_id='{tmp_uuid}'", commit=True)
         child = Child.by_id(0)
 
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
+
+    sync_all(0)
     child.mode = ChildMode.virtual
     # if db_version < 69:
     #     _v70(0)
@@ -1316,8 +1331,6 @@ def migrate(db_version):
         execute("update domain set sub_link_only=False where sub_link_only is NULL")
         execute("update proxy set child_id=0 where child_id is NULL")
     if db_version < 130:
-        from hiddifypanel.models.domain import FakeMode
-
         execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
         execute("UPDATE child SET node_base_url=''")
         execute(
@@ -1327,13 +1340,10 @@ def migrate(db_version):
         )
         execute("UPDATE domain SET fake_mode='valid' WHERE fake_mode IS NULL OR fake_mode=''")
 
-        Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker, DomainType.sub_link_only])).update(  # noqa: E712
-            {"fake_mode": FakeMode.valid},
-            synchronize_session=False,
-        )
-        db.session.commit()
+        execute("UPDATE domain SET fake_mode='valid' WHERE mode IN ('cdn','auto_cdn_ip','worker','sub_link_only')")
+    db.session.commit()
 
-    add_new_enum_values()
+    remove_old_enum_values()
 
     AdminUser.get_super_admin()  # to create super admin if not exist
 

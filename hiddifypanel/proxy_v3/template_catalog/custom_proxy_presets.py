@@ -143,7 +143,7 @@ def build_additional_config_preset(child_id: int = 0) -> CustomProxyPreset:
         name="Additional Config",
         slug=ADDITIONAL_CONFIG_SLUG,
         enable=False,
-        mode=CustomProxyMode.ip,
+        mode=CustomProxyMode.no_inbound,
         proto="vless",
         transport="other",
         tls_layer="http",
@@ -203,7 +203,7 @@ def build_node_configs_preset(child_id: int = 0) -> CustomProxyPreset:
         name="Node Configs",
         slug=NODE_CONFIGS_SLUG,
         enable=True,
-        mode=CustomProxyMode.ip,
+        mode=CustomProxyMode.no_inbound,
         proto="vless",
         transport="other",
         tls_layer="http",
@@ -244,7 +244,7 @@ def _preset_l7_reverse_proto(
     return "h2"
 
 
-def _v2ray_domain_modes(tls_layer: str, transport: str = "") -> tuple[str, ...]:
+def _v2ray_domain_modes(tls_layer: str, transport: str = "", *, download: bool = False) -> tuple[str, ...]:
     modes = list(V2RAY_ALL_DOMAIN_MODES)
     if not transport_tls_supports_reality(transport, tls_layer):
         modes = filter_domain_modes_without_reality(modes)
@@ -436,7 +436,7 @@ def _build_preset(
         download_tls_layer = _tls_layer_for_alpn(slot.download_alpn, primary)
         if proto in V2RAY_GATEWAY_PROTOS:
             domain_modes = list(_v2ray_domain_modes(tls_layer, transport_value))
-            download_domain_modes = _v2ray_domain_modes(download_tls_layer or tls_layer, transport_value)
+            download_domain_modes = _v2ray_domain_modes(download_tls_layer or tls_layer, transport_value, download=True)
         else:
             download_domain_modes = tuple(_download_domain_modes_for_combo(primary))
         if xhttp_alpn_is_quic(slot.upload_alpn):

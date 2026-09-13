@@ -6,7 +6,7 @@ from hiddifypanel.models.child import Child
 from hiddifypanel.models.config import get_hconfigs_json, hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
-from hiddifypanel.models.domain import Domain
+from hiddifypanel.models.domain import Domain, DomainType
 from hiddifypanel.models.user import User
 from hiddifypanel.proxy_v3.context_vars.builder.utils import normalize_common_proxy_core
 from hiddifypanel.proxy_v3.context_vars.cert import CertVar, select_shared_certificate
@@ -82,12 +82,21 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
+    if proxy.mode == CustomProxyMode.no_inbound:
+        return True
+    if d.is_sub_link_only():
+        return False
     if d.child_id != Child.current().id:
-        return proxy.slug == "node-configs"
-    if proxy.slug == "node-configs":
         return False
     if proxy.slug == REALITY_TERMINATION_SLUG:
-        return d.is_reality()
+        return False
+
+    if d.is_reality():
+        if not domain_ip_matches_modes(d, proxy.domain_modes):
+            return False
+        if d.custom_proxy_ids:
+            return proxy.id in d.custom_proxy_ids
+        return _download_domain_ok(d, proxy)
 
     proxy_id = proxy.id
 
@@ -98,8 +107,10 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
         return proxy_id in d.custom_proxy_ids
     if not domain_ip_matches_modes(d, proxy.domain_modes):
         return False
-    # Every DomainIPVar has a download copy of itself. Only a *different*
-    # download domain is constrained by download_domain_modes (xhttp).
+    return _download_domain_ok(d, proxy)
+
+
+def _download_domain_ok(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if not proxy.download_domain_modes:
         return True
     if d.download is None or d.download.name == d.name:
@@ -108,8 +119,7 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
 
 
 def filter_proxy(base: BaseVar) -> bool:
-    # additional_config / node_configs are client-only and have no domain bindings.
-    if base.proxy.slug in {"additional-config", "node-configs"}:
+    if base.proxy.mode == CustomProxyMode.no_inbound:
         return True
 
     if not base.proxy.domains and base.proxy.mode != CustomProxyMode.ip:
@@ -150,15 +160,24 @@ def find_domains_by_name(domain_names: list[str] | None) -> list[Domain]:
 
 @cache.cache(600)
 def get_domains_by_name(domain_names: list[str] | None) -> list[DomainIPVar]:
-    return [DomainIPVar.from_domain(d) for d in find_domains_by_name(domain_names)]
+    return [DomainIPVar.from_domain(d) for d in _proxy_domain_rows(find_domains_by_name(domain_names))]
+
+
+def _proxy_domain_rows(domains: list[Domain]) -> list[Domain]:
+    return [d for d in domains if not d.is_sub_link_only()]
 
 
 @cache.cache(600)
 def get_availble_domains(sublink_domain: str | None):
+    child_id = Child.current().id
+    only_allow_sub_link = Domain.child_has_sub_link_only(0)
+
     if not sublink_domain:
-        domains = Domain.query.filter(Domain.child_id == Child.current().id).all()
+        if only_allow_sub_link:
+            return []
+        domains: list[Domain] = Domain.query.filter(Domain.child_id == child_id).all()
     else:
-        db_domain = Domain.query.filter(Domain.domain == sublink_domain).first()
+        db_domain: Domain = Domain.query.filter(Domain.domain == sublink_domain).first()
 
         if not db_domain:
             parts = sublink_domain.split(".")  # TODO fix bug domain maybe null
@@ -169,6 +188,9 @@ def get_availble_domains(sublink_domain: str | None):
         if not db_domain:
             db_domain = Domain(domain=sublink_domain, show_domains=[])
 
-        domains = db_domain.show_domains or Domain.query.filter(Domain.sub_link_only != True).all()
+        if only_allow_sub_link and not db_domain.is_sub_link_only():
+            return []
 
-    return [DomainIPVar.from_domain(d) for d in domains]
+        domains = db_domain.show_domains or Domain.query.filter(Domain.mode != DomainType.sub_link_only).all()
+
+    return [DomainIPVar.from_domain(d) for d in _proxy_domain_rows(domains)]

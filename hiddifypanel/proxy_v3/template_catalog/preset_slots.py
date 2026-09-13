@@ -133,8 +133,9 @@ def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombinati
             if str(combo.l3).lower() == "reality":
                 return [(combo, "tls", None, None, None)]
             return [(_with_l3(combo, "http"), "http", None, None, None)]
+        layer = "tls_h1" if transport == "http" else "tls"
         tls_combo = combo if combo.l3 in ("reality", "tls", "tls_h2", "tls_h2_h1", "h3_quic") else _with_l3(combo, "tls")
-        variants = [(tls_combo, "tls", None, None, _default_l7(transport, "tls"))]
+        variants = [(tls_combo, layer, None, None, _default_l7(transport, layer))]
         if proto != "trojan":
             variants.append((_with_l3(combo, "http"), "http", None, None, _default_l7(transport, "http")))
         return variants

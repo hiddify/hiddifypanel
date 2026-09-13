@@ -24,10 +24,12 @@ from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section 
 from hiddifypanel.proxy_v3.config_builder.render import render_section as _render_section_impl
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
     extract_block_body as _extract_block_body,
-    if_wraps_client_blocks,
 )
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
     fragment_block_body as _fragment_block_body,
+)
+from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    if_wraps_client_blocks,
 )
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
     inject_named_fragment_blocks as _inject_named_fragment_blocks,

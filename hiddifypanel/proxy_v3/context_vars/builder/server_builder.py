@@ -4,7 +4,7 @@ from hiddifypanel import hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models.config import get_hconfigs_json
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
-from hiddifypanel.models.domain import Domain, FakeMode
+from hiddifypanel.models.domain import Domain, DomainType
 from hiddifypanel.models.proxy import ProxyTransport
 from hiddifypanel.models.user import User
 from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
@@ -16,6 +16,7 @@ from hiddifypanel.proxy_v3.context_vars.proxy import ProxyVar, ServerBuilderProx
 from hiddifypanel.proxy_v3.context_vars.server_platform_var import ServerPlatformVar, get_server_platform_var
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
+from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
 
 from ..ip import IPVar
@@ -75,14 +76,12 @@ def get_server_base(child_id: int) -> ServerBase:
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
-    if proxy.slug == "xray-reality-termination":
+    if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
+    if d.is_reality():
+        return False
 
     proxy_id = proxy.id
-
-    if d.fake_mode == FakeMode.reality and not d.custom_proxy_ids:
-        # print(f"Domain {d.name} is reality but has no custom proxy", file=sys.stderr)
-        return False
     if proxy.mode in (CustomProxyMode.domains_sni_gateway, CustomProxyMode.domains_dns_gateway):
         return proxy_id in d.custom_proxy_ids
 
@@ -101,6 +100,8 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
 
 
 def filter_server_proxy(proxy: ProxyVar) -> bool:
+    if proxy.mode == CustomProxyMode.no_inbound:
+        return True
     if not proxy.domains and proxy.mode != CustomProxyMode.ip:
         return False
 
@@ -137,9 +138,9 @@ def _domains_for_custom_proxy(proxy: CustomProxy, child_id: int) -> list[DomainI
         row
         for row in Domain.query.filter(
             Domain.child_id == child_id,
-            Domain.sub_link_only == False,  # noqa: E712
+            Domain.mode != DomainType.sub_link_only,
         ).all()
-        if not row.custom_proxy_ids or proxy_id in row.custom_proxy_ids
+        if proxy.slug == REALITY_TERMINATION_SLUG or not row.custom_proxy_ids or proxy_id in row.custom_proxy_ids
     ]
     matched = _domains_for_proxy_row(proxy, domain_rows)
     return [DomainIPVar.from_domain(domain) for domain in matched]

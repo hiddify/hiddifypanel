@@ -36,33 +36,22 @@ class DomainType(StrEnum):
     direct = auto()
     sub_link_only = auto()
     cdn = auto()
-    auto_cdn_ip = auto()
     relay = auto()
     worker = auto()
 
-    old_xtls_direct = auto()  # deprecated
-    dnstt = auto()
-    special = auto()
-
     def is_cdn(self) -> bool:
-        return self in [DomainType.cdn, DomainType.auto_cdn_ip]
+        return self == DomainType.cdn
 
     def is_direct(self) -> bool:
-        return self in [DomainType.direct, DomainType.old_xtls_direct]
-
-    def is_dnstt(self) -> bool:
-        return self == DomainType.dnstt
+        return self == DomainType.direct
 
     def name_is_real(self) -> bool:
         return self in {
             DomainType.direct,
             DomainType.cdn,
-            DomainType.auto_cdn_ip,
             DomainType.worker,
             DomainType.relay,
             DomainType.sub_link_only,
-            DomainType.old_xtls_direct,
-            DomainType.dnstt,
         }
 
 
@@ -77,13 +66,12 @@ DomainCustomProxy = db.Table(
 
 class Domain(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    child_id: Mapped[int | None] = mapped_column(ForeignKey("child.id"), default=0)
-    domain: Mapped[str | None] = mapped_column(String(200))
-    alias: Mapped[str | None] = mapped_column(String(200))
-    sub_link_only: Mapped[bool] = mapped_column(default=False)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
+    domain: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    alias: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     mode: Mapped[DomainType] = mapped_column(Enum(DomainType), default=DomainType.direct)
     fake_mode: Mapped[FakeMode] = mapped_column(Enum(FakeMode), default=FakeMode.valid)
-    cdn_ip: Mapped[str | None] = mapped_column(Text(2000), default="")
+    cdn_ip: Mapped[str] = mapped_column(Text(2000), nullable=False, default="")
     server_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id"), default=None)
     server_domain: Mapped[Domain | None] = relationship("Domain", remote_side=[id], foreign_keys=[server_domain_id])
 
@@ -101,7 +89,6 @@ class Domain(db.Model):
     )
     download_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id", ondelete="SET NULL"), default=None)
     download_domain: Mapped[Domain | None] = relationship("Domain", remote_side=[id], foreign_keys=[download_domain_id])
-    extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
     resolve_ip: Mapped[bool | None] = mapped_column(default=False)
 
     custom_proxies: Mapped[list[CustomProxy]] = relationship("CustomProxy", secondary=DomainCustomProxy, lazy="selectin")
@@ -111,6 +98,7 @@ class Domain(db.Model):
         uselist=False,
         cascade="all, delete-orphan",
     )
+    extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
 
     def is_reality(self) -> bool:
         return self.fake_mode == FakeMode.reality
@@ -118,18 +106,34 @@ class Domain(db.Model):
     def is_fake_tls(self) -> bool:
         return self.fake_mode == FakeMode.fake
 
+    def is_sub_link_only(self) -> bool:
+        return self.mode == DomainType.sub_link_only
+
+    def usable_server_domain(self) -> Domain | None:
+        """Upstream hostname used as client ``server``: valid direct/relay only."""
+        sd = self.server_domain
+        if sd is None or sd.is_sub_link_only():
+            return None
+        if sd.mode not in (DomainType.direct, DomainType.relay):
+            return None
+        if sd.fake_mode != FakeMode.valid:
+            return None
+        return sd
+
     @property
     def custom_proxy_ids(self) -> list[int]:
         return [proxy.id for proxy in self.custom_proxies]
 
     @property
     def custom_proxy_slugs(self) -> list[str]:
-        return [proxy.slug for proxy in self.custom_proxies if proxy.slug]
+
+        return [proxy.slug for proxy in self.custom_proxies]
 
     def set_custom_proxies_by_slugs(self, slugs: Sequence[str] | None) -> None:
         from hiddifypanel.models.custom_proxy import CustomProxy
+        from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
-        wanted = [slug for slug in (slugs or []) if slug]
+        wanted = [slug for slug in (slugs or []) if slug and slug != REALITY_TERMINATION_SLUG]
         if not wanted:
             self.custom_proxies = []
             return
@@ -175,7 +179,6 @@ class Domain(db.Model):
             "mode": self.mode,
             "fake_mode": self.fake_mode,
             "alias": self.alias,
-            "sub_link_only": self.sub_link_only,
             "child_unique_id": self.child.unique_id if self.child else "",
             "cdn_ip": self.cdn_ip,
             "servernames": self.servernames,
@@ -194,21 +197,18 @@ class Domain(db.Model):
             data["internal_port_tuic"] = self.internal_port_tuic
             data["internal_port_naive"] = self.internal_port_naive
             data["internal_port_special"] = self.internal_port_special
-            data["internal_port_dnstt"] = self.internal_port_dnstt
             data["need_valid_ssl"] = self.need_valid_ssl
 
         return data
 
     def get_server(self):
-        if self.server_domain_id:
-            return self.server_domain.domain
+        if sd := self.usable_server_domain():
+            return sd.domain
         if cdn_ip := self.auto_cdn_ip():
-            return cdn_ip[0]
+            selected = cdn_ip[0] if isinstance(cdn_ip, (tuple, list)) else cdn_ip
+            return selected
         if self.fake_mode != FakeMode.valid:
-            from hiddifypanel import hutils
-
-            return str(hutils.proxy.shared.random_or_none(hutils.network.get_ips()))
-
+            return None
         return self.domain
 
     @staticmethod
@@ -224,7 +224,7 @@ class Domain(db.Model):
     def auto_cdn_ip(self):
         from hiddifypanel import hutils
 
-        if self.cdn_ip.strip():
+        if (self.cdn_ip or "").strip():
             return hutils.network.auto_ip_selector.get_clean_ip(self.cdn_ip)
         return None
 
@@ -237,8 +237,6 @@ class Domain(db.Model):
             DomainType.cdn,
             DomainType.worker,
             DomainType.relay,
-            DomainType.auto_cdn_ip,
-            DomainType.old_xtls_direct,
             DomainType.sub_link_only,
         ]
 
@@ -270,12 +268,6 @@ class Domain(db.Model):
         return int(hconfig(ConfigEnum.hysteria_port, self.child_id)) + self.port_index
 
     @property
-    def internal_port_dnstt(self):
-        if self.mode not in [DomainType.dnstt]:
-            return 0
-        return 5400 + self.port_index
-
-    @property
     def internal_port_tuic(self):
         if self.fake_mode == FakeMode.reality:
             return 0
@@ -296,19 +288,23 @@ class Domain(db.Model):
         return int(hconfig(ConfigEnum.special_port, self.child_id)) + self.port_index
 
     @classmethod
-    def by_mode(cls, mode: DomainType) -> list["Domain"]:
+    def by_mode(cls, mode: DomainType) -> list[Domain]:
         domains = Domain.query.filter(Domain.mode == mode).all()
         if domains:
             return [d.domain for d in domains]
         return []
 
     @classmethod
-    def modes_and_domains(cls) -> dict[DomainType, list["Domain"]]:
+    def modes_and_domains(cls) -> dict[DomainType, list[Domain]]:
         return {mode: cls.by_mode(mode) for mode in DomainType}
 
     @classmethod
-    def by_domain(cls, domain: str) -> "Domain | None":
+    def by_domain(cls, domain: str) -> Domain | None:
         return Domain.query.filter(Domain.domain == domain).first()
+
+    @classmethod
+    def child_has_sub_link_only(cls, child_id: int) -> bool:
+        return cls.query.filter(cls.child_id == child_id, cls.mode == DomainType.sub_link_only).first() is not None
 
     @classmethod
     def get_panel_link(cls, child_id: int | None = None) -> str | None:
@@ -321,8 +317,6 @@ class Domain(db.Model):
                     DomainType.cdn,
                     DomainType.worker,
                     DomainType.relay,
-                    DomainType.auto_cdn_ip,
-                    DomainType.old_xtls_direct,
                     DomainType.sub_link_only,
                 ]
             ),
@@ -334,7 +328,7 @@ class Domain(db.Model):
         return domains[0].domain
 
     @classmethod
-    def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> list["Domain"]:
+    def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> list[Domain]:
         from hiddifypanel import hutils
 
         domains = []
@@ -370,11 +364,19 @@ class Domain(db.Model):
             db.session.add(dbdomain)
         dbdomain.child_id = child_id
 
-        dbdomain.mode = domain["mode"]
-        if str(domain.get("sub_link_only", False)).lower() == "true":
-            dbdomain.mode = DomainType.sub_link_only
-        if domain.get("fake_mode") is not None:
-            dbdomain.fake_mode = domain["fake_mode"]
+        mode = domain["mode"]
+        fake_mode = domain.get("fake_mode")
+        mode_value = str(getattr(mode, "value", mode) or "")
+        if mode_value == "old_xtls_direct":
+            mode = DomainType.direct
+        elif mode_value == "auto_cdn_ip":
+            mode = DomainType.cdn
+        elif mode_value == "special":
+            mode = DomainType.direct
+            fake_mode = FakeMode.reality
+        dbdomain.mode = mode
+        if fake_mode is not None:
+            dbdomain.fake_mode = fake_mode
         if "custom_proxy_slugs" in domain:
             raw_slugs = domain["custom_proxy_slugs"]
             slugs = [str(slug) for slug in raw_slugs] if isinstance(raw_slugs, list) else []

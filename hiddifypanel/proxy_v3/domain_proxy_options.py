@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from hiddifypanel.models import CustomProxy, CustomProxyMode, DomainType, FakeMode
 
-from .domain_mode_filter import expand_domain_mode_tokens, proxy_buckets_for_domain
+from .domain_mode_filter import domain_modes_use_reality, expand_domain_mode_tokens, proxy_buckets_for_domain
 
 REALITY_TERMINATION_SLUG = "xray-reality-termination"
 
@@ -54,22 +54,19 @@ def list_domain_proxy_options(
     mode: DomainType,
     fake_mode: FakeMode,
 ) -> list[dict]:
-    if fake_mode == FakeMode.reality:
-        proxy = CustomProxy.query.filter(
-            CustomProxy.enable == True,
-            CustomProxy.child_id == child_id,
-            CustomProxy.slug == REALITY_TERMINATION_SLUG,
-        ).first()
-        return [_proxy_payload(proxy)] if proxy and proxy.enable else []
-
     buckets = set(proxy_buckets_for_domain(mode, fake_mode))
     rows: list[CustomProxy] = []
     for proxy in CustomProxy.query.filter(
         CustomProxy.enable == True,
         CustomProxy.child_id == child_id,
     ).all():
+        if not proxy.enable or proxy.slug == REALITY_TERMINATION_SLUG:
+            continue
+        if fake_mode == FakeMode.reality:
+            if proxy.mode != CustomProxyMode.domains_l7_gateway or not domain_modes_use_reality(proxy.domain_modes):
+                continue
         proxy_buckets = expand_domain_mode_tokens(proxy.domain_modes)
-        if proxy.enable and buckets & proxy_buckets:
+        if buckets & proxy_buckets:
             rows.append(proxy)
 
     rows.sort(key=_proxy_sort_key)

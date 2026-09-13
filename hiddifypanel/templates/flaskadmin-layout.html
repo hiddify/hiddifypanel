@@ -24,6 +24,11 @@
     .breadcrumb {
         display: none;
     }
+
+    #domain-advanced>.card-header {
+        cursor: pointer;
+        user-select: none;
+    }
 </style>
 {% endblock %}
 
@@ -59,7 +64,7 @@
 
 <script src="{{ static_url_for( filename='plugins/bootstrap4-editable/js/bootstrap-editable.min.js' ) }}"></script>
 <script>
-    const CDN_MODES = new Set(['cdn', 'auto_cdn_ip', 'worker']);
+    const CDN_MODES = new Set(['cdn', 'worker']);
     const PROXY_OPTIONS_URL = "{{ hurl_for('admin.Actions:domain_proxy_options') }}";
     const PROXY_GROUP_LABELS = {
         sni_gateway: `{{_("domain.custom_proxy.group.sni_gateway")}}`,
@@ -71,10 +76,6 @@
     const PROXY_GROUP_ORDER = ['sni_gateway', 'dns_gateway', 'ip_based', 'l7_gateway', 'other'];
     const SNI_L7_MUTEX_MSG = `{{_("domain.custom_proxy.sni_l7_mutex")}}`;
     const SNI_SINGLE_ONLY_MSG = `{{_("domain.custom_proxy.sni_single_only")}}`;
-
-    function isRealityFakeMode() {
-        return currentFakeMode() === 'reality';
-    }
 
     function customProxySelectEl() {
         return document.getElementById("custom_proxies");
@@ -253,9 +254,6 @@
         });
 
         let nextValues = previous.filter((value) => optionValueExists(proxyEl, value));
-        if (isRealityFakeMode() && proxies.length === 1) {
-            nextValues = [String(proxies[0].id)];
-        }
         // Drop invalid combos from restored selection.
         const byId = {};
         Array.from(proxyEl.options).forEach((opt) => {
@@ -285,7 +283,7 @@
         const proxyEl = customProxySelectEl();
         if (!proxyEl) return;
         const selected = getCustomProxySelectedIds();
-        const mode = isSubLinkOnly() ? 'sub_link_only' : currentMode();
+        const mode = currentMode();
         const fakeMode = currentFakeMode();
         const url = `${PROXY_OPTIONS_URL}?mode=${encodeURIComponent(mode)}&fake_mode=${encodeURIComponent(fakeMode)}`;
         try {
@@ -308,7 +306,7 @@
     }
 
     function isSubLinkOnly() {
-        return $("#sub_link_only").is(':checked') || currentMode() === 'sub_link_only';
+        return currentMode() === 'sub_link_only';
     }
 
     function syncFakeModeConstraints() {
@@ -331,7 +329,7 @@
         if ($("#domain").length > 0) {
             var selectElement = document.getElementById("mode");
             var groups = [
-                { label: `{{_("Direct")}}`, options: ["direct", "dnstt"] },
+                { label: `{{_("Direct")}}`, options: ["direct"] },
                 { label: `{{_("Panel Link")}}`, options: ["sub_link_only"] },
                 { label: `{{_("Bridge Servers")}}`, options: ["cdn", "worker", "relay"] },
             ];
@@ -366,7 +364,7 @@
 
             const fakeMode = currentFakeMode();
             const mode = currentMode();
-            const hideShowDomains = mode === 'dnstt' || fakeMode === 'fake' || fakeMode === 'reality';
+            const hideShowDomains = fakeMode === 'fake' || fakeMode === 'reality';
             if (hideShowDomains) {
                 $("#show_domains").parent().hide();
             } else {
@@ -374,7 +372,6 @@
             }
             $("#custom_proxies").parent().show();
             $("#server_domain").parent().hide();
-            $("#sub_link_only").parent().parent().hide();
             if (mode == "sub_link_only" || isSubLinkOnly()) {
                 $("#cdn_ip").parent().hide();
                 $("#cdn_ip").val("");
@@ -383,19 +380,16 @@
                 $("#server_domain").parent().hide();
                 $("#resolve_ip").parent().hide();
                 $("#servernames").parent().hide();
+                $("#ech").closest(".form-group").hide();
+                $("#extra_params").closest(".form-group").hide();
                 $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`);
                 $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`);
                 $("#download_domain").parent().hide();
-            } else if (mode == "dnstt") {
-                $("#resolve_ip").parent().hide();
-                $("#servernames").parent().hide();
-                $("#download_domain").parent().hide();
-                $("#cdn_ip").parent().hide();
-                // $("#extra_params").parent().show();
             } else {
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();
                 $("#resolve_ip").parent().show();
+                $("#extra_params").closest(".form-group").show();
 
                 if (mode == 'direct') {
                     $("#cdn_ip").parent().hide();
@@ -418,7 +412,7 @@
                     $("#domain").parent().find(".help-block").html(`{{_('config.reality_fallback_domain.description')+("<a target='_blank' href='" +hurl_for('admin.Actions:get_some_random_reality_friendly_domain',test_domain=domain)+"'>"+_('Example Domains')+"</a>")}}`);
                     $("#download_domain").parent().hide();
                 } else {
-                    if (mode == 'cdn' || mode == 'auto_cdn_ip') {
+                    if (mode == 'cdn') {
                         $("#servernames").parent().show();
                         $("#servernames").parent().find(".control-label").html(`{{_('domain.domain_fronting.label')}}`);
                         $("#servernames").parent().find(".help-block").html(`{{_('domain.domain_fronting.description')}}`);
@@ -431,12 +425,55 @@
                 {% endautoescape %}
             }
             refreshProxyOptions();
+            syncDomainAdvancedAccordion();
         }
-        $("#sub_link_only").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
         $("#mode").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
         $("#fake_mode").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
+        wrapDomainAdvancedFields();
         hide_domain_elements();
         ConvertNumberToPersion(document.getElementById('fa_modal_window'));
+    }
+
+    function wrapDomainAdvancedFields() {
+        if (!$("#domain").length || document.getElementById("domain-advanced")) return;
+        const names = ["server_domain", "resolve_ip", "cdn_ip", "ech", "download_domain", "extra_params"];
+        const rows = [];
+        names.forEach((name) => {
+            const el = document.getElementById(name);
+            const row = el ? (el.closest(".form-group") || el.parentElement) : null;
+            if (row) rows.push(row);
+        });
+        if (!rows.length) return;
+        const wrap = document.createElement("div");
+        wrap.className = "card collapsed-card mt-3";
+        wrap.id = "domain-advanced";
+        wrap.innerHTML = `
+            <div class="card-header">
+                <h3 class="card-title">{{ _("config.advanced.label") }}</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="card-body"></div>
+        `;
+        rows[0].parentNode.insertBefore(wrap, rows[0]);
+        const body = wrap.querySelector(".card-body");
+        rows.forEach((row) => body.appendChild(row));
+        const header = wrap.querySelector(".card-header");
+        header.addEventListener("click", function (event) {
+            if (event.target.closest("[data-card-widget='collapse']")) return;
+            const toggle = header.querySelector("[data-card-widget='collapse']");
+            if (toggle) toggle.click();
+        });
+    }
+
+    function syncDomainAdvancedAccordion() {
+        const card = document.getElementById("domain-advanced");
+        if (!card) return;
+        const visible = $(card).children(".card-body").children().filter(function () {
+            return $(this).css("display") !== "none";
+        }).length;
+        $(card).toggle(visible > 0);
     }
 
     update_hiddify_ui();

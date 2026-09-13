@@ -228,6 +228,7 @@
   "The name shown in the configs for this domain.": "The name that will be shown in the Configs for this Domain.",
   "This can be used for giving your users a permanent non blockable links.": "This can be used for giving your Users a permanent non Blockable Links.",
   "This domain does not exist in the panel!": "This Domain does not exist in the Panel !",
+  "This domain %(domain_name)s is invalid": "This domain %(domain_name)s is invalid",
   "Today Usage": "Today",
   "Too many Connected IPs": "Too Many Connected IPs",
   "Total Usage": "Total Usage",
@@ -505,6 +506,7 @@
         "domains_l7_gateway": "Domain L7 gateway",
         "domains_single_public_port": "Multi-domain static port",
         "domains_sni_gateway": "Domain SNI gateway",
+        "no_inbound": "No inbound",
         "ip": "IP-based"
       },
       "modeSettings": "Mode & routing",
@@ -1156,6 +1158,10 @@
       "description": "It will Disable IPv6",
       "label": "ℹ️ Only IPv4"
     },
+    "max_proxy_ips_per_version": {
+      "description": "Maximum number of IPv4 and IPv6 addresses used to generate proxies for each domain (each version is capped separately).",
+      "label": "Max Proxy IPs Per Version"
+    },
     "package_mode": {
       "description": "Specify whether you want Released Package or Beta one",
       "label": "🔄 Package Update Mode"
@@ -1684,8 +1690,8 @@
         "sni_gateway": "SNI gateway"
       },
       "label": "Custom proxies",
-      "reality_only": "REALITY domains must use the REALITY Termination proxy",
-      "reality_required": "REALITY domains require the REALITY Termination proxy",
+      "reality_only": "REALITY domains can only use L7 domain-gateway proxies whose domain modes include REALITY. Leave empty to use every matching REALITY L7 proxy.",
+      "reality_required": "REALITY domains can only use L7 domain-gateway proxies whose domain modes include REALITY",
       "sni_l7_mutex": "SNI gateway and L7 gateway cannot be selected together for one domain",
       "sni_single_only": "Only one SNI gateway can be selected for a domain"
     },
@@ -1717,8 +1723,9 @@
       "label": "🔢 Resolve IP"
     },
     "server_domain": {
-      "description": "Upstream server domain used for this entry",
-      "label": "Server Domain"
+      "description": "Upstream server domain used for this entry. Must be a valid Direct or Relay domain.",
+      "label": "Server Domain",
+      "must_be_valid_direct_or_relay": "Server Domain must be a valid Direct or Relay domain"
     },
     "show_domains_description": "For users visit the user area with this domain, Specify they can see the proxies of which domains.\n<br>\nSuggestion: For a domain with an unfiltered IP and different from the others, select all other domains (except the current domain). As a result, since the use of this IP is not for proxy and it is a simple website, this domain and IP will never be blocked and your users can easily update new profiles.",
     "tls_status": {

@@ -9,10 +9,10 @@ from wtforms.validators import Regexp, ValidationError
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.hutils.flask import hurl_for
-from hiddifypanel.models import *
+from hiddifypanel.models import ApplyMode, Child, ConfigEnum, CustomProxy, CustomProxyMode, Domain, DomainType, FakeMode, Role, get_hconfigs, hconfig, set_hconfig
 from hiddifypanel.panel import custom_widgets, hiddify
 from hiddifypanel.panel.run_commander import Command, commander
-from hiddifypanel.proxy_v3.domain_mode_filter import expand_domain_mode_tokens, proxy_buckets_for_domain
+from hiddifypanel.proxy_v3.domain_mode_filter import domain_modes_use_reality, expand_domain_mode_tokens, proxy_buckets_for_domain
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
 from .adminlte import AdminLTEModelView
@@ -41,7 +41,6 @@ class DomainAdmin(AdminLTEModelView):
         show_domains=_("domain.show_domains_description"),
         alias=_("The name shown in the configs for this domain."),
         servernames=_("config.reality_server_names.description"),
-        sub_link_only=_("This can be used for giving your users a permanent non blockable links."),
         grpc=_("grpc-proxy.description"),
         download_domain=_("download_domain.description"),
         resolve_ip=_("domain.resolveip.description"),
@@ -58,20 +57,31 @@ class DomainAdmin(AdminLTEModelView):
         "mode": {"enum": DomainType},
         "fake_mode": {"enum": FakeMode},
         "show_domains": {
-            "query_factory": lambda: Domain.query.filter(Domain.sub_link_only == False).order_by(Domain.child_id, Domain.domain),
+            "query_factory": lambda: Domain.query.filter(Domain.mode != DomainType.sub_link_only).order_by(Domain.child_id, Domain.domain),
+            "get_label": lambda d: DomainAdmin._domain_option_label(d),
+        },
+        "download_domain": {
+            "query_factory": lambda: Domain.query.filter(Domain.mode != DomainType.sub_link_only, Domain.child_id == Child.current().id).order_by(Domain.domain),
             "get_label": lambda d: DomainAdmin._domain_option_label(d),
         },
         "custom_proxies": {
             "query_factory": lambda: CustomProxy.query.filter(
-                CustomProxy.enable == True,
+                CustomProxy.enable,
                 CustomProxy.child_id == Child.current().id,
+                CustomProxy.slug != REALITY_TERMINATION_SLUG,
             ).order_by(CustomProxy.sort_order, CustomProxy.name),
             "get_label": lambda p: p.name,
         },
         "domain": {"validators": [Regexp(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$", message=__("Should be a valid domain"))]},
         "cdn_ip": {"validators": [Regexp(r"(((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d).){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d))|^([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,}))[ \t\n,;]*\w{3}[ \t\n,;]*)*", message=__("Invalid IP or domain"))]},
         "servernames": {"validators": [Regexp(r"^([\w-]+\.)+[\w-]+(,\s*([\w-]+\.)+[\w-]+)*$", re.IGNORECASE, _("Invalid REALITY hostnames"))]},
-        "server_domain": {"query_factory": lambda: Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.valid)},
+        "server_domain": {
+            "query_factory": lambda: Domain.query.filter(
+                Domain.child_id == Child.current().id,
+                Domain.mode.in_([DomainType.direct, DomainType.relay]),
+                Domain.fake_mode == FakeMode.valid,
+            )
+        },
     }
     column_list = ["domain", "alias", "mode", "tls_status", "custom_proxies", "show_domains"]
     column_editable_list = ["alias"]
@@ -79,7 +89,6 @@ class DomainAdmin(AdminLTEModelView):
     column_sortable_list = ["domain", "alias", "mode"]
     column_labels = {
         "domain": _("domain.domain"),
-        "sub_link_only": _("Only for sublink?"),
         "mode": _("domain.mode"),
         "fake_mode": _("domain.fake_mode.label"),
         "cdn_ip": _("config.cdn_forced_host.label"),
@@ -99,17 +108,16 @@ class DomainAdmin(AdminLTEModelView):
     form_columns = [
         "mode",
         "fake_mode",
-        "sub_link_only",
         "domain",
         "alias",
         "custom_proxies",
-        "servernames",
-        "server_domain",
-        "cdn_ip",
+        "show_domains",
         "resolve_ip",
         "ech",
-        "show_domains",
         "download_domain",
+        # "servernames",
+        "server_domain",
+        "cdn_ip",
         "extra_params",
     ]
 
@@ -124,23 +132,29 @@ class DomainAdmin(AdminLTEModelView):
         return f"Node[{child_name}] {alias} [{d.domain}] {mode}({fake_mode})"
 
     def _domain_admin_link(view, context, model, name):
-        server = model.get_server()
-        domain_tag = model.domain
-        if domain_tag != server:
-            domain_tag = f"{domain_tag} → {server}"
-        domain_ip = f'<a data-domain="{domain_tag}" href="{hurl_for("admin.Actions:get_domain_ip", domain=server)}" class="domain-ip-link"><i class="fa-solid fa-dharmachakra"></i></a>'
+        server = model.get_server() or model.domain
+        domain_tag = model.domain or ""
+        if server and domain_tag != server:
+            domain_tag = f"{domain_tag} → {server}" if domain_tag else str(server)
+        if server:
+            domain_ip = f'<a data-domain="{escape(domain_tag)}" href="{hurl_for("admin.Actions:get_domain_ip", domain=server)}" class="domain-ip-link"><i class="fa-solid fa-dharmachakra"></i></a>'
+        else:
+            domain_ip = ""
         if hiddify.is_fake_domain(model) or not model.is_accessible():
             badge = model.fake_mode.value if model.fake_mode else ""
-            return Markup(f"<span class='badge'>{model.domain or badge}</span>" + domain_ip)
+            return Markup(f"<span class='badge'>{escape(model.domain or badge)}</span>" + domain_ip)
         d = model.domain
         if "*" in d:
             d = d.replace("*", hutils.random.get_random_string(5, 15))
         admin_link = hiddify.get_account_panel_link(g.account, d)
-        return Markup(f'<div class="btn-group"><a href="{admin_link}" class="btn btn-xs btn-secondary">' + _("admin link") + f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{model.domain}</a></div>' + domain_ip)
+        return Markup(
+            f'<div class="btn-group"><a href="{admin_link}" class="btn btn-xs btn-secondary">' + _("admin link") + f'</a><a href="{admin_link}" class="btn btn-xs btn-info ltr" target="_blank">{escape(model.domain)}</a></div>' + domain_ip
+        )
 
     def _domain_ip(view, context, model, name):
         myips = set(hutils.network.get_ips())
-        dips = hutils.network.get_domain_ips_cached(model.get_server())
+        target = model.get_server() or model.domain
+        dips = hutils.network.get_domain_ips_cached(target) if target else set()
         all_res = ""
         for dip in dips:
             if dip in myips and model.mode in [DomainType.direct, DomainType.sub_link_only]:
@@ -150,7 +164,7 @@ class DomainAdmin(AdminLTEModelView):
             else:
                 badge_type = "danger"
             res = f'<span class="badge badge-{badge_type}">{dip}</span>'
-            if model.sub_link_only:
+            if model.is_sub_link_only():
                 res += f'<span class="badge badge-success">{_("SubLink")}</span>'
             all_res += res
         return Markup(all_res)
@@ -167,7 +181,8 @@ class DomainAdmin(AdminLTEModelView):
         return f"{model.mode.value} ({model.fake_mode.value})"
 
     def _custom_proxies_formater(view, context, model, name):
-        if not model.custom_proxies:
+        proxies = [proxy for proxy in (model.custom_proxies or [])]
+        if not proxies:
             return ""
         links = []
         for proxy in model.custom_proxies:
@@ -219,17 +234,16 @@ class DomainAdmin(AdminLTEModelView):
         model.mode = DomainType(model.mode)
         if model.server_domain:
             model.cdn_ip = ""
+            sd = model.server_domain
+            if sd.mode not in (DomainType.direct, DomainType.relay) or sd.fake_mode != FakeMode.valid or sd.is_sub_link_only():
+                raise ValidationError(_("domain.server_domain.must_be_valid_direct_or_relay"))
 
         if model.download_domain and model.domain == model.download_domain.domain:
             model.download_domain_id = None
             model.download_domain = None
 
-        if model.sub_link_only or model.mode == DomainType.sub_link_only:
-            model.sub_link_only = True
-            model.mode = DomainType.sub_link_only
+        if model.mode == DomainType.sub_link_only:
             model.fake_mode = FakeMode.valid
-        elif model.mode == DomainType.sub_link_only:
-            model.mode = DomainType.direct
 
         if model.mode.is_cdn() or model.mode == DomainType.worker:
             if model.fake_mode != FakeMode.valid:
@@ -246,26 +260,22 @@ class DomainAdmin(AdminLTEModelView):
         if not server_ips:
             raise ValidationError(_("Couldn't find your ip addresses"))
 
-        if "*" in model.domain and model.mode not in [DomainType.cdn, DomainType.auto_cdn_ip]:
+        if "*" in model.domain and model.mode != DomainType.cdn:
             raise ValidationError(_("Domain can not be resolved! there is a problem in your domain"))
 
         if model.mode == DomainType.relay and model.fake_mode != FakeMode.valid and not (model.cdn_ip or "").strip():
             raise ValidationError(_("Relay domains with non-valid fake mode require an IP address"))
 
+        if model.custom_proxies:
+            model.custom_proxies = [p for p in model.custom_proxies if p and p.slug != REALITY_TERMINATION_SLUG]
+
         if model.fake_mode == FakeMode.reality:
             selected = list(model.custom_proxies or [])
-            if not selected:
-                termination = CustomProxy.query.filter(
-                    CustomProxy.child_id == Child.current().id,
-                    CustomProxy.slug == REALITY_TERMINATION_SLUG,
-                    CustomProxy.enable == True,
-                ).first()
-                if termination:
-                    model.set_custom_proxies_by_slugs([REALITY_TERMINATION_SLUG])
-                else:
-                    raise ValidationError(_("domain.custom_proxy.reality_required"))
-            elif any(p.slug != REALITY_TERMINATION_SLUG for p in selected):
-                raise ValidationError(_("domain.custom_proxy.reality_only"))
+            for proxy in selected:
+                if proxy.mode != CustomProxyMode.domains_l7_gateway or not domain_modes_use_reality(proxy.domain_modes):
+                    raise ValidationError(_("domain.custom_proxy.reality_only"))
+            buckets = set(proxy_buckets_for_domain(model.mode, model.fake_mode))
+            model.custom_proxies = [p for p in selected if buckets & expand_domain_mode_tokens(p.domain_modes)]
         elif model.custom_proxies:
             sni_count = sum(1 for p in model.custom_proxies if p and p.mode == CustomProxyMode.domains_sni_gateway)
             has_l7 = any(p and p.mode == CustomProxyMode.domains_l7_gateway for p in model.custom_proxies)
@@ -304,13 +314,12 @@ class DomainAdmin(AdminLTEModelView):
             except Exception:
                 raise ValidationError(_("Error in auto cdn format"))
 
+        model.show_domains = [d for d in (model.show_domains or []) if not d.is_sub_link_only()]
+
         if len(model.show_domains) == Domain.query.count():
             model.show_domains = []
 
-        if model.mode == DomainType.old_xtls_direct and not hconfig(ConfigEnum.xtls_enable):
-            set_hconfig(ConfigEnum.xtls_enable, True)
-            hutils.proxy.get_proxies().invalidate_all()
-        elif model.fake_mode == FakeMode.reality:
+        if model.fake_mode == FakeMode.reality:
             self._validate_reality_settings(model, server_ips)
 
         old_db_domain = Domain.by_domain(model.domain)
@@ -320,7 +329,7 @@ class DomainAdmin(AdminLTEModelView):
     def _update_cloudflare(self, model, ipv4_list, ipv6_list):
         if hconfig(ConfigEnum.cloudflare) and model.fake_mode == FakeMode.valid and model.mode not in [DomainType.relay]:
             try:
-                proxied = model.mode in [DomainType.cdn, DomainType.auto_cdn_ip]
+                proxied = model.mode == DomainType.cdn
                 if ipv4_list:
                     hutils.network.cf_api.add_or_update_dns_record(model.domain, str(ipv4_list[0]), "A", proxied=proxied)
                 if ipv6_list:
@@ -333,7 +342,7 @@ class DomainAdmin(AdminLTEModelView):
     def _validate_reality_settings(self, model, server_ips):
         if not hconfig(ConfigEnum.reality_enable):
             set_hconfig(ConfigEnum.reality_enable, True)
-            hutils.proxy.get_proxies().invalidate_all()
+            hutils.proxy.get_proxies.invalidate_all()
 
         model.servernames = (model.servernames or model.domain).lower().strip()
         domains_to_check = set()
@@ -381,9 +390,9 @@ class DomainAdmin(AdminLTEModelView):
     def _validate_domain_ips(self, model, server_ips):
         if (model.domain.startswith("*") or not model.domain) and model.mode not in [DomainType.direct]:
             return True
-        if model.fake_mode in (FakeMode.fake, FakeMode.reality):
+        if model.fake_mode in (FakeMode.fake, FakeMode.reality, FakeMode.dns):
             return True
-        if model.mode in [DomainType.relay, DomainType.dnstt]:
+        if model.mode in [DomainType.relay]:
             return True
         try:
             dips = hutils.network.get_domain_ips(model.domain)
@@ -401,7 +410,7 @@ class DomainAdmin(AdminLTEModelView):
         if not domain_ip_matches_server and model.mode in [DomainType.direct]:
             raise ValidationError(__("Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode", server_ip=server_ips_str, domain_ip=dips_str))
 
-        if domain_ip_matches_server and model.mode in [DomainType.cdn, DomainType.relay, DomainType.auto_cdn_ip]:
+        if domain_ip_matches_server and model.mode in [DomainType.cdn, DomainType.relay]:
             raise ValidationError(__("In CDN mode, Domain IP=%(domain_ip)s should be different to your ip=%(server_ip)s", server_ip=server_ips_str, domain_ip=dips_str))
 
         return True

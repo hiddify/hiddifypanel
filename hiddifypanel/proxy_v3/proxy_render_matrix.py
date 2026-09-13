@@ -4,11 +4,12 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from hiddifypanel import hutils
-from hiddifypanel.models import Domain, get_hconfigs
+from hiddifypanel.models import Domain, DomainType, get_hconfigs
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
+from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
-from .custom_proxy_ports import default_domain_modes_for_mode, mode_value, ports_dict_for_proxy_row
+from .custom_proxy_ports import default_domain_modes_for_mode, ports_dict_for_proxy_row
 from .domain_mode_filter import domain_matches_modes
 
 
@@ -27,15 +28,12 @@ class ProxyRenderCache:
         cache = cls(child_id=child_id)
         hconfigs = get_hconfigs(child_id)
         for domain_db in Domain.query.filter(Domain.child_id == child_id).order_by(Domain.id).all():
-            if domain_db.sub_link_only:
+            if domain_db.is_sub_link_only():
                 continue
             cache.domains.append(_domain_dict_for_proxy(domain_db, hconfigs))
 
         rows = CustomProxy.query.filter(CustomProxy.child_id == child_id).order_by(CustomProxy.sort_order, CustomProxy.id).all()
-        domain_rows = [
-            d
-            for d in Domain.query.filter(Domain.child_id == child_id, Domain.sub_link_only == False).all()  # noqa: E712
-        ]
+        domain_rows = [d for d in Domain.query.filter(Domain.child_id == child_id, Domain.mode != DomainType.sub_link_only).all()]
         for row in rows:
             from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import effective_field
 
@@ -83,10 +81,14 @@ def _domain_dict_for_proxy(domain_db: Domain, hconfigs: dict) -> dict[str, Any]:
 
 
 def _domains_for_proxy_row(proxy: CustomProxy, all_domains: list[Domain]) -> list[Domain]:
-    if mode_value(proxy.mode) == CustomProxyMode.domains_sni_gateway.value:
+    if proxy.mode == CustomProxyMode.no_inbound:
+        return []
+    if proxy.slug == REALITY_TERMINATION_SLUG:
+        return [domain for domain in all_domains if domain.is_reality()]
+    if proxy.mode == CustomProxyMode.domains_sni_gateway:
         proxy_id = int(proxy.id)
         return [domain for domain in all_domains if proxy_id in domain.custom_proxy_ids]
-    if mode_value(proxy.mode) == CustomProxyMode.ip.value:
+    if proxy.mode == CustomProxyMode.ip:
         buckets = [m for m in (proxy.domain_modes or []) if m in ("direct", "relay")]
         if not buckets:
             buckets = ["direct", "relay"]
@@ -108,8 +110,8 @@ def client_domain_vars_for_proxy(child_id: int, proxy_id: int) -> list[DomainIPV
         domain
         for domain in Domain.query.filter(
             Domain.child_id == child_id,
-            Domain.sub_link_only == False,  # noqa: E712
+            Domain.mode != DomainType.sub_link_only,
         ).all()
-        if not domain.custom_proxy_ids or proxy_id in domain.custom_proxy_ids
+        if proxy.slug == REALITY_TERMINATION_SLUG or not domain.custom_proxy_ids or proxy_id in domain.custom_proxy_ids
     ]
     return [DomainIPVar.from_domain(domain_db) for domain_db in _domains_for_proxy_row(proxy, domain_rows)]

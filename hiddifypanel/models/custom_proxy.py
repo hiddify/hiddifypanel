@@ -104,9 +104,14 @@ class CustomProxyMode(JinjaEnum):
     domains_auto_public_ports = auto()
     domains_single_public_port = auto()
     ip = auto()
+    no_inbound = auto()
 
     def template_domain_binding(self) -> str:
-        return "ip" if self == CustomProxyMode.ip else "domain"
+        if self == CustomProxyMode.ip:
+            return "ip"
+        if self == CustomProxyMode.no_inbound:
+            return "none"
+        return "domain"
 
     def direct_port_access(self) -> bool:
         return self in [

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Iterable, Protocol
+from collections.abc import Iterable
+from typing import Any, Protocol
 
 DOMAIN_MODE_DIRECT_VALID = "direct-valid"
 DOMAIN_MODE_DIRECT_FAKE = "direct-fake"
@@ -37,8 +38,8 @@ VALID_FAKE_DIRECT_RELAY_DOMAIN_MODES = (
 REALITY_DIRECT_RELAY_DOMAIN_MODES = (DOMAIN_MODE_DIRECT_REALITY, DOMAIN_MODE_RELAY_REALITY)
 DNS_DIRECT_DOMAIN_MODES = (DOMAIN_MODE_DIRECT_DNS,)
 
-_CDN_TYPES = frozenset({"cdn", "auto_cdn_ip", "worker"})
-_DIRECT_TYPES = frozenset({"direct", "old_xtls_direct", "dnstt", "sub_link_only"})
+_CDN_TYPES = frozenset({"cdn", "worker"})
+_DIRECT_TYPES = frozenset({"direct", "sub_link_only"})
 
 _LEGACY_EXPAND: dict[str, tuple[str, ...]] = {
     "direct": (DOMAIN_MODE_DIRECT_VALID,),
@@ -110,14 +111,14 @@ def transport_tls_supports_reality(transport: str | None, tls_layer: str | None)
     """REALITY is only supported on gRPC, xHTTP H2, and raw HTTP with TLS."""
     transport_key = str(transport or "").strip().lower()
     layer = str(tls_layer or "").strip().lower()
+    if transport_key == "http":
+        return layer in _REALITY_TLS_LAYERS or layer == "tls_h1"
     if not transport_key or layer in _NO_REALITY_TLS_LAYERS:
         return False
     if transport_key == "grpc":
         return layer in _REALITY_TLS_LAYERS
     if transport_key == "xhttp":
         return layer == "tls_h2"
-    if transport_key == "http":
-        return layer in _REALITY_TLS_LAYERS
     return False
 
 
