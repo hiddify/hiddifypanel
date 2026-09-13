@@ -14,6 +14,6 @@ class SyncWithParentApi(MethodView):
         logger.info(f"Syncing panel with parent called by {g.node.unique_id}")
         if not hutils.node.child.sync_with_parent():
             logger.error("Sync with parent failed")
-            abort(400, _("child.sync-failed"))  # type: ignore
+            abort(400, _("child.sync-failed"))
         logger.success(f"Synced panel with parent {g.node.unique_id}")
         return {"status": 200, "msg": "ok"}

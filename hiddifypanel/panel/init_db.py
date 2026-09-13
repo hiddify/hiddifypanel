@@ -22,6 +22,21 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 141
 
 
+def _v141(child_id):
+    """MasterDNS payload encrypt key (used by dns_proxy/masterdns templates)."""
+
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
+    from hiddifypanel.proxy_v3.config_builder import jinja_render
+
+    sync_all(child_id)
+    cache.invalidate_all_cached_functions()
+    jinja_render._template_map_cache.clear()
+    jinja_render._jinja_env_cache.clear()
+
+    # def _v134(child_id):
+    # sync_builtin_presets(child_id)
+
+
 def _v140(child_id):
     set_hconfig(ConfigEnum.ssfaketls_enable, False)
     set_hconfig(ConfigEnum.dnstt_enable, False)
@@ -76,24 +91,9 @@ BEGIN
 END
     """
     db_execute(add_usage_proc, commit=True)
-
-
-def _v137(child_id):
-    """MasterDNS payload encrypt key (used by dns_proxy/masterdns templates)."""
     import secrets
 
     add_config_if_not_exist(ConfigEnum.master_dns_encrypt_key, secrets.token_hex(32))
-
-    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
-    from hiddifypanel.proxy_v3.config_builder import jinja_render
-
-    sync_all(child_id)
-    cache.invalidate_all_cached_functions()
-    jinja_render._template_map_cache.clear()
-    jinja_render._jinja_env_cache.clear()
-
-    # def _v134(child_id):
-    # sync_builtin_presets(child_id)
 
 
 def _v133(child_id):

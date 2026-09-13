@@ -107,7 +107,7 @@ def iter_proxy_v3_config_items(user, *, sublink_domain: str, user_agent: str, ch
 class AllConfigsAPI(MethodView):
     decorators = [login_required({Role.user})]
 
-    @app.output(list[ConfigSchema])  # type: ignore
+    @app.output(list[ConfigSchema])
     def get(self):
         def create_item(name, domain, type, protocol, transport, security, link):
             dto = ConfigSchema()
