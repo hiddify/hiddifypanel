@@ -16,12 +16,13 @@
     {% include '__TLS_SLUG__' %}
     {% include '__TRANSPORT_SLUG__' %}
 
-  {% if ctx.hconfig.vless_flow %}
-    {% set qp.flow=ctx.hconfig.vless_flow %}
-  {% endif %}
-
-  {% if ctx.hconfig.vless_encryption %}
-    {% set qp.encryption=ctx.hconfig.vless_encryption %}
+  {% if ctx.proxy.server_core == "xray" %}
+    {% if ctx.hconfig.vless_flow %}
+      {% set qp.flow=ctx.hconfig.vless_flow %}
+    {% endif %}
+    {% if ctx.hconfig.vless_encryption %}
+      {% set qp.encryption=ctx.hconfig.vless_encryption %}
+    {% endif %}
   {% endif %}
   {% include 'sublink/uri/final_link_maker' %}
 {% endfor %}

@@ -1,7 +1,9 @@
-{{skip("unsupported vless encryption") if ctx.platform.hiddify.version < "4.2.0" and hconfig.vless_encryption!="none"}}
+{{skip("unsupported vless encryption") if ctx.proxy.server_core == "xray" and ctx.platform.hiddify.version < "4.2.0" and ctx.hconfig.vless_encryption and ctx.hconfig.vless_encryption != "none"}}
 "type": "vless",
 "server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
-//"flow": "{{ ctx.hconfig.vless_flow }}",
-
+{% if ctx.proxy.server_core == "xray" %}
+"encryption": "{{ ctx.hconfig.vless_encryption }}",
+"flow": "{{ ctx.hconfig.vless_flow }}",
+{% endif %}

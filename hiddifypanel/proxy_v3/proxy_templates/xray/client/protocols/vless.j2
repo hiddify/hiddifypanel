@@ -5,8 +5,10 @@
     "port": {{ ctx.proxy.port }},
     "users": [{
       "id": "{{ ctx.user.uuid }}",
+      {% if ctx.proxy.server_core == "xray" %}
       "encryption": "{{ctx.hconfig.vless_encryption}}",
       "flow": "{{ ctx.hconfig.vless_flow }}",
+      {% endif %}
       "level": 8
     }]
   }]
