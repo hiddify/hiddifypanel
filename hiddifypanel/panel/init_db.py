@@ -1161,7 +1161,7 @@ def init_db():
 
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    set_hconfig(ConfigEnum.db_version, 135, commit=True)
+    # set_hconfig(ConfigEnum.db_version, 135, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

@@ -389,7 +389,9 @@ class Domain(db.Model):
         dbdomain.resolve_ip = domain.get("resolve_ip", False)
         dbdomain.extra_params = domain.get("extra_params", "")
         show_domains = domain.get("show_domains", [])
-        dbdomain.show_domains = Domain.query.filter(Domain.domain.in_(show_domains)).all()
+
+        dbdomain.show_domains = Domain.query.filter(Domain.domain.in_(show_domains)).all() if show_domains else []
+
         dl_domain = domain.get("download_domain")
         if dl_domain:
             dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()
