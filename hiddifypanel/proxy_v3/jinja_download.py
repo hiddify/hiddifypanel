@@ -18,8 +18,10 @@ from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 
 _CACHE_RE = re.compile(r"^(\d+)\s*([smhdSMHD])?$")
 _DEFAULT_TIMEOUT = 8
+_NEGATIVE_CACHE_TTL = 60 * 3  # 3 minutes
 _MAX_WORKERS = 8
-_REDIS_PREFIX = "h:jinja_download:"
+DOWNLOAD_CACHE_PREFIX = "h:jinja_download:"
+_REDIS_PREFIX = DOWNLOAD_CACHE_PREFIX
 _ALLOWED_METHODS = frozenset({"GET", "POST"})
 
 
@@ -79,6 +81,43 @@ def _normalize_json_data(data: Any) -> Any | None:
     return None
 
 
+def invalidate_download_cache() -> None:
+    """Delete ``download()`` / ``get_nodes_configs()`` Redis entries (separate from function-cache keys)."""
+    batch: list[Any] = []
+    try:
+        for key in redis_client.scan_iter(match=f"{DOWNLOAD_CACHE_PREFIX}*", count=500):
+            batch.append(key)
+            if len(batch) >= 500:
+                redis_client.delete(*batch)
+                batch.clear()
+        if batch:
+            redis_client.delete(*batch)
+    except Exception:
+        pass
+
+
+def _cache_get(key: str) -> tuple[bool, Any]:
+    try:
+        cached = redis_client.get(key)
+    except Exception:
+        return False, None
+    if cached is None:
+        return False, None
+    try:
+        return True, json.loads(cached)
+    except Exception:
+        return False, None
+
+
+def _cache_set(key: str, value: Any, ttl: int) -> None:
+    if ttl <= 0:
+        return
+    try:
+        redis_client.setex(key, ttl, json.dumps(value, ensure_ascii=False, default=str))
+    except Exception:
+        pass
+
+
 def _cache_key(
     content_type: str,
     user_agent: str,
@@ -130,12 +169,9 @@ def _fetch_url(
     json_data = _normalize_json_data(data)
     key = _cache_key(content_type, user_agent, url, extra_headers, method_name, json_data)
     if ttl > 0:
-        try:
-            cached = redis_client.get(key)
-            if cached is not None:
-                return json.loads(cached)
-        except Exception:
-            pass
+        hit, cached = _cache_get(key)
+        if hit:
+            return cached
 
     request_headers = {"User-Agent": user_agent, **extra_headers}
     try:
@@ -149,13 +185,11 @@ def _fetch_url(
         response.raise_for_status()
         parsed = _parse_body(content_type, response.text)
     except Exception:
+        if ttl > 0:
+            _cache_set(key, None, min(_NEGATIVE_CACHE_TTL, ttl))
         return None
 
-    if ttl > 0:
-        try:
-            redis_client.setex(key, ttl, json.dumps(parsed, ensure_ascii=False, default=str))
-        except Exception:
-            pass
+    _cache_set(key, parsed, ttl)
     return parsed
 
 

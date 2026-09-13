@@ -33,17 +33,13 @@ def get_context(context: Any) -> ClientContextVar | None:
     return None
 
 
-def _child_base_url(child: Child) -> str | None:
-    return child.node_base_url
-
-
 def _node_config_urls() -> list[str]:
-    children = Child.query.filter(Child.id != 0, Child.mode.in_([ChildMode.remote, ChildMode.virtual])).order_by(Child.id).all()
+    children = Child.query.filter(Child.id != 0, Child.mode == ChildMode.remote).order_by(Child.id).all()
     urls: list[str] = []
     for child in children:
-        base_url = _child_base_url(child)
+        base_url = (child.node_base_url or "").strip()
         if not base_url:
-            logger.debug(f"get_nodes_configs: skip child {child.name} (no panel link)")
+            logger.debug(f"get_nodes_configs: skip child {child.name} (no node_base_url)")
             continue
         urls.append(f"{base_url.rstrip('/')}/api/v2/child/client-configs/")
     return urls

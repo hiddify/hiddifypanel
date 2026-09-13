@@ -4,6 +4,7 @@ from loguru import logger
 
 from hiddifypanel import current_app as app
 from hiddifypanel import g
+from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
 
@@ -73,6 +74,7 @@ class RegisterApi(MethodView):
             logger.info("Setting panel to parent mode")
             set_hconfig(ConfigEnum.panel_mode, PanelMode.parent)
 
+        cache.invalidate_all_cached_functions()
         logger.info("Returning register output")
         try:
             return RegisterOutputSchema(

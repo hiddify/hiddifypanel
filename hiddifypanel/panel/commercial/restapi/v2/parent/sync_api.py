@@ -5,6 +5,7 @@ from loguru import logger
 from hiddifypanel import current_app as app
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
+from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, Domain, Proxy, User, bulk_register_configs
 from hiddifypanel.models.child import Child
@@ -57,6 +58,7 @@ class SyncApi(MethodView):
             logger.info("Commit changes to database")
             child.mark_node_to_parent()
             db.session.commit()
+            cache.invalidate_all_cached_functions()
         except Exception as err:
             with logger.contextualize(error=err):
                 logger.error("Error while syncing data")

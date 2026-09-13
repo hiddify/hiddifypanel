@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Protocol
 
 import redis
 from loguru import logger
-from redis_cache import RedisCache, chunks, compact_dump
+from redis_cache import RedisCache, compact_dump
 
 redis_client = redis.from_url(os.environ["REDIS_URI_MAIN"])
 # print(os.environ["REDIS_URI_MAIN"])
@@ -20,14 +20,25 @@ class CustomRedisCache(RedisCache):
         self.cached_functions.add(res)
         return res
 
+    def _delete_matching(self, pattern: str) -> None:
+        batch: list = []
+        for key in self.client.scan_iter(match=pattern, count=500):
+            batch.append(key)
+            if len(batch) >= 500:
+                self.client.delete(*batch)
+                batch.clear()
+        if batch:
+            self.client.delete(*batch)
+
     def invalidate_all_cached_functions(self):
         try:
             for f in self.cached_functions:
                 f.invalidate_all()
             logger.trace("Invalidating all cached functions")
-            chunks_gen = chunks(f"{self.prefix}*", 5000)
-            for keys in chunks_gen:
-                self.client.delete(*keys)
+            self._delete_matching(f"{self.prefix}*")
+            from hiddifypanel.proxy_v3.jinja_download import invalidate_download_cache
+
+            invalidate_download_cache()
             logger.trace("Successfully invalidated all cached functions")
             return True
         except Exception as err:
