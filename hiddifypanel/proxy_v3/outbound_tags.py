@@ -7,7 +7,11 @@ from typing import Any
 
 from jinja2 import Environment
 
-from .alpn_helpers import DEFAULT_OUTBOUND_TAG_TEMPLATE
+from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
+
+
+def default_outbound_tag_template() -> str:
+    return load_template_slug("client/tag", normalize=False)
 
 
 def config_content_hash(item: dict[str, Any]) -> str:
@@ -51,6 +55,6 @@ def deduplicate_client_tags(items: list[dict[str, Any]], *, tag_key: str = 'tag'
 
 
 def render_outbound_tag(env: Environment, template: str, context: dict[str, Any]) -> str:
-    tpl = (template or '').strip() or DEFAULT_OUTBOUND_TAG_TEMPLATE
+    tpl = (template or '').strip() or default_outbound_tag_template()
     rendered = env.from_string(tpl).render(**context).strip()
     return ' '.join(rendered.split())

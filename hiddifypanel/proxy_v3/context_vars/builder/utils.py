@@ -13,7 +13,7 @@ from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, fake_ip_for_sub_link
 
 
 def make_jinja_context(ctx: BaseModel) -> dict[str, Any]:
-    data: dict[str, Any] = {
+    return {
         "ctx": ctx,
         "skip": skip_proxy,
         "include_path": include_path,
@@ -22,10 +22,6 @@ def make_jinja_context(ctx: BaseModel) -> dict[str, Any]:
         "enumerate": enumerate,
         "fake_ip_for_sub_link": fake_ip_for_sub_link(),
     }
-    tags = getattr(ctx, "client_proxy_tags", None)
-    if tags is not None:
-        data["client_proxy_tags"] = list(tags)
-    return data
 
 
 def load_json5(text: str) -> list[dict[str, Any]]:

@@ -29,6 +29,14 @@ def _v141(child_id):
     for d in Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.reality).all():
         d.set_custom_proxies_by_slugs([])
 
+    if core_type := hconfig(ConfigEnum.core_type, child_id):
+        if core_type == "singbox":
+            add_config_if_not_exist(ConfigEnum.common_proxy_core, "hiddify_core", child_id)
+        elif core_type == "xray":
+            add_config_if_not_exist(ConfigEnum.common_proxy_core, "xray", child_id)
+
+    add_config_if_not_exist(ConfigEnum.common_proxy_core, "both", child_id)
+
 
 def _v140(child_id):
     set_hconfig(ConfigEnum.ssfaketls_enable, False)
@@ -94,13 +102,6 @@ def _v133(child_id):
     vless_encryption, vless_decryption = hutils.crypto.vless_encryption_decryption(quantum=False)
     set_hconfig(ConfigEnum.vless_encryption, vless_encryption)
     set_hconfig(ConfigEnum.vless_decryption, vless_decryption)
-    if core_type := hconfig(ConfigEnum.core_type):
-        if core_type == "singbox":
-            add_config_if_not_exist(ConfigEnum.common_proxy_core, "hiddify_core")
-        elif core_type == "xray":
-            add_config_if_not_exist(ConfigEnum.common_proxy_core, "xray")
-    else:
-        add_config_if_not_exist(ConfigEnum.common_proxy_core, "both")
 
 
 def _v130(child_id):
@@ -962,7 +963,7 @@ def add_config_if_not_exist(key: "ConfigEnum", val: str | int, child_id: int | N
 
     old_val = hconfig(key, child_id)
     if old_val is None:
-        set_hconfig(key, val)
+        set_hconfig(key, val, child_id)
 
 
 def add_column(column):
@@ -1160,7 +1161,7 @@ def init_db():
 
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 135, commit=True)
+    set_hconfig(ConfigEnum.db_version, 135, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

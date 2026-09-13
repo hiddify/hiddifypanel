@@ -178,7 +178,13 @@ def effective_template_content(row) -> str:
         return row.content or ""
     if row.builtin_override and (row.content or "").strip():
         return row.content or ""
-    return row.builtin_content or row.content or ""
+    from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
+
+    try:
+        disk = load_template_slug(row.slug, normalize=False)
+    except FileNotFoundError:
+        disk = ""
+    return disk or row.builtin_content or row.content or ""
 
 
 def effective_base_config_content(row) -> str:
@@ -186,7 +192,14 @@ def effective_base_config_content(row) -> str:
         return row.content or ""
     if row.builtin_override and (row.content or "").strip():
         return row.content or ""
-    return row.builtin_content or row.content or ""
+    from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
+
+    slug = f"{row.core}/{row.side}/base"
+    try:
+        disk = load_template_slug(slug, normalize=False)
+    except FileNotFoundError:
+        disk = ""
+    return disk or row.builtin_content or row.content or ""
 
 
 def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:

@@ -8,8 +8,6 @@ from hiddifypanel.models import ConfigEnum
 from hiddifypanel.models.proxy import ProxyProto
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
-DEFAULT_OUTBOUND_TAG_TEMPLATE = "{{ proxy.tag }} {{ domain.alias or domain.name }} {{ domain.ip_version }} {{ proxy.alpn }}"
-
 XHTTP_ALPN_TAGS = (
     "http",
     "tls_h1",

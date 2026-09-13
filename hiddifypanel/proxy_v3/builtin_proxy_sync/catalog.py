@@ -41,6 +41,9 @@ def _infer_template_meta(slug: str) -> tuple[TemplateCore, TemplateCategory, str
         core = TemplateCore.xray
     leaf = slug.rsplit("/", 1)[-1]
 
+    if slug.startswith("client/"):
+        return TemplateCore.xray, TemplateCategory.client_outbound, f"client {leaf}", f"Shared client: {leaf}"
+
     if "/base/" in slug and not slug.endswith("/base"):
         return core, TemplateCategory.base_config, f"{core_str} base {leaf}", f"Base fragment: {leaf}"
 
@@ -88,7 +91,7 @@ def discover_builtin_templates() -> tuple[BuiltinTemplateRecord, ...]:
     records: list[BuiltinTemplateRecord] = []
     for slug, path in iter_template_files():
         core_str = slug.split("/")[0]
-        if core_str not in TEMPLATE_CORES:
+        if core_str not in TEMPLATE_CORES and not slug.startswith("client/"):
             continue
         core, category, name, description = _infer_template_meta(slug)
         records.append(
@@ -106,8 +109,9 @@ def discover_builtin_templates() -> tuple[BuiltinTemplateRecord, ...]:
 
 @lru_cache(maxsize=1)
 def discover_base_configs() -> tuple[BuiltinBaseConfigRecord, ...]:
-    from hiddifypanel.proxy_v3.template_catalog.base_configs import default_base_content as catalog_base_content
     from loguru import logger
+
+    from hiddifypanel.proxy_v3.template_catalog.base_configs import default_base_content as catalog_base_content
 
     records: list[BuiltinBaseConfigRecord] = []
     for spec in BUILTIN_BASE_CONFIGS:

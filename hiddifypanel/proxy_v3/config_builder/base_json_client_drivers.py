@@ -13,7 +13,6 @@ from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.context_vars.proxy import ConfigVar
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
-from hiddifypanel.proxy_v3.template_catalog.client_builder import USE_HIDDIFY_CORE_PLACEHOLDER
 
 _USE_HIDDIFY_CORE_RE = re.compile(r"\{#\s*use_hiddify_core\s*\(\s*\)\s*#\}")
 
@@ -27,8 +26,7 @@ class JsonClientOutboundDriver(BaseConfigBuilderDriver):
     def build(self, child_id: int, ctx: ClientContextVar) -> ConfigBuilderModel:
         return self.build_all(child_id, [ctx])
 
-    def build_all(self, child_id: int, contexts: list[ClientContextVar]) -> ConfigBuilderModel:
-        messages: list[MessageModel] = []
+    def collect_proxy_blocks(self, child_id: int, contexts: list[ClientContextVar], messages: list[MessageModel]) -> list[ProxyBlock]:
         proxy_blocks: list[ProxyBlock] = []
         for ctx in contexts:
             client_config = self._select_client_config(ctx)
@@ -51,11 +49,15 @@ class JsonClientOutboundDriver(BaseConfigBuilderDriver):
                         data={"stacktrace": traceback.format_exc()},
                     )
                 )
+        return proxy_blocks
 
+    def build_all(self, child_id: int, contexts: list[ClientContextVar]) -> ConfigBuilderModel:
+        messages: list[MessageModel] = []
         if not contexts:
             messages.append(MessageModel(level="error", message=f"No client proxies for {self.core.value}"))
             return ConfigBuilderModel(core=self.core, side=self.side, config="", messages=messages)
 
+        proxy_blocks = self.collect_proxy_blocks(child_id, contexts, messages)
         compose_ctx = contexts[0]
         self._assign_generated_proxy_tags(compose_ctx, proxy_blocks)
         return compose_config_from_blocks(

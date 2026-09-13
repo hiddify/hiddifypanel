@@ -3,7 +3,7 @@ from sqlalchemy.orm import selectinload
 
 from hiddifypanel.cache import cache
 from hiddifypanel.models.child import Child
-from hiddifypanel.models.config import get_hconfigs_json, hconfig
+from hiddifypanel.models.config import get_hconfigs, get_hconfigs_json
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain, DomainType
@@ -23,8 +23,8 @@ from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 def _common_proxy_core_cache_token() -> str:
     tokens: list[str] = []
     for child in Child.query.all():
-        selected = hconfig(ConfigEnum.common_proxy_core, child.id)
-        tokens.append(f"{child.id}:{normalize_common_proxy_core(selected if isinstance(selected, str) or selected is None else None)}")
+        selected = get_hconfigs(child.id).get(ConfigEnum.common_proxy_core)
+        tokens.append(f"{child.id}:{normalize_common_proxy_core(selected)}")
     return ",".join(tokens)
 
 

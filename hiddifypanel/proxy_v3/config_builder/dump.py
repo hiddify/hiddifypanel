@@ -393,6 +393,16 @@ def summarize_client_dumped_config(core: str, filename: str, rendered: str) -> d
             for key in ("inbounds", "outbounds", "endpoints"):
                 value = data.get(key)
                 stats[key] = len(value) if isinstance(value, list) else 0
+        elif isinstance(data, list):
+            stats["configs"] = len(data)
+            inbounds = outbounds = endpoints = 0
+            for item in data:
+                if not isinstance(item, dict):
+                    continue
+                inbounds += len(item["inbounds"]) if isinstance(item.get("inbounds"), list) else 0
+                outbounds += len(item["outbounds"]) if isinstance(item.get("outbounds"), list) else 0
+                endpoints += len(item["endpoints"]) if isinstance(item.get("endpoints"), list) else 0
+            stats.update(inbounds=inbounds, outbounds=outbounds, endpoints=endpoints)
         else:
             stats.update(inbounds=0, outbounds=0, endpoints=0)
     elif core == "clash":
@@ -419,6 +429,8 @@ def format_client_dump_stats(filename: str, size: int, stats: dict[str, int] | N
 
     parts = [f"{size} bytes", _n(stats.get("lines", 0), "line")]
     if filename.endswith(".json"):
+        if stats.get("configs"):
+            parts.append(_n(stats["configs"], "config"))
         parts.extend(
             [
                 _n(stats.get("inbounds", 0), "inbound"),

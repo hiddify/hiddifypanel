@@ -218,7 +218,7 @@ def build_sublink_client(combo: ProxyCombination) -> tuple[str, list[str]]:
     transport_slug = _sublink_transport_slug(combo.transport)
     body_slug = _sublink_link_body_slug(combo)
     tls_slug = _sublink_tls_slug(combo)
-    slugs = ["sublink/tag", body_slug]
+    slugs = ["client/tag", body_slug]
     if body_slug in _STANDALONE_URI_BODIES:
         slugs.append("sublink/uri/final_link_maker")
         content = load_template_slug(body_slug)
@@ -280,7 +280,7 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
         proto_slug,
         stream_slug,
         security_slug,
-        "xray/client/tag",
+        "client/tag",
         "xray/client/snippets/mux",
         "xray/client/snippets/fragment",
     ]
@@ -437,7 +437,7 @@ def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]
             "__NETWORK__": network,
         },
     )
-    return content, ["clash/client/tag"]
+    return content, ["client/tag"]
 
 
 def _builtin_client_core_entry(core: str, outbound: str) -> dict[str, Any]:

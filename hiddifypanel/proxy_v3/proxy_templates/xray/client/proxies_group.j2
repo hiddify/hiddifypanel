@@ -1,0 +1,70 @@
+{% if ctx.hconfig.show_usage_in_sublink %}
+{% set tag = '⏳ ' if ctx.user.is_active else '✖ ' %}
+{% if ctx.user.usage_limit_GB < 1000 %}
+{% set tag = tag ~ (ctx.user.current_usage_GB|round(3)) ~ '/' ~ (ctx.user.usage_limit_GB|string|replace('.0', '')) ~ 'GB' %}
+{% elif ctx.user.usage_limit_GB < 100000 %}
+{% set tag = tag ~ ((ctx.user.current_usage_GB / 1000)|round(3)) ~ '/' ~ ((ctx.user.usage_limit_GB / 1000)|round(1)|string|replace('.0', '')) ~ 'TB' %}
+{% else %}
+
+{% endif %}
+{% set tag = tag ~ ' 📅 ' %}
+{% if ctx.user.expire_days < 1000 %}
+{% set tag = tag ~ _('%(expire_days)s days', expire_days=ctx.user.expire_days) %}
+{% else %}
+
+{% endif %}
+{% set tag = tag|trim %}
+
+
+{% if ctx.user.is_active and ctx.client_proxy_tags %}
+{
+  "remarks": "{{ tag |trim_no_line}}",
+  "outbounds": [
+    {% block outbounds %}{% endblock %},
+    {% include 'xray/client/fragment' %}
+    {"tag": "direct", "protocol": "freedom", "settings": {}},
+    {"tag": "block", "protocol": "blackhole", "settings": {"response": {"type": "http"}}}
+  ],
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {% include 'xray/client/inbounds' %}
+  ],
+  
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+    
+      {"type": "field", "network": "tcp,udp", "balancerTag": "least-ping"}
+    
+    ],"balancers": [
+      {
+        "tag": "least-ping",
+        "selector": {{ ctx.client_proxy_tags|tojson }},
+        "fallbackTag": {{ ctx.client_proxy_tags[0]|tojson }},
+        "strategy": {"type": "leastPing"}
+      }
+    ]
+    
+  },"observatory": {
+    "subjectSelector": {{ ctx.client_proxy_tags|tojson }},
+    "probeUrl": "https://www.gstatic.com/generate_204",
+    "probeInterval": "10s",
+    "enableConcurrency": true
+  }
+  {% endif %}
+}
+{%else%}
+{
+  "remarks": "{{ _('✖ Package Ended') }} {{tag |trim_no_line}}",
+  "log": {"access": "", "error": "", "loglevel": "warning"},
+  "inbounds": [
+    {% include 'xray/client/inbounds' %}
+  ],
+  "outbounds": [
+    {"tag": "proxy", "protocol": "blackhole", "settings": {}}
+  ],
+  "routing": {"domainStrategy": "AsIs", "rules": []}
+},
+{% endif %}

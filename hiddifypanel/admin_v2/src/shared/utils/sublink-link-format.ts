@@ -22,7 +22,10 @@ export interface LinkFormatOptions {
   base64_format: Base64LinkFormat
 }
 
-export const URI_FRAGMENT_INCLUDE = "{%- include 'hiddify-core/client/tag' -%}"
+export const URI_FRAGMENT_INCLUDE = "{%- include 'client/tag' -%}"
+
+const LEGACY_TAG_INCLUDE_RE =
+  /\{%-?\s*include\s+['"](?:hiddify-core\/client\/tag|xray\/client\/tag|clash\/client\/tag|singbox\/client\/tag|sublink\/tag)['"]\s*-?%\}/g
 
 /** Exact Jinja link line for URI format (uri object must be in render context). */
 export const URI_LINK_TEMPLATE =
@@ -48,7 +51,7 @@ export const DEFAULT_URI_FORMAT: UriLinkFormat = {
 
 export const DEFAULT_BASE64_CONTENT = `{
   "v": "2",
-  "ps": "{%- include 'hiddify-core/client/tag' -%}",
+  "ps": "{%- include 'client/tag' -%}",
   "add": "{{ proxy.server }}",
   "port": "{{ proxy.port }}",
   "id": "{{ user.uuid }}",
@@ -115,12 +118,15 @@ function migrateLegacyOptions(
       uri.password = uri.pass
       delete uri.pass
     }
-    if (uri.fragment?.includes("{% include 'hiddify-core/client/tag' %}")) {
-      uri.fragment = uri.fragment.replace(
-        /\{%\s*include\s+['"]hiddify-core\/client\/tag['"]\s*%\}/g,
-        URI_FRAGMENT_INCLUDE,
-      )
+    if (uri.fragment) {
+      uri.fragment = uri.fragment.replace(LEGACY_TAG_INCLUDE_RE, URI_FRAGMENT_INCLUDE)
     }
+  }
+  if (migrated.base64_format?.content) {
+    migrated.base64_format.content = migrated.base64_format.content.replace(
+      LEGACY_TAG_INCLUDE_RE,
+      URI_FRAGMENT_INCLUDE,
+    )
   }
   if (migrated.base64_format?.content?.includes("{% set _ps %}")) {
     migrated.base64_format.content = DEFAULT_BASE64_CONTENT
