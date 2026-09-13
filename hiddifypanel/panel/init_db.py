@@ -22,7 +22,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 143
 
 
-def _v141(child_id):
+def _v142(child_id):
     """Cap how many IPv4/IPv6 addresses are emitted per proxy domain."""
     add_config_if_not_exist(ConfigEnum.max_proxy_ips_per_version, 3, child_id)
 
@@ -1233,6 +1233,9 @@ def migrate(db_version):
     Events.db_prehook.notify()
     # execute("UPDATE custom_proxy SET proto='shadowsocks' WHERE proto='ss'")
     # execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
+    if db_version < 142:
+        execute("ALTER TABLE domain DROP COLUMN sub_link_only;")
+
     if db_version < 100:
         execute('update str_config set `key`="xhttp_enable" where `key`="splithttp_enable";')
         execute('update str_config set `key`="path_xhttp" where `key`="path_splithttp";')
