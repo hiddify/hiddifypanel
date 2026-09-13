@@ -1,4 +1,5 @@
 {# Server TLS — alpns optional (mirrors hiddify-core/server/tls/tls.pj2). #}
+{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}
 "security": "tls",
 "tlsSettings": {
   "serverName": "{{ ctx.domain.sni }}",
