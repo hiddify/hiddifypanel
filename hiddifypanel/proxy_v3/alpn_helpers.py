@@ -8,7 +8,7 @@ from hiddifypanel.models import ConfigEnum
 from hiddifypanel.models.proxy import ProxyProto
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 
-DEFAULT_OUTBOUND_TAG_TEMPLATE = "{{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}"
+DEFAULT_OUTBOUND_TAG_TEMPLATE = "{{ proxy.tag }} {{ domain.alias or domain.name }} {{ domain.ip_version }} {{ proxy.alpn }}"
 
 XHTTP_ALPN_TAGS = (
     "http",
@@ -164,7 +164,13 @@ def alpns_for_combo(l3: str, transport: str, proto: str = "") -> list[str]:
 
     if transport_key == "grpc":
         tags = ["tls_h2"]
-    elif transport_key in ("ws", "httpupgrade", "tcp", "http"):
+    elif transport_key == "http":
+        # TCP HTTP obfuscation sends raw HTTP/1.1; h2 ALPN breaks the handshake.
+        if l3 == "http":
+            tags = ["http"]
+        else:
+            tags = ["tls_h1"]
+    elif transport_key in ("ws", "httpupgrade", "tcp"):
         if l3 in ("tls", "tls_h2_h1"):
             tags = ["tls_h2", "tls_h1"]
         elif l3 == "tls_h2":
