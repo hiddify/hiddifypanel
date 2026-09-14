@@ -320,6 +320,23 @@ def _stable_public_port(slug: str) -> int:
     return 10_000 + mixed
 
 
+def _hconfig_port(key: ConfigEnum, child_id: int = 0, *, fallback_slug: str) -> int:
+    """Port owned by an external service (WireGuard manager, SSH daemon, …).
+
+    IP-mode presets must advertise that listening port — not a CRC32 slug port —
+    otherwise clients connect to a closed endpoint while the real service stays
+    on the hconfig value that firewall / wg-quick already use.
+    """
+    try:
+        raw = hconfig(key, child_id)
+        port = int(raw) if raw not in (None, "", "None") else 0
+    except Exception:
+        port = 0
+    if 1 <= port <= 65535:
+        return port
+    return _stable_public_port(fallback_slug)
+
+
 used_paths = set()
 
 
@@ -456,7 +473,11 @@ def _build_preset(
     inbound_tcp_ports: tuple[int, ...] = ()
     inbound_udp_ports: tuple[int, ...] = ()
     if mode == CustomProxyMode.ip:
-        public_port = _stable_public_port(slug)
+        if proto == "wireguard":
+            # WireGuard listens on hconfig.wireguard_port (wg-quick / firewall), not a slug port.
+            public_port = _hconfig_port(ConfigEnum.wireguard_port, child_id, fallback_slug=slug)
+        else:
+            public_port = _stable_public_port(slug)
         if tcp_udp != InboundTcpUdp.udp:
             inbound_tcp_ports = (public_port,)
         if tcp_udp != InboundTcpUdp.tcp:
