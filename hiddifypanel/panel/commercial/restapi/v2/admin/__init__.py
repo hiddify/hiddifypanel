@@ -2,6 +2,7 @@ from apiflask import APIBlueprint
 
 from hiddifypanel import g
 from hiddifypanel.models import AdminUser, User
+from hiddifypanel.models.admin import AdminMode
 
 bp = APIBlueprint("api_admin", __name__, url_prefix="/<proxy_path>/api/v2/admin/", enable_openapi=True)
 
@@ -113,9 +114,87 @@ def has_permission(model) -> bool:
     """Check if the authenticated account has permission to do an action(get,insert,update,delete) on the another admin"""
     if g.account.uuid == AdminUser.get_super_admin_uuid():
         return True
+    if isinstance(model, AdminUser) and model.id == g.account.id:
+        return True
     if isinstance(model, AdminUser) and model.parent_admin_id == g.account.id:
         return True
     elif isinstance(model, User) and model.added_by == g.account.id:
         return True
 
     return False
+
+
+_ADMIN_MODE_RANK = {
+    AdminMode.agent: 1,
+    AdminMode.admin: 2,
+    AdminMode.super_admin: 3,
+}
+
+
+def _as_admin_mode(value) -> AdminMode:
+    if isinstance(value, AdminMode):
+        return value
+    return AdminMode(str(value))
+
+
+def assert_actor_can_create_admin() -> None:
+    """POST /admin_user/ — only super_admin or admin with can_add_admin."""
+    from apiflask import abort
+
+    actor = g.account
+    if actor is None or not hasattr(actor, "mode"):
+        abort(403, "Admin account required")
+    if actor.mode == AdminMode.super_admin:
+        return
+    if actor.mode == AdminMode.admin and actor.can_add_admin:
+        return
+    abort(403, "You don't have permission to create admins")
+
+
+def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = None) -> dict:
+    """Reject privilege escalation on admin create/update payloads.
+
+    - Assigned ``mode`` must not exceed the caller's mode.
+    - Only ``super_admin`` may assign ``super_admin`` or grant ``can_add_admin``.
+    - Callers cannot raise their own ``mode`` / ``can_add_admin``.
+    - Non-super callers are parented under themselves.
+    """
+    from apiflask import abort
+
+    actor = g.account
+    if actor is None or not hasattr(actor, "mode"):
+        abort(403, "Admin account required")
+
+    actor_mode = _as_admin_mode(actor.mode)
+    actor_rank = _ADMIN_MODE_RANK[actor_mode]
+    out = dict(payload)
+
+    if target is not None and getattr(target, "id", None) == getattr(actor, "id", None):
+        if "mode" in out and out["mode"] is not None and _as_admin_mode(out["mode"]) != _as_admin_mode(target.mode):
+            abort(403, "Cannot change your own mode")
+        if "can_add_admin" in out and out["can_add_admin"] is not None and bool(out["can_add_admin"]) != bool(target.can_add_admin):
+            abort(403, "Cannot change your own can_add_admin")
+        out.pop("parent_admin_uuid", None)
+
+    if "mode" in out and out["mode"] is not None:
+        requested = _as_admin_mode(out["mode"])
+        if _ADMIN_MODE_RANK[requested] > actor_rank:
+            abort(403, "Cannot assign a mode higher than your own")
+        if requested == AdminMode.super_admin and actor_mode != AdminMode.super_admin:
+            abort(403, "Only super_admin can assign super_admin")
+        out["mode"] = requested
+
+    if "can_add_admin" in out and out["can_add_admin"] is not None:
+        want = bool(out["can_add_admin"])
+        if actor_mode != AdminMode.super_admin:
+            if target is None:
+                out["can_add_admin"] = False
+            elif want and not bool(target.can_add_admin):
+                abort(403, "Only super_admin can grant can_add_admin")
+            else:
+                out["can_add_admin"] = want
+
+    if actor_mode != AdminMode.super_admin:
+        out["parent_admin_uuid"] = actor.uuid
+
+    return out

@@ -5,7 +5,7 @@ from hiddifypanel import current_app as app
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import AdminUser, Role
 
-from . import has_permission
+from . import has_permission, validate_admin_write_payload
 from .schema import AdminSchema, PatchAdminSchema, SuccessfulSchema
 
 
@@ -28,12 +28,20 @@ class AdminUserApi(MethodView):
         if not has_permission(admin):
             abort(403, "You don't have permission to access this admin")
 
-        payload = data.model_dump(exclude_unset=True)
+        # Only validate fields the client actually sent (exclude_unset), then merge.
+        requested = validate_admin_write_payload(data.model_dump(exclude_unset=True), target=admin)
+        payload = {}
         for field in AdminUser.__table__.columns.keys():
             if field in ["id", "parent_admin_id"]:
                 continue
-            if field not in payload:
+            if field in requested:
+                payload[field] = requested[field]
+            else:
                 payload[field] = getattr(admin, field)
+        if "parent_admin_uuid" in requested:
+            payload["parent_admin_uuid"] = requested["parent_admin_uuid"]
+        elif admin.parent_admin:
+            payload["parent_admin_uuid"] = admin.parent_admin.uuid
         payload["old_uuid"] = uuid
         admin = AdminUser.add_or_update(True, **payload) or abort(502, "Unknown issue: Admin is not patched")
         return admin.to_schema()
