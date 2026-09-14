@@ -190,15 +190,62 @@ def _private_key_valid(key_pem: str) -> bool:
     return False
 
 
+def _subject_alt_names(cert_pem: str) -> list[str]:
+    """Return SAN entries as lowercase host/IP strings (no DNS:/IP: prefix)."""
+    raw = _openssl_x509(cert_pem, "-ext", "subjectAltName")
+    if not raw:
+        return []
+    names: list[str] = []
+    for part in re.split(r"[\n,]", raw):
+        part = part.strip()
+        if not part or part.lower().startswith("x509v3") or part.lower() == "subject alternative name:":
+            continue
+        lower = part.lower()
+        if lower.startswith("dns:"):
+            names.append(part.split(":", 1)[1].strip().lower().rstrip("."))
+        elif lower.startswith("ip address:") or lower.startswith("ip:"):
+            names.append(part.split(":", 1)[1].strip().lower())
+    return names
+
+
+def _subject_cn(cert_pem: str) -> str:
+    subject = _dn_from_pem(cert_pem, "subject")
+    return (_parse_issuer_field(subject, "CN") or "").strip().lower().rstrip(".")
+
+
+def hostname_matches_cert_name(hostname: str, name: str) -> bool:
+    """RFC 6125-style match: exact name, or single-label wildcard (*.example.com)."""
+    host = (hostname or "").strip().lower().rstrip(".")
+    cert_name = (name or "").strip().lower().rstrip(".")
+    if not host or not cert_name:
+        return False
+    if host == cert_name:
+        return True
+    if cert_name.startswith("*.") and cert_name.count(".") >= 2:
+        # *.example.com matches foo.example.com, not example.com or a.b.example.com
+        suffix = cert_name[1:]  # .example.com
+        return host.endswith(suffix) and host.count(".") == cert_name.count(".")
+    return False
+
+
+def cert_covers_hostname(cert_pem: str, hostname: str) -> bool:
+    """True if leaf cert SAN (or CN fallback) covers ``hostname``."""
+    host = domain_file_key(hostname)
+    if not host or not cert_pem.strip():
+        return False
+    sans = _subject_alt_names(cert_pem)
+    if sans:
+        return any(hostname_matches_cert_name(host, n) for n in sans)
+    cn = _subject_cn(cert_pem)
+    return bool(cn) and hostname_matches_cert_name(host, cn)
+
+
 def read_tls_files(domain: str) -> dict[str, Any] | None:
+    """Load ``data/ssl/<domain>.crt`` (+ key). Missing domain file → None (no glob fallback)."""
     cert_path, key_path = cert_paths_for_domain(domain)
     if not cert_path.is_file():
-        certs = sorted(SSL_ROOT.glob("*.crt"))
-        if not certs:
-            return None
-        cert_path = certs[-1]
-        key_path = Path(f"{cert_path}.key")
-    cert_pem = cert_path.read_text(encoding="utf-8") if cert_path.is_file() else ""
+        return None
+    cert_pem = cert_path.read_text(encoding="utf-8")
     key_pem = key_path.read_text(encoding="utf-8") if key_path.is_file() else ""
     if not cert_pem.strip():
         return None
@@ -206,7 +253,8 @@ def read_tls_files(domain: str) -> dict[str, Any] | None:
     now = datetime.utcnow()
     key_ok = _private_key_valid(key_pem)
     not_expired = expires_at is None or expires_at > now
-    valid_cert = bool(key_ok and not_expired)
+    covers_host = cert_covers_hostname(cert_pem, domain)
+    valid_cert = bool(key_ok and not_expired and covers_host)
     fingerprint = cert_sha256_hex_from_pem(cert_pem) or ""
     public_key = public_key_sha256_from_pem(cert_pem) or ""
     issuer = _issuer_from_pem(cert_pem)
@@ -358,6 +406,12 @@ def _sync_tls_store_row(domain_db: Domain, *, commit: bool = True) -> TlsStore |
     row = TlsStore.by_domain_id(domain_db.id)
     if not payload:
         if row:
+            # Do not keep a previously synced (possibly wrong) cert when domain files are gone.
+            row.certificate = ""
+            row.private_key = ""
+            row.valid_cert = False
+            row.fingerprint = ""
+            row.auto_renew = False
             row.last_renewal_error = f"no certificate files found for {hostname}"
             row.updated_at = datetime.utcnow()
             if commit:
