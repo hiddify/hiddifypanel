@@ -166,7 +166,9 @@ def init_app(app: APIFlask):
 
             g.__child_id = values.pop("child_id", 0)
         g.child = Child.by_id(g.__child_id) or abort(404, "Child not found")
-        g.node = g.child
+        # Never treat the local child as an authenticated peer node. g.node is
+        # set only in auth_before_request after Hiddify-API-Key unique_id validation.
+        g.node = None
         g.account = current_account
 
     @app.before_request

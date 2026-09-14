@@ -116,22 +116,30 @@ def login_required(roles: set[Role] | None = None, node_auth: bool = False):
 
 
 def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
-    """When both roles and node_auth is set, means authentication can be done by either uuid or unique_id"""
+    """Require an account role and/or an authenticated peer node.
+
+    When both ``roles`` and ``node_auth`` are set, either path is accepted (OR).
+    ``g.node`` must only be set after unique_id validation in
+    ``auth_before_request`` — never from the local child default.
+    """
 
     def wrapper(fn):
 
         @wraps(fn)
         def decorated_view(*args, **kwargs):
-            # print('xxxx', current_account)
-            if node_auth and not g.get("node") and not roles:
+            if node_auth and g.get("node"):
+                return fn(*args, **kwargs)
+
+            if roles is not None:
+                if current_account and current_account.role in roles:
+                    return fn(*args, **kwargs)
+                return redirect_to_login()
+
+            if node_auth:
                 json_abort(403, "Unauthorized node")
 
-            if not current_account and not node_auth:
+            if not current_account:
                 return redirect_to_login()
-            if roles and not node_auth:
-                account_role = current_account.role
-                if account_role not in roles:
-                    return redirect_to_login()
             return fn(*args, **kwargs)
 
         return decorated_view

@@ -4,6 +4,7 @@ from loguru import logger
 
 from hiddifypanel import current_app as app
 from hiddifypanel import g
+from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
@@ -12,14 +13,16 @@ from .schema import RegisterInputSchema, RegisterOutputSchema
 
 
 class RegisterApi(MethodView):
-    # decorators = [login_required({Role.super_admin})]
+    decorators = [login_required(roles={Role.super_admin}, node_auth=True)]
 
     @app.input(RegisterInputSchema, arg_name="data")
     @app.output(RegisterOutputSchema)
     def put(self, data: RegisterInputSchema):
-        if g.node.id != 0 and g.node.unique_id != data.unique_id:
+        # Node peers may only register/update themselves; super_admin may register any child.
+        node = g.get("node")
+        if node is not None and node.id != 0 and node.unique_id != data.unique_id:
             abort(403, "Unauthorized")
-        if g.node.id == 0 and g.account.role != Role.super_admin:
+        if node is None and (not g.account or g.account.role != Role.super_admin):
             abort(403, "Unauthorized")
 
         if hconfig(ConfigEnum.unique_id) == data.unique_id:
