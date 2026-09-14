@@ -83,6 +83,76 @@ class DailyUsage(db.Model):
             "total": {"usage": total_stats[0], "online": users_online_last_10_years, "users": total_users},
         }
 
+    @staticmethod
+    def get_dashboard_stats(admin_id: int | None = None, child_id: int | None = None, series_days: int = 30) -> dict:
+        """Usage history, period aggregates and user counts for the Admin V2 dashboard."""
+        from hiddifypanel.hutils.usage_stats import MONTH_DAYS, DailyPoint, build_usage_summary
+
+        from .admin import AdminUser
+        from .user import User
+
+        if not admin_id:
+            admin_id = g.account.id
+        admin = AdminUser.query.filter(AdminUser.id == admin_id).first()
+        sub_admins = admin.recursive_sub_admins_ids() if admin else [admin_id]
+
+        def for_admin(query):
+            query = query.filter(DailyUsage.admin_id.in_(sub_admins))
+            if child_id is not None:
+                query = query.filter(DailyUsage.child_id == child_id)
+            return query
+
+        def for_users(query):
+            return query.filter(User.added_by.in_(sub_admins), User.deleted.is_(False))
+
+        today = date.today()
+        now = datetime.datetime.now()
+        # history covers the requested chart range plus one extra month for
+        # previous-period comparisons
+        history_days = max(series_days, MONTH_DAYS) + MONTH_DAYS
+        history_start = today - timedelta(days=history_days - 1)
+
+        rows = for_admin(
+            db.session.query(
+                DailyUsage.date,
+                func.coalesce(func.sum(DailyUsage.usage), 0),
+                func.coalesce(func.sum(DailyUsage.online), 0),
+            ).filter(DailyUsage.date >= history_start)
+        ).group_by(DailyUsage.date)
+        points = [DailyPoint(day=row[0], usage=int(row[1] or 0), online=int(row[2] or 0)) for row in rows if row[0]]
+
+        total_usage = for_admin(db.session.query(func.coalesce(func.sum(DailyUsage.usage), 0))).scalar() or 0
+        summary = build_usage_summary(points, today, series_days=series_days, total_usage=int(total_usage))
+
+        online_by_day = {point.day: point.online for point in points}
+        week_start = today - timedelta(days=6)
+        month_start = today - timedelta(days=29)
+
+        users = {
+            "total": for_users(User.query).count(),
+            "enabled": for_users(User.query).filter(User.enable.is_(True)).count(),
+            "online": {
+                "m5": for_users(User.query).filter(User.last_online >= now - timedelta(minutes=5)).count(),
+                "h24": for_users(User.query).filter(User.last_online >= now - timedelta(days=1)).count(),
+                "today": for_users(User.query).filter(User.last_online >= today).count(),
+                "yesterday": online_by_day.get(today - timedelta(days=1), 0),
+                "week": for_users(User.query).filter(User.last_online >= week_start).count(),
+                "month": for_users(User.query).filter(User.last_online >= month_start).count(),
+            },
+        }
+
+        def online_average(days: int) -> int:
+            return round(sum(online_by_day.get(today - timedelta(days=offset), 0) for offset in range(days)) / days)
+
+        users["averages"] = {"daily_week": online_average(7), "daily_month": online_average(30)}
+
+        return {
+            "range_days": series_days,
+            "series": summary["series"],
+            "usage": {key: summary[key] for key in ("totals", "averages", "previous", "trends", "peak")},
+            "users": users,
+        }
+
 
 class UnsyncedUsage(db.Model):
     """Usage deltas that failed to sync to the parent panel (child nodes)."""

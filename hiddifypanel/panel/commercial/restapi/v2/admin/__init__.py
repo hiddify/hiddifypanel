@@ -13,11 +13,13 @@ def init_app(app):
         from .admin_log_api import AdminLogApi
         from .admin_user_api import AdminUserApi
         from .admin_users_api import AdminUsersApi
+        from .dashboard_api import AdminDashboardApi
         from .server_status_api import AdminServerStatusApi
         from .system_actions import AllConfigsApi, AllPublicPortsApi, UpdateUserUsageApi
 
         bp.add_url_rule("/me/", view_func=AdminInfoApi)
         bp.add_url_rule("/server_status/", view_func=AdminServerStatusApi)
+        bp.add_url_rule("/dashboard/", view_func=AdminDashboardApi)
         bp.add_url_rule("/admin_user/<uuid:uuid>/", view_func=AdminUserApi)
         bp.add_url_rule("/admin_user/", view_func=AdminUsersApi)
 

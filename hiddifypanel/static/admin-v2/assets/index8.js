@@ -1,2 +1,88 @@
-import{s as a,o as i,c as l,e as s,g as u}from"./index.js";var c={name:"ChevronRightIcon",extends:a};function p(r){return d(r)||m(r)||y(r)||f()}function f(){throw new TypeError(`Invalid attempt to spread non-iterable instance.
-In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function y(r,t){if(r){if(typeof r=="string")return o(r,t);var e={}.toString.call(r).slice(8,-1);return e==="Object"&&r.constructor&&(e=r.constructor.name),e==="Map"||e==="Set"?Array.from(r):e==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(e)?o(r,t):void 0}}function m(r){if(typeof Symbol<"u"&&r[Symbol.iterator]!=null||r["@@iterator"]!=null)return Array.from(r)}function d(r){if(Array.isArray(r))return o(r)}function o(r,t){(t==null||t>r.length)&&(t=r.length);for(var e=0,n=Array(t);e<t;e++)n[e]=r[e];return n}function C(r,t,e,n,b,g){return i(),l("svg",u({width:"14",height:"14",viewBox:"0 0 14 14",fill:"none",xmlns:"http://www.w3.org/2000/svg"},r.pti()),p(t[0]||(t[0]=[s("path",{d:"M4.38708 13C4.28408 13.0005 4.18203 12.9804 4.08691 12.9409C3.99178 12.9014 3.9055 12.8433 3.83313 12.7701C3.68634 12.6231 3.60388 12.4238 3.60388 12.2161C3.60388 12.0084 3.68634 11.8091 3.83313 11.6622L8.50507 6.99022L3.83313 2.31827C3.69467 2.16968 3.61928 1.97313 3.62287 1.77005C3.62645 1.56698 3.70872 1.37322 3.85234 1.22959C3.99596 1.08597 4.18972 1.00371 4.3928 1.00012C4.59588 0.996539 4.79242 1.07192 4.94102 1.21039L10.1669 6.43628C10.3137 6.58325 10.3962 6.78249 10.3962 6.99022C10.3962 7.19795 10.3137 7.39718 10.1669 7.54416L4.94102 12.7701C4.86865 12.8433 4.78237 12.9014 4.68724 12.9409C4.59212 12.9804 4.49007 13.0005 4.38708 13Z",fill:"currentColor"},null,-1)])),16)}c.render=C;export{c as s};
+import{d as h,c as v}from"./index4.js";import{B as w,R as P,s as O,f as k,C as B,o as a,c as g,i as d,r as p,a as r,d as c,e as u,D as f,n as S,l as j,ad as D,x as C,z as L,ap as I,an as E}from"./index.js";var K=`
+    .p-fieldset {
+        background: dt('fieldset.background');
+        border: 1px solid dt('fieldset.border.color');
+        border-radius: dt('fieldset.border.radius');
+        color: dt('fieldset.color');
+        padding: dt('fieldset.padding');
+        margin: 0;
+    }
+
+    .p-fieldset-legend {
+        background: dt('fieldset.legend.background');
+        border-radius: dt('fieldset.legend.border.radius');
+        border-width: dt('fieldset.legend.border.width');
+        border-style: solid;
+        border-color: dt('fieldset.legend.border.color');
+        color: dt('fieldset.legend.color');
+        padding: dt('fieldset.legend.padding');
+        transition:
+            background dt('fieldset.transition.duration'),
+            color dt('fieldset.transition.duration'),
+            outline-color dt('fieldset.transition.duration'),
+            box-shadow dt('fieldset.transition.duration');
+    }
+
+    .p-fieldset-toggleable > .p-fieldset-legend {
+        padding: 0;
+    }
+
+    .p-fieldset-toggle-button {
+        cursor: pointer;
+        user-select: none;
+        overflow: hidden;
+        position: relative;
+        text-decoration: none;
+        display: flex;
+        gap: dt('fieldset.legend.gap');
+        align-items: center;
+        justify-content: center;
+        padding: dt('fieldset.legend.padding');
+        background: transparent;
+        border: 0 none;
+        border-radius: dt('fieldset.legend.border.radius');
+        transition:
+            background dt('fieldset.transition.duration'),
+            color dt('fieldset.transition.duration'),
+            outline-color dt('fieldset.transition.duration'),
+            box-shadow dt('fieldset.transition.duration');
+        outline-color: transparent;
+    }
+
+    .p-fieldset-legend-label {
+        font-weight: dt('fieldset.legend.font.weight');
+    }
+
+    .p-fieldset-toggle-button:focus-visible {
+        box-shadow: dt('fieldset.legend.focus.ring.shadow');
+        outline: dt('fieldset.legend.focus.ring.width') dt('fieldset.legend.focus.ring.style') dt('fieldset.legend.focus.ring.color');
+        outline-offset: dt('fieldset.legend.focus.ring.offset');
+    }
+
+    .p-fieldset-toggleable > .p-fieldset-legend:hover {
+        color: dt('fieldset.legend.hover.color');
+        background: dt('fieldset.legend.hover.background');
+    }
+
+    .p-fieldset-toggle-icon {
+        color: dt('fieldset.toggle.icon.color');
+        transition: color dt('fieldset.transition.duration');
+    }
+
+    .p-fieldset-toggleable > .p-fieldset-legend:hover .p-fieldset-toggle-icon {
+        color: dt('fieldset.toggle.icon.hover.color');
+    }
+
+    .p-fieldset-content-container {
+        display: grid;
+        grid-template-rows: 1fr;
+    }
+
+    .p-fieldset-content-wrapper {
+        min-height: 0;
+    }
+
+    .p-fieldset-content {
+        padding: dt('fieldset.content.padding');
+    }
+`,$={root:function(t){var n=t.props;return["p-fieldset p-component",{"p-fieldset-toggleable":n.toggleable}]},legend:"p-fieldset-legend",legendLabel:"p-fieldset-legend-label",toggleButton:"p-fieldset-toggle-button",toggleIcon:"p-fieldset-toggle-icon",contentContainer:"p-fieldset-content-container",contentWrapper:"p-fieldset-content-wrapper",content:"p-fieldset-content"},N=w.extend({name:"fieldset",style:K,classes:$}),A={name:"BaseFieldset",extends:O,props:{legend:String,toggleable:Boolean,collapsed:Boolean,toggleButtonProps:{type:null,default:null}},style:N,provide:function(){return{$pcFieldset:this,$parentInstance:this}}},F={name:"Fieldset",extends:A,inheritAttrs:!1,emits:["update:collapsed","toggle"],data:function(){return{d_collapsed:this.collapsed}},watch:{collapsed:function(t){this.d_collapsed=t}},methods:{toggle:function(t){this.d_collapsed=!this.d_collapsed,this.$emit("update:collapsed",this.d_collapsed),this.$emit("toggle",{originalEvent:t,value:this.d_collapsed})},onKeyDown:function(t){(t.code==="Enter"||t.code==="NumpadEnter"||t.code==="Space")&&(this.toggle(t),t.preventDefault())}},computed:{buttonAriaLabel:function(){return this.toggleButtonProps&&this.toggleButtonProps.ariaLabel?this.toggleButtonProps.ariaLabel:this.legend},dataP:function(){return k({toggleable:this.toggleable})}},directives:{ripple:P},components:{PlusIcon:v,MinusIcon:h}};function s(e){"@babel/helpers - typeof";return s=typeof Symbol=="function"&&typeof Symbol.iterator=="symbol"?function(t){return typeof t}:function(t){return t&&typeof Symbol=="function"&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},s(e)}function b(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);t&&(o=o.filter(function(i){return Object.getOwnPropertyDescriptor(e,i).enumerable})),n.push.apply(n,o)}return n}function m(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]!=null?arguments[t]:{};t%2?b(Object(n),!0).forEach(function(o){V(e,o,n[o])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):b(Object(n)).forEach(function(o){Object.defineProperty(e,o,Object.getOwnPropertyDescriptor(n,o))})}return e}function V(e,t,n){return(t=W(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function W(e){var t=z(e,"string");return s(t)=="symbol"?t:t+""}function z(e,t){if(s(e)!="object"||!e)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var o=n.call(e,t);if(s(o)!="object")return o;throw new TypeError("@@toPrimitive must return a primitive value.")}return(t==="string"?String:Number)(e)}var M=["data-p"],R=["data-p"],T=["id"],q=["id","aria-controls","aria-expanded","aria-label"],G=["id","aria-labelledby"];function H(e,t,n,o,i,l){var y=B("ripple");return a(),g("fieldset",r({class:e.cx("root"),"data-p":l.dataP},e.ptmi("root")),[d("legend",r({class:e.cx("legend"),"data-p":l.dataP},e.ptm("legend")),[p(e.$slots,"legend",{toggleCallback:l.toggle},function(){return[e.toggleable?u("",!0):(a(),g("span",r({key:0,id:e.$id+"_header",class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17,T)),e.toggleable?f((a(),g("button",r({key:1,id:e.$id+"_header",type:"button","aria-controls":e.$id+"_content","aria-expanded":!i.d_collapsed,"aria-label":l.buttonAriaLabel,class:e.cx("toggleButton"),onClick:t[0]||(t[0]=function(){return l.toggle&&l.toggle.apply(l,arguments)}),onKeydown:t[1]||(t[1]=function(){return l.onKeyDown&&l.onKeyDown.apply(l,arguments)})},m(m({},e.toggleButtonProps),e.ptm("toggleButton"))),[p(e.$slots,e.$slots.toggleicon?"toggleicon":"togglericon",{collapsed:i.d_collapsed,class:S(e.cx("toggleIcon"))},function(){return[(a(),j(D(i.d_collapsed?"PlusIcon":"MinusIcon"),r({class:e.cx("toggleIcon")},e.ptm("toggleIcon")),null,16,["class"]))]}),d("span",r({class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17)],16,q)),[[y]]):u("",!0)]})],16,R),C(E,r({name:"p-collapsible"},e.ptm("transition")),{default:L(function(){return[f(d("div",r({id:e.$id+"_content",class:e.cx("contentContainer"),role:"region","aria-labelledby":e.$id+"_header"},e.ptm("contentContainer")),[d("div",r({class:e.cx("contentWrapper")},e.ptm("contentWrapper")),[d("div",r({class:e.cx("content")},e.ptm("content")),[p(e.$slots,"default")],16)],16)],16,G),[[I,!i.d_collapsed]])]}),_:3},16)],16,M)}F.render=H;export{F as s};

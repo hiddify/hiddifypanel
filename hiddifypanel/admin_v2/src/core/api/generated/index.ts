@@ -439,3 +439,107 @@ export const templateVariablesApi = {
 export const adminApi = {
   me: () => getHttp().get<{ lang?: string }>('/me/').then((r) => r.data),
 }
+
+export interface DashboardDailyPoint {
+  date: string
+  /** bytes */
+  usage: number
+  /** distinct users online that day */
+  online: number
+}
+
+export interface DashboardUsage {
+  totals: { today: number; yesterday: number; week: number; month: number; total: number }
+  averages: { daily_week: number; daily_month: number }
+  previous: { week: number; month: number }
+  /** percent change vs the previous period, null when there is no baseline */
+  trends: { day: number | null; week: number | null; month: number | null }
+  peak: { date: string; usage: number } | null
+}
+
+export interface DashboardUsers {
+  total: number
+  enabled: number
+  online: { m5: number; h24: number; today: number; yesterday: number; week: number; month: number }
+  averages: { daily_week: number; daily_month: number }
+}
+
+export interface DashboardCpu {
+  percent: number
+  per_core: number[]
+  cores: number
+  load_avg: number[]
+  load_percent: number[]
+}
+
+export interface DashboardMemory {
+  used_gb: number
+  total_gb: number
+  available_gb: number
+  cached_gb: number
+  percent: number
+  swap_used_gb: number
+  swap_total_gb: number
+  swap_percent: number
+}
+
+export interface DashboardDisk {
+  used_gb: number
+  total_gb: number
+  free_gb: number
+  percent: number
+  hiddify_gb: number | null
+}
+
+export interface DashboardNetwork {
+  bytes_sent: number
+  bytes_recv: number
+  sent_gb: number
+  recv_gb: number
+  total_gb: number
+  /** unix seconds, used to derive throughput between two snapshots */
+  sampled_at: number
+  connections: number
+  unique_ips: number
+}
+
+export interface DashboardHost {
+  hostname: string
+  boot_time: number
+  uptime_s: number
+  panel_version?: string
+}
+
+export interface DashboardProcess {
+  name: string
+  percent: number
+  memory_gb?: number
+  cpu_percent?: number
+}
+
+export interface DashboardSnapshot {
+  generated_at: string
+  range_days: number
+  series: DashboardDailyPoint[]
+  usage: DashboardUsage
+  users: DashboardUsers
+  system: {
+    cpu: DashboardCpu
+    memory: DashboardMemory
+    disk: DashboardDisk
+    network: DashboardNetwork
+    host: DashboardHost
+  }
+  processes: { count: number; cpu: DashboardProcess[]; memory: DashboardProcess[] }
+}
+
+export const dashboardApi = {
+  /** `include: 'system'` skips the usage aggregation and returns live metrics only. */
+  get: (params?: {
+    days?: number
+    processes?: number
+    admin_id?: number
+    child_id?: number
+    include?: 'system'
+  }) => getHttp().get<DashboardSnapshot>('/dashboard/', { params }).then((r) => r.data),
+}
