@@ -20,9 +20,8 @@
     {% if ctx.hconfig.vless_flow %}
       {% set qp.flow=ctx.hconfig.vless_flow %}
     {% endif %}
-    {% if ctx.hconfig.vless_encryption %}
-      {% set qp.encryption=ctx.hconfig.vless_encryption %}
-    {% endif %}
   {% endif %}
+  {# Xray needs an explicit encryption; only an xray server can terminate a real one. #}
+  {% set qp.encryption=ctx.hconfig.vless_encryption if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption else "none" %}
   {% include 'sublink/uri/final_link_maker' %}
 {% endfor %}

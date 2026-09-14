@@ -5,8 +5,9 @@
     "port": {{ ctx.proxy.port }},
     "users": [{
       "id": "{{ ctx.user.uuid }}",
+      {# Xray rejects a VLESS user without an explicit encryption; only an xray server can terminate a real one. #}
+      "encryption": "{{ ctx.hconfig.vless_encryption if ctx.proxy.server_core == 'xray' and ctx.hconfig.vless_encryption else 'none' }}",
       {% if ctx.proxy.server_core == "xray" %}
-      "encryption": "{{ctx.hconfig.vless_encryption}}",
       "flow": "{{ ctx.hconfig.vless_flow }}",
       {% endif %}
       "level": 8
