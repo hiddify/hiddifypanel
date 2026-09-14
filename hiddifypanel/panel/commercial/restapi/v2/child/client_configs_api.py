@@ -13,6 +13,14 @@ from .schema import ClientConfigsIn, ClientConfigsOut
 
 
 def _render(data: ClientConfigsIn) -> ClientConfigsOut:
+    if not data.domains:
+        return ClientConfigsOut(
+            status=200,
+            msg="ok",
+            config="",
+            user_uuid=data.user_uuid,
+            user_name=None,
+        )
 
     try:
         result = render_client_configs(
@@ -63,7 +71,7 @@ class ClientConfigsApi(MethodView):
     @app.doc(
         tags=["Child"],
         summary="Render client configs for domains",
-        description="Renders client configs for a user over an explicit list of domains (not a sublink domain). Unknown domains are ignored. Empty domains uses all local domains.",
+        description="Renders client configs for a user over an explicit list of domains. Unknown domains are ignored. An empty domains list returns an empty config (does not mean all local domains).",
     )
     def post(self, data: ClientConfigsIn) -> ClientConfigsOut | Response:
         out = _render(data)

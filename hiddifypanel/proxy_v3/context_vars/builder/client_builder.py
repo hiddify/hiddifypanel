@@ -62,7 +62,8 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
     del common_core_token  # cache key only; selection is re-read from hconfig below
     proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).all()
     child_hconfigs: dict[int, HConfigVar] = get_all_hconfigs()
-    domains: list[DomainIPVar] = get_domains_by_name(domain_names) if domain_names else get_availble_domains(sublink_domain)
+    # ``domain_names is not None``: explicit list (including []) — never fall back to "all".
+    domains: list[DomainIPVar] = get_domains_by_name(domain_names) if domain_names is not None else get_availble_domains(sublink_domain)
     shared_cert = select_shared_certificate()
     all_bases = []
     for p in proxies:
@@ -83,7 +84,9 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.mode == CustomProxyMode.no_inbound:
-        return True
+        # Keep available domains (all children) so get_nodes_configs can split by child_id.
+        # Still drop sub-link-only hosts; never treat no_inbound as "ignore every filter".
+        return not d.is_sub_link_only()
     if d.is_sub_link_only():
         return False
     if d.child_id != Child.current().id:
@@ -191,6 +194,8 @@ def get_availble_domains(sublink_domain: str | None):
         if only_allow_sub_link and not db_domain.is_sub_link_only():
             return []
 
-        domains = db_domain.show_domains or Domain.query.filter(Domain.mode != DomainType.sub_link_only).all()
+        # Empty show_domains means "all" — still exclude sub_link_only hosts.
+        # Include every child so parent can aggregate; per-proxy / get_nodes_configs filter by child_id.
+        domains = list(db_domain.show_domains) if db_domain.show_domains else Domain.query.filter(Domain.mode != DomainType.sub_link_only).all()
 
     return [DomainIPVar.from_domain(d) for d in _proxy_domain_rows(domains)]

@@ -20,7 +20,10 @@ class RegisterWithParentInputSchema(ApiModel):
 class ClientConfigsIn(ApiModel):
     core: ClientCore = Field(description=f"The client core to render, one of {list(CLIENT_CORES)}")
     user_uuid: str = Field(description="The uuid of the user to render the configs for")
-    domains: list[str] = Field(description="The domains to build the configs from; unknown domains are ignored", min_length=1)
+    domains: list[str] = Field(
+        description="Domain hostnames to render. Unknown names are ignored. An empty list yields no configs (never 'all domains').",
+        default_factory=list,
+    )
     user_agent: str = Field(default="", description="The client user agent, used to pick the template version")
     pretty: bool = Field(default=True, description="Indent the json based cores")
     raw: bool = Field(default=False, description="When true, return the config body only (no JSON envelope)")
