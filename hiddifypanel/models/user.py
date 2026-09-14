@@ -274,7 +274,10 @@ class User(BaseAccount):
     def bulk_register(cls, accounts: list = [], commit: bool = True, remove: bool = False):
         for u in accounts:
             row = u.model_dump() if hasattr(u, "model_dump") else u
-            data = {**row, "deleted": False}
+            # Preserve soft-delete flag from backup; only default when missing.
+            data = {**row}
+            if "deleted" not in data:
+                data["deleted"] = False
             cls.add_or_update(commit=False, **data)
         if remove:
             keep = {str(u.uuid if hasattr(u, "uuid") else u.get("uuid")) for u in accounts if (getattr(u, "uuid", None) or (isinstance(u, dict) and u.get("uuid")))}

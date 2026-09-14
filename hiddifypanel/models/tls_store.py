@@ -34,9 +34,17 @@ class TlsStore(db.Model):  # type: ignore
     domain: Mapped[Domain] = relationship("Domain", back_populates="certificate")
 
     def to_dict(self, *, include_private_key: bool = False) -> dict[str, Any]:
+        domain_name = ""
+        child_unique_id = ""
+        if self.domain:
+            domain_name = self.domain.domain or ""
+            if self.domain.child:
+                child_unique_id = self.domain.child.unique_id or ""
         data: dict[str, Any] = {
             "id": self.id,
             "domain_id": self.domain_id,
+            "domain": domain_name,
+            "child_unique_id": child_unique_id,
             "certificate": self.certificate or "",
             "expires_at": self.expires_at.isoformat() if self.expires_at else None,
             "valid_cert": bool(self.valid_cert),
@@ -56,3 +64,70 @@ class TlsStore(db.Model):  # type: ignore
         if not domain_id:
             return None
         return cls.query.filter(cls.domain_id == int(domain_id)).first()
+
+    @classmethod
+    def add_or_update(cls, commit: bool = True, **data) -> TlsStore | None:
+        from hiddifypanel.models.domain import Domain
+        from hiddifypanel.panel import hiddify
+
+        domain_id = data.get("domain_id")
+        domain_row = None
+        if domain_id:
+            domain_row = Domain.query.filter(Domain.id == int(domain_id)).first()
+        if not domain_row:
+            domain_name = str(data.get("domain") or "").strip().lower()
+            if not domain_name:
+                return None
+            child_id = hiddify.child_id_from_row(data, data.get("force_child_unique_id"))
+            domain_row = Domain.query.filter(Domain.domain == domain_name, Domain.child_id == child_id).first()
+            if not domain_row:
+                domain_row = Domain.query.filter(Domain.domain == domain_name).first()
+        if not domain_row:
+            return None
+
+        row = cls.by_domain_id(domain_row.id)
+        if not row:
+            row = cls(domain_id=domain_row.id)
+            db.session.add(row)
+
+        if "certificate" in data:
+            row.certificate = data.get("certificate") or ""
+        if "private_key" in data:
+            row.private_key = data.get("private_key") or ""
+        if "valid_cert" in data:
+            row.valid_cert = bool(data["valid_cert"])
+        if "self_signed" in data:
+            row.self_signed = bool(data["self_signed"])
+        if "issuer" in data:
+            row.issuer = data.get("issuer") or ""
+        if "fingerprint" in data:
+            row.fingerprint = data.get("fingerprint") or ""
+        if "auto_renew" in data:
+            row.auto_renew = bool(data["auto_renew"])
+        if "last_renewal_error" in data:
+            row.last_renewal_error = data.get("last_renewal_error") or None
+        for field in ("expires_at", "updated_at"):
+            if field not in data or not data[field]:
+                continue
+            raw = data[field]
+            if isinstance(raw, datetime):
+                setattr(row, field, raw)
+            elif isinstance(raw, str):
+                try:
+                    setattr(row, field, datetime.fromisoformat(raw.replace("Z", "+00:00")))
+                except ValueError:
+                    pass
+        if commit:
+            db.session.commit()
+        return row
+
+    @classmethod
+    def bulk_register(cls, rows, commit: bool = True, force_child_unique_id: str | None = None) -> None:
+        for item in rows:
+            row = item.model_dump() if hasattr(item, "model_dump") else dict(item)
+            payload = {k: v for k, v in row.items() if k not in {"id", "domain_id"}}
+            if force_child_unique_id is not None:
+                payload["force_child_unique_id"] = force_child_unique_id
+            cls.add_or_update(commit=False, **payload)
+        if commit:
+            db.session.commit()

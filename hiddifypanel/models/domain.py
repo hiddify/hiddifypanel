@@ -185,6 +185,7 @@ class Domain(db.Model):
             "grpc": self.grpc,
             "ech": bool(self.ech),
             "download_domain": self.download_domain.domain if self.download_domain else "",
+            "server_domain": self.server_domain.domain if self.server_domain else "",
             "show_domains": [dd.domain for dd in self.show_domains] if not for_parent else None,
             "resolve_ip": self.resolve_ip,
             "extra_params": extra,
@@ -357,30 +358,17 @@ class Domain(db.Model):
         return domains
 
     @classmethod
-    def add_or_update(cls, commit=True, child_id=0, **domain):
+    def add_or_update(cls, commit=True, child_id=0, *, apply_links: bool = True, **domain):
         dbdomain = Domain.query.filter(Domain.domain == domain["domain"], Domain.child_id == child_id).first()
         if not dbdomain:
             dbdomain = Domain(domain=domain["domain"])
             db.session.add(dbdomain)
         dbdomain.child_id = child_id
 
-        mode = domain["mode"]
-        fake_mode = domain.get("fake_mode")
-        mode_value = str(getattr(mode, "value", mode) or "")
-        if mode_value == "old_xtls_direct":
-            mode = DomainType.direct
-        elif mode_value == "auto_cdn_ip":
-            mode = DomainType.cdn
-        elif mode_value == "special":
-            mode = DomainType.direct
-            fake_mode = FakeMode.reality
+        mode, fake_mode = cls._normalize_legacy_mode(domain.get("mode"), domain.get("fake_mode"))
         dbdomain.mode = mode
         if fake_mode is not None:
             dbdomain.fake_mode = fake_mode
-        if "custom_proxy_slugs" in domain:
-            raw_slugs = domain["custom_proxy_slugs"]
-            slugs = [str(slug) for slug in raw_slugs] if isinstance(raw_slugs, list) else []
-            dbdomain.set_custom_proxies_by_slugs(slugs)
         dbdomain.cdn_ip = domain.get("cdn_ip", "")
         dbdomain.alias = domain.get("alias", "")
         dbdomain.grpc = domain.get("grpc", False)
@@ -394,22 +382,101 @@ class Domain(db.Model):
             dbdomain.extra_params = "{}"
         else:
             dbdomain.extra_params = raw_extra
-        show_domains = domain.get("show_domains", [])
 
-        dbdomain.show_domains = Domain.query.filter(Domain.domain.in_(show_domains)).all() if show_domains else []
+        if apply_links:
+            cls._apply_domain_links(dbdomain, domain, preferred_child_id=child_id)
 
-        dl_domain = domain.get("download_domain")
-        if dl_domain:
-            dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()
-            if not dbdldomain:
-                dbdldomain = Domain(domain=dl_domain)
-                db.session.add(dbdldomain)
-                db.session.commit()
-                dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()
-            assert dbdldomain
-            dbdomain.download_domain_id = dbdldomain.id
         if commit:
             db.session.commit()
+        return dbdomain
+
+    @classmethod
+    def _normalize_legacy_mode(cls, mode, fake_mode):
+        """Map ≤12.x domain modes (reality/fake/special_*/…) to DomainType + FakeMode."""
+        mode_value = str(getattr(mode, "value", mode) or "").strip().lower()
+        fake_value = fake_mode
+        if isinstance(fake_value, str):
+            fake_value = fake_value.strip().lower() or None
+
+        remapped = None
+        if mode_value in {"old_xtls_direct"}:
+            remapped = DomainType.direct
+        elif mode_value == "auto_cdn_ip":
+            remapped = DomainType.cdn
+        elif mode_value == "special":
+            remapped = DomainType.direct
+            fake_value = FakeMode.reality
+        elif mode_value == "fake":
+            remapped = DomainType.direct
+            fake_value = FakeMode.fake
+        elif mode_value in {
+            "reality",
+            "special_reality",
+            "special_reality_tcp",
+            "special_reality_grpc",
+            "special_reality_xhttp",
+        } or mode_value.startswith("special_reality"):
+            remapped = DomainType.direct
+            fake_value = FakeMode.reality
+        elif mode_value == "dnstt":
+            remapped = DomainType.direct
+            fake_value = FakeMode.dns
+        elif mode_value:
+            try:
+                remapped = mode if isinstance(mode, DomainType) else DomainType(mode_value)
+            except ValueError:
+                remapped = DomainType.direct
+        else:
+            remapped = DomainType.direct
+
+        if isinstance(fake_value, FakeMode):
+            resolved_fake = fake_value
+        elif isinstance(fake_value, str) and fake_value:
+            try:
+                resolved_fake = FakeMode(fake_value)
+            except ValueError:
+                resolved_fake = None
+        else:
+            resolved_fake = None
+        return remapped, resolved_fake
+
+    @classmethod
+    def _lookup_domain_ref(cls, name: str | None, preferred_child_id: int = 0) -> Domain | None:
+        if not name:
+            return None
+        name = str(name).strip().lower()
+        if not name:
+            return None
+        row = cls.query.filter(cls.domain == name, cls.child_id == preferred_child_id).first()
+        if row:
+            return row
+        return cls.query.filter(cls.domain == name).first()
+
+    @classmethod
+    def _apply_domain_links(cls, dbdomain: Domain, domain: dict, preferred_child_id: int = 0) -> None:
+        show_domains = domain.get("show_domains") or []
+        if show_domains:
+            resolved = []
+            for name in show_domains:
+                ref = cls._lookup_domain_ref(name, preferred_child_id)
+                if ref:
+                    resolved.append(ref)
+            dbdomain.show_domains = resolved
+        elif "show_domains" in domain:
+            dbdomain.show_domains = []
+
+        if "download_domain" in domain:
+            dl = cls._lookup_domain_ref(domain.get("download_domain"), preferred_child_id)
+            dbdomain.download_domain_id = dl.id if dl else None
+
+        if "server_domain" in domain:
+            sd = cls._lookup_domain_ref(domain.get("server_domain"), preferred_child_id)
+            dbdomain.server_domain_id = sd.id if sd else None
+
+        if "custom_proxy_slugs" in domain:
+            raw_slugs = domain["custom_proxy_slugs"]
+            slugs = [str(slug) for slug in raw_slugs] if isinstance(raw_slugs, list) else []
+            dbdomain.set_custom_proxies_by_slugs(slugs)
 
     @classmethod
     def bulk_register(cls, domains, commit=True, remove=False, force_child_unique_id: str | None = None):
@@ -417,15 +484,36 @@ class Domain(db.Model):
 
         child_ids = {}
         for domain in domains:
-            row = domain.model_dump() if hasattr(domain, "model_dump") else domain
-            child_id = hiddify.get_child(unique_id=force_child_unique_id)
+            row = domain.model_dump() if hasattr(domain, "model_dump") else dict(domain)
+            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
             child_ids[child_id] = 1
-            cls.add_or_update(commit=False, child_id=child_id, **row)
+            # First pass: create rows without cross-domain links (later rows may not exist yet).
+            link_keys = ("show_domains", "download_domain", "server_domain", "custom_proxy_slugs")
+            base = {k: v for k, v in row.items() if k not in link_keys}
+            cls.add_or_update(commit=False, child_id=child_id, apply_links=False, **base)
         if remove and len(child_ids):
             dd = {d.domain if hasattr(d, "domain") else d["domain"]: 1 for d in domains}
             for d in Domain.query.filter(Domain.child_id.in_(child_ids)):
                 if d.domain not in dd:
                     db.session.delete(d)
 
+        db.session.flush()
+        # Always resolve cross-domain links once all rows exist (even if commit=False).
+        # set_db_from_json re-runs this after custom proxies so custom_proxy_slugs stick.
+        cls.bulk_apply_links(domains, force_child_unique_id=force_child_unique_id, commit=False)
+        if commit:
+            db.session.commit()
+
+    @classmethod
+    def bulk_apply_links(cls, domains, force_child_unique_id: str | None = None, commit: bool = True):
+        from hiddifypanel.panel import hiddify
+
+        for domain in domains:
+            row = domain.model_dump() if hasattr(domain, "model_dump") else dict(domain)
+            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
+            dbdomain = cls.query.filter(cls.domain == row["domain"], cls.child_id == child_id).first()
+            if not dbdomain:
+                continue
+            cls._apply_domain_links(dbdomain, row, preferred_child_id=child_id)
         if commit:
             db.session.commit()

@@ -81,8 +81,14 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
             db_account.comment = comment
         if (telegram_id := data.get("telegram_id")) and isinstance(telegram_id, int):
             db_account.telegram_id = hutils.convert.to_int(telegram_id)
-        if (lang := data.get("lang")) and isinstance(lang, Lang):
-            db_account.lang = lang
+        if (lang := data.get("lang")) is not None:
+            if isinstance(lang, Lang):
+                db_account.lang = lang
+            elif isinstance(lang, str) and lang.strip():
+                try:
+                    db_account.lang = Lang(lang.strip())
+                except (ValueError, KeyError):
+                    pass
         if commit:
             db.session.commit()
         return db_account

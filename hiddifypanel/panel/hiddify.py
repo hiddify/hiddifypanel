@@ -146,12 +146,34 @@ def get_child(unique_id):
     return child_id
 
 
+def child_id_from_row(row: dict, force_child_unique_id: str | None = None) -> int:
+    """Resolve child_id for bulk restore.
+
+    Prefer an explicit ``force_child_unique_id`` (parent→node sync). Otherwise use the
+    row's ``child_unique_id`` so multi-node backups do not collapse onto child 0.
+    """
+    if force_child_unique_id is not None:
+        return get_child(unique_id=force_child_unique_id)
+    uid = (row or {}).get("child_unique_id")
+    if uid in (None, ""):
+        return get_child(unique_id=None)
+    return get_child(unique_id=uid)
+
+
 def dump_db_to_dict():
+    from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
+    from hiddifypanel.models.server_ip import ServerIp
+    from hiddifypanel.models.tls_store import TlsStore
+
     return {
         "childs": [u.to_dict() for u in db.session.query(Child).all()],
         "users": [u.to_dict() for u in db.session.query(User).all()],
         "domains": [u.to_dict() for u in db.session.query(Domain).all()],
         "proxies": [u.to_dict() for u in db.session.query(Proxy).all()],
+        "proxy_templates": [t.to_dict() for t in db.session.query(ProxyTemplate).all()],
+        "custom_proxies": [p.to_dict() for p in db.session.query(CustomProxy).all()],
+        "server_ips": [ip.to_dict() for ip in db.session.query(ServerIp).all()],
+        "tls_store": [t.to_dict(include_private_key=True) for t in db.session.query(TlsStore).all()],
         # "parent_domains": [] if not hconfig(ConfigEnum.license) else [u.to_dict() for u in ParentDomain.query.all()],
         "admin_users": [d.to_dict() for d in db.session.query(AdminUser).all()],
         "hconfigs": [*[u.to_dict() for u in db.session.query(BoolConfig).all()], *[u.to_dict() for u in db.session.query(StrConfig).all()]],
@@ -245,6 +267,24 @@ def set_db_from_json(
         bulk_register_configs(json_data["hconfigs"], commit=True, override_unique_id=override_unique_id)
         if "proxies" in json_data:
             Proxy.bulk_register(json_data["proxies"], commit=False)
+
+    # Newer backup sections (optional; ignored by older restore paths).
+    if set_domains or set_settings:
+        from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
+        from hiddifypanel.models.server_ip import ServerIp
+        from hiddifypanel.models.tls_store import TlsStore
+
+        if "proxy_templates" in json_data:
+            ProxyTemplate.bulk_register(json_data["proxy_templates"], commit=False)
+        if "custom_proxies" in json_data:
+            CustomProxy.bulk_register(json_data["custom_proxies"], commit=False)
+        if "server_ips" in json_data:
+            ServerIp.bulk_register(json_data["server_ips"], commit=False)
+        if set_domains and "domains" in json_data:
+            # Second pass: show_domains / download / server_domain / custom_proxy_slugs
+            Domain.bulk_apply_links(json_data["domains"], commit=False)
+        if set_domains and "tls_store" in json_data:
+            TlsStore.bulk_register(json_data["tls_store"], commit=False)
 
     ids_without_parent = get_ids_without_parent({u.id: u.to_dict() for u in AdminUser.query.all()})
     owner = AdminUser.get_super_admin()

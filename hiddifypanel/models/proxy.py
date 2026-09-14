@@ -109,10 +109,15 @@ class Proxy(db.Model):
             db.session.add(dbproxy)
         dbproxy.enable = proxy["enable"]
         dbproxy.name = proxy["name"]
-        dbproxy.proto = proxy["proto"]
-        if proxy["transport"] == "splithttp":
-            proxy["transport"] = "xhttp"
-        dbproxy.transport = proxy["transport"]
+        proto = proxy["proto"]
+        proto_value = str(getattr(proto, "value", proto) or "").strip().lower()
+        if proto_value == "ss":
+            proto = ProxyProto.shadowsocks
+        dbproxy.proto = proto
+        transport = proxy["transport"]
+        if transport == "splithttp":
+            transport = "xhttp"
+        dbproxy.transport = transport
         dbproxy.cdn = proxy["cdn"]
         dbproxy.l3 = proxy["l3"]
         dbproxy.params = proxy["params"]
@@ -136,7 +141,7 @@ class Proxy(db.Model):
 
         for proxy in proxies:
             row = proxy.model_dump() if hasattr(proxy, "model_dump") else proxy
-            child_id = hiddify.get_child(unique_id=force_child_unique_id)
+            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
             Proxy.add_or_update(commit=False, child_id=child_id, **row)
         if commit:
             db.session.commit()

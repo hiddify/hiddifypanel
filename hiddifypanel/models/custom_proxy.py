@@ -216,9 +216,13 @@ class ProxyTemplate(db.Model):  # type: ignore
         return effective_template_content(self)
 
     def to_dict(self) -> dict[str, Any]:
+        from hiddifypanel.models.child import Child
+
+        child = Child.by_id(self.child_id) if self.child_id is not None else None
         return {
             "id": self.id,
             "child_id": self.child_id,
+            "child_unique_id": child.unique_id if child else "",
             "slug": self.slug,
             "core": self.core.value if self.core else None,
             "category": self.category.value if self.category else None,
@@ -295,6 +299,22 @@ class ProxyTemplate(db.Model):  # type: ignore
         if commit:
             db.session.commit()
         return db_tpl
+
+    @classmethod
+    def bulk_register(cls, templates, commit: bool = True, force_child_unique_id: str | None = None) -> None:
+        from hiddifypanel.panel import hiddify
+
+        for tpl in templates:
+            row = tpl.model_dump() if hasattr(tpl, "model_dump") else dict(tpl)
+            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
+            payload = {k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id"}}
+            # Built-ins are keyed by slug; pass existing id so add_or_update can update them.
+            existing = cls.query.filter(cls.slug == payload.get("slug"), cls.child_id == child_id).first()
+            if existing:
+                payload["id"] = existing.id
+            cls.add_or_update(child_id=child_id, commit=False, **payload)
+        if commit:
+            db.session.commit()
 
 
 class CustomProxyClientCore(db.Model):  # type: ignore
@@ -454,9 +474,13 @@ class CustomProxy(db.Model):  # type: ignore
         ]
         blocked = self.blocked_parent_enables()
         stored_enable = bool(self._enable)
+        from hiddifypanel.models.child import Child
+
+        child = Child.by_id(self.child_id) if self.child_id is not None else None
         return {
             "id": self.id,
             "child_id": self.child_id,
+            "child_unique_id": child.unique_id if child else "",
             "name": self.name,
             "slug": self.slug,
             "enable": stored_enable,
@@ -663,6 +687,26 @@ class CustomProxy(db.Model):  # type: ignore
         if commit:
             db.session.commit()
         return dbproxy
+
+    @classmethod
+    def bulk_register(cls, proxies, commit: bool = True, force_child_unique_id: str | None = None) -> None:
+        from hiddifypanel.panel import hiddify
+
+        for proxy in proxies:
+            row = proxy.model_dump() if hasattr(proxy, "model_dump") else dict(proxy)
+            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
+            payload = {k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id", "effective_enable", "blocked_by", "client_cores"}}
+            # Match by slug on this child; drop cross-DB ids.
+            existing = cls.query.filter(cls.slug == payload.get("slug"), cls.child_id == child_id).first()
+            if existing:
+                payload["id"] = existing.id
+            try:
+                cls.add_or_update(child_id=child_id, commit=False, **payload)
+            except ValueError:
+                # Skip incomplete / incompatible legacy rows rather than aborting restore.
+                continue
+        if commit:
+            db.session.commit()
 
     @classmethod
     def _sync_builtin_client_overrides(cls, dbproxy: CustomProxy, client_config: dict[str, Any]) -> None:

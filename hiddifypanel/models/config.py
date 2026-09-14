@@ -187,7 +187,7 @@ def bulk_register_configs(hconfigs, commit: bool = True, froce_child_unique_id: 
         row = conf.model_dump() if hasattr(conf, "model_dump") else conf
         if row["key"] == ConfigEnum.unique_id and not override_unique_id:
             continue
-        child_id = hiddify.get_child(unique_id=froce_child_unique_id)
+        child_id = hiddify.child_id_from_row(row, froce_child_unique_id)
         add_or_update_config(commit=False, child_id=child_id, **row)
     if commit:
         db.session.commit()

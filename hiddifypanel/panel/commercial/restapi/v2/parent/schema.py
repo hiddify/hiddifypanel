@@ -26,17 +26,16 @@ class DomainSchema(ApiModel):
     extra_params: dict[str, Any] | str | None = Field(default=None, description="Extra domain params")
     resolve_ip: bool | None = Field(default=None, description="Resolve domain to IP on the client")
     download_domain: str | None = Field(default=None, description="Download/mux domain name")
+    server_domain: str | None = Field(default=None, description="Server/mux domain name")
 
     @field_validator("mode", mode="before")
     @classmethod
     def _coerce_legacy_mode(cls, value: Any) -> Any:
         raw = str(getattr(value, "value", value) or "").strip().lower()
-        if raw == "old_xtls_direct":
+        if raw in {"old_xtls_direct", "special", "fake", "reality", "dnstt"} or raw.startswith("special_reality"):
             return DomainType.direct
         if raw == "auto_cdn_ip":
             return DomainType.cdn
-        if raw == "special":
-            return DomainType.direct
         return value
 
 

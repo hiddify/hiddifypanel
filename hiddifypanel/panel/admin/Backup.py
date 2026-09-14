@@ -51,10 +51,6 @@ class Backup(FlaskView):
                                      # replace_owner_admin=restore_form.override_root_admin.data,
                                      )
 
-            # remove default user cause it's not needed (program users wanted)
-            if default := User.by_id(1):
-                default.remove()
-
             from flask_babel import refresh
             refresh()
             # return redirect(hutils.flask.hurl_for("admin.Actions:reinstall2"))
