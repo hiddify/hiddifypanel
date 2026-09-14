@@ -15,6 +15,7 @@ const routes = [
         path: 'custom-proxies',
         name: 'custom-proxy-list',
         component: () => import('@/features/custom-proxy/views/CustomProxyListView.vue'),
+        meta: { keepAlive: true },
       },
       {
         path: 'custom-proxies/new',

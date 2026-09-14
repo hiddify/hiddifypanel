@@ -17,6 +17,38 @@
         </div>
       </template>
 
+      <Column field="enable" sortable class="w-44 shrink-0">
+        <template #header>
+          <div class="flex items-center gap-1">
+            <span>{{ t('common.enabled') }}</span>
+            <Button
+              icon="pi pi-filter"
+              text
+              rounded
+              size="small"
+              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
+              :aria-label="t('common.filter')"
+              @click="(e: Event) => enabledPopover.toggle(e)"
+            />
+          </div>
+        </template>
+        <template #body="{ data }">
+          <div class="list-actions-cell">
+            <ToggleSwitch :model-value="data.enable !== false" @update:model-value="(v: boolean) => toggleEnable(data, v)" />
+            <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'base-config-edit', params: { id: data.id } })" />
+            <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
+            <Button
+              v-if="!data.is_builtin"
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="confirmDelete(data)"
+            />
+            <SysBadge v-if="data.is_builtin" :customized="data.builtin_override" icon-only class="inline-flex" />
+          </div>
+        </template>
+      </Column>
       <Column field="name" sortable>
         <template #header>
           <div class="flex items-center gap-1">
@@ -31,6 +63,13 @@
               @click="(e: Event) => namePopover.toggle(e)"
             />
           </div>
+        </template>
+        <template #body="{ data }">
+          <a
+            class="list-name-link"
+            href="#"
+            @click.prevent="router.push({ name: 'base-config-edit', params: { id: data.id } })"
+          >{{ data.name }}</a>
         </template>
       </Column>
       <Column field="description" sortable>
@@ -101,40 +140,6 @@
         </template>
         <template #body="{ data }">
           <span v-if="data.version">≥ {{ data.version }}</span>
-        </template>
-      </Column>
-      <Column field="enable" sortable>
-        <template #header>
-          <div class="flex items-center gap-1">
-            <span>{{ t('common.enabled') }}</span>
-            <Button
-              icon="pi pi-filter"
-              text
-              rounded
-              size="small"
-              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
-              :aria-label="t('common.filter')"
-              @click="(e: Event) => enabledPopover.toggle(e)"
-            />
-          </div>
-        </template>
-        <template #body="{ data }">
-          <ToggleSwitch :model-value="data.enable !== false" @update:model-value="(v: boolean) => toggleEnable(data, v)" />
-        </template>
-      </Column>
-      <Column header="" class="w-48 shrink-0">
-        <template #body="{ data }">
-          <SysBadge v-if="data.is_builtin" :customized="data.builtin_override" icon-only class="mr-1" />
-          <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'base-config-edit', params: { id: data.id } })" />
-          <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
-          <Button
-            v-if="!data.is_builtin"
-            icon="pi pi-trash"
-            text
-            rounded
-            severity="danger"
-            @click="confirmDelete(data)"
-          />
         </template>
       </Column>
     </DataTable>
@@ -309,3 +314,20 @@ function confirmDelete(row: ProxyBaseConfig) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.list-actions-cell {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+.list-name-link {
+  color: var(--p-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.list-name-link:hover {
+  text-decoration: underline;
+}
+</style>

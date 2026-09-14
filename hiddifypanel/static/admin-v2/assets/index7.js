@@ -1,4 +1,4 @@
-import{b as h,a as v}from"./index2.js";import{B as w,R as P,i as k,j as O,ad as j,o as a,c as g,e as d,k as p,g as r,f as c,l as u,v as f,n as B,p as S,q as D,a as L,w as C,x as I,T as E}from"./index.js";var K=`
+import{b as h,a as v}from"./index2.js";import{B as w,R as P,i as k,j as O,af as j,o as a,c as g,e as d,k as p,g as r,f as c,l as u,v as f,n as B,p as S,q as D,a as L,w as C,x as I,T as E}from"./index.js";var K=`
     .p-fieldset {
         background: dt('fieldset.background');
         border: 1px solid dt('fieldset.border.color');

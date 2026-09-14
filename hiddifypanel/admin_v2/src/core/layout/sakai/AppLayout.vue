@@ -1,3 +1,24 @@
+<template>
+  <div class="layout-wrapper" :class="containerClass">
+    <AppTopbar />
+    <AppSidebar />
+    <div class="layout-main-container">
+      <div class="layout-main">
+        <PanelNotices />
+        <RouterView v-slot="{ Component, route }">
+          <KeepAlive :include="keptViews">
+            <component :is="Component" :key="route.name as string" />
+          </KeepAlive>
+        </RouterView>
+      </div>
+      <AppFooter />
+    </div>
+    <div class="layout-mask animate-fadein" @click="hideMobileMenu" />
+  </div>
+  <Toast />
+  <ConfirmDialog />
+</template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 import ConfirmDialog from 'primevue/confirmdialog'
@@ -10,6 +31,9 @@ import { useLayout } from './composables/layout'
 
 const { layoutConfig, layoutState, hideMobileMenu } = useLayout()
 
+/** Keep list filters/search when navigating to editor and back. */
+const keptViews = ['CustomProxyListView']
+
 const containerClass = computed(() => ({
   'layout-overlay': layoutConfig.menuMode === 'overlay',
   'layout-static': layoutConfig.menuMode === 'static',
@@ -18,20 +42,3 @@ const containerClass = computed(() => ({
   'layout-static-inactive': layoutState.staticMenuInactive,
 }))
 </script>
-
-<template>
-  <div class="layout-wrapper" :class="containerClass">
-    <AppTopbar />
-    <AppSidebar />
-    <div class="layout-main-container">
-      <div class="layout-main">
-        <PanelNotices />
-        <RouterView />
-      </div>
-      <AppFooter />
-    </div>
-    <div class="layout-mask animate-fadein" @click="hideMobileMenu" />
-  </div>
-  <Toast />
-  <ConfirmDialog />
-</template>

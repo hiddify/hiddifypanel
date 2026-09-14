@@ -735,21 +735,37 @@ def validate_port_rules(compiled_text: str, port: int | None = None) -> list[dic
 
 def validate_core_placeholders(template_text: str, core: str | None) -> list[dict[str, str]]:
     errors: list[dict[str, str]] = []
-    has_tag = "proxy.tag" in template_text or "{{TAG}}" in template_text or "{{ TAG }}" in template_text
-    has_port = "proxy.tcp_port" in template_text or "proxy.udp_port" in template_text or "{{PORT}}" in template_text or "{{ PORT }}" in template_text
+    text = template_text or ""
+    # Builtins use ctx.proxy.* and shared includes (…/tag, …/listen), not only {{TAG}}/{{PORT}}.
+    # xray/inbound/listen embeds both tag and port.
+    has_listen_include = bool(re.search(r"include\s+['\"][^'\"]*listen['\"]", text, re.IGNORECASE))
+    has_tag = has_listen_include or bool(
+        re.search(
+            r"(?:ctx\.)?proxy\.tag|\{\{\s*TAG\s*\}\}|include\s+['\"][^'\"]*tag['\"]",
+            text,
+            re.IGNORECASE,
+        )
+    )
+    has_port = has_listen_include or bool(
+        re.search(
+            r"(?:ctx\.)?proxy\.(?:tcp_|udp_)?port|\{\{\s*PORT\s*\}\}",
+            text,
+            re.IGNORECASE,
+        )
+    )
     if core == "xray":
         if not has_tag:
             errors.append({"code": "missing_tag", "message": "Xray template must include proxy.tag (or {{TAG}})"})
         if not has_port:
             errors.append({"code": "missing_port", "message": "Xray template must include proxy.tcp_port or proxy.udp_port (or {{PORT}})"})
-        if re.search(r'"port"\s*:\s*\d+', template_text) and not has_port:
+        if re.search(r'"port"\s*:\s*\d+', text) and not has_port:
             errors.append({"code": "hardcoded_port", "message": "Use proxy.tcp_port or proxy.udp_port instead of a numeric port for xray"})
     elif core == "hiddify-core":
         if not has_tag:
             errors.append({"code": "missing_tag", "message": "Hiddify-core template must include proxy.tag (or {{TAG}})"})
         if not has_port:
             errors.append({"code": "missing_listen_port", "message": "Hiddify-core template must include proxy.tcp_port or proxy.udp_port (or {{PORT}}) for listen_port"})
-        if re.search(r'"listen_port"\s*:\s*\d+', template_text) and not has_port:
+        if re.search(r'"listen_port"\s*:\s*\d+', text) and not has_port:
             errors.append({"code": "hardcoded_port", "message": "Use proxy.tcp_port or proxy.udp_port instead of a numeric listen_port"})
     return errors
 

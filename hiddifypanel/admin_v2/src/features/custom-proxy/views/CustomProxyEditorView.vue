@@ -2,9 +2,14 @@
   <div class="flex flex-col gap-3 mb-5">
     <div class="flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-2 flex-wrap">
-        <Button icon="pi pi-arrow-left" text :label="t('common.back')" @click="router.push({ name: 'custom-proxy-list' })" />
+        <Button
+          icon="pi pi-arrow-left"
+          text
+          :label="t('common.back')"
+          @click="router.push({ name: 'custom-proxy-list' })"
+        />
         <h2 class="text-2xl font-semibold m-0">{{ isNew ? t('proxy.new') : form.name }}</h2>
-        <SysBadge v-if="isBuiltin" :customized="Boolean(form.server_override || form.client_override)" />
+        <SysBadge v-if="isBuiltin" :customized="isCustomizedBuiltin" />
         <Tag v-if="isCommonProxy" :value="t('proxy.commonProxyBadge')" severity="info" />
       </div>
       <div class="flex flex-wrap gap-2">
@@ -571,6 +576,11 @@ const enableSwitchEpoch = ref(0)
 const isNew = computed(() => route.name === 'custom-proxy-new' || !props.id)
 const isBuiltin = computed(() => Boolean(form.is_builtin) && !isNew.value)
 const isCommonProxy = computed(() => Boolean(form.is_common_proxy) && !isNew.value)
+const isCustomizedBuiltin = computed(
+  () =>
+    Boolean(form.server_override || form.client_override)
+    || Object.values(form.builtin_overrides ?? {}).some(Boolean),
+)
 const structureLocked = computed(() => isBuiltin.value)
 const serverLocked = computed(() => isBuiltin.value && !isFieldOverridden('server_config'))
 const meta = ref<CustomProxyMeta | null>(null)
@@ -1721,7 +1731,9 @@ function buildBuiltinPatch(): Partial<CustomProxy> {
     name: form.name,
     enable: form.enable,
     categories: form.categories,
+    // Full map so cleared overrides are sent as absent and cleared server-side.
     builtin_overrides: { ...(form.builtin_overrides ?? {}) },
+    server_override: isFieldOverridden('server_config'),
   }
   if (isFieldOverridden('custom_path')) patch.custom_path = form.custom_path
   if (isFieldOverridden('domain_modes')) patch.domain_modes = form.domain_modes
@@ -1731,16 +1743,14 @@ function buildBuiltinPatch(): Partial<CustomProxy> {
   if (isFieldOverridden('l7_reverse_proto')) patch.l7_reverse_proto = form.l7_reverse_proto
   if (isFieldOverridden('server_config')) {
     patch.server_config = form.server_config
-    patch.server_override = true
   }
+  // Always send client cores with explicit override flags so revert clears the badge.
   const clientConfigs = (form.client_config?.core_configs ?? []).map((cc) => ({
     ...cc,
     override: clientCoreOverridden(cc.core),
   }))
-  if (clientConfigs.some((cc) => cc.override)) {
-    patch.client_config = { core_configs: clientConfigs }
-    patch.client_override = true
-  }
+  patch.client_config = { core_configs: clientConfigs }
+  patch.client_override = clientConfigs.some((cc) => cc.override)
   return patch
 }
 
@@ -1771,7 +1781,7 @@ async function save() {
     if (isNew.value) {
       const created = await customProxiesApi.create(payload as CustomProxy)
       toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
-      router.replace({ name: 'custom-proxy-edit', params: { id: created.id } })
+      await router.replace({ name: 'custom-proxy-edit', params: { id: created.id } })
     } else {
       const updated = await customProxiesApi.update(Number(props.id), payload)
       Object.assign(form, updated)

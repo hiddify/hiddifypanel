@@ -28,11 +28,55 @@
               severity="secondary"
               @click="bundleDialogVisible = true"
             />
-            <Button icon="pi pi-plus" :label="t('proxy.new')" @click="router.push({ name: 'custom-proxy-new' })" />
+            <Button icon="pi pi-plus" :label="t('proxy.new')" as="a" :href="newProxyHref" @click.exact.prevent="openNew" />
           </div>
         </div>
       </template>
 
+      <Column field="enable" sortable class="w-44 shrink-0">
+        <template #header>
+          <div class="flex items-center gap-1">
+            <span>{{ t('common.enabled') }}</span>
+            <Button
+              icon="pi pi-filter"
+              text
+              rounded
+              size="small"
+              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
+              :aria-label="t('common.filter')"
+              @click="(e: Event) => enabledPopover.toggle(e)"
+            />
+          </div>
+        </template>
+        <template #body="{ data }">
+          <div class="list-actions-cell">
+            <ToggleSwitch
+              :key="`${data.id}-${enableSwitchEpoch}`"
+              :model-value="isEffectivelyEnabled(data)"
+              @update:model-value="(v: boolean) => toggleEnable(data, v)"
+            />
+            <Button
+              as="a"
+              :href="editProxyHref(data.id)"
+              icon="pi pi-pencil"
+              text
+              rounded
+              @click.exact.prevent="openEdit(data.id)"
+            />
+            <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
+            <Button
+              v-if="!data.is_builtin"
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="confirmDelete(data)"
+            />
+            <Tag v-if="data.is_common_proxy" icon="pi pi-asterisk" v-tooltip="t('proxy.commonProxyBadge')" severity="info" />
+            <SysBadge v-if="data.is_builtin" :customized="Boolean(data.server_override || data.client_override)" icon-only class="inline-flex" />
+          </div>
+        </template>
+      </Column>
       <Column field="name" sortable>
         <template #header>
           <div class="flex items-center gap-1">
@@ -49,7 +93,11 @@
           </div>
         </template>
         <template #body="{ data }">
-          <span>{{ data.name }}</span>
+          <a
+            class="proxy-name-link"
+            :href="editProxyHref(data.id)"
+            @click.exact.prevent="openEdit(data.id)"
+          >{{ data.name }}</a>
         </template>
       </Column>
       <Column field="proto" sortable>
@@ -107,14 +155,40 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag
-            v-for="category in data.categories || []"
-            :key="category"
-            :value="category"
-            class="mr-1 mb-1"
-            severity="secondary"
-          />
-          <span v-if="!(data.categories || []).length">—</span>
+          <div v-if="(data.categories || []).length" class="chip-summary-cell">
+            <template v-if="isCategoriesExpanded(data.id)">
+              <Tag
+                v-for="category in data.categories || []"
+                :key="category"
+                :value="category"
+                class="mr-1 mb-1"
+                severity="secondary"
+              />
+              <Button
+                link
+                class="p-0 chip-summary-toggle"
+                :label="t('common.collapse', 'less')"
+                @click="toggleCategories(data.id)"
+              />
+            </template>
+            <template v-else>
+              <Tag
+                v-for="category in visibleCategories(data.categories || [])"
+                :key="category"
+                :value="category"
+                class="mr-1 mb-1"
+                severity="secondary"
+              />
+              <Button
+                v-if="(data.categories || []).length > 2"
+                link
+                class="p-0 chip-summary-toggle"
+                label="…"
+                @click="toggleCategories(data.id)"
+              />
+            </template>
+          </div>
+          <span v-else>—</span>
         </template>
       </Column>
       <Column field="server_core" sortable>
@@ -150,53 +224,34 @@
           <span>{{ t('proxy.domainModes') }}</span>
         </template>
         <template #body="{ data }">
-          <Tag
-            v-for="mode in data.domain_modes || []"
-            :key="mode"
-            :value="t(`proxy.domainModeLabels.${mode}`, mode)"
-            class="mr-1 mb-1"
-            severity="secondary"
-          />
-          <span v-if="!(data.domain_modes || []).length">—</span>
-        </template>
-      </Column>
-      <Column field="enable" sortable>
-        <template #header>
-          <div class="flex items-center gap-1">
-            <span>{{ t('common.enabled') }}</span>
-            <Button
-              icon="pi pi-filter"
-              text
-              rounded
-              size="small"
-              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
-              :aria-label="t('common.filter')"
-              @click="(e: Event) => enabledPopover.toggle(e)"
-            />
+          <div v-if="(data.domain_modes || []).length" class="domain-modes-cell">
+            <template v-if="isDomainModesExpanded(data.id)">
+              <Tag
+                v-for="mode in data.domain_modes || []"
+                :key="mode"
+                :value="t(`proxy.domainModeLabels.${mode}`, mode)"
+                class="mr-1 mb-1"
+                severity="secondary"
+              />
+              <Button
+                link
+                class="p-0 domain-modes-toggle"
+                :label="t('common.collapse', 'less')"
+                @click="toggleDomainModes(data.id)"
+              />
+            </template>
+            <template v-else>
+              <span class="domain-modes-summary">{{ domainModesSummary(data.domain_modes || []) }}</span>
+              <Button
+                v-if="domainModesNeedsExpand(data.domain_modes || [])"
+                link
+                class="p-0 domain-modes-toggle"
+                label="…"
+                @click="toggleDomainModes(data.id)"
+              />
+            </template>
           </div>
-        </template>
-        <template #body="{ data }">
-          <ToggleSwitch
-            :key="`${data.id}-${enableSwitchEpoch}`"
-            :model-value="isEffectivelyEnabled(data)"
-            @update:model-value="(v: boolean) => toggleEnable(data, v)"
-          />
-        </template>
-      </Column>
-      <Column header="" class="w-52 shrink-0">
-        <template #body="{ data }">
-          <Tag v-if="data.is_common_proxy" icon="pi pi-asterisk" v-tooltip="t('proxy.commonProxyBadge')" severity="info" class="mr-1" />
-          <SysBadge v-if="data.is_builtin" :customized="Boolean(data.server_override || data.client_override)" icon-only class="inline-flex mr-1" />
-          <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'custom-proxy-edit', params: { id: data.id } })" />
-          <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
-          <Button
-            v-if="!data.is_builtin"
-            icon="pi pi-trash"
-            text
-            rounded
-            severity="danger"
-            @click="confirmDelete(data)"
-          />
+          <span v-else>—</span>
         </template>
       </Column>
     </DataTable>
@@ -261,7 +316,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+defineOptions({ name: 'CustomProxyListView' })
+
+import { computed, onActivated, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useConfirm } from 'primevue/useconfirm'
@@ -290,6 +347,75 @@ const confirm = useConfirm()
 const toast = useToast()
 const { promptParentEnable } = useParentEnablePrompt()
 const enableSwitchEpoch = ref(0)
+
+const newProxyHref = computed(() => router.resolve({ name: 'custom-proxy-new' }).href)
+
+function editProxyHref(id: number | undefined) {
+  if (id == null) return '#'
+  return router.resolve({ name: 'custom-proxy-edit', params: { id: String(id) } }).href
+}
+
+function openNew() {
+  void router.push({ name: 'custom-proxy-new' })
+}
+
+function openEdit(id: number | undefined) {
+  if (id == null) return
+  void router.push({ name: 'custom-proxy-edit', params: { id: String(id) } })
+}
+
+const expandedDomainModeIds = ref<Set<number>>(new Set())
+const expandedCategoryIds = ref<Set<number>>(new Set())
+
+function domainModeFamilies(modes: string[]): string[] {
+  const families: string[] = []
+  const seen = new Set<string>()
+  for (const mode of modes) {
+    const family = String(mode).split('-')[0] || String(mode)
+    if (!seen.has(family)) {
+      seen.add(family)
+      families.push(family)
+    }
+  }
+  return families
+}
+
+function domainModesSummary(modes: string[]): string {
+  return domainModeFamilies(modes).join(', ')
+}
+
+function domainModesNeedsExpand(modes: string[]): boolean {
+  if (modes.length <= 1) return false
+  return modes.some((mode) => String(mode).includes('-')) || modes.length > domainModeFamilies(modes).length
+}
+
+function isDomainModesExpanded(id: number | undefined): boolean {
+  return id != null && expandedDomainModeIds.value.has(id)
+}
+
+function toggleDomainModes(id: number | undefined) {
+  if (id == null) return
+  const next = new Set(expandedDomainModeIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expandedDomainModeIds.value = next
+}
+
+function visibleCategories(categories: string[]): string[] {
+  return categories.slice(0, 2)
+}
+
+function isCategoriesExpanded(id: number | undefined): boolean {
+  return id != null && expandedCategoryIds.value.has(id)
+}
+
+function toggleCategories(id: number | undefined) {
+  if (id == null) return
+  const next = new Set(expandedCategoryIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expandedCategoryIds.value = next
+}
 
 const proxies = ref<CustomProxy[]>([])
 const meta = ref<CustomProxyMeta | null>(null)
@@ -462,6 +588,7 @@ async function toggleEnable(row: CustomProxy, enable: boolean) {
 async function duplicate(id: number) {
   const copy = await customProxiesApi.duplicate(id)
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
+  await load()
   await router.push({ name: 'custom-proxy-edit', params: { id: String(copy.id) } })
 }
 
@@ -480,4 +607,42 @@ function confirmDelete(row: CustomProxy) {
 }
 
 onMounted(load)
+onActivated(() => {
+  // Refresh rows after edit/save while keeping filters/search from KeepAlive.
+  void load()
+})
 </script>
+
+<style scoped>
+.proxy-name-link,
+.list-name-link {
+  color: var(--p-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.proxy-name-link:hover,
+.list-name-link:hover {
+  text-decoration: underline;
+}
+.list-actions-cell {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+.domain-modes-cell,
+.chip-summary-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+.domain-modes-summary {
+  font-size: 0.9rem;
+}
+.domain-modes-toggle,
+.chip-summary-toggle {
+  font-size: 0.85rem;
+  min-width: auto;
+}
+</style>

@@ -551,8 +551,11 @@ class CustomProxy(db.Model):  # type: ignore
             if "categories" in data:
                 dbproxy.categories = list(data.get("categories") or [])
             if "builtin_overrides" in data:
-                for key, enabled in (data.get("builtin_overrides") or {}).items():
-                    set_field_override(dbproxy, str(key), bool(enabled))
+                incoming = {str(k): bool(v) for k, v in (data.get("builtin_overrides") or {}).items()}
+                # Replace override set: keys omitted from the payload are cleared so revert sticks.
+                existing = set((dbproxy.builtin_overrides or {}).keys())
+                for key in existing | set(incoming.keys()):
+                    set_field_override(dbproxy, key, incoming.get(key, False))
             if "server_override" in data:
                 set_field_override(dbproxy, "server_config", bool(data["server_override"]))
             if "l7_reverse_proto" in data and data.get("l7_reverse_proto") not in (None, ""):
@@ -562,7 +565,12 @@ class CustomProxy(db.Model):  # type: ignore
             _apply_download_xhttp_fields(dbproxy, data)
             if "tls_layer" in data and data.get("tls_layer") not in (None, ""):
                 dbproxy.tls_layer = _parse_tls_layer(data.get("tls_layer"))
-            apply_server = bool((data.get("builtin_overrides") or {}).get("server_config") or dbproxy.server_override or dbproxy.id is None)
+            apply_server = bool(
+                (data.get("builtin_overrides") or {}).get("server_config")
+                or data.get("server_override")
+                or dbproxy.server_override
+                or dbproxy.id is None
+            )
             if "server_config" in data and apply_server:
                 payload = data["server_config"] or {}
                 if "core" in payload:

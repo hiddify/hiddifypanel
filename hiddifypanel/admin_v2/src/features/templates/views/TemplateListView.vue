@@ -17,6 +17,23 @@
         </div>
       </template>
 
+      <Column header="" class="w-36 shrink-0">
+        <template #body="{ data }">
+          <div class="list-actions-cell">
+            <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'template-edit', params: { id: data.id } })" />
+            <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
+            <Button
+              v-if="!data.is_builtin"
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="confirmDelete(data)"
+            />
+            <SysBadge v-if="data.is_builtin" :customized="data.builtin_override" icon-only class="inline-flex" />
+          </div>
+        </template>
+      </Column>
       <Column field="description" sortable>
         <template #header>
           <div class="flex items-center gap-1">
@@ -31,6 +48,13 @@
               @click="(e: Event) => descriptionPopover.toggle(e)"
             />
           </div>
+        </template>
+        <template #body="{ data }">
+          <a
+            class="list-name-link"
+            href="#"
+            @click.prevent="router.push({ name: 'template-edit', params: { id: data.id } })"
+          >{{ data.description || data.slug }}</a>
         </template>
       </Column>
       <Column field="slug" sortable>
@@ -85,21 +109,6 @@
               @click="(e: Event) => categoryPopover.toggle(e)"
             />
           </div>
-        </template>
-      </Column>
-      <Column header="" class="w-48 shrink-0">
-        <template #body="{ data }">
-          <SysBadge v-if="data.is_builtin" :customized="data.builtin_override" icon-only class="mr-1" />
-          <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'template-edit', params: { id: data.id } })" />
-          <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
-          <Button
-            v-if="!data.is_builtin"
-            icon="pi pi-trash"
-            text
-            rounded
-            severity="danger"
-            @click="confirmDelete(data)"
-          />
         </template>
       </Column>
     </DataTable>
@@ -225,3 +234,20 @@ function confirmDelete(row: ProxyTemplate) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.list-actions-cell {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+.list-name-link {
+  color: var(--p-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.list-name-link:hover {
+  text-decoration: underline;
+}
+</style>
