@@ -4,6 +4,7 @@ import random
 import socket
 import sys
 import uuid
+from datetime import datetime
 
 from loguru import logger
 
@@ -24,14 +25,8 @@ MAX_DB_VERSION = 144
 
 def _v144(child_id):
     """AdminUser inherits last_online / last_modified_time from BaseAccount (parent usage sync)."""
-    execute(
-        "UPDATE admin_user SET last_modified_time=COALESCE(last_modified_time, NOW()) "
-        "WHERE last_modified_time IS NULL OR last_modified_time < '1971-01-01'"
-    )
-    execute(
-        "UPDATE admin_user SET last_online=COALESCE(last_online, '0001-01-01 00:00:00') "
-        "WHERE last_online IS NULL"
-    )
+
+    AdminUser.query.update({"last_modified_time": datetime.now(), "last_online": datetime.now()})
 
 
 def _v142(child_id):
@@ -1058,6 +1053,74 @@ enum_columns = [
     CustomProxyClientCore.core,
 ]
 
+# Tables where DELETE of legacy enum rows is unsafe (FK / data loss). Remap instead.
+_ENUM_REMAP_ONLY_TABLES = frozenset({"domain", "user", "proxy", "custom_proxy", "custom_proxy_client_core"})
+
+# Known legacy Domain.mode values → current DomainType (side effects applied in _remap_legacy_domain_modes).
+_LEGACY_DOMAIN_MODE_REMAP = {
+    "old_xtls_direct": "direct",
+    "auto_cdn_ip": "cdn",
+    "special": "direct",
+    "dnstt": "direct",
+    "fake": "direct",
+    "reality": "direct",
+    "special_reality_tcp": "direct",
+    "special_reality_grpc": "direct",
+    "special_reality_xhttp": "direct",
+    "special_reality": "direct",
+}
+
+# Simple old→new maps for other columns (applied before shrinking ENUM).
+_LEGACY_ENUM_REMAPS: dict[tuple[str, str], dict[str, str]] = {
+    ("domain", "mode"): dict(_LEGACY_DOMAIN_MODE_REMAP),
+    ("proxy", "proto"): {"ss": "shadowsocks"},
+    ("user", "mode"): {"disable": "no_reset"},
+}
+
+
+def _db_enum_values(table_name: str, column_name: str) -> list[str]:
+    from sqlalchemy import text
+
+    result = db.session.execute(text(f"SHOW COLUMNS FROM `{table_name}` LIKE '{column_name}'")).fetchall()
+    db_values: list[str] = []
+    for row in result:
+        if "enum" in str(row[1]).lower():
+            db_values = row[1].split("(", 1)[1].rsplit(")", 1)[0].split(",")
+            break
+    return [value.strip().strip("'") for value in db_values if value.strip()]
+
+
+def _remap_legacy_domain_modes() -> None:
+    """Convert removed Domain.mode values in-place (never DELETE domain rows)."""
+    # Side-effect remaps first (must run while MySQL ENUM still accepts legacy labels).
+    execute("UPDATE domain SET mode='cdn', resolve_ip=1 WHERE mode='auto_cdn_ip'")
+    execute("UPDATE domain SET mode='direct', fake_mode='reality' WHERE mode='special'")
+    execute("UPDATE domain SET mode='direct', fake_mode='dns' WHERE mode='dnstt'")
+    execute("UPDATE domain SET mode='direct' WHERE mode='old_xtls_direct'")
+    execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
+    execute(
+        """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
+        'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'
+        )"""
+    )
+    execute("UPDATE domain SET fake_mode='valid' WHERE mode IN ('cdn','worker','sub_link_only') AND (fake_mode IS NULL OR fake_mode='')")
+
+
+def _default_enum_fallback(table_name: str, column_name: str, current_values: list[str]) -> str:
+    defaults = {
+        ("domain", "mode"): "direct",
+        ("domain", "fake_mode"): "valid",
+        ("user", "mode"): "no_reset",
+        ("proxy", "proto"): "vless",
+        ("proxy", "cdn"): "direct",
+        ("proxy", "transport"): "tcp",
+        ("proxy", "l3"): "tls",
+    }
+    preferred = defaults.get((table_name, column_name))
+    if preferred and preferred in current_values:
+        return preferred
+    return current_values[0]
+
 
 def remove_old_enum_values():
 
@@ -1247,6 +1310,8 @@ def migrate(db_version):
     # execute("UPDATE custom_proxy SET proto='shadowsocks' WHERE proto='ss'")
     # execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
     if db_version < 142:
+        _remap_legacy_domain_modes()
+        db.session.commit()
         execute("ALTER TABLE domain DROP COLUMN sub_link_only;")
 
     if db_version < 100:
