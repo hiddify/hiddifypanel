@@ -64,8 +64,6 @@ class User(BaseAccount):
     """
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    last_online: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.min)
-    last_modified_time: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.now)
     # removed
     # expiry_time = db.Column(db.Date, default=datetime.date.today() + relativedelta.relativedelta(months=6))
     usage_limit: Mapped[int] = mapped_column(BigInteger, default=1000 * ONE_GIG)

@@ -19,7 +19,19 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 143
+MAX_DB_VERSION = 144
+
+
+def _v144(child_id):
+    """AdminUser inherits last_online / last_modified_time from BaseAccount (parent usage sync)."""
+    execute(
+        "UPDATE admin_user SET last_modified_time=COALESCE(last_modified_time, NOW()) "
+        "WHERE last_modified_time IS NULL OR last_modified_time < '1971-01-01'"
+    )
+    execute(
+        "UPDATE admin_user SET last_online=COALESCE(last_online, '0001-01-01 00:00:00') "
+        "WHERE last_online IS NULL"
+    )
 
 
 def _v142(child_id):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from enum import auto
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -206,3 +207,10 @@ def before_insert(mapper, connection, target):
 
     hutils.model.gen_username(target)
     # hutils.model.gen_password(target)
+    target.last_modified_time = datetime.datetime.now()
+
+
+@event.listens_for(AdminUser, "before_update")
+def on_admin_update(mapper, connection, target):
+    """Bump last_modified_time so parent/node usage sync can detect admin changes."""
+    target.last_modified_time = datetime.datetime.now()

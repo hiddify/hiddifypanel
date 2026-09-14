@@ -74,7 +74,17 @@ def login_user(user: AdminUser | User, remember=False, duration=None, force=Fals
     account_id = user.get_id()  # type: ignore
     # print('account_id', account_id)
     if user.role in {Role.super_admin, Role.admin, Role.agent}:
+        is_new_login = session.get("_admin_id") != account_id
         session["_admin_id"] = account_id
+        if is_new_login and isinstance(user, AdminUser) and getattr(user, "id", None):
+            import datetime
+
+            from hiddifypanel.database import db
+
+            now = datetime.datetime.now()
+            # Raw UPDATE so before_update does not bump last_modified_time (parent sync flood).
+            AdminUser.query.filter(AdminUser.id == user.id).update({"last_online": now})
+            db.session.commit()
     else:
         session["_user_id"] = account_id
     # session["_fresh"] = fresh

@@ -57,4 +57,4 @@ def get_users_usage_data_for_api(from_time: datetime, include_uuids: set[str]):
     admin_users: list[AdminSchema] = []
     for user in AdminUser.query.filter(AdminUser.last_modified_time >= from_time).all():
         admin_users.append(user.to_schema())
-    return UsageResponseSchema(usages=users, response_time=sync_time, admin_users=admin_users)
+    return UsageResponseSchema(users=users, response_time=sync_time, admin_users=admin_users)

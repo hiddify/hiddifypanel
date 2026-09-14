@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import datetime
 import uuid
 
 from flask_login import UserMixin as FlaskLoginUserMixin
-from sqlalchemy import BigInteger, Enum, String
+from sqlalchemy import BigInteger, DateTime, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel.database import db
@@ -22,6 +23,8 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
     lang: Mapped[Lang | None] = mapped_column(Enum(Lang), default=None)
     deleted: Mapped[bool] = mapped_column(default=False, index=True)
     enable: Mapped[bool] = mapped_column(default=True)
+    last_online: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.min)
+    last_modified_time: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.now)
 
     @property
     def role(self) -> Role | None:
