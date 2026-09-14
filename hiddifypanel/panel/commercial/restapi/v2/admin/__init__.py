@@ -198,3 +198,23 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
         out["parent_admin_uuid"] = actor.uuid
 
     return out
+
+
+def resolve_added_by_uuid(requested_uuid: str | None) -> str:
+    """Restrict added_by_uuid to the caller (or a sub-admin). Never invent admins."""
+    from apiflask import abort
+
+    actor = g.account
+    if actor is None:
+        abort(403, "Admin account required")
+    if not requested_uuid:
+        return actor.uuid
+    target = AdminUser.by_uuid(requested_uuid, create=False)
+    if not target:
+        abort(400, "Invalid added_by_uuid")
+    if getattr(actor, "mode", None) == AdminMode.super_admin:
+        return requested_uuid
+    allowed = set(actor.recursive_sub_admins_ids())
+    if target.id not in allowed:
+        abort(403, "Cannot assign added_by_uuid outside your admins")
+    return requested_uuid

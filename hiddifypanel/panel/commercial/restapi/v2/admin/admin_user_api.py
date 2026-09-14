@@ -38,12 +38,10 @@ class AdminUserApi(MethodView):
                 payload[field] = requested[field]
             else:
                 payload[field] = getattr(admin, field)
+        # Only touch parent when the client sent it (avoids resetting parent to owner on unrelated patches).
         if "parent_admin_uuid" in requested:
             payload["parent_admin_uuid"] = requested["parent_admin_uuid"]
-        elif admin.parent_admin:
-            payload["parent_admin_uuid"] = admin.parent_admin.uuid
-        payload["old_uuid"] = uuid
-        admin = AdminUser.add_or_update(True, **payload) or abort(502, "Unknown issue: Admin is not patched")
+        admin = AdminUser.add_or_update(True, old_uuid=uuid, **payload) or abort(502, "Unknown issue: Admin is not patched")
         return admin.to_schema()
 
     @app.output(SuccessfulSchema)

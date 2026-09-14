@@ -7,7 +7,7 @@ from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import Role, User
 from hiddifypanel.panel import hiddify
 
-from . import has_permission
+from . import has_permission, resolve_added_by_uuid
 from .schema import PatchUserSchema, SuccessfulSchema, UserSchema
 
 
@@ -32,9 +32,10 @@ class UserApi(MethodView):
             abort(403, "You don't have permission to access this user")
 
         payload = data.model_dump(exclude_unset=True)
-        payload["old_uuid"] = uuid
+        if "added_by_uuid" in payload:
+            payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
         user_driver.remove_client(user)
-        dbuser = User.add_or_update(**payload) or abort(502, "Unknown issue! User is not patched")
+        dbuser = User.add_or_update(old_uuid=uuid, **payload) or abort(502, "Unknown issue! User is not patched")
         if dbuser.is_active:
             user_driver.add_client(dbuser)
         hiddify.quick_apply_users()

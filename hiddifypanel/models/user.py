@@ -288,12 +288,13 @@ class User(BaseAccount):
             db.session.commit()
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, **data):
+    def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data):
         from hiddifypanel import hutils
 
-        dbuser: User = super().add_or_update(commit=commit, **data)
+        dbuser: User = super().add_or_update(commit=commit, old_uuid=old_uuid, **data)
         if data.get("added_by_uuid"):
-            admin = AdminUser.by_uuid(data.get("added_by_uuid"), create=True) or AdminUser.current_admin_or_owner()  # type: ignore
+            # Never auto-create admins from user payloads.
+            admin = AdminUser.by_uuid(data.get("added_by_uuid"), create=False) or AdminUser.current_admin_or_owner()  # type: ignore
             dbuser.added_by = admin.id
         elif not dbuser.added_by:
             dbuser.added_by = 1
@@ -308,9 +309,10 @@ class User(BaseAccount):
         if data.get("package_days") is not None:
             dbuser.package_days = data["package_days"]
 
+        if "start_date" in data:
             if data.get("start_date"):
                 dbuser.start_date = hutils.convert.json_to_date(data["start_date"])
-            elif "start_date" in data and data["start_date"] is None:
+            else:
                 dbuser.start_date = None
 
         if (c_GB := data.get("current_usage_GB")) is not None:

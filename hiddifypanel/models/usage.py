@@ -27,7 +27,17 @@ class DailyUsage(db.Model):
 
         if not admin_id:
             admin_id = g.account.id
-        sub_admins = AdminUser.query.filter(AdminUser.id == admin_id).first().recursive_sub_admins_ids()
+        admin = AdminUser.query.filter(AdminUser.id == admin_id).first()
+        if not admin:
+            return {
+                "today": {"usage": 0, "online": 0},
+                "h24": {"usage": 0, "online": 0},
+                "m5": {"usage": 0, "online": 0},
+                "yesterday": {"usage": 0, "online": 0},
+                "last_30_days": {"usage": 0, "online": 0},
+                "total": {"usage": 0, "online": 0, "users": 0},
+            }
+        sub_admins = admin.recursive_sub_admins_ids()
         # print(sub_admins)
 
         def filter_daily_usage_admin(query):

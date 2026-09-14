@@ -27,7 +27,7 @@ class AllConfigsApi(MethodView):
 
 
 class AllPublicPortsApi(MethodView):
-    decorators = [login_required({Role.admin})]
+    decorators = [login_required({Role.super_admin, Role.admin})]
 
     def get(self):
         """Public Ports"""

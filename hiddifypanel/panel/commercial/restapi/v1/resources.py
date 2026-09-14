@@ -38,25 +38,6 @@ class UserResource(Resource):
         hiddify.quick_apply_users()
         return jsonify({"status": 200, "msg": "ok"})
 
-        # start aliz dev
-
-    # desc : it is better to have a delete method to manage users more programatically :)
-    def delete(self, uuid=None):
-        uuid = request.args["uuid"] if "uuid" in request.args else None
-        if uuid:
-            user = User.query.filter(User.uuid == uuid).first() or abort(204)
-            if user is not None:
-                User.remove_user(uuid)
-                # user_driver.remove_client(uuid)
-                hiddify.quick_apply_users()
-                return jsonify({"status": 200, "msg": "ok"})
-            else:
-                return jsonify({"status": 204, "msg": "user not found"})
-        else:
-            return jsonify({"status": 204, "msg": "uuid not found"})
-
-    # end aliz dev
-
 
 class AdminUserResource(Resource):
     decorators = [login_required({Role.super_admin})]

@@ -89,8 +89,12 @@ class AdminUser(BaseAccount):
         }
 
     @classmethod
-    def by_uuid(cls, uuid: str, create: bool = False) -> BaseAccount | None:
-        if not isinstance(uuid, str):
+    def by_uuid(cls, uuid: str | None, create: bool = False) -> BaseAccount | None:
+        if uuid is None or uuid == "":
+            if not create:
+                return None
+            uuid = str(uuid4())
+        elif not isinstance(uuid, str):
             uuid = str(uuid)
         account = AdminUser.query.filter(AdminUser.uuid == uuid).first()
         if not account and create:
@@ -107,16 +111,19 @@ class AdminUser(BaseAccount):
 
     @classmethod
     def add_or_update(cls, commit: bool = True, old_uuid=None, **data):
+        # Forward old_uuid so uuid renames update the existing row instead of inserting a duplicate.
+        dbuser = super().add_or_update(commit=False, old_uuid=old_uuid, **data)
 
-        dbuser = super().add_or_update(commit=commit, **data)
-
-        if dbuser.id != 1:
+        if dbuser.id != 1 and "parent_admin_uuid" in data:
             parent = data.get("parent_admin_uuid")
-            if parent == data["uuid"] or not parent:
+            if not parent or str(parent) == str(dbuser.uuid):
                 parent_admin = cls.current_admin_or_owner()
             else:
-                parent_admin = cls.by_uuid(parent, create=True)
+                parent_admin = cls.by_uuid(str(parent), create=False) or cls.current_admin_or_owner()
             dbuser.parent_admin_id = parent_admin.id
+        elif dbuser.id != 1 and not dbuser.parent_admin_id:
+            dbuser.parent_admin_id = cls.current_admin_or_owner().id
+
         if data.get("mode") is not None:
             dbuser.mode = data.get("mode", AdminMode.agent)
         if data.get("can_add_admin") is not None:
@@ -133,19 +140,19 @@ class AdminUser(BaseAccount):
         from .user import User
 
         admin_ids = self.recursive_sub_admins_ids()
-        return User.query.filter(User.added_by.in_(admin_ids))
+        return User.query.filter(User.added_by.in_(admin_ids), User.deleted.is_(False))
 
     def can_have_more_users(self):
         if self.mode == AdminMode.super_admin:
             return True
         users_count = self.recursive_users_query().count()
-        if self.max_users < users_count:
+        if users_count >= self.max_users:
             return False
-        if users_count <= self.max_active_users:
+        if users_count < self.max_active_users:
             return True
 
         actives = [u for u in self.recursive_users_query().all() if u.is_active]
-        return len(actives) <= self.max_active_users
+        return len(actives) < self.max_active_users
 
     def recursive_sub_admins_ids(self, depth=20, seen=None):
         if seen is None:
