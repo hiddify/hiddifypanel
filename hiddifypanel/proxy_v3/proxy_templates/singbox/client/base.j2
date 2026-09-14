@@ -134,11 +134,11 @@
         {
             "type": "tun",
             "tag": "tun-in",
-            "domain_strategy": "prefer_ipv4",
             "interface_name": "tun0",
             {% if ctx.platform.singbox.version >= "1.11.0" %}
                "address": ["172.19.0.1/30"],
             {% else %}
+                "domain_strategy": "prefer_ipv4",
                 "inet4_address": "172.19.0.1/30",
                 "sniff": true,
                 "sniff_override_destination": false,
