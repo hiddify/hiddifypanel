@@ -11,6 +11,7 @@ backend sp_{{ d['mode'] }}_{{ port }}
     
 
 backend sp_{{ d['mode'] }}_http_{{ port }}
-    mode http
-    server sp_decoy {{ d['domain'] }}:80
+    {% with decoy_host = d['domain'] %}
+      {% include 'haproxy/server/snippets/decoy_upstream' %}
+    {% endwith %}
 {% endfor %}

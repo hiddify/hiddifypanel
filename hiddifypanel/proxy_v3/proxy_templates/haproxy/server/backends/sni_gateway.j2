@@ -9,7 +9,8 @@ backend sp_{{ p.id }}_{{ pd.domain.name|slugify }}
   server s 127.0.0.1:{{ pd.tcp_port }} send-proxy-v2
   
 backend decoy_sp_{{ p.id }}_{{ pd.domain.name|slugify }}
-  mode http
-  server s {{ pd.domain.name }}:80
+  {% with decoy_host = pd.domain.name %}
+    {% include 'haproxy/server/snippets/decoy_upstream' %}
+  {% endwith %}
   {% endfor %}
 {% endfor %}

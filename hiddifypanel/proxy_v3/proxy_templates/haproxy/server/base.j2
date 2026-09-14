@@ -2,6 +2,7 @@
 
 {% include 'haproxy/server/global' %}
 {% include 'haproxy/server/defaults' %}
+{% include 'haproxy/server/resolvers' %}
 
 {# Shared naive-proxy path/tag for HTTP and QUIC frontends #}
 {% set ns = namespace(naive_path='', naive_tag='naive') %}

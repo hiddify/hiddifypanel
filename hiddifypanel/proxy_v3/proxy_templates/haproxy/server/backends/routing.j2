@@ -11,8 +11,9 @@ backend panel
   server s 127.0.0.1:9000 
 
 backend default_decoy
-  mode http
-  server s {{ctx.hconfig.decoy_domain}}:80
+  {% with decoy_host = ctx.hconfig.decoy_domain %}
+    {% include 'haproxy/server/snippets/decoy_upstream' %}
+  {% endwith %}
 
 
 

@@ -1,0 +1,14 @@
+{# Runtime DNS for hostname backends (decoy sites). Required when defaults use init-addr none. #}
+resolvers dns
+    nameserver cloudflare 1.1.1.1:53
+    nameserver google 8.8.8.8:53
+    resolve_retries 3
+    timeout resolve 1s
+    timeout retry 1s
+    hold other 30s
+    hold refused 30s
+    hold nx 30s
+    hold timeout 30s
+    hold valid 10s
+    hold obsolete 30s
+    accepted_payload_size 8192
