@@ -6,4 +6,4 @@
 "extra_headers":{
     "X-API-Key":"{{proxy.path}}"
 },
-"quic": {{(ctx.proxy.tls_layer=="quic")|jsbool}},
+"quic": {{(ctx.proxy.tls_layer in ["quic","quic_tls"])|jsbool}},
