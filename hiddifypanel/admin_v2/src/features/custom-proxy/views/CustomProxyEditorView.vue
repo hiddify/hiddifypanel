@@ -306,9 +306,6 @@
               <HorizontalField v-if="showDomains && isSniGateway" :label="t('proxy.faketlsDomains')" :hint="t('proxy.faketlsSpecialHint')">
                 <FaketlsDomainSelect v-model="form.faketls_domains!" :domain-modes="form.domain_modes" />
               </HorizontalField>
-              <HorizontalField v-if="showDomains && showDomainPicker" :label="t('proxy.domainIds')" :hint="t('proxy.domainIdsEmptyAll')">
-                <DomainMultiSelect v-model="form.domain_ids!" :domain-modes="form.domain_modes" />
-              </HorizontalField>
             </Panel>
           </TabPanel>
 
@@ -537,7 +534,6 @@ import HorizontalField from '@/shared/components/HorizontalField.vue'
 import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import ValidationPanel from '@/shared/components/ValidationPanel.vue'
 import { validationToastDetail } from '@/shared/utils/validation-toast'
-import DomainMultiSelect from '@/shared/components/DomainMultiSelect.vue'
 import ProxyCategoriesMultiSelect from '@/shared/components/ProxyCategoriesMultiSelect.vue'
 import FaketlsDomainSelect from '@/shared/components/FaketlsDomainSelect.vue'
 import TemplateSidePanel from '@/shared/components/TemplateSidePanel.vue'
@@ -1033,12 +1029,6 @@ const udpPortsText = computed({
 const showCustomPath = computed(() => isL7Gateway.value)
 
 const showDomainModes = computed(
-  () =>
-    showDomains.value &&
-    (isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value),
-)
-
-const showDomainPicker = computed(
   () =>
     showDomains.value &&
     (isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value),

@@ -73,13 +73,22 @@ def _user_var(user: User | UserVar | dict[str, Any] | None) -> UserVar:
     if isinstance(user, User):
         return UserVar.from_user(user)
     if isinstance(user, dict):
+        from hiddifypanel.proxy_v3.context_vars.user import _wireguard_client_ips
+
         uuid = str(user.get("uuid") or "")
+        user_id = user.get("id")
+        wg_ipv4 = str(user.get("wg_ipv4") or "")
+        wg_ipv6 = str(user.get("wg_ipv6") or "")
+        if not wg_ipv4 or not wg_ipv6:
+            computed_v4, computed_v6 = _wireguard_client_ips(user_id if isinstance(user_id, int) else None)
+            wg_ipv4 = wg_ipv4 or computed_v4
+            wg_ipv6 = wg_ipv6 or computed_v6
         return UserVar(
             uuid=uuid,
             uuid_hex=uuid.replace("-", ""),
             name=str(user.get("name") or ""),
             username=str(user.get("username") or user.get("name") or ""),
-            id=user.get("id"),
+            id=user_id,
             lang=str(user.get("lang") or ""),
             usage_limit_GB=float(user.get("usage_limit_GB") or 0),
             current_usage_GB=float(user.get("current_usage_GB") or 0),
@@ -91,6 +100,8 @@ def _user_var(user: User | UserVar | dict[str, Any] | None) -> UserVar:
             wg_pk=str(user.get("wg_pk") or ""),
             wg_pub=str(user.get("wg_pub") or ""),
             wg_psk=str(user.get("wg_psk") or ""),
+            wg_ipv4=wg_ipv4,
+            wg_ipv6=wg_ipv6,
         )
     return UserVar()
 

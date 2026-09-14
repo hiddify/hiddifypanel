@@ -71,7 +71,7 @@ def _is_plain_ss2022(combo: ProxyCombination) -> bool:
 
 def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
     proto = combo.proto.lower()
-    return proto in ("socks", "ssh") or _is_plain_ss2022(combo)
+    return proto in ("socks", "ssh", "mieru", "wireguard") or _is_plain_ss2022(combo)
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
@@ -355,7 +355,7 @@ def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
 
 
 def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Mieru client outbound for hiddify-core (sing-box skips this proto)."""
+    """Mieru client outbound for hiddify-core (no TLS; sing-box skips this proto)."""
     proto_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/mieru"
     tls_slug = _hiddify_client_tls_slug(combo)
     content = _render_shell(
@@ -363,7 +363,8 @@ def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, 
         "outbound_general",
         {"__PROTO_SLUG__": proto_slug, "__TLS_SLUG__": tls_slug},
     )
-    return content, [proto_slug, tls_slug]
+    content = content.replace(f"{{% include '{tls_slug}' %}}", "")
+    return content, [proto_slug]
 
 
 def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:

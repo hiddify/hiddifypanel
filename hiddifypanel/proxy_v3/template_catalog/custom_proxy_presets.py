@@ -414,7 +414,7 @@ def _build_preset(
     tls_layer = slot.tls_layer
     if proto in UDP_ONLY_PROTOS or str(primary.l3).lower() == "h3_quic":
         tls_layer = "quic_tls"
-    if proto in ("shadowsocks", "ss", "socks") and raw_transport not in ("shadowtls", "faketls"):
+    if proto in ("shadowsocks", "ss", "socks", "mieru") and raw_transport not in ("shadowtls", "faketls"):
         tls_layer = "http"
     if proto in V2RAY_GATEWAY_PROTOS:
         domain_modes = list(_v2ray_domain_modes(tls_layer, transport_value))

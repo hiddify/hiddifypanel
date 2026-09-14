@@ -2,10 +2,10 @@
   {% for ctx in ctx.iter_ctx_domains() %}
     {% set proxy = ctx.proxy %}
     {% set domain = ctx.proxy.domain %}
-      {% set tag %}{%- include 'client/tag' -%}{% endset %}
-      {% set detour = (tag | trim) ~ "_out §hide§" %}
+      {% set tag |trim_no_line %}{%- include 'client/tag' -%}{% endset %}
+      {% set detour = tag ~ "_out §hide§" %}
         {
-          "tag": "{{ tag | trim_no_line }}",
+          "tag": "{{ tag }}",
           {% include '__PROTO_SLUG__' %}
         },
         {

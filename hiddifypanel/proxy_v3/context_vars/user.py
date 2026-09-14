@@ -4,9 +4,27 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
+from hiddifypanel import hutils
+from hiddifypanel.models.config import hconfig
+from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.user import User
 
 from .json_map import JsonMap
+
+_DEFAULT_WG_IPV4 = "10.90.0.1"
+_DEFAULT_WG_IPV6 = "fd42:42:90::1"
+
+
+def _wireguard_client_ips(user_id: int | None) -> tuple[str, str]:
+    """Per-user WireGuard addresses derived from panel base IPs + user id."""
+    if user_id is None:
+        return "", ""
+    base_v4 = str(hconfig(ConfigEnum.wireguard_ipv4) or _DEFAULT_WG_IPV4)
+    base_v6 = str(hconfig(ConfigEnum.wireguard_ipv6) or _DEFAULT_WG_IPV6)
+    return (
+        hutils.network.add_number_to_ipv4(base_v4, user_id),
+        hutils.network.add_number_to_ipv6(base_v6, user_id),
+    )
 
 
 class UserVar(BaseModel):
@@ -28,6 +46,8 @@ class UserVar(BaseModel):
     wg_pk: str = ""
     wg_pub: str = ""
     wg_psk: str = ""
+    wg_ipv4: str = ""
+    wg_ipv6: str = ""
     password: str = ""
     extra_params: JsonMap = Field(default_factory=JsonMap)
 
@@ -49,6 +69,7 @@ class UserVar(BaseModel):
             return cls()
         uuid = user.uuid or ""
         lang = user.lang.value if getattr(user.lang, "value", None) else (str(user.lang) if user.lang else "")
+        wg_ipv4, wg_ipv6 = _wireguard_client_ips(user.id)
         var = cls(
             uuid=uuid,
             uuid_hex=uuid.replace("-", ""),
@@ -66,6 +87,8 @@ class UserVar(BaseModel):
             wg_pk=user.wg_pk or "",
             wg_pub=user.wg_pub or "",
             wg_psk=user.wg_psk or "",
+            wg_ipv4=wg_ipv4,
+            wg_ipv6=wg_ipv6,
             password=uuid,
             extra_params=JsonMap.from_any(user.extra_params_json()),
         )

@@ -1,4 +1,4 @@
-{{ skip("xhttp_enable = " ~ ctx.hconfig.xhttp_enable) if not ctx.hconfig.xhttp_enable }}
+{{skip("xhttp is not supported in hiddify core version < 4.1.0") if ctx.platform.hiddify.version < "4.1.0"}}
 "transport": {
   "type": "xhttp",
   "path": "/{{ proxy.path }}",

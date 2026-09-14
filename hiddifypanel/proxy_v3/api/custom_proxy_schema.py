@@ -75,6 +75,10 @@ class ClientConfigSchema(Schema):
 
 
 class CustomProxySchema(Schema):
+    class Meta:
+        # Preview/editor POSTs send the full form including dump_only fields.
+        unknown = EXCLUDE
+
     id = fields.Integer(dump_only=True)
     child_id = fields.Integer(dump_only=True)
     name = fields.String(required=True)
