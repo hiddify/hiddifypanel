@@ -16,6 +16,14 @@ from hiddifypanel.panel import hiddify
 to_gig_d = 1024**3
 
 
+def _user_package_end_date():
+    """MySQL ``DATE + INT`` coerces to a number (e.g. 20260801+90 → 20260891).
+
+    Use ``ADDDATE(start_date, package_days)`` so comparisons with ``today`` work.
+    """
+    return func.adddate(User.start_date, User.package_days)
+
+
 @shared_task(ignore_result=False)
 def update_local_usage():
     return locked_execute(update_local_usage_not_lock)
@@ -64,7 +72,8 @@ def _reset_priodic_usage() -> bool:
     today = datetime.date.today()
 
     db_change = False
-    for user in db.session.query(User).filter(User.mode != UserMode.no_reset, User.start_date != None, User.start_date + User.package_days >= today).all():
+    package_end = _user_package_end_date()
+    for user in db.session.query(User).filter(User.mode != UserMode.no_reset, User.start_date != None, package_end >= today).all():
         if user.user_should_reset():
             logger.info(f"reseting user usage for {user.uuid}")
             old_active = user.is_active
@@ -80,7 +89,7 @@ def _reset_priodic_usage() -> bool:
     if db_change:
         db.session.commit()
 
-    for user in db.session.query(User).filter(User.start_date != None, User.start_date + User.package_days < today).all():
+    for user in db.session.query(User).filter(User.start_date != None, package_end < today).all():
         logger.info(f"Removing enabled client {user.uuid} ")
         if not user.is_active:
             user_driver.remove_client(user)
