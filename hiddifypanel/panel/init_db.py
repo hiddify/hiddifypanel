@@ -475,12 +475,7 @@ def _v74(child_id):
     set_hconfig(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     # db.session.bulk_save_objects(get_proxy_rows_v1())
 
-    for i in range(1, 10):
-        for d in hutils.network.get_random_domains(50):
-            if hutils.network.is_domain_reality_friendly(d):
-                set_hconfig(ConfigEnum.shadowtls_fakedomain, d)
-                return
-    set_hconfig(ConfigEnum.shadowtls_fakedomain, "captive.apple.com")
+    set_hconfig(ConfigEnum.shadowtls_fakedomain, hutils.network.pick_reality_friendly_domain("captive.apple.com"))
 
 
 def _v71(child_id):
@@ -700,14 +695,9 @@ def _v31():
             )
         )
         execute("update admin_user set id=1 where name='owner'")
-    for i in range(1, 10):
-        for d in hutils.network.get_random_domains(50):
-            if hutils.network.is_domain_reality_friendly(d):
-                add_config_if_not_exist(ConfigEnum.reality_fallback_domain, d)
-                add_config_if_not_exist(ConfigEnum.reality_server_names, d)
-                return
-    add_config_if_not_exist(ConfigEnum.reality_fallback_domain, "yahoo.com")
-    add_config_if_not_exist(ConfigEnum.reality_server_names, "yahoo.com")
+    reality_domain = hutils.network.pick_reality_friendly_domain("yahoo.com")
+    add_config_if_not_exist(ConfigEnum.reality_fallback_domain, reality_domain)
+    add_config_if_not_exist(ConfigEnum.reality_server_names, reality_domain)
 
     # add_config_if_not_exist(ConfigEnum.cloudflare, "")
 

@@ -189,83 +189,80 @@ def get_ip(version: Literal[4, 6], retry: int = 5) -> ipaddress.IPv4Address | ip
 
 
 def get_random_user_agent():
-
-    uas = requests.get("https://cdn.jsdelivr.net/gh/microlinkhq/top-user-agents@master/src/index.json").json()
-    if uas:
-        return random.sample(uas, 1)[0]
-    return
-
-
-def get_random_domains(count: int = 1, retry: int = 6) -> list[str]:
     try:
-        region = "CN" if retry < 3 else "IR"
-        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc={region}&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(3 - retry % 3) * 100}"
-        # cnurl="https://api.ooni.io/api/v1/measurements?probe_cc=CN&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&order_by=test_start_time&limit=1000"
-        data_ir = requests.get(irurl).json()
-        # data_cn=requests.get(url).json()
+        uas = requests.get(
+            "https://cdn.jsdelivr.net/gh/microlinkhq/top-user-agents@master/src/index.json",
+            timeout=5,
+        ).json()
+        if uas:
+            return random.sample(uas, 1)[0]
+    except BaseException:
+        pass
+    return "Mozilla/5.0"
 
-        domains = [urlparse(d["input"]).netloc.lower() for d in data_ir.get("results", {}) if d.get("scores", {}).get("blocking_country") == 0.0]
-        domains = [d for d in domains if not d.endswith(".ir") and ".gov" not in d]
 
-        return random.sample(domains, count)
+_FALLBACK_DOMAINS = [
+    "fa.wikipedia.org",
+    "en.wikipedia.org",
+    "wikipedia.org",
+    "yahoo.com",
+    "en.yahoo.com",
+    "msn.com",
+    "fast.com",
+    "speedtest.net",
+    "flightradar24.com",
+    "chess.com",
+    "amazon.com",
+    "google.com",
+    "gstatic.com",
+    "hcaptcha.com",
+    "sourceforge.net",
+    "github.com",
+    "www.google.com",
+    "dash.cloudflare.com",
+    "cloudflare.com",
+    "www.gstatic.com",
+    "fonts.gstatic.com",
+    "bbc.com",
+    "www.wikipedia.org",
+]
+
+
+def get_random_domains(count: int = 1, retry: int = 2) -> list[str]:
+    """Pick random domains for decoy/reality.
+
+    Network calls are hard-capped so a fresh ``init_db`` cannot hang for minutes
+    when OONI/CDN is unreachable (common in Docker / restricted networks).
+    """
+    count = max(1, int(count))
+    try:
+        region = "CN" if retry < 2 else "IR"
+        irurl = (
+            "https://api.ooni.io/api/v1/measurements"
+            f"?probe_cc={region}&test_name=web_connectivity"
+            "&anomaly=false&confirmed=false&failure=false"
+            f"&limit=100&offset={(2 - retry % 2) * 100}"
+        )
+        data_ir = requests.get(irurl, timeout=5).json()
+        domains = [
+            urlparse(d["input"]).netloc.lower()
+            for d in data_ir.get("results", {})
+            if d.get("scores", {}).get("blocking_country") == 0.0
+        ]
+        domains = [d for d in domains if d and not d.endswith(".ir") and ".gov" not in d]
+        if len(domains) >= count:
+            return random.sample(domains, count)
+        if domains:
+            padded = list(domains)
+            while len(padded) < count:
+                padded.append(random.choice(_FALLBACK_DOMAINS))
+            return padded[:count]
+        raise ValueError("OONI returned no usable domains")
     except BaseException as e:
         print("Error, getting random domains... ", e, "retrying...", retry)
         if retry <= 0:
-            defdomains = [
-                "fa.wikipedia.org",
-                "en.wikipedia.org",
-                "wikipedia.org",
-                "yahoo.com",
-                "en.yahoo.com",
-                "msn.com",
-                "foot.com",
-                "fast.com",
-                "speedtest.net",
-                "remove.bg",
-                "flightradar24.com",
-                "chess.com",
-                "supercell.com",
-                "react.dev",
-                "amazon.com",
-                "google.com",
-                "gstatic.com",
-                "mirror.nyist.edu.cn",
-                "mirror.nju.edu.cn",
-                "hcaptcha.com",
-                "sourceforge.net",
-                "github.com",
-                "www.google.com",
-                "hatgpt.com",
-                "google.com",
-                "github.com",
-                "claude.ai",
-                "dash.cloudflare.com",
-                "pages.dev",
-                "workers.dev",
-                "gemini.google.com",
-                "www.workspace.google.com",
-                "www.mail.google.com",
-                "www.gstatic.com",
-                "www.gmail.com",
-                "workspace.google.com",
-                "ss1.gstatic.com",
-                "mail.google.com",
-                "gstatic.com",
-                "gmail.com",
-                "g3.gstatic.com",
-                "g1.gstatic.com",
-                "fonts.gstatic.com",
-                "csi.gstatic.com",
-                "connectivitycheck.gstatic.com",
-                "clientservices.googleapis.com",
-                "checkin.gstatic.com",
-                "beacons.gvt2.com",
-                "beacons.gcp.gvt2.com",
-                "dash.cloudflare.com",
-                "cloudflare.com",
-            ]
             print("Error, using default domains")
-            return random.sample(defdomains, count)
+            return random.sample(_FALLBACK_DOMAINS, min(count, len(_FALLBACK_DOMAINS)))
         return get_random_domains(count, retry - 1)
 
 
@@ -273,7 +270,7 @@ def get_random_domains(count: int = 1, retry: int = 6) -> list[str]:
 def is_domain_support_tls_13(domain: str) -> bool:
     context = ssl.create_default_context()
     port = 433
-    with socket.create_connection((domain, port)) as sock:
+    with socket.create_connection((domain, port), timeout=2) as sock:
         with context.wrap_socket(sock, server_hostname=domain) as ssock:
             return ssock.version() == "TLSv1.3"
 
@@ -308,20 +305,42 @@ def fallback_domain_compatible_with_servernames(fallback_domain: str, servername
 
 
 def get_random_decoy_domain() -> str:
-    for _ in range(10):
-        domains = get_random_domains(10)
-        from concurrent.futures import ThreadPoolExecutor, as_completed
+    """Pick a Let's-Encrypt domain for decoy TLS.
 
-        with ThreadPoolExecutor(max_workers=min(10, len(domains) or 1)) as executor:
+    Prefer local fallbacks (bounded TLS probes) before calling OONI so ``_v1``
+    init cannot stall ~10 minutes on a bad network.
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    def _first_letsencrypt(domains: list[str]) -> str | None:
+        if not domains:
+            return None
+        with ThreadPoolExecutor(max_workers=min(8, len(domains))) as executor:
             futures = {executor.submit(is_domain_use_letsencrypt, d): d for d in domains}
             for future in as_completed(futures):
                 d = futures[future]
-                if future.result():
-                    for f in futures:
-                        f.cancel()
-                    return d
+                try:
+                    if future.result():
+                        for f in futures:
+                            f.cancel()
+                        return d
+                except BaseException:
+                    continue
+        return None
 
-    return "bbc.com"
+    local = random.sample(_FALLBACK_DOMAINS, min(8, len(_FALLBACK_DOMAINS)))
+    found = _first_letsencrypt(local)
+    if found:
+        return found
+
+    try:
+        found = _first_letsencrypt(get_random_domains(8, retry=1))
+        if found:
+            return found
+    except BaseException:
+        pass
+
+    return "www.wikipedia.org"
 
 
 def is_domain_use_letsencrypt(domain: str) -> bool:
@@ -330,17 +349,31 @@ def is_domain_use_letsencrypt(domain: str) -> bool:
     avoid phishing detection
     """
     try:
-        # Create a socket connection to the website
-        with socket.create_connection((domain, 443)) as sock:
+        with socket.create_connection((domain, 443), timeout=2) as sock:
             context = ssl.create_default_context()
             with context.wrap_socket(sock, server_hostname=domain) as ssock:
                 certificate = ssock.getpeercert()
 
         issuer = dict(x[0] for x in certificate.get("issuer", []))
 
-        return issuer["organizationName"] == "Let's Encrypt"
+        return issuer.get("organizationName") == "Let's Encrypt"
     except BaseException:
         return False
+
+
+def pick_reality_friendly_domain(fallback: str = "yahoo.com") -> str:
+    """Fast reality SNI/fallback picker for migrations (no long OONI loops)."""
+    candidates = random.sample(_FALLBACK_DOMAINS, min(10, len(_FALLBACK_DOMAINS)))
+    for d in candidates:
+        if is_domain_reality_friendly(d):
+            return d
+    try:
+        for d in get_random_domains(10, retry=1):
+            if is_domain_reality_friendly(d):
+                return d
+    except BaseException:
+        pass
+    return fallback
 
 
 @cache.cache(ttl=300)
