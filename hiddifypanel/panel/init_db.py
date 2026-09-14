@@ -1179,9 +1179,6 @@ def init_db():
         db_execute(f"update child set id=0 where unique_id='{tmp_uuid}'", commit=True)
         child = Child.by_id(0)
 
-    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
-
-    sync_all(0)
     child.mode = ChildMode.virtual
     # if db_version < 69:
     #     _v70(0)
@@ -1219,6 +1216,10 @@ def init_db():
 
         db.session.commit()
     g.child = Child.by_id(0)
+
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
+
+    sync_all(0)
     return BoolConfig.query.all()
 
 

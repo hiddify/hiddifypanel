@@ -310,9 +310,16 @@ def fallback_domain_compatible_with_servernames(fallback_domain: str, servername
 def get_random_decoy_domain() -> str:
     for _ in range(10):
         domains = get_random_domains(10)
-        for d in domains:
-            if is_domain_use_letsencrypt(d):
-                return d
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        with ThreadPoolExecutor(max_workers=min(10, len(domains) or 1)) as executor:
+            futures = {executor.submit(is_domain_use_letsencrypt, d): d for d in domains}
+            for future in as_completed(futures):
+                d = futures[future]
+                if future.result():
+                    for f in futures:
+                        f.cancel()
+                    return d
 
     return "bbc.com"
 
