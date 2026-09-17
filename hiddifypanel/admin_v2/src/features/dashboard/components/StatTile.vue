@@ -12,8 +12,10 @@ withDefaults(
     trend?: number | null
     trendLabel?: string
     sparkline?: number[]
+    sparkLabels?: string[]
+    sparkFormatter?: (value: number) => string
   }>(),
-  { trend: undefined, sparkline: () => [] },
+  { trend: undefined, sparkline: () => [], sparkLabels: () => [] },
 )
 </script>
 
@@ -26,7 +28,15 @@ withDefaults(
       </div>
       <span class="tile__icon"><i :class="icon" /></span>
     </div>
-    <Sparkline v-if="sparkline.length > 1" :values="sparkline" :color="accent" :height="34" class="tile__spark" />
+    <Sparkline
+      v-if="sparkline.length > 1"
+      :values="sparkline"
+      :color="accent"
+      :height="34"
+      :labels="sparkLabels"
+      :formatter="sparkFormatter ?? ((value: number) => String(value))"
+      class="tile__spark"
+    />
     <div class="tile__bottom">
       <TrendChip v-if="trend !== undefined" :value="trend ?? null" :label="trendLabel" />
       <span v-if="caption" class="tile__caption">{{ caption }}</span>
@@ -101,5 +111,13 @@ withDefaults(
 .tile__caption {
   font-size: 0.75rem;
   color: var(--p-text-muted-color);
+}
+@media (max-width: 767px) {
+  .tile {
+    padding: 0.9rem 1rem;
+  }
+  .tile__value {
+    font-size: 1.35rem;
+  }
 }
 </style>

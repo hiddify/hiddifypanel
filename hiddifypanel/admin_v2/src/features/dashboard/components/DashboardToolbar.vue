@@ -2,12 +2,18 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import Select from 'primevue/select'
 import SelectButton from 'primevue/selectbutton'
+import type { DashboardNode } from '@/core/api/generated'
 import { formatClock } from '@/shared/utils/format-metrics'
 import { RANGE_OPTIONS } from '../composables/useDashboard'
 
+const ALL_NODES = -1
+
 const props = defineProps<{
   rangeDays: number
+  childId: number | null
+  nodes: DashboardNode[]
   live: boolean
   refreshing: boolean
   failed: boolean
@@ -16,6 +22,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:rangeDays': [value: number]
+  'update:childId': [value: number | null]
   'update:live': [value: boolean]
   refresh: []
 }>()
@@ -25,6 +32,19 @@ const { t, locale } = useI18n()
 const rangeItems = computed(() =>
   RANGE_OPTIONS.map((days) => ({ label: t('dashboard.nDays', { days }), value: days })),
 )
+
+const nodeOptions = computed(() => [
+  { label: t('dashboard.allNodes'), value: ALL_NODES },
+  ...props.nodes.map((node) => ({
+    label: node.id === 0 ? t('dashboard.thisServer') : node.name,
+    value: node.id,
+  })),
+])
+
+const selectedNode = computed({
+  get: () => (props.childId === null ? ALL_NODES : props.childId),
+  set: (value: number) => emit('update:childId', value === ALL_NODES ? null : value),
+})
 
 const status = computed(() => {
   if (props.failed) return { text: t('dashboard.loadFailed'), tone: 'error' }
@@ -40,6 +60,15 @@ const status = computed(() => {
       {{ status.text }}
     </span>
     <div class="toolbar__controls">
+      <Select
+        v-model="selectedNode"
+        :options="nodeOptions"
+        option-label="label"
+        option-value="value"
+        size="small"
+        class="toolbar__node"
+        :aria-label="t('dashboard.node')"
+      />
       <SelectButton
         :model-value="rangeDays"
         :options="rangeItems"
@@ -47,6 +76,7 @@ const status = computed(() => {
         option-value="value"
         :allow-empty="false"
         size="small"
+        class="toolbar__range"
         :aria-label="t('dashboard.range')"
         @update:model-value="(value: number) => emit('update:rangeDays', value)"
       />
@@ -86,6 +116,9 @@ const status = computed(() => {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+.toolbar__node {
+  min-width: 11rem;
+}
 .status {
   display: inline-flex;
   align-items: center;
@@ -117,6 +150,29 @@ const status = computed(() => {
   }
   100% {
     box-shadow: 0 0 0 0 rgb(34 197 94 / 0%);
+  }
+}
+@media (max-width: 767px) {
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .toolbar__controls {
+    width: 100%;
+  }
+  .toolbar__node {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .toolbar__range {
+    flex: 1 1 100%;
+  }
+  .toolbar__range :deep(.p-selectbutton) {
+    width: 100%;
+    display: flex;
+  }
+  .toolbar__range :deep(.p-togglebutton) {
+    flex: 1;
   }
 }
 </style>

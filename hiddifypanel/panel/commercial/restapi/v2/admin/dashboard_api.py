@@ -1,34 +1,20 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any
 
 from flask import request
 from flask.views import MethodView
-from pydantic import Field
 
-import hiddifypanel
 from hiddifypanel import current_app as app
-from hiddifypanel import g, hutils
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import Role
 from hiddifypanel.models.usage import DailyUsage
-from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
+from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DEFAULT_RANGE_DAYS, DashboardOutputSchema
 
-DEFAULT_RANGE_DAYS = 30
 ALLOWED_RANGE_DAYS = (7, 14, 30, 90, 180, 365)
-DEFAULT_PROCESS_LIMIT = 8
-MAX_PROCESS_LIMIT = 25
-
-
-class DashboardOutputSchema(ApiModel):
-    generated_at: str = Field(default="", description="ISO timestamp of this snapshot")
-    range_days: int = Field(default=DEFAULT_RANGE_DAYS, description="Number of days in the usage series")
-    series: list[dict[str, Any]] = Field(default_factory=list, description="Daily usage/online history (oldest first)")
-    usage: dict[str, Any] = Field(default_factory=dict, description="Usage totals, averages, previous periods and trends")
-    users: dict[str, Any] = Field(default_factory=dict, description="User counts and online buckets")
-    system: dict[str, Any] = Field(default_factory=dict, description="CPU, memory, disk, network and host metrics")
-    processes: dict[str, Any] = Field(default_factory=dict, description="Top processes by CPU and memory")
+DEFAULT_PROCESS_LIMIT = 16
+MAX_PROCESS_LIMIT = 32
 
 
 def _range_days() -> int:
@@ -58,26 +44,32 @@ def _int_arg(name: str) -> int | None:
 class AdminDashboardApi(MethodView):
     """Everything the Admin V2 dashboard renders, in a single snapshot.
 
-    `?include=system` returns only the live server metrics, so the dashboard can
-    poll them every few seconds without re-running the usage aggregation.
+    `?include=system` returns only live server metrics (this host and/or child
+    nodes). Usage aggregation always comes from the parent DB and is cached
+    day-by-day so polls do not re-sum the whole history.
     """
 
     decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
 
     @app.output(DashboardOutputSchema)
-    def get(self):
+    def get(self) -> DashboardOutputSchema:
         """System: Dashboard"""
+        from hiddifypanel.hutils import node_system
+
         range_days = _range_days()
         system_only = request.args.get("include") == "system"
+        child_id = _int_arg("child_id")
 
-        metrics = hutils.system_metrics.snapshot(process_limit=_process_limit())
-        host = {**metrics.pop("host"), "panel_version": hiddifypanel.__version__}
+        live = node_system.collect_system_stats(child_id, process_limit=_process_limit())
 
-        dto = DashboardOutputSchema()
-        dto.generated_at = datetime.datetime.now(datetime.UTC).isoformat()
-        dto.range_days = range_days
-        dto.processes = metrics.pop("processes")
-        dto.system = {**metrics, "host": host}
+        dto = DashboardOutputSchema(
+            generated_at=datetime.datetime.now(datetime.UTC).isoformat(),
+            range_days=range_days,
+            child_id=child_id,
+            processes=live.processes,
+            system=live.system,
+            node_stats=live.node_stats,
+        )
 
         if system_only:
             return dto
@@ -86,8 +78,9 @@ class AdminDashboardApi(MethodView):
         if admin_id not in g.account.recursive_sub_admins_ids():
             admin_id = g.account.id
 
-        stats = DailyUsage.get_dashboard_stats(admin_id=admin_id, child_id=_int_arg("child_id"), series_days=range_days)
-        dto.series = stats["series"]
-        dto.usage = stats["usage"]
-        dto.users = stats["users"]
+        stats = DailyUsage.get_dashboard_stats(admin_id=admin_id, child_id=child_id, series_days=range_days)
+        dto.series = stats.series
+        dto.usage = stats.usage
+        dto.users = stats.users
+        dto.nodes = stats.nodes
         return dto

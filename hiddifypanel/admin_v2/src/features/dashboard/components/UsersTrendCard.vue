@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DashboardDailyPoint, DashboardUsers } from '@/core/api/generated'
-import { formatDayLabel } from '@/shared/utils/format-metrics'
+import { formatDayLabel, formatBytes } from '@/shared/utils/format-metrics'
 import { SERIES } from '../composables/useChartTheme'
 import { rollingAverage } from '../utils/series'
 import DashCard from './DashCard.vue'
@@ -47,6 +47,11 @@ const chartSeries = computed(() => [
       :value-formatter="(value: number) => String(Math.round(value))"
       :height="280"
       :max-x-ticks="rangeDays > 60 ? 8 : 12"
+      :tooltip-extra="(index: number) => {
+        const point = series[index]
+        if (!point) return []
+        return [t('dashboard.usageOnDay', { value: formatBytes(point.usage) })]
+      }"
     />
     <template #footer>
       <div class="users-footer">

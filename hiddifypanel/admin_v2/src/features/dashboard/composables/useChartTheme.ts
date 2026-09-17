@@ -15,12 +15,31 @@ export const SERIES = {
   neutral: '#94a3b8',
 } as const
 
+/** Distinct colors for stacked per-node usage. */
+export const NODE_COLORS = [
+  '#6366f1',
+  '#06b6d4',
+  '#f59e0b',
+  '#10b981',
+  '#ec4899',
+  '#8b5cf6',
+  '#f97316',
+  '#14b8a6',
+  '#ef4444',
+  '#84cc16',
+] as const
+
+export function nodeColor(index: number): string {
+  return NODE_COLORS[index % NODE_COLORS.length]
+}
+
 export type ChartOptionsLike = Record<string, unknown>
 
 interface TooltipItem {
   dataset: { label?: string }
   parsed: { x: number; y: number }
   label?: string
+  dataIndex: number
   raw?: unknown
 }
 
@@ -33,6 +52,9 @@ export interface BaseOptions {
   yTitle?: string
   hideXGrid?: boolean
   maxXTicks?: number
+  /** Extra tooltip lines for the hovered index (online users, per-node rates, …). */
+  tooltipExtra?: (index: number) => string[]
+  stackTotalLabel?: string
 }
 
 function cssVar(name: string, fallback: string): string {
@@ -107,18 +129,33 @@ export function useChartTheme() {
           },
         },
         tooltip: {
+          enabled: true,
           backgroundColor: surface,
           titleColor: text,
           bodyColor: text,
+          footerColor: muted,
           borderColor: border,
           borderWidth: 1,
-          padding: 10,
+          padding: 12,
           cornerRadius: 8,
           displayColors: true,
           usePointStyle: true,
+          titleMarginBottom: 8,
+          footerMarginTop: 8,
           callbacks: {
+            title: (items: TooltipItem[]) => items[0]?.label ?? '',
             label: (item: TooltipItem) =>
               `${item.dataset.label ? `${item.dataset.label}: ` : ''}${format(item.parsed.y)}`,
+            footer: (items: TooltipItem[]) => {
+              if (!items.length) return []
+              const lines: string[] = []
+              if ((options.stacked ?? false) && items.length > 1) {
+                const total = items.reduce((sum, item) => sum + (Number(item.parsed.y) || 0), 0)
+                lines.push(`${options.stackTotalLabel ?? 'Total'}: ${format(total)}`)
+              }
+              lines.push(...(options.tooltipExtra?.(items[0]!.dataIndex) ?? []))
+              return lines
+            },
           },
         },
       },

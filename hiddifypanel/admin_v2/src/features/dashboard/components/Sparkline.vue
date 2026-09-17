@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -7,12 +7,15 @@ const props = withDefaults(
     color?: string
     height?: number
     filled?: boolean
+    labels?: string[]
+    formatter?: (value: number) => string
   }>(),
-  { color: 'var(--p-primary-color)', height: 40, filled: true },
+  { color: 'var(--p-primary-color)', height: 40, filled: true, labels: () => [], formatter: (value: number) => String(value) },
 )
 
 const WIDTH = 100
 const gradientId = `spark-${Math.random().toString(36).slice(2, 9)}`
+const hover = ref<{ index: number; clientX: number; clientY: number } | null>(null)
 
 /** Points normalized into a 100 x height viewBox, oldest sample first. */
 const points = computed(() => {
@@ -37,39 +40,90 @@ const area = computed(() => {
   const last = points.value[points.value.length - 1]!
   return `${line.value} L${last.x.toFixed(2)},${props.height} L${first.x.toFixed(2)},${props.height} Z`
 })
+
+const hoverText = computed(() => {
+  if (!hover.value) return ''
+  const value = props.values[hover.value.index]
+  if (value === undefined) return ''
+  const label = props.labels[hover.value.index]
+  const formatted = props.formatter(value)
+  return label ? `${label} · ${formatted}` : formatted
+})
+
+function onMove(event: MouseEvent) {
+  if (props.values.length === 0) return
+  const rect = (event.currentTarget as SVGElement).getBoundingClientRect()
+  const ratio = rect.width ? (event.clientX - rect.left) / rect.width : 0
+  const index = Math.min(props.values.length - 1, Math.max(0, Math.round(ratio * (props.values.length - 1))))
+  hover.value = { index, clientX: event.clientX, clientY: event.clientY }
+}
+
+function onLeave() {
+  hover.value = null
+}
 </script>
 
 <template>
-  <svg
-    class="sparkline"
-    :viewBox="`0 0 ${WIDTH} ${height}`"
-    :style="{ height: `${height}px`, color }"
-    preserveAspectRatio="none"
-    aria-hidden="true"
-  >
-    <defs>
-      <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="currentColor" stop-opacity="0.35" />
-        <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
-      </linearGradient>
-    </defs>
-    <path v-if="filled && area" :d="area" :fill="`url(#${gradientId})`" stroke="none" />
-    <path
-      v-if="line"
-      :d="line"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.75"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      vector-effect="non-scaling-stroke"
-    />
-  </svg>
+  <div class="sparkline-wrap">
+    <svg
+      class="sparkline"
+      :viewBox="`0 0 ${WIDTH} ${height}`"
+      :style="{ height: `${height}px`, color }"
+      preserveAspectRatio="none"
+      role="img"
+      @mousemove="onMove"
+      @mouseleave="onLeave"
+    >
+      <defs>
+        <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="currentColor" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path v-if="filled && area" :d="area" :fill="`url(#${gradientId})`" stroke="none" />
+      <path
+        v-if="line"
+        :d="line"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        vector-effect="non-scaling-stroke"
+      />
+    </svg>
+    <div
+      v-if="hover && hoverText"
+      class="sparkline-tip"
+      :style="{ left: `${hover.clientX + 12}px`, top: `${hover.clientY - 36}px` }"
+    >
+      {{ hoverText }}
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.sparkline-wrap {
+  position: relative;
+  width: 100%;
+}
 .sparkline {
   display: block;
   width: 100%;
+}
+.sparkline-tip {
+  position: fixed;
+  z-index: 40;
+  pointer-events: none;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  color: var(--p-text-color);
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 8px 24px -12px rgb(15 23 42 / 45%);
+  white-space: nowrap;
 }
 </style>

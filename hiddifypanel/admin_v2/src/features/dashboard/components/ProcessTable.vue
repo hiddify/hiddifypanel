@@ -11,7 +11,7 @@ const props = withDefaults(
     formatter: (process: DashboardProcess) => string
     limit?: number
   }>(),
-  { limit: 5 },
+  { limit: 12 },
 )
 
 const rows = computed(() => props.processes.filter((row) => row.name.trim()).slice(0, props.limit))

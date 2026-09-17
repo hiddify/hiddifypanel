@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { DashboardDailyPoint, DashboardUsage } from '@/core/api/generated'
+import type { DashboardDailyPoint, DashboardNode, DashboardUsage } from '@/core/api/generated'
 import { formatBytes, formatDayLabel } from '@/shared/utils/format-metrics'
-import { SERIES } from '../composables/useChartTheme'
+import { SERIES, nodeColor } from '../composables/useChartTheme'
 import { rollingAverage } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
@@ -13,6 +13,8 @@ const props = defineProps<{
   series: DashboardDailyPoint[]
   usage: DashboardUsage | null
   rangeDays: number
+  nodes: DashboardNode[]
+  stacked: boolean
 }>()
 
 const { t, locale } = useI18n()
@@ -20,16 +22,40 @@ const { t, locale } = useI18n()
 const labels = computed(() => props.series.map((point) => formatDayLabel(point.date, locale.value)))
 const values = computed(() => props.series.map((point) => point.usage))
 
-const chartSeries = computed(() => [
-  { label: t('dashboard.dailyUsage'), values: values.value, color: SERIES.usage, type: 'bar' as const },
-  {
-    label: t('dashboard.rollingAverage'),
-    values: rollingAverage(values.value, 7),
-    color: SERIES.usageAvg,
+const nodeName = (id: string) => {
+  const numeric = Number(id)
+  if (numeric === 0) return t('dashboard.thisServer')
+  return props.nodes.find((node) => node.id === numeric)?.name || `${t('dashboard.node')} ${id}`
+}
+
+const stackedSeries = computed(() => {
+  const ids = new Set<string>()
+  for (const point of props.series) {
+    for (const id of Object.keys(point.by_child ?? {})) ids.add(id)
+  }
+  const ordered = [...ids].sort((a, b) => Number(a) - Number(b))
+  return ordered.map((id, index) => ({
+    label: nodeName(id),
+    values: props.series.map((point) => point.by_child?.[id]?.usage ?? 0),
+    color: nodeColor(index),
     type: 'line' as const,
-    dashed: true,
-  },
-])
+    area: true,
+  }))
+})
+
+const chartSeries = computed(() => {
+  if (props.stacked && stackedSeries.value.length > 1) return stackedSeries.value
+  return [
+    { label: t('dashboard.dailyUsage'), values: values.value, color: SERIES.usage, type: 'bar' as const },
+    {
+      label: t('dashboard.rollingAverage'),
+      values: rollingAverage(values.value, 7),
+      color: SERIES.usageAvg,
+      type: 'line' as const,
+      dashed: true,
+    },
+  ]
+})
 
 const peakLabel = computed(() => {
   const peak = props.usage?.peak
@@ -41,7 +67,7 @@ const peakLabel = computed(() => {
 <template>
   <DashCard
     :title="t('dashboard.usageTrend')"
-    :subtitle="t('dashboard.lastNDays', { days: rangeDays })"
+    :subtitle="stacked && stackedSeries.length > 1 ? t('dashboard.usageStackedHint') : t('dashboard.lastNDays', { days: rangeDays })"
     icon="pi pi-chart-bar"
     :accent="SERIES.usage"
     padded
@@ -49,10 +75,17 @@ const peakLabel = computed(() => {
     <MetricChart
       :labels="labels"
       :series="chartSeries"
-      type="bar"
+      :type="stacked && stackedSeries.length > 1 ? 'line' : 'bar'"
+      :stacked="stacked && stackedSeries.length > 1"
       :value-formatter="(value: number) => formatBytes(value, 0)"
       :height="280"
       :max-x-ticks="rangeDays > 60 ? 8 : 12"
+      :stack-total-label="t('dashboard.totalUsage')"
+      :tooltip-extra="(index: number) => {
+        const point = series[index]
+        if (!point) return []
+        return [t('dashboard.onlineOnDay', { count: point.online })]
+      }"
     />
     <template #footer>
       <div class="usage-footer">

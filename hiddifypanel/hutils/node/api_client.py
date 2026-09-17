@@ -32,9 +32,10 @@ def _load_output(output_schema: type[T], data: object) -> T:
 
 
 class NodeApiClient:
-    def __init__(self, base_url: str, apikey: str | None = None, max_retry: int = 3):
+    def __init__(self, base_url: str, apikey: str | None = None, max_retry: int = 3, timeout: float = 8):
         self.base_url = base_url if base_url.endswith("/") else base_url + "/"
         self.max_retry = max_retry
+        self.timeout = timeout
         self.headers = {"Hiddify-API-Key": apikey or hconfig(ConfigEnum.unique_id)}
 
     def __call(self, method: str, path: str, payload: BaseModel | None, output_schema: type[T]) -> T | NodeApiErrorSchema:
@@ -46,9 +47,9 @@ class NodeApiClient:
                 logger.trace(f"Attempting {method} request to node at {full_url}")
 
                 if payload is not None:
-                    response = requests.request(method, full_url, json=_dump_payload(payload), headers=self.headers)
+                    response = requests.request(method, full_url, json=_dump_payload(payload), headers=self.headers, timeout=self.timeout)
                 else:
-                    response = requests.request(method, full_url, headers=self.headers)
+                    response = requests.request(method, full_url, headers=self.headers, timeout=self.timeout)
 
                 response.raise_for_status()
                 resp = response.json()
@@ -92,6 +93,14 @@ class NodeApiClient:
                     return err
 
                 logger.warning(f"Error occurred: {e} from {full_url} with method {method}, retrying... ({retry_count}/{self.max_retry})")
+                retry_count += 1
+
+            except (requests.Timeout, requests.ConnectionError) as e:
+                if retry_count >= self.max_retry:
+                    err = NodeApiErrorSchema(msg=str(e), stacktrace=traceback.format_exc(), code=0, reason=type(e).__name__)
+                    logger.error(f"Node request to {full_url} failed after {self.max_retry} retries: {e}")
+                    return err
+                logger.warning(f"Timeout/connection error from {full_url}, retrying... ({retry_count}/{self.max_retry})")
                 retry_count += 1
 
     def get(self, path: str, output: type[T]) -> T | NodeApiErrorSchema:

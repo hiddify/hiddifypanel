@@ -337,10 +337,23 @@
       "validationOk": "اعتبارسنجی موفق"
     },
     "dashboard": {
-      "subtitle": "مدیریت پنل هیدیفای",
+      "allNodes": "همه نودها",
+      "node": "نود",
+      "nodeHealth": "سلامت نودها",
+      "nodeHealthHint": "CPU، RAM و دیسک زنده از API هر نود",
+      "nodeOffline": "آفلاین",
+      "nodeOnline": "آنلاین",
+      "nodeUnreachable": "این نود در دسترس نیست",
+      "subtitle": "ترافیک، کاربران و سلامت سرور در یک نگاه",
+      "thisServer": "این سرور",
       "title": "داشبورد",
       "underConstruction": "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت.",
-      "welcomePanel": "خوش آمدید"
+      "usageStackedHint": "مصرف هر نود به‌صورت پشته — مجموع همان سطح پرشده است",
+      "welcomePanel": "خوش آمدید",
+      "onlineOnDay": "آنلاین: {count}",
+      "usageOnDay": "مصرف: {value}",
+      "clickForProcesses": "برای دیدن پردازش‌های برتر کلیک کنید",
+      "nodeNetworkHint": "آپلود و دانلود زنده هر نود"
     },
     "domain": {
       "addFailed": "افزودن دامنه ناموفق بود",

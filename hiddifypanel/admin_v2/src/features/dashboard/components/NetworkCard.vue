@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { DashboardNetwork } from '@/core/api/generated'
+import type { DashboardNetwork, DashboardNodeStats } from '@/core/api/generated'
 import { formatBitRate, formatGb } from '@/shared/utils/format-metrics'
-import { SERIES } from '../composables/useChartTheme'
-import type { MetricSample } from '../composables/useMetricHistory'
+import { SERIES, nodeColor } from '../composables/useChartTheme'
+import type { MetricSample, NodeSample } from '../composables/useMetricHistory'
 import { timeLabels } from '../utils/series'
 import DashCard from './DashCard.vue'
 import MetricChart from './MetricChart.vue'
@@ -13,34 +13,122 @@ import MiniStat from './MiniStat.vue'
 const props = defineProps<{
   network: DashboardNetwork | null
   samples: MetricSample[]
+  nodes: DashboardNodeStats[]
+  nodeSamples: Record<number, NodeSample[]>
 }>()
 
 const { t, locale } = useI18n()
 
-const chartSeries = computed(() => [
-  {
-    label: t('dashboard.upload'),
-    values: props.samples.map((sample) => sample.up),
-    color: SERIES.upload,
-    type: 'line' as const,
-    area: true,
-  },
-  {
-    label: t('dashboard.download'),
-    values: props.samples.map((sample) => sample.down),
-    color: SERIES.download,
-    type: 'line' as const,
-    area: true,
-  },
-])
+const liveNodes = computed(() => props.nodes.filter((node) => node.ok && (props.nodeSamples[node.id]?.length ?? 0) > 0))
+const multiNode = computed(() => liveNodes.value.length > 1)
 
-const latest = computed(() => props.samples[props.samples.length - 1] ?? null)
+const nodeTitle = (node: DashboardNodeStats) => (node.id === 0 ? t('dashboard.thisServer') : node.name)
+
+const longest = computed(() => {
+  let best: NodeSample[] = []
+  for (const node of liveNodes.value) {
+    const series = props.nodeSamples[node.id] ?? []
+    if (series.length > best.length) best = series
+  }
+  return best
+})
+
+const chartSeries = computed(() => {
+  if (!multiNode.value) {
+    return [
+      {
+        label: t('dashboard.upload'),
+        values: props.samples.map((sample) => sample.up),
+        color: SERIES.upload,
+        type: 'line' as const,
+        area: true,
+      },
+      {
+        label: t('dashboard.download'),
+        values: props.samples.map((sample) => sample.down),
+        color: SERIES.download,
+        type: 'line' as const,
+        area: true,
+      },
+    ]
+  }
+  const width = longest.value.length
+  return liveNodes.value.flatMap((node, index) => {
+    const series = props.nodeSamples[node.id] ?? []
+    const pad = Math.max(0, width - series.length)
+    const color = nodeColor(index)
+    return [
+      {
+        label: `${nodeTitle(node)} ↓`,
+        values: [...Array(pad).fill(0), ...series.map((sample) => sample.down)],
+        color,
+        type: 'line' as const,
+        area: true,
+      },
+      {
+        label: `${nodeTitle(node)} ↑`,
+        values: [...Array(pad).fill(0), ...series.map((sample) => sample.up)],
+        color,
+        dashed: true,
+        type: 'line' as const,
+        area: true,
+      },
+    ]
+  })
+})
+
+const labels = computed(() => {
+  if (!multiNode.value) return timeLabels(props.samples.map((sample) => sample.at), locale.value)
+  return timeLabels(longest.value.map((sample) => sample.at), locale.value)
+})
+
+const latest = computed(() => {
+  if (!multiNode.value) return props.samples[props.samples.length - 1] ?? null
+  let up = 0
+  let down = 0
+  for (const node of liveNodes.value) {
+    const series = props.nodeSamples[node.id] ?? []
+    const point = series[series.length - 1]
+    up += point?.up ?? 0
+    down += point?.down ?? 0
+  }
+  return { up, down }
+})
+
+const totals = computed(() => {
+  if (!multiNode.value) {
+    return {
+      sent: props.network?.sent_gb ?? 0,
+      recv: props.network?.recv_gb ?? 0,
+      connections: props.network?.connections ?? 0,
+      uniqueIps: props.network?.unique_ips ?? 0,
+    }
+  }
+  return liveNodes.value.reduce(
+    (acc, node) => ({
+      sent: acc.sent + (node.network?.sent_gb ?? 0),
+      recv: acc.recv + (node.network?.recv_gb ?? 0),
+      connections: acc.connections + (node.network?.connections ?? 0),
+      uniqueIps: acc.uniqueIps + (node.network?.unique_ips ?? 0),
+    }),
+    { sent: 0, recv: 0, connections: 0, uniqueIps: 0 },
+  )
+})
+
+function tooltipExtra(index: number): string[] {
+  if (!multiNode.value) return []
+  return liveNodes.value.map((node) => {
+    const series = props.nodeSamples[node.id] ?? []
+    const point = series[index - (longest.value.length - series.length)] ?? series[series.length - 1]
+    return `${nodeTitle(node)}: ↑ ${formatBitRate(point?.up ?? 0)} · ↓ ${formatBitRate(point?.down ?? 0)}`
+  })
+}
 </script>
 
 <template>
   <DashCard
     :title="t('dashboard.network')"
-    :subtitle="t('dashboard.liveThroughput')"
+    :subtitle="multiNode ? t('dashboard.nodeNetworkHint') : t('dashboard.liveThroughput')"
     icon="pi pi-globe"
     :accent="SERIES.download"
     padded
@@ -57,9 +145,12 @@ const latest = computed(() => props.samples[props.samples.length - 1] ?? null)
     </template>
 
     <MetricChart
-      :labels="timeLabels(samples.map((sample) => sample.at), locale)"
+      :labels="labels"
       :series="chartSeries"
       type="line"
+      :stacked="multiNode"
+      :stack-total-label="t('dashboard.liveThroughput')"
+      :tooltip-extra="tooltipExtra"
       :value-formatter="(value: number) => formatBitRate(value)"
       :height="190"
       :max-x-ticks="6"
@@ -69,25 +160,25 @@ const latest = computed(() => props.samples[props.samples.length - 1] ?? null)
       <div class="net-footer">
         <MiniStat
           :label="t('dashboard.sentSinceRestart')"
-          :value="formatGb(network?.sent_gb ?? 0, 1)"
+          :value="formatGb(totals.sent, 1)"
           icon="pi pi-arrow-up"
           :accent="SERIES.upload"
         />
         <MiniStat
           :label="t('dashboard.receivedSinceRestart')"
-          :value="formatGb(network?.recv_gb ?? 0, 1)"
+          :value="formatGb(totals.recv, 1)"
           icon="pi pi-arrow-down"
           :accent="SERIES.download"
         />
         <MiniStat
           :label="t('dashboard.connections')"
-          :value="String(network?.connections ?? 0)"
+          :value="String(totals.connections)"
           icon="pi pi-link"
           :accent="SERIES.users"
         />
         <MiniStat
           :label="t('dashboard.uniqueIps')"
-          :value="String(network?.unique_ips ?? 0)"
+          :value="String(totals.uniqueIps)"
           icon="pi pi-map-marker"
           :accent="SERIES.online"
         />

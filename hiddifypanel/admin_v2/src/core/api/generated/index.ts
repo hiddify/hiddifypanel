@@ -440,12 +440,39 @@ export const adminApi = {
   me: () => getHttp().get<{ lang?: string }>('/me/').then((r) => r.data),
 }
 
+export interface ChildUsagePoint {
+  usage: number
+  online: number
+}
+
 export interface DashboardDailyPoint {
   date: string
   /** bytes */
   usage: number
   /** distinct users online that day */
   online: number
+  /** per-node breakdown when viewing all nodes */
+  by_child?: Record<string, ChildUsagePoint>
+}
+
+export interface DashboardNode {
+  id: number
+  name: string
+  mode: string
+}
+
+export interface DashboardNodeStats {
+  id: number
+  name: string
+  mode: string
+  ok: boolean
+  error?: string | null
+  cpu?: DashboardCpu
+  memory?: DashboardMemory
+  disk?: DashboardDisk
+  network?: DashboardNetwork
+  host?: DashboardHost
+  processes?: DashboardProcesses
 }
 
 export interface DashboardUsage {
@@ -517,20 +544,31 @@ export interface DashboardProcess {
   cpu_percent?: number
 }
 
+export interface DashboardProcesses {
+  count: number
+  cpu: DashboardProcess[]
+  memory: DashboardProcess[]
+}
+
+export interface DashboardSystem {
+  cpu: DashboardCpu
+  memory: DashboardMemory
+  disk: DashboardDisk
+  network: DashboardNetwork
+  host: DashboardHost
+}
+
 export interface DashboardSnapshot {
   generated_at: string
   range_days: number
   series: DashboardDailyPoint[]
   usage: DashboardUsage
   users: DashboardUsers
-  system: {
-    cpu: DashboardCpu
-    memory: DashboardMemory
-    disk: DashboardDisk
-    network: DashboardNetwork
-    host: DashboardHost
-  }
-  processes: { count: number; cpu: DashboardProcess[]; memory: DashboardProcess[] }
+  system: DashboardSystem
+  processes: DashboardProcesses
+  nodes?: DashboardNode[]
+  node_stats?: DashboardNodeStats[]
+  child_id?: number | null
 }
 
 export const dashboardApi = {

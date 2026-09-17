@@ -24,6 +24,8 @@ const props = withDefaults(
     stacked?: boolean
     yMax?: number
     maxXTicks?: number
+    tooltipExtra?: (index: number) => string[]
+    stackTotalLabel?: string
   }>(),
   { type: 'line', height: 260, legend: true, stacked: false },
 )
@@ -47,7 +49,8 @@ const data = computed(() => ({
       maxBarThickness: isBar ? 34 : undefined,
       tension: 0.35,
       pointRadius: 0,
-      pointHoverRadius: 4,
+      pointHoverRadius: 5,
+      pointHitRadius: 12,
       pointHoverBorderWidth: 2,
       pointHoverBackgroundColor: series.color,
       order: isBar ? 2 : 1,
@@ -62,6 +65,8 @@ const options = computed(() =>
     stacked: props.stacked,
     yMax: props.yMax,
     maxXTicks: props.maxXTicks,
+    tooltipExtra: props.tooltipExtra,
+    stackTotalLabel: props.stackTotalLabel,
   }),
 )
 </script>

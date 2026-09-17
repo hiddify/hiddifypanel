@@ -3,13 +3,11 @@ import { useI18n } from 'vue-i18n'
 import Message from 'primevue/message'
 import ProgressBar from 'primevue/progressbar'
 import PageHeader from '@/shared/components/PageHeader.vue'
-import CpuCard from '../components/CpuCard.vue'
 import DashboardToolbar from '../components/DashboardToolbar.vue'
-import DiskCard from '../components/DiskCard.vue'
 import HostInfoBar from '../components/HostInfoBar.vue'
 import KpiTiles from '../components/KpiTiles.vue'
-import MemoryCard from '../components/MemoryCard.vue'
 import NetworkCard from '../components/NetworkCard.vue'
+import NodeHealthCard from '../components/NodeHealthCard.vue'
 import UsageComparisonCard from '../components/UsageComparisonCard.vue'
 import UsageTrendCard from '../components/UsageTrendCard.vue'
 import UsersComparisonCard from '../components/UsersComparisonCard.vue'
@@ -23,9 +21,12 @@ const {
   usage,
   users,
   system,
-  processes,
   samples,
+  nodeSamples,
   rangeDays,
+  childId,
+  nodes,
+  nodeStats,
   live,
   loading,
   refreshing,
@@ -40,7 +41,9 @@ const {
 
   <DashboardToolbar
     v-model:range-days="rangeDays"
+    v-model:child-id="childId"
     v-model:live="live"
+    :nodes="nodes"
     :refreshing="refreshing"
     :failed="failed"
     :updated-at="updatedAt"
@@ -57,7 +60,13 @@ const {
     <KpiTiles :usage="usage" :users="users" :series="series" />
 
     <div class="dashboard__split">
-      <UsageTrendCard :series="series" :usage="usage" :range-days="rangeDays" />
+      <UsageTrendCard
+        :series="series"
+        :usage="usage"
+        :range-days="rangeDays"
+        :nodes="nodes"
+        :stacked="childId === null"
+      />
       <UsageComparisonCard :usage="usage" />
     </div>
 
@@ -66,15 +75,16 @@ const {
       <UsersComparisonCard :users="users" />
     </div>
 
-    <div class="dashboard__resources">
-      <CpuCard :cpu="system?.cpu ?? null" :processes="processes?.cpu ?? []" :samples="samples" />
-      <MemoryCard :memory="system?.memory ?? null" :processes="processes?.memory ?? []" :samples="samples" />
-      <DiskCard :disk="system?.disk ?? null" />
-    </div>
+    <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" />
 
-    <NetworkCard :network="system?.network ?? null" :samples="samples" />
+    <NetworkCard
+      :network="system?.network ?? null"
+      :samples="samples"
+      :nodes="nodeStats"
+      :node-samples="nodeSamples"
+    />
 
-    <HostInfoBar :host="system?.host ?? null" />
+    <HostInfoBar v-if="childId !== null || nodeStats.length <= 1" :host="system?.host ?? null" />
   </div>
 </template>
 
@@ -89,15 +99,14 @@ const {
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: 1rem;
 }
-.dashboard__resources {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
-  gap: 1rem;
-  align-items: start;
-}
 @media (max-width: 1199px) {
   .dashboard__split {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 767px) {
+  .dashboard {
+    gap: 0.75rem;
   }
 }
 </style>

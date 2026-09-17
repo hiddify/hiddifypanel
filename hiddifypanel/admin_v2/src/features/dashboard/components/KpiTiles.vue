@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DashboardDailyPoint, DashboardUsage, DashboardUsers } from '@/core/api/generated'
-import { formatBytes } from '@/shared/utils/format-metrics'
+import { formatBytes, formatDayLabel } from '@/shared/utils/format-metrics'
 import { SERIES } from '../composables/useChartTheme'
 import StatTile from './StatTile.vue'
 
@@ -12,7 +12,7 @@ const props = defineProps<{
   series: DashboardDailyPoint[]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 interface Tile {
   label: string
@@ -23,10 +23,13 @@ interface Tile {
   trend?: number | null
   trendLabel?: string
   sparkline: number[]
+  sparkLabels: string[]
+  sparkFormatter: (value: number) => string
 }
 
 const usageSpark = computed(() => props.series.map((point) => point.usage))
 const onlineSpark = computed(() => props.series.map((point) => point.online))
+const sparkLabels = computed(() => props.series.map((point) => formatDayLabel(point.date, locale.value)))
 
 const tiles = computed<Tile[]>(() => [
   {
@@ -38,6 +41,8 @@ const tiles = computed<Tile[]>(() => [
     trendLabel: t('dashboard.vsYesterday'),
     caption: t('dashboard.onlineToday', { count: props.users?.online.today ?? 0, total: props.users?.total ?? 0 }),
     sparkline: usageSpark.value.slice(-14),
+    sparkLabels: sparkLabels.value.slice(-14),
+    sparkFormatter: (value: number) => formatBytes(value),
   },
   {
     label: t('dashboard.weekUsage'),
@@ -48,6 +53,8 @@ const tiles = computed<Tile[]>(() => [
     trendLabel: t('dashboard.vsPreviousWeek'),
     caption: t('dashboard.perDay', { value: formatBytes(props.usage?.averages.daily_week ?? 0) }),
     sparkline: usageSpark.value.slice(-14),
+    sparkLabels: sparkLabels.value.slice(-14),
+    sparkFormatter: (value: number) => formatBytes(value),
   },
   {
     label: t('dashboard.monthUsage'),
@@ -58,6 +65,8 @@ const tiles = computed<Tile[]>(() => [
     trendLabel: t('dashboard.vsPreviousMonth'),
     caption: t('dashboard.perDay', { value: formatBytes(props.usage?.averages.daily_month ?? 0) }),
     sparkline: usageSpark.value.slice(-30),
+    sparkLabels: sparkLabels.value.slice(-30),
+    sparkFormatter: (value: number) => formatBytes(value),
   },
   {
     label: t('dashboard.totalUsage'),
@@ -66,6 +75,8 @@ const tiles = computed<Tile[]>(() => [
     accent: SERIES.usageAvg,
     caption: t('dashboard.usersSummary', { total: props.users?.total ?? 0, enabled: props.users?.enabled ?? 0 }),
     sparkline: [],
+    sparkLabels: [],
+    sparkFormatter: (value: number) => formatBytes(value),
   },
   {
     label: t('dashboard.onlineUsers'),
@@ -74,6 +85,8 @@ const tiles = computed<Tile[]>(() => [
     accent: SERIES.online,
     caption: t('dashboard.inFiveMinutes'),
     sparkline: onlineSpark.value.slice(-14),
+    sparkLabels: sparkLabels.value.slice(-14),
+    sparkFormatter: (value: number) => String(Math.round(value)),
   },
 ])
 </script>
@@ -91,6 +104,8 @@ const tiles = computed<Tile[]>(() => [
       :trend="tile.trend"
       :trend-label="tile.trendLabel"
       :sparkline="tile.sparkline"
+      :spark-labels="tile.sparkLabels"
+      :spark-formatter="tile.sparkFormatter"
     />
   </div>
 </template>
@@ -100,5 +115,10 @@ const tiles = computed<Tile[]>(() => [
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: 1rem;
+}
+@media (max-width: 767px) {
+  .kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>
