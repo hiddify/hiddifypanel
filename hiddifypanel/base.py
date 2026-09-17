@@ -8,24 +8,38 @@ from dotenv import dotenv_values
 
 
 def create_app(*args, app_mode="web", **config):
-    from apiflask import APIFlask
     from dynaconf import FlaskDynaconf
 
-    app = APIFlask(
-        __name__,
-        static_url_path="/<proxy_path>/static/",
-        instance_relative_config=True,
-        version="2.2.0",
-        title="Hiddify API",
-        openapi_blueprint_url_prefix="/<proxy_path>/api",
-        docs_ui="elements",
-        json_errors=False,
-        enable_openapi=app_mode == "web",
-    )
+    if app_mode == "web":
+        # apiflask (and the flask_marshmallow it pulls in) is only needed for
+        # the web app's OpenAPI docs/schema validation. CLI and celery
+        # processes never touch that, so avoid the import/memory cost there.
+        from apiflask import APIFlask
+
+        app = APIFlask(
+            __name__,
+            static_url_path="/<proxy_path>/static/",
+            instance_relative_config=True,
+            version="2.2.0",
+            title="Hiddify API",
+            openapi_blueprint_url_prefix="/<proxy_path>/api",
+            docs_ui="elements",
+            json_errors=False,
+            enable_openapi=True,
+        )
+    else:
+        from flask import Flask
+
+        app = Flask(
+            __name__,
+            static_url_path="/<proxy_path>/static/",
+            instance_relative_config=True,
+        )
     # app = Flask(__name__, static_url_path="/<proxy_path>/static/", instance_relative_config=True)
     # app.asgi_app = WsgiToAsgi(app)
 
-    for c, v in dotenv_values(os.environ.get("HIDDIFY_CFG_PATH", "app.cfg")).items():
+    _cfg_path = os.environ.get("HIDDIFY_CFG_PATH", "/opt/hiddify-manager/data/hiddify-panel/app.cfg")
+    for c, v in dotenv_values(_cfg_path).items():
         if not v:
             continue
         if v.isdecimal():
@@ -33,7 +47,7 @@ def create_app(*args, app_mode="web", **config):
         else:
             v = True if v.lower() == "true" else (False if v.lower() == "false" else v)
         app.config[c] = v
-    dyn = FlaskDynaconf(app, settings_files=[os.environ.get("HIDDIFY_CFG_PATH", "app.cfg")])
+    dyn = FlaskDynaconf(app, settings_files=[_cfg_path])
 
     extensions = [
         # "hiddifypanel.cache:init_app",

@@ -1,4 +1,3 @@
-import xtlsapi
 from loguru import logger
 
 from hiddifypanel.models import ConfigEnum, hconfig
@@ -13,6 +12,8 @@ class XrayApi(DriverABS):
 
     def get_xray_client(self):
         if not hasattr(self, "xray_client"):
+            import xtlsapi
+
             self.xray_client = xtlsapi.XrayClient("127.0.0.1", 10085)
         return self.xray_client
 

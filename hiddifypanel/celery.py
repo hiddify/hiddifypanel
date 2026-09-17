@@ -51,7 +51,7 @@ def init_app(app):
 
 def init_app_no_flask():
     config = {}
-    for c, v in dotenv_values(os.environ.get("HIDDIFY_CFG_PATH", "app.cfg")).items():
+    for c, v in dotenv_values(os.environ.get("HIDDIFY_CFG_PATH", "/opt/hiddify-manager/data/hiddify-panel/app.cfg")).items():
         if v.isdecimal():
             v = int(v)
         else:

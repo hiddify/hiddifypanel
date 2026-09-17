@@ -1,7 +1,6 @@
 import json
 import os
 
-import xtlsapi
 from loguru import logger
 
 from hiddifypanel.cache import cache
@@ -16,6 +15,8 @@ class SingboxApi(DriverABS):
         return True
 
     def get_singbox_client(self):
+        import xtlsapi
+
         return xtlsapi.SingboxClient("127.0.0.1", 10086)
 
     def get_enabled_users(self):
