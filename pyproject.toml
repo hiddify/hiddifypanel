@@ -64,10 +64,10 @@ dependencies = [
     "dynaconf>=3.3.5,<4.0.0",
     "json5>=0.15.0,<1.0.0",
     "jinja2>=3.1.6",
-
     "dnspython>=2.8.0",
     "granian>=2.8.3",
     "polib>=1.2.0",
+    "apscheduler>=3.11.3",
 ]
 
 [project.optional-dependencies]

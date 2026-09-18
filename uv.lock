@@ -178,6 +178,18 @@ wheels = [
 ]
 
 [[package]]
+name = "apscheduler"
+version = "3.11.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzlocal" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8c/6b/eeff360196bb20b312c9e762a820fd1b2c6d809466c755ef57863478e454/apscheduler-3.11.3.tar.gz", hash = "sha256:cd2fcc9330039a81a5893472ad49facf23a6d5604cbe1d918c835c6de7834d5a", size = 110312 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/42/c9/8638db32514dbb9157b3d82680c6faea89283523edf9ed2415ea3884f2ae/apscheduler-3.11.3-py3-none-any.whl", hash = "sha256:bbeb2ec02d23d3c06a6c07ed7f0f3939ada6680eb121fae809a69bb42c537a30", size = 66024 },
+]
+
+[[package]]
 name = "asgiref"
 version = "3.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -986,6 +998,7 @@ source = { editable = "." }
 dependencies = [
     { name = "ansi2html" },
     { name = "apiflask", extra = ["async"] },
+    { name = "apscheduler" },
     { name = "asgiref" },
     { name = "babel" },
     { name = "bleach" },
@@ -1028,11 +1041,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "redis" },
     { name = "requests" },
-    { name = "ruff" },
     { name = "sonora" },
     { name = "sqlalchemy", extra = ["asyncio"] },
     { name = "strenum" },
-    { name = "ty" },
     { name = "user-agents" },
     { name = "werkzeug" },
     { name = "wtforms" },
@@ -1053,6 +1064,7 @@ dev = [
 requires-dist = [
     { name = "ansi2html", specifier = ">=1.9.5" },
     { name = "apiflask", extras = ["async"], specifier = ">=3.1.2" },
+    { name = "apscheduler", specifier = ">=3.11.3" },
     { name = "asgiref", specifier = ">=3.12.1,<4.0.0" },
     { name = "babel", specifier = "==2.18.0" },
     { name = "bleach", specifier = ">=6.4.0" },
@@ -1099,13 +1111,11 @@ requires-dist = [
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "redis", specifier = ">=8.1.0" },
     { name = "requests", specifier = ">=2.34.2" },
-    { name = "ruff", specifier = ">=0.16.8" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.15.21" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.16.8" },
     { name = "sonora", specifier = ">=0.2.3,<1.0.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.54" },
     { name = "strenum", specifier = "==0.4.15" },
-    { name = "ty", specifier = ">=0.0.82" },
-    { name = "ty", marker = "extra == 'dev'", specifier = ">=0.0.58" },
+    { name = "ty", marker = "extra == 'dev'", specifier = ">=0.0.82" },
     { name = "user-agents", specifier = "==2.2.0" },
     { name = "werkzeug", specifier = ">=3.1.8" },
     { name = "wtforms", specifier = "==3.1.2" },
