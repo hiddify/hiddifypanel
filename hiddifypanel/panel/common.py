@@ -211,7 +211,11 @@ def init_app(app: APIFlask):
 
     app.jinja_env.globals["generate_github_issue_link_for_admin_sidebar"] = hutils.github_issue.generate_github_issue_link_for_admin_sidebar
     with app.app_context():
-        import hiddifypanel.panel.commercial.telegrambot as telegrambot
+        # Importing the telegrambot package registers its message handlers, which
+        # constructs a real telebot.TeleBot (its own requests.Session, etc.).
+        # Skip that entirely on installs that never configured a bot token.
+        if hconfig(ConfigEnum.telegram_bot_token):
+            import hiddifypanel.panel.commercial.telegrambot as telegrambot
 
-        if (not telegrambot.bot) or (not telegrambot.bot.username):  # type: ignore
-            telegrambot.register_bot_cached(set_hook=True)
+            if (not telegrambot.bot) or (not telegrambot.bot.username):  # type: ignore
+                telegrambot.register_bot_cached(set_hook=True)

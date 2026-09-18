@@ -12,8 +12,8 @@ def create_app(*args, app_mode="web", **config):
 
     if app_mode == "web":
         # apiflask (and the flask_marshmallow it pulls in) is only needed for
-        # the web app's OpenAPI docs/schema validation. CLI and celery
-        # processes never touch that, so avoid the import/memory cost there.
+        # the web app's OpenAPI docs/schema validation. The CLI process never
+        # touches that, so avoid the import/memory cost there.
         from apiflask import APIFlask
 
         app = APIFlask(
@@ -55,9 +55,7 @@ def create_app(*args, app_mode="web", **config):
         "hiddifypanel.panel.hlogger:init_cli",
     ]
 
-    if app_mode == "celery":
-        extensions = ["hiddifypanel.celery:init_app"]
-    elif app_mode == "cli":
+    if app_mode == "cli":
         extensions.append("hiddifypanel.panel.cli:init_app")
     else:
         extensions.extend(
@@ -70,7 +68,7 @@ def create_app(*args, app_mode="web", **config):
                 "hiddifypanel.panel.user:init_app",
                 "hiddifypanel.panel.commercial:init_app",
                 "hiddifypanel.panel.node:init_app",
-                "hiddifypanel.celery:init_app",
+                "hiddifypanel.scheduler:init_app",
             ]
         )
 
@@ -91,13 +89,3 @@ def create_app_wsgi(*args, **kwargs):
     # cli=True
     app = create_app(app_mode="cli" if cli else "web")
     return app
-
-
-def create_celery_app():
-    #     # workaround for Flask issue
-    #     # that doesn't allow **config
-    #     # to be passed to create_app
-    #     # https://github.com/pallets/flask/issues/4170
-    # print(kwargs)
-    app = create_app(app_mode="celery")
-    return app.extensions["celery"]

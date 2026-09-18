@@ -3,7 +3,6 @@ import json
 from collections.abc import Callable
 from typing import Any
 
-from celery import shared_task
 from loguru import logger
 from sqlalchemy import func
 
@@ -24,16 +23,14 @@ def _user_package_end_date():
     return func.adddate(User.start_date, User.package_days)
 
 
-@shared_task(ignore_result=False)
 def update_local_usage():
-    return locked_execute(update_local_usage_not_lock)
+    return locked_execute("lock-update-local-usage", update_local_usage_not_lock)
     # return {"status": 'success', "comments":res}
 
 
-def locked_execute(func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
-    lock_key = "lock-update-local-usage"
+def locked_execute(lock_key: str, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
     if not cache.redis_client.set(lock_key, "locked", nx=True, ex=60):
-        return {"msg": "last update task is not finished yet."}
+        return {"msg": "last run of this task is not finished yet."}
     try:
         return func(*args, **kwargs)
     finally:
@@ -101,7 +98,7 @@ def _reset_priodic_usage() -> bool:
 
 def add_users_usage_new(usages: list[UsageData], child_id: int) -> dict[str, Any]:
     """Apply usage deltas under the globzal usage lock."""
-    return locked_execute(_add_users_usage_new_impl, usages, child_id)
+    return locked_execute("lock-update-local-usage", _add_users_usage_new_impl, usages, child_id)
 
 
 def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[str, Any]:

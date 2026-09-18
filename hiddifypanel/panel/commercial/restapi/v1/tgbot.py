@@ -1,4 +1,3 @@
-import telebot
 from flask import request
 from apiflask import abort
 from flask_restful import Resource
@@ -7,33 +6,58 @@ import time
 from hiddifypanel.models import *
 from hiddifypanel import Events
 from hiddifypanel.cache import cache
-logger = telebot.logger
+from loguru import logger
 
 
-class ExceptionHandler(telebot.ExceptionHandler):
-    def handle(self, exception):
-        """Improved error handling for Telegram bot exceptions"""
-        error_msg = str(exception)
-        logger.error(f"Telegram bot error: {error_msg}")
-        
-        try:
-            # Attempt recovery based on error type
-            if "webhook" in error_msg.lower():
-                if hasattr(bot, 'remove_webhook'):
-                    bot.remove_webhook()
-                    logger.info("Removed webhook due to error")
-            elif "connection" in error_msg.lower():
-                # Wait and retry for connection issues
-                time.sleep(5)
-                return True  # Indicates retry
-        except Exception as e:
-            logger.error(f"Error during recovery attempt: {str(e)}")
-        
-        return False  # Don't retry for unknown errors
+class _LazyBot:
+    """Defers importing telebot (and creating its TeleBot/requests.Session) until
+    the bot is actually touched, so installs that never configure a Telegram bot
+    don't pay for it on every process startup."""
+
+    __slots__ = ("_real",)
+
+    def __init__(self):
+        object.__setattr__(self, "_real", None)
+
+    def _ensure(self):
+        real = object.__getattribute__(self, "_real")
+        if real is None:
+            import telebot
+
+            class ExceptionHandler(telebot.ExceptionHandler):
+                def handle(self, exception):
+                    """Improved error handling for Telegram bot exceptions"""
+                    error_msg = str(exception)
+                    logger.error(f"Telegram bot error: {error_msg}")
+
+                    try:
+                        # Attempt recovery based on error type
+                        if "webhook" in error_msg.lower():
+                            if hasattr(bot, 'remove_webhook'):
+                                bot.remove_webhook()
+                                logger.info("Removed webhook due to error")
+                        elif "connection" in error_msg.lower():
+                            # Wait and retry for connection issues
+                            time.sleep(5)
+                            return True  # Indicates retry
+                    except Exception as e:
+                        logger.error(f"Error during recovery attempt: {str(e)}")
+
+                    return False  # Don't retry for unknown errors
+
+            real = telebot.TeleBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
+            real.username = ''
+            object.__setattr__(self, "_real", real)
+        return real
+
+    def __getattr__(self, name):
+        return getattr(self._ensure(), name)
+
+    def __setattr__(self, name, value):
+        setattr(self._ensure(), name, value)
 
 
-bot = telebot.TeleBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
-bot.username = ''
+bot = _LazyBot()
 
 
 @cache.cache(1000)
@@ -43,7 +67,6 @@ def register_bot_cached(set_hook=False, remove_hook=False):
 
 def register_bot(set_hook=False, remove_hook=False):
     try:
-        global bot
         token = hconfig(ConfigEnum.telegram_bot_token)
         if token:
             bot.token = hconfig(ConfigEnum.telegram_bot_token)
@@ -64,12 +87,10 @@ def register_bot(set_hook=False, remove_hook=False):
                 bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/{user_secret}/api/v1/tgbot/")
     except Exception as e:
         logger.error(e)
-        
 
 
 def init_app(app):
     with app.app_context():
-        global bot
         token = hconfig(ConfigEnum.telegram_bot_token)
         if token:
             bot.token = token
@@ -83,6 +104,8 @@ class TGBotResource(Resource):
     def post(self):
         try:
             if request.headers.get('content-type') == 'application/json':
+                import telebot
+
                 json_string = request.get_data().decode('utf-8')
                 update = telebot.types.Update.de_json(json_string)
                 bot.process_new_updates([update])

@@ -32,14 +32,10 @@ def downgrade():
         os.rename("/opt/hiddify-manager/services/hiddify-panel/hiddifypanel.db.old", "/opt/hiddify-manager/services/hiddify-panel/hiddifypanel.db")
 
 
-from celery import shared_task
-
-
 def backup():
     backup_task()
 
 
-@shared_task(ignore_result=False)
 def backup_task():
     dbdict = hiddify.dump_db_to_dict()
     os.makedirs("backup", exist_ok=True)
