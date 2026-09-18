@@ -7,7 +7,8 @@ from hiddifypanel.models import ConfigEnum, Role, hconfig
 from .v2_menu import build_admin_v2_menu, build_admin_v2_notices
 from hiddifypanel import g
 
-
+from flask import render_template, request, redirect
+from hiddifypanel.hutils.flask import hurl_for
 def _panel_version() -> str:
     if not hiddifypanel.is_released_version:
         return 'DEV'
@@ -53,6 +54,10 @@ def register_v2_routes(flask_app, admin_bp):
         static_prefix = f'/{proxy_path}/static/admin-v2/assets'
         static_js = f'{static_prefix}/index.js'
         static_css = f'{static_prefix}/index.css'
+        if hconfig(ConfigEnum.first_setup):
+            return redirect(hurl_for("admin.QuickSetup:index"))
+
+
         return render_template(
             'admin_v2.html',
             api_base=f'/{proxy_path}/api/v2/admin/',

@@ -16,7 +16,7 @@ def init_app(app):
         from .admin_users_api import AdminUsersApi
         from .dashboard_api import AdminDashboardApi
         from .server_status_api import AdminServerStatusApi
-        from .system_actions import AllConfigsApi, AllPublicPortsApi, UpdateUserUsageApi
+        from .system_actions import AllConfigsApi, AllPublicPortsApi, DumpServerConfigsApi, UpdateUserUsageApi
 
         bp.add_url_rule("/me/", view_func=AdminInfoApi)
         bp.add_url_rule("/server_status/", view_func=AdminServerStatusApi)
@@ -27,6 +27,7 @@ def init_app(app):
         bp.add_url_rule("/log/", view_func=AdminLogApi)
         bp.add_url_rule("/update_user_usage/", view_func=UpdateUserUsageApi)
         bp.add_url_rule("/all-configs/", view_func=AllConfigsApi)
+        bp.add_url_rule("/dump-server-configs/", view_func=DumpServerConfigsApi)
 
         bp.add_url_rule("/all-public-port/", view_func=AllPublicPortsApi)
 
