@@ -111,6 +111,8 @@
 
 #### Other
 
+* Chore: update MANIFEST.in to prune admin_v2 directory, preventing inclusion of node_modules in the sdist and wheel. 
+
 * Chore: update package inclusion in pyproject.toml to include all subpackages and refine exclusion patterns; enhance GitHub Actions workflow for building and publishing with improved error handling and dependency management. 
 
 * Refactor: update DashboardView styles and JavaScript components for improved layout and functionality; enhance progress bar and toggle button implementations. 
