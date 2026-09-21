@@ -86,7 +86,7 @@ def create_app_wsgi(*args, **kwargs):
     # to be passed to create_app
     # https://github.com/pallets/flask/issues/4170
     cli = ("granian" not in sys.argv[0]) and (len(sys.argv) <= 1 or sys.argv[1] != "run")
-    print("argv:",sys.argv)
+    # print("argv:",sys.argv)
     # cli = (sys.argv[1] in ["update-usage", "all-configs", "admin_links", "admin_path","get-setting"])
     # cli=True
     app = create_app(app_mode="cli" if cli else "web")

@@ -84,28 +84,34 @@ const chartSeries = computed(() => {
     <template #footer>
       <div class="users-footer">
         <MiniStat
-          :label="t('dashboard.totalUsers')"
-          :value="String(users?.total ?? 0)"
+          :label="t('dashboard.onlineEnabledUsers')"
+          :value="`${users?.online.m5 ?? 0}/${users?.enabled ?? 0}`"
           icon="pi pi-id-card"
           :accent="SERIES.users"
         />
         <MiniStat
-          :label="t('dashboard.enabledUsers')"
-          :value="String(users?.enabled ?? 0)"
+          :label="t('dashboard.todayOnline')"
+          :value="String(users?.online.today ?? 0)"
           icon="pi pi-check-circle"
           :accent="SERIES.online"
         />
         <MiniStat
-          :label="t('dashboard.monthlyAverage')"
-          :value="String(users?.averages.daily_month ?? 0)"
-          icon="pi pi-calendar"
-          :accent="SERIES.download"
+          :label="t('dashboard.lastdayOnline')"
+          :value="String(users?.online.yesterday ?? 0)"
+          icon="pi pi-calendar-minus"
+          :accent="SERIES.usageAvg"
         />
         <MiniStat
-          :label="t('dashboard.weeklyAverage')"
-          :value="String(users?.averages.daily_week ?? 0)"
+          :label="t('dashboard.weeklyOnline')"
+          :value="String(users?.online.week ?? 0)"
           icon="pi pi-calendar-clock"
           :accent="SERIES.usageAvg"
+        />
+        <MiniStat
+          :label="t('dashboard.monthlyOnline')"
+          :value="String(users?.online.month ?? 0)"
+          icon="pi pi-calendar"
+          :accent="SERIES.download"
         />
       </div>
     </template>
@@ -115,7 +121,7 @@ const chartSeries = computed(() => {
 <style scoped>
 .users-footer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   gap: 0.75rem 1.25rem;
 }
 </style>
