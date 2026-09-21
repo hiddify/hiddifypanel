@@ -43,19 +43,32 @@ jobs:
     - name: Build Admin V2 UI
       working-directory: hiddifypanel/admin_v2
       run: npm ci && npm run build
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine poetry
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
     - name: Build and publish
       env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       run: |
         sed -i "/^is_released_version/c is_released_version=True" hiddifypanel/VERSION.py
-        poetry build
-        twine upload dist/*
+        # uv publish uploads everything in dist/, so never build on top of stale artifacts
+        rm -rf dist
+        # uv build builds the sdist first and the wheel from that sdist, so an
+        # incomplete sdist fails here instead of shipping a broken release.
+        uv build
+        # The npm build above leaves a 271MB node_modules inside the package directory.
+        # If it ever reaches the wheel again, the upload fails with a bare 400.
+        if unzip -l dist/*.whl | grep -q node_modules; then
+          echo "::error::wheel contains node_modules — check MANIFEST.in and [tool.setuptools.packages.find]"
+          exit 1
+        fi
+        # admin_v2/ is excluded as build-time source; what ships is vite's output in
+        # static/admin-v2/. That directory is committed, so a failed npm build would
+        # otherwise publish stale assets instead of failing.
+        if ! unzip -l dist/*.whl | grep -q 'hiddifypanel/static/admin-v2/index.html'; then
+          echo "::error::wheel has no built admin UI — did the 'Build Admin V2 UI' step run?"
+          exit 1
+        fi
+        ls -lh dist/
+        uvx twine check --strict dist/*
+        # --check-url lets a re-run skip files already on PyPI rather than failing on them
+        uv publish --check-url https://pypi.org/simple/hiddifypanel/
