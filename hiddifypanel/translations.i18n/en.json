@@ -77,6 +77,7 @@
   "Edit Proxy Names": "✏️ Modifying Proxies",
   "Enable": "❇️ Enable",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "Enable TLS ECH in panel settings before using ECH on a CDN domain",
+  "Error in Config Generation": "Error in Config Generation",
   "Error in auto cdn format": "⚠️ Error in Auto CDN Format",
   "Error! auto cdn ip can not be find, please contact admin.": "Error In Auto CDN IP! It Can Not Be Find, Please Contact Admin",
   "Example Domains": "Test and Suggest Domain ",
@@ -117,6 +118,8 @@
   "It will override the root admin to the current user": "It will override the owner admin of the backup file to the current admin.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Join our Hiddify Telegram channel to get the latest updates on Hiddify.",
   "Last Online": "Last Connection",
+  "Last node to parent": "Last node to parent",
+  "Last parent to node": "Last parent to node",
   "Link is changed!": "ℹ️ Link is Changed!",
   "Linux": "Linux",
   "Max Active Users": "Max Active Users",
@@ -227,8 +230,8 @@
   "The message was not sent to": "The message was not sent to",
   "The name shown in the configs for this domain.": "The name that will be shown in the Configs for this Domain.",
   "This can be used for giving your users a permanent non blockable links.": "This can be used for giving your Users a permanent non Blockable Links.",
-  "This domain does not exist in the panel!": "This Domain does not exist in the Panel !",
   "This domain %(domain_name)s is invalid": "This domain %(domain_name)s is invalid",
+  "This domain does not exist in the panel!": "This Domain does not exist in the Panel !",
   "Today Usage": "Today",
   "Too many Connected IPs": "Too Many Connected IPs",
   "Total Usage": "Total Usage",
@@ -341,6 +344,7 @@
       "available": "Available",
       "breakdown": "Breakdown",
       "cached": "Cached",
+      "clickForProcesses": "Click to show top processes",
       "collapse": "Collapse details",
       "connections": "Connections",
       "core": "Core {index}",
@@ -358,6 +362,7 @@
       "hostname": "Host",
       "inFiveMinutes": "In the last 5 minutes",
       "lastNDays": "Last {days} days",
+      "lastdayOnline": "Last day online",
       "liveThroughput": "Live throughput",
       "liveUpdated": "Live · updated {time}",
       "load15m": "15 min",
@@ -366,7 +371,6 @@
       "loadAverage": "Load average",
       "loadFailed": "Could not load dashboard data",
       "loadFailedHint": "The dashboard could not reach the panel API. Check that you are still signed in.",
-      "lastdayOnline": "Last day online",
       "monthUsage": "Month usage",
       "monthUsers": "Month",
       "monthlyAverage": "Monthly average",
@@ -378,6 +382,7 @@
       "nodeHealth": "Node health",
       "nodeHealthHint": "Live CPU, RAM and disk from each node API",
       "nodeHealthStackedHint": "Stacked CPU, RAM and disk per node",
+      "nodeNetworkHint": "Live upload and download per node",
       "nodeOffline": "Offline",
       "nodeOnline": "Online",
       "nodeUnreachable": "Could not reach this node",
@@ -387,9 +392,6 @@
       "onlineOnDay": "Online: {count}",
       "onlineToday": "Online today: {count} / {total}",
       "onlineUsers": "Online users",
-      "nodeNetworkHint": "Live upload and download per node",
-      "clickForProcesses": "Click to show top processes",
-      "usageOnDay": "Usage: {value}",
       "panelVersion": "Panel version",
       "pause": "Pause",
       "paused": "Live updates paused",
@@ -419,6 +421,7 @@
       "uptime": "Uptime",
       "usageComparison": "Usage comparison",
       "usageComparisonHint": "Today and yesterday against the weekly and monthly daily average",
+      "usageOnDay": "Usage: {value}",
       "usageStackedHint": "Stacked usage per node · total is the filled area",
       "usageTrend": "Usage trend",
       "used": "Used",
@@ -599,8 +602,8 @@
         "domains_l7_gateway": "Domain L7 gateway",
         "domains_single_public_port": "Multi-domain static port",
         "domains_sni_gateway": "Domain SNI gateway",
-        "no_inbound": "No inbound",
-        "ip": "IP-based"
+        "ip": "IP-based",
+        "no_inbound": "No inbound"
       },
       "modeSettings": "Mode & routing",
       "name": "Name",
@@ -1156,6 +1159,10 @@
       "description": "MasterDNS payload encryption key (hex)",
       "label": "MasterDNS Encrypt Key"
     },
+    "max_proxy_ips_per_version": {
+      "description": "Maximum number of IPv4 and IPv6 addresses used to generate proxies for each domain (each version is capped separately).",
+      "label": "Max Proxy IPs Per Version"
+    },
     "mieru": {
       "description": "The Mieru protocol is a secure and decentralized communication protocol designed to facilitate data transfer in distributed networks without the need for a central server",
       "label": "⚡️ Mieru"
@@ -1250,10 +1257,6 @@
     "only_ipv4": {
       "description": "It will Disable IPv6",
       "label": "ℹ️ Only IPv4"
-    },
-    "max_proxy_ips_per_version": {
-      "description": "Maximum number of IPv4 and IPv6 addresses used to generate proxies for each domain (each version is capped separately).",
-      "label": "Max Proxy IPs Per Version"
     },
     "package_mode": {
       "description": "Specify whether you want Released Package or Beta one",

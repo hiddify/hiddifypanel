@@ -77,6 +77,7 @@
   "Edit Proxy Names": "✏️ Изменить прокси",
   "Enable": "❇️ Включить",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ Ошибка в формате Auto CDN",
   "Error! auto cdn ip can not be find, please contact admin.": "Ошибка в IP-адресе Auto CDN! Невозможно найти, обратитесь к администратору",
   "Example Domains": "Тестируйте и предложите домеy",
@@ -117,6 +118,8 @@
   "It will override the root admin to the current user": "Он заменит администратора-владельца файла резервной копии на текущего администратора.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Присоединяйтесь к нашему каналу Hiddify в Telegram, чтобы получать последние обновления Hiddify.",
   "Last Online": "Последнее соединение",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️Ссылка изменена!",
   "Linux": "Linux ОС",
   "Max Active Users": "Максимальное количество активных пользователей",
@@ -227,8 +230,8 @@
   "The message was not sent to": "Сообщение не было отправлено ",
   "The name shown in the configs for this domain.": "Имя, которое будет отображаться в конфигурациях этого домена.",
   "This can be used for giving your users a permanent non blockable links.": "Это можно использовать для предоставления вашим пользователям постоянных неблокируемых ссылок.",
-  "This domain does not exist in the panel!": "Этого домена не существует в панели управления!",
   "This domain %(domain_name)s is invalid": "Домен %(domain_name)s недействителен",
+  "This domain does not exist in the panel!": "Этого домена не существует в панели управления!",
   "Today Usage": "Сегодня",
   "Too many Connected IPs": "Слишком много подключенных IP-адресов",
   "Total Usage": "Общее использование",
@@ -685,6 +688,10 @@
       "label": "config.log_level.label"
     },
     "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
+    },
+    "max_proxy_ips_per_version": {
       "description": "",
       "label": ""
     },
@@ -1292,13 +1299,17 @@
     "custom_proxy": {
       "description": "",
       "group": {
+        "dns_gateway": "",
         "ip_based": "",
+        "l7_gateway": "",
         "other": "",
         "sni_gateway": ""
       },
       "label": "",
       "reality_only": "",
-      "reality_required": ""
+      "reality_required": "",
+      "sni_l7_mutex": "",
+      "sni_single_only": ""
     },
     "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
@@ -1329,7 +1340,8 @@
     },
     "server_domain": {
       "description": "",
-      "label": ""
+      "label": "",
+      "must_be_valid_direct_or_relay": ""
     },
     "show_domains_description": "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n<br>\nПредложение: Для домена с IP-адресом не попадащим под фильтры, отличного от других, выберите все остальные домены (кроме текущего). В результате, поскольку этот IP-адрес используется не для прокси-сервера, а для простого веб-сайта, этот домен и IP-адрес никогда не будут заблокированы, и ваши пользователи смогут легко обновлять свои профили.",
     "tls_status": {

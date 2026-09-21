@@ -77,6 +77,7 @@
   "Edit Proxy Names": "✏️ ویرایش پروکسی‌ها",
   "Enable": "❇️ فعال",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "قبل از استفاده از ECH روی دامنه CDN، TLS ECH را در تنظیمات پنل فعال کنید",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ خطا در ورود IP ها به صورت دستی",
   "Error! auto cdn ip can not be find, please contact admin.": "خطا! آی پی اتوماتیک نتوانست پیدا شود. لطفا با مدیر تماس بگیرید",
   "Example Domains": "بررسی و پیشنهاد دامنه",
@@ -117,6 +118,8 @@
   "It will override the root admin to the current user": "این گزینه ادمین‌ی که در فایل بکاپ هست را با ادمین فعلی جایگزین می‌کند",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "در کانال تلگرام هیدیفای عضو شوید تا از آخرین آپدیت‌های ما مطلع شوید.",
   "Last Online": "آخرین اتصال",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️ لینک تغییر کرد!",
   "Linux": "لینوکس",
   "Max Active Users": "حداکثر کاربران فعال",
@@ -227,8 +230,8 @@
   "The message was not sent to": "پیام نتوانست به کاربران زیر ارسال شود",
   "The name shown in the configs for this domain.": "نامی که در کانفیگ‌ها به جای دامنه نمایش داده شود",
   "This can be used for giving your users a permanent non blockable links.": "این می تواند برای دادن لینک های غیرقابل مسدود و دائمی به کاربران شما استفاده شود.",
-  "This domain does not exist in the panel!": "این دامنه در پنل وجود ندارد!",
   "This domain %(domain_name)s is invalid": "دامنه %(domain_name)s نامعتبر است",
+  "This domain does not exist in the panel!": "این دامنه در پنل وجود ندارد!",
   "Today Usage": "استفاده امروز",
   "Too many Connected IPs": "تعداد IP های متصل بسیار زیاد است",
   "Total Usage": "استفاده کل",
@@ -338,22 +341,22 @@
     },
     "dashboard": {
       "allNodes": "همه نودها",
+      "clickForProcesses": "برای دیدن پردازش‌های برتر کلیک کنید",
       "node": "نود",
       "nodeHealth": "سلامت نودها",
       "nodeHealthHint": "CPU، RAM و دیسک زنده از API هر نود",
+      "nodeNetworkHint": "آپلود و دانلود زنده هر نود",
       "nodeOffline": "آفلاین",
       "nodeOnline": "آنلاین",
       "nodeUnreachable": "این نود در دسترس نیست",
+      "onlineOnDay": "آنلاین: {count}",
       "subtitle": "ترافیک، کاربران و سلامت سرور در یک نگاه",
       "thisServer": "این سرور",
       "title": "داشبورد",
       "underConstruction": "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت.",
-      "usageStackedHint": "مصرف هر نود به‌صورت پشته — مجموع همان سطح پرشده است",
-      "welcomePanel": "خوش آمدید",
-      "onlineOnDay": "آنلاین: {count}",
       "usageOnDay": "مصرف: {value}",
-      "clickForProcesses": "برای دیدن پردازش‌های برتر کلیک کنید",
-      "nodeNetworkHint": "آپلود و دانلود زنده هر نود"
+      "usageStackedHint": "مصرف هر نود به‌صورت پشته — مجموع همان سطح پرشده است",
+      "welcomePanel": "خوش آمدید"
     },
     "domain": {
       "addFailed": "افزودن دامنه ناموفق بود",
@@ -519,8 +522,8 @@
         "domains_l7_gateway": "Domain L7 Gateway",
         "domains_single_public_port": "پورت ثابت چند دامنه",
         "domains_sni_gateway": "Domain SNI Gateway",
-        "no_inbound": "بدون اینباند",
-        "ip": "مبتنی بر IP"
+        "ip": "مبتنی بر IP",
+        "no_inbound": "بدون اینباند"
       },
       "modeSettings": "حالت و مسیریابی",
       "name": "نام",
@@ -1076,6 +1079,10 @@
       "description": "کلید رمزنگاری payload برای MasterDNS (hex)",
       "label": "کلید رمزنگاری MasterDNS"
     },
+    "max_proxy_ips_per_version": {
+      "description": "حداکثر تعداد آدرس IPv4 و IPv6 که برای ساخت پروکسی هر دامنه استفاده می‌شود (هر نسخه جداگانه محدود می‌شود).",
+      "label": "حداکثر IP پروکسی در هر نسخه"
+    },
     "mieru": {
       "description": "پروتکل Mieru یک پروتکل ارتباطی امن و غیرمتمرکز برای انتقال داده در شبکه‌های توزیع‌شده است",
       "label": "⚡️ Mieru"
@@ -1170,10 +1177,6 @@
     "only_ipv4": {
       "description": "با فعال کردن این گزینه IPv۶ غیر فعال میشود",
       "label": "ℹ️ فقط آی‌پی ورژن 4"
-    },
-    "max_proxy_ips_per_version": {
-      "description": "حداکثر تعداد آدرس IPv4 و IPv6 که برای ساخت پروکسی هر دامنه استفاده می‌شود (هر نسخه جداگانه محدود می‌شود).",
-      "label": "حداکثر IP پروکسی در هر نسخه"
     },
     "package_mode": {
       "description": "در این قسمت می‌توانید مشخص کنید که از کدام نسخه میخواهید استفاده کنید. (نسخه 'آزمایشی' امکانات را سریع‌تر از نسخه پایدار در اختیار شما می‌گذارد اما ممکن است دارای مشکلاتی باشد)",

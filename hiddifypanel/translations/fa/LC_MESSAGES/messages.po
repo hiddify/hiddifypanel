@@ -310,6 +310,9 @@ msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 "قبل از استفاده از ECH روی دامنه CDN، TLS ECH را در تنظیمات پنل فعال کنید"
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ خطا در ورود IP ها به صورت دستی"
 
@@ -458,6 +461,12 @@ msgstr "در کانال تلگرام هیدیفای عضو شوید تا از آ
 
 msgid "Last Online"
 msgstr "آخرین اتصال"
+
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
 
 msgid "Link is changed!"
 msgstr "ℹ️ لینک تغییر کرد!"
@@ -825,6 +834,9 @@ msgstr ""
 "این می تواند برای دادن لینک های غیرقابل مسدود و دائمی به کاربران شما استفاده"
 " شود."
 
+msgid "This domain %(domain_name)s is invalid"
+msgstr "دامنه %(domain_name)s نامعتبر است"
+
 msgid "This domain does not exist in the panel!"
 msgstr "این دامنه در پنل وجود ندارد!"
 
@@ -1158,14 +1170,53 @@ msgstr "اعتبارسنجی ناموفق"
 msgid "adminV2.common.validationOk"
 msgstr "اعتبارسنجی موفق"
 
+msgid "adminV2.dashboard.allNodes"
+msgstr "همه نودها"
+
+msgid "adminV2.dashboard.clickForProcesses"
+msgstr "برای دیدن پردازش‌های برتر کلیک کنید"
+
+msgid "adminV2.dashboard.node"
+msgstr "نود"
+
+msgid "adminV2.dashboard.nodeHealth"
+msgstr "سلامت نودها"
+
+msgid "adminV2.dashboard.nodeHealthHint"
+msgstr "CPU، RAM و دیسک زنده از API هر نود"
+
+msgid "adminV2.dashboard.nodeNetworkHint"
+msgstr "آپلود و دانلود زنده هر نود"
+
+msgid "adminV2.dashboard.nodeOffline"
+msgstr "آفلاین"
+
+msgid "adminV2.dashboard.nodeOnline"
+msgstr "آنلاین"
+
+msgid "adminV2.dashboard.nodeUnreachable"
+msgstr "این نود در دسترس نیست"
+
+msgid "adminV2.dashboard.onlineOnDay"
+msgstr "آنلاین: {count}"
+
 msgid "adminV2.dashboard.subtitle"
-msgstr "مدیریت پنل هیدیفای"
+msgstr "ترافیک، کاربران و سلامت سرور در یک نگاه"
+
+msgid "adminV2.dashboard.thisServer"
+msgstr "این سرور"
 
 msgid "adminV2.dashboard.title"
 msgstr "داشبورد"
 
 msgid "adminV2.dashboard.underConstruction"
 msgstr "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت."
+
+msgid "adminV2.dashboard.usageOnDay"
+msgstr "مصرف: {value}"
+
+msgid "adminV2.dashboard.usageStackedHint"
+msgstr "مصرف هر نود به‌صورت پشته — مجموع همان سطح پرشده است"
 
 msgid "adminV2.dashboard.welcomePanel"
 msgstr "خوش آمدید"
@@ -1634,6 +1685,9 @@ msgstr "Domain SNI Gateway"
 
 msgid "adminV2.proxy.modeLabels.ip"
 msgstr "مبتنی بر IP"
+
+msgid "adminV2.proxy.modeLabels.no_inbound"
+msgstr "بدون اینباند"
 
 msgid "adminV2.proxy.modeSettings"
 msgstr "حالت و مسیریابی"
@@ -2786,6 +2840,14 @@ msgstr "کلید رمزنگاری payload برای MasterDNS (hex)"
 msgid "config.master_dns_encrypt_key.label"
 msgstr "کلید رمزنگاری MasterDNS"
 
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+"حداکثر تعداد آدرس IPv4 و IPv6 که برای ساخت پروکسی هر دامنه استفاده می‌شود "
+"(هر نسخه جداگانه محدود می‌شود)."
+
+msgid "config.max_proxy_ips_per_version.label"
+msgstr "حداکثر IP پروکسی در هر نسخه"
+
 msgid "config.mieru.description"
 msgstr ""
 "پروتکل Mieru یک پروتکل ارتباطی امن و غیرمتمرکز برای انتقال داده در شبکه‌های "
@@ -3883,7 +3945,8 @@ msgstr "🔢 IPهای فعلی سرور"
 msgid "domain.custom_proxy.description"
 msgstr ""
 "اتصال اختیاری به پراکسی. فقط پراکسی‌هایی که از ترکیب حالت این دامنه پشتیبانی"
-" می‌کنند نمایش داده می‌شوند. خالی بگذارید تا همه پراکسی‌های سازگار استفاده شوند."
+" می‌کنند نمایش داده می‌شوند. خالی بگذارید تا همه پراکسی‌های سازگار استفاده "
+"شوند."
 
 msgid "domain.custom_proxy.group.dns_gateway"
 msgstr "درگاه DNS"
@@ -3904,10 +3967,15 @@ msgid "domain.custom_proxy.label"
 msgstr "پراکسی‌های سفارشی"
 
 msgid "domain.custom_proxy.reality_only"
-msgstr "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند"
+msgstr ""
+"دامنه‌های REALITY فقط می‌توانند پراکسی‌های درگاه L7 را ببندند که REALITY در "
+"حالت دامنه‌شان باشد. خالی بگذارید تا همه پراکسی‌های L7 سازگار با REALITY "
+"استفاده شوند."
 
 msgid "domain.custom_proxy.reality_required"
-msgstr "دامنه‌های REALITY به پراکسی REALITY Termination نیاز دارند"
+msgstr ""
+"دامنه‌های REALITY فقط می‌توانند پراکسی‌های درگاه L7 را ببندند که REALITY در "
+"حالت دامنه‌شان باشد"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
 msgstr "برای یک دامنه نمی‌توان همزمان درگاه SNI و درگاه L7 را انتخاب کرد"
@@ -3979,10 +4047,14 @@ msgid "domain.resolveip.label"
 msgstr "🔢 استفاده از IP"
 
 msgid "domain.server_domain.description"
-msgstr "دامنه سرور بالادستی برای این مورد"
+msgstr ""
+"دامنه سرور بالادستی برای این مورد. باید یک دامنه Direct یا Relay معتبر باشد."
 
 msgid "domain.server_domain.label"
 msgstr "دامنه سرور"
+
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
+msgstr "دامنه سرور باید یک دامنه Direct یا Relay معتبر باشد"
 
 msgid "domain.show_domains_description"
 msgstr ""

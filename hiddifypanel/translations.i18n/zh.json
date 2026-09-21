@@ -77,6 +77,7 @@
   "Edit Proxy Names": "✏️ 修改代理",
   "Enable": "❇️启用",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ 自动 CDN 格式错误",
   "Error! auto cdn ip can not be find, please contact admin.": "自动 CDN IP 错误！找不到，请联系管理员",
   "Example Domains": "测试并推荐域名",
@@ -117,6 +118,8 @@
   "It will override the root admin to the current user": "它会将备份文件的所有者管理员覆盖为当前管理员。",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "加入我们的 Hiddify Telegram 频道，获取 Hiddify 的最新动态。",
   "Last Online": "最后一次连接",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️链接已更改！",
   "Linux": "Linux",
   "Max Active Users": "最大活跃用户数",
@@ -227,8 +230,8 @@
   "The message was not sent to": "该消息未发送至",
   "The name shown in the configs for this domain.": "将显示在该域的配置中的名称。",
   "This can be used for giving your users a permanent non blockable links.": "这可用于为您的用户提供永久的不可阻止链接。",
-  "This domain does not exist in the panel!": "该域名在面板中不存在！",
   "This domain %(domain_name)s is invalid": "域名 %(domain_name)s 无效",
+  "This domain does not exist in the panel!": "该域名在面板中不存在！",
   "Today Usage": "今天",
   "Too many Connected IPs": "连接的IP太多",
   "Total Usage": "总使用量",
@@ -685,6 +688,10 @@
       "label": "config.log_level.label"
     },
     "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
+    },
+    "max_proxy_ips_per_version": {
       "description": "",
       "label": ""
     },
@@ -1292,13 +1299,17 @@
     "custom_proxy": {
       "description": "",
       "group": {
+        "dns_gateway": "",
         "ip_based": "",
+        "l7_gateway": "",
         "other": "",
         "sni_gateway": ""
       },
       "label": "",
       "reality_only": "",
-      "reality_required": ""
+      "reality_required": "",
+      "sni_l7_mutex": "",
+      "sni_single_only": ""
     },
     "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
     "domain": "领域",
@@ -1329,7 +1340,8 @@
     },
     "server_domain": {
       "description": "",
-      "label": ""
+      "label": "",
+      "must_be_valid_direct_or_relay": ""
     },
     "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。",
     "tls_status": {

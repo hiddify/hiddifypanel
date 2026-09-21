@@ -77,6 +77,7 @@
   "Edit Proxy Names": "✏️ Modificando Proxies",
   "Enable": "❇️ Habilitar",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ Erro no formato CDN automático",
   "Error! auto cdn ip can not be find, please contact admin.": "Erro no Auto CDN IP! Não pode ser encontrado, entre em contato com o administrador",
   "Example Domains": "Test and Suggest Domain ",
@@ -117,6 +118,8 @@
   "It will override the root admin to the current user": "Irá substituir o administrador proprietário do arquivo de backup pelo administrador atual.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Junte-se ao nosso canal Hiddify Telegram para obter as atualizações mais recentes sobre o Hiddify.",
   "Last Online": "Última vez online",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️ O link foi alterado!",
   "Linux": "Linux",
   "Max Active Users": "Máximo de usuários ativos",
@@ -227,8 +230,8 @@
   "The message was not sent to": "The message was not sent to",
   "The name shown in the configs for this domain.": "O nome que será mostrado nas Configs deste Domínio.",
   "This can be used for giving your users a permanent non blockable links.": "Isso pode ser usado para fornecer aos seus usuários links permanentes não bloqueáveis.",
-  "This domain does not exist in the panel!": "Este Domínio não existe no Painel!",
   "This domain %(domain_name)s is invalid": "O domínio %(domain_name)s é inválido",
+  "This domain does not exist in the panel!": "Este Domínio não existe no Painel!",
   "Today Usage": "Hoje",
   "Too many Connected IPs": "Muitos IPs conectados",
   "Total Usage": "Uso total",
@@ -685,6 +688,10 @@
       "label": "config.log_level.label"
     },
     "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
+    },
+    "max_proxy_ips_per_version": {
       "description": "",
       "label": ""
     },
@@ -1292,13 +1299,17 @@
     "custom_proxy": {
       "description": "",
       "group": {
+        "dns_gateway": "",
         "ip_based": "",
+        "l7_gateway": "",
         "other": "",
         "sni_gateway": ""
       },
       "label": "",
       "reality_only": "",
-      "reality_required": ""
+      "reality_required": "",
+      "sni_l7_mutex": "",
+      "sni_single_only": ""
     },
     "description": "Por favor, preencha este campo com cuidado e corretamente. Caso contrário, os proxies terão problemas. Visite <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Ajuda</a> para aprenda como criar um subdomínio.",
     "domain": "Domínio",
@@ -1329,7 +1340,8 @@
     },
     "server_domain": {
       "description": "",
-      "label": ""
+      "label": "",
+      "must_be_valid_direct_or_relay": ""
     },
     "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis.",
     "tls_status": {

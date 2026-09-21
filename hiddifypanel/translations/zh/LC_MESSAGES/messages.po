@@ -311,6 +311,9 @@ msgstr "❇️启用"
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ 自动 CDN 格式错误"
 
@@ -453,6 +456,12 @@ msgstr "加入我们的 Hiddify Telegram 频道，获取 Hiddify 的最新动态
 
 msgid "Last Online"
 msgstr "最后一次连接"
+
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
 
 msgid "Link is changed!"
 msgstr "ℹ️链接已更改！"
@@ -813,6 +822,9 @@ msgstr "将显示在该域的配置中的名称。"
 msgid ""
 "This can be used for giving your users a permanent non blockable links."
 msgstr "这可用于为您的用户提供永久的不可阻止链接。"
+
+msgid "This domain %(domain_name)s is invalid"
+msgstr "域名 %(domain_name)s 无效"
 
 msgid "This domain does not exist in the panel!"
 msgstr "该域名在面板中不存在！"
@@ -1700,6 +1712,12 @@ msgid "config.master_dns_encrypt_key.description"
 msgstr ""
 
 msgid "config.master_dns_encrypt_key.label"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.label"
 msgstr ""
 
 msgid "config.mieru.description"
@@ -2681,7 +2699,13 @@ msgstr ""
 msgid "domain.custom_proxy.description"
 msgstr ""
 
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr ""
+
 msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.l7_gateway"
 msgstr ""
 
 msgid "domain.custom_proxy.group.other"
@@ -2697,6 +2721,12 @@ msgid "domain.custom_proxy.reality_only"
 msgstr ""
 
 msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_single_only"
 msgstr ""
 
 msgid "domain.description"
@@ -2755,6 +2785,9 @@ msgid "domain.server_domain.description"
 msgstr ""
 
 msgid "domain.server_domain.label"
+msgstr ""
+
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
 msgstr ""
 
 msgid "domain.show_domains_description"

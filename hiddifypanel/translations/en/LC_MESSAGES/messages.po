@@ -313,6 +313,9 @@ msgstr "❇️ Enable"
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 
+msgid "Error in Config Generation"
+msgstr "Error in Config Generation"
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ Error in Auto CDN Format"
 
@@ -465,6 +468,12 @@ msgstr ""
 
 msgid "Last Online"
 msgstr "Last Connection"
+
+msgid "Last node to parent"
+msgstr "Last node to parent"
+
+msgid "Last parent to node"
+msgstr "Last parent to node"
 
 msgid "Link is changed!"
 msgstr "ℹ️ Link is Changed!"
@@ -833,6 +842,9 @@ msgid ""
 msgstr ""
 "This can be used for giving your Users a permanent non Blockable Links."
 
+msgid "This domain %(domain_name)s is invalid"
+msgstr "This domain %(domain_name)s is invalid"
+
 msgid "This domain does not exist in the panel!"
 msgstr "This Domain does not exist in the Panel !"
 
@@ -1164,17 +1176,298 @@ msgstr "Validation failed"
 msgid "adminV2.common.validationOk"
 msgstr "Validation passed"
 
+msgid "adminV2.dashboard.allNodes"
+msgstr "All nodes"
+
+msgid "adminV2.dashboard.available"
+msgstr "Available"
+
+msgid "adminV2.dashboard.breakdown"
+msgstr "Breakdown"
+
+msgid "adminV2.dashboard.cached"
+msgstr "Cached"
+
+msgid "adminV2.dashboard.clickForProcesses"
+msgstr "Click to show top processes"
+
+msgid "adminV2.dashboard.collapse"
+msgstr "Collapse details"
+
+msgid "adminV2.dashboard.connections"
+msgstr "Connections"
+
+msgid "adminV2.dashboard.core"
+msgstr "Core {index}"
+
+msgid "adminV2.dashboard.cpu"
+msgstr "CPU"
+
+msgid "adminV2.dashboard.cpuCores"
+msgstr "CPU · {count} cores"
+
+msgid "adminV2.dashboard.dailyOnline"
+msgstr "Online users per day"
+
+msgid "adminV2.dashboard.dailyUsage"
+msgstr "Daily usage"
+
+msgid "adminV2.dashboard.disk"
+msgstr "Disk"
+
+msgid "adminV2.dashboard.download"
+msgstr "Download"
+
+msgid "adminV2.dashboard.enabledUsers"
+msgstr "Enabled users"
+
+msgid "adminV2.dashboard.expand"
+msgstr "Expand details"
+
+msgid "adminV2.dashboard.free"
+msgstr "Free"
+
+msgid "adminV2.dashboard.hiddify"
+msgstr "Hiddify"
+
+msgid "adminV2.dashboard.hiddifyData"
+msgstr "Hiddify data"
+
+msgid "adminV2.dashboard.hostname"
+msgstr "Host"
+
+msgid "adminV2.dashboard.inFiveMinutes"
+msgstr "In the last 5 minutes"
+
+msgid "adminV2.dashboard.lastNDays"
+msgstr "Last {days} days"
+
+msgid "adminV2.dashboard.lastdayOnline"
+msgstr "Last day online"
+
+msgid "adminV2.dashboard.liveThroughput"
+msgstr "Live throughput"
+
+msgid "adminV2.dashboard.liveUpdated"
+msgstr "Live · updated {time}"
+
+msgid "adminV2.dashboard.load15m"
+msgstr "15 min"
+
+msgid "adminV2.dashboard.load1m"
+msgstr "1 min"
+
+msgid "adminV2.dashboard.load5m"
+msgstr "5 min"
+
+msgid "adminV2.dashboard.loadAverage"
+msgstr "Load average"
+
+msgid "adminV2.dashboard.loadFailed"
+msgstr "Could not load dashboard data"
+
+msgid "adminV2.dashboard.loadFailedHint"
+msgstr ""
+"The dashboard could not reach the panel API. Check that you are still signed"
+" in."
+
+msgid "adminV2.dashboard.monthUsage"
+msgstr "Month usage"
+
+msgid "adminV2.dashboard.monthUsers"
+msgstr "Month"
+
+msgid "adminV2.dashboard.monthlyAverage"
+msgstr "Monthly average"
+
+msgid "adminV2.dashboard.monthlyOnline"
+msgstr "Monthly online"
+
+msgid "adminV2.dashboard.nDays"
+msgstr "{days}d"
+
+msgid "adminV2.dashboard.network"
+msgstr "Network"
+
+msgid "adminV2.dashboard.noData"
+msgstr "No data yet"
+
+msgid "adminV2.dashboard.node"
+msgstr "Node"
+
+msgid "adminV2.dashboard.nodeHealth"
+msgstr "Node health"
+
+msgid "adminV2.dashboard.nodeHealthHint"
+msgstr "Live CPU, RAM and disk from each node API"
+
+msgid "adminV2.dashboard.nodeHealthStackedHint"
+msgstr "Stacked CPU, RAM and disk per node"
+
+msgid "adminV2.dashboard.nodeNetworkHint"
+msgstr "Live upload and download per node"
+
+msgid "adminV2.dashboard.nodeOffline"
+msgstr "Offline"
+
+msgid "adminV2.dashboard.nodeOnline"
+msgstr "Online"
+
+msgid "adminV2.dashboard.nodeUnreachable"
+msgstr "Could not reach this node"
+
+msgid "adminV2.dashboard.none"
+msgstr "None"
+
+msgid "adminV2.dashboard.onlineEnabledUsers"
+msgstr "Online / Enabled users"
+
+msgid "adminV2.dashboard.onlineNow"
+msgstr "Online now"
+
+msgid "adminV2.dashboard.onlineOnDay"
+msgstr "Online: {count}"
+
+msgid "adminV2.dashboard.onlineToday"
+msgstr "Online today: {count} / {total}"
+
+msgid "adminV2.dashboard.onlineUsers"
+msgstr "Online users"
+
+msgid "adminV2.dashboard.panelVersion"
+msgstr "Panel version"
+
+msgid "adminV2.dashboard.pause"
+msgstr "Pause"
+
+msgid "adminV2.dashboard.paused"
+msgstr "Live updates paused"
+
+msgid "adminV2.dashboard.peakDay"
+msgstr "Peak day"
+
+msgid "adminV2.dashboard.perCore"
+msgstr "Per core"
+
+msgid "adminV2.dashboard.perDay"
+msgstr "{value} / day"
+
+msgid "adminV2.dashboard.ram"
+msgstr "RAM"
+
+msgid "adminV2.dashboard.range"
+msgstr "History range"
+
+msgid "adminV2.dashboard.receivedSinceRestart"
+msgstr "Received since restart"
+
+msgid "adminV2.dashboard.refresh"
+msgstr "Refresh now"
+
+msgid "adminV2.dashboard.resume"
+msgstr "Live"
+
+msgid "adminV2.dashboard.rollingAverage"
+msgstr "7-day average"
+
+msgid "adminV2.dashboard.sentSinceRestart"
+msgstr "Sent since restart"
+
 msgid "adminV2.dashboard.subtitle"
-msgstr "Hiddify panel administration"
+msgstr "Traffic, users and server health at a glance"
+
+msgid "adminV2.dashboard.swap"
+msgstr "Swap"
+
+msgid "adminV2.dashboard.thisServer"
+msgstr "This server"
 
 msgid "adminV2.dashboard.title"
 msgstr "Dashboard"
 
-msgid "adminV2.dashboard.underConstruction"
-msgstr "Welcome to the new Hiddify dashboard — under construction."
+msgid "adminV2.dashboard.today"
+msgstr "Today"
 
-msgid "adminV2.dashboard.welcomePanel"
-msgstr "Welcome"
+msgid "adminV2.dashboard.todayOnline"
+msgstr "Today online"
+
+msgid "adminV2.dashboard.todayUsage"
+msgstr "Today usage"
+
+msgid "adminV2.dashboard.topFolders"
+msgstr "Largest folders"
+
+msgid "adminV2.dashboard.topProcesses"
+msgstr "Top processes"
+
+msgid "adminV2.dashboard.totalUsage"
+msgstr "Total usage"
+
+msgid "adminV2.dashboard.totalUsers"
+msgstr "Total users"
+
+msgid "adminV2.dashboard.uniqueIps"
+msgstr "Unique IPs"
+
+msgid "adminV2.dashboard.upload"
+msgstr "Upload"
+
+msgid "adminV2.dashboard.uptime"
+msgstr "Uptime"
+
+msgid "adminV2.dashboard.usageComparison"
+msgstr "Usage comparison"
+
+msgid "adminV2.dashboard.usageComparisonHint"
+msgstr "Today and yesterday against the weekly and monthly daily average"
+
+msgid "adminV2.dashboard.usageOnDay"
+msgstr "Usage: {value}"
+
+msgid "adminV2.dashboard.usageStackedHint"
+msgstr "Stacked usage per node · total is the filled area"
+
+msgid "adminV2.dashboard.usageTrend"
+msgstr "Usage trend"
+
+msgid "adminV2.dashboard.used"
+msgstr "Used"
+
+msgid "adminV2.dashboard.usersComparison"
+msgstr "Users comparison"
+
+msgid "adminV2.dashboard.usersComparisonHint"
+msgstr "Distinct users seen per period"
+
+msgid "adminV2.dashboard.usersSummary"
+msgstr "{total} users · {enabled} enabled"
+
+msgid "adminV2.dashboard.usersTrend"
+msgstr "Users trend"
+
+msgid "adminV2.dashboard.vsPreviousMonth"
+msgstr "vs previous 30 days"
+
+msgid "adminV2.dashboard.vsPreviousWeek"
+msgstr "vs previous 7 days"
+
+msgid "adminV2.dashboard.vsYesterday"
+msgstr "vs yesterday"
+
+msgid "adminV2.dashboard.weekUsage"
+msgstr "Week usage"
+
+msgid "adminV2.dashboard.weekUsers"
+msgstr "Week"
+
+msgid "adminV2.dashboard.weeklyAverage"
+msgstr "Weekly average"
+
+msgid "adminV2.dashboard.weeklyOnline"
+msgstr "Weekly online"
+
+msgid "adminV2.dashboard.yesterday"
+msgstr "Yesterday"
 
 msgid "adminV2.domain.addFailed"
 msgstr "Could not add domain"
@@ -1642,6 +1935,9 @@ msgstr "Domain SNI gateway"
 
 msgid "adminV2.proxy.modeLabels.ip"
 msgstr "IP-based"
+
+msgid "adminV2.proxy.modeLabels.no_inbound"
+msgstr "No inbound"
 
 msgid "adminV2.proxy.modeSettings"
 msgstr "Mode & routing"
@@ -2790,6 +3086,14 @@ msgstr "MasterDNS payload encryption key (hex)"
 msgid "config.master_dns_encrypt_key.label"
 msgstr "MasterDNS Encrypt Key"
 
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+"Maximum number of IPv4 and IPv6 addresses used to generate proxies for each "
+"domain (each version is capped separately)."
+
+msgid "config.max_proxy_ips_per_version.label"
+msgstr "Max Proxy IPs Per Version"
+
 msgid "config.mieru.description"
 msgstr ""
 "The Mieru protocol is a secure and decentralized communication protocol "
@@ -3900,10 +4204,14 @@ msgid "domain.custom_proxy.label"
 msgstr "Custom proxies"
 
 msgid "domain.custom_proxy.reality_only"
-msgstr "REALITY domains must use the REALITY Termination proxy"
+msgstr ""
+"REALITY domains can only use L7 domain-gateway proxies whose domain modes "
+"include REALITY. Leave empty to use every matching REALITY L7 proxy."
 
 msgid "domain.custom_proxy.reality_required"
-msgstr "REALITY domains require the REALITY Termination proxy"
+msgstr ""
+"REALITY domains can only use L7 domain-gateway proxies whose domain modes "
+"include REALITY"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
 msgstr "SNI gateway and L7 gateway cannot be selected together for one domain"
@@ -3976,10 +4284,15 @@ msgid "domain.resolveip.label"
 msgstr "🔢 Resolve IP"
 
 msgid "domain.server_domain.description"
-msgstr "Upstream server domain used for this entry"
+msgstr ""
+"Upstream server domain used for this entry. Must be a valid Direct or Relay "
+"domain."
 
 msgid "domain.server_domain.label"
 msgstr "Server Domain"
+
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
+msgstr "Server Domain must be a valid Direct or Relay domain"
 
 msgid "domain.show_domains_description"
 msgstr ""

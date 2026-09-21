@@ -280,6 +280,9 @@ msgstr "❇️ Habilitar"
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ Erro no formato CDN automático"
 
@@ -431,6 +434,12 @@ msgstr ""
 
 msgid "Last Online"
 msgstr "Última vez online"
+
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
 
 msgid "Link is changed!"
 msgstr "ℹ️ O link foi alterado!"
@@ -798,6 +807,9 @@ msgid ""
 msgstr ""
 "Isso pode ser usado para fornecer aos seus usuários links permanentes não "
 "bloqueáveis."
+
+msgid "This domain %(domain_name)s is invalid"
+msgstr "O domínio %(domain_name)s é inválido"
 
 msgid "This domain does not exist in the panel!"
 msgstr "Este Domínio não existe no Painel!"
@@ -1743,6 +1755,12 @@ msgid "config.master_dns_encrypt_key.description"
 msgstr ""
 
 msgid "config.master_dns_encrypt_key.label"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.label"
 msgstr ""
 
 msgid "config.mieru.description"
@@ -2813,7 +2831,13 @@ msgstr ""
 msgid "domain.custom_proxy.description"
 msgstr ""
 
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr ""
+
 msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.l7_gateway"
 msgstr ""
 
 msgid "domain.custom_proxy.group.other"
@@ -2829,6 +2853,12 @@ msgid "domain.custom_proxy.reality_only"
 msgstr ""
 
 msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_single_only"
 msgstr ""
 
 msgid "domain.description"
@@ -2892,6 +2922,9 @@ msgid "domain.server_domain.description"
 msgstr ""
 
 msgid "domain.server_domain.label"
+msgstr ""
+
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
 msgstr ""
 
 msgid "domain.show_domains_description"
