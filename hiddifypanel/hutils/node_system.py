@@ -9,6 +9,7 @@ from hiddifypanel import hutils
 from hiddifypanel.hutils.node.api_client import NodeApiClient, NodeApiErrorSchema
 from hiddifypanel.models.child import Child, ChildMode
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
+    DashboardDiskDetail,
     DashboardNodeStats,
     DashboardOutputSchema,
     MetricsSnapshot,
@@ -19,6 +20,11 @@ from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
 _NODE_TIMEOUT = 3.0
 _NODE_RETRIES = 1
 _MAX_WORKERS = 8
+# Disk detail is fetched on demand (a popup, not the poll loop) and involves a
+# `du` scan on the remote side (capped by its own short deadline), so it gets
+# a bit more budget than the polled metrics, but the remote side itself now
+# answers quickly.
+_DISK_DETAIL_TIMEOUT = 15.0
 
 
 def _local_snapshot(process_limit: int) -> MetricsSnapshot:
@@ -72,63 +78,74 @@ def _fetch_child(child: Child, process_limit: int) -> DashboardNodeStats:
     )
 
 
+def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
+    """Disk usage + top folders for the disk popup — local, or proxied to a remote node."""
+    if child_id in (None, 0):
+        return hutils.system_metrics.disk_detail(node_id=0)
+
+    child = Child.by_id(child_id)
+    if not child or child.mode != ChildMode.remote:
+        return DashboardDiskDetail(node_id=child_id, error="unknown_node")
+
+    base = (child.node_base_url or "").strip()
+    if not base:
+        return DashboardDiskDetail(node_id=child_id, error="no_url")
+
+    client = NodeApiClient(base, timeout=_DISK_DETAIL_TIMEOUT, max_retry=1)
+    res = client.get("/api/v2/admin/dashboard/disk/", DashboardDiskDetail)
+    if isinstance(res, NodeApiErrorSchema):
+        return DashboardDiskDetail(node_id=child_id, error=res.msg)
+    res.node_id = child_id
+    return res
+
+
 def collect_system_stats(child_id: int | None, process_limit: int = 8) -> NodeSystemCollection:
-    """Local stats, a single remote node, or every node in parallel.
+    """Local + every remote node, in parallel.
+
+    `node_stats` always lists every node (so multi-node views — the network
+    breakdown chart/table, node health, … — have full data regardless of which
+    node is selected). `system`/`processes` are the metrics for the requested
+    `child_id` (or the local node when None), picked out of that same fetch.
 
     Usage traffic is *not* fetched here — that lives in the parent DB.
-    Local snapshot and remote node APIs run concurrently.
     """
     remotes: list[Child] = []
-    include_local = False
+    if hutils.node.is_parent():
+        remotes = Child.query.filter(Child.id != 0, Child.mode == ChildMode.remote).order_by(Child.id).all()
 
-    if child_id == 0:
-        include_local = True
-    elif child_id is None:
-        include_local = True
-        if hutils.node.is_parent():
-            remotes = Child.query.filter(Child.id != 0, Child.mode == ChildMode.remote).order_by(Child.id).all()
-    else:
-        remotes = Child.query.filter(Child.id == child_id, Child.mode == ChildMode.remote).order_by(Child.id).all()
-        if not remotes:
-            child = Child.by_id(child_id)
-            if child and child.id == 0:
-                include_local = True
-            else:
-                return NodeSystemCollection(node_stats=[_failed_node(child_id, "unknown", "remote", "unknown_node")])
-
-    local: MetricsSnapshot | None = None
     node_stats: list[DashboardNodeStats] = []
-    workers = int(include_local) + len(remotes)
+    workers = 1 + len(remotes)
 
-    if workers <= 1 and include_local and not remotes:
+    if workers <= 1:
         local = _local_snapshot(process_limit)
-        local_node = _local_node(local)
-        return NodeSystemCollection(system=local_node.system(), processes=local.processes, node_stats=[local_node])
+        node_stats = [_local_node(local)]
+    else:
+        with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, max(1, workers))) as pool:
+            local_future = pool.submit(_local_snapshot, process_limit)
+            remote_futures = {pool.submit(_fetch_child, child, process_limit): child for child in remotes}
 
-    with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, max(1, workers))) as pool:
-        local_future = pool.submit(_local_snapshot, process_limit) if include_local else None
-        remote_futures = {pool.submit(_fetch_child, child, process_limit): child for child in remotes}
-
-        if local_future is not None:
             local = local_future.result()
             node_stats.append(_local_node(local))
 
-        for future in as_completed(remote_futures):
-            child = remote_futures[future]
-            try:
-                node_stats.append(future.result())
-            except Exception as exc:
-                node_stats.append(_failed_node(child.id, child.name or f"node-{child.id}", str(child.mode), str(exc)))
+            for future in as_completed(remote_futures):
+                child = remote_futures[future]
+                try:
+                    node_stats.append(future.result())
+                except Exception as exc:
+                    node_stats.append(_failed_node(child.id, child.name or f"node-{child.id}", str(child.mode), str(exc)))
 
     node_stats.sort(key=lambda row: row.id)
 
-    if child_id is not None and node_stats:
-        chosen = node_stats[0]
+    if child_id is not None:
+        chosen = next((row for row in node_stats if row.id == child_id), None)
+        if chosen is None:
+            chosen = _failed_node(child_id, "unknown", "remote", "unknown_node")
+            node_stats = [*node_stats, chosen]
         return NodeSystemCollection(system=chosen.system(), processes=chosen.processes, node_stats=node_stats)
 
-    local_node = node_stats[0] if node_stats else _local_node(local or _local_snapshot(process_limit))
+    local_node = node_stats[0]
     return NodeSystemCollection(
-        system=local_node.system() if local is None else _local_node(local).system(),
-        processes=(local.processes if local is not None else local_node.processes),
-        node_stats=node_stats or [local_node],
+        system=local_node.system(),
+        processes=local_node.processes,
+        node_stats=node_stats,
     )

@@ -138,6 +138,19 @@ class DashboardDisk(ApiModel):
     hiddify_gb: float | None = None
 
 
+class DiskFolderUsage(ApiModel):
+    name: str
+    path: str
+    size_gb: float = 0.0
+
+
+class DashboardDiskDetail(ApiModel):
+    node_id: int = 0
+    disk: DashboardDisk = Field(default_factory=DashboardDisk)
+    top_folders: list[DiskFolderUsage] = Field(default_factory=list)
+    error: str | None = None
+
+
 class DashboardNetwork(ApiModel):
     bytes_sent: int = 0
     bytes_recv: int = 0
@@ -161,6 +174,7 @@ class DashboardProcess(ApiModel):
     percent: float = 0.0
     memory_gb: float | None = None
     cpu_percent: float | None = None
+    path: str | None = None
 
 
 class DashboardProcesses(ApiModel):

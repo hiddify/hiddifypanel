@@ -542,6 +542,7 @@ export interface DashboardProcess {
   percent: number
   memory_gb?: number
   cpu_percent?: number
+  path?: string | null
 }
 
 export interface DashboardProcesses {
@@ -571,6 +572,19 @@ export interface DashboardSnapshot {
   child_id?: number | null
 }
 
+export interface DiskFolderUsage {
+  name: string
+  path: string
+  size_gb: number
+}
+
+export interface DashboardDiskDetail {
+  node_id: number
+  disk: DashboardDisk
+  top_folders: DiskFolderUsage[]
+  error?: string | null
+}
+
 export const dashboardApi = {
   /** `include: 'system'` skips the usage aggregation and returns live metrics only. */
   get: (params?: {
@@ -580,4 +594,6 @@ export const dashboardApi = {
     child_id?: number
     include?: 'system'
   }) => getHttp().get<DashboardSnapshot>('/dashboard/', { params }).then((r) => r.data),
+  /** Disk usage + largest top-level folders for one node — fetched on demand (a popup). */
+  disk: (params?: { child_id?: number }) => getHttp().get<DashboardDiskDetail>('/dashboard/disk/', { params }).then((r) => r.data),
 }

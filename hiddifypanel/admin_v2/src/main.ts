@@ -5,6 +5,7 @@ import { HiddifyPreset } from '@/core/theme/preset'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import Ripple from 'primevue/ripple'
+import Tooltip from 'primevue/tooltip'
 import '@/assets/sakai/tailwind.css'
 import '@/assets/sakai/styles.scss'
 import '@/shared/monaco/setup'
@@ -31,6 +32,7 @@ async function bootstrap() {
     },
   })
   app.directive('ripple', Ripple)
+  app.directive('tooltip', Tooltip)
   app.use(ConfirmationService)
   app.use(ToastService)
   app.mount('#app')

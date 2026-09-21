@@ -11,6 +11,7 @@ withDefaults(
     caption?: string
     trend?: number | null
     trendLabel?: string
+    tooltip?: string
     sparkline?: number[]
     sparkLabels?: string[]
     sparkFormatter?: (value: number) => string
@@ -20,7 +21,12 @@ withDefaults(
 </script>
 
 <template>
-  <article class="tile" :style="{ '--tile-accent': accent }">
+  <article
+    v-tooltip.top="tooltip ? { value: tooltip } : undefined"
+    class="tile"
+    :class="{ 'tile--hoverable': tooltip }"
+    :style="{ '--tile-accent': accent }"
+  >
     <div class="tile__top">
       <div class="min-w-0">
         <p class="tile__label">{{ label }}</p>
@@ -63,6 +69,9 @@ withDefaults(
 .tile:hover {
   transform: translateY(-2px);
   box-shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 20px 38px -24px rgb(15 23 42 / 45%);
+}
+.tile--hoverable {
+  cursor: help;
 }
 .tile__top {
   display: flex;

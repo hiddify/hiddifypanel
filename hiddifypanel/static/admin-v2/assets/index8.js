@@ -1,88 +1,48 @@
-import{b as h,a as v}from"./index5.js";import{B as w,R as P,s as O,f as k,h as B,o as s,c as g,i as d,r as p,a as r,d as c,e as u,w as f,n as S,q as j,ad as D,G as L,v as C,aG as I,ae as E}from"./index.js";var K=`
-    .p-fieldset {
-        background: dt('fieldset.background');
-        border: 1px solid dt('fieldset.border.color');
-        border-radius: dt('fieldset.border.radius');
-        color: dt('fieldset.color');
-        padding: dt('fieldset.padding');
-        margin: 0;
+import{c as f,d as m}from"./index3.js";import{B as y,R as v,I as B,s as w,f as k,j as P,o as s,c as i,i as d,r,a as t,d as $,e as c,n as C,G as u,v as h,q as D,af as A,w as S,aU as I,ag as K}from"./index.js";var L=`
+    .p-panel {
+        display: block;
+        border: 1px solid dt('panel.border.color');
+        border-radius: dt('panel.border.radius');
+        background: dt('panel.background');
+        color: dt('panel.color');
     }
 
-    .p-fieldset-legend {
-        background: dt('fieldset.legend.background');
-        border-radius: dt('fieldset.legend.border.radius');
-        border-width: dt('fieldset.legend.border.width');
-        border-style: solid;
-        border-color: dt('fieldset.legend.border.color');
-        color: dt('fieldset.legend.color');
-        padding: dt('fieldset.legend.padding');
-        transition:
-            background dt('fieldset.transition.duration'),
-            color dt('fieldset.transition.duration'),
-            outline-color dt('fieldset.transition.duration'),
-            box-shadow dt('fieldset.transition.duration');
-    }
-
-    .p-fieldset-toggleable > .p-fieldset-legend {
-        padding: 0;
-    }
-
-    .p-fieldset-toggle-button {
-        cursor: pointer;
-        user-select: none;
-        overflow: hidden;
-        position: relative;
-        text-decoration: none;
+    .p-panel-header {
         display: flex;
-        gap: dt('fieldset.legend.gap');
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        padding: dt('fieldset.legend.padding');
-        background: transparent;
-        border: 0 none;
-        border-radius: dt('fieldset.legend.border.radius');
-        transition:
-            background dt('fieldset.transition.duration'),
-            color dt('fieldset.transition.duration'),
-            outline-color dt('fieldset.transition.duration'),
-            box-shadow dt('fieldset.transition.duration');
-        outline-color: transparent;
+        padding: dt('panel.header.padding');
+        background: dt('panel.header.background');
+        color: dt('panel.header.color');
+        border-style: solid;
+        border-width: dt('panel.header.border.width');
+        border-color: dt('panel.header.border.color');
+        border-radius: dt('panel.header.border.radius');
     }
 
-    .p-fieldset-legend-label {
-        font-weight: dt('fieldset.legend.font.weight');
+    .p-panel-toggleable .p-panel-header {
+        padding: dt('panel.toggleable.header.padding');
     }
 
-    .p-fieldset-toggle-button:focus-visible {
-        box-shadow: dt('fieldset.legend.focus.ring.shadow');
-        outline: dt('fieldset.legend.focus.ring.width') dt('fieldset.legend.focus.ring.style') dt('fieldset.legend.focus.ring.color');
-        outline-offset: dt('fieldset.legend.focus.ring.offset');
+    .p-panel-title {
+        line-height: 1;
+        font-weight: dt('panel.title.font.weight');
     }
 
-    .p-fieldset-toggleable > .p-fieldset-legend:hover {
-        color: dt('fieldset.legend.hover.color');
-        background: dt('fieldset.legend.hover.background');
-    }
-
-    .p-fieldset-toggle-icon {
-        color: dt('fieldset.toggle.icon.color');
-        transition: color dt('fieldset.transition.duration');
-    }
-
-    .p-fieldset-toggleable > .p-fieldset-legend:hover .p-fieldset-toggle-icon {
-        color: dt('fieldset.toggle.icon.hover.color');
-    }
-
-    .p-fieldset-content-container {
+    .p-panel-content-container {
         display: grid;
         grid-template-rows: 1fr;
     }
 
-    .p-fieldset-content-wrapper {
+    .p-panel-content-wrapper {
         min-height: 0;
     }
 
-    .p-fieldset-content {
-        padding: dt('fieldset.content.padding');
+    .p-panel-content {
+        padding: dt('panel.content.padding');
     }
-`,$={root:function(t){var n=t.props;return["p-fieldset p-component",{"p-fieldset-toggleable":n.toggleable}]},legend:"p-fieldset-legend",legendLabel:"p-fieldset-legend-label",toggleButton:"p-fieldset-toggle-button",toggleIcon:"p-fieldset-toggle-icon",contentContainer:"p-fieldset-content-container",contentWrapper:"p-fieldset-content-wrapper",content:"p-fieldset-content"},N=w.extend({name:"fieldset",style:K,classes:$}),A={name:"BaseFieldset",extends:O,props:{legend:String,toggleable:Boolean,collapsed:Boolean,toggleButtonProps:{type:null,default:null}},style:N,provide:function(){return{$pcFieldset:this,$parentInstance:this}}},F={name:"Fieldset",extends:A,inheritAttrs:!1,emits:["update:collapsed","toggle"],data:function(){return{d_collapsed:this.collapsed}},watch:{collapsed:function(t){this.d_collapsed=t}},methods:{toggle:function(t){this.d_collapsed=!this.d_collapsed,this.$emit("update:collapsed",this.d_collapsed),this.$emit("toggle",{originalEvent:t,value:this.d_collapsed})},onKeyDown:function(t){(t.code==="Enter"||t.code==="NumpadEnter"||t.code==="Space")&&(this.toggle(t),t.preventDefault())}},computed:{buttonAriaLabel:function(){return this.toggleButtonProps&&this.toggleButtonProps.ariaLabel?this.toggleButtonProps.ariaLabel:this.legend},dataP:function(){return k({toggleable:this.toggleable})}},directives:{ripple:P},components:{PlusIcon:v,MinusIcon:h}};function a(e){"@babel/helpers - typeof";return a=typeof Symbol=="function"&&typeof Symbol.iterator=="symbol"?function(t){return typeof t}:function(t){return t&&typeof Symbol=="function"&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},a(e)}function b(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);t&&(o=o.filter(function(i){return Object.getOwnPropertyDescriptor(e,i).enumerable})),n.push.apply(n,o)}return n}function m(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]!=null?arguments[t]:{};t%2?b(Object(n),!0).forEach(function(o){V(e,o,n[o])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):b(Object(n)).forEach(function(o){Object.defineProperty(e,o,Object.getOwnPropertyDescriptor(n,o))})}return e}function V(e,t,n){return(t=W(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function W(e){var t=G(e,"string");return a(t)=="symbol"?t:t+""}function G(e,t){if(a(e)!="object"||!e)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var o=n.call(e,t);if(a(o)!="object")return o;throw new TypeError("@@toPrimitive must return a primitive value.")}return(t==="string"?String:Number)(e)}var M=["data-p"],R=["data-p"],T=["id"],q=["id","aria-controls","aria-expanded","aria-label"],z=["id","aria-labelledby"];function H(e,t,n,o,i,l){var y=B("ripple");return s(),g("fieldset",r({class:e.cx("root"),"data-p":l.dataP},e.ptmi("root")),[d("legend",r({class:e.cx("legend"),"data-p":l.dataP},e.ptm("legend")),[p(e.$slots,"legend",{toggleCallback:l.toggle},function(){return[e.toggleable?u("",!0):(s(),g("span",r({key:0,id:e.$id+"_header",class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17,T)),e.toggleable?f((s(),g("button",r({key:1,id:e.$id+"_header",type:"button","aria-controls":e.$id+"_content","aria-expanded":!i.d_collapsed,"aria-label":l.buttonAriaLabel,class:e.cx("toggleButton"),onClick:t[0]||(t[0]=function(){return l.toggle&&l.toggle.apply(l,arguments)}),onKeydown:t[1]||(t[1]=function(){return l.onKeyDown&&l.onKeyDown.apply(l,arguments)})},m(m({},e.toggleButtonProps),e.ptm("toggleButton"))),[p(e.$slots,e.$slots.toggleicon?"toggleicon":"togglericon",{collapsed:i.d_collapsed,class:S(e.cx("toggleIcon"))},function(){return[(s(),j(D(i.d_collapsed?"PlusIcon":"MinusIcon"),r({class:e.cx("toggleIcon")},e.ptm("toggleIcon")),null,16,["class"]))]}),d("span",r({class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17)],16,q)),[[y]]):u("",!0)]})],16,R),L(E,r({name:"p-collapsible"},e.ptm("transition")),{default:C(function(){return[f(d("div",r({id:e.$id+"_content",class:e.cx("contentContainer"),role:"region","aria-labelledby":e.$id+"_header"},e.ptm("contentContainer")),[d("div",r({class:e.cx("contentWrapper")},e.ptm("contentWrapper")),[d("div",r({class:e.cx("content")},e.ptm("content")),[p(e.$slots,"default")],16)],16)],16,z),[[I,!i.d_collapsed]])]}),_:3},16)],16,M)}F.render=H;export{F as s};
+
+    .p-panel-footer {
+        padding: dt('panel.footer.padding');
+    }
+`,T={root:function(n){var g=n.props;return["p-panel p-component",{"p-panel-toggleable":g.toggleable}]},header:"p-panel-header",title:"p-panel-title",headerActions:"p-panel-header-actions",pcToggleButton:"p-panel-toggle-button",contentContainer:"p-panel-content-container",contentWrapper:"p-panel-content-wrapper",content:"p-panel-content",footer:"p-panel-footer"},E=y.extend({name:"panel",style:L,classes:T}),N={name:"BasePanel",extends:w,props:{header:String,toggleable:Boolean,collapsed:Boolean,toggleButtonProps:{type:Object,default:function(){return{severity:"secondary",text:!0,rounded:!0}}}},style:E,provide:function(){return{$pcPanel:this,$parentInstance:this}}},j={name:"Panel",extends:N,inheritAttrs:!1,emits:["update:collapsed","toggle"],data:function(){return{d_collapsed:this.collapsed}},watch:{collapsed:function(n){this.d_collapsed=n}},methods:{toggle:function(n){this.d_collapsed=!this.d_collapsed,this.$emit("update:collapsed",this.d_collapsed),this.$emit("toggle",{originalEvent:n,value:this.d_collapsed})},onKeyDown:function(n){(n.code==="Enter"||n.code==="NumpadEnter"||n.code==="Space")&&(this.toggle(n),n.preventDefault())}},computed:{buttonAriaLabel:function(){return this.toggleButtonProps&&this.toggleButtonProps.ariaLabel?this.toggleButtonProps.ariaLabel:this.header},dataP:function(){return k({toggleable:this.toggleable})}},components:{PlusIcon:m,MinusIcon:f,Button:B},directives:{ripple:v}},V=["data-p"],W=["data-p"],M=["id"],R=["id","aria-labelledby"];function q(e,n,g,z,l,a){var b=P("Button");return s(),i("div",t({class:e.cx("root"),"data-p":a.dataP},e.ptmi("root")),[d("div",t({class:e.cx("header"),"data-p":a.dataP},e.ptm("header")),[r(e.$slots,"header",{id:e.$id+"_header",class:C(e.cx("title")),collapsed:l.d_collapsed},function(){return[e.header?(s(),i("span",t({key:0,id:e.$id+"_header",class:e.cx("title")},e.ptm("title")),$(e.header),17,M)):c("",!0)]}),d("div",t({class:e.cx("headerActions")},e.ptm("headerActions")),[r(e.$slots,"icons"),e.toggleable?r(e.$slots,"togglebutton",{key:0,collapsed:l.d_collapsed,toggleCallback:function(p){return a.toggle(p)},keydownCallback:function(p){return a.onKeyDown(p)}},function(){return[u(b,t({id:e.$id+"_header",class:e.cx("pcToggleButton"),"aria-label":a.buttonAriaLabel,"aria-controls":e.$id+"_content","aria-expanded":!l.d_collapsed,unstyled:e.unstyled,onClick:n[0]||(n[0]=function(o){return a.toggle(o)}),onKeydown:n[1]||(n[1]=function(o){return a.onKeyDown(o)})},e.toggleButtonProps,{pt:e.ptm("pcToggleButton")}),{icon:h(function(o){return[r(e.$slots,e.$slots.toggleicon?"toggleicon":"togglericon",{collapsed:l.d_collapsed},function(){return[(s(),D(A(l.d_collapsed?"PlusIcon":"MinusIcon"),t({class:o.class},e.ptm("pcToggleButton").icon),null,16,["class"]))]})]}),_:3},16,["id","class","aria-label","aria-controls","aria-expanded","unstyled","pt"])]}):c("",!0)],16)],16,W),u(K,t({name:"p-collapsible"},e.ptm("transition")),{default:h(function(){return[S(d("div",t({id:e.$id+"_content",class:e.cx("contentContainer"),role:"region","aria-labelledby":e.$id+"_header"},e.ptm("contentContainer")),[d("div",t({class:e.cx("contentWrapper")},e.ptm("contentWrapper")),[d("div",t({class:e.cx("content")},e.ptm("content")),[r(e.$slots,"default")],16),e.$slots.footer?(s(),i("div",t({key:0,class:e.cx("footer")},e.ptm("footer")),[r(e.$slots,"footer")],16)):c("",!0)],16)],16,R),[[I,!l.d_collapsed]])]}),_:3},16)],16,V)}j.render=q;export{j as s};

@@ -34,10 +34,10 @@ const stackedSeries = computed(() => {
     for (const id of Object.keys(point.by_child ?? {})) ids.add(id)
   }
   const ordered = [...ids].sort((a, b) => Number(a) - Number(b))
-  return ordered.map((id, index) => ({
+  return ordered.map((id) => ({
     label: nodeName(id),
     values: props.series.map((point) => point.by_child?.[id]?.usage ?? 0),
-    color: nodeColor(index),
+    color: nodeColor(Number(id)),
     type: 'line' as const,
     area: true,
   }))

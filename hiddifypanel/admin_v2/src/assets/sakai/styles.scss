@@ -1,2 +1,6 @@
 @use 'primeicons/primeicons.css';
 @use './layout/layout.scss';
+
+.p-tooltip-text {
+  white-space: pre-line;
+}

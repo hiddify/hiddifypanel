@@ -85,7 +85,8 @@ def create_app_wsgi(*args, **kwargs):
     # that doesn't allow **config
     # to be passed to create_app
     # https://github.com/pallets/flask/issues/4170
-    cli = ("hiddifypanel" in sys.argv[0]) or (sys.argv[1] in ["update-usage", "all-configs", "admin_links", "admin_path"])
+    cli = len(sys.argv) <= 1 or sys.argv[1] != "run"
+    # cli = (sys.argv[1] in ["update-usage", "all-configs", "admin_links", "admin_path","get-setting"])
     # cli=True
     app = create_app(app_mode="cli" if cli else "web")
     return app

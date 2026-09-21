@@ -1,4 +1,4 @@
-import{B as l,s as u,f as g,o as s,c as i,q as p,a,ad as y,e as c,r as f,i as b,d as m}from"./index.js";var v=`
+import{B as l,s as u,f as g,o as s,c as i,q as p,a,af as y,e as c,r as f,i as b,d as m}from"./index.js";var v=`
     .p-tag {
         display: inline-flex;
         align-items: center;

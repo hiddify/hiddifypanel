@@ -219,7 +219,7 @@ def auth_before_request():
             return logout_redirect()
         if is_admin_path:
             next_url = request.url
-            next_url = next_url.replace(f"/{g.uuid}/", "/admin/")
+            next_url = next_url.replace(f"/{g.uuid}/", "/admin/v2/")
             next_url = next_url.replace("/admin/admin/", "/admin/")
             next_url = next_url.replace("http://", "https://")
 

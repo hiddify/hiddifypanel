@@ -4,9 +4,7 @@ import Message from 'primevue/message'
 import ProgressBar from 'primevue/progressbar'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import DashboardToolbar from '../components/DashboardToolbar.vue'
-import HostInfoBar from '../components/HostInfoBar.vue'
 import KpiTiles from '../components/KpiTiles.vue'
-import NetworkCard from '../components/NetworkCard.vue'
 import NodeHealthCard from '../components/NodeHealthCard.vue'
 import UsageComparisonCard from '../components/UsageComparisonCard.vue'
 import UsageTrendCard from '../components/UsageTrendCard.vue'
@@ -20,8 +18,6 @@ const {
   series,
   usage,
   users,
-  system,
-  samples,
   nodeSamples,
   rangeDays,
   childId,
@@ -67,24 +63,21 @@ const {
         :nodes="nodes"
         :stacked="childId === null"
       />
-      <UsageComparisonCard :usage="usage" />
+      <UsageComparisonCard :usage="usage" :series="series" :nodes="nodes" :stacked="childId === null" />
     </div>
 
     <div class="dashboard__split">
-      <UsersTrendCard :series="series" :users="users" :range-days="rangeDays" />
-      <UsersComparisonCard :users="users" />
+      <UsersTrendCard
+        :series="series"
+        :users="users"
+        :range-days="rangeDays"
+        :nodes="nodes"
+        :stacked="childId === null"
+      />
+      <UsersComparisonCard :users="users" :series="series" :nodes="nodes" :stacked="childId === null" />
     </div>
 
-    <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" />
-
-    <NetworkCard
-      :network="system?.network ?? null"
-      :samples="samples"
-      :nodes="nodeStats"
-      :node-samples="nodeSamples"
-    />
-
-    <HostInfoBar v-if="childId !== null || nodeStats.length <= 1" :host="system?.host ?? null" />
+    <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" :child-id="childId" />
   </div>
 </template>
 

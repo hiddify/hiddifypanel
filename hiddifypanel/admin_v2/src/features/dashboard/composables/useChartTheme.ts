@@ -29,8 +29,12 @@ export const NODE_COLORS = [
   '#84cc16',
 ] as const
 
-export function nodeColor(index: number): string {
-  return NODE_COLORS[index % NODE_COLORS.length]
+/**
+ * Stable color for a node's identity, keyed by its id (not array position) so
+ * the same node gets the same color on every chart across the dashboard.
+ */
+export function nodeColor(id: number): string {
+  return NODE_COLORS[Math.abs(id) % NODE_COLORS.length]
 }
 
 export type ChartOptionsLike = Record<string, unknown>
@@ -55,6 +59,8 @@ export interface BaseOptions {
   /** Extra tooltip lines for the hovered index (online users, per-node rates, …). */
   tooltipExtra?: (index: number) => string[]
   stackTotalLabel?: string
+  /** Lets the y-axis range below zero (e.g. upload above / download below a mirrored stacked area). */
+  mirror?: boolean
 }
 
 function cssVar(name: string, fallback: string): string {
@@ -149,7 +155,7 @@ export function useChartTheme() {
             footer: (items: TooltipItem[]) => {
               if (!items.length) return []
               const lines: string[] = []
-              if ((options.stacked ?? false) && items.length > 1) {
+              if ((options.stacked ?? false) && items.length > 1 && options.stackTotalLabel) {
                 const total = items.reduce((sum, item) => sum + (Number(item.parsed.y) || 0), 0)
                 lines.push(`${options.stackTotalLabel ?? 'Total'}: ${format(total)}`)
               }
@@ -174,7 +180,7 @@ export function useChartTheme() {
         },
         y: {
           stacked: options.stacked ?? false,
-          beginAtZero: true,
+          beginAtZero: !options.mirror,
           max: options.yMax,
           grid: { color: grid, drawBorder: false },
           border: { display: false },

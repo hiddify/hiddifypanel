@@ -26,6 +26,7 @@ const props = withDefaults(
     maxXTicks?: number
     tooltipExtra?: (index: number) => string[]
     stackTotalLabel?: string
+    mirror?: boolean
   }>(),
   { type: 'line', height: 260, legend: true, stacked: false },
 )
@@ -67,6 +68,7 @@ const options = computed(() =>
     maxXTicks: props.maxXTicks,
     tooltipExtra: props.tooltipExtra,
     stackTotalLabel: props.stackTotalLabel,
+    mirror: props.mirror,
   }),
 )
 </script>

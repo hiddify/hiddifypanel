@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import os
 import socket
+import subprocess
 import time
 from collections.abc import Callable, Mapping, Sequence
 from typing import NamedTuple, Protocol
@@ -19,11 +20,13 @@ import psutil
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
     DashboardCpu,
     DashboardDisk,
+    DashboardDiskDetail,
     DashboardHost,
     DashboardMemory,
     DashboardNetwork,
     DashboardProcess,
     DashboardProcesses,
+    DiskFolderUsage,
     MetricsSnapshot,
 )
 
@@ -69,6 +72,7 @@ class ProcessRow(NamedTuple):
     name: str
     cpu: float
     memory: float
+    path: str = ""
 
 
 class _NamedTupleMap(Protocol):
@@ -154,6 +158,80 @@ def disk_metrics(include_hiddify: bool = True) -> DashboardDisk:
     )
 
 
+DISK_FOLDERS_ROOT = f"{HIDDIFY_DIR}data/"
+DISK_FOLDERS_TTL = 60.0
+# Hard cap on total wait. A `du` over a slow/huge folder (a stuffed `/var`,
+# say) can run for a minute or more — we'd rather answer fast with whatever
+# finished than make a popup wait that long. Trivial folders (empty, or on a
+# pseudo-fs) report back in well under a second, but folders with real data
+# routinely take several seconds, so this doesn't cut off the moment the
+# first (usually trivial) batch reports — just when the whole budget is spent.
+_DISK_FOLDERS_DEADLINE = 8.0
+_DISK_FOLDERS_MAX_CONCURRENCY = 24
+_disk_folders_cache: dict[str, tuple[float, list[DiskFolderUsage]]] = {}
+
+
+def disk_top_folders(root: str = DISK_FOLDERS_ROOT, limit: int = 8) -> list[DiskFolderUsage]:
+    """Largest immediate subfolders of `root` (the Hiddify data dir by default), cached for `DISK_FOLDERS_TTL` seconds.
+
+    A single `du --max-depth=1` walks subfolders one at a time in whatever
+    order the OS returns them, so one slow folder blocks every folder behind
+    it — including ones that would finish instantly. This instead runs one
+    `du -s` per top-level folder *in parallel*, so fast folders report back
+    immediately regardless of slow ones still running, and on the deadline we
+    return whichever finished — partial, best-effort results beat nothing.
+    """
+    now = time.time()
+    cached = _disk_folders_cache.get(root)
+    if cached and now - cached[0] < DISK_FOLDERS_TTL:
+        return cached[1][:limit]
+
+    try:
+        with os.scandir(root) as it:
+            candidates = [entry.path for entry in it if entry.is_dir(follow_symlinks=False)]
+    except OSError:
+        candidates = []
+
+    entries: list[DiskFolderUsage] = []
+    procs: dict[str, subprocess.Popen] = {}
+    try:
+        for path in candidates[:_DISK_FOLDERS_MAX_CONCURRENCY]:
+            try:
+                procs[path] = subprocess.Popen(["du", "-x", "-s", "-B1", path], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+            except OSError:
+                continue
+
+        pending = dict(procs)
+        deadline = now + _DISK_FOLDERS_DEADLINE
+        while pending and time.time() < deadline:
+            for path, proc in list(pending.items()):
+                if proc.poll() is None:
+                    continue
+                del pending[path]
+                output = proc.stdout.read() if proc.stdout else ""
+                size_str, _, _ = output.partition("\t")
+                try:
+                    size_bytes = int(size_str)
+                except ValueError:
+                    continue
+                entries.append(DiskFolderUsage(name=os.path.basename(path.rstrip("/")) or path, path=path, size_gb=_round(size_bytes / ONE_GB)))
+            if pending:
+                time.sleep(0.1)
+    finally:
+        for proc in procs.values():
+            if proc.poll() is None:
+                proc.kill()
+
+    entries.sort(key=lambda entry: entry.size_gb, reverse=True)
+    _disk_folders_cache[root] = (now, entries)
+    return entries[:limit]
+
+
+def disk_detail(node_id: int = 0) -> DashboardDiskDetail:
+    """Current disk usage plus the largest top-level folders, for the disk popup."""
+    return DashboardDiskDetail(node_id=node_id, disk=disk_metrics(), top_folders=disk_top_folders())
+
+
 def network_metrics(include_connections: bool = True) -> DashboardNetwork:
     """Cumulative traffic counters; clients derive throughput from two samples."""
     net = psutil.net_io_counters()
@@ -206,6 +284,7 @@ def _process_rows() -> list[ProcessRow]:
 
     cpu_by_name: dict[str, float] = {}
     memory_by_name: dict[str, float] = {}
+    path_by_name: dict[str, str] = {}
 
     for proc in psutil.process_iter(attrs):
         info = proc.info
@@ -219,8 +298,13 @@ def _process_rows() -> list[ProcessRow]:
         memory_info = info["memory_info"]
         cpu_by_name[label] = cpu_by_name.get(label, 0.0) + (info["cpu_percent"] or 0.0) / cores
         memory_by_name[label] = memory_by_name.get(label, 0.0) + (memory_info.rss if memory_info else 0) / ONE_GB
+        if label not in path_by_name:
+            path_by_name[label] = exe.strip() or (cmdline[0] if cmdline else "")
 
-    return [ProcessRow(name=name, cpu=cpu_by_name[name], memory=memory_by_name.get(name, 0.0)) for name in cpu_by_name]
+    return [
+        ProcessRow(name=name, cpu=cpu_by_name[name], memory=memory_by_name.get(name, 0.0), path=path_by_name.get(name, ""))
+        for name in cpu_by_name
+    ]
 
 
 def _with_pinned(rows: list[ProcessRow], limit: int, key: Callable[[ProcessRow], float]) -> list[ProcessRow]:
@@ -241,13 +325,14 @@ def process_metrics(limit: int = 8) -> DashboardProcesses:
 
     return DashboardProcesses(
         count=len(rows),
-        cpu=[DashboardProcess(name=row.name, percent=_round(row.cpu, 1), memory_gb=_round(row.memory)) for row in by_cpu],
+        cpu=[DashboardProcess(name=row.name, percent=_round(row.cpu, 1), memory_gb=_round(row.memory), path=row.path or None) for row in by_cpu],
         memory=[
             DashboardProcess(
                 name=row.name,
                 memory_gb=_round(row.memory),
                 percent=_percent(row.memory, ram_total),
                 cpu_percent=_round(row.cpu, 1),
+                path=row.path or None,
             )
             for row in by_memory
         ],

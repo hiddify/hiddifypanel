@@ -4,6 +4,8 @@ import { computed } from 'vue'
 const props = withDefaults(
   defineProps<{
     label: string
+    /** Small muted line under the label (e.g. an executable path). */
+    sublabel?: string
     percent: number
     value?: string
     color?: string
@@ -26,9 +28,12 @@ const barColor = computed(() => {
 <template>
   <div class="metric-bar" :class="{ 'metric-bar--compact': compact }">
     <div class="metric-bar__labels">
-      <span class="metric-bar__label" :title="label">{{ label }}</span>
+      <span class="metric-bar__label" :title="label">
+        <slot name="label">{{ label }}</slot>
+      </span>
       <span class="metric-bar__value">{{ value ?? `${Math.round(clamped)}%` }}</span>
     </div>
+    <p v-if="sublabel" class="metric-bar__sublabel" :title="sublabel">{{ sublabel }}</p>
     <div class="metric-bar__track">
       <div class="metric-bar__fill" :style="{ width: `${clamped}%`, background: barColor }" />
     </div>
@@ -53,7 +58,20 @@ const barColor = computed(() => {
   font-size: 0.72rem;
 }
 .metric-bar__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  min-width: 0;
   color: var(--p-text-muted-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.metric-bar__sublabel {
+  margin: -0.2rem 0 0;
+  font-size: 0.66rem;
+  color: var(--p-text-muted-color);
+  opacity: 0.75;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

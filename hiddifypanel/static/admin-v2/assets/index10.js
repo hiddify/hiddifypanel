@@ -1,141 +1,88 @@
-import{B as k,X as x,f,b3 as m,k as y,j as l,o as d,c as g,i as s,a as r,r as v,q as b,e as C,n as w}from"./index.js";import{b as P}from"./index5.js";import{b as S}from"./index3.js";var I=`
-    .p-checkbox {
-        position: relative;
-        display: inline-flex;
-        user-select: none;
-        vertical-align: bottom;
-        width: dt('checkbox.width');
-        height: dt('checkbox.height');
-    }
-
-    .p-checkbox-input {
-        cursor: pointer;
-        appearance: none;
-        position: absolute;
-        inset-block-start: 0;
-        inset-inline-start: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
+import{c as h,d as v}from"./index3.js";import{B as w,R as P,s as O,f as k,h as B,o as a,c as g,i as d,r as p,a as r,d as c,e as u,w as f,n as S,q as j,af as D,G as L,v as C,aU as I,ag as E}from"./index.js";var K=`
+    .p-fieldset {
+        background: dt('fieldset.background');
+        border: 1px solid dt('fieldset.border.color');
+        border-radius: dt('fieldset.border.radius');
+        color: dt('fieldset.color');
+        padding: dt('fieldset.padding');
         margin: 0;
-        opacity: 0;
-        z-index: 1;
-        outline: 0 none;
-        border: 1px solid transparent;
-        border-radius: dt('checkbox.border.radius');
     }
 
-    .p-checkbox-box {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: dt('checkbox.border.radius');
-        border: 1px solid dt('checkbox.border.color');
-        background: dt('checkbox.background');
-        width: dt('checkbox.width');
-        height: dt('checkbox.height');
+    .p-fieldset-legend {
+        background: dt('fieldset.legend.background');
+        border-radius: dt('fieldset.legend.border.radius');
+        border-width: dt('fieldset.legend.border.width');
+        border-style: solid;
+        border-color: dt('fieldset.legend.border.color');
+        color: dt('fieldset.legend.color');
+        padding: dt('fieldset.legend.padding');
         transition:
-            background dt('checkbox.transition.duration'),
-            color dt('checkbox.transition.duration'),
-            border-color dt('checkbox.transition.duration'),
-            box-shadow dt('checkbox.transition.duration'),
-            outline-color dt('checkbox.transition.duration');
+            background dt('fieldset.transition.duration'),
+            color dt('fieldset.transition.duration'),
+            outline-color dt('fieldset.transition.duration'),
+            box-shadow dt('fieldset.transition.duration');
+    }
+
+    .p-fieldset-toggleable > .p-fieldset-legend {
+        padding: 0;
+    }
+
+    .p-fieldset-toggle-button {
+        cursor: pointer;
+        user-select: none;
+        overflow: hidden;
+        position: relative;
+        text-decoration: none;
+        display: flex;
+        gap: dt('fieldset.legend.gap');
+        align-items: center;
+        justify-content: center;
+        padding: dt('fieldset.legend.padding');
+        background: transparent;
+        border: 0 none;
+        border-radius: dt('fieldset.legend.border.radius');
+        transition:
+            background dt('fieldset.transition.duration'),
+            color dt('fieldset.transition.duration'),
+            outline-color dt('fieldset.transition.duration'),
+            box-shadow dt('fieldset.transition.duration');
         outline-color: transparent;
-        box-shadow: dt('checkbox.shadow');
     }
 
-    .p-checkbox-icon {
-        transition-duration: dt('checkbox.transition.duration');
-        color: dt('checkbox.icon.color');
-        font-size: dt('checkbox.icon.size');
-        width: dt('checkbox.icon.size');
-        height: dt('checkbox.icon.size');
+    .p-fieldset-legend-label {
+        font-weight: dt('fieldset.legend.font.weight');
     }
 
-    .p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
-        border-color: dt('checkbox.hover.border.color');
+    .p-fieldset-toggle-button:focus-visible {
+        box-shadow: dt('fieldset.legend.focus.ring.shadow');
+        outline: dt('fieldset.legend.focus.ring.width') dt('fieldset.legend.focus.ring.style') dt('fieldset.legend.focus.ring.color');
+        outline-offset: dt('fieldset.legend.focus.ring.offset');
     }
 
-    .p-checkbox-checked .p-checkbox-box {
-        border-color: dt('checkbox.checked.border.color');
-        background: dt('checkbox.checked.background');
+    .p-fieldset-toggleable > .p-fieldset-legend:hover {
+        color: dt('fieldset.legend.hover.color');
+        background: dt('fieldset.legend.hover.background');
     }
 
-    .p-checkbox-checked .p-checkbox-icon {
-        color: dt('checkbox.icon.checked.color');
+    .p-fieldset-toggle-icon {
+        color: dt('fieldset.toggle.icon.color');
+        transition: color dt('fieldset.transition.duration');
     }
 
-    .p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
-        background: dt('checkbox.checked.hover.background');
-        border-color: dt('checkbox.checked.hover.border.color');
+    .p-fieldset-toggleable > .p-fieldset-legend:hover .p-fieldset-toggle-icon {
+        color: dt('fieldset.toggle.icon.hover.color');
     }
 
-    .p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-icon {
-        color: dt('checkbox.icon.checked.hover.color');
+    .p-fieldset-content-container {
+        display: grid;
+        grid-template-rows: 1fr;
     }
 
-    .p-checkbox:not(.p-disabled):has(.p-checkbox-input:focus-visible) .p-checkbox-box {
-        border-color: dt('checkbox.focus.border.color');
-        box-shadow: dt('checkbox.focus.ring.shadow');
-        outline: dt('checkbox.focus.ring.width') dt('checkbox.focus.ring.style') dt('checkbox.focus.ring.color');
-        outline-offset: dt('checkbox.focus.ring.offset');
+    .p-fieldset-content-wrapper {
+        min-height: 0;
     }
 
-    .p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:focus-visible) .p-checkbox-box {
-        border-color: dt('checkbox.checked.focus.border.color');
+    .p-fieldset-content {
+        padding: dt('fieldset.content.padding');
     }
-
-    .p-checkbox.p-invalid > .p-checkbox-box {
-        border-color: dt('checkbox.invalid.border.color');
-    }
-
-    .p-checkbox.p-variant-filled .p-checkbox-box {
-        background: dt('checkbox.filled.background');
-    }
-
-    .p-checkbox-checked.p-variant-filled .p-checkbox-box {
-        background: dt('checkbox.checked.background');
-    }
-
-    .p-checkbox-checked.p-variant-filled:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
-        background: dt('checkbox.checked.hover.background');
-    }
-
-    .p-checkbox.p-disabled {
-        opacity: 1;
-    }
-
-    .p-checkbox.p-disabled .p-checkbox-box {
-        background: dt('checkbox.disabled.background');
-        border-color: dt('checkbox.checked.disabled.border.color');
-    }
-
-    .p-checkbox.p-disabled .p-checkbox-box .p-checkbox-icon {
-        color: dt('checkbox.icon.disabled.color');
-    }
-
-    .p-checkbox-sm,
-    .p-checkbox-sm .p-checkbox-box {
-        width: dt('checkbox.sm.width');
-        height: dt('checkbox.sm.height');
-    }
-
-    .p-checkbox-sm .p-checkbox-icon {
-        font-size: dt('checkbox.icon.sm.size');
-        width: dt('checkbox.icon.sm.size');
-        height: dt('checkbox.icon.sm.size');
-    }
-
-    .p-checkbox-lg,
-    .p-checkbox-lg .p-checkbox-box {
-        width: dt('checkbox.lg.width');
-        height: dt('checkbox.lg.height');
-    }
-
-    .p-checkbox-lg .p-checkbox-icon {
-        font-size: dt('checkbox.icon.lg.size');
-        width: dt('checkbox.icon.lg.size');
-        height: dt('checkbox.icon.lg.size');
-    }
-`,z={root:function(n){var t=n.instance,c=n.props;return["p-checkbox p-component",{"p-checkbox-checked":t.checked,"p-disabled":c.disabled,"p-invalid":t.$pcCheckboxGroup?t.$pcCheckboxGroup.$invalid:t.$invalid,"p-variant-filled":t.$variant==="filled","p-checkbox-sm p-inputfield-sm":c.size==="small","p-checkbox-lg p-inputfield-lg":c.size==="large"}]},box:"p-checkbox-box",input:"p-checkbox-input",icon:"p-checkbox-icon"},B=k.extend({name:"checkbox",style:I,classes:z}),_={name:"BaseCheckbox",extends:S,props:{value:null,binary:Boolean,indeterminate:{type:Boolean,default:!1},trueValue:{type:null,default:!0},falseValue:{type:null,default:!1},readonly:{type:Boolean,default:!1},required:{type:Boolean,default:!1},tabindex:{type:Number,default:null},inputId:{type:String,default:null},inputClass:{type:[String,Object],default:null},inputStyle:{type:Object,default:null},ariaLabelledby:{type:String,default:null},ariaLabel:{type:String,default:null}},style:B,provide:function(){return{$pcCheckbox:this,$parentInstance:this}}};function a(e){"@babel/helpers - typeof";return a=typeof Symbol=="function"&&typeof Symbol.iterator=="symbol"?function(n){return typeof n}:function(n){return n&&typeof Symbol=="function"&&n.constructor===Symbol&&n!==Symbol.prototype?"symbol":typeof n},a(e)}function A(e,n,t){return(n=T(n))in e?Object.defineProperty(e,n,{value:t,enumerable:!0,configurable:!0,writable:!0}):e[n]=t,e}function T(e){var n=G(e,"string");return a(n)=="symbol"?n:n+""}function G(e,n){if(a(e)!="object"||!e)return e;var t=e[Symbol.toPrimitive];if(t!==void 0){var c=t.call(e,n);if(a(c)!="object")return c;throw new TypeError("@@toPrimitive must return a primitive value.")}return(n==="string"?String:Number)(e)}function O(e){return F(e)||N(e)||j(e)||$()}function $(){throw new TypeError(`Invalid attempt to spread non-iterable instance.
-In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function j(e,n){if(e){if(typeof e=="string")return h(e,n);var t={}.toString.call(e).slice(8,-1);return t==="Object"&&e.constructor&&(t=e.constructor.name),t==="Map"||t==="Set"?Array.from(e):t==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t)?h(e,n):void 0}}function N(e){if(typeof Symbol<"u"&&e[Symbol.iterator]!=null||e["@@iterator"]!=null)return Array.from(e)}function F(e){if(Array.isArray(e))return h(e)}function h(e,n){(n==null||n>e.length)&&(n=e.length);for(var t=0,c=Array(n);t<n;t++)c[t]=e[t];return c}var q={name:"Checkbox",extends:_,inheritAttrs:!1,emits:["change","focus","blur","update:indeterminate"],inject:{$pcCheckboxGroup:{default:void 0}},data:function(){return{d_indeterminate:this.indeterminate}},watch:{indeterminate:function(n){this.d_indeterminate=n,this.updateIndeterminate()}},mounted:function(){this.updateIndeterminate()},updated:function(){this.updateIndeterminate()},methods:{getPTOptions:function(n){var t=n==="root"?this.ptmi:this.ptm;return t(n,{context:{checked:this.checked,indeterminate:this.d_indeterminate,disabled:this.disabled}})},onChange:function(n){var t=this;if(!this.disabled&&!this.readonly){var c=this.$pcCheckboxGroup?this.$pcCheckboxGroup.d_value:this.d_value,i;this.binary?i=this.d_indeterminate?this.trueValue:this.checked?this.falseValue:this.trueValue:this.checked||this.d_indeterminate?i=c.filter(function(o){return!y(o,t.value)}):i=c?[].concat(O(c),[this.value]):[this.value],this.d_indeterminate&&(this.d_indeterminate=!1,this.$emit("update:indeterminate",this.d_indeterminate)),this.$pcCheckboxGroup?this.$pcCheckboxGroup.writeValue(i,n):this.writeValue(i,n),this.$emit("change",n)}},onFocus:function(n){this.$emit("focus",n)},onBlur:function(n){var t,c;this.$emit("blur",n),(t=(c=this.formField).onBlur)===null||t===void 0||t.call(c,n)},updateIndeterminate:function(){this.$refs.input&&(this.$refs.input.indeterminate=this.d_indeterminate)}},computed:{groupName:function(){return this.$pcCheckboxGroup?this.$pcCheckboxGroup.groupName:this.$formName},checked:function(){var n=this.$pcCheckboxGroup?this.$pcCheckboxGroup.d_value:this.d_value;return this.d_indeterminate?!1:this.binary?n===this.trueValue:m(this.value,n)},dataP:function(){return f(A({invalid:this.$invalid,checked:this.checked,disabled:this.disabled,filled:this.$variant==="filled"},this.size,this.size))}},components:{CheckIcon:x,MinusIcon:P}},V=["data-p-checked","data-p-indeterminate","data-p-disabled","data-p"],L=["id","value","name","checked","tabindex","disabled","readonly","required","aria-labelledby","aria-label","aria-invalid"],E=["data-p"];function H(e,n,t,c,i,o){var u=l("CheckIcon"),p=l("MinusIcon");return d(),g("div",r({class:e.cx("root")},o.getPTOptions("root"),{"data-p-checked":o.checked,"data-p-indeterminate":i.d_indeterminate||void 0,"data-p-disabled":e.disabled,"data-p":o.dataP}),[s("input",r({ref:"input",id:e.inputId,type:"checkbox",class:[e.cx("input"),e.inputClass],style:e.inputStyle,value:e.value,name:o.groupName,checked:o.checked,tabindex:e.tabindex,disabled:e.disabled,readonly:e.readonly,required:e.required,"aria-labelledby":e.ariaLabelledby,"aria-label":e.ariaLabel,"aria-invalid":e.invalid||void 0,onFocus:n[0]||(n[0]=function(){return o.onFocus&&o.onFocus.apply(o,arguments)}),onBlur:n[1]||(n[1]=function(){return o.onBlur&&o.onBlur.apply(o,arguments)}),onChange:n[2]||(n[2]=function(){return o.onChange&&o.onChange.apply(o,arguments)})},o.getPTOptions("input")),null,16,L),s("div",r({class:e.cx("box")},o.getPTOptions("box"),{"data-p":o.dataP}),[v(e.$slots,"icon",{checked:o.checked,indeterminate:i.d_indeterminate,class:w(e.cx("icon")),dataP:o.dataP},function(){return[o.checked?(d(),b(u,r({key:0,class:e.cx("icon")},o.getPTOptions("icon"),{"data-p":o.dataP}),null,16,["class","data-p"])):i.d_indeterminate?(d(),b(p,r({key:1,class:e.cx("icon")},o.getPTOptions("icon"),{"data-p":o.dataP}),null,16,["class","data-p"])):C("",!0)]})],16,E)],16,V)}q.render=H;export{q as s};
+`,$={root:function(t){var n=t.props;return["p-fieldset p-component",{"p-fieldset-toggleable":n.toggleable}]},legend:"p-fieldset-legend",legendLabel:"p-fieldset-legend-label",toggleButton:"p-fieldset-toggle-button",toggleIcon:"p-fieldset-toggle-icon",contentContainer:"p-fieldset-content-container",contentWrapper:"p-fieldset-content-wrapper",content:"p-fieldset-content"},N=w.extend({name:"fieldset",style:K,classes:$}),A={name:"BaseFieldset",extends:O,props:{legend:String,toggleable:Boolean,collapsed:Boolean,toggleButtonProps:{type:null,default:null}},style:N,provide:function(){return{$pcFieldset:this,$parentInstance:this}}},F={name:"Fieldset",extends:A,inheritAttrs:!1,emits:["update:collapsed","toggle"],data:function(){return{d_collapsed:this.collapsed}},watch:{collapsed:function(t){this.d_collapsed=t}},methods:{toggle:function(t){this.d_collapsed=!this.d_collapsed,this.$emit("update:collapsed",this.d_collapsed),this.$emit("toggle",{originalEvent:t,value:this.d_collapsed})},onKeyDown:function(t){(t.code==="Enter"||t.code==="NumpadEnter"||t.code==="Space")&&(this.toggle(t),t.preventDefault())}},computed:{buttonAriaLabel:function(){return this.toggleButtonProps&&this.toggleButtonProps.ariaLabel?this.toggleButtonProps.ariaLabel:this.legend},dataP:function(){return k({toggleable:this.toggleable})}},directives:{ripple:P},components:{PlusIcon:v,MinusIcon:h}};function s(e){"@babel/helpers - typeof";return s=typeof Symbol=="function"&&typeof Symbol.iterator=="symbol"?function(t){return typeof t}:function(t){return t&&typeof Symbol=="function"&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},s(e)}function b(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);t&&(o=o.filter(function(i){return Object.getOwnPropertyDescriptor(e,i).enumerable})),n.push.apply(n,o)}return n}function m(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]!=null?arguments[t]:{};t%2?b(Object(n),!0).forEach(function(o){V(e,o,n[o])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):b(Object(n)).forEach(function(o){Object.defineProperty(e,o,Object.getOwnPropertyDescriptor(n,o))})}return e}function V(e,t,n){return(t=W(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function W(e){var t=M(e,"string");return s(t)=="symbol"?t:t+""}function M(e,t){if(s(e)!="object"||!e)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var o=n.call(e,t);if(s(o)!="object")return o;throw new TypeError("@@toPrimitive must return a primitive value.")}return(t==="string"?String:Number)(e)}var R=["data-p"],T=["data-p"],q=["id"],z=["id","aria-controls","aria-expanded","aria-label"],G=["id","aria-labelledby"];function U(e,t,n,o,i,l){var y=B("ripple");return a(),g("fieldset",r({class:e.cx("root"),"data-p":l.dataP},e.ptmi("root")),[d("legend",r({class:e.cx("legend"),"data-p":l.dataP},e.ptm("legend")),[p(e.$slots,"legend",{toggleCallback:l.toggle},function(){return[e.toggleable?u("",!0):(a(),g("span",r({key:0,id:e.$id+"_header",class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17,q)),e.toggleable?f((a(),g("button",r({key:1,id:e.$id+"_header",type:"button","aria-controls":e.$id+"_content","aria-expanded":!i.d_collapsed,"aria-label":l.buttonAriaLabel,class:e.cx("toggleButton"),onClick:t[0]||(t[0]=function(){return l.toggle&&l.toggle.apply(l,arguments)}),onKeydown:t[1]||(t[1]=function(){return l.onKeyDown&&l.onKeyDown.apply(l,arguments)})},m(m({},e.toggleButtonProps),e.ptm("toggleButton"))),[p(e.$slots,e.$slots.toggleicon?"toggleicon":"togglericon",{collapsed:i.d_collapsed,class:S(e.cx("toggleIcon"))},function(){return[(a(),j(D(i.d_collapsed?"PlusIcon":"MinusIcon"),r({class:e.cx("toggleIcon")},e.ptm("toggleIcon")),null,16,["class"]))]}),d("span",r({class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17)],16,z)),[[y]]):u("",!0)]})],16,T),L(E,r({name:"p-collapsible"},e.ptm("transition")),{default:C(function(){return[f(d("div",r({id:e.$id+"_content",class:e.cx("contentContainer"),role:"region","aria-labelledby":e.$id+"_header"},e.ptm("contentContainer")),[d("div",r({class:e.cx("contentWrapper")},e.ptm("contentWrapper")),[d("div",r({class:e.cx("content")},e.ptm("content")),[p(e.$slots,"default")],16)],16)],16,G),[[I,!i.d_collapsed]])]}),_:3},16)],16,R)}F.render=U;export{F as s};

@@ -1,2 +1,115 @@
-import{P as a,o as i,c as l,i as s,a as u}from"./index.js";var c={name:"ChevronRightIcon",extends:a};function p(r){return d(r)||m(r)||y(r)||f()}function f(){throw new TypeError(`Invalid attempt to spread non-iterable instance.
-In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function y(r,e){if(r){if(typeof r=="string")return o(r,e);var t={}.toString.call(r).slice(8,-1);return t==="Object"&&r.constructor&&(t=r.constructor.name),t==="Map"||t==="Set"?Array.from(r):t==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t)?o(r,e):void 0}}function m(r){if(typeof Symbol<"u"&&r[Symbol.iterator]!=null||r["@@iterator"]!=null)return Array.from(r)}function d(r){if(Array.isArray(r))return o(r)}function o(r,e){(e==null||e>r.length)&&(e=r.length);for(var t=0,n=Array(e);t<e;t++)n[t]=r[t];return n}function C(r,e,t,n,b,h){return i(),l("svg",u({width:"14",height:"14",viewBox:"0 0 14 14",fill:"none",xmlns:"http://www.w3.org/2000/svg"},r.pti()),p(e[0]||(e[0]=[s("path",{d:"M4.38708 13C4.28408 13.0005 4.18203 12.9804 4.08691 12.9409C3.99178 12.9014 3.9055 12.8433 3.83313 12.7701C3.68634 12.6231 3.60388 12.4238 3.60388 12.2161C3.60388 12.0084 3.68634 11.8091 3.83313 11.6622L8.50507 6.99022L3.83313 2.31827C3.69467 2.16968 3.61928 1.97313 3.62287 1.77005C3.62645 1.56698 3.70872 1.37322 3.85234 1.22959C3.99596 1.08597 4.18972 1.00371 4.3928 1.00012C4.59588 0.996539 4.79242 1.07192 4.94102 1.21039L10.1669 6.43628C10.3137 6.58325 10.3962 6.78249 10.3962 6.99022C10.3962 7.19795 10.3137 7.39718 10.1669 7.54416L4.94102 12.7701C4.86865 12.8433 4.78237 12.9014 4.68724 12.9409C4.59212 12.9804 4.49007 13.0005 4.38708 13Z",fill:"currentColor"},null,-1)])),16)}c.render=C;export{c as s};
+import{s as a}from"./index3.js";import{B as s,f as r,o as c,c as g,i as d,a as l,r as h}from"./index.js";var u=`
+    .p-toggleswitch {
+        display: inline-block;
+        width: dt('toggleswitch.width');
+        height: dt('toggleswitch.height');
+    }
+
+    .p-toggleswitch-input {
+        cursor: pointer;
+        appearance: none;
+        position: absolute;
+        top: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+        z-index: 1;
+        outline: 0 none;
+        border-radius: dt('toggleswitch.border.radius');
+    }
+
+    .p-toggleswitch-slider {
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        border-width: dt('toggleswitch.border.width');
+        border-style: solid;
+        border-color: dt('toggleswitch.border.color');
+        background: dt('toggleswitch.background');
+        transition:
+            background dt('toggleswitch.transition.duration'),
+            color dt('toggleswitch.transition.duration'),
+            border-color dt('toggleswitch.transition.duration'),
+            outline-color dt('toggleswitch.transition.duration'),
+            box-shadow dt('toggleswitch.transition.duration');
+        border-radius: dt('toggleswitch.border.radius');
+        outline-color: transparent;
+        box-shadow: dt('toggleswitch.shadow');
+    }
+
+    .p-toggleswitch-handle {
+        position: absolute;
+        top: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: dt('toggleswitch.handle.background');
+        color: dt('toggleswitch.handle.color');
+        width: dt('toggleswitch.handle.size');
+        height: dt('toggleswitch.handle.size');
+        inset-inline-start: dt('toggleswitch.gap');
+        margin-block-start: calc(-1 * calc(dt('toggleswitch.handle.size') / 2));
+        border-radius: dt('toggleswitch.handle.border.radius');
+        transition:
+            background dt('toggleswitch.transition.duration'),
+            color dt('toggleswitch.transition.duration'),
+            inset-inline-start dt('toggleswitch.slide.duration'),
+            box-shadow dt('toggleswitch.slide.duration');
+    }
+
+    .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+        background: dt('toggleswitch.checked.background');
+        border-color: dt('toggleswitch.checked.border.color');
+    }
+
+    .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.checked.background');
+        color: dt('toggleswitch.handle.checked.color');
+        inset-inline-start: calc(dt('toggleswitch.width') - calc(dt('toggleswitch.handle.size') + dt('toggleswitch.gap')));
+    }
+
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-slider {
+        background: dt('toggleswitch.hover.background');
+        border-color: dt('toggleswitch.hover.border.color');
+    }
+
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.hover.background');
+        color: dt('toggleswitch.handle.hover.color');
+    }
+
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-slider {
+        background: dt('toggleswitch.checked.hover.background');
+        border-color: dt('toggleswitch.checked.hover.border.color');
+    }
+
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.checked.hover.background');
+        color: dt('toggleswitch.handle.checked.hover.color');
+    }
+
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:focus-visible) .p-toggleswitch-slider {
+        box-shadow: dt('toggleswitch.focus.ring.shadow');
+        outline: dt('toggleswitch.focus.ring.width') dt('toggleswitch.focus.ring.style') dt('toggleswitch.focus.ring.color');
+        outline-offset: dt('toggleswitch.focus.ring.offset');
+    }
+
+    .p-toggleswitch.p-invalid > .p-toggleswitch-slider {
+        border-color: dt('toggleswitch.invalid.border.color');
+    }
+
+    .p-toggleswitch.p-disabled {
+        opacity: 1;
+    }
+
+    .p-toggleswitch.p-disabled .p-toggleswitch-slider {
+        background: dt('toggleswitch.disabled.background');
+    }
+
+    .p-toggleswitch.p-disabled .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.disabled.background');
+    }
+`,p={root:{position:"relative"}},w={root:function(e){var i=e.instance,o=e.props;return["p-toggleswitch p-component",{"p-toggleswitch-checked":i.checked,"p-disabled":o.disabled,"p-invalid":i.$invalid}]},input:"p-toggleswitch-input",slider:"p-toggleswitch-slider",handle:"p-toggleswitch-handle"},b=s.extend({name:"toggleswitch",style:u,classes:w,inlineStyles:p}),k={name:"BaseToggleSwitch",extends:a,props:{trueValue:{type:null,default:!0},falseValue:{type:null,default:!1},readonly:{type:Boolean,default:!1},tabindex:{type:Number,default:null},inputId:{type:String,default:null},inputClass:{type:[String,Object],default:null},inputStyle:{type:Object,default:null},ariaLabelledby:{type:String,default:null},ariaLabel:{type:String,default:null}},style:b,provide:function(){return{$pcToggleSwitch:this,$parentInstance:this}}},f={name:"ToggleSwitch",extends:k,inheritAttrs:!1,emits:["change","focus","blur"],methods:{getPTOptions:function(e){var i=e==="root"?this.ptmi:this.ptm;return i(e,{context:{checked:this.checked,disabled:this.disabled}})},onChange:function(e){if(!this.disabled&&!this.readonly){var i=this.checked?this.falseValue:this.trueValue;this.writeValue(i,e),this.$emit("change",e)}},onFocus:function(e){this.$emit("focus",e)},onBlur:function(e){var i,o;this.$emit("blur",e),(i=(o=this.formField).onBlur)===null||i===void 0||i.call(o,e)}},computed:{checked:function(){return this.d_value===this.trueValue},dataP:function(){return r({checked:this.checked,disabled:this.disabled,invalid:this.$invalid})}}},v=["data-p-checked","data-p-disabled","data-p"],y=["id","checked","tabindex","disabled","readonly","aria-checked","aria-labelledby","aria-label","aria-invalid"],m=["data-p"],S=["data-p"];function B(t,e,i,o,P,n){return c(),g("div",l({class:t.cx("root"),style:t.sx("root")},n.getPTOptions("root"),{"data-p-checked":n.checked,"data-p-disabled":t.disabled,"data-p":n.dataP}),[d("input",l({id:t.inputId,type:"checkbox",role:"switch",class:[t.cx("input"),t.inputClass],style:t.inputStyle,checked:n.checked,tabindex:t.tabindex,disabled:t.disabled,readonly:t.readonly,"aria-checked":n.checked,"aria-labelledby":t.ariaLabelledby,"aria-label":t.ariaLabel,"aria-invalid":t.invalid||void 0,onFocus:e[0]||(e[0]=function(){return n.onFocus&&n.onFocus.apply(n,arguments)}),onBlur:e[1]||(e[1]=function(){return n.onBlur&&n.onBlur.apply(n,arguments)}),onChange:e[2]||(e[2]=function(){return n.onChange&&n.onChange.apply(n,arguments)})},n.getPTOptions("input")),null,16,y),d("div",l({class:t.cx("slider")},n.getPTOptions("slider"),{"data-p":n.dataP}),[d("div",l({class:t.cx("handle")},n.getPTOptions("handle"),{"data-p":n.dataP}),[h(t.$slots,"handle",{checked:n.checked})],16,S)],16,m)],16,v)}f.render=B;export{f as s};

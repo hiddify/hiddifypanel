@@ -10,7 +10,7 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import Role
 from hiddifypanel.models.usage import DailyUsage
-from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DEFAULT_RANGE_DAYS, DashboardOutputSchema
+from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DEFAULT_RANGE_DAYS, DashboardDiskDetail, DashboardOutputSchema
 
 ALLOWED_RANGE_DAYS = (7, 14, 30, 90, 180, 365)
 DEFAULT_PROCESS_LIMIT = 16
@@ -84,3 +84,17 @@ class AdminDashboardApi(MethodView):
         dto.users = stats.users
         dto.nodes = stats.nodes
         return dto
+
+
+class AdminDashboardDiskApi(MethodView):
+    """Disk usage + largest top-level folders for one node, fetched on demand (a popup)."""
+
+    decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
+
+    @app.output(DashboardDiskDetail)
+    def get(self) -> DashboardDiskDetail:
+        """System: Dashboard disk detail"""
+        from hiddifypanel.hutils import node_system
+
+        child_id = _int_arg("child_id")
+        return node_system.fetch_disk_detail(child_id)
