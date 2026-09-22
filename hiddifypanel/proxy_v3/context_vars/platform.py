@@ -9,6 +9,10 @@ from .version import PlatformPart, TemplateVersion
 from hiddifypanel import hutils
 
 
+def _format_version(version: list[int] | None) -> str:
+    if not version:
+        return ""
+    return ".".join(str(x) for x in version if isinstance(x, int))
 class PlatformVar(BaseModel):
     """Client platform derived from User-Agent."""
 
@@ -39,10 +43,10 @@ class PlatformVar(BaseModel):
         app_version = cls._detect_app_version(raw, info, app, app_group)
         group_version = cls._detect_group_version(info, app_group)
 
-        os_version = ".".join(str(x) for x in (info.get("os_version") or []) if x) or ""
-        singbox_version = ".".join(str(x) for x in (info.get("singbox_version") or []) if x) or ""
-        hiddify_version = ".".join(str(x) for x in (info.get("hiddify_version") or []) if x) or ""
-        xray_version = ".".join(str(x) for x in (info.get("xray_version") or []) if x) or ""
+        os_version = _format_version(info.get("os_version"))
+        singbox_version = _format_version(info.get("singbox_version"))
+        hiddify_version = _format_version(info.get("hiddify_version"))
+        xray_version = _format_version(info.get("xray_version"))
         if app == "v2rayn" and xray_version == "" and app_version:
             if TemplateVersion(app_version) >= "7.20.0":
                 xray_version = "26.3.27"
