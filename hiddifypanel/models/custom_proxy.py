@@ -1119,5 +1119,7 @@ def _validate_required_server_ports(dbproxy: CustomProxy) -> None:
     mode = dbproxy.mode
     if mode_uses_gateway_port(mode) or mode_uses_auto_ports(mode):
         return
-    if mode_requires_static_ports(mode) and not normalize_port_list(dbproxy.server_inbound_tcp_ports):
-        raise ValueError("At least one inbound TCP port is required for this mode")
+    if mode_requires_static_ports(mode) and not (
+        normalize_port_list(dbproxy.server_inbound_tcp_ports) or normalize_port_list(dbproxy.server_inbound_udp_ports)
+    ):
+        raise ValueError("At least one inbound TCP or UDP port is required for this mode")

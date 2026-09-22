@@ -985,11 +985,11 @@ def validate_proxy_payload(
     if "general" in sections:
         domain_ids = [int(v) for v in (data.get("domain_ids") or []) if v is not None]
         if mode_requires_static_ports(protocol):
-            if not stored_tcp:
+            if not stored_tcp and not stored_udp:
                 errors.append(
                     {
-                        "code": "missing_inbound_tcp_ports",
-                        "message": "At least one inbound TCP port is required for this mode",
+                        "code": "missing_inbound_ports",
+                        "message": "At least one inbound TCP or UDP port is required for this mode",
                     }
                 )
         elif mode_uses_auto_ports(protocol) or mode_uses_gateway_port(protocol):
