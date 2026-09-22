@@ -67,7 +67,7 @@ dependencies = [
     "dnspython>=2.8.0",
     "granian>=2.8.3",
     "polib>=1.2.0",
-    "apscheduler>=3.11.3",
+    "apscheduler>=3.11.3,<4.0.0",
 ]
 
 [project.optional-dependencies]

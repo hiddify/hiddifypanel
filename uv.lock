@@ -993,7 +993,7 @@ wheels = [
 
 [[package]]
 name = "hiddifypanel"
-version = "12.3.3"
+version = "13.0.0b3"
 source = { editable = "." }
 dependencies = [
     { name = "ansi2html" },
@@ -1064,7 +1064,7 @@ dev = [
 requires-dist = [
     { name = "ansi2html", specifier = ">=1.9.5" },
     { name = "apiflask", extras = ["async"], specifier = ">=3.1.2" },
-    { name = "apscheduler", specifier = ">=3.11.3" },
+    { name = "apscheduler", specifier = ">=3.11.3,<4.0.0" },
     { name = "asgiref", specifier = ">=3.12.1,<4.0.0" },
     { name = "babel", specifier = "==2.18.0" },
     { name = "bleach", specifier = ">=6.4.0" },
