@@ -27,6 +27,11 @@
 
 #### Fix
 
+* Update validation for inbound ports in proxy configuration. 
+  _Modified the validation logic to require at least one inbound TCP or UDP port for modes that require static ports. Updated error messages to reflect this change, ensuring clearer feedback for users regarding port requirements._
+
+* Wiregaurd. 
+
 * Handle IntegrityError during database commit in set_hconfig function. 
   _Added error handling for IntegrityError when committing changes to the database. If an IntegrityError occurs, the session is rolled back, and the function attempts to update the existing configuration value instead of raising an error._
 
@@ -118,6 +123,8 @@ picked up the pre-release._
 * Issue in extra params. 
 
 #### Other
+
+* Refactor: simplify version formatting in PlatformVar. 
 
 * Feat: add domain creation template and update domain validation. 
   _Introduced a new template for domain creation and updated the domain field validation to include a filter for whitespace. The changes enhance the user interface and improve input handling for domain entries._
