@@ -1,8 +1,15 @@
+import re
 import threading
 from typing import List
 from strenum import StrEnum
 import subprocess
 import os
+
+# Strict allow-lists to prevent shell/argument injection when values are
+# forwarded as arguments to the privileged commander.py script.
+_SAFE_URL_RE = re.compile(r'^[A-Za-z0-9_\-./?=&%:#]+$')
+_SAFE_SLUG_RE = re.compile(r'^[A-Za-z0-9_\-]+$')
+_SAFE_DOMAIN_RE = re.compile(r'^[A-Za-z0-9*_\-.]+$')
 
 
 class Command(StrEnum):
