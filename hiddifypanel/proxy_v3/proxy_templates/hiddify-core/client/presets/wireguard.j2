@@ -1,5 +1,5 @@
-{% if (ctx.platform.singbox.version >= "1.11.0") %}
-  {% block endpoints %}
+{% block endpoints %}
+  {% if (ctx.platform.singbox.version >= "1.11.0") %}
     {% for ctx in ctx.iter_ctx_domains() %}
       {% set proxy = ctx.proxy %}
       {% set domain = ctx.proxy.domain %}
@@ -9,9 +9,10 @@
         {% include 'hiddify-core/client/protocols/wireguard' %}
       },
     {% endfor %}
-  {% endblock %}
-{% else %}
-  {% block outbounds %}
+  {% endif %}
+{% endblock %}
+{% block outbounds %}
+  {% if (ctx.platform.singbox.version < "1.11.0") %}
     {% for ctx in ctx.iter_ctx_domains() %}
       {% set proxy = ctx.proxy %}
       {% set domain = ctx.proxy.domain %}
@@ -21,5 +22,5 @@
         {% include 'hiddify-core/client/protocols/wireguard' %}
       },
     {% endfor %}
-  {% endblock %}
-{% endif %}
+  {% endif %}
+{% endblock %}
