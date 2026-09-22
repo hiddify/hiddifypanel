@@ -22,7 +22,7 @@ class DomainAdmin(AdminLTEModelView):
     column_hide_backrefs = False
 
     edit_template = "model/domain_edit.html"
-    create_template = "model/domain_edit.html"
+    # create_template = "model/domain_create.html"
 
     list_template = "model/domain_list.html"
     form_overrides = {
@@ -72,7 +72,10 @@ class DomainAdmin(AdminLTEModelView):
             ).order_by(CustomProxy.sort_order, CustomProxy.name),
             "get_label": lambda p: p.name,
         },
-        "domain": {"validators": [Regexp(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$", message=__("Should be a valid domain"))]},
+        "domain": {
+            "filters": [lambda x: x.strip() if x else x],
+            "validators": [Regexp(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$", message=__("Should be a valid domain"))],
+        },
         "cdn_ip": {"validators": [Regexp(r"(((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d).){3}(25[0-5]|(2[0-4]|1\d|[1-9]|)\d))|^([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,}))[ \t\n,;]*\w{3}[ \t\n,;]*)*", message=__("Invalid IP or domain"))]},
         "servernames": {"validators": [Regexp(r"^([\w-]+\.)+[\w-]+(,\s*([\w-]+\.)+[\w-]+)*$", re.IGNORECASE, _("Invalid REALITY hostnames"))]},
         "server_domain": {
