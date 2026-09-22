@@ -27,6 +27,9 @@
 
 #### Fix
 
+* Handle IntegrityError during database commit in set_hconfig function. 
+  _Added error handling for IntegrityError when committing changes to the database. If an IntegrityError occurs, the session is rolled back, and the function attempts to update the existing configuration value instead of raising an error._
+
 * Pin apscheduler to <4.0.0 to avoid breaking pre-release. 
   _apscheduler 4.0.0a6 removed the apscheduler.schedulers module that
 scheduler.py imports, crashing the app on import when a resolver
@@ -115,6 +118,9 @@ picked up the pre-release._
 * Issue in extra params. 
 
 #### Other
+
+* Feat: add domain creation template and update domain validation. 
+  _Introduced a new template for domain creation and updated the domain field validation to include a filter for whitespace. The changes enhance the user interface and improve input handling for domain entries._
 
 * Chore: update deploy path references for services/panel rename. 
   _The panel's deployment directory is being renamed from
