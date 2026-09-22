@@ -20,7 +20,7 @@ to_gig_d = 1000 * 1000 * 1000
 # def add_temporary_access():
 #     random_port = random.randint(30000, 50000)
 #     # exec_command(
-#     #     f'sudo /opt/hiddify-manager/services/hiddify-panel/temporary_access.sh {random_port} &')
+#     #     f'sudo /opt/hiddify-manager/services/panel/temporary_access.sh {random_port} &')
 
 #     # run temporary_access.sh
 #     commander(Command.temporary_access, port=random_port)

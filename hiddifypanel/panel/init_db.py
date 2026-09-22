@@ -1186,7 +1186,7 @@ def latest_db_version():
 
 
 def upgrade_database():
-    panel_root = "/opt/hiddify-manager/services/hiddify-panel/"
+    panel_root = "/opt/hiddify-manager/services/panel/"
     backup_root = f"{panel_root}backup/"
     sqlite_db = f"{panel_root}hiddifypanel.db"
     if not os.path.isdir(backup_root) or len(os.listdir(backup_root)) == 0:
