@@ -2,6 +2,7 @@ from typing import Any
 
 from loguru import logger
 from sqlalchemy import Boolean, Enum, ForeignKey, String
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel import Events
@@ -123,7 +124,18 @@ def set_hconfig(key: ConfigEnum, value: str | int | bool, child_id: int | None =
             set_hconfig(key, value, child.id)
 
     if commit:
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            # another process inserted the same row between our existence check and insert
+            db.session.rollback()
+            model = BoolConfig if key.type == bool else StrConfig
+            existing = db.session.query(model).filter(model.key == key, model.child_id == child_id).first()
+            if existing:
+                existing.value = value
+                db.session.commit()
+            else:
+                raise
 
 
 def __parse_hconfig(u: StrConfig) -> Any:
