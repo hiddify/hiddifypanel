@@ -1218,6 +1218,9 @@ msgstr "Disk"
 msgid "adminV2.dashboard.download"
 msgstr "Download"
 
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "Uptime Download"
+
 msgid "adminV2.dashboard.enabledUsers"
 msgstr "Enabled users"
 
@@ -1358,9 +1361,6 @@ msgstr "RAM"
 msgid "adminV2.dashboard.range"
 msgstr "History range"
 
-msgid "adminV2.dashboard.downloadSinceBoot"
-msgstr "Total download (since boot)"
-
 msgid "adminV2.dashboard.refresh"
 msgstr "Refresh now"
 
@@ -1369,9 +1369,6 @@ msgstr "Live"
 
 msgid "adminV2.dashboard.rollingAverage"
 msgstr "7-day average"
-
-msgid "adminV2.dashboard.uploadSinceBoot"
-msgstr "Total upload (since boot)"
 
 msgid "adminV2.dashboard.subtitle"
 msgstr "Traffic, users and server health at a glance"
@@ -1411,6 +1408,9 @@ msgstr "Unique IPs"
 
 msgid "adminV2.dashboard.upload"
 msgstr "Upload"
+
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "Uptime Upload"
 
 msgid "adminV2.dashboard.uptime"
 msgstr "Uptime"

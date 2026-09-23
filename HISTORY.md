@@ -124,6 +124,12 @@ picked up the pre-release._
 
 #### Other
 
+* Feat: enhance child fetching and add SyncTlsStoreApi endpoint. 
+  _Updated the child fetching function to include a parent API key for improved security and error handling. Increased the node timeout from 3.0 to 30.0 seconds for better performance. Added a new SyncTlsStoreApi endpoint to facilitate the import of TLS certificates into the store, with support for domain-specific syncing. Updated API decorators to enforce role-based access control for enhanced security._
+
+* Feat: implement debug node functionality and enhance dashboard metrics. 
+  _Added support for simulating multi-node panels with debug nodes, including a new `debug_node` parameter in API requests. Updated dashboard components to display panel URLs for nodes and improved chart rendering for stacked areas. Enhanced usage statistics to account for debug nodes, ensuring accurate reporting in the dashboard. Additionally, updated translations for clarity on upload and download metrics._
+
 * Refactor: simplify version formatting in PlatformVar. 
 
 * Feat: add domain creation template and update domain validation. 
