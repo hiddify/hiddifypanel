@@ -54,7 +54,7 @@ class AdminDashboardApi(MethodView):
     day-by-day so polls do not re-sum the whole history.
     """
 
-    decorators = [login_required(node_auth=True)]
+    decorators = [login_required(roles={Role.super_admin, Role.admin, Role.agent}, node_auth=True)]
 
     @app.output(DashboardOutputSchema)
     def get(self) -> DashboardOutputSchema:
@@ -98,7 +98,7 @@ class AdminDashboardApi(MethodView):
 class AdminDashboardDiskApi(MethodView):
     """Disk usage + largest top-level folders for one node, fetched on demand (a popup)."""
 
-    decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
+    decorators = [login_required(roles={Role.super_admin, Role.admin, Role.agent}, node_auth=True)]
 
     @app.output(DashboardDiskDetail)
     def get(self) -> DashboardDiskDetail:

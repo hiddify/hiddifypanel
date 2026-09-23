@@ -8,6 +8,7 @@ import hiddifypanel
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.hutils.node.api_client import NodeApiClient, NodeApiErrorSchema
+from hiddifypanel.models import ConfigEnum, hconfig
 from hiddifypanel.models.child import Child, ChildMode
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
     DashboardDiskDetail,
@@ -18,7 +19,7 @@ from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
 )
 
 # One retry, short timeout — the dashboard polls every few seconds.
-_NODE_TIMEOUT = 3.0
+_NODE_TIMEOUT = 30.0
 _NODE_RETRIES = 1
 _MAX_WORKERS = 8
 # Disk detail is fetched on demand (a popup, not the poll loop) and involves a
@@ -65,28 +66,31 @@ def _local_node(metrics: MetricsSnapshot) -> DashboardNodeStats:
     return _node_from_snapshot(0, "this-server", "local", metrics)
 
 
-def _fetch_child(child: Child, process_limit: int) -> DashboardNodeStats:
+def _fetch_child(child: Child, process_limit: int, parent_key: str) -> DashboardNodeStats:
     name = child.name or f"node-{child.id}"
     mode = str(child.mode)
     base = (child.node_base_url or "").strip()
     if not base:
         return _failed_node(child.id, name, mode, "no_url")
-    client = NodeApiClient(base, timeout=_NODE_TIMEOUT, max_retry=_NODE_RETRIES)
-    res = client.get(f"/api/v2/admin/dashboard/?include=system&processes={process_limit}", DashboardOutputSchema)
-    if isinstance(res, NodeApiErrorSchema):
-        return _failed_node(child.id, name, mode, res.msg)
-    return DashboardNodeStats(
-        id=child.id,
-        name=name,
-        mode=mode,
-        ok=True,
-        cpu=res.system.cpu,
-        memory=res.system.memory,
-        disk=res.system.disk,
-        network=res.system.network,
-        host=res.system.host,
-        processes=res.processes,
-    )
+    try:
+        client = NodeApiClient(base, timeout=_NODE_TIMEOUT, max_retry=_NODE_RETRIES, apikey=parent_key)
+        res = client.get(f"/api/v2/admin/dashboard/?include=system&processes={process_limit}", DashboardOutputSchema)
+        if isinstance(res, NodeApiErrorSchema):
+            return _failed_node(child.id, name, mode, res.msg)
+        return DashboardNodeStats(
+            id=child.id,
+            name=name,
+            mode=mode,
+            ok=True,
+            cpu=res.system.cpu,
+            memory=res.system.memory,
+            disk=res.system.disk,
+            network=res.system.network,
+            host=res.system.host,
+            processes=res.processes,
+        )
+    except BaseException as exc:
+        return _failed_node(child.id, name, mode, str(exc))
 
 
 def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
@@ -151,7 +155,7 @@ def collect_system_stats(child_id: int | None, process_limit: int = 8, debug_nod
     else:
         with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, max(1, workers))) as pool:
             local_future = pool.submit(_local_snapshot, process_limit)
-            remote_futures = {pool.submit(_fetch_child, child, process_limit): child for child in remotes}
+            remote_futures = {pool.submit(_fetch_child, child, process_limit, hconfig(ConfigEnum.unique_id)): child for child in remotes}
 
             local = local_future.result()
             node_stats.append(_local_node(local))

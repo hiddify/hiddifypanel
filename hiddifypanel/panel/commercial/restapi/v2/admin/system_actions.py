@@ -44,6 +44,40 @@ class DumpServerConfigsApi(MethodView):
         return json.dumps(payload, indent=2), (200 if result.ok else 500)
 
 
+class SyncTlsStoreApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self):
+        """System: Import TLS certificates from data/ssl/ into tls_store (all, or one ?domain= / ?domain_id=)"""
+        from hiddifypanel.proxy_v3.tls_store_sync import (
+            sync_tls_store_all,
+            sync_tls_store_for_domain,
+            sync_tls_store_for_domain_id,
+        )
+
+        domain = request.args.get("domain") or None
+        domain_id = request.args.get("domain_id", type=int)
+        child_id = request.args.get("child_id", default=0, type=int)
+
+        if domain_id is not None or domain:
+            row = sync_tls_store_for_domain_id(domain_id) if domain_id is not None else sync_tls_store_for_domain(domain, child_id=child_id)
+            if not row:
+                payload = {"ok": False, "synced": 0, "message": f"no certificate files found for {domain_id if domain_id is not None else domain}"}
+                return json.dumps(payload, indent=2)
+            payload = {
+                "ok": True,
+                "synced": 1,
+                "domain_id": row.domain_id,
+                "domain": row.domain.domain if row.domain else domain,
+                "issuer": row.issuer,
+                "self_signed": bool(row.self_signed),
+            }
+            return json.dumps(payload, indent=2)
+
+        count = sync_tls_store_all(child_id)
+        return json.dumps({"ok": True, "synced": count}, indent=2)
+
+
 class AllPublicPortsApi(MethodView):
     decorators = [login_required({Role.super_admin, Role.admin})]
 
