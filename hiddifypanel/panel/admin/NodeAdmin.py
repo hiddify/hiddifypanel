@@ -30,8 +30,8 @@ class NodeAdmin(AdminLTEModelView):
     def name_formater(view, context, model, name):
 
         # res = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True, child_id=model.id)
-        href = f"{model.node_base_url}/{g.account.uuid}/admin/"
-        return Markup(f"<a href='{href}'>{model.name}</a>")
+        href = f"{model.node_base_url}/{g.account.uuid}/"
+        return Markup(f"<a target='_blank' href='{href}'>{model.name}</a>")
 
     def relative_time_formater(view, context, model, name):
         value = getattr(model, name, None)

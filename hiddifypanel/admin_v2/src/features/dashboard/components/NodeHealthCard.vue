@@ -36,6 +36,7 @@ const tableRows = computed(() =>
     id: node.id,
     title: nodeTitle(node),
     color: nodeColor(node.id),
+    panelUrl: node.panel_url ?? null,
     ok: node.ok,
     hostname: node.host?.hostname ?? '',
     uptimeS: node.host?.uptime_s ?? null,
@@ -262,7 +263,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       <Column :header="t('dashboard.node')">
         <template #body="{ data }">
           <span class="node-cell__dot" :style="{ background: data.color }" />
-          <div class="min-w-0 node-cell__title">
+          <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
+            <strong>{{ data.title }} <i class="pi pi-external-link" /></strong>
+            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+          </a>
+          <div v-else class="min-w-0 node-cell__title">
             <strong>{{ data.title }}</strong>
             <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
           </div>
@@ -279,16 +284,16 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <template #body="{ data }">
           <button v-if="data.ok" type="button" class="disk-cell" @click="openDisk({ id: data.id, title: data.title })">
             {{ data.diskPercent !== null ? formatPercent(data.diskPercent, 1) : '—' }}
-            <span v-if="data.diskUsedGb !== null" class="disk-cell__sub">{{ formatGb(data.diskUsedGb, 1) }} / {{ formatGb(data.diskTotalGb ?? 0, 1) }}</span>
+            <span v-if="false" v-if1="data.diskUsedGb !== null" class="disk-cell__sub">{{ formatGb(data.diskUsedGb, 1) }} / {{ formatGb(data.diskTotalGb ?? 0, 1) }}</span>
             <i class="pi pi-external-link" />
           </button>
           <span v-else>—</span>
         </template>
       </Column>
-      <Column :header="t('dashboard.sentSinceRestart')">
+      <Column :header="t('dashboard.uploadSinceBoot')">
         <template #body="{ data }">{{ data.sentGb !== null ? formatGb(data.sentGb, 1) : '—' }}</template>
       </Column>
-      <Column :header="t('dashboard.receivedSinceRestart')">
+      <Column :header="t('dashboard.downloadSinceBoot')">
         <template #body="{ data }">{{ data.recvGb !== null ? formatGb(data.recvGb, 1) : '—' }}</template>
       </Column>
       <Column :header="t('dashboard.connections')">
@@ -414,6 +419,17 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 .node-cell__title {
   display: inline-block;
   vertical-align: middle;
+}
+.node-cell__link {
+  color: inherit;
+  text-decoration: none;
+}
+.node-cell__link:hover strong {
+  color: var(--p-primary-color);
+}
+.node-cell__link i {
+  font-size: 0.6rem;
+  color: var(--p-text-muted-color);
 }
 .node-cell__host {
   margin: 0.1rem 0 0;

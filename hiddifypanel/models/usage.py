@@ -100,13 +100,15 @@ class DailyUsage(db.Model):
         }
 
     @staticmethod
-    def get_dashboard_stats(admin_id: int | None = None, child_id: int | None = None, series_days: int = 30) -> DashboardStats:
+    def get_dashboard_stats(admin_id: int | None = None, child_id: int | None = None, series_days: int = 30, debug_nodes: bool = False) -> DashboardStats:
         """Usage history, period aggregates and user counts for the Admin V2 dashboard.
 
         Traffic numbers come from the parent ``daily_usage`` table (cached day by
-        day). They are never fetched from child nodes.
+        day). They are never fetched from child nodes. With ``debug_nodes`` the
+        fake debug nodes report this server's usage.
         """
         from hiddifypanel.hutils import usage_cache
+        from hiddifypanel.hutils.node_system import DEBUG_NODE_IDS, debug_node_name, is_debug_node
         from hiddifypanel.hutils.usage_stats import MONTH_DAYS, build_usage_summary
         from hiddifypanel.models.child import Child
         from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
@@ -132,15 +134,21 @@ class DailyUsage(db.Model):
         now = datetime.datetime.now()
         history_days = max(series_days, MONTH_DAYS) + MONTH_DAYS
 
-        nodes = Child.query.order_by(Child.id).all()
+        nodes = [DashboardNode(id=node.id, name=node.name or f"node-{node.id}", mode=str(node.mode)) for node in Child.query.order_by(Child.id).all()]
+        mirrors: dict[int, int] = {}
+        if debug_nodes:
+            nodes += [DashboardNode(id=node_id, name=debug_node_name(node_id), mode="debug") for node_id in DEBUG_NODE_IDS]
+            mirrors = {node_id: 0 for node_id in DEBUG_NODE_IDS}
+        usage_child_id = 0 if is_debug_node(child_id) else child_id
 
-        points = usage_cache.load_points(sub_admins, child_id, today, history_days)
+        points = usage_cache.load_points(sub_admins, usage_child_id, today, history_days)
         today_usage = next((point.usage for point in points if point.day == today), 0)
-        total_usage = usage_cache.lifetime_usage(sub_admins, child_id, today, today_usage)
+        total_usage = usage_cache.lifetime_usage(sub_admins, usage_child_id, today, today_usage)
         summary = build_usage_summary(points, today, series_days=series_days, total_usage=total_usage)
 
-        if child_id is None and len(nodes) > 1:
-            summary.series = usage_cache.stacked_history(sub_admins, today, series_days, [int(node.id) for node in nodes])
+        # Always split the series per node (`by_child`); a filtered request just has that one node.
+        series_child_ids = [int(node.id) for node in nodes] if child_id is None else [child_id]
+        summary.series = usage_cache.stacked_history(sub_admins, today, series_days, series_child_ids, mirrors=mirrors)
 
         online_by_day = {point.day: point.online for point in points}
         week_start = today - timedelta(days=6)
@@ -168,7 +176,7 @@ class DailyUsage(db.Model):
             series=summary.series,
             usage=summary.to_usage(),
             users=users,
-            nodes=[DashboardNode(id=node.id, name=node.name or f"node-{node.id}", mode=str(node.mode)) for node in nodes],
+            nodes=nodes,
         )
 
 

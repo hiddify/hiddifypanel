@@ -34,7 +34,10 @@ class UsageApi(MethodView):
 
         g.node.mark_node_to_parent(commit=True)
 
-        return get_users_usage_data_for_api(from_time=data.last_users_sync - timedelta(minutes=1), include_uuids={u.uuid for u in data.usages})
+        # A never-synced child sends datetime.min; subtracting from it would overflow.
+        last_sync = data.last_users_sync.replace(tzinfo=None)
+        from_time = last_sync - timedelta(minutes=1) if last_sync > datetime.min + timedelta(minutes=1) else datetime.min
+        return get_users_usage_data_for_api(from_time=from_time, include_uuids={u.uuid for u in data.usages})
 
 
 def get_users_usage_data_for_api(from_time: datetime, include_uuids: set[str]):

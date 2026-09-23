@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import hiddifypanel
 from hiddifypanel import hutils
+from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.hutils.node.api_client import NodeApiClient, NodeApiErrorSchema
 from hiddifypanel.models.child import Child, ChildMode
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
@@ -25,6 +26,16 @@ _MAX_WORKERS = 8
 # a bit more budget than the polled metrics, but the remote side itself now
 # answers quickly.
 _DISK_DETAIL_TIMEOUT = 15.0
+# `?debug_node=1`: fake node ids (copies of this server) to simulate a multi-node panel.
+DEBUG_NODE_IDS = (-1, -2, -3)
+
+
+def is_debug_node(node_id: int | None) -> bool:
+    return node_id in DEBUG_NODE_IDS
+
+
+def debug_node_name(node_id: int) -> str:
+    return f"debug-node{-node_id}"
 
 
 def _local_snapshot(process_limit: int) -> MetricsSnapshot:
@@ -80,8 +91,10 @@ def _fetch_child(child: Child, process_limit: int) -> DashboardNodeStats:
 
 def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
     """Disk usage + top folders for the disk popup — local, or proxied to a remote node."""
-    if child_id in (None, 0):
-        return hutils.system_metrics.disk_detail(node_id=0)
+    if child_id in (None, 0) or is_debug_node(child_id):
+        res = hutils.system_metrics.disk_detail(node_id=0)
+        res.node_id = child_id or 0
+        return res
 
     child = Child.by_id(child_id)
     if not child or child.mode != ChildMode.remote:
@@ -99,7 +112,23 @@ def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
     return res
 
 
-def collect_system_stats(child_id: int | None, process_limit: int = 8) -> NodeSystemCollection:
+def attach_panel_urls(node_stats: list[DashboardNodeStats], account_uuid: str, admin_base: str) -> None:
+    """Link each remote node (online or offline) to its panel, same link as the legacy Node admin.
+
+    Nodes without a base URL fall back to their edit page in this panel's Node admin.
+    """
+    remote_ids = [row.id for row in node_stats if row.id != 0]
+    if not remote_ids:
+        return
+    bases = {child.id: (child.node_base_url or "").strip().rstrip("/") for child in Child.query.filter(Child.id.in_(remote_ids)).all()}
+    for row in node_stats:
+        if row.id == 0 or is_debug_node(row.id):
+            continue
+        base = bases.get(row.id)
+        row.panel_url = f"{base}/{account_uuid}/" if base else hurl_for('flask.node.edit_view', id=row.id)
+
+
+def collect_system_stats(child_id: int | None, process_limit: int = 8, debug_nodes: bool = False) -> NodeSystemCollection:
     """Local + every remote node, in parallel.
 
     `node_stats` always lists every node (so multi-node views — the network
@@ -133,8 +162,14 @@ def collect_system_stats(child_id: int | None, process_limit: int = 8) -> NodeSy
                     node_stats.append(future.result())
                 except Exception as exc:
                     node_stats.append(_failed_node(child.id, child.name or f"node-{child.id}", str(child.mode), str(exc)))
+    
+    if debug_nodes:
+        local_row = next(row for row in node_stats if row.id == 0)
+        for node_id in DEBUG_NODE_IDS:
+            node_stats.append(local_row.model_copy(deep=True, update={"id": node_id, "name": debug_node_name(node_id), "mode": "debug"}))
 
-    node_stats.sort(key=lambda row: row.id)
+    # This server first, then real nodes, then the debug copies.
+    node_stats.sort(key=lambda row: (row.id < 0, abs(row.id)))
 
     if child_id is not None:
         chosen = next((row for row in node_stats if row.id == child_id), None)

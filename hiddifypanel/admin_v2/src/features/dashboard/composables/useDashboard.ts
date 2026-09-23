@@ -17,6 +17,11 @@ function storedRange(): number {
   return (RANGE_OPTIONS as readonly number[]).includes(stored) ? stored : DEFAULT_RANGE
 }
 
+/** `?debug_node=1` on the page is forwarded to the API to simulate a multi-node panel. */
+function debugNodes(): boolean {
+  return ['1', 'true', 'yes'].includes(new URLSearchParams(window.location.search).get('debug_node')?.toLowerCase() ?? '')
+}
+
 function storedNode(): number | null {
   const raw = localStorage.getItem(NODE_STORAGE_KEY)
   if (raw === null || raw === '' || raw === 'all') return null
@@ -47,9 +52,11 @@ export function useDashboard() {
   const timers: number[] = []
   let inFlight = false
 
+  const debug = debugNodes()
   const query = () => ({
     days: rangeDays.value,
     ...(childId.value === null ? {} : { child_id: childId.value }),
+    ...(debug ? { debug_node: 1 as const } : {}),
   })
 
   function applySystem(snapshot: DashboardSnapshot) {

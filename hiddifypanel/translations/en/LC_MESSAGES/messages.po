@@ -1358,8 +1358,8 @@ msgstr "RAM"
 msgid "adminV2.dashboard.range"
 msgstr "History range"
 
-msgid "adminV2.dashboard.receivedSinceRestart"
-msgstr "Received since restart"
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "Total download (since boot)"
 
 msgid "adminV2.dashboard.refresh"
 msgstr "Refresh now"
@@ -1370,8 +1370,8 @@ msgstr "Live"
 msgid "adminV2.dashboard.rollingAverage"
 msgstr "7-day average"
 
-msgid "adminV2.dashboard.sentSinceRestart"
-msgstr "Sent since restart"
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "Total upload (since boot)"
 
 msgid "adminV2.dashboard.subtitle"
 msgstr "Traffic, users and server health at a glance"

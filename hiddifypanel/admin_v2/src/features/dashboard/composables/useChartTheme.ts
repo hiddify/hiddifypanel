@@ -29,12 +29,29 @@ export const NODE_COLORS = [
   '#84cc16',
 ] as const
 
+function hslToHex(h: number, s: number, l: number): string {
+  const a = s * Math.min(l, 1 - l)
+  const channel = (n: number) => {
+    const k = (n + h / 30) % 12
+    const c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))
+    return Math.round(c * 255)
+      .toString(16)
+      .padStart(2, '0')
+  }
+  return `#${channel(0)}${channel(8)}${channel(4)}`
+}
+
 /**
  * Stable color for a node's identity, keyed by its id (not array position) so
  * the same node gets the same color on every chart across the dashboard.
+ * Ids past the curated palette get their own golden-angle hue instead of
+ * wrapping around, so two nodes never share a color.
  */
 export function nodeColor(id: number): string {
-  return NODE_COLORS[Math.abs(id) % NODE_COLORS.length]
+  const index = Math.abs(id)
+  if (index < NODE_COLORS.length) return NODE_COLORS[index]!
+  const hue = (index * 137.508) % 360
+  return hslToHex(hue, 0.65, index % 2 ? 0.5 : 0.42)
 }
 
 export type ChartOptionsLike = Record<string, unknown>

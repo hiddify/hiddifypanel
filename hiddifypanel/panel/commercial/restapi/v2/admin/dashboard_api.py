@@ -10,6 +10,7 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import Role
 from hiddifypanel.models.usage import DailyUsage
+from hiddifypanel.panel import hiddify
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DEFAULT_RANGE_DAYS, DashboardDiskDetail, DashboardOutputSchema
 
 ALLOWED_RANGE_DAYS = (7, 14, 30, 90, 180, 365)
@@ -41,6 +42,10 @@ def _int_arg(name: str) -> int | None:
         return None
 
 
+def _debug_nodes() -> bool:
+    return request.args.get("debug_node", "").lower() in ("1", "true", "yes")
+
+
 class AdminDashboardApi(MethodView):
     """Everything the Admin V2 dashboard renders, in a single snapshot.
 
@@ -49,7 +54,7 @@ class AdminDashboardApi(MethodView):
     day-by-day so polls do not re-sum the whole history.
     """
 
-    decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
+    decorators = [login_required(node_auth=True)]
 
     @app.output(DashboardOutputSchema)
     def get(self) -> DashboardOutputSchema:
@@ -60,7 +65,11 @@ class AdminDashboardApi(MethodView):
         system_only = request.args.get("include") == "system"
         child_id = _int_arg("child_id")
 
-        live = node_system.collect_system_stats(child_id, process_limit=_process_limit())
+        debug_nodes = _debug_nodes()
+
+        live = node_system.collect_system_stats(child_id, process_limit=_process_limit(), debug_nodes=debug_nodes)
+        admin_base = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True) + "admin/"
+        node_system.attach_panel_urls(live.node_stats, g.account.uuid, admin_base)
 
         dto = DashboardOutputSchema(
             generated_at=datetime.datetime.now(datetime.UTC).isoformat(),
@@ -78,7 +87,7 @@ class AdminDashboardApi(MethodView):
         if admin_id not in g.account.recursive_sub_admins_ids():
             admin_id = g.account.id
 
-        stats = DailyUsage.get_dashboard_stats(admin_id=admin_id, child_id=child_id, series_days=range_days)
+        stats = DailyUsage.get_dashboard_stats(admin_id=admin_id, child_id=child_id, series_days=range_days, debug_nodes=debug_nodes)
         dto.series = stats.series
         dto.usage = stats.usage
         dto.users = stats.users

@@ -207,6 +207,8 @@ class DashboardNodeStats(ApiModel):
     id: int
     name: str
     mode: str
+    # Admin panel of the node for the current account; None for this server.
+    panel_url: str | None = None
     ok: bool = True
     error: str | None = None
     cpu: DashboardCpu | None = None

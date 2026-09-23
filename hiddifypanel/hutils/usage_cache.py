@@ -118,5 +118,10 @@ def stacked_history(
     today: datetime.date,
     days: int,
     child_ids: list[int],
+    mirrors: dict[int, int] | None = None,
 ) -> list[DashboardDailyPoint]:
-    return stacked_series(load_node_points(admin_ids, today, days), today, days, child_ids)
+    """`mirrors` maps a fake child id to a real one whose points it copies (debug nodes)."""
+    points = load_node_points(admin_ids, today, days)
+    for fake_id, source_id in (mirrors or {}).items():
+        points += [NodeDailyPoint(day=point.day, child_id=fake_id, usage=point.usage, online=point.online) for point in points if point.child_id == source_id]
+    return stacked_series(points, today, days, child_ids)

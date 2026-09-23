@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import random
@@ -49,7 +50,7 @@ def _v140(child_id):
     set_hconfig(ConfigEnum.ssfaketls_enable, False)
     set_hconfig(ConfigEnum.dnstt_enable, False)
     add_config_if_not_exist(ConfigEnum.last_users_sync, "0001-01-01 00:00:00", child_id)
-    add_config_if_not_exist(ConfigEnum.node_name, f"{socket.gethostname()}-{hconfig(ConfigEnum.unique_id)}", child_id)
+    add_config_if_not_exist(ConfigEnum.node_name, f"{socket.gethostname()}-{hashlib.sha256(hconfig(ConfigEnum.unique_id).encode()).hexdigest()[:4]}", child_id)
 
     execute("UPDATE user SET deleted=0 WHERE deleted IS NULL")
 

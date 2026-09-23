@@ -465,6 +465,7 @@ export interface DashboardNodeStats {
   id: number
   name: string
   mode: string
+  panel_url?: string | null
   ok: boolean
   error?: string | null
   cpu?: DashboardCpu
@@ -593,6 +594,8 @@ export const dashboardApi = {
     admin_id?: number
     child_id?: number
     include?: 'system'
+    /** Adds three copies of this server as fake nodes to simulate a multi-node panel. */
+    debug_node?: 1
   }) => getHttp().get<DashboardSnapshot>('/dashboard/', { params }).then((r) => r.data),
   /** Disk usage + largest top-level folders for one node — fetched on demand (a popup). */
   disk: (params?: { child_id?: number }) => getHttp().get<DashboardDiskDetail>('/dashboard/disk/', { params }).then((r) => r.data),
