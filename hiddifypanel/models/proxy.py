@@ -1,5 +1,8 @@
+from __future__ import annotations
+
+from collections.abc import Iterable
 from enum import auto
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
@@ -7,6 +10,9 @@ from sqlalchemy.types import JSON
 from strenum import StrEnum
 
 from hiddifypanel.database import db
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.node import ProxyModel
 
 
 class ProxyTransport(StrEnum):
@@ -86,44 +92,51 @@ class Proxy(db.Model):
     def enabled(self):
         return self.enable * 1
 
+    def to_model(self) -> ProxyModel:
+        from hiddifypanel.models.external_model.node import ProxyModel
+
+        return ProxyModel(
+            name=self.name,
+            enable=self.enable,
+            proto=self.proto,
+            l3=self.l3,
+            transport=self.transport,
+            cdn=self.cdn,
+            child_unique_id=self.child.unique_id if self.child else "",
+            params=self.params,
+        )
+
     def to_dict(self):
-        return {
-            "name": self.name,
-            "enable": self.enable,
-            "proto": self.proto,
-            "l3": self.l3,
-            "transport": self.transport,
-            "cdn": self.cdn,
-            "child_unique_id": self.child.unique_id if self.child else "",
-            "params": self.params,
-        }
+        return self.to_model().to_dict()
 
     def __str__(self):
         return str(self.to_dict())
 
     @staticmethod
-    def add_or_update(commit=True, child_id=0, **proxy):
-        dbproxy = Proxy.query.filter(Proxy.name == proxy["name"]).first()
+    def add_or_update(commit=True, child_id=0, **proxy) -> Proxy:
+        from hiddifypanel.models.external_model.node import ProxyModel
+
+        return Proxy.upsert(ProxyModel.coerce(proxy), child_id=child_id, commit=commit)
+
+    @staticmethod
+    def upsert(data: ProxyModel, *, child_id: int = 0, commit: bool = True) -> Proxy:
+        """``data.proto``/``transport`` already map legacy ``ss``/``splithttp`` aliases."""
+        dbproxy = Proxy.query.filter(Proxy.name == data.name).first()
         if not dbproxy:
             dbproxy = Proxy()
             db.session.add(dbproxy)
-        dbproxy.enable = proxy["enable"]
-        dbproxy.name = proxy["name"]
-        proto = proxy["proto"]
-        proto_value = str(getattr(proto, "value", proto) or "").strip().lower()
-        if proto_value == "ss":
-            proto = ProxyProto.shadowsocks
-        dbproxy.proto = proto
-        transport = proxy["transport"]
-        if transport == "splithttp":
-            transport = "xhttp"
-        dbproxy.transport = transport
-        dbproxy.cdn = proxy["cdn"]
-        dbproxy.l3 = proxy["l3"]
-        dbproxy.params = proxy["params"]
+        dbproxy.enable = data.enable
+        dbproxy.name = data.name
+        dbproxy.proto = data.proto
+        dbproxy.transport = data.transport
+        dbproxy.cdn = data.cdn
+        dbproxy.l3 = data.l3
+        if data.has("params"):
+            dbproxy.params = data.params
         dbproxy.child_id = child_id
         if commit:
             db.session.commit()
+        return dbproxy
 
     @staticmethod
     def from_schema(schema):
@@ -136,12 +149,12 @@ class Proxy(db.Model):
         return ProxySchema.model_validate(proxy_dict)
 
     @staticmethod
-    def bulk_register(proxies, commit=True, force_child_unique_id: str | None = None):
+    def bulk_register(proxies: Iterable[Any], commit=True, force_child_unique_id: str | None = None):
+        from hiddifypanel.models.external_model.node import ProxyModel
         from hiddifypanel.panel import hiddify
 
-        for proxy in proxies:
-            row = proxy.model_dump() if hasattr(proxy, "model_dump") else proxy
-            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
-            Proxy.add_or_update(commit=False, child_id=child_id, **row)
+        for row in ProxyModel.coerce_many(proxies):
+            child_id = hiddify.child_id_from_row({"child_unique_id": row.child_unique_id}, force_child_unique_id)
+            Proxy.upsert(row, child_id=child_id, commit=False)
         if commit:
             db.session.commit()

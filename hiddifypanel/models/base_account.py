@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import datetime
 import uuid
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, Any
 
 from flask_login import UserMixin as FlaskLoginUserMixin
 from sqlalchemy import BigInteger, DateTime, Enum, String
@@ -10,6 +12,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 from hiddifypanel.database import db
 from hiddifypanel.models.config_enum import Lang
 from hiddifypanel.models.role import Role
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.account import AccountModel
 
 
 class BaseAccount(db.Model, FlaskLoginUserMixin):
@@ -40,8 +45,13 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
             return False
         return True
 
+    def to_model(self) -> AccountModel:
+        from hiddifypanel.models.external_model.account import AccountModel
+
+        return AccountModel(name=self.name, comment=self.comment, uuid=self.uuid, telegram_id=self.telegram_id, lang=self.lang)
+
     def to_dict(self, convert_date=True) -> dict:
-        return {"name": self.name, "comment": self.comment, "uuid": self.uuid, "telegram_id": self.telegram_id, "lang": self.lang}
+        return self.to_model().to_dict()
 
     def update_password(self, new_password):
         self.password = new_password
@@ -66,42 +76,44 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
         return cls.query.filter(cls.username == username, cls.password == password).first()
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data):
+    def external_model(cls) -> type[AccountModel]:
+        from hiddifypanel.models.external_model.account import AccountModel
 
-        db_account: BaseAccount = cls.by_uuid(old_uuid or data.get("uuid"), create=True)
+        return AccountModel
+
+    @classmethod
+    def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data):
+        return cls.upsert(cls.external_model().coerce(data), commit=commit, old_uuid=old_uuid)
+
+    @classmethod
+    def upsert(cls, data: AccountModel, *, commit: bool = True, old_uuid: str | None = None):
         from hiddifypanel import hutils
 
-        if (uuid := data.get("uuid")) and hutils.auth.is_uuid_valid(uuid):
-            db_account.uuid = data["uuid"]
+        db_account: BaseAccount = cls.by_uuid(old_uuid or data.uuid, create=True)
 
-        if (name := data.get("name")) and isinstance(name, str):
-            db_account.name = name
-
-        if (comment := data.get("comment")) and isinstance(comment, str):
-            db_account.comment = comment
-        if (telegram_id := data.get("telegram_id")) and isinstance(telegram_id, int):
-            db_account.telegram_id = hutils.convert.to_int(telegram_id)
-        if (lang := data.get("lang")) is not None:
-            if isinstance(lang, Lang):
-                db_account.lang = lang
-            elif isinstance(lang, str) and lang.strip():
-                try:
-                    db_account.lang = Lang(lang.strip())
-                except (ValueError, KeyError):
-                    pass
+        if data.uuid and hutils.auth.is_uuid_valid(data.uuid):
+            db_account.uuid = data.uuid
+        if data.name:
+            db_account.name = data.name
+        if data.comment:
+            db_account.comment = data.comment
+        if data.telegram_id:
+            db_account.telegram_id = data.telegram_id
+        if data.lang is not None:
+            db_account.lang = data.lang
         if commit:
             db.session.commit()
         return db_account
 
     @classmethod
-    def bulk_register(cls, accounts: list = [], commit: bool = True, remove: bool = False):
-        for u in accounts:
-            row = u.model_dump() if hasattr(u, "model_dump") else u
-            cls.add_or_update(commit=False, **row)
+    def bulk_register(cls, accounts: Iterable[Any] = (), commit: bool = True, remove: bool = False):
+        rows = cls.external_model().coerce_many(accounts)
+        for row in rows:
+            cls.upsert(row, commit=False)
         if remove:
-            dd = {str(u.uuid if hasattr(u, "uuid") else u["uuid"]): 1 for u in accounts}
+            keep = {str(row.uuid) for row in rows if row.uuid}
             for d in cls.query.all():
-                if d.uuid not in dd:
+                if d.uuid not in keep:
                     db.session.delete(d)
         if commit:
             db.session.commit()

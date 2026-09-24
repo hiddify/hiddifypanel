@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import auto
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from slugify import slugify
 from sqlalchemy import Enum, ForeignKey, String, Text, UniqueConstraint
@@ -12,6 +12,14 @@ from strenum import StrEnum
 
 from hiddifypanel.database import db
 from hiddifypanel.models.proxy import ProxyProto
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.proxy_v3 import (
+        CustomProxyClientConfigModel,
+        CustomProxyClientCoreModel,
+        CustomProxyModel,
+        ProxyTemplateModel,
+    )
 from hiddifypanel.proxy_v3.custom_proxy_ports import (
     default_domain_modes_for_mode,
     mode_requires_static_ports,
@@ -215,33 +223,43 @@ class ProxyTemplate(db.Model):  # type: ignore
 
         return effective_template_content(self)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_model(self) -> ProxyTemplateModel:
         from hiddifypanel.models.child import Child
+        from hiddifypanel.models.external_model.proxy_v3 import ProxyTemplateModel
 
         child = Child.by_id(self.child_id) if self.child_id is not None else None
-        return {
-            "id": self.id,
-            "child_id": self.child_id,
-            "child_unique_id": child.unique_id if child else "",
-            "slug": self.slug,
-            "core": self.core.value if self.core else None,
-            "category": self.category.value if self.category else None,
-            "name": self.name,
-            "description": self.description or "",
-            "content": self.effective_content(),
-            "builtin_content": self.builtin_content or "",
-            "builtin_override": bool(self.builtin_override),
-            "is_builtin": bool(self.is_builtin),
-        }
+        return ProxyTemplateModel(
+            id=self.id,
+            child_id=self.child_id,
+            child_unique_id=child.unique_id if child else "",
+            slug=self.slug,
+            core=self.core,
+            category=self.category,
+            name=self.name,
+            description=self.description or "",
+            content=self.effective_content(),
+            builtin_content=self.builtin_content or "",
+            builtin_override=bool(self.builtin_override),
+            is_builtin=bool(self.is_builtin),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return self.to_model().to_dict()
 
     @classmethod
     def add_or_update(cls, child_id: int = 0, commit: bool = True, **data) -> ProxyTemplate:
-        slug = (data.get("slug") or "").strip()
+        from hiddifypanel.models.external_model.proxy_v3 import ProxyTemplateModel
+
+        return cls.upsert(ProxyTemplateModel.coerce(data), child_id=child_id, commit=commit)
+
+    @classmethod
+    def upsert(cls, data: ProxyTemplateModel, *, child_id: int = 0, commit: bool = True) -> ProxyTemplate:
+        slug = data.slug
         if not slug:
             raise ValueError("Template slug is required")
 
         db_tpl = None
-        template_id = data.get("id")
+        template_id = data.id
         if template_id:
             db_tpl = cls.query.filter(cls.id == template_id).first()
         if not db_tpl:
@@ -254,47 +272,46 @@ class ProxyTemplate(db.Model):  # type: ignore
             db_tpl = cls()
             db_tpl.child_id = child_id
             db_tpl.slug = slug
-            db_tpl.is_builtin = bool(data.get("is_builtin", False))
-            db_tpl.builtin_override = bool(data.get("builtin_override", False))
+            db_tpl.is_builtin = data.is_builtin
+            db_tpl.builtin_override = data.builtin_override
             db.session.add(db_tpl)
 
         if db_tpl.is_builtin:
-            if "slug" in data and data.get("slug") != db_tpl.slug:
+            if data.has("slug") and slug != db_tpl.slug:
                 raise ValueError("Built-in template slug cannot be changed")
             from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_builtin_override_template
 
-            if "name" in data:
-                db_tpl.name = data["name"]
-            if "description" in data:
-                db_tpl.description = data.get("description") or ""
-            if "content" in data:
-                new_content = data.get("content") or ""
+            if data.name is not None:
+                db_tpl.name = data.name
+            if data.has("description"):
+                db_tpl.description = data.description or ""
+            if data.has("content"):
+                new_content = data.content or ""
                 if new_content != (db_tpl.builtin_content or ""):
                     apply_builtin_override_template(db_tpl, override=True)
-                elif "builtin_override" in data:
-                    apply_builtin_override_template(db_tpl, override=bool(data["builtin_override"]))
+                elif data.has("builtin_override"):
+                    apply_builtin_override_template(db_tpl, override=data.builtin_override)
                 if db_tpl.builtin_override:
                     db_tpl.content = new_content
-            elif "builtin_override" in data:
-                apply_builtin_override_template(db_tpl, override=bool(data["builtin_override"]))
+            elif data.has("builtin_override"):
+                apply_builtin_override_template(db_tpl, override=data.builtin_override)
             if commit:
                 db.session.commit()
             return db_tpl
 
-        if "core" not in data:
+        if data.core is None:
             raise ValueError("Template core is required")
-        if "category" not in data:
+        if data.category is None:
             raise ValueError("Template category is required")
-        if "name" not in data:
+        if data.name is None:
             raise ValueError("Template name is required")
 
         db_tpl.slug = slug
-        db_tpl.core = _parse_template_core(data["core"])
-        category = data["category"]
-        db_tpl.category = category if isinstance(category, TemplateCategory) else TemplateCategory(category)
-        db_tpl.name = data["name"]
-        db_tpl.description = data.get("description") or ""
-        db_tpl.content = data.get("content") or ""
+        db_tpl.core = data.core
+        db_tpl.category = data.category
+        db_tpl.name = data.name
+        db_tpl.description = data.description or ""
+        db_tpl.content = data.content or ""
 
         if commit:
             db.session.commit()
@@ -302,17 +319,19 @@ class ProxyTemplate(db.Model):  # type: ignore
 
     @classmethod
     def bulk_register(cls, templates, commit: bool = True, force_child_unique_id: str | None = None) -> None:
+        from hiddifypanel.models.external_model.base import as_row
+        from hiddifypanel.models.external_model.proxy_v3 import ProxyTemplateModel
         from hiddifypanel.panel import hiddify
 
         for tpl in templates:
-            row = tpl.model_dump() if hasattr(tpl, "model_dump") else dict(tpl)
+            row = as_row(tpl)
             child_id = hiddify.child_id_from_row(row, force_child_unique_id)
-            payload = {k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id"}}
-            # Built-ins are keyed by slug; pass existing id so add_or_update can update them.
-            existing = cls.query.filter(cls.slug == payload.get("slug"), cls.child_id == child_id).first()
+            data = ProxyTemplateModel.coerce({k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id"}})
+            # Built-ins are keyed by slug; pass existing id so upsert can update them.
+            existing = cls.query.filter(cls.slug == data.slug, cls.child_id == child_id).first()
             if existing:
-                payload["id"] = existing.id
-            cls.add_or_update(child_id=child_id, commit=False, **payload)
+                data = ProxyTemplateModel.coerce(data, id=existing.id)
+            cls.upsert(data, child_id=child_id, commit=False)
         if commit:
             db.session.commit()
 
@@ -338,17 +357,22 @@ class CustomProxyClientCore(db.Model):  # type: ignore
             return self.outbounds_template or ""
         return self.builtin_outbounds_template or self.outbounds_template or ""
 
-    def to_dict(self) -> dict[str, Any]:
-        payload = {
-            "core": self.core.value,
-            "version": self.version or "",
-            "slug": self.slug or f"client-{self.core.value}",
-            "is_builtin": bool(self.is_builtin),
-            "outbounds_template": self.effective_outbounds_template(),
-        }
+    def to_model(self) -> CustomProxyClientCoreModel:
+        from hiddifypanel.models.external_model.proxy_v3 import CustomProxyClientCoreModel
+
+        model = CustomProxyClientCoreModel(
+            core=self.core,
+            version=self.version or "",
+            slug=self.slug or f"client-{self.core.value}",
+            is_builtin=bool(self.is_builtin),
+            outbounds_template=self.effective_outbounds_template(),
+        )
         if self.override:
-            payload["override"] = True
-        return payload
+            model.override = True  # only emitted when set
+        return model
+
+    def to_dict(self) -> dict[str, Any]:
+        return self.to_model().to_dict()
 
 
 class CustomProxy(db.Model):  # type: ignore
@@ -452,7 +476,15 @@ class CustomProxy(db.Model):  # type: ignore
     def is_effectively_enabled(self) -> bool:
         return bool(self.enable)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_model(self) -> CustomProxyModel:
+        from hiddifypanel.models.child import Child
+        from hiddifypanel.models.external_model.proxy_v3 import (
+            BlockedByModel,
+            CustomProxyClientConfigModel,
+            CustomProxyClientCoreModel,
+            CustomProxyModel,
+            CustomProxyServerConfigModel,
+        )
         from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
             builtin_payload,
             client_override_key,
@@ -460,248 +492,251 @@ class CustomProxy(db.Model):  # type: ignore
             overrides_payload,
         )
 
-        client_configs = [row.to_dict() for row in self.client_cores]
         builtin_client_configs = [
-            {
-                "core": row.core.value,
-                "version": row.version or "",
-                "outbounds_template": ((self.builtin or {}).get(client_override_key(row.core.value), "") if self.is_builtin else (row.builtin_outbounds_template or "")),
-                "slug": row.slug or f"client-{row.core.value}",
-                "is_builtin": bool(row.is_builtin),
-                "override": is_field_overridden(self, client_override_key(row.core.value)),
-            }
+            CustomProxyClientCoreModel(
+                core=row.core,
+                version=row.version or "",
+                outbounds_template=((self.builtin or {}).get(client_override_key(row.core.value), "") if self.is_builtin else (row.builtin_outbounds_template or "")),
+                slug=row.slug or f"client-{row.core.value}",
+                is_builtin=bool(row.is_builtin),
+                override=is_field_overridden(self, client_override_key(row.core.value)),
+            )
             for row in self.client_cores
         ]
         blocked = self.blocked_parent_enables()
         stored_enable = bool(self._enable)
-        from hiddifypanel.models.child import Child
-
         child = Child.by_id(self.child_id) if self.child_id is not None else None
-        return {
-            "id": self.id,
-            "child_id": self.child_id,
-            "child_unique_id": child.unique_id if child else "",
-            "name": self.name,
-            "slug": self.slug,
-            "enable": stored_enable,
-            "effective_enable": stored_enable and not blocked,
-            "blocked_by": blocked,
-            "mode": self.mode.value if self.mode else None,
-            "proto": self.proto.value,
-            "transport": self.transport.value,
-            "tls_layer": self.tls_layer.value if self.tls_layer else None,
-            "l7_reverse_proto": self.l7_reverse_proto.value if self.l7_reverse_proto else None,
-            "download_tls_layer": self.download_tls_layer.value if self.download_tls_layer else None,
-            "download_domain_modes": list(self.download_domain_modes or []),
-            "categories": self.categories or [],
-            "domain_modes": list(self.domain_modes or []),
-            "custom_path": self.custom_path or "",
-            "server_config": {
-                "core": self.server_core.value if self.server_core else None,
-                "inbound_template": self.effective_server_config_text(),
-                "inbound_tcp_ports": list(self.server_inbound_tcp_ports or []),
-                "inbound_udp_ports": list(self.server_inbound_udp_ports or []),
-                "tcp_udp": (self.server_inbound_tcp_udp or InboundTcpUdp.both).value,
-                "download_tcp_udp": (self.server_inbound_download_tcp_udp.value if self.server_inbound_download_tcp_udp else None),
-            },
-            "client_config": {"core_configs": client_configs},
-            "builtin": builtin_payload(self) if self.is_builtin else {},
-            "builtin_overrides": overrides_payload(self) if self.is_builtin else {},
-            "builtin_server_config": (self.builtin or {}).get("server_config") or self.builtin_server_config or "",
-            "builtin_client_config": {"core_configs": builtin_client_configs},
-            "server_override": bool((self.builtin_overrides or {}).get("server_config")),
-            "client_override": any((self.builtin_overrides or {}).get(client_override_key(row.core.value)) for row in self.client_cores),
-            "sort_order": self.sort_order or 0,
-            "is_builtin": bool(self.is_builtin),
-            "is_common_proxy": bool(self.is_common_proxy),
-            "client_cores": [row.core.value for row in self.client_cores if row.core],
-            "server_core": self.server_core.value if self.server_core else None,
-        }
+        return CustomProxyModel(
+            id=self.id,
+            child_id=self.child_id,
+            child_unique_id=child.unique_id if child else "",
+            name=self.name,
+            slug=self.slug,
+            enable=stored_enable,
+            effective_enable=stored_enable and not blocked,
+            blocked_by=[BlockedByModel(key=b["key"], label=b["label"]) for b in blocked],
+            mode=self.mode,
+            proto=self.proto,
+            transport=self.transport,
+            tls_layer=self.tls_layer,
+            l7_reverse_proto=self.l7_reverse_proto,
+            download_tls_layer=self.download_tls_layer,
+            download_domain_modes=list(self.download_domain_modes or []),
+            categories=self.categories or [],
+            domain_modes=list(self.domain_modes or []),
+            custom_path=self.custom_path or "",
+            server_config=CustomProxyServerConfigModel(
+                core=self.server_core,
+                inbound_template=self.effective_server_config_text(),
+                inbound_tcp_ports=list(self.server_inbound_tcp_ports or []),
+                inbound_udp_ports=list(self.server_inbound_udp_ports or []),
+                tcp_udp=self.server_inbound_tcp_udp or InboundTcpUdp.both,
+                download_tcp_udp=self.server_inbound_download_tcp_udp,
+            ),
+            client_config=CustomProxyClientConfigModel(core_configs=[row.to_model() for row in self.client_cores]),
+            builtin=builtin_payload(self) if self.is_builtin else {},
+            builtin_overrides=overrides_payload(self) if self.is_builtin else {},
+            builtin_server_config=(self.builtin or {}).get("server_config") or self.builtin_server_config or "",
+            builtin_client_config=CustomProxyClientConfigModel(core_configs=builtin_client_configs),
+            server_override=bool((self.builtin_overrides or {}).get("server_config")),
+            client_override=any((self.builtin_overrides or {}).get(client_override_key(row.core.value)) for row in self.client_cores),
+            sort_order=self.sort_order or 0,
+            is_builtin=bool(self.is_builtin),
+            is_common_proxy=bool(self.is_common_proxy),
+            client_cores=[row.core.value for row in self.client_cores if row.core],
+            server_core=self.server_core,
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return self.to_model().to_dict()
 
     @classmethod
     def add_or_update(cls, child_id: int = 0, commit: bool = True, **data) -> CustomProxy:
-        proxy_id = data.get("id")
+        from hiddifypanel.models.external_model.proxy_v3 import CustomProxyModel
+
+        return cls.upsert(CustomProxyModel.coerce(data), child_id=child_id, commit=commit)
+
+    @classmethod
+    def upsert(cls, data: CustomProxyModel, *, child_id: int = 0, commit: bool = True) -> CustomProxy:
         dbproxy = None
-        if proxy_id:
-            dbproxy = cls.query.filter(cls.id == proxy_id, cls.child_id == child_id).first()
+        if data.id:
+            dbproxy = cls.query.filter(cls.id == data.id, cls.child_id == child_id).first()
             if not dbproxy:
-                raise ValueError(f"Custom proxy id={proxy_id} not found")
-        if not dbproxy and data.get("slug"):
-            dbproxy = cls.query.filter(cls.slug == data["slug"], cls.child_id == child_id).first()
+                raise ValueError(f"Custom proxy id={data.id} not found")
+        if not dbproxy and data.slug:
+            dbproxy = cls.query.filter(cls.slug == data.slug, cls.child_id == child_id).first()
         if not dbproxy:
-            if "name" not in data:
+            if not data.has("name"):
                 raise ValueError("name is required")
-            if "mode" not in data:
+            if not data.has("mode"):
                 raise ValueError("mode is required")
             dbproxy = cls()
             dbproxy.child_id = child_id
-            dbproxy.is_builtin = bool(data.get("is_builtin", False))
-            dbproxy.server_override = bool(data.get("server_override", False))
-            dbproxy.is_common_proxy = bool(data.get("is_common_proxy", False))
+            dbproxy.is_builtin = data.is_builtin
+            dbproxy.server_override = data.server_override
+            dbproxy.is_common_proxy = data.is_common_proxy
             db.session.add(dbproxy)
 
         if dbproxy.is_builtin:
-            if "slug" in data:
-                new_slug = (data.get("slug") or "").strip()
-                if dbproxy.slug and new_slug and dbproxy.slug != new_slug:
-                    raise ValueError("Built-in proxy slug cannot be changed")
-                if new_slug:
-                    dbproxy.slug = new_slug
-            if not dbproxy.slug:
-                raise ValueError("slug is required")
-            if "mode" in data:
-                dbproxy.mode = _parse_mode(data["mode"])
-            elif not dbproxy.mode:
-                raise ValueError("mode is required")
-            if "proto" in data and data.get("proto") not in (None, ""):
-                dbproxy.proto = _parse_proto(data.get("proto"))
-            elif not dbproxy.proto:
-                dbproxy.proto = infer_proto_from_categories(data.get("categories") or dbproxy.categories)
-            if "transport" in data and data.get("transport") not in (None, ""):
-                dbproxy.transport = _parse_transport(data.get("transport"))
-
-            from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general
-            from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
-                GENERAL_OVERRIDE_FIELDS,
-                set_field_override,
-            )
-
-            if "name" in data:
-                dbproxy.name = data["name"]
-            if "enable" in data:
-                dbproxy.enable = bool(data["enable"])
-            if "is_common_proxy" in data:
-                dbproxy.is_common_proxy = bool(data["is_common_proxy"])
-            if "categories" in data:
-                dbproxy.categories = list(data.get("categories") or [])
-            if "builtin_overrides" in data:
-                incoming = {str(k): bool(v) for k, v in (data.get("builtin_overrides") or {}).items()}
-                # Replace override set: keys omitted from the payload are cleared so revert sticks.
-                existing = set((dbproxy.builtin_overrides or {}).keys())
-                for key in existing | set(incoming.keys()):
-                    set_field_override(dbproxy, key, incoming.get(key, False))
-            if "server_override" in data:
-                set_field_override(dbproxy, "server_config", bool(data["server_override"]))
-            if "l7_reverse_proto" in data and data.get("l7_reverse_proto") not in (None, ""):
-                dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_reverse_proto"))
-            elif "l7_proto" in data and data.get("l7_proto") not in (None, ""):
-                dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_proto"))
-            _apply_download_xhttp_fields(dbproxy, data)
-            if "tls_layer" in data and data.get("tls_layer") not in (None, ""):
-                dbproxy.tls_layer = _parse_tls_layer(data.get("tls_layer"))
-            apply_server = bool(
-                (data.get("builtin_overrides") or {}).get("server_config")
-                or data.get("server_override")
-                or dbproxy.server_override
-                or dbproxy.id is None
-            )
-            if "server_config" in data and apply_server:
-                payload = data["server_config"] or {}
-                if "core" in payload:
-                    dbproxy.server_core = _parse_server_core(payload["core"])
-                if "inbound_template" in payload:
-                    dbproxy.server_config = payload.get("inbound_template") or ""
-                _apply_server_ports(dbproxy, payload)
-                _apply_server_tcp_udp(dbproxy, payload)
-            if "client_config" in data and dbproxy.id is not None:
-                cls._sync_builtin_client_overrides(dbproxy, data.get("client_config") or {})
-            general_keys = tuple(GENERAL_OVERRIDE_FIELDS)
-            if any(k in data for k in general_keys):
-                apply_custom_proxy_general(dbproxy, data)
-            for field in general_keys:
-                if field in data and (data.get("builtin_overrides") or {}).get(field):
-                    setattr(dbproxy, field, data[field])
-            if "domain_modes" in data:
-                _apply_domain_modes(dbproxy, list(data.get("domain_modes") or []))
-            elif "mode" in data and "domain_modes" not in data:
-                _apply_domain_modes(dbproxy, None)
-            validate_naive_tls_layer(dbproxy.proto, dbproxy.tls_layer)
-            if commit:
-                db.session.commit()
-            return dbproxy
-
-        if "name" in data:
-            dbproxy.name = data["name"]
-        if "slug" in data:
-            dbproxy.slug = data["slug"]
-        elif not dbproxy.slug:
-            dbproxy.slug = proxy_slug(dbproxy.name)
-        if "enable" in data:
-            dbproxy.enable = bool(data["enable"])
-        if "mode" in data:
-            dbproxy.mode = _parse_mode(data["mode"])
-            if "domain_modes" not in data:
-                _apply_domain_modes(dbproxy, None)
-        if "proto" in data and data.get("proto") not in (None, ""):
-            dbproxy.proto = _parse_proto(data.get("proto"))
-        elif not dbproxy.proto:
-            dbproxy.proto = infer_proto_from_categories(data.get("categories") or dbproxy.categories)
-        if "transport" in data and data.get("transport") not in (None, ""):
-            dbproxy.transport = _parse_transport(data.get("transport"))
-
-        if "tls_layer" in data and data.get("tls_layer") not in (None, ""):
-            dbproxy.tls_layer = _parse_tls_layer(data.get("tls_layer"))
-        if "l7_reverse_proto" in data and data.get("l7_reverse_proto") not in (None, ""):
-            dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_reverse_proto"))
-        elif "l7_proto" in data and data.get("l7_proto") not in (None, ""):
-            dbproxy.l7_reverse_proto = _parse_l7_reverse_proto(data.get("l7_proto"))
-        _apply_download_xhttp_fields(dbproxy, data)
-        if "categories" in data:
-            dbproxy.categories = list(data.get("categories") or [])
-        if "domain_modes" in data:
-            _apply_domain_modes(dbproxy, list(data.get("domain_modes") or []))
-        if "custom_path" in data:
-            dbproxy.custom_path = normalize_custom_path(data["custom_path"])
-        if "server_config" in data:
-            payload = data["server_config"] or {}
-            if "core" in payload:
-                dbproxy.server_core = _parse_server_core(payload["core"])
-            if "inbound_template" in payload:
-                dbproxy.server_config = payload.get("inbound_template") or ""
-            _apply_server_ports(dbproxy, payload)
-            _apply_server_tcp_udp(dbproxy, payload)
-        if "client_config" in data:
-            core_configs = list((data.get("client_config") or {}).get("core_configs") or [])
-            if not core_configs:
-                raise ValueError("client_config.core_configs must contain at least one client core")
-            dbproxy.client_cores.clear()
-            for item in core_configs:
-                core = _parse_client_core(item.get("core"))
-                template = str(item.get("outbounds_template") or item.get("link_template") or "")
-                slug = str(item.get("slug") or f"client-{core.value}")
-                dbproxy.client_cores.append(
-                    CustomProxyClientCore(
-                        core=core,
-                        version=str(item.get("version") or ""),
-                        slug=slug,
-                        is_builtin=bool(item.get("is_builtin")),
-                        outbounds_template=template,
-                    )
-                )
-        if "sort_order" in data:
-            dbproxy.sort_order = int(data["sort_order"])
-
-        _validate_required_server_ports(dbproxy)
+            cls._upsert_builtin(dbproxy, data)
+        else:
+            cls._upsert_custom(dbproxy, data)
         validate_naive_tls_layer(dbproxy.proto, dbproxy.tls_layer)
-
         if commit:
             db.session.commit()
         return dbproxy
 
     @classmethod
+    def _upsert_builtin(cls, dbproxy: CustomProxy, data: CustomProxyModel) -> None:
+        """Built-ins only take fields the admin explicitly overrode; the rest track the catalog."""
+        from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
+            GENERAL_OVERRIDE_FIELDS,
+            set_field_override,
+        )
+
+        body = data.provided()
+        if data.has("slug"):
+            new_slug = (data.slug or "").strip()
+            if dbproxy.slug and new_slug and dbproxy.slug != new_slug:
+                raise ValueError("Built-in proxy slug cannot be changed")
+            if new_slug:
+                dbproxy.slug = new_slug
+        if not dbproxy.slug:
+            raise ValueError("slug is required")
+        if data.mode is not None:
+            dbproxy.mode = data.mode
+        elif not dbproxy.mode:
+            raise ValueError("mode is required")
+        if data.proto is not None:
+            dbproxy.proto = data.proto
+        elif not dbproxy.proto:
+            dbproxy.proto = infer_proto_from_categories(data.categories or dbproxy.categories)
+        if data.transport is not None:
+            dbproxy.transport = data.transport
+
+        if data.name is not None:
+            dbproxy.name = data.name
+        if data.has("enable"):
+            dbproxy.enable = bool(data.enable)
+        if data.has("is_common_proxy"):
+            dbproxy.is_common_proxy = data.is_common_proxy
+        if data.has("categories"):
+            dbproxy.categories = list(data.categories or [])
+        if data.has("builtin_overrides"):
+            incoming = data.builtin_overrides or {}
+            # Replace override set: keys omitted from the data are cleared so revert sticks.
+            existing = set((dbproxy.builtin_overrides or {}).keys())
+            for key in existing | set(incoming.keys()):
+                set_field_override(dbproxy, key, incoming.get(key, False))
+        if data.has("server_override"):
+            set_field_override(dbproxy, "server_config", data.server_override)
+        if data.l7_reverse_proto is not None:
+            dbproxy.l7_reverse_proto = data.l7_reverse_proto
+        _apply_download_xhttp_fields(dbproxy, body)
+        if data.tls_layer is not None:
+            dbproxy.tls_layer = data.tls_layer
+        apply_server = bool(data.override_requested("server_config") or data.server_override or dbproxy.server_override or dbproxy.id is None)
+        if data.server_config is not None and apply_server:
+            cls._apply_server_config(dbproxy, data)
+        if data.client_config is not None and dbproxy.id is not None:
+            cls._sync_builtin_client_overrides(dbproxy, data.client_config)
+        general_keys = tuple(GENERAL_OVERRIDE_FIELDS)
+        if any(data.has(k) for k in general_keys):
+            apply_custom_proxy_general(dbproxy, body)
+        for field in general_keys:
+            if data.has(field) and data.override_requested(field):
+                setattr(dbproxy, field, getattr(data, field))
+        if data.has("domain_modes"):
+            _apply_domain_modes(dbproxy, list(data.domain_modes or []))
+        elif data.has("mode"):
+            _apply_domain_modes(dbproxy, None)
+
+    @classmethod
+    def _upsert_custom(cls, dbproxy: CustomProxy, data: CustomProxyModel) -> None:
+        if data.name is not None:
+            dbproxy.name = data.name
+        if data.slug is not None:
+            dbproxy.slug = data.slug
+        elif not dbproxy.slug:
+            dbproxy.slug = proxy_slug(dbproxy.name)
+        if data.has("enable"):
+            dbproxy.enable = bool(data.enable)
+        if data.mode is not None:
+            dbproxy.mode = data.mode
+            if not data.has("domain_modes"):
+                _apply_domain_modes(dbproxy, None)
+        if data.proto is not None:
+            dbproxy.proto = data.proto
+        elif not dbproxy.proto:
+            dbproxy.proto = infer_proto_from_categories(data.categories or dbproxy.categories)
+        if data.transport is not None:
+            dbproxy.transport = data.transport
+
+        if data.tls_layer is not None:
+            dbproxy.tls_layer = data.tls_layer
+        if data.l7_reverse_proto is not None:
+            dbproxy.l7_reverse_proto = data.l7_reverse_proto
+        _apply_download_xhttp_fields(dbproxy, data.provided())
+        if data.has("categories"):
+            dbproxy.categories = list(data.categories or [])
+        if data.has("domain_modes"):
+            _apply_domain_modes(dbproxy, list(data.domain_modes or []))
+        if data.has("custom_path"):
+            dbproxy.custom_path = normalize_custom_path(data.custom_path)
+        if data.server_config is not None:
+            cls._apply_server_config(dbproxy, data)
+        if data.client_config is not None:
+            core_configs = data.client_config.core_configs or []
+            if not core_configs:
+                raise ValueError("client_config.core_configs must contain at least one client core")
+            dbproxy.client_cores.clear()
+            if dbproxy.id is not None:
+                # Delete the old rows before re-inserting the same (core, version) keys.
+                db.session.flush()
+            for item in core_configs:
+                dbproxy.client_cores.append(
+                    CustomProxyClientCore(
+                        core=item.core,
+                        version=item.version,
+                        slug=item.default_slug,
+                        is_builtin=item.is_builtin,
+                        outbounds_template=item.template,
+                    )
+                )
+        if data.sort_order is not None:
+            dbproxy.sort_order = data.sort_order
+
+        _validate_required_server_ports(dbproxy)
+
+    @staticmethod
+    def _apply_server_config(dbproxy: CustomProxy, data: CustomProxyModel) -> None:
+        server = data.server_config
+        assert server is not None
+        if server.core is not None:
+            dbproxy.server_core = server.core
+        if server.has("inbound_template"):
+            dbproxy.server_config = server.inbound_template or ""
+        body = server.provided()
+        _apply_server_ports(dbproxy, body)
+        _apply_server_tcp_udp(dbproxy, body)
+
+    @classmethod
     def bulk_register(cls, proxies, commit: bool = True, force_child_unique_id: str | None = None) -> None:
+        from hiddifypanel.models.external_model.base import as_row
+        from hiddifypanel.models.external_model.proxy_v3 import CustomProxyModel
         from hiddifypanel.panel import hiddify
 
         for proxy in proxies:
-            row = proxy.model_dump() if hasattr(proxy, "model_dump") else dict(proxy)
+            row = as_row(proxy)
             child_id = hiddify.child_id_from_row(row, force_child_unique_id)
-            payload = {k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id", "effective_enable", "blocked_by", "client_cores"}}
-            # Match by slug on this child; drop cross-DB ids.
-            existing = cls.query.filter(cls.slug == payload.get("slug"), cls.child_id == child_id).first()
+            # Match by slug on this child; drop cross-DB ids and computed fields.
+            data = {k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id", "effective_enable", "blocked_by", "client_cores"}}
+            existing = cls.query.filter(cls.slug == data.get("slug"), cls.child_id == child_id).first()
             if existing:
-                payload["id"] = existing.id
+                data["id"] = existing.id
             try:
-                cls.add_or_update(child_id=child_id, commit=False, **payload)
+                cls.upsert(CustomProxyModel.coerce(data), child_id=child_id, commit=False)
             except ValueError:
                 # Skip incomplete / incompatible legacy rows rather than aborting restore.
                 continue
@@ -709,34 +744,33 @@ class CustomProxy(db.Model):  # type: ignore
             db.session.commit()
 
     @classmethod
-    def _sync_builtin_client_overrides(cls, dbproxy: CustomProxy, client_config: dict[str, Any]) -> None:
+    def _sync_builtin_client_overrides(cls, dbproxy: CustomProxy, client_config: CustomProxyClientConfigModel) -> None:
         from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import client_override_key, set_field_override
 
-        for item in client_config.get("core_configs") or []:
-            core = _parse_client_core(item.get("core"))
+        for item in client_config.core_configs or []:
+            core = item.core
             key = client_override_key(core.value)
             row = next((r for r in dbproxy.client_cores if r.core == core), None)
             if not row:
-                slug = str(item.get("slug") or f"client-{core.value}")
                 row = CustomProxyClientCore(
                     core=core,
-                    version=str(item.get("version") or ""),
-                    slug=slug,
-                    is_builtin=bool(item.get("is_builtin")),
+                    version=item.version,
+                    slug=item.default_slug,
+                    is_builtin=item.is_builtin,
                 )
                 dbproxy.client_cores.append(row)
-            if "override" in item:
-                set_field_override(dbproxy, key, bool(item.get("override")))
-            elif item.get("outbounds_template") is not None or item.get("link_template") is not None:
+            if item.has("override"):
+                set_field_override(dbproxy, key, bool(item.override))
+            elif item.outbounds_template is not None or item.link_template is not None:
                 set_field_override(dbproxy, key, True)
-            if "outbounds_template" in item:
-                row.outbounds_template = item.get("outbounds_template") or ""
-            elif "link_template" in item:
-                row.outbounds_template = item.get("link_template") or ""
-            if "version" in item:
-                row.version = str(item.get("version") or "")
-            if "slug" in item and item.get("slug"):
-                row.slug = str(item.get("slug"))
+            if item.has("outbounds_template"):
+                row.outbounds_template = item.outbounds_template or ""
+            elif item.has("link_template"):
+                row.outbounds_template = item.link_template or ""
+            if item.has("version"):
+                row.version = item.version
+            if item.has("slug") and item.slug:
+                row.slug = str(item.slug)
 
     def duplicate(self, child_id: int | None = None) -> CustomProxy:
         child_id = child_id if child_id is not None else self.child_id
@@ -1064,37 +1098,37 @@ def _parse_tcp_udp(value: Any) -> InboundTcpUdp:
         raise ValueError(f"Invalid tcp_udp {value!r}. Must be one of: {allowed}") from exc
 
 
-def _apply_server_tcp_udp(dbproxy: CustomProxy, payload: dict[str, Any]) -> None:
+def _apply_server_tcp_udp(dbproxy: CustomProxy, data: dict[str, Any]) -> None:
     if dbproxy.is_builtin:
         return
     if uses_xhttp_download_settings(dbproxy):
         # Upload uses server_inbound_tcp_udp; accept legacy upload_tcp_udp as alias.
-        if "tcp_udp" in payload:
-            dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(payload.get("tcp_udp"))
-        elif "upload_tcp_udp" in payload:
-            dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(payload.get("upload_tcp_udp"))
-        if "download_tcp_udp" in payload:
-            dbproxy.server_inbound_download_tcp_udp = _parse_tcp_udp(payload.get("download_tcp_udp"))
+        if "tcp_udp" in data:
+            dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(data.get("tcp_udp"))
+        elif "upload_tcp_udp" in data:
+            dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(data.get("upload_tcp_udp"))
+        if "download_tcp_udp" in data:
+            dbproxy.server_inbound_download_tcp_udp = _parse_tcp_udp(data.get("download_tcp_udp"))
         return
     dbproxy.server_inbound_download_tcp_udp = None
-    if "tcp_udp" in payload:
-        dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(payload.get("tcp_udp"))
+    if "tcp_udp" in data:
+        dbproxy.server_inbound_tcp_udp = _parse_tcp_udp(data.get("tcp_udp"))
 
 
-def _apply_server_ports(dbproxy: CustomProxy, payload: dict[str, Any]) -> None:
+def _apply_server_ports(dbproxy: CustomProxy, data: dict[str, Any]) -> None:
     mode = dbproxy.mode
     if mode_uses_gateway_port(mode) or mode_uses_auto_ports(mode):
         dbproxy.server_inbound_tcp_ports = []
         dbproxy.server_inbound_udp_ports = []
         return
-    if not any(key in payload for key in ("inbound_tcp_ports", "inbound_udp_ports", "inbound_port")):
+    if not any(key in data for key in ("inbound_tcp_ports", "inbound_udp_ports", "inbound_port")):
         return
-    tcp_ports = normalize_port_list(payload.get("inbound_tcp_ports"))
-    if not tcp_ports and payload.get("inbound_port") is not None:
-        tcp_ports = normalize_port_list(payload.get("inbound_port"))
+    tcp_ports = normalize_port_list(data.get("inbound_tcp_ports"))
+    if not tcp_ports and data.get("inbound_port") is not None:
+        tcp_ports = normalize_port_list(data.get("inbound_port"))
     dbproxy.server_inbound_tcp_ports = tcp_ports
-    if "inbound_udp_ports" in payload:
-        dbproxy.server_inbound_udp_ports = normalize_port_list(payload.get("inbound_udp_ports"))
+    if "inbound_udp_ports" in data:
+        dbproxy.server_inbound_udp_ports = normalize_port_list(data.get("inbound_udp_ports"))
     else:
         dbproxy.server_inbound_udp_ports = list(tcp_ports)
 

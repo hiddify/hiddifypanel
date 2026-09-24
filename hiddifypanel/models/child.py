@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Iterable
 from datetime import datetime
 from enum import auto
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from flask import has_app_context
 from sqlalchemy import DateTime, Enum, String
@@ -16,6 +17,7 @@ from hiddifypanel.database import db
 if TYPE_CHECKING:
     from hiddifypanel.models.config import BoolConfig, StrConfig
     from hiddifypanel.models.domain import Domain
+    from hiddifypanel.models.external_model.node import ChildModel
     from hiddifypanel.models.proxy import Proxy
     from hiddifypanel.models.usage import DailyUsage
 
@@ -44,15 +46,20 @@ class Child(db.Model):  # type: ignore
     strconfigs: Mapped[list[StrConfig]] = relationship("StrConfig", cascade="all,delete", backref="child")
     dailyusages: Mapped[list[DailyUsage]] = relationship("DailyUsage", cascade="all,delete", backref="child")
 
+    def to_model(self) -> ChildModel:
+        from hiddifypanel.models.external_model.node import ChildModel
+
+        return ChildModel(
+            id=self.id,
+            name=self.name,
+            mode=self.mode,
+            unique_id=self.unique_id,
+            last_node_to_parent_time=self.last_node_to_parent_time,
+            last_parent_to_node_time=self.last_parent_to_node_time,
+        )
+
     def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "mode": self.mode,
-            "unique_id": self.unique_id,
-            "last_node_to_parent_time": self.last_node_to_parent_time.isoformat() if self.last_node_to_parent_time else None,
-            "last_parent_to_node_time": self.last_parent_to_node_time.isoformat() if self.last_parent_to_node_time else None,
-        }
+        return self.to_model().to_dict()
 
     def mark_node_to_parent(self, when: datetime | None = None, *, commit: bool = False) -> None:
         self.last_node_to_parent_time = when or datetime.now()
@@ -66,25 +73,36 @@ class Child(db.Model):  # type: ignore
 
     @staticmethod
     def add_or_update(commit=True, **data) -> Child:
-        dbchild = Child.query.filter(Child.id == data["id"]).first()
+        from hiddifypanel.models.external_model.node import ChildModel
+
+        return Child.upsert(ChildModel.coerce(data), commit=commit)
+
+    @staticmethod
+    def upsert(data: ChildModel, *, commit: bool = True) -> Child:
+        dbchild = Child.query.filter(Child.id == data.id).first() if data.id is not None else None
+        if not dbchild:
+            # Ids differ between panels; fall back to the stable unique_id so re-restores update in place.
+            dbchild = Child.query.filter(Child.unique_id == data.unique_id).first()
         if not dbchild:
             dbchild = Child()
             db.session.add(dbchild)
-        dbchild.name = data["name"]
-        dbchild.mode = data["mode"]
-        dbchild.unique_id = data["unique_id"]
-        if "last_node_to_parent_time" in data:
-            dbchild.last_node_to_parent_time = _parse_optional_datetime(data["last_node_to_parent_time"])
-        if "last_parent_to_node_time" in data:
-            dbchild.last_parent_to_node_time = _parse_optional_datetime(data["last_parent_to_node_time"])
+        dbchild.name = data.name
+        dbchild.mode = data.mode
+        dbchild.unique_id = data.unique_id
+        if data.last_node_to_parent_time is not None:
+            dbchild.last_node_to_parent_time = data.last_node_to_parent_time
+        if data.last_parent_to_node_time is not None:
+            dbchild.last_parent_to_node_time = data.last_parent_to_node_time
         if commit:
             db.session.commit()
         return dbchild
 
     @staticmethod
-    def bulk_register(childs, commit=True):
-        for child in childs:
-            Child.add_or_update(commit=False, **child)
+    def bulk_register(childs: Iterable[Any], commit=True):
+        from hiddifypanel.models.external_model.node import ChildModel
+
+        for row in ChildModel.coerce_many(childs):
+            Child.upsert(row, commit=False)
         if commit:
             db.session.commit()
 
@@ -115,11 +133,3 @@ class Child(db.Model):  # type: ignore
         if has_app_context() and hasattr(g, "node"):
             return getattr(g, "node", None)
         return None
-
-
-def _parse_optional_datetime(raw: object) -> datetime | None:
-    if isinstance(raw, str) and raw:
-        return datetime.fromisoformat(raw)
-    if isinstance(raw, datetime):
-        return raw
-    return None

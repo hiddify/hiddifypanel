@@ -10,6 +10,7 @@ from hiddifypanel.database import db
 
 if TYPE_CHECKING:
     from hiddifypanel.models.domain import Domain
+    from hiddifypanel.models.external_model.network import TlsStoreModel
 
 
 class TlsStore(db.Model):  # type: ignore
@@ -33,31 +34,34 @@ class TlsStore(db.Model):  # type: ignore
 
     domain: Mapped[Domain] = relationship("Domain", back_populates="certificate")
 
-    def to_dict(self, *, include_private_key: bool = False) -> dict[str, Any]:
+    def to_model(self) -> TlsStoreModel:
+        from hiddifypanel.models.external_model.network import TlsStoreModel
+
         domain_name = ""
         child_unique_id = ""
         if self.domain:
             domain_name = self.domain.domain or ""
             if self.domain.child:
                 child_unique_id = self.domain.child.unique_id or ""
-        data: dict[str, Any] = {
-            "id": self.id,
-            "domain_id": self.domain_id,
-            "domain": domain_name,
-            "child_unique_id": child_unique_id,
-            "certificate": self.certificate or "",
-            "expires_at": self.expires_at.isoformat() if self.expires_at else None,
-            "valid_cert": bool(self.valid_cert),
-            "self_signed": bool(self.self_signed),
-            "issuer": self.issuer or "",
-            "fingerprint": self.fingerprint or "",
-            "auto_renew": bool(self.auto_renew),
-            "last_renewal_error": self.last_renewal_error or "",
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-        }
-        if include_private_key:
-            data["private_key"] = self.private_key or ""
-        return data
+        return TlsStoreModel(
+            id=self.id,
+            domain_id=self.domain_id,
+            domain=domain_name,
+            child_unique_id=child_unique_id,
+            certificate=self.certificate or "",
+            private_key=self.private_key or "",
+            expires_at=self.expires_at,
+            valid_cert=bool(self.valid_cert),
+            self_signed=bool(self.self_signed),
+            issuer=self.issuer or "",
+            fingerprint=self.fingerprint or "",
+            auto_renew=bool(self.auto_renew),
+            last_renewal_error=self.last_renewal_error or "",
+            updated_at=self.updated_at,
+        )
+
+    def to_dict(self, *, include_private_key: bool = False) -> dict[str, Any]:
+        return self.to_model().to_dict(exclude=None if include_private_key else {"private_key"})
 
     @classmethod
     def by_domain_id(cls, domain_id: int | None) -> TlsStore | None:
@@ -67,21 +71,27 @@ class TlsStore(db.Model):  # type: ignore
 
     @classmethod
     def add_or_update(cls, commit: bool = True, **data) -> TlsStore | None:
+        from hiddifypanel.models.external_model.network import TlsStoreModel
+
+        return cls.upsert(TlsStoreModel.coerce(data), commit=commit)
+
+    @classmethod
+    def upsert(cls, data: TlsStoreModel, *, commit: bool = True, force_child_unique_id: str | None = None) -> TlsStore | None:
+        """Attach to the domain by ``domain_id``, else by name (preferring the row's child)."""
         from hiddifypanel.models.domain import Domain
         from hiddifypanel.panel import hiddify
 
-        domain_id = data.get("domain_id")
         domain_row = None
-        if domain_id:
-            domain_row = Domain.query.filter(Domain.id == int(domain_id)).first()
+        if data.domain_id:
+            domain_row = Domain.query.filter(Domain.id == data.domain_id).first()
         if not domain_row:
-            domain_name = str(data.get("domain") or "").strip().lower()
-            if not domain_name:
+            if not data.domain_key:
                 return None
-            child_id = hiddify.child_id_from_row(data, data.get("force_child_unique_id"))
-            domain_row = Domain.query.filter(Domain.domain == domain_name, Domain.child_id == child_id).first()
+            force = force_child_unique_id if force_child_unique_id is not None else data.force_child_unique_id
+            child_id = hiddify.child_id_from_row({"child_unique_id": data.child_unique_id}, force)
+            domain_row = Domain.query.filter(Domain.domain == data.domain_key, Domain.child_id == child_id).first()
             if not domain_row:
-                domain_row = Domain.query.filter(Domain.domain == domain_name).first()
+                domain_row = Domain.query.filter(Domain.domain == data.domain_key).first()
         if not domain_row:
             return None
 
@@ -90,44 +100,37 @@ class TlsStore(db.Model):  # type: ignore
             row = cls(domain_id=domain_row.id)
             db.session.add(row)
 
-        if "certificate" in data:
-            row.certificate = data.get("certificate") or ""
-        if "private_key" in data:
-            row.private_key = data.get("private_key") or ""
-        if "valid_cert" in data:
-            row.valid_cert = bool(data["valid_cert"])
-        if "self_signed" in data:
-            row.self_signed = bool(data["self_signed"])
-        if "issuer" in data:
-            row.issuer = data.get("issuer") or ""
-        if "fingerprint" in data:
-            row.fingerprint = data.get("fingerprint") or ""
-        if "auto_renew" in data:
-            row.auto_renew = bool(data["auto_renew"])
-        if "last_renewal_error" in data:
-            row.last_renewal_error = data.get("last_renewal_error") or None
-        for field in ("expires_at", "updated_at"):
-            if field not in data or not data[field]:
-                continue
-            raw = data[field]
-            if isinstance(raw, datetime):
-                setattr(row, field, raw)
-            elif isinstance(raw, str):
-                try:
-                    setattr(row, field, datetime.fromisoformat(raw.replace("Z", "+00:00")))
-                except ValueError:
-                    pass
+        if data.has("certificate"):
+            row.certificate = data.certificate or ""
+        if data.has("private_key"):
+            row.private_key = data.private_key or ""
+        if data.has("valid_cert"):
+            row.valid_cert = bool(data.valid_cert)
+        if data.has("self_signed"):
+            row.self_signed = bool(data.self_signed)
+        if data.has("issuer"):
+            row.issuer = data.issuer or ""
+        if data.has("fingerprint"):
+            row.fingerprint = data.fingerprint or ""
+        if data.has("auto_renew"):
+            row.auto_renew = bool(data.auto_renew)
+        if data.has("last_renewal_error"):
+            row.last_renewal_error = data.last_renewal_error or None
+        if data.expires_at is not None:
+            row.expires_at = data.expires_at
+        if data.updated_at is not None:
+            row.updated_at = data.updated_at
         if commit:
             db.session.commit()
         return row
 
     @classmethod
     def bulk_register(cls, rows, commit: bool = True, force_child_unique_id: str | None = None) -> None:
-        for item in rows:
-            row = item.model_dump() if hasattr(item, "model_dump") else dict(item)
-            payload = {k: v for k, v in row.items() if k not in {"id", "domain_id"}}
-            if force_child_unique_id is not None:
-                payload["force_child_unique_id"] = force_child_unique_id
-            cls.add_or_update(commit=False, **payload)
+        from hiddifypanel.models.external_model import as_row
+        from hiddifypanel.models.external_model.network import TlsStoreModel
+
+        # Row ids differ between panels: drop domain_id so the domain is always resolved by name.
+        for data in TlsStoreModel.coerce_many({**as_row(item), "domain_id": None} for item in rows):
+            cls.upsert(data, commit=False, force_child_unique_id=force_child_unique_id)
         if commit:
             db.session.commit()

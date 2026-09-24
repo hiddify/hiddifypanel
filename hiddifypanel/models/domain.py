@@ -22,6 +22,7 @@ from .child import Child
 
 if TYPE_CHECKING:
     from hiddifypanel.models.custom_proxy import CustomProxy
+    from hiddifypanel.models.external_model.network import DomainModel
     from hiddifypanel.models.tls_store import TlsStore
 
 
@@ -169,38 +170,45 @@ class Domain(db.Model):
                 pass
         return res
 
-    def to_dict(self, dump_ports=False, dump_child_id=False, for_parent=False):
+    def to_model(self, dump_ports=False, for_parent=False) -> DomainModel:
+        """Port fields need hconfig lookups, so they are only filled with ``dump_ports``."""
+        from hiddifypanel.models.external_model.network import DomainModel
+
         try:
             extra = json.loads(self.extra_params or "{}")
         except:
             extra = {}
-        data = {
-            "domain": self.domain.lower(),
-            "mode": self.mode,
-            "fake_mode": self.fake_mode,
-            "alias": self.alias,
-            "child_unique_id": self.child.unique_id if self.child else "",
-            "cdn_ip": self.cdn_ip,
-            "servernames": self.servernames,
-            "grpc": self.grpc,
-            "ech": bool(self.ech),
-            "download_domain": self.download_domain.domain if self.download_domain else "",
-            "server_domain": self.server_domain.domain if self.server_domain else "",
-            "show_domains": [dd.domain for dd in self.show_domains] if not for_parent else None,
-            "resolve_ip": self.resolve_ip,
-            "extra_params": extra,
-            "custom_proxy_slugs": self.custom_proxy_slugs if not for_parent else None,
-        }
-        if dump_child_id:
-            data["child_id"] = self.child_id
-        if dump_ports:
-            data["internal_port_hysteria2"] = self.internal_port_hysteria2
-            data["internal_port_tuic"] = self.internal_port_tuic
-            data["internal_port_naive"] = self.internal_port_naive
-            data["internal_port_special"] = self.internal_port_special
-            data["need_valid_ssl"] = self.need_valid_ssl
+        return DomainModel(
+            domain=self.domain.lower(),
+            mode=self.mode,
+            fake_mode=self.fake_mode,
+            alias=self.alias,
+            child_unique_id=self.child.unique_id if self.child else "",
+            cdn_ip=self.cdn_ip,
+            servernames=self.servernames,
+            grpc=self.grpc,
+            ech=bool(self.ech),
+            download_domain=self.download_domain.domain if self.download_domain else "",
+            server_domain=self.server_domain.domain if self.server_domain else "",
+            show_domains=[dd.domain for dd in self.show_domains] if not for_parent else None,
+            resolve_ip=self.resolve_ip,
+            extra_params=extra if isinstance(extra, (dict, list)) else {},
+            custom_proxy_slugs=self.custom_proxy_slugs if not for_parent else None,
+            child_id=self.child_id,
+            internal_port_hysteria2=self.internal_port_hysteria2 if dump_ports else None,
+            internal_port_tuic=self.internal_port_tuic if dump_ports else None,
+            internal_port_naive=self.internal_port_naive if dump_ports else None,
+            internal_port_special=self.internal_port_special if dump_ports else None,
+            need_valid_ssl=self.need_valid_ssl if dump_ports else None,
+        )
 
-        return data
+    def to_dict(self, dump_ports=False, dump_child_id=False, for_parent=False):
+        from hiddifypanel.models.external_model.network import DOMAIN_PORT_FIELDS
+
+        exclude = set() if dump_ports else set(DOMAIN_PORT_FIELDS)
+        if not dump_child_id:
+            exclude.add("child_id")
+        return self.to_model(dump_ports=dump_ports, for_parent=for_parent).to_dict(exclude=exclude)
 
     def get_server(self):
         if sd := self.usable_server_domain():
@@ -358,33 +366,32 @@ class Domain(db.Model):
         return domains
 
     @classmethod
-    def add_or_update(cls, commit=True, child_id=0, *, apply_links: bool = True, **domain):
-        dbdomain = Domain.query.filter(Domain.domain == domain["domain"], Domain.child_id == child_id).first()
+    def add_or_update(cls, commit=True, child_id=0, *, apply_links: bool = True, **domain) -> Domain:
+        from hiddifypanel.models.external_model.network import DomainModel
+
+        return cls.upsert(DomainModel.coerce(domain), child_id=child_id, commit=commit, apply_links=apply_links)
+
+    @classmethod
+    def upsert(cls, data: DomainModel, *, child_id: int = 0, commit: bool = True, apply_links: bool = True) -> Domain:
+        dbdomain = Domain.query.filter(Domain.domain == data.domain, Domain.child_id == child_id).first()
         if not dbdomain:
-            dbdomain = Domain(domain=domain["domain"])
+            dbdomain = Domain(domain=data.domain)
             db.session.add(dbdomain)
         dbdomain.child_id = child_id
 
-        mode, fake_mode = cls._normalize_legacy_mode(domain.get("mode"), domain.get("fake_mode"))
-        dbdomain.mode = mode
-        if fake_mode is not None:
-            dbdomain.fake_mode = fake_mode
-        dbdomain.cdn_ip = domain.get("cdn_ip", "")
-        dbdomain.alias = domain.get("alias", "")
-        dbdomain.grpc = domain.get("grpc", False)
-        dbdomain.ech = bool(domain.get("ech", False))
-        dbdomain.servernames = domain.get("servernames", "")
-        dbdomain.resolve_ip = domain.get("resolve_ip", False)
-        raw_extra = domain.get("extra_params", "")
-        if isinstance(raw_extra, (dict, list)):
-            dbdomain.extra_params = json.dumps(raw_extra)
-        elif raw_extra is None:
-            dbdomain.extra_params = "{}"
-        else:
-            dbdomain.extra_params = raw_extra
+        dbdomain.mode = data.mode
+        if data.fake_mode is not None:
+            dbdomain.fake_mode = data.fake_mode
+        dbdomain.cdn_ip = data.cdn_ip
+        dbdomain.alias = data.alias
+        dbdomain.grpc = data.grpc
+        dbdomain.ech = data.ech
+        dbdomain.servernames = data.servernames
+        dbdomain.resolve_ip = data.resolve_ip
+        dbdomain.extra_params = data.extra_params_text()
 
         if apply_links:
-            cls._apply_domain_links(dbdomain, domain, preferred_child_id=child_id)
+            cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)
 
         if commit:
             db.session.commit()
@@ -393,52 +400,9 @@ class Domain(db.Model):
     @classmethod
     def _normalize_legacy_mode(cls, mode, fake_mode):
         """Map ≤12.x domain modes (reality/fake/special_*/…) to DomainType + FakeMode."""
-        mode_value = str(getattr(mode, "value", mode) or "").strip().lower()
-        fake_value = fake_mode
-        if isinstance(fake_value, str):
-            fake_value = fake_value.strip().lower() or None
+        from hiddifypanel.models.external_model.network import normalize_legacy_domain_mode
 
-        remapped = None
-        if mode_value in {"old_xtls_direct"}:
-            remapped = DomainType.direct
-        elif mode_value == "auto_cdn_ip":
-            remapped = DomainType.cdn
-        elif mode_value == "special":
-            remapped = DomainType.direct
-            fake_value = FakeMode.reality
-        elif mode_value == "fake":
-            remapped = DomainType.direct
-            fake_value = FakeMode.fake
-        elif mode_value in {
-            "reality",
-            "special_reality",
-            "special_reality_tcp",
-            "special_reality_grpc",
-            "special_reality_xhttp",
-        } or mode_value.startswith("special_reality"):
-            remapped = DomainType.direct
-            fake_value = FakeMode.reality
-        elif mode_value == "dnstt":
-            remapped = DomainType.direct
-            fake_value = FakeMode.dns
-        elif mode_value:
-            try:
-                remapped = mode if isinstance(mode, DomainType) else DomainType(mode_value)
-            except ValueError:
-                remapped = DomainType.direct
-        else:
-            remapped = DomainType.direct
-
-        if isinstance(fake_value, FakeMode):
-            resolved_fake = fake_value
-        elif isinstance(fake_value, str) and fake_value:
-            try:
-                resolved_fake = FakeMode(fake_value)
-            except ValueError:
-                resolved_fake = None
-        else:
-            resolved_fake = None
-        return remapped, resolved_fake
+        return normalize_legacy_domain_mode(mode, fake_mode)
 
     @classmethod
     def _lookup_domain_ref(cls, name: str | None, preferred_child_id: int = 0) -> Domain | None:
@@ -453,46 +417,43 @@ class Domain(db.Model):
         return cls.query.filter(cls.domain == name).first()
 
     @classmethod
-    def _apply_domain_links(cls, dbdomain: Domain, domain: dict, preferred_child_id: int = 0) -> None:
-        show_domains = domain.get("show_domains") or []
-        if show_domains:
-            resolved = []
-            for name in show_domains:
+    def _apply_domain_links(cls, dbdomain: Domain, data: DomainModel, preferred_child_id: int = 0) -> None:
+        if data.show_domains:
+            resolved: list[Domain] = []
+            for name in data.show_domains:
                 ref = cls._lookup_domain_ref(name, preferred_child_id)
-                if ref:
+                # show_domain is a set (PK domain_id+related_id): skip repeated names.
+                if ref and ref not in resolved:
                     resolved.append(ref)
             dbdomain.show_domains = resolved
-        elif "show_domains" in domain:
+        elif data.has("show_domains"):
             dbdomain.show_domains = []
 
-        if "download_domain" in domain:
-            dl = cls._lookup_domain_ref(domain.get("download_domain"), preferred_child_id)
+        if data.has("download_domain"):
+            dl = cls._lookup_domain_ref(data.download_domain, preferred_child_id)
             dbdomain.download_domain_id = dl.id if dl else None
 
-        if "server_domain" in domain:
-            sd = cls._lookup_domain_ref(domain.get("server_domain"), preferred_child_id)
+        if data.has("server_domain"):
+            sd = cls._lookup_domain_ref(data.server_domain, preferred_child_id)
             dbdomain.server_domain_id = sd.id if sd else None
 
-        if "custom_proxy_slugs" in domain:
-            raw_slugs = domain["custom_proxy_slugs"]
-            slugs = [str(slug) for slug in raw_slugs] if isinstance(raw_slugs, list) else []
-            dbdomain.set_custom_proxies_by_slugs(slugs)
+        if data.has("custom_proxy_slugs"):
+            dbdomain.set_custom_proxies_by_slugs(data.custom_proxy_slugs or [])
 
     @classmethod
     def bulk_register(cls, domains, commit=True, remove=False, force_child_unique_id: str | None = None):
+        from hiddifypanel.models.external_model.network import DomainModel
         from hiddifypanel.panel import hiddify
 
+        rows = DomainModel.coerce_many(domains)
         child_ids = {}
-        for domain in domains:
-            row = domain.model_dump() if hasattr(domain, "model_dump") else dict(domain)
-            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
+        for data in rows:
+            child_id = hiddify.child_id_from_row({"child_unique_id": data.child_unique_id}, force_child_unique_id)
             child_ids[child_id] = 1
             # First pass: create rows without cross-domain links (later rows may not exist yet).
-            link_keys = ("show_domains", "download_domain", "server_domain", "custom_proxy_slugs")
-            base = {k: v for k, v in row.items() if k not in link_keys}
-            cls.add_or_update(commit=False, child_id=child_id, apply_links=False, **base)
+            cls.upsert(data.without_links(), child_id=child_id, commit=False, apply_links=False)
         if remove and len(child_ids):
-            dd = {d.domain if hasattr(d, "domain") else d["domain"]: 1 for d in domains}
+            dd = {p.domain: 1 for p in rows}
             for d in Domain.query.filter(Domain.child_id.in_(child_ids)):
                 if d.domain not in dd:
                     db.session.delete(d)
@@ -500,20 +461,20 @@ class Domain(db.Model):
         db.session.flush()
         # Always resolve cross-domain links once all rows exist (even if commit=False).
         # set_db_from_json re-runs this after custom proxies so custom_proxy_slugs stick.
-        cls.bulk_apply_links(domains, force_child_unique_id=force_child_unique_id, commit=False)
+        cls.bulk_apply_links(rows, force_child_unique_id=force_child_unique_id, commit=False)
         if commit:
             db.session.commit()
 
     @classmethod
     def bulk_apply_links(cls, domains, force_child_unique_id: str | None = None, commit: bool = True):
+        from hiddifypanel.models.external_model.network import DomainModel
         from hiddifypanel.panel import hiddify
 
-        for domain in domains:
-            row = domain.model_dump() if hasattr(domain, "model_dump") else dict(domain)
-            child_id = hiddify.child_id_from_row(row, force_child_unique_id)
-            dbdomain = cls.query.filter(cls.domain == row["domain"], cls.child_id == child_id).first()
+        for data in DomainModel.coerce_many(domains):
+            child_id = hiddify.child_id_from_row({"child_unique_id": data.child_unique_id}, force_child_unique_id)
+            dbdomain = cls.query.filter(cls.domain == data.domain, cls.child_id == child_id).first()
             if not dbdomain:
                 continue
-            cls._apply_domain_links(dbdomain, row, preferred_child_id=child_id)
+            cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)
         if commit:
             db.session.commit()

@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 from enum import auto
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import Enum, ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from strenum import StrEnum
 
 from hiddifypanel.database import db
-
 from hiddifypanel.proxy_v3.template_catalog.base_configs import default_base_content as _catalog_base_content
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.proxy_v3 import ProxyBaseConfigModel
 
 
 class BaseConfigSide(StrEnum):
@@ -26,6 +28,7 @@ BASE_CONFIG_MATRIX: dict[str, list[str]] = {
 def default_base_content(side: str, core: str) -> str:
     """Builtin base shell from proxy_templates/{core}/{side}/base.j2 only."""
     return _catalog_base_content(side, core)
+
 
 class ProxyBaseConfig(db.Model):  # type: ignore
     __tablename__ = 'proxy_base_config'
@@ -50,82 +53,94 @@ class ProxyBaseConfig(db.Model):  # type: ignore
         from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import effective_base_config_content
         return effective_base_config_content(self)
 
+    def to_model(self) -> ProxyBaseConfigModel:
+        from hiddifypanel.models.external_model.proxy_v3 import ProxyBaseConfigModel
+
+        return ProxyBaseConfigModel(
+            id=self.id,
+            child_id=self.child_id,
+            side=self.side,
+            core=self.core,
+            version=self.version or '',
+            name=self.name,
+            description=self.description or '',
+            content=self.effective_content(),
+            builtin_content=self.builtin_content or '',
+            builtin_override=bool(self.builtin_override),
+            is_builtin=bool(self.is_builtin),
+            enable=bool(self.enable),
+        )
+
     def to_dict(self) -> dict[str, Any]:
-        return {
-            'id': self.id,
-            'child_id': self.child_id,
-            'side': self.side.value if self.side else None,
-            'core': self.core,
-            'version': self.version or '',
-            'name': self.name,
-            'description': self.description or '',
-            'content': self.effective_content(),
-            'builtin_content': self.builtin_content or '',
-            'builtin_override': bool(self.builtin_override),
-            'is_builtin': bool(self.is_builtin),
-            'enable': bool(self.enable),
-        }
+        return self.to_model().to_dict()
 
     @classmethod
-    def add_or_update(cls, child_id: int = 0, commit: bool = True, **data) -> 'ProxyBaseConfig':
+    def add_or_update(cls, child_id: int = 0, commit: bool = True, **data) -> ProxyBaseConfig:
+        from hiddifypanel.models.external_model.proxy_v3 import ProxyBaseConfigModel
+
+        return cls.upsert(ProxyBaseConfigModel.coerce(data), child_id=child_id, commit=commit)
+
+    @classmethod
+    def upsert(cls, data: ProxyBaseConfigModel, *, child_id: int = 0, commit: bool = True) -> ProxyBaseConfig:
         row = None
-        row_id = data.get('id')
-        if row_id:
-            row = cls.query.filter(cls.id == row_id, cls.child_id == child_id).first()
+        if data.id:
+            row = cls.query.filter(cls.id == data.id, cls.child_id == child_id).first()
         if not row:
-            side = data['side']
-            side_val = side.value if isinstance(side, BaseConfigSide) else side
-            core = data['core']
-            version = (data.get('version') or '').strip() or ''
+            if data.side is None:
+                raise ValueError('side is required')
+            if not data.core:
+                raise ValueError('core is required')
             row = cls.query.filter(
                 cls.child_id == child_id,
-                cls.side == side_val,
-                cls.core == core,
-                cls.version == version,
+                cls.side == data.side.value,
+                cls.core == data.core,
+                cls.version == data.clean_version,
             ).first()
         if not row:
             row = cls()
             row.child_id = child_id
-            row.is_builtin = bool(data.get('is_builtin', False))
+            row.is_builtin = data.is_builtin
             db.session.add(row)
 
         if row.is_builtin:
             from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_builtin_override_base_config
-            if 'name' in data:
-                row.name = data['name']
-            if 'enable' in data:
+            if data.name is not None:
+                row.name = data.name
+            if data.has('enable'):
                 row.enable = True
-            if 'description' in data:
-                row.description = data.get('description') or ''
-            if 'content' in data:
-                new_content = data.get('content') or ''
+            if data.has('description'):
+                row.description = data.description or ''
+            if data.has('content'):
+                new_content = data.content or ''
                 if new_content != (row.builtin_content or ''):
                     apply_builtin_override_base_config(row, override=True)
-                elif 'builtin_override' in data:
-                    apply_builtin_override_base_config(row, override=bool(data['builtin_override']))
+                elif data.has('builtin_override'):
+                    apply_builtin_override_base_config(row, override=data.builtin_override)
                 if row.builtin_override:
                     row.content = new_content
-            elif 'builtin_override' in data:
-                apply_builtin_override_base_config(row, override=bool(data['builtin_override']))
+            elif data.has('builtin_override'):
+                apply_builtin_override_base_config(row, override=data.builtin_override)
             if commit:
                 db.session.commit()
             return row
 
-        side = data.get('side', row.side)
-        row.side = side if isinstance(side, BaseConfigSide) else BaseConfigSide(side)
-        row.core = data.get('core', row.core)
-        row.version = (data.get('version') or row.version or '').strip()
-        row.name = data.get('name', row.name)
-        row.description = data.get('description', row.description) or ''
-        row.content = data.get('content', row.content) or ''
-        if 'enable' in data:
-            row.enable = bool(data['enable'])
+        if data.side is not None:
+            row.side = data.side
+        if data.core is not None:
+            row.core = data.core
+        row.version = (data.clean_version or row.version or '').strip()
+        if data.name is not None:
+            row.name = data.name
+        row.description = (data.description if data.has('description') else row.description) or ''
+        row.content = (data.content if data.has('content') else row.content) or ''
+        if data.has('enable'):
+            row.enable = bool(data.enable)
 
         if commit:
             db.session.commit()
         return row
 
-    def duplicate(self, child_id: int | None = None) -> 'ProxyBaseConfig':
+    def duplicate(self, child_id: int | None = None) -> ProxyBaseConfig:
         child_id = child_id if child_id is not None else self.child_id
         base_version = self.version
         i = 1

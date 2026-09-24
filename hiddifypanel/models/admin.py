@@ -16,6 +16,7 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.models.usage import DailyUsage
 
 if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.account import AccountModel, AdminModel
     from hiddifypanel.models.user import User
 
 
@@ -71,22 +72,26 @@ class AdminUser(BaseAccount):
     def get_id(self) -> str | None:
         return f"admin_{self.id}"
 
-    def to_dict(self, convert_date=True, dump_id=False) -> dict:
-        base = super().to_dict()
-        if dump_id:
-            base["id"] = self.id
-        if not base.get("lang"):
-            from hiddifypanel.models import ConfigEnum, hconfig
+    def to_model(self) -> AdminModel:
+        from hiddifypanel.models import ConfigEnum, hconfig
+        from hiddifypanel.models.external_model.account import AdminModel
 
-            base["lang"] = hconfig(ConfigEnum.admin_lang)
-        return {
-            **base,
-            "mode": self.mode,
-            "can_add_admin": self.can_add_admin,
-            "parent_admin_uuid": self.parent_admin.uuid if self.parent_admin else None,
-            "max_users": self.max_users,
-            "max_active_users": self.max_active_users,
-        }
+        return AdminModel(
+            name=self.name,
+            comment=self.comment,
+            uuid=self.uuid,
+            telegram_id=self.telegram_id,
+            lang=self.lang or hconfig(ConfigEnum.admin_lang),
+            id=self.id,
+            mode=self.mode,
+            can_add_admin=self.can_add_admin,
+            parent_admin_uuid=self.parent_admin.uuid if self.parent_admin else None,
+            max_users=self.max_users,
+            max_active_users=self.max_active_users,
+        )
+
+    def to_dict(self, convert_date=True, dump_id=False) -> dict:
+        return self.to_model().to_dict(exclude=None if dump_id else {"id"})
 
     @classmethod
     def by_uuid(cls, uuid: str | None, create: bool = False) -> BaseAccount | None:
@@ -110,28 +115,39 @@ class AdminUser(BaseAccount):
         return account
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, old_uuid=None, **data):
-        # Forward old_uuid so uuid renames update the existing row instead of inserting a duplicate.
-        dbuser = super().add_or_update(commit=False, old_uuid=old_uuid, **data)
+    def external_model(cls) -> type[AdminModel]:
+        from hiddifypanel.models.external_model.account import AdminModel
 
-        if dbuser.id != 1 and "parent_admin_uuid" in data:
-            parent = data.get("parent_admin_uuid")
-            if not parent or str(parent) == str(dbuser.uuid):
+        return AdminModel
+
+    @classmethod
+    def add_or_update(cls, commit: bool = True, old_uuid=None, **data) -> AdminUser:
+        # Forward old_uuid so uuid renames update the existing row instead of inserting a duplicate.
+        return cls.upsert(cls.external_model().coerce(data), commit=commit, old_uuid=old_uuid)
+
+    @classmethod
+    def upsert(cls, data: AccountModel, *, commit: bool = True, old_uuid: str | None = None) -> AdminUser:
+        row = cls.external_model().coerce(data)
+        dbuser = super().upsert(row, commit=False, old_uuid=old_uuid)
+
+        if dbuser.id != 1 and row.has("parent_admin_uuid"):
+            parent = row.parent_admin_uuid
+            if not parent or parent == str(dbuser.uuid):
                 parent_admin = cls.current_admin_or_owner()
             else:
-                parent_admin = cls.by_uuid(str(parent), create=False) or cls.current_admin_or_owner()
+                parent_admin = cls.by_uuid(parent, create=False) or cls.current_admin_or_owner()
             dbuser.parent_admin_id = parent_admin.id
         elif dbuser.id != 1 and not dbuser.parent_admin_id:
             dbuser.parent_admin_id = cls.current_admin_or_owner().id
 
-        if data.get("mode") is not None:
-            dbuser.mode = data.get("mode", AdminMode.agent)
-        if data.get("can_add_admin") is not None:
-            dbuser.can_add_admin = data["can_add_admin"]
-        if data.get("max_users") is not None:
-            dbuser.max_users = data["max_users"]
-        if data.get("max_active_users") is not None:
-            dbuser.max_active_users = data["max_active_users"]
+        if row.mode is not None:
+            dbuser.mode = row.mode
+        if row.can_add_admin is not None:
+            dbuser.can_add_admin = row.can_add_admin
+        if row.max_users is not None:
+            dbuser.max_users = row.max_users
+        if row.max_active_users is not None:
+            dbuser.max_active_users = row.max_active_users
         if commit:
             db.session.commit()
         return dbuser

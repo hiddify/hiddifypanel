@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import datetime
+from collections.abc import Iterable
 from enum import auto
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import json5
@@ -13,6 +15,9 @@ from hiddifypanel.database import db
 from hiddifypanel.models.admin import AdminUser
 from hiddifypanel.models.base_account import BaseAccount
 from hiddifypanel.models.role import Role
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.account import AccountModel, UserModel
 
 ONE_GIG = 1024 * 1024 * 1024
 
@@ -271,16 +276,21 @@ class User(BaseAccount):
             dbuser.remove(commit=commit)
 
     @classmethod
-    def bulk_register(cls, accounts: list = [], commit: bool = True, remove: bool = False):
-        for u in accounts:
-            row = u.model_dump() if hasattr(u, "model_dump") else u
-            # Preserve soft-delete flag from backup; only default when missing.
-            data = {**row}
-            if "deleted" not in data:
-                data["deleted"] = False
-            cls.add_or_update(commit=False, **data)
+    def external_model(cls) -> type[UserModel]:
+        from hiddifypanel.models.external_model.account import UserModel
+
+        return UserModel
+
+    @classmethod
+    def bulk_register(cls, accounts: Iterable[Any] = (), commit: bool = True, remove: bool = False):
+        from hiddifypanel.models.external_model import as_row
+
+        # Preserve soft-delete flag from backup; only default when missing (before validation).
+        rows = cls.external_model().coerce_many({"deleted": False, **as_row(account)} for account in accounts)
+        for row in rows:
+            cls.upsert(row, commit=False)
         if remove:
-            keep = {str(u.uuid if hasattr(u, "uuid") else u.get("uuid")) for u in accounts if (getattr(u, "uuid", None) or (isinstance(u, dict) and u.get("uuid")))}
+            keep = {str(row.uuid) for row in rows if row.uuid}
             for d in cls.query.filter(cls.deleted.is_(False)).all():
                 if d.uuid not in keep:
                     d.remove(commit=False)
@@ -288,74 +298,61 @@ class User(BaseAccount):
             db.session.commit()
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data):
-        from hiddifypanel import hutils
+    def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data) -> User:
+        return cls.upsert(cls.external_model().coerce(data), commit=commit, old_uuid=old_uuid)
 
-        dbuser: User = super().add_or_update(commit=commit, old_uuid=old_uuid, **data)
-        if data.get("added_by_uuid"):
-            # Never auto-create admins from user payloads.
-            admin = AdminUser.by_uuid(data.get("added_by_uuid"), create=False) or AdminUser.current_admin_or_owner()  # type: ignore
+    @classmethod
+    def upsert(cls, data: AccountModel, *, commit: bool = True, old_uuid: str | None = None) -> User:
+        row = cls.external_model().coerce(data)
+        dbuser: User = super().upsert(row, commit=False, old_uuid=old_uuid)
+        if row.added_by_uuid:
+            # Never auto-create admins from user input.
+            admin = AdminUser.by_uuid(row.added_by_uuid, create=False) or AdminUser.current_admin_or_owner()
             dbuser.added_by = admin.id
         elif not dbuser.added_by:
             dbuser.added_by = 1
 
-        # if data.get('expiry_time', ''): #v4
-        #     last_reset_time = hutils.convert.json_to_time(data.get('last_reset_time', '')) or datetime.date.today()
+        if row.package_days is not None:
+            dbuser.package_days = row.package_days
 
-        #     expiry_time = hutils.convert.json_to_date(data['expiry_time'])
-        #     dbuser.start_date = last_reset_time
-        #     dbuser.package_days = (expiry_time - last_reset_time).days  # type: ignore
-        # el
-        if data.get("package_days") is not None:
-            dbuser.package_days = data["package_days"]
+        if row.has("start_date"):
+            dbuser.start_date = row.start_date
 
-        if "start_date" in data:
-            if data.get("start_date"):
-                dbuser.start_date = hutils.convert.json_to_date(data["start_date"])
-            else:
-                dbuser.start_date = None
-
-        if (c_GB := data.get("current_usage_GB")) is not None:
-            dbuser.current_usage_GB = c_GB
-        elif (c := data.get("current_usage")) is not None:
-            dbuser.current_usage = c
+        if row.current_usage_GB is not None:
+            dbuser.current_usage_GB = row.current_usage_GB
+        elif row.current_usage is not None:
+            dbuser.current_usage = row.current_usage
         elif dbuser.current_usage is None:
             dbuser.current_usage = 0
 
-        if (l_GB := data.get("usage_limit_GB")) is not None:
-            dbuser.usage_limit_GB = l_GB
-        elif (l := data.get("usage_limit")) is not None:
-            dbuser.usage_limit = l
-        elif dbuser.usage_limit_GB is None:
-            dbuser.usage_limit_GB = 1000
+        if row.usage_limit_GB is not None:
+            dbuser.usage_limit_GB = row.usage_limit_GB
+        elif row.usage_limit is not None:
+            dbuser.usage_limit = row.usage_limit
 
-        if data.get("enable") is not None:
-            dbuser.enable = data["enable"]
+        if row.enable is not None:
+            dbuser.enable = row.enable
 
-        if data.get("deleted") is not None:
-            dbuser.deleted = bool(data["deleted"])
+        if row.deleted is not None:
+            dbuser.deleted = row.deleted
 
-        if data.get("ed25519_private_key", "") and data.get("ed25519_public_key", ""):
-            dbuser.ed25519_private_key = data.get("ed25519_private_key", "")
-            dbuser.ed25519_public_key = data.get("ed25519_public_key", "")
-        if data.get("wg_pk") is not None:
-            dbuser.wg_pk = data["wg_pk"]
-        if data.get("wg_pub") is not None:
-            dbuser.wg_pub = data["wg_pub"]
-        if data.get("wg_psk") is not None:
-            dbuser.wg_psk = data["wg_psk"]
+        if row.ed25519_private_key and row.ed25519_public_key:
+            dbuser.ed25519_private_key = row.ed25519_private_key
+            dbuser.ed25519_public_key = row.ed25519_public_key
+        if row.wg_pk is not None:
+            dbuser.wg_pk = row.wg_pk
+        if row.wg_pub is not None:
+            dbuser.wg_pub = row.wg_pub
+        if row.wg_psk is not None:
+            dbuser.wg_psk = row.wg_psk
 
-        if data.get("mode") is not None or dbuser.mode is None:
-            mode = data.get("mode", UserMode.no_reset)
-            if mode == "disable":
-                mode = UserMode.no_reset
-                dbuser.enable = False
-            dbuser.mode = mode
+        if row.mode is not None or dbuser.mode is None:
+            dbuser.mode = row.mode or UserMode.no_reset
 
-        if data.get("last_online") is not None:
-            dbuser.last_online = hutils.convert.json_to_time(data.get("last_online")) or datetime.datetime.min
-        if data.get("last_modified_time") is not None:
-            dbuser.last_modified_time = hutils.convert.json_to_time(data.get("last_modified_time")) or datetime.datetime.now()
+        if row.last_online is not None:
+            dbuser.last_online = row.last_online
+        if row.last_modified_time is not None:
+            dbuser.last_modified_time = row.last_modified_time
         if commit:
             db.session.commit()
         return dbuser
@@ -369,37 +366,38 @@ class User(BaseAccount):
 
         return UserSchema.model_validate(self.to_dict(dump_id=True))
 
+    def to_model(self) -> UserModel:
+        from hiddifypanel.models import ConfigEnum, hconfig
+        from hiddifypanel.models.external_model.account import UserModel
+
+        return UserModel(
+            name=self.name,
+            comment=self.comment,
+            uuid=self.uuid,
+            telegram_id=self.telegram_id,
+            lang=self.lang or hconfig(ConfigEnum.lang),
+            id=self.id,
+            last_online=self.last_online,
+            last_modified_time=self.last_modified_time,
+            usage_limit_GB=self.usage_limit_GB,
+            package_days=self.package_days,
+            mode=self.mode,
+            start_date=self.start_date,
+            current_usage_GB=self.current_usage_GB,
+            last_reset_time=self.last_reset_time,
+            added_by_uuid=self.admin.uuid if self.admin else None,
+            ed25519_private_key=self.ed25519_private_key,
+            ed25519_public_key=self.ed25519_public_key,
+            wg_pk=self.wg_pk,
+            wg_pub=self.wg_pub,
+            wg_psk=self.wg_psk,
+            is_active=self.is_active,
+            enable=self.enable,
+            deleted=bool(self.deleted),
+        )
+
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
-        base = super().to_dict()
-        from hiddifypanel import hutils
-
-        if dump_id:
-            base["id"] = self.id
-        if not base.get("lang"):
-            from hiddifypanel.models import ConfigEnum, hconfig
-
-            base["lang"] = hconfig(ConfigEnum.lang)
-        return {
-            **base,
-            "last_online": hutils.convert.time_to_json(self.last_online) if convert_date else self.last_online,
-            "last_modified_time": hutils.convert.time_to_json(self.last_modified_time) if convert_date else self.last_modified_time,
-            "usage_limit_GB": self.usage_limit_GB,
-            "package_days": self.package_days,
-            "mode": self.mode,
-            "start_date": hutils.convert.date_to_json(self.start_date) if convert_date else self.start_date,
-            "current_usage_GB": self.current_usage_GB,
-            "last_reset_time": hutils.convert.time_to_json(self.last_reset_time) if convert_date else self.last_reset_time,
-            # 'expiry_time': hutils.convert.date_to_json(self.expiry_time) if convert_date else self.expiry_time,
-            "added_by_uuid": self.admin.uuid if self.admin else None,
-            "ed25519_private_key": self.ed25519_private_key,
-            "ed25519_public_key": self.ed25519_public_key,
-            "wg_pk": self.wg_pk,
-            "wg_pub": self.wg_pub,
-            "wg_psk": self.wg_psk,
-            "is_active": self.is_active,
-            "enable": self.enable,
-            "deleted": bool(self.deleted),
-        }
+        return self.to_model().to_dict(exclude=None if dump_id else {"id"}, convert_date=convert_date)
 
     # @staticmethod
     # def from_dict(data):
