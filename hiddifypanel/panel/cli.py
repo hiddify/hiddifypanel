@@ -1,19 +1,17 @@
 import datetime
-import uuid
 import json
 import os
+import uuid
+
 import click
 from dateutil import relativedelta
-
+from loguru import logger
 
 from hiddifypanel import hutils
-
+from hiddifypanel.database import db
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify, usage
-from hiddifypanel.database import db
 from hiddifypanel.panel.init_db import init_db
-
-from loguru import logger
 
 
 def drop_db():
@@ -38,8 +36,9 @@ def backup():
 
 def backup_task():
     dbdict = hiddify.dump_db_to_dict()
-    os.makedirs("backup", exist_ok=True)
-    dst = f"backup/{datetime.datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.json"
+    dst_dir = os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/") + "/data/backup"
+    os.makedirs(dst_dir, exist_ok=True)
+    dst = f"{dst_dir}/{datetime.datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.json"
     with open(dst, "w", encoding="utf-8") as fp:
         json.dump(dbdict, fp, indent=2, sort_keys=True, default=str)
     print(dst)
@@ -53,7 +52,7 @@ def backup_task():
             caption = "Backup \n" + admin_links()
             with open(dst, "rb") as document:
                 try:
-                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.replace("backup/", ""), caption=caption[:1000])
+                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.split("backup/")[-1], caption=caption[:1000])
                 except Exception as e:
                     logger.exception(e)
 
@@ -73,7 +72,7 @@ def admin_links():
     admin_links = f"Not Secure (do not use it - only if others not work):\n   {hiddify.get_account_panel_link(owner, server_ip, is_https=True)}\n"
 
     domains = Domain.get_domains()
-    admin_links += f"Secure:\n"
+    admin_links += "Secure:\n"
     if not any([d for d in domains if "sslip.io" not in d.domain]):
         admin_links += f"   (not signed) {hiddify.get_account_panel_link(owner, server_ip)}\n"
 
@@ -345,6 +344,8 @@ def init_app(app):
         """Render and dump the hiddify-core server sing-box config."""
         from hiddifypanel.proxy_v3.config_builder.dump import (
             dump_hiddify_core_server_config as render_dump,
+        )
+        from hiddifypanel.proxy_v3.config_builder.dump import (
             format_builder_messages,
         )
 
