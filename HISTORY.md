@@ -124,6 +124,15 @@ picked up the pre-release._
 
 #### Other
 
+* Feat: add POST method support for admin menu actions. 
+  _Enhanced the admin menu item functionality by introducing a POST method option for system actions, allowing for confirmation prompts before executing actions. Updated the backend to support this feature and modified the translations to reflect changes in backup file paths._
+
+* Strip spaces  in the parent panel. 
+
+* Refactor backup and restore. 
+
+* Refactor: update backup directory handling and improve file naming. 
+
 * Feat: enhance child fetching and add SyncTlsStoreApi endpoint. 
   _Updated the child fetching function to include a parent API key for improved security and error handling. Increased the node timeout from 3.0 to 30.0 seconds for better performance. Added a new SyncTlsStoreApi endpoint to facilitate the import of TLS certificates into the store, with support for domain-specific syncing. Updated API decorators to enforce role-based access control for enhanced security._
 
