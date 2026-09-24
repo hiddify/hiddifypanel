@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useConfirm } from 'primevue/useconfirm'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { submitPostForm } from '@/core/panelShell'
 import { useLayout } from './composables/layout'
 
 defineOptions({ name: 'AppMenuItem' })
 
 const { layoutState, isDesktop } = useLayout()
 const route = useRoute()
+const confirm = useConfirm()
 
 const props = defineProps<{
   item: Record<string, unknown>
@@ -52,6 +55,24 @@ const isActive = computed(() => {
 function itemClick(event: Event, item: Record<string, unknown>) {
   if (item.disabled) {
     event.preventDefault()
+    return
+  }
+  if (item.method === 'post' && item.url) {
+    // POST-only system actions (apply configs, update, reinstall, restart): never a plain GET link.
+    event.preventDefault()
+    const url = String(item.url)
+    const target = (item.target as string) || '_self'
+    const run = () => submitPostForm(url, target)
+    if (item.confirm) {
+      confirm.require({
+        message: String(item.confirm),
+        header: String(item.label ?? ''),
+        icon: 'pi pi-exclamation-triangle',
+        accept: run,
+      })
+    } else {
+      run()
+    }
     return
   }
   if (typeof item.command === 'function') {

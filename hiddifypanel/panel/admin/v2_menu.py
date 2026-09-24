@@ -18,6 +18,14 @@ def _item(label: str, url: str, icon: str, *, target: str = "_self", badge: str 
     return row
 
 
+def _post_action(label: str, url: str, icon: str) -> dict:
+    """System action: the endpoint only accepts POST, so the shell confirms and submits a form."""
+    row = _item(label, url, icon)
+    row["method"] = "post"
+    row["confirm"] = _("Are you sure you want to do this action?")
+    return row
+
+
 def _wiki_support_url() -> str:
     if get_locale() == "fa":
         return "https://github.com/hiddify/hiddify-manager/wiki/%D9%87%D9%85%D9%87-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%E2%80%8C%D9%87%D8%A7-%D9%88-%D9%88%DB%8C%D8%AF%D8%A6%D9%88%D9%87%D8%A7"
@@ -93,10 +101,10 @@ def build_admin_v2_menu() -> list[dict]:
                 "items": [
                     _item(_("admin.actions.status"), hurl_for("admin.Actions:status"), "pi pi-fw pi-chart-line"),
                     _item(_("admin.actions.viewlogs"), hurl_for("admin.Actions:viewlogs"), "pi pi-fw pi-inbox"),
-                    _item(_("admin.actions.apply_configs"), hurl_for("admin.Actions:apply_configs"), "pi pi-fw pi-bolt"),
-                    _item(_("admin.actions.update"), hurl_for("admin.Actions:update"), "pi pi-fw pi-upload"),
-                    _item(_("admin.actions.reinstall"), hurl_for("admin.Actions:reinstall"), "pi pi-fw pi-refresh"),
-                    _item(_("admin.actions.reset"), hurl_for("admin.Actions:reset"), "pi pi-fw pi-power-off"),
+                    _post_action(_("admin.actions.apply_configs"), hurl_for("admin.Actions:apply_configs"), "pi pi-fw pi-bolt"),
+                    _post_action(_("admin.actions.update"), hurl_for("admin.Actions:update"), "pi pi-fw pi-upload"),
+                    _post_action(_("admin.actions.reinstall"), hurl_for("admin.Actions:reinstall"), "pi pi-fw pi-refresh"),
+                    _post_action(_("admin.actions.reset"), hurl_for("admin.Actions:reset"), "pi pi-fw pi-power-off"),
                 ],
             }
         )

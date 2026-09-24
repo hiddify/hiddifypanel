@@ -7,7 +7,22 @@ export interface AdminMenuItem {
   url?: string
   target?: string
   badge?: string
+  /** `post`: the URL only accepts POST (system actions); submitted as a form after `confirm`. */
+  method?: 'get' | 'post'
+  confirm?: string
   items?: AdminMenuItem[]
+}
+
+/** Navigate to `url` with a POST form submit (full page load, like the classic admin's `form_post`). */
+export function submitPostForm(url: string, target = '_self'): void {
+  const form = document.createElement('form')
+  form.method = 'post'
+  form.action = url
+  form.target = target
+  form.style.display = 'none'
+  document.body.appendChild(form)
+  form.submit()
+  form.remove()
 }
 
 export interface AdminMenuGroup {
