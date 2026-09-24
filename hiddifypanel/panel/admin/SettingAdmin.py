@@ -80,8 +80,9 @@ class SettingAdmin(FlaskView):
                 hutils.flask.flash(_("ProxyPath is already used! use different proxy path"), "error")
                 return render_template("config.html", form=form)
             parent_apikey = ""
+            
             if p_p := changed_configs.get(ConfigEnum.parent_panel):
-                parent_baseurl, uuid = hutils.flask.extract_parent_info_from_url(p_p)
+                parent_baseurl, uuid = hutils.flask.extract_parent_info_from_url(p_p.strip())
                 if not parent_baseurl or not uuid:
                     hutils.flask.flash(_("parent.invalid-parent-url"), "danger")
                     return render_template("config.html", form=form)
