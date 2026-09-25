@@ -245,6 +245,7 @@
   "V2rayNG intro": "Установите v2rayNG по любой из этих ссылок: %(dl_link)s %(play_link)s.\nЗатем скопируйте ссылку ниже и вставьте ее в v2rayNG согласно видеоинструкции <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -вопрос'></i> </button>.\n<br />",
   "Valid": "",
   "View in Telegram": "Посмотреть в Telegram",
+  "Waiting for the process to start...": "",
   "Want to enjoy more with telegram?": "ℹ️ Подключите свой аккаунт к Telegram",
   "Welcome %(user)s": "Добро пожаловать %(user)s",
   "Why Going to Premium?": "Зачем переходить на Премиум?",

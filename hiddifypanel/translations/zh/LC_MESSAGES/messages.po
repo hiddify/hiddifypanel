@@ -874,6 +874,9 @@ msgstr ""
 msgid "View in Telegram"
 msgstr "在电报中查看"
 
+msgid "Waiting for the process to start..."
+msgstr ""
+
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ 将您的帐户连接到 Telegram"
 

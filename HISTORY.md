@@ -124,6 +124,18 @@ picked up the pre-release._
 
 #### Other
 
+* Feat: implement danger confirmation for destructive actions. 
+  _- Introduced a new `useDangerConfirm` composable to handle confirmation prompts for destructive actions, enhancing user safety during critical operations.
+- Updated various components to utilize the new confirmation method, replacing the previous `useConfirm` implementation.
+- Enhanced the dashboard and configuration views to ensure consistent confirmation behavior across the application.
+- Added localization support for confirmation messages, improving the user experience in different languages._
+
+* Feat: add Vazirmatn font and improve layout responsiveness. 
+  _- Integrated the Vazirmatn font for better typography support, especially for RTL languages.
+- Enhanced layout styles to ensure better responsiveness across various screen sizes, including adjustments to margins and paddings.
+- Updated various components to utilize new CSS properties for improved layout handling.
+- Refactored dashboard components for better mobile usability and visual consistency._
+
 * Feat: add POST method support for admin menu actions. 
   _Enhanced the admin menu item functionality by introducing a POST method option for system actions, allowing for confirmation prompts before executing actions. Updated the backend to support this feature and modified the translations to reflect changes in backup file paths._
 

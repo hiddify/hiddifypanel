@@ -859,6 +859,9 @@ msgstr ""
 msgid "View in Telegram"
 msgstr "Ver no Telegram"
 
+msgid "Waiting for the process to start..."
+msgstr ""
+
 msgid "Want to enjoy more with telegram?"
 msgstr "Conecte sua conta ao Telegram"
 

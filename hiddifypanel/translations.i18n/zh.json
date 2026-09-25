@@ -245,6 +245,7 @@
   "V2rayNG intro": "请从以下任一链接安装 v2rayNG：%(dl_link)s %(play_link)s。\n然后按照视频教程复制下面的链接粘贴到v2rayNG中 <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -问题'></i> </按钮>。\n<br/>",
   "Valid": "",
   "View in Telegram": "在电报中查看",
+  "Waiting for the process to start...": "",
   "Want to enjoy more with telegram?": "ℹ️ 将您的帐户连接到 Telegram",
   "Welcome %(user)s": "欢迎%(user)s",
   "Why Going to Premium?": "为什么要选择高级版？",
