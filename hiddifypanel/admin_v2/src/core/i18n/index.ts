@@ -29,6 +29,24 @@ export function applyDocumentLocale(loc: string) {
   document.documentElement.dir = rtl ? 'rtl' : 'ltr'
 }
 
+/** PrimeVue's built-in texts (confirm buttons, empty filter results, …) in the panel language. */
+export function primeVueLocale() {
+  const t = i18n.global.t
+  const keys = [
+    'accept',
+    'reject',
+    'cancel',
+    'clear',
+    'apply',
+    'choose',
+    'upload',
+    'emptyMessage',
+    'emptyFilterMessage',
+    'emptySearchMessage',
+  ] as const
+  return Object.fromEntries(keys.map((key) => [key, t(`primevue.${key}`)]))
+}
+
 export function setLocale(loc: string) {
   ;(i18n.global.locale as unknown as { value: string }).value = loc
   applyDocumentLocale(loc)

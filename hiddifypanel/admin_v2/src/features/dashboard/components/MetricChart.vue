@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
-import Chart from 'primevue/chart'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import Chart from 'chart.js/auto'
 import { useChartTheme, alpha } from '../composables/useChartTheme'
 
 export interface MetricSeries {
@@ -108,20 +108,82 @@ const options = computed(() =>
     mirror: props.mirror,
   }),
 )
+
+/*
+ * The chart is created once and updated in place. PrimeVue's <Chart> destroys
+ * and recreates it on every data or options change, replaying the intro
+ * animation on each dashboard poll even when nothing changed.
+ */
+const canvas = ref<HTMLCanvasElement | null>(null)
+const chart = shallowRef<Chart | null>(null)
+
+/** Comparable form of chart config; functions (formatters, gradients) are rebuilt every render. */
+const signature = (value: unknown) => JSON.stringify(value, (_key, v) => (typeof v === 'function' ? undefined : v))
+
+let dataSignature = ''
+let optionsSignature = ''
+
+function createChart() {
+  chart.value?.destroy()
+  if (!canvas.value) return
+  chart.value = new Chart(canvas.value, {
+    type: props.type,
+    data: data.value,
+    options: options.value,
+  } as never)
+  dataSignature = signature(data.value)
+  optionsSignature = signature(options.value)
+}
+
+function syncChart() {
+  const instance = chart.value
+  if (!instance) return
+  const nextData = data.value
+  const nextDataSignature = signature(nextData)
+  const nextOptionsSignature = signature(options.value)
+  const dataChanged = nextDataSignature !== dataSignature
+  const optionsChanged = nextOptionsSignature !== optionsSignature
+
+  // Always hand over the latest callbacks (tooltip extras read current props).
+  instance.options = options.value as never
+  if (!dataChanged && !optionsChanged) return
+
+  if (dataChanged) {
+    instance.data.labels = nextData.labels
+    const current = instance.data.datasets
+    if (current.length === nextData.datasets.length) {
+      // Keep dataset objects so Chart.js animates from the previous values.
+      nextData.datasets.forEach((dataset, index) => Object.assign(current[index]!, dataset))
+    } else {
+      instance.data.datasets = nextData.datasets as never
+    }
+  }
+  dataSignature = nextDataSignature
+  optionsSignature = nextOptionsSignature
+  // Only real data changes animate; theme or layout option changes apply instantly.
+  instance.update(dataChanged ? undefined : 'none')
+}
+
+onMounted(createChart)
+watch(() => props.type, createChart)
+watch([data, options], syncChart)
+onBeforeUnmount(() => {
+  chart.value?.destroy()
+  chart.value = null
+})
 </script>
 
 <template>
-  <Chart
-    :type="type"
-    :data="data"
-    :options="options"
-    class="metric-chart"
-    :style="{ height: `${chartHeight}px` }"
-  />
+  <div class="metric-chart" :style="{ height: `${chartHeight}px` }">
+    <canvas ref="canvas" />
+  </div>
 </template>
 
 <style scoped>
-.metric-chart :deep(canvas) {
+.metric-chart {
+  position: relative;
+}
+.metric-chart canvas {
   width: 100% !important;
 }
 </style>

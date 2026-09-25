@@ -12,7 +12,7 @@ import '@/shared/monaco/setup'
 
 import App from './App.vue'
 import { createAppRouter } from './router'
-import { i18n, setLocale } from './core/i18n'
+import { i18n, primeVueLocale, setLocale } from './core/i18n'
 import { initApiClient, getRouterBase } from './core/api/client'
 
 async function bootstrap() {
@@ -26,6 +26,7 @@ async function bootstrap() {
   app.use(i18n)
   app.use(PrimeVue, {
     ripple: true,
+    locale: primeVueLocale(),
     theme: {
       preset: HiddifyPreset,
       options: {

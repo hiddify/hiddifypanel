@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useConfirm } from 'primevue/useconfirm'
+import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { submitPostForm } from '@/core/panelShell'
@@ -9,7 +9,7 @@ defineOptions({ name: 'AppMenuItem' })
 
 const { layoutState, isDesktop } = useLayout()
 const route = useRoute()
-const confirm = useConfirm()
+const dangerConfirm = useDangerConfirm()
 
 const props = defineProps<{
   item: Record<string, unknown>
@@ -64,10 +64,10 @@ function itemClick(event: Event, item: Record<string, unknown>) {
     const target = (item.target as string) || '_self'
     const run = () => submitPostForm(url, target)
     if (item.confirm) {
-      confirm.require({
-        message: String(item.confirm),
+      dangerConfirm({
+        // The dialog already shows a warning icon; drop the emoji the legacy text starts with.
+        message: String(item.confirm).replace(/^\s*⚠️\s*/u, ''),
         header: String(item.label ?? ''),
-        icon: 'pi pi-exclamation-triangle',
         accept: run,
       })
     } else {

@@ -893,6 +893,9 @@ msgstr "Valid"
 msgid "View in Telegram"
 msgstr "View in Telegram"
 
+msgid "Waiting for the process to start..."
+msgstr "Waiting for the process to start..."
+
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ Connect Your Account to Telegram"
 
@@ -1171,6 +1174,9 @@ msgstr "Format"
 msgid "adminV2.common.loadFailed"
 msgstr "Failed to load data"
 
+msgid "adminV2.common.no"
+msgstr "No"
+
 msgid "adminV2.common.save"
 msgstr "Save"
 
@@ -1188,6 +1194,9 @@ msgstr "Validation failed"
 
 msgid "adminV2.common.validationOk"
 msgstr "Validation passed"
+
+msgid "adminV2.common.yes"
+msgstr "Yes"
 
 msgid "adminV2.dashboard.allNodes"
 msgstr "All nodes"
@@ -1578,6 +1587,36 @@ msgstr "Templates"
 
 msgid "adminV2.menu.utils"
 msgstr "Utils"
+
+msgid "adminV2.primevue.accept"
+msgstr "Yes"
+
+msgid "adminV2.primevue.apply"
+msgstr "Apply"
+
+msgid "adminV2.primevue.cancel"
+msgstr "Cancel"
+
+msgid "adminV2.primevue.choose"
+msgstr "Choose"
+
+msgid "adminV2.primevue.clear"
+msgstr "Clear"
+
+msgid "adminV2.primevue.emptyFilterMessage"
+msgstr "No results found"
+
+msgid "adminV2.primevue.emptyMessage"
+msgstr "No available options"
+
+msgid "adminV2.primevue.emptySearchMessage"
+msgstr "No results found"
+
+msgid "adminV2.primevue.reject"
+msgstr "No"
+
+msgid "adminV2.primevue.upload"
+msgstr "Upload"
 
 msgid "adminV2.proxy.addClient"
 msgstr "Add client"

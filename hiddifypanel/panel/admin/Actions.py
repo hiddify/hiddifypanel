@@ -1,5 +1,6 @@
 import urllib.request
 import json
+import time
 from flask_classful import FlaskView, route
 from flask import render_template, request, redirect
 from hiddifypanel.hutils.flask import hurl_for
@@ -36,7 +37,7 @@ class Actions(FlaskView):
 
     @login_required(roles={Role.super_admin})
     def reset2(self):
-        res = render_template("result.html", out_type="info", out_msg="", log_file_url=get_log_api_url(), log_file="restart.log", show_success=True, domains=get_domains())
+        res = render_template("result.html", out_type="info", out_msg="", show_success=True, **log_page_context("restart.log"))
 
         # run restart.sh
         commander(Command.restart_services)
@@ -131,7 +132,7 @@ class Actions(FlaskView):
             link = hiddify.get_account_panel_link(g.account, d)
             admin_links += f"<li><a target='_blank' class='badge ltr' href='{link}'>{link}</a></li>"
 
-        resp = render_template("result.html", out_type="info", out_msg=_("admin.waiting_for_update") + admin_links, log_file_url=get_log_api_url(), log_file="0-install.log", show_success=True, domains=get_domains())
+        resp = render_template("result.html", out_type="info", out_msg=_("admin.waiting_for_update") + admin_links, show_success=True, **log_page_context("0-install.log"))
 
         # subprocess.Popen(f"sudo {config['HIDDIFY_CONFIG_PATH']}/{file} --no-gui".split(" "), cwd=f"{config['HIDDIFY_CONFIG_PATH']}", start_new_session=True)
 
@@ -152,9 +153,10 @@ class Actions(FlaskView):
 
     @login_required(roles={Role.super_admin})
     def status(self):
+        log_context = log_page_context("status.log")
         # run status.sh
         commander(Command.status)
-        return render_template("result.html", out_type="info", out_msg=_("see the log in the bellow screen"), log_file_url=get_log_api_url(), log_file="status.log", show_success=False, domains=get_domains())
+        return render_template("result.html", out_type="info", out_msg=_("see the log in the bellow screen"), show_success=False, **log_context)
 
     @route("update", methods=["POST"])
     @login_required(roles={Role.super_admin})
@@ -163,12 +165,13 @@ class Actions(FlaskView):
 
     def update2(self):
         # hiddify.add_temporary_access()
+        log_context = log_page_context("update.log")
         # run update.sh
 
         commander(Command.update)
 
         return render_template(
-            "result.html", out_type="success", out_msg=_("Success! Please wait around 5 minutes to make sure everything is updated."), show_success=True, log_file_url=get_log_api_url(), log_file="update.log", domains=get_domains()
+            "result.html", out_type="success", out_msg=_("Success! Please wait around 5 minutes to make sure everything is updated."), show_success=True, **log_context
         )
 
     @login_required(roles={Role.super_admin})
@@ -233,6 +236,28 @@ class Actions(FlaskView):
 
 def get_log_api_url():
     return f"/{g.get('new_proxy_path', g.proxy_path)}/api/v2/admin/log/"
+
+
+def get_log_api_urls():
+    """Log API paths to poll, newest proxy path first.
+
+    While apply/install runs after a proxy_path change, the new path only routes
+    once nginx is regenerated and the old one stops once the panel restarts, so
+    the page keeps both and uses whichever answers.
+    """
+    urls = [get_log_api_url(), f"/{g.proxy_path}/api/v2/admin/log/"]
+    return list(dict.fromkeys(urls))
+
+
+def log_page_context(log_file: str) -> dict:
+    """Template args for result.html; call it before starting the command."""
+    return {
+        "log_file": log_file,
+        "log_file_url": get_log_api_url(),
+        "log_file_urls": get_log_api_urls(),
+        "log_started_at": time.time(),
+        "domains": get_domains(),
+    }
 
 
 def get_domains():

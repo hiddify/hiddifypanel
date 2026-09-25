@@ -150,7 +150,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useConfirm } from 'primevue/useconfirm'
+import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { useToast } from 'primevue/usetoast'
 import Panel from 'primevue/panel'
 import DataTable from 'primevue/datatable'
@@ -168,7 +168,7 @@ import { customProxiesApi, proxyTemplatesApi, type ProxyTemplate } from '@/core/
 
 const { t } = useI18n()
 const router = useRouter()
-const confirm = useConfirm()
+const dangerConfirm = useDangerConfirm()
 const toast = useToast()
 
 const templates = ref<ProxyTemplate[]>([])
@@ -219,10 +219,11 @@ async function duplicate(id: number) {
 }
 
 function confirmDelete(row: ProxyTemplate) {
-  confirm.require({
+  dangerConfirm({
     message: t('common.confirmDelete'),
     header: t('common.delete'),
-    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('common.delete'),
+    rejectLabel: t('common.cancel'),
     accept: async () => {
       if (!row.id) return
       await proxyTemplatesApi.delete(row.id)

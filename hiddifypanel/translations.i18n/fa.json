@@ -245,6 +245,7 @@
   "V2rayNG intro": "لطفاً v2rayNG را از %(dl_link)s   %(play_link)s نصب کنید.\nسپس لینک زیر را کپی کرده و مطابق فیلم آموزش <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i>  </button>\nدر v2rayNG قرار دهید.\n<br />",
   "Valid": "",
   "View in Telegram": "مشاهده جزییات در تلگرام",
+  "Waiting for the process to start...": "در انتظار شروع فرایند...",
   "Want to enjoy more with telegram?": "ℹ️ وصل کردن حساب کاربری به تلگرام",
   "Welcome %(user)s": "%(user)s عزیز خوش آمدی",
   "Why Going to Premium?": "مجوز استفاده از هیدیفای چگونه است؟",
@@ -336,12 +337,14 @@
       "filter": "فیلتر",
       "format": "قالب‌بندی",
       "loadFailed": "بارگذاری داده ناموفق بود",
+      "no": "خیر",
       "save": "ذخیره",
       "saved": "با موفقیت ذخیره شد",
       "search": "جستجو...",
       "validate": "اعتبارسنجی",
       "validationFailed": "اعتبارسنجی ناموفق",
-      "validationOk": "اعتبارسنجی موفق"
+      "validationOk": "اعتبارسنجی موفق",
+      "yes": "بله"
     },
     "dashboard": {
       "allNodes": "همه نودها",
@@ -483,6 +486,18 @@
       "templateVariables": "متغیرهای قالب",
       "templates": "قالب‌ها",
       "utils": "ابزارها"
+    },
+    "primevue": {
+      "accept": "بله",
+      "apply": "اعمال",
+      "cancel": "انصراف",
+      "choose": "انتخاب",
+      "clear": "پاک کردن",
+      "emptyFilterMessage": "نتیجه‌ای یافت نشد",
+      "emptyMessage": "گزینه‌ای موجود نیست",
+      "emptySearchMessage": "نتیجه‌ای یافت نشد",
+      "reject": "خیر",
+      "upload": "بارگذاری"
     },
     "proxy": {
       "addClient": "افزودن کلاینت",

@@ -31,13 +31,19 @@ class AdminLogApi(MethodView):
         if os.path.commonpath([log_dir, file_path]) != log_dir or not os.path.isfile(file_path):
             abort(404, "Invalid log file")
 
+        mtime = os.path.getmtime(file_path)
         with open(file_path) as f:
             logs = "".join(f)
 
         conv = Ansi2HTMLConverter()
         html_log = f'<div style="background-color:black; color:white;padding:10px">{conv.convert(logs)}</div>'
         resp = make_response(html_log)
+        # Lets the action page tell this run's log from the previous run's
+        # leftover (which still ends in "Finished!") until the script truncates it.
+        resp.headers["X-Log-Mtime"] = f"{mtime:.3f}"
+        resp.headers["Cache-Control"] = "no-store"
         resp.headers["Access-Control-Allow-Origin"] = "*"
+        resp.headers["Access-Control-Expose-Headers"] = "X-Log-Mtime"
         return resp
 
     @app.input(AdminInputLogfileSchema, arg_name="data", location="form")

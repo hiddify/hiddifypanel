@@ -885,6 +885,9 @@ msgstr ""
 msgid "View in Telegram"
 msgstr "مشاهده جزییات در تلگرام"
 
+msgid "Waiting for the process to start..."
+msgstr "در انتظار شروع فرایند..."
+
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ وصل کردن حساب کاربری به تلگرام"
 
@@ -1166,6 +1169,9 @@ msgstr "قالب‌بندی"
 msgid "adminV2.common.loadFailed"
 msgstr "بارگذاری داده ناموفق بود"
 
+msgid "adminV2.common.no"
+msgstr "خیر"
+
 msgid "adminV2.common.save"
 msgstr "ذخیره"
 
@@ -1183,6 +1189,9 @@ msgstr "اعتبارسنجی ناموفق"
 
 msgid "adminV2.common.validationOk"
 msgstr "اعتبارسنجی موفق"
+
+msgid "adminV2.common.yes"
+msgstr "بله"
 
 msgid "adminV2.dashboard.allNodes"
 msgstr "همه نودها"
@@ -1579,6 +1588,36 @@ msgstr "قالب‌ها"
 
 msgid "adminV2.menu.utils"
 msgstr "ابزارها"
+
+msgid "adminV2.primevue.accept"
+msgstr "بله"
+
+msgid "adminV2.primevue.apply"
+msgstr "اعمال"
+
+msgid "adminV2.primevue.cancel"
+msgstr "انصراف"
+
+msgid "adminV2.primevue.choose"
+msgstr "انتخاب"
+
+msgid "adminV2.primevue.clear"
+msgstr "پاک کردن"
+
+msgid "adminV2.primevue.emptyFilterMessage"
+msgstr "نتیجه‌ای یافت نشد"
+
+msgid "adminV2.primevue.emptyMessage"
+msgstr "گزینه‌ای موجود نیست"
+
+msgid "adminV2.primevue.emptySearchMessage"
+msgstr "نتیجه‌ای یافت نشد"
+
+msgid "adminV2.primevue.reject"
+msgstr "خیر"
+
+msgid "adminV2.primevue.upload"
+msgstr "بارگذاری"
 
 msgid "adminV2.proxy.addClient"
 msgstr "افزودن کلاینت"

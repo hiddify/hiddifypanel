@@ -245,6 +245,7 @@
   "V2rayNG intro": "Please install v2rayNG from either of these links: %(dl_link)s  %(play_link)s.\nThen copy the link below and paste it in v2rayNG according to the video tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>.\n<br />",
   "Valid": "Valid",
   "View in Telegram": "View in Telegram",
+  "Waiting for the process to start...": "Waiting for the process to start...",
   "Want to enjoy more with telegram?": "ℹ️ Connect Your Account to Telegram",
   "Welcome %(user)s": "Welcome %(user)s",
   "Why Going to Premium?": "Why Going to Premium?",
@@ -336,12 +337,14 @@
       "filter": "Filter",
       "format": "Format",
       "loadFailed": "Failed to load data",
+      "no": "No",
       "save": "Save",
       "saved": "Saved successfully",
       "search": "Search...",
       "validate": "Validate",
       "validationFailed": "Validation failed",
-      "validationOk": "Validation passed"
+      "validationOk": "Validation passed",
+      "yes": "Yes"
     },
     "dashboard": {
       "allNodes": "All nodes",
@@ -481,6 +484,18 @@
       "templateVariables": "Template Variables",
       "templates": "Templates",
       "utils": "Utils"
+    },
+    "primevue": {
+      "accept": "Yes",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "choose": "Choose",
+      "clear": "Clear",
+      "emptyFilterMessage": "No results found",
+      "emptyMessage": "No available options",
+      "emptySearchMessage": "No results found",
+      "reject": "No",
+      "upload": "Upload"
     },
     "proxy": {
       "addClient": "Add client",

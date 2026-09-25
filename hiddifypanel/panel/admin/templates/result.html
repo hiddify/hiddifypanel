@@ -75,62 +75,82 @@ page."),temp_link(),show=False)}}
   var x = document.getElementById("ilog");
   var finished = false
   var seconds = 0
-  raw_domains = '{{",".join(domains)}}'.split(",")
-  log_urls = raw_domains.map(p => "https://" + p + "{{ log_file_url }}");
-  log_urls.unshift("{{ log_file_url }}")
-  function sendRequestsSequentially(urls) {
-    let index = 0;
+  // Server time before the command started: an older mtime means the file still
+  // holds the previous run (which ends in "Finished!") and must not count yet.
+  const log_started_at = {{ (log_started_at or 0) | tojson }};
+  const log_paths = {{ (log_file_urls or [log_file_url]) | tojson }};
+  const raw_domains = {{ domains | tojson }};
+  // Relative URLs first, then every domain; after a proxy_path or domain change
+  // only some of them answer, and which ones changes while the run progresses.
+  const log_urls = [
+    ...log_paths,
+    ...raw_domains.flatMap(d => log_paths.map(p => "https://" + d + p)),
+  ];
+  var good_url_index = 0
 
-    function sendNextRequest() {
-      return $.ajax({
-        url: urls[index] + "?random=" + Math.random(),
-        type: 'POST',
-        data: { file: '{{ log_file}}' },
-        headers: {
-          "Hiddify-API-Key": "{{g.account.uuid}}"
-        },
-
-      }).then(response => {
-        return Promise.resolve(response);
-      }).catch(() => {
-        index++;
-        if (index >= urls.length) {
-          return Promise.reject('All requests failed');
-        } else {
-          return sendNextRequest();
-        }
-      });
-    }
-
-    return sendNextRequest();
+  function requestLog(url) {
+    return $.ajax({
+      url: url + "?random=" + Math.random(),
+      type: 'POST',
+      data: { file: '{{ log_file }}' },
+      headers: {
+        "Hiddify-API-Key": "{{g.account.uuid}}"
+      },
+      timeout: 8000,
+    }).then((response, _status, xhr) => {
+      const mtime = xhr.getResponseHeader("X-Log-Mtime")
+      // Anything without the header (login page, panel error page) is not the log.
+      if (mtime === null) return $.Deferred().reject()
+      return { html: response, mtime: Number(mtime) }
+    })
   }
+
+  // Tries the last URL that worked, then every other one once.
+  function fetchLog() {
+    let attempt = 0
+    function tryNext() {
+      const index = (good_url_index + attempt) % log_urls.length
+      return requestLog(log_urls[index]).then(
+        result => {
+          good_url_index = index
+          return result
+        },
+        () => {
+          attempt++
+          if (attempt >= log_urls.length) return $.Deferred().reject('All log URLs failed')
+          return tryNext()
+        })
+    }
+    return tryNext()
+  }
+
   var last_position = 0
   const progress_regex = /####(?<progress>\d+)####(?<title>.*?)####(?<subtitle>.*?)####/;
   var progress_regex_all = new RegExp(progress_regex.source, progress_regex.flags + "g");
 
-
   var old = ''
   function isScrollEnd(element) {
     return (element.scrollTop + element.offsetHeight >= element.scrollHeight - 100)
-
-    // return element.scrollTop + element.clientHeight >= element.scrollHeight;
   }
   function get_log() {
-    sendRequestsSequentially(log_urls)
-      .then(response => {
+    fetchLog()
+      .then(({ html: response, mtime }) => {
+        if (log_started_at && mtime < log_started_at) {
+          x.innerHTML = '<div style="padding:10px">' + {{ _("Waiting for the process to start...") | tojson }} + '</div>'
+          old = ''
+          return
+        }
 
         if (old != response) {
           change_location = isScrollEnd(x)
           x.innerHTML = response
           if (change_location)
             x.scrollTop = x.scrollHeight
-          trimed_response = response.substring(Math.min(last_position, response.length - 200))
           matches = response.match(progress_regex_all)
 
           if (matches) {
             const lastMatch = [...matches].pop().match(progress_regex);
             last_position = response.length
-            // Access named groups of the last match
             const progress = lastMatch.groups.progress;
             const title = lastMatch.groups.title;
             const subtitle = lastMatch.groups.subtitle;
@@ -138,33 +158,26 @@ page."),temp_link(),show=False)}}
             $("#process-title").html(title)
             set_progress(Number(progress))
           }
-
         }
 
         old = response
-        if (!finished) {
-          indx = response.lastIndexOf("----Finished!---")
-          if (indx > 0 && (indx > response.length - 200) && seconds > 5) {
-            set_progress(100)
-            finished = true
-            $("#progress").removeClass("bg-danger")
-            $("#progress").addClass("bg-success")
-            document.getElementById("count-down").innerHTML = 0
-            $("#process-details").html("")
-            $("#process-title").html("")
-            bootbox.alert({
-              title: '{{_("Success")}}',
-              message: '{{_("admin.action_done_sucess")}}',
-              locale: '{{get_locale()}}',
-            });
-          }
+        if (!finished && response.indexOf("----Finished!---") >= 0) {
+          set_progress(100)
+          finished = true
+          $("#progress").removeClass("bg-danger")
+          $("#progress").addClass("bg-success")
+          document.getElementById("count-down").innerHTML = 0
+          $("#process-details").html("")
+          $("#process-title").html("")
+          bootbox.alert({
+            title: '{{_("Success")}}',
+            message: '{{_("admin.action_done_sucess")}}',
+            locale: '{{get_locale()}}',
+          });
         }
-        setTimeout(get_log, 1000);
       })
-      .catch(error => {
-        console.error(error);
-        setTimeout(get_log, 1000);
-      });
+      .catch(error => console.error(error))
+      .always(() => setTimeout(get_log, 1000));
   }
   function set_progress(v) {
     $("#progress")[0].style.width = Math.max(0, Math.min(100, v)) + "%"
@@ -206,7 +219,7 @@ page."),temp_link(),show=False)}}
   $("#logbtn").on("click", function (event) {
     event.preventDefault()
     $.ajax({
-      url: $('#logbtn').attr('href'),
+      url: log_urls[good_url_index],
       type: 'POST',
       data: { file: '{{ log_file}}' },
       headers: {
