@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
 import random
 import re
-import subprocess
 import time
+from datetime import datetime, timedelta
 from typing import Any
 from urllib.parse import quote, urlencode
 
@@ -121,11 +122,8 @@ def _jinja_compact_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
 
 
-def _jinja_exec(command: str) -> str:
-    try:
-        return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
-    except subprocess.CalledProcessError:
-        return ""
+# Absolute path of the panel's static assets, e.g. for nginx `alias`.
+PANEL_STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "static")
 
 
 def _urlencode_pair(key: Any, val: Any) -> tuple[str, Any] | None:
@@ -227,7 +225,9 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["get_nodes_configs"] = get_nodes_configs
     env.globals["enumerate"] = enumerate
     env.globals["len"] = len
-    env.globals["exec"] = _jinja_exec
+    env.globals["panel_static_dir"] = PANEL_STATIC_DIR
+    env.globals["now"] = datetime.now
+    env.globals["timedelta"] = timedelta
     env.globals["ConfigEnum"] = ConfigEnum
     env.globals["_"] = _jinja_gettext
     env.filters["jsbool"] = jsbool

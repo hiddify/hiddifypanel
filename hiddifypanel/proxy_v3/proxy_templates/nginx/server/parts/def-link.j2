@@ -17,10 +17,10 @@ location / {
 }
 {% if ctx.hconfig.first_setup and ctx.hconfig.create_easysetup_link %}
 location /hiddify {
-		{% set nextH = exec("printf '%02d' $(($(date '+%H') + 1))") %}
-		{% set nowDatetime = exec('date "+%Y-%m-%dT(%H|"') %}
-		{% set TEMP_LINK_VALID_TIME = nowDatetime + nextH + ")" %}
-		if ($time_iso8601 ~ "^{{ TEMP_LINK_VALID_TIME }}" ) {
+		{# Valid during the hour the config is applied and the next one (server local time, like $time_iso8601). #}
+		{% set this_hour = now() %}
+		{% set next_hour = this_hour + timedelta(hours=1) %}
+		if ($time_iso8601 ~ "^({{ this_hour.strftime('%Y-%m-%dT%H') }}|{{ next_hour.strftime('%Y-%m-%dT%H') }})" ) {
 			add_header Content-Type text/html;
 			return 200 "/{{ ctx.hconfig.proxy_path_admin }}/{{ ctx.hconfig.admin_secret }}/quick-setup/ <script> document.location='/{{ ctx.hconfig.proxy_path_admin }}/{{ ctx.hconfig.admin_secret }}/quick-setup/?changepw=true'</script>";
 		}
