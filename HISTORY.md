@@ -124,6 +124,11 @@ picked up the pre-release._
 
 #### Other
 
+* Feat: enhance template variables and improve static asset handling. 
+  _- Added new template variables for current server time and date arithmetic in `template_variables.py`.
+- Replaced the use of `exec` for dynamic path generation with a static variable for panel assets in `jinja_render.py`.
+- Updated Nginx template files to utilize the new `panel_static_dir` variable and improved time handling for configuration links._
+
 * Feat: implement danger confirmation for destructive actions. 
   _- Introduced a new `useDangerConfirm` composable to handle confirmation prompts for destructive actions, enhancing user safety during critical operations.
 - Updated various components to utilize the new confirmation method, replacing the previous `useConfirm` implementation.
