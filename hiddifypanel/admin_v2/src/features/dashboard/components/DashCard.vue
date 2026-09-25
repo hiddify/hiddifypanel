@@ -47,8 +47,10 @@ defineProps<{
   box-shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px -18px rgb(15 23 42 / 30%);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
-.dash-card:hover {
-  box-shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 18px 36px -22px rgb(15 23 42 / 38%);
+@media (hover: hover) {
+  .dash-card:hover {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 18px 36px -22px rgb(15 23 42 / 38%);
+  }
 }
 .dash-card__accent {
   height: 3px;
@@ -105,5 +107,22 @@ defineProps<{
   padding: 0.75rem 1.25rem;
   border-top: 1px solid var(--p-content-border-color);
   background: color-mix(in srgb, var(--p-text-color) 3%, transparent);
+}
+@media (max-width: 575px) {
+  .dash-card__header {
+    gap: 0.75rem;
+    padding: 0.85rem 1rem 0.4rem;
+  }
+  .dash-card__icon {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+  }
+  .dash-card__body--padded {
+    padding: 0.4rem 0.75rem 1rem;
+  }
+  .dash-card__footer {
+    padding: 0.7rem 1rem;
+  }
 }
 </style>

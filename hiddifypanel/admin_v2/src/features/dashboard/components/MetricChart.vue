@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import Chart from 'primevue/chart'
 import { useChartTheme, alpha } from '../composables/useChartTheme'
 
@@ -32,6 +32,15 @@ const props = withDefaults(
 )
 
 const { colors, baseOptions, areaFill } = useChartTheme()
+
+/** Phones get shorter charts with fewer x labels so they stay readable. */
+const phoneQuery = window.matchMedia('(max-width: 575px)')
+const isPhone = ref(phoneQuery.matches)
+const onPhoneChange = (event: MediaQueryListEvent) => (isPhone.value = event.matches)
+phoneQuery.addEventListener('change', onPhoneChange)
+onBeforeUnmount(() => phoneQuery.removeEventListener('change', onPhoneChange))
+
+const chartHeight = computed(() => (isPhone.value && props.height > 180 ? Math.round(props.height * 0.8) : props.height))
 
 const stackedAreas = computed(() => props.stacked && props.series.filter((series) => series.area).length > 1)
 
@@ -93,7 +102,7 @@ const options = computed(() =>
     legend: props.legend && props.series.length > 1,
     stacked: props.stacked,
     yMax: props.yMax,
-    maxXTicks: props.maxXTicks,
+    maxXTicks: isPhone.value ? Math.min(props.maxXTicks ?? 8, 5) : props.maxXTicks,
     tooltipExtra: props.tooltipExtra,
     stackTotalLabel: props.stackTotalLabel,
     mirror: props.mirror,
@@ -107,7 +116,7 @@ const options = computed(() =>
     :data="data"
     :options="options"
     class="metric-chart"
-    :style="{ height: `${height}px` }"
+    :style="{ height: `${chartHeight}px` }"
   />
 </template>
 

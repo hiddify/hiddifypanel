@@ -7,7 +7,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { dashboardApi, type DashboardDiskDetail, type DashboardNodeStats } from '@/core/api/generated'
-import { formatBitRate, formatDuration, formatGb, formatPercent } from '@/shared/utils/format-metrics'
+import { durationParts, formatBitRate, formatGb, formatPercent } from '@/shared/utils/format-metrics'
 import { SERIES, nodeColor } from '../composables/useChartTheme'
 import type { NodeSample } from '../composables/useMetricHistory'
 import { timeLabels } from '../utils/series'
@@ -114,6 +114,13 @@ const percentFormatter = (value: number) => formatPercent(value, 1)
 const bitRateFormatter = (value: number) => formatBitRate(Math.abs(value))
 
 /** Clicking the CPU/RAM overview chart toggles a combined top-processes list across visible nodes. */
+function formatUptime(seconds: number): string {
+  const parts = durationParts(seconds)
+  if (parts.days) return t('dashboard.durationDaysHours', parts)
+  if (parts.hours) return t('dashboard.durationHoursMinutes', parts)
+  return t('dashboard.durationMinutes', parts)
+}
+
 const expandedMetric = ref<'cpu' | 'memory' | null>(null)
 function toggleMetric(metric: 'cpu' | 'memory') {
   expandedMetric.value = expandedMetric.value === metric ? null : metric
@@ -259,7 +266,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       <p v-else class="node-health__empty">{{ t('dashboard.noData') }}</p>
     </div>
 
-    <DataTable :value="tableRows" size="small" class="node-table" data-key="id">
+    <DataTable :value="tableRows" size="small" class="node-table" data-key="id" scrollable>
       <Column :header="t('dashboard.node')">
         <template #body="{ data }">
           <span class="node-cell__dot" :style="{ background: data.color }" />
@@ -275,7 +282,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         </template>
       </Column>
       <Column :header="t('dashboard.uptime')">
-        <template #body="{ data }">{{ data.uptimeS !== null ? formatDuration(data.uptimeS) : '—' }}</template>
+        <template #body="{ data }">{{ data.uptimeS !== null ? formatUptime(data.uptimeS) : '—' }}</template>
       </Column>
       <Column :header="t('dashboard.panelVersion')">
         <template #body="{ data }">{{ data.panelVersion ?? '—' }}</template>
@@ -304,7 +311,66 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       </Column>
     </DataTable>
 
-    <Dialog v-model:visible="diskDialogOpen" modal :header="diskDialogNode?.title" :style="{ width: '30rem' }">
+    <ul class="node-list">
+      <li v-for="data in tableRows" :key="data.id" class="node-list__item">
+        <div class="node-list__head">
+          <span class="node-cell__dot" :style="{ background: data.color }" />
+          <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
+            <strong>{{ data.title }} <i class="pi pi-external-link" /></strong>
+            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+          </a>
+          <div v-else class="min-w-0 node-cell__title">
+            <strong>{{ data.title }}</strong>
+            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+          </div>
+          <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
+        </div>
+        <dl class="node-list__stats">
+          <div>
+            <dt>{{ t('dashboard.uptime') }}</dt>
+            <dd>{{ data.uptimeS !== null ? formatUptime(data.uptimeS) : '—' }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('dashboard.panelVersion') }}</dt>
+            <dd>{{ data.panelVersion ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('dashboard.disk') }}</dt>
+            <dd>
+              <button v-if="data.ok" type="button" class="disk-cell" @click="openDisk({ id: data.id, title: data.title })">
+                {{ data.diskPercent !== null ? formatPercent(data.diskPercent, 1) : '—' }}
+                <i class="pi pi-external-link" />
+              </button>
+              <span v-else>—</span>
+            </dd>
+          </div>
+          <div>
+            <dt>{{ t('dashboard.connections') }}</dt>
+            <dd>{{ data.connections !== null ? data.connections : '—' }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('dashboard.uploadSinceBoot') }}</dt>
+            <dd>{{ data.sentGb !== null ? formatGb(data.sentGb, 1) : '—' }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('dashboard.downloadSinceBoot') }}</dt>
+            <dd>{{ data.recvGb !== null ? formatGb(data.recvGb, 1) : '—' }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('dashboard.uniqueIps') }}</dt>
+            <dd>{{ data.uniqueIps !== null ? data.uniqueIps : '—' }}</dd>
+          </div>
+        </dl>
+      </li>
+    </ul>
+
+    <Dialog
+      v-model:visible="diskDialogOpen"
+      modal
+      :header="diskDialogNode?.title"
+      :style="{ width: '30rem' }"
+      :breakpoints="{ '575px': 'calc(100vw - 2rem)' }"
+    >
       <div v-if="diskLoading" class="disk-dialog__loading">
         <ProgressSpinner style="width: 2.5rem; height: 2.5rem" stroke-width="4" />
       </div>
@@ -359,9 +425,14 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 }
 .node-health__overview-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
   margin-bottom: 1rem;
+}
+@container dashboard (min-width: 52rem) {
+  .node-health__overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .node-health__overview-chart {
   display: block;
@@ -492,9 +563,50 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   font-size: 0.78rem;
   color: var(--p-red-500);
 }
-@media (max-width: 991px) {
-  .node-health__overview-grid {
-    grid-template-columns: minmax(0, 1fr);
+/* Stacked node cards replace the wide table on narrow screens. */
+.node-list {
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.node-list__item {
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.85rem;
+}
+.node-list__head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.6rem;
+}
+.node-list__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 1rem;
+  margin: 0;
+}
+.node-list__stats dt {
+  font-size: 0.68rem;
+  color: var(--p-text-muted-color);
+}
+.node-list__stats dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+@container dashboard (max-width: 48rem) {
+  .node-table {
+    display: none;
+  }
+  .node-list {
+    display: flex;
   }
 }
 </style>

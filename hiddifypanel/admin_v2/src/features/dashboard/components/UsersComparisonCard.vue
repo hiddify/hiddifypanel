@@ -85,34 +85,39 @@ const onlineShare = computed(() => {
     :accent="SERIES.online"
     padded
   >
-    <div class="users-compare">
-      <div class="users-compare__gauge">
-        <ResourceGauge
-          :percent="onlineShare"
-          :color="SERIES.online"
-          :value="`${users?.online.m5 ?? 0}/${users?.total ?? 0}`"
-          :caption="t('dashboard.onlineNow')"
-          :auto-color="false"
-          :size="110"
+    <div class="users-compare-wrap">
+      <div class="users-compare">
+        <div class="users-compare__gauge">
+          <ResourceGauge
+            :percent="onlineShare"
+            :color="SERIES.online"
+            :value="`${users?.online.m5 ?? 0}/${users?.total ?? 0}`"
+            :caption="t('dashboard.onlineNow')"
+            :auto-color="false"
+            :size="110"
+          />
+          <p class="users-compare__hint">{{ t('dashboard.inFiveMinutes') }}</p>
+        </div>
+        <MetricChart
+          class="users-compare__chart"
+          :labels="labels"
+          :series="chartSeries"
+          type="bar"
+          :stacked="stacked && stackedSeries.length > 1"
+          :value-formatter="(value: number) => String(Math.round(value))"
+          :height="216"
+          :legend="stacked && stackedSeries.length > 1"
+          :max-x-ticks="5"
         />
-        <p class="users-compare__hint">{{ t('dashboard.inFiveMinutes') }}</p>
       </div>
-      <MetricChart
-        class="users-compare__chart"
-        :labels="labels"
-        :series="chartSeries"
-        type="bar"
-        :stacked="stacked && stackedSeries.length > 1"
-        :value-formatter="(value: number) => String(Math.round(value))"
-        :height="216"
-        :legend="stacked && stackedSeries.length > 1"
-        :max-x-ticks="5"
-      />
     </div>
   </DashCard>
 </template>
 
 <style scoped>
+.users-compare-wrap {
+  container-type: inline-size;
+}
 .users-compare {
   display: flex;
   align-items: center;
@@ -135,10 +140,11 @@ const onlineShare = computed(() => {
   flex: 1;
   min-width: 0;
 }
-@media (max-width: 575px) {
+@container (max-width: 30rem) {
   .users-compare {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
   }
 }
 </style>

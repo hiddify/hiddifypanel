@@ -468,7 +468,7 @@ watch(activeDetailTab, () => {
         <Message v-else severity="warn">{{ t('proxy.generateBundlePartial') }}</Message>
 
         <Fieldset v-if="result.context" :legend="t('proxy.exampleContext')">
-          <ul class="m-0 pl-4 text-sm">
+          <ul class="m-0 ps-4 text-sm">
             <li>{{ t('proxy.bundleContextProxyCount') }}: {{ result.context.proxy_count }}</li>
             <li>{{ t('proxy.exampleContextDomain') }}: {{ result.context.domain }}</li>
             <li>{{ t('proxy.exampleContextUser') }}: {{ result.context.user }}</li>
@@ -478,13 +478,13 @@ watch(activeDetailTab, () => {
         </Fieldset>
 
         <Fieldset v-if="result.warnings?.length" :legend="t('validation.warnings')">
-          <ul class="m-0 pl-4">
+          <ul class="m-0 ps-4">
             <li v-for="(w, i) in result.warnings" :key="'warn-' + i">{{ w.message }}</li>
           </ul>
         </Fieldset>
 
         <Fieldset v-if="result.errors?.length" :legend="t('validation.errors')">
-          <ul class="m-0 pl-4">
+          <ul class="m-0 ps-4">
             <li
               v-for="(e, i) in result.errors"
               :key="'err-' + i"
@@ -670,7 +670,7 @@ watch(activeDetailTab, () => {
 }
 
 .render-error-link__hint {
-  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
   font-size: 0.75rem;
   opacity: 0.8;
 }

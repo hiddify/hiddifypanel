@@ -12,11 +12,13 @@ import '@/shared/monaco/setup'
 
 import App from './App.vue'
 import { createAppRouter } from './router'
-import { i18n } from './core/i18n'
+import { i18n, setLocale } from './core/i18n'
 import { initApiClient, getRouterBase } from './core/api/client'
 
 async function bootstrap() {
   await initApiClient()
+  // Bootstrap may have resolved the locale after the i18n module was evaluated.
+  if (window.__LOCALE__) setLocale(window.__LOCALE__)
 
   const app = createApp(App)
   app.use(createPinia())

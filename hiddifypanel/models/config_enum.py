@@ -82,7 +82,7 @@ class ConfigCategory(StrEnum):
     reality = auto()
     wireguard = auto()
     shadowsocks = auto()
-    additional_configs = auto()
+    # additional_configs = auto()
     dnstt = auto()
 
 
@@ -165,9 +165,9 @@ class ConfigEnum(metaclass=FastEnum):
     utls = _StrConfigDscr(ConfigCategory.advanced)
     telegram_bot_token = _StrConfigDscr(ConfigCategory.telegram, hide_in_virtual_child=True)
 
-    additional_configs_urls = _StrConfigDscr(ConfigCategory.additional_configs)
-    additional_configs_singbox = _StrConfigDscr(ConfigCategory.additional_configs)
-    additional_configs_xrayjson = _StrConfigDscr(ConfigCategory.additional_configs)
+    additional_configs_urls = _StrConfigDscr(ConfigCategory.hidden)
+    additional_configs_singbox = _StrConfigDscr(ConfigCategory.hidden)
+    additional_configs_xrayjson = _StrConfigDscr(ConfigCategory.hidden)
 
     # region child-parent
     # deprecated

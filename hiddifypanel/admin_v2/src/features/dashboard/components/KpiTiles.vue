@@ -127,13 +127,18 @@ const tiles = computed<Tile[]>(() => [
 <style scoped>
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
-@media (max-width: 767px) {
+@container dashboard (min-width: 52rem) {
   .kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+@container dashboard (max-width: 20rem) {
+  .kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

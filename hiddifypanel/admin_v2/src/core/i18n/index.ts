@@ -29,4 +29,9 @@ export function applyDocumentLocale(loc: string) {
   document.documentElement.dir = rtl ? 'rtl' : 'ltr'
 }
 
+export function setLocale(loc: string) {
+  ;(i18n.global.locale as unknown as { value: string }).value = loc
+  applyDocumentLocale(loc)
+}
+
 applyDocumentLocale(locale)

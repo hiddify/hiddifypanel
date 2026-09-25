@@ -66,9 +66,11 @@ withDefaults(
   box-shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 10px 26px -20px rgb(15 23 42 / 35%);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.tile:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 20px 38px -24px rgb(15 23 42 / 45%);
+@media (hover: hover) {
+  .tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 20px 38px -24px rgb(15 23 42 / 45%);
+  }
 }
 .tile--hoverable {
   cursor: help;
@@ -81,6 +83,9 @@ withDefaults(
 }
 .tile__label {
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -125,8 +130,17 @@ withDefaults(
   .tile {
     padding: 0.9rem 1rem;
   }
+  .tile__top {
+    gap: 0.5rem;
+  }
   .tile__value {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
+  }
+  .tile__icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.7rem;
+    font-size: 0.85rem;
   }
 }
 </style>

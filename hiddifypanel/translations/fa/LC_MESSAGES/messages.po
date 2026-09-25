@@ -1079,7 +1079,12 @@ msgstr ""
 "کنید. در این فاصله لینک‌های زیر را کپی کرده و در جایی برای خود ذخیره نمایید:"
 
 msgid "adminV2.appTitle"
-msgstr "هیدیفای — جدید"
+msgstr "هیدیفای منیجر"
+
+msgid "adminV2.baseConfig.builtinDefaultHint"
+msgstr ""
+"کانفیگ پایه داخلی از کاتالوگ همگام می‌شود. برای ویرایش، محتوای سفارشی را "
+"فعال کنید."
 
 msgid "adminV2.baseConfig.builtinReadOnly"
 msgstr ""
@@ -1087,7 +1092,7 @@ msgstr ""
 "کپی بگیرید."
 
 msgid "adminV2.baseConfig.content"
-msgstr "پیکربندی کامل"
+msgstr "کانفیگ کامل"
 
 msgid "adminV2.baseConfig.core"
 msgstr "هسته"
@@ -1096,13 +1101,13 @@ msgid "adminV2.baseConfig.description"
 msgstr "توضیحات"
 
 msgid "adminV2.baseConfig.listTitle"
-msgstr "پیکربندی‌های پایه"
+msgstr "کانفیگ‌های پایه"
 
 msgid "adminV2.baseConfig.name"
 msgstr "نام"
 
 msgid "adminV2.baseConfig.new"
-msgstr "پیکربندی پایه جدید"
+msgstr "کانفیگ پایه جدید"
 
 msgid "adminV2.baseConfig.side"
 msgstr "سمت"
@@ -1122,6 +1127,9 @@ msgstr "بازگشت"
 msgid "adminV2.common.cancel"
 msgstr "انصراف"
 
+msgid "adminV2.common.collapse"
+msgstr "کمتر"
+
 msgid "adminV2.common.confirmDelete"
 msgstr "آیا از حذف این مورد مطمئن هستید؟"
 
@@ -1137,14 +1145,20 @@ msgstr "حذف"
 msgid "adminV2.common.deleted"
 msgstr "با موفقیت حذف شد"
 
+msgid "adminV2.common.disabled"
+msgstr "غیرفعال"
+
 msgid "adminV2.common.duplicate"
-msgstr "کپی"
+msgstr "ایجاد کپی"
 
 msgid "adminV2.common.edit"
 msgstr "ویرایش"
 
 msgid "adminV2.common.enabled"
 msgstr "فعال"
+
+msgid "adminV2.common.filter"
+msgstr "فیلتر"
 
 msgid "adminV2.common.format"
 msgstr "قالب‌بندی"
@@ -1173,8 +1187,129 @@ msgstr "اعتبارسنجی موفق"
 msgid "adminV2.dashboard.allNodes"
 msgstr "همه نودها"
 
+msgid "adminV2.dashboard.available"
+msgstr "در دسترس"
+
+msgid "adminV2.dashboard.breakdown"
+msgstr "جزئیات"
+
+msgid "adminV2.dashboard.cached"
+msgstr "کش‌شده"
+
 msgid "adminV2.dashboard.clickForProcesses"
-msgstr "برای دیدن پردازش‌های برتر کلیک کنید"
+msgstr "برای دیدن پردازش‌های پرمصرف کلیک کنید"
+
+msgid "adminV2.dashboard.collapse"
+msgstr "بستن جزئیات"
+
+msgid "adminV2.dashboard.connections"
+msgstr "اتصال‌ها"
+
+msgid "adminV2.dashboard.core"
+msgstr "هسته {index}"
+
+msgid "adminV2.dashboard.cpu"
+msgstr "پردازنده"
+
+msgid "adminV2.dashboard.cpuCores"
+msgstr "پردازنده · {count} هسته"
+
+msgid "adminV2.dashboard.dailyOnline"
+msgstr "کاربران آنلاین روزانه"
+
+msgid "adminV2.dashboard.dailyUsage"
+msgstr "مصرف روزانه"
+
+msgid "adminV2.dashboard.disk"
+msgstr "دیسک"
+
+msgid "adminV2.dashboard.download"
+msgstr "دانلود"
+
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "دانلود از زمان روشن شدن"
+
+msgid "adminV2.dashboard.durationDaysHours"
+msgstr "{days} روز {hours} ساعت"
+
+msgid "adminV2.dashboard.durationHoursMinutes"
+msgstr "{hours} ساعت {minutes} دقیقه"
+
+msgid "adminV2.dashboard.durationMinutes"
+msgstr "{minutes} دقیقه"
+
+msgid "adminV2.dashboard.enabledUsers"
+msgstr "کاربران فعال"
+
+msgid "adminV2.dashboard.expand"
+msgstr "نمایش جزئیات"
+
+msgid "adminV2.dashboard.free"
+msgstr "آزاد"
+
+msgid "adminV2.dashboard.hiddify"
+msgstr "هیدیفای"
+
+msgid "adminV2.dashboard.hiddifyData"
+msgstr "داده‌های هیدیفای"
+
+msgid "adminV2.dashboard.hostname"
+msgstr "میزبان"
+
+msgid "adminV2.dashboard.inFiveMinutes"
+msgstr "در ۵ دقیقه اخیر"
+
+msgid "adminV2.dashboard.lastNDays"
+msgstr "{days} روز اخیر"
+
+msgid "adminV2.dashboard.lastdayOnline"
+msgstr "آنلاین دیروز"
+
+msgid "adminV2.dashboard.liveThroughput"
+msgstr "ترافیک لحظه‌ای"
+
+msgid "adminV2.dashboard.liveUpdated"
+msgstr "زنده · به‌روزرسانی {time}"
+
+msgid "adminV2.dashboard.load15m"
+msgstr "۱۵ دقیقه"
+
+msgid "adminV2.dashboard.load1m"
+msgstr "۱ دقیقه"
+
+msgid "adminV2.dashboard.load5m"
+msgstr "۵ دقیقه"
+
+msgid "adminV2.dashboard.loadAverage"
+msgstr "میانگین بار"
+
+msgid "adminV2.dashboard.loadFailed"
+msgstr "بارگذاری اطلاعات داشبورد ناموفق بود"
+
+msgid "adminV2.dashboard.loadFailedHint"
+msgstr ""
+"داشبورد به API پنل دسترسی ندارد. بررسی کنید که هنوز وارد حساب خود هستید."
+
+msgid "adminV2.dashboard.monthUsage"
+msgstr "مصرف ماه"
+
+msgid "adminV2.dashboard.monthUsers"
+msgstr "ماه"
+
+msgid "adminV2.dashboard.monthlyAverage"
+msgstr "میانگین ماهانه"
+
+msgid "adminV2.dashboard.monthlyOnline"
+msgstr "آنلاین ماهانه"
+
+msgid "adminV2.dashboard.nDays"
+msgstr "{days} روز"
+
+msgid "adminV2.dashboard.network"
+msgstr "شبکه"
+
+msgid "adminV2.dashboard.noData"
+msgstr "هنوز داده‌ای وجود ندارد"
 
 msgid "adminV2.dashboard.node"
 msgstr "نود"
@@ -1183,10 +1318,13 @@ msgid "adminV2.dashboard.nodeHealth"
 msgstr "سلامت نودها"
 
 msgid "adminV2.dashboard.nodeHealthHint"
-msgstr "CPU، RAM و دیسک زنده از API هر نود"
+msgstr "وضعیت لحظه‌ای CPU، RAM و دیسک از API هر نود"
+
+msgid "adminV2.dashboard.nodeHealthStackedHint"
+msgstr "CPU، RAM و دیسک هر نود به‌صورت پشته‌ای"
 
 msgid "adminV2.dashboard.nodeNetworkHint"
-msgstr "آپلود و دانلود زنده هر نود"
+msgstr "آپلود و دانلود لحظه‌ای هر نود"
 
 msgid "adminV2.dashboard.nodeOffline"
 msgstr "آفلاین"
@@ -1197,11 +1335,62 @@ msgstr "آنلاین"
 msgid "adminV2.dashboard.nodeUnreachable"
 msgstr "این نود در دسترس نیست"
 
+msgid "adminV2.dashboard.none"
+msgstr "هیچ"
+
+msgid "adminV2.dashboard.onlineEnabledUsers"
+msgstr "کاربران آنلاین / فعال"
+
+msgid "adminV2.dashboard.onlineNow"
+msgstr "هم‌اکنون آنلاین"
+
 msgid "adminV2.dashboard.onlineOnDay"
 msgstr "آنلاین: {count}"
 
+msgid "adminV2.dashboard.onlineToday"
+msgstr "آنلاین امروز: {count} از {total}"
+
+msgid "adminV2.dashboard.onlineUsers"
+msgstr "کاربران آنلاین"
+
+msgid "adminV2.dashboard.panelVersion"
+msgstr "نسخه پنل"
+
+msgid "adminV2.dashboard.pause"
+msgstr "توقف"
+
+msgid "adminV2.dashboard.paused"
+msgstr "به‌روزرسانی زنده متوقف شده است"
+
+msgid "adminV2.dashboard.peakDay"
+msgstr "روز اوج مصرف"
+
+msgid "adminV2.dashboard.perCore"
+msgstr "به تفکیک هسته"
+
+msgid "adminV2.dashboard.perDay"
+msgstr "{value} در روز"
+
+msgid "adminV2.dashboard.ram"
+msgstr "حافظه (RAM)"
+
+msgid "adminV2.dashboard.range"
+msgstr "بازه زمانی"
+
+msgid "adminV2.dashboard.refresh"
+msgstr "به‌روزرسانی"
+
+msgid "adminV2.dashboard.resume"
+msgstr "زنده"
+
+msgid "adminV2.dashboard.rollingAverage"
+msgstr "میانگین ۷ روزه"
+
 msgid "adminV2.dashboard.subtitle"
 msgstr "ترافیک، کاربران و سلامت سرور در یک نگاه"
+
+msgid "adminV2.dashboard.swap"
+msgstr "حافظه مجازی (Swap)"
 
 msgid "adminV2.dashboard.thisServer"
 msgstr "این سرور"
@@ -1209,17 +1398,98 @@ msgstr "این سرور"
 msgid "adminV2.dashboard.title"
 msgstr "داشبورد"
 
+msgid "adminV2.dashboard.today"
+msgstr "امروز"
+
+msgid "adminV2.dashboard.todayOnline"
+msgstr "آنلاین امروز"
+
+msgid "adminV2.dashboard.todayUsage"
+msgstr "مصرف امروز"
+
+msgid "adminV2.dashboard.topFolders"
+msgstr "بزرگ‌ترین پوشه‌ها"
+
+msgid "adminV2.dashboard.topProcesses"
+msgstr "پردازش‌های پرمصرف"
+
+msgid "adminV2.dashboard.totalUsage"
+msgstr "مصرف کل"
+
+msgid "adminV2.dashboard.totalUsers"
+msgstr "کل کاربران"
+
 msgid "adminV2.dashboard.underConstruction"
 msgstr "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت."
+
+msgid "adminV2.dashboard.uniqueIps"
+msgstr "IPهای یکتا"
+
+msgid "adminV2.dashboard.upload"
+msgstr "آپلود"
+
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "آپلود از زمان روشن شدن"
+
+msgid "adminV2.dashboard.uptime"
+msgstr "مدت روشن بودن"
+
+msgid "adminV2.dashboard.usageComparison"
+msgstr "مقایسه مصرف"
+
+msgid "adminV2.dashboard.usageComparisonHint"
+msgstr "مصرف امروز و دیروز در مقایسه با میانگین روزانه هفته و ماه"
 
 msgid "adminV2.dashboard.usageOnDay"
 msgstr "مصرف: {value}"
 
 msgid "adminV2.dashboard.usageStackedHint"
-msgstr "مصرف هر نود به‌صورت پشته — مجموع همان سطح پرشده است"
+msgstr "مصرف هر نود به‌صورت پشته‌ای · مجموع، همان سطح پرشده است"
+
+msgid "adminV2.dashboard.usageTrend"
+msgstr "روند مصرف"
+
+msgid "adminV2.dashboard.used"
+msgstr "مصرف‌شده"
+
+msgid "adminV2.dashboard.usersComparison"
+msgstr "مقایسه کاربران"
+
+msgid "adminV2.dashboard.usersComparisonHint"
+msgstr "تعداد کاربران یکتا در هر بازه"
+
+msgid "adminV2.dashboard.usersSummary"
+msgstr "{total} کاربر · {enabled} فعال"
+
+msgid "adminV2.dashboard.usersTrend"
+msgstr "روند کاربران"
+
+msgid "adminV2.dashboard.vsPreviousMonth"
+msgstr "نسبت به ۳۰ روز قبل"
+
+msgid "adminV2.dashboard.vsPreviousWeek"
+msgstr "نسبت به ۷ روز قبل"
+
+msgid "adminV2.dashboard.vsYesterday"
+msgstr "نسبت به دیروز"
+
+msgid "adminV2.dashboard.weekUsage"
+msgstr "مصرف هفته"
+
+msgid "adminV2.dashboard.weekUsers"
+msgstr "هفته"
+
+msgid "adminV2.dashboard.weeklyAverage"
+msgstr "میانگین هفتگی"
+
+msgid "adminV2.dashboard.weeklyOnline"
+msgstr "آنلاین هفتگی"
 
 msgid "adminV2.dashboard.welcomePanel"
 msgstr "خوش آمدید"
+
+msgid "adminV2.dashboard.yesterday"
+msgstr "دیروز"
 
 msgid "adminV2.domain.addFailed"
 msgstr "افزودن دامنه ناموفق بود"
@@ -1243,10 +1513,10 @@ msgid "adminV2.editor.excludeBuiltinTemplates"
 msgstr "حذف قالب‌های داخلی از خروجی"
 
 msgid "adminV2.editor.exportBundle"
-msgstr "خروجی بسته"
+msgstr "خروجی گرفتن از بسته"
 
 msgid "adminV2.editor.includeTemplate"
-msgstr "شامل کردن قالب"
+msgstr "افزودن قالب (include)"
 
 msgid "adminV2.editor.insertVariable"
 msgstr "درج متغیر"
@@ -1278,13 +1548,13 @@ msgid "adminV2.editor.previewTitle"
 msgstr "پیش‌نمایش قالب"
 
 msgid "adminV2.footer.text"
-msgstr "پنل ادمین هیدیفای نسخه ۲"
+msgstr "هیدیفای منیجر"
 
 msgid "adminV2.menu.baseConfigs"
-msgstr "پیکربندی پایه"
+msgstr "کانفیگ‌های پایه"
 
 msgid "adminV2.menu.customProxies"
-msgstr "پروکسی‌های سفارشی"
+msgstr "پروکسی‌ها"
 
 msgid "adminV2.menu.dashboard"
 msgstr "داشبورد"
@@ -1350,22 +1620,22 @@ msgid "adminV2.proxy.autoClient"
 msgstr "خودکار"
 
 msgid "adminV2.proxy.baseConfigTemplate"
-msgstr "بازنویسی پیکربندی پایه"
+msgstr "بازنویسی کانفیگ پایه"
 
 msgid "adminV2.proxy.baseConfigTemplateHint"
 msgstr ""
-"اختیاری: پوسته کامل xray داخل {% block base_config %}. خالی بگذارید تا از "
-"پیکربندی پایه سراسری استفاده شود."
+"اختیاری: پوسته کامل کانفیگ کلاینت xray داخل {% block base_config %}. خالی "
+"بگذارید تا از کانفیگ پایه سراسری استفاده شود."
 
 msgid "adminV2.proxy.builtinDefaultHint"
 msgstr ""
-"پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را "
-"در تب سرور یا کلاینت فعال کنید."
+"پیش‌تنظیم داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی "
+"را در تب سرور یا کلاینت فعال کنید."
 
 msgid "adminV2.proxy.builtinReadOnly"
 msgstr ""
-"پریست داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل کپی "
-"بگیرید."
+"پیش‌تنظیم داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل، یک "
+"کپی ایجاد کنید."
 
 msgid "adminV2.proxy.bundleContextProxyCount"
 msgstr "پروکسی‌های فعال"
@@ -1408,16 +1678,16 @@ msgid "adminV2.proxy.clashFormatYaml"
 msgstr "YAML"
 
 msgid "adminV2.proxy.clientBuiltinCustomized"
-msgstr "پیکربندی کلاینت سفارشی"
+msgstr "کانفیگ کلاینت سفارشی"
 
 msgid "adminV2.proxy.clientBuiltinDefault"
-msgstr "استفاده از پیکربندی پیش‌فرض کلاینت کاتالوگ"
+msgstr "استفاده از کانفیگ پیش‌فرض کلاینت از کاتالوگ"
 
 msgid "adminV2.proxy.clientConfigDefault"
 msgstr "کانفیگ کلاینت"
 
 msgid "adminV2.proxy.clientCoreConfigs"
-msgstr "کانفیگ هسته کلاینت"
+msgstr "کانفیگ‌های هسته کلاینت"
 
 msgid "adminV2.proxy.clientCores"
 msgstr "هسته‌های کلاینت"
@@ -1432,13 +1702,14 @@ msgid "adminV2.proxy.customPath"
 msgstr "مسیر سفارشی"
 
 msgid "adminV2.proxy.customPathAuto"
-msgstr "برای پراکسی‌های HTTP به‌صورت خودکار ساخته می‌شود"
+msgstr "برای پروکسی‌های HTTP به‌صورت خودکار ساخته می‌شود"
 
 msgid "adminV2.proxy.directPortAccess"
 msgstr "دسترسی مستقیم به پورت"
 
 msgid "adminV2.proxy.directPortAccessHint"
-msgstr "با احتیاط استفاده کنید — ممکن است سرور شما قابل کشف باشد"
+msgstr ""
+"با احتیاط استفاده کنید — ممکن است سرور شما روی رابط عمومی قابل شناسایی شود"
 
 msgid "adminV2.proxy.doBase64After"
 msgstr "Base64 بعد از رندر"
@@ -1453,19 +1724,19 @@ msgid "adminV2.proxy.domainModeLabels.cdn"
 msgstr "CDN"
 
 msgid "adminV2.proxy.domainModeLabels.direct"
-msgstr "Direct"
+msgstr "مستقیم"
 
 msgid "adminV2.proxy.domainModeLabels.direct-dns"
-msgstr "Direct DNS"
+msgstr "مستقیم (DNS)"
 
 msgid "adminV2.proxy.domainModeLabels.direct-fake"
-msgstr "Direct Fake"
+msgstr "مستقیم (Fake)"
 
 msgid "adminV2.proxy.domainModeLabels.direct-reality"
-msgstr "Direct Reality"
+msgstr "مستقیم (REALITY)"
 
 msgid "adminV2.proxy.domainModeLabels.direct-valid"
-msgstr "Direct Valid"
+msgstr "مستقیم (معتبر)"
 
 msgid "adminV2.proxy.domainModeLabels.fake"
 msgstr "Fake TLS"
@@ -1474,22 +1745,22 @@ msgid "adminV2.proxy.domainModeLabels.reality"
 msgstr "REALITY"
 
 msgid "adminV2.proxy.domainModeLabels.relay"
-msgstr "Relay"
+msgstr "رله"
 
 msgid "adminV2.proxy.domainModeLabels.relay-fake"
-msgstr "Relay Fake"
+msgstr "رله (Fake)"
 
 msgid "adminV2.proxy.domainModeLabels.relay-reality"
-msgstr "Relay Reality"
+msgstr "رله (REALITY)"
 
 msgid "adminV2.proxy.domainModeLabels.relay-valid"
-msgstr "Relay Valid"
+msgstr "رله (معتبر)"
 
 msgid "adminV2.proxy.domainModeLabels.special"
-msgstr "Special (REALITY)"
+msgstr "ویژه (REALITY)"
 
 msgid "adminV2.proxy.domainModes"
-msgstr "حالت دامنه"
+msgstr "حالت‌های دامنه"
 
 msgid "adminV2.proxy.domains"
 msgstr "دامنه‌ها"
@@ -1498,7 +1769,9 @@ msgid "adminV2.proxy.downloadAlpns"
 msgstr "ALPN دانلود"
 
 msgid "adminV2.proxy.downloadAlpnsHint"
-msgstr "فقط xHTTP. خالی = همان ALPN اصلی."
+msgstr ""
+"فقط برای xHTTP. خالی = همان ALPN اصلی. تعداد کانفیگ‌ها = ALPN اصلی × ALPN "
+"دانلود."
 
 msgid "adminV2.proxy.downloadDomainModes"
 msgstr "حالت‌های دامنه دانلود"
@@ -1565,28 +1838,22 @@ msgid "adminV2.proxy.exampleUserSample"
 msgstr "کاربر نمونه"
 
 msgid "adminV2.proxy.export"
-msgstr "خروجی"
+msgstr "خروجی گرفتن"
 
 msgid "adminV2.proxy.exportFailed"
-msgstr "خروجی ناموفق"
-
-msgid "adminV2.proxy.faketlsDomains"
-msgstr "دامنه‌های faketls"
-
-msgid "adminV2.proxy.faketlsSpecialHint"
-msgstr "از دامنه‌های ویژه (REALITY) در پنل انتخاب کنید"
+msgstr "خروجی گرفتن ناموفق بود"
 
 msgid "adminV2.proxy.fieldOverride"
 msgstr "بازنویسی"
 
 msgid "adminV2.proxy.generateBundle"
-msgstr "تولید همه پیکربندی‌ها"
+msgstr "تولید همه کانفیگ‌ها"
 
 msgid "adminV2.proxy.generateBundleOk"
-msgstr "بسته پیکربندی با موفقیت تولید شد"
+msgstr "بسته کانفیگ با موفقیت تولید شد"
 
 msgid "adminV2.proxy.generateBundlePartial"
-msgstr "بسته پیکربندی با هشدار یا خطا تولید شد"
+msgstr "بسته کانفیگ با هشدار یا خطا تولید شد"
 
 msgid "adminV2.proxy.generateExample"
 msgstr "تولید نمونه"
@@ -1601,22 +1868,22 @@ msgid "adminV2.proxy.goToSettings"
 msgstr "رفتن به تنظیمات"
 
 msgid "adminV2.proxy.ignoreSkip"
-msgstr "نادیده گرفتن skip"
+msgstr "نادیده گرفتن تگ‌های skip"
 
 msgid "adminV2.proxy.ignoreSkipHint"
-msgstr "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود"
+msgstr "کانفیگ حتی وقتی بلوک skip قالب معمولاً بخشی را رد می‌کند، تولید شود"
 
 msgid "adminV2.proxy.import"
-msgstr "ورود"
+msgstr "وارد کردن"
 
 msgid "adminV2.proxy.importFailed"
-msgstr "ورود ناموفق"
+msgstr "وارد کردن ناموفق بود"
 
 msgid "adminV2.proxy.importSuccess"
 msgstr "با موفقیت وارد شد ({count} قالب)"
 
 msgid "adminV2.proxy.inboundPort"
-msgstr "پورت inbound"
+msgstr "پورت ورودی"
 
 msgid "adminV2.proxy.inboundPortAuto"
 msgstr "خالی = خودکار"
@@ -1631,7 +1898,7 @@ msgid "adminV2.proxy.inboundTcpPortsHint"
 msgstr "پورت‌های TCP ثابت با کاما"
 
 msgid "adminV2.proxy.inboundTemplate"
-msgstr "قالب inbound"
+msgstr "قالب ورودی (inbound)"
 
 msgid "adminV2.proxy.inboundUdpPorts"
 msgstr "پورت‌های UDP ورودی"
@@ -1648,10 +1915,10 @@ msgstr ""
 "مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد."
 
 msgid "adminV2.proxy.l7Proto"
-msgstr "L7 Reverse Proxy Protocol"
+msgstr "پروتکل ریورس پروکسی لایه ۷"
 
 msgid "adminV2.proxy.l7ReverseProto"
-msgstr "پروتکل L7 reverse proxy"
+msgstr "پروتکل ریورس پروکسی لایه ۷"
 
 msgid "adminV2.proxy.linkSettings"
 msgstr "تنظیمات لینک"
@@ -1666,28 +1933,28 @@ msgid "adminV2.proxy.mode"
 msgstr "حالت"
 
 msgid "adminV2.proxy.modeLabels.domain_native"
-msgstr "بومی دامنه"
+msgstr "دامنه (بومی)"
 
 msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
-msgstr "پورت خودکار چند دامنه"
+msgstr "چند دامنه با پورت خودکار"
 
 msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
-msgstr "Domain DNS Gateway"
+msgstr "درگاه DNS دامنه"
 
 msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
-msgstr "Domain L7 Gateway"
+msgstr "درگاه لایه ۷ دامنه"
 
 msgid "adminV2.proxy.modeLabels.domains_single_public_port"
-msgstr "پورت ثابت چند دامنه"
+msgstr "چند دامنه با پورت ثابت"
 
 msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
-msgstr "Domain SNI Gateway"
+msgstr "درگاه SNI دامنه"
 
 msgid "adminV2.proxy.modeLabels.ip"
 msgstr "مبتنی بر IP"
 
 msgid "adminV2.proxy.modeLabels.no_inbound"
-msgstr "بدون اینباند"
+msgstr "بدون ورودی"
 
 msgid "adminV2.proxy.modeSettings"
 msgstr "حالت و مسیریابی"
@@ -1704,16 +1971,18 @@ msgid "adminV2.proxy.new"
 msgstr "پروکسی جدید"
 
 msgid "adminV2.proxy.noClientConfigs"
-msgstr "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید."
+msgstr "هنوز کانفیگ کلاینتی وجود ندارد. برای شروع یک کلاینت اضافه کنید."
 
 msgid "adminV2.proxy.outboundTagTemplate"
-msgstr "قالب تگ outbound"
+msgstr "قالب تگ خروجی (outbound)"
 
 msgid "adminV2.proxy.outboundTagTemplateHint"
-msgstr "Jinja برای تگ هر outbound کلاینت"
+msgstr ""
+"Jinja برای تگ هر outbound کلاینت. پیش‌فرض: {{ proxy.tag }} {{ domain.alias "
+"or domain.name }} {{ proxy.alpn }}"
 
 msgid "adminV2.proxy.outboundsTemplate"
-msgstr "قالب outbounds"
+msgstr "قالب خروجی‌ها (outbounds)"
 
 msgid "adminV2.proxy.protocol"
 msgstr "پروتکل"
@@ -1746,10 +2015,10 @@ msgid "adminV2.proxy.searchAll"
 msgstr "جستجو در همه ستون‌ها..."
 
 msgid "adminV2.proxy.serverBuiltinCustomized"
-msgstr "پیکربندی سرور سفارشی"
+msgstr "کانفیگ سرور سفارشی"
 
 msgid "adminV2.proxy.serverBuiltinDefault"
-msgstr "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ"
+msgstr "استفاده از کانفیگ پیش‌فرض سرور از کاتالوگ"
 
 msgid "adminV2.proxy.serverCore"
 msgstr "هسته سرور"
@@ -1839,7 +2108,7 @@ msgid "adminV2.proxy.tcpUdp"
 msgstr "TCP یا UDP"
 
 msgid "adminV2.proxy.tcpUdpHint"
-msgstr "پروتکل انتقال برای پورت‌های inbound محاسبه‌شده"
+msgstr "پروتکل لایه انتقال برای پورت‌های ورودی محاسبه‌شده"
 
 msgid "adminV2.proxy.tcpUdpLabels.both"
 msgstr "TCP + UDP"
@@ -1851,7 +2120,7 @@ msgid "adminV2.proxy.tcpUdpLabels.udp"
 msgstr "UDP"
 
 msgid "adminV2.proxy.templateSlugs"
-msgstr "قالب‌های include"
+msgstr "قالب‌های ضمیمه‌شده (include)"
 
 msgid "adminV2.proxy.tlsLayer"
 msgstr "لایه TLS"
@@ -1878,7 +2147,7 @@ msgid "adminV2.proxy.tlsLayerSpecialConflict"
 msgstr "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست"
 
 msgid "adminV2.proxy.transport"
-msgstr "ترابری"
+msgstr "لایه انتقال"
 
 msgid "adminV2.proxy.transportLabels.grpc"
 msgstr "gRPC"
@@ -1905,7 +2174,17 @@ msgid "adminV2.proxy.version"
 msgstr "نسخه"
 
 msgid "adminV2.template.builtin"
-msgstr "سیستمی"
+msgstr "داخلی"
+
+msgid "adminV2.template.builtinCustomized"
+msgstr "قالب داخلی سفارشی‌شده"
+
+msgid "adminV2.template.builtinDefault"
+msgstr "استفاده از پیش‌فرض کاتالوگ"
+
+msgid "adminV2.template.builtinDefaultHint"
+msgstr ""
+"قالب داخلی از کاتالوگ همگام می‌شود. برای ویرایش، محتوای سفارشی را فعال کنید."
 
 msgid "adminV2.template.builtinReadOnly"
 msgstr "قالب داخلی — برای ایجاد نسخه قابل ویرایش کپی بگیرید."
@@ -1930,6 +2209,9 @@ msgstr "محتوا"
 
 msgid "adminV2.template.core"
 msgstr "هسته"
+
+msgid "adminV2.template.customContent"
+msgstr "محتوای سفارشی"
 
 msgid "adminV2.template.description"
 msgstr "توضیحات"
@@ -1979,6 +2261,9 @@ msgstr "این شناسه قالب قبلاً استفاده شده است."
 msgid "adminV2.template.slugHint"
 msgstr "فقط بخش بعد از هسته/دسته قابل ویرایش است"
 
+msgid "adminV2.template.sysTooltip"
+msgstr "مورد داخلی (سیستمی)"
+
 msgid "adminV2.templateVariables.access"
 msgstr "دسترسی"
 
@@ -2005,7 +2290,7 @@ msgstr "نام"
 
 msgid "adminV2.templateVariables.skipHint"
 msgstr ""
-"خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی "
+"خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پروکسی "
 "رندر نشود"
 
 msgid "adminV2.theme.dark"
@@ -2024,7 +2309,7 @@ msgid "adminV2.utils.decode"
 msgstr "رمزگشایی"
 
 msgid "adminV2.utils.emptyLinks"
-msgstr "لینک‌ها را سمت چپ بچسبانید تا اینجا نمایش داده شوند."
+msgstr "لینک‌های اشتراک‌گذاری را در بخش ورودی بچسبانید تا اینجا بررسی شوند."
 
 msgid "adminV2.utils.encode"
 msgstr "رمزگذاری"
@@ -2036,17 +2321,17 @@ msgid "adminV2.utils.extraJson"
 msgstr "extra (JSON)"
 
 msgid "adminV2.utils.fragment"
-msgstr "Fragment"
+msgstr "نام"
 
 msgid "adminV2.utils.input"
 msgstr "ورودی"
 
 msgid "adminV2.utils.links"
-msgstr "لینک‌ها"
+msgstr "لینک‌های اشتراک‌گذاری"
 
 msgid "adminV2.utils.linksPlaceholder"
 msgstr ""
-"یک یا چند لینک vless://، vmess://، ss://، trojan:// (یا سابسکریپشن base64) "
+"یک یا چند لینک vless://، vmess://، ss://، trojan:// (یا لینک اشتراک base64) "
 "بچسبانید"
 
 msgid "adminV2.utils.method"
@@ -2059,7 +2344,7 @@ msgid "adminV2.utils.output"
 msgstr "خروجی"
 
 msgid "adminV2.utils.pass"
-msgstr "رمز"
+msgstr "رمز عبور"
 
 msgid "adminV2.utils.path"
 msgstr "مسیر"
@@ -2087,9 +2372,9 @@ msgstr "سرور"
 
 msgid "adminV2.utils.sublinkHint"
 msgstr ""
-"لینک‌ها را سمت چپ بچسبانید. سمت راست فیلدهای رمزگشایی‌شده را نشان می‌دهد. "
-"پارامترهای کوئری ردیف‌های قابل ویرایش هستند و extra به صورت JSON است. تغییر "
-"سمت راست لینک را بازنویسی می‌کند."
+"لینک‌ها را در بخش ورودی بچسبانید. بخش خروجی فیلدهای رمزگشایی‌شده را نشان "
+"می‌دهد. پارامترهای کوئری ردیف‌های قابل ویرایش هستند و extra به‌صورت JSON "
+"است. تغییرات بخش خروجی، لینک‌ها را بازنویسی می‌کند."
 
 msgid "adminV2.utils.sublinkTab"
 msgstr "ساب‌لینک"
@@ -2100,13 +2385,13 @@ msgstr ""
 "نمی‌شود."
 
 msgid "adminV2.utils.swap"
-msgstr "جابه‌جا"
+msgstr "جابه‌جایی"
 
 msgid "adminV2.utils.title"
 msgstr "ابزارها"
 
 msgid "adminV2.utils.unwrappedSubscription"
-msgstr "سابسکریپشن base64 شناسایی و به لینک‌های جداگانه تبدیل شد."
+msgstr "لینک اشتراک base64 شناسایی شد و به لینک‌های جداگانه تبدیل شد."
 
 msgid "adminV2.utils.urlSafe"
 msgstr "URL-safe"
@@ -2118,16 +2403,16 @@ msgid "adminV2.utils.user"
 msgstr "کاربر"
 
 msgid "adminV2.utils.vmessJson"
-msgstr "JSON وی‌مس"
+msgstr "JSON مربوط به vmess"
 
 msgid "adminV2.utils.vmessObject"
-msgstr "JSON وی‌مس باید یک آبجکت باشد"
+msgstr "JSON مربوط به vmess باید یک آبجکت باشد"
 
 msgid "adminV2.validation.errors"
 msgstr "خطاها"
 
 msgid "adminV2.validation.preview"
-msgstr "پیش‌نمایش کامپایل"
+msgstr "پیش‌نمایش کامپایل‌شده"
 
 msgid "adminV2.validation.title"
 msgstr "اعتبارسنجی"

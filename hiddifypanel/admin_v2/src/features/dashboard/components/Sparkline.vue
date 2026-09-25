@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -50,7 +50,20 @@ const hoverText = computed(() => {
   return label ? `${label} · ${formatted}` : formatted
 })
 
-function onMove(event: MouseEvent) {
+/** Keeps the tip on screen: it flips to the pointer's left past mid-viewport. */
+const tipStyle = computed(() => {
+  if (!hover.value) return {}
+  const { clientX, clientY } = hover.value
+  const top = `${Math.max(8, clientY - 36)}px`
+  return clientX > window.innerWidth / 2
+    ? { right: `${window.innerWidth - clientX + 12}px`, top }
+    : { left: `${clientX + 12}px`, top }
+})
+
+let hideTimer: ReturnType<typeof setTimeout> | undefined
+
+function onMove(event: PointerEvent) {
+  clearTimeout(hideTimer)
   if (props.values.length === 0) return
   const rect = (event.currentTarget as SVGElement).getBoundingClientRect()
   const ratio = rect.width ? (event.clientX - rect.left) / rect.width : 0
@@ -58,9 +71,16 @@ function onMove(event: MouseEvent) {
   hover.value = { index, clientX: event.clientX, clientY: event.clientY }
 }
 
-function onLeave() {
-  hover.value = null
+function onLeave(event: PointerEvent) {
+  // Touch fires pointerleave on lift; keep the value readable for a moment.
+  if (event.pointerType === 'mouse') {
+    hover.value = null
+    return
+  }
+  hideTimer = setTimeout(() => (hover.value = null), 1500)
 }
+
+onBeforeUnmount(() => clearTimeout(hideTimer))
 </script>
 
 <template>
@@ -71,8 +91,9 @@ function onLeave() {
       :style="{ height: `${height}px`, color }"
       preserveAspectRatio="none"
       role="img"
-      @mousemove="onMove"
-      @mouseleave="onLeave"
+      @pointerdown="onMove"
+      @pointermove="onMove"
+      @pointerleave="onLeave"
     >
       <defs>
         <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
@@ -95,7 +116,7 @@ function onLeave() {
     <div
       v-if="hover && hoverText"
       class="sparkline-tip"
-      :style="{ left: `${hover.clientX + 12}px`, top: `${hover.clientY - 36}px` }"
+      :style="tipStyle"
     >
       {{ hoverText }}
     </div>

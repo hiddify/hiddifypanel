@@ -40,7 +40,7 @@
       <Tabs v-model:value="activeTab">
         <TabList>
           <Tab value="0">{{ t('proxy.tabGeneral') }}</Tab>
-          <Tab value="1">{{ t('proxy.tabServer') }}</Tab>
+          <Tab v-if="!isNoInbound" value="1">{{ t('proxy.tabServer') }}</Tab>
           <Tab value="2">{{ t('proxy.tabClient') }}</Tab>
         </TabList>
         <TabPanels>
@@ -55,7 +55,7 @@
                 />
               </HorizontalField>
               <HorizontalField
-                v-if="!isNew"
+                v-if="!isNew && showCommonProxy"
                 :label="t('proxy.isCommonProxy')"
                 input-id="proxy-common"
                 :hint="t('proxy.isCommonProxyHint')"
@@ -98,7 +98,7 @@
               </HorizontalField>
 
               <div :class="{ 'builtin-locked': structureLocked }">
-                <HorizontalField :label="t('proxy.protocol')" input-id="proxy-proto">
+                <HorizontalField v-if="!isNoInbound" :label="t('proxy.protocol')" input-id="proxy-proto">
                   <Select
                     id="proxy-proto"
                     v-model="form.proto"
@@ -109,7 +109,7 @@
                     @change="onLinkSettingsChange"
                   />
                 </HorizontalField>
-                <HorizontalField :label="t('proxy.transport')" input-id="proxy-transport">
+                <HorizontalField v-if="!isNoInbound" :label="t('proxy.transport')" input-id="proxy-transport">
                   <Select
                     id="proxy-transport"
                     v-model="form.transport"
@@ -308,13 +308,10 @@
                   </InputGroupAddon>
                 </InputGroup>
               </HorizontalField>
-              <HorizontalField v-if="showDomains && isSniGateway" :label="t('proxy.faketlsDomains')" :hint="t('proxy.faketlsSpecialHint')">
-                <FaketlsDomainSelect v-model="form.faketls_domains!" :domain-modes="form.domain_modes" />
-              </HorizontalField>
             </Panel>
           </TabPanel>
 
-          <TabPanel value="1">
+          <TabPanel v-if="!isNoInbound" value="1">
             <div :class="{ 'builtin-locked': serverLocked }">
             <Panel :header="t('proxy.tabServer')">
               <HorizontalField :label="t('proxy.serverCore')" input-id="server-core">
@@ -540,7 +537,6 @@ import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import ValidationPanel from '@/shared/components/ValidationPanel.vue'
 import { validationToastDetail } from '@/shared/utils/validation-toast'
 import ProxyCategoriesMultiSelect from '@/shared/components/ProxyCategoriesMultiSelect.vue'
-import FaketlsDomainSelect from '@/shared/components/FaketlsDomainSelect.vue'
 import TemplateSidePanel from '@/shared/components/TemplateSidePanel.vue'
 import BundleExportDialog from '@/shared/components/BundleExportDialog.vue'
 import GenerateExampleDialog from '@/features/custom-proxy/components/GenerateExampleDialog.vue'
@@ -575,7 +571,7 @@ const enableSwitchEpoch = ref(0)
 
 const isNew = computed(() => route.name === 'custom-proxy-new' || !props.id)
 const isBuiltin = computed(() => Boolean(form.is_builtin) && !isNew.value)
-const isCommonProxy = computed(() => Boolean(form.is_common_proxy) && !isNew.value)
+const isCommonProxy = computed(() => Boolean(form.is_common_proxy) && !isNew.value && showCommonProxy.value)
 const isCustomizedBuiltin = computed(
   () =>
     Boolean(form.server_override || form.client_override)
@@ -812,7 +808,6 @@ const defaultForm = (): CustomProxy => ({
   domain_modes: ['direct-valid'],
   custom_path: generateCustomPath(),
   domain_ids: [],
-  faketls_domains: [],
   server_override: false,
   client_override: false,
   builtin: {},
@@ -958,6 +953,10 @@ const isMultiDomainAuto = computed(() => form.mode === 'domains_auto_public_port
 const isMultiDomainStatic = computed(() => form.mode === 'domains_single_public_port')
 const isIpBased = computed(() => form.mode === 'ip')
 const isNoInbound = computed(() => form.mode === 'no_inbound')
+const COMMON_PROXY_CORES = new Set(['hiddify-core', 'xray'])
+const showCommonProxy = computed(
+  () => isNoInbound.value || COMMON_PROXY_CORES.has(form.server_config?.core ?? ''),
+)
 const showTlsLayer = computed(
   () => isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value,
 )
@@ -1865,6 +1864,10 @@ watch(activeClientCoreTab, (core) => {
     expandedClientPanel.value = items.length ? String(items[0]!.globalIndex) : null
     if (items.length) activeClientIndex.value = items[0]!.globalIndex
   }
+})
+
+watch(isNoInbound, (noInbound) => {
+  if (noInbound && activeTab.value === '1') activeTab.value = '0'
 })
 
 watch(activeTab, (tab) => {

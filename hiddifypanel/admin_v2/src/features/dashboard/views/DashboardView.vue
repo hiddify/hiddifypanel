@@ -82,23 +82,26 @@ const {
 </template>
 
 <style scoped>
+/* Cards size against the space left beside the sidebar, not the viewport. */
 .dashboard {
+  container: dashboard / inline-size;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 .dashboard__split {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
 }
-@media (max-width: 1199px) {
+@container dashboard (min-width: 64rem) {
   .dashboard__split {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 }
 @media (max-width: 767px) {
-  .dashboard {
+  .dashboard,
+  .dashboard__split {
     gap: 0.75rem;
   }
 }

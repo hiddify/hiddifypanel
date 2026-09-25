@@ -130,6 +130,7 @@ export function useChartTheme() {
   function baseOptions(options: BaseOptions = {}): ChartOptionsLike {
     const { text, muted, grid, surface, border } = colors.value
     const format = options.valueFormatter ?? ((value: number) => String(value))
+    const rtl = document.documentElement.dir === 'rtl'
 
     return {
       responsive: true,
@@ -141,6 +142,7 @@ export function useChartTheme() {
           display: options.legend ?? true,
           position: 'top',
           align: 'end',
+          rtl,
           labels: {
             color: muted,
             usePointStyle: true,
@@ -153,6 +155,8 @@ export function useChartTheme() {
         },
         tooltip: {
           enabled: true,
+          rtl,
+          textDirection: rtl ? 'rtl' : 'ltr',
           backgroundColor: surface,
           titleColor: text,
           bodyColor: text,

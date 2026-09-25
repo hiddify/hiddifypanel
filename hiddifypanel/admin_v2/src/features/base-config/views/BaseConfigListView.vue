@@ -258,7 +258,7 @@ const coreFilterOptions = computed(() => {
 
 const enabledOptions = [
   { label: t('common.enabled'), value: true },
-  { label: 'Disabled', value: false },
+  { label: t('common.disabled'), value: false },
 ]
 
 const filteredConfigs = computed(() =>

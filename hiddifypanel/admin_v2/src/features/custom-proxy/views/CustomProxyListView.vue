@@ -72,7 +72,7 @@
               severity="danger"
               @click="confirmDelete(data)"
             />
-            <Tag v-if="data.is_common_proxy" icon="pi pi-asterisk" v-tooltip="t('proxy.commonProxyBadge')" severity="info" />
+            <Tag v-if="showsCommonProxy(data)" icon="pi pi-asterisk" v-tooltip="t('proxy.commonProxyBadge')" severity="info" />
             <SysBadge v-if="data.is_builtin" :customized="Boolean(data.server_override || data.client_override)" icon-only class="inline-flex" />
           </div>
         </template>
@@ -116,7 +116,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag v-if="data.proto" :value="protoLabel(data.proto)" severity="info" />
+          <Tag v-if="data.proto && !isNoInbound(data)" :value="protoLabel(data.proto)" severity="info" />
           <span v-else>—</span>
         </template>
       </Column>
@@ -161,7 +161,7 @@
                 v-for="category in data.categories || []"
                 :key="category"
                 :value="category"
-                class="mr-1 mb-1"
+                class="me-1 mb-1"
                 severity="secondary"
               />
               <Button
@@ -176,7 +176,7 @@
                 v-for="category in visibleCategories(data.categories || [])"
                 :key="category"
                 :value="category"
-                class="mr-1 mb-1"
+                class="me-1 mb-1"
                 severity="secondary"
               />
               <Button
@@ -230,7 +230,7 @@
                 v-for="mode in data.domain_modes || []"
                 :key="mode"
                 :value="t(`proxy.domainModeLabels.${mode}`, mode)"
-                class="mr-1 mb-1"
+                class="me-1 mb-1"
                 severity="secondary"
               />
               <Button
@@ -444,8 +444,18 @@ const enabledPopover = ref()
 
 const enabledOptions = [
   { label: t('common.enabled'), value: true },
-  { label: 'Disabled', value: false },
+  { label: t('common.disabled'), value: false },
 ]
+
+const COMMON_PROXY_CORES = new Set(['hiddify-core', 'xray'])
+
+function isNoInbound(row: CustomProxy) {
+  return row.mode === 'no_inbound'
+}
+
+function showsCommonProxy(row: CustomProxy) {
+  return Boolean(row.is_common_proxy) && (isNoInbound(row) || COMMON_PROXY_CORES.has(row.server_core ?? ''))
+}
 
 function protoLabel(proto: string | undefined) {
   if (!proto) return '—'
@@ -488,8 +498,8 @@ function proxySearchHaystack(row: CustomProxy): string {
   const parts = [
     row.name,
     row.slug,
-    proto,
-    protoLabel(proto),
+    isNoInbound(row) ? '' : proto,
+    isNoInbound(row) ? '' : protoLabel(proto),
     mode,
     modeLabel(mode),
     ...(row.categories ?? []),
@@ -499,8 +509,8 @@ function proxySearchHaystack(row: CustomProxy): string {
     tlsLayerDisplay(row),
     ...(row.domain_modes ?? []),
     ...(row.domain_modes ?? []).map((domainMode) => t(`proxy.domainModeLabels.${domainMode}`, domainMode)),
-    isEffectivelyEnabled(row) ? t('common.enabled') : 'Disabled',
-    row.is_common_proxy ? t('proxy.commonProxyBadge') : '',
+    isEffectivelyEnabled(row) ? t('common.enabled') : t('common.disabled'),
+    showsCommonProxy(row) ? t('proxy.commonProxyBadge') : '',
     row.is_builtin ? 'SYS' : '',
   ]
   return parts.filter((part): part is string => Boolean(part)).join(' ').toLowerCase()
@@ -516,7 +526,7 @@ const filteredProxies = computed(() =>
     if (nameQ && !(p.name || '').toLowerCase().includes(nameQ) && !(p.slug || '').toLowerCase().includes(nameQ)) {
       return false
     }
-    if (filterProto.value && proto !== filterProto.value) return false
+    if (filterProto.value && (isNoInbound(p) || proto !== filterProto.value)) return false
     if (filterMode.value && mode !== filterMode.value) return false
     if (filterCore.value && p.server_core !== filterCore.value) return false
     if (filterCategories.value.length && !filterCategories.value.some((category) => (p.categories || []).includes(category))) return false

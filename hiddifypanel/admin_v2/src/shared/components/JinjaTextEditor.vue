@@ -1,6 +1,6 @@
 <template>
   <div class="jinja-text-editor">
-    <div ref="container" :style="{ height: height ?? `${Math.max(rows ?? 6, 4) * 1.35}rem`, width: '100%' }" />
+    <div ref="container" dir="ltr" :style="{ height: height ?? `${Math.max(rows ?? 6, 4) * 1.35}rem`, width: '100%' }" />
   </div>
 </template>
 

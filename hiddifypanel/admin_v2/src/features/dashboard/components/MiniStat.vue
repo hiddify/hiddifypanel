@@ -45,6 +45,8 @@ defineProps<{
   text-transform: uppercase;
   color: var(--p-text-muted-color);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .mini__value {
   margin: 0.1rem 0 0;

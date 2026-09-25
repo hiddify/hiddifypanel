@@ -1,6 +1,75 @@
 @use 'primeicons/primeicons.css';
+@use 'vazirmatn/Vazirmatn-Variable-font-face.css';
 @use './layout/layout.scss';
 
 .p-tooltip-text {
   white-space: pre-line;
+}
+
+// Page content must never be wider than the viewport: on phones that widens the
+// layout viewport, so the page pans sideways and the off-canvas sidebar peeks in.
+.layout-main-container,
+.layout-main {
+  min-width: 0;
+}
+.layout-main-container {
+  overflow-x: clip;
+}
+
+// Panel content sits in a grid track, which by default grows to its widest
+// child (tables, chip lists) and pushes it past the panel edge.
+.p-panel-content-wrapper,
+.p-tabpanels,
+.p-tabpanel {
+  min-width: 0;
+}
+
+// Selected chips (e.g. domain modes) wrap onto new lines instead of stretching the field.
+.p-multiselect {
+  max-width: 100%;
+}
+.p-multiselect-label:has(.p-chip) {
+  flex-wrap: wrap;
+  white-space: normal;
+}
+
+// Wide tables scroll inside their own box instead of stretching the page.
+.p-datatable-table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .p-datatable {
+    .p-datatable-header {
+      padding: 0.75rem;
+    }
+
+    .p-datatable-thead > tr > th,
+    .p-datatable-tbody > tr > td {
+      padding: 0.5rem 0.6rem;
+    }
+
+    .p-datatable-thead > tr > th {
+      white-space: nowrap;
+    }
+  }
+
+  .p-panel .p-panel-content {
+    padding: 0.5rem;
+  }
+
+  .p-paginator {
+    padding: 0.5rem 0.25rem;
+    gap: 0.15rem;
+
+    .p-paginator-page,
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      min-width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
 }

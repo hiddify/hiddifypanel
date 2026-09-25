@@ -1,6 +1,6 @@
 <template>
   <div class="json5-editor">
-    <div ref="container" :style="{ height: height ?? '320px', width: '100%' }" />
+    <div ref="container" dir="ltr" :style="{ height: height ?? '320px', width: '100%' }" />
     <p v-if="localError" class="text-red-500 text-sm mt-1 mb-0">{{ localError }}</p>
   </div>
 </template>

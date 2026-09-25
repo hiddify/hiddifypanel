@@ -38,7 +38,7 @@ def build_admin_v2_menu() -> list[dict]:
 
     home_label = _("Parent Panel") if hutils.node.is_parent() else _("admin.menu.home")
     master_items = [
-        _item(home_label, hurl_for("admin.Dashboard:index"), "pi pi-fw pi-home"),
+        # _item(home_label, hurl_for("admin.Dashboard:index"), "pi pi-fw pi-home"),
     ]
     if hconfig(ConfigEnum.parent_panel):
         master_items.extend(

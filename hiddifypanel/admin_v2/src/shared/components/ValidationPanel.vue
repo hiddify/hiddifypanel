@@ -6,7 +6,7 @@
         <div class="font-semibold mb-2">{{ t('common.validationFailed') }}</div>
         <ul class="validation-issue-list mb-0">
           <li v-for="(e, i) in result.errors" :key="'e' + i" class="validation-issue">
-            <Tag v-if="e.code" severity="danger" :value="e.code" class="text-xs mr-2" />
+            <Tag v-if="e.code" severity="danger" :value="e.code" class="text-xs me-2" />
             <span class="validation-issue-message">{{ e.message }}</span>
             <pre v-if="e.detail?.excerpt" class="validation-issue-detail">{{ e.detail.excerpt }}</pre>
           </li>
@@ -17,7 +17,7 @@
     <Fieldset v-if="result.warnings?.length" :legend="t('validation.warnings')" class="mt-3 mb-0">
       <ul class="validation-issue-list">
         <li v-for="(w, i) in result.warnings" :key="'w' + i" class="validation-issue">
-          <Tag v-if="w.code" severity="warn" :value="w.code" class="text-xs mr-2" />
+          <Tag v-if="w.code" severity="warn" :value="w.code" class="text-xs me-2" />
           <span class="validation-issue-message">{{ w.message }}</span>
         </li>
       </ul>

@@ -1087,6 +1087,10 @@ msgstr ""
 msgid "adminV2.appTitle"
 msgstr "HiddifyManager"
 
+msgid "adminV2.baseConfig.builtinDefaultHint"
+msgstr ""
+"Built-in base config synced from catalog. Enable custom content to edit it."
+
 msgid "adminV2.baseConfig.builtinReadOnly"
 msgstr ""
 "Built-in base config — only name and enabled state can be changed. Duplicate"
@@ -1128,6 +1132,9 @@ msgstr "Back"
 msgid "adminV2.common.cancel"
 msgstr "Cancel"
 
+msgid "adminV2.common.collapse"
+msgstr "less"
+
 msgid "adminV2.common.confirmDelete"
 msgstr "Are you sure you want to delete this item?"
 
@@ -1143,6 +1150,9 @@ msgstr "Delete"
 msgid "adminV2.common.deleted"
 msgstr "Deleted successfully"
 
+msgid "adminV2.common.disabled"
+msgstr "Disabled"
+
 msgid "adminV2.common.duplicate"
 msgstr "Duplicate"
 
@@ -1151,6 +1161,9 @@ msgstr "Edit"
 
 msgid "adminV2.common.enabled"
 msgstr "Enabled"
+
+msgid "adminV2.common.filter"
+msgstr "Filter"
 
 msgid "adminV2.common.format"
 msgstr "Format"
@@ -1220,6 +1233,15 @@ msgstr "Download"
 
 msgid "adminV2.dashboard.downloadSinceBoot"
 msgstr "Uptime Download"
+
+msgid "adminV2.dashboard.durationDaysHours"
+msgstr "{days}d {hours}h"
+
+msgid "adminV2.dashboard.durationHoursMinutes"
+msgstr "{hours}h {minutes}m"
+
+msgid "adminV2.dashboard.durationMinutes"
+msgstr "{minutes}m"
 
 msgid "adminV2.dashboard.enabledUsers"
 msgstr "Enabled users"
@@ -1819,12 +1841,6 @@ msgstr "Export"
 msgid "adminV2.proxy.exportFailed"
 msgstr "Export failed"
 
-msgid "adminV2.proxy.faketlsDomains"
-msgstr "Faketls domains"
-
-msgid "adminV2.proxy.faketlsSpecialHint"
-msgstr "Select from special (REALITY) domains in the panel"
-
 msgid "adminV2.proxy.fieldOverride"
 msgstr "Override"
 
@@ -2159,6 +2175,16 @@ msgstr "Version"
 msgid "adminV2.template.builtin"
 msgstr "Built-in"
 
+msgid "adminV2.template.builtinCustomized"
+msgstr "Customized built-in"
+
+msgid "adminV2.template.builtinDefault"
+msgstr "Using catalog default"
+
+msgid "adminV2.template.builtinDefaultHint"
+msgstr ""
+"Built-in template synced from catalog. Enable custom content to edit it."
+
 msgid "adminV2.template.builtinReadOnly"
 msgstr "Built-in template — duplicate to create an editable copy."
 
@@ -2182,6 +2208,9 @@ msgstr "Content"
 
 msgid "adminV2.template.core"
 msgstr "Core"
+
+msgid "adminV2.template.customContent"
+msgstr "Custom content"
 
 msgid "adminV2.template.description"
 msgstr "Description"
@@ -2230,6 +2259,9 @@ msgstr "This template slug is already in use. Choose a different slug."
 
 msgid "adminV2.template.slugHint"
 msgstr "Only the part after core/category can be edited"
+
+msgid "adminV2.template.sysTooltip"
+msgstr "Built-in (system) item"
 
 msgid "adminV2.templateVariables.access"
 msgstr "Access"

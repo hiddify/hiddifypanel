@@ -93,7 +93,6 @@ export interface CustomProxy {
   domain_modes?: string[]
   custom_path?: string
   domain_ids?: number[]
-  faketls_domains?: string[]
   server_config?: ServerConfig
   client_config?: ClientConfig
   sort_order?: number

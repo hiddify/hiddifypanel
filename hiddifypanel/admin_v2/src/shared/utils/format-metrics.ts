@@ -43,15 +43,14 @@ export function formatCount(value: number): string {
   )
 }
 
-/** Coarse uptime, e.g. `12d 4h` or `3h 12m`. */
-export function formatDuration(seconds: number): string {
+/** Coarse uptime split into whole days, hours and minutes. */
+export function durationParts(seconds: number): { days: number; hours: number; minutes: number } {
   const total = Math.max(0, Math.floor(Number(seconds) || 0))
-  const days = Math.floor(total / 86400)
-  const hours = Math.floor((total % 86400) / 3600)
-  const minutes = Math.floor((total % 3600) / 60)
-  if (days) return `${days}d ${hours}h`
-  if (hours) return `${hours}h ${minutes}m`
-  return `${minutes}m`
+  return {
+    days: Math.floor(total / 86400),
+    hours: Math.floor((total % 86400) / 3600),
+    minutes: Math.floor((total % 3600) / 60),
+  }
 }
 
 export function formatDayLabel(isoDate: string, locale?: string): string {
