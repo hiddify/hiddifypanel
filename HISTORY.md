@@ -1,7 +1,7 @@
 # Changelog
 
 
-## (unreleased)
+## v13.0.0 (2026-09-25)
 
 #### New
 

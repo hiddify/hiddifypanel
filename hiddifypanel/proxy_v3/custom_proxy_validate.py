@@ -770,6 +770,61 @@ def validate_core_placeholders(template_text: str, core: str | None) -> list[dic
     return errors
 
 
+def _validate_no_inbound_client(
+    client_config: dict[str, Any],
+    child_id: int,
+    ctx_client: dict[str, Any],
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    """Validation for client-only (no_inbound) proxies such as additional configs.
+
+    There is no inbound, port, tag or domain to check, and the output is not
+    composed into a base config. Each client template only has to render: to
+    plain text for sublink, and to valid JSON (YAML for clash) for other cores.
+    """
+    from hiddifypanel.proxy_v3.config_builder.jinja_render import jinja_env
+
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    for idx, cc in enumerate(client_config.get("core_configs") or []):
+        core_name = str(cc.get("core") or "")
+        label = _client_core_config_label(cc, idx)
+        tpl = _client_outbounds_template(cc) if core_name == "sublink" else str(cc.get("outbounds_template") or "")
+        if not tpl.strip() or (core_name == "singbox" and _template_uses_hiddify_core(tpl)):
+            continue
+        try:
+            template = jinja_env(child_id).from_string(tpl)
+            context = template.new_context(ctx_client)
+            # Run the whole template first so top-level {% set %} values reach the blocks.
+            rendered = "".join(template.root_render_func(context))
+            outputs = {name: "".join(block(context)) for name, block in template.blocks.items()} or {"": rendered}
+        except TemplateSkip:
+            continue
+        except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
+            errors.append({"code": "client_jinja_error", "message": f"{label}: {e}"})
+            continue
+        if core_name == "sublink":
+            continue
+        for block_name, output in outputs.items():
+            body = fix_duplicate_json_commas(output).strip()
+            if not body:
+                continue
+            where = f"{label} / {block_name}" if block_name else label
+            # Fragments are comma-separated items; brackets on their own lines keep
+            # a trailing `# comment` (valid in clash YAML) from swallowing them.
+            if not body.startswith("["):
+                body = f"[\n{body.rstrip(',')}\n]"
+            if core_name == "clash":
+                try:
+                    yaml.safe_load(body)
+                except yaml.YAMLError as e:
+                    errors.append({"code": "client_yaml_parse", "message": f"{where}: {e}"})
+                continue
+            _, parse_err = parse_json5(body)
+            if parse_err:
+                errors.append({"code": "client_json5_parse", "message": f"{where}: {parse_err}"})
+    return errors, warnings
+
+
 def _client_core_config_label(cc: dict[str, Any] | None, idx: int) -> str:
     """Human label for a client core_configs entry (prefer core name over index)."""
     core = str((cc or {}).get("core") or "").strip()
@@ -859,6 +914,10 @@ def validate_proxy_payload(
         proxy_id=proxy_id or data.get("id"),
         core=core,
     )
+
+    if protocol == CustomProxyMode.no_inbound.value:
+        errors, warnings = _validate_no_inbound_client(client_config, child_id, ctx_client) if "client" in sections and validate_client else ([], [])
+        return {"ok": not errors, "errors": errors, "warnings": warnings, "compiled_preview": "", "compiled_json": None}
 
     if "server" in sections and validate_server:
         inbound_template = server_config.get("inbound_template") or ""
