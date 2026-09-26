@@ -62,7 +62,7 @@ async function scrollIntoView() {
 watch(
   () => props.result,
   (result) => {
-    if (result && !result.ok) void scrollIntoView()
+    if (result && (!result.ok || result.warnings?.length)) void scrollIntoView()
   },
 )
 

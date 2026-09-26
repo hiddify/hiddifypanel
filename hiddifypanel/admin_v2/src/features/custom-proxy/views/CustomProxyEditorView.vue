@@ -1617,6 +1617,13 @@ async function runValidate() {
       detail: validationToastDetail(validation.value),
       life: 8000,
     })
+  } else if (validation.value?.warnings?.length) {
+    toast.add({
+      severity: 'warn',
+      summary: t('validation.warnings'),
+      detail: validationToastDetail(validation.value),
+      life: 8000,
+    })
   }
 }
 

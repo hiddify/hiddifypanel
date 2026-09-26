@@ -836,6 +836,43 @@ def _client_core_config_label(cc: dict[str, Any] | None, idx: int) -> str:
     return f"core_configs[{idx}]"
 
 
+# Config rules (domain modes, ports, xhttp download fields, placeholders) do not
+# fail validation. Only output that cannot be parsed does.
+_UNPARSABLE_ERROR_CODES = frozenset(
+    {
+        "json5_parse",
+        "client_json5_parse",
+        "client_yaml_parse",
+        "jinja_error",
+        "client_jinja_error",
+        "sublink_jinja_error",
+    }
+)
+
+
+def _proxy_validation_result(
+    errors: list[dict[str, str]],
+    warnings: list[dict[str, str]],
+    *,
+    compiled_preview: str = "",
+    compiled_json: Any = None,
+) -> dict[str, Any]:
+    parse_errors: list[dict[str, str]] = []
+    noted = list(warnings)
+    for item in errors:
+        if item.get("code") in _UNPARSABLE_ERROR_CODES:
+            parse_errors.append(item)
+        else:
+            noted.append(item)
+    return {
+        "ok": not parse_errors,
+        "errors": parse_errors,
+        "warnings": noted,
+        "compiled_preview": compiled_preview,
+        "compiled_json": compiled_json,
+    }
+
+
 def validate_proxy_payload(
     data: dict[str, Any],
     child_id: int = 0,
@@ -917,7 +954,7 @@ def validate_proxy_payload(
 
     if protocol == CustomProxyMode.no_inbound.value:
         errors, warnings = _validate_no_inbound_client(client_config, child_id, ctx_client) if "client" in sections and validate_client else ([], [])
-        return {"ok": not errors, "errors": errors, "warnings": warnings, "compiled_preview": "", "compiled_json": None}
+        return _proxy_validation_result(errors, warnings)
 
     if "server" in sections and validate_server:
         inbound_template = server_config.get("inbound_template") or ""
@@ -1153,13 +1190,12 @@ def validate_proxy_payload(
                     }
                 )
 
-    return {
-        "ok": len(errors) == 0,
-        "errors": errors,
-        "warnings": warnings,
-        "compiled_preview": compiled_preview,
-        "compiled_json": compiled_json,
-    }
+    return _proxy_validation_result(
+        errors,
+        warnings,
+        compiled_preview=compiled_preview,
+        compiled_json=compiled_json,
+    )
 
 
 def validate_base_config_content(data: dict[str, Any], child_id: int = 0) -> dict[str, Any]:
