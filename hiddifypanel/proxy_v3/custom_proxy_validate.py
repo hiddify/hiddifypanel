@@ -259,7 +259,7 @@ def build_render_context(
 
         hconfigs = HConfigVar(get_hconfigs(child_id), server_side=server_side)
         pairs = resolve_proxy_alpn_pairs(
-            tls_layer=str(data.get("tls_layer") or "").lower() or None,
+            tls_layer=str(data.get("tls_layer") or "http").lower(),
             transport=_infer_proxy_transport(data),
             proto=_infer_proxy_proto(data),
             hconfigs=hconfigs,
@@ -384,7 +384,7 @@ def build_render_context(
             "reality": proxy_l3 == "reality",
             "transport": _infer_proxy_transport(data),
             "proto": _infer_proxy_proto(data),
-            "tls_layer": str(data.get("tls_layer") or "").lower() or None,
+            "tls_layer": str(data.get("tls_layer") or "http").lower(),
             "download_tls_layer": str(data.get("download_tls_layer") or "").lower() or None,
             "download_domain_modes": list(data.get("download_domain_modes") or []),
             "domain_modes": list(data.get("domain_modes") or []),
@@ -1164,13 +1164,6 @@ def validate_proxy_payload(
                             "message": "REALITY is incompatible with QUIC download in xhttp",
                         }
                     )
-            elif data.get("download_tls_layer") or data.get("download_domain_modes"):
-                errors.append(
-                    {
-                        "code": "invalid_download_xhttp_fields",
-                        "message": "download_tls_layer and download_domain_modes apply only to xhttp with l7_reverse_proto=h2",
-                    }
-                )
         elif protocol in (
             CustomProxyMode.domains_sni_gateway.value,
             CustomProxyMode.domains_dns_gateway.value,

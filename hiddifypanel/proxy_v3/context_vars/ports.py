@@ -12,7 +12,7 @@ GATEWAY_CLIENT_HTTP_PORT = 80
 
 def _tls_layer_key(tls_layer: Any) -> str:
     value = tls_layer.value if hasattr(tls_layer, "value") else tls_layer
-    key = str(value or "tls").strip().lower().replace("-", "_").replace("+", "_")
+    key = str(value or "http").strip().lower().replace("-", "_").replace("+", "_")
     return {
         "tcp_tls": "tls",
         "quic_tcp_tls": "quic_tcp_tls",

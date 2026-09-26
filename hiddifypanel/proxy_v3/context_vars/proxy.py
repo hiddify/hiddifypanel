@@ -68,21 +68,26 @@ class ProxyVar(BaseModel):
 
     domains: list[DomainIPVar] = Field(default_factory=list)
 
+    def effective_tls_layer(self) -> TlsLayer:
+        """A missing layer is plain HTTP. There is no null TLS layer."""
+        return self.tls_layer or TlsLayer.http
+
+    def effective_download_tls_layer(self) -> TlsLayer:
+        """Unset download layer follows the upload layer."""
+        return self.download_tls_layer or self.effective_tls_layer()
+
     @property
     def uses_tls(self) -> bool:
-        return self.tls_layer is None or self.tls_layer != TlsLayer.http
+        return self.effective_tls_layer() != TlsLayer.http
 
     @property
     def download_uses_tls(self) -> bool:
-        if self.download_tls_layer is not None:
-            return self.download_tls_layer != TlsLayer.http
-        return self.uses_tls
+        return self.effective_download_tls_layer() != TlsLayer.http
 
     @property
     def download_port(self) -> int:
         if self.mode == CustomProxyMode.domains_l7_gateway:
-            layer = self.download_tls_layer if self.download_tls_layer is not None else self.tls_layer
-            return gateway_client_port(layer)
+            return gateway_client_port(self.effective_download_tls_layer())
         return self.tcp_port or self.udp_port
 
     @property
@@ -114,7 +119,7 @@ class ProxyVar(BaseModel):
 
         db_tcp_ports = normalize_port_list(proxy.server_inbound_tcp_ports)
         db_udp_ports = normalize_port_list(proxy.server_inbound_udp_ports)
-        mode: CustomProxyMode = proxy.mode  # type: ignore
+        mode: CustomProxyMode = proxy.mode
         proxy_id = int(proxy.id or 0)
         tcp_udp = proxy.effective_server_tcp_udp()
         resolved = resolve_inbound_ports(
@@ -129,21 +134,21 @@ class ProxyVar(BaseModel):
         return cls(
             id=proxy_id,
             mode=mode,
-            tag=proxy.name or proxy.slug or "",  # type: ignore
+            tag=proxy.name or proxy.slug or "",
             tcp_ports=list(resolved.tcp_ports),
             udp_ports=list(resolved.udp_ports),
-            path=normalize_custom_path(proxy.custom_path),  # type: ignore
-            tls_layer=proxy.tls_layer,  # type: ignore
-            l7_reverse_proto=proxy.l7_reverse_proto,  # type: ignore
-            download_tls_layer=proxy.download_tls_layer,  # type: ignore
+            path=normalize_custom_path(proxy.custom_path),
+            tls_layer=proxy.tls_layer or TlsLayer.http,
+            l7_reverse_proto=proxy.l7_reverse_proto,
+            download_tls_layer=proxy.download_tls_layer,
             domain_modes=[str(m) for m in (proxy.domain_modes or [])],
             download_domain_modes=[str(m) for m in (proxy.download_domain_modes or [])],
             categories=[str(c) for c in (proxy.categories or [])],
             proto=proxy.proto,
-            transport=proxy.transport or None,  # type: ignore
+            transport=proxy.transport or None,
             db_tcp_ports=db_tcp_ports,
             db_udp_ports=db_udp_ports,
-            tcp_udp=tcp_udp,  # type: ignore
+            tcp_udp=tcp_udp,
             slug=proxy.slug or "",
             is_common_proxy=bool(proxy.is_common_proxy),
             server_core=proxy.server_core.value if proxy.server_core else "",
@@ -170,8 +175,8 @@ def resolve_domain_type(domain_mode: str) -> DomainType:
 def _l7_client_domain_ports(domain: DomainIPVar, proxy: ProxyVar) -> DomainIPVar:
     if proxy.mode != CustomProxyMode.domains_l7_gateway:
         return domain
-    upload_port = gateway_client_port(proxy.tls_layer)
-    download_layer = proxy.download_tls_layer if proxy.download_tls_layer is not None else proxy.tls_layer
+    upload_port = gateway_client_port(proxy.effective_tls_layer())
+    download_layer = proxy.effective_download_tls_layer()
     download_port = gateway_client_port(download_layer)
     download = domain.download
     if download is not None:
@@ -187,7 +192,7 @@ class ProxyDomainVar(ProxyVar):
             return False
         if self.domain.download.name != self.domain.name:
             return True
-        if self.download_tls_layer != self.tls_layer:
+        if self.effective_download_tls_layer() != self.effective_tls_layer():
             return True
         if self.domain.download.server() != self.domain.server():
             return True
@@ -260,7 +265,7 @@ class ServerBuilderProxyVar(ProxyVar):
         return cls(
             **base.model_dump(),
             server_config=ConfigVar(
-                core=proxy.server_core,  # type: ignore
+                core=proxy.server_core,
                 version=TemplateVersion(),
                 content=proxy.effective_server_config_text(),
             ),
@@ -275,7 +280,7 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
             return False
         if self.domain.download.name != self.domain.name:
             return True
-        if self.download_tls_layer != self.tls_layer:
+        if self.effective_download_tls_layer() != self.effective_tls_layer():
             return True
         if self.domain.download.server() != self.domain.server():
             return True

@@ -234,7 +234,7 @@ def resolve_proxy_alpn_pairs(
     hconfigs: HConfigVar,
     categories: list[str] | tuple[str, ...] | None = None,
 ) -> list[tuple[AlpnTags, AlpnTags | None]]:
-    layer = str(tls_layer or "tls").lower()
+    layer = str(tls_layer or "http").lower()
     transport_key = str(transport).lower()
     proto_key = str(proto).lower()
 
