@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v13.0.2 (2026-09-26)
+
+#### Fix
+
+* Subadmin access. 
+
+#### Other
+
+* Fix sqlalchemy dependency specifier. 
+
+
+
 ## v13.0.0 (2026-09-26)
 
 #### New
