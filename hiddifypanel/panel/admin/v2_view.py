@@ -1,67 +1,73 @@
-from flask import jsonify, render_template
+from flask import jsonify, redirect, render_template
+
 import hiddifypanel
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.hutils import flask as hutils_flask
+from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import ConfigEnum, Role, hconfig
 
 from .v2_menu import build_admin_v2_menu, build_admin_v2_notices
-from hiddifypanel import g
 
-from flask import render_template, request, redirect
-from hiddifypanel.hutils.flask import hurl_for
+
 def _panel_version() -> str:
     if not hiddifypanel.is_released_version:
-        return 'DEV'
+        return "DEV"
     return hiddifypanel.__version__
 
 
 def _panel_logo_url(proxy_path: str) -> str:
-    static_path = hutils_flask.static_url_for(filename='images/WhiteLogo.png')
-    if static_path.startswith('/'):
+    static_path = hutils_flask.static_url_for(filename="images/WhiteLogo.png")
+    if static_path.startswith("/"):
         return static_path
-    return f'/{proxy_path}/{static_path.lstrip("/")}'
+    return f"/{proxy_path}/{static_path.lstrip('/')}"
 
 
 def _admin_v2_bootstrap_payload() -> dict:
     proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
     return {
-        'proxy_path': proxy_path,
-        'api_base': f'/{proxy_path}/api/v2/admin/',
-        'router_base': f'/{proxy_path}/admin/v2/',
-        'locale': hconfig(ConfigEnum.admin_lang) or 'en',
-        'panel_version': _panel_version(),
-        'panel_logo_url': _panel_logo_url(proxy_path),
-        'menu': build_admin_v2_menu(),
-        'notices': build_admin_v2_notices(),
+        "proxy_path": proxy_path,
+        "api_base": f"/{proxy_path}/api/v2/admin/",
+        "router_base": f"/{proxy_path}/admin/v2/",
+        "locale": hconfig(ConfigEnum.admin_lang) or "en",
+        "panel_version": _panel_version(),
+        "panel_logo_url": _panel_logo_url(proxy_path),
+        "menu": build_admin_v2_menu(),
+        "notices": build_admin_v2_notices(),
     }
 
 
+# Same roles as the v2 dashboard API. Login sends every admin here; a
+# super_admin-only gate bounces Role.admin / Role.agent through /?force=1 forever.
+_ADMIN_V2_ROLES = {Role.super_admin, Role.admin, Role.agent}
+
+
 def register_v2_routes(flask_app, admin_bp):
-    @flask_app.route('/__admin_v2_bootstrap')
-    @flask_app.route('/<proxy_path>/__admin_v2_bootstrap')
+    @flask_app.route("/__admin_v2_bootstrap")
+    @flask_app.route("/<proxy_path>/__admin_v2_bootstrap")
     @flask_app.doc(hide=True)
-    @login_required(roles={Role.super_admin})
+    @login_required(roles=_ADMIN_V2_ROLES)
     def admin_v2_bootstrap(**_values):
         """Bootstrap for Admin V2 dev (menu, notices, paths)."""
         return jsonify(_admin_v2_bootstrap_payload())
 
-    @admin_bp.route('/v2/')
-    @admin_bp.route('/v2/<path:subpath>')
-    @login_required(roles={Role.super_admin})
-    def admin_v2(subpath=''):
+    @admin_bp.route("/v2/")
+    @admin_bp.route("/v2/<path:subpath>")
+    @login_required(roles=_ADMIN_V2_ROLES)
+    def admin_v2(subpath=""):
         proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
-        lang = hconfig(ConfigEnum.admin_lang) or 'en'
-        static_prefix = f'/{proxy_path}/static/admin-v2/assets'
-        static_js = f'{static_prefix}/index.js'
-        static_css = f'{static_prefix}/index.css'
+        lang = hconfig(ConfigEnum.admin_lang) or "en"
+        static_prefix = f"/{proxy_path}/static/admin-v2/assets"
+        static_js = f"{static_prefix}/index.js"
+        static_css = f"{static_prefix}/index.css"
+        # Quick setup is owner-only. Sending a normal admin there restarts the login loop.
         if hconfig(ConfigEnum.first_setup):
             return redirect(hurl_for("admin.QuickSetup:index"))
 
-
         return render_template(
-            'admin_v2.html',
-            api_base=f'/{proxy_path}/api/v2/admin/',
-            router_base=f'/{proxy_path}/admin/v2/',
+            "admin_v2.html",
+            api_base=f"/{proxy_path}/api/v2/admin/",
+            router_base=f"/{proxy_path}/admin/v2/",
             static_js=static_js,
             static_css=static_css,
             proxy_path=proxy_path,
