@@ -288,6 +288,7 @@ class ConfigEnum(metaclass=FastEnum):
     grpc_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     httpupgrade_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     xhttp_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    xhttp_different_up_down_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     naive_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     naive_port = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)

@@ -1026,6 +1026,10 @@
       "description": "Websocket သည် CDN တွင် အသုံးပြုရန် အသုံးဝင်သော HTTP ပေါ်ရှိ ဥမင်လိုဏ်ခေါင်းတစ်ခုကို ဖန်တီးသည်။",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "ဤပရိုတိုကောသည် ချန်နယ်တစ်ခုချင်းစီတွင် အချက်အလက်များကို ပေးပို့လက်ခံသည်",
       "label": "🈁 Split HTTP"

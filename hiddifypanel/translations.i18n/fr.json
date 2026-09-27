@@ -1025,6 +1025,10 @@
       "description": "Websocket crée un tunnel sur HTTP utile pour être utilisé dans CDN",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "Ce protocole envoie et reçoit des informations dans des canaux individuels ",
       "label": "🈁 Split HTTP"

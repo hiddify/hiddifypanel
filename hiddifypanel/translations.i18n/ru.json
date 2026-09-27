@@ -1278,6 +1278,10 @@
       "description": "Websocket создает туннель поверх HTTP, который будет полезно использовать в CDN",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "Этот протокол отправляет и получает информацию по отдельным каналам<br />\n⚠️ <strong>Не поддерживается в клиентах на базе SignBox. Поддерживаются только приложения <a href=\"https://app.hiddify.com\" target=\"_blank\">Hiddify</a> и клиенты на базе XRay</strong>",
       "label": "🈁 XHTTP"

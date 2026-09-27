@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import json5
 from flask import request
-from sqlalchemy import Enum, ForeignKey, String, Text
+from sqlalchemy import Enum, ForeignKey, String, Text, event, or_
 from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
 from strenum import StrEnum
 
@@ -478,3 +478,14 @@ class Domain(db.Model):
             cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)
         if commit:
             db.session.commit()
+
+
+@event.listens_for(Domain, "before_delete")
+def _detach_domain_references(mapper, connection, target: Domain) -> None:
+    from hiddifypanel.models.tls_store import TlsStore
+
+    domain_table = Domain.__table__
+    connection.execute(ShowDomain.delete().where(or_(ShowDomain.c.domain_id == target.id, ShowDomain.c.related_id == target.id)))
+    connection.execute(domain_table.update().where(domain_table.c.server_domain_id == target.id).values(server_domain_id=None))
+    connection.execute(domain_table.update().where(domain_table.c.download_domain_id == target.id).values(download_domain_id=None))
+    connection.execute(TlsStore.__table__.delete().where(TlsStore.__table__.c.domain_id == target.id))

@@ -135,7 +135,24 @@ def parent_enable_keys(
         add(domain_mode_config_map.get(mode.lower()))
     for category in categories or []:
         add(category_config_map.get(category.lower()))
+    if transport == CustomProxyTransport.xhttp and xhttp_up_down_differ(tls_layer, download_tls_layer, domain_modes, download_domain_modes, categories):
+        add(ConfigEnum.xhttp_different_up_down_enable)
     return keys
+
+
+def xhttp_up_down_differ(
+    tls_layer: TlsLayer | None,
+    download_tls_layer: TlsLayer | None,
+    domain_modes: Sequence[str] | None,
+    download_domain_modes: Sequence[str] | None,
+    categories: Sequence[str] | None,
+) -> bool:
+    if download_tls_layer is not None and download_tls_layer != tls_layer:
+        return True
+    if download_domain_modes and {m.lower() for m in download_domain_modes} != {m.lower() for m in domain_modes or []}:
+        return True
+    cats = {str(c).lower() for c in categories or []}
+    return {c[3:] for c in cats if c.startswith("up:")} != {c[5:] for c in cats if c.startswith("down:")}
 
 
 def parent_enable_keys_for(proxy: ParentEnableFields) -> list[ConfigEnum]:

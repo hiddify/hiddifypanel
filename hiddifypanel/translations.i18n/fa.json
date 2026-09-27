@@ -1784,6 +1784,10 @@
       "description": "Websocket یک تونل روی HTTP ایجاد می کند که برای استفاده در CDN مفید است",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "اجازه ساخت کانفیگ‌های XHTTP که آپلود و دانلود آن‌ها دامنه یا تنظیمات متفاوتی دارند. ⚠️ بسیاری از برنامه‌ها از این حالت پشتیبانی نمی‌کنند، به همین دلیل به صورت پیش‌فرض غیرفعال است.",
+      "label": "🈁 XHTTP با آپلود/دانلود متفاوت"
+    },
     "xhttp_enable": {
       "description": "این پروتکل اطلاعات را در کانال های جداگانه ارسال و دریافت می کند<br />\n⚠️<strong>&nbsp;این پروتکل در برنامه های با هسته SingBox پشتیبانی نمیشود. فقط در برنامه <a href=\"https://app.hiddify.com\" target=\"_blank\">Hiddify</a> و برنامه های با هسته XRay پشتیبانی میشود</strong>",
       "label": "🈁 XHTTP"

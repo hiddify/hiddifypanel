@@ -1278,6 +1278,10 @@
       "description": "Websocket 通过 HTTP 创建一个隧道，可用于 CDN",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "该协议通过单独的渠道发送和接收信息 ",
       "label": "🈁 Split HTTP"

@@ -585,6 +585,8 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
 
             if all_element_in_first_dict_is_exist_in_second(dl, base):
                 del base["download"]
+            elif not hconfigs.get(ConfigEnum.xhttp_different_up_down_enable):
+                return {"name": name, "msg": "xhttp with different upload and download is disabled", "type": "error", "proto": proxy.proto}
         return base
 
     if proxy.transport == "grpc":
