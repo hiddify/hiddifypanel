@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import ipaddress
-import re
 from typing import TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -18,7 +17,6 @@ from .ip import IPVar
 from .json_map import JsonMap
 
 DEFAULT_MAX_PROXY_IPS_PER_VERSION = 3
-_FORCED_HOST_SPLIT = re.compile(r"[ \t\r\n;,]+")
 
 
 class _ExtractedSniHost(TypedDict):
@@ -44,6 +42,7 @@ class DomainIPVar(BaseModel):
     echinfo: str = ""
     resolve_ip: bool = False
     has_server_domain: bool = False
+    has_cdn_ip: bool = False
 
     cert: CertVar = Field(default_factory=CertVar.empty)
     download: DomainIPVar | None = None
@@ -133,6 +132,7 @@ class DomainIPVar(BaseModel):
             extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
             has_server_domain=bool(domain_db.usable_server_domain()),
+            has_cdn_ip=bool((domain_db.cdn_ip or "").strip()),
             custom_proxy_ids=set(domain_db.custom_proxy_ids),
             ips=ips,
         )
@@ -153,6 +153,10 @@ class DomainIPVar(BaseModel):
         if force_ip or self.resolve_ip or self.fake_mode != FakeMode.valid:
             return prefer_ipv4_server(self.ips, dst_domain)
         return dst_domain
+
+    @property
+    def keeps_dst_server(self) -> bool:
+        return self.has_server_domain or self.has_cdn_ip
 
     @property
     def ip_version(self) -> str:
@@ -218,8 +222,8 @@ def server_ip_candidates(domain: DomainIPVar) -> list[tuple[str, str]]:
 
 
 def expand_sni_domain_servers(domain: DomainIPVar) -> list[DomainIPVar]:
-    """One client domain per server IP when no ``server_domain`` is bound."""
-    if domain.has_server_domain:
+    """One client domain per server IP when no ``server_domain`` or ``cdn_ip`` is bound."""
+    if domain.keeps_dst_server:
         return [domain]
 
     candidates = server_ip_candidates(domain)
@@ -249,9 +253,8 @@ def get_ips(domain_db: Domain) -> IPVar:
     if sd := domain_db.usable_server_domain():
         ips.merge(hutils.network.get_domain_ips_cached(sd.domain))
     else:
-        forced = _ips_from_forced_hosts(domain_db)
-        if forced.ips:
-            ips.merge(forced)
+        if cdn_ip := domain_db.auto_cdn_ip():
+            ips.merge(_ips_for_host(cdn_ip[0]))
         elif domain_db.fake_mode != FakeMode.valid:
             ips.merge(hutils.network.get_ips())
         elif domain_db.mode.name_is_real():
@@ -266,22 +269,12 @@ def get_ips(domain_db: Domain) -> IPVar:
     return cap_ipvar(ips, only_ipv4=hconfig(ConfigEnum.only_ipv4), max_per_version=hconfig(ConfigEnum.max_proxy_ips_per_version))
 
 
-def _ips_from_forced_hosts(domain_db: Domain) -> IPVar:
+def _ips_for_host(host: str) -> IPVar:
+    parsed = IPVar.from_strings(host)
+    if parsed.ips:
+        return parsed
     ips = IPVar.empty()
-    raw = str(domain_db.cdn_ip or "").strip()
-    if not raw:
-        return ips
-    for token in _FORCED_HOST_SPLIT.split(raw):
-        host = token.strip()
-        if not host:
-            continue
-        parsed = IPVar.from_strings(host)
-        if parsed.ips:
-            ips.merge(parsed)
-            continue
-        if "." not in host and ":" not in host:
-            continue
-        ips.merge(hutils.network.get_domain_ips_cached(host))
+    ips.merge(hutils.network.get_domain_ips_cached(host))
     return ips
 
 

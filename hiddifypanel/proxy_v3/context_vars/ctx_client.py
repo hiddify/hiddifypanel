@@ -83,13 +83,13 @@ def _ip_mode_domain_rank(domain: DomainIPVar) -> tuple[int, str]:
 def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIPVar]) -> list[DomainIPVar]:
     """IP-mode clients connect by address:port; emit one entry per distinct IP.
 
-    Domains with a bound ``server_domain`` keep that hostname and are not expanded.
+    Domains with a bound ``server_domain`` or ``cdn_ip`` keep that address and are not expanded.
     """
     unique: list[tuple[DomainIPVar, str]] = []
     seen: set[tuple[str, int]] = set()
     kept: list[DomainIPVar] = []
     for domain in sorted(domains, key=_ip_mode_domain_rank):
-        if domain.has_server_domain:
+        if domain.keeps_dst_server:
             kept.append(domain)
             continue
         bound = proxy.with_domain(domain)
