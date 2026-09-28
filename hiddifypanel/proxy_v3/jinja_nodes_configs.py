@@ -19,6 +19,12 @@ def _caller_user_uuid(context: Any) -> str | None:
         return str(ctx.user.uuid or "").strip() or None
 
 
+def _caller_render_core(context: Any) -> str:
+    if ctx := get_context(context):
+        return (ctx.render_core or "").strip().lower()
+    return ""
+
+
 def _caller_user_agent(context: Any) -> str:
     if ctx := get_context(context):
         return (ctx.platform.useragent or "").strip()
@@ -63,7 +69,8 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
         {% set node_configs = get_nodes_configs("xray", "1h") %}
         {% set node_configs = get_nodes_configs("sublink", "1h") %}
 
-    - ``core``: ``hiddify-core`` | ``singbox`` | ``xray`` | ``clash`` | ``sublink``
+    - ``core``: ``hiddify-core`` | ``singbox`` | ``xray`` | ``clash`` | ``sublink``; the core actually
+      being rendered wins, so a sing-box sub (which reuses the hiddify-core template) asks for ``singbox``
     - ``cache``: TTL such as ``1h`` (default), ``30m``, ``0`` to disable
     - ``sublink`` uses ``txt``; other cores use ``json``
     - POSTs JSON body with ``raw=true`` and ``Hiddify-API-Key`` header
@@ -78,7 +85,7 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
     if getattr(g, "node", None) is not None:
         return []
 
-    core_name = str(core or "").strip().lower()
+    core_name = _caller_render_core(context) or str(core or "").strip().lower()
     if not core_name:
         logger.warning("get_nodes_configs: missing core")
         return []
@@ -125,6 +132,49 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
         )
         merged.extend(item for item in chunk if item is not None)
     return merged
+
+
+# Groups and utility outbounds every client shell already defines; merging a remote
+# config's copies duplicates tags (fatal in sing-box/xray) or nests Select in Select.
+_SINGBOX_SHELL_TYPES = frozenset({"selector", "urltest", "direct", "block", "dns"})
+_XRAY_SHELL_TAGS = frozenset({"direct", "block", "fragment", "freedom", "blackhole", "dns-out"})
+_XRAY_SHELL_PROTOCOLS = frozenset({"freedom", "blackhole", "dns", "loopback"})
+
+
+def remote_proxy_outbounds(conf: Any, core: str = "hiddify-core") -> list[dict[str, Any]]:
+    """Proxy outbounds of a downloaded client config, without its groups/utility outbounds.
+
+    ``conf`` is a sing-box/hiddify-core object, or an xray config / list of configs.
+    """
+    xray = str(core or "").lower() == "xray"
+    configs = conf if isinstance(conf, list) else [conf]
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for cfg in configs:
+        if not isinstance(cfg, dict):
+            continue
+        for outbound in cfg.get("outbounds") or []:
+            if not isinstance(outbound, dict):
+                continue
+            tag = outbound.get("tag")
+            if xray:
+                if tag in _XRAY_SHELL_TAGS or outbound.get("protocol") in _XRAY_SHELL_PROTOCOLS:
+                    continue
+            elif outbound.get("type") in _SINGBOX_SHELL_TYPES:
+                continue
+            # xray subs repeat each outbound in the Auto config and its own config.
+            if isinstance(tag, str) and tag:
+                if tag in seen:
+                    continue
+                seen.add(tag)
+            out.append(outbound)
+    return out
+
+
+def remote_endpoints(conf: Any) -> list[dict[str, Any]]:
+    if not isinstance(conf, dict):
+        return []
+    return [item for item in conf.get("endpoints") or [] if isinstance(item, dict)]
 
 
 def get_available_domains(context: Any) -> list[DomainIPVar]:

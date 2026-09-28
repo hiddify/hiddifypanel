@@ -6,7 +6,7 @@
 {% set node_configs = get_nodes_configs("hiddify-core", "1h") %}
 {% block outbounds %}
      {% for conf in node_configs if conf %}
-          {% for outbound in conf.get("outbounds", []) %}
+          {% for outbound in remote_proxy_outbounds(conf, "hiddify-core") %}
                {{ outbound | tojson }},
           {% endfor %}
      {% endfor %}
@@ -14,7 +14,7 @@
 
 {% block endpoints %}
      {% for conf in node_configs if conf %}
-          {% for endpoint in conf.get("endpoints", []) %}
+          {% for endpoint in remote_endpoints(conf) %}
                {{ endpoint | tojson }},
           {% endfor %}
      {% endfor %}

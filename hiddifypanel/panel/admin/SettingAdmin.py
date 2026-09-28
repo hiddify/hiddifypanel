@@ -1,4 +1,5 @@
 import re
+from loguru import logger
 
 import flask_babel
 import wtforms as wtf
@@ -106,7 +107,11 @@ class SettingAdmin(FlaskView):
                 node_name = hconfig(ConfigEnum.node_name)
                 # Register while still standalone/parent — flipping to child first makes the
                 # parent endpoint reject the request (and self-register would always fail).
-                sucess, msg = hutils.node.child.register_to_parent(node_name, parent_apikey or hconfig(ConfigEnum.unique_id), mode=ChildMode.remote)
+                try:
+                    sucess, msg = hutils.node.child.register_to_parent(node_name, parent_apikey or hconfig(ConfigEnum.unique_id), mode=ChildMode.remote)
+                except Exception as e:
+                    logger.exception("Error while registering to parent")
+                    sucess, msg = False, str(e)
                 if not sucess:
                     hutils.flask.flash(_("child.register-failed") + f": {msg}", "danger")
                     set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)

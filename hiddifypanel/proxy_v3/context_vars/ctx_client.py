@@ -27,6 +27,8 @@ class ClientContextVar(BaseModel):
     proxy: ClientBuilderProxyVar
     shared_cert: CertVar = Field(default_factory=CertVar.empty)
     client_proxy_tags: list[str] = Field(default_factory=list)
+    # Client core being rendered (hiddify-core, singbox, xray, clash, sublink); set by the builders.
+    render_core: str = ""
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]

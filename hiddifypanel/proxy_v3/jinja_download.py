@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 import requests
 from jinja2 import pass_context
 from jinja2.runtime import Context
+from loguru import logger
 
 from hiddifypanel.cache import redis_client
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
@@ -143,7 +144,16 @@ def _is_http_url(url: str) -> bool:
 def _parse_body(content_type: str, body: str) -> Any:
     text = body if isinstance(body, str) else str(body or "")
     if content_type == "json":
-        return json.loads(text)
+        text = text.lstrip("\ufeff")
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            # Panels fall back to raw JSON5 (trailing commas) when their own dump fails.
+            import json5
+
+            from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
+
+            return json5.loads(fix_duplicate_json_commas(text))
     if content_type == "yaml":
         import yaml
 
@@ -184,7 +194,8 @@ def _fetch_url(
         )
         response.raise_for_status()
         parsed = _parse_body(content_type, response.text)
-    except Exception:
+    except Exception as exc:
+        logger.warning(f"download(): {method_name} {url} failed: {exc}")
         if ttl > 0:
             _cache_set(key, None, min(_NEGATIVE_CACHE_TTL, ttl))
         return None

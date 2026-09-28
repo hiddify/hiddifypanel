@@ -29,6 +29,7 @@ class JsonClientOutboundDriver(BaseConfigBuilderDriver):
     def collect_proxy_blocks(self, child_id: int, contexts: list[ClientContextVar], messages: list[MessageModel]) -> list[ProxyBlock]:
         proxy_blocks: list[ProxyBlock] = []
         for ctx in contexts:
+            ctx.render_core = self.core.value
             client_config = self._select_client_config(ctx)
             if client_config is None:
                 if len(contexts) == 1:

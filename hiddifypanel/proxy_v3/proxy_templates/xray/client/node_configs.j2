@@ -6,7 +6,7 @@
 {% block outbounds %}
   {% set node_configs = get_nodes_configs("xray", "1h") %}
   {% for conf in node_configs if conf %}
-    {% for outbound in conf.get("outbounds", []) %}
+    {% for outbound in remote_proxy_outbounds(conf, "xray") %}
       {{ outbound | tojson }},
     {% endfor %}
   {% endfor %}

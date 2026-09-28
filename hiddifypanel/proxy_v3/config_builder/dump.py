@@ -693,6 +693,7 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     proxies: list[dict[str, Any]] = list(parsed.get("proxies") or [])
 
     for ctx in contexts:
+        ctx.render_core = TemplateCore.clash.value
         client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.clash, ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():
             continue
@@ -739,6 +740,7 @@ def _build_sublink_client_config(child_id: int, contexts: list[ClientContextVar]
     messages: list[MessageModel] = []
     links: list[str] = []
     for ctx in contexts:
+        ctx.render_core = TemplateCore.sublink.value
         client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.sublink, ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():
             continue

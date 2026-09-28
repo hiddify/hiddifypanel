@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask_babel import gettext as _
 from loguru import logger
 from strenum import StrEnum
 
@@ -118,14 +119,27 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
         logger.error(f"Error while registering to parent: {res.msg}")
         return False, res.msg
 
-    # TODO: change the bulk_register and such methods to accept models instead of dict
-    AdminUser.bulk_register(res.admin_users, commit=False)
-    User.bulk_register(res.users, commit=False)
+    if not res.parent_unique_id:
+        return False, "Parent did not return its unique id"
 
-    # add new child as parent
-    db.session.add(Child(unique_id=res.parent_unique_id, name=res.parent_unique_id, mode=ChildMode.parent))
+    # The parent has already stored this node; a failure here must not surface as a 500
+    # (and re-registering must work), so upsert the parent row and report errors.
+    try:
+        # TODO: change the bulk_register and such methods to accept models instead of dict
+        AdminUser.bulk_register(res.admin_users, commit=False)
+        User.bulk_register(res.users, commit=False)
 
-    db.session.commit()
+        parent = Child.by_unique_id(res.parent_unique_id)
+        if parent is None:
+            db.session.add(Child(unique_id=res.parent_unique_id, name=res.parent_unique_id, mode=ChildMode.parent))
+        else:
+            parent.mode = ChildMode.parent
+
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.exception("Error while saving parent data after registering")
+        return False, str(e)
 
     logger.success("Successfully registered to parent")
     cache.invalidate_all_cached_functions()
