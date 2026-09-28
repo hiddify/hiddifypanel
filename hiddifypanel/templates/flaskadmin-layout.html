@@ -215,10 +215,26 @@
             opt.disabled = disabled;
         });
 
-        const $el = $(el);
-        if ($el.data('multipleSelect')) {
-            $el.multipleSelect('refresh');
-        }
+        applyDisabledToMultipleSelect(el);
+    }
+
+    // multipleSelect('refresh') is destroy + init, which closes the dropdown on every
+    // click; patch the plugin rows and rendered checkboxes in place instead.
+    function applyDisabledToMultipleSelect(el) {
+        const ms = $(el).data('multipleSelect');
+        if (!ms || !ms.$drop) return;
+        const disabledValues = new Set(Array.from(el.options).filter((opt) => opt.disabled).map((opt) => opt.value));
+        (ms.data || []).forEach((row) => {
+            (row.type === 'optgroup' ? row.children || [] : [row]).forEach((item) => {
+                if (item.divider) return;
+                const disabled = disabledValues.has(String(item.value));
+                item.disabled = disabled;
+                const $input = ms.$drop.find(`input[data-key="${item._key}"]`);
+                $input.prop('disabled', disabled);
+                $input.closest('label').toggleClass('disabled', disabled);
+                $input.closest('li').attr('tabindex', disabled ? -1 : 0);
+            });
+        });
     }
 
     function rebuildCustomProxySelect(proxies, selected) {

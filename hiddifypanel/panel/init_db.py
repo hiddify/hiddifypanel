@@ -24,7 +24,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 145
 
 
-def _v145(child_id):
+def _v146(child_id):
     add_config_if_not_exist(ConfigEnum.xhttp_different_up_down_enable, False, child_id)
 
 
@@ -1231,7 +1231,7 @@ def init_db():
 
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    set_hconfig(ConfigEnum.db_version, 140, commit=True)
+    # set_hconfig(ConfigEnum.db_version, 140, commit=True)
     db_version = current_db_version()
     if db_version == latest_db_version():
         return

@@ -54,7 +54,9 @@
         {
             "type": "field", 
             "outboundTag": "{{ region_outbound }}",
-            "domain": ["geosite:{{region}}","domain:{{region}}"] 
+            "domain": [
+            {% if region in ['cn'] %}"geosite:{{region}}",{% endif %}
+            "domain:{{region}}"] 
             
         },
         {% endif %}

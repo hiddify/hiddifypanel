@@ -79,8 +79,19 @@
               <HorizontalField v-if="showCustomPath" :label="t('proxy.customPath')" input-id="proxy-path" :hint="t('proxy.customPathAuto')">
                 <InputGroup>
                   <InputGroupAddon><i class="pi pi-link" /></InputGroupAddon>
-                  <InputText id="proxy-path" v-model="form.custom_path" class="w-full" />
+                  <InputText id="proxy-path" :model-value="form.custom_path" class="w-full" @update:model-value="onCustomPathInput" />
                   <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('proxy.regeneratePath')" @click="regeneratePath" />
+                  <InputGroupAddon v-if="isBuiltin">
+                    <div class="flex items-center gap-1 whitespace-nowrap px-1">
+                      <Checkbox
+                        input-id="override-custom-path"
+                        :model-value="isFieldOverridden('custom_path')"
+                        binary
+                        @update:model-value="setFieldOverride('custom_path', $event)"
+                      />
+                      <label for="override-custom-path" class="text-sm">{{ t('proxy.fieldOverride') }}</label>
+                    </div>
+                  </InputGroupAddon>
                 </InputGroup>
               </HorizontalField>
               <HorizontalField :label="t('proxy.slug')" input-id="proxy-slug">
@@ -1296,7 +1307,18 @@ function onNameBlur() {
   }
 }
 
+// Built-in proxies only save custom_path when it is overridden; editing it opts in.
+function markCustomPathOverridden() {
+  if (isBuiltin.value && !isFieldOverridden('custom_path')) setFieldOverride('custom_path', true)
+}
+
+function onCustomPathInput(value: string | undefined) {
+  markCustomPathOverridden()
+  form.custom_path = value ?? ''
+}
+
 function regeneratePath() {
+  markCustomPathOverridden()
   form.custom_path = generateCustomPath()
 }
 
