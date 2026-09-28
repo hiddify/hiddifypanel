@@ -16,6 +16,7 @@ from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
+from hiddifypanel.proxy_v3.context_vars.builder.utils import parse_json_for_dump
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.jinja_context import HIDDIFY_MANAGER_ROOT
 
@@ -212,24 +213,11 @@ def _omit_empty_values(value: Any) -> Any:
     return value
 
 
-def _parse_json_for_dump(rendered: str) -> Any:
-    text = (rendered or "").strip()
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        pass
-    import json5
-
-    from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
-
-    return json5.loads(fix_duplicate_json_commas(text))
-
-
 def _pretty_json_config(rendered: str, *, pretty: bool) -> str:
     if not rendered.strip():
         return rendered
     try:
-        parsed = _omit_empty_values(_parse_json_for_dump(rendered))
+        parsed = _omit_empty_values(parse_json_for_dump(rendered))
     except Exception:
         return rendered
     if pretty:
@@ -512,11 +500,13 @@ def render_client_configs(
     pretty: bool = True,
     cores: tuple[str, ...] | None = None,
     invalidate_cache: bool = False,
+    for_parent: bool = False,
 ) -> ClientConfigRenderResult:
     """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy).
 
     ``domains`` renders an explicit list of domain names instead of the ones
     ``sublink_domain`` exposes; names with no matching domain are ignored.
+    ``for_parent`` omits proxy groups and subscription status (the parent adds its own).
     """
     from hiddifypanel.models.user import User
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
@@ -538,6 +528,8 @@ def render_client_configs(
 
     try:
         contexts = build_client_template_context(user_obj, domain, ua, domains)
+        for ctx in contexts:
+            ctx.for_parent = for_parent
     except Exception as exc:
         result.messages.append(
             {

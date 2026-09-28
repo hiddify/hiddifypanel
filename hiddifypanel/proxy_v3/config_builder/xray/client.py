@@ -140,7 +140,7 @@ class XrayClientDriver(JsonClientOutboundDriver):
         compose_ctx.client_proxy_tags = client_selector_tags(proxy_blocks) or xray_balancer_tags(proxy_outbounds)
 
         if not compose_ctx.user.is_active:
-            status_configs = self._render_status_configs(child_id, compose_ctx, messages)
+            status_configs = [] if compose_ctx.for_parent else self._render_status_configs(child_id, compose_ctx, messages)
             return ConfigBuilderModel(
                 core=self.core,
                 side=self.side,
@@ -149,7 +149,10 @@ class XrayClientDriver(JsonClientOutboundDriver):
             )
 
         proxy_group, base_config = self._render_proxy_group_and_base_config(child_id, compose_ctx, proxy_blocks, messages)
-        configs = build_xray_subscription_array(proxy_group, base_config, proxy_outbounds)
+        if compose_ctx.for_parent:
+            configs = wrap_xray_outbounds_as_client_configs(base_config, proxy_outbounds)
+        else:
+            configs = build_xray_subscription_array(proxy_group, base_config, proxy_outbounds)
         return ConfigBuilderModel(
             core=self.core,
             side=BaseConfigSide.client,

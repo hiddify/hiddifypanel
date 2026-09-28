@@ -31,6 +31,7 @@ def _render(data: ClientConfigsIn) -> ClientConfigsOut:
             pretty=data.pretty,
             cores=(data.core,),
             invalidate_cache=False,
+            for_parent=True,
         )
     except ValueError as err:
         logger.error(f"Failed to render client configs: {err}")

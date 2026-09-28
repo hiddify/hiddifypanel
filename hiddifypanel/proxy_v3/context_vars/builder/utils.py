@@ -1,3 +1,4 @@
+import json
 import re
 from collections.abc import Callable, Sequence
 from typing import Any, Protocol
@@ -44,6 +45,15 @@ def fix_duplicate_json_commas(text: str) -> str:
         prev = text
         text = pattern.sub(",", text)
     return text
+
+
+def parse_json_for_dump(rendered: str) -> Any:
+    text = (rendered or "").strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    return json5.loads(fix_duplicate_json_commas(text))
 
 
 protocol_config_map: dict[ProxyProto, ConfigEnum] = {

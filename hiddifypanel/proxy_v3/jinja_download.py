@@ -15,6 +15,7 @@ from jinja2.runtime import Context
 from loguru import logger
 
 from hiddifypanel.cache import redis_client
+from hiddifypanel.proxy_v3.context_vars.builder.utils import parse_json_for_dump
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 
 _CACHE_RE = re.compile(r"^(\d+)\s*([smhdSMHD])?$")
@@ -146,14 +147,10 @@ def _parse_body(content_type: str, body: str) -> Any:
     if content_type == "json":
         text = text.lstrip("\ufeff")
         try:
-            return json.loads(text)
-        except json.JSONDecodeError:
-            # Panels fall back to raw JSON5 (trailing commas) when their own dump fails.
-            import json5
+            return parse_json_for_dump(text)
+        except Exception:
+            return text
 
-            from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
-
-            return json5.loads(fix_duplicate_json_commas(text))
     if content_type == "yaml":
         import yaml
 
@@ -185,13 +182,7 @@ def _fetch_url(
 
     request_headers = {"User-Agent": user_agent, **extra_headers}
     try:
-        response = requests.request(
-            method_name,
-            url,
-            timeout=_DEFAULT_TIMEOUT,
-            headers=request_headers,
-            json=json_data if method_name == "POST" else None,
-        )
+        response = requests.request(method_name, url, timeout=_DEFAULT_TIMEOUT, headers=request_headers, json=json_data if method_name == "POST" else None)
         response.raise_for_status()
         parsed = _parse_body(content_type, response.text)
     except Exception as exc:

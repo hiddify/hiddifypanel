@@ -6,7 +6,7 @@
         {% include 'singbox/client/proxies_group' %},
       {% endblock %}
       {% block outbounds %}{% endblock %},
-    {% else %}
+    {% elif not ctx.for_parent %}
         {% include 'singbox/client/subscription_status' %}
     {% endif %}
 

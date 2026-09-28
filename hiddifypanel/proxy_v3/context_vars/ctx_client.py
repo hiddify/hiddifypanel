@@ -29,6 +29,8 @@ class ClientContextVar(BaseModel):
     client_proxy_tags: list[str] = Field(default_factory=list)
     # Client core being rendered (hiddify-core, singbox, xray, clash, sublink); set by the builders.
     render_core: str = ""
+    # Rendering for a parent panel (child/client-configs): the parent adds its own groups and status.
+    for_parent: bool = False
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]

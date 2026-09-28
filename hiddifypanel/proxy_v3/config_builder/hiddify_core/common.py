@@ -11,6 +11,7 @@ from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel, ProxyBlock
 from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section, render_section
 from hiddifypanel.proxy_v3.config_builder.template_blocks import (
+    drop_template_block,
     extract_block_body,
     inject_named_fragment_blocks,
 )
@@ -94,6 +95,8 @@ def compose_config_from_blocks(
         min_version,
     )
     base = extract_base_config_shell(base)
+    if getattr(ctx, "for_parent", False):
+        base = drop_template_block(base, "proxy_group")
 
     injected, ok = inject_named_fragment_blocks(base, fragment, block_names)
     if not ok and fragment.strip():

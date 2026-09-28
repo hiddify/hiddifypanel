@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import base64
+import json
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from flask import request
 from flask.views import MethodView
@@ -36,7 +38,7 @@ def _security_label(proxy: Any) -> str:
     return _enum_str(getattr(proxy, "tls_layer", None)) or "tls"
 
 
-def _render_sublink_for_context(child_id: int, ctx: Any) -> str | None:
+def _render_sublinks_for_context(child_id: int, ctx: Any) -> list[str]:
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.render import render_section
@@ -44,7 +46,7 @@ def _render_sublink_for_context(child_id: int, ctx: Any) -> str | None:
 
     client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.sublink, ctx.platform.app_version)
     if client_config is None or not (client_config.content or "").strip():
-        return None
+        return []
     section = render_section(
         client_config.content,
         child_id,
@@ -53,12 +55,26 @@ def _render_sublink_for_context(child_id: int, ctx: Any) -> str | None:
         parse_json=False,
     )
     if section.error or section.skipped:
-        return None
+        return []
+    links: list[str] = []
     for line in (section.rendered or "").splitlines():
         text = line.strip().strip('"')
         if text and "://" in text:
-            return text
-    return None
+            links.append(text)
+    return links
+
+
+def _link_name_and_host(link: str) -> tuple[str, str]:
+    """Display name and server host of a share link (node links carry their own names)."""
+    scheme, _, rest = link.partition("://")
+    if scheme == "vmess":
+        try:
+            data = json.loads(base64.b64decode(rest + "=" * (-len(rest) % 4)))
+            return str(data.get("ps") or "").strip(), str(data.get("add") or "").strip()
+        except Exception:
+            return "", ""
+    _, _, fragment = link.partition("#")
+    return unquote(fragment).strip(), urlparse(link).hostname or ""
 
 
 def iter_proxy_v3_config_items(user, *, sublink_domain: str, user_agent: str, child_id: int = 0) -> list[dict[str, str]]:
@@ -71,6 +87,20 @@ def iter_proxy_v3_config_items(user, *, sublink_domain: str, user_agent: str, ch
     items: list[dict[str, str]] = []
     for ctx in contexts:
         if ctx.proxy.mode == CustomProxyMode.no_inbound:
+            # e.g. node-configs: one render over all domains yields links fetched from child nodes.
+            for link in _render_sublinks_for_context(child_id, ctx):
+                name, host = _link_name_and_host(link)
+                items.append(
+                    {
+                        "name": name or ctx.proxy.tag or ctx.proxy.slug or "proxy",
+                        "domain": "Node",
+                        "type": host,
+                        "protocol": link.split("://", 1)[0],
+                        "transport": "",
+                        "security": "",
+                        "link": link,
+                    }
+                )
             continue
         for dctx in ctx.iter_ctx_domains():
             domain = dctx.proxy.domain
@@ -81,9 +111,10 @@ def iter_proxy_v3_config_items(user, *, sublink_domain: str, user_agent: str, ch
                 proxy=ctx.proxy.model_copy(update={"domains": [domain]}),
                 shared_cert=ctx.shared_cert,
             )
-            link = _render_sublink_for_context(int(domain.child_id or child_id or 0), single)
-            if not link:
+            links = _render_sublinks_for_context(int(domain.child_id or child_id or 0), single)
+            if not links:
                 continue
+            link = links[0]
             tag = (dctx.proxy.tag or dctx.proxy.slug or "").replace("_", " ").strip()
             domain_label = (domain.alias or domain.name or "").strip()
             name = f"{tag} {domain_label}".strip() if domain_label and domain_label not in tag else tag
