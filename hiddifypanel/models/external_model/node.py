@@ -86,5 +86,15 @@ class ProxyModel(HBaseModel):
 
     @field_validator("params", mode="before")
     @classmethod
-    def _params_json(cls, value: object) -> object:
-        return json.loads(value) if isinstance(value, str) and value.strip() else value
+    def _params_dict(cls, value: object) -> object:
+        # Legacy rows store "" (or a JSON string) in the JSON column; backups must not 500 on them.
+        if isinstance(value, str):
+            text = value.strip()
+            if not text:
+                return None
+            try:
+                value = json.loads(text)
+            except ValueError:
+                return None
+        return value if value is None or isinstance(value, dict) else None
+
