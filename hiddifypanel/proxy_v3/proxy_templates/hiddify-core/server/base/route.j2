@@ -72,16 +72,14 @@
         "geosite-{{ region }}"
       ]
     },
-    {% else %}
+    {% elif ctx.hconfig.warp_mode != 'disable' %}
     {
-      "outbound": {% if ctx.hconfig.warp_mode == 'disable' %}"forbidden_sites"{% else %}"WARP"{% endif %},
+      "outbound": "WARP",
       "rule_set": [
         "geoip-{{ region }}",
         "geosite-{{ region }}"
       ]
     },
-    {% endif %}
-    {% if ctx.hconfig.warp_mode != 'disable' %}
     {
       "outbound": "WARP",
       "rule_set": [

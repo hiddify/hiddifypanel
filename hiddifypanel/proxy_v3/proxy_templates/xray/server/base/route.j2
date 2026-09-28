@@ -1,3 +1,10 @@
+{% set region = {
+    'zh': 'cn',
+    'cn': 'cn',
+    'ir': 'ir',
+    'ru': 'ru'
+}.get(ctx.hconfig.country, 'cn') %}
+
 {
     "domainStrategy": "IPOnDemand",
     "domainMatcher": "hybrid",
@@ -36,33 +43,22 @@
         },
         {% endfor %}
         {% endif %}
+        {# Country sites: blocked when block_iran_sites is on, otherwise sent through WARP when it is enabled. #}
+        {% set region_outbound = "blackhole" if ctx.hconfig.block_iran_sites else ("WARP" if ctx.hconfig.warp_mode != 'disable' else "") %}
+        {% if region_outbound %}
+        {
+            "type": "field", 
+            "outboundTag": "{{ region_outbound }}",
+            "ip": ["geoip:{{region}}"]
+        },
+        {
+            "type": "field", 
+            "outboundTag": "{{ region_outbound }}",
+            "domain": ["geosite:{{region}}","domain:{{region}}"] 
+            
+        },
+        {% endif %}
         {% if ctx.hconfig.warp_mode != 'all' %}
-        {
-            "type": "field", 
-            "outboundTag": {% if ctx.hconfig.warp_mode == 'disable' %}"forbidden_sites"{% else %}"WARP"{% endif %},
-            {% if ctx.hconfig.country in ['zh','cn'] %}
-              "ip": ["geoip:cn"]
-            {% elif ctx.hconfig.country == 'ir' %}
-              "ip": ["geoip:ir"]
-            {% elif ctx.hconfig.country == 'ru' %}
-              "ip": ["geoip:ru"]
-            {% else %}
-              "ip": ["geoip:cn"]
-            {% endif %}
-        },
-        {
-            "type": "field", 
-            "outboundTag": {% if ctx.hconfig.warp_mode == 'disable' %}"forbidden_sites"{% else %}"WARP"{% endif %},
-            {% if ctx.hconfig.country in ['zh','cn'] %}
-              "domain": ["geosite:cn","tld-cn"] 
-            {% elif ctx.hconfig.country == 'ir' %}
-              "domain": ["tld-ir"]
-            {% elif ctx.hconfig.country == 'ru' %}
-              "domain": ["tld-ru"]
-            {% else %}
-              "domain": ["geosite:cn","tld-cn"] 
-            {% endif %}
-        },
          {
                 "type":"field",
                 "outboundTag": {% if ctx.hconfig.warp_mode == 'disable' %}"freedom"{% else %}"WARP"{% endif %},

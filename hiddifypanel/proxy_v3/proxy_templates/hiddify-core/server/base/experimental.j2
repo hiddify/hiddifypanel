@@ -4,7 +4,7 @@
     "stats": {
       "enabled": true,
       "inbounds": [],
-      "outbounds": ["WARP", "freedom", "blackhole"],
+      "outbounds": ["WARP", "freedom", "direct"],
       "users": [
         {% for user in ctx.users %}
         "{{ user.uuid }}",
