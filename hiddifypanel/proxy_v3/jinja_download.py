@@ -18,7 +18,7 @@ from hiddifypanel.cache import redis_client
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 
 _CACHE_RE = re.compile(r"^(\d+)\s*([smhdSMHD])?$")
-_DEFAULT_TIMEOUT = 8
+_DEFAULT_TIMEOUT = 30
 _NEGATIVE_CACHE_TTL = 60 * 3  # 3 minutes
 _MAX_WORKERS = 8
 DOWNLOAD_CACHE_PREFIX = "h:jinja_download:"

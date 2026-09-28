@@ -36,7 +36,6 @@ from hiddifypanel.proxy_v3.config_builder.template_blocks import (
 )
 from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, fix_duplicate_json_commas
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
-from hiddifypanel.proxy_v3.context_vars.version import PlatformPart as _PlatformPart
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 from hiddifypanel.proxy_v3.template_catalog.client_builder import singbox_client_is_unsupported, template_skips_unsupported
 
@@ -393,34 +392,24 @@ def build_render_context(
         },
     )
     ctx["alpns"] = alpn_list
-    adapted = ctx.get("ctx")
-    if server_side and core:
-        version = TemplateVersion((core_version or "").strip() or "1.0.0")
-        platform = adapted.get("platform") if adapted is not None else None
-        if platform is not None and hasattr(platform, "_data"):
-            platform._data["app"] = _PlatformPart(core, version)
-            platform._data["app_version"] = version
+    typed = ctx["ctx"]
+    if server_side and core and (core_version or "").strip():
+        # Render as if the requested server core runs this version.
+        field = _SERVER_CORE_VERSION_FIELDS.get(str(core).lower())
+        if field:
+            setattr(typed.platform, field, TemplateVersion(core_version.strip()))
     if not server_side:
         outbound_tag = (outbound_tag or base_tag or "").strip()
-        if adapted is not None:
-            adapted["client_proxy_tags"] = [outbound_tag] if outbound_tag else []
-            if resolved_alpn:
-                adapted["alpn_builtin_value"] = resolved_alpn
-            download_tls_layer = str(data.get("download_tls_layer") or "").lower()
-            if download_tls_layer:
-                adapted["download_tls"] = download_tls_layer != "http"
-            elif download_alpn:
-                adapted["download_tls"] = alpn_tls_for_tag(download_alpn)
-        else:
-            ctx["client_proxy_tags"] = [outbound_tag] if outbound_tag else []
-            if resolved_alpn:
-                ctx["alpn_builtin_value"] = resolved_alpn
-            download_tls_layer = str(data.get("download_tls_layer") or "").lower()
-            if download_tls_layer:
-                ctx["download_tls"] = download_tls_layer != "http"
-            elif download_alpn:
-                ctx["download_tls"] = alpn_tls_for_tag(download_alpn)
+        typed.client_proxy_tags = [outbound_tag] if outbound_tag else []
     return ctx
+
+
+_SERVER_CORE_VERSION_FIELDS = {
+    "xray": "xray_version",
+    "hiddify-core": "hiddifycore_version",
+    "singbox": "singbox_version",
+    "haproxy": "haproxy_version",
+}
 
 
 def build_sample_context(
@@ -445,19 +434,8 @@ def build_sample_context(
         user_agent="HiddifyNext/3.0.0 (android) like ClashMeta v2ray sing-box",
     )
     if proxy_data:
-        adapted = ctx.get("ctx")
-        existing = adapted.get("proxy") if adapted is not None else ctx.get("proxy")
-        if existing is not None and hasattr(existing, "model_dump"):
-            merged = existing.model_dump()
-        elif isinstance(existing, dict):
-            merged = dict(existing)
-        else:
-            merged = {}
-        merged.update(proxy_data)
-        if adapted is not None:
-            adapted["proxy"] = merged
-        else:
-            ctx["proxy"] = merged
+        typed = ctx["ctx"]
+        typed.proxy = typed.proxy.model_copy(update=dict(proxy_data))
     return ctx
 
 
@@ -2224,10 +2202,9 @@ def _scope_example_context(
     server_side: bool,
 ) -> None:
     del proxy_id, server_side
-    target = ctx.get("ctx") if isinstance(ctx.get("ctx"), object) and hasattr(ctx.get("ctx"), "get") else ctx
-    if not hasattr(target, "get") and not isinstance(target, dict):
-        return
-    domains = target.get("domains") or []
+    typed = ctx.get("ctx")
+    proxy = getattr(typed, "proxy", None)
+    domains = list(getattr(proxy, "domains", None) or [])
     if not domains:
         return
     if domain_id is not None:
@@ -2237,15 +2214,11 @@ def _scope_example_context(
         scoped_domains = [item for item in domains if _domain_var_host(item) == host]
     else:
         return
-    if scoped_domains:
-        target["domains"] = scoped_domains
-    else:
-        fallback = target.get("domain")
-        if fallback is not None:
-            target["domains"] = [fallback]
-    proxy = target.get("proxy")
-    if proxy is not None and hasattr(proxy, "domains"):
-        proxy.domains = list(target.get("domains") or [])
+    if not scoped_domains:
+        return
+    proxy.domains = scoped_domains
+    if hasattr(typed, "domains"):  # server contexts also expose the domain list
+        typed.domains = list(scoped_domains)
 
 
 def _collect_client_fragment_bodies(

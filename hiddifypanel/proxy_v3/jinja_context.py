@@ -3,8 +3,6 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from wcwidth import ljust
-
 from hiddifypanel.models import ConfigEnum, Domain, DomainType, get_hconfigs
 from hiddifypanel.models.custom_proxy import CustomProxyMode, normalize_custom_path
 from hiddifypanel.models.user import User
@@ -36,35 +34,12 @@ def fake_ip_for_sub_link() -> str:
     return datetime.now().strftime("%H.%M--%Y.%m.%d.time:%H%M")
 
 
-class HconfigsAccessor(dict):
-    """Legacy panel settings dict for templates that still read hconfigs."""
-
-    def __getitem__(self, key: Any) -> Any:
-        if isinstance(key, ConfigEnum):
-            key = key.name
-        return super().get(str(key))
-
-    def __getattr__(self, name: str) -> Any:
-        if name.startswith("_"):
-            raise AttributeError(name)
-        return self.get(name)
-
-    def get(self, key: Any, default: Any = None) -> Any:  # type: ignore[override]
-        if isinstance(key, ConfigEnum):
-            key = key.name
-        return super().get(str(key), default)
-
-
 def _load_raw_hconfigs(child_id: int = 0) -> dict[str, Any]:
     try:
         raw = get_hconfigs(child_id)
         return {(getattr(k, "name", None) or str(k)): v for k, v in raw.items()}
     except RuntimeError:
         return {}
-
-
-def _wrap_hconfigs(raw: dict[str, Any]) -> HconfigsAccessor:
-    return HconfigsAccessor(raw)
 
 
 def _user_var(user: User | UserVar | dict[str, Any] | None) -> UserVar:
@@ -158,8 +133,12 @@ def _proxy_var(
     tag: str,
     port: int,
     custom_path: str,
+    cls: type[ProxyVar] = ProxyVar,
+    **fields: Any,
 ) -> ProxyVar:
-    data = dict(proxy_data or {})
+    data = {**fields, **dict(proxy_data or {})}
+    if data.get("id") is None:
+        data["id"] = 0  # unsaved proxy (validation / preview)
     data.setdefault("tag", tag)
     data.setdefault("port", port)
     data["path"] = normalize_custom_path(str(data.get("path") or custom_path or ""))
@@ -169,7 +148,7 @@ def _proxy_var(
             data["mode"] = CustomProxyMode(mode)
         except ValueError:
             data.pop("mode", None)
-    return ProxyVar.model_validate(data)
+    return cls.model_validate(data)
 
 
 def _chown_generated_path(path: str) -> None:
@@ -239,49 +218,15 @@ def jsbool(value: Any) -> str:
     return "true" if truthy else "false"
 
 
-class RenderContextAdapter:
-    """Expose dict template context with typed-style ``iter_ctx_domains()``."""
+# Example values for validation/preview contexts when the panel has no real data.
+EXAMPLE_IPV4 = "203.0.113.1"
+EXAMPLE_IPV6 = "2001:db8::1"
 
-    def __init__(self, data: dict[str, Any]) -> None:
-        object.__setattr__(self, "_data", data)
 
-    def __getattr__(self, name: str) -> Any:
-        if name.startswith("_"):
-            raise AttributeError(name)
-        try:
-            return self._data[name]
-        except KeyError as exc:
-            raise AttributeError(name) from exc
-
-    def __setattr__(self, name: str, value: Any) -> None:
-        if name == "_data":
-            object.__setattr__(self, name, value)
-            return
-        self._data[name] = value
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        self._data[key] = value
-
-    def __getitem__(self, key: str) -> Any:
-        return self._data[key]
-
-    def __contains__(self, key: object) -> bool:
-        return key in self._data
-
-    def get(self, key: str, default: Any = None) -> Any:
-        return self._data.get(key, default)
-
-    def iter_ctx_domains(self):
-        proxy = self._data.get("proxy")
-        domains = list(self._data.get("domains") or [])
-        if not domains and self._data.get("domain") is not None:
-            domains = [self._data["domain"]]
-        for domain in domains:
-            child = dict(self._data)
-            child["domain"] = domain
-            if proxy is not None and hasattr(proxy, "with_domain"):
-                child["proxy"] = proxy.with_domain(domain)
-            yield RenderContextAdapter(child)
+def _server_ips(cache: ProxyRenderCache, ip: str) -> IPVar:
+    values = [str(row.get("address") or row.get("ip") or "") for row in [*cache.ips_v4, *cache.ips_v6] if row.get("enabled", True)]
+    ips = IPVar.from_strings(*[v for v in values if v])
+    return ips if ips.ips else IPVar.from_strings(ip or EXAMPLE_IPV4, EXAMPLE_IPV6)
 
 
 def build_template_context(
@@ -300,58 +245,63 @@ def build_template_context(
     server_side: bool = False,
     users: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    """Jinja context for validation/preview renders.
+
+    ``ctx`` is the same typed context production renders use: ``ClientContextVar`` for
+    client templates, ``ServerContextProxyVar`` for server templates, with example
+    values filled in wherever the panel has no real data.
+    """
+    from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
+    from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextProxyVar
+    from hiddifypanel.proxy_v3.context_vars.proxy import ClientBuilderProxyVar, ConfigVar, ServerBuilderProxyVar
+    from hiddifypanel.proxy_v3.context_vars.server_platform_var import get_server_platform_var
+    from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+    from hiddifypanel.models.custom_proxy import TemplateCore
+
     del domain_binding, user_agent_parsed  # kept for caller compatibility
 
-    raw_hconfigs = _load_raw_hconfigs(child_id)
-    hconfig = HConfigVar(raw_hconfigs, server_side=server_side)
+    hconfig = HConfigVar(_load_raw_hconfigs(child_id), server_side=server_side)
     user_var = _user_var(user)
-    platform = PlatformVar.from_user_agent(user_agent or "")
     domain_var = _resolve_domain(child_id, domain_data, ip=ip)
-    proxy_var = _proxy_var(proxy_data, tag=tag, port=port, custom_path=custom_path)
-
-    ctx: dict[str, Any] = {
-        "user": user_var,
-        "domain": domain_var,
-        "hconfig": hconfig,
-        "platform": platform,
-        "proxy": proxy_var,
-        "users": list(users or []),
-        "hconfigs": _wrap_hconfigs(raw_hconfigs),
-        "child_id": child_id,
-        "custom_path": normalize_custom_path(custom_path),
-        "port": port,
-        "tag": tag,
-        "skip": skip_proxy,
-        "enumerate": enumerate,
-        "include_path": include_path,
-        "jsbool": jsbool,
-        "ConfigEnum": ConfigEnum,
-        "ljust": ljust,
-        "fake_ip_for_sub_link": fake_ip_for_sub_link(),
-    }
 
     if server_side:
         cache = ProxyRenderCache.load(child_id)
-        domain_ids = [int(item["id"]) for item in cache.domains if item.get("id")]
+        domain_ids = [int(item.get("domain_id") or item["id"]) for item in cache.domains if item.get("domain_id") or item.get("id")]
         by_id = {row.id: row for row in Domain.query.filter(Domain.id.in_(domain_ids)).all()} if domain_ids else {}
-        ctx["domains"] = [DomainIPVar.from_domain(by_id[did]) for did in domain_ids if did in by_id]
-        ctx["custom_proxies"] = cache.proxies
-        ctx["ips_v4"] = cache.ips_v4
-        ctx["ips_v6"] = cache.ips_v6
+        domains = [DomainIPVar.from_domain(by_id[did]) for did in domain_ids if did in by_id] or [domain_var]
+        proxy_var = _proxy_var(proxy_data, tag=tag, port=port, custom_path=custom_path, cls=ServerBuilderProxyVar, server_config=ConfigVar(core=TemplateCore.xray, version=TemplateVersion()))
+        proxy_var.domains = domains
+        user_vars = [_user_var(item) for item in users or []] or [user_var]
+        ctx: Any = ServerContextProxyVar(
+            child_id=child_id,
+            users=[u for u in user_vars if u.is_active],
+            inactive_users=[u for u in user_vars if not u.is_active],
+            domains=domains,
+            hconfig=hconfig,
+            proxies=[proxy_var],
+            proxy=proxy_var,
+            ips=_server_ips(cache, ip),
+            platform=get_server_platform_var(),
+            shared_cert=select_shared_certificate(),
+        )
     else:
         proxy_id = (proxy_data or {}).get("id")
         if proxy_id:
-            ctx["domains"] = client_domain_vars_for_proxy(child_id, int(proxy_id))
-        elif domain_var.name:
-            ctx["domains"] = [domain_var]
+            domains = client_domain_vars_for_proxy(child_id, int(proxy_id))
         else:
-            ctx["domains"] = []
-
-    if hasattr(proxy_var, "domains"):
-        proxy_var.domains = list(ctx["domains"])
+            domains = [domain_var] if domain_var.name else []
+        proxy_var = _proxy_var(proxy_data, tag=tag, port=port, custom_path=custom_path, cls=ClientBuilderProxyVar)
+        proxy_var.domains = list(domains)
+        ctx = ClientContextVar(
+            user=user_var,
+            hconfig=hconfig,
+            platform=PlatformVar.from_user_agent(user_agent or ""),
+            proxy=proxy_var,
+            shared_cert=select_shared_certificate(),
+        )
 
     return {
-        "ctx": RenderContextAdapter(ctx),
+        "ctx": ctx,
         "skip": skip_proxy,
         "enumerate": enumerate,
         "include_path": include_path,

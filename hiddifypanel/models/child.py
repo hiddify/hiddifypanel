@@ -7,8 +7,11 @@ from enum import auto
 from typing import TYPE_CHECKING, Any
 
 from flask import has_app_context
-from sqlalchemy import DateTime, Enum, String
+from loguru import logger
+from sqlalchemy import DateTime, Enum, String, inspect, update
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm.attributes import set_committed_value
 from strenum import StrEnum
 
 from hiddifypanel import g
@@ -62,14 +65,35 @@ class Child(db.Model):  # type: ignore
         return self.to_model().to_dict()
 
     def mark_node_to_parent(self, when: datetime | None = None, *, commit: bool = False) -> None:
-        self.last_node_to_parent_time = when or datetime.now()
-        if commit:
-            db.session.commit()
+        self._touch("last_node_to_parent_time", when or datetime.now(), commit=commit)
 
     def mark_parent_to_node(self, when: datetime | None = None, *, commit: bool = False) -> None:
-        self.last_parent_to_node_time = when or datetime.now()
+        self._touch("last_parent_to_node_time", when or datetime.now(), commit=commit)
+
+    def _touch(self, column: str, when: datetime, *, commit: bool) -> None:
+        """Record a node heartbeat.
+
+        Concurrent requests from one node update this row, and MariaDB 11.6+
+        (innodb_snapshot_isolation) rejects updating a row changed after the session's
+        snapshot (error 1020). So a saved, otherwise unchanged row gets an atomic UPDATE
+        in its own short transaction; the heartbeat is best-effort and never fails the request.
+        """
         if commit:
-            db.session.commit()
+            db.session.commit()  # callers rely on this to persist their own pending work
+        state = inspect(self)
+        if not state.persistent or state.modified:
+            # New row, or other pending changes to it: saved together with them.
+            setattr(self, column, when)
+            if commit:
+                db.session.commit()
+            return
+        try:
+            with db.engine.begin() as conn:
+                conn.execute(update(Child).where(Child.id == self.id).values({column: when}))
+        except OperationalError as exc:
+            logger.warning(f"Could not update {column} of child {self.id}: {exc}")
+            return
+        set_committed_value(self, column, when)
 
     @staticmethod
     def add_or_update(commit=True, **data) -> Child:

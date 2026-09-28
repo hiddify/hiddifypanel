@@ -41,6 +41,7 @@ class ClientContextVar(BaseModel):
                 proxy=self.proxy.with_domain(domain),
                 shared_cert=self.shared_cert,
                 client_proxy_tags=list(self.client_proxy_tags),
+                render_core=self.render_core,
             )
 
 
