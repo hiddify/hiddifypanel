@@ -221,9 +221,18 @@ def server_ip_candidates(domain: DomainIPVar) -> list[tuple[str, str]]:
     return out
 
 
+def _keeps_hostname(domain: DomainIPVar) -> bool:
+    """A dialable hostname with ``resolve_ip`` off is left for the client to resolve."""
+    if domain.resolve_ip or domain.fake_mode != FakeMode.valid:
+        return False
+    host = domain.dst_server or ""
+    return bool(host) and "*" not in host and not is_ip_address(host)
+
+
 def expand_sni_domain_servers(domain: DomainIPVar) -> list[DomainIPVar]:
-    """One client domain per server IP when no ``server_domain`` or ``cdn_ip`` is bound."""
-    if domain.keeps_dst_server:
+    """One client domain per server IP when no ``server_domain`` or ``cdn_ip`` is bound
+    and the domain's ``resolve_ip`` is on (or its name can't be dialed)."""
+    if domain.keeps_dst_server or _keeps_hostname(domain):
         return [domain]
 
     candidates = server_ip_candidates(domain)
