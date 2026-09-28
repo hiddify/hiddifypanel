@@ -1,6 +1,8 @@
 from flask import request
 from apiflask import abort
 from flask_restful import Resource
+import hashlib
+import hmac
 import time
 
 from hiddifypanel.models import *
@@ -60,6 +62,15 @@ class _LazyBot:
 bot = _LazyBot()
 
 
+def webhook_secret() -> str:
+    """Value Telegram echoes back in X-Telegram-Bot-Api-Secret-Token.
+
+    Derived from the bot token, so it needs no extra setting and changes with the token.
+    """
+    token = hconfig(ConfigEnum.telegram_bot_token) or ""
+    return hmac.new(token.encode(), b"hiddify-tgbot-webhook", hashlib.sha256).hexdigest()
+
+
 @cache.cache(1000)
 def register_bot_cached(set_hook=False, remove_hook=False):
     return register_bot(set_hook, remove_hook)
@@ -82,9 +93,9 @@ def register_bot(set_hook=False, remove_hook=False):
 
             admin_proxy_path = hconfig(ConfigEnum.proxy_path_admin)
 
-            user_secret = AdminUser.get_super_admin_uuid()
             if set_hook:
-                bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/{user_secret}/api/v1/tgbot/")
+                # No admin uuid in the URL: uuid-path auth rejects admins with a password.
+                bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/api/v1/tgbot/", secret_token=webhook_secret())
     except Exception as e:
         logger.error(e)
 
@@ -102,16 +113,19 @@ def init_app(app):
 
 class TGBotResource(Resource):
     def post(self):
+        if not hconfig(ConfigEnum.telegram_bot_token):
+            abort(404)
+        if not hmac.compare_digest(request.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), webhook_secret()):
+            abort(403)
+        if request.headers.get('content-type') != 'application/json':
+            abort(415)
         try:
-            if request.headers.get('content-type') == 'application/json':
-                import telebot
+            import telebot
 
-                json_string = request.get_data().decode('utf-8')
-                update = telebot.types.Update.de_json(json_string)
-                bot.process_new_updates([update])
-                return ''
-            else:
-                abort(403)
+            json_string = request.get_data().decode('utf-8')
+            update = telebot.types.Update.de_json(json_string)
+            bot.process_new_updates([update])
+            return ''
         except Exception as e:
             print("Error", e)
             import traceback

@@ -18,12 +18,11 @@ def init_app(app):
     tgbot.init_app(app)
     api.add_resource(UserResource, "/user/")
     api.add_resource(AdminUserResource, "/admin/")
-    # api.add_resource(TGBotResource, "/tgbot/")
+    api.add_resource(TGBotResource, "/tgbot/")
     api.add_resource(SendMsgResource, "/send_msg/")
 
     api_uuid.add_resource(UserResource, "/user/")
     api_uuid.add_resource(AdminUserResource, "/admin/")
-    api_uuid.add_resource(TGBotResource, "/tgbot/")
     api_uuid.add_resource(SendMsgResource, "/send_msg/")
 
     # with app.app_context():

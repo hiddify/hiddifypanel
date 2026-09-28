@@ -217,5 +217,6 @@ def init_app(app: APIFlask):
         if hconfig(ConfigEnum.telegram_bot_token):
             import hiddifypanel.panel.commercial.telegrambot as telegrambot
 
-            if (not telegrambot.bot) or (not telegrambot.bot.username):  # type: ignore
-                telegrambot.register_bot_cached(set_hook=True)
+            # Always (re)register so existing bots move to the current webhook URL/secret;
+            # the cache keeps this to one call per 1000 s.
+            telegrambot.register_bot_cached(set_hook=True)
