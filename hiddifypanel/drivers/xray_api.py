@@ -183,7 +183,7 @@ class XrayApi(DriverABS):
         tags = self.get_inbound_tags()
         for t in tags:
             # Command to execute
-            cmd = ["xray", "api", "inbounduser", "--server=127.0.0.1:10085", f"-tag={t}"]
+            cmd = ["/opt/hiddify-manager/services/xray/bin/xray", "api", "inbounduser", "--server=127.0.0.1:10085", f"-tag={t}"]
 
             try:
                 result = subprocess.run(cmd, capture_output=True, text=True, check=True)

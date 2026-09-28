@@ -557,7 +557,7 @@ class CustomProxy(db.Model):  # type: ignore
         return cls.upsert(CustomProxyModel.coerce(data), child_id=child_id, commit=commit)
 
     @classmethod
-    def upsert(cls, data: CustomProxyModel, *, child_id: int = 0, commit: bool = True) -> CustomProxy:
+    def upsert(cls, data: CustomProxyModel, *, child_id: int = 0, commit: bool = True, validate_unique: bool = True) -> CustomProxy:
         dbproxy = None
         if data.id:
             dbproxy = cls.query.filter(cls.id == data.id, cls.child_id == child_id).first()
@@ -582,6 +582,8 @@ class CustomProxy(db.Model):  # type: ignore
         else:
             cls._upsert_custom(dbproxy, data)
         validate_naive_tls_layer(dbproxy.proto, dbproxy.tls_layer)
+        if validate_unique:
+            validate_unique_path_and_ports(dbproxy)
         if commit:
             db.session.commit()
         return dbproxy
@@ -677,11 +679,12 @@ class CustomProxy(db.Model):  # type: ignore
             dbproxy.tls_layer = data.tls_layer
         if data.l7_reverse_proto is not None:
             dbproxy.l7_reverse_proto = data.l7_reverse_proto
-        _apply_download_xhttp_fields(dbproxy, data.provided())
         if data.has("categories"):
             dbproxy.categories = list(data.categories or [])
         if data.has("domain_modes"):
             _apply_domain_modes(dbproxy, list(data.domain_modes or []))
+        # After domain_modes: a download leg without its own layer mirrors the upload modes.
+        _apply_download_xhttp_fields(dbproxy, data.provided())
         if data.has("custom_path"):
             dbproxy.custom_path = normalize_custom_path(data.custom_path)
         if data.server_config is not None:
@@ -736,7 +739,8 @@ class CustomProxy(db.Model):  # type: ignore
             if existing:
                 data["id"] = existing.id
             try:
-                cls.upsert(CustomProxyModel.coerce(data), child_id=child_id, commit=False)
+                # Restores keep the backup as-is; uniqueness is enforced on interactive saves.
+                cls.upsert(CustomProxyModel.coerce(data), child_id=child_id, commit=False, validate_unique=False)
             except ValueError:
                 # Skip incomplete / incompatible legacy rows rather than aborting restore.
                 continue
@@ -786,6 +790,23 @@ class CustomProxy(db.Model):  # type: ignore
         data.pop("client_cores", None)
         data["name"] = f"{self.name} (copy)"
         data["slug"] = slug
+        # A copy must never share the original's path or ports.
+        if data.get("custom_path"):
+            data["custom_path"] = new_unique_custom_path(child_id)
+        server_config = data.get("server_config") or {}
+        tcp_ports = normalize_port_list(server_config.get("inbound_tcp_ports"))
+        udp_ports = normalize_port_list(server_config.get("inbound_udp_ports"))
+        if tcp_ports or udp_ports:
+            # Same old port -> same new port, so a port shared by TCP and UDP stays shared.
+            used = set(used_server_ports(child_id))
+            mapping: dict[int, int] = {}
+            for port in [*tcp_ports, *udp_ports]:
+                if port not in mapping:
+                    mapping[port] = new_free_port(used)
+                    used.add(mapping[port])
+            server_config["inbound_tcp_ports"] = [mapping[p] for p in tcp_ports]
+            server_config["inbound_udp_ports"] = [mapping[p] for p in udp_ports]
+            data["server_config"] = server_config
         data["is_builtin"] = False
         data["server_override"] = False
         for cc in data.get("client_config", {}).get("core_configs", []):
@@ -1033,6 +1054,10 @@ def _apply_download_domain_modes(dbproxy: CustomProxy, domain_modes: list[str]) 
 def validate_download_xhttp_fields(proxy: CustomProxy) -> None:
     if not uses_xhttp_download_settings(proxy):
         return
+    if proxy.download_tls_layer is None:
+        # No separate download leg (e.g. the editor hides it for h1): download follows upload.
+        proxy.download_domain_modes = list(proxy.domain_modes or [])
+        return
     modes = normalize_domain_modes(proxy.download_domain_modes)
     invalid = [m for m in (proxy.download_domain_modes or []) if str(m).strip().lower() not in ALLOWED_DOMAIN_MODES and str(m).strip().lower() not in {"direct", "relay", "fake", "reality", "special"}]
     if invalid:
@@ -1147,13 +1172,75 @@ def proxy_slug(name: str) -> str:
     return slugify(name, lowercase=True) or "custom-proxy"
 
 
+def _proxy_label(row: CustomProxy) -> str:
+    return row.name or row.slug or str(row.id)
+
+
+def used_server_ports(child_id: int, exclude_id: int | None = None) -> dict[int, str]:
+    """Server-side inbound ports of every proxy on ``child_id`` -> proxy name."""
+    from hiddifypanel.proxy_v3.custom_proxy_ports import ports_for_proxy_row
+
+    used: dict[int, str] = {}
+    for row in CustomProxy.query.filter(CustomProxy.child_id == child_id).all():
+        if row.id is None or row.id == exclude_id or row.mode == CustomProxyMode.no_inbound:
+            continue
+        resolved = ports_for_proxy_row(row, server_side=True)
+        for port in [*resolved.tcp_ports, *resolved.udp_ports]:
+            if port:
+                used.setdefault(int(port), _proxy_label(row))
+    return used
+
+
+def new_free_port(used: set[int] | dict[int, str]) -> int:
+    import secrets
+
+    for _ in range(1000):
+        port = 10_000 + secrets.randbelow(50_000)
+        if port not in used:
+            return port
+    raise ValueError("No free port left for the proxy")
+
+
+def new_unique_custom_path(child_id: int) -> str:
+    from hiddifypanel import hutils
+
+    while True:
+        path = hutils.random.get_random_string(10, 16)
+        if not CustomProxy.query.filter(CustomProxy.child_id == child_id, CustomProxy.custom_path == path).first():
+            return path
+
+
+def validate_unique_path_and_ports(dbproxy: CustomProxy) -> None:
+    """custom_path and stored ports are unique across proxies; one proxy may use a port for TCP and UDP."""
+    from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import is_field_overridden
+
+    # Queries below autoflush; flush first so a new row has its id and is excluded.
+    db.session.flush()
+    path = normalize_custom_path(dbproxy.custom_path)
+    # Built-ins get unique catalog paths; only an admin-chosen path needs checking.
+    if path and (not dbproxy.is_builtin or is_field_overridden(dbproxy, "custom_path")):
+        query = CustomProxy.query.filter(CustomProxy.child_id == dbproxy.child_id, CustomProxy.custom_path == path)
+        if dbproxy.id is not None:
+            query = query.filter(CustomProxy.id != dbproxy.id)
+        if other := query.first():
+            raise ValueError(f"Custom path '{path}' is already used by proxy '{_proxy_label(other)}'")
+
+    if dbproxy.is_builtin or mode_uses_gateway_port(dbproxy.mode) or mode_uses_auto_ports(dbproxy.mode):
+        return
+    ports = set(normalize_port_list(dbproxy.server_inbound_tcp_ports)) | set(normalize_port_list(dbproxy.server_inbound_udp_ports))
+    if not ports:
+        return
+    used = used_server_ports(dbproxy.child_id, exclude_id=dbproxy.id)
+    for port in sorted(ports):
+        if port in used:
+            raise ValueError(f"Port {port} is already used by proxy '{used[port]}'")
+
+
 def _validate_required_server_ports(dbproxy: CustomProxy) -> None:
     if dbproxy.is_builtin:
         return
     mode = dbproxy.mode
     if mode_uses_gateway_port(mode) or mode_uses_auto_ports(mode):
         return
-    if mode_requires_static_ports(mode) and not (
-        normalize_port_list(dbproxy.server_inbound_tcp_ports) or normalize_port_list(dbproxy.server_inbound_udp_ports)
-    ):
+    if mode_requires_static_ports(mode) and not (normalize_port_list(dbproxy.server_inbound_tcp_ports) or normalize_port_list(dbproxy.server_inbound_udp_ports)):
         raise ValueError("At least one inbound TCP or UDP port is required for this mode")

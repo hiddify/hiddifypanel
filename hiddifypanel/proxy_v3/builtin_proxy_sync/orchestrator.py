@@ -397,9 +397,54 @@ def sync_all(child_id: int = 0, *, refresh_base_configs: bool = True) -> SyncSta
     sync_tls_store_all(child_id)
     from hiddifypanel.cache import cache
     from hiddifypanel.proxy_v3.config_builder import jinja_render
+
     cache.invalidate_all_cached_functions()
     jinja_render.clear_jinja_template_caches()
+    _remember_catalog_fingerprint(child_id)
     return stats
+
+
+_CATALOG_FINGERPRINT_KEY = "hiddify:builtin_catalog_fingerprint:{}"
+
+
+def catalog_fingerprint() -> str:
+    """Hash of the panel version and every file the builtin catalog is built from."""
+    import hashlib
+    from pathlib import Path
+
+    from hiddifypanel import __version__
+
+    root = Path(__file__).resolve().parents[1]  # hiddifypanel/proxy_v3
+    digest = hashlib.sha256(__version__.encode())
+    for sub, pattern in (("proxy_templates", "**/*"), ("template_catalog", "*.py"), ("builtin_proxy_sync", "*.py")):
+        for path in sorted((root / sub).glob(pattern)):
+            if path.is_file() and "__pycache__" not in path.parts:
+                digest.update(str(path.relative_to(root)).encode())
+                digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def _remember_catalog_fingerprint(child_id: int) -> None:
+    from hiddifypanel.cache import redis_client
+
+    try:
+        redis_client.set(_CATALOG_FINGERPRINT_KEY.format(child_id), catalog_fingerprint())
+    except Exception as exc:
+        logger.warning("Could not store builtin catalog fingerprint: {}", exc)
+
+
+def sync_all_if_catalog_changed(child_id: int = 0) -> SyncStats | None:
+    """Run ``sync_all`` only when the builtin catalog sources changed since the last sync."""
+    from hiddifypanel.cache import redis_client
+
+    try:
+        stored = redis_client.get(_CATALOG_FINGERPRINT_KEY.format(child_id))
+        if stored is not None and stored.decode() == catalog_fingerprint():
+            logger.debug("Builtin catalog unchanged for child_id={}; skipping sync", child_id)
+            return None
+    except Exception as exc:
+        logger.warning("Could not read builtin catalog fingerprint ({}); syncing", exc)
+    return sync_all(child_id)
 
 
 def seed_proxy_catalog(child_id: int = 0, *, refresh_builtin_base_configs: bool = False) -> None:

@@ -340,6 +340,7 @@
       "no": "No",
       "save": "Save",
       "saved": "Saved successfully",
+      "saveFailed": "Save failed",
       "search": "Search...",
       "validate": "Validate",
       "validationFailed": "Validation failed",

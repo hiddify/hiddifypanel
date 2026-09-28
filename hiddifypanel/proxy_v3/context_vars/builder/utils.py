@@ -147,7 +147,10 @@ def xhttp_up_down_differ(
     download_domain_modes: Sequence[str] | None,
     categories: Sequence[str] | None,
 ) -> bool:
-    if download_tls_layer is not None and download_tls_layer != tls_layer:
+    if download_tls_layer is None:
+        # No download layer means no separate download leg; its domain modes follow upload.
+        download_domain_modes = None
+    elif download_tls_layer != tls_layer:
         return True
     if download_domain_modes and {m.lower() for m in download_domain_modes} != {m.lower() for m in domain_modes or []}:
         return True

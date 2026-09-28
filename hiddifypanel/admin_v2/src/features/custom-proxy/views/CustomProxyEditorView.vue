@@ -571,6 +571,7 @@ import {
   type TemplatePreviewResult,
   type ValidationResult,
 } from '@/core/api/generated'
+import { apiErrorMessage } from '@/core/api/client'
 
 const props = defineProps<{ id?: string }>()
 const { t } = useI18n()
@@ -1784,7 +1785,13 @@ function buildBuiltinPatch(): Partial<CustomProxy> {
 
 async function duplicateBuiltin() {
   if (!props.id) return
-  const copy = await customProxiesApi.duplicate(Number(props.id))
+  let copy
+  try {
+    copy = await customProxiesApi.duplicate(Number(props.id))
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+    return
+  }
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
   await router.push({ name: 'custom-proxy-edit', params: { id: String(copy.id) } })
 }
@@ -1815,6 +1822,9 @@ async function save() {
       Object.assign(form, updated)
       toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
     }
+  } catch (err) {
+    // e.g. a custom path or port already used by another proxy (HTTP 400)
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
   } finally {
     saving.value = false
   }

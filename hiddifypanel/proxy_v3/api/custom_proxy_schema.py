@@ -113,6 +113,10 @@ class CustomProxySchema(Schema):
 
 
 class PatchCustomProxySchema(Schema):
+    class Meta:
+        # The editor PATCHes the whole form, including dump_only fields from GET.
+        unknown = EXCLUDE
+
     name = fields.String()
     slug = fields.String(allow_none=True)
     enable = fields.Boolean()

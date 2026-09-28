@@ -116,8 +116,11 @@ def init_app(app: APIFlask):
 
         # if it's api error
         if hutils.flask.is_api_call(request.path):
+            # "msg" for existing callers; "message"/"detail" match apiflask's error shape.
             return {
                 "msg": e.message,
+                "message": e.message,
+                "detail": e.detail,
             }, e.status_code
 
         return render_template("error.html", error=e), e.status_code

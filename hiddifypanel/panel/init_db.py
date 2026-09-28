@@ -21,7 +21,20 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 145
+MAX_DB_VERSION = 200
+
+
+def _v147(child_id):
+    """xhttp proxies without a download layer stored ["direct-valid"] as download modes;
+    they follow upload, so mirror the upload modes (else they need xhttp_different_up_down_enable)."""
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyTransport
+
+    for proxy in CustomProxy.query.filter(
+        CustomProxy.child_id == child_id,
+        CustomProxy.transport == CustomProxyTransport.xhttp,
+        CustomProxy.download_tls_layer.is_(None),
+    ).all():
+        proxy.download_domain_modes = list(proxy.domain_modes or [])
 
 
 def _v146(child_id):
@@ -1183,7 +1196,8 @@ def is_db_latest() -> bool:
 
 
 def latest_db_version():
-    for ver in range(MAX_DB_VERSION, 1, -1):
+    # Scan above MAX_DB_VERSION too, so a new _vN without a bump still counts.
+    for ver in range(MAX_DB_VERSION + 50, 1, -1):
         db_action = sys.modules[__name__].__dict__.get(f"_v{ver}", None)
         if db_action:
             return ver
@@ -1233,7 +1247,7 @@ def init_db():
     # _drop_wip_proxy_tables()
     # set_hconfig(ConfigEnum.db_version, 140, commit=True)
     db_version = current_db_version()
-    if db_version == latest_db_version():
+    if db_version >= latest_db_version():
         return
 
     db.create_all()
@@ -1260,7 +1274,7 @@ def init_db():
         db_version = int(hconfig(ConfigEnum.db_version, child.id) or 0)
         start_version = db_version
 
-        for ver in range(1, MAX_DB_VERSION + 1):
+        for ver in range(1, latest_db_version() + 1):
             if ver <= db_version:
                 continue
 

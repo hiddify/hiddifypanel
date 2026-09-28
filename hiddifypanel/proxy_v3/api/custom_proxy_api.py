@@ -205,6 +205,17 @@ def _prepare_create_data(data: dict) -> dict:
     return data
 
 
+def _save_or_400(save):
+    """Run a save; validation errors (e.g. a duplicate path or port) become a 400."""
+    from hiddifypanel.database import db
+
+    try:
+        return save()
+    except ValueError as err:
+        db.session.rollback()
+        abort(400, str(err))
+
+
 class CustomProxiesApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
@@ -217,7 +228,7 @@ class CustomProxiesApi(MethodView):
     @app.output(CustomProxySchema)
     def post(self, data):
         data = _prepare_create_data(data)
-        proxy = CustomProxy.add_or_update(child_id=_child_id(), **data)
+        proxy = _save_or_400(lambda: CustomProxy.add_or_update(child_id=_child_id(), **data))
         return proxy.to_dict()
 
 
@@ -237,7 +248,7 @@ class CustomProxyApi(MethodView):
         merged["id"] = proxy_id
         merged = _prepare_create_data(merged)
 
-        proxy = CustomProxy.add_or_update(**merged)
+        proxy = _save_or_400(lambda: CustomProxy.add_or_update(**merged))
         return proxy.to_dict()
 
     def delete(self, proxy_id: int):
@@ -274,7 +285,7 @@ class CustomProxyDuplicateApi(MethodView):
     @app.output(CustomProxySchema)
     def post(self, proxy_id: int):
         proxy = _get_proxy_or_404(proxy_id)
-        new_proxy = proxy.duplicate(child_id=_child_id())
+        new_proxy = _save_or_400(lambda: proxy.duplicate(child_id=_child_id()))
         return new_proxy.to_dict()
 
 

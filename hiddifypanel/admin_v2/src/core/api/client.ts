@@ -181,6 +181,30 @@ export async function initApiClient(): Promise<void> {
   )
 }
 
+function flattenErrorDetail(detail: unknown, prefix = ''): string[] {
+  if (Array.isArray(detail)) return [`${prefix}${detail.map(String).join(', ')}`]
+  if (detail && typeof detail === 'object') {
+    return Object.entries(detail as Record<string, unknown>).flatMap(([key, value]) =>
+      // apiflask nests field errors under the request location ("json", "query")
+      flattenErrorDetail(value, key === 'json' || key === 'query' ? prefix : `${prefix}${key}: `),
+    )
+  }
+  return detail ? [`${prefix}${String(detail)}`] : []
+}
+
+/** Server-provided error text (``{message|msg, detail}``), else the generic axios message. */
+export function apiErrorMessage(error: unknown): string {
+  const data = (error as { response?: { data?: unknown } })?.response?.data
+  if (data && typeof data === 'object') {
+    const body = data as { message?: unknown; msg?: unknown; detail?: unknown }
+    const message = [body.message, body.msg].find((m) => typeof m === 'string' && m.trim()) as string | undefined
+    const details = flattenErrorDetail(body.detail)
+    if (message || details.length) return [message, ...details].filter(Boolean).join('\n')
+  }
+  if (typeof data === 'string' && data.trim() && data.length < 500) return data
+  return error instanceof Error ? error.message : String(error ?? '')
+}
+
 export function getHttp(): AxiosInstance {
   if (!httpClient) {
     throw new Error('API client not initialized. Call initApiClient() first.')

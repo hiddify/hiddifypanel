@@ -316,6 +316,7 @@
 </template>
 
 <script setup lang="ts">
+import { apiErrorMessage } from '@/core/api/client'
 defineOptions({ name: 'CustomProxyListView' })
 
 import { computed, onActivated, onMounted, ref } from 'vue'
@@ -596,7 +597,13 @@ async function toggleEnable(row: CustomProxy, enable: boolean) {
 }
 
 async function duplicate(id: number) {
-  const copy = await customProxiesApi.duplicate(id)
+  let copy
+  try {
+    copy = await customProxiesApi.duplicate(id)
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+    return
+  }
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
   await load()
   await router.push({ name: 'custom-proxy-edit', params: { id: String(copy.id) } })
