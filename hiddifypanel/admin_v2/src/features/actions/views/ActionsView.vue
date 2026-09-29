@@ -60,7 +60,7 @@ const actions = computed<ActionDef[]>(() => [
   { key: 'status', label: t('actions.status'), description: t('actions.statusHint'), icon: 'pi pi-chart-line', method: 'get' },
   { key: 'viewlogs', label: t('actions.viewlogs'), description: t('actions.viewlogsHint'), icon: 'pi pi-inbox', method: 'get' },
   { key: 'apply_configs', label: t('actions.applyConfigs'), description: t('actions.applyConfigsHint'), icon: 'pi pi-bolt', method: 'post', confirm: true },
-  { key: 'update', label: t('actions.update'), description: t('actions.updateHint'), icon: 'pi pi-upload', method: 'post', confirm: true },
+  { key: 'update', label: t('actions.update'), description: t('actions.updateHint'), icon: 'pi pi-upload', method: 'post', confirm: true, danger: true },
   { key: 'reinstall', label: t('actions.reinstall'), description: t('actions.reinstallHint'), icon: 'pi pi-refresh', method: 'post', confirm: true, danger: true },
   { key: 'reset', label: t('actions.restart'), description: t('actions.restartHint'), icon: 'pi pi-power-off', method: 'post', confirm: true, danger: true },
 ])

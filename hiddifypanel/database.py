@@ -48,14 +48,30 @@ db = SQLAlchemy()
 # db.UUID = UUIDType  # type: ignore
 
 
+def _engine_options(uri: str | None) -> dict:
+    """READ COMMITTED on MySQL/MariaDB.
+
+    Under the default REPEATABLE READ, MariaDB >= 11.6 (innodb_snapshot_isolation=ON) fails a
+    write to a row another transaction changed after this one started with error 1020
+    "Record has changed since last read" (e.g. two requests of one admin updating
+    admin_user.last_online, or a node sync rewriting users). The panel's requests are short and
+    do not rely on repeatable reads, so each statement seeing the latest committed data is right.
+    """
+    if (uri or "").startswith(("mysql", "mariadb")):
+        return {"isolation_level": "READ COMMITTED"}
+    return {}
+
+
 def init_no_flask():
-    engine = create_engine(os.environ.get("SQLALCHEMY_DATABASE_URI"))
+    uri = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    engine = create_engine(uri, **_engine_options(uri))
     db.session = sessionmaker(bind=engine)()
 
 
 def init_app(app):
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {**_engine_options(app.config.get("SQLALCHEMY_DATABASE_URI")), **(app.config.get("SQLALCHEMY_ENGINE_OPTIONS") or {})}
     db.init_app(app)
     with app.app_context():
         from hiddifypanel.panel.init_db import init_db

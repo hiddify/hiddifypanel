@@ -7,7 +7,7 @@ from flask_babel import get_locale
 from flask_babel import gettext as _
 
 from hiddifypanel import g, hutils
-from hiddifypanel.hutils.flask import get_proxy_stats_url, hurl_for
+from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import ConfigEnum, Domain, User, hconfig
 from hiddifypanel.panel import hiddify
 
@@ -101,7 +101,7 @@ def _settings_items(*, node: bool) -> list[dict]:
         )
     if g.account.mode == "super_admin":
         items.append(_item(_("admin.menu.api"), hurl_for("openapi.docs"), "pi pi-fw pi-code"))
-        items.append(_item(_("admin.menu.proxy_stats"), get_proxy_stats_url(), "pi pi-fw pi-chart-bar"))
+        # items.append(_item(_("admin.menu.proxy_stats"), get_proxy_stats_url(), "pi pi-fw pi-chart-bar"))
     return items
 
 

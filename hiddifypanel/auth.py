@@ -3,6 +3,7 @@ from functools import wraps
 from apiflask import abort as json_abort
 from flask import redirect, request, session
 from flask_login.utils import _get_user
+from loguru import logger
 from werkzeug.local import LocalProxy
 
 from hiddifypanel import current_app, g, hutils
@@ -83,8 +84,14 @@ def login_user(user: AdminUser | User, remember=False, duration=None, force=Fals
 
             now = datetime.datetime.now()
             # Raw UPDATE so before_update does not bump last_modified_time (parent sync flood).
-            AdminUser.query.filter(AdminUser.id == user.id).update({"last_online": now})
-            db.session.commit()
+            # Best effort: it is bookkeeping, and a concurrent write to the same row (parallel
+            # requests of one admin, a node sync) must not turn this request into a 500.
+            try:
+                AdminUser.query.filter(AdminUser.id == user.id).update({"last_online": now})
+                db.session.commit()
+            except Exception as err:
+                db.session.rollback()
+                logger.warning(f"Could not update last_online of admin {user.id}: {err}")
     else:
         session["_user_id"] = account_id
     # session["_fresh"] = fresh
