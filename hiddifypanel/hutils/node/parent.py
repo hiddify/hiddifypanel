@@ -1,12 +1,14 @@
 import threading
 
 from flask import has_request_context
+from pydantic import BaseModel
 from flask_babel import lazy_gettext as _
 from loguru import logger
 
 from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
-from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, hconfig
+from hiddifypanel.database import db
+from hiddifypanel.models import Child, ChildMode, ConfigEnum, Domain, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.child.schema import RegisterWithParentInputSchema
 
 from .api_client import NodeApiClient, NodeApiErrorSchema
@@ -68,38 +70,103 @@ def request_child_to_sync(child: Child) -> bool:
     return False
 
 
-# before using this function should check child version
+def _panel_base_url_for_nodes() -> str:
+    """``https://<host>/<admin proxy path>/`` a node can call back.
+
+    Prefer the host the admin is using when it is one of our domains (it has a
+    certificate); otherwise the first main domain.
+    """
+    from flask import has_request_context, request
+
+    host = request.host if has_request_context() else ""
+    domains = Domain.get_domains()
+    known = {d.domain.lower() for d in domains}
+    if not host or host.split(":", 1)[0].lower() not in known:
+        host = domains[0].domain if domains else host
+    return f"https://{host}/{hconfig(ConfigEnum.proxy_path_admin)}/"
 
 
-# TODO: not used
-def request_chlid_to_register(name: str, child_link: str, apikey: str) -> bool:
-    """Requests to a child to register itself with the current panel"""
-    if not child_link or not apikey:
-        logger.error("Child link or apikey is empty")
-        return False
-    domain = Domain.get_panel_link()
-    if not domain:
-        logger.error("Domain is empty")
-        return False
-    from hiddifypanel.panel import hiddify
+class _NodeName(BaseModel):
+    name: str
 
-    payload = RegisterWithParentInputSchema()
-    payload.parent_panel = hiddify.get_account_panel_link(AdminUser.by_uuid(g.account.uuid), domain)  # type: ignore
-    payload.apikey = payload.name = hconfig(ConfigEnum.unique_id)
 
-    logger.debug(f"Requesting child {name} to register")
-    res = NodeApiClient(child_link, apikey).post("/api/v2/child/register-parent/", payload, dict)
+class NodeRegisterError(Exception):
+    """``code`` is stable for the UI to translate; ``detail`` is the technical reason."""
+
+    def __init__(self, code: str, detail: str = ""):
+        super().__init__(f"{code}: {detail}" if detail else code)
+        self.code = code
+        self.detail = detail
+
+
+def register_node(node_admin_link: str, name: str = "") -> Child | None:
+    """Add a panel as a node of this panel, given the node's full admin link.
+
+    The node is asked to register itself here (``/api/v2/child/register-parent/``),
+    which runs the normal node→parent registration. Raises ``NodeRegisterError``.
+    """
+    link = (node_admin_link or "").strip()
+    if link and not link.endswith("/"):
+        link += "/"
+    base_url, node_apikey = hutils.flask.extract_parent_info_from_url(link)
+    if not base_url or not node_apikey:
+        raise NodeRegisterError("invalid_link")
+
+    parent_base = _panel_base_url_for_nodes()
+    if base_url.rstrip("/").lower() == parent_base.rstrip("/").lower():
+        raise NodeRegisterError("self")
+
+    active, error = hutils.node.is_panel_active(base_url, node_apikey)
+    if not active:
+        raise NodeRegisterError("unreachable", error)
+
+    before = {c.id for c in Child.query.filter(Child.mode == ChildMode.remote).all()}
+    payload = RegisterWithParentInputSchema(
+        parent_panel=parent_base,
+        name=(name or "").strip() or base_url.split("://", 1)[-1].split("/", 1)[0],
+        apikey=str(g.account.uuid),
+    )
+    # The node calls back while we wait, so allow for its own round trip; do not retry (not idempotent).
+    res = NodeApiClient(base_url, node_apikey, max_retry=1, timeout=60).post("/api/v2/child/register-parent/", payload, dict)
     if isinstance(res, NodeApiErrorSchema):
-        logger.error(f"Error while requesting child {name} to register: {res.msg}")
+        logger.error(f"Error while registering node {base_url}: {res.msg}")
+        raise NodeRegisterError("rejected", res.msg)
+
+    db.session.expire_all()
+    remotes = Child.query.filter(Child.mode == ChildMode.remote).order_by(Child.id.desc()).all()
+    child = next((c for c in remotes if c.id not in before), None) or next((c for c in remotes if c.name == payload.name), None)
+    cache.invalidate_all_cached_functions()
+    logger.success(f"Registered node {payload.name} ({base_url})")
+    return child
+
+
+def rename_node(child: Child, name: str) -> bool:
+    """Rename a node here and on the node itself. Returns whether the node took the new name.
+
+    The name is saved here even when the node cannot be reached (or is too old to
+    know the call); it then shows again the next time the node registers.
+    """
+    child.name = name
+    db.session.commit()
+    base_url = (child.node_base_url or "").strip()
+    if not base_url:
         return False
+    res = NodeApiClient(base_url, max_retry=1).post("/api/v2/child/node-name/", _NodeName(name=name), dict)
+    if isinstance(res, NodeApiErrorSchema):
+        logger.warning(f"Node {child.id} renamed here but not on the node: {res.msg}")
+        return False
+    return True
 
-    if res["msg"] == "ok":
-        logger.success(f"Successfully requested child {name} to register")
-        cache.invalidate_all_cached_functions()
-        return True
 
-    logger.error(f"Request to child {name} to register failed")
-    return False
+def remove_node(child: Child) -> None:
+    """Forget a node on this panel (the node itself is not changed)."""
+    from hiddifypanel.models import CustomProxy, ProxyBaseConfig, ProxyTemplate, ServerIp, UserDetail
+
+    # Rows that reference the node without a cascade on the relationship.
+    for model in (CustomProxy, ProxyTemplate, ProxyBaseConfig, ServerIp, UserDetail):
+        model.query.filter(model.child_id == child.id).delete(synchronize_session=False)
+    db.session.delete(child)
+    db.session.commit()
 
 
 def is_child_domain_active(child: Child, domain: Domain) -> bool:

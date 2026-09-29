@@ -47,7 +47,6 @@ def _build_child_menu() -> list[dict]:
         return groups
     settings_items = [
         _item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link"),
-        _item(_("admin.menu.proxy"), hurl_for("admin.ProxyAdmin:index"), "pi pi-fw pi-sitemap"),
     ]
     if g.account.mode == "super_admin":
         settings_items.extend(
@@ -85,10 +84,8 @@ def build_admin_v2_menu() -> list[dict]:
                 _item(_("Admins"), hurl_for("flask.adminuser.index_view"), "pi pi-fw pi-user-edit"),
             ]
         )
-    if hutils.node.is_parent():
-        master_items.append(
-            _item(_("Nodes"), hurl_for("flask.node.index_view"), "pi pi-fw pi-server"),
-        )
+    if g.account.mode == "super_admin":
+        master_items.append({"label": _("Nodes"), "to": "/nodes", "icon": "pi pi-fw pi-server"})
     groups.append(
         {
             "label": _("master.page-title"),
@@ -99,8 +96,7 @@ def build_admin_v2_menu() -> list[dict]:
     if g.account.mode != "agent":
         settings_items = [
             _item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link"),
-            _item(_("admin.menu.proxy"), hurl_for("admin.ProxyAdmin:index"), "pi pi-fw pi-sitemap"),
-        ]
+            ]
         if g.account.mode == "super_admin":
             settings_items.extend(
                 [

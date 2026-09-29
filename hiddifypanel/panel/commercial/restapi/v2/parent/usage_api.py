@@ -33,6 +33,9 @@ class UsageApi(MethodView):
             add_users_usage_new(increased, int(g.node.id))
 
         g.node.mark_node_to_parent(commit=True)
+        from hiddifypanel.hutils.node.usage_report import record_usage_report
+
+        record_usage_report(int(g.node.id), len(increased), sum(int(u.usage or 0) for u in increased))
 
         # A never-synced child sends datetime.min; subtracting from it would overflow.
         last_sync = data.last_users_sync.replace(tzinfo=None)

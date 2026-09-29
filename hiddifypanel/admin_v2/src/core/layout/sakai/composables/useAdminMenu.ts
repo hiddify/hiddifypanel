@@ -4,6 +4,26 @@ import { isChildPanel, legacyMenu, type AdminMenuGroup, type AdminMenuItem } fro
 
 export type { AdminMenuGroup, AdminMenuItem }
 
+function framedPath(item: AdminMenuItem): string | null {
+  if (!item.url || item.to || item.method === 'post' || (item.target && item.target !== '_self')) return null
+  let url: URL
+  try {
+    url = new URL(item.url, window.location.origin)
+  } catch {
+    return null
+  }
+  if (url.origin !== window.location.origin || /\/admin\/v2(\/|$)/.test(url.pathname)) return null
+  return `/legacy${url.pathname}${url.search}`
+}
+
+function framed(item: AdminMenuItem): AdminMenuItem {
+  const to = framedPath(item)
+  const items = item.items?.map(framed)
+  if (!to) return items ? { ...item, items } : item
+  const { url: _url, target: _target, ...rest } = item
+  return { ...rest, to, ...(items ? { items } : {}) }
+}
+
 export function useAdminMenu() {
   const { t } = useI18n()
 
@@ -33,7 +53,8 @@ export function useAdminMenu() {
     },
   ])
 
-  const legacyGroups = legacyMenu
+  // Same-origin classic pages open inside the new shell (legacy frame); external links stay as they are.
+  const legacyGroups = computed<AdminMenuGroup[]>(() => legacyMenu.value.map((group) => ({ ...group, items: group.items.map(framed) })))
 
   const menuGroups = computed(() => [...v2Groups.value, ...legacyGroups.value])
 

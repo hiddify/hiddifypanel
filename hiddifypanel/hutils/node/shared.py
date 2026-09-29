@@ -58,10 +58,13 @@ def is_panel_active(base_url: str, apikey: str | None = None) -> tuple[bool, str
 
 
 def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> dict | PanelInfoOutputSchema | None:
-    base_url = f"https://{domain}/{proxy_path}"
-    res = NodeApiClient(base_url, apikey).get("/api/v2/panel/info/", PanelInfoOutputSchema)
+    return get_panel_info_by_url(f"https://{domain}/{proxy_path}", apikey)
+
+
+def get_panel_info_by_url(base_url: str, apikey: str | None = None) -> PanelInfoOutputSchema | None:
+    res = NodeApiClient(base_url, apikey, max_retry=1).get("/api/v2/panel/info/", PanelInfoOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
-        logger.error(f"Error while getting panel info from {domain}: {res.msg}")
+        logger.error(f"Error while getting panel info from {base_url}: {res.msg}")
         return None
     return res
 

@@ -5,6 +5,22 @@
 <html>
 
 <head>
+  <script>
+    // Shown inside the Admin V2 shell (iframe): the shell provides the menu, so hide our own chrome.
+    (function () {
+      var embedded = false;
+      try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+      if (embedded) document.documentElement.classList.add("hiddify-embedded");
+    })();
+  </script>
+  <style>
+    html.hiddify-embedded .main-header,
+    html.hiddify-embedded .main-sidebar,
+    html.hiddify-embedded .main-footer,
+    html.hiddify-embedded #splash_screen { display: none !important; }
+    html.hiddify-embedded .content-wrapper { margin-left: 0 !important; margin-right: 0 !important; min-height: 100vh !important; padding-top: 0.5rem; }
+    html.hiddify-embedded body { padding-top: 0 !important; }
+  </style>
   <title>{% block title %}{% endblock %} | {{_("master.page-title")}} | {{version}}</title>
   {% block head_meta %}
   <meta name="robots" content="noindex, nofollow">
@@ -570,6 +586,15 @@
 
   {%block last%}
   {% endblock %}
+  <script>
+    // Embedded in Admin V2: links back to the new UI replace the whole page instead of nesting it.
+    if (document.documentElement.classList.contains("hiddify-embedded")) {
+      document.addEventListener("click", function (event) {
+        var link = event.target.closest && event.target.closest("a[href]");
+        if (link && /\/admin\/v2(\/|$)/.test(link.pathname)) link.target = "_top";
+      }, true);
+    }
+  </script>
 </body>
 
 </html>

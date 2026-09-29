@@ -48,6 +48,7 @@ def _admin_v2_bootstrap_payload() -> dict:
         "system_actions": build_admin_v2_system_actions(),
         "panel_mode": str(hconfig(ConfigEnum.panel_mode) or ""),
         "node_info": _node_info(),
+        "account_mode": str(g.account.mode),
     }
 
 
@@ -93,4 +94,5 @@ def register_v2_routes(flask_app, admin_bp):
             admin_system_actions=build_admin_v2_system_actions(),
             panel_mode=str(hconfig(ConfigEnum.panel_mode) or ""),
             node_info=_node_info(),
+            account_mode=str(g.account.mode),
         )

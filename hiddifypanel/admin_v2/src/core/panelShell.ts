@@ -57,6 +57,10 @@ export interface NodeInfo {
 /** Set only on node (child) panels. */
 export const nodeInfo = ref<NodeInfo | null>(window.__NODE_INFO__ ?? null)
 
+/** Signed-in admin's mode: `super_admin` | `admin` | `agent`. */
+export const accountMode = ref<string>(window.__ACCOUNT_MODE__ ?? '')
+export const isSuperAdmin = computed(() => accountMode.value === 'super_admin')
+
 export const legacyMenu = ref<AdminMenuGroup[]>(window.__ADMIN_MENU__ ?? [])
 export const panelNotices = ref<PanelNotice[]>(window.__ADMIN_NOTICES__ ?? [])
 
@@ -66,6 +70,7 @@ export function applyBootstrapShell(data: {
   system_actions?: SystemActionUrls
   panel_mode?: string
   node_info?: NodeInfo | null
+  account_mode?: string
   locale?: string
   panel_version?: string
   panel_logo_url?: string
@@ -90,6 +95,10 @@ export function applyBootstrapShell(data: {
     nodeInfo.value = data.node_info
     window.__NODE_INFO__ = data.node_info
   }
+  if (data.account_mode !== undefined) {
+    accountMode.value = data.account_mode
+    window.__ACCOUNT_MODE__ = data.account_mode
+  }
   if (data.locale) {
     window.__LOCALE__ = data.locale
   }
@@ -108,6 +117,7 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
     system_actions: data.system_actions as SystemActionUrls | undefined,
     panel_mode: data.panel_mode as string | undefined,
     node_info: data.node_info as NodeInfo | null | undefined,
+    account_mode: data.account_mode as string | undefined,
     locale: data.locale as string | undefined,
     panel_version: data.panel_version as string | undefined,
     panel_logo_url: data.panel_logo_url as string | undefined,

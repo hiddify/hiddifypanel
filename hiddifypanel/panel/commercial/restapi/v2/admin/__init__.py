@@ -40,6 +40,13 @@ def init_app(app):
 
         bp.add_url_rule("/settings/", view_func=SettingsApi)
 
+        from .nodes_api import NodeApi, NodePingApi, NodesApi, NodeSyncApi
+
+        bp.add_url_rule("/nodes/", view_func=NodesApi)
+        bp.add_url_rule("/nodes/<int:node_id>/", view_func=NodeApi)
+        bp.add_url_rule("/nodes/<int:node_id>/ping/", view_func=NodePingApi)
+        bp.add_url_rule("/nodes/<int:node_id>/sync/", view_func=NodeSyncApi)
+
         bp.add_url_rule("/all-public-port/", view_func=AllPublicPortsApi)
 
         from .user_api import UserApi

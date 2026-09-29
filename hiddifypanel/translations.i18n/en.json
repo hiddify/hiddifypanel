@@ -501,6 +501,10 @@
     "footer": {
       "text": "HiddifyManager"
     },
+    "legacy": {
+      "title": "Classic admin page",
+      "loading": "Loading…"
+    },
     "menu": {
       "baseConfigs": "Base Configs",
       "customProxies": "Proxies",
@@ -523,6 +527,82 @@
       "subtitle": "This panel is a node of a parent panel.",
       "title": "Node",
       "titleNamed": "Node: {name}"
+    },
+    "nodes": {
+      "add": {
+        "connecting": "Connecting to the node… this can take up to a minute.",
+        "linkHint": "Looks like https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
+        "linkInvalid": "This doesn't look like a full admin link. It must start with https:// and contain the admin ID.",
+        "linkLabel": "Node admin link",
+        "linkOk": "Node at {host}",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g. Germany 1",
+        "optional": "optional",
+        "step1": "Open the admin panel of the server you want to add.",
+        "step2": "Copy its full address from the browser's address bar.",
+        "step3": "Paste it below and press Connect.",
+        "submit": "Connect node",
+        "success": "Node connected",
+        "title": "Add a node"
+      },
+      "addNode": "Add node",
+      "checkConnection": "Check connection",
+      "checking": "Checking…",
+      "connection": "Connection",
+      "differentVersion": "Node runs {node}, this panel runs {panel}. Keep them on the same version.",
+      "empty": {
+        "cta": "Add your first node",
+        "point1": "Users and admins sync automatically",
+        "point2": "Usage is collected here",
+        "point3": "One click to open each node's admin",
+        "text": "Add another Hiddify server as a node to manage all your servers from this panel.",
+        "title": "No nodes yet"
+      },
+      "errors": {
+        "invalid_link": "The link is not a valid admin link.",
+        "rejected": "The node refused to connect. It may already belong to another parent panel, or its version is too old.",
+        "self": "This is the link of this panel. Use the link of the node server.",
+        "timeout": "The node took too long to answer. Check it and try again.",
+        "unreachable": "The node could not be reached. Check the link and that the node is online."
+      },
+      "info": {
+        "fromNode": "Last message from node",
+        "lastUsage": "Last user usage update",
+        "noUsageYet": "No usage reported yet",
+        "toNode": "Last message to node",
+        "todayOnline": "Online users today",
+        "todayTraffic": "Traffic today",
+        "usageReport": "{users} user with traffic, {traffic} | {users} users with traffic, {traffic}"
+      },
+      "justNow": "Just now",
+      "lastSeen": "Last contact",
+      "moreInfo": "More information",
+      "neverSeen": "Never",
+      "openAdmin": "Open",
+      "reachable": "Reachable",
+      "refresh": "Refresh",
+      "remove": "Remove",
+      "removeMessage": "The node is removed from this panel only. The node server itself keeps running; to reconnect it later, add it again.",
+      "removeTitle": "Remove {name}?",
+      "removed": "{name} removed",
+      "rename": "Rename",
+      "renamed": "Renamed to {name}",
+      "renamedHereOnly": "Renamed to {name} on this panel only",
+      "renamedHereOnlyDetail": "The node could not be reached or is too old to take the name; it may show its old name after it re-registers.",
+      "sameVersion": "Same version as this panel",
+      "showLess": "Show less",
+      "status": {
+        "late": "Late",
+        "never": "Not connected yet",
+        "offline": "Offline",
+        "online": "Online"
+      },
+      "subtitle": "Other Hiddify servers connected to this panel. Users and admins are shared with them automatically.",
+      "syncFailed": "Could not sync {name}",
+      "syncNow": "Sync now",
+      "synced": "{name} synced",
+      "title": "Nodes",
+      "unreachable": "Not reachable"
     },
     "primevue": {
       "accept": "Yes",

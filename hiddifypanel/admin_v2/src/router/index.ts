@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, type Router } from 'vue-router'
 import AppLayout from '@/core/layout/sakai/AppLayout.vue'
-import { isChildPanel } from '@/core/panelShell'
+import { isChildPanel, isSuperAdmin } from '@/core/panelShell'
 
 const routes = [
   {
@@ -18,6 +18,19 @@ const routes = [
         path: 'node',
         name: 'node-home',
         component: () => import('@/features/node-home/views/NodeHomeView.vue'),
+      },
+      {
+        // Classic admin pages the new UI has not replaced yet, framed inside the new shell.
+        path: 'legacy/:path(.*)',
+        name: 'legacy',
+        component: () => import('@/features/legacy/views/LegacyFrameView.vue'),
+      },
+      {
+        path: 'nodes',
+        name: 'nodes',
+        component: () => import('@/features/nodes/views/NodesView.vue'),
+        // Super admins of a parent/standalone panel only; a node's nodes are managed on its parent.
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
       {
         path: 'settings',

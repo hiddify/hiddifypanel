@@ -32,8 +32,12 @@ function childRoutes(item: Record<string, unknown>): string[] {
   return children.map((c) => c.to).filter((to): to is string => Boolean(to))
 }
 
-function routeMatchesMenu(path: string): boolean {
-  return route.path === path || route.path.startsWith(`${path}/`)
+function routeMatchesMenu(to: string): boolean {
+  // Menu targets may carry a query (framed classic pages); match on the path only.
+  const path = to.split('?', 1)[0]!.replace(/\/+$/, '')
+  const current = route.path.replace(/\/+$/, '')
+  if (!path) return !current // the root item matches only itself
+  return current === path || current.startsWith(`${path}/`)
 }
 
 const isActive = computed(() => {
