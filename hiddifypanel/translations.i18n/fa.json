@@ -522,12 +522,14 @@
       "baseConfigs": "کانفیگ‌های پایه",
       "customProxies": "پروکسی‌ها",
       "dashboard": "داشبورد",
+      "group": {
+        "manager": "مدیریت",
+        "settings": "تنظیمات",
+        "help": "راهنما"
+      },
       "nodeHome": "نود",
       "protocols": "پروتکل‌ها",
       "proxyEditor": "ویرایشگر پروکسی",
-      "sectionMain": "اصلی",
-      "sectionNew": "جدید",
-      "sectionV2": "جدید",
       "templateVariables": "متغیرهای قالب",
       "templates": "قالب‌ها",
       "utils": "ابزارها"

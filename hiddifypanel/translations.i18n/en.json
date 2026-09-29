@@ -520,12 +520,14 @@
       "baseConfigs": "Base Configs",
       "customProxies": "Proxies",
       "dashboard": "Dashboard",
+      "group": {
+        "manager": "Manager",
+        "settings": "Settings",
+        "help": "Help"
+      },
       "nodeHome": "Node",
       "protocols": "Protocols",
       "proxyEditor": "Proxy Editor",
-      "sectionMain": "Main",
-      "sectionNew": "New",
-      "sectionV2": "New",
       "templateVariables": "Template Variables",
       "templates": "Templates",
       "utils": "Utils"

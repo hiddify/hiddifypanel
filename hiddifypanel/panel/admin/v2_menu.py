@@ -49,107 +49,89 @@ def _wiki_support_url() -> str:
     return "https://github.com/hiddify/hiddify-manager/wiki/All-tutorials-and-videos"
 
 
-def _build_child_menu() -> list[dict]:
-    """A node only manages its own domains, proxies and server; users and the dashboard live on the parent."""
-    groups: list[dict] = []
-    if parent_url := hutils.node.child.parent_admin_dashboard_url(g.account.uuid):
-        groups.append({"label": _("Parent Panel"), "items": [_item(_("Parent Panel"), parent_url, "pi pi-fw pi-home")]})
+# The shell shows exactly three groups, in this order. The frontend adds its own
+# routes to them by id (useAdminMenu.ts): Dashboard/Node home and Utils to "manager",
+# the Proxy Editor to the top of "settings"; it also sets the translated group titles.
+MENU_GROUP_IDS = ("manager", "settings", "help")
+
+
+def _group(group_id: str, label: str, items: list[dict]) -> dict:
+    return {"id": group_id, "label": label, "items": items}
+
+
+def _help_group() -> dict:
+    return _group(
+        "help",
+        _("admin.menu.support"),
+        [
+            _item(_("admin.menu.support"), _wiki_support_url(), "pi pi-fw pi-question-circle", target="_blank"),
+            _item(
+                _("Bug"),
+                hutils.github_issue.generate_github_issue_link_for_admin_sidebar(),
+                "pi pi-fw pi-exclamation-circle",
+                target="_blank",
+            ),
+            _donation_item(),
+        ],
+    )
+
+
+def _settings_items(*, node: bool) -> list[dict]:
     if g.account.mode == "agent":
-        return groups
-    settings_items = [
-        _item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link"),
-    ]
+        return []
+    items = [_item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link")]
     if g.account.mode == "super_admin":
-        settings_items.extend(
+        items.extend(
             [
                 {"label": _("admin.menu.config"), "to": "/settings", "icon": "pi pi-fw pi-cog"},
                 _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
                 {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
             ]
         )
-    groups.append({"label": _("admin.menu.config"), "items": settings_items})
-    return groups
+    if node:
+        # A node only manages its own domains, proxies and server.
+        return items
+    if hconfig(ConfigEnum.telegram_bot_token) and getattr(g, "bot", None):
+        items.append(
+            _item(
+                _("Telegram Bot"),
+                f"tg://resolve?domain={g.bot.username}&start=admin_{g.account.uuid}",
+                "pi pi-fw pi-telegram",
+            ),
+        )
+    if g.account.mode == "super_admin":
+        items.append(_item(_("admin.menu.api"), hurl_for("openapi.docs"), "pi pi-fw pi-code"))
+        items.append(_item(_("admin.menu.proxy_stats"), get_proxy_stats_url(), "pi pi-fw pi-chart-bar"))
+    return items
+
+
+def _manager_items() -> list[dict]:
+    if hutils.node.is_child():
+        # Users, admins and the dashboard live on the parent; the shell adds the node's home page after this.
+        parent_url = hutils.node.child.parent_admin_dashboard_url(g.account.uuid)
+        return [_item(_("Parent Panel"), parent_url, "pi pi-fw pi-home")] if parent_url else []
+    if hconfig(ConfigEnum.parent_panel):
+        items = [
+            _item(_("admin.menu.user"), hconfig(ConfigEnum.parent_panel) + "admin/user/", "pi pi-fw pi-users"),
+            _item(_("Admins"), hconfig(ConfigEnum.parent_panel) + "admin/adminuser/", "pi pi-fw pi-user-edit"),
+        ]
+    else:
+        items = [
+            _item(_("admin.menu.user"), hurl_for("flask.user.index_view"), "pi pi-fw pi-users"),
+            _item(_("Admins"), hurl_for("flask.adminuser.index_view"), "pi pi-fw pi-user-edit"),
+        ]
+    if g.account.mode == "super_admin":
+        items.append({"label": _("Nodes"), "to": "/nodes", "icon": "pi pi-fw pi-server"})
+    return items
 
 
 def build_admin_v2_menu() -> list[dict]:
-    """Grouped legacy panel menu (full-page links). V2 routes are added in the frontend."""
-    if hutils.node.is_child():
-        return _build_child_menu()
-    groups: list[dict] = []
-
-    home_label = _("Parent Panel") if hutils.node.is_parent() else _("admin.menu.home")
-    master_items = [
-        # _item(home_label, hurl_for("admin.Dashboard:index"), "pi pi-fw pi-home"),
+    """The shell's menu groups (Manager, Settings, Help); the frontend adds its own routes to them."""
+    return [
+        _group("manager", _("master.page-title"), _manager_items()),
+        _group("settings", _("admin.menu.config"), _settings_items(node=hutils.node.is_child())),
+        _help_group(),
     ]
-    if hconfig(ConfigEnum.parent_panel):
-        master_items.extend(
-            [
-                _item(_("admin.menu.user"), hconfig(ConfigEnum.parent_panel) + "admin/user/", "pi pi-fw pi-users"),
-                _item(_("Admins"), hconfig(ConfigEnum.parent_panel) + "admin/adminuser/", "pi pi-fw pi-user-edit"),
-            ]
-        )
-    else:
-        master_items.extend(
-            [
-                _item(_("admin.menu.user"), hurl_for("flask.user.index_view"), "pi pi-fw pi-users"),
-                _item(_("Admins"), hurl_for("flask.adminuser.index_view"), "pi pi-fw pi-user-edit"),
-            ]
-        )
-    if g.account.mode == "super_admin":
-        master_items.append({"label": _("Nodes"), "to": "/nodes", "icon": "pi pi-fw pi-server"})
-    groups.append(
-        {
-            "label": _("master.page-title"),
-            "items": master_items,
-        }
-    )
-
-    if g.account.mode != "agent":
-        settings_items = [
-            _item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link"),
-            ]
-        if g.account.mode == "super_admin":
-            settings_items.extend(
-                [
-                    {"label": _("admin.menu.config"), "to": "/settings", "icon": "pi pi-fw pi-cog"},
-                    _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
-                    {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
-                ]
-            )
-        if hconfig(ConfigEnum.telegram_bot_token) and getattr(g, "bot", None):
-            settings_items.append(
-                _item(
-                    _("Telegram Bot"),
-                    f"tg://resolve?domain={g.bot.username}&start=admin_{g.account.uuid}",
-                    "pi pi-fw pi-telegram",
-                ),
-            )
-        if g.account.mode == "super_admin":
-            settings_items.append(
-                _item(_("admin.menu.api"), hurl_for("openapi.docs"), "pi pi-fw pi-code"),
-            )
-            settings_items.append(
-                _item(_("admin.menu.proxy_stats"), get_proxy_stats_url(), "pi pi-fw pi-chart-bar"),
-            )
-        groups.append({"label": _("admin.menu.config"), "items": settings_items})
-
-    groups.append(
-        {
-            "label": _("admin.menu.support"),
-            "items": [
-                _item(_("admin.menu.support"), _wiki_support_url(), "pi pi-fw pi-question-circle", target="_blank"),
-                _item(
-                    _("Bug"),
-                    hutils.github_issue.generate_github_issue_link_for_admin_sidebar(),
-                    "pi pi-fw pi-exclamation-circle",
-                    target="_blank",
-                ),
-                _donation_item(),
-            ],
-        }
-    )
-
-    return groups
 
 
 def build_admin_v2_notices() -> list[dict]:

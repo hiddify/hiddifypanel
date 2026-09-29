@@ -24,39 +24,46 @@ function framed(item: AdminMenuItem): AdminMenuItem {
   return { ...rest, to, ...(items ? { items } : {}) }
 }
 
+/** The only groups, in order. The server sends them (v2_menu.py); new-UI routes are added here. */
+const GROUP_ORDER = ['manager', 'settings', 'help'] as const
+type GroupId = (typeof GROUP_ORDER)[number]
+
 export function useAdminMenu() {
   const { t } = useI18n()
 
-  const v2Groups = computed<AdminMenuGroup[]>(() => [
-    {
-      label: t('menu.sectionNew'),
-      items: [
-        // Nodes have no dashboard of their own (it is on the parent) and only keep the proxy editor.
-        ...(isChildPanel.value
-          ? [{ label: t('menu.nodeHome'), icon: 'pi pi-fw pi-home', to: '/node' }]
-          : [
-              { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
-              { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
-            ]),
-        {
-          label: t('menu.proxyEditor'),
-          icon: 'pi pi-fw pi-server',
-          items: [
-            { label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' },
-            { label: t('menu.customProxies'), icon: 'pi pi-fw pi-share-alt', to: '/custom-proxies' },
-            { label: t('menu.baseConfigs'), icon: 'pi pi-fw pi-cog', to: '/base-configs' },
-            { label: t('menu.templates'), icon: 'pi pi-fw pi-file-edit', to: '/templates' },
-            { label: t('menu.templateVariables'), icon: 'pi pi-fw pi-list', to: '/template-variables' },
+  const proxyEditor = computed<AdminMenuItem>(() => ({
+    label: t('menu.proxyEditor'),
+    icon: 'pi pi-fw pi-server',
+    items: [
+      { label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' },
+      { label: t('menu.customProxies'), icon: 'pi pi-fw pi-share-alt', to: '/custom-proxies' },
+      { label: t('menu.baseConfigs'), icon: 'pi pi-fw pi-cog', to: '/base-configs' },
+      { label: t('menu.templates'), icon: 'pi pi-fw pi-file-edit', to: '/templates' },
+      { label: t('menu.templateVariables'), icon: 'pi pi-fw pi-list', to: '/template-variables' },
+    ],
+  }))
+
+  const menuGroups = computed<AdminMenuGroup[]>(() => {
+    // Same-origin classic pages open inside the new shell (legacy frame); external links stay as they are.
+    const server = new Map(legacyMenu.value.map((group) => [group.id ?? '', group.items.map(framed)]))
+    const serverItems = (id: GroupId) => server.get(id) ?? []
+
+    const items: Record<GroupId, AdminMenuItem[]> = {
+      // A node: its parent panel first, then this node's home, then the rest.
+      // Otherwise: the dashboard first; tools at the end.
+      manager: isChildPanel.value
+        ? [...serverItems('manager'), { label: t('menu.nodeHome'), icon: 'pi pi-fw pi-server', to: '/node' }]
+        : [
+            { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
+            ...serverItems('manager'),
+            { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
           ],
-        },
-      ],
-    },
-  ])
+      // The proxy editor lives in Settings in every mode.
+      settings: [proxyEditor.value, ...serverItems('settings')],
+      help: serverItems('help'),
+    }
+    return GROUP_ORDER.map((id) => ({ id, label: t(`menu.group.${id}`), items: items[id] })).filter((group) => group.items.length > 0)
+  })
 
-  // Same-origin classic pages open inside the new shell (legacy frame); external links stay as they are.
-  const legacyGroups = computed<AdminMenuGroup[]>(() => legacyMenu.value.map((group) => ({ ...group, items: group.items.map(framed) })))
-
-  const menuGroups = computed(() => [...v2Groups.value, ...legacyGroups.value])
-
-  return { menuGroups, v2Groups, legacyGroups }
+  return { menuGroups }
 }

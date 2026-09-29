@@ -33,6 +33,8 @@ export function submitPostForm(url: string, target = '_self'): void {
 }
 
 export interface AdminMenuGroup {
+  /** `manager` | `settings` | `help` (server menu, v2_menu.py). */
+  id?: string
   label: string
   items: AdminMenuItem[]
 }
