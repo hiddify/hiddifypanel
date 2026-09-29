@@ -499,6 +499,8 @@
       "includeTemplate": "Include template",
       "insertVariable": "Insert variable",
       "jinjaHint": "JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}",
+      "loadFailed": "The editor could not be loaded. Check your connection and reload the page.",
+      "loading": "Loading editor…",
       "noVariables": "No variables match your search",
       "preview": "Preview",
       "previewFailed": "Preview request failed",

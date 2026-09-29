@@ -501,6 +501,8 @@
       "includeTemplate": "افزودن قالب (include)",
       "insertVariable": "درج متغیر",
       "jinjaHint": "JSON5 + Jinja: از {{ proxy.port }}، {{ proxy.tag }}، {% for %}…{% endfor %} استفاده کنید",
+      "loadFailed": "ویرایشگر بارگذاری نشد. اتصال را بررسی و صفحه را دوباره بارگذاری کنید.",
+      "loading": "در حال بارگذاری ویرایشگر…",
       "noVariables": "متغیری با این جستجو یافت نشد",
       "preview": "پیش‌نمایش",
       "previewFailed": "درخواست پیش‌نمایش ناموفق بود",

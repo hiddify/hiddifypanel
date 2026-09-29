@@ -8,7 +8,6 @@ import Ripple from 'primevue/ripple'
 import Tooltip from 'primevue/tooltip'
 import '@/assets/sakai/tailwind.css'
 import '@/assets/sakai/styles.scss'
-import '@/shared/monaco/setup'
 
 import App from './App.vue'
 import { createAppRouter } from './router'
