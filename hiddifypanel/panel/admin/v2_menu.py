@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from bleach import clean as bleach_clean
 from flask_babel import get_locale
 from flask_babel import gettext as _
 
@@ -30,6 +31,16 @@ def build_admin_v2_system_actions() -> dict[str, str]:
         "reinstall": hurl_for("admin.Actions:reinstall"),
         "reset": hurl_for("admin.Actions:reset"),
     }
+
+
+_DONATION_TAGS = frozenset({"a", "br", "ul", "ol", "li", "h5", "h6", "p", "strong", "b", "em", "div", "span"})
+_DONATION_ATTRS = {"a": ["href", "target", "rel", "data-copy", "class"], "div": ["class"]}
+
+
+def _donation_item() -> dict:
+    """Opens the donation dialog in the shell (the classic UI shows it as a modal)."""
+    html = bleach_clean(str(_("Donation.description")), tags=_DONATION_TAGS, attributes=_DONATION_ATTRS, strip=True)
+    return {"label": _("Donation.title"), "icon": "pi pi-fw pi-heart", "action": "donation", "dialog_html": html}
 
 
 def _wiki_support_url() -> str:
@@ -133,7 +144,7 @@ def build_admin_v2_menu() -> list[dict]:
                     "pi pi-fw pi-exclamation-circle",
                     target="_blank",
                 ),
-                _item(_("Donation.title"), hurl_for("admin.Dashboard:index"), "pi pi-fw pi-heart"),
+                _donation_item(),
             ],
         }
     )

@@ -17,11 +17,13 @@
   </div>
   <Toast />
   <ConfirmDialog />
+  <DonationDialog />
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import ConfirmDialog from 'primevue/confirmdialog'
+import DonationDialog from '@/shared/components/DonationDialog.vue'
 import Toast from 'primevue/toast'
 import AppFooter from './AppFooter.vue'
 import AppSidebar from './AppSidebar.vue'

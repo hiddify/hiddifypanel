@@ -10,8 +10,15 @@ export interface AdminMenuItem {
   /** `post`: the URL only accepts POST (system actions); submitted as a form after `confirm`. */
   method?: 'get' | 'post'
   confirm?: string
+  /** Opens a shell dialog instead of navigating (e.g. `donation`). */
+  action?: 'donation' | string
+  /** Sanitized HTML body for `action` dialogs. */
+  dialog_html?: string
   items?: AdminMenuItem[]
 }
+
+/** Dialog opened from a menu `action` item; null when closed. */
+export const shellDialog = ref<{ action: string; title: string; html: string } | null>(null)
 
 /** Navigate to `url` with a POST form submit (full page load, like the classic admin's `form_post`). */
 export function submitPostForm(url: string, target = '_self'): void {

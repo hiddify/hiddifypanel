@@ -1,1 +1,0 @@
-const s=new Set(["xray","singbox","hiddify-core","hiddify_core","clash"]);function o(n){const e=(n??"").replace(/_/g,"-");return s.has(e)||s.has(n??"")}const i="sublink";function a(n){return(n??"")===i}export{i as S,a as i,o as u};
