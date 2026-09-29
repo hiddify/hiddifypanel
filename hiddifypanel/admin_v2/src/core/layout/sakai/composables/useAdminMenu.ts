@@ -22,6 +22,7 @@ export function useAdminMenu() {
           label: t('menu.proxyEditor'),
           icon: 'pi pi-fw pi-server',
           items: [
+            { label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' },
             { label: t('menu.customProxies'), icon: 'pi pi-fw pi-share-alt', to: '/custom-proxies' },
             { label: t('menu.baseConfigs'), icon: 'pi pi-fw pi-cog', to: '/base-configs' },
             { label: t('menu.templates'), icon: 'pi pi-fw pi-file-edit', to: '/templates' },

@@ -10,7 +10,7 @@ from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.models import BoolConfig, Child, ConfigEnum, Proxy, get_hconfigs, set_hconfig
-from hiddifypanel.models.config_enum import ApplyMode
+from hiddifypanel.models.config_enum import ApplyMode, is_protocol_switch
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
 
@@ -73,9 +73,7 @@ def get_global_config_form(empty=False):
         pass
 
     for cf in boolconfigs:
-        if cf.key.category == "hidden":
-            continue
-        if not cf.key.endswith("_enable") or cf.key in [ConfigEnum.mux_brutal_enable, ConfigEnum.mux_padding_enable, ConfigEnum.hysteria_obfs_enable]:
+        if not is_protocol_switch(cf.key):
             continue
 
         field = SwitchField(_(f"config.{cf.key}.label"), default=cf.value, description=_(f"config.{cf.key}.description"))

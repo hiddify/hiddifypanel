@@ -20,6 +20,11 @@ const routes = [
         component: () => import('@/features/node-home/views/NodeHomeView.vue'),
       },
       {
+        path: 'protocols',
+        name: 'protocols',
+        component: () => import('@/features/protocols/views/ProtocolsView.vue'),
+      },
+      {
         path: 'custom-proxies',
         name: 'custom-proxy-list',
         component: () => import('@/features/custom-proxy/views/CustomProxyListView.vue'),

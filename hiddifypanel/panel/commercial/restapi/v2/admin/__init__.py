@@ -32,6 +32,10 @@ def init_app(app):
         bp.add_url_rule("/sync-tls-store/", view_func=SyncTlsStoreApi)
         bp.add_url_rule("/reset-cache/", view_func=ResetCacheApi)
 
+        from .protocols_api import ProtocolSwitchesApi
+
+        bp.add_url_rule("/protocols/", view_func=ProtocolSwitchesApi)
+
         bp.add_url_rule("/all-public-port/", view_func=AllPublicPortsApi)
 
         from .user_api import UserApi

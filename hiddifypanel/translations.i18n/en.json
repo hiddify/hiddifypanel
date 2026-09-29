@@ -500,6 +500,7 @@
       "customProxies": "Proxies",
       "dashboard": "Dashboard",
       "nodeHome": "Node",
+      "protocols": "Protocols",
       "proxyEditor": "Proxy Editor",
       "sectionMain": "Main",
       "sectionNew": "New",
@@ -528,6 +529,46 @@
       "emptySearchMessage": "No results found",
       "reject": "No",
       "upload": "Upload"
+    },
+    "protocols": {
+      "changed": "Changed",
+      "disableAll": "Disable all",
+      "discard": "Discard",
+      "enableAll": "Enable all",
+      "enabledOf": "{on} of {total} enabled",
+      "filterAll": "All",
+      "filterOff": "Off",
+      "filterOn": "On",
+      "groups": {
+        "other": {
+          "hint": "Other switches",
+          "title": "Other"
+        },
+        "protocols": {
+          "hint": "Proxy protocols offered to clients",
+          "title": "Protocols"
+        },
+        "security": {
+          "hint": "Reality, TLS tricks and multiplexing",
+          "title": "Security & tricks"
+        },
+        "transports": {
+          "hint": "How traffic is carried (TCP, WebSocket, gRPC, …)",
+          "title": "Transports"
+        }
+      },
+      "instantChip": "Instant",
+      "later": "Later",
+      "leaveUnsaved": "You have unsaved changes. Leave anyway?",
+      "needsApply": "Saved. Apply the configs to put the changes into effect.",
+      "needsReinstall": "Saved. Some changes need a reinstall to take effect.",
+      "noMatch": "Nothing matches your search.",
+      "reinstallChip": "Needs reinstall",
+      "search": "Search protocols…",
+      "subtitle": "Turn protocols, transports and TLS tricks on or off for the whole panel.",
+      "summaryHint": "Tap a card to toggle it, then save.",
+      "title": "Protocols",
+      "unsaved": "{count} unsaved change | {count} unsaved changes"
     },
     "proxy": {
       "addClient": "Add client",

@@ -386,3 +386,10 @@ def config_enum_members() -> list["ConfigEnum"]:
             continue
         members.append(cfg)
     return members
+
+
+def is_protocol_switch(key: "ConfigEnum") -> bool:
+    """Global on/off protocol/transport switches (the ``*_enable`` settings of the proxy page)."""
+    # Sub-options edited elsewhere, not global switches.
+    excluded = (ConfigEnum.mux_brutal_enable, ConfigEnum.mux_padding_enable, ConfigEnum.hysteria_obfs_enable)
+    return key.category != "hidden" and key.endswith("_enable") and key not in excluded
