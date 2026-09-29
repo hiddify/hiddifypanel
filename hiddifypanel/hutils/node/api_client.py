@@ -26,6 +26,11 @@ def _dump_payload(payload: BaseModel) -> dict:
 def _load_output(output_schema: type[T], data: object) -> T:
     if isinstance(data, BaseModel):
         return data  # type: ignore
+    if output_schema in (dict, list):
+        # Plain JSON objects/arrays (e.g. {"status": 200, "msg": "ok"} from node actions).
+        if isinstance(data, output_schema):
+            return data  # type: ignore
+        raise ValueError(f"expected a JSON {output_schema.__name__}, got {type(data).__name__}")
     if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
         return output_schema.model_validate(data)  # type: ignore
     raise TypeError(f"Unsupported output schema type: {output_schema!r}")
@@ -65,7 +70,12 @@ class NodeApiClient:
                     return err
 
                 logger.trace(f"Successfully received response from {full_url}")
-                return _load_output(output_schema, resp)
+                try:
+                    return _load_output(output_schema, resp)
+                except (ValueError, TypeError) as e:  # pydantic's ValidationError is a ValueError
+                    # A reply of an unexpected shape (e.g. an older node) is an API error, not a crash.
+                    logger.error(f"Unexpected response from {full_url}: {e}")
+                    return NodeApiErrorSchema(msg=f"Unexpected response: {e}", stacktrace=traceback.format_exc(), code=response.status_code, reason="bad_response")
 
             except requests.HTTPError as e:
                 status_code = response.status_code if response is not None else 0
