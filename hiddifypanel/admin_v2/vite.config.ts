@@ -23,6 +23,23 @@ function monacoFileWanted(relative: string): boolean {
   return !(rel === 'language' || rel.startsWith('language/') || /^nls\.messages\./.test(rel))
 }
 
+/**
+ * The translation files (hiddifypanel/translations.i18n/*.json) are shared with the classic
+ * panel; this UI only reads their `adminV2` section (src/core/i18n). Keep just that part, so
+ * the rest (~75% of every locale) is neither bundled into index.js nor processed by the build.
+ */
+function adminV2TranslationsOnly(): Plugin {
+  return {
+    name: 'hiddify-admin-v2-translations',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!/[\\/]translations\.i18n[\\/][^\\/]+\.json$/.test(id.split('?', 1)[0]!)) return null
+      const data = JSON.parse(code) as { adminV2?: unknown }
+      return { code: JSON.stringify({ adminV2: data.adminV2 ?? {} }), map: null }
+    },
+  }
+}
+
 function prebuiltMonaco(): Plugin {
   let outDir = ''
   return {
@@ -116,6 +133,7 @@ export default defineConfig(({ mode }) => {
     base,
     define: devDefines,
     plugins: [
+      adminV2TranslationsOnly(),
       prebuiltMonaco(),
       vue(),
       tailwindcss(),
