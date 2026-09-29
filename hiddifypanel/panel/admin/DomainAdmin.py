@@ -387,8 +387,12 @@ class DomainAdmin(AdminLTEModelView):
             if td.servernames and (model.domain in td.servernames.split(",")):
                 raise ValidationError(_("You have used this domain in: ") + _("config.reality_server_names.label") + td.domain)
 
-        if is_created and Domain.query.filter(Domain.domain == model.domain, Domain.child_id == model.child_id).count() > 1:
-            raise ValidationError(_("You have used this domain in: "))
+        # One row per (child, domain), also when an existing domain is renamed to a used name.
+        # Empty names (fake mode) may repeat.
+        if model.domain:
+            same = Domain.query.filter(Domain.domain == model.domain, Domain.child_id == model.child_id).all()
+            if any(d is not model and d.id != model.id for d in same):
+                raise ValidationError(_("You have used this domain in: ") + model.domain)
 
     def _validate_domain_ips(self, model, server_ips):
         if (model.domain.startswith("*") or not model.domain) and model.mode not in [DomainType.direct]:

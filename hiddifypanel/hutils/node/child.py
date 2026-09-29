@@ -55,6 +55,22 @@ def __get_sync_data_for_api() -> SyncInputSchema:
     return SyncInputSchema(domains=[domain.to_schema() for domain in Domain.query.all()])
 
 
+def _active_user_uuids() -> set[str]:
+    """Users the proxy cores should accept (is_active covers enable, delete, expiry, usage limit)."""
+    return {str(u.uuid) for u in User.query.filter(User.deleted.is_(False)).all() if u.is_active}
+
+
+def _apply_users_if_changed(before: set[str]) -> None:
+    """Users came from the parent: apply them to the proxy cores, like a local user change does.
+
+    Only when the set of active users changed, so frequent usage syncs do not reload the cores.
+    """
+    after = _active_user_uuids()
+    if after != before:
+        logger.info(f"Users from parent changed ({len(after - before)} activated, {len(before - after)} deactivated): applying users")
+        hiddify.quick_apply_users()
+
+
 def __get_parent_panel_url() -> str:
     return hconfig(ConfigEnum.parent_panel)
 
@@ -140,6 +156,7 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
 
     # The parent has already stored this node; a failure here must not surface as a 500
     # (and re-registering must work), so upsert the parent row and report errors.
+    active_before = _active_user_uuids()
     try:
         # TODO: change the bulk_register and such methods to accept models instead of dict
         AdminUser.bulk_register(res.admin_users, commit=False)
@@ -159,6 +176,7 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
 
     logger.success("Successfully registered to parent")
     cache.invalidate_all_cached_functions()
+    _apply_users_if_changed(active_before)
     return True, ""
 
 
@@ -183,11 +201,13 @@ def sync_with_parent(pull_users: bool = True) -> bool:
         # An older parent may still send the users; they are not needed for this call.
         logger.success("Sent domains to parent")
         return True
+    active_before = _active_user_uuids()
     AdminUser.bulk_register(res.admin_users, commit=False, remove=True)
     User.bulk_register(res.users, commit=False, remove=True)
     db.session.commit()
     logger.success("Successfully synced with parent")
     cache.invalidate_all_cached_functions()
+    _apply_users_if_changed(active_before)
     return True
 
 
@@ -227,10 +247,12 @@ def sync_users_usage_with_parent(usages: list[UsageData]) -> bool:
         usage.add_users_usage_new(usages, 0)
         return False
 
+    active_before = _active_user_uuids()
     for u in res.users:
         data = u.model_dump()
         User.add_or_update(commit=False, **data)
     db.session.commit()
+    _apply_users_if_changed(active_before)
 
     UnsyncedUsage.clear_all(commit=True)
 

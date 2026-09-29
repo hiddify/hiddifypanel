@@ -373,9 +373,12 @@ class Domain(db.Model):
 
     @classmethod
     def upsert(cls, data: DomainModel, *, child_id: int = 0, commit: bool = True, apply_links: bool = True) -> Domain:
-        dbdomain = Domain.query.filter(Domain.domain == data.domain, Domain.child_id == child_id).first()
+        # One row per (child, domain): match on the normalized name so "Example.com " does not
+        # become a second row of "example.com".
+        name = normalize_domain_name(data.domain)
+        dbdomain = Domain.query.filter(Domain.domain == name, Domain.child_id == child_id).first()
         if not dbdomain:
-            dbdomain = Domain(domain=data.domain)
+            dbdomain = Domain(domain=name)
             db.session.add(dbdomain)
         dbdomain.child_id = child_id
 
@@ -453,9 +456,9 @@ class Domain(db.Model):
             # First pass: create rows without cross-domain links (later rows may not exist yet).
             cls.upsert(data.without_links(), child_id=child_id, commit=False, apply_links=False)
         if remove and len(child_ids):
-            dd = {p.domain: 1 for p in rows}
+            keep = {normalize_domain_name(p.domain) for p in rows}
             for d in Domain.query.filter(Domain.child_id.in_(child_ids)):
-                if d.domain not in dd:
+                if normalize_domain_name(d.domain) not in keep:
                     db.session.delete(d)
 
         db.session.flush()
@@ -478,6 +481,10 @@ class Domain(db.Model):
             cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)
         if commit:
             db.session.commit()
+
+
+def normalize_domain_name(value: str | None) -> str:
+    return (value or "").strip().lower()
 
 
 @event.listens_for(Domain, "before_delete")

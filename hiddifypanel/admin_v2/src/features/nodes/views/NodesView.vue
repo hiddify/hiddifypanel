@@ -391,9 +391,10 @@ function confirmRemove(node: PanelNode) {
     acceptLabel: t('nodes.remove'),
     accept: async () => {
       try {
-        await nodesApi.remove(node.id)
+        const unlinked = await nodesApi.remove(node.id)
         nodes.value = nodes.value.filter((row) => row.id !== node.id)
-        toast.add({ severity: 'success', summary: t('nodes.removed', { name: node.name }), life: 3000 })
+        if (unlinked) toast.add({ severity: 'success', summary: t('nodes.removed', { name: node.name }), life: 3000 })
+        else toast.add({ severity: 'warn', summary: t('nodes.removed', { name: node.name }), detail: t('nodes.removedNotUnlinked'), life: 9000 })
       } catch (err) {
         toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
       }

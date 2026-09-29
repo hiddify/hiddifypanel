@@ -24,6 +24,45 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v150(child_id):
+    """One domain row per (node, domain name): normalize names and merge duplicates.
+
+    Overlapping node syncs could insert the same domain twice. The oldest row is kept and takes
+    over the duplicates' links; empty names (fake-mode domains) may legitimately repeat.
+    Runs once for all nodes (remote nodes are not in the per-virtual-child migration loop).
+    """
+    if child_id != 0:
+        return
+    from hiddifypanel.models.domain import Domain, normalize_domain_name
+
+    groups: dict[tuple[int, str], list[Domain]] = {}
+    for d in Domain.query.order_by(Domain.id).all():
+        groups.setdefault((d.child_id, normalize_domain_name(d.domain)), []).append(d)
+
+    merged = 0
+    for (_cid, name), rows in groups.items():
+        if not name:
+            continue
+        keep, duplicates = rows[0], rows[1:]
+        for dup in duplicates:
+            for proxy in list(dup.custom_proxies):
+                if proxy not in keep.custom_proxies:
+                    keep.custom_proxies.append(proxy)
+            for shown in list(dup.show_domains):
+                if shown is not keep and shown not in duplicates and shown not in keep.show_domains:
+                    keep.show_domains.append(shown)
+            Domain.query.filter(Domain.server_domain_id == dup.id).update({"server_domain_id": keep.id}, synchronize_session=False)
+            Domain.query.filter(Domain.download_domain_id == dup.id).update({"download_domain_id": keep.id}, synchronize_session=False)
+            db.session.delete(dup)
+            merged += 1
+        db.session.flush()
+        if keep.domain != name:
+            keep.domain = name
+    db.session.commit()
+    if merged:
+        logger.info(f"Merged {merged} duplicate domain rows")
+
+
 def _v149(child_id):
     pass
 

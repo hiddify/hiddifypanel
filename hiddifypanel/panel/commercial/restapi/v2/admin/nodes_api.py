@@ -119,8 +119,9 @@ class NodeApi(MethodView):
     def delete(self, node_id: int):
         """Nodes: Remove a node from this panel (the node itself is not changed)"""
         _only_on_parent_or_standalone()
-        hutils.node.parent.remove_node(_remote_or_404(node_id))
-        return {"status": 200, "msg": "ok"}
+        unlinked = hutils.node.parent.remove_node(_remote_or_404(node_id))
+        # unlinked=False: the node was offline or too old; it still has this panel as parent.
+        return {"status": 200, "msg": "ok", "node_unlinked": unlinked}
 
 
 class NodePingApi(MethodView):

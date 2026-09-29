@@ -10,6 +10,7 @@ def init_app(app):
         from .actions import ApplyConfig, Restart, Status, UpdateUsage, Install
         from .client_configs_api import ClientConfigsApi
         from .node_name_api import NodeNameApi
+        from .unregister_parent_api import UnregisterParentApi
 
         bp.add_url_rule("/sync-parent/", view_func=SyncWithParentApi)
         bp.add_url_rule("/register-parent/", view_func=RegisterWithParentApi)
@@ -20,4 +21,5 @@ def init_app(app):
         bp.add_url_rule("/update-usage/", view_func=UpdateUsage)
         bp.add_url_rule("/client-configs/", view_func=ClientConfigsApi)
         bp.add_url_rule("/node-name/", view_func=NodeNameApi)
+        bp.add_url_rule("/unregister-parent/", view_func=UnregisterParentApi)
     app.register_blueprint(bp)

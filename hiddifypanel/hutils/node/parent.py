@@ -19,7 +19,8 @@ def get_child_base_url(child: Child) -> str:
 
 
 def request_childs_to_sync():
-    for c in Child.query.filter(Child.id != 0).all():
+    # Only remote nodes can be asked (virtual ones live in this panel and have no address).
+    for c in Child.query.filter(Child.id != 0, Child.mode == ChildMode.remote).all():
         if not request_child_to_sync(c):
             logger.error(f"{c.name}: {_('parent.sync-req-failed')}")
             if has_request_context():
@@ -56,7 +57,9 @@ def request_child_to_sync(child: Child) -> bool:
         return False
 
     path = "/api/v2/child/sync-parent/"
-    res = NodeApiClient(base_url).post(path, payload=None, output=dict)
+    # No retries: the node answers at once and syncs in the background; a retry would only
+    # start another full sync there.
+    res = NodeApiClient(base_url, max_retry=1).post(path, payload=None, output=dict)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while requesting child {child.name} to sync: {res.msg}")
         return False
@@ -158,15 +161,31 @@ def rename_node(child: Child, name: str) -> bool:
     return True
 
 
-def remove_node(child: Child) -> None:
-    """Forget a node on this panel (the node itself is not changed)."""
-    from hiddifypanel.models import CustomProxy, ProxyBaseConfig, ProxyTemplate, ServerIp, UserDetail
+def remove_node(child: Child) -> bool:
+    """Remove a node: tell it to forget this parent, then delete it (and its domains) here.
+
+    Returns whether the node confirmed; it is removed here either way (it may be offline).
+    """
+    from hiddifypanel.models import CustomProxy, Domain, ProxyBaseConfig, ProxyTemplate, ServerIp, UserDetail
+
+    unlinked = False
+    base_url = (child.node_base_url or "").strip()
+    if base_url and child.mode == ChildMode.remote:
+        res = NodeApiClient(base_url, max_retry=1, timeout=15).post("/api/v2/child/unregister-parent/", None, dict)
+        unlinked = not isinstance(res, NodeApiErrorSchema)
+        if not unlinked:
+            logger.warning(f"Node {child.name} did not confirm leaving this parent: {res.msg}")
+    # The node's domains (and their links) go with it; deleted one by one for the before_delete hook.
+    for domain in Domain.query.filter(Domain.child_id == child.id).all():
+        db.session.delete(domain)
 
     # Rows that reference the node without a cascade on the relationship.
     for model in (CustomProxy, ProxyTemplate, ProxyBaseConfig, ServerIp, UserDetail):
         model.query.filter(model.child_id == child.id).delete(synchronize_session=False)
     db.session.delete(child)
     db.session.commit()
+    cache.invalidate_all_cached_functions()
+    return unlinked
 
 
 def is_child_domain_active(child: Child, domain: Domain) -> bool:

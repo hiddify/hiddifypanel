@@ -60,6 +60,18 @@ class NodeAdmin(AdminLTEModelView):
             return False
         return True
 
+    def delete_model(self, model):
+        """Unlink the node and remove its domains too (see hutils.node.parent.remove_node)."""
+        if model.id == 0:
+            return False
+        try:
+            hutils.node.parent.remove_node(model)
+        except Exception as e:
+            db.session.rollback()
+            hutils.flask.flash(str(e), "danger")
+            return False
+        return True
+
     def on_model_change(self, form, model, is_created):
         if is_created and model.mode != ChildMode.virtual:
             raise ValidationError(_("Remote nodes are not supported yet!"))

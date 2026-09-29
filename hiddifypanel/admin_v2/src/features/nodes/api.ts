@@ -49,8 +49,10 @@ export const nodesApi = {
     const { data } = await getHttp().patch<{ node: PanelNode; synced_to_node: boolean }>(`nodes/${id}/`, { name }, { timeout: 30_000 })
     return data
   },
-  async remove(id: number): Promise<void> {
-    await getHttp().delete(`nodes/${id}/`)
+  /** Resolves to whether the node confirmed it left (false: it was offline or too old). */
+  async remove(id: number): Promise<boolean> {
+    const { data } = await getHttp().delete<{ node_unlinked?: boolean }>(`nodes/${id}/`, { timeout: 30_000 })
+    return data.node_unlinked !== false
   },
   async ping(id: number): Promise<NodePing> {
     const { data } = await getHttp().get<NodePing>(`nodes/${id}/ping/`, { timeout: 30_000 })

@@ -13,6 +13,18 @@ from hiddifypanel.models.child import Child
 
 from .schema import SyncInputSchema, SyncOutputSchema
 
+import threading
+
+# One sync per node at a time: two overlapping syncs of the same node would both find a new
+# domain missing and insert it twice (and fight over the same rows).
+_node_locks: dict[str, threading.Lock] = {}
+_node_locks_guard = threading.Lock()
+
+
+def _node_lock(unique_id: str) -> threading.Lock:
+    with _node_locks_guard:
+        return _node_locks.setdefault(unique_id, threading.Lock())
+
 
 class SyncApi(MethodView):
     decorators = [login_required(node_auth=True)]
@@ -34,24 +46,8 @@ class SyncApi(MethodView):
             logger.error("The child does not exist")
             abort(404, "The child does not exist")
 
-        try:
-            logger.info("Syncing domains...")
-            if payload.get("domains"):
-                logger.info("Inserting domains into database")
-                Domain.bulk_register(payload["domains"], commit=False, force_child_unique_id=child.unique_id)
-            else:
-                logger.info("Domains field is empty")
-
-            # Only domains are synced; proxies/hconfigs sent by older nodes are ignored.
-
-            logger.info("Commit changes to database")
-            child.mark_node_to_parent()
-            db.session.commit()
-            cache.invalidate_all_cached_functions()
-        except Exception as err:
-            with logger.contextualize(error=err):
-                logger.error("Error while syncing data")
-            abort(400, str(err))
+        with _node_lock(child.unique_id):
+            self._store(payload, child)
 
         if request.args.get("users") == "0":
             # The node only reported config changes: skip building (and sending) every user.
@@ -64,3 +60,26 @@ class SyncApi(MethodView):
 
         logger.info("Returning sync output")
         return res
+
+    @staticmethod
+    def _store(payload: dict, child: Child) -> None:
+        try:
+            logger.info("Syncing domains...")
+            if payload.get("domains"):
+                logger.info("Inserting domains into database")
+                # remove=True: a domain deleted on the node disappears here too (the node sends all of them).
+                Domain.bulk_register(payload["domains"], commit=False, remove=True, force_child_unique_id=child.unique_id)
+            else:
+                logger.info("Domains field is empty")
+
+            # Only domains are synced; proxies/hconfigs sent by older nodes are ignored.
+
+            logger.info("Commit changes to database")
+            child.mark_node_to_parent()
+            db.session.commit()
+            cache.invalidate_all_cached_functions()
+        except Exception as err:
+            db.session.rollback()
+            with logger.contextualize(error=err):
+                logger.error("Error while syncing data")
+            abort(400, str(err))

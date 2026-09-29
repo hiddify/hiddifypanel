@@ -74,7 +74,8 @@ class Dashboard(FlaskView):
     def remove_child(self):
         child_id = request.form["child_id"]
         child = Child.query.filter(Child.id == child_id).first()
-        db.session.delete(child)
-        db.session.commit()
+        if child and child.id != 0:
+            # Unlinks the node and removes its domains too.
+            hutils.node.parent.remove_node(child)
         hutils.flask.flash(_("child has been removed!"), "success")  # type: ignore
         return self.index()

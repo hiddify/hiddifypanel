@@ -3125,7 +3125,7 @@ msgstr ""
 "رمز UUID نامعتبر است. به عنوان مثال: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6"
 
 msgid "config.is_parent.description"
-msgstr "آیا این پنل به‌عنوان پنل والد عمل می‌کند"
+msgstr "آیا این پنل به‌عنوان پنل مرکزی عمل می‌کند"
 
 msgid "config.is_parent.label"
 msgstr "پنل مرکزی"
@@ -3425,28 +3425,28 @@ msgid "config.panel_mode.child"
 msgstr "فرزند"
 
 msgid "config.panel_mode.description"
-msgstr "حالت پنل: مستقل، والد یا فرزند"
+msgstr "حالت پنل: مستقل، مرکزی یا فرزند"
 
 msgid "config.panel_mode.label"
 msgstr "حالت پنل"
 
 msgid "config.panel_mode.parent"
-msgstr "والد"
+msgstr "مرکزی"
 
 msgid "config.panel_mode.standalone"
 msgstr "مستقل"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "مسیر پروکسی ادمین در پنل والد"
+msgstr "مسیر پروکسی ادمین در پنل مرکزی"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "مسیر پروکسی ادمین والد"
+msgstr "مسیر پروکسی ادمین مرکزی"
 
 msgid "config.parent_domain.description"
-msgstr "دامنه پنل والد"
+msgstr "دامنه پنل مرکزی"
 
 msgid "config.parent_domain.label"
-msgstr "دامنه والد"
+msgstr "دامنه مرکزی"
 
 msgid "config.parent_panel.description"
 msgstr ""
@@ -4628,13 +4628,13 @@ msgid "package size?"
 msgstr "حجم بسته"
 
 msgid "parent.invalid-parent-url"
-msgstr "آدرس پنل والد نامعتبر است"
+msgstr "آدرس پنل مرکزی نامعتبر است"
 
 msgid "parent.panel-not-active"
 msgstr ""
 
 msgid "parent.sync-req-failed"
-msgstr "درخواست همگام‌سازی با پنل والد ناموفق بود"
+msgstr "درخواست همگام‌سازی با پنل مرکزی ناموفق بود"
 
 msgid "previous"
 msgstr "قبلی"
