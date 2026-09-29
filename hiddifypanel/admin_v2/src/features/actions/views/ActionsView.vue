@@ -35,7 +35,7 @@ import Card from 'primevue/card'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage, getHttp } from '@/core/api/client'
-import { submitPostForm, systemActionUrls, type SystemActionUrls } from '@/core/panelShell'
+import { openLegacyAction, systemActionUrls, type SystemActionUrls } from '@/core/panelShell'
 
 type LegacyKey = keyof SystemActionUrls
 
@@ -89,9 +89,8 @@ function execute(action: ActionDef) {
   }
   const url = systemActionUrls.value[action.key as LegacyKey]
   if (!url) return
-  busy.value = action.key
-  if (action.method === 'post') submitPostForm(url)
-  else window.location.href = url
+  // The classic page (with its live log) opens in a dialog instead of replacing this page.
+  openLegacyAction({ title: action.label, url, method: action.method })
 }
 
 function run(action: ActionDef) {

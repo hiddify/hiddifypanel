@@ -32,6 +32,20 @@ export function submitPostForm(url: string, target = '_self'): void {
   form.remove()
 }
 
+/** A classic system action (status, logs, apply, update, …) shown in a dialog with an iframe. */
+export interface LegacyAction {
+  title: string
+  url: string
+  /** `post` actions are submitted into the frame (they only accept POST). */
+  method: 'get' | 'post'
+}
+
+export const legacyActionDialog = ref<LegacyAction | null>(null)
+
+export function openLegacyAction(action: LegacyAction): void {
+  legacyActionDialog.value = { ...action }
+}
+
 export interface AdminMenuGroup {
   /** `manager` | `settings` | `help` (server menu, v2_menu.py). */
   id?: string

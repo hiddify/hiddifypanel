@@ -162,18 +162,27 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
     return True, ""
 
 
-def sync_with_parent() -> bool:
-    # sync usage first
+def sync_with_parent(pull_users: bool = True) -> bool:
+    """Send this node's domains to the parent; with ``pull_users`` also take all its users/admins.
 
+    ``pull_users=False`` is the cheap form used after local config changes: the parent only
+    needs the domains (and drops its cache of this node's configs). Pulling and rewriting every
+    user runs in the panel's own process and slows its requests down on panels with many users.
+    """
     p_url = __get_parent_panel_url()
     if not p_url:
         logger.error("Error while syncing with parent: Parent url is empty")
         return False
     payload = __get_sync_data_for_api()
-    res = NodeApiClient(p_url).put("/api/v2/parent/sync/", payload, SyncOutputSchema)
+    path = "/api/v2/parent/sync/" if pull_users else "/api/v2/parent/sync/?users=0"
+    res = NodeApiClient(p_url).put(path, payload, SyncOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while syncing with parent: {res.msg}")
         return False
+    if not pull_users:
+        # An older parent may still send the users; they are not needed for this call.
+        logger.success("Sent domains to parent")
+        return True
     AdminUser.bulk_register(res.admin_users, commit=False, remove=True)
     User.bulk_register(res.users, commit=False, remove=True)
     db.session.commit()
@@ -249,7 +258,7 @@ def _notify_parent_now(app) -> None:
             if not shared.is_child() or not __get_parent_panel_url():
                 return
             # The parent drops its cached copy of this node's configs on every sync.
-            sync_with_parent()
+            sync_with_parent(pull_users=False)
         except Exception:
             logger.exception("Error while notifying parent about config changes")
 

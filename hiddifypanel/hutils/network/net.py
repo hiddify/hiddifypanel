@@ -237,18 +237,9 @@ def get_random_domains(count: int = 1, retry: int = 2) -> list[str]:
     count = max(1, int(count))
     try:
         region = "CN" if retry < 2 else "IR"
-        irurl = (
-            "https://api.ooni.io/api/v1/measurements"
-            f"?probe_cc={region}&test_name=web_connectivity"
-            "&anomaly=false&confirmed=false&failure=false"
-            f"&limit=100&offset={(2 - retry % 2) * 100}"
-        )
+        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc={region}&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(2 - retry % 2) * 100}"
         data_ir = requests.get(irurl, timeout=5).json()
-        domains = [
-            urlparse(d["input"]).netloc.lower()
-            for d in data_ir.get("results", {})
-            if d.get("scores", {}).get("blocking_country") == 0.0
-        ]
+        domains = [urlparse(d["input"]).netloc.lower() for d in data_ir.get("results", {}) if d.get("scores", {}).get("blocking_country") == 0.0]
         domains = [d for d in domains if d and not d.endswith(".ir") and ".gov" not in d]
         if len(domains) >= count:
             return random.sample(domains, count)

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
-import { submitPostForm, systemActionUrls } from '@/core/panelShell'
+import { openLegacyAction, systemActionUrls } from '@/core/panelShell'
 import type { RestartMode } from '@/shared/utils/restart-mode'
 
 const mode = defineModel<RestartMode>({ required: true })
@@ -29,7 +29,8 @@ function run() {
   const current = action.value
   if (!current?.url) return
   const url = current.url
-  dangerConfirm({ header: current.label, message: t('actions.confirm'), accept: () => submitPostForm(url) })
+  const title = current.label
+  dangerConfirm({ header: title, message: t('actions.confirm'), accept: () => openLegacyAction({ title, url, method: 'post' }) })
 }
 </script>
 

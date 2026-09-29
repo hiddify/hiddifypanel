@@ -1,4 +1,5 @@
 from apiflask import abort
+from flask import request
 from flask.views import MethodView
 from loguru import logger
 
@@ -51,6 +52,10 @@ class SyncApi(MethodView):
             with logger.contextualize(error=err):
                 logger.error("Error while syncing data")
             abort(400, str(err))
+
+        if request.args.get("users") == "0":
+            # The node only reported config changes: skip building (and sending) every user.
+            return SyncOutputSchema()
 
         res = SyncOutputSchema(
             users=[u.to_schema() for u in User.query.all()],

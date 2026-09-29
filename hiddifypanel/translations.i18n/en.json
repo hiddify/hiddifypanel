@@ -513,8 +513,9 @@
       "text": "HiddifyManager"
     },
     "legacy": {
-      "title": "Classic admin page",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "refresh": "Refresh",
+      "title": "Classic admin page"
     },
     "menu": {
       "baseConfigs": "Base Configs",
