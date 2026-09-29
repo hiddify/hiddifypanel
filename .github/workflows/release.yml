@@ -62,8 +62,8 @@ jobs:
           exit 1
         fi
         # admin_v2/ is excluded as build-time source; what ships is vite's output in
-        # static/admin-v2/. That directory is committed, so a failed npm build would
-        # otherwise publish stale assets instead of failing.
+        # static/admin-v2/, which is not in git: without the npm build above the
+        # wheel would have no admin UI at all.
         if ! unzip -l dist/*.whl | grep -q 'hiddifypanel/static/admin-v2/index.html'; then
           echo "::error::wheel has no built admin UI — did the 'Build Admin V2 UI' step run?"
           exit 1
