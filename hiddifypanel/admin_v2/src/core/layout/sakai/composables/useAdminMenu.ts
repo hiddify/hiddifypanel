@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
+import { isChildPanel, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
 
 export type { AdminMenuGroup, AdminMenuItem }
 
@@ -11,8 +11,13 @@ export function useAdminMenu() {
     {
       label: t('menu.sectionNew'),
       items: [
-        { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
-        { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
+        // Nodes have no dashboard of their own (it is on the parent) and only keep the proxy editor.
+        ...(isChildPanel.value
+          ? [{ label: t('menu.nodeHome'), icon: 'pi pi-fw pi-home', to: '/node' }]
+          : [
+              { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
+              { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
+            ]),
         {
           label: t('menu.proxyEditor'),
           icon: 'pi pi-fw pi-server',

@@ -2790,6 +2790,14 @@ msgstr "Websocket cria um túnel sobre HTTP que é útil para ser usado em CDN"
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
 
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"Allow XHTTP configs whose upload and download use different domains or "
+"settings. ⚠️ Many clients do not support this, so it is disabled by default."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP with different upload/download"
+
 msgid "config.xhttp_enable.description"
 msgstr "Este protocolo envia e recebe informações em canais individuais "
 

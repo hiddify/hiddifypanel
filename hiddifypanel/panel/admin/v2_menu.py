@@ -18,12 +18,18 @@ def _item(label: str, url: str, icon: str, *, target: str = "_self", badge: str 
     return row
 
 
-def _post_action(label: str, url: str, icon: str) -> dict:
-    """System action: the endpoint only accepts POST, so the shell confirms and submits a form."""
-    row = _item(label, url, icon)
-    row["method"] = "post"
-    row["confirm"] = _("Are you sure you want to do this action?")
-    return row
+def build_admin_v2_system_actions() -> dict[str, str]:
+    """Legacy system action URLs used by the Admin V2 Actions page (super_admin only)."""
+    if g.account.mode != "super_admin":
+        return {}
+    return {
+        "status": hurl_for("admin.Actions:status"),
+        "viewlogs": hurl_for("admin.Actions:viewlogs"),
+        "apply_configs": hurl_for("admin.Actions:apply_configs"),
+        "update": hurl_for("admin.Actions:update"),
+        "reinstall": hurl_for("admin.Actions:reinstall"),
+        "reset": hurl_for("admin.Actions:reset"),
+    }
 
 
 def _wiki_support_url() -> str:
@@ -32,8 +38,33 @@ def _wiki_support_url() -> str:
     return "https://github.com/hiddify/hiddify-manager/wiki/All-tutorials-and-videos"
 
 
+def _build_child_menu() -> list[dict]:
+    """A node only manages its own domains, proxies and server; users and the dashboard live on the parent."""
+    groups: list[dict] = []
+    if parent_url := hutils.node.child.parent_admin_dashboard_url(g.account.uuid):
+        groups.append({"label": _("Parent Panel"), "items": [_item(_("Parent Panel"), parent_url, "pi pi-fw pi-home")]})
+    if g.account.mode == "agent":
+        return groups
+    settings_items = [
+        _item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link"),
+        _item(_("admin.menu.proxy"), hurl_for("admin.ProxyAdmin:index"), "pi pi-fw pi-sitemap"),
+    ]
+    if g.account.mode == "super_admin":
+        settings_items.extend(
+            [
+                _item(_("admin.menu.config"), hurl_for("admin.SettingAdmin:index"), "pi pi-fw pi-cog"),
+                _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
+                {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
+            ]
+        )
+    groups.append({"label": _("admin.menu.config"), "items": settings_items})
+    return groups
+
+
 def build_admin_v2_menu() -> list[dict]:
     """Grouped legacy panel menu (full-page links). V2 routes are added in the frontend."""
+    if hutils.node.is_child():
+        return _build_child_menu()
     groups: list[dict] = []
 
     home_label = _("Parent Panel") if hutils.node.is_parent() else _("admin.menu.home")
@@ -75,6 +106,7 @@ def build_admin_v2_menu() -> list[dict]:
                 [
                     _item(_("admin.menu.config"), hurl_for("admin.SettingAdmin:index"), "pi pi-fw pi-cog"),
                     _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
+                    {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
                 ]
             )
         if hconfig(ConfigEnum.telegram_bot_token) and getattr(g, "bot", None):
@@ -93,21 +125,6 @@ def build_admin_v2_menu() -> list[dict]:
                 _item(_("admin.menu.proxy_stats"), get_proxy_stats_url(), "pi pi-fw pi-chart-bar"),
             )
         groups.append({"label": _("admin.menu.config"), "items": settings_items})
-
-    if g.account.mode == "super_admin":
-        groups.append(
-            {
-                "label": _("admin.actions.title"),
-                "items": [
-                    _item(_("admin.actions.status"), hurl_for("admin.Actions:status"), "pi pi-fw pi-chart-line"),
-                    _item(_("admin.actions.viewlogs"), hurl_for("admin.Actions:viewlogs"), "pi pi-fw pi-inbox"),
-                    _post_action(_("admin.actions.apply_configs"), hurl_for("admin.Actions:apply_configs"), "pi pi-fw pi-bolt"),
-                    _post_action(_("admin.actions.update"), hurl_for("admin.Actions:update"), "pi pi-fw pi-upload"),
-                    _post_action(_("admin.actions.reinstall"), hurl_for("admin.Actions:reinstall"), "pi pi-fw pi-refresh"),
-                    _post_action(_("admin.actions.reset"), hurl_for("admin.Actions:reset"), "pi pi-fw pi-power-off"),
-                ],
-            }
-        )
 
     groups.append(
         {

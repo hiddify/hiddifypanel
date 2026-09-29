@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type Router } from 'vue-router'
 import AppLayout from '@/core/layout/sakai/AppLayout.vue'
+import { isChildPanel } from '@/core/panelShell'
 
 const routes = [
   {
@@ -10,6 +11,13 @@ const routes = [
         path: '',
         name: 'dashboard',
         component: () => import('@/features/dashboard/views/DashboardView.vue'),
+        // A node's dashboard lives on the parent panel; it only gets a basic home page.
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+      },
+      {
+        path: 'node',
+        name: 'node-home',
+        component: () => import('@/features/node-home/views/NodeHomeView.vue'),
       },
       {
         path: 'custom-proxies',
@@ -53,6 +61,11 @@ const routes = [
         path: 'utils',
         name: 'utils',
         component: () => import('@/features/utils/views/UtilsView.vue'),
+      },
+      {
+        path: 'actions',
+        name: 'actions',
+        component: () => import('@/features/actions/views/ActionsView.vue'),
       },
       {
         path: 'base-configs',

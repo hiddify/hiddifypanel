@@ -73,8 +73,30 @@
                   />
                 </div>
               </Message>
-              <HorizontalField :label="t('proxy.name')" input-id="proxy-name">
-                <InputText id="proxy-name" v-model="form.name" class="w-full" @blur="onNameBlur" />
+              <HorizontalField :label="t('proxy.name')" input-id="proxy-name" :hint="nameHint">
+                <InputGroup>
+                  <InputGroupAddon><i class="pi pi-tag" /></InputGroupAddon>
+                  <InputText id="proxy-name" :model-value="form.name" class="w-full" @update:model-value="onNameInput" @blur="onNameBlur" />
+                  <InputGroupAddon v-if="isBuiltin">
+                    <div class="flex items-center gap-1 whitespace-nowrap px-1">
+                      <Checkbox
+                        input-id="override-name"
+                        :model-value="isFieldOverridden('name')"
+                        binary
+                        @update:model-value="setFieldOverride('name', $event)"
+                      />
+                      <label for="override-name" class="text-sm">{{ t('proxy.fieldOverride') }}</label>
+                    </div>
+                  </InputGroupAddon>
+                  <Button
+                    v-if="isBuiltin && isFieldOverridden('name')"
+                    icon="pi pi-undo"
+                    severity="secondary"
+                    :aria-label="t('proxy.resetTagName')"
+                    v-tooltip.top="t('proxy.resetTagName')"
+                    @click="setFieldOverride('name', false)"
+                  />
+                </InputGroup>
               </HorizontalField>
               <HorizontalField v-if="showCustomPath" :label="t('proxy.customPath')" input-id="proxy-path" :hint="t('proxy.customPathAuto')">
                 <InputGroup>
@@ -742,6 +764,8 @@ function snapshotBuiltinField(key: string) {
   if (form.builtin![key] !== undefined) return
   if (key === 'server_config') {
     form.builtin![key] = form.server_config?.inbound_template ?? form.builtin_server_config ?? ''
+  } else if (key === 'name') {
+    form.builtin![key] = form.name ?? ''
   } else if (key === 'custom_path') {
     form.builtin![key] = form.custom_path ?? ''
   } else if (key === 'domain_modes') {
@@ -768,6 +792,8 @@ function resetFieldFromBuiltin(key: string) {
     const template = String(builtin ?? form.builtin_server_config ?? '')
     if (form.server_config) form.server_config.inbound_template = template
     form.server_override = false
+  } else if (key === 'name') {
+    form.name = String(builtin ?? form.name ?? '')
   } else if (key === 'custom_path') {
     form.custom_path = String(builtin ?? '')
   } else if (key === 'domain_modes' && Array.isArray(builtin)) {
@@ -1302,6 +1328,23 @@ function slugifyName(name: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+// Built-in proxies keep the catalog tag in builtin.name; typing a different tag opts in to the override.
+const builtinName = computed(() => (isBuiltin.value ? String(form.builtin?.name ?? '') : ''))
+const nameHint = computed(() =>
+  isBuiltin.value && isFieldOverridden('name') && builtinName.value
+    ? t('proxy.defaultTagName', { name: builtinName.value })
+    : undefined,
+)
+
+function onNameInput(value: string | undefined) {
+  if (isBuiltin.value && !isFieldOverridden('name')) snapshotBuiltinField('name')
+  form.name = value ?? ''
+  if (!isBuiltin.value) return
+  const differs = form.name.trim() !== builtinName.value
+  if (differs && !isFieldOverridden('name')) form.builtin_overrides!['name'] = true
+  else if (!differs && isFieldOverridden('name')) delete form.builtin_overrides!['name']
+}
+
 function onNameBlur() {
   if (!form.slug?.trim() && form.name.trim()) {
     form.slug = slugifyName(form.name)
@@ -1797,9 +1840,10 @@ async function duplicateBuiltin() {
 }
 
 async function save() {
+  // A tag-only override does not touch the rendered body.
   const needsBodyValidation =
     !isBuiltin.value
-    || Object.values(form.builtin_overrides ?? {}).some(Boolean)
+    || Object.entries(form.builtin_overrides ?? {}).some(([key, on]) => on && key !== 'name')
   if (needsBodyValidation) {
     ensureClientCores()
     await runValidate()

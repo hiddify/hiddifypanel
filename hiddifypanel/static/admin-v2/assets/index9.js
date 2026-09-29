@@ -1,115 +1,48 @@
-import{s as a}from"./index3.js";import{B as s,f as r,o as c,c as g,i as d,a as l,r as h}from"./index.js";var u=`
-    .p-toggleswitch {
-        display: inline-block;
-        width: dt('toggleswitch.width');
-        height: dt('toggleswitch.height');
+import{c as f,d as m}from"./index3.js";import{B as y,R as v,I as B,s as w,f as k,j as P,o as s,c as i,i as d,r,a as t,d as $,e as c,n as C,G as u,v as h,q as D,af as A,w as S,aW as I,ag as K}from"./index.js";var L=`
+    .p-panel {
+        display: block;
+        border: 1px solid dt('panel.border.color');
+        border-radius: dt('panel.border.radius');
+        background: dt('panel.background');
+        color: dt('panel.color');
     }
 
-    .p-toggleswitch-input {
-        cursor: pointer;
-        appearance: none;
-        position: absolute;
-        top: 0;
-        inset-inline-start: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-        opacity: 0;
-        z-index: 1;
-        outline: 0 none;
-        border-radius: dt('toggleswitch.border.radius');
-    }
-
-    .p-toggleswitch-slider {
-        cursor: pointer;
-        width: 100%;
-        height: 100%;
-        border-width: dt('toggleswitch.border.width');
-        border-style: solid;
-        border-color: dt('toggleswitch.border.color');
-        background: dt('toggleswitch.background');
-        transition:
-            background dt('toggleswitch.transition.duration'),
-            color dt('toggleswitch.transition.duration'),
-            border-color dt('toggleswitch.transition.duration'),
-            outline-color dt('toggleswitch.transition.duration'),
-            box-shadow dt('toggleswitch.transition.duration');
-        border-radius: dt('toggleswitch.border.radius');
-        outline-color: transparent;
-        box-shadow: dt('toggleswitch.shadow');
-    }
-
-    .p-toggleswitch-handle {
-        position: absolute;
-        top: 50%;
+    .p-panel-header {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        background: dt('toggleswitch.handle.background');
-        color: dt('toggleswitch.handle.color');
-        width: dt('toggleswitch.handle.size');
-        height: dt('toggleswitch.handle.size');
-        inset-inline-start: dt('toggleswitch.gap');
-        margin-block-start: calc(-1 * calc(dt('toggleswitch.handle.size') / 2));
-        border-radius: dt('toggleswitch.handle.border.radius');
-        transition:
-            background dt('toggleswitch.transition.duration'),
-            color dt('toggleswitch.transition.duration'),
-            inset-inline-start dt('toggleswitch.slide.duration'),
-            box-shadow dt('toggleswitch.slide.duration');
+        padding: dt('panel.header.padding');
+        background: dt('panel.header.background');
+        color: dt('panel.header.color');
+        border-style: solid;
+        border-width: dt('panel.header.border.width');
+        border-color: dt('panel.header.border.color');
+        border-radius: dt('panel.header.border.radius');
     }
 
-    .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
-        background: dt('toggleswitch.checked.background');
-        border-color: dt('toggleswitch.checked.border.color');
+    .p-panel-toggleable .p-panel-header {
+        padding: dt('panel.toggleable.header.padding');
     }
 
-    .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-handle {
-        background: dt('toggleswitch.handle.checked.background');
-        color: dt('toggleswitch.handle.checked.color');
-        inset-inline-start: calc(dt('toggleswitch.width') - calc(dt('toggleswitch.handle.size') + dt('toggleswitch.gap')));
+    .p-panel-title {
+        line-height: 1;
+        font-weight: dt('panel.title.font.weight');
     }
 
-    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-slider {
-        background: dt('toggleswitch.hover.background');
-        border-color: dt('toggleswitch.hover.border.color');
+    .p-panel-content-container {
+        display: grid;
+        grid-template-rows: 1fr;
     }
 
-    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-handle {
-        background: dt('toggleswitch.handle.hover.background');
-        color: dt('toggleswitch.handle.hover.color');
+    .p-panel-content-wrapper {
+        min-height: 0;
     }
 
-    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-slider {
-        background: dt('toggleswitch.checked.hover.background');
-        border-color: dt('toggleswitch.checked.hover.border.color');
+    .p-panel-content {
+        padding: dt('panel.content.padding');
     }
 
-    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-handle {
-        background: dt('toggleswitch.handle.checked.hover.background');
-        color: dt('toggleswitch.handle.checked.hover.color');
+    .p-panel-footer {
+        padding: dt('panel.footer.padding');
     }
-
-    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:focus-visible) .p-toggleswitch-slider {
-        box-shadow: dt('toggleswitch.focus.ring.shadow');
-        outline: dt('toggleswitch.focus.ring.width') dt('toggleswitch.focus.ring.style') dt('toggleswitch.focus.ring.color');
-        outline-offset: dt('toggleswitch.focus.ring.offset');
-    }
-
-    .p-toggleswitch.p-invalid > .p-toggleswitch-slider {
-        border-color: dt('toggleswitch.invalid.border.color');
-    }
-
-    .p-toggleswitch.p-disabled {
-        opacity: 1;
-    }
-
-    .p-toggleswitch.p-disabled .p-toggleswitch-slider {
-        background: dt('toggleswitch.disabled.background');
-    }
-
-    .p-toggleswitch.p-disabled .p-toggleswitch-handle {
-        background: dt('toggleswitch.handle.disabled.background');
-    }
-`,p={root:{position:"relative"}},w={root:function(e){var i=e.instance,o=e.props;return["p-toggleswitch p-component",{"p-toggleswitch-checked":i.checked,"p-disabled":o.disabled,"p-invalid":i.$invalid}]},input:"p-toggleswitch-input",slider:"p-toggleswitch-slider",handle:"p-toggleswitch-handle"},b=s.extend({name:"toggleswitch",style:u,classes:w,inlineStyles:p}),k={name:"BaseToggleSwitch",extends:a,props:{trueValue:{type:null,default:!0},falseValue:{type:null,default:!1},readonly:{type:Boolean,default:!1},tabindex:{type:Number,default:null},inputId:{type:String,default:null},inputClass:{type:[String,Object],default:null},inputStyle:{type:Object,default:null},ariaLabelledby:{type:String,default:null},ariaLabel:{type:String,default:null}},style:b,provide:function(){return{$pcToggleSwitch:this,$parentInstance:this}}},f={name:"ToggleSwitch",extends:k,inheritAttrs:!1,emits:["change","focus","blur"],methods:{getPTOptions:function(e){var i=e==="root"?this.ptmi:this.ptm;return i(e,{context:{checked:this.checked,disabled:this.disabled}})},onChange:function(e){if(!this.disabled&&!this.readonly){var i=this.checked?this.falseValue:this.trueValue;this.writeValue(i,e),this.$emit("change",e)}},onFocus:function(e){this.$emit("focus",e)},onBlur:function(e){var i,o;this.$emit("blur",e),(i=(o=this.formField).onBlur)===null||i===void 0||i.call(o,e)}},computed:{checked:function(){return this.d_value===this.trueValue},dataP:function(){return r({checked:this.checked,disabled:this.disabled,invalid:this.$invalid})}}},v=["data-p-checked","data-p-disabled","data-p"],y=["id","checked","tabindex","disabled","readonly","aria-checked","aria-labelledby","aria-label","aria-invalid"],m=["data-p"],S=["data-p"];function B(t,e,i,o,P,n){return c(),g("div",l({class:t.cx("root"),style:t.sx("root")},n.getPTOptions("root"),{"data-p-checked":n.checked,"data-p-disabled":t.disabled,"data-p":n.dataP}),[d("input",l({id:t.inputId,type:"checkbox",role:"switch",class:[t.cx("input"),t.inputClass],style:t.inputStyle,checked:n.checked,tabindex:t.tabindex,disabled:t.disabled,readonly:t.readonly,"aria-checked":n.checked,"aria-labelledby":t.ariaLabelledby,"aria-label":t.ariaLabel,"aria-invalid":t.invalid||void 0,onFocus:e[0]||(e[0]=function(){return n.onFocus&&n.onFocus.apply(n,arguments)}),onBlur:e[1]||(e[1]=function(){return n.onBlur&&n.onBlur.apply(n,arguments)}),onChange:e[2]||(e[2]=function(){return n.onChange&&n.onChange.apply(n,arguments)})},n.getPTOptions("input")),null,16,y),d("div",l({class:t.cx("slider")},n.getPTOptions("slider"),{"data-p":n.dataP}),[d("div",l({class:t.cx("handle")},n.getPTOptions("handle"),{"data-p":n.dataP}),[h(t.$slots,"handle",{checked:n.checked})],16,S)],16,m)],16,v)}f.render=B;export{f as s};
+`,T={root:function(n){var g=n.props;return["p-panel p-component",{"p-panel-toggleable":g.toggleable}]},header:"p-panel-header",title:"p-panel-title",headerActions:"p-panel-header-actions",pcToggleButton:"p-panel-toggle-button",contentContainer:"p-panel-content-container",contentWrapper:"p-panel-content-wrapper",content:"p-panel-content",footer:"p-panel-footer"},E=y.extend({name:"panel",style:L,classes:T}),N={name:"BasePanel",extends:w,props:{header:String,toggleable:Boolean,collapsed:Boolean,toggleButtonProps:{type:Object,default:function(){return{severity:"secondary",text:!0,rounded:!0}}}},style:E,provide:function(){return{$pcPanel:this,$parentInstance:this}}},W={name:"Panel",extends:N,inheritAttrs:!1,emits:["update:collapsed","toggle"],data:function(){return{d_collapsed:this.collapsed}},watch:{collapsed:function(n){this.d_collapsed=n}},methods:{toggle:function(n){this.d_collapsed=!this.d_collapsed,this.$emit("update:collapsed",this.d_collapsed),this.$emit("toggle",{originalEvent:n,value:this.d_collapsed})},onKeyDown:function(n){(n.code==="Enter"||n.code==="NumpadEnter"||n.code==="Space")&&(this.toggle(n),n.preventDefault())}},computed:{buttonAriaLabel:function(){return this.toggleButtonProps&&this.toggleButtonProps.ariaLabel?this.toggleButtonProps.ariaLabel:this.header},dataP:function(){return k({toggleable:this.toggleable})}},components:{PlusIcon:m,MinusIcon:f,Button:B},directives:{ripple:v}},j=["data-p"],V=["data-p"],M=["id"],R=["id","aria-labelledby"];function q(e,n,g,z,l,a){var b=P("Button");return s(),i("div",t({class:e.cx("root"),"data-p":a.dataP},e.ptmi("root")),[d("div",t({class:e.cx("header"),"data-p":a.dataP},e.ptm("header")),[r(e.$slots,"header",{id:e.$id+"_header",class:C(e.cx("title")),collapsed:l.d_collapsed},function(){return[e.header?(s(),i("span",t({key:0,id:e.$id+"_header",class:e.cx("title")},e.ptm("title")),$(e.header),17,M)):c("",!0)]}),d("div",t({class:e.cx("headerActions")},e.ptm("headerActions")),[r(e.$slots,"icons"),e.toggleable?r(e.$slots,"togglebutton",{key:0,collapsed:l.d_collapsed,toggleCallback:function(p){return a.toggle(p)},keydownCallback:function(p){return a.onKeyDown(p)}},function(){return[u(b,t({id:e.$id+"_header",class:e.cx("pcToggleButton"),"aria-label":a.buttonAriaLabel,"aria-controls":e.$id+"_content","aria-expanded":!l.d_collapsed,unstyled:e.unstyled,onClick:n[0]||(n[0]=function(o){return a.toggle(o)}),onKeydown:n[1]||(n[1]=function(o){return a.onKeyDown(o)})},e.toggleButtonProps,{pt:e.ptm("pcToggleButton")}),{icon:h(function(o){return[r(e.$slots,e.$slots.toggleicon?"toggleicon":"togglericon",{collapsed:l.d_collapsed},function(){return[(s(),D(A(l.d_collapsed?"PlusIcon":"MinusIcon"),t({class:o.class},e.ptm("pcToggleButton").icon),null,16,["class"]))]})]}),_:3},16,["id","class","aria-label","aria-controls","aria-expanded","unstyled","pt"])]}):c("",!0)],16)],16,V),u(K,t({name:"p-collapsible"},e.ptm("transition")),{default:h(function(){return[S(d("div",t({id:e.$id+"_content",class:e.cx("contentContainer"),role:"region","aria-labelledby":e.$id+"_header"},e.ptm("contentContainer")),[d("div",t({class:e.cx("contentWrapper")},e.ptm("contentWrapper")),[d("div",t({class:e.cx("content")},e.ptm("content")),[r(e.$slots,"default")],16),e.$slots.footer?(s(),i("div",t({key:0,class:e.cx("footer")},e.ptm("footer")),[r(e.$slots,"footer")],16)):c("",!0)],16)],16,R),[[I,!l.d_collapsed]])]}),_:3},16)],16,j)}W.render=q;export{W as s};

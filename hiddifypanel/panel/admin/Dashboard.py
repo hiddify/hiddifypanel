@@ -19,6 +19,9 @@ class Dashboard(FlaskView):
     def index(self):
         if hconfig(ConfigEnum.first_setup):
             return redirect(hurl_for("admin.QuickSetup:index"))
+        # A node has no dashboard of its own; the new UI shows a basic "connected to parent" page.
+        if hutils.node.is_child():
+            return redirect(hurl_for("admin.admin_v2"))
 
         if hutils.utils.is_panel_outdated():
             hutils.flask.flash(_("outdated_panel"), "danger")  # type: ignore

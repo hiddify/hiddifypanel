@@ -1081,6 +1081,65 @@ msgstr ""
 "⚠️ لطفا برای اینکه مطمئن شوید تغییرات به درستی اعمال شده، حدود 5 دقیقه صبر "
 "کنید. در این فاصله لینک‌های زیر را کپی کرده و در جایی برای خود ذخیره نمایید:"
 
+msgid "adminV2.actions.applyConfigs"
+msgstr "اعمال تغییرات"
+
+msgid "adminV2.actions.applyConfigsHint"
+msgstr "کانفیگ‌های سرور را دوباره می‌سازد و روی سرویس‌ها اعمال می‌کند."
+
+msgid "adminV2.actions.confirm"
+msgstr "آیا از انجام این عملیات مطمئن هستید؟"
+
+msgid "adminV2.actions.reinstall"
+msgstr "نصب مجدد"
+
+msgid "adminV2.actions.reinstallHint"
+msgstr "اجرای دوباره نصب کامل. سرویس‌ها چند دقیقه از دسترس خارج می‌شوند."
+
+msgid "adminV2.actions.resetCache"
+msgstr "پاک‌سازی کش"
+
+msgid "adminV2.actions.resetCacheDone"
+msgstr "کش پاک شد"
+
+msgid "adminV2.actions.resetCacheFailed"
+msgstr "پاک‌سازی کش ناموفق بود"
+
+msgid "adminV2.actions.resetCacheHint"
+msgstr ""
+"داده‌های کش‌شده و قالب‌های رندرشده پنل را پاک می‌کند. بی‌خطر است و سرویسی "
+"ری‌استارت نمی‌شود."
+
+msgid "adminV2.actions.restart"
+msgstr "ریستارت سیستم"
+
+msgid "adminV2.actions.restartHint"
+msgstr "ری‌استارت همه سرویس‌ها. اتصال‌های فعال قطع می‌شوند."
+
+msgid "adminV2.actions.status"
+msgstr "وضعیت"
+
+msgid "adminV2.actions.statusHint"
+msgstr "بررسی وضعیت همه سرویس‌ها و نمایش لاگ آن."
+
+msgid "adminV2.actions.subtitle"
+msgstr "عملیات نگهداری و سیستمی پنل."
+
+msgid "adminV2.actions.title"
+msgstr "اقدامات"
+
+msgid "adminV2.actions.update"
+msgstr "به‌روز‌ رسانی"
+
+msgid "adminV2.actions.updateHint"
+msgstr "به‌روزرسانی پنل و همه سرویس‌ها به آخرین نسخه."
+
+msgid "adminV2.actions.viewlogs"
+msgstr "نمایش لاگ"
+
+msgid "adminV2.actions.viewlogsHint"
+msgstr "مشاهده فایل‌های لاگ سیستم."
+
 msgid "adminV2.appTitle"
 msgstr "هیدیفای منیجر"
 
@@ -1174,6 +1233,9 @@ msgstr "خیر"
 
 msgid "adminV2.common.save"
 msgstr "ذخیره"
+
+msgid "adminV2.common.saveFailed"
+msgstr "ذخیره ناموفق بود"
 
 msgid "adminV2.common.saved"
 msgstr "با موفقیت ذخیره شد"
@@ -1743,6 +1805,9 @@ msgstr "مسیر سفارشی"
 msgid "adminV2.proxy.customPathAuto"
 msgstr "برای پروکسی‌های HTTP به‌صورت خودکار ساخته می‌شود"
 
+msgid "adminV2.proxy.defaultTagName"
+msgstr "تگ پیش‌فرض: {name}"
+
 msgid "adminV2.proxy.directPortAccess"
 msgstr "دسترسی مستقیم به پورت"
 
@@ -2046,6 +2111,9 @@ msgstr "خروجی رندر شده"
 
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "منبع قالب"
+
+msgid "adminV2.proxy.resetTagName"
+msgstr "بازگرداندن نام تگ به پیش‌فرض"
 
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "بازگردانی به پیش‌فرض کاتالوگ"
@@ -4222,6 +4290,15 @@ msgstr ""
 
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
+
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"اجازه ساخت کانفیگ‌های XHTTP که آپلود و دانلود آن‌ها دامنه یا تنظیمات متفاوتی"
+" دارند. ⚠️ بسیاری از برنامه‌ها از این حالت پشتیبانی نمی‌کنند، به همین دلیل "
+"به صورت پیش‌فرض غیرفعال است."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP با آپلود/دانلود متفاوت"
 
 msgid "config.xhttp_enable.description"
 msgstr ""

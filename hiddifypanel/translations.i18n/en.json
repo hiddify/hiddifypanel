@@ -306,6 +306,27 @@
     "waiting_for_update": "⚠️ Please wait about 5 minutes to make sure everything is updated. during this time, please copy and save your Proxy links which are:"
   },
   "adminV2": {
+    "actions": {
+      "applyConfigs": "Apply Configs",
+      "applyConfigsHint": "Regenerate the server configs and apply them to running services.",
+      "confirm": "Are you sure you want to do this action?",
+      "reinstall": "Reinstall",
+      "reinstallHint": "Run the full installer again. Services will be down for a few minutes.",
+      "resetCache": "Reset Cache",
+      "resetCacheDone": "Cache cleared",
+      "resetCacheFailed": "Failed to reset cache",
+      "resetCacheHint": "Clear the panel's cached data and rendered templates. Safe; no service restart.",
+      "restart": "Restart System",
+      "restartHint": "Restart all services. Active connections will be dropped.",
+      "status": "Status",
+      "statusHint": "Run a status check of all services and show its log.",
+      "subtitle": "Maintenance and system operations for this panel.",
+      "title": "Actions",
+      "update": "Update",
+      "updateHint": "Update the panel and all services to the latest version.",
+      "viewlogs": "View Logs",
+      "viewlogsHint": "Browse the system log files."
+    },
     "appTitle": "HiddifyManager",
     "baseConfig": {
       "builtinDefaultHint": "Built-in base config synced from catalog. Enable custom content to edit it.",
@@ -339,8 +360,8 @@
       "loadFailed": "Failed to load data",
       "no": "No",
       "save": "Save",
-      "saved": "Saved successfully",
       "saveFailed": "Save failed",
+      "saved": "Saved successfully",
       "search": "Search...",
       "validate": "Validate",
       "validationFailed": "Validation failed",
@@ -478,6 +499,7 @@
       "baseConfigs": "Base Configs",
       "customProxies": "Proxies",
       "dashboard": "Dashboard",
+      "nodeHome": "Node",
       "proxyEditor": "Proxy Editor",
       "sectionMain": "Main",
       "sectionNew": "New",
@@ -485,6 +507,15 @@
       "templateVariables": "Template Variables",
       "templates": "Templates",
       "utils": "Utils"
+    },
+    "nodeHome": {
+      "connectedTo": "This node is connected to the parent panel",
+      "managedOnParent": "Users, admins and the dashboard are managed on the parent panel. Here you manage only this node's domains, proxies and server.",
+      "noParent": "This node is not connected to a parent panel yet.",
+      "openParent": "Open parent dashboard",
+      "subtitle": "This panel is a node of a parent panel.",
+      "title": "Node",
+      "titleNamed": "Node: {name}"
     },
     "primevue": {
       "accept": "Yes",
@@ -540,6 +571,7 @@
       "core": "Core",
       "customPath": "Custom path",
       "customPathAuto": "Generated automatically for HTTP proxies",
+      "defaultTagName": "Default tag: {name}",
       "directPortAccess": "Direct port access",
       "directPortAccessHint": "Use with care — may make your server discoverable on the public interface",
       "doBase64After": "Base64 after render",
@@ -642,6 +674,7 @@
       "renderErrorNoDetail": "No additional context is available for this error.",
       "renderErrorRenderedSource": "Rendered output",
       "renderErrorTemplateSource": "Template source",
+      "resetTagName": "Reset tag name to default",
       "resetToBuiltin": "Reset to catalog default",
       "searchAll": "Search all columns...",
       "serverBuiltinCustomized": "Custom server config",

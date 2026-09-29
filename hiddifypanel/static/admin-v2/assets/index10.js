@@ -1,88 +1,115 @@
-import{c as h,d as v}from"./index3.js";import{B as w,R as P,s as O,f as k,h as B,o as a,c as g,i as d,r as p,a as r,d as c,e as u,w as f,n as S,q as j,af as D,G as L,v as C,aV as I,ag as E}from"./index.js";var K=`
-    .p-fieldset {
-        background: dt('fieldset.background');
-        border: 1px solid dt('fieldset.border.color');
-        border-radius: dt('fieldset.border.radius');
-        color: dt('fieldset.color');
-        padding: dt('fieldset.padding');
-        margin: 0;
+import{s as a}from"./index3.js";import{B as s,f as r,o as c,c as g,i as d,a as l,r as h}from"./index.js";var u=`
+    .p-toggleswitch {
+        display: inline-block;
+        width: dt('toggleswitch.width');
+        height: dt('toggleswitch.height');
     }
 
-    .p-fieldset-legend {
-        background: dt('fieldset.legend.background');
-        border-radius: dt('fieldset.legend.border.radius');
-        border-width: dt('fieldset.legend.border.width');
-        border-style: solid;
-        border-color: dt('fieldset.legend.border.color');
-        color: dt('fieldset.legend.color');
-        padding: dt('fieldset.legend.padding');
-        transition:
-            background dt('fieldset.transition.duration'),
-            color dt('fieldset.transition.duration'),
-            outline-color dt('fieldset.transition.duration'),
-            box-shadow dt('fieldset.transition.duration');
-    }
-
-    .p-fieldset-toggleable > .p-fieldset-legend {
-        padding: 0;
-    }
-
-    .p-fieldset-toggle-button {
+    .p-toggleswitch-input {
         cursor: pointer;
-        user-select: none;
-        overflow: hidden;
-        position: relative;
-        text-decoration: none;
-        display: flex;
-        gap: dt('fieldset.legend.gap');
-        align-items: center;
-        justify-content: center;
-        padding: dt('fieldset.legend.padding');
-        background: transparent;
-        border: 0 none;
-        border-radius: dt('fieldset.legend.border.radius');
+        appearance: none;
+        position: absolute;
+        top: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        opacity: 0;
+        z-index: 1;
+        outline: 0 none;
+        border-radius: dt('toggleswitch.border.radius');
+    }
+
+    .p-toggleswitch-slider {
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        border-width: dt('toggleswitch.border.width');
+        border-style: solid;
+        border-color: dt('toggleswitch.border.color');
+        background: dt('toggleswitch.background');
         transition:
-            background dt('fieldset.transition.duration'),
-            color dt('fieldset.transition.duration'),
-            outline-color dt('fieldset.transition.duration'),
-            box-shadow dt('fieldset.transition.duration');
+            background dt('toggleswitch.transition.duration'),
+            color dt('toggleswitch.transition.duration'),
+            border-color dt('toggleswitch.transition.duration'),
+            outline-color dt('toggleswitch.transition.duration'),
+            box-shadow dt('toggleswitch.transition.duration');
+        border-radius: dt('toggleswitch.border.radius');
         outline-color: transparent;
+        box-shadow: dt('toggleswitch.shadow');
     }
 
-    .p-fieldset-legend-label {
-        font-weight: dt('fieldset.legend.font.weight');
+    .p-toggleswitch-handle {
+        position: absolute;
+        top: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: dt('toggleswitch.handle.background');
+        color: dt('toggleswitch.handle.color');
+        width: dt('toggleswitch.handle.size');
+        height: dt('toggleswitch.handle.size');
+        inset-inline-start: dt('toggleswitch.gap');
+        margin-block-start: calc(-1 * calc(dt('toggleswitch.handle.size') / 2));
+        border-radius: dt('toggleswitch.handle.border.radius');
+        transition:
+            background dt('toggleswitch.transition.duration'),
+            color dt('toggleswitch.transition.duration'),
+            inset-inline-start dt('toggleswitch.slide.duration'),
+            box-shadow dt('toggleswitch.slide.duration');
     }
 
-    .p-fieldset-toggle-button:focus-visible {
-        box-shadow: dt('fieldset.legend.focus.ring.shadow');
-        outline: dt('fieldset.legend.focus.ring.width') dt('fieldset.legend.focus.ring.style') dt('fieldset.legend.focus.ring.color');
-        outline-offset: dt('fieldset.legend.focus.ring.offset');
+    .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+        background: dt('toggleswitch.checked.background');
+        border-color: dt('toggleswitch.checked.border.color');
     }
 
-    .p-fieldset-toggleable > .p-fieldset-legend:hover {
-        color: dt('fieldset.legend.hover.color');
-        background: dt('fieldset.legend.hover.background');
+    .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.checked.background');
+        color: dt('toggleswitch.handle.checked.color');
+        inset-inline-start: calc(dt('toggleswitch.width') - calc(dt('toggleswitch.handle.size') + dt('toggleswitch.gap')));
     }
 
-    .p-fieldset-toggle-icon {
-        color: dt('fieldset.toggle.icon.color');
-        transition: color dt('fieldset.transition.duration');
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-slider {
+        background: dt('toggleswitch.hover.background');
+        border-color: dt('toggleswitch.hover.border.color');
     }
 
-    .p-fieldset-toggleable > .p-fieldset-legend:hover .p-fieldset-toggle-icon {
-        color: dt('fieldset.toggle.icon.hover.color');
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover) .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.hover.background');
+        color: dt('toggleswitch.handle.hover.color');
     }
 
-    .p-fieldset-content-container {
-        display: grid;
-        grid-template-rows: 1fr;
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-slider {
+        background: dt('toggleswitch.checked.hover.background');
+        border-color: dt('toggleswitch.checked.hover.border.color');
     }
 
-    .p-fieldset-content-wrapper {
-        min-height: 0;
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:hover).p-toggleswitch-checked .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.checked.hover.background');
+        color: dt('toggleswitch.handle.checked.hover.color');
     }
 
-    .p-fieldset-content {
-        padding: dt('fieldset.content.padding');
+    .p-toggleswitch:not(.p-disabled):has(.p-toggleswitch-input:focus-visible) .p-toggleswitch-slider {
+        box-shadow: dt('toggleswitch.focus.ring.shadow');
+        outline: dt('toggleswitch.focus.ring.width') dt('toggleswitch.focus.ring.style') dt('toggleswitch.focus.ring.color');
+        outline-offset: dt('toggleswitch.focus.ring.offset');
     }
-`,$={root:function(t){var n=t.props;return["p-fieldset p-component",{"p-fieldset-toggleable":n.toggleable}]},legend:"p-fieldset-legend",legendLabel:"p-fieldset-legend-label",toggleButton:"p-fieldset-toggle-button",toggleIcon:"p-fieldset-toggle-icon",contentContainer:"p-fieldset-content-container",contentWrapper:"p-fieldset-content-wrapper",content:"p-fieldset-content"},N=w.extend({name:"fieldset",style:K,classes:$}),A={name:"BaseFieldset",extends:O,props:{legend:String,toggleable:Boolean,collapsed:Boolean,toggleButtonProps:{type:null,default:null}},style:N,provide:function(){return{$pcFieldset:this,$parentInstance:this}}},F={name:"Fieldset",extends:A,inheritAttrs:!1,emits:["update:collapsed","toggle"],data:function(){return{d_collapsed:this.collapsed}},watch:{collapsed:function(t){this.d_collapsed=t}},methods:{toggle:function(t){this.d_collapsed=!this.d_collapsed,this.$emit("update:collapsed",this.d_collapsed),this.$emit("toggle",{originalEvent:t,value:this.d_collapsed})},onKeyDown:function(t){(t.code==="Enter"||t.code==="NumpadEnter"||t.code==="Space")&&(this.toggle(t),t.preventDefault())}},computed:{buttonAriaLabel:function(){return this.toggleButtonProps&&this.toggleButtonProps.ariaLabel?this.toggleButtonProps.ariaLabel:this.legend},dataP:function(){return k({toggleable:this.toggleable})}},directives:{ripple:P},components:{PlusIcon:v,MinusIcon:h}};function s(e){"@babel/helpers - typeof";return s=typeof Symbol=="function"&&typeof Symbol.iterator=="symbol"?function(t){return typeof t}:function(t){return t&&typeof Symbol=="function"&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},s(e)}function b(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);t&&(o=o.filter(function(i){return Object.getOwnPropertyDescriptor(e,i).enumerable})),n.push.apply(n,o)}return n}function m(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]!=null?arguments[t]:{};t%2?b(Object(n),!0).forEach(function(o){V(e,o,n[o])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):b(Object(n)).forEach(function(o){Object.defineProperty(e,o,Object.getOwnPropertyDescriptor(n,o))})}return e}function V(e,t,n){return(t=W(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function W(e){var t=M(e,"string");return s(t)=="symbol"?t:t+""}function M(e,t){if(s(e)!="object"||!e)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var o=n.call(e,t);if(s(o)!="object")return o;throw new TypeError("@@toPrimitive must return a primitive value.")}return(t==="string"?String:Number)(e)}var R=["data-p"],T=["data-p"],q=["id"],z=["id","aria-controls","aria-expanded","aria-label"],G=["id","aria-labelledby"];function H(e,t,n,o,i,l){var y=B("ripple");return a(),g("fieldset",r({class:e.cx("root"),"data-p":l.dataP},e.ptmi("root")),[d("legend",r({class:e.cx("legend"),"data-p":l.dataP},e.ptm("legend")),[p(e.$slots,"legend",{toggleCallback:l.toggle},function(){return[e.toggleable?u("",!0):(a(),g("span",r({key:0,id:e.$id+"_header",class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17,q)),e.toggleable?f((a(),g("button",r({key:1,id:e.$id+"_header",type:"button","aria-controls":e.$id+"_content","aria-expanded":!i.d_collapsed,"aria-label":l.buttonAriaLabel,class:e.cx("toggleButton"),onClick:t[0]||(t[0]=function(){return l.toggle&&l.toggle.apply(l,arguments)}),onKeydown:t[1]||(t[1]=function(){return l.onKeyDown&&l.onKeyDown.apply(l,arguments)})},m(m({},e.toggleButtonProps),e.ptm("toggleButton"))),[p(e.$slots,e.$slots.toggleicon?"toggleicon":"togglericon",{collapsed:i.d_collapsed,class:S(e.cx("toggleIcon"))},function(){return[(a(),j(D(i.d_collapsed?"PlusIcon":"MinusIcon"),r({class:e.cx("toggleIcon")},e.ptm("toggleIcon")),null,16,["class"]))]}),d("span",r({class:e.cx("legendLabel")},e.ptm("legendLabel")),c(e.legend),17)],16,z)),[[y]]):u("",!0)]})],16,T),L(E,r({name:"p-collapsible"},e.ptm("transition")),{default:C(function(){return[f(d("div",r({id:e.$id+"_content",class:e.cx("contentContainer"),role:"region","aria-labelledby":e.$id+"_header"},e.ptm("contentContainer")),[d("div",r({class:e.cx("contentWrapper")},e.ptm("contentWrapper")),[d("div",r({class:e.cx("content")},e.ptm("content")),[p(e.$slots,"default")],16)],16)],16,G),[[I,!i.d_collapsed]])]}),_:3},16)],16,R)}F.render=H;export{F as s};
+
+    .p-toggleswitch.p-invalid > .p-toggleswitch-slider {
+        border-color: dt('toggleswitch.invalid.border.color');
+    }
+
+    .p-toggleswitch.p-disabled {
+        opacity: 1;
+    }
+
+    .p-toggleswitch.p-disabled .p-toggleswitch-slider {
+        background: dt('toggleswitch.disabled.background');
+    }
+
+    .p-toggleswitch.p-disabled .p-toggleswitch-handle {
+        background: dt('toggleswitch.handle.disabled.background');
+    }
+`,p={root:{position:"relative"}},w={root:function(e){var i=e.instance,o=e.props;return["p-toggleswitch p-component",{"p-toggleswitch-checked":i.checked,"p-disabled":o.disabled,"p-invalid":i.$invalid}]},input:"p-toggleswitch-input",slider:"p-toggleswitch-slider",handle:"p-toggleswitch-handle"},b=s.extend({name:"toggleswitch",style:u,classes:w,inlineStyles:p}),k={name:"BaseToggleSwitch",extends:a,props:{trueValue:{type:null,default:!0},falseValue:{type:null,default:!1},readonly:{type:Boolean,default:!1},tabindex:{type:Number,default:null},inputId:{type:String,default:null},inputClass:{type:[String,Object],default:null},inputStyle:{type:Object,default:null},ariaLabelledby:{type:String,default:null},ariaLabel:{type:String,default:null}},style:b,provide:function(){return{$pcToggleSwitch:this,$parentInstance:this}}},f={name:"ToggleSwitch",extends:k,inheritAttrs:!1,emits:["change","focus","blur"],methods:{getPTOptions:function(e){var i=e==="root"?this.ptmi:this.ptm;return i(e,{context:{checked:this.checked,disabled:this.disabled}})},onChange:function(e){if(!this.disabled&&!this.readonly){var i=this.checked?this.falseValue:this.trueValue;this.writeValue(i,e),this.$emit("change",e)}},onFocus:function(e){this.$emit("focus",e)},onBlur:function(e){var i,o;this.$emit("blur",e),(i=(o=this.formField).onBlur)===null||i===void 0||i.call(o,e)}},computed:{checked:function(){return this.d_value===this.trueValue},dataP:function(){return r({checked:this.checked,disabled:this.disabled,invalid:this.$invalid})}}},v=["data-p-checked","data-p-disabled","data-p"],y=["id","checked","tabindex","disabled","readonly","aria-checked","aria-labelledby","aria-label","aria-invalid"],m=["data-p"],S=["data-p"];function B(t,e,i,o,P,n){return c(),g("div",l({class:t.cx("root"),style:t.sx("root")},n.getPTOptions("root"),{"data-p-checked":n.checked,"data-p-disabled":t.disabled,"data-p":n.dataP}),[d("input",l({id:t.inputId,type:"checkbox",role:"switch",class:[t.cx("input"),t.inputClass],style:t.inputStyle,checked:n.checked,tabindex:t.tabindex,disabled:t.disabled,readonly:t.readonly,"aria-checked":n.checked,"aria-labelledby":t.ariaLabelledby,"aria-label":t.ariaLabel,"aria-invalid":t.invalid||void 0,onFocus:e[0]||(e[0]=function(){return n.onFocus&&n.onFocus.apply(n,arguments)}),onBlur:e[1]||(e[1]=function(){return n.onBlur&&n.onBlur.apply(n,arguments)}),onChange:e[2]||(e[2]=function(){return n.onChange&&n.onChange.apply(n,arguments)})},n.getPTOptions("input")),null,16,y),d("div",l({class:t.cx("slider")},n.getPTOptions("slider"),{"data-p":n.dataP}),[d("div",l({class:t.cx("handle")},n.getPTOptions("handle"),{"data-p":n.dataP}),[h(t.$slots,"handle",{checked:n.checked})],16,S)],16,m)],16,v)}f.render=B;export{f as s};

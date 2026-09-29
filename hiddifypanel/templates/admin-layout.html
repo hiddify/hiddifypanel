@@ -88,6 +88,14 @@
         <div class="n3av nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
+          {% set is_child_panel = hutils.node.is_child() %}
+          {% if is_child_panel %}
+          {# A node only manages its domains/proxies/server; its dashboard and users live on the parent. #}
+          {% set parent_dashboard = hutils.node.child.parent_admin_dashboard_url(g.account.uuid, v2=False) %}
+          {% if parent_dashboard %}
+          {{ render_nav_item(parent_dashboard, icon('solid','house','nav-icon')+_("Parent Panel"), _use_li=True) }}
+          {% endif %}
+          {% else %}
           {{ render_nav_item('admin.Dashboard:index', icon('solid','house','nav-icon')+(_("Parent Panel") if
           hutils.node.is_parent() else _('admin.menu.home')),_use_li=True)}}
 
@@ -96,20 +104,9 @@
           _use_li=True) }}
           {% endif %}
 
-          {% if hutils.node.is_child() %}
-          {{
-          render_nav_item(hconfig(ConfigEnum.parent_panel)+"admin/user/",icon('solid','user-secret','nav-icon')+_('admin.menu.user'),_badge=_('in
-          parent panel') ,_use_li=True) }}
-          {% else %}
           {{ render_nav_item('flask.user.index_view',
           icon('solid','user','nav-icon')+_('admin.menu.user'),_use_li=True)}}
-          {% endif %}
 
-          {% if hutils.node.is_child() %}
-          {{
-          render_nav_item(hconfig(ConfigEnum.parent_panel)+"admin/adminuser/",icon('solid','user-secret','nav-icon')+_('Admins'),_badge=_('in
-          parent panel') ,_use_li=True) }}
-          {% else %}
           {{ render_nav_item('flask.adminuser.index_view',
           icon('solid','user-secret','nav-icon')+_('Admins'),_use_li=True) }}
           {% endif %}
@@ -146,6 +143,7 @@
           </li>
           {% endif %}
 
+          {% if not is_child_panel %}
           <li class="nav-item">
             <a href="https://github.com/hiddify/hiddify-manager/wiki/{{'%D9%87%D9%85%D9%87-%D8%A2%D9%85%D9%88%D8%B2%D8%B4%E2%80%8C%D9%87%D8%A7-%D9%88-%D9%88%DB%8C%D8%AF%D8%A6%D9%88%D9%87%D8%A7' if get_locale()=='fa' else 'All-tutorials-and-videos'}}"
               target="_blank"
@@ -166,6 +164,7 @@
               {{icon('solid','heart','nav-icon')+_("Donation.title")}}
             </a>
           </li>
+          {% endif %}
         </div>
 
       </nav>
@@ -212,13 +211,19 @@
           {{ render_nav_item('admin.ProxyAdmin:index',
           icon('solid','arrow-down-up-lock','nav-icon')+_('admin.menu.proxy'),_use_li=True) }}
           {% if g.account.mode=='super_admin' %}
+          {% if hutils.node.is_child() %}
+          {{ render_nav_item('admin.admin_v2', icon('solid','pen-to-square','nav-icon')+_('Proxy Editor'),
+          _use_li=True, subpath='custom-proxies') }}
+          {% else %}
           {{ render_nav_item('admin.admin_v2', icon('solid','gauge-high','nav-icon')+_('admin.menu.dashboard_v2'),
           _use_li=True) }}
+          {% endif %}
           {{ render_nav_item('admin.SettingAdmin:index',icon('solid','gears','nav-icon')+
           _('admin.menu.config'),_use_li=True) }}
           {{ render_nav_item('admin.Backup:index',icon('solid','floppy-disk','nav-icon')+ _('Backup'), _use_li=True) }}
           {% endif %}
 
+          {% if not hutils.node.is_child() %}
           {% if hconfig(ConfigEnum.telegram_bot_token) and g.bot %}
           {{ render_nav_item("tg://resolve?domain="+g.bot.username+"&start=admin_"+g.account.uuid,
           icon('brands','telegram','nav-icon')+_('Telegram Bot'),_use_li=True) }}
@@ -230,6 +235,7 @@
 
           {% if g.account.mode=="super_admin" %}
           {{render_nav_item(proxy_stats_url(),icon('solid','feed','nav-icon')+_('admin.menu.proxy_stats'),_use_li=True)}}
+          {% endif %}
           {% endif %}
 
         </div>

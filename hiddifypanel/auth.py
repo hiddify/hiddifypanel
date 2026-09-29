@@ -142,6 +142,8 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
 
             if roles is not None:
                 if current_account and current_account.role in roles:
+                    if denied := _deny_non_super_admin_on_node():
+                        return denied
                     return fn(*args, **kwargs)
                 return redirect_to_login()
 
@@ -150,11 +152,24 @@ def login_required2(roles: set[Role] | None = None, node_auth: bool = False):
 
             if not current_account:
                 return redirect_to_login()
+            if denied := _deny_non_super_admin_on_node():
+                return denied
             return fn(*args, **kwargs)
 
         return decorated_view
 
     return wrapper
+
+
+def _deny_non_super_admin_on_node():
+    """On a node only the super admin manages it; other admins are sent to the parent's dashboard."""
+    if current_account.role not in (Role.admin, Role.agent) or not hutils.node.is_child():
+        return None
+    if hutils.flask.is_api_call(request.path):
+        json_abort(403, "Only the super admin can manage a node; use the parent panel")
+    if parent_url := hutils.node.child.parent_admin_dashboard_url(current_account.uuid):
+        return redirect(parent_url)
+    json_abort(403, "Only the super admin can manage a node")
 
 
 def get_account_by_api_key(api_key, is_admin):

@@ -1,13 +1,13 @@
 from flask import jsonify, redirect, render_template
 
 import hiddifypanel
-from hiddifypanel import g
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.hutils import flask as hutils_flask
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import ConfigEnum, Role, hconfig
 
-from .v2_menu import build_admin_v2_menu, build_admin_v2_notices
+from .v2_menu import build_admin_v2_menu, build_admin_v2_notices, build_admin_v2_system_actions
 
 
 def _panel_version() -> str:
@@ -23,6 +23,17 @@ def _panel_logo_url(proxy_path: str) -> str:
     return f"/{proxy_path}/{static_path.lstrip('/')}"
 
 
+def _node_info() -> dict | None:
+    """What a node's home page shows: its name and the parent it is connected to."""
+    if not hutils.node.is_child():
+        return None
+    return {
+        "node_name": hconfig(ConfigEnum.node_name) or "",
+        "parent_host": hutils.node.child.parent_panel_host(),
+        "parent_dashboard_url": hutils.node.child.parent_admin_dashboard_url(g.account.uuid),
+    }
+
+
 def _admin_v2_bootstrap_payload() -> dict:
     proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
     return {
@@ -34,6 +45,9 @@ def _admin_v2_bootstrap_payload() -> dict:
         "panel_logo_url": _panel_logo_url(proxy_path),
         "menu": build_admin_v2_menu(),
         "notices": build_admin_v2_notices(),
+        "system_actions": build_admin_v2_system_actions(),
+        "panel_mode": str(hconfig(ConfigEnum.panel_mode) or ""),
+        "node_info": _node_info(),
     }
 
 
@@ -76,4 +90,7 @@ def register_v2_routes(flask_app, admin_bp):
             panel_logo_url=_panel_logo_url(proxy_path),
             admin_menu=build_admin_v2_menu(),
             admin_notices=build_admin_v2_notices(),
+            admin_system_actions=build_admin_v2_system_actions(),
+            panel_mode=str(hconfig(ConfigEnum.panel_mode) or ""),
+            node_info=_node_info(),
         )

@@ -27,6 +27,9 @@ declare global {
       detail?: string
       toast?: boolean
     }>
+    __ADMIN_SYSTEM_ACTIONS__?: Record<string, string>
+    __PANEL_MODE__?: string
+    __NODE_INFO__?: { node_name: string; parent_host: string; parent_dashboard_url: string } | null
   }
 }
 

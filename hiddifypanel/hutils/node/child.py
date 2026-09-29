@@ -3,13 +3,12 @@ from datetime import datetime
 
 from flask_babel import gettext as _
 from loguru import logger
-from strenum import StrEnum
 
 # region private
 from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
-from hiddifypanel.models import AdminUser, BoolConfig, Child, ChildMode, ConfigEnum, Domain, Proxy, StrConfig, UnsyncedUsage, UsageData, User, hconfig, set_hconfig
+from hiddifypanel.models import AdminUser, Child, ChildMode, ConfigEnum, Domain, UnsyncedUsage, UsageData, User, hconfig, set_hconfig
 from hiddifypanel.panel import hiddify, usage
 
 # import schmeas
@@ -50,33 +49,34 @@ def __get_register_data_for_api(name: str, mode: ChildMode) -> RegisterInputSche
     return register_data
 
 
-class SyncFields(StrEnum):
-    domains = "domains"
-    proxies = "proxies"
-    hconfigs = "hconfigs"
-
-
-def __get_sync_data_for_api(*fields: SyncFields) -> SyncInputSchema:
-    sync_data = SyncInputSchema()
-    if len(fields) == 0:
-        sync_data.domains = [domain.to_schema() for domain in Domain.query.all()]
-        sync_data.proxies = [proxy.to_schema() for proxy in Proxy.query.all()]
-        sync_data.hconfigs = [*[u.to_schema() for u in StrConfig.query.all()], *[u.to_schema() for u in BoolConfig.query.all()]]
-    else:
-        for f in fields:
-            match f:
-                case SyncFields.domains:
-                    sync_data.domains = [domain.to_schema() for domain in Domain.query.all()]
-                case SyncFields.proxies:
-                    sync_data.proxies = [proxy.to_schema() for proxy in Proxy.query.all()]
-                case SyncFields.hconfigs:
-                    sync_data.hconfigs = [*[u.to_schema() for u in StrConfig.query.all()], *[u.to_schema() for u in BoolConfig.query.all()]]
-
-    return sync_data
+def __get_sync_data_for_api() -> SyncInputSchema:
+    # Only domains go up; users and admins come back down. Proxies and hconfigs stay on the node.
+    return SyncInputSchema(domains=[domain.to_schema() for domain in Domain.query.all()])
 
 
 def __get_parent_panel_url() -> str:
     return hconfig(ConfigEnum.parent_panel)
+
+
+def parent_panel_host() -> str:
+    """Host (and port) of the parent panel this node is connected to, or ""."""
+    base_url, _uuid = hutils.flask.extract_parent_info_from_url(__get_parent_panel_url() or "")
+    if not base_url:
+        return ""
+    return base_url.split("://", 1)[-1].split("/", 1)[0]
+
+
+def parent_admin_dashboard_url(account_uuid: str | None, *, v2: bool = True) -> str:
+    """The parent's admin dashboard for *this* admin, or "" without a parent.
+
+    ``parent_panel`` embeds the uuid of the admin who linked the node, so it is
+    never handed out as-is: the link is rebuilt with the viewer's own uuid
+    (admins are synced from the parent, so it is the same account there).
+    """
+    base_url, _uuid = hutils.flask.extract_parent_info_from_url(__get_parent_panel_url() or "")
+    if not base_url or not account_uuid:
+        return ""
+    return f"{base_url}{account_uuid}/" + ("admin/v2/" if v2 else "admin/")
 
 
 # endregion
@@ -147,14 +147,14 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
     return True, ""
 
 
-def sync_with_parent(*fields: SyncFields) -> bool:
+def sync_with_parent() -> bool:
     # sync usage first
 
     p_url = __get_parent_panel_url()
     if not p_url:
         logger.error("Error while syncing with parent: Parent url is empty")
         return False
-    payload = __get_sync_data_for_api(*fields)
+    payload = __get_sync_data_for_api()
     res = NodeApiClient(p_url).put("/api/v2/parent/sync/", payload, SyncOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while syncing with parent: {res.msg}")
@@ -234,7 +234,7 @@ def _notify_parent_now(app) -> None:
             if not shared.is_child() or not __get_parent_panel_url():
                 return
             # The parent drops its cached copy of this node's configs on every sync.
-            sync_with_parent(SyncFields.domains)
+            sync_with_parent()
         except Exception:
             logger.exception("Error while notifying parent about config changes")
 

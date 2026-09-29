@@ -1087,6 +1087,66 @@ msgstr ""
 "⚠️ Please wait about 5 minutes to make sure everything is updated. during "
 "this time, please copy and save your Proxy links which are:"
 
+msgid "adminV2.actions.applyConfigs"
+msgstr "Apply Configs"
+
+msgid "adminV2.actions.applyConfigsHint"
+msgstr "Regenerate the server configs and apply them to running services."
+
+msgid "adminV2.actions.confirm"
+msgstr "Are you sure you want to do this action?"
+
+msgid "adminV2.actions.reinstall"
+msgstr "Reinstall"
+
+msgid "adminV2.actions.reinstallHint"
+msgstr ""
+"Run the full installer again. Services will be down for a few minutes."
+
+msgid "adminV2.actions.resetCache"
+msgstr "Reset Cache"
+
+msgid "adminV2.actions.resetCacheDone"
+msgstr "Cache cleared"
+
+msgid "adminV2.actions.resetCacheFailed"
+msgstr "Failed to reset cache"
+
+msgid "adminV2.actions.resetCacheHint"
+msgstr ""
+"Clear the panel's cached data and rendered templates. Safe; no service "
+"restart."
+
+msgid "adminV2.actions.restart"
+msgstr "Restart System"
+
+msgid "adminV2.actions.restartHint"
+msgstr "Restart all services. Active connections will be dropped."
+
+msgid "adminV2.actions.status"
+msgstr "Status"
+
+msgid "adminV2.actions.statusHint"
+msgstr "Run a status check of all services and show its log."
+
+msgid "adminV2.actions.subtitle"
+msgstr "Maintenance and system operations for this panel."
+
+msgid "adminV2.actions.title"
+msgstr "Actions"
+
+msgid "adminV2.actions.update"
+msgstr "Update"
+
+msgid "adminV2.actions.updateHint"
+msgstr "Update the panel and all services to the latest version."
+
+msgid "adminV2.actions.viewlogs"
+msgstr "View Logs"
+
+msgid "adminV2.actions.viewlogsHint"
+msgstr "Browse the system log files."
+
 msgid "adminV2.appTitle"
 msgstr "HiddifyManager"
 
@@ -1179,6 +1239,9 @@ msgstr "No"
 
 msgid "adminV2.common.save"
 msgstr "Save"
+
+msgid "adminV2.common.saveFailed"
+msgstr "Save failed"
 
 msgid "adminV2.common.saved"
 msgstr "Saved successfully"
@@ -1741,6 +1804,9 @@ msgstr "Custom path"
 msgid "adminV2.proxy.customPathAuto"
 msgstr "Generated automatically for HTTP proxies"
 
+msgid "adminV2.proxy.defaultTagName"
+msgstr "Default tag: {name}"
+
 msgid "adminV2.proxy.directPortAccess"
 msgstr "Direct port access"
 
@@ -2045,6 +2111,9 @@ msgstr "Rendered output"
 
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "Template source"
+
+msgid "adminV2.proxy.resetTagName"
+msgstr "Reset tag name to default"
 
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "Reset to catalog default"
@@ -4207,6 +4276,14 @@ msgstr "Websocket creates a tunnel over HTTP that is useful to be used in CDN"
 
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
+
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"Allow XHTTP configs whose upload and download use different domains or "
+"settings. ⚠️ Many clients do not support this, so it is disabled by default."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP with different upload/download"
 
 msgid "config.xhttp_enable.description"
 msgstr ""

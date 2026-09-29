@@ -110,7 +110,8 @@ class DailyUsage(db.Model):
         from hiddifypanel.hutils import usage_cache
         from hiddifypanel.hutils.node_system import DEBUG_NODE_IDS, debug_node_name, is_debug_node
         from hiddifypanel.hutils.usage_stats import MONTH_DAYS, build_usage_summary
-        from hiddifypanel.models.child import Child
+        from hiddifypanel import hutils
+        from hiddifypanel.models.child import Child, ChildMode
         from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
             DashboardNode,
             DashboardStats,
@@ -134,7 +135,12 @@ class DailyUsage(db.Model):
         now = datetime.datetime.now()
         history_days = max(series_days, MONTH_DAYS) + MONTH_DAYS
 
-        nodes = [DashboardNode(id=node.id, name=node.name or f"node-{node.id}", mode=str(node.mode)) for node in Child.query.order_by(Child.id).all()]
+        # A parent lists itself and its remote nodes; a node (or standalone panel) lists only itself,
+        # never the parent row it keeps for syncing.
+        node_rows = Child.query.filter(Child.id == 0)
+        if hutils.node.is_parent():
+            node_rows = Child.query.filter((Child.id == 0) | (Child.mode == ChildMode.remote))
+        nodes = [DashboardNode(id=node.id, name=node.name or f"node-{node.id}", mode=str(node.mode)) for node in node_rows.order_by(Child.id).all()]
         mirrors: dict[int, int] = {}
         if debug_nodes:
             nodes += [DashboardNode(id=node_id, name=debug_node_name(node_id), mode="debug") for node_id in DEBUG_NODE_IDS]
