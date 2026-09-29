@@ -173,10 +173,7 @@ def cap_ipvar(ips: IPVar, *, only_ipv4: bool = False, max_per_version: int = DEF
 
 def prefer_ipv4_server(ips: IPVar | None, fallback: str) -> str:
     if ips:
-        if ips.ipsv4:
-            return sorted(ips.ipsv4)[0]
-        if ips.ipsv6:
-            return sorted(ips.ipsv6)[0]
+        return random_or_none(list(ips.ipsv4)) or random_or_none(list(ips.ipsv6)) or fallback
     return fallback
 
 
