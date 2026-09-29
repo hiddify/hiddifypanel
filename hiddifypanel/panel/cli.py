@@ -36,10 +36,12 @@ def backup():
 
 def backup_task():
     dbdict = hiddify.dump_db_to_dict()
-    dst_dir = os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/") + "/data/backup"
-    os.makedirs(dst_dir, exist_ok=True)
+    dst_dir = os.path.join(os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/"), "data", "backup")
+    os.makedirs(dst_dir, mode=0o750, exist_ok=True)
     dst = f"{dst_dir}/{datetime.datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.json"
-    with open(dst, "w", encoding="utf-8") as fp:
+    # A full database dump (secrets, user ids): readable by the panel user only.
+    fd = os.open(dst, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o640)
+    with os.fdopen(fd, "w", encoding="utf-8") as fp:
         json.dump(dbdict, fp, indent=2, sort_keys=True, default=str)
     print(dst)
     if hconfig(ConfigEnum.telegram_bot_token):
