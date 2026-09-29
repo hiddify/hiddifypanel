@@ -2,4 +2,5 @@
 {% set qp.path = '/' ~ proxy.path %}
 {% set qp.host = ctx.proxy.domain.host %}
 {% set qp.headerType = 'http' %}
-{% set qp.fragment = qp.fragment ~ " insecure" %}
+{# Label the link's name (the #fragment), not the query: `fragment` there means TLS fragment. #}
+{% set uri.fragment = uri.fragment ~ " insecure" %}

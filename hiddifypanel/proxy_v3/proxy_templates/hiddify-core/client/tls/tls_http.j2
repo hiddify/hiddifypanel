@@ -47,4 +47,12 @@
     {% endif %}
   {% endif %}
 },
+{# TLS fragment (Hiddify's core only): real TLS to CDN domains. #}
+{% if ctx.hconfig.tls_fragment_enable and domain.mode.is_cdn() and ctx.platform.hiddify.version > "1.0.0" %}
+"tls_fragment": {
+  "enabled": true,
+  "size": "{{ ctx.hconfig.tls_fragment_size }}",
+  "sleep": "{{ ctx.hconfig.tls_fragment_sleep }}"
+},
+{% endif %}
 {% endif %}

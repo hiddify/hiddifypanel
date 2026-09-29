@@ -1,4 +1,4 @@
-{% if (not proxy.is_reality) and proxy.uses_tls and ctx.hconfig.tls_fragment_enable %}
+{% if ctx.hconfig.tls_fragment_enable and domain.mode.is_cdn() %}
 "sockopt": {
   "dialerProxy": "fragment",
   "tcpKeepAliveIdle": 100,

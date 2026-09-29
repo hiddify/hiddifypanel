@@ -20,7 +20,11 @@
 
         {% if domain.echinfo %}
             {% set qp.ech = domain.echinfo %}
-        {% endif %}       
+        {% endif %}
+        {# TLS fragment: real TLS to CDN domains. #}
+        {% if ctx.hconfig.tls_fragment_enable and domain.mode.is_cdn() %}
+            {% set qp.fragment = ctx.hconfig.tls_fragment_size ~ ',' ~ ctx.hconfig.tls_fragment_sleep ~ ',' ~ (ctx.hconfig.tls_fragment_packets or 'tlshello') %}
+        {% endif %}
     {% endif %}
 {% else %}
     {% set qp.security = 'none' %}

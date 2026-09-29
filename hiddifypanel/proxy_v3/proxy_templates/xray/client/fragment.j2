@@ -5,8 +5,8 @@
   "settings": {
     "fragment": {
       "packets": "{{ ctx.hconfig.tls_fragment_packets or 'tlshello' }}",
-      "length": "{{ ctx.hconfig.tls_fragment_length or '100-200' }}",
-      "interval": "{{ ctx.hconfig.tls_fragment_interval or '10-20' }}"
+      "length": "{{ ctx.hconfig.tls_fragment_size or '100-200' }}",
+      "interval": "{{ ctx.hconfig.tls_fragment_sleep or '10-20' }}"
     }
   },
   "streamSettings": {

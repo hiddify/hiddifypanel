@@ -24,6 +24,10 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v149(child_id):
+    pass
+
+
 def _v148(child_id):
     """xhttp proxies without a download layer stored ["direct-valid"] as download modes;
     they follow upload, so mirror the upload modes (else they need xhttp_different_up_down_enable)."""

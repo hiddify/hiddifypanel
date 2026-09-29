@@ -177,9 +177,9 @@ def to_link(proxy: dict) -> str | dict:
         q["mode"] = proxy["grpc_mode"]
     # print(proxy['cdn'],proxy["transport"])
     if request.args.get("fragment"):
-        q["fragment"] = request.args.get("fragment")  # type: ignore
+        q["fragment"] = request.args.get("fragment")
     if "ws" == proxy["transport"] and proxy["cdn"] and request.args.get("fragment_v1"):
-        q["fragment_v1"] = request.args.get("fragment_v1")  # type: ignore
+        q["fragment_v1"] = request.args.get("fragment_v1")
     if "vless" == proxy["proto"]:
         q["encryption"] = "none"
 
