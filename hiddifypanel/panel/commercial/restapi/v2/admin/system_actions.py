@@ -78,6 +78,19 @@ class SyncTlsStoreApi(MethodView):
         return json.dumps({"ok": True, "synced": count}, indent=2)
 
 
+class ResetCacheApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self):
+        """System: Reset panel cache (redis cached functions and jinja template caches)"""
+        from hiddifypanel.cache import cache
+        from hiddifypanel.proxy_v3.config_builder.jinja_render import clear_jinja_template_caches
+
+        ok = cache.invalidate_all_cached_functions()
+        clear_jinja_template_caches()
+        return json.dumps({"ok": bool(ok)}, indent=2), (200 if ok else 500)
+
+
 class AllPublicPortsApi(MethodView):
     decorators = [login_required({Role.super_admin, Role.admin})]
 

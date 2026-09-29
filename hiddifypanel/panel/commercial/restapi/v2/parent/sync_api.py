@@ -7,7 +7,7 @@ from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
-from hiddifypanel.models import AdminUser, Domain, Proxy, User, bulk_register_configs
+from hiddifypanel.models import AdminUser, Domain, User
 from hiddifypanel.models.child import Child
 
 from .schema import SyncInputSchema, SyncOutputSchema
@@ -41,19 +41,7 @@ class SyncApi(MethodView):
             else:
                 logger.info("Domains field is empty")
 
-            logger.info("Syncing hconfigs...")
-            if payload.get("hconfigs"):
-                logger.info("Inserting hconfigs into database")
-                bulk_register_configs(payload["hconfigs"], commit=False, froce_child_unique_id=child.unique_id)
-            else:
-                logger.info("Hconfigs field is empty")
-
-            logger.info("Syncing proxies...")
-            if payload.get("proxies"):
-                logger.info("Inserting proxies into database")
-                Proxy.bulk_register(payload["proxies"], commit=False, force_child_unique_id=child.unique_id)
-            else:
-                logger.info("Proxies field is empty")
+            # Only domains are synced; proxies/hconfigs sent by older nodes are ignored.
 
             logger.info("Commit changes to database")
             child.mark_node_to_parent()

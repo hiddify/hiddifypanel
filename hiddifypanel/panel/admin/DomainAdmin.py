@@ -427,17 +427,12 @@ class DomainAdmin(AdminLTEModelView):
         model.showed_by_domains = []
         hutils.flask.flash_config_success(restart_mode=ApplyMode.apply_config, domain_changed=True)
 
-    def after_model_delete(self, model):
-        if hutils.node.is_child():
-            hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, hutils.node.child.SyncFields.domains)
-
     def after_model_change(self, form, model, is_created):
         if hconfig(ConfigEnum.first_setup):
             set_hconfig(ConfigEnum.first_setup, False)
         if model.need_valid_ssl and "*" not in model.domain:
             commander(Command.get_cert, domain=model.domain)
-        if hutils.node.is_child():
-            hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, hutils.node.child.SyncFields.domains)
+        # Nodes notify the parent from the commit hook (models/cache_events.py).
 
     def is_accessible(self):
         if login_required(roles={Role.super_admin, Role.admin})(lambda: True)() != True:

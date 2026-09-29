@@ -2,7 +2,7 @@ from apiflask import abort
 from flask.views import MethodView
 
 from hiddifypanel import current_app as app
-from hiddifypanel import g
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import User
@@ -50,4 +50,5 @@ class UsersApi(MethodView):
         dbuser = User.add_or_update(**payload) or abort(502, "Unknown issue: User is not added")
         user_driver.add_client(dbuser)
         hiddify.quick_apply_users()
+        hutils.node.parent.notify_childs_users_changed()
         return dbuser.to_schema()

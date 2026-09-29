@@ -240,9 +240,9 @@ class AdminstratorAdmin(AdminLTEModelView):
             del form.can_add_admin
 
     def after_model_change(self, form, model, is_created):
-        if hutils.node.is_parent():
-            hutils.node.run_node_op_in_bg(hutils.node.parent.request_childs_to_sync)
+        if not hutils.node.is_parent():
+            hutils.node.parent.notify_childs_users_changed()
 
     def after_model_delete(self, model):
-        if hutils.node.is_parent():
-            hutils.node.run_node_op_in_bg(hutils.node.parent.request_childs_to_sync)
+        if not hutils.node.is_parent():
+            hutils.node.parent.notify_childs_users_changed()

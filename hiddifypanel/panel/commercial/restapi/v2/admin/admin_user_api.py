@@ -2,6 +2,7 @@ from apiflask import abort
 from flask.views import MethodView
 
 from hiddifypanel import current_app as app
+from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import AdminUser, Role
 
@@ -42,6 +43,7 @@ class AdminUserApi(MethodView):
         if "parent_admin_uuid" in requested:
             payload["parent_admin_uuid"] = requested["parent_admin_uuid"]
         admin = AdminUser.add_or_update(True, old_uuid=uuid, **payload) or abort(502, "Unknown issue: Admin is not patched")
+        hutils.node.parent.notify_childs_users_changed()
         return admin.to_schema()
 
     @app.output(SuccessfulSchema)
@@ -51,4 +53,5 @@ class AdminUserApi(MethodView):
         if not has_permission(admin):
             abort(403, "You don't have permission to access this admin")
         admin.remove()
+        hutils.node.parent.notify_childs_users_changed()
         return {"status": 200, "msg": "ok"}

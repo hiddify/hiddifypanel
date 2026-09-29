@@ -89,13 +89,14 @@ class UsageInputOutputSchema(ApiModel):
 
 class SyncInputSchema(ApiModel):
     domains: list[DomainSchema] | None = Field(default=None, description="The list of domains")
-    proxies: list[ProxySchema] | None = Field(default=None, description="The list of proxies")
-    hconfigs: list[HConfigSchema] | None = Field(default=None, description="The list of configs")
+    # Deprecated: accepted from older nodes but ignored by the parent.
+    proxies: list[ProxySchema] | None = Field(default=None, description="Deprecated, ignored")
+    hconfigs: list[HConfigSchema] | None = Field(default=None, description="Deprecated, ignored")
 
     @model_validator(mode="after")
     def _at_least_one(self) -> SyncInputSchema:
         if not (self.domains or self.proxies or self.hconfigs):
-            raise ValueError("At least one field must exist (domains, proxies, or hconfigs)")
+            raise ValueError("At least one field must exist (domains)")
         return self
 
 

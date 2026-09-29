@@ -2,6 +2,7 @@ from apiflask import abort
 from flask.views import MethodView
 
 from hiddifypanel import current_app as app
+from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import Role, User
@@ -39,6 +40,7 @@ class UserApi(MethodView):
         if dbuser.is_active:
             user_driver.add_client(dbuser)
         hiddify.quick_apply_users()
+        hutils.node.parent.notify_childs_users_changed()
         return dbuser.to_schema()
 
     @app.output(SuccessfulSchema)
@@ -49,4 +51,5 @@ class UserApi(MethodView):
             abort(403, "You don't have permission to access this user")
         user.remove()
         hiddify.quick_apply_users()
+        hutils.node.parent.notify_childs_users_changed()
         return {"status": 200, "msg": "ok"}

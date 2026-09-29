@@ -2,7 +2,7 @@ from apiflask import abort
 from flask.views import MethodView
 
 from hiddifypanel import current_app as app
-from hiddifypanel import g
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.models import AdminUser
 from hiddifypanel.models.role import Role
@@ -33,4 +33,5 @@ class AdminUsersApi(MethodView):
             payload["parent_admin_uuid"] = g.account.uuid
 
         admin = AdminUser.add_or_update(**payload) or abort(502, "Unknown issue: Admin is not added")
+        hutils.node.parent.notify_childs_users_changed()
         return admin.to_schema()

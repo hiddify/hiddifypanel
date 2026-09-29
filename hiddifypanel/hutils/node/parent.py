@@ -1,3 +1,6 @@
+import threading
+
+from flask import has_request_context
 from flask_babel import lazy_gettext as _
 from loguru import logger
 
@@ -17,7 +20,30 @@ def request_childs_to_sync():
     for c in Child.query.filter(Child.id != 0).all():
         if not request_child_to_sync(c):
             logger.error(f"{c.name}: {_('parent.sync-req-failed')}")
-            hutils.flask.flash(f"{c.name}: " + _("parent.sync-req-failed"), "danger")  # just for debug
+            if has_request_context():
+                hutils.flask.flash(f"{c.name}: " + _("parent.sync-req-failed"), "danger")  # just for debug
+
+
+def notify_childs_users_changed() -> None:
+    """After an admin creates/changes/deletes users or admins, ask every node to pull them (in the background)."""
+    from . import shared
+
+    if not shared.is_parent():
+        return
+    if has_request_context():
+        shared.run_node_op_in_bg(request_childs_to_sync)
+        return
+    from flask import current_app, has_app_context
+
+    if not has_app_context():
+        return
+    app = current_app._get_current_object()  # type: ignore[attr-defined]
+
+    def _run() -> None:
+        with app.app_context():
+            request_childs_to_sync()
+
+    threading.Thread(target=_run, daemon=True).start()
 
 
 def request_child_to_sync(child: Child) -> bool:

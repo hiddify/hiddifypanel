@@ -80,6 +80,11 @@ def _invalidate_cache_after_commit(session: Session) -> None:
     cache.invalidate_all_cached_functions()
     clear_jinja_template_caches()
 
+    # On a node, the parent caches this node's rendered configs; tell it they changed.
+    from hiddifypanel.hutils.node.child import schedule_notify_parent_config_changed
+
+    schedule_notify_parent_config_changed()
+
 
 @event.listens_for(Session, "after_rollback")
 def _clear_cache_invalidation_flag(session: Session) -> None:

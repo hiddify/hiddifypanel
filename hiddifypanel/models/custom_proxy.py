@@ -594,6 +594,7 @@ class CustomProxy(db.Model):  # type: ignore
         from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import apply_custom_proxy_general
         from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
             GENERAL_OVERRIDE_FIELDS,
+            apply_builtin_name,
             set_field_override,
         )
 
@@ -617,8 +618,6 @@ class CustomProxy(db.Model):  # type: ignore
         if data.transport is not None:
             dbproxy.transport = data.transport
 
-        if data.name is not None:
-            dbproxy.name = data.name
         if data.has("enable"):
             dbproxy.enable = bool(data.enable)
         if data.has("is_common_proxy"):
@@ -633,6 +632,9 @@ class CustomProxy(db.Model):  # type: ignore
                 set_field_override(dbproxy, key, incoming.get(key, False))
         if data.has("server_override"):
             set_field_override(dbproxy, "server_config", data.server_override)
+        # After the override map: the tag override follows whether the name differs from the default.
+        if data.name is not None:
+            apply_builtin_name(dbproxy, data.name)
         if data.l7_reverse_proto is not None:
             dbproxy.l7_reverse_proto = data.l7_reverse_proto
         _apply_download_xhttp_fields(dbproxy, body)

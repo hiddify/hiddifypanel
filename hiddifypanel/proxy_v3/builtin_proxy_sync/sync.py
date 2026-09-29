@@ -4,16 +4,17 @@ from hiddifypanel.database import db
 from hiddifypanel.models.custom_proxy import (
     CustomProxy,
     CustomProxyClientCore,
-    normalize_custom_path,
     _parse_l7_reverse_proto,
     _parse_proto,
     _parse_server_core,
     _parse_tcp_udp,
     _parse_tls_layer,
     _parse_transport,
+    normalize_custom_path,
 )
 
 from ..template_catalog.custom_proxy_builtin import (
+    NAME_OVERRIDE_KEY,
     catalog_fields_from_snapshot,
     client_override_key,
     ensure_builtin_migrated,
@@ -102,10 +103,8 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
         return False
     ensure_builtin_migrated(row)
     snapshot = catalog.snapshot()
-    changed = False
-    if row.name != catalog.name:
-        row.name = catalog.name
-        changed = True
+    # Only the default tag follows the catalog; an admin's tag (name override) is kept.
+    changed = sync_catalog_field(row, NAME_OVERRIDE_KEY, catalog.name)
 
     proto = _parse_proto(catalog.proto)
     if row.proto != proto:
@@ -214,11 +213,14 @@ def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:
     if row.builtin_content != catalog_content:
         row.builtin_content = catalog_content
         changed = True
-    for field in ("name", "description"):
-        val = catalog_data.get(field) or ""
-        if getattr(row, field) != val:
-            setattr(row, field, val)
-            changed = True
+    # Names are the admin's to change; sync only fills an empty one.
+    if not row.name and catalog_data.get("name"):
+        row.name = catalog_data["name"]
+        changed = True
+    val = catalog_data.get("description") or ""
+    if row.description != val:
+        row.description = val
+        changed = True
     category = catalog_data.get("category")
     if category is not None and row.category != category:
         row.category = category
@@ -239,11 +241,14 @@ def sync_builtin_base_config(row, catalog: dict) -> bool:
     if row.builtin_content != catalog_content:
         row.builtin_content = catalog_content
         changed = True
-    for field in ("name", "description"):
-        val = catalog.get(field) or ""
-        if getattr(row, field) != val:
-            setattr(row, field, val)
-            changed = True
+    # Names are the admin's to change; sync only fills an empty one.
+    if not row.name and catalog.get("name"):
+        row.name = catalog["name"]
+        changed = True
+    val = catalog.get("description") or ""
+    if row.description != val:
+        row.description = val
+        changed = True
     if not row.builtin_override:
         effective = row.builtin_content or ""
         if row.content != effective:

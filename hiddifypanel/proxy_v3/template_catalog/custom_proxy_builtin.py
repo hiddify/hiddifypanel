@@ -23,6 +23,10 @@ SERVER_OVERRIDE_FIELDS: tuple[str, ...] = (
     'server_config',
 )
 
+# Client-visible tag (``ctx.proxy.tag``). ``builtin['name']`` keeps the catalog default,
+# ``row.name`` the admin's tag when ``builtin_overrides['name']`` is set.
+NAME_OVERRIDE_KEY = 'name'
+
 # Always computed from builtin preset rules; never stored in builtin/override catalog.
 DERIVED_BUILTIN_FIELDS: frozenset[str] = frozenset({
     'server_inbound_tcp_udp',
@@ -82,6 +86,10 @@ def ensure_builtin_migrated(row: CustomProxy) -> None:
             elif val is not None:
                 builtin[field] = copy.deepcopy(val)
                 changed = True
+
+    if NAME_OVERRIDE_KEY not in builtin and row.name:
+        builtin[NAME_OVERRIDE_KEY] = row.name
+        changed = True
 
     for cc in row.client_cores:
         key = client_override_key(cc.core.value if cc.core else '')
@@ -226,6 +234,25 @@ def sync_catalog_field(row: CustomProxy, key: str, catalog_value: Any) -> bool:
             _apply_live(row, key, catalog_value)
             changed = True
     return changed
+
+
+def apply_builtin_name(row: CustomProxy, name: str | None) -> None:
+    """Set a built-in's tag: a name equal to the default (or empty) clears the override."""
+    ensure_builtin_migrated(row)
+    name = (name or '').strip()
+    default = builtin_value(row, NAME_OVERRIDE_KEY)
+    if default is None:
+        # First save of a new built-in row: this name is the catalog default.
+        if name:
+            _set_builtin(row, NAME_OVERRIDE_KEY, name)
+            row.name = name
+        _set_override_flag(row, NAME_OVERRIDE_KEY, False)
+        return
+    if not name or name == default:
+        set_field_override(row, NAME_OVERRIDE_KEY, False)
+        return
+    _set_override_flag(row, NAME_OVERRIDE_KEY, True)
+    row.name = name
 
 
 def builtin_payload(row: CustomProxy) -> dict[str, Any]:

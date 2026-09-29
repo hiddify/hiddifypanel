@@ -127,7 +127,7 @@ def get_proxy_form(empty=False):
             # print(cat,vs)
             hutils.proxy.get_proxies.invalidate_all()
             if hutils.node.is_child():
-                hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
+                hutils.node.child.schedule_notify_parent_config_changed()
 
             from .Actions import Actions
 

@@ -36,7 +36,7 @@ class ProxyAdmin(FlaskView):
             # print(cat,vs)
             hutils.proxy.get_proxies.invalidate_all()
             if hutils.node.is_child():
-                hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
+                hutils.node.child.schedule_notify_parent_config_changed()
             hiddify.check_need_reset(old_configs)
             all_proxy_form = get_all_proxy_form(True)
 
@@ -57,7 +57,7 @@ class ProxyAdmin(FlaskView):
             db.session.commit()
             hutils.proxy.get_proxies.invalidate_all()
             if hutils.node.is_child():
-                hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.proxies])
+                hutils.node.child.schedule_notify_parent_config_changed()
             hutils.flask.flash_config_success(restart_mode=ApplyMode.apply_config, domain_changed=False)
             global_config_form = get_global_config_form(True)
         else:

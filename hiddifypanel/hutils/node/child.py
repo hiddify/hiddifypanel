@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime
 
 from flask_babel import gettext as _
@@ -213,3 +214,49 @@ def sync_users_usage_with_parent(usages: list[UsageData]) -> bool:
     set_hconfig(ConfigEnum.last_users_sync, sync_time, commit=True)
     logger.success(f"Successfully synced users usage with parent: {len(res.users)} users at {sync_time}")
     return True
+
+
+# region notify parent about local config changes
+
+_NOTIFY_PARENT_DELAY_SECONDS = 3.0
+_notify_parent_lock = threading.Lock()
+_notify_parent_timer: threading.Timer | None = None
+
+
+def _notify_parent_now(app) -> None:
+    global _notify_parent_timer
+    with _notify_parent_lock:
+        _notify_parent_timer = None
+    with app.app_context():
+        try:
+            from . import shared
+
+            if not shared.is_child() or not __get_parent_panel_url():
+                return
+            # The parent drops its cached copy of this node's configs on every sync.
+            sync_with_parent(SyncFields.domains)
+        except Exception:
+            logger.exception("Error while notifying parent about config changes")
+
+
+def schedule_notify_parent_config_changed() -> None:
+    """Ask the parent (in the background) to refresh this node's configs.
+
+    Safe to call from SQLAlchemy commit hooks: it emits no SQL here, and calls
+    made within a few seconds of each other collapse into one sync.
+    """
+    global _notify_parent_timer
+    from flask import current_app, has_app_context
+
+    if not has_app_context():
+        return
+    app = current_app._get_current_object()  # type: ignore[attr-defined]
+    with _notify_parent_lock:
+        if _notify_parent_timer is not None:
+            _notify_parent_timer.cancel()
+        _notify_parent_timer = threading.Timer(_NOTIFY_PARENT_DELAY_SECONDS, _notify_parent_now, args=(app,))
+        _notify_parent_timer.daemon = True
+        _notify_parent_timer.start()
+
+
+# endregion

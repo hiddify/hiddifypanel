@@ -127,6 +127,8 @@ class SettingAdmin(FlaskView):
             register_bot(set_hook=True)
 
             # sync with parent if needed
+            if hutils.node.is_child():
+                hutils.node.child.schedule_notify_parent_config_changed()
 
             # if hutils.node.is_child():
             # if hutils.node.child.is_registered():

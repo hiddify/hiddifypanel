@@ -4,6 +4,7 @@ from apiflask import abort
 from flask import jsonify, request
 from flask_restful import Resource
 
+from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import *
@@ -29,6 +30,7 @@ class UserResource(Resource):
         user = User.by_uuid(uuid) or abort(502, "unknown issue! user is not added")
         user_driver.add_client(user)
         hiddify.quick_apply_users()
+        hutils.node.parent.notify_childs_users_changed()
         return jsonify({"status": 200, "msg": "ok"})
 
     def delete(self):
@@ -36,6 +38,7 @@ class UserResource(Resource):
         user = User.by_uuid(uuid) or abort(404, "user not found")
         user.remove()
         hiddify.quick_apply_users()
+        hutils.node.parent.notify_childs_users_changed()
         return jsonify({"status": 200, "msg": "ok"})
 
 
@@ -55,13 +58,14 @@ class AdminUserResource(Resource):
         data = request.json
         uuid = data.get("uuid") or abort(422, "Parameter issue: 'uuid'")
         AdminUser.add_or_update(**data)
-
+        hutils.node.parent.notify_childs_users_changed()
         return jsonify({"status": 200, "msg": "ok"})
 
     def delete(self):
         uuid = request.args.get("uuid") or abort(422, "Parameter issue: 'uuid'")
         admin = AdminUser.by_uuid(uuid) or abort(404, "admin not found")
         admin.remove()
+        hutils.node.parent.notify_childs_users_changed()
         return jsonify({"status": 200, "msg": "ok"})
 
 

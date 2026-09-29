@@ -1,16 +1,18 @@
+import datetime
+
 from flask_babel import force_locale
 from flask_babel import gettext as _
 from telebot import types
-import datetime
 
-from hiddifypanel.database import db
-from hiddifypanel.panel import hiddify
-from hiddifypanel.models import *
 from hiddifypanel import hutils
+from hiddifypanel.database import db
+from hiddifypanel.models import *
+from hiddifypanel.panel import hiddify
+
 from . import bot
 
 
-@bot.message_handler(commands=['start'], func=lambda message: "admin" in message.text)
+@bot.message_handler(commands=["start"], func=lambda message: "admin" in message.text)
 def send_welcome(message):
     text = message.text
     # print("dddd",text)
@@ -43,71 +45,42 @@ def get_admin_by_tgid(message):
 
 def admin_keyboard_main():
 
-    return types.InlineKeyboardMarkup(keyboard=[[
-        types.InlineKeyboardButton(
-            text=_("Create Package"),
-            callback_data=f'create_package'
-        )
-    ]
-    ]
+    return types.InlineKeyboardMarkup(
+        keyboard=[
+            [types.InlineKeyboardButton(text=_("Create Package"), callback_data="create_package")],
+        ],
     )
 
 
 def admin_keyboard_gig(old_action):
     def keyboard(gig):
-        return types.InlineKeyboardButton(
-            text=f"{gig} GB",
-            callback_data=f"{old_action} {gig}"
-        )
-    return types.InlineKeyboardMarkup(keyboard=[
-        [keyboard(i) for i in range(1, 5)],
-        [keyboard(5 * i) for i in range(1, 5)],
-        [keyboard(50 * i) for i in range(1, 5)]
-    ]
-    )
+        return types.InlineKeyboardButton(text=f"{gig} GB", callback_data=f"{old_action} {gig}")
+
+    return types.InlineKeyboardMarkup(keyboard=[[keyboard(i) for i in range(1, 5)], [keyboard(5 * i) for i in range(1, 5)], [keyboard(50 * i) for i in range(1, 5)]])
 
 
 def admin_keyboard_days(old_action):
     def keyboard(days):
-        return types.InlineKeyboardButton(
-            text=f"{days}",
-            callback_data=f"{old_action} {days}"
-        )
-    return types.InlineKeyboardMarkup(keyboard=[
-        [keyboard(i) for i in range(1, 16, 3)],
-        [keyboard(30 * i) for i in range(1, 5)]
-    ]
-    )
+        return types.InlineKeyboardButton(text=f"{days}", callback_data=f"{old_action} {days}")
+
+    return types.InlineKeyboardMarkup(keyboard=[[keyboard(i) for i in range(1, 16, 3)], [keyboard(30 * i) for i in range(1, 5)]])
 
 
 def admin_keyboard_count(old_action):
     def keyboard(count):
-        return types.InlineKeyboardButton(
-            text=f"{count}",
-            callback_data=f"{old_action} {count}"
-        )
-    return types.InlineKeyboardMarkup(keyboard=[
-        [keyboard(i) for i in range(1, 5)],
-        [keyboard(i * 5) for i in range(1, 5)],
-        [keyboard(i * 50) for i in range(1, 5)]
-    ]
-    )
+        return types.InlineKeyboardButton(text=f"{count}", callback_data=f"{old_action} {count}")
+
+    return types.InlineKeyboardMarkup(keyboard=[[keyboard(i) for i in range(1, 5)], [keyboard(i * 5) for i in range(1, 5)], [keyboard(i * 50) for i in range(1, 5)]])
 
 
 def admin_keyboard_domain(old_action):
     def keyboard(domain):
-        return types.InlineKeyboardButton(
-            text=f"{domain.alias or domain.domain}",
-            callback_data=f"{old_action} {domain.id}"
-        )
-    return types.InlineKeyboardMarkup(keyboard=[
-        [keyboard(d)]
-        for d in Domain.get_domains()
-    ]
-    )
+        return types.InlineKeyboardButton(text=f"{domain.alias or domain.domain}", callback_data=f"{old_action} {domain.id}")
+
+    return types.InlineKeyboardMarkup(keyboard=[[keyboard(d)] for d in Domain.get_domains()])
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith(f'create_package'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith("create_package"))
 def create_package(call):  # <- passes a CallbackQuery type object to your function
     admin = get_admin_by_tgid(call.message)
     if not (admin):
@@ -140,10 +113,11 @@ def create_package(call):  # <- passes a CallbackQuery type object to your funct
                 bot.edit_message_text(new_text, call.message.chat.id, call.message.message_id, reply_markup=None)
                 domain = Domain.query.filter(Domain.id == domain).first()
                 from . import Usage
+
                 admin_id = admin.id
                 admin_name = admin.name
                 for i in range(1, count + 1):
-                    new_text = _("Please Wait") + f' {i}/{count}'
+                    new_text = _("Please Wait") + f" {i}/{count}"
                     bot.edit_message_text(new_text, call.message.chat.id, call.message.message_id, reply_markup=None)
                     user = User(package_days=days, usage_limit_GB=gig, name=f"{admin_name} auto {i}  {datetime.date.today()}", added_by=admin_id)
                     db.session.add(user)
@@ -159,8 +133,10 @@ def create_package(call):  # <- passes a CallbackQuery type object to your funct
                 bot.edit_message_text(new_text, call.message.chat.id, call.message.message_id, reply_markup=admin_keyboard_main())
                 bot.answer_callback_query(call.id, text=_("Ok"), show_alert=False, cache_time=1)
                 from hiddifypanel.panel import usage
+
                 usage.update_local_usage()
                 hiddify.quick_apply_users()
+                hutils.node.parent.notify_childs_users_changed()
 
         except Exception as e:
             print(e)
