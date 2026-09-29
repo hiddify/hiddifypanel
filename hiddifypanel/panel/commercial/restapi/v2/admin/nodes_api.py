@@ -43,9 +43,7 @@ def _node_details(child: Child) -> dict:
     from hiddifypanel.hutils.node.usage_report import last_usage_report
     from hiddifypanel.models import DailyUsage
 
-    today = DailyUsage.query.with_entities(func.coalesce(func.sum(DailyUsage.usage), 0), func.coalesce(func.sum(DailyUsage.online), 0)).filter(
-        DailyUsage.child_id == child.id, DailyUsage.date == date.today()
-    ).one()
+    today = DailyUsage.query.with_entities(func.coalesce(func.sum(DailyUsage.usage), 0), func.coalesce(func.sum(DailyUsage.online), 0)).filter(DailyUsage.child_id == child.id, DailyUsage.date == date.today()).one()
     return {
         "last_usage_report": last_usage_report(child.id),
         "today_usage": int(today[0] or 0),
@@ -64,7 +62,7 @@ def _node_row(child: Child) -> dict:
         "name": child.name or f"node-{child.id}",
         "host": base.split("://", 1)[-1].split("/", 1)[0] if base else "",
         # Same account on the node (admins are synced), so this signs the admin in there.
-        "admin_url": f"{base}{g.account.uuid}/admin/" if base else "",
+        "admin_url": f"{base}{g.account.uuid}/" if base else "",
         "last_seen": last_seen.isoformat() if last_seen else None,
         "status": _status(last_seen),
         "domains": sorted(d.domain for d in child.domains),
