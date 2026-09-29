@@ -115,7 +115,10 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: '../static/admin-v2',
       emptyOutDir: true,
+      // Servers build this during install: keep peak memory down (~2.4 GB -> ~1.9 GB).
+      reportCompressedSize: false,
       rollupOptions: {
+        maxParallelFileOps: 2,
         output: {
           entryFileNames: 'assets/index.js',
           chunkFileNames: 'assets/[name].js',
