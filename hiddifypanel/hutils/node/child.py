@@ -1,3 +1,4 @@
+import re
 import threading
 from datetime import datetime
 
@@ -58,9 +59,23 @@ def __get_parent_panel_url() -> str:
     return hconfig(ConfigEnum.parent_panel)
 
 
+def _parent_base_url() -> str:
+    """``https://host/<proxy_path>/`` of the parent.
+
+    ``parent_panel`` is stored either as that base URL (settings page) or as a
+    full admin link with a uuid (Node admin); accept both.
+    """
+    raw = (__get_parent_panel_url() or "").strip()
+    base_url, _uuid = hutils.flask.extract_parent_info_from_url(raw)
+    if base_url:
+        return base_url
+    match = re.match(r"^https?://[^/]+/[^/]+/", raw if raw.endswith("/") else raw + "/")
+    return match.group(0) if match else ""
+
+
 def parent_panel_host() -> str:
     """Host (and port) of the parent panel this node is connected to, or ""."""
-    base_url, _uuid = hutils.flask.extract_parent_info_from_url(__get_parent_panel_url() or "")
+    base_url = _parent_base_url()
     if not base_url:
         return ""
     return base_url.split("://", 1)[-1].split("/", 1)[0]
@@ -69,11 +84,11 @@ def parent_panel_host() -> str:
 def parent_admin_dashboard_url(account_uuid: str | None, *, v2: bool = True) -> str:
     """The parent's admin dashboard for *this* admin, or "" without a parent.
 
-    ``parent_panel`` embeds the uuid of the admin who linked the node, so it is
-    never handed out as-is: the link is rebuilt with the viewer's own uuid
+    ``parent_panel`` may embed the uuid of the admin who linked the node, so it
+    is never handed out as-is: the link is rebuilt with the viewer's own uuid
     (admins are synced from the parent, so it is the same account there).
     """
-    base_url, _uuid = hutils.flask.extract_parent_info_from_url(__get_parent_panel_url() or "")
+    base_url = _parent_base_url()
     if not base_url or not account_uuid:
         return ""
     return f"{base_url}{account_uuid}/" + ("admin/v2/" if v2 else "admin/")

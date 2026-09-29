@@ -20,6 +20,11 @@ const routes = [
         component: () => import('@/features/node-home/views/NodeHomeView.vue'),
       },
       {
+        path: 'settings',
+        name: 'settings',
+        component: () => import('@/features/settings/views/SettingsView.vue'),
+      },
+      {
         path: 'protocols',
         name: 'protocols',
         component: () => import('@/features/protocols/views/ProtocolsView.vue'),

@@ -52,7 +52,7 @@ def _build_child_menu() -> list[dict]:
     if g.account.mode == "super_admin":
         settings_items.extend(
             [
-                _item(_("admin.menu.config"), hurl_for("admin.SettingAdmin:index"), "pi pi-fw pi-cog"),
+                {"label": _("admin.menu.config"), "to": "/settings", "icon": "pi pi-fw pi-cog"},
                 _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
                 {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
             ]
@@ -104,7 +104,7 @@ def build_admin_v2_menu() -> list[dict]:
         if g.account.mode == "super_admin":
             settings_items.extend(
                 [
-                    _item(_("admin.menu.config"), hurl_for("admin.SettingAdmin:index"), "pi pi-fw pi-cog"),
+                    {"label": _("admin.menu.config"), "to": "/settings", "icon": "pi pi-fw pi-cog"},
                     _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
                     {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
                 ]

@@ -1,4 +1,6 @@
 import re
+from dataclasses import dataclass
+from dataclasses import field as dc_field
 from loguru import logger
 
 import flask_babel
@@ -40,112 +42,17 @@ class SettingAdmin(FlaskView):
         form = get_config_form()
         reset_action = None
         if form.validate_on_submit():
-            boolconfigs = BoolConfig.query.filter(BoolConfig.child_id == Child.current().id).all()
-            bool_types = {c.key: "bool" for c in boolconfigs}
-
-            old_configs = get_hconfigs()
-            changed_configs = {}
-
-            for category, c_items in form.data.items():  # [c for c in ConfigEnum]:
-                if isinstance(c_items, dict):
-                    for k in ConfigEnum:
-                        if k.name not in c_items:
-                            continue
-                        v = c_items[k.name]
-                        if k.type == str:
-                            if "_domain" in k or "_fakedomain" in k:
-                                v = v.lower()
-                            if k == ConfigEnum.warp_sites and "https://" in v:
-                                hutils.flask.flash(_("config.warp-https-domain-for-warp-site"), "error")
-                                return render_template("config.html", form=form)
-                            if "port" in k:
-                                for p in v.split(","):
-                                    if (k != ConfigEnum.tls_ports and p == "443") or (k != ConfigEnum.http_ports and p == "80"):
-                                        hutils.flask.flash(_("Port 80 and 443 can not be selected"), "error")
-                                        return render_template("config.html", form=form)
-                                    for c_, c_items2 in form.data.items():
-                                        if not isinstance(c_items2, dict):
-                                            continue
-                                        for k2, v2 in c_items2.items():
-                                            if "port" in k2 and k.name != k2 and isinstance(v2, str) and p in v2.strip().split(","):
-                                                hutils.flask.flash(_("Port is already used! in") + f" {k2} {k}", "error")
-                                                return render_template("config.html", form=form)
-
-                        if old_configs[k] != v:
-                            changed_configs[k] = v
-
-                # print(cat,vs)
-
-            merged_configs = {**old_configs, **changed_configs}
-            if len(set([merged_configs[ConfigEnum.proxy_path], merged_configs[ConfigEnum.proxy_path_client], merged_configs[ConfigEnum.proxy_path_admin]])) != 3:
-                hutils.flask.flash(_("ProxyPath is already used! use different proxy path"), "error")
+            result = save_config_form(form)
+            if result.errors:
+                for error in result.errors:
+                    hutils.flask.flash(error, "error")
                 return render_template("config.html", form=form)
-            parent_apikey = ""
-            
-            if p_p := changed_configs.get(ConfigEnum.parent_panel):
-                parent_baseurl, uuid = hutils.flask.extract_parent_info_from_url(p_p.strip())
-                if not parent_baseurl or not uuid:
-                    hutils.flask.flash(_("parent.invalid-parent-url"), "danger")
-                    return render_template("config.html", form=form)
-                elif (activeres := hutils.node.is_panel_active(parent_baseurl, uuid)) and not activeres[0]:
-                    hutils.flask.flash(_("parent.panel-not-active") + f": {activeres[1]}", "danger")
-                    return render_template("config.html", form=form)
-                else:
-                    changed_configs[ConfigEnum.parent_panel] = parent_baseurl
-                    parent_apikey = uuid
+            for warning in result.warnings:
+                hutils.flask.flash(warning, "danger")
 
-            for k, v in changed_configs.items():
-                # html inputs santitizing
-                if k in {ConfigEnum.branding_title, ConfigEnum.branding_site, ConfigEnum.branding_freetext}:
-                    v = bleach_clean(v, tags=ALLOWED_TAGS)
-                set_hconfig(k, v, commit=False)
+            reset_action = hiddify.check_need_reset(result.old_configs)
 
-            db.session.commit()
-            flask_babel.refresh()
-
-            if parent_apikey or changed_configs.get(ConfigEnum.node_name):
-                node_name = hconfig(ConfigEnum.node_name)
-                # Register while still standalone/parent — flipping to child first makes the
-                # parent endpoint reject the request (and self-register would always fail).
-                try:
-                    sucess, msg = hutils.node.child.register_to_parent(node_name, parent_apikey or hconfig(ConfigEnum.unique_id), mode=ChildMode.remote)
-                except Exception as e:
-                    logger.exception("Error while registering to parent")
-                    sucess, msg = False, str(e)
-                if not sucess:
-                    hutils.flask.flash(_("child.register-failed") + f": {msg}", "danger")
-                    set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
-                else:
-                    set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
-            elif hconfig(ConfigEnum.parent_panel) and hconfig(ConfigEnum.panel_mode) != PanelMode.parent:
-                set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
-
-            cache.invalidate_all_cached_functions()
-            # hutils.proxy.get_proxies.invalidate_all()
-            from hiddifypanel.panel.commercial.telegrambot import register_bot
-
-            register_bot(set_hook=True)
-
-            # sync with parent if needed
-            if hutils.node.is_child():
-                hutils.node.child.schedule_notify_parent_config_changed()
-
-            # if hutils.node.is_child():
-            # if hutils.node.child.is_registered():
-            # hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
-            # else:
-            #     name = hconfig(ConfigEnum.unique_id)
-            #     parent_info = hutils.node.get_panel_info(hconfig(ConfigEnum.parent_domain), hconfig(ConfigEnum.parent_admin_proxy_path), parent_apikey)
-            #     if parent_info.get("version") != __version__:
-            #         hutils.flask.flash(_("node.diff-version"), "danger")
-            #     if not hutils.node.child.register_to_parent(name, parent_apikey, mode=ChildMode.remote):
-            #         hutils.flask.flash(_("child.register-failed"), "danger")
-            #     else:  # TODO: it's just for debuging
-            #         hutils.flask.flash(_("child.register-success"))
-
-            reset_action = hiddify.check_need_reset(old_configs)
-
-            if old_configs[ConfigEnum.admin_lang] != hconfig(ConfigEnum.admin_lang):
+            if result.old_configs[ConfigEnum.admin_lang] != hconfig(ConfigEnum.admin_lang):
                 form = get_config_form()
         else:
             hutils.flask.flash(_("config.validation-error"), "danger")
@@ -177,7 +84,128 @@ class SettingAdmin(FlaskView):
         return res
 
 
-def get_config_form():
+@dataclass
+class SettingsSaveResult:
+    errors: list[str] = dc_field(default_factory=list)
+    warnings: list[str] = dc_field(default_factory=list)
+    old_configs: dict = dc_field(default_factory=dict)
+    changed_configs: dict = dc_field(default_factory=dict)
+
+    def fail(self, message) -> "SettingsSaveResult":
+        self.errors.append(str(message))
+        return self
+
+
+def save_config_form(form) -> SettingsSaveResult:
+    """Cross-field checks + save for an already validated settings form (classic page and Admin V2 API).
+
+    Returns ``errors`` instead of flashing, so each caller reports them its own way.
+    Nothing is saved when ``errors`` is non-empty.
+    """
+    result = SettingsSaveResult()
+    boolconfigs = BoolConfig.query.filter(BoolConfig.child_id == Child.current().id).all()
+    bool_types = {c.key: "bool" for c in boolconfigs}
+
+    old_configs = get_hconfigs()
+    result.old_configs = old_configs
+    changed_configs = {}
+
+    for category, c_items in form.data.items():  # [c for c in ConfigEnum]:
+        if isinstance(c_items, dict):
+            for k in ConfigEnum:
+                if k.name not in c_items:
+                    continue
+                v = c_items[k.name]
+                if k.type == str:
+                    if "_domain" in k or "_fakedomain" in k:
+                        v = v.lower()
+                    if k == ConfigEnum.warp_sites and "https://" in v:
+                        return result.fail(_("config.warp-https-domain-for-warp-site"))
+                    if "port" in k:
+                        for p in v.split(","):
+                            if (k != ConfigEnum.tls_ports and p == "443") or (k != ConfigEnum.http_ports and p == "80"):
+                                return result.fail(_("Port 80 and 443 can not be selected"))
+                            for c_, c_items2 in form.data.items():
+                                if not isinstance(c_items2, dict):
+                                    continue
+                                for k2, v2 in c_items2.items():
+                                    if "port" in k2 and k.name != k2 and isinstance(v2, str) and p in v2.strip().split(","):
+                                        return result.fail(_("Port is already used! in") + f" {k2} {k}")
+
+                if old_configs[k] != v:
+                    changed_configs[k] = v
+
+        # print(cat,vs)
+
+    merged_configs = {**old_configs, **changed_configs}
+    if len(set([merged_configs[ConfigEnum.proxy_path], merged_configs[ConfigEnum.proxy_path_client], merged_configs[ConfigEnum.proxy_path_admin]])) != 3:
+        return result.fail(_("ProxyPath is already used! use different proxy path"))
+    parent_apikey = ""
+    
+    if p_p := changed_configs.get(ConfigEnum.parent_panel):
+        parent_baseurl, uuid = hutils.flask.extract_parent_info_from_url(p_p.strip())
+        if not parent_baseurl or not uuid:
+            return result.fail(_("parent.invalid-parent-url"))
+        elif (activeres := hutils.node.is_panel_active(parent_baseurl, uuid)) and not activeres[0]:
+            return result.fail(_("parent.panel-not-active") + f": {activeres[1]}")
+        else:
+            changed_configs[ConfigEnum.parent_panel] = parent_baseurl
+            parent_apikey = uuid
+
+    for k, v in changed_configs.items():
+        # html inputs santitizing
+        if k in {ConfigEnum.branding_title, ConfigEnum.branding_site, ConfigEnum.branding_freetext}:
+            v = bleach_clean(v, tags=ALLOWED_TAGS)
+        set_hconfig(k, v, commit=False)
+
+    db.session.commit()
+    flask_babel.refresh()
+
+    if parent_apikey or changed_configs.get(ConfigEnum.node_name):
+        node_name = hconfig(ConfigEnum.node_name)
+        # Register while still standalone/parent — flipping to child first makes the
+        # parent endpoint reject the request (and self-register would always fail).
+        try:
+            sucess, msg = hutils.node.child.register_to_parent(node_name, parent_apikey or hconfig(ConfigEnum.unique_id), mode=ChildMode.remote)
+        except Exception as e:
+            logger.exception("Error while registering to parent")
+            sucess, msg = False, str(e)
+        if not sucess:
+            result.warnings.append(str(_("child.register-failed") + f": {msg}"))
+            set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
+        else:
+            set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
+    elif hconfig(ConfigEnum.parent_panel) and hconfig(ConfigEnum.panel_mode) != PanelMode.parent:
+        set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
+
+    cache.invalidate_all_cached_functions()
+    # hutils.proxy.get_proxies.invalidate_all()
+    from hiddifypanel.panel.commercial.telegrambot import register_bot
+
+    register_bot(set_hook=True)
+
+    # sync with parent if needed
+    if hutils.node.is_child():
+        hutils.node.child.schedule_notify_parent_config_changed()
+
+    # if hutils.node.is_child():
+    # if hutils.node.child.is_registered():
+    # hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.hconfigs])
+    # else:
+    #     name = hconfig(ConfigEnum.unique_id)
+    #     parent_info = hutils.node.get_panel_info(hconfig(ConfigEnum.parent_domain), hconfig(ConfigEnum.parent_admin_proxy_path), parent_apikey)
+    #     if parent_info.get("version") != __version__:
+    #         hutils.flask.flash(_("node.diff-version"), "danger")
+    #     if not hutils.node.child.register_to_parent(name, parent_apikey, mode=ChildMode.remote):
+    #         hutils.flask.flash(_("child.register-failed"), "danger")
+    #     else:  # TODO: it's just for debuging
+    #         hutils.flask.flash(_("child.register-success"))
+    result.changed_configs = changed_configs
+    return result
+
+
+def get_config_form(**form_kwargs):
+    """The settings form; ``form_kwargs`` go to the form (e.g. explicit ``formdata`` and ``meta`` for the API)."""
     strconfigs = StrConfig.query.filter(StrConfig.child_id == Child.current().id).all()
     boolconfigs = BoolConfig.query.filter(BoolConfig.child_id == Child.current().id).all()
     bool_types = {c.key: "bool" for c in boolconfigs}
@@ -376,4 +404,4 @@ def get_config_form():
 
     DynamicForm.submit = wtf.SubmitField(_("Submit"))
 
-    return DynamicForm()
+    return DynamicForm(**form_kwargs)

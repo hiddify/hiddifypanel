@@ -36,6 +36,10 @@ def init_app(app):
 
         bp.add_url_rule("/protocols/", view_func=ProtocolSwitchesApi)
 
+        from .settings_api import SettingsApi
+
+        bp.add_url_rule("/settings/", view_func=SettingsApi)
+
         bp.add_url_rule("/all-public-port/", view_func=AllPublicPortsApi)
 
         from .user_api import UserApi

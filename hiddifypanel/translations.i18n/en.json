@@ -328,6 +328,12 @@
       "viewlogsHint": "Browse the system log files."
     },
     "appTitle": "HiddifyManager",
+    "applyNotice": {
+      "apply": "Saved. Apply the configs to put the changes into effect.",
+      "later": "Later",
+      "reinstall": "Saved. Some changes need a reinstall to take effect.",
+      "update": "Saved. The update channel changed; run an update to switch."
+    },
     "baseConfig": {
       "builtinDefaultHint": "Built-in base config synced from catalog. Enable custom content to edit it.",
       "builtinReadOnly": "Built-in base config — only name and enabled state can be changed. Duplicate to edit fully.",
@@ -533,7 +539,6 @@
     "protocols": {
       "changed": "Changed",
       "disableAll": "Disable all",
-      "discard": "Discard",
       "enableAll": "Enable all",
       "enabledOf": "{on} of {total} enabled",
       "filterAll": "All",
@@ -558,17 +563,14 @@
         }
       },
       "instantChip": "Instant",
-      "later": "Later",
       "leaveUnsaved": "You have unsaved changes. Leave anyway?",
-      "needsApply": "Saved. Apply the configs to put the changes into effect.",
-      "needsReinstall": "Saved. Some changes need a reinstall to take effect.",
       "noMatch": "Nothing matches your search.",
       "reinstallChip": "Needs reinstall",
+      "relatedSettings": "Settings",
       "search": "Search protocols…",
       "subtitle": "Turn protocols, transports and TLS tricks on or off for the whole panel.",
       "summaryHint": "Tap a card to toggle it, then save.",
-      "title": "Protocols",
-      "unsaved": "{count} unsaved change | {count} unsaved changes"
+      "title": "Protocols"
     },
     "proxy": {
       "addClient": "Add client",
@@ -781,6 +783,33 @@
       },
       "uploadTcpUdp": "Upload TCP or UDP",
       "version": "Version"
+    },
+    "saveBar": {
+      "discard": "Discard",
+      "unsaved": "{count} unsaved change | {count} unsaved changes"
+    },
+    "settings": {
+      "adminPathChanged": "The admin path changed. After applying the configs, the admin panel will be at",
+      "advancedBadge": "Advanced",
+      "categories": "Setting categories",
+      "changed": "Changed",
+      "fixErrors": "Please fix the highlighted fields.",
+      "hiddenCount": "{count} advanced setting hidden | {count} advanced settings hidden",
+      "invalid": "This value is not valid.",
+      "leaveUnsaved": "You have unsaved changes. Leave anyway?",
+      "noMatch": "No setting matches your search.",
+      "openProtocols": "Protocols",
+      "reinstallBadge": "Reinstall",
+      "reinstallHint": "Changing this needs a reinstall to take effect",
+      "reloading": "Language changed, reloading…",
+      "required": "This field is required.",
+      "search": "Search all settings…",
+      "showAdvanced": "Show advanced settings",
+      "showAdvancedIn": "Show {count} advanced setting | Show {count} advanced settings",
+      "showLess": "Show less",
+      "showMore": "Show {count} more advanced setting | Show {count} more advanced settings",
+      "subtitle": "Everything about how this panel runs. Common settings first; advanced ones on request.",
+      "title": "Settings"
     },
     "template": {
       "builtin": "Built-in",

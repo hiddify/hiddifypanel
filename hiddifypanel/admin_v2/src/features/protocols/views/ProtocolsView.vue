@@ -30,24 +30,7 @@
     </section>
 
     <!-- Apply notice after a save that needs it -->
-    <Transition name="proto-fade">
-      <Message v-if="pendingApply !== 'nothing'" :severity="pendingApply === 'reinstall' ? 'warn' : 'info'" class="mb-4" :closable="false">
-        <div class="flex flex-wrap items-center justify-between gap-3 w-full">
-          <span>{{ pendingApply === 'reinstall' ? t('protocols.needsReinstall') : t('protocols.needsApply') }}</span>
-          <div class="flex gap-2">
-            <Button
-              v-if="applyUrl"
-              size="small"
-              :icon="pendingApply === 'reinstall' ? 'pi pi-refresh' : 'pi pi-bolt'"
-              :label="pendingApply === 'reinstall' ? t('actions.reinstall') : t('actions.applyConfigs')"
-              :severity="pendingApply === 'reinstall' ? 'danger' : undefined"
-              @click="runApply"
-            />
-            <Button size="small" text severity="secondary" :label="t('protocols.later')" @click="pendingApply = 'nothing'" />
-          </div>
-        </div>
-      </Message>
-    </Transition>
+    <ApplyNotice v-model="pendingApply" />
 
     <!-- Loading -->
     <div v-if="loading" class="proto-grid">
@@ -94,6 +77,14 @@
               <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
               <p v-if="item.description" class="proto-tile__desc" @click="onDescriptionClick" v-html="item.description" />
               <div class="proto-tile__meta">
+                <RouterLink
+                  :to="{ name: 'settings', query: { category: item.category } }"
+                  class="proto-chip proto-chip--link"
+                  :title="t('protocols.relatedSettings')"
+                  @click.stop
+                >
+                  <i class="pi pi-cog" />{{ t('protocols.relatedSettings') }}
+                </RouterLink>
                 <span v-if="item.apply_mode === 'reinstall'" class="proto-chip proto-chip--warn"><i class="pi pi-refresh" />{{ t('protocols.reinstallChip') }}</span>
                 <span v-else-if="item.apply_mode === 'nothing'" class="proto-chip"><i class="pi pi-bolt" />{{ t('protocols.instantChip') }}</span>
                 <Transition name="proto-fade">
@@ -111,21 +102,7 @@
       </div>
     </template>
 
-    <!-- Sticky save bar -->
-    <Transition name="proto-bar">
-      <div v-if="dirtyCount > 0" class="proto-savebar">
-        <div class="proto-savebar__inner">
-          <span class="proto-savebar__count">
-            <i class="pi pi-circle-fill" />
-            {{ t('protocols.unsaved', { count: dirtyCount }, dirtyCount) }}
-          </span>
-          <div class="flex gap-2">
-            <Button :label="t('protocols.discard')" severity="secondary" outlined :disabled="saving" @click="discard" />
-            <Button :label="t('common.save')" icon="pi pi-check" :loading="saving" @click="save" />
-          </div>
-        </div>
-      </div>
-    </Transition>
+    <StickySaveBar :count="dirtyCount" :saving="saving" @save="save" @discard="discard" />
   </div>
 </template>
 
@@ -144,10 +121,12 @@ import Skeleton from 'primevue/skeleton'
 import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
 import PageHeader from '@/shared/components/PageHeader.vue'
-import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
+import ApplyNotice from '@/shared/components/ApplyNotice.vue'
+import StickySaveBar from '@/shared/components/StickySaveBar.vue'
 import { apiErrorMessage } from '@/core/api/client'
-import { submitPostForm, systemActionUrls } from '@/core/panelShell'
-import { protocolsApi, type ApplyMode, type ProtocolSwitch } from '@/features/protocols/api'
+import { displayConfigLabel as displayLabel, htmlToText as plainText } from '@/shared/utils/config-labels'
+import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
+import { protocolsApi, type ProtocolSwitch } from '@/features/protocols/api'
 
 type GroupId = 'protocols' | 'transports' | 'security' | 'other'
 type Filter = 'all' | 'on' | 'off'
@@ -202,7 +181,6 @@ const GROUPS: GroupDef[] = [
 
 const { t } = useI18n()
 const toast = useToast()
-const dangerConfirm = useDangerConfirm()
 
 const items = ref<ProtocolSwitch[]>([])
 const draft = reactive<Record<string, boolean>>({})
@@ -211,24 +189,13 @@ const loadError = ref<string | null>(null)
 const saving = ref(false)
 const search = ref('')
 const filter = ref<Filter>('all')
-const pendingApply = ref<ApplyMode>('nothing')
+const pendingApply = ref<RestartMode>('nothing')
 
 const filterOptions = computed(() => [
   { label: t('protocols.filterAll'), value: 'all' },
   { label: t('protocols.filterOn'), value: 'on' },
   { label: t('protocols.filterOff'), value: 'off' },
 ])
-
-/** Labels carry legacy emoji markers ("🔴 Reality"); the group icon replaces them. */
-function displayLabel(label: string): string {
-  return label.replace(/^[\p{Extended_Pictographic}\p{Emoji_Presentation}️‍\s]+/u, '').trim() || label
-}
-
-function plainText(html: string): string {
-  const el = document.createElement('div')
-  el.innerHTML = html
-  return el.textContent ?? ''
-}
 
 function isChanged(item: ProtocolSwitch): boolean {
   return draft[item.key] !== item.enabled
@@ -301,29 +268,13 @@ async function save() {
     const res = await protocolsApi.update(values)
     items.value = res.items
     resetDraft()
-    const rank: Record<ApplyMode, number> = { nothing: 0, apply_config: 1, reinstall: 2 }
-    if (rank[res.restart_mode] > rank[pendingApply.value]) pendingApply.value = res.restart_mode
+    pendingApply.value = strongerRestartMode(pendingApply.value, res.restart_mode)
     toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
   } catch (error) {
     toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(error), life: 6000 })
   } finally {
     saving.value = false
   }
-}
-
-const applyUrl = computed(() =>
-  pendingApply.value === 'reinstall' ? systemActionUrls.value.reinstall : systemActionUrls.value.apply_configs,
-)
-
-function runApply() {
-  const url = applyUrl.value
-  if (!url) return
-  const reinstall = pendingApply.value === 'reinstall'
-  dangerConfirm({
-    header: reinstall ? t('actions.reinstall') : t('actions.applyConfigs'),
-    message: t('actions.confirm'),
-    accept: () => submitPostForm(url),
-  })
 }
 
 function confirmLeave(): boolean {
@@ -554,6 +505,16 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', onBeforeUnload)
   color: var(--p-orange-600, #c2410c);
   background: color-mix(in srgb, var(--p-orange-400, #fb923c) 18%, transparent);
 }
+.proto-chip--link {
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+.proto-chip--link:hover {
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+}
 .proto-chip--changed {
   color: var(--p-primary-color);
   background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
@@ -569,43 +530,6 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', onBeforeUnload)
 }
 .proto-empty i {
   font-size: 1.75rem;
-}
-
-/* Save bar */
-.proto-savebar {
-  position: fixed;
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 50;
-  display: flex;
-  justify-content: center;
-  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-  pointer-events: none;
-}
-.proto-savebar__inner {
-  pointer-events: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem 1.5rem;
-  width: min(100%, 44rem);
-  padding: 0.75rem 1rem;
-  border-radius: 16px;
-  background: var(--p-content-background);
-  border: 1px solid var(--p-content-border-color);
-  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.35);
-}
-.proto-savebar__count {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-}
-.proto-savebar__count i {
-  font-size: 0.55rem;
-  color: var(--p-orange-400, #fb923c);
-  animation: proto-pulse 1.6s ease-in-out infinite;
 }
 
 /* Animations */
@@ -657,17 +581,6 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', onBeforeUnload)
   opacity: 0;
   transform: scale(0.97);
 }
-.proto-bar-enter-active,
-.proto-bar-leave-active {
-  transition:
-    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.2s ease;
-}
-.proto-bar-enter-from,
-.proto-bar-leave-to {
-  transform: translateY(120%);
-  opacity: 0;
-}
 
 @media (max-width: 640px) {
   .proto-summary,
@@ -692,19 +605,11 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', onBeforeUnload)
     width: 100%;
     justify-content: flex-end;
   }
-  .proto-savebar__inner {
-    border-radius: 14px;
-  }
-  .proto-savebar__inner > div {
-    flex: 1;
-    justify-content: flex-end;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .proto-tile,
-  .proto-tile--changed::after,
-  .proto-savebar__count i {
+  .proto-tile--changed::after {
     animation: none;
   }
   .proto-tile,
