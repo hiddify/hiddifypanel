@@ -217,9 +217,11 @@
                   class="fa-solid fa-share-from-square"></i> {{_('clickable copy')}}</a>
               <a target="_blank" id="share-link-open" class="btn btn-secondary" href=""><i
                   class="fa-solid fa-arrow-up-right-from-square"></i> {{_('open')}}</a>
+              <a id="qrcode-copy-image" class="btn btn-info" href="#"><i class="fa-regular fa-image"></i>
+                {{_('Copy QR image')}}</a>
             </div>
             <br />
-            <div id="qrcode" style="margin:10px;padding:10px;"></div>
+            <div id="qrcode" style="margin:10px;padding:10px;cursor:pointer;" title="{{_('Copy QR image')}}"></div>
           </center>
         </div>
         <div class="modal-footer">
@@ -310,6 +312,48 @@
 
     w = Math.min(window.innerWidth, window.innerHeight) * .5;
     qrcode = new QRCode(document.getElementById("qrcode"), { width: w, height: w, correctLevel: 1 });
+
+    // The QR as a PNG with a white quiet zone (scanners need it; the drawn canvas has none).
+    function qr_image_blob() {
+      return new Promise(function (resolve, reject) {
+        var src = document.querySelector("#qrcode canvas") || document.querySelector("#qrcode img");
+        if (!src) return reject(new Error("no QR code"));
+        var size = src.width || src.naturalWidth, pad = Math.round(size * 0.08);
+        var out = document.createElement("canvas");
+        out.width = out.height = size + 2 * pad;
+        var ctx = out.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, out.width, out.height);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(src, pad, pad, size, size);
+        out.toBlob(function (blob) { blob ? resolve(blob) : reject(new Error("toBlob failed")); }, "image/png");
+      });
+    }
+
+    function download_qr_image(blob) {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "qrcode.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    }
+
+    function copy_qr_image(e) {
+      if (e) e.preventDefault();
+      qr_image_blob().then(function (blob) {
+        // Image clipboard needs a secure context (https) and a recent browser; otherwise save it.
+        if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+          return navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]).then(function () {
+            alert("{{_('QR code image copied')}}");
+          }, function () { download_qr_image(blob); });
+        }
+        download_qr_image(blob);
+      }).catch(function (err) { console.error(err); });
+    }
+    $('#qrcode-copy-image').click(copy_qr_image);
+    $('#qrcode').click(copy_qr_image);
     function share_click(e) {
       e.preventDefault();
 
