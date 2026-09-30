@@ -9,6 +9,8 @@
 
 #### Fix
 
+* Quick  setup. 
+
 * Improve error handling in Node API client. 
 
 * Node api. 
@@ -35,6 +37,16 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: update translations. 
+
+* Feat: enhance proxy configuration and editor functionality. 
+  _- Updated the default form for custom proxy settings to use context variables for better data handling.
+- Improved the Jinja and JSON5 editors by adjusting their minimum height for better usability.
+- Introduced a new utility function to dynamically fit the editor's height to its content.
+- Enhanced transport TLS support for raw TCP and gRPC in the proxy validation logic.
+- Updated translations to include new HTTP terminology and improved language support.
+- Added new presets for raw VLESS over REALITY, streamlining the configuration process for users._
 
 * Fixxray. 
 
