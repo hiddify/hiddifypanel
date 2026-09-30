@@ -38,6 +38,10 @@ export interface LegacyAction {
   url: string
   /** `post` actions are submitted into the frame (they only accept POST). */
   method: 'get' | 'post'
+  /** Runs once when the action's log reports it finished (classic result page). */
+  onFinish?: () => void
+  /** Runs when the dialog is closed, whether or not the action finished. */
+  onClose?: () => void
 }
 
 export const legacyActionDialog = ref<LegacyAction | null>(null)

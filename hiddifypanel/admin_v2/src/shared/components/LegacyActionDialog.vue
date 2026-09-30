@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -48,7 +48,8 @@ function submitInto(url: string, target: string) {
   form.remove()
 }
 
-watch(action, async (current) => {
+watch(action, async (current, previous) => {
+  if (previous && previous !== current) previous.onClose?.()
   if (!current) return
   loading.value = true
   frameName.value = `legacy-action-${++openCount}`
@@ -76,6 +77,14 @@ function onLoad() {
     window.location.href = location.href
   }
 }
+
+/** The classic result page posts this when its log reaches "Finished". */
+function onMessage(event: MessageEvent) {
+  if (event.origin !== window.location.origin || event.source !== frame.value?.contentWindow) return
+  if ((event.data as { type?: string } | null)?.type === 'hiddify-action-finished') action.value?.onFinish?.()
+}
+onMounted(() => window.addEventListener('message', onMessage))
+onBeforeUnmount(() => window.removeEventListener('message', onMessage))
 
 /** Only for GET pages: reloading a POST result would run the action (e.g. a reinstall) again. */
 function reload() {

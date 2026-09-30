@@ -169,6 +169,10 @@ page."),temp_link(),show=False)}}
           document.getElementById("count-down").innerHTML = 0
           $("#process-details").html("")
           $("#process-title").html("")
+          // Shown in the new UI's action dialog: tell it the action is done.
+          if (window.parent !== window) {
+            try { window.parent.postMessage({ type: "hiddify-action-finished" }, window.location.origin) } catch (e) { }
+          }
           bootbox.alert({
             title: '{{_("Success")}}',
             message: '{{_("admin.action_done_sucess")}}',
