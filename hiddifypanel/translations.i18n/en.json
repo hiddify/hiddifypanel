@@ -893,43 +893,43 @@
       "domains": {
         "block": "Block domestic sites",
         "blockHint": "Blocks domestic sites to prevent detection by the government.",
+        "changeMode": "Change how {name} is used",
         "copied": "{ip} copied",
         "decoy": "Decoy site",
         "decoyHint": "A fake site shown when someone opens your domain directly.",
         "decoyWarn1": "Do not use financial, Iranian or famous sites, or sites with a login such as Google, Yahoo, Wikipedia or PayPal.",
         "decoyWarn2": "Check the site carefully and make sure it is the right one, otherwise you may get a phishing warning.",
         "decoyWarn3": "Check this domain again so there is no problem in the future.",
+        "detecting": "Checking…",
         "domains": "Domains",
         "domainsHint": "You can add any domains here: direct, CDN, REALITY, relay… Each one is checked automatically; tap its type to change it. You need at least one direct, CDN or subscription-link domain (this server's IP counts as direct).",
         "how1": "Point your domain or subdomain to these IPs (an A record for IPv4, AAAA for IPv6).",
         "how2": "Then enter the domain below. You can add several; press Enter or comma after each one.",
         "ipsTitle": "Your server's IPs",
-        "noIp": "The server's IP could not be detected.",
-        "remove": "Remove {name}",
-        "required": "Add at least one direct, CDN or subscription-link domain (REALITY and relay domains alone are not enough). This server's IP counts as a direct domain.",
-        "useIp": "Use this IP as a direct domain",
-        "changeMode": "Change how {name} is used",
-        "detecting": "Checking…",
-        "modes": {
-          "direct": "Direct",
-          "cdn": "CDN",
-          "reality": "REALITY",
-          "relay": "Relay"
-        },
         "modeHelp": {
-          "direct": "Points straight to this server's IP. Fastest; detected when the domain resolves to this server.",
           "cdn": "Behind a CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …) that forwards to this server. Hides your server's IP.",
+          "direct": "Points straight to this server's IP. Fastest; detected when the domain resolves to this server.",
           "reality": "Someone else's popular site (TLS 1.3 + HTTP/2). Not pointed to your server; this server imitates it.",
           "relay": "Points to another server that forwards traffic to this one (a relay/tunnel). Set it by hand."
         },
-        "notes": {
-          "unresolved": "This domain does not resolve yet. Check its DNS record.",
-          "not_friendly": "This site may not support TLS 1.3 + HTTP/2, which REALITY needs."
+        "modes": {
+          "cdn": "CDN",
+          "direct": "Direct",
+          "reality": "REALITY",
+          "relay": "Relay"
         },
-        "sublink": "Subscription link domain",
+        "noIp": "The server's IP could not be detected.",
+        "notes": {
+          "not_friendly": "This site may not support TLS 1.3 + HTTP/2, which REALITY needs.",
+          "unresolved": "This domain does not resolve yet. Check its DNS record."
+        },
         "recommended": "Highly recommended",
+        "remove": "Remove {name}",
+        "required": "Add at least one direct, CDN or subscription-link domain (REALITY and relay domains alone are not enough). This server's IP counts as a direct domain.",
+        "sublink": "Subscription link domain",
+        "sublinkHint": "Only serves subscription links, not proxies. It can point to this server or through a CDN.",
         "sublinkWhy": "Use a different domain for users' subscription links, ideally behind a CDN. If your server or proxy domains are blocked, users can still update their subscription and receive new working configs, so they are not affected.",
-        "sublinkHint": "Only serves subscription links, not proxies. It can point to this server or through a CDN."
+        "useIp": "Use this IP as a direct domain"
       },
       "finish": {
         "button": "Finish",

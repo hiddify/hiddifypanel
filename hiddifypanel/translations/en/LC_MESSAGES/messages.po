@@ -2653,6 +2653,280 @@ msgstr "Upload TCP or UDP"
 msgid "adminV2.proxy.version"
 msgstr "Version"
 
+msgid "adminV2.quickSetup.back"
+msgstr "Back"
+
+msgid "adminV2.quickSetup.countries.ir"
+msgstr "Iran"
+
+msgid "adminV2.quickSetup.countries.other"
+msgstr "Others"
+
+msgid "adminV2.quickSetup.countries.ru"
+msgstr "Russia"
+
+msgid "adminV2.quickSetup.countries.zh"
+msgstr "China"
+
+msgid "adminV2.quickSetup.domains.block"
+msgstr "Block domestic sites"
+
+msgid "adminV2.quickSetup.domains.blockHint"
+msgstr "Blocks domestic sites to prevent detection by the government."
+
+msgid "adminV2.quickSetup.domains.changeMode"
+msgstr "Change how {name} is used"
+
+msgid "adminV2.quickSetup.domains.copied"
+msgstr "{ip} copied"
+
+msgid "adminV2.quickSetup.domains.decoy"
+msgstr "Decoy site"
+
+msgid "adminV2.quickSetup.domains.decoyHint"
+msgstr "A fake site shown when someone opens your domain directly."
+
+msgid "adminV2.quickSetup.domains.decoyWarn1"
+msgstr ""
+"Do not use financial, Iranian or famous sites, or sites with a login such as"
+" Google, Yahoo, Wikipedia or PayPal."
+
+msgid "adminV2.quickSetup.domains.decoyWarn2"
+msgstr ""
+"Check the site carefully and make sure it is the right one, otherwise you "
+"may get a phishing warning."
+
+msgid "adminV2.quickSetup.domains.decoyWarn3"
+msgstr "Check this domain again so there is no problem in the future."
+
+msgid "adminV2.quickSetup.domains.detecting"
+msgstr "Checking…"
+
+msgid "adminV2.quickSetup.domains.domains"
+msgstr "Domains"
+
+msgid "adminV2.quickSetup.domains.domainsHint"
+msgstr ""
+"You can add any domains here: direct, CDN, REALITY, relay… Each one is "
+"checked automatically; tap its type to change it. You need at least one "
+"direct, CDN or subscription-link domain (this server's IP counts as direct)."
+
+msgid "adminV2.quickSetup.domains.how1"
+msgstr ""
+"Point your domain or subdomain to these IPs (an A record for IPv4, AAAA for "
+"IPv6)."
+
+msgid "adminV2.quickSetup.domains.how2"
+msgstr ""
+"Then enter the domain below. You can add several; press Enter or comma after"
+" each one."
+
+msgid "adminV2.quickSetup.domains.ipsTitle"
+msgstr "Your server's IPs"
+
+msgid "adminV2.quickSetup.domains.modeHelp.cdn"
+msgstr ""
+"Behind a CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …) that forwards to "
+"this server. Hides your server's IP."
+
+msgid "adminV2.quickSetup.domains.modeHelp.direct"
+msgstr ""
+"Points straight to this server's IP. Fastest; detected when the domain "
+"resolves to this server."
+
+msgid "adminV2.quickSetup.domains.modeHelp.reality"
+msgstr ""
+"Someone else's popular site (TLS 1.3 + HTTP/2). Not pointed to your server; "
+"this server imitates it."
+
+msgid "adminV2.quickSetup.domains.modeHelp.relay"
+msgstr ""
+"Points to another server that forwards traffic to this one (a relay/tunnel)."
+" Set it by hand."
+
+msgid "adminV2.quickSetup.domains.modes.cdn"
+msgstr "CDN"
+
+msgid "adminV2.quickSetup.domains.modes.direct"
+msgstr "Direct"
+
+msgid "adminV2.quickSetup.domains.modes.reality"
+msgstr "REALITY"
+
+msgid "adminV2.quickSetup.domains.modes.relay"
+msgstr "Relay"
+
+msgid "adminV2.quickSetup.domains.noIp"
+msgstr "The server's IP could not be detected."
+
+msgid "adminV2.quickSetup.domains.notes.not_friendly"
+msgstr "This site may not support TLS 1.3 + HTTP/2, which REALITY needs."
+
+msgid "adminV2.quickSetup.domains.notes.unresolved"
+msgstr "This domain does not resolve yet. Check its DNS record."
+
+msgid "adminV2.quickSetup.domains.recommended"
+msgstr "Highly recommended"
+
+msgid "adminV2.quickSetup.domains.remove"
+msgstr "Remove {name}"
+
+msgid "adminV2.quickSetup.domains.required"
+msgstr ""
+"Add at least one direct, CDN or subscription-link domain (REALITY and relay "
+"domains alone are not enough). This server's IP counts as a direct domain."
+
+msgid "adminV2.quickSetup.domains.sublink"
+msgstr "Subscription link domain"
+
+msgid "adminV2.quickSetup.domains.sublinkHint"
+msgstr ""
+"Only serves subscription links, not proxies. It can point to this server or "
+"through a CDN."
+
+msgid "adminV2.quickSetup.domains.sublinkWhy"
+msgstr ""
+"Use a different domain for users' subscription links, ideally behind a CDN. "
+"If your server or proxy domains are blocked, users can still update their "
+"subscription and receive new working configs, so they are not affected."
+
+msgid "adminV2.quickSetup.domains.useIp"
+msgstr "Use this IP as a direct domain"
+
+msgid "adminV2.quickSetup.finish.button"
+msgstr "Finish"
+
+msgid "adminV2.quickSetup.finish.docs"
+msgstr "Read more documentation"
+
+msgid "adminV2.quickSetup.finish.off"
+msgstr "Off"
+
+msgid "adminV2.quickSetup.finish.on"
+msgstr "On"
+
+msgid "adminV2.quickSetup.finish.ready"
+msgstr "Everything is ready"
+
+msgid "adminV2.quickSetup.finish.readyHint"
+msgstr "Review your choices, then finish the setup."
+
+msgid "adminV2.quickSetup.finish.running"
+msgstr "Finishing setup"
+
+msgid "adminV2.quickSetup.finish.whatHappens"
+msgstr ""
+"Finish applies the configuration and reinstalls the services with your "
+"domains. It takes a few minutes; the log and your new admin links are shown "
+"while it runs."
+
+msgid "adminV2.quickSetup.language.adminLang"
+msgstr "Admin panel language"
+
+msgid "adminV2.quickSetup.language.adminLangHint"
+msgstr "The language of the admin area."
+
+msgid "adminV2.quickSetup.language.country"
+msgstr "Country"
+
+msgid "adminV2.quickSetup.language.countryHint"
+msgstr ""
+"Applies the right settings for the filtering conditions of that country."
+
+msgid "adminV2.quickSetup.next"
+msgstr "Next"
+
+msgid "adminV2.quickSetup.nodes.question"
+msgstr ""
+"Do you want to add other nodes? Add the full admin link of each other panel;"
+" after it connects, it is listed here. You can also do this later."
+
+msgid "adminV2.quickSetup.nodes.skip"
+msgstr "Skip"
+
+msgid "adminV2.quickSetup.optional"
+msgstr "optional"
+
+msgid "adminV2.quickSetup.password.confirm"
+msgstr "Repeat the password"
+
+msgid "adminV2.quickSetup.password.label"
+msgstr "New password"
+
+msgid "adminV2.quickSetup.password.medium"
+msgstr "Medium"
+
+msgid "adminV2.quickSetup.password.min"
+msgstr "The password must have at least {min} characters."
+
+msgid "adminV2.quickSetup.password.mismatch"
+msgstr "The passwords do not match."
+
+msgid "adminV2.quickSetup.password.ok"
+msgstr "Passwords match"
+
+msgid "adminV2.quickSetup.password.prompt"
+msgstr "At least {min} characters"
+
+msgid "adminV2.quickSetup.password.strong"
+msgstr "Strong"
+
+msgid "adminV2.quickSetup.password.weak"
+msgstr "Weak"
+
+msgid "adminV2.quickSetup.password.why"
+msgstr ""
+"You will use this password to sign in to the admin area. Use at least 8 "
+"characters."
+
+msgid "adminV2.quickSetup.skip"
+msgstr "Skip for now"
+
+msgid "adminV2.quickSetup.stepOf"
+msgstr "Step {n} of {total}"
+
+msgid "adminV2.quickSetup.steps.domains.lead"
+msgstr "Connect your domain to this server."
+
+msgid "adminV2.quickSetup.steps.domains.title"
+msgstr "Domains"
+
+msgid "adminV2.quickSetup.steps.finish.lead"
+msgstr "Let's do the final configuration to finish the setup."
+
+msgid "adminV2.quickSetup.steps.finish.title"
+msgstr "Finish"
+
+msgid "adminV2.quickSetup.steps.language.lead"
+msgstr "Choose the admin language and the country your users are in."
+
+msgid "adminV2.quickSetup.steps.language.title"
+msgstr "Welcome"
+
+msgid "adminV2.quickSetup.steps.nodes.lead"
+msgstr "Optionally connect other Hiddify servers to manage them from here."
+
+msgid "adminV2.quickSetup.steps.nodes.title"
+msgstr "Nodes"
+
+msgid "adminV2.quickSetup.steps.password.lead"
+msgstr "Protect the admin area with a password."
+
+msgid "adminV2.quickSetup.steps.password.title"
+msgstr "Password"
+
+msgid "adminV2.quickSetup.steps.protocols.lead"
+msgstr "Pick the protocols to offer. Choose as few as possible."
+
+msgid "adminV2.quickSetup.steps.protocols.title"
+msgstr "Protocols"
+
+msgid "adminV2.quickSetup.subtitle"
+msgstr "A few steps and your panel is ready."
+
+msgid "adminV2.quickSetup.title"
+msgstr "Quick setup"
+
 msgid "adminV2.saveBar.discard"
 msgstr "Discard"
 

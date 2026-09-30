@@ -2651,6 +2651,281 @@ msgstr "TCP یا UDP آپلود"
 msgid "adminV2.proxy.version"
 msgstr "نسخه"
 
+msgid "adminV2.quickSetup.back"
+msgstr "قبلی"
+
+msgid "adminV2.quickSetup.countries.ir"
+msgstr "ایران"
+
+msgid "adminV2.quickSetup.countries.other"
+msgstr "سایر"
+
+msgid "adminV2.quickSetup.countries.ru"
+msgstr "روسیه"
+
+msgid "adminV2.quickSetup.countries.zh"
+msgstr "چین"
+
+msgid "adminV2.quickSetup.domains.block"
+msgstr "مسدودسازی سایت‌های داخلی"
+
+msgid "adminV2.quickSetup.domains.blockHint"
+msgstr "سایت‌های داخلی را مسدود می‌کند تا از شناسایی توسط دولت جلوگیری شود."
+
+msgid "adminV2.quickSetup.domains.changeMode"
+msgstr "تغییر نوع {name}"
+
+msgid "adminV2.quickSetup.domains.copied"
+msgstr "{ip} کپی شد"
+
+msgid "adminV2.quickSetup.domains.decoy"
+msgstr "سایت جعلی"
+
+msgid "adminV2.quickSetup.domains.decoyHint"
+msgstr "سایتی که وقتی کسی مستقیماً دامنه شما را باز کند، نمایش داده می‌شود."
+
+msgid "adminV2.quickSetup.domains.decoyWarn1"
+msgstr ""
+"از سایت‌های مالی، ایرانی و معروف یا سایت‌های دارای ورود مانند گوگل، یاهو، "
+"ویکی‌پدیا و پی‌پال استفاده نکنید."
+
+msgid "adminV2.quickSetup.domains.decoyWarn2"
+msgstr ""
+"سایت را با دقت بررسی کنید و مطمئن شوید درست است، وگرنه ممکن است هشدار فیشینگ"
+" دریافت کنید."
+
+msgid "adminV2.quickSetup.domains.decoyWarn3"
+msgstr "این دامنه را دوباره بررسی کنید تا در آینده مشکلی پیش نیاید."
+
+msgid "adminV2.quickSetup.domains.detecting"
+msgstr "در حال بررسی…"
+
+msgid "adminV2.quickSetup.domains.domains"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.quickSetup.domains.domainsHint"
+msgstr ""
+"هر نوع دامنه‌ای را می‌توانید اضافه کنید: مستقیم، CDN، ریلیتی، رله… نوع هر "
+"دامنه خودکار تشخیص داده می‌شود؛ برای تغییر، روی نوع آن بزنید. حداقل یک دامنه"
+" مستقیم، CDN یا لینک اشتراک لازم است (IP همین سرور هم مستقیم حساب می‌شود)."
+
+msgid "adminV2.quickSetup.domains.how1"
+msgstr ""
+"دامنه یا ساب‌دامنه خود را به این آی‌پی‌ها متصل کنید (رکورد A برای IPv4 و "
+"AAAA برای IPv6)."
+
+msgid "adminV2.quickSetup.domains.how2"
+msgstr ""
+"سپس دامنه را در کادر زیر وارد کنید. می‌توانید چند دامنه اضافه کنید؛ بعد از "
+"هر کدام Enter یا کاما بزنید."
+
+msgid "adminV2.quickSetup.domains.ipsTitle"
+msgstr "آی‌پی‌های سرور شما"
+
+msgid "adminV2.quickSetup.domains.modeHelp.cdn"
+msgstr ""
+"پشت یک CDN (کلادفلر، فستلی، آروان، آکامای، …) که ترافیک را به این سرور "
+"می‌فرستد. IP سرور شما را پنهان می‌کند."
+
+msgid "adminV2.quickSetup.domains.modeHelp.direct"
+msgstr ""
+"مستقیماً به IP همین سرور اشاره می‌کند. سریع‌ترین حالت؛ وقتی دامنه به همین "
+"سرور اشاره کند تشخیص داده می‌شود."
+
+msgid "adminV2.quickSetup.domains.modeHelp.reality"
+msgstr ""
+"سایت معروف دیگران (با TLS 1.3 و HTTP/2). به سرور شما اشاره نمی‌کند؛ این سرور"
+" خود را شبیه آن نشان می‌دهد."
+
+msgid "adminV2.quickSetup.domains.modeHelp.relay"
+msgstr ""
+"به سرور دیگری اشاره می‌کند که ترافیک را به این سرور می‌رساند (رله/تونل). "
+"دستی انتخاب کنید."
+
+msgid "adminV2.quickSetup.domains.modes.cdn"
+msgstr "CDN"
+
+msgid "adminV2.quickSetup.domains.modes.direct"
+msgstr "مستقیم"
+
+msgid "adminV2.quickSetup.domains.modes.reality"
+msgstr "ریلیتی"
+
+msgid "adminV2.quickSetup.domains.modes.relay"
+msgstr "رله"
+
+msgid "adminV2.quickSetup.domains.noIp"
+msgstr "آی‌پی سرور شناسایی نشد."
+
+msgid "adminV2.quickSetup.domains.notes.not_friendly"
+msgstr "این سایت شاید از TLS 1.3 و HTTP/2 که ریلیتی لازم دارد پشتیبانی نکند."
+
+msgid "adminV2.quickSetup.domains.notes.unresolved"
+msgstr "این دامنه هنوز resolve نمی‌شود. رکورد DNS آن را بررسی کنید."
+
+msgid "adminV2.quickSetup.domains.recommended"
+msgstr "بسیار توصیه می‌شود"
+
+msgid "adminV2.quickSetup.domains.remove"
+msgstr "حذف {name}"
+
+msgid "adminV2.quickSetup.domains.required"
+msgstr ""
+"حداقل یک دامنه مستقیم، CDN یا لینک اشتراک اضافه کنید (دامنه‌های ریلیتی و رله"
+" به تنهایی کافی نیستند). IP همین سرور هم یک دامنه مستقیم حساب می‌شود."
+
+msgid "adminV2.quickSetup.domains.sublink"
+msgstr "دامنه لینک اشتراک"
+
+msgid "adminV2.quickSetup.domains.sublinkHint"
+msgstr ""
+"فقط لینک اشتراک را ارائه می‌دهد، نه پروکسی. می‌تواند به همین سرور یا از طریق"
+" CDN اشاره کند."
+
+msgid "adminV2.quickSetup.domains.sublinkWhy"
+msgstr ""
+"برای لینک اشتراک کاربران از یک دامنه دیگر استفاده کنید، ترجیحاً پشت CDN. اگر"
+" سرور یا دامنه‌های پروکسی شما فیلتر شوند، کاربران همچنان می‌توانند اشتراک "
+"خود را به‌روز کنند و کانفیگ‌های جدید سالم بگیرند و آسیبی نمی‌بینند."
+
+msgid "adminV2.quickSetup.domains.useIp"
+msgstr "استفاده از این IP به عنوان دامنه مستقیم"
+
+msgid "adminV2.quickSetup.finish.button"
+msgstr "پایان"
+
+msgid "adminV2.quickSetup.finish.docs"
+msgstr "مطالعه مستندات بیشتر"
+
+msgid "adminV2.quickSetup.finish.off"
+msgstr "خاموش"
+
+msgid "adminV2.quickSetup.finish.on"
+msgstr "روشن"
+
+msgid "adminV2.quickSetup.finish.ready"
+msgstr "همه چیز آماده است"
+
+msgid "adminV2.quickSetup.finish.readyHint"
+msgstr "انتخاب‌های خود را بررسی کنید، سپس راه‌اندازی را تمام کنید."
+
+msgid "adminV2.quickSetup.finish.running"
+msgstr "در حال اتمام راه‌اندازی"
+
+msgid "adminV2.quickSetup.finish.whatHappens"
+msgstr ""
+"با «پایان»، پیکربندی اعمال و سرویس‌ها با دامنه‌های شما دوباره نصب می‌شوند. "
+"چند دقیقه طول می‌کشد؛ در این مدت لاگ و لینک‌های جدید ادمین نمایش داده "
+"می‌شود."
+
+msgid "adminV2.quickSetup.language.adminLang"
+msgstr "زبان پنل ادمین"
+
+msgid "adminV2.quickSetup.language.adminLangHint"
+msgstr "زبان بخش ادمین."
+
+msgid "adminV2.quickSetup.language.country"
+msgstr "کشور"
+
+msgid "adminV2.quickSetup.language.countryHint"
+msgstr "تنظیمات مناسب با شرایط فیلترینگ آن کشور اعمال می‌شود."
+
+msgid "adminV2.quickSetup.next"
+msgstr "بعدی"
+
+msgid "adminV2.quickSetup.nodes.question"
+msgstr ""
+"می‌خواهید نودهای دیگری اضافه کنید؟ لینک کامل ادمین هر پنل دیگر را وارد کنید؛"
+" پس از اتصال، اینجا نمایش داده می‌شود. این کار را بعداً هم می‌توانید انجام "
+"دهید."
+
+msgid "adminV2.quickSetup.nodes.skip"
+msgstr "رد شدن"
+
+msgid "adminV2.quickSetup.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.quickSetup.password.confirm"
+msgstr "تکرار رمز عبور"
+
+msgid "adminV2.quickSetup.password.label"
+msgstr "رمز عبور جدید"
+
+msgid "adminV2.quickSetup.password.medium"
+msgstr "متوسط"
+
+msgid "adminV2.quickSetup.password.min"
+msgstr "رمز عبور باید حداقل {min} کاراکتر باشد."
+
+msgid "adminV2.quickSetup.password.mismatch"
+msgstr "رمزهای عبور یکسان نیستند."
+
+msgid "adminV2.quickSetup.password.ok"
+msgstr "رمزها یکسان هستند"
+
+msgid "adminV2.quickSetup.password.prompt"
+msgstr "حداقل {min} کاراکتر"
+
+msgid "adminV2.quickSetup.password.strong"
+msgstr "قوی"
+
+msgid "adminV2.quickSetup.password.weak"
+msgstr "ضعیف"
+
+msgid "adminV2.quickSetup.password.why"
+msgstr "با این رمز عبور وارد بخش ادمین می‌شوید. حداقل ۸ کاراکتر استفاده کنید."
+
+msgid "adminV2.quickSetup.skip"
+msgstr "فعلاً رد شو"
+
+msgid "adminV2.quickSetup.stepOf"
+msgstr "مرحله {n} از {total}"
+
+msgid "adminV2.quickSetup.steps.domains.lead"
+msgstr "دامنه خود را به این سرور متصل کنید."
+
+msgid "adminV2.quickSetup.steps.domains.title"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.quickSetup.steps.finish.lead"
+msgstr "بیایید پیکربندی نهایی را برای اتمام راه‌اندازی انجام دهیم."
+
+msgid "adminV2.quickSetup.steps.finish.title"
+msgstr "پایان"
+
+msgid "adminV2.quickSetup.steps.language.lead"
+msgstr "زبان پنل ادمین و کشوری که کاربران شما در آن هستند را انتخاب کنید."
+
+msgid "adminV2.quickSetup.steps.language.title"
+msgstr "خوش آمدید"
+
+msgid "adminV2.quickSetup.steps.nodes.lead"
+msgstr ""
+"در صورت تمایل، سرورهای دیگر هیدیفای را متصل کنید تا از اینجا مدیریت شوند."
+
+msgid "adminV2.quickSetup.steps.nodes.title"
+msgstr "نودها"
+
+msgid "adminV2.quickSetup.steps.password.lead"
+msgstr "با یک رمز عبور از بخش ادمین محافظت کنید."
+
+msgid "adminV2.quickSetup.steps.password.title"
+msgstr "رمز عبور"
+
+msgid "adminV2.quickSetup.steps.protocols.lead"
+msgstr ""
+"پروتکل‌هایی که می‌خواهید ارائه دهید را انتخاب کنید. تا حد امکان کمترین تعداد"
+" را انتخاب کنید."
+
+msgid "adminV2.quickSetup.steps.protocols.title"
+msgstr "پروتکل‌ها"
+
+msgid "adminV2.quickSetup.subtitle"
+msgstr "با چند قدم، پنل شما آماده است."
+
+msgid "adminV2.quickSetup.title"
+msgstr "راه‌اندازی سریع"
+
 msgid "adminV2.saveBar.discard"
 msgstr "لغو تغییرات"
 

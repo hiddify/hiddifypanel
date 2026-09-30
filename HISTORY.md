@@ -36,6 +36,12 @@ Addresses CWE-78_
 
 #### Other
 
+* Feat: add quick setup feature for streamlined initial configuration. 
+  _- Introduced a new quick setup process to guide users through initial configuration steps.
+- Added components for language selection, password setup, domain management, and finalization.
+- Implemented API interactions for quick setup state management and domain handling.
+- Enhanced user experience with improved error handling and feedback mechanisms throughout the setup process._
+
 * Add copy qr  code  image. 
 
 * Feat: enhance domain mode handling and reality support. 
