@@ -24,6 +24,10 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v151(child_id):
+    pass
+
+
 def _v150(child_id):
     """One domain row per (node, domain name): normalize names and merge duplicates.
 
@@ -61,10 +65,6 @@ def _v150(child_id):
     db.session.commit()
     if merged:
         logger.info(f"Merged {merged} duplicate domain rows")
-
-
-def _v149(child_id):
-    pass
 
 
 def _v148(child_id):
