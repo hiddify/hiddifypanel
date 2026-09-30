@@ -6,9 +6,12 @@
     "users": [{
       "id": "{{ ctx.user.uuid }}",
       {# Xray rejects a VLESS user without an explicit encryption; only an xray server can terminate a real one. #}
-      "encryption": "{{ ctx.hconfig.vless_encryption if ctx.proxy.server_core == 'xray' and ctx.hconfig.vless_encryption else 'none' }}",
+      {# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
+      {%set has_encryption=ctx.proxy.server_core == 'xray' and ctx.hconfig.vless_encryption %}
+      {%set has_encryption =  has_encryption and not (ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality()) %}
+      "encryption": "{{ ctx.hconfig.vless_encryption if has_encryption else 'none' }}",
       {% if ctx.proxy.server_core == "xray" %}
-      "flow": "{{ ctx.hconfig.vless_flow }}",
+        "flow": "{{ ctx.hconfig.vless_flow }}",
       {% endif %}
       "level": 8
     }]

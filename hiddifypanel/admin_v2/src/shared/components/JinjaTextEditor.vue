@@ -4,7 +4,7 @@
       <template v-if="loadState === 'error'"><i class="pi pi-exclamation-triangle" /> {{ t('editor.loadFailed') }}</template>
       <template v-else><i class="pi pi-spin pi-spinner" /> {{ t('editor.loading') }}</template>
     </div>
-    <div ref="container" dir="ltr" :style="{ height: height ?? `${Math.max(rows ?? 6, 4) * 1.35}rem`, width: '100%' }" />
+    <div ref="container" dir="ltr" :style="{ minHeight: height ?? `${Math.max(rows ?? 6, 4) * 1.35}rem`, width: '100%' }" />
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Monaco } from '@/shared/monaco/monaco'
 import { ensureMonaco } from '@/shared/monaco/setup'
+import { fitEditorToContent } from '@/shared/monaco/fitContent'
 
 const props = defineProps<{
   modelValue: string
@@ -32,6 +33,7 @@ const container = ref<HTMLElement | null>(null)
 const loadState = ref<'loading' | 'ready' | 'error'>('loading')
 let editor: Monaco.editor.IStandaloneCodeEditor | null = null
 let unmounted = false
+let stopFitting: (() => void) | null = null
 
 function editorTheme(): string {
   return document.documentElement.classList.contains('app-dark') ? 'vs-dark' : 'vs'
@@ -64,8 +66,9 @@ onMounted(async () => {
     renderLineHighlight: 'line',
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,
-    scrollbar: { vertical: 'auto', horizontal: 'auto' },
+    scrollbar: { vertical: 'auto', horizontal: 'auto', alwaysConsumeMouseWheel: false },
   })
+  stopFitting = fitEditorToContent(editor, container.value)
   editor.onDidChangeModelContent(() => {
     emit('update:modelValue', editor!.getValue())
   })
@@ -102,6 +105,7 @@ watch(
 
 onBeforeUnmount(() => {
   unmounted = true
+  stopFitting?.()
   editor?.dispose()
 })
 </script>

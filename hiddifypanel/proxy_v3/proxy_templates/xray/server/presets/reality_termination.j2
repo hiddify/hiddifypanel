@@ -7,6 +7,18 @@
             "port": {{ ctx.proxy.tcp_port }}, 
             "protocol": "vless",
             "settings": {
+                "clients": [
+                    {% for u in ctx.users %}
+                    {
+                    "id": "{{ u.uuid }}",
+                    "email": "{{ u.uuid }}",
+                    {# raw VLESS clients connect here directly (xray server core: they send this flow) #}
+                    "flow": "{{ ctx.hconfig.vless_flow }}",
+                    },
+                    {% endfor %}
+                ],
+
+                {# xray rejects "decryption" together with "fallbacks": raw VLESS clients here use encryption none #}
                 "decryption": "none",
                 "fallbacks": [
                     {

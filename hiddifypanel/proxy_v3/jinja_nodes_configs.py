@@ -72,7 +72,7 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
     - ``core``: ``hiddify-core`` | ``singbox`` | ``xray`` | ``clash`` | ``sublink``; the core actually
       being rendered wins, so a sing-box sub (which reuses the hiddify-core template) asks for ``singbox``
     - ``cache``: TTL such as ``1h`` (default), ``30m``, ``0`` to disable
-    - ``sublink`` uses ``txt``; other cores use ``json``
+    - ``sublink`` uses ``txt``, ``clash`` uses ``yaml``; other cores use ``json``
     - POSTs JSON body with ``raw=true`` and ``Hiddify-API-Key`` header
     - No-ops on child panels / when serving another node (returns ``[]``)
     - Each node only receives domains with that node's ``child_id`` (never parent hosts)
@@ -101,7 +101,8 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
         return []
 
     available = get_available_domains(context)
-    content_type = "txt" if core_name == "sublink" else "json"
+    # Children render clash as YAML (a JSON parse would hand back the raw text).
+    content_type = {"sublink": "txt", "clash": "yaml"}.get(core_name, "json")
     merged: list[Any] = []
 
     for child in _remote_children():

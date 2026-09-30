@@ -102,6 +102,36 @@ def build_reality_termination_preset(child_id: int = 0) -> CustomProxyPreset:
     )
 
 
+# Raw VLESS over REALITY needs no inbound of its own: the REALITY termination inbound is a
+# VLESS inbound and serves it directly (only other traffic falls back to the gateway).
+RAW_VLESS_REALITY_SERVER_TEMPLATE = "{# raw VLESS over REALITY is served by the REALITY termination proxy #}"
+
+
+def is_raw_vless_reality_slot(slot: PresetSlot) -> bool:
+    primary = slot.primary
+    return primary.proto.lower() == "vless" and _raw_transport(primary.transport) == "tcp" and str(primary.l3).lower() == "reality"
+
+
+def build_raw_vless_reality_preset(slot: PresetSlot, child_id: int = 0) -> CustomProxyPreset:
+    """Client-only L7-gateway proxy on REALITY domains (direct/relay); the termination serves it."""
+    # Clients use the TLS templates: on a REALITY domain they switch to REALITY themselves.
+    client_combo = replace(slot.primary, l3="tls")
+    built = _build_preset(replace(slot, primary=client_combo, related=(client_combo,), tls_layer="tls"), "xray", RAW_VLESS_REALITY_SERVER_TEMPLATE, [], child_id)
+    return replace(
+        built,
+        name=preset_display_name(slot),
+        slug=proxy_slug(f"xray-{preset_slug_name(slot)}"),
+        mode=CustomProxyMode.domains_l7_gateway,
+        tls_layer="tls",
+        l7_reverse_proto=None,
+        categories=_build_categories(slot),
+        domain_modes=REALITY_DIRECT_RELAY_DOMAIN_MODES,
+        server_config=replace(built.server_config, inbound_tcp_ports=(), inbound_udp_ports=()),
+        tcp_udp=InboundTcpUdp.tcp,
+        is_common_proxy=False,
+    )
+
+
 def build_additional_config_preset(child_id: int = 0) -> CustomProxyPreset:
     """Client-only proxy that merges remote configs via Jinja ``download()``. Disabled by default."""
     del child_id  # presets are child-agnostic; sync applies child_id
@@ -575,6 +605,9 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
         primary = slot.primary
         if primary.proto.lower() in DNS_GATEWAY_PROTOS:
             rows.append(_build_dns_gateway_preset(slot, child_id))
+            continue
+        if is_raw_vless_reality_slot(slot):
+            rows.append(build_raw_vless_reality_preset(slot, child_id))
             continue
         l7_gateway = _preset_protocol(primary) == CustomProxyMode.domains_l7_gateway
         xray_built: tuple[str, list[str]] | None = None

@@ -36,10 +36,10 @@ export const BASE64_LINK_TEMPLATE = '{{ uri.protocol }}://{{ uri.content|trim|b6
 
 export const DEFAULT_URI_FORMAT: UriLinkFormat = {
   protocol: 'vless',
-  user: '{{ user.uuid }}',
+  user: '{{ ctx.user.uuid }}',
   password: '',
-  host: '{{ proxy.server }}',
-  port: '{{ proxy.port }}',
+  host: '{{ ctx.proxy.server }}',
+  port: '{{ ctx.proxy.port }}',
   path: '/',
   fragment: URI_FRAGMENT_INCLUDE,
   query_params: {
@@ -52,14 +52,14 @@ export const DEFAULT_URI_FORMAT: UriLinkFormat = {
 export const DEFAULT_BASE64_CONTENT = `{
   "v": "2",
   "ps": "{%- include 'client/tag' -%}",
-  "add": "{{ proxy.server }}",
-  "port": "{{ proxy.port }}",
-  "id": "{{ user.uuid }}",
+  "add": "{{ ctx.proxy.server }}",
+  "port": "{{ ctx.proxy.port }}",
+  "id": "{{ ctx.user.uuid }}",
   "aid": "0",
   "net": "tcp",
   "type": "none",
   "host": "",
-  "path": "{{ proxy.path }}",
+  "path": "{{ ctx.proxy.path }}",
   "tls": "tls"
 }`
 

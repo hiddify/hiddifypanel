@@ -108,14 +108,15 @@ def normalize_domain_modes(modes: Iterable[str] | None, *, default: Iterable[str
 
 
 def transport_tls_supports_reality(transport: str | None, tls_layer: str | None) -> bool:
-    """REALITY is only supported on gRPC, xHTTP H2, and raw HTTP with TLS."""
+    """REALITY is only supported on gRPC, xHTTP H2, raw HTTP with TLS, and raw TCP (VLESS served
+    by the REALITY termination inbound)."""
     transport_key = str(transport or "").strip().lower()
     layer = str(tls_layer or "").strip().lower()
     if transport_key == "http":
         return layer in _REALITY_TLS_LAYERS or layer == "tls_h1"
     if not transport_key or layer in _NO_REALITY_TLS_LAYERS:
         return False
-    if transport_key == "grpc":
+    if transport_key in ("grpc", "tcp"):
         return layer in _REALITY_TLS_LAYERS
     if transport_key == "xhttp":
         return layer == "tls_h2"

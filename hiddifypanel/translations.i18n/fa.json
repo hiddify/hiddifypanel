@@ -134,7 +134,7 @@
   "No certificate": "",
   "No children!": "هیچ زیر مجموعه ای یافت نشد",
   "No main domains found, please add at least one domain with valid certificate": "",
-  "Nodes": "",
+  "Nodes": "نودها",
   "Not Secure": "ناامن",
   "Note": "📝 یادداشت",
   "Offline more than 1 day": "آفلاین بیش از 1 روز",
@@ -879,7 +879,8 @@
         "other": "سایر",
         "tcp": "TCP",
         "ws": "WebSocket",
-        "xhttp": "xHTTP"
+        "xhttp": "xHTTP",
+        "http": "HTTP (خام)"
       },
       "uploadTcpUdp": "TCP یا UDP آپلود",
       "version": "نسخه"

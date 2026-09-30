@@ -1,9 +1,11 @@
-{{skip("unsupported vless encryption") if ctx.proxy.server_core == "xray" and ctx.platform.hiddify.version < "4.2.0" and ctx.hconfig.vless_encryption and ctx.hconfig.vless_encryption != "none"}}
+{# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
+{%set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+
 "type": "vless",
 "server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
 {% if ctx.proxy.server_core == "xray" %}
-"encryption": "{{ ctx.hconfig.vless_encryption }}",
+"encryption": "{{ 'none' if reality_terminated else ctx.hconfig.vless_encryption }}",
 "flow": "{{ ctx.hconfig.vless_flow }}",
 {% endif %}

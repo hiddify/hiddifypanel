@@ -22,6 +22,8 @@
     {% endif %}
   {% endif %}
   {# Xray needs an explicit encryption; only an xray server can terminate a real one. #}
-  {% set qp.encryption=ctx.hconfig.vless_encryption if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption else "none" %}
+  {# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
+  {% set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+  {% set qp.encryption=ctx.hconfig.vless_encryption if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption and not reality_terminated else "none" %}
   {% include 'sublink/uri/final_link_maker' %}
 {% endfor %}

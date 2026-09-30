@@ -4,7 +4,7 @@
       <template v-if="loadState === 'error'"><i class="pi pi-exclamation-triangle" /> {{ t('editor.loadFailed') }}</template>
       <template v-else><i class="pi pi-spin pi-spinner" /> {{ t('editor.loading') }}</template>
     </div>
-    <div ref="container" dir="ltr" :style="{ height: height ?? '320px', width: '100%' }" />
+    <div ref="container" dir="ltr" :style="{ minHeight: height ?? '320px', width: '100%' }" />
     <p v-if="localError" class="text-red-500 text-sm mt-1 mb-0">{{ localError }}</p>
   </div>
 </template>
@@ -14,6 +14,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Monaco } from '@/shared/monaco/monaco'
 import { JINJA_JSON_LANGUAGE, ensureMonaco } from '@/shared/monaco/setup'
+import { fitEditorToContent } from '@/shared/monaco/fitContent'
 import { validateJinjaJson } from '@/shared/utils/jinja-json'
 
 const props = defineProps<{
@@ -34,6 +35,7 @@ const localError = ref<string | null>(null)
 const loadState = ref<'loading' | 'ready' | 'error'>('loading')
 let editor: Monaco.editor.IStandaloneCodeEditor | null = null
 let unmounted = false
+let stopFitting: (() => void) | null = null
 
 function editorTheme(): string {
   return document.documentElement.classList.contains('app-dark') ? 'vs-dark' : 'vs'
@@ -82,8 +84,9 @@ onMounted(async () => {
     renderLineHighlight: 'none',
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,
-    scrollbar: { vertical: 'auto', horizontal: 'auto' },
+    scrollbar: { vertical: 'auto', horizontal: 'auto', alwaysConsumeMouseWheel: false },
   })
+  stopFitting = fitEditorToContent(editor, container.value)
   editor.onDidChangeModelContent(() => {
     const v = editor!.getValue()
     emit('update:modelValue', v)
@@ -113,6 +116,7 @@ watch(
 
 onBeforeUnmount(() => {
   unmounted = true
+  stopFitting?.()
   editor?.dispose()
 })
 </script>

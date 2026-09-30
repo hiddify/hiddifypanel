@@ -877,7 +877,8 @@
         "other": "Other",
         "tcp": "TCP",
         "ws": "WebSocket",
-        "xhttp": "xHTTP"
+        "xhttp": "xHTTP",
+        "http": "HTTP (raw)"
       },
       "uploadTcpUdp": "Upload TCP or UDP",
       "version": "Version"

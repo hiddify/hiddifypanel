@@ -992,7 +992,7 @@ def validate_tls_layer_domain_modes(
     layer = tls_layer.value if isinstance(tls_layer, TlsLayer) else tls_layer
     transport_key = transport.value if isinstance(transport, CustomProxyTransport) else transport
     if not transport_tls_supports_reality(transport_key, layer):
-        raise ValueError("REALITY is only supported on gRPC, xHTTP H2, and raw HTTP with TLS")
+        raise ValueError("REALITY is only supported on raw TCP, gRPC, xHTTP H2, and raw HTTP with TLS")
 
 
 def validate_naive_tls_layer(proto: ProxyProto | str | None, tls_layer: TlsLayer | None) -> None:

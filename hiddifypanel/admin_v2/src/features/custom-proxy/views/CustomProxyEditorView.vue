@@ -859,7 +859,7 @@ const defaultForm = (): CustomProxy => ({
     tag: '',
     direct_port_access: false,
     inbound_template:
-      '{\n  "listen": "127.0.0.1",\n  "listen_port": {{ proxy.port }},\n  "tag": "{{ proxy.tag }}"\n}',
+      '{\n  "listen": "127.0.0.1",\n  "listen_port": {{ ctx.proxy.port }},\n  "tag": "{{ ctx.proxy.tag }}"\n}',
   },
   client_config: {
     core_configs: [defaultSublinkCore()],
@@ -971,7 +971,8 @@ function transportTlsSupportsReality(transport: string | undefined | null, layer
   // raw HTTP ("rawhttp") also rides REALITY over TLS-h1.
   if (t === 'http') return l === 'tls' || l === 'tls_h2' || l === 'tls_h1'
   if (!t || l === 'http' || l === 'tls_h1' || l === 'quic_tls' || l === 'quic_tcp_tls') return false
-  if (t === 'grpc') return l === 'tls' || l === 'tls_h2'
+  // raw TCP: VLESS served by the REALITY termination inbound.
+  if (t === 'grpc' || t === 'tcp') return l === 'tls' || l === 'tls_h2'
   if (t === 'xhttp') return l === 'tls_h2'
   return false
 }
