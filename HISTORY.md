@@ -36,6 +36,8 @@ Addresses CWE-78_
 
 #### Other
 
+* Fixxray. 
+
 * Feat: add quick setup feature for streamlined initial configuration. 
   _- Introduced a new quick setup process to guide users through initial configuration steps.
 - Added components for language selection, password setup, domain management, and finalization.
