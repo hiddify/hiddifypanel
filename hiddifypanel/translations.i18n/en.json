@@ -873,12 +873,12 @@
       "transport": "Transport",
       "transportLabels": {
         "grpc": "gRPC",
+        "http": "HTTP (raw)",
         "httpupgrade": "HTTP Upgrade",
         "other": "Other",
         "tcp": "TCP",
         "ws": "WebSocket",
-        "xhttp": "xHTTP",
-        "http": "HTTP (raw)"
+        "xhttp": "xHTTP"
       },
       "uploadTcpUdp": "Upload TCP or UDP",
       "version": "Version"

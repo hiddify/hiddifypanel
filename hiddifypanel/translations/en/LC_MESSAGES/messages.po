@@ -2632,6 +2632,9 @@ msgstr "Transport"
 msgid "adminV2.proxy.transportLabels.grpc"
 msgstr "gRPC"
 
+msgid "adminV2.proxy.transportLabels.http"
+msgstr "HTTP (raw)"
+
 msgid "adminV2.proxy.transportLabels.httpupgrade"
 msgstr "HTTP Upgrade"
 

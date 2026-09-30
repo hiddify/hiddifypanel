@@ -875,12 +875,12 @@
       "transport": "لایه انتقال",
       "transportLabels": {
         "grpc": "gRPC",
+        "http": "HTTP (خام)",
         "httpupgrade": "HTTP Upgrade",
         "other": "سایر",
         "tcp": "TCP",
         "ws": "WebSocket",
-        "xhttp": "xHTTP",
-        "http": "HTTP (خام)"
+        "xhttp": "xHTTP"
       },
       "uploadTcpUdp": "TCP یا UDP آپلود",
       "version": "نسخه"
