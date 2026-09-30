@@ -150,6 +150,9 @@ msgstr "配置文件不正确。"
 msgid "Copy Link"
 msgstr "复制链接"
 
+msgid "Copy QR image"
+msgstr ""
+
 msgid "Couldn't find your ip addresses"
 msgstr "找不到您的 IP 地址"
 
@@ -635,11 +638,17 @@ msgstr ""
 "捐赠后请联系<a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>。\n"
 "发送消息获取商业用户专用版本。"
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath 已被使用！使用不同的代理路径"
 
 msgid "QR code"
 msgstr "🧾 二维码"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"

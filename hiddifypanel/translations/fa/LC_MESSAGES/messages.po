@@ -151,6 +151,9 @@ msgstr "فایل کانفیگ اشتباه است"
 msgid "Copy Link"
 msgstr "کپی لینک"
 
+msgid "Copy QR image"
+msgstr ""
+
 msgid "Couldn't find your ip addresses"
 msgstr "آدرس های IP شما پیدا نشد"
 
@@ -261,7 +264,7 @@ msgstr ""
 " <ul>\n"
 "    <li> <div class='btn-group'>\n"
 "        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
+"    <a data-copy='UQDGA32X8-xgRrZnzW0uPP-ChssO2dRLQ5NPubKj3sBqHwNp' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
 "    \n"
 "    <li> <div class='btn-group'>\n"
 "        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
@@ -642,11 +645,17 @@ msgstr ""
 "لطفا پس از دونیت کردن به <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>\n"
 "پیام دهید تا نسخه ویژه ی کاربران تجاری به شما ارائه شود."
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath قبلاً استفاده شده است! از مسیرهای مختلف پروکسی استفاده کنید"
 
 msgid "QR code"
 msgstr "🧾 کیوآر کد"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QR Code "
@@ -1143,6 +1152,19 @@ msgstr "مشاهده فایل‌های لاگ سیستم."
 msgid "adminV2.appTitle"
 msgstr "هیدیفای منیجر"
 
+msgid "adminV2.applyNotice.apply"
+msgstr "ذخیره شد. برای اعمال تغییرات، کانفیگ‌ها را اعمال کنید."
+
+msgid "adminV2.applyNotice.later"
+msgstr "بعداً"
+
+msgid "adminV2.applyNotice.reinstall"
+msgstr "ذخیره شد. برخی تغییرات نیاز به نصب مجدد دارند."
+
+msgid "adminV2.applyNotice.update"
+msgstr ""
+"ذخیره شد. کانال به‌روزرسانی تغییر کرد؛ برای اعمال، به‌روزرسانی را اجرا کنید."
+
 msgid "adminV2.baseConfig.builtinDefaultHint"
 msgstr ""
 "کانفیگ پایه داخلی از کاتالوگ همگام می‌شود. برای ویرایش، محتوای سفارشی را "
@@ -1577,6 +1599,27 @@ msgstr "دامنه"
 msgid "adminV2.domain.mode"
 msgstr "حالت"
 
+msgid "adminV2.donation.close"
+msgstr "بستن"
+
+msgid "adminV2.donation.copied"
+msgstr "آدرس {name} کپی شد"
+
+msgid "adminV2.donation.copiedShort"
+msgstr "کپی شد"
+
+msgid "adminV2.donation.qr"
+msgstr "کد QR"
+
+msgid "adminV2.donation.qrOf"
+msgstr "کد QR آدرس {name}"
+
+msgid "adminV2.donation.showQr"
+msgstr "نمایش کد QR برای {name}"
+
+msgid "adminV2.donation.title"
+msgstr "حمایت"
+
 msgid "adminV2.editor.cannotFormatJinja"
 msgstr "قالب‌بندی خودکار با تگ‌های Jinja ممکن نیست"
 
@@ -1596,6 +1639,12 @@ msgid "adminV2.editor.jinjaHint"
 msgstr ""
 "JSON5 + Jinja: از {{ proxy.port }}، {{ proxy.tag }}، {% for %}…{% endfor %} "
 "استفاده کنید"
+
+msgid "adminV2.editor.loadFailed"
+msgstr "ویرایشگر بارگذاری نشد. اتصال را بررسی و صفحه را دوباره بارگذاری کنید."
+
+msgid "adminV2.editor.loading"
+msgstr "در حال بارگذاری ویرایشگر…"
 
 msgid "adminV2.editor.noVariables"
 msgstr "متغیری با این جستجو یافت نشد"
@@ -1621,6 +1670,15 @@ msgstr "پیش‌نمایش قالب"
 msgid "adminV2.footer.text"
 msgstr "هیدیفای منیجر"
 
+msgid "adminV2.legacy.loading"
+msgstr "در حال بارگذاری…"
+
+msgid "adminV2.legacy.refresh"
+msgstr "بارگذاری مجدد"
+
+msgid "adminV2.legacy.title"
+msgstr "صفحه ادمین قدیمی"
+
 msgid "adminV2.menu.baseConfigs"
 msgstr "کانفیگ‌های پایه"
 
@@ -1630,17 +1688,23 @@ msgstr "پروکسی‌ها"
 msgid "adminV2.menu.dashboard"
 msgstr "داشبورد"
 
+msgid "adminV2.menu.group.help"
+msgstr "راهنما"
+
+msgid "adminV2.menu.group.manager"
+msgstr "مدیریت"
+
+msgid "adminV2.menu.group.settings"
+msgstr "تنظیمات"
+
+msgid "adminV2.menu.nodeHome"
+msgstr "نود"
+
+msgid "adminV2.menu.protocols"
+msgstr "پروتکل‌ها"
+
 msgid "adminV2.menu.proxyEditor"
 msgstr "ویرایشگر پروکسی"
-
-msgid "adminV2.menu.sectionMain"
-msgstr "اصلی"
-
-msgid "adminV2.menu.sectionNew"
-msgstr "جدید"
-
-msgid "adminV2.menu.sectionV2"
-msgstr "جدید"
 
 msgid "adminV2.menu.templateVariables"
 msgstr "متغیرهای قالب"
@@ -1650,6 +1714,240 @@ msgstr "قالب‌ها"
 
 msgid "adminV2.menu.utils"
 msgstr "ابزارها"
+
+msgid "adminV2.nodeHome.connectedTo"
+msgstr "این نود به پنل مرکزی متصل است:"
+
+msgid "adminV2.nodeHome.managedOnParent"
+msgstr ""
+"کاربران، ادمین‌ها و داشبورد در پنل مرکزی مدیریت می‌شوند. اینجا فقط دامنه‌ها،"
+" پروکسی‌ها و سرور این نود را مدیریت می‌کنید."
+
+msgid "adminV2.nodeHome.noParent"
+msgstr "این نود هنوز به پنل مرکزی متصل نشده است."
+
+msgid "adminV2.nodeHome.openParent"
+msgstr "باز کردن داشبورد مرکزی"
+
+msgid "adminV2.nodeHome.subtitle"
+msgstr "این پنل یک نود از پنل مرکزی است."
+
+msgid "adminV2.nodeHome.title"
+msgstr "نود"
+
+msgid "adminV2.nodeHome.titleNamed"
+msgstr "نود: {name}"
+
+msgid "adminV2.nodes.add.connecting"
+msgstr "در حال اتصال به نود… ممکن است تا یک دقیقه طول بکشد."
+
+msgid "adminV2.nodes.add.linkHint"
+msgstr "مانند https://node.example.com/…/xxxxxxxx-xxxx-…/admin/"
+
+msgid "adminV2.nodes.add.linkInvalid"
+msgstr ""
+"این لینک کامل ادمین نیست. باید با https:// شروع شود و شناسه ادمین را داشته "
+"باشد."
+
+msgid "adminV2.nodes.add.linkLabel"
+msgstr "لینک ادمین نود"
+
+msgid "adminV2.nodes.add.linkOk"
+msgstr "نود در {host}"
+
+msgid "adminV2.nodes.add.nameLabel"
+msgstr "نام"
+
+msgid "adminV2.nodes.add.namePlaceholder"
+msgstr "مثلاً آلمان ۱"
+
+msgid "adminV2.nodes.add.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.nodes.add.step1"
+msgstr "پنل ادمین سروری که می‌خواهید اضافه کنید را باز کنید."
+
+msgid "adminV2.nodes.add.step2"
+msgstr "آدرس کامل آن را از نوار آدرس مرورگر کپی کنید."
+
+msgid "adminV2.nodes.add.step3"
+msgstr "آن را اینجا وارد کنید و «اتصال» را بزنید."
+
+msgid "adminV2.nodes.add.submit"
+msgstr "اتصال نود"
+
+msgid "adminV2.nodes.add.success"
+msgstr "نود متصل شد"
+
+msgid "adminV2.nodes.add.title"
+msgstr "افزودن نود"
+
+msgid "adminV2.nodes.addNode"
+msgstr "افزودن نود"
+
+msgid "adminV2.nodes.checkConnection"
+msgstr "بررسی اتصال"
+
+msgid "adminV2.nodes.checking"
+msgstr "در حال بررسی…"
+
+msgid "adminV2.nodes.connection"
+msgstr "اتصال"
+
+msgid "adminV2.nodes.differentVersion"
+msgstr ""
+"نود نسخه {node} و این پنل نسخه {panel} است. آن‌ها را هم‌نسخه نگه دارید."
+
+msgid "adminV2.nodes.empty.cta"
+msgstr "افزودن اولین نود"
+
+msgid "adminV2.nodes.empty.point1"
+msgstr "همگام‌سازی خودکار کاربران و ادمین‌ها"
+
+msgid "adminV2.nodes.empty.point2"
+msgstr "جمع‌آوری مصرف در این پنل"
+
+msgid "adminV2.nodes.empty.point3"
+msgstr "ورود به پنل هر نود با یک کلیک"
+
+msgid "adminV2.nodes.empty.text"
+msgstr ""
+"یک سرور هیدیفای دیگر را به‌عنوان نود اضافه کنید تا همه سرورها را از این پنل "
+"مدیریت کنید."
+
+msgid "adminV2.nodes.empty.title"
+msgstr "هنوز نودی ندارید"
+
+msgid "adminV2.nodes.errors.invalid_link"
+msgstr "این لینک، لینک معتبر ادمین نیست."
+
+msgid "adminV2.nodes.errors.rejected"
+msgstr ""
+"نود اتصال را نپذیرفت. ممکن است متعلق به پنل مرکزی دیگری باشد یا نسخه آن "
+"قدیمی باشد."
+
+msgid "adminV2.nodes.errors.self"
+msgstr "این لینک همین پنل است. لینک سرور نود را وارد کنید."
+
+msgid "adminV2.nodes.errors.timeout"
+msgstr "پاسخ نود بیش از حد طول کشید. آن را بررسی و دوباره تلاش کنید."
+
+msgid "adminV2.nodes.errors.unreachable"
+msgstr "نود در دسترس نیست. لینک و آنلاین بودن نود را بررسی کنید."
+
+msgid "adminV2.nodes.info.fromNode"
+msgstr "آخرین پیام از نود"
+
+msgid "adminV2.nodes.info.lastUsage"
+msgstr "آخرین بروزرسانی مصرف کاربران"
+
+msgid "adminV2.nodes.info.noUsageYet"
+msgstr "هنوز مصرفی گزارش نشده"
+
+msgid "adminV2.nodes.info.toNode"
+msgstr "آخرین پیام به نود"
+
+msgid "adminV2.nodes.info.todayOnline"
+msgstr "کاربران آنلاین امروز"
+
+msgid "adminV2.nodes.info.todayTraffic"
+msgstr "ترافیک امروز"
+
+msgid "adminV2.nodes.info.usageReport"
+msgstr "{users} کاربر با ترافیک، {traffic}"
+
+msgid "adminV2.nodes.justNow"
+msgstr "همین الان"
+
+msgid "adminV2.nodes.lastSeen"
+msgstr "آخرین ارتباط"
+
+msgid "adminV2.nodes.moreInfo"
+msgstr "اطلاعات بیشتر"
+
+msgid "adminV2.nodes.neverSeen"
+msgstr "هرگز"
+
+msgid "adminV2.nodes.openAdmin"
+msgstr "ورود به نود"
+
+msgid "adminV2.nodes.reachable"
+msgstr "در دسترس"
+
+msgid "adminV2.nodes.refresh"
+msgstr "بروزرسانی"
+
+msgid "adminV2.nodes.remove"
+msgstr "حذف"
+
+msgid "adminV2.nodes.removeMessage"
+msgstr ""
+"نود همراه با دامنه‌هایش از این پنل حذف می‌شود و خود نود دوباره به پنل مستقل "
+"تبدیل می‌شود (لینک والد آن پاک می‌شود). برای اتصال دوباره، آن را دوباره "
+"اضافه کنید."
+
+msgid "adminV2.nodes.removeTitle"
+msgstr "{name} حذف شود؟"
+
+msgid "adminV2.nodes.removed"
+msgstr "{name} حذف شد"
+
+msgid "adminV2.nodes.removedNotUnlinked"
+msgstr ""
+"نود در دسترس نبود، پس هنوز این پنل را والد خود می‌داند. لینک والد را در "
+"تنظیمات آن پاک کنید، وگرنه به تلاش برای همگام‌سازی ادامه می‌دهد."
+
+msgid "adminV2.nodes.rename"
+msgstr "تغییر نام"
+
+msgid "adminV2.nodes.renamed"
+msgstr "نام به {name} تغییر کرد"
+
+msgid "adminV2.nodes.renamedHereOnly"
+msgstr "نام فقط در این پنل به {name} تغییر کرد"
+
+msgid "adminV2.nodes.renamedHereOnlyDetail"
+msgstr ""
+"نود در دسترس نبود یا نسخه آن قدیمی است؛ ممکن است پس از ثبت مجدد، نام قبلی "
+"نمایش داده شود."
+
+msgid "adminV2.nodes.sameVersion"
+msgstr "هم‌نسخه با این پنل"
+
+msgid "adminV2.nodes.showLess"
+msgstr "نمایش کمتر"
+
+msgid "adminV2.nodes.status.late"
+msgstr "با تأخیر"
+
+msgid "adminV2.nodes.status.never"
+msgstr "هنوز متصل نشده"
+
+msgid "adminV2.nodes.status.offline"
+msgstr "آفلاین"
+
+msgid "adminV2.nodes.status.online"
+msgstr "آنلاین"
+
+msgid "adminV2.nodes.subtitle"
+msgstr ""
+"سرورهای دیگر هیدیفای که به این پنل متصل هستند. کاربران و ادمین‌ها به‌صورت "
+"خودکار با آن‌ها به اشتراک گذاشته می‌شوند."
+
+msgid "adminV2.nodes.syncFailed"
+msgstr "همگام‌سازی {name} ناموفق بود"
+
+msgid "adminV2.nodes.syncNow"
+msgstr "همگام‌سازی"
+
+msgid "adminV2.nodes.synced"
+msgstr "{name} همگام شد"
+
+msgid "adminV2.nodes.title"
+msgstr "نودها"
+
+msgid "adminV2.nodes.unreachable"
+msgstr "در دسترس نیست"
 
 msgid "adminV2.primevue.accept"
 msgstr "بله"
@@ -1680,6 +1978,79 @@ msgstr "خیر"
 
 msgid "adminV2.primevue.upload"
 msgstr "بارگذاری"
+
+msgid "adminV2.protocols.changed"
+msgstr "تغییر کرده"
+
+msgid "adminV2.protocols.disableAll"
+msgstr "غیرفعال‌سازی همه"
+
+msgid "adminV2.protocols.enableAll"
+msgstr "فعال‌سازی همه"
+
+msgid "adminV2.protocols.enabledOf"
+msgstr "{on} از {total} فعال"
+
+msgid "adminV2.protocols.filterAll"
+msgstr "همه"
+
+msgid "adminV2.protocols.filterOff"
+msgstr "خاموش"
+
+msgid "adminV2.protocols.filterOn"
+msgstr "روشن"
+
+msgid "adminV2.protocols.groups.other.hint"
+msgstr "سایر گزینه‌ها"
+
+msgid "adminV2.protocols.groups.other.title"
+msgstr "سایر"
+
+msgid "adminV2.protocols.groups.protocols.hint"
+msgstr "پروتکل‌های پروکسی ارائه‌شده به کاربران"
+
+msgid "adminV2.protocols.groups.protocols.title"
+msgstr "پروتکل‌ها"
+
+msgid "adminV2.protocols.groups.security.hint"
+msgstr "Reality، ترفندهای TLS و Mux"
+
+msgid "adminV2.protocols.groups.security.title"
+msgstr "امنیت و ترفندها"
+
+msgid "adminV2.protocols.groups.transports.hint"
+msgstr "نحوه انتقال ترافیک (TCP، WebSocket، gRPC و …)"
+
+msgid "adminV2.protocols.groups.transports.title"
+msgstr "روش‌های انتقال"
+
+msgid "adminV2.protocols.instantChip"
+msgstr "فوری"
+
+msgid "adminV2.protocols.leaveUnsaved"
+msgstr "تغییرات ذخیره‌نشده دارید. خارج می‌شوید؟"
+
+msgid "adminV2.protocols.noMatch"
+msgstr "موردی پیدا نشد."
+
+msgid "adminV2.protocols.reinstallChip"
+msgstr "نیاز به نصب مجدد"
+
+msgid "adminV2.protocols.relatedSettings"
+msgstr "تنظیمات"
+
+msgid "adminV2.protocols.search"
+msgstr "جستجوی پروتکل…"
+
+msgid "adminV2.protocols.subtitle"
+msgstr ""
+"پروتکل‌ها، روش‌های انتقال و ترفندهای TLS را برای کل پنل روشن یا خاموش کنید."
+
+msgid "adminV2.protocols.summaryHint"
+msgstr "روی هر کارت بزنید تا تغییر کند، سپس ذخیره کنید."
+
+msgid "adminV2.protocols.title"
+msgstr "پروتکل‌ها"
 
 msgid "adminV2.proxy.addClient"
 msgstr "افزودن کلاینت"
@@ -2279,6 +2650,78 @@ msgstr "TCP یا UDP آپلود"
 
 msgid "adminV2.proxy.version"
 msgstr "نسخه"
+
+msgid "adminV2.saveBar.discard"
+msgstr "لغو تغییرات"
+
+msgid "adminV2.saveBar.unsaved"
+msgstr "{count} تغییر ذخیره‌نشده"
+
+msgid "adminV2.settings.adminPathChanged"
+msgstr ""
+"مسیر ادمین تغییر کرد. پس از اعمال کانفیگ‌ها، پنل ادمین در این آدرس خواهد بود"
+
+msgid "adminV2.settings.advancedBadge"
+msgstr "پیشرفته"
+
+msgid "adminV2.settings.categories"
+msgstr "دسته‌های تنظیمات"
+
+msgid "adminV2.settings.changed"
+msgstr "تغییر کرده"
+
+msgid "adminV2.settings.fixErrors"
+msgstr "لطفاً فیلدهای مشخص‌شده را اصلاح کنید."
+
+msgid "adminV2.settings.hiddenCount"
+msgstr "{count} تنظیم پیشرفته پنهان است"
+
+msgid "adminV2.settings.invalid"
+msgstr "این مقدار معتبر نیست."
+
+msgid "adminV2.settings.leaveUnsaved"
+msgstr "تغییرات ذخیره‌نشده دارید. خارج می‌شوید؟"
+
+msgid "adminV2.settings.noMatch"
+msgstr "هیچ تنظیمی با جستجوی شما مطابقت ندارد."
+
+msgid "adminV2.settings.openProtocols"
+msgstr "پروتکل‌ها"
+
+msgid "adminV2.settings.reinstallBadge"
+msgstr "نصب مجدد"
+
+msgid "adminV2.settings.reinstallHint"
+msgstr "تغییر این مورد نیاز به نصب مجدد دارد"
+
+msgid "adminV2.settings.reloading"
+msgstr "زبان تغییر کرد، در حال بارگذاری مجدد…"
+
+msgid "adminV2.settings.required"
+msgstr "این فیلد الزامی است."
+
+msgid "adminV2.settings.search"
+msgstr "جستجو در همه تنظیمات…"
+
+msgid "adminV2.settings.showAdvanced"
+msgstr "نمایش تنظیمات پیشرفته"
+
+msgid "adminV2.settings.showAdvancedIn"
+msgstr "نمایش {count} تنظیم پیشرفته"
+
+msgid "adminV2.settings.showLess"
+msgstr "نمایش کمتر"
+
+msgid "adminV2.settings.showMore"
+msgstr "نمایش {count} تنظیم پیشرفته دیگر"
+
+msgid "adminV2.settings.subtitle"
+msgstr ""
+"همه چیز درباره نحوه کار این پنل. تنظیمات رایج اول؛ تنظیمات پیشرفته در صورت "
+"درخواست."
+
+msgid "adminV2.settings.title"
+msgstr "تنظیمات"
 
 msgid "adminV2.template.builtin"
 msgstr "داخلی"

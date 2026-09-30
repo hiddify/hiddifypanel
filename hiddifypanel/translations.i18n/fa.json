@@ -46,6 +46,7 @@
   "Commercial use": "استفاده تجاری",
   "Config file is incorrect": "فایل کانفیگ اشتباه است",
   "Copy Link": "کپی لینک",
+  "Copy QR image": "",
   "Couldn't find your ip addresses": "آدرس های IP شما پیدا نشد",
   "Count:": "تعداد:",
   "Create": "ایجاد",
@@ -168,8 +169,10 @@
   "Port 80 and 443 can not be selected": "پورت‌های ۸۰ و ۴۴۳ قابل انتخاب نیستند",
   "Port is already used! in": "پورت قبلا استفاده شده است در",
   "Premium Description": "پنل هیدیفای برای استفاده غیرتجاری ساخته شده است. اما چنانچه از این پنل استفاده تجاری می‌کنید، از شما خواهشمندیم با دونیت کردن به رشد پروژه کمک کنید. <br/>\nدر عوض حمایت مالی شما، امکانات ویژه ای هم برای محصول تجاری شما فراهم می‌کنیم.\n<br/>\n<br/>\nاز قبیل:\n<ul>\n<li>امکان سینک شدن به کلودفلر: یعنی با افزودن دامنه در پنل، تنظیمات مربوطه در کلود فلر نیز انجام شود</li>\n<li>امکان نمایش برند شما در پنل</li>\n<li>امکان استفاده از پنل مرکزی جهت مدیریت بیش از ۱ سرور در فقط یک پنل بنابراین دیگر لازم نیست کاربران را در سرورهای مختلف ثبت کنید و همین طور حجم آنها در تمام سرورها جمع خواهد شد.\n</li>\n<li>\nامکان استفاده از بات تلگرام\n</li>\n<li>\nامکان تغییر نام پروکسی ها\n</li>\n</ul>\n\nلطفا پس از دونیت کردن به <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>\nپیام دهید تا نسخه ویژه ی کاربران تجاری به شما ارائه شود.",
+  "Proxy Editor": "",
   "ProxyPath is already used! use different proxy path": "ProxyPath قبلاً استفاده شده است! از مسیرهای مختلف پروکسی استفاده کنید",
   "QR code": "🧾 کیوآر کد",
+  "QR code image copied": "",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QR Code ",
   "RAM": "رم",
   "REALITY Fallback domain is not compaitble with server names!": "دامنه بازگشتی REALITY با نام سرور سازگار نیست!",
@@ -524,9 +527,9 @@
       "customProxies": "پروکسی‌ها",
       "dashboard": "داشبورد",
       "group": {
+        "help": "راهنما",
         "manager": "مدیریت",
-        "settings": "تنظیمات",
-        "help": "راهنما"
+        "settings": "تنظیمات"
       },
       "nodeHome": "نود",
       "protocols": "پروتکل‌ها",

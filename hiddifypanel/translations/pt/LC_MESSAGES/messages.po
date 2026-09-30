@@ -151,6 +151,9 @@ msgstr "O arquivo de configuração está incorreto."
 msgid "Copy Link"
 msgstr "Link de cópia"
 
+msgid "Copy QR image"
+msgstr ""
+
 msgid "Couldn't find your ip addresses"
 msgstr "Não foi possível encontrar seus endereços IP"
 
@@ -616,11 +619,17 @@ msgstr ""
 "Entre em contato com <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> após a doação.\n"
 "Envie uma mensagem para obter uma versão especial para usuários corporativos."
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath já está em uso! usar caminho de proxy diferente"
 
 msgid "QR code"
 msgstr "🧾 Código QR"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"

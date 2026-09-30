@@ -46,6 +46,7 @@
   "Commercial use": "Commercial use",
   "Config file is incorrect": "Config file is incorrect.",
   "Copy Link": "Copy Link",
+  "Copy QR image": "Copy QR image",
   "Couldn't find your ip addresses": "Couldn't find your IP Addresses",
   "Count:": "Count:",
   "Create": "Create",
@@ -168,8 +169,10 @@
   "Port 80 and 443 can not be selected": "Port 80 and 443 can not be selected",
   "Port is already used! in": "Port is Already Used in:",
   "Premium Description": "Hiddify Manager Is Made For Non-Commercial Use. But If You Use This Panel Commercially, Please Help The Project Grow By Donating. <br/>\nIn Exchange For Your Financial Support, We Also Provide Special Facilities For Your Commercial Product.\n<br/>\n<br/>\nSuch as:\n<ul><li>\n<li>The Possibility Of Syncing To Cloudflare: That Is, By Adding a Domain In The Panel, The Relevant Settings Can Also Be Made In Cloudflare</li>\n<li>Possibility Of Displaying Your Brand In The Panel</li>\n<li>Possibility Of Using The Central Panel To Manage More Than 1 Server In Just One Panel, So It Is No Longer Necessary To Register Users In Different Servers, And Their Volume Will Be Collected In All Servers.\n</li>\n<li>\nThe Possibility Of Using The Telegram Bot\n</li>\n<li>\nAbility To Change Proxy Names\n</li>\n</ul>\n\nPlease Contact <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> After Donating.\nSend a Message To Get a Special Version for business users.",
+  "Proxy Editor": "Proxy Editor",
   "ProxyPath is already used! use different proxy path": "ProxyPath is already used! use different proxy path",
   "QR code": "🧾 QR Code",
+  "QR code image copied": "QR code image copied",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "RAM",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain is not compaitble with Server names!",
@@ -522,9 +525,9 @@
       "customProxies": "Proxies",
       "dashboard": "Dashboard",
       "group": {
+        "help": "Help",
         "manager": "Manager",
-        "settings": "Settings",
-        "help": "Help"
+        "settings": "Settings"
       },
       "nodeHome": "Node",
       "protocols": "Protocols",

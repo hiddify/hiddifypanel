@@ -150,6 +150,9 @@ msgstr "Config file is incorrect."
 msgid "Copy Link"
 msgstr "Copy Link"
 
+msgid "Copy QR image"
+msgstr "Copy QR image"
+
 msgid "Couldn't find your ip addresses"
 msgstr "Couldn't find your IP Addresses"
 
@@ -262,7 +265,7 @@ msgstr ""
 "    <ul>\n"
 "    <li> <div class='btn-group'>\n"
 "        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
+"    <a data-copy='UQDGA32X8-xgRrZnzW0uPP-ChssO2dRLQ5NPubKj3sBqHwNp' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
 "    \n"
 "    <li> <div class='btn-group'>\n"
 "        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
@@ -652,11 +655,17 @@ msgstr ""
 "Please Contact <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> After Donating.\n"
 "Send a Message To Get a Special Version for business users."
 
+msgid "Proxy Editor"
+msgstr "Proxy Editor"
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath is already used! use different proxy path"
 
 msgid "QR code"
 msgstr "🧾 QR Code"
+
+msgid "QR code image copied"
+msgstr "QR code image copied"
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"
@@ -1150,6 +1159,18 @@ msgstr "Browse the system log files."
 msgid "adminV2.appTitle"
 msgstr "HiddifyManager"
 
+msgid "adminV2.applyNotice.apply"
+msgstr "Saved. Apply the configs to put the changes into effect."
+
+msgid "adminV2.applyNotice.later"
+msgstr "Later"
+
+msgid "adminV2.applyNotice.reinstall"
+msgstr "Saved. Some changes need a reinstall to take effect."
+
+msgid "adminV2.applyNotice.update"
+msgstr "Saved. The update channel changed; run an update to switch."
+
 msgid "adminV2.baseConfig.builtinDefaultHint"
 msgstr ""
 "Built-in base config synced from catalog. Enable custom content to edit it."
@@ -1578,6 +1599,27 @@ msgstr "Domain"
 msgid "adminV2.domain.mode"
 msgstr "Mode"
 
+msgid "adminV2.donation.close"
+msgstr "Close"
+
+msgid "adminV2.donation.copied"
+msgstr "{name} address copied"
+
+msgid "adminV2.donation.copiedShort"
+msgstr "Copied"
+
+msgid "adminV2.donation.qr"
+msgstr "QR code"
+
+msgid "adminV2.donation.qrOf"
+msgstr "QR code of the {name} address"
+
+msgid "adminV2.donation.showQr"
+msgstr "Show QR code for {name}"
+
+msgid "adminV2.donation.title"
+msgstr "Donation"
+
 msgid "adminV2.editor.cannotFormatJinja"
 msgstr "Cannot auto-format while Jinja tags are present"
 
@@ -1596,6 +1638,13 @@ msgstr "Insert variable"
 msgid "adminV2.editor.jinjaHint"
 msgstr ""
 "JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}"
+
+msgid "adminV2.editor.loadFailed"
+msgstr ""
+"The editor could not be loaded. Check your connection and reload the page."
+
+msgid "adminV2.editor.loading"
+msgstr "Loading editor…"
 
 msgid "adminV2.editor.noVariables"
 msgstr "No variables match your search"
@@ -1621,6 +1670,15 @@ msgstr "Template preview"
 msgid "adminV2.footer.text"
 msgstr "HiddifyManager"
 
+msgid "adminV2.legacy.loading"
+msgstr "Loading…"
+
+msgid "adminV2.legacy.refresh"
+msgstr "Refresh"
+
+msgid "adminV2.legacy.title"
+msgstr "Classic admin page"
+
 msgid "adminV2.menu.baseConfigs"
 msgstr "Base Configs"
 
@@ -1630,17 +1688,23 @@ msgstr "Proxies"
 msgid "adminV2.menu.dashboard"
 msgstr "Dashboard"
 
+msgid "adminV2.menu.group.help"
+msgstr "Help"
+
+msgid "adminV2.menu.group.manager"
+msgstr "Manager"
+
+msgid "adminV2.menu.group.settings"
+msgstr "Settings"
+
+msgid "adminV2.menu.nodeHome"
+msgstr "Node"
+
+msgid "adminV2.menu.protocols"
+msgstr "Protocols"
+
 msgid "adminV2.menu.proxyEditor"
 msgstr "Proxy Editor"
-
-msgid "adminV2.menu.sectionMain"
-msgstr "Main"
-
-msgid "adminV2.menu.sectionNew"
-msgstr "New"
-
-msgid "adminV2.menu.sectionV2"
-msgstr "New"
 
 msgid "adminV2.menu.templateVariables"
 msgstr "Template Variables"
@@ -1650,6 +1714,242 @@ msgstr "Templates"
 
 msgid "adminV2.menu.utils"
 msgstr "Utils"
+
+msgid "adminV2.nodeHome.connectedTo"
+msgstr "This node is connected to the parent panel"
+
+msgid "adminV2.nodeHome.managedOnParent"
+msgstr ""
+"Users, admins and the dashboard are managed on the parent panel. Here you "
+"manage only this node's domains, proxies and server."
+
+msgid "adminV2.nodeHome.noParent"
+msgstr "This node is not connected to a parent panel yet."
+
+msgid "adminV2.nodeHome.openParent"
+msgstr "Open parent dashboard"
+
+msgid "adminV2.nodeHome.subtitle"
+msgstr "This panel is a node of a parent panel."
+
+msgid "adminV2.nodeHome.title"
+msgstr "Node"
+
+msgid "adminV2.nodeHome.titleNamed"
+msgstr "Node: {name}"
+
+msgid "adminV2.nodes.add.connecting"
+msgstr "Connecting to the node… this can take up to a minute."
+
+msgid "adminV2.nodes.add.linkHint"
+msgstr "Looks like https://node.example.com/…/xxxxxxxx-xxxx-…/admin/"
+
+msgid "adminV2.nodes.add.linkInvalid"
+msgstr ""
+"This doesn't look like a full admin link. It must start with https:// and "
+"contain the admin ID."
+
+msgid "adminV2.nodes.add.linkLabel"
+msgstr "Node admin link"
+
+msgid "adminV2.nodes.add.linkOk"
+msgstr "Node at {host}"
+
+msgid "adminV2.nodes.add.nameLabel"
+msgstr "Name"
+
+msgid "adminV2.nodes.add.namePlaceholder"
+msgstr "e.g. Germany 1"
+
+msgid "adminV2.nodes.add.optional"
+msgstr "optional"
+
+msgid "adminV2.nodes.add.step1"
+msgstr "Open the admin panel of the server you want to add."
+
+msgid "adminV2.nodes.add.step2"
+msgstr "Copy its full address from the browser's address bar."
+
+msgid "adminV2.nodes.add.step3"
+msgstr "Paste it below and press Connect."
+
+msgid "adminV2.nodes.add.submit"
+msgstr "Connect node"
+
+msgid "adminV2.nodes.add.success"
+msgstr "Node connected"
+
+msgid "adminV2.nodes.add.title"
+msgstr "Add a node"
+
+msgid "adminV2.nodes.addNode"
+msgstr "Add node"
+
+msgid "adminV2.nodes.checkConnection"
+msgstr "Check connection"
+
+msgid "adminV2.nodes.checking"
+msgstr "Checking…"
+
+msgid "adminV2.nodes.connection"
+msgstr "Connection"
+
+msgid "adminV2.nodes.differentVersion"
+msgstr ""
+"Node runs {node}, this panel runs {panel}. Keep them on the same version."
+
+msgid "adminV2.nodes.empty.cta"
+msgstr "Add your first node"
+
+msgid "adminV2.nodes.empty.point1"
+msgstr "Users and admins sync automatically"
+
+msgid "adminV2.nodes.empty.point2"
+msgstr "Usage is collected here"
+
+msgid "adminV2.nodes.empty.point3"
+msgstr "One click to open each node's admin"
+
+msgid "adminV2.nodes.empty.text"
+msgstr ""
+"Add another Hiddify server as a node to manage all your servers from this "
+"panel."
+
+msgid "adminV2.nodes.empty.title"
+msgstr "No nodes yet"
+
+msgid "adminV2.nodes.errors.invalid_link"
+msgstr "The link is not a valid admin link."
+
+msgid "adminV2.nodes.errors.rejected"
+msgstr ""
+"The node refused to connect. It may already belong to another parent panel, "
+"or its version is too old."
+
+msgid "adminV2.nodes.errors.self"
+msgstr "This is the link of this panel. Use the link of the node server."
+
+msgid "adminV2.nodes.errors.timeout"
+msgstr "The node took too long to answer. Check it and try again."
+
+msgid "adminV2.nodes.errors.unreachable"
+msgstr ""
+"The node could not be reached. Check the link and that the node is online."
+
+msgid "adminV2.nodes.info.fromNode"
+msgstr "Last message from node"
+
+msgid "adminV2.nodes.info.lastUsage"
+msgstr "Last user usage update"
+
+msgid "adminV2.nodes.info.noUsageYet"
+msgstr "No usage reported yet"
+
+msgid "adminV2.nodes.info.toNode"
+msgstr "Last message to node"
+
+msgid "adminV2.nodes.info.todayOnline"
+msgstr "Online users today"
+
+msgid "adminV2.nodes.info.todayTraffic"
+msgstr "Traffic today"
+
+msgid "adminV2.nodes.info.usageReport"
+msgstr ""
+"{users} user with traffic, {traffic} | {users} users with traffic, {traffic}"
+
+msgid "adminV2.nodes.justNow"
+msgstr "Just now"
+
+msgid "adminV2.nodes.lastSeen"
+msgstr "Last contact"
+
+msgid "adminV2.nodes.moreInfo"
+msgstr "More information"
+
+msgid "adminV2.nodes.neverSeen"
+msgstr "Never"
+
+msgid "adminV2.nodes.openAdmin"
+msgstr "Open"
+
+msgid "adminV2.nodes.reachable"
+msgstr "Reachable"
+
+msgid "adminV2.nodes.refresh"
+msgstr "Refresh"
+
+msgid "adminV2.nodes.remove"
+msgstr "Remove"
+
+msgid "adminV2.nodes.removeMessage"
+msgstr ""
+"The node is removed from this panel together with its domains, and the node "
+"becomes a standalone panel again (its parent link is cleared). To connect it"
+" later, add it again."
+
+msgid "adminV2.nodes.removeTitle"
+msgstr "Remove {name}?"
+
+msgid "adminV2.nodes.removed"
+msgstr "{name} removed"
+
+msgid "adminV2.nodes.removedNotUnlinked"
+msgstr ""
+"The node could not be reached, so it still has this panel as its parent. "
+"Clear the parent link in its settings, or it will keep trying to sync."
+
+msgid "adminV2.nodes.rename"
+msgstr "Rename"
+
+msgid "adminV2.nodes.renamed"
+msgstr "Renamed to {name}"
+
+msgid "adminV2.nodes.renamedHereOnly"
+msgstr "Renamed to {name} on this panel only"
+
+msgid "adminV2.nodes.renamedHereOnlyDetail"
+msgstr ""
+"The node could not be reached or is too old to take the name; it may show "
+"its old name after it re-registers."
+
+msgid "adminV2.nodes.sameVersion"
+msgstr "Same version as this panel"
+
+msgid "adminV2.nodes.showLess"
+msgstr "Show less"
+
+msgid "adminV2.nodes.status.late"
+msgstr "Late"
+
+msgid "adminV2.nodes.status.never"
+msgstr "Not connected yet"
+
+msgid "adminV2.nodes.status.offline"
+msgstr "Offline"
+
+msgid "adminV2.nodes.status.online"
+msgstr "Online"
+
+msgid "adminV2.nodes.subtitle"
+msgstr ""
+"Other Hiddify servers connected to this panel. Users and admins are shared "
+"with them automatically."
+
+msgid "adminV2.nodes.syncFailed"
+msgstr "Could not sync {name}"
+
+msgid "adminV2.nodes.syncNow"
+msgstr "Sync now"
+
+msgid "adminV2.nodes.synced"
+msgstr "{name} synced"
+
+msgid "adminV2.nodes.title"
+msgstr "Nodes"
+
+msgid "adminV2.nodes.unreachable"
+msgstr "Not reachable"
 
 msgid "adminV2.primevue.accept"
 msgstr "Yes"
@@ -1680,6 +1980,79 @@ msgstr "No"
 
 msgid "adminV2.primevue.upload"
 msgstr "Upload"
+
+msgid "adminV2.protocols.changed"
+msgstr "Changed"
+
+msgid "adminV2.protocols.disableAll"
+msgstr "Disable all"
+
+msgid "adminV2.protocols.enableAll"
+msgstr "Enable all"
+
+msgid "adminV2.protocols.enabledOf"
+msgstr "{on} of {total} enabled"
+
+msgid "adminV2.protocols.filterAll"
+msgstr "All"
+
+msgid "adminV2.protocols.filterOff"
+msgstr "Off"
+
+msgid "adminV2.protocols.filterOn"
+msgstr "On"
+
+msgid "adminV2.protocols.groups.other.hint"
+msgstr "Other switches"
+
+msgid "adminV2.protocols.groups.other.title"
+msgstr "Other"
+
+msgid "adminV2.protocols.groups.protocols.hint"
+msgstr "Proxy protocols offered to clients"
+
+msgid "adminV2.protocols.groups.protocols.title"
+msgstr "Protocols"
+
+msgid "adminV2.protocols.groups.security.hint"
+msgstr "Reality, TLS tricks and multiplexing"
+
+msgid "adminV2.protocols.groups.security.title"
+msgstr "Security & tricks"
+
+msgid "adminV2.protocols.groups.transports.hint"
+msgstr "How traffic is carried (TCP, WebSocket, gRPC, …)"
+
+msgid "adminV2.protocols.groups.transports.title"
+msgstr "Transports"
+
+msgid "adminV2.protocols.instantChip"
+msgstr "Instant"
+
+msgid "adminV2.protocols.leaveUnsaved"
+msgstr "You have unsaved changes. Leave anyway?"
+
+msgid "adminV2.protocols.noMatch"
+msgstr "Nothing matches your search."
+
+msgid "adminV2.protocols.reinstallChip"
+msgstr "Needs reinstall"
+
+msgid "adminV2.protocols.relatedSettings"
+msgstr "Settings"
+
+msgid "adminV2.protocols.search"
+msgstr "Search protocols…"
+
+msgid "adminV2.protocols.subtitle"
+msgstr ""
+"Turn protocols, transports and TLS tricks on or off for the whole panel."
+
+msgid "adminV2.protocols.summaryHint"
+msgstr "Tap a card to toggle it, then save."
+
+msgid "adminV2.protocols.title"
+msgstr "Protocols"
 
 msgid "adminV2.proxy.addClient"
 msgstr "Add client"
@@ -2279,6 +2652,80 @@ msgstr "Upload TCP or UDP"
 
 msgid "adminV2.proxy.version"
 msgstr "Version"
+
+msgid "adminV2.saveBar.discard"
+msgstr "Discard"
+
+msgid "adminV2.saveBar.unsaved"
+msgstr "{count} unsaved change | {count} unsaved changes"
+
+msgid "adminV2.settings.adminPathChanged"
+msgstr ""
+"The admin path changed. After applying the configs, the admin panel will be "
+"at"
+
+msgid "adminV2.settings.advancedBadge"
+msgstr "Advanced"
+
+msgid "adminV2.settings.categories"
+msgstr "Setting categories"
+
+msgid "adminV2.settings.changed"
+msgstr "Changed"
+
+msgid "adminV2.settings.fixErrors"
+msgstr "Please fix the highlighted fields."
+
+msgid "adminV2.settings.hiddenCount"
+msgstr "{count} advanced setting hidden | {count} advanced settings hidden"
+
+msgid "adminV2.settings.invalid"
+msgstr "This value is not valid."
+
+msgid "adminV2.settings.leaveUnsaved"
+msgstr "You have unsaved changes. Leave anyway?"
+
+msgid "adminV2.settings.noMatch"
+msgstr "No setting matches your search."
+
+msgid "adminV2.settings.openProtocols"
+msgstr "Protocols"
+
+msgid "adminV2.settings.reinstallBadge"
+msgstr "Reinstall"
+
+msgid "adminV2.settings.reinstallHint"
+msgstr "Changing this needs a reinstall to take effect"
+
+msgid "adminV2.settings.reloading"
+msgstr "Language changed, reloading…"
+
+msgid "adminV2.settings.required"
+msgstr "This field is required."
+
+msgid "adminV2.settings.search"
+msgstr "Search all settings…"
+
+msgid "adminV2.settings.showAdvanced"
+msgstr "Show advanced settings"
+
+msgid "adminV2.settings.showAdvancedIn"
+msgstr "Show {count} advanced setting | Show {count} advanced settings"
+
+msgid "adminV2.settings.showLess"
+msgstr "Show less"
+
+msgid "adminV2.settings.showMore"
+msgstr ""
+"Show {count} more advanced setting | Show {count} more advanced settings"
+
+msgid "adminV2.settings.subtitle"
+msgstr ""
+"Everything about how this panel runs. Common settings first; advanced ones "
+"on request."
+
+msgid "adminV2.settings.title"
+msgstr "Settings"
 
 msgid "adminV2.template.builtin"
 msgstr "Built-in"
