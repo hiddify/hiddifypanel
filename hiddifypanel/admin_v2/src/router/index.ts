@@ -1,8 +1,17 @@
 import { createRouter, createWebHistory, type Router } from 'vue-router'
 import AppLayout from '@/core/layout/sakai/AppLayout.vue'
-import { isChildPanel, isSuperAdmin } from '@/core/panelShell'
+import { isChildPanel, isSuperAdmin, needsQuickSetup } from '@/core/panelShell'
+
+export const QUICK_SETUP_SKIPPED_KEY = 'hiddify.quickSetup.skipped'
 
 const routes = [
+  {
+    // First-run onboarding: full screen, outside the shell (no sidebar).
+    path: '/quick-setup',
+    name: 'quick-setup',
+    component: () => import('@/features/quick-setup/views/QuickSetupView.vue'),
+    beforeEnter: () => (isSuperAdmin.value ? true : { path: '/' }),
+  },
   {
     path: '/',
     component: AppLayout,
@@ -110,11 +119,27 @@ const routes = [
   },
 ]
 
+function quickSetupSkipped(): boolean {
+  try {
+    return sessionStorage.getItem(QUICK_SETUP_SKIPPED_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
 export function createAppRouter(base: string): Router {
-  return createRouter({
+  const router = createRouter({
     history: createWebHistory(base),
     routes,
   })
+  // A panel that still needs its first setup opens the quick setup instead of the dashboard.
+  router.beforeEach((to) => {
+    if (to.name === 'dashboard' && needsQuickSetup.value && isSuperAdmin.value && !quickSetupSkipped()) {
+      return { name: 'quick-setup' }
+    }
+    return true
+  })
+  return router
 }
 
 export default createAppRouter(import.meta.env.BASE_URL)

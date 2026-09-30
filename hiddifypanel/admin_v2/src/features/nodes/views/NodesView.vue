@@ -1,7 +1,7 @@
 <template>
   <div class="nodes-page">
     <div class="nodes-head">
-      <PageHeader :title="t('nodes.title')" :subtitle="t('nodes.subtitle')" />
+      <PageHeader v-if="!embedded" :title="t('nodes.title')" :subtitle="t('nodes.subtitle')" />
       <Button v-if="nodes.length" icon="pi pi-plus" :label="t('nodes.addNode')" class="nodes-head__add" @click="addVisible = true" />
     </div>
 
@@ -230,6 +230,9 @@ interface PingState {
 
 const REFRESH_MS = 60_000
 const DOMAIN_PREVIEW = 3
+
+/** `embedded`: shown inside another page (quick setup), without the page header. */
+defineProps<{ embedded?: boolean }>()
 
 const { t, locale } = useI18n()
 const toast = useToast()

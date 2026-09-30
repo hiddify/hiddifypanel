@@ -18,7 +18,7 @@ class Dashboard(FlaskView):
     @login_required(roles={Role.super_admin, Role.admin, Role.agent})
     def index(self):
         if hconfig(ConfigEnum.first_setup):
-            return redirect(hurl_for("admin.QuickSetup:index"))
+            return redirect(hurl_for("admin.admin_v2", subpath="quick-setup"))
         # A node has no dashboard of its own; the new UI shows a basic "connected to parent" page.
         if hutils.node.is_child():
             return redirect(hurl_for("admin.admin_v2"))

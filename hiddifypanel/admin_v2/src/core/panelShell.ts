@@ -84,6 +84,9 @@ export const nodeInfo = ref<NodeInfo | null>(window.__NODE_INFO__ ?? null)
 export const accountMode = ref<string>(window.__ACCOUNT_MODE__ ?? '')
 export const isSuperAdmin = computed(() => accountMode.value === 'super_admin')
 
+/** First setup still pending (super admins only): the dashboard opens the quick setup instead. */
+export const needsQuickSetup = ref<boolean>(Boolean(window.__NEEDS_QUICK_SETUP__))
+
 export const legacyMenu = ref<AdminMenuGroup[]>(window.__ADMIN_MENU__ ?? [])
 export const panelNotices = ref<PanelNotice[]>(window.__ADMIN_NOTICES__ ?? [])
 
@@ -94,6 +97,7 @@ export function applyBootstrapShell(data: {
   panel_mode?: string
   node_info?: NodeInfo | null
   account_mode?: string
+  needs_quick_setup?: boolean
   locale?: string
   panel_version?: string
   panel_logo_url?: string
@@ -118,6 +122,10 @@ export function applyBootstrapShell(data: {
     nodeInfo.value = data.node_info
     window.__NODE_INFO__ = data.node_info
   }
+  if (data.needs_quick_setup !== undefined) {
+    needsQuickSetup.value = Boolean(data.needs_quick_setup)
+    window.__NEEDS_QUICK_SETUP__ = data.needs_quick_setup
+  }
   if (data.account_mode !== undefined) {
     accountMode.value = data.account_mode
     window.__ACCOUNT_MODE__ = data.account_mode
@@ -141,6 +149,7 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
     panel_mode: data.panel_mode as string | undefined,
     node_info: data.node_info as NodeInfo | null | undefined,
     account_mode: data.account_mode as string | undefined,
+    needs_quick_setup: data.needs_quick_setup as boolean | undefined,
     locale: data.locale as string | undefined,
     panel_version: data.panel_version as string | undefined,
     panel_logo_url: data.panel_logo_url as string | undefined,

@@ -34,6 +34,15 @@ def _node_info() -> dict | None:
     }
 
 
+def _needs_quick_setup() -> bool:
+    # Quick setup is owner-only: other admins never see it.
+    if g.account.mode != "super_admin":
+        return False
+    from hiddifypanel.panel.commercial.restapi.v2.admin.quick_setup_api import needs_quick_setup
+
+    return needs_quick_setup()
+
+
 def _admin_v2_bootstrap_payload() -> dict:
     proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
     return {
@@ -49,6 +58,7 @@ def _admin_v2_bootstrap_payload() -> dict:
         "panel_mode": str(hconfig(ConfigEnum.panel_mode) or ""),
         "node_info": _node_info(),
         "account_mode": str(g.account.mode),
+        "needs_quick_setup": _needs_quick_setup(),
     }
 
 
@@ -75,9 +85,7 @@ def register_v2_routes(flask_app, admin_bp):
         static_prefix = f"/{proxy_path}/static/admin-v2/assets"
         static_js = f"{static_prefix}/index.js"
         static_css = f"{static_prefix}/index.css"
-        # Quick setup is owner-only. Sending a normal admin there restarts the login loop.
-        if hconfig(ConfigEnum.first_setup):
-            return redirect(hurl_for("admin.QuickSetup:index"))
+        # First setup is handled by the SPA's /quick-setup route (super admins only; see bootstrap).
 
         return render_template(
             "admin_v2.html",
@@ -95,4 +103,5 @@ def register_v2_routes(flask_app, admin_bp):
             panel_mode=str(hconfig(ConfigEnum.panel_mode) or ""),
             node_info=_node_info(),
             account_mode=str(g.account.mode),
+            needs_quick_setup=_needs_quick_setup(),
         )

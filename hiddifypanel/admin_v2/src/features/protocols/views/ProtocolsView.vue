@@ -1,6 +1,6 @@
 <template>
   <div class="protocols-page" :class="{ 'protocols-page--dirty': dirtyCount > 0 }">
-    <PageHeader :title="t('protocols.title')" :subtitle="t('protocols.subtitle')" />
+    <PageHeader v-if="!embedded" :title="t('protocols.title')" :subtitle="t('protocols.subtitle')" />
 
     <!-- Summary + filters -->
     <section class="proto-summary">
@@ -30,7 +30,7 @@
     </section>
 
     <!-- Apply notice after a save that needs it -->
-    <ApplyNotice v-model="pendingApply" />
+    <ApplyNotice v-if="!embedded" v-model="pendingApply" />
 
     <!-- Loading -->
     <div v-if="loading" class="proto-grid">
@@ -102,7 +102,7 @@
       </div>
     </template>
 
-    <StickySaveBar :count="dirtyCount" :saving="saving" @save="save" @discard="discard" />
+    <StickySaveBar v-if="!embedded" :count="dirtyCount" :saving="saving" @save="save" @discard="discard" />
   </div>
 </template>
 
@@ -178,6 +178,9 @@ const GROUPS: GroupDef[] = [
   { id: 'security', icon: 'pi pi-lock', accent: '#10b981' },
   { id: 'other', icon: 'pi pi-sliders-h', accent: '#f59e0b' },
 ]
+
+/** `embedded`: shown inside another page (quick setup): no header, save bar or apply notice. */
+const props = defineProps<{ embedded?: boolean }>()
 
 const { t } = useI18n()
 const toast = useToast()
@@ -261,21 +264,27 @@ async function load() {
   }
 }
 
-async function save() {
+/** Resolves to whether the changes were saved (the quick setup waits for it). */
+async function save(): Promise<boolean> {
   const values = Object.fromEntries(items.value.filter(isChanged).map((item) => [item.key, draft[item.key]]))
+  if (!Object.keys(values).length) return true
   saving.value = true
   try {
     const res = await protocolsApi.update(values)
     items.value = res.items
     resetDraft()
     pendingApply.value = strongerRestartMode(pendingApply.value, res.restart_mode)
-    toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
+    if (!props.embedded) toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
+    return true
   } catch (error) {
     toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(error), life: 6000 })
+    return false
   } finally {
     saving.value = false
   }
 }
+
+defineExpose({ save, dirtyCount, saving })
 
 function confirmLeave(): boolean {
   return dirtyCount.value === 0 || window.confirm(t('protocols.leaveUnsaved'))
@@ -285,7 +294,7 @@ function onBeforeUnload(event: BeforeUnloadEvent) {
   if (dirtyCount.value > 0) event.preventDefault()
 }
 
-onBeforeRouteLeave(() => confirmLeave())
+onBeforeRouteLeave(() => props.embedded || confirmLeave())
 onMounted(() => {
   window.addEventListener('beforeunload', onBeforeUnload)
   void load()

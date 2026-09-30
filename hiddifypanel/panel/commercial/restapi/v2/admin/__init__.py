@@ -40,6 +40,15 @@ def init_app(app):
 
         bp.add_url_rule("/settings/", view_func=SettingsApi)
 
+        from .quick_setup_api import QuickSetupApi, QuickSetupDetectApi, QuickSetupDomainsApi, QuickSetupFinishApi, QuickSetupLanguageApi, QuickSetupPasswordApi
+
+        bp.add_url_rule("/quick-setup/", view_func=QuickSetupApi)
+        bp.add_url_rule("/quick-setup/language/", view_func=QuickSetupLanguageApi)
+        bp.add_url_rule("/quick-setup/password/", view_func=QuickSetupPasswordApi)
+        bp.add_url_rule("/quick-setup/detect/", view_func=QuickSetupDetectApi)
+        bp.add_url_rule("/quick-setup/domains/", view_func=QuickSetupDomainsApi)
+        bp.add_url_rule("/quick-setup/finish/", view_func=QuickSetupFinishApi)
+
         from .nodes_api import NodeApi, NodePingApi, NodesApi, NodeSyncApi
 
         bp.add_url_rule("/nodes/", view_func=NodesApi)

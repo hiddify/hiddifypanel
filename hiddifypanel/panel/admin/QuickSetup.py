@@ -15,6 +15,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
+from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import *
 
 # from gettext import gettext as _
@@ -34,7 +35,11 @@ class QuickSetup(FlaskView):
         return form[step](empty=empty or next)
 
     def index(self):
+        # The onboarding lives in Admin V2 now; this form stays reachable with ?classic=1.
+        if request.args.get("classic") != "1":
+            from flask import redirect
 
+            return redirect(hurl_for("admin.admin_v2", subpath="quick-setup"))
         return render_template(
             "quick_setup.html",
             form=self.current_form(),
