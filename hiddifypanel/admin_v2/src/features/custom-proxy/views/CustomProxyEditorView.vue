@@ -932,7 +932,7 @@ const domainModeOptions = computed(() => {
   if (!transportTlsSupportsReality(form.transport, form.tls_layer) || xhttpUploadIsQuic(form.categories ?? [])) {
     modes = modes.filter((mode) => !isRealityDomainMode(mode))
   }
-  return modes
+  return withSelected(modes, form.domain_modes)
 })
 
 const downloadDomainModeOptions = computed(() => {
@@ -943,7 +943,7 @@ const downloadDomainModeOptions = computed(() => {
   if (!transportTlsSupportsReality('xhttp', form.download_tls_layer) || xhttpDownloadIsQuic(form.categories ?? [])) {
     modes = modes.filter((mode) => !isRealityDomainMode(mode))
   }
-  return modes
+  return withSelected(modes, form.download_domain_modes)
 })
 
 const domainModeSelectOptions = computed(() =>
@@ -964,14 +964,30 @@ function isRealityDomainMode(mode: string): boolean {
   return mode === 'reality' || mode === 'special' || mode.endsWith('-reality')
 }
 
+/** Same rule as the server (proxy_v3/domain_mode_filter.py: transport_tls_supports_reality). */
 function transportTlsSupportsReality(transport: string | undefined | null, layer: string | undefined | null): boolean {
   const t = String(transport || '').toLowerCase()
   const l = String(layer || '').toLowerCase()
+  // raw HTTP ("rawhttp") also rides REALITY over TLS-h1.
+  if (t === 'http') return l === 'tls' || l === 'tls_h2' || l === 'tls_h1'
   if (!t || l === 'http' || l === 'tls_h1' || l === 'quic_tls' || l === 'quic_tcp_tls') return false
   if (t === 'grpc') return l === 'tls' || l === 'tls_h2'
   if (t === 'xhttp') return l === 'tls_h2'
-  if (t === 'http') return l === 'tls' || l === 'tls_h2'
   return false
+}
+
+/**
+ * A built-in proxy's domain modes are the server's (read-only until overridden): never prune
+ * them client-side, only modes the admin edits.
+ */
+function domainModesEditable(key: 'domain_modes' | 'download_domain_modes'): boolean {
+  return !isBuiltin.value || isFieldOverridden(key)
+}
+
+/** Options always include the selected modes, so a saved value never shows as unselected. */
+function withSelected(options: string[], selected: string[] | undefined | null): string[] {
+  const extra = (selected ?? []).filter((mode) => !options.includes(mode))
+  return extra.length ? [...options, ...extra] : options
 }
 
 function xhttpUploadIsQuic(categories: string[]): boolean {
@@ -1012,7 +1028,7 @@ const showXhttpDownloadSettings = computed(
 
 
 function onDownloadTlsLayerChange() {
-  if (!transportTlsSupportsReality('xhttp', form.download_tls_layer)) {
+  if (domainModesEditable('download_domain_modes') && !transportTlsSupportsReality('xhttp', form.download_tls_layer)) {
     const next = withoutReality(form.download_domain_modes)
     if (!sameModes(form.download_domain_modes, next)) form.download_domain_modes = next
   }
@@ -1376,7 +1392,7 @@ function onLinkSettingsChange() {
 }
 
 function onTlsLayerChange() {
-  if (!transportTlsSupportsReality(form.transport, form.tls_layer)) {
+  if (domainModesEditable('domain_modes') && !transportTlsSupportsReality(form.transport, form.tls_layer)) {
     const next = withoutReality(form.domain_modes)
     if (!sameModes(form.domain_modes, next)) form.domain_modes = next
   }
@@ -1415,11 +1431,11 @@ function ensureXhttpDownloadDefaults() {
   if (!form.server_config!.download_tcp_udp) {
     form.server_config!.download_tcp_udp = 'tcp'
   }
-  if (xhttpUploadIsQuic(form.categories ?? [])) {
+  if (domainModesEditable('domain_modes') && xhttpUploadIsQuic(form.categories ?? [])) {
     const next = withoutReality(form.domain_modes)
     if (!sameModes(form.domain_modes, next)) form.domain_modes = next
   }
-  if (xhttpDownloadIsQuic(form.categories ?? [])) {
+  if (domainModesEditable('download_domain_modes') && xhttpDownloadIsQuic(form.categories ?? [])) {
     const next = withoutReality(form.download_domain_modes)
     if (!sameModes(form.download_domain_modes, next)) form.download_domain_modes = next
   }
@@ -1885,7 +1901,7 @@ watch(
 watch(
   () => form.download_domain_modes,
   (modes) => {
-    if (!transportTlsSupportsReality('xhttp', form.download_tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
+    if (domainModesEditable('download_domain_modes') && !transportTlsSupportsReality('xhttp', form.download_tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
       form.download_domain_modes = withoutReality(modes)
     }
   },
@@ -1896,14 +1912,14 @@ watch(
   () => [form.transport, form.categories, form.l7_reverse_proto] as const,
   () => {
     if (!isCdnCapableTransport(form.transport)) {
-      if (form.domain_modes?.includes('cdn')) {
+      if (domainModesEditable('domain_modes') && form.domain_modes?.includes('cdn')) {
         form.domain_modes = form.domain_modes.filter((mode) => mode !== 'cdn')
       }
-      if (form.download_domain_modes?.includes('cdn')) {
+      if (domainModesEditable('download_domain_modes') && form.download_domain_modes?.includes('cdn')) {
         form.download_domain_modes = form.download_domain_modes.filter((mode) => mode !== 'cdn')
       }
     }
-    if (!transportTlsSupportsReality(form.transport, form.tls_layer)) {
+    if (domainModesEditable('domain_modes') && !transportTlsSupportsReality(form.transport, form.tls_layer)) {
       const next = withoutReality(form.domain_modes)
       if (!sameModes(form.domain_modes, next)) form.domain_modes = next
     }
@@ -1915,7 +1931,7 @@ watch(
 watch(
   () => form.domain_modes,
   (modes) => {
-    if (!transportTlsSupportsReality(form.transport, form.tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
+    if (domainModesEditable('domain_modes') && !transportTlsSupportsReality(form.transport, form.tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
       form.domain_modes = withoutReality(modes)
     }
     ensureXhttpDownloadDefaults()

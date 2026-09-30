@@ -131,7 +131,9 @@ def is_reality_domain_valid(domain: ClientProxyDomainVar | DomainIPVar, proxy: C
     if domain.is_reality():
         if proxy.tls_layer in [TlsLayer.quic_tls, TlsLayer.http]:
             return False
-        if proxy.transport not in [CustomProxyTransport.xhttp, CustomProxyTransport.grpc, CustomProxyTransport.tcp]:
+        # http = raw TCP with an HTTP header ("rawhttp"); with TLS it can ride REALITY
+        # (domain_mode_filter.transport_tls_supports_reality offers it the reality domain modes).
+        if proxy.transport not in [CustomProxyTransport.xhttp, CustomProxyTransport.grpc, CustomProxyTransport.tcp, CustomProxyTransport.http]:
             return False
         if proxy.l7_reverse_proto not in [L7Proto.h2] and proxy.transport in [CustomProxyTransport.xhttp]:
             return False

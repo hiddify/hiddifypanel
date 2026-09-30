@@ -134,7 +134,9 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
                 continue
             if l3_s in ("kcp", "reality") and cdn != "direct":
                 continue
-            if l3_s == "reality" and (transport not in ("tcp", "XTLS", ProxyTransport.xhttp) or proto != "vless"):
+            # REALITY rides TCP, xHTTP (h2), gRPC and raw HTTP ("rawhttp", transport "http") over TLS;
+            # clients only offer it for VLESS (context_vars/ctx_client.is_reality_domain_valid).
+            if l3_s == "reality" and (transport not in ("tcp", "XTLS", ProxyTransport.xhttp, "grpc", "http") or proto != "vless"):
                 continue
             if proto == "trojan" and l3_s not in ("tls", "xtls", "tls_h2", "h3_quic"):
                 continue
@@ -156,7 +158,7 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
 
             enable = l3_s != "http" or proto in ("vless", "vmess")
             enable = enable and (transport != "tcp" or l3_s in ("reality", "http", "tls"))
-            enable = enable and (transport != "http" or l3_s in ("http", "tls"))
+            enable = enable and (transport != "http" or l3_s in ("http", "tls", "reality"))
             name = f"{l3_s} {c}"
 
             params_list: list[tuple[str, dict[str, Any]]] = [("", {})]

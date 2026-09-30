@@ -95,6 +95,9 @@ def tls_layer_for_xhttp_alpn(alpn: str | None, *, reality: bool = False) -> str:
     return "tls"
 
 
+REALITY_IN_TLS_PRESET_TRANSPORTS = frozenset({"grpc", "http"})
+
+
 def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombination, str, str | None, str | None, str | None]]:
     """Return (effective_combo, tls_layer, upload_alpn, download_alpn, l7_reverse_proto)."""
     proto = combo.proto.lower()
@@ -180,6 +183,9 @@ def iter_grouped_preset_slots() -> list[PresetSlot]:
         for variant in _expand_combo_variants(combo):
             effective, layer, upload, download, l7 = variant
             l3_key = "" if (upload or download) else str(effective.l3).lower()
+            # REALITY on gRPC / raw HTTP is a domain mode of the TLS preset, not a preset of its own.
+            if l3_key == "reality" and _raw_transport(effective.transport) in REALITY_IN_TLS_PRESET_TRANSPORTS:
+                l3_key = "tls"
             key = (
                 effective.proto.lower(),
                 _raw_transport(effective.transport),

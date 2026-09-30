@@ -27,6 +27,17 @@ from .ports import gateway_client_port, normalize_port_list, ports_list_to_range
 from .version import TemplateVersion
 
 
+
+_REALITY_TLS_LAYERS: frozenset[TlsLayer] = frozenset({TlsLayer.tls, TlsLayer.tls_h2})
+
+
+def _tls_layer_allows_reality(transport: CustomProxyTransport, tls_layer: TlsLayer | None) -> bool:
+    """TLS layers a REALITY domain can carry: TLS/TLS-h2, and TLS-h1 for raw HTTP (rawhttp)
+    (see domain_mode_filter.transport_tls_supports_reality, which offers these domain modes)."""
+    if tls_layer in _REALITY_TLS_LAYERS:
+        return True
+    return tls_layer == TlsLayer.tls_h1 and transport == CustomProxyTransport.http
+
 class ConfigVar(BaseModel):
     class Config:
         arbitrary_types_allowed = True
@@ -226,7 +237,7 @@ class ProxyDomainVar(ProxyVar):
     def is_reality(self) -> bool:
         if self.proto not in {ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess}:
             return False
-        if self.tls_layer not in (TlsLayer.tls_h2, TlsLayer.tls):
+        if not _tls_layer_allows_reality(self.transport, self.tls_layer):
             return False
         if not self.domain.is_reality():
             return False
@@ -315,6 +326,6 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
     def is_reality(self) -> bool:
         if self.proto not in {ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess}:
             return False
-        if self.tls_layer not in (TlsLayer.tls_h2, TlsLayer.tls):
+        if not _tls_layer_allows_reality(self.transport, self.tls_layer):
             return False
         return self.domain.is_reality()

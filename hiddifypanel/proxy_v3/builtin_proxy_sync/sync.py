@@ -106,6 +106,12 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
     # Only the default tag follows the catalog; an admin's tag (name override) is kept.
     changed = sync_catalog_field(row, NAME_OVERRIDE_KEY, catalog.name)
 
+    # New catalog categories (e.g. "reality") are added; ones the admin set are never removed.
+    missing = [c for c in (catalog.categories or ()) if c not in (row.categories or [])]
+    if missing:
+        row.categories = [*(row.categories or []), *missing]
+        changed = True
+
     proto = _parse_proto(catalog.proto)
     if row.proto != proto:
         row.proto = proto

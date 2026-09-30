@@ -377,6 +377,10 @@ def _build_categories(slot: PresetSlot) -> tuple[str, ...]:
     proto = str(primary.proto).lower()
     transport = str(primary.transport).lower()
     categories: list[str] = [proto, transport]
+    # The slot also serves REALITY domains (gRPC / xHTTP h2 / raw HTTP over TLS).
+    carries_reality = any(str(c.l3).lower() == "reality" for c in slot.related) and transport_tls_supports_reality(
+        _parse_transport(primary.transport).value, slot.tls_layer
+    )
 
     if slot.upload_alpn or slot.download_alpn:
         for alpn in (slot.upload_alpn, slot.download_alpn):
@@ -405,6 +409,8 @@ def _build_categories(slot: PresetSlot) -> tuple[str, ...]:
         elif l3 in ("tls", "tls_h2", "tls_h2_h1"):
             categories.append("tls")
 
+    if carries_reality:
+        categories.append("reality")
     return tuple(dict.fromkeys(str(t) for t in categories if t))
 
 
