@@ -65,6 +65,14 @@ ADDITIONAL_CONFIG_CLIENT_SLUGS = {
     "clash": "clash/client/additional_config",
     "sublink": "sublink/additional_config",
 }
+USER_CONFIGS_SLUG = "user-configs"
+USER_CONFIGS_SERVER_SLUG = "hiddify-core/server/user_configs"
+USER_CONFIGS_CLIENT_SLUGS = {
+    "hiddify-core": "hiddify-core/client/user_configs",
+    "xray": "xray/client/user_configs",
+    "clash": "clash/client/user_configs",
+    "sublink": "sublink/user_configs",
+}
 NODE_CONFIGS_SLUG = "node-configs"
 NODE_CONFIGS_SERVER_SLUG = "hiddify-core/server/node_configs"
 NODE_CONFIGS_CLIENT_SLUGS = {
@@ -246,6 +254,40 @@ def build_node_configs_preset(child_id: int = 0) -> CustomProxyPreset:
             inbound_template=server_template,
             template_slugs=(NODE_CONFIGS_SERVER_SLUG,),
             tag="node-configs",
+        ),
+        client_cores=client_cores,
+        tcp_udp=InboundTcpUdp.both,
+    )
+
+
+def build_user_configs_preset(child_id: int = 0) -> CustomProxyPreset:
+    """Client-only proxy adding each user's own additional configs (extra params). Enabled by default."""
+    del child_id  # presets are child-agnostic; sync applies child_id
+    client_cores = (
+        PresetClientCore(core="hiddify-core", version="", slug="client-hiddify-core", outbounds_template=load_template_slug(USER_CONFIGS_CLIENT_SLUGS["hiddify-core"])),
+        # Same JSON shape as hiddify-core.
+        PresetClientCore(core="singbox", version="", slug="client-singbox", outbounds_template="{# use_hiddify_core() #}"),
+        PresetClientCore(core="xray", version="", slug="client-xray", outbounds_template=load_template_slug(USER_CONFIGS_CLIENT_SLUGS["xray"])),
+        PresetClientCore(core="clash", version="", slug="client-clash", outbounds_template=load_template_slug(USER_CONFIGS_CLIENT_SLUGS["clash"])),
+        PresetClientCore(core="sublink", version="", slug="client-sublink", outbounds_template=load_template_slug(USER_CONFIGS_CLIENT_SLUGS["sublink"])),
+    )
+    return CustomProxyPreset(
+        name="User Configs",
+        slug=USER_CONFIGS_SLUG,
+        enable=True,
+        mode=CustomProxyMode.no_inbound,
+        proto="vless",
+        transport="other",
+        tls_layer="http",
+        l7_reverse_proto=None,
+        categories=("user_configs",),
+        domain_modes=(),
+        custom_path="",
+        server_config=PresetServerConfig(
+            core="hiddify-core",
+            inbound_template=load_template_slug(USER_CONFIGS_SERVER_SLUG),
+            template_slugs=(USER_CONFIGS_SERVER_SLUG,),
+            tag="user-configs",
         ),
         client_cores=client_cores,
         tcp_udp=InboundTcpUdp.both,
@@ -632,11 +674,12 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     rows.append(build_reality_termination_preset(child_id))
     rows.append(build_additional_config_preset(child_id))
     rows.append(build_node_configs_preset(child_id))
+    rows.append(build_user_configs_preset(child_id))
     return _mark_common_proxies(rows)
 
 
 _COMMON_PROXY_CORES = frozenset({"xray", "hiddify-core"})
-_COMMON_PROXY_SKIP_SLUGS = frozenset({"additional-config", "node-configs", "xray-reality-termination"})
+_COMMON_PROXY_SKIP_SLUGS = frozenset({"additional-config", "node-configs", "user-configs", "xray-reality-termination"})
 
 
 def _preset_slot_key(preset: CustomProxyPreset) -> str | None:

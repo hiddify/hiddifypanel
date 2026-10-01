@@ -1,0 +1,9 @@
+{#
+  Builtin user_configs (clash / mihomo).
+  The user's own additional configs (Users → edit → Additional configs): YAML or JSON with "proxies".
+#}
+{% for conf in user_additional_configs("clash") if conf is mapping %}
+  {% for proxy in conf.get("proxies", []) %}
+   {{ proxy | tojson }},
+  {% endfor %}
+{% endfor %}

@@ -507,10 +507,22 @@ class OutboundVar(BaseModel):
         return bool(self.sites or self.rule_sets)
 
 
+class UserRouteVar(BaseModel):
+    """Users whose traffic all leaves through one outbound (their preferred outbound)."""
+
+    xray_tag: str
+    singbox_tag: str
+    #: Block: rejected in hiddify-core (no outbound), blackhole in xray.
+    block: bool = False
+    uuids: list[str] = Field(default_factory=list)
+
+
 class OutboundsVar(BaseModel):
     """All outbounds in rule order, plus the final (default) tags."""
 
     items: list[OutboundVar] = Field(default_factory=list)
+    #: Per-user preferred outbounds; these rules come before the site rules.
+    user_routes: list[UserRouteVar] = Field(default_factory=list)
     region: str = ""
     default_xray_tag: str = "freedom"
     default_singbox_tag: str = "freedom"
@@ -550,6 +562,39 @@ def _tags(row: Outbound, warp_available: bool) -> tuple[str, str]:
             return f"socks-{row.id}", f"socks-{row.id}"
         case _:
             return str(row.mode), str(row.mode)
+
+
+def preferred_outbound_id(extra: dict[str, Any]) -> int | None:
+    """The user's preferred outbound id from extra params (``preferred_outbound``), or None."""
+    value = extra.get("preferred_outbound")
+    try:
+        return int(value) if value not in (None, "", False) else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _user_routes(rows: list[Outbound], items: list[OutboundVar]) -> list[UserRouteVar]:
+    from hiddifypanel.models.user import User
+
+    by_id = {o.id: o for o in items}
+    legacy_by_mode = {o.mode: o for o in items}
+    uuids: dict[int, list[str]] = {}
+    for user in User.query.filter(User.deleted.is_(False), User.extra_params.isnot(None)).all():
+        if not user.extra_params or user.extra_params.strip() in ("", "{}"):
+            continue
+        extra = user.extra_params_json()
+        oid = preferred_outbound_id(extra)
+        target = by_id.get(oid) if oid is not None else None
+        # Older panels: extra {"outbound": "warp"} meant "this user goes through WARP".
+        if target is None and isinstance(extra.get("outbound"), str):
+            target = legacy_by_mode.get(extra["outbound"].strip().lower())
+        if target is not None:
+            uuids.setdefault(target.id, []).append(user.uuid)
+    return [
+        UserRouteVar(xray_tag=o.xray_tag, singbox_tag=o.singbox_tag, block=o.mode == OutboundMode.block, uuids=sorted(uuids[o.id]))
+        for o in items
+        if o.id in uuids
+    ]
 
 
 def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
@@ -609,7 +654,7 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
             )
         )
 
-    out = OutboundsVar(items=items, region=region)
+    out = OutboundsVar(items=items, region=region, user_routes=_user_routes(rows, items))
     final = next((o for o in items if o.is_default), None)
     if final is not None:
         out.default_xray_tag, out.default_singbox_tag = final.xray_tag, final.singbox_tag

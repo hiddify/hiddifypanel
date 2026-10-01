@@ -57,7 +57,6 @@ export function useAdminMenu() {
         : [
             { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
             ...serverItems('manager'),
-            { label: t('menu.myAccount'), icon: 'pi pi-fw pi-id-card', to: '/account' },
             { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
           ],
       // The proxy editor lives in Settings in every panel mode; agents don't get it.

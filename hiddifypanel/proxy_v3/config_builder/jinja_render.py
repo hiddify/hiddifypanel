@@ -21,6 +21,7 @@ from hiddifypanel.models.custom_proxy import ProxyTemplate
 from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, include_path, jsbool, skip_proxy
 from hiddifypanel.proxy_v3.jinja_download import download
 from hiddifypanel.proxy_v3.jinja_nodes_configs import get_nodes_configs, remote_endpoints, remote_proxy_outbounds
+from hiddifypanel.proxy_v3.user_configs import user_additional_configs
 
 
 def _namespace_attrs(value: Any) -> dict[str, Any] | None:
@@ -223,6 +224,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["include_path"] = include_path
     env.globals["download"] = download
     env.globals["get_nodes_configs"] = get_nodes_configs
+    env.globals["user_additional_configs"] = user_additional_configs
     env.globals["remote_proxy_outbounds"] = remote_proxy_outbounds
     env.globals["remote_endpoints"] = remote_endpoints
     env.globals["enumerate"] = enumerate

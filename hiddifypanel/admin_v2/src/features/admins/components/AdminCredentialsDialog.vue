@@ -28,6 +28,8 @@ const canShare = canShareImages()
 /** Made when the dialog opens: the share sheet must open right on the click. */
 const qrFile = ref<File | null>(null)
 const sharing = ref(false)
+/** The image being made (awaited if Share is clicked before it is ready). */
+let preparing: Promise<File | null> | null = null
 
 watch(visible, (open) => {
   if (open) {
@@ -38,22 +40,40 @@ watch(visible, (open) => {
 
 watch(
   [visible, () => props.credentials?.admin_link],
-  async ([open, link]) => {
+  ([open, link]) => {
     qrFile.value = null
+    preparing = null
+    if (!open || !link || !canShare) return
     // The image carries the name and link (never the password), for apps that keep only the image.
-    if (open && link && canShare)
-      qrFile.value = await qrPngFile(link, `${(props.name || 'admin').replace(/[^\p{L}\p{N}_-]+/gu, '-')}-qr`, { title: props.name, caption: link })
+    const job = qrPngFile(link, `${(props.name || 'admin').replace(/[^\p{L}\p{N}_-]+/gu, '-')}-qr`, { title: props.name, caption: link }).catch(() => null)
+    preparing = job
+    void job.then((file) => {
+      if (preparing === job) qrFile.value = file
+    })
   },
   { immediate: true },
 )
 
 /** Message + QR image together into Telegram, WhatsApp, mail… */
 async function share() {
-  if (!qrFile.value || sharing.value) return
+  if (sharing.value) return
   sharing.value = true
-  const result = await shareWithImage(message.value, qrFile.value, props.credentials?.admin_link)
-  sharing.value = false
-  if (result === 'failed') toast.add({ severity: 'warn', summary: t('qr.shareFailed'), life: 5000 })
+  try {
+    // Not ready yet (or the image could not be made): wait for it, else share the message alone.
+    const file = qrFile.value ?? (preparing ? await preparing : null)
+    if (file) {
+      const result = await shareWithImage(message.value, file, props.credentials?.admin_link)
+      if (result === 'failed') toast.add({ severity: 'warn', summary: t('qr.shareFailed'), life: 5000 })
+      return
+    }
+    try {
+      await navigator.share({ text: message.value })
+    } catch (err) {
+      if ((err as { name?: string })?.name !== 'AbortError') toast.add({ severity: 'warn', summary: t('qr.shareFailed'), life: 5000 })
+    }
+  } finally {
+    sharing.value = false
+  }
 }
 
 async function copy(what: 'message' | 'link' | 'password') {
@@ -158,7 +178,7 @@ async function copy(what: 'message' | 'link' | 'password') {
           v-if="canShare"
           icon="pi pi-share-alt"
           :label="t('qr.share')"
-          :loading="sharing || !qrFile"
+          :loading="sharing"
           v-tooltip.top="t('qr.shareHint')"
           @click="share"
         />

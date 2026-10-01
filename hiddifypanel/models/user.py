@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import json5
-from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, event
+from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, Text, event
 from sqlalchemy.orm import DynamicMapped, Mapped, mapped_column, relationship
 from strenum import StrEnum
 
@@ -92,13 +92,16 @@ class User(BaseAccount):
     wg_pk: Mapped[str | None] = mapped_column(String(50), default="")
     wg_pub: Mapped[str | None] = mapped_column(String(50), default="")
     wg_psk: Mapped[str | None] = mapped_column(String(50), default="")
-    extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
+    #: JSON object. Keys the dashboard manages: ``preferred_outbound`` (outbound id: all of the user's
+    #: traffic leaves there) and ``additional_configs`` ([kind, target, value] rows, see USER_CONFIG_*).
+    extra_params: Mapped[str | None] = mapped_column(Text, default="{}")
 
     def extra_params_json(self):
         try:
-            return json5.loads(self.extra_params)
+            data = json5.loads(self.extra_params or "{}")
         except Exception:
             return {}
+        return data if isinstance(data, dict) else {}
 
     @property
     def role(self) -> Role | None:

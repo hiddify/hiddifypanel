@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLayout } from './composables/layout'
 import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
+import { isChildPanel } from '@/core/panelShell'
 
 const { t } = useI18n()
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout()
@@ -32,9 +33,27 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
       </router-link>
     </div>
     <div class="layout-topbar-actions">
+      <!-- My account: limits and password (a node's admins are managed on its parent) -->
+      <router-link
+        v-if="!isChildPanel"
+        to="/account"
+        class="layout-topbar-action"
+        active-class="layout-topbar-action--active"
+        :aria-label="t('menu.myAccount')"
+        v-tooltip.bottom="t('menu.myAccount')"
+      >
+        <i class="pi pi-user" />
+      </router-link>
       <button type="button" class="layout-topbar-action" :aria-label="t('theme.dark')" @click="toggleDarkMode">
         <i :class="['pi', isDarkTheme ? 'pi-sun' : 'pi-moon']" />
       </button>
     </div>
   </div>
 </template>
+
+<style scoped>
+.layout-topbar-action--active {
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+</style>

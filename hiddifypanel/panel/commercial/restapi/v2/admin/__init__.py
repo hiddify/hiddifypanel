@@ -85,6 +85,12 @@ def init_app(app):
 
         bp.add_url_rule("/user/", view_func=UsersApi)
 
+        from .users_page_api import UserPageApi, UsersBulkApi, UsersPageApi
+
+        bp.add_url_rule("/users/", view_func=UsersPageApi)
+        bp.add_url_rule("/users/bulk/", view_func=UsersBulkApi)
+        bp.add_url_rule("/users/<uuid:uuid>/", view_func=UserPageApi)
+
         from hiddifypanel.proxy_v3.api.custom_proxy_api import (
             CustomProxiesApi,
             CustomProxyApi,

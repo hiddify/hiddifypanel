@@ -48,10 +48,13 @@ def _admin_link(admin: AdminUser) -> str:
     return hiddify.get_account_panel_link(admin, request.host)
 
 
-def _link_domains() -> list[dict]:
-    """Domains an admin link can use: this panel's address first, then the panel's domains (as the classic user list)."""
+def _link_domains(path_key: ConfigEnum = ConfigEnum.proxy_path_admin) -> list[dict]:
+    """Domains a panel link can use: this panel's address first, then the panel's domains (as the classic user list).
+
+    ``path_key``: ``proxy_path_admin`` for admin links, ``proxy_path_client`` for user links.
+    """
     current = request.host
-    out = [{"domain": current, "label": current, "kind": "current", "base": f"https://{current}/{hconfig(ConfigEnum.proxy_path_admin)}/"}]
+    out = [{"domain": current, "label": current, "kind": "current", "base": f"https://{current}/{hconfig(path_key)}/"}]
     seen = {current}
     for d in Domain.get_domains():
         name = d.domain.replace("*", hutils.random.get_random_string(5, 15)) if "*" in d.domain else d.domain
@@ -62,7 +65,7 @@ def _link_domains() -> list[dict]:
         if d.mode == DomainType.cdn and not d.is_sub_link_only():
             kind = "auto" if bool(d.resolve_ip) or (d.cdn_ip and "MTN" in d.cdn_ip) else "cdn"
         # A node's domain opens that node's panel, which has its own admin path.
-        out.append({"domain": name, "label": d.alias or name, "kind": kind, "base": f"https://{name}/{hconfig(ConfigEnum.proxy_path_admin, d.child_id)}/"})
+        out.append({"domain": name, "label": d.alias or name, "kind": kind, "base": f"https://{name}/{hconfig(path_key, d.child_id)}/"})
     return out
 
 

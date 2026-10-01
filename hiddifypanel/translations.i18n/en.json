@@ -379,17 +379,9 @@
       },
       "linkDialog": {
         "title": "Admin link of {name}",
-        "domain": "Domain",
-        "download": "Download",
-        "open": "Open",
         "pwSet": "Signs in with this link and a password",
         "pwNone": "No password: this link alone signs in",
-        "pwHint": "Passwords are never shown again. To give a new one, reset it.",
-        "kind": {
-          "current": "Current",
-          "cdn": "CDN",
-          "auto": "Auto CDN"
-        }
+        "pwHint": "Passwords are never shown again. To give a new one, reset it."
       },
       "showLink": "Admin link",
       "title": "Admins",
@@ -687,6 +679,18 @@
       "loading": "Loading…",
       "refresh": "Refresh",
       "title": "Classic admin page"
+    },
+    "linkShare": {
+      "domain": "Domain",
+      "link": "Link",
+      "copyLink": "Copy link",
+      "open": "Open",
+      "download": "Download",
+      "kind": {
+        "current": "Current",
+        "cdn": "CDN",
+        "auto": "Auto CDN"
+      }
     },
     "menu": {
       "baseConfigs": "Base Configs",
@@ -1347,6 +1351,230 @@
     "theme": {
       "dark": "Dark mode",
       "light": "Light mode"
+    },
+    "users": {
+      "all": "All",
+      "filter": {
+        "all": "All",
+        "allHint": "Every user",
+        "active": "Active",
+        "activeHint": "Enabled, with days and data left",
+        "expiring": "Expiring soon",
+        "expiringHint": "Active, ending within a week",
+        "data_low": "Low on data",
+        "data_lowHint": "Active, with 80% or more of the data used",
+        "not_started": "Not started",
+        "not_startedHint": "Never connected yet: their days start at the first connection",
+        "unseen_week": "Not seen for a week",
+        "unseen_weekHint": "Connected before, but not in the last 7 days",
+        "no_data": "Out of data",
+        "no_dataHint": "Used all of the usage limit",
+        "expired": "Expired",
+        "expiredHint": "No days left",
+        "disabled": "Disabled",
+        "disabledHint": "Turned off by an admin"
+      },
+      "filtersLabel": "Filter users",
+      "noTimeLimit": "No time limit",
+      "pageReport": "{first}–{last} of {totalRecords}",
+      "perPage": "Users per page",
+      "resetTag": {
+        "daily": "Daily reset",
+        "weekly": "Weekly reset",
+        "monthly": "Monthly reset"
+      },
+      "showRelative": "Show time left",
+      "title": "Users",
+      "subtitle": "Everyone who connects through this panel: their data, time left and links.",
+      "add": "Add user",
+      "limitReached": "You reached your user limit. Ask the admin above you to raise it.",
+      "search": "Search name, UUID or note",
+      "clearSearch": "Clear search",
+      "refresh": "Refresh",
+      "groupByOwner": "Group by admin",
+      "showDates": "Show end dates",
+      "inlineEdit": "Inline edit",
+      "inlineHint": "Inline edit is on: click a name, usage limit, expiry, mode or note to change it right in the list. Usage itself can only be reset.",
+      "selected": "{n} selected | {n} selected",
+      "select": "Select",
+      "clearSelection": "Clear selection",
+      "noMatch": "No user matches",
+      "none": "No users yet",
+      "groupCount": "{n} user | {n} users",
+      "showMore": "Show {n} more",
+      "of": "of",
+      "online": "Online",
+      "never": "Never",
+      "link": "Link",
+      "showLink": "Show user link",
+      "linkTitle": "Link of {name}",
+      "more": "More actions",
+      "daysLeft": "{n} day left | {n} days left",
+      "afterFirstShort": "{n} days after first use",
+      "added": "{name} added",
+      "saved": "{name} saved",
+      "deleted": "{name} deleted",
+      "deleteTitle": "Delete {name}?",
+      "deleteMessage": "The user can no longer connect. Their UUID can be used again later.",
+      "status": {
+        "active": "Active",
+        "no_data": "Out of data",
+        "expired": "Expired",
+        "disabled": "Disabled"
+      },
+      "statusHint": {
+        "active": "Enabled, with days and data left",
+        "no_data": "Used all of the usage limit",
+        "expired": "No days left in the package",
+        "disabled": "Turned off by an admin"
+      },
+      "col": {
+        "status": "Status",
+        "name": "Name",
+        "usage": "Usage",
+        "expire": "Expires",
+        "lastOnline": "Last connection"
+      },
+      "mode": {
+        "no_reset": "Without reset",
+        "monthly": "Monthly",
+        "weekly": "Weekly",
+        "daily": "Daily"
+      },
+      "modeHint": {
+        "no_reset": "The usage never resets: the limit is for the whole package.",
+        "monthly": "The usage resets every 30 days from the start.",
+        "weekly": "The usage resets every 7 days from the start.",
+        "daily": "The usage resets every day."
+      },
+      "done": {
+        "reset_usage": "Usage of {name} reset",
+        "reset_days": "{name} starts again at the next connection"
+      },
+      "bulk": {
+        "enable": "Enable",
+        "disable": "Disable",
+        "reset_usage": "Reset usage",
+        "reset_days": "Reset days",
+        "add_days": "+7 days",
+        "delete": "Delete"
+      },
+      "bulkDone": {
+        "enable": "{n} user enabled | {n} users enabled",
+        "disable": "{n} user disabled | {n} users disabled",
+        "reset_usage": "Usage reset for {n} user | Usage reset for {n} users",
+        "reset_days": "Days reset for {n} user | Days reset for {n} users",
+        "add_days": "7 days added to {n} user | 7 days added to {n} users",
+        "delete": "{n} user deleted | {n} users deleted"
+      },
+      "bulkConfirm": {
+        "disable": "Disable {n} user? | Disable {n} users?",
+        "reset_usage": "Reset the usage of {n} user? | Reset the usage of {n} users?",
+        "reset_days": "Reset the days of {n} user? | Reset the days of {n} users?",
+        "delete": "Delete {n} user? | Delete {n} users?"
+      },
+      "bulkConfirmText": {
+        "disable": "They can not connect until enabled again.",
+        "reset_usage": "Their used data goes back to zero.",
+        "reset_days": "Their package starts again at their next connection.",
+        "delete": "They can no longer connect."
+      },
+      "form": {
+        "addTitle": "New user",
+        "addSubtitle": "After saving, the user's link and QR code open, ready to send.",
+        "daysCount": "{n} day | {n} days",
+        "editTitle": "Edit {name}",
+        "editSubtitle": "Changes apply right away.",
+        "add": "Add user",
+        "endedWhen": "ended {when}",
+        "endsWhen": "ends {when}",
+        "neverExpires": "never expires",
+        "notStarted": "Not started",
+        "packageLength": "Package length",
+        "period": {
+          "week": "1 week",
+          "month": "1 month",
+          "months3": "3 months",
+          "months6": "6 months",
+          "year": "1 year",
+          "unlimited": "Unlimited"
+        },
+        "reset": "Reset",
+        "restart": "Restart",
+        "restartPending": "Restarts on save: its days count again from the next connection",
+        "setDays": "Set days",
+        "startedWhen": "Started {when}",
+        "summaryConfigs": "{n} additional config | {n} additional configs",
+        "summaryExtra": "extra params set",
+        "summaryOutbound": "Exits through {name}",
+        "unlimited": "Unlimited",
+        "waitingText": "The {n} days begin at the first connection.",
+        "waitingUnlimited": "Begins at the first connection and never expires.",
+        "who": "Who",
+        "name": "Name",
+        "namePlaceholder": "e.g. Sara's phone",
+        "nameRequired": "A name is required",
+        "note": "Note",
+        "notePlaceholder": "Only admins see this",
+        "optional": "optional",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "enableHint": "A disabled user can not connect.",
+        "data": "Data",
+        "used": "Used",
+        "usageReadOnly": "Used data is counted by the server; it can only be reset.",
+        "resetUsage": "Reset usage",
+        "resetUsagePending": "Usage will be reset when you save",
+        "undo": "Undo",
+        "limit": "Usage limit",
+        "mode": "Reset period",
+        "nextReset": "next reset {when}",
+        "time": "Time",
+        "packageDays": "Package days",
+        "daysUnit": "days",
+        "notStartedHint": "Starts at the first connection",
+        "expiresOn": "ends {date}",
+        "resetDays": "Reset days",
+        "resetDaysHint": "Start the package again: its days count from the next connection",
+        "routing": "Routing",
+        "outbound": "Preferred outbound",
+        "outboundAuto": "Automatic (follow the outbound rules)",
+        "outboundOff": "turned off",
+        "outboundHint": "All of this user's traffic leaves through this outbound (Outbounds page). A turned-off outbound is ignored.",
+        "advanced": "Advanced",
+        "newUuid": "New UUID",
+        "uuidInvalid": "This is not a valid UUID",
+        "uuidHint": "Generated automatically.",
+        "uuidEditHint": "Changing it changes the user's link: the old link stops working.",
+        "owner": "Sub-admin",
+        "ownerMe": "{name} (you)",
+        "telegram": "Telegram ID",
+        "extra": "Extra params (JSON)",
+        "extraHint": "Advanced settings used by templates. Routing and additional configs are set above.",
+        "extraInvalid": "This is not valid JSON",
+        "extraNotObject": "Extra params must be a JSON object (between curly braces)"
+      },
+      "configs": {
+        "title": "Additional configs",
+        "hint": "Extra configs added to this user's subscription: paste one (offline) or give a URL fetched for the user (subscription). Choose which app format it is for, or Auto for all.",
+        "kind": {
+          "offline": "Offline",
+          "subscription": "Subscription"
+        },
+        "target": {
+          "auto": "Auto (all formats)",
+          "sublink": "Share links",
+          "xray": "Xray",
+          "hiddify-core": "Hiddify / sing-box",
+          "clash": "Clash"
+        },
+        "addSubscription": "Add subscription",
+        "addOffline": "Add offline config",
+        "urlPlaceholder": "https://example.com/sub/…",
+        "offlinePlaceholder": "vless://…  or a JSON / YAML config",
+        "empty": "Empty: fill it in or remove it",
+        "badUrl": "A subscription must be an http(s) URL"
+      }
     },
     "utils": {
       "addQuery": "Add query",

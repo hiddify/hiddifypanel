@@ -117,7 +117,7 @@ def _manager_items() -> list[dict]:
         ]
     else:
         items = [
-            _item(_("admin.menu.user"), hurl_for("flask.user.index_view"), "pi pi-fw pi-users"),
+            {"label": _("admin.menu.user"), "to": "/users", "icon": "pi pi-fw pi-users"},
             {"label": _("Admins"), "to": "/admins", "icon": "pi pi-fw pi-sitemap"},
         ]
     if g.account.mode == "super_admin":
@@ -135,8 +135,11 @@ def build_admin_v2_menu() -> list[dict]:
 
 
 def build_admin_v2_notices() -> list[dict]:
-    """Panel warnings mirrored from the classic dashboard (no flash session)."""
+    """Panel warnings mirrored from the classic dashboard (no flash session). Super admins only:
+    they are about the server (domains, SSH, updates), which other admins can not change."""
     notices: list[dict] = []
+    if g.account.mode != "super_admin":
+        return notices
 
     if hutils.utils.is_panel_outdated():
         notices.append(

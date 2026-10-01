@@ -45,6 +45,13 @@ const routes = [
         beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
       {
+        path: 'users',
+        name: 'users',
+        component: () => import('@/features/users/views/UsersView.vue'),
+        // Users are managed on the parent panel.
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+      },
+      {
         path: 'admins',
         name: 'admins',
         component: () => import('@/features/admins/views/AdminsView.vue'),

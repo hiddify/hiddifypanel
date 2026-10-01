@@ -22,20 +22,14 @@
         { //block quic
           "type": "field", "port": 443, "network": "udp", "outboundTag": "blackhole"
         },
-        {% set outbound_users = namespace(uuids=[]) %}
-        {% for u in ctx.users if u.extra.get("outbound") %}
-          {% if outbound_users.uuids.append(u.uuid) %}{% endif %}
-        {% endfor %}
-        {% if outbound_users.uuids %}
-        {% for tag in ["WARP", "direct"] %}
+        {# Users with a preferred outbound (Users → edit → Preferred outbound): all their traffic goes there. #}
+        {% for route in ctx.outbounds.user_routes %}
         {
             "type": "field",
-            "user": {{ outbound_users.uuids|tojson }},
-            "outboundTag":"{{ tag }}",
-
+            "user": {{ route.uuids|tojson }},
+            "outboundTag": {{ route.xray_tag|tojson }}
         },
         {% endfor %}
-        {% endif %}
         {# Outbound manager: each outbound's sites and geosite:/geoip: entries, in order
            (block, SOCKS/Tor/Psiphon, WARP, direct). Lists are edited in Admin → Outbounds. #}
         {% for o in ctx.outbounds.items if o.has_xray_rules %}
