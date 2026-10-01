@@ -855,6 +855,9 @@ msgstr "Домен %(domain_name)s недействителен"
 msgid "This domain does not exist in the panel!"
 msgstr "Этого домена не существует в панели управления!"
 
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
+
 msgid "Today Usage"
 msgstr "Сегодня"
 
@@ -1204,6 +1207,9 @@ msgstr "Описание V2RayNG"
 
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
+
+msgid "at least one domain should exist"
+msgstr ""
 
 msgid "at least one user should exist"
 msgstr ""

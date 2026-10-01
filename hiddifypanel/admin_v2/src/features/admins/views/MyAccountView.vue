@@ -2,9 +2,9 @@
   <div class="account-page">
     <PageHeader :title="t('account.title')" :subtitle="t('account.subtitle')" />
 
-    <div v-if="loading" class="account-grid">
-      <Skeleton height="16rem" border-radius="16px" />
-      <Skeleton height="16rem" border-radius="16px" />
+    <div v-if="loading" class="account-skeleton">
+      <Skeleton height="7rem" border-radius="20px" />
+      <Skeleton height="16rem" border-radius="20px" />
     </div>
 
     <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
@@ -15,12 +15,13 @@
         <span class="account-hero__avatar" :class="{ 'account-hero__avatar--super': isSuper }">
           <i class="pi" :class="isSuper ? 'pi-crown' : 'pi-user'" />
         </span>
-        <div class="min-w-0 flex-1">
+        <div class="account-hero__body">
           <div class="account-hero__name">{{ me.name }}</div>
           <div class="account-hero__meta">
             <span class="account-mode" :class="`account-mode--${me.mode}`">{{ t(`admins.mode.${me.mode}`) }}</span>
-            <span v-if="me.parent_name" class="text-muted-color"><i class="pi pi-sitemap" /> {{ t('account.under', { name: me.parent_name }) }}</span>
-            <span v-if="me.can_add_admin" class="text-muted-color"><i class="pi pi-user-plus" /> {{ t('account.canAddAdmins') }}</span>
+            <span v-if="me.parent_name" class="account-hero__chip"><i class="pi pi-sitemap" />{{ t('account.under', { name: me.parent_name }) }}</span>
+            <span v-if="me.can_add_admin" class="account-hero__chip"><i class="pi pi-user-plus" />{{ t('account.canAddAdmins') }}</span>
+            <span v-if="me.alias" class="account-hero__chip" dir="ltr"><i class="pi pi-at" />{{ me.alias }}</span>
           </div>
         </div>
         <Button
@@ -33,88 +34,50 @@
         />
       </section>
 
-      <!-- Telegram bot: notifications and backups in Telegram -->
-      <TelegramConnect v-if="telegramInfo" :connected="me.telegram_connected" show-qr class="account-telegram" @check="reloadMe" />
-
+      <!-- Four blocks: limits | security, default outbound | configs -->
       <div class="account-grid">
-        <!-- Limits -->
+        <!-- Limits and usage -->
         <section class="account-card">
           <header class="account-card__head">
             <span class="account-card__icon"><i class="pi pi-gauge" /></span>
-            <div>
+            <div class="flex-1 min-w-0">
               <h3 class="account-card__title">{{ t('account.limitsTitle') }}</h3>
-              <p class="account-card__sub">{{ isSuper ? t('account.noLimits') : t('account.limitsSub') }}</p>
+              <p class="account-card__sub">{{ isSuper ? t('account.superText') : t('account.limitsSub') }}</p>
             </div>
+            <span class="account-chip" v-tooltip.top="t('account.subAdmins')"><i class="pi pi-sitemap" />{{ formatCount(me.sub_admins) }}</span>
           </header>
-
-          <div v-if="isSuper" class="account-unlimited">
-            <span class="account-unlimited__sign">∞</span>
-            <span>{{ t('account.superText') }}</span>
-          </div>
-
-          <UsageMeters :stats="me.stats" :limits="me.limits" large />
-          <dl class="account-facts">
-            <div>
-              <dt><i class="pi pi-sitemap" />{{ t('account.subAdmins') }}</dt>
-              <dd>{{ formatCount(me.sub_admins) }}</dd>
-            </div>
-          </dl>
+          <UsageMeters :stats="me.stats" :limits="me.limits" />
           <Message v-if="nearLimit" severity="warn" :closable="false" size="small">{{ t('account.nearLimit') }}</Message>
         </section>
 
-        <!-- Password -->
+        <!-- Security -->
         <section class="account-card">
           <header class="account-card__head">
-            <span class="account-card__icon account-card__icon--key"><i class="pi pi-key" /></span>
-            <div>
-              <h3 class="account-card__title">{{ t('account.passwordTitle') }}</h3>
+            <span class="account-card__icon account-card__icon--key"><i class="pi pi-shield" /></span>
+            <div class="flex-1 min-w-0">
+              <h3 class="account-card__title">{{ t('account.tabs.security') }}</h3>
               <p class="account-card__sub">{{ me.has_password ? t('account.passwordSub') : t('account.noPasswordSub') }}</p>
             </div>
           </header>
-
-          <form class="account-form" @submit.prevent="savePassword">
-            <!-- Lets password managers pair the new password with this account -->
-            <input type="text" name="username" autocomplete="username" :value="me.alias || me.uuid" hidden readonly />
-            <div v-if="me.has_password" class="account-form__field">
-              <label for="current-password" class="font-medium">{{ t('account.current') }}</label>
-              <Password v-model="current" input-id="current-password" :feedback="false" toggle-mask fluid :invalid="wrongCurrent" :input-props="{ autocomplete: 'current-password' }" />
-              <small v-if="wrongCurrent" class="account-form__error">{{ t('account.wrongCurrent') }}</small>
-            </div>
-            <div class="account-form__field">
-              <div class="flex items-center justify-between gap-2">
-                <label for="new-password" class="font-medium">{{ t('account.new') }}</label>
-                <Button type="button" size="small" text icon="pi pi-sparkles" :label="t('account.generate')" @click="generate" />
+          <div class="account-rows">
+            <div class="account-row">
+              <span class="account-row__icon"><i class="pi pi-key" /></span>
+              <div class="account-row__text">
+                <b>{{ t('account.passwordTitle') }}</b>
+                <small>{{ me.has_password ? t('account.passwordSet') : t('account.passwordNone') }}</small>
               </div>
-              <Password
-                v-model="next"
-                input-id="new-password"
-                toggle-mask
-                fluid
-                :invalid="weak"
-                :feedback="false"
-                :input-props="{ autocomplete: 'new-password' }"
-              />
-              <PasswordRules :password="next" :avoid="avoid" />
+              <Button :label="me.has_password ? t('account.changePassword') : t('account.setPassword')" icon="pi pi-pencil" size="small" outlined @click="openPassword" />
             </div>
-            <div class="account-form__field">
-              <label for="repeat-password" class="font-medium">{{ t('account.repeat') }}</label>
-              <Password v-model="repeat" input-id="repeat-password" :feedback="false" toggle-mask fluid :invalid="mismatch" :input-props="{ autocomplete: 'new-password' }" />
-              <small v-if="mismatch" class="account-form__error">{{ t('account.mismatch') }}</small>
-            </div>
-            <Message severity="secondary" :closable="false" size="small" icon="pi pi-info-circle">{{ t('account.loginHint') }}</Message>
-            <Button type="submit" icon="pi pi-check" :label="t('account.save')" :loading="saving" :disabled="!canSave" class="self-end" />
-          </form>
-
-          <!-- Sign-in username: instead of the UUID, with a strong password -->
-          <div class="account-alias">
-            <div class="account-alias__head">
-              <span class="font-medium"><i class="pi pi-at" /> {{ t('account.aliasTitle') }}</span>
-              <span v-if="me.alias" class="account-alias__badge">{{ t('account.aliasOn') }}</span>
-            </div>
-            <p v-if="!me.can_alias" class="account-alias__note">{{ t('account.aliasSuper') }}</p>
-            <template v-else>
-              <p class="account-alias__note">{{ me.strong_password ? t('account.aliasHint') : t('account.aliasNeedsStrong') }}</p>
-              <form class="account-alias__row" @submit.prevent="saveAlias">
+            <div class="account-row account-row--col">
+              <div class="account-row__line">
+                <span class="account-row__icon account-row__icon--sky"><i class="pi pi-at" /></span>
+                <div class="account-row__text">
+                  <b>{{ t('account.aliasTitle') }}</b>
+                  <small>{{ me.can_alias ? (me.strong_password ? t('account.aliasHint') : t('account.aliasNeedsStrong')) : t('account.aliasSuper') }}</small>
+                </div>
+                <span v-if="me.alias" class="account-alias__badge">{{ t('account.aliasOn') }}</span>
+              </div>
+              <form v-if="me.can_alias" class="account-alias__row" @submit.prevent="saveAlias">
                 <InputText
                   v-model="aliasInput"
                   dir="ltr"
@@ -130,28 +93,92 @@
                 <Button type="submit" icon="pi pi-check" :label="t('common.save')" :loading="savingAlias" :disabled="!me.strong_password || !aliasDirty || !!aliasError" />
               </form>
               <small v-if="aliasError" class="account-form__error">{{ aliasError }}</small>
-              <small v-else-if="me.alias" class="text-muted-color">{{ t('account.aliasActive') }}</small>
-            </template>
+            </div>
           </div>
         </section>
 
-        <!-- Additional configs for all my users (and my sub-admins' users) -->
-        <section class="account-card account-card--wide">
+        <!-- Default outbound -->
+        <section class="account-card">
+          <header class="account-card__head">
+            <span class="account-card__icon account-card__icon--configs"><i class="pi pi-directions" /></span>
+            <div class="flex-1 min-w-0">
+              <h3 class="account-card__title">{{ t('account.outboundTitle') }}</h3>
+              <p class="account-card__sub">{{ t('account.outboundSub') }}</p>
+            </div>
+          </header>
+          <template v-if="me.outbounds.length">
+            <DefaultOutboundSelect v-model="myOutbound" :outbounds="me.outbounds" :inherited="me.inherited_outbound" :disabled="savingOutbound" input-id="my-outbound" />
+            <div class="account-card__foot">
+              <small v-if="outboundDirty" class="text-muted-color">{{ t('account.configsUnsaved') }}</small>
+              <Button icon="pi pi-check" :label="t('common.save')" :loading="savingOutbound" :disabled="!outboundDirty" @click="saveOutbound" />
+            </div>
+          </template>
+          <p v-else class="account-empty"><i class="pi pi-inbox" />{{ t('account.outboundNone') }}</p>
+        </section>
+
+        <!-- Configs for my users -->
+        <section class="account-card">
           <header class="account-card__head">
             <span class="account-card__icon account-card__icon--configs"><i class="pi pi-paperclip" /></span>
             <div class="flex-1 min-w-0">
               <h3 class="account-card__title">{{ t('account.configsTitle') }}</h3>
               <p class="account-card__sub">{{ t('account.configsSub') }}</p>
             </div>
+            <span v-if="configs.length" class="account-chip">{{ configs.length }}</span>
           </header>
           <p v-if="!configs.length" class="account-empty"><i class="pi pi-inbox" />{{ t('account.configsEmpty') }}</p>
-          <AdditionalConfigsEditor v-model="configs" :disabled="savingConfigs" :show-errors="configsTouched" :inherited="me.inherited_configs" />
-          <div class="flex flex-wrap items-center justify-end gap-3">
-            <small v-if="configsDirty" class="text-muted-color">{{ t('account.configsUnsaved') }}</small>
-            <Button icon="pi pi-check" :label="t('account.configsSave')" :loading="savingConfigs" :disabled="!configsDirty" @click="saveConfigs" />
+          <p v-else class="account-empty account-empty--solid"><i class="pi pi-paperclip" />{{ t('account.configsCount', { n: configs.length }, configs.length) }}</p>
+          <div class="account-card__foot">
+            <small v-if="me.inherited_configs" class="text-muted-color">{{ t('account.inheritedConfigs', { n: me.inherited_configs }) }}</small>
+            <Button icon="pi pi-pencil" :label="t('account.editConfigs')" outlined @click="configsDialog = true" />
           </div>
         </section>
       </div>
+
+      <!-- Telegram bot (when the panel has one) -->
+      <TelegramConnect v-if="telegramInfo" :connected="me.telegram_connected" class="account-telegram" @check="reloadMe" />
+
+      <!-- Change password -->
+      <Dialog v-model:visible="passwordDialog" modal :draggable="false" :header="me.has_password ? t('account.changePassword') : t('account.setPassword')" :style="{ width: 'min(30rem, calc(100vw - 1.5rem))' }">
+        <form class="account-form" @submit.prevent="savePassword">
+          <!-- Lets password managers pair the new password with this account -->
+          <input type="text" name="username" autocomplete="username" :value="me.alias || me.uuid" hidden readonly />
+          <div v-if="me.has_password" class="account-form__field">
+            <label for="current-password" class="font-medium">{{ t('account.current') }}</label>
+            <Password v-model="current" input-id="current-password" :feedback="false" toggle-mask fluid :invalid="wrongCurrent" :input-props="{ autocomplete: 'current-password' }" />
+            <small v-if="wrongCurrent" class="account-form__error">{{ t('account.wrongCurrent') }}</small>
+          </div>
+          <div class="account-form__field">
+            <div class="flex items-center justify-between gap-2">
+              <label for="new-password" class="font-medium">{{ t('account.new') }}</label>
+              <Button type="button" size="small" text icon="pi pi-sparkles" :label="t('account.generate')" @click="generate" />
+            </div>
+            <Password v-model="next" input-id="new-password" toggle-mask fluid :invalid="weak" :feedback="false" :input-props="{ autocomplete: 'new-password' }" />
+            <PasswordRules :password="next" :avoid="avoid" />
+          </div>
+          <div class="account-form__field">
+            <label for="repeat-password" class="font-medium">{{ t('account.repeat') }}</label>
+            <Password v-model="repeat" input-id="repeat-password" :feedback="false" toggle-mask fluid :invalid="mismatch" :input-props="{ autocomplete: 'new-password' }" />
+            <small v-if="mismatch" class="account-form__error">{{ t('account.mismatch') }}</small>
+          </div>
+          <Message severity="secondary" :closable="false" size="small" icon="pi pi-info-circle">{{ t('account.loginHint') }}</Message>
+        </form>
+        <template #footer>
+          <Button :label="t('common.cancel')" severity="secondary" text @click="passwordDialog = false" />
+          <Button icon="pi pi-check" :label="t('account.save')" :loading="saving" :disabled="!canSave" @click="savePassword" />
+        </template>
+      </Dialog>
+
+      <!-- Configs for all my users -->
+      <Dialog v-model:visible="configsDialog" modal :draggable="false" :header="t('account.configsTitle')" :style="{ width: 'min(46rem, calc(100vw - 1.5rem))' }" :breakpoints="{ '640px': '100vw' }">
+        <p class="account-card__sub mb-3">{{ t('account.configsSub') }}</p>
+        <AdditionalConfigsEditor v-model="configs" :disabled="savingConfigs" :show-errors="configsTouched" :inherited="me.inherited_configs" />
+        <template #footer>
+          <small v-if="configsDirty" class="text-muted-color mr-auto">{{ t('account.configsUnsaved') }}</small>
+          <Button :label="t('common.cancel')" severity="secondary" text @click="closeConfigs" />
+          <Button icon="pi pi-check" :label="t('account.configsSave')" :loading="savingConfigs" :disabled="!configsDirty" @click="saveConfigs" />
+        </template>
+      </Dialog>
     </template>
   </div>
 </template>
@@ -161,6 +188,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import Password from 'primevue/password'
 import Skeleton from 'primevue/skeleton'
@@ -170,6 +198,7 @@ import { formatCount } from '@/shared/utils/format-metrics'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import PasswordRules from '@/shared/components/PasswordRules.vue'
+import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundSelect.vue'
 import TelegramConnect from '@/shared/components/TelegramConnect.vue'
 import { telegramInfo } from '@/core/panelShell'
 import InputText from 'primevue/inputtext'
@@ -182,6 +211,8 @@ const { t } = useI18n()
 const toast = useToast()
 
 const me = ref<MyAccount | null>(null)
+const passwordDialog = ref(false)
+const configsDialog = ref(false)
 const loading = ref(true)
 const loadError = ref<string | null>(null)
 const copied = ref(false)
@@ -203,6 +234,24 @@ function setConfigs(rows: AdditionalConfig[]) {
   savedConfigs.value = JSON.stringify(cleanConfigRows(configs.value))
 }
 
+const myOutbound = ref<number | null>(null)
+const savedOutbound = ref<number | null>(null)
+const savingOutbound = ref(false)
+const outboundDirty = computed(() => myOutbound.value !== savedOutbound.value)
+
+async function saveOutbound() {
+  savingOutbound.value = true
+  try {
+    await adminsApi.setMyOutbound(myOutbound.value)
+    savedOutbound.value = myOutbound.value
+    toast.add({ severity: 'success', summary: t('account.outboundSaved'), detail: t('account.outboundApply'), life: 5000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    savingOutbound.value = false
+  }
+}
+
 async function saveConfigs() {
   configsTouched.value = true
   if (configs.value.some((c) => configRowProblem(c)) || savingConfigs.value) return
@@ -210,6 +259,7 @@ async function saveConfigs() {
   try {
     setConfigs(await adminsApi.saveMyConfigs(cleanConfigRows(configs.value)))
     configsTouched.value = false
+    configsDialog.value = false
     toast.add({ severity: 'success', summary: t('account.configsSaved'), life: 3000 })
   } catch (err) {
     toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
@@ -285,6 +335,7 @@ async function load() {
   try {
     me.value = await adminsApi.me()
     setConfigs(me.value.additional_configs ?? [])
+    myOutbound.value = savedOutbound.value = me.value.default_outbound ?? null
     aliasInput.value = me.value.alias ?? ''
   } catch (err) {
     loadError.value = apiErrorMessage(err) || t('common.loadFailed')
@@ -305,6 +356,18 @@ async function reloadMe() {
   }
 }
 
+function openPassword() {
+  current.value = next.value = repeat.value = ''
+  wrongCurrent.value = false
+  passwordDialog.value = true
+}
+
+function closeConfigs() {
+  configsDialog.value = false
+  if (configsDirty.value) setConfigs(JSON.parse(savedConfigs.value) as AdditionalConfig[]) // discard unsaved edits
+  configsTouched.value = false
+}
+
 async function savePassword() {
   if (!canSave.value) return
   saving.value = true
@@ -317,6 +380,7 @@ async function savePassword() {
       me.value.has_password = true
       me.value.strong_password = true
     }
+    passwordDialog.value = false
   } catch (err) {
     const code = (err as { response?: { data?: { code?: string } } })?.response?.data?.code
     if (code === 'wrong_current') wrongCurrent.value = true
@@ -334,20 +398,20 @@ onMounted(load)
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-  padding: 1.1rem 1.25rem;
+  gap: 1rem 1.1rem;
+  padding: 1.35rem 1.5rem;
   margin-bottom: 1rem;
-  border-radius: 18px;
+  border-radius: 22px;
   border: 1px solid var(--p-content-border-color);
   background:
     radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--p-primary-color) 14%, transparent), transparent 60%),
     var(--p-content-background);
 }
 .account-hero__avatar {
-  width: 3.4rem;
-  height: 3.4rem;
+  width: 4rem;
+  height: 4rem;
   flex-shrink: 0;
-  border-radius: 16px;
+  border-radius: 20px;
   display: grid;
   place-items: center;
   font-size: 1.4rem;
@@ -359,7 +423,7 @@ onMounted(load)
   background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 18%, transparent);
 }
 .account-hero__name {
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -392,17 +456,113 @@ onMounted(load)
   --mode-color: var(--p-violet-500, #8b5cf6);
 }
 
-/* Two equal columns (limits | password), configs full width below; one column on phones. */
+/* Four equal blocks (2 x 2); one column on phones. */
 .account-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   align-items: stretch;
 }
-@media (max-width: 860px) {
+.account-grid > .account-card {
+  justify-content: space-between;
+}
+@media (max-width: 800px) {
   .account-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
+}
+.account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.1));
+}
+.account-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 13px;
+  border: 1px solid var(--p-content-border-color);
+}
+.account-row--col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.account-row__line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.account-row__icon {
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--p-amber-600, #d97706);
+  background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 14%, transparent);
+}
+.account-row__icon--sky {
+  color: var(--p-sky-500, #0ea5e9);
+  background: color-mix(in srgb, var(--p-sky-500, #0ea5e9) 14%, transparent);
+}
+.account-row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.account-row__text b {
+  font-size: 0.9rem;
+}
+.account-row__text small {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--p-text-muted-color);
+}
+.account-empty--solid {
+  border-style: solid;
+}
+.account-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.account-hero__body {
+  flex: 1;
+  min-width: 0;
+}
+.account-hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--p-text-muted-color);
+}
+.account-card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+.account-card__icon--sky {
+  color: var(--p-sky-500, #0ea5e9);
+  background: color-mix(in srgb, var(--p-sky-500, #0ea5e9) 14%, transparent);
+}
+.account-form__submit {
+  align-self: flex-end;
 }
 .account-empty {
   display: flex;
@@ -416,7 +576,7 @@ onMounted(load)
   color: var(--p-text-muted-color);
 }
 .account-telegram {
-  margin-bottom: 1.25rem;
+  margin-top: 1rem;
 }
 .account-card {
   display: flex;
@@ -479,9 +639,6 @@ onMounted(load)
 .account-alias__row {
   display: flex;
   gap: 0.5rem;
-}
-.account-card--wide {
-  grid-column: 1 / -1;
 }
 .account-card__icon--configs {
   color: var(--p-violet-500, #8b5cf6);

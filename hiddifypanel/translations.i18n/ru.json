@@ -235,6 +235,7 @@
   "This can be used for giving your users a permanent non blockable links.": "Это можно использовать для предоставления вашим пользователям постоянных неблокируемых ссылок.",
   "This domain %(domain_name)s is invalid": "Домен %(domain_name)s недействителен",
   "This domain does not exist in the panel!": "Этого домена не существует в панели управления!",
+  "This restore has expired. Start it again from the Backup page.": "",
   "Today Usage": "Сегодня",
   "Too many Connected IPs": "Слишком много подключенных IP-адресов",
   "Total Usage": "Общее использование",
@@ -380,6 +381,7 @@
       "title": "V2RayNG"
     }
   },
+  "at least one domain should exist": "",
   "at least one user should exist": "",
   "auto": "Авто",
   "auto_cdn_ip": "☑️ Автоматический выбор IP-адреса CDN",

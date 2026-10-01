@@ -49,8 +49,19 @@ export interface AdminRow {
   sub_admins: number
   /** Added to the subscription of every user of this admin and its sub-admins. */
   additional_configs: AdditionalConfig[]
+  /** Outbound id this admin's users leave through unless they choose another (null: automatic). */
+  default_outbound: number | null
+  /** What it gets from the admins above (null: automatic). */
+  inherited_outbound: number | null
   can_edit: boolean
   can_delete: boolean
+}
+
+export interface OutboundOption {
+  id: number
+  name: string
+  mode: string
+  enabled: boolean
 }
 
 export interface AdminsTree {
@@ -58,6 +69,7 @@ export interface AdminsTree {
   can_create: boolean
   my_limits: AdminLimits | null
   link_domains: LinkDomain[]
+  outbounds: OutboundOption[]
   admins: AdminRow[]
 }
 
@@ -73,6 +85,8 @@ export interface AdminPayload {
   max_online_users?: number | null
   max_total_usage_GB?: number | null
   additional_configs?: AdditionalConfig[]
+  /** Null: automatic. */
+  default_outbound?: number | null
   /** "" clears it. */
   alias?: string
 }
@@ -106,6 +120,9 @@ export interface MyAccount {
   additional_configs: AdditionalConfig[]
   /** From the admins above me: my users get them too. */
   inherited_configs: number
+  default_outbound: number | null
+  inherited_outbound: number | null
+  outbounds: OutboundOption[]
   /** Linked to the panel's Telegram bot. */
   telegram_connected: boolean
 }
@@ -136,6 +153,9 @@ export const adminsApi = {
   async setMyAlias(alias: string): Promise<{ alias: string; login_link: string }> {
     const { data } = await getHttp().put<{ alias: string; login_link: string }>('admins/me/alias/', { alias })
     return data
+  },
+  async setMyOutbound(id: number | null): Promise<void> {
+    await getHttp().put('admins/me/default-outbound/', { default_outbound: id })
   },
   async saveMyConfigs(rows: AdditionalConfig[]): Promise<AdditionalConfig[]> {
     const { data } = await getHttp().put<{ additional_configs: AdditionalConfig[] }>('admins/me/additional-configs/', { additional_configs: rows })

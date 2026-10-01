@@ -58,6 +58,37 @@ def _login_link(admin: AdminUser) -> str:
     return _admin_link(admin)
 
 
+def _outbound_options() -> list[dict]:
+    """Outbounds an admin can make the default for its users (the Outbounds page's order)."""
+    from hiddifypanel.proxy_v3 import outbounds as ob
+
+    return [{"id": o.id, "name": o.name, "mode": str(o.mode), "enabled": bool(o.enabled)} for o in ob.ordered_rows(0)]
+
+
+def _apply_default_outbound(admin: AdminUser, value) -> None:
+    """Set (or clear, with null / 0 / "") the outbound this admin's users leave through by default."""
+    from hiddifypanel.models.outbound import Outbound
+
+    if value in (None, "", 0, False):
+        admin.default_outbound_id = None
+        return
+    try:
+        oid = int(value)
+    except (TypeError, ValueError):
+        abort(400, "Unknown outbound")
+    if not Outbound.query.filter(Outbound.id == oid).first():
+        abort(400, "Unknown outbound")
+    admin.default_outbound_id = oid
+
+
+def _inherited_outbound(admin: AdminUser) -> int | None:
+    """The default the admin gets from the admins above (None: automatic)."""
+    for parent in reversed(user_configs.admin_chain(admin)[:-1]):
+        if parent.default_outbound_id:
+            return int(parent.default_outbound_id)
+    return None
+
+
 def _apply_alias(admin: AdminUser, value) -> None:
     """Set (or clear, with an empty value) ``admin.alias``; 400 when it is not allowed."""
     alias = creds.normalize_alias(value)
@@ -173,6 +204,9 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         "sub_admins": sub_admins,
         # Added to the subscription of every user of this admin and its sub-admins.
         "additional_configs": user_configs.clean_rows(admin.additional_configs or [])[0],
+        # Outbound id this admin's users use unless they choose another (null: automatic / inherited).
+        "default_outbound": admin.default_outbound_id,
+        "inherited_outbound": _inherited_outbound(admin),
         "can_edit": manageable and (not _is_super(admin) or _is_super(actor)),
         "can_delete": manageable and (not _is_super(admin) or _is_super(actor)),
     }
@@ -293,6 +327,7 @@ class AdminsTreeApi(MethodView):
             "can_create": _can_create(actor),
             "my_limits": _limits(actor),
             "link_domains": _link_domains(),
+            "outbounds": _outbound_options(),
             "admins": [_row(a, actor, stats[a.id], subs.get(a.id, 0), visible) for a in admins],
         }
 
@@ -308,6 +343,8 @@ class AdminsTreeApi(MethodView):
         payload["mode"] = AdminMode.agent
         admin = AdminUser.add_or_update(commit=False, **payload)
         admin.additional_configs = configs
+        if "default_outbound" in body:
+            _apply_default_outbound(admin, body.get("default_outbound"))
         password = _new_password()
         admin.password = password
         if body.get("alias"):
@@ -330,12 +367,15 @@ class AdminTreeItemApi(MethodView):
             admin.additional_configs = _configs_or_400(body)
         if "alias" in body:
             _apply_alias(admin, body.get("alias"))
+        if "default_outbound" in body:
+            _apply_default_outbound(admin, body.get("default_outbound"))
         if "comment" in payload:
             admin.comment = payload.pop("comment")  # upsert skips empty text
         AdminUser.add_or_update(commit=False, old_uuid=admin.uuid, uuid=admin.uuid, **payload)
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
-        return {"status": 200, "msg": "ok"}
+        # The server's routing follows the users' (and admins') outbounds.
+        return {"status": 200, "msg": "ok", **({"restart_mode": "apply_config"} if "default_outbound" in body else {})}
 
     def delete(self, uuid):
         """Admins page: delete a sub-admin (its sub-admins too; their users move to you)"""
@@ -382,6 +422,9 @@ class MyAdminAccountApi(MethodView):
             "stats": stats[actor.id],
             "sub_admins": len(admins) - 1,
             "additional_configs": user_configs.clean_rows(actor.additional_configs or [])[0],
+            "default_outbound": actor.default_outbound_id,
+            "inherited_outbound": _inherited_outbound(actor),
+            "outbounds": _outbound_options(),
             # From the admins above: also added to this admin's users (read only here).
             "inherited_configs": len(user_configs.merge_rows(*[user_configs.clean_rows(a.additional_configs or [])[0] for a in user_configs.admin_chain(actor)[:-1]])),
         }
@@ -397,6 +440,18 @@ class MyAdminConfigsApi(MethodView):
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
         return {"additional_configs": actor.additional_configs}
+
+
+class MyAdminOutboundApi(MethodView):
+    decorators = [login_required(ALL_ROLES)]
+
+    def put(self):
+        """My account: the default outbound of my users (and my sub-admins' users)"""
+        actor: AdminUser = g.account
+        _apply_default_outbound(actor, (request.get_json(silent=True) or {}).get("default_outbound"))
+        db.session.commit()
+        hutils.node.parent.notify_childs_users_changed()
+        return {"default_outbound": actor.default_outbound_id, "restart_mode": "apply_config"}
 
 
 class MyAdminAliasApi(MethodView):

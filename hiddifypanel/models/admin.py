@@ -55,6 +55,9 @@ class AdminUser(BaseAccount):
     #: [kind, target, value] rows added to the subscription of every user of this admin and its
     #: sub-admins (merged with the users' own; see proxy_v3.user_configs).
     additional_configs: Mapped[list | None] = mapped_column(JSON, default=list, nullable=True)
+    #: Outbound id this admin's users (and its sub-admins' users) leave through, unless the user (or a nearer
+    #: admin) chose another; None = automatic. See proxy_v3.outbounds.admin_default_outbounds.
+    default_outbound_id: Mapped[int | None] = mapped_column(default=None, nullable=True)
     users: Mapped[list[User]] = relationship("User", backref="admin")
     usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)

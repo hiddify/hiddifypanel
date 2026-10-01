@@ -573,21 +573,44 @@ def preferred_outbound_id(extra: dict[str, Any]) -> int | None:
         return None
 
 
+def admin_default_outbounds() -> dict[int, int]:
+    """Admin id → the outbound id its users leave through by default.
+
+    An admin's own choice wins; else its nearest parent's; admins with none are left out (automatic).
+    """
+    from hiddifypanel.models import AdminUser
+
+    admins = {a.id: a for a in AdminUser.query.all()}
+    resolved: dict[int, int] = {}
+    for admin in admins.values():
+        seen: set[int] = set()
+        cur = admin
+        while cur is not None and cur.id not in seen:
+            seen.add(cur.id)
+            if cur.default_outbound_id:
+                resolved[admin.id] = int(cur.default_outbound_id)
+                break
+            cur = admins.get(cur.parent_admin_id) if cur.parent_admin_id and cur.parent_admin_id != cur.id else None
+    return resolved
+
+
 def _user_routes(rows: list[Outbound], items: list[OutboundVar]) -> list[UserRouteVar]:
     from hiddifypanel.models.user import User
 
     by_id = {o.id: o for o in items}
     legacy_by_mode = {o.mode: o for o in items}
+    admin_default = admin_default_outbounds()
     uuids: dict[int, list[str]] = {}
-    for user in User.query.filter(User.deleted.is_(False), User.extra_params.isnot(None)).all():
-        if not user.extra_params or user.extra_params.strip() in ("", "{}"):
-            continue
-        extra = user.extra_params_json()
+    for user in User.query.filter(User.deleted.is_(False)).all():
+        extra = user.extra_params_json() if user.extra_params and user.extra_params.strip() not in ("", "{}") else {}
         oid = preferred_outbound_id(extra)
         target = by_id.get(oid) if oid is not None else None
         # Older panels: extra {"outbound": "warp"} meant "this user goes through WARP".
         if target is None and isinstance(extra.get("outbound"), str):
             target = legacy_by_mode.get(extra["outbound"].strip().lower())
+        # The user chose nothing: the owner's (or the nearest admin above's) default.
+        if target is None:
+            target = by_id.get(admin_default.get(user.added_by or 0, 0))
         if target is not None:
             uuids.setdefault(target.id, []).append(user.uuid)
     return [

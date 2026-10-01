@@ -823,6 +823,9 @@ msgstr "O domínio %(domain_name)s é inválido"
 msgid "This domain does not exist in the panel!"
 msgstr "Este Domínio não existe no Painel!"
 
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
+
 msgid "Today Usage"
 msgstr "Hoje"
 
@@ -1173,6 +1176,9 @@ msgstr "Descrição do V2RayNG"
 
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
+
+msgid "at least one domain should exist"
+msgstr ""
 
 msgid "at least one user should exist"
 msgstr ""

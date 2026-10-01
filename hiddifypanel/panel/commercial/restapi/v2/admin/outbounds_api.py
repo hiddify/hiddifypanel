@@ -13,7 +13,7 @@ from flask.views import MethodView
 
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
-from hiddifypanel.models import ConfigEnum, hconfig
+from hiddifypanel.models import AdminUser, ConfigEnum, hconfig
 from hiddifypanel.models.child import Child
 from hiddifypanel.models.outbound import BUILTIN_MODES, CONFIGURABLE_ENDPOINT_MODES, ENDPOINT_MODES, LIST_FIELDS, MULTI_MODES, Outbound, OutboundMode
 from hiddifypanel.models.role import Role
@@ -198,6 +198,8 @@ class OutboundApi(MethodView):
         if row.is_builtin or row.mode in BUILTIN_MODES:
             abort(400, "WARP, Direct and Block can not be deleted")
         child_id = row.child_id
+        # Admins whose default it was go back to automatic.
+        AdminUser.query.filter(AdminUser.default_outbound_id == row.id).update({"default_outbound_id": None})
         db.session.delete(row)
         db.session.flush()
         _finalize_or_400(child_id, ob.ordered_rows(child_id))

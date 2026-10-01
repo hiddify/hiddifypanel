@@ -838,6 +838,9 @@ msgstr "域名 %(domain_name)s 无效"
 msgid "This domain does not exist in the panel!"
 msgstr "该域名在面板中不存在！"
 
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
+
 msgid "Today Usage"
 msgstr "今天"
 
@@ -1171,6 +1174,9 @@ msgstr "V2RayNG 说明"
 
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
+
+msgid "at least one domain should exist"
+msgstr ""
 
 msgid "at least one user should exist"
 msgstr ""

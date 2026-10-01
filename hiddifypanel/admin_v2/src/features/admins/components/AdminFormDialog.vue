@@ -12,6 +12,7 @@ import TreeSelect from 'primevue/treeselect'
 import type { TreeNode } from 'primevue/treenode'
 import { apiErrorMessage } from '@/core/api/client'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
+import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundSelect.vue'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
 import { adminsApi, type AdminCredentials, type AdminLimits, type AdminPayload, type AdminRow, type AdminsTree } from '@/features/admins/api'
@@ -119,6 +120,7 @@ watch(visible, (open) => {
   comment.value = admin?.comment ?? ''
   uuid.value = admin?.uuid ?? randomUuid()
   configs.value = (admin?.additional_configs ?? []).map((row) => [...row] as AdditionalConfig)
+  defaultOutbound.value = admin?.default_outbound ?? null
   canAddAdmin.value = admin?.can_add_admin ?? false
   parent.value = { [admin?.parent_uuid ?? props.tree?.me_uuid ?? '']: true }
   const mine = myLimits.value
@@ -153,6 +155,7 @@ const limitFields = computed(() =>
   }),
 )
 const configs = ref<AdditionalConfig[]>([])
+const defaultOutbound = ref<number | null>(null)
 
 const limitsInvalid = computed(() => !targetIsSuper.value && limitFields.value.some((field) => field.invalid))
 
@@ -169,6 +172,7 @@ async function submit() {
     can_add_admin: canAddAdmin.value,
     parent_uuid: Object.keys(parent.value)[0] || undefined,
     additional_configs: cleanConfigRows(configs.value),
+    default_outbound: defaultOutbound.value,
   }
   if (!targetIsSuper.value) payload.alias = alias.value.trim().toLowerCase()
   if (!targetIsSuper.value) {
@@ -324,6 +328,12 @@ async function submit() {
             <Button type="button" icon="pi pi-refresh" severity="secondary" outlined :aria-label="t('admins.form.newUuid')" v-tooltip.top="t('admins.form.newUuid')" @click="uuid = randomUuid()" />
           </div>
           <small :class="uuidError ? 'admin-form__error' : 'text-muted-color'">{{ uuidError ? t('admins.form.uuidInvalid') : t('admins.form.uuidHint') }}</small>
+        </div>
+        <!-- Where this admin's users (and its sub-admins' users) leave through, unless they choose -->
+        <div v-if="showAdvanced && (tree?.outbounds.length ?? 0) > 0" class="admin-form__field">
+          <label for="admin-outbound" class="admin-form__limit-label"><i class="pi pi-directions" />{{ t('admins.form.outbound') }}</label>
+          <DefaultOutboundSelect v-model="defaultOutbound" :outbounds="tree?.outbounds ?? []" :inherited="admin?.inherited_outbound ?? null" :disabled="busy" input-id="admin-outbound" />
+          <small class="text-muted-color">{{ t('admins.form.outboundHint') }}</small>
         </div>
         <!-- Configs every user of this admin (and of its sub-admins) gets -->
         <div v-if="showAdvanced" class="admin-form__field">

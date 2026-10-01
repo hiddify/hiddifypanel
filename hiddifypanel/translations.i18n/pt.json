@@ -235,6 +235,7 @@
   "This can be used for giving your users a permanent non blockable links.": "Isso pode ser usado para fornecer aos seus usuários links permanentes não bloqueáveis.",
   "This domain %(domain_name)s is invalid": "O domínio %(domain_name)s é inválido",
   "This domain does not exist in the panel!": "Este Domínio não existe no Painel!",
+  "This restore has expired. Start it again from the Backup page.": "",
   "Today Usage": "Hoje",
   "Too many Connected IPs": "Muitos IPs conectados",
   "Total Usage": "Uso total",
@@ -380,6 +381,7 @@
       "title": "V2RayNG"
     }
   },
+  "at least one domain should exist": "",
   "at least one user should exist": "",
   "auto": "Auto",
   "auto_cdn_ip": "Seletor automático de CDN IP",

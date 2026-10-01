@@ -24,25 +24,15 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
-def _v159(child_id):
-    """Domains: drag-and-drop order and per-domain gateway ports (columns added by migrate)."""
-    pass
-
-
-def _v158(child_id):
-    """Admins can sign in with an alias (username) and a strong password (column added by migrate)."""
-    pass
-
-
-def _v157(child_id):
-    """Admins can have additional configs for all their users (column added by migrate)."""
+def _v160(child_id):
+    """Admins can have a default outbound for their users (column added by migrate)."""
     pass
 
 
 def _v156(child_id):
     """User extra params can hold additional configs: no longer limited to 2000 characters."""
-    if child_id == 0:
-        alter_column(User.extra_params)
+
+    alter_column(User.extra_params)
 
 
 def _v155(child_id):
