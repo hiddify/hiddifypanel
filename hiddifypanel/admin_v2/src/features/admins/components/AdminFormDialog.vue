@@ -13,6 +13,7 @@ import type { TreeNode } from 'primevue/treenode'
 import { apiErrorMessage } from '@/core/api/client'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
+import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
 import { adminsApi, type AdminCredentials, type AdminLimits, type AdminPayload, type AdminRow, type AdminsTree } from '@/features/admins/api'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -30,6 +31,11 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const name = ref('')
+const alias = ref('')
+const aliasError = computed(() => {
+  const problem = aliasProblem(alias.value)
+  return problem ? t(`account.aliasProblem.${problem}`, { n: ALIAS_MIN }) : null
+})
 const comment = ref('')
 const uuid = ref('')
 const canAddAdmin = ref(false)
@@ -109,6 +115,7 @@ watch(visible, (open) => {
   error.value = null
   showAdvanced.value = false
   name.value = admin?.name ?? ''
+  alias.value = admin?.alias ?? ''
   comment.value = admin?.comment ?? ''
   uuid.value = admin?.uuid ?? randomUuid()
   configs.value = (admin?.additional_configs ?? []).map((row) => [...row] as AdditionalConfig)
@@ -153,7 +160,7 @@ async function submit() {
   touched.value = true
   const configsInvalid = configs.value.some((c) => configRowProblem(c))
   if (configsInvalid) showAdvanced.value = true
-  if (!name.value.trim() || uuidError.value || limitsInvalid.value || configsInvalid || busy.value) return
+  if (!name.value.trim() || uuidError.value || limitsInvalid.value || configsInvalid || aliasError.value || busy.value) return
   busy.value = true
   error.value = null
   const payload: AdminPayload = {
@@ -163,6 +170,7 @@ async function submit() {
     parent_uuid: Object.keys(parent.value)[0] || undefined,
     additional_configs: cleanConfigRows(configs.value),
   }
+  if (!targetIsSuper.value) payload.alias = alias.value.trim().toLowerCase()
   if (!targetIsSuper.value) {
     payload.max_users = limits.value.max_users ?? DEFAULT_LIMIT
     payload.max_active_users = limits.value.max_active_users ?? DEFAULT_LIMIT
@@ -212,6 +220,25 @@ async function submit() {
           <label for="admin-name" class="font-medium">{{ t('admins.form.name') }}</label>
           <InputText id="admin-name" v-model="name" autofocus maxlength="512" :invalid="nameError" :disabled="busy" :placeholder="t('admins.form.namePlaceholder')" />
           <small v-if="nameError" class="admin-form__error">{{ t('admins.form.nameRequired') }}</small>
+        </div>
+        <!-- Optional sign-in username (never for super admins) -->
+        <div v-if="!targetIsSuper" class="admin-form__field">
+          <label for="admin-alias" class="font-medium">
+            {{ t('admins.form.alias') }} <span class="text-muted-color font-normal">({{ t('admins.form.optional') }})</span>
+          </label>
+          <InputText
+            id="admin-alias"
+            v-model="alias"
+            dir="ltr"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            maxlength="64"
+            :invalid="!!aliasError"
+            :disabled="busy"
+            :placeholder="t('account.aliasPlaceholder')"
+          />
+          <small :class="aliasError ? 'admin-form__error' : 'text-muted-color'">{{ aliasError ?? t('admins.form.aliasHint') }}</small>
         </div>
         <div class="admin-form__field">
           <label for="admin-note" class="font-medium">

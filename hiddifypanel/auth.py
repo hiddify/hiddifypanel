@@ -312,10 +312,15 @@ def logout_redirect():
 
 def redirect_to_login():
     if hutils.flask.is_api_call(request.path):
-        json_abort(403, "Unathorized")
+        # 401 (not signed in), not 403 (signed in, not allowed): the dashboard sends 401s to the login page.
+        json_abort(401, "Unauthorized")
     # if g.user_agent['is_browser']:
     # return redirect(hurl_for('common_bp.LoginView:basic_0', force=1, next=request.path))
-    return redirect(hurl_for("common_bp.LoginView:index", force=1, next=request.path.replace(f"{g.uuid}/", ""), user=g.uuid))
+    # Back to this page after signing in, query string included (the UUID is taken out of the path).
+    back = request.path.replace(f"{g.uuid}/", "") if g.uuid else request.path
+    if request.query_string:
+        back += "?" + request.query_string.decode("utf-8", "replace")
+    return redirect(hurl_for("common_bp.LoginView:index", force=1, next=back, user=g.uuid))
 
     # else:
     #     abort(401, "Unauthorized")

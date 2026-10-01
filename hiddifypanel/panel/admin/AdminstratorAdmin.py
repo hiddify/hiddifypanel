@@ -217,6 +217,10 @@ class AdminstratorAdmin(AdminLTEModelView):
         if not model.new_password and is_created:
             raise ValidationError("Password for new admin is needed.")
         if model.new_password:
+            from hiddifypanel import admin_credentials as creds
+
+            if creds.password_problems(model.new_password, avoid=creds.admin_avoid(model)):
+                raise ValidationError(creds.PASSWORD_MESSAGE)
             model.password = model.new_password
 
     def on_model_delete(self, model):

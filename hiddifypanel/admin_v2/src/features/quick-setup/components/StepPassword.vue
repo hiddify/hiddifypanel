@@ -4,18 +4,21 @@ import { useI18n } from 'vue-i18n'
 import Password from 'primevue/password'
 import { apiErrorMessage } from '@/core/api/client'
 import { quickSetupApi } from '@/features/quick-setup/api'
+import PasswordRules from '@/shared/components/PasswordRules.vue'
+import { MIN_PASSWORD, isStrongPassword } from '@/shared/utils/password-strength'
 
 const emit = defineEmits<{ error: [message: string] }>()
 
-const MIN = 8
+// Strong passwords only (same rule as the server).
+const MIN = MIN_PASSWORD
 const { t } = useI18n()
 const password = ref('')
 const confirm = ref('')
 const touched = ref(false)
 
-const tooShort = computed(() => password.value.length > 0 && password.value.length < MIN)
+const weak = computed(() => password.value.length > 0 && !isStrongPassword(password.value))
 const mismatch = computed(() => confirm.value.length > 0 && confirm.value !== password.value)
-const valid = computed(() => password.value.length >= MIN && confirm.value === password.value)
+const valid = computed(() => isStrongPassword(password.value) && confirm.value === password.value)
 
 async function submit(): Promise<boolean> {
   touched.value = true
@@ -50,11 +53,11 @@ defineExpose({ submit })
         :weak-label="t('quickSetup.password.weak')"
         :medium-label="t('quickSetup.password.medium')"
         :strong-label="t('quickSetup.password.strong')"
-        :invalid="touched && (tooShort || !password)"
+        :invalid="touched && (weak || !password)"
         fluid
         :input-props="{ autocomplete: 'new-password' }"
       />
-      <small v-if="touched && (tooShort || !password)" class="qs-error">{{ t('quickSetup.password.min', { min: MIN }) }}</small>
+      <PasswordRules :password="password" />
     </div>
 
     <div class="flex flex-col gap-2">

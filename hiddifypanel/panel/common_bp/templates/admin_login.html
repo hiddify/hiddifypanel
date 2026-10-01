@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ 'rtl' if rtl else 'ltr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="light dark">
+  <title>{{ texts.get('pageTitle', 'Sign in') }} · {{ title }}</title>
+  <script>
+    // Shown inside the dashboard's frame (a classic page whose session ended): open in the whole window,
+    // returning to the dashboard page that framed it.
+    try {
+      if (window.top !== window.self && window.top.location.host === window.location.host) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('next', window.top.location.pathname + window.top.location.search + window.top.location.hash);
+        window.top.location.replace(url.toString());
+      }
+    } catch (e) {}
+    // Same dark mode as the dashboard (its toggle is remembered in this browser), else the system's.
+    try {
+      var saved = localStorage.getItem('admin_v2_dark');
+      if (saved === '1' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+    } catch (e) {}
+  </script>
+  <style>
+    :root {
+      --primary: #4f6df5;
+      --primary-2: #8b5cf6;
+      --bg: #eef2fb;
+      --card: rgba(255, 255, 255, 0.78);
+      --card-border: rgba(255, 255, 255, 0.9);
+      --text: #1e2333;
+      --muted: #6b7280;
+      --field: #ffffff;
+      --field-border: #d9deea;
+      --danger: #e5484d;
+      --danger-bg: rgba(229, 72, 77, 0.08);
+      --warn: #b45309;
+      --warn-bg: rgba(245, 158, 11, 0.12);
+      --shadow: 0 30px 60px -30px rgba(40, 55, 120, 0.45);
+    }
+    .dark {
+      --bg: #0f1221;
+      --card: rgba(24, 28, 46, 0.78);
+      --card-border: rgba(255, 255, 255, 0.07);
+      --text: #e8eaf3;
+      --muted: #9aa3b8;
+      --field: #151a2c;
+      --field-border: #2b3250;
+      --danger-bg: rgba(229, 72, 77, 0.14);
+      --warn: #fbbf24;
+      --warn-bg: rgba(245, 158, 11, 0.14);
+      --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Vazirmatn, Tahoma, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+    /* Soft moving color in the background */
+    .glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .glow span {
+      position: absolute; width: 46vmax; height: 46vmax; border-radius: 50%;
+      filter: blur(70px); opacity: 0.55; animation: drift 18s ease-in-out infinite alternate;
+    }
+    .glow span:nth-child(1) { background: #6d8bff; top: -18vmax; left: -12vmax; }
+    .glow span:nth-child(2) { background: #b18cff; bottom: -20vmax; right: -14vmax; animation-delay: -6s; }
+    .glow span:nth-child(3) { background: #5ad1ff; top: 40%; left: 55%; width: 28vmax; height: 28vmax; opacity: 0.35; animation-delay: -12s; }
+    .dark .glow span { opacity: 0.28; }
+    @keyframes drift { to { transform: translate(6vmax, 4vmax) scale(1.08); } }
+
+    main { position: relative; z-index: 1; width: min(100%, 25rem); animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+    .card {
+      padding: 2rem 1.75rem 1.5rem;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px) saturate(1.3);
+      -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    }
+    .brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.35rem; margin-bottom: 1.5rem; }
+    .logo {
+      width: 4rem; height: 4rem; border-radius: 20px; display: grid; place-items: center; margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 14px 30px -12px rgba(79, 109, 245, 0.75);
+    }
+    .logo img { width: 2.4rem; height: 2.4rem; object-fit: contain; }
+    h1 { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; }
+    .sub { margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+
+    form { display: flex; flex-direction: column; gap: 1rem; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .field { position: relative; }
+    .field svg.lead { position: absolute; inset-inline-start: 0.85rem; top: 50%; translate: 0 -50%; width: 1.1rem; height: 1.1rem; color: var(--muted); pointer-events: none; }
+    input[type=text], input[type=password] {
+      width: 100%; height: 3rem; padding: 0 2.9rem 0 2.6rem; border-radius: 14px;
+      border: 1px solid var(--field-border); background: var(--field); color: var(--text);
+      font: inherit; font-size: 0.98rem; outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    [dir=rtl] input[type=text], [dir=rtl] input[type=password] { padding: 0 2.6rem 0 2.9rem; }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 109, 245, 0.18); }
+    input[aria-invalid=true] { border-color: var(--danger); }
+    #username { direction: ltr; text-align: start; }
+    [dir=rtl] #username { text-align: right; }
+    .peek {
+      position: absolute; inset-inline-end: 0.35rem; top: 50%; translate: 0 -50%;
+      width: 2.3rem; height: 2.3rem; border: 0; border-radius: 10px; display: grid; place-items: center;
+      background: transparent; color: var(--muted); cursor: pointer;
+    }
+    .peek:hover { color: var(--primary); background: rgba(79, 109, 245, 0.08); }
+    .peek svg { width: 1.15rem; height: 1.15rem; }
+    .hint { margin: 0.4rem 0 0; font-size: 0.78rem; color: var(--muted); line-height: 1.45; }
+
+    .alert { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.75rem 0.85rem; border-radius: 14px; font-size: 0.86rem; line-height: 1.45; animation: shake 0.35s ease; }
+    .alert svg { flex-shrink: 0; width: 1.1rem; height: 1.1rem; margin-top: 0.05rem; }
+    .alert--danger { color: var(--danger); background: var(--danger-bg); }
+    .alert--warn { color: var(--warn); background: var(--warn-bg); }
+    @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+    button.submit {
+      position: relative; height: 3.1rem; margin-top: 0.25rem; border: 0; border-radius: 14px; cursor: pointer;
+      font: inherit; font-size: 1rem; font-weight: 650; color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 14px 28px -14px rgba(79, 109, 245, 0.9);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+    button.submit:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    button.submit:active { transform: translateY(0); }
+    button.submit .spin { display: none; width: 1.1rem; height: 1.1rem; border: 2px solid rgba(255,255,255,0.45); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -0.2rem; margin-inline-end: 0.5rem; }
+    form.busy button.submit { pointer-events: none; filter: saturate(0.8); }
+    form.busy button.submit .spin { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .foot { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--field-border); display: flex; flex-direction: column; gap: 0.5rem; }
+    .foot p { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0; font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
+    .foot svg { flex-shrink: 0; width: 0.95rem; height: 0.95rem; margin-top: 0.1rem; color: var(--primary); }
+    .below { margin-top: 1rem; text-align: center; font-size: 0.75rem; color: var(--muted); }
+
+    @media (max-width: 420px) {
+      .card { padding: 1.6rem 1.15rem 1.2rem; border-radius: 20px; }
+      h1 { font-size: 1.2rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"><span></span><span></span><span></span></div>
+  <main>
+    <div class="card">
+      <div class="brand">
+        <div class="logo"><img src="{{ logo_url }}" alt=""></div>
+        <h1>{{ texts.get('title', 'Sign in') }}</h1>
+        <p class="sub">{{ title }} · {{ texts.get('subtitle', 'Admin panel') }}</p>
+      </div>
+
+      <form method="post" autocomplete="on" novalidate id="login-form">
+        {{ form.csrf_token }}
+        <input type="hidden" name="next" value="{{ next_url }}">
+
+        {% if error %}
+        <div class="alert {{ 'alert--warn' if error in ('locked', 'expired') else 'alert--danger' }}" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span>{{ texts.get('error_' ~ error, 'Could not sign in') }}</span>
+        </div>
+        {% endif %}
+
+        <div>
+          <label for="username">{{ texts.get('username', 'Admin ID or username') }}</label>
+          <div class="field">
+            <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="username" name="username" value="{{ form.username.data or '' }}"
+                   autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required
+                   placeholder="{{ texts.get('usernamePlaceholder', '') }}"
+                   {% if error == 'invalid' %}aria-invalid="true"{% endif %}
+                   {% if not form.username.data %}autofocus{% endif %}>
+          </div>
+          <p class="hint">{{ texts.get('usernameHint', '') }}</p>
+        </div>
+
+        <div>
+          <label for="password">{{ texts.get('password', 'Password') }}</label>
+          <div class="field">
+            <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="password" name="password" autocomplete="current-password"
+                   placeholder="{{ texts.get('passwordPlaceholder', '') }}"
+                   {% if error == 'invalid' %}aria-invalid="true"{% endif %}
+                   {% if form.username.data %}autofocus{% endif %}>
+            <button type="button" class="peek" id="peek" aria-label="{{ texts.get('show', 'Show password') }}" data-show="{{ texts.get('show', 'Show password') }}" data-hide="{{ texts.get('hide', 'Hide password') }}" aria-pressed="false">
+              <svg id="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <p class="hint">{{ texts.get('passwordHint', '') }}</p>
+        </div>
+
+        <button type="submit" class="submit"><span class="spin" aria-hidden="true"></span><span id="submit-text">{{ texts.get('submit', 'Sign in') }}</span></button>
+      </form>
+
+      <div class="foot">
+        <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>{{ texts.get('tipLink', '') }}</p>
+        <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>{{ texts.get('tipLost', '') }}</p>
+      </div>
+    </div>
+    <p class="below">Hiddify</p>
+  </main>
+  <script>
+    (function () {
+      var form = document.getElementById('login-form');
+      var pw = document.getElementById('password');
+      var peek = document.getElementById('peek');
+      var eye = document.getElementById('eye');
+      var open = '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+      var shut = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19"/><path d="M1 1l22 22"/>';
+      peek.addEventListener('click', function () {
+        var showing = pw.type === 'text';
+        pw.type = showing ? 'password' : 'text';
+        eye.innerHTML = showing ? open : shut;
+        peek.setAttribute('aria-pressed', String(!showing));
+        peek.setAttribute('aria-label', showing ? peek.dataset.show : peek.dataset.hide);
+        pw.focus();
+      });
+      form.addEventListener('submit', function () {
+        // Back to a password field so browsers offer to save it.
+        pw.type = 'password';
+        form.classList.add('busy');
+        document.getElementById('submit-text').textContent = {{ texts.get('signingIn', 'Signing in…')|tojson }};
+      });
+    })();
+  </script>
+</body>
+</html>

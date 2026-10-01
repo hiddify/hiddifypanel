@@ -11,6 +11,7 @@ from apiflask import abort
 from flask import request
 from flask.views import MethodView
 
+from hiddifypanel import admin_credentials as creds
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
@@ -20,7 +21,6 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import user_configs
 
-MIN_PASSWORD = 8
 PASSWORD_LENGTH = 16
 # Same window as the classic admin list: online = seen in the last 24 hours.
 ONLINE_WINDOW = datetime.timedelta(days=1)
@@ -47,6 +47,25 @@ def _can_create(actor: AdminUser) -> bool:
 
 def _admin_link(admin: AdminUser) -> str:
     return hiddify.get_account_panel_link(admin, request.host)
+
+
+def _login_link(admin: AdminUser) -> str:
+    """With an alias: the sign-in page (username filled in), no UUID in it. Without: the UUID link."""
+    if admin.alias:
+        from urllib.parse import quote
+
+        return f"https://{request.host}/{hconfig(ConfigEnum.proxy_path_admin)}/?user={quote(admin.alias)}"
+    return _admin_link(admin)
+
+
+def _apply_alias(admin: AdminUser, value) -> None:
+    """Set (or clear, with an empty value) ``admin.alias``; 400 when it is not allowed."""
+    alias = creds.normalize_alias(value)
+    problem = creds.alias_problem(alias, admin)
+    if problem:
+        db.session.rollback()
+        abort(400, creds.ALIAS_MESSAGES.get(problem, "This alias can not be used"))
+    admin.alias = alias or None
 
 
 def _link_domains(path_key: ConfigEnum = ConfigEnum.proxy_path_admin) -> list[dict]:
@@ -147,6 +166,7 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         "parent_name": parent.name if parent else None,
         "is_me": is_me,
         "has_password": bool(admin.password),
+        "alias": admin.alias or "",
         "admin_link": _admin_link(admin),
         "limits": _limits(admin),
         "stats": stats,
@@ -254,7 +274,8 @@ def _configs_or_400(body: dict) -> list[list[str]]:
 
 
 def _credentials(admin: AdminUser, password: str) -> dict:
-    return {"password": password, "admin_link": _admin_link(admin)}
+    # With an alias the admin signs in with username + password: the link carries no UUID.
+    return {"password": password, "admin_link": _login_link(admin), "alias": admin.alias or ""}
 
 
 class AdminsTreeApi(MethodView):
@@ -289,6 +310,9 @@ class AdminsTreeApi(MethodView):
         admin.additional_configs = configs
         password = _new_password()
         admin.password = password
+        if body.get("alias"):
+            db.session.flush()
+            _apply_alias(admin, body.get("alias"))
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
         return {"uuid": admin.uuid, "name": admin.name, **_credentials(admin, password)}
@@ -304,6 +328,8 @@ class AdminTreeItemApi(MethodView):
         payload = _clean_payload(body, target=admin)
         if "additional_configs" in body:
             admin.additional_configs = _configs_or_400(body)
+        if "alias" in body:
+            _apply_alias(admin, body.get("alias"))
         if "comment" in payload:
             admin.comment = payload.pop("comment")  # upsert skips empty text
         AdminUser.add_or_update(commit=False, old_uuid=admin.uuid, uuid=admin.uuid, **payload)
@@ -346,6 +372,10 @@ class MyAdminAccountApi(MethodView):
             "can_add_admin": _can_create(actor),
             "parent_name": parent.name if parent and parent.id != actor.id else None,
             "has_password": bool(actor.password),
+            "strong_password": creds.is_strong(actor.password, avoid=creds.admin_avoid(actor)),
+            "alias": actor.alias or "",
+            "can_alias": actor.mode != AdminMode.super_admin,
+            "login_link": _login_link(actor),
             "admin_link": _admin_link(actor),
             "limits": _limits(actor),
             "stats": stats[actor.id],
@@ -368,6 +398,17 @@ class MyAdminConfigsApi(MethodView):
         return {"additional_configs": actor.additional_configs}
 
 
+class MyAdminAliasApi(MethodView):
+    decorators = [login_required(ALL_ROLES)]
+
+    def put(self):
+        """My account: set or clear my alias (sign-in username); needs a strong password, not for super admins"""
+        actor: AdminUser = g.account
+        _apply_alias(actor, (request.get_json(silent=True) or {}).get("alias"))
+        db.session.commit()
+        return {"alias": actor.alias or "", "login_link": _login_link(actor)}
+
+
 class MyAdminPasswordApi(MethodView):
     decorators = [login_required(ALL_ROLES)]
 
@@ -379,7 +420,8 @@ class MyAdminPasswordApi(MethodView):
         new = str(body.get("new_password") or "")
         if actor.password and not secrets.compare_digest(current, actor.password):
             return {"message": "The current password is wrong", "code": "wrong_current"}, 400
-        if len(new) < MIN_PASSWORD:
-            return {"message": f"The password needs at least {MIN_PASSWORD} characters", "code": "too_short"}, 400
+        problems = creds.password_problems(new, avoid=creds.admin_avoid(actor))
+        if problems:
+            return {"message": creds.PASSWORD_MESSAGE, "code": "weak", "problems": problems}, 400
         actor.update_password(new)
         return {"status": 200, "msg": "ok"}

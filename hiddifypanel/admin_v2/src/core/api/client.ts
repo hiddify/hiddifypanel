@@ -96,6 +96,15 @@ async function fetchBootstrap(): Promise<{
   notices?: unknown[]
 }> {
   const res = await fetch(bootstrapPath(), { credentials: 'include' })
+  const knownPath = resolveProxyPathForBootstrap()
+  // Signed out shows as a 401, or as a redirect to the sign-in page (HTML instead of JSON).
+  const signedOut = res.status === 401 || res.redirected || (res.ok && !(res.headers.get('content-type') || '').includes('json'))
+  if (signedOut && knownPath) {
+    // Signed out before the dashboard even started: sign in, then come back.
+    const next = window.location.pathname + window.location.search + window.location.hash
+    window.location.href = `/${knownPath}/?next=${encodeURIComponent(next)}`
+    await new Promise(() => {}) // the page is leaving; do not show the error below meanwhile
+  }
   if (!res.ok) {
     throw new Error(
       'Could not resolve proxy_path. Start the Flask panel and open Admin V2 from the panel, or use ?proxy_path=YOUR_PATH in the URL.',
@@ -173,7 +182,11 @@ export async function initApiClient(): Promise<void> {
     (response) => response,
     (error) => {
       const status = error?.response?.status
-      if (status === 401 || status === 403) {
+      // Not signed in (or the session ended): to the sign-in page, then back here.
+      // (The Vite dev server forwards /<proxy_path>/ to the panel, so this works in development too.)
+      if (status === 401) {
+        goToLogin()
+      } else if (status === 401 || status === 403) {
         console.error('Admin V2 API auth failed — log in via the panel first, then reload this page.')
       }
       return Promise.reject(error)
@@ -203,6 +216,17 @@ export function apiErrorMessage(error: unknown): string {
   }
   if (typeof data === 'string' && data.trim() && data.length < 500) return data
   return error instanceof Error ? error.message : String(error ?? '')
+}
+
+let redirecting = false
+
+/** The panel's sign-in page (`/<proxy_path>/`), returning to the current page afterwards. */
+export function goToLogin(): void {
+  if (redirecting) return
+  redirecting = true
+  const base = getRouterBase().replace(/admin\/v2\/?$/, '')
+  const next = window.location.pathname + window.location.search + window.location.hash
+  window.location.href = `${base}?next=${encodeURIComponent(next)}`
 }
 
 export function getHttp(): AxiosInstance {

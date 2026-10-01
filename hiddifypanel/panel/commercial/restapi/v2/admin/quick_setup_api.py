@@ -21,7 +21,6 @@ from hiddifypanel.models.domain import normalize_domain_name
 DOMAIN_RE = re.compile(r"^([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$")
 LANGUAGES = ("en", "fa", "zh", "pt", "ru", "my")
 COUNTRIES = ("ir", "zh", "ru", "other")
-MIN_PASSWORD = 8
 
 
 def needs_quick_setup() -> bool:
@@ -188,8 +187,11 @@ class QuickSetupPasswordApi(MethodView):
     def put(self):
         """Quick setup: admin password"""
         password = str((request.get_json(silent=True) or {}).get("password") or "")
-        if len(password) < MIN_PASSWORD:
-            return {"field_errors": {"password": [_("user.password.validation-lenght")]}}, 422
+        from hiddifypanel import admin_credentials as creds
+
+        # Admins can not set a weak password (same rule as My account).
+        if creds.password_problems(password, avoid=creds.admin_avoid(g.account)):
+            return {"field_errors": {"password": [creds.PASSWORD_MESSAGE]}}, 422
         g.account.update_password(password)
         return {"status": 200, "msg": "ok"}
 

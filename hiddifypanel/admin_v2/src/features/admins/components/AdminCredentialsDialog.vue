@@ -20,9 +20,14 @@ const copied = ref<'message' | 'link' | 'password' | null>(null)
 const showPassword = ref(false)
 let copiedTimer: number | undefined
 
-const message = computed(() =>
-  props.credentials ? t('admins.credentials.message', { link: props.credentials.admin_link, password: props.credentials.password }) : '',
-)
+// With an alias: link (no UUID) + username + password; else the UUID link + password.
+const message = computed(() => {
+  const c = props.credentials
+  if (!c) return ''
+  return c.alias
+    ? t('admins.credentials.messageAlias', { link: c.admin_link, alias: c.alias, password: c.password })
+    : t('admins.credentials.message', { link: c.admin_link, password: c.password })
+})
 
 const canShare = canShareImages()
 /** Made when the dialog opens: the share sheet must open right on the click. */
@@ -130,6 +135,12 @@ async function copy(what: 'message' | 'link' | 'password') {
             </div>
           </div>
 
+          <div v-if="credentials.alias" class="cred__field">
+            <span class="cred__label">{{ t('admins.credentials.username') }}</span>
+            <div class="cred__value">
+              <code dir="ltr" class="cred__code">{{ credentials.alias }}</code>
+            </div>
+          </div>
           <div class="cred__field">
             <span class="cred__label">{{ t('admins.credentials.password') }}</span>
             <div class="cred__value">

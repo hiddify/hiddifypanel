@@ -71,7 +71,7 @@
 
           <form class="account-form" @submit.prevent="savePassword">
             <!-- Lets password managers pair the new password with this account -->
-            <input type="text" name="username" autocomplete="username" :value="me.uuid" hidden readonly />
+            <input type="text" name="username" autocomplete="username" :value="me.alias || me.uuid" hidden readonly />
             <div v-if="me.has_password" class="account-form__field">
               <label for="current-password" class="font-medium">{{ t('account.current') }}</label>
               <Password v-model="current" input-id="current-password" :feedback="false" toggle-mask fluid :invalid="wrongCurrent" :input-props="{ autocomplete: 'current-password' }" />
@@ -87,14 +87,11 @@
                 input-id="new-password"
                 toggle-mask
                 fluid
-                :invalid="tooShort"
-                :prompt-label="t('account.strength.prompt')"
-                :weak-label="t('account.strength.weak')"
-                :medium-label="t('account.strength.medium')"
-                :strong-label="t('account.strength.strong')"
+                :invalid="weak"
+                :feedback="false"
                 :input-props="{ autocomplete: 'new-password' }"
               />
-              <small :class="tooShort ? 'account-form__error' : 'text-muted-color'">{{ t('account.minLength', { n: MIN_PASSWORD }) }}</small>
+              <PasswordRules :password="next" :avoid="avoid" />
             </div>
             <div class="account-form__field">
               <label for="repeat-password" class="font-medium">{{ t('account.repeat') }}</label>
@@ -104,6 +101,35 @@
             <Message severity="secondary" :closable="false" size="small" icon="pi pi-info-circle">{{ t('account.loginHint') }}</Message>
             <Button type="submit" icon="pi pi-check" :label="t('account.save')" :loading="saving" :disabled="!canSave" class="self-end" />
           </form>
+
+          <!-- Sign-in username: instead of the UUID, with a strong password -->
+          <div class="account-alias">
+            <div class="account-alias__head">
+              <span class="font-medium"><i class="pi pi-at" /> {{ t('account.aliasTitle') }}</span>
+              <span v-if="me.alias" class="account-alias__badge">{{ t('account.aliasOn') }}</span>
+            </div>
+            <p v-if="!me.can_alias" class="account-alias__note">{{ t('account.aliasSuper') }}</p>
+            <template v-else>
+              <p class="account-alias__note">{{ me.strong_password ? t('account.aliasHint') : t('account.aliasNeedsStrong') }}</p>
+              <form class="account-alias__row" @submit.prevent="saveAlias">
+                <InputText
+                  v-model="aliasInput"
+                  dir="ltr"
+                  class="flex-1 min-w-0"
+                  autocomplete="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  :placeholder="t('account.aliasPlaceholder')"
+                  :invalid="!!aliasError"
+                  :disabled="!me.strong_password || savingAlias"
+                  :aria-label="t('account.aliasTitle')"
+                />
+                <Button type="submit" icon="pi pi-check" :label="t('common.save')" :loading="savingAlias" :disabled="!me.strong_password || !aliasDirty || !!aliasError" />
+              </form>
+              <small v-if="aliasError" class="account-form__error">{{ aliasError }}</small>
+              <small v-else-if="me.alias" class="text-muted-color">{{ t('account.aliasActive') }}</small>
+            </template>
+          </div>
         </section>
 
         <!-- Additional configs for all my users (and my sub-admins' users) -->
@@ -128,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -140,10 +166,12 @@ import { apiErrorMessage } from '@/core/api/client'
 import { formatCount } from '@/shared/utils/format-metrics'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
+import PasswordRules from '@/shared/components/PasswordRules.vue'
+import InputText from 'primevue/inputtext'
+import { ALIAS_MIN, aliasProblem, generatePassword, isStrongPassword } from '@/shared/utils/password-strength'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { adminsApi, meterTone, type MyAccount } from '@/features/admins/api'
 
-const MIN_PASSWORD = 8
 
 const { t } = useI18n()
 const toast = useToast()
@@ -196,16 +224,44 @@ const nearLimit = computed(() => {
     meterTone(m.stats.usage_GB, m.limits.max_total_usage_GB),
   ].some((tone) => tone === 'danger')
 })
-const tooShort = computed(() => next.value.length > 0 && next.value.length < MIN_PASSWORD)
+/** A new password may not contain these (same rule as the server). */
+const avoid = computed(() => [me.value?.name, me.value?.alias, me.value?.uuid])
+const weak = computed(() => next.value.length > 0 && !isStrongPassword(next.value, avoid.value))
 const mismatch = computed(() => repeat.value.length > 0 && repeat.value !== next.value)
 const canSave = computed(
-  () => next.value.length >= MIN_PASSWORD && repeat.value === next.value && (!me.value?.has_password || current.value.length > 0) && !saving.value,
+  () => isStrongPassword(next.value, avoid.value) && repeat.value === next.value && (!me.value?.has_password || current.value.length > 0) && !saving.value,
 )
 
+// ---- Alias (sign-in username)
+const aliasInput = ref('')
+const savingAlias = ref(false)
+const aliasServerError = ref<string | null>(null)
+const aliasDirty = computed(() => aliasInput.value.trim().toLowerCase() !== (me.value?.alias ?? ''))
+const aliasError = computed(() => {
+  const problem = aliasProblem(aliasInput.value)
+  if (problem) return t(`account.aliasProblem.${problem}`, { n: ALIAS_MIN })
+  return aliasServerError.value
+})
+watch(aliasInput, () => (aliasServerError.value = null))
+
+async function saveAlias() {
+  if (!me.value || aliasError.value || savingAlias.value) return
+  savingAlias.value = true
+  try {
+    const res = await adminsApi.setMyAlias(aliasInput.value.trim().toLowerCase())
+    me.value.alias = res.alias
+    me.value.login_link = res.login_link
+    aliasInput.value = res.alias
+    toast.add({ severity: 'success', summary: res.alias ? t('account.aliasSaved', { alias: res.alias }) : t('account.aliasCleared'), life: 4000 })
+  } catch (err) {
+    aliasServerError.value = apiErrorMessage(err)
+  } finally {
+    savingAlias.value = false
+  }
+}
+
 function generate() {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
-  const bytes = crypto.getRandomValues(new Uint32Array(16))
-  const password = Array.from(bytes, (n) => alphabet[n % alphabet.length]).join('')
+  const password = generatePassword()
   next.value = password
   repeat.value = password
   void navigator.clipboard?.writeText(password).then(() => toast.add({ severity: 'info', summary: t('account.generatedCopied'), life: 3000 }))
@@ -224,6 +280,7 @@ async function load() {
   try {
     me.value = await adminsApi.me()
     setConfigs(me.value.additional_configs ?? [])
+    aliasInput.value = me.value.alias ?? ''
   } catch (err) {
     loadError.value = apiErrorMessage(err) || t('common.loadFailed')
   } finally {
@@ -239,7 +296,10 @@ async function savePassword() {
     await adminsApi.changeMyPassword(current.value, next.value)
     toast.add({ severity: 'success', summary: t('account.saved'), life: 4000 })
     current.value = next.value = repeat.value = ''
-    if (me.value) me.value.has_password = true
+    if (me.value) {
+      me.value.has_password = true
+      me.value.strong_password = true
+    }
   } catch (err) {
     const code = (err as { response?: { data?: { code?: string } } })?.response?.data?.code
     if (code === 'wrong_current') wrongCurrent.value = true
@@ -365,6 +425,40 @@ onMounted(load)
   place-items: center;
   color: var(--p-primary-color);
   background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+}
+.account-alias {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--p-content-border-color);
+}
+.account-alias__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.account-alias__head i {
+  color: var(--p-primary-color);
+  font-size: 0.85rem;
+}
+.account-alias__badge {
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--p-green-600, #16a34a);
+  background: color-mix(in srgb, var(--p-green-500, #22c55e) 12%, transparent);
+}
+.account-alias__note {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
+}
+.account-alias__row {
+  display: flex;
+  gap: 0.5rem;
 }
 .account-card--wide {
   grid-column: 1 / -1;

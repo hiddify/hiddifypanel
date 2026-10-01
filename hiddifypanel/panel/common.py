@@ -33,9 +33,20 @@ def init_app(app: APIFlask):
     def apply_no_robot(response):
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         response.headers["Referrer-Policy"] = "same-origin"
-        if response.status_code == 401:
+        if response.status_code == 401 and _wants_basic_auth_challenge():
             response.headers["WWW-Authenticate"] = 'Basic realm="Hiddify"'
         return response
+
+    def _wants_basic_auth_challenge() -> bool:
+        """Only the user (subscription) side asks for HTTP basic auth (apps sign in with it). Admins sign in on
+        the panel's login page, and API calls answer 401 to the dashboard: the browser's own username/password
+        popup must not show there."""
+        try:
+            if hutils.flask.is_api_call(request.path):
+                return False
+            return not hutils.flask.is_admin_proxy_path()
+        except Exception:
+            return True
 
     from werkzeug.exceptions import HTTPException
 

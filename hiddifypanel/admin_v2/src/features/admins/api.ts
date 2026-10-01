@@ -40,6 +40,8 @@ export interface AdminRow {
   parent_name: string | null
   is_me: boolean
   has_password: boolean
+  /** Sign-in username instead of the UUID ("" when not set). */
+  alias: string
   admin_link: string
   /** Null for a super admin: no limits. */
   limits: AdminLimits | null
@@ -71,11 +73,15 @@ export interface AdminPayload {
   max_online_users?: number | null
   max_total_usage_GB?: number | null
   additional_configs?: AdditionalConfig[]
+  /** "" clears it. */
+  alias?: string
 }
 
 export interface AdminCredentials {
   password: string
+  /** With an alias: the sign-in page (no UUID); else the UUID link. */
   admin_link: string
+  alias?: string
 }
 
 export interface MyAccount {
@@ -85,6 +91,13 @@ export interface MyAccount {
   can_add_admin: boolean
   parent_name: string | null
   has_password: boolean
+  /** Strong enough for an alias (and required for any new password). */
+  strong_password: boolean
+  alias: string
+  /** False for super admins: they sign in with their link only. */
+  can_alias: boolean
+  /** With an alias: the sign-in page; else the UUID link. */
+  login_link: string
   admin_link: string
   limits: AdminLimits | null
   stats: AdminStats
@@ -116,6 +129,10 @@ export const adminsApi = {
   },
   async me(): Promise<MyAccount> {
     const { data } = await getHttp().get<MyAccount>('admins/me/')
+    return data
+  },
+  async setMyAlias(alias: string): Promise<{ alias: string; login_link: string }> {
+    const { data } = await getHttp().put<{ alias: string; login_link: string }>('admins/me/alias/', { alias })
     return data
   },
   async saveMyConfigs(rows: AdditionalConfig[]): Promise<AdditionalConfig[]> {

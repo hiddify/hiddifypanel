@@ -3,12 +3,20 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLayout } from './composables/layout'
 import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
-import { isChildPanel } from '@/core/panelShell'
+import { isChildPanel, submitPostForm } from '@/core/panelShell'
+import { getRouterBase } from '@/core/api/client'
 
 const { t } = useI18n()
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout()
 
 const panelVersion = computed(() => getPanelVersion())
+
+/** Ends the session on the server (POST only), then the sign-in page opens. */
+function signOut() {
+  // After signing in again: back to this page.
+  const here = window.location.pathname + window.location.search + window.location.hash
+  submitPostForm(`${getRouterBase().replace(/admin\/v2\/?$/, '')}logout/?next=${encodeURIComponent(here)}`)
+}
 const panelLogoUrl = computed(() => getPanelLogoUrl())
 </script>
 
@@ -46,6 +54,9 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
       </router-link>
       <button type="button" class="layout-topbar-action" :aria-label="t('theme.dark')" @click="toggleDarkMode">
         <i :class="['pi', isDarkTheme ? 'pi-sun' : 'pi-moon']" />
+      </button>
+      <button type="button" class="layout-topbar-action" :aria-label="t('menu.signOut')" v-tooltip.bottom="t('menu.signOut')" @click="signOut">
+        <i class="pi pi-sign-out" />
       </button>
     </div>
   </div>

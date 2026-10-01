@@ -310,6 +310,20 @@
   },
   "adminV2": {
     "account": {
+      "aliasActive": "Leave it empty and save to remove it.",
+      "aliasCleared": "Username removed",
+      "aliasHint": "Sign in with this username and your password instead of the ID. Links you share then carry no ID.",
+      "aliasNeedsStrong": "Set a strong password above first: a username only works with a strong password.",
+      "aliasOn": "On",
+      "aliasPlaceholder": "e.g. sara.sales",
+      "aliasProblem": {
+        "too_short": "At least {n} characters",
+        "bad_chars": "Only a-z, 0-9, dot, dash and underscore, starting with a letter or digit",
+        "looks_like_uuid": "It can not look like an ID (UUID)"
+      },
+      "aliasSaved": "You can now sign in as {alias}",
+      "aliasSuper": "Super admins sign in with their admin link only, so they have no username.",
+      "aliasTitle": "Sign-in username",
       "configsEmpty": "No configs yet. Add a subscription link or paste a config: all your users get it.",
       "configsSave": "Save configs",
       "configsSaved": "Configs saved",
@@ -387,7 +401,9 @@
         "title": "Admin link of {name}",
         "pwSet": "Signs in with this link and a password",
         "pwNone": "No password: this link alone signs in",
-        "pwHint": "Passwords are never shown again. To give a new one, reset it."
+        "pwHint": "Passwords are never shown again. To give a new one, reset it.",
+        "username": "Username",
+        "usernameHint": "This link opens the sign-in page; they sign in with this username and their password."
       },
       "myConfigs": "Configs for my users",
       "myConfigsHint": "Configs for my users: added to the subscription of all your users and your sub-admins' users",
@@ -449,6 +465,8 @@
       },
       "form": {
         "advancedHint": "Under {name}",
+        "alias": "Sign-in username",
+        "aliasHint": "With a username they sign in with username + password, and shared links carry no ID.",
         "configs": "Configs for this admin's users",
         "configsCount": "{n} config | {n} configs",
         "configsHint": "Added to the subscription of every user of this admin and of its sub-admins.",
@@ -483,6 +501,7 @@
       "credentials": {
         "copyMessageHint": "Copies the message together with the QR code image",
         "createdTitle": "{name} is ready",
+        "messageAlias": "To log in, please open the following link:\n{link}\nand sign in with the username: {alias}\nand the password: {password}",
         "resetTitle": "New password for {name}",
         "lead": "Send these to the admin. They open the link and sign in with the password.",
         "link": "Admin link",
@@ -492,7 +511,8 @@
         "message": "To log in, please open the following link:\n{link}\nand sign in with the password: {password}",
         "copyMessage": "Copy message",
         "once": "The password is shown only now. Copy it before closing; otherwise reset it again.",
-        "done": "Done"
+        "done": "Done",
+        "username": "Username"
       },
       "empty": {
         "title": "No sub-admins yet",
@@ -703,6 +723,27 @@
         "auto": "Auto CDN"
       }
     },
+    "login": {
+      "pageTitle": "Sign in",
+      "title": "Welcome back",
+      "subtitle": "Admin panel",
+      "brand": "Hiddify",
+      "username": "Admin ID or username",
+      "usernamePlaceholder": "xxxxxxxx-xxxx-… or your username",
+      "usernameHint": "The ID in your admin link, or the username you were given.",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "passwordHint": "Leave empty if your admin link has no password.",
+      "show": "Show password",
+      "hide": "Hide password",
+      "submit": "Sign in",
+      "signingIn": "Signing in…",
+      "error_invalid": "The ID, username or password is not right. Check them and try again.",
+      "error_locked": "Too many tries from your network. Wait 15 minutes, then try again.",
+      "error_expired": "This page was open for too long. Please sign in again.",
+      "tipLink": "Opening your admin link fills in your ID automatically.",
+      "tipLost": "Lost your password? Ask the admin who added you to reset it."
+    },
     "menu": {
       "baseConfigs": "Base Configs",
       "customProxies": "Proxies",
@@ -717,6 +758,7 @@
       "outbounds": "Outbounds",
       "protocols": "Protocols",
       "proxyEditor": "Proxy Editor",
+      "signOut": "Sign out",
       "templateVariables": "Template Variables",
       "templates": "Templates",
       "utils": "Utils"
@@ -901,6 +943,15 @@
         "domestic": "Domestic sites of {region}",
         "add": "Add outbound"
       }
+    },
+    "passwordRules": {
+      "label": "A strong password needs",
+      "length": "{n}+ characters",
+      "lower": "a lowercase letter",
+      "upper": "an uppercase letter",
+      "digit": "a digit",
+      "common": "not a common password",
+      "name": "not your name or ID"
     },
     "primevue": {
       "accept": "Yes",

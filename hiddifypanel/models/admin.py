@@ -5,7 +5,7 @@ from enum import auto
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import Enum, ForeignKey, event
+from sqlalchemy import Enum, ForeignKey, String, event
 from sqlalchemy.types import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from strenum import StrEnum
@@ -49,6 +49,9 @@ class AdminUser(BaseAccount):
     max_online_users: Mapped[int | None] = mapped_column(default=None, nullable=True)
     # Traffic (GB) all users of this admin and its sub-admins may use together; None = no limit.
     max_total_usage_GB: Mapped[float | None] = mapped_column(default=None, nullable=True)
+    #: Sign-in username instead of the UUID (lowercase, unique; never for super admins; needs a strong
+    #: password). See hiddifypanel.admin_credentials.
+    alias: Mapped[str | None] = mapped_column(String(64), default=None, nullable=True, index=True)
     #: [kind, target, value] rows added to the subscription of every user of this admin and its
     #: sub-admins (merged with the users' own; see proxy_v3.user_configs).
     additional_configs: Mapped[list | None] = mapped_column(JSON, default=list, nullable=True)
