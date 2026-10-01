@@ -50,7 +50,6 @@
           </div>
 
           <UsageMeters :stats="me.stats" :limits="me.limits" large />
-
           <dl class="account-facts">
             <div>
               <dt><i class="pi pi-sitemap" />{{ t('account.subAdmins') }}</dt>
@@ -106,6 +105,23 @@
             <Button type="submit" icon="pi pi-check" :label="t('account.save')" :loading="saving" :disabled="!canSave" class="self-end" />
           </form>
         </section>
+
+        <!-- Additional configs for all my users (and my sub-admins' users) -->
+        <section class="account-card account-card--wide">
+          <header class="account-card__head">
+            <span class="account-card__icon account-card__icon--configs"><i class="pi pi-paperclip" /></span>
+            <div class="flex-1 min-w-0">
+              <h3 class="account-card__title">{{ t('account.configsTitle') }}</h3>
+              <p class="account-card__sub">{{ t('account.configsSub') }}</p>
+            </div>
+          </header>
+          <p v-if="!configs.length" class="account-empty"><i class="pi pi-inbox" />{{ t('account.configsEmpty') }}</p>
+          <AdditionalConfigsEditor v-model="configs" :disabled="savingConfigs" :show-errors="configsTouched" :inherited="me.inherited_configs" />
+          <div class="flex flex-wrap items-center justify-end gap-3">
+            <small v-if="configsDirty" class="text-muted-color">{{ t('account.configsUnsaved') }}</small>
+            <Button icon="pi pi-check" :label="t('account.configsSave')" :loading="savingConfigs" :disabled="!configsDirty" @click="saveConfigs" />
+          </div>
+        </section>
       </div>
     </template>
   </div>
@@ -123,6 +139,8 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import { apiErrorMessage } from '@/core/api/client'
 import { formatCount } from '@/shared/utils/format-metrics'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
+import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
+import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { adminsApi, meterTone, type MyAccount } from '@/features/admins/api'
 
 const MIN_PASSWORD = 8
@@ -140,6 +158,32 @@ const next = ref('')
 const repeat = ref('')
 const wrongCurrent = ref(false)
 const saving = ref(false)
+
+const configs = ref<AdditionalConfig[]>([])
+const savedConfigs = ref('[]')
+const configsTouched = ref(false)
+const savingConfigs = ref(false)
+const configsDirty = computed(() => JSON.stringify(cleanConfigRows(configs.value)) !== savedConfigs.value)
+
+function setConfigs(rows: AdditionalConfig[]) {
+  configs.value = rows.map((row) => [...row] as AdditionalConfig)
+  savedConfigs.value = JSON.stringify(cleanConfigRows(configs.value))
+}
+
+async function saveConfigs() {
+  configsTouched.value = true
+  if (configs.value.some((c) => configRowProblem(c)) || savingConfigs.value) return
+  savingConfigs.value = true
+  try {
+    setConfigs(await adminsApi.saveMyConfigs(cleanConfigRows(configs.value)))
+    configsTouched.value = false
+    toast.add({ severity: 'success', summary: t('account.configsSaved'), life: 3000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    savingConfigs.value = false
+  }
+}
 
 const isSuper = computed(() => me.value?.mode === 'super_admin')
 const nearLimit = computed(() => {
@@ -179,6 +223,7 @@ async function load() {
   loadError.value = null
   try {
     me.value = await adminsApi.me()
+    setConfigs(me.value.additional_configs ?? [])
   } catch (err) {
     loadError.value = apiErrorMessage(err) || t('common.loadFailed')
   } finally {
@@ -270,11 +315,28 @@ onMounted(load)
   --mode-color: var(--p-violet-500, #8b5cf6);
 }
 
+/* Two equal columns (limits | password), configs full width below; one column on phones. */
 .account-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
+}
+@media (max-width: 860px) {
+  .account-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.account-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 1px dashed var(--p-content-border-color);
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
 }
 .account-card {
   display: flex;
@@ -303,6 +365,13 @@ onMounted(load)
   place-items: center;
   color: var(--p-primary-color);
   background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+}
+.account-card--wide {
+  grid-column: 1 / -1;
+}
+.account-card__icon--configs {
+  color: var(--p-violet-500, #8b5cf6);
+  background: color-mix(in srgb, var(--p-violet-500, #8b5cf6) 14%, transparent);
 }
 .account-card__icon--key {
   color: var(--p-amber-600, #d97706);

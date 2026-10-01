@@ -119,7 +119,19 @@
                   </div>
                 </div>
                 <!-- Actions sit at the top end of the admin -->
-                <div v-if="row(node).is_me" class="admins-you-lock" v-tooltip.top="t('admins.meLocked')"><i class="pi pi-lock" /></div>
+                <!-- Your own row: only your users' additional configs can be changed here -->
+                <div v-if="row(node).is_me" class="admins-actions">
+                  <Button
+                    icon="pi pi-paperclip"
+                    text
+                    rounded
+                    size="small"
+                    :aria-label="t('admins.myConfigs')"
+                    v-tooltip.top="t('admins.myConfigsHint')"
+                    @click="openMyConfigs(row(node))"
+                  />
+                  <span class="admins-you-lock" v-tooltip.top="t('admins.meLocked')"><i class="pi pi-lock" /></span>
+                </div>
                 <div v-else class="admins-actions">
                   <Button
                     icon="pi pi-pencil"
@@ -179,6 +191,7 @@
 
     <Menu ref="menu" :model="menuItems" popup />
 
+    <MyConfigsDialog v-model:visible="myConfigsVisible" :admin="myRow" @saved="onMyConfigsSaved" />
     <AdminFormDialog v-model:visible="formVisible" :admin="editingAdmin" :tree="tree" @created="onCreated" @saved="onSaved" @reset-password="confirmReset" />
     <AdminLinkDialog v-model:visible="linkVisible" :admin="linkAdmin" :domains="tree?.link_domains ?? []" @reset-password="confirmReset" />
     <AdminCredentialsDialog v-model:visible="credentialsVisible" :name="credentialsName" :credentials="credentials" :kind="credentialsKind" />
@@ -208,6 +221,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import { formatCount } from '@/shared/utils/format-metrics'
 import AdminCredentialsDialog from '@/features/admins/components/AdminCredentialsDialog.vue'
 import AdminFormDialog from '@/features/admins/components/AdminFormDialog.vue'
+import MyConfigsDialog from '@/features/admins/components/MyConfigsDialog.vue'
 import AdminLinkDialog from '@/features/admins/components/AdminLinkDialog.vue'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
 import { adminsApi, type AdminCredentials, type AdminMode, type AdminRow, type AdminsTree } from '@/features/admins/api'
@@ -388,6 +402,17 @@ function flash(uuid: string) {
 function openCreate() {
   editingAdmin.value = null
   formVisible.value = true
+}
+
+const myConfigsVisible = ref(false)
+const myRow = ref<AdminRow | null>(null)
+function openMyConfigs(admin: AdminRow) {
+  myRow.value = admin
+  myConfigsVisible.value = true
+}
+function onMyConfigsSaved(rows: AdminRow['additional_configs']) {
+  if (myRow.value) myRow.value.additional_configs = rows
+  toast.add({ severity: 'success', summary: t('account.configsSaved'), life: 3000 })
 }
 
 function openEdit(admin: AdminRow) {

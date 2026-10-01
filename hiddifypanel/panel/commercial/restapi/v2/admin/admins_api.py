@@ -18,6 +18,7 @@ from hiddifypanel.models import AdminUser, ConfigEnum, Domain, DomainType, User,
 from hiddifypanel.models.admin import AdminMode
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
+from hiddifypanel.proxy_v3 import user_configs
 
 MIN_PASSWORD = 8
 PASSWORD_LENGTH = 16
@@ -150,6 +151,8 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         "limits": _limits(admin),
         "stats": stats,
         "sub_admins": sub_admins,
+        # Added to the subscription of every user of this admin and its sub-admins.
+        "additional_configs": user_configs.clean_rows(admin.additional_configs or [])[0],
         "can_edit": manageable and (not _is_super(admin) or _is_super(actor)),
         "can_delete": manageable and (not _is_super(admin) or _is_super(actor)),
     }
@@ -243,6 +246,13 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
     return out
 
 
+def _configs_or_400(body: dict) -> list[list[str]]:
+    rows, problems = user_configs.clean_rows(body.get("additional_configs"))
+    if problems:
+        abort(400, "Additional configs: " + "; ".join(problems[:5]))
+    return rows
+
+
 def _credentials(admin: AdminUser, password: str) -> dict:
     return {"password": password, "admin_link": _admin_link(admin)}
 
@@ -270,10 +280,13 @@ class AdminsTreeApi(MethodView):
         actor: AdminUser = g.account
         if not _can_create(actor):
             abort(403, "You don't have permission to add admins")
-        payload = _clean_payload(request.get_json(silent=True) or {}, target=None)
+        body = request.get_json(silent=True) or {}
+        payload = _clean_payload(body, target=None)
+        configs = _configs_or_400(body) if "additional_configs" in body else []
         payload.setdefault("uuid", str(uuid_lib.uuid4()))
         payload["mode"] = AdminMode.agent
         admin = AdminUser.add_or_update(commit=False, **payload)
+        admin.additional_configs = configs
         password = _new_password()
         admin.password = password
         db.session.commit()
@@ -287,7 +300,10 @@ class AdminTreeItemApi(MethodView):
     def patch(self, uuid):
         """Admins page: update a sub-admin"""
         admin = _managed_target(uuid)
-        payload = _clean_payload(request.get_json(silent=True) or {}, target=admin)
+        body = request.get_json(silent=True) or {}
+        payload = _clean_payload(body, target=admin)
+        if "additional_configs" in body:
+            admin.additional_configs = _configs_or_400(body)
         if "comment" in payload:
             admin.comment = payload.pop("comment")  # upsert skips empty text
         AdminUser.add_or_update(commit=False, old_uuid=admin.uuid, uuid=admin.uuid, **payload)
@@ -334,7 +350,22 @@ class MyAdminAccountApi(MethodView):
             "limits": _limits(actor),
             "stats": stats[actor.id],
             "sub_admins": len(admins) - 1,
+            "additional_configs": user_configs.clean_rows(actor.additional_configs or [])[0],
+            # From the admins above: also added to this admin's users (read only here).
+            "inherited_configs": len(user_configs.merge_rows(*[user_configs.clean_rows(a.additional_configs or [])[0] for a in user_configs.admin_chain(actor)[:-1]])),
         }
+
+
+class MyAdminConfigsApi(MethodView):
+    decorators = [login_required(ALL_ROLES)]
+
+    def put(self):
+        """My account: additional configs for all users of the signed-in admin and its sub-admins"""
+        actor: AdminUser = g.account
+        actor.additional_configs = _configs_or_400(request.get_json(silent=True) or {})
+        db.session.commit()
+        hutils.node.parent.notify_childs_users_changed()
+        return {"additional_configs": actor.additional_configs}
 
 
 class MyAdminPasswordApi(MethodView):

@@ -310,6 +310,12 @@
   },
   "adminV2": {
     "account": {
+      "configsEmpty": "No configs yet. Add a subscription link or paste a config: all your users get it.",
+      "configsSave": "Save configs",
+      "configsSaved": "Configs saved",
+      "configsSub": "Added to the subscription of all your users and your sub-admins' users, on top of each user's own.",
+      "configsTitle": "Configs for my users",
+      "configsUnsaved": "Not saved yet",
       "title": "My account",
       "subtitle": "Your limits, how much of them you use, and your password.",
       "under": "Under {name}",
@@ -383,6 +389,8 @@
         "pwNone": "No password: this link alone signs in",
         "pwHint": "Passwords are never shown again. To give a new one, reset it."
       },
+      "myConfigs": "Configs for my users",
+      "myConfigsHint": "Configs for my users: added to the subscription of all your users and your sub-admins' users",
       "showLink": "Admin link",
       "title": "Admins",
       "subtitle": "Your admin team as a tree. Each admin's limits cover their own users and everyone below them.",
@@ -392,7 +400,7 @@
       "refresh": "Refresh",
       "noMatch": "No admin matches these filters",
       "you": "You",
-      "meLocked": "This is you. Change your password in My account.",
+      "meLocked": "This is you: only your users' configs can be changed here. Change your password in My account.",
       "more": "More actions",
       "copyLink": "Copy link",
       "canAddShort": "Adds sub-admins",
@@ -441,6 +449,9 @@
       },
       "form": {
         "advancedHint": "Under {name}",
+        "configs": "Configs for this admin's users",
+        "configsCount": "{n} config | {n} configs",
+        "configsHint": "Added to the subscription of every user of this admin and of its sub-admins.",
         "createTitle": "New admin",
         "createSubtitle": "Creates an agent. A secure password is generated for them.",
         "editTitle": "Edit {name}",
@@ -1555,6 +1566,7 @@
         "extraNotObject": "Extra params must be a JSON object (between curly braces)"
       },
       "configs": {
+        "inherited": "Also gets {n} config from the admins above | Also gets {n} configs from the admins above",
         "title": "Additional configs",
         "hint": "Extra configs added to this user's subscription: paste one (offline) or give a URL fetched for the user (subscription). Choose which app format it is for, or Auto for all.",
         "kind": {

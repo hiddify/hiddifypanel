@@ -1,4 +1,5 @@
 import { getHttp } from '@/core/api/client'
+import type { AdditionalConfig } from '@/shared/utils/additional-configs'
 
 export type AdminMode = 'super_admin' | 'admin' | 'agent'
 
@@ -44,6 +45,8 @@ export interface AdminRow {
   limits: AdminLimits | null
   stats: AdminStats
   sub_admins: number
+  /** Added to the subscription of every user of this admin and its sub-admins. */
+  additional_configs: AdditionalConfig[]
   can_edit: boolean
   can_delete: boolean
 }
@@ -67,6 +70,7 @@ export interface AdminPayload {
   /** 0 or null: no limit. */
   max_online_users?: number | null
   max_total_usage_GB?: number | null
+  additional_configs?: AdditionalConfig[]
 }
 
 export interface AdminCredentials {
@@ -85,6 +89,10 @@ export interface MyAccount {
   limits: AdminLimits | null
   stats: AdminStats
   sub_admins: number
+  /** Mine: for all my users and my sub-admins' users. */
+  additional_configs: AdditionalConfig[]
+  /** From the admins above me: my users get them too. */
+  inherited_configs: number
 }
 
 export const adminsApi = {
@@ -109,6 +117,10 @@ export const adminsApi = {
   async me(): Promise<MyAccount> {
     const { data } = await getHttp().get<MyAccount>('admins/me/')
     return data
+  },
+  async saveMyConfigs(rows: AdditionalConfig[]): Promise<AdditionalConfig[]> {
+    const { data } = await getHttp().put<{ additional_configs: AdditionalConfig[] }>('admins/me/additional-configs/', { additional_configs: rows })
+    return data.additional_configs
   },
   async changeMyPassword(currentPassword: string, newPassword: string): Promise<void> {
     await getHttp().put('admins/me/password/', { current_password: currentPassword, new_password: newPassword })

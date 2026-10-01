@@ -11,11 +11,8 @@ export const USER_MODES: UserMode[] = ['no_reset', 'monthly', 'weekly', 'daily']
 export const UNLIMITED_GB = 1_000_000
 export const UNLIMITED_DAYS = 10_000
 
-export type ConfigKind = 'offline' | 'subscription'
-export type ConfigTarget = 'sublink' | 'xray' | 'hiddify-core' | 'clash' | 'auto'
-export const CONFIG_TARGETS: ConfigTarget[] = ['auto', 'sublink', 'xray', 'hiddify-core', 'clash']
-/** [kind, target, value]: offline = the config itself, subscription = a URL fetched for the user. */
-export type AdditionalConfig = [ConfigKind, ConfigTarget, string]
+import type { AdditionalConfig } from '@/shared/utils/additional-configs'
+export { CONFIG_TARGETS, type AdditionalConfig, type ConfigKind, type ConfigTarget } from '@/shared/utils/additional-configs'
 
 export interface UserRow {
   uuid: string
@@ -45,6 +42,8 @@ export interface UserRow {
 
 export interface UserDetail extends Omit<UserRow, 'additional_configs'> {
   additional_configs: AdditionalConfig[]
+  /** Rows the user also gets from its admin and the admins above. */
+  inherited_configs: number
   /** JSON text of the other extra params. */
   extra_params: string
 }

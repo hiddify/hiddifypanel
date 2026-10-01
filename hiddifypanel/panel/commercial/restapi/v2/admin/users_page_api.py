@@ -105,6 +105,8 @@ def _detail(user: User, admins: dict[int, AdminUser]) -> dict[str, Any]:
     return {
         **_row(user, admins),
         "additional_configs": rows,
+        # Rows the user also gets from its admin and the admins above.
+        "inherited_configs": len(user_configs.inherited_rows(user.uuid)),
         "extra_params": json.dumps(rest, indent=2, ensure_ascii=False) if rest else "{}",
     }
 

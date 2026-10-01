@@ -24,6 +24,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v157(child_id):
+    """Admins can have additional configs for all their users (column added by migrate)."""
+    pass
+
+
 def _v156(child_id):
     """User extra params can hold additional configs: no longer limited to 2000 characters."""
     if child_id == 0:

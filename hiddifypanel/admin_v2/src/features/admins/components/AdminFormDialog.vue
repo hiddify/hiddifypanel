@@ -11,6 +11,8 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import TreeSelect from 'primevue/treeselect'
 import type { TreeNode } from 'primevue/treenode'
 import { apiErrorMessage } from '@/core/api/client'
+import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
+import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { adminsApi, type AdminCredentials, type AdminLimits, type AdminPayload, type AdminRow, type AdminsTree } from '@/features/admins/api'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -109,6 +111,7 @@ watch(visible, (open) => {
   name.value = admin?.name ?? ''
   comment.value = admin?.comment ?? ''
   uuid.value = admin?.uuid ?? randomUuid()
+  configs.value = (admin?.additional_configs ?? []).map((row) => [...row] as AdditionalConfig)
   canAddAdmin.value = admin?.can_add_admin ?? false
   parent.value = { [admin?.parent_uuid ?? props.tree?.me_uuid ?? '']: true }
   const mine = myLimits.value
@@ -142,11 +145,15 @@ const limitFields = computed(() =>
     return { ...field, mine, invalid: tooHigh || missing }
   }),
 )
+const configs = ref<AdditionalConfig[]>([])
+
 const limitsInvalid = computed(() => !targetIsSuper.value && limitFields.value.some((field) => field.invalid))
 
 async function submit() {
   touched.value = true
-  if (!name.value.trim() || uuidError.value || limitsInvalid.value || busy.value) return
+  const configsInvalid = configs.value.some((c) => configRowProblem(c))
+  if (configsInvalid) showAdvanced.value = true
+  if (!name.value.trim() || uuidError.value || limitsInvalid.value || configsInvalid || busy.value) return
   busy.value = true
   error.value = null
   const payload: AdminPayload = {
@@ -154,6 +161,7 @@ async function submit() {
     comment: comment.value.trim(),
     can_add_admin: canAddAdmin.value,
     parent_uuid: Object.keys(parent.value)[0] || undefined,
+    additional_configs: cleanConfigRows(configs.value),
   }
   if (!targetIsSuper.value) {
     payload.max_users = limits.value.max_users ?? DEFAULT_LIMIT
@@ -262,7 +270,9 @@ async function submit() {
         <button type="button" class="admin-form__toggle" :aria-expanded="showAdvanced" @click="showAdvanced = !showAdvanced">
           <i class="pi pi-sliders-h" />
           <span class="flex-1">{{ t('admins.form.advanced') }}</span>
-          <span v-if="!showAdvanced && parentName" class="admin-form__toggle-hint">{{ t('admins.form.advancedHint', { name: parentName }) }}</span>
+          <span v-if="!showAdvanced && parentName" class="admin-form__toggle-hint">
+            {{ t('admins.form.advancedHint', { name: parentName }) }}<template v-if="configs.length"> · {{ t('admins.form.configsCount', { n: configs.length }, configs.length) }}</template>
+          </span>
           <i class="pi pi-angle-down admin-form__caret" :class="{ 'admin-form__caret--open': showAdvanced }" />
         </button>
         <div v-if="showAdvanced" class="admin-form__field">
@@ -287,6 +297,12 @@ async function submit() {
             <Button type="button" icon="pi pi-refresh" severity="secondary" outlined :aria-label="t('admins.form.newUuid')" v-tooltip.top="t('admins.form.newUuid')" @click="uuid = randomUuid()" />
           </div>
           <small :class="uuidError ? 'admin-form__error' : 'text-muted-color'">{{ uuidError ? t('admins.form.uuidInvalid') : t('admins.form.uuidHint') }}</small>
+        </div>
+        <!-- Configs every user of this admin (and of its sub-admins) gets -->
+        <div v-if="showAdvanced" class="admin-form__field">
+          <span class="admin-form__limit-label"><i class="pi pi-paperclip" />{{ t('admins.form.configs') }}<span v-if="configs.length" class="admin-form__count">{{ configs.length }}</span></span>
+          <small class="text-muted-color">{{ t('admins.form.configsHint') }}</small>
+          <AdditionalConfigsEditor v-model="configs" :disabled="busy" :show-errors="touched" />
         </div>
       </section>
 
@@ -420,6 +436,13 @@ async function submit() {
   font-size: 0.88rem;
   text-align: start;
   cursor: pointer;
+}
+.admin-form__count {
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
 }
 .admin-form__toggle-hint {
   max-width: 45%;

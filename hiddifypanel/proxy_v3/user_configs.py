@@ -6,6 +6,10 @@ Stored in the user's extra params as ``additional_configs``: a JSON list of ``[k
 * ``target``  the client format it is for: ``sublink`` | ``xray`` | ``hiddify-core`` | ``clash`` | ``auto`` (every format)
 * ``value``   share links / JSON / YAML, or the URL
 
+Admins can have the same list (``AdminUser.additional_configs``): it goes to every user of the admin and of
+its sub-admins. A user gets, in order, the rows of the top admin down to its own admin, then its own rows;
+identical rows count once.
+
 The built-in "User Configs" custom proxy (enabled by default) renders them via ``user_additional_configs(core)``.
 """
 
@@ -92,12 +96,55 @@ def _parse_offline(content: str, core: str) -> Any:
     return data if isinstance(data, (dict, list)) else None
 
 
-def _rows_for(extra: Any, core: str) -> list[list[str]]:
+def admin_chain(admin: Any) -> list[Any]:
+    """``admin`` and its parents, top admin first (stops on loops)."""
+    chain: list[Any] = []
+    seen: set[int] = set()
+    while admin is not None and admin.id not in seen:
+        seen.add(admin.id)
+        chain.append(admin)
+        parent = admin.parent_admin
+        admin = parent if parent is not None and parent.id != admin.id else None
+    return list(reversed(chain))
+
+
+def inherited_rows(user_uuid: str | None) -> list[list[str]]:
+    """Rows the user gets from its admin and every admin above (top first)."""
+    if not user_uuid:
+        return []
+    from hiddifypanel.models import AdminUser, User
+
+    user = User.query.filter(User.uuid == str(user_uuid)).first()
+    owner = AdminUser.by_id(user.added_by) if user and user.added_by else None
+    return merge_rows(*[clean_rows(admin.additional_configs or [])[0] for admin in admin_chain(owner)])
+
+
+def merge_rows(*groups: list[list[str]]) -> list[list[str]]:
+    """All rows in order; identical rows once."""
+    out: list[list[str]] = []
+    seen: set[tuple[str, str, str]] = set()
+    for group in groups:
+        for row in group:
+            key = (row[0], row[1], row[2])
+            if key not in seen:
+                seen.add(key)
+                out.append(list(row))
+    return out
+
+
+def _own_rows(extra: Any) -> list[list[str]]:
     getter = getattr(extra, "get", None)
     raw = getter(EXTRA_KEY) if callable(getter) else None
-    if hasattr(raw, "to_python"):
-        raw = raw.to_python()
     rows, _problems = clean_rows(list(raw) if isinstance(raw, (list, tuple)) else raw)
+    return rows
+
+
+def _rows_for(user: Any, core: str) -> list[list[str]]:
+    try:
+        inherited = inherited_rows(getattr(user, "uuid", None))
+    except Exception:  # no database (e.g. a template preview without a user row)
+        inherited = []
+    rows = merge_rows(inherited, _own_rows(getattr(user, "extra_params", None) or {}))
     want = "hiddify-core" if core == "singbox" else core
     return [r for r in rows if r[1] in (want, "auto")]
 
@@ -109,7 +156,7 @@ def user_additional_configs(context: Any, core: str, cache: str = "1h") -> list[
     user = getattr(ctx, "user", None)
     if user is None:
         return []
-    rows = _rows_for(getattr(user, "extra_params", None) or {}, core)
+    rows = _rows_for(user, core)
     out: list[Any] = [_parse_offline(r[2], core) for r in rows if r[0] == "offline"]
     urls = [r[2] for r in rows if r[0] == "subscription"]
     if urls:

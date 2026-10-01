@@ -7,21 +7,20 @@ import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
-import SelectButton from 'primevue/selectbutton'
 import Skeleton from 'primevue/skeleton'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Json5Editor from '@/shared/components/Json5Editor.vue'
+import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
+import { cleanConfigRows, configRowProblem } from '@/shared/utils/additional-configs'
 import { apiErrorMessage } from '@/core/api/client'
 import {
-  CONFIG_TARGETS,
   MODE_ICON,
   UNLIMITED_DAYS,
   UNLIMITED_GB,
   USER_MODES,
   usersApi,
   type AdditionalConfig,
-  type ConfigKind,
   type UserDetail,
   type UserMode,
   type UserPayload,
@@ -177,20 +176,7 @@ const ownerOptions = computed(() => {
 })
 
 // ---- Additional configs
-const kindOptions = computed(() => (['offline', 'subscription'] as ConfigKind[]).map((k) => ({ value: k, label: t(`users.configs.kind.${k}`) })))
-const targetOptions = computed(() => CONFIG_TARGETS.map((x) => ({ value: x, label: t(`users.configs.target.${x}`) })))
-function addConfig(kind: ConfigKind) {
-  configs.value.push([kind, 'auto', ''])
-}
-function removeConfig(i: number) {
-  configs.value.splice(i, 1)
-}
-function configProblem(row: AdditionalConfig): string | null {
-  if (!touched.value) return null
-  if (!row[2].trim()) return t('users.configs.empty')
-  if (row[0] === 'subscription' && !/^https?:\/\//i.test(row[2].trim())) return t('users.configs.badUrl')
-  return null
-}
+const configsInvalid = computed(() => configs.value.some((c) => configRowProblem(c)))
 
 /** What is set inside the closed Advanced section, so nothing hides there unnoticed. */
 const advancedSummary = computed(() => {
@@ -218,8 +204,8 @@ const extraError = computed(() => {
 
 async function submit() {
   touched.value = true
-  if (!name.value.trim() || uuidError.value || extraError.value || configs.value.some((c) => configProblem(c)) || busy.value) {
-    if (uuidError.value || extraError.value || configs.value.some((c) => configProblem(c))) showAdvanced.value = true
+  if (!name.value.trim() || uuidError.value || extraError.value || configsInvalid.value || busy.value) {
+    if (uuidError.value || extraError.value || configsInvalid.value) showAdvanced.value = true
     return
   }
   busy.value = true
@@ -234,7 +220,7 @@ async function submit() {
     owner_uuid: ownerUuid.value ?? undefined,
     telegram_id: telegramId.value,
     preferred_outbound: preferredOutbound.value,
-    additional_configs: configs.value.map(([k, target, v]) => [k, target, v.trim()] as AdditionalConfig),
+    additional_configs: cleanConfigRows(configs.value),
     extra_params: extraText.value.trim() || '{}',
     uuid: uuid.value.trim().toLowerCase(),
   }
@@ -463,24 +449,9 @@ async function submit() {
 
           <!-- Additional configs -->
           <section class="uf-sub">
-            <h5 class="uf-sub__title"><i class="pi pi-clone" />{{ t('users.configs.title') }}<span v-if="configs.length" class="uf-count">{{ configs.length }}</span></h5>
+            <h5 class="uf-sub__title"><i class="pi pi-paperclip" />{{ t('users.configs.title') }}<span v-if="configs.length" class="uf-count">{{ configs.length }}</span></h5>
             <p class="uf-hint">{{ t('users.configs.hint') }}</p>
-            <TransitionGroup name="uf-row" tag="div" class="uf-configs">
-              <div v-for="(row, i) in configs" :key="i" class="uf-config">
-                <div class="uf-config__head">
-                  <SelectButton v-model="row[0]" :options="kindOptions" option-label="label" option-value="value" :allow-empty="false" size="small" :disabled="busy" />
-                  <Select v-model="row[1]" :options="targetOptions" option-label="label" option-value="value" size="small" :disabled="busy" class="uf-config__target" />
-                  <Button type="button" icon="pi pi-trash" text rounded severity="danger" size="small" :aria-label="t('common.delete')" :disabled="busy" @click="removeConfig(i)" />
-                </div>
-                <InputText v-if="row[0] === 'subscription'" v-model="row[2]" dir="ltr" class="w-full font-mono text-sm" :placeholder="t('users.configs.urlPlaceholder')" :invalid="!!configProblem(row)" :disabled="busy" />
-                <Textarea v-else v-model="row[2]" dir="ltr" rows="3" class="w-full uf-mono" :placeholder="t('users.configs.offlinePlaceholder')" :invalid="!!configProblem(row)" :disabled="busy" />
-                <small v-if="configProblem(row)" class="uf-error">{{ configProblem(row) }}</small>
-              </div>
-            </TransitionGroup>
-            <div class="flex flex-wrap gap-2">
-              <Button type="button" icon="pi pi-link" :label="t('users.configs.addSubscription')" size="small" severity="secondary" outlined :disabled="busy" @click="addConfig('subscription')" />
-              <Button type="button" icon="pi pi-file" :label="t('users.configs.addOffline')" size="small" severity="secondary" outlined :disabled="busy" @click="addConfig('offline')" />
-            </div>
+            <AdditionalConfigsEditor v-model="configs" :disabled="busy" :show-errors="touched" :inherited="detail?.inherited_configs" />
           </section>
           </div>
           <div class="uf-field uf-field--wide">
@@ -869,29 +840,6 @@ async function submit() {
 .uf-opt--off {
   opacity: 0.6;
 }
-.uf-configs {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-.uf-config {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  padding: 0.65rem;
-  border-radius: 12px;
-  border: 1px dashed var(--p-content-border-color);
-}
-.uf-config__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-.uf-config__target {
-  min-width: 9rem;
-  flex: 1;
-}
 .uf-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.8rem;
@@ -928,17 +876,6 @@ async function submit() {
   gap: 0.5rem;
   padding: 0.75rem 0 0.1rem;
   background: var(--p-dialog-background, var(--p-content-background));
-}
-.uf-row-enter-active,
-.uf-row-leave-active {
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-.uf-row-enter-from,
-.uf-row-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
 }
 /* Very narrow: used box above the limit, no "of" */
 @media (max-width: 480px) {
