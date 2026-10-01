@@ -1,0 +1,125 @@
+import { getHttp } from '@/core/api/client'
+
+export type AdminMode = 'super_admin' | 'admin' | 'agent'
+
+/** Limits of one admin; they count its users and all its sub-admins' users. Null fields: no limit. */
+export interface AdminLimits {
+  max_users: number
+  max_active_users: number
+  max_online_users: number | null
+  /** Traffic all these users may use together. */
+  max_total_usage_GB: number | null
+}
+
+/** Users of an admin and its sub-admins. Online = seen in the last 24 hours. */
+export interface AdminStats {
+  total: number
+  active: number
+  online: number
+  usage_GB: number
+}
+
+/** A domain an admin link can use; the link is `${base}${uuid}/`. */
+export interface LinkDomain {
+  domain: string
+  label: string
+  /** `current`: the address this panel is open on. */
+  kind: 'current' | 'direct' | 'cdn' | 'auto'
+  base: string
+}
+
+export interface AdminRow {
+  uuid: string
+  name: string
+  comment: string
+  mode: AdminMode
+  can_add_admin: boolean
+  /** Null for the tree root (the signed-in admin). */
+  parent_uuid: string | null
+  parent_name: string | null
+  is_me: boolean
+  has_password: boolean
+  admin_link: string
+  /** Null for a super admin: no limits. */
+  limits: AdminLimits | null
+  stats: AdminStats
+  sub_admins: number
+  can_edit: boolean
+  can_delete: boolean
+}
+
+export interface AdminsTree {
+  me_uuid: string
+  can_create: boolean
+  my_limits: AdminLimits | null
+  link_domains: LinkDomain[]
+  admins: AdminRow[]
+}
+
+export interface AdminPayload {
+  name?: string
+  comment?: string
+  uuid?: string
+  can_add_admin?: boolean
+  parent_uuid?: string
+  max_users?: number
+  max_active_users?: number
+  /** 0 or null: no limit. */
+  max_online_users?: number | null
+  max_total_usage_GB?: number | null
+}
+
+export interface AdminCredentials {
+  password: string
+  admin_link: string
+}
+
+export interface MyAccount {
+  uuid: string
+  name: string
+  mode: AdminMode
+  can_add_admin: boolean
+  parent_name: string | null
+  has_password: boolean
+  admin_link: string
+  limits: AdminLimits | null
+  stats: AdminStats
+  sub_admins: number
+}
+
+export const adminsApi = {
+  async tree(): Promise<AdminsTree> {
+    const { data } = await getHttp().get<AdminsTree>('admins/')
+    return data
+  },
+  async create(payload: AdminPayload): Promise<AdminCredentials & { uuid: string; name: string }> {
+    const { data } = await getHttp().post<AdminCredentials & { uuid: string; name: string }>('admins/', payload)
+    return data
+  },
+  async update(uuid: string, payload: AdminPayload): Promise<void> {
+    await getHttp().patch(`admins/${uuid}/`, payload)
+  },
+  async remove(uuid: string): Promise<void> {
+    await getHttp().delete(`admins/${uuid}/`)
+  },
+  async resetPassword(uuid: string): Promise<AdminCredentials> {
+    const { data } = await getHttp().post<AdminCredentials>(`admins/${uuid}/reset-password/`)
+    return data
+  },
+  async me(): Promise<MyAccount> {
+    const { data } = await getHttp().get<MyAccount>('admins/me/')
+    return data
+  },
+  async changeMyPassword(currentPassword: string, newPassword: string): Promise<void> {
+    await getHttp().put('admins/me/password/', { current_password: currentPassword, new_password: newPassword })
+  },
+}
+
+export type MeterTone = 'ok' | 'warn' | 'danger' | 'none'
+
+/** Color of a meter: green up to 50% of the limit, yellow above it, red from 80%; `none` without a limit. */
+export function meterTone(used: number, max: number | null | undefined): MeterTone {
+  if (!max) return 'none'
+  const ratio = used / max
+  return ratio >= 0.8 ? 'danger' : ratio > 0.5 ? 'warn' : 'ok'
+}

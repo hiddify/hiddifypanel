@@ -118,7 +118,7 @@ def _manager_items() -> list[dict]:
     else:
         items = [
             _item(_("admin.menu.user"), hurl_for("flask.user.index_view"), "pi pi-fw pi-users"),
-            _item(_("Admins"), hurl_for("flask.adminuser.index_view"), "pi pi-fw pi-user-edit"),
+            {"label": _("Admins"), "to": "/admins", "icon": "pi pi-fw pi-sitemap"},
         ]
     if g.account.mode == "super_admin":
         items.append({"label": _("Nodes"), "to": "/nodes", "icon": "pi pi-fw pi-server"})

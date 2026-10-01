@@ -128,6 +128,8 @@ class AdminSchema(ApiModel):
     lang: Lang
     max_users: int | None = Field(default=None, description="The maximum number of users allowed")
     max_active_users: int | None = Field(default=None, description="The maximum number of active users allowed")
+    max_online_users: int | None = Field(default=None, description="The maximum number of users online in the last 24 hours (empty: no limit)")
+    max_total_usage_GB: float | None = Field(default=None, description="The traffic in GB all users of the admin and its sub-admins may use together (empty: no limit)")
 
 
 class PatchAdminSchema(ApiModel):
@@ -141,6 +143,8 @@ class PatchAdminSchema(ApiModel):
     lang: Lang | None = None
     max_users: int | None = None
     max_active_users: int | None = None
+    max_online_users: int | None = None
+    max_total_usage_GB: float | None = None
 
 
 class SuccessfulSchema(ApiModel):

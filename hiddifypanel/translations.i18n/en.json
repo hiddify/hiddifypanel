@@ -309,6 +309,40 @@
     "waiting_for_update": "⚠️ Please wait about 5 minutes to make sure everything is updated. during this time, please copy and save your Proxy links which are:"
   },
   "adminV2": {
+    "account": {
+      "title": "My account",
+      "subtitle": "Your limits, how much of them you use, and your password.",
+      "under": "Under {name}",
+      "canAddAdmins": "Can add sub-admins",
+      "copyLink": "Copy my admin link",
+      "limitsTitle": "My limits",
+      "limitsSub": "Your users and all your sub-admins' users count toward these.",
+      "noLimits": "Super admins have no limits.",
+      "superText": "You can add as many users and admins as you need.",
+      "unlimited": "No limit",
+      "subAdmins": "Sub-admins",
+      "nearLimit": "You are close to a limit. Ask the admin above you to raise it, or disable users you no longer need.",
+      "passwordTitle": "Password",
+      "passwordSub": "Change the password you sign in with.",
+      "noPasswordSub": "You have no password: anyone with your link can sign in. Set one to protect your account.",
+      "current": "Current password",
+      "wrongCurrent": "The current password is wrong",
+      "new": "New password",
+      "repeat": "Repeat new password",
+      "generate": "Generate",
+      "generatedCopied": "A strong password was generated and copied",
+      "minLength": "At least {n} characters",
+      "mismatch": "The passwords don't match",
+      "loginHint": "After saving, sign in with your admin link and this password.",
+      "save": "Save password",
+      "saved": "Password changed",
+      "strength": {
+        "prompt": "Enter a password",
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      }
+    },
     "actions": {
       "applyConfigs": "Apply Configs",
       "applyConfigsHint": "Regenerate the server configs and apply them to running services.",
@@ -329,6 +363,140 @@
       "updateHint": "Update the panel and all services to the latest version.",
       "viewlogs": "View Logs",
       "viewlogsHint": "Browse the system log files."
+    },
+    "admins": {
+      "canAddHint": "This admin can create its own sub-admins",
+      "collapse": "Hide sub-admins of {name}",
+      "expand": "Show sub-admins of {name}",
+      "filter": {
+        "mode": "Filter by mode",
+        "anyMode": "Any mode",
+        "sub": "Filter by sub-admin permission",
+        "anySub": "Any permission",
+        "canAdd": "Can add sub-admins",
+        "cannotAdd": "Can't add sub-admins",
+        "clear": "Clear filters"
+      },
+      "linkDialog": {
+        "title": "Admin link of {name}",
+        "domain": "Domain",
+        "download": "Download",
+        "open": "Open",
+        "pwSet": "Signs in with this link and a password",
+        "pwNone": "No password: this link alone signs in",
+        "pwHint": "Passwords are never shown again. To give a new one, reset it.",
+        "kind": {
+          "current": "Current",
+          "cdn": "CDN",
+          "auto": "Auto CDN"
+        }
+      },
+      "showLink": "Admin link",
+      "title": "Admins",
+      "subtitle": "Your admin team as a tree. Each admin's limits cover their own users and everyone below them.",
+      "add": "Add admin",
+      "search": "Search name or UUID",
+      "clearSearch": "Clear search",
+      "refresh": "Refresh",
+      "noMatch": "No admin matches these filters",
+      "you": "You",
+      "meLocked": "This is you. Change your password in My account.",
+      "more": "More actions",
+      "copyLink": "Copy link",
+      "canAddShort": "Adds sub-admins",
+      "subCount": "{n} sub-admin | {n} sub-admins",
+      "resetPassword": "Reset password",
+      "resetTitle": "Reset the password of {name}?",
+      "resetMessage": "A new password is generated and the old one stops working right away.",
+      "deleteTitle": "Delete {name}?",
+      "deleteMessage": "This admin is deleted and its users move to you.",
+      "deleteMessageWithSubs": "This admin and its {count} sub-admin are deleted, and their users move to you. | This admin and its {count} sub-admins are deleted, and their users move to you.",
+      "deleted": "{name} deleted",
+      "saved": "{name} saved",
+      "summary": {
+        "admins": "admin | admins",
+        "users": "user | users",
+        "online": "online"
+      },
+      "col": {
+        "name": "Name",
+        "link": "Admin link",
+        "mode": "Mode",
+        "subAdmins": "Sub-admins",
+        "users": "Users",
+        "note": "Note"
+      },
+      "mode": {
+        "super_admin": "Super admin",
+        "admin": "Admin",
+        "agent": "Agent"
+      },
+      "meter": {
+        "online": "Online",
+        "onlineHint": "Users seen in the last 24 hours, out of the allowed number",
+        "active": "Active",
+        "activeHint": "Users that are enabled and have days and traffic left, out of the allowed number",
+        "total": "Total",
+        "totalHint": "All users, out of the allowed number",
+        "traffic": "Traffic",
+        "trafficHint": "Traffic used by all these users, out of the allowed total"
+      },
+      "limit": {
+        "max_online_users": "Max online users",
+        "max_active_users": "Max active users",
+        "max_total_usage_GB": "Max used traffic (total)",
+        "max_users": "Max total users"
+      },
+      "form": {
+        "advancedHint": "Under {name}",
+        "createTitle": "New admin",
+        "createSubtitle": "Creates an agent. A secure password is generated for them.",
+        "editTitle": "Edit {name}",
+        "editSubtitle": "Changes apply right away.",
+        "name": "Name",
+        "namePlaceholder": "e.g. Sales team",
+        "nameRequired": "A name is required",
+        "note": "Note",
+        "notePlaceholder": "Only visible to admins above them",
+        "optional": "optional",
+        "placement": "Place in the team",
+        "parent": "Parent admin",
+        "parentHint": "The new admin, its users and its limits sit under this admin.",
+        "canAddAdmin": "Can add sub-admins",
+        "canAddAdminHint": "Lets this admin create agents of its own, within its limits.",
+        "limits": "Limits",
+        "limitsHint": "Counted over this admin's users and all of its sub-admins' users. When one is reached, no new users can be added.",
+        "superNoLimits": "Super admins have no limits.",
+        "noLimit": "No limit",
+        "emptyNoLimit": "Leave empty for no limit",
+        "upTo": "Up to {max} (your limit)",
+        "advanced": "Advanced",
+        "newUuid": "New UUID",
+        "uuidHint": "Generated automatically. Change it only to reuse a known ID.",
+        "uuidInvalid": "This is not a valid UUID",
+        "passwordInfo": "A secure password is created automatically. You can copy it with the login link right after saving.",
+        "create": "Create admin"
+      },
+      "credentials": {
+        "copyMessageHint": "Copies the message together with the QR code image",
+        "createdTitle": "{name} is ready",
+        "resetTitle": "New password for {name}",
+        "lead": "Send these to the admin. They open the link and sign in with the password.",
+        "link": "Admin link",
+        "password": "Password",
+        "show": "Show password",
+        "messageLabel": "Message to send",
+        "message": "To log in, please open the following link:\n{link}\nand sign in with the password: {password}",
+        "copyMessage": "Copy message",
+        "once": "The password is shown only now. Copy it before closing; otherwise reset it again.",
+        "done": "Done"
+      },
+      "empty": {
+        "title": "No sub-admins yet",
+        "text": "Add agents to share the work. Each one gets their own link, password and limits.",
+        "textNoPermission": "You don't have permission to add admins. Ask the admin above you if you need it.",
+        "cta": "Add your first admin"
+      }
     },
     "appTitle": "HiddifyManager",
     "applyNotice": {
@@ -529,7 +697,9 @@
         "manager": "Manager",
         "settings": "Settings"
       },
+      "myAccount": "My account",
       "nodeHome": "Node",
+      "outbounds": "Outbounds",
       "protocols": "Protocols",
       "proxyEditor": "Proxy Editor",
       "templateVariables": "Template Variables",
@@ -621,6 +791,99 @@
       "synced": "{name} synced",
       "title": "Nodes",
       "unreachable": "Not reachable"
+    },
+    "outbounds": {
+      "title": "Outbounds",
+      "subtitle": "Choose where traffic leaves this server: through WARP, directly, blocked, or through a SOCKS, Tor or Psiphon exit.",
+      "add": "Add outbound",
+      "default": "Default",
+      "makeDefault": "Make default",
+      "nowDefault": "{name} is now the default",
+      "defaultAlwaysOn": "The default outbound is always on",
+      "enabled": "Enabled",
+      "enable": "Turn on",
+      "disable": "Turn off",
+      "edited": "Edited here: upgrades keep your lists",
+      "followsDefaults": "Uses the built-in lists, updated on upgrade",
+      "reset": "Reset to defaults",
+      "resetTitle": "Reset {name} to the built-in lists?",
+      "resetMessage": "Your changes to its sites, geosites and rule-sets are replaced with the built-in lists, which upgrades then keep up to date.",
+      "resetDone": "{name} uses the built-in lists again",
+      "deleteTitle": "Delete {name}?",
+      "deleteMessage": "Its sites go to the default outbound from now on.",
+      "deleteMessageDefault": "This is the default outbound: Direct becomes the default.",
+      "deleted": "{name} deleted",
+      "saved": "{name} saved",
+      "empty": "Nothing routed here yet. Edit it to add sites or rule-sets.",
+      "emptyDefault": "Everything not routed elsewhere goes here.",
+      "domesticChip": "Domestic ({region})",
+      "warpOff": "WARP is turned off in the settings, so the WARP outbound's sites go out directly. Turn WARP on in Settings → WARP to use it.",
+      "flow": {
+        "label": "Routing order",
+        "lead": "Checked in this order:",
+        "rest": "Everything else → {name}"
+      },
+      "count": {
+        "sites": "site | sites",
+        "geosites": "geosite | geosites",
+        "rule_sets": "rule-set | rule-sets"
+      },
+      "mode": {
+        "warp": "WARP",
+        "direct": "Direct",
+        "block": "Block",
+        "socks": "SOCKS",
+        "tor": "Tor",
+        "psiphon": "Psiphon"
+      },
+      "modeHint": {
+        "warp": "Through Cloudflare WARP on this server",
+        "direct": "Straight from this server",
+        "block": "Dropped",
+        "socks": "Through a SOCKS5 proxy",
+        "tor": "Through the Tor network (a Tor SOCKS port)",
+        "psiphon": "Through Psiphon (a Psiphon SOCKS port)"
+      },
+      "region": {
+        "ir": "Iran",
+        "cn": "China",
+        "ru": "Russia",
+        "other": "your region"
+      },
+      "list": {
+        "sites": "Sites",
+        "sitesHint": "One domain per line; subdomains are included.",
+        "sitesPlaceholder": "example.com",
+        "geosites": "Geosites (xray)",
+        "geositesHint": "xray geosite tags. An unknown tag stops xray, so use known ones.",
+        "geositesPlaceholder": "google",
+        "rule_sets": "Rule-sets (hiddify-core)",
+        "rule_setsHint": "Rule-set names like geosite-netflix or geoip-ir, or full .srs URLs.",
+        "rule_setsPlaceholder": "geosite-netflix",
+        "browse": "Browse rule-sets"
+      },
+      "dialog": {
+        "addTitle": "Add {mode} outbound",
+        "editTitle": "Edit {name}",
+        "name": "Name",
+        "nameRequired": "A name is required",
+        "endpoint": "Connection",
+        "endpointHint": {
+          "tor": "The Tor service must be running on this server with its SOCKS port here.",
+          "psiphon": "The Psiphon client must be running on this server with its SOCKS port here."
+        },
+        "host": "Host",
+        "port": "Port",
+        "username": "Username",
+        "password": "Password",
+        "passwordKeep": "Leave empty to keep the current password",
+        "optional": "optional",
+        "routes": "What goes through it",
+        "routesHint": "Traffic to these sites leaves through this outbound.",
+        "routesHintDefault": "This is the default: everything not routed elsewhere already goes here. Lists still matter if another outbound lists the same sites later in the order.",
+        "domestic": "Domestic sites of {region}",
+        "add": "Add outbound"
+      }
     },
     "primevue": {
       "accept": "Yes",
@@ -882,6 +1145,18 @@
       },
       "uploadTcpUdp": "Upload TCP or UDP",
       "version": "Version"
+    },
+    "qr": {
+      "copiedBoth": "Message and QR code copied",
+      "copiedBothClick": "Mail and documents paste both. Chat apps paste only the text: after pasting it, click the QR code to copy the image and paste that too.",
+      "copiedBothShare": "Mail and documents paste both. Chat apps paste only the text: use Share to send both, or click the QR code to copy the image.",
+      "copy": "Copy QR",
+      "clickToCopy": "Click to copy the image",
+      "copyUnsupported": "This browser can't copy images. Use Download instead.",
+      "share": "Share",
+      "shareFailed": "Sharing didn't work here. Copy the message, then click the QR code to copy the image.",
+      "shareHint": "Send the text and the QR image together to Telegram, WhatsApp, mail…",
+      "textOnly": "The message was copied. This browser couldn't add the QR image; copy it by clicking the code."
     },
     "quickSetup": {
       "back": "Back",

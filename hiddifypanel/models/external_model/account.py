@@ -135,6 +135,8 @@ class AdminModel(AccountModel):
     parent_admin_uuid: str | None = None
     max_users: int | None = None
     max_active_users: int | None = None
+    max_online_users: int | None = None
+    max_total_usage_GB: float | None = None
 
     @field_validator("parent_admin_uuid", mode="before")
     @classmethod

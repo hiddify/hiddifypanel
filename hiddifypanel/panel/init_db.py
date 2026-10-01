@@ -24,7 +24,15 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
-def _v151(child_id):
+def _v154(child_id):
+    """Outbound manager: seed WARP / Direct / Block and carry warp_mode, warp_sites and block_iran_sites over."""
+    from hiddifypanel.proxy_v3.outbounds import migrate_legacy_settings
+
+    migrate_legacy_settings(child_id)
+
+
+def _v153(child_id):
+
     pass
 
 

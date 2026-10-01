@@ -44,6 +44,10 @@ class AdminUser(BaseAccount):
     can_add_admin: Mapped[bool] = mapped_column(default=False)
     max_users: Mapped[int] = mapped_column(default=100)
     max_active_users: Mapped[int] = mapped_column(default=100)
+    # None = no limit. Online means seen in the last 24 hours.
+    max_online_users: Mapped[int | None] = mapped_column(default=None, nullable=True)
+    # Traffic (GB) all users of this admin and its sub-admins may use together; None = no limit.
+    max_total_usage_GB: Mapped[float | None] = mapped_column(default=None, nullable=True)
     users: Mapped[list[User]] = relationship("User", backref="admin")
     usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)
@@ -88,6 +92,8 @@ class AdminUser(BaseAccount):
             parent_admin_uuid=self.parent_admin.uuid if self.parent_admin else None,
             max_users=self.max_users,
             max_active_users=self.max_active_users,
+            max_online_users=self.max_online_users,
+            max_total_usage_GB=self.max_total_usage_GB,
         )
 
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
@@ -148,6 +154,11 @@ class AdminUser(BaseAccount):
             dbuser.max_users = row.max_users
         if row.max_active_users is not None:
             dbuser.max_active_users = row.max_active_users
+        # 0 or a negative value clears these optional limits (None alone means "not sent").
+        if row.max_online_users is not None:
+            dbuser.max_online_users = row.max_online_users if row.max_online_users > 0 else None
+        if row.max_total_usage_GB is not None:
+            dbuser.max_total_usage_GB = row.max_total_usage_GB if row.max_total_usage_GB > 0 else None
         if commit:
             db.session.commit()
         return dbuser
@@ -158,9 +169,29 @@ class AdminUser(BaseAccount):
         admin_ids = self.recursive_sub_admins_ids()
         return User.query.filter(User.added_by.in_(admin_ids), User.deleted.is_(False))
 
-    def can_have_more_users(self):
-        if self.mode == AdminMode.super_admin:
-            return True
+    def limited_ancestors(self) -> list[AdminUser]:
+        """This admin and its parents up to the first super admin: each one's limits apply to the users below it."""
+        chain: list[AdminUser] = []
+        admin: AdminUser | None = self
+        seen: set[int] = set()
+        while admin is not None and admin.id not in seen and admin.mode != AdminMode.super_admin:
+            chain.append(admin)
+            seen.add(admin.id)
+            admin = admin.parent_admin
+        return chain
+
+    def total_usage_GB(self) -> float:
+        """Traffic used by this admin's users and all its sub-admins' users."""
+        from sqlalchemy import func
+
+        from .user import User
+
+        used = db.session.query(func.coalesce(func.sum(User.current_usage), 0)).filter(User.added_by.in_(self.recursive_sub_admins_ids()), User.deleted.is_(False)).scalar()
+        return (used or 0) / 1024**3
+
+    def _has_room_for_one_more_user(self) -> bool:
+        if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
+            return False
         users_count = self.recursive_users_query().count()
         if users_count >= self.max_users:
             return False
@@ -169,6 +200,10 @@ class AdminUser(BaseAccount):
 
         actives = [u for u in self.recursive_users_query().all() if u.is_active]
         return len(actives) < self.max_active_users
+
+    def can_have_more_users(self):
+        # A sub-admin's users also count against its parents' limits.
+        return all(admin._has_room_for_one_more_user() for admin in self.limited_ancestors())
 
     def recursive_sub_admins_ids(self, depth=20, seen=None):
         if seen is None:

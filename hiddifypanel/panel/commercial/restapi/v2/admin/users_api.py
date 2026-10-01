@@ -35,7 +35,7 @@ class UsersApi(MethodView):
         if not g.account.can_have_more_users():
             abort(
                 400,
-                f"User limit reached: max {g.account.max_users} users / {g.account.max_active_users} active",
+                "User limit reached: you (or an admin above you) reached the max users, active users or total traffic",
             )
 
         if payload.get("uuid"):
