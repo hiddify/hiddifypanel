@@ -1,10 +1,3 @@
-{% set region = {
-    'zh': 'cn',
-    'cn': 'cn',
-    'ir': 'ir',
-    'ru': 'ru'
-}.get(ctx.hconfig.country, 'cn') %}
-
 {
     "domainStrategy": "IPOnDemand",
     "domainMatcher": "hybrid",
@@ -43,81 +36,27 @@
         },
         {% endfor %}
         {% endif %}
-        {# Country sites: blocked when block_iran_sites is on, otherwise sent through WARP when it is enabled. #}
-        {% set region_outbound = "blackhole" if ctx.hconfig.block_iran_sites else ("WARP" if ctx.hconfig.warp_mode != 'disable' else "") %}
-        {% if region_outbound %}
+        {# Outbound manager: each outbound's sites and geosite:/geoip: entries, in order
+           (block, SOCKS/Tor/Psiphon, WARP, direct). Lists are edited in Admin → Outbounds. #}
+        {% for o in ctx.outbounds.items if o.has_xray_rules %}
+        {% if o.geoips %}
         {
-            "type": "field", 
-            "outboundTag": "{{ region_outbound }}",
-            "ip": ["geoip:{{region}}"]
+            "type": "field",
+            "outboundTag": {{ o.xray_tag|tojson }},
+            "ip": {{ o.geoips|tojson }}
         },
+        {% endif %}
+        {% if o.sites or o.geosites %}
         {
-            "type": "field", 
-            "outboundTag": "{{ region_outbound }}",
+            "type": "field",
+            "outboundTag": {{ o.xray_tag|tojson }},
             "domain": [
-            {% if region in ['cn'] %}"geosite:{{region}}",{% endif %}
-            "domain:{{region}}"] 
-            
+                {% for g in o.geosites %}{{ g|tojson }},{% endfor %}
+                {% for d in o.sites %}"domain:{{ d }}"{% if not loop.last %},{% endif %}{% endfor %}
+            ]
         },
         {% endif %}
-        {% if ctx.hconfig.warp_mode != 'all' %}
-         {
-                "type":"field",
-                "outboundTag": {% if ctx.hconfig.warp_mode == 'disable' %}"freedom"{% else %}"WARP"{% endif %},
-                "domain":[
-                    "geosite:google",
-                    "geosite:netflix",
-                    "geosite:spotify",
-                    "geosite:nvidia",
-                    "geosite:bytedance",
-                    "geosite:tiktok",
-                    "geosite:unity",
-                    "geosite:reddit",
-                    "geosite:openai",
-
-                    "domain:ip.gs",
-                    "domain:kmplayer.com",
-                    "domain:ipinfo.io",
-                    "domain:openai.com",
-                    "domain:ai.com",
-                    "domain:freepik.com",
-                    "domain:developer.mozilla.org",
-                    "domain:behance.net",
-                    "domain:remini.com",
-                    "domain:snapchat.com",
-                    "domain:tunetank.com",
-                    "domain:livechart.me",
-                    "domain:9anime.me",
-                    "domain:pixelexperience.org",
-                    "domain:evolution-x.org",
-                    "domain:kenvyra.xyz",
-                    "domain:spark-os.live",
-                    "domain:pixelos.net",
-                    "domain:gamebanana.com",
-                    "domain:myanimelist.net",
-                    "domain:sourcemod.net",
-                    "domain:alliedmods.net",
-                    "domain:pagespeed.web.dev",
-                    "domain:axieinfinity.com",
-                    "domain:clubhouse.com",
-                    "domain:omegle.com",
-                    "domain:alldatasheet.com",
-                    "domain:flaticon.com",
-                    "domain:xda-developers.com",
-                    "domain:giglio.com",
-                    "domain:lookmovie2.to",
-                    "domain:adbtc.top",
-                    "domain:homedepot.com",
-                    "domain:flutter.dev",
-                    "domain:adobe.com"
-                    {% if ctx.hconfig.warp_mode != 'disable' %}
-                      {% for d in (ctx.hconfig.warp_sites or '').split('\n') if d.strip() %}
-                      ,"domain:{{ d.strip() }}"
-                      {% endfor %}
-                    {% endif %}
-                ]
-            },
-        {% endif %}
+        {% endfor %}
         {
           "inboundTag": ["api"], "outboundTag": "api", "type": "field"
         },
@@ -130,7 +69,7 @@
         {
           "type": "field",
           "port": "0-65535",
-          "outboundTag": {% if ctx.hconfig.warp_mode == 'all' %}"WARP"{% else %}"freedom"{% endif %}
+          "outboundTag": {{ ctx.outbounds.default_xray_tag|tojson }}
         }
       ]
 }

@@ -357,6 +357,10 @@ def sync_all(child_id: int = 0, *, refresh_base_configs: bool = True) -> SyncSta
         refresh_builtin=refresh_base_configs,
     )
     cp_added, cp_updated, cp_removed, cp_demoted = sync_custom_proxy_presets(child_id)
+    # Built-in outbounds: lists the admin has not edited follow proxy_templates/outbounds/defaults.yaml.
+    from hiddifypanel.proxy_v3.outbounds import sync_builtin_outbounds
+
+    sync_builtin_outbounds(child_id)
 
     stats = SyncStats(
         child_id=child_id,

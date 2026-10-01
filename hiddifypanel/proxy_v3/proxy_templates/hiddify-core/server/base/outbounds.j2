@@ -11,7 +11,21 @@
     "type": "direct",
     "bind_interface": "warp"
 },
+{# SOCKS / Tor / Psiphon outbounds from the Outbound manager #}
+{% for o in ctx.outbounds.custom %}
+{
+    "tag": "{{ o.singbox_tag }}",
+    "type": "socks",
+    "server": "{{ o.host }}",
+    "server_port": {{ o.port }},
+    "version": "5",
+    {% if o.username %}
+        "username": {{ o.username|tojson }},
+        "password": {{ o.password|tojson }}
+    {% endif %}
+},
+{% endfor %}
 {
     "type": "block",
     "tag": "block"
-},
+}

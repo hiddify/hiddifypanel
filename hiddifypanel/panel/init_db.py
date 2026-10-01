@@ -24,6 +24,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v155(child_id):
+    """Outbounds get an order (the last enabled one is the default); WARP is on only when the WARP setting uses it."""
+    from hiddifypanel.proxy_v3.outbounds import align_warp_with_setting
+
+    align_warp_with_setting(child_id)
+
+
 def _v154(child_id):
     """Outbound manager: seed WARP / Direct / Block and carry warp_mode, warp_sites and block_iran_sites over."""
     from hiddifypanel.proxy_v3.outbounds import migrate_legacy_settings

@@ -2,4 +2,19 @@
 {"tag": "direct", "protocol": "freedom"},
 {"tag": "WARP", "protocol": "freedom", "streamSettings": {"sockopt": {"tcpFastOpen": true, "interface": "warp"}}},
 {"tag": "blackhole", "protocol": "blackhole"},
+{# SOCKS / Tor / Psiphon outbounds from the Outbound manager #}
+{% for o in ctx.outbounds.custom %}
+{
+  "tag": "{{ o.xray_tag }}",
+  "protocol": "socks",
+  "settings": {
+    "address": "{{ o.host }}",
+      "port": {{ o.port }},
+      {% if o.username %}
+        "user": {{ o.username|tojson }},
+        "pass": {{ o.password|tojson }},
+      {% endif %}
+  },
+},
+{% endfor %}
 {"tag": "DNS-Internal", "protocol": "dns"}

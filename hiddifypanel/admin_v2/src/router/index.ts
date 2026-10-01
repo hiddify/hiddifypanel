@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory, type Router } from 'vue-router'
 import AppLayout from '@/core/layout/sakai/AppLayout.vue'
-import { isChildPanel, isSuperAdmin, needsQuickSetup } from '@/core/panelShell'
+import { isAgent, isChildPanel, isSuperAdmin, needsQuickSetup } from '@/core/panelShell'
 
 export const QUICK_SETUP_SKIPPED_KEY = 'hiddify.quickSetup.skipped'
+
+/** Proxy editor pages: not for agents. */
+const notForAgents = () => (isAgent.value ? { name: 'dashboard' } : true)
 
 const routes = [
   {
@@ -42,6 +45,19 @@ const routes = [
         beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
       {
+        path: 'admins',
+        name: 'admins',
+        component: () => import('@/features/admins/views/AdminsView.vue'),
+        // Admins are managed on the parent panel.
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+      },
+      {
+        path: 'account',
+        name: 'my-account',
+        component: () => import('@/features/admins/views/MyAccountView.vue'),
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+      },
+      {
         path: 'settings',
         name: 'settings',
         component: () => import('@/features/settings/views/SettingsView.vue'),
@@ -50,44 +66,59 @@ const routes = [
         path: 'protocols',
         name: 'protocols',
         component: () => import('@/features/protocols/views/ProtocolsView.vue'),
+        beforeEnter: notForAgents,
+      },
+      {
+        path: 'outbounds',
+        name: 'outbounds',
+        component: () => import('@/features/outbounds/views/OutboundsView.vue'),
+        // Server routing: super admins only.
+        beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
       {
         path: 'custom-proxies',
         name: 'custom-proxy-list',
         component: () => import('@/features/custom-proxy/views/CustomProxyListView.vue'),
         meta: { keepAlive: true },
+        beforeEnter: notForAgents,
       },
       {
         path: 'custom-proxies/new',
         name: 'custom-proxy-new',
         component: () => import('@/features/custom-proxy/views/CustomProxyEditorView.vue'),
+        beforeEnter: notForAgents,
       },
       {
         path: 'custom-proxies/:id',
         name: 'custom-proxy-edit',
         component: () => import('@/features/custom-proxy/views/CustomProxyEditorView.vue'),
         props: true,
+        beforeEnter: notForAgents,
       },
       {
         path: 'templates',
         name: 'template-list',
         component: () => import('@/features/templates/views/TemplateListView.vue'),
+        beforeEnter: notForAgents,
       },
       {
         path: 'templates/new',
         name: 'template-new',
         component: () => import('@/features/templates/views/TemplateEditorView.vue'),
+        beforeEnter: notForAgents,
       },
       {
         path: 'templates/:id',
         name: 'template-edit',
         component: () => import('@/features/templates/views/TemplateEditorView.vue'),
         props: true,
+        beforeEnter: notForAgents,
       },
       {
         path: 'template-variables',
         name: 'template-variables',
         component: () => import('@/features/template-variables/views/TemplateVariablesView.vue'),
+        beforeEnter: notForAgents,
       },
       {
         path: 'utils',
@@ -103,17 +134,20 @@ const routes = [
         path: 'base-configs',
         name: 'base-config-list',
         component: () => import('@/features/base-config/views/BaseConfigListView.vue'),
+        beforeEnter: notForAgents,
       },
       {
         path: 'base-configs/new',
         name: 'base-config-new',
         component: () => import('@/features/base-config/views/BaseConfigEditorView.vue'),
+        beforeEnter: notForAgents,
       },
       {
         path: 'base-configs/:id',
         name: 'base-config-edit',
         component: () => import('@/features/base-config/views/BaseConfigEditorView.vue'),
         props: true,
+        beforeEnter: notForAgents,
       },
     ],
   },

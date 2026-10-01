@@ -34,6 +34,7 @@ from .proxy_base_config import (
     default_base_content,
     seed_proxy_base_configs,
 )
+from .outbound import Outbound, OutboundMode
 from .server_ip import ServerIp
 from .tls_store import TlsStore
 from .usage import DailyUsage, UnsyncedUsage

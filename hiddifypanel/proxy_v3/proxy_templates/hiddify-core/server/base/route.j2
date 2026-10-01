@@ -1,39 +1,18 @@
-{% set region = {
-    'zh': 'cn',
-    'cn': 'cn',
-    'ir': 'ir',
-    'ru': 'ru'
-}.get(ctx.hconfig.country, 'cn') %}
-
-{% set geo_sites=['spotify','speedtest','google','netflix','nvidia','bytedance','tiktok','unity','reddit','openai'] %}
-
+{# Outbound manager (Admin → Outbounds): each outbound's sites and rule-sets, in rule order
+   (block, SOCKS/Tor/Psiphon, WARP, direct); the default outbound is `final`. #}
 "route": {
   "rule_set": [
+    {% for rs in ctx.outbounds.rule_sets %}
     {
-      "tag": "geoip-{{ region }}",
+      "tag": "{{ rs.tag }}",
       "type": "remote",
-      "format": "binary",
+      "format": {{ rs.format|tojson }},
       "update_interval": "1d",
-      "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-{{ region }}.srs"
-    },
-    {
-      "tag": "geosite-{{ region }}",
-      "type": "remote",
-      "format": "binary",
-      "update_interval": "1d",
-      "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-{{ region }}.srs"
-    },
-    {% for site in geo_sites %}
-    {
-      "tag": "geosite-{{ site }}",
-      "type": "remote",
-      "format": "binary",
-      "update_interval": "1d",
-      "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/{{ site }}.srs"
+      "url": {{ rs.url|tojson }}
     },
     {% endfor %}
   ],
-  "final": {% if ctx.hconfig.warp_mode == 'all' %}"WARP"{% else %}"freedom"{% endif %},
+  "final": "{{ ctx.outbounds.default_singbox_tag }}",
   "rules": [
     {"action": "sniff"},
     {
@@ -63,43 +42,21 @@
       },
     {% endfor %}
     {% endif %}
-    {% if ctx.hconfig.block_iran_sites %}
+    {% for o in ctx.outbounds.items if o.has_singbox_rules %}
+    {% set target %}{% if o.mode == 'block' %}"action": "reject", "method": "default"{% else %}"outbound": {{ o.singbox_tag|tojson }}{% endif %}{% endset %}
+    {% if o.sites %}
     {
-      "action": "reject",
-      "method": "default",
-      "rule_set": [
-        "geoip-{{ region }}",
-        "geosite-{{ region }}"
-      ]
-    },
-    {% elif ctx.hconfig.warp_mode != 'disable' %}
-    {
-      "outbound": "WARP",
-      "rule_set": [
-        "geoip-{{ region }}",
-        "geosite-{{ region }}"
-      ]
-    },
-    {
-      "outbound": "WARP",
-      "rule_set": [
-        {% for site in geo_sites %}
-        "geosite-{{ site }}",
-        {% endfor %}
-      ]
-    },
-    {% set warp_domains = (ctx.hconfig.warp_sites or '').split('\n') %}
-    {% if warp_domains[0].strip() != '' %}
-    {
-      "outbound": "WARP",
-      "domain": [
-        {% for d in warp_domains %}
-        "{{ d.strip() }}",
-        {% endfor %}
-      ]
+      {{ target }},
+      "domain_suffix": {{ o.sites|tojson }}
     },
     {% endif %}
+    {% if o.rule_sets %}
+    {
+      {{ target }},
+      "rule_set": [{% for rs in o.rule_sets %}{{ rs.tag|tojson }},{% endfor %}]
+    },
     {% endif %}
+    {% endfor %}
     {
       "action": "reject",
       "ip_is_private": true

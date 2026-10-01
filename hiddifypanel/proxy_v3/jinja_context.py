@@ -253,6 +253,7 @@ def build_template_context(
     """
     from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
     from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextProxyVar
+    from hiddifypanel.proxy_v3.outbounds import build_outbounds_var
     from hiddifypanel.proxy_v3.context_vars.proxy import ClientBuilderProxyVar, ConfigVar, ServerBuilderProxyVar
     from hiddifypanel.proxy_v3.context_vars.server_platform_var import get_server_platform_var
     from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
@@ -283,6 +284,7 @@ def build_template_context(
             ips=_server_ips(cache, ip),
             platform=get_server_platform_var(),
             shared_cert=select_shared_certificate(),
+            outbounds=build_outbounds_var(child_id, hconfig),
         )
     else:
         proxy_id = (proxy_data or {}).get("id")

@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { isChildPanel, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
+import { isAgent, isChildPanel, isSuperAdmin, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
 
 export type { AdminMenuGroup, AdminMenuItem }
 
@@ -37,6 +37,7 @@ export function useAdminMenu() {
     items: [
       { label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' },
       { label: t('menu.customProxies'), icon: 'pi pi-fw pi-share-alt', to: '/custom-proxies' },
+      ...(isSuperAdmin.value ? [{ label: t('menu.outbounds'), icon: 'pi pi-fw pi-directions', to: '/outbounds' }] : []),
       { label: t('menu.baseConfigs'), icon: 'pi pi-fw pi-cog', to: '/base-configs' },
       { label: t('menu.templates'), icon: 'pi pi-fw pi-file-edit', to: '/templates' },
       { label: t('menu.templateVariables'), icon: 'pi pi-fw pi-list', to: '/template-variables' },
@@ -56,10 +57,11 @@ export function useAdminMenu() {
         : [
             { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
             ...serverItems('manager'),
+            { label: t('menu.myAccount'), icon: 'pi pi-fw pi-id-card', to: '/account' },
             { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
           ],
-      // The proxy editor lives in Settings in every mode.
-      settings: [proxyEditor.value, ...serverItems('settings')],
+      // The proxy editor lives in Settings in every panel mode; agents don't get it.
+      settings: [...(isAgent.value ? [] : [proxyEditor.value]), ...serverItems('settings')],
       help: serverItems('help'),
     }
     return GROUP_ORDER.map((id) => ({ id, label: t(`menu.group.${id}`), items: items[id] })).filter((group) => group.items.length > 0)

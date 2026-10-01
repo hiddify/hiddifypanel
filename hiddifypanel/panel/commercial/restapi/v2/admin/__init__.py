@@ -25,6 +25,14 @@ def init_app(app):
         bp.add_url_rule("/admin_user/<uuid:uuid>/", view_func=AdminUserApi)
         bp.add_url_rule("/admin_user/", view_func=AdminUsersApi)
 
+        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminPasswordApi
+
+        bp.add_url_rule("/admins/", view_func=AdminsTreeApi)
+        bp.add_url_rule("/admins/me/", view_func=MyAdminAccountApi)
+        bp.add_url_rule("/admins/me/password/", view_func=MyAdminPasswordApi)
+        bp.add_url_rule("/admins/<uuid:uuid>/", view_func=AdminTreeItemApi)
+        bp.add_url_rule("/admins/<uuid:uuid>/reset-password/", view_func=AdminResetPasswordApi)
+
         bp.add_url_rule("/log/", view_func=AdminLogApi)
         bp.add_url_rule("/update_user_usage/", view_func=UpdateUserUsageApi)
         bp.add_url_rule("/all-configs/", view_func=AllConfigsApi)
@@ -35,6 +43,18 @@ def init_app(app):
         from .protocols_api import ProtocolSwitchesApi
 
         bp.add_url_rule("/protocols/", view_func=ProtocolSwitchesApi)
+
+        from hiddifypanel.proxy_v3.outbounds import subscribe_events as subscribe_outbound_events
+
+        from .outbounds_api import OutboundApi, OutboundDefaultApi, OutboundOrderApi, OutboundResetApi, OutboundsApi
+
+        bp.add_url_rule("/outbounds/", view_func=OutboundsApi)
+        bp.add_url_rule("/outbounds/order/", view_func=OutboundOrderApi)
+        bp.add_url_rule("/outbounds/<int:outbound_id>/", view_func=OutboundApi)
+        bp.add_url_rule("/outbounds/<int:outbound_id>/default/", view_func=OutboundDefaultApi)
+        bp.add_url_rule("/outbounds/<int:outbound_id>/reset/", view_func=OutboundResetApi)
+        # Settings → WARP mode "all"/"custom" keeps the default outbound in step.
+        subscribe_outbound_events()
 
         from .settings_api import SettingsApi
 

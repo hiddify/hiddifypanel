@@ -87,6 +87,8 @@ export const nodeInfo = ref<NodeInfo | null>(window.__NODE_INFO__ ?? null)
 /** Signed-in admin's mode: `super_admin` | `admin` | `agent`. */
 export const accountMode = ref<string>(window.__ACCOUNT_MODE__ ?? '')
 export const isSuperAdmin = computed(() => accountMode.value === 'super_admin')
+/** Agents only manage users and their own sub-admins: no server or proxy settings. */
+export const isAgent = computed(() => accountMode.value === 'agent')
 
 /** First setup still pending (super admins only): the dashboard opens the quick setup instead. */
 export const needsQuickSetup = ref<boolean>(Boolean(window.__NEEDS_QUICK_SETUP__))

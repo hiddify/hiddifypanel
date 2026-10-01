@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from .cert import CertVar
 from .domain import DomainIPVar
 from .hconfig import HConfigVar
+from ..outbounds import OutboundsVar
 from .ip import IPVar
 from .proxy import ProxyDomainVar, ServerBuilderProxyVar
 from .server_platform_var import ServerPlatformVar
@@ -28,6 +29,8 @@ class ServerContextVar(BaseModel):
     platform: ServerPlatformVar | None = None
     client_proxy_tags: list[str] = Field(default_factory=list)
     shared_cert: CertVar = Field(default_factory=CertVar.empty)
+    #: Outbound manager: outbounds in rule order and the default (final) tags.
+    outbounds: OutboundsVar = Field(default_factory=OutboundsVar)
 
     def use_proxy(self, proxy: ServerBuilderProxyVar) -> ServerContextProxyVar:
         return ServerContextProxyVar(
@@ -41,6 +44,7 @@ class ServerContextVar(BaseModel):
             ips=self.ips,
             platform=self.platform,
             shared_cert=self.shared_cert,
+            outbounds=self.outbounds,
         )
 
 
@@ -68,6 +72,7 @@ class ServerContextProxyVar(ServerContextVar):
                 ips=self.ips,
                 platform=self.platform,
                 shared_cert=self.shared_cert,
+            outbounds=self.outbounds,
             )
 
 

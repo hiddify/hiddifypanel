@@ -793,13 +793,23 @@
       "unreachable": "Not reachable"
     },
     "outbounds": {
+      "defaultHint": "The last enabled outbound: everything not routed above goes here",
+      "drag": "Drag to change the order",
+      "everythingElse": "Everything else goes here",
+      "howto": "Outbounds are checked from top to bottom: traffic goes out through the first one that lists its site. The last enabled outbound is the default and gets everything else. Drag or use the arrows to change the order.",
+      "idle": "Not used",
+      "idleHint": "It has no sites, geosites or rule-sets, so nothing goes through it. Edit it to add some, or move it to the end to make it the default.",
+      "more": "More actions",
+      "moveDown": "Move down",
+      "moveUp": "Move up",
+      "notChanged": "Not changed",
+      "off": "Off",
       "title": "Outbounds",
-      "subtitle": "Choose where traffic leaves this server: through WARP, directly, blocked, or through a SOCKS, Tor or Psiphon exit.",
+      "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a SOCKS, Tor or Psiphon exit.",
       "add": "Add outbound",
       "default": "Default",
-      "makeDefault": "Make default",
+      "makeDefault": "Make default (move to the end)",
       "nowDefault": "{name} is now the default",
-      "defaultAlwaysOn": "The default outbound is always on",
       "enabled": "Enabled",
       "enable": "Turn on",
       "disable": "Turn off",
@@ -811,18 +821,10 @@
       "resetDone": "{name} uses the built-in lists again",
       "deleteTitle": "Delete {name}?",
       "deleteMessage": "Its sites go to the default outbound from now on.",
-      "deleteMessageDefault": "This is the default outbound: Direct becomes the default.",
+      "deleteMessageDefault": "This is the default outbound: the enabled outbound above it becomes the default.",
       "deleted": "{name} deleted",
       "saved": "{name} saved",
-      "empty": "Nothing routed here yet. Edit it to add sites or rule-sets.",
-      "emptyDefault": "Everything not routed elsewhere goes here.",
       "domesticChip": "Domestic ({region})",
-      "warpOff": "WARP is turned off in the settings, so the WARP outbound's sites go out directly. Turn WARP on in Settings → WARP to use it.",
-      "flow": {
-        "label": "Routing order",
-        "lead": "Checked in this order:",
-        "rest": "Everything else → {name}"
-      },
       "count": {
         "sites": "site | sites",
         "geosites": "geosite | geosites",
@@ -854,12 +856,12 @@
         "sites": "Sites",
         "sitesHint": "One domain per line; subdomains are included.",
         "sitesPlaceholder": "example.com",
-        "geosites": "Geosites (xray)",
-        "geositesHint": "xray geosite tags. An unknown tag stops xray, so use known ones.",
-        "geositesPlaceholder": "google",
+        "geosites": "Geosites / GeoIPs (xray)",
+        "geositesHint": "One xray entry per line with its prefix: geosite:google or geoip:ir (a bare name means geosite:). An unknown tag stops xray, so use known ones.",
+        "geositesPlaceholder": "geosite:google\ngeoip:ir",
         "rule_sets": "Rule-sets (hiddify-core)",
-        "rule_setsHint": "Rule-set names like geosite-netflix or geoip-ir, or full .srs URLs.",
-        "rule_setsPlaceholder": "geosite-netflix",
+        "rule_setsHint": "One rule-set URL per line (.srs, or .json source). Typing a SagerNet name like geosite-netflix turns it into its URL.",
+        "rule_setsPlaceholder": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
         "browse": "Browse rule-sets"
       },
       "dialog": {
@@ -869,8 +871,8 @@
         "nameRequired": "A name is required",
         "endpoint": "Connection",
         "endpointHint": {
-          "tor": "The Tor service must be running on this server with its SOCKS port here.",
-          "psiphon": "The Psiphon client must be running on this server with its SOCKS port here."
+          "tor": "Connects to the Tor SOCKS port on this server ({endpoint}); the Tor service must be running there.",
+          "psiphon": "Connects to the Psiphon SOCKS port on this server ({endpoint}); the Psiphon client must be running there."
         },
         "host": "Host",
         "port": "Port",
@@ -880,7 +882,7 @@
         "optional": "optional",
         "routes": "What goes through it",
         "routesHint": "Traffic to these sites leaves through this outbound.",
-        "routesHintDefault": "This is the default: everything not routed elsewhere already goes here. Lists still matter if another outbound lists the same sites later in the order.",
+        "routesHintDefault": "This is the default (the last enabled outbound): everything not routed above already goes here, so it needs no lists. They are used again if you move it up.",
         "domestic": "Domestic sites of {region}",
         "add": "Add outbound"
       }

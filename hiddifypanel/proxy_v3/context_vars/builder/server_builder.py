@@ -17,6 +17,7 @@ from hiddifypanel.proxy_v3.context_vars.server_platform_var import ServerPlatfor
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
+from hiddifypanel.proxy_v3.outbounds import build_outbounds_var
 from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
 
 from ..ip import IPVar
@@ -39,6 +40,7 @@ def build_server_template_context(child_id: int = 0) -> ServerContextVar:
         ips=base.ips,
         platform=base.platform,
         shared_cert=base.shared_cert,
+        outbounds=build_outbounds_var(child_id, base.hconfig),
     )
 
 
@@ -222,5 +224,6 @@ def build_bundle_jinja_context(
             platform=ctx.platform,
             client_proxy_tags=list(ctx.client_proxy_tags),
             shared_cert=ctx.shared_cert,
+            outbounds=ctx.outbounds,
         )
     )

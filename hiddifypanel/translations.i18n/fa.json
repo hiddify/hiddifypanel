@@ -795,13 +795,23 @@
       "unreachable": "در دسترس نیست"
     },
     "outbounds": {
+      "defaultHint": "آخرین خروجی فعال: هر چیزی که بالاتر هدایت نشود به اینجا می‌آید",
+      "drag": "برای تغییر ترتیب بکشید",
+      "everythingElse": "بقیهٔ ترافیک به اینجا می‌آید",
+      "howto": "خروجی‌ها از بالا به پایین بررسی می‌شوند: ترافیک از اولین خروجی‌ای که سایتش را دارد خارج می‌شود. آخرین خروجی فعال، پیش‌فرض است و بقیهٔ ترافیک را می‌گیرد. برای تغییر ترتیب بکشید یا از پیکان‌ها استفاده کنید.",
+      "idle": "بدون استفاده",
+      "idleHint": "سایت، geosite یا rule-setی ندارد، پس چیزی از آن عبور نمی‌کند. ویرایشش کنید تا اضافه کنید، یا آن را به انتها ببرید تا پیش‌فرض شود.",
+      "more": "کارهای بیشتر",
+      "moveDown": "پایین",
+      "moveUp": "بالا",
+      "notChanged": "تغییر نکرد",
+      "off": "خاموش",
       "title": "خروجی‌ها",
-      "subtitle": "تعیین کنید ترافیک از کجا از این سرور خارج شود: از WARP، مستقیم، مسدود، یا از یک خروجی SOCKS، Tor یا Psiphon.",
+      "subtitle": "به ترتیب تعیین کنید ترافیک از کجا از این سرور خارج شود: از WARP، مستقیم، مسدود، یا از یک خروجی SOCKS، Tor یا Psiphon.",
       "add": "افزودن خروجی",
       "default": "پیش‌فرض",
-      "makeDefault": "پیش‌فرض کردن",
+      "makeDefault": "پیش‌فرض کردن (انتقال به انتها)",
       "nowDefault": "{name} اکنون پیش‌فرض است",
-      "defaultAlwaysOn": "خروجی پیش‌فرض همیشه روشن است",
       "enabled": "فعال",
       "enable": "روشن کردن",
       "disable": "خاموش کردن",
@@ -813,18 +823,10 @@
       "resetDone": "{name} دوباره از فهرست‌های پیش‌فرض استفاده می‌کند",
       "deleteTitle": "{name} حذف شود؟",
       "deleteMessage": "از این پس سایت‌هایش به خروجی پیش‌فرض می‌روند.",
-      "deleteMessageDefault": "این خروجی پیش‌فرض است: «مستقیم» پیش‌فرض می‌شود.",
+      "deleteMessageDefault": "این خروجی پیش‌فرض است: خروجی فعال بالای آن پیش‌فرض می‌شود.",
       "deleted": "{name} حذف شد",
       "saved": "{name} ذخیره شد",
-      "empty": "هنوز چیزی به اینجا هدایت نمی‌شود. برای افزودن سایت یا rule-set ویرایشش کنید.",
-      "emptyDefault": "هر چیزی که جای دیگری هدایت نشود به اینجا می‌آید.",
       "domesticChip": "داخلی ({region})",
-      "warpOff": "WARP در تنظیمات خاموش است، پس سایت‌های خروجی WARP مستقیم خارج می‌شوند. برای استفاده، WARP را در تنظیمات ← WARP روشن کنید.",
-      "flow": {
-        "label": "ترتیب مسیریابی",
-        "lead": "به این ترتیب بررسی می‌شود:",
-        "rest": "بقیه ← {name}"
-      },
       "count": {
         "sites": "سایت | سایت",
         "geosites": "geosite | geosite",
@@ -856,12 +858,12 @@
         "sites": "سایت‌ها",
         "sitesHint": "هر خط یک دامنه؛ زیردامنه‌ها هم شامل می‌شوند.",
         "sitesPlaceholder": "example.com",
-        "geosites": "Geositeها (xray)",
-        "geositesHint": "برچسب‌های geosite در xray. برچسب ناشناخته xray را متوقف می‌کند، پس از برچسب‌های شناخته‌شده استفاده کنید.",
-        "geositesPlaceholder": "google",
+        "geosites": "Geosite / GeoIP (xray)",
+        "geositesHint": "هر خط یک مورد xray همراه پیشوند: geosite:google یا geoip:ir (نام بدون پیشوند یعنی geosite:). برچسب ناشناخته xray را متوقف می‌کند، پس از برچسب‌های شناخته‌شده استفاده کنید.",
+        "geositesPlaceholder": "geosite:google\ngeoip:ir",
         "rule_sets": "Rule-setها (hiddify-core)",
-        "rule_setsHint": "نام rule-set مانند geosite-netflix یا geoip-ir، یا نشانی کامل .srs.",
-        "rule_setsPlaceholder": "geosite-netflix",
+        "rule_setsHint": "هر خط یک نشانی rule-set (.srs یا منبع .json). اگر نامی از SagerNet مانند geosite-netflix بنویسید، به نشانی‌اش تبدیل می‌شود.",
+        "rule_setsPlaceholder": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
         "browse": "مرور rule-setها"
       },
       "dialog": {
@@ -871,8 +873,8 @@
         "nameRequired": "نام لازم است",
         "endpoint": "اتصال",
         "endpointHint": {
-          "tor": "سرویس Tor باید روی این سرور با پورت SOCKS زیر در حال اجرا باشد.",
-          "psiphon": "کلاینت Psiphon باید روی این سرور با پورت SOCKS زیر در حال اجرا باشد."
+          "tor": "به پورت SOCKS تور روی این سرور ({endpoint}) وصل می‌شود؛ سرویس Tor باید آنجا در حال اجرا باشد.",
+          "psiphon": "به پورت SOCKS سایفون روی این سرور ({endpoint}) وصل می‌شود؛ کلاینت Psiphon باید آنجا در حال اجرا باشد."
         },
         "host": "میزبان",
         "port": "پورت",
@@ -882,7 +884,7 @@
         "optional": "اختیاری",
         "routes": "چه چیزی از آن عبور کند",
         "routesHint": "ترافیک این سایت‌ها از این خروجی خارج می‌شود.",
-        "routesHintDefault": "این خروجی پیش‌فرض است: هر چیزی که جای دیگری هدایت نشود همین حالا به اینجا می‌آید. فهرست‌ها وقتی مهم‌اند که خروجی دیگری همان سایت‌ها را بعداً در ترتیب داشته باشد.",
+        "routesHintDefault": "این خروجی پیش‌فرض است (آخرین خروجی فعال): هر چیزی که بالاتر هدایت نشود همین حالا به اینجا می‌آید، پس فهرست لازم ندارد. اگر آن را بالاتر ببرید دوباره استفاده می‌شوند.",
         "domestic": "سایت‌های داخلی {region}",
         "add": "افزودن خروجی"
       }
