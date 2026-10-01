@@ -33,6 +33,9 @@ class DomainIPVar(BaseModel):
     host: str = ""
     sni: str = ""
     port: int = 443
+    #: Gateway ports clients use for this domain's SNI / L7 proxies (Domains page → Advanced).
+    tls_port: int = 443
+    http_port: int = 80
 
     mode: DomainType
     fake_mode: FakeMode = FakeMode.valid
@@ -135,6 +138,8 @@ class DomainIPVar(BaseModel):
             has_cdn_ip=bool((domain_db.cdn_ip or "").strip()),
             custom_proxy_ids=set(domain_db.custom_proxy_ids),
             ips=ips,
+            tls_port=int(domain_db.tls_port or 443),
+            http_port=int(domain_db.http_port or 80),
         )
         if domain_db.download_domain:
             var.download = cls.from_domain(domain_db.download_domain)

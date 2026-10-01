@@ -100,6 +100,12 @@ class Domain(db.Model):
         cascade="all, delete-orphan",
     )
     extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
+    #: Order on the Domains page (drag and drop); the first usable domain is the panel's main one.
+    sort_order: Mapped[int | None] = mapped_column(default=None)
+    #: Client-facing gateway ports for this domain's SNI / L7 proxies (None: 443 for TLS, 80 for HTTP).
+    #: The gateway also listens on them (haproxy fronts).
+    tls_port: Mapped[int | None] = mapped_column(default=None)
+    http_port: Mapped[int | None] = mapped_column(default=None)
 
     def is_reality(self) -> bool:
         return self.fake_mode == FakeMode.reality
@@ -194,6 +200,9 @@ class Domain(db.Model):
             resolve_ip=self.resolve_ip,
             extra_params=extra if isinstance(extra, (dict, list)) else {},
             custom_proxy_slugs=self.custom_proxy_slugs if not for_parent else None,
+            sort_order=self.sort_order,
+            tls_port=self.tls_port,
+            http_port=self.http_port,
             child_id=self.child_id,
             internal_port_hysteria2=self.internal_port_hysteria2 if dump_ports else None,
             internal_port_tuic=self.internal_port_tuic if dump_ports else None,
@@ -297,6 +306,11 @@ class Domain(db.Model):
         return int(hconfig(ConfigEnum.special_port, self.child_id)) + self.port_index
 
     @classmethod
+    def ordering(cls):
+        """Page order: the admin's drag-and-drop order, then oldest first."""
+        return (cls.sort_order.is_(None), cls.sort_order, cls.id)
+
+    @classmethod
     def by_mode(cls, mode: DomainType) -> list[Domain]:
         domains = Domain.query.filter(Domain.mode == mode).all()
         if domains:
@@ -331,7 +345,7 @@ class Domain(db.Model):
             ),
             Domain.fake_mode == FakeMode.valid,
             Domain.child_id == child_id,
-        ).all()
+        ).order_by(*Domain.ordering()).all()
         if not domains:
             return None
         return domains[0].domain
@@ -347,6 +361,7 @@ class Domain(db.Model):
                 Domain.mode == DomainType.sub_link_only,
                 Domain.child_id == Child.current().id,
             )
+            .order_by(*Domain.ordering())
             .all()
         )
         if not len(domains) or always_add_all_domains:
@@ -356,6 +371,7 @@ class Domain(db.Model):
                     Domain.fake_mode == FakeMode.valid,
                     Domain.child_id == Child.current().id,
                 )
+                .order_by(*Domain.ordering())
                 .all()
             )
 
@@ -392,6 +408,9 @@ class Domain(db.Model):
         dbdomain.servernames = data.servernames
         dbdomain.resolve_ip = data.resolve_ip
         dbdomain.extra_params = data.extra_params_text()
+        for field in ("sort_order", "tls_port", "http_port"):
+            if data.has(field):
+                setattr(dbdomain, field, getattr(data, field))
 
         if apply_links:
             cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)

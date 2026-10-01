@@ -2,17 +2,14 @@ import re
 
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
-from loguru import logger
 from markupsafe import Markup, escape
 from wtforms.validators import Regexp, ValidationError
 
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.hutils.flask import hurl_for
-from hiddifypanel.models import ApplyMode, Child, ConfigEnum, CustomProxy, CustomProxyMode, Domain, DomainType, FakeMode, Role, get_hconfigs, hconfig, set_hconfig
+from hiddifypanel.models import ApplyMode, Child, ConfigEnum, CustomProxy, Domain, DomainType, FakeMode, Role, hconfig, set_hconfig
 from hiddifypanel.panel import custom_widgets, hiddify
-from hiddifypanel.panel.run_commander import Command, commander
-from hiddifypanel.proxy_v3.domain_mode_filter import domain_modes_use_reality, expand_domain_mode_tokens, proxy_buckets_for_domain
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
 from .adminlte import AdminLTEModelView
@@ -233,209 +230,37 @@ class DomainAdmin(AdminLTEModelView):
         return f"{_('search')} {_('domain.domain')} {_('domain.mode')}"
 
     def on_model_change(self, form, model: Domain, is_created):
-        model.domain = (model.domain or "").lower().strip()
-        model.mode = DomainType(model.mode)
-        if model.server_domain:
-            model.cdn_ip = ""
-            sd = model.server_domain
-            if sd.mode not in (DomainType.direct, DomainType.relay) or sd.fake_mode != FakeMode.valid or sd.is_sub_link_only():
-                raise ValidationError(_("domain.server_domain.must_be_valid_direct_or_relay"))
+        # Same rules as the Domains page of the new dashboard (panel/domain_rules.py).
+        from hiddifypanel.panel import domain_rules
 
-        if model.download_domain and model.domain == model.download_domain.domain:
-            model.download_domain_id = None
-            model.download_domain = None
-
-        if model.mode == DomainType.sub_link_only:
-            model.fake_mode = FakeMode.valid
-
-        if model.mode.is_cdn() or model.mode == DomainType.worker:
-            if model.fake_mode != FakeMode.valid:
-                raise ValidationError(_("CDN and worker domains must use valid fake mode"))
-
-        if model.domain == "" and model.fake_mode != FakeMode.fake:
-            raise ValidationError(_("domain.empty.allowed_for_fake_only"))
-
-        self._validate_not_used_before(model, is_created)
-        ipv4_list = hutils.network.get_ips(4)
-        ipv6_list = hutils.network.get_ips(6)
-        server_ips = [*ipv4_list, *ipv6_list]
-
-        if not server_ips:
-            raise ValidationError(_("Couldn't find your ip addresses"))
-
-        if "*" in model.domain and model.mode != DomainType.cdn:
-            raise ValidationError(_("Domain can not be resolved! there is a problem in your domain"))
-
-        if model.mode == DomainType.relay and model.fake_mode != FakeMode.valid and not (model.cdn_ip or "").strip():
-            raise ValidationError(_("Relay domains with non-valid fake mode require an IP address"))
-
-        if model.custom_proxies:
-            model.custom_proxies = [p for p in model.custom_proxies if p and p.slug != REALITY_TERMINATION_SLUG]
-
-        if model.fake_mode == FakeMode.reality:
-            selected = list(model.custom_proxies or [])
-            for proxy in selected:
-                if proxy.mode != CustomProxyMode.domains_l7_gateway or not domain_modes_use_reality(proxy.domain_modes):
-                    raise ValidationError(_("domain.custom_proxy.reality_only"))
-            buckets = set(proxy_buckets_for_domain(model.mode, model.fake_mode))
-            model.custom_proxies = [p for p in selected if buckets & expand_domain_mode_tokens(p.domain_modes)]
-        elif model.custom_proxies:
-            sni_count = sum(1 for p in model.custom_proxies if p and p.mode == CustomProxyMode.domains_sni_gateway)
-            has_l7 = any(p and p.mode == CustomProxyMode.domains_l7_gateway for p in model.custom_proxies)
-            if sni_count > 1:
-                raise ValidationError(_("domain.custom_proxy.sni_single_only"))
-            if sni_count and has_l7:
-                raise ValidationError(_("domain.custom_proxy.sni_l7_mutex"))
-            buckets = set(proxy_buckets_for_domain(model.mode, model.fake_mode))
-            valid = []
-            for proxy in model.custom_proxies:
-                proxy_buckets = expand_domain_mode_tokens(proxy.domain_modes)
-                if buckets & proxy_buckets:
-                    valid.append(proxy)
-            model.custom_proxies = valid
-
-        cloudflare_updated = self._update_cloudflare(model, ipv4_list, ipv6_list)
-
-        if not cloudflare_updated:
-            self._validate_domain_ips(model, server_ips)
-
-        if model.mode == DomainType.direct and model.cdn_ip:
-            model.cdn_ip = ""
-            raise ValidationError(_("Specifying CDN IP is only valid for CDN mode"))
-
-        if not model.mode.is_cdn():
-            model.ech = False
-        elif model.ech and not hconfig(ConfigEnum.tls_ech_enable):
-            raise ValidationError(_("Enable TLS ECH in panel settings before using ECH on a CDN domain"))
-
-        if model.fake_mode == FakeMode.fake and not model.cdn_ip:
-            model.cdn_ip = str(server_ips[0])
-
-        if model.cdn_ip:
-            try:
-                hutils.network.auto_ip_selector.get_clean_ip(str(model.cdn_ip))
-            except Exception:
-                raise ValidationError(_("Error in auto cdn format"))
-
-        model.show_domains = [d for d in (model.show_domains or []) if not d.is_sub_link_only()]
-
-        if len(model.show_domains) == Domain.query.count():
-            model.show_domains = []
-
-        if model.fake_mode == FakeMode.reality:
-            self._validate_reality_settings(model, server_ips)
+        try:
+            warnings = domain_rules.validate_domain(model, is_created=is_created)
+        except domain_rules.DomainRuleError as e:
+            raise ValidationError(str(e))
+        for warning in warnings:
+            hutils.flask.flash(warning, "warning")
 
         old_db_domain = Domain.by_domain(model.domain)
         if is_created or not old_db_domain or old_db_domain.mode != model.mode:
             hutils.flask.flash_config_success(restart_mode=ApplyMode.apply_config, domain_changed=True)
 
-    def _update_cloudflare(self, model, ipv4_list, ipv6_list):
-        if hconfig(ConfigEnum.cloudflare) and model.fake_mode == FakeMode.valid and model.mode not in [DomainType.relay]:
-            try:
-                proxied = model.mode == DomainType.cdn
-                if ipv4_list:
-                    hutils.network.cf_api.add_or_update_dns_record(model.domain, str(ipv4_list[0]), "A", proxied=proxied)
-                if ipv6_list:
-                    hutils.network.cf_api.add_or_update_dns_record(model.domain, str(ipv6_list[0]), "AAAA", proxied=proxied)
-                return True
-            except Exception as e:
-                raise ValidationError(__("cloudflare.error") + f" {e}")
-        return False
-
-    def _validate_reality_settings(self, model, server_ips):
-        if not hconfig(ConfigEnum.reality_enable):
-            set_hconfig(ConfigEnum.reality_enable, True)
-            hutils.proxy.get_proxies.invalidate_all()
-
-        model.servernames = (model.servernames or model.domain).lower().strip()
-        domains_to_check = set()
-        for v in [model.domain, model.servernames]:
-            domains_to_check.update(d.strip() for d in v.split(",") if d.strip())
-
-        for d in domains_to_check:
-            if not hutils.network.is_domain_reality_friendly(d):
-                # raise ValidationError(_("Domain is not REALITY friendly!") + f" {d}")
-                hutils.flask.flash(_("Domain is not REALITY friendly!") + f" {d}", "warning")
-
-            try:
-                if not hutils.network.is_in_same_asn(d, server_ips[0]):
-                    domain_ips = hutils.network.get_domain_ips(d)
-                    if domain_ips:
-                        dip = next(iter(domain_ips))
-                        server_asn = hutils.network.get_ip_asn(server_ips[0])
-                        domain_asn = hutils.network.get_ip_asn(dip)
-                        msg = _("domain.reality.asn_issue")
-                        if server_asn or domain_asn:
-                            msg += f"<br> Server ASN={server_asn}<br>{d}_ASN={domain_asn}"
-                        hutils.flask.flash(msg, "warning")
-            except Exception as e:
-                logger.warning(f"ASN check failed for domain {d}: {str(e)}")
-
-        for d in model.servernames.split(","):
-            if d.strip() and not hutils.network.fallback_domain_compatible_with_servernames(model.domain, d):
-                msg = _("REALITY Fallback domain is not compatible with server names!") + f" {d} != {model.domain}"
-                hutils.flask.flash(msg, "warning")
-
-    def _validate_not_used_before(self, model, is_created):
-        configs = get_hconfigs()
-        for c in configs:
-            if "domain" in c and c not in [ConfigEnum.decoy_domain, ConfigEnum.reality_fallback_domain] and c.category != "hidden":
-                if model.domain == configs[c]:
-                    raise ValidationError(_("You have used this domain in: ") + _(f"config.{c}.label"))
-
-        for td in Domain.query.filter(Domain.fake_mode == FakeMode.reality, Domain.domain != model.domain).all():
-            if td.servernames and (model.domain in td.servernames.split(",")):
-                raise ValidationError(_("You have used this domain in: ") + _("config.reality_server_names.label") + td.domain)
-
-        # One row per (child, domain), also when an existing domain is renamed to a used name.
-        # Empty names (fake mode) may repeat.
-        if model.domain:
-            same = Domain.query.filter(Domain.domain == model.domain, Domain.child_id == model.child_id).all()
-            if any(d is not model and d.id != model.id for d in same):
-                raise ValidationError(_("You have used this domain in: ") + model.domain)
-
-    def _validate_domain_ips(self, model, server_ips):
-        if (model.domain.startswith("*") or not model.domain) and model.mode not in [DomainType.direct]:
-            return True
-        if model.fake_mode in (FakeMode.fake, FakeMode.reality, FakeMode.dns):
-            return True
-        if model.mode in [DomainType.relay]:
-            return True
-        try:
-            dips = hutils.network.get_domain_ips(model.domain)
-        except Exception as e:
-            logger.error(f"Error resolving domain {model.domain}: {str(e)}")
-            raise ValidationError(_("Domain cannot be resolved! Please check DNS settings"))
-
-        if not dips:
-            raise ValidationError(_("Domain cannot be resolved! Please check DNS settings"))
-
-        domain_ip_matches_server = any(ip in dips for ip in server_ips)
-        server_ips_str = ", ".join(map(str, server_ips))
-        dips_str = ", ".join(map(str, dips))
-
-        if not domain_ip_matches_server and model.mode in [DomainType.direct]:
-            raise ValidationError(__("Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode", server_ip=server_ips_str, domain_ip=dips_str))
-
-        if domain_ip_matches_server and model.mode in [DomainType.cdn, DomainType.relay]:
-            raise ValidationError(__("In CDN mode, Domain IP=%(domain_ip)s should be different to your ip=%(server_ip)s", server_ip=server_ips_str, domain_ip=dips_str))
-
-        return True
-
     def on_model_delete(self, model):
-        if len(Domain.query.all()) <= 1:
-            raise ValidationError("at least one domain should exist")
-        if hconfig(ConfigEnum.cloudflare) and model.fake_mode == FakeMode.valid and model.mode not in [DomainType.relay]:
-            if not hutils.network.cf_api.delete_dns_record(model.domain):
-                hutils.flask.flash(_("cf-delete.failed"), "warning")  # type: ignore
-        model.showed_by_domains = []
+        from hiddifypanel.panel import domain_rules
+
+        try:
+            warnings = domain_rules.before_delete(model)
+        except domain_rules.DomainRuleError as e:
+            raise ValidationError(str(e))
+        for warning in warnings:
+            hutils.flask.flash(warning, "warning")  # type: ignore
         hutils.flask.flash_config_success(restart_mode=ApplyMode.apply_config, domain_changed=True)
 
     def after_model_change(self, form, model, is_created):
         if hconfig(ConfigEnum.first_setup):
             set_hconfig(ConfigEnum.first_setup, False)
-        if model.need_valid_ssl and "*" not in model.domain:
-            commander(Command.get_cert, domain=model.domain)
+        from hiddifypanel.panel import domain_rules
+
+        domain_rules.request_certificate(model)
         # Nodes notify the parent from the commit hook (models/cache_events.py).
 
     def is_accessible(self):

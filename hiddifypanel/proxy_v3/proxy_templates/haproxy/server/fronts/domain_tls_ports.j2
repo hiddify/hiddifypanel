@@ -1,0 +1,15 @@
+{# Extra TLS gateway ports set per domain (Domains page → Advanced). rpxy-l4 listens on 443 only,
+   so these ports hand the connection to it unchanged (it routes by SNI as on 443). TCP only. #}
+{% set domain_tls_ports = (ctx.domains or []) | map(attribute='tls_port') | select | map('int') | reject('equalto', 443) | unique | list %}
+{% if domain_tls_ports %}
+frontend domain-tls-ports
+    mode tcp
+    {% for port in domain_tls_ports %}
+    bind :{{ port }},:::{{ port }} v4v6 tfo
+    {% endfor %}
+    default_backend to_rpxy_l4
+
+backend to_rpxy_l4
+    mode tcp
+    server rpxy 127.0.0.1:443
+{% endif %}

@@ -76,6 +76,13 @@ const routes = [
         beforeEnter: notForAgents,
       },
       {
+        path: 'domains',
+        name: 'domains',
+        component: () => import('@/features/domains/views/DomainsView.vue'),
+        // Super admins and admins (like the classic Domains page); agents do not manage domains.
+        beforeEnter: notForAgents,
+      },
+      {
         path: 'outbounds',
         name: 'outbounds',
         component: () => import('@/features/outbounds/views/OutboundsView.vue'),

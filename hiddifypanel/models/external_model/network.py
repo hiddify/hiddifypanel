@@ -85,6 +85,9 @@ class DomainModel(HBaseModel):
     download_domain: str | None = None
     server_domain: str | None = None
     custom_proxy_slugs: list[str] | None = None
+    sort_order: int | None = None
+    tls_port: int | None = None
+    http_port: int | None = None
     # Output only.
     child_id: int | None = None
     internal_port_hysteria2: int | None = None

@@ -23,7 +23,7 @@ from hiddifypanel.models.custom_proxy import TemplateCore
 
 from .domain import DomainIPVar
 from .hconfig import HConfigVar
-from .ports import gateway_client_port, normalize_port_list, ports_list_to_ranges, resolve_inbound_ports
+from .ports import GATEWAY_CLIENT_HTTP_PORT, GATEWAY_CLIENT_TLS_PORT, gateway_client_port, normalize_port_list, ports_list_to_ranges, resolve_inbound_ports
 from .version import TemplateVersion
 
 
@@ -183,12 +183,23 @@ def resolve_domain_type(domain_mode: str) -> DomainType:
         raise ValueError(f"Invalid domain mode: {domain_mode}") from exc
 
 
+def domain_gateway_port(domain: DomainIPVar, port: int | None) -> int | None:
+    """The domain's own gateway port instead of the default 443 (TLS) / 80 (HTTP)."""
+    if port == GATEWAY_CLIENT_TLS_PORT:
+        return int(domain.tls_port or port)
+    if port == GATEWAY_CLIENT_HTTP_PORT:
+        return int(domain.http_port or port)
+    return port
+
+
 def _l7_client_domain_ports(domain: DomainIPVar, proxy: ProxyVar) -> DomainIPVar:
     if proxy.mode != CustomProxyMode.domains_l7_gateway:
         return domain
-    upload_port = gateway_client_port(proxy.effective_tls_layer())
+    upload_port = domain_gateway_port(domain, gateway_client_port(proxy.effective_tls_layer()))
     download_layer = proxy.effective_download_tls_layer()
     download_port = gateway_client_port(download_layer)
+    if domain.download is not None:
+        download_port = domain_gateway_port(domain.download, download_port)
     download = domain.download
     if download is not None:
         download = download.model_copy(update={"port": download_port, "download": None})
@@ -221,11 +232,16 @@ class ProxyDomainVar(ProxyVar):
             tcp_udp=proxy.tcp_udp,
             tls_layer=proxy.tls_layer,
         )
+        tcp_ports, udp_ports = list(resolved.tcp_ports), list(resolved.udp_ports)
+        if not server_side and proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway):
+            # Clients connect to the domain's own gateway port when it has one.
+            tcp_ports = [domain_gateway_port(domain, p) for p in tcp_ports]
+            udp_ports = [domain_gateway_port(domain, p) for p in udp_ports]
         return cls(
             domain=domain,
             **proxy.model_dump(exclude={"domain", "server_config", "client_configs", "tcp_ports", "udp_ports", "domains"}),
-            tcp_ports=list(resolved.tcp_ports),
-            udp_ports=list(resolved.udp_ports),
+            tcp_ports=tcp_ports,
+            udp_ports=udp_ports,
         )
 
     @property

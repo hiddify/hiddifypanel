@@ -79,7 +79,7 @@ def _help_group() -> dict:
 def _settings_items(*, node: bool) -> list[dict]:
     if g.account.mode == "agent":
         return []
-    items = [_item(_("admin.menu.domain"), hurl_for("flask.domain.index_view"), "pi pi-fw pi-link")]
+    items = [{"label": _("admin.menu.domain"), "to": "/domains", "icon": "pi pi-fw pi-link"}]
     if g.account.mode == "super_admin":
         items.extend(
             [

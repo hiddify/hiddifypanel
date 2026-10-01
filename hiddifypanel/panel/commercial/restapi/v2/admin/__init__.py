@@ -151,6 +151,15 @@ def init_app(app):
         bp.add_url_rule("/domains/options/", view_func=DomainsOptionsApi)
         bp.add_url_rule("/domains/", view_func=DomainsQuickAddApi)
 
+        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageItemApi, DomainsPageOrderApi, DomainsPagePortCheckApi
+
+        bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
+        bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
+        bp.add_url_rule("/domains-page/detect/", view_func=DomainsPageDetectApi)
+        bp.add_url_rule("/domains-page/port-check/", view_func=DomainsPagePortCheckApi)
+        bp.add_url_rule("/domains-page/<int:domain_id>/", view_func=DomainsPageItemApi)
+        bp.add_url_rule("/domains-page/<int:domain_id>/certificate/", view_func=DomainsPageCertificateApi)
+
         from .server_ip_api import (
             DomainHealthCheckApi,
             ServerIpApi,

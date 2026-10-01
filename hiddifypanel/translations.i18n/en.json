@@ -1680,6 +1680,232 @@
       "preview": "Compiled preview",
       "title": "Validation",
       "warnings": "Warnings"
+    },
+    "domains": {
+      "title": "Domains",
+      "subtitle": "The addresses users connect to, how each one reaches this server, and their certificates",
+      "add": "Add domain",
+      "search": "Search domain or name",
+      "howto": "Order matters: drag (or use the arrows) to sort. Configs list domains in this order, and the first one is used for panel links.",
+      "howtoFiltered": "Clear the search and filters to change the order.",
+      "drag": "Drag to reorder",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "more": "More",
+      "noName": "(no name)",
+      "openPanel": "Open the panel on this domain",
+      "copyDomain": "Copy domain",
+      "getCert": "Get certificate",
+      "renewCert": "Renew certificate",
+      "noMatch": "No domain matches the filters",
+      "notChanged": "Not changed",
+      "warning": "Saved, with a warning",
+      "saved": "{name} saved",
+      "deleted": "{name} removed",
+      "deleteTitle": "Remove {name}?",
+      "deleteMessage": "Its configs stop working for every user. At least one domain must stay.",
+      "editTitle": "Edit domain",
+      "advanced": "Advanced",
+      "stats": {
+        "all": "domains",
+        "valid": "certificates OK",
+        "attention": "need a certificate",
+        "decoy": "decoy TLS"
+      },
+      "kind": {
+        "direct": {
+          "name": "Direct",
+          "desc": "Your domain points straight to this server's IP. If it is on Cloudflare (or a similar DNS), keep the cloud off: DNS only."
+        },
+        "cdn": {
+          "name": "CDN",
+          "desc": "Your domain goes through a CDN such as Cloudflare (orange cloud / proxy on). It hides this server's IP and keeps working when the IP is blocked."
+        },
+        "relay": {
+          "name": "Relay",
+          "desc": "Users connect to another server in between, which passes their traffic on to this one. The domain points to that in-between server."
+        },
+        "worker": {
+          "name": "Cloudflare Worker",
+          "desc": "Cloudflare workers are created for this domain automatically."
+        },
+        "sublink": {
+          "name": "Subscription only",
+          "desc": "Only for users' subscription links, no proxies. Best behind a CDN: if your proxy domains get blocked, users can still update their subscription and receive new working configs."
+        }
+      },
+      "tlsMode": {
+        "valid": "Valid TLS",
+        "fake": "Fake",
+        "reality": "Reality",
+        "dns": "DNS",
+        "validHint": "A real certificate, issued automatically.",
+        "fakeHint": "Decoy TLS with a fake site's name (e.g. soft98.ir) to pass an SNI whitelist. Not recommended.",
+        "realityHint": "Borrows another site's TLS with the Reality protocol; you can have many such domains.",
+        "dnsHint": "DNS tunnel only.",
+        "locked": "This mode always uses a valid certificate."
+      },
+      "tls": {
+        "valid": "Valid",
+        "self_signed": "Self-signed",
+        "expired": "Expired",
+        "invalid": "Invalid",
+        "missing": "No certificate",
+        "validHint": "A real certificate; it renews automatically.",
+        "self_signedHint": "A temporary self-signed certificate: apps warn or refuse. Get a real one.",
+        "expiredHint": "The certificate has expired.",
+        "invalidHint": "The certificate does not match this domain.",
+        "missingHint": "No certificate yet.",
+        "running": "Getting certificate",
+        "expiresIn": "{n} days left",
+        "decoy": "Decoy TLS",
+        "decoyHint": "Fake and Reality TLS domains do not need a certificate of their own.",
+        "issuer": "Issuer",
+        "expires": "Expires"
+      },
+      "badge": {
+        "resolveIp": "IP",
+        "cdnIp": "Forced IPs",
+        "frontingHint": "Domain fronting: configs show this name instead of the domain"
+      },
+      "field": {
+        "domain": "Domain",
+        "alias": "Display name",
+        "aliasHint": "Shown in the users' apps instead of the domain.",
+        "mode": "Mode",
+        "tlsMode": "TLS mode",
+        "relayNeedsIp": "A relay that is not on a real certificate needs the relay server's IP in Advanced → Force IPs.",
+        "servernames": "Server names",
+        "servernamesHint": "Sites whose TLS Reality borrows, comma separated. Empty: the domain itself.",
+        "proxies": "Custom proxies",
+        "showDomains": "Show configs of",
+        "showAll": "All domains",
+        "showDomainsHint": "Users opening their page on this domain see the configs of these domains.",
+        "ports": "Gateway ports",
+        "portsHint": "Where SNI and L7 proxies of this domain listen: one TLS port and one HTTP port. Empty uses the default. The port must be free, or only used by haproxy / rpxy-l4.",
+        "serverDomain": "Server domain",
+        "serverDomainHint": "Upstream server domain used for this entry. Must be a valid Direct or Relay domain.",
+        "downloadDomain": "📈 Download domain",
+        "downloadDomainHint": "Only for XHTTP: downloads can come from another domain than uploads. Harder to detect, often faster.",
+        "none": "None",
+        "cdnIp": "🔂 Force configs to use these IPs / domains",
+        "cdnIpHint": "Put these in the users' links instead of the domain's IP, separated by commas or new lines. Operator templates work too.",
+        "resolveIp": "🔢 Resolve IP",
+        "resolveIpHint": "Use the IP instead of the domain name in the proxies. Useful when DNS is noisy.",
+        "ech": "🔐 ECH",
+        "echHint": "Fetch and use Encrypted Client Hello for this CDN domain.",
+        "echNeedsSetting": "Turn on TLS ECH in the panel settings first.",
+        "extra": "Extra params",
+        "extraObject": "Must be a JSON object",
+        "extraInvalid": "Not valid JSON",
+        "domainRequired": "Enter a domain",
+        "domainInvalid": "That does not look like a domain",
+        "fronting": "🎭 Domain fronting",
+        "frontingPlaceholder": "another-site.com, cdn-site.net",
+        "frontingHint": "Optional. Users' apps show one of these names (SNI) instead of your domain, so a filter only sees another site. Use sites on the same CDN as your domain (e.g. other Cloudflare sites). Empty: no fronting.",
+        "hostnamesInvalid": "Use host names separated by commas, like site.com"
+      },
+      "proxies": {
+        "auto": "Automatic",
+        "autoHint": "Every proxy that fits this domain",
+        "pick": "Choose",
+        "pickHint": "Only the proxies you pick",
+        "group": {
+          "l7": "L7 gateway",
+          "sni": "SNI gateway",
+          "ip": "IP based"
+        },
+        "sniOne": " · one at most",
+        "off": "off",
+        "noneTicked": "Nothing picked: works like Automatic.",
+        "rule": "One SNI proxy, or L7 proxies; the two can not be mixed. IP-based ones go with either.",
+        "noneFit": "No custom proxy fits this kind of domain; the built-in proxies are used.",
+        "autoShort": "automatic",
+        "selectAll": "Select all",
+        "selectNone": "Select none"
+      },
+      "port": {
+        "default": "default",
+        "checking": "checking…",
+        "free": "free",
+        "usedByProxy": "used by the proxy {name}",
+        "usedByDomain": "used by {name} for the other protocol",
+        "usedByGateway": {
+          "http": "an HTTP gateway port",
+          "tls": "a TLS gateway port"
+        },
+        "usedBySetting": "used by {name}",
+        "system": "a system port",
+        "busy": "used by {name}",
+        "invalid": "not a valid port",
+        "unknown": "could not check this port"
+      },
+      "cert": {
+        "waiting": "Getting a certificate…",
+        "ok": "Certificate issued",
+        "failed": "Could not get a certificate",
+        "timeout": "Still waiting for the certificate",
+        "steps": {
+          "contact": "Contacting Let's Encrypt",
+          "verify": "Verifying the domain",
+          "install": "Installing"
+        },
+        "secondsLeft": "about {n}s",
+        "okHint": "Users connect with a real, trusted certificate. It renews by itself.",
+        "timeoutHint": "It takes longer than usual; it keeps going in the background and this page updates when it is done.",
+        "failedHint": "A self-signed certificate is used until a real one can be issued.",
+        "tips": {
+          "dns": "The domain must point to this server (or the CDN in front of it).",
+          "port80": "Port 80 must be reachable from the internet.",
+          "cdn": "Too many requests in a short time are refused by Let's Encrypt; try again later."
+        },
+        "retry": "Try again"
+      },
+      "wizard": {
+        "title": "Add a domain",
+        "steps": {
+          "name": "Domain",
+          "mode": "Mode",
+          "alias": "Name",
+          "cert": "Certificate"
+        },
+        "nameQ": "Which domain?",
+        "nameLead": "Type the domain or subdomain. We check its DNS to suggest the right mode.",
+        "taken": "This domain is already added",
+        "check": "Check",
+        "checking": "Checking DNS…",
+        "found": {
+          "direct": "Points straight to this server ({ips}).",
+          "cdn": "Is behind {cdn}.",
+          "external": "Points to another server ({ips}): good for Reality, a relay or Fake TLS.",
+          "externalNotFriendly": "Points to another server ({ips}), but that site is not Reality friendly (needs TLS 1.3 and HTTP/2).",
+          "unresolved": "Has no DNS record yet. Add it on your DNS provider first, or use it with Fake TLS."
+        },
+        "modeQ": "How is it set up?",
+        "recommended": "matches",
+        "unlikely": "DNS does not match",
+        "mismatch": {
+          "direct": "Direct needs the domain to point to this server's IP. Saving checks it again.",
+          "cdn": "The domain does not look like it is behind a CDN. Turn proxy mode on at your CDN provider.",
+          "worker": "Workers need the domain on Cloudflare.",
+          "sublink": "The domain must point to this server or a CDN.",
+          "relay": "A relay domain points to the intermediary server, not to this server.",
+          "reality": "Reality needs a real site that resolves."
+        },
+        "next": "Next",
+        "aliasQ": "What should users see?",
+        "aliasLead": "A short name shown in the apps for configs of this domain.",
+        "saving": "Saving and checking…",
+        "add": "Add domain",
+        "moreSettings": "More settings",
+        "continueBackground": "Close (keeps going)",
+        "finish": "Done",
+        "added": "{name} added",
+        "noCert": "No certificate request was needed.",
+        "noCertDecoy": "Fake and Reality TLS do not need a certificate. Apply the changes to start using it.",
+        "tlsQ": "Which TLS?"
+      },
+      "readMore": "Read more"
     }
   },
   "adminuser": {

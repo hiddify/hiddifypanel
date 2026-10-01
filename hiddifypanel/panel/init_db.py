@@ -24,6 +24,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v159(child_id):
+    """Domains: drag-and-drop order and per-domain gateway ports (columns added by migrate)."""
+    pass
+
+
 def _v158(child_id):
     """Admins can sign in with an alias (username) and a strong password (column added by migrate)."""
     pass
