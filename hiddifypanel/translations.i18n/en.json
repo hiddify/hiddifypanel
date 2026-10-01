@@ -382,7 +382,18 @@
       "update": "Update",
       "updateHint": "Update the panel and all services to the latest version.",
       "viewlogs": "View Logs",
-      "viewlogsHint": "Browse the system log files."
+      "viewlogsHint": "Browse the system log files.",
+      "ports": {
+        "title": "Public ports",
+        "hint": "Every port this server needs open to the internet, ready for a firewall.",
+        "lead": "Open these ports in your server's (or cloud provider's) firewall so users can connect.",
+        "count": "{n} ports",
+        "copyList": "Copy the list",
+        "none": "none",
+        "firewall": "Firewall commands (ufw)",
+        "copied": "{what} copied",
+        "refresh": "Refresh"
+      }
     },
     "admins": {
       "canAddHint": "This admin can create its own sub-admins",
@@ -1906,6 +1917,95 @@
         "tlsQ": "Which TLS?"
       },
       "readMore": "Read more"
+    },
+    "backup": {
+      "title": "Backup & restore",
+      "subtitle": "Keep a copy of your whole panel, and bring one back when you need it",
+      "count": {
+        "users": "users",
+        "admins": "admins",
+        "domains": "domains",
+        "custom_proxies": "custom proxies",
+        "nodes": "nodes",
+        "settings": "settings"
+      },
+      "save": {
+        "title": "Make a backup",
+        "sub": "Everything in one file: settings, users, admins, domains, proxies and certificates.",
+        "secret": "The file holds passwords, user links and private keys. Keep it somewhere safe.",
+        "download": "Download backup",
+        "onServer": "Save on the server",
+        "downloaded": "Backup downloaded",
+        "created": "Backup saved on the server",
+        "failed": "Could not make the backup"
+      },
+      "restore": {
+        "title": "Restore",
+        "sub": "Bring back a backup from this panel or from another one.",
+        "drop": "Drop a backup file here",
+        "dropHint": "or click to choose a .json backup",
+        "notJson": "Choose a .json backup file",
+        "unreadable": "This file is not a Hiddify backup",
+        "fromFile": "From your device",
+        "fromServer": "From this server",
+        "change": "Choose another",
+        "part": {
+          "settings": "Settings",
+          "settingsHint": "Panel settings, proxies and their configs",
+          "users": "Users",
+          "usersHint": "Users, their usage and limits, and the admins",
+          "domains": "Domains",
+          "domainsHint": "Domains, their certificates and custom proxies"
+        },
+        "advanced": "Advanced",
+        "overrideRoot": "Make me the owner",
+        "overrideRootHint": "The backup's owner admin becomes you (useful when restoring another panel's backup).",
+        "pathChanges": "This backup comes from another panel: after restoring, the admin link changes. The new links are shown when it finishes.",
+        "whatHappens": "Restoring replaces what you chose, then reinstalls the server configs. You can watch the progress; it takes a few minutes.",
+        "run": "Restore",
+        "running": "Restoring the backup",
+        "confirmTitle": "Restore this backup?",
+        "confirmMessage": "These parts of the panel are replaced: {parts}. Make a backup first if you may want them back."
+      },
+      "auto": {
+        "title": "Backups on the server",
+        "sub": "Made automatically from time to time, and when you save one here.",
+        "telegramOn": "Each automatic backup is also sent to you on Telegram.",
+        "telegramOff": "Automatic backups can also be sent to you on Telegram.",
+        "connect": "Connect Telegram",
+        "empty": "No backups on the server yet",
+        "latest": "latest",
+        "download": "Download",
+        "restore": "Restore this one",
+        "showAll": "Show all {n}",
+        "showLess": "Show less",
+        "deleteTitle": "Delete this backup?",
+        "deleteMessage": "The backup from {when} is removed from the server.",
+        "deleteFailed": "Could not delete it"
+      }
+    },
+    "telegram": {
+      "connectTitle": "Connect your Telegram",
+      "connectHint": "Get notifications and backups from {bot}, and manage the panel from Telegram.",
+      "connectedTitle": "Telegram is connected",
+      "connectedHint": "You get notifications and backups from {bot}.",
+      "connected": "connected",
+      "connect": "Connect Telegram",
+      "reconnect": "Connect again",
+      "openWeb": "Open in browser",
+      "check": "I have connected",
+      "scan": "Or scan this with your phone's camera.",
+      "nowConnected": "Telegram is connected",
+      "notYet": "Not connected yet: press Start in the bot, then check again.",
+      "promptTitle": "Connect your Telegram?",
+      "promptLead": "This panel has a Telegram bot, {bot}. Link it to your account:",
+      "benefit": {
+        "notify": "Get notified about important events",
+        "backup": "Receive the automatic backups",
+        "manage": "Manage users right from Telegram"
+      },
+      "notNow": "Not now",
+      "later": "You can connect it any time from My account."
     }
   },
   "adminuser": {

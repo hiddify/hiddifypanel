@@ -2,7 +2,7 @@ from flask import render_template, request, jsonify
 from flask_wtf.file import FileField, FileRequired
 from flask_bootstrap import SwitchField
 from flask_babel import gettext as _
-from flask_classful import FlaskView
+from flask_classful import FlaskView, route
 from urllib.parse import urlparse
 from flask_wtf import FlaskForm
 from datetime import datetime
@@ -62,6 +62,25 @@ class Backup(FlaskView):
         else:
             hutils.flask.flash(_('Config file is incorrect'), category='error')
         return render_template('backup.html', restore_form=restore_form)
+
+
+    @route("/restore/<token>/", methods=["POST"])
+    def restore_run(self, token):
+        """New dashboard restore: the backup prepared by the Backup page (one-time token), then the
+        reinstall with its live log, in this request (as above: the admin path may change)."""
+        from hiddifypanel.panel.commercial.restapi.v2.admin import backup_api
+
+        payload = backup_api.take_restore(token)
+        if not payload:
+            hutils.flask.flash(_('This restore has expired. Start it again from the Backup page.'), category='error')
+            return render_template('result.html', out_type="danger", out_msg=_('This restore has expired. Start it again from the Backup page.'))
+        backup_api.run_restore(payload)
+        from flask_babel import refresh
+        refresh()
+        from .Actions import Actions
+        g.new_proxy_path = hconfig(ConfigEnum.proxy_path_admin)
+        g.force_proxy_path = g.proxy_path
+        return Actions().reinstall(complete_install=True, domain_changed=True)
 
 
 def get_restore_form(empty=False):

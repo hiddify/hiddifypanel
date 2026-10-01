@@ -33,6 +33,9 @@
         />
       </section>
 
+      <!-- Telegram bot: notifications and backups in Telegram -->
+      <TelegramConnect v-if="telegramInfo" :connected="me.telegram_connected" show-qr class="account-telegram" @check="reloadMe" />
+
       <div class="account-grid">
         <!-- Limits -->
         <section class="account-card">
@@ -167,6 +170,8 @@ import { formatCount } from '@/shared/utils/format-metrics'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import PasswordRules from '@/shared/components/PasswordRules.vue'
+import TelegramConnect from '@/shared/components/TelegramConnect.vue'
+import { telegramInfo } from '@/core/panelShell'
 import InputText from 'primevue/inputtext'
 import { ALIAS_MIN, aliasProblem, generatePassword, isStrongPassword } from '@/shared/utils/password-strength'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
@@ -288,6 +293,18 @@ async function load() {
   }
 }
 
+/** After talking to the bot: is the Telegram account linked now? (keeps the form as it is) */
+async function reloadMe() {
+  try {
+    const fresh = await adminsApi.me()
+    if (me.value) me.value = { ...me.value, telegram_connected: fresh.telegram_connected }
+    if (telegramInfo.value) telegramInfo.value = { ...telegramInfo.value, connected: fresh.telegram_connected }
+    toast.add({ severity: fresh.telegram_connected ? 'success' : 'info', summary: fresh.telegram_connected ? t('telegram.nowConnected') : t('telegram.notYet'), life: 3500 })
+  } catch {
+    /* keep what is shown */
+  }
+}
+
 async function savePassword() {
   if (!canSave.value) return
   saving.value = true
@@ -397,6 +414,9 @@ onMounted(load)
   border: 1px dashed var(--p-content-border-color);
   font-size: 0.85rem;
   color: var(--p-text-muted-color);
+}
+.account-telegram {
+  margin-bottom: 1.25rem;
 }
 .account-card {
   display: flex;

@@ -151,6 +151,14 @@ def init_app(app):
         bp.add_url_rule("/domains/options/", view_func=DomainsOptionsApi)
         bp.add_url_rule("/domains/", view_func=DomainsQuickAddApi)
 
+        from .backup_api import BackupApi, BackupDownloadApi, BackupFileApi, BackupFilesApi, BackupRestoreApi
+
+        bp.add_url_rule("/backup/", view_func=BackupApi)
+        bp.add_url_rule("/backup/download/", view_func=BackupDownloadApi)
+        bp.add_url_rule("/backup/files/", view_func=BackupFilesApi)
+        bp.add_url_rule("/backup/files/<string:name>/", view_func=BackupFileApi)
+        bp.add_url_rule("/backup/restore/", view_func=BackupRestoreApi)
+
         from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageItemApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)

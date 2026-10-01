@@ -31,6 +31,7 @@ declare global {
     __PANEL_MODE__?: string
     __ACCOUNT_MODE__?: string
     __NEEDS_QUICK_SETUP__?: boolean
+    __TELEGRAM__?: { bot_username: string; connect_url: string; web_url: string; connected: boolean } | null
     __NODE_INFO__?: { node_name: string; parent_host: string; parent_dashboard_url: string } | null
   }
 }

@@ -34,6 +34,20 @@ def _node_info() -> dict | None:
     }
 
 
+def _telegram_info() -> dict | None:
+    """The panel's Telegram bot (when set up) and how this admin connects to it."""
+    bot = g.get("bot")
+    username = getattr(bot, "username", None) if bot else None
+    if not username:
+        return None
+    return {
+        "bot_username": username,
+        "connect_url": f"tg://resolve?domain={username}&start=admin_{g.account.uuid}",
+        "web_url": f"https://t.me/{username}?start=admin_{g.account.uuid}",
+        "connected": bool(g.account.telegram_id),
+    }
+
+
 def _needs_quick_setup() -> bool:
     # Quick setup is owner-only: other admins never see it.
     if g.account.mode != "super_admin":
@@ -59,6 +73,7 @@ def _admin_v2_bootstrap_payload() -> dict:
         "node_info": _node_info(),
         "account_mode": str(g.account.mode),
         "needs_quick_setup": _needs_quick_setup(),
+        "telegram": _telegram_info(),
     }
 
 
@@ -104,4 +119,5 @@ def register_v2_routes(flask_app, admin_bp):
             node_info=_node_info(),
             account_mode=str(g.account.mode),
             needs_quick_setup=_needs_quick_setup(),
+            telegram=_telegram_info(),
         )

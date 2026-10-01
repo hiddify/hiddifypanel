@@ -106,6 +106,8 @@ export interface MyAccount {
   additional_configs: AdditionalConfig[]
   /** From the admins above me: my users get them too. */
   inherited_configs: number
+  /** Linked to the panel's Telegram bot. */
+  telegram_connected: boolean
 }
 
 export const adminsApi = {

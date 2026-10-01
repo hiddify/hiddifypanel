@@ -24,6 +24,7 @@
       </template>
     </Card>
   </div>
+  <PublicPortsDialog v-model:visible="portsVisible" />
 </template>
 
 <script setup lang="ts">
@@ -33,6 +34,7 @@ import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import PageHeader from '@/shared/components/PageHeader.vue'
+import PublicPortsDialog from '@/features/actions/components/PublicPortsDialog.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage, getHttp } from '@/core/api/client'
 import { openLegacyAction, systemActionUrls, type SystemActionUrls } from '@/core/panelShell'
@@ -40,7 +42,7 @@ import { openLegacyAction, systemActionUrls, type SystemActionUrls } from '@/cor
 type LegacyKey = keyof SystemActionUrls
 
 interface ActionDef {
-  key: LegacyKey | 'reset_cache'
+  key: LegacyKey | 'reset_cache' | 'public_ports'
   label: string
   description: string
   icon: string
@@ -54,9 +56,11 @@ const { t } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 const busy = ref<ActionDef['key'] | null>(null)
+const portsVisible = ref(false)
 
 const actions = computed<ActionDef[]>(() => [
   { key: 'reset_cache', label: t('actions.resetCache'), description: t('actions.resetCacheHint'), icon: 'pi pi-eraser', method: 'api', confirm: true },
+  { key: 'public_ports', label: t('actions.ports.title'), description: t('actions.ports.hint'), icon: 'pi pi-sitemap', method: 'api' },
   { key: 'status', label: t('actions.status'), description: t('actions.statusHint'), icon: 'pi pi-chart-line', method: 'get' },
   { key: 'viewlogs', label: t('actions.viewlogs'), description: t('actions.viewlogsHint'), icon: 'pi pi-inbox', method: 'get' },
   { key: 'apply_configs', label: t('actions.applyConfigs'), description: t('actions.applyConfigsHint'), icon: 'pi pi-bolt', method: 'post', confirm: true },
@@ -83,6 +87,10 @@ async function resetCache() {
 }
 
 function execute(action: ActionDef) {
+  if (action.key === 'public_ports') {
+    portsVisible.value = true
+    return
+  }
   if (action.method === 'api') {
     void resetCache()
     return

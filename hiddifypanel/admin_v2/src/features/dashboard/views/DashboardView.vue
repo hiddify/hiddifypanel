@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import TelegramPrompt from '@/shared/components/TelegramPrompt.vue'
 import Message from 'primevue/message'
 import ProgressBar from 'primevue/progressbar'
 import PageHeader from '@/shared/components/PageHeader.vue'
@@ -34,6 +35,7 @@ const {
 
 <template>
   <PageHeader :title="t('dashboard.title')" :subtitle="t('dashboard.subtitle')" />
+  <TelegramPrompt />
 
   <DashboardToolbar
     v-model:range-days="rangeDays"

@@ -83,6 +83,13 @@ const routes = [
         beforeEnter: notForAgents,
       },
       {
+        path: 'backup',
+        name: 'backup',
+        component: () => import('@/features/backup/views/BackupView.vue'),
+        // The whole panel's data: super admins only.
+        beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
+      },
+      {
         path: 'outbounds',
         name: 'outbounds',
         component: () => import('@/features/outbounds/views/OutboundsView.vue'),

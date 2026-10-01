@@ -373,6 +373,7 @@ class MyAdminAccountApi(MethodView):
             "parent_name": parent.name if parent and parent.id != actor.id else None,
             "has_password": bool(actor.password),
             "strong_password": creds.is_strong(actor.password, avoid=creds.admin_avoid(actor)),
+            "telegram_connected": bool(actor.telegram_id),
             "alias": actor.alias or "",
             "can_alias": actor.mode != AdminMode.super_admin,
             "login_link": _login_link(actor),

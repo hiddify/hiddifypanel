@@ -84,7 +84,7 @@ def _settings_items(*, node: bool) -> list[dict]:
         items.extend(
             [
                 {"label": _("admin.menu.config"), "to": "/settings", "icon": "pi pi-fw pi-cog"},
-                _item(_("Backup"), hurl_for("admin.Backup:index"), "pi pi-fw pi-save"),
+                {"label": _("Backup"), "to": "/backup", "icon": "pi pi-fw pi-save"},
                 {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
             ]
         )

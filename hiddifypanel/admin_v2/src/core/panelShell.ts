@@ -93,6 +93,18 @@ export const isAgent = computed(() => accountMode.value === 'agent')
 /** First setup still pending (super admins only): the dashboard opens the quick setup instead. */
 export const needsQuickSetup = ref<boolean>(Boolean(window.__NEEDS_QUICK_SETUP__))
 
+/** The panel's Telegram bot (null when none is set up) and how this admin connects to it. */
+export interface TelegramInfo {
+  bot_username: string
+  /** Opens the bot in the Telegram app with this admin's start code. */
+  connect_url: string
+  /** Same, through t.me (works where tg:// links do not). */
+  web_url: string
+  /** This admin's Telegram account is linked. */
+  connected: boolean
+}
+export const telegramInfo = ref<TelegramInfo | null>(window.__TELEGRAM__ ?? null)
+
 export const legacyMenu = ref<AdminMenuGroup[]>(window.__ADMIN_MENU__ ?? [])
 export const panelNotices = ref<PanelNotice[]>(window.__ADMIN_NOTICES__ ?? [])
 
@@ -104,6 +116,7 @@ export function applyBootstrapShell(data: {
   node_info?: NodeInfo | null
   account_mode?: string
   needs_quick_setup?: boolean
+  telegram?: TelegramInfo | null
   locale?: string
   panel_version?: string
   panel_logo_url?: string
@@ -132,6 +145,10 @@ export function applyBootstrapShell(data: {
     needsQuickSetup.value = Boolean(data.needs_quick_setup)
     window.__NEEDS_QUICK_SETUP__ = data.needs_quick_setup
   }
+  if (data.telegram !== undefined) {
+    telegramInfo.value = data.telegram
+    window.__TELEGRAM__ = data.telegram
+  }
   if (data.account_mode !== undefined) {
     accountMode.value = data.account_mode
     window.__ACCOUNT_MODE__ = data.account_mode
@@ -156,6 +173,7 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
     node_info: data.node_info as NodeInfo | null | undefined,
     account_mode: data.account_mode as string | undefined,
     needs_quick_setup: data.needs_quick_setup as boolean | undefined,
+    telegram: data.telegram as TelegramInfo | null | undefined,
     locale: data.locale as string | undefined,
     panel_version: data.panel_version as string | undefined,
     panel_logo_url: data.panel_logo_url as string | undefined,
