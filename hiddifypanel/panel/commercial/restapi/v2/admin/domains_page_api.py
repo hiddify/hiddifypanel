@@ -489,6 +489,20 @@ class DomainsPageOrderApi(MethodView):
         return {"restart_mode": APPLY, **_list_out(child_id)}
 
 
+class DomainsPageIpsApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def get(self, domain_id: int):
+        """Where the domain (or its server domain) points now, and whether that is this server"""
+        d = _get_domain(domain_id)
+        target = d.get_server() or d.domain
+        if not target:
+            return {"domain": d.domain, "target": "", "ips": []}
+        mine = set(hutils.network.get_ips())
+        ips = sorted(hutils.network.get_domain_ips(target), key=lambda ip: (ip.version, str(ip)))
+        return {"domain": d.domain, "target": target, "ips": [{"ip": str(ip), "version": ip.version, "is_server_ip": ip in mine} for ip in ips]}
+
+
 class DomainsPageDetectApi(MethodView):
     decorators = [login_required(ROLES)]
 

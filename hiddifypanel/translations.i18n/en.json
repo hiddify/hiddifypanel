@@ -1916,7 +1916,13 @@
         "noCertDecoy": "Fake and Reality TLS do not need a certificate. Apply the changes to start using it.",
         "tlsQ": "Which TLS?"
       },
-      "readMore": "Read more"
+      "readMore": "Read more",
+      "ips": {
+        "title": "Where it points (DNS)",
+        "none": "No DNS record found for this domain.",
+        "thisServer": "this server",
+        "elsewhere": "another server / CDN"
+      }
     },
     "backup": {
       "title": "Backup & restore",

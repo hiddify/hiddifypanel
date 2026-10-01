@@ -159,13 +159,14 @@ def init_app(app):
         bp.add_url_rule("/backup/files/<string:name>/", view_func=BackupFileApi)
         bp.add_url_rule("/backup/restore/", view_func=BackupRestoreApi)
 
-        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageItemApi, DomainsPageOrderApi, DomainsPagePortCheckApi
+        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
         bp.add_url_rule("/domains-page/detect/", view_func=DomainsPageDetectApi)
         bp.add_url_rule("/domains-page/port-check/", view_func=DomainsPagePortCheckApi)
         bp.add_url_rule("/domains-page/<int:domain_id>/", view_func=DomainsPageItemApi)
+        bp.add_url_rule("/domains-page/<int:domain_id>/ips/", view_func=DomainsPageIpsApi)
         bp.add_url_rule("/domains-page/<int:domain_id>/certificate/", view_func=DomainsPageCertificateApi)
 
         from .server_ip_api import (

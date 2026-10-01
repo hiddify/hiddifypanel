@@ -144,6 +144,7 @@
               @click="openCert(d)"
             />
             <div class="dm-row__actions">
+              <Button v-if="d.domain" icon="pi pi-compass" text rounded size="small" severity="secondary" :aria-label="t('domains.ips.title')" v-tooltip.top="t('domains.ips.title')" @click="openIps(d)" />
               <Button icon="pi pi-arrow-up" text rounded size="small" severity="secondary" :disabled="busy || filtering || position(d) === 0" :aria-label="t('domains.moveUp')" v-tooltip.top="t('domains.moveUp')" @click="move(d, -1)" />
               <Button icon="pi pi-arrow-down" text rounded size="small" severity="secondary" :disabled="busy || filtering || position(d) === state.domains.length - 1" :aria-label="t('domains.moveDown')" v-tooltip.top="t('domains.moveDown')" @click="move(d, 1)" />
               <Button icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(d)" />
@@ -156,6 +157,7 @@
     </template>
 
     <Menu ref="rowMenu" :model="rowItems" popup />
+    <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
     <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" @saved="onSaved" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
 
@@ -188,6 +190,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
+import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
 import { KIND_META, KINDS, TLS_ICON, domainsApi, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsState } from '@/features/domains/api'
 
@@ -212,6 +215,13 @@ const editing = ref<DomainRow | null>(null)
 const wizardVisible = ref(false)
 const rowMenu = ref<InstanceType<typeof Menu> | null>(null)
 const menuRow = ref<DomainRow | null>(null)
+
+const ipsVisible = ref(false)
+const ipsId = ref<number | null>(null)
+function openIps(d: DomainRow) {
+  ipsId.value = d.id
+  ipsVisible.value = true
+}
 
 const certVisible = ref(false)
 const certRow = ref<DomainRow | null>(null)
@@ -299,6 +309,7 @@ const rowItems = computed<MenuItem[]>(() => {
   return [
     { label: t('common.edit'), icon: 'pi pi-pencil', command: () => openEdit(d) },
     { label: t('domains.openPanel'), icon: 'pi pi-external-link', visible: !!d.panel_link, url: d.panel_link ?? undefined, target: '_blank' },
+    { label: t('domains.ips.title'), icon: 'pi pi-compass', visible: !!d.domain, command: () => openIps(d) },
     { label: t('domains.copyDomain'), icon: 'pi pi-copy', visible: !!d.domain, command: () => copy(d.domain) },
     { label: d.tls.status === 'valid' ? t('domains.renewCert') : t('domains.getCert'), icon: 'pi pi-verified', visible: d.tls.needs_valid && !!d.domain && !d.domain.includes('*'), command: () => openCert(d) },
     { separator: true },
