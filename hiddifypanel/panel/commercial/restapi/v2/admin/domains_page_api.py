@@ -31,8 +31,8 @@ from hiddifypanel.proxy_v3.domain_mode_filter import domain_modes_use_reality
 APPLY = "apply_config"
 ROLES = {Role.super_admin, Role.admin}
 DOMAIN_RE = re.compile(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$")
-#: Processes allowed to already listen on a gateway port (they are ours and will serve it).
-GATEWAY_PROCESSES = ("haproxy", "rpxy-l4")
+# A domain's own TLS / HTTP port is not served by anything: the firewall redirects it to 443 / 80
+# (services/firewall). So no process may listen on it, not even haproxy or rpxy-l4.
 #: Settings whose ports belong to other services (a domain gateway port must not take them).
 OTHER_SERVICE_PORTS = (
     ConfigEnum.ssh_server_port,
@@ -211,16 +211,18 @@ def reserved_ports(child_id: int, *, kind: str, domain_id: int | None = None) ->
     for key in OTHER_SERVICE_PORTS:
         for p in _ports(hconfig(key)):
             used.setdefault(p, f"setting:{key.name}")
-    # The other gateway kind (a TLS port can not also be an HTTP port).
-    other = _ports(hconfig(ConfigEnum.http_ports)) | {GATEWAY_CLIENT_HTTP_PORT} if kind == "tls" else _ports(hconfig(ConfigEnum.tls_ports)) | {GATEWAY_CLIENT_TLS_PORT}
-    for p in other:
-        used.setdefault(p, "gateway:http" if kind == "tls" else "gateway:tls")
+    # The gateway ports the panel itself serves (settings), for both kinds.
+    for p in _ports(hconfig(ConfigEnum.tls_ports)) | {GATEWAY_CLIENT_TLS_PORT}:
+        used.setdefault(p, "gateway:tls")
+    for p in _ports(hconfig(ConfigEnum.http_ports)) | {GATEWAY_CLIENT_HTTP_PORT}:
+        used.setdefault(p, "gateway:http")
+    # A TLS port of one domain can not be the HTTP port of another one (same server), and the other way round.
     for d in Domain.query.filter(Domain.child_id == child_id).all():
         if d.id == domain_id:
             continue
         p = d.http_port if kind == "tls" else d.tls_port
         if p:
-            used.setdefault(int(p), f"domain:{d.domain}")
+            used[int(p)] = f"domain:{d.domain}"
     # Custom proxies listening on their own ports.
     for proxy in CustomProxy.query.filter(CustomProxy.child_id == child_id).all():
         if proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway, CustomProxyMode.domains_dns_gateway, CustomProxyMode.no_inbound):
@@ -234,7 +236,7 @@ def reserved_ports(child_id: int, *, kind: str, domain_id: int | None = None) ->
 
 
 def port_owners(port: int) -> list[str] | None:
-    """Processes listening on ``port`` (via root ``lsof``), or None when that can not be checked."""
+    """Processes listening on ``port`` (via root ``lsof``; any of them, haproxy and rpxy-l4 too), or None when it can not be checked."""
     from hiddifypanel.panel.run_commander import Command, commander
 
     try:
@@ -259,9 +261,8 @@ def port_problem(port: int | None, *, kind: str, child_id: int, domain_id: int |
         owners = port_owners(port)
         if owners is None:
             return {"code": "unknown", "detail": ""}
-        others = [o for o in owners if not any(o.startswith(name) for name in GATEWAY_PROCESSES)]
-        if others:
-            return {"code": "busy", "detail": ", ".join(others)}
+        if owners:
+            return {"code": "busy", "detail": ", ".join(owners)}
     return None
 
 

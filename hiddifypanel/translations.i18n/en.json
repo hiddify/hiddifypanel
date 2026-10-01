@@ -1793,7 +1793,7 @@
         "showAll": "All domains",
         "showDomainsHint": "Users opening their page on this domain see the configs of these domains.",
         "ports": "Gateway ports",
-        "portsHint": "Where SNI and L7 proxies of this domain listen: one TLS port and one HTTP port. Empty uses the default. The port must be free, or only used by haproxy / rpxy-l4.",
+        "portsHint": "Where users reach this domain's SNI and L7 proxies: one TLS port and one HTTP port. Empty uses the default. The firewall redirects them to 443 / 80, so nothing on the server may listen on them, and a TLS port can not be another domain's HTTP port.",
         "serverDomain": "Server domain",
         "serverDomainHint": "Upstream server domain used for this entry. Must be a valid Direct or Relay domain.",
         "downloadDomain": "📈 Download domain",
@@ -1847,7 +1847,7 @@
         },
         "usedBySetting": "used by {name}",
         "system": "a system port",
-        "busy": "used by {name}",
+        "busy": "another program listens on it ({name})",
         "invalid": "not a valid port",
         "unknown": "could not check this port"
       },
