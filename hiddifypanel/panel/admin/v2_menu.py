@@ -85,7 +85,7 @@ def _settings_items(*, node: bool) -> list[dict]:
             [
                 {"label": _("admin.menu.config"), "to": "/settings", "icon": "pi pi-fw pi-cog"},
                 {"label": _("Backup"), "to": "/backup", "icon": "pi pi-fw pi-save"},
-                {"label": _("admin.actions.title"), "to": "/actions", "icon": "pi pi-fw pi-bolt"},
+                {"label": _("admin.actions.title"), "to": "/apply", "icon": "pi pi-fw pi-bolt"},
             ]
         )
     if node:

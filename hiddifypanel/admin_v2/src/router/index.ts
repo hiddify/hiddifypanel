@@ -147,10 +147,14 @@ const routes = [
         component: () => import('@/features/utils/views/UtilsView.vue'),
       },
       {
-        path: 'actions',
-        name: 'actions',
-        component: () => import('@/features/actions/views/ActionsView.vue'),
+        path: 'apply',
+        name: 'apply',
+        component: () => import('@/features/apply/views/ApplyView.vue'),
+        // Server actions: super admins only.
+        beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
+      // The old Actions page lives on the Apply page now.
+      { path: 'actions', redirect: { name: 'apply' } },
       {
         path: 'base-configs',
         name: 'base-config-list',

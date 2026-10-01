@@ -3,34 +3,31 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
-import { openLegacyAction, systemActionUrls } from '@/core/panelShell'
+import { useRouter } from 'vue-router'
 import type { RestartMode } from '@/shared/utils/restart-mode'
 
 const mode = defineModel<RestartMode>({ required: true })
 
 const { t } = useI18n()
-const dangerConfirm = useDangerConfirm()
+const router = useRouter()
 
 const action = computed(() => {
   switch (mode.value) {
     case 'reinstall':
-      return { url: systemActionUrls.value.reinstall, label: t('actions.reinstall'), icon: 'pi pi-refresh', text: t('applyNotice.reinstall'), danger: true }
+      return { run: 'install', label: t('actions.reinstall'), icon: 'pi pi-refresh', text: t('applyNotice.reinstall'), danger: true }
     case 'update':
-      return { url: systemActionUrls.value.update, label: t('actions.update'), icon: 'pi pi-upload', text: t('applyNotice.update'), danger: true }
+      return { run: 'update', label: t('actions.update'), icon: 'pi pi-upload', text: t('applyNotice.update'), danger: true }
     case 'apply_config':
-      return { url: systemActionUrls.value.apply_configs, label: t('actions.applyConfigs'), icon: 'pi pi-bolt', text: t('applyNotice.apply'), danger: false }
+      return { run: 'apply', label: t('actions.applyConfigs'), icon: 'pi pi-bolt', text: t('applyNotice.apply'), danger: false }
     default:
       return null
   }
 })
 
+/** The Apply page asks (when needed), runs it and shows its live progress. */
 function run() {
   const current = action.value
-  if (!current?.url) return
-  const url = current.url
-  const title = current.label
-  dangerConfirm({ header: title, message: t('actions.confirm'), accept: () => openLegacyAction({ title, url, method: 'post' }) })
+  if (current) void router.push({ name: 'apply', query: { run: current.run } })
 }
 </script>
 
@@ -40,7 +37,7 @@ function run() {
       <div class="flex flex-wrap items-center justify-between gap-3 w-full">
         <span>{{ action.text }}</span>
         <div class="flex gap-2">
-          <Button v-if="action.url" size="small" :icon="action.icon" :label="action.label" :severity="action.danger ? 'danger' : undefined" @click="run" />
+          <Button size="small" :icon="action.icon" :label="action.label" :severity="action.danger ? 'danger' : undefined" @click="run" />
           <Button size="small" text severity="secondary" :label="t('applyNotice.later')" @click="mode = 'nothing'" />
         </div>
       </div>

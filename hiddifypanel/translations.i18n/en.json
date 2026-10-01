@@ -2012,6 +2012,86 @@
       },
       "notNow": "Not now",
       "later": "You can connect it any time from My account."
+    },
+    "apply": {
+      "title": "Apply & status",
+      "subtitle": "Put changes into effect, update the server, and see how everything is doing",
+      "recommended": "recommended",
+      "takes": "About how long it takes",
+      "minutes": "~{n} min",
+      "lastRun": "Last run {when}",
+      "busyOutside": "Something is running on the server right now.",
+      "watch": "Watch it",
+      "notStarted": "Could not start it",
+      "action": {
+        "apply": {
+          "title": "Apply changes",
+          "desc": "Puts your settings, users and domain changes into effect. Quick, and the usual choice after you change something.",
+          "button": "Apply now",
+          "running": "Applying changes",
+          "done": "Changes are applied"
+        },
+        "install": {
+          "title": "Reinstall",
+          "desc": "Installs everything again and rebuilds all services. Use it when apply is not enough, for example after changing the panel path or protocols.",
+          "button": "Reinstall",
+          "confirm": "Everything is installed again. Connections may drop for a few minutes. Continue?",
+          "running": "Reinstalling",
+          "done": "Reinstall finished"
+        },
+        "update": {
+          "title": "Update Hiddify",
+          "desc": "Downloads and installs the latest version of Hiddify, then applies it. It takes a while; the panel restarts at the end.",
+          "button": "Update",
+          "confirm": "Hiddify is updated to the latest version. The panel restarts and connections may drop for a few minutes. Continue?",
+          "running": "Updating",
+          "done": "Update finished"
+        },
+        "restart": {
+          "title": "Restart services",
+          "desc": "Restarts all Hiddify services without reinstalling anything. A good first try when something misbehaves.",
+          "button": "Restart",
+          "confirm": "All services restart. Connections drop for a moment. Continue?",
+          "running": "Restarting services",
+          "done": "Services restarted"
+        },
+        "status": {
+          "title": "Check status",
+          "desc": "Shows whether each service is running, plus the server's public IP and Warp. Changes nothing.",
+          "button": "Check now",
+          "running": "Checking status",
+          "done": "Status checked"
+        }
+      },
+      "run": {
+        "starting": "Starting…",
+        "working": "Working…",
+        "waitingStart": "Waiting for it to start…",
+        "dontClose": "You can leave this page; it keeps running on the server.",
+        "reconnecting": "Panel is restarting, reconnecting…",
+        "stalled": "Nothing new in the log for a long time. Check the log below.",
+        "reload": "The panel was updated. Reload to use the new version.",
+        "reloadBtn": "Reload",
+        "links": "Admin links on your domains (they may have changed)"
+      },
+      "log": {
+        "terminal": "log",
+        "empty": "Nothing yet…",
+        "loading": "Loading…",
+        "copied": "Log copied",
+        "wrap": "Wrap lines",
+        "follow": "Latest",
+        "show": "Show log",
+        "hide": "Hide log",
+        "download": "Download",
+        "showingEnd": "showing the end"
+      },
+      "logs": {
+        "title": "Logs",
+        "sub": "What each action did, from the server.",
+        "view": "View",
+        "empty": "No logs yet"
+      }
     }
   },
   "adminuser": {
