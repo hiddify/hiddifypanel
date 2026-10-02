@@ -71,6 +71,15 @@ export const applyApi = {
     const { data } = await getHttp().get<LogChunk>('apply/log/', { params: { file, tail: 1 }, timeout: 8000 })
     return data
   },
+  /** Empty one log; returns the files that are left. */
+  async clear(name: string): Promise<LogFile[]> {
+    const { data } = await getHttp().delete<{ files: LogFile[] }>(`apply/logs/${encodeURIComponent(name)}/`)
+    return data.files
+  },
+  async clearAll(): Promise<{ cleared: number; failed: string[]; skipped: string[]; files: LogFile[] }> {
+    const { data } = await getHttp().post<{ cleared: number; failed: string[]; skipped: string[]; files: LogFile[] }>('apply/logs/clear/', {})
+    return data
+  },
   downloadUrl(name: string): string {
     return `${getHttp().defaults.baseURL ?? ''}apply/logs/${encodeURIComponent(name)}/download/`
   },

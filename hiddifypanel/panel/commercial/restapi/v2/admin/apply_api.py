@@ -278,6 +278,51 @@ class ApplyLogApi(MethodView):
         return _cors({}, preflight=True)
 
 
+def _clear(path: Path) -> bool:
+    """Empty a log in place (the writers keep their file). False when the file can not be written."""
+    try:
+        with path.open("r+b") as fh:
+            fh.truncate(0)
+        return True
+    except OSError as e:
+        logger.warning(f"Could not clear {path.name}: {e}")
+        return False
+
+
+def _logs_in_use() -> set[str]:
+    return {ACTIONS[key]["log"] for key in running_actions()}
+
+
+class ApplyLogClearApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def delete(self, name: str):
+        """Empty one log file"""
+        path = _log_path(name)
+        if path.name in _logs_in_use():
+            abort(409, "This log is being written by a running action")
+        if not _clear(path):
+            abort(500, "Could not clear the log")
+        return {"cleared": 1, "files": _log_files()}
+
+
+class ApplyLogsClearApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def post(self):
+        """Empty every log file (the log of a running action is left alone)"""
+        busy = _logs_in_use()
+        cleared, failed, skipped = 0, [], []
+        for f in _log_files():
+            if f["name"] in busy:
+                skipped.append(f["name"])
+            elif f["size"] == 0 or _clear(_log_path(f["name"])):
+                cleared += f["size"] > 0
+            else:
+                failed.append(f["name"])
+        return {"cleared": cleared, "failed": failed, "skipped": skipped, "files": _log_files()}
+
+
 class ApplyLogDownloadApi(MethodView):
     decorators = [login_required(ROLES)]
 

@@ -55,6 +55,7 @@
             <h3 class="ap-logs__title">{{ t('apply.logs.title') }}</h3>
             <p class="ap-logs__sub">{{ t('apply.logs.sub') }}</p>
           </div>
+          <Button v-if="files.length" icon="pi pi-trash" :label="t('apply.logs.clearAll')" text size="small" severity="danger" class="ap-logs__clear" :loading="clearing" @click="clearAll" />
           <Button icon="pi pi-refresh" text rounded severity="secondary" class="ap-logs__refresh" :aria-label="t('legacy.refresh')" v-tooltip.top="t('legacy.refresh')" @click="refresh()" />
         </header>
         <ul class="ap-files">
@@ -72,7 +73,7 @@
       </section>
     </template>
 
-    <LogViewerDialog v-model:visible="logVisible" :file="logFile" />
+    <LogViewerDialog v-model:visible="logVisible" :file="logFile" @cleared="refresh(true)" />
     <PublicPortsDialog v-model:visible="portsVisible" />
   </div>
 </template>
@@ -183,6 +184,28 @@ function watchRunning() {
 function onFinished() {
   runDone.value = true
   void refresh(true)
+}
+
+const clearing = ref(false)
+function clearAll() {
+  dangerConfirm({
+    header: t('apply.logs.clearAll'),
+    message: t('apply.logs.clearAllConfirm'),
+    acceptLabel: t('apply.logs.clearAll'),
+    accept: async () => {
+      clearing.value = true
+      try {
+        const out = await applyApi.clearAll()
+        const kept = out.skipped.length ? ` · ${t('apply.logs.clearSkipped', { n: out.skipped.length })}` : ''
+        toast.add({ severity: out.failed.length ? 'warn' : 'success', summary: out.failed.length ? t('apply.logs.clearFailed') : t('apply.logs.clearedAll'), detail: (out.failed.join(', ') + kept).replace(/^ · /, '') || undefined, life: 4000 })
+        await refresh(true)
+      } catch (err) {
+        toast.add({ severity: 'error', summary: t('apply.logs.clearFailed'), detail: apiErrorMessage(err), life: 5000 })
+      } finally {
+        clearing.value = false
+      }
+    },
+  })
 }
 
 function openLog(f: LogFile) {

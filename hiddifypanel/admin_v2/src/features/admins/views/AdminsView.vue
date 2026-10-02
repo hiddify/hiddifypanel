@@ -289,6 +289,7 @@ const subOptions = computed(() => [
 ])
 const filtering = computed(() => Boolean(query.value.trim() || modeFilter.value || subFilter.value))
 
+
 function canAddSubs(admin: AdminRow): boolean {
   return admin.mode === 'super_admin' || admin.can_add_admin
 }

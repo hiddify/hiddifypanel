@@ -24,7 +24,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
-def _v161(child_id):
+def _v162(child_id):
     """Outbounds are shared by all nodes and named by a slug (the ids are local): give old rows a slug, make it unique."""
     from hiddifypanel.proxy_v3.outbounds import sync_builtin_outbounds
 

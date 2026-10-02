@@ -610,13 +610,22 @@
         "show": "Show log",
         "showingEnd": "showing the end",
         "terminal": "log",
-        "wrap": "Wrap lines"
+        "wrap": "Wrap lines",
+        "clear": "Clear",
+        "clearConfirm": "Empty \"{name}\"? Its text is deleted from the server.",
+        "cleared": "Log cleared",
+        "clearFailed": "Could not clear the log"
       },
       "logs": {
         "empty": "No logs yet",
         "sub": "What each action did, from the server.",
         "title": "Logs",
-        "view": "View"
+        "view": "View",
+        "clearAll": "Clear all",
+        "clearAllConfirm": "Empty every log file? The text is deleted from the server (a log being written by a running action is kept).",
+        "clearedAll": "Logs cleared",
+        "clearSkipped": "{n} in use were kept",
+        "clearFailed": "Could not clear some logs"
       },
       "minutes": "~{n} min",
       "notStarted": "Could not start it",
@@ -2116,6 +2125,49 @@
       "preview": "Compiled preview",
       "title": "Validation",
       "warnings": "Warnings"
+    },
+    "tags": {
+      "title": "Tags",
+      "tagged": "Tagged",
+      "taggedHint": "Everyone who has at least one tag",
+      "untagged": "No tag",
+      "filterLabel": "Filter by tag",
+      "clear": "Clear",
+      "addTag": "Tag",
+      "editTags": "Edit tags",
+      "tagCount": "{n} tags",
+      "none": "No tags yet",
+      "pick": "Choose tags",
+      "pickHint": "You can choose several",
+      "newTag": "New tag",
+      "namePlaceholder": "Name your own tag",
+      "create": "Create",
+      "color": "Color",
+      "created": "Tag created",
+      "deleted": "Tag deleted",
+      "delete": "Delete tag",
+      "rename": "Rename",
+      "deleteConfirm": "Delete the tag \"{name}\"? It is taken off everyone who has it.",
+      "saveFailed": "Could not save the tags",
+      "bulk": "Tag",
+      "bulkHint": "Tags of the selected: a tick means all of them have it",
+      "use": "{n} in use",
+      "colors": {
+        "red": "Red",
+        "orange": "Orange",
+        "green": "Green",
+        "blue": "Blue",
+        "black": "Black"
+      },
+      "default": {
+        "family": "Family",
+        "friends": "Friends",
+        "work": "Work",
+        "important": "Important",
+        "free": "Free"
+      },
+      "edit": "Edit tag",
+      "save": "Save"
     }
   },
   "adminuser": {

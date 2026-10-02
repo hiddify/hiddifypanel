@@ -14,9 +14,8 @@
 
     <!-- Filters with counts: states and what needs attention -->
     <section v-if="state" class="users-filters" :aria-label="t('users.filtersLabel')">
+      <template v-for="f in filters" :key="f.key">
       <button
-        v-for="f in filters"
-        :key="f.key"
         type="button"
         class="users-filter"
         :class="[`users-filter--${f.key}`, { 'users-filter--on': filter === f.key }]"
@@ -28,6 +27,9 @@
         <b>{{ formatCount(f.count) }}</b>
         <span>{{ t(`users.filter.${f.key}`) }}</span>
       </button>
+      <!-- Right after "All" -->
+      <TagFilter v-if="f.key === 'all'" v-model="pickedTags" :items="allRows" class="users-tagfilter" />
+      </template>
     </section>
 
     <!-- Toolbar -->
@@ -59,6 +61,7 @@
           <Button size="small" icon="pi pi-refresh" :label="t('users.bulk.reset_usage')" severity="secondary" outlined @click="bulk('reset_usage')" />
           <Button size="small" icon="pi pi-replay" :label="t('users.bulk.reset_days')" severity="secondary" outlined @click="bulk('reset_days')" />
           <Button size="small" icon="pi pi-calendar-plus" :label="t('users.bulk.add_days')" severity="secondary" outlined @click="bulk('add_days')" />
+          <Button size="small" icon="pi pi-tag" :label="t('tags.bulk')" severity="secondary" outlined aria-haspopup="dialog" @click="bulkTagPop?.toggle($event)" />
           <Button size="small" icon="pi pi-trash" :label="t('common.delete')" severity="danger" outlined @click="bulk('delete')" />
           <Button size="small" icon="pi pi-times" text severity="secondary" :aria-label="t('users.clearSelection')" @click="selected = []" />
         </div>
@@ -136,6 +139,7 @@
               <div class="u-who__line">
                 <!-- The link first: every row's QR button lines up -->
                 <Button icon="pi pi-qrcode" text rounded size="small" class="u-who__link" :aria-label="t('users.showLink')" v-tooltip.top="t('users.showLink')" @click.stop="openLink(data)" />
+                <TagDots kind="user" :uuid="data.uuid" :ids="data.tags" @changed="(ids: number[]) => setTags(data.uuid, ids)" />
                 <button type="button" class="u-who__name" :title="data.name" @click="openEdit(data)"><MarkText :text="data.name" :query="query" /></button>
               </div>
               <small v-if="data.comment" class="u-who__note" :title="data.comment"><MarkText :text="data.comment" :query="query" /></small>
@@ -190,7 +194,7 @@
 
         <Column field="last_online_ts" :header="t('users.col.lastOnline')" sortable header-style="width: 9rem">
           <template #body="{ data }">
-            <span class="u-online" :class="`u-tone--${seen(data).tone}`" :title="data.last_online ? new Date(data.last_online).toLocaleString(locale) : ''">
+            <span class="u-online" :class="`u-tone--${seen(data).tone}`" :title="data.last_online && !seen(data).online ? new Date(data.last_online).toLocaleString(locale) : undefined">
               <span v-if="seen(data).online" class="u-dot" />{{ seen(data).text }}
             </span>
           </template>
@@ -211,6 +215,7 @@
               <i class="pi pi-qrcode" />
               <span class="u-card__badge" :aria-label="t(`users.status.${u.status}`)"><i :class="STATUS_ICON[u.status]" /></span>
             </button>
+            <TagDots kind="user" :uuid="u.uuid" :ids="u.tags" @changed="(ids: number[]) => setTags(u.uuid, ids)" />
             <button type="button" class="u-card__title" @click="openEdit(u)">
               <span class="u-card__name">{{ u.name }}</span>
               <span class="u-card__sub">{{ u.comment || t(`users.status.${u.status}`) }}</span>
@@ -235,6 +240,9 @@
     </div>
 
     <Menu ref="rowMenu" :model="menuItems" popup />
+    <Popover ref="bulkTagPop" append-to="body">
+      <TagPicker :selected="bulkTagState.all" :partial="bulkTagState.some" :title="t('tags.bulk')" :hint="t('tags.bulkHint')" @toggle="bulkTag" @create="(id: number) => bulkTag(id, true)" />
+    </Popover>
 
     <UserFormDialog v-model:visible="formVisible" :user="editingUser" :state="state" @saved="onSaved" />
     <LinkShareDialog
@@ -264,6 +272,7 @@ import Menu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
 import Message from 'primevue/message'
 import Paginator from 'primevue/paginator'
+import Popover from 'primevue/popover'
 import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -273,6 +282,11 @@ import MeterBar from '@/shared/components/MeterBar.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
 import { formatCount } from '@/shared/utils/format-metrics'
+import { matchesTags, useTags } from '@/features/tags/useTags'
+import { tagsApi } from '@/features/tags/api'
+import TagDots from '@/features/tags/components/TagDots.vue'
+import TagFilter from '@/features/tags/components/TagFilter.vue'
+import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersState } from '@/features/users/api'
 import { expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
@@ -310,6 +324,7 @@ const refreshing = ref(false)
 const loadError = ref<string | null>(null)
 const query = ref('')
 const filter = ref<FilterKey>('all')
+const pickedTags = ref<number[]>([])
 const selected = ref<Row[]>([])
 const sortField = ref<string | undefined>(undefined)
 const sortOrder = ref<1 | -1 | 0 | undefined>(undefined)
@@ -430,10 +445,37 @@ const filters = computed(() =>
 const rows = computed<Row[]>(() => {
   const q = query.value.trim().toLowerCase()
   const match = MATCH[filter.value]
-  return allRows.value.filter((u) => match(u) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || u.comment.toLowerCase().includes(q)))
+  return allRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || u.comment.toLowerCase().includes(q)))
 })
 // New filter / search / page size: back to the first page.
-watch([filter, query, pageSize], () => (first.value = 0))
+watch([filter, query, pageSize, pickedTags], () => (first.value = 0))
+
+// Tags: a user's own dots, and the "Tag" button of the bulk bar.
+const { load: loadTags } = useTags()
+function setTags(uuid: string, ids: number[]) {
+  if (!state.value) return
+  state.value.users = state.value.users.map((u) => (u.uuid === uuid ? { ...u, tags: ids } : u))
+}
+const bulkTagPop = ref<InstanceType<typeof Popover> | null>(null)
+const bulkTagState = computed(() => {
+  const picked = new Set(selected.value.map((s) => s.uuid))
+  const users = allRows.value.filter((u) => picked.has(u.uuid))
+  const seen = new Map<number, number>()
+  for (const u of users) for (const id of u.tags) seen.set(id, (seen.get(id) ?? 0) + 1)
+  const all = [...seen].filter(([, n]) => n === users.length).map(([id]) => id)
+  return { all, some: [...seen.keys()].filter((id) => !all.includes(id)) }
+})
+async function bulkTag(id: number, on: boolean) {
+  const uuids = selected.value.map((s) => s.uuid)
+  if (!uuids.length) return
+  try {
+    await tagsApi.bulk('user', uuids, on ? [id] : [], on ? [] : [id])
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('tags.saveFailed'), detail: apiErrorMessage(err), life: 5000 })
+    return
+  }
+  await Promise.all([load(true), loadTags(true)])
+}
 
 /** Phones: the current page, grouped when asked. */
 const pageRows = computed(() => {
@@ -667,6 +709,11 @@ onBeforeUnmount(() => {
   gap: 0.45rem;
   margin-bottom: 0.85rem;
 }
+.users-tagfilter {
+  flex: none;
+  min-width: 8.5rem;
+  border-radius: 12px;
+}
 .users-filter {
   --tone: var(--p-primary-color);
   display: inline-flex;
@@ -871,11 +918,14 @@ onBeforeUnmount(() => {
 
 /* Name cell: name + link button, note below */
 .u-who {
+  /* The note sits beside the name when there is room, and wraps under it when there is not */
   display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.6rem;
+  row-gap: 0.1rem;
   min-width: 0;
-  max-width: 20rem;
+  max-width: 32rem;
 }
 .u-who__line {
   display: flex;
@@ -906,10 +956,12 @@ onBeforeUnmount(() => {
   height: 1.8rem !important;
   margin-inline-end: 0.2rem;
 }
+.u-who__note {
+  flex: 1 1 6rem;
+  min-width: 0;
+}
 .u-who__note,
 .u-who__uuid {
-  /* aligned under the name, past the QR button */
-  padding-inline-start: 2rem;
   max-width: 100%;
   font-size: 0.75rem;
   color: var(--p-text-muted-color);
@@ -917,6 +969,11 @@ onBeforeUnmount(() => {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: start;
+}
+.u-who__uuid {
+  /* its own line, aligned under the name past the QR button */
+  flex-basis: 100%;
+  padding-inline-start: 2rem;
 }
 .u-who__uuid {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

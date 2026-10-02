@@ -23,6 +23,7 @@ from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import AdminUser, ConfigEnum, User, UserMode, hconfig, set_hconfig
 from hiddifypanel.models.outbound import Outbound
 from hiddifypanel.models.role import Role
+from hiddifypanel.models.tag import tags_of
 from hiddifypanel.models.user import package_mode_dic
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import outbounds as ob
@@ -68,7 +69,7 @@ def _iso(value: datetime.date | datetime.datetime | None) -> str | None:
     return value.isoformat()
 
 
-def _row(user: User, admins: dict[int, AdminUser]) -> dict[str, Any]:
+def _row(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]] | None = None) -> dict[str, Any]:
     owner = admins.get(user.added_by or 0)
     extra = user.extra_params_json()
     expires = user.start_date + datetime.timedelta(days=user.package_days or 0) if user.start_date else None
@@ -95,6 +96,7 @@ def _row(user: User, admins: dict[int, AdminUser]) -> dict[str, Any]:
         "preferred_outbound": ob.preferred_outbound_id(extra),
         "additional_configs": len(extra.get(user_configs.EXTRA_KEY) or []) if isinstance(extra.get(user_configs.EXTRA_KEY), list) else 0,
         "telegram_id": user.telegram_id or None,
+        "tags": (tag_map if tag_map is not None else tags_of("user", [user.uuid])).get(user.uuid, []),
     }
 
 
@@ -234,7 +236,8 @@ class UsersPageApi(MethodView):
         """Users page: users of the signed-in admin and its sub-admins, with what the page needs"""
         admins = _admins_map()
         users = _users_query().order_by(User.id.desc()).all()
-        return {"users": [_row(u, admins) for u in users], **_meta(admins)}
+        tag_map = tags_of("user")
+        return {"users": [_row(u, admins, tag_map) for u in users], **_meta(admins)}
 
     def post(self):
         """Users page: add a user"""

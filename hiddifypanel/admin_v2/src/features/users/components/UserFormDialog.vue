@@ -13,7 +13,10 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import Json5Editor from '@/shared/components/Json5Editor.vue'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import { cleanConfigRows, configRowProblem } from '@/shared/utils/additional-configs'
+import { useToast } from 'primevue/usetoast'
 import { apiErrorMessage } from '@/core/api/client'
+import TagSelect from '@/features/tags/components/TagSelect.vue'
+import { saveFormTags } from '@/features/tags/useTags'
 import {
   MODE_ICON,
   UNLIMITED_DAYS,
@@ -65,6 +68,9 @@ const uuid = ref('')
 const ownerUuid = ref<string | null>(null)
 const telegramId = ref<number | null>(null)
 const preferredOutbound = ref<number | null>(null)
+const toast = useToast()
+const tagIds = ref<number[]>([])
+const initialTags = ref<number[]>([])
 const configs = ref<AdditionalConfig[]>([])
 const extraText = ref('{}')
 const resetUsage = ref(false)
@@ -92,6 +98,8 @@ function fill(d: UserDetail | null) {
   ownerUuid.value = d?.owner_uuid ?? props.state?.me_uuid ?? null
   telegramId.value = d?.telegram_id ?? null
   preferredOutbound.value = d?.preferred_outbound ?? null
+  tagIds.value = [...(d?.tags ?? [])]
+  initialTags.value = [...tagIds.value]
   configs.value = (d?.additional_configs ?? []).map((row) => [...row] as AdditionalConfig)
   extraText.value = d?.extra_params ?? '{}'
 }
@@ -228,6 +236,8 @@ async function submit() {
   if (resetDays.value) payload.reset_days = true
   try {
     const saved = props.user ? await usersApi.update(props.user.uuid, payload) : await usersApi.create(payload)
+    if (await saveFormTags('user', saved.uuid, tagIds.value, initialTags.value)) saved.tags = [...tagIds.value]
+    else toast.add({ severity: 'warn', summary: t('tags.saveFailed'), life: 5000 })
     emit('saved', saved, !props.user)
     visible.value = false
   } catch (err) {
@@ -270,10 +280,17 @@ async function submit() {
       <section class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-user" />{{ t('users.form.who') }}</h4>
         <div class="uf-grid">
-          <div class="uf-field uf-field--wide">
-            <label for="uf-name" class="font-medium">{{ t('users.form.name') }}</label>
-            <InputText id="uf-name" v-model="name" maxlength="512" autofocus :invalid="nameError" :disabled="busy" :placeholder="t('users.form.namePlaceholder')" />
-            <small v-if="nameError" class="uf-error">{{ t('users.form.nameRequired') }}</small>
+          <!-- Name and Tag side by side -->
+          <div class="uf-namerow uf-field--wide">
+            <div class="uf-field uf-namerow__name">
+              <label for="uf-name" class="font-medium">{{ t('users.form.name') }}</label>
+              <InputText id="uf-name" v-model="name" maxlength="512" autofocus :invalid="nameError" :disabled="busy" :placeholder="t('users.form.namePlaceholder')" />
+              <small v-if="nameError" class="uf-error">{{ t('users.form.nameRequired') }}</small>
+            </div>
+            <div class="uf-field uf-namerow__tag">
+              <label id="uf-tag-label" class="font-medium">{{ t('tags.addTag') }}</label>
+              <TagSelect v-model="tagIds" :disabled="busy" aria-labelledby="uf-tag-label" />
+            </div>
           </div>
           <div class="uf-field uf-field--wide">
             <label for="uf-note" class="font-medium">{{ t('users.form.note') }} <span class="text-muted-color font-normal">({{ t('users.form.optional') }})</span></label>
@@ -557,6 +574,18 @@ async function submit() {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.9rem;
   align-items: start;
+}
+.uf-namerow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.uf-namerow__name {
+  flex: 1;
+  min-width: 0;
+}
+.uf-namerow__tag {
+  flex: none;
 }
 .uf-field {
   display: flex;

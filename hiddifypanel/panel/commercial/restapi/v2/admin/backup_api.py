@@ -55,6 +55,7 @@ def summarize(data: dict) -> dict[str, Any]:
         "admins": len(data.get("admin_users") or []),
         "domains": len(data.get("domains") or []),
         "custom_proxies": len(data.get("custom_proxies") or []),
+        "tags": len(data.get("tags") or []),
         "settings": len(data.get("hconfigs") or []),
         "nodes": max(0, len(data.get("childs") or []) - 1),
         "domain_names": [d.get("domain") for d in (data.get("domains") or [])[:6] if isinstance(d, dict) and d.get("domain")],

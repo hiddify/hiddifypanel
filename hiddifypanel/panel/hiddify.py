@@ -157,6 +157,7 @@ def child_id_from_row(row: dict, force_child_unique_id: str | None = None) -> in
 
 
 def dump_db_to_dict():
+    from hiddifypanel.models.tag import export_links, export_tags
     from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
     from hiddifypanel.models.server_ip import ServerIp
     from hiddifypanel.models.tls_store import TlsStore
@@ -168,6 +169,8 @@ def dump_db_to_dict():
         "proxies": [u.to_dict() for u in db.session.query(Proxy).all()],
         "proxy_templates": [t.to_dict() for t in db.session.query(ProxyTemplate).all()],
         "custom_proxies": [p.to_dict() for p in db.session.query(CustomProxy).all()],
+        "tags": export_tags(),
+        "tag_links": export_links(),
         "outbounds": [o.to_dict() for o in db.session.query(Outbound).order_by(Outbound.position, Outbound.id).all()],
         "server_ips": [ip.to_dict() for ip in db.session.query(ServerIp).all()],
         "tls_store": [t.to_dict(include_private_key=True) for t in db.session.query(TlsStore).all()],
@@ -287,6 +290,16 @@ def set_db_from_json(
             Domain.bulk_apply_links(json_data["domains"], commit=False)
         if set_domains and "tls_store" in json_data:
             TlsStore.bulk_register(json_data["tls_store"], commit=False)
+
+    from hiddifypanel.models.tag import restore_tags
+
+    if (set_users or set_admins or set_settings) and (json_data.get("tags") or json_data.get("tag_links")):
+        db.session.flush()
+        restore_tags(
+            json_data.get("tags") or [],
+            json_data.get("tag_links") or [],
+            kinds={"user"} if set_users else set(),
+        )
 
     ids_without_parent = get_ids_without_parent({u.id: u.to_dict() for u in AdminUser.query.all()})
     owner = AdminUser.get_super_admin()

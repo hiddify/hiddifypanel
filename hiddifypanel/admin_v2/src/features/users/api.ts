@@ -38,6 +38,8 @@ export interface UserRow {
   /** List: how many; detail: the rows. */
   additional_configs: number
   telegram_id: number | null
+  /** Ids of the tags on the user. */
+  tags: number[]
 }
 
 export interface UserDetail extends Omit<UserRow, 'additional_configs'> {
