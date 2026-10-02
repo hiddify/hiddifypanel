@@ -110,6 +110,29 @@ const networkOverview = computed(() => {
 const cpuOverview = computed(() => resourceSeries('cpu', t('dashboard.cpu'), SERIES.cpu))
 const memoryOverview = computed(() => resourceSeries('memory', t('dashboard.ram'), SERIES.memory))
 
+/** The sample a chart point shows for a node (multi-node series are left-padded to the same width). */
+function sampleAt(node: DashboardNodeStats, dataIndex: number): NodeSample | undefined {
+  const samples = props.history[node.id] ?? []
+  const pad = Math.max(0, overviewLabels.value.length - samples.length)
+  return samples[dataIndex - pad]
+}
+
+/** Hover text per server: CPU usage and core count, or RAM percent with used / total. */
+function tooltipLabel(metric: 'cpu' | 'memory') {
+  return (datasetIndex: number, dataIndex: number, formatted: string): string | undefined => {
+    const node = visibleNodes.value[multiNode.value ? datasetIndex : 0]
+    const sample = node ? sampleAt(node, dataIndex) : undefined
+    if (!node || !sample) return undefined
+    const detail =
+      metric === 'cpu'
+        ? t('dashboard.cpuCores', { count: sample.cores })
+        : `${formatGb(sample.memoryUsedGb, 1)} / ${formatGb(sample.memoryTotalGb, 1)}`
+    return `${nodeTitle(node)}: ${formatted} · ${detail}`
+  }
+}
+const cpuTooltipLabel = tooltipLabel('cpu')
+const memoryTooltipLabel = tooltipLabel('memory')
+
 const percentFormatter = (value: number) => formatPercent(value, 1)
 const bitRateFormatter = (value: number) => formatBitRate(Math.abs(value))
 
@@ -207,6 +230,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <MetricChart
           :labels="overviewLabels"
           :series="cpuOverview"
+          :tooltip-label="cpuTooltipLabel"
           type="line"
           :stacked="true"
           :legend="false"
@@ -220,6 +244,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <MetricChart
           :labels="overviewLabels"
           :series="memoryOverview"
+          :tooltip-label="memoryTooltipLabel"
           type="line"
           :stacked="true"
           :legend="false"

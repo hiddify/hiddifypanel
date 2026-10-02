@@ -25,6 +25,7 @@ const props = withDefaults(
     yMax?: number
     maxXTicks?: number
     tooltipExtra?: (index: number) => string[]
+    tooltipLabel?: (datasetIndex: number, dataIndex: number, formatted: string) => string | undefined
     stackTotalLabel?: string
     mirror?: boolean
   }>(),
@@ -104,6 +105,7 @@ const options = computed(() =>
     yMax: props.yMax,
     maxXTicks: isPhone.value ? Math.min(props.maxXTicks ?? 8, 5) : props.maxXTicks,
     tooltipExtra: props.tooltipExtra,
+    tooltipLabel: props.tooltipLabel,
     stackTotalLabel: props.stackTotalLabel,
     mirror: props.mirror,
   }),

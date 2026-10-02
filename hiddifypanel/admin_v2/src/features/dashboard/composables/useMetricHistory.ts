@@ -16,7 +16,11 @@ export interface MetricSample {
 export interface NodeSample {
   at: number
   cpu: number
+  /** logical CPU cores of the server */
+  cores: number
   memory: number
+  memoryUsedGb: number
+  memoryTotalGb: number
   disk: number
   up: number
   down: number
@@ -82,7 +86,14 @@ export function useMetricHistory(capacity = 60): MetricHistory {
       previousByNode.set(node.id, current)
       next[node.id] = [
         ...series.slice(-(capacity - 1)),
-        { at, cpu: node.cpu.percent, memory: node.memory.percent, disk: node.disk.percent, ...rates },
+        {
+          at,
+          cpu: node.cpu.percent,
+          cores: node.cpu.cores,
+          memory: node.memory.percent,
+          memoryUsedGb: node.memory.used_gb,
+          memoryTotalGb: node.memory.total_gb,
+          disk: node.disk.percent, ...rates },
       ]
     }
     nodeSamples.value = next

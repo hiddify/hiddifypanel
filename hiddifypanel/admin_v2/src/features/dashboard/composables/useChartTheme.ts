@@ -61,6 +61,7 @@ interface TooltipItem {
   parsed: { x: number; y: number }
   label?: string
   dataIndex: number
+  datasetIndex: number
   raw?: unknown
 }
 
@@ -75,6 +76,8 @@ export interface BaseOptions {
   maxXTicks?: number
   /** Extra tooltip lines for the hovered index (online users, per-node rates, …). */
   tooltipExtra?: (index: number) => string[]
+  /** Replaces a tooltip row's text (per dataset and hovered index); `formatted` is the default value text. */
+  tooltipLabel?: (datasetIndex: number, dataIndex: number, formatted: string) => string | undefined
   stackTotalLabel?: string
   /** Lets the y-axis range below zero (e.g. upload above / download below a mirrored stacked area). */
   mirror?: boolean
@@ -171,8 +174,11 @@ export function useChartTheme() {
           footerMarginTop: 8,
           callbacks: {
             title: (items: TooltipItem[]) => items[0]?.label ?? '',
-            label: (item: TooltipItem) =>
-              `${item.dataset.label ? `${item.dataset.label}: ` : ''}${format(item.parsed.y)}`,
+            label: (item: TooltipItem) => {
+              const formatted = format(item.parsed.y)
+              const custom = options.tooltipLabel?.(item.datasetIndex, item.dataIndex, formatted)
+              return custom ?? `${item.dataset.label ? `${item.dataset.label}: ` : ''}${formatted}`
+            },
             footer: (items: TooltipItem[]) => {
               if (!items.length) return []
               const lines: string[] = []
