@@ -24,6 +24,11 @@
     .breadcrumb {
         display: none;
     }
+
+    #domain-advanced>.card-header {
+        cursor: pointer;
+        user-select: none;
+    }
 </style>
 {% endblock %}
 
@@ -59,40 +64,58 @@
 
 <script src="{{ static_url_for( filename='plugins/bootstrap4-editable/js/bootstrap-editable.min.js' ) }}"></script>
 <script>
-    const CDN_MODES = new Set(['cdn', 'auto_cdn_ip', 'worker']);
+    const CDN_MODES = new Set(['cdn', 'worker']);
     const PROXY_OPTIONS_URL = "{{ hurl_for('admin.Actions:domain_proxy_options') }}";
     const PROXY_GROUP_LABELS = {
         sni_gateway: `{{_("domain.custom_proxy.group.sni_gateway")}}`,
+        dns_gateway: `{{_("domain.custom_proxy.group.dns_gateway")}}`,
         ip_based: `{{_("domain.custom_proxy.group.ip_based")}}`,
+        l7_gateway: `{{_("domain.custom_proxy.group.l7_gateway")}}`,
         other: `{{_("domain.custom_proxy.group.other")}}`,
     };
-    const PROXY_GROUP_ORDER = ['sni_gateway', 'ip_based', 'other'];
+    const PROXY_GROUP_ORDER = ['sni_gateway', 'dns_gateway', 'ip_based', 'l7_gateway', 'other'];
+    const SNI_L7_MUTEX_MSG = `{{_("domain.custom_proxy.sni_l7_mutex")}}`;
+    const SNI_SINGLE_ONLY_MSG = `{{_("domain.custom_proxy.sni_single_only")}}`;
 
-    function isRealityFakeMode() {
-        return currentFakeMode() === 'reality';
+    function customProxySelectEl() {
+        return document.getElementById("custom_proxies");
     }
 
-    function destroyCustomProxySelect2() {
-        const proxyEl = $('#custom_proxy');
-        if (!proxyEl.length) return;
-        if (proxyEl.data('select2')) {
-            proxyEl.select2('destroy');
+    function destroyCustomProxyMultipleSelect() {
+        const $proxy = $(customProxySelectEl());
+        if (!$proxy.length) return;
+        if ($proxy.data('multipleSelect')) {
+            $proxy.multipleSelect('destroy');
         }
-        proxyEl.removeClass('select2-hidden-accessible');
-        proxyEl.removeAttr('aria-hidden');
-        proxyEl.removeAttr('tabindex');
-        proxyEl.siblings('.select2-container').remove();
+        $proxy.siblings('.ms-parent').remove();
     }
 
-    function initCustomProxySelect2() {
-        const proxyEl = $('#custom_proxy');
-        if (!proxyEl.length) return;
-        destroyCustomProxySelect2();
-        proxyEl.select2({
+    function initCustomProxyMultipleSelect() {
+        const el = customProxySelectEl();
+        if (!el) return;
+        const $proxy = $(el);
+        destroyCustomProxyMultipleSelect();
+        el.setAttribute('multiple', 'multiple');
+        $proxy.multipleSelect({
             width: '100%',
+            filter: true,
             placeholder: '—',
-            allowClear: !isRealityFakeMode(),
+            onClick: function (view) {
+                if (view && view.selected) {
+                    rejectInvalidGatewaySelection(String(view.value));
+                }
+                syncGatewayOptionAvailability();
+            },
+            onCheckAll: function () {
+                rejectInvalidGatewaySelection(null);
+                syncGatewayOptionAvailability();
+            },
+            onOptgroupClick: function () {
+                rejectInvalidGatewaySelection(null);
+                syncGatewayOptionAvailability();
+            },
         });
+        syncGatewayOptionAvailability();
     }
 
     function optionValueExists(selectEl, value) {
@@ -100,19 +123,129 @@
         return Array.from(selectEl.querySelectorAll('option')).some((opt) => opt.value === value);
     }
 
-    function rebuildCustomProxySelect(proxies, selected) {
-        const proxyEl = document.getElementById("custom_proxy");
-        if (!proxyEl) return;
-        const previous = selected || proxyEl.value || '';
-        destroyCustomProxySelect2();
-        proxyEl.innerHTML = '';
-
-        if (!isRealityFakeMode()) {
-            const empty = document.createElement('option');
-            empty.value = '';
-            empty.textContent = '—';
-            proxyEl.appendChild(empty);
+    function getCustomProxySelectedIds() {
+        const el = customProxySelectEl();
+        if (!el) return [];
+        const $proxy = $(el);
+        if ($proxy.data('multipleSelect')) {
+            return ($proxy.multipleSelect('getSelects') || []).map(String);
         }
+        return Array.from(el.selectedOptions || []).map((opt) => opt.value);
+    }
+
+    function setCustomProxySelectedIds(ids) {
+        const el = customProxySelectEl();
+        if (!el) return;
+        const $el = $(el);
+        const values = (ids || []).map(String);
+        Array.from(el.options).forEach((opt) => {
+            opt.selected = values.includes(opt.value);
+        });
+        if ($el.data('multipleSelect')) {
+            $el.multipleSelect('setSelects', values);
+        } else {
+            $el.val(values);
+        }
+    }
+
+    function selectedProxyMeta() {
+        const el = customProxySelectEl();
+        if (!el) return [];
+        return getCustomProxySelectedIds().map((id) => {
+            const opt = el.querySelector(`option[value="${CSS.escape(id)}"]`);
+            return {
+                id: id,
+                group: (opt && opt.dataset.group) || 'other',
+            };
+        });
+    }
+
+    function rejectInvalidGatewaySelection(preferredNewId) {
+        const selected = selectedProxyMeta();
+        const sni = selected.filter((p) => p.group === 'sni_gateway');
+        const l7 = selected.filter((p) => p.group === 'l7_gateway');
+        let next = selected.slice();
+        let message = null;
+
+        if (sni.length && l7.length) {
+            message = SNI_L7_MUTEX_MSG;
+            if (preferredNewId && sni.some((p) => p.id === preferredNewId)) {
+                next = selected.filter((p) => p.group !== 'l7_gateway');
+            } else if (preferredNewId && l7.some((p) => p.id === preferredNewId)) {
+                next = selected.filter((p) => p.id !== preferredNewId);
+            } else {
+                next = selected.filter((p) => p.group !== 'l7_gateway');
+            }
+        } else if (sni.length > 1) {
+            message = SNI_SINGLE_ONLY_MSG;
+            if (preferredNewId && sni.some((p) => p.id === preferredNewId)) {
+                next = selected.filter((p) => p.group !== 'sni_gateway' || p.id !== preferredNewId);
+            } else {
+                next = selected.filter((p) => p.group !== 'sni_gateway' || p.id === sni[0].id);
+            }
+        }
+
+        const nextIds = next.map((p) => p.id);
+        const currentIds = selected.map((p) => p.id);
+        if (nextIds.join(',') !== currentIds.join(',')) {
+            setCustomProxySelectedIds(nextIds);
+        }
+        if (message && window.alert) {
+            window.alert(message);
+        }
+    }
+
+    function syncGatewayOptionAvailability() {
+        const el = customProxySelectEl();
+        if (!el) return;
+        const selected = selectedProxyMeta();
+        const hasSni = selected.some((p) => p.group === 'sni_gateway');
+        const hasL7 = selected.some((p) => p.group === 'l7_gateway');
+        const selectedSniId = hasSni ? selected.find((p) => p.group === 'sni_gateway').id : null;
+
+        Array.from(el.querySelectorAll('option')).forEach((opt) => {
+            const group = opt.dataset.group || 'other';
+            let disabled = false;
+            if (group === 'sni_gateway') {
+                if (hasL7) disabled = true;
+                else if (hasSni && opt.value !== selectedSniId) disabled = true;
+            } else if (group === 'l7_gateway' && hasSni) {
+                disabled = true;
+            }
+            opt.disabled = disabled;
+        });
+
+        applyDisabledToMultipleSelect(el);
+    }
+
+    // multipleSelect('refresh') is destroy + init, which closes the dropdown on every
+    // click; patch the plugin rows and rendered checkboxes in place instead.
+    function applyDisabledToMultipleSelect(el) {
+        const ms = $(el).data('multipleSelect');
+        if (!ms || !ms.$drop) return;
+        const disabledValues = new Set(Array.from(el.options).filter((opt) => opt.disabled).map((opt) => opt.value));
+        (ms.data || []).forEach((row) => {
+            (row.type === 'optgroup' ? row.children || [] : [row]).forEach((item) => {
+                if (item.divider) return;
+                const disabled = disabledValues.has(String(item.value));
+                item.disabled = disabled;
+                const $input = ms.$drop.find(`input[data-key="${item._key}"]`);
+                $input.prop('disabled', disabled);
+                $input.closest('label').toggleClass('disabled', disabled);
+                $input.closest('li').attr('tabindex', disabled ? -1 : 0);
+            });
+        });
+    }
+
+    function rebuildCustomProxySelect(proxies, selected) {
+        const proxyEl = customProxySelectEl();
+        if (!proxyEl) return;
+        const previous = Array.isArray(selected)
+            ? selected.map(String)
+            : getCustomProxySelectedIds();
+        destroyCustomProxyMultipleSelect();
+        proxyEl.innerHTML = '';
+        proxyEl.setAttribute('multiple', 'multiple');
 
         const grouped = {};
         (proxies || []).forEach((proxy) => {
@@ -130,29 +263,43 @@
                 const option = document.createElement('option');
                 option.value = String(proxy.id);
                 option.textContent = proxy.name;
+                option.dataset.group = proxy.group || groupKey;
                 optgroup.appendChild(option);
             });
             proxyEl.appendChild(optgroup);
         });
 
-        let nextValue = previous;
-        if (isRealityFakeMode() && proxies.length === 1) {
-            nextValue = String(proxies[0].id);
+        let nextValues = previous.filter((value) => optionValueExists(proxyEl, value));
+        // Drop invalid combos from restored selection.
+        const byId = {};
+        Array.from(proxyEl.options).forEach((opt) => {
+            byId[opt.value] = opt.dataset.group || 'other';
+        });
+        const restored = nextValues.map((id) => ({ id, group: byId[id] || 'other' }));
+        const sni = restored.filter((p) => p.group === 'sni_gateway');
+        const l7 = restored.filter((p) => p.group === 'l7_gateway');
+        if (sni.length && l7.length) {
+            nextValues = restored.filter((p) => p.group !== 'l7_gateway').map((p) => p.id);
         }
-        if (optionValueExists(proxyEl, nextValue)) {
-            proxyEl.value = nextValue;
-        } else if (!isRealityFakeMode()) {
-            proxyEl.value = '';
+        if (sni.length > 1) {
+            nextValues = restored.filter((p) => p.group !== 'sni_gateway' || p.id === sni[0].id).map((p) => p.id);
         }
-        initCustomProxySelect2();
+
+        Array.from(proxyEl.options).forEach((opt) => {
+            opt.selected = nextValues.includes(opt.value);
+        });
+        initCustomProxyMultipleSelect();
+        if (nextValues.length) {
+            setCustomProxySelectedIds(nextValues);
+        }
+        syncGatewayOptionAvailability();
     }
 
     async function refreshProxyOptions() {
-        const proxyEl = document.getElementById("custom_proxy");
+        const proxyEl = customProxySelectEl();
         if (!proxyEl) return;
-        const $proxy = $('#custom_proxy');
-        const selected = ($proxy.data('select2') ? $proxy.val() : proxyEl.value) || '';
-        const mode = isSubLinkOnly() ? 'sub_link_only' : currentMode();
+        const selected = getCustomProxySelectedIds();
+        const mode = currentMode();
         const fakeMode = currentFakeMode();
         const url = `${PROXY_OPTIONS_URL}?mode=${encodeURIComponent(mode)}&fake_mode=${encodeURIComponent(fakeMode)}`;
         try {
@@ -175,7 +322,7 @@
     }
 
     function isSubLinkOnly() {
-        return $("#sub_link_only").is(':checked') || currentMode() === 'sub_link_only';
+        return currentMode() === 'sub_link_only';
     }
 
     function syncFakeModeConstraints() {
@@ -198,7 +345,7 @@
         if ($("#domain").length > 0) {
             var selectElement = document.getElementById("mode");
             var groups = [
-                { label: `{{_("Direct")}}`, options: ["direct", "dnstt"] },
+                { label: `{{_("Direct")}}`, options: ["direct"] },
                 { label: `{{_("Panel Link")}}`, options: ["sub_link_only"] },
                 { label: `{{_("Bridge Servers")}}`, options: ["cdn", "worker", "relay"] },
             ];
@@ -228,36 +375,37 @@
             $(this).parent('.custom-control').append('<label class="custom-control-label" for="' + $(this).attr('id') + '">' + label + '</label>');
         });
         function hide_domain_elements() {
-            $("#extra_params").parent().hide();
+            // $("#extra_params").parent().hide();
             syncFakeModeConstraints();
 
             const fakeMode = currentFakeMode();
             const mode = currentMode();
-            const hideShowDomains = mode === 'dnstt' || fakeMode === 'fake' || fakeMode === 'reality';
+            const hideShowDomains = fakeMode === 'fake' || fakeMode === 'reality';
             if (hideShowDomains) {
                 $("#show_domains").parent().hide();
             } else {
                 $("#show_domains").parent().show();
             }
-
+            $("#custom_proxies").parent().show();
+            $("#server_domain").parent().hide();
             if (mode == "sub_link_only" || isSubLinkOnly()) {
                 $("#cdn_ip").parent().hide();
                 $("#cdn_ip").val("");
+                $("#custom_proxies").parent().hide();
+                $("#custom_proxies").val("");
+                $("#server_domain").parent().hide();
                 $("#resolve_ip").parent().hide();
                 $("#servernames").parent().hide();
+                $("#ech").closest(".form-group").hide();
+                $("#extra_params").closest(".form-group").hide();
                 $("#domain").parent().find(".control-label").html(`{{_('domain.domain')}}`);
                 $("#domain").parent().find(".help-block").html(`{{_('domain.description')}}`);
                 $("#download_domain").parent().hide();
-            } else if (mode == "dnstt") {
-                $("#resolve_ip").parent().hide();
-                $("#servernames").parent().hide();
-                $("#download_domain").parent().hide();
-                $("#cdn_ip").parent().hide();
-                $("#extra_params").parent().show();
             } else {
                 $("#download_domain").parent().show();
                 $("#cdn_ip").parent().show();
                 $("#resolve_ip").parent().show();
+                $("#extra_params").closest(".form-group").show();
 
                 if (mode == 'direct') {
                     $("#cdn_ip").parent().hide();
@@ -280,7 +428,7 @@
                     $("#domain").parent().find(".help-block").html(`{{_('config.reality_fallback_domain.description')+("<a target='_blank' href='" +hurl_for('admin.Actions:get_some_random_reality_friendly_domain',test_domain=domain)+"'>"+_('Example Domains')+"</a>")}}`);
                     $("#download_domain").parent().hide();
                 } else {
-                    if (mode == 'cdn' || mode == 'auto_cdn_ip') {
+                    if (mode == 'cdn') {
                         $("#servernames").parent().show();
                         $("#servernames").parent().find(".control-label").html(`{{_('domain.domain_fronting.label')}}`);
                         $("#servernames").parent().find(".help-block").html(`{{_('domain.domain_fronting.description')}}`);
@@ -293,12 +441,55 @@
                 {% endautoescape %}
             }
             refreshProxyOptions();
+            syncDomainAdvancedAccordion();
         }
-        $("#sub_link_only").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
         $("#mode").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
         $("#fake_mode").off('change.domainProxy').on('change.domainProxy', hide_domain_elements);
+        wrapDomainAdvancedFields();
         hide_domain_elements();
         ConvertNumberToPersion(document.getElementById('fa_modal_window'));
+    }
+
+    function wrapDomainAdvancedFields() {
+        if (!$("#domain").length || document.getElementById("domain-advanced")) return;
+        const names = ["server_domain", "resolve_ip", "cdn_ip", "ech", "download_domain", "extra_params"];
+        const rows = [];
+        names.forEach((name) => {
+            const el = document.getElementById(name);
+            const row = el ? (el.closest(".form-group") || el.parentElement) : null;
+            if (row) rows.push(row);
+        });
+        if (!rows.length) return;
+        const wrap = document.createElement("div");
+        wrap.className = "card collapsed-card mt-3";
+        wrap.id = "domain-advanced";
+        wrap.innerHTML = `
+            <div class="card-header">
+                <h3 class="card-title">{{ _("config.advanced.label") }}</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="card-body"></div>
+        `;
+        rows[0].parentNode.insertBefore(wrap, rows[0]);
+        const body = wrap.querySelector(".card-body");
+        rows.forEach((row) => body.appendChild(row));
+        const header = wrap.querySelector(".card-header");
+        header.addEventListener("click", function (event) {
+            if (event.target.closest("[data-card-widget='collapse']")) return;
+            const toggle = header.querySelector("[data-card-widget='collapse']");
+            if (toggle) toggle.click();
+        });
+    }
+
+    function syncDomainAdvancedAccordion() {
+        const card = document.getElementById("domain-advanced");
+        if (!card) return;
+        const visible = $(card).children(".card-body").children().filter(function () {
+            return $(this).css("display") !== "none";
+        }).length;
+        $(card).toggle(visible > 0);
     }
 
     update_hiddify_ui();

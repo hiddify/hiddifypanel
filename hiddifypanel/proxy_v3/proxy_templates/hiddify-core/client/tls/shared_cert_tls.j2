@@ -1,0 +1,24 @@
+{% set cert = ctx.shared_cert %}
+{% set server_name = cert.server_name %}
+{% set allow_insecure = not cert.is_trusted %}
+"tls": {
+"enabled": true,
+{%if not server_name%} "disable_sni": true {%endif%},
+"server_name": "{{ server_name }}",
+
+
+
+
+
+{%if allow_insecure%} 
+    "insecure": true,
+    {% if cert.public_key_sha256 %}
+    "certificate_public_key_sha256": {{ [cert.public_key_sha256] | tojson }},
+    {% elif cert.pinnedPeerCertSha256 %}
+    "certificate_public_key_sha256": {{ cert.pinnedPeerCertSha256 | tojson }},
+    {% endif %}
+{%endif%}
+
+
+
+},

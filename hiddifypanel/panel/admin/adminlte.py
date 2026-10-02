@@ -19,4 +19,4 @@ class AdminLTEModelView(ModelView):
     details_modal_template = 'flask-admin/model/modals/details.html'
 
     def inaccessible_callback(self, name, **kwargs):
-        return auth.redirect_to_login()  # type: ignore
+        return auth.redirect_to_login()

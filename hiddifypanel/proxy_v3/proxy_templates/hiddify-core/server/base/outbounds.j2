@@ -1,0 +1,40 @@
+{
+    "tag": "freedom",
+    "type": "direct"
+},
+{
+    "tag": "direct",
+    "type": "direct"
+},
+{
+    "tag": "WARP",
+    "type": "direct",
+    "bind_interface": "warp"
+},
+{# Tor / Psiphon from the Outbound manager (only when on): run by hiddify-core itself; xray reaches them
+   through the local SOCKS inbounds in builtin_inbounds #}
+{% for o in ctx.outbounds.native %}
+{
+    "tag": "{{ o.singbox_tag }}",
+    "type": "{{ o.mode }}",
+    "data_directory": "/opt/hiddify-manager/data/hiddify-core/{{ o.mode }}"
+},
+{% endfor %}
+{# The admin's own SOCKS outbounds #}
+{% for o in ctx.outbounds.custom_socks %}
+{
+    "tag": "{{ o.singbox_tag }}",
+    "type": "socks",
+    "server": "{{ o.host }}",
+    "server_port": {{ o.port }},
+    "version": "5",
+    {% if o.username %}
+        "username": {{ o.username|tojson }},
+        "password": {{ o.password|tojson }}
+    {% endif %}
+},
+{% endfor %}
+{
+    "type": "block",
+    "tag": "block"
+}

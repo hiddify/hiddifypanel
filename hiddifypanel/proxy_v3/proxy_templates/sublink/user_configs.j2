@@ -1,0 +1,7 @@
+{#
+  Builtin user_configs (subscription links).
+  The user's own additional configs (Users → edit → Additional configs): share links, one per line.
+#}
+{% for conf in user_additional_configs("sublink") if conf %}
+{{ conf }}
+{% endfor %}

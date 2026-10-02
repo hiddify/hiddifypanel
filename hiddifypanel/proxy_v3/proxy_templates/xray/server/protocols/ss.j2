@@ -1,0 +1,14 @@
+"protocol": "shadowsocks",
+"settings": {
+  "method": "{{ ctx.hconfig.shadowsocks2022_method }}",
+  "password": "{{ ctx.hconfig.shared_secret.replace('-','')|b64encode }}",
+  "clients": [
+    {% for u in ctx.users %}
+    {
+      "password": "{{ u.uuid_hex|b64encode }}",
+      "email": "{{ u.uuid }}"
+    },
+    {% endfor %}
+  ],
+  "network": "tcp,udp"
+}

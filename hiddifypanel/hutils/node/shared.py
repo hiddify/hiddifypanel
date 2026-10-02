@@ -1,12 +1,16 @@
-import threading
-from loguru import logger
-from typing import Callable
-from flask import copy_current_request_context
+from __future__ import annotations
 
-from hiddifypanel.models import hconfig, ConfigEnum, PanelMode, User
-from hiddifypanel.cache import cache
-from hiddifypanel.panel.commercial.restapi.v2.parent.schema import UsageInputOutputSchema, UsageData
-from hiddifypanel.panel.commercial.restapi.v2.panel.schema import PanelInfoOutputSchema
+import threading
+from collections.abc import Callable, Mapping
+from typing import Any
+
+from flask import copy_current_request_context
+from loguru import logger
+
+from hiddifypanel.models import ConfigEnum, PanelMode, hconfig
+from hiddifypanel.panel.commercial.restapi.v2.panel.schema import PanelInfoOutputSchema, PongOutputSchema
+from hiddifypanel.panel.commercial.restapi.v2.parent.schema import UsageInputOutputSchema
+
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -17,62 +21,57 @@ def is_child() -> bool:
 def is_parent() -> bool:
     return hconfig(ConfigEnum.panel_mode) == PanelMode.parent
 
+
 # region usage
 
 
-def get_users_usage_data_for_api() -> UsageInputOutputSchema:
-    res = UsageInputOutputSchema()
-    res.usages = []  # type: ignore
-    for u in User.query.all():
-        usage_data = UsageData()
-        usage_data.uuid = u.uuid
-        usage_data.usage = u.current_usage
-        usage_data.devices = u.devices
-        res.usages.append(usage_data)  # type: ignore
-    return res
-
-
-def convert_usage_api_response_to_dict(data: dict) -> dict:
-    converted = {}
-    for i in data['usages']:  # type: ignore
-        converted[str(i['uuid'])] = {
-            'usage': i['usage'],
-            'devices': ','.join(i['devices'])  # type: ignore
+def convert_usage_api_response_to_dict(
+    data: UsageInputOutputSchema | Mapping[str, Any] | dict[str, Any],
+) -> dict[str, dict[str, int | str]]:
+    """Legacy {uuid: {usage, upload, download, devices}} map for callers that still expect a plain dict."""
+    schema = data if isinstance(data, UsageInputOutputSchema) else UsageInputOutputSchema.model_validate(data)
+    converted: dict[str, dict[str, int | str]] = {}
+    for item in schema.usages:
+        converted[item.uuid] = {
+            "usage": int(item.usage or 0),
+            "upload": int(item.upload or 0),
+            "download": int(item.download or 0),
+            "devices": ",".join(item.devices),
         }
     return converted
 
+
 # endregion
 
-# TODO: use cache for these functions in release
-# @cache.cache(ttl=150)
 
+def is_panel_active(base_url: str, apikey: str | None = None) -> tuple[bool, str]:
 
-def is_panel_active(domain: str, proxy_path: str, apikey: str | None = None) -> bool:
-    base_url = f'https://{domain}/{proxy_path}'
-    res = NodeApiClient(base_url, apikey).get('/api/v2/panel/ping/', dict)
+    res = NodeApiClient(base_url, apikey).get("/api/v2/panel/ping/", PongOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while checking if panel is active: {res.msg}")
-        return False
-    if 'PONG' in res['msg']:
-        logger.debug(f"Panel is active: {res['msg']}")
-        return True
+        return False, res.msg
+    if isinstance(res, PongOutputSchema) and "PONG" in str(res.msg):
+        logger.debug(f"Panel is active: {res.msg}")
+        return True, ""
     logger.debug("Panel is not active")
-    return False
+    return False, f"Panel is not active: {res.msg}"
 
 
-# @cache.cache(300)
-def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> dict | None:
-    base_url = f'https://{domain}/{proxy_path}'
-    res = NodeApiClient(base_url, apikey).get('/api/v2/panel/info/', PanelInfoOutputSchema)
+def get_panel_info(domain: str, proxy_path: str, apikey: str | None = None) -> dict | PanelInfoOutputSchema | None:
+    return get_panel_info_by_url(f"https://{domain}/{proxy_path}", apikey)
+
+
+def get_panel_info_by_url(base_url: str, apikey: str | None = None) -> PanelInfoOutputSchema | None:
+    res = NodeApiClient(base_url, apikey, max_retry=1).get("/api/v2/panel/info/", PanelInfoOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
-        logger.error(f"Error while getting panel info from {domain}: {res.msg}")
+        logger.error(f"Error while getting panel info from {base_url}: {res.msg}")
         return None
     return res
 
 
-def run_node_op_in_bg(op: Callable, *args, **kwargs):
+def run_node_op_in_bg(op: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
     @copy_current_request_context
-    def wrapped_op():
+    def wrapped_op() -> None:
         op(*args, **kwargs)
 
     threading.Thread(target=wrapped_op).start()

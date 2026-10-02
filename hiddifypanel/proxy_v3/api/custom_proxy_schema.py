@@ -75,11 +75,17 @@ class ClientConfigSchema(Schema):
 
 
 class CustomProxySchema(Schema):
+    class Meta:
+        # Preview/editor POSTs send the full form including dump_only fields.
+        unknown = EXCLUDE
+
     id = fields.Integer(dump_only=True)
     child_id = fields.Integer(dump_only=True)
     name = fields.String(required=True)
     slug = fields.String(allow_none=True)
     enable = fields.Boolean(load_default=True)
+    effective_enable = fields.Boolean(dump_only=True)
+    blocked_by = fields.List(fields.Dict(), dump_only=True)
     mode = StrEnumField(CustomProxyMode, required=True)
     proto = StrEnumField(ProxyProto, allow_none=True, load_default=None)
     transport = StrEnumField(CustomProxyTransport, allow_none=True, load_default=None)
@@ -97,6 +103,7 @@ class CustomProxySchema(Schema):
     client_cores = fields.List(fields.String(), dump_only=True)
     server_core = fields.String(dump_only=True)
     is_builtin = fields.Boolean(dump_only=True)
+    is_common_proxy = fields.Boolean(dump_only=True)
     server_override = fields.Boolean(load_default=False)
     client_override = fields.Boolean(load_default=False)
     builtin = fields.Dict(dump_only=True)
@@ -106,6 +113,10 @@ class CustomProxySchema(Schema):
 
 
 class PatchCustomProxySchema(Schema):
+    class Meta:
+        # The editor PATCHes the whole form, including dump_only fields from GET.
+        unknown = EXCLUDE
+
     name = fields.String()
     slug = fields.String(allow_none=True)
     enable = fields.Boolean()
@@ -304,6 +315,9 @@ class CustomProxyGenerateBundleResultSchema(Schema):
 
 
 class ProxyTemplateSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     id = fields.Integer(dump_only=True)
     child_id = fields.Integer(dump_only=True)
     slug = fields.String(required=True)
@@ -318,6 +332,9 @@ class ProxyTemplateSchema(Schema):
 
 
 class PatchProxyTemplateSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     slug = fields.String()
     core = fields.String()
     category = StrEnumField(TemplateCategory)
@@ -354,6 +371,7 @@ class CustomProxyMetaSchema(Schema):
     default_sublink_link = fields.String()
     example_user_agents = fields.List(fields.Dict())
     tcp_udp_options = fields.List(fields.String())
+    parent_enable_settings_url = fields.String()
 
 
 class CustomProxyExportInputSchema(Schema):
@@ -421,6 +439,9 @@ class CustomProxyImportResultSchema(Schema):
 
 
 class ProxyBaseConfigSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     id = fields.Integer(dump_only=True)
     child_id = fields.Integer(dump_only=True)
     side = fields.String(required=True)
@@ -436,6 +457,9 @@ class ProxyBaseConfigSchema(Schema):
 
 
 class PatchProxyBaseConfigSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
     side = fields.String()
     core = fields.String()
     version = fields.String()

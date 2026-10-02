@@ -1,0 +1,119 @@
+# Built-in outbounds of the Outbound manager (Admin → Outbounds).
+#
+# Edit the lists here to change what new panels get and what every panel gets on upgrade:
+# a built-in outbound whose lists the admin has not edited is refreshed from this file on each
+# upgrade; once the admin edits them in the panel, the panel keeps the admin's version.
+#
+#   sites      domains, matched with their subdomains     (xray "domain:", hiddify-core "domain_suffix")
+#   geosites   xray entries with their prefix: geosite:<tag> or geoip:<code> (geosite.dat / geoip.dat
+#              shipped with xray) — an unknown tag stops xray. A bare name is taken as geosite:<name>
+#   rule_sets  hiddify-core (sing-box) rule-set URLs (.srs binary, or .json source), e.g. from
+#              https://github.com/SagerNet/sing-geosite/tree/rule-set (geosite-*.srs)
+#              https://github.com/SagerNet/sing-geoip/tree/rule-set  (geoip-*.srs, countries only)
+#              https://github.com/MetaCubeX/meta-rules-dat/tree/sing/geo/geoip  (service IP ranges)
+#              (a bare name like geosite-netflix typed in the panel is expanded to its SagerNet URL)
+#   domestic   also route the sites of the panel's region (see `domestic:` below)
+
+outbounds:
+  warp:
+    name: WARP
+    domestic: true
+    sites:
+      - ip.gs
+      - kmplayer.com
+      - ipinfo.io
+      - openai.com
+      - ai.com
+      - freepik.com
+      - developer.mozilla.org
+      - behance.net
+      - remini.com
+      - snapchat.com
+      - tunetank.com
+      - livechart.me
+      - 9anime.me
+      - pixelexperience.org
+      - evolution-x.org
+      - kenvyra.xyz
+      - spark-os.live
+      - pixelos.net
+      - gamebanana.com
+      - myanimelist.net
+      - sourcemod.net
+      - alliedmods.net
+      - pagespeed.web.dev
+      - axieinfinity.com
+      - clubhouse.com
+      - omegle.com
+      - alldatasheet.com
+      - flaticon.com
+      - xda-developers.com
+      - giglio.com
+      - lookmovie2.to
+      - adbtc.top
+      - homedepot.com
+      - flutter.dev
+      - adobe.com
+    geosites:
+      - geosite:google
+      - geosite:netflix
+      - geosite:spotify
+      - geosite:nvidia
+      - geosite:bytedance
+      - geosite:tiktok
+      - geosite:unity
+      - geosite:reddit
+      - geosite:openai
+    rule_sets:
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-spotify.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-nvidia.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-bytedance.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-tiktok.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-unity.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-reddit.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-openai.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-adobe.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-mozilla.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-clubhouse.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-flutter.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-homedepot.srs
+      # IP ranges, for apps that connect by IP. SagerNet's sing-geoip only has countries
+      # (used in `domestic:` below), so service ranges come from MetaCubeX meta-rules-dat.
+      - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/google.srs
+      - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/netflix.srs
+  direct:
+    name: Direct
+    default: true
+  block:
+    name: Block
+
+# Domestic sites per region (hconfig `country`); used by outbounds with `domestic: true`.
+domestic:
+  ir:
+    sites: [ir]
+    geosites: [geoip:ir]
+    rule_sets:
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ir.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-ir.srs
+  cn:
+    sites: [cn]
+    geosites: [geosite:cn, geoip:cn]
+    rule_sets:
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs
+  ru:
+    sites: [ru]
+    geosites: [geoip:ru]
+    rule_sets:
+      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ru.srs
+      - https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-ru.srs
+
+# Local SOCKS endpoints of these outbounds (SOCKS: the default offered when adding one).
+endpoints:
+  # Tor and Psiphon run inside hiddify-core, which listens on these local SOCKS ports for them;
+  # xray's routing connects to the same ports (hiddify-core itself uses the outbound directly).
+  psiphon: {host: 127.0.0.1, port: 2003}
+  tor: {host: 127.0.0.1, port: 2004}
+  socks: {host: 127.0.0.1, port: 1080}

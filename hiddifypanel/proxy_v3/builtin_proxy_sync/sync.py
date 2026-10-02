@@ -4,16 +4,17 @@ from hiddifypanel.database import db
 from hiddifypanel.models.custom_proxy import (
     CustomProxy,
     CustomProxyClientCore,
-    normalize_custom_path,
     _parse_l7_reverse_proto,
     _parse_proto,
     _parse_server_core,
     _parse_tcp_udp,
     _parse_tls_layer,
     _parse_transport,
+    normalize_custom_path,
 )
 
 from ..template_catalog.custom_proxy_builtin import (
+    NAME_OVERRIDE_KEY,
     catalog_fields_from_snapshot,
     client_override_key,
     ensure_builtin_migrated,
@@ -102,9 +103,13 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
         return False
     ensure_builtin_migrated(row)
     snapshot = catalog.snapshot()
-    changed = False
-    if row.name != catalog.name:
-        row.name = catalog.name
+    # Only the default tag follows the catalog; an admin's tag (name override) is kept.
+    changed = sync_catalog_field(row, NAME_OVERRIDE_KEY, catalog.name)
+
+    # New catalog categories (e.g. "reality") are added; ones the admin set are never removed.
+    missing = [c for c in (catalog.categories or ()) if c not in (row.categories or [])]
+    if missing:
+        row.categories = [*(row.categories or []), *missing]
         changed = True
 
     proto = _parse_proto(catalog.proto)
@@ -130,22 +135,23 @@ def sync_builtin_custom_proxy(row: CustomProxy, catalog: CustomProxyPreset) -> b
     if row.server_inbound_tcp_udp != tcp_udp:
         row.server_inbound_tcp_udp = tcp_udp
         changed = True
-    download_tcp_udp = (
-        _parse_tcp_udp(snapshot.server_inbound_download_tcp_udp)
-        if snapshot.server_inbound_download_tcp_udp
-        else None
-    )
+    download_tcp_udp = _parse_tcp_udp(snapshot.server_inbound_download_tcp_udp) if snapshot.server_inbound_download_tcp_udp else None
     if row.server_inbound_download_tcp_udp != download_tcp_udp:
         row.server_inbound_download_tcp_udp = download_tcp_udp
         changed = True
 
     for key, value in catalog_fields_from_snapshot(snapshot).items():
+        if key == "custom_path":
+            continue
         if sync_catalog_field(row, key, value):
             changed = True
 
     server_core = _parse_server_core(snapshot.server_core)
     if row.server_core != server_core:
         row.server_core = server_core
+        changed = True
+    if bool(row.is_common_proxy) != bool(catalog.is_common_proxy):
+        row.is_common_proxy = bool(catalog.is_common_proxy)
         changed = True
 
     if snapshot.client_cores:
@@ -177,7 +183,13 @@ def effective_template_content(row) -> str:
         return row.content or ""
     if row.builtin_override and (row.content or "").strip():
         return row.content or ""
-    return row.builtin_content or row.content or ""
+    from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
+
+    try:
+        disk = load_template_slug(row.slug, normalize=False)
+    except FileNotFoundError:
+        disk = ""
+    return disk or row.builtin_content or row.content or ""
 
 
 def effective_base_config_content(row) -> str:
@@ -185,7 +197,14 @@ def effective_base_config_content(row) -> str:
         return row.content or ""
     if row.builtin_override and (row.content or "").strip():
         return row.content or ""
-    return row.builtin_content or row.content or ""
+    from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
+
+    slug = f"{row.core}/{row.side}/base"
+    try:
+        disk = load_template_slug(slug, normalize=False)
+    except FileNotFoundError:
+        disk = ""
+    return disk or row.builtin_content or row.content or ""
 
 
 def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:
@@ -200,11 +219,14 @@ def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:
     if row.builtin_content != catalog_content:
         row.builtin_content = catalog_content
         changed = True
-    for field in ("name", "description"):
-        val = catalog_data.get(field) or ""
-        if getattr(row, field) != val:
-            setattr(row, field, val)
-            changed = True
+    # Names are the admin's to change; sync only fills an empty one.
+    if not row.name and catalog_data.get("name"):
+        row.name = catalog_data["name"]
+        changed = True
+    val = catalog_data.get("description") or ""
+    if row.description != val:
+        row.description = val
+        changed = True
     category = catalog_data.get("category")
     if category is not None and row.category != category:
         row.category = category
@@ -225,11 +247,14 @@ def sync_builtin_base_config(row, catalog: dict) -> bool:
     if row.builtin_content != catalog_content:
         row.builtin_content = catalog_content
         changed = True
-    for field in ("name", "description"):
-        val = catalog.get(field) or ""
-        if getattr(row, field) != val:
-            setattr(row, field, val)
-            changed = True
+    # Names are the admin's to change; sync only fills an empty one.
+    if not row.name and catalog.get("name"):
+        row.name = catalog["name"]
+        changed = True
+    val = catalog.get("description") or ""
+    if row.description != val:
+        row.description = val
+        changed = True
     if not row.builtin_override:
         effective = row.builtin_content or ""
         if row.content != effective:

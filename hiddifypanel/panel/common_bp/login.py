@@ -1,9 +1,8 @@
 from flask_classful import FlaskView, route
-from hiddifypanel import hutils
+from hiddifypanel import g, current_app as app, hutils
 from hiddifypanel.auth import login_required, current_account, login_user, logout_user, login_by_uuid
-from flask import redirect, request, g, render_template, flash, jsonify
+from flask import redirect, request, render_template, flash, jsonify
 from hiddifypanel.hutils.flask import hurl_for
-from flask import current_app as app
 from flask_babel import lazy_gettext as _
 from apiflask import abort
 import hiddifypanel.panel.hiddify as hiddify
@@ -29,6 +28,69 @@ class LoginForm(FlaskForm):
     submit = wtf.fields.SubmitField(_('login.button'))
 
 
+class AdminLoginForm(FlaskForm):
+    """Admin sign in: UUID or alias + password (field names browsers recognise, so they can save it)."""
+
+    username = wtf.fields.StringField(default="")
+    password = wtf.fields.PasswordField(default="")
+
+
+_TEXTS_CACHE: dict[str, dict] = {}
+
+
+def _login_texts() -> dict:
+    """The page's texts from translations.i18n (adminV2.login), in the admin language, English as fallback."""
+    import json
+    from pathlib import Path
+
+    lang = str(hconfig(ConfigEnum.admin_lang) or "en")
+    if lang not in _TEXTS_CACHE:
+        root = Path(__file__).resolve().parents[2] / "translations.i18n"
+
+        def load(code: str) -> dict:
+            try:
+                return json.loads((root / f"{code}.json").read_text(encoding="utf-8")).get("adminV2", {}).get("login", {})
+            except (OSError, ValueError):
+                return {}
+
+        _TEXTS_CACHE[lang] = {**load("en"), **load(lang)}
+    return _TEXTS_CACHE[lang]
+
+
+def _safe_next(value: str | None) -> str | None:
+    """Only a path on this admin panel (no other site, no protocol-relative trick)."""
+    if not value or not isinstance(value, str):
+        return None
+    if not value.startswith(f"/{g.proxy_path}/") or value.startswith("//") or "\\" in value or "://" in value:
+        return None
+    return value
+
+
+def _client_ip() -> str:
+    try:
+        return hutils.network.auto_ip_selector.get_real_user_ip() or request.remote_addr or "?"
+    except Exception:
+        return request.remote_addr or "?"
+
+
+def _render_admin_login(form: AdminLoginForm, *, error: str | None = None, status: int = 200):
+    texts = _login_texts()
+    return (
+        render_template(
+            "admin_login.html",
+            form=form,
+            error=error,
+            texts=texts,
+            next_url=_safe_next(request.values.get("next")) or "",
+            lang=str(hconfig(ConfigEnum.admin_lang) or "en"),
+            rtl=str(hconfig(ConfigEnum.admin_lang) or "en") in ("fa", "ar"),
+            title=hconfig(ConfigEnum.branding_title) or texts.get("brand") or "Hiddify",
+            logo_url=hutils.flask.static_url_for(filename="images/WhiteLogo.png"),
+        ),
+        status,
+    )
+
+
 class LoginView(FlaskView):
 
     # @route("/")
@@ -37,6 +99,11 @@ class LoginView(FlaskView):
         redirect_arg = request.args.get('redirect')
         username_arg = (request.args.get('user') or '').split("?")[0]
         if not current_account:
+            if hutils.flask.is_admin_proxy_path():
+                # The UUID from the link (or an alias) is filled in already.
+                form = AdminLoginForm()
+                form.username.data = form.username.data or username_arg
+                return _render_admin_login(form)
             form=LoginForm()
             form.secret_textbox.data=form.secret_textbox.data or username_arg
             return render_template('login.html', form=form)
@@ -46,7 +113,7 @@ class LoginView(FlaskView):
         if redirect_arg:
             return redirect(redirect_arg)
         if hutils.flask.is_admin_proxy_path() and g.account.role in {Role.super_admin, Role.admin, Role.agent}:
-            return redirect(hurl_for('admin.Dashboard:index'))
+            return redirect(hurl_for('admin.admin_v2'))
         # if g.user_agent['is_browser'] and hutils.flask.is_client_proxy_path():
         #     return redirect(hurl_for('client.UserView:index'))
 
@@ -54,6 +121,8 @@ class LoginView(FlaskView):
         return UserView().auto_sub()
 
     def post(self):
+        if hutils.flask.is_admin_proxy_path():
+            return self._admin_post()
         form = LoginForm()
         if form.validate_on_submit():
             uuid = form.secret_textbox.data.strip()
@@ -61,6 +130,36 @@ class LoginView(FlaskView):
                 return redirect(f'/{g.proxy_path}/')
         hutils.flask.flash(_('config.invalid_uuid'), 'danger')  # type: ignore
         return render_template('login.html', form=LoginForm())
+
+    @route("/logout/", methods=["POST"])
+    def logout(self):
+        """Sign out and go to the sign-in page. POST from this panel only (another site can not sign you out)."""
+        from urllib.parse import urlparse
+
+        source = request.headers.get("Origin") or request.headers.get("Referer") or ""
+        if source and urlparse(source).netloc != request.host:
+            abort(403, "Cross-site sign out refused")
+        logout_user()
+        back = _safe_next(request.values.get("next"))
+        return redirect(hurl_for("common_bp.LoginView:index", next=back) if back else f"/{g.proxy_path}/")
+
+    def _admin_post(self):
+        from hiddifypanel import admin_credentials as creds
+
+        form = AdminLoginForm()
+        if not form.validate_on_submit():  # CSRF token missing or expired: the page was open too long
+            return _render_admin_login(form, error="expired", status=400)
+        ip = _client_ip()
+        if creds.login_locked(ip):
+            return _render_admin_login(form, error="locked", status=429)
+        admin = creds.check_admin_login(form.username.data or "", form.password.data or "")
+        if admin is None:
+            creds.record_failure(ip)
+            form.password.data = ""
+            return _render_admin_login(form, error="invalid", status=401)
+        creds.clear_failures(ip)
+        login_user(admin, force=True)
+        return redirect(_safe_next(request.form.get("next")) or hurl_for("admin.admin_v2"))
 
     @ route("/l/<path:path>/")
     @ route("/l/<path:path>")
@@ -71,6 +170,11 @@ class LoginView(FlaskView):
             redirect_arg = f"/{g.proxy_path}/{path}"
         else:
             redirect_arg = request.args.get('next')
+
+        if hutils.flask.is_admin_proxy_path() and not current_account:
+            # Admins: straight to the panel's login page (no browser username/password popup).
+            username = request.authorization.username if request.authorization else g.uuid
+            return redirect(hurl_for('common_bp.LoginView:index', next=redirect_arg, user=username))
 
         if not current_account or (not request.headers.get('Authorization')):
             username = request.authorization.username if request.authorization else g.uuid
@@ -89,7 +193,7 @@ class LoginView(FlaskView):
             return redirect(redirect_arg)
 
         if hutils.flask.is_admin_proxy_path() and g.account.role in {Role.super_admin, Role.admin, Role.agent}:
-            return redirect(hurl_for('admin.Dashboard:index'))
+            return redirect(hurl_for('admin.admin_v2'))
 
         if g.user_agent['is_browser'] and hutils.flask.is_client_proxy_path():
             return redirect(hurl_for('client.UserView:index'))

@@ -188,9 +188,11 @@ def render_section(
             parsed, parse_err = _parse_json5(to_parse)
             if parse_err:
                 error_detail = _build_error_detail(parse_err, source=wrapped, phase="json5")
-            elif as_json_object and isinstance(parsed, list) and len(parsed) == 1 and isinstance(parsed[0], dict):
-                parsed = parsed[0]
-                wrapped = json.dumps(parsed, indent=2, ensure_ascii=False)
+            else:
+                if as_json_object and isinstance(parsed, list) and len(parsed) == 1 and isinstance(parsed[0], dict):
+                    parsed = parsed[0]
+                if as_json_object and isinstance(parsed, (dict, list)):
+                    wrapped = json.dumps(parsed, indent=2, ensure_ascii=False)
 
         return RenderSectionResult(
             rendered=wrapped,
@@ -203,12 +205,26 @@ def render_section(
         return RenderSectionResult(rendered="SKIP", skipped=True)
     except (TemplateError, TemplateSyntaxError, UndefinedError) as exc:
         message = str(exc)
-        lineno = getattr(exc, "lineno", None) or _infer_jinja_error_line(template_text, message)
+        lineno = getattr(exc, "lineno", None)
+        include_name = getattr(exc, "name", None)
+        template_source = template_text
+        if include_name:
+            message = f"{include_name}: {message}"
+            try:
+                from hiddifypanel.proxy_v3.config_builder.jinja_render import _cached_template_map
+
+                included = _cached_template_map(child_id).get(include_name)
+                if included:
+                    template_source = included
+            except Exception:
+                pass
+        if not lineno:
+            lineno = _infer_jinja_error_line(template_source, message)
         return RenderSectionResult(
             error=message,
             error_detail=_build_error_detail(
                 message,
-                template_source=template_text,
+                template_source=template_source,
                 phase="jinja",
                 line=lineno,
                 column=getattr(exc, "colno", None),
@@ -219,10 +235,9 @@ def render_section(
 def _resolve_fragment_block_name(fragment: str, block_name: str | None) -> str:
     preferred = block_name or "outbounds"
     raw = (fragment or "").strip()
-    if extract_block_body(raw, preferred) is not None:
-        return preferred
-    if extract_block_body(raw, "endpoints") is not None:
-        return "endpoints"
+    for name in (preferred, "inbounds", "inbound", "endpoints", "outbounds"):
+        if extract_block_body(raw, name) is not None:
+            return name
     return preferred
 
 
@@ -235,7 +250,8 @@ def render_fragment_section(
     parse_json: bool = True,
 ) -> RenderSectionResult:
     raw = (fragment or "").strip()
-    body = extract_block_body(raw, block_name)
+    resolved = _resolve_fragment_block_name(raw, block_name)
+    body = extract_block_body(raw, resolved)
     if body is None:
         return RenderSectionResult(skipped=True)
 

@@ -1,3 +1,0 @@
-{% set auth = ((uri.user ~ ':' ~ uri.password).strip(':') ~ '@') if uri.user or uri.password else '' %}
-{% set uripath = (uri.path or "").lstrip('/') %}
-{{ uri.protocol }}://{{ auth }}{{ uri.host }}:{{ uri.port }}/{{ uripath }}?{{ uri.query_params|urlencoded }}#{{ uri.fragment|urlencoded }}

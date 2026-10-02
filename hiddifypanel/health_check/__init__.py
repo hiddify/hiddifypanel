@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from flask import Response, g
+from flask import Response
+
+from hiddifypanel import g
 
 from .service import (
     handle_domain_health_request,

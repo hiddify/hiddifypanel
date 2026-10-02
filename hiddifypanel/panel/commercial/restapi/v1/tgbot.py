@@ -1,39 +1,74 @@
-import telebot
 from flask import request
 from apiflask import abort
 from flask_restful import Resource
+import hashlib
+import hmac
 import time
 
 from hiddifypanel.models import *
 from hiddifypanel import Events
 from hiddifypanel.cache import cache
-logger = telebot.logger
+from loguru import logger
 
 
-class ExceptionHandler(telebot.ExceptionHandler):
-    def handle(self, exception):
-        """Improved error handling for Telegram bot exceptions"""
-        error_msg = str(exception)
-        logger.error(f"Telegram bot error: {error_msg}")
-        
-        try:
-            # Attempt recovery based on error type
-            if "webhook" in error_msg.lower():
-                if hasattr(bot, 'remove_webhook'):
-                    bot.remove_webhook()
-                    logger.info("Removed webhook due to error")
-            elif "connection" in error_msg.lower():
-                # Wait and retry for connection issues
-                time.sleep(5)
-                return True  # Indicates retry
-        except Exception as e:
-            logger.error(f"Error during recovery attempt: {str(e)}")
-        
-        return False  # Don't retry for unknown errors
+class _LazyBot:
+    """Defers importing telebot (and creating its TeleBot/requests.Session) until
+    the bot is actually touched, so installs that never configure a Telegram bot
+    don't pay for it on every process startup."""
+
+    __slots__ = ("_real",)
+
+    def __init__(self):
+        object.__setattr__(self, "_real", None)
+
+    def _ensure(self):
+        real = object.__getattribute__(self, "_real")
+        if real is None:
+            import telebot
+
+            class ExceptionHandler(telebot.ExceptionHandler):
+                def handle(self, exception):
+                    """Improved error handling for Telegram bot exceptions"""
+                    error_msg = str(exception)
+                    logger.error(f"Telegram bot error: {error_msg}")
+
+                    try:
+                        # Attempt recovery based on error type
+                        if "webhook" in error_msg.lower():
+                            if hasattr(bot, 'remove_webhook'):
+                                bot.remove_webhook()
+                                logger.info("Removed webhook due to error")
+                        elif "connection" in error_msg.lower():
+                            # Wait and retry for connection issues
+                            time.sleep(5)
+                            return True  # Indicates retry
+                    except Exception as e:
+                        logger.error(f"Error during recovery attempt: {str(e)}")
+
+                    return False  # Don't retry for unknown errors
+
+            real = telebot.TeleBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
+            real.username = ''
+            object.__setattr__(self, "_real", real)
+        return real
+
+    def __getattr__(self, name):
+        return getattr(self._ensure(), name)
+
+    def __setattr__(self, name, value):
+        setattr(self._ensure(), name, value)
 
 
-bot = telebot.TeleBot("1:2", parse_mode="HTML", threaded=False, exception_handler=ExceptionHandler())
-bot.username = ''
+bot = _LazyBot()
+
+
+def webhook_secret() -> str:
+    """Value Telegram echoes back in X-Telegram-Bot-Api-Secret-Token.
+
+    Derived from the bot token, so it needs no extra setting and changes with the token.
+    """
+    token = hconfig(ConfigEnum.telegram_bot_token) or ""
+    return hmac.new(token.encode(), b"hiddify-tgbot-webhook", hashlib.sha256).hexdigest()
 
 
 @cache.cache(1000)
@@ -43,7 +78,6 @@ def register_bot_cached(set_hook=False, remove_hook=False):
 
 def register_bot(set_hook=False, remove_hook=False):
     try:
-        global bot
         token = hconfig(ConfigEnum.telegram_bot_token)
         if token:
             bot.token = hconfig(ConfigEnum.telegram_bot_token)
@@ -59,17 +93,15 @@ def register_bot(set_hook=False, remove_hook=False):
 
             admin_proxy_path = hconfig(ConfigEnum.proxy_path_admin)
 
-            user_secret = AdminUser.get_super_admin_uuid()
             if set_hook:
-                bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/{user_secret}/api/v1/tgbot/")
+                # No admin uuid in the URL: uuid-path auth rejects admins with a password.
+                bot.set_webhook(url=f"https://{domain}/{admin_proxy_path}/api/v1/tgbot/", secret_token=webhook_secret())
     except Exception as e:
         logger.error(e)
-        
 
 
 def init_app(app):
     with app.app_context():
-        global bot
         token = hconfig(ConfigEnum.telegram_bot_token)
         if token:
             bot.token = token
@@ -81,14 +113,19 @@ def init_app(app):
 
 class TGBotResource(Resource):
     def post(self):
+        if not hconfig(ConfigEnum.telegram_bot_token):
+            abort(404)
+        if not hmac.compare_digest(request.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), webhook_secret()):
+            abort(403)
+        if request.headers.get('content-type') != 'application/json':
+            abort(415)
         try:
-            if request.headers.get('content-type') == 'application/json':
-                json_string = request.get_data().decode('utf-8')
-                update = telebot.types.Update.de_json(json_string)
-                bot.process_new_updates([update])
-                return ''
-            else:
-                abort(403)
+            import telebot
+
+            json_string = request.get_data().decode('utf-8')
+            update = telebot.types.Update.de_json(json_string)
+            bot.process_new_updates([update])
+            return ''
         except Exception as e:
             print("Error", e)
             import traceback

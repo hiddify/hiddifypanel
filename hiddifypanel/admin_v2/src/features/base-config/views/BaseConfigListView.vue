@@ -17,6 +17,38 @@
         </div>
       </template>
 
+      <Column field="enable" sortable class="w-44 shrink-0">
+        <template #header>
+          <div class="flex items-center gap-1">
+            <span>{{ t('common.enabled') }}</span>
+            <Button
+              icon="pi pi-filter"
+              text
+              rounded
+              size="small"
+              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
+              :aria-label="t('common.filter')"
+              @click="(e: Event) => enabledPopover.toggle(e)"
+            />
+          </div>
+        </template>
+        <template #body="{ data }">
+          <div class="list-actions-cell">
+            <ToggleSwitch :model-value="data.enable !== false" @update:model-value="(v: boolean) => toggleEnable(data, v)" />
+            <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'base-config-edit', params: { id: data.id } })" />
+            <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
+            <Button
+              v-if="!data.is_builtin"
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="confirmDelete(data)"
+            />
+            <SysBadge v-if="data.is_builtin" :customized="data.builtin_override" icon-only class="inline-flex" />
+          </div>
+        </template>
+      </Column>
       <Column field="name" sortable>
         <template #header>
           <div class="flex items-center gap-1">
@@ -31,6 +63,13 @@
               @click="(e: Event) => namePopover.toggle(e)"
             />
           </div>
+        </template>
+        <template #body="{ data }">
+          <a
+            class="list-name-link"
+            href="#"
+            @click.prevent="router.push({ name: 'base-config-edit', params: { id: data.id } })"
+          >{{ data.name }}</a>
         </template>
       </Column>
       <Column field="description" sortable>
@@ -81,7 +120,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag :value="data.core" />
+          <Tag :value="data.core" :style="coreTagStyle(data.core)" class="core-tag" />
         </template>
       </Column>
       <Column field="version" sortable>
@@ -103,44 +142,10 @@
           <span v-if="data.version">≥ {{ data.version }}</span>
         </template>
       </Column>
-      <Column field="enable" sortable>
-        <template #header>
-          <div class="flex items-center gap-1">
-            <span>{{ t('common.enabled') }}</span>
-            <Button
-              icon="pi pi-filter"
-              text
-              rounded
-              size="small"
-              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
-              :aria-label="t('common.filter')"
-              @click="(e: Event) => enabledPopover.toggle(e)"
-            />
-          </div>
-        </template>
-        <template #body="{ data }">
-          <ToggleSwitch :model-value="data.enable !== false" @update:model-value="(v: boolean) => toggleEnable(data, v)" />
-        </template>
-      </Column>
-      <Column header="" class="w-48 shrink-0">
-        <template #body="{ data }">
-          <SysBadge v-if="data.is_builtin" :customized="data.builtin_override" icon-only class="mr-1" />
-          <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'base-config-edit', params: { id: data.id } })" />
-          <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
-          <Button
-            v-if="!data.is_builtin"
-            icon="pi pi-trash"
-            text
-            rounded
-            severity="danger"
-            @click="confirmDelete(data)"
-          />
-        </template>
-      </Column>
     </DataTable>
   </Panel>
 
-  <Popover ref="namePopover">
+  <Popover ref="namePopover" @show="focusFirstInput(namePopover)">
     <div class="flex flex-col gap-2 min-w-52">
       <label class="text-sm font-medium">{{ t('baseConfig.name') }}</label>
       <IconField>
@@ -149,7 +154,7 @@
       </IconField>
     </div>
   </Popover>
-  <Popover ref="descriptionPopover">
+  <Popover ref="descriptionPopover" @show="focusFirstInput(descriptionPopover)">
     <div class="flex flex-col gap-2 min-w-52">
       <label class="text-sm font-medium">{{ t('baseConfig.description') }}</label>
       <IconField>
@@ -158,19 +163,19 @@
       </IconField>
     </div>
   </Popover>
-  <Popover ref="sidePopover">
+  <Popover ref="sidePopover" @show="focusFirstInput(sidePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('baseConfig.side') }}</label>
-      <Select v-model="filterSide" :options="sideOptions" show-clear class="w-full" />
+      <Listbox v-model="filterSide" :options="sideOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="sidePopover.hide()" />
     </div>
   </Popover>
-  <Popover ref="corePopover">
+  <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('baseConfig.core') }}</label>
-      <Select v-model="filterCore" :options="coreFilterOptions" show-clear class="w-full" />
+      <Listbox v-model="filterCore" :options="coreFilterOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="corePopover.hide()" />
     </div>
   </Popover>
-  <Popover ref="versionPopover">
+  <Popover ref="versionPopover" @show="focusFirstInput(versionPopover)">
     <div class="flex flex-col gap-2 min-w-52">
       <label class="text-sm font-medium">{{ t('baseConfig.version') }}</label>
       <IconField>
@@ -179,17 +184,10 @@
       </IconField>
     </div>
   </Popover>
-  <Popover ref="enabledPopover">
+  <Popover ref="enabledPopover" @show="focusFirstInput(enabledPopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('common.enabled') }}</label>
-      <Select
-        v-model="filterEnabled"
-        :options="enabledOptions"
-        option-label="label"
-        option-value="value"
-        show-clear
-        class="w-full"
-      />
+      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()" />
     </div>
   </Popover>
 </template>
@@ -198,7 +196,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useConfirm } from 'primevue/useconfirm'
+import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { useToast } from 'primevue/usetoast'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -207,17 +205,29 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
 import InputText from 'primevue/inputtext'
-import Select from 'primevue/select'
+import Listbox from 'primevue/listbox'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Popover from 'primevue/popover'
+import { focusFirstInput } from '@/shared/utils/popover-focus'
+import { protoColor } from '@/shared/utils/proto-color'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import { proxyBaseConfigsApi, type ProxyBaseConfig, type ProxyBaseConfigMeta } from '@/core/api/generated'
 
 const { t } = useI18n()
+
+/** A color per core (xray, hiddify-core, …) so a long list reads at a glance. */
+function coreTagStyle(core: string | undefined) {
+  const c = protoColor(core)
+  return {
+    background: `color-mix(in srgb, ${c} 16%, transparent)`,
+    color: `color-mix(in srgb, ${c} 82%, var(--p-text-color))`,
+    border: `1px solid color-mix(in srgb, ${c} 38%, transparent)`,
+  }
+}
 const router = useRouter()
-const confirm = useConfirm()
+const dangerConfirm = useDangerConfirm()
 const toast = useToast()
 
 const configs = ref<ProxyBaseConfig[]>([])
@@ -253,7 +263,7 @@ const coreFilterOptions = computed(() => {
 
 const enabledOptions = [
   { label: t('common.enabled'), value: true },
-  { label: 'Disabled', value: false },
+  { label: t('common.disabled'), value: false },
 ]
 
 const filteredConfigs = computed(() =>
@@ -296,10 +306,11 @@ async function duplicate(id: number) {
 }
 
 function confirmDelete(row: ProxyBaseConfig) {
-  confirm.require({
+  dangerConfirm({
     message: t('common.confirmDelete'),
     header: t('common.delete'),
-    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('common.delete'),
+    rejectLabel: t('common.cancel'),
     accept: async () => {
       await proxyBaseConfigsApi.delete(row.id!)
       await load()
@@ -309,3 +320,20 @@ function confirmDelete(row: ProxyBaseConfig) {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.list-actions-cell {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+.list-name-link {
+  color: var(--p-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.list-name-link:hover {
+  text-decoration: underline;
+}
+</style>

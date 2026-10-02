@@ -1,0 +1,14 @@
+"protocol": "vless",
+"settings": {
+  "clients": [
+    {% for u in ctx.users %}
+    {
+      "id": "{{ u.uuid }}",
+      "email": "{{ u.uuid }}",
+    },
+    {% endfor %}
+  ],
+  "flow": "{{ ctx.hconfig.vless_flow }}",
+  "decryption": "{{ctx.hconfig.vless_decryption}}"
+
+}

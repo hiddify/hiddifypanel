@@ -1,0 +1,17 @@
+"type": "shadowsocks",
+{% if detour|default('') %}
+"detour": "{{ detour }}",
+{% else %}
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+{% endif %}
+"method": "{{ ctx.hconfig.shadowsocks2022_method }}",
+"password": "{{ ctx.hconfig.shared_secret.replace('-','')|b64encode }}:{{ ctx.user.uuid_hex|b64encode }}",
+"udp_over_tcp": {
+  "enabled": true,
+  "version": 2
+},
+{% if plugin %}
+"plugin": "{{ plugin }}",
+"plugin_opts": "{{ plugin_opts }}",
+{% endif %}

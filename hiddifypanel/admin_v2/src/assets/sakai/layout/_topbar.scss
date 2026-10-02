@@ -1,7 +1,8 @@
 @use 'mixins' as *;
 
 .layout-topbar {
-    --topbar-bg: #2f2fb7;
+    /* The same vivid blue as the buttons, with a light sweep so the bar feels alive */
+    --topbar-bg: linear-gradient(100deg, var(--p-primary-700) 0%, var(--p-primary-600) 45%, var(--p-primary-500) 100%);
     --topbar-text: rgba(255, 255, 255, 0.95);
     --topbar-text-muted: rgba(255, 255, 255, 0.72);
     --topbar-hover: rgba(255, 255, 255, 0.14);
@@ -9,13 +10,14 @@
     position: fixed;
     height: 4rem;
     z-index: 997;
-    left: 0;
+    inset-inline-start: 0;
     top: 0;
     width: 100%;
     padding: 0 2rem;
-    background-color: var(--topbar-bg);
+    background: var(--topbar-bg);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 12%) inset, 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
     color: var(--topbar-text);
-    transition: left var(--layout-section-transition-duration);
+    transition: inset-inline-start var(--layout-section-transition-duration);
     display: flex;
     align-items: center;
 
@@ -112,7 +114,7 @@
     }
 
     .layout-menu-button {
-        margin-right: 0.5rem;
+        margin-inline-end: 0.5rem;
     }
 
     .layout-topbar-menu-button {
@@ -120,7 +122,7 @@
     }
 
     .layout-topbar-actions {
-        margin-left: auto;
+        margin-inline-start: auto;
         display: flex;
         gap: 1rem;
     }
@@ -145,8 +147,8 @@
         }
 
         .layout-menu-button {
-            margin-left: 0;
-            margin-right: 0.5rem;
+            margin-inline-start: 0;
+            margin-inline-end: 0.5rem;
         }
 
         .layout-topbar-menu-button {
@@ -163,7 +165,7 @@
                 0px 1px 4px rgba(0, 0, 0, 0.08);
             border-radius: var(--content-border-radius);
             padding: 1rem;
-            right: 2rem;
+            inset-inline-end: 2rem;
             top: 4rem;
             min-width: 15rem;
             border: 1px solid var(--surface-border);
@@ -182,7 +184,7 @@
 
                 i {
                     font-size: 1rem;
-                    margin-right: 0.5rem;
+                    margin-inline-end: 0.5rem;
                 }
 
                 span {

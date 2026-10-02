@@ -1,12 +1,13 @@
-from apiflask import Schema, fields
-# region info
+from __future__ import annotations
+
+from pydantic import Field
+
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 
-class PanelInfoOutputSchema(Schema):
-    version = fields.String( metadata={"description": "The panel version"})
-# endregion
+class PanelInfoOutputSchema(ApiModel):
+    version: str = Field("", description="The panel version")
 
 
-class PongOutputSchema(Schema):
-    msg = fields.String( metadata={"description": "Pong Response"})
-# endregion
+class PongOutputSchema(ApiModel):
+    msg: str = Field("", description="Pong Response")

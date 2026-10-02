@@ -1,11 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr " 搜索<inlang-LineFeed>设置"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: zh\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr ""
@@ -147,6 +149,9 @@ msgstr "配置文件不正确。"
 
 msgid "Copy Link"
 msgstr "复制链接"
+
+msgid "Copy QR image"
+msgstr ""
 
 msgid "Couldn't find your ip addresses"
 msgstr "找不到您的 IP 地址"
@@ -309,6 +314,9 @@ msgstr "❇️启用"
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ 自动 CDN 格式错误"
 
@@ -317,6 +325,9 @@ msgstr "自动 CDN IP 错误！找不到，请联系管理员"
 
 msgid "Example Domains"
 msgstr "测试并推荐域名"
+
+msgid "Expired"
+msgstr ""
 
 msgid "Expired Users"
 msgstr "过期用户"
@@ -419,6 +430,9 @@ msgstr "安装"
 msgid "Install Hiddify Application"
 msgstr "Hiddify 管理器安装"
 
+msgid "Invalid"
+msgstr ""
+
 msgid "Invalid IP or domain"
 msgstr "错误的IP或域名"
 
@@ -445,6 +459,12 @@ msgstr "加入我们的 Hiddify Telegram 频道，获取 Hiddify 的最新动态
 
 msgid "Last Online"
 msgstr "最后一次连接"
+
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
 
 msgid "Link is changed!"
 msgstr "ℹ️链接已更改！"
@@ -476,8 +496,18 @@ msgstr "网络"
 msgid "New"
 msgstr "新"
 
+msgid "No certificate"
+msgstr ""
+
 msgid "No children!"
 msgstr "没有孩子"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
 
 msgid "Not Secure"
 msgstr ""
@@ -608,11 +638,17 @@ msgstr ""
 "捐赠后请联系<a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>。\n"
 "发送消息获取商业用户专用版本。"
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath 已被使用！使用不同的代理路径"
 
 msgid "QR code"
 msgstr "🧾 二维码"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"
@@ -701,6 +737,9 @@ msgstr "保存并添加更多"
 msgid "Save Link"
 msgstr "保存链接"
 
+msgid "Search Settings"
+msgstr ""
+
 msgid "Select all records"
 msgstr "选择所有记录"
 
@@ -712,6 +751,9 @@ msgstr ""
 
 msgid "Seleted Users"
 msgstr "选定用户"
+
+msgid "Self-signed"
+msgstr ""
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 向用户的 Telegram 发送消息"
@@ -765,6 +807,9 @@ msgid ""
 "Success! Please wait around 5 minutes to make sure everything is updated."
 msgstr "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新"
 
+msgid "TLS"
+msgstr ""
+
 msgid "Telegram Bot"
 msgstr "Telegram 机器人"
 
@@ -787,8 +832,14 @@ msgid ""
 "This can be used for giving your users a permanent non blockable links."
 msgstr "这可用于为您的用户提供永久的不可阻止链接。"
 
+msgid "This domain %(domain_name)s is invalid"
+msgstr "域名 %(domain_name)s 无效"
+
 msgid "This domain does not exist in the panel!"
 msgstr "该域名在面板中不存在！"
+
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
 
 msgid "Today Usage"
 msgstr "今天"
@@ -829,8 +880,14 @@ msgstr ""
 "然后按照视频教程复制下面的链接粘贴到v2rayNG中 <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -问题'></i> </按钮>。\n"
 "<br/>"
 
+msgid "Valid"
+msgstr ""
+
 msgid "View in Telegram"
 msgstr "在电报中查看"
+
+msgid "Waiting for the process to start..."
+msgstr ""
 
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ 将您的帐户连接到 Telegram"
@@ -881,6 +938,9 @@ msgstr "你的用户太多了！您只能拥有 %(active)s 个活跃用户和 %(
 
 msgid "You have used this domain in: "
 msgstr "您已在以下位置使用过该域名："
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr ""
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1115,6 +1175,12 @@ msgstr "V2RayNG 说明"
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
+msgid "at least one domain should exist"
+msgstr ""
+
+msgid "at least one user should exist"
+msgstr ""
+
 msgid "auto"
 msgstr "自动"
 
@@ -1314,6 +1380,21 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 Cloudflare API"
+
+msgid "config.common_proxy_core.both"
+msgstr ""
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr ""
+
+msgid "config.common_proxy_core.label"
+msgstr ""
+
+msgid "config.common_proxy_core.xray"
+msgstr ""
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1606,6 +1687,12 @@ msgstr "配置.last_priodic_usage_check.description"
 msgid "config.last_priodic_usage_check.label"
 msgstr "config.last_priodic_usage_check.标签"
 
+msgid "config.last_users_sync.description"
+msgstr ""
+
+msgid "config.last_users_sync.label"
+msgstr ""
+
 msgid "config.license.description"
 msgstr "要将本产品用于商业用途，您必须购买其许可证"
 
@@ -1638,6 +1725,18 @@ msgstr "config.log_level.description"
 
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr ""
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.label"
+msgstr ""
 
 msgid "config.mieru.description"
 msgstr ""
@@ -1779,6 +1878,12 @@ msgstr "用于显示资源。使用您服务器的 CPU，但不会太多。"
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr ""
+
+msgid "config.node_name.label"
+msgstr ""
+
 msgid "config.not_found.description"
 msgstr "未找到配置"
 
@@ -1835,6 +1940,12 @@ msgstr "配置中的 gRPC 路径"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ gRPC 路径"
+
+msgid "config.path_http.description"
+msgstr ""
+
+msgid "config.path_http.label"
+msgstr ""
 
 msgid "config.path_httpupgrade.description"
 msgstr "应该是随机的"
@@ -2564,6 +2675,14 @@ msgstr "Websocket 通过 HTTP 创建一个隧道，可用于 CDN"
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
 
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"Allow XHTTP configs whose upload and download use different domains or "
+"settings. ⚠️ Many clients do not support this, so it is disabled by default."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP with different upload/download"
+
 msgid "config.xhttp_enable.description"
 msgstr "该协议通过单独的渠道发送和接收信息 "
 
@@ -2606,7 +2725,13 @@ msgstr ""
 msgid "domain.custom_proxy.description"
 msgstr ""
 
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr ""
+
 msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.l7_gateway"
 msgstr ""
 
 msgid "domain.custom_proxy.group.other"
@@ -2622,6 +2747,12 @@ msgid "domain.custom_proxy.reality_only"
 msgstr ""
 
 msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_single_only"
 msgstr ""
 
 msgid "domain.description"
@@ -2682,11 +2813,17 @@ msgstr ""
 msgid "domain.server_domain.label"
 msgstr ""
 
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
+msgstr ""
+
 msgid "domain.show_domains_description"
 msgstr ""
 "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n"
 "<br>\n"
 "建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。"
+
+msgid "domain.tls_status.description"
+msgstr ""
 
 msgid "download"
 msgstr "直接下载"
@@ -2705,6 +2842,11 @@ msgstr "➿ gRPC"
 
 msgid "grpc-proxy.description"
 msgstr "ℹ️ gRPC 是一个基于 H2 的协议。也许对你来说更快！"
+
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
 
 msgid "in parent panel"
 msgstr "在中央面板"
@@ -2822,6 +2964,9 @@ msgstr "包装尺寸？"
 
 msgid "parent.invalid-parent-url"
 msgstr "parent.invalid-parent-url"
+
+msgid "parent.panel-not-active"
+msgstr ""
 
 msgid "parent.sync-req-failed"
 msgstr "parent.sync-req-failed"

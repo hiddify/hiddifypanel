@@ -1,16 +1,24 @@
+from __future__ import annotations
+
+import datetime
 from enum import auto
+from typing import TYPE_CHECKING
 from uuid import uuid4
-from flask import g
-from hiddifypanel.models.usage import DailyUsage
-from sqlalchemy import event, Column, Integer, Enum, Boolean, ForeignKey
+
+from sqlalchemy import Enum, ForeignKey, String, event
+from sqlalchemy.types import JSON
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from strenum import StrEnum
 
-
-
+from hiddifypanel import g
 from hiddifypanel.database import db, db_execute
-from hiddifypanel.models.role import Role
 from hiddifypanel.models.base_account import BaseAccount
+from hiddifypanel.models.role import Role
+from hiddifypanel.models.usage import DailyUsage
 
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.account import AccountModel, AdminModel
+    from hiddifypanel.models.user import User
 
 
 class AdminMode(StrEnum):
@@ -20,9 +28,16 @@ class AdminMode(StrEnum):
     such as the frequency at which data is reset or whether the account is currently disabled. The class is
     implemented using the "StrEnum" base class and the "auto()" function to generate unique values for each mode.
     """
+
     super_admin = auto()
     admin = auto()
     agent = auto()
+
+
+def _outbound_slug(outbound_id: int | None) -> str | None:
+    from hiddifypanel.models.outbound import Outbound
+
+    return Outbound.slug_by_id(outbound_id)
 
 
 class AdminUser(BaseAccount):
@@ -30,15 +45,29 @@ class AdminUser(BaseAccount):
     This is a model class for a user in a database that includes columns for their ID, UUID, name, online status,
     account expiration date, usage limit, package days, mode, start date, current usage, last reset time, and comment.
     """
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    mode = Column(Enum(AdminMode), default=AdminMode.agent, nullable=False)
-    can_add_admin = Column(Boolean, default=False, nullable=False)
-    max_users = Column(Integer, default=100, nullable=False)
-    max_active_users = Column(Integer, default=100, nullable=False)
-    users = db.relationship('User', backref='admin')  # type: ignore
-    usages = db.relationship('DailyUsage', backref='admin')  # type: ignore
-    parent_admin_id = Column(Integer, ForeignKey('admin_user.id'), default=1)
-    parent_admin = db.relationship('AdminUser', remote_side=[id], backref='sub_admins')  # type: ignore
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    mode: Mapped[AdminMode] = mapped_column(Enum(AdminMode), default=AdminMode.agent)
+    can_add_admin: Mapped[bool] = mapped_column(default=False)
+    max_users: Mapped[int] = mapped_column(default=100)
+    max_active_users: Mapped[int] = mapped_column(default=100)
+    # None = no limit. Online means seen in the last 24 hours.
+    max_online_users: Mapped[int | None] = mapped_column(default=None, nullable=True)
+    # Traffic (GB) all users of this admin and its sub-admins may use together; None = no limit.
+    max_total_usage_GB: Mapped[float | None] = mapped_column(default=None, nullable=True)
+    #: Sign-in username instead of the UUID (lowercase, unique; never for super admins; needs a strong
+    #: password). See hiddifypanel.admin_credentials.
+    alias: Mapped[str | None] = mapped_column(String(64), default=None, nullable=True, index=True)
+    #: [kind, target, value] rows added to the subscription of every user of this admin and its
+    #: sub-admins (merged with the users' own; see proxy_v3.user_configs).
+    additional_configs: Mapped[list | None] = mapped_column(JSON, default=list, nullable=True)
+    #: Outbound id this admin's users (and its sub-admins' users) leave through, unless the user (or a nearer
+    #: admin) chose another; None = automatic. See proxy_v3.outbounds.admin_default_outbounds.
+    default_outbound_id: Mapped[int | None] = mapped_column(default=None, nullable=True)
+    users: Mapped[list[User]] = relationship("User", backref="admin")
+    usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
+    parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)
+    parent_admin: Mapped[AdminUser | None] = relationship("AdminUser", remote_side=[id], backref="sub_admins")
 
     @property
     def role(self) -> Role | None:
@@ -56,35 +85,49 @@ class AdminUser(BaseAccount):
         return schema.dump(AdminUser())
 
     def to_schema(self):
-        admin_dict = self.to_dict()
-        from hiddifypanel.panel.commercial.restapi.v2.admin.admin_user_api import AdminSchema
-        return AdminSchema().load(admin_dict)
+        from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema
+
+        return AdminSchema.model_validate({**self.to_dict(), "default_outbound_slug": _outbound_slug(self.default_outbound_id)})
 
     def get_id(self) -> str | None:
-        return f'admin_{self.id}'
+        return f"admin_{self.id}"
+
+    def to_model(self) -> AdminModel:
+        from hiddifypanel.models import ConfigEnum, hconfig
+        from hiddifypanel.models.external_model.account import AdminModel
+
+        return AdminModel(
+            name=self.name,
+            comment=self.comment,
+            uuid=self.uuid,
+            telegram_id=self.telegram_id,
+            lang=self.lang or hconfig(ConfigEnum.admin_lang),
+            id=self.id,
+            mode=self.mode,
+            can_add_admin=self.can_add_admin,
+            parent_admin_uuid=self.parent_admin.uuid if self.parent_admin else None,
+            max_users=self.max_users,
+            max_active_users=self.max_active_users,
+            max_online_users=self.max_online_users,
+            max_total_usage_GB=self.max_total_usage_GB,
+            **({"default_outbound_slug": slug} if (slug := _outbound_slug(self.default_outbound_id)) else {}),
+        )
 
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
-        base = super().to_dict()
-        if dump_id:
-            base['id'] = self.id
-        if not base.get('lang'):
-            from hiddifypanel.models import hconfig, ConfigEnum
-            base['lang'] = hconfig(ConfigEnum.admin_lang)
-        return {**base,
-                'mode': self.mode,
-                'can_add_admin': self.can_add_admin,
-                'parent_admin_uuid': self.parent_admin.uuid if self.parent_admin else None,
-                'max_users': self.max_users,
-                'max_active_users': self.max_active_users,
-                }
+        return self.to_model().to_dict(exclude=None if dump_id else {"id"})
 
     @classmethod
-    def by_uuid(cls, uuid: str, create: bool = False) -> BaseAccount | None:
-        if not isinstance(uuid, str):
+    def by_uuid(cls, uuid: str | None, create: bool = False) -> BaseAccount | None:
+        if uuid is None or uuid == "":
+            if not create:
+                return None
+            uuid = str(uuid4())
+        elif not isinstance(uuid, str):
             uuid = str(uuid)
         account = AdminUser.query.filter(AdminUser.uuid == uuid).first()
         if not account and create:
             from hiddifypanel import hutils
+
             if not hutils.auth.is_uuid_valid(uuid):
                 uuid = str(uuid4())
             dbuser = AdminUser(uuid=uuid, name="unknown", parent_admin_id=AdminUser.current_admin_or_owner().id)
@@ -95,45 +138,93 @@ class AdminUser(BaseAccount):
         return account
 
     @classmethod
-    def add_or_update(cls, commit: bool = True, **data):
+    def external_model(cls) -> type[AdminModel]:
+        from hiddifypanel.models.external_model.account import AdminModel
 
-        dbuser = super().add_or_update(commit=commit, **data)
+        return AdminModel
 
-        if dbuser.id != 1:
-            parent = data.get('parent_admin_uuid')
-            if parent == data['uuid'] or not parent:
+    @classmethod
+    def add_or_update(cls, commit: bool = True, old_uuid=None, **data) -> AdminUser:
+        # Forward old_uuid so uuid renames update the existing row instead of inserting a duplicate.
+        return cls.upsert(cls.external_model().coerce(data), commit=commit, old_uuid=old_uuid)
+
+    @classmethod
+    def upsert(cls, data: AccountModel, *, commit: bool = True, old_uuid: str | None = None) -> AdminUser:
+        row = cls.external_model().coerce(data)
+        dbuser = super().upsert(row, commit=False, old_uuid=old_uuid)
+
+        if dbuser.id != 1 and row.has("parent_admin_uuid"):
+            parent = row.parent_admin_uuid
+            if not parent or parent == str(dbuser.uuid):
                 parent_admin = cls.current_admin_or_owner()
             else:
-                parent_admin = cls.by_uuid(parent, create=True)
-            dbuser.parent_admin_id = parent_admin.id  # type: ignore
-        if data.get('mode') is not None:
-            dbuser.mode = data.get('mode', AdminMode.agent)
-        if data.get('can_add_admin') is not None:
-            dbuser.can_add_admin = data['can_add_admin']
-        if data.get('max_users') is not None:
-            dbuser.max_users = data['max_users']
-        if data.get('max_active_users') is not None:
-            dbuser.max_active_users = data['max_active_users']
+                parent_admin = cls.by_uuid(parent, create=False) or cls.current_admin_or_owner()
+            dbuser.parent_admin_id = parent_admin.id
+        elif dbuser.id != 1 and not dbuser.parent_admin_id:
+            dbuser.parent_admin_id = cls.current_admin_or_owner().id
+
+        if row.mode is not None:
+            dbuser.mode = row.mode
+        if row.can_add_admin is not None:
+            dbuser.can_add_admin = row.can_add_admin
+        if row.max_users is not None:
+            dbuser.max_users = row.max_users
+        if row.max_active_users is not None:
+            dbuser.max_active_users = row.max_active_users
+        # 0 or a negative value clears these optional limits (None alone means "not sent").
+        if row.max_online_users is not None:
+            dbuser.max_online_users = row.max_online_users if row.max_online_users > 0 else None
+        if row.max_total_usage_GB is not None:
+            dbuser.max_total_usage_GB = row.max_total_usage_GB if row.max_total_usage_GB > 0 else None
+        if row.has("default_outbound_slug"):
+            from hiddifypanel.models.outbound import Outbound
+
+            dbuser.default_outbound_id = Outbound.id_by_slug(row.default_outbound_slug)
         if commit:
             db.session.commit()
         return dbuser
 
     def recursive_users_query(self):
         from .user import User
-        admin_ids = self.recursive_sub_admins_ids()
-        return User.query.filter(User.added_by.in_(admin_ids))
 
-    def can_have_more_users(self):
-        if self.mode == AdminMode.super_admin:
-            return True
-        users_count = self.recursive_users_query().count()
-        if self.max_users < users_count:
+        admin_ids = self.recursive_sub_admins_ids()
+        return User.query.filter(User.added_by.in_(admin_ids), User.deleted.is_(False))
+
+    def limited_ancestors(self) -> list[AdminUser]:
+        """This admin and its parents up to the first super admin: each one's limits apply to the users below it."""
+        chain: list[AdminUser] = []
+        admin: AdminUser | None = self
+        seen: set[int] = set()
+        while admin is not None and admin.id not in seen and admin.mode != AdminMode.super_admin:
+            chain.append(admin)
+            seen.add(admin.id)
+            admin = admin.parent_admin
+        return chain
+
+    def total_usage_GB(self) -> float:
+        """Traffic used by this admin's users and all its sub-admins' users."""
+        from sqlalchemy import func
+
+        from .user import User
+
+        used = db.session.query(func.coalesce(func.sum(User.current_usage), 0)).filter(User.added_by.in_(self.recursive_sub_admins_ids()), User.deleted.is_(False)).scalar()
+        return (used or 0) / 1024**3
+
+    def _has_room_for_one_more_user(self) -> bool:
+        if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
             return False
-        if users_count <= self.max_active_users:
+        users_count = self.recursive_users_query().count()
+        if users_count >= self.max_users:
+            return False
+        if users_count < self.max_active_users:
             return True
 
         actives = [u for u in self.recursive_users_query().all() if u.is_active]
-        return len(actives) <= self.max_active_users
+        return len(actives) < self.max_active_users
+
+    def can_have_more_users(self):
+        # A sub-admin's users also count against its parents' limits.
+        return all(admin._has_room_for_one_more_user() for admin in self.limited_ancestors())
 
     def recursive_sub_admins_ids(self, depth=20, seen=None):
         if seen is None:
@@ -150,14 +241,15 @@ class AdminUser(BaseAccount):
     def remove(self):
         if self.id == 1 or self.id == g.account.id:
             # raise ValidationError(_("Owner can not be deleted!"))
-            from flask_babel import gettext as __
             from apiflask import abort
+            from flask_babel import gettext as __
+
             abort(422, __("Owner can not be deleted!"))
         users = self.recursive_users_query().all()
         for u in users:
             u.added_by = g.account.id
 
-        DailyUsage.query.filter(DailyUsage.admin_id.in_(self.recursive_sub_admins_ids())).update({'admin_id': g.account.id})
+        DailyUsage.query.filter(DailyUsage.admin_id.in_(self.recursive_sub_admins_ids())).update({"admin_id": g.account.id})
         AdminUser.query.filter(AdminUser.id.in_(self.recursive_sub_admins_ids())).delete()
 
         db.session.commit()
@@ -183,7 +275,7 @@ class AdminUser(BaseAccount):
 
     @staticmethod
     def current_admin_or_owner():
-        if g and hasattr(g, 'account') and g.account and isinstance(g.account, AdminUser):
+        if g and hasattr(g, "account") and g.account and isinstance(g.account, AdminUser):
             return g.account
         return AdminUser.query.filter(AdminUser.id == 1).first()
 
@@ -191,5 +283,13 @@ class AdminUser(BaseAccount):
 @event.listens_for(AdminUser, "before_insert")
 def before_insert(mapper, connection, target):
     from hiddifypanel import hutils
+
     hutils.model.gen_username(target)
     # hutils.model.gen_password(target)
+    target.last_modified_time = datetime.datetime.now()
+
+
+@event.listens_for(AdminUser, "before_update")
+def on_admin_update(mapper, connection, target):
+    """Bump last_modified_time so parent/node usage sync can detect admin changes."""
+    target.last_modified_time = datetime.datetime.now()

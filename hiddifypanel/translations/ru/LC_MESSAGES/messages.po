@@ -1,13 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr ""
-" Поиск\n"
-"Настройки"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: ru\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr ""
@@ -149,6 +149,9 @@ msgstr "Конфигурационный файл неверен"
 
 msgid "Copy Link"
 msgstr "Копировать ссылку"
+
+msgid "Copy QR image"
+msgstr ""
 
 msgid "Couldn't find your ip addresses"
 msgstr "Не удалось найти ваши IP-адреса"
@@ -308,6 +311,9 @@ msgstr "❇️ Включить"
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ Ошибка в формате Auto CDN"
 
@@ -317,6 +323,9 @@ msgstr ""
 
 msgid "Example Domains"
 msgstr "Тестируйте и предложите домеy"
+
+msgid "Expired"
+msgstr ""
 
 msgid "Expired Users"
 msgstr "Пользователи с истекшим сроком действия"
@@ -424,6 +433,9 @@ msgstr "Установить"
 msgid "Install Hiddify Application"
 msgstr "Установка панели Hidify"
 
+msgid "Invalid"
+msgstr ""
+
 msgid "Invalid IP or domain"
 msgstr "Неверный IP или Домен"
 
@@ -457,6 +469,12 @@ msgstr ""
 msgid "Last Online"
 msgstr "Последнее соединение"
 
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
+
 msgid "Link is changed!"
 msgstr "ℹ️Ссылка изменена!"
 
@@ -487,8 +505,18 @@ msgstr "Сеть"
 msgid "New"
 msgstr "Новый"
 
+msgid "No certificate"
+msgstr ""
+
 msgid "No children!"
 msgstr "Нет дочерних"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
 
 msgid "Not Secure"
 msgstr ""
@@ -623,11 +651,17 @@ msgstr ""
 "Пожалуйста, свяжитесь с <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> после пожертвования.\n"
 "Отправьте сообщение, чтобы получить специальную версию для бизнес-пользователей."
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath уже используется! используйте другой путь прокси"
 
 msgid "QR code"
 msgstr "🧾 QR-код"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QR-код"
@@ -716,6 +750,9 @@ msgstr "Сохранить и добавить еще"
 msgid "Save Link"
 msgstr "Сохранить ссылку"
 
+msgid "Search Settings"
+msgstr ""
+
 msgid "Select all records"
 msgstr "Выбрать все записи"
 
@@ -727,6 +764,9 @@ msgstr ""
 
 msgid "Seleted Users"
 msgstr "Выбранные пользователи"
+
+msgid "Self-signed"
+msgstr ""
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 Отправить сообщение в Telegram пользователя"
@@ -782,6 +822,9 @@ msgstr ""
 "✔️Операция завершена успешно! Пожалуйста, подождите около 5 минут, чтобы "
 "убедиться, что все обновлено."
 
+msgid "TLS"
+msgstr ""
+
 msgid "Telegram Bot"
 msgstr "Telegram-бот"
 
@@ -806,8 +849,14 @@ msgstr ""
 "Это можно использовать для предоставления вашим пользователям постоянных "
 "неблокируемых ссылок."
 
+msgid "This domain %(domain_name)s is invalid"
+msgstr "Домен %(domain_name)s недействителен"
+
 msgid "This domain does not exist in the panel!"
 msgstr "Этого домена не существует в панели управления!"
+
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
 
 msgid "Today Usage"
 msgstr "Сегодня"
@@ -848,8 +897,14 @@ msgstr ""
 "Затем скопируйте ссылку ниже и вставьте ее в v2rayNG согласно видеоинструкции <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -вопрос'></i> </button>.\n"
 "<br />"
 
+msgid "Valid"
+msgstr ""
+
 msgid "View in Telegram"
 msgstr "Посмотреть в Telegram"
+
+msgid "Waiting for the process to start..."
+msgstr ""
 
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ Подключите свой аккаунт к Telegram"
@@ -881,7 +936,7 @@ msgid ""
 msgstr ""
 "🔄 Панель Hiddify автоматически создает резервную копию каждые 6 часов. Путь к файлам резервной копии на сервере: ⬇️\n"
 "<br>\n"
-"💿 /opt/hiddify-manager/hiddify-panel/backup/\n"
+"💿 /opt/hiddify-manager/data/backup/\n"
 "<br>\n"
 "<br>\n"
 "<br>\n"
@@ -904,6 +959,9 @@ msgstr ""
 
 msgid "You have used this domain in: "
 msgstr "Вы уже используете этот домен в:"
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr ""
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1150,6 +1208,12 @@ msgstr "Описание V2RayNG"
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
+msgid "at least one domain should exist"
+msgstr ""
+
+msgid "at least one user should exist"
+msgstr ""
+
 msgid "auto"
 msgstr "Авто"
 
@@ -1369,6 +1433,21 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 API Cloudflare"
+
+msgid "config.common_proxy_core.both"
+msgstr ""
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr ""
+
+msgid "config.common_proxy_core.label"
+msgstr ""
+
+msgid "config.common_proxy_core.xray"
+msgstr ""
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1687,6 +1766,12 @@ msgstr "config.last_priodic_usage_check.description"
 msgid "config.last_priodic_usage_check.label"
 msgstr "config.last_priodic_usage_check.label"
 
+msgid "config.last_users_sync.description"
+msgstr ""
+
+msgid "config.last_users_sync.label"
+msgstr ""
+
 msgid "config.license.description"
 msgstr ""
 "Для коммерческого использования этого продукта вам необходимо приобрести его"
@@ -1721,6 +1806,18 @@ msgstr "config.log_level.description"
 
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr ""
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.label"
+msgstr ""
 
 msgid "config.mieru.description"
 msgstr ""
@@ -1871,6 +1968,12 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr ""
+
+msgid "config.node_name.label"
+msgstr ""
+
 msgid "config.not_found.description"
 msgstr "Конфигурация не найдена"
 
@@ -1930,6 +2033,12 @@ msgstr "Путь gRPC в конфигурации"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ Путь gRPC"
+
+msgid "config.path_http.description"
+msgstr ""
+
+msgid "config.path_http.label"
+msgstr ""
 
 msgid "config.path_httpupgrade.description"
 msgstr "должен быть случайным"
@@ -2738,6 +2847,14 @@ msgstr ""
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
 
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"Allow XHTTP configs whose upload and download use different domains or "
+"settings. ⚠️ Many clients do not support this, so it is disabled by default."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP with different upload/download"
+
 msgid "config.xhttp_enable.description"
 msgstr ""
 "Этот протокол отправляет и получает информацию по отдельным каналам<br />\n"
@@ -2785,7 +2902,13 @@ msgstr ""
 msgid "domain.custom_proxy.description"
 msgstr ""
 
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr ""
+
 msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.l7_gateway"
 msgstr ""
 
 msgid "domain.custom_proxy.group.other"
@@ -2801,6 +2924,12 @@ msgid "domain.custom_proxy.reality_only"
 msgstr ""
 
 msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_single_only"
 msgstr ""
 
 msgid "domain.description"
@@ -2866,11 +2995,17 @@ msgstr ""
 msgid "domain.server_domain.label"
 msgstr ""
 
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
+msgstr ""
+
 msgid "domain.show_domains_description"
 msgstr ""
 "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n"
 "<br>\n"
 "Предложение: Для домена с IP-адресом не попадащим под фильтры, отличного от других, выберите все остальные домены (кроме текущего). В результате, поскольку этот IP-адрес используется не для прокси-сервера, а для простого веб-сайта, этот домен и IP-адрес никогда не будут заблокированы, и ваши пользователи смогут легко обновлять свои профили."
+
+msgid "domain.tls_status.description"
+msgstr ""
 
 msgid "download"
 msgstr "Direct Download"
@@ -2891,6 +3026,11 @@ msgid "grpc-proxy.description"
 msgstr ""
 "ℹ️ gRPC — это протокол на основе HTTP 2. Возможно, в вашей ситуации он будет"
 " быстрее!"
+
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
 
 msgid "in parent panel"
 msgstr "В центральной панели"
@@ -3013,6 +3153,9 @@ msgstr "Размер посылки?"
 
 msgid "parent.invalid-parent-url"
 msgstr "parent.invalid-parent-url"
+
+msgid "parent.panel-not-active"
+msgstr ""
 
 msgid "parent.sync-req-failed"
 msgstr "parent.sync-req-failed"

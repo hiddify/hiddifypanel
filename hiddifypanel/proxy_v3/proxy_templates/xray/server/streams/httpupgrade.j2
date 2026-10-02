@@ -1,0 +1,5 @@
+"network": "httpupgrade",
+"httpupgradeSettings": {
+  "path": "/{{ ctx.proxy.path }}",
+  {% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
+}

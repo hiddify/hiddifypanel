@@ -1,0 +1,25 @@
+{# https://hiddify.com/app/URL-Scheme/  ssh://user:pass@server:port/?pk=private_key&hk=host_key #}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set ns = namespace(host_keys=[]) %}
+  {% for key in [ctx.hconfig.ssh_host_rsa_pub, ctx.hconfig.ssh_host_ecdsa_pub, ctx.hconfig.ssh_host_ed25519_pub] %}
+    {% if key %}
+      {% set ns.host_keys = ns.host_keys + [key] %}
+    {% endif %}
+  {% endfor %}
+  {% set uri = namespace(
+    protocol='ssh',
+    user=ctx.user.uuid,
+    password=ctx.user.password,
+    host=proxy.server,
+    port=proxy.port,
+    query_params={
+      'pk': ctx.user.ed25519_private_key,
+      'private_key': ctx.user.ed25519_private_key,
+
+      'hk': ns.host_keys | join(','),
+    },
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

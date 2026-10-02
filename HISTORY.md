@@ -1,6 +1,468 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Better integration with the old panel. 
+
+#### Fix
+
+* Quick  setup. 
+
+* Improve error handling in Node API client. 
+
+* Node api. 
+
+* Backup. 
+
+* Update TLS layer handling for raw HTTP, WS, and HTTPUpgrade transports. 
+
+* Pass base_cmd to background commander thread so commands actually run. 
+  _When commander() is called with run_in_background=True (the default), the
+background command was never executed. The thread was created as
+`threading.Thread(target=cmd_in_back, daemon=True)` without forwarding the
+constructed `base_cmd`, so `cmd_in_back(cmd)` was invoked with no arguments
+and raised before subprocess.Popen ever ran:
+
+    TypeError: cmd_in_back() missing 1 required positional argument: 'cmd'
+
+Forward base_cmd to the thread via args=(base_cmd,)._
+
+* Sanitize shell/subprocess call in run_commander.py. 
+  _The run_commander
+Addresses CWE-78_
+
+* Standardize default TLS layer to 'http' across various components. 
+
+#### Other
+
+* Feat: update translations. 
+
+* Feat: enhance proxy configuration and editor functionality. 
+  _- Updated the default form for custom proxy settings to use context variables for better data handling.
+- Improved the Jinja and JSON5 editors by adjusting their minimum height for better usability.
+- Introduced a new utility function to dynamically fit the editor's height to its content.
+- Enhanced transport TLS support for raw TCP and gRPC in the proxy validation logic.
+- Updated translations to include new HTTP terminology and improved language support.
+- Added new presets for raw VLESS over REALITY, streamlining the configuration process for users._
+
+* Fixxray. 
+
+* Feat: add quick setup feature for streamlined initial configuration. 
+  _- Introduced a new quick setup process to guide users through initial configuration steps.
+- Added components for language selection, password setup, domain management, and finalization.
+- Implemented API interactions for quick setup state management and domain handling.
+- Enhanced user experience with improved error handling and feedback mechanisms throughout the setup process._
+
+* Add copy qr  code  image. 
+
+* Feat: enhance domain mode handling and reality support. 
+  _- Updated domain mode options to include selected modes for both upload and download configurations.
+- Introduced functions to determine if domain modes are editable based on proxy settings.
+- Improved transport TLS support for reality domains, allowing raw HTTP to utilize TLS effectively.
+- Enhanced category management in custom proxy presets to include new reality categories without removing admin-set categories.
+- Refactored proxy combination logic to support reality domains across various transport types._
+
+* Make random choice of ips. 
+
+* Feat: enhance node removal functionality and improve user feedback. 
+  _- Updated the `remove` method in the nodes API to return a boolean indicating whether the node successfully unlinked from its parent.
+- Modified the `confirmRemove` function in `NodesView.vue` to provide user feedback based on the unlinking status, displaying appropriate success or warning messages.
+- Added a new `UnregisterParentApi` to handle the scenario where a node is removed by its parent, allowing it to switch to standalone mode.
+- Improved the handling of domain normalization in the `Domain` model to prevent duplicate entries during sync operations._
+
+* Feat: implement TLS fragment support in proxy templates. 
+
+* Feat: enhance user login handling and database isolation. 
+  _- Added logging for failed updates to the last_online timestamp of admin users during login, improving error tracking.
+- Implemented a try-except block to handle potential database update conflicts gracefully.
+- Introduced READ COMMITTED isolation level for MySQL/MariaDB to prevent transaction errors during concurrent updates.
+- Updated SQLAlchemy engine options to support the new isolation level, ensuring data consistency._
+
+* Feat: implement legacy action dialog for classic system actions. 
+  _- Added a new `LegacyAction` interface and `openLegacyAction` function to manage classic system actions in a dialog.
+- Introduced `LegacyActionDialog` component to display actions in an iframe, enhancing user experience.
+- Updated various components to utilize the new legacy action handling, replacing direct URL navigation with dialog-based interactions.
+- Enhanced translations to support new dialog features._
+
+* Feat: enhance admin menu structure and translations. 
+  _- Introduced a new `id` property for `AdminMenuGroup` to facilitate menu grouping.
+- Defined a constant `GROUP_ORDER` for consistent menu group ordering (manager, settings, help).
+- Refactored `useAdminMenu` to dynamically generate menu groups based on server data and frontend routes.
+- Updated translations to include new group labels for better localization support._
+
+* Feat: add plugin for adminV2 translations handling. 
+
+* Feat: integrate Monaco editor with loading state and error handling. 
+  _- Added a new plugin to handle the prebuilt Monaco editor, improving performance by avoiding bundling.
+- Implemented loading state and error messages in the JinjaTextEditor and Json5Editor components.
+- Updated translations for loading and error messages.
+- Refactored Monaco setup to ensure it loads only when needed, enhancing user experience._
+
+* Optimise build. 
+
+* Refactor: improve backup functionality in CLI. 
+  _- Updated the backup task to use os.path.join for better path handling.
+- Changed the backup directory creation to set permissions to 750 for enhanced security.
+- Modified file opening to use os.open and os.fdopen, ensuring the backup file is only readable by the panel user._
+
+* Remove admin built data. 
+
+* Add  new node page, and integrate old admin with new admin. 
+
+* Rewrite settings page. 
+
+* Feat: add protocols management feature. 
+
+* Feat: implement node management enhancements and new actions view, only super admin can access nodes panel. 
+  _- Added a new `_deny_non_super_admin_on_node` function to restrict non-super admins from managing nodes, improving security.
+- Introduced the `ActionsView` component to display available system actions for super admins, enhancing user interface and functionality.
+- Updated routing to include a dedicated node home page for child panels, providing a clearer navigation experience.
+- Enhanced the `CustomProxyEditorView` to support better name management and user feedback for built-in proxies.
+- Introduced new global variables for panel mode and node information to streamline data handling across components._
+
+* Refactor: streamline sync operations and enhance parent notification handling. 
+  _- Removed deprecated sync fields from the child node's API, focusing on domain synchronization only.
+- Introduced a new mechanism to notify the parent of configuration changes in child nodes, improving responsiveness to updates.
+- Updated various admin views to utilize the new notification system for user and configuration changes, ensuring consistency across the application.
+- Enhanced error handling and logging during synchronization processes to improve debugging and reliability._
+
+* Verify and check multi node configs. 
+
+* Refactor: improve child model timestamp handling and proxy context management. 
+  _- Introduced a new `_touch` method in the `Child` model to manage timestamp updates with better concurrency handling.
+- Enhanced error logging for database update failures in the `mark_node_to_parent` and `mark_parent_to_node` methods.
+- Refactored proxy context handling in `custom_proxy_validate.py` and `jinja_context.py` to streamline data access and improve clarity.
+- Removed legacy code related to `HconfigsAccessor` and `RenderContextAdapter` to simplify the context management logic.
+- Increased the default timeout in `jinja_download.py` to improve download reliability._
+
+* Feat: enhance error handling in custom proxy operations. 
+  _- Introduced a new `apiErrorMessage` function to format server-provided error messages for better user feedback.
+- Updated `duplicateBuiltin` and `save` functions in `CustomProxyEditorView.vue` to utilize the new error handling, improving user experience during API calls.
+- Enhanced `CustomProxyListView.vue` to handle errors during proxy duplication with user-friendly notifications.
+- Added a new utility function to flatten error details for clearer presentation in the UI._
+
+* Refactor: enhance parent registration and error handling in child node management. 
+  _- Improved the registration process to ensure the parent unique ID is validated.
+- Implemented upsert logic for parent nodes to prevent 500 errors on re-registration.
+- Added exception handling during the registration process to log errors and rollback transactions as needed.
+- Updated related methods to accept models instead of dictionaries in bulk registration._
+
+* Improve domain proxy selection. 
+
+* Feat: enhance Telegram bot integration with webhook secret validation. 
+  _- Always re-register the bot to ensure it uses the current webhook URL/secret.
+- Introduced a `webhook_secret` function to derive the secret token from the bot token.
+- Updated the TGBotResource to validate the incoming requests against the webhook secret and content type._
+
+* "Block Iranian sites" does nothing. 
+
+* Fix "Resolve IP" switch. 
+
+* Refactor: enhance domain handling by introducing `has_cdn_ip` and updating logic for server domain retention. 
+  _- Added `has_cdn_ip` attribute to `DomainIPVar` to track CDN IP presence.
+- Updated the `keeps_dst_server` property to include both `has_server_domain` and `has_cdn_ip`.
+- Modified related functions to reflect the new logic for domain expansion based on CDN IPs._
+
+* Feat: add support for XHTTP configurations with different upload and download domains. 
+  _- Introduced a new configuration option `xhttp_different_up_down_enable` to allow XHTTP setups with distinct upload and download settings._
+
+* Merge pull request #30 from rezasabourinejad/fix/background-commander-args. 
+  _fix: pass base_cmd to background commander thread so commands actually run_
+
+* Merge pull request #37 from anupamme/fix-repo-hiddifypanel-multi-agent-cwe-78-hiddifypanel-panel-run-commander-py. 
+  _fix: sanitize shell/subprocess call in run_commander.py (CWE-78)_
+
+
+
+## v13.0.3 (2026-09-26)
+
+#### Other
+
+* Custom proxy validation is  now optional as  warning not an error. 
+
+
+
+## v13.0.2 (2026-09-26)
+
+#### Fix
+
+* Subadmin access. 
+
+#### Other
+
+* Fix sqlalchemy dependency specifier. 
+
+
+
+## v13.0.0 (2026-09-26)
+
+#### New
+
+* Lazyload xtlsapi for lower memory usage. 
+
+* Add new comperhensive dashboard. 
+
+* Add last online node, make singbox  and hiddify core working. 
+
+* Add  multiple proxy selector. 
+
+* Multinode. 
+
+* Multi node. 
+
+* Add get configs from child. 
+
+* Add extra params for domains and users that can be used in custom proxy maker. 
+
+* Add dns protocols. 
+
+* Refactor custom proxy. 
+
+#### Fix
+
+* Update validation for inbound ports in proxy configuration. 
+  _Modified the validation logic to require at least one inbound TCP or UDP port for modes that require static ports. Updated error messages to reflect this change, ensuring clearer feedback for users regarding port requirements._
+
+* Wiregaurd. 
+
+* Handle IntegrityError during database commit in set_hconfig function. 
+  _Added error handling for IntegrityError when committing changes to the database. If an IntegrityError occurs, the session is rolled back, and the function attempts to update the existing configuration value instead of raising an error._
+
+* Pin apscheduler to <4.0.0 to avoid breaking pre-release. 
+  _apscheduler 4.0.0a6 removed the apscheduler.schedulers module that
+scheduler.py imports, crashing the app on import when a resolver
+picked up the pre-release._
+
+* Cli. 
+
+* User package end date calculation for usage reset logic. 
+
+* Naive quic. 
+
+* Restore domain_strategy for older singbox versions. 
+
+* Wiregaurd bug. 
+
+* Encryption=none for non xray cores. 
+
+* Mieru, wiregaurd, xhttp download settings. 
+
+* Update child sync request to use base URL instead of domain. 
+
+* Parent bug. 
+
+* Parent registration. 
+
+* Default tls_layer in the xray server TLS template. 
+
+* Skip inbound ports and domain binding for no_inbound custom proxies. 
+
+* Treat sub_link_only as a domain mode after dropping leftover DomainTypes. 
+  _Queries and APIs still filtered the old boolean column and accepted removed modes like old_xtls_direct and auto_cdn_ip._
+
+* Skip cache flush during apply_users so Apply Config does not kill the panel. 
+  _Dumping configs was wiping Redis/Jinja caches even when MODE=apply_users, which restarted the same panel process._
+
+* Return a visible error config when client render fails. 
+  _Render errors were only printed, so clients still received an empty body with HTTP 200._
+
+* Round TB usage before formatting subscription remarks. 
+  _Jinja applied round(3) to 1000 instead of the usage value, so tiny usage showed up as scientific notation._
+
+* Use HTTP/1.1 ALPN and Accept */* for raw HTTP transport. 
+  _Full fake headers plus h2 ALPN broke TCP HTTP obfuscation handshakes._
+
+* Label expanded IPv4/IPv6 endpoints in outbound tags. 
+  _When a domain is expanded per IP, tags now include the address family so clients can tell the copies apart, and remark fragments are trimmed of the extra newlines._
+
+* Invalidate v3 Jinja and Redis caches when domains or proxies change. 
+  _Subscription output could stay stale for 10–20 minutes after Apply Config because proxy_v3 template maps were never dropped._
+
+* Pin CDN TLS to the edge cert and prefer a stable server IP. 
+  _CDN clients were pinning the origin cert while the handshake shows the CDN edge cert. Direct/Reality server addresses also pick a stable IPv4-first IP instead of a random cached A/AAAA mix._
+
+* Keep VLESS flow and encryption on xray core only. 
+  _hiddify-core VLESS outbounds were getting xray-only flow/encryption and failing to connect; templates now read ctx.hconfig and emit those fields only for xray._
+
+* Emit Reality client configs from L7 proxies instead of pinning termination. 
+  _Reality domains no longer auto-bind xray-reality-termination on the client, so /sub and related endpoints get the matching L7 Reality proxies instead of an empty list._
+
+* Wiregaurd and typing issues. 
+
+* Bug. 
+
+* Singbox issues. 
+
+* Bug. 
+
+* Upgrade. 
+
+* Installation bugs, show errors in dump configs, and fix routing bug. 
+
+* Domains. 
+
+* Redis for wiregaurd and telemt. 
+
+* Reality bug. 
+
+* Ssh key generation when a key type is not availble. 
+
+* Tcp mode. 
+
+* Bugs. 
+
+* Xray  api. 
+
+* Issue in extra params. 
+
+#### Other
+
+* Feat: enhance template variables and improve static asset handling. 
+  _- Added new template variables for current server time and date arithmetic in `template_variables.py`.
+- Replaced the use of `exec` for dynamic path generation with a static variable for panel assets in `jinja_render.py`.
+- Updated Nginx template files to utilize the new `panel_static_dir` variable and improved time handling for configuration links._
+
+* Feat: implement danger confirmation for destructive actions. 
+  _- Introduced a new `useDangerConfirm` composable to handle confirmation prompts for destructive actions, enhancing user safety during critical operations.
+- Updated various components to utilize the new confirmation method, replacing the previous `useConfirm` implementation.
+- Enhanced the dashboard and configuration views to ensure consistent confirmation behavior across the application.
+- Added localization support for confirmation messages, improving the user experience in different languages._
+
+* Feat: add Vazirmatn font and improve layout responsiveness. 
+  _- Integrated the Vazirmatn font for better typography support, especially for RTL languages.
+- Enhanced layout styles to ensure better responsiveness across various screen sizes, including adjustments to margins and paddings.
+- Updated various components to utilize new CSS properties for improved layout handling.
+- Refactored dashboard components for better mobile usability and visual consistency._
+
+* Feat: add POST method support for admin menu actions. 
+  _Enhanced the admin menu item functionality by introducing a POST method option for system actions, allowing for confirmation prompts before executing actions. Updated the backend to support this feature and modified the translations to reflect changes in backup file paths._
+
+* Strip spaces  in the parent panel. 
+
+* Refactor backup and restore. 
+
+* Refactor: update backup directory handling and improve file naming. 
+
+* Feat: enhance child fetching and add SyncTlsStoreApi endpoint. 
+  _Updated the child fetching function to include a parent API key for improved security and error handling. Increased the node timeout from 3.0 to 30.0 seconds for better performance. Added a new SyncTlsStoreApi endpoint to facilitate the import of TLS certificates into the store, with support for domain-specific syncing. Updated API decorators to enforce role-based access control for enhanced security._
+
+* Feat: implement debug node functionality and enhance dashboard metrics. 
+  _Added support for simulating multi-node panels with debug nodes, including a new `debug_node` parameter in API requests. Updated dashboard components to display panel URLs for nodes and improved chart rendering for stacked areas. Enhanced usage statistics to account for debug nodes, ensuring accurate reporting in the dashboard. Additionally, updated translations for clarity on upload and download metrics._
+
+* Refactor: simplify version formatting in PlatformVar. 
+
+* Feat: add domain creation template and update domain validation. 
+  _Introduced a new template for domain creation and updated the domain field validation to include a filter for whitespace. The changes enhance the user interface and improve input handling for domain entries._
+
+* Chore: update deploy path references for services/panel rename. 
+  _The panel's deployment directory is being renamed from
+services/hiddify-panel to services/panel; update hardcoded paths in
+source, translation catalogs, and the compiled admin UI bundle to
+match._
+
+* Chore: update MANIFEST.in to prune admin_v2 directory, preventing inclusion of node_modules in the sdist and wheel. 
+
+* Chore: update package inclusion in pyproject.toml to include all subpackages and refine exclusion patterns; enhance GitHub Actions workflow for building and publishing with improved error handling and dependency management. 
+
+* Refactor: update DashboardView styles and JavaScript components for improved layout and functionality; enhance progress bar and toggle button implementations. 
+
+* Feat: update UsersTrendCard component with new online user metrics and improved layout; add missing translations for online statistics. 
+
+* Refactor: update dashboard components with improved tooltip functionality, enhance data handling for user and usage metrics, and streamline node health display. 
+
+* Update apscheduler. 
+
+* Optimize memory usage: replace Celery with APScheduler for background tasks, streamline app initialization, and update dependencies. 
+
+* Feat: add DumpServerConfigs API and improve admin routing for first setup. 
+
+* Feat: enhance dashboard components with node health metrics, improved charting, and new UI elements for better data visualization. 
+
+* Speed up initial configs. 
+
+* Feat: improve AdminUser and User management with enhanced UUID handling, parent admin resolution, and usage statistics validation. 
+
+* Feat: enhance bulk registration and child ID resolution for various models, including ServerIp, TlsStore, and Proxy. 
+
+* Feat: implement admin role validation and permission checks for creating and updating AdminUser. 
+
+* Feat: enhance client config rendering to handle domains related to child. 
+
+* Feat: implement legacy ENUM value remapping and enhance AdminUser timestamp updates. 
+
+* Feat: implement last_online and last_modified_time tracking for AdminUser. 
+
+* Feat: enhance TLS certificate handling with subject alternative names and hostname validation. 
+
+* Fix node auth bug. 
+
+* Feat: add DNS resolver configuration and decoy upstream snippets for HAProxy templates. 
+
+* Temporaty fix for wiregaurd port. 
+
+* Improve: admin list UX, override revert, and template placeholder validation. 
+
+* Improve domain detection. 
+
+* Fix removed column. 
+
+* Add 3 minutes negative cache for errory config fetch. 
+
+* Add all important domain fields. 
+
+* Add xray array config generation, centeralized tag name. 
+
+* Chore: tidy unused imports in database.py. 
+
+* Make db models type safe. 
+
+* Disable xhttp for singbox, fix domain for proxies. 
+
+* Update api models from marshalow to pydantic. 
+
+* Add new validation information, fix singbox configs, improve stablity. 
+
+* Test and improve proxy supports for 80 protocols. 
+
+* Make all protocols working fix  bugs. 
+
+* Revert http proxy. 
+
+* Add vless encryption, flow, insecure, http tcp none reality tcp, and much more. 
+
+* Improve protocol compatibility. 
+
+* Update. 
+
+* Fix upgrade. 
+
+* Fix upgrade issue. 
+
+* Fix issues. 
+
+* Update. 
+
+* Update translation. 
+
+* Update. 
+
+* Update. 
+
+* New version. 
+
+* WIP. Add new dashboard and fully configurable backend. 
+
+* Update. 
+
+* Update. 
+
+* Update. 
+
+
+
 ## v12.3.1 (2026-05-26)
 
 #### Fix

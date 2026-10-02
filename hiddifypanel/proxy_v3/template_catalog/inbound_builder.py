@@ -16,6 +16,7 @@ TRANSPORT_SLUG: dict[str, str] = {
     "h2": "tcp",
     "grpc": "grpc",
     "tcp": "tcp",
+    "http": "http",
     "httpupgrade": "httpupgrade",
     "xhttp": "xhttp",
     "faketls": "tcp",
@@ -63,7 +64,7 @@ def _inbound_proto_file(combo: ProxyCombination) -> str | None:
 
 
 def _raw_transport(transport: str) -> str:
-    return str(getattr(transport, "value", transport) or transport).lower()
+    return transport.lower()
 
 
 def _transport_file(transport: str) -> str | None:
@@ -136,6 +137,12 @@ def _is_standalone_hiddify_server(combo: ProxyCombination) -> bool:
 def supports_hiddify_preset(combo: ProxyCombination) -> bool:
     if combo.proto == "wireguard":
         return False
+    # DNS tunnels are OS services (dns_proxy), not hiddify-core inbounds.
+    if str(combo.proto).lower() in {"dnstt", "slipstream", "masterdns"}:
+        return False
+    # sing-box / hiddify-core has no raw TCP stream (header none / IP).
+    if _uses_v2ray_transport_proto(_server_proto_stem(combo)) and _raw_transport(combo.transport) == "tcp":
+        return False
     if _is_standalone_hiddify_server(combo):
         proto = _server_proto_stem(combo)
         return bool(proto and proto in list_fragments("hiddify-core", "protocols", side="server"))
@@ -143,19 +150,19 @@ def supports_hiddify_preset(combo: ProxyCombination) -> bool:
     transport = _transport_file(combo.transport)
     if not proto or not transport:
         return False
-    return proto in list_fragments("hiddify-core", "protocols", side="server") and transport in list_fragments("hiddify-core", "stream", side="server")
+    return proto in list_fragments("hiddify-core", "protocols", side="server") and transport in list_fragments("hiddify-core", "streams", side="server")
 
 
 def _xray_security_slug(combo: ProxyCombination, *, l7_gateway: bool = False) -> str:
     # Behind HAProxy / L7 gateway, Xray terminates PROXY protocol only (TLS already stripped).
     if l7_gateway and combo.l3 != "reality":
-        return "xray/common/security/none"
+        return "xray/server/security/none"
     security = L3_STREAM_SECURITY.get(combo.l3, "tls")
     if security == "none":
-        return "xray/common/security/none"
+        return "xray/server/security/none"
     if security == "reality":
-        return "xray/common/security/reality"
-    return "xray/common/security/tls"
+        return "xray/server/security/reality"
+    return "xray/server/security/tls"
 
 
 def _xray_client_security_slug(combo: ProxyCombination) -> str:
@@ -175,7 +182,7 @@ def _render_preset_shell(
     alpn_line: str = "",
     tls_slug: str | None = None,
 ) -> str:
-    resolved_security = security_slug or "xray/common/security/none"
+    resolved_security = security_slug or "xray/server/security/none"
     shell = load_template_slug(_preset_shell_slug(core, shell_name), normalize=False)
     replacements = {
         "__PROTO_SLUG__": proto_slug,
@@ -209,7 +216,7 @@ def build_xray_inbound_template(combo: ProxyCombination, *, l7_gateway: bool = F
     slugs = [listen_slug, proto_slug, stream_slug, security_slug, sockopt_slug, sniffing_slug]
 
     alpn_line = ""
-    if security_slug == "xray/common/security/tls":
+    if security_slug == "xray/server/security/tls":
         download_alpn = (combo.params.get("download") or {}).get("alpn")
         if download_alpn:
             alpn_line = f'{{% set ALPN = "{download_alpn}" %}}'
@@ -229,7 +236,14 @@ def build_xray_inbound_template(combo: ProxyCombination, *, l7_gateway: bool = F
     return content, slugs
 
 
-_DOMAIN_LOOP_PROTOS: frozenset[str] = frozenset({"tuic", "hysteria", "hysteria2", "shadowtls"})
+def _standalone_uses_sni_domain_loop(combo: ProxyCombination) -> bool:
+    """SNI gateways bind a distinct local port per domain; the inbound must loop domains."""
+    proto = (combo.proto or "").lower()
+    raw_transport = _raw_transport(combo.transport)
+    l3 = str(combo.l3 or "").lower()
+    if proto == "anytls" or raw_transport in ("shadowtls", "faketls"):
+        return True
+    return proto == "naive" and l3 == "h3_quic"
 
 
 def build_hiddify_standalone_inbound(combo: ProxyCombination) -> tuple[str, list[str]]:
@@ -238,8 +252,21 @@ def build_hiddify_standalone_inbound(combo: ProxyCombination) -> tuple[str, list
         raise ValueError(f"Unsupported hiddify-core standalone preset: {combo.name}")
     proto_slug = fragment_slug("hiddify-core", "protocols", proto, side="server")
     slugs = [proto_slug]
-    if proto in _DOMAIN_LOOP_PROTOS:
-        content = f"{{% block inbounds %}}\n{{% for ctx in ctx.iter_domains() %}}\n{{\n  {{% include '{proto_slug}' %}}\n}}\n{{%- if not loop.last %}},{{%- endif %}}\n{{% endfor %}}\n{{% endblock %}}"
+    if _standalone_uses_sni_domain_loop(combo):
+        proto_key, transport_key = _path_keys(combo.proto, combo.transport)
+        listen_slug = "hiddify-core/server/snippets/listen"
+        meta_slug = "hiddify-core/server/snippets/inbound_meta"
+        tag_slug = "hiddify-core/server/tag"
+        slugs = [listen_slug, proto_slug, meta_slug, tag_slug]
+        content = _render_preset_shell(
+            "hiddify-core",
+            shell_name="inbound_domain_loop",
+            proto_slug=proto_slug,
+            stream_slug="",
+            security_slug=None,
+            proto_key=proto_key,
+            transport_key=transport_key,
+        )
         return content, slugs
 
     listen_slug = "hiddify-core/server/snippets/listen"
@@ -275,7 +302,7 @@ def build_hiddify_inbound_template(combo: ProxyCombination, *, l7_gateway: bool 
 
     proto_key, transport_key = _path_keys(combo.proto, combo.transport)
     proto_slug = fragment_slug("hiddify-core", "protocols", proto, side="server")
-    stream_slug = fragment_slug("hiddify-core", "stream", transport, side="server")
+    stream_slug = fragment_slug("hiddify-core", "streams", transport, side="server")
     tls_slug = "hiddify-core/server/tls/none" if l7_gateway else _hiddify_tls_slug(combo)
     listen_slug = "hiddify-core/server/snippets/listen"
     meta_slug = "hiddify-core/server/snippets/inbound_meta"

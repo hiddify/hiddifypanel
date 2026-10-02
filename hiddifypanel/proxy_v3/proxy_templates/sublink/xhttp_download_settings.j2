@@ -1,0 +1,16 @@
+{
+  "address": "{{ proxy.domain.download.server() if proxy.domain.download else proxy.domain.server() }}",
+  "port": {{ proxy.download_port }},
+  "network": "xhttp",
+  {% with domain=proxy.domain.download, tls_layer=proxy.download_tls_layer %}
+    {% include 'xray/client/security/tls' %}
+  {% endwith %}
+  "xhttpSettings": {
+    "path": "/{{ proxy.path }}",
+    "host": "{{ proxy.domain.host }}",
+    "mode": "auto",
+    "headers": {
+        {%if ctx.hconfig.default_useragent_string %}"User-Agent": "{{ctx.hconfig.default_useragent_string}}" {%endif%}
+    }
+  }
+}

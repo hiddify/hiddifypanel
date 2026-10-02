@@ -1,0 +1,18 @@
+{% set qp.type = 'xhttp' %}
+{% set qp.mode = "auto" %}
+{% set qp.path = '/' ~ proxy.path %}
+{% set qp.host = ctx.proxy.domain.host %}
+
+{% if proxy.is_download_upload_different() %}
+    {%with tls_layer=proxy.download_tls_layer %}
+        {% set qp.extra | compactjson %}
+        {
+            "downloadSettings":{% include 'sublink/xhttp_download_settings' %},
+            "headers": {
+                {%if ctx.hconfig.default_useragent_string %}"User-Agent": "{{ctx.hconfig.default_useragent_string}}" {%endif%}
+            }
+        }
+        {% endset %}
+    {%endwith%}
+
+{% endif %}

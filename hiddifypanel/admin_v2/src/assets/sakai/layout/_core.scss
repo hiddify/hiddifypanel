@@ -1,4 +1,5 @@
 html {
+    --layout-dir-sign: 1;
     height: 100%;
     font-size: 14px;
     line-height: 1.2;
@@ -13,6 +14,32 @@ body {
     min-height: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+html[lang='fa'] body {
+    font-family: 'Vazirmatn', 'Lato', sans-serif;
+}
+
+html[dir='rtl'] {
+    --layout-dir-sign: -1;
+
+    // Directional icons point the other way in RTL.
+    .pi-arrow-left,
+    .pi-arrow-right,
+    .pi-angle-left,
+    .pi-angle-right,
+    .pi-chevron-left,
+    .pi-chevron-right {
+        transform: scaleX(-1);
+    }
+
+    // Code and editors stay LTR.
+    .monaco-editor,
+    pre,
+    code {
+        direction: ltr;
+        text-align: left;
+    }
 }
 
 a {

@@ -1,64 +1,103 @@
-from typing import Optional, Union, Type
-from apiflask import Schema, fields
+from __future__ import annotations
+
 import traceback
+from typing import TypeVar
+
 import requests
 from loguru import logger
-from hiddifypanel.models import hconfig, ConfigEnum
+from pydantic import BaseModel
+
+from hiddifypanel.models import ConfigEnum, hconfig
+
+T = TypeVar("T")
 
 
-class NodeApiErrorSchema(Schema):
-    msg = fields.String(required=True)
-    stacktrace = fields.String(required=True)
-    code = fields.Integer(required=True)
-    reason = fields.String(required=True)
+class NodeApiErrorSchema(BaseModel):
+    msg: str
+    stacktrace: str = ""
+    code: int = 0
+    reason: str = ""
 
 
-class NodeApiClient():
-    def __init__(self, base_url: str, apikey: Optional[str] = None, max_retry: int = 3):
-        self.base_url = base_url if base_url.endswith('/') else base_url+'/'
+def _dump_payload(payload: BaseModel) -> dict:
+    return payload.model_dump(mode="json")
+
+
+def _load_output(output_schema: type[T], data: object) -> T:
+    if isinstance(data, BaseModel):
+        return data  # type: ignore
+    if output_schema in (dict, list):
+        # Plain JSON objects/arrays (e.g. {"status": 200, "msg": "ok"} from node actions).
+        if isinstance(data, output_schema):
+            return data  # type: ignore
+        raise ValueError(f"expected a JSON {output_schema.__name__}, got {type(data).__name__}")
+    if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
+        return output_schema.model_validate(data)  # type: ignore
+    raise TypeError(f"Unsupported output schema type: {output_schema!r}")
+
+
+class NodeApiClient:
+    def __init__(self, base_url: str, apikey: str | None = None, max_retry: int = 3, timeout: float = 8):
+        self.base_url = base_url if base_url.endswith("/") else base_url + "/"
         self.max_retry = max_retry
-        self.headers = {'Hiddify-API-Key': apikey or hconfig(ConfigEnum.unique_id)}
+        self.timeout = timeout
+        self.headers = {"Hiddify-API-Key": apikey or hconfig(ConfigEnum.unique_id)}
 
-    def __call(self, method: str, path: str, payload: Optional[Schema], output_schema: Type[Union[Schema, dict]]) -> Union[dict, NodeApiErrorSchema]:  # type: ignore
+    def __call(self, method: str, path: str, payload: BaseModel | None, output_schema: type[T]) -> T | NodeApiErrorSchema:
         retry_count = 1
-        full_url = self.base_url + path.removeprefix('/')
-        while 1:
+        full_url = self.base_url + path.removeprefix("/")
+        response: requests.Response | None = None
+        while True:
             try:
-                # TODO: implement it with aiohttp
-
                 logger.trace(f"Attempting {method} request to node at {full_url}")
 
-                # send request
-                if payload:
-                    response = requests.request(method, full_url, json=payload.dump(payload), headers=self.headers)
+                if payload is not None:
+                    response = requests.request(method, full_url, json=_dump_payload(payload), headers=self.headers, timeout=self.timeout)
                 else:
-                    response = requests.request(method, full_url, headers=self.headers)
+                    response = requests.request(method, full_url, headers=self.headers, timeout=self.timeout)
 
-                # parse response
                 response.raise_for_status()
                 resp = response.json()
                 if not resp:
-                    err = NodeApiErrorSchema()
-                    err.msg = 'Empty response'  # type: ignore
-                    err.stacktrace = ''  # type: ignore
-                    err.code = response.status_code  # type: ignore
-                    err.reason = response.reason  # type: ignore
+                    err = NodeApiErrorSchema(
+                        msg="Empty response",
+                        stacktrace="",
+                        code=response.status_code,
+                        reason=response.reason or "",
+                    )
                     with logger.contextualize(payload=payload):
                         logger.warning(f"Received empty response from {full_url} with method {method}")
                     return err
 
                 logger.trace(f"Successfully received response from {full_url}")
-                return resp if isinstance(output_schema, type(dict)) else output_schema().load(resp)  # type: ignore
+                try:
+                    return _load_output(output_schema, resp)
+                except (ValueError, TypeError) as e:  # pydantic's ValidationError is a ValueError
+                    # A reply of an unexpected shape (e.g. an older node) is an API error, not a crash.
+                    logger.error(f"Unexpected response from {full_url}: {e}")
+                    return NodeApiErrorSchema(msg=f"Unexpected response: {e}", stacktrace=traceback.format_exc(), code=response.status_code, reason="bad_response")
 
             except requests.HTTPError as e:
+                status_code = response.status_code if response is not None else 0
+                reason = (response.reason or "") if response is not None else ""
+                body = ""
+                if response is not None:
+                    try:
+                        body = (response.text or "")[:2000]
+                    except Exception:
+                        body = ""
                 if retry_count >= self.max_retry:
                     stack_trace = traceback.format_exc()
-                    err = NodeApiErrorSchema()
-                    err.msg = str(e)  # type: ignore
-                    err.stacktrace = stack_trace  # type: ignore
-                    err.code = response.status_code  # type: ignore
-                    err.reason = response.reason  # type: ignore
-                    with logger.contextualize(status_code=err.code, reason=err.reason, stack_trace=stack_trace, payload=payload):
+                    msg = str(e)
+                    if body:
+                        msg = f"{msg} | body={body}"
+                    err = NodeApiErrorSchema(
+                        msg=msg,
+                        stacktrace=stack_trace,
+                        code=status_code,
+                        reason=reason,
+                    )
+                    with logger.contextualize(status_code=err.code, reason=err.reason, stack_trace=stack_trace, payload=payload, body=body):
                         logger.error(f"HTTP error after {self.max_retry} retries")
                         logger.exception(e)
                     return err
@@ -66,11 +105,19 @@ class NodeApiClient():
                 logger.warning(f"Error occurred: {e} from {full_url} with method {method}, retrying... ({retry_count}/{self.max_retry})")
                 retry_count += 1
 
-    def get(self, path: str, output: Type[Union[Schema, dict]]) -> Union[dict, NodeApiErrorSchema]:
+            except (requests.Timeout, requests.ConnectionError) as e:
+                if retry_count >= self.max_retry:
+                    err = NodeApiErrorSchema(msg=str(e), stacktrace=traceback.format_exc(), code=0, reason=type(e).__name__)
+                    logger.error(f"Node request to {full_url} failed after {self.max_retry} retries: {e}")
+                    return err
+                logger.warning(f"Timeout/connection error from {full_url}, retrying... ({retry_count}/{self.max_retry})")
+                retry_count += 1
+
+    def get(self, path: str, output: type[T]) -> T | NodeApiErrorSchema:
         return self.__call("GET", path, None, output)
 
-    def post(self, path: str, payload: Optional[Schema], output: Type[Union[Schema, dict]]) -> Union[dict, NodeApiErrorSchema]:
+    def post(self, path: str, payload: BaseModel | None, output: type[T]) -> T | NodeApiErrorSchema:
         return self.__call("POST", path, payload, output)
 
-    def put(self, path: str, payload: Optional[Schema], output: Type[Union[Schema, dict]]) -> Union[dict, NodeApiErrorSchema]:
+    def put(self, path: str, payload: BaseModel | None, output: type[T]) -> T | NodeApiErrorSchema:
         return self.__call("PUT", path, payload, output)

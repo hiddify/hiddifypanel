@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { shellDialog, submitPostForm } from '@/core/panelShell'
 import { useLayout } from './composables/layout'
 
 defineOptions({ name: 'AppMenuItem' })
 
 const { layoutState, isDesktop } = useLayout()
 const route = useRoute()
+const dangerConfirm = useDangerConfirm()
 
 const props = defineProps<{
   item: Record<string, unknown>
@@ -29,8 +32,12 @@ function childRoutes(item: Record<string, unknown>): string[] {
   return children.map((c) => c.to).filter((to): to is string => Boolean(to))
 }
 
-function routeMatchesMenu(path: string): boolean {
-  return route.path === path || route.path.startsWith(`${path}/`)
+function routeMatchesMenu(to: string): boolean {
+  // Menu targets may carry a query (framed classic pages); match on the path only.
+  const path = to.split('?', 1)[0]!.replace(/\/+$/, '')
+  const current = route.path.replace(/\/+$/, '')
+  if (!path) return !current // the root item matches only itself
+  return current === path || current.startsWith(`${path}/`)
 }
 
 const isActive = computed(() => {
@@ -52,6 +59,32 @@ const isActive = computed(() => {
 function itemClick(event: Event, item: Record<string, unknown>) {
   if (item.disabled) {
     event.preventDefault()
+    return
+  }
+  if (item.action) {
+    event.preventDefault()
+    shellDialog.value = { action: String(item.action), title: String(item.label ?? ''), html: String(item.dialog_html ?? '') }
+    layoutState.overlayMenuActive = false
+    layoutState.mobileMenuActive = false
+    layoutState.menuHoverActive = false
+    return
+  }
+  if (item.method === 'post' && item.url) {
+    // POST-only system actions (apply configs, update, reinstall, restart): never a plain GET link.
+    event.preventDefault()
+    const url = String(item.url)
+    const target = (item.target as string) || '_self'
+    const run = () => submitPostForm(url, target)
+    if (item.confirm) {
+      dangerConfirm({
+        // The dialog already shows a warning icon; drop the emoji the legacy text starts with.
+        message: String(item.confirm).replace(/^\s*⚠️\s*/u, ''),
+        header: String(item.label ?? ''),
+        accept: run,
+      })
+    } else {
+      run()
+    }
     return
   }
   if (typeof item.command === 'function') {

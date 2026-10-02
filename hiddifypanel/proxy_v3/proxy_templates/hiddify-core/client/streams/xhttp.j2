@@ -1,0 +1,25 @@
+{{skip("xhttp is not supported in hiddify core version < 4.1.0") if ctx.platform.hiddify.version < "4.1.0"}}
+"transport": {
+  "type": "xhttp",
+  "path": "/{{ proxy.path }}",
+  "host": "{{ domain.host }}",
+  "mode": "auto",
+  "headers":{
+    {% include 'hiddify-core/client/default_headers' %}
+  },
+  {% if proxy.is_download_upload_different()  %}
+  "downloadSettings": {
+    "path": "/{{ proxy.path }}",
+    "host": "{{ domain.download.host }}",
+    "server": "{{ domain.download.server() }}",
+    "server_port": {{ domain.download.port or proxy.download_port }},
+
+    "headers": {
+      {% include 'hiddify-core/client/default_headers' %}
+    },
+    {% with domain=domain.download, tls_layer=proxy.download_tls_layer %}
+      {% include 'hiddify-core/client/tls/tls_http' %}
+    {% endwith %}
+  }
+  {% endif %}
+},

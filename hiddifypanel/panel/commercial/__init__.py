@@ -25,21 +25,6 @@ def is_valid():
     return True
 
 
-def config_changed_event(conf, old_value):
-    if conf.key == ConfigEnum.is_parent:
-        if conf.value and not is_valid():
-            set_hconfig(ConfigEnum.is_parent, False)
-        if not old_value and conf.value:
-            Domain.query.delete()
-            new_domain = hutils.network.get_ip_str(4) + ".sslip.io"
-            if not ParentDomain.query.filter(ParentDomain.domain == new_domain).first():
-                db.session.add(ParentDomain(domain=hutils.network.get_ip_str(4) + ".sslip.io"))
-                db.session.commit()
-
-
-Events.config_changed.subscribe(config_changed_event)
-
-
 # def db_init_event(db_version):
 #     # if not is_valid():
 #     #     db.add(BoolConfig(ConfigEnum.db_version,10,child_id=0))

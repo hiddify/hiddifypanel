@@ -1,0 +1,34 @@
+{% set _alpn = proxy.alpn|default('') %}
+{% set domain=ctx.proxy.domain%}
+{% if proxy.uses_tls %}
+    {% set data.sni = ctx.proxy.domain.sni %}
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set data.fp = ctx.hconfig.utls %}{% endif %}
+
+    
+    {% if ctx.proxy.domain.is_reality() %}
+        {{skip("reality do not support quic") if proxy.tls_layer == "quic_tls"}}
+        {% set data.tls = 'reality' %}
+        {% set data.pbk = ctx.hconfig.reality_public_key %}
+        {% set data.sid = ctx.hconfig.reality_short_ids | choose_random %}
+    {%else%}
+        {% if proxy.alpn %}{% set data.alpn = ",".join(proxy.alpn) %}{% endif %}
+        {% set data.tls = 'tls' %}    
+        {% if ctx.proxy.domain.echinfo %}
+            {% set data.ech = ctx.proxy.domain.echinfo %}
+        {% endif %}
+        {# TLS fragment: real TLS to CDN domains. #}
+        {% if ctx.hconfig.tls_fragment_enable and domain.mode.is_cdn() %}
+            {% set data.fragment = ctx.hconfig.tls_fragment_size ~ ',' ~ ctx.hconfig.tls_fragment_sleep ~ ',' ~ (ctx.hconfig.tls_fragment_packets or 'tlshello') %}
+        {% endif %}
+        {%if domain.allow_insecure %}
+            {%if ctx.platform.xray.version>"0.0.0" and ctx.platform.xray.version<"26.1.1" %}
+                {%set data.allowInsecure= true %}
+                {%set data.insecure= true %}
+            {%else%}
+                {%set data.pcs=",".join(domain.cert.pinnedPeerCertSha256)%}
+            {%endif%}
+        {%endif%}
+    {% endif %}
+{% else %}
+    
+{% endif %}

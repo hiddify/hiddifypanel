@@ -1,0 +1,21 @@
+{% set domain = domain if domain is defined else ctx.domain %}
+{% set proxy = ctx.proxy %}
+
+{% set cert = cert if cert is defined else domain.cert %}
+{% set server_name = cert.server_name %}
+
+"tls": {
+  "enabled": true,
+  "server_name": "{{ server_name }}",
+    {% if ctx.proxy.proto not in ["hysteria","tuic"] %}
+      "alpn": {{ proxy.tls_layer.alpns() | tojson }},
+    {% endif %}
+  
+
+
+  {% if cert.cert_lines %}
+  "certificate": {{ cert.cert_lines | tojson }},
+  "key": {{ cert.key_lines | tojson }},
+  {% endif %}
+
+},

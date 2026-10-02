@@ -1,5 +1,6 @@
+{% if not ctx.for_parent %}
 {% include 'sublink/subscription_header' %}
+{% endif %}
 {% if ctx.user.is_active %}
-{% block links %}
-{% endblock %}
-{%endif%}
+{{ links }}
+{% endif %}

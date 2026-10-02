@@ -12,17 +12,71 @@
     >
       <template #header>
         <div class="flex justify-between items-center flex-wrap gap-3">
-          <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('common.search')" @click="load" />
-          <Button
-            icon="pi pi-file-export"
-            :label="t('proxy.generateBundle')"
-            severity="secondary"
-            @click="bundleDialogVisible = true"
-          />
-          <Button icon="pi pi-plus" :label="t('proxy.new')" @click="router.push({ name: 'custom-proxy-new' })" />
+          <IconField class="min-w-56 flex-1 max-w-xl">
+            <InputIcon class="pi pi-search" />
+            <InputText
+              v-model="filterSearch"
+              :placeholder="t('proxy.searchAll')"
+              class="w-full"
+            />
+          </IconField>
+          <div class="flex flex-wrap gap-2">
+            <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('common.search')" @click="load" />
+            <Button
+              icon="pi pi-file-export"
+              :label="t('proxy.generateBundle')"
+              severity="secondary"
+              @click="bundleDialogVisible = true"
+            />
+            <Button icon="pi pi-plus" :label="t('proxy.new')" as="a" :href="newProxyHref" @click.exact.prevent="openNew" />
+          </div>
         </div>
       </template>
 
+      <Column field="enable" sortable class="w-44 shrink-0">
+        <template #header>
+          <div class="flex items-center gap-1">
+            <span>{{ t('common.enabled') }}</span>
+            <Button
+              icon="pi pi-filter"
+              text
+              rounded
+              size="small"
+              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
+              :aria-label="t('common.filter')"
+              @click="(e: Event) => enabledPopover.toggle(e)"
+            />
+          </div>
+        </template>
+        <template #body="{ data }">
+          <div class="list-actions-cell">
+            <ToggleSwitch
+              :key="`${data.id}-${enableSwitchEpoch}`"
+              :model-value="isEffectivelyEnabled(data)"
+              @update:model-value="(v: boolean) => toggleEnable(data, v)"
+            />
+            <Button
+              as="a"
+              :href="editProxyHref(data.id)"
+              icon="pi pi-pencil"
+              text
+              rounded
+              @click.exact.prevent="openEdit(data.id)"
+            />
+            <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
+            <Button
+              v-if="!data.is_builtin"
+              icon="pi pi-trash"
+              text
+              rounded
+              severity="danger"
+              @click="confirmDelete(data)"
+            />
+            <Tag v-if="showsCommonProxy(data)" icon="pi pi-asterisk" v-tooltip="t('proxy.commonProxyBadge')" severity="info" />
+            <SysBadge v-if="data.is_builtin" :customized="Boolean(data.server_override || data.client_override)" icon-only class="inline-flex" />
+          </div>
+        </template>
+      </Column>
       <Column field="name" sortable>
         <template #header>
           <div class="flex items-center gap-1">
@@ -39,7 +93,11 @@
           </div>
         </template>
         <template #body="{ data }">
-          <span>{{ data.name }}</span>
+          <a
+            class="proxy-name-link"
+            :href="editProxyHref(data.id)"
+            @click.exact.prevent="openEdit(data.id)"
+          >{{ data.name }}</a>
         </template>
       </Column>
       <Column field="proto" sortable>
@@ -58,7 +116,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag v-if="data.proto" :value="protoLabel(data.proto)" severity="info" />
+          <Tag v-if="data.proto && !isNoInbound(data)" :value="protoLabel(data.proto)" :style="protoTagStyle(data.proto)" class="proto-tag" />
           <span v-else>—</span>
         </template>
       </Column>
@@ -97,14 +155,40 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag
-            v-for="category in data.categories || []"
-            :key="category"
-            :value="category"
-            class="mr-1 mb-1"
-            severity="secondary"
-          />
-          <span v-if="!(data.categories || []).length">—</span>
+          <div v-if="(data.categories || []).length" class="chip-summary-cell">
+            <template v-if="isCategoriesExpanded(data.id)">
+              <Tag
+                v-for="category in data.categories || []"
+                :key="category"
+                :value="category"
+                class="me-1 mb-1"
+                severity="secondary"
+              />
+              <Button
+                link
+                class="p-0 chip-summary-toggle"
+                :label="t('common.collapse', 'less')"
+                @click="toggleCategories(data.id)"
+              />
+            </template>
+            <template v-else>
+              <Tag
+                v-for="category in visibleCategories(data.categories || [])"
+                :key="category"
+                :value="category"
+                class="me-1 mb-1"
+                severity="secondary"
+              />
+              <Button
+                v-if="(data.categories || []).length > 2"
+                link
+                class="p-0 chip-summary-toggle"
+                label="…"
+                @click="toggleCategories(data.id)"
+              />
+            </template>
+          </div>
+          <span v-else>—</span>
         </template>
       </Column>
       <Column field="server_core" sortable>
@@ -127,121 +211,95 @@
           <span v-else>—</span>
         </template>
       </Column>
-      <Column >
+      <Column field="tls_layer" sortable>
         <template #header>
-          <div class="flex items-center gap-1">
-            <span>{{ t('proxy.clientCores') }}</span>
-            <Button
-              icon="pi pi-filter"
-              text
-              rounded
-              size="small"
-              :severity="filterClientCore ? 'primary' : 'secondary'"
-              :aria-label="t('common.filter')"
-              @click="(e: Event) => clientPopover.toggle(e)"
-            />
-          </div>
+          <span>{{ t('proxy.tlsLayer') }}</span>
         </template>
         <template #body="{ data }">
-          <Tag v-for="c in data.client_cores || []" :key="c" :value="c" class="mr-1" />
-          <span v-if="!(data.client_cores || []).length">—</span>
+          <span>{{ tlsLayerDisplay(data) }}</span>
         </template>
       </Column>
-      <Column field="enable" sortable>
+      <Column field="domain_modes">
         <template #header>
-          <div class="flex items-center gap-1">
-            <span>{{ t('common.enabled') }}</span>
-            <Button
-              icon="pi pi-filter"
-              text
-              rounded
-              size="small"
-              :severity="filterEnabled !== null ? 'primary' : 'secondary'"
-              :aria-label="t('common.filter')"
-              @click="(e: Event) => enabledPopover.toggle(e)"
-            />
+          <span>{{ t('proxy.domainModes') }}</span>
+        </template>
+        <template #body="{ data }">
+          <div v-if="(data.domain_modes || []).length" class="domain-modes-cell">
+            <template v-if="isDomainModesExpanded(data.id)">
+              <Tag
+                v-for="mode in data.domain_modes || []"
+                :key="mode"
+                :value="t(`proxy.domainModeLabels.${mode}`, mode)"
+                class="me-1 mb-1"
+                severity="secondary"
+              />
+              <Button
+                link
+                class="p-0 domain-modes-toggle"
+                :label="t('common.collapse', 'less')"
+                @click="toggleDomainModes(data.id)"
+              />
+            </template>
+            <template v-else>
+              <span class="domain-modes-summary">{{ domainModesSummary(data.domain_modes || []) }}</span>
+              <Button
+                v-if="domainModesNeedsExpand(data.domain_modes || [])"
+                link
+                class="p-0 domain-modes-toggle"
+                label="…"
+                @click="toggleDomainModes(data.id)"
+              />
+            </template>
           </div>
-        </template>
-        <template #body="{ data }">
-          <ToggleSwitch :model-value="data.enable" @update:model-value="(v: boolean) => toggleEnable(data, v)" />
-        </template>
-      </Column>
-      <Column header="" class="w-52 shrink-0">
-        <template #body="{ data }">
-          <SysBadge v-if="data.is_builtin" :customized="Boolean(data.server_override || data.client_override)" icon-only class="inline-flex mr-1" />
-          <Button icon="pi pi-pencil" text rounded @click="router.push({ name: 'custom-proxy-edit', params: { id: data.id } })" />
-          <Button icon="pi pi-copy" text rounded @click="duplicate(data.id)" />
-          <Button
-            v-if="!data.is_builtin"
-            icon="pi pi-trash"
-            text
-            rounded
-            severity="danger"
-            @click="confirmDelete(data)"
-          />
+          <span v-else>—</span>
         </template>
       </Column>
     </DataTable>
   </Panel>
 
-  <Popover ref="categoriesPopover">
-    <div class="flex flex-col gap-2 min-w-52">
-      <label class="text-sm font-medium">{{ t('proxy.categories') }}</label>
-      <MultiSelect
-        v-model="filterCategories"
-        :options="categoryOptions"
-        display="chip"
-        filter
-        show-clear
-        class="w-full"
-        :placeholder="t('proxy.categoriesFilter')"
-      />
+  <!-- One click on a filter icon: the list is already open (or the text box is focused) -->
+  <Popover ref="categoriesPopover" @show="focusFirstInput(categoriesPopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.categories') }}</label>
+      <Listbox v-model="filterCategories" :options="categoryOptions" multiple filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" />
+      <Button v-if="filterCategories.length" :label="t('tags.clear')" icon="pi pi-times" text size="small" severity="secondary" @click="filterCategories = []" />
     </div>
   </Popover>
-  <Popover ref="namePopover">
-    <div class="flex flex-col gap-2 min-w-52">
-      <label class="text-sm font-medium">{{ t('proxy.name') }}</label>
+  <Popover ref="namePopover" @show="focusFirstInput(namePopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.name') }}</label>
       <IconField>
         <InputIcon class="pi pi-search" />
-        <InputText v-model="filterName" :placeholder="t('common.search')" class="w-full" />
+        <InputText v-model="filterName" :placeholder="t('common.search')" class="w-full" @keydown.enter="namePopover.hide()" />
       </IconField>
     </div>
   </Popover>
-  <Popover ref="protoPopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.protocol') }}</label>
-      <Select v-model="filterProto" :options="protoOptions" option-label="label" option-value="value" show-clear class="w-full" />
+  <Popover ref="protoPopover" @show="focusFirstInput(protoPopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.protocol') }}</label>
+      <Listbox v-model="filterProto" :options="protoOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="protoPopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: protoColor(option.value) }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
-  <Popover ref="modePopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.mode') }}</label>
-      <Select v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" show-clear class="w-full" />
+  <Popover ref="modePopover" @show="focusFirstInput(modePopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.mode') }}</label>
+      <Listbox v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="modePopover.hide()" />
     </div>
   </Popover>
-  <Popover ref="corePopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.serverCore') }}</label>
-      <Select v-model="filterCore" :options="coreOptions" show-clear class="w-full" />
-    </div>
-  </Popover>
-  <Popover ref="clientPopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.clientCores') }}</label>
-      <Select v-model="filterClientCore" :options="clientCoreOptions" show-clear class="w-full" />
+  <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.serverCore') }}</label>
+      <Listbox v-model="filterCore" :options="coreOptions" class="w-full" @change="corePopover.hide()" />
     </div>
   </Popover>
   <Popover ref="enabledPopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('common.enabled') }}</label>
-      <Select
-        v-model="filterEnabled"
-        :options="enabledOptions"
-        option-label="label"
-        option-value="value"
-        show-clear
-        class="w-full"
-      />
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('common.enabled') }}</label>
+      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()" />
     </div>
   </Popover>
 
@@ -249,10 +307,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { apiErrorMessage } from '@/core/api/client'
+defineOptions({ name: 'CustomProxyListView' })
+
+import { computed, onActivated, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useConfirm } from 'primevue/useconfirm'
+import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { useToast } from 'primevue/usetoast'
 import Panel from 'primevue/panel'
 import DataTable from 'primevue/datatable'
@@ -260,21 +321,94 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Tag from 'primevue/tag'
-import MultiSelect from 'primevue/multiselect'
-import Select from 'primevue/select'
+import Listbox from 'primevue/listbox'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Popover from 'primevue/popover'
 import PageHeader from '@/shared/components/PageHeader.vue'
+import { focusFirstInput } from '@/shared/utils/popover-focus'
+import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import GenerateBundleDialog from '@/features/custom-proxy/components/GenerateBundleDialog.vue'
 import { customProxiesApi, type CustomProxy, type CustomProxyMeta } from '@/core/api/generated'
+import { isEffectivelyEnabled, blockedParentEnables, isBlockedByParent, parentEnableConflict, useParentEnablePrompt } from '@/features/custom-proxy/parent-enable'
 
 const { t } = useI18n()
 const router = useRouter()
-const confirm = useConfirm()
+const dangerConfirm = useDangerConfirm()
 const toast = useToast()
+const { promptParentEnable } = useParentEnablePrompt()
+const enableSwitchEpoch = ref(0)
+
+const newProxyHref = computed(() => router.resolve({ name: 'custom-proxy-new' }).href)
+
+function editProxyHref(id: number | undefined) {
+  if (id == null) return '#'
+  return router.resolve({ name: 'custom-proxy-edit', params: { id: String(id) } }).href
+}
+
+function openNew() {
+  void router.push({ name: 'custom-proxy-new' })
+}
+
+function openEdit(id: number | undefined) {
+  if (id == null) return
+  void router.push({ name: 'custom-proxy-edit', params: { id: String(id) } })
+}
+
+const expandedDomainModeIds = ref<Set<number>>(new Set())
+const expandedCategoryIds = ref<Set<number>>(new Set())
+
+function domainModeFamilies(modes: string[]): string[] {
+  const families: string[] = []
+  const seen = new Set<string>()
+  for (const mode of modes) {
+    const family = String(mode).split('-')[0] || String(mode)
+    if (!seen.has(family)) {
+      seen.add(family)
+      families.push(family)
+    }
+  }
+  return families
+}
+
+function domainModesSummary(modes: string[]): string {
+  return domainModeFamilies(modes).join(', ')
+}
+
+function domainModesNeedsExpand(modes: string[]): boolean {
+  if (modes.length <= 1) return false
+  return modes.some((mode) => String(mode).includes('-')) || modes.length > domainModeFamilies(modes).length
+}
+
+function isDomainModesExpanded(id: number | undefined): boolean {
+  return id != null && expandedDomainModeIds.value.has(id)
+}
+
+function toggleDomainModes(id: number | undefined) {
+  if (id == null) return
+  const next = new Set(expandedDomainModeIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expandedDomainModeIds.value = next
+}
+
+function visibleCategories(categories: string[]): string[] {
+  return categories.slice(0, 2)
+}
+
+function isCategoriesExpanded(id: number | undefined): boolean {
+  return id != null && expandedCategoryIds.value.has(id)
+}
+
+function toggleCategories(id: number | undefined) {
+  if (id == null) return
+  const next = new Set(expandedCategoryIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expandedCategoryIds.value = next
+}
 
 const proxies = ref<CustomProxy[]>([])
 const meta = ref<CustomProxyMeta | null>(null)
@@ -283,16 +417,15 @@ const loading = ref(false)
 const modeOptions = ref<{ label: string; value: string }[]>([])
 const protoOptions = ref<{ label: string; value: string }[]>([])
 const coreOptions = ref<string[]>([])
-const clientCoreOptions = ref<string[]>([])
 
 const filterCategories = ref<string[]>([])
 const categoryOptions = ref<string[]>([])
 
+const filterSearch = ref('')
 const filterName = ref('')
 const filterProto = ref<string | null>(null)
 const filterMode = ref<string | null>(null)
 const filterCore = ref<string | null>(null)
-const filterClientCore = ref<string | null>(null)
 const filterEnabled = ref<boolean | null>(null)
 
 const categoriesPopover = ref()
@@ -300,13 +433,22 @@ const namePopover = ref()
 const protoPopover = ref()
 const modePopover = ref()
 const corePopover = ref()
-const clientPopover = ref()
 const enabledPopover = ref()
 
 const enabledOptions = [
   { label: t('common.enabled'), value: true },
-  { label: 'Disabled', value: false },
+  { label: t('common.disabled'), value: false },
 ]
+
+const COMMON_PROXY_CORES = new Set(['hiddify-core', 'xray'])
+
+function isNoInbound(row: CustomProxy) {
+  return row.mode === 'no_inbound'
+}
+
+function showsCommonProxy(row: CustomProxy) {
+  return Boolean(row.is_common_proxy) && (isNoInbound(row) || COMMON_PROXY_CORES.has(row.server_core ?? ''))
+}
 
 function protoLabel(proto: string | undefined) {
   if (!proto) return '—'
@@ -319,20 +461,69 @@ function modeLabel(mode: string | undefined) {
   return t(`proxy.modeLabels.${mode}`, mode)
 }
 
+const TLS_LAYER_SHORT: Record<string, string> = {
+  http: '-',
+  tls_h1: 'TLS H1',
+  tls_h2: 'TLS H2',
+  tls: 'TLS H2 H1',
+  quic_tls: 'QUIC',
+  quic_tcp_tls: 'QUIC+TLS',
+}
+
+function tlsLayerShort(layer: string | null | undefined): string {
+  if (!layer) return ''
+  return TLS_LAYER_SHORT[layer] || t(`proxy.tlsLayerLabels.${layer}`, layer)
+}
+
+function tlsLayerDisplay(row: CustomProxy): string {
+  const up = row.tls_layer
+  const down = row.download_tls_layer
+  if (!up && !down) return '—'
+  if (down && up && down !== up) {
+    return `📤${tlsLayerShort(up)} 📥${tlsLayerShort(down)}`
+  }
+  return tlsLayerShort(up || down)
+}
+
+function proxySearchHaystack(row: CustomProxy): string {
+  const mode = row.mode ?? (row as { protocol?: string }).protocol
+  const proto = row.proto ?? (row as { protocol?: string }).protocol
+  const parts = [
+    row.name,
+    row.slug,
+    isNoInbound(row) ? '' : proto,
+    isNoInbound(row) ? '' : protoLabel(proto),
+    mode,
+    modeLabel(mode),
+    ...(row.categories ?? []),
+    row.server_core,
+    row.tls_layer,
+    row.download_tls_layer,
+    tlsLayerDisplay(row),
+    ...(row.domain_modes ?? []),
+    ...(row.domain_modes ?? []).map((domainMode) => t(`proxy.domainModeLabels.${domainMode}`, domainMode)),
+    isEffectivelyEnabled(row) ? t('common.enabled') : t('common.disabled'),
+    showsCommonProxy(row) ? t('proxy.commonProxyBadge') : '',
+    row.is_builtin ? 'SYS' : '',
+  ]
+  return parts.filter((part): part is string => Boolean(part)).join(' ').toLowerCase()
+}
+
 const filteredProxies = computed(() =>
   proxies.value.filter((p) => {
     const mode = p.mode ?? (p as { protocol?: string }).protocol
     const proto = p.proto ?? (p as { protocol?: string }).protocol
+    const searchQ = filterSearch.value.trim().toLowerCase()
+    if (searchQ && !proxySearchHaystack(p).includes(searchQ)) return false
     const nameQ = filterName.value.trim().toLowerCase()
     if (nameQ && !(p.name || '').toLowerCase().includes(nameQ) && !(p.slug || '').toLowerCase().includes(nameQ)) {
       return false
     }
-    if (filterProto.value && proto !== filterProto.value) return false
+    if (filterProto.value && (isNoInbound(p) || proto !== filterProto.value)) return false
     if (filterMode.value && mode !== filterMode.value) return false
     if (filterCore.value && p.server_core !== filterCore.value) return false
-    if (filterClientCore.value && !(p.client_cores || []).includes(filterClientCore.value)) return false
     if (filterCategories.value.length && !filterCategories.value.some((category) => (p.categories || []).includes(category))) return false
-    if (filterEnabled.value !== null && Boolean(p.enable) !== filterEnabled.value) return false
+    if (filterEnabled.value !== null && isEffectivelyEnabled(p) !== filterEnabled.value) return false
     return true
   }),
 )
@@ -352,16 +543,13 @@ async function load() {
       value: p,
     }))
     const cores = new Set<string>()
-    const clientCores = new Set<string>(metaRes.client_cores ?? [])
     const categories = new Set<string>(metaRes.suggested_categories ?? [])
     for (const p of list) {
       if (p.server_core) cores.add(p.server_core)
-      for (const c of p.client_cores ?? []) clientCores.add(c)
       for (const category of p.categories ?? []) categories.add(category)
     }
     for (const c of metaRes.server_cores ?? []) cores.add(c)
     coreOptions.value = [...cores].sort()
-    clientCoreOptions.value = [...clientCores].sort()
     categoryOptions.value = [...categories].sort()
   } catch {
     toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 5000 })
@@ -370,23 +558,55 @@ async function load() {
   }
 }
 
+function rejectBlockedEnable(row: CustomProxy) {
+  enableSwitchEpoch.value += 1
+  promptParentEnable(blockedParentEnables(row), meta.value?.parent_enable_settings_url)
+}
+
 async function toggleEnable(row: CustomProxy, enable: boolean) {
   if (!row.id) return
-  await customProxiesApi.enable(row.id, enable)
-  row.enable = enable
+  if (enable && isBlockedByParent(row)) {
+    rejectBlockedEnable(row)
+    return
+  }
+  try {
+    const updated = await customProxiesApi.enable(row.id, enable)
+    if (enable && isBlockedByParent(updated)) {
+      rejectBlockedEnable({ ...row, ...updated })
+      return
+    }
+    Object.assign(row, updated)
+  } catch (err: unknown) {
+    const conflict = parentEnableConflict(err)
+    if (conflict) {
+      enableSwitchEpoch.value += 1
+      promptParentEnable(conflict.blocked_by, conflict.settings_url)
+      return
+    }
+    enableSwitchEpoch.value += 1
+    toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 5000 })
+  }
 }
 
 async function duplicate(id: number) {
-  const copy = await customProxiesApi.duplicate(id)
+  let copy
+  try {
+    copy = await customProxiesApi.duplicate(id)
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+    return
+  }
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
+  await load()
   await router.push({ name: 'custom-proxy-edit', params: { id: String(copy.id) } })
 }
 
 function confirmDelete(row: CustomProxy) {
-  confirm.require({
+  dangerConfirm({
     message: t('common.confirmDelete'),
     header: t('common.delete'),
-    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('common.delete'),
+    rejectLabel: t('common.cancel'),
     accept: async () => {
       if (!row.id) return
       await customProxiesApi.delete(row.id)
@@ -397,4 +617,68 @@ function confirmDelete(row: CustomProxy) {
 }
 
 onMounted(load)
+onActivated(() => {
+  // Refresh rows after edit/save while keeping filters/search from KeepAlive.
+  void load()
+})
 </script>
+
+<style scoped>
+.filter-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 14rem;
+}
+.filter-pop__title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.proto-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.proto-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+}
+.proto-tag {
+  font-weight: 600;
+}
+.proxy-name-link,
+.list-name-link {
+  color: var(--p-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.proxy-name-link:hover,
+.list-name-link:hover {
+  text-decoration: underline;
+}
+.list-actions-cell {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+.domain-modes-cell,
+.chip-summary-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+.domain-modes-summary {
+  font-size: 0.9rem;
+}
+.domain-modes-toggle,
+.chip-summary-toggle {
+  font-size: 0.85rem;
+  min-width: auto;
+}
+</style>

@@ -1,7 +1,5 @@
-from flask import g
 from flask.views import MethodView
 from apiflask import abort
-from flask import current_app as app
 from sqlalchemy.exc import IntegrityError
 
 from hiddifypanel.auth import login_required
@@ -10,6 +8,7 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.database import db
 
 from .schemas import PatchProxyTemplateIn, ProxyTemplateIn, ProxyTemplateOut
+from hiddifypanel import g, current_app as app
 
 
 def _child_id() -> int:

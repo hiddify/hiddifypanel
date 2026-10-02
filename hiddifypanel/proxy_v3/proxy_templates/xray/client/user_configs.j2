@@ -1,0 +1,11 @@
+{#
+  Builtin user_configs (xray JSON).
+  The user's own additional configs (Users → edit → Additional configs), for this format or "auto".
+#}
+{% block outbounds %}
+  {% for conf in user_additional_configs("xray") if conf %}
+    {% for outbound in remote_proxy_outbounds(conf, "xray") %}
+      {{ outbound | tojson }},
+    {% endfor %}
+  {% endfor %}
+{% endblock %}

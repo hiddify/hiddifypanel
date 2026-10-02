@@ -1,0 +1,63 @@
+{# Outbound manager (Admin → Outbounds): each outbound's sites and rule-sets, in rule order
+   (block, SOCKS/Tor/Psiphon, WARP, direct); the default outbound is `final`. #}
+"route": {
+  "rule_set": [
+    {% for rs in ctx.outbounds.rule_sets %}
+    {
+      "tag": "{{ rs.tag }}",
+      "type": "remote",
+      "format": {{ rs.format|tojson }},
+      "update_interval": "1d",
+      "url": {{ rs.url|tojson }}
+    },
+    {% endfor %}
+  ],
+  "final": "{{ ctx.outbounds.default_singbox_tag }}",
+  "rules": [
+    {"action": "sniff"},
+    {# Traffic xray sends into a Tor / Psiphon SOCKS inbound leaves through that outbound #}
+    {% for o in ctx.outbounds.native %}
+    {"inbound": ["in-{{ o.singbox_tag }}"], "outbound": {{ o.singbox_tag|tojson }}},
+    {% endfor %}
+    {
+      "action": "hijack-dns",
+      "port": [53]
+    },
+    {
+      "action": "hijack-dns",
+      "protocol": "dns"
+    },
+    {
+      "protocol": "quic",
+      "port": [443],
+      "action": "reject",
+      "method": "default"
+    },
+    {# Users with a preferred outbound (Users → edit → Preferred outbound): all their traffic goes there. #}
+    {% for route in ctx.outbounds.user_routes %}
+    {
+      "auth_user": {{ route.uuids|tojson }},
+      {% if route.block %}"action": "reject", "method": "default"{% else %}"outbound": {{ route.singbox_tag|tojson }}{% endif %}
+    },
+    {% endfor %}
+    {% for o in ctx.outbounds.items if o.has_singbox_rules %}
+    {% set target %}{% if o.mode == 'block' %}"action": "reject", "method": "default"{% else %}"outbound": {{ o.singbox_tag|tojson }}{% endif %}{% endset %}
+    {% if o.sites %}
+    {
+      {{ target }},
+      "domain_suffix": {{ o.sites|tojson }}
+    },
+    {% endif %}
+    {% if o.rule_sets %}
+    {
+      {{ target }},
+      "rule_set": [{% for rs in o.rule_sets %}{{ rs.tag|tojson }},{% endfor %}]
+    },
+    {% endif %}
+    {% endfor %}
+    {
+      "action": "reject",
+      "ip_is_private": true
+    }
+  ]
+}

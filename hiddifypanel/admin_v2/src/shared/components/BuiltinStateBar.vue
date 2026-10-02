@@ -27,7 +27,7 @@ const { t } = useI18n()
           : (defaultLabel || t('template.builtinDefault'))
       }}
     </span>
-    <div v-if="showToggle" class="flex items-center gap-2 ml-auto">
+    <div v-if="showToggle" class="flex items-center gap-2 ms-auto">
       <label class="text-sm text-muted-color cursor-pointer" for="builtin-override-toggle">
         {{ t('template.customContent') }}
       </label>

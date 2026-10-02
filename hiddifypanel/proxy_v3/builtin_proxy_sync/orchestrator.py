@@ -258,6 +258,7 @@ def sync_base_configs(child_id: int = 0, *, refresh_builtin: bool = True) -> tup
 def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
     """Sync programmatic custom-proxy presets with unified stale handling."""
     from hiddifypanel.models.custom_proxy import normalize_custom_path
+
     from ..template_catalog.custom_proxy_presets import iter_custom_proxy_presets
 
     presets = iter_custom_proxy_presets(child_id)
@@ -277,37 +278,40 @@ def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
                 updated += 1
             continue
         server = preset.server_config
-        row = CustomProxy.add_or_update(
-            child_id=child_id,
-            commit=False,
-            is_builtin=True,
-            name=preset.name,
-            slug=slug,
-            enable=preset.enable,
-            mode=preset.mode.value,
-            proto=preset.proto,
-            transport=preset.transport,
-            tls_layer=preset.tls_layer,
-            l7_reverse_proto=preset.l7_reverse_proto,
-            download_tls_layer=preset.download_tls_layer,
-            download_domain_modes=list(preset.download_domain_modes),
-            categories=list(preset.categories),
-            domain_modes=list(preset.domain_modes),
-            custom_path=preset.custom_path,
-            server_config={
-                "core": server.core,
-                "inbound_template": server.inbound_template,
-                "template_slugs": list(server.template_slugs),
-                "tag": server.tag,
-                "inbound_tcp_ports": list(server.inbound_tcp_ports),
-                "inbound_udp_ports": list(server.inbound_udp_ports),
-                "sni_domains": list(server.sni_domains),
-                "tcp_udp": preset.tcp_udp.value,
-                "download_tcp_udp": (
-                    preset.download_tcp_udp.value if preset.download_tcp_udp else None
-                ),
-            },
-        )
+        try:
+            row = CustomProxy.add_or_update(
+                child_id=child_id,
+                commit=False,
+                is_builtin=True,
+                name=preset.name,
+                slug=slug,
+                enable=preset.enable,
+                is_common_proxy=preset.is_common_proxy,
+                mode=preset.mode.value,
+                proto=preset.proto,
+                transport=preset.transport,
+                tls_layer=preset.tls_layer,
+                l7_reverse_proto=preset.l7_reverse_proto,
+                download_tls_layer=preset.download_tls_layer,
+                download_domain_modes=list(preset.download_domain_modes),
+                categories=list(preset.categories),
+                domain_modes=list(preset.domain_modes),
+                custom_path=preset.custom_path,
+                server_config={
+                    "core": server.core,
+                    "inbound_template": server.inbound_template,
+                    "template_slugs": list(server.template_slugs),
+                    "tag": server.tag,
+                    "inbound_tcp_ports": list(server.inbound_tcp_ports),
+                    "inbound_udp_ports": list(server.inbound_udp_ports),
+                    "sni_domains": list(server.sni_domains),
+                    "tcp_udp": preset.tcp_udp.value,
+                    "download_tcp_udp": (preset.download_tcp_udp.value if preset.download_tcp_udp else None),
+                },
+            )
+        except Exception as e:
+            logger.error(f"Error adding or updating custom proxy preset {preset.slug}: {e}")
+            continue
         db.session.flush()
         sync_builtin_custom_proxy(row, preset)
         added += 1
@@ -353,6 +357,10 @@ def sync_all(child_id: int = 0, *, refresh_base_configs: bool = True) -> SyncSta
         refresh_builtin=refresh_base_configs,
     )
     cp_added, cp_updated, cp_removed, cp_demoted = sync_custom_proxy_presets(child_id)
+    # Built-in outbounds: lists the admin has not edited follow proxy_templates/outbounds/defaults.yaml.
+    from hiddifypanel.proxy_v3.outbounds import sync_builtin_outbounds
+
+    sync_builtin_outbounds(child_id)
 
     stats = SyncStats(
         child_id=child_id,
@@ -388,7 +396,59 @@ def sync_all(child_id: int = 0, *, refresh_base_configs: bool = True) -> SyncSta
         stats.builtin_base_configs,
         stats.builtin_custom_proxies,
     )
+    from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
+
+    sync_tls_store_all(child_id)
+    from hiddifypanel.cache import cache
+    from hiddifypanel.proxy_v3.config_builder import jinja_render
+
+    cache.invalidate_all_cached_functions()
+    jinja_render.clear_jinja_template_caches()
+    _remember_catalog_fingerprint(child_id)
     return stats
+
+
+_CATALOG_FINGERPRINT_KEY = "hiddify:builtin_catalog_fingerprint:{}"
+
+
+def catalog_fingerprint() -> str:
+    """Hash of the panel version and every file the builtin catalog is built from."""
+    import hashlib
+    from pathlib import Path
+
+    from hiddifypanel import __version__
+
+    root = Path(__file__).resolve().parents[1]  # hiddifypanel/proxy_v3
+    digest = hashlib.sha256(__version__.encode())
+    for sub, pattern in (("proxy_templates", "**/*"), ("template_catalog", "*.py"), ("builtin_proxy_sync", "*.py")):
+        for path in sorted((root / sub).glob(pattern)):
+            if path.is_file() and "__pycache__" not in path.parts:
+                digest.update(str(path.relative_to(root)).encode())
+                digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def _remember_catalog_fingerprint(child_id: int) -> None:
+    from hiddifypanel.cache import redis_client
+
+    try:
+        redis_client.set(_CATALOG_FINGERPRINT_KEY.format(child_id), catalog_fingerprint())
+    except Exception as exc:
+        logger.warning("Could not store builtin catalog fingerprint: {}", exc)
+
+
+def sync_all_if_catalog_changed(child_id: int = 0) -> SyncStats | None:
+    """Run ``sync_all`` only when the builtin catalog sources changed since the last sync."""
+    from hiddifypanel.cache import redis_client
+
+    try:
+        stored = redis_client.get(_CATALOG_FINGERPRINT_KEY.format(child_id))
+        if stored is not None and stored.decode() == catalog_fingerprint():
+            logger.debug("Builtin catalog unchanged for child_id={}; skipping sync", child_id)
+            return None
+    except Exception as exc:
+        logger.warning("Could not read builtin catalog fingerprint ({}); syncing", exc)
+    return sync_all(child_id)
 
 
 def seed_proxy_catalog(child_id: int = 0, *, refresh_builtin_base_configs: bool = False) -> None:

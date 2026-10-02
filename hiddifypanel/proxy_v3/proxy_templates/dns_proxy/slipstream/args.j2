@@ -1,0 +1,6 @@
+{# Slipstream server CLI args — one argv token per line.
+   https://github.com/EndPositive/slipstream
+#}
+--dns-listen-port={{ ctx.proxy.udp_port }}
+--target-address={{ params.upstream | default('127.0.0.1:2001') }}
+--domain={{ ctx.domain.name }}

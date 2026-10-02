@@ -47,6 +47,7 @@
   "Commercial use": "Utilização comercial",
   "Config file is incorrect": "O arquivo de configuração está incorreto.",
   "Copy Link": "Link de cópia",
+  "Copy QR image": "",
   "Couldn't find your ip addresses": "Não foi possível encontrar seus endereços IP",
   "Count:": "Contar:",
   "Create": "Criar",
@@ -77,9 +78,11 @@
   "Edit Proxy Names": "✏️ Modificando Proxies",
   "Enable": "❇️ Habilitar",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ Erro no formato CDN automático",
   "Error! auto cdn ip can not be find, please contact admin.": "Erro no Auto CDN IP! Não pode ser encontrado, entre em contato com o administrador",
   "Example Domains": "Test and Suggest Domain ",
+  "Expired": "",
   "Expired Users": "Usuários expirados",
   "Export": "Exportar",
   "Fake": "➖ Falso",
@@ -107,6 +110,7 @@
   "Incorrect Password": "⚠️ Senha incorreta",
   "Install": "Instalar",
   "Install Hiddify Application": "Instalação do Painel Hidify",
+  "Invalid": "",
   "Invalid IP or domain": "IP ou domínio inválido",
   "Invalid REALITY hostnames": "Nomes de host REALITY inválidos",
   "Invalid admin link": "Link de administrador inválido",
@@ -115,6 +119,8 @@
   "It will override the root admin to the current user": "Irá substituir o administrador proprietário do arquivo de backup pelo administrador atual.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Junte-se ao nosso canal Hiddify Telegram para obter as atualizações mais recentes sobre o Hiddify.",
   "Last Online": "Última vez online",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️ O link foi alterado!",
   "Linux": "Linux",
   "Max Active Users": "Máximo de usuários ativos",
@@ -125,7 +131,10 @@
   "More Applications": "Mais aplicativos",
   "Network": "Rede",
   "New": "Novo",
+  "No certificate": "",
   "No children!": "sem filhos",
+  "No main domains found, please add at least one domain with valid certificate": "",
+  "Nodes": "",
   "Not Secure": "",
   "Note": "📝 Observação",
   "Offline more than 1 day": "Offline por mais de 1 dia",
@@ -160,8 +169,10 @@
   "Port 80 and 443 can not be selected": "",
   "Port is already used! in": "A porta já é usada em:",
   "Premium Description": "O painel Hiddify é feito para uso não comercial. Mas se você usar este painel comercialmente, ajude o projeto a crescer com uma doação. <br/>\nEm troca de seu suporte financeiro, também fornecemos facilidades especiais para seu produto comercial.\n<br/>\n<br/>\nComo:\n<ul><li>\n<li>A possibilidade de sincronizar com o Cloudflare: ou seja, adicionando um domínio no painel, as configurações relevantes também podem ser feitas no Cloudflare</li>\n<li>Possibilidade de exibir sua marca no painel</li>\n<li>Possibilidade de Utilizar o Painel Central para Gerenciar Mais de 1 Servidor em Apenas um Painel, Assim Não É Mais Necessário Cadastrar Usuários em Servidores Diferentes, E Seu Volume Será Coletado em Todos os Servidores.\n</li>\n<li>\nA possibilidade de usar o bot do Telegram\n</li>\n<li>\nCapacidade de alterar nomes de proxy\n</li>\n</ul>\n\nEntre em contato com <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> após a doação.\nEnvie uma mensagem para obter uma versão especial para usuários corporativos.",
+  "Proxy Editor": "",
   "ProxyPath is already used! use different proxy path": "ProxyPath já está em uso! usar caminho de proxy diferente",
   "QR code": "🧾 Código QR",
+  "QR code image copied": "",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "BATER",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain não é compatível com nomes de servidores!",
@@ -191,10 +202,12 @@
   "Save": "Salvar",
   "Save & Add More": "Salvar e adicionar mais",
   "Save Link": "Link salvo",
+  "Search Settings": "",
   "Select all records": "Selecionar todos os registros",
   "Select record": "Selecionar registro",
   "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "Usuários selecionados",
+  "Self-signed": "",
   "Send Message to User's Telegram": "📣 Enviar mensagem para o telegram do usuário",
   "Sending": "Enviando...",
   "Should be a valid domain": "Deve ser um domínio válido",
@@ -212,6 +225,7 @@
   "Submit": "Enviar",
   "Success": "Sucesso",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ Sucesso! Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado",
+  "TLS": "",
   "Telegram Bot": "Telegram Bot",
   "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️ Link curto temporário",
@@ -219,7 +233,9 @@
   "The message was not sent to": "The message was not sent to",
   "The name shown in the configs for this domain.": "O nome que será mostrado nas Configs deste Domínio.",
   "This can be used for giving your users a permanent non blockable links.": "Isso pode ser usado para fornecer aos seus usuários links permanentes não bloqueáveis.",
+  "This domain %(domain_name)s is invalid": "O domínio %(domain_name)s é inválido",
   "This domain does not exist in the panel!": "Este Domínio não existe no Painel!",
+  "This restore has expired. Start it again from the Backup page.": "",
   "Today Usage": "Hoje",
   "Too many Connected IPs": "Muitos IPs conectados",
   "Total Usage": "Uso total",
@@ -231,7 +247,9 @@
   "User is inactive": "O usuário está inativo",
   "V2rayNG": "Alternativa v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>",
   "V2rayNG intro": "Instale o v2rayNG a partir de um destes links: %(dl_link)s %(play_link)s.\nEntão copie o link abaixo e cole no v2rayNG conforme o vídeo tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -question'></i> </button>.\n<br />",
+  "Valid": "",
   "View in Telegram": "Ver no Telegram",
+  "Waiting for the process to start...": "",
   "Want to enjoy more with telegram?": "Conecte sua conta ao Telegram",
   "Welcome %(user)s": "Bem-vindo %(user)s",
   "Why Going to Premium?": "Por que ir para premium?",
@@ -244,6 +262,7 @@
   "You can restore your configs from previously downloaded configs": "Você pode restaurar suas configurações do arquivo de backup baixado anteriormente",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "Você tem muitos usuários! Você pode ter apenas %(active)s usuários ativos e %(total)s usuários",
   "You have used this domain in: ": "Já utilizou este Domínio em:",
+  "You need to enable %(names)s globally to enable this proxy.": "",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Suas informações de instância do Hiddify\nDomínio: {}\nLimite de uso: {} GB\nUso atual: {} GB\nExpira em: {}\nDias restantes: {}\n\n\nBoa sorte! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Mensagem visível apenas pelo administrador]: Você pode alterar esta mensagem nas configurações.",
   "actions": "Ações",
@@ -362,6 +381,8 @@
       "title": "V2RayNG"
     }
   },
+  "at least one domain should exist": "",
+  "at least one user should exist": "",
   "auto": "Auto",
   "auto_cdn_ip": "Seletor automático de CDN IP",
   "bot": {
@@ -469,6 +490,13 @@
     "cloudflare": {
       "description": "Por favor, siga <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>a instrução</a> e cole a chave de API Cloudflare",
       "label": "🔑 API Cloudflare"
+    },
+    "common_proxy_core": {
+      "both": "",
+      "description": "",
+      "hiddify_core": "",
+      "label": "",
+      "xray": ""
     },
     "core_type": {
       "description": "☢️ XRay: é um núcleo completo\n<br>\n📦 Singbox: Desenvolvido por SagerNet. Também é um bom núcleo",
@@ -646,6 +674,10 @@
       "description": "config.last_priodic_usage_check.description",
       "label": "config.last_priodic_usage_check.label"
     },
+    "last_users_sync": {
+      "description": "",
+      "label": ""
+    },
     "license": {
       "description": "Para uso comercial deste produto, você deve comprar sua licença",
       "label": "Código de licença"
@@ -660,6 +692,14 @@
       "WARNING": "",
       "description": "config.log_level.descrição",
       "label": "config.log_level.label"
+    },
+    "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
+    },
+    "max_proxy_ips_per_version": {
+      "description": "",
+      "label": ""
     },
     "mieru": {
       "description": "",
@@ -744,6 +784,10 @@
       "description": "Para exibir recursos. usa a CPU do seu servidor, mas não é muito.",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "",
+      "label": ""
+    },
     "not_found": {
       "description": "Configuração não encontrada",
       "label": "Configuração não encontrada"
@@ -778,6 +822,10 @@
     "path_grpc": {
       "description": "Caminho gRPC nas configurações",
       "label": "ℹ️ caminho gRPC"
+    },
+    "path_http": {
+      "description": "",
+      "label": ""
     },
     "path_httpupgrade": {
       "description": "deveria ser aleatório",
@@ -1235,6 +1283,10 @@
       "description": "Websocket cria um túnel sobre HTTP que é útil para ser usado em CDN",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "Este protocolo envia e recebe informações em canais individuais ",
       "label": "🈁 Split HTTP"
@@ -1257,13 +1309,17 @@
     "custom_proxy": {
       "description": "",
       "group": {
+        "dns_gateway": "",
         "ip_based": "",
+        "l7_gateway": "",
         "other": "",
         "sni_gateway": ""
       },
       "label": "",
       "reality_only": "",
-      "reality_required": ""
+      "reality_required": "",
+      "sni_l7_mutex": "",
+      "sni_single_only": ""
     },
     "description": "Por favor, preencha este campo com cuidado e corretamente. Caso contrário, os proxies terão problemas. Visite <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Ajuda</a> para aprenda como criar um subdomínio.",
     "domain": "Domínio",
@@ -1294,9 +1350,13 @@
     },
     "server_domain": {
       "description": "",
-      "label": ""
+      "label": "",
+      "must_be_valid_direct_or_relay": ""
     },
-    "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis."
+    "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis.",
+    "tls_status": {
+      "description": ""
+    }
   },
   "download": "Download direto",
   "download_domain": {
@@ -1308,6 +1368,7 @@
   "grpc-proxy": {
     "description": "ℹ️ gRPC é um protocolo baseado em H2. Talvez seja mais rápido para você!"
   },
+  "in\n          parent panel": "",
   "in parent panel": "No Painel Central",
   "install from google play": "<i class='fa-brands fa-google-play'></i>Google Play",
   "ios": "iOS",
@@ -1370,6 +1431,7 @@
   "package size?": "tamanho do pacote?",
   "parent": {
     "invalid-parent-url": "parent.invalid-parent-url",
+    "panel-not-active": "",
     "sync-req-failed": "parent.sync-req-failed"
   },
   "previous": "Anterior",

@@ -1,0 +1,11 @@
+"network": "tcp",
+"tcpSettings": {
+ {% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
+
+  "header": {
+    "type": "http",
+    "request": {
+      "path": ["/{{ ctx.proxy.path }}"]
+    }
+  }
+}

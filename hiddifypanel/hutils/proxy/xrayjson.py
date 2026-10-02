@@ -1,7 +1,7 @@
 import json
 import copy
-from flask import render_template, g
-from hiddifypanel import hutils
+from flask import render_template
+from hiddifypanel import g, hutils
 from hiddifypanel.models import ProxyTransport, ProxyL3, ProxyProto, Domain, User
 from flask_babel import gettext as _
 from hiddifypanel.models import hconfig, ConfigEnum

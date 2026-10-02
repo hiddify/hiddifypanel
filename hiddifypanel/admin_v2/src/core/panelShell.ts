@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export interface AdminMenuItem {
   label: string
@@ -7,10 +7,52 @@ export interface AdminMenuItem {
   url?: string
   target?: string
   badge?: string
+  /** `post`: the URL only accepts POST (system actions); submitted as a form after `confirm`. */
+  method?: 'get' | 'post'
+  confirm?: string
+  /** Opens a shell dialog instead of navigating (e.g. `donation`). */
+  action?: 'donation' | string
+  /** Sanitized HTML body for `action` dialogs. */
+  dialog_html?: string
   items?: AdminMenuItem[]
 }
 
+/** Dialog opened from a menu `action` item; null when closed. */
+export const shellDialog = ref<{ action: string; title: string; html: string } | null>(null)
+
+/** Navigate to `url` with a POST form submit (full page load, like the classic admin's `form_post`). */
+export function submitPostForm(url: string, target = '_self'): void {
+  const form = document.createElement('form')
+  form.method = 'post'
+  form.action = url
+  form.target = target
+  form.style.display = 'none'
+  document.body.appendChild(form)
+  form.submit()
+  form.remove()
+}
+
+/** A classic system action (status, logs, apply, update, …) shown in a dialog with an iframe. */
+export interface LegacyAction {
+  title: string
+  url: string
+  /** `post` actions are submitted into the frame (they only accept POST). */
+  method: 'get' | 'post'
+  /** Runs once when the action's log reports it finished (classic result page). */
+  onFinish?: () => void
+  /** Runs when the dialog is closed, whether or not the action finished. */
+  onClose?: () => void
+}
+
+export const legacyActionDialog = ref<LegacyAction | null>(null)
+
+export function openLegacyAction(action: LegacyAction): void {
+  legacyActionDialog.value = { ...action }
+}
+
 export interface AdminMenuGroup {
+  /** `manager` | `settings` | `help` (server menu, v2_menu.py). */
+  id?: string
   label: string
   items: AdminMenuItem[]
 }
@@ -23,12 +65,58 @@ export interface PanelNotice {
   id?: string
 }
 
+/** Legacy system action URLs (POST-only except `status`/`viewlogs`), keyed by action; empty for non-super admins. */
+export type SystemActionUrls = Partial<Record<'status' | 'viewlogs' | 'apply_configs' | 'update' | 'reinstall' | 'reset', string>>
+
+export const systemActionUrls = ref<SystemActionUrls>(window.__ADMIN_SYSTEM_ACTIONS__ ?? {})
+/** `panel_mode` hconfig: `standalone` | `parent` | `child`. */
+export const panelMode = ref<string>(window.__PANEL_MODE__ ?? '')
+/** A node only manages its domains/proxies/server; dashboard and users live on the parent. */
+export const isChildPanel = computed(() => panelMode.value === 'child')
+
+export interface NodeInfo {
+  node_name: string
+  parent_host: string
+  /** The parent's dashboard for the signed-in admin ("" when unknown). */
+  parent_dashboard_url: string
+}
+
+/** Set only on node (child) panels. */
+export const nodeInfo = ref<NodeInfo | null>(window.__NODE_INFO__ ?? null)
+
+/** Signed-in admin's mode: `super_admin` | `admin` | `agent`. */
+export const accountMode = ref<string>(window.__ACCOUNT_MODE__ ?? '')
+export const isSuperAdmin = computed(() => accountMode.value === 'super_admin')
+/** Agents only manage users and their own sub-admins: no server or proxy settings. */
+export const isAgent = computed(() => accountMode.value === 'agent')
+
+/** First setup still pending (super admins only): the dashboard opens the quick setup instead. */
+export const needsQuickSetup = ref<boolean>(Boolean(window.__NEEDS_QUICK_SETUP__))
+
+/** The panel's Telegram bot (null when none is set up) and how this admin connects to it. */
+export interface TelegramInfo {
+  bot_username: string
+  /** Opens the bot in the Telegram app with this admin's start code. */
+  connect_url: string
+  /** Same, through t.me (works where tg:// links do not). */
+  web_url: string
+  /** This admin's Telegram account is linked. */
+  connected: boolean
+}
+export const telegramInfo = ref<TelegramInfo | null>(window.__TELEGRAM__ ?? null)
+
 export const legacyMenu = ref<AdminMenuGroup[]>(window.__ADMIN_MENU__ ?? [])
 export const panelNotices = ref<PanelNotice[]>(window.__ADMIN_NOTICES__ ?? [])
 
 export function applyBootstrapShell(data: {
   menu?: AdminMenuGroup[]
   notices?: PanelNotice[]
+  system_actions?: SystemActionUrls
+  panel_mode?: string
+  node_info?: NodeInfo | null
+  account_mode?: string
+  needs_quick_setup?: boolean
+  telegram?: TelegramInfo | null
   locale?: string
   panel_version?: string
   panel_logo_url?: string
@@ -40,6 +128,30 @@ export function applyBootstrapShell(data: {
   if (data.notices) {
     panelNotices.value = data.notices
     window.__ADMIN_NOTICES__ = data.notices
+  }
+  if (data.system_actions) {
+    systemActionUrls.value = data.system_actions
+    window.__ADMIN_SYSTEM_ACTIONS__ = data.system_actions
+  }
+  if (data.panel_mode !== undefined) {
+    panelMode.value = data.panel_mode
+    window.__PANEL_MODE__ = data.panel_mode
+  }
+  if (data.node_info !== undefined) {
+    nodeInfo.value = data.node_info
+    window.__NODE_INFO__ = data.node_info
+  }
+  if (data.needs_quick_setup !== undefined) {
+    needsQuickSetup.value = Boolean(data.needs_quick_setup)
+    window.__NEEDS_QUICK_SETUP__ = data.needs_quick_setup
+  }
+  if (data.telegram !== undefined) {
+    telegramInfo.value = data.telegram
+    window.__TELEGRAM__ = data.telegram
+  }
+  if (data.account_mode !== undefined) {
+    accountMode.value = data.account_mode
+    window.__ACCOUNT_MODE__ = data.account_mode
   }
   if (data.locale) {
     window.__LOCALE__ = data.locale
@@ -56,6 +168,12 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
   applyBootstrapShell({
     menu: data.menu as AdminMenuGroup[] | undefined,
     notices: data.notices as PanelNotice[] | undefined,
+    system_actions: data.system_actions as SystemActionUrls | undefined,
+    panel_mode: data.panel_mode as string | undefined,
+    node_info: data.node_info as NodeInfo | null | undefined,
+    account_mode: data.account_mode as string | undefined,
+    needs_quick_setup: data.needs_quick_setup as boolean | undefined,
+    telegram: data.telegram as TelegramInfo | null | undefined,
     locale: data.locale as string | undefined,
     panel_version: data.panel_version as string | undefined,
     panel_logo_url: data.panel_logo_url as string | undefined,

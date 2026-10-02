@@ -1,27 +1,12 @@
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import * as monaco from 'monaco-editor'
+import { loadMonaco, type Monaco } from '@/shared/monaco/monaco'
 
 const JINJA_JSON = 'jinja-json'
 let languageReady = false
 
-export function setupMonaco(): void {
-  if (typeof self !== 'undefined') {
-    self.MonacoEnvironment = {
-      getWorker(_: unknown, label: string) {
-        if (label === 'json') return new jsonWorker()
-        if (label === 'css' || label === 'scss' || label === 'less') return new cssWorker()
-        if (label === 'html' || label === 'handlebars' || label === 'razor') return new htmlWorker()
-        if (label === 'typescript' || label === 'javascript') return new tsWorker()
-        return new editorWorker()
-      },
-    }
-  }
-
-  if (languageReady) return
+/** Loads Monaco (once) and registers the panel's `jinja-json` language (once). */
+export async function ensureMonaco(): Promise<typeof Monaco> {
+  const monaco = await loadMonaco()
+  if (languageReady) return monaco
   languageReady = true
 
   monaco.languages.register({ id: JINJA_JSON })
@@ -47,6 +32,7 @@ export function setupMonaco(): void {
       ],
     },
   })
+  return monaco
 }
 
 export const JINJA_JSON_LANGUAGE = JINJA_JSON

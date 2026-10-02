@@ -1,8 +1,8 @@
-from flask import render_template, request, redirect, g
+from flask import render_template, request, redirect
 from . import fix_flaskadmin_babel
 import flask_admin
 from flask_admin import Admin
-from hiddifypanel import Events
+from hiddifypanel import g, Events
 from .DomainAdmin import DomainAdmin
 from .AdminstratorAdmin import AdminstratorAdmin
 
@@ -43,7 +43,7 @@ def init_app(app):
     flaskadmin.add_view(AdminstratorAdmin(AdminUser, db.session))
     from .NodeAdmin import NodeAdmin
 
-    flaskadmin.add_view(NodeAdmin(Child, db.session))
+    flaskadmin.add_view(NodeAdmin(Child, db.session, endpoint="node", url="node", name="Node"))
     from .Dashboard import Dashboard
     from .SettingAdmin import SettingAdmin
     from .commercial_info import CommercialInfo

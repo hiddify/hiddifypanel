@@ -1,0 +1,29 @@
+{# https://github.com/XTLS/Xray-core/discussions/4877  #}
+{# https://github.com/XTLS/Xray-core/discussions/716  #}
+{#https://xray-checker.kutovoy.dev/configuration/subscription/#}
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set uri = namespace(
+    protocol = 'vless',
+    user=ctx.user.uuid,
+    host=proxy.server,
+    port=proxy.port,
+    query_params=namespace(hiddify='1'),
+  ) %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+  
+  {% set qp = uri.query_params %}
+    {% include '__TLS_SLUG__' %}
+    {% include '__TRANSPORT_SLUG__' %}
+
+  {% if ctx.proxy.server_core == "xray" %}
+    {% if ctx.hconfig.vless_flow %}
+      {% set qp.flow=ctx.hconfig.vless_flow %}
+    {% endif %}
+  {% endif %}
+  {# Xray needs an explicit encryption; only an xray server can terminate a real one. #}
+  {# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
+  {% set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+  {% set qp.encryption=ctx.hconfig.vless_encryption if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption and not reality_terminated else "none" %}
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

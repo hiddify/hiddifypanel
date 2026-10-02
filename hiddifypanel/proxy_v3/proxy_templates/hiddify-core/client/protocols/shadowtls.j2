@@ -1,0 +1,16 @@
+"type": "shadowtls",
+"server": "{{ proxy.server }}",
+"server_port": {{ proxy.port }},
+"version": 3,
+"password": "{{ ctx.hconfig.shared_secret }}",
+"tls": {
+  "enabled": true,
+  "server_name": "{{ ctx.hconfig.shadowtls_fakedomain }}",
+  {% set fp = ctx.hconfig.utls or "" %}
+  {% if fp and fp!="none" %}
+  "utls": {
+    "enabled": true,
+    "fingerprint": "{{ fp }}"
+  },
+  {% endif %}
+},

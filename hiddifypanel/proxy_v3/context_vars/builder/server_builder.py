@@ -1,15 +1,14 @@
-import sys
-
 from pydantic import BaseModel, ConfigDict
 
 from hiddifypanel import hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models.config import get_hconfigs_json
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
-from hiddifypanel.models.domain import Domain, FakeMode
+from hiddifypanel.models.domain import Domain, DomainType
 from hiddifypanel.models.proxy import ProxyTransport
 from hiddifypanel.models.user import User
-from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context, protocol_config_map, transport_config_map
+from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
+from hiddifypanel.proxy_v3.context_vars.cert import CertVar, select_shared_certificate
 from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextProxyVar, ServerContextVar
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
@@ -17,6 +16,8 @@ from hiddifypanel.proxy_v3.context_vars.proxy import ProxyVar, ServerBuilderProx
 from hiddifypanel.proxy_v3.context_vars.server_platform_var import ServerPlatformVar, get_server_platform_var
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
+from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
+from hiddifypanel.proxy_v3.outbounds import build_outbounds_var
 from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
 
 from ..ip import IPVar
@@ -38,6 +39,8 @@ def build_server_template_context(child_id: int = 0) -> ServerContextVar:
         proxies=base.proxies,
         ips=base.ips,
         platform=base.platform,
+        shared_cert=base.shared_cert,
+        outbounds=build_outbounds_var(child_id, base.hconfig),
     )
 
 
@@ -49,35 +52,43 @@ class ServerBase(BaseModel):
     proxies: list[ServerBuilderProxyVar]
     ips: IPVar
     platform: ServerPlatformVar
+    shared_cert: CertVar
 
 
 def get_server_base(child_id: int) -> ServerBase:
     hconfig: HConfigVar = get_server_hconfigs_child(child_id)
     platform = get_server_platform_var()
 
-    child_hconfigs: HConfigVar = get_server_hconfigs_child(0)
     domains: list[DomainIPVar] = get_server_domains(child_id=child_id)
     ips: IPVar = IPVar.from_strings(*hutils.network.net.get_ips())
+    shared_cert = select_shared_certificate()
 
     proxies: list[ServerBuilderProxyVar] = get_server_builder_proxies(child_id)
     for proxy in proxies:
         proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy)]
-    proxies = [b for b in proxies if filter_server_proxy(b, child_hconfigs)]
-    return ServerBase(domains=domains, hconfig=hconfig, proxies=proxies, ips=ips, platform=platform)
+    proxies = [b for b in proxies if filter_server_proxy(b)]
+    return ServerBase(
+        domains=domains,
+        hconfig=hconfig,
+        proxies=proxies,
+        ips=ips,
+        platform=platform,
+        shared_cert=shared_cert,
+    )
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
-    if proxy.slug == "xray-reality-termination":
+    if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
-
-    if d.fake_mode == FakeMode.reality and d.custom_proxy_id is None:
-        print(f"Domain {d.name} is reality but has no custom proxy", file=sys.stderr)
-        return False
-    if proxy.mode == CustomProxyMode.domains_sni_gateway and d.custom_proxy_id is None:
+    if d.is_reality():
         return False
 
-    if d.custom_proxy_id is not None and d.custom_proxy_id != proxy.id:
-        return False
+    proxy_id = proxy.id
+    if proxy.mode in (CustomProxyMode.domains_sni_gateway, CustomProxyMode.domains_dns_gateway):
+        return proxy_id in d.custom_proxy_ids
+
+    if d.custom_proxy_ids:
+        return proxy_id in d.custom_proxy_ids
 
     if not domain_ip_matches_modes(d, proxy.domain_modes):
         return False
@@ -90,14 +101,10 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     return False
 
 
-def filter_server_proxy(proxy: ProxyVar, hconfig: HConfigVar) -> bool:
+def filter_server_proxy(proxy: ProxyVar) -> bool:
+    if proxy.mode == CustomProxyMode.no_inbound:
+        return True
     if not proxy.domains and proxy.mode != CustomProxyMode.ip:
-        return False
-
-    if (cfg := hconfig.get(protocol_config_map[proxy.proto])) and cfg is False:
-        return False
-
-    if (cfg := hconfig.get(transport_config_map.get(proxy.transport))) and cfg is False:
         return False
 
     return True
@@ -112,7 +119,7 @@ def get_server_domains(child_id: int = 0) -> list[DomainIPVar]:
 def get_server_builder_proxies(child_id: int = 0) -> list[ServerBuilderProxyVar]:
     hconfig = get_server_hconfigs_child(child_id)
     custom_proxies = CustomProxy.query.filter(CustomProxy.enable == True, CustomProxy.child_id == child_id).all()
-    return [ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig) for proxy in custom_proxies]
+    return [ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig) for proxy in custom_proxies if proxy.enable]
 
 
 @cache.cache(600)
@@ -127,13 +134,15 @@ def resolve_custom_proxy(child_id: int, proxy_id: int | None) -> CustomProxy | N
 
 
 def _domains_for_custom_proxy(proxy: CustomProxy, child_id: int) -> list[DomainIPVar]:
+
+    proxy_id = proxy.id
     domain_rows = [
         row
         for row in Domain.query.filter(
             Domain.child_id == child_id,
-            Domain.sub_link_only == False,  # noqa: E712
+            Domain.mode != DomainType.sub_link_only,
         ).all()
-        if not row.custom_proxy_id or int(row.custom_proxy_id) == int(proxy.id or 0)
+        if proxy.slug == REALITY_TERMINATION_SLUG or not row.custom_proxy_ids or proxy_id in row.custom_proxy_ids
     ]
     matched = _domains_for_proxy_row(proxy, domain_rows)
     return [DomainIPVar.from_domain(domain) for domain in matched]
@@ -187,6 +196,7 @@ def build_proxy_jinja_context(
         proxy=proxy_var,
         ips=ips,
         platform=platform,
+        shared_cert=select_shared_certificate(),
     )
     return make_jinja_context(ctx)
 
@@ -213,5 +223,7 @@ def build_bundle_jinja_context(
             ips=ctx.ips,
             platform=ctx.platform,
             client_proxy_tags=list(ctx.client_proxy_tags),
+            shared_cert=ctx.shared_cert,
+            outbounds=ctx.outbounds,
         )
     )

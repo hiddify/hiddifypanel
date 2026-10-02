@@ -57,7 +57,7 @@ const displayText = computed(() => {
         {{ t('editor.previewPartial') }}
       </Message>
 
-      <ul v-if="result.warnings?.length" class="m-0 pl-4 text-sm">
+      <ul v-if="result.warnings?.length" class="m-0 ps-4 text-sm">
         <li v-for="(warning, index) in result.warnings" :key="index">
           {{ warning.message }}
         </li>

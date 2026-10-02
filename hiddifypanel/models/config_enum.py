@@ -1,9 +1,8 @@
-from enum import auto, Enum
 import os
-from typing import Union
+from enum import auto
 
-from strenum import StrEnum
 from fast_enum import FastEnum
+from strenum import StrEnum
 
 
 class HEnum(StrEnum):
@@ -50,6 +49,12 @@ class LogLevel(HEnum):
     CRITICAL = auto()
 
 
+class CommonProxyCore(HEnum):
+    xray = auto()
+    hiddify_core = auto()
+    both = auto()
+
+
 class ConfigCategory(StrEnum):
     admin = auto()
     branding = auto()
@@ -77,7 +82,7 @@ class ConfigCategory(StrEnum):
     reality = auto()
     wireguard = auto()
     shadowsocks = auto()
-    additional_configs = auto()
+    # additional_configs = auto()
     dnstt = auto()
 
 
@@ -135,7 +140,8 @@ class ConfigEnum(metaclass=FastEnum):
     ssh_use_tls_port = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.apply_config, hide_in_virtual_child=True)
     ssh_server_enable = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.reinstall)
     first_setup = _BoolConfigDscr(ConfigCategory.hidden)
-    core_type = _StrConfigDscr(ConfigCategory.advanced, ApplyMode.reinstall, hide_in_virtual_child=True)
+    core_type = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
+    common_proxy_core = _TypedConfigDscr(CommonProxyCore, ConfigCategory.advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
     warp_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
     warp_mode = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)
     warp_plus_code = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -153,23 +159,24 @@ class ConfigEnum(metaclass=FastEnum):
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
     show_usage_in_sublink = _BoolConfigDscr(ConfigCategory.general)
     cloudflare = _StrConfigDscr(ConfigCategory.too_advanced)
-    # license = _StrConfigDscr(ConfigCategory.hidden)
+    license = _StrConfigDscr(ConfigCategory.hidden)
     country = _StrConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     package_mode = _StrConfigDscr(ConfigCategory.advanced, hide_in_virtual_child=True)
     utls = _StrConfigDscr(ConfigCategory.advanced)
     telegram_bot_token = _StrConfigDscr(ConfigCategory.telegram, hide_in_virtual_child=True)
 
-    additional_configs_urls = _StrConfigDscr(ConfigCategory.additional_configs)
-    additional_configs_singbox = _StrConfigDscr(ConfigCategory.additional_configs)
-    additional_configs_xrayjson = _StrConfigDscr(ConfigCategory.additional_configs)
+    additional_configs_urls = _StrConfigDscr(ConfigCategory.hidden)
+    additional_configs_singbox = _StrConfigDscr(ConfigCategory.hidden)
+    additional_configs_xrayjson = _StrConfigDscr(ConfigCategory.hidden)
 
     # region child-parent
     # deprecated
     is_parent = _BoolConfigDscr(ConfigCategory.hidden)
     # parent panel domain
-    parent_panel = _StrConfigDscr(ConfigCategory.hidden)  # should be able to change by user
-    parent_domain = _StrConfigDscr(ConfigCategory.hidden)
-    parent_admin_proxy_path = _StrConfigDscr(ConfigCategory.hidden)
+    parent_panel = _StrConfigDscr(ConfigCategory.admin)
+    node_name = _StrConfigDscr(ConfigCategory.admin)
+    parent_domain = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
+    parent_admin_proxy_path = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
 
     # the panel mode could be one of these: "parent", "child", "standalone"
     # this config value would be 'standalone' by default. and would be set by panel itself
@@ -221,6 +228,7 @@ class ConfigEnum(metaclass=FastEnum):
     dnstt_resolvers = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
     dnstt_private_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
     dnstt_public_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
+    master_dns_encrypt_key = _StrConfigDscr(ConfigCategory.dnstt, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     # will be deprecated
     proxy_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
@@ -235,6 +243,7 @@ class ConfigEnum(metaclass=FastEnum):
     auto_update = _BoolConfigDscr(ConfigCategory.hidden if os.environ.get("HIDDIFY_DISABLE_UPDATE", "").lower() in {"1", "true"} else ConfigCategory.general, ApplyMode.apply_config, True, hide_in_virtual_child=True)
     speed_test = _BoolConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     only_ipv4 = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
+    max_proxy_ips_per_version = _IntConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     shared_secret = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
 
@@ -279,6 +288,7 @@ class ConfigEnum(metaclass=FastEnum):
     grpc_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     httpupgrade_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     xhttp_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    xhttp_different_up_down_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     naive_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     naive_port = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
@@ -299,23 +309,25 @@ class ConfigEnum(metaclass=FastEnum):
 
     db_version = _StrConfigDscr(ConfigCategory.hidden)
     last_priodic_usage_check = _IntConfigDscr(ConfigCategory.hidden)
+    last_users_sync = _StrConfigDscr(ConfigCategory.hidden)
 
     branding_title = _StrConfigDscr(ConfigCategory.branding)
     branding_site = _StrConfigDscr(ConfigCategory.branding)
     branding_freetext = _StrConfigDscr(ConfigCategory.branding)
     not_found = _StrConfigDscr(ConfigCategory.hidden)
-    path_vmess = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_vless = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_trojan = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_naive = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_vmess = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_vless = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_trojan = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_naive = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_v2ray = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)  # deprecated
     path_ss = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
-    path_xhttp = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_httpupgrade = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_ws = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_tcp = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
-    path_grpc = _StrConfigDscr(ConfigCategory.too_advanced, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_xhttp = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_httpupgrade = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_ws = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_tcp = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_http = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    path_grpc = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     # subs
     sub_full_singbox_enable = _BoolConfigDscr(ConfigCategory.hidden)
@@ -374,3 +386,10 @@ def config_enum_members() -> list["ConfigEnum"]:
             continue
         members.append(cfg)
     return members
+
+
+def is_protocol_switch(key: "ConfigEnum") -> bool:
+    """Global on/off protocol/transport switches (the ``*_enable`` settings of the proxy page)."""
+    # Sub-options edited elsewhere, not global switches.
+    excluded = (ConfigEnum.mux_brutal_enable, ConfigEnum.mux_padding_enable, ConfigEnum.hysteria_obfs_enable)
+    return key.category != "hidden" and key.endswith("_enable") and key not in excluded

@@ -1,0 +1,9 @@
+{#
+  Builtin node_configs (subscription links).
+  Each child returns plain-text share links (one per line).
+  Enabled by default on parent panels (fetches child node configs).
+#}
+{% set node_configs = get_nodes_configs("sublink", "1h") %}
+{% for conf in node_configs if conf %}
+{{ conf }}
+{% endfor %}

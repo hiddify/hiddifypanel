@@ -141,7 +141,10 @@ development.db
 
 hiddify_usages.json
 
-# Admin V2 (Vue / Vite) — production bundle: hiddifypanel/static/admin-v2/
+# Admin V2 (Vue / Vite). The production bundle is build output, not source:
+# release/beta wheels get it from the release workflow, source installs build it
+# in the installer (hiddify-manager scripts/common/utils.sh: build_panel_ui).
+hiddifypanel/static/admin-v2/
 hiddifypanel/admin_v2/node_modules/
 hiddifypanel/admin_v2/dist/
 hiddifypanel/admin_v2/.vite/

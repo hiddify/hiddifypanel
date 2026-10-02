@@ -1,25 +1,33 @@
-from typing import Optional, Any
-from hiddifypanel.models.config_enum import ConfigEnum, LogLevel, PanelMode, Lang
-from flask import g
-
-from hiddifypanel import Events
-from hiddifypanel.database import db
-from hiddifypanel.cache import cache
-from hiddifypanel.models.child import Child, ChildMode
-from sqlalchemy import Column, String, Boolean, Enum, ForeignKey, Integer
-from strenum import StrEnum
+from typing import TYPE_CHECKING, Any
 
 from loguru import logger
+from sqlalchemy import Boolean, Enum, ForeignKey, String
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Mapped, mapped_column
+
+from hiddifypanel import Events
+from hiddifypanel.cache import cache
+from hiddifypanel.database import db
+from hiddifypanel.models.child import Child, ChildMode
+from hiddifypanel.models.config_enum import ConfigEnum
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.node import HConfigModel
 
 
 class BoolConfig(db.Model):
-    child_id = Column(Integer, ForeignKey("child.id"), primary_key=True, default=0)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
-    key = Column(Enum(ConfigEnum), primary_key=True)
-    value = Column(Boolean)
+    key: Mapped[ConfigEnum] = mapped_column(Enum(ConfigEnum), primary_key=True)
+    value: Mapped[bool | None] = mapped_column(Boolean)
 
-    def to_dict(d):
-        return {"key": str(d.key), "value": d.value, "child_unique_id": d.child.unique_id if d.child else ""}
+    def to_model(self) -> "HConfigModel":
+        from hiddifypanel.models.external_model.node import HConfigModel
+
+        return HConfigModel(key=self.key, value=self.value, child_unique_id=self.child.unique_id if self.child else "")
+
+    def to_dict(self):
+        return self.to_model().to_dict()
 
     @staticmethod
     def from_schema(schema):
@@ -29,17 +37,22 @@ class BoolConfig(db.Model):
         conf_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import HConfigSchema
 
-        return HConfigSchema().load(conf_dict)
+        return HConfigSchema.model_validate(conf_dict)
 
 
 class StrConfig(db.Model):
-    child_id = Column(Integer, ForeignKey("child.id"), primary_key=True, default=0)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
-    key = Column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
-    value = Column(String(3072))
+    key: Mapped[ConfigEnum] = mapped_column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
+    value: Mapped[str | None] = mapped_column(String(3072))
+
+    def to_model(self) -> "HConfigModel":
+        from hiddifypanel.models.external_model.node import HConfigModel
+
+        return HConfigModel(key=self.key, value=self.value, child_unique_id=self.child.unique_id if self.child else "")
 
     def to_dict(self: "StrConfig"):
-        return {"key": str(self.key), "value": self.value, "child_unique_id": self.child.unique_id if self.child else ""}
+        return self.to_model().to_dict()
 
     @staticmethod
     def from_schema(schema):
@@ -49,11 +62,11 @@ class StrConfig(db.Model):
         conf_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import HConfigSchema
 
-        return HConfigSchema().load(conf_dict)
+        return HConfigSchema.model_validate(conf_dict)
 
 
 @cache.cache(ttl=500)
-def hconfig(key: ConfigEnum, child_id: Optional[int] = None):  # -> str | int | StrEnum | None:
+def hconfig(key: ConfigEnum, child_id: int | None = None):  # -> str | int | StrEnum | None:
     if child_id is None:
         child_id = Child.current().id
 
@@ -87,7 +100,7 @@ def set_hconfig(key: ConfigEnum, value: str | int | bool, child_id: int | None =
     if child_id is None:
         child_id = Child.current().id
 
-    if key.type == int and value != None:
+    if key.type is int and value is not None:
         int(value)  # for testing int
 
     # hconfig.invalidate(key, child_id)
@@ -124,7 +137,18 @@ def set_hconfig(key: ConfigEnum, value: str | int | bool, child_id: int | None =
             set_hconfig(key, value, child.id)
 
     if commit:
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            # another process inserted the same row between our existence check and insert
+            db.session.rollback()
+            model = BoolConfig if key.type == bool else StrConfig
+            existing = db.session.query(model).filter(model.key == key, model.child_id == child_id).first()
+            if existing:
+                existing.value = value
+                db.session.commit()
+            else:
+                raise
 
 
 def __parse_hconfig(u: StrConfig) -> Any:
@@ -165,29 +189,35 @@ def get_hconfigs_childs_json(child_ids: list[int]):
 
 
 def add_or_update_config(commit: bool = True, child_id: int | None = None, override_unique_id: bool = True, **config):
+    from hiddifypanel.models.external_model.node import HConfigModel
+
+    upsert_config(HConfigModel.coerce(config), commit=commit, child_id=child_id, override_unique_id=override_unique_id)
+
+
+def upsert_config(data: "HConfigModel", *, commit: bool = True, child_id: int | None = None, override_unique_id: bool = True) -> None:
     if child_id is None:
         child_id = Child.current().id
-    c = config["key"]
-    try:
-        ckey = ConfigEnum(c)
-    except:
+    ckey = data.key
+    if ckey is None:  # unknown key (e.g. from a newer/older panel)
         return
-    if c == ConfigEnum.unique_id and not override_unique_id:
+    if ckey == ConfigEnum.unique_id and not override_unique_id:
         return
-
-    v = str(config["value"]).lower() == "true" if ckey.type == bool else config["value"]
     if ckey in [ConfigEnum.db_version]:
         return
-    set_hconfig(ckey, v, child_id, commit=commit)
+    value = data.typed_value()
+    if value is None:  # formerly stored as the string "None"
+        return
+    set_hconfig(ckey, str(value) if isinstance(value, float) else value, child_id, commit=commit)
 
 
 def bulk_register_configs(hconfigs, commit: bool = True, froce_child_unique_id: str | None = None, override_unique_id: bool = True):
+    from hiddifypanel.models.external_model.node import HConfigModel
     from hiddifypanel.panel import hiddify
 
-    for conf in hconfigs:
-        if conf["key"] == ConfigEnum.unique_id and not override_unique_id:
+    for row in HConfigModel.coerce_many(hconfigs):
+        if row.key == ConfigEnum.unique_id and not override_unique_id:
             continue
-        child_id = hiddify.get_child(unique_id=froce_child_unique_id)
-        add_or_update_config(commit=False, child_id=child_id, **conf)
+        child_id = hiddify.child_id_from_row({"child_unique_id": row.child_unique_id}, froce_child_unique_id)
+        upsert_config(row, commit=False, child_id=child_id, override_unique_id=override_unique_id)
     if commit:
         db.session.commit()

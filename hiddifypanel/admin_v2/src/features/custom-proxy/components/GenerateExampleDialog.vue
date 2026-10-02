@@ -39,6 +39,8 @@ import {
   detailFromSection,
 } from '@/shared/utils/render-error-detail'
 import RenderErrorDetailDialog from './RenderErrorDetailDialog.vue'
+import SublinkEditor from '@/features/utils/components/SublinkEditor.vue'
+import { parseSublinks, type PrettyLink } from '@/shared/utils/sublink-pretty'
 
 const props = defineProps<{
   proxyId: number
@@ -67,7 +69,7 @@ const customUa = ref('')
 
 const activeResultTab = ref('server')
 const activeXrayConfigByTab = ref<Record<string, number>>({})
-const sublinkView = ref<'raw' | 'uri' | 'base64'>('raw')
+const sublinkView = ref<'decoded' | 'raw'>('decoded')
 const configFormatView = ref<ConfigFormatView>('json')
 const ignoreSkip = ref(true)
 const errorDetailVisible = ref(false)
@@ -97,6 +99,7 @@ const uaOptions = computed(() =>
 )
 
 const sublinkViewOptions = computed(() => [
+  { value: 'decoded', label: t('proxy.sublinkFormatDecoded') },
   { value: 'raw', label: t('proxy.sublinkFormatRaw') },
 ])
 
@@ -187,7 +190,7 @@ async function runGenerate() {
     const payload = buildPayload()
     result.value = await customProxiesApi.generateExampleById(props.proxyId, payload)
     activeResultTab.value = defaultResultTab(result.value)
-    sublinkView.value = 'raw'
+    sublinkView.value = 'decoded'
     configFormatView.value = 'json'
   } finally {
     loading.value = false
@@ -305,6 +308,11 @@ function sublinkDisplay(formats: SublinkFormats): string {
   return formats.raw || ''
 }
 
+function parsedSublinkLinks(section: GeneratedSection | null | undefined): PrettyLink[] {
+  if (!isSublinkSection(section)) return []
+  return parseSublinks(section.sublink_formats.raw || section.rendered || '')
+}
+
 watch(
   () => props.visible,
   (open) => {
@@ -325,7 +333,7 @@ watch(uaPresets, (list) => {
 })
 
 watch(activeResultTab, () => {
-  sublinkView.value = 'raw'
+  sublinkView.value = 'decoded'
   configFormatView.value = 'json'
 })
 </script>
@@ -334,7 +342,7 @@ watch(activeResultTab, () => {
   <Dialog
     v-model:visible="visible"
     modal
-    class="w-full max-w-3xl"
+    class="w-full max-w-5xl"
     :header="t('proxy.generateExample')"
     :close-on-escape="!errorDetailVisible"
   >
@@ -441,7 +449,7 @@ watch(activeResultTab, () => {
         <Message v-else severity="warn">{{ t('proxy.generateExamplePartial') }}</Message>
 
         <Fieldset v-if="result.context" :legend="t('proxy.exampleContext')">
-          <ul class="m-0 pl-4 text-sm">
+          <ul class="m-0 ps-4 text-sm">
             <li>{{ t('proxy.exampleContextProxy') }}: {{ result.context.custom_proxy_id }}</li>
             <li>{{ t('proxy.exampleContextDomain') }}: {{ result.context.domain }}</li>
             <li>{{ t('proxy.exampleContextUser') }}: {{ result.context.user }}</li>
@@ -451,7 +459,7 @@ watch(activeResultTab, () => {
         </Fieldset>
 
         <Fieldset v-if="result.errors?.length" :legend="t('validation.errors')">
-          <ul class="m-0 pl-4">
+          <ul class="m-0 ps-4">
             <li
               v-for="(e, i) in result.errors"
               :key="'err-' + i"
@@ -519,7 +527,7 @@ watch(activeResultTab, () => {
                   @update:model-value="setXrayConfigIndexForTab(tab.value, $event)"
                 />
               </div>
-              <div v-if="isSublinkSection(activeDisplaySection(tab.value)) && sublinkViewOptions.length > 1" class="mb-3">
+              <div v-if="isSublinkSection(activeDisplaySection(tab.value))" class="mb-3">
                 <Select
                   v-model="sublinkView"
                   :options="sublinkViewOptions"
@@ -540,7 +548,13 @@ watch(activeResultTab, () => {
                   class="w-full max-w-xs"
                 />
               </div>
-              <ScrollPanel class="config-scroll-panel" :style="{ width: '100%', height: '320px' }">
+              <SublinkEditor
+                v-if="isSublinkSection(activeDisplaySection(tab.value)) && sublinkView === 'decoded'"
+                :links="parsedSublinkLinks(activeDisplaySection(tab.value))"
+                :id-prefix="`${tab.value}-`"
+                readonly
+              />
+              <ScrollPanel v-else class="config-scroll-panel" :style="{ width: '100%', height: '320px' }">
                 <LineNumberedCode :text="displayText(activeDisplaySection(tab.value))" />
               </ScrollPanel>
             </TabPanel>
@@ -567,7 +581,7 @@ watch(activeResultTab, () => {
 }
 
 .render-error-link__hint {
-  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
   font-size: 0.75rem;
   opacity: 0.8;
 }

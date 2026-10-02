@@ -1,0 +1,24 @@
+{% for ctx in ctx.iter_ctx_domains() %}
+  {% set proxy = ctx.proxy %}
+  {% set method = ctx.hconfig.shadowsocks2022_method %}
+  {% set password = (ctx.hconfig.shared_secret.replace('-','')|b64encode) ~ ':' ~ (ctx.user.uuid_hex|b64encode) %}
+  {% set userinfo = (method ~ ':' ~ password)|b64encode %}
+    {% set uri = namespace(
+      protocol='ss',
+      user=userinfo,
+      host=proxy.server,
+      port=proxy.port,
+      query_params=namespace(uot='true',hiddify=1)
+      )
+      %}
+  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
+
+  {% set qp = uri.query_params %}
+  {% if proxy.proto == 'v2ray' %}
+    {% set qp.plugin = 'v2ray-plugin;mode=websocket;path=' ~ proxy.path ~ ';host=' ~ proxy.domain.host ~ ';tls' %}
+  {% elif 'faketls' in (proxy.categories or []) or 'faketls' in (proxy.slug or '') %}
+    {% set qp.plugin = 'obfs-local;obfs=tls;obfs-host=' ~ ctx.hconfig.ssfaketls_fakedomain %}
+  {% endif %}
+  
+  {% include 'sublink/uri/final_link_maker' %}
+{% endfor %}

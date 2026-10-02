@@ -1,7 +1,7 @@
-from flask import render_template, request, g
+from flask import render_template, request
 import json
 
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.hutils.proxy.xrayjson import to_xray
 from hiddifypanel.models import ProxyProto, ProxyTransport, Domain, ConfigEnum
 

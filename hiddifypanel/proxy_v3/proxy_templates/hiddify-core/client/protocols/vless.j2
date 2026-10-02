@@ -1,0 +1,11 @@
+{# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
+{%set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+
+"type": "vless",
+"server": "{{ proxy.server }}",
+"server_port": {{ ctx.proxy.port }},
+"uuid": "{{ ctx.user.uuid }}",
+{% if ctx.proxy.server_core == "xray" %}
+"encryption": "{{ 'none' if reality_terminated else ctx.hconfig.vless_encryption }}",
+"flow": "{{ ctx.hconfig.vless_flow }}",
+{% endif %}

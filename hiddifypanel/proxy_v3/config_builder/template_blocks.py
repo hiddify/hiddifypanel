@@ -4,6 +4,15 @@ import re
 
 _BLOCK_OPEN_RE = re.compile(r"\{%-?\s*block\s+(\w+)\s*-?%\}")
 _BLOCK_CLOSE_RE = re.compile(r"\{%-?\s*endblock\s*-?%\}")
+_IF_WRAPS_CLIENT_BLOCK_RE = re.compile(
+    r"\{%-?\s*if\b.*?%\}\s*\{%-?\s*block\s+(?:endpoints|outbounds)\b",
+    re.DOTALL,
+)
+
+
+def if_wraps_client_blocks(template: str) -> bool:
+    """True when ``{% if %}`` chooses between client ``endpoints`` / ``outbounds`` blocks."""
+    return bool(_IF_WRAPS_CLIENT_BLOCK_RE.search(template or ""))
 
 
 def _balanced_block_body(text: str, start_pos: int) -> str | None:
@@ -36,6 +45,22 @@ def extract_block_body(fragment: str, block_name: str) -> str | None:
         if body is not None:
             return body.strip()
     return None
+
+
+def drop_template_block(template: str, block_name: str) -> str:
+    """Remove ``{% block block_name %}...{% endblock %}`` (including its body) from ``template``."""
+    text = template or ""
+    for open_match in _BLOCK_OPEN_RE.finditer(text):
+        if open_match.group(1) != block_name:
+            continue
+        body = _balanced_block_body(text, open_match.end())
+        if body is None:
+            return text
+        close_match = _BLOCK_CLOSE_RE.search(text, open_match.end() + len(body))
+        if close_match is None:
+            return text
+        return text[: open_match.start()] + text[close_match.end() :]
+    return text
 
 
 def fragment_block_body(fragment: str, block_name: str) -> str:

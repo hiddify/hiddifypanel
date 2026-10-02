@@ -1,8 +1,15 @@
+import re
 import threading
 from typing import List
 from strenum import StrEnum
 import subprocess
 import os
+
+# Strict allow-lists to prevent shell/argument injection when values are
+# forwarded as arguments to the privileged commander.py script.
+_SAFE_URL_RE = re.compile(r'^[A-Za-z0-9_\-./?=&%:#]+$')
+_SAFE_SLUG_RE = re.compile(r'^[A-Za-z0-9_\-]+$')
+_SAFE_DOMAIN_RE = re.compile(r'^[A-Za-z0-9*_\-.]+$')
 
 
 class Command(StrEnum):
@@ -16,6 +23,7 @@ class Command(StrEnum):
     temporary_access = 'temporary-access'
     update_usage = 'update-usage'
     get_cert = 'get-cert'
+    port_owner = 'port-owner'
     apply_users = 'apply-users'
     update_wg_usage = 'update-wg-usage'
 
@@ -75,6 +83,11 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
         if not domain:
             raise Exception("Invalid input passed to the run_commander function for get-cert command")
         base_cmd.extend(['get-cert', '--domain', domain])
+    elif command == Command.port_owner:
+        port = str(kwargs.get('port'))
+        if not port.isnumeric():
+            raise Exception("Invalid input passed to the run_commander function for port-owner command")
+        base_cmd.extend(['port-owner', '--port', port])
     elif command == Command.update_wg_usage:
         base_cmd.append('update-wg-usage')
     else:

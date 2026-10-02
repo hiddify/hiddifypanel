@@ -9,11 +9,11 @@ const { visibleNotices, dismiss } = usePanelNotifications()
   <div v-if="visibleNotices.length" class="panel-notices flex flex-col gap-2 mb-4">
     <Message
       v-for="(notice, index) in visibleNotices"
-      :key="`${notice.severity}-${index}`"
+      :key="`${notice.severity}-${index}-${notice.summary.length}`"
       :severity="notice.severity"
       :closable="true"
       class="w-full"
-      @close="dismiss(notice, index)"
+      @close="dismiss(notice)"
     >
       <span class="notice-body" v-html="notice.summary" />
       <p v-if="notice.detail" class="m-0 mt-2 text-sm notice-body" v-html="notice.detail" />

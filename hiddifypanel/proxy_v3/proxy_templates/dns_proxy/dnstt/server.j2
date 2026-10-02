@@ -1,0 +1,15 @@
+{# DNSTT / VayDNS — server_config (CustomProxy inbound_template).
+   Edit params here; include_path writes generated/dns_proxy/dnstt/<domain>/args
+#}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set params = namespace(
+  mtu=1232,
+  clientid_size=2,
+  keepalive='2s',
+  idle_timeout='10s',
+  record_type='txt',
+  dnstt_compat=false,
+  upstream='127.0.0.1:2001',
+) %}
+{{ include_path(ctx, 'dns_proxy/dnstt/args', 'dns_proxy/dnstt/' ~ (ctx.domain.name|slugify)) }}
+{% endfor %}

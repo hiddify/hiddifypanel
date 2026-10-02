@@ -1,8 +1,0 @@
-"type": "vmess",
-"server": "{{ proxy.server }}",
-"server_port": {{ ctx.proxy.tcp_port }},
-"uuid": "{{ ctx.user.uuid }}",
-"security": "auto",
-"alter_id": 0,
-"global_padding": false,
-"authenticated_length": true,

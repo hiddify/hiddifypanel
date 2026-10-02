@@ -1,11 +1,18 @@
+from __future__ import annotations
 
-from strenum import StrEnum
+from collections.abc import Iterable
 from enum import auto
-from sqlalchemy import Column, String, Integer, Boolean, Enum, ForeignKey
+from typing import TYPE_CHECKING, Any
+
+from sqlalchemy import Enum, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.types import JSON
+from strenum import StrEnum
 
 from hiddifypanel.database import db
 
-from sqlalchemy.types import JSON
+if TYPE_CHECKING:
+    from hiddifypanel.models.external_model.node import ProxyModel
 
 
 class ProxyTransport(StrEnum):
@@ -19,6 +26,7 @@ class ProxyTransport(StrEnum):
     # h1=auto()
     WS = auto()
     tcp = auto()
+    http = auto()
     ssh = auto()
     httpupgrade = auto()
     xhttp = auto()
@@ -51,6 +59,8 @@ class ProxyProto(StrEnum):
     mieru = auto()
     anytls = auto()
     dnstt = auto()
+    slipstream = auto()
+    masterdns = auto()
     snell = auto()
 
 
@@ -67,54 +77,66 @@ class ProxyL3(StrEnum):
     custom = auto()
 
 
-class Proxy(db.Model):  # type: ignore
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    child_id = Column(Integer, ForeignKey('child.id'), default=0)
-    name = Column(String(200), nullable=False, unique=False)
-    enable = Column(Boolean, nullable=False)
-    proto = Column(Enum(ProxyProto), nullable=False)
-    l3 = Column(Enum(ProxyL3), nullable=False)
-    transport = Column(Enum(ProxyTransport), nullable=False)
-    cdn = Column(Enum(ProxyCDN), nullable=False)
-    params = Column(JSON,default={})
+class Proxy(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int | None] = mapped_column(ForeignKey("child.id"), default=0)
+    name: Mapped[str] = mapped_column(String(200))
+    enable: Mapped[bool] = mapped_column()
+    proto: Mapped[ProxyProto] = mapped_column(Enum(ProxyProto))
+    l3: Mapped[ProxyL3] = mapped_column(Enum(ProxyL3))
+    transport: Mapped[ProxyTransport] = mapped_column(Enum(ProxyTransport))
+    cdn: Mapped[ProxyCDN] = mapped_column(Enum(ProxyCDN))
+    params: Mapped[dict[str, Any] | None] = mapped_column(JSON, default=dict)
 
     @property
     def enabled(self):
         return self.enable * 1
 
+    def to_model(self) -> ProxyModel:
+        from hiddifypanel.models.external_model.node import ProxyModel
+
+        return ProxyModel(
+            name=self.name,
+            enable=self.enable,
+            proto=self.proto,
+            l3=self.l3,
+            transport=self.transport,
+            cdn=self.cdn,
+            child_unique_id=self.child.unique_id if self.child else "",
+            params=self.params,
+        )
+
     def to_dict(self):
-        return {
-            'name': self.name,
-            'enable': self.enable,
-            'proto': self.proto,
-            'l3': self.l3,
-            'transport': self.transport,
-            'cdn': self.cdn,
-            'child_unique_id': self.child.unique_id if self.child else '',
-            'params': self.params
-        }
+        return self.to_model().to_dict()
 
     def __str__(self):
         return str(self.to_dict())
 
     @staticmethod
-    def add_or_update(commit=True, child_id=0, **proxy):
-        dbproxy = Proxy.query.filter(Proxy.name == proxy['name']).first()
+    def add_or_update(commit=True, child_id=0, **proxy) -> Proxy:
+        from hiddifypanel.models.external_model.node import ProxyModel
+
+        return Proxy.upsert(ProxyModel.coerce(proxy), child_id=child_id, commit=commit)
+
+    @staticmethod
+    def upsert(data: ProxyModel, *, child_id: int = 0, commit: bool = True) -> Proxy:
+        """``data.proto``/``transport`` already map legacy ``ss``/``splithttp`` aliases."""
+        dbproxy = Proxy.query.filter(Proxy.name == data.name).first()
         if not dbproxy:
             dbproxy = Proxy()
-            db.session.add(dbproxy)  # type: ignore
-        dbproxy.enable = proxy['enable']
-        dbproxy.name = proxy['name']
-        dbproxy.proto = proxy['proto']
-        if proxy['transport']=="splithttp":
-            proxy['transport']="xhttp"
-        dbproxy.transport = proxy['transport']
-        dbproxy.cdn = proxy['cdn']
-        dbproxy.l3 = proxy['l3']
-        dbproxy.params=proxy['params']
+            db.session.add(dbproxy)
+        dbproxy.enable = data.enable
+        dbproxy.name = data.name
+        dbproxy.proto = data.proto
+        dbproxy.transport = data.transport
+        dbproxy.cdn = data.cdn
+        dbproxy.l3 = data.l3
+        if data.has("params"):
+            dbproxy.params = data.params
         dbproxy.child_id = child_id
         if commit:
-            db.session.commit()  # type: ignore
+            db.session.commit()
+        return dbproxy
 
     @staticmethod
     def from_schema(schema):
@@ -123,13 +145,16 @@ class Proxy(db.Model):  # type: ignore
     def to_schema(self):
         proxy_dict = self.to_dict()
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import ProxySchema
-        return ProxySchema().load(proxy_dict)
+
+        return ProxySchema.model_validate(proxy_dict)
 
     @staticmethod
-    def bulk_register(proxies, commit=True, force_child_unique_id: str | None = None):
+    def bulk_register(proxies: Iterable[Any], commit=True, force_child_unique_id: str | None = None):
+        from hiddifypanel.models.external_model.node import ProxyModel
         from hiddifypanel.panel import hiddify
-        for proxy in proxies:
-            child_id = hiddify.get_child(unique_id=force_child_unique_id)
-            Proxy.add_or_update(commit=False, child_id=child_id, **proxy)
+
+        for row in ProxyModel.coerce_many(proxies):
+            child_id = hiddify.child_id_from_row({"child_unique_id": row.child_unique_id}, force_child_unique_id)
+            Proxy.upsert(row, child_id=child_id, commit=False)
         if commit:
-            db.session.commit()  # type: ignore
+            db.session.commit()

@@ -29,6 +29,7 @@ def _load_drivers() -> None:
     from .haproxy import server as haproxy_server
     from .hiddify_core import client as hiddify_core_client
     from .hiddify_core import server as hiddify_core_server
+    from .dns_proxy import server as dns_proxy_server
     from .nginx import server as nginx_server
     from .rust_rpxy_l4 import server as rust_rpxy_l4_server
     from .singbox.client import SingboxClientDriver
@@ -42,6 +43,7 @@ def _load_drivers() -> None:
     _register(haproxy_server.HaproxyServerDriver())
     _register(nginx_server.NginxServerDriver())
     _register(rust_rpxy_l4_server.RustRpxyL4ServerDriver())
+    _register(dns_proxy_server.DnsProxyServerDriver())
 
 
 def ensure_drivers_loaded() -> None:

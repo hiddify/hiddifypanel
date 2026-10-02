@@ -1,8 +1,0 @@
-"type": "naive",
-"server": "{{ proxy.server }}",
-"server_port": {{ proxy.tcp_port }},
-"username": "{{ ctx.user.uuid }}",
-"password": "h",
-"extra_headers":{
-    "X-API-Key":"{{proxy.path}}"
-}

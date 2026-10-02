@@ -1,19 +1,17 @@
 import datetime
-import uuid
 import json
 import os
+import uuid
+
 import click
 from dateutil import relativedelta
-
+from loguru import logger
 
 from hiddifypanel import hutils
-
+from hiddifypanel.database import db
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify, usage
-from hiddifypanel.database import db
 from hiddifypanel.panel.init_db import init_db
-
-from loguru import logger
 
 
 def drop_db():
@@ -29,22 +27,21 @@ def downgrade():
         ).delete()
         Proxy.query.filter(Proxy.l3.in_([ProxyL3.ssh, ProxyL3.h3_quic, ProxyL3.custom])).delete()
         db.session.commit()
-        os.rename("/opt/hiddify-manager/services/hiddify-panel/hiddifypanel.db.old", "/opt/hiddify-manager/services/hiddify-panel/hiddifypanel.db")
-
-
-from celery import shared_task
+        os.rename("/opt/hiddify-manager/services/panel/hiddifypanel.db.old", "/opt/hiddify-manager/services/panel/hiddifypanel.db")
 
 
 def backup():
     backup_task()
 
 
-@shared_task(ignore_result=False)
 def backup_task():
     dbdict = hiddify.dump_db_to_dict()
-    os.makedirs("backup", exist_ok=True)
-    dst = f"backup/{datetime.datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.json"
-    with open(dst, "w", encoding="utf-8") as fp:
+    dst_dir = os.path.join(os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/"), "data", "backup")
+    os.makedirs(dst_dir, mode=0o750, exist_ok=True)
+    dst = f"{dst_dir}/{datetime.datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.json"
+    # A full database dump (secrets, user ids): readable by the panel user only.
+    fd = os.open(dst, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o640)
+    with os.fdopen(fd, "w", encoding="utf-8") as fp:
         json.dump(dbdict, fp, indent=2, sort_keys=True, default=str)
     print(dst)
     if hconfig(ConfigEnum.telegram_bot_token):
@@ -57,7 +54,7 @@ def backup_task():
             caption = "Backup \n" + admin_links()
             with open(dst, "rb") as document:
                 try:
-                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.replace("backup/", ""), caption=caption[:1000])
+                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.split("backup/")[-1], caption=caption[:1000])
                 except Exception as e:
                     logger.exception(e)
 
@@ -77,7 +74,7 @@ def admin_links():
     admin_links = f"Not Secure (do not use it - only if others not work):\n   {hiddify.get_account_panel_link(owner, server_ip, is_https=True)}\n"
 
     domains = Domain.get_domains()
-    admin_links += f"Secure:\n"
+    admin_links += "Secure:\n"
     if not any([d for d in domains if "sslip.io" not in d.domain]):
         admin_links += f"   (not signed) {hiddify.get_account_panel_link(owner, server_ip)}\n"
 
@@ -132,7 +129,6 @@ def init_app(app):
         d = Domain()
         d.domain = domain
         d.mode = mode
-        d.sub_link_only = True if mode == DomainType.sub_link_only else False
         db.session.add(d)
         db.session.commit()
         return "success"
@@ -274,7 +270,10 @@ def init_app(app):
             row = sync_tls_store_for_domain_id(domain_id)
             if row:
                 host = row.domain.domain if row.domain else domain_id
-                click.echo(f"synced certificate for domain_id={row.domain_id} ({host}) issuer={row.issuer}")
+                click.echo(
+                    f"synced certificate for domain_id={row.domain_id} ({host}) "
+                    f"issuer={row.issuer} self_signed={bool(row.self_signed)}"
+                )
             else:
                 click.echo(f"no certificate files found for domain_id={domain_id}", err=True)
             return
@@ -282,7 +281,10 @@ def init_app(app):
             row = sync_tls_store_for_domain(domain, child_id=child_id)
             if row:
                 host = row.domain.domain if row.domain else domain
-                click.echo(f"synced certificate for domain_id={row.domain_id} ({host}) issuer={row.issuer}")
+                click.echo(
+                    f"synced certificate for domain_id={row.domain_id} ({host}) "
+                    f"issuer={row.issuer} self_signed={bool(row.self_signed)}"
+                )
             else:
                 click.echo(f"no certificate files found for {domain}", err=True)
             return
@@ -344,6 +346,8 @@ def init_app(app):
         """Render and dump the hiddify-core server sing-box config."""
         from hiddifypanel.proxy_v3.config_builder.dump import (
             dump_hiddify_core_server_config as render_dump,
+        )
+        from hiddifypanel.proxy_v3.config_builder.dump import (
             format_builder_messages,
         )
 
@@ -376,7 +380,8 @@ def init_app(app):
     @click.option("--child-id", "-c", default=0, show_default=True, type=int)
     @click.option("--refresh-db", is_flag=True, help="Sync builtin proxy catalog from disk before rendering")
     @click.option("--compact", is_flag=True, help="Emit compact JSON instead of indented output")
-    def dump_server_configs(output_dir, child_id, refresh_db, compact):
+    @click.option("--no-invalidate-cache", is_flag=True, help="Do not flush Redis/Jinja caches (used by apply_users)")
+    def dump_server_configs(output_dir, child_id, refresh_db, compact, no_invalidate_cache):
         """Render and write xray, hiddify-core, haproxy, and nginx server configs to a directory."""
         from pathlib import Path
 
@@ -385,8 +390,9 @@ def init_app(app):
         if refresh_db:
             _run_sync_builtin_catalog(child_id)
 
-        result = dump_all_server_configs(output_dir, child_id, pretty=not compact)
-        from hiddifypanel.proxy_v3.config_builder.dump import format_dump_stats
+        invalidate_cache = False if no_invalidate_cache else None
+        result = dump_all_server_configs(output_dir, child_id, pretty=not compact, invalidate_cache=invalidate_cache)
+        from hiddifypanel.proxy_v3.config_builder.dump import format_dump_stats, format_message_detail_lines
 
         for filename, size in sorted(result.written.items()):
             detail = format_dump_stats(filename, size, result.stats.get(filename))
@@ -396,9 +402,8 @@ def init_app(app):
             core = item.get("core", "")
             text = item.get("message", "")
             click.echo(f"{level}: [{core}] {text}", err=level == "error")
-            data = item.get("data") or {}
-            if level == "error" and data.get("stacktrace"):
-                click.echo(data["stacktrace"], err=True)
+            for line in format_message_detail_lines(item.get("data")):
+                click.echo(line, err=level == "error")
         if not result.ok:
             raise SystemExit(1)
 
@@ -416,7 +421,7 @@ def init_app(app):
         """Render client configs for one user: hiddify-core, xray, sublink, clash, singbox."""
         from pathlib import Path
 
-        from hiddifypanel.proxy_v3.config_builder.dump import dump_all_client_configs, format_client_dump_stats
+        from hiddifypanel.proxy_v3.config_builder.dump import dump_all_client_configs, format_client_dump_stats, format_message_detail_lines
 
         if refresh_db:
             _run_sync_builtin_catalog(child_id)
@@ -447,9 +452,8 @@ def init_app(app):
             core = item.get("core", "")
             text = item.get("message", "")
             click.echo(f"error: [{core}] {text}", err=True)
-            data = item.get("data") or {}
-            if data.get("stacktrace"):
-                click.echo(data["stacktrace"], err=True)
+            for line in format_message_detail_lines(item.get("data")):
+                click.echo(line, err=True)
         if not result.ok:
             raise SystemExit(1)
 

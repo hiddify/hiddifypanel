@@ -1,19 +1,14 @@
+import os
 import re
 import subprocess
+from datetime import datetime, timedelta
 
-from datetime import datetime
-from typing import Tuple
-from flask import current_app, g
-from flask_babel import lazy_gettext as _
-from datetime import timedelta
-import os
+from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
-from hiddifypanel.models import *
 from hiddifypanel.database import db
 from hiddifypanel.hutils.utils import *
-from hiddifypanel import hutils
-from hiddifypanel.panel.run_commander import commander, Command
-import subprocess
+from hiddifypanel.models import *
+from hiddifypanel.panel.run_commander import Command, commander
 
 to_gig_d = 1000 * 1000 * 1000
 
@@ -21,7 +16,7 @@ to_gig_d = 1000 * 1000 * 1000
 # def add_temporary_access():
 #     random_port = random.randint(30000, 50000)
 #     # exec_command(
-#     #     f'sudo /opt/hiddify-manager/services/hiddify-panel/temporary_access.sh {random_port} &')
+#     #     f'sudo /opt/hiddify-manager/services/panel/temporary_access.sh {random_port} &')
 
 #     # run temporary_access.sh
 #     commander(Command.temporary_access, port=random_port)
@@ -30,19 +25,19 @@ to_gig_d = 1000 * 1000 * 1000
 
 
 # with user panel url format we don't really need this function
-def add_short_link(link: str, period_min: int = 5) -> Tuple[str, int]:
+def add_short_link(link: str, period_min: int = 5) -> tuple[str, int]:
     short_code, expire_date = add_short_link_imp(link, period_min)
     return short_code, (expire_date - datetime.now()).seconds
 
 
 @cache.cache(ttl=300)
 # TODO: Change ttl dynamically
-def add_short_link_imp(link: str, period_min: int = 5) -> Tuple[str, datetime]:
+def add_short_link_imp(link: str, period_min: int = 5) -> tuple[str, datetime]:
     # pattern = "\^/([^/]+)(/)?\?\$\ {return 302 " + re.escape(link) + ";}"
 
     pattern = r"([^/]+)\("
 
-    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/data/services/nginx/parts/short-link.conf", "r") as f:
+    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/data/services/nginx/parts/short-link.conf") as f:
         for line in f:
             if link in line:
                 return re.search(pattern, line).group(1), datetime.now() + timedelta(minutes=period_min)
@@ -90,8 +85,8 @@ def get_html_user_link(model: BaseAccount, domain: Domain):
     text = domain.alias or domain.domain
     color_cls = "info"
 
-    if isinstance(domain, Domain) and not domain.sub_link_only and domain.mode in [DomainType.cdn, DomainType.auto_cdn_ip]:
-        auto_cdn = (domain.mode == DomainType.auto_cdn_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
+    if isinstance(domain, Domain) and not domain.is_sub_link_only() and domain.mode == DomainType.cdn:
+        auto_cdn = bool(domain.resolve_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
         color_cls = "success" if auto_cdn else "warning"
         text = f'<span class="badge badge-secondary" >{"Auto" if auto_cdn else "CDN"}</span> ' + text
 
@@ -147,12 +142,38 @@ def get_child(unique_id):
     return child_id
 
 
+def child_id_from_row(row: dict, force_child_unique_id: str | None = None) -> int:
+    """Resolve child_id for bulk restore.
+
+    Prefer an explicit ``force_child_unique_id`` (parent→node sync). Otherwise use the
+    row's ``child_unique_id`` so multi-node backups do not collapse onto child 0.
+    """
+    if force_child_unique_id is not None:
+        return get_child(unique_id=force_child_unique_id)
+    uid = (row or {}).get("child_unique_id")
+    if uid in (None, ""):
+        return get_child(unique_id=None)
+    return get_child(unique_id=uid)
+
+
 def dump_db_to_dict():
+    from hiddifypanel.models.tag import export_links, export_tags
+    from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
+    from hiddifypanel.models.server_ip import ServerIp
+    from hiddifypanel.models.tls_store import TlsStore
+
     return {
         "childs": [u.to_dict() for u in db.session.query(Child).all()],
         "users": [u.to_dict() for u in db.session.query(User).all()],
         "domains": [u.to_dict() for u in db.session.query(Domain).all()],
         "proxies": [u.to_dict() for u in db.session.query(Proxy).all()],
+        "proxy_templates": [t.to_dict() for t in db.session.query(ProxyTemplate).all()],
+        "custom_proxies": [p.to_dict() for p in db.session.query(CustomProxy).all()],
+        "tags": export_tags(),
+        "tag_links": export_links(),
+        "outbounds": [o.to_dict() for o in db.session.query(Outbound).order_by(Outbound.position, Outbound.id).all()],
+        "server_ips": [ip.to_dict() for ip in db.session.query(ServerIp).all()],
+        "tls_store": [t.to_dict(include_private_key=True) for t in db.session.query(TlsStore).all()],
         # "parent_domains": [] if not hconfig(ConfigEnum.license) else [u.to_dict() for u in ParentDomain.query.all()],
         "admin_users": [d.to_dict() for d in db.session.query(AdminUser).all()],
         "hconfigs": [*[u.to_dict() for u in db.session.query(BoolConfig).all()], *[u.to_dict() for u in db.session.query(StrConfig).all()]],
@@ -162,11 +183,11 @@ def dump_db_to_dict():
 def get_ids_without_parent(input_dict):
     selector = "uuid"
     # Get all parent_uuids in a set for faster lookup
-    parent_uuids = {item.get(f"parent_admin_uuid") for item in input_dict.values() if item.get(f"parent_admin_uuid") is not None and item.get(f"parent_admin_uuid") != item.get("uuid")}
+    parent_uuids = {item.get("parent_admin_uuid") for item in input_dict.values() if item.get("parent_admin_uuid") is not None and item.get("parent_admin_uuid") != item.get("uuid")}
     print("PARENTS", parent_uuids)
     uuids = {v["uuid"]: v for v in input_dict.values()}
     # Find all uuids that do not have a parent_uuid in the dict
-    uuids_without_parent = [key for key, item in input_dict.items() if item.get(f"parent_admin_uuid") is None or item.get(f"parent_admin_uuid") == item.get("uuid") or item[f"parent_admin_uuid"] not in uuids]
+    uuids_without_parent = [key for key, item in input_dict.items() if item.get("parent_admin_uuid") is None or item.get("parent_admin_uuid") == item.get("uuid") or item["parent_admin_uuid"] not in uuids]
     print("abondon uuids", uuids_without_parent)
     return uuids_without_parent
 
@@ -235,6 +256,11 @@ def set_db_from_json(
             if u["added_by_uuid"] in uuids_without_parent:
                 u["added_by_uuid"] = AdminUser.current_admin_or_owner().uuid
 
+    if (set_settings or set_domains) and json_data.get("outbounds"):
+        # Before the admins and users: their default / preferred outbounds point at these slugs.
+        Outbound.bulk_register(json_data["outbounds"], commit=False)
+        db.session.flush()
+
     if set_admins and "admin_users" in json_data:
         AdminUser.bulk_register(json_data["admin_users"], commit=True)
     if set_users and "users" in json_data:
@@ -246,6 +272,34 @@ def set_db_from_json(
         bulk_register_configs(json_data["hconfigs"], commit=True, override_unique_id=override_unique_id)
         if "proxies" in json_data:
             Proxy.bulk_register(json_data["proxies"], commit=False)
+
+    # Newer backup sections (optional; ignored by older restore paths).
+    if set_domains or set_settings:
+        from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
+        from hiddifypanel.models.server_ip import ServerIp
+        from hiddifypanel.models.tls_store import TlsStore
+
+        if "proxy_templates" in json_data:
+            ProxyTemplate.bulk_register(json_data["proxy_templates"], commit=False)
+        if "custom_proxies" in json_data:
+            CustomProxy.bulk_register(json_data["custom_proxies"], commit=False)
+        if "server_ips" in json_data:
+            ServerIp.bulk_register(json_data["server_ips"], commit=False)
+        if set_domains and "domains" in json_data:
+            # Second pass: show_domains / download / server_domain / custom_proxy_slugs
+            Domain.bulk_apply_links(json_data["domains"], commit=False)
+        if set_domains and "tls_store" in json_data:
+            TlsStore.bulk_register(json_data["tls_store"], commit=False)
+
+    from hiddifypanel.models.tag import restore_tags
+
+    if (set_users or set_admins or set_settings) and (json_data.get("tags") or json_data.get("tag_links")):
+        db.session.flush()
+        restore_tags(
+            json_data.get("tags") or [],
+            json_data.get("tag_links") or [],
+            kinds={"user"} if set_users else set(),
+        )
 
     ids_without_parent = get_ids_without_parent({u.id: u.to_dict() for u in AdminUser.query.all()})
     owner = AdminUser.get_super_admin()
@@ -264,8 +318,8 @@ def set_db_from_json(
 def get_domain_btn_link(domain):
     text = domain.alias or domain.domain
     color_cls = "info"
-    if domain.mode in [DomainType.cdn, DomainType.auto_cdn_ip]:
-        auto_cdn = (domain.mode == DomainType.auto_cdn_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
+    if domain.mode == DomainType.cdn:
+        auto_cdn = bool(domain.resolve_ip) or (domain.cdn_ip and "MTN" in domain.cdn_ip)
         color_cls = "success" if auto_cdn else "warning"
         text = f'<span class="badge badge-secondary" >{"Auto" if auto_cdn else "CDN"}</span> ' + text
     res = f"<a target='_blank' href='#' class='btn btn-xs btn-{color_cls} ltr' ><i class='fa-solid fa-arrow-up-right-from-square d-none'></i> {text}</a>"
@@ -310,7 +364,7 @@ def is_telegram_proxy_enable(domains=None) -> bool:
     if not hconfig(ConfigEnum.telegram_enable):
         return False
 
-    valid_domain_types = [DomainType.direct, DomainType.relay, DomainType.old_xtls_direct]
+    valid_domain_types = [DomainType.direct, DomainType.relay]
     res = False
     if domains:
         res = any(d.mode in valid_domain_types for d in domains)
@@ -357,7 +411,7 @@ def get_backup_child_unique_id(backupdata: dict) -> str:
 
 
 def all_configs_for_cli():
-    valid_users = [u.to_dict(dump_id=True) for u in User.query.filter((User.usage_limit > User.current_usage)).all() if u.is_active]
+    valid_users = [u.to_dict(dump_id=True) for u in User.query.filter(User.usage_limit > User.current_usage).all() if u.is_active]
     host_child_ids = [c.id for c in Child.query.filter(Child.mode == ChildMode.virtual).all()]
     domains = Domain.query.filter(Domain.child_id.in_(host_child_ids), ~Domain.domain.contains("*")).all()
     configs = {

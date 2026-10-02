@@ -119,6 +119,5 @@ defineExpose({ insertText: insertSnippet })
 <style scoped>
 .builtin-content-locked {
   opacity: 0.72;
-  pointer-events: none;
 }
 </style>

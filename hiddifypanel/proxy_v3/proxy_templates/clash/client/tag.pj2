@@ -1,1 +1,0 @@
-{{ ctx.proxy.tag }} {{ ctx.proxy.domain.alias or ctx.proxy.domain.name }}

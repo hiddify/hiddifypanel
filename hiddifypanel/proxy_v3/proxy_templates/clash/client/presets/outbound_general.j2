@@ -1,0 +1,31 @@
+{% for ctx in ctx.iter_ctx_domains() %}
+{%set tag%}{%- include 'clash/client/tag' -%}{%endset%}
+{
+  "name": "{{tag|trim_no_line}}",
+  "type": "__PROTO__",
+  "server": "{{ ctx.proxy.server }}",
+  "port": {{ ctx.proxy.tcp_port or ctx.proxy.udp_port }},
+  "uuid": "{{ ctx.user.uuid }}",
+  "network": "__NETWORK__",
+  "tls": {{ ctx.proxy.uses_tls|tojson }},
+  "servername": "{{ ctx.proxy.domain.sni }}",
+  "udp": true,
+  {% if ctx.proxy.domain.is_reality() %}
+  "reality-opts": {
+    "public-key": "{{ ctx.hconfig.reality_public_key }}",
+    "short-id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
+  },
+  "client-fingerprint": "{{ ctx.hconfig.utls if ctx.hconfig.utls and ctx.hconfig.utls != 'none' else 'chrome' }}",
+  {% if ctx.proxy.proto == 'vless' and ctx.proxy.transport == 'tcp' and ctx.proxy.server_core == 'xray' and ctx.hconfig.vless_flow %}
+  "flow": "{{ ctx.hconfig.vless_flow }}",
+  {% endif %}
+  {% endif %}
+  {% if ctx.proxy.transport == 'http' %}
+  "http-opts": {
+    "path": ["/{{ ctx.proxy.path }}"],
+    "headers": {
+      "Host": ["{{ ctx.proxy.domain.host }}"]
+    }
+  }{% endif %}
+},
+{% endfor %}

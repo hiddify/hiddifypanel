@@ -203,6 +203,7 @@
   "The name shown in the configs for this domain.": "ဤဒိုမိန်းအတွက် အပြင်အဆင်တွင် ပြသပေးမည့် အမည်",
   "This can be used for giving your users a permanent non blockable links.": "သင့်အသုံးပြုသူများကို အမြဲတမ်းပိတ်ဆို့၍မရသော လင့်ခ်များပေးရန်အတွက် ၎င်းကို အသုံးပြုနိုင်သည်။",
   "This domain does not exist in the panel!": "ဤဒိုမိန်းသည် ထိန်းချုပ်ခုံတွင် မရှိနေပါ။",
+  "This domain %(domain_name)s is invalid": "ဒိုမိန်း %(domain_name)s သည် မမှန်ကန်ပါ",
   "Today Usage": "ယနေ့",
   "Too many Connected IPs": "ချိတ်ဆက်ထားသော အိုင်ပီ များပြားလွန်းသည်",
   "Total Usage": "စုစုပေါင်း သုံးစွဲမှု",
@@ -223,7 +224,7 @@
   "With selected": "ရွေးချယ်ထားခြင်းဖြင့်",
   "Xray": "☢️ XRay",
   "Yesterday Usage": "မနေ့",
-  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 ဟစ်ဒီဖိုင်း မန်နေဂျာသည် ၆ နာရီတိုင်း အရန်သိမ်းဆည်းမှုကို အလိုအလျောက် ရယူသည်။ ဆာဗာရှိ အရန်ဖိုင်များ လမ်းကြောင်း- ⬇️\n<br>\n💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ အောက်ပါ ခလုတ်ကို နှိပ်ခြင်းဖြင့် ဖွဲ့စည်းမှုပုံစံ၏ JSON ဖိုင်ကို ဒေါင်းလုဒ်လုပ်နိုင်ပါသည်။\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>အရန်သိမ်းဆည်းမှုဖိုင်ကို ဒေါင်းလုဒ်လုပ်ပါ။</a>",
+  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 ဟစ်ဒီဖိုင်း မန်နေဂျာသည် ၆ နာရီတိုင်း အရန်သိမ်းဆည်းမှုကို အလိုအလျောက် ရယူသည်။ ဆာဗာရှိ အရန်ဖိုင်များ လမ်းကြောင်း- ⬇️\n<br>\n💿 /opt/hiddify-manager/data/backup/\n<br>\n<br>\n<br>\n⚠️ အောက်ပါ ခလုတ်ကို နှိပ်ခြင်းဖြင့် ဖွဲ့စည်းမှုပုံစံ၏ JSON ဖိုင်ကို ဒေါင်းလုဒ်လုပ်နိုင်ပါသည်။\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>အရန်သိမ်းဆည်းမှုဖိုင်ကို ဒေါင်းလုဒ်လုပ်ပါ။</a>",
   "You can restore your configs from previously downloaded configs": "ℹ️ ယခင်က ဒေါင်းလုဒ်လုပ်ထားသော အရန်ဖိုင်မှ သင့် configuration ကို ပြန်လည်ရယူနိုင်သည်။",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "သင့်တွင် အသုံးပြုသူများ အလွန်များပါသည်။ သင့်တွင် အသုံးပြုသူ %(active)s ဦးနှင့် အသုံးပြုသူ %(total)s ဦးသာ ရှိနိုင်ပါသည်။",
   "You have used this domain in: ": "သင်သည် ဤဒိုမိန်းကို အသုံးပြုပြီးဖြစ်သည်- ",
@@ -1024,6 +1025,10 @@
     "ws_enable": {
       "description": "Websocket သည် CDN တွင် အသုံးပြုရန် အသုံးဝင်သော HTTP ပေါ်ရှိ ဥမင်လိုဏ်ခေါင်းတစ်ခုကို ဖန်တီးသည်။",
       "label": "🔰 Websocket"
+    },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
     },
     "xhttp_enable": {
       "description": "ဤပရိုတိုကောသည် ချန်နယ်တစ်ခုချင်းစီတွင် အချက်အလက်များကို ပေးပို့လက်ခံသည်",

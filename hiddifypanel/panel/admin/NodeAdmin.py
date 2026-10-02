@@ -1,41 +1,55 @@
-from hiddifypanel.database import db
-import copy
-from wtforms.validators import Regexp, ValidationError
+from datetime import datetime
+
+from flask import request
 from flask_babel import lazy_gettext as _
-from .adminlte import AdminLTEModelView
-from flask_babel import gettext as __
-from flask import g, request
 from markupsafe import Markup
+from wtforms.validators import ValidationError
 
-
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
+from hiddifypanel.database import db
+from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify
 
-from hiddifypanel.models import *
-from hiddifypanel import hutils
-from sqlalchemy.orm.session import make_transient
+from .adminlte import AdminLTEModelView
 
 
 class NodeAdmin(AdminLTEModelView):
     column_hide_backrefs = False
-    column_list = ["name", "mode", "unique_id"]
+    column_list = ["name", "mode", "unique_id", "last_node_to_parent_time", "last_parent_to_node_time"]
     form_columns = ["name", "mode", "unique_id"]
     column_labels = {
         "name": _("node.name.label"),
         "mode": _("node.mode.label"),
-        "unique_id": _("node.uuid.label")
+        "unique_id": _("node.uuid.label"),
+        "last_node_to_parent_time": _("Last node to parent"),
+        "last_parent_to_node_time": _("Last parent to node"),
     }
-    column_descriptions = {
-        "name": _("node.name.dscr"),
-        "mode": _("node.mode.dscr"),
-        "unique_id": _("node.uuid.dscr")
-    }
+    column_descriptions = {"name": _("node.name.dscr"), "mode": _("node.mode.dscr"), "unique_id": _("node.uuid.dscr")}
 
     def name_formater(view, context, model, name):
-        res = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True, child_id=model.id)
-        return Markup(f"<a href='{res}'>{model.name}</a>")
+
+        # res = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True, child_id=model.id)
+        href = f"{model.node_base_url}/{g.account.uuid}/"
+        return Markup(f"<a target='_blank' href='{href}'>{model.name}</a>")
+
+    def relative_time_formater(view, context, model, name):
+        value = getattr(model, name, None)
+        if not value:
+            return Markup("-")
+        diff = value - datetime.now()
+
+        if diff.days < -1000:
+            return Markup("-")
+        if diff.total_seconds() > -60 * 2:
+            return Markup(f"<span class='badge badge-success'>{_('Online')}</span>")
+        state = "danger" if diff.days < -3 else ("success" if diff.days >= -1 else "warning")
+        return Markup(f"<span class='badge badge-{state}'>{hutils.convert.format_timedelta(diff, granularity='min')}</span>")
+
     column_formatters = {
-        'name': name_formater,
+        "name": name_formater,
+        "last_node_to_parent_time": relative_time_formater,
+        "last_parent_to_node_time": relative_time_formater,
     }
     can_export = False
 
@@ -43,6 +57,18 @@ class NodeAdmin(AdminLTEModelView):
         if login_required(roles={Role.super_admin})(lambda: True)() != True:
             return False
         if Child.current().id != 0:
+            return False
+        return True
+
+    def delete_model(self, model):
+        """Unlink the node and remove its domains too (see hutils.node.parent.remove_node)."""
+        if model.id == 0:
+            return False
+        try:
+            hutils.node.parent.remove_node(model)
+        except Exception as e:
+            db.session.rollback()
+            hutils.flask.flash(str(e), "danger")
             return False
         return True
 
@@ -72,7 +98,7 @@ class NodeAdmin(AdminLTEModelView):
                 c.child_id = model.id
                 items_to_dup.append(c)
             d = Domain()
-            d.alias = f'{model.name}-def'
+            d.alias = f"{model.name}-def"
             d.domain = f"{model.id}.{hutils.network.get_ip_str(4)}.sslip.io"
             d.child_id = model.id
             items_to_dup.append(d)

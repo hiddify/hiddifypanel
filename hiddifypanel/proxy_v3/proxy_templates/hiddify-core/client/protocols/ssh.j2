@@ -1,0 +1,10 @@
+"type": "ssh",
+"server": "{{ ctx.proxy.server }}",
+"server_port": {{ ctx.proxy.port }},
+"user": "{{ ctx.user.uuid }}",
+"private_key": "{{ ctx.user.ed25519_private_key | replace('\n', '\\n') }}",
+"host_key": [
+  "{{ ctx.hconfig.ssh_host_rsa_pub | replace('\n', '\\n') }}",
+  "{{ ctx.hconfig.ssh_host_ecdsa_pub | replace('\n', '\\n') }}",
+  "{{ ctx.hconfig.ssh_host_ed25519_pub | replace('\n', '\\n') }}"
+],

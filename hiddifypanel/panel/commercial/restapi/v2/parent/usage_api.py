@@ -1,57 +1,66 @@
-from apiflask import abort
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
 from flask.views import MethodView
-from flask import current_app as app
-from flask import g
 from loguru import logger
 
-from hiddifypanel.models import Child
-from hiddifypanel.panel.usage import add_users_usage_uuid
+from hiddifypanel import current_app as app
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
+from hiddifypanel.models import AdminUser, User
+from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema, UserSchema
+from hiddifypanel.panel.usage import add_users_usage_new
 
-from .schema import UsageInputOutputSchema
+from .schema import UsageInputOutputSchema, UsageResponseSchema
 
 
 class UsageApi(MethodView):
     decorators = [login_required(node_auth=True)]
 
-    @app.input(UsageInputOutputSchema, arg_name='data')  # type: ignore
-    @app.output(UsageInputOutputSchema)  # type: ignore
-    def put(self, data):
-        from hiddifypanel import hutils
-        child = Child.query.filter(Child.unique_id == Child.node.unique_id).first()
-        if not child:
-            logger.error("The child does not exist")
-            abort(400, "The child does not exist")
+    @app.input(UsageInputOutputSchema, arg_name="data")
+    @app.output(UsageResponseSchema)
+    def put(self, data: UsageInputOutputSchema) -> UsageResponseSchema:
+        assert g.node, "The child does not exist"
 
-        # parse request data
-        logger.debug(f"Received Usage data from child: {data}")
-        child_usages_data = hutils.node.convert_usage_api_response_to_dict(data)
+        logger.debug(f"Received usage data from child {g.node.name}: {len(data.usages)} users")
 
-        # get current usage
-        logger.debug("Getting current usage data from parent")
-        parent_current_usages_data = hutils.node.convert_usage_api_response_to_dict(UsageInputOutputSchema().dump(hutils.node.get_users_usage_data_for_api()))  # type: ignore
+        increased = [u for u in data.usages if u.usage > 0]
+        logger.debug(f"Increased usages: {len(increased)} users")
 
-        # calculate usages
-        logger.debug("Calculating increased usages")
-        increased_usages = self.__calculate_parent_increased_usages(child_usages_data, parent_current_usages_data)
-        logger.debug(f"Increased usages: {increased_usages}")
+        if increased:
+            logger.info(f"Adding increased usages to parent for child_id={g.node.id}")
+            add_users_usage_new(increased, int(g.node.id))
 
-        # add users usage
-        if increased_usages:
-            logger.info(f"Adding increased usages to parent: {increased_usages}")
-            add_users_usage_uuid(increased_usages, child.id)
+        g.node.mark_node_to_parent(commit=True)
+        from hiddifypanel.hutils.node.usage_report import record_usage_report
 
-        return hutils.node.get_users_usage_data_for_api()
+        record_usage_report(int(g.node.id), len(increased), sum(int(u.usage or 0) for u in increased))
 
-    def __calculate_parent_increased_usages(self, child_usages_data: dict, parent_usages_data: dict) -> dict:
-        res = {}
-        for p_uuid, p_usage in parent_usages_data.items():
-            if child_usage := child_usages_data.get(p_uuid):
-                if child_usage['usage'] > 0:
-                    usage_data = {
-                        'usage':  child_usage['usage'] - p_usage['usage'],
-                        'devices': child_usage['devices'],
-                    }
-                    if usage_data['usage'] > 0:
-                        res[p_uuid] = usage_data
-        return res
+        # A never-synced child sends datetime.min; subtracting from it would overflow.
+        last_sync = data.last_users_sync.replace(tzinfo=None)
+        from_time = last_sync - timedelta(minutes=1) if last_sync > datetime.min + timedelta(minutes=1) else datetime.min
+        return get_users_usage_data_for_api(from_time=from_time, include_uuids={u.uuid for u in data.usages})
+
+
+def get_users_usage_data_for_api(from_time: datetime, include_uuids: set[str]):
+    users: list[UserSchema] = []
+    added_uuids = set()
+    sync_time = datetime.now()
+    for user in User.query.filter((User.last_modified_time >= from_time) | (User.uuid.in_(include_uuids))).all():
+        added_uuids.add(user.uuid)
+        users.append(user.to_schema())
+
+    for uuid in include_uuids - added_uuids:
+        users.append(
+            UserSchema(
+                uuid=uuid,
+                name="deleted",
+                deleted=True,
+                enable=False,
+            )
+        )
+    admin_users: list[AdminSchema] = []
+    for user in AdminUser.query.filter(AdminUser.last_modified_time >= from_time).all():
+        admin_users.append(user.to_schema())
+    return UsageResponseSchema(users=users, response_time=sync_time, admin_users=admin_users)

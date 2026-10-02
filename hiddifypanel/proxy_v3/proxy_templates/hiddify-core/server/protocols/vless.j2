@@ -1,0 +1,10 @@
+"type": "vless",
+"users": [
+  {% for user in ctx.users %}
+  {
+    "name": "{{ user.uuid }}",
+    "uuid": "{{ user.uuid }}",
+    //"flow": "{{ ctx.hconfig.vless_flow }}"
+  },
+  {% endfor %}
+]

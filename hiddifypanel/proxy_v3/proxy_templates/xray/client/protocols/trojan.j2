@@ -1,0 +1,9 @@
+"protocol": "trojan",
+"settings": {
+  "servers": [{
+    "address": "{{ ctx.proxy.server }}",
+    "port": {{ ctx.proxy.port }},
+    "password": "{{ ctx.user.uuid }}",
+    "level": 8
+  }]
+}

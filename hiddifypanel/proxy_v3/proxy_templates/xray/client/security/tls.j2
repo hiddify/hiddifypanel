@@ -1,0 +1,35 @@
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or 'http' %}
+{% if tls_layer == 'http' %}
+  "security": "none",
+{% elif domain.is_reality() %}
+  "security": "reality",
+  "realitySettings": {
+    "serverName": "{{ domain.sni }}",
+    "fingerprint": "{{ ctx.hconfig.utls }}",
+    "shortId": "{{ ctx.hconfig.reality_short_ids | choose_random }}",
+    "publicKey": "{{ ctx.hconfig.reality_public_key }}",
+    "show": false
+  },
+{% else %}
+  "security": "tls",
+  "tlsSettings": {
+    "serverName": "{{ domain.sni }}",
+    {%if domain.allow_insecure %}
+      {%if ctx.platform.xray.version>"0.0.0" and ctx.platform.xray.version<"26.1.1" %}
+        "allowInsecure": true,
+      {%else%}
+        "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",
+      {%endif%}
+    {%endif%}
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}"fingerprint": "{{ ctx.hconfig.utls }}",{% endif %}
+
+    
+    "alpn": {{ tls_layer.alpns() }},
+    {% if ctx.hconfig.tls_ech_enable and domain.echinfo %}
+    "echConfigList": ["{{ domain.echinfo }}"],
+    {% endif %}
+  },
+  {# TLS fragment for this leg's domain (also the xhttp download leg, which renders this with its own domain). #}
+  {% include 'xray/client/snippets/fragment' %}
+{% endif %}

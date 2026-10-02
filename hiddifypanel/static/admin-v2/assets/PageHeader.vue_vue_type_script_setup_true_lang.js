@@ -1,1 +1,0 @@
-import{d as a,o as t,c as s,e as c,f as o,l}from"./index.js";const n={class:"mb-5"},i={class:"text-2xl font-semibold m-0"},m={key:0,class:"text-muted-color mt-2 mb-0"},u=a({__name:"PageHeader",props:{title:{},subtitle:{}},setup(e){return(r,d)=>(t(),s("div",n,[c("h2",i,o(e.title),1),e.subtitle?(t(),s("p",m,o(e.subtitle),1)):l("",!0)]))}});export{u as _};

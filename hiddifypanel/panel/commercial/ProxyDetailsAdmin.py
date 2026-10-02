@@ -2,7 +2,7 @@ from hiddifypanel.models import *
 from hiddifypanel.panel.admin.adminlte import AdminLTEModelView
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
-from flask import g, redirect
+from flask import redirect
 from markupsafe import Markup
 from hiddifypanel.auth import login_required
 from flask_admin.actions import action
@@ -11,7 +11,7 @@ from flask_admin import expose
 from hiddifypanel.panel import  custom_widgets
 
 # Define a custom field type for the related domains
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 
 from wtforms.widgets import TextArea
 import json
@@ -63,13 +63,13 @@ class ProxyDetailsAdmin(AdminLTEModelView):
 
     def after_model_change(self, form, model, is_created):
         if hutils.node.is_child():
-            hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.proxies])
+            hutils.node.child.schedule_notify_parent_config_changed()
         hutils.proxy.get_proxies.invalidate_all()
         pass
 
     def after_model_delete(self, model):
         if hutils.node.is_child():
-            hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent, *[hutils.node.child.SyncFields.proxies])
+            hutils.node.child.schedule_notify_parent_config_changed()
         hutils.proxy.get_proxies.invalidate_all()
         pass
 

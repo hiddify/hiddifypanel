@@ -1,8 +1,0 @@
-{{ skip("grpc_enable = " ~ ctx.hconfig.grpc_enable) if not ctx.hconfig.grpc_enable }}
-"network": "tcp",
-"transport": {
-  "type": "grpc",
-  "service_name": "{{ proxy.path }}",
-  "idle_timeout": "15s",
-  "ping_timeout": "15s"
-},

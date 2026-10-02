@@ -1,0 +1,4 @@
+"sockopt": {
+{% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
+  "tcpFastOpen": true
+}

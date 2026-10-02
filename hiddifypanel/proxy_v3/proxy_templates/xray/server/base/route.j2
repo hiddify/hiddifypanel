@@ -1,0 +1,69 @@
+{
+    "domainStrategy": "IPOnDemand",
+    "domainMatcher": "hybrid",
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": ["api"],
+        "outboundTag": "api"
+      },
+      {
+          "type":"field",
+          "outboundTag": "freedom",
+          "ip": [
+            "127.0.0.1"
+          ],
+          "port":"443,80,53"
+        },
+        
+        { //DNS Cache rule
+          "type": "field", "port": 53, "network": "tcp,udp", "outboundTag": "DNS-Internal"
+        },
+        { //block quic
+          "type": "field", "port": 443, "network": "udp", "outboundTag": "blackhole"
+        },
+        {# Users with a preferred outbound (Users → edit → Preferred outbound): all their traffic goes there. #}
+        {% for route in ctx.outbounds.user_routes %}
+        {
+            "type": "field",
+            "user": {{ route.uuids|tojson }},
+            "outboundTag": {{ route.xray_tag|tojson }}
+        },
+        {% endfor %}
+        {# Outbound manager: each outbound's sites and geosite:/geoip: entries, in order
+           (block, SOCKS/Tor/Psiphon, WARP, direct). Lists are edited in Admin → Outbounds. #}
+        {% for o in ctx.outbounds.items if o.has_xray_rules %}
+        {% if o.geoips %}
+        {
+            "type": "field",
+            "outboundTag": {{ o.xray_tag|tojson }},
+            "ip": {{ o.geoips|tojson }}
+        },
+        {% endif %}
+        {% if o.sites or o.geosites %}
+        {
+            "type": "field",
+            "outboundTag": {{ o.xray_tag|tojson }},
+            "domain": [
+                {% for g in o.geosites %}{{ g|tojson }},{% endfor %}
+                {% for d in o.sites %}"domain:{{ d }}"{% if not loop.last %},{% endif %}{% endfor %}
+            ]
+        },
+        {% endif %}
+        {% endfor %}
+        {
+          "inboundTag": ["api"], "outboundTag": "api", "type": "field"
+        },
+        {
+          "type": "field", "outboundTag": "blackhole", "ip": ["geoip:private"]
+        },
+        {// Block BitTorrent protocol
+          "type": "field", "outboundTag": "blackhole", "protocol": ["bittorrent"]
+        },
+        {
+          "type": "field",
+          "port": "0-65535",
+          "outboundTag": {{ ctx.outbounds.default_xray_tag|tojson }}
+        }
+      ]
+}

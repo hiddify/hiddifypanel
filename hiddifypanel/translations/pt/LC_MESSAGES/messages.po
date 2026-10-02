@@ -1,13 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr ""
-" Procurar\n"
-"Configurações"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: pt\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr ""
@@ -151,6 +151,9 @@ msgstr "O arquivo de configuração está incorreto."
 msgid "Copy Link"
 msgstr "Link de cópia"
 
+msgid "Copy QR image"
+msgstr ""
+
 msgid "Couldn't find your ip addresses"
 msgstr "Não foi possível encontrar seus endereços IP"
 
@@ -280,6 +283,9 @@ msgstr "❇️ Habilitar"
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ Erro no formato CDN automático"
 
@@ -290,6 +296,9 @@ msgstr ""
 
 msgid "Example Domains"
 msgstr "Test and Suggest Domain "
+
+msgid "Expired"
+msgstr ""
 
 msgid "Expired Users"
 msgstr "Usuários expirados"
@@ -393,6 +402,9 @@ msgstr "Instalar"
 msgid "Install Hiddify Application"
 msgstr "Instalação do Painel Hidify"
 
+msgid "Invalid"
+msgstr ""
+
 msgid "Invalid IP or domain"
 msgstr "IP ou domínio inválido"
 
@@ -426,6 +438,12 @@ msgstr ""
 msgid "Last Online"
 msgstr "Última vez online"
 
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
+
 msgid "Link is changed!"
 msgstr "ℹ️ O link foi alterado!"
 
@@ -456,8 +474,18 @@ msgstr "Rede"
 msgid "New"
 msgstr "Novo"
 
+msgid "No certificate"
+msgstr ""
+
 msgid "No children!"
 msgstr "sem filhos"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+
+msgid "Nodes"
+msgstr ""
 
 msgid "Not Secure"
 msgstr ""
@@ -591,11 +619,17 @@ msgstr ""
 "Entre em contato com <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> após a doação.\n"
 "Envie uma mensagem para obter uma versão especial para usuários corporativos."
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath já está em uso! usar caminho de proxy diferente"
 
 msgid "QR code"
 msgstr "🧾 Código QR"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"
@@ -684,6 +718,9 @@ msgstr "Salvar e adicionar mais"
 msgid "Save Link"
 msgstr "Link salvo"
 
+msgid "Search Settings"
+msgstr ""
+
 msgid "Select all records"
 msgstr "Selecionar todos os registros"
 
@@ -695,6 +732,9 @@ msgstr ""
 
 msgid "Seleted Users"
 msgstr "Usuários selecionados"
+
+msgid "Self-signed"
+msgstr ""
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 Enviar mensagem para o telegram do usuário"
@@ -750,6 +790,9 @@ msgstr ""
 "✔️ Sucesso! Aguarde cerca de 5 minutos para garantir que tudo esteja "
 "atualizado"
 
+msgid "TLS"
+msgstr ""
+
 msgid "Telegram Bot"
 msgstr "Telegram Bot"
 
@@ -774,8 +817,14 @@ msgstr ""
 "Isso pode ser usado para fornecer aos seus usuários links permanentes não "
 "bloqueáveis."
 
+msgid "This domain %(domain_name)s is invalid"
+msgstr "O domínio %(domain_name)s é inválido"
+
 msgid "This domain does not exist in the panel!"
 msgstr "Este Domínio não existe no Painel!"
+
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
 
 msgid "Today Usage"
 msgstr "Hoje"
@@ -816,8 +865,14 @@ msgstr ""
 "Então copie o link abaixo e cole no v2rayNG conforme o vídeo tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -question'></i> </button>.\n"
 "<br />"
 
+msgid "Valid"
+msgstr ""
+
 msgid "View in Telegram"
 msgstr "Ver no Telegram"
+
+msgid "Waiting for the process to start..."
+msgstr ""
 
 msgid "Want to enjoy more with telegram?"
 msgstr "Conecte sua conta ao Telegram"
@@ -872,6 +927,9 @@ msgstr ""
 
 msgid "You have used this domain in: "
 msgstr "Já utilizou este Domínio em:"
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr ""
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1119,6 +1177,12 @@ msgstr "Descrição do V2RayNG"
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
+msgid "at least one domain should exist"
+msgstr ""
+
+msgid "at least one user should exist"
+msgstr ""
+
 msgid "auto"
 msgstr "Auto"
 
@@ -1338,6 +1402,21 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 API Cloudflare"
+
+msgid "config.common_proxy_core.both"
+msgstr ""
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr ""
+
+msgid "config.common_proxy_core.label"
+msgstr ""
+
+msgid "config.common_proxy_core.xray"
+msgstr ""
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1651,6 +1730,12 @@ msgstr "config.last_priodic_usage_check.description"
 msgid "config.last_priodic_usage_check.label"
 msgstr "config.last_priodic_usage_check.label"
 
+msgid "config.last_users_sync.description"
+msgstr ""
+
+msgid "config.last_users_sync.label"
+msgstr ""
+
 msgid "config.license.description"
 msgstr "Para uso comercial deste produto, você deve comprar sua licença"
 
@@ -1683,6 +1768,18 @@ msgstr "config.log_level.descrição"
 
 msgid "config.log_level.label"
 msgstr "config.log_level.label"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr ""
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+
+msgid "config.max_proxy_ips_per_version.label"
+msgstr ""
 
 msgid "config.mieru.description"
 msgstr ""
@@ -1830,6 +1927,12 @@ msgstr "Para exibir recursos. usa a CPU do seu servidor, mas não é muito."
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr ""
+
+msgid "config.node_name.label"
+msgstr ""
+
 msgid "config.not_found.description"
 msgstr "Configuração não encontrada"
 
@@ -1888,6 +1991,12 @@ msgstr "Caminho gRPC nas configurações"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ caminho gRPC"
+
+msgid "config.path_http.description"
+msgstr ""
+
+msgid "config.path_http.label"
+msgstr ""
 
 msgid "config.path_httpupgrade.description"
 msgstr "deveria ser aleatório"
@@ -2696,6 +2805,14 @@ msgstr "Websocket cria um túnel sobre HTTP que é útil para ser usado em CDN"
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
 
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"Allow XHTTP configs whose upload and download use different domains or "
+"settings. ⚠️ Many clients do not support this, so it is disabled by default."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP with different upload/download"
+
 msgid "config.xhttp_enable.description"
 msgstr "Este protocolo envia e recebe informações em canais individuais "
 
@@ -2740,7 +2857,13 @@ msgstr ""
 msgid "domain.custom_proxy.description"
 msgstr ""
 
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr ""
+
 msgid "domain.custom_proxy.group.ip_based"
+msgstr ""
+
+msgid "domain.custom_proxy.group.l7_gateway"
 msgstr ""
 
 msgid "domain.custom_proxy.group.other"
@@ -2756,6 +2879,12 @@ msgid "domain.custom_proxy.reality_only"
 msgstr ""
 
 msgid "domain.custom_proxy.reality_required"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr ""
+
+msgid "domain.custom_proxy.sni_single_only"
 msgstr ""
 
 msgid "domain.description"
@@ -2821,11 +2950,17 @@ msgstr ""
 msgid "domain.server_domain.label"
 msgstr ""
 
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
+msgstr ""
+
 msgid "domain.show_domains_description"
 msgstr ""
 "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n"
 "<br>\n"
 "Sugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis."
+
+msgid "domain.tls_status.description"
+msgstr ""
 
 msgid "download"
 msgstr "Download direto"
@@ -2845,6 +2980,11 @@ msgstr "➿ gRPC"
 msgid "grpc-proxy.description"
 msgstr ""
 "ℹ️ gRPC é um protocolo baseado em H2. Talvez seja mais rápido para você!"
+
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
 
 msgid "in parent panel"
 msgstr "No Painel Central"
@@ -2964,6 +3104,9 @@ msgstr "tamanho do pacote?"
 
 msgid "parent.invalid-parent-url"
 msgstr "parent.invalid-parent-url"
+
+msgid "parent.panel-not-active"
+msgstr ""
 
 msgid "parent.sync-req-failed"
 msgstr "parent.sync-req-failed"

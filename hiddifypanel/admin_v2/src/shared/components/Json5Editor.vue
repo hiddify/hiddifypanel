@@ -1,14 +1,20 @@
 <template>
   <div class="json5-editor">
-    <div ref="container" :style="{ height: height ?? '320px', width: '100%' }" />
+    <div v-if="loadState !== 'ready'" class="monaco-loading" :class="{ 'monaco-loading--error': loadState === 'error' }">
+      <template v-if="loadState === 'error'"><i class="pi pi-exclamation-triangle" /> {{ t('editor.loadFailed') }}</template>
+      <template v-else><i class="pi pi-spin pi-spinner" /> {{ t('editor.loading') }}</template>
+    </div>
+    <div ref="container" dir="ltr" :style="{ minHeight: height ?? '320px', width: '100%' }" />
     <p v-if="localError" class="text-red-500 text-sm mt-1 mb-0">{{ localError }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import * as monaco from 'monaco-editor'
-import { JINJA_JSON_LANGUAGE, setupMonaco } from '@/shared/monaco/setup'
+import { useI18n } from 'vue-i18n'
+import type { Monaco } from '@/shared/monaco/monaco'
+import { JINJA_JSON_LANGUAGE, ensureMonaco } from '@/shared/monaco/setup'
+import { fitEditorToContent } from '@/shared/monaco/fitContent'
 import { validateJinjaJson } from '@/shared/utils/jinja-json'
 
 const props = defineProps<{
@@ -22,9 +28,14 @@ const emit = defineEmits<{
   focus: []
 }>()
 
+const { t } = useI18n()
 const container = ref<HTMLElement | null>(null)
 const localError = ref<string | null>(null)
-let editor: monaco.editor.IStandaloneCodeEditor | null = null
+/** Monaco loads on first use (see shared/monaco/monaco.ts). */
+const loadState = ref<'loading' | 'ready' | 'error'>('loading')
+let editor: Monaco.editor.IStandaloneCodeEditor | null = null
+let unmounted = false
+let stopFitting: (() => void) | null = null
 
 function editorTheme(): string {
   return document.documentElement.classList.contains('app-dark') ? 'vs-dark' : 'vs'
@@ -44,9 +55,19 @@ function insertText(text: string) {
 
 defineExpose({ insertText })
 
-onMounted(() => {
-  setupMonaco()
-  if (!container.value) return
+onMounted(async () => {
+  // Validate right away: the text is known before the editor finishes loading.
+  validateLocal(props.modelValue ?? '')
+  let monaco: typeof Monaco
+  try {
+    monaco = await ensureMonaco()
+  } catch (err) {
+    console.error(err)
+    loadState.value = 'error'
+    return
+  }
+  if (unmounted || !container.value) return
+  loadState.value = 'ready'
   editor = monaco.editor.create(container.value, {
     value: props.modelValue ?? '',
     language: JINJA_JSON_LANGUAGE,
@@ -63,8 +84,9 @@ onMounted(() => {
     renderLineHighlight: 'none',
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,
-    scrollbar: { vertical: 'auto', horizontal: 'auto' },
+    scrollbar: { vertical: 'auto', horizontal: 'auto', alwaysConsumeMouseWheel: false },
   })
+  stopFitting = fitEditorToContent(editor, container.value)
   editor.onDidChangeModelContent(() => {
     const v = editor!.getValue()
     emit('update:modelValue', v)
@@ -73,7 +95,6 @@ onMounted(() => {
   editor.onDidFocusEditorWidget(() => {
     emit('focus')
   })
-  validateLocal(props.modelValue ?? '')
 })
 
 watch(
@@ -94,6 +115,23 @@ watch(
 )
 
 onBeforeUnmount(() => {
+  unmounted = true
+  stopFitting?.()
   editor?.dispose()
 })
 </script>
+
+<style scoped>
+.monaco-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
+}
+.monaco-loading--error {
+  color: var(--p-red-500, #ef4444);
+}
+</style>
+

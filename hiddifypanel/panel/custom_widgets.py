@@ -52,27 +52,25 @@ class LastResetField(IntegerField):
 
 
 class CKTextAreaWidget(TextArea):
-    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
 
     def __call__(self, field, **kwargs):
-        if kwargs.get('class'):
-            kwargs['class'] += ' ckeditor'
+        if kwargs.get("class"):
+            kwargs["class"] += " ckeditor"
         else:
-            kwargs.setdefault('class', 'ckeditor')
+            kwargs.setdefault("class", "ckeditor")
         return super(CKTextAreaWidget, self).__call__(field, **kwargs)
 
 
 class CKTextAreaField(TextAreaField):
-    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
     widget = CKTextAreaWidget()
 
 
 class MessageAdmin(ModelView):
-    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
 
-    form_overrides = {
-        'body': CKTextAreaField
-    }
+    form_overrides = {"body": CKTextAreaField}
 
 
 class EnumSelectField(SelectField):
@@ -96,47 +94,62 @@ class UsageField(DecimalField):
             self.data = None
 
 
-
-
-
-
-
 class JSONWidget(TextArea):
     def __call__(self, field, **kwargs):
-        if kwargs.get('class'):
-            kwargs['class'] += ' ltr json-editor'
+        if kwargs.get("class"):
+            kwargs["class"] += " ltr json-editor"
         else:
-            kwargs.setdefault('class', 'ltr json-editor')
-        
-        kwargs.setdefault("rows",10)
-        
+            kwargs.setdefault("class", "ltr json-editor")
+
+        kwargs.setdefault("rows", 5)
+
         return super().__call__(field, **kwargs)
 
+
 class JSONField(Field):
+    """Arbitrary JSON editor (json5). Stores a JSON string for DB String columns."""
+
     widget = JSONWidget()
 
     def _value(self):
         if not self.data:
-            return ''
+            return "{}"
         if isinstance(self.data, str):
-            return self.data
+            try:
+                return json5.dumps(json5.loads(self.data), indent=2)
+            except Exception:
+                return self.data
         try:
             return json5.dumps(self.data, indent=2)
         except Exception:
             return str(self.data)
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            try:    
-                self.data = json5.loads(valuelist[0]) if valuelist[0] else ""
-            except Exception as e:
-                raise ValidationError(f'Invalid JSON: {e}')
-            
+        if not valuelist:
+            self.data = "{}"
+            return
+        raw = valuelist[0]
+        if not raw or not str(raw).strip():
+            self.data = "{}"
+            return
+        try:
+            parsed = json5.loads(raw)
+            if not isinstance(parsed, (dict, list)):
+                raise ValidationError("JSON must be an object or array")
+            # Persist as compact JSON string for String/Text columns.
+            self.data = json5.dumps(parsed)
+        except ValidationError:
+            raise
+        except Exception as e:
+            raise ValidationError(f"Invalid JSON: {e}")
 
 
-from typing import Type, TypeVar,Generic
+from typing import Type, TypeVar, Generic
 from pydantic import BaseModel
-T=TypeVar("T",bound=BaseModel)
+
+T = TypeVar("T", bound=BaseModel)
+
+
 class CustomJSONField(Field, Generic[T]):
     widget = JSONWidget()
 
@@ -176,7 +189,7 @@ class CustomJSONField(Field, Generic[T]):
                 lines.append(f' "{name}": {value_str},')
 
         if len(lines) > 1:
-            lines[-1] = lines[-1].rstrip(',')
+            lines[-1] = lines[-1].rstrip(",")
 
         lines.append("}")
         return "\n".join(lines)
@@ -199,4 +212,4 @@ class CustomJSONField(Field, Generic[T]):
                 self.data = model_obj.model_dump_json()
 
             except Exception as e:
-                raise ValidationError(f'Invalid JSON: {e}')
+                raise ValidationError(f"Invalid JSON: {e}")

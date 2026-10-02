@@ -1,0 +1,58 @@
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = (tls_layer if tls_layer is defined else ctx.proxy.tls_layer) or "http" %}
+
+{% if tls_layer != 'http' %}
+"tls": {
+  "enabled": true,
+  {%if not domain.sni%} "disable_sni": true {%endif%},
+  "server_name": "{{ domain.sni }}",
+  {% if ctx.proxy.proto not in ["naive"] %}
+    "alpn": {{ tls_layer.alpns() | tojson }},
+    
+
+    {% set fp = ctx.hconfig.utls or "" %}
+    {% if fp and fp!="none" %}
+      "utls": {
+        "enabled": true,
+        "fingerprint": "{{ fp }}"
+      },
+    {% endif %}
+  {% endif %}
+  {% if domain.is_reality() %}
+    "reality": {
+      "enabled": true,
+      "public_key": "{{ ctx.hconfig.reality_public_key }}",
+      "short_id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
+    }
+  {% else %}
+    {% if ctx.platform.singbox.version >= "1.14.0" and ctx.hconfig.singbox_tls_engine %}
+      "engine": "{{ ctx.hconfig.singbox_tls_engine }}",
+    {% endif %}
+    {%if domain.allow_insecure%} 
+      {% if ctx.platform.singbox.version >= "1.13.0" %}
+        "certificate_public_key_sha256": "{{domain.cert.public_key_sha256}}",
+      {% else %}
+        "insecure": true,
+      {%endif%}
+
+    {%endif%}
+
+    {% if ctx.hconfig.tls_ech_enable and domain.mode=="cdn" %}
+    "ech": {
+      "enabled": true,
+      "config": [],
+      "config_path": "",
+      "query_server_name": "{{ domain.sni }}"
+    },
+    {% endif %}
+  {% endif %}
+},
+{# TLS fragment (Hiddify's core only): real TLS to CDN domains. #}
+{% if ctx.hconfig.tls_fragment_enable and domain.mode.is_cdn() and ctx.platform.hiddify.version > "1.0.0" %}
+"tls_fragment": {
+  "enabled": true,
+  "size": "{{ ctx.hconfig.tls_fragment_size }}",
+  "sleep": "{{ ctx.hconfig.tls_fragment_sleep }}"
+},
+{% endif %}
+{% endif %}

@@ -1,0 +1,27 @@
+{
+  "log": {
+    "level": "info"
+  },
+  {%set has_domains = false -%}
+  "tunnels": [
+{%- for proxy in ctx.proxies if proxy.mode == 'domains_dns_gateway' -%}
+  {%- for domain in proxy.domains -%}
+  {%- set pd = proxy.with_domain(domain) -%}
+  {%- set has_domains = true -%}
+      {
+        "tag": "{{ domain.name }}",
+        "enabled": true,
+        "transport": "{{ proxy.proto }}",
+        "domain": "{{ domain.name }}",
+        "port": {{ pd.udp_port }}
+      },
+  {%- endfor -%}
+{%- endfor %}
+  ],
+  "listen": {
+    "address": {% if has_domains %}"0.0.0.0:53"{% else %}"127.0.0.1:53"{% endif %}
+  },
+  "route": {
+    "mode": "multi"
+  }
+}

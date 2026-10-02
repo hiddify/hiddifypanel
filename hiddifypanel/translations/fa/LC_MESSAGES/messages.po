@@ -1,13 +1,13 @@
 #
 msgid ""
 msgstr ""
-
-msgid ""
-" Search\n"
-"            Settings"
-msgstr ""
-" جستجو کردن\n"
-"تنظیمات"
+"Project-Id-Version: hiddifypanel\n"
+"Language-Team: fa\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
 msgstr "%(count)s رکورد با موفقیت حذف شد."
@@ -151,6 +151,9 @@ msgstr "فایل کانفیگ اشتباه است"
 msgid "Copy Link"
 msgstr "کپی لینک"
 
+msgid "Copy QR image"
+msgstr ""
+
 msgid "Couldn't find your ip addresses"
 msgstr "آدرس های IP شما پیدا نشد"
 
@@ -261,7 +264,7 @@ msgstr ""
 " <ul>\n"
 "    <li> <div class='btn-group'>\n"
 "        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
+"    <a data-copy='UQDGA32X8-xgRrZnzW0uPP-ChssO2dRLQ5NPubKj3sBqHwNp' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
 "    \n"
 "    <li> <div class='btn-group'>\n"
 "        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
@@ -310,6 +313,9 @@ msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
 "قبل از استفاده از ECH روی دامنه CDN، TLS ECH را در تنظیمات پنل فعال کنید"
 
+msgid "Error in Config Generation"
+msgstr ""
+
 msgid "Error in auto cdn format"
 msgstr "⚠️ خطا در ورود IP ها به صورت دستی"
 
@@ -318,6 +324,9 @@ msgstr "خطا! آی پی اتوماتیک نتوانست پیدا شود. لط�
 
 msgid "Example Domains"
 msgstr "بررسی و پیشنهاد دامنه"
+
+msgid "Expired"
+msgstr ""
 
 msgid "Expired Users"
 msgstr "کاربران منقضی شده"
@@ -423,6 +432,9 @@ msgstr "نصب"
 msgid "Install Hiddify Application"
 msgstr "نصب پنل هیدیفای"
 
+msgid "Invalid"
+msgstr ""
+
 msgid "Invalid IP or domain"
 msgstr "IP یا دامنه نامعتبر است"
 
@@ -452,6 +464,12 @@ msgstr "در کانال تلگرام هیدیفای عضو شوید تا از آ
 
 msgid "Last Online"
 msgstr "آخرین اتصال"
+
+msgid "Last node to parent"
+msgstr ""
+
+msgid "Last parent to node"
+msgstr ""
 
 msgid "Link is changed!"
 msgstr "ℹ️ لینک تغییر کرد!"
@@ -483,8 +501,18 @@ msgstr "شبکه"
 msgid "New"
 msgstr "تازه"
 
+msgid "No certificate"
+msgstr ""
+
 msgid "No children!"
 msgstr "هیچ زیر مجموعه ای یافت نشد"
+
+msgid ""
+"No main domains found, please add at least one domain with valid certificate"
+msgstr ""
+
+msgid "Nodes"
+msgstr "نودها"
 
 msgid "Not Secure"
 msgstr "ناامن"
@@ -617,11 +645,17 @@ msgstr ""
 "لطفا پس از دونیت کردن به <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>\n"
 "پیام دهید تا نسخه ویژه ی کاربران تجاری به شما ارائه شود."
 
+msgid "Proxy Editor"
+msgstr ""
+
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath قبلاً استفاده شده است! از مسیرهای مختلف پروکسی استفاده کنید"
 
 msgid "QR code"
 msgstr "🧾 کیوآر کد"
+
+msgid "QR code image copied"
+msgstr ""
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QR Code "
@@ -710,6 +744,9 @@ msgstr "ذخیره و افزودن مورد دیگر"
 msgid "Save Link"
 msgstr "این لینک را در محلی ذخیره نمایید."
 
+msgid "Search Settings"
+msgstr "جستجوی تنظیمات"
+
 msgid "Select all records"
 msgstr "انتخاب همه رکوردها"
 
@@ -721,6 +758,9 @@ msgstr "پراکسی انتخاب‌شده از این ترکیب حالت دا�
 
 msgid "Seleted Users"
 msgstr "کاربران انتخاب شده"
+
+msgid "Self-signed"
+msgstr ""
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 ارسال پیام به تلگرام کاربر"
@@ -776,6 +816,9 @@ msgstr ""
 "✔️ موفقیت آمیز بود! لطفا برای اینکه مطمئن شوید بروزرسانی‌ها به درستی اعمال "
 "شده، حدود 5 دقیقه صبر کنید."
 
+msgid "TLS"
+msgstr ""
+
 msgid "Telegram Bot"
 msgstr "بات تلگرام"
 
@@ -800,8 +843,14 @@ msgstr ""
 "این می تواند برای دادن لینک های غیرقابل مسدود و دائمی به کاربران شما استفاده"
 " شود."
 
+msgid "This domain %(domain_name)s is invalid"
+msgstr "دامنه %(domain_name)s نامعتبر است"
+
 msgid "This domain does not exist in the panel!"
 msgstr "این دامنه در پنل وجود ندارد!"
+
+msgid "This restore has expired. Start it again from the Backup page."
+msgstr ""
 
 msgid "Today Usage"
 msgstr "استفاده امروز"
@@ -842,8 +891,14 @@ msgstr ""
 "در v2rayNG قرار دهید.\n"
 "<br />"
 
+msgid "Valid"
+msgstr ""
+
 msgid "View in Telegram"
 msgstr "مشاهده جزییات در تلگرام"
+
+msgid "Waiting for the process to start..."
+msgstr "در انتظار شروع فرایند..."
 
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ وصل کردن حساب کاربری به تلگرام"
@@ -875,7 +930,7 @@ msgid ""
 msgstr ""
 "🔄 پنل هیدیفای به صورت خودکار هر ۶ ساعت یک Backup میگیرد. مسیر فایل های Backup روی سرور: ⬇️\n"
 "<br>\n"
-"💿 /opt/hiddify-manager/hiddify-panel/backup/\n"
+"💿 /opt/hiddify-manager/data/backup/\n"
 "<br>\n"
 "<br>\n"
 "<br>\n"
@@ -898,6 +953,9 @@ msgstr ""
 
 msgid "You have used this domain in: "
 msgstr "شما از این دامنه در بخش زیر استفاده کرده اید: "
+
+msgid "You need to enable %(names)s globally to enable this proxy."
+msgstr ""
 
 msgid ""
 "Your hiddify instance information \n"
@@ -979,7 +1037,7 @@ msgid "admin.menu.config"
 msgstr "تنظیمات"
 
 msgid "admin.menu.dashboard_v2"
-msgstr "داشبورد جدید"
+msgstr "Next"
 
 msgid "admin.menu.domain"
 msgstr "دامنه‌ها"
@@ -1035,8 +1093,1073 @@ msgstr ""
 "⚠️ لطفا برای اینکه مطمئن شوید تغییرات به درستی اعمال شده، حدود 5 دقیقه صبر "
 "کنید. در این فاصله لینک‌های زیر را کپی کرده و در جایی برای خود ذخیره نمایید:"
 
+msgid "adminV2.account.aliasActive"
+msgstr "برای حذف، خالی بگذارید و ذخیره کنید."
+
+msgid "adminV2.account.aliasCleared"
+msgstr "نام کاربری حذف شد"
+
+msgid "adminV2.account.aliasHint"
+msgstr ""
+"به‌جای شناسه، با این نام کاربری و رمزتان وارد شوید. لینک‌هایی که به اشتراک "
+"می‌گذارید دیگر شناسه ندارند."
+
+msgid "adminV2.account.aliasNeedsStrong"
+msgstr ""
+"ابتدا در بالا یک رمز قوی بگذارید: نام کاربری فقط با رمز قوی کار می‌کند."
+
+msgid "adminV2.account.aliasOn"
+msgstr "فعال"
+
+msgid "adminV2.account.aliasPlaceholder"
+msgstr "مثلاً sara.sales"
+
+msgid "adminV2.account.aliasProblem.bad_chars"
+msgstr "فقط a-z، 0-9، نقطه، خط تیره و زیرخط، با حرف یا رقم شروع شود"
+
+msgid "adminV2.account.aliasProblem.looks_like_uuid"
+msgstr "نباید شبیه شناسه (UUID) باشد"
+
+msgid "adminV2.account.aliasProblem.too_short"
+msgstr "حداقل {n} کاراکتر"
+
+msgid "adminV2.account.aliasSaved"
+msgstr "اکنون می‌توانید با {alias} وارد شوید"
+
+msgid "adminV2.account.aliasSuper"
+msgstr "مدیر کل فقط با لینک ادمین وارد می‌شود و نام کاربری ندارد."
+
+msgid "adminV2.account.aliasTitle"
+msgstr "نام کاربری ورود"
+
+msgid "adminV2.account.canAddAdmins"
+msgstr "اجازهٔ افزودن زیرمجموعه"
+
+msgid "adminV2.account.changePassword"
+msgstr "تغییر رمز عبور"
+
+msgid "adminV2.account.configsCount"
+msgstr "{n} کانفیگ برای همه کاربران من | {n} کانفیگ برای همه کاربران من"
+
+msgid "adminV2.account.configsEmpty"
+msgstr ""
+"هنوز پیکربندی‌ای نیست. یک لینک اشتراک اضافه کنید یا یک پیکربندی بچسبانید: "
+"همهٔ کاربرانتان آن را می‌گیرند."
+
+msgid "adminV2.account.configsSave"
+msgstr "ذخیرهٔ پیکربندی‌ها"
+
+msgid "adminV2.account.configsSaved"
+msgstr "پیکربندی‌ها ذخیره شد"
+
+msgid "adminV2.account.configsSub"
+msgstr ""
+"به اشتراک همهٔ کاربران شما و کاربران زیرمجموعه‌هایتان اضافه می‌شود، علاوه بر"
+" پیکربندی‌های خود هر کاربر."
+
+msgid "adminV2.account.configsTitle"
+msgstr "پیکربندی‌های کاربران من"
+
+msgid "adminV2.account.configsUnsaved"
+msgstr "هنوز ذخیره نشده"
+
+msgid "adminV2.account.copyLink"
+msgstr "کپی لینک ادمین من"
+
+msgid "adminV2.account.current"
+msgstr "رمز فعلی"
+
+msgid "adminV2.account.editConfigs"
+msgstr "ویرایش کانفیگ‌ها"
+
+msgid "adminV2.account.generate"
+msgstr "ساخت رمز"
+
+msgid "adminV2.account.generatedCopied"
+msgstr "یک رمز قوی ساخته و کپی شد"
+
+msgid "adminV2.account.inheritedConfigs"
+msgstr "+ {n} از ادمین‌های بالاتر"
+
+msgid "adminV2.account.limitsSub"
+msgstr "کاربران شما و همهٔ زیرمجموعه‌هایتان در این‌ها حساب می‌شوند."
+
+msgid "adminV2.account.limitsTitle"
+msgstr "محدودیت‌های من"
+
+msgid "adminV2.account.loginHint"
+msgstr "پس از ذخیره، با لینک ادمین و این رمز وارد شوید."
+
+msgid "adminV2.account.minLength"
+msgstr "حداقل {n} کاراکتر"
+
+msgid "adminV2.account.mismatch"
+msgstr "رمزها یکسان نیستند"
+
+msgid "adminV2.account.nearLimit"
+msgstr ""
+"به یکی از محدودیت‌ها نزدیک شده‌اید. از ادمین بالادست بخواهید آن را افزایش "
+"دهد یا کاربران غیرضروری را غیرفعال کنید."
+
+msgid "adminV2.account.new"
+msgstr "رمز جدید"
+
+msgid "adminV2.account.noLimits"
+msgstr "مدیر کل محدودیتی ندارد."
+
+msgid "adminV2.account.noPasswordSub"
+msgstr ""
+"رمز عبور ندارید: هر کسی لینک شما را داشته باشد وارد می‌شود. برای محافظت از "
+"حساب، رمز بگذارید."
+
+msgid "adminV2.account.outboundApply"
+msgstr "برای اعمال، تغییرات را اعمال کنید."
+
+msgid "adminV2.account.outboundNone"
+msgstr "هنوز خروجی‌ای نیست. ادمین اصلی آن‌ها را تنظیم می‌کند."
+
+msgid "adminV2.account.outboundSaved"
+msgstr "خروجی پیش‌فرض ذخیره شد"
+
+msgid "adminV2.account.outboundSub"
+msgstr ""
+"کاربران من و کاربران زیرمجموعه‌هایم از این خروجی استفاده می‌کنند، مگر کاربر "
+"(یا ادمینی نزدیک‌تر) خروجی دیگری انتخاب کند."
+
+msgid "adminV2.account.outboundTitle"
+msgstr "خروجی پیش‌فرض"
+
+msgid "adminV2.account.passwordNone"
+msgstr "بدون رمز: هر کس لینک شما را داشته باشد می‌تواند وارد شود"
+
+msgid "adminV2.account.passwordSet"
+msgstr "رمز عبور از حساب شما محافظت می‌کند"
+
+msgid "adminV2.account.passwordSub"
+msgstr "رمزی را که با آن وارد می‌شوید تغییر دهید."
+
+msgid "adminV2.account.passwordTitle"
+msgstr "رمز عبور"
+
+msgid "adminV2.account.repeat"
+msgstr "تکرار رمز جدید"
+
+msgid "adminV2.account.save"
+msgstr "ذخیرهٔ رمز"
+
+msgid "adminV2.account.saved"
+msgstr "رمز عبور تغییر کرد"
+
+msgid "adminV2.account.setPassword"
+msgstr "تنظیم رمز عبور"
+
+msgid "adminV2.account.strength.medium"
+msgstr "متوسط"
+
+msgid "adminV2.account.strength.prompt"
+msgstr "رمز را وارد کنید"
+
+msgid "adminV2.account.strength.strong"
+msgstr "قوی"
+
+msgid "adminV2.account.strength.weak"
+msgstr "ضعیف"
+
+msgid "adminV2.account.subAdmins"
+msgstr "زیرمجموعه‌ها"
+
+msgid "adminV2.account.subtitle"
+msgstr "محدودیت‌های شما، میزان استفاده از آن‌ها و رمز عبور."
+
+msgid "adminV2.account.superText"
+msgstr "هر تعداد کاربر و ادمین که نیاز دارید می‌توانید اضافه کنید."
+
+msgid "adminV2.account.tabs.overview"
+msgstr "نمای کلی"
+
+msgid "adminV2.account.tabs.security"
+msgstr "امنیت"
+
+msgid "adminV2.account.tabs.users"
+msgstr "کاربران من"
+
+msgid "adminV2.account.title"
+msgstr "حساب من"
+
+msgid "adminV2.account.under"
+msgstr "زیرمجموعهٔ {name}"
+
+msgid "adminV2.account.unlimited"
+msgstr "بدون محدودیت"
+
+msgid "adminV2.account.wrongCurrent"
+msgstr "رمز فعلی اشتباه است"
+
+msgid "adminV2.actions.applyConfigs"
+msgstr "اعمال تغییرات"
+
+msgid "adminV2.actions.applyConfigsHint"
+msgstr "کانفیگ‌های سرور را دوباره می‌سازد و روی سرویس‌ها اعمال می‌کند."
+
+msgid "adminV2.actions.confirm"
+msgstr "آیا از انجام این عملیات مطمئن هستید؟"
+
+msgid "adminV2.actions.ports.copied"
+msgstr "{what} کپی شد"
+
+msgid "adminV2.actions.ports.copyList"
+msgstr "کپی فهرست"
+
+msgid "adminV2.actions.ports.count"
+msgstr "{n} پورت"
+
+msgid "adminV2.actions.ports.firewall"
+msgstr "دستورهای فایروال (ufw)"
+
+msgid "adminV2.actions.ports.hint"
+msgstr ""
+"همه پورت‌هایی که این سرور باید رو به اینترنت باز باشند، آماده برای فایروال."
+
+msgid "adminV2.actions.ports.lead"
+msgstr ""
+"این پورت‌ها را در فایروال سرور (یا سرویس ابری) باز کنید تا کاربران بتوانند "
+"وصل شوند."
+
+msgid "adminV2.actions.ports.none"
+msgstr "هیچ"
+
+msgid "adminV2.actions.ports.refresh"
+msgstr "تازه‌سازی"
+
+msgid "adminV2.actions.ports.title"
+msgstr "پورت‌های عمومی"
+
+msgid "adminV2.actions.reinstall"
+msgstr "نصب مجدد"
+
+msgid "adminV2.actions.reinstallHint"
+msgstr "اجرای دوباره نصب کامل. سرویس‌ها چند دقیقه از دسترس خارج می‌شوند."
+
+msgid "adminV2.actions.resetCache"
+msgstr "پاک‌سازی کش"
+
+msgid "adminV2.actions.resetCacheDone"
+msgstr "کش پاک شد"
+
+msgid "adminV2.actions.resetCacheFailed"
+msgstr "پاک‌سازی کش ناموفق بود"
+
+msgid "adminV2.actions.resetCacheHint"
+msgstr ""
+"داده‌های کش‌شده و قالب‌های رندرشده پنل را پاک می‌کند. بی‌خطر است و سرویسی "
+"ری‌استارت نمی‌شود."
+
+msgid "adminV2.actions.restart"
+msgstr "ریستارت سیستم"
+
+msgid "adminV2.actions.restartHint"
+msgstr "ری‌استارت همه سرویس‌ها. اتصال‌های فعال قطع می‌شوند."
+
+msgid "adminV2.actions.status"
+msgstr "وضعیت"
+
+msgid "adminV2.actions.statusHint"
+msgstr "بررسی وضعیت همه سرویس‌ها و نمایش لاگ آن."
+
+msgid "adminV2.actions.subtitle"
+msgstr "عملیات نگهداری و سیستمی پنل."
+
+msgid "adminV2.actions.title"
+msgstr "اقدامات"
+
+msgid "adminV2.actions.update"
+msgstr "به‌روز‌ رسانی"
+
+msgid "adminV2.actions.updateHint"
+msgstr "به‌روزرسانی پنل و همه سرویس‌ها به آخرین نسخه."
+
+msgid "adminV2.actions.viewlogs"
+msgstr "نمایش لاگ"
+
+msgid "adminV2.actions.viewlogsHint"
+msgstr "مشاهده فایل‌های لاگ سیستم."
+
+msgid "adminV2.admins.add"
+msgstr "افزودن ادمین"
+
+msgid "adminV2.admins.canAddHint"
+msgstr "این ادمین می‌تواند زیرمجموعهٔ خودش را بسازد"
+
+msgid "adminV2.admins.canAddShort"
+msgstr "افزودن زیرمجموعه"
+
+msgid "adminV2.admins.clearSearch"
+msgstr "پاک کردن جستجو"
+
+msgid "adminV2.admins.col.link"
+msgstr "لینک ادمین"
+
+msgid "adminV2.admins.col.mode"
+msgstr "نقش"
+
+msgid "adminV2.admins.col.name"
+msgstr "نام"
+
+msgid "adminV2.admins.col.note"
+msgstr "یادداشت"
+
+msgid "adminV2.admins.col.subAdmins"
+msgstr "زیرمجموعه"
+
+msgid "adminV2.admins.col.users"
+msgstr "کاربران"
+
+msgid "adminV2.admins.collapse"
+msgstr "پنهان کردن زیرمجموعه‌های {name}"
+
+msgid "adminV2.admins.copyLink"
+msgstr "کپی لینک"
+
+msgid "adminV2.admins.credentials.copyMessage"
+msgstr "کپی پیام"
+
+msgid "adminV2.admins.credentials.copyMessageHint"
+msgstr "پیام را همراه با تصویر کد QR کپی می‌کند"
+
+msgid "adminV2.admins.credentials.createdTitle"
+msgstr "{name} آماده است"
+
+msgid "adminV2.admins.credentials.done"
+msgstr "تمام"
+
+msgid "adminV2.admins.credentials.lead"
+msgstr ""
+"این‌ها را برای ادمین بفرستید. لینک را باز می‌کند و با رمز وارد می‌شود."
+
+msgid "adminV2.admins.credentials.link"
+msgstr "لینک ادمین"
+
+msgid "adminV2.admins.credentials.message"
+msgstr ""
+"برای ورود، لطفاً لینک زیر را باز کنید:\n"
+"{link}\n"
+"و با این رمز وارد شوید: {password}"
+
+msgid "adminV2.admins.credentials.messageAlias"
+msgstr ""
+"برای ورود، لطفاً لینک زیر را باز کنید:\n"
+"{link}\n"
+"و با این نام کاربری وارد شوید: {alias}\n"
+"و این رمز: {password}"
+
+msgid "adminV2.admins.credentials.messageLabel"
+msgstr "پیام برای ارسال"
+
+msgid "adminV2.admins.credentials.once"
+msgstr ""
+"رمز فقط همین حالا نمایش داده می‌شود. پیش از بستن کپی کنید؛ وگرنه دوباره "
+"بازنشانی کنید."
+
+msgid "adminV2.admins.credentials.password"
+msgstr "رمز عبور"
+
+msgid "adminV2.admins.credentials.resetTitle"
+msgstr "رمز جدید {name}"
+
+msgid "adminV2.admins.credentials.show"
+msgstr "نمایش رمز"
+
+msgid "adminV2.admins.credentials.username"
+msgstr "نام کاربری"
+
+msgid "adminV2.admins.deleteMessage"
+msgstr "این ادمین حذف می‌شود و کاربرانش به شما منتقل می‌شوند."
+
+msgid "adminV2.admins.deleteMessageWithSubs"
+msgstr ""
+"این ادمین و {count} زیرمجموعه‌اش حذف می‌شوند و کاربرانشان به شما منتقل "
+"می‌شوند. | این ادمین و {count} زیرمجموعه‌اش حذف می‌شوند و کاربرانشان به شما "
+"منتقل می‌شوند."
+
+msgid "adminV2.admins.deleteTitle"
+msgstr "{name} حذف شود؟"
+
+msgid "adminV2.admins.deleted"
+msgstr "{name} حذف شد"
+
+msgid "adminV2.admins.empty.cta"
+msgstr "افزودن اولین ادمین"
+
+msgid "adminV2.admins.empty.text"
+msgstr ""
+"برای تقسیم کار نماینده اضافه کنید. هر کدام لینک، رمز و محدودیت خودش را دارد."
+
+msgid "adminV2.admins.empty.textNoPermission"
+msgstr "اجازهٔ افزودن ادمین ندارید. در صورت نیاز از ادمین بالادست بخواهید."
+
+msgid "adminV2.admins.empty.title"
+msgstr "هنوز زیرمجموعه‌ای ندارید"
+
+msgid "adminV2.admins.expand"
+msgstr "نمایش زیرمجموعه‌های {name}"
+
+msgid "adminV2.admins.filter.anyMode"
+msgstr "همهٔ نقش‌ها"
+
+msgid "adminV2.admins.filter.anySub"
+msgstr "همهٔ اجازه‌ها"
+
+msgid "adminV2.admins.filter.canAdd"
+msgstr "می‌تواند زیرمجموعه بسازد"
+
+msgid "adminV2.admins.filter.cannotAdd"
+msgstr "نمی‌تواند زیرمجموعه بسازد"
+
+msgid "adminV2.admins.filter.clear"
+msgstr "پاک کردن فیلترها"
+
+msgid "adminV2.admins.filter.mode"
+msgstr "فیلتر بر اساس نقش"
+
+msgid "adminV2.admins.filter.sub"
+msgstr "فیلتر بر اساس اجازهٔ زیرمجموعه"
+
+msgid "adminV2.admins.form.advanced"
+msgstr "پیشرفته"
+
+msgid "adminV2.admins.form.advancedHint"
+msgstr "زیر {name}"
+
+msgid "adminV2.admins.form.alias"
+msgstr "نام کاربری ورود"
+
+msgid "adminV2.admins.form.aliasHint"
+msgstr ""
+"با نام کاربری، با نام کاربری و رمز وارد می‌شود و لینک‌های اشتراکی شناسه "
+"ندارند."
+
+msgid "adminV2.admins.form.canAddAdmin"
+msgstr "اجازهٔ افزودن زیرمجموعه"
+
+msgid "adminV2.admins.form.canAddAdminHint"
+msgstr "این ادمین می‌تواند در حد محدودیت‌های خودش نماینده بسازد."
+
+msgid "adminV2.admins.form.configs"
+msgstr "پیکربندی‌های کاربران این ادمین"
+
+msgid "adminV2.admins.form.configsCount"
+msgstr "{n} پیکربندی | {n} پیکربندی"
+
+msgid "adminV2.admins.form.configsHint"
+msgstr "به اشتراک همهٔ کاربران این ادمین و زیرمجموعه‌هایش اضافه می‌شود."
+
+msgid "adminV2.admins.form.create"
+msgstr "ساخت ادمین"
+
+msgid "adminV2.admins.form.createSubtitle"
+msgstr "یک نماینده ساخته می‌شود و یک رمز امن برایش تولید می‌شود."
+
+msgid "adminV2.admins.form.createTitle"
+msgstr "ادمین جدید"
+
+msgid "adminV2.admins.form.editSubtitle"
+msgstr "تغییرات بلافاصله اعمال می‌شوند."
+
+msgid "adminV2.admins.form.editTitle"
+msgstr "ویرایش {name}"
+
+msgid "adminV2.admins.form.emptyNoLimit"
+msgstr "برای بدون محدودیت، خالی بگذارید"
+
+msgid "adminV2.admins.form.limits"
+msgstr "محدودیت‌ها"
+
+msgid "adminV2.admins.form.limitsHint"
+msgstr ""
+"روی کاربران این ادمین و همهٔ زیرمجموعه‌هایش حساب می‌شود. با رسیدن به هر "
+"کدام، کاربر جدید اضافه نمی‌شود."
+
+msgid "adminV2.admins.form.name"
+msgstr "نام"
+
+msgid "adminV2.admins.form.namePlaceholder"
+msgstr "مثلاً تیم فروش"
+
+msgid "adminV2.admins.form.nameRequired"
+msgstr "نام لازم است"
+
+msgid "adminV2.admins.form.newUuid"
+msgstr "UUID جدید"
+
+msgid "adminV2.admins.form.noLimit"
+msgstr "بدون محدودیت"
+
+msgid "adminV2.admins.form.note"
+msgstr "یادداشت"
+
+msgid "adminV2.admins.form.notePlaceholder"
+msgstr "فقط برای ادمین‌های بالاتر قابل مشاهده است"
+
+msgid "adminV2.admins.form.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.admins.form.outbound"
+msgstr "خروجی پیش‌فرض"
+
+msgid "adminV2.admins.form.outboundHint"
+msgstr ""
+"کاربران این ادمین (و کاربران زیرمجموعه‌هایش) از این خروجی استفاده می‌کنند، "
+"مگر کاربری خروجی دیگری انتخاب کند."
+
+msgid "adminV2.admins.form.parent"
+msgstr "ادمین بالادست"
+
+msgid "adminV2.admins.form.parentHint"
+msgstr "ادمین جدید، کاربران و محدودیت‌هایش زیر این ادمین قرار می‌گیرند."
+
+msgid "adminV2.admins.form.passwordInfo"
+msgstr ""
+"یک رمز امن خودکار ساخته می‌شود. بلافاصله پس از ذخیره می‌توانید آن را همراه "
+"لینک ورود کپی کنید."
+
+msgid "adminV2.admins.form.placement"
+msgstr "جایگاه در تیم"
+
+msgid "adminV2.admins.form.superNoLimits"
+msgstr "مدیر کل محدودیتی ندارد."
+
+msgid "adminV2.admins.form.upTo"
+msgstr "تا {max} (محدودیت شما)"
+
+msgid "adminV2.admins.form.uuidHint"
+msgstr "خودکار ساخته می‌شود. فقط برای استفاده از یک شناسهٔ مشخص تغییرش دهید."
+
+msgid "adminV2.admins.form.uuidInvalid"
+msgstr "این UUID معتبر نیست"
+
+msgid "adminV2.admins.limit.max_active_users"
+msgstr "حداکثر کاربر فعال"
+
+msgid "adminV2.admins.limit.max_online_users"
+msgstr "حداکثر کاربر آنلاین"
+
+msgid "adminV2.admins.limit.max_total_usage_GB"
+msgstr "حداکثر ترافیک مصرفی (کل)"
+
+msgid "adminV2.admins.limit.max_users"
+msgstr "حداکثر کل کاربران"
+
+msgid "adminV2.admins.linkDialog.pwHint"
+msgstr "رمزها دیگر نمایش داده نمی‌شوند. برای رمز جدید، آن را بازنشانی کنید."
+
+msgid "adminV2.admins.linkDialog.pwNone"
+msgstr "بدون رمز: فقط با این لینک وارد می‌شود"
+
+msgid "adminV2.admins.linkDialog.pwSet"
+msgstr "ورود با این لینک و رمز عبور"
+
+msgid "adminV2.admins.linkDialog.title"
+msgstr "لینک ادمین {name}"
+
+msgid "adminV2.admins.linkDialog.username"
+msgstr "نام کاربری"
+
+msgid "adminV2.admins.linkDialog.usernameHint"
+msgstr ""
+"این لینک صفحهٔ ورود را باز می‌کند؛ با این نام کاربری و رمز خود وارد می‌شوند."
+
+msgid "adminV2.admins.meLocked"
+msgstr ""
+"این حساب خودتان است: اینجا فقط پیکربندی‌های کاربرانتان تغییر می‌کند. رمز "
+"عبور را در «حساب من» تغییر دهید."
+
+msgid "adminV2.admins.meter.active"
+msgstr "فعال"
+
+msgid "adminV2.admins.meter.activeHint"
+msgstr "کاربران روشن که هنوز روز و حجم دارند، از تعداد مجاز"
+
+msgid "adminV2.admins.meter.online"
+msgstr "آنلاین"
+
+msgid "adminV2.admins.meter.onlineHint"
+msgstr "کاربرانی که در ۲۴ ساعت گذشته آنلاین بوده‌اند، از تعداد مجاز"
+
+msgid "adminV2.admins.meter.total"
+msgstr "کل"
+
+msgid "adminV2.admins.meter.totalHint"
+msgstr "همهٔ کاربران، از تعداد مجاز"
+
+msgid "adminV2.admins.meter.traffic"
+msgstr "ترافیک"
+
+msgid "adminV2.admins.meter.trafficHint"
+msgstr "ترافیک مصرف‌شدهٔ همهٔ این کاربران، از کل مجاز"
+
+msgid "adminV2.admins.mode.admin"
+msgstr "ادمین"
+
+msgid "adminV2.admins.mode.agent"
+msgstr "نماینده"
+
+msgid "adminV2.admins.mode.super_admin"
+msgstr "مدیر کل"
+
+msgid "adminV2.admins.more"
+msgstr "کارهای بیشتر"
+
+msgid "adminV2.admins.myConfigs"
+msgstr "پیکربندی‌های کاربران من"
+
+msgid "adminV2.admins.myConfigsHint"
+msgstr ""
+"پیکربندی‌های کاربران من: به اشتراک همهٔ کاربران شما و کاربران "
+"زیرمجموعه‌هایتان اضافه می‌شود"
+
+msgid "adminV2.admins.noMatch"
+msgstr "هیچ ادمینی با این فیلترها پیدا نشد"
+
+msgid "adminV2.admins.outbound.auto"
+msgstr "خودکار"
+
+msgid "adminV2.admins.outbound.inherit"
+msgstr "مثل بالادست: {name}"
+
+msgid "adminV2.admins.refresh"
+msgstr "بارگذاری دوباره"
+
+msgid "adminV2.admins.resetMessage"
+msgstr "یک رمز جدید ساخته می‌شود و رمز قبلی بلافاصله از کار می‌افتد."
+
+msgid "adminV2.admins.resetPassword"
+msgstr "بازنشانی رمز"
+
+msgid "adminV2.admins.resetTitle"
+msgstr "رمز عبور {name} بازنشانی شود؟"
+
+msgid "adminV2.admins.saved"
+msgstr "{name} ذخیره شد"
+
+msgid "adminV2.admins.search"
+msgstr "جستجوی نام یا UUID"
+
+msgid "adminV2.admins.showLink"
+msgstr "لینک ادمین"
+
+msgid "adminV2.admins.subCount"
+msgstr "{n} زیرمجموعه | {n} زیرمجموعه"
+
+msgid "adminV2.admins.subtitle"
+msgstr ""
+"تیم ادمین‌های شما به‌صورت درختی. محدودیت هر ادمین شامل کاربران خودش و همهٔ "
+"زیرمجموعه‌هایش است."
+
+msgid "adminV2.admins.summary.admins"
+msgstr "ادمین | ادمین"
+
+msgid "adminV2.admins.summary.online"
+msgstr "آنلاین"
+
+msgid "adminV2.admins.summary.users"
+msgstr "کاربر | کاربر"
+
+msgid "adminV2.admins.title"
+msgstr "ادمین‌ها"
+
+msgid "adminV2.admins.you"
+msgstr "شما"
+
 msgid "adminV2.appTitle"
-msgstr "هیدیفای — جدید"
+msgstr "هیدیفای منیجر"
+
+msgid "adminV2.apply.action.apply.button"
+msgstr "الان اعمال کن"
+
+msgid "adminV2.apply.action.apply.desc"
+msgstr ""
+"تنظیمات، کاربران و تغییرات دامنه را اعمال می‌کند. سریع است و بعد از هر تغییر"
+" معمولا همین را می‌خواهید."
+
+msgid "adminV2.apply.action.apply.done"
+msgstr "تغییرات اعمال شد"
+
+msgid "adminV2.apply.action.apply.running"
+msgstr "در حال اعمال تغییرات"
+
+msgid "adminV2.apply.action.apply.title"
+msgstr "اعمال تغییرات"
+
+msgid "adminV2.apply.action.install.button"
+msgstr "نصب دوباره"
+
+msgid "adminV2.apply.action.install.confirm"
+msgstr ""
+"همه چیز دوباره نصب می‌شود و ممکن است اتصال‌ها چند دقیقه قطع شود. ادامه "
+"می‌دهید؟"
+
+msgid "adminV2.apply.action.install.desc"
+msgstr ""
+"همه چیز را دوباره نصب می‌کند و همه سرویس‌ها را از نو می‌سازد. وقتی اعمال "
+"کافی نیست، مثلا بعد از تغییر مسیر پنل یا پروتکل‌ها."
+
+msgid "adminV2.apply.action.install.done"
+msgstr "نصب دوباره تمام شد"
+
+msgid "adminV2.apply.action.install.running"
+msgstr "در حال نصب دوباره"
+
+msgid "adminV2.apply.action.install.title"
+msgstr "نصب دوباره"
+
+msgid "adminV2.apply.action.restart.button"
+msgstr "راه‌اندازی مجدد"
+
+msgid "adminV2.apply.action.restart.confirm"
+msgstr ""
+"همه سرویس‌ها راه‌اندازی مجدد می‌شوند و اتصال‌ها لحظه‌ای قطع می‌شود. ادامه "
+"می‌دهید؟"
+
+msgid "adminV2.apply.action.restart.desc"
+msgstr ""
+"همه سرویس‌های هیدیفای را بدون نصب دوباره راه‌اندازی مجدد می‌کند. اولین کار "
+"خوب وقتی چیزی درست کار نمی‌کند."
+
+msgid "adminV2.apply.action.restart.done"
+msgstr "سرویس‌ها راه‌اندازی مجدد شدند"
+
+msgid "adminV2.apply.action.restart.running"
+msgstr "در حال راه‌اندازی مجدد سرویس‌ها"
+
+msgid "adminV2.apply.action.restart.title"
+msgstr "راه‌اندازی مجدد سرویس‌ها"
+
+msgid "adminV2.apply.action.status.button"
+msgstr "الان بررسی کن"
+
+msgid "adminV2.apply.action.status.desc"
+msgstr ""
+"نشان می‌دهد هر سرویس کار می‌کند یا نه، به همراه IP عمومی سرور و Warp. چیزی "
+"را تغییر نمی‌دهد."
+
+msgid "adminV2.apply.action.status.done"
+msgstr "وضعیت بررسی شد"
+
+msgid "adminV2.apply.action.status.running"
+msgstr "در حال بررسی وضعیت"
+
+msgid "adminV2.apply.action.status.title"
+msgstr "بررسی وضعیت"
+
+msgid "adminV2.apply.action.update.button"
+msgstr "به‌روزرسانی"
+
+msgid "adminV2.apply.action.update.confirm"
+msgstr ""
+"هیدیفای به آخرین نسخه به‌روز می‌شود. پنل راه‌اندازی مجدد می‌شود و ممکن است "
+"اتصال‌ها چند دقیقه قطع شود. ادامه می‌دهید؟"
+
+msgid "adminV2.apply.action.update.desc"
+msgstr ""
+"آخرین نسخه هیدیفای را دانلود و نصب می‌کند و اعمال می‌کند. کمی طول می‌کشد و "
+"در پایان پنل راه‌اندازی مجدد می‌شود."
+
+msgid "adminV2.apply.action.update.done"
+msgstr "به‌روزرسانی تمام شد"
+
+msgid "adminV2.apply.action.update.running"
+msgstr "در حال به‌روزرسانی"
+
+msgid "adminV2.apply.action.update.title"
+msgstr "به‌روزرسانی هیدیفای"
+
+msgid "adminV2.apply.busyOutside"
+msgstr "همین الان چیزی روی سرور در حال اجراست."
+
+msgid "adminV2.apply.lastRun"
+msgstr "آخرین اجرا {when}"
+
+msgid "adminV2.apply.log.copied"
+msgstr "لاگ کپی شد"
+
+msgid "adminV2.apply.log.download"
+msgstr "دانلود"
+
+msgid "adminV2.apply.log.empty"
+msgstr "هنوز چیزی نیست…"
+
+msgid "adminV2.apply.log.follow"
+msgstr "آخرین"
+
+msgid "adminV2.apply.log.hide"
+msgstr "پنهان کردن لاگ"
+
+msgid "adminV2.apply.log.loading"
+msgstr "در حال بارگذاری…"
+
+msgid "adminV2.apply.log.show"
+msgstr "نمایش لاگ"
+
+msgid "adminV2.apply.log.showingEnd"
+msgstr "انتهای لاگ نشان داده می‌شود"
+
+msgid "adminV2.apply.log.terminal"
+msgstr "لاگ"
+
+msgid "adminV2.apply.log.wrap"
+msgstr "شکستن خط‌ها"
+
+msgid "adminV2.apply.logs.empty"
+msgstr "هنوز لاگی نیست"
+
+msgid "adminV2.apply.logs.sub"
+msgstr "هر اقدام چه کرد، از سرور."
+
+msgid "adminV2.apply.logs.title"
+msgstr "لاگ‌ها"
+
+msgid "adminV2.apply.logs.view"
+msgstr "مشاهده"
+
+msgid "adminV2.apply.minutes"
+msgstr "~{n} دقیقه"
+
+msgid "adminV2.apply.notStarted"
+msgstr "شروع نشد"
+
+msgid "adminV2.apply.recommended"
+msgstr "پیشنهادی"
+
+msgid "adminV2.apply.run.dontClose"
+msgstr "می‌توانید از این صفحه بروید؛ روی سرور ادامه می‌یابد."
+
+msgid "adminV2.apply.run.links"
+msgstr "لینک‌های ادمین روی دامنه‌های شما (ممکن است تغییر کرده باشند)"
+
+msgid "adminV2.apply.run.reconnecting"
+msgstr "پنل در حال راه‌اندازی مجدد است، اتصال دوباره…"
+
+msgid "adminV2.apply.run.reload"
+msgstr ""
+"پنل به‌روز شد. برای استفاده از نسخه جدید صفحه را دوباره بارگذاری کنید."
+
+msgid "adminV2.apply.run.reloadBtn"
+msgstr "بارگذاری مجدد"
+
+msgid "adminV2.apply.run.stalled"
+msgstr "مدت زیادی است چیز تازه‌ای در لاگ نیست. لاگ پایین را ببینید."
+
+msgid "adminV2.apply.run.starting"
+msgstr "در حال شروع…"
+
+msgid "adminV2.apply.run.waitingStart"
+msgstr "منتظر شروع…"
+
+msgid "adminV2.apply.run.working"
+msgstr "در حال کار…"
+
+msgid "adminV2.apply.subtitle"
+msgstr "تغییرات را اعمال کنید، سرور را به‌روز کنید و وضعیت همه چیز را ببینید"
+
+msgid "adminV2.apply.takes"
+msgstr "زمان تقریبی"
+
+msgid "adminV2.apply.title"
+msgstr "اعمال و وضعیت"
+
+msgid "adminV2.apply.watch"
+msgstr "تماشا"
+
+msgid "adminV2.applyNotice.apply"
+msgstr "ذخیره شد. برای اعمال تغییرات، کانفیگ‌ها را اعمال کنید."
+
+msgid "adminV2.applyNotice.later"
+msgstr "بعداً"
+
+msgid "adminV2.applyNotice.reinstall"
+msgstr "ذخیره شد. برخی تغییرات نیاز به نصب مجدد دارند."
+
+msgid "adminV2.applyNotice.update"
+msgstr ""
+"ذخیره شد. کانال به‌روزرسانی تغییر کرد؛ برای اعمال، به‌روزرسانی را اجرا کنید."
+
+msgid "adminV2.backup.auto.connect"
+msgstr "اتصال تلگرام"
+
+msgid "adminV2.backup.auto.deleteFailed"
+msgstr "حذف ممکن نشد"
+
+msgid "adminV2.backup.auto.deleteMessage"
+msgstr "پشتیبان {when} از سرور حذف می‌شود."
+
+msgid "adminV2.backup.auto.deleteTitle"
+msgstr "این پشتیبان حذف شود؟"
+
+msgid "adminV2.backup.auto.download"
+msgstr "دانلود"
+
+msgid "adminV2.backup.auto.empty"
+msgstr "هنوز پشتیبانی روی سرور نیست"
+
+msgid "adminV2.backup.auto.latest"
+msgstr "جدیدترین"
+
+msgid "adminV2.backup.auto.restore"
+msgstr "بازیابی همین"
+
+msgid "adminV2.backup.auto.showAll"
+msgstr "نمایش همه {n}"
+
+msgid "adminV2.backup.auto.showLess"
+msgstr "نمایش کمتر"
+
+msgid "adminV2.backup.auto.sub"
+msgstr ""
+"به‌طور خودکار هر چند وقت یک بار ساخته می‌شوند، و هر وقت اینجا ذخیره کنید."
+
+msgid "adminV2.backup.auto.telegramOff"
+msgstr "پشتیبان‌های خودکار می‌توانند در تلگرام هم برای شما فرستاده شوند."
+
+msgid "adminV2.backup.auto.telegramOn"
+msgstr "هر پشتیبان خودکار در تلگرام هم برای شما فرستاده می‌شود."
+
+msgid "adminV2.backup.auto.title"
+msgstr "پشتیبان‌های روی سرور"
+
+msgid "adminV2.backup.count.admins"
+msgstr "ادمین"
+
+msgid "adminV2.backup.count.custom_proxies"
+msgstr "پروکسی سفارشی"
+
+msgid "adminV2.backup.count.domains"
+msgstr "دامنه"
+
+msgid "adminV2.backup.count.nodes"
+msgstr "نود"
+
+msgid "adminV2.backup.count.settings"
+msgstr "تنظیم"
+
+msgid "adminV2.backup.count.users"
+msgstr "کاربر"
+
+msgid "adminV2.backup.restore.advanced"
+msgstr "پیشرفته"
+
+msgid "adminV2.backup.restore.change"
+msgstr "انتخاب فایل دیگر"
+
+msgid "adminV2.backup.restore.confirmMessage"
+msgstr ""
+"این بخش‌های پنل جایگزین می‌شوند: {parts}. اگر ممکن است به آن‌ها نیاز داشته "
+"باشید، ابتدا پشتیبان بگیرید."
+
+msgid "adminV2.backup.restore.confirmTitle"
+msgstr "این پشتیبان بازیابی شود؟"
+
+msgid "adminV2.backup.restore.drop"
+msgstr "فایل پشتیبان را اینجا رها کنید"
+
+msgid "adminV2.backup.restore.dropHint"
+msgstr "یا برای انتخاب فایل ‎.json‎ کلیک کنید"
+
+msgid "adminV2.backup.restore.fromFile"
+msgstr "از دستگاه شما"
+
+msgid "adminV2.backup.restore.fromServer"
+msgstr "از همین سرور"
+
+msgid "adminV2.backup.restore.notJson"
+msgstr "یک فایل پشتیبان ‎.json‎ انتخاب کنید"
+
+msgid "adminV2.backup.restore.overrideRoot"
+msgstr "من مالک شوم"
+
+msgid "adminV2.backup.restore.overrideRootHint"
+msgstr "ادمین مالک پشتیبان، شما می‌شوید (برای بازیابی پشتیبان پنلی دیگر)."
+
+msgid "adminV2.backup.restore.part.domains"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.backup.restore.part.domainsHint"
+msgstr "دامنه‌ها، گواهی‌ها و پروکسی‌های سفارشی"
+
+msgid "adminV2.backup.restore.part.settings"
+msgstr "تنظیمات"
+
+msgid "adminV2.backup.restore.part.settingsHint"
+msgstr "تنظیمات پنل، پروکسی‌ها و کانفیگ‌هایشان"
+
+msgid "adminV2.backup.restore.part.users"
+msgstr "کاربران"
+
+msgid "adminV2.backup.restore.part.usersHint"
+msgstr "کاربران، مصرف و محدودیت‌هایشان، و ادمین‌ها"
+
+msgid "adminV2.backup.restore.pathChanges"
+msgstr ""
+"این پشتیبان از پنل دیگری است: پس از بازیابی، لینک ادمین تغییر می‌کند. "
+"لینک‌های جدید در پایان نشان داده می‌شوند."
+
+msgid "adminV2.backup.restore.run"
+msgstr "بازیابی"
+
+msgid "adminV2.backup.restore.running"
+msgstr "در حال بازیابی پشتیبان"
+
+msgid "adminV2.backup.restore.sub"
+msgstr "پشتیبانی از همین پنل یا پنلی دیگر را برگردانید."
+
+msgid "adminV2.backup.restore.title"
+msgstr "بازیابی"
+
+msgid "adminV2.backup.restore.unreadable"
+msgstr "این فایل پشتیبان هیدیفای نیست"
+
+msgid "adminV2.backup.restore.whatHappens"
+msgstr ""
+"بازیابی، بخش‌های انتخاب‌شده را جایگزین می‌کند و سپس کانفیگ‌های سرور دوباره "
+"نصب می‌شوند. می‌توانید روند را ببینید؛ چند دقیقه طول می‌کشد."
+
+msgid "adminV2.backup.save.created"
+msgstr "پشتیبان روی سرور ذخیره شد"
+
+msgid "adminV2.backup.save.download"
+msgstr "دانلود پشتیبان"
+
+msgid "adminV2.backup.save.downloaded"
+msgstr "پشتیبان دانلود شد"
+
+msgid "adminV2.backup.save.failed"
+msgstr "گرفتن پشتیبان ممکن نشد"
+
+msgid "adminV2.backup.save.onServer"
+msgstr "ذخیره روی سرور"
+
+msgid "adminV2.backup.save.secret"
+msgstr ""
+"این فایل شامل رمزها، لینک کاربران و کلیدهای خصوصی است. آن را در جای امنی نگه"
+" دارید."
+
+msgid "adminV2.backup.save.sub"
+msgstr ""
+"همه چیز در یک فایل: تنظیمات، کاربران، ادمین‌ها، دامنه‌ها، پروکسی‌ها و "
+"گواهی‌ها."
+
+msgid "adminV2.backup.save.title"
+msgstr "گرفتن پشتیبان"
+
+msgid "adminV2.backup.subtitle"
+msgstr "از کل پنل نسخه پشتیبان بگیرید و هر وقت لازم شد برگردانید"
+
+msgid "adminV2.backup.title"
+msgstr "پشتیبان‌گیری و بازیابی"
+
+msgid "adminV2.baseConfig.builtinDefaultHint"
+msgstr ""
+"کانفیگ پایه داخلی از کاتالوگ همگام می‌شود. برای ویرایش، محتوای سفارشی را "
+"فعال کنید."
 
 msgid "adminV2.baseConfig.builtinReadOnly"
 msgstr ""
@@ -1044,7 +2167,7 @@ msgstr ""
 "کپی بگیرید."
 
 msgid "adminV2.baseConfig.content"
-msgstr "پیکربندی کامل"
+msgstr "کانفیگ کامل"
 
 msgid "adminV2.baseConfig.core"
 msgstr "هسته"
@@ -1053,13 +2176,13 @@ msgid "adminV2.baseConfig.description"
 msgstr "توضیحات"
 
 msgid "adminV2.baseConfig.listTitle"
-msgstr "پیکربندی‌های پایه"
+msgstr "کانفیگ‌های پایه"
 
 msgid "adminV2.baseConfig.name"
 msgstr "نام"
 
 msgid "adminV2.baseConfig.new"
-msgstr "پیکربندی پایه جدید"
+msgstr "کانفیگ پایه جدید"
 
 msgid "adminV2.baseConfig.side"
 msgstr "سمت"
@@ -1079,8 +2202,17 @@ msgstr "بازگشت"
 msgid "adminV2.common.cancel"
 msgstr "انصراف"
 
+msgid "adminV2.common.collapse"
+msgstr "کمتر"
+
 msgid "adminV2.common.confirmDelete"
 msgstr "آیا از حذف این مورد مطمئن هستید؟"
+
+msgid "adminV2.common.copied"
+msgstr "کپی شد"
+
+msgid "adminV2.common.copy"
+msgstr "کپی"
 
 msgid "adminV2.common.delete"
 msgstr "حذف"
@@ -1088,8 +2220,11 @@ msgstr "حذف"
 msgid "adminV2.common.deleted"
 msgstr "با موفقیت حذف شد"
 
+msgid "adminV2.common.disabled"
+msgstr "غیرفعال"
+
 msgid "adminV2.common.duplicate"
-msgstr "کپی"
+msgstr "ایجاد کپی"
 
 msgid "adminV2.common.edit"
 msgstr "ویرایش"
@@ -1097,14 +2232,23 @@ msgstr "ویرایش"
 msgid "adminV2.common.enabled"
 msgstr "فعال"
 
+msgid "adminV2.common.filter"
+msgstr "فیلتر"
+
 msgid "adminV2.common.format"
 msgstr "قالب‌بندی"
 
 msgid "adminV2.common.loadFailed"
 msgstr "بارگذاری داده ناموفق بود"
 
+msgid "adminV2.common.no"
+msgstr "خیر"
+
 msgid "adminV2.common.save"
 msgstr "ذخیره"
+
+msgid "adminV2.common.saveFailed"
+msgstr "ذخیره ناموفق بود"
 
 msgid "adminV2.common.saved"
 msgstr "با موفقیت ذخیره شد"
@@ -1121,17 +2265,315 @@ msgstr "اعتبارسنجی ناموفق"
 msgid "adminV2.common.validationOk"
 msgstr "اعتبارسنجی موفق"
 
+msgid "adminV2.common.yes"
+msgstr "بله"
+
+msgid "adminV2.dashboard.allNodes"
+msgstr "همه نودها"
+
+msgid "adminV2.dashboard.available"
+msgstr "در دسترس"
+
+msgid "adminV2.dashboard.breakdown"
+msgstr "جزئیات"
+
+msgid "adminV2.dashboard.cached"
+msgstr "کش‌شده"
+
+msgid "adminV2.dashboard.clickForProcesses"
+msgstr "برای دیدن پردازش‌های پرمصرف کلیک کنید"
+
+msgid "adminV2.dashboard.collapse"
+msgstr "بستن جزئیات"
+
+msgid "adminV2.dashboard.connections"
+msgstr "اتصال‌ها"
+
+msgid "adminV2.dashboard.core"
+msgstr "هسته {index}"
+
+msgid "adminV2.dashboard.cpu"
+msgstr "پردازنده"
+
+msgid "adminV2.dashboard.cpuCores"
+msgstr "پردازنده · {count} هسته"
+
+msgid "adminV2.dashboard.dailyOnline"
+msgstr "کاربران آنلاین روزانه"
+
+msgid "adminV2.dashboard.dailyUsage"
+msgstr "مصرف روزانه"
+
+msgid "adminV2.dashboard.disk"
+msgstr "دیسک"
+
+msgid "adminV2.dashboard.download"
+msgstr "دانلود"
+
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "دانلود از زمان روشن شدن"
+
+msgid "adminV2.dashboard.durationDaysHours"
+msgstr "{days} روز {hours} ساعت"
+
+msgid "adminV2.dashboard.durationHoursMinutes"
+msgstr "{hours} ساعت {minutes} دقیقه"
+
+msgid "adminV2.dashboard.durationMinutes"
+msgstr "{minutes} دقیقه"
+
+msgid "adminV2.dashboard.enabledUsers"
+msgstr "کاربران فعال"
+
+msgid "adminV2.dashboard.expand"
+msgstr "نمایش جزئیات"
+
+msgid "adminV2.dashboard.free"
+msgstr "آزاد"
+
+msgid "adminV2.dashboard.hiddify"
+msgstr "هیدیفای"
+
+msgid "adminV2.dashboard.hiddifyData"
+msgstr "داده‌های هیدیفای"
+
+msgid "adminV2.dashboard.hostname"
+msgstr "میزبان"
+
+msgid "adminV2.dashboard.inFiveMinutes"
+msgstr "در ۵ دقیقه اخیر"
+
+msgid "adminV2.dashboard.lastNDays"
+msgstr "{days} روز اخیر"
+
+msgid "adminV2.dashboard.lastdayOnline"
+msgstr "آنلاین دیروز"
+
+msgid "adminV2.dashboard.liveThroughput"
+msgstr "ترافیک لحظه‌ای"
+
+msgid "adminV2.dashboard.liveUpdated"
+msgstr "زنده · به‌روزرسانی {time}"
+
+msgid "adminV2.dashboard.load15m"
+msgstr "۱۵ دقیقه"
+
+msgid "adminV2.dashboard.load1m"
+msgstr "۱ دقیقه"
+
+msgid "adminV2.dashboard.load5m"
+msgstr "۵ دقیقه"
+
+msgid "adminV2.dashboard.loadAverage"
+msgstr "میانگین بار"
+
+msgid "adminV2.dashboard.loadFailed"
+msgstr "بارگذاری اطلاعات داشبورد ناموفق بود"
+
+msgid "adminV2.dashboard.loadFailedHint"
+msgstr ""
+"داشبورد به API پنل دسترسی ندارد. بررسی کنید که هنوز وارد حساب خود هستید."
+
+msgid "adminV2.dashboard.monthUsage"
+msgstr "مصرف ماه"
+
+msgid "adminV2.dashboard.monthUsers"
+msgstr "ماه"
+
+msgid "adminV2.dashboard.monthlyAverage"
+msgstr "میانگین ماهانه"
+
+msgid "adminV2.dashboard.monthlyOnline"
+msgstr "آنلاین ماهانه"
+
+msgid "adminV2.dashboard.nDays"
+msgstr "{days} روز"
+
+msgid "adminV2.dashboard.network"
+msgstr "شبکه"
+
+msgid "adminV2.dashboard.noData"
+msgstr "هنوز داده‌ای وجود ندارد"
+
+msgid "adminV2.dashboard.node"
+msgstr "نود"
+
+msgid "adminV2.dashboard.nodeHealth"
+msgstr "سلامت نودها"
+
+msgid "adminV2.dashboard.nodeHealthHint"
+msgstr "وضعیت لحظه‌ای CPU، RAM و دیسک از API هر نود"
+
+msgid "adminV2.dashboard.nodeHealthStackedHint"
+msgstr "CPU، RAM و دیسک هر نود به‌صورت پشته‌ای"
+
+msgid "adminV2.dashboard.nodeNetworkHint"
+msgstr "آپلود و دانلود لحظه‌ای هر نود"
+
+msgid "adminV2.dashboard.nodeOffline"
+msgstr "آفلاین"
+
+msgid "adminV2.dashboard.nodeOnline"
+msgstr "آنلاین"
+
+msgid "adminV2.dashboard.nodeUnreachable"
+msgstr "این نود در دسترس نیست"
+
+msgid "adminV2.dashboard.none"
+msgstr "هیچ"
+
+msgid "adminV2.dashboard.onlineEnabledUsers"
+msgstr "کاربران آنلاین / فعال"
+
+msgid "adminV2.dashboard.onlineNow"
+msgstr "هم‌اکنون آنلاین"
+
+msgid "adminV2.dashboard.onlineOnDay"
+msgstr "آنلاین: {count}"
+
+msgid "adminV2.dashboard.onlineToday"
+msgstr "آنلاین امروز: {count} از {total}"
+
+msgid "adminV2.dashboard.onlineUsers"
+msgstr "کاربران آنلاین"
+
+msgid "adminV2.dashboard.panelVersion"
+msgstr "نسخه پنل"
+
+msgid "adminV2.dashboard.pause"
+msgstr "توقف"
+
+msgid "adminV2.dashboard.paused"
+msgstr "به‌روزرسانی زنده متوقف شده است"
+
+msgid "adminV2.dashboard.peakDay"
+msgstr "روز اوج مصرف"
+
+msgid "adminV2.dashboard.perCore"
+msgstr "به تفکیک هسته"
+
+msgid "adminV2.dashboard.perDay"
+msgstr "{value} در روز"
+
+msgid "adminV2.dashboard.ram"
+msgstr "حافظه (RAM)"
+
+msgid "adminV2.dashboard.range"
+msgstr "بازه زمانی"
+
+msgid "adminV2.dashboard.refresh"
+msgstr "به‌روزرسانی"
+
+msgid "adminV2.dashboard.resume"
+msgstr "زنده"
+
+msgid "adminV2.dashboard.rollingAverage"
+msgstr "میانگین ۷ روزه"
+
 msgid "adminV2.dashboard.subtitle"
-msgstr "مدیریت پنل هیدیفای"
+msgstr "ترافیک، کاربران و سلامت سرور در یک نگاه"
+
+msgid "adminV2.dashboard.swap"
+msgstr "حافظه مجازی (Swap)"
+
+msgid "adminV2.dashboard.thisServer"
+msgstr "این سرور"
 
 msgid "adminV2.dashboard.title"
 msgstr "داشبورد"
 
+msgid "adminV2.dashboard.today"
+msgstr "امروز"
+
+msgid "adminV2.dashboard.todayOnline"
+msgstr "آنلاین امروز"
+
+msgid "adminV2.dashboard.todayUsage"
+msgstr "مصرف امروز"
+
+msgid "adminV2.dashboard.topFolders"
+msgstr "بزرگ‌ترین پوشه‌ها"
+
+msgid "adminV2.dashboard.topProcesses"
+msgstr "پردازش‌های پرمصرف"
+
+msgid "adminV2.dashboard.totalUsage"
+msgstr "مصرف کل"
+
+msgid "adminV2.dashboard.totalUsers"
+msgstr "کل کاربران"
+
 msgid "adminV2.dashboard.underConstruction"
 msgstr "به داشبورد هیدیفای نسخه ۲ خوش آمدید — در حال ساخت."
 
+msgid "adminV2.dashboard.uniqueIps"
+msgstr "IPهای یکتا"
+
+msgid "adminV2.dashboard.upload"
+msgstr "آپلود"
+
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "آپلود از زمان روشن شدن"
+
+msgid "adminV2.dashboard.uptime"
+msgstr "مدت روشن بودن"
+
+msgid "adminV2.dashboard.usageComparison"
+msgstr "مقایسه مصرف"
+
+msgid "adminV2.dashboard.usageComparisonHint"
+msgstr "مصرف امروز و دیروز در مقایسه با میانگین روزانه هفته و ماه"
+
+msgid "adminV2.dashboard.usageOnDay"
+msgstr "مصرف: {value}"
+
+msgid "adminV2.dashboard.usageStackedHint"
+msgstr "مصرف هر نود به‌صورت پشته‌ای · مجموع، همان سطح پرشده است"
+
+msgid "adminV2.dashboard.usageTrend"
+msgstr "روند مصرف"
+
+msgid "adminV2.dashboard.used"
+msgstr "مصرف‌شده"
+
+msgid "adminV2.dashboard.usersComparison"
+msgstr "مقایسه کاربران"
+
+msgid "adminV2.dashboard.usersComparisonHint"
+msgstr "تعداد کاربران یکتا در هر بازه"
+
+msgid "adminV2.dashboard.usersSummary"
+msgstr "{total} کاربر · {enabled} فعال"
+
+msgid "adminV2.dashboard.usersTrend"
+msgstr "روند کاربران"
+
+msgid "adminV2.dashboard.vsPreviousMonth"
+msgstr "نسبت به ۳۰ روز قبل"
+
+msgid "adminV2.dashboard.vsPreviousWeek"
+msgstr "نسبت به ۷ روز قبل"
+
+msgid "adminV2.dashboard.vsYesterday"
+msgstr "نسبت به دیروز"
+
+msgid "adminV2.dashboard.weekUsage"
+msgstr "مصرف هفته"
+
+msgid "adminV2.dashboard.weekUsers"
+msgstr "هفته"
+
+msgid "adminV2.dashboard.weeklyAverage"
+msgstr "میانگین هفتگی"
+
+msgid "adminV2.dashboard.weeklyOnline"
+msgstr "آنلاین هفتگی"
+
 msgid "adminV2.dashboard.welcomePanel"
 msgstr "خوش آمدید"
+
+msgid "adminV2.dashboard.yesterday"
+msgstr "دیروز"
 
 msgid "adminV2.domain.addFailed"
 msgstr "افزودن دامنه ناموفق بود"
@@ -1148,6 +2590,637 @@ msgstr "دامنه"
 msgid "adminV2.domain.mode"
 msgstr "حالت"
 
+msgid "adminV2.domains.add"
+msgstr "افزودن دامنه"
+
+msgid "adminV2.domains.advanced"
+msgstr "پیشرفته"
+
+msgid "adminV2.domains.badge.cdnIp"
+msgstr "IP اجباری"
+
+msgid "adminV2.domains.badge.frontingHint"
+msgstr "دامین فرانتینگ: کانفیگ‌ها به جای دامنه این نام را نشان می‌دهند"
+
+msgid "adminV2.domains.badge.resolveIp"
+msgstr "IP"
+
+msgid "adminV2.domains.cert.failed"
+msgstr "گرفتن گواهی ممکن نشد"
+
+msgid "adminV2.domains.cert.failedHint"
+msgstr "تا صدور گواهی واقعی، از گواهی خودامضا استفاده می‌شود."
+
+msgid "adminV2.domains.cert.ok"
+msgstr "گواهی صادر شد"
+
+msgid "adminV2.domains.cert.okHint"
+msgstr ""
+"کاربران با گواهی واقعی و مورد اعتماد وصل می‌شوند. خودکار تمدید می‌شود."
+
+msgid "adminV2.domains.cert.retry"
+msgstr "تلاش دوباره"
+
+msgid "adminV2.domains.cert.secondsLeft"
+msgstr "حدود {n} ثانیه"
+
+msgid "adminV2.domains.cert.steps.contact"
+msgstr "ارتباط با Let's Encrypt"
+
+msgid "adminV2.domains.cert.steps.install"
+msgstr "نصب"
+
+msgid "adminV2.domains.cert.steps.verify"
+msgstr "تأیید دامنه"
+
+msgid "adminV2.domains.cert.timeout"
+msgstr "هنوز منتظر گواهی هستیم"
+
+msgid "adminV2.domains.cert.timeoutHint"
+msgstr ""
+"بیش از معمول طول کشیده؛ در پس‌زمینه ادامه دارد و این صفحه پس از پایان به‌روز"
+" می‌شود."
+
+msgid "adminV2.domains.cert.tips.cdn"
+msgstr ""
+"Let's Encrypt درخواست‌های زیاد در زمان کوتاه را رد می‌کند؛ بعدا دوباره "
+"امتحان کنید."
+
+msgid "adminV2.domains.cert.tips.dns"
+msgstr "دامنه باید به این سرور (یا CDN جلوی آن) اشاره کند."
+
+msgid "adminV2.domains.cert.tips.port80"
+msgstr "پورت ۸۰ باید از اینترنت در دسترس باشد."
+
+msgid "adminV2.domains.cert.waiting"
+msgstr "در حال گرفتن گواهی…"
+
+msgid "adminV2.domains.copyDomain"
+msgstr "کپی دامنه"
+
+msgid "adminV2.domains.deleteMessage"
+msgstr ""
+"کانفیگ‌های آن برای همه کاربران از کار می‌افتد. دست‌کم یک دامنه باید بماند."
+
+msgid "adminV2.domains.deleteTitle"
+msgstr "{name} حذف شود؟"
+
+msgid "adminV2.domains.deleted"
+msgstr "{name} حذف شد"
+
+msgid "adminV2.domains.drag"
+msgstr "برای جابه‌جایی بکشید"
+
+msgid "adminV2.domains.editTitle"
+msgstr "ویرایش دامنه"
+
+msgid "adminV2.domains.field.alias"
+msgstr "نام نمایشی"
+
+msgid "adminV2.domains.field.aliasHint"
+msgstr "به جای دامنه در برنامه کاربران نشان داده می‌شود."
+
+msgid "adminV2.domains.field.cdnIp"
+msgstr "🔂 اجبار کانفیگ‌ها به استفاده از این IPها یا دامنه‌ها"
+
+msgid "adminV2.domains.field.cdnIpHint"
+msgstr ""
+"به جای IP دامنه در لینک کاربران قرار می‌گیرند؛ با ویرگول یا خط جدید جدا "
+"کنید. قالب‌های اپراتور هم کار می‌کنند."
+
+msgid "adminV2.domains.field.domain"
+msgstr "دامنه"
+
+msgid "adminV2.domains.field.domainInvalid"
+msgstr "این شبیه دامنه نیست"
+
+msgid "adminV2.domains.field.domainRequired"
+msgstr "دامنه را وارد کنید"
+
+msgid "adminV2.domains.field.downloadDomain"
+msgstr "📈 دامنه دانلود"
+
+msgid "adminV2.domains.field.downloadDomainHint"
+msgstr ""
+"فقط برای XHTTP: دانلود می‌تواند از دامنه‌ای جدا از آپلود انجام شود. تشخیص "
+"سخت‌تر و اغلب سریع‌تر."
+
+msgid "adminV2.domains.field.ech"
+msgstr "🔐 ECH"
+
+msgid "adminV2.domains.field.echHint"
+msgstr "دریافت و استفاده از Encrypted Client Hello برای این دامنه CDN."
+
+msgid "adminV2.domains.field.echNeedsSetting"
+msgstr "ابتدا TLS ECH را در تنظیمات پنل روشن کنید."
+
+msgid "adminV2.domains.field.extra"
+msgstr "پارامترهای اضافه"
+
+msgid "adminV2.domains.field.extraInvalid"
+msgstr "JSON معتبر نیست"
+
+msgid "adminV2.domains.field.extraObject"
+msgstr "باید یک شیء JSON باشد"
+
+msgid "adminV2.domains.field.fronting"
+msgstr "🎭 دامین فرانتینگ"
+
+msgid "adminV2.domains.field.frontingHint"
+msgstr ""
+"اختیاری. برنامه کاربران به جای دامنه شما یکی از این نام‌ها (SNI) را نشان "
+"می‌دهد، پس فیلتر فقط سایت دیگری را می‌بیند. از سایت‌هایی روی همان CDN دامنه "
+"خود استفاده کنید (مثلا سایت‌های دیگر کلودفلر). خالی: بدون فرانتینگ."
+
+msgid "adminV2.domains.field.frontingPlaceholder"
+msgstr "another-site.com, cdn-site.net"
+
+msgid "adminV2.domains.field.hostnamesInvalid"
+msgstr "نام‌ها را با ویرگول جدا کنید، مثل site.com"
+
+msgid "adminV2.domains.field.mode"
+msgstr "حالت"
+
+msgid "adminV2.domains.field.none"
+msgstr "هیچ"
+
+msgid "adminV2.domains.field.ports"
+msgstr "پورت‌های درگاه"
+
+msgid "adminV2.domains.field.portsHint"
+msgstr ""
+"جایی که کاربران به پروکسی‌های SNI و L7 این دامنه می‌رسند: یک پورت TLS و یک "
+"پورت HTTP. خالی یعنی پیش‌فرض. فایروال آن‌ها را به ۴۴۳ / ۸۰ هدایت می‌کند، پس "
+"هیچ سرویسی روی سرور نباید روی آن‌ها گوش کند و پورت TLS نمی‌تواند پورت HTTP "
+"دامنه دیگری باشد."
+
+msgid "adminV2.domains.field.proxies"
+msgstr "پروکسی‌های سفارشی"
+
+msgid "adminV2.domains.field.relayNeedsIp"
+msgstr ""
+"رله‌ای که گواهی واقعی ندارد، به IP سرور رله در پیشرفته ← IPهای اجباری نیاز "
+"دارد."
+
+msgid "adminV2.domains.field.resolveIp"
+msgstr "🔢 تبدیل به IP"
+
+msgid "adminV2.domains.field.resolveIpHint"
+msgstr ""
+"در پروکسی‌ها به جای نام دامنه از IP استفاده شود. وقتی DNS مختل است مفید است."
+
+msgid "adminV2.domains.field.serverDomain"
+msgstr "دامنه سرور"
+
+msgid "adminV2.domains.field.serverDomainHint"
+msgstr ""
+"دامنه سرور بالادستی برای این مورد. باید یک دامنه مستقیم یا رله معتبر باشد."
+
+msgid "adminV2.domains.field.servernames"
+msgstr "نام‌های سرور"
+
+msgid "adminV2.domains.field.servernamesHint"
+msgstr ""
+"سایت‌هایی که ریلیتی TLS آن‌ها را قرض می‌گیرد، جدا با ویرگول. خالی: خود "
+"دامنه."
+
+msgid "adminV2.domains.field.showAll"
+msgstr "همه دامنه‌ها"
+
+msgid "adminV2.domains.field.showDomains"
+msgstr "نمایش کانفیگ‌های"
+
+msgid "adminV2.domains.field.showDomainsHint"
+msgstr ""
+"کاربرانی که صفحه خود را روی این دامنه باز می‌کنند، کانفیگ‌های این دامنه‌ها "
+"را می‌بینند."
+
+msgid "adminV2.domains.field.tlsMode"
+msgstr "حالت TLS"
+
+msgid "adminV2.domains.getCert"
+msgstr "گرفتن گواهی"
+
+msgid "adminV2.domains.howto"
+msgstr ""
+"ترتیب مهم است: برای مرتب‌سازی بکشید (یا از فلش‌ها استفاده کنید). کانفیگ‌ها "
+"به همین ترتیب می‌آیند و اولین دامنه برای لینک پنل استفاده می‌شود."
+
+msgid "adminV2.domains.howtoFiltered"
+msgstr "برای تغییر ترتیب، جستجو و فیلترها را پاک کنید."
+
+msgid "adminV2.domains.ips.elsewhere"
+msgstr "سرور دیگر / CDN"
+
+msgid "adminV2.domains.ips.none"
+msgstr "برای این دامنه رکورد DNS پیدا نشد."
+
+msgid "adminV2.domains.ips.thisServer"
+msgstr "همین سرور"
+
+msgid "adminV2.domains.ips.title"
+msgstr "به کجا اشاره می‌کند (DNS)"
+
+msgid "adminV2.domains.kind.cdn.desc"
+msgstr ""
+"دامنه از یک CDN مثل کلودفلر عبور می‌کند (ابر نارنجی / پروکسی روشن). IP این "
+"سرور پنهان می‌ماند و با مسدود شدن IP هم کار می‌کند."
+
+msgid "adminV2.domains.kind.cdn.name"
+msgstr "CDN"
+
+msgid "adminV2.domains.kind.direct.desc"
+msgstr ""
+"دامنه مستقیم به IP این سرور اشاره می‌کند. اگر روی کلودفلر (یا DNS مشابه) "
+"است، ابر را خاموش بگذارید: فقط DNS."
+
+msgid "adminV2.domains.kind.direct.name"
+msgstr "مستقیم"
+
+msgid "adminV2.domains.kind.relay.desc"
+msgstr ""
+"کاربران به سرور دیگری در میانه وصل می‌شوند که ترافیک را به این سرور "
+"می‌رساند. دامنه به همان سرور میانی اشاره می‌کند."
+
+msgid "adminV2.domains.kind.relay.name"
+msgstr "رله"
+
+msgid "adminV2.domains.kind.sublink.desc"
+msgstr ""
+"فقط برای لینک اشتراک کاربران، بدون پروکسی. بهتر است پشت CDN باشد: اگر "
+"دامنه‌های پروکسی مسدود شوند، کاربران همچنان اشتراک خود را به‌روز می‌کنند و "
+"کانفیگ‌های سالم جدید می‌گیرند."
+
+msgid "adminV2.domains.kind.sublink.name"
+msgstr "فقط لینک اشتراک"
+
+msgid "adminV2.domains.kind.worker.desc"
+msgstr "ورکرهای کلودفلر برای این دامنه خودکار ساخته می‌شوند."
+
+msgid "adminV2.domains.kind.worker.name"
+msgstr "ورکر کلودفلر"
+
+msgid "adminV2.domains.more"
+msgstr "بیشتر"
+
+msgid "adminV2.domains.moveDown"
+msgstr "پایین‌تر"
+
+msgid "adminV2.domains.moveUp"
+msgstr "بالاتر"
+
+msgid "adminV2.domains.noMatch"
+msgstr "هیچ دامنه‌ای با فیلترها جور نیست"
+
+msgid "adminV2.domains.noName"
+msgstr "(بدون نام)"
+
+msgid "adminV2.domains.notChanged"
+msgstr "تغییری داده نشد"
+
+msgid "adminV2.domains.openPanel"
+msgstr "باز کردن پنل روی این دامنه"
+
+msgid "adminV2.domains.port.busy"
+msgstr "برنامه دیگری روی آن گوش می‌کند ({name})"
+
+msgid "adminV2.domains.port.checking"
+msgstr "در حال بررسی…"
+
+msgid "adminV2.domains.port.default"
+msgstr "پیش‌فرض"
+
+msgid "adminV2.domains.port.free"
+msgstr "آزاد"
+
+msgid "adminV2.domains.port.invalid"
+msgstr "پورت معتبر نیست"
+
+msgid "adminV2.domains.port.system"
+msgstr "پورت سیستمی"
+
+msgid "adminV2.domains.port.unknown"
+msgstr "بررسی این پورت ممکن نشد"
+
+msgid "adminV2.domains.port.usedByDomain"
+msgstr "در اختیار {name} برای پروتکل دیگر"
+
+msgid "adminV2.domains.port.usedByGateway.http"
+msgstr "یک پورت درگاه HTTP"
+
+msgid "adminV2.domains.port.usedByGateway.tls"
+msgstr "یک پورت درگاه TLS"
+
+msgid "adminV2.domains.port.usedByProxy"
+msgstr "در اختیار پروکسی {name}"
+
+msgid "adminV2.domains.port.usedBySetting"
+msgstr "در اختیار {name}"
+
+msgid "adminV2.domains.proxies.auto"
+msgstr "خودکار"
+
+msgid "adminV2.domains.proxies.autoHint"
+msgstr "همه پروکسی‌های مناسب این دامنه"
+
+msgid "adminV2.domains.proxies.autoShort"
+msgstr "خودکار"
+
+msgid "adminV2.domains.proxies.group.ip"
+msgstr "مبتنی بر IP"
+
+msgid "adminV2.domains.proxies.group.l7"
+msgstr "درگاه L7"
+
+msgid "adminV2.domains.proxies.group.sni"
+msgstr "درگاه SNI"
+
+msgid "adminV2.domains.proxies.noneFit"
+msgstr ""
+"هیچ پروکسی سفارشی با این نوع دامنه جور نیست؛ پروکسی‌های داخلی استفاده "
+"می‌شوند."
+
+msgid "adminV2.domains.proxies.noneTicked"
+msgstr "چیزی انتخاب نشده: مثل خودکار عمل می‌کند."
+
+msgid "adminV2.domains.proxies.off"
+msgstr "خاموش"
+
+msgid "adminV2.domains.proxies.pick"
+msgstr "انتخاب"
+
+msgid "adminV2.domains.proxies.pickHint"
+msgstr "فقط پروکسی‌هایی که انتخاب می‌کنید"
+
+msgid "adminV2.domains.proxies.rule"
+msgstr ""
+"یک پروکسی SNI یا پروکسی‌های L7؛ این دو با هم ترکیب نمی‌شوند. پروکسی‌های "
+"مبتنی بر IP با هر دو می‌آیند."
+
+msgid "adminV2.domains.proxies.selectAll"
+msgstr "انتخاب همه"
+
+msgid "adminV2.domains.proxies.selectNone"
+msgstr "هیچ‌کدام"
+
+msgid "adminV2.domains.proxies.sniOne"
+msgstr " · حداکثر یکی"
+
+msgid "adminV2.domains.readMore"
+msgstr "بیشتر بخوانید"
+
+msgid "adminV2.domains.renewCert"
+msgstr "تمدید گواهی"
+
+msgid "adminV2.domains.saved"
+msgstr "{name} ذخیره شد"
+
+msgid "adminV2.domains.search"
+msgstr "جستجوی دامنه یا نام"
+
+msgid "adminV2.domains.stats.all"
+msgstr "دامنه"
+
+msgid "adminV2.domains.stats.attention"
+msgstr "نیازمند گواهی"
+
+msgid "adminV2.domains.stats.decoy"
+msgstr "TLS جعلی"
+
+msgid "adminV2.domains.stats.valid"
+msgstr "گواهی سالم"
+
+msgid "adminV2.domains.subtitle"
+msgstr ""
+"آدرس‌هایی که کاربران به آن وصل می‌شوند، نحوه رسیدن هر کدام به این سرور و "
+"گواهی‌هایشان"
+
+msgid "adminV2.domains.title"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.domains.tls.decoy"
+msgstr "TLS جعلی"
+
+msgid "adminV2.domains.tls.decoyHint"
+msgstr "دامنه‌های با TLS جعلی و ریلیتی گواهی جداگانه لازم ندارند."
+
+msgid "adminV2.domains.tls.expired"
+msgstr "منقضی"
+
+msgid "adminV2.domains.tls.expiredHint"
+msgstr "گواهی منقضی شده است."
+
+msgid "adminV2.domains.tls.expires"
+msgstr "انقضا"
+
+msgid "adminV2.domains.tls.expiresIn"
+msgstr "{n} روز مانده"
+
+msgid "adminV2.domains.tls.invalid"
+msgstr "نامعتبر"
+
+msgid "adminV2.domains.tls.invalidHint"
+msgstr "گواهی با این دامنه جور نیست."
+
+msgid "adminV2.domains.tls.issuer"
+msgstr "صادرکننده"
+
+msgid "adminV2.domains.tls.missing"
+msgstr "بدون گواهی"
+
+msgid "adminV2.domains.tls.missingHint"
+msgstr "هنوز گواهی ندارد."
+
+msgid "adminV2.domains.tls.running"
+msgstr "در حال گرفتن گواهی"
+
+msgid "adminV2.domains.tls.self_signed"
+msgstr "خودامضا"
+
+msgid "adminV2.domains.tls.self_signedHint"
+msgstr ""
+"گواهی موقت خودامضا: برنامه‌ها هشدار می‌دهند یا وصل نمی‌شوند. یک گواهی واقعی "
+"بگیرید."
+
+msgid "adminV2.domains.tls.valid"
+msgstr "معتبر"
+
+msgid "adminV2.domains.tls.validHint"
+msgstr "گواهی واقعی؛ خودکار تمدید می‌شود."
+
+msgid "adminV2.domains.tlsMode.dns"
+msgstr "DNS"
+
+msgid "adminV2.domains.tlsMode.dnsHint"
+msgstr "فقط تونل DNS."
+
+msgid "adminV2.domains.tlsMode.fake"
+msgstr "جعلی"
+
+msgid "adminV2.domains.tlsMode.fakeHint"
+msgstr ""
+"TLS جعلی با نام یک سایت (مثلا soft98.ir) برای عبور از لیست سفید SNI. پیشنهاد"
+" نمی‌شود."
+
+msgid "adminV2.domains.tlsMode.locked"
+msgstr "این حالت همیشه از گواهی معتبر استفاده می‌کند."
+
+msgid "adminV2.domains.tlsMode.reality"
+msgstr "ریلیتی"
+
+msgid "adminV2.domains.tlsMode.realityHint"
+msgstr ""
+"TLS سایتی دیگر را با پروتکل ریلیتی قرض می‌گیرد؛ می‌توان چندین دامنه "
+"این‌چنینی داشت."
+
+msgid "adminV2.domains.tlsMode.valid"
+msgstr "TLS معتبر"
+
+msgid "adminV2.domains.tlsMode.validHint"
+msgstr "گواهی واقعی که خودکار صادر می‌شود."
+
+msgid "adminV2.domains.warning"
+msgstr "ذخیره شد، با هشدار"
+
+msgid "adminV2.domains.wizard.add"
+msgstr "افزودن دامنه"
+
+msgid "adminV2.domains.wizard.added"
+msgstr "{name} اضافه شد"
+
+msgid "adminV2.domains.wizard.aliasLead"
+msgstr ""
+"نامی کوتاه که برای کانفیگ‌های این دامنه در برنامه‌ها نشان داده می‌شود."
+
+msgid "adminV2.domains.wizard.aliasQ"
+msgstr "کاربران چه نامی ببینند؟"
+
+msgid "adminV2.domains.wizard.check"
+msgstr "بررسی"
+
+msgid "adminV2.domains.wizard.checking"
+msgstr "در حال بررسی DNS…"
+
+msgid "adminV2.domains.wizard.continueBackground"
+msgstr "بستن (ادامه می‌یابد)"
+
+msgid "adminV2.domains.wizard.finish"
+msgstr "تمام"
+
+msgid "adminV2.domains.wizard.found.cdn"
+msgstr "پشت {cdn} است."
+
+msgid "adminV2.domains.wizard.found.direct"
+msgstr "مستقیم به این سرور اشاره می‌کند ({ips})."
+
+msgid "adminV2.domains.wizard.found.external"
+msgstr "به سرور دیگری اشاره می‌کند ({ips}): مناسب ریلیتی، رله یا TLS جعلی."
+
+msgid "adminV2.domains.wizard.found.externalNotFriendly"
+msgstr ""
+"به سرور دیگری اشاره می‌کند ({ips})، اما آن سایت برای ریلیتی مناسب نیست (TLS "
+"1.3 و HTTP/2 لازم است)."
+
+msgid "adminV2.domains.wizard.found.unresolved"
+msgstr ""
+"هنوز رکورد DNS ندارد. ابتدا آن را در DNS خود اضافه کنید یا با TLS جعلی "
+"استفاده کنید."
+
+msgid "adminV2.domains.wizard.mismatch.cdn"
+msgstr "به نظر نمی‌رسد دامنه پشت CDN باشد. حالت پروکسی را در CDN روشن کنید."
+
+msgid "adminV2.domains.wizard.mismatch.direct"
+msgstr ""
+"حالت مستقیم نیاز دارد دامنه به IP این سرور اشاره کند. هنگام ذخیره دوباره "
+"بررسی می‌شود."
+
+msgid "adminV2.domains.wizard.mismatch.reality"
+msgstr "ریلیتی به یک سایت واقعی که resolve شود نیاز دارد."
+
+msgid "adminV2.domains.wizard.mismatch.relay"
+msgstr "دامنه رله به سرور واسط اشاره می‌کند، نه به این سرور."
+
+msgid "adminV2.domains.wizard.mismatch.sublink"
+msgstr "دامنه باید به این سرور یا یک CDN اشاره کند."
+
+msgid "adminV2.domains.wizard.mismatch.worker"
+msgstr "ورکرها نیاز دارند دامنه روی کلودفلر باشد."
+
+msgid "adminV2.domains.wizard.modeQ"
+msgstr "چطور تنظیم شده است؟"
+
+msgid "adminV2.domains.wizard.moreSettings"
+msgstr "تنظیمات بیشتر"
+
+msgid "adminV2.domains.wizard.nameLead"
+msgstr ""
+"دامنه یا زیردامنه را بنویسید. DNS آن را بررسی می‌کنیم تا حالت مناسب را "
+"پیشنهاد دهیم."
+
+msgid "adminV2.domains.wizard.nameQ"
+msgstr "کدام دامنه؟"
+
+msgid "adminV2.domains.wizard.next"
+msgstr "بعدی"
+
+msgid "adminV2.domains.wizard.noCert"
+msgstr "نیازی به درخواست گواهی نبود."
+
+msgid "adminV2.domains.wizard.noCertDecoy"
+msgstr ""
+"TLS جعلی و ریلیتی گواهی لازم ندارند. برای استفاده، تغییرات را اعمال کنید."
+
+msgid "adminV2.domains.wizard.recommended"
+msgstr "مطابق"
+
+msgid "adminV2.domains.wizard.saving"
+msgstr "در حال ذخیره و بررسی…"
+
+msgid "adminV2.domains.wizard.steps.alias"
+msgstr "نام"
+
+msgid "adminV2.domains.wizard.steps.cert"
+msgstr "گواهی"
+
+msgid "adminV2.domains.wizard.steps.mode"
+msgstr "حالت"
+
+msgid "adminV2.domains.wizard.steps.name"
+msgstr "دامنه"
+
+msgid "adminV2.domains.wizard.taken"
+msgstr "این دامنه قبلا اضافه شده است"
+
+msgid "adminV2.domains.wizard.title"
+msgstr "افزودن دامنه"
+
+msgid "adminV2.domains.wizard.tlsQ"
+msgstr "کدام TLS؟"
+
+msgid "adminV2.domains.wizard.unlikely"
+msgstr "DNS جور نیست"
+
+msgid "adminV2.donation.close"
+msgstr "بستن"
+
+msgid "adminV2.donation.copied"
+msgstr "آدرس {name} کپی شد"
+
+msgid "adminV2.donation.copiedShort"
+msgstr "کپی شد"
+
+msgid "adminV2.donation.qr"
+msgstr "کد QR"
+
+msgid "adminV2.donation.qrOf"
+msgstr "کد QR آدرس {name}"
+
+msgid "adminV2.donation.showQr"
+msgstr "نمایش کد QR برای {name}"
+
+msgid "adminV2.donation.title"
+msgstr "حمایت"
+
 msgid "adminV2.editor.cannotFormatJinja"
 msgstr "قالب‌بندی خودکار با تگ‌های Jinja ممکن نیست"
 
@@ -1155,10 +3228,10 @@ msgid "adminV2.editor.excludeBuiltinTemplates"
 msgstr "حذف قالب‌های داخلی از خروجی"
 
 msgid "adminV2.editor.exportBundle"
-msgstr "خروجی بسته"
+msgstr "خروجی گرفتن از بسته"
 
 msgid "adminV2.editor.includeTemplate"
-msgstr "شامل کردن قالب"
+msgstr "افزودن قالب (include)"
 
 msgid "adminV2.editor.insertVariable"
 msgstr "درج متغیر"
@@ -1167,6 +3240,12 @@ msgid "adminV2.editor.jinjaHint"
 msgstr ""
 "JSON5 + Jinja: از {{ proxy.port }}، {{ proxy.tag }}، {% for %}…{% endfor %} "
 "استفاده کنید"
+
+msgid "adminV2.editor.loadFailed"
+msgstr "ویرایشگر بارگذاری نشد. اتصال را بررسی و صفحه را دوباره بارگذاری کنید."
+
+msgid "adminV2.editor.loading"
+msgstr "در حال بارگذاری ویرایشگر…"
 
 msgid "adminV2.editor.noVariables"
 msgstr "متغیری با این جستجو یافت نشد"
@@ -1190,34 +3269,765 @@ msgid "adminV2.editor.previewTitle"
 msgstr "پیش‌نمایش قالب"
 
 msgid "adminV2.footer.text"
-msgstr "پنل ادمین هیدیفای نسخه ۲"
+msgstr "هیدیفای منیجر"
+
+msgid "adminV2.legacy.loading"
+msgstr "در حال بارگذاری…"
+
+msgid "adminV2.legacy.refresh"
+msgstr "بارگذاری مجدد"
+
+msgid "adminV2.legacy.title"
+msgstr "صفحه ادمین قدیمی"
+
+msgid "adminV2.linkShare.copyLink"
+msgstr "کپی لینک"
+
+msgid "adminV2.linkShare.domain"
+msgstr "دامنه"
+
+msgid "adminV2.linkShare.download"
+msgstr "دانلود"
+
+msgid "adminV2.linkShare.kind.auto"
+msgstr "CDN خودکار"
+
+msgid "adminV2.linkShare.kind.cdn"
+msgstr "CDN"
+
+msgid "adminV2.linkShare.kind.current"
+msgstr "فعلی"
+
+msgid "adminV2.linkShare.link"
+msgstr "لینک"
+
+msgid "adminV2.linkShare.open"
+msgstr "باز کردن"
+
+msgid "adminV2.login.brand"
+msgstr "Hiddify"
+
+msgid "adminV2.login.error_expired"
+msgstr "این صفحه مدت زیادی باز مانده بود. لطفاً دوباره وارد شوید."
+
+msgid "adminV2.login.error_invalid"
+msgstr "شناسه، نام کاربری یا رمز درست نیست. بررسی کنید و دوباره تلاش کنید."
+
+msgid "adminV2.login.error_locked"
+msgstr ""
+"تلاش‌های زیادی از شبکهٔ شما انجام شده. ۱۵ دقیقه صبر کنید و دوباره تلاش کنید."
+
+msgid "adminV2.login.hide"
+msgstr "پنهان کردن رمز"
+
+msgid "adminV2.login.pageTitle"
+msgstr "ورود"
+
+msgid "adminV2.login.password"
+msgstr "رمز عبور"
+
+msgid "adminV2.login.passwordHint"
+msgstr "اگر لینک ادمین شما رمز ندارد، خالی بگذارید."
+
+msgid "adminV2.login.passwordPlaceholder"
+msgstr "رمز عبور شما"
+
+msgid "adminV2.login.show"
+msgstr "نمایش رمز"
+
+msgid "adminV2.login.signingIn"
+msgstr "در حال ورود…"
+
+msgid "adminV2.login.submit"
+msgstr "ورود"
+
+msgid "adminV2.login.subtitle"
+msgstr "پنل مدیریت"
+
+msgid "adminV2.login.tipLink"
+msgstr "با باز کردن لینک ادمین، شناسهٔ شما خودکار پر می‌شود."
+
+msgid "adminV2.login.tipLost"
+msgstr ""
+"رمز را فراموش کرده‌اید؟ از ادمینی که شما را اضافه کرده بخواهید آن را "
+"بازنشانی کند."
+
+msgid "adminV2.login.title"
+msgstr "خوش آمدید"
+
+msgid "adminV2.login.username"
+msgstr "شناسهٔ ادمین یا نام کاربری"
+
+msgid "adminV2.login.usernameHint"
+msgstr "شناسهٔ داخل لینک ادمین شما، یا نام کاربری‌ای که به شما داده شده."
+
+msgid "adminV2.login.usernamePlaceholder"
+msgstr "xxxxxxxx-xxxx-… یا نام کاربری شما"
 
 msgid "adminV2.menu.baseConfigs"
-msgstr "پیکربندی پایه"
+msgstr "کانفیگ‌های پایه"
 
 msgid "adminV2.menu.customProxies"
-msgstr "پروکسی‌های سفارشی"
+msgstr "پروکسی‌ها"
 
 msgid "adminV2.menu.dashboard"
 msgstr "داشبورد"
 
+msgid "adminV2.menu.group.help"
+msgstr "راهنما"
+
+msgid "adminV2.menu.group.manager"
+msgstr "مدیریت"
+
+msgid "adminV2.menu.group.settings"
+msgstr "تنظیمات"
+
+msgid "adminV2.menu.myAccount"
+msgstr "حساب من"
+
+msgid "adminV2.menu.nodeHome"
+msgstr "نود"
+
+msgid "adminV2.menu.outbounds"
+msgstr "خروجی‌ها"
+
+msgid "adminV2.menu.protocols"
+msgstr "پروتکل‌ها"
+
 msgid "adminV2.menu.proxyEditor"
 msgstr "ویرایشگر پروکسی"
 
-msgid "adminV2.menu.sectionMain"
-msgstr "اصلی"
-
-msgid "adminV2.menu.sectionNew"
-msgstr "جدید"
-
-msgid "adminV2.menu.sectionV2"
-msgstr "جدید"
+msgid "adminV2.menu.signOut"
+msgstr "خروج"
 
 msgid "adminV2.menu.templateVariables"
 msgstr "متغیرهای قالب"
 
 msgid "adminV2.menu.templates"
 msgstr "قالب‌ها"
+
+msgid "adminV2.menu.utils"
+msgstr "ابزارها"
+
+msgid "adminV2.nodeHome.connectedTo"
+msgstr "این نود به پنل مرکزی متصل است:"
+
+msgid "adminV2.nodeHome.managedOnParent"
+msgstr ""
+"کاربران، ادمین‌ها و داشبورد در پنل مرکزی مدیریت می‌شوند. اینجا فقط دامنه‌ها،"
+" پروکسی‌ها و سرور این نود را مدیریت می‌کنید."
+
+msgid "adminV2.nodeHome.noParent"
+msgstr "این نود هنوز به پنل مرکزی متصل نشده است."
+
+msgid "adminV2.nodeHome.openParent"
+msgstr "باز کردن داشبورد مرکزی"
+
+msgid "adminV2.nodeHome.subtitle"
+msgstr "این پنل یک نود از پنل مرکزی است."
+
+msgid "adminV2.nodeHome.title"
+msgstr "نود"
+
+msgid "adminV2.nodeHome.titleNamed"
+msgstr "نود: {name}"
+
+msgid "adminV2.nodes.add.connecting"
+msgstr "در حال اتصال به نود… ممکن است تا یک دقیقه طول بکشد."
+
+msgid "adminV2.nodes.add.linkHint"
+msgstr "مانند https://node.example.com/…/xxxxxxxx-xxxx-…/admin/"
+
+msgid "adminV2.nodes.add.linkInvalid"
+msgstr ""
+"این لینک کامل ادمین نیست. باید با https:// شروع شود و شناسه ادمین را داشته "
+"باشد."
+
+msgid "adminV2.nodes.add.linkLabel"
+msgstr "لینک ادمین نود"
+
+msgid "adminV2.nodes.add.linkOk"
+msgstr "نود در {host}"
+
+msgid "adminV2.nodes.add.nameLabel"
+msgstr "نام"
+
+msgid "adminV2.nodes.add.namePlaceholder"
+msgstr "مثلاً آلمان ۱"
+
+msgid "adminV2.nodes.add.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.nodes.add.step1"
+msgstr "پنل ادمین سروری که می‌خواهید اضافه کنید را باز کنید."
+
+msgid "adminV2.nodes.add.step2"
+msgstr "آدرس کامل آن را از نوار آدرس مرورگر کپی کنید."
+
+msgid "adminV2.nodes.add.step3"
+msgstr "آن را اینجا وارد کنید و «اتصال» را بزنید."
+
+msgid "adminV2.nodes.add.submit"
+msgstr "اتصال نود"
+
+msgid "adminV2.nodes.add.success"
+msgstr "نود متصل شد"
+
+msgid "adminV2.nodes.add.title"
+msgstr "افزودن نود"
+
+msgid "adminV2.nodes.addNode"
+msgstr "افزودن نود"
+
+msgid "adminV2.nodes.checkConnection"
+msgstr "بررسی اتصال"
+
+msgid "adminV2.nodes.checking"
+msgstr "در حال بررسی…"
+
+msgid "adminV2.nodes.connection"
+msgstr "اتصال"
+
+msgid "adminV2.nodes.differentVersion"
+msgstr ""
+"نود نسخه {node} و این پنل نسخه {panel} است. آن‌ها را هم‌نسخه نگه دارید."
+
+msgid "adminV2.nodes.empty.cta"
+msgstr "افزودن اولین نود"
+
+msgid "adminV2.nodes.empty.point1"
+msgstr "همگام‌سازی خودکار کاربران و ادمین‌ها"
+
+msgid "adminV2.nodes.empty.point2"
+msgstr "جمع‌آوری مصرف در این پنل"
+
+msgid "adminV2.nodes.empty.point3"
+msgstr "ورود به پنل هر نود با یک کلیک"
+
+msgid "adminV2.nodes.empty.text"
+msgstr ""
+"یک سرور هیدیفای دیگر را به‌عنوان نود اضافه کنید تا همه سرورها را از این پنل "
+"مدیریت کنید."
+
+msgid "adminV2.nodes.empty.title"
+msgstr "هنوز نودی ندارید"
+
+msgid "adminV2.nodes.errors.invalid_link"
+msgstr "این لینک، لینک معتبر ادمین نیست."
+
+msgid "adminV2.nodes.errors.rejected"
+msgstr ""
+"نود اتصال را نپذیرفت. ممکن است متعلق به پنل مرکزی دیگری باشد یا نسخه آن "
+"قدیمی باشد."
+
+msgid "adminV2.nodes.errors.self"
+msgstr "این لینک همین پنل است. لینک سرور نود را وارد کنید."
+
+msgid "adminV2.nodes.errors.timeout"
+msgstr "پاسخ نود بیش از حد طول کشید. آن را بررسی و دوباره تلاش کنید."
+
+msgid "adminV2.nodes.errors.unreachable"
+msgstr "نود در دسترس نیست. لینک و آنلاین بودن نود را بررسی کنید."
+
+msgid "adminV2.nodes.info.fromNode"
+msgstr "آخرین پیام از نود"
+
+msgid "adminV2.nodes.info.lastUsage"
+msgstr "آخرین بروزرسانی مصرف کاربران"
+
+msgid "adminV2.nodes.info.noUsageYet"
+msgstr "هنوز مصرفی گزارش نشده"
+
+msgid "adminV2.nodes.info.toNode"
+msgstr "آخرین پیام به نود"
+
+msgid "adminV2.nodes.info.todayOnline"
+msgstr "کاربران آنلاین امروز"
+
+msgid "adminV2.nodes.info.todayTraffic"
+msgstr "ترافیک امروز"
+
+msgid "adminV2.nodes.info.usageReport"
+msgstr "{users} کاربر با ترافیک، {traffic}"
+
+msgid "adminV2.nodes.justNow"
+msgstr "همین الان"
+
+msgid "adminV2.nodes.lastSeen"
+msgstr "آخرین ارتباط"
+
+msgid "adminV2.nodes.moreInfo"
+msgstr "اطلاعات بیشتر"
+
+msgid "adminV2.nodes.neverSeen"
+msgstr "هرگز"
+
+msgid "adminV2.nodes.openAdmin"
+msgstr "ورود به نود"
+
+msgid "adminV2.nodes.reachable"
+msgstr "در دسترس"
+
+msgid "adminV2.nodes.refresh"
+msgstr "بروزرسانی"
+
+msgid "adminV2.nodes.remove"
+msgstr "حذف"
+
+msgid "adminV2.nodes.removeMessage"
+msgstr ""
+"نود همراه با دامنه‌هایش از این پنل حذف می‌شود و خود نود دوباره به پنل مستقل "
+"تبدیل می‌شود (لینک والد آن پاک می‌شود). برای اتصال دوباره، آن را دوباره "
+"اضافه کنید."
+
+msgid "adminV2.nodes.removeTitle"
+msgstr "{name} حذف شود؟"
+
+msgid "adminV2.nodes.removed"
+msgstr "{name} حذف شد"
+
+msgid "adminV2.nodes.removedNotUnlinked"
+msgstr ""
+"نود در دسترس نبود، پس هنوز این پنل را والد خود می‌داند. لینک والد را در "
+"تنظیمات آن پاک کنید، وگرنه به تلاش برای همگام‌سازی ادامه می‌دهد."
+
+msgid "adminV2.nodes.rename"
+msgstr "تغییر نام"
+
+msgid "adminV2.nodes.renamed"
+msgstr "نام به {name} تغییر کرد"
+
+msgid "adminV2.nodes.renamedHereOnly"
+msgstr "نام فقط در این پنل به {name} تغییر کرد"
+
+msgid "adminV2.nodes.renamedHereOnlyDetail"
+msgstr ""
+"نود در دسترس نبود یا نسخه آن قدیمی است؛ ممکن است پس از ثبت مجدد، نام قبلی "
+"نمایش داده شود."
+
+msgid "adminV2.nodes.sameVersion"
+msgstr "هم‌نسخه با این پنل"
+
+msgid "adminV2.nodes.showLess"
+msgstr "نمایش کمتر"
+
+msgid "adminV2.nodes.status.late"
+msgstr "با تأخیر"
+
+msgid "adminV2.nodes.status.never"
+msgstr "هنوز متصل نشده"
+
+msgid "adminV2.nodes.status.offline"
+msgstr "آفلاین"
+
+msgid "adminV2.nodes.status.online"
+msgstr "آنلاین"
+
+msgid "adminV2.nodes.subtitle"
+msgstr ""
+"سرورهای دیگر هیدیفای که به این پنل متصل هستند. کاربران و ادمین‌ها به‌صورت "
+"خودکار با آن‌ها به اشتراک گذاشته می‌شوند."
+
+msgid "adminV2.nodes.syncFailed"
+msgstr "همگام‌سازی {name} ناموفق بود"
+
+msgid "adminV2.nodes.syncNow"
+msgstr "همگام‌سازی"
+
+msgid "adminV2.nodes.synced"
+msgstr "{name} همگام شد"
+
+msgid "adminV2.nodes.title"
+msgstr "نودها"
+
+msgid "adminV2.nodes.unreachable"
+msgstr "در دسترس نیست"
+
+msgid "adminV2.outbounds.add"
+msgstr "افزودن خروجی"
+
+msgid "adminV2.outbounds.count.geosites"
+msgstr "geosite | geosite"
+
+msgid "adminV2.outbounds.count.rule_sets"
+msgstr "rule-set | rule-set"
+
+msgid "adminV2.outbounds.count.sites"
+msgstr "سایت | سایت"
+
+msgid "adminV2.outbounds.default"
+msgstr "پیش‌فرض"
+
+msgid "adminV2.outbounds.defaultHint"
+msgstr "آخرین خروجی فعال: هر چیزی که بالاتر هدایت نشود به اینجا می‌آید"
+
+msgid "adminV2.outbounds.deleteMessage"
+msgstr "از این پس سایت‌هایش به خروجی پیش‌فرض می‌روند."
+
+msgid "adminV2.outbounds.deleteMessageDefault"
+msgstr "این خروجی پیش‌فرض است: خروجی فعال بالای آن پیش‌فرض می‌شود."
+
+msgid "adminV2.outbounds.deleteTitle"
+msgstr "{name} حذف شود؟"
+
+msgid "adminV2.outbounds.deleted"
+msgstr "{name} حذف شد"
+
+msgid "adminV2.outbounds.dialog.add"
+msgstr "افزودن خروجی"
+
+msgid "adminV2.outbounds.dialog.addTitle"
+msgstr "افزودن خروجی {mode}"
+
+msgid "adminV2.outbounds.dialog.domestic"
+msgstr "سایت‌های داخلی {region}"
+
+msgid "adminV2.outbounds.dialog.editTitle"
+msgstr "ویرایش {name}"
+
+msgid "adminV2.outbounds.dialog.endpoint"
+msgstr "اتصال"
+
+msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
+msgstr ""
+"به پورت SOCKS سایفون روی این سرور ({endpoint}) وصل می‌شود؛ کلاینت Psiphon "
+"باید آنجا در حال اجرا باشد."
+
+msgid "adminV2.outbounds.dialog.endpointHint.tor"
+msgstr ""
+"به پورت SOCKS تور روی این سرور ({endpoint}) وصل می‌شود؛ سرویس Tor باید آنجا "
+"در حال اجرا باشد."
+
+msgid "adminV2.outbounds.dialog.host"
+msgstr "میزبان"
+
+msgid "adminV2.outbounds.dialog.name"
+msgstr "نام"
+
+msgid "adminV2.outbounds.dialog.nameRequired"
+msgstr "نام لازم است"
+
+msgid "adminV2.outbounds.dialog.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.outbounds.dialog.password"
+msgstr "رمز عبور"
+
+msgid "adminV2.outbounds.dialog.passwordKeep"
+msgstr "برای نگه داشتن رمز فعلی خالی بگذارید"
+
+msgid "adminV2.outbounds.dialog.port"
+msgstr "پورت"
+
+msgid "adminV2.outbounds.dialog.routes"
+msgstr "چه چیزی از آن عبور کند"
+
+msgid "adminV2.outbounds.dialog.routesHint"
+msgstr "ترافیک این سایت‌ها از این خروجی خارج می‌شود."
+
+msgid "adminV2.outbounds.dialog.routesHintDefault"
+msgstr ""
+"این خروجی پیش‌فرض است (آخرین خروجی فعال): هر چیزی که بالاتر هدایت نشود همین "
+"حالا به اینجا می‌آید، پس فهرست لازم ندارد. اگر آن را بالاتر ببرید دوباره "
+"استفاده می‌شوند."
+
+msgid "adminV2.outbounds.dialog.username"
+msgstr "نام کاربری"
+
+msgid "adminV2.outbounds.disable"
+msgstr "خاموش کردن"
+
+msgid "adminV2.outbounds.domesticChip"
+msgstr "داخلی ({region})"
+
+msgid "adminV2.outbounds.drag"
+msgstr "برای تغییر ترتیب بکشید"
+
+msgid "adminV2.outbounds.edited"
+msgstr "ویرایش‌شده: به‌روزرسانی‌ها فهرست‌های شما را نگه می‌دارند"
+
+msgid "adminV2.outbounds.enable"
+msgstr "روشن کردن"
+
+msgid "adminV2.outbounds.enabled"
+msgstr "فعال"
+
+msgid "adminV2.outbounds.everythingElse"
+msgstr "بقیهٔ ترافیک به اینجا می‌آید"
+
+msgid "adminV2.outbounds.followsDefaults"
+msgstr "از فهرست‌های پیش‌فرض استفاده می‌کند که با به‌روزرسانی تازه می‌شوند"
+
+msgid "adminV2.outbounds.howto"
+msgstr ""
+"خروجی‌ها از بالا به پایین بررسی می‌شوند: ترافیک از اولین خروجی‌ای که سایتش "
+"را دارد خارج می‌شود. آخرین خروجی فعال، پیش‌فرض است و بقیهٔ ترافیک را "
+"می‌گیرد. برای تغییر ترتیب بکشید یا از پیکان‌ها استفاده کنید."
+
+msgid "adminV2.outbounds.idle"
+msgstr "بدون استفاده"
+
+msgid "adminV2.outbounds.idleHint"
+msgstr ""
+"سایت، geosite یا rule-setی ندارد، پس چیزی از آن عبور نمی‌کند. ویرایشش کنید "
+"تا اضافه کنید، یا آن را به انتها ببرید تا پیش‌فرض شود."
+
+msgid "adminV2.outbounds.list.browse"
+msgstr "مرور rule-setها"
+
+msgid "adminV2.outbounds.list.geosites"
+msgstr "Geosite / GeoIP (xray)"
+
+msgid "adminV2.outbounds.list.geositesHint"
+msgstr ""
+"هر خط یک مورد xray همراه پیشوند: geosite:google یا geoip:ir (نام بدون پیشوند"
+" یعنی geosite:). برچسب ناشناخته xray را متوقف می‌کند، پس از برچسب‌های "
+"شناخته‌شده استفاده کنید."
+
+msgid "adminV2.outbounds.list.geositesPlaceholder"
+msgstr ""
+"geosite:google\n"
+"geoip:ir"
+
+msgid "adminV2.outbounds.list.rule_sets"
+msgstr "Rule-setها (hiddify-core)"
+
+msgid "adminV2.outbounds.list.rule_setsHint"
+msgstr ""
+"هر خط یک نشانی rule-set (.srs یا منبع .json). اگر نامی از SagerNet مانند "
+"geosite-netflix بنویسید، به نشانی‌اش تبدیل می‌شود."
+
+msgid "adminV2.outbounds.list.rule_setsPlaceholder"
+msgstr ""
+"https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-"
+"netflix.srs"
+
+msgid "adminV2.outbounds.list.sites"
+msgstr "سایت‌ها"
+
+msgid "adminV2.outbounds.list.sitesHint"
+msgstr "هر خط یک دامنه؛ زیردامنه‌ها هم شامل می‌شوند."
+
+msgid "adminV2.outbounds.list.sitesPlaceholder"
+msgstr "example.com"
+
+msgid "adminV2.outbounds.makeDefault"
+msgstr "پیش‌فرض کردن (انتقال به انتها)"
+
+msgid "adminV2.outbounds.mode.block"
+msgstr "مسدود"
+
+msgid "adminV2.outbounds.mode.direct"
+msgstr "مستقیم"
+
+msgid "adminV2.outbounds.mode.psiphon"
+msgstr "Psiphon"
+
+msgid "adminV2.outbounds.mode.socks"
+msgstr "SOCKS"
+
+msgid "adminV2.outbounds.mode.tor"
+msgstr "Tor"
+
+msgid "adminV2.outbounds.mode.warp"
+msgstr "WARP"
+
+msgid "adminV2.outbounds.modeHint.block"
+msgstr "مسدود می‌شود"
+
+msgid "adminV2.outbounds.modeHint.direct"
+msgstr "مستقیم از این سرور"
+
+msgid "adminV2.outbounds.modeHint.psiphon"
+msgstr "از Psiphon (یک پورت SOCKS سایفون)"
+
+msgid "adminV2.outbounds.modeHint.socks"
+msgstr "از یک پروکسی SOCKS5"
+
+msgid "adminV2.outbounds.modeHint.tor"
+msgstr "از شبکهٔ Tor (یک پورت SOCKS تور)"
+
+msgid "adminV2.outbounds.modeHint.warp"
+msgstr "از Cloudflare WARP روی این سرور"
+
+msgid "adminV2.outbounds.more"
+msgstr "کارهای بیشتر"
+
+msgid "adminV2.outbounds.moveDown"
+msgstr "پایین"
+
+msgid "adminV2.outbounds.moveUp"
+msgstr "بالا"
+
+msgid "adminV2.outbounds.notChanged"
+msgstr "تغییر نکرد"
+
+msgid "adminV2.outbounds.nowDefault"
+msgstr "{name} اکنون پیش‌فرض است"
+
+msgid "adminV2.outbounds.off"
+msgstr "خاموش"
+
+msgid "adminV2.outbounds.region.cn"
+msgstr "چین"
+
+msgid "adminV2.outbounds.region.ir"
+msgstr "ایران"
+
+msgid "adminV2.outbounds.region.other"
+msgstr "منطقهٔ شما"
+
+msgid "adminV2.outbounds.region.ru"
+msgstr "روسیه"
+
+msgid "adminV2.outbounds.reset"
+msgstr "بازگشت به پیش‌فرض"
+
+msgid "adminV2.outbounds.resetDone"
+msgstr "{name} دوباره از فهرست‌های پیش‌فرض استفاده می‌کند"
+
+msgid "adminV2.outbounds.resetMessage"
+msgstr ""
+"تغییرات شما در سایت‌ها، geositeها و rule-setها با فهرست‌های پیش‌فرض جایگزین "
+"می‌شود که از آن پس با به‌روزرسانی تازه می‌شوند."
+
+msgid "adminV2.outbounds.resetTitle"
+msgstr "{name} به فهرست‌های پیش‌فرض برگردد؟"
+
+msgid "adminV2.outbounds.saved"
+msgstr "{name} ذخیره شد"
+
+msgid "adminV2.outbounds.subtitle"
+msgstr ""
+"به ترتیب تعیین کنید ترافیک از کجا از این سرور خارج شود: از WARP، مستقیم، "
+"مسدود، یا از یک خروجی SOCKS، Tor یا Psiphon."
+
+msgid "adminV2.outbounds.title"
+msgstr "خروجی‌ها"
+
+msgid "adminV2.passwordRules.common"
+msgstr "رمز رایج نباشد"
+
+msgid "adminV2.passwordRules.digit"
+msgstr "یک رقم"
+
+msgid "adminV2.passwordRules.label"
+msgstr "رمز قوی باید داشته باشد"
+
+msgid "adminV2.passwordRules.length"
+msgstr "{n}+ کاراکتر"
+
+msgid "adminV2.passwordRules.lower"
+msgstr "یک حرف کوچک"
+
+msgid "adminV2.passwordRules.name"
+msgstr "نام یا شناسهٔ شما نباشد"
+
+msgid "adminV2.passwordRules.upper"
+msgstr "یک حرف بزرگ"
+
+msgid "adminV2.primevue.accept"
+msgstr "بله"
+
+msgid "adminV2.primevue.apply"
+msgstr "اعمال"
+
+msgid "adminV2.primevue.cancel"
+msgstr "انصراف"
+
+msgid "adminV2.primevue.choose"
+msgstr "انتخاب"
+
+msgid "adminV2.primevue.clear"
+msgstr "پاک کردن"
+
+msgid "adminV2.primevue.emptyFilterMessage"
+msgstr "نتیجه‌ای یافت نشد"
+
+msgid "adminV2.primevue.emptyMessage"
+msgstr "گزینه‌ای موجود نیست"
+
+msgid "adminV2.primevue.emptySearchMessage"
+msgstr "نتیجه‌ای یافت نشد"
+
+msgid "adminV2.primevue.reject"
+msgstr "خیر"
+
+msgid "adminV2.primevue.upload"
+msgstr "بارگذاری"
+
+msgid "adminV2.protocols.changed"
+msgstr "تغییر کرده"
+
+msgid "adminV2.protocols.disableAll"
+msgstr "غیرفعال‌سازی همه"
+
+msgid "adminV2.protocols.enableAll"
+msgstr "فعال‌سازی همه"
+
+msgid "adminV2.protocols.enabledOf"
+msgstr "{on} از {total} فعال"
+
+msgid "adminV2.protocols.filterAll"
+msgstr "همه"
+
+msgid "adminV2.protocols.filterOff"
+msgstr "خاموش"
+
+msgid "adminV2.protocols.filterOn"
+msgstr "روشن"
+
+msgid "adminV2.protocols.groups.other.hint"
+msgstr "سایر گزینه‌ها"
+
+msgid "adminV2.protocols.groups.other.title"
+msgstr "سایر"
+
+msgid "adminV2.protocols.groups.protocols.hint"
+msgstr "پروتکل‌های پروکسی ارائه‌شده به کاربران"
+
+msgid "adminV2.protocols.groups.protocols.title"
+msgstr "پروتکل‌ها"
+
+msgid "adminV2.protocols.groups.security.hint"
+msgstr "Reality، ترفندهای TLS و Mux"
+
+msgid "adminV2.protocols.groups.security.title"
+msgstr "امنیت و ترفندها"
+
+msgid "adminV2.protocols.groups.transports.hint"
+msgstr "نحوه انتقال ترافیک (TCP، WebSocket، gRPC و …)"
+
+msgid "adminV2.protocols.groups.transports.title"
+msgstr "روش‌های انتقال"
+
+msgid "adminV2.protocols.instantChip"
+msgstr "فوری"
+
+msgid "adminV2.protocols.leaveUnsaved"
+msgstr "تغییرات ذخیره‌نشده دارید. خارج می‌شوید؟"
+
+msgid "adminV2.protocols.noMatch"
+msgstr "موردی پیدا نشد."
+
+msgid "adminV2.protocols.reinstallChip"
+msgstr "نیاز به نصب مجدد"
+
+msgid "adminV2.protocols.relatedSettings"
+msgstr "تنظیمات"
+
+msgid "adminV2.protocols.search"
+msgstr "جستجوی پروتکل…"
+
+msgid "adminV2.protocols.subtitle"
+msgstr ""
+"پروتکل‌ها، روش‌های انتقال و ترفندهای TLS را برای کل پنل روشن یا خاموش کنید."
+
+msgid "adminV2.protocols.summaryHint"
+msgstr "روی هر کارت بزنید تا تغییر کند، سپس ذخیره کنید."
+
+msgid "adminV2.protocols.title"
+msgstr "پروتکل‌ها"
 
 msgid "adminV2.proxy.addClient"
 msgstr "افزودن کلاینت"
@@ -1259,25 +4069,28 @@ msgid "adminV2.proxy.autoClient"
 msgstr "خودکار"
 
 msgid "adminV2.proxy.baseConfigTemplate"
-msgstr "بازنویسی پیکربندی پایه"
+msgstr "بازنویسی کانفیگ پایه"
 
 msgid "adminV2.proxy.baseConfigTemplateHint"
 msgstr ""
-"اختیاری: پوسته کامل xray داخل {% block base_config %}. خالی بگذارید تا از "
-"پیکربندی پایه سراسری استفاده شود."
+"اختیاری: پوسته کامل کانفیگ کلاینت xray داخل {% block base_config %}. خالی "
+"بگذارید تا از کانفیگ پایه سراسری استفاده شود."
 
 msgid "adminV2.proxy.builtinDefaultHint"
 msgstr ""
-"پیش‌فرض داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی را "
-"در تب سرور یا کلاینت فعال کنید."
+"پیش‌تنظیم داخلی از کاتالوگ همگام می‌شود. برای ویرایش هر طرف، محتوای سفارشی "
+"را در تب سرور یا کلاینت فعال کنید."
 
 msgid "adminV2.proxy.builtinReadOnly"
 msgstr ""
-"پریست داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل کپی "
-"بگیرید."
+"پیش‌تنظیم داخلی — فقط نام و وضعیت فعال قابل تغییر است. برای ویرایش کامل، یک "
+"کپی ایجاد کنید."
 
 msgid "adminV2.proxy.bundleContextProxyCount"
 msgstr "پروکسی‌های فعال"
+
+msgid "adminV2.proxy.cannotEnable"
+msgstr "امکان فعال‌سازی این پروکسی نیست"
 
 msgid "adminV2.proxy.categories"
 msgstr "دسته‌بندی‌ها"
@@ -1314,19 +4127,22 @@ msgid "adminV2.proxy.clashFormatYaml"
 msgstr "YAML"
 
 msgid "adminV2.proxy.clientBuiltinCustomized"
-msgstr "پیکربندی کلاینت سفارشی"
+msgstr "کانفیگ کلاینت سفارشی"
 
 msgid "adminV2.proxy.clientBuiltinDefault"
-msgstr "استفاده از پیکربندی پیش‌فرض کلاینت کاتالوگ"
+msgstr "استفاده از کانفیگ پیش‌فرض کلاینت از کاتالوگ"
 
 msgid "adminV2.proxy.clientConfigDefault"
 msgstr "کانفیگ کلاینت"
 
 msgid "adminV2.proxy.clientCoreConfigs"
-msgstr "کانفیگ هسته کلاینت"
+msgstr "کانفیگ‌های هسته کلاینت"
 
 msgid "adminV2.proxy.clientCores"
 msgstr "هسته‌های کلاینت"
+
+msgid "adminV2.proxy.commonProxyBadge"
+msgstr "مشترک"
 
 msgid "adminV2.proxy.core"
 msgstr "هسته"
@@ -1335,13 +4151,17 @@ msgid "adminV2.proxy.customPath"
 msgstr "مسیر سفارشی"
 
 msgid "adminV2.proxy.customPathAuto"
-msgstr "برای پراکسی‌های HTTP به‌صورت خودکار ساخته می‌شود"
+msgstr "برای پروکسی‌های HTTP به‌صورت خودکار ساخته می‌شود"
+
+msgid "adminV2.proxy.defaultTagName"
+msgstr "تگ پیش‌فرض: {name}"
 
 msgid "adminV2.proxy.directPortAccess"
 msgstr "دسترسی مستقیم به پورت"
 
 msgid "adminV2.proxy.directPortAccessHint"
-msgstr "با احتیاط استفاده کنید — ممکن است سرور شما قابل کشف باشد"
+msgstr ""
+"با احتیاط استفاده کنید — ممکن است سرور شما روی رابط عمومی قابل شناسایی شود"
 
 msgid "adminV2.proxy.doBase64After"
 msgstr "Base64 بعد از رندر"
@@ -1358,6 +4178,18 @@ msgstr "CDN"
 msgid "adminV2.proxy.domainModeLabels.direct"
 msgstr "مستقیم"
 
+msgid "adminV2.proxy.domainModeLabels.direct-dns"
+msgstr "مستقیم (DNS)"
+
+msgid "adminV2.proxy.domainModeLabels.direct-fake"
+msgstr "مستقیم (Fake)"
+
+msgid "adminV2.proxy.domainModeLabels.direct-reality"
+msgstr "مستقیم (REALITY)"
+
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "مستقیم (معتبر)"
+
 msgid "adminV2.proxy.domainModeLabels.fake"
 msgstr "Fake TLS"
 
@@ -1365,13 +4197,22 @@ msgid "adminV2.proxy.domainModeLabels.reality"
 msgstr "REALITY"
 
 msgid "adminV2.proxy.domainModeLabels.relay"
-msgstr "Relay"
+msgstr "رله"
+
+msgid "adminV2.proxy.domainModeLabels.relay-fake"
+msgstr "رله (Fake)"
+
+msgid "adminV2.proxy.domainModeLabels.relay-reality"
+msgstr "رله (REALITY)"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "رله (معتبر)"
 
 msgid "adminV2.proxy.domainModeLabels.special"
 msgstr "ویژه (REALITY)"
 
 msgid "adminV2.proxy.domainModes"
-msgstr "حالت دامنه"
+msgstr "حالت‌های دامنه"
 
 msgid "adminV2.proxy.domains"
 msgstr "دامنه‌ها"
@@ -1380,7 +4221,9 @@ msgid "adminV2.proxy.downloadAlpns"
 msgstr "ALPN دانلود"
 
 msgid "adminV2.proxy.downloadAlpnsHint"
-msgstr "فقط xHTTP. خالی = همان ALPN اصلی."
+msgstr ""
+"فقط برای xHTTP. خالی = همان ALPN اصلی. تعداد کانفیگ‌ها = ALPN اصلی × ALPN "
+"دانلود."
 
 msgid "adminV2.proxy.downloadDomainModes"
 msgstr "حالت‌های دامنه دانلود"
@@ -1447,28 +4290,22 @@ msgid "adminV2.proxy.exampleUserSample"
 msgstr "کاربر نمونه"
 
 msgid "adminV2.proxy.export"
-msgstr "خروجی"
+msgstr "خروجی گرفتن"
 
 msgid "adminV2.proxy.exportFailed"
-msgstr "خروجی ناموفق"
-
-msgid "adminV2.proxy.faketlsDomains"
-msgstr "دامنه‌های faketls"
-
-msgid "adminV2.proxy.faketlsSpecialHint"
-msgstr "از دامنه‌های ویژه (REALITY) در پنل انتخاب کنید"
+msgstr "خروجی گرفتن ناموفق بود"
 
 msgid "adminV2.proxy.fieldOverride"
 msgstr "بازنویسی"
 
 msgid "adminV2.proxy.generateBundle"
-msgstr "تولید همه پیکربندی‌ها"
+msgstr "تولید همه کانفیگ‌ها"
 
 msgid "adminV2.proxy.generateBundleOk"
-msgstr "بسته پیکربندی با موفقیت تولید شد"
+msgstr "بسته کانفیگ با موفقیت تولید شد"
 
 msgid "adminV2.proxy.generateBundlePartial"
-msgstr "بسته پیکربندی با هشدار یا خطا تولید شد"
+msgstr "بسته کانفیگ با هشدار یا خطا تولید شد"
 
 msgid "adminV2.proxy.generateExample"
 msgstr "تولید نمونه"
@@ -1479,23 +4316,26 @@ msgstr "نمونه با موفقیت تولید شد"
 msgid "adminV2.proxy.generateExamplePartial"
 msgstr "نمونه با هشدار یا خطا تولید شد"
 
+msgid "adminV2.proxy.goToSettings"
+msgstr "رفتن به تنظیمات"
+
 msgid "adminV2.proxy.ignoreSkip"
-msgstr "نادیده گرفتن skip"
+msgstr "نادیده گرفتن تگ‌های skip"
 
 msgid "adminV2.proxy.ignoreSkipHint"
-msgstr "حتی اگر بلوک skip فعال باشد، پیکربندی تولید شود"
+msgstr "کانفیگ حتی وقتی بلوک skip قالب معمولاً بخشی را رد می‌کند، تولید شود"
 
 msgid "adminV2.proxy.import"
-msgstr "ورود"
+msgstr "وارد کردن"
 
 msgid "adminV2.proxy.importFailed"
-msgstr "ورود ناموفق"
+msgstr "وارد کردن ناموفق بود"
 
 msgid "adminV2.proxy.importSuccess"
 msgstr "با موفقیت وارد شد ({count} قالب)"
 
 msgid "adminV2.proxy.inboundPort"
-msgstr "پورت inbound"
+msgstr "پورت ورودی"
 
 msgid "adminV2.proxy.inboundPortAuto"
 msgstr "خالی = خودکار"
@@ -1510,7 +4350,7 @@ msgid "adminV2.proxy.inboundTcpPortsHint"
 msgstr "پورت‌های TCP ثابت با کاما"
 
 msgid "adminV2.proxy.inboundTemplate"
-msgstr "قالب inbound"
+msgstr "قالب ورودی (inbound)"
 
 msgid "adminV2.proxy.inboundUdpPorts"
 msgstr "پورت‌های UDP ورودی"
@@ -1518,11 +4358,19 @@ msgstr "پورت‌های UDP ورودی"
 msgid "adminV2.proxy.inboundUdpPortsHint"
 msgstr "پورت‌های UDP ثابت؛ در صورت خالی بودن همان TCP"
 
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "پروکسی مشترک"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"این پروتکل روی هر دو هسته Xray و Hiddify Core وجود دارد. تنظیم هسته پروکسی "
+"مشترک فقط هسته انتخاب‌شده را روشن نگه می‌دارد."
+
 msgid "adminV2.proxy.l7Proto"
-msgstr "L7 Reverse Proxy Protocol"
+msgstr "پروتکل ریورس پروکسی لایه ۷"
 
 msgid "adminV2.proxy.l7ReverseProto"
-msgstr "پروتکل L7 reverse proxy"
+msgstr "پروتکل ریورس پروکسی لایه ۷"
 
 msgid "adminV2.proxy.linkSettings"
 msgstr "تنظیمات لینک"
@@ -1537,16 +4385,19 @@ msgid "adminV2.proxy.mode"
 msgstr "حالت"
 
 msgid "adminV2.proxy.modeLabels.domain_native"
-msgstr "بومی دامنه"
+msgstr "دامنه (بومی)"
 
 msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
-msgstr "پورت خودکار چند دامنه"
+msgstr "چند دامنه با پورت خودکار"
+
+msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
+msgstr "درگاه DNS دامنه"
 
 msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
-msgstr "درگاه L7 دامنه"
+msgstr "درگاه لایه ۷ دامنه"
 
 msgid "adminV2.proxy.modeLabels.domains_single_public_port"
-msgstr "پورت ثابت چند دامنه"
+msgstr "چند دامنه با پورت ثابت"
 
 msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
 msgstr "درگاه SNI دامنه"
@@ -1554,26 +4405,36 @@ msgstr "درگاه SNI دامنه"
 msgid "adminV2.proxy.modeLabels.ip"
 msgstr "مبتنی بر IP"
 
+msgid "adminV2.proxy.modeLabels.no_inbound"
+msgstr "بدون ورودی"
+
 msgid "adminV2.proxy.modeSettings"
 msgstr "حالت و مسیریابی"
 
 msgid "adminV2.proxy.name"
 msgstr "نام"
 
+msgid "adminV2.proxy.needGlobalEnable"
+msgstr ""
+"برای فعال‌سازی این پروکسی باید ابتدا {names} را به‌صورت سراسری فعال کنید. "
+"می‌خواهید تنظیمات را در تب جدید باز کنید؟"
+
 msgid "adminV2.proxy.new"
 msgstr "پروکسی جدید"
 
 msgid "adminV2.proxy.noClientConfigs"
-msgstr "هنوز کانفیگ کلاینتی نیست. برای شروع یک کلاینت اضافه کنید."
+msgstr "هنوز کانفیگ کلاینتی وجود ندارد. برای شروع یک کلاینت اضافه کنید."
 
 msgid "adminV2.proxy.outboundTagTemplate"
-msgstr "قالب تگ outbound"
+msgstr "قالب تگ خروجی (outbound)"
 
 msgid "adminV2.proxy.outboundTagTemplateHint"
-msgstr "Jinja برای تگ هر outbound کلاینت"
+msgstr ""
+"Jinja برای تگ هر outbound کلاینت. پیش‌فرض: {{ proxy.tag }} {{ domain.alias "
+"or domain.name }} {{ proxy.alpn }}"
 
 msgid "adminV2.proxy.outboundsTemplate"
-msgstr "قالب outbounds"
+msgstr "قالب خروجی‌ها (outbounds)"
 
 msgid "adminV2.proxy.protocol"
 msgstr "پروتکل"
@@ -1599,14 +4460,20 @@ msgstr "خروجی رندر شده"
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "منبع قالب"
 
+msgid "adminV2.proxy.resetTagName"
+msgstr "بازگرداندن نام تگ به پیش‌فرض"
+
 msgid "adminV2.proxy.resetToBuiltin"
 msgstr "بازگردانی به پیش‌فرض کاتالوگ"
 
+msgid "adminV2.proxy.searchAll"
+msgstr "جستجو در همه ستون‌ها..."
+
 msgid "adminV2.proxy.serverBuiltinCustomized"
-msgstr "پیکربندی سرور سفارشی"
+msgstr "کانفیگ سرور سفارشی"
 
 msgid "adminV2.proxy.serverBuiltinDefault"
-msgstr "استفاده از پیکربندی پیش‌فرض سرور کاتالوگ"
+msgstr "استفاده از کانفیگ پیش‌فرض سرور از کاتالوگ"
 
 msgid "adminV2.proxy.serverCore"
 msgstr "هسته سرور"
@@ -1634,6 +4501,9 @@ msgstr "فرمت لینک"
 
 msgid "adminV2.proxy.sublinkFormatBase64"
 msgstr "فرمت Base64"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "فیلدهای رمزگشایی‌شده"
 
 msgid "adminV2.proxy.sublinkFormatRaw"
 msgstr "لینک تولیدشده"
@@ -1693,7 +4563,7 @@ msgid "adminV2.proxy.tcpUdp"
 msgstr "TCP یا UDP"
 
 msgid "adminV2.proxy.tcpUdpHint"
-msgstr "پروتکل انتقال برای پورت‌های inbound محاسبه‌شده"
+msgstr "پروتکل لایه انتقال برای پورت‌های ورودی محاسبه‌شده"
 
 msgid "adminV2.proxy.tcpUdpLabels.both"
 msgstr "TCP + UDP"
@@ -1705,25 +4575,40 @@ msgid "adminV2.proxy.tcpUdpLabels.udp"
 msgstr "UDP"
 
 msgid "adminV2.proxy.templateSlugs"
-msgstr "قالب‌های include"
+msgstr "قالب‌های ضمیمه‌شده (include)"
 
 msgid "adminV2.proxy.tlsLayer"
 msgstr "لایه TLS"
 
 msgid "adminV2.proxy.tlsLayerLabels.http"
-msgstr "HTTP"
+msgstr "-"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
 
 msgid "adminV2.proxy.tlsLayerLabels.tls"
-msgstr "TLS"
+msgstr "TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
+msgstr "TLS H2"
 
 msgid "adminV2.proxy.tlsLayerSpecialConflict"
 msgstr "لایه TLS از نوع HTTP با حالت دامنه REALITY سازگار نیست"
 
 msgid "adminV2.proxy.transport"
-msgstr "ترابری"
+msgstr "لایه انتقال"
 
 msgid "adminV2.proxy.transportLabels.grpc"
 msgstr "gRPC"
+
+msgid "adminV2.proxy.transportLabels.http"
+msgstr "HTTP (خام)"
 
 msgid "adminV2.proxy.transportLabels.httpupgrade"
 msgstr "HTTP Upgrade"
@@ -1746,8 +4631,462 @@ msgstr "TCP یا UDP آپلود"
 msgid "adminV2.proxy.version"
 msgstr "نسخه"
 
+msgid "adminV2.qr.clickToCopy"
+msgstr "برای کپی تصویر کلیک کنید"
+
+msgid "adminV2.qr.copiedBoth"
+msgstr "پیام و کد QR کپی شد"
+
+msgid "adminV2.qr.copiedBothClick"
+msgstr ""
+"ایمیل و اسناد هر دو را می‌چسبانند. برنامه‌های گفتگو فقط متن را می‌چسبانند: "
+"پس از چسباندن متن، روی کد QR کلیک کنید تا تصویر کپی شود و آن را هم بچسبانید."
+
+msgid "adminV2.qr.copiedBothShare"
+msgstr ""
+"ایمیل و اسناد هر دو را می‌چسبانند. برنامه‌های گفتگو فقط متن را می‌چسبانند: "
+"برای ارسال هر دو از «اشتراک‌گذاری» استفاده کنید یا با کلیک روی کد QR تصویر "
+"را کپی کنید."
+
+msgid "adminV2.qr.copy"
+msgstr "کپی QR"
+
+msgid "adminV2.qr.copyUnsupported"
+msgstr "این مرورگر نمی‌تواند تصویر کپی کند. از دانلود استفاده کنید."
+
+msgid "adminV2.qr.share"
+msgstr "اشتراک‌گذاری"
+
+msgid "adminV2.qr.shareFailed"
+msgstr ""
+"اشتراک‌گذاری اینجا کار نکرد. پیام را کپی کنید، سپس با کلیک روی کد QR تصویر "
+"را کپی کنید."
+
+msgid "adminV2.qr.shareHint"
+msgstr "متن و تصویر QR را با هم به تلگرام، واتساپ، ایمیل و… بفرستید"
+
+msgid "adminV2.qr.textOnly"
+msgstr ""
+"پیام کپی شد. این مرورگر نتوانست تصویر QR را اضافه کند؛ با کلیک روی کد آن را "
+"کپی کنید."
+
+msgid "adminV2.quickSetup.back"
+msgstr "قبلی"
+
+msgid "adminV2.quickSetup.countries.ir"
+msgstr "ایران"
+
+msgid "adminV2.quickSetup.countries.other"
+msgstr "سایر"
+
+msgid "adminV2.quickSetup.countries.ru"
+msgstr "روسیه"
+
+msgid "adminV2.quickSetup.countries.zh"
+msgstr "چین"
+
+msgid "adminV2.quickSetup.domains.block"
+msgstr "مسدودسازی سایت‌های داخلی"
+
+msgid "adminV2.quickSetup.domains.blockHint"
+msgstr "سایت‌های داخلی را مسدود می‌کند تا از شناسایی توسط دولت جلوگیری شود."
+
+msgid "adminV2.quickSetup.domains.changeMode"
+msgstr "تغییر نوع {name}"
+
+msgid "adminV2.quickSetup.domains.copied"
+msgstr "{ip} کپی شد"
+
+msgid "adminV2.quickSetup.domains.decoy"
+msgstr "سایت جعلی"
+
+msgid "adminV2.quickSetup.domains.decoyHint"
+msgstr "سایتی که وقتی کسی مستقیماً دامنه شما را باز کند، نمایش داده می‌شود."
+
+msgid "adminV2.quickSetup.domains.decoyWarn1"
+msgstr ""
+"از سایت‌های مالی، ایرانی و معروف یا سایت‌های دارای ورود مانند گوگل، یاهو، "
+"ویکی‌پدیا و پی‌پال استفاده نکنید."
+
+msgid "adminV2.quickSetup.domains.decoyWarn2"
+msgstr ""
+"سایت را با دقت بررسی کنید و مطمئن شوید درست است، وگرنه ممکن است هشدار فیشینگ"
+" دریافت کنید."
+
+msgid "adminV2.quickSetup.domains.decoyWarn3"
+msgstr "این دامنه را دوباره بررسی کنید تا در آینده مشکلی پیش نیاید."
+
+msgid "adminV2.quickSetup.domains.detecting"
+msgstr "در حال بررسی…"
+
+msgid "adminV2.quickSetup.domains.domains"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.quickSetup.domains.domainsHint"
+msgstr ""
+"هر نوع دامنه‌ای را می‌توانید اضافه کنید: مستقیم، CDN، ریلیتی، رله… نوع هر "
+"دامنه خودکار تشخیص داده می‌شود؛ برای تغییر، روی نوع آن بزنید. حداقل یک دامنه"
+" مستقیم، CDN یا لینک اشتراک لازم است (IP همین سرور هم مستقیم حساب می‌شود)."
+
+msgid "adminV2.quickSetup.domains.how1"
+msgstr ""
+"دامنه یا ساب‌دامنه خود را به این آی‌پی‌ها متصل کنید (رکورد A برای IPv4 و "
+"AAAA برای IPv6)."
+
+msgid "adminV2.quickSetup.domains.how2"
+msgstr ""
+"سپس دامنه را در کادر زیر وارد کنید. می‌توانید چند دامنه اضافه کنید؛ بعد از "
+"هر کدام Enter یا کاما بزنید."
+
+msgid "adminV2.quickSetup.domains.ipsTitle"
+msgstr "آی‌پی‌های سرور شما"
+
+msgid "adminV2.quickSetup.domains.modeHelp.cdn"
+msgstr ""
+"پشت یک CDN (کلادفلر، فستلی، آروان، آکامای، …) که ترافیک را به این سرور "
+"می‌فرستد. IP سرور شما را پنهان می‌کند."
+
+msgid "adminV2.quickSetup.domains.modeHelp.direct"
+msgstr ""
+"مستقیماً به IP همین سرور اشاره می‌کند. سریع‌ترین حالت؛ وقتی دامنه به همین "
+"سرور اشاره کند تشخیص داده می‌شود."
+
+msgid "adminV2.quickSetup.domains.modeHelp.reality"
+msgstr ""
+"سایت معروف دیگران (با TLS 1.3 و HTTP/2). به سرور شما اشاره نمی‌کند؛ این سرور"
+" خود را شبیه آن نشان می‌دهد."
+
+msgid "adminV2.quickSetup.domains.modeHelp.relay"
+msgstr ""
+"به سرور دیگری اشاره می‌کند که ترافیک را به این سرور می‌رساند (رله/تونل). "
+"دستی انتخاب کنید."
+
+msgid "adminV2.quickSetup.domains.modes.cdn"
+msgstr "CDN"
+
+msgid "adminV2.quickSetup.domains.modes.direct"
+msgstr "مستقیم"
+
+msgid "adminV2.quickSetup.domains.modes.reality"
+msgstr "ریلیتی"
+
+msgid "adminV2.quickSetup.domains.modes.relay"
+msgstr "رله"
+
+msgid "adminV2.quickSetup.domains.noIp"
+msgstr "آی‌پی سرور شناسایی نشد."
+
+msgid "adminV2.quickSetup.domains.notes.not_friendly"
+msgstr "این سایت شاید از TLS 1.3 و HTTP/2 که ریلیتی لازم دارد پشتیبانی نکند."
+
+msgid "adminV2.quickSetup.domains.notes.unresolved"
+msgstr "این دامنه هنوز resolve نمی‌شود. رکورد DNS آن را بررسی کنید."
+
+msgid "adminV2.quickSetup.domains.recommended"
+msgstr "بسیار توصیه می‌شود"
+
+msgid "adminV2.quickSetup.domains.remove"
+msgstr "حذف {name}"
+
+msgid "adminV2.quickSetup.domains.required"
+msgstr ""
+"حداقل یک دامنه مستقیم، CDN یا لینک اشتراک اضافه کنید (دامنه‌های ریلیتی و رله"
+" به تنهایی کافی نیستند). IP همین سرور هم یک دامنه مستقیم حساب می‌شود."
+
+msgid "adminV2.quickSetup.domains.sublink"
+msgstr "دامنه لینک اشتراک"
+
+msgid "adminV2.quickSetup.domains.sublinkHint"
+msgstr ""
+"فقط لینک اشتراک را ارائه می‌دهد، نه پروکسی. می‌تواند به همین سرور یا از طریق"
+" CDN اشاره کند."
+
+msgid "adminV2.quickSetup.domains.sublinkWhy"
+msgstr ""
+"برای لینک اشتراک کاربران از یک دامنه دیگر استفاده کنید، ترجیحاً پشت CDN. اگر"
+" سرور یا دامنه‌های پروکسی شما فیلتر شوند، کاربران همچنان می‌توانند اشتراک "
+"خود را به‌روز کنند و کانفیگ‌های جدید سالم بگیرند و آسیبی نمی‌بینند."
+
+msgid "adminV2.quickSetup.domains.useIp"
+msgstr "استفاده از این IP به عنوان دامنه مستقیم"
+
+msgid "adminV2.quickSetup.finish.button"
+msgstr "پایان"
+
+msgid "adminV2.quickSetup.finish.docs"
+msgstr "مطالعه مستندات بیشتر"
+
+msgid "adminV2.quickSetup.finish.off"
+msgstr "خاموش"
+
+msgid "adminV2.quickSetup.finish.on"
+msgstr "روشن"
+
+msgid "adminV2.quickSetup.finish.ready"
+msgstr "همه چیز آماده است"
+
+msgid "adminV2.quickSetup.finish.readyHint"
+msgstr "انتخاب‌های خود را بررسی کنید، سپس راه‌اندازی را تمام کنید."
+
+msgid "adminV2.quickSetup.finish.running"
+msgstr "در حال اتمام راه‌اندازی"
+
+msgid "adminV2.quickSetup.finish.whatHappens"
+msgstr ""
+"با «پایان»، پیکربندی اعمال و سرویس‌ها با دامنه‌های شما دوباره نصب می‌شوند. "
+"چند دقیقه طول می‌کشد؛ در این مدت لاگ و لینک‌های جدید ادمین نمایش داده "
+"می‌شود."
+
+msgid "adminV2.quickSetup.language.adminLang"
+msgstr "زبان پنل ادمین"
+
+msgid "adminV2.quickSetup.language.adminLangHint"
+msgstr "زبان بخش ادمین."
+
+msgid "adminV2.quickSetup.language.country"
+msgstr "کشور"
+
+msgid "adminV2.quickSetup.language.countryHint"
+msgstr "تنظیمات مناسب با شرایط فیلترینگ آن کشور اعمال می‌شود."
+
+msgid "adminV2.quickSetup.next"
+msgstr "بعدی"
+
+msgid "adminV2.quickSetup.nodes.question"
+msgstr ""
+"می‌خواهید نودهای دیگری اضافه کنید؟ لینک کامل ادمین هر پنل دیگر را وارد کنید؛"
+" پس از اتصال، اینجا نمایش داده می‌شود. این کار را بعداً هم می‌توانید انجام "
+"دهید."
+
+msgid "adminV2.quickSetup.nodes.skip"
+msgstr "رد شدن"
+
+msgid "adminV2.quickSetup.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.quickSetup.password.confirm"
+msgstr "تکرار رمز عبور"
+
+msgid "adminV2.quickSetup.password.label"
+msgstr "رمز عبور جدید"
+
+msgid "adminV2.quickSetup.password.medium"
+msgstr "متوسط"
+
+msgid "adminV2.quickSetup.password.min"
+msgstr "رمز عبور باید حداقل {min} کاراکتر باشد."
+
+msgid "adminV2.quickSetup.password.mismatch"
+msgstr "رمزهای عبور یکسان نیستند."
+
+msgid "adminV2.quickSetup.password.ok"
+msgstr "رمزها یکسان هستند"
+
+msgid "adminV2.quickSetup.password.prompt"
+msgstr "حداقل {min} کاراکتر"
+
+msgid "adminV2.quickSetup.password.strong"
+msgstr "قوی"
+
+msgid "adminV2.quickSetup.password.weak"
+msgstr "ضعیف"
+
+msgid "adminV2.quickSetup.password.why"
+msgstr "با این رمز عبور وارد بخش ادمین می‌شوید. حداقل ۸ کاراکتر استفاده کنید."
+
+msgid "adminV2.quickSetup.skip"
+msgstr "فعلاً رد شو"
+
+msgid "adminV2.quickSetup.stepOf"
+msgstr "مرحله {n} از {total}"
+
+msgid "adminV2.quickSetup.steps.domains.lead"
+msgstr "دامنه خود را به این سرور متصل کنید."
+
+msgid "adminV2.quickSetup.steps.domains.title"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.quickSetup.steps.finish.lead"
+msgstr "بیایید پیکربندی نهایی را برای اتمام راه‌اندازی انجام دهیم."
+
+msgid "adminV2.quickSetup.steps.finish.title"
+msgstr "پایان"
+
+msgid "adminV2.quickSetup.steps.language.lead"
+msgstr "زبان پنل ادمین و کشوری که کاربران شما در آن هستند را انتخاب کنید."
+
+msgid "adminV2.quickSetup.steps.language.title"
+msgstr "خوش آمدید"
+
+msgid "adminV2.quickSetup.steps.nodes.lead"
+msgstr ""
+"در صورت تمایل، سرورهای دیگر هیدیفای را متصل کنید تا از اینجا مدیریت شوند."
+
+msgid "adminV2.quickSetup.steps.nodes.title"
+msgstr "نودها"
+
+msgid "adminV2.quickSetup.steps.password.lead"
+msgstr "با یک رمز عبور از بخش ادمین محافظت کنید."
+
+msgid "adminV2.quickSetup.steps.password.title"
+msgstr "رمز عبور"
+
+msgid "adminV2.quickSetup.steps.protocols.lead"
+msgstr ""
+"پروتکل‌هایی که می‌خواهید ارائه دهید را انتخاب کنید. تا حد امکان کمترین تعداد"
+" را انتخاب کنید."
+
+msgid "adminV2.quickSetup.steps.protocols.title"
+msgstr "پروتکل‌ها"
+
+msgid "adminV2.quickSetup.subtitle"
+msgstr "با چند قدم، پنل شما آماده است."
+
+msgid "adminV2.quickSetup.title"
+msgstr "راه‌اندازی سریع"
+
+msgid "adminV2.saveBar.discard"
+msgstr "لغو تغییرات"
+
+msgid "adminV2.saveBar.unsaved"
+msgstr "{count} تغییر ذخیره‌نشده"
+
+msgid "adminV2.settings.adminPathChanged"
+msgstr ""
+"مسیر ادمین تغییر کرد. پس از اعمال کانفیگ‌ها، پنل ادمین در این آدرس خواهد بود"
+
+msgid "adminV2.settings.advancedBadge"
+msgstr "پیشرفته"
+
+msgid "adminV2.settings.categories"
+msgstr "دسته‌های تنظیمات"
+
+msgid "adminV2.settings.changed"
+msgstr "تغییر کرده"
+
+msgid "adminV2.settings.fixErrors"
+msgstr "لطفاً فیلدهای مشخص‌شده را اصلاح کنید."
+
+msgid "adminV2.settings.hiddenCount"
+msgstr "{count} تنظیم پیشرفته پنهان است"
+
+msgid "adminV2.settings.invalid"
+msgstr "این مقدار معتبر نیست."
+
+msgid "adminV2.settings.leaveUnsaved"
+msgstr "تغییرات ذخیره‌نشده دارید. خارج می‌شوید؟"
+
+msgid "adminV2.settings.noMatch"
+msgstr "هیچ تنظیمی با جستجوی شما مطابقت ندارد."
+
+msgid "adminV2.settings.openProtocols"
+msgstr "پروتکل‌ها"
+
+msgid "adminV2.settings.reinstallBadge"
+msgstr "نصب مجدد"
+
+msgid "adminV2.settings.reinstallHint"
+msgstr "تغییر این مورد نیاز به نصب مجدد دارد"
+
+msgid "adminV2.settings.reloading"
+msgstr "زبان تغییر کرد، در حال بارگذاری مجدد…"
+
+msgid "adminV2.settings.required"
+msgstr "این فیلد الزامی است."
+
+msgid "adminV2.settings.search"
+msgstr "جستجو در همه تنظیمات…"
+
+msgid "adminV2.settings.showAdvanced"
+msgstr "نمایش تنظیمات پیشرفته"
+
+msgid "adminV2.settings.showAdvancedIn"
+msgstr "نمایش {count} تنظیم پیشرفته"
+
+msgid "adminV2.settings.showLess"
+msgstr "نمایش کمتر"
+
+msgid "adminV2.settings.showMore"
+msgstr "نمایش {count} تنظیم پیشرفته دیگر"
+
+msgid "adminV2.settings.subtitle"
+msgstr ""
+"همه چیز درباره نحوه کار این پنل. تنظیمات رایج اول؛ تنظیمات پیشرفته در صورت "
+"درخواست."
+
+msgid "adminV2.settings.title"
+msgstr "تنظیمات"
+
+msgid "adminV2.telegram.benefit.backup"
+msgstr "پشتیبان‌های خودکار را دریافت کنید"
+
+msgid "adminV2.telegram.benefit.manage"
+msgstr "کاربران را مستقیم از تلگرام مدیریت کنید"
+
+msgid "adminV2.telegram.benefit.notify"
+msgstr "از رویدادهای مهم باخبر شوید"
+
+msgid "adminV2.telegram.check"
+msgstr "وصل کردم"
+
+msgid "adminV2.telegram.connect"
+msgstr "اتصال تلگرام"
+
+msgid "adminV2.telegram.connectHint"
+msgstr ""
+"اعلان‌ها و پشتیبان‌ها را از {bot} بگیرید و پنل را از تلگرام مدیریت کنید."
+
+msgid "adminV2.telegram.connectTitle"
+msgstr "تلگرام خود را وصل کنید"
+
+msgid "adminV2.telegram.connected"
+msgstr "وصل"
+
+msgid "adminV2.telegram.connectedHint"
+msgstr "اعلان‌ها و پشتیبان‌ها را از {bot} می‌گیرید."
+
+msgid "adminV2.telegram.connectedTitle"
+msgstr "تلگرام وصل است"
+
+msgid "adminV2.telegram.later"
+msgstr "هر وقت خواستید از «حساب من» وصل کنید."
+
+msgid "adminV2.telegram.notNow"
+msgstr "الان نه"
+
+msgid "adminV2.telegram.notYet"
+msgstr "هنوز وصل نیست: در ربات Start را بزنید و دوباره بررسی کنید."
+
+msgid "adminV2.telegram.nowConnected"
+msgstr "تلگرام وصل شد"
+
+msgid "adminV2.telegram.openWeb"
+msgstr "باز کردن در مرورگر"
+
+msgid "adminV2.telegram.promptLead"
+msgstr "این پنل یک ربات تلگرام دارد، {bot}. آن را به حساب خود وصل کنید:"
+
+msgid "adminV2.telegram.promptTitle"
+msgstr "تلگرام خود را وصل می‌کنید؟"
+
+msgid "adminV2.telegram.reconnect"
+msgstr "اتصال دوباره"
+
+msgid "adminV2.telegram.scan"
+msgstr "یا این را با دوربین گوشی اسکن کنید."
+
 msgid "adminV2.template.builtin"
-msgstr "سیستمی"
+msgstr "داخلی"
+
+msgid "adminV2.template.builtinCustomized"
+msgstr "قالب داخلی سفارشی‌شده"
+
+msgid "adminV2.template.builtinDefault"
+msgstr "استفاده از پیش‌فرض کاتالوگ"
+
+msgid "adminV2.template.builtinDefaultHint"
+msgstr ""
+"قالب داخلی از کاتالوگ همگام می‌شود. برای ویرایش، محتوای سفارشی را فعال کنید."
 
 msgid "adminV2.template.builtinReadOnly"
 msgstr "قالب داخلی — برای ایجاد نسخه قابل ویرایش کپی بگیرید."
@@ -1772,6 +5111,9 @@ msgstr "محتوا"
 
 msgid "adminV2.template.core"
 msgstr "هسته"
+
+msgid "adminV2.template.customContent"
+msgstr "محتوای سفارشی"
 
 msgid "adminV2.template.description"
 msgstr "توضیحات"
@@ -1821,6 +5163,9 @@ msgstr "این شناسه قالب قبلاً استفاده شده است."
 msgid "adminV2.template.slugHint"
 msgstr "فقط بخش بعد از هسته/دسته قابل ویرایش است"
 
+msgid "adminV2.template.sysTooltip"
+msgstr "مورد داخلی (سیستمی)"
+
 msgid "adminV2.templateVariables.access"
 msgstr "دسترسی"
 
@@ -1847,7 +5192,7 @@ msgstr "نام"
 
 msgid "adminV2.templateVariables.skipHint"
 msgstr ""
-"خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پراکسی "
+"خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پروکسی "
 "رندر نشود"
 
 msgid "adminV2.theme.dark"
@@ -1856,11 +5201,699 @@ msgstr "حالت تاریک"
 msgid "adminV2.theme.light"
 msgstr "حالت روشن"
 
+msgid "adminV2.users.add"
+msgstr "افزودن کاربر"
+
+msgid "adminV2.users.added"
+msgstr "{name} افزوده شد"
+
+msgid "adminV2.users.afterFirstShort"
+msgstr "{n} روز پس از اولین استفاده"
+
+msgid "adminV2.users.all"
+msgstr "همه"
+
+msgid "adminV2.users.bulk.add_days"
+msgstr "+۷ روز"
+
+msgid "adminV2.users.bulk.delete"
+msgstr "حذف"
+
+msgid "adminV2.users.bulk.disable"
+msgstr "غیرفعال‌سازی"
+
+msgid "adminV2.users.bulk.enable"
+msgstr "فعال‌سازی"
+
+msgid "adminV2.users.bulk.reset_days"
+msgstr "بازنشانی روزها"
+
+msgid "adminV2.users.bulk.reset_usage"
+msgstr "بازنشانی مصرف"
+
+msgid "adminV2.users.bulkConfirm.delete"
+msgstr "{n} کاربر حذف شود؟ | {n} کاربر حذف شوند؟"
+
+msgid "adminV2.users.bulkConfirm.disable"
+msgstr "{n} کاربر غیرفعال شود؟ | {n} کاربر غیرفعال شوند؟"
+
+msgid "adminV2.users.bulkConfirm.reset_days"
+msgstr "روزهای {n} کاربر بازنشانی شود؟ | روزهای {n} کاربر بازنشانی شود؟"
+
+msgid "adminV2.users.bulkConfirm.reset_usage"
+msgstr "مصرف {n} کاربر بازنشانی شود؟ | مصرف {n} کاربر بازنشانی شود؟"
+
+msgid "adminV2.users.bulkConfirmText.delete"
+msgstr "دیگر نمی‌توانند وصل شوند."
+
+msgid "adminV2.users.bulkConfirmText.disable"
+msgstr "تا فعال شدن دوباره نمی‌توانند وصل شوند."
+
+msgid "adminV2.users.bulkConfirmText.reset_days"
+msgstr "بستهٔ آن‌ها از اتصال بعدی دوباره شروع می‌شود."
+
+msgid "adminV2.users.bulkConfirmText.reset_usage"
+msgstr "حجم مصرف‌شدهٔ آن‌ها صفر می‌شود."
+
+msgid "adminV2.users.bulkDone.add_days"
+msgstr "۷ روز به {n} کاربر افزوده شد | ۷ روز به {n} کاربر افزوده شد"
+
+msgid "adminV2.users.bulkDone.delete"
+msgstr "{n} کاربر حذف شد | {n} کاربر حذف شد"
+
+msgid "adminV2.users.bulkDone.disable"
+msgstr "{n} کاربر غیرفعال شد | {n} کاربر غیرفعال شد"
+
+msgid "adminV2.users.bulkDone.enable"
+msgstr "{n} کاربر فعال شد | {n} کاربر فعال شد"
+
+msgid "adminV2.users.bulkDone.reset_days"
+msgstr "روزهای {n} کاربر بازنشانی شد | روزهای {n} کاربر بازنشانی شد"
+
+msgid "adminV2.users.bulkDone.reset_usage"
+msgstr "مصرف {n} کاربر بازنشانی شد | مصرف {n} کاربر بازنشانی شد"
+
+msgid "adminV2.users.clearSearch"
+msgstr "پاک کردن جستجو"
+
+msgid "adminV2.users.clearSelection"
+msgstr "لغو انتخاب"
+
+msgid "adminV2.users.col.expire"
+msgstr "انقضا"
+
+msgid "adminV2.users.col.lastOnline"
+msgstr "آخرین اتصال"
+
+msgid "adminV2.users.col.name"
+msgstr "نام"
+
+msgid "adminV2.users.col.status"
+msgstr "وضعیت"
+
+msgid "adminV2.users.col.usage"
+msgstr "مصرف"
+
+msgid "adminV2.users.configs.addOffline"
+msgstr "افزودن پیکربندی آفلاین"
+
+msgid "adminV2.users.configs.addSubscription"
+msgstr "افزودن اشتراک"
+
+msgid "adminV2.users.configs.badUrl"
+msgstr "اشتراک باید یک نشانی http(s) باشد"
+
+msgid "adminV2.users.configs.empty"
+msgstr "خالی است: پرش کنید یا حذفش کنید"
+
+msgid "adminV2.users.configs.hint"
+msgstr ""
+"پیکربندی‌هایی که به اشتراک این کاربر اضافه می‌شوند: یکی را بچسبانید (آفلاین)"
+" یا نشانی‌ای بدهید که برای کاربر دریافت شود (اشتراک). قالب برنامه را انتخاب "
+"کنید، یا «خودکار» برای همه."
+
+msgid "adminV2.users.configs.inherited"
+msgstr ""
+"{n} پیکربندی هم از ادمین‌های بالادست می‌گیرد | {n} پیکربندی هم از ادمین‌های "
+"بالادست می‌گیرد"
+
+msgid "adminV2.users.configs.kind.offline"
+msgstr "آفلاین"
+
+msgid "adminV2.users.configs.kind.subscription"
+msgstr "اشتراک"
+
+msgid "adminV2.users.configs.offlinePlaceholder"
+msgstr "vless://…  یا یک پیکربندی JSON / YAML"
+
+msgid "adminV2.users.configs.target.auto"
+msgstr "خودکار (همهٔ قالب‌ها)"
+
+msgid "adminV2.users.configs.target.clash"
+msgstr "Clash"
+
+msgid "adminV2.users.configs.target.hiddify-core"
+msgstr "Hiddify / sing-box"
+
+msgid "adminV2.users.configs.target.sublink"
+msgstr "لینک‌های اشتراک‌گذاری"
+
+msgid "adminV2.users.configs.target.xray"
+msgstr "Xray"
+
+msgid "adminV2.users.configs.title"
+msgstr "پیکربندی‌های اضافه"
+
+msgid "adminV2.users.configs.urlPlaceholder"
+msgstr "https://example.com/sub/…"
+
+msgid "adminV2.users.daysLeft"
+msgstr "{n} روز مانده | {n} روز مانده"
+
+msgid "adminV2.users.deleteMessage"
+msgstr "کاربر دیگر نمی‌تواند وصل شود. UUID او بعداً قابل استفاده است."
+
+msgid "adminV2.users.deleteTitle"
+msgstr "{name} حذف شود؟"
+
+msgid "adminV2.users.deleted"
+msgstr "{name} حذف شد"
+
+msgid "adminV2.users.done.reset_days"
+msgstr "{name} از اتصال بعدی دوباره شروع می‌شود"
+
+msgid "adminV2.users.done.reset_usage"
+msgstr "مصرف {name} بازنشانی شد"
+
+msgid "adminV2.users.filter.active"
+msgstr "فعال"
+
+msgid "adminV2.users.filter.activeHint"
+msgstr "روشن، با روز و حجم باقی‌مانده"
+
+msgid "adminV2.users.filter.all"
+msgstr "همه"
+
+msgid "adminV2.users.filter.allHint"
+msgstr "همهٔ کاربران"
+
+msgid "adminV2.users.filter.data_low"
+msgstr "حجم رو به اتمام"
+
+msgid "adminV2.users.filter.data_lowHint"
+msgstr "فعال، با ۸۰٪ یا بیشتر حجم مصرف‌شده"
+
+msgid "adminV2.users.filter.disabled"
+msgstr "غیرفعال"
+
+msgid "adminV2.users.filter.disabledHint"
+msgstr "توسط ادمین خاموش شده"
+
+msgid "adminV2.users.filter.expired"
+msgstr "منقضی"
+
+msgid "adminV2.users.filter.expiredHint"
+msgstr "روزی باقی نمانده"
+
+msgid "adminV2.users.filter.expiring"
+msgstr "رو به انقضا"
+
+msgid "adminV2.users.filter.expiringHint"
+msgstr "فعال، تا یک هفتهٔ دیگر تمام می‌شود"
+
+msgid "adminV2.users.filter.no_data"
+msgstr "حجم تمام"
+
+msgid "adminV2.users.filter.no_dataHint"
+msgstr "همهٔ حجم مجاز مصرف شده"
+
+msgid "adminV2.users.filter.not_started"
+msgstr "شروع نشده"
+
+msgid "adminV2.users.filter.not_startedHint"
+msgstr "هنوز وصل نشده: روزهایش از اولین اتصال شروع می‌شود"
+
+msgid "adminV2.users.filter.unseen_week"
+msgstr "یک هفته بدون اتصال"
+
+msgid "adminV2.users.filter.unseen_weekHint"
+msgstr "قبلاً وصل شده، ولی در ۷ روز گذشته نه"
+
+msgid "adminV2.users.filtersLabel"
+msgstr "فیلتر کاربران"
+
+msgid "adminV2.users.form.add"
+msgstr "افزودن کاربر"
+
+msgid "adminV2.users.form.addSubtitle"
+msgstr "پس از ذخیره، لینک و کد QR کاربر برای ارسال باز می‌شود."
+
+msgid "adminV2.users.form.addTitle"
+msgstr "کاربر جدید"
+
+msgid "adminV2.users.form.advanced"
+msgstr "پیشرفته"
+
+msgid "adminV2.users.form.data"
+msgstr "حجم"
+
+msgid "adminV2.users.form.daysCount"
+msgstr "{n} روز | {n} روز"
+
+msgid "adminV2.users.form.daysUnit"
+msgstr "روز"
+
+msgid "adminV2.users.form.disabled"
+msgstr "غیرفعال"
+
+msgid "adminV2.users.form.editSubtitle"
+msgstr "تغییرات بلافاصله اعمال می‌شوند."
+
+msgid "adminV2.users.form.editTitle"
+msgstr "ویرایش {name}"
+
+msgid "adminV2.users.form.enableHint"
+msgstr "کاربر غیرفعال نمی‌تواند وصل شود."
+
+msgid "adminV2.users.form.enabled"
+msgstr "فعال"
+
+msgid "adminV2.users.form.endedWhen"
+msgstr "پایان یافت {when}"
+
+msgid "adminV2.users.form.endsWhen"
+msgstr "پایان {when}"
+
+msgid "adminV2.users.form.expiresOn"
+msgstr "پایان {date}"
+
+msgid "adminV2.users.form.extra"
+msgstr "پارامترهای اضافه (JSON)"
+
+msgid "adminV2.users.form.extraHint"
+msgstr ""
+"تنظیمات پیشرفته‌ای که قالب‌ها استفاده می‌کنند. مسیریابی و پیکربندی‌های اضافه"
+" در بالا تنظیم می‌شوند."
+
+msgid "adminV2.users.form.extraInvalid"
+msgstr "این JSON معتبر نیست"
+
+msgid "adminV2.users.form.extraNotObject"
+msgstr "پارامترهای اضافه باید یک شیء JSON (داخل آکولاد) باشند"
+
+msgid "adminV2.users.form.limit"
+msgstr "سقف حجم"
+
+msgid "adminV2.users.form.mode"
+msgstr "دورهٔ بازنشانی"
+
+msgid "adminV2.users.form.name"
+msgstr "نام"
+
+msgid "adminV2.users.form.namePlaceholder"
+msgstr "مثلاً گوشی سارا"
+
+msgid "adminV2.users.form.nameRequired"
+msgstr "نام لازم است"
+
+msgid "adminV2.users.form.neverExpires"
+msgstr "منقضی نمی‌شود"
+
+msgid "adminV2.users.form.newUuid"
+msgstr "UUID جدید"
+
+msgid "adminV2.users.form.nextReset"
+msgstr "بازنشانی بعدی {when}"
+
+msgid "adminV2.users.form.notStarted"
+msgstr "شروع نشده"
+
+msgid "adminV2.users.form.notStartedHint"
+msgstr "از اولین اتصال شروع می‌شود"
+
+msgid "adminV2.users.form.note"
+msgstr "یادداشت"
+
+msgid "adminV2.users.form.notePlaceholder"
+msgstr "فقط ادمین‌ها می‌بینند"
+
+msgid "adminV2.users.form.optional"
+msgstr "اختیاری"
+
+msgid "adminV2.users.form.outbound"
+msgstr "خروجی ترجیحی"
+
+msgid "adminV2.users.form.outboundAuto"
+msgstr "خودکار (طبق قوانین خروجی‌ها)"
+
+msgid "adminV2.users.form.outboundHint"
+msgstr ""
+"همهٔ ترافیک این کاربر از این خروجی خارج می‌شود (صفحهٔ خروجی‌ها). خروجی خاموش"
+" نادیده گرفته می‌شود."
+
+msgid "adminV2.users.form.outboundOff"
+msgstr "خاموش"
+
+msgid "adminV2.users.form.owner"
+msgstr "زیرمجموعه"
+
+msgid "adminV2.users.form.ownerMe"
+msgstr "{name} (شما)"
+
+msgid "adminV2.users.form.packageDays"
+msgstr "روزهای بسته"
+
+msgid "adminV2.users.form.packageLength"
+msgstr "مدت بسته"
+
+msgid "adminV2.users.form.period.month"
+msgstr "۱ ماه"
+
+msgid "adminV2.users.form.period.months3"
+msgstr "۳ ماه"
+
+msgid "adminV2.users.form.period.months6"
+msgstr "۶ ماه"
+
+msgid "adminV2.users.form.period.unlimited"
+msgstr "نامحدود"
+
+msgid "adminV2.users.form.period.week"
+msgstr "۱ هفته"
+
+msgid "adminV2.users.form.period.year"
+msgstr "۱ سال"
+
+msgid "adminV2.users.form.reset"
+msgstr "بازنشانی"
+
+msgid "adminV2.users.form.resetDays"
+msgstr "بازنشانی روزها"
+
+msgid "adminV2.users.form.resetDaysHint"
+msgstr "بسته دوباره شروع شود: روزهایش از اتصال بعدی شمرده می‌شود"
+
+msgid "adminV2.users.form.resetUsage"
+msgstr "بازنشانی مصرف"
+
+msgid "adminV2.users.form.resetUsagePending"
+msgstr "مصرف هنگام ذخیره بازنشانی می‌شود"
+
+msgid "adminV2.users.form.restart"
+msgstr "شروع دوباره"
+
+msgid "adminV2.users.form.restartPending"
+msgstr "هنگام ذخیره دوباره شروع می‌شود: روزهایش از اتصال بعدی شمرده می‌شود"
+
+msgid "adminV2.users.form.routing"
+msgstr "مسیریابی"
+
+msgid "adminV2.users.form.setDays"
+msgstr "تعیین روز"
+
+msgid "adminV2.users.form.startedWhen"
+msgstr "شروع {when}"
+
+msgid "adminV2.users.form.summaryConfigs"
+msgstr "{n} پیکربندی اضافه | {n} پیکربندی اضافه"
+
+msgid "adminV2.users.form.summaryExtra"
+msgstr "پارامتر اضافه تنظیم شده"
+
+msgid "adminV2.users.form.summaryOutbound"
+msgstr "خروج از {name}"
+
+msgid "adminV2.users.form.telegram"
+msgstr "شناسهٔ تلگرام"
+
+msgid "adminV2.users.form.time"
+msgstr "زمان"
+
+msgid "adminV2.users.form.undo"
+msgstr "لغو"
+
+msgid "adminV2.users.form.unlimited"
+msgstr "نامحدود"
+
+msgid "adminV2.users.form.usageReadOnly"
+msgstr "مصرف را سرور می‌شمارد؛ فقط بازنشانی می‌شود."
+
+msgid "adminV2.users.form.used"
+msgstr "مصرف‌شده"
+
+msgid "adminV2.users.form.uuidEditHint"
+msgstr "تغییر آن لینک کاربر را عوض می‌کند: لینک قبلی دیگر کار نمی‌کند."
+
+msgid "adminV2.users.form.uuidHint"
+msgstr "خودکار ساخته می‌شود."
+
+msgid "adminV2.users.form.uuidInvalid"
+msgstr "این UUID معتبر نیست"
+
+msgid "adminV2.users.form.waitingText"
+msgstr "{n} روز از اولین اتصال شروع می‌شود."
+
+msgid "adminV2.users.form.waitingUnlimited"
+msgstr "از اولین اتصال شروع می‌شود و منقضی نمی‌شود."
+
+msgid "adminV2.users.form.who"
+msgstr "مشخصات"
+
+msgid "adminV2.users.groupByOwner"
+msgstr "گروه‌بندی بر اساس ادمین"
+
+msgid "adminV2.users.groupCount"
+msgstr "{n} کاربر | {n} کاربر"
+
+msgid "adminV2.users.inlineEdit"
+msgstr "ویرایش درجا"
+
+msgid "adminV2.users.inlineHint"
+msgstr ""
+"ویرایش درجا روشن است: روی نام، سقف حجم، انقضا، دوره یا یادداشت کلیک کنید تا "
+"همان‌جا تغییرش دهید. حجم مصرف‌شده فقط بازنشانی می‌شود."
+
+msgid "adminV2.users.limitReached"
+msgstr "به سقف کاربران رسیده‌اید. از ادمین بالادست بخواهید آن را افزایش دهد."
+
+msgid "adminV2.users.link"
+msgstr "لینک"
+
+msgid "adminV2.users.linkTitle"
+msgstr "لینک {name}"
+
+msgid "adminV2.users.mode.daily"
+msgstr "روزانه"
+
+msgid "adminV2.users.mode.monthly"
+msgstr "ماهانه"
+
+msgid "adminV2.users.mode.no_reset"
+msgstr "بدون بازنشانی"
+
+msgid "adminV2.users.mode.weekly"
+msgstr "هفتگی"
+
+msgid "adminV2.users.modeHint.daily"
+msgstr "مصرف هر روز بازنشانی می‌شود."
+
+msgid "adminV2.users.modeHint.monthly"
+msgstr "مصرف هر ۳۰ روز از شروع بازنشانی می‌شود."
+
+msgid "adminV2.users.modeHint.no_reset"
+msgstr "مصرف هیچ‌وقت بازنشانی نمی‌شود: سقف برای کل بسته است."
+
+msgid "adminV2.users.modeHint.weekly"
+msgstr "مصرف هر ۷ روز از شروع بازنشانی می‌شود."
+
+msgid "adminV2.users.more"
+msgstr "کارهای بیشتر"
+
+msgid "adminV2.users.never"
+msgstr "هرگز"
+
+msgid "adminV2.users.noMatch"
+msgstr "کاربری پیدا نشد"
+
+msgid "adminV2.users.noTimeLimit"
+msgstr "بدون محدودیت زمانی"
+
+msgid "adminV2.users.none"
+msgstr "هنوز کاربری ندارید"
+
+msgid "adminV2.users.of"
+msgstr "از"
+
+msgid "adminV2.users.online"
+msgstr "آنلاین"
+
+msgid "adminV2.users.pageReport"
+msgstr "{first}–{last} از {totalRecords}"
+
+msgid "adminV2.users.perPage"
+msgstr "تعداد کاربر در صفحه"
+
+msgid "adminV2.users.refresh"
+msgstr "بارگذاری دوباره"
+
+msgid "adminV2.users.resetTag.daily"
+msgstr "بازنشانی روزانه"
+
+msgid "adminV2.users.resetTag.monthly"
+msgstr "بازنشانی ماهانه"
+
+msgid "adminV2.users.resetTag.weekly"
+msgstr "بازنشانی هفتگی"
+
+msgid "adminV2.users.saved"
+msgstr "{name} ذخیره شد"
+
+msgid "adminV2.users.search"
+msgstr "جستجوی نام، UUID یا یادداشت"
+
+msgid "adminV2.users.select"
+msgstr "انتخاب"
+
+msgid "adminV2.users.selected"
+msgstr "{n} انتخاب شد | {n} انتخاب شد"
+
+msgid "adminV2.users.showDates"
+msgstr "نمایش تاریخ پایان"
+
+msgid "adminV2.users.showLink"
+msgstr "نمایش لینک کاربر"
+
+msgid "adminV2.users.showMore"
+msgstr "نمایش {n} مورد دیگر"
+
+msgid "adminV2.users.showRelative"
+msgstr "نمایش زمان باقی‌مانده"
+
+msgid "adminV2.users.status.active"
+msgstr "فعال"
+
+msgid "adminV2.users.status.disabled"
+msgstr "غیرفعال"
+
+msgid "adminV2.users.status.expired"
+msgstr "منقضی"
+
+msgid "adminV2.users.status.no_data"
+msgstr "حجم تمام"
+
+msgid "adminV2.users.statusHint.active"
+msgstr "روشن، با روز و حجم باقی‌مانده"
+
+msgid "adminV2.users.statusHint.disabled"
+msgstr "توسط ادمین خاموش شده"
+
+msgid "adminV2.users.statusHint.expired"
+msgstr "روزی از بسته باقی نمانده"
+
+msgid "adminV2.users.statusHint.no_data"
+msgstr "همهٔ حجم مجاز مصرف شده"
+
+msgid "adminV2.users.subtitle"
+msgstr ""
+"همهٔ کسانی که از این پنل وصل می‌شوند: حجم، زمان باقی‌مانده و لینک‌هایشان."
+
+msgid "adminV2.users.title"
+msgstr "کاربران"
+
+msgid "adminV2.utils.addQuery"
+msgstr "افزودن پارامتر"
+
+msgid "adminV2.utils.base64Tab"
+msgstr "Base64"
+
+msgid "adminV2.utils.decode"
+msgstr "رمزگشایی"
+
+msgid "adminV2.utils.emptyLinks"
+msgstr "لینک‌های اشتراک‌گذاری را در بخش ورودی بچسبانید تا اینجا بررسی شوند."
+
+msgid "adminV2.utils.encode"
+msgstr "رمزگذاری"
+
+msgid "adminV2.utils.extraHint"
+msgstr "JSON رمزگشایی‌شده از URL. برای حذف extra از لینک خالی بگذارید."
+
+msgid "adminV2.utils.extraJson"
+msgstr "extra (JSON)"
+
+msgid "adminV2.utils.fragment"
+msgstr "نام"
+
+msgid "adminV2.utils.input"
+msgstr "ورودی"
+
+msgid "adminV2.utils.links"
+msgstr "لینک‌های اشتراک‌گذاری"
+
+msgid "adminV2.utils.linksPlaceholder"
+msgstr ""
+"یک یا چند لینک vless://، vmess://، ss://، trojan:// (یا لینک اشتراک base64) "
+"بچسبانید"
+
+msgid "adminV2.utils.method"
+msgstr "متد"
+
+msgid "adminV2.utils.noQuery"
+msgstr "پارامتر کوئری نیست. با افزودن پارامتر یکی اضافه کنید."
+
+msgid "adminV2.utils.output"
+msgstr "خروجی"
+
+msgid "adminV2.utils.pass"
+msgstr "رمز عبور"
+
+msgid "adminV2.utils.path"
+msgstr "مسیر"
+
+msgid "adminV2.utils.port"
+msgstr "پورت"
+
+msgid "adminV2.utils.pretty"
+msgstr "رمزگشایی‌شده"
+
+msgid "adminV2.utils.protocol"
+msgstr "پروتکل"
+
+msgid "adminV2.utils.queryKey"
+msgstr "کلید"
+
+msgid "adminV2.utils.queryParams"
+msgstr "پارامترهای کوئری"
+
+msgid "adminV2.utils.queryValue"
+msgstr "مقدار"
+
+msgid "adminV2.utils.server"
+msgstr "سرور"
+
+msgid "adminV2.utils.sublinkHint"
+msgstr ""
+"لینک‌ها را در بخش ورودی بچسبانید. بخش خروجی فیلدهای رمزگشایی‌شده را نشان "
+"می‌دهد. پارامترهای کوئری ردیف‌های قابل ویرایش هستند و extra به‌صورت JSON "
+"است. تغییرات بخش خروجی، لینک‌ها را بازنویسی می‌کند."
+
+msgid "adminV2.utils.sublinkTab"
+msgstr "ساب‌لینک"
+
+msgid "adminV2.utils.subtitle"
+msgstr ""
+"رمزگذاری، رمزگشایی و بررسی لینک‌ها فقط در مرورگر — چیزی به سرور فرستاده "
+"نمی‌شود."
+
+msgid "adminV2.utils.swap"
+msgstr "جابه‌جایی"
+
+msgid "adminV2.utils.title"
+msgstr "ابزارها"
+
+msgid "adminV2.utils.unwrappedSubscription"
+msgstr "لینک اشتراک base64 شناسایی شد و به لینک‌های جداگانه تبدیل شد."
+
+msgid "adminV2.utils.urlSafe"
+msgstr "URL-safe"
+
+msgid "adminV2.utils.urlTab"
+msgstr "URL"
+
+msgid "adminV2.utils.user"
+msgstr "کاربر"
+
+msgid "adminV2.utils.vmessJson"
+msgstr "JSON مربوط به vmess"
+
+msgid "adminV2.utils.vmessObject"
+msgstr "JSON مربوط به vmess باید یک آبجکت باشد"
+
 msgid "adminV2.validation.errors"
 msgstr "خطاها"
 
 msgid "adminV2.validation.preview"
-msgstr "پیش‌نمایش کامپایل"
+msgstr "پیش‌نمایش کامپایل‌شده"
 
 msgid "adminV2.validation.title"
 msgstr "اعتبارسنجی"
@@ -1975,6 +6008,12 @@ msgstr "توضیحات V2RayNG"
 
 msgid "app.v2rayng.title"
 msgstr "V2RayNG"
+
+msgid "at least one domain should exist"
+msgstr ""
+
+msgid "at least one user should exist"
+msgstr ""
 
 msgid "auto"
 msgstr "خودکار"
@@ -2190,6 +6229,23 @@ msgstr ""
 
 msgid "config.cloudflare.label"
 msgstr "🔑 کلید توسعه کلودفلر"
+
+msgid "config.common_proxy_core.both"
+msgstr "هر دو"
+
+msgid "config.common_proxy_core.description"
+msgstr ""
+"اگر پروتکل روی هر دو هسته باشد، فقط هسته انتخاب‌شده فعال می‌ماند. هر دو را "
+"برای فعال ماندن هر دو انتخاب کنید."
+
+msgid "config.common_proxy_core.hiddify_core"
+msgstr "Hiddify Core (singbox)"
+
+msgid "config.common_proxy_core.label"
+msgstr "🎛️ هسته پروکسی مشترک"
+
+msgid "config.common_proxy_core.xray"
+msgstr "Xray"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -2446,7 +6502,7 @@ msgstr ""
 "رمز UUID نامعتبر است. به عنوان مثال: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6"
 
 msgid "config.is_parent.description"
-msgstr "آیا این پنل به‌عنوان پنل والد عمل می‌کند"
+msgstr "آیا این پنل به‌عنوان پنل مرکزی عمل می‌کند"
 
 msgid "config.is_parent.label"
 msgstr "پنل مرکزی"
@@ -2508,6 +6564,12 @@ msgstr "زمان آخرین بررسی دوره‌ای مصرف"
 msgid "config.last_priodic_usage_check.label"
 msgstr "آخرین بررسی دوره‌ای مصرف"
 
+msgid "config.last_users_sync.description"
+msgstr ""
+
+msgid "config.last_users_sync.label"
+msgstr ""
+
 msgid "config.license.description"
 msgstr "برای استفاده تجاری از این محصول باید مجوز آن را خریداری کنید"
 
@@ -2540,6 +6602,20 @@ msgstr "سطح جزئیات لاگ پنل"
 
 msgid "config.log_level.label"
 msgstr "سطح لاگ"
+
+msgid "config.master_dns_encrypt_key.description"
+msgstr "کلید رمزنگاری payload برای MasterDNS (hex)"
+
+msgid "config.master_dns_encrypt_key.label"
+msgstr "کلید رمزنگاری MasterDNS"
+
+msgid "config.max_proxy_ips_per_version.description"
+msgstr ""
+"حداکثر تعداد آدرس IPv4 و IPv6 که برای ساخت پروکسی هر دامنه استفاده می‌شود "
+"(هر نسخه جداگانه محدود می‌شود)."
+
+msgid "config.max_proxy_ips_per_version.label"
+msgstr "حداکثر IP پروکسی در هر نسخه"
 
 msgid "config.mieru.description"
 msgstr ""
@@ -2695,6 +6771,12 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.node_name.description"
+msgstr ""
+
+msgid "config.node_name.label"
+msgstr ""
+
 msgid "config.not_found.description"
 msgstr "تنظیمات پیدا نشد."
 
@@ -2720,28 +6802,28 @@ msgid "config.panel_mode.child"
 msgstr "فرزند"
 
 msgid "config.panel_mode.description"
-msgstr "حالت پنل: مستقل، والد یا فرزند"
+msgstr "حالت پنل: مستقل، مرکزی یا فرزند"
 
 msgid "config.panel_mode.label"
 msgstr "حالت پنل"
 
 msgid "config.panel_mode.parent"
-msgstr "والد"
+msgstr "مرکزی"
 
 msgid "config.panel_mode.standalone"
 msgstr "مستقل"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "مسیر پروکسی ادمین در پنل والد"
+msgstr "مسیر پروکسی ادمین در پنل مرکزی"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "مسیر پروکسی ادمین والد"
+msgstr "مسیر پروکسی ادمین مرکزی"
 
 msgid "config.parent_domain.description"
-msgstr "دامنه پنل والد"
+msgstr "دامنه پنل مرکزی"
 
 msgid "config.parent_domain.label"
-msgstr "دامنه والد"
+msgstr "دامنه مرکزی"
 
 msgid "config.parent_panel.description"
 msgstr ""
@@ -2756,6 +6838,12 @@ msgstr "مسیر gRPC در کانفیگ ها"
 
 msgid "config.path_grpc.label"
 msgstr "ℹ️ مسیر gRPC"
+
+msgid "config.path_http.description"
+msgstr ""
+
+msgid "config.path_http.label"
+msgstr ""
 
 msgid "config.path_httpupgrade.description"
 msgstr "باید تصادفی باشد"
@@ -3580,6 +7668,15 @@ msgstr ""
 msgid "config.ws_enable.label"
 msgstr "🔰 Websocket"
 
+msgid "config.xhttp_different_up_down_enable.description"
+msgstr ""
+"اجازه ساخت کانفیگ‌های XHTTP که آپلود و دانلود آن‌ها دامنه یا تنظیمات متفاوتی"
+" دارند. ⚠️ بسیاری از برنامه‌ها از این حالت پشتیبانی نمی‌کنند، به همین دلیل "
+"به صورت پیش‌فرض غیرفعال است."
+
+msgid "config.xhttp_different_up_down_enable.label"
+msgstr "🈁 XHTTP با آپلود/دانلود متفاوت"
+
 msgid "config.xhttp_enable.description"
 msgstr ""
 "این پروتکل اطلاعات را در کانال های جداگانه ارسال و دریافت می کند<br />\n"
@@ -3626,10 +7723,17 @@ msgstr "🔢 IPهای فعلی سرور"
 msgid "domain.custom_proxy.description"
 msgstr ""
 "اتصال اختیاری به پراکسی. فقط پراکسی‌هایی که از ترکیب حالت این دامنه پشتیبانی"
-" می‌کنند نمایش داده می‌شوند."
+" می‌کنند نمایش داده می‌شوند. خالی بگذارید تا همه پراکسی‌های سازگار استفاده "
+"شوند."
+
+msgid "domain.custom_proxy.group.dns_gateway"
+msgstr "درگاه DNS"
 
 msgid "domain.custom_proxy.group.ip_based"
 msgstr "مبتنی بر IP"
+
+msgid "domain.custom_proxy.group.l7_gateway"
+msgstr "درگاه L7"
 
 msgid "domain.custom_proxy.group.other"
 msgstr "سایر"
@@ -3638,13 +7742,24 @@ msgid "domain.custom_proxy.group.sni_gateway"
 msgstr "درگاه SNI"
 
 msgid "domain.custom_proxy.label"
-msgstr "پراکسی سفارشی"
+msgstr "پراکسی‌های سفارشی"
 
 msgid "domain.custom_proxy.reality_only"
-msgstr "دامنه‌های REALITY باید از پراکسی REALITY Termination استفاده کنند"
+msgstr ""
+"دامنه‌های REALITY فقط می‌توانند پراکسی‌های درگاه L7 را ببندند که REALITY در "
+"حالت دامنه‌شان باشد. خالی بگذارید تا همه پراکسی‌های L7 سازگار با REALITY "
+"استفاده شوند."
 
 msgid "domain.custom_proxy.reality_required"
-msgstr "دامنه‌های REALITY به پراکسی REALITY Termination نیاز دارند"
+msgstr ""
+"دامنه‌های REALITY فقط می‌توانند پراکسی‌های درگاه L7 را ببندند که REALITY در "
+"حالت دامنه‌شان باشد"
+
+msgid "domain.custom_proxy.sni_l7_mutex"
+msgstr "برای یک دامنه نمی‌توان همزمان درگاه SNI و درگاه L7 را انتخاب کرد"
+
+msgid "domain.custom_proxy.sni_single_only"
+msgstr "برای هر دامنه فقط یک درگاه SNI قابل انتخاب است"
 
 msgid "domain.description"
 msgstr ""
@@ -3710,16 +7825,43 @@ msgid "domain.resolveip.label"
 msgstr "🔢 استفاده از IP"
 
 msgid "domain.server_domain.description"
-msgstr "دامنه سرور بالادستی برای این مورد"
+msgstr ""
+"دامنه سرور بالادستی برای این مورد. باید یک دامنه Direct یا Relay معتبر باشد."
 
 msgid "domain.server_domain.label"
 msgstr "دامنه سرور"
+
+msgid "domain.server_domain.must_be_valid_direct_or_relay"
+msgstr "دامنه سرور باید یک دامنه Direct یا Relay معتبر باشد"
 
 msgid "domain.show_domains_description"
 msgstr ""
 "مشخص کنید کاربرانی که با این دامنه، پنل کاربری را مشاهده می‌کنند، کانفیگ‌های مربوط به کدام دامنه‌ها را مشاهده کنند.\n"
 "<br>\n"
 "پیشنهاد: برای یک دامنه با IP فیلتر نشده و متفاوت با بقیه، همه دامنه های دیگر (به جز دامنه فعلی) را انتخاب کنید. در نتیجه از آنجایی که از این IP برای فیلترشکن استفاده نمی‌شود و یک وبسایت ساده است، این دامنه و آی پی هرگز مسدود نمی‌شود و کاربران شما به راحتی می توانند پروفایل های جدید را به روز کنند."
+
+msgid "domain.tls_status.description"
+msgstr ""
+"گواهی ذخیره‌شده برای این دامنه: معتبر، خودامضا، منقضی، نامعتبر یا بدون "
+"گواهی."
+
+msgid "domain.tls_status.expired"
+msgstr "منقضی"
+
+msgid "domain.tls_status.invalid"
+msgstr "نامعتبر"
+
+msgid "domain.tls_status.label"
+msgstr "TLS"
+
+msgid "domain.tls_status.missing"
+msgstr "بدون گواهی"
+
+msgid "domain.tls_status.self_signed"
+msgstr "خودامضا"
+
+msgid "domain.tls_status.valid"
+msgstr "معتبر"
 
 msgid "download"
 msgstr "دانلود مستقیم"
@@ -3741,6 +7883,11 @@ msgstr "➿ gRPC"
 
 msgid "grpc-proxy.description"
 msgstr "gRPC ℹ️ یک پروتکل مبتنی بر H2 است. شاید برای شما سریعتر باشد!"
+
+msgid ""
+"in\n"
+"          parent panel"
+msgstr ""
 
 msgid "in parent panel"
 msgstr "در پنل مرکزی"
@@ -3858,10 +8005,13 @@ msgid "package size?"
 msgstr "حجم بسته"
 
 msgid "parent.invalid-parent-url"
-msgstr "آدرس پنل والد نامعتبر است"
+msgstr "آدرس پنل مرکزی نامعتبر است"
+
+msgid "parent.panel-not-active"
+msgstr ""
 
 msgid "parent.sync-req-failed"
-msgstr "درخواست همگام‌سازی با پنل والد ناموفق بود"
+msgstr "درخواست همگام‌سازی با پنل مرکزی ناموفق بود"
 
 msgid "previous"
 msgstr "قبلی"

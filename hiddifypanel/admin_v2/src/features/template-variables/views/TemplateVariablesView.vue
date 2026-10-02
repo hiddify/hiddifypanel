@@ -18,7 +18,7 @@
           <div class="flex flex-wrap gap-2 items-center">
             <IconField>
               <InputIcon class="pi pi-search" />
-              <InputText v-model="filters.global.value" :placeholder="t('common.search')" />
+              <InputText v-model="filters.global.value" :placeholder="t('common.search')" :autofocus="finePointer" />
             </IconField>
             <Select
               v-model="filterCategory"
@@ -26,6 +26,9 @@
               option-label="label"
               option-value="id"
               show-clear
+              filter
+              auto-filter-focus
+              :filter-placeholder="t('common.search')"
               :placeholder="t('templateVariables.group')"
               class="min-w-48"
             />
@@ -71,6 +74,9 @@ import { templateVariablesApi, type TemplateVariable, type TemplateVariableGroup
 import { flattenTemplateVariableGroups } from '@/shared/utils/template-variables'
 
 const { t } = useI18n()
+
+/** The search box takes the keyboard at once, but not on a phone (it would pop the keyboard up). */
+const finePointer = window.matchMedia('(pointer: fine)').matches
 
 const loading = ref(false)
 const groups = ref<TemplateVariableGroup[]>([])

@@ -1,0 +1,20 @@
+{"tag": "freedom", "protocol": "freedom"},
+{"tag": "direct", "protocol": "freedom"},
+{"tag": "WARP", "protocol": "freedom", "streamSettings": {"sockopt": {"tcpFastOpen": true, "interface": "warp"}}},
+{"tag": "blackhole", "protocol": "blackhole"},
+{# SOCKS outbounds from the Outbound manager; Tor / Psiphon (run by hiddify-core) are reached on its local SOCKS inbounds #}
+{% for o in ctx.outbounds.custom %}
+{
+  "tag": "{{ o.xray_tag }}",
+  "protocol": "socks",
+  "settings": {
+    "address": "{{ o.host }}",
+      "port": {{ o.port }},
+      {% if o.username %}
+        "user": {{ o.username|tojson }},
+        "pass": {{ o.password|tojson }},
+      {% endif %}
+  },
+},
+{% endfor %}
+{"tag": "DNS-Internal", "protocol": "dns"}

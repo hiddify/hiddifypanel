@@ -1,0 +1,18 @@
+# =====================
+# QUIC/H3 Frontend
+# =====================
+frontend in-httpmode-quic
+#  bind quic4@:902 ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
+
+  mode http
+
+  http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},nginx_dispatcher_http_h2)
+  http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},nginx_dispatcher_http_h2) if { req.hdr(x-api-key) -m found } { var(txn.backend) -m str nginx_dispatcher_http_h2 }
+  http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},nginx_dispatcher_http_h2) if { var(txn.backend) -m str nginx_dispatcher_http_h2 }
+
+  #http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default)
+  #http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default) if { var(txn.backend) -m str default }
+  #http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},nginx_dispatcher_http_h2) if { var(txn.backend) -m str default }
+
+  use_backend %[var(txn.backend)] 
+  default_backend nginx_dispatcher_http_h2

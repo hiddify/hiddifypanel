@@ -3,9 +3,11 @@ import { getHttp } from '../client'
 export type CustomProxyMode =
   | 'domains_l7_gateway'
   | 'domains_sni_gateway'
+  | 'domains_dns_gateway'
   | 'domains_auto_public_ports'
   | 'domains_single_public_port'
   | 'ip'
+  | 'no_inbound'
 
 export type InboundTcpUdp = 'tcp' | 'udp' | 'both'
 
@@ -64,15 +66,22 @@ export type ProxyProto =
   | 'dnstt'
   | 'snell'
 
-export type ProxyTransport = 'tcp' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | 'other'
+export type ProxyTransport = 'tcp' | 'http' | 'ws' | 'httpupgrade' | 'grpc' | 'xhttp' | 'other'
 
-export type TlsLayer = 'http' | 'tls'
+export type TlsLayer = 'http' | 'tls_h1' | 'tls_h2' | 'tls' | 'quic_tls' | 'quic_tcp_tls'
+
+export interface ParentEnableBlock {
+  key: string
+  label: string
+}
 
 export interface CustomProxy {
   id?: number
   name: string
   slug?: string
   enable?: boolean
+  effective_enable?: boolean
+  blocked_by?: ParentEnableBlock[]
   mode: CustomProxyMode
   proto?: ProxyProto
   transport?: ProxyTransport
@@ -84,13 +93,13 @@ export interface CustomProxy {
   domain_modes?: string[]
   custom_path?: string
   domain_ids?: number[]
-  faketls_domains?: string[]
   server_config?: ServerConfig
   client_config?: ClientConfig
   sort_order?: number
   client_cores?: string[]
   server_core?: string
   is_builtin?: boolean
+  is_common_proxy?: boolean
   server_override?: boolean
   client_override?: boolean
   builtin?: Record<string, unknown>
@@ -259,6 +268,7 @@ export interface CustomProxyMeta {
   default_sublink_link?: string
   example_user_agents?: Array<{ id: string; label: string; value: string }>
   tcp_udp_options?: InboundTcpUdp[]
+  parent_enable_settings_url?: string
 }
 
 export const customProxiesApi = {
@@ -427,4 +437,165 @@ export const templateVariablesApi = {
 
 export const adminApi = {
   me: () => getHttp().get<{ lang?: string }>('/me/').then((r) => r.data),
+}
+
+export interface ChildUsagePoint {
+  usage: number
+  online: number
+}
+
+export interface DashboardDailyPoint {
+  date: string
+  /** bytes */
+  usage: number
+  /** distinct users online that day */
+  online: number
+  /** per-node breakdown when viewing all nodes */
+  by_child?: Record<string, ChildUsagePoint>
+}
+
+export interface DashboardNode {
+  id: number
+  name: string
+  mode: string
+}
+
+export interface DashboardNodeStats {
+  id: number
+  name: string
+  mode: string
+  panel_url?: string | null
+  ok: boolean
+  error?: string | null
+  cpu?: DashboardCpu
+  memory?: DashboardMemory
+  disk?: DashboardDisk
+  network?: DashboardNetwork
+  host?: DashboardHost
+  processes?: DashboardProcesses
+}
+
+export interface DashboardUsage {
+  totals: { today: number; yesterday: number; week: number; month: number; total: number }
+  averages: { daily_week: number; daily_month: number }
+  previous: { week: number; month: number }
+  /** percent change vs the previous period, null when there is no baseline */
+  trends: { day: number | null; week: number | null; month: number | null }
+  peak: { date: string; usage: number } | null
+}
+
+export interface DashboardUsers {
+  total: number
+  enabled: number
+  online: { m5: number; h24: number; today: number; yesterday: number; week: number; month: number }
+  averages: { daily_week: number; daily_month: number }
+}
+
+export interface DashboardCpu {
+  percent: number
+  per_core: number[]
+  cores: number
+  load_avg: number[]
+  load_percent: number[]
+}
+
+export interface DashboardMemory {
+  used_gb: number
+  total_gb: number
+  available_gb: number
+  cached_gb: number
+  percent: number
+  swap_used_gb: number
+  swap_total_gb: number
+  swap_percent: number
+}
+
+export interface DashboardDisk {
+  used_gb: number
+  total_gb: number
+  free_gb: number
+  percent: number
+  hiddify_gb: number | null
+}
+
+export interface DashboardNetwork {
+  bytes_sent: number
+  bytes_recv: number
+  sent_gb: number
+  recv_gb: number
+  total_gb: number
+  /** unix seconds, used to derive throughput between two snapshots */
+  sampled_at: number
+  connections: number
+  unique_ips: number
+}
+
+export interface DashboardHost {
+  hostname: string
+  boot_time: number
+  uptime_s: number
+  panel_version?: string
+}
+
+export interface DashboardProcess {
+  name: string
+  percent: number
+  memory_gb?: number
+  cpu_percent?: number
+  path?: string | null
+}
+
+export interface DashboardProcesses {
+  count: number
+  cpu: DashboardProcess[]
+  memory: DashboardProcess[]
+}
+
+export interface DashboardSystem {
+  cpu: DashboardCpu
+  memory: DashboardMemory
+  disk: DashboardDisk
+  network: DashboardNetwork
+  host: DashboardHost
+}
+
+export interface DashboardSnapshot {
+  generated_at: string
+  range_days: number
+  series: DashboardDailyPoint[]
+  usage: DashboardUsage
+  users: DashboardUsers
+  system: DashboardSystem
+  processes: DashboardProcesses
+  nodes?: DashboardNode[]
+  node_stats?: DashboardNodeStats[]
+  child_id?: number | null
+}
+
+export interface DiskFolderUsage {
+  name: string
+  path: string
+  size_gb: number
+}
+
+export interface DashboardDiskDetail {
+  node_id: number
+  disk: DashboardDisk
+  top_folders: DiskFolderUsage[]
+  error?: string | null
+}
+
+export const dashboardApi = {
+  /** `include: 'system'` skips the usage aggregation and returns live metrics only. */
+  get: (params?: {
+    days?: number
+    processes?: number
+    admin_id?: number
+    child_id?: number
+    include?: 'system'
+    /** Adds three copies of this server as fake nodes to simulate a multi-node panel. */
+    debug_node?: 1
+  }) => getHttp().get<DashboardSnapshot>('/dashboard/', { params }).then((r) => r.data),
+  /** Disk usage + largest top-level folders for one node — fetched on demand (a popup). */
+  disk: (params?: { child_id?: number }) => getHttp().get<DashboardDiskDetail>('/dashboard/disk/', { params }).then((r) => r.data),
 }

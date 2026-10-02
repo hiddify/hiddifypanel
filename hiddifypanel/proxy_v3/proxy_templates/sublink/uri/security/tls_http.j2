@@ -1,0 +1,31 @@
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or 'http' %}
+
+{% if tls_layer != 'http' %}
+
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set qp.fp = ctx.hconfig.utls %}{% endif %}
+    {% set qp.sni = domain.sni %}
+    {% if domain.is_reality() %}
+        {% set qp.security = 'reality' %}
+        {% set qp.pbk = ctx.hconfig.reality_public_key %}
+        {% set qp.sid = ctx.hconfig.reality_short_ids | choose_random %}
+    {%else%}
+        {% set qp.security = 'tls' %}
+        {% set qp.alpn = ",".join(tls_layer.alpns()) %}
+        {% if domain.allow_insecure %}
+            {% set qp.allowInsecure = 'true' %}
+            {% set qp.insecure = 'true' %}
+            {% set qp.pcs = ",".join(domain.cert.pinnedPeerCertSha256)%}
+        {% endif %}
+
+        {% if domain.echinfo %}
+            {% set qp.ech = domain.echinfo %}
+        {% endif %}
+        {# TLS fragment: real TLS to CDN domains. #}
+        {% if ctx.hconfig.tls_fragment_enable and domain.mode.is_cdn() %}
+            {% set qp.fragment = ctx.hconfig.tls_fragment_size ~ ',' ~ ctx.hconfig.tls_fragment_sleep ~ ',' ~ (ctx.hconfig.tls_fragment_packets or 'tlshello') %}
+        {% endif %}
+    {% endif %}
+{% else %}
+    {% set qp.security = 'none' %}
+{% endif %}

@@ -1,94 +1,111 @@
-from enum import auto
+from __future__ import annotations
+
 import ipaddress
 import json
 import re
-from typing import Dict, List
+from collections.abc import Sequence
+from datetime import datetime
+from enum import auto
+from typing import TYPE_CHECKING
+
+import json5
 from flask import request
-
-from sqlalchemy.orm import backref
+from sqlalchemy import Enum, ForeignKey, String, Text, event, or_
+from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
 from strenum import StrEnum
-
 
 from hiddifypanel.database import db
 from hiddifypanel.models.config import hconfig
-from .child import Child
 from hiddifypanel.models.config_enum import ConfigEnum
+
+from .child import Child
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.custom_proxy import CustomProxy
+    from hiddifypanel.models.external_model.network import DomainModel
+    from hiddifypanel.models.tls_store import TlsStore
 
 
 class FakeMode(StrEnum):
     valid = auto()
     fake = auto()
     reality = auto()
+    dns = auto()
 
 
 class DomainType(StrEnum):
     direct = auto()
     sub_link_only = auto()
     cdn = auto()
-    auto_cdn_ip = auto()
     relay = auto()
     worker = auto()
 
-    old_xtls_direct = auto()  # deprecated
-    dnstt = auto()
-    special = auto()
-
     def is_cdn(self) -> bool:
-        return self in [DomainType.cdn, DomainType.auto_cdn_ip]
+        return self == DomainType.cdn
 
     def is_direct(self) -> bool:
-        return self in [DomainType.direct, DomainType.old_xtls_direct]
-
-    def is_dnstt(self) -> bool:
-        return self == DomainType.dnstt
+        return self == DomainType.direct
 
     def name_is_real(self) -> bool:
         return self in {
             DomainType.direct,
             DomainType.cdn,
-            DomainType.auto_cdn_ip,
             DomainType.worker,
             DomainType.relay,
             DomainType.sub_link_only,
-            DomainType.old_xtls_direct,
-            DomainType.dnstt,
         }
 
 
 ShowDomain = db.Table("show_domain", db.Column("domain_id", db.Integer, db.ForeignKey("domain.id"), primary_key=True), db.Column("related_id", db.Integer, db.ForeignKey("domain.id"), primary_key=True))
 
+DomainCustomProxy = db.Table(
+    "domain_custom_proxy",
+    db.Column("domain_id", db.Integer, db.ForeignKey("domain.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("custom_proxy_id", db.Integer, db.ForeignKey("custom_proxy.id", ondelete="CASCADE"), primary_key=True),
+)
+
 
 class Domain(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    child_id = db.Column(db.Integer, db.ForeignKey("child.id"), default=0)
-    domain = db.Column(db.String(200), nullable=True, unique=False)
-    alias = db.Column(db.String(200))
-    sub_link_only = db.Column(db.Boolean, nullable=False, default=False)
-    mode = db.Column(db.Enum(DomainType), nullable=False, default=DomainType.direct)
-    fake_mode = db.Column(db.Enum(FakeMode), nullable=False, default=FakeMode.valid)
-    cdn_ip = db.Column(db.Text(2000), nullable=True, default="")
-    server_domain_id = db.Column(db.Integer, db.ForeignKey("domain.id"), nullable=True, default=None)
-    server_domain = db.relationship("Domain", remote_side=[id], foreign_keys=[server_domain_id])
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), default=0)
+    domain: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    alias: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    mode: Mapped[DomainType] = mapped_column(Enum(DomainType), default=DomainType.direct)
+    fake_mode: Mapped[FakeMode] = mapped_column(Enum(FakeMode), default=FakeMode.valid)
+    cdn_ip: Mapped[str] = mapped_column(Text(2000), nullable=False, default="")
+    server_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id"), default=None)
+    server_domain: Mapped[Domain | None] = relationship("Domain", remote_side=[id], foreign_keys=[server_domain_id])
 
     # port_index=db.Column(db.Integer, nullable=True, default=0)
-    grpc = db.Column(db.Boolean, nullable=True, default=False)
-    ech = db.Column(db.Boolean, nullable=False, default=False)
-    servernames = db.Column(db.String(1000), nullable=True, default="")
+    grpc: Mapped[bool | None] = mapped_column(default=False)
+    ech: Mapped[bool] = mapped_column(default=False)
+    servernames: Mapped[str | None] = mapped_column(String(1000), default="")
     # show_all=db.Column(db.Boolean, nullable=True)
-    show_domains = db.relationship("Domain", secondary=ShowDomain, primaryjoin=id == ShowDomain.c.domain_id, secondaryjoin=id == ShowDomain.c.related_id, backref=backref("showed_by_domains", lazy="dynamic"))
-    download_domain_id = db.Column(db.Integer, db.ForeignKey("domain.id", ondelete="SET NULL"), default=None, nullable=True)
-    download_domain = db.relationship("Domain", remote_side=[id], foreign_keys=[download_domain_id])
-    extra_params = db.Column(db.String(2000), nullable=True, default="{}")
-    resolve_ip = db.Column(db.Boolean, nullable=True, default=False)
+    show_domains: Mapped[list[Domain]] = relationship(
+        "Domain",
+        secondary=ShowDomain,
+        primaryjoin=id == ShowDomain.c.domain_id,
+        secondaryjoin=id == ShowDomain.c.related_id,
+        backref=backref("showed_by_domains", lazy="dynamic"),
+    )
+    download_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id", ondelete="SET NULL"), default=None)
+    download_domain: Mapped[Domain | None] = relationship("Domain", remote_side=[id], foreign_keys=[download_domain_id])
+    resolve_ip: Mapped[bool | None] = mapped_column(default=False)
 
-    custom_proxy_id = db.Column(db.Integer, db.ForeignKey("custom_proxy.id", ondelete="SET NULL"), default=None, nullable=True)
-    custom_proxy = db.relationship("CustomProxy")
-    certificate = db.relationship(
+    custom_proxies: Mapped[list[CustomProxy]] = relationship("CustomProxy", secondary=DomainCustomProxy, lazy="selectin")
+    certificate: Mapped[TlsStore | None] = relationship(
         "TlsStore",
         back_populates="domain",
         uselist=False,
         cascade="all, delete-orphan",
     )
+    extra_params: Mapped[str | None] = mapped_column(String(2000), default="{}")
+    #: Order on the Domains page (drag and drop); the first usable domain is the panel's main one.
+    sort_order: Mapped[int | None] = mapped_column(default=None)
+    #: Client-facing gateway ports for this domain's SNI / L7 proxies (None: 443 for TLS, 80 for HTTP).
+    #: The gateway also listens on them (haproxy fronts).
+    tls_port: Mapped[int | None] = mapped_column(default=None)
+    http_port: Mapped[int | None] = mapped_column(default=None)
 
     def is_reality(self) -> bool:
         return self.fake_mode == FakeMode.reality
@@ -96,16 +113,53 @@ class Domain(db.Model):
     def is_fake_tls(self) -> bool:
         return self.fake_mode == FakeMode.fake
 
+    def is_sub_link_only(self) -> bool:
+        return self.mode == DomainType.sub_link_only
+
+    def usable_server_domain(self) -> Domain | None:
+        """Upstream hostname used as client ``server``: valid direct/relay only."""
+        sd = self.server_domain
+        if sd is None or sd.is_sub_link_only():
+            return None
+        if sd.mode not in (DomainType.direct, DomainType.relay):
+            return None
+        if sd.fake_mode != FakeMode.valid:
+            return None
+        return sd
+
+    @property
+    def custom_proxy_ids(self) -> list[int]:
+        return [proxy.id for proxy in self.custom_proxies]
+
+    @property
+    def custom_proxy_slugs(self) -> list[str]:
+
+        return [proxy.slug for proxy in self.custom_proxies]
+
+    def set_custom_proxies_by_slugs(self, slugs: Sequence[str] | None) -> None:
+        from hiddifypanel.models.custom_proxy import CustomProxy
+        from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
+
+        wanted = [slug for slug in (slugs or []) if slug and slug != REALITY_TERMINATION_SLUG]
+        if not wanted:
+            self.custom_proxies = []
+            return
+        proxies = CustomProxy.query.filter(
+            CustomProxy.child_id == self.child_id,
+            CustomProxy.slug.in_(wanted),
+        ).all()
+        by_slug = {proxy.slug: proxy for proxy in proxies if proxy.slug}
+        self.custom_proxies = [by_slug[slug] for slug in wanted if slug in by_slug]
+
     def is_accessible(self) -> bool:
         if self.mode in (DomainType.direct, DomainType.relay):
             return self.fake_mode == FakeMode.valid
         return self.fake_mode == FakeMode.valid
 
     def extra_params_json(self):
-        import json
 
         try:
-            return json.loads(self.extra_params)
+            return json5.loads(self.extra_params)
         except:
             return {}
 
@@ -122,66 +176,73 @@ class Domain(db.Model):
                 pass
         return res
 
-    def to_dict(self, dump_ports=False, dump_child_id=False):
+    def to_model(self, dump_ports=False, for_parent=False) -> DomainModel:
+        """Port fields need hconfig lookups, so they are only filled with ``dump_ports``."""
+        from hiddifypanel.models.external_model.network import DomainModel
+
         try:
             extra = json.loads(self.extra_params or "{}")
         except:
             extra = {}
-        data = {
-            "domain": self.domain.lower(),
-            "mode": self.mode,
-            "fake_mode": self.fake_mode,
-            "alias": self.alias,
-            "sub_link_only": self.sub_link_only,
-            "child_unique_id": self.child.unique_id if self.child else "",  # type: ignore
-            "cdn_ip": self.cdn_ip,
-            "servernames": self.servernames,
-            "grpc": self.grpc,
-            "ech": bool(self.ech),
-            "download_domain": self.download_domain.domain if self.download_domain else "",
-            "show_domains": [dd.domain for dd in self.show_domains],  # type: ignore
-            "resolve_ip": self.resolve_ip,
-            "extra_params": extra,
-            "custom_proxy_id": self.custom_proxy_id,
-        }
-        if dump_child_id:
-            data["child_id"] = self.child_id
-        if dump_ports:
-            data["internal_port_hysteria2"] = self.internal_port_hysteria2
-            data["internal_port_tuic"] = self.internal_port_tuic
-            data["internal_port_naive"] = self.internal_port_naive
-            data["internal_port_special"] = self.internal_port_special
-            data["internal_port_dnstt"] = self.internal_port_dnstt
-            data["need_valid_ssl"] = self.need_valid_ssl
+        return DomainModel(
+            domain=self.domain.lower(),
+            mode=self.mode,
+            fake_mode=self.fake_mode,
+            alias=self.alias,
+            child_unique_id=self.child.unique_id if self.child else "",
+            cdn_ip=self.cdn_ip,
+            servernames=self.servernames,
+            grpc=self.grpc,
+            ech=bool(self.ech),
+            download_domain=self.download_domain.domain if self.download_domain else "",
+            server_domain=self.server_domain.domain if self.server_domain else "",
+            show_domains=[dd.domain for dd in self.show_domains] if not for_parent else None,
+            resolve_ip=self.resolve_ip,
+            extra_params=extra if isinstance(extra, (dict, list)) else {},
+            custom_proxy_slugs=self.custom_proxy_slugs if not for_parent else None,
+            sort_order=self.sort_order,
+            tls_port=self.tls_port,
+            http_port=self.http_port,
+            child_id=self.child_id,
+            internal_port_hysteria2=self.internal_port_hysteria2 if dump_ports else None,
+            internal_port_tuic=self.internal_port_tuic if dump_ports else None,
+            internal_port_naive=self.internal_port_naive if dump_ports else None,
+            internal_port_special=self.internal_port_special if dump_ports else None,
+            need_valid_ssl=self.need_valid_ssl if dump_ports else None,
+        )
 
-        return data
+    def to_dict(self, dump_ports=False, dump_child_id=False, for_parent=False):
+        from hiddifypanel.models.external_model.network import DOMAIN_PORT_FIELDS
+
+        exclude = set() if dump_ports else set(DOMAIN_PORT_FIELDS)
+        if not dump_child_id:
+            exclude.add("child_id")
+        return self.to_model(dump_ports=dump_ports, for_parent=for_parent).to_dict(exclude=exclude)
 
     def get_server(self):
-        if self.server_domain_id:
-            return self.server_domain.domain
+        if sd := self.usable_server_domain():
+            return sd.domain
         if cdn_ip := self.auto_cdn_ip():
-            return cdn_ip[0]
+            selected = cdn_ip[0] if isinstance(cdn_ip, (tuple, list)) else cdn_ip
+            return selected
         if self.fake_mode != FakeMode.valid:
-            from hiddifypanel import hutils
-
-            return str(hutils.proxy.shared.random_or_none(hutils.network.get_ips()))
-
+            return None
         return self.domain
 
     @staticmethod
     def from_schema(schema):
         return schema.dump(Domain())
 
-    def to_schema(self):
-        domain_dict = self.to_dict()
+    def to_schema(self, for_parent=False):
+        domain_dict = self.to_dict(for_parent=for_parent)
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import DomainSchema
 
-        return DomainSchema().load(domain_dict)
+        return DomainSchema.model_validate(domain_dict)
 
     def auto_cdn_ip(self):
         from hiddifypanel import hutils
 
-        if self.cdn_ip.strip():
+        if (self.cdn_ip or "").strip():
             return hutils.network.auto_ip_selector.get_clean_ip(self.cdn_ip)
         return None
 
@@ -194,10 +255,19 @@ class Domain(db.Model):
             DomainType.cdn,
             DomainType.worker,
             DomainType.relay,
-            DomainType.auto_cdn_ip,
-            DomainType.old_xtls_direct,
             DomainType.sub_link_only,
         ]
+
+    @property
+    def tls_status(self) -> str:
+        cert = self.certificate
+        if not cert or not str(cert.certificate or "").strip():
+            return "missing"
+        if cert.valid_cert:
+            return "self_signed" if cert.self_signed else "valid"
+        if cert.expires_at and cert.expires_at < datetime.utcnow():
+            return "expired"
+        return "invalid"
 
     @property
     def port_index(self):
@@ -214,12 +284,6 @@ class Domain(db.Model):
         if self.mode not in [DomainType.direct, DomainType.relay]:
             return 0
         return int(hconfig(ConfigEnum.hysteria_port, self.child_id)) + self.port_index
-
-    @property
-    def internal_port_dnstt(self):
-        if self.mode not in [DomainType.dnstt]:
-            return 0
-        return int(5400) + self.port_index
 
     @property
     def internal_port_tuic(self):
@@ -242,24 +306,33 @@ class Domain(db.Model):
         return int(hconfig(ConfigEnum.special_port, self.child_id)) + self.port_index
 
     @classmethod
-    def by_mode(cls, mode: DomainType) -> List["Domain"]:
+    def ordering(cls):
+        """Page order: the admin's drag-and-drop order, then oldest first."""
+        return (cls.sort_order.is_(None), cls.sort_order, cls.id)
+
+    @classmethod
+    def by_mode(cls, mode: DomainType) -> list[Domain]:
         domains = Domain.query.filter(Domain.mode == mode).all()
         if domains:
             return [d.domain for d in domains]
         return []
 
     @classmethod
-    def modes_and_domains(cls) -> Dict[DomainType, List["Domain"]]:
+    def modes_and_domains(cls) -> dict[DomainType, list[Domain]]:
         return {mode: cls.by_mode(mode) for mode in DomainType}
 
     @classmethod
-    def by_domain(cls, domain: str) -> "Domain | None":
+    def by_domain(cls, domain: str) -> Domain | None:
         return Domain.query.filter(Domain.domain == domain).first()
+
+    @classmethod
+    def child_has_sub_link_only(cls, child_id: int) -> bool:
+        return cls.query.filter(cls.child_id == child_id, cls.mode == DomainType.sub_link_only).first() is not None
 
     @classmethod
     def get_panel_link(cls, child_id: int | None = None) -> str | None:
         if child_id is None:
-            child_id = Child.current().id  # type: ignore
+            child_id = Child.current().id
         domains = Domain.query.filter(
             Domain.mode.in_(
                 [
@@ -267,20 +340,18 @@ class Domain(db.Model):
                     DomainType.cdn,
                     DomainType.worker,
                     DomainType.relay,
-                    DomainType.auto_cdn_ip,
-                    DomainType.old_xtls_direct,
                     DomainType.sub_link_only,
                 ]
             ),
             Domain.fake_mode == FakeMode.valid,
             Domain.child_id == child_id,
-        ).all()
+        ).order_by(*Domain.ordering()).all()
         if not domains:
             return None
         return domains[0].domain
 
     @classmethod
-    def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> List["Domain"]:
+    def get_domains(cls, always_add_ip=False, always_add_all_domains=False) -> list[Domain]:
         from hiddifypanel import hutils
 
         domains = []
@@ -290,6 +361,7 @@ class Domain(db.Model):
                 Domain.mode == DomainType.sub_link_only,
                 Domain.child_id == Child.current().id,
             )
+            .order_by(*Domain.ordering())
             .all()
         )
         if not len(domains) or always_add_all_domains:
@@ -297,67 +369,149 @@ class Domain(db.Model):
                 db.session.query(Domain)
                 .filter(
                     Domain.fake_mode == FakeMode.valid,
+                    Domain.child_id == Child.current().id,
                 )
+                .order_by(*Domain.ordering())
                 .all()
             )
 
         if len(domains) == 0 and request:
-            domains = [Domain(domain=request.host)]  # type: ignore
+            domains = [Domain(domain=request.host)]
         if len(domains) == 0 or always_add_ip:
-            domains += [Domain(domain=hutils.network.get_ip_str(4))]  # type: ignore
+            domains += [Domain(domain=hutils.network.get_ip_str(4))]
         return domains
 
     @classmethod
-    def add_or_update(cls, commit=True, child_id=0, **domain):
-        dbdomain = Domain.query.filter(Domain.domain == domain["domain"]).first()
+    def add_or_update(cls, commit=True, child_id=0, *, apply_links: bool = True, **domain) -> Domain:
+        from hiddifypanel.models.external_model.network import DomainModel
+
+        return cls.upsert(DomainModel.coerce(domain), child_id=child_id, commit=commit, apply_links=apply_links)
+
+    @classmethod
+    def upsert(cls, data: DomainModel, *, child_id: int = 0, commit: bool = True, apply_links: bool = True) -> Domain:
+        # One row per (child, domain): match on the normalized name so "Example.com " does not
+        # become a second row of "example.com".
+        name = normalize_domain_name(data.domain)
+        dbdomain = Domain.query.filter(Domain.domain == name, Domain.child_id == child_id).first()
         if not dbdomain:
-            dbdomain = Domain(domain=domain["domain"])  # type: ignore
+            dbdomain = Domain(domain=name)
             db.session.add(dbdomain)
         dbdomain.child_id = child_id
 
-        dbdomain.mode = domain["mode"]
-        if str(domain.get("sub_link_only", False)).lower() == "true":
-            dbdomain.mode = DomainType.sub_link_only
-        if domain.get("fake_mode") is not None:
-            dbdomain.fake_mode = domain["fake_mode"]
-        if domain.get("custom_proxy_id") is not None:
-            dbdomain.custom_proxy_id = domain.get("custom_proxy_id") or None
-        dbdomain.cdn_ip = domain.get("cdn_ip", "")
-        dbdomain.alias = domain.get("alias", "")
-        dbdomain.grpc = domain.get("grpc", False)
-        dbdomain.ech = bool(domain.get("ech", False))
-        dbdomain.servernames = domain.get("servernames", "")
-        dbdomain.resolve_ip = domain.get("resolve_ip", False)
-        dbdomain.extra_params = domain.get("extra_params", "")
-        show_domains = domain.get("show_domains", [])
-        dbdomain.show_domains = Domain.query.filter(Domain.domain.in_(show_domains)).all()
-        dl_domain = domain.get("download_domain")
-        if dl_domain:
-            dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()
-            if not dbdldomain:
-                dbdldomain = Domain(domain=dl_domain)  # type: ignore
-                db.session.add(dbdldomain)
-                db.session.commit()
-                dbdldomain = Domain.query.filter(Domain.domain == dl_domain).first()
-            assert dbdldomain
-            dbdomain.download_domain_id = dbdldomain.id
+        dbdomain.mode = data.mode
+        if data.fake_mode is not None:
+            dbdomain.fake_mode = data.fake_mode
+        dbdomain.cdn_ip = data.cdn_ip
+        dbdomain.alias = data.alias
+        dbdomain.grpc = data.grpc
+        dbdomain.ech = data.ech
+        dbdomain.servernames = data.servernames
+        dbdomain.resolve_ip = data.resolve_ip
+        dbdomain.extra_params = data.extra_params_text()
+        for field in ("sort_order", "tls_port", "http_port"):
+            if data.has(field):
+                setattr(dbdomain, field, getattr(data, field))
+
+        if apply_links:
+            cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)
+
+        if commit:
+            db.session.commit()
+        return dbdomain
+
+    @classmethod
+    def _normalize_legacy_mode(cls, mode, fake_mode):
+        """Map ≤12.x domain modes (reality/fake/special_*/…) to DomainType + FakeMode."""
+        from hiddifypanel.models.external_model.network import normalize_legacy_domain_mode
+
+        return normalize_legacy_domain_mode(mode, fake_mode)
+
+    @classmethod
+    def _lookup_domain_ref(cls, name: str | None, preferred_child_id: int = 0) -> Domain | None:
+        if not name:
+            return None
+        name = str(name).strip().lower()
+        if not name:
+            return None
+        row = cls.query.filter(cls.domain == name, cls.child_id == preferred_child_id).first()
+        if row:
+            return row
+        return cls.query.filter(cls.domain == name).first()
+
+    @classmethod
+    def _apply_domain_links(cls, dbdomain: Domain, data: DomainModel, preferred_child_id: int = 0) -> None:
+        if data.show_domains:
+            resolved: list[Domain] = []
+            for name in data.show_domains:
+                ref = cls._lookup_domain_ref(name, preferred_child_id)
+                # show_domain is a set (PK domain_id+related_id): skip repeated names.
+                if ref and ref not in resolved:
+                    resolved.append(ref)
+            dbdomain.show_domains = resolved
+        elif data.has("show_domains"):
+            dbdomain.show_domains = []
+
+        if data.has("download_domain"):
+            dl = cls._lookup_domain_ref(data.download_domain, preferred_child_id)
+            dbdomain.download_domain_id = dl.id if dl else None
+
+        if data.has("server_domain"):
+            sd = cls._lookup_domain_ref(data.server_domain, preferred_child_id)
+            dbdomain.server_domain_id = sd.id if sd else None
+
+        if data.has("custom_proxy_slugs"):
+            dbdomain.set_custom_proxies_by_slugs(data.custom_proxy_slugs or [])
+
+    @classmethod
+    def bulk_register(cls, domains, commit=True, remove=False, force_child_unique_id: str | None = None):
+        from hiddifypanel.models.external_model.network import DomainModel
+        from hiddifypanel.panel import hiddify
+
+        rows = DomainModel.coerce_many(domains)
+        child_ids = {}
+        for data in rows:
+            child_id = hiddify.child_id_from_row({"child_unique_id": data.child_unique_id}, force_child_unique_id)
+            child_ids[child_id] = 1
+            # First pass: create rows without cross-domain links (later rows may not exist yet).
+            cls.upsert(data.without_links(), child_id=child_id, commit=False, apply_links=False)
+        if remove and len(child_ids):
+            keep = {normalize_domain_name(p.domain) for p in rows}
+            for d in Domain.query.filter(Domain.child_id.in_(child_ids)):
+                if normalize_domain_name(d.domain) not in keep:
+                    db.session.delete(d)
+
+        db.session.flush()
+        # Always resolve cross-domain links once all rows exist (even if commit=False).
+        # set_db_from_json re-runs this after custom proxies so custom_proxy_slugs stick.
+        cls.bulk_apply_links(rows, force_child_unique_id=force_child_unique_id, commit=False)
         if commit:
             db.session.commit()
 
     @classmethod
-    def bulk_register(cls, domains, commit=True, remove=False, force_child_unique_id: str | None = None):
+    def bulk_apply_links(cls, domains, force_child_unique_id: str | None = None, commit: bool = True):
+        from hiddifypanel.models.external_model.network import DomainModel
         from hiddifypanel.panel import hiddify
 
-        child_ids = {}
-        for domain in domains:
-            child_id = hiddify.get_child(unique_id=force_child_unique_id)
-            child_ids[child_id] = 1
-            cls.add_or_update(commit=False, child_id=child_id, **domain)
-        if remove and len(child_ids):
-            dd = {d["domain"]: 1 for d in domains}
-            for d in Domain.query.filter(Domain.child_id.in_(child_ids)):
-                if d.domain not in dd:
-                    db.session.delete(d)
-
+        for data in DomainModel.coerce_many(domains):
+            child_id = hiddify.child_id_from_row({"child_unique_id": data.child_unique_id}, force_child_unique_id)
+            dbdomain = cls.query.filter(cls.domain == data.domain, cls.child_id == child_id).first()
+            if not dbdomain:
+                continue
+            cls._apply_domain_links(dbdomain, data, preferred_child_id=child_id)
         if commit:
             db.session.commit()
+
+
+def normalize_domain_name(value: str | None) -> str:
+    return (value or "").strip().lower()
+
+
+@event.listens_for(Domain, "before_delete")
+def _detach_domain_references(mapper, connection, target: Domain) -> None:
+    from hiddifypanel.models.tls_store import TlsStore
+
+    domain_table = Domain.__table__
+    connection.execute(ShowDomain.delete().where(or_(ShowDomain.c.domain_id == target.id, ShowDomain.c.related_id == target.id)))
+    connection.execute(domain_table.update().where(domain_table.c.server_domain_id == target.id).values(server_domain_id=None))
+    connection.execute(domain_table.update().where(domain_table.c.download_domain_id == target.id).values(download_domain_id=None))
+    connection.execute(TlsStore.__table__.delete().where(TlsStore.__table__.c.domain_id == target.id))

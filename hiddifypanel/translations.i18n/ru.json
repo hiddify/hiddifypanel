@@ -47,6 +47,7 @@
   "Commercial use": "Коммерческое использование",
   "Config file is incorrect": "Конфигурационный файл неверен",
   "Copy Link": "Копировать ссылку",
+  "Copy QR image": "",
   "Couldn't find your ip addresses": "Не удалось найти ваши IP-адреса",
   "Count:": "Количество:",
   "Create": "Создать",
@@ -77,9 +78,11 @@
   "Edit Proxy Names": "✏️ Изменить прокси",
   "Enable": "❇️ Включить",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ Ошибка в формате Auto CDN",
   "Error! auto cdn ip can not be find, please contact admin.": "Ошибка в IP-адресе Auto CDN! Невозможно найти, обратитесь к администратору",
   "Example Domains": "Тестируйте и предложите домеy",
+  "Expired": "",
   "Expired Users": "Пользователи с истекшим сроком действия",
   "Export": "Экспортировать",
   "Fake": "➖ Фейковый сайт",
@@ -107,6 +110,7 @@
   "Incorrect Password": "⚠️ Неверный пароль.",
   "Install": "Установить",
   "Install Hiddify Application": "Установка панели Hidify",
+  "Invalid": "",
   "Invalid IP or domain": "Неверный IP или Домен",
   "Invalid REALITY hostnames": "Неверные имена хостов REALITY",
   "Invalid admin link": "Неверная ссылка администратора",
@@ -115,6 +119,8 @@
   "It will override the root admin to the current user": "Он заменит администратора-владельца файла резервной копии на текущего администратора.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Присоединяйтесь к нашему каналу Hiddify в Telegram, чтобы получать последние обновления Hiddify.",
   "Last Online": "Последнее соединение",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️Ссылка изменена!",
   "Linux": "Linux ОС",
   "Max Active Users": "Максимальное количество активных пользователей",
@@ -125,7 +131,10 @@
   "More Applications": "Больше приложений",
   "Network": "Сеть",
   "New": "Новый",
+  "No certificate": "",
   "No children!": "Нет дочерних",
+  "No main domains found, please add at least one domain with valid certificate": "",
+  "Nodes": "",
   "Not Secure": "",
   "Note": "📝 Примечание",
   "Offline more than 1 day": "Оффлайн более 1 дня",
@@ -160,8 +169,10 @@
   "Port 80 and 443 can not be selected": "",
   "Port is already used! in": "Порт уже используется в:",
   "Premium Description": "Панель Hiddify предназначена для некоммерческого использования. Но если вы используете эту панель в коммерческих целях, пожалуйста, помогите проекту развиваться, сделав пожертвование. <br/>\nВ обмен на вашу финансовую поддержку мы также предоставляем специальные возможности для вашего коммерческого продукта.\n<br/>\n<br/>\nТакой как:\n<ul><li>\n<li>Возможность синхронизации с Cloudflare: то есть, добавив домен в панели, соответствующие настройки также можно сделать в Cloudflare.</li>\n<li>Возможность отображения вашего бренда на панели</li>\n<li>Возможность использования центральной панели для управления более чем 1 сервером всего в одной панели, поэтому больше не нужно регистрировать пользователей на разных серверах, а их объем будет собираться на всех серверах.\n</li>\n<ли>\nВозможность использования Telegram-бота\n</li>\n<ли>\nВозможность изменения имен прокси\n</li>\n</ul>\n\nПожалуйста, свяжитесь с <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> после пожертвования.\nОтправьте сообщение, чтобы получить специальную версию для бизнес-пользователей.",
+  "Proxy Editor": "",
   "ProxyPath is already used! use different proxy path": "ProxyPath уже используется! используйте другой путь прокси",
   "QR code": "🧾 QR-код",
+  "QR code image copied": "",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QR-код",
   "RAM": "RAM",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain несовместим с именами серверов!",
@@ -191,10 +202,12 @@
   "Save": "Сохранить",
   "Save & Add More": "Сохранить и добавить еще",
   "Save Link": "Сохранить ссылку",
+  "Search Settings": "",
   "Select all records": "Выбрать все записи",
   "Select record": "Выберите запись",
   "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "Выбранные пользователи",
+  "Self-signed": "",
   "Send Message to User's Telegram": "📣 Отправить сообщение в Telegram пользователя",
   "Sending": "Отправка...",
   "Should be a valid domain": "Должен быть действительный Домен",
@@ -212,6 +225,7 @@
   "Submit": "Подтвердить",
   "Success": "Успешно",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️Операция завершена успешно! Пожалуйста, подождите около 5 минут, чтобы убедиться, что все обновлено.",
+  "TLS": "",
   "Telegram Bot": "Telegram-бот",
   "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️ Временная ссылка",
@@ -219,7 +233,9 @@
   "The message was not sent to": "Сообщение не было отправлено ",
   "The name shown in the configs for this domain.": "Имя, которое будет отображаться в конфигурациях этого домена.",
   "This can be used for giving your users a permanent non blockable links.": "Это можно использовать для предоставления вашим пользователям постоянных неблокируемых ссылок.",
+  "This domain %(domain_name)s is invalid": "Домен %(domain_name)s недействителен",
   "This domain does not exist in the panel!": "Этого домена не существует в панели управления!",
+  "This restore has expired. Start it again from the Backup page.": "",
   "Today Usage": "Сегодня",
   "Too many Connected IPs": "Слишком много подключенных IP-адресов",
   "Total Usage": "Общее использование",
@@ -231,7 +247,9 @@
   "User is inactive": "Пользователь неактивен",
   "V2rayNG": "Альтернатива v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br />\n<br />",
   "V2rayNG intro": "Установите v2rayNG по любой из этих ссылок: %(dl_link)s %(play_link)s.\nЗатем скопируйте ссылку ниже и вставьте ее в v2rayNG согласно видеоинструкции <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -вопрос'></i> </button>.\n<br />",
+  "Valid": "",
   "View in Telegram": "Посмотреть в Telegram",
+  "Waiting for the process to start...": "",
   "Want to enjoy more with telegram?": "ℹ️ Подключите свой аккаунт к Telegram",
   "Welcome %(user)s": "Добро пожаловать %(user)s",
   "Why Going to Premium?": "Зачем переходить на Премиум?",
@@ -240,10 +258,11 @@
   "With selected": "С выбранным",
   "Xray": "☢️ XRay",
   "Yesterday Usage": "Вчера",
-  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 Панель Hiddify автоматически создает резервную копию каждые 6 часов. Путь к файлам резервной копии на сервере: ⬇️\n<br>\n💿 /opt/hiddify-manager/services/hiddify-panel/backup/\n<br>\n<br>\n<br>\n⚠️ Вы можете скачать файл конфигураций в формате JSON, нажав кнопку ниже.\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>Загрузить файл резервной копии</a>",
+  "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 Панель Hiddify автоматически создает резервную копию каждые 6 часов. Путь к файлам резервной копии на сервере: ⬇️\n<br>\n💿 /opt/hiddify-manager/data/backup/\n<br>\n<br>\n<br>\n⚠️ Вы можете скачать файл конфигураций в формате JSON, нажав кнопку ниже.\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>Загрузить файл резервной копии</a>",
   "You can restore your configs from previously downloaded configs": "ℹ️ Вы можете восстановить свои конфигурации из ранее скачанного файла резервной копии.",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "У вас слишком много пользователей! У вас может быть только %(active) активных пользователей и %(total) пользователей.",
   "You have used this domain in: ": "Вы уже используете этот домен в:",
+  "You need to enable %(names)s globally to enable this proxy.": "",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Информация о вашем экземпляре Hiddify\nДомен: {}\nЛимит: {} ГБ\nИспользовано: {} ГБ\nСрок действия истекает: {}\nОставшиеся дни: {}\n\n\nУдачи! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Сообщение, видимое только администратору]: Вы можете изменить это сообщение в настройках",
   "actions": "Операции",
@@ -362,6 +381,8 @@
       "title": "V2RayNG"
     }
   },
+  "at least one domain should exist": "",
+  "at least one user should exist": "",
   "auto": "Авто",
   "auto_cdn_ip": "☑️ Автоматический выбор IP-адреса CDN",
   "bot": {
@@ -469,6 +490,13 @@
     "cloudflare": {
       "description": "Следуйте <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>инструкции</a> и вставьте ключ API Cloudflare.",
       "label": "🔑 API Cloudflare"
+    },
+    "common_proxy_core": {
+      "both": "",
+      "description": "",
+      "hiddify_core": "",
+      "label": "",
+      "xray": ""
     },
     "core_type": {
       "description": "☢️ XRay: хорошее ядро\n<br>\n📦 Singbox: разработан SagerNet. Это также хорошее ядро",
@@ -646,6 +674,10 @@
       "description": "config.last_priodic_usage_check.description",
       "label": "config.last_priodic_usage_check.label"
     },
+    "last_users_sync": {
+      "description": "",
+      "label": ""
+    },
     "license": {
       "description": "Для коммерческого использования этого продукта вам необходимо приобрести его лицензию.",
       "label": "License  Code"
@@ -660,6 +692,14 @@
       "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
+    },
+    "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
+    },
+    "max_proxy_ips_per_version": {
+      "description": "",
+      "label": ""
     },
     "mieru": {
       "description": "",
@@ -744,6 +784,10 @@
       "description": "Для отображения ресурсов, используется процессор вашего сервера, но нагрузка не слишком высокая",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "",
+      "label": ""
+    },
     "not_found": {
       "description": "Конфигурация не найдена",
       "label": "Конфигурация не найдена"
@@ -778,6 +822,10 @@
     "path_grpc": {
       "description": "Путь gRPC в конфигурации",
       "label": "ℹ️ Путь gRPC"
+    },
+    "path_http": {
+      "description": "",
+      "label": ""
     },
     "path_httpupgrade": {
       "description": "должен быть случайным",
@@ -1235,6 +1283,10 @@
       "description": "Websocket создает туннель поверх HTTP, который будет полезно использовать в CDN",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "Этот протокол отправляет и получает информацию по отдельным каналам<br />\n⚠️ <strong>Не поддерживается в клиентах на базе SignBox. Поддерживаются только приложения <a href=\"https://app.hiddify.com\" target=\"_blank\">Hiddify</a> и клиенты на базе XRay</strong>",
       "label": "🈁 XHTTP"
@@ -1257,13 +1309,17 @@
     "custom_proxy": {
       "description": "",
       "group": {
+        "dns_gateway": "",
         "ip_based": "",
+        "l7_gateway": "",
         "other": "",
         "sni_gateway": ""
       },
       "label": "",
       "reality_only": "",
-      "reality_required": ""
+      "reality_required": "",
+      "sni_l7_mutex": "",
+      "sni_single_only": ""
     },
     "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
@@ -1294,9 +1350,13 @@
     },
     "server_domain": {
       "description": "",
-      "label": ""
+      "label": "",
+      "must_be_valid_direct_or_relay": ""
     },
-    "show_domains_description": "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n<br>\nПредложение: Для домена с IP-адресом не попадащим под фильтры, отличного от других, выберите все остальные домены (кроме текущего). В результате, поскольку этот IP-адрес используется не для прокси-сервера, а для простого веб-сайта, этот домен и IP-адрес никогда не будут заблокированы, и ваши пользователи смогут легко обновлять свои профили."
+    "show_domains_description": "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n<br>\nПредложение: Для домена с IP-адресом не попадащим под фильтры, отличного от других, выберите все остальные домены (кроме текущего). В результате, поскольку этот IP-адрес используется не для прокси-сервера, а для простого веб-сайта, этот домен и IP-адрес никогда не будут заблокированы, и ваши пользователи смогут легко обновлять свои профили.",
+    "tls_status": {
+      "description": ""
+    }
   },
   "download": "Direct Download",
   "download_domain": {
@@ -1308,6 +1368,7 @@
   "grpc-proxy": {
     "description": "ℹ️ gRPC — это протокол на основе HTTP 2. Возможно, в вашей ситуации он будет быстрее!"
   },
+  "in\n          parent panel": "",
   "in parent panel": "В центральной панели",
   "install from google play": "<i class='fa-brands fa-google-play'></i> Google Play",
   "ios": "iOS",
@@ -1370,6 +1431,7 @@
   "package size?": "Размер посылки?",
   "parent": {
     "invalid-parent-url": "parent.invalid-parent-url",
+    "panel-not-active": "",
     "sync-req-failed": "parent.sync-req-failed"
   },
   "previous": "Предыдущий",

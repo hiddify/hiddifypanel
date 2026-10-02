@@ -1,19 +1,28 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import traceback
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+from hiddifypanel.proxy_v3.config_builder.dns_proxy.server import DnsProxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
-from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
-from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel
+from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
+from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
+from hiddifypanel.proxy_v3.context_vars.builder.utils import parse_json_for_dump
+from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
+from hiddifypanel.proxy_v3.jinja_context import HIDDIFY_MANAGER_ROOT
+
+if TYPE_CHECKING:
+    from hiddifypanel.models.user import User
+
 
 SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "hiddify-core": HiddifyCoreServerDriver,
@@ -21,6 +30,7 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "haproxy": HaproxyServerDriver,
     "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
+    "dns_proxy": DnsProxyServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -29,6 +39,7 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("haproxy", "haproxy.cfg"),
     ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
+    ("dns_proxy", "dnstm.json"),
 )
 
 
@@ -53,6 +64,49 @@ def error_messages(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [message for message in messages if message.get("level") == "error"]
 
 
+def serialize_message_data(data: dict[str, Any] | None) -> dict[str, Any]:
+    """Normalize builder message payloads for CLI / JSON (RenderErrorDetail → dict)."""
+    if not data:
+        return {}
+    out: dict[str, Any] = dict(data)
+    details = out.get("details")
+    if details is not None and hasattr(details, "model_dump"):
+        out["details"] = details.model_dump()
+    return out
+
+
+def format_message_detail_lines(data: dict[str, Any] | None) -> list[str]:
+    """Human-readable detail lines for dump-* CLI error output."""
+    data = serialize_message_data(data)
+    if not data:
+        return []
+    lines: list[str] = []
+    details = data.get("details")
+    if isinstance(details, dict):
+        loc: list[str] = []
+        if details.get("phase"):
+            loc.append(f"phase={details['phase']}")
+        if details.get("line") is not None:
+            loc.append(f"line={details['line']}")
+        if details.get("column") is not None:
+            loc.append(f"column={details['column']}")
+        if details.get("label"):
+            loc.append(f"label={details['label']}")
+        if loc:
+            lines.append("  " + ", ".join(loc))
+        excerpt = details.get("excerpt") or details.get("template_excerpt") or ""
+        if excerpt:
+            for eline in str(excerpt).rstrip("\n").splitlines():
+                lines.append(f"  | {eline}")
+        elif details.get("message") and details["message"] not in (data.get("message") or ""):
+            lines.append(f"  detail: {details['message']}")
+    if data.get("block"):
+        lines.append(f"  block={data['block']}")
+    if data.get("stacktrace"):
+        lines.append(str(data["stacktrace"]).rstrip("\n"))
+    return lines
+
+
 def _line_count(text: str) -> int:
     if not text:
         return 0
@@ -64,17 +118,24 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
     stats: dict[str, int] = {"lines": _line_count(rendered)}
     text = rendered or ""
 
-    if core in ("xray", "hiddify-core"):
+    if core in ("xray", "hiddify-core", "dns_proxy"):
         try:
             data = json.loads(text) if text.strip() else {}
         except json.JSONDecodeError:
             data = {}
         if isinstance(data, dict):
-            for key in ("inbounds", "outbounds", "endpoints"):
-                value = data.get(key)
-                stats[key] = len(value) if isinstance(value, list) else 0
+            if core == "dns_proxy":
+                tunnels = data.get("tunnels")
+                stats["tunnels"] = len(tunnels) if isinstance(tunnels, list) else 0
+            else:
+                for key in ("inbounds", "outbounds", "endpoints"):
+                    value = data.get(key)
+                    stats[key] = len(value) if isinstance(value, list) else 0
         else:
-            stats.update(inbounds=0, outbounds=0, endpoints=0)
+            if core == "dns_proxy":
+                stats["tunnels"] = 0
+            else:
+                stats.update(inbounds=0, outbounds=0, endpoints=0)
     elif core == "haproxy":
         stats["frontends"] = len(re.findall(r"(?m)^\s*frontend\s+\S+", text))
         stats["backends"] = len(re.findall(r"(?m)^\s*backend\s+\S+", text))
@@ -93,13 +154,16 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
 
     parts = [f"{size} bytes", _n(stats.get("lines", 0), "line")]
     if filename.endswith(".json"):
-        parts.extend(
-            [
-                _n(stats.get("inbounds", 0), "inbound"),
-                _n(stats.get("outbounds", 0), "outbound"),
-                _n(stats.get("endpoints", 0), "endpoint"),
-            ]
-        )
+        if filename == "dnstm.json":
+            parts.append(_n(stats.get("tunnels", 0), "tunnel"))
+        else:
+            parts.extend(
+                [
+                    _n(stats.get("inbounds", 0), "inbound"),
+                    _n(stats.get("outbounds", 0), "outbound"),
+                    _n(stats.get("endpoints", 0), "endpoint"),
+                ]
+            )
     elif filename == "haproxy.cfg":
         parts.extend(
             [
@@ -153,12 +217,12 @@ def _pretty_json_config(rendered: str, *, pretty: bool) -> str:
     if not rendered.strip():
         return rendered
     try:
-        parsed = _omit_empty_values(json.loads(rendered))
-        if pretty:
-            return json.dumps(parsed, indent=2, ensure_ascii=False)
-        return json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
-    except json.JSONDecodeError:
+        parsed = _omit_empty_values(parse_json_for_dump(rendered))
+    except Exception:
         return rendered
+    if pretty:
+        return json.dumps(parsed, indent=2, ensure_ascii=False)
+    return json.dumps(parsed, ensure_ascii=False, separators=(",", ":"))
 
 
 def dump_hiddify_core_server_config(
@@ -171,16 +235,33 @@ def dump_hiddify_core_server_config(
     return rendered, result
 
 
+def invalidate_config_caches() -> None:
+    """Drop Redis function caches and in-memory Jinja template maps before a dump."""
+    from hiddifypanel.cache import cache
+    from hiddifypanel.proxy_v3.config_builder.jinja_render import clear_jinja_template_caches
+
+    cache.invalidate_all_cached_functions()
+    clear_jinja_template_caches()
+
+
 def dump_all_server_configs(
     output_dir: str | Path,
     child_id: int = 0,
     *,
     pretty: bool = True,
+    invalidate_cache: bool | None = None,
 ) -> ServerConfigDumpResult:
+    # apply_users only refreshes user lists; wiping Redis/Jinja would stall the panel.
+    if invalidate_cache is None:
+        invalidate_cache = os.environ.get("MODE") != "apply_users"
+    if invalidate_cache:
+        invalidate_config_caches()
     target = Path(output_dir)
     target.mkdir(parents=True, exist_ok=True)
 
     dump = ServerConfigDumpResult(output_dir=target, child_id=child_id)
+    _clear_dns_proxy_generated(target)
+
     for core, filename in SERVER_CONFIG_FILES:
         try:
             result = build_server_config_for_core(child_id, core)
@@ -196,7 +277,7 @@ def dump_all_server_configs(
             continue
 
         rendered = result.config or ""
-        if core in ("xray", "hiddify-core"):
+        if core in ("xray", "hiddify-core", "dns_proxy"):
             rendered = _pretty_json_config(rendered, pretty=pretty)
 
         for message in result.messages:
@@ -205,7 +286,7 @@ def dump_all_server_configs(
                     "core": core,
                     "level": message.level,
                     "message": message.message,
-                    "data": message.data,
+                    "data": serialize_message_data(message.data),
                 }
             )
 
@@ -218,7 +299,38 @@ def dump_all_server_configs(
         dump.written[filename] = len(rendered.encode("utf-8"))
         dump.stats[filename] = summarize_dumped_config(core, rendered)
 
+        if core == "dns_proxy":
+            _collect_dns_proxy_sidecars(dump, target)
+
     return dump
+
+
+def _clear_dns_proxy_generated(target: Path) -> None:
+    import shutil
+
+    manager_gen = Path(HIDDIFY_MANAGER_ROOT) / "generated" / "dns_proxy"
+    dump_gen = target / "dns_proxy"
+    for path in {manager_gen, dump_gen}:
+        if path.exists():
+            shutil.rmtree(path)
+        path.mkdir(parents=True, exist_ok=True)
+
+
+def _collect_dns_proxy_sidecars(dump: ServerConfigDumpResult, target: Path) -> None:
+    """Record sizes of include_path sidecars under generated/dns_proxy/."""
+    manager_gen = Path(HIDDIFY_MANAGER_ROOT) / "generated" / "dns_proxy"
+    dump_gen = target / "dns_proxy"
+    for gen_root in (manager_gen, dump_gen):
+        if not gen_root.is_dir():
+            continue
+        for path in gen_root.rglob("*"):
+            if not path.is_file():
+                continue
+            try:
+                rel = str(path.relative_to(target))
+            except ValueError:
+                rel = str(path.relative_to(gen_root.parent))
+            dump.written[rel] = path.stat().st_size
 
 
 def format_builder_messages(result: ConfigBuilderModel) -> list[dict[str, Any]]:
@@ -269,6 +381,16 @@ def summarize_client_dumped_config(core: str, filename: str, rendered: str) -> d
             for key in ("inbounds", "outbounds", "endpoints"):
                 value = data.get(key)
                 stats[key] = len(value) if isinstance(value, list) else 0
+        elif isinstance(data, list):
+            stats["configs"] = len(data)
+            inbounds = outbounds = endpoints = 0
+            for item in data:
+                if not isinstance(item, dict):
+                    continue
+                inbounds += len(item["inbounds"]) if isinstance(item.get("inbounds"), list) else 0
+                outbounds += len(item["outbounds"]) if isinstance(item.get("outbounds"), list) else 0
+                endpoints += len(item["endpoints"]) if isinstance(item.get("endpoints"), list) else 0
+            stats.update(inbounds=inbounds, outbounds=outbounds, endpoints=endpoints)
         else:
             stats.update(inbounds=0, outbounds=0, endpoints=0)
     elif core == "clash":
@@ -295,6 +417,8 @@ def format_client_dump_stats(filename: str, size: int, stats: dict[str, int] | N
 
     parts = [f"{size} bytes", _n(stats.get("lines", 0), "line")]
     if filename.endswith(".json"):
+        if stats.get("configs"):
+            parts.append(_n(stats["configs"], "config"))
         parts.extend(
             [
                 _n(stats.get("inbounds", 0), "inbound"),
@@ -309,26 +433,26 @@ def format_client_dump_stats(filename: str, size: int, stats: dict[str, int] | N
     return ", ".join(parts)
 
 
-def _resolve_dump_user_obj(*, user_uuid: str | None):
+def _resolve_dump_user_obj(*, user_uuid: str | None) -> User:
     from hiddifypanel.models.user import User
 
     if user_uuid:
         user = User.by_uuid(user_uuid, create=False)
-        if user is None:
+        if not isinstance(user, User):
             raise ValueError(f"User not found for uuid={user_uuid}")
         return user
 
     user = User.query.filter(User.enable.is_(True)).order_by(User.id).first()
-    if user is None:
+    if not isinstance(user, User):
         raise ValueError("No enabled user found")
     return user
 
 
 def _resolve_sublink_domain(child_id: int = 0) -> str:
-    from hiddifypanel.models.domain import Domain
+    from hiddifypanel.models.domain import Domain, DomainType
 
     row = (
-        Domain.query.filter(Domain.child_id == child_id, Domain.sub_link_only != True)  # noqa: E712
+        Domain.query.filter(Domain.child_id == child_id, Domain.mode == DomainType.sub_link_only)
         .order_by(Domain.id)
         .first()
     )
@@ -353,14 +477,14 @@ class ClientConfigRenderResult:
         return not self.errors
 
 
-def _append_render_messages(result: ClientConfigRenderResult, core: str, messages: list[Any]) -> None:
+def _append_render_messages(result: ClientConfigRenderResult, core: str, messages: list[MessageModel]) -> None:
     for message in messages:
         result.messages.append(
             {
                 "core": core,
-                "level": getattr(message, "level", None) or (message.get("level") if isinstance(message, dict) else "info"),
-                "message": getattr(message, "message", None) or (message.get("message") if isinstance(message, dict) else ""),
-                "data": getattr(message, "data", None) or ((message.get("data") if isinstance(message, dict) else None) or {}),
+                "level": message.level,
+                "message": message.message,
+                "data": serialize_message_data(message.data),
             }
         )
 
@@ -371,30 +495,41 @@ def render_client_configs(
     user_uuid: str | None = None,
     child_id: int = 0,
     sublink_domain: str | None = None,
+    domains: list[str] | None = None,
     user_agent: str | None = None,
     pretty: bool = True,
     cores: tuple[str, ...] | None = None,
     invalidate_cache: bool = False,
+    for_parent: bool = False,
 ) -> ClientConfigRenderResult:
-    """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy)."""
-    from hiddifypanel.cache import cache
+    """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy).
+
+    ``domains`` renders an explicit list of domain names instead of the ones
+    ``sublink_domain`` exposes; names with no matching domain are ignored.
+    ``for_parent`` omits proxy groups and subscription status (the parent adds its own).
+    """
+    from hiddifypanel.models.user import User
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
 
     if invalidate_cache:
-        cache.invalidate_all_cached_functions()
+        invalidate_config_caches()
 
-    user_obj = user if user is not None else _resolve_dump_user_obj(user_uuid=user_uuid)
+    user_obj = user if isinstance(user, User) else _resolve_dump_user_obj(user_uuid=user_uuid)
     result = ClientConfigRenderResult(
-        user_uuid=str(getattr(user_obj, "uuid", "") or ""),
-        user_name=getattr(user_obj, "name", None),
+        user_uuid=str(user_obj.uuid or ""),
+        user_name=user_obj.name,
     )
 
     ua = (user_agent or "").strip() or DEFAULT_CLIENT_UA
-    domain = (sublink_domain or "").strip() or _resolve_sublink_domain(child_id)
+    domain = (sublink_domain or "").strip()
+    if not domain and not domains:
+        domain = _resolve_sublink_domain(child_id)
     wanted = cores or tuple(core for core, _filename in CLIENT_CONFIG_FILES)
 
     try:
-        contexts = build_client_template_context(user_obj, domain, ua)
+        contexts = build_client_template_context(user_obj, domain, ua, domains)
+        for ctx in contexts:
+            ctx.for_parent = for_parent
     except Exception as exc:
         result.messages.append(
             {
@@ -514,62 +649,23 @@ def dump_all_client_configs(
     return dump
 
 
-def _build_merged_json_client_config(child_id: int, contexts: list[Any], *, core: str) -> ConfigBuilderModel:
+def _build_merged_json_client_config(child_id: int, contexts: list[ClientContextVar], *, core: str) -> ConfigBuilderModel:
     """Render each proxy with typed ClientContextVar, then compose one core config."""
-    from hiddifypanel.models.custom_proxy import TemplateCore
-    from hiddifypanel.models.proxy_base_config import BaseConfigSide
     from hiddifypanel.proxy_v3.config_builder.hiddify_core.client import HiddifyCoreClientDriver
-
     from hiddifypanel.proxy_v3.config_builder.singbox.client import SingboxClientDriver
     from hiddifypanel.proxy_v3.config_builder.xray.client import XrayClientDriver
-    from hiddifypanel.proxy_v3.config_builder.hiddify_core.common import compose_config_from_blocks
-    from hiddifypanel.proxy_v3.config_builder.models import MessageModel, ProxyBlock
-    from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
 
     drivers = {
         "hiddify-core": HiddifyCoreClientDriver(),
         "singbox": SingboxClientDriver(),
         "xray": XrayClientDriver(),
     }
-    driver = drivers[core]
-    messages: list[MessageModel] = []
-    blocks: list[ProxyBlock] = []
-    min_version = TemplateVersion("0.0.0")
-
-    for ctx in contexts:
-        client_config = driver._select_client_config(ctx)
-        if client_config is None:
-            continue
-        min_version = driver._min_version(ctx)
-        try:
-            blocks.extend(driver.build_proxy_config(child_id, ctx, messages, client_config=client_config))
-        except Exception as exc:
-            messages.append(
-                MessageModel(
-                    level="error",
-                    message=f"{ctx.proxy.tag or ctx.proxy.id}: {exc}",
-                    data={"stacktrace": traceback.format_exc()},
-                )
-            )
-
-    if not contexts:
-        messages.append(MessageModel(level="error", message=f"No client proxies for {core}"))
-        return ConfigBuilderModel(core=TemplateCore(core), side=BaseConfigSide.client, config="", messages=messages)
-
-    # Base shells are versioned independently of the UA; use 0.0.0 like server drivers.
-    return compose_config_from_blocks(
-        child_id,
-        contexts[0],
-        blocks,
-        core=TemplateCore(core),
-        side=BaseConfigSide.client,
-        block_names=driver.block_names,
-        min_version=TemplateVersion("0.0.0"),
-        messages=messages,
-    )
+    return drivers[core].build_all(child_id, contexts)
 
 
-def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str, list[Any]]:
+def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
+    import yaml
+
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.models.proxy_base_config import BaseConfigSide
     from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
@@ -577,8 +673,6 @@ def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str,
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
     from hiddifypanel.proxy_v3.config_builder.render import render_section
     from hiddifypanel.proxy_v3.context_vars.builder.utils import load_json5, make_jinja_context
-
-    import yaml
 
     messages: list[MessageModel] = []
     if not contexts:
@@ -591,6 +685,7 @@ def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str,
     proxies: list[dict[str, Any]] = list(parsed.get("proxies") or [])
 
     for ctx in contexts:
+        ctx.render_core = TemplateCore.clash.value
         client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.clash, ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():
             continue
@@ -627,7 +722,7 @@ def _build_clash_client_config(child_id: int, contexts: list[Any]) -> tuple[str,
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
 
 
-def _build_sublink_client_config(child_id: int, contexts: list[Any]) -> tuple[str, list[Any]]:
+def _build_sublink_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
@@ -637,6 +732,7 @@ def _build_sublink_client_config(child_id: int, contexts: list[Any]) -> tuple[st
     messages: list[MessageModel] = []
     links: list[str] = []
     for ctx in contexts:
+        ctx.render_core = TemplateCore.sublink.value
         client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.sublink, ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():
             continue
@@ -656,4 +752,42 @@ def _build_sublink_client_config(child_id: int, contexts: list[Any]) -> tuple[st
             text = line.strip().strip('"')
             if text and "://" in text:
                 links.append(text)
-    return "\n".join(links), messages
+    links_text = "\n".join(links)
+    if not contexts:
+        return links_text, messages
+    try:
+        from hiddifypanel.models.custom_proxy import TemplateCore
+        from hiddifypanel.models.proxy_base_config import BaseConfigSide
+        from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
+        from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+
+        base = resolve_base_config_content(
+            child_id,
+            BaseConfigSide.client,
+            TemplateCore.sublink,
+            TemplateVersion("0.0.0"),
+        )
+        base = extract_base_config_shell(base) or base
+        base = re.sub(
+            r"\{%\s*block\s+links\s*%\}.*?\{%\s*endblock\s*%\}",
+            "{{ links }}",
+            base or "",
+            flags=re.DOTALL,
+        )
+        if "{{ links }}" in (base or "") or "{{links}}" in (base or ""):
+            compose_ctx = make_jinja_context(contexts[0])
+            compose_ctx["links"] = links_text
+            wrapped = render_section(base, child_id, compose_ctx, as_json_object=False, parse_json=False)
+            if wrapped.error:
+                messages.append(
+                    MessageModel(
+                        level="error",
+                        message=f"sublink base: {wrapped.error}",
+                        data={"details": wrapped.error_detail.model_dump() if wrapped.error_detail else {}},
+                    )
+                )
+            elif wrapped.rendered and not wrapped.skipped:
+                return wrapped.rendered.strip(), messages
+    except Exception as exc:
+        messages.append(MessageModel(level="error", message=f"sublink base: {exc}", data={}))
+    return links_text, messages

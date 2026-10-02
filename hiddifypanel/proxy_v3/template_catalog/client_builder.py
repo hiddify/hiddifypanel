@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import json
+import re
 from typing import Any
 
-from ..alpn_helpers import alpn_list_for_tag, alpn_tag_uses_tls
+from hiddifypanel.proxy_v3.alpn_helpers import tls_layer_from_l3
 
 from .fragment_loader import load_template_slug
-from .paths import preset_shell_slug
 from .inbound_builder import (
     _client_proto_file,
     _proto_file,
@@ -17,12 +16,13 @@ from .inbound_builder import (
     supports_hiddify_preset,
     supports_xray_preset,
 )
+from .paths import preset_shell_slug
+from .preset_slots import TRANSPORT_DISPLAY_NAME, V2RAY_GATEWAY_PROTOS
 from .proxy_matrix import ProxyCombination
 from .template_defaults import default_sublink_link_template
 
 CLIENT_CORES = ("xray", "singbox", "hiddify-core", "clash", "sublink")
 
-_SINGBOX_CLIENT_ROOT = "singbox"
 _HIDDIFY_CLIENT_ROOT = "hiddify-core"
 
 
@@ -35,24 +35,8 @@ def _uses_v2ray_transport_client(combo: ProxyCombination) -> bool:
     return _uses_v2ray_transport_proto(proto)
 
 
-def _xhttp_combo_alpn_tags(combo: ProxyCombination) -> tuple[str, str]:
-    upload = combo.params.get("upload_alpn")
-    download = combo.params.get("download_alpn")
-    if not upload or not download:
-        default = "http" if str(combo.l3).lower() == "http" else "tls_h2"
-        upload = upload or default
-        download = download or default
-    return str(upload), str(download)
-
-
 def _xhttp_with_replacements(combo: ProxyCombination) -> dict[str, str]:
-    upload_tag, download_tag = _xhttp_combo_alpn_tags(combo)
-    return {
-        "__ALPNS__": json.dumps(alpn_list_for_tag(upload_tag)),
-        "__DOWNLOAD_ALPNS__": json.dumps(alpn_list_for_tag(download_tag)),
-        "__TLS_MODE__": "true" if alpn_tag_uses_tls(upload_tag) else "false",
-        "__DOWNLOAD_TLS_MODE__": "true" if alpn_tag_uses_tls(download_tag) else "false",
-    }
+    return {}
 
 
 def _render_shell(core: str, shell_name: str, replacements: dict[str, str]) -> str:
@@ -68,14 +52,26 @@ def _hiddify_client_streams_slug(combo: ProxyCombination) -> str | None:
     transport = _transport_file(combo.transport)
     if not transport:
         return None
-    if transport == "tcp":
-        return f"{_HIDDIFY_CLIENT_ROOT}/client/stream/none"
-    slug = f"{_HIDDIFY_CLIENT_ROOT}/client/stream/{transport}"
+    slug = f"{_HIDDIFY_CLIENT_ROOT}/client/streams/{transport}"
     try:
         load_template_slug(slug)
         return slug
     except FileNotFoundError:
         return None
+
+
+def _is_plain_ss2022(combo: ProxyCombination) -> bool:
+    proto = combo.proto.lower()
+    if proto == "v2ray":
+        return False
+    if _raw_transport(combo.transport) in ("faketls", "shadowtls"):
+        return False
+    return proto in ("shadowsocks", "ss")
+
+
+def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
+    proto = combo.proto.lower()
+    return proto in ("socks", "ssh", "mieru", "wireguard") or _is_plain_ss2022(combo)
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
@@ -98,6 +94,9 @@ def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
 
 
 def _hiddify_client_tls_slug(combo: ProxyCombination) -> str:
+    proto = (combo.proto or "").lower()
+    if proto in ("tuic", "hysteria", "hysteria2"):
+        return f"{_HIDDIFY_CLIENT_ROOT}/client/tls/shared_cert_tls"
     return f"{_HIDDIFY_CLIENT_ROOT}/client/tls/tls_http"
 
 
@@ -108,6 +107,7 @@ def _sublink_transport_slug(transport: str) -> str:
         "httpupgrade": "sublink/uri/transport/httpupgrade",
         "grpc": "sublink/uri/transport/grpc",
         "tcp": "sublink/uri/transport/tcp",
+        "http": "sublink/uri/transport/http",
         "xhttp": "sublink/uri/transport/xhttp",
     }
     return slugs.get(mapped, "sublink/uri/transport/tcp")
@@ -120,20 +120,49 @@ _URI_LINK_BODIES = frozenset(
     }
 )
 
+_STANDALONE_URI_BODIES = frozenset(
+    {
+        "sublink/uri/naive",
+        "sublink/uri/anytls",
+        "sublink/uri/mieru",
+        "sublink/uri/socks",
+        "sublink/uri/tuic",
+        "sublink/uri/hysteria",
+        "sublink/uri/hysteria2",
+        "sublink/uri/snell",
+        "sublink/uri/wireguard",
+        "sublink/uri/ss",
+        "sublink/uri/ssh",
+    }
+)
+
+_SUBLINK_PROTO_BODIES: dict[str, str] = {
+    "ss": "sublink/uri/ss",
+    "shadowsocks": "sublink/uri/ss",
+    "v2ray": "sublink/uri/ss",
+    "vmess": "sublink/vmess/base",
+    "trojan": "sublink/uri/trojan",
+    "vless": "sublink/uri/vless",
+    "naive": "sublink/uri/naive",
+    "anytls": "sublink/uri/anytls",
+    "mieru": "sublink/uri/mieru",
+    "socks": "sublink/uri/socks",
+    "tuic": "sublink/uri/tuic",
+    "hysteria": "sublink/uri/hysteria",
+    "hysteria2": "sublink/uri/hysteria2",
+    "snell": "sublink/uri/snell",
+    "wireguard": "sublink/uri/wireguard",
+    "ssh": "sublink/uri/ssh",
+}
+
 
 def _sublink_link_body_slug(combo: ProxyCombination) -> str:
-    if combo.proto in ("ss", "shadowsocks", "v2ray"):
-        return "sublink/uri/ss"
-    if combo.proto == "vmess":
-        return "sublink/vmess/base"
-    if combo.proto == "trojan":
-        return "sublink/uri/trojan"
-    return "sublink/uri/vless"
+    return _SUBLINK_PROTO_BODIES.get(combo.proto.lower(), "sublink/uri/vless")
 
 
 def _sublink_tls_slug(combo: ProxyCombination) -> str:
-    if str(combo.l3).lower() == "reality":
-        return "sublink/uri/security/reality"
+    # if str(combo.l3).lower() == "reality":
+    #     return "sublink/uri/security/reality"
     return "sublink/uri/security/tls_http"
 
 
@@ -141,6 +170,7 @@ def _vmess_transport_slug(combo: ProxyCombination) -> str:
     transport = str(_transport_file(combo.transport) or "tcp").lower()
     slugs = {
         "tcp": "sublink/vmess/transport/tcp",
+        "http": "sublink/vmess/transport/http",
         "ws": "sublink/vmess/transport/ws",
         "grpc": "sublink/vmess/transport/grpc",
         "httpupgrade": "sublink/vmess/transport/httpupgrade",
@@ -168,8 +198,9 @@ def _apply_sublink_vmess_placeholders(body: str, combo: ProxyCombination) -> str
 def _apply_sublink_body_placeholders(body: str, combo: ProxyCombination) -> str:
     transport_slug = _sublink_transport_slug(combo.transport)
     tls_slug = _sublink_tls_slug(combo)
-    body = body.replace("{% include '__TLS_SLUG__' %}", f"{{% include '{tls_slug}' %}}")
-    body = body.replace("{% include '__TRANSPORT_SLUG__' %}", f"{{% include '{transport_slug}' %}}")
+    body = body.replace("__TLS_SLUG__", tls_slug)
+    body = body.replace("__TRANSPORT_SLUG__", transport_slug)
+
     return body
 
 
@@ -187,8 +218,9 @@ def build_sublink_client(combo: ProxyCombination) -> tuple[str, list[str]]:
     transport_slug = _sublink_transport_slug(combo.transport)
     body_slug = _sublink_link_body_slug(combo)
     tls_slug = _sublink_tls_slug(combo)
-    slugs = ["sublink/tag", body_slug]
-    if body_slug == "sublink/uri/ss":
+    slugs = ["client/tag", body_slug]
+    if body_slug in _STANDALONE_URI_BODIES:
+        slugs.append("sublink/uri/final_link_maker")
         content = load_template_slug(body_slug)
         return content, slugs
     if body_slug in _URI_LINK_BODIES:
@@ -212,30 +244,6 @@ def build_sublink_client(combo: ProxyCombination) -> tuple[str, list[str]]:
             slugs.extend(["sublink/vmess/xhttp_extra", "sublink/xhttp_download_settings"])
     content = render_sublink_link_template(combo)
     return content, slugs
-
-
-def _singbox_client_streams_slug(transport: str) -> str | None:
-    mapped = _transport_file(transport)
-    if not mapped:
-        return None
-    slug = f"{_SINGBOX_CLIENT_ROOT}/client/streams/{mapped}"
-    try:
-        load_template_slug(slug)
-        return slug
-    except FileNotFoundError:
-        return None
-
-
-def _singbox_client_proto_slug(proto: str) -> str | None:
-    mapped = _proto_file(proto)
-    if not mapped:
-        return None
-    slug = f"{_SINGBOX_CLIENT_ROOT}/client/protocols/{mapped}"
-    try:
-        load_template_slug(slug)
-        return slug
-    except FileNotFoundError:
-        return None
 
 
 def _xray_client_streams_slug(transport: str) -> str | None:
@@ -272,7 +280,7 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
         proto_slug,
         stream_slug,
         security_slug,
-        "xray/client/tag",
+        "client/tag",
         "xray/client/snippets/mux",
         "xray/client/snippets/fragment",
     ]
@@ -293,19 +301,61 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
 
 # Sing-box client outbounds reuse hiddify-core (same JSON dialect) unless a core-specific
 # template is needed. Drivers resolve this marker to the proxy's hiddify-core client config.
-USE_HIDDIFY_CORE_PLACEHOLDER = "{#use_hiddify_core()#}"
+USE_HIDDIFY_CORE_PLACEHOLDER = "{# use_hiddify_core() #}"
+SKIP_UNSUPPORTED_PLACEHOLDER = '{# skip("unsupported") #}'
+HIDDIFY_RAWHTTP_TLS_SKIP = (
+    '{{ skip("singbox send h2 header need to fix client") if "rawhttp" in ctx.proxy.tag|lower and tls_layer != "http" }}'
+)
+_SKIP_UNSUPPORTED_RE = re.compile(r"""\{#\s*skip\s*\(\s*["']unsupported["']\s*\)\s*#\}""")
+_SINGBOX_UNSUPPORTED_PROTOS = frozenset({"mieru"})
+_SINGBOX_UNSUPPORTED_TRANSPORTS = frozenset({"xhttp", "splithttp"})
+
+
+def template_skips_unsupported(template: str) -> bool:
+    return bool(_SKIP_UNSUPPORTED_RE.search(template or ""))
+
+
+def singbox_client_is_unsupported(*, proto: str = "", transport: str = "") -> bool:
+    if str(proto or "").lower() in _SINGBOX_UNSUPPORTED_PROTOS:
+        return True
+    return _raw_transport(transport) in _SINGBOX_UNSUPPORTED_TRANSPORTS
+
+
+def _hiddify_rawhttp_tls_skip_template() -> str:
+    return (
+        "{% block outbounds %}\n"
+        "{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}\n"
+        f"{HIDDIFY_RAWHTTP_TLS_SKIP}\n"
+        "{% endblock %}\n"
+    )
+
+
+def _combo_title_is_rawhttp(combo: ProxyCombination) -> bool:
+    if "rawhttp" in str(combo.name or "").lower():
+        return True
+    transport = _raw_transport(combo.transport)
+    proto = str(combo.proto or "").lower()
+    display = TRANSPORT_DISPLAY_NAME.get(transport, transport) if proto in V2RAY_GATEWAY_PROTOS else transport
+    return str(display).lower() == "rawhttp"
+
+
+def _is_rawhttp_with_tls(combo: ProxyCombination) -> bool:
+    return _combo_title_is_rawhttp(combo) and tls_layer_from_l3(combo.l3) != "http"
+
+
+def _singbox_outbound_stub(body: str) -> str:
+    return f"{{% block outbounds %}}\n{body}\n{{% endblock %}}\n"
 
 
 def build_singbox_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Sing-box client: reuse hiddify-core via placeholder; mieru is not supported in sing-box."""
-    if _client_proto_file(combo.proto) == "mieru":
-        return "skip('mieru is not supported by sing-box')\n", []
-    content = f"{{% block outbounds %}}\n{USE_HIDDIFY_CORE_PLACEHOLDER}\n{{% endblock %}}\n"
-    return content, []
+    """Sing-box client outbounds are stubs: reuse hiddify-core, or skip unsupported proto/transport."""
+    if singbox_client_is_unsupported(proto=combo.proto, transport=combo.transport):
+        return _singbox_outbound_stub(SKIP_UNSUPPORTED_PLACEHOLDER), []
+    return _singbox_outbound_stub(USE_HIDDIFY_CORE_PLACEHOLDER), []
 
 
 def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Mieru lives on sing-box only (hiddify-core client config is empty)."""
+    """Mieru client outbound for hiddify-core (no TLS; sing-box skips this proto)."""
     proto_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/mieru"
     tls_slug = _hiddify_client_tls_slug(combo)
     content = _render_shell(
@@ -313,21 +363,28 @@ def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, 
         "outbound_general",
         {"__PROTO_SLUG__": proto_slug, "__TLS_SLUG__": tls_slug},
     )
-    return content, [proto_slug, tls_slug]
+    content = content.replace(f"{{% include '{tls_slug}' %}}", "")
+    return content, [proto_slug]
 
 
 def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
+    if _is_rawhttp_with_tls(combo):
+        return _hiddify_rawhttp_tls_skip_template(), []
     if _client_proto_file(combo.proto) == "mieru":
         return _build_mieru_hiddify_client_outbound(combo)
     proto_slug = _hiddify_client_proto_slug(combo)
     if not proto_slug:
         raise ValueError(f"Unsupported hiddify-core client preset: {combo.name}")
+    if _client_proto_file(combo.proto) == "wireguard":
+        content = _render_shell(_HIDDIFY_CLIENT_ROOT, "wireguard", {})
+        return content, [proto_slug]
     if not _uses_v2ray_transport_client(combo):
         tls_slug = _hiddify_client_tls_slug(combo)
         shadowtls_slug = f"{_HIDDIFY_CLIENT_ROOT}/client/protocols/shadowtls"
         is_shadowtls_ss = _raw_transport(combo.transport) == "shadowtls" and _client_proto_file(combo.proto) == "ss"
+        is_plain_ss = _skips_hiddify_client_tls(combo)
         slugs = [proto_slug]
-        if _client_proto_file(combo.proto) == "wireguard":
+        if _client_proto_file(combo.proto) == "open-connect":
             shell_name = "endpoint_general"
         else:
             shell_name = "outbound_general"
@@ -336,9 +393,11 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
             shell_name = "outbound_with_detour"
             slugs.append(shadowtls_slug)
             replacements["__SHADOWTLS_SLUG__"] = shadowtls_slug
-        else:
+        elif not is_plain_ss:
             slugs.append(tls_slug)
         content = _render_shell(_HIDDIFY_CLIENT_ROOT, shell_name, replacements)
+        if is_plain_ss:
+            content = content.replace(f"{{% include '{tls_slug}' %}}", "")
         return content, slugs
     stream_slug = _hiddify_client_streams_slug(combo)
     if not stream_slug:
@@ -368,6 +427,8 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
 def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
     """Mihomo/Clash JSON proxy entry (YAML grammar JSON subset)."""
     network = _transport_file(combo.transport) or "tcp"
+    if network == "http":
+        network = "tcp"
     proto = _proto_file(combo.proto) or "vless"
     content = _render_shell(
         "clash",
@@ -377,7 +438,7 @@ def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]
             "__NETWORK__": network,
         },
     )
-    return content, ["clash/client/tag"]
+    return content, ["client/tag"]
 
 
 def _builtin_client_core_entry(core: str, outbound: str) -> dict[str, Any]:
@@ -401,16 +462,16 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
         except ValueError:
             pass
 
-    if supports_hiddify_preset(combo) or supports_xray_preset(combo) or combo.proto == "mieru":
-        try:
-            outbound, _slugs = build_singbox_client_outbound(combo)
-            configs.append(_builtin_client_core_entry("singbox", outbound))
-        except ValueError:
-            pass
+    outbound, _slugs = build_singbox_client_outbound(combo)
+    configs.append(_builtin_client_core_entry("singbox", outbound))
 
-    # Always pair singbox's use_hiddify_core() marker with a hiddify-core client config
-    # (mieru gets an empty hiddify-core template).
-    if supports_hiddify_preset(combo) or combo.proto in ("wireguard", "mieru") or supports_xray_preset(combo):
+    # Pair singbox's use_hiddify_core() stub with a real hiddify-core client config.
+    if (
+        supports_hiddify_preset(combo)
+        or combo.proto in ("wireguard", "mieru")
+        or supports_xray_preset(combo)
+        or _is_rawhttp_with_tls(combo)
+    ):
         try:
             outbound, _slugs = build_hiddify_client_outbound(combo)
             configs.append(_builtin_client_core_entry("hiddify-core", outbound))
@@ -435,7 +496,7 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
     if "sublink" not in present:
         link = default_sublink_link_template()
         configs.append(_builtin_client_core_entry("sublink", link))
-    for core in ("xray", "singbox", "hiddify-core", "clash"):
+    for core in ("xray", "hiddify-core", "clash"):
         if core not in present and server_core in ("xray", "hiddify-core"):
             configs.append(_builtin_client_core_entry(core, "[]"))
 

@@ -47,6 +47,7 @@
   "Commercial use": "商业用途",
   "Config file is incorrect": "配置文件不正确。",
   "Copy Link": "复制链接",
+  "Copy QR image": "",
   "Couldn't find your ip addresses": "找不到您的 IP 地址",
   "Count:": "数数：",
   "Create": "创造",
@@ -77,9 +78,11 @@
   "Edit Proxy Names": "✏️ 修改代理",
   "Enable": "❇️启用",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
+  "Error in Config Generation": "",
   "Error in auto cdn format": "⚠️ 自动 CDN 格式错误",
   "Error! auto cdn ip can not be find, please contact admin.": "自动 CDN IP 错误！找不到，请联系管理员",
   "Example Domains": "测试并推荐域名",
+  "Expired": "",
   "Expired Users": "过期用户",
   "Export": "导入",
   "Fake": "➖ 假",
@@ -107,6 +110,7 @@
   "Incorrect Password": "⚠️密码错误",
   "Install": "安装",
   "Install Hiddify Application": "Hiddify 管理器安装",
+  "Invalid": "",
   "Invalid IP or domain": "错误的IP或域名",
   "Invalid REALITY hostnames": "无效的 REALITY 主机名",
   "Invalid admin link": "管理员链接无效",
@@ -115,6 +119,8 @@
   "It will override the root admin to the current user": "它会将备份文件的所有者管理员覆盖为当前管理员。",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "加入我们的 Hiddify Telegram 频道，获取 Hiddify 的最新动态。",
   "Last Online": "最后一次连接",
+  "Last node to parent": "",
+  "Last parent to node": "",
   "Link is changed!": "ℹ️链接已更改！",
   "Linux": "Linux",
   "Max Active Users": "最大活跃用户数",
@@ -125,7 +131,10 @@
   "More Applications": "更多应用",
   "Network": "网络",
   "New": "新",
+  "No certificate": "",
   "No children!": "没有孩子",
+  "No main domains found, please add at least one domain with valid certificate": "",
+  "Nodes": "",
   "Not Secure": "",
   "Note": "📝 注意",
   "Offline more than 1 day": "离线超过1天",
@@ -160,8 +169,10 @@
   "Port 80 and 443 can not be selected": "",
   "Port is already used! in": "端口已用于：",
   "Premium Description": "Hiddify Manager 仅供非商业用途。但如果您将此面板用于商业用途，请通过捐赠来帮助该项目发展。 <br/>\n为了换取您的财务支持，我们还为您的商业产品提供特殊设施。\n<br/>\n<br/>\n例如：\n<ul><li>\n<li>同步到Cloudflare的可能性：即通过在面板中添加域名，也可以在Cloudflare中进行相关设置</li>\n<li>可以在面板中显示您的品牌</li>\n<li>可以使用中央面板在一个面板中管理多于一台服务器，因此不再需要在不同服务器中注册用户，并且用户的数量将在所有服务器中收集。\n</li>\n<li>\n使用 Telegram 机器人的可能性\n</li>\n<li>\n能够更改代理名称\n</li>\n</ul>\n\n捐赠后请联系<a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>。\n发送消息获取商业用户专用版本。",
+  "Proxy Editor": "",
   "ProxyPath is already used! use different proxy path": "ProxyPath 已被使用！使用不同的代理路径",
   "QR code": "🧾 二维码",
+  "QR code image copied": "",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "内存",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY 后备域与服务器名称不兼容！",
@@ -191,10 +202,12 @@
   "Save": "保存",
   "Save & Add More": "保存并添加更多",
   "Save Link": "保存链接",
+  "Search Settings": "",
   "Select all records": "选择所有记录",
   "Select record": "选择记录",
   "Selected proxy does not support this domain mode combination": "",
   "Seleted Users": "选定用户",
+  "Self-signed": "",
   "Send Message to User's Telegram": "📣 向用户的 Telegram 发送消息",
   "Sending": "正在发送...",
   "Should be a valid domain": "应该是有效域名",
@@ -212,6 +225,7 @@
   "Submit": "提交",
   "Success": "成功",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新",
+  "TLS": "",
   "Telegram Bot": "Telegram 机器人",
   "Telegram Bot Link": "",
   "Temporary Short Link": "⏱️临时短链接",
@@ -219,7 +233,9 @@
   "The message was not sent to": "该消息未发送至",
   "The name shown in the configs for this domain.": "将显示在该域的配置中的名称。",
   "This can be used for giving your users a permanent non blockable links.": "这可用于为您的用户提供永久的不可阻止链接。",
+  "This domain %(domain_name)s is invalid": "域名 %(domain_name)s 无效",
   "This domain does not exist in the panel!": "该域名在面板中不存在！",
+  "This restore has expired. Start it again from the Backup page.": "",
   "Today Usage": "今天",
   "Too many Connected IPs": "连接的IP太多",
   "Total Usage": "总使用量",
@@ -231,7 +247,9 @@
   "User is inactive": "用户处于非活动状态",
   "V2rayNG": "替代 v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br/>\n<br/>",
   "V2rayNG intro": "请从以下任一链接安装 v2rayNG：%(dl_link)s %(play_link)s。\n然后按照视频教程复制下面的链接粘贴到v2rayNG中 <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -问题'></i> </按钮>。\n<br/>",
+  "Valid": "",
   "View in Telegram": "在电报中查看",
+  "Waiting for the process to start...": "",
   "Want to enjoy more with telegram?": "ℹ️ 将您的帐户连接到 Telegram",
   "Welcome %(user)s": "欢迎%(user)s",
   "Why Going to Premium?": "为什么要选择高级版？",
@@ -244,6 +262,7 @@
   "You can restore your configs from previously downloaded configs": "ℹ️您可以从以前下载的备份文件恢复您的配置",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "你的用户太多了！您只能拥有 %(active)s 个活跃用户和 %(total)s 个用户",
   "You have used this domain in: ": "您已在以下位置使用过该域名：",
+  "You need to enable %(names)s globally to enable this proxy.": "",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "您的 Hiddify 实例信息\n领域： {}\n使用限制：{} GB\n当前使用情况：{} GB\n到期时间：{}\n剩余天数：{}\n\n\n祝你好运！ 🎉🎉🎉",
   "[Admin only visible message:] You can change this message from settings": "[管理员专用消息]：可通过设置自定义。",
   "actions": "行动",
@@ -362,6 +381,8 @@
       "title": "V2RayNG"
     }
   },
+  "at least one domain should exist": "",
+  "at least one user should exist": "",
   "auto": "自动",
   "auto_cdn_ip": "☑️ 自动 CDN IP 选择器",
   "bot": {
@@ -469,6 +490,13 @@
     "cloudflare": {
       "description": "请按照<a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>说明</a>并粘贴 Cloudflare API 密钥",
       "label": "🔑 Cloudflare API"
+    },
+    "common_proxy_core": {
+      "both": "",
+      "description": "",
+      "hiddify_core": "",
+      "label": "",
+      "xray": ""
     },
     "core_type": {
       "description": "☢️ XRay：是一个完整的核心\n<br>\n📦 Singbox：由 SagerNet 开发。也是一个不错的核心",
@@ -646,6 +674,10 @@
       "description": "配置.last_priodic_usage_check.description",
       "label": "config.last_priodic_usage_check.标签"
     },
+    "last_users_sync": {
+      "description": "",
+      "label": ""
+    },
     "license": {
       "description": "要将本产品用于商业用途，您必须购买其许可证",
       "label": "许可证代码"
@@ -660,6 +692,14 @@
       "WARNING": "",
       "description": "config.log_level.description",
       "label": "config.log_level.label"
+    },
+    "master_dns_encrypt_key": {
+      "description": "",
+      "label": ""
+    },
+    "max_proxy_ips_per_version": {
+      "description": "",
+      "label": ""
     },
     "mieru": {
       "description": "",
@@ -744,6 +784,10 @@
       "description": "用于显示资源。使用您服务器的 CPU，但不会太多。",
       "label": "Netdata"
     },
+    "node_name": {
+      "description": "",
+      "label": ""
+    },
     "not_found": {
       "description": "未找到配置",
       "label": "未找到配置"
@@ -778,6 +822,10 @@
     "path_grpc": {
       "description": "配置中的 gRPC 路径",
       "label": "ℹ️ gRPC 路径"
+    },
+    "path_http": {
+      "description": "",
+      "label": ""
     },
     "path_httpupgrade": {
       "description": "应该是随机的",
@@ -1235,6 +1283,10 @@
       "description": "Websocket 通过 HTTP 创建一个隧道，可用于 CDN",
       "label": "🔰 Websocket"
     },
+    "xhttp_different_up_down_enable": {
+      "description": "Allow XHTTP configs whose upload and download use different domains or settings. ⚠️ Many clients do not support this, so it is disabled by default.",
+      "label": "🈁 XHTTP with different upload/download"
+    },
     "xhttp_enable": {
       "description": "该协议通过单独的渠道发送和接收信息 ",
       "label": "🈁 Split HTTP"
@@ -1257,13 +1309,17 @@
     "custom_proxy": {
       "description": "",
       "group": {
+        "dns_gateway": "",
         "ip_based": "",
+        "l7_gateway": "",
         "other": "",
         "sni_gateway": ""
       },
       "label": "",
       "reality_only": "",
-      "reality_required": ""
+      "reality_required": "",
+      "sni_l7_mutex": "",
+      "sni_single_only": ""
     },
     "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
     "domain": "领域",
@@ -1294,9 +1350,13 @@
     },
     "server_domain": {
       "description": "",
-      "label": ""
+      "label": "",
+      "must_be_valid_direct_or_relay": ""
     },
-    "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。"
+    "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。",
+    "tls_status": {
+      "description": ""
+    }
   },
   "download": "直接下载",
   "download_domain": {
@@ -1308,6 +1368,7 @@
   "grpc-proxy": {
     "description": "ℹ️ gRPC 是一个基于 H2 的协议。也许对你来说更快！"
   },
+  "in\n          parent panel": "",
   "in parent panel": "在中央面板",
   "install from google play": "<i class='fa-brands fa-google-play'></i> Google Play",
   "ios": "iOS",
@@ -1370,6 +1431,7 @@
   "package size?": "包装尺寸？",
   "parent": {
     "invalid-parent-url": "parent.invalid-parent-url",
+    "panel-not-active": "",
     "sync-req-failed": "parent.sync-req-failed"
   },
   "previous": "以前的",

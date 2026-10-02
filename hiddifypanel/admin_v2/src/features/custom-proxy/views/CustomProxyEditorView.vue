@@ -2,9 +2,15 @@
   <div class="flex flex-col gap-3 mb-5">
     <div class="flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-2 flex-wrap">
-        <Button icon="pi pi-arrow-left" text :label="t('common.back')" @click="router.push({ name: 'custom-proxy-list' })" />
+        <Button
+          icon="pi pi-arrow-left"
+          text
+          :label="t('common.back')"
+          @click="router.push({ name: 'custom-proxy-list' })"
+        />
         <h2 class="text-2xl font-semibold m-0">{{ isNew ? t('proxy.new') : form.name }}</h2>
-        <SysBadge v-if="isBuiltin" :customized="Boolean(form.server_override || form.client_override)" />
+        <SysBadge v-if="isBuiltin" :customized="isCustomizedBuiltin" />
+        <Tag v-if="isCommonProxy" :value="t('proxy.commonProxyBadge')" severity="info" />
       </div>
       <div class="flex flex-wrap gap-2">
         <Button
@@ -27,28 +33,87 @@
     {{ t('proxy.builtinDefaultHint') }}
   </Message>
 
+  <ValidationPanel :result="validation" />
+
   <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_19rem] gap-4 items-start">
     <div class="min-w-0">
       <Tabs v-model:value="activeTab">
         <TabList>
           <Tab value="0">{{ t('proxy.tabGeneral') }}</Tab>
-          <Tab value="1">{{ t('proxy.tabServer') }}</Tab>
+          <Tab v-if="!isNoInbound" value="1">{{ t('proxy.tabServer') }}</Tab>
           <Tab value="2">{{ t('proxy.tabClient') }}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel value="0">
             <Panel :header="t('proxy.tabGeneral')">
               <HorizontalField :label="t('common.enabled')" input-id="proxy-enable">
-                <ToggleSwitch id="proxy-enable" v-model="form.enable!" />
+                <ToggleSwitch
+                  :key="enableSwitchEpoch"
+                  id="proxy-enable"
+                  :model-value="displayedEnable"
+                  @update:model-value="onEnableToggle"
+                />
               </HorizontalField>
-              <HorizontalField :label="t('proxy.name')" input-id="proxy-name">
-                <InputText id="proxy-name" v-model="form.name" class="w-full" @blur="onNameBlur" />
+              <HorizontalField
+                v-if="!isNew && showCommonProxy"
+                :label="t('proxy.isCommonProxy')"
+                input-id="proxy-common"
+                :hint="t('proxy.isCommonProxyHint')"
+              >
+                <ToggleSwitch id="proxy-common" :model-value="Boolean(form.is_common_proxy)" disabled />
+              </HorizontalField>
+              <Message v-if="blockedParent.length" severity="warn" :closable="false" class="mb-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span>{{ t('proxy.needGlobalEnable', { names: blockedParent.map((item) => item.label).join(', ') }) }}</span>
+                  <Button
+                    v-if="meta?.parent_enable_settings_url"
+                    size="small"
+                    :label="t('proxy.goToSettings')"
+                    @click="openParentSettings"
+                  />
+                </div>
+              </Message>
+              <HorizontalField :label="t('proxy.name')" input-id="proxy-name" :hint="nameHint">
+                <InputGroup>
+                  <InputGroupAddon><i class="pi pi-tag" /></InputGroupAddon>
+                  <InputText id="proxy-name" :model-value="form.name" class="w-full" @update:model-value="onNameInput" @blur="onNameBlur" />
+                  <InputGroupAddon v-if="isBuiltin">
+                    <div class="flex items-center gap-1 whitespace-nowrap px-1">
+                      <Checkbox
+                        input-id="override-name"
+                        :model-value="isFieldOverridden('name')"
+                        binary
+                        @update:model-value="setFieldOverride('name', $event)"
+                      />
+                      <label for="override-name" class="text-sm">{{ t('proxy.fieldOverride') }}</label>
+                    </div>
+                  </InputGroupAddon>
+                  <Button
+                    v-if="isBuiltin && isFieldOverridden('name')"
+                    icon="pi pi-undo"
+                    severity="secondary"
+                    :aria-label="t('proxy.resetTagName')"
+                    v-tooltip.top="t('proxy.resetTagName')"
+                    @click="setFieldOverride('name', false)"
+                  />
+                </InputGroup>
               </HorizontalField>
               <HorizontalField v-if="showCustomPath" :label="t('proxy.customPath')" input-id="proxy-path" :hint="t('proxy.customPathAuto')">
                 <InputGroup>
                   <InputGroupAddon><i class="pi pi-link" /></InputGroupAddon>
-                  <InputText id="proxy-path" v-model="form.custom_path" class="w-full" />
+                  <InputText id="proxy-path" :model-value="form.custom_path" class="w-full" @update:model-value="onCustomPathInput" />
                   <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('proxy.regeneratePath')" @click="regeneratePath" />
+                  <InputGroupAddon v-if="isBuiltin">
+                    <div class="flex items-center gap-1 whitespace-nowrap px-1">
+                      <Checkbox
+                        input-id="override-custom-path"
+                        :model-value="isFieldOverridden('custom_path')"
+                        binary
+                        @update:model-value="setFieldOverride('custom_path', $event)"
+                      />
+                      <label for="override-custom-path" class="text-sm">{{ t('proxy.fieldOverride') }}</label>
+                    </div>
+                  </InputGroupAddon>
                 </InputGroup>
               </HorizontalField>
               <HorizontalField :label="t('proxy.slug')" input-id="proxy-slug">
@@ -66,7 +131,7 @@
               </HorizontalField>
 
               <div :class="{ 'builtin-locked': structureLocked }">
-                <HorizontalField :label="t('proxy.protocol')" input-id="proxy-proto">
+                <HorizontalField v-if="!isNoInbound" :label="t('proxy.protocol')" input-id="proxy-proto">
                   <Select
                     id="proxy-proto"
                     v-model="form.proto"
@@ -77,7 +142,7 @@
                     @change="onLinkSettingsChange"
                   />
                 </HorizontalField>
-                <HorizontalField :label="t('proxy.transport')" input-id="proxy-transport">
+                <HorizontalField v-if="!isNoInbound" :label="t('proxy.transport')" input-id="proxy-transport">
                   <Select
                     id="proxy-transport"
                     v-model="form.transport"
@@ -191,6 +256,7 @@
                 </Message>
               </HorizontalField>
               <HorizontalField
+                v-if="showTcpUdp"
                 :label="showXhttpDownloadSettings ? t('proxy.uploadTcpUdp') : t('proxy.tcpUdp')"
                 input-id="proxy-tcp-udp"
                 :hint="t('proxy.tcpUdpHint')"
@@ -206,7 +272,7 @@
                 />
               </HorizontalField>
               <HorizontalField
-                v-if="showXhttpDownloadSettings"
+                v-if="showTcpUdp && showXhttpDownloadSettings"
                 :label="t('proxy.downloadTcpUdp')"
                 input-id="proxy-download-tcp-udp"
                 :hint="t('proxy.tcpUdpHint')"
@@ -226,7 +292,9 @@
                   <MultiSelect
                     id="proxy-modes"
                     v-model="form.domain_modes"
-                    :options="domainModeOptions"
+                    :options="domainModeSelectOptions"
+                    option-label="label"
+                    option-value="value"
                     display="chip"
                     class="flex-1 min-w-0"
                     :disabled="isBuiltin && !isFieldOverridden('domain_modes')"
@@ -253,7 +321,9 @@
                   <MultiSelect
                     id="proxy-download-domain-modes"
                     v-model="form.download_domain_modes"
-                    :options="downloadDomainModeOptions"
+                    :options="downloadDomainModeSelectOptions"
+                    option-label="label"
+                    option-value="value"
                     display="chip"
                     class="flex-1 min-w-0"
                     :disabled="isBuiltin && !isFieldOverridden('download_domain_modes')"
@@ -271,16 +341,10 @@
                   </InputGroupAddon>
                 </InputGroup>
               </HorizontalField>
-              <HorizontalField v-if="showDomains && isSniGateway" :label="t('proxy.faketlsDomains')" :hint="t('proxy.faketlsSpecialHint')">
-                <FaketlsDomainSelect v-model="form.faketls_domains!" :domain-modes="form.domain_modes" />
-              </HorizontalField>
-              <HorizontalField v-if="showDomains && showDomainPicker" :label="t('proxy.domainIds')" :hint="t('proxy.domainIdsEmptyAll')">
-                <DomainMultiSelect v-model="form.domain_ids!" :domain-modes="form.domain_modes" />
-              </HorizontalField>
             </Panel>
           </TabPanel>
 
-          <TabPanel value="1">
+          <TabPanel v-if="!isNoInbound" value="1">
             <div :class="{ 'builtin-locked': serverLocked }">
             <Panel :header="t('proxy.tabServer')">
               <HorizontalField :label="t('proxy.serverCore')" input-id="server-core">
@@ -421,8 +485,6 @@
           </TabPanel>
         </TabPanels>
       </Tabs>
-
-      <ValidationPanel :result="validation" />
     </div>
 
     <TemplateSidePanel
@@ -480,6 +542,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import { blockedParentEnables, isBlockedByParent, isEffectivelyEnabled, useParentEnablePrompt } from '@/features/custom-proxy/parent-enable'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -505,9 +568,8 @@ import SysBadge from '@/shared/components/SysBadge.vue'
 import HorizontalField from '@/shared/components/HorizontalField.vue'
 import TemplatedEditor from '@/shared/components/TemplatedEditor.vue'
 import ValidationPanel from '@/shared/components/ValidationPanel.vue'
-import DomainMultiSelect from '@/shared/components/DomainMultiSelect.vue'
+import { validationToastDetail } from '@/shared/utils/validation-toast'
 import ProxyCategoriesMultiSelect from '@/shared/components/ProxyCategoriesMultiSelect.vue'
-import FaketlsDomainSelect from '@/shared/components/FaketlsDomainSelect.vue'
 import TemplateSidePanel from '@/shared/components/TemplateSidePanel.vue'
 import BundleExportDialog from '@/shared/components/BundleExportDialog.vue'
 import GenerateExampleDialog from '@/features/custom-proxy/components/GenerateExampleDialog.vue'
@@ -527,18 +589,28 @@ import {
   type CustomProxyMeta,
   type ProxyTemplate,
   type ProxyTransport,
+  type TlsLayer,
   type TemplatePreviewResult,
   type ValidationResult,
 } from '@/core/api/generated'
+import { apiErrorMessage } from '@/core/api/client'
 
 const props = defineProps<{ id?: string }>()
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const { promptParentEnable } = useParentEnablePrompt()
+const enableSwitchEpoch = ref(0)
 
 const isNew = computed(() => route.name === 'custom-proxy-new' || !props.id)
 const isBuiltin = computed(() => Boolean(form.is_builtin) && !isNew.value)
+const isCommonProxy = computed(() => Boolean(form.is_common_proxy) && !isNew.value && showCommonProxy.value)
+const isCustomizedBuiltin = computed(
+  () =>
+    Boolean(form.server_override || form.client_override)
+    || Object.values(form.builtin_overrides ?? {}).some(Boolean),
+)
 const structureLocked = computed(() => isBuiltin.value)
 const serverLocked = computed(() => isBuiltin.value && !isFieldOverridden('server_config'))
 const meta = ref<CustomProxyMeta | null>(null)
@@ -662,6 +734,7 @@ function inferTransportFromCategories(categories: string[]): ProxyTransport | ''
   if (lower.some((tag) => tag.includes('httpupgrade'))) return 'httpupgrade'
   if (lower.some((tag) => tag.includes('ws'))) return 'ws'
   if (lower.some((tag) => tag.includes('tcp'))) return 'tcp'
+  if (lower.some((tag) => tag === 'http')) return 'http'
   return ''
 }
 
@@ -691,6 +764,8 @@ function snapshotBuiltinField(key: string) {
   if (form.builtin![key] !== undefined) return
   if (key === 'server_config') {
     form.builtin![key] = form.server_config?.inbound_template ?? form.builtin_server_config ?? ''
+  } else if (key === 'name') {
+    form.builtin![key] = form.name ?? ''
   } else if (key === 'custom_path') {
     form.builtin![key] = form.custom_path ?? ''
   } else if (key === 'domain_modes') {
@@ -717,6 +792,8 @@ function resetFieldFromBuiltin(key: string) {
     const template = String(builtin ?? form.builtin_server_config ?? '')
     if (form.server_config) form.server_config.inbound_template = template
     form.server_override = false
+  } else if (key === 'name') {
+    form.name = String(builtin ?? form.name ?? '')
   } else if (key === 'custom_path') {
     form.custom_path = String(builtin ?? '')
   } else if (key === 'domain_modes' && Array.isArray(builtin)) {
@@ -766,10 +843,9 @@ const defaultForm = (): CustomProxy => ({
   download_tls_layer: null,
   download_domain_modes: [],
   categories: [],
-  domain_modes: ['direct'],
+  domain_modes: ['direct-valid'],
   custom_path: generateCustomPath(),
   domain_ids: [],
-  faketls_domains: [],
   server_override: false,
   client_override: false,
   builtin: {},
@@ -783,7 +859,7 @@ const defaultForm = (): CustomProxy => ({
     tag: '',
     direct_port_access: false,
     inbound_template:
-      '{\n  "listen": "127.0.0.1",\n  "listen_port": {{ proxy.port }},\n  "tag": "{{ proxy.tag }}"\n}',
+      '{\n  "listen": "127.0.0.1",\n  "listen_port": {{ ctx.proxy.port }},\n  "tag": "{{ ctx.proxy.tag }}"\n}',
   },
   client_config: {
     core_configs: [defaultSublinkCore()],
@@ -811,31 +887,109 @@ function ensureClientCores() {
 
 const form = reactive<CustomProxy>(defaultForm())
 
+const blockedParent = computed(() => blockedParentEnables(form))
+const displayedEnable = computed(() => isEffectivelyEnabled(form))
+
+function onEnableToggle(value: boolean) {
+  if (value) {
+    if (isBlockedByParent(form)) {
+      enableSwitchEpoch.value += 1
+      promptParentEnable(blockedParent.value, meta.value?.parent_enable_settings_url)
+      return
+    }
+    form.enable = true
+    return
+  }
+  form.enable = false
+}
+
+function openParentSettings() {
+  const url = meta.value?.parent_enable_settings_url
+  if (url) window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+const ALL_DOMAIN_MODES = [
+  'direct-valid',
+  'direct-fake',
+  'direct-reality',
+  'direct-dns',
+  'relay-valid',
+  'relay-fake',
+  'relay-reality',
+  'cdn',
+] as const
+const CDN_CAPABLE_TRANSPORTS = new Set(['xhttp', 'grpc', 'ws', 'httpupgrade'])
+
+function isCdnCapableTransport(transport: string | undefined | null): boolean {
+  return CDN_CAPABLE_TRANSPORTS.has(String(transport || '').toLowerCase())
+}
+
 const domainModeOptions = computed(() => {
-  let modes: string[]
-  if (form.mode === 'domains_sni_gateway') modes = ['fake', 'direct', 'relay', 'reality']
-  else if (form.mode === 'domains_l7_gateway') {
-    modes = meta.value?.domain_modes ?? ['direct', 'cdn', 'relay']
-  } else if (form.mode === 'ip') {
-    modes = ['direct', 'relay']
-  } else if (form.mode === 'domains_auto_public_ports' || form.mode === 'domains_single_public_port') {
-    modes = ['direct', 'relay']
-  } else {
-    modes = ['direct', 'relay']
+  let modes = [...(meta.value?.domain_modes?.length ? meta.value.domain_modes : ALL_DOMAIN_MODES)]
+  if (!isCdnCapableTransport(form.transport)) {
+    modes = modes.filter((mode) => mode !== 'cdn')
   }
-  if (isXhttpTransport.value && xhttpUploadIsQuic(form.categories ?? [])) {
-    modes = modes.filter((mode) => mode !== 'reality')
+  if (!transportTlsSupportsReality(form.transport, form.tls_layer) || xhttpUploadIsQuic(form.categories ?? [])) {
+    modes = modes.filter((mode) => !isRealityDomainMode(mode))
   }
-  return modes
+  return withSelected(modes, form.domain_modes)
 })
 
 const downloadDomainModeOptions = computed(() => {
-  let modes = [...domainModeOptions.value]
-  if (xhttpDownloadIsQuic(form.categories ?? [])) {
-    modes = modes.filter((mode) => mode !== 'reality')
+  let modes = [...(meta.value?.domain_modes?.length ? meta.value.domain_modes : ALL_DOMAIN_MODES)]
+  if (!isCdnCapableTransport(form.transport)) {
+    modes = modes.filter((mode) => mode !== 'cdn')
   }
-  return modes
+  if (!transportTlsSupportsReality('xhttp', form.download_tls_layer) || xhttpDownloadIsQuic(form.categories ?? [])) {
+    modes = modes.filter((mode) => !isRealityDomainMode(mode))
+  }
+  return withSelected(modes, form.download_domain_modes)
 })
+
+const domainModeSelectOptions = computed(() =>
+  domainModeOptions.value.map((value) => ({
+    value,
+    label: t(`proxy.domainModeLabels.${value}`, value),
+  })),
+)
+
+const downloadDomainModeSelectOptions = computed(() =>
+  downloadDomainModeOptions.value.map((value) => ({
+    value,
+    label: t(`proxy.domainModeLabels.${value}`, value),
+  })),
+)
+
+function isRealityDomainMode(mode: string): boolean {
+  return mode === 'reality' || mode === 'special' || mode.endsWith('-reality')
+}
+
+/** Same rule as the server (proxy_v3/domain_mode_filter.py: transport_tls_supports_reality). */
+function transportTlsSupportsReality(transport: string | undefined | null, layer: string | undefined | null): boolean {
+  const t = String(transport || '').toLowerCase()
+  const l = String(layer || '').toLowerCase()
+  // raw HTTP ("rawhttp") also rides REALITY over TLS-h1.
+  if (t === 'http') return l === 'tls' || l === 'tls_h2' || l === 'tls_h1'
+  if (!t || l === 'http' || l === 'tls_h1' || l === 'quic_tls' || l === 'quic_tcp_tls') return false
+  // raw TCP: VLESS served by the REALITY termination inbound.
+  if (t === 'grpc' || t === 'tcp') return l === 'tls' || l === 'tls_h2'
+  if (t === 'xhttp') return l === 'tls_h2'
+  return false
+}
+
+/**
+ * A built-in proxy's domain modes are the server's (read-only until overridden): never prune
+ * them client-side, only modes the admin edits.
+ */
+function domainModesEditable(key: 'domain_modes' | 'download_domain_modes'): boolean {
+  return !isBuiltin.value || isFieldOverridden(key)
+}
+
+/** Options always include the selected modes, so a saved value never shows as unselected. */
+function withSelected(options: string[], selected: string[] | undefined | null): string[] {
+  const extra = (selected ?? []).filter((mode) => !options.includes(mode))
+  return extra.length ? [...options, ...extra] : options
+}
 
 function xhttpUploadIsQuic(categories: string[]): boolean {
   return categories.some((category) => String(category).toLowerCase() === 'up:quic')
@@ -845,7 +999,7 @@ function xhttpDownloadIsQuic(categories: string[]): boolean {
   return categories.some((category) => String(category).toLowerCase() === 'down:quic')
 }
 
-const showDomains = computed(() => !isIpBased.value)
+const showDomains = computed(() => !isIpBased.value && !isNoInbound.value)
 
 const isL7Gateway = computed(() => form.mode === 'domains_l7_gateway')
 const isSniGateway = computed(() => form.mode === 'domains_sni_gateway')
@@ -853,14 +1007,20 @@ const isDnsGateway = computed(() => form.mode === 'domains_dns_gateway')
 const isMultiDomainAuto = computed(() => form.mode === 'domains_auto_public_ports')
 const isMultiDomainStatic = computed(() => form.mode === 'domains_single_public_port')
 const isIpBased = computed(() => form.mode === 'ip')
+const isNoInbound = computed(() => form.mode === 'no_inbound')
+const COMMON_PROXY_CORES = new Set(['hiddify-core', 'xray'])
+const showCommonProxy = computed(
+  () => isNoInbound.value || COMMON_PROXY_CORES.has(form.server_config?.core ?? ''),
+)
 const showTlsLayer = computed(
   () => isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value,
 )
 const showStaticPorts = computed(() => isMultiDomainStatic.value || isIpBased.value)
+const showTcpUdp = computed(() => !isL7Gateway.value && !isNoInbound.value)
 const showAutoPortsHint = computed(
-  () => isMultiDomainAuto.value || isL7Gateway.value || isSniGateway.value,
+  () => isMultiDomainAuto.value || isL7Gateway.value || isSniGateway.value || isDnsGateway.value,
 )
-const showDirectPortAccess = computed(() => !isL7Gateway.value && !isSniGateway.value)
+const showDirectPortAccess = computed(() => !isL7Gateway.value && !isSniGateway.value && !isDnsGateway.value && !isNoInbound.value)
 const showL7Proto = computed(() => isL7Gateway.value)
 const isXhttpTransport = computed(() => effectiveTransport() === 'xhttp')
 const showXhttpDownloadSettings = computed(
@@ -869,12 +1029,9 @@ const showXhttpDownloadSettings = computed(
 
 
 function onDownloadTlsLayerChange() {
-  if (
-    form.download_tls_layer === 'http'
-    && (form.download_domain_modes ?? []).some((m) => m === 'reality')
-  ) {
-    form.download_tls_layer = 'tls'
-    toast.add({ severity: 'warn', summary: t('proxy.tlsLayerSpecialConflict'), life: 4000 })
+  if (domainModesEditable('download_domain_modes') && !transportTlsSupportsReality('xhttp', form.download_tls_layer)) {
+    const next = withoutReality(form.download_domain_modes)
+    if (!sameModes(form.download_domain_modes, next)) form.download_domain_modes = next
   }
 }
 
@@ -885,17 +1042,17 @@ const tcpUdpOptions = computed(() =>
   })),
 )
 
-function defaultTlsLayerForProxy(): 'http' | 'tls' {
-  const categories = (form.categories ?? []).map((category) => String(category).toLowerCase())
-  if (categories.includes('http') || categories.includes('reality')) return 'tls'
+function defaultTlsLayerForProxy(): TlsLayer {
   return 'tls'
 }
 
 const tlsLayerOptions = computed(() =>
-  (meta.value?.tls_layers ?? ['http', 'tls']).map((layer) => ({
-    value: layer,
-    label: t(`proxy.tlsLayerLabels.${layer}`, layer.toUpperCase()),
-  })),
+  (meta.value?.tls_layers ?? ['http', 'tls_h1', 'tls_h2', 'tls', 'quic_tls', 'quic_tcp_tls'])
+    .filter((layer) => form.proto !== 'naive' || layer !== 'http')
+    .map((layer) => ({
+      value: layer,
+      label: layer === 'http' ? '-' : t(`proxy.tlsLayerLabels.${layer}`, layer.toUpperCase()),
+    })),
 )
 
 const l7ReverseProtoOptions = computed(() =>
@@ -941,12 +1098,6 @@ const showDomainModes = computed(
     (isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value),
 )
 
-const showDomainPicker = computed(
-  () =>
-    showDomains.value &&
-    (isL7Gateway.value || isMultiDomainAuto.value || isMultiDomainStatic.value),
-)
-
 const modeOptions = computed(() =>
   (meta.value?.modes ?? []).map((m) => ({
     value: m,
@@ -962,7 +1113,7 @@ const protoOptions = computed(() =>
 )
 
 const transportOptions = computed(() =>
-  (meta.value?.transports ?? ['tcp', 'ws', 'httpupgrade', 'grpc', 'xhttp', 'other']).map((tr) => ({
+  (meta.value?.transports ?? ['tcp', 'http', 'ws', 'httpupgrade', 'grpc', 'xhttp', 'other']).map((tr) => ({
     value: tr,
     label: t(`proxy.transportLabels.${tr}`, tr),
   })),
@@ -981,7 +1132,9 @@ const showTemplatePanel = computed(() => activeTab.value === '1' || showClientTe
 
 const templatePanelReadOnly = computed(() => {
   if (!isBuiltin.value) return false
-  return activeTab.value === '1' ? !form.server_override : !form.client_override
+  if (activeTab.value === '1') return !form.server_override
+  const core = clientCoreAt(activeClientIndex.value).core
+  return core ? !clientCoreOverridden(core) : !form.client_override
 })
 
 const templatePanelAllowCreate = computed(() => !templatePanelReadOnly.value)
@@ -1192,13 +1345,41 @@ function slugifyName(name: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+// Built-in proxies keep the catalog tag in builtin.name; typing a different tag opts in to the override.
+const builtinName = computed(() => (isBuiltin.value ? String(form.builtin?.name ?? '') : ''))
+const nameHint = computed(() =>
+  isBuiltin.value && isFieldOverridden('name') && builtinName.value
+    ? t('proxy.defaultTagName', { name: builtinName.value })
+    : undefined,
+)
+
+function onNameInput(value: string | undefined) {
+  if (isBuiltin.value && !isFieldOverridden('name')) snapshotBuiltinField('name')
+  form.name = value ?? ''
+  if (!isBuiltin.value) return
+  const differs = form.name.trim() !== builtinName.value
+  if (differs && !isFieldOverridden('name')) form.builtin_overrides!['name'] = true
+  else if (!differs && isFieldOverridden('name')) delete form.builtin_overrides!['name']
+}
+
 function onNameBlur() {
   if (!form.slug?.trim() && form.name.trim()) {
     form.slug = slugifyName(form.name)
   }
 }
 
+// Built-in proxies only save custom_path when it is overridden; editing it opts in.
+function markCustomPathOverridden() {
+  if (isBuiltin.value && !isFieldOverridden('custom_path')) setFieldOverride('custom_path', true)
+}
+
+function onCustomPathInput(value: string | undefined) {
+  markCustomPathOverridden()
+  form.custom_path = value ?? ''
+}
+
 function regeneratePath() {
+  markCustomPathOverridden()
   form.custom_path = generateCustomPath()
 }
 
@@ -1206,20 +1387,35 @@ function onLinkSettingsChange() {
   if (!form.tls_layer && showTlsLayer.value) {
     form.tls_layer = defaultTlsLayerForProxy()
   }
+  if (form.proto === 'naive' && form.tls_layer === 'http') {
+    form.tls_layer = defaultTlsLayerForProxy()
+  }
 }
 
 function onTlsLayerChange() {
-  if (form.tls_layer === 'http' && (form.domain_modes ?? []).some((m) => m === 'reality')) {
-    form.tls_layer = 'tls'
-    toast.add({ severity: 'warn', summary: t('proxy.tlsLayerSpecialConflict'), life: 4000 })
+  if (domainModesEditable('domain_modes') && !transportTlsSupportsReality(form.transport, form.tls_layer)) {
+    const next = withoutReality(form.domain_modes)
+    if (!sameModes(form.domain_modes, next)) form.domain_modes = next
   }
+  if (form.proto === 'naive' && form.tls_layer === 'http') {
+    form.tls_layer = defaultTlsLayerForProxy()
+  }
+}
+
+function withoutReality(modes: string[] | undefined | null): string[] {
+  return (modes ?? []).filter((mode) => !isRealityDomainMode(mode))
+}
+
+function sameModes(left: string[] | undefined | null, right: string[]): boolean {
+  const current = left ?? []
+  return current.length === right.length && current.every((mode, index) => mode === right[index])
 }
 
 function ensureXhttpDownloadDefaults() {
   if (!showXhttpDownloadSettings.value) {
-    form.download_tls_layer = null
-    form.download_domain_modes = []
-    if (form.server_config) {
+    if (form.download_tls_layer != null) form.download_tls_layer = null
+    if (form.download_domain_modes?.length) form.download_domain_modes = []
+    if (form.server_config?.download_tcp_udp != null) {
       form.server_config.download_tcp_udp = undefined
     }
     return
@@ -1228,7 +1424,7 @@ function ensureXhttpDownloadDefaults() {
     form.download_tls_layer = 'tls'
   }
   if (!form.download_domain_modes?.length) {
-    form.download_domain_modes = [...(form.domain_modes ?? ['direct'])]
+    form.download_domain_modes = [...(form.domain_modes ?? ['direct-valid'])]
   }
   if (!form.server_config!.tcp_udp) {
     form.server_config!.tcp_udp = 'tcp'
@@ -1236,11 +1432,13 @@ function ensureXhttpDownloadDefaults() {
   if (!form.server_config!.download_tcp_udp) {
     form.server_config!.download_tcp_udp = 'tcp'
   }
-  if (xhttpUploadIsQuic(form.categories ?? [])) {
-    form.domain_modes = (form.domain_modes ?? []).filter((mode) => mode !== 'reality')
+  if (domainModesEditable('domain_modes') && xhttpUploadIsQuic(form.categories ?? [])) {
+    const next = withoutReality(form.domain_modes)
+    if (!sameModes(form.domain_modes, next)) form.domain_modes = next
   }
-  if (xhttpDownloadIsQuic(form.categories ?? [])) {
-    form.download_domain_modes = (form.download_domain_modes ?? []).filter((mode) => mode !== 'reality')
+  if (domainModesEditable('download_domain_modes') && xhttpDownloadIsQuic(form.categories ?? [])) {
+    const next = withoutReality(form.download_domain_modes)
+    if (!sameModes(form.download_domain_modes, next)) form.download_domain_modes = next
   }
 }
 
@@ -1261,18 +1459,28 @@ function onModeChange() {
     }
   } else if (form.mode === 'domains_sni_gateway') {
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct', 'relay']
+      form.domain_modes = ['direct-valid', 'relay-valid']
     }
     form.custom_path = ''
     form.l7_reverse_proto = null
     form.tls_layer = 'tls'
     form.domain_ids = []
+  } else if (form.mode === 'domains_dns_gateway') {
+    if (!form.domain_modes?.length) {
+      form.domain_modes = ['direct-dns']
+    }
+    form.custom_path = ''
+    form.l7_reverse_proto = null
+    form.tls_layer = 'http'
+    form.domain_ids = []
+    form.server_config!.inbound_tcp_ports = []
+    form.server_config!.inbound_udp_ports = []
   } else if (form.mode === 'ip') {
     form.custom_path = ''
     form.l7_reverse_proto = null
     form.domain_ids = []
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct']
+      form.domain_modes = ['direct-valid']
     }
   } else if (form.mode === 'domains_auto_public_ports') {
     form.custom_path = ''
@@ -1281,7 +1489,7 @@ function onModeChange() {
       form.tls_layer = defaultTlsLayerForProxy()
     }
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct', 'relay']
+      form.domain_modes = ['direct-valid', 'relay-valid']
     }
     form.server_config!.inbound_tcp_ports = []
     form.server_config!.inbound_udp_ports = []
@@ -1292,8 +1500,15 @@ function onModeChange() {
       form.tls_layer = defaultTlsLayerForProxy()
     }
     if (!form.domain_modes?.length) {
-      form.domain_modes = ['direct', 'relay']
+      form.domain_modes = ['direct-valid', 'relay-valid']
     }
+  } else if (form.mode === 'no_inbound') {
+    form.custom_path = ''
+    form.l7_reverse_proto = null
+    form.domain_ids = []
+    form.domain_modes = []
+    form.server_config!.inbound_tcp_ports = []
+    form.server_config!.inbound_udp_ports = []
   } else if (isL7Gateway.value || isSniGateway.value) {
     form.server_config!.inbound_tcp_ports = []
     form.server_config!.inbound_udp_ports = []
@@ -1478,6 +1693,21 @@ async function runValidate() {
   validation.value = props.id
     ? await customProxiesApi.validateById(Number(props.id), payload)
     : await customProxiesApi.validate(payload)
+  if (validation.value && !validation.value.ok) {
+    toast.add({
+      severity: 'error',
+      summary: t('common.validationFailed'),
+      detail: validationToastDetail(validation.value),
+      life: 8000,
+    })
+  } else if (validation.value?.warnings?.length) {
+    toast.add({
+      severity: 'warn',
+      summary: t('validation.warnings'),
+      detail: validationToastDetail(validation.value),
+      life: 8000,
+    })
+  }
 }
 
 function effectiveServerInboundTemplate(): string {
@@ -1590,7 +1820,9 @@ function buildBuiltinPatch(): Partial<CustomProxy> {
     name: form.name,
     enable: form.enable,
     categories: form.categories,
+    // Full map so cleared overrides are sent as absent and cleared server-side.
     builtin_overrides: { ...(form.builtin_overrides ?? {}) },
+    server_override: isFieldOverridden('server_config'),
   }
   if (isFieldOverridden('custom_path')) patch.custom_path = form.custom_path
   if (isFieldOverridden('domain_modes')) patch.domain_modes = form.domain_modes
@@ -1600,50 +1832,60 @@ function buildBuiltinPatch(): Partial<CustomProxy> {
   if (isFieldOverridden('l7_reverse_proto')) patch.l7_reverse_proto = form.l7_reverse_proto
   if (isFieldOverridden('server_config')) {
     patch.server_config = form.server_config
-    patch.server_override = true
   }
+  // Always send client cores with explicit override flags so revert clears the badge.
   const clientConfigs = (form.client_config?.core_configs ?? []).map((cc) => ({
     ...cc,
     override: clientCoreOverridden(cc.core),
   }))
-  if (clientConfigs.some((cc) => cc.override)) {
-    patch.client_config = { core_configs: clientConfigs }
-    patch.client_override = true
-  }
+  patch.client_config = { core_configs: clientConfigs }
+  patch.client_override = clientConfigs.some((cc) => cc.override)
   return patch
 }
 
 async function duplicateBuiltin() {
   if (!props.id) return
-  const copy = await customProxiesApi.duplicate(Number(props.id))
+  let copy
+  try {
+    copy = await customProxiesApi.duplicate(Number(props.id))
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+    return
+  }
   toast.add({ severity: 'success', summary: t('common.duplicate'), life: 3000 })
   await router.push({ name: 'custom-proxy-edit', params: { id: String(copy.id) } })
 }
 
 async function save() {
+  // A tag-only override does not touch the rendered body.
   const needsBodyValidation =
     !isBuiltin.value
-    || Object.values(form.builtin_overrides ?? {}).some(Boolean)
+    || Object.entries(form.builtin_overrides ?? {}).some(([key, on]) => on && key !== 'name')
   if (needsBodyValidation) {
     ensureClientCores()
     await runValidate()
     if (validation.value && !validation.value.ok) {
-      toast.add({ severity: 'error', summary: t('common.validationFailed'), life: 4000 })
       return
     }
   }
   saving.value = true
   try {
-    const payload = isBuiltin.value ? buildBuiltinPatch() : form
+    const payload = isBuiltin.value ? buildBuiltinPatch() : { ...form }
+    if (isBlockedByParent(form)) {
+      payload.enable = false
+    }
     if (isNew.value) {
       const created = await customProxiesApi.create(payload as CustomProxy)
       toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
-      router.replace({ name: 'custom-proxy-edit', params: { id: created.id } })
+      await router.replace({ name: 'custom-proxy-edit', params: { id: created.id } })
     } else {
       const updated = await customProxiesApi.update(Number(props.id), payload)
       Object.assign(form, updated)
       toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
     }
+  } catch (err) {
+    // e.g. a custom path or port already used by another proxy (HTTP 400)
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
   } finally {
     saving.value = false
   }
@@ -1660,11 +1902,8 @@ watch(
 watch(
   () => form.download_domain_modes,
   (modes) => {
-    if (
-      form.download_tls_layer === 'http'
-      && (modes ?? []).some((m) => m === 'special' || m === 'reality')
-    ) {
-      form.download_tls_layer = 'tls'
+    if (domainModesEditable('download_domain_modes') && !transportTlsSupportsReality('xhttp', form.download_tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
+      form.download_domain_modes = withoutReality(modes)
     }
   },
   { deep: true },
@@ -1673,6 +1912,18 @@ watch(
 watch(
   () => [form.transport, form.categories, form.l7_reverse_proto] as const,
   () => {
+    if (!isCdnCapableTransport(form.transport)) {
+      if (domainModesEditable('domain_modes') && form.domain_modes?.includes('cdn')) {
+        form.domain_modes = form.domain_modes.filter((mode) => mode !== 'cdn')
+      }
+      if (domainModesEditable('download_domain_modes') && form.download_domain_modes?.includes('cdn')) {
+        form.download_domain_modes = form.download_domain_modes.filter((mode) => mode !== 'cdn')
+      }
+    }
+    if (domainModesEditable('domain_modes') && !transportTlsSupportsReality(form.transport, form.tls_layer)) {
+      const next = withoutReality(form.domain_modes)
+      if (!sameModes(form.domain_modes, next)) form.domain_modes = next
+    }
     ensureXhttpDownloadDefaults()
   },
   { deep: true },
@@ -1681,8 +1932,8 @@ watch(
 watch(
   () => form.domain_modes,
   (modes) => {
-    if (form.tls_layer === 'http' && (modes ?? []).some((m) => m === 'reality')) {
-      form.tls_layer = 'tls'
+    if (domainModesEditable('domain_modes') && !transportTlsSupportsReality(form.transport, form.tls_layer) && (modes ?? []).some((m) => isRealityDomainMode(m))) {
+      form.domain_modes = withoutReality(modes)
     }
     ensureXhttpDownloadDefaults()
   },
@@ -1713,6 +1964,10 @@ watch(activeClientCoreTab, (core) => {
     expandedClientPanel.value = items.length ? String(items[0]!.globalIndex) : null
     if (items.length) activeClientIndex.value = items[0]!.globalIndex
   }
+})
+
+watch(isNoInbound, (noInbound) => {
+  if (noInbound && activeTab.value === '1') activeTab.value = '0'
 })
 
 watch(activeTab, (tab) => {

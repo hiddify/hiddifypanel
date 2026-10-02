@@ -1,12 +1,15 @@
+import hashlib
 import json
 import os
 import random
+import socket
 import sys
 import uuid
+from datetime import datetime
 
 from loguru import logger
 
-from hiddifypanel import Events, hutils
+from hiddifypanel import Events, g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db, db_execute, db_execute_ddl
 from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
@@ -14,59 +17,204 @@ from hiddifypanel.models import *
 from hiddifypanel.models import ConfigEnum
 from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_catalog
 from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
-    sync_builtin_custom_proxy_presets,
+    sync_builtin_presets,
 )
 from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 
-MAX_DB_VERSION = 132
+MAX_DB_VERSION = 200
 
 
-def _drop_wip_proxy_tables() -> None:
+def _v162(child_id):
+    """Outbounds are shared by all nodes and named by a slug (the ids are local): give old rows a slug, make it unique."""
+    from hiddifypanel.proxy_v3.outbounds import sync_builtin_outbounds
 
-    for table in (
-        "custom_proxy_client_core",
-        "custom_proxy",
-        "proxy_template",
-        "proxy_base_config",
-        "tls_store",
-        "server_ip",
-    ):
-        try:
-            db_execute(f"DROP TABLE IF EXISTS `{table}`", commit=True)
-        except BaseException as exc:
-            logger.warning("drop {}: {}", table, exc)
-    db.create_all()
-
-    set_hconfig(ConfigEnum.db_version, 129)
+    sync_builtin_outbounds(0)
+    execute("CREATE UNIQUE INDEX ix_outbound_slug ON outbound (slug)")
 
 
-def _v132(child_id):
-    sync_builtin_custom_proxy_presets(child_id)
+def _v156(child_id):
+    """User extra params can hold additional configs: no longer limited to 2000 characters."""
+
+    alter_column(User.extra_params)
 
 
-def _v131(child_id):
-    from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
+def _v155(child_id):
+    """Outbounds get an order (the last enabled one is the default); WARP is on only when the WARP setting uses it."""
+    from hiddifypanel.proxy_v3.outbounds import align_warp_with_setting
 
-    termination = CustomProxy.query.filter(
-        CustomProxy.child_id == Child.current().id,
-        CustomProxy.slug == REALITY_TERMINATION_SLUG,
-        CustomProxy.enable == True,
-    ).first()
+    align_warp_with_setting(child_id)
+
+
+def _v154(child_id):
+    """Outbound manager: seed WARP / Direct / Block and carry warp_mode, warp_sites and block_iran_sites over."""
+    from hiddifypanel.proxy_v3.outbounds import migrate_legacy_settings
+
+    migrate_legacy_settings(child_id)
+
+
+def _v153(child_id):
+
+    pass
+
+
+def _v150(child_id):
+    """One domain row per (node, domain name): normalize names and merge duplicates.
+
+    Overlapping node syncs could insert the same domain twice. The oldest row is kept and takes
+    over the duplicates' links; empty names (fake-mode domains) may legitimately repeat.
+    Runs once for all nodes (remote nodes are not in the per-virtual-child migration loop).
+    """
+    if child_id != 0:
+        return
+    from hiddifypanel.models.domain import Domain, normalize_domain_name
+
+    groups: dict[tuple[int, str], list[Domain]] = {}
+    for d in Domain.query.order_by(Domain.id).all():
+        groups.setdefault((d.child_id, normalize_domain_name(d.domain)), []).append(d)
+
+    merged = 0
+    for (_cid, name), rows in groups.items():
+        if not name:
+            continue
+        keep, duplicates = rows[0], rows[1:]
+        for dup in duplicates:
+            for proxy in list(dup.custom_proxies):
+                if proxy not in keep.custom_proxies:
+                    keep.custom_proxies.append(proxy)
+            for shown in list(dup.show_domains):
+                if shown is not keep and shown not in duplicates and shown not in keep.show_domains:
+                    keep.show_domains.append(shown)
+            Domain.query.filter(Domain.server_domain_id == dup.id).update({"server_domain_id": keep.id}, synchronize_session=False)
+            Domain.query.filter(Domain.download_domain_id == dup.id).update({"download_domain_id": keep.id}, synchronize_session=False)
+            db.session.delete(dup)
+            merged += 1
+        db.session.flush()
+        if keep.domain != name:
+            keep.domain = name
+    db.session.commit()
+    if merged:
+        logger.info(f"Merged {merged} duplicate domain rows")
+
+
+def _v148(child_id):
+    """xhttp proxies without a download layer stored ["direct-valid"] as download modes;
+    they follow upload, so mirror the upload modes (else they need xhttp_different_up_down_enable)."""
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyTransport
+
+    for proxy in CustomProxy.query.filter(
+        CustomProxy.child_id == child_id,
+        CustomProxy.transport == CustomProxyTransport.xhttp,
+        CustomProxy.download_tls_layer.is_(None),
+    ).all():
+        proxy.download_domain_modes = list(proxy.domain_modes or [])
+
+
+def _v146(child_id):
+    add_config_if_not_exist(ConfigEnum.xhttp_different_up_down_enable, False, child_id)
+
+
+def _v144(child_id):
+    """AdminUser inherits last_online / last_modified_time from BaseAccount (parent usage sync)."""
+
+    AdminUser.query.update({"last_modified_time": datetime.now(), "last_online": datetime.now()})
+
+
+def _v142(child_id):
+    """Cap how many IPv4/IPv6 addresses are emitted per proxy domain."""
+    add_config_if_not_exist(ConfigEnum.max_proxy_ips_per_version, 3, child_id)
+
     for d in Domain.query.filter(Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.reality).all():
-        d.custom_proxy_id = termination.id
+        d.set_custom_proxies_by_slugs([])
+
+    if core_type := hconfig(ConfigEnum.core_type, child_id):
+        if core_type == "singbox":
+            add_config_if_not_exist(ConfigEnum.common_proxy_core, "hiddify_core", child_id)
+        elif core_type == "xray":
+            add_config_if_not_exist(ConfigEnum.common_proxy_core, "xray", child_id)
+
+    add_config_if_not_exist(ConfigEnum.common_proxy_core, "both", child_id)
+
+
+def _v140(child_id):
+    set_hconfig(ConfigEnum.ssfaketls_enable, False)
+    set_hconfig(ConfigEnum.dnstt_enable, False)
+    add_config_if_not_exist(ConfigEnum.last_users_sync, "0001-01-01 00:00:00", child_id)
+    add_config_if_not_exist(ConfigEnum.node_name, f"{socket.gethostname()}-{hashlib.sha256(hconfig(ConfigEnum.unique_id).encode()).hexdigest()[:4]}", child_id)
+
+    execute("UPDATE user SET deleted=0 WHERE deleted IS NULL")
+
+    """Add user.last_modified_time and bump it from add_usage_json."""
+    execute("UPDATE user SET last_modified_time=COALESCE(last_online, NOW()) WHERE last_modified_time IS NULL OR last_modified_time < '1971-01-01'")
+
+    add_usage_proc = """
+DROP PROCEDURE IF EXISTS add_usage_json;
+
+CREATE PROCEDURE add_usage_json(IN usage_data JSON, IN cur_time DATETIME)
+BEGIN
+  DECLARE u_id INT DEFAULT NULL;
+  DECLARE u_uuid CHAR(36) DEFAULT NULL;
+  DECLARE u_usage BIGINT;
+  DECLARE done BOOL DEFAULT FALSE;
+  DECLARE cur_date DATE;
+
+
+  DECLARE cur CURSOR FOR
+    SELECT  jt.uuid, jt.usage FROM JSON_TABLE(
+      usage_data, '$[*]' COLUMNS (
+        uuid CHAR(36) PATH '$.uuid', `usage` BIGINT PATH '$.usage')) AS jt;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  SET cur_date = DATE(cur_time);
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO  u_uuid, u_usage;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+
+    UPDATE `user`
+    SET current_usage = current_usage + u_usage,
+        last_online = cur_time,
+        last_modified_time = cur_time,
+        start_date = CASE WHEN start_date IS NULL THEN cur_date ELSE start_date END
+    WHERE uuid = u_uuid;
+
+
+    COMMIT;
+  END LOOP;
+
+  CLOSE cur;
+END
+    """
+    db_execute(add_usage_proc, commit=True)
+    import secrets
+
+    add_config_if_not_exist(ConfigEnum.master_dns_encrypt_key, secrets.token_hex(32))
+
+
+def _v133(child_id):
+    set_hconfig(ConfigEnum.vless_flow, value="xtls-rprx-vision")
+    vless_encryption, vless_decryption = hutils.crypto.vless_encryption_decryption(quantum=False)
+    set_hconfig(ConfigEnum.vless_encryption, vless_encryption)
+    set_hconfig(ConfigEnum.vless_decryption, vless_decryption)
 
 
 def _v130(child_id):
     """Fresh proxy catalog, TLS store, and server IPs (WIP — no incremental migrations)."""
+    import secrets
 
     add_config_if_not_exist(ConfigEnum.anytls_enable, True)
     add_config_if_not_exist(ConfigEnum.dnstt_enable, True)
+    add_config_if_not_exist(ConfigEnum.master_dns_encrypt_key, secrets.token_hex(32))
     add_config_if_not_exist(ConfigEnum.path_vless, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_vmess, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_trojan, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_ss, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_grpc, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_tcp, hutils.random.get_random_string(7, 15))
+    add_config_if_not_exist(ConfigEnum.path_http, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_ws, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.path_xhttp, hutils.random.get_random_string(7, 15))
@@ -89,6 +237,7 @@ def _v130(child_id):
     add_config_if_not_exist(ConfigEnum.mieru_enable, True)
     add_config_if_not_exist(ConfigEnum.snell_enable, True)
     add_config_if_not_exist(ConfigEnum.socks_enable, True)
+    add_config_if_not_exist(ConfigEnum.common_proxy_core, "both")
     if not hconfig(ConfigEnum.mieru_tcp_ports):
         _p = hutils.random.get_random_unused_port() or 30000
         add_config_if_not_exist(ConfigEnum.mieru_tcp_ports, ",".join(str(_p + i) for i in range(4)))
@@ -110,7 +259,7 @@ def _v130(child_id):
         add_config_if_not_exist(ConfigEnum.ssh_host_ecdsa_pub, keys["ecdsa"]["pub"])
 
     seed_proxy_catalog(child_id, refresh_builtin_base_configs=True)
-    sync_builtin_custom_proxy_presets(child_id)
+    sync_builtin_presets(child_id)
     try:
         sync_tls_store_all(child_id)
     except Exception as exc:
@@ -256,7 +405,7 @@ def _v111(child_id):
 
 
 def _v108(child_id):
-    Domain.query.filter(Domain.mode == DomainType.auto_cdn_ip).update({"mode": "cdn", "resolve_ip": True})
+    Domain.query.filter(Domain.mode == "auto_cdn_ip").update({"mode": "cdn", "resolve_ip": True})
 
 
 def _v107(child_id):
@@ -273,52 +422,6 @@ def _v106(child_id):
     set_hconfig(ConfigEnum.default_useragent_string, hutils.network.get_random_user_agent())
     set_hconfig(ConfigEnum.h2_enable, False)
     # db.session.bulk_save_objects(get_proxy_rows_v1())
-
-
-def _v103(child_id):
-
-    add_usage_proc = """
-DROP PROCEDURE IF EXISTS add_usage_json;
-
-CREATE PROCEDURE add_usage_json(IN usage_data JSON, IN cur_time DATETIME)
-BEGIN
-  DECLARE u_id INT DEFAULT NULL;
-  DECLARE u_uuid CHAR(36) DEFAULT NULL;
-  DECLARE u_usage BIGINT;
-  DECLARE done BOOL DEFAULT FALSE;
-  DECLARE cur_date DATE;
-
-
-  DECLARE cur CURSOR FOR
-    SELECT  jt.uuid, jt.usage FROM JSON_TABLE(
-      usage_data, '$[*]' COLUMNS (
-        uuid CHAR(36) PATH '$.uuid', `usage` BIGINT PATH '$.usage')) AS jt;
-
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-  SET cur_date = DATE(cur_time);
-  OPEN cur;
-
-  read_loop: LOOP
-    FETCH cur INTO  u_uuid, u_usage;
-    IF done THEN
-      LEAVE read_loop;
-    END IF;
-
-    
-    UPDATE `user`
-    SET current_usage = current_usage + u_usage, last_online = cur_time, start_date = CASE WHEN start_date IS NULL THEN cur_date ELSE start_date END
-    WHERE uuid = u_uuid;
-
-
-    COMMIT;
-  END LOOP;
-
-  CLOSE cur;
-END
-
-    """
-
-    db_execute(add_usage_proc, commit=True)
 
 
 def _v101(child_id):
@@ -428,9 +531,9 @@ def _v82(child_id):
     set_hconfig(ConfigEnum.h2_enable, True)
 
 
-def _v80(child_id):
-    set_hconfig(ConfigEnum.parent_domain, "")
-    set_hconfig(ConfigEnum.parent_admin_proxy_path, "")
+# def _v80(child_id):
+#     set_hconfig(ConfigEnum.parent_domain, "")
+#     set_hconfig(ConfigEnum.parent_admin_proxy_path, "")
 
 
 def _v79(child_id):
@@ -462,12 +565,7 @@ def _v74(child_id):
     set_hconfig(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     # db.session.bulk_save_objects(get_proxy_rows_v1())
 
-    for i in range(1, 10):
-        for d in hutils.network.get_random_domains(50):
-            if hutils.network.is_domain_reality_friendly(d):
-                set_hconfig(ConfigEnum.shadowtls_fakedomain, d)
-                return
-    set_hconfig(ConfigEnum.shadowtls_fakedomain, "captive.apple.com")
+    set_hconfig(ConfigEnum.shadowtls_fakedomain, hutils.network.pick_reality_friendly_domain("captive.apple.com"))
 
 
 def _v71(child_id):
@@ -687,14 +785,9 @@ def _v31():
             )
         )
         execute("update admin_user set id=1 where name='owner'")
-    for i in range(1, 10):
-        for d in hutils.network.get_random_domains(50):
-            if hutils.network.is_domain_reality_friendly(d):
-                add_config_if_not_exist(ConfigEnum.reality_fallback_domain, d)
-                add_config_if_not_exist(ConfigEnum.reality_server_names, d)
-                return
-    add_config_if_not_exist(ConfigEnum.reality_fallback_domain, "yahoo.com")
-    add_config_if_not_exist(ConfigEnum.reality_server_names, "yahoo.com")
+    reality_domain = hutils.network.pick_reality_friendly_domain("yahoo.com")
+    add_config_if_not_exist(ConfigEnum.reality_fallback_domain, reality_domain)
+    add_config_if_not_exist(ConfigEnum.reality_server_names, reality_domain)
 
     # add_config_if_not_exist(ConfigEnum.cloudflare, "")
 
@@ -769,7 +862,7 @@ def _v19():
 
 def _v1():
     external_ip = str(hutils.network.get_ip_str(4))
-    rnd_domains = hutils.network.get_random_domains(5)
+    # rnd_domains = hutils.network.get_random_domains(5)
 
     data = [
         StrConfig(key=ConfigEnum.db_version, value=1),
@@ -957,7 +1050,7 @@ def add_config_if_not_exist(key: "ConfigEnum", val: str | int, child_id: int | N
 
     old_val = hconfig(key, child_id)
     if old_val is None:
-        set_hconfig(key, val)
+        set_hconfig(key, val, child_id)
 
 
 def add_column(column):
@@ -1005,37 +1098,118 @@ def _config_enum_key_names(*, bool_only: bool | None = None) -> list[str]:
 
 def _enum_column_values(col) -> list[str]:
     enum_class = col.type.enum_class
-    table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
-    if table_name == "bool_config" and col.name == "key":
-        return _config_enum_key_names(bool_only=True)
-    if table_name == "str_config" and col.name == "key":
-        return _config_enum_key_names(bool_only=False)
-    return [e.value for e in enum_class]
+    # table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
+    # if table_name == "bool_config" and col.name == "key":
+    #     return _config_enum_key_names(bool_only=True)
+    # if table_name == "str_config" and col.name == "key":
+    #     return _config_enum_key_names(bool_only=False)
+    # SQLAlchemy Enum(PEP435) persists member *names* (e.g. hiddify_core), not values
+    # (hiddify-core). Prefer the dialect enums list so MySQL stays in sync.
+    if getattr(col.type, "enums", None):
+        return list(col.type.enums)
+    return [e.name for e in enum_class]
 
 
-def add_new_enum_values():
-    from hiddifypanel.models.custom_proxy import CustomProxy
+from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyClientCore
 
-    columns = [
-        Proxy.l3,
-        Proxy.proto,
-        Proxy.cdn,
-        Proxy.transport,
-        User.mode,
-        Domain.mode,
-        Domain.fake_mode,
-        BoolConfig.key,
-        StrConfig.key,
-        ProxyTemplate.category,
-        CustomProxy.mode,
-        CustomProxy.proto,
-    ]
+enum_columns = [
+    Proxy.l3,
+    Proxy.proto,
+    Proxy.cdn,
+    Proxy.transport,
+    User.mode,
+    Domain.mode,
+    Domain.fake_mode,
+    BoolConfig.key,
+    StrConfig.key,
+    ProxyTemplate.category,
+    ProxyTemplate.core,
+    CustomProxy.mode,
+    CustomProxy.proto,
+    CustomProxy.transport,
+    CustomProxy.tls_layer,
+    CustomProxy.download_tls_layer,
+    CustomProxy.server_core,
+    CustomProxyClientCore.core,
+]
+
+# Tables where DELETE of legacy enum rows is unsafe (FK / data loss). Remap instead.
+_ENUM_REMAP_ONLY_TABLES = frozenset({"domain", "user", "proxy", "custom_proxy", "custom_proxy_client_core"})
+
+# Known legacy Domain.mode values → current DomainType (side effects applied in _remap_legacy_domain_modes).
+_LEGACY_DOMAIN_MODE_REMAP = {
+    "old_xtls_direct": "direct",
+    "auto_cdn_ip": "cdn",
+    "special": "direct",
+    "dnstt": "direct",
+    "fake": "direct",
+    "reality": "direct",
+    "special_reality_tcp": "direct",
+    "special_reality_grpc": "direct",
+    "special_reality_xhttp": "direct",
+    "special_reality": "direct",
+}
+
+# Simple old→new maps for other columns (applied before shrinking ENUM).
+_LEGACY_ENUM_REMAPS: dict[tuple[str, str], dict[str, str]] = {
+    ("domain", "mode"): dict(_LEGACY_DOMAIN_MODE_REMAP),
+    ("proxy", "proto"): {"ss": "shadowsocks"},
+    ("user", "mode"): {"disable": "no_reset"},
+}
+
+
+def _db_enum_values(table_name: str, column_name: str) -> list[str]:
     from sqlalchemy import text
 
-    for col in columns:
+    result = db.session.execute(text(f"SHOW COLUMNS FROM `{table_name}` LIKE '{column_name}'")).fetchall()
+    db_values: list[str] = []
+    for row in result:
+        if "enum" in str(row[1]).lower():
+            db_values = row[1].split("(", 1)[1].rsplit(")", 1)[0].split(",")
+            break
+    return [value.strip().strip("'") for value in db_values if value.strip()]
+
+
+def _remap_legacy_domain_modes() -> None:
+    """Convert removed Domain.mode values in-place (never DELETE domain rows)."""
+    # Side-effect remaps first (must run while MySQL ENUM still accepts legacy labels).
+    execute("UPDATE domain SET mode='cdn', resolve_ip=1 WHERE mode='auto_cdn_ip'")
+    execute("UPDATE domain SET mode='direct', fake_mode='reality' WHERE mode='special'")
+    execute("UPDATE domain SET mode='direct', fake_mode='dns' WHERE mode='dnstt'")
+    execute("UPDATE domain SET mode='direct' WHERE mode='old_xtls_direct'")
+    execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
+    execute(
+        """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
+        'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'
+        )"""
+    )
+    execute("UPDATE domain SET fake_mode='valid' WHERE mode IN ('cdn','worker','sub_link_only') AND (fake_mode IS NULL OR fake_mode='')")
+
+
+def _default_enum_fallback(table_name: str, column_name: str, current_values: list[str]) -> str:
+    defaults = {
+        ("domain", "mode"): "direct",
+        ("domain", "fake_mode"): "valid",
+        ("user", "mode"): "no_reset",
+        ("proxy", "proto"): "vless",
+        ("proxy", "cdn"): "direct",
+        ("proxy", "transport"): "tcp",
+        ("proxy", "l3"): "tls",
+    }
+    preferred = defaults.get((table_name, column_name))
+    if preferred and preferred in current_values:
+        return preferred
+    return current_values[0]
+
+
+def remove_old_enum_values():
+
+    from sqlalchemy import text
+
+    for col in enum_columns:
         column_name = col.name
         table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
-        existing_values = _enum_column_values(col)
+        current_values = _enum_column_values(col)
 
         result = db.session.execute(text(f"SHOW COLUMNS FROM {table_name} LIKE '{column_name}';")).fetchall()
         db_values: list[str] = []
@@ -1046,11 +1220,34 @@ def add_new_enum_values():
                 break
         db_values = [value.strip().strip("'") for value in db_values if value.strip()]
 
-        new_values = set(existing_values) - set(db_values)
+        if should_removed := set(db_values) - set(current_values):
+            logger.info(f"Removing enum {table_name}.{column_name}: {should_removed}")
+            db_execute_ddl(f"DELETE FROM `{table_name}` WHERE `{column_name}` IN ({','.join([f"'{a}'" for a in should_removed])})")
+
+
+def add_new_enum_values():
+
+    from sqlalchemy import text
+
+    for col in enum_columns:
+        column_name = col.name
+        table_name = col.table.name if hasattr(col.table, "name") else str(col.table)
+        current_values = _enum_column_values(col)
+
+        result = db.session.execute(text(f"SHOW COLUMNS FROM {table_name} LIKE '{column_name}';")).fetchall()
+        db_values: list[str] = []
+
+        for row in result:
+            if "enum" in str(row[1]).lower():
+                db_values = row[1].split("(", 1)[1].rsplit(")", 1)[0].split(",")
+                break
+        db_values = [value.strip().strip("'") for value in db_values if value.strip()]
+
+        new_values = set(current_values) - set(db_values)
         if not new_values:
             continue
 
-        merged = sorted(set(db_values) | set(existing_values))
+        merged = sorted(set(db_values) | set(current_values))
         enumstr = ",".join([f"'{a}'" for a in merged])
         logger.info("Expanding enum {}.{} (+{})", table_name, column_name, ",".join(sorted(new_values)))
         db_execute_ddl(f"ALTER TABLE {table_name} MODIFY COLUMN `{column_name}` ENUM({enumstr});")
@@ -1071,7 +1268,8 @@ def is_db_latest() -> bool:
 
 
 def latest_db_version():
-    for ver in range(MAX_DB_VERSION, 1, -1):
+    # Scan above MAX_DB_VERSION too, so a new _vN without a bump still counts.
+    for ver in range(MAX_DB_VERSION + 50, 1, -1):
         db_action = sys.modules[__name__].__dict__.get(f"_v{ver}", None)
         if db_action:
             return ver
@@ -1079,7 +1277,7 @@ def latest_db_version():
 
 
 def upgrade_database():
-    panel_root = "/opt/hiddify-manager/services/hiddify-panel/"
+    panel_root = "/opt/hiddify-manager/services/panel/"
     backup_root = f"{panel_root}backup/"
     sqlite_db = f"{panel_root}hiddifypanel.db"
     if not os.path.isdir(backup_root) or len(os.listdir(backup_root)) == 0:
@@ -1116,19 +1314,15 @@ def upgrade_database():
 
 
 def init_db():
+
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
+    # set_hconfig(ConfigEnum.db_version, 140, commit=True)
     db_version = current_db_version()
-    if db_version == latest_db_version():
+    if db_version >= latest_db_version():
         return
 
     db.create_all()
-
-    # temporary fix
-    add_column(Child.mode)
-    add_column(Child.name)
-
-    from flask import g
 
     cache.invalidate_all_cached_functions()
     migrate(db_version)
@@ -1136,7 +1330,7 @@ def init_db():
     child = Child.by_id(0)
     if child is None:
         tmp_uuid = str(uuid.uuid4())
-        db.session.add(Child(id=0, unique_id=tmp_uuid, name="Root"))
+        db.session.add(Child(id=0, unique_id=tmp_uuid, name="Root", node_base_url=""))
         db.session.commit()
         db_execute(f"update child set id=0 where unique_id='{tmp_uuid}'", commit=True)
         child = Child.by_id(0)
@@ -1152,7 +1346,7 @@ def init_db():
         db_version = int(hconfig(ConfigEnum.db_version, child.id) or 0)
         start_version = db_version
 
-        for ver in range(1, MAX_DB_VERSION + 1):
+        for ver in range(1, latest_db_version() + 1):
             if ver <= db_version:
                 continue
 
@@ -1178,19 +1372,33 @@ def init_db():
 
         db.session.commit()
     g.child = Child.by_id(0)
+
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import sync_all
+
+    sync_all(0)
     return BoolConfig.query.all()
 
 
 def migrate(db_version):
+
     for table_name, table_obj in db.metadata.tables.items():
         for column in table_obj.columns:
             add_column(column)
 
     add_new_enum_values()
+    if db_version < 161:
+        # The outbound table lost its child_id (a NOT NULL foreign key the model no longer fills).
+        execute("ALTER TABLE outbound DROP FOREIGN KEY outbound_ibfk_1")
+        execute("ALTER TABLE outbound DROP COLUMN child_id")
     execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
     Events.db_prehook.notify()
     # execute("UPDATE custom_proxy SET proto='shadowsocks' WHERE proto='ss'")
     # execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
+    if db_version < 142:
+        _remap_legacy_domain_modes()
+        db.session.commit()
+        execute("ALTER TABLE domain DROP COLUMN sub_link_only;")
+
     if db_version < 100:
         execute('update str_config set `key`="xhttp_enable" where `key`="splithttp_enable";')
         execute('update str_config set `key`="path_xhttp" where `key`="path_splithttp";')
@@ -1290,9 +1498,8 @@ def migrate(db_version):
         execute("update domain set sub_link_only=False where sub_link_only is NULL")
         execute("update proxy set child_id=0 where child_id is NULL")
     if db_version < 130:
-        from hiddifypanel.models.domain import FakeMode
-
         execute("UPDATE domain SET fake_mode='fake', mode='direct' WHERE mode='fake'")
+        execute("UPDATE child SET node_base_url=''")
         execute(
             """UPDATE domain SET fake_mode='reality', mode='direct' WHERE mode IN (
             'reality','special_reality_tcp','special_reality_grpc','special_reality_xhttp','special_reality'
@@ -1300,13 +1507,10 @@ def migrate(db_version):
         )
         execute("UPDATE domain SET fake_mode='valid' WHERE fake_mode IS NULL OR fake_mode=''")
 
-        Domain.query.filter(Domain.mode.in_([DomainType.cdn, DomainType.auto_cdn_ip, DomainType.worker, DomainType.sub_link_only])).update(  # noqa: E712
-            {"fake_mode": FakeMode.valid},
-            synchronize_session=False,
-        )
-        db.session.commit()
+        execute("UPDATE domain SET fake_mode='valid' WHERE mode IN ('cdn','auto_cdn_ip','worker','sub_link_only')")
+    db.session.commit()
 
-    add_new_enum_values()
+    remove_old_enum_values()
 
     AdminUser.get_super_admin()  # to create super admin if not exist
 

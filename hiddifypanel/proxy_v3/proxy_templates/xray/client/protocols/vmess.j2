@@ -1,0 +1,12 @@
+"protocol": "vmess",
+"settings": {
+  "vnext": [{
+    "address": "{{ ctx.proxy.server }}",
+    "port": {{ ctx.proxy.port }},
+    "users": [{
+      "id": "{{ ctx.user.uuid }}",
+      "security": "auto",
+      "level": 8
+    }]
+  }]
+}

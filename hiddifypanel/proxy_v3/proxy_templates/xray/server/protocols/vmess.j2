@@ -1,0 +1,12 @@
+"protocol": "vmess",
+"settings": {
+  "clients": [
+    {% for u in ctx.users %}
+    {
+      "id": "{{ u.uuid }}",
+      "email": "{{ u.uuid }}",
+      "alterId": 0
+    },
+    {% endfor %}
+  ]
+}
