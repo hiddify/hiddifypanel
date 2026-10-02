@@ -2,7 +2,7 @@
 {"tag": "direct", "protocol": "freedom"},
 {"tag": "WARP", "protocol": "freedom", "streamSettings": {"sockopt": {"tcpFastOpen": true, "interface": "warp"}}},
 {"tag": "blackhole", "protocol": "blackhole"},
-{# SOCKS / Tor / Psiphon outbounds from the Outbound manager #}
+{# SOCKS outbounds from the Outbound manager; Tor / Psiphon (run by hiddify-core) are reached on its local SOCKS inbounds #}
 {% for o in ctx.outbounds.custom %}
 {
   "tag": "{{ o.xray_tag }}",

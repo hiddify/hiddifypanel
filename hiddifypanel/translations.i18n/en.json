@@ -1291,8 +1291,8 @@
         "editTitle": "Edit {name}",
         "endpoint": "Connection",
         "endpointHint": {
-          "psiphon": "Connects to the Psiphon SOCKS port on this server ({endpoint}); the Psiphon client must be running there.",
-          "tor": "Connects to the Tor SOCKS port on this server ({endpoint}); the Tor service must be running there."
+          "psiphon": "Runs inside hiddify-core. xray reaches it on the local SOCKS port {endpoint}.",
+          "tor": "Runs inside hiddify-core (the `tor` program must be installed on this server). xray reaches it on the local SOCKS port {endpoint}."
         },
         "host": "Host",
         "name": "Name",
@@ -1341,9 +1341,9 @@
       "modeHint": {
         "block": "Dropped",
         "direct": "Straight from this server",
-        "psiphon": "Through Psiphon (a Psiphon SOCKS port)",
+        "psiphon": "Through Psiphon (run by hiddify-core)",
         "socks": "Through a SOCKS5 proxy",
-        "tor": "Through the Tor network (a Tor SOCKS port)",
+        "tor": "Through the Tor network (run by hiddify-core)",
         "warp": "Through Cloudflare WARP on this server"
       },
       "more": "More actions",

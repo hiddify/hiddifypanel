@@ -32,4 +32,13 @@
         },
         {% endfor %}
     ]
-}
+},
+{# One local SOCKS inbound per Tor / Psiphon outbound that is on: xray routes into them, they route to the outbound #}
+{% for o in ctx.outbounds.native %}
+{
+    "type": "socks",
+    "tag": "in-{{ o.singbox_tag }}",
+    "listen": "127.0.0.1",
+    "listen_port": {{ o.port }}
+},
+{% endfor %}

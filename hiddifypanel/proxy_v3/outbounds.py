@@ -522,6 +522,8 @@ class OutboundVar(BaseModel):
     singbox_tag: str
     #: Whether templates must declare an outbound for it (SOCKS-based ones; the others are static).
     custom: bool
+    #: Tor / Psiphon: run by hiddify-core itself, which also opens a local SOCKS inbound (host / port) for xray.
+    native: bool = False
     host: str = ""
     port: int = 0
     username: str = ""
@@ -565,6 +567,16 @@ class OutboundsVar(BaseModel):
         return [o for o in self.items if o.custom]
 
     @property
+    def custom_socks(self) -> list[OutboundVar]:
+        """Outbounds that are plain SOCKS servers (the admin's own)."""
+        return [o for o in self.items if o.custom and not o.native]
+
+    @property
+    def native(self) -> list[OutboundVar]:
+        """Tor / Psiphon outbounds hiddify-core runs; only the enabled ones are here."""
+        return [o for o in self.items if o.native]
+
+    @property
     def rule_sets(self) -> list[RuleSetVar]:
         """Every rule-set any outbound uses, once."""
         seen: dict[str, RuleSetVar] = {}
@@ -595,6 +607,16 @@ def _tags(row: Outbound, warp_available: bool) -> tuple[str, str]:
             return f"socks-{row.id}", f"socks-{row.id}"
         case _:
             return str(row.mode), str(row.mode)
+
+
+NATIVE_MODES = (OutboundMode.tor, OutboundMode.psiphon)
+
+
+def tor_available() -> bool:
+    """hiddify-core starts the ``tor`` program itself; without it the whole core would refuse to start."""
+    import shutil
+
+    return shutil.which("tor") is not None
 
 
 def preferred_outbound_id(extra: dict[str, Any]) -> int | None:
@@ -669,6 +691,9 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
 
     # In the admin's order; the last enabled one is the default (route final).
     rows = [r for r in ordered_rows(child_id) if r.enabled]
+    if not tor_available() and any(r.mode == OutboundMode.tor for r in rows):
+        logger.warning("The Tor outbound is on but the `tor` program is not installed: it is left out of the configs")
+        rows = [r for r in rows if r.mode != OutboundMode.tor]
     default = rows[-1] if rows and rows[-1].mode != OutboundMode.block else None
 
     items: list[OutboundVar] = []
@@ -698,6 +723,7 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
                 xray_tag=xray_tag,
                 singbox_tag=singbox_tag,
                 custom=row.mode in ENDPOINT_MODES,
+                native=row.mode in NATIVE_MODES,
                 # Tor / Psiphon: always their local port from the defaults file.
                 host=(row.host if configurable and row.host else str(endpoint.get("host") or "")),
                 port=int((row.port if configurable and row.port else endpoint.get("port")) or 0),

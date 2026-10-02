@@ -110,8 +110,10 @@ domestic:
       - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ru.srs
       - https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-ru.srs
 
-# Default local endpoints offered when adding these outbounds (the service must be running there).
+# Local SOCKS endpoints of these outbounds (SOCKS: the default offered when adding one).
 endpoints:
-  psiphon: {host: 127.0.0.1, port: 1080}
-  tor: {host: 127.0.0.1, port: 9050}
+  # Tor and Psiphon run inside hiddify-core, which listens on these local SOCKS ports for them;
+  # xray's routing connects to the same ports (hiddify-core itself uses the outbound directly).
+  psiphon: {host: 127.0.0.1, port: 2003}
+  tor: {host: 127.0.0.1, port: 2004}
   socks: {host: 127.0.0.1, port: 1080}

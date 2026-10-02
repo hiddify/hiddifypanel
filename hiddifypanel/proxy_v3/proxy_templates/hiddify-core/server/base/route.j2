@@ -15,6 +15,10 @@
   "final": "{{ ctx.outbounds.default_singbox_tag }}",
   "rules": [
     {"action": "sniff"},
+    {# Traffic xray sends into a Tor / Psiphon SOCKS inbound leaves through that outbound #}
+    {% for o in ctx.outbounds.native %}
+    {"inbound": ["in-{{ o.singbox_tag }}"], "outbound": {{ o.singbox_tag|tojson }}},
+    {% endfor %}
     {
       "action": "hijack-dns",
       "port": [53]

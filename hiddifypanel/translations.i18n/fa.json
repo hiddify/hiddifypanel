@@ -1293,8 +1293,8 @@
         "editTitle": "ویرایش {name}",
         "endpoint": "اتصال",
         "endpointHint": {
-          "psiphon": "به پورت SOCKS سایفون روی این سرور ({endpoint}) وصل می‌شود؛ کلاینت Psiphon باید آنجا در حال اجرا باشد.",
-          "tor": "به پورت SOCKS تور روی این سرور ({endpoint}) وصل می‌شود؛ سرویس Tor باید آنجا در حال اجرا باشد."
+          "psiphon": "داخل hiddify-core اجرا می‌شود. xray از طریق پورت SOCKS محلی {endpoint} به آن وصل می‌شود.",
+          "tor": "داخل hiddify-core اجرا می‌شود (برنامه‌ی `tor` باید روی این سرور نصب باشد). xray از طریق پورت SOCKS محلی {endpoint} به آن وصل می‌شود."
         },
         "host": "میزبان",
         "name": "نام",
@@ -1343,9 +1343,9 @@
       "modeHint": {
         "block": "مسدود می‌شود",
         "direct": "مستقیم از این سرور",
-        "psiphon": "از Psiphon (یک پورت SOCKS سایفون)",
+        "psiphon": "از Psiphon (اجرا توسط hiddify-core)",
         "socks": "از یک پروکسی SOCKS5",
-        "tor": "از شبکهٔ Tor (یک پورت SOCKS تور)",
+        "tor": "از شبکهٔ Tor (اجرا توسط hiddify-core)",
         "warp": "از Cloudflare WARP روی این سرور"
       },
       "more": "کارهای بیشتر",
