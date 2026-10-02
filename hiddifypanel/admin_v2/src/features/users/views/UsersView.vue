@@ -60,7 +60,7 @@
           <Button size="small" icon="pi pi-ban" :label="t('users.bulk.disable')" severity="secondary" outlined @click="bulk('disable')" />
           <Button size="small" icon="pi pi-refresh" :label="t('users.bulk.reset_usage')" severity="secondary" outlined @click="bulk('reset_usage')" />
           <Button size="small" icon="pi pi-replay" :label="t('users.bulk.reset_days')" severity="secondary" outlined @click="bulk('reset_days')" />
-          <Button size="small" icon="pi pi-calendar-plus" :label="t('users.bulk.add_days')" severity="secondary" outlined @click="bulk('add_days')" />
+          <Button size="small" icon="pi pi-plus-circle" :label="t('users.bulk.add_limits')" severity="secondary" outlined @click="openAddLimits" />
           <Button size="small" icon="pi pi-tag" :label="t('tags.bulk')" severity="secondary" outlined aria-haspopup="dialog" @click="bulkTagPop?.toggle($event)" />
           <Button size="small" icon="pi pi-trash" :label="t('common.delete')" severity="danger" outlined @click="bulk('delete')" />
           <Button size="small" icon="pi pi-times" text severity="secondary" :aria-label="t('users.clearSelection')" @click="selected = []" />
@@ -240,6 +240,26 @@
     </div>
 
     <Menu ref="rowMenu" :model="menuItems" popup />
+
+    <!-- Add limits: data and days on top of what the selected users have -->
+    <Dialog v-model:visible="limitsVisible" modal :draggable="false" :header="t('users.addLimits.title', { n: selected.length }, selected.length)" :style="{ width: '24rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
+      <p class="al-hint">{{ t('users.addLimits.hint') }}</p>
+      <form class="al-form" @submit.prevent="applyLimits">
+        <div class="al-field">
+          <label for="al-gb" class="font-medium">{{ t('users.addLimits.gb') }}</label>
+          <InputNumber v-model="limitsGb" input-id="al-gb" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" suffix=" GB" fluid autofocus />
+        </div>
+        <div class="al-field">
+          <label for="al-days" class="font-medium">{{ t('users.addLimits.days') }}</label>
+          <InputNumber v-model="limitsDays" input-id="al-days" :min="0" :max="3650" :suffix="` ${t('users.form.daysUnit')}`" fluid />
+        </div>
+        <small class="al-note">{{ t('users.addLimits.note') }}</small>
+      </form>
+      <template #footer>
+        <Button :label="t('common.cancel')" severity="secondary" text @click="limitsVisible = false" />
+        <Button icon="pi pi-plus-circle" :label="t('users.addLimits.apply')" :loading="limitsBusy" :disabled="!limitsGb && !limitsDays" @click="applyLimits" />
+      </template>
+    </Dialog>
     <Popover ref="bulkTagPop" append-to="body">
       <TagPicker :selected="bulkTagState.all" :partial="bulkTagState.some" :title="t('tags.bulk')" :hint="t('tags.bulkHint')" @toggle="bulkTag" @create="(id: number) => bulkTag(id, true)" />
     </Popover>
@@ -263,6 +283,7 @@ import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
+import Dialog from 'primevue/dialog'
 import DataTable, { type DataTableCellEditCompleteEvent, type DataTableSortEvent } from 'primevue/datatable'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
@@ -643,6 +664,31 @@ function confirmDelete(u: UserRow) {
   })
 }
 
+// "Add limits": data and days added to every selected user (10 GB and 7 days to start with).
+const limitsVisible = ref(false)
+const limitsGb = ref<number | null>(10)
+const limitsDays = ref<number | null>(7)
+const limitsBusy = ref(false)
+function openAddLimits() {
+  limitsGb.value = 10
+  limitsDays.value = 7
+  limitsVisible.value = true
+}
+async function applyLimits() {
+  if ((!limitsGb.value && !limitsDays.value) || limitsBusy.value) return
+  limitsBusy.value = true
+  try {
+    const count = await usersApi.bulk('add_limits', selected.value.map((u) => u.uuid), limitsDays.value ?? 0, limitsGb.value ?? 0)
+    toast.add({ severity: 'success', summary: t('users.bulkDone.add_limits', { n: count }, count), life: 3000 })
+    limitsVisible.value = false
+    await load(true)
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    limitsBusy.value = false
+  }
+}
+
 function bulk(action: BulkAction) {
   const uuids = selected.value.map((u) => u.uuid)
   const n = uuids.length
@@ -917,6 +963,24 @@ onBeforeUnmount(() => {
 }
 
 /* Name cell: name + link button, note below */
+.al-hint,
+.al-note {
+  color: var(--p-text-muted-color);
+}
+.al-hint {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+}
+.al-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.al-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
 .u-who {
   /* The note sits beside the name when there is room, and wraps under it when there is not */
   display: flex;

@@ -76,7 +76,7 @@ export interface UserPayload {
   reset_days?: boolean
 }
 
-export type BulkAction = 'enable' | 'disable' | 'delete' | 'reset_usage' | 'reset_days' | 'add_days'
+export type BulkAction = 'enable' | 'disable' | 'delete' | 'reset_usage' | 'reset_days' | 'add_days' | 'add_limits'
 
 export const usersApi = {
   async list(): Promise<UsersState> {
@@ -98,8 +98,8 @@ export const usersApi = {
   async remove(uuid: string): Promise<void> {
     await getHttp().delete(`users/${uuid}/`)
   },
-  async bulk(action: BulkAction, uuids: string[], days?: number): Promise<number> {
-    const { data } = await getHttp().post<{ count: number }>('users/bulk/', { action, uuids, days })
+  async bulk(action: BulkAction, uuids: string[], days?: number, gb?: number): Promise<number> {
+    const { data } = await getHttp().post<{ count: number }>('users/bulk/', { action, uuids, days, gb })
     return data.count
   },
 }

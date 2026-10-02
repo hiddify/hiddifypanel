@@ -1870,7 +1870,8 @@
         "disable": "Disable",
         "enable": "Enable",
         "reset_days": "Reset days",
-        "reset_usage": "Reset usage"
+        "reset_usage": "Reset usage",
+        "add_limits": "Add limits"
       },
       "bulkConfirm": {
         "delete": "Delete {n} user? | Delete {n} users?",
@@ -1890,7 +1891,8 @@
         "disable": "{n} user disabled | {n} users disabled",
         "enable": "{n} user enabled | {n} users enabled",
         "reset_days": "Days reset for {n} user | Days reset for {n} users",
-        "reset_usage": "Usage reset for {n} user | Usage reset for {n} users"
+        "reset_usage": "Usage reset for {n} user | Usage reset for {n} users",
+        "add_limits": "Limits added to {n} user | Limits added to {n} users"
       },
       "clearSearch": "Clear search",
       "clearSelection": "Clear selection",
@@ -2082,7 +2084,15 @@
         "no_data": "Used all of the usage limit"
       },
       "subtitle": "Everyone who connects through this panel: their data, time left and links.",
-      "title": "Users"
+      "title": "Users",
+      "addLimits": {
+        "title": "Add limits to {n} user | Add limits to {n} users",
+        "hint": "Data and days are added on top of what each user already has.",
+        "gb": "Data to add",
+        "days": "Days to add",
+        "note": "Users with unlimited data or days stay unlimited. Leave one at 0 to add only the other.",
+        "apply": "Add"
+      }
     },
     "utils": {
       "addQuery": "Add query",

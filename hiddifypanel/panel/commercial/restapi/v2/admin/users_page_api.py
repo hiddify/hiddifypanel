@@ -304,14 +304,14 @@ class UserPageApi(MethodView):
         return {"status": 200, "msg": "ok"}
 
 
-BULK_ACTIONS = ("enable", "disable", "delete", "reset_usage", "reset_days", "add_days")
+BULK_ACTIONS = ("enable", "disable", "delete", "reset_usage", "reset_days", "add_days", "add_limits")
 
 
 class UsersBulkApi(MethodView):
     decorators = [login_required(ALL_ROLES)]
 
     def post(self):
-        """Users page: one action on many users (enable, disable, delete, reset usage, reset days, add days)"""
+        """Users page: one action on many users (enable, disable, delete, reset usage, reset days, add days, add limits)"""
         body = request.get_json(silent=True) or {}
         action = str(body.get("action") or "")
         if action not in BULK_ACTIONS:
@@ -330,6 +330,13 @@ class UsersBulkApi(MethodView):
             hutils.node.parent.notify_childs_users_changed()
             return {"count": len(users)}
         days = _number(body, "days", low=1, high=3650, integer=True) if action == "add_days" else 0
+        add_gb = 0.0
+        if action == "add_limits":
+            # Data and / or days on top of what each user has; at least one of them.
+            add_gb = _number({"gb": body.get("gb") or 0}, "gb", low=0, high=MAX_USAGE_GB, integer=False)
+            days = _number({"days": body.get("days") or 0}, "days", low=0, high=3650, integer=True)
+            if not add_gb and not days:
+                abort(400, "Give some data (GB) or days to add")
         for user in users:
             if action in ("enable", "disable"):
                 user.enable = action == "enable"
@@ -339,6 +346,12 @@ class UsersBulkApi(MethodView):
                 user.start_date = None
             elif action == "add_days":
                 user.package_days = min(MAX_PACKAGE_DAYS, (user.package_days or 0) + days)
+            elif action == "add_limits":
+                # "Unlimited" (the highest value) stays unlimited.
+                if add_gb and user.usage_limit_GB < MAX_USAGE_GB:
+                    user.usage_limit_GB = min(MAX_USAGE_GB, user.usage_limit_GB + add_gb)
+                if days and (user.package_days or 0) < MAX_PACKAGE_DAYS:
+                    user.package_days = min(MAX_PACKAGE_DAYS, (user.package_days or 0) + days)
         db.session.commit()
         _after_change(users)
         return {"count": len(users)}
