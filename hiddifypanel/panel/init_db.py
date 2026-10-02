@@ -24,9 +24,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
-def _v160(child_id):
-    """Admins can have a default outbound for their users (column added by migrate)."""
-    pass
+def _v161(child_id):
+    """Outbounds are shared by all nodes and named by a slug (the ids are local): give old rows a slug, make it unique."""
+    from hiddifypanel.proxy_v3.outbounds import sync_builtin_outbounds
+
+    sync_builtin_outbounds(0)
+    execute("CREATE UNIQUE INDEX ix_outbound_slug ON outbound (slug)")
 
 
 def _v156(child_id):
@@ -1383,6 +1386,10 @@ def migrate(db_version):
             add_column(column)
 
     add_new_enum_values()
+    if db_version < 161:
+        # The outbound table lost its child_id (a NOT NULL foreign key the model no longer fills).
+        execute("ALTER TABLE outbound DROP FOREIGN KEY outbound_ibfk_1")
+        execute("ALTER TABLE outbound DROP COLUMN child_id")
     execute("UPDATE proxy SET proto='shadowsocks' WHERE proto='ss'")
     Events.db_prehook.notify()
     # execute("UPDATE custom_proxy SET proto='shadowsocks' WHERE proto='ss'")

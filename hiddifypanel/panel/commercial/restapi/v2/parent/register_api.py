@@ -8,6 +8,7 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
+from hiddifypanel.proxy_v3 import outbounds as ob
 
 from .schema import RegisterInputSchema, RegisterOutputSchema
 
@@ -57,9 +58,10 @@ class RegisterApi(MethodView):
         try:
             # add data
             logger.info("Adding admin users...")
-            AdminUser.bulk_register(data.panel_data.admin_users, commit=False)
+            # The node's outbound ids mean nothing here: outbounds are the parent's.
+            AdminUser.bulk_register([a.model_dump(exclude={"default_outbound_slug"}) for a in data.panel_data.admin_users], commit=False)
             logger.info("Adding users...")
-            User.bulk_register(data.panel_data.users, commit=False)
+            User.bulk_register([u.model_dump(exclude={"preferred_outbound_slug"}) for u in data.panel_data.users], commit=False)
             logger.info("Adding domains...")
             Domain.bulk_register(data.panel_data.domains, remove=True, commit=False, force_child_unique_id=child.unique_id)
             # logger.info("Adding hconfigs...")
@@ -83,6 +85,7 @@ class RegisterApi(MethodView):
             return RegisterOutputSchema(
                 users=[u.to_schema() for u in User.query.all()],
                 admin_users=[a.to_schema() for a in AdminUser.query.all()],
+                outbounds=ob.export_rows(),
                 parent_unique_id=hconfig(ConfigEnum.unique_id),
             )
         except Exception as err:

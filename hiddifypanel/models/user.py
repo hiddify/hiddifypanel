@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import json
 from collections.abc import Iterable
 from enum import auto
 from typing import TYPE_CHECKING, Any
@@ -352,6 +353,11 @@ class User(BaseAccount):
         if row.mode is not None or dbuser.mode is None:
             dbuser.mode = row.mode or UserMode.no_reset
 
+        if row.has("preferred_outbound_slug"):
+            from hiddifypanel.models.outbound import Outbound
+
+            _set_preferred_outbound(dbuser, Outbound.id_by_slug(row.preferred_outbound_slug))
+
         if row.last_online is not None:
             dbuser.last_online = row.last_online
         if row.last_modified_time is not None:
@@ -367,7 +373,8 @@ class User(BaseAccount):
     def to_schema(self):
         from hiddifypanel.panel.commercial.restapi.v2.admin.schema import UserSchema
 
-        return UserSchema.model_validate(self.to_dict(dump_id=True))
+        # The outbound choice is for node sync only: it stays out of to_dict (backups, golden dumps).
+        return UserSchema.model_validate({**self.to_dict(dump_id=True), "preferred_outbound_slug": _preferred_outbound_slug(self)})
 
     def to_model(self) -> UserModel:
         from hiddifypanel.models import ConfigEnum, hconfig
@@ -397,6 +404,7 @@ class User(BaseAccount):
             is_active=self.is_active,
             enable=self.enable,
             deleted=bool(self.deleted),
+            **({"preferred_outbound_slug": slug} if (slug := _preferred_outbound_slug(self)) else {}),
         )
 
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
@@ -422,6 +430,33 @@ class User(BaseAccount):
     #         telegram_id=data.get('telegram_id', None),
     #         added_by=data.get('added_by', 1)
     #     )
+
+
+def _preferred_outbound(user: User) -> int | None:
+    value = user.extra_params_json().get("preferred_outbound")
+    try:
+        return int(value) if value not in (None, "", False) else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _preferred_outbound_slug(user: User) -> str | None:
+    from hiddifypanel.models.outbound import Outbound
+
+    return Outbound.slug_by_id(_preferred_outbound(user))
+
+
+def _set_preferred_outbound(user: User, outbound_id: int | None) -> None:
+    """Set (or clear) the preferred outbound in ``extra_params``, keeping its other keys."""
+    if _preferred_outbound(user) == (outbound_id or None):
+        return
+    extra = user.extra_params_json()
+    extra.pop("outbound", None)  # legacy key
+    if outbound_id:
+        extra["preferred_outbound"] = int(outbound_id)
+    else:
+        extra.pop("preferred_outbound", None)
+    user.extra_params = json.dumps(extra, ensure_ascii=False) if extra else "{}"
 
 
 @event.listens_for(User, "before_insert")

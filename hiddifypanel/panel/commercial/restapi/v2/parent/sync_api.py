@@ -1,3 +1,5 @@
+import threading
+
 from apiflask import abort
 from flask import request
 from flask.views import MethodView
@@ -10,10 +12,9 @@ from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, Domain, User
 from hiddifypanel.models.child import Child
+from hiddifypanel.proxy_v3 import outbounds as ob
 
 from .schema import SyncInputSchema, SyncOutputSchema
-
-import threading
 
 # One sync per node at a time: two overlapping syncs of the same node would both find a new
 # domain missing and insert it twice (and fight over the same rows).
@@ -56,6 +57,7 @@ class SyncApi(MethodView):
         res = SyncOutputSchema(
             users=[u.to_schema() for u in User.query.all()],
             admin_users=[a.to_schema() for a in AdminUser.query.all()],
+            outbounds=ob.export_rows(),
         )
 
         logger.info("Returning sync output")

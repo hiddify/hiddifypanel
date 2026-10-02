@@ -1,18 +1,14 @@
+import os
 import re
 import subprocess
+from datetime import datetime, timedelta
 
-from datetime import datetime
-from typing import Tuple
-from flask_babel import lazy_gettext as _
-from datetime import timedelta
-import os
+from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
-from hiddifypanel.models import *
 from hiddifypanel.database import db
 from hiddifypanel.hutils.utils import *
-from hiddifypanel import g, current_app, hutils
-from hiddifypanel.panel.run_commander import commander, Command
-import subprocess
+from hiddifypanel.models import *
+from hiddifypanel.panel.run_commander import Command, commander
 
 to_gig_d = 1000 * 1000 * 1000
 
@@ -29,19 +25,19 @@ to_gig_d = 1000 * 1000 * 1000
 
 
 # with user panel url format we don't really need this function
-def add_short_link(link: str, period_min: int = 5) -> Tuple[str, int]:
+def add_short_link(link: str, period_min: int = 5) -> tuple[str, int]:
     short_code, expire_date = add_short_link_imp(link, period_min)
     return short_code, (expire_date - datetime.now()).seconds
 
 
 @cache.cache(ttl=300)
 # TODO: Change ttl dynamically
-def add_short_link_imp(link: str, period_min: int = 5) -> Tuple[str, datetime]:
+def add_short_link_imp(link: str, period_min: int = 5) -> tuple[str, datetime]:
     # pattern = "\^/([^/]+)(/)?\?\$\ {return 302 " + re.escape(link) + ";}"
 
     pattern = r"([^/]+)\("
 
-    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/data/services/nginx/parts/short-link.conf", "r") as f:
+    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/data/services/nginx/parts/short-link.conf") as f:
         for line in f:
             if link in line:
                 return re.search(pattern, line).group(1), datetime.now() + timedelta(minutes=period_min)
@@ -172,6 +168,7 @@ def dump_db_to_dict():
         "proxies": [u.to_dict() for u in db.session.query(Proxy).all()],
         "proxy_templates": [t.to_dict() for t in db.session.query(ProxyTemplate).all()],
         "custom_proxies": [p.to_dict() for p in db.session.query(CustomProxy).all()],
+        "outbounds": [o.to_dict() for o in db.session.query(Outbound).order_by(Outbound.position, Outbound.id).all()],
         "server_ips": [ip.to_dict() for ip in db.session.query(ServerIp).all()],
         "tls_store": [t.to_dict(include_private_key=True) for t in db.session.query(TlsStore).all()],
         # "parent_domains": [] if not hconfig(ConfigEnum.license) else [u.to_dict() for u in ParentDomain.query.all()],
@@ -183,11 +180,11 @@ def dump_db_to_dict():
 def get_ids_without_parent(input_dict):
     selector = "uuid"
     # Get all parent_uuids in a set for faster lookup
-    parent_uuids = {item.get(f"parent_admin_uuid") for item in input_dict.values() if item.get(f"parent_admin_uuid") is not None and item.get(f"parent_admin_uuid") != item.get("uuid")}
+    parent_uuids = {item.get("parent_admin_uuid") for item in input_dict.values() if item.get("parent_admin_uuid") is not None and item.get("parent_admin_uuid") != item.get("uuid")}
     print("PARENTS", parent_uuids)
     uuids = {v["uuid"]: v for v in input_dict.values()}
     # Find all uuids that do not have a parent_uuid in the dict
-    uuids_without_parent = [key for key, item in input_dict.items() if item.get(f"parent_admin_uuid") is None or item.get(f"parent_admin_uuid") == item.get("uuid") or item[f"parent_admin_uuid"] not in uuids]
+    uuids_without_parent = [key for key, item in input_dict.items() if item.get("parent_admin_uuid") is None or item.get("parent_admin_uuid") == item.get("uuid") or item["parent_admin_uuid"] not in uuids]
     print("abondon uuids", uuids_without_parent)
     return uuids_without_parent
 
@@ -255,6 +252,11 @@ def set_db_from_json(
         for u in json_data["users"]:
             if u["added_by_uuid"] in uuids_without_parent:
                 u["added_by_uuid"] = AdminUser.current_admin_or_owner().uuid
+
+    if (set_settings or set_domains) and json_data.get("outbounds"):
+        # Before the admins and users: their default / preferred outbounds point at these slugs.
+        Outbound.bulk_register(json_data["outbounds"], commit=False)
+        db.session.flush()
 
     if set_admins and "admin_users" in json_data:
         AdminUser.bulk_register(json_data["admin_users"], commit=True)
@@ -396,7 +398,7 @@ def get_backup_child_unique_id(backupdata: dict) -> str:
 
 
 def all_configs_for_cli():
-    valid_users = [u.to_dict(dump_id=True) for u in User.query.filter((User.usage_limit > User.current_usage)).all() if u.is_active]
+    valid_users = [u.to_dict(dump_id=True) for u in User.query.filter(User.usage_limit > User.current_usage).all() if u.is_active]
     host_child_ids = [c.id for c in Child.query.filter(Child.mode == ChildMode.virtual).all()]
     domains = Domain.query.filter(Domain.child_id.in_(host_child_ids), ~Domain.domain.contains("*")).all()
     configs = {

@@ -1144,6 +1144,12 @@ msgstr "Sign-in username"
 msgid "adminV2.account.canAddAdmins"
 msgstr "Can add sub-admins"
 
+msgid "adminV2.account.changePassword"
+msgstr "Change password"
+
+msgid "adminV2.account.configsCount"
+msgstr "{n} config for all my users | {n} configs for all my users"
+
 msgid "adminV2.account.configsEmpty"
 msgstr ""
 "No configs yet. Add a subscription link or paste a config: all your users "
@@ -1172,6 +1178,9 @@ msgstr "Copy my admin link"
 msgid "adminV2.account.current"
 msgstr "Current password"
 
+msgid "adminV2.account.editConfigs"
+msgstr "Edit configs"
+
 msgid "adminV2.account.generate"
 msgstr "Generate"
 
@@ -1179,7 +1188,7 @@ msgid "adminV2.account.generatedCopied"
 msgstr "A strong password was generated and copied"
 
 msgid "adminV2.account.inheritedConfigs"
-msgstr "configs inherited from admins above"
+msgstr "+ {n} inherited from admins above"
 
 msgid "adminV2.account.limitsSub"
 msgstr "Your users and all your sub-admins' users count toward these."
@@ -1215,6 +1224,9 @@ msgstr ""
 msgid "adminV2.account.outboundApply"
 msgstr "Apply the changes to put it into effect."
 
+msgid "adminV2.account.outboundNone"
+msgstr "No outbounds yet. A super admin sets them up."
+
 msgid "adminV2.account.outboundSaved"
 msgstr "Default outbound saved"
 
@@ -1225,6 +1237,12 @@ msgstr ""
 
 msgid "adminV2.account.outboundTitle"
 msgstr "Default outbound"
+
+msgid "adminV2.account.passwordNone"
+msgstr "No password: anyone with your link can sign in"
+
+msgid "adminV2.account.passwordSet"
+msgstr "A password protects your account"
 
 msgid "adminV2.account.passwordSub"
 msgstr "Change the password you sign in with."
@@ -1240,6 +1258,9 @@ msgstr "Save password"
 
 msgid "adminV2.account.saved"
 msgstr "Password changed"
+
+msgid "adminV2.account.setPassword"
+msgstr "Set a password"
 
 msgid "adminV2.account.strength.medium"
 msgstr "Medium"

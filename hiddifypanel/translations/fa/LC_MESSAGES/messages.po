@@ -1135,6 +1135,12 @@ msgstr "نام کاربری ورود"
 msgid "adminV2.account.canAddAdmins"
 msgstr "اجازهٔ افزودن زیرمجموعه"
 
+msgid "adminV2.account.changePassword"
+msgstr "تغییر رمز عبور"
+
+msgid "adminV2.account.configsCount"
+msgstr "{n} کانفیگ برای همه کاربران من | {n} کانفیگ برای همه کاربران من"
+
 msgid "adminV2.account.configsEmpty"
 msgstr ""
 "هنوز پیکربندی‌ای نیست. یک لینک اشتراک اضافه کنید یا یک پیکربندی بچسبانید: "
@@ -1163,6 +1169,9 @@ msgstr "کپی لینک ادمین من"
 msgid "adminV2.account.current"
 msgstr "رمز فعلی"
 
+msgid "adminV2.account.editConfigs"
+msgstr "ویرایش کانفیگ‌ها"
+
 msgid "adminV2.account.generate"
 msgstr "ساخت رمز"
 
@@ -1170,7 +1179,7 @@ msgid "adminV2.account.generatedCopied"
 msgstr "یک رمز قوی ساخته و کپی شد"
 
 msgid "adminV2.account.inheritedConfigs"
-msgstr "کانفیگ به ارث رسیده از ادمین‌های بالاتر"
+msgstr "+ {n} از ادمین‌های بالاتر"
 
 msgid "adminV2.account.limitsSub"
 msgstr "کاربران شما و همهٔ زیرمجموعه‌هایتان در این‌ها حساب می‌شوند."
@@ -1206,6 +1215,9 @@ msgstr ""
 msgid "adminV2.account.outboundApply"
 msgstr "برای اعمال، تغییرات را اعمال کنید."
 
+msgid "adminV2.account.outboundNone"
+msgstr "هنوز خروجی‌ای نیست. ادمین اصلی آن‌ها را تنظیم می‌کند."
+
 msgid "adminV2.account.outboundSaved"
 msgstr "خروجی پیش‌فرض ذخیره شد"
 
@@ -1216,6 +1228,12 @@ msgstr ""
 
 msgid "adminV2.account.outboundTitle"
 msgstr "خروجی پیش‌فرض"
+
+msgid "adminV2.account.passwordNone"
+msgstr "بدون رمز: هر کس لینک شما را داشته باشد می‌تواند وارد شود"
+
+msgid "adminV2.account.passwordSet"
+msgstr "رمز عبور از حساب شما محافظت می‌کند"
 
 msgid "adminV2.account.passwordSub"
 msgstr "رمزی را که با آن وارد می‌شوید تغییر دهید."
@@ -1231,6 +1249,9 @@ msgstr "ذخیرهٔ رمز"
 
 msgid "adminV2.account.saved"
 msgstr "رمز عبور تغییر کرد"
+
+msgid "adminV2.account.setPassword"
+msgstr "تنظیم رمز عبور"
 
 msgid "adminV2.account.strength.medium"
 msgstr "متوسط"

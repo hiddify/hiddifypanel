@@ -86,6 +86,7 @@ class UserSchema(ApiModel):
     enable: bool | None = Field(default=None, description="Whether the user is enabled or not")
     deleted: bool | None = Field(default=None, description="Whether the user is soft-deleted")
     is_active: bool | None = Field(default=None, description="Whether the user is active for using hiddify")
+    preferred_outbound_slug: str | None = Field(default=None, description="Slug of the outbound all of the user's traffic leaves through (empty: automatic)")
     id: int | None = Field(default=None, description="never use it, only for better presentation")
 
 
@@ -130,6 +131,7 @@ class AdminSchema(ApiModel):
     max_active_users: int | None = Field(default=None, description="The maximum number of active users allowed")
     max_online_users: int | None = Field(default=None, description="The maximum number of users online in the last 24 hours (empty: no limit)")
     max_total_usage_GB: float | None = Field(default=None, description="The traffic in GB all users of the admin and its sub-admins may use together (empty: no limit)")
+    default_outbound_slug: str | None = Field(default=None, description="Slug of the outbound this admin's users leave through unless they choose another (empty: automatic)")
 
 
 class PatchAdminSchema(ApiModel):

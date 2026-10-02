@@ -84,6 +84,8 @@ class UserModel(AccountModel):
     """Output only (input is ignored, as before)."""
     is_active: bool | None = None
     """Output only."""
+    preferred_outbound_slug: str | None = None
+    """Slug of the outbound all of the user's traffic leaves through (``None``: automatic)."""
 
     @model_validator(mode="before")
     @classmethod
@@ -137,6 +139,8 @@ class AdminModel(AccountModel):
     max_active_users: int | None = None
     max_online_users: int | None = None
     max_total_usage_GB: float | None = None
+    default_outbound_slug: str | None = None
+    """Slug of the outbound this admin's users leave through by default (``None``: automatic)."""
 
     @field_validator("parent_admin_uuid", mode="before")
     @classmethod

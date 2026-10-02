@@ -6,6 +6,7 @@ from typing import Any
 from pydantic import Field, field_validator, model_validator
 
 from hiddifypanel.models import ChildMode, ConfigEnum, DomainType, FakeMode, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
+from hiddifypanel.models.external_model.outbound import OutboundModel
 from hiddifypanel.models.usage_data import UsageData
 from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema, FriendlyDateTime, UserSchema
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
@@ -103,6 +104,7 @@ class SyncInputSchema(ApiModel):
 class SyncOutputSchema(ApiModel):
     users: list[UserSchema] = Field(default_factory=list, description="The list of users")
     admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")
+    outbounds: list[OutboundModel] | None = Field(default=None, description="All outbounds of the parent (None: an older parent, keep the local ones)")
 
 
 class ChildStatusInputSchema(ApiModel):
@@ -133,3 +135,4 @@ class RegisterOutputSchema(ApiModel):
     parent_unique_id: str | None = Field(default=None, description="The parent's unique id")
     users: list[UserSchema] = Field(default_factory=list, description="The list of users")
     admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")
+    outbounds: list[OutboundModel] | None = Field(default=None, description="All outbounds of the parent")

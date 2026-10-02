@@ -71,6 +71,26 @@ def _apply_users_if_changed(before: set[str]) -> None:
         hiddify.quick_apply_users()
 
 
+def _apply_outbounds(items) -> bool:
+    """Outbounds are the parent's: copy them (with ids) so users' and admins' choices keep pointing at them.
+
+    Returns whether they changed. ``None`` comes from an older parent that does not send them.
+    """
+    if items is None:
+        return False
+    from hiddifypanel.proxy_v3 import outbounds as ob
+
+    return ob.import_rows(items)
+
+
+def _apply_server_config() -> None:
+    """New outbounds change the routing of the cores: regenerate the server configs."""
+    from hiddifypanel.panel.run_commander import Command, commander
+
+    logger.info("Outbounds from parent changed: applying configs")
+    commander(Command.apply)
+
+
 def __get_parent_panel_url() -> str:
     return hconfig(ConfigEnum.parent_panel)
 
@@ -159,6 +179,7 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
     active_before = _active_user_uuids()
     try:
         # TODO: change the bulk_register and such methods to accept models instead of dict
+        outbounds_changed = _apply_outbounds(res.outbounds)
         AdminUser.bulk_register(res.admin_users, commit=False)
         User.bulk_register(res.users, commit=False)
 
@@ -177,6 +198,8 @@ def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remot
     logger.success("Successfully registered to parent")
     cache.invalidate_all_cached_functions()
     _apply_users_if_changed(active_before)
+    if outbounds_changed:
+        _apply_server_config()
     return True, ""
 
 
@@ -202,12 +225,15 @@ def sync_with_parent(pull_users: bool = True) -> bool:
         logger.success("Sent domains to parent")
         return True
     active_before = _active_user_uuids()
+    outbounds_changed = _apply_outbounds(res.outbounds)
     AdminUser.bulk_register(res.admin_users, commit=False, remove=True)
     User.bulk_register(res.users, commit=False, remove=True)
     db.session.commit()
     logger.success("Successfully synced with parent")
     cache.invalidate_all_cached_functions()
     _apply_users_if_changed(active_before)
+    if outbounds_changed:
+        _apply_server_config()
     return True
 
 

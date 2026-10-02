@@ -34,6 +34,12 @@ class AdminMode(StrEnum):
     agent = auto()
 
 
+def _outbound_slug(outbound_id: int | None) -> str | None:
+    from hiddifypanel.models.outbound import Outbound
+
+    return Outbound.slug_by_id(outbound_id)
+
+
 class AdminUser(BaseAccount):
     """
     This is a model class for a user in a database that includes columns for their ID, UUID, name, online status,
@@ -81,7 +87,7 @@ class AdminUser(BaseAccount):
     def to_schema(self):
         from hiddifypanel.panel.commercial.restapi.v2.admin.schema import AdminSchema
 
-        return AdminSchema.model_validate(self.to_dict())
+        return AdminSchema.model_validate({**self.to_dict(), "default_outbound_slug": _outbound_slug(self.default_outbound_id)})
 
     def get_id(self) -> str | None:
         return f"admin_{self.id}"
@@ -104,6 +110,7 @@ class AdminUser(BaseAccount):
             max_active_users=self.max_active_users,
             max_online_users=self.max_online_users,
             max_total_usage_GB=self.max_total_usage_GB,
+            **({"default_outbound_slug": slug} if (slug := _outbound_slug(self.default_outbound_id)) else {}),
         )
 
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
@@ -169,6 +176,10 @@ class AdminUser(BaseAccount):
             dbuser.max_online_users = row.max_online_users if row.max_online_users > 0 else None
         if row.max_total_usage_GB is not None:
             dbuser.max_total_usage_GB = row.max_total_usage_GB if row.max_total_usage_GB > 0 else None
+        if row.has("default_outbound_slug"):
+            from hiddifypanel.models.outbound import Outbound
+
+            dbuser.default_outbound_id = Outbound.id_by_slug(row.default_outbound_slug)
         if commit:
             db.session.commit()
         return dbuser

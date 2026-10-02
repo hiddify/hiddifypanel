@@ -18,6 +18,7 @@ from loguru import logger
 from pydantic import BaseModel, Field
 
 from hiddifypanel.database import db
+from hiddifypanel.models.external_model.outbound import OutboundModel
 from hiddifypanel.models.outbound import (
     BUILTIN_MODES,
     CONFIGURABLE_ENDPOINT_MODES,
@@ -161,7 +162,8 @@ def has_rules(row: Outbound) -> bool:
 
 
 def ordered_rows(child_id: int = 0) -> list[Outbound]:
-    rows = Outbound.query.filter(Outbound.child_id == child_id).all()
+    """All outbounds in rule order (``child_id`` is kept for callers; the outbounds are shared by all nodes)."""
+    rows = Outbound.query.all()
     return sorted(rows, key=lambda r: (r.position or 0, r.id or 0))
 
 
@@ -267,14 +269,20 @@ def sync_builtin_outbounds(child_id: int = 0, *, commit: bool = True) -> int:
     Returns how many rows were added or changed.
     """
     changed = 0
-    rows = Outbound.query.filter(Outbound.child_id == child_id).all()
+    rows = Outbound.query.all()
+    if rows and _is_child_panel():
+        return 0  # the parent decides; only an empty node gets the built-ins until its first sync
+    for r in rows:
+        if not r.slug:
+            r.slug = str(r.mode) if r.is_builtin and not any(o.slug == str(r.mode) for o in rows) else Outbound.make_slug(r.name, r.mode)
+            changed += 1
     for mode in BUILTIN_MODES:
         spec = _builtin_spec(mode)
         row = next((r for r in rows if r.mode == mode and r.is_builtin), None) or next((r for r in rows if r.mode == mode), None)
         if row is None:
             # WARP starts off unless the WARP setting already uses it.
             enabled = _warp_setting_enabled(child_id) if mode == OutboundMode.warp else True
-            row = Outbound(child_id=child_id, mode=mode, name=spec["name"], is_builtin=True, lists_override=False, enabled=enabled)
+            row = Outbound(slug=str(mode), mode=mode, name=spec["name"], is_builtin=True, lists_override=False, enabled=enabled)
             _apply_lists(row, spec["lists"])
             row.builtin_lists = spec["lists"]
             db.session.add(row)
@@ -326,6 +334,31 @@ def sync_builtin_outbounds(child_id: int = 0, *, commit: bool = True) -> int:
         db.session.commit()
     else:
         db.session.flush()
+    return changed
+
+
+def _is_child_panel() -> bool:
+    """A node: its outbounds come from the parent panel and are not edited here."""
+    try:
+        from hiddifypanel.models import ConfigEnum, PanelMode, hconfig
+
+        return hconfig(ConfigEnum.panel_mode) == PanelMode.child
+    except Exception:
+        return False
+
+
+def export_rows() -> list[OutboundModel]:
+    """The outbounds in order, as the parent hands them to its nodes and backups (slugs, no ids)."""
+    return [r.to_model() for r in ordered_rows()]
+
+
+def import_rows(items: list[OutboundModel]) -> bool:
+    """Make this panel's outbounds equal to the parent's, matched by slug. Returns whether anything changed; commits nothing."""
+    changed = Outbound.bulk_register(items, commit=False, remove=True)
+    if changed:
+        rows = ordered_rows()
+        _mark_default(rows)
+        _sync_warp_setting(0, rows)
     return changed
 
 
@@ -403,7 +436,7 @@ def on_warp_mode_changed(child_id: int, value: str) -> None:
 
 
 def _builtin_rows(child_id: int) -> dict[OutboundMode, Outbound]:
-    return {r.mode: r for r in Outbound.query.filter(Outbound.child_id == child_id, Outbound.is_builtin.is_(True)).all()}
+    return {r.mode: r for r in Outbound.query.filter(Outbound.is_builtin.is_(True)).all()}
 
 
 def on_warp_sites_changed(child_id: int, old: str, new: str) -> None:
@@ -435,7 +468,7 @@ def on_block_domestic_changed(child_id: int, block_domestic: bool) -> None:
 def _config_changed(conf=None, old_value=None, **_kw) -> None:
     from hiddifypanel.models import ConfigEnum
 
-    if conf is None or str(conf.value) == str(old_value):
+    if conf is None or str(conf.value) == str(old_value) or _is_child_panel():
         return
     if conf.key not in (ConfigEnum.warp_mode, ConfigEnum.warp_sites, ConfigEnum.block_iran_sites):
         return
