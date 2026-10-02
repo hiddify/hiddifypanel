@@ -1,7 +1,8 @@
 @use 'mixins' as *;
 
 .layout-topbar {
-    --topbar-bg: #2f2fb7;
+    /* The same vivid blue as the buttons, with a light sweep so the bar feels alive */
+    --topbar-bg: linear-gradient(100deg, var(--p-primary-700) 0%, var(--p-primary-600) 45%, var(--p-primary-500) 100%);
     --topbar-text: rgba(255, 255, 255, 0.95);
     --topbar-text-muted: rgba(255, 255, 255, 0.72);
     --topbar-hover: rgba(255, 255, 255, 0.14);
@@ -13,7 +14,8 @@
     top: 0;
     width: 100%;
     padding: 0 2rem;
-    background-color: var(--topbar-bg);
+    background: var(--topbar-bg);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 12%) inset, 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
     color: var(--topbar-text);
     transition: inset-inline-start var(--layout-section-transition-duration);
     display: flex;

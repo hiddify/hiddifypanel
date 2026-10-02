@@ -120,7 +120,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag :value="data.core" />
+          <Tag :value="data.core" :style="coreTagStyle(data.core)" class="core-tag" />
         </template>
       </Column>
       <Column field="version" sortable>
@@ -145,7 +145,7 @@
     </DataTable>
   </Panel>
 
-  <Popover ref="namePopover">
+  <Popover ref="namePopover" @show="focusFirstInput(namePopover)">
     <div class="flex flex-col gap-2 min-w-52">
       <label class="text-sm font-medium">{{ t('baseConfig.name') }}</label>
       <IconField>
@@ -154,7 +154,7 @@
       </IconField>
     </div>
   </Popover>
-  <Popover ref="descriptionPopover">
+  <Popover ref="descriptionPopover" @show="focusFirstInput(descriptionPopover)">
     <div class="flex flex-col gap-2 min-w-52">
       <label class="text-sm font-medium">{{ t('baseConfig.description') }}</label>
       <IconField>
@@ -163,19 +163,19 @@
       </IconField>
     </div>
   </Popover>
-  <Popover ref="sidePopover">
+  <Popover ref="sidePopover" @show="focusFirstInput(sidePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('baseConfig.side') }}</label>
-      <Select v-model="filterSide" :options="sideOptions" show-clear class="w-full" />
+      <Listbox v-model="filterSide" :options="sideOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="sidePopover.hide()" />
     </div>
   </Popover>
-  <Popover ref="corePopover">
+  <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('baseConfig.core') }}</label>
-      <Select v-model="filterCore" :options="coreFilterOptions" show-clear class="w-full" />
+      <Listbox v-model="filterCore" :options="coreFilterOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="corePopover.hide()" />
     </div>
   </Popover>
-  <Popover ref="versionPopover">
+  <Popover ref="versionPopover" @show="focusFirstInput(versionPopover)">
     <div class="flex flex-col gap-2 min-w-52">
       <label class="text-sm font-medium">{{ t('baseConfig.version') }}</label>
       <IconField>
@@ -184,17 +184,10 @@
       </IconField>
     </div>
   </Popover>
-  <Popover ref="enabledPopover">
+  <Popover ref="enabledPopover" @show="focusFirstInput(enabledPopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('common.enabled') }}</label>
-      <Select
-        v-model="filterEnabled"
-        :options="enabledOptions"
-        option-label="label"
-        option-value="value"
-        show-clear
-        class="w-full"
-      />
+      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()" />
     </div>
   </Popover>
 </template>
@@ -212,15 +205,27 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
 import InputText from 'primevue/inputtext'
-import Select from 'primevue/select'
+import Listbox from 'primevue/listbox'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Popover from 'primevue/popover'
+import { focusFirstInput } from '@/shared/utils/popover-focus'
+import { protoColor } from '@/shared/utils/proto-color'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import { proxyBaseConfigsApi, type ProxyBaseConfig, type ProxyBaseConfigMeta } from '@/core/api/generated'
 
 const { t } = useI18n()
+
+/** A color per core (xray, hiddify-core, …) so a long list reads at a glance. */
+function coreTagStyle(core: string | undefined) {
+  const c = protoColor(core)
+  return {
+    background: `color-mix(in srgb, ${c} 16%, transparent)`,
+    color: `color-mix(in srgb, ${c} 82%, var(--p-text-color))`,
+    border: `1px solid color-mix(in srgb, ${c} 38%, transparent)`,
+  }
+}
 const router = useRouter()
 const dangerConfirm = useDangerConfirm()
 const toast = useToast()

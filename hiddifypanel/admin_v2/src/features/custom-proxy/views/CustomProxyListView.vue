@@ -116,7 +116,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag v-if="data.proto && !isNoInbound(data)" :value="protoLabel(data.proto)" severity="info" />
+          <Tag v-if="data.proto && !isNoInbound(data)" :value="protoLabel(data.proto)" :style="protoTagStyle(data.proto)" class="proto-tag" />
           <span v-else>—</span>
         </template>
       </Column>
@@ -257,58 +257,49 @@
     </DataTable>
   </Panel>
 
-  <Popover ref="categoriesPopover">
-    <div class="flex flex-col gap-2 min-w-52">
-      <label class="text-sm font-medium">{{ t('proxy.categories') }}</label>
-      <MultiSelect
-        v-model="filterCategories"
-        :options="categoryOptions"
-        display="chip"
-        filter
-        show-clear
-        class="w-full"
-        :placeholder="t('proxy.categoriesFilter')"
-      />
+  <!-- One click on a filter icon: the list is already open (or the text box is focused) -->
+  <Popover ref="categoriesPopover" @show="focusFirstInput(categoriesPopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.categories') }}</label>
+      <Listbox v-model="filterCategories" :options="categoryOptions" multiple filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" />
+      <Button v-if="filterCategories.length" :label="t('tags.clear')" icon="pi pi-times" text size="small" severity="secondary" @click="filterCategories = []" />
     </div>
   </Popover>
-  <Popover ref="namePopover">
-    <div class="flex flex-col gap-2 min-w-52">
-      <label class="text-sm font-medium">{{ t('proxy.name') }}</label>
+  <Popover ref="namePopover" @show="focusFirstInput(namePopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.name') }}</label>
       <IconField>
         <InputIcon class="pi pi-search" />
-        <InputText v-model="filterName" :placeholder="t('common.search')" class="w-full" />
+        <InputText v-model="filterName" :placeholder="t('common.search')" class="w-full" @keydown.enter="namePopover.hide()" />
       </IconField>
     </div>
   </Popover>
-  <Popover ref="protoPopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.protocol') }}</label>
-      <Select v-model="filterProto" :options="protoOptions" option-label="label" option-value="value" show-clear class="w-full" />
+  <Popover ref="protoPopover" @show="focusFirstInput(protoPopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.protocol') }}</label>
+      <Listbox v-model="filterProto" :options="protoOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="protoPopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: protoColor(option.value) }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
-  <Popover ref="modePopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.mode') }}</label>
-      <Select v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" show-clear class="w-full" />
+  <Popover ref="modePopover" @show="focusFirstInput(modePopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.mode') }}</label>
+      <Listbox v-model="filterMode" :options="modeOptions" option-label="label" option-value="value" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="modePopover.hide()" />
     </div>
   </Popover>
-  <Popover ref="corePopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('proxy.serverCore') }}</label>
-      <Select v-model="filterCore" :options="coreOptions" show-clear class="w-full" />
+  <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('proxy.serverCore') }}</label>
+      <Listbox v-model="filterCore" :options="coreOptions" class="w-full" @change="corePopover.hide()" />
     </div>
   </Popover>
   <Popover ref="enabledPopover">
-    <div class="flex flex-col gap-2 min-w-44">
-      <label class="text-sm font-medium">{{ t('common.enabled') }}</label>
-      <Select
-        v-model="filterEnabled"
-        :options="enabledOptions"
-        option-label="label"
-        option-value="value"
-        show-clear
-        class="w-full"
-      />
+    <div class="filter-pop">
+      <label class="filter-pop__title">{{ t('common.enabled') }}</label>
+      <Listbox v-model="filterEnabled" :options="enabledOptions" option-label="label" option-value="value" class="w-full" @change="enabledPopover.hide()" />
     </div>
   </Popover>
 
@@ -330,13 +321,14 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Tag from 'primevue/tag'
-import MultiSelect from 'primevue/multiselect'
-import Select from 'primevue/select'
+import Listbox from 'primevue/listbox'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Popover from 'primevue/popover'
 import PageHeader from '@/shared/components/PageHeader.vue'
+import { focusFirstInput } from '@/shared/utils/popover-focus'
+import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import GenerateBundleDialog from '@/features/custom-proxy/components/GenerateBundleDialog.vue'
 import { customProxiesApi, type CustomProxy, type CustomProxyMeta } from '@/core/api/generated'
@@ -632,6 +624,32 @@ onActivated(() => {
 </script>
 
 <style scoped>
+.filter-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 14rem;
+}
+.filter-pop__title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.proto-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.proto-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+}
+.proto-tag {
+  font-weight: 600;
+}
 .proxy-name-link,
 .list-name-link {
   color: var(--p-primary-color);
