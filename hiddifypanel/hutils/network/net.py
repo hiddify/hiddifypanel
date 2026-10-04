@@ -541,6 +541,45 @@ def get_ech_info(domain: str) -> str | None:
     return None
 
 
+CLOUDFLARE_ECH_DOMAIN = "cloudflare-ech.com"
+
+
+@cache.cache(600)
+def get_domain_ech_info(domain: str) -> str | None:
+    """ECH config of the domain; Cloudflare-hosted domains fall back to the shared cloudflare-ech.com config."""
+    if ech := get_ech_info(domain):
+        return ech
+    try:
+        from hiddifypanel.hutils.network import domain_detect
+        if (domain_detect.detect_domain(domain).get("cdn") or "").lower() != "cloudflare":
+            return None
+    except Exception:
+        return None
+    return get_ech_info(CLOUDFLARE_ECH_DOMAIN)
+
+
+def get_ech_public_name(ech_b64: str) -> str:
+    """Outer SNI (public_name) inside a base64 ECHConfigList; '' when it can't be parsed."""
+    try:
+        data = base64.b64decode(ech_b64)
+        pos = 2  # ECHConfigList length
+        while pos + 4 <= len(data):
+            version, length = int.from_bytes(data[pos:pos + 2], "big"), int.from_bytes(data[pos + 2:pos + 4], "big")
+            body = data[pos + 4:pos + 4 + length]
+            pos += 4 + length
+            if version != 0xFE0D:
+                continue
+            i = 3  # config_id(1) + kem_id(2)
+            i += 2 + int.from_bytes(body[i:i + 2], "big")  # public_key
+            i += 2 + int.from_bytes(body[i:i + 2], "big")  # cipher_suites
+            i += 1  # maximum_name_length
+            n = body[i]
+            return body[i + 1:i + 1 + n].decode()
+    except Exception:
+        pass
+    return ""
+
+
 def all_public_ports():
     tcp_ports = {80: "http", 443: "tls"}
     udp_ports = {

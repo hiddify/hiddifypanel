@@ -319,13 +319,13 @@ def attach_domain_ech(base: dict, hconfigs: dict, *, enabled: bool = True) -> No
         return
     sni = base.get("sni") or base.get("host")
     if sni:
-        if ech := hutils.network.get_ech_info(sni):
+        if ech := hutils.network.get_domain_ech_info(sni):
             base["ech"] = ech
     download = base.get("download")
     if isinstance(download, dict):
         dl_sni = download.get("sni")
         if dl_sni:
-            if ech := hutils.network.get_ech_info(dl_sni):
+            if ech := hutils.network.get_domain_ech_info(dl_sni):
                 download["ech"] = ech
 
 
@@ -361,6 +361,8 @@ def sni_host_server_extractor(domain_db: Domain, hconfigs):
         "cdn": is_cdn,
     }
     attach_domain_ech(base, hconfigs, enabled=bool(domain_db.ech) and domain_db.mode.is_cdn())
+    if base.get("ech"):
+        base["sni"] = hutils.network.get_ech_public_name(base["ech"]) or base["sni"]
     if domain_db.fake_mode == FakeMode.reality:
         base["reality_short_id"] = random.sample(hconfigs[ConfigEnum.reality_short_ids].split(","), 1)[0]
         # base['flow']="xtls-rprx-vision"

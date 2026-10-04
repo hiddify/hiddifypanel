@@ -40,9 +40,12 @@
     {% if ctx.hconfig.tls_ech_enable and domain.mode=="cdn" %}
     "ech": {
       "enabled": true,
+      {% if domain.echinfo %}
+      "config": ["-----BEGIN ECH CONFIGS-----", "{{ domain.echinfo }}", "-----END ECH CONFIGS-----"]
+      {% else %}
       "config": [],
-      "config_path": "",
       "query_server_name": "{{ domain.sni }}"
+      {% endif %}
     },
     {% endif %}
   {% endif %}

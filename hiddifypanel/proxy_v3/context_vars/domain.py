@@ -115,6 +115,9 @@ class DomainIPVar(BaseModel):
         extracted_data = sni_host_ip_extractor(domain_db)
         hostname = str(domain_db.domain or "").lower()
         sni = extracted_data["sni"] or hostname
+        echinfo = _resolve_domain_ech(domain_db)
+        if echinfo:  # with ECH the client's SNI is the ECH public name, not the original domain
+            sni = hutils.network.get_ech_public_name(echinfo) or sni
         extra = JsonMap.from_any(domain_db.extra_params_json())
         ips = get_ips(domain_db)
         server_host = domain_db.get_server()
@@ -130,7 +133,7 @@ class DomainIPVar(BaseModel):
             alias=domain_db.alias or domain_db.name,
             need_valid_ssl=bool(domain_db.need_valid_ssl),
             child_id=int(domain_db.child_id or 0),
-            echinfo=_resolve_domain_ech(domain_db),
+            echinfo=echinfo,
             cert=cert,
             extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
@@ -327,4 +330,4 @@ def _resolve_domain_ech(domain_db: Domain) -> str:
     hostname = str(domain_db.domain or "").replace("*", hutils.random.get_random_string(5, 15))
     if not hostname:
         return ""
-    return hutils.network.get_ech_info(hostname) or ""
+    return hutils.network.get_domain_ech_info(hostname) or ""
