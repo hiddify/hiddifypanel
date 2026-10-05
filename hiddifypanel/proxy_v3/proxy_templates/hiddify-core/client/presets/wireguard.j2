@@ -7,6 +7,7 @@
       {
         "tag": "{{ tag | trim_no_line }}",
         {% include 'hiddify-core/client/protocols/wireguard' %}
+        {% include 'hiddify-core/client/snippets/finalmask' %},
       },
     {% endfor %}
   {% endif %}

@@ -7,7 +7,8 @@
           "tag": "{{ tag | trim_no_line }}",
           {% include '__PROTO_SLUG__' %},
           {% include '__STREAM_SLUG__' %},
-          {% include '__TLS_SLUG__' %}
+          {% include '__TLS_SLUG__' %},
+          {% include 'hiddify-core/client/snippets/finalmask' %},
         },
   {% endfor %}
 {% endblock %}
