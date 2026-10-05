@@ -51,6 +51,8 @@
 
 #### Fix
 
+* Cli. 
+
 * Update finalmask handling in VLESS template. 
   _- Modified the VLESS template to ensure the finalmask is processed as compact JSON when set.
 - Corrected the assignment of the flow parameter to properly assign the value from the configuration._
