@@ -19,6 +19,7 @@ import {
   KIND_META,
   KINDS,
   domainsApi,
+  isFakeProxyMode,
   kindOf,
   tlsModeSelectable,
   type DomainKind,
@@ -96,6 +97,9 @@ const kind = computed<DomainKind>({
 const isSublink = computed(() => mode.value === 'sub_link_only')
 const isCdn = computed(() => mode.value === 'cdn')
 const isReality = computed(() => fakeMode.value === 'reality')
+/** Telegram / ShadowTLS / SS FakeTLS front domain: like Reality, but no custom proxies and no download domain. */
+const isFakeProxy = computed(() => isFakeProxyMode(fakeMode.value))
+const takenFakeModes = computed(() => others.value.map((d) => d.fake_mode).filter(isFakeProxyMode))
 const compatibleIds = computed(() => meta.value?.compatible[`${mode.value}:${fakeMode.value}`] ?? [])
 // Another mode: drop the proxies that do not fit it (the server would drop them too).
 watch(compatibleIds, (ids) => {
@@ -164,10 +168,10 @@ async function save() {
     alias: alias.value.trim(),
     mode: mode.value,
     fake_mode: fakeMode.value,
-    custom_proxy_ids: proxyIds.value,
+    custom_proxy_ids: isFakeProxy.value ? [] : proxyIds.value,
     show_domain_ids: showDomainsAllowed.value ? showIds.value : [],
     server_domain_id: serverDomainId.value,
-    download_domain_id: downloadDomainId.value,
+    download_domain_id: isFakeProxy.value ? null : downloadDomainId.value,
     // Subscription-only domains run no proxies: no forced IPs, resolve IP or gateway ports.
     cdn_ip: isSublink.value ? '' : cdnIp.value.trim(),
     resolve_ip: !isSublink.value && resolveIp.value,
@@ -228,7 +232,8 @@ async function save() {
 
       <section class="dd__section">
         <h3 class="dd__h">{{ t('domains.field.tlsMode') }}</h3>
-        <TlsPicker v-model="fakeMode" :locked="!tlsModeSelectable(mode)" />
+        <TlsPicker v-model="fakeMode" :locked="!tlsModeSelectable(mode)" :taken="takenFakeModes" />
+        <Message v-if="isFakeProxy" severity="info" size="small" :closable="false">{{ t('domains.tlsMode.fakeProxyNote') }}</Message>
         <Message v-if="relayNeedsIp" severity="warn" size="small" :closable="false">{{ t('domains.field.relayNeedsIp') }}</Message>
       </section>
 
@@ -240,7 +245,7 @@ async function save() {
         </label>
       </section>
 
-      <section v-if="!isSublink" class="dd__section">
+      <section v-if="!isSublink && !isFakeProxy" class="dd__section">
         <h3 class="dd__h">{{ t('domains.field.proxies') }}</h3>
         <ProxyPicker v-model="proxyIds" v-model:choosing="choosingL7" :proxies="meta?.proxies ?? []" :compatible-ids="compatibleIds" :reality="isReality" />
       </section>
@@ -293,7 +298,7 @@ async function save() {
             <Select v-model="serverDomainId" :options="serverDomainOptions" option-label="label" option-value="id" show-clear :placeholder="t('domains.field.none')" class="dd__ltr" fluid />
             <small class="dd__hint">{{ t('domains.field.serverDomainHint') }}</small>
           </label>
-          <label v-if="!isSublink" class="dd__field">
+          <label v-if="!isSublink && !isFakeProxy" class="dd__field">
             <span class="dd__label">{{ t('domains.field.downloadDomain') }}</span>
             <Select v-model="downloadDomainId" :options="downloadOptions" option-label="label" option-value="id" show-clear filter :placeholder="t('domains.field.none')" class="dd__ltr" fluid />
             <small class="dd__hint">{{ t('domains.field.downloadDomainHint') }}</small>

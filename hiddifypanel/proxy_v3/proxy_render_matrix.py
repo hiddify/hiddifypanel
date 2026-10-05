@@ -28,7 +28,7 @@ class ProxyRenderCache:
         cache = cls(child_id=child_id)
         hconfigs = get_hconfigs(child_id)
         for domain_db in Domain.query.filter(Domain.child_id == child_id).order_by(Domain.id).all():
-            if domain_db.is_sub_link_only():
+            if domain_db.is_sub_link_only() or domain_db.is_fake_proxy():
                 continue
             cache.domains.append(_domain_dict_for_proxy(domain_db, hconfigs))
 

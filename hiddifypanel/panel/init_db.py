@@ -24,6 +24,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v163(child_id):
+    """Telegram / ShadowTLS / SS FakeTLS fake domains also live as domain rows (fake_mode telegram / shadowtls / ssfaketls)."""
+    from hiddifypanel.panel.fake_proxy_domains import sync_all_configs_to_domains
+
+    sync_all_configs_to_domains(child_id)
+
+
 def _v162(child_id):
     """Outbounds are shared by all nodes and named by a slug (the ids are local): give old rows a slug, make it unique."""
     from hiddifypanel.proxy_v3.outbounds import sync_builtin_outbounds
@@ -1317,7 +1324,7 @@ def init_db():
 
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 140, commit=True)
+    set_hconfig(ConfigEnum.db_version, 160, commit=True)
     db_version = current_db_version()
     if db_version >= latest_db_version():
         return

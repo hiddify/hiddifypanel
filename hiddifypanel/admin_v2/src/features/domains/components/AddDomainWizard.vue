@@ -17,6 +17,7 @@ import {
   KIND_META,
   KINDS,
   TLS_MODES,
+  FAKE_PROXY_MODES,
   domainsApi,
   kindFitsDetection,
   suggestedSetup,
@@ -107,6 +108,8 @@ const tlsFit = computed(() =>
 )
 const fit = computed(() => Object.fromEntries(KINDS.map((k) => [k, kindFitsDetection(k, tlsModeSelectable(KIND_META[k].mode) ? tls.value : 'valid', found.value)])) as Record<DomainKind, 'good' | 'ok' | 'bad'>)
 const decoy = computed(() => tlsMode.value !== 'valid')
+/** Fake-proxy modes that already have a domain on this panel (one of each only). */
+const takenFakeModes = computed(() => (props.state?.domains ?? []).map((d) => d.fake_mode).filter((m) => FAKE_PROXY_MODES.includes(m)))
 
 /** What we found, in words. */
 const finding = computed(() => {
@@ -246,7 +249,7 @@ function back() {
         </section>
         <section class="wz__part">
           <h3 class="wz__part-title"><span class="wz__part-n">2</span>{{ t('domains.wizard.tlsQ') }}</h3>
-          <TlsPicker v-model="tls" :locked="!tlsShown" :fit="tlsFit" />
+          <TlsPicker v-model="tls" :locked="!tlsShown" :fit="tlsFit" :taken="takenFakeModes" />
         </section>
         <Message v-if="fit[kind] === 'bad'" severity="warn" size="small" :closable="false">{{ t(decoy && tlsMode === 'reality' ? 'domains.wizard.mismatch.reality' : `domains.wizard.mismatch.${kind}`) }}</Message>
         <div class="wz__actions">

@@ -2,18 +2,22 @@
 /** TLS mode cards: Valid TLS, Fake, Reality. `locked`: the mode always uses a real certificate (CDN, worker, subscription). */
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { TLS_MODES, type TlsMode } from '@/features/domains/api'
+import { FAKE_PROXY_MODES, TLS_MODES, type TlsMode } from '@/features/domains/api'
 
-const props = defineProps<{ locked?: boolean; fit?: Partial<Record<TlsMode, 'good' | 'bad'>> }>()
+/** `taken`: fake-proxy modes that already have a domain (only one of each can exist). */
+const props = defineProps<{ locked?: boolean; fit?: Partial<Record<TlsMode, 'good' | 'bad'>>; taken?: TlsMode[] }>()
 const model = defineModel<TlsMode>({ required: true })
 const { t } = useI18n()
 
-const ICON: Record<TlsMode, string> = { valid: '🔒', fake: '🎭', reality: '🔂', dns: '🧭' }
+const ICON: Record<TlsMode, string> = { valid: '🔒', fake: '🎭', reality: '🔂', dns: '🧭', telegram: '✈️', shadowtls: '🕶️', ssfaketls: '🥷' }
 const COLOR: Record<TlsMode, string> = {
   valid: 'var(--p-green-500, #22c55e)',
   fake: 'var(--p-pink-500, #ec4899)',
   reality: 'var(--p-violet-500, #8b5cf6)',
   dns: 'var(--p-sky-500, #0ea5e9)',
+  telegram: 'var(--p-sky-500, #0ea5e9)',
+  shadowtls: 'var(--p-slate-500, #64748b)',
+  ssfaketls: 'var(--p-slate-500, #64748b)',
 }
 const modes = computed<TlsMode[]>(() => (model.value === 'dns' ? [...TLS_MODES, 'dns'] : TLS_MODES))
 const shown = computed<TlsMode>(() => (props.locked ? 'valid' : model.value))
@@ -45,6 +49,22 @@ function pick(m: TlsMode) {
         </span>
         <span class="tls__desc">{{ t(`domains.tlsMode.${m}Hint`) }}</span>
         <i v-if="shown === m" class="pi pi-check-circle tls__check" />
+      </button>
+    </div>
+    <div v-if="!locked" class="tls__other" role="group" :aria-label="t('domains.tlsMode.other')" v-tooltip.top="t('domains.tlsMode.otherHint')">
+      <span class="tls__other-title">{{ t('domains.tlsMode.other') }}</span>
+      <button
+        v-for="m in FAKE_PROXY_MODES"
+        :key="m"
+        type="button"
+        class="tls__chip"
+        :class="{ 'tls__chip--on': model === m }"
+        :disabled="model !== m && taken?.includes(m)"
+        :aria-pressed="model === m"
+        :title="model !== m && taken?.includes(m) ? t('domains.tlsMode.taken') : t(`domains.tlsMode.${m}Hint`)"
+        @click="model = model === m ? 'valid' : m"
+      >
+        <span aria-hidden="true">{{ ICON[m] }}</span>{{ t(`domains.tlsMode.${m}`) }}
       </button>
     </div>
     <p v-if="locked" class="tls__lock"><i class="pi pi-lock" />{{ t('domains.tlsMode.locked') }}</p>
@@ -128,6 +148,41 @@ function pick(m: TlsMode) {
   top: 0.55rem;
   inset-inline-end: 0.6rem;
   color: var(--tls-color);
+}
+.tls__other {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.tls__other-title {
+  font-size: 0.72rem;
+  color: var(--p-text-muted-color);
+}
+.tls__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  color: var(--p-text-muted-color);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.tls__chip:not(:disabled):hover {
+  color: var(--p-text-color);
+}
+.tls__chip--on {
+  border-color: var(--p-primary-color);
+  color: var(--p-text-color);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+}
+.tls__chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 .tls__lock {
   display: flex;

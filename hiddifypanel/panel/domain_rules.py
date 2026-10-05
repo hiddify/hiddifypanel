@@ -13,6 +13,7 @@ from loguru import logger
 
 from hiddifypanel import hutils
 from hiddifypanel.models import ConfigEnum, CustomProxyMode, Domain, DomainType, FakeMode, get_hconfigs, hconfig, set_hconfig
+from hiddifypanel.models.domain import FAKE_PROXY_MODES
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_modes_use_reality, expand_domain_mode_tokens, proxy_buckets_for_domain
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
@@ -58,6 +59,9 @@ def validate_domain(model: Domain, *, is_created: bool) -> list[str]:
 
     if model.mode == DomainType.sub_link_only:
         model.fake_mode = FakeMode.valid
+
+    if model.fake_mode in FAKE_PROXY_MODES:
+        return _validate_fake_proxy_domain(model)
 
     if (model.mode.is_cdn() or model.mode == DomainType.worker) and model.fake_mode != FakeMode.valid:
         raise DomainRuleError(_("CDN and worker domains must use valid fake mode"))
@@ -117,6 +121,32 @@ def validate_domain(model: Domain, *, is_created: bool) -> list[str]:
     return warnings
 
 
+def _validate_fake_proxy_domain(model: Domain) -> list[str]:
+    """Telegram / ShadowTLS / SS FakeTLS front domain: a name only, one per node and kind, mirrored to its setting."""
+    from hiddifypanel.panel.fake_proxy_domains import sync_domain_to_config
+
+    if not model.domain or "*" in model.domain:
+        raise DomainRuleError(_("A fake domain needs a real domain name"))
+    same_kind = Domain.query.filter(Domain.fake_mode == model.fake_mode, Domain.child_id == model.child_id).all()
+    if any(d is not model and d.id != model.id for d in same_kind):
+        raise DomainRuleError(_("Only one domain of this kind can be added"))
+    _check_not_used_before(model)
+
+    if model.mode not in (DomainType.direct, DomainType.relay):
+        raise DomainRuleError(_("Fake domains can only be direct or relay"))
+    if model.mode == DomainType.relay and not (model.cdn_ip or "").strip():
+        raise DomainRuleError(_("Relay domains with non-valid fake mode require an IP address"))
+
+    # Like REALITY, but no custom proxies and no download domain: these only mirror a fake-TLS setting.
+    model.custom_proxies = []
+    model.download_domain = None
+    model.download_domain_id = None
+    model.servernames = ""
+    model.ech = False
+    sync_domain_to_config(model)
+    return []
+
+
 def update_cloudflare(model: Domain, ipv4_list, ipv6_list) -> bool:
     if hconfig(ConfigEnum.cloudflare) and model.fake_mode == FakeMode.valid and model.mode not in [DomainType.relay]:
         try:
@@ -167,8 +197,11 @@ def _check_reality(model: Domain, server_ips) -> list[str]:
 
 def _check_not_used_before(model: Domain) -> None:
     configs = get_hconfigs()
+    from hiddifypanel.panel.fake_proxy_domains import FAKE_PROXY_CONFIGS
+
+    own_setting = FAKE_PROXY_CONFIGS[model.fake_mode][0] if model.fake_mode in FAKE_PROXY_CONFIGS else None
     for c in configs:
-        if "domain" in c and c not in [ConfigEnum.decoy_domain, ConfigEnum.reality_fallback_domain] and c.category != "hidden":
+        if "domain" in c and c not in [ConfigEnum.decoy_domain, ConfigEnum.reality_fallback_domain, own_setting] and c.category != "hidden":
             if model.domain == configs[c]:
                 raise DomainRuleError(_("You have used this domain in: ") + _(f"config.{c}.label"))
 

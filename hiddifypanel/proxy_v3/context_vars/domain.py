@@ -9,6 +9,7 @@ from hiddifypanel import hutils
 from hiddifypanel.hutils.network.auto_ip_selector import split_pattern
 from hiddifypanel.hutils.proxy import random_or_none
 from hiddifypanel.models import Domain, DomainType, FakeMode
+from hiddifypanel.models.domain import FAKE_PROXY_MODES
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 
@@ -76,6 +77,9 @@ class DomainIPVar(BaseModel):
 
     def is_sub_link_only(self) -> bool:
         return self.mode == DomainType.sub_link_only
+
+    def is_fake_proxy(self) -> bool:
+        return self.fake_mode in FAKE_PROXY_MODES
 
     def uses_public_edge_tls(self) -> bool:
         """CDN/worker: the client sees the CDN edge cert, not the origin cert in tls_store."""

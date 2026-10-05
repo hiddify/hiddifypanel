@@ -426,6 +426,9 @@ class DomainsPageApi(MethodView):
 
     def get(self):
         """Domains page: every domain in order, with TLS status and what the page needs to edit them"""
+        from hiddifypanel.panel.fake_proxy_domains import sync_all_configs_to_domains
+
+        sync_all_configs_to_domains(_child_id())  # Telegram / ShadowTLS / SS FakeTLS rows follow their settings
         return _list_out(_child_id())
 
     def post(self):

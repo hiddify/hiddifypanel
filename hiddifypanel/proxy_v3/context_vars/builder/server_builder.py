@@ -78,6 +78,8 @@ def get_server_base(child_id: int) -> ServerBase:
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
+    if d.is_fake_proxy():
+        return False
     if proxy.slug == REALITY_TERMINATION_SLUG:
         return d.is_reality()
     if d.is_reality():

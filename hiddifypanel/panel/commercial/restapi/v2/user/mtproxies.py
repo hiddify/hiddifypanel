@@ -6,10 +6,12 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
-from hiddifypanel.models.domain import DomainType
+from hiddifypanel.models.child import Child
+from hiddifypanel.models.domain import Domain, DomainType, FakeMode
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.panel.user.user import get_common_data
+from hiddifypanel.proxy_v3.context_vars.domain import get_ips
 
 
 class MtproxySchema(ApiModel):
@@ -28,21 +30,39 @@ class MTProxiesAPI(MethodView):
             abort(status_code=404, message="Telegram mtproxy is not enable")
 
         dtos = []
+        domains = c["domains"]
+        servers = [d for d in domains if d.mode in [DomainType.direct, DomainType.relay] and d.fake_mode == FakeMode.valid]
+        fronts = [d for d in domains if d.fake_mode == FakeMode.telegram]
+        # Choosing domains for the sub link: if it picks some Telegram domains only those are shown, else all of them.
+        picked = c["db_domain"].show_domains if c.get("db_domain") is not None else []
+        picked_fronts = [d for d in fronts if d in picked]
+        fronts = picked_fronts or fronts or Domain.query.filter(Domain.fake_mode == FakeMode.telegram, Domain.child_id == Child.current().id).all()
+
         # TODO: Remove duplicated domains mapped to a same ipv4 and v6
-        for d in c["domains"]:
-            if d.mode not in [DomainType.direct, DomainType.relay]:
-                continue
+        if not fronts:  # no Telegram domain row yet: the old behaviour, the setting's fake domain on every server domain
+            for d in servers:
+                dtos.append(_dto(d.alias or d.domain, d.domain, d.child_id, hconfig(ConfigEnum.telegram_fakedomain, d.child_id)))
+            return dtos
 
-            # make mtproxy link
-            raw_sec = hconfig(ConfigEnum.shared_secret, d.child_id)
-            if hconfig(ConfigEnum.telegram_lib) == "telemt":
-                raw_sec = g.account.uuid
-            secret_hex = str(raw_sec).replace("-", "")
-            telegram_faketls_domain_hex = hconfig(ConfigEnum.telegram_fakedomain, d.child_id).encode("utf-8").hex()
-            server_link = f"tg://proxy?server={d.domain}&port=443&secret=ee{secret_hex}{telegram_faketls_domain_hex}"
-
-            dto = MtproxySchema()
-            dto.title = d.alias or d.domain
-            dto.link = server_link
-            dtos.append(dto)
+        for front in fronts:
+            node_servers = [d for d in servers if d.child_id == front.child_id]
+            for d in node_servers:
+                dtos.append(_dto(d.alias or d.domain, d.domain, front.child_id, front.domain))
+            ips = get_ips(front)
+            for ip in sorted(ips.ipsv4):
+                dtos.append(_dto(f"{front.alias or front.domain} IPv4", ip, front.child_id, front.domain))
+            for ip in sorted(ips.ipsv6):
+                dtos.append(_dto(f"{front.alias or front.domain} IPv6", ip, front.child_id, front.domain))
         return dtos
+
+
+def _dto(title: str, server: str, child_id: int, fake_domain: str) -> MtproxySchema:
+    raw_sec = hconfig(ConfigEnum.shared_secret, child_id)
+    if hconfig(ConfigEnum.telegram_lib) == "telemt":
+        raw_sec = g.account.uuid
+    secret_hex = str(raw_sec).replace("-", "")
+    fake_domain_hex = str(fake_domain or "").encode("utf-8").hex()
+    dto = MtproxySchema()
+    dto.title = title
+    dto.link = f"tg://proxy?server={server}&port=443&secret=ee{secret_hex}{fake_domain_hex}"
+    return dto

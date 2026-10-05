@@ -2,7 +2,7 @@ import { getHttp } from '@/core/api/client'
 import type { RestartMode } from '@/shared/utils/restart-mode'
 
 export type DomainMode = 'direct' | 'sub_link_only' | 'cdn' | 'relay' | 'worker'
-export type TlsMode = 'valid' | 'fake' | 'reality' | 'dns'
+export type TlsMode = 'valid' | 'fake' | 'reality' | 'dns' | 'telegram' | 'shadowtls' | 'ssfaketls'
 export type TlsStatus = 'valid' | 'self_signed' | 'expired' | 'invalid' | 'missing'
 
 /** The mode as the page shows it (the TLS mode, valid / fake / Reality, is chosen separately). */
@@ -197,6 +197,13 @@ export function tlsModeSelectable(mode: DomainMode): boolean {
 
 /** TLS modes offered (DNS only when a domain already has it). */
 export const TLS_MODES: TlsMode[] = ['valid', 'fake', 'reality']
+
+/** Fake-TLS front domains of the Telegram / ShadowTLS / SS FakeTLS servers: one each, no custom proxies or download domain. */
+export const FAKE_PROXY_MODES: TlsMode[] = ['telegram', 'shadowtls', 'ssfaketls']
+
+export function isFakeProxyMode(mode: TlsMode): boolean {
+  return FAKE_PROXY_MODES.includes(mode)
+}
 
 export const TLS_ICON: Record<TlsStatus, string> = {
   valid: 'pi pi-verified',

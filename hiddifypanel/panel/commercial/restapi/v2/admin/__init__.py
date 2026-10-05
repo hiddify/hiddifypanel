@@ -59,6 +59,11 @@ def init_app(app):
         # Settings → WARP mode "all"/"custom" keeps the default outbound in step.
         subscribe_outbound_events()
 
+        from hiddifypanel.panel.fake_proxy_domains import subscribe_events as subscribe_fake_proxy_events
+
+        # Telegram / ShadowTLS / SS FakeTLS fake domain settings <-> their domain rows.
+        subscribe_fake_proxy_events()
+
         from .settings_api import SettingsApi
 
         bp.add_url_rule("/settings/", view_func=SettingsApi)

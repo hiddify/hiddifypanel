@@ -31,6 +31,14 @@ class FakeMode(StrEnum):
     fake = auto()
     reality = auto()
     dns = auto()
+    #: Fake-TLS front domains of the Telegram MTProxy / Shadowsocks FakeTLS / ShadowTLS servers.
+    #: They only mirror the matching ``*_fakedomain`` setting and never carry normal proxies.
+    telegram = auto()
+    shadowtls = auto()
+    ssfaketls = auto()
+
+
+FAKE_PROXY_MODES = frozenset({FakeMode.telegram, FakeMode.shadowtls, FakeMode.ssfaketls})
 
 
 class DomainType(StrEnum):
@@ -109,6 +117,9 @@ class Domain(db.Model):
 
     def is_reality(self) -> bool:
         return self.fake_mode == FakeMode.reality
+
+    def is_fake_proxy(self) -> bool:
+        return self.fake_mode in FAKE_PROXY_MODES
 
     def is_fake_tls(self) -> bool:
         return self.fake_mode == FakeMode.fake

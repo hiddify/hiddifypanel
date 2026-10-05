@@ -86,8 +86,8 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.mode == CustomProxyMode.no_inbound:
         # Keep available domains (all children) so get_nodes_configs can split by child_id.
         # Still drop sub-link-only hosts; never treat no_inbound as "ignore every filter".
-        return not d.is_sub_link_only()
-    if d.is_sub_link_only():
+        return not d.is_sub_link_only() and not d.is_fake_proxy()
+    if d.is_sub_link_only() or d.is_fake_proxy():
         return False
     if d.child_id != Child.current().id:
         return False
@@ -167,7 +167,7 @@ def get_domains_by_name(domain_names: list[str] | None) -> list[DomainIPVar]:
 
 
 def _proxy_domain_rows(domains: list[Domain]) -> list[Domain]:
-    return [d for d in domains if not d.is_sub_link_only()]
+    return [d for d in domains if not d.is_sub_link_only() and not d.is_fake_proxy()]
 
 
 @cache.cache(600)
