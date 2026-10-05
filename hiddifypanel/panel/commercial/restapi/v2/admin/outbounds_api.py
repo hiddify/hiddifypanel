@@ -1,4 +1,5 @@
-"""Outbound manager API (super admins): where server traffic leaves (WARP, direct, block, SOCKS, Tor, Psiphon).
+"""Outbound manager API (super admins): where server traffic leaves (WARP, direct, block, SOCKS, Tor, Psiphon, and the admin's own
+hiddify-core outbound / endpoint and xray outbound JSON).
 
 Outbounds are rules in order; the last enabled one is the default (everything else goes there).
 """
@@ -15,8 +16,9 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, ConfigEnum, hconfig
 from hiddifypanel.models.child import Child
-from hiddifypanel.models.outbound import BUILTIN_MODES, CONFIGURABLE_ENDPOINT_MODES, ENDPOINT_MODES, LIST_FIELDS, MULTI_MODES, Outbound, OutboundMode
+from hiddifypanel.models.outbound import BUILTIN_MODES, CONFIGURABLE_ENDPOINT_MODES, CUSTOM_CONFIG_MODES, ENDPOINT_MODES, LIST_FIELDS, MULTI_MODES, Outbound, OutboundMode
 from hiddifypanel.models.role import Role
+from hiddifypanel.proxy_v3 import outbound_custom as custom_config
 from hiddifypanel.proxy_v3 import outbounds as ob
 
 #: Every change needs the server configs regenerated.
@@ -40,6 +42,13 @@ def _changed() -> None:
 
 def _child_id() -> int:
     return Child.current().id
+
+
+def _custom_out(row: Outbound) -> dict[str, Any]:
+    """Custom JSON outbounds: the text, the tag the panel gave it (its slug) and the local SOCKS bridge port the other core connects to."""
+    if row.mode not in CUSTOM_CONFIG_MODES:
+        return {}
+    return {"config": row.config or "", "tag": custom_config.custom_tag(row), "bridge_port": custom_config.bridge_port(row.id), "runs_in": "xray" if row.mode == OutboundMode.xray_outbound else "hiddify-core"}
 
 
 def _row_out(row: Outbound, default: Outbound | None) -> dict[str, Any]:
@@ -68,6 +77,7 @@ def _row_out(row: Outbound, default: Outbound | None) -> dict[str, Any]:
         "username": (row.username or "") if configurable else "",
         # The password is never sent back; `has_password` tells whether one is set.
         "has_password": bool(row.password) and configurable,
+        **_custom_out(row),
         "is_builtin": bool(row.is_builtin),
         "lists_override": bool(row.lists_override),
         "builtin_lists": {field: list(builtin.get(field) or []) for field in LIST_FIELDS} | {"domestic": bool(builtin.get("domestic"))},
@@ -127,6 +137,14 @@ def _apply_body(row: Outbound, body: dict[str, Any], *, creating: bool) -> None:
         if clash:
             abort(400, "Another outbound has this name")
         row.name = name
+
+    # The admin's own JSON: it must pass the checks (and the real core) or nothing is stored.
+    if row.mode in CUSTOM_CONFIG_MODES and (creating or "config" in body):
+        try:
+            cfg = custom_config.validate(row.mode, body.get("config"))
+        except custom_config.CustomOutboundError as e:
+            abort(400, str(e))
+        row.config = custom_config.normalized(cfg)
 
     if "enabled" in body:
         row.enabled = bool(body.get("enabled"))

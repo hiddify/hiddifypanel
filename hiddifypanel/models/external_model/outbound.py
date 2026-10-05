@@ -12,7 +12,7 @@ from .base import EnumValue, HBaseModel
 
 _COPIED = (
     "name", "mode", "enabled", "position", "is_default", "domestic", "sites", "geosites", "rule_sets",
-    "host", "port", "username", "password", "is_builtin", "builtin_lists", "lists_override",
+    "host", "port", "username", "password", "config", "is_builtin", "builtin_lists", "lists_override",
 )
 
 
@@ -31,6 +31,7 @@ class OutboundModel(HBaseModel):
     port: int | None = None
     username: str | None = ""
     password: str | None = ""
+    config: str | None = ""
     is_builtin: bool = False
     builtin_lists: dict[str, Any] = Field(default_factory=dict)
     lists_override: bool = False

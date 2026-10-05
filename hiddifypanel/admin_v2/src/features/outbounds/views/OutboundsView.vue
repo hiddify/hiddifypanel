@@ -75,6 +75,7 @@
                 <span v-for="c in counts(o)" :key="c.key" class="ob-count" :class="{ 'ob-count--zero': !c.n }"><b>{{ c.n }}</b>{{ t(`outbounds.count.${c.key}`, c.n) }}</span>
               </template>
               <span v-if="o.mode === 'socks' || o.mode === 'tor' || o.mode === 'psiphon'" class="ob-row__endpoint" dir="ltr">{{ o.host }}:{{ o.port }}</span>
+              <span v-else-if="o.tag" class="ob-row__endpoint" dir="ltr" v-tooltip.top="t('outbounds.dialog.configBridge', { tag: o.tag, port: o.bridge_port })">{{ o.tag }}</span>
             </div>
             <p v-if="!o.is_default && (o.sites.length || o.geosites.length)" class="ob-row__sample" dir="ltr" :title="sample(o, 40)">{{ sample(o, 6) }}</p>
 

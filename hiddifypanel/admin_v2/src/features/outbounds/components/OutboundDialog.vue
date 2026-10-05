@@ -10,7 +10,7 @@ import Password from 'primevue/password'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { apiErrorMessage } from '@/core/api/client'
-import { CONFIGURABLE_ENDPOINT_MODES, MODE_ICON, outboundsApi, type Outbound, type OutboundLists, type OutboundMode, type OutboundPayload, type OutboundsState } from '@/features/outbounds/api'
+import { CONFIGURABLE_ENDPOINT_MODES, CUSTOM_CONFIG_EXAMPLES, CUSTOM_CONFIG_MODES, MODE_ICON, outboundsApi, type Outbound, type OutboundLists, type OutboundMode, type OutboundPayload, type OutboundsState } from '@/features/outbounds/api'
 
 /** `outbound`: the one being edited; null adds a new one of `mode`. */
 const props = defineProps<{ outbound: Outbound | null; mode: OutboundMode; state: OutboundsState | null }>()
@@ -36,6 +36,7 @@ const password = ref('')
 const busy = ref(false)
 const error = ref<string | null>(null)
 const touched = ref(false)
+const config = ref('')
 
 const editing = computed(() => props.outbound !== null)
 const currentMode = computed<OutboundMode>(() => props.outbound?.mode ?? props.mode)
@@ -46,6 +47,21 @@ const fixedEndpoint = computed(() => {
   const e = endpointDefaults.value
   return e.host && e.port ? `${e.host}:${e.port}` : null
 })
+/** hiddify-core outbound / endpoint and xray outbound: the admin writes the JSON. */
+const needsConfig = computed(() => CUSTOM_CONFIG_MODES.includes(currentMode.value))
+const configError = computed(() => {
+  if (!needsConfig.value || !touched.value) return null
+  if (!config.value.trim()) return t('outbounds.dialog.configRequired')
+  try {
+    JSON.parse(config.value)
+    return null
+  } catch (e) {
+    return t('outbounds.dialog.configInvalid', { error: e instanceof Error ? e.message : String(e) })
+  }
+})
+function useExample() {
+  config.value = CUSTOM_CONFIG_EXAMPLES[currentMode.value] ?? ''
+}
 const endpointDefaults = computed(() => props.state?.endpoints[currentMode.value] ?? {})
 
 function toLines(values: string[]): string {
@@ -74,6 +90,7 @@ watch(visible, (open) => {
   port.value = o?.port ?? endpointDefaults.value.port ?? null
   username.value = o?.username ?? ''
   password.value = ''
+  config.value = o?.config ?? ''
 })
 
 const regionDomestic = computed(() => props.state?.domestic)
@@ -89,6 +106,7 @@ const nameError = computed(() => touched.value && !name.value.trim())
 async function submit() {
   touched.value = true
   if (!name.value.trim() || busy.value) return
+  if (needsConfig.value && (!config.value.trim() || configError.value)) return
   busy.value = true
   error.value = null
   const payload: OutboundPayload = {
@@ -98,6 +116,7 @@ async function submit() {
     geosites: fromLines(lists.value.geosites),
     rule_sets: fromLines(lists.value.rule_sets),
   }
+  if (needsConfig.value) payload.config = config.value
   if (needsEndpoint.value) {
     payload.host = host.value.trim()
     payload.port = port.value
@@ -145,6 +164,27 @@ async function submit() {
       <Message v-if="fixedEndpoint" severity="secondary" :closable="false" size="small" icon="pi pi-server">
         {{ t(`outbounds.dialog.endpointHint.${currentMode}`, { endpoint: fixedEndpoint }) }}
       </Message>
+
+      <!-- The admin's own JSON: checked by the real core before it is saved -->
+      <section v-if="needsConfig" class="ob-dlg__section">
+        <h4 class="ob-dlg__heading"><i class="pi pi-code" />{{ t('outbounds.dialog.config') }}</h4>
+        <p class="ob-dlg__hint">{{ t(`outbounds.dialog.configHint.${currentMode}`) }}</p>
+        <Textarea
+          v-model="config"
+          rows="14"
+          dir="ltr"
+          class="ob-dlg__textarea ob-dlg__json"
+          spellcheck="false"
+          :invalid="!!configError"
+          :disabled="busy"
+          :placeholder="CUSTOM_CONFIG_EXAMPLES[currentMode]"
+        />
+        <small v-if="configError" class="ob-dlg__error">{{ configError }}</small>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <small class="text-muted-color">{{ outbound?.tag ? t('outbounds.dialog.configBridge', { tag: outbound.tag, port: outbound.bridge_port }) : t('outbounds.dialog.configBridgeNew') }}</small>
+          <Button type="button" :label="t('outbounds.dialog.configExample')" icon="pi pi-file" size="small" severity="secondary" text :disabled="busy" @click="useExample" />
+        </div>
+      </section>
 
       <!-- SOCKS endpoint -->
       <section v-if="needsEndpoint" class="ob-dlg__section">
@@ -369,6 +409,17 @@ async function submit() {
 }
 .ob-tone--tor {
   --ob-color: var(--p-violet-500, #8b5cf6);
+}
+.ob-dlg__json {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+}
+.ob-tone--core_outbound,
+.ob-tone--core_endpoint {
+  --ob-color: var(--p-indigo-500, #6366f1);
+}
+.ob-tone--xray_outbound {
+  --ob-color: var(--p-amber-500, #f59e0b);
 }
 .ob-tone--psiphon {
   --ob-color: var(--p-teal-500, #14b8a6);

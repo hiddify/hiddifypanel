@@ -7,6 +7,13 @@
   "outbounds": [
     {% include 'hiddify-core/server/base/outbounds' %},
   ],
+  {% if ctx.outbounds.singbox_raw_endpoints %}
+  "endpoints": [
+    {% for entry in ctx.outbounds.singbox_raw_endpoints %}
+    {{ entry|tojson }},
+    {% endfor %}
+  ],
+  {% endif %}
   {% include 'hiddify-core/server/base/route' %},
   {% include 'hiddify-core/server/base/experimental' %},
   {% include 'hiddify-core/server/base/dns' %},

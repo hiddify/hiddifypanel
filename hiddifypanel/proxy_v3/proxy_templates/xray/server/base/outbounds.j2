@@ -2,8 +2,9 @@
 {"tag": "direct", "protocol": "freedom"},
 {"tag": "WARP", "protocol": "freedom", "streamSettings": {"sockopt": {"tcpFastOpen": true, "interface": "warp"}}},
 {"tag": "blackhole", "protocol": "blackhole"},
-{# SOCKS outbounds from the Outbound manager; Tor / Psiphon (run by hiddify-core) are reached on its local SOCKS inbounds #}
-{% for o in ctx.outbounds.custom %}
+{# SOCKS outbounds from the Outbound manager; Tor / Psiphon and the admin's hiddify-core outbounds / endpoints
+   (run by hiddify-core) are reached on its local SOCKS inbounds #}
+{% for o in ctx.outbounds.xray_socks %}
 {
   "tag": "{{ o.xray_tag }}",
   "protocol": "socks",
@@ -16,5 +17,9 @@
       {% endif %}
   },
 },
+{% endfor %}
+{# The admin's own xray outbounds (Outbounds → xray outbound); routing uses their tags #}
+{% for entry in ctx.outbounds.xray_raw_outbounds %}
+{{ entry|tojson }},
 {% endfor %}
 {"tag": "DNS-Internal", "protocol": "dns"}

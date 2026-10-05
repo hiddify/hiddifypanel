@@ -7,6 +7,14 @@
         "inboundTag": ["api"],
         "outboundTag": "api"
       },
+      {# Traffic hiddify-core sends into the bridge of an xray outbound leaves through that outbound #}
+      {% for o in ctx.outbounds.xray_bridged %}
+      {
+        "type": "field",
+        "inboundTag": ["in-{{ o.xray_tag }}"],
+        "outboundTag": {{ o.xray_tag|tojson }}
+      },
+      {% endfor %}
       {
           "type":"field",
           "outboundTag": "freedom",

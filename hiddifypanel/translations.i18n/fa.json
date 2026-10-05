@@ -1299,6 +1299,17 @@
       "dialog": {
         "add": "افزودن خروجی",
         "addTitle": "افزودن خروجی {mode}",
+        "config": "JSON",
+        "configBridge": "پنل نام «{tag}» را به آن داد؛ مسیریابی از همین تگ استفاده می‌کند و هسته‌ی دیگر روی 127.0.0.1:{port} به آن وصل می‌شود.",
+        "configBridgeNew": "پنل خودش برای آن تگ می‌گذارد (تگی که بنویسید نادیده گرفته می‌شود)؛ مسیریابی از آن استفاده می‌کند و هسته‌ی دیگر از طریق پل SOCKS محلی به آن وصل می‌شود.",
+        "configExample": "درج یک نمونه",
+        "configHint": {
+          "core_outbound": "یک outbound هیدیفای‌کور (sing-box)، مثلاً {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. پیش از ذخیره با hiddify-core بررسی می‌شود.",
+          "core_endpoint": "یک endpoint هیدیفای‌کور (sing-box) مثل WireGuard. پیش از ذخیره با hiddify-core بررسی می‌شود.",
+          "xray_outbound": "یک outbound ایکس‌ری، مثلاً {\"protocol\": \"socks\", \"settings\": {…}}. پیش از ذخیره با xray بررسی می‌شود."
+        },
+        "configInvalid": "JSON معتبر نیست: {error}",
+        "configRequired": "JSON لازم است",
         "domestic": "سایت‌های داخلی {region}",
         "editTitle": "ویرایش {name}",
         "endpoint": "اتصال",
@@ -1344,19 +1355,25 @@
       "makeDefault": "پیش‌فرض کردن (انتقال به انتها)",
       "mode": {
         "block": "مسدود",
+        "core_endpoint": "endpoint هیدیفای‌کور",
+        "core_outbound": "outbound هیدیفای‌کور",
         "direct": "مستقیم",
         "psiphon": "Psiphon",
         "socks": "SOCKS",
         "tor": "Tor",
-        "warp": "WARP"
+        "warp": "WARP",
+        "xray_outbound": "outbound ایکس‌ری"
       },
       "modeHint": {
         "block": "مسدود می‌شود",
+        "core_endpoint": "endpoint دلخواه شما در هیدیفای‌کور مثل WireGuard (JSON)؛ ایکس‌ری از طریق پل SOCKS محلی به آن می‌رسد",
+        "core_outbound": "outbound دلخواه شما در هیدیفای‌کور (JSON)؛ ایکس‌ری از طریق پل SOCKS محلی به آن می‌رسد",
         "direct": "مستقیم از این سرور",
         "psiphon": "از Psiphon (اجرا توسط hiddify-core)",
         "socks": "از یک پروکسی SOCKS5",
         "tor": "از شبکهٔ Tor (اجرا توسط hiddify-core)",
-        "warp": "از Cloudflare WARP روی این سرور"
+        "warp": "از Cloudflare WARP روی این سرور",
+        "xray_outbound": "outbound دلخواه شما در ایکس‌ری (JSON)؛ هیدیفای‌کور از طریق پل SOCKS محلی به آن می‌رسد"
       },
       "more": "کارهای بیشتر",
       "moveDown": "پایین",

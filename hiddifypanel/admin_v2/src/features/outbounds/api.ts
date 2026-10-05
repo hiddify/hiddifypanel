@@ -1,7 +1,17 @@
 import { getHttp } from '@/core/api/client'
 import type { RestartMode } from '@/shared/utils/restart-mode'
 
-export type OutboundMode = 'warp' | 'psiphon' | 'direct' | 'socks' | 'tor' | 'block'
+export type OutboundMode = 'warp' | 'psiphon' | 'direct' | 'socks' | 'tor' | 'block' | 'core_outbound' | 'core_endpoint' | 'xray_outbound'
+
+/** The admin writes ONE JSON object (a hiddify-core outbound / endpoint, or an xray outbound); the panel gives it its tag. */
+export const CUSTOM_CONFIG_MODES: OutboundMode[] = ['core_outbound', 'core_endpoint', 'xray_outbound']
+
+/** An example to start from, per custom mode. */
+export const CUSTOM_CONFIG_EXAMPLES: Record<string, string> = {
+  core_outbound: JSON.stringify({ type: 'socks', server: '203.0.113.5', server_port: 1080 }, null, 2),
+  core_endpoint: JSON.stringify({ type: 'wireguard', address: ['10.0.0.2/32'], private_key: '…', peers: [{ address: '203.0.113.5', port: 51820, public_key: '…', allowed_ips: ['0.0.0.0/0'] }] }, null, 2),
+  xray_outbound: JSON.stringify({ protocol: 'socks', settings: { address: '203.0.113.5', port: 1080 } }, null, 2),
+}
 
 /** Only SOCKS has an endpoint the admin sets; Tor and Psiphon use their local port on the server. */
 export const CONFIGURABLE_ENDPOINT_MODES: OutboundMode[] = ['socks']
@@ -30,6 +40,11 @@ export interface Outbound extends OutboundLists {
   port: number | null
   username: string
   has_password: boolean
+  /** Custom JSON modes: the stored JSON, the tag the panel gave it (its slug) and the local SOCKS bridge port. */
+  config?: string
+  tag?: string
+  bridge_port?: number
+  runs_in?: 'hiddify-core' | 'xray'
   is_builtin: boolean
   /** The admin edited the lists: upgrades keep them. */
   lists_override: boolean
@@ -62,6 +77,7 @@ export interface OutboundPayload extends Partial<OutboundLists> {
   username?: string
   /** Empty keeps the current password. */
   password?: string
+  config?: string
   clear_password?: boolean
   is_default?: boolean
 }
@@ -72,11 +88,11 @@ export const outboundsApi = {
     return data
   },
   async create(payload: OutboundPayload): Promise<OutboundsState> {
-    const { data } = await getHttp().post<OutboundsState>('outbounds/', payload)
+    const { data } = await getHttp().post<OutboundsState>('outbounds/', payload, { timeout: 60_000 }) // the core checks custom JSON
     return data
   },
   async update(id: number, payload: OutboundPayload): Promise<OutboundsState> {
-    const { data } = await getHttp().patch<OutboundsState>(`outbounds/${id}/`, payload)
+    const { data } = await getHttp().patch<OutboundsState>(`outbounds/${id}/`, payload, { timeout: 60_000 })
     return data
   },
   async remove(id: number): Promise<OutboundsState> {
@@ -106,4 +122,7 @@ export const MODE_ICON: Record<OutboundMode, string> = {
   socks: 'pi pi-share-alt',
   tor: 'pi pi-eye-slash',
   psiphon: 'pi pi-globe',
+  core_outbound: 'pi pi-code',
+  core_endpoint: 'pi pi-link',
+  xray_outbound: 'pi pi-bolt',
 }

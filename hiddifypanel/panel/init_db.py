@@ -24,6 +24,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v164(child_id):
+    """Custom JSON outbounds (hiddify-core outbound / endpoint, xray outbound): the `outbound.config` column and the new
+    outbound modes are added by the generic column / enum sync that runs before every upgrade."""
+
+
 def _v163(child_id):
     """Telegram / ShadowTLS / SS FakeTLS fake domains also live as domain rows (fake_mode telegram / shadowtls / ssfaketls)."""
     from hiddifypanel.panel.fake_proxy_domains import sync_all_configs_to_domains

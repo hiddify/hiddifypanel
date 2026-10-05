@@ -1,0 +1,10 @@
+{# One local SOCKS inbound per xray outbound of the Outbound manager: hiddify-core connects to it, the routing sends it to the outbound #}
+{% for o in ctx.outbounds.xray_bridged %}
+{
+  "tag": "in-{{ o.xray_tag }}",
+  "listen": "127.0.0.1",
+  "port": {{ o.port }},
+  "protocol": "socks",
+  "settings": {"auth": "noauth", "udp": true}
+},
+{% endfor %}

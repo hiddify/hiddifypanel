@@ -8,6 +8,7 @@ keep a copy of the file's lists in ``builtin_lists``; while the admin has not ed
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -19,9 +20,11 @@ from pydantic import BaseModel, Field
 
 from hiddifypanel.database import db
 from hiddifypanel.models.external_model.outbound import OutboundModel
+from hiddifypanel.proxy_v3 import outbound_custom as custom_config
 from hiddifypanel.models.outbound import (
     BUILTIN_MODES,
     CONFIGURABLE_ENDPOINT_MODES,
+    CUSTOM_CONFIG_MODES,
     ENDPOINT_MODES,
     LIST_FIELDS,
     MULTI_MODES,
@@ -263,6 +266,51 @@ def _initial_order(rows: list[Outbound]) -> list[Outbound]:
     return rows
 
 
+def _repoint_outbound_ids(mapping: dict[int, int]) -> None:
+    """Admins' default outbound and users' preferred outbound that pointed at a removed copy now point at the one kept."""
+    from hiddifypanel.models import AdminUser
+    from hiddifypanel.models.user import User
+
+    for old, new in mapping.items():
+        AdminUser.query.filter(AdminUser.default_outbound_id == old).update({"default_outbound_id": new})
+    for user in User.query.filter(User.extra_params.isnot(None), User.extra_params != "", User.extra_params != "{}").all():
+        extra = user.extra_params_json()
+        oid = preferred_outbound_id(extra)
+        if oid in mapping:
+            extra["preferred_outbound"] = mapping[oid]
+            user.extra_params = json.dumps(extra, ensure_ascii=False)
+
+
+def dedupe_builtin_outbounds(rows: list[Outbound]) -> int:
+    """WARP, Direct and Block exist once. Copies (made by restores / syncs that named them differently) are merged
+    into the one whose slug is its mode (else the oldest); edited lists are kept. Returns how many copies were removed."""
+    removed = 0
+    mapping: dict[int, int] = {}
+    for mode in BUILTIN_MODES:
+        same = [r for r in rows if r.mode == mode]
+        if len(same) < 2:
+            continue
+        same.sort(key=lambda r: (r.slug != str(mode), r.id or 0))
+        keep, extras = same[0], same[1:]
+        for extra in extras:
+            if not keep.lists_override and extra.lists_override:
+                _apply_lists(keep, current_lists(extra))
+                keep.lists_override = True
+            if extra.id is not None and keep.id is not None:
+                mapping[extra.id] = keep.id
+            rows.remove(extra)
+            db.session.delete(extra)
+            removed += 1
+        keep.is_builtin = True
+        keep.slug = str(mode)
+    if removed:
+        db.session.flush()
+        if mapping:
+            _repoint_outbound_ids(mapping)
+        logger.info(f"Removed {removed} duplicated built-in outbound(s)")
+    return removed
+
+
 def sync_builtin_outbounds(child_id: int = 0, *, commit: bool = True) -> int:
     """Create missing built-in outbounds, refresh the lists the admin has not edited, keep the order valid.
 
@@ -272,6 +320,10 @@ def sync_builtin_outbounds(child_id: int = 0, *, commit: bool = True) -> int:
     rows = Outbound.query.all()
     if rows and _is_child_panel():
         return 0  # the parent decides; only an empty node gets the built-ins until its first sync
+    removed = dedupe_builtin_outbounds(rows)
+    if removed:
+        changed += removed
+        renumber(sorted(rows, key=lambda r: (r.position or 0, r.id or 0)))
     for r in rows:
         if not r.slug:
             r.slug = str(r.mode) if r.is_builtin and not any(o.slug == str(r.mode) for o in rows) else Outbound.make_slug(r.name, r.mode)
@@ -524,6 +576,10 @@ class OutboundVar(BaseModel):
     custom: bool
     #: Tor / Psiphon: run by hiddify-core itself, which also opens a local SOCKS inbound (host / port) for xray.
     native: bool = False
+    #: Which core runs it: ``singbox`` (Tor / Psiphon / hiddify-core JSON) or ``xray`` (xray JSON); the other core uses a SOCKS bridge to host:port.
+    runs_in: str = ""
+    #: The admin's own entries (custom JSON modes), as parsed JSON objects.
+    raw: list[dict[str, Any]] = Field(default_factory=list)
     host: str = ""
     port: int = 0
     username: str = ""
@@ -567,9 +623,40 @@ class OutboundsVar(BaseModel):
         return [o for o in self.items if o.custom]
 
     @property
+    def xray_socks(self) -> list[OutboundVar]:
+        """SOCKS outbounds xray declares: the admin's SOCKS servers and everything hiddify-core runs (reached on its local SOCKS inbounds)."""
+        return [o for o in self.items if o.custom and o.runs_in != "xray"]
+
+    @property
     def custom_socks(self) -> list[OutboundVar]:
-        """Outbounds that are plain SOCKS servers (the admin's own)."""
-        return [o for o in self.items if o.custom and not o.native]
+        """SOCKS outbounds hiddify-core declares: the admin's SOCKS servers and the entries xray runs (reached on xray's local SOCKS inbounds)."""
+        return [o for o in self.items if o.custom and not o.native and o.runs_in != "singbox"]
+
+    @property
+    def singbox_bridged(self) -> list[OutboundVar]:
+        """Run by hiddify-core, reached by xray: each gets a local SOCKS inbound that routes into it."""
+        return [o for o in self.items if o.runs_in == "singbox"]
+
+    @property
+    def xray_bridged(self) -> list[OutboundVar]:
+        """Run by xray, reached by hiddify-core: each gets a local SOCKS inbound that routes into it."""
+        return [o for o in self.items if o.runs_in == "xray"]
+
+    def raw_of(self, mode: str) -> list[dict[str, Any]]:
+        """The admin's entries of one custom mode, in outbound order."""
+        return [entry for o in self.items if o.mode == mode for entry in o.raw]
+
+    @property
+    def singbox_raw_outbounds(self) -> list[dict[str, Any]]:
+        return self.raw_of("core_outbound")
+
+    @property
+    def singbox_raw_endpoints(self) -> list[dict[str, Any]]:
+        return self.raw_of("core_endpoint")
+
+    @property
+    def xray_raw_outbounds(self) -> list[dict[str, Any]]:
+        return self.raw_of("xray_outbound")
 
     @property
     def native(self) -> list[OutboundVar]:
@@ -596,6 +683,10 @@ def rule_set_var(item: str) -> RuleSetVar:
 
 
 def _tags(row: Outbound, warp_available: bool) -> tuple[str, str]:
+    if row.mode in CUSTOM_CONFIG_MODES:
+        custom_config.parse(row.mode, row.config)  # raises when what is stored is not valid
+        tag = custom_config.custom_tag(row)  # the slug: the panel gives the object its tag
+        return tag, tag
     match row.mode:
         case OutboundMode.warp:
             return ("WARP", "WARP") if warp_available else ("freedom", "freedom")
@@ -698,7 +789,13 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
 
     items: list[OutboundVar] = []
     for row in rows:
-        xray_tag, singbox_tag = _tags(row, warp_available)
+        try:
+            xray_tag, singbox_tag = _tags(row, warp_available)
+        except custom_config.CustomOutboundError as e:  # stored before the checks, or edited in the database: leave it out
+            logger.warning(f"The custom outbound '{row.name}' is not valid and is left out of the configs: {e}")
+            if row is default:
+                default = None
+            continue
         sites = list(row.sites or [])
         geosites = list(row.geosites or [])
         rule_sets = list(row.rule_sets or [])
@@ -708,6 +805,14 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
             rule_sets += clean_list("rule_sets", domestic.get("rule_sets") or [])
         endpoint = default_endpoint(row.mode)
         configurable = row.mode in CONFIGURABLE_ENDPOINT_MODES
+        is_custom_json = row.mode in CUSTOM_CONFIG_MODES
+        if is_custom_json:
+            endpoint = {"host": "127.0.0.1", "port": custom_config.bridge_port(row.id)}
+            raw = [custom_config.parse(row.mode, row.config).with_tag(singbox_tag)]
+            runs_in = "xray" if row.mode == OutboundMode.xray_outbound else "singbox"
+        else:
+            raw = []
+            runs_in = "singbox" if row.mode in NATIVE_MODES else ""
         if row is default:
             # Everything else goes to the default anyway: its own lists add nothing.
             sites, geosites, rule_sets = [], [], []
@@ -724,6 +829,8 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
                 singbox_tag=singbox_tag,
                 custom=row.mode in ENDPOINT_MODES,
                 native=row.mode in NATIVE_MODES,
+                runs_in=runs_in,
+                raw=raw,
                 # Tor / Psiphon: always their local port from the defaults file.
                 host=(row.host if configurable and row.host else str(endpoint.get("host") or "")),
                 port=int((row.port if configurable and row.port else endpoint.get("port")) or 0),

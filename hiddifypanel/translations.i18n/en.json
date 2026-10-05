@@ -1297,6 +1297,17 @@
       "dialog": {
         "add": "Add outbound",
         "addTitle": "Add {mode} outbound",
+        "config": "JSON",
+        "configBridge": "The panel named it \"{tag}\"; routing uses that tag and the other core connects to it on 127.0.0.1:{port}.",
+        "configBridgeNew": "The panel gives it a tag (a tag you write is ignored); routing uses it and the other core connects to it through a local SOCKS bridge.",
+        "configExample": "Insert an example",
+        "configHint": {
+          "core_outbound": "One hiddify-core (sing-box) outbound object, e.g. {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. It is checked by hiddify-core before saving.",
+          "core_endpoint": "One hiddify-core (sing-box) endpoint object, e.g. a WireGuard endpoint. It is checked by hiddify-core before saving.",
+          "xray_outbound": "One xray outbound object, e.g. {\"protocol\": \"socks\", \"settings\": {…}}. It is checked by xray before saving."
+        },
+        "configInvalid": "Not valid JSON: {error}",
+        "configRequired": "The JSON is required",
         "domestic": "Domestic sites of {region}",
         "editTitle": "Edit {name}",
         "endpoint": "Connection",
@@ -1342,19 +1353,25 @@
       "makeDefault": "Make default (move to the end)",
       "mode": {
         "block": "Block",
+        "core_endpoint": "hiddify-core endpoint",
+        "core_outbound": "hiddify-core outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
         "socks": "SOCKS",
         "tor": "Tor",
-        "warp": "WARP"
+        "warp": "WARP",
+        "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "Dropped",
+        "core_endpoint": "Your own hiddify-core endpoint, e.g. WireGuard (JSON); xray reaches it through a local SOCKS bridge",
+        "core_outbound": "Your own hiddify-core outbound (JSON); xray reaches it through a local SOCKS bridge",
         "direct": "Straight from this server",
         "psiphon": "Through Psiphon (run by hiddify-core)",
         "socks": "Through a SOCKS5 proxy",
         "tor": "Through the Tor network (run by hiddify-core)",
-        "warp": "Through Cloudflare WARP on this server"
+        "warp": "Through Cloudflare WARP on this server",
+        "xray_outbound": "Your own xray outbound (JSON); hiddify-core reaches it through a local SOCKS bridge"
       },
       "more": "More actions",
       "moveDown": "Move down",

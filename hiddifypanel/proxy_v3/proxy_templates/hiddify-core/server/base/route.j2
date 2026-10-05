@@ -15,8 +15,8 @@
   "final": "{{ ctx.outbounds.default_singbox_tag }}",
   "rules": [
     {"action": "sniff"},
-    {# Traffic xray sends into a Tor / Psiphon SOCKS inbound leaves through that outbound #}
-    {% for o in ctx.outbounds.native %}
+    {# Traffic xray sends into a bridge SOCKS inbound (Tor, Psiphon, the admin's outbounds / endpoints) leaves through that outbound #}
+    {% for o in ctx.outbounds.singbox_bridged %}
     {"inbound": ["in-{{ o.singbox_tag }}"], "outbound": {{ o.singbox_tag|tojson }}},
     {% endfor %}
     {

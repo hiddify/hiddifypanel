@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from enum import auto
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import Enum, String
+from sqlalchemy import Enum, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import JSON
 from strenum import StrEnum
@@ -25,18 +25,25 @@ class OutboundMode(StrEnum):
     socks = auto()
     tor = auto()
     block = auto()
+    #: The admin's own JSON: hiddify-core ``{"outbounds": [...]}``, hiddify-core ``{"endpoints": [...]}`` or xray ``{"outbounds": [...]}``.
+    #: The other core reaches them through a local SOCKS bridge (see proxy_v3.outbound_custom).
+    core_outbound = auto()
+    core_endpoint = auto()
+    xray_outbound = auto()
 
 
 #: Built in on every panel; can not be deleted.
 BUILTIN_MODES = (OutboundMode.warp, OutboundMode.direct, OutboundMode.block)
 #: Modes that may exist more than once.
-MULTI_MODES = (OutboundMode.socks,)
+MULTI_MODES = (OutboundMode.socks, OutboundMode.core_outbound, OutboundMode.core_endpoint, OutboundMode.xray_outbound)
+#: Modes whose body is the admin's own JSON (the ``config`` column).
+CUSTOM_CONFIG_MODES = (OutboundMode.core_outbound, OutboundMode.core_endpoint, OutboundMode.xray_outbound)
 #: Modes that connect to a SOCKS endpoint.
-ENDPOINT_MODES = (OutboundMode.socks, OutboundMode.tor, OutboundMode.psiphon)
+ENDPOINT_MODES = (OutboundMode.socks, OutboundMode.tor, OutboundMode.psiphon, *CUSTOM_CONFIG_MODES)
 #: Of those, only SOCKS is configured by the admin; Tor and Psiphon use the local ports of the defaults file.
 CONFIGURABLE_ENDPOINT_MODES = (OutboundMode.socks,)
 #: Order given to outbounds from before they could be reordered: blocking first, exits, WARP, direct.
-RULE_ORDER = (OutboundMode.block, OutboundMode.socks, OutboundMode.tor, OutboundMode.psiphon, OutboundMode.warp, OutboundMode.direct)
+RULE_ORDER = (OutboundMode.block, OutboundMode.socks, *CUSTOM_CONFIG_MODES, OutboundMode.tor, OutboundMode.psiphon, OutboundMode.warp, OutboundMode.direct)
 
 #: Routing list fields an admin can edit.
 LIST_FIELDS = ("sites", "geosites", "rule_sets")
@@ -69,6 +76,8 @@ class Outbound(db.Model):  # type: ignore
     port: Mapped[int | None] = mapped_column(default=None)
     username: Mapped[str | None] = mapped_column(String(255), default="")
     password: Mapped[str | None] = mapped_column(String(255), default="")
+    #: Custom modes: the admin's JSON text (validated before it is stored).
+    config: Mapped[str | None] = mapped_column(Text, default="")
 
     is_builtin: Mapped[bool] = mapped_column(default=False)
     #: The defaults file's lists (and `domestic`) at the last sync: refreshed on upgrade.
@@ -116,6 +125,18 @@ class Outbound(db.Model):  # type: ignore
         from hiddifypanel.models.external_model.outbound import OutboundModel
 
         models = OutboundModel.coerce_many(as_row(r) for r in rows)
+        # WARP, Direct and Block are one each, keyed by their mode: another panel's slug for them (or a repeated entry) must not add a copy.
+        seen: set[OutboundMode] = set()
+        unique = []
+        for m in models:
+            if m.mode in BUILTIN_MODES:
+                if m.mode in seen:
+                    continue
+                seen.add(m.mode)
+                if m.slug != str(m.mode):
+                    m = m.model_copy(update={"slug": str(m.mode)})
+            unique.append(m)
+        models = unique
         existing = {r.slug: r for r in cls.query.all()}
         changed = False
         if remove:

@@ -20,7 +20,12 @@
     "data_directory": "/opt/hiddify-manager/data/hiddify-core/{{ o.mode }}"
 },
 {% endfor %}
-{# The admin's own SOCKS outbounds #}
+{# The admin's own hiddify-core outbounds (Outbounds → hiddify-core outbound); routing uses their tags.
+   Their endpoints are in the "endpoints" list of the config #}
+{% for entry in ctx.outbounds.singbox_raw_outbounds %}
+{{ entry|tojson }},
+{% endfor %}
+{# The admin's own SOCKS outbounds, and the bridges to xray outbounds (xray listens on the port) #}
 {% for o in ctx.outbounds.custom_socks %}
 {
     "tag": "{{ o.singbox_tag }}",
