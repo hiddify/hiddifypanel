@@ -25,7 +25,7 @@ const summary = ref<BackupSummary | null>(null)
 const error = ref<string | null>(null)
 const busy = ref(false)
 const showAdvanced = ref(false)
-const options = ref<RestoreOptions>({ settings: true, users: true, domains: true, override_root_admin: false })
+const options = ref<RestoreOptions>({ settings: true, users: true, domains: true, replace_owner_admin: false })
 
 const PARTS = [
   { key: 'settings', icon: 'pi pi-cog' },
@@ -194,12 +194,12 @@ async function run() {
         <i class="pi pi-sliders-h" />{{ t('backup.restore.advanced') }}<i class="pi rc__chev" :class="showAdvanced ? 'pi-chevron-up' : 'pi-chevron-down'" />
       </button>
       <label v-if="showAdvanced" class="rc__part rc__part--plain">
-        <span class="rc__part-icon"><i class="pi pi-crown" /></span>
+        <span class="rc__part-icon"><i class="pi pi-id-card" /></span>
         <span class="rc__part-text">
-          <b>{{ t('backup.restore.overrideRoot') }}</b>
-          <small>{{ t('backup.restore.overrideRootHint') }}</small>
+          <b>{{ t('backup.restore.replaceOwner') }}</b>
+          <small>{{ t('backup.restore.replaceOwnerHint') }}</small>
         </span>
-        <ToggleSwitch v-model="options.override_root_admin" :disabled="busy" />
+        <ToggleSwitch v-model="options.replace_owner_admin" :disabled="busy" />
       </label>
 
       <Message v-if="summary.admin_path_changes && options.settings" severity="warn" :closable="false" size="small" icon="pi pi-link">{{ t('backup.restore.pathChanges') }}</Message>

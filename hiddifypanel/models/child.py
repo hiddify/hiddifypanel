@@ -57,6 +57,7 @@ class Child(db.Model):  # type: ignore
             name=self.name,
             mode=self.mode,
             unique_id=self.unique_id,
+            node_base_url=self.node_base_url or "",
             last_node_to_parent_time=self.last_node_to_parent_time,
             last_parent_to_node_time=self.last_parent_to_node_time,
         )
@@ -113,6 +114,8 @@ class Child(db.Model):  # type: ignore
         dbchild.name = data.name
         dbchild.mode = data.mode
         dbchild.unique_id = data.unique_id
+        if data.node_base_url is not None:  # older backups carry none: keep what the row has
+            dbchild.node_base_url = data.node_base_url
         if data.last_node_to_parent_time is not None:
             dbchild.last_node_to_parent_time = data.last_node_to_parent_time
         if data.last_parent_to_node_time is not None:

@@ -251,7 +251,7 @@ class BackupRestoreApi(MethodView):
         summary = summarize(data)
         if body.get("dry_run"):
             return {"summary": summary}
-        options = {k: bool(body.get(k)) for k in ("settings", "users", "domains", "override_root_admin")}
+        options = {k: bool(body.get(k)) for k in ("settings", "users", "domains", "replace_owner_admin")}
         if not (options["settings"] or options["users"] or options["domains"]):
             abort(400, "Choose at least one part to restore")
         try:
@@ -275,6 +275,6 @@ def run_restore(payload: dict) -> None:
         set_settings=options.get("settings", False),
         override_unique_id=False,
         override_child_unique_id=True,
-        override_root_admin=options.get("override_root_admin", False),
+        replace_owner_admin=options.get("replace_owner_admin", False),
     )
     db.session.commit()

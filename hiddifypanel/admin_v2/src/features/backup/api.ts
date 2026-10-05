@@ -36,7 +36,8 @@ export interface RestoreOptions {
   settings: boolean
   users: boolean
   domains: boolean
-  override_root_admin: boolean
+  /** The owner of this panel takes the backup owner's GUID (admin links of the old panel keep working). */
+  replace_owner_admin: boolean
 }
 
 /** Where a restore comes from: a file picked in the browser, or one of the server's backups. */

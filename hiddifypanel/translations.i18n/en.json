@@ -687,8 +687,6 @@
         "fromFile": "From your device",
         "fromServer": "From this server",
         "notJson": "Choose a .json backup file",
-        "overrideRoot": "Make me the owner",
-        "overrideRootHint": "The backup's owner admin becomes you (useful when restoring another panel's backup).",
         "part": {
           "domains": "Domains",
           "domainsHint": "Domains, their certificates and custom proxies",
@@ -698,6 +696,8 @@
           "usersHint": "Users, their usage and limits, and the admins"
         },
         "pathChanges": "This backup comes from another panel: after restoring, the admin link changes. The new links are shown when it finishes.",
+        "replaceOwner": "Keep the backup owner's GUID",
+        "replaceOwnerHint": "This panel's owner takes the GUID of the backup's owner, so the old admin links keep working. Works without restoring users. Your current admin link changes.",
         "run": "Restore",
         "running": "Restoring the backup",
         "sub": "Bring back a backup from this panel or from another one.",
