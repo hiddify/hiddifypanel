@@ -1,7 +1,10 @@
 import os
 import re
 import subprocess
+import threading
 from datetime import datetime, timedelta
+
+from loguru import logger
 
 from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
@@ -58,10 +61,31 @@ def exec_command(cmd, cwd=None):
         print(e)
 
 
-def quick_apply_users():
-    # run install.sh apply_users
-    commander(Command.apply_users)
+_apply_users_lock = threading.Lock()
+_apply_users_state = {"running": False, "pending": False}
 
+
+def _apply_users_worker():
+    while True:
+        try:
+            commander(Command.apply_users, run_in_background=False)
+        except Exception as e:
+            logger.exception(f"apply users failed: {e}")
+        with _apply_users_lock:
+            if not _apply_users_state["pending"]:
+                _apply_users_state["running"] = False
+                return
+            _apply_users_state["pending"] = False  # changes came in meanwhile: apply again
+
+
+def quick_apply_users():
+    """Run install.sh apply_users. Asked again while it runs: it runs once more afterwards, so the last change is always applied."""
+    with _apply_users_lock:
+        if _apply_users_state["running"]:
+            _apply_users_state["pending"] = True
+            return {"status": "queued"}
+        _apply_users_state["running"] = True
+    threading.Thread(target=_apply_users_worker, daemon=True).start()
     return {"status": "success"}
 
 
@@ -157,9 +181,9 @@ def child_id_from_row(row: dict, force_child_unique_id: str | None = None) -> in
 
 
 def dump_db_to_dict():
-    from hiddifypanel.models.tag import export_links, export_tags
     from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
     from hiddifypanel.models.server_ip import ServerIp
+    from hiddifypanel.models.tag import export_links, export_tags
     from hiddifypanel.models.tls_store import TlsStore
 
     return {
