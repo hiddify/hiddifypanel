@@ -17,6 +17,8 @@
     fp=ctx.hconfig.utls|default(''),
   ) %}
   {% set data.ps |trim_no_line %}{% include 'sublink/tag' %}{% endset %}
+  {% if ctx.proxy.domain.extra.finalmask %}{% set data.fm = ctx.proxy.domain.extra.finalmask %},{% endif %}
+
   {% include '__VMESS_TRANSPORT_SLUG__' %}
   {% include '__VMESS_SECURITY_SLUG__' %}
   
