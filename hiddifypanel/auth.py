@@ -121,8 +121,8 @@ def login_required(roles: set[Role] | None = None, node_auth: bool = False):
     def decorator(func):
         from flask import has_app_context
 
-        # Conditionally apply x if has_app_context() is true
-        if has_app_context():
+        # OpenAPI docs exist only in the web app (APIFlask); the CLI app is a plain Flask without ``doc``.
+        if has_app_context() and hasattr(current_app, "doc"):
             func = current_app.doc(security=[{"Hiddify-API-Key": []}])(func)
 
         # Always apply y
