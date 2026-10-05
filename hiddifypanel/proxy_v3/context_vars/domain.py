@@ -84,9 +84,7 @@ class DomainIPVar(BaseModel):
     def has_domain_fronting(self) -> bool:
         if not self.uses_public_edge_tls():
             return False
-        sni = (self.sni or "").strip().lower()
-        name = (self.name or "").strip().lower()
-        return bool(sni) and sni != name
+        return _is_fronting(self.sni, self.name)
 
     @property
     def allow_insecure(self) -> bool:
@@ -115,9 +113,6 @@ class DomainIPVar(BaseModel):
         extracted_data = sni_host_ip_extractor(domain_db)
         hostname = str(domain_db.domain or "").lower()
         sni = extracted_data["sni"] or hostname
-        echinfo = _resolve_domain_ech(domain_db)
-        if echinfo:  # with ECH the client's SNI is the ECH public name, not the original domain
-            sni = hutils.network.get_ech_public_name(echinfo) or sni
         extra = JsonMap.from_any(domain_db.extra_params_json())
         ips = get_ips(domain_db)
         server_host = domain_db.get_server()
@@ -133,7 +128,7 @@ class DomainIPVar(BaseModel):
             alias=domain_db.alias or domain_db.name,
             need_valid_ssl=bool(domain_db.need_valid_ssl),
             child_id=int(domain_db.child_id or 0),
-            echinfo=echinfo,
+            echinfo=_resolve_domain_ech(domain_db),
             cert=cert,
             extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
@@ -292,6 +287,17 @@ def _ips_for_host(host: str) -> IPVar:
     return ips
 
 
+def _is_fronting(sni: str, name: str) -> bool:
+    """SNI differs from the domain; a wildcard name (*.example.com) matches its own random subdomain."""
+    sni = (sni or "").strip().lower()
+    name = (name or "").strip().lower()
+    if not sni or sni == name:
+        return False
+    if name.startswith("*."):
+        return not (sni.endswith(name[1:]) and len(sni) > len(name) - 1)
+    return True
+
+
 def _client_cert_for_domain(domain_db: Domain, *, hostname: str, sni: str, connect_host: str) -> CertVar:
     """Client TLS material: origin cert, except CDN/worker which must not pin origin.
 
@@ -303,8 +309,7 @@ def _client_cert_for_domain(domain_db: Domain, *, hostname: str, sni: str, conne
     if domain_db.mode not in (DomainType.cdn, DomainType.worker):
         return origin
 
-    fronting = bool(sni) and sni.strip().lower() != (hostname or "").strip().lower()
-    if not fronting:
+    if not _is_fronting(sni, hostname):
         return origin.model_copy(update={"pinnedPeerCertSha256": [], "public_key_sha256": ""})
     pin, spki = hutils.network.get_tls_peer_pins(connect_host, sni)
     if not pin:
