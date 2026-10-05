@@ -94,10 +94,6 @@ def validate_domain(model: Domain, *, is_created: bool) -> list[str]:
     if not update_cloudflare(model, ipv4_list, ipv6_list):
         _check_domain_ips(model, server_ips)
 
-    if model.mode == DomainType.direct and model.cdn_ip:
-        model.cdn_ip = ""
-        raise DomainRuleError(_("Specifying CDN IP is only valid for CDN mode"))
-
     if not model.mode.is_cdn():
         model.ech = False
     elif model.ech and not hconfig(ConfigEnum.tls_ech_enable):

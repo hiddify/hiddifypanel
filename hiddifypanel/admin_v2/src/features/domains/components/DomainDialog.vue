@@ -305,7 +305,7 @@ async function save() {
           </label>
         </div>
 
-        <label v-if="!isSublink && (mode !== 'direct' || fakeMode !== 'valid')" class="dd__field">
+        <label v-if="!isSublink" class="dd__field">
           <span class="dd__label">{{ t('domains.field.cdnIp') }}</span>
           <Textarea v-model="cdnIp" dir="ltr" rows="2" auto-resize spellcheck="false" :invalid="relayNeedsIp" fluid />
           <small class="dd__hint">{{ t('domains.field.cdnIpHint') }}</small>
