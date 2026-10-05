@@ -39,6 +39,9 @@ msgstr "Last Day"
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
 msgstr "<a href=\"%(user_link)s\"> %(user)s</a>"
 
+msgid "A fake domain needs a real domain name"
+msgstr "A fake domain needs a real domain name"
+
 msgid "Access Denied!"
 msgstr "Access Denied"
 
@@ -340,6 +343,9 @@ msgstr "Export"
 msgid "Fake"
 msgstr "➖ Fake"
 
+msgid "Fake domains can only be direct or relay"
+msgstr "Fake domains can only be direct or relay"
+
 msgid "Filter"
 msgstr "Filter"
 
@@ -551,6 +557,9 @@ msgstr "☑️ Only Blocked and Local Websites"
 
 msgid "Only for sublink?"
 msgstr "🌍 Use Only for Subscription Link"
+
+msgid "Only one domain of this kind can be added"
+msgstr "Only one domain of this kind can be added"
 
 msgid "Oops! Something went wrong."
 msgstr "Oops! something went wrong."
@@ -1894,6 +1903,18 @@ msgstr "Something is running on the server right now."
 msgid "adminV2.apply.lastRun"
 msgstr "Last run {when}"
 
+msgid "adminV2.apply.log.clear"
+msgstr "Clear"
+
+msgid "adminV2.apply.log.clearConfirm"
+msgstr "Empty \"{name}\"? Its text is deleted from the server."
+
+msgid "adminV2.apply.log.clearFailed"
+msgstr "Could not clear the log"
+
+msgid "adminV2.apply.log.cleared"
+msgstr "Log cleared"
+
 msgid "adminV2.apply.log.copied"
 msgstr "Log copied"
 
@@ -1923,6 +1944,23 @@ msgstr "log"
 
 msgid "adminV2.apply.log.wrap"
 msgstr "Wrap lines"
+
+msgid "adminV2.apply.logs.clearAll"
+msgstr "Clear all"
+
+msgid "adminV2.apply.logs.clearAllConfirm"
+msgstr ""
+"Empty every log file? The text is deleted from the server (a log being "
+"written by a running action is kept)."
+
+msgid "adminV2.apply.logs.clearFailed"
+msgstr "Could not clear some logs"
+
+msgid "adminV2.apply.logs.clearSkipped"
+msgstr "{n} in use were kept"
+
+msgid "adminV2.apply.logs.clearedAll"
+msgstr "Logs cleared"
 
 msgid "adminV2.apply.logs.empty"
 msgstr "No logs yet"
@@ -2086,14 +2124,6 @@ msgstr "From this server"
 msgid "adminV2.backup.restore.notJson"
 msgstr "Choose a .json backup file"
 
-msgid "adminV2.backup.restore.overrideRoot"
-msgstr "Make me the owner"
-
-msgid "adminV2.backup.restore.overrideRootHint"
-msgstr ""
-"The backup's owner admin becomes you (useful when restoring another panel's "
-"backup)."
-
 msgid "adminV2.backup.restore.part.domains"
 msgstr "Domains"
 
@@ -2116,6 +2146,15 @@ msgid "adminV2.backup.restore.pathChanges"
 msgstr ""
 "This backup comes from another panel: after restoring, the admin link "
 "changes. The new links are shown when it finishes."
+
+msgid "adminV2.backup.restore.replaceOwner"
+msgstr "Keep the backup owner's GUID"
+
+msgid "adminV2.backup.restore.replaceOwnerHint"
+msgstr ""
+"This panel's owner takes the GUID of the backup's owner, so the old admin "
+"links keep working. Works without restoring users. Your current admin link "
+"changes."
 
 msgid "adminV2.backup.restore.run"
 msgstr "Restore"
@@ -3068,8 +3107,21 @@ msgstr ""
 "Decoy TLS with a fake site's name (e.g. soft98.ir) to pass an SNI whitelist."
 " Not recommended."
 
+msgid "adminV2.domains.tlsMode.fakeProxyNote"
+msgstr ""
+"This domain is the fake-TLS name of a built-in server and stays in step with"
+" its setting. It has no custom proxies or download domain."
+
 msgid "adminV2.domains.tlsMode.locked"
 msgstr "This mode always uses a valid certificate."
+
+msgid "adminV2.domains.tlsMode.other"
+msgstr "Other"
+
+msgid "adminV2.domains.tlsMode.otherHint"
+msgstr ""
+"Fake-TLS front domains of the Telegram, ShadowTLS and Shadowsocks FakeTLS "
+"servers. One of each."
 
 msgid "adminV2.domains.tlsMode.reality"
 msgstr "Reality"
@@ -3078,6 +3130,27 @@ msgid "adminV2.domains.tlsMode.realityHint"
 msgstr ""
 "Borrows another site's TLS with the Reality protocol; you can have many such"
 " domains."
+
+msgid "adminV2.domains.tlsMode.shadowtls"
+msgstr "ShadowTLS"
+
+msgid "adminV2.domains.tlsMode.shadowtlsHint"
+msgstr "Fake domain of the ShadowTLS server."
+
+msgid "adminV2.domains.tlsMode.ssfaketls"
+msgstr "SS FakeTLS"
+
+msgid "adminV2.domains.tlsMode.ssfaketlsHint"
+msgstr "Fake domain of the Shadowsocks FakeTLS server."
+
+msgid "adminV2.domains.tlsMode.taken"
+msgstr "Already added"
+
+msgid "adminV2.domains.tlsMode.telegram"
+msgstr "Telegram proxy"
+
+msgid "adminV2.domains.tlsMode.telegramHint"
+msgstr "Fake domain of the Telegram MTProxy."
 
 msgid "adminV2.domains.tlsMode.valid"
 msgstr "Valid TLS"
@@ -3688,6 +3761,44 @@ msgstr "Add outbound"
 msgid "adminV2.outbounds.dialog.addTitle"
 msgstr "Add {mode} outbound"
 
+msgid "adminV2.outbounds.dialog.config"
+msgstr "JSON"
+
+msgid "adminV2.outbounds.dialog.configBridge"
+msgstr ""
+"The panel named it \"{tag}\"; routing uses that tag and the other core "
+"connects to it on 127.0.0.1:{port}."
+
+msgid "adminV2.outbounds.dialog.configBridgeNew"
+msgstr ""
+"The panel gives it a tag (a tag you write is ignored); routing uses it and "
+"the other core connects to it through a local SOCKS bridge."
+
+msgid "adminV2.outbounds.dialog.configExample"
+msgstr "Insert an example"
+
+msgid "adminV2.outbounds.dialog.configHint.core_endpoint"
+msgstr ""
+"One hiddify-core (sing-box) endpoint object, e.g. a WireGuard endpoint. It "
+"is checked by hiddify-core before saving."
+
+msgid "adminV2.outbounds.dialog.configHint.core_outbound"
+msgstr ""
+"One hiddify-core (sing-box) outbound object, e.g. {\"type\": \"socks\", "
+"\"server\": \"…\", \"server_port\": 1080}. It is checked by hiddify-core "
+"before saving."
+
+msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
+msgstr ""
+"One xray outbound object, e.g. {\"protocol\": \"socks\", \"settings\": {…}}."
+" It is checked by xray before saving."
+
+msgid "adminV2.outbounds.dialog.configInvalid"
+msgstr "Not valid JSON: {error}"
+
+msgid "adminV2.outbounds.dialog.configRequired"
+msgstr "The JSON is required"
+
 msgid "adminV2.outbounds.dialog.domestic"
 msgstr "Domestic sites of {region}"
 
@@ -3699,13 +3810,13 @@ msgstr "Connection"
 
 msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
 msgstr ""
-"Connects to the Psiphon SOCKS port on this server ({endpoint}); the Psiphon "
-"client must be running there."
+"Runs inside hiddify-core. xray reaches it on the local SOCKS port "
+"{endpoint}."
 
 msgid "adminV2.outbounds.dialog.endpointHint.tor"
 msgstr ""
-"Connects to the Tor SOCKS port on this server ({endpoint}); the Tor service "
-"must be running there."
+"Runs inside hiddify-core (the `tor` program must be installed on this "
+"server). xray reaches it on the local SOCKS port {endpoint}."
 
 msgid "adminV2.outbounds.dialog.host"
 msgstr "Host"
@@ -3825,6 +3936,12 @@ msgstr "Make default (move to the end)"
 msgid "adminV2.outbounds.mode.block"
 msgstr "Block"
 
+msgid "adminV2.outbounds.mode.core_endpoint"
+msgstr "hiddify-core endpoint"
+
+msgid "adminV2.outbounds.mode.core_outbound"
+msgstr "hiddify-core outbound"
+
 msgid "adminV2.outbounds.mode.direct"
 msgstr "Direct"
 
@@ -3840,23 +3957,41 @@ msgstr "Tor"
 msgid "adminV2.outbounds.mode.warp"
 msgstr "WARP"
 
+msgid "adminV2.outbounds.mode.xray_outbound"
+msgstr "xray outbound"
+
 msgid "adminV2.outbounds.modeHint.block"
 msgstr "Dropped"
+
+msgid "adminV2.outbounds.modeHint.core_endpoint"
+msgstr ""
+"Your own hiddify-core endpoint, e.g. WireGuard (JSON); xray reaches it "
+"through a local SOCKS bridge"
+
+msgid "adminV2.outbounds.modeHint.core_outbound"
+msgstr ""
+"Your own hiddify-core outbound (JSON); xray reaches it through a local SOCKS"
+" bridge"
 
 msgid "adminV2.outbounds.modeHint.direct"
 msgstr "Straight from this server"
 
 msgid "adminV2.outbounds.modeHint.psiphon"
-msgstr "Through Psiphon (a Psiphon SOCKS port)"
+msgstr "Through Psiphon (run by hiddify-core)"
 
 msgid "adminV2.outbounds.modeHint.socks"
 msgstr "Through a SOCKS5 proxy"
 
 msgid "adminV2.outbounds.modeHint.tor"
-msgstr "Through the Tor network (a Tor SOCKS port)"
+msgstr "Through the Tor network (run by hiddify-core)"
 
 msgid "adminV2.outbounds.modeHint.warp"
 msgstr "Through Cloudflare WARP on this server"
+
+msgid "adminV2.outbounds.modeHint.xray_outbound"
+msgstr ""
+"Your own xray outbound (JSON); hiddify-core reaches it through a local SOCKS"
+" bridge"
 
 msgid "adminV2.outbounds.more"
 msgstr "More actions"
@@ -5025,6 +5160,117 @@ msgstr ""
 msgid "adminV2.settings.title"
 msgstr "Settings"
 
+msgid "adminV2.tags.addTag"
+msgstr "Tag"
+
+msgid "adminV2.tags.bulk"
+msgstr "Tag"
+
+msgid "adminV2.tags.bulkHint"
+msgstr "Tags of the selected: a tick means all of them have it"
+
+msgid "adminV2.tags.clear"
+msgstr "Clear"
+
+msgid "adminV2.tags.color"
+msgstr "Color"
+
+msgid "adminV2.tags.colors.black"
+msgstr "Black"
+
+msgid "adminV2.tags.colors.blue"
+msgstr "Blue"
+
+msgid "adminV2.tags.colors.green"
+msgstr "Green"
+
+msgid "adminV2.tags.colors.orange"
+msgstr "Orange"
+
+msgid "adminV2.tags.colors.red"
+msgstr "Red"
+
+msgid "adminV2.tags.create"
+msgstr "Create"
+
+msgid "adminV2.tags.created"
+msgstr "Tag created"
+
+msgid "adminV2.tags.default.family"
+msgstr "Family"
+
+msgid "adminV2.tags.default.free"
+msgstr "Free"
+
+msgid "adminV2.tags.default.friends"
+msgstr "Friends"
+
+msgid "adminV2.tags.default.important"
+msgstr "Important"
+
+msgid "adminV2.tags.default.work"
+msgstr "Work"
+
+msgid "adminV2.tags.delete"
+msgstr "Delete tag"
+
+msgid "adminV2.tags.deleteConfirm"
+msgstr "Delete the tag \"{name}\"? It is taken off everyone who has it."
+
+msgid "adminV2.tags.deleted"
+msgstr "Tag deleted"
+
+msgid "adminV2.tags.edit"
+msgstr "Edit tag"
+
+msgid "adminV2.tags.editTags"
+msgstr "Edit tags"
+
+msgid "adminV2.tags.filterLabel"
+msgstr "Filter by tag"
+
+msgid "adminV2.tags.namePlaceholder"
+msgstr "Name your own tag"
+
+msgid "adminV2.tags.newTag"
+msgstr "New tag"
+
+msgid "adminV2.tags.none"
+msgstr "No tags yet"
+
+msgid "adminV2.tags.pick"
+msgstr "Choose tags"
+
+msgid "adminV2.tags.pickHint"
+msgstr "You can choose several"
+
+msgid "adminV2.tags.rename"
+msgstr "Rename"
+
+msgid "adminV2.tags.save"
+msgstr "Save"
+
+msgid "adminV2.tags.saveFailed"
+msgstr "Could not save the tags"
+
+msgid "adminV2.tags.tagCount"
+msgstr "{n} tags"
+
+msgid "adminV2.tags.tagged"
+msgstr "Tagged"
+
+msgid "adminV2.tags.taggedHint"
+msgstr "Everyone who has at least one tag"
+
+msgid "adminV2.tags.title"
+msgstr "Tags"
+
+msgid "adminV2.tags.untagged"
+msgstr "No tag"
+
+msgid "adminV2.tags.use"
+msgstr "{n} in use"
+
 msgid "adminV2.telegram.benefit.backup"
 msgstr "Receive the automatic backups"
 
@@ -5213,6 +5459,26 @@ msgstr "Light mode"
 msgid "adminV2.users.add"
 msgstr "Add user"
 
+msgid "adminV2.users.addLimits.apply"
+msgstr "Add"
+
+msgid "adminV2.users.addLimits.days"
+msgstr "Days to add"
+
+msgid "adminV2.users.addLimits.gb"
+msgstr "Data to add"
+
+msgid "adminV2.users.addLimits.hint"
+msgstr "Data and days are added on top of what each user already has."
+
+msgid "adminV2.users.addLimits.note"
+msgstr ""
+"Users with unlimited data or days stay unlimited. Leave one at 0 to add only"
+" the other."
+
+msgid "adminV2.users.addLimits.title"
+msgstr "Add limits to {n} user | Add limits to {n} users"
+
 msgid "adminV2.users.added"
 msgstr "{name} added"
 
@@ -5224,6 +5490,9 @@ msgstr "All"
 
 msgid "adminV2.users.bulk.add_days"
 msgstr "+7 days"
+
+msgid "adminV2.users.bulk.add_limits"
+msgstr "Add limits"
 
 msgid "adminV2.users.bulk.delete"
 msgstr "Delete"
@@ -5266,6 +5535,9 @@ msgstr "Their used data goes back to zero."
 
 msgid "adminV2.users.bulkDone.add_days"
 msgstr "7 days added to {n} user | 7 days added to {n} users"
+
+msgid "adminV2.users.bulkDone.add_limits"
+msgstr "Limits added to {n} user | Limits added to {n} users"
 
 msgid "adminV2.users.bulkDone.delete"
 msgstr "{n} user deleted | {n} users deleted"

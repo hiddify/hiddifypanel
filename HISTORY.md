@@ -5,9 +5,59 @@
 
 #### New
 
+* Add finalmask support. 
+
+* Add psiphone and tor backend. 
+
+* Add cpu   core and ram info in the chart. 
+
+* Rewrite log and actions into new interface. 
+  _- Removed the old ActionsView component and integrated its functionality into the new ApplyView.
+- Introduced a new API for managing apply actions, including apply, install, update, and restart.
+- Added components for displaying logs and running actions with live progress tracking.
+- Updated routing to redirect from the old actions path to the new apply path.
+- Enhanced user interface with new dialogs for log viewing and action confirmation.
+- Improved error handling and user feedback mechanisms throughout the apply process._
+
+* Add domain ip extraction. 
+
+* Redesign backup page, integrate Telegram bot functionality. 
+  _- Added support for linking admin accounts to the panel's Telegram bot, enhancing communication and notifications.
+- Introduced a new component for Telegram connection management, including a QR code for easy linking.
+- Implemented a prompt for admins to connect their Telegram accounts if not already linked.
+- Updated the admin account view to display the Telegram connection status and provide options for reconnection.
+- Enhanced the dashboard with a Telegram prompt for better user engagement.
+- Added API support for managing Telegram connection states and notifications.
+- Improved translations and UI elements to reflect the new Telegram features._
+
+* Add domain management features. 
+  _- Introduced a new API for managing domains, including listing, creating, updating, and deleting domains.
+- Added components for domain management, including a wizard for adding domains and a dialog for editing existing domains.
+- Implemented certificate progress tracking and validation for domain certificates.
+- Enhanced user experience with improved form validation, error handling, and feedback mechanisms.
+- Added support for custom proxy configurations and domain-specific settings.
+- Updated translations and UI elements to reflect new domain management features._
+
+* New user management features. 
+  _- Added user management view and dialog components for creating and editing users.
+- Introduced API integration for user data handling, including listing, creating, updating, and deleting users.
+- Implemented user status and mode management with appropriate UI elements.
+- Enhanced user experience with improved form validation and feedback mechanisms.
+- Added support for sharing user links via QR codes and direct links._
+
+* New admin page. 
+
 * Better integration with the old panel. 
 
 #### Fix
+
+* Update finalmask handling in VLESS template. 
+  _- Modified the VLESS template to ensure the finalmask is processed as compact JSON when set.
+- Corrected the assignment of the flow parameter to properly assign the value from the configuration._
+
+* Simplify CDN IP validation in domain management. 
+  _- Removed unnecessary condition for CDN IP in the DomainDialog component, ensuring it is displayed for all non-sublink modes.
+- Updated backend validation to eliminate the restriction on specifying CDN IP for direct mode, improving flexibility in domain configuration._
 
 * Quick  setup. 
 
@@ -37,6 +87,100 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: implement custom JSON outbounds for hiddify-core and xray. 
+  _- Added support for custom JSON configurations in the Outbounds API, allowing admins to define hiddify-core outbound, endpoint, and xray outbound objects.
+- Introduced new outbound modes: 'core_outbound', 'core_endpoint', and 'xray_outbound'.
+- Enhanced the OutboundDialog component to handle custom JSON input, including validation and example configurations.
+- Updated backend models and API to store and validate custom JSON entries, ensuring they are checked by the respective core before saving.
+- Improved UI translations to accommodate new features and provide guidance on custom JSON usage._
+
+* Feat: implement threading for user application process. 
+  _- Introduced a new threading mechanism to handle the `quick_apply_users` function, allowing multiple requests to queue while the command is running.
+- Added a worker function to manage the application of user changes, ensuring that the latest changes are always applied.
+- Implemented logging for error handling during the user application process to improve debugging and monitoring._
+
+* Feat: update backup restore options and UI components. 
+  _- Renamed `override_root_admin` to `replace_owner_admin` in the RestoreOptions interface to clarify functionality.
+- Updated RestoreCard component to reflect the new option name and adjusted associated UI elements.
+- Enhanced translations for both English and Persian to include new terms related to the owner replacement feature.
+- Modified backend API to accommodate the updated restore options, ensuring consistent behavior across the application._
+
+* Feat: introduce fake-TLS domain management for Telegram and ShadowTLS. 
+  _- Added support for new fake-TLS modes: 'telegram', 'shadowtls', and 'ssfaketls' in the domain management system.
+- Implemented logic to ensure only one instance of each fake-TLS domain can exist per node.
+- Updated UI components to reflect the new fake-TLS modes and their restrictions.
+- Enhanced backend validation to manage fake-TLS domains effectively, ensuring they sync with their respective settings.
+- Improved translations to include new terms related to fake-TLS functionality._
+
+* Refactor: streamline SNI handling and domain fronting logic. 
+  _- Removed redundant ECH public name extraction from SNI handling in `sni_host_server_extractor` and `DomainIPVar` class.
+- Introduced a new helper function `_is_fronting` to encapsulate domain fronting logic, improving code clarity and maintainability.
+- Updated references to ECH information to ensure consistent handling across domain processing functions._
+
+* Feat: enhance ECH handling and domain detection. 
+  _- Introduced a new function `get_domain_ech_info` to retrieve ECH configuration for Cloudflare-hosted domains.
+- Updated existing functions to utilize the new ECH retrieval method, improving accuracy in ECH information handling.
+- Enhanced the public name extraction from ECH configurations for better SNI management.
+- Modified templates and proxy configurations to support the new ECH structure, ensuring compatibility across components._
+
+* Feat: enhance UI components and styles for better user experience. 
+  _- Updated the topbar background to a dynamic gradient for a more vibrant appearance.
+- Replaced Select components with Listbox for improved filtering and selection in various popovers.
+- Introduced utility functions for color styling of tags based on core and protocol types, enhancing visual organization.
+- Added autofocus functionality to input fields in popovers for improved accessibility and user interaction._
+
+* Feat: add 'add_limits' bulk action for user management. 
+  _- Introduced a new bulk action to add data limits and days to selected users.
+- Updated the API to handle the new 'add_limits' action, allowing for flexible user management.
+- Enhanced the UsersView component with a dialog for inputting limits, improving user experience.
+- Updated translations to include new terms related to the 'add_limits' functionality._
+
+* Feat: implement tagging system for users. 
+  _- Introduced a new tagging feature allowing admins to assign colored tags to users for better organization and identification.
+- Added API endpoints for creating, updating, and removing tags, as well as assigning tags to users.
+- Implemented UI components for tag selection and management within user forms and views.
+- Enhanced user experience by integrating tag filters and displays in user lists and detail views.
+- Updated database models to support tag functionality, ensuring data integrity and efficient retrieval._
+
+* Feat: add log clearing functionality in LogViewerDialog. 
+  _- Implemented a clear button to remove log entries, with confirmation dialog and success/error toast notifications.
+- Enhanced user experience by allowing users to clear logs directly from the Log Viewer interface._
+
+* Feat: enhance outbound management and synchronization. 
+  _- Introduced new functions for managing outbounds, including applying changes from the parent panel and syncing outbound configurations.
+- Updated the AdminUser and User models to include preferred outbound slugs, allowing for better outbound management.
+- Enhanced the API to support outbound operations, ensuring that outbounds are managed centrally by the parent panel.
+- Added new methods for exporting and importing outbound configurations, improving synchronization between parent and child panels.
+- Updated database migration scripts to accommodate changes in outbound structure and ensure compatibility.
+- Improved translations to reflect new outbound management features._
+
+* Feat: add default outbound management for admins. 
+  _- Introduced new functionality for setting a default outbound for admin users and their sub-admins.
+- Updated API to handle default outbound settings, including retrieval and application of inherited outbounds.
+- Added a new component for selecting default outbound options in the admin form.
+- Enhanced admin views to display and manage default outbound settings.
+- Improved validation and error handling for outbound selections.
+- Updated translations to reflect new outbound management features._
+
+* Support any ports for domains. 
+
+* Feat: implement admin alias functionality. 
+  _- Added support for admins to sign in using an alias (username) instead of UUID, enhancing user experience and security.
+- Introduced strong password requirements for alias usage, ensuring better account protection.
+- Updated admin management API to handle alias creation and validation.
+- Enhanced admin views to display and manage aliases, including error handling for invalid aliases.
+- Implemented frontend components for alias input and validation, improving user feedback and interaction.
+- Added translations and UI updates to reflect the new alias feature._
+
+* Feat: add additional configuration management for admins. 
+  _- Introduced a new component for managing additional configurations for admins and their users.
+- Updated API to support saving and retrieving additional configurations.
+- Enhanced admin and user views to display and edit additional configurations.
+- Improved validation and error handling for configuration inputs.
+- Added translations for new configuration features._
+
+* Add new outbound manager. 
 
 * Feat: update translations. 
 

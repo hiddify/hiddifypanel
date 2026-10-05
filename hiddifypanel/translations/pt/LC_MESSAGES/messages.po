@@ -39,6 +39,9 @@ msgstr "Último dia"
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
 msgstr ""
 
+msgid "A fake domain needs a real domain name"
+msgstr ""
+
 msgid "Access Denied!"
 msgstr "Acesso negado"
 
@@ -309,6 +312,9 @@ msgstr "Exportar"
 msgid "Fake"
 msgstr "➖ Falso"
 
+msgid "Fake domains can only be direct or relay"
+msgstr ""
+
 msgid "Filter"
 msgstr "Filtro"
 
@@ -516,6 +522,9 @@ msgstr "☑️ Somente sites bloqueados localmente"
 
 msgid "Only for sublink?"
 msgstr "🌍 Use apenas para link de assinatura"
+
+msgid "Only one domain of this kind can be added"
+msgstr ""
 
 msgid "Oops! Something went wrong."
 msgstr "Ops! algo deu errado."

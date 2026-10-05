@@ -9,6 +9,7 @@
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Last Day",
   "<a href=\"%(user_link)s\"> %(user)s</a>": "<a href=\"%(user_link)s\"> %(user)s</a>",
+  "A fake domain needs a real domain name": "A fake domain needs a real domain name",
   "Access Denied!": "Access Denied",
   "Actions": "Actions",
   "Active": "Active",
@@ -86,6 +87,7 @@
   "Expired Users": "Expired Users",
   "Export": "Export",
   "Fake": "➖ Fake",
+  "Fake domains can only be direct or relay": "Fake domains can only be direct or relay",
   "Filter": "Filter",
   "Finished": "Finished...",
   "From Last Restart": "From Last Restart",
@@ -145,6 +147,7 @@
   "Online Users": "Online Users",
   "Only Blocked and Local websites": "☑️ Only Blocked and Local Websites",
   "Only for sublink?": "🌍 Use Only for Subscription Link",
+  "Only one domain of this kind can be added": "Only one domain of this kind can be added",
   "Oops! Something went wrong.": "Oops! something went wrong.",
   "Open in Application": "Open in Application",
   "Others": "🇺🇳 Others",
@@ -601,6 +604,10 @@
       "busyOutside": "Something is running on the server right now.",
       "lastRun": "Last run {when}",
       "log": {
+        "clear": "Clear",
+        "clearConfirm": "Empty \"{name}\"? Its text is deleted from the server.",
+        "clearFailed": "Could not clear the log",
+        "cleared": "Log cleared",
         "copied": "Log copied",
         "download": "Download",
         "empty": "Nothing yet…",
@@ -610,22 +617,18 @@
         "show": "Show log",
         "showingEnd": "showing the end",
         "terminal": "log",
-        "wrap": "Wrap lines",
-        "clear": "Clear",
-        "clearConfirm": "Empty \"{name}\"? Its text is deleted from the server.",
-        "cleared": "Log cleared",
-        "clearFailed": "Could not clear the log"
+        "wrap": "Wrap lines"
       },
       "logs": {
+        "clearAll": "Clear all",
+        "clearAllConfirm": "Empty every log file? The text is deleted from the server (a log being written by a running action is kept).",
+        "clearFailed": "Could not clear some logs",
+        "clearSkipped": "{n} in use were kept",
+        "clearedAll": "Logs cleared",
         "empty": "No logs yet",
         "sub": "What each action did, from the server.",
         "title": "Logs",
-        "view": "View",
-        "clearAll": "Clear all",
-        "clearAllConfirm": "Empty every log file? The text is deleted from the server (a log being written by a running action is kept).",
-        "clearedAll": "Logs cleared",
-        "clearSkipped": "{n} in use were kept",
-        "clearFailed": "Could not clear some logs"
+        "view": "View"
       },
       "minutes": "~{n} min",
       "notStarted": "Could not start it",
@@ -1302,8 +1305,8 @@
         "configBridgeNew": "The panel gives it a tag (a tag you write is ignored); routing uses it and the other core connects to it through a local SOCKS bridge.",
         "configExample": "Insert an example",
         "configHint": {
-          "core_outbound": "One hiddify-core (sing-box) outbound object, e.g. {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. It is checked by hiddify-core before saving.",
           "core_endpoint": "One hiddify-core (sing-box) endpoint object, e.g. a WireGuard endpoint. It is checked by hiddify-core before saving.",
+          "core_outbound": "One hiddify-core (sing-box) outbound object, e.g. {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. It is checked by hiddify-core before saving.",
           "xray_outbound": "One xray outbound object, e.g. {\"protocol\": \"socks\", \"settings\": {…}}. It is checked by xray before saving."
         },
         "configInvalid": "Not valid JSON: {error}",
@@ -1816,6 +1819,49 @@
       "subtitle": "Everything about how this panel runs. Common settings first; advanced ones on request.",
       "title": "Settings"
     },
+    "tags": {
+      "addTag": "Tag",
+      "bulk": "Tag",
+      "bulkHint": "Tags of the selected: a tick means all of them have it",
+      "clear": "Clear",
+      "color": "Color",
+      "colors": {
+        "black": "Black",
+        "blue": "Blue",
+        "green": "Green",
+        "orange": "Orange",
+        "red": "Red"
+      },
+      "create": "Create",
+      "created": "Tag created",
+      "default": {
+        "family": "Family",
+        "free": "Free",
+        "friends": "Friends",
+        "important": "Important",
+        "work": "Work"
+      },
+      "delete": "Delete tag",
+      "deleteConfirm": "Delete the tag \"{name}\"? It is taken off everyone who has it.",
+      "deleted": "Tag deleted",
+      "edit": "Edit tag",
+      "editTags": "Edit tags",
+      "filterLabel": "Filter by tag",
+      "namePlaceholder": "Name your own tag",
+      "newTag": "New tag",
+      "none": "No tags yet",
+      "pick": "Choose tags",
+      "pickHint": "You can choose several",
+      "rename": "Rename",
+      "save": "Save",
+      "saveFailed": "Could not save the tags",
+      "tagCount": "{n} tags",
+      "tagged": "Tagged",
+      "taggedHint": "Everyone who has at least one tag",
+      "title": "Tags",
+      "untagged": "No tag",
+      "use": "{n} in use"
+    },
     "telegram": {
       "benefit": {
         "backup": "Receive the automatic backups",
@@ -1888,17 +1934,25 @@
     },
     "users": {
       "add": "Add user",
+      "addLimits": {
+        "apply": "Add",
+        "days": "Days to add",
+        "gb": "Data to add",
+        "hint": "Data and days are added on top of what each user already has.",
+        "note": "Users with unlimited data or days stay unlimited. Leave one at 0 to add only the other.",
+        "title": "Add limits to {n} user | Add limits to {n} users"
+      },
       "added": "{name} added",
       "afterFirstShort": "{n} days after first use",
       "all": "All",
       "bulk": {
         "add_days": "+7 days",
+        "add_limits": "Add limits",
         "delete": "Delete",
         "disable": "Disable",
         "enable": "Enable",
         "reset_days": "Reset days",
-        "reset_usage": "Reset usage",
-        "add_limits": "Add limits"
+        "reset_usage": "Reset usage"
       },
       "bulkConfirm": {
         "delete": "Delete {n} user? | Delete {n} users?",
@@ -1914,12 +1968,12 @@
       },
       "bulkDone": {
         "add_days": "7 days added to {n} user | 7 days added to {n} users",
+        "add_limits": "Limits added to {n} user | Limits added to {n} users",
         "delete": "{n} user deleted | {n} users deleted",
         "disable": "{n} user disabled | {n} users disabled",
         "enable": "{n} user enabled | {n} users enabled",
         "reset_days": "Days reset for {n} user | Days reset for {n} users",
-        "reset_usage": "Usage reset for {n} user | Usage reset for {n} users",
-        "add_limits": "Limits added to {n} user | Limits added to {n} users"
+        "reset_usage": "Usage reset for {n} user | Usage reset for {n} users"
       },
       "clearSearch": "Clear search",
       "clearSelection": "Clear selection",
@@ -2111,15 +2165,7 @@
         "no_data": "Used all of the usage limit"
       },
       "subtitle": "Everyone who connects through this panel: their data, time left and links.",
-      "title": "Users",
-      "addLimits": {
-        "title": "Add limits to {n} user | Add limits to {n} users",
-        "hint": "Data and days are added on top of what each user already has.",
-        "gb": "Data to add",
-        "days": "Days to add",
-        "note": "Users with unlimited data or days stay unlimited. Leave one at 0 to add only the other.",
-        "apply": "Add"
-      }
+      "title": "Users"
     },
     "utils": {
       "addQuery": "Add query",
@@ -2162,49 +2208,6 @@
       "preview": "Compiled preview",
       "title": "Validation",
       "warnings": "Warnings"
-    },
-    "tags": {
-      "title": "Tags",
-      "tagged": "Tagged",
-      "taggedHint": "Everyone who has at least one tag",
-      "untagged": "No tag",
-      "filterLabel": "Filter by tag",
-      "clear": "Clear",
-      "addTag": "Tag",
-      "editTags": "Edit tags",
-      "tagCount": "{n} tags",
-      "none": "No tags yet",
-      "pick": "Choose tags",
-      "pickHint": "You can choose several",
-      "newTag": "New tag",
-      "namePlaceholder": "Name your own tag",
-      "create": "Create",
-      "color": "Color",
-      "created": "Tag created",
-      "deleted": "Tag deleted",
-      "delete": "Delete tag",
-      "rename": "Rename",
-      "deleteConfirm": "Delete the tag \"{name}\"? It is taken off everyone who has it.",
-      "saveFailed": "Could not save the tags",
-      "bulk": "Tag",
-      "bulkHint": "Tags of the selected: a tick means all of them have it",
-      "use": "{n} in use",
-      "colors": {
-        "red": "Red",
-        "orange": "Orange",
-        "green": "Green",
-        "blue": "Blue",
-        "black": "Black"
-      },
-      "default": {
-        "family": "Family",
-        "friends": "Friends",
-        "work": "Work",
-        "important": "Important",
-        "free": "Free"
-      },
-      "edit": "Edit tag",
-      "save": "Save"
     }
   },
   "adminuser": {

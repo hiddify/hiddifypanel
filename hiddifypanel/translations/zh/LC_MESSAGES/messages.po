@@ -39,6 +39,9 @@ msgstr "最后一天"
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
 msgstr ""
 
+msgid "A fake domain needs a real domain name"
+msgstr ""
+
 msgid "Access Denied!"
 msgstr "拒绝访问"
 
@@ -338,6 +341,9 @@ msgstr "导入"
 msgid "Fake"
 msgstr "➖ 假"
 
+msgid "Fake domains can only be direct or relay"
+msgstr ""
+
 msgid "Filter"
 msgstr "过滤"
 
@@ -538,6 +544,9 @@ msgstr "☑️ 仅屏蔽和本地网站"
 
 msgid "Only for sublink?"
 msgstr "🌍 仅用于订阅链接"
+
+msgid "Only one domain of this kind can be added"
+msgstr ""
 
 msgid "Oops! Something went wrong."
 msgstr "哎呀！出了些问题。"

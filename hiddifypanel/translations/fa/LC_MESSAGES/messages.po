@@ -39,6 +39,9 @@ msgstr "آخرین روز"
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
 msgstr "<a href=\"%(user_link)s\"> %(user)s</a>"
 
+msgid "A fake domain needs a real domain name"
+msgstr ""
+
 msgid "Access Denied!"
 msgstr "دسترسی غیرمجاز"
 
@@ -337,6 +340,9 @@ msgstr "خروجی گرفتن"
 msgid "Fake"
 msgstr "➖ جعلی"
 
+msgid "Fake domains can only be direct or relay"
+msgstr ""
+
 msgid "Filter"
 msgstr "فیلتر"
 
@@ -543,6 +549,9 @@ msgstr "☑️ فقط سایت‌های داخلی و مسدود شده‌ی خ�
 
 msgid "Only for sublink?"
 msgstr "🌍 استفاده فقط برای لینک کانفیگ ها (سابسکریپشن)"
+
+msgid "Only one domain of this kind can be added"
+msgstr ""
 
 msgid "Oops! Something went wrong."
 msgstr "خطایی رخ داده است!!"
@@ -1879,6 +1888,18 @@ msgstr "همین الان چیزی روی سرور در حال اجراست."
 msgid "adminV2.apply.lastRun"
 msgstr "آخرین اجرا {when}"
 
+msgid "adminV2.apply.log.clear"
+msgstr "پاک کردن"
+
+msgid "adminV2.apply.log.clearConfirm"
+msgstr "محتوای «{name}» خالی شود؟ متن آن از سرور پاک می‌شود."
+
+msgid "adminV2.apply.log.clearFailed"
+msgstr "لاگ پاک نشد"
+
+msgid "adminV2.apply.log.cleared"
+msgstr "لاگ پاک شد"
+
 msgid "adminV2.apply.log.copied"
 msgstr "لاگ کپی شد"
 
@@ -1908,6 +1929,23 @@ msgstr "لاگ"
 
 msgid "adminV2.apply.log.wrap"
 msgstr "شکستن خط‌ها"
+
+msgid "adminV2.apply.logs.clearAll"
+msgstr "پاک کردن همه"
+
+msgid "adminV2.apply.logs.clearAllConfirm"
+msgstr ""
+"همه‌ی فایل‌های لاگ خالی شوند؟ متن آن‌ها از سرور پاک می‌شود (لاگ عملیاتی که "
+"در حال اجراست نگه داشته می‌شود)."
+
+msgid "adminV2.apply.logs.clearFailed"
+msgstr "بعضی لاگ‌ها پاک نشدند"
+
+msgid "adminV2.apply.logs.clearSkipped"
+msgstr "{n} مورد در حال استفاده بود و ماند"
+
+msgid "adminV2.apply.logs.clearedAll"
+msgstr "لاگ‌ها پاک شدند"
 
 msgid "adminV2.apply.logs.empty"
 msgstr "هنوز لاگی نیست"
@@ -2073,12 +2111,6 @@ msgstr "از همین سرور"
 msgid "adminV2.backup.restore.notJson"
 msgstr "یک فایل پشتیبان ‎.json‎ انتخاب کنید"
 
-msgid "adminV2.backup.restore.overrideRoot"
-msgstr "من مالک شوم"
-
-msgid "adminV2.backup.restore.overrideRootHint"
-msgstr "ادمین مالک پشتیبان، شما می‌شوید (برای بازیابی پشتیبان پنلی دیگر)."
-
 msgid "adminV2.backup.restore.part.domains"
 msgstr "دامنه‌ها"
 
@@ -2101,6 +2133,14 @@ msgid "adminV2.backup.restore.pathChanges"
 msgstr ""
 "این پشتیبان از پنل دیگری است: پس از بازیابی، لینک ادمین تغییر می‌کند. "
 "لینک‌های جدید در پایان نشان داده می‌شوند."
+
+msgid "adminV2.backup.restore.replaceOwner"
+msgstr "حفظ GUID مالک پشتیبان"
+
+msgid "adminV2.backup.restore.replaceOwnerHint"
+msgstr ""
+"مالک این پنل GUID مالک پشتیبان را می‌گیرد تا لینک‌های ادمین قدیمی کار کنند. "
+"بدون بازیابی کاربران هم کار می‌کند. لینک ادمین فعلی شما عوض می‌شود."
 
 msgid "adminV2.backup.restore.run"
 msgstr "بازیابی"
@@ -3062,8 +3102,20 @@ msgstr ""
 "TLS جعلی با نام یک سایت (مثلا soft98.ir) برای عبور از لیست سفید SNI. پیشنهاد"
 " نمی‌شود."
 
+msgid "adminV2.domains.tlsMode.fakeProxyNote"
+msgstr ""
+"این دامنه نام فیک TLS یکی از سرورهای داخلی است و با تنظیمات آن همگام "
+"می‌ماند. پروکسی سفارشی و دامنه دانلود ندارد."
+
 msgid "adminV2.domains.tlsMode.locked"
 msgstr "این حالت همیشه از گواهی معتبر استفاده می‌کند."
+
+msgid "adminV2.domains.tlsMode.other"
+msgstr "سایر"
+
+msgid "adminV2.domains.tlsMode.otherHint"
+msgstr ""
+"دامنه‌های فیک تلگرام، ShadowTLS و Shadowsocks FakeTLS. از هر کدام فقط یکی."
 
 msgid "adminV2.domains.tlsMode.reality"
 msgstr "ریلیتی"
@@ -3072,6 +3124,27 @@ msgid "adminV2.domains.tlsMode.realityHint"
 msgstr ""
 "TLS سایتی دیگر را با پروتکل ریلیتی قرض می‌گیرد؛ می‌توان چندین دامنه "
 "این‌چنینی داشت."
+
+msgid "adminV2.domains.tlsMode.shadowtls"
+msgstr "ShadowTLS"
+
+msgid "adminV2.domains.tlsMode.shadowtlsHint"
+msgstr "دامنه فیک سرور ShadowTLS."
+
+msgid "adminV2.domains.tlsMode.ssfaketls"
+msgstr "SS FakeTLS"
+
+msgid "adminV2.domains.tlsMode.ssfaketlsHint"
+msgstr "دامنه فیک سرور Shadowsocks FakeTLS."
+
+msgid "adminV2.domains.tlsMode.taken"
+msgstr "قبلاً اضافه شده"
+
+msgid "adminV2.domains.tlsMode.telegram"
+msgstr "پروکسی تلگرام"
+
+msgid "adminV2.domains.tlsMode.telegramHint"
+msgstr "دامنه فیک پروکسی MTProxy تلگرام."
 
 msgid "adminV2.domains.tlsMode.valid"
 msgstr "TLS معتبر"
@@ -3679,6 +3752,43 @@ msgstr "افزودن خروجی"
 msgid "adminV2.outbounds.dialog.addTitle"
 msgstr "افزودن خروجی {mode}"
 
+msgid "adminV2.outbounds.dialog.config"
+msgstr "JSON"
+
+msgid "adminV2.outbounds.dialog.configBridge"
+msgstr ""
+"پنل نام «{tag}» را به آن داد؛ مسیریابی از همین تگ استفاده می‌کند و هسته‌ی "
+"دیگر روی 127.0.0.1:{port} به آن وصل می‌شود."
+
+msgid "adminV2.outbounds.dialog.configBridgeNew"
+msgstr ""
+"پنل خودش برای آن تگ می‌گذارد (تگی که بنویسید نادیده گرفته می‌شود)؛ مسیریابی "
+"از آن استفاده می‌کند و هسته‌ی دیگر از طریق پل SOCKS محلی به آن وصل می‌شود."
+
+msgid "adminV2.outbounds.dialog.configExample"
+msgstr "درج یک نمونه"
+
+msgid "adminV2.outbounds.dialog.configHint.core_endpoint"
+msgstr ""
+"یک endpoint هیدیفای‌کور (sing-box) مثل WireGuard. پیش از ذخیره با hiddify-"
+"core بررسی می‌شود."
+
+msgid "adminV2.outbounds.dialog.configHint.core_outbound"
+msgstr ""
+"یک outbound هیدیفای‌کور (sing-box)، مثلاً {\"type\": \"socks\", \"server\": "
+"\"…\", \"server_port\": 1080}. پیش از ذخیره با hiddify-core بررسی می‌شود."
+
+msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
+msgstr ""
+"یک outbound ایکس‌ری، مثلاً {\"protocol\": \"socks\", \"settings\": {…}}. پیش"
+" از ذخیره با xray بررسی می‌شود."
+
+msgid "adminV2.outbounds.dialog.configInvalid"
+msgstr "JSON معتبر نیست: {error}"
+
+msgid "adminV2.outbounds.dialog.configRequired"
+msgstr "JSON لازم است"
+
 msgid "adminV2.outbounds.dialog.domestic"
 msgstr "سایت‌های داخلی {region}"
 
@@ -3690,13 +3800,13 @@ msgstr "اتصال"
 
 msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
 msgstr ""
-"به پورت SOCKS سایفون روی این سرور ({endpoint}) وصل می‌شود؛ کلاینت Psiphon "
-"باید آنجا در حال اجرا باشد."
+"داخل hiddify-core اجرا می‌شود. xray از طریق پورت SOCKS محلی {endpoint} به آن"
+" وصل می‌شود."
 
 msgid "adminV2.outbounds.dialog.endpointHint.tor"
 msgstr ""
-"به پورت SOCKS تور روی این سرور ({endpoint}) وصل می‌شود؛ سرویس Tor باید آنجا "
-"در حال اجرا باشد."
+"داخل hiddify-core اجرا می‌شود (برنامه‌ی `tor` باید روی این سرور نصب باشد). "
+"xray از طریق پورت SOCKS محلی {endpoint} به آن وصل می‌شود."
 
 msgid "adminV2.outbounds.dialog.host"
 msgstr "میزبان"
@@ -3817,6 +3927,12 @@ msgstr "پیش‌فرض کردن (انتقال به انتها)"
 msgid "adminV2.outbounds.mode.block"
 msgstr "مسدود"
 
+msgid "adminV2.outbounds.mode.core_endpoint"
+msgstr "endpoint هیدیفای‌کور"
+
+msgid "adminV2.outbounds.mode.core_outbound"
+msgstr "outbound هیدیفای‌کور"
+
 msgid "adminV2.outbounds.mode.direct"
 msgstr "مستقیم"
 
@@ -3832,23 +3948,41 @@ msgstr "Tor"
 msgid "adminV2.outbounds.mode.warp"
 msgstr "WARP"
 
+msgid "adminV2.outbounds.mode.xray_outbound"
+msgstr "outbound ایکس‌ری"
+
 msgid "adminV2.outbounds.modeHint.block"
 msgstr "مسدود می‌شود"
+
+msgid "adminV2.outbounds.modeHint.core_endpoint"
+msgstr ""
+"endpoint دلخواه شما در هیدیفای‌کور مثل WireGuard (JSON)؛ ایکس‌ری از طریق پل "
+"SOCKS محلی به آن می‌رسد"
+
+msgid "adminV2.outbounds.modeHint.core_outbound"
+msgstr ""
+"outbound دلخواه شما در هیدیفای‌کور (JSON)؛ ایکس‌ری از طریق پل SOCKS محلی به "
+"آن می‌رسد"
 
 msgid "adminV2.outbounds.modeHint.direct"
 msgstr "مستقیم از این سرور"
 
 msgid "adminV2.outbounds.modeHint.psiphon"
-msgstr "از Psiphon (یک پورت SOCKS سایفون)"
+msgstr "از Psiphon (اجرا توسط hiddify-core)"
 
 msgid "adminV2.outbounds.modeHint.socks"
 msgstr "از یک پروکسی SOCKS5"
 
 msgid "adminV2.outbounds.modeHint.tor"
-msgstr "از شبکهٔ Tor (یک پورت SOCKS تور)"
+msgstr "از شبکهٔ Tor (اجرا توسط hiddify-core)"
 
 msgid "adminV2.outbounds.modeHint.warp"
 msgstr "از Cloudflare WARP روی این سرور"
+
+msgid "adminV2.outbounds.modeHint.xray_outbound"
+msgstr ""
+"outbound دلخواه شما در ایکس‌ری (JSON)؛ هیدیفای‌کور از طریق پل SOCKS محلی به "
+"آن می‌رسد"
 
 msgid "adminV2.outbounds.more"
 msgstr "کارهای بیشتر"
@@ -5017,6 +5151,117 @@ msgstr ""
 msgid "adminV2.settings.title"
 msgstr "تنظیمات"
 
+msgid "adminV2.tags.addTag"
+msgstr "تگ"
+
+msgid "adminV2.tags.bulk"
+msgstr "تگ"
+
+msgid "adminV2.tags.bulkHint"
+msgstr "تگ‌های انتخاب‌شده‌ها: تیک یعنی همه آن را دارند"
+
+msgid "adminV2.tags.clear"
+msgstr "پاک کردن"
+
+msgid "adminV2.tags.color"
+msgstr "رنگ"
+
+msgid "adminV2.tags.colors.black"
+msgstr "مشکی"
+
+msgid "adminV2.tags.colors.blue"
+msgstr "آبی"
+
+msgid "adminV2.tags.colors.green"
+msgstr "سبز"
+
+msgid "adminV2.tags.colors.orange"
+msgstr "نارنجی"
+
+msgid "adminV2.tags.colors.red"
+msgstr "قرمز"
+
+msgid "adminV2.tags.create"
+msgstr "ساخت"
+
+msgid "adminV2.tags.created"
+msgstr "تگ ساخته شد"
+
+msgid "adminV2.tags.default.family"
+msgstr "خانواده"
+
+msgid "adminV2.tags.default.free"
+msgstr "رایگان"
+
+msgid "adminV2.tags.default.friends"
+msgstr "دوستان"
+
+msgid "adminV2.tags.default.important"
+msgstr "مهم"
+
+msgid "adminV2.tags.default.work"
+msgstr "کار"
+
+msgid "adminV2.tags.delete"
+msgstr "حذف تگ"
+
+msgid "adminV2.tags.deleteConfirm"
+msgstr "تگ «{name}» حذف شود؟ از همه کسانی که دارند برداشته می‌شود."
+
+msgid "adminV2.tags.deleted"
+msgstr "تگ حذف شد"
+
+msgid "adminV2.tags.edit"
+msgstr "ویرایش تگ"
+
+msgid "adminV2.tags.editTags"
+msgstr "ویرایش تگ‌ها"
+
+msgid "adminV2.tags.filterLabel"
+msgstr "فیلتر بر اساس تگ"
+
+msgid "adminV2.tags.namePlaceholder"
+msgstr "نام تگ دلخواه"
+
+msgid "adminV2.tags.newTag"
+msgstr "تگ جدید"
+
+msgid "adminV2.tags.none"
+msgstr "هنوز تگی نیست"
+
+msgid "adminV2.tags.pick"
+msgstr "انتخاب تگ"
+
+msgid "adminV2.tags.pickHint"
+msgstr "می‌توانید چند تگ انتخاب کنید"
+
+msgid "adminV2.tags.rename"
+msgstr "تغییر نام"
+
+msgid "adminV2.tags.save"
+msgstr "ذخیره"
+
+msgid "adminV2.tags.saveFailed"
+msgstr "تگ‌ها ذخیره نشدند"
+
+msgid "adminV2.tags.tagCount"
+msgstr "{n} تگ"
+
+msgid "adminV2.tags.tagged"
+msgstr "تگ‌دار"
+
+msgid "adminV2.tags.taggedHint"
+msgstr "همه کسانی که حداقل یک تگ دارند"
+
+msgid "adminV2.tags.title"
+msgstr "تگ‌ها"
+
+msgid "adminV2.tags.untagged"
+msgstr "بدون تگ"
+
+msgid "adminV2.tags.use"
+msgstr "{n} مورد"
+
 msgid "adminV2.telegram.benefit.backup"
 msgstr "پشتیبان‌های خودکار را دریافت کنید"
 
@@ -5204,6 +5449,26 @@ msgstr "حالت روشن"
 msgid "adminV2.users.add"
 msgstr "افزودن کاربر"
 
+msgid "adminV2.users.addLimits.apply"
+msgstr "افزودن"
+
+msgid "adminV2.users.addLimits.days"
+msgstr "روز افزوده"
+
+msgid "adminV2.users.addLimits.gb"
+msgstr "حجم افزوده"
+
+msgid "adminV2.users.addLimits.hint"
+msgstr "حجم و روزها روی مقدار فعلی هر کاربر اضافه می‌شوند."
+
+msgid "adminV2.users.addLimits.note"
+msgstr ""
+"کاربران با حجم یا روز نامحدود، نامحدود می‌مانند. برای افزودن فقط یکی، دیگری "
+"را ۰ بگذارید."
+
+msgid "adminV2.users.addLimits.title"
+msgstr "افزودن محدودیت به {n} کاربر | افزودن محدودیت به {n} کاربر"
+
 msgid "adminV2.users.added"
 msgstr "{name} افزوده شد"
 
@@ -5215,6 +5480,9 @@ msgstr "همه"
 
 msgid "adminV2.users.bulk.add_days"
 msgstr "+۷ روز"
+
+msgid "adminV2.users.bulk.add_limits"
+msgstr "افزودن محدودیت"
 
 msgid "adminV2.users.bulk.delete"
 msgstr "حذف"
@@ -5257,6 +5525,9 @@ msgstr "حجم مصرف‌شدهٔ آن‌ها صفر می‌شود."
 
 msgid "adminV2.users.bulkDone.add_days"
 msgstr "۷ روز به {n} کاربر افزوده شد | ۷ روز به {n} کاربر افزوده شد"
+
+msgid "adminV2.users.bulkDone.add_limits"
+msgstr "محدودیت به {n} کاربر اضافه شد | محدودیت به {n} کاربر اضافه شد"
 
 msgid "adminV2.users.bulkDone.delete"
 msgstr "{n} کاربر حذف شد | {n} کاربر حذف شد"
