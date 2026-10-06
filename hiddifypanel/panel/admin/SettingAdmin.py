@@ -324,7 +324,9 @@ def get_config_form(**form_kwargs):
                     validators.append(hutils.flask.validate_domain_exist)
 
                     if c.key != ConfigEnum.decoy_domain:
-                        validators.append(wtf.validators.NoneOf([d.domain.lower() for d in Domain.query.all()], _("config.Domain_already_used")))
+                        from hiddifypanel.panel.fake_proxy_domains import domains_taken_by_others
+
+                        validators.append(wtf.validators.NoneOf(domains_taken_by_others(c.key, Child.current().id), _("config.Domain_already_used")))
                         validators.append(
                             wtf.validators.NoneOf(
                                 [cc.value.lower() for cc in StrConfig.query.filter(StrConfig.child_id == Child.current().id).all() if cc.key != c.key and "fakedomain" in cc.key and cc.key != ConfigEnum.decoy_domain],

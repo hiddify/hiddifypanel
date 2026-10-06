@@ -74,6 +74,13 @@ def sync_all_configs_to_domains(child_id: int | None = None) -> None:
     db.session.commit()
 
 
+def domains_taken_by_others(setting: ConfigEnum, child_id: int) -> list[str]:
+    """Names in the domains table a ``*_domain`` setting must not take: all of them except its own fake-domain row
+    (the Telegram / ShadowTLS / SS FakeTLS setting is that row)."""
+    own = {mode for mode, (key, _) in FAKE_PROXY_CONFIGS.items() if key == setting}
+    return [d.domain.lower() for d in Domain.query.all() if not (d.fake_mode in own and d.child_id == child_id)]
+
+
 def _name_is_free(name: str, child_id: int, ignore: Domain | None) -> bool:
     same = Domain.query.filter(Domain.domain == name, Domain.child_id == child_id).all()
     return all(d is ignore or (ignore is not None and d.id == ignore.id) for d in same)
