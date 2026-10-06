@@ -15,6 +15,7 @@ import type { AdditionalConfig } from '@/shared/utils/additional-configs'
 export { CONFIG_TARGETS, type AdditionalConfig, type ConfigKind, type ConfigTarget } from '@/shared/utils/additional-configs'
 
 export interface UserRow {
+  id: number
   uuid: string
   name: string
   comment: string
