@@ -21,6 +21,7 @@
       window.__TELEGRAM__ = {{ telegram | tojson }};
     </script>
     <link rel="stylesheet" crossorigin href="{{ static_css }}">
+    <link rel="icon" type="image/x-icon" href="{{ static_url_for(filename='images/favicon.ico') }}">
   </head>
   <body>
     <div id="app"></div>
