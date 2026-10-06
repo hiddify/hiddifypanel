@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from flask import jsonify, redirect, render_template
 
 import hiddifypanel
@@ -22,6 +25,30 @@ def _panel_logo_url(proxy_path: str) -> str:
         return static_path
     return f"/{proxy_path}/{static_path.lstrip('/')}"
 
+
+_ADMIN_V2_DIR = Path(__file__).resolve().parents[2] / "static" / "admin-v2"
+_ADMIN_V2_MANIFEST_PATHS = (_ADMIN_V2_DIR / ".vite" / "manifest.json", _ADMIN_V2_DIR / "manifest.json")
+_ADMIN_V2_ENTRY_FALLBACK = ("assets/index.js", "assets/index.css")
+
+
+def _admin_v2_entry_files() -> tuple[str, str]:
+    """(js, css) of the built Admin V2 entry, relative to `static/admin-v2/`.
+
+    The build content-hashes file names and records them in the Vite manifest (see
+    admin_v2/vite.config.ts), so the shell must not hardcode them. Builds without a
+    manifest keep working through the un-hashed fallback names.
+    """
+    for manifest in _ADMIN_V2_MANIFEST_PATHS:
+        try:
+            entries = json.loads(manifest.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        entry = next((e for e in entries.values() if e.get("isEntry") and e.get("file")), None)
+        if entry is None or not (_ADMIN_V2_DIR / entry["file"]).is_file():
+            continue
+        css = next((c for c in entry.get("css") or [] if (_ADMIN_V2_DIR / c).is_file()), None)
+        return entry["file"], css or _ADMIN_V2_ENTRY_FALLBACK[1]
+    return _ADMIN_V2_ENTRY_FALLBACK
 
 def _node_info() -> dict | None:
     """What a node's home page shows: its name and the parent it is connected to."""
@@ -97,9 +124,10 @@ def register_v2_routes(flask_app, admin_bp):
     def admin_v2(subpath=""):
         proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
         lang = hconfig(ConfigEnum.admin_lang) or "en"
-        static_prefix = f"/{proxy_path}/static/admin-v2/assets"
-        static_js = f"{static_prefix}/index.js"
-        static_css = f"{static_prefix}/index.css"
+        static_prefix = f"/{proxy_path}/static/admin-v2"
+        static_js_file, static_css_file = _admin_v2_entry_files()
+        static_js = f"{static_prefix}/{static_js_file}"
+        static_css = f"{static_prefix}/{static_css_file}"
         # First setup is handled by the SPA's /quick-setup route (super admins only; see bootstrap).
 
         return render_template(

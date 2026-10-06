@@ -175,12 +175,16 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       // Servers build this during install: keep peak memory down (see also shared/monaco/monaco.ts).
       reportCompressedSize: false,
+      // Content-hashed file names + manifest: no stable `assets/index.js`, so no cache (browser/CDN)
+      // can keep serving a stale bundle after an update. `panel/admin/v2_view.py` reads the manifest
+      // for the entry file names.
+      manifest: true,
       rollupOptions: {
         maxParallelFileOps: 2,
         output: {
-          entryFileNames: 'assets/index.js',
-          chunkFileNames: 'assets/[name].js',
-          assetFileNames: 'assets/[name][extname]',
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash][extname]',
         },
       },
     },
