@@ -35,12 +35,9 @@ DOMAIN_RE = re.compile(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^(\d{1,3}\.){
 # (services/firewall). So no process may listen on it, not even haproxy or rpxy-l4.
 #: Settings whose ports belong to other services (a domain gateway port must not take them).
 OTHER_SERVICE_PORTS = (
-    ConfigEnum.ssh_server_port,
     ConfigEnum.wireguard_port,
     ConfigEnum.reality_port,
     ConfigEnum.special_port,
-    ConfigEnum.tuic_port,
-    ConfigEnum.hysteria_port,
     ConfigEnum.shadowsocks2022_port,
     ConfigEnum.naive_port,
     ConfigEnum.mieru_tcp_ports,

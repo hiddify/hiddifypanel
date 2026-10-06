@@ -359,6 +359,9 @@ def _preset_tcp_udp(
         return InboundTcpUdp.tcp
     if str(l3).lower() == "h3_quic":
         return InboundTcpUdp.udp
+    if proto_key == "mieru":
+        # "Mieru TCP" listens (and is opened) on TCP only, "Mieru UDP" on UDP only.
+        return InboundTcpUdp.udp if transport_key == "udp" else InboundTcpUdp.tcp
     if proto_key in BOTH_PROTOS:
         return InboundTcpUdp.both
     if proto_key in UDP_ONLY_PROTOS:
@@ -497,9 +500,12 @@ def _build_preset(
 ) -> CustomProxyPreset:
     primary = slot.primary
     display_name = preset_display_name(slot)
-    slug = proxy_slug(f"{core}-{preset_slug_name(slot)}")
+    legacy_slug = proxy_slug(f"{core}-{preset_slug_name(slot)}")
+    slug = legacy_slug
     if core == "hiddify-core":
         display_name = f"{display_name} HC"
+        # "snell HC" (not "hiddify-core-custom-snell"): the slug is the name's.
+        slug = proxy_slug(display_name)
     mode = _preset_protocol(primary)
     custom_path = _preset_custom_path(primary, child_id)
     domain_modes = _group_domain_modes(slot.related)
@@ -543,7 +549,7 @@ def _build_preset(
     else:
         tcp_udp = _preset_tcp_udp(
             proto,
-            transport=transport_value,
+            transport=raw_transport if proto == "mieru" else transport_value,
             l3=primary.l3,
         )
     tag = _backend_tag(primary, core)
@@ -597,6 +603,7 @@ def _build_preset(
         tcp_udp=tcp_udp,
         download_tcp_udp=download_tcp_udp,
         is_common_proxy=is_common_proxy,
+        legacy_slugs=(legacy_slug,) if legacy_slug != slug else (),
     )
 
 
@@ -685,8 +692,8 @@ _COMMON_PROXY_SKIP_SLUGS = frozenset({"additional-config", "node-configs", "user
 def _preset_slot_key(preset: CustomProxyPreset) -> str | None:
     slug = preset.slug.strip().lower()
     core = preset.server_config.core
-    if core == "hiddify-core" and slug.startswith("hiddify-core-"):
-        key = slug[len("hiddify-core-") :]
+    if core == "hiddify-core":
+        key = slug[len("hiddify-core-") :] if slug.startswith("hiddify-core-") else slug
     elif core == "xray" and slug.startswith("xray-"):
         key = slug[len("xray-") :]
     else:

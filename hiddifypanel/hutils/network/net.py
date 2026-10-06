@@ -588,10 +588,10 @@ def _port_list(value) -> list[str]:
 def all_public_ports():
     """Every port the internet must reach on this server: the gateway, the panel's own services and the custom proxies' own ports.
 
-    hysteria / tuic / naive / mieru / shadowsocks 2022 are custom proxies now: their ports are the proxies' (IP-based ones and
+    hysteria / tuic / naive / mieru / shadowsocks 2022 / ssh are custom proxies now: their ports are the proxies' (IP-based ones and
     those with their own public port), not settings or per-domain ports."""
     from hiddifypanel.models import Child
-    from hiddifypanel.models.custom_proxy import CustomProxy
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
     from hiddifypanel.proxy_v3.custom_proxy_ports import firewall_protocols_for_proxy, mode_uses_firewall_ports, ports_for_proxy_row
     from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
 
@@ -606,8 +606,6 @@ def all_public_ports():
 
     if hconfig(ConfigEnum.wireguard_enable):
         add(udp_ports, ConfigEnum.wireguard_port, "wireguard")
-    if hconfig(ConfigEnum.ssh_server_enable):
-        add(tcp_ports, ConfigEnum.ssh_server_port, "ssh")
 
     add(tcp_ports, ConfigEnum.tls_ports, "tls")
     add(udp_ports, ConfigEnum.tls_ports, "quic")

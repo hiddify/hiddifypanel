@@ -54,6 +54,8 @@ class CustomProxyPreset:
     tcp_udp: InboundTcpUdp = InboundTcpUdp.both
     download_tcp_udp: InboundTcpUdp | None = None
     is_common_proxy: bool = False
+    #: Slugs this preset had before (a row that still has one is renamed, keeping its domains and settings).
+    legacy_slugs: tuple[str, ...] = ()
 
     def snapshot(self) -> CustomProxySnapshot:
         return CustomProxySnapshot.from_preset(self)

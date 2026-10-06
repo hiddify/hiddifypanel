@@ -266,6 +266,16 @@ def sync_custom_proxy_presets(child_id: int = 0) -> tuple[int, int, int, int]:
     disk_slugs = set(presets_by_slug)
     added = updated = removed = demoted = 0
 
+    # A preset whose slug changed keeps its row (id, domains, the admin's settings): rename the row.
+    for preset in presets:
+        for old_slug in preset.legacy_slugs:
+            old_row = CustomProxy.query.filter(CustomProxy.child_id == child_id, CustomProxy.slug == old_slug).first()
+            if old_row is not None and not CustomProxy.query.filter(CustomProxy.child_id == child_id, CustomProxy.slug == preset.slug).first():
+                old_row.slug = preset.slug
+                db.session.flush()
+                updated += 1
+                break
+
     for preset in presets:
         slug = preset.slug
         row = CustomProxy.query.filter(CustomProxy.child_id == child_id, CustomProxy.slug == slug).first()

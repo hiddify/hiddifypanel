@@ -444,6 +444,8 @@ def all_configs_for_cli():
         "domains": [u.to_dict(dump_ports=True, dump_child_id=True) for u in domains],
         # "hconfigs": get_hconfigs(json=True),
         "chconfigs": get_hconfigs_childs_json(host_child_ids),
+        # What the firewall opens: the gateway, the services and the custom proxies' own ports.
+        "public_ports": hutils.network.all_public_ports(),
     }
 
     def_user = User.query.filter(User.name == "default").first() if User.query.count() == 1 else None

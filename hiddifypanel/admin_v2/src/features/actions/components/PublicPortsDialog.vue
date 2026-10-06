@@ -54,13 +54,6 @@ function list(proto: 'tcp' | 'udp'): string {
   return Object.keys(data.value?.[proto] ?? {}).join(',')
 }
 
-/** Ready to paste: `ufw` commands for every port. */
-const ufw = computed(() =>
-  (['tcp', 'udp'] as const)
-    .flatMap((proto) => Object.keys(data.value?.[proto] ?? {}).map((p) => `ufw allow ${p}/${proto}`))
-    .join('\n'),
-)
-
 async function copy(text: string, what: string) {
   try {
     await navigator.clipboard.writeText(text)
@@ -107,14 +100,6 @@ const SERVICE_ICON: Record<string, string> = {
             <li v-if="!s.rows.length" class="pp-row pp-row--empty">{{ t('actions.ports.none') }}</li>
           </ul>
         </section>
-      </div>
-
-      <div class="pp-ufw">
-        <div class="pp-ufw__head">
-          <span><i class="pi pi-shield" />{{ t('actions.ports.firewall') }}</span>
-          <Button :label="t('common.copy')" icon="pi pi-copy" size="small" text @click="copy(ufw, 'ufw')" />
-        </div>
-        <pre dir="ltr">{{ ufw }}</pre>
       </div>
     </template>
 
@@ -208,34 +193,6 @@ const SERVICE_ICON: Record<string, string> = {
   justify-content: center;
   font-size: 0.82rem;
   color: var(--p-text-muted-color);
-}
-.pp-ufw {
-  margin-top: 1rem;
-  border-radius: 14px;
-  border: 1px solid var(--p-content-border-color);
-  overflow: hidden;
-}
-.pp-ufw__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.3rem 0.4rem 0.3rem 0.85rem;
-  font-size: 0.84rem;
-  font-weight: 600;
-  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.06));
-}
-.pp-ufw__head span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-.pp-ufw pre {
-  margin: 0;
-  max-height: 10rem;
-  overflow: auto;
-  padding: 0.6rem 0.85rem;
-  font-size: 0.76rem;
-  text-align: start;
 }
 @media (max-width: 560px) {
   .pp-grid {
