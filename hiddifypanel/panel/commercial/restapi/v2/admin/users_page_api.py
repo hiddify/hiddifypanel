@@ -75,6 +75,7 @@ def _row(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]]
     expires = user.start_date + datetime.timedelta(days=user.package_days or 0) if user.start_date else None
     periodic = user.mode in package_mode_dic
     return {
+        "id": user.id,
         "uuid": user.uuid,
         "name": user.name,
         "comment": user.comment or "",

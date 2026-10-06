@@ -133,6 +133,12 @@
           </template>
         </Column>
 
+        <Column field="id" :header="t('users.col.id')" sortable header-style="width: 4.5rem">
+          <template #body="{ data }">
+            <span class="u-id">{{ data.id }}</span>
+          </template>
+        </Column>
+
         <Column field="name" :header="t('users.col.name')" sortable>
           <template #body="{ data }">
             <div class="u-who">
@@ -466,7 +472,7 @@ const filters = computed(() =>
 const rows = computed<Row[]>(() => {
   const q = query.value.trim().toLowerCase()
   const match = MATCH[filter.value]
-  return allRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || u.comment.toLowerCase().includes(q)))
+  return allRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
 })
 // New filter / search / page size: back to the first page.
 watch([filter, query, pageSize, pickedTags], () => (first.value = 0))
@@ -935,6 +941,15 @@ onBeforeUnmount(() => {
 .users-empty > i {
   font-size: 1.6rem;
   color: var(--p-primary-color);
+}
+
+/* Id cell: small, quiet, aligned digits */
+.u-id {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--p-text-muted-color);
 }
 
 /* Status: icon only */

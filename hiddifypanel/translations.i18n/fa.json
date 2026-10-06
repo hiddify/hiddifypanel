@@ -1981,6 +1981,7 @@
       "clearSelection": "لغو انتخاب",
       "col": {
         "expire": "انقضا",
+        "id": "شناسه",
         "lastOnline": "آخرین اتصال",
         "name": "نام",
         "status": "وضعیت",
