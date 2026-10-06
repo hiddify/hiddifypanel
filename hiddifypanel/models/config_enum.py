@@ -153,7 +153,7 @@ class ConfigEnum(metaclass=FastEnum):
     reality_private_key = _StrConfigDscr(ConfigCategory.reality, ApplyMode.apply_config, hide_in_virtual_child=True)
     reality_public_key = _StrConfigDscr(ConfigCategory.reality, ApplyMode.apply_config, hide_in_virtual_child=True)
     reality_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
-    special_port = _StrConfigDscr(ConfigCategory.reality, ApplyMode.apply_config, hide_in_virtual_child=True)
+    special_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     restls1_2_domain = _StrConfigDscr(ConfigCategory.hidden)
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
@@ -195,7 +195,7 @@ class ConfigEnum(metaclass=FastEnum):
     default_useragent_string = _StrConfigDscr(ConfigCategory.general)
     use_ip_in_config = _BoolConfigDscr(ConfigCategory.hidden)
     # tls
-    tls_ports = _StrConfigDscr(ConfigCategory.tls, ApplyMode.apply_config)
+    tls_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
 
     tls_fragment_enable = _BoolConfigDscr(ConfigCategory.tls_trick)
     tls_fragment_size = _StrConfigDscr(ConfigCategory.tls_trick)
@@ -217,9 +217,9 @@ class ConfigEnum(metaclass=FastEnum):
     mux_brutal_up_mbps = _IntConfigDscr(ConfigCategory.mux, ApplyMode.apply_config)
     mux_brutal_down_mbps = _IntConfigDscr(ConfigCategory.mux, ApplyMode.apply_config)
 
-    http_ports = _StrConfigDscr(ConfigCategory.http, ApplyMode.apply_config)
-    mieru_tcp_ports = _StrConfigDscr(ConfigCategory.mieru, ApplyMode.apply_config, hide_in_virtual_child=True)
-    mieru_udp_ports = _StrConfigDscr(ConfigCategory.mieru, ApplyMode.apply_config, hide_in_virtual_child=True)
+    http_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
+    mieru_tcp_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    mieru_udp_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     kcp_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     kcp_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     decoy_domain = _StrConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)

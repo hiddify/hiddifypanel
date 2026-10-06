@@ -21,7 +21,7 @@ const spans = ref<AnsiSpan[]>([])
 const progress = ref<LogChunk['progress']>(null)
 const elapsed = ref(0)
 const reconnecting = ref(false)
-const showLog = ref(true)
+const showLog = ref(false) // the log opens only when asked
 
 const parser = new AnsiParser()
 const MAX_SPANS = 6000

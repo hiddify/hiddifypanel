@@ -2148,6 +2148,7 @@
       "saved": "{name} saved",
       "search": "Search name, UUID or note",
       "select": "Select",
+      "selectAll": "Select all {n} | Select all {n}",
       "selected": "{n} selected | {n} selected",
       "showDates": "Show end dates",
       "showLink": "Show user link",

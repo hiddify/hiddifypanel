@@ -580,36 +580,64 @@ def get_ech_public_name(ech_b64: str) -> str:
     return ""
 
 
+def _port_list(value) -> list[str]:
+    """A port setting as a list: one number, or comma / space separated numbers; nothing when it is not set."""
+    return [p for p in re.split(r"[\s,;]+", str(value if value is not None else "")) if p]
+
+
 def all_public_ports():
+    """Every port the internet must reach on this server: the gateway, the panel's own services and the custom proxies' own ports.
+
+    hysteria / tuic / naive / mieru / shadowsocks 2022 are custom proxies now: their ports are the proxies' (IP-based ones and
+    those with their own public port), not settings or per-domain ports."""
+    from hiddifypanel.models import Child
+    from hiddifypanel.models.custom_proxy import CustomProxy
+    from hiddifypanel.proxy_v3.custom_proxy_ports import firewall_protocols_for_proxy, mode_uses_firewall_ports, ports_for_proxy_row
+    from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
+
     tcp_ports = {80: "http", 443: "tls"}
     udp_ports = {
         443: "quic",
     }
-    log = []
+
+    def add(ports, setting, name):
+        for p in _port_list(hconfig(setting)):
+            ports[p] = name
+
     if hconfig(ConfigEnum.wireguard_enable):
-        udp_ports[hconfig(ConfigEnum.wireguard_port)] = "wireguard"
-
-    if hconfig(ConfigEnum.shadowsocks2022_enable) and (p := hconfig(ConfigEnum.shadowsocks2022_port)):
-        udp_ports[p] = "shadowsocks_2022"
-        tcp_ports[p] = "shadowsocks_2022"
-    if hconfig(ConfigEnum.mieru_enable):
-        for p in hconfig(ConfigEnum.mieru_tcp_ports).split(","):
-            tcp_ports[p] = "mieru"
-        for p in hconfig(ConfigEnum.mieru_udp_ports).split(","):
-            udp_ports[p] = "mieru"
+        add(udp_ports, ConfigEnum.wireguard_port, "wireguard")
     if hconfig(ConfigEnum.ssh_server_enable):
-        tcp_ports[hconfig(ConfigEnum.ssh_server_port)] = "ssh"
+        add(tcp_ports, ConfigEnum.ssh_server_port, "ssh")
 
-    for p in (hconfig(ConfigEnum.tls_ports)).split(","):
-        tcp_ports[p] = "tls"
-        udp_ports[p] = "quic"
-    for p in hconfig(ConfigEnum.http_ports).split(","):
-        tcp_ports[p] = "http"
+    add(tcp_ports, ConfigEnum.tls_ports, "tls")
+    add(udp_ports, ConfigEnum.tls_ports, "quic")
+    add(tcp_ports, ConfigEnum.http_ports, "http")
 
-    for d in Domain.query.all():
-        udp_ports[d.internal_port_tuic] = "tuic"
-        udp_ports[d.internal_port_naive] = "naive"
-        udp_ports[d.internal_port_hysteria2] = "hysteria"
+    child_id = Child.current().id
+    domains = Domain.query.filter(Domain.child_id == child_id).all()
+    # A domain can have its own gateway ports.
+    for d in domains:
+        if d.tls_port:
+            tcp_ports[d.tls_port] = "tls"
+            udp_ports[d.tls_port] = "quic"
+        if d.http_port:
+            tcp_ports[d.http_port] = "http"
+
+    # Custom proxies that listen on their own public ports (IP based, single or automatic public ports).
+    for row in CustomProxy.query.filter(CustomProxy.child_id == child_id).all():
+        if not row.enable or not mode_uses_firewall_ports(row.mode):
+            continue
+        name = re.sub(r"[^A-Za-z0-9_-]+", "-", str(row.slug or row.name or f"proxy-{row.id}")).strip("-") or f"proxy-{row.id}"
+        protocols = firewall_protocols_for_proxy(row)
+        # Automatic ports are one per domain.
+        resolved = [ports_for_proxy_row(row, domain_id=d.id) for d in _domains_for_proxy_row(row, domains)] if row.mode == CustomProxyMode.domains_auto_public_ports else [ports_for_proxy_row(row)]
+        for r in resolved:
+            if "tcp" in protocols:
+                for p in r.tcp_ports:
+                    tcp_ports[p] = name
+            if "udp" in protocols:
+                for p in r.udp_ports:
+                    udp_ports[p] = name
 
     def to_int(ports):
         r = {}

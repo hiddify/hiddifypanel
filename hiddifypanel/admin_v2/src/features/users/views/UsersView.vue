@@ -211,6 +211,11 @@
 
     <!-- Phones: compact cards -->
     <div v-else-if="state" class="u-cards">
+      <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
+      <label v-if="rows.length" class="u-selectall">
+        <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
+        <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
+      </label>
       <template v-for="group in cardGroups" :key="group.key">
         <div v-if="groupByOwner" class="users-group users-group--card"><i class="pi pi-sitemap" /><b>{{ group.owner || '—' }}</b><span class="text-muted-color">{{ group.users.length }}</span></div>
         <article v-for="u in group.users" :key="u.uuid" class="u-card" :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u) }]">
@@ -550,6 +555,16 @@ function onSort(e: DataTableSortEvent) {
 
 function isSelected(u: Row): boolean {
   return selected.value.some((s) => s.uuid === u.uuid)
+}
+
+/** Every user the filter / search shows (not only this page). */
+const allPicked = computed(() => rows.value.length > 0 && rows.value.every((u) => isSelected(u)))
+const somePicked = computed(() => rows.value.some((u) => isSelected(u)))
+
+function toggleAll(on: boolean) {
+  const shown = new Set(rows.value.map((u) => u.uuid))
+  const others = selected.value.filter((s) => !shown.has(s.uuid))
+  selected.value = on ? [...others, ...rows.value] : others
 }
 
 function toggleSelect(u: Row, on: boolean) {
@@ -1189,6 +1204,18 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+}
+.u-selectall {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
 }
 .u-card {
   --tone: var(--p-green-500, #22c55e);

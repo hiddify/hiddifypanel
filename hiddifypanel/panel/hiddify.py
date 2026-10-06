@@ -422,9 +422,10 @@ def replace_backup_child_unique_id(backupdata: dict, old_child_unique_id: str, n
 
             if v[0]["unique_id"] == old_child_unique_id or v[0]["unique_id"] == "self" or v[0]["unique_id"] == "default":
                 v[0]["unique_id"] = new_child_unique_id
-        else:
+        elif isinstance(v, list):
+            # Sections without a node (outbounds, tags, ...) have no child_unique_id.
             for item in v:
-                if item["child_unique_id"] == old_child_unique_id or item["child_unique_id"] == "self" or item["child_unique_id"] == "default":
+                if isinstance(item, dict) and item.get("child_unique_id") in (old_child_unique_id, "self", "default"):
                     item["child_unique_id"] = new_child_unique_id
 
 

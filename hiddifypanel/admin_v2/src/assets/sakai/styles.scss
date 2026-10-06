@@ -28,6 +28,15 @@
 .p-multiselect {
   max-width: 100%;
 }
+// The option list never gets wider than the screen, and long names (e.g. "Node[x] alias [domain] kind (tls)") wrap:
+// on a phone a nowrap list pushed the checkboxes off-screen so they could not be ticked.
+.p-multiselect-overlay {
+  max-width: calc(100vw - 1rem);
+}
+.p-multiselect-option {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 .p-multiselect-label:has(.p-chip) {
   flex-wrap: wrap;
   white-space: normal;

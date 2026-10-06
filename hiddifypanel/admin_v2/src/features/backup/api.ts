@@ -1,4 +1,5 @@
 import { getHttp } from '@/core/api/client'
+import type { StartedRun } from '@/features/apply/api'
 
 export interface PanelCounts {
   users: number
@@ -108,9 +109,14 @@ export const backupApi = {
     }
     return (await postRestore<{ summary: BackupSummary }>({ ...sourceBody(source), dry_run: true })).summary
   },
-  /** Prepares the restore; `run_url` restores and reinstalls (opened in the action dialog, with its log). */
-  async prepare(source: RestoreSource, options: RestoreOptions): Promise<{ run_url: string; summary: BackupSummary }> {
+  /** Prepares the restore: `token` is used once by `run`. */
+  async prepare(source: RestoreSource, options: RestoreOptions): Promise<{ token: string; summary: BackupSummary }> {
     return postRestore({ ...sourceBody(source), ...options })
+  },
+  /** Restores, then starts the panel's reinstall (as on the Apply page); follow `log` with the run panel. */
+  async run(token: string): Promise<StartedRun> {
+    const { data } = await getHttp().post<StartedRun>('backup/restore/run/', { token }, { timeout: 600_000 })
+    return data
   },
 }
 

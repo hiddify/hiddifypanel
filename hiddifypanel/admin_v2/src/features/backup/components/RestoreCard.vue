@@ -1,16 +1,19 @@
 <script setup lang="ts">
 /**
  * Restore: drop (or pick) a backup file, or take one of the server's backups (`source`), see what it holds,
- * choose the parts, then restore. The restore and the reinstall run in the action dialog with their log.
+ * choose the parts, then restore. The restore runs on the server, then the panel's reinstall (the Apply page's) starts and
+ * its live log is shown here.
  */
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { apiErrorMessage } from '@/core/api/client'
-import { openLegacyAction } from '@/core/panelShell'
+import RunPanel from '@/features/apply/components/RunPanel.vue'
+import type { StartedRun } from '@/features/apply/api'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { backupApi, formatSize, type BackupSummary, type RestoreOptions, type RestoreSource } from '@/features/backup/api'
 
@@ -25,6 +28,8 @@ const summary = ref<BackupSummary | null>(null)
 const error = ref<string | null>(null)
 const busy = ref(false)
 const showAdvanced = ref(false)
+const started = ref<StartedRun | null>(null)
+const runOpen = ref(false)
 const options = ref<RestoreOptions>({ settings: true, users: true, domains: true, replace_owner_admin: false })
 
 const PARTS = [
@@ -112,8 +117,9 @@ async function run() {
   busy.value = true
   error.value = null
   try {
-    const { run_url } = await backupApi.prepare(source.value, options.value)
-    openLegacyAction({ title: t('backup.restore.running'), url: run_url, method: 'post' })
+    const { token } = await backupApi.prepare(source.value, options.value)
+    started.value = await backupApi.run(token)
+    runOpen.value = true
   } catch (err) {
     error.value = apiErrorMessage(err)
   } finally {
@@ -209,6 +215,10 @@ async function run() {
         <Button :label="t('backup.restore.run')" icon="pi pi-replay" severity="danger" :loading="busy" :disabled="!anyPart" @click="start" />
       </div>
     </template>
+
+    <Dialog v-model:visible="runOpen" modal :draggable="false" :closable="false" :header="t('backup.restore.running')" :style="{ width: 'min(46rem, calc(100vw - 1.5rem))' }" :breakpoints="{ '640px': '100vw' }">
+      <RunPanel v-if="started" :key="started.started" :action="started.action" :file="started.log" :started="started.started" :sources="started" @close="runOpen = false" />
+    </Dialog>
   </section>
 </template>
 

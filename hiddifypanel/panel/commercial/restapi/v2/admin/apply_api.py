@@ -202,28 +202,37 @@ class ApplyApi(MethodView):
         return _state()
 
 
+def check_can_start(action: str) -> None:
+    """Aborts (409 / 400) when ``action`` can not be started now."""
+    if action not in ACTIONS:
+        abort(404, "Unknown action")
+    if action in ("apply", "install", "update") and running_actions():
+        abort(409, "Another action is still running")
+    if action in ("apply", "install") and int(hconfig(ConfigEnum.db_version)) < 9:
+        abort(400, "Please update your panel before this action.")
+
+
+def start_action(action: str) -> dict[str, Any]:
+    """Start an action (the Apply page, and the restore that reinstalls afterwards); the page then follows its log."""
+    check_can_start(action)
+    spec = ACTIONS[action]
+    if action in ("apply", "install") and hutils.node.is_child():
+        hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent)
+    started = time.time()
+    try:
+        commander(spec["command"])
+    except Exception as e:
+        logger.exception(e)
+        abort(500, "Could not start the action")
+    return {"action": action, "log": spec["log"], "started": started, **_state()}
+
+
 class ApplyActionApi(MethodView):
     decorators = [login_required(ROLES)]
 
     def post(self, action: str):
         """Start an action (apply configs, reinstall, update, restart, status)"""
-        spec = ACTIONS.get(action)
-        if not spec:
-            abort(404, "Unknown action")
-        busy = running_actions()
-        if action in ("apply", "install", "update") and busy:
-            abort(409, "Another action is still running")
-        if action in ("apply", "install") and int(hconfig(ConfigEnum.db_version)) < 9:
-            abort(400, "Please update your panel before this action.")
-        if action in ("apply", "install") and hutils.node.is_child():
-            hutils.node.run_node_op_in_bg(hutils.node.child.sync_with_parent)
-        started = time.time()
-        try:
-            commander(spec["command"])
-        except Exception as e:
-            logger.exception(e)
-            abort(500, "Could not start the action")
-        return {"action": action, "log": spec["log"], "started": started, **_state()}
+        return start_action(action)
 
 
 class ApplyLogApi(MethodView):

@@ -168,12 +168,15 @@ def _restore_key(token: str) -> str:
     return f"backup-restore:{token}"
 
 
-def stash_restore(data: dict, options: dict[str, bool]) -> str:
+def _put_restore(token: str, payload: dict) -> None:
     from hiddifypanel.cache import redis_client
 
-    token = secrets.token_urlsafe(24)
-    payload = {"admin": g.account.uuid, "options": options, "data": data}
     redis_client.set(_restore_key(token), gzip.compress(json.dumps(payload, default=str).encode()), ex=RESTORE_TTL)
+
+
+def stash_restore(data: dict, options: dict[str, bool]) -> str:
+    token = secrets.token_urlsafe(24)
+    _put_restore(token, {"admin": g.account.uuid, "options": options, "data": data})
     return token
 
 
@@ -259,7 +262,32 @@ class BackupRestoreApi(MethodView):
         except Exception as e:
             logger.exception(e)
             abort(500, "Could not prepare the restore")
-        return {"summary": summary, "run_url": hurl_for("admin.Backup:restore_run", token=token)}
+        return {"summary": summary, "token": token, "run_url": hurl_for("admin.Backup:restore_run", token=token)}
+
+
+class BackupRestoreRunApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self):
+        """Restore what the prepared restore holds, then reinstall like the Apply page's reinstall; the page follows the run's log"""
+        from hiddifypanel.panel.commercial.restapi.v2.admin import apply_api
+
+        token = str((request.get_json(silent=True) or {}).get("token") or "")
+        # Before anything is changed: is a reinstall allowed now?
+        apply_api.check_can_start("install")
+        payload = take_restore(token)
+        if not payload:
+            abort(410, "This restore has expired. Start it again from the Backup page.")
+        try:
+            run_restore(payload)
+        except Exception as e:
+            db.session.rollback()
+            logger.exception(e)
+            # Give the token back: a repeated request (a proxy or the browser retrying) must see this error again, not "expired".
+            _put_restore(token, payload)
+            abort(500, f"The restore failed: {e!r}")
+        # The settings (and the admin path) may have changed: the state below is read after the restore.
+        return apply_api.start_action("install")
 
 
 def run_restore(payload: dict) -> None:

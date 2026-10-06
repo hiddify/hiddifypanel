@@ -288,13 +288,22 @@ class Domain(db.Model):
     def name(self):
         return self.domain
 
+    def _internal_port(self, setting: ConfigEnum) -> int:
+        """The setting's base port plus this domain's index; a node without the setting uses the main panel's; 0 when none."""
+        for child_id in (self.child_id, 0):
+            raw = hconfig(setting, child_id)
+            first = next((p for p in re.split(r"[\s,;]+", str(raw if raw is not None else "")) if p.isdigit()), None)
+            if first is not None:
+                return int(first) + self.port_index
+        return 0
+
     @property
     def internal_port_hysteria2(self):
         if self.fake_mode == FakeMode.reality:
             return 0
         if self.mode not in [DomainType.direct, DomainType.relay]:
             return 0
-        return int(hconfig(ConfigEnum.hysteria_port, self.child_id)) + self.port_index
+        return self._internal_port(ConfigEnum.hysteria_port)
 
     @property
     def internal_port_tuic(self):
@@ -302,19 +311,19 @@ class Domain(db.Model):
             return 0
         if self.mode not in [DomainType.direct, DomainType.relay]:
             return 0
-        return int(hconfig(ConfigEnum.tuic_port, self.child_id)) + self.port_index
+        return self._internal_port(ConfigEnum.tuic_port)
 
     @property
     def internal_port_naive(self):
         if self.mode not in [DomainType.direct, DomainType.relay]:
             return 0
-        return int(hconfig(ConfigEnum.naive_port, self.child_id)) + self.port_index
+        return self._internal_port(ConfigEnum.naive_port)
 
     @property
     def internal_port_special(self):
         if self.fake_mode != FakeMode.reality:
             return 0
-        return int(hconfig(ConfigEnum.special_port, self.child_id)) + self.port_index
+        return self._internal_port(ConfigEnum.special_port)
 
     @classmethod
     def ordering(cls):
