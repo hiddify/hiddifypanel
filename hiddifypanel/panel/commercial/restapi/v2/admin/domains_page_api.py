@@ -126,7 +126,7 @@ def _domains(child_id: int) -> list[Domain]:
     return (
         Domain.query.filter(Domain.child_id == child_id)
         .options(selectinload(Domain.certificate).defer(TlsStore.private_key), selectinload(Domain.show_domains))
-        .order_by(*Domain.ordering())
+        .order_by((Domain.mode != DomainType.sub_link_only), *Domain.ordering())  # sub-link domains always on top
         .all()
     )
 

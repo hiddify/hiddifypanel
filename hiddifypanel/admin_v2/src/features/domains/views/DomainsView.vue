@@ -60,6 +60,7 @@
           class="dm-row"
           :style="{ '--kind-color': KIND_META[kindOf(d.mode)].color }"
           :class="{
+            'dm-row--minor': isFakeProxyMode(d.fake_mode),
             'dm-row--new': d.id === justChanged,
             'dm-row--drag': d.id === dragId,
             'dm-row--over': d.id === overId && d.id !== dragId,
@@ -112,7 +113,7 @@
               <span v-if="d.download_domain_id" class="dm-badge dm-badge--soft" dir="ltr">📈 {{ domainName(d.download_domain_id) }}</span>
             </div>
 
-            <div v-if="d.mode !== 'sub_link_only'" class="dm-row__line">
+            <div v-if="d.mode !== 'sub_link_only' && !isFakeProxyMode(d.fake_mode)" class="dm-row__line">
               <span class="dm-row__key"><i class="pi pi-sitemap" />{{ t('domains.field.proxies') }}</span>
               <template v-if="proxiesOf(d).length">
                 <span v-for="p in proxiesOf(d)" :key="p.id" class="dm-proxy" :class="{ 'dm-proxy--off': !p.enabled }">
@@ -121,7 +122,7 @@
               </template>
               <span v-else class="dm-row__auto">{{ t('domains.proxies.autoShort') }}</span>
             </div>
-            <div v-if="showsConfigs(d)" class="dm-row__line">
+            <div v-if="showsConfigs(d) && !isFakeProxyMode(d.fake_mode)" class="dm-row__line">
               <span class="dm-row__key"><i class="pi pi-eye" />{{ t('domains.field.showDomains') }}</span>
               <template v-if="d.show_domain_ids.length">
                 <span v-for="id in d.show_domain_ids.slice(0, 4)" :key="id" class="dm-proxy" dir="ltr">{{ showName(id) }}</span>
@@ -192,7 +193,7 @@ import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
 import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
-import { KIND_META, KINDS, TLS_ICON, domainsApi, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type DomainsState } from '@/features/domains/api'
+import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type DomainsState } from '@/features/domains/api'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -621,6 +622,31 @@ onBeforeUnmount(() => window.clearInterval(refresher))
 }
 .dm-row:hover {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+/* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: smaller and quieter than real domains. */
+.dm-row.dm-row--minor {
+  gap: 0.5rem 0.6rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+  border-radius: 10px;
+  border-inline-start-width: 3px;
+  background: transparent;
+  opacity: 0.72;
+}
+.dm-row.dm-row--minor:hover {
+  opacity: 1;
+  box-shadow: none;
+}
+.dm-row--minor .dm-row__emoji {
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 0.95rem;
+}
+.dm-row--minor .dm-row__domain {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.dm-row--minor .dm-row__chips {
+  margin-top: 0.1rem;
 }
 .dm-row--new {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
