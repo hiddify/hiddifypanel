@@ -9,6 +9,7 @@ declare global {
     __PROXY_PATH__?: string
     __PANEL_VERSION__?: string
     __PANEL_LOGO_URL__?: string
+    __MONACO_BASE__?: string
   }
 }
 
