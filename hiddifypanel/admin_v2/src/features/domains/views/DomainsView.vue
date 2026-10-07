@@ -156,7 +156,7 @@
       <p v-if="!rows.length" class="dm-empty"><i class="pi pi-filter-slash" />{{ t('domains.noMatch') }}</p>
     </template>
 
-    <Menu ref="rowMenu" :model="rowItems" popup />
+    <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
     <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
     <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" @saved="onSaved" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
@@ -171,7 +171,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -215,6 +215,8 @@ const editing = ref<DomainRow | null>(null)
 const wizardVisible = ref(false)
 const rowMenu = ref<InstanceType<typeof Menu> | null>(null)
 const menuRow = ref<DomainRow | null>(null)
+// Recreating the popup after each change drops its stale scroll handler/target.
+const menuKey = ref(0)
 
 const ipsVisible = ref(false)
 const ipsId = ref<number | null>(null)
@@ -319,6 +321,7 @@ const rowItems = computed<MenuItem[]>(() => {
 
 function apply(next: DomainsState) {
   state.value = next
+  menuKey.value++
   if (next.restart_mode) pendingApply.value = strongerRestartMode(pendingApply.value, next.restart_mode)
   for (const w of next.warnings ?? []) toast.add({ severity: 'warn', summary: t('domains.warning'), detail: w.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ''), life: 9000 })
 }
@@ -405,7 +408,11 @@ function onDrop(target: DomainRow) {
 
 function openMenu(e: Event, d: DomainRow) {
   menuRow.value = d
-  rowMenu.value?.toggle(e)
+  const menu = rowMenu.value
+  const target = e.currentTarget as HTMLElement | null
+  // Always re-show instead of toggling so a stuck open state can't swallow the tap.
+  menu?.hide()
+  void nextTick(() => menu?.show(e, target ?? undefined))
 }
 
 function openEdit(d: DomainRow) {
