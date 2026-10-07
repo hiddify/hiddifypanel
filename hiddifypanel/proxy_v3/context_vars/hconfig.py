@@ -20,6 +20,13 @@ class HConfigVar:
             name = getattr(key, "name", None) or str(key)
             self._values[name] = value
 
+    @property
+    def ipv6_enabled(self) -> bool:
+        """Listen on IPv6 only when the admin did not choose IPv4 only and the kernel has IPv6."""
+        from hiddifypanel.hutils.network.net import kernel_ipv6_available
+
+        return not self._values.get("only_ipv4") and kernel_ipv6_available()
+
     def __getitem__(self, key: Any) -> Any:
         name = self._alias_key(getattr(key, "name", None) or str(key))
         if not self._visible(name):

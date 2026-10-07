@@ -1,4 +1,4 @@
-"listen": "{{ ('::' if not ctx.hconfig.only_ipv4 else '0.0.0.0') if ctx.proxy.public_access else '127.0.0.1' }}",
+"listen": "{{ ('::' if ctx.hconfig.ipv6_enabled else '0.0.0.0') if ctx.proxy.public_access else '127.0.0.1' }}",
 {% if ctx.proxy.proto!="mieru" %}
 "listen_port": {{ ctx.proxy.tcp_port or ctx.proxy.udp_port }},
 {%endif%}

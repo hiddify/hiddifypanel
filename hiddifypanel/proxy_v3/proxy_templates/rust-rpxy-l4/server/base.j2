@@ -3,7 +3,7 @@
 {% set tls_ports = (["443"] + ctx.hconfig.tls_ports.split(',')) | map('trim') | list | unique %}
 #listen_port = {{ tls_ports[0] }}
 listen_port = 443
-listen_ipv6 = true
+listen_ipv6 = {{ 'true' if ctx.hconfig.ipv6_enabled else 'false' }}
 tcp_backlog = 4096
 tcp_max_connections = 8192
 udp_max_connections = 2048

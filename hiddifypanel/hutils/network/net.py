@@ -93,9 +93,20 @@ def get_domain_ips(domain: str, retry: int = 3) -> set[ipaddress.IPv4Address | i
     return res or get_domain_ips(domain, retry=retry - 1)
 
 
+def kernel_ipv6_available() -> bool:
+    """False when the kernel has IPv6 off (``ipv6.disable=1`` or ``disable_ipv6=1``): nothing can bind or reach IPv6."""
+    try:
+        if not os.path.isdir("/proc/sys/net/ipv6"):
+            return False
+        with open("/proc/sys/net/ipv6/conf/all/disable_ipv6") as f:
+            return f.read().strip() != "1"
+    except OSError:
+        return False
+
+
 def get_socket_public_ip(version: Literal[4, 6]) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s = socket.socket(socket.AF_INET6 if version == 6 else socket.AF_INET, socket.SOCK_DGRAM)
         if version == 6:
             s.connect(("2001:4860:4860::8888", 80))
         else:
@@ -137,6 +148,8 @@ def get_interface_public_ip(version: Literal[4, 6]) -> list[ipaddress.IPv4Addres
 def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     if not version:
         return [*get_ips(4), *get_ips(6)]
+    if version == 6 and not kernel_ipv6_available():
+        return []
     addrs = []
 
     i_ips = get_interface_public_ip(version)
