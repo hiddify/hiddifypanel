@@ -139,6 +139,22 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
         commit=True,
     )
 
+    # Per-node user status: one row per (user, node) — when this node last saw the user and how much
+    # the user used through it in the current period. One statement for the whole report.
+    if usages:
+        db_execute(
+            "INSERT INTO user_detail (user_id, child_id, last_online, current_usage, connected_devices) "
+            "SELECT u.id, :child_id, :seen_at, jt.`usage`, '' FROM `user` u "
+            "JOIN JSON_TABLE(:usage_data, '$[*]' COLUMNS (uuid CHAR(36) PATH '$.uuid', `usage` BIGINT PATH '$.usage')) AS jt ON jt.uuid = u.uuid "
+            "ON DUPLICATE KEY UPDATE "
+            "last_online = GREATEST(user_detail.last_online, VALUES(last_online)), "
+            "current_usage = user_detail.current_usage + VALUES(current_usage)",
+            usage_data=json.dumps(usage_payload),
+            child_id=child_id,
+            seen_at=cur_time.strftime("%Y-%m-%d %H:%M:%S"),
+            commit=True,
+        )
+
     usage_map = {use.uuid: use for use in usages}
 
     users = db.session.query(User).filter(User.uuid.in_(set(usage_map.keys()))).all()

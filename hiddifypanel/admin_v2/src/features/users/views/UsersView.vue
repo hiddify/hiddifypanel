@@ -162,8 +162,8 @@
 
         <Column field="usage_ratio" :header="t('users.col.usage')" sortable header-style="width: 12rem">
           <template #body="{ data }">
-            <div class="u-usage">
-              <MeterBar :used="data.current_usage_GB" :max="unlimitedGb(data.usage_limit_GB) ? null : data.usage_limit_GB" :text="usageText(data)" size="sm" />
+            <div class="u-usage" @mouseenter="showNodes($event, data)" @mouseleave="hideNodesSoon()">
+              <MeterBar :used="data.current_usage_GB" :max="unlimitedGb(data.usage_limit_GB) ? null : data.usage_limit_GB" :text="usageText(data)" size="sm" :segments="usageSegments(data)" />
               <span v-if="data.mode !== 'no_reset'" class="u-reset" v-tooltip.top="t(`users.modeHint.${data.mode}`)">
                 <i class="pi pi-sync" />{{ t(`users.resetTag.${data.mode}`) }}<template v-if="data.days_to_reset !== null"> · {{ relativeDays(data.days_to_reset, locale) }}</template>
               </span>
@@ -200,7 +200,7 @@
 
         <Column field="last_online_ts" :header="t('users.col.lastOnline')" sortable header-style="width: 9rem">
           <template #body="{ data }">
-            <span class="u-online" :class="`u-tone--${seen(data).tone}`" :title="data.last_online && !seen(data).online ? new Date(data.last_online).toLocaleString(locale) : undefined">
+            <span class="u-online" :class="[`u-tone--${seen(data).tone}`, { 'u-online--hover': data.nodes.length }]" :title="data.last_online && !seen(data).online ? new Date(data.last_online).toLocaleString(locale) : undefined" @mouseenter="showNodes($event, data)" @mouseleave="hideNodesSoon()">
               <span v-if="seen(data).online" class="u-dot" />{{ seen(data).text }}
             </span>
           </template>
@@ -235,7 +235,7 @@
             <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('users.more')" @click="openMenu($event, u)" />
           </header>
           <div class="u-card__body">
-            <MeterBar :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="sm" />
+            <MeterBar :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="sm" :segments="usageSegments(u)" />
             <div class="u-card__pills">
               <button type="button" class="u-pill" :class="`u-tone--${expireToneOf(u)}`" :aria-label="t('users.col.expire')" @click="showDates = !showDates">
                 <i :class="u.start_date ? 'pi pi-calendar' : 'pi pi-hourglass'" />{{ expireText(u) }}
@@ -251,6 +251,19 @@
     </div>
 
     <Menu ref="rowMenu" :model="menuItems" popup />
+
+    <!-- Hover breakdown of the last status / usage cell: one row per node -->
+    <Popover ref="nodesPop" append-to="body" @mouseenter="cancelHideNodes" @mouseleave="hideNodesSoon">
+      <div v-if="nodesBreakdown.length" class="un">
+        <div class="un__title"><i class="pi pi-sitemap" />{{ t('users.nodes.title') }}</div>
+        <div v-for="n in nodesBreakdown" :key="n.key" class="un__row">
+          <span class="un__dot" :style="{ background: n.color }" />
+          <span class="un__name" :title="n.name">{{ n.name }}</span>
+          <span class="un__seen" :class="`u-tone--${n.seen.tone}`"><span v-if="n.seen.online" class="u-dot" />{{ n.seen.text }}</span>
+          <span class="un__usage" dir="ltr">{{ n.usage }}</span>
+        </div>
+      </div>
+    </Popover>
 
     <!-- Add limits: data and days on top of what the selected users have -->
     <Dialog v-model:visible="limitsVisible" modal :draggable="false" :header="t('users.addLimits.title', { n: selected.length }, selected.length)" :style="{ width: '24rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
@@ -321,7 +334,7 @@ import TagFilter from '@/features/tags/components/TagFilter.vue'
 import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersState } from '@/features/users/api'
-import { expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
+import { expireTone, gb, lastSeen, nodeColor, ONE_GIG, relativeDays, shortDate, type Tone } from '@/features/users/format'
 
 /** Highlights the search match. */
 const MarkText = defineComponent({
@@ -545,6 +558,55 @@ function expireTitle(u: UserRow): string {
 function seen(u: UserRow) {
   return lastSeen(u.last_online, now.value, locale.value, { online: t('users.online'), never: t('users.never') })
 }
+
+/** Hover breakdown: one popover for the table, anchored at the hovered cell. */
+const nodesPop = ref()
+const nodesRow = ref<Row | null>(null)
+let nodesHideTimer: number | undefined
+
+function cancelHideNodes() {
+  if (nodesHideTimer) window.clearTimeout(nodesHideTimer)
+  nodesHideTimer = undefined
+}
+function hideNodesSoon() {
+  cancelHideNodes()
+  nodesHideTimer = window.setTimeout(() => {
+    nodesRow.value = null
+    nodesPop.value?.hide()
+  }, 220)
+}
+function showNodes(event: MouseEvent, u: Row) {
+  if (!u.nodes.length) return
+  cancelHideNodes()
+  nodesRow.value = u
+  nodesPop.value?.show(event)
+}
+
+/** Per-node usage slices for the bar; with fewer than two slices the classic gradient stays. */
+function usageSegments(u: UserRow): { value: number; color: string }[] {
+  const slices = u.nodes.filter((n) => n.usage > 0).map((n) => ({ value: n.usage / ONE_GIG, color: nodeColor(n.child_id) }))
+  const rest = u.current_usage_GB - slices.reduce((sum, s) => sum + s.value, 0)
+  if (rest > 0.001) slices.push({ value: rest, color: 'var(--p-text-muted-color)' })
+  return slices.length > 1 ? slices : []
+}
+
+const nodesBreakdown = computed(() => {
+  const u = nodesRow.value
+  if (!u) return []
+  const rows = u.nodes.map((n) => ({
+    key: `n${n.child_id}`,
+    name: n.name,
+    color: nodeColor(n.child_id),
+    seen: lastSeen(n.last_online, now.value, locale.value, { online: t('users.online'), never: t('users.never') }),
+    usage: `${gb(n.usage / ONE_GIG, locale.value)} GB`,
+  }))
+  const rest = u.current_usage_GB - u.nodes.reduce((sum, n) => sum + n.usage / ONE_GIG, 0)
+  if (rest > 0.001) {
+    rows.push({ key: 'rest', name: t('users.nodes.other'), color: 'var(--p-text-muted-color)', seen: { text: '—', tone: 'muted' as Tone, online: false }, usage: `${gb(rest, locale.value)} GB` })
+  }
+  return rows
+})
+
 function rowClass(u: Row) {
   return u.status === 'active' ? '' : `u-row--${u.status}`
 }
@@ -1180,6 +1242,9 @@ onBeforeUnmount(() => {
 .u-online i {
   font-size: 0.7rem;
 }
+.u-online--hover {
+  cursor: help;
+}
 .u-dot {
   position: relative;
   width: 0.5rem;
@@ -1197,6 +1262,62 @@ onBeforeUnmount(() => {
 }
 .u-actions {
   display: flex;
+}
+
+/* Hover breakdown popover (last status / usage cells) */
+.un {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 14rem;
+}
+.un__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.un__title i {
+  color: var(--p-primary-color);
+}
+.un__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.un__dot {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+.un__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.un__seen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: none;
+  white-space: nowrap;
+  color: var(--tone);
+}
+.un__usage {
+  flex: none;
+  min-width: 4.5rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  color: var(--p-text-muted-color);
 }
 
 /* Cards (phones) */

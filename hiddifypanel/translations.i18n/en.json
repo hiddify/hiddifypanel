@@ -2132,6 +2132,10 @@
       },
       "more": "More actions",
       "never": "Never",
+      "nodes": {
+        "other": "Other",
+        "title": "By node"
+      },
       "noMatch": "No user matches",
       "noTimeLimit": "No time limit",
       "none": "No users yet",

@@ -20,7 +20,7 @@ from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import AdminUser, ConfigEnum, User, UserMode, hconfig, set_hconfig
+from hiddifypanel.models import AdminUser, Child, ConfigEnum, User, UserDetail, UserMode, hconfig, set_hconfig
 from hiddifypanel.models.outbound import Outbound
 from hiddifypanel.models.role import Role
 from hiddifypanel.models.tag import tags_of
@@ -50,6 +50,30 @@ def _users_query():
     return User.query.filter(User.added_by.in_(_visible_admin_ids()), User.deleted.is_(False))
 
 
+def _node_rows(user_ids: list[int]) -> dict[int, list[dict[str, Any]]]:
+    """Per-node status per user (last connection + usage in the current period), one query for the batch.
+
+    Only users that had traffic through a node have a row there; newest connection first.
+    """
+    if not user_ids:
+        return {}
+    rows = UserDetail.query.filter(UserDetail.user_id.in_(user_ids)).order_by(UserDetail.last_online.desc()).all()
+    if not rows:
+        return {}
+    names = {c.id: (c.name or f"node-{c.id}") for c in Child.query.filter(Child.id.in_({r.child_id for r in rows})).all()}
+    out: dict[int, list[dict[str, Any]]] = {}
+    for row in rows:
+        out.setdefault(row.user_id, []).append(
+            {
+                "child_id": row.child_id,
+                "name": names.get(row.child_id) or f"node-{row.child_id}",
+                "last_online": _iso(row.last_online),
+                "usage": int(row.current_usage or 0),
+            }
+        )
+    return out
+
+
 def _status(user: User) -> str:
     """One clear state: disabled (turned off) > expired (no days left) > no_data (usage used up) > active."""
     if not user.enable:
@@ -69,7 +93,7 @@ def _iso(value: datetime.date | datetime.datetime | None) -> str | None:
     return value.isoformat()
 
 
-def _row(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]] | None = None) -> dict[str, Any]:
+def _row(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]] | None = None, nodes: list[dict[str, Any]] | None = None) -> dict[str, Any]:
     owner = admins.get(user.added_by or 0)
     extra = user.extra_params_json()
     expires = user.start_date + datetime.timedelta(days=user.package_days or 0) if user.start_date else None
@@ -92,6 +116,8 @@ def _row(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]]
         "days_to_reset": user.days_to_reset() if periodic else None,
         "last_reset_time": _iso(user.last_reset_time),
         "last_online": _iso(user.last_online),
+        # Per-node status (last connection + usage in the current period), newest first.
+        "nodes": nodes or [],
         "owner_uuid": owner.uuid if owner else None,
         "owner_name": owner.name if owner else "",
         "preferred_outbound": ob.preferred_outbound_id(extra),
@@ -106,7 +132,7 @@ def _detail(user: User, admins: dict[int, AdminUser]) -> dict[str, Any]:
     rows, _problems = user_configs.clean_rows(extra.get(user_configs.EXTRA_KEY))
     rest = {k: v for k, v in extra.items() if k not in MANAGED_EXTRA}
     return {
-        **_row(user, admins),
+        **_row(user, admins, nodes=_node_rows([user.id]).get(user.id)),
         "additional_configs": rows,
         # Rows the user also gets from its admin and the admins above.
         "inherited_configs": len(user_configs.inherited_rows(user.uuid)),
@@ -238,7 +264,8 @@ class UsersPageApi(MethodView):
         admins = _admins_map()
         users = _users_query().order_by(User.id.desc()).all()
         tag_map = tags_of("user")
-        return {"users": [_row(u, admins, tag_map) for u in users], **_meta(admins)}
+        nodes_map = _node_rows([u.id for u in users])
+        return {"users": [_row(u, admins, tag_map, nodes_map.get(u.id)) for u in users], **_meta(admins)}
 
     def post(self):
         """Users page: add a user"""

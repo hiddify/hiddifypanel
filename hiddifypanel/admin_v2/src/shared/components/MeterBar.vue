@@ -12,7 +12,8 @@
     <!-- Text over the empty part -->
     <span class="mbar__text" dir="ltr">{{ text }}</span>
     <!-- Same text, clipped to the filled part, in the fill's contrast color -->
-    <span class="mbar__fill" :style="{ width: `${percent}%` }">
+    <span class="mbar__fill" :class="{ 'mbar__fill--segments': segmentSlices.length > 0 }" :style="{ width: `${percent}%` }">
+      <span v-for="(seg, i) in segmentSlices" :key="i" class="mbar__seg" :style="{ width: `${seg.width}%`, background: seg.color }" />
       <span class="mbar__text mbar__text--on-fill" dir="ltr">{{ text }}</span>
     </span>
   </div>
@@ -25,10 +26,22 @@ import { computed } from 'vue'
  * Glossy progress bar with its text inside (e.g. "8 / 10"): green up to 50%, yellow above, red from 80%;
  * striped when there is no limit. Used for admin limits and user usage.
  */
-const props = withDefaults(defineProps<{ used: number; max: number | null | undefined; text: string; label?: string; size?: 'sm' | 'md' | 'lg' }>(), {
-  label: undefined,
-  size: 'md',
-})
+const props = withDefaults(
+  defineProps<{
+    used: number
+    max: number | null | undefined
+    text: string
+    label?: string
+    size?: 'sm' | 'md' | 'lg'
+    /** Optional per-node slices (same unit as `used`): colored segments replace the gradient. */
+    segments?: { value: number; color: string }[] | null
+  }>(),
+  {
+    label: undefined,
+    size: 'md',
+    segments: null,
+  },
+)
 
 const tone = computed(() => {
   if (!props.max) return 'none'
@@ -38,6 +51,14 @@ const tone = computed(() => {
 
 // A sliver stays visible once anything is used, so 1 of 1000 still shows.
 const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.min(100, (props.used * 100) / props.max)) : 0) : 0))
+
+// Segments are relative to the used value, so they always fill the same part of the bar.
+const segmentSlices = computed(() => {
+  const segments = (props.segments ?? []).filter((s) => s.value > 0)
+  const total = segments.reduce((sum, s) => sum + s.value, 0)
+  if (!segments.length || total <= 0) return []
+  return segments.map((s) => ({ width: (s.value / total) * 100, color: s.color }))
+})
 </script>
 
 <style scoped>
@@ -101,6 +122,15 @@ const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.m
   background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.35) 45%, transparent 70%);
   transform: translateX(-100%);
   animation: mbar-sheen 3.2s ease-in-out infinite;
+}
+/* Per-node slices replace the gradient; the tone glow stays. */
+.mbar__fill--segments {
+  display: flex;
+  background: none;
+}
+.mbar__seg {
+  flex: none;
+  align-self: stretch;
 }
 .mbar__text {
   position: absolute;
