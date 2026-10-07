@@ -3,10 +3,16 @@ from typing import Tuple, Any
 from uuid import UUID
 
 
-def is_uuid_valid(uuid: str, version: int = 4) -> bool:
+def is_uuid_valid(uuid: str, version: int | None = None) -> bool:
+    """A canonical (lowercase, hyphenated) UUID. Any version unless ``version`` is given.
+
+    Accounts keep the UUID they were created with (imports, other panels and old backups use v1/v5/v7...): a v4-only
+    check made a restore replace those users' UUIDs with new random ones."""
     try:
-        uuid_obj = UUID(uuid, version=version)
+        uuid_obj = UUID(uuid)
     except Exception:
+        return False
+    if version is not None and uuid_obj.version != version:
         return False
     return str(uuid_obj) == uuid
 
@@ -24,7 +30,7 @@ def get_uuid_from_url_path(path: str, section_index: int = 2) -> str | None:
     """
     s_index = 1
     for section in path.lstrip('/').split('/'):
-        if is_uuid_valid(section, 4):
+        if is_uuid_valid(section):
             if s_index == section_index:
                 return section
         s_index += 1
