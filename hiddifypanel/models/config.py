@@ -112,6 +112,8 @@ def set_hconfig(key: ConfigEnum, value: str | int | bool, child_id: int | None =
         hconfig.invalidate(key)
     # hconfig.invalidate_all()
     get_hconfigs.invalidate_all()
+    # The installer reads this one (all-configs): without it a feature enabled just before Install/Apply is still off for up to 500 s.
+    get_hconfigs_json.invalidate_all()
     old_v = None
     if key.type == bool:
         dbconf = db.session.query(BoolConfig).filter(BoolConfig.key == key, BoolConfig.child_id == child_id).first()
