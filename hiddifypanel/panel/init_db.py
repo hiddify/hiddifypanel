@@ -24,7 +24,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
-def _v164(child_id):
+def _v165(child_id):
     """Custom JSON outbounds (hiddify-core outbound / endpoint, xray outbound): the `outbound.config` column and the new
     outbound modes are added by the generic column / enum sync that runs before every upgrade."""
 
@@ -1123,6 +1123,7 @@ def _enum_column_values(col) -> list[str]:
 
 
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyClientCore
+from hiddifypanel.models.outbound import Outbound
 
 enum_columns = [
     Proxy.l3,
@@ -1143,6 +1144,7 @@ enum_columns = [
     CustomProxy.download_tls_layer,
     CustomProxy.server_core,
     CustomProxyClientCore.core,
+    Outbound.mode,  # new modes (core_outbound, ...) must be added to the MySQL ENUM too
 ]
 
 # Tables where DELETE of legacy enum rows is unsafe (FK / data loss). Remap instead.
