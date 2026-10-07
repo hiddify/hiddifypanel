@@ -3937,10 +3937,10 @@ msgid "adminV2.outbounds.mode.block"
 msgstr "Block"
 
 msgid "adminV2.outbounds.mode.core_endpoint"
-msgstr "hiddify-core endpoint"
+msgstr "hiddify-core (sing-box) endpoint"
 
 msgid "adminV2.outbounds.mode.core_outbound"
-msgstr "hiddify-core outbound"
+msgstr "hiddify-core (sing-box) outbound"
 
 msgid "adminV2.outbounds.mode.direct"
 msgstr "Direct"
@@ -5563,6 +5563,9 @@ msgstr "Clear selection"
 msgid "adminV2.users.col.expire"
 msgstr "Expires"
 
+msgid "adminV2.users.col.id"
+msgstr "ID"
+
 msgid "adminV2.users.col.lastOnline"
 msgstr "Last connection"
 
@@ -6014,6 +6017,9 @@ msgstr "Search name, UUID or note"
 
 msgid "adminV2.users.select"
 msgstr "Select"
+
+msgid "adminV2.users.selectAll"
+msgstr "Select all {n} | Select all {n}"
 
 msgid "adminV2.users.selected"
 msgstr "{n} selected | {n} selected"

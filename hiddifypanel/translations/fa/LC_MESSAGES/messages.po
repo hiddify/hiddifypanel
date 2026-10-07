@@ -3928,10 +3928,10 @@ msgid "adminV2.outbounds.mode.block"
 msgstr "مسدود"
 
 msgid "adminV2.outbounds.mode.core_endpoint"
-msgstr "endpoint هیدیفای‌کور"
+msgstr "hiddify-core (sing-box) endpoint"
 
 msgid "adminV2.outbounds.mode.core_outbound"
-msgstr "outbound هیدیفای‌کور"
+msgstr "hiddify-core (sing-box) outbound"
 
 msgid "adminV2.outbounds.mode.direct"
 msgstr "مستقیم"
@@ -5553,6 +5553,9 @@ msgstr "لغو انتخاب"
 msgid "adminV2.users.col.expire"
 msgstr "انقضا"
 
+msgid "adminV2.users.col.id"
+msgstr "شناسه"
+
 msgid "adminV2.users.col.lastOnline"
 msgstr "آخرین اتصال"
 
@@ -6004,6 +6007,9 @@ msgstr "جستجوی نام، UUID یا یادداشت"
 
 msgid "adminV2.users.select"
 msgstr "انتخاب"
+
+msgid "adminV2.users.selectAll"
+msgstr "انتخاب همه ({n}) | انتخاب همه ({n})"
 
 msgid "adminV2.users.selected"
 msgstr "{n} انتخاب شد | {n} انتخاب شد"
