@@ -210,12 +210,28 @@ def upsert_config(data: "HConfigModel", *, commit: bool = True, child_id: int | 
     set_hconfig(ckey, str(value) if isinstance(value, float) else value, child_id, commit=commit)
 
 
+#: Backups older than this do not restore ``vless_flow`` / ``vless_encryption``.
+_VLESS_SETTINGS_DB_VERSION = 150
+
+
 def bulk_register_configs(hconfigs, commit: bool = True, froce_child_unique_id: str | None = None, override_unique_id: bool = True):
     from hiddifypanel.models.external_model.node import HConfigModel
     from hiddifypanel.panel import hiddify
 
-    for row in HConfigModel.coerce_many(hconfigs):
+    rows = list(HConfigModel.coerce_many(hconfigs))
+    # Backups from before db_version 150 hold flow / encryption values that no longer apply: keep the current ones.
+    old_backup = set()
+    for row in rows:
+        if row.key == ConfigEnum.db_version:
+            try:
+                if int(row.typed_value()) < _VLESS_SETTINGS_DB_VERSION:
+                    old_backup.add(row.child_unique_id)
+            except (TypeError, ValueError):
+                pass
+    for row in rows:
         if row.key == ConfigEnum.unique_id and not override_unique_id:
+            continue
+        if row.key in (ConfigEnum.vless_flow, ConfigEnum.vless_encryption) and row.child_unique_id in old_backup:
             continue
         child_id = hiddify.child_id_from_row({"child_unique_id": row.child_unique_id}, froce_child_unique_id)
         upsert_config(row, commit=False, child_id=child_id, override_unique_id=override_unique_id)
