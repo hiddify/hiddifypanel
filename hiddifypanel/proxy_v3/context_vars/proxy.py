@@ -327,11 +327,16 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
             tcp_udp=proxy.tcp_udp,
             tls_layer=proxy.tls_layer,
         )
+        tcp_ports, udp_ports = list(resolved.tcp_ports), list(resolved.udp_ports)
+        if proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway):
+            # Clients connect to the domain's own gateway port when it has one.
+            tcp_ports = [domain_gateway_port(domain, p) for p in tcp_ports]
+            udp_ports = [domain_gateway_port(domain, p) for p in udp_ports]
         return cls(
             domain=_l7_client_domain_ports(domain, proxy),
             **proxy.model_dump(exclude={"domain", "server_config", "tcp_ports", "udp_ports", "domains"}),
-            tcp_ports=list(resolved.tcp_ports),
-            udp_ports=list(resolved.udp_ports),
+            tcp_ports=tcp_ports,
+            udp_ports=udp_ports,
         )
 
     @property
