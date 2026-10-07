@@ -1358,8 +1358,8 @@
       "makeDefault": "پیش‌فرض کردن (انتقال به انتها)",
       "mode": {
         "block": "مسدود",
-        "core_endpoint": "endpoint هیدیفای‌کور",
-        "core_outbound": "outbound هیدیفای‌کور",
+        "core_endpoint": "hiddify-core (sing-box) endpoint",
+        "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "مستقیم",
         "psiphon": "Psiphon",
         "socks": "SOCKS",

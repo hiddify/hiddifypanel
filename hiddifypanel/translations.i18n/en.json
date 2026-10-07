@@ -1356,8 +1356,8 @@
       "makeDefault": "Make default (move to the end)",
       "mode": {
         "block": "Block",
-        "core_endpoint": "hiddify-core endpoint",
-        "core_outbound": "hiddify-core outbound",
+        "core_endpoint": "hiddify-core (sing-box) endpoint",
+        "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
         "socks": "SOCKS",

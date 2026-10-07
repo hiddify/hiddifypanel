@@ -71,7 +71,8 @@ def sync_all_configs_to_domains(child_id: int | None = None) -> None:
     for cid in child_ids:
         for fake_mode in FAKE_PROXY_CONFIGS:
             sync_config_to_domain(fake_mode, cid)
-    db.session.commit()
+    if db.session.dirty or db.session.new:  # the Domains page calls this on every open; skip the empty commit
+        db.session.commit()
 
 
 def domains_taken_by_others(setting: ConfigEnum, child_id: int) -> list[str]:

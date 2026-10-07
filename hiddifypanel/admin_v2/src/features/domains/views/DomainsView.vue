@@ -158,7 +158,7 @@
 
     <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
     <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
-    <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" @saved="onSaved" />
+    <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
 
     <Dialog v-model:visible="certVisible" modal :draggable="false" :header="t('domains.getCert')" :style="{ width: 'min(32rem, calc(100vw - 1.5rem))' }" @after-hide="onCertClosed">
@@ -192,13 +192,15 @@ import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
 import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
-import { KIND_META, KINDS, TLS_ICON, domainsApi, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsState } from '@/features/domains/api'
+import { KIND_META, KINDS, TLS_ICON, domainsApi, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type DomainsState } from '@/features/domains/api'
 
 const { t } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 
 const state = ref<DomainsState | null>(null)
+/** Loaded after the list so the page shows right away. */
+const options = ref<DomainsOptions | null>(null)
 const loading = ref(true)
 const loadError = ref<string | null>(null)
 const pendingApply = ref<RestartMode>('nothing')
@@ -275,7 +277,7 @@ function domainName(id: number | null): string {
 }
 /** A shown domain, also a node's (as `Node[name] domain`). */
 function showName(id: number): string {
-  const o = state.value?.meta.show_options.find((x) => x.id === id)
+  const o = options.value?.show_options.find((x) => x.id === id)
   if (!o) return domainName(id)
   return o.node ? `Node[${o.node}] ${o.domain}` : o.domain
 }
@@ -322,6 +324,7 @@ const rowItems = computed<MenuItem[]>(() => {
 function apply(next: DomainsState) {
   state.value = next
   menuKey.value++
+  void loadOptions()
   if (next.restart_mode) pendingApply.value = strongerRestartMode(pendingApply.value, next.restart_mode)
   for (const w of next.warnings ?? []) toast.add({ severity: 'warn', summary: t('domains.warning'), detail: w.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ''), life: 9000 })
 }
@@ -332,11 +335,20 @@ function flash(id: number | null | undefined) {
   window.setTimeout(() => (justChanged.value = null), 2200)
 }
 
+async function loadOptions() {
+  try {
+    options.value = await domainsApi.options()
+  } catch {
+    // the dialog falls back to every proxy, and shown domains to this panel's names
+  }
+}
+
 async function load(quiet = false) {
   if (!quiet) loading.value = true
   loadError.value = null
   try {
     state.value = await domainsApi.list()
+    void loadOptions()
   } catch (err) {
     if (!quiet) loadError.value = apiErrorMessage(err) || t('common.loadFailed')
   } finally {

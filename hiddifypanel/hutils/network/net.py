@@ -6,6 +6,7 @@ import random
 import re
 import socket
 import ssl
+import threading
 import time
 import urllib.request
 from typing import Literal
@@ -156,6 +157,36 @@ def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address 
 
     # remove duplicates
     return list(set(addrs))
+
+
+_ips_snapshot: dict[int, list] = {}
+_ips_refreshing = threading.Lock()
+
+
+def _refresh_ips_snapshot() -> None:
+    try:
+        for v in (4, 6):
+            _ips_snapshot[v] = get_ips(v)  # may wait for ident.me: only ever runs in the background
+    except BaseException:
+        pass
+    finally:
+        _ips_refreshing.release()
+
+
+def get_ips_lazy(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
+    """Server IPs for a user request: never waits for the network.
+
+    Returns the last known list (local addresses only before the first refresh) and refreshes it in a background thread."""
+    if _ips_refreshing.acquire(blocking=False):
+        threading.Thread(target=_refresh_ips_snapshot, name="refresh-server-ips", daemon=True).start()
+    versions = (version,) if version else (4, 6)
+    out = []
+    for v in versions:
+        known = _ips_snapshot.get(v)
+        if known is None:
+            known = list({*get_interface_public_ip(v), *([ip] if (ip := get_socket_public_ip(v)) else [])})
+        out.extend(known)
+    return out
 
 
 @cache.cache(ttl=600)
