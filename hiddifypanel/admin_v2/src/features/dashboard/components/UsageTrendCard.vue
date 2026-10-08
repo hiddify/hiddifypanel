@@ -59,8 +59,11 @@ const chartSeries = computed(() => {
 
 const peakLabel = computed(() => {
   const peak = props.usage?.peak
-  if (!peak) return t('dashboard.noData')
-  return `${formatBytes(peak.usage)} · ${formatDayLabel(peak.date, locale.value)}`
+  return peak ? formatBytes(peak.usage) : t('dashboard.noData')
+})
+const peakDay = computed(() => {
+  const peak = props.usage?.peak
+  return peak ? formatDayLabel(peak.date, locale.value) : undefined
 })
 </script>
 
@@ -92,7 +95,7 @@ const peakLabel = computed(() => {
         <MiniStat :label="t('dashboard.totalUsage')" :value="formatBytes(usage?.totals.total ?? 0)" icon="pi pi-database" :accent="SERIES.usage" />
         <MiniStat :label="t('dashboard.monthUsage')" :value="formatBytes(usage?.totals.month ?? 0)" icon="pi pi-calendar" :accent="SERIES.users" />
         <MiniStat :label="t('dashboard.weekUsage')" :value="formatBytes(usage?.totals.week ?? 0)" icon="pi pi-calendar-clock" :accent="SERIES.download" />
-        <MiniStat :label="t('dashboard.peakDay')" :value="peakLabel" icon="pi pi-bolt" :accent="SERIES.usageAvg" />
+        <MiniStat :label="t('dashboard.peakDay')" :value="peakLabel" :extra="peakDay" icon="pi pi-bolt" :accent="SERIES.usageAvg" />
       </div>
     </template>
   </DashCard>

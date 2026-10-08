@@ -1,14 +1,22 @@
 const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+/** How Persian says them (the way people write sizes: مگ, گیگ). */
+const FA_UNITS: Record<string, string> = { B: 'بایت', KB: 'کیلو', MB: 'مگ', GB: 'گیگ', TB: 'ترا', PB: 'پتا' }
+
+/** A size unit as the interface language writes it: `GB`, or `گیگ` in Persian. */
+export function unitLabel(unit: string, locale: string = window.__LOCALE__ ?? 'en'): string {
+  return locale.toLowerCase().startsWith('fa') ? (FA_UNITS[unit] ?? unit) : unit
+}
 export const ONE_GB = 1024 ** 3
 
 /** Compact byte size, e.g. `1.24 TB`. */
-export function formatBytes(bytes: number, digits?: number): string {
+export function formatBytes(bytes: number, digits?: number, minUnit: 'B' | 'KB' | 'MB' = 'B'): string {
   const value = Number(bytes) || 0
-  if (value <= 0) return '0 B'
-  const exponent = Math.min(BYTE_UNITS.length - 1, Math.floor(Math.log(value) / Math.log(1024)))
+  const floor = BYTE_UNITS.indexOf(minUnit)
+  if (value <= 0) return `0 ${unitLabel(minUnit)}`
+  const exponent = Math.min(BYTE_UNITS.length - 1, Math.max(floor, Math.floor(Math.log(value) / Math.log(1024))))
   const scaled = value / 1024 ** exponent
   const precision = digits ?? (scaled >= 100 ? 0 : scaled >= 10 ? 1 : 2)
-  return `${scaled.toFixed(precision)} ${BYTE_UNITS[exponent]}`
+  return `${scaled.toFixed(precision)} ${unitLabel(BYTE_UNITS[exponent]!)}`
 }
 
 export function formatGb(gigabytes: number, digits?: number): string {

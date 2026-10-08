@@ -55,6 +55,13 @@ def _window_sum(by_day: dict[datetime.date, DailyPoint], end: datetime.date, day
     return sum(point.usage for day, point in by_day.items() if start <= day <= end)
 
 
+def _window_average(by_day: dict[datetime.date, DailyPoint], end: datetime.date, days: int) -> int:
+    """Average daily usage over the days of the window that had any usage (idle days do not pull it down)."""
+    start = end - datetime.timedelta(days=days - 1)
+    used = [point.usage for day, point in by_day.items() if start <= day <= end and point.usage > 0]
+    return round(sum(used) / len(used)) if used else 0
+
+
 def fill_series(
     points: list[DailyPoint],
     today: datetime.date,
@@ -105,8 +112,8 @@ def build_usage_summary(
             total=int(total_usage if total_usage is not None else sum(point.usage for point in points)),
         ),
         averages=UsageAverages(
-            daily_week=round(week / WEEK_DAYS),
-            daily_month=round(month / MONTH_DAYS),
+            daily_week=_window_average(by_day, today, WEEK_DAYS),
+            daily_month=_window_average(by_day, today, MONTH_DAYS),
         ),
         previous=UsagePrevious(week=prev_week, month=prev_month),
         trends=UsageTrends(

@@ -619,7 +619,7 @@ msgid ""
 "Please understand that parent panel is under test and the plan and the "
 "condition of use maybe change at anytime."
 msgstr ""
-"لطفاً توجه داشته باشید که پنل مادر در حال آزمایش است و طرح و شرایط استفاده "
+"لطفاً توجه داشته باشید که پنل مرکزی در حال آزمایش است و طرح و شرایط استفاده "
 "ممکن است در هر زمان تغییر کند."
 
 msgid "Please wait "

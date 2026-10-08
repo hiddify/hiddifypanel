@@ -161,11 +161,15 @@ class DailyUsage(db.Model):
         month_start = today - timedelta(days=29)
 
         def online_average(days: int) -> int:
-            return round(sum(online_by_day.get(today - timedelta(days=offset), 0) for offset in range(days)) / days)
+            """Average users online per day, over the days that had anyone online."""
+            counts = [online_by_day.get(today - timedelta(days=offset), 0) for offset in range(days)]
+            active = [count for count in counts if count > 0]
+            return round(sum(active) / len(active)) if active else 0
 
         users = DashboardUsers(
             total=for_users(User.query).count(),
             enabled=for_users(User.query).filter(User.enable.is_(True)).count(),
+            active=sum(1 for user in for_users(User.query).filter(User.enable.is_(True)).all() if user.is_active),
             online=UsersOnline(
                 m5=for_users(User.query).filter(User.last_online >= now - timedelta(minutes=5)).count(),
                 h24=for_users(User.query).filter(User.last_online >= now - timedelta(days=1)).count(),

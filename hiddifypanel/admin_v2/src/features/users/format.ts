@@ -1,5 +1,7 @@
 /** Display helpers shared by the users list and form (relative times as the classic user list shows them). */
 
+import { unitLabel } from '@/shared/utils/format-metrics'
+
 export type Tone = 'ok' | 'warn' | 'danger' | 'muted'
 
 const DAY_UNITS: [Intl.RelativeTimeFormatUnit, number, number][] = [
@@ -49,6 +51,16 @@ export function lastSeen(iso: string | null, now: number, locale: string, labels
   const [unit, size] = units.find(([, s]) => abs >= s) ?? ['minute', 60]
   const days = abs / 86400
   return { text: rtf.format(Math.round(seconds / size), unit), tone: days <= 1 ? 'ok' : days <= 3 ? 'warn' : 'danger', online: false }
+}
+
+/** A user's data amount from GB, never smaller than MB: `40 MB`, `12.5 GB` (`۴۰ مگ`, `۱۲٫۵ گیگ` in Persian). */
+export function sizeText(gigabytes: number, locale: string): string {
+  const value = Number(gigabytes) || 0
+  const number = (n: number, max: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: max }).format(n)
+  if (value >= 1024) return `${number(value / 1024, 2)} ${unitLabel('TB', locale)}`
+  if (value >= 1) return `${number(value, value < 100 ? 2 : 1)} ${unitLabel('GB', locale)}`
+  const mb = value * 1024
+  return `${number(mb, mb < 10 ? 1 : 0)} ${unitLabel('MB', locale)}`
 }
 
 /** `0.029`, `12.5`, `3000`: GB without needless zeros. */

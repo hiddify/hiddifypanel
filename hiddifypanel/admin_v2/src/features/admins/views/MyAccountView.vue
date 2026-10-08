@@ -10,34 +10,34 @@
     <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
 
     <template v-else-if="me">
-      <!-- Identity -->
-      <section class="account-hero">
-        <span class="account-hero__avatar" :class="{ 'account-hero__avatar--super': isSuper }">
-          <i class="pi" :class="isSuper ? 'pi-crown' : 'pi-user'" />
-        </span>
-        <div class="account-hero__body">
-          <div class="account-hero__name">{{ me.name }}</div>
-          <div class="account-hero__meta">
-            <span class="account-mode" :class="`account-mode--${me.mode}`">{{ t(`admins.mode.${me.mode}`) }}</span>
-            <span v-if="me.parent_name" class="account-hero__chip"><i class="pi pi-sitemap" />{{ t('account.under', { name: me.parent_name }) }}</span>
-            <span v-if="me.can_add_admin" class="account-hero__chip"><i class="pi pi-user-plus" />{{ t('account.canAddAdmins') }}</span>
-            <span v-if="me.alias" class="account-hero__chip" dir="ltr"><i class="pi pi-at" />{{ me.alias }}</span>
-          </div>
-        </div>
-        <Button
-          :icon="copied ? 'pi pi-check' : 'pi pi-copy'"
-          :label="copied ? t('common.copied') : t('account.copyLink')"
-          severity="secondary"
-          outlined
-          class="account-hero__copy"
-          @click="copyLink"
-        />
-      </section>
-
       <!-- Four blocks: limits | security, default outbound | configs -->
       <div class="account-grid">
         <!-- Limits and usage -->
         <section class="account-card">
+          <!-- Who I am -->
+          <div class="account-hero account-hero--inline">
+            <span class="account-hero__avatar" :class="{ 'account-hero__avatar--super': isSuper }">
+              <i class="pi" :class="isSuper ? 'pi-crown' : 'pi-user'" />
+            </span>
+            <div class="account-hero__body">
+              <div class="account-hero__name">{{ me.name }}</div>
+              <div class="account-hero__meta">
+                <span class="account-mode" :class="`account-mode--${me.mode}`">{{ t(`admins.mode.${me.mode}`) }}</span>
+                <span v-if="me.parent_name" class="account-hero__chip"><i class="pi pi-sitemap" />{{ t('account.under', { name: me.parent_name }) }}</span>
+                <span v-if="me.can_add_admin" class="account-hero__chip"><i class="pi pi-user-plus" />{{ t('account.canAddAdmins') }}</span>
+                <span v-if="me.alias" class="account-hero__chip" dir="ltr"><i class="pi pi-at" />{{ me.alias }}</span>
+              </div>
+            </div>
+            <Button
+              :icon="copied ? 'pi pi-check' : 'pi pi-copy'"
+              :label="copied ? t('common.copied') : t('account.copyLink')"
+              severity="secondary"
+              outlined
+              size="small"
+              class="account-hero__copy"
+              @click="copyLink"
+            />
+          </div>
           <header class="account-card__head">
             <span class="account-card__icon"><i class="pi pi-gauge" /></span>
             <div class="flex-1 min-w-0">
@@ -53,21 +53,14 @@
         <!-- Security -->
         <section class="account-card">
           <header class="account-card__head">
-            <span class="account-card__icon account-card__icon--key"><i class="pi pi-shield" /></span>
+            <span class="account-card__icon account-card__icon--key"><i class="pi pi-cog" /></span>
             <div class="flex-1 min-w-0">
-              <h3 class="account-card__title">{{ t('account.tabs.security') }}</h3>
-              <p class="account-card__sub">{{ me.has_password ? t('account.passwordSub') : t('account.noPasswordSub') }}</p>
+              <h3 class="account-card__title">{{ t('account.settingsTitle') }}</h3>
+              <p class="account-card__sub">{{ t('account.settingsSub') }}</p>
             </div>
           </header>
           <div class="account-rows">
-            <div class="account-row">
-              <span class="account-row__icon"><i class="pi pi-key" /></span>
-              <div class="account-row__text">
-                <b>{{ t('account.passwordTitle') }}</b>
-                <small>{{ me.has_password ? t('account.passwordSet') : t('account.passwordNone') }}</small>
-              </div>
-              <Button :label="me.has_password ? t('account.changePassword') : t('account.setPassword')" icon="pi pi-pencil" size="small" outlined @click="openPassword" />
-            </div>
+            <!-- My interface language -->
             <div class="account-row">
               <span class="account-row__icon account-row__icon--sky"><i class="pi pi-globe" /></span>
               <div class="account-row__text">
@@ -84,7 +77,23 @@
                 class="account-lang"
                 :aria-label="t('account.languageTitle')"
                 @update:model-value="saveLanguage"
-              />
+              >
+                <template #value="{ value }">
+                  <span class="account-lang__opt"><span class="account-lang__flag">{{ flagOf(value) }}</span>{{ labelOf(value) }}</span>
+                </template>
+                <template #option="{ option }">
+                  <span class="account-lang__opt"><span class="account-lang__flag">{{ option.flag }}</span>{{ option.label }}</span>
+                </template>
+                <template #dropdownicon><i class="pi pi-language" /></template>
+              </Select>
+            </div>
+            <div class="account-row">
+              <span class="account-row__icon"><i class="pi pi-key" /></span>
+              <div class="account-row__text">
+                <b>{{ t('account.passwordTitle') }}</b>
+                <small>{{ me.has_password ? t('account.passwordSet') : t('account.passwordNone') }}</small>
+              </div>
+              <Button :label="me.has_password ? t('account.changePassword') : t('account.setPassword')" icon="pi pi-pencil" size="small" outlined @click="openPassword" />
             </div>
             <div class="account-row account-row--col">
               <div class="account-row__line">
@@ -211,6 +220,7 @@ import Message from 'primevue/message'
 import Password from 'primevue/password'
 import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
+import { LANGUAGE_LOOK } from '@/shared/utils/languages'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { apiErrorMessage } from '@/core/api/client'
 import { formatCount } from '@/shared/utils/format-metrics'
@@ -318,13 +328,13 @@ const aliasError = computed(() => {
 })
 watch(aliasInput, () => (aliasServerError.value = null))
 
-/** Each language in its own name, so it can be found whatever the current one is. */
-const LANGUAGE_NAMES: Record<string, string> = { en: 'English', fa: 'فارسی', ru: 'Русский', pt: 'Português', zh: '中文', my: 'မြန်မာ' }
 const savingLang = ref(false)
 const languageOptions = computed(() => [
-  { value: '', label: t('account.languageDefault', { name: LANGUAGE_NAMES[me.value?.default_lang ?? 'en'] ?? me.value?.default_lang }) },
-  ...(me.value?.languages ?? []).map((value) => ({ value, label: LANGUAGE_NAMES[value] ?? value })),
+  { value: '', flag: '🌐', label: t('account.languageDefault', { name: LANGUAGE_LOOK[me.value?.default_lang ?? 'en']?.name ?? me.value?.default_lang }) },
+  ...(me.value?.languages ?? []).map((value) => ({ value, flag: LANGUAGE_LOOK[value]?.flag ?? '🏳️', label: LANGUAGE_LOOK[value]?.name ?? value })),
 ])
+const flagOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.flag ?? '🌐'
+const labelOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.label ?? value
 async function saveLanguage(lang: string) {
   if (!me.value || savingLang.value || lang === me.value.lang) return
   savingLang.value = true
@@ -435,7 +445,24 @@ onMounted(load)
 
 <style scoped>
 .account-lang {
-  min-width: 9rem;
+  min-width: 11rem;
+}
+.account-lang__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.account-lang__flag {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.account-hero.account-hero--inline {
+  margin-bottom: 0;
+  padding: 0 0 0.9rem;
+  border: 0;
+  border-bottom: 1px dashed var(--p-content-border-color);
+  border-radius: 0;
+  background: none;
 }
 .account-hero {
   display: flex;

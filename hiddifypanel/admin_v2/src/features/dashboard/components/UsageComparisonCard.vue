@@ -45,9 +45,9 @@ const stackedSeries = computed(() => {
   const nodeUsage = (id: string, index: number) => points[index]?.by_child?.[id]?.usage ?? 0
   const average = (id: string, days: number) => {
     const from = Math.max(0, points.length - days)
-    const slice = points.slice(from)
-    if (!slice.length) return 0
-    return slice.reduce((sum, point) => sum + (point.by_child?.[id]?.usage ?? 0), 0) / slice.length
+    // Only the days this server had traffic: idle days do not pull the average down
+    const used = points.slice(from).map((point) => point.by_child?.[id]?.usage ?? 0).filter((usage) => usage > 0)
+    return used.length ? used.reduce((sum, usage) => sum + usage, 0) / used.length : 0
   }
   return ordered.map((id) => ({
     label: nodeName(id),

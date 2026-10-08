@@ -127,7 +127,11 @@ function tooltipLabel(metric: 'cpu' | 'memory') {
       metric === 'cpu'
         ? t('dashboard.cpuCores', { count: sample.cores })
         : `${formatGb(sample.memoryUsedGb, 1)} / ${formatGb(sample.memoryTotalGb, 1)}`
-    return `${nodeTitle(node)}: ${formatted} · ${detail}`
+    // Each part is isolated, so a Latin server name between Persian text does not scramble the line
+    const rtl = document.documentElement.dir === 'rtl'
+    const iso = (text: string) => (rtl ? `\u2068${text}\u2069` : text)
+    const name = (text: string) => (rtl ? `\u2067${text}\u2069` : text)
+    return `${rtl ? '\u200F' : ''}${name(nodeTitle(node))}: ${iso(formatted)} · ${iso(detail)}`
   }
 }
 const cpuTooltipLabel = tooltipLabel('cpu')

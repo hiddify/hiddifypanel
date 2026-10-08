@@ -122,12 +122,28 @@ const chart = shallowRef<Chart | null>(null)
 /** Comparable form of chart config; functions (formatters, gradients) are rebuilt every render. */
 const signature = (value: unknown) => JSON.stringify(value, (_key, v) => (typeof v === 'function' ? undefined : v))
 
+/**
+ * Canvas text ignores the page's CSS: it needs the font named explicitly (else Persian falls back to a
+ * system font), and the face has to be loaded before the canvas can draw with it.
+ */
+function applyPageFont() {
+  const family = getComputedStyle(document.body).fontFamily
+  if (family) Chart.defaults.font.family = family
+  const primary = family.split(',').map((f) => f.trim()).find((f) => !f.includes('Twemoji'))
+  if (primary && document.fonts) {
+    void Promise.all([document.fonts.load(`400 11px ${primary}`, 'آب 01'), document.fonts.load(`500 11px ${primary}`, 'آب 01')])
+      .then(() => chart.value?.update('none'))
+      .catch(() => undefined)
+  }
+}
+
 let dataSignature = ''
 let optionsSignature = ''
 
 function createChart() {
   chart.value?.destroy()
   if (!canvas.value) return
+  applyPageFont()
   chart.value = new Chart(canvas.value, {
     type: props.type,
     data: data.value,

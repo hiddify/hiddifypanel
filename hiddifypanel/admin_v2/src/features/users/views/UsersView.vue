@@ -176,7 +176,7 @@
           </template>
           <template #editor="{ data }">
             <div class="u-edit-usage">
-              <InputNumber v-model="data.usage_limit_GB" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" suffix=" GB" size="small" fluid autofocus />
+              <InputNumber v-model="data.usage_limit_GB" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" :suffix="` ${unitLabel('GB')}`" size="small" fluid autofocus />
               <Select v-model="data.mode" :options="modeOptions" option-label="label" option-value="value" size="small" class="u-edit-mode" />
               <Button icon="pi pi-refresh" text rounded size="small" severity="warn" :disabled="!data.current_usage_GB" :aria-label="t('users.form.resetUsage')" v-tooltip.top="t('users.form.resetUsage')" @click.stop="quick(data, 'reset_usage')" />
             </div>
@@ -272,7 +272,7 @@
       <form class="al-form" @submit.prevent="applyLimits">
         <div class="al-field">
           <label for="al-gb" class="font-medium">{{ t('users.addLimits.gb') }}</label>
-          <InputNumber v-model="limitsGb" input-id="al-gb" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" suffix=" GB" fluid autofocus />
+          <InputNumber v-model="limitsGb" input-id="al-gb" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" :suffix="` ${unitLabel('GB')}`" fluid autofocus />
         </div>
         <div class="al-field">
           <label for="al-days" class="font-medium">{{ t('users.addLimits.days') }}</label>
@@ -302,6 +302,7 @@
 </template>
 
 <script setup lang="ts">
+import { unitLabel } from '@/shared/utils/format-metrics'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import { numberListCodec, optionalNumberCodec, useHashState } from '@/shared/composables/useHashState'
@@ -338,7 +339,7 @@ import TagFilter from '@/features/tags/components/TagFilter.vue'
 import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersState } from '@/features/users/api'
-import { exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
+import { sizeText, exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
 
 /** Highlights the search match. */
 const MarkText = defineComponent({
@@ -560,8 +561,8 @@ function groupSize(key: string): number {
 }
 
 function usageText(u: UserRow): string {
-  const used = gb(u.current_usage_GB, locale.value)
-  return unlimitedGb(u.usage_limit_GB) ? `${used} / ∞ GB` : `${used} / ${gb(u.usage_limit_GB, locale.value)} GB`
+  const used = sizeText(u.current_usage_GB, locale.value)
+  return unlimitedGb(u.usage_limit_GB) ? `${used} / ∞` : `${used} / ${sizeText(u.usage_limit_GB, locale.value)}`
 }
 function expireToneOf(u: UserRow): Tone {
   return u.package_days >= UNLIMITED_DAYS ? 'ok' : expireTone(u.remaining_days)

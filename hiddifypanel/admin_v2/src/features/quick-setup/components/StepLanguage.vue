@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { apiErrorMessage } from '@/core/api/client'
+import { LANGUAGE_LOOK } from '@/shared/utils/languages'
 import { quickSetupApi, type QuickSetupState } from '@/features/quick-setup/api'
 
 const props = defineProps<{ state: QuickSetupState }>()
@@ -9,15 +10,6 @@ const emit = defineEmits<{ error: [message: string] }>()
 
 const { t } = useI18n()
 
-// Native names: the admin may not read the current UI language yet.
-const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
-  en: { flag: '🇺🇸', name: 'English' },
-  fa: { flag: '🇮🇷', name: 'فارسی' },
-  zh: { flag: '🇨🇳', name: '中文' },
-  pt: { flag: '🇧🇷', name: 'Português' },
-  ru: { flag: '🇷🇺', name: 'Русский' },
-  my: { flag: '🇲🇲', name: 'မြန်မာ' },
-}
 const COUNTRY_FLAG: Record<string, string> = { ir: '🇮🇷', zh: '🇨🇳', ru: '🇷🇺', other: '🌍' }
 
 const lang = ref(props.state.admin_lang)

@@ -488,6 +488,8 @@ export interface DashboardUsage {
 export interface DashboardUsers {
   total: number
   enabled: number
+  /** Can connect now: enabled, not expired, not out of data. */
+  active: number
   online: { m5: number; h24: number; today: number; yesterday: number; week: number; month: number }
   averages: { daily_week: number; daily_month: number }
 }

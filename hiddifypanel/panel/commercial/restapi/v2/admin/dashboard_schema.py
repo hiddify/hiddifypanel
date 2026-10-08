@@ -93,6 +93,8 @@ class UsersAverages(ApiModel):
 class DashboardUsers(ApiModel):
     total: int = 0
     enabled: int = 0
+    # Can connect right now: enabled, not expired and not out of data.
+    active: int = 0
     online: UsersOnline = Field(default_factory=UsersOnline)
     averages: UsersAverages = Field(default_factory=UsersAverages)
 

@@ -30,7 +30,8 @@ import {
   type UserRow,
   type UsersState,
 } from '@/features/users/api'
-import { daysFromToday, gb, relativeDays, shortDate } from '@/features/users/format'
+import { unitLabel } from '@/shared/utils/format-metrics'
+import { daysFromToday, gb, sizeText, relativeDays, shortDate } from '@/features/users/format'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 /** Quick picks; the last one is "unlimited" (the highest value the server keeps). */
@@ -311,7 +312,7 @@ async function submit() {
         <div class="uf-data">
           <div v-if="editing" class="uf-used" :class="{ 'uf-used--reset': resetUsage }">
             <span class="uf-used__label">{{ t('users.form.used') }}</span>
-            <b class="uf-used__value" dir="ltr">{{ gb(usedGb, locale) }} GB</b>
+            <b class="uf-used__value" dir="ltr">{{ sizeText(usedGb, locale) }}</b>
             <button
               type="button"
               class="uf-used__reset"
@@ -327,7 +328,7 @@ async function submit() {
           <span v-if="editing" class="uf-data__of">{{ t('users.of') }}</span>
           <div class="uf-field uf-data__limit">
             <label for="uf-limit" class="uf-used__label">{{ t('users.form.limit') }}</label>
-            <InputNumber v-model="usageLimit" input-id="uf-limit" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" suffix=" GB" :disabled="busy" fluid />
+            <InputNumber v-model="usageLimit" input-id="uf-limit" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" :suffix="` ${unitLabel('GB')}`" :disabled="busy" fluid />
           </div>
         </div>
         <small v-if="resetUsage" class="uf-pending"><i class="pi pi-clock" />{{ t('users.form.resetUsagePending') }}</small>
@@ -340,7 +341,7 @@ async function submit() {
             :class="{ 'uf-chip--on': usageLimit === v, 'uf-chip--extra': v === 200 || v === 500 }"
             @click="usageLimit = v"
           >
-            {{ v === UNLIMITED_GB ? '♾️' : v >= 1000 ? `${v / 1000} TB` : `${v} GB` }}
+            {{ v === UNLIMITED_GB ? '♾️' : v >= 1000 ? `${v / 1000} ${unitLabel('TB')}` : `${v} ${unitLabel('GB')}` }}
           </button>
         </div>
 

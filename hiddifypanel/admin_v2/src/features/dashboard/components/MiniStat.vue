@@ -2,6 +2,8 @@
 defineProps<{
   label: string
   value: string
+  /** A second part in the page's own direction, e.g. a date after a size. */
+  extra?: string
   accent?: string
   icon?: string
 }>()
@@ -13,7 +15,8 @@ defineProps<{
     <span v-else-if="accent" class="mini__dot" />
     <div class="min-w-0">
       <p class="mini__label">{{ label }}</p>
-      <p class="mini__value">{{ value }}</p>
+      <!-- Each part picks its own direction, so a size and a date do not tangle in a right-to-left page -->
+      <p class="mini__value"><bdi>{{ value }}</bdi><template v-if="extra"> · <bdi>{{ extra }}</bdi></template></p>
     </div>
   </div>
 </template>
