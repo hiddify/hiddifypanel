@@ -1340,6 +1340,10 @@ def validate_unique_path_and_ports(dbproxy: CustomProxy) -> None:
     ports = set(normalize_port_list(dbproxy.server_inbound_tcp_ports)) | set(normalize_port_list(dbproxy.server_inbound_udp_ports))
     if not ports:
         return
+    # 80 and 443 are the gateway's: a proxy on its own public port (raw TCP, UDP protocols...) cannot take them.
+    gateway = sorted(ports & {80, 443})
+    if gateway:
+        raise ValueError(f"Port {gateway[0]} belongs to the gateway; choose another public port")
     used = used_server_ports(dbproxy.child_id, exclude_id=dbproxy.id)
     for port in sorted(ports):
         if port in used:

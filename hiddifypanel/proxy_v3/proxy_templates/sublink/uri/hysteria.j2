@@ -11,7 +11,6 @@
     query_params=namespace(
       auth=ctx.user.uuid,
       protocol='udp',
-      alpn='h3',
       upmbps=ctx.hconfig.hysteria_up_mbps,
       downmbps=ctx.hconfig.hysteria_down_mbps,
     ),

@@ -7,6 +7,7 @@
   {% for user in ctx.users %}
   {% if user.wg_pub %}
   {
+    "name": "{{ user.uuid }}",
     "public_key": "{{ user.wg_pub }}",
     "pre_shared_key": "{{ user.wg_psk }}",
     "allowed_ips": ["{{ user.wg_ipv4 }}/32", "{{ user.wg_ipv6 }}/128"]
