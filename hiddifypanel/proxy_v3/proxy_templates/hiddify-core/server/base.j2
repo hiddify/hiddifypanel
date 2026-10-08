@@ -9,7 +9,7 @@
   ],
   {# endpoints of a preset (e.g. WireGuard) come from the "endpoints" block; no section when there is none #}
   "endpoints": [
-   {% if ctx.outbounds.singbox_raw_endpoints or preset_endpoints.strip() %}
+   {% if ctx.outbounds.singbox_raw_endpoints %}
     {% for entry in ctx.outbounds.singbox_raw_endpoints %}
     {{ entry|tojson }},
     {% endfor %}

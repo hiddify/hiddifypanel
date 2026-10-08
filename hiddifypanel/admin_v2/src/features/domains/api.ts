@@ -71,6 +71,8 @@ export interface DomainsMeta {
   default_http_port: number
   is_super_admin: boolean
   proxies: DomainProxy[]
+  /** This server's public addresses: what a new domain's DNS record should point to. */
+  server_ips?: { ip: string; version: 4 | 6; label: string }[]
 }
 
 /** Loaded separately, after the page: only the edit dialog (and the names of shown domains) need it. */

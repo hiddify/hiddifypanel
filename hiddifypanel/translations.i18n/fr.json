@@ -1099,6 +1099,8 @@
         "check": "Vérifier",
         "checking": "Vérification du DNS…",
         "continueBackground": "Fermer (continue en arrière-plan)",
+        "dnsHint": "Dans votre DNS, ajoutez l'enregistrement ci-dessous pour ce domaine (la valeur est l'adresse de ce serveur).",
+        "dnsTitle": "Faites-le pointer vers ce serveur",
         "finish": "Terminé",
         "found": {
           "cdn": "Est derrière {cdn}.",
@@ -1608,6 +1610,7 @@
       },
       "modeSettings": "Mode et routage",
       "name": "Nom",
+      "nameRequired": "Donnez un nom au proxy avant d’enregistrer : c’est l’étiquette de ses liens.",
       "needGlobalEnable": "Vous devez activer {names} globalement pour activer ce proxy. Voulez-vous ouvrir les paramètres ?",
       "new": "Nouveau proxy",
       "noClientConfigs": "Aucune config client pour l'instant. Ajoutez un client pour commencer.",

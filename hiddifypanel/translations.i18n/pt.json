@@ -1095,6 +1095,8 @@
         "check": "Verificar",
         "checking": "Verificando DNS…",
         "continueBackground": "Fechar (continua em segundo plano)",
+        "dnsHint": "No seu DNS, adicione o registro abaixo para este domínio (o valor é o endereço deste servidor).",
+        "dnsTitle": "Aponte-o para este servidor",
         "finish": "Concluído",
         "found": {
           "cdn": "Está atrás de {cdn}.",
@@ -1604,6 +1606,7 @@
       },
       "modeSettings": "Modo e roteamento",
       "name": "Nome",
+      "nameRequired": "Dê um nome ao proxy antes de salvar: é o rótulo dos seus links.",
       "needGlobalEnable": "Você precisa ativar {names} globalmente para ativar este proxy. Deseja abrir as configurações?",
       "new": "Novo proxy",
       "noClientConfigs": "Ainda não há configs de cliente. Adicione um cliente para começar.",

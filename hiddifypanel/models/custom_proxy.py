@@ -645,7 +645,7 @@ class CustomProxy(db.Model):  # type: ignore
         if not dbproxy and data.slug:
             dbproxy = cls.query.filter(cls.slug == data.slug, cls.child_id == child_id).first()
         if not dbproxy:
-            if not data.has("name"):
+            if not data.has("name") or not (data.name or "").strip():
                 raise ValueError("name is required")
             if not data.has("mode"):
                 raise ValueError("mode is required")
@@ -738,7 +738,10 @@ class CustomProxy(db.Model):  # type: ignore
     @classmethod
     def _upsert_custom(cls, dbproxy: CustomProxy, data: CustomProxyModel) -> None:
         if data.name is not None:
-            dbproxy.name = data.name
+            # The name is the label of its links: a blank one gives a link that starts with a space and says nothing
+            if not data.name.strip():
+                raise ValueError("name is required")
+            dbproxy.name = data.name.strip()
         if data.slug is not None:
             if data.slug != dbproxy.slug:
                 other = CustomProxy.query.filter(CustomProxy.slug == data.slug, CustomProxy.child_id == dbproxy.child_id)

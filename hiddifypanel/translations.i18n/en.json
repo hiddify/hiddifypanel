@@ -1094,6 +1094,8 @@
         "check": "Check",
         "checking": "Checking DNS…",
         "continueBackground": "Close (keeps going)",
+        "dnsHint": "In your DNS, add the record below for this domain (the value is this server's address).",
+        "dnsTitle": "Point it at this server",
         "finish": "Done",
         "found": {
           "cdn": "Is behind {cdn}.",
@@ -1603,6 +1605,7 @@
       },
       "modeSettings": "Mode & routing",
       "name": "Name",
+      "nameRequired": "Give the proxy a name before saving: it is the label of its links.",
       "needGlobalEnable": "You need to enable {names} globally to enable this proxy. Do you want to open settings?",
       "new": "New Proxy",
       "noClientConfigs": "No client configs yet. Add a client to get started.",

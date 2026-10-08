@@ -1857,6 +1857,11 @@ async function duplicateBuiltin() {
 }
 
 async function save() {
+  // The name is the label of every link of this proxy: a nameless one makes a link that says nothing
+  if (!isBuiltin.value && !form.name?.trim()) {
+    toast.add({ severity: 'warn', summary: t('proxy.nameRequired'), life: 5000 })
+    return
+  }
   // A tag-only override does not touch the rendered body.
   const needsBodyValidation =
     !isBuiltin.value

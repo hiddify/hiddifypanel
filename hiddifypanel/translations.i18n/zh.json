@@ -1095,6 +1095,8 @@
         "check": "检查",
         "checking": "正在检查 DNS…",
         "continueBackground": "关闭（继续运行）",
+        "dnsHint": "在 DNS 中为该域名添加下面的记录（值为此服务器的地址）。",
+        "dnsTitle": "将其指向此服务器",
         "finish": "完成",
         "found": {
           "cdn": "位于 {cdn} 之后。",
@@ -1604,6 +1606,7 @@
       },
       "modeSettings": "模式与路由",
       "name": "名称",
+      "nameRequired": "保存前请先给代理起个名字：它是其链接的标签。",
       "needGlobalEnable": "您需要全局启用 {names} 才能启用此代理。是否打开设置？",
       "new": "新建代理",
       "noClientConfigs": "暂无客户端配置。请添加客户端开始使用。",

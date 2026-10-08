@@ -192,6 +192,30 @@ def _show_options(child_id: int) -> list[dict[str, Any]]:
     return out
 
 
+def _server_ips(child_id: int) -> list[dict[str, Any]]:
+    """Every public address of this server, to put in the DNS record of a new domain (A for IPv4, AAAA for IPv6):
+    the ones found on its interfaces and the ones added in the server IPs list."""
+    import ipaddress
+
+    from hiddifypanel.models.server_ip import ServerIp
+
+    found: dict[str, dict[str, Any]] = {}
+    try:
+        for ip in hutils.network.get_ips_lazy():
+            if ip.is_global:
+                found.setdefault(str(ip), {"ip": str(ip), "version": ip.version, "label": ""})
+    except Exception:
+        pass
+    for row in ServerIp.query.filter(ServerIp.child_id == child_id, ServerIp.enabled.is_(True)).all():
+        try:
+            ip = ipaddress.ip_address(str(row.address).strip())
+        except ValueError:
+            continue
+        if ip.is_global:
+            found.setdefault(str(ip), {"ip": str(ip), "version": ip.version, "label": ""})["label"] = row.label or ""
+    return sorted(found.values(), key=lambda r: (r["version"], r["ip"]))
+
+
 def _list_out(child_id: int) -> dict[str, Any]:
     domains = _domains(child_id)
     return {
@@ -204,6 +228,7 @@ def _list_out(child_id: int) -> dict[str, Any]:
             "default_http_port": GATEWAY_CLIENT_HTTP_PORT,
             "is_super_admin": g.account.role == Role.super_admin,
             "proxies": _proxies_list(child_id),
+            "server_ips": _server_ips(child_id),
         },
     }
 
