@@ -227,6 +227,10 @@ class CustomProxiesApi(MethodView):
     @app.input(CustomProxySchema, arg_name="data")
     @app.output(CustomProxySchema)
     def post(self, data):
+        # A new proxy never takes over another one's slug (the model would treat it as an update of that proxy).
+        slug = str(data.get("slug") or "").strip()
+        if slug and CustomProxy.query.filter(CustomProxy.slug == slug, CustomProxy.child_id == _child_id()).first():
+            abort(400, f"Slug '{slug}' is already used by another proxy")
         data = _prepare_create_data(data)
         proxy = _save_or_400(lambda: CustomProxy.add_or_update(child_id=_child_id(), **data))
         return proxy.to_dict()

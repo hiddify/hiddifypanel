@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from enum import auto
 from typing import TYPE_CHECKING, Any
 
@@ -550,6 +551,84 @@ class CustomProxy(db.Model):  # type: ignore
     def to_dict(self) -> dict[str, Any]:
         return self.to_model().to_dict()
 
+    def to_backup_dict(self, default_enable: bool | None = None) -> dict[str, Any] | None:
+        """What a backup keeps. Your own proxies: everything. A built-in: only what you changed from the catalog
+        (the overridden fields, and enable when it differs from the default); nothing at all when it is untouched."""
+        if not self.is_builtin:
+            data = self.to_dict()
+            data.pop("id", None)
+            data.pop("child_id", None)
+            return data
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import NAME_OVERRIDE_KEY, ensure_builtin_migrated, _live_value
+
+        ensure_builtin_migrated(self)
+        overrides: dict[str, Any] = {}
+        for key, on in (self.builtin_overrides or {}).items():
+            if not on:
+                continue
+            value = self.name if key == NAME_OVERRIDE_KEY else _live_value(self, key)
+            overrides[key] = value.value if hasattr(value, "value") else copy.deepcopy(value)
+        entry: dict[str, Any] = {"slug": self.slug, "is_builtin": True}
+        if overrides:
+            entry["overrides"] = overrides
+        stored_enable = bool(self._enable)
+        if default_enable is None or stored_enable != default_enable:
+            entry["enable"] = stored_enable
+        return entry if len(entry) > 2 else None
+
+    @staticmethod
+    def _legacy_overrides(row: dict[str, Any]) -> dict[str, Any]:
+        """The changed fields of a full (older) backup row of a built-in."""
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import NAME_OVERRIDE_KEY
+
+        server = row.get("server_config") or {}
+        cores = {c.get("core"): c for c in ((row.get("client_config") or {}).get("core_configs") or [])}
+        out: dict[str, Any] = {}
+        for key, on in (row.get("builtin_overrides") or {}).items():
+            if not on:
+                continue
+            if key == NAME_OVERRIDE_KEY:
+                out[key] = row.get("name")
+            elif key == "server_config":
+                out[key] = server.get("inbound_template", "")
+            elif key == "server_core":
+                out[key] = server.get("core")
+            elif key in ("server_inbound_tcp_ports", "server_inbound_udp_ports"):
+                out[key] = server.get(key.replace("server_", "", 1))
+            elif key.startswith("client:"):
+                core = cores.get(key.split(":", 1)[1]) or {}
+                out[key] = core.get("outbounds_template") or core.get("template") or ""
+            elif key in row:
+                out[key] = row[key]
+        return out
+
+    @classmethod
+    def _restore_builtin(cls, existing: CustomProxy, row: dict[str, Any]) -> None:
+        """Put the changes saved in a backup onto the built-in with the same slug; its other parts stay as the
+        catalog has them and it is not marked as changed for them."""
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import (
+            NAME_OVERRIDE_KEY,
+            _apply_live,
+            apply_builtin_name,
+            ensure_builtin_migrated,
+            set_field_override,
+        )
+
+        ensure_builtin_migrated(existing)
+        overrides = row["overrides"] if isinstance(row.get("overrides"), dict) else cls._legacy_overrides(row)
+        # What is not in the backup is not changed: undo any change made since.
+        for key, on in list((existing.builtin_overrides or {}).items()):
+            if on and key not in overrides:
+                set_field_override(existing, key, False)
+        for key, value in overrides.items():
+            if key == NAME_OVERRIDE_KEY:
+                apply_builtin_name(existing, value)
+                continue
+            set_field_override(existing, key, True)
+            _apply_live(existing, key, value)
+        if "enable" in row:
+            existing.enable = bool(row["enable"])
+
     @classmethod
     def add_or_update(cls, child_id: int = 0, commit: bool = True, **data) -> CustomProxy:
         from hiddifypanel.models.external_model.proxy_v3 import CustomProxyModel
@@ -661,9 +740,17 @@ class CustomProxy(db.Model):  # type: ignore
         if data.name is not None:
             dbproxy.name = data.name
         if data.slug is not None:
+            if data.slug != dbproxy.slug:
+                other = CustomProxy.query.filter(CustomProxy.slug == data.slug, CustomProxy.child_id == dbproxy.child_id)
+                if dbproxy.id is not None:
+                    other = other.filter(CustomProxy.id != dbproxy.id)
+                with db.session.no_autoflush:
+                    taken = other.first() is not None
+                if taken:
+                    raise ValueError(f"Slug '{data.slug}' is already used by another proxy")
             dbproxy.slug = data.slug
         elif not dbproxy.slug:
-            dbproxy.slug = proxy_slug(dbproxy.name)
+            dbproxy.slug = unique_slug(proxy_slug(dbproxy.name), dbproxy.child_id, dbproxy.id)
         if data.has("enable"):
             dbproxy.enable = bool(data.enable)
         if data.mode is not None:
@@ -735,9 +822,15 @@ class CustomProxy(db.Model):  # type: ignore
         for proxy in proxies:
             row = as_row(proxy)
             child_id = hiddify.child_id_from_row(row, force_child_unique_id)
-            # Match by slug on this child; drop cross-DB ids and computed fields.
+            slug = row.get("slug")
+            # The proxy is found by its slug (unique per child); ids differ between panels.
+            existing = cls.query.filter(cls.slug == slug, cls.child_id == child_id).first() if slug else None
+            if row.get("is_builtin") or (existing is not None and existing.is_builtin):
+                if existing is not None and existing.is_builtin:
+                    cls._restore_builtin(existing, row)
+                # A built-in this panel does not have (yet) is created by the catalog sync, not by a backup.
+                continue
             data = {k: v for k, v in row.items() if k not in {"id", "child_id", "child_unique_id", "effective_enable", "blocked_by", "client_cores"}}
-            existing = cls.query.filter(cls.slug == data.get("slug"), cls.child_id == child_id).first()
             if existing:
                 data["id"] = existing.id
             try:
@@ -1172,6 +1265,21 @@ def _apply_domain_modes(dbproxy: CustomProxy, domain_modes: list[str] | None) ->
 
 def proxy_slug(name: str) -> str:
     return slugify(name, lowercase=True) or "custom-proxy"
+
+
+def unique_slug(base: str, child_id: int, exclude_id: int | None = None) -> str:
+    """`base`, or `base-2`, `base-3`... : a slug no other proxy of this child uses (slugs are unique)."""
+    slug, i = base, 2
+    # The proxy being named is a half-built pending row: do not flush it while looking
+    with db.session.no_autoflush:
+        while True:
+            query = CustomProxy.query.filter(CustomProxy.slug == slug, CustomProxy.child_id == child_id)
+            if exclude_id is not None:
+                query = query.filter(CustomProxy.id != exclude_id)
+            if query.first() is None:
+                return slug
+            slug = f"{base}-{i}"
+            i += 1
 
 
 def _proxy_label(row: CustomProxy) -> str:

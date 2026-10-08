@@ -180,6 +180,25 @@ def child_id_from_row(row: dict, force_child_unique_id: str | None = None) -> in
     return get_child(unique_id=uid)
 
 
+def _custom_proxies_for_backup(CustomProxy) -> list[dict]:
+    """Your own proxies in full; built-ins only with what you changed (nothing for an untouched one)."""
+    defaults: dict[tuple[int, str], bool] = {}
+    try:
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import iter_custom_proxy_presets
+
+        for child_id in {row.child_id for row in db.session.query(CustomProxy.child_id).distinct()}:
+            defaults.update({(child_id, preset.slug): bool(preset.enable) for preset in iter_custom_proxy_presets(child_id)})
+    except Exception:
+        # Without the catalog the enable state of a built-in is always kept
+        defaults = {}
+    entries = []
+    for proxy in db.session.query(CustomProxy).order_by(CustomProxy.id).all():
+        entry = proxy.to_backup_dict(defaults.get((proxy.child_id, proxy.slug)))
+        if entry is not None:
+            entries.append(entry)
+    return entries
+
+
 def dump_db_to_dict():
     from hiddifypanel.models.custom_proxy import CustomProxy, ProxyTemplate
     from hiddifypanel.models.server_ip import ServerIp
@@ -192,7 +211,7 @@ def dump_db_to_dict():
         "domains": [u.to_dict() for u in db.session.query(Domain).all()],
         "proxies": [u.to_dict() for u in db.session.query(Proxy).all()],
         "proxy_templates": [t.to_dict() for t in db.session.query(ProxyTemplate).all()],
-        "custom_proxies": [p.to_dict() for p in db.session.query(CustomProxy).all()],
+        "custom_proxies": _custom_proxies_for_backup(CustomProxy),
         "tags": export_tags(),
         "tag_links": export_links(),
         "outbounds": [o.to_dict() for o in db.session.query(Outbound).order_by(Outbound.position, Outbound.id).all()],
