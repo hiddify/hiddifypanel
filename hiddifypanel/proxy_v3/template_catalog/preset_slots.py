@@ -110,7 +110,8 @@ def _expand_combo_variants(combo: ProxyCombination) -> list[tuple[ProxyCombinati
         if proto == "vless":
             pairs = pairs + XHTTP_ALPN_PAIRS
         for upload, download in pairs:
-            if reality and (upload == "http" or download == "http"):
+            # REALITY and trojan always run over TLS: no plain-HTTP leg.
+            if (reality or proto == "trojan") and (upload == "http" or download == "http"):
                 continue
             effective = _with_l3(combo, combo.l3, params=_xhttp_params(upload, download))
             layer = tls_layer_for_xhttp_alpn(upload, reality=reality)

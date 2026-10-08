@@ -584,6 +584,18 @@ const quickGroups = computed<QuickGroup[]>(() => [
     ),
   },
   {
+    key: 'core',
+    icon: 'pi pi-cog',
+    title: t('proxy.serverCore'),
+    options: listedOptions(
+      [
+        ['xray', 'Xray', ['xray']],
+        ['hiddify-core', 'Hiddify Core', ['hiddify-core']],
+      ],
+      (row) => row.server_core ?? undefined,
+    ),
+  },
+  {
     key: 'tls',
     icon: 'pi pi-lock',
     title: 'TLS',
