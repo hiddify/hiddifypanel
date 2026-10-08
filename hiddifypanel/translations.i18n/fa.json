@@ -2035,6 +2035,13 @@
         "reset_days": "{name} از اتصال بعدی دوباره شروع می‌شود",
         "reset_usage": "مصرف {name} بازنشانی شد"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "برای این کاربر خروجی اختصاصی انتخاب شده است",
+        "subs": "{n} ساب اضافه | {n} ساب اضافه",
+        "subsHint": "پیکربندی‌های اشتراک اضافی برای این کاربر",
+        "telegramHint": "حساب تلگرام متصل است"
+      },
       "filter": {
         "active": "فعال",
         "activeHint": "روشن، با روز و حجم باقی‌مانده",
@@ -2066,7 +2073,9 @@
         "daysUnit": "روز",
         "disabled": "غیرفعال",
         "editSubtitle": "تغییرات بلافاصله اعمال می‌شوند.",
+        "editTimeTitle": "ویرایش زمان: {name}",
         "editTitle": "ویرایش {name}",
+        "editUsageTitle": "ویرایش حجم: {name}",
         "enableHint": "کاربر غیرفعال نمی‌تواند وصل شود.",
         "enabled": "فعال",
         "endedWhen": "پایان یافت {when}",
@@ -2174,6 +2183,7 @@
       "showLink": "نمایش لینک کاربر",
       "showMore": "نمایش {n} مورد دیگر",
       "showRelative": "نمایش زمان باقی‌مانده",
+      "sortById": "مرتب‌سازی بر اساس شناسه",
       "status": {
         "active": "فعال",
         "disabled": "غیرفعال",

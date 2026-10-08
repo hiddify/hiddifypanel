@@ -45,7 +45,12 @@ const DAY_PRESETS = [
 ] as const
 
 /** `user`: the one being edited (its detail is loaded); null adds a new user. */
-const props = defineProps<{ user: UserRow | null; state: UsersState | null }>()
+const props = defineProps<{
+  user: UserRow | null
+  state: UsersState | null
+  /** Show just one section (a quick edit from the list) instead of the whole form. */
+  focus?: 'usage' | 'time' | null
+}>()
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ saved: [user: UserDetail, created: boolean] }>()
 
@@ -260,11 +265,11 @@ async function submit() {
       <div class="uf-title">
         <span class="uf-title__icon"><i class="pi" :class="editing ? 'pi-user-edit' : 'pi-user-plus'" /></span>
         <div class="min-w-0">
-          <div class="font-semibold text-lg uf-title__text">{{ editing ? t('users.form.editTitle', { name: user?.name }) : t('users.form.addTitle') }}</div>
-          <div class="text-muted-color text-sm">{{ editing ? t('users.form.editSubtitle') : t('users.form.addSubtitle') }}</div>
+          <div class="font-semibold text-lg uf-title__text">{{ focus === 'usage' ? t('users.form.editUsageTitle', { name: user?.name }) : focus === 'time' ? t('users.form.editTimeTitle', { name: user?.name }) : editing ? t('users.form.editTitle', { name: user?.name }) : t('users.form.addTitle') }}</div>
+          <div v-if="!focus" class="text-muted-color text-sm">{{ editing ? t('users.form.editSubtitle') : t('users.form.addSubtitle') }}</div>
         </div>
         <!-- Can the user connect? -->
-        <label class="uf-enable" :class="{ 'uf-enable--off': !enable }" for="uf-enable" v-tooltip.bottom="t('users.form.enableHint')">
+        <label v-if="!focus" class="uf-enable" :class="{ 'uf-enable--off': !enable }" for="uf-enable" v-tooltip.bottom="t('users.form.enableHint')">
           <span>{{ enable ? t('users.form.enabled') : t('users.form.disabled') }}</span>
           <ToggleSwitch v-model="enable" input-id="uf-enable" :disabled="busy || loading" />
         </label>
@@ -277,7 +282,7 @@ async function submit() {
 
     <form v-else class="uf" @submit.prevent="submit">
       <!-- Who -->
-      <section class="uf-sec">
+      <section v-if="!focus" class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-user" />{{ t('users.form.who') }}</h4>
         <div class="uf-grid">
           <!-- Name and Tag side by side -->
@@ -300,7 +305,7 @@ async function submit() {
       </section>
 
       <!-- Data -->
-      <section class="uf-sec">
+      <section v-if="!focus || focus === 'usage'" class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-database" />{{ t('users.form.data') }}</h4>
         <!-- Used (read only, can be reset) and the limit, in one row -->
         <div class="uf-data">
@@ -364,7 +369,7 @@ async function submit() {
       </section>
 
       <!-- Time: the same shape as Data (used days ↻ of package length) -->
-      <section class="uf-sec">
+      <section v-if="!focus || focus === 'time'" class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-calendar" />{{ t('users.form.time') }}</h4>
         <div class="uf-data">
           <div v-if="editing" class="uf-used" :class="{ 'uf-used--reset': resetDays }">
@@ -437,7 +442,7 @@ async function submit() {
       </section>
 
       <!-- Advanced -->
-      <section class="uf-sec">
+      <section v-if="!focus" class="uf-sec">
         <button type="button" class="uf-toggle" :aria-expanded="showAdvanced" @click="showAdvanced = !showAdvanced">
           <i class="pi pi-sliders-h" />
           <span class="flex-1">{{ t('users.form.advanced') }}</span>

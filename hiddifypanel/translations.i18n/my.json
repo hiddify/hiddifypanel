@@ -2038,6 +2038,13 @@
         "reset_days": "{name} သည် နောက်ချိတ်ဆက်ချိန်တွင် ပြန်စမည်",
         "reset_usage": "{name} ၏ အသုံးပြုမှုကို ပြန်လည်သတ်မှတ်ပြီးပါပြီ"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "ဤအသုံးပြုသူအတွက် သီးသန့် outbound ရွေးထားသည်",
+        "subs": "အပို sub {n} ခု | အပို sub {n} ခု",
+        "subsHint": "ဤအသုံးပြုသူအတွက် ထပ်တိုးထားသော subscription ဖွဲ့စည်းမှုများ",
+        "telegramHint": "Telegram အကောင့် ချိတ်ဆက်ထားသည်"
+      },
       "filter": {
         "active": "အသက်ဝင်သည်",
         "activeHint": "ဖွင့်ထားပြီး ရက်နှင့် ဒေတာ ကျန်သည်",
@@ -2069,7 +2076,9 @@
         "daysUnit": "ရက်",
         "disabled": "ပိတ်ထားသည်",
         "editSubtitle": "ပြောင်းလဲမှုများ ချက်ချင်း အသက်ဝင်သည်။",
+        "editTimeTitle": "အချိန် ပြင်ရန် - {name}",
         "editTitle": "{name} ကို တည်းဖြတ်ရန်",
+        "editUsageTitle": "အသုံးပြုမှု ပြင်ရန် - {name}",
         "enableHint": "ပိတ်ထားသောအသုံးပြုသူ ချိတ်ဆက်၍ မရပါ။",
         "enabled": "ဖွင့်ထားသည်",
         "endedWhen": "{when} တွင် ပြီးဆုံးခဲ့သည်",
@@ -2177,6 +2186,7 @@
       "showLink": "အသုံးပြုသူလင့်ခ် ပြရန်",
       "showMore": "{n} ခု ထပ်ပြရန်",
       "showRelative": "ကျန်ချိန် ပြရန်",
+      "sortById": "ID ဖြင့် စီမည်",
       "status": {
         "active": "အသက်ဝင်သည်",
         "disabled": "ပိတ်ထားသည်",

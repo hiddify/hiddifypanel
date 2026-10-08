@@ -25,7 +25,7 @@ import { computed } from 'vue'
  * Glossy progress bar with its text inside (e.g. "8 / 10"): green up to 50%, yellow above, red from 80%;
  * striped when there is no limit. Used for admin limits and user usage.
  */
-const props = withDefaults(defineProps<{ used: number; max: number | null | undefined; text: string; label?: string; size?: 'sm' | 'md' | 'lg' }>(), {
+const props = withDefaults(defineProps<{ used: number; max: number | null | undefined; text: string; label?: string; size?: 'xs' | 'sm' | 'md' | 'lg' }>(), {
   label: undefined,
   size: 'md',
 })
@@ -69,6 +69,12 @@ const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.m
     color-mix(in srgb, var(--p-primary-color) 7%, transparent) 0 6px,
     color-mix(in srgb, var(--p-primary-color) 12%, transparent) 6px 12px
   );
+}
+.mbar--xs {
+  height: 0.95rem;
+}
+.mbar--xs .mbar__text {
+  font-size: 0.64rem;
 }
 .mbar--sm {
   height: 1.15rem;

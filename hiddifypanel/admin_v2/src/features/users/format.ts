@@ -56,9 +56,26 @@ export function gb(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, { maximumFractionDigits: value < 1 ? 3 : value < 100 ? 2 : 1 }).format(value || 0)
 }
 
+/** Persian shows the Persian (Jalali) calendar, everything else the Gregorian one. */
+export function dateLocale(locale: string): string {
+  return locale.toLowerCase().startsWith('fa') ? 'fa-IR-u-ca-persian' : locale
+}
+
 export function shortDate(iso: string | null, locale: string): string {
   if (!iso) return ''
-  return new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })
+  return new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString(dateLocale(locale), { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+/** "Tuesday, 14 October 2026" (Jalali in Persian): the full date, for a long press. */
+export function exactDate(iso: string | null, locale: string): string {
+  if (!iso) return ''
+  return new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString(dateLocale(locale), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+/** Date and time, e.g. for a last-online tooltip. */
+export function exactDateTime(iso: string | null, locale: string): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleString(dateLocale(locale), { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 /** Days from today to an ISO date (negative: in the past). */

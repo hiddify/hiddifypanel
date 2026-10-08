@@ -2034,6 +2034,13 @@
         "reset_days": "{name} 将在下次连接时重新开始",
         "reset_usage": "{name} 的用量已重置"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "该用户选择了专属出站（outbound）",
+        "subs": "额外订阅 {n} 个 | 额外订阅 {n} 个",
+        "subsHint": "为该用户添加的额外订阅配置",
+        "telegramHint": "已绑定 Telegram 账号"
+      },
       "filter": {
         "active": "活跃",
         "activeHint": "已启用，有剩余天数和流量",
@@ -2065,7 +2072,9 @@
         "daysUnit": "天",
         "disabled": "已禁用",
         "editSubtitle": "更改立即生效。",
+        "editTimeTitle": "编辑时长：{name}",
         "editTitle": "编辑 {name}",
+        "editUsageTitle": "编辑流量：{name}",
         "enableHint": "已禁用的用户无法连接。",
         "enabled": "已启用",
         "endedWhen": "{when}已结束",
@@ -2173,6 +2182,7 @@
       "showLink": "显示用户链接",
       "showMore": "再显示 {n} 个",
       "showRelative": "显示剩余时间",
+      "sortById": "按 ID 排序",
       "status": {
         "active": "活跃",
         "disabled": "已禁用",

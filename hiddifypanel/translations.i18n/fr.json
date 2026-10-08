@@ -2038,6 +2038,13 @@
         "reset_days": "{name} redémarre à la prochaine connexion",
         "reset_usage": "Consommation de {name} réinitialisée"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "Cet utilisateur a sa propre sortie (outbound)",
+        "subs": "{n} abonnement en plus | {n} abonnements en plus",
+        "subsHint": "Configurations d'abonnement supplémentaires pour cet utilisateur",
+        "telegramHint": "Compte Telegram lié"
+      },
       "filter": {
         "active": "Actif",
         "activeHint": "Activé, avec jours et données restants",
@@ -2069,7 +2076,9 @@
         "daysUnit": "jours",
         "disabled": "Désactivé",
         "editSubtitle": "Les changements s'appliquent immédiatement.",
+        "editTimeTitle": "Modifier la durée : {name}",
         "editTitle": "Modifier {name}",
+        "editUsageTitle": "Modifier le trafic : {name}",
         "enableHint": "Un utilisateur désactivé ne peut pas se connecter.",
         "enabled": "Activé",
         "endedWhen": "terminé {when}",
@@ -2177,6 +2186,7 @@
       "showLink": "Afficher le lien de l'utilisateur",
       "showMore": "Afficher {n} de plus",
       "showRelative": "Afficher le temps restant",
+      "sortById": "Trier par ID",
       "status": {
         "active": "Actif",
         "disabled": "Désactivé",

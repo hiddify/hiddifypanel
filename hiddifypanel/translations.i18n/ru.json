@@ -2034,6 +2034,13 @@
         "reset_days": "{name} начнёт заново при следующем подключении",
         "reset_usage": "Трафик {name} сброшен"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "У пользователя выбран свой исходящий канал (outbound)",
+        "subs": "{n} доп. подписка | {n} доп. подписки",
+        "subsHint": "Дополнительные конфигурации подписки для этого пользователя",
+        "telegramHint": "Аккаунт Telegram привязан"
+      },
       "filter": {
         "active": "Активные",
         "activeHint": "Включены, остались дни и данные",
@@ -2065,7 +2072,9 @@
         "daysUnit": "дн.",
         "disabled": "Отключён",
         "editSubtitle": "Изменения применяются сразу.",
+        "editTimeTitle": "Срок: {name}",
         "editTitle": "Изменить {name}",
+        "editUsageTitle": "Трафик: {name}",
         "enableHint": "Отключённый пользователь не может подключаться.",
         "enabled": "Включён",
         "endedWhen": "закончился {when}",
@@ -2173,6 +2182,7 @@
       "showLink": "Показать ссылку пользователя",
       "showMore": "Показать ещё {n}",
       "showRelative": "Показывать оставшееся время",
+      "sortById": "Сортировать по ID",
       "status": {
         "active": "Активен",
         "disabled": "Отключён",

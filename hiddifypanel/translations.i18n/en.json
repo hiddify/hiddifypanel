@@ -2033,6 +2033,13 @@
         "reset_days": "{name} starts again at the next connection",
         "reset_usage": "Usage of {name} reset"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "This user has its own outbound selected",
+        "subs": "{n} extra sub | {n} extra subs",
+        "subsHint": "Extra subscription configs added for this user",
+        "telegramHint": "Telegram account linked"
+      },
       "filter": {
         "active": "Active",
         "activeHint": "Enabled, with days and data left",
@@ -2064,7 +2071,9 @@
         "daysUnit": "days",
         "disabled": "Disabled",
         "editSubtitle": "Changes apply right away.",
+        "editTimeTitle": "Edit time: {name}",
         "editTitle": "Edit {name}",
+        "editUsageTitle": "Edit usage: {name}",
         "enableHint": "A disabled user can not connect.",
         "enabled": "Enabled",
         "endedWhen": "ended {when}",
@@ -2172,6 +2181,7 @@
       "showLink": "Show user link",
       "showMore": "Show {n} more",
       "showRelative": "Show time left",
+      "sortById": "Sort by ID",
       "status": {
         "active": "Active",
         "disabled": "Disabled",

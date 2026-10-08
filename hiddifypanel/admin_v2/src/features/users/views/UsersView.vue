@@ -117,7 +117,9 @@
         </template>
 
         <Column selection-mode="multiple" header-style="width: 2.5rem" />
-        <Column header-style="width: 4.5rem" body-class="u-actions-cell">
+        <!-- No ID column: this one sorts by id -->
+        <Column field="id" sortable header-style="width: 6rem" body-class="u-actions-cell">
+          <template #header><span class="u-idhead" v-tooltip.top="t('users.sortById')">#</span></template>
           <template #body="{ data }">
             <div class="u-actions">
               <Button icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(data)" />
@@ -136,14 +138,9 @@
           </template>
         </Column>
 
-        <Column field="id" :header="t('users.col.id')" sortable header-style="width: 4.5rem">
-          <template #body="{ data }">
-            <span class="u-id">{{ data.id }}</span>
-          </template>
-        </Column>
-
         <Column field="name" :header="t('users.col.name')" sortable>
           <template #body="{ data }">
+            <div class="u-namecell">
             <div class="u-who">
               <div class="u-who__line">
                 <!-- The link first: every row's QR button lines up -->
@@ -153,6 +150,11 @@
               </div>
               <small v-if="data.comment" class="u-who__note" :title="data.comment"><MarkText :text="data.comment" :query="query" /></small>
               <small v-if="query && data.uuid.includes(query.trim().toLowerCase())" class="u-who__uuid" dir="ltr"><MarkText :text="data.uuid" :query="query" /></small>
+            </div>
+            <!-- What is special about this user, in the room right of the name -->
+            <div v-if="extrasOf(data).length" class="u-extras">
+              <span v-for="x in extrasOf(data)" :key="x.key" class="u-extra" :class="`u-extra--${x.key}`" v-tooltip.top="x.title"><i :class="x.icon" />{{ x.text }}</span>
+            </div>
             </div>
           </template>
           <template #editor="{ data, field }">
@@ -165,7 +167,7 @@
 
         <Column field="usage_ratio" :header="t('users.col.usage')" sortable header-style="width: 12rem">
           <template #body="{ data }">
-            <div class="u-usage">
+            <div class="u-usage u-tap" role="button" tabindex="0" @click="openQuick(data, 'usage')" @keydown.enter="openQuick(data, 'usage')">
               <MeterBar :used="data.current_usage_GB" :max="unlimitedGb(data.usage_limit_GB) ? null : data.usage_limit_GB" :text="usageText(data)" size="sm" />
               <span v-if="data.mode !== 'no_reset'" class="u-reset" v-tooltip.top="t(`users.modeHint.${data.mode}`)">
                 <i class="pi pi-sync" />{{ t(`users.resetTag.${data.mode}`) }}<template v-if="data.days_to_reset !== null"> · {{ relativeDays(data.days_to_reset, locale) }}</template>
@@ -191,7 +193,7 @@
             </span>
           </template>
           <template #body="{ data }">
-            <span class="u-expire" :class="`u-tone--${expireToneOf(data)}`" v-tooltip.top="expireTitle(data)">
+            <span class="u-expire u-tap" role="button" tabindex="0" :class="`u-tone--${expireToneOf(data)}`" v-tooltip.top="expireTitle(data)" @click="expireClick(data)" @keydown.enter="openQuick(data, 'time')" @pointerdown="pressStart(data)" @pointerup="pressEnd" @pointerleave="pressEnd" @pointercancel="pressEnd" @contextmenu.prevent>
               <i v-if="!data.start_date" class="pi pi-hourglass" />
               {{ expireText(data) }}
             </span>
@@ -203,7 +205,7 @@
 
         <Column field="last_online_ts" :header="t('users.col.lastOnline')" sortable header-style="width: 9rem">
           <template #body="{ data }">
-            <span class="u-online" :class="`u-tone--${seen(data).tone}`" :title="data.last_online && !seen(data).online ? new Date(data.last_online).toLocaleString(locale) : undefined">
+            <span class="u-online" :class="`u-tone--${seen(data).tone}`" :title="data.last_online && !seen(data).online ? exactDateTime(data.last_online, locale) : undefined">
               <span v-if="seen(data).online" class="u-dot" />{{ seen(data).text }}
             </span>
           </template>
@@ -232,20 +234,28 @@
             <TagDots kind="user" :uuid="u.uuid" :ids="u.tags" @changed="(ids: number[]) => setTags(u.uuid, ids)" />
             <button type="button" class="u-card__title" @click="openEdit(u)">
               <span class="u-card__name">{{ u.name }}</span>
-              <span class="u-card__sub">{{ u.comment || t(`users.status.${u.status}`) }}</span>
+              <!-- Say the state only when it needs attention (the badge on the QR already says "active") -->
+              <span v-if="u.comment || u.status !== 'active'" class="u-card__sub">
+                <b v-if="u.status !== 'active'" class="u-card__state">{{ t(`users.status.${u.status}`) }}</b>
+                <template v-if="u.comment && u.status !== 'active'"> · </template>{{ u.comment }}
+              </span>
             </button>
-            <Button icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" @click="openEdit(u)" />
-            <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('users.more')" @click="openMenu($event, u)" />
+            <!-- Usage where the edit button was: tapping the name edits -->
+            <MeterBar class="u-card__meter u-tap" role="button" tabindex="0" :aria-label="t('users.form.editUsageTitle', { name: u.name })" @click="openQuick(u, 'usage')" @keydown.enter="openQuick(u, 'usage')" :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="xs" />
           </header>
           <div class="u-card__body">
-            <MeterBar :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="sm" />
             <div class="u-card__pills">
-              <button type="button" class="u-pill" :class="`u-tone--${expireToneOf(u)}`" :aria-label="t('users.col.expire')" @click="showDates = !showDates">
+              <button type="button" class="u-pill" :class="`u-tone--${expireToneOf(u)}`" :aria-label="t('users.col.expire')" @click="expireClick(u)" @pointerdown="pressStart(u)" @pointerup="pressEnd" @pointerleave="pressEnd" @pointercancel="pressEnd" @contextmenu.prevent>
                 <i :class="u.start_date ? 'pi pi-calendar' : 'pi pi-hourglass'" />{{ expireText(u) }}
               </button>
               <span class="u-pill" :class="`u-tone--${seen(u).tone}`"><span v-if="seen(u).online" class="u-dot" /><i v-else class="pi pi-wifi" />{{ seen(u).text }}</span>
               <span v-if="u.mode !== 'no_reset'" class="u-pill u-pill--reset"><i class="pi pi-sync" />{{ t(`users.resetTag.${u.mode}`) }}</span>
             </div>
+            <!-- What is special about the user, as many as fit on the line -->
+            <div v-if="extrasOf(u).length" class="u-card__extras">
+              <span v-for="x in extrasOf(u)" :key="x.key" class="u-extra" :class="`u-extra--${x.key}`" v-tooltip.top="x.title"><i :class="x.icon" />{{ x.text }}</span>
+            </div>
+            <Button icon="pi pi-ellipsis-h" text rounded size="small" severity="secondary" class="u-card__more" :aria-label="t('users.more')" @click="openMenu($event, u)" />
           </div>
         </article>
       </template>
@@ -279,7 +289,7 @@
       <TagPicker :selected="bulkTagState.all" :partial="bulkTagState.some" :title="t('tags.bulk')" :hint="t('tags.bulkHint')" @toggle="bulkTag" @create="(id: number) => bulkTag(id, true)" />
     </Popover>
 
-    <UserFormDialog v-model:visible="formVisible" :user="editingUser" :state="state" @saved="onSaved" />
+    <UserFormDialog v-model:visible="formVisible" :user="editingUser" :focus="formFocus" :state="state" @saved="onSaved" />
     <LinkShareDialog
       v-if="linkUser && state"
       v-model:visible="linkVisible"
@@ -328,7 +338,7 @@ import TagFilter from '@/features/tags/components/TagFilter.vue'
 import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersState } from '@/features/users/api'
-import { expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
+import { exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
 
 /** Highlights the search match. */
 const MarkText = defineComponent({
@@ -415,6 +425,8 @@ const onNarrow = (e: MediaQueryListEvent) => (narrow.value = e.matches)
 
 const formVisible = ref(false)
 const editingUser = ref<UserRow | null>(null)
+/** A quick edit of one section (usage / time) instead of the whole form. */
+const formFocus = ref<'usage' | 'time' | null>(null)
 const linkVisible = ref(false)
 const linkUser = ref<UserRow | null>(null)
 const rowMenu = ref<InstanceType<typeof Menu> | null>(null)
@@ -570,6 +582,20 @@ function seen(u: UserRow) {
 function rowClass(u: Row) {
   return u.status === 'active' ? '' : `u-row--${u.status}`
 }
+/** Short facts shown beside the name: a chosen outbound, extra subscription configs, a linked Telegram. */
+function extrasOf(u: Row): { key: string; icon: string; text: string; title: string }[] {
+  const out: { key: string; icon: string; text: string; title: string }[] = []
+  if (u.preferred_outbound != null) {
+    const name = state.value?.outbounds.find((o) => o.id === u.preferred_outbound)?.name ?? `#${u.preferred_outbound}`
+    out.push({ key: 'outbound', icon: 'pi pi-directions', text: t('users.extra.outbound', { name }), title: t('users.extra.outboundHint') })
+  }
+  if (u.additional_configs > 0) {
+    out.push({ key: 'subs', icon: 'pi pi-plus-circle', text: t('users.extra.subs', { n: u.additional_configs }, u.additional_configs), title: t('users.extra.subsHint') })
+  }
+  if (u.telegram_id) out.push({ key: 'telegram', icon: 'pi pi-telegram', text: 'Telegram', title: t('users.extra.telegramHint') })
+  return out
+}
+
 function onSort(e: DataTableSortEvent) {
   sortField.value = (e.sortField as string) || undefined
   sortOrder.value = e.sortOrder ?? undefined
@@ -652,9 +678,45 @@ function quick(u: UserRow, action: 'reset_usage' | 'reset_days') {
 
 function openAdd() {
   editingUser.value = null
+  formFocus.value = null
   formVisible.value = true
 }
-function openEdit(u: UserRow) {
+/** Tap the usage or the remaining time to edit just that; not while cells are edited in place. */
+function openQuick(u: UserRow, focus: 'usage' | 'time') {
+  if (inlineEdit.value) return
+  openEdit(u, focus)
+}
+
+// Long press on the remaining time: the exact date (Persian calendar in Persian).
+let pressTimer: number | undefined
+let longPressed = false
+function pressStart(u: UserRow) {
+  longPressed = false
+  window.clearTimeout(pressTimer)
+  pressTimer = window.setTimeout(() => {
+    longPressed = true
+    toast.add({ severity: 'info', summary: exactExpire(u), detail: u.package_days >= UNLIMITED_DAYS ? undefined : expireTitle(u), life: 5000 })
+  }, 500)
+}
+function pressEnd() {
+  window.clearTimeout(pressTimer)
+}
+function expireClick(u: UserRow) {
+  // The press that just showed the date is not also a tap
+  if (longPressed) {
+    longPressed = false
+    return
+  }
+  openQuick(u, 'time')
+}
+function exactExpire(u: UserRow): string {
+  if (u.package_days >= UNLIMITED_DAYS) return t('users.noTimeLimit')
+  if (!u.expire_date) return t('users.form.notStartedHint')
+  return exactDate(u.expire_date, locale.value)
+}
+
+function openEdit(u: UserRow, focus: 'usage' | 'time' | null = null) {
+  formFocus.value = focus
   editingUser.value = u
   formVisible.value = true
 }
@@ -1033,6 +1095,56 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 0.4rem;
 }
+.u-idhead {
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+}
+.u-namecell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.u-namecell .u-who {
+  flex: 1 1 auto;
+}
+/* One line, never taller than the row: it only uses the room right of the name */
+.u-extras {
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  gap: 0.3rem;
+  margin-inline-start: auto;
+}
+.u-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--p-content-border-color);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--p-text-muted-color);
+}
+.u-extra i {
+  font-size: 0.7rem;
+}
+.u-extra--outbound i {
+  color: var(--p-sky-500, #0ea5e9);
+}
+.u-extra--subs i {
+  color: var(--p-violet-500, #8b5cf6);
+}
+.u-extra--telegram i {
+  color: var(--p-blue-500, #3b82f6);
+}
+@media (max-width: 1100px) {
+  .u-extras {
+    display: none;
+  }
+}
 .u-who {
   /* The note sits beside the name when there is room, and wraps under it when there is not */
   display: flex;
@@ -1225,7 +1337,7 @@ onBeforeUnmount(() => {
 .u-cards {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.4rem;
 }
 .u-selectall {
   display: flex;
@@ -1244,13 +1356,14 @@ onBeforeUnmount(() => {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.6rem 0.4rem 0.65rem 0.65rem;
-  border-radius: 16px;
+  gap: 0.35rem;
+  padding: 0.45rem 0.4rem 0.5rem 0.55rem;
+  border-radius: 14px;
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--tone) 7%, transparent), transparent 45%),
     var(--p-content-background);
   border: 1px solid color-mix(in srgb, var(--tone) 22%, var(--p-content-border-color));
+  border-inline-start: 4px solid var(--tone);
   box-shadow: 0 6px 18px -14px color-mix(in srgb, var(--tone) 60%, rgba(15, 23, 42, 0.5));
   transition:
     box-shadow 0.2s ease,
@@ -1282,10 +1395,10 @@ onBeforeUnmount(() => {
 .u-card__qr {
   position: relative;
   flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   display: grid;
   place-items: center;
   font-size: 1.05rem;
@@ -1339,29 +1452,75 @@ onBeforeUnmount(() => {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Card: name + usage on top, expiry / last seen / menu below */
+.u-card__state {
+  color: var(--tone);
+  font-weight: 700;
+}
+.u-card .u-card__meter.mbar {
+  height: 1.4rem;
+}
+.u-card__meter :deep(.mbar__text) {
+  font-size: 0.72rem;
+}
+.u-card .u-pill {
+  height: 1.4rem;
+}
 .u-card__body {
   display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
+  align-items: center;
+  gap: 0.35rem 0.4rem;
   margin-inline-end: 0.25rem;
-  padding: 0.5rem 0.55rem;
-  border-radius: 12px;
-  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.06));
+  padding-inline-start: 0.1rem;
+}
+.u-card__meter {
+  flex: 0 0 6.6rem;
+  width: 6.6rem;
+}
+.u-card__more {
+  flex: none;
+  width: 1.8rem !important;
+  height: 1.8rem !important;
+  margin-inline-start: auto;
 }
 .u-card__pills {
   display: flex;
+  flex: 0 1 auto;
   flex-wrap: wrap;
+  min-width: 0;
   gap: 0.3rem;
+}
+/* One line high: chips that do not fit wrap out of sight instead of making the card taller */
+.u-card__extras {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.3rem;
+  min-width: 0;
+  height: 1.4rem;
+  overflow: hidden;
+}
+.u-card__extras .u-extra {
+  height: 1.4rem;
+  padding-block: 0;
+}
+.u-tap {
+  cursor: pointer;
+}
+.u-tap:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 2px;
 }
 .u-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.12rem 0.5rem;
+  padding: 0.08rem 0.45rem;
   border: 0;
   border-radius: 999px;
   font: inherit;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 600;
   white-space: nowrap;
   color: var(--tone, var(--p-text-muted-color));
@@ -1372,6 +1531,9 @@ onBeforeUnmount(() => {
 }
 button.u-pill {
   cursor: pointer;
+}
+.u-card .u-pill {
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.1));
 }
 .u-pill--reset {
   color: var(--p-primary-color);
