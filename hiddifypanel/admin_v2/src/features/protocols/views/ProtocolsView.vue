@@ -29,6 +29,8 @@
       </div>
     </section>
 
+    <ListFilterStatus v-if="!loading && !loadError" :shown="visibleCount" :total="items.length" :active="filtersActive" @reset="resetFilters" />
+
     <!-- Apply notice after a save that needs it -->
     <ApplyNotice v-if="!embedded" v-model="pendingApply" />
 
@@ -96,10 +98,7 @@
         </section>
       </TransitionGroup>
 
-      <div v-if="!visibleGroups.length" class="proto-empty">
-        <i class="pi pi-filter-slash" />
-        <span>{{ t('protocols.noMatch') }}</span>
-      </div>
+      <ListNoMatch v-if="!visibleGroups.length" @reset="resetFilters" />
     </template>
 
     <StickySaveBar v-if="!embedded" :count="dirtyCount" :saving="saving" @save="save" @discard="discard" />
@@ -107,6 +106,9 @@
 </template>
 
 <script setup lang="ts">
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { useHashState } from '@/shared/composables/useHashState'
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -192,6 +194,7 @@ const loadError = ref<string | null>(null)
 const saving = ref(false)
 const search = ref('')
 const filter = ref<Filter>('all')
+useHashState({ q: search, f: filter })
 const pendingApply = ref<RestartMode>('nothing')
 
 const filterOptions = computed(() => [
@@ -228,6 +231,13 @@ const visibleGroups = computed(() => {
     }
   }).filter((group) => group.items.length > 0)
 })
+
+const visibleCount = computed(() => visibleGroups.value.reduce((n, group) => n + group.items.length, 0))
+const filtersActive = computed(() => filter.value !== 'all' || search.value.trim().length > 0)
+function resetFilters() {
+  search.value = ''
+  filter.value = 'all'
+}
 
 function toggle(item: ProtocolSwitch) {
   draft[item.key] = !draft[item.key]

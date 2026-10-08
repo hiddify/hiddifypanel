@@ -51,6 +51,8 @@
       </div>
     </section>
 
+    <ListFilterStatus v-if="state" :shown="rows.length" :total="allRows.length" :active="usersFiltered" @reset="resetUserFilters" />
+
     <!-- Bulk actions -->
     <Transition name="users-fade">
       <section v-if="selected.length" class="users-bulk">
@@ -99,9 +101,10 @@
         @cell-edit-complete="onCellEdit"
       >
         <template #empty>
-          <div class="users-empty">
+          <ListNoMatch v-if="usersFiltered && state.users.length" @reset="resetUserFilters" />
+          <div v-else class="users-empty">
             <i class="pi pi-users" />
-            <span>{{ state.users.length ? t('users.noMatch') : t('users.none') }}</span>
+            <span>{{ t('users.none') }}</span>
             <Button v-if="!state.users.length && state.can_add" icon="pi pi-user-plus" :label="t('users.add')" size="small" @click="openAdd" />
           </div>
         </template>
@@ -246,7 +249,8 @@
           </div>
         </article>
       </template>
-      <div v-if="!rows.length" class="users-empty"><i class="pi pi-users" /><span>{{ state.users.length ? t('users.noMatch') : t('users.none') }}</span></div>
+      <ListNoMatch v-if="!rows.length && usersFiltered && state.users.length" @reset="resetUserFilters" />
+      <div v-else-if="!rows.length" class="users-empty"><i class="pi pi-users" /><span>{{ t('users.none') }}</span></div>
       <Paginator v-if="paged && rows.length > pageSize" v-model:first="first" :rows="pageSize" :total-records="rows.length" template="PrevPageLink CurrentPageReport NextPageLink" :current-page-report-template="pageReport" />
     </div>
 
@@ -288,7 +292,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { numberListCodec, optionalNumberCodec, useHashState } from '@/shared/composables/useHashState'
+import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -361,6 +368,14 @@ const selected = ref<Row[]>([])
 const sortField = ref<string | undefined>(undefined)
 const sortOrder = ref<1 | -1 | 0 | undefined>(undefined)
 const first = ref(0)
+useHashState({
+  q: query,
+  f: filter,
+  tags: { ref: pickedTags, codec: numberListCodec },
+  sort: sortField,
+  dir: { ref: sortOrder as Ref<number | undefined>, codec: optionalNumberCodec },
+  first,
+})
 const now = ref(Date.now())
 let timer: number | undefined
 
@@ -479,6 +494,13 @@ const rows = computed<Row[]>(() => {
   const match = MATCH[filter.value]
   return allRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
 })
+const usersFiltered = computed(() => filter.value !== 'all' || Boolean(query.value.trim()) || pickedTags.value.length > 0)
+function resetUserFilters() {
+  filter.value = 'all'
+  query.value = ''
+  pickedTags.value = []
+  first.value = 0
+}
 // New filter / search / page size: back to the first page.
 watch([filter, query, pageSize, pickedTags], () => (first.value = 0))
 

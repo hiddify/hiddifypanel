@@ -13,14 +13,18 @@
     <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
 
     <template v-else-if="state">
-      <!-- Overview -->
-      <div class="dm-stats">
+      <!-- Search and filters: one row of same-shaped pills -->
+      <div class="dm-filters">
+        <IconField v-if="state.domains.length > 4" class="dm-filters__search">
+          <InputIcon class="pi pi-search" />
+          <InputText v-model="search" :placeholder="t('domains.search')" fluid />
+        </IconField>
         <button
           v-for="s in stats"
           :key="s.key"
           type="button"
-          class="dm-stat"
-          :class="[`dm-stat--${s.key}`, { 'dm-stat--on': tlsFilter === s.key }]"
+          class="dm-pill dm-stat"
+          :class="[`dm-stat--${s.key}`, { 'dm-pill--on': tlsFilter === s.key }]"
           :aria-pressed="tlsFilter === s.key"
           @click="tlsFilter = tlsFilter === s.key ? null : s.key"
         >
@@ -28,29 +32,24 @@
           <b>{{ s.n }}</b>
           <span>{{ t(`domains.stats.${s.key}`) }}</span>
         </button>
-      </div>
-
-      <div v-if="state.domains.length > 4" class="dm-tools">
-        <IconField class="dm-tools__search">
-          <InputIcon class="pi pi-search" />
-          <InputText v-model="search" :placeholder="t('domains.search')" fluid />
-        </IconField>
-        <div class="dm-tools__kinds">
+        <template v-if="state.domains.length > 4">
           <button
             v-for="k in presentKinds"
             :key="k"
             type="button"
-            class="dm-kind-chip"
-            :class="{ 'dm-kind-chip--on': kindFilter === k }"
-            :style="{ '--kind-color': KIND_META[k].color }"
+            class="dm-pill dm-kind-chip"
+            :class="{ 'dm-pill--on': kindFilter === k }"
+            :style="{ '--tone': KIND_META[k].color }"
             :aria-pressed="kindFilter === k"
             @click="kindFilter = kindFilter === k ? null : k"
           >
-            {{ KIND_META[k].emoji }} {{ t(`domains.kind.${k}.name`) }}
+            <span>{{ KIND_META[k].emoji }}</span>
+            <span>{{ t(`domains.kind.${k}.name`) }}</span>
           </button>
-        </div>
+        </template>
       </div>
 
+      <ListFilterStatus :shown="rows.length" :total="state.domains.length" :active="filtering" @reset="resetFilters" />
       <p class="dm-howto"><i class="pi pi-sort-alt" />{{ filtering ? t('domains.howtoFiltered') : t('domains.howto') }}</p>
 
       <TransitionGroup name="dm-row" tag="ol" class="dm-list" :class="{ 'dm-list--dragging': dragId !== null }">
@@ -154,7 +153,7 @@
           </div>
         </li>
       </TransitionGroup>
-      <p v-if="!rows.length" class="dm-empty"><i class="pi pi-filter-slash" />{{ t('domains.noMatch') }}</p>
+      <ListNoMatch v-if="!rows.length" @reset="resetFilters" />
     </template>
 
     <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
@@ -172,6 +171,9 @@
 </template>
 
 <script setup lang="ts">
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { useHashState } from '@/shared/composables/useHashState'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -212,6 +214,7 @@ const search = ref('')
 const kindFilter = ref<DomainKind | null>(null)
 type TlsFilter = 'all' | 'valid' | 'attention' | 'decoy'
 const tlsFilter = ref<TlsFilter | null>(null)
+useHashState({ q: search, kind: kindFilter, tls: tlsFilter })
 
 const editVisible = ref(false)
 const editing = ref<DomainRow | null>(null)
@@ -257,6 +260,12 @@ const stats = computed(() => {
 
 const presentKinds = computed(() => [...KINDS, 'worker' as DomainKind].filter((k) => (state.value?.domains ?? []).some((d) => kindOf(d.mode) === k)))
 const filtering = computed(() => !!search.value.trim() || kindFilter.value !== null || (tlsFilter.value !== null && tlsFilter.value !== 'all'))
+
+function resetFilters() {
+  search.value = ''
+  kindFilter.value = null
+  tlsFilter.value = null
+}
 
 const rows = computed(() => {
   const q = search.value.trim().toLowerCase()
@@ -504,22 +513,34 @@ onBeforeUnmount(() => window.clearInterval(refresher))
 }
 
 /* Overview tiles (also TLS filters) */
-.dm-stats {
+.dm-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.45rem;
   margin-bottom: 1rem;
 }
-.dm-stat {
+.dm-filters__search {
+  flex: 1 1 14rem;
+  max-width: 20rem;
+}
+.dm-filters__search :deep(input) {
+  height: 2.4rem;
+  border-radius: 12px;
+  font-size: 0.84rem;
+}
+/* Every filter is the same pill: one height, radius, border and font. */
+.dm-pill {
   --tone: var(--p-primary-color);
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.85rem;
+  gap: 0.4rem;
+  height: 2.4rem;
+  padding: 0 0.8rem;
   border-radius: 12px;
   border: 1px solid var(--p-content-border-color);
   background: var(--p-content-background);
-  color: var(--p-text-color);
+  color: var(--p-text-muted-color);
   font: inherit;
   font-size: 0.84rem;
   cursor: pointer;
@@ -527,15 +548,15 @@ onBeforeUnmount(() => window.clearInterval(refresher))
     border-color 0.15s ease,
     background 0.15s ease;
 }
-.dm-stat i {
-  color: var(--tone);
+.dm-pill:hover {
+  border-color: var(--tone);
 }
-.dm-stat b {
-  font-size: 1rem;
+.dm-pill b {
+  color: var(--p-text-color);
   font-variant-numeric: tabular-nums;
 }
-.dm-stat span {
-  color: var(--p-text-muted-color);
+.dm-stat i {
+  color: var(--tone);
 }
 .dm-stat--valid {
   --tone: var(--p-green-500, #22c55e);
@@ -546,40 +567,17 @@ onBeforeUnmount(() => window.clearInterval(refresher))
 .dm-stat--decoy {
   --tone: var(--p-violet-500, #8b5cf6);
 }
-.dm-stat--on {
+.dm-pill--on {
   border-color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 10%, var(--p-content-background));
-}
-
-.dm-tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.9rem;
-}
-.dm-tools__search {
-  flex: 1 1 14rem;
-  max-width: 22rem;
-}
-.dm-tools__kinds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-.dm-kind-chip {
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid var(--p-content-border-color);
-  background: var(--p-content-background);
+  box-shadow: inset 0 0 0 1px var(--tone);
+  background: color-mix(in srgb, var(--tone) 11%, var(--p-content-background));
   color: var(--p-text-color);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
 }
-.dm-kind-chip--on {
-  border-color: var(--kind-color);
-  background: color-mix(in srgb, var(--kind-color) 12%, var(--p-content-background));
+@media (max-width: 560px) {
+  .dm-filters__search {
+    flex-basis: 100%;
+    max-width: none;
+  }
 }
 
 .dm-howto {
@@ -888,7 +886,7 @@ a.dm-row__domain:hover {
   .dm-row__side:not(:has(.dm-row__cert)) {
     justify-content: flex-end;
   }
-  .dm-tools__search {
+  .dm-filters__search {
     max-width: none;
   }
 }

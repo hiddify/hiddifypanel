@@ -750,9 +750,13 @@
       "edit": "Edit",
       "enabled": "Enabled",
       "filter": "Filter",
+      "filteredOf": "Filtered: showing {n} of {total}",
       "format": "Format",
       "loadFailed": "Failed to load data",
       "no": "No",
+      "noMatch": "Nothing matches these filters",
+      "noMatchHint": "Try removing a filter or changing your search.",
+      "resetFilters": "Reset filters",
       "save": "Save",
       "saveFailed": "Save failed",
       "saved": "Saved successfully",
@@ -2702,8 +2706,8 @@
       "label": "Netdata"
     },
     "node_name": {
-      "description": "config.node_name.description",
-      "label": "config.node_name.label"
+      "description": "The name of this node, shown in the parent panel",
+      "label": "Node name"
     },
     "not_found": {
       "description": "Config Not Found",
@@ -2741,8 +2745,8 @@
       "label": "ℹ️ gRPC Path"
     },
     "path_http": {
-      "description": "config.path_http.description",
-      "label": "config.path_http.label"
+      "description": "should be random",
+      "label": "ℹ️ HTTP Path"
     },
     "path_httpupgrade": {
       "description": "should be random",
@@ -3366,7 +3370,7 @@
   "package size?": "package size?",
   "parent": {
     "invalid-parent-url": "Invalid parent panel URL",
-    "panel-not-active": "parent.panel-not-active",
+    "panel-not-active": "The parent panel is not active",
     "sync-req-failed": "Parent sync request failed"
   },
   "previous": "Previous",

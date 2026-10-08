@@ -1,5 +1,6 @@
 <template>
   <PageHeader :title="t('baseConfig.listTitle')" />
+  <ListFilterStatus :shown="filteredConfigs.length" :total="configs.length" :active="filtersActive" @reset="resetFilters" />
   <Panel>
     <DataTable
       :value="filteredConfigs"
@@ -10,6 +11,10 @@
       :rows-per-page-options="[10, 25, 50]"
       data-key="id"
     >
+      <template #empty>
+        <ListNoMatch v-if="filtersActive" @reset="resetFilters" />
+        <span v-else-if="!loading">{{ t('common.none') }}</span>
+      </template>
       <template #header>
         <div class="flex justify-between items-center flex-wrap gap-3">
           <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('common.search')" @click="load" />
@@ -193,6 +198,9 @@
 </template>
 
 <script setup lang="ts">
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { triStateCodec, useHashState } from '@/shared/composables/useHashState'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -240,6 +248,14 @@ const filterSide = ref<string | null>(null)
 const filterCore = ref<string | null>(null)
 const filterVersion = ref('')
 const filterEnabled = ref<boolean | null>(null)
+useHashState({
+  name: filterName,
+  desc: filterDescription,
+  side: filterSide,
+  core: filterCore,
+  ver: filterVersion,
+  on: { ref: filterEnabled, codec: triStateCodec },
+})
 
 const namePopover = ref()
 const descriptionPopover = ref()
@@ -265,6 +281,18 @@ const enabledOptions = [
   { label: t('common.enabled'), value: true },
   { label: t('common.disabled'), value: false },
 ]
+
+const filtersActive = computed(
+  () => Boolean(filterName.value.trim() || filterDescription.value.trim() || filterSide.value || filterCore.value || filterVersion.value.trim() || filterEnabled.value !== null),
+)
+function resetFilters() {
+  filterName.value = ''
+  filterDescription.value = ''
+  filterSide.value = null
+  filterCore.value = null
+  filterVersion.value = ''
+  filterEnabled.value = null
+}
 
 const filteredConfigs = computed(() =>
   configs.value.filter((row) => {

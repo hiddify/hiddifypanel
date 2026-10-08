@@ -1,5 +1,6 @@
 <template>
   <PageHeader :title="t('template.listTitle')" />
+  <ListFilterStatus :shown="filteredTemplates.length" :total="templates.length" :active="filtersActive" @reset="resetFilters" />
   <Panel>
     <DataTable
       :value="filteredTemplates"
@@ -10,6 +11,10 @@
       :rows-per-page-options="[10, 25, 50]"
       data-key="id"
     >
+      <template #empty>
+        <ListNoMatch v-if="filtersActive" @reset="resetFilters" />
+        <span v-else-if="!loading">{{ t('common.none') }}</span>
+      </template>
       <template #header>
         <div class="flex justify-between items-center flex-wrap gap-3">
           <Button icon="pi pi-refresh" severity="secondary" :aria-label="t('common.search')" @click="load" />
@@ -147,6 +152,9 @@
 </template>
 
 <script setup lang="ts">
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { useHashState } from '@/shared/composables/useHashState'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -192,6 +200,7 @@ const filterDescription = ref('')
 const filterSlug = ref('')
 const filterCore = ref<string | null>(null)
 const filterCategory = ref<string | null>(null)
+useHashState({ desc: filterDescription, slug: filterSlug, core: filterCore, cat: filterCategory })
 
 const descriptionPopover = ref()
 const slugPopover = ref()
@@ -209,6 +218,14 @@ const filteredTemplates = computed(() =>
     return true
   }),
 )
+
+const filtersActive = computed(() => Boolean(filterDescription.value.trim() || filterSlug.value.trim() || filterCore.value || filterCategory.value))
+function resetFilters() {
+  filterDescription.value = ''
+  filterSlug.value = ''
+  filterCore.value = null
+  filterCategory.value = null
+}
 
 async function load() {
   loading.value = true

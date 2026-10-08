@@ -9,7 +9,7 @@
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "آخرین روز",
   "<a href=\"%(user_link)s\"> %(user)s</a>": "<a href=\"%(user_link)s\"> %(user)s</a>",
-  "A fake domain needs a real domain name": "",
+  "A fake domain needs a real domain name": "دامنه جعلی به یک نام دامنه واقعی نیاز دارد",
   "Access Denied!": "دسترسی غیرمجاز",
   "Actions": "عملیات",
   "Active": "فعال",
@@ -47,7 +47,7 @@
   "Commercial use": "استفاده تجاری",
   "Config file is incorrect": "فایل کانفیگ اشتباه است",
   "Copy Link": "کپی لینک",
-  "Copy QR image": "",
+  "Copy QR image": "کپی تصویر QR",
   "Couldn't find your ip addresses": "آدرس های IP شما پیدا نشد",
   "Count:": "تعداد:",
   "Create": "ایجاد",
@@ -79,15 +79,15 @@
   "Edit Proxy Names": "✏️ ویرایش پروکسی‌ها",
   "Enable": "❇️ فعال",
   "Enable TLS ECH in panel settings before using ECH on a CDN domain": "قبل از استفاده از ECH روی دامنه CDN، TLS ECH را در تنظیمات پنل فعال کنید",
-  "Error in Config Generation": "",
+  "Error in Config Generation": "خطا در ساخت پیکربندی",
   "Error in auto cdn format": "⚠️ خطا در ورود IP ها به صورت دستی",
   "Error! auto cdn ip can not be find, please contact admin.": "خطا! آی پی اتوماتیک نتوانست پیدا شود. لطفا با مدیر تماس بگیرید",
   "Example Domains": "بررسی و پیشنهاد دامنه",
-  "Expired": "",
+  "Expired": "منقضی‌شده",
   "Expired Users": "کاربران منقضی شده",
   "Export": "خروجی گرفتن",
   "Fake": "➖ جعلی",
-  "Fake domains can only be direct or relay": "",
+  "Fake domains can only be direct or relay": "دامنه‌های جعلی فقط می‌توانند مستقیم یا رله باشند",
   "Filter": "فیلتر",
   "Finished": "تمام شد...",
   "From Last Restart": "از آخرین راه اندازی",
@@ -112,7 +112,7 @@
   "Incorrect Password": "⚠️ رمز عبور اشتباه است",
   "Install": "نصب",
   "Install Hiddify Application": "نصب پنل هیدیفای",
-  "Invalid": "",
+  "Invalid": "نامعتبر",
   "Invalid IP or domain": "IP یا دامنه نامعتبر است",
   "Invalid REALITY hostnames": "نام‌های میزبان REALITY نامعتبر است",
   "Invalid admin link": "لینک ادمین نامعتبر است",
@@ -121,8 +121,8 @@
   "It will override the root admin to the current user": "این گزینه ادمین‌ی که در فایل بکاپ هست را با ادمین فعلی جایگزین می‌کند",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "در کانال تلگرام هیدیفای عضو شوید تا از آخرین آپدیت‌های ما مطلع شوید.",
   "Last Online": "آخرین اتصال",
-  "Last node to parent": "",
-  "Last parent to node": "",
+  "Last node to parent": "آخرین ارتباط نود به پنل مرکزی",
+  "Last parent to node": "آخرین ارتباط پنل مرکزی به نود",
   "Link is changed!": "ℹ️ لینک تغییر کرد!",
   "Linux": "لینوکس",
   "Max Active Users": "حداکثر کاربران فعال",
@@ -133,9 +133,9 @@
   "More Applications": "نرم افزارهای بیشتر",
   "Network": "شبکه",
   "New": "تازه",
-  "No certificate": "",
+  "No certificate": "بدون گواهی",
   "No children!": "هیچ زیر مجموعه ای یافت نشد",
-  "No main domains found, please add at least one domain with valid certificate": "",
+  "No main domains found, please add at least one domain with valid certificate": "دامنه اصلی پیدا نشد؛ لطفاً دست‌کم یک دامنه با گواهی معتبر اضافه کنید",
   "Nodes": "نودها",
   "Not Secure": "ناامن",
   "Note": "📝 یادداشت",
@@ -147,7 +147,7 @@
   "Online Users": "کاربران آنلاین",
   "Only Blocked and Local websites": "☑️ فقط سایت‌های داخلی و مسدود شده‌ی خارجی",
   "Only for sublink?": "🌍 استفاده فقط برای لینک کانفیگ ها (سابسکریپشن)",
-  "Only one domain of this kind can be added": "",
+  "Only one domain of this kind can be added": "فقط یک دامنه از این نوع قابل افزودن است",
   "Oops! Something went wrong.": "خطایی رخ داده است!!",
   "Open in Application": "باز کردن در برنامه",
   "Others": "🇺🇳 سایر",
@@ -172,10 +172,10 @@
   "Port 80 and 443 can not be selected": "پورت‌های ۸۰ و ۴۴۳ قابل انتخاب نیستند",
   "Port is already used! in": "پورت قبلا استفاده شده است در",
   "Premium Description": "پنل هیدیفای برای استفاده غیرتجاری ساخته شده است. اما چنانچه از این پنل استفاده تجاری می‌کنید، از شما خواهشمندیم با دونیت کردن به رشد پروژه کمک کنید. <br/>\nدر عوض حمایت مالی شما، امکانات ویژه ای هم برای محصول تجاری شما فراهم می‌کنیم.\n<br/>\n<br/>\nاز قبیل:\n<ul>\n<li>امکان سینک شدن به کلودفلر: یعنی با افزودن دامنه در پنل، تنظیمات مربوطه در کلود فلر نیز انجام شود</li>\n<li>امکان نمایش برند شما در پنل</li>\n<li>امکان استفاده از پنل مرکزی جهت مدیریت بیش از ۱ سرور در فقط یک پنل بنابراین دیگر لازم نیست کاربران را در سرورهای مختلف ثبت کنید و همین طور حجم آنها در تمام سرورها جمع خواهد شد.\n</li>\n<li>\nامکان استفاده از بات تلگرام\n</li>\n<li>\nامکان تغییر نام پروکسی ها\n</li>\n</ul>\n\nلطفا پس از دونیت کردن به <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>\nپیام دهید تا نسخه ویژه ی کاربران تجاری به شما ارائه شود.",
-  "Proxy Editor": "",
+  "Proxy Editor": "ویرایشگر پروکسی",
   "ProxyPath is already used! use different proxy path": "ProxyPath قبلاً استفاده شده است! از مسیرهای مختلف پروکسی استفاده کنید",
   "QR code": "🧾 کیوآر کد",
-  "QR code image copied": "",
+  "QR code image copied": "تصویر کد QR کپی شد",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QR Code ",
   "RAM": "رم",
   "REALITY Fallback domain is not compaitble with server names!": "دامنه بازگشتی REALITY با نام سرور سازگار نیست!",
@@ -210,7 +210,7 @@
   "Select record": "انتخاب رکورد",
   "Selected proxy does not support this domain mode combination": "پراکسی انتخاب‌شده از این ترکیب حالت دامنه پشتیبانی نمی‌کند",
   "Seleted Users": "کاربران انتخاب شده",
-  "Self-signed": "",
+  "Self-signed": "خودامضا",
   "Send Message to User's Telegram": "📣 ارسال پیام به تلگرام کاربر",
   "Sending": "در حال ارسال...",
   "Should be a valid domain": "باید یک دامنه معتبر باشد",
@@ -228,7 +228,7 @@
   "Submit": "ثبت",
   "Success": "موفقیت",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ موفقیت آمیز بود! لطفا برای اینکه مطمئن شوید بروزرسانی‌ها به درستی اعمال شده، حدود 5 دقیقه صبر کنید.",
-  "TLS": "",
+  "TLS": "TLS",
   "Telegram Bot": "بات تلگرام",
   "Telegram Bot Link": "لینک ربات تلگرام",
   "Temporary Short Link": "⏱️ لینک کوتاه موقت",
@@ -238,7 +238,7 @@
   "This can be used for giving your users a permanent non blockable links.": "این می تواند برای دادن لینک های غیرقابل مسدود و دائمی به کاربران شما استفاده شود.",
   "This domain %(domain_name)s is invalid": "دامنه %(domain_name)s نامعتبر است",
   "This domain does not exist in the panel!": "این دامنه در پنل وجود ندارد!",
-  "This restore has expired. Start it again from the Backup page.": "",
+  "This restore has expired. Start it again from the Backup page.": "این بازیابی منقضی شده است. دوباره از صفحه پشتیبان‌گیری شروع کنید.",
   "Today Usage": "استفاده امروز",
   "Too many Connected IPs": "تعداد IP های متصل بسیار زیاد است",
   "Total Usage": "استفاده کل",
@@ -250,7 +250,7 @@
   "User is inactive": "کاربر غیر فعال است",
   "V2rayNG": "نرم افزار جایگزین  v2rayNG  <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br />",
   "V2rayNG intro": "لطفاً v2rayNG را از %(dl_link)s   %(play_link)s نصب کنید.\nسپس لینک زیر را کپی کرده و مطابق فیلم آموزش <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i>  </button>\nدر v2rayNG قرار دهید.\n<br />",
-  "Valid": "",
+  "Valid": "معتبر",
   "View in Telegram": "مشاهده جزییات در تلگرام",
   "Waiting for the process to start...": "در انتظار شروع فرایند...",
   "Want to enjoy more with telegram?": "ℹ️ وصل کردن حساب کاربری به تلگرام",
@@ -265,11 +265,10 @@
   "You can restore your configs from previously downloaded configs": "ℹ️ در این قسمت می‌توانید تنظیمات قبلی خود را (که قبلا از قسمت پشتیبان گیری دانلود کرده‌اید.) بازگردانی نمایید.",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "شما کاربران زیادی دارید! شما می توانید تنها %(active)s کاربر فعال و %(total)s کاربر داشته باشید",
   "You have used this domain in: ": "شما از این دامنه در بخش زیر استفاده کرده اید: ",
-  "You need to enable %(names)s globally to enable this proxy.": "",
+  "You need to enable %(names)s globally to enable this proxy.": "برای فعال‌کردن این پروکسی باید %(names)s را به‌صورت سراسری فعال کنید.",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "اطلاعات اکانت هیدیفای شما\nدامنه : {} \nمقدار حجم مجاز : {} گیگابایت\nحجم مصرف شده : {} گیگابایت\nتاریخ انقضا : {} \nروزهای باقی ‌مانده : {} \n\n\nبا آرزوی موفقیت. 🎉 🎉 🎉 ",
   "[Admin only visible message:] You can change this message from settings": "[پیام اختصاصی ادمین]: قابل تنظیم از طریق تنظیمات",
   "actions": "عملیات",
-  "admin link": "مدیریت",
   "admin": {
     "Actions:apply_configs": "اعمال تنظیمات",
     "action_done_sucess": "✅ عملیات با موفقیت انجام شد. اکنون می توانید این صفحه را ترک کنید",
@@ -312,6 +311,7 @@
     "save_panel_link": "توجه داشته باشید که تنها از طریق لینک زیر  می‌توانید به پنل مدیریت دسترسی داشته باشید. لطفا این لینک را کپی و برای استفاده‌های بعدی ذخیره نمایید.\n\n<p class='ltr'>\n<a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "⚠️ لطفا برای اینکه مطمئن شوید تغییرات به درستی اعمال شده، حدود 5 دقیقه صبر کنید. در این فاصله لینک‌های زیر را کپی کرده و در جایی برای خود ذخیره نمایید:"
   },
+  "admin link": "مدیریت",
   "adminV2": {
     "account": {
       "aliasActive": "برای حذف، خالی بگذارید و ذخیره کنید.",
@@ -396,6 +396,7 @@
         "hint": "همه پورت‌هایی که این سرور باید رو به اینترنت باز باشند، آماده برای فایروال.",
         "lead": "این پورت‌ها را در فایروال سرور (یا سرویس ابری) باز کنید تا کاربران بتوانند وصل شوند.",
         "none": "هیچ",
+        "openProxy": "باز کردن این پروکسی سفارشی",
         "refresh": "تازه‌سازی",
         "title": "پورت‌های عمومی"
       },
@@ -749,9 +750,13 @@
       "edit": "ویرایش",
       "enabled": "فعال",
       "filter": "فیلتر",
+      "filteredOf": "فیلترشده: نمایش {n} از {total}",
       "format": "قالب‌بندی",
       "loadFailed": "بارگذاری داده ناموفق بود",
       "no": "خیر",
+      "noMatch": "هیچ مورد با این فیلترها مطابقت ندارد",
+      "noMatchHint": "یک فیلتر را بردارید یا جستجو را تغییر دهید.",
+      "resetFilters": "بازنشانی فیلترها",
       "save": "ذخیره",
       "saveFailed": "ذخیره ناموفق بود",
       "saved": "با موفقیت ذخیره شد",
@@ -1593,6 +1598,16 @@
       "outboundTagTemplateHint": "Jinja برای تگ هر outbound کلاینت. پیش‌فرض: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
       "outboundsTemplate": "قالب خروجی‌ها (outbounds)",
       "protocol": "پروتکل",
+      "quick": {
+        "any": "همه",
+        "clear": "بازنشانی فیلترها",
+        "label": "فیلترها",
+        "modified": "تغییرکرده",
+        "modifiedHint": "نسبت به پیش‌فرض کاتالوگ تغییر کرده است",
+        "nSelected": "{n} مورد انتخاب شده",
+        "other": "سایر",
+        "showing": "نمایش {n} از {total}"
+      },
       "regeneratePath": "بازتولید مسیر",
       "renderErrorClickHint": "برای جزئیات کلیک کنید",
       "renderErrorDetail": "جزئیات خطای رندر",
@@ -1600,6 +1615,9 @@
       "renderErrorNoDetail": "جزئیات بیشتری برای این خطا موجود نیست.",
       "renderErrorRenderedSource": "خروجی رندر شده",
       "renderErrorTemplateSource": "منبع قالب",
+      "resetAll": "بازنشانی همه به پیش‌فرض",
+      "resetAllConfirm": "همه تغییراتی که روی پروکسی‌های داخلی داده‌اید (برچسب، حالت‌های دامنه، TLS، پیکربندی سرور و کلاینت) حذف شود و پیش‌فرض‌های کاتالوگ بازگردانده شود؟ پروکسی‌هایی که خودتان ساخته‌اید تغییری نمی‌کنند.",
+      "resetAllDone": "{n} پروکسی به پیش‌فرض بازنشانی شد",
       "resetTagName": "بازگرداندن نام تگ به پیش‌فرض",
       "resetToBuiltin": "بازگردانی به پیش‌فرض کاتالوگ",
       "searchAll": "جستجو در همه ستون‌ها...",
@@ -2286,8 +2304,8 @@
       "title": "V2RayNG"
     }
   },
-  "at least one domain should exist": "",
-  "at least one user should exist": "",
+  "at least one domain should exist": "دست‌کم یک دامنه باید وجود داشته باشد",
+  "at least one user should exist": "دست‌کم یک کاربر باید وجود داشته باشد",
   "auto": "خودکار",
   "auto_cdn_ip": "☑️ انتخاب کننده آی‌پی CDN به صورت خودکار",
   "bot": {
@@ -2298,12 +2316,12 @@
   "cf-delete": {
     "failed": "حذف کلودفلر ناموفق بود"
   },
-  "child has been removed!": "پنل زیر مجموعه حذف شد",
   "child": {
     "register-failed": "ثبت‌نام پنل فرزند ناموفق بود",
     "register-success": "پنل فرزند با موفقیت ثبت شد",
     "sync-failed": "همگام‌سازی پنل فرزند ناموفق بود"
   },
+  "child has been removed!": "پنل زیر مجموعه حذف شد",
   "clickable copy": "لینک برای شبکه‌های اجتماعی",
   "close": "بستن",
   "cloudflare": {
@@ -2580,8 +2598,8 @@
       "label": "آخرین بررسی دوره‌ای مصرف"
     },
     "last_users_sync": {
-      "description": "",
-      "label": ""
+      "description": "زمان آخرین همگام‌سازی موفق کاربران با پنل مرکزی",
+      "label": "آخرین همگام‌سازی کاربران"
     },
     "license": {
       "description": "برای استفاده تجاری از این محصول باید مجوز آن را خریداری کنید",
@@ -2690,8 +2708,8 @@
       "label": "Netdata"
     },
     "node_name": {
-      "description": "",
-      "label": ""
+      "description": "نام این نود که در پنل مرکزی نمایش داده می‌شود",
+      "label": "نام نود"
     },
     "not_found": {
       "description": "تنظیمات پیدا نشد.",
@@ -2729,8 +2747,8 @@
       "label": "ℹ️ مسیر gRPC"
     },
     "path_http": {
-      "description": "",
-      "label": ""
+      "description": "باید تصادفی باشد",
+      "label": "ℹ️ مسیر HTTP"
     },
     "path_httpupgrade": {
       "description": "باید تصادفی باشد",
@@ -3291,7 +3309,7 @@
   "grpc-proxy": {
     "description": "gRPC ℹ️ یک پروتکل مبتنی بر H2 است. شاید برای شما سریعتر باشد!"
   },
-  "in\n          parent panel": "",
+  "in\n          parent panel": "در\n          پنل مرکزی",
   "in parent panel": "در پنل مرکزی",
   "install from google play": "<i class='fa-brands fa-google-play'></i> گوگل‌پلی",
   "ios": "آی‌او‌اس",
@@ -3354,7 +3372,7 @@
   "package size?": "حجم بسته",
   "parent": {
     "invalid-parent-url": "آدرس پنل مرکزی نامعتبر است",
-    "panel-not-active": "",
+    "panel-not-active": "پنل مرکزی فعال نیست",
     "sync-req-failed": "درخواست همگام‌سازی با پنل مرکزی ناموفق بود"
   },
   "previous": "قبلی",

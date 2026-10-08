@@ -57,9 +57,8 @@
       :class="{ 'qf-select--on': selectedDomainModes.length }"
     />
 
-    <Button v-if="quickActive" icon="pi pi-times" :label="t('proxy.quick.clear')" text size="small" severity="secondary" @click="clearQuick" />
-    <span class="qf__count">{{ t('proxy.quick.showing', { n: filteredProxies.length, total: proxies.length }) }}</span>
   </section>
+  <ListFilterStatus :shown="filteredProxies.length" :total="proxies.length" :active="anyFilterActive" @reset="resetAllFilters" />
   <Panel>
     <DataTable
       :value="filteredProxies"
@@ -69,7 +68,14 @@
       :rows="10"
       :rows-per-page-options="[10, 25, 50]"
       data-key="id"
+      v-model:first="first"
+      v-model:sort-field="sortField"
+      v-model:sort-order="sortOrder"
     >
+      <template #empty>
+        <ListNoMatch v-if="anyFilterActive" @reset="resetAllFilters" />
+        <span v-else-if="!loading">{{ t('common.none') }}</span>
+      </template>
       <template #header>
         <div class="flex justify-between items-center flex-wrap gap-3">
           <IconField class="min-w-56 flex-1 max-w-xl">
@@ -397,7 +403,10 @@ import Popover from 'primevue/popover'
 import MultiSelect from 'primevue/multiselect'
 import TreeSelect from 'primevue/treeselect'
 import type { TreeNode } from 'primevue/treenode'
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import PageHeader from '@/shared/components/PageHeader.vue'
+import { useHashState, triStateCodec, optionalNumberCodec, type HashCodec } from '@/shared/composables/useHashState'
 import { focusFirstInput } from '@/shared/utils/popover-focus'
 import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
 import SysBadge from '@/shared/components/SysBadge.vue'
@@ -516,6 +525,9 @@ const filterModified = ref(false)
 const quick = ref<Record<string, string[]>>({})
 const domainModeSelection = ref<Record<string, { checked?: boolean; partialChecked?: boolean }> | null>(null)
 const resetting = ref(false)
+const first = ref(0)
+const sortField = ref<string | undefined>(undefined)
+const sortOrder = ref<number | undefined>(undefined)
 
 function rowProto(row: CustomProxy) {
   return row.proto ?? (row as { protocol?: string }).protocol
@@ -641,6 +653,24 @@ const quickActive = computed(
   () => filterModified.value || selectedDomainModes.value.length > 0 || Object.values(quick.value).some((v) => v.length),
 )
 
+const anyFilterActive = computed(
+  () =>
+    quickActive.value ||
+    Boolean(filterSearch.value.trim() || filterName.value.trim() || filterProto.value || filterMode.value || filterCore.value || filterCategories.value.length || filterEnabled.value !== null),
+)
+
+function resetAllFilters() {
+  clearQuick()
+  filterSearch.value = ''
+  filterName.value = ''
+  filterProto.value = null
+  filterMode.value = null
+  filterCore.value = null
+  filterCategories.value = []
+  filterEnabled.value = null
+  first.value = 0
+}
+
 function clearQuick() {
   filterModified.value = false
   quick.value = {}
@@ -659,6 +689,38 @@ function matchesQuick(row: CustomProxy, skip?: string): boolean {
   if (skip !== 'domain' && modes.length && !(row.domain_modes ?? []).some((m) => modes.includes(m))) return false
   return true
 }
+
+/** Domain modes in the URL: just the picked leaf modes; the tree's checkbox state is rebuilt from them. */
+const domainModesCodec: HashCodec<Record<string, { checked?: boolean; partialChecked?: boolean }> | null> = {
+  encode: (v) =>
+    Object.entries(v ?? {})
+      .filter(([key, state]) => state?.checked && !key.startsWith('group:'))
+      .map(([key]) => encodeURIComponent(key))
+      .join(',') || null,
+  decode: (raw) => {
+    const out: Record<string, { checked?: boolean; partialChecked?: boolean }> = {}
+    for (const key of raw.split(',').filter(Boolean).map(decodeURIComponent)) {
+      out[key] = { checked: true }
+      if (key.includes('-')) out[`group:${key.split('-')[0]}`] = { partialChecked: true }
+    }
+    return out
+  },
+}
+useHashState({
+  q: filterSearch,
+  name: filterName,
+  proto: filterProto,
+  mode: filterMode,
+  core: filterCore,
+  cats: filterCategories,
+  on: { ref: filterEnabled, codec: triStateCodec },
+  mod: filterModified,
+  qf: quick,
+  dm: { ref: domainModeSelection, codec: domainModesCodec },
+  first,
+  sort: sortField,
+  dir: { ref: sortOrder, codec: optionalNumberCodec },
+})
 
 function confirmResetAll() {
   dangerConfirm({
@@ -885,11 +947,6 @@ onActivated(() => {
   gap: 0.45rem;
   margin-bottom: 0.85rem;
 }
-.qf__count {
-  margin-inline-start: auto;
-  font-size: 0.82rem;
-  color: var(--p-text-muted-color);
-}
 /* Every filter is the same pill: one height, radius, border and font. */
 .qf-pill,
 .qf-select {
@@ -962,10 +1019,6 @@ onActivated(() => {
   .qf-select {
     flex: 1 1 calc(50% - 0.45rem);
     width: auto;
-  }
-  .qf__count {
-    flex: 1 0 100%;
-    margin: 0;
   }
 }
 .filter-pop {

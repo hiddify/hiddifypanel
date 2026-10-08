@@ -108,6 +108,7 @@
         <div v-if="!visibleCategories.length" class="settings-empty">
           <i class="pi pi-search" />
           <span>{{ t('settings.noMatch') }}</span>
+          <Button v-if="searching" icon="pi pi-times" :label="t('common.resetFilters')" size="small" severity="secondary" outlined @click="search = ''" />
         </div>
       </div>
     </div>
@@ -117,6 +118,8 @@
 </template>
 
 <script setup lang="ts">
+import Button from 'primevue/button'
+import { useHashState } from '@/shared/composables/useHashState'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -186,6 +189,7 @@ const formErrors = ref<string[]>([])
 const pendingApply = ref<RestartMode>('nothing')
 const newAdminPath = ref<string | null>(null)
 const activeCategory = ref<string | null>(null)
+useHashState({ q: search, cat: activeCategory })
 const highlightCategory = ref<string | null>(null)
 const highlightKey = ref<string | null>(null)
 

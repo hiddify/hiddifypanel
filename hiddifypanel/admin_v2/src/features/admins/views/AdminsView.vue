@@ -56,7 +56,8 @@
 
     <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
 
-    <div v-else-if="tree" class="admins-card">
+    <ListFilterStatus v-else-if="tree" :shown="visibleAdmins" :total="tree.admins.length" :active="filtering" @reset="clearFilters" />
+    <div v-if="!loading && !loadError && tree" class="admins-card">
       <TreeTable
         :value="nodes"
         v-model:expanded-keys="expandedKeys"
@@ -64,10 +65,7 @@
         class="admins-table"
       >
         <template #empty>
-          <div class="admins-empty-search">
-            <i class="pi pi-filter-slash" />{{ t('admins.noMatch') }}
-            <Button :label="t('admins.filter.clear')" size="small" text @click="clearFilters" />
-          </div>
+          <ListNoMatch @reset="clearFilters" />
         </template>
 
         <Column field="name" :header="t('admins.col.name')" header-class="admins-col--name" body-class="admins-col--name">
@@ -199,6 +197,9 @@
 </template>
 
 <script setup lang="ts">
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { useHashState } from '@/shared/composables/useHashState'
 import { computed, defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -252,6 +253,7 @@ const query = ref('')
 const expandedKeys = ref<Record<string, boolean>>({})
 const modeFilter = ref<AdminMode | null>(null)
 const subFilter = ref<'yes' | 'no' | null>(null)
+useHashState({ q: query, mode: modeFilter, sub: subFilter })
 const linkAdmin = ref<AdminRow | null>(null)
 const linkVisible = ref(false)
 const justChanged = ref<string | null>(null)
@@ -301,6 +303,8 @@ function matches(admin: AdminRow): boolean {
   if (subFilter.value && canAddSubs(admin) !== (subFilter.value === 'yes')) return false
   return true
 }
+
+const visibleAdmins = computed(() => (tree.value?.admins ?? []).filter(matches).length)
 
 function clearFilters() {
   query.value = ''
