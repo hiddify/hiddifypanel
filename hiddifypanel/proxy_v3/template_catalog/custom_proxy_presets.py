@@ -604,7 +604,8 @@ def _build_preset(
         tcp_udp=tcp_udp,
         download_tcp_udp=download_tcp_udp,
         is_common_proxy=is_common_proxy,
-        legacy_slugs=(legacy_slug,) if legacy_slug != slug else (),
+        # Snell v4 became v5 (same wire protocol): its row, with its settings, is the v5 one now
+        legacy_slugs=("hiddify-core-custom-snell", "snell-hc") if slug == "snell-v5-hc" else ((legacy_slug,) if legacy_slug != slug else ()),
     )
 
 

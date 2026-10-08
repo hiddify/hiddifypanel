@@ -85,8 +85,11 @@ EXTRA_PROXY_ROWS: list[dict[str, Any]] = [
     {"l3": ProxyL3.custom, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.dnstt, "name": "DNSTT"},
     {"l3": ProxyL3.custom, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.slipstream, "name": "Slipstream"},
     {"l3": ProxyL3.custom, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.masterdns, "name": "MasterDNS"},
-    {"l3": ProxyL3.tls, "transport": "custom", "cdn": "direct", "proto": "snell", "name": "Snell"},
-    {"l3": ProxyL3.tls, "transport": "custom", "cdn": "relay", "proto": "snell", "name": "Snell Relay"},
+    # Snell v5 and v6 (v4 is gone: the v5 wire protocol is the same as v4, so v5 serves v4 clients too)
+    {"l3": "snell_v5", "transport": "custom", "cdn": "direct", "proto": "snell", "name": "Snell v5"},
+    {"l3": "snell_v5", "transport": "custom", "cdn": "relay", "proto": "snell", "name": "Snell v5 Relay"},
+    {"l3": "snell_v6", "transport": "custom", "cdn": "direct", "proto": "snell", "name": "Snell v6"},
+    {"l3": "snell_v6", "transport": "custom", "cdn": "relay", "proto": "snell", "name": "Snell v6 Relay"},
     {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.wireguard, "name": "WireGuard"},
     {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.relay, "proto": ProxyProto.wireguard, "name": "WireGuard Relay"},
     {"l3": "tls", "transport": "custom", "cdn": "direct", "proto": "naive", "name": "Naive"},

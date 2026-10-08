@@ -5,6 +5,8 @@ from .paths import preset_shell_slug
 from .proxy_matrix import ProxyCombination
 
 # Map legacy matrix names to on-disk fragment basenames.
+from .snell_version import with_snell_version
+
 PROTO_SLUG: dict[str, str] = {
     "shadowsocks": "ss",
     "v2ray": "vmess",
@@ -311,7 +313,8 @@ def build_hiddify_inbound_template(combo: ProxyCombination, *, l7_gateway: bool 
 
         return build_hiddify_wireguard_endpoint() if is_wireguard_endpoint(combo) else build_hiddify_wireguard_server_stub()
     if _is_standalone_hiddify_server(combo):
-        return build_hiddify_standalone_inbound(combo)
+        content, slugs = build_hiddify_standalone_inbound(combo)
+        return with_snell_version(content, combo), slugs
     proto = _inbound_proto_file(combo)
     transport = _transport_file(combo.transport)
     if not proto or not transport:
