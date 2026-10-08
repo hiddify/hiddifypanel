@@ -71,7 +71,8 @@ def _is_plain_ss2022(combo: ProxyCombination) -> bool:
 
 def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
     proto = combo.proto.lower()
-    return proto in ("socks", "ssh", "mieru", "wireguard") or _is_plain_ss2022(combo)
+    # Snell has its own obfuscation and no TLS section: hiddify-core rejects an unknown "tls" field on it
+    return proto in ("socks", "ssh", "mieru", "wireguard", "snell") or _is_plain_ss2022(combo)
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
