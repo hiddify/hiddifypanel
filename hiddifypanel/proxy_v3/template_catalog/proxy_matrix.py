@@ -6,6 +6,13 @@ from typing import Any, Iterator
 from hiddifypanel.models.proxy import ProxyCDN, ProxyL3, ProxyProto, ProxyTransport
 
 # Same transport/cdn/proto strings as init_db.get_proxy_rows_v1 / make_proxy_rows.
+#: ``l3`` of the WireGuard row that hiddify-core serves as an endpoint (a separate preset from the wg-quick one).
+WIREGUARD_ENDPOINT_L3 = "wg_endpoint"
+
+#: Not created for now: a hiddify-core WireGuard endpoint has no per-user accounting (usage, limits), which the
+#: wg-quick WireGuard rows have. The templates and builders stay; turn this on to get the preset again.
+WIREGUARD_ENDPOINT_ENABLED = False
+
 PROXY_CFG_STRINGS: list[str] = [
     "h2 direct vless",
     "WS direct vless",
@@ -94,6 +101,12 @@ EXTRA_PROXY_ROWS: list[dict[str, Any]] = [
     {"l3": "tls", "transport": "custom", "cdn": "relay", "proto": "anytls", "name": "AnyTLS Relay"},
 ]
 
+# WireGuard served by hiddify-core itself (a sing-box wireguard endpoint), on its own port: it does not use the
+# wg-quick service of the plain WireGuard rows above.
+WIREGUARD_ENDPOINT_ROWS: list[dict[str, Any]] = [
+    {"l3": WIREGUARD_ENDPOINT_L3, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.wireguard, "name": "WireGuard Endpoint"},
+]
+
 L3_LAYERS: list[str | ProxyL3] = [
     ProxyL3.h3_quic,
     "tls_h2",
@@ -101,6 +114,10 @@ L3_LAYERS: list[str | ProxyL3] = [
     ProxyL3.http,
     ProxyL3.reality,
 ]
+
+
+def is_wireguard_endpoint(combo: "ProxyCombination") -> bool:
+    return str(combo.proto).lower() == "wireguard" and str(combo.l3) == WIREGUARD_ENDPOINT_L3
 
 
 @dataclass
@@ -178,7 +195,7 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
                     params=params,
                 )
 
-    for row in EXTRA_PROXY_ROWS:
+    for row in EXTRA_PROXY_ROWS + (WIREGUARD_ENDPOINT_ROWS if WIREGUARD_ENDPOINT_ENABLED else []):
         yield ProxyCombination(
             l3=_enum_val(row["l3"]),
             transport=_enum_val(row["transport"]),

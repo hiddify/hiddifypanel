@@ -1,0 +1,9 @@
+{# An endpoint (not an inbound): sing-box endpoints such as wireguard have a tag and a listen port, and the protocol's own fields #}
+{% block endpoints %}
+{% set tag %}{%- include 'hiddify-core/server/tag' -%}{% endset %}
+{
+  "tag":"{{tag}}",
+  "listen_port": {{ ctx.proxy.udp_port or ctx.proxy.tcp_port }},
+  {% include '__PROTO_SLUG__' %},
+},
+{% endblock %}

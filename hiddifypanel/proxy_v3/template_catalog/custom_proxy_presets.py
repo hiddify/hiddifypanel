@@ -42,6 +42,7 @@ from .inbound_builder import (
     supports_xray_preset,
 )
 from .preset_slots import H3_PROTOS, PresetSlot, iter_grouped_preset_slots, preset_display_name, preset_slug_name, tls_layer_for_xhttp_alpn
+from .proxy_matrix import is_wireguard_endpoint
 
 V2RAY_GATEWAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
 
@@ -557,7 +558,7 @@ def _build_preset(
     inbound_tcp_ports: tuple[int, ...] = ()
     inbound_udp_ports: tuple[int, ...] = ()
     if mode == CustomProxyMode.ip:
-        if proto == "wireguard":
+        if proto == "wireguard" and not is_wireguard_endpoint(primary):
             # WireGuard listens on hconfig.wireguard_port (wg-quick / firewall), not a slug port.
             public_port = _hconfig_port(ConfigEnum.wireguard_port, child_id, fallback_slug=slug)
         else:
