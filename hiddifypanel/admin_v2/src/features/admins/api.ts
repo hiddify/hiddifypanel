@@ -108,6 +108,10 @@ export interface MyAccount {
   /** Strong enough for an alias (and required for any new password). */
   strong_password: boolean
   alias: string
+  /** My interface language; empty: the panel's default admin language. */
+  lang: string
+  default_lang: string
+  languages: string[]
   /** False for super admins: they sign in with their link only. */
   can_alias: boolean
   /** With an alias: the sign-in page; else the UUID link. */
@@ -153,6 +157,9 @@ export const adminsApi = {
   async setMyAlias(alias: string): Promise<{ alias: string; login_link: string }> {
     const { data } = await getHttp().put<{ alias: string; login_link: string }>('admins/me/alias/', { alias })
     return data
+  },
+  async setMyLanguage(lang: string): Promise<void> {
+    await getHttp().put('admins/me/language/', { lang })
   },
   async setMyOutbound(id: number | null): Promise<void> {
     await getHttp().put('admins/me/default-outbound/', { default_outbound: id })

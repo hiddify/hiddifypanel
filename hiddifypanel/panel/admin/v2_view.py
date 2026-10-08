@@ -84,13 +84,19 @@ def _needs_quick_setup() -> bool:
     return needs_quick_setup()
 
 
+def _admin_locale() -> str:
+    """The signed-in admin's own language (My account), else the panel's default admin language."""
+    own = getattr(g.account, "lang", None)
+    return (str(getattr(own, "value", own)) if own else "") or hconfig(ConfigEnum.admin_lang) or "en"
+
+
 def _admin_v2_bootstrap_payload() -> dict:
     proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
     return {
         "proxy_path": proxy_path,
         "api_base": f"/{proxy_path}/api/v2/admin/",
         "router_base": f"/{proxy_path}/admin/v2/",
-        "locale": hconfig(ConfigEnum.admin_lang) or "en",
+        "locale": _admin_locale(),
         "panel_version": _panel_version(),
         "panel_logo_url": _panel_logo_url(proxy_path),
         "menu": build_admin_v2_menu(),
@@ -123,7 +129,7 @@ def register_v2_routes(flask_app, admin_bp):
     @login_required(roles=_ADMIN_V2_ROLES)
     def admin_v2(subpath=""):
         proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
-        lang = hconfig(ConfigEnum.admin_lang) or "en"
+        lang = _admin_locale()
         static_prefix = f"/{proxy_path}/static/admin-v2"
         static_js_file, static_css_file = _admin_v2_entry_files()
         static_js = f"{static_prefix}/{static_js_file}"

@@ -68,6 +68,24 @@
               </div>
               <Button :label="me.has_password ? t('account.changePassword') : t('account.setPassword')" icon="pi pi-pencil" size="small" outlined @click="openPassword" />
             </div>
+            <div class="account-row">
+              <span class="account-row__icon account-row__icon--sky"><i class="pi pi-globe" /></span>
+              <div class="account-row__text">
+                <b>{{ t('account.languageTitle') }}</b>
+                <small>{{ t('account.languageHint') }}</small>
+              </div>
+              <Select
+                :model-value="me.lang"
+                :options="languageOptions"
+                option-label="label"
+                option-value="value"
+                :loading="savingLang"
+                :disabled="savingLang"
+                class="account-lang"
+                :aria-label="t('account.languageTitle')"
+                @update:model-value="saveLanguage"
+              />
+            </div>
             <div class="account-row account-row--col">
               <div class="account-row__line">
                 <span class="account-row__icon account-row__icon--sky"><i class="pi pi-at" /></span>
@@ -191,6 +209,7 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import Password from 'primevue/password'
+import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { apiErrorMessage } from '@/core/api/client'
@@ -299,6 +318,27 @@ const aliasError = computed(() => {
 })
 watch(aliasInput, () => (aliasServerError.value = null))
 
+/** Each language in its own name, so it can be found whatever the current one is. */
+const LANGUAGE_NAMES: Record<string, string> = { en: 'English', fa: 'فارسی', ru: 'Русский', pt: 'Português', zh: '中文', my: 'မြန်မာ' }
+const savingLang = ref(false)
+const languageOptions = computed(() => [
+  { value: '', label: t('account.languageDefault', { name: LANGUAGE_NAMES[me.value?.default_lang ?? 'en'] ?? me.value?.default_lang }) },
+  ...(me.value?.languages ?? []).map((value) => ({ value, label: LANGUAGE_NAMES[value] ?? value })),
+])
+async function saveLanguage(lang: string) {
+  if (!me.value || savingLang.value || lang === me.value.lang) return
+  savingLang.value = true
+  try {
+    await adminsApi.setMyLanguage(lang)
+    me.value.lang = lang
+    // The interface language is chosen when the page loads
+    window.setTimeout(() => window.location.reload(), 400)
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+    savingLang.value = false
+  }
+}
+
 async function saveAlias() {
   if (!me.value || aliasError.value || savingAlias.value) return
   savingAlias.value = true
@@ -394,6 +434,9 @@ onMounted(load)
 </script>
 
 <style scoped>
+.account-lang {
+  min-width: 9rem;
+}
 .account-hero {
   display: flex;
   flex-wrap: wrap;

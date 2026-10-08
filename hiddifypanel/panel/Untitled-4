@@ -1,0 +1,12 @@
+
+in the utils for base. 64 it should be live (one side base64 one side decoded (can be swapped)) if change in base64 automatically decoded part update if change decoded automatically make it base64
+
+if it has vmess:// (or protocol://) in the begining of base64 part  it should ignore that part
+
+if should automatically swap if it detect it is base64
+
+
+
+you should not backup the not changed part of custom proxies
+if there is not changed part during restore you should not also mark it as changed
+during restore, it should find a relevant proxy by its slug and restore it
