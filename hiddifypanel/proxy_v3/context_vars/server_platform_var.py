@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import re
 import subprocess
+from pathlib import Path
 
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
@@ -8,6 +10,12 @@ from pydantic import BaseModel, ConfigDict
 from hiddifypanel.cache import cache
 
 from .version import TemplateVersion
+
+# The binary's NEEDED entry is ./lib/hiddify-core.so, resolved from the process
+# cwd. Running it from anywhere else makes the loader exit 127.
+_CORE_DIR = Path("/opt/hiddify-manager/services/hiddify-core")
+_CORE_BIN = _CORE_DIR / "hiddify-core"
+_VERSION_TOKEN = re.compile(r"(\d+\.\d+\.\d+(?:[-.]?(?:rc|alpha|beta|a|b|pre)\.?\d*)?)")
 
 
 class ServerPlatformVar(BaseModel):
@@ -49,15 +57,23 @@ def get_xray_version() -> TemplateVersion:
         return TemplateVersion("0.0.0")
 
 
-def _first_output_line(cmd: list[str]) -> str:
-    return subprocess.check_output(cmd).decode("utf-8").splitlines()[0].strip()
+def _first_output_line(cmd: list[str], *, cwd: Path | None = None) -> str:
+    return subprocess.check_output(cmd, cwd=cwd).decode("utf-8").splitlines()[0].strip()
+
+
+def _core_version_line() -> str:
+    return _first_output_line([str(_CORE_BIN), "version"], cwd=_CORE_DIR)
+
+
+def _version_token(token: str) -> str:
+    match = _VERSION_TOKEN.search(token.lstrip("v"))
+    return match.group(1) if match else "0.0.0"
 
 
 def get_hiddifycore_version() -> TemplateVersion:
     try:
-        line = _first_output_line(["/opt/hiddify-manager/services/hiddify-core/hiddify-core", "version"])
-        parts = line.split()
-        version = parts[2].lstrip("v") if len(parts) > 2 else "0.0.0"
+        parts = _core_version_line().split()
+        version = _version_token(parts[2]) if len(parts) > 2 else "0.0.0"
         return TemplateVersion(version)
     except Exception as e:
         logger.error(f"Error getting hiddifycore version: {e}")
@@ -66,9 +82,8 @@ def get_hiddifycore_version() -> TemplateVersion:
 
 def get_singbox_version() -> TemplateVersion:
     try:
-        line = _first_output_line(["/opt/hiddify-manager/services/hiddify-core/hiddify-core", "version"])
-        parts = line.split()
-        version = parts[-1] if len(parts) > 5 else "0.0.0"
+        parts = _core_version_line().split()
+        version = _version_token(parts[-1]) if len(parts) > 5 else "0.0.0"
         return TemplateVersion(version)
     except Exception as e:
         logger.error(f"Error getting singbox version: {e}")
