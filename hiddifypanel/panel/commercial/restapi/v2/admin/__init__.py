@@ -116,6 +116,7 @@ def init_app(app):
             CustomProxyImportApi,
             CustomProxyMetaApi,
             CustomProxyPreviewApi,
+            CustomProxyResetAllApi,
             CustomProxyValidateApi,
             CustomProxyValidateByIdApi,
         )
@@ -140,6 +141,7 @@ def init_app(app):
         bp.add_url_rule("/custom-proxies/preview/", view_func=CustomProxyPreviewApi)
         bp.add_url_rule("/custom-proxies/generate-example/", view_func=CustomProxyGenerateExampleApi)
         bp.add_url_rule("/custom-proxies/generate-bundle/", view_func=CustomProxyGenerateBundleApi)
+        bp.add_url_rule("/custom-proxies/reset-all/", view_func=CustomProxyResetAllApi)
         bp.add_url_rule("/custom-proxies/export/", view_func=CustomProxyExportApi)
         bp.add_url_rule("/custom-proxies/import/", view_func=CustomProxyImportApi)
         bp.add_url_rule("/custom-proxies/<int:proxy_id>/", view_func=CustomProxyApi)

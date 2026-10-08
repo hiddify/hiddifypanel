@@ -1,5 +1,65 @@
 <template>
   <PageHeader :title="t('proxy.listTitle')" />
+  <section class="qf" :aria-label="t('proxy.quick.label')">
+    <button
+      type="button"
+      class="qf-pill qf-pill--modified"
+      :class="{ 'qf-pill--on': filterModified }"
+      :aria-pressed="filterModified"
+      v-tooltip.bottom="t('proxy.quick.modifiedHint')"
+      @click="filterModified = !filterModified"
+    >
+      <i class="pi pi-pencil" />
+      <b>{{ modifiedCount }}</b>
+      <span>{{ t('proxy.quick.modified') }}</span>
+    </button>
+
+    <MultiSelect
+      v-for="g in quickGroups"
+      :key="g.key"
+      :model-value="quick[g.key] ?? []"
+      :options="groupOptions(g)"
+      option-label="label"
+      option-value="value"
+      :show-toggle-all="false"
+      :max-selected-labels="0"
+      :placeholder="g.title"
+      :aria-label="g.title"
+      class="qf-select"
+      :class="{ 'qf-select--on': quick[g.key]?.length }"
+      @update:model-value="(v: string[]) => (quick = { ...quick, [g.key]: v })"
+    >
+      <template v-if="quick[g.key]?.length" #value="{ value }">
+        <span class="qf-value">
+          <i :class="g.icon" />
+          <span v-if="value.length === 1">{{ g.options.find((o) => o.value === value[0])?.label }}</span>
+          <template v-else><span>{{ g.title }}</span><b>{{ value.length }}</b></template>
+        </span>
+      </template>
+      <template #option="{ option }">
+        <span class="qf-option">
+          <span class="qf-option__label">{{ option.label }}</span>
+          <small>{{ option.count }}</small>
+        </span>
+      </template>
+    </MultiSelect>
+
+    <TreeSelect
+      v-model="domainModeSelection"
+      :options="domainModeTree"
+      selection-mode="checkbox"
+      display="comma"
+      filter
+      filter-mode="lenient"
+      :placeholder="t('proxy.domainModes')"
+      :aria-label="t('proxy.domainModes')"
+      class="qf-select"
+      :class="{ 'qf-select--on': selectedDomainModes.length }"
+    />
+
+    <Button v-if="quickActive" icon="pi pi-times" :label="t('proxy.quick.clear')" text size="small" severity="secondary" @click="clearQuick" />
+    <span class="qf__count">{{ t('proxy.quick.showing', { n: filteredProxies.length, total: proxies.length }) }}</span>
+  </section>
   <Panel>
     <DataTable
       :value="filteredProxies"
@@ -27,6 +87,14 @@
               :label="t('proxy.generateBundle')"
               severity="secondary"
               @click="bundleDialogVisible = true"
+            />
+            <Button
+              icon="pi pi-replay"
+              :label="t('proxy.resetAll')"
+              severity="secondary"
+              outlined
+              :loading="resetting"
+              @click="confirmResetAll"
             />
             <Button icon="pi pi-plus" :label="t('proxy.new')" as="a" :href="newProxyHref" @click.exact.prevent="openNew" />
           </div>
@@ -326,6 +394,9 @@ import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Popover from 'primevue/popover'
+import MultiSelect from 'primevue/multiselect'
+import TreeSelect from 'primevue/treeselect'
+import type { TreeNode } from 'primevue/treenode'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { focusFirstInput } from '@/shared/utils/popover-focus'
 import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
@@ -428,6 +499,176 @@ const filterMode = ref<string | null>(null)
 const filterCore = ref<string | null>(null)
 const filterEnabled = ref<boolean | null>(null)
 
+/* Quick filters: OR inside a group, AND between groups. */
+interface QuickOption {
+  value: string
+  label: string
+  test: (row: CustomProxy) => boolean
+}
+interface QuickGroup {
+  key: string
+  title: string
+  icon: string
+  options: QuickOption[]
+}
+
+const filterModified = ref(false)
+const quick = ref<Record<string, string[]>>({})
+const domainModeSelection = ref<Record<string, { checked?: boolean; partialChecked?: boolean }> | null>(null)
+const resetting = ref(false)
+
+function rowProto(row: CustomProxy) {
+  return row.proto ?? (row as { protocol?: string }).protocol
+}
+function rowMode(row: CustomProxy) {
+  return row.mode ?? (row as { protocol?: string }).protocol
+}
+
+/** A built-in proxy whose catalog defaults the admin changed. */
+function isModified(row: CustomProxy): boolean {
+  return Boolean(row.is_builtin) && (Boolean(row.server_override) || Boolean(row.client_override) || Object.values(row.builtin_overrides ?? {}).some(Boolean))
+}
+
+const otherLabel = computed(() => t('proxy.quick.other'))
+
+function listedOptions(known: Array<[string, string, string[]]>, rowValue: (row: CustomProxy) => string | undefined): QuickOption[] {
+  const knownValues = new Set(known.flatMap(([, , values]) => values))
+  return [
+    ...known.map(([value, label, values]) => ({ value, label, test: (row: CustomProxy) => values.includes(rowValue(row) ?? '') })),
+    { value: 'other', label: otherLabel.value, test: (row: CustomProxy) => !knownValues.has(rowValue(row) ?? '') },
+  ]
+}
+
+const quickGroups = computed<QuickGroup[]>(() => [
+  {
+    key: 'proto',
+    icon: 'pi pi-share-alt',
+    title: t('proxy.protocol'),
+    options: listedOptions(
+      [
+        ['vless', 'VLESS', ['vless']],
+        ['vmess', 'VMess', ['vmess']],
+        ['trojan', 'Trojan', ['trojan']],
+      ],
+      (row) => (isNoInbound(row) ? '' : rowProto(row)),
+    ),
+  },
+  {
+    key: 'transport',
+    icon: 'pi pi-arrows-h',
+    title: t('proxy.transport'),
+    options: listedOptions(
+      [
+        ['xhttp', 'XHTTP', ['xhttp']],
+        ['ws', 'WebSocket', ['ws']],
+        ['httpupgrade', 'HTTPUpgrade', ['httpupgrade']],
+        ['tcp', 'RAW', ['tcp']],
+        ['http', 'RawHTTP', ['http']],
+        ['grpc', 'gRPC', ['grpc']],
+      ],
+      (row) => row.transport ?? undefined,
+    ),
+  },
+  {
+    key: 'mode',
+    icon: 'pi pi-server',
+    title: t('proxy.mode'),
+    options: listedOptions(
+      [
+        ['l7', 'L7 gateway', ['domains_l7_gateway']],
+        ['sni', 'SNI gateway', ['domains_sni_gateway']],
+        ['dns', 'DNS', ['domains_dns_gateway']],
+        ['ip', 'IP based', ['ip']],
+      ],
+      (row) => rowMode(row),
+    ),
+  },
+  {
+    key: 'tls',
+    icon: 'pi pi-lock',
+    title: 'TLS',
+    options: [
+      { value: 'http', label: 'HTTP', test: (row) => [row.tls_layer, row.download_tls_layer].some((l) => l === 'http') },
+      { value: 'tls', label: 'TLS', test: (row) => [row.tls_layer, row.download_tls_layer].some((l) => ['tls', 'tls_h1', 'tls_h2', 'quic_tcp_tls'].includes(l ?? '')) },
+      { value: 'quic', label: 'QUIC', test: (row) => [row.tls_layer, row.download_tls_layer].some((l) => ['quic_tls', 'quic_tcp_tls'].includes(l ?? '')) },
+    ],
+  },
+])
+
+function groupOptions(group: QuickGroup) {
+  return group.options.map((o) => ({ value: o.value, label: o.label, count: proxies.value.filter((row) => matchesQuick(row, group.key) && o.test(row)).length }))
+}
+
+/** Domain modes as a tree: direct → valid, fake…; relay → …; CDN on its own. */
+const domainModeTree = computed<TreeNode[]>(() => {
+  const modes = new Set<string>(meta.value?.domain_modes ?? [])
+  for (const p of proxies.value) for (const m of p.domain_modes ?? []) modes.add(m)
+  const families = new Map<string, string[]>()
+  for (const m of [...modes].sort()) {
+    const family = m.split('-')[0] || m
+    families.set(family, [...(families.get(family) ?? []), m])
+  }
+  return [...families.entries()].map(([family, members]) => {
+    const label = (m: string) => t(`proxy.domainModeLabels.${m}`, m)
+    if (members.length === 1 && members[0] === family) return { key: family, label: label(family) }
+    return { key: `group:${family}`, label: label(family), children: members.map((m) => ({ key: m, label: label(m) })) }
+  })
+})
+
+const selectedDomainModes = computed(() => {
+  const leaves = new Set<string>()
+  const walk = (nodes: TreeNode[]) => nodes.forEach((n) => (n.children ? walk(n.children) : leaves.add(String(n.key))))
+  walk(domainModeTree.value)
+  return Object.entries(domainModeSelection.value ?? {})
+    .filter(([key, state]) => state?.checked && leaves.has(key))
+    .map(([key]) => key)
+})
+
+const modifiedCount = computed(() => proxies.value.filter((row) => matchesQuick(row, 'modified') && isModified(row)).length)
+const quickActive = computed(
+  () => filterModified.value || selectedDomainModes.value.length > 0 || Object.values(quick.value).some((v) => v.length),
+)
+
+function clearQuick() {
+  filterModified.value = false
+  quick.value = {}
+  domainModeSelection.value = null
+}
+
+/** `skip`: a group left out, so its options can be counted against all the other filters. */
+function matchesQuick(row: CustomProxy, skip?: string): boolean {
+  if (skip !== 'modified' && filterModified.value && !isModified(row)) return false
+  for (const group of quickGroups.value) {
+    if (group.key === skip) continue
+    const picked = quick.value[group.key] ?? []
+    if (picked.length && !group.options.some((o) => picked.includes(o.value) && o.test(row))) return false
+  }
+  const modes = selectedDomainModes.value
+  if (skip !== 'domain' && modes.length && !(row.domain_modes ?? []).some((m) => modes.includes(m))) return false
+  return true
+}
+
+function confirmResetAll() {
+  dangerConfirm({
+    message: t('proxy.resetAllConfirm'),
+    header: t('proxy.resetAll'),
+    acceptLabel: t('proxy.resetAll'),
+    rejectLabel: t('common.cancel'),
+    accept: async () => {
+      resetting.value = true
+      try {
+        const { reset } = await customProxiesApi.resetAll()
+        toast.add({ severity: 'success', summary: t('proxy.resetAllDone', { n: reset }), life: 4000 })
+        await load()
+      } catch (err) {
+        toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+      } finally {
+        resetting.value = false
+      }
+    },
+  })
+}
+
 const categoriesPopover = ref()
 const namePopover = ref()
 const protoPopover = ref()
@@ -514,6 +755,7 @@ const filteredProxies = computed(() =>
     const mode = p.mode ?? (p as { protocol?: string }).protocol
     const proto = p.proto ?? (p as { protocol?: string }).protocol
     const searchQ = filterSearch.value.trim().toLowerCase()
+    if (!matchesQuick(p)) return false
     if (searchQ && !proxySearchHaystack(p).includes(searchQ)) return false
     const nameQ = filterName.value.trim().toLowerCase()
     if (nameQ && !(p.name || '').toLowerCase().includes(nameQ) && !(p.slug || '').toLowerCase().includes(nameQ)) {
@@ -624,6 +866,96 @@ onActivated(() => {
 </script>
 
 <style scoped>
+.qf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+}
+.qf__count {
+  margin-inline-start: auto;
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
+}
+/* Every filter is the same pill: one height, radius, border and font. */
+.qf-pill,
+.qf-select {
+  height: 2.4rem;
+  min-width: 0;
+  border-radius: 12px;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  font: inherit;
+  font-size: 0.84rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.qf-select {
+  width: 10.5rem;
+  max-width: 100%;
+}
+.qf-select--on,
+.qf-pill--on {
+  border-color: var(--p-primary-color);
+  box-shadow: inset 0 0 0 1px var(--p-primary-color);
+}
+.qf-pill {
+  --tone: var(--p-amber-500, #f59e0b);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.75rem;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+}
+.qf-pill:hover {
+  border-color: var(--tone);
+}
+.qf-pill i {
+  color: var(--tone);
+}
+.qf-pill b {
+  color: var(--p-text-color);
+}
+.qf-pill--on {
+  --tone: var(--p-amber-500, #f59e0b);
+  border-color: var(--tone);
+  box-shadow: inset 0 0 0 1px var(--tone);
+  background: color-mix(in srgb, var(--tone) 11%, var(--p-content-background));
+  color: var(--p-text-color);
+}
+.qf-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.qf-value i {
+  color: var(--p-text-muted-color);
+  font-size: 0.85rem;
+}
+.qf-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+.qf-option__label {
+  flex: 1;
+}
+.qf-option small {
+  color: var(--p-text-muted-color);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 560px) {
+  .qf-select {
+    flex: 1 1 calc(50% - 0.45rem);
+    width: auto;
+  }
+  .qf__count {
+    flex: 1 0 100%;
+    margin: 0;
+  }
+}
 .filter-pop {
   display: flex;
   flex-direction: column;

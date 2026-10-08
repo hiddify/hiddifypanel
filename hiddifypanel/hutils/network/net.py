@@ -629,6 +629,20 @@ def _port_list(value) -> list[str]:
     return [p for p in re.split(r"[\s,;]+", str(value if value is not None else "")) if p]
 
 
+def public_port_proxy_name(row) -> str:
+    """The service name a custom proxy's ports are listed under in all_public_ports()."""
+    return re.sub(r"[^A-Za-z0-9_-]+", "-", str(row.slug or row.name or f"proxy-{row.id}")).strip("-") or f"proxy-{row.id}"
+
+
+def public_port_proxy_ids() -> dict[str, dict]:
+    """Service name in all_public_ports() -> the custom proxy's id and display name, so a listed port can link to its proxy."""
+    from hiddifypanel.models import Child
+    from hiddifypanel.models.custom_proxy import CustomProxy
+
+    rows = CustomProxy.query.filter(CustomProxy.child_id == Child.current().id).all()
+    return {public_port_proxy_name(r): {"id": r.id, "name": r.name or ""} for r in rows}
+
+
 def all_public_ports():
     """Every port the internet must reach on this server: the gateway, the panel's own services and the custom proxies' own ports.
 
@@ -669,7 +683,7 @@ def all_public_ports():
     for row in CustomProxy.query.filter(CustomProxy.child_id == child_id).all():
         if not row.enable or not mode_uses_firewall_ports(row.mode):
             continue
-        name = re.sub(r"[^A-Za-z0-9_-]+", "-", str(row.slug or row.name or f"proxy-{row.id}")).strip("-") or f"proxy-{row.id}"
+        name = public_port_proxy_name(row)
         protocols = firewall_protocols_for_proxy(row)
         # Automatic ports are one per domain.
         resolved = [ports_for_proxy_row(row, domain_id=d.id) for d in _domains_for_proxy_row(row, domains)] if row.mode == CustomProxyMode.domains_auto_public_ports else [ports_for_proxy_row(row)]

@@ -296,6 +296,7 @@ export const customProxiesApi = {
   generateBundle: (data?: GenerateBundleInput) =>
     getHttp().post<GenerateBundleResult>('/custom-proxies/generate-bundle/', data ?? {}).then((r) => r.data),
   listUsers: () => getHttp().get<PanelUserOption[]>('/user/').then((r) => r.data),
+  resetAll: () => getHttp().post<{ reset: number }>('/custom-proxies/reset-all/').then((r) => r.data),
   meta: () => getHttp().get<CustomProxyMeta>('/custom-proxies/meta/').then((r) => r.data),
   exportBundle: (data: Partial<CustomProxy> & { exclude_builtin_templates?: boolean }) =>
     getHttp().post<CustomProxyBundle>('/custom-proxies/export/', data).then((r) => r.data),

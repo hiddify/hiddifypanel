@@ -262,6 +262,29 @@ class CustomProxyApi(MethodView):
         return "", 204
 
 
+class CustomProxyResetAllApi(MethodView):
+    """Drop every admin override on the built-in proxies so they follow the catalog again."""
+
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self):
+        from hiddifypanel.database import db
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import ensure_builtin_migrated, set_field_override
+
+        reset = 0
+        rows = CustomProxy.query.filter(CustomProxy.child_id == _child_id(), CustomProxy.is_builtin.is_(True)).all()
+        for row in rows:
+            ensure_builtin_migrated(row)
+            keys = [key for key, on in (row.builtin_overrides or {}).items() if on]
+            for key in keys:
+                set_field_override(row, key, False)
+            if keys or row.server_override:
+                row.server_override = False
+                reset += 1
+        db.session.commit()
+        return {"reset": reset}
+
+
 class CustomProxyEnableApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
