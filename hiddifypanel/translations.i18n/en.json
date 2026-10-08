@@ -641,6 +641,7 @@
       "recommended": "recommended",
       "run": {
         "dontClose": "You can leave this page; it keeps running on the server.",
+        "hide": "Hide",
         "links": "Admin links on your domains (they may have changed)",
         "reconnecting": "Panel is restarting, reconnecting…",
         "reload": "The panel was updated. Reload to use the new version.",

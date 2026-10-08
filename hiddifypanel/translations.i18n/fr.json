@@ -646,6 +646,7 @@
       "recommended": "recommandé",
       "run": {
         "dontClose": "Vous pouvez quitter cette page ; l'opération continue sur le serveur.",
+        "hide": "Masquer",
         "links": "Liens admin sur vos domaines (ils ont peut-être changé)",
         "reconnecting": "Le panneau redémarre, reconnexion…",
         "reload": "Le panneau a été mis à jour. Rechargez pour utiliser la nouvelle version.",

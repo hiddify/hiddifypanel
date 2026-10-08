@@ -3,13 +3,16 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import { useRouter } from 'vue-router'
+import ApplyRunDialog from '@/features/apply/components/ApplyRunDialog.vue'
+import type { ApplyAction } from '@/features/apply/api'
+import { ref } from 'vue'
 import type { RestartMode } from '@/shared/utils/restart-mode'
 
 const mode = defineModel<RestartMode>({ required: true })
 
 const { t } = useI18n()
-const router = useRouter()
+const dialogVisible = ref(false)
+const dialogAction = ref<ApplyAction | null>(null)
 
 const action = computed(() => {
   switch (mode.value) {
@@ -24,10 +27,17 @@ const action = computed(() => {
   }
 })
 
-/** The Apply page asks (when needed), runs it and shows its live progress. */
+/** Runs it in a dialog over this page (asks first when it is disruptive, then shows the live progress). */
 function run() {
   const current = action.value
-  if (current) void router.push({ name: 'apply', query: { run: current.run } })
+  if (!current) return
+  dialogAction.value = current.run as ApplyAction
+  dialogVisible.value = true
+}
+
+/** It went through: nothing is waiting to be applied any more. */
+function onFinished(_action: ApplyAction, ok: boolean) {
+  if (ok) mode.value = 'nothing'
 }
 </script>
 
@@ -43,6 +53,7 @@ function run() {
       </div>
     </Message>
   </Transition>
+  <ApplyRunDialog v-model:visible="dialogVisible" :action="dialogAction" @finished="onFinished" />
 </template>
 
 <style scoped>

@@ -642,6 +642,7 @@
       "recommended": "recomendado",
       "run": {
         "dontClose": "Você pode sair desta página; a execução continua no servidor.",
+        "hide": "Ocultar",
         "links": "Links de administrador nos seus domínios (podem ter mudado)",
         "reconnecting": "O painel está reiniciando, reconectando…",
         "reload": "O painel foi atualizado. Recarregue para usar a nova versão.",
