@@ -47,3 +47,27 @@ export function safeDecodeUriComponent(text: string): string {
     return text
   }
 }
+
+/**
+ * The text a string decodes to when it clearly is Base64 (standard or URL-safe, optional padding): at least 8
+ * characters, valid UTF-8 and printable. Anything else (a normal word, a sentence) is null.
+ */
+export function decodeIfBase64(text: string): string | null {
+  const compact = text.replace(/\s+/g, '')
+  if (compact.length < 8 || !/^[A-Za-z0-9+/_-]+={0,2}$/.test(compact)) return null
+  try {
+    const padded = compact.replace(/-/g, '+').replace(/_/g, '/')
+    const bytes = binaryToBytes(atob(padded + '='.repeat((4 - (padded.length % 4)) % 4)))
+    const decoded = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+    // eslint-disable-next-line no-control-regex
+    return decoded.length > 0 && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\ufffd]/.test(decoded) ? decoded : null
+  } catch {
+    return null
+  }
+}
+
+/** `vmess://abc` -> ['vmess://', 'abc']: the protocol in front is not part of the Base64. */
+export function splitProtocolPrefix(text: string): [string, string] {
+  const match = text.match(/^\s*([a-z][a-z0-9+.-]*:\/\/)/i)
+  return match ? [match[1]!, text.slice(match[0].length)] : ['', text]
+}

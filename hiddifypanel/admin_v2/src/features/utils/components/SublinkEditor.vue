@@ -13,6 +13,7 @@
         <Textarea
           :model-value="link.json"
           class="w-full font-mono text-sm sublink-json"
+          dir="ltr"
           :auto-resize="false"
           :rows="18"
           spellcheck="false"
@@ -62,6 +63,7 @@
         <small class="block mb-2 text-muted-color">{{ t('utils.extraHint') }}</small>
         <Textarea
           class="w-full font-mono text-sm sublink-json"
+          dir="ltr"
           :auto-resize="false"
           :rows="14"
           spellcheck="false"

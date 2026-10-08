@@ -19,6 +19,7 @@
               <Textarea
                 v-model="rawLinks"
                 class="w-full font-mono text-sm util-textarea util-textarea--tall"
+                dir="ltr"
                 :auto-resize="false"
                 :rows="22"
                 spellcheck="false"
@@ -35,29 +36,10 @@
           <Message v-if="prettyError" severity="error" class="mt-3" :closable="false">{{ prettyError }}</Message>
         </TabPanel>
         <TabPanel value="base64">
-          <CodecPanel
-            v-model:left="base64Left"
-            v-model:right="base64Right"
-            :left-label="t('utils.input')"
-            :right-label="t('utils.output')"
-            :encode-label="t('utils.encode')"
-            :decode-label="t('utils.decode')"
-            :encode="encodeBase64"
-            :decode="decodeBase64"
-            show-url-safe
-          />
+          <LiveCodecPanel kind="base64" />
         </TabPanel>
         <TabPanel value="url">
-          <CodecPanel
-            v-model:left="urlLeft"
-            v-model:right="urlRight"
-            :left-label="t('utils.input')"
-            :right-label="t('utils.output')"
-            :encode-label="t('utils.encode')"
-            :decode-label="t('utils.decode')"
-            :encode="encodeUrlValue"
-            :decode="decodeUrlValue"
-          />
+          <LiveCodecPanel kind="url" />
         </TabPanel>
       </TabPanels>
     </Tabs>
@@ -78,9 +60,8 @@ import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import PageHeader from '@/shared/components/PageHeader.vue'
-import CodecPanel from '@/features/utils/components/CodecPanel.vue'
+import LiveCodecPanel from '@/features/utils/components/LiveCodecPanel.vue'
 import SublinkEditor from '@/features/utils/components/SublinkEditor.vue'
-import { decodeUtf8Base64, decodeUrl, encodeUtf8Base64, encodeUrl } from '@/shared/utils/text-codecs'
 import { parseSublinks, tryStringifySublinks, unwrapSubscriptionText, type PrettyLink } from '@/shared/utils/sublink-pretty'
 
 const { t } = useI18n()
@@ -91,27 +72,7 @@ const rawLinks = ref('')
 const links = ref<PrettyLink[]>([])
 const prettyError = ref<string | null>(null)
 const unwrapped = ref(false)
-const base64Left = ref('')
-const base64Right = ref('')
-const urlLeft = ref('')
-const urlRight = ref('')
 let syncing = false
-
-function encodeBase64(value: string, urlSafe: boolean) {
-  return encodeUtf8Base64(value, urlSafe)
-}
-
-function decodeBase64(value: string) {
-  return decodeUtf8Base64(value)
-}
-
-function encodeUrlValue(value: string) {
-  return encodeUrl(value)
-}
-
-function decodeUrlValue(value: string) {
-  return decodeUrl(value)
-}
 
 function onRawInput(value: string) {
   if (syncing) return
