@@ -37,7 +37,7 @@ frontend in-httpmode
   http-request set-var(txn.backend) var(txn.naive_pass),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.naive_pass) -m found }
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
 
-  http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
+  http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000' unless METH_CONNECT
 
   use_backend %[var(txn.backend)] 
 
