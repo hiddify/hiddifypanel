@@ -2158,6 +2158,8 @@
       "showLink": "Show user link",
       "showMore": "Show {n} more",
       "showRelative": "Show time left",
+      "sort": "Sort by",
+      "sortDir": "Sort direction",
       "status": {
         "active": "Active",
         "disabled": "Disabled",
