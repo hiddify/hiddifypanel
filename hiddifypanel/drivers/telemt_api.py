@@ -88,7 +88,11 @@ class TelemtApi(DriverABS):
 
     def __sync_local_usages(self) -> dict:
         local_usage = self.__get_local_usage()
-        tg_usage = self.__get_tg_usages()
+        try:
+            tg_usage = self.__get_tg_usages()
+        except Exception as e:
+            print(f"Error getting tg usage: {e}")
+            return {}
 
         res = {}
         # remove local usage that is removed from wg usage
