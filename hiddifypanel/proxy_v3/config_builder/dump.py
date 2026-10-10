@@ -14,6 +14,7 @@ from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCore
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
+from hiddifypanel.proxy_v3.config_builder.wireguard.server import WireguardServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
 from hiddifypanel.proxy_v3.context_vars.builder.utils import parse_json_for_dump
@@ -31,6 +32,7 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
     "dns_proxy": DnsProxyServerDriver,
+    "wireguard": WireguardServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -40,6 +42,7 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
     ("dns_proxy", "dnstm.json"),
+    ("wireguard", "wireguard.conf"),
 )
 
 
@@ -141,6 +144,8 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
         stats["backends"] = len(re.findall(r"(?m)^\s*backend\s+\S+", text))
     elif core == "rust-rpxy-l4":
         stats["services"] = len(re.findall(r"(?m)^\s*\[protocols\.[^\]]+\]", text))
+    elif core == "wireguard":
+        stats["peers"] = len(re.findall(r"(?m)^\[Peer\]", text))
 
     return stats
 
@@ -173,6 +178,8 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
         )
     elif filename.endswith(".toml"):
         parts.append(_n(stats.get("services", 0), "service"))
+    elif filename == "wireguard.conf":
+        parts.append(_n(stats.get("peers", 0), "peer"))
     return ", ".join(parts)
 
 

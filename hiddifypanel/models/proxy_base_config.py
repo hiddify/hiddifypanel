@@ -20,7 +20,7 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4', 'dns_proxy'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4', 'dns_proxy', 'wireguard'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
@@ -238,6 +238,13 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'version': '1.0.0',
         'name': 'Server DNSTM Base',
         'description': 'DNSTM DNS router config (tunnels for DNS-gateway proxies)',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'wireguard',
+        'version': '1.0.0',
+        'name': 'Server WireGuard Base',
+        'description': 'wg-quick config for the hiddifywg interface (server address and user peers)',
     },
 ]
 

@@ -179,6 +179,7 @@ class TemplateCore(JinjaEnum):
     dnstt = "dnstt"
     dns_gateway = "dns_gateway"
     dns_proxy = "dns_proxy"
+    wireguard = "wireguard"
 
     def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)

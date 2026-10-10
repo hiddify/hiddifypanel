@@ -1,0 +1,24 @@
+[Interface]
+Address = {{ ctx.hconfig.wireguard_ipv4 }}/16,{{ ctx.hconfig.wireguard_ipv6 }}/90
+ListenPort = {{ ctx.hconfig.wireguard_port }}
+PrivateKey = {{ ctx.hconfig.wireguard_private_key }}
+
+PostUp = iptables -I INPUT -p udp --dport {{ ctx.hconfig.wireguard_port }} -j ACCEPT
+PostUp = iptables -I FORWARD -i {{ pub_nic }} -o {{ wg_nic }} -j ACCEPT
+PostUp = iptables -I FORWARD -i {{ wg_nic }} -j ACCEPT
+PostUp = iptables -t nat -A POSTROUTING -o {{ pub_nic }} -j MASQUERADE
+PostUp = ip6tables -I FORWARD -i {{ wg_nic }} -j ACCEPT
+PostUp = ip6tables -t nat -A POSTROUTING -o {{ pub_nic }} -j MASQUERADE
+PostDown = iptables -D INPUT -p udp --dport {{ ctx.hconfig.wireguard_port }} -j ACCEPT
+PostDown = iptables -D FORWARD -i {{ pub_nic }} -o {{ wg_nic }} -j ACCEPT
+PostDown = iptables -D FORWARD -i {{ wg_nic }} -j ACCEPT
+PostDown = iptables -t nat -D POSTROUTING -o {{ pub_nic }} -j MASQUERADE
+PostDown = ip6tables -D FORWARD -i {{ wg_nic }} -j ACCEPT
+PostDown = ip6tables -t nat -D POSTROUTING -o {{ pub_nic }} -j MASQUERADE
+{% for user in ctx.users if user.wg_pub %}
+
+[Peer]
+PublicKey = {{ user.wg_pub }}
+PresharedKey = {{ user.wg_psk }}
+AllowedIPs = {{ user.wg_ipv4 }}/32,{{ user.wg_ipv6 }}/128
+{% endfor %}
