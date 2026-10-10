@@ -178,7 +178,7 @@ def get_availble_domains(sublink_domain: str | None):
     if not sublink_domain:
         if only_allow_sub_link:
             return []
-        domains: list[Domain] = Domain.query.filter(Domain.child_id == child_id).all()
+        domains: list[Domain] = Domain.query.filter(Domain.child_id == child_id).order_by(*Domain.ordering()).all()
     else:
         db_domain: Domain = Domain.query.filter(Domain.domain == sublink_domain).first()
 
@@ -196,6 +196,9 @@ def get_availble_domains(sublink_domain: str | None):
 
         # Empty show_domains means "all" — still exclude sub_link_only hosts.
         # Include every child so parent can aggregate; per-proxy / get_nodes_configs filter by child_id.
-        domains = list(db_domain.show_domains) if db_domain.show_domains else Domain.query.filter(Domain.mode != DomainType.sub_link_only).all()
+        if db_domain.show_domains:
+            domains = sorted(db_domain.show_domains, key=Domain.panel_order_key)
+        else:
+            domains = Domain.query.filter(Domain.mode != DomainType.sub_link_only).order_by(*Domain.ordering()).all()
 
     return [DomainIPVar.from_domain(d) for d in _proxy_domain_rows(domains)]

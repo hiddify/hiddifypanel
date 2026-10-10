@@ -92,7 +92,8 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
         t = threading.Thread(target=cmd_in_back, args=(base_cmd,), daemon=True)
         t.start()
     else:
-        return subprocess.check_output(base_cmd, cwd=str(os.environ["HIDDIFY_CONFIG_PATH"])).decode()
+        out = subprocess.check_output(base_cmd, cwd=str(os.environ["HIDDIFY_CONFIG_PATH"])).decode()
+        return out
 
 
 def cmd_in_back(cmd):

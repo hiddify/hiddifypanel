@@ -27,13 +27,13 @@ class ProxyRenderCache:
 
         cache = cls(child_id=child_id)
         hconfigs = get_hconfigs(child_id)
-        for domain_db in Domain.query.filter(Domain.child_id == child_id).order_by(Domain.id).all():
+        for domain_db in Domain.query.filter(Domain.child_id == child_id).order_by(*Domain.ordering()).all():
             if domain_db.is_sub_link_only() or domain_db.is_fake_proxy():
                 continue
             cache.domains.append(_domain_dict_for_proxy(domain_db, hconfigs))
 
         rows = CustomProxy.query.filter(CustomProxy.child_id == child_id).order_by(CustomProxy.sort_order, CustomProxy.id).all()
-        domain_rows = [d for d in Domain.query.filter(Domain.child_id == child_id, Domain.mode != DomainType.sub_link_only).all()]
+        domain_rows = list(Domain.query.filter(Domain.child_id == child_id, Domain.mode != DomainType.sub_link_only).order_by(*Domain.ordering()).all())
         for row in rows:
             from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import effective_field
 
@@ -111,7 +111,7 @@ def client_domain_vars_for_proxy(child_id: int, proxy_id: int) -> list[DomainIPV
         for domain in Domain.query.filter(
             Domain.child_id == child_id,
             Domain.mode != DomainType.sub_link_only,
-        ).all()
+        ).order_by(*Domain.ordering()).all()
         if proxy.slug == REALITY_TERMINATION_SLUG or not domain.custom_proxy_ids or proxy_id in domain.custom_proxy_ids
     ]
     return [DomainIPVar.from_domain(domain_db) for domain_db in _domains_for_proxy_row(proxy, domain_rows)]
