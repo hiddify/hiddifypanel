@@ -3,6 +3,7 @@ import re
 import subprocess
 import threading
 
+from loguru import logger
 from strenum import StrEnum
 
 # Strict allow-lists to prevent shell/argument injection when values are
@@ -40,7 +41,7 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
                   domain for the get-cert command
     """
     base_cmd: list[str] = ["sudo", os.path.join(os.environ["HIDDIFY_CONFIG_PATH"], "scripts/common/commander.py")]
-
+    logger.info(f"commander {command} called with kwargs: {kwargs}")
     if command == Command.apply:
         base_cmd.append("apply")
     elif command == Command.install:
@@ -93,9 +94,15 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
         t.start()
     else:
         out = subprocess.check_output(base_cmd, cwd=str(os.environ["HIDDIFY_CONFIG_PATH"])).decode()
+        logger.info(f"commander {command} output: {out}")
         return out
 
 
 def cmd_in_back(cmd):
     p = subprocess.Popen(cmd, cwd=str(os.environ["HIDDIFY_CONFIG_PATH"]), start_new_session=True)
     p.wait()
+    if p.stdout:
+        logger.info(f"commander {cmd} output: {p.stdout.read().decode()}")
+    if p.stderr:
+        logger.info(f"commander {cmd} error: {p.stderr.read().decode()}")
+    logger.info(f"commander {cmd} exited with code: {p.returncode}")
