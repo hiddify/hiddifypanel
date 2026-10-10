@@ -13,7 +13,7 @@ frontend in-httpmode-ssl
 
 frontend in-reality-tcpmode
   bind abns@tcp_in_reality_h1 accept-proxy
-  bind :80,:::80 v4v6 tfo
+  bind :80{% if ctx.hconfig.ipv6_enabled %},:::80 v4v6{% endif %} tfo
   mode tcp
   tcp-request inspect-delay 500ms
   tcp-request content accept if HTTP

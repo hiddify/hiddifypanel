@@ -343,6 +343,9 @@
       "generate": "Generate",
       "generatedCopied": "A strong password was generated and copied",
       "inheritedConfigs": "+ {n} inherited from admins above",
+      "languageDefault": "Panel default ({name})",
+      "languageHint": "The language of your admin pages",
+      "languageTitle": "Language",
       "limitsSub": "Your users and all your sub-admins' users count toward these.",
       "limitsTitle": "My limits",
       "loginHint": "After saving, sign in with your admin link and this password.",
@@ -365,6 +368,8 @@
       "save": "Save password",
       "saved": "Password changed",
       "setPassword": "Set a password",
+      "settingsSub": "Your language, password and sign-in name.",
+      "settingsTitle": "Settings",
       "strength": {
         "medium": "Medium",
         "prompt": "Enter a password",
@@ -396,6 +401,7 @@
         "hint": "Every port this server needs open to the internet, ready for a firewall.",
         "lead": "Open these ports in your server's (or cloud provider's) firewall so users can connect.",
         "none": "none",
+        "openProxy": "Open this custom proxy",
         "refresh": "Refresh",
         "title": "Public ports"
       },
@@ -635,6 +641,7 @@
       "recommended": "recommended",
       "run": {
         "dontClose": "You can leave this page; it keeps running on the server.",
+        "hide": "Hide",
         "links": "Admin links on your domains (they may have changed)",
         "reconnecting": "Panel is restarting, reconnecting…",
         "reload": "The panel was updated. Reload to use the new version.",
@@ -749,9 +756,13 @@
       "edit": "Edit",
       "enabled": "Enabled",
       "filter": "Filter",
+      "filteredOf": "Filtered: showing {n} of {total}",
       "format": "Format",
       "loadFailed": "Failed to load data",
       "no": "No",
+      "noMatch": "Nothing matches these filters",
+      "noMatchHint": "Try removing a filter or changing your search.",
+      "resetFilters": "Reset filters",
       "save": "Save",
       "saveFailed": "Save failed",
       "saved": "Saved successfully",
@@ -764,6 +775,7 @@
     "dashboard": {
       "allNodes": "All nodes",
       "available": "Available",
+      "averageHint": "Average users online per day, counting only days when someone was online.",
       "breakdown": "Breakdown",
       "cached": "Cached",
       "clickForProcesses": "Click to show top processes",
@@ -797,6 +809,9 @@
       "loadAverage": "Load average",
       "loadFailed": "Could not load dashboard data",
       "loadFailedHint": "The dashboard could not reach the panel API. Check that you are still signed in.",
+      "modeAverage": "Average",
+      "modePeak": "Peak",
+      "modeUnique": "Unique",
       "monthUsage": "Month usage",
       "monthUsers": "Month",
       "monthlyAverage": "Monthly average",
@@ -813,7 +828,7 @@
       "nodeOnline": "Online",
       "nodeUnreachable": "Could not reach this node",
       "none": "None",
-      "onlineEnabledUsers": "Online / Enabled users",
+      "onlineEnabledUsers": "Online / Active users",
       "onlineNow": "Online now",
       "onlineOnDay": "Online: {count}",
       "onlineToday": "Online today: {count} / {total}",
@@ -822,6 +837,7 @@
       "pause": "Pause",
       "paused": "Live updates paused",
       "peakDay": "Peak day",
+      "peakHint": "The most users online in a single day.",
       "perCore": "Per core",
       "perDay": "{value} / day",
       "ram": "RAM",
@@ -840,7 +856,10 @@
       "topProcesses": "Top processes",
       "totalUsage": "Total usage",
       "totalUsers": "Total users",
+      "uniqueHint": "Distinct users seen in each period, whole panel.",
       "uniqueIps": "Unique IPs",
+      "uniqueMonth": "Distinct users, last 30 days",
+      "uniqueWeek": "Distinct users, last 7 days",
       "upload": "Upload",
       "uploadSinceBoot": "Uptime Upload",
       "uptime": "Uptime",
@@ -1075,6 +1094,8 @@
         "check": "Check",
         "checking": "Checking DNS…",
         "continueBackground": "Close (keeps going)",
+        "dnsHint": "In your DNS, add the record below for this domain (the value is this server's address).",
+        "dnsTitle": "Point it at this server",
         "finish": "Done",
         "found": {
           "cdn": "Is behind {cdn}.",
@@ -1356,8 +1377,8 @@
       "makeDefault": "Make default (move to the end)",
       "mode": {
         "block": "Block",
-        "core_endpoint": "hiddify-core endpoint",
-        "core_outbound": "hiddify-core outbound",
+        "core_endpoint": "hiddify-core (sing-box) endpoint",
+        "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
         "socks": "SOCKS",
@@ -1584,6 +1605,7 @@
       },
       "modeSettings": "Mode & routing",
       "name": "Name",
+      "nameRequired": "Give the proxy a name before saving: it is the label of its links.",
       "needGlobalEnable": "You need to enable {names} globally to enable this proxy. Do you want to open settings?",
       "new": "New Proxy",
       "noClientConfigs": "No client configs yet. Add a client to get started.",
@@ -1591,6 +1613,16 @@
       "outboundTagTemplateHint": "Jinja for each client outbound tag. Default: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
       "outboundsTemplate": "Outbounds template",
       "protocol": "Protocol",
+      "quick": {
+        "any": "Any",
+        "clear": "Reset filters",
+        "label": "Filters",
+        "modified": "Modified",
+        "modifiedHint": "Changed from the catalog default",
+        "nSelected": "{n} selected",
+        "other": "Other",
+        "showing": "Showing {n} of {total}"
+      },
       "regeneratePath": "Regenerate path",
       "renderErrorClickHint": "Click for details",
       "renderErrorDetail": "Render error details",
@@ -1598,6 +1630,9 @@
       "renderErrorNoDetail": "No additional context is available for this error.",
       "renderErrorRenderedSource": "Rendered output",
       "renderErrorTemplateSource": "Template source",
+      "resetAll": "Reset all to defaults",
+      "resetAllConfirm": "Drop every change you made to the built-in proxies (tag, domain modes, TLS, server and client configs) and restore the catalog defaults? Proxies you created yourself are not touched.",
+      "resetAllDone": "{n} proxies reset to defaults",
       "resetTagName": "Reset tag name to default",
       "resetToBuiltin": "Reset to catalog default",
       "searchAll": "Search all columns...",
@@ -2015,6 +2050,13 @@
         "reset_days": "{name} starts again at the next connection",
         "reset_usage": "Usage of {name} reset"
       },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "This user has its own outbound selected",
+        "subs": "{n} extra sub | {n} extra subs",
+        "subsHint": "Extra subscription configs added for this user",
+        "telegramHint": "Telegram account linked"
+      },
       "filter": {
         "active": "Active",
         "activeHint": "Enabled, with days and data left",
@@ -2046,7 +2088,9 @@
         "daysUnit": "days",
         "disabled": "Disabled",
         "editSubtitle": "Changes apply right away.",
+        "editTimeTitle": "Edit time: {name}",
         "editTitle": "Edit {name}",
+        "editUsageTitle": "Edit usage: {name}",
         "enableHint": "A disabled user can not connect.",
         "enabled": "Enabled",
         "endedWhen": "ended {when}",
@@ -2159,6 +2203,7 @@
       "showMore": "Show {n} more",
       "showRelative": "Show time left",
       "sort": "Sort by",
+      "sortById": "Sort by ID",
       "sortDir": "Sort direction",
       "status": {
         "active": "Active",
@@ -2177,7 +2222,11 @@
     },
     "utils": {
       "addQuery": "Add query",
+      "autoSwapped": "It looked like Base64, so the sides were swapped.",
+      "base64Label": "Base64",
+      "base64Live": "Edit either side and the other updates as you type. A leading protocol:// (like vmess://) is kept and ignored when decoding. Base64 pasted into the text side swaps the sides by itself.",
       "base64Tab": "Base64",
+      "clear": "Clear",
       "decode": "Decode",
       "emptyLinks": "Paste share links on the left to inspect them here.",
       "encode": "Encode",
@@ -2189,6 +2238,8 @@
       "linksPlaceholder": "Paste one or more vless://, vmess://, ss://, trojan:// links (or a base64 subscription)",
       "method": "Method",
       "noQuery": "No query parameters. Use Add query to insert one.",
+      "notBase64": "This is not valid Base64.",
+      "notUrlEncoded": "This is not valid URL-encoded text.",
       "output": "Output",
       "pass": "Pass",
       "path": "UrlPath",
@@ -2203,8 +2254,11 @@
       "sublinkTab": "Sublink",
       "subtitle": "Encode, decode, and inspect share links in the browser — nothing is sent to the server.",
       "swap": "Swap",
+      "textLabel": "Text",
       "title": "Utils",
       "unwrappedSubscription": "Detected a base64 subscription and decoded it into individual links.",
+      "urlEncodedLabel": "URL encoded",
+      "urlLive": "Edit either side and the other updates as you type. Percent-encoded text pasted into the text side swaps the sides by itself.",
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "User",
@@ -2694,8 +2748,8 @@
       "label": "Netdata"
     },
     "node_name": {
-      "description": "config.node_name.description",
-      "label": "config.node_name.label"
+      "description": "The name of this node, shown in the parent panel",
+      "label": "Node name"
     },
     "not_found": {
       "description": "Config Not Found",
@@ -2733,8 +2787,8 @@
       "label": "ℹ️ gRPC Path"
     },
     "path_http": {
-      "description": "config.path_http.description",
-      "label": "config.path_http.label"
+      "description": "should be random",
+      "label": "ℹ️ HTTP Path"
     },
     "path_httpupgrade": {
       "description": "should be random",
@@ -3358,7 +3412,7 @@
   "package size?": "package size?",
   "parent": {
     "invalid-parent-url": "Invalid parent panel URL",
-    "panel-not-active": "parent.panel-not-active",
+    "panel-not-active": "The parent panel is not active",
     "sync-req-failed": "Parent sync request failed"
   },
   "previous": "Previous",

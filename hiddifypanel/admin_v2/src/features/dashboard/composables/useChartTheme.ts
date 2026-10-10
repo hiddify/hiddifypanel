@@ -54,6 +54,68 @@ export function nodeColor(id: number): string {
   return hslToHex(hue, 0.65, index % 2 ? 0.5 : 0.42)
 }
 
+interface ExternalTooltipContext {
+  chart: { canvas: HTMLCanvasElement; width: number }
+  tooltip: {
+    opacity: number
+    caretX: number
+    caretY: number
+    title?: string[]
+    body?: { lines: string[] }[]
+    footer?: string[]
+    labelColors?: { backgroundColor: string; borderColor: string }[]
+  }
+}
+
+/**
+ * Tooltip as real page text. Canvas text mixes Persian and Latin (server names, units) in the wrong order;
+ * the browser's own layout of a right-to-left element gets it right.
+ */
+function domTooltip(theme: { text: string; muted: string; surface: string; border: string }) {
+  return ({ chart, tooltip }: ExternalTooltipContext) => {
+    const holder = chart.canvas.parentElement
+    if (!holder) return
+    let el = holder.querySelector<HTMLDivElement>(':scope > .chart-tip')
+    if (!el) {
+      el = document.createElement('div')
+      el.className = 'chart-tip'
+      el.dir = 'rtl'
+      el.style.cssText =
+        'position:absolute;z-index:5;pointer-events:none;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.7;max-width:90%;white-space:nowrap;transition:opacity .1s;box-shadow:0 4px 14px rgba(0,0,0,.25)'
+      holder.appendChild(el)
+    }
+    if (tooltip.opacity === 0) {
+      el.style.opacity = '0'
+      return
+    }
+    el.style.background = theme.surface
+    el.style.border = `1px solid ${theme.border}`
+    el.style.color = theme.text
+    el.replaceChildren()
+    const add = (text: string, style: string, swatch?: string) => {
+      const row = document.createElement('div')
+      row.style.cssText = `display:flex;align-items:center;gap:6px;${style}`
+      if (swatch) {
+        const dot = document.createElement('span')
+        dot.style.cssText = `width:9px;height:9px;border-radius:50%;flex:none;background:${swatch}`
+        row.appendChild(dot)
+      }
+      const label = document.createElement('bdi')
+      label.textContent = text
+      row.appendChild(label)
+      el!.appendChild(row)
+    }
+    ;(tooltip.title ?? []).forEach((line) => add(line, 'font-weight:700;margin-bottom:4px'))
+    ;(tooltip.body ?? []).forEach((body, i) => body.lines.forEach((line) => add(line, '', tooltip.labelColors?.[i]?.backgroundColor ?? tooltip.labelColors?.[i]?.borderColor)))
+    ;(tooltip.footer ?? []).forEach((line) => add(line, `color:${theme.muted};margin-top:4px`))
+    el.style.opacity = '1'
+    const x = Math.max(0, Math.min(chart.width - el.offsetWidth, tooltip.caretX - el.offsetWidth / 2))
+    const y = tooltip.caretY - el.offsetHeight - 14
+    el.style.left = `${x}px`
+    el.style.top = `${y < 0 ? tooltip.caretY + 14 : y}px`
+  }
+}
+
 export type ChartOptionsLike = Record<string, unknown>
 
 interface TooltipItem {
@@ -157,7 +219,9 @@ export function useChartTheme() {
           },
         },
         tooltip: {
-          enabled: true,
+          // Right-to-left: the page-text tooltip below (canvas text scrambles Persian next to Latin)
+          enabled: !rtl,
+          external: rtl ? domTooltip({ text, muted, surface, border }) : undefined,
           rtl,
           textDirection: rtl ? 'rtl' : 'ltr',
           backgroundColor: surface,
@@ -177,7 +241,12 @@ export function useChartTheme() {
             label: (item: TooltipItem) => {
               const formatted = format(item.parsed.y)
               const custom = options.tooltipLabel?.(item.datasetIndex, item.dataIndex, formatted)
-              return custom ?? `${item.dataset.label ? `${item.dataset.label}: ` : ''}${formatted}`
+              if (custom) return custom
+              // Isolated parts keep a Latin name and a Persian value from scrambling each other in a right-to-left tooltip
+              const iso = (text: string) => (rtl ? `\u2068${text}\u2069` : text)
+              // The name is a right-to-left unit of its own: "test-srv2 ↑" keeps the arrow on the left, as after Persian text
+              const name = (text: string) => (rtl ? `\u2067${text}\u2069` : text)
+              return `${rtl ? '\u200F' : ''}${item.dataset.label ? `${name(String(item.dataset.label))}: ` : ''}${iso(formatted)}`
             },
             footer: (items: TooltipItem[]) => {
               if (!items.length) return []
@@ -216,7 +285,12 @@ export function useChartTheme() {
             color: muted,
             font: { size: 11 },
             maxTicksLimit: 5,
-            callback: (value: number | string) => format(Number(value)),
+            // Ticks that would read the same (0.5 and 1 both "1") show once
+            callback: (value: number | string, index: number, ticks: { value: number }[]) => {
+              const label = format(Number(value))
+              const before = index > 0 ? format(Number(ticks[index - 1]?.value)) : undefined
+              return label === before ? '' : label
+            },
           },
         },
       },

@@ -25,13 +25,14 @@ def init_app(app):
         bp.add_url_rule("/admin_user/<uuid:uuid>/", view_func=AdminUserApi)
         bp.add_url_rule("/admin_user/", view_func=AdminUsersApi)
 
-        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminAliasApi, MyAdminOutboundApi, MyAdminConfigsApi, MyAdminPasswordApi
+        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminAliasApi, MyAdminLanguageApi, MyAdminOutboundApi, MyAdminConfigsApi, MyAdminPasswordApi
 
         bp.add_url_rule("/admins/", view_func=AdminsTreeApi)
         bp.add_url_rule("/admins/me/", view_func=MyAdminAccountApi)
         bp.add_url_rule("/admins/me/password/", view_func=MyAdminPasswordApi)
         bp.add_url_rule("/admins/me/additional-configs/", view_func=MyAdminConfigsApi)
         bp.add_url_rule("/admins/me/alias/", view_func=MyAdminAliasApi)
+        bp.add_url_rule("/admins/me/language/", view_func=MyAdminLanguageApi)
         bp.add_url_rule("/admins/me/default-outbound/", view_func=MyAdminOutboundApi)
         bp.add_url_rule("/admins/<uuid:uuid>/", view_func=AdminTreeItemApi)
         bp.add_url_rule("/admins/<uuid:uuid>/reset-password/", view_func=AdminResetPasswordApi)
@@ -116,6 +117,7 @@ def init_app(app):
             CustomProxyImportApi,
             CustomProxyMetaApi,
             CustomProxyPreviewApi,
+            CustomProxyResetAllApi,
             CustomProxyValidateApi,
             CustomProxyValidateByIdApi,
         )
@@ -140,6 +142,7 @@ def init_app(app):
         bp.add_url_rule("/custom-proxies/preview/", view_func=CustomProxyPreviewApi)
         bp.add_url_rule("/custom-proxies/generate-example/", view_func=CustomProxyGenerateExampleApi)
         bp.add_url_rule("/custom-proxies/generate-bundle/", view_func=CustomProxyGenerateBundleApi)
+        bp.add_url_rule("/custom-proxies/reset-all/", view_func=CustomProxyResetAllApi)
         bp.add_url_rule("/custom-proxies/export/", view_func=CustomProxyExportApi)
         bp.add_url_rule("/custom-proxies/import/", view_func=CustomProxyImportApi)
         bp.add_url_rule("/custom-proxies/<int:proxy_id>/", view_func=CustomProxyApi)
@@ -180,10 +183,11 @@ def init_app(app):
         bp.add_url_rule("/backup/restore/", view_func=BackupRestoreApi)
         bp.add_url_rule("/backup/restore/run/", view_func=BackupRestoreRunApi, methods=["POST"])
 
-        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOrderApi, DomainsPagePortCheckApi
+        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
+        bp.add_url_rule("/domains-page/options/", view_func=DomainsPageOptionsApi)
         bp.add_url_rule("/domains-page/detect/", view_func=DomainsPageDetectApi)
         bp.add_url_rule("/domains-page/port-check/", view_func=DomainsPagePortCheckApi)
         bp.add_url_rule("/domains-page/<int:domain_id>/", view_func=DomainsPageItemApi)

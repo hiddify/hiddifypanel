@@ -47,10 +47,15 @@ location /{{ ctx.hconfig.proxy_path_client }}/dns/dns-query {
   set $upstream https://8.8.8.8/dns-query;
   proxy_pass $upstream$is_args$args;
 }
+# The built-in speed test page is gone (it answered "not found"): send users to Cloudflare's.
 location /{{ ctx.hconfig.proxy_path_client }}/speedtest/ {
-  client_max_body_size 10000M;
-  proxy_pass          http://localhost:438/;
+  return 302 https://speed.cloudflare.com/;
 }
+{% if ctx.hconfig.proxy_path != ctx.hconfig.proxy_path_client %}
+location /{{ ctx.hconfig.proxy_path }}/speedtest/ {
+  return 302 https://speed.cloudflare.com/;
+}
+{% endif %}
 location /{{ ctx.hconfig.proxy_path }}/static {
   include {{ include_path(ctx, 'nginx/server/parts/proxy_to_static') }};
 }

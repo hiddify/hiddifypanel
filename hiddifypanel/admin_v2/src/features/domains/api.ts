@@ -64,8 +64,6 @@ export interface DomainProxy {
 }
 
 export interface DomainsMeta {
-  ipv4: string[]
-  ipv6: string[]
   ech_enabled: boolean
   cloudflare: boolean
   has_sublink: boolean
@@ -73,6 +71,12 @@ export interface DomainsMeta {
   default_http_port: number
   is_super_admin: boolean
   proxies: DomainProxy[]
+  /** This server's public addresses: what a new domain's DNS record should point to. */
+  server_ips?: { ip: string; version: 4 | 6; label: string }[]
+}
+
+/** Loaded separately, after the page: only the edit dialog (and the names of shown domains) need it. */
+export interface DomainsOptions {
   /** Domains whose configs a domain can show: this panel's and its nodes' (`node` = the node's name). */
   show_options: { id: number; domain: string; alias: string; mode: DomainMode; fake_mode: TlsMode; node: string | null }[]
   /** `mode:fake_mode` → ids of the custom proxies that fit that kind of domain. */
@@ -129,6 +133,10 @@ export interface PortCheck {
 export const domainsApi = {
   async list(): Promise<DomainsState> {
     const { data } = await getHttp().get<DomainsState>('domains-page/')
+    return data
+  },
+  async options(): Promise<DomainsOptions> {
+    const { data } = await getHttp().get<DomainsOptions>('domains-page/options/')
     return data
   },
   async create(payload: DomainPayload): Promise<DomainsState> {

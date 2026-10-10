@@ -51,6 +51,20 @@
 
 #### Fix
 
+* Uuid not restored. 
+
+* Ipv6 enabled configs. 
+
+* Change bug. 
+
+* Outbound issue. 
+
+* Domain menu issue. 
+
+* Fix panel icon in v2 paths. 
+
+* Add node configs to sing-box based clients. 
+
 * Cli. 
 
 * Update finalmask handling in VLESS template. 
@@ -89,6 +103,48 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Redirectspeed test page. 
+
+* Improve domain page. 
+
+* Ignore vless encryption from old backup. 
+
+* Speed up domain page. 
+
+* Refactor: update TCP/UDP port handling in ClientProxyDomainVar. 
+  _- Enhanced the logic for determining TCP and UDP ports based on proxy mode.
+- Clients now connect to the domain's gateway port when applicable, improving routing accuracy._
+
+* Refactor: r update public ports logic. 
+  _- Updated the all_public_ports function to include SSH in the list of custom proxies.
+- Adjusted related comments and cleaned up unused code in various files._
+
+* Improve backup / restore. 
+
+* Feat: enhance domain validation in settings. 
+  _- Added a new function `domains_taken_by_others` to check for domain names already in use, excluding the current fake-domain row.
+- Updated the domain validation logic in `SettingAdmin.py` to utilize the new function, improving the accuracy of domain availability checks._
+
+* Merge pull request #39 from AnonymousContributorAlpha/vite-manifestation. 
+  _refactor: add vite manifestation_
+
+* Refactor: add vite manifestation. 
+
+* Merge pull request #38 from AnonymousContributorAlpha/icon-v2. 
+  _fix: fix panel icon in v2 paths_
+
+* Merge pull request #42 from AnonymousContributorAlpha/node-configs. 
+  _fix: add node configs to sing-box based clients_
+
+* Merge pull request #41 from AnonymousContributorAlpha/user-id. 
+  _feat: added user id to admin/v2 users page_
+
+* Feat: added user id to admin/v2 users page. 
+
+* Feat: add finalmask support to hiddify-core. 
+  _- Included the finalmask snippet in endpoint_general, outbound_general, outbound_v2ray, outbound_xhttp, and wireguard templates to enhance JSON output.
+- Created a new finalmask.j2 snippet to conditionally include the finalmask based on proxy domain settings and Hiddify Core version._
 
 * Feat: implement custom JSON outbounds for hiddify-core and xray. 
   _- Added support for custom JSON configurations in the Outbounds API, allowing admins to define hiddify-core outbound, endpoint, and xray outbound objects.

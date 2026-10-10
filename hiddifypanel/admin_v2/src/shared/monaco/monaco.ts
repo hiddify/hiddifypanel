@@ -1,6 +1,6 @@
 /**
  * Monaco is not bundled: its prebuilt `min/vs` build (from the monaco-editor package) is
- * copied next to the UI (`<ui>/monaco/vs`, see vite.config.ts) and loaded here with
+ * copied next to the UI (`<ui>/monaco/<hash>/vs`, see vite.config.ts) and loaded here with
  * Monaco's own AMD loader the first time an editor opens. Bundling Monaco from source
  * roughly doubled the UI build's time and memory (servers build the UI during install).
  *
@@ -21,13 +21,18 @@ declare global {
   }
 }
 
-/** Where the prebuilt Monaco lives: `<ui root>/monaco/vs` (dev: served by the vite plugin). */
+/**
+ * Where the prebuilt Monaco lives: `<ui root>/monaco/vs` in dev (served by the vite plugin). The
+ * build copies it under a content-hashed directory and the panel passes the path in
+ * `window.__MONACO_BASE__` (see vite.config.ts, panel/admin/v2_view.py).
+ */
 function vsBaseUrl(): string {
   if (import.meta.env.DEV) {
     return new URL(`${import.meta.env.BASE_URL}monaco/vs`, window.location.origin).href
   }
-  // Built chunks are in `<ui root>/assets/`; resolve from this chunk's own URL so it works
-  // under any proxy path.
+  if (window.__MONACO_BASE__) return new URL(window.__MONACO_BASE__, window.location.origin).href
+  // Fallback for shells rendered by an older panel build: chunks are in `<ui root>/assets/`,
+  // resolve from this chunk's own URL so it works under any proxy path.
   const chunk = import.meta.url
   const assets = chunk.lastIndexOf('/assets/')
   const uiRoot = assets >= 0 ? chunk.slice(0, assets + 1) : new URL('./', chunk).href

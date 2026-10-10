@@ -17,12 +17,14 @@ from flask import request
 from flask.views import MethodView
 from flask_babel import gettext as _
 from loguru import logger
+from sqlalchemy.orm import selectinload
 
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.models import Child, ConfigEnum, CustomProxy, CustomProxyMode, Domain, DomainType, FakeMode, Role, hconfig, set_hconfig
 from hiddifypanel.models.domain import normalize_domain_name
+from hiddifypanel.models.tls_store import TlsStore
 from hiddifypanel.panel import domain_rules
 from hiddifypanel.proxy_v3.context_vars.ports import GATEWAY_CLIENT_HTTP_PORT, GATEWAY_CLIENT_TLS_PORT
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG, list_domain_proxy_options, proxy_mode_group
@@ -121,7 +123,12 @@ def _row_out(d: Domain) -> dict[str, Any]:
 
 
 def _domains(child_id: int) -> list[Domain]:
-    return Domain.query.filter(Domain.child_id == child_id).order_by(*Domain.ordering()).all()
+    return (
+        Domain.query.filter(Domain.child_id == child_id)
+        .options(selectinload(Domain.certificate).defer(TlsStore.private_key), selectinload(Domain.show_domains))
+        .order_by((Domain.mode != DomainType.sub_link_only), *Domain.ordering())  # sub-link domains always on top
+        .all()
+    )
 
 
 #: Custom proxy modes a domain can pick, and how the page groups them.
@@ -139,8 +146,8 @@ def ip_based_allowed(mode, fake_mode) -> bool:
     return mode == DomainType.direct and fake_mode == FakeMode.valid
 
 
-def _proxies_meta(child_id: int) -> dict[str, Any]:
-    """Custom proxies a domain can use, and which ones fit each kind of domain."""
+def _proxies_list(child_id: int) -> list[dict[str, Any]]:
+    """Custom proxies a domain can use."""
     rows = (
         CustomProxy.query.filter(
             CustomProxy.child_id == child_id,
@@ -150,7 +157,7 @@ def _proxies_meta(child_id: int) -> dict[str, Any]:
         .order_by(CustomProxy.sort_order, CustomProxy.name)
         .all()
     )
-    proxies = [
+    return [
         {
             "id": p.id,
             "name": p.name,
@@ -162,12 +169,17 @@ def _proxies_meta(child_id: int) -> dict[str, Any]:
         }
         for p in rows
     ]
+
+
+def _compatible_proxies(child_id: int) -> dict[str, list[int]]:
+    """Which custom proxies fit each kind of domain (only the edit dialog needs it)."""
+    enabled = CustomProxy.query.filter(CustomProxy.enable == True, CustomProxy.child_id == child_id).all()
     compatible = {}
     for mode in DomainType:
         for fake in FakeMode:
-            ids = [o["id"] for o in list_domain_proxy_options(child_id=child_id, mode=mode, fake_mode=fake) if ip_based_allowed(mode, fake) or o["group"] != "ip_based"]
+            ids = [o["id"] for o in list_domain_proxy_options(child_id=child_id, mode=mode, fake_mode=fake, proxies=enabled) if ip_based_allowed(mode, fake) or o["group"] != "ip_based"]
             compatible[f"{mode.value}:{fake.value}"] = ids
-    return {"proxies": proxies, "compatible": compatible}
+    return compatible
 
 
 def _show_options(child_id: int) -> list[dict[str, Any]]:
@@ -180,21 +192,43 @@ def _show_options(child_id: int) -> list[dict[str, Any]]:
     return out
 
 
+def _server_ips(child_id: int) -> list[dict[str, Any]]:
+    """Every public address of this server, to put in the DNS record of a new domain (A for IPv4, AAAA for IPv6):
+    the ones found on its interfaces and the ones added in the server IPs list."""
+    import ipaddress
+
+    from hiddifypanel.models.server_ip import ServerIp
+
+    found: dict[str, dict[str, Any]] = {}
+    try:
+        for ip in hutils.network.get_ips_lazy():
+            if ip.is_global:
+                found.setdefault(str(ip), {"ip": str(ip), "version": ip.version, "label": ""})
+    except Exception:
+        pass
+    for row in ServerIp.query.filter(ServerIp.child_id == child_id, ServerIp.enabled.is_(True)).all():
+        try:
+            ip = ipaddress.ip_address(str(row.address).strip())
+        except ValueError:
+            continue
+        if ip.is_global:
+            found.setdefault(str(ip), {"ip": str(ip), "version": ip.version, "label": ""})["label"] = row.label or ""
+    return sorted(found.values(), key=lambda r: (r["version"], r["ip"]))
+
+
 def _list_out(child_id: int) -> dict[str, Any]:
     domains = _domains(child_id)
     return {
         "domains": [_row_out(d) for d in domains],
         "meta": {
-            "ipv4": [str(ip) for ip in hutils.network.get_ips(4)],
-            "ipv6": [str(ip) for ip in hutils.network.get_ips(6)],
             "ech_enabled": bool(hconfig(ConfigEnum.tls_ech_enable)),
             "cloudflare": bool(hconfig(ConfigEnum.cloudflare)),
             "has_sublink": any(d.mode == DomainType.sub_link_only for d in domains),
             "default_tls_port": GATEWAY_CLIENT_TLS_PORT,
             "default_http_port": GATEWAY_CLIENT_HTTP_PORT,
             "is_super_admin": g.account.role == Role.super_admin,
-            "show_options": _show_options(child_id),
-            **_proxies_meta(child_id),
+            "proxies": _proxies_list(child_id),
+            "server_ips": _server_ips(child_id),
         },
     }
 
@@ -444,6 +478,15 @@ class DomainsPageApi(MethodView):
         return {"created_id": d.id, "certificate_requested": cert, "warnings": warnings, "restart_mode": APPLY, **_list_out(child_id)}
 
 
+class DomainsPageOptionsApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def get(self):
+        """What only the edit dialog needs, loaded when it opens: which proxies fit each kind of domain, and the domains a sub-link domain can show"""
+        child_id = _child_id()
+        return {"compatible": _compatible_proxies(child_id), "show_options": _show_options(child_id)}
+
+
 class DomainsPageItemApi(MethodView):
     decorators = [login_required(ROLES)]
 
@@ -499,7 +542,7 @@ class DomainsPageIpsApi(MethodView):
         target = d.get_server() or d.domain
         if not target:
             return {"domain": d.domain, "target": "", "ips": []}
-        mine = set(hutils.network.get_ips())
+        mine = set(hutils.network.get_ips_lazy())
         ips = sorted(hutils.network.get_domain_ips(target), key=lambda ip: (ip.version, str(ip)))
         return {"domain": d.domain, "target": target, "ips": [{"ip": str(ip), "version": ip.version, "is_server_ip": ip in mine} for ip in ips]}
 

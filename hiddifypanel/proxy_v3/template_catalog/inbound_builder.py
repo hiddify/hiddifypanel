@@ -5,6 +5,8 @@ from .paths import preset_shell_slug
 from .proxy_matrix import ProxyCombination
 
 # Map legacy matrix names to on-disk fragment basenames.
+from .snell_version import with_snell_version
+
 PROTO_SLUG: dict[str, str] = {
     "shadowsocks": "ss",
     "v2ray": "vmess",
@@ -286,15 +288,33 @@ def build_hiddify_standalone_inbound(combo: ProxyCombination) -> tuple[str, list
     return content, slugs
 
 
+def build_hiddify_wireguard_endpoint() -> tuple[str, list[str]]:
+    """hiddify-core serves WireGuard itself, as an endpoint: the ``endpoint_other`` preset around the ``wireguard`` protocol."""
+    proto_slug = fragment_slug("hiddify-core", "protocols", "wireguard", side="server")
+    content = _render_preset_shell(
+        "hiddify-core",
+        shell_name="endpoint_other",
+        proto_slug=proto_slug,
+        stream_slug="",
+        security_slug=None,
+        proto_key="wireguard",
+        transport_key="",
+    )
+    return content, ["hiddify-core/server/tag", proto_slug]
+
+
 def build_hiddify_wireguard_server_stub() -> tuple[str, list[str]]:
     return "{% block inbounds %}\n{{ skip() if true }}\n{% endblock %}", []
 
 
 def build_hiddify_inbound_template(combo: ProxyCombination, *, l7_gateway: bool = False) -> tuple[str, list[str]]:
     if combo.proto == "wireguard":
-        return build_hiddify_wireguard_server_stub()
+        from .proxy_matrix import is_wireguard_endpoint
+
+        return build_hiddify_wireguard_endpoint() if is_wireguard_endpoint(combo) else build_hiddify_wireguard_server_stub()
     if _is_standalone_hiddify_server(combo):
-        return build_hiddify_standalone_inbound(combo)
+        content, slugs = build_hiddify_standalone_inbound(combo)
+        return with_snell_version(content, combo), slugs
     proto = _inbound_proto_file(combo)
     transport = _transport_file(combo.transport)
     if not proto or not transport:

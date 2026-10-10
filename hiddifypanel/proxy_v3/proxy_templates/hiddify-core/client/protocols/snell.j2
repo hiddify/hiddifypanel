@@ -1,7 +1,10 @@
-{{ skip("hiddify_core version " ~ ctx.platform.hiddify.version ~ " ") if  ctx.platform.hiddify.version < "4.1.0" }}
+{# The Snell outbound: Hiddify from 4.1.0, any other sing-box client from 1.14.0 #}
+{{ skip("snell needs hiddify 4.1.0 or sing-box 1.14.0") if (ctx.platform.app == "hiddify" and ctx.platform.hiddify.version < "4.1.0") or (ctx.platform.app != "hiddify" and ctx.platform.singbox.version < "1.14.0") }}
+{# Snell v5 or v6 server (the preset sets snell_version). A v5 server speaks the v4 wire protocol, so its client uses 4. #}
+{% set v = snell_version|default(5) %}
 "type": "snell",
 "server": "{{ proxy.server }}",
 "server_port": {{ proxy.port }},
-"version": 4,
-"psk": "{{ ctx.hconfig.proxy_path }}",
+"version": {{ 6 if v == 6 else 4 }},
+"psk": "{{ ctx.hconfig.shared_secret }}",
 "userkey": "{{ ctx.user.uuid }}"

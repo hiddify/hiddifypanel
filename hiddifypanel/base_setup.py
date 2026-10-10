@@ -51,7 +51,13 @@ def init_app(app):
         # Put your logic here. Application can store locale in
         # user profile, cookie, session, etc.
         if "admin" in request.base_url:
-            g.locale = hconfig(ConfigEnum.admin_lang) or "en"
+            # An admin's own language (My account) wins over the panel's default admin language.
+            own = None
+            try:
+                own = auth.current_account.lang
+            except Exception:
+                pass
+            g.locale = (str(getattr(own, "value", own)) if own else "") or hconfig(ConfigEnum.admin_lang) or "en"
         else:
             g.locale = auth.current_account.lang or hconfig(ConfigEnum.lang) or "en"
         return g.locale

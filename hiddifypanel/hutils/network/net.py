@@ -6,6 +6,7 @@ import random
 import re
 import socket
 import ssl
+import threading
 import time
 import urllib.request
 from typing import Literal
@@ -92,9 +93,20 @@ def get_domain_ips(domain: str, retry: int = 3) -> set[ipaddress.IPv4Address | i
     return res or get_domain_ips(domain, retry=retry - 1)
 
 
+def kernel_ipv6_available() -> bool:
+    """False when the kernel has IPv6 off (``ipv6.disable=1`` or ``disable_ipv6=1``): nothing can bind or reach IPv6."""
+    try:
+        if not os.path.isdir("/proc/sys/net/ipv6"):
+            return False
+        with open("/proc/sys/net/ipv6/conf/all/disable_ipv6") as f:
+            return f.read().strip() != "1"
+    except OSError:
+        return False
+
+
 def get_socket_public_ip(version: Literal[4, 6]) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s = socket.socket(socket.AF_INET6 if version == 6 else socket.AF_INET, socket.SOCK_DGRAM)
         if version == 6:
             s.connect(("2001:4860:4860::8888", 80))
         else:
@@ -136,6 +148,8 @@ def get_interface_public_ip(version: Literal[4, 6]) -> list[ipaddress.IPv4Addres
 def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     if not version:
         return [*get_ips(4), *get_ips(6)]
+    if version == 6 and not kernel_ipv6_available():
+        return []
     addrs = []
 
     i_ips = get_interface_public_ip(version)
@@ -156,6 +170,36 @@ def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address 
 
     # remove duplicates
     return list(set(addrs))
+
+
+_ips_snapshot: dict[int, list] = {}
+_ips_refreshing = threading.Lock()
+
+
+def _refresh_ips_snapshot() -> None:
+    try:
+        for v in (4, 6):
+            _ips_snapshot[v] = get_ips(v)  # may wait for ident.me: only ever runs in the background
+    except BaseException:
+        pass
+    finally:
+        _ips_refreshing.release()
+
+
+def get_ips_lazy(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
+    """Server IPs for a user request: never waits for the network.
+
+    Returns the last known list (local addresses only before the first refresh) and refreshes it in a background thread."""
+    if _ips_refreshing.acquire(blocking=False):
+        threading.Thread(target=_refresh_ips_snapshot, name="refresh-server-ips", daemon=True).start()
+    versions = (version,) if version else (4, 6)
+    out = []
+    for v in versions:
+        known = _ips_snapshot.get(v)
+        if known is None:
+            known = list({*get_interface_public_ip(v), *([ip] if (ip := get_socket_public_ip(v)) else [])})
+        out.extend(known)
+    return out
 
 
 @cache.cache(ttl=600)
@@ -585,6 +629,20 @@ def _port_list(value) -> list[str]:
     return [p for p in re.split(r"[\s,;]+", str(value if value is not None else "")) if p]
 
 
+def public_port_proxy_name(row) -> str:
+    """The service name a custom proxy's ports are listed under in all_public_ports()."""
+    return re.sub(r"[^A-Za-z0-9_-]+", "-", str(row.slug or row.name or f"proxy-{row.id}")).strip("-") or f"proxy-{row.id}"
+
+
+def public_port_proxy_ids() -> dict[str, dict]:
+    """Service name in all_public_ports() -> the custom proxy's id and display name, so a listed port can link to its proxy."""
+    from hiddifypanel.models import Child
+    from hiddifypanel.models.custom_proxy import CustomProxy
+
+    rows = CustomProxy.query.filter(CustomProxy.child_id == Child.current().id).all()
+    return {public_port_proxy_name(r): {"id": r.id, "name": r.name or ""} for r in rows}
+
+
 def all_public_ports():
     """Every port the internet must reach on this server: the gateway, the panel's own services and the custom proxies' own ports.
 
@@ -625,7 +683,7 @@ def all_public_ports():
     for row in CustomProxy.query.filter(CustomProxy.child_id == child_id).all():
         if not row.enable or not mode_uses_firewall_ports(row.mode):
             continue
-        name = re.sub(r"[^A-Za-z0-9_-]+", "-", str(row.slug or row.name or f"proxy-{row.id}")).strip("-") or f"proxy-{row.id}"
+        name = public_port_proxy_name(row)
         protocols = firewall_protocols_for_proxy(row)
         # Automatic ports are one per domain.
         resolved = [ports_for_proxy_row(row, domain_id=d.id) for d in _domains_for_proxy_row(row, domains)] if row.mode == CustomProxyMode.domains_auto_public_ports else [ports_for_proxy_row(row)]

@@ -30,7 +30,8 @@ import {
   type UserRow,
   type UsersState,
 } from '@/features/users/api'
-import { daysFromToday, gb, relativeDays, shortDate } from '@/features/users/format'
+import { unitLabel } from '@/shared/utils/format-metrics'
+import { daysFromToday, gb, sizeText, relativeDays, shortDate } from '@/features/users/format'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 /** Quick picks; the last one is "unlimited" (the highest value the server keeps). */
@@ -45,7 +46,12 @@ const DAY_PRESETS = [
 ] as const
 
 /** `user`: the one being edited (its detail is loaded); null adds a new user. */
-const props = defineProps<{ user: UserRow | null; state: UsersState | null }>()
+const props = defineProps<{
+  user: UserRow | null
+  state: UsersState | null
+  /** Show just one section (a quick edit from the list) instead of the whole form. */
+  focus?: 'usage' | 'time' | null
+}>()
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ saved: [user: UserDetail, created: boolean] }>()
 
@@ -260,11 +266,11 @@ async function submit() {
       <div class="uf-title">
         <span class="uf-title__icon"><i class="pi" :class="editing ? 'pi-user-edit' : 'pi-user-plus'" /></span>
         <div class="min-w-0">
-          <div class="font-semibold text-lg uf-title__text">{{ editing ? t('users.form.editTitle', { name: user?.name }) : t('users.form.addTitle') }}</div>
-          <div class="text-muted-color text-sm">{{ editing ? t('users.form.editSubtitle') : t('users.form.addSubtitle') }}</div>
+          <div class="font-semibold text-lg uf-title__text">{{ focus === 'usage' ? t('users.form.editUsageTitle', { name: user?.name }) : focus === 'time' ? t('users.form.editTimeTitle', { name: user?.name }) : editing ? t('users.form.editTitle', { name: user?.name }) : t('users.form.addTitle') }}</div>
+          <div v-if="!focus" class="text-muted-color text-sm">{{ editing ? t('users.form.editSubtitle') : t('users.form.addSubtitle') }}</div>
         </div>
         <!-- Can the user connect? -->
-        <label class="uf-enable" :class="{ 'uf-enable--off': !enable }" for="uf-enable" v-tooltip.bottom="t('users.form.enableHint')">
+        <label v-if="!focus" class="uf-enable" :class="{ 'uf-enable--off': !enable }" for="uf-enable" v-tooltip.bottom="t('users.form.enableHint')">
           <span>{{ enable ? t('users.form.enabled') : t('users.form.disabled') }}</span>
           <ToggleSwitch v-model="enable" input-id="uf-enable" :disabled="busy || loading" />
         </label>
@@ -277,7 +283,7 @@ async function submit() {
 
     <form v-else class="uf" @submit.prevent="submit">
       <!-- Who -->
-      <section class="uf-sec">
+      <section v-if="!focus" class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-user" />{{ t('users.form.who') }}</h4>
         <div class="uf-grid">
           <!-- Name and Tag side by side -->
@@ -300,13 +306,13 @@ async function submit() {
       </section>
 
       <!-- Data -->
-      <section class="uf-sec">
+      <section v-if="!focus || focus === 'usage'" class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-database" />{{ t('users.form.data') }}</h4>
         <!-- Used (read only, can be reset) and the limit, in one row -->
         <div class="uf-data">
           <div v-if="editing" class="uf-used" :class="{ 'uf-used--reset': resetUsage }">
             <span class="uf-used__label">{{ t('users.form.used') }}</span>
-            <b class="uf-used__value" dir="ltr">{{ gb(usedGb, locale) }} GB</b>
+            <b class="uf-used__value" dir="ltr">{{ sizeText(usedGb, locale) }}</b>
             <button
               type="button"
               class="uf-used__reset"
@@ -322,7 +328,7 @@ async function submit() {
           <span v-if="editing" class="uf-data__of">{{ t('users.of') }}</span>
           <div class="uf-field uf-data__limit">
             <label for="uf-limit" class="uf-used__label">{{ t('users.form.limit') }}</label>
-            <InputNumber v-model="usageLimit" input-id="uf-limit" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" suffix=" GB" :disabled="busy" fluid />
+            <InputNumber v-model="usageLimit" input-id="uf-limit" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" :suffix="` ${unitLabel('GB')}`" :disabled="busy" fluid />
           </div>
         </div>
         <small v-if="resetUsage" class="uf-pending"><i class="pi pi-clock" />{{ t('users.form.resetUsagePending') }}</small>
@@ -335,7 +341,7 @@ async function submit() {
             :class="{ 'uf-chip--on': usageLimit === v, 'uf-chip--extra': v === 200 || v === 500 }"
             @click="usageLimit = v"
           >
-            {{ v === UNLIMITED_GB ? '♾️' : v >= 1000 ? `${v / 1000} TB` : `${v} GB` }}
+            {{ v === UNLIMITED_GB ? '♾️' : v >= 1000 ? `${v / 1000} ${unitLabel('TB')}` : `${v} ${unitLabel('GB')}` }}
           </button>
         </div>
 
@@ -364,7 +370,7 @@ async function submit() {
       </section>
 
       <!-- Time: the same shape as Data (used days ↻ of package length) -->
-      <section class="uf-sec">
+      <section v-if="!focus || focus === 'time'" class="uf-sec">
         <h4 class="uf-sec__title"><i class="pi pi-calendar" />{{ t('users.form.time') }}</h4>
         <div class="uf-data">
           <div v-if="editing" class="uf-used" :class="{ 'uf-used--reset': resetDays }">
@@ -437,7 +443,7 @@ async function submit() {
       </section>
 
       <!-- Advanced -->
-      <section class="uf-sec">
+      <section v-if="!focus" class="uf-sec">
         <button type="button" class="uf-toggle" :aria-expanded="showAdvanced" @click="showAdvanced = !showAdvanced">
           <i class="pi pi-sliders-h" />
           <span class="flex-1">{{ t('users.form.advanced') }}</span>

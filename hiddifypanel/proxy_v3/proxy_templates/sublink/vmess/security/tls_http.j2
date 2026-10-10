@@ -1,4 +1,3 @@
-{% set _alpn = proxy.alpn|default('') %}
 {% set domain=ctx.proxy.domain%}
 {% if proxy.uses_tls %}
     {% set data.sni = ctx.proxy.domain.sni %}
@@ -11,7 +10,9 @@
         {% set data.pbk = ctx.hconfig.reality_public_key %}
         {% set data.sid = ctx.hconfig.reality_short_ids | choose_random %}
     {%else%}
-        {% if proxy.alpn %}{% set data.alpn = ",".join(proxy.alpn) %}{% endif %}
+        {# The ALPN follows the TLS layer (h3 for QUIC), as in the vless / other links #}
+        {% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or 'http' %}
+        {% set data.alpn = ",".join(tls_layer.alpns()) %}
         {% set data.tls = 'tls' %}    
         {% if ctx.proxy.domain.echinfo %}
             {% set data.ech = ctx.proxy.domain.echinfo %}

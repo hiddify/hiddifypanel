@@ -3,7 +3,7 @@
 # =====================
 frontend https-in
     {% for port in (["443"] + ctx.hconfig.tls_ports.split(',')) | unique %}
-    bind :{{ port }},:::{{ port }} v4v6 tfo
+    bind :{{ port }}{% if ctx.hconfig.ipv6_enabled %},:::{{ port }} v4v6{% endif %} tfo
     {% endfor %}
     tcp-request inspect-delay 5s
     tcp-request content accept if { req.ssl_hello_type 1 }

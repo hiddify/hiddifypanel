@@ -1,16 +1,16 @@
 {
   " Search\n            Settings": " Поиск\nНастройки",
-  "%(count)s records were successfully deleted.": "",
+  "%(count)s records were successfully deleted.": "Успешно удалено записей: %(count)s.",
   "%(count)s records were successfully disabled.": "%(count)s записей были успешно отключены.",
   "%(count)s records were successfully enabled.": "%(count)s записей были успешно включены.",
-  "%(count)s records were successfully reset days.": "",
-  "%(count)s records were successfully reset usage.": "",
-  "%(count)s records were successfully updated.": "",
+  "%(count)s records were successfully reset days.": "Дни успешно сброшены у записей: %(count)s.",
+  "%(count)s records were successfully reset usage.": "Трафик успешно сброшен у записей: %(count)s.",
+  "%(count)s records were successfully updated.": "Успешно обновлено записей: %(count)s.",
   "%(expire_days)s days": "%(expire_days)s дней",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Последний день",
-  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
-  "A fake domain needs a real domain name": "",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "<a href=\"%(user_link)s\"> %(user)s</a>",
+  "A fake domain needs a real domain name": "Для фейкового домена нужно настоящее доменное имя",
   "Access Denied!": "Доступ запрещен",
   "Actions": "Действия",
   "Active": "Активный",
@@ -19,7 +19,7 @@
   "Add some text that is only visible to super_admin.": "Добавьте текст, который будет виден только суперадминистратору",
   "Add some text that is only visible to you.": "Вы можете добавить текст, который будет виден только вам.",
   "Added by": "Добавлено",
-  "Admin Links": "",
+  "Admin Links": "Ссылки администратора",
   "Admins": "Администраторы",
   "Alias": "Псевдоним",
   "All": "Все",
@@ -34,10 +34,10 @@
   "Beta": "☑️ Бета",
   "Bridge Servers": "➖ Bridge серверы",
   "Bug": "Баги/Предложения",
-  "CDN and worker domains must use valid fake mode": "",
+  "CDN and worker domains must use valid fake mode": "Домены CDN и worker должны использовать допустимый fake-режим",
   "CPU %(cores)s Cores": "CPU %(cores)s Ядро",
   "Can add sub admin": "👥 Может добавлять администраторов",
-  "Change": "",
+  "Change": "Изменить",
   "Check again": "Проверить снова",
   "Childs": "Дочерние",
   "China": "🇨🇳 Китай",
@@ -48,7 +48,7 @@
   "Commercial use": "Коммерческое использование",
   "Config file is incorrect": "Конфигурационный файл неверен",
   "Copy Link": "Копировать ссылку",
-  "Copy QR image": "",
+  "Copy QR image": "Копировать QR-изображение",
   "Couldn't find your ip addresses": "Не удалось найти ваши IP-адреса",
   "Count:": "Количество:",
   "Create": "Создать",
@@ -67,7 +67,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "Домен (%(domain)s)-> IP = %(domain_ip)s не совпадает с вашим IP = %(server_ip)s . это требуется в режиме Direct",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "IP=%(domain_ip)s Домена не совпадает с Вашим IP Сервера, который необходим для \"Прямого Режима\"",
   "Domain can not be resolved! there is a problem in your domain": "Не возможно определить IP адрес для домена! В вашем домене возникла проблема. Пожалуйста, проверьте настройки.",
-  "Domain cannot be resolved! Please check DNS settings": "",
+  "Domain cannot be resolved! Please check DNS settings": "Не удаётся разрешить домен! Проверьте настройки DNS",
   "Domain is not REALITY friendly!": "Домен не подходит для использования с REALITY!",
   "Domain?": "Домен?",
   "Donation": {
@@ -75,31 +75,32 @@
     "title": "Пожертвование"
   },
   "Download App": "<i class='fa-solid fa-download'></i> Загрузить приложение",
+  "Download Domain": "📈 Домен загрузки",
   "Edit": "Изменить",
   "Edit Proxy Names": "✏️ Изменить прокси",
   "Enable": "❇️ Включить",
-  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
-  "Error in Config Generation": "",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "Включите TLS ECH в настройках панели, прежде чем использовать ECH на домене CDN",
+  "Error in Config Generation": "Ошибка генерации конфигурации",
   "Error in auto cdn format": "⚠️ Ошибка в формате Auto CDN",
   "Error! auto cdn ip can not be find, please contact admin.": "Ошибка в IP-адресе Auto CDN! Невозможно найти, обратитесь к администратору",
   "Example Domains": "Тестируйте и предложите домеy",
-  "Expired": "",
+  "Expired": "Истёк",
   "Expired Users": "Пользователи с истекшим сроком действия",
   "Export": "Экспортировать",
   "Fake": "➖ Фейковый сайт",
-  "Fake domains can only be direct or relay": "",
+  "Fake domains can only be direct or relay": "Фейковые домены могут быть только прямыми или relay",
   "Filter": "Фильтровать",
   "Finished": "Законченный...",
   "From Last Restart": "С последнего перезапуска",
   "From when the user package will be started? Empty for start from first connection": "Укажите дату начала действия пакета. Оставьте пустым, чтобы начать с первого подключения.",
   "Hiddify": "Hiddify",
-  "Hiddify Android": "Hiddify Android",
+  "Hiddify Android": "Hiddify Android ",
   "HiddifyClash": "HiddifyClash",
   "HiddifyN intro": "Пожалуйста, установите HiddifyN из %(dl_link)s.\nЗатем нажмите на ссылку ниже. Она сделает все автоматически\n<br />",
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>Рекомендуется</span>",
   "HiddifyNG intro": "📌 Установите HiddifyNG по любой из этих ссылок:\n<br />\n %(dl_link)s %(play_link)s\n<br />\nЗатем нажмите ссылку ниже и откройте ее в HiddifyNG\n<br />",
   "HiddigyN": "Рекомендуется<span class='badge Badge-success'>HiddifyN</span>",
-  "Home Link": "",
+  "Home Link": "Ссылка на главную",
   "Hover the user to see the reason": "Наведите курсор на пользователя, чтобы увидеть причину",
   "How many days this package should be available?": "На сколько дней рассчитан этот пакет?",
   "How many?": "Сколько?",
@@ -112,7 +113,7 @@
   "Incorrect Password": "⚠️ Неверный пароль.",
   "Install": "Установить",
   "Install Hiddify Application": "Установка панели Hidify",
-  "Invalid": "",
+  "Invalid": "Недействителен",
   "Invalid IP or domain": "Неверный IP или Домен",
   "Invalid REALITY hostnames": "Неверные имена хостов REALITY",
   "Invalid admin link": "Неверная ссылка администратора",
@@ -121,8 +122,8 @@
   "It will override the root admin to the current user": "Он заменит администратора-владельца файла резервной копии на текущего администратора.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Присоединяйтесь к нашему каналу Hiddify в Telegram, чтобы получать последние обновления Hiddify.",
   "Last Online": "Последнее соединение",
-  "Last node to parent": "",
-  "Last parent to node": "",
+  "Last node to parent": "Последний узел к родителю",
+  "Last parent to node": "Последний родитель к узлу",
   "Link is changed!": "ℹ️Ссылка изменена!",
   "Linux": "Linux ОС",
   "Max Active Users": "Максимальное количество активных пользователей",
@@ -133,21 +134,21 @@
   "More Applications": "Больше приложений",
   "Network": "Сеть",
   "New": "Новый",
-  "No certificate": "",
+  "No certificate": "Нет сертификата",
   "No children!": "Нет дочерних",
-  "No main domains found, please add at least one domain with valid certificate": "",
-  "Nodes": "",
-  "Not Secure": "",
+  "No main domains found, please add at least one domain with valid certificate": "Основные домены не найдены, добавьте хотя бы один домен с действительным сертификатом",
+  "Nodes": "Узлы",
+  "Not Secure": "Небезопасно",
   "Note": "📝 Примечание",
   "Offline more than 1 day": "Оффлайн более 1 дня",
   "Offline more than 1 hour": "Оффлайн более 1 часа",
   "Offline more than 1 week": "Офлайн более 1 недели",
   "Ok": "Хорошо",
-  "Online": "",
+  "Online": "Онлайн",
   "Online Users": "Пользователей в сети",
   "Only Blocked and Local websites": "☑️ Только заблокированные и локальные сайты",
   "Only for sublink?": "🌍 Используйте только для ссылки на подпискy",
-  "Only one domain of this kind can be added": "",
+  "Only one domain of this kind can be added": "Можно добавить только один домен такого типа",
   "Oops! Something went wrong.": "Упс! что-то пошло не так",
   "Open in Application": "Открыть в приложении",
   "Others": "🇺🇳 Другие",
@@ -169,18 +170,18 @@
   "Please type your message to send to the telegram:": "✏️ Пожалуйста, напишите свое сообщение для отправки в Telegram:",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "Обратите внимание, что родительская панель находится на стадии тестирования, поэтому план и условия использования могут измениться в любое время",
   "Please wait ": "Пожалуйста, подождите",
-  "Port 80 and 443 can not be selected": "",
+  "Port 80 and 443 can not be selected": "Порты 80 и 443 выбрать нельзя",
   "Port is already used! in": "Порт уже используется в:",
   "Premium Description": "Панель Hiddify предназначена для некоммерческого использования. Но если вы используете эту панель в коммерческих целях, пожалуйста, помогите проекту развиваться, сделав пожертвование. <br/>\nВ обмен на вашу финансовую поддержку мы также предоставляем специальные возможности для вашего коммерческого продукта.\n<br/>\n<br/>\nТакой как:\n<ul><li>\n<li>Возможность синхронизации с Cloudflare: то есть, добавив домен в панели, соответствующие настройки также можно сделать в Cloudflare.</li>\n<li>Возможность отображения вашего бренда на панели</li>\n<li>Возможность использования центральной панели для управления более чем 1 сервером всего в одной панели, поэтому больше не нужно регистрировать пользователей на разных серверах, а их объем будет собираться на всех серверах.\n</li>\n<ли>\nВозможность использования Telegram-бота\n</li>\n<ли>\nВозможность изменения имен прокси\n</li>\n</ul>\n\nПожалуйста, свяжитесь с <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> после пожертвования.\nОтправьте сообщение, чтобы получить специальную версию для бизнес-пользователей.",
-  "Proxy Editor": "",
+  "Proxy Editor": "Редактор прокси",
   "ProxyPath is already used! use different proxy path": "ProxyPath уже используется! используйте другой путь прокси",
   "QR code": "🧾 QR-код",
-  "QR code image copied": "",
+  "QR code image copied": "QR-изображение скопировано",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QR-код",
   "RAM": "RAM",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain несовместим с именами серверов!",
-  "REALITY Fallback domain is not compatible with server names!": "",
-  "Relay domains with non-valid fake mode require an IP address": "",
+  "REALITY Fallback domain is not compatible with server names!": "Резервный домен REALITY несовместим с именами серверов!",
+  "Relay domains with non-valid fake mode require an IP address": "Relay-домены с недопустимым fake-режимом требуют IP-адрес",
   "Release": "✅ Релиз",
   "Remaining about %(relative)s, exactly %(days)s days": "Осталось около %(relative)s, ровно %(days)s дней",
   "Remote nodes are not supported yet!": "Удаленные узлы пока не поддерживаются!",
@@ -200,17 +201,17 @@
   "Restore Settings description": "Восстановить все описания настроек",
   "Restore Users": "👥 Восстановление пользователей",
   "Restore Users description": "Выберите этот вариант, чтобы восстановить всех пользователей",
-  "Root": "Root",
+  "Root": "Корень",
   "Russia": "Россия",
   "Save": "Сохранить",
   "Save & Add More": "Сохранить и добавить еще",
   "Save Link": "Сохранить ссылку",
-  "Search Settings": "",
+  "Search Settings": "Поиск по настройкам",
   "Select all records": "Выбрать все записи",
   "Select record": "Выберите запись",
-  "Selected proxy does not support this domain mode combination": "",
+  "Selected proxy does not support this domain mode combination": "Выбранный прокси не поддерживает эту комбинацию режимов домена",
   "Seleted Users": "Выбранные пользователи",
-  "Self-signed": "",
+  "Self-signed": "Самоподписанный",
   "Send Message to User's Telegram": "📣 Отправить сообщение в Telegram пользователя",
   "Sending": "Отправка...",
   "Should be a valid domain": "Должен быть действительный Домен",
@@ -219,18 +220,18 @@
   "Simplifies the process of employing the link elsewhere.": "Упрощает процесс использования ссылки в других местах",
   "SingBox": "📦 SingBox",
   "Sort by %(name)s": "Сортировать по %(name)s",
-  "Specifying CDN IP is only valid for CDN mode": "",
+  "Specifying CDN IP is only valid for CDN mode": "Указание IP CDN допустимо только в режиме CDN",
   "Start Date": "Дата начала",
   "Started %(days)s days ago": "Началось %(days)s дней назад",
   "Started from %(relative)s": "Началось с %(relative)s",
   "Status": "Статус",
-  "SubLink": "",
+  "SubLink": "SubLink",
   "Submit": "Подтвердить",
   "Success": "Успешно",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️Операция завершена успешно! Пожалуйста, подождите около 5 минут, чтобы убедиться, что все обновлено.",
-  "TLS": "",
+  "TLS": "TLS",
   "Telegram Bot": "Telegram-бот",
-  "Telegram Bot Link": "",
+  "Telegram Bot Link": "Ссылка на Telegram-бота",
   "Temporary Short Link": "⏱️ Временная ссылка",
   "The message has been sent.": "Сообщение отправлено",
   "The message was not sent to": "Сообщение не было отправлено ",
@@ -238,7 +239,7 @@
   "This can be used for giving your users a permanent non blockable links.": "Это можно использовать для предоставления вашим пользователям постоянных неблокируемых ссылок.",
   "This domain %(domain_name)s is invalid": "Домен %(domain_name)s недействителен",
   "This domain does not exist in the panel!": "Этого домена не существует в панели управления!",
-  "This restore has expired. Start it again from the Backup page.": "",
+  "This restore has expired. Start it again from the Backup page.": "Срок этого восстановления истёк. Запустите его снова на странице резервных копий.",
   "Today Usage": "Сегодня",
   "Too many Connected IPs": "Слишком много подключенных IP-адресов",
   "Total Usage": "Общее использование",
@@ -250,9 +251,9 @@
   "User is inactive": "Пользователь неактивен",
   "V2rayNG": "Альтернатива v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br />\n<br />",
   "V2rayNG intro": "Установите v2rayNG по любой из этих ссылок: %(dl_link)s %(play_link)s.\nЗатем скопируйте ссылку ниже и вставьте ее в v2rayNG согласно видеоинструкции <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -вопрос'></i> </button>.\n<br />",
-  "Valid": "",
+  "Valid": "Действителен",
   "View in Telegram": "Посмотреть в Telegram",
-  "Waiting for the process to start...": "",
+  "Waiting for the process to start...": "Ожидание запуска процесса...",
   "Want to enjoy more with telegram?": "ℹ️ Подключите свой аккаунт к Telegram",
   "Welcome %(user)s": "Добро пожаловать %(user)s",
   "Why Going to Premium?": "Зачем переходить на Премиум?",
@@ -265,11 +266,10 @@
   "You can restore your configs from previously downloaded configs": "ℹ️ Вы можете восстановить свои конфигурации из ранее скачанного файла резервной копии.",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "У вас слишком много пользователей! У вас может быть только %(active) активных пользователей и %(total) пользователей.",
   "You have used this domain in: ": "Вы уже используете этот домен в:",
-  "You need to enable %(names)s globally to enable this proxy.": "",
+  "You need to enable %(names)s globally to enable this proxy.": "Чтобы включить этот прокси, нужно глобально включить %(names)s.",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Информация о вашем экземпляре Hiddify\nДомен: {}\nЛимит: {} ГБ\nИспользовано: {} ГБ\nСрок действия истекает: {}\nОставшиеся дни: {}\n\n\nУдачи! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Сообщение, видимое только администратору]: Вы можете изменить это сообщение в настройках",
   "actions": "Операции",
-  "admin link": "Админ",
   "admin": {
     "Actions:apply_configs": "Применить конфигурацию",
     "action_done_sucess": "✅Действие выполнено успешно. Теперь вы можете покинуть эту страницу",
@@ -291,7 +291,7 @@
     "menu": {
       "api": "API",
       "config": "Настройки",
-      "dashboard_v2": "",
+      "dashboard_v2": "Далее",
       "domain": "Домены",
       "home": "Панель управления",
       "proxy": "Прокси",
@@ -312,6 +312,1961 @@
     "save_panel_link": "Обратите внимание, что доступ к вашей панели возможен только по следующей ссылке. пожалуйста, сохраните эту ссылку.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: Break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "⚠️ Подождите около 5 минут, чтобы убедиться, что все обновлено. в течение этого времени скопируйте и сохраните ссылки для прокси-серверов:"
   },
+  "admin link": "Админ",
+  "adminV2": {
+    "account": {
+      "aliasActive": "Оставьте пустым и сохраните, чтобы удалить.",
+      "aliasCleared": "Имя пользователя удалено",
+      "aliasHint": "Входите с этим именем пользователя и паролем вместо ID. Ссылки, которыми вы делитесь, не будут содержать ID.",
+      "aliasNeedsStrong": "Сначала задайте выше надёжный пароль: имя пользователя работает только с надёжным паролем.",
+      "aliasOn": "Вкл.",
+      "aliasPlaceholder": "напр. sara.sales",
+      "aliasProblem": {
+        "bad_chars": "Только a-z, 0-9, точка, дефис и подчёркивание; начинается с буквы или цифры",
+        "looks_like_uuid": "Не должно выглядеть как ID (UUID)",
+        "too_short": "Не менее {n} симв."
+      },
+      "aliasSaved": "Теперь вы можете войти как {alias}",
+      "aliasSuper": "Суперадмины входят только по своей админ-ссылке, поэтому у них нет имени пользователя.",
+      "aliasTitle": "Имя пользователя для входа",
+      "canAddAdmins": "Может добавлять субадминов",
+      "changePassword": "Сменить пароль",
+      "configsCount": "{n} конфигурация для всех моих пользователей | {n} конфигураций для всех моих пользователей",
+      "configsEmpty": "Конфигураций пока нет. Добавьте ссылку на подписку или вставьте конфигурацию: её получат все ваши пользователи.",
+      "configsSave": "Сохранить конфигурации",
+      "configsSaved": "Конфигурации сохранены",
+      "configsSub": "Добавляются в подписку всех ваших пользователей и пользователей ваших субадминов, поверх собственных конфигураций каждого пользователя.",
+      "configsTitle": "Конфигурации для моих пользователей",
+      "configsUnsaved": "Ещё не сохранено",
+      "copyLink": "Копировать мою админ-ссылку",
+      "current": "Текущий пароль",
+      "editConfigs": "Изменить конфигурации",
+      "generate": "Сгенерировать",
+      "generatedCopied": "Надёжный пароль сгенерирован и скопирован",
+      "inheritedConfigs": "+ {n} унаследовано от вышестоящих админов",
+      "languageDefault": "По умолчанию панели ({name})",
+      "languageHint": "Язык ваших страниц администратора",
+      "languageTitle": "Язык",
+      "limitsSub": "Ваши пользователи и все пользователи ваших субадминов учитываются в этих лимитах.",
+      "limitsTitle": "Мои лимиты",
+      "loginHint": "После сохранения входите по своей админ-ссылке и этому паролю.",
+      "minLength": "Не менее {n} симв.",
+      "mismatch": "Пароли не совпадают",
+      "nearLimit": "Вы близки к лимиту. Попросите вышестоящего админа увеличить его или отключите ненужных пользователей.",
+      "new": "Новый пароль",
+      "noLimits": "У суперадминов нет лимитов.",
+      "noPasswordSub": "У вас нет пароля: любой, у кого есть ваша ссылка, может войти. Задайте пароль, чтобы защитить аккаунт.",
+      "outboundApply": "Примените изменения, чтобы они вступили в силу.",
+      "outboundNone": "Исходящих подключений пока нет. Их настраивает суперадмин.",
+      "outboundSaved": "Исходящее подключение по умолчанию сохранено",
+      "outboundSub": "Через какое подключение выходят мои пользователи и пользователи моих субадминов, если пользователь (или ближайший админ) не выбрал другое.",
+      "outboundTitle": "Исходящее подключение по умолчанию",
+      "passwordNone": "Пароля нет: любой, у кого есть ваша ссылка, может войти",
+      "passwordSet": "Аккаунт защищён паролем",
+      "passwordSub": "Измените пароль, с которым вы входите.",
+      "passwordTitle": "Пароль",
+      "repeat": "Повторите новый пароль",
+      "save": "Сохранить пароль",
+      "saved": "Пароль изменён",
+      "setPassword": "Задать пароль",
+      "settingsSub": "Ваш язык, пароль и имя для входа.",
+      "settingsTitle": "Настройки",
+      "strength": {
+        "medium": "Средний",
+        "prompt": "Введите пароль",
+        "strong": "Надёжный",
+        "weak": "Слабый"
+      },
+      "subAdmins": "Субадмины",
+      "subtitle": "Ваши лимиты, сколько из них вы используете, и ваш пароль.",
+      "superText": "Вы можете добавлять сколько угодно пользователей и админов.",
+      "tabs": {
+        "overview": "Обзор",
+        "security": "Безопасность",
+        "users": "Мои пользователи"
+      },
+      "title": "Мой аккаунт",
+      "under": "Под {name}",
+      "unlimited": "Без ограничений",
+      "wrongCurrent": "Текущий пароль неверный"
+    },
+    "actions": {
+      "applyConfigs": "Применить конфигурации",
+      "applyConfigsHint": "Пересоздать конфигурации сервера и применить их к запущенным службам.",
+      "confirm": "Вы уверены, что хотите выполнить это действие?",
+      "ports": {
+        "copied": "{what} скопировано",
+        "copyList": "Копировать список",
+        "count": "{n} портов",
+        "firewall": "Команды брандмауэра (ufw)",
+        "hint": "Все порты, которые должны быть открыты в интернет на этом сервере, в виде, готовом для брандмауэра.",
+        "lead": "Откройте эти порты в брандмауэре вашего сервера (или облачного провайдера), чтобы пользователи могли подключаться.",
+        "none": "нет",
+        "openProxy": "Открыть этот пользовательский прокси",
+        "refresh": "Обновить",
+        "title": "Публичные порты"
+      },
+      "reinstall": "Переустановить",
+      "reinstallHint": "Запустить полный установщик заново. Службы будут недоступны несколько минут.",
+      "resetCache": "Сбросить кэш",
+      "resetCacheDone": "Кэш очищен",
+      "resetCacheFailed": "Не удалось сбросить кэш",
+      "resetCacheHint": "Очистить кэшированные данные панели и отрендеренные шаблоны. Безопасно; перезапуск служб не требуется.",
+      "restart": "Перезагрузить систему",
+      "restartHint": "Перезапустить все службы. Активные соединения будут разорваны.",
+      "status": "Статус",
+      "statusHint": "Проверить состояние всех служб и показать журнал проверки.",
+      "subtitle": "Обслуживание и системные операции этой панели.",
+      "title": "Действия",
+      "update": "Обновить",
+      "updateHint": "Обновить панель и все службы до последней версии.",
+      "viewlogs": "Просмотр журналов",
+      "viewlogsHint": "Просмотр файлов системных журналов."
+    },
+    "admins": {
+      "add": "Добавить админа",
+      "canAddHint": "Этот админ может создавать собственных субадминов",
+      "canAddShort": "Добавляет субадминов",
+      "clearSearch": "Очистить поиск",
+      "col": {
+        "link": "Админ-ссылка",
+        "mode": "Режим",
+        "name": "Имя",
+        "note": "Заметка",
+        "subAdmins": "Субадмины",
+        "users": "Пользователи"
+      },
+      "collapse": "Скрыть субадминов {name}",
+      "copyLink": "Копировать ссылку",
+      "credentials": {
+        "copyMessage": "Копировать сообщение",
+        "copyMessageHint": "Копирует сообщение вместе с QR-кодом",
+        "createdTitle": "{name} готов",
+        "done": "Готово",
+        "lead": "Отправьте это админу. Он откроет ссылку и войдёт с паролем.",
+        "link": "Админ-ссылка",
+        "message": "Чтобы войти, откройте ссылку:\n{link}\nи войдите с паролем: {password}",
+        "messageAlias": "Чтобы войти, откройте ссылку:\n{link}\nи войдите с именем пользователя: {alias}\nи паролем: {password}",
+        "messageLabel": "Сообщение для отправки",
+        "once": "Пароль показывается только сейчас. Скопируйте его, прежде чем закрыть; иначе сбросьте его снова.",
+        "password": "Пароль",
+        "resetTitle": "Новый пароль для {name}",
+        "show": "Показать пароль",
+        "username": "Имя пользователя"
+      },
+      "deleteMessage": "Этот админ будет удалён, а его пользователи перейдут к вам.",
+      "deleteMessageWithSubs": "Этот админ и его субадмин ({count}) будут удалены, а их пользователи перейдут к вам. | Этот админ и его субадмины ({count}) будут удалены, а их пользователи перейдут к вам.",
+      "deleteTitle": "Удалить {name}?",
+      "deleted": "{name} удалён",
+      "empty": {
+        "cta": "Добавьте первого админа",
+        "text": "Добавьте агентов, чтобы разделить работу. У каждого будут своя ссылка, пароль и лимиты.",
+        "textNoPermission": "У вас нет прав добавлять админов. Обратитесь к вышестоящему админу, если это нужно.",
+        "title": "Субадминов пока нет"
+      },
+      "expand": "Показать субадминов {name}",
+      "filter": {
+        "anyMode": "Любой режим",
+        "anySub": "Любое разрешение",
+        "canAdd": "Может добавлять субадминов",
+        "cannotAdd": "Не может добавлять субадминов",
+        "clear": "Сбросить фильтры",
+        "mode": "Фильтр по режиму",
+        "sub": "Фильтр по праву на субадминов"
+      },
+      "form": {
+        "advanced": "Дополнительно",
+        "advancedHint": "Под {name}",
+        "alias": "Имя пользователя для входа",
+        "aliasHint": "С именем пользователя вход выполняется по имени и паролю, а общие ссылки не содержат ID.",
+        "canAddAdmin": "Может добавлять субадминов",
+        "canAddAdminHint": "Позволяет этому админу создавать собственных агентов в рамках его лимитов.",
+        "configs": "Конфигурации для пользователей этого админа",
+        "configsCount": "{n} конфигурация | {n} конфигураций",
+        "configsHint": "Добавляются в подписку каждого пользователя этого админа и его субадминов.",
+        "create": "Создать админа",
+        "createSubtitle": "Создаёт агента. Для него генерируется надёжный пароль.",
+        "createTitle": "Новый админ",
+        "editSubtitle": "Изменения применяются сразу.",
+        "editTitle": "Изменить {name}",
+        "emptyNoLimit": "Оставьте пустым для отсутствия лимита",
+        "limits": "Лимиты",
+        "limitsHint": "Считаются по пользователям этого админа и всех его субадминов. При достижении лимита новых пользователей добавить нельзя.",
+        "name": "Имя",
+        "namePlaceholder": "напр. Отдел продаж",
+        "nameRequired": "Требуется имя",
+        "newUuid": "Новый UUID",
+        "noLimit": "Без ограничений",
+        "note": "Заметка",
+        "notePlaceholder": "Видна только вышестоящим админам",
+        "optional": "необязательно",
+        "outbound": "Исходящее подключение по умолчанию",
+        "outboundHint": "Через какое подключение выходят пользователи этого админа (и его субадминов), если пользователь не выбрал другое.",
+        "parent": "Родительский админ",
+        "parentHint": "Новый админ, его пользователи и лимиты находятся под этим админом.",
+        "passwordInfo": "Надёжный пароль создаётся автоматически. Вы сможете скопировать его вместе со ссылкой для входа сразу после сохранения.",
+        "placement": "Место в команде",
+        "superNoLimits": "У суперадминов нет лимитов.",
+        "upTo": "До {max} (ваш лимит)",
+        "uuidHint": "Генерируется автоматически. Меняйте только чтобы повторно использовать известный ID.",
+        "uuidInvalid": "Это недопустимый UUID"
+      },
+      "limit": {
+        "max_active_users": "Макс. активных пользователей",
+        "max_online_users": "Макс. пользователей онлайн",
+        "max_total_usage_GB": "Макс. использованный трафик (всего)",
+        "max_users": "Макс. всего пользователей"
+      },
+      "linkDialog": {
+        "pwHint": "Пароли больше не показываются. Чтобы выдать новый, сбросьте его.",
+        "pwNone": "Пароля нет: вход только по этой ссылке",
+        "pwSet": "Вход по этой ссылке и паролю",
+        "title": "Админ-ссылка {name}",
+        "username": "Имя пользователя",
+        "usernameHint": "Эта ссылка открывает страницу входа; он входит с этим именем пользователя и своим паролем."
+      },
+      "meLocked": "Это вы: здесь можно изменить только конфигурации ваших пользователей. Пароль меняется в разделе «Мой аккаунт».",
+      "meter": {
+        "active": "Активные",
+        "activeHint": "Пользователи, которые включены и у которых остались дни и трафик, из разрешённого числа",
+        "online": "Онлайн",
+        "onlineHint": "Пользователи, замеченные за последние 24 часа, из разрешённого числа",
+        "total": "Всего",
+        "totalHint": "Все пользователи, из разрешённого числа",
+        "traffic": "Трафик",
+        "trafficHint": "Трафик, использованный всеми этими пользователями, из разрешённого общего объёма"
+      },
+      "mode": {
+        "admin": "Админ",
+        "agent": "Агент",
+        "super_admin": "Суперадмин"
+      },
+      "more": "Другие действия",
+      "myConfigs": "Конфигурации для моих пользователей",
+      "myConfigsHint": "Конфигурации для моих пользователей: добавляются в подписку всех ваших пользователей и пользователей ваших субадминов",
+      "noMatch": "Нет админов, подходящих под фильтры",
+      "outbound": {
+        "auto": "Автоматически",
+        "inherit": "Как выше: {name}"
+      },
+      "refresh": "Обновить",
+      "resetMessage": "Будет сгенерирован новый пароль, а старый сразу перестанет работать.",
+      "resetPassword": "Сбросить пароль",
+      "resetTitle": "Сбросить пароль {name}?",
+      "saved": "{name} сохранён",
+      "search": "Поиск по имени или UUID",
+      "showLink": "Админ-ссылка",
+      "subCount": "{n} субадмин | {n} субадминов",
+      "subtitle": "Ваша команда админов в виде дерева. Лимиты каждого админа охватывают его пользователей и всех, кто ниже.",
+      "summary": {
+        "admins": "админ | админов",
+        "online": "онлайн",
+        "users": "пользователь | пользователей"
+      },
+      "title": "Админы",
+      "you": "Вы"
+    },
+    "appTitle": "HiddifyManager",
+    "apply": {
+      "action": {
+        "apply": {
+          "button": "Применить сейчас",
+          "desc": "Применяет изменения настроек, пользователей и доменов. Быстро; обычный выбор после любых изменений.",
+          "done": "Изменения применены",
+          "running": "Применение изменений",
+          "title": "Применить изменения"
+        },
+        "install": {
+          "button": "Переустановить",
+          "confirm": "Всё будет установлено заново. Соединения могут прерваться на несколько минут. Продолжить?",
+          "desc": "Устанавливает всё заново и пересобирает все службы. Используйте, когда применения недостаточно, например после смены пути панели или протоколов.",
+          "done": "Переустановка завершена",
+          "running": "Переустановка",
+          "title": "Переустановить"
+        },
+        "restart": {
+          "button": "Перезапуск",
+          "confirm": "Все службы перезапустятся. Соединения ненадолго прервутся. Продолжить?",
+          "desc": "Перезапускает все службы Hiddify без переустановки. Хороший первый шаг, если что-то работает неправильно.",
+          "done": "Службы перезапущены",
+          "running": "Перезапуск служб",
+          "title": "Перезапустить службы"
+        },
+        "status": {
+          "button": "Проверить сейчас",
+          "desc": "Показывает, работает ли каждая служба, а также публичный IP сервера и Warp. Ничего не меняет.",
+          "done": "Статус проверен",
+          "running": "Проверка статуса",
+          "title": "Проверить статус"
+        },
+        "update": {
+          "button": "Обновить",
+          "confirm": "Hiddify будет обновлён до последней версии. Панель перезапустится, соединения могут прерваться на несколько минут. Продолжить?",
+          "desc": "Скачивает и устанавливает последнюю версию Hiddify, затем применяет её. Это занимает время; в конце панель перезапустится.",
+          "done": "Обновление завершено",
+          "running": "Обновление",
+          "title": "Обновить Hiddify"
+        }
+      },
+      "busyOutside": "На сервере сейчас что-то выполняется.",
+      "lastRun": "Последний запуск {when}",
+      "log": {
+        "clear": "Очистить",
+        "clearConfirm": "Очистить «{name}»? Его текст будет удалён с сервера.",
+        "clearFailed": "Не удалось очистить журнал",
+        "cleared": "Журнал очищен",
+        "copied": "Журнал скопирован",
+        "download": "Скачать",
+        "empty": "Пока ничего…",
+        "follow": "Последние",
+        "hide": "Скрыть журнал",
+        "loading": "Загрузка…",
+        "show": "Показать журнал",
+        "showingEnd": "показан конец",
+        "terminal": "журнал",
+        "wrap": "Переносить строки"
+      },
+      "logs": {
+        "clearAll": "Очистить всё",
+        "clearAllConfirm": "Очистить все файлы журналов? Текст будет удалён с сервера (журнал, который сейчас пишет запущенное действие, сохраняется).",
+        "clearFailed": "Не удалось очистить некоторые журналы",
+        "clearSkipped": "Сохранено используемых: {n}",
+        "clearedAll": "Журналы очищены",
+        "empty": "Журналов пока нет",
+        "sub": "Что делало каждое действие, по данным сервера.",
+        "title": "Журналы",
+        "view": "Открыть"
+      },
+      "minutes": "~{n} мин",
+      "notStarted": "Не удалось запустить",
+      "recommended": "рекомендуется",
+      "run": {
+        "dontClose": "Вы можете покинуть эту страницу; процесс продолжит работать на сервере.",
+        "hide": "Скрыть",
+        "links": "Админ-ссылки на ваших доменах (они могли измениться)",
+        "reconnecting": "Панель перезапускается, повторное подключение…",
+        "reload": "Панель обновлена. Перезагрузите страницу, чтобы использовать новую версию.",
+        "reloadBtn": "Перезагрузить",
+        "stalled": "Долгое время в журнале нет ничего нового. Проверьте журнал ниже.",
+        "starting": "Запуск…",
+        "waitingStart": "Ожидание запуска…",
+        "working": "Выполняется…"
+      },
+      "subtitle": "Применить изменения, обновить сервер и посмотреть, как всё работает",
+      "takes": "Примерное время выполнения",
+      "title": "Применение и статус",
+      "watch": "Следить"
+    },
+    "applyNotice": {
+      "apply": "Сохранено. Примените конфигурации, чтобы изменения вступили в силу.",
+      "later": "Позже",
+      "reinstall": "Сохранено. Для вступления некоторых изменений в силу нужна переустановка.",
+      "update": "Сохранено. Канал обновлений изменён; запустите обновление, чтобы переключиться."
+    },
+    "backup": {
+      "auto": {
+        "connect": "Подключить Telegram",
+        "deleteFailed": "Не удалось удалить",
+        "deleteMessage": "Резервная копия от {when} будет удалена с сервера.",
+        "deleteTitle": "Удалить эту резервную копию?",
+        "download": "Скачать",
+        "empty": "На сервере пока нет резервных копий",
+        "latest": "последняя",
+        "restore": "Восстановить эту",
+        "showAll": "Показать все ({n})",
+        "showLess": "Показать меньше",
+        "sub": "Создаются автоматически время от времени, а также когда вы сохраняете копию здесь.",
+        "telegramOff": "Автоматические резервные копии можно также получать в Telegram.",
+        "telegramOn": "Каждая автоматическая резервная копия также отправляется вам в Telegram.",
+        "title": "Резервные копии на сервере"
+      },
+      "count": {
+        "admins": "админы",
+        "custom_proxies": "пользовательские прокси",
+        "domains": "домены",
+        "nodes": "узлы",
+        "settings": "настройки",
+        "users": "пользователи"
+      },
+      "restore": {
+        "advanced": "Дополнительно",
+        "change": "Выбрать другую",
+        "confirmMessage": "Эти части панели будут заменены: {parts}. Сначала сделайте резервную копию, если они могут понадобиться.",
+        "confirmTitle": "Восстановить эту резервную копию?",
+        "drop": "Перетащите сюда файл резервной копии",
+        "dropHint": "или нажмите, чтобы выбрать резервную копию .json",
+        "fromFile": "С вашего устройства",
+        "fromServer": "С этого сервера",
+        "notJson": "Выберите файл резервной копии .json",
+        "part": {
+          "domains": "Домены",
+          "domainsHint": "Домены, их сертификаты и пользовательские прокси",
+          "settings": "Настройки",
+          "settingsHint": "Настройки панели, прокси и их конфигурации",
+          "users": "Пользователи",
+          "usersHint": "Пользователи, их трафик и лимиты, а также админы"
+        },
+        "pathChanges": "Эта резервная копия создана в другой панели: после восстановления админ-ссылка изменится. Новые ссылки будут показаны по завершении.",
+        "replaceOwner": "Сохранить GUID владельца резервной копии",
+        "replaceOwnerHint": "Владелец этой панели получит GUID владельца резервной копии, поэтому старые админ-ссылки продолжат работать. Работает без восстановления пользователей. Ваша текущая админ-ссылка изменится.",
+        "run": "Восстановить",
+        "running": "Восстановление резервной копии",
+        "sub": "Восстановите резервную копию из этой или другой панели.",
+        "title": "Восстановление",
+        "unreadable": "Этот файл не является резервной копией Hiddify",
+        "whatHappens": "Восстановление заменяет выбранное, а затем переустанавливает конфигурации сервера. Вы можете следить за ходом; это занимает несколько минут."
+      },
+      "save": {
+        "created": "Резервная копия сохранена на сервере",
+        "download": "Скачать резервную копию",
+        "downloaded": "Резервная копия скачана",
+        "failed": "Не удалось создать резервную копию",
+        "onServer": "Сохранить на сервере",
+        "secret": "Файл содержит пароли, ссылки пользователей и приватные ключи. Храните его в безопасном месте.",
+        "sub": "Всё в одном файле: настройки, пользователи, админы, домены, прокси и сертификаты.",
+        "title": "Создать резервную копию"
+      },
+      "subtitle": "Сохраните копию всей панели и восстановите её, когда понадобится",
+      "title": "Резервное копирование и восстановление"
+    },
+    "baseConfig": {
+      "builtinDefaultHint": "Встроенная базовая конфигурация, синхронизированная из каталога. Включите собственное содержимое, чтобы редактировать её.",
+      "builtinReadOnly": "Встроенная базовая конфигурация: можно изменить только имя и состояние включения. Дублируйте её для полного редактирования.",
+      "content": "Полная конфигурация",
+      "core": "Ядро",
+      "description": "Описание",
+      "listTitle": "Базовые конфигурации",
+      "name": "Имя",
+      "new": "Новая базовая конфигурация",
+      "side": "Сторона",
+      "version": "Версия"
+    },
+    "common": {
+      "actions": "Действия",
+      "add": "Добавить",
+      "back": "Назад",
+      "cancel": "Отмена",
+      "collapse": "меньше",
+      "confirmDelete": "Вы уверены, что хотите удалить этот элемент?",
+      "copied": "Скопировано",
+      "copy": "Копировать",
+      "delete": "Удалить",
+      "deleted": "Успешно удалено",
+      "disabled": "Отключено",
+      "duplicate": "Дублировать",
+      "edit": "Изменить",
+      "enabled": "Включено",
+      "filter": "Фильтр",
+      "filteredOf": "Отфильтровано: показано {n} из {total}",
+      "format": "Форматировать",
+      "loadFailed": "Не удалось загрузить данные",
+      "no": "Нет",
+      "noMatch": "Ничего не соответствует этим фильтрам",
+      "noMatchHint": "Попробуйте убрать фильтр или изменить поиск.",
+      "resetFilters": "Сбросить фильтры",
+      "save": "Сохранить",
+      "saveFailed": "Не удалось сохранить",
+      "saved": "Успешно сохранено",
+      "search": "Поиск...",
+      "validate": "Проверить",
+      "validationFailed": "Проверка не пройдена",
+      "validationOk": "Проверка пройдена",
+      "yes": "Да"
+    },
+    "dashboard": {
+      "allNodes": "Все узлы",
+      "available": "Доступно",
+      "averageHint": "Среднее число пользователей онлайн в день, только по дням, когда кто-то был онлайн.",
+      "breakdown": "Детализация",
+      "cached": "В кэше",
+      "clickForProcesses": "Нажмите, чтобы показать самые тяжёлые процессы",
+      "collapse": "Свернуть подробности",
+      "connections": "Соединения",
+      "core": "Ядро {index}",
+      "cpu": "CPU",
+      "cpuCores": "CPU · ядер: {count}",
+      "dailyOnline": "Пользователи онлайн по дням",
+      "dailyUsage": "Трафик по дням",
+      "disk": "Диск",
+      "download": "Загрузка",
+      "downloadSinceBoot": "Загрузка с момента запуска",
+      "durationDaysHours": "{days} д {hours} ч",
+      "durationHoursMinutes": "{hours} ч {minutes} мин",
+      "durationMinutes": "{minutes} мин",
+      "enabledUsers": "Включённые пользователи",
+      "expand": "Развернуть подробности",
+      "free": "Свободно",
+      "hiddify": "Hiddify",
+      "hiddifyData": "Данные Hiddify",
+      "hostname": "Хост",
+      "inFiveMinutes": "За последние 5 минут",
+      "lastNDays": "Последние {days} дн.",
+      "lastdayOnline": "Онлайн за последний день",
+      "liveThroughput": "Текущая пропускная способность",
+      "liveUpdated": "Онлайн · обновлено {time}",
+      "load15m": "15 мин",
+      "load1m": "1 мин",
+      "load5m": "5 мин",
+      "loadAverage": "Средняя нагрузка",
+      "loadFailed": "Не удалось загрузить данные панели",
+      "loadFailedHint": "Панель управления не смогла связаться с API панели. Проверьте, что вы всё ещё авторизованы.",
+      "modeAverage": "Среднее",
+      "modePeak": "Пик",
+      "modeUnique": "Уникальные",
+      "monthUsage": "Трафик за месяц",
+      "monthUsers": "Месяц",
+      "monthlyAverage": "Среднее за месяц",
+      "monthlyOnline": "Онлайн за месяц",
+      "nDays": "{days} д",
+      "network": "Сеть",
+      "noData": "Данных пока нет",
+      "node": "Узел",
+      "nodeHealth": "Состояние узлов",
+      "nodeHealthHint": "Текущие CPU, RAM и диск из API каждого узла",
+      "nodeHealthStackedHint": "CPU, RAM и диск по узлам с накоплением",
+      "nodeNetworkHint": "Текущая отдача и загрузка по узлам",
+      "nodeOffline": "Офлайн",
+      "nodeOnline": "Онлайн",
+      "nodeUnreachable": "Не удалось связаться с этим узлом",
+      "none": "Нет",
+      "onlineEnabledUsers": "Онлайн / активные пользователи",
+      "onlineNow": "Сейчас онлайн",
+      "onlineOnDay": "Онлайн: {count}",
+      "onlineToday": "Онлайн сегодня: {count} / {total}",
+      "onlineUsers": "Пользователи онлайн",
+      "panelVersion": "Версия панели",
+      "pause": "Пауза",
+      "paused": "Обновление в реальном времени приостановлено",
+      "peakDay": "Пиковый день",
+      "peakHint": "Максимум пользователей онлайн за один день.",
+      "perCore": "По ядрам",
+      "perDay": "{value} / день",
+      "ram": "RAM",
+      "range": "Период истории",
+      "refresh": "Обновить сейчас",
+      "resume": "Онлайн",
+      "rollingAverage": "Среднее за 7 дней",
+      "subtitle": "Трафик, пользователи и состояние сервера с первого взгляда",
+      "swap": "Swap",
+      "thisServer": "Этот сервер",
+      "title": "Панель управления",
+      "today": "Сегодня",
+      "todayOnline": "Онлайн сегодня",
+      "todayUsage": "Трафик за сегодня",
+      "topFolders": "Самые большие папки",
+      "topProcesses": "Самые тяжёлые процессы",
+      "totalUsage": "Общий трафик",
+      "totalUsers": "Всего пользователей",
+      "uniqueHint": "Уникальные пользователи за каждый период, вся панель.",
+      "uniqueIps": "Уникальные IP",
+      "uniqueMonth": "Уникальных пользователей за 30 дней",
+      "uniqueWeek": "Уникальных пользователей за 7 дней",
+      "upload": "Отдача",
+      "uploadSinceBoot": "Отдача с момента запуска",
+      "uptime": "Время работы",
+      "usageComparison": "Сравнение трафика",
+      "usageComparisonHint": "Сегодня и вчера в сравнении со средним за день за неделю и месяц",
+      "usageOnDay": "Трафик: {value}",
+      "usageStackedHint": "Трафик по узлам с накоплением · общий показан заливкой",
+      "usageTrend": "Динамика трафика",
+      "used": "Использовано",
+      "usersComparison": "Сравнение пользователей",
+      "usersComparisonHint": "Уникальные пользователи за период",
+      "usersSummary": "Пользователей: {total} · включено: {enabled}",
+      "usersTrend": "Динамика пользователей",
+      "vsPreviousMonth": "по сравнению с предыдущими 30 днями",
+      "vsPreviousWeek": "по сравнению с предыдущими 7 днями",
+      "vsYesterday": "по сравнению со вчера",
+      "weekUsage": "Трафик за неделю",
+      "weekUsers": "Неделя",
+      "weeklyAverage": "Среднее за неделю",
+      "weeklyOnline": "Онлайн за неделю",
+      "yesterday": "Вчера"
+    },
+    "domain": {
+      "addFailed": "Не удалось добавить домен",
+      "addTitle": "Добавить домен",
+      "alias": "Псевдоним",
+      "domain": "Домен",
+      "mode": "Режим"
+    },
+    "domains": {
+      "add": "Добавить домен",
+      "advanced": "Дополнительно",
+      "badge": {
+        "cdnIp": "Принудительные IP",
+        "frontingHint": "Domain fronting: в конфигурациях показывается это имя вместо домена",
+        "resolveIp": "IP"
+      },
+      "cert": {
+        "failed": "Не удалось получить сертификат",
+        "failedHint": "Пока не удастся выпустить настоящий, используется самоподписанный сертификат.",
+        "ok": "Сертификат выпущен",
+        "okHint": "Пользователи подключаются с настоящим доверенным сертификатом. Он продлевается автоматически.",
+        "retry": "Повторить",
+        "secondsLeft": "около {n} с",
+        "steps": {
+          "contact": "Связь с Let's Encrypt",
+          "install": "Установка",
+          "verify": "Проверка домена"
+        },
+        "timeout": "Сертификат всё ещё ожидается",
+        "timeoutHint": "Это занимает больше времени, чем обычно; процесс продолжается в фоне, и страница обновится по его завершении.",
+        "tips": {
+          "cdn": "Let's Encrypt отклоняет слишком много запросов за короткое время; повторите позже.",
+          "dns": "Домен должен указывать на этот сервер (или на CDN перед ним).",
+          "port80": "Порт 80 должен быть доступен из интернета."
+        },
+        "waiting": "Получение сертификата…"
+      },
+      "copyDomain": "Копировать домен",
+      "deleteMessage": "Его конфигурации перестанут работать у всех пользователей. Должен остаться хотя бы один домен.",
+      "deleteTitle": "Удалить {name}?",
+      "deleted": "{name} удалён",
+      "drag": "Перетащите, чтобы изменить порядок",
+      "editTitle": "Изменить домен",
+      "field": {
+        "alias": "Отображаемое имя",
+        "aliasHint": "Показывается в приложениях пользователей вместо домена.",
+        "cdnIp": "🔂 Принудительно использовать в конфигурациях эти IP / домены",
+        "cdnIpHint": "Подставляются в ссылки пользователей вместо IP домена; разделяйте запятыми или переводами строки. Шаблоны оператора тоже работают.",
+        "domain": "Домен",
+        "domainInvalid": "Это не похоже на домен",
+        "domainRequired": "Введите домен",
+        "downloadDomain": "📈 Домен загрузки",
+        "downloadDomainHint": "Только для XHTTP: загрузка может идти с другого домена, чем отдача. Сложнее обнаружить, часто быстрее.",
+        "ech": "🔐 ECH",
+        "echHint": "Получать и использовать Encrypted Client Hello для этого домена CDN.",
+        "echNeedsSetting": "Сначала включите TLS ECH в настройках панели.",
+        "extra": "Дополнительные параметры",
+        "extraInvalid": "Недопустимый JSON",
+        "extraObject": "Должен быть JSON-объект",
+        "fronting": "🎭 Domain fronting",
+        "frontingHint": "Необязательно. Приложения пользователей показывают одно из этих имён (SNI) вместо вашего домена, поэтому фильтр видит только другой сайт. Используйте сайты на том же CDN, что и ваш домен (например, другие сайты Cloudflare). Пусто: без fronting.",
+        "frontingPlaceholder": "another-site.com, cdn-site.net",
+        "hostnamesInvalid": "Укажите имена хостов через запятую, например site.com",
+        "mode": "Режим",
+        "none": "Нет",
+        "ports": "Порты шлюза",
+        "portsHint": "Порты, на которые пользователи подключаются к SNI и L7-прокси этого домена: один порт TLS и один порт HTTP. Пусто: по умолчанию. Брандмауэр перенаправляет их на 443 / 80, поэтому на сервере ничто не должно их слушать, а порт TLS не может быть портом HTTP другого домена.",
+        "proxies": "Пользовательские прокси",
+        "relayNeedsIp": "Relay без настоящего сертификата требует IP relay-сервера в разделе «Дополнительно» → «Принудительные IP».",
+        "resolveIp": "🔢 Разрешать IP",
+        "resolveIpHint": "Использовать в прокси IP вместо доменного имени. Полезно при проблемах с DNS.",
+        "serverDomain": "Домен сервера",
+        "serverDomainHint": "Домен вышестоящего сервера для этой записи. Должен быть допустимым доменом Direct или Relay.",
+        "servernames": "Имена серверов",
+        "servernamesHint": "Сайты, чей TLS заимствует Reality, через запятую. Пусто: сам домен.",
+        "showAll": "Все домены",
+        "showDomains": "Показывать конфигурации",
+        "showDomainsHint": "Пользователи, открывающие свою страницу на этом домене, видят конфигурации этих доменов.",
+        "tlsMode": "Режим TLS"
+      },
+      "getCert": "Получить сертификат",
+      "howto": "Порядок важен: перетащите (или используйте стрелки) для сортировки. Конфигурации перечисляют домены в этом порядке, а первый используется для ссылок панели.",
+      "howtoFiltered": "Очистите поиск и фильтры, чтобы изменить порядок.",
+      "ips": {
+        "elsewhere": "другой сервер / CDN",
+        "none": "Для этого домена не найдено DNS-записи.",
+        "thisServer": "этот сервер",
+        "title": "Куда указывает (DNS)"
+      },
+      "kind": {
+        "cdn": {
+          "desc": "Ваш домен проходит через CDN, например Cloudflare (оранжевое облако / прокси включён). Скрывает IP этого сервера и продолжает работать при блокировке IP.",
+          "name": "CDN"
+        },
+        "direct": {
+          "desc": "Ваш домен указывает прямо на IP этого сервера. Если он на Cloudflare (или похожем DNS), держите облако выключенным: только DNS.",
+          "name": "Direct"
+        },
+        "relay": {
+          "desc": "Пользователи подключаются к другому серверу-посреднику, который передаёт их трафик на этот. Домен указывает на этот промежуточный сервер.",
+          "name": "Relay"
+        },
+        "sublink": {
+          "desc": "Только для ссылок подписки пользователей, без прокси. Лучше за CDN: если ваши прокси-домены заблокируют, пользователи всё равно смогут обновить подписку и получить новые рабочие конфигурации.",
+          "name": "Только подписка"
+        },
+        "worker": {
+          "desc": "Для этого домена автоматически создаются Cloudflare workers.",
+          "name": "Cloudflare Worker"
+        }
+      },
+      "more": "Ещё",
+      "moveDown": "Вниз",
+      "moveUp": "Вверх",
+      "noMatch": "Нет доменов, подходящих под фильтры",
+      "noName": "(без имени)",
+      "notChanged": "Не изменено",
+      "openPanel": "Открыть панель на этом домене",
+      "port": {
+        "busy": "его слушает другая программа ({name})",
+        "checking": "проверка…",
+        "default": "по умолчанию",
+        "free": "свободен",
+        "invalid": "недопустимый порт",
+        "system": "системный порт",
+        "unknown": "не удалось проверить этот порт",
+        "usedByDomain": "используется {name} для другого протокола",
+        "usedByGateway": {
+          "http": "порт HTTP-шлюза",
+          "tls": "порт TLS-шлюза"
+        },
+        "usedByProxy": "используется прокси {name}",
+        "usedBySetting": "используется: {name}"
+      },
+      "proxies": {
+        "auto": "Автоматически",
+        "autoHint": "Все прокси, подходящие этому домену",
+        "autoShort": "автоматически",
+        "group": {
+          "ip": "На основе IP",
+          "l7": "L7-шлюз",
+          "sni": "SNI-шлюз"
+        },
+        "noneFit": "Ни один пользовательский прокси не подходит для этого типа домена; используются встроенные прокси.",
+        "noneTicked": "Ничего не выбрано: работает как «Автоматически».",
+        "off": "выкл.",
+        "pick": "Выбрать",
+        "pickHint": "Только выбранные вами прокси",
+        "rule": "Один SNI-прокси или L7-прокси; их нельзя смешивать. Прокси на основе IP подходят к любому варианту.",
+        "selectAll": "Выбрать все",
+        "selectNone": "Снять выбор",
+        "sniOne": " · не более одного"
+      },
+      "readMore": "Подробнее",
+      "renewCert": "Продлить сертификат",
+      "saved": "{name} сохранён",
+      "search": "Поиск по домену или имени",
+      "stats": {
+        "all": "доменов",
+        "attention": "нужен сертификат",
+        "decoy": "decoy TLS",
+        "valid": "сертификаты в порядке"
+      },
+      "subtitle": "Адреса, к которым подключаются пользователи, способ доступа каждого к этому серверу и их сертификаты",
+      "title": "Домены",
+      "tls": {
+        "decoy": "Decoy TLS",
+        "decoyHint": "Для фейковых доменов и доменов Reality TLS собственный сертификат не нужен.",
+        "expired": "Истёк",
+        "expiredHint": "Срок действия сертификата истёк.",
+        "expires": "Истекает",
+        "expiresIn": "Осталось дней: {n}",
+        "invalid": "Недействителен",
+        "invalidHint": "Сертификат не соответствует этому домену.",
+        "issuer": "Выдавший",
+        "missing": "Нет сертификата",
+        "missingHint": "Сертификата пока нет.",
+        "running": "Получение сертификата",
+        "self_signed": "Самоподписанный",
+        "self_signedHint": "Временный самоподписанный сертификат: приложения предупреждают или отказывают. Получите настоящий.",
+        "valid": "Действителен",
+        "validHint": "Настоящий сертификат; продлевается автоматически."
+      },
+      "tlsMode": {
+        "dns": "DNS",
+        "dnsHint": "Только DNS-туннель.",
+        "fake": "Fake",
+        "fakeHint": "Decoy TLS с именем фейкового сайта (например, soft98.ir) для обхода белого списка SNI. Не рекомендуется.",
+        "fakeProxyNote": "Этот домен является fake-TLS именем встроенного сервера и синхронизируется с его настройкой. У него нет пользовательских прокси и домена загрузки.",
+        "locked": "Этот режим всегда использует действительный сертификат.",
+        "other": "Другое",
+        "otherHint": "Fake-TLS фронт-домены серверов Telegram, ShadowTLS и Shadowsocks FakeTLS. По одному каждого.",
+        "reality": "Reality",
+        "realityHint": "Заимствует TLS чужого сайта по протоколу Reality; таких доменов может быть много.",
+        "shadowtls": "ShadowTLS",
+        "shadowtlsHint": "Фейковый домен сервера ShadowTLS.",
+        "ssfaketls": "SS FakeTLS",
+        "ssfaketlsHint": "Фейковый домен сервера Shadowsocks FakeTLS.",
+        "taken": "Уже добавлен",
+        "telegram": "Telegram-прокси",
+        "telegramHint": "Фейковый домен Telegram MTProxy.",
+        "valid": "Действительный TLS",
+        "validHint": "Настоящий сертификат, выдаётся автоматически."
+      },
+      "warning": "Сохранено, с предупреждением",
+      "wizard": {
+        "add": "Добавить домен",
+        "added": "{name} добавлен",
+        "aliasLead": "Короткое имя, которое показывается в приложениях для конфигураций этого домена.",
+        "aliasQ": "Что должны видеть пользователи?",
+        "check": "Проверить",
+        "checking": "Проверка DNS…",
+        "continueBackground": "Закрыть (процесс продолжится)",
+        "dnsHint": "В DNS добавьте для этого домена запись ниже (значение — адрес этого сервера).",
+        "dnsTitle": "Направьте его на этот сервер",
+        "finish": "Готово",
+        "found": {
+          "cdn": "Находится за {cdn}.",
+          "direct": "Указывает прямо на этот сервер ({ips}).",
+          "external": "Указывает на другой сервер ({ips}): подходит для Reality, relay или Fake TLS.",
+          "externalNotFriendly": "Указывает на другой сервер ({ips}), но этот сайт не подходит для Reality (нужны TLS 1.3 и HTTP/2).",
+          "unresolved": "DNS-записи пока нет. Сначала добавьте её у своего DNS-провайдера или используйте домен с Fake TLS."
+        },
+        "mismatch": {
+          "cdn": "Домен не похож на находящийся за CDN. Включите режим прокси у вашего CDN-провайдера.",
+          "direct": "Для Direct домен должен указывать на IP этого сервера. При сохранении это проверится снова.",
+          "reality": "Для Reality нужен настоящий сайт, который разрешается.",
+          "relay": "Relay-домен указывает на промежуточный сервер, а не на этот.",
+          "sublink": "Домен должен указывать на этот сервер или CDN.",
+          "worker": "Для workers домен должен быть на Cloudflare."
+        },
+        "modeQ": "Как это настроено?",
+        "moreSettings": "Больше настроек",
+        "nameLead": "Введите домен или поддомен. Мы проверим его DNS и предложим подходящий режим.",
+        "nameQ": "Какой домен?",
+        "next": "Далее",
+        "noCert": "Запрос сертификата не потребовался.",
+        "noCertDecoy": "Для Fake и Reality TLS сертификат не нужен. Примените изменения, чтобы начать использовать.",
+        "recommended": "подходит",
+        "saving": "Сохранение и проверка…",
+        "steps": {
+          "alias": "Имя",
+          "cert": "Сертификат",
+          "mode": "Режим",
+          "name": "Домен"
+        },
+        "taken": "Этот домен уже добавлен",
+        "title": "Добавить домен",
+        "tlsQ": "Какой TLS?",
+        "unlikely": "DNS не совпадает"
+      }
+    },
+    "donation": {
+      "close": "Закрыть",
+      "copied": "Адрес {name} скопирован",
+      "copiedShort": "Скопировано",
+      "qr": "QR-код",
+      "qrOf": "QR-код адреса {name}",
+      "showQr": "Показать QR-код для {name}",
+      "title": "Пожертвование"
+    },
+    "editor": {
+      "cannotFormatJinja": "Автоформатирование невозможно, пока есть теги Jinja",
+      "excludeBuiltinTemplates": "Исключить встроенные шаблоны из экспорта",
+      "exportBundle": "Экспортировать набор",
+      "includeTemplate": "Включить шаблон",
+      "insertVariable": "Вставить переменную",
+      "jinjaHint": "JSON5 + Jinja: используйте {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}",
+      "loadFailed": "Не удалось загрузить редактор. Проверьте соединение и перезагрузите страницу.",
+      "loading": "Загрузка редактора…",
+      "noVariables": "Нет переменных, подходящих под поиск",
+      "preview": "Предпросмотр",
+      "previewFailed": "Не удалось выполнить запрос предпросмотра",
+      "previewOk": "Предпросмотр успешно сформирован",
+      "previewParams": "Параметры предпросмотра",
+      "previewPartial": "Предпросмотр сформирован с предупреждениями",
+      "previewTitle": "Предпросмотр шаблона"
+    },
+    "footer": {
+      "text": "HiddifyManager"
+    },
+    "legacy": {
+      "loading": "Загрузка…",
+      "refresh": "Обновить",
+      "title": "Классическая страница админки"
+    },
+    "linkShare": {
+      "copyLink": "Копировать ссылку",
+      "domain": "Домен",
+      "download": "Скачать",
+      "kind": {
+        "auto": "Авто CDN",
+        "cdn": "CDN",
+        "current": "Текущий"
+      },
+      "link": "Ссылка",
+      "open": "Открыть"
+    },
+    "login": {
+      "brand": "Hiddify",
+      "error_expired": "Эта страница была открыта слишком долго. Войдите снова.",
+      "error_invalid": "ID, имя пользователя или пароль неверны. Проверьте их и повторите попытку.",
+      "error_locked": "Слишком много попыток из вашей сети. Подождите 15 минут и повторите.",
+      "hide": "Скрыть пароль",
+      "pageTitle": "Вход",
+      "password": "Пароль",
+      "passwordHint": "Оставьте пустым, если у вашей админ-ссылки нет пароля.",
+      "passwordPlaceholder": "Ваш пароль",
+      "show": "Показать пароль",
+      "signingIn": "Вход…",
+      "submit": "Войти",
+      "subtitle": "Панель администратора",
+      "tipLink": "При открытии вашей админ-ссылки ID подставляется автоматически.",
+      "tipLost": "Потеряли пароль? Попросите админа, который вас добавил, сбросить его.",
+      "title": "С возвращением",
+      "username": "ID админа или имя пользователя",
+      "usernameHint": "ID из вашей админ-ссылки или выданное вам имя пользователя.",
+      "usernamePlaceholder": "xxxxxxxx-xxxx-… или ваше имя пользователя"
+    },
+    "menu": {
+      "baseConfigs": "Базовые конфигурации",
+      "customProxies": "Прокси",
+      "dashboard": "Панель управления",
+      "group": {
+        "help": "Помощь",
+        "manager": "Менеджер",
+        "settings": "Настройки"
+      },
+      "myAccount": "Мой аккаунт",
+      "nodeHome": "Узел",
+      "outbounds": "Исходящие",
+      "protocols": "Протоколы",
+      "proxyEditor": "Редактор прокси",
+      "signOut": "Выйти",
+      "templateVariables": "Переменные шаблонов",
+      "templates": "Шаблоны",
+      "utils": "Утилиты"
+    },
+    "nodeHome": {
+      "connectedTo": "Этот узел подключён к родительской панели",
+      "managedOnParent": "Пользователи, админы и панель управления управляются в родительской панели. Здесь вы управляете только доменами, прокси и сервером этого узла.",
+      "noParent": "Этот узел ещё не подключён к родительской панели.",
+      "openParent": "Открыть панель управления родителя",
+      "subtitle": "Эта панель является узлом родительской панели.",
+      "title": "Узел",
+      "titleNamed": "Узел: {name}"
+    },
+    "nodes": {
+      "add": {
+        "connecting": "Подключение к узлу… это может занять до минуты.",
+        "linkHint": "Выглядит как https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
+        "linkInvalid": "Это не похоже на полную админ-ссылку. Она должна начинаться с https:// и содержать ID админа.",
+        "linkLabel": "Админ-ссылка узла",
+        "linkOk": "Узел на {host}",
+        "nameLabel": "Имя",
+        "namePlaceholder": "напр. Германия 1",
+        "optional": "необязательно",
+        "step1": "Откройте админ-панель сервера, который хотите добавить.",
+        "step2": "Скопируйте её полный адрес из адресной строки браузера.",
+        "step3": "Вставьте его ниже и нажмите «Подключить».",
+        "submit": "Подключить узел",
+        "success": "Узел подключён",
+        "title": "Добавить узел"
+      },
+      "addNode": "Добавить узел",
+      "checkConnection": "Проверить соединение",
+      "checking": "Проверка…",
+      "connection": "Соединение",
+      "differentVersion": "На узле версия {node}, на этой панели {panel}. Держите их на одной версии.",
+      "empty": {
+        "cta": "Добавьте первый узел",
+        "point1": "Пользователи и админы синхронизируются автоматически",
+        "point2": "Трафик собирается здесь",
+        "point3": "Один клик, чтобы открыть админку каждого узла",
+        "text": "Добавьте другой сервер Hiddify как узел, чтобы управлять всеми серверами из этой панели.",
+        "title": "Узлов пока нет"
+      },
+      "errors": {
+        "invalid_link": "Ссылка не является действительной админ-ссылкой.",
+        "rejected": "Узел отказался подключаться. Возможно, он уже принадлежит другой родительской панели или его версия слишком старая.",
+        "self": "Это ссылка этой панели. Используйте ссылку сервера узла.",
+        "timeout": "Узел слишком долго отвечал. Проверьте его и повторите попытку.",
+        "unreachable": "Не удалось связаться с узлом. Проверьте ссылку и убедитесь, что узел в сети."
+      },
+      "info": {
+        "fromNode": "Последнее сообщение от узла",
+        "lastUsage": "Последнее обновление трафика пользователей",
+        "noUsageYet": "Трафик пока не передан",
+        "toNode": "Последнее сообщение узлу",
+        "todayOnline": "Пользователи онлайн сегодня",
+        "todayTraffic": "Трафик за сегодня",
+        "usageReport": "{users} пользователь с трафиком, {traffic} | {users} пользователей с трафиком, {traffic}"
+      },
+      "justNow": "Только что",
+      "lastSeen": "Последний контакт",
+      "moreInfo": "Дополнительная информация",
+      "neverSeen": "Никогда",
+      "openAdmin": "Открыть",
+      "reachable": "Доступен",
+      "refresh": "Обновить",
+      "remove": "Удалить",
+      "removeMessage": "Узел будет удалён из этой панели вместе со своими доменами и снова станет самостоятельной панелью (ссылка на родителя очищается). Чтобы подключить его позже, добавьте его снова.",
+      "removeTitle": "Удалить {name}?",
+      "removed": "{name} удалён",
+      "removedNotUnlinked": "Не удалось связаться с узлом, поэтому у него всё ещё указана эта панель как родитель. Очистите ссылку на родителя в его настройках, иначе он будет продолжать пытаться синхронизироваться.",
+      "rename": "Переименовать",
+      "renamed": "Переименован в {name}",
+      "renamedHereOnly": "Переименован в {name} только в этой панели",
+      "renamedHereOnlyDetail": "Не удалось связаться с узлом, или он слишком старый, чтобы принять имя; после повторной регистрации он может показывать старое имя.",
+      "sameVersion": "Та же версия, что и у этой панели",
+      "showLess": "Показать меньше",
+      "status": {
+        "late": "Опаздывает",
+        "never": "Ещё не подключён",
+        "offline": "Офлайн",
+        "online": "Онлайн"
+      },
+      "subtitle": "Другие серверы Hiddify, подключённые к этой панели. Пользователи и админы автоматически разделяются с ними.",
+      "syncFailed": "Не удалось синхронизировать {name}",
+      "syncNow": "Синхронизировать сейчас",
+      "synced": "{name} синхронизирован",
+      "title": "Узлы",
+      "unreachable": "Недоступен"
+    },
+    "outbounds": {
+      "add": "Добавить исходящее подключение",
+      "count": {
+        "geosites": "геосайт | геосайтов",
+        "rule_sets": "набор правил | наборов правил",
+        "sites": "сайт | сайтов"
+      },
+      "default": "По умолчанию",
+      "defaultHint": "Последнее включённое исходящее подключение: всё, что не направлено выше, идёт сюда",
+      "deleteMessage": "Его сайты с этого момента будут идти через исходящее подключение по умолчанию.",
+      "deleteMessageDefault": "Это исходящее подключение по умолчанию: включённое выше станет подключением по умолчанию.",
+      "deleteTitle": "Удалить {name}?",
+      "deleted": "{name} удалено",
+      "dialog": {
+        "add": "Добавить исходящее подключение",
+        "addTitle": "Добавить исходящее подключение: {mode}",
+        "config": "JSON",
+        "configBridge": "Панель назвала его «{tag}»; маршрутизация использует этот тег, а другое ядро подключается к нему на 127.0.0.1:{port}.",
+        "configBridgeNew": "Панель сама назначает ему тег (написанный вами тег игнорируется); маршрутизация использует его, а другое ядро подключается к нему через локальный SOCKS-мост.",
+        "configExample": "Вставить пример",
+        "configHint": {
+          "core_endpoint": "Один объект endpoint hiddify-core (sing-box), например endpoint WireGuard. Проверяется hiddify-core перед сохранением.",
+          "core_outbound": "Один объект outbound hiddify-core (sing-box), например {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. Проверяется hiddify-core перед сохранением.",
+          "xray_outbound": "Один объект outbound xray, например {\"protocol\": \"socks\", \"settings\": {…}}. Проверяется xray перед сохранением."
+        },
+        "configInvalid": "Недопустимый JSON: {error}",
+        "configRequired": "JSON обязателен",
+        "domestic": "Внутренние сайты региона {region}",
+        "editTitle": "Изменить {name}",
+        "endpoint": "Подключение",
+        "endpointHint": {
+          "psiphon": "Работает внутри hiddify-core. xray подключается к нему через локальный SOCKS-порт {endpoint}.",
+          "tor": "Работает внутри hiddify-core (на этом сервере должна быть установлена программа `tor`). xray подключается к нему через локальный SOCKS-порт {endpoint}."
+        },
+        "host": "Хост",
+        "name": "Имя",
+        "nameRequired": "Требуется имя",
+        "optional": "необязательно",
+        "password": "Пароль",
+        "passwordKeep": "Оставьте пустым, чтобы сохранить текущий пароль",
+        "port": "Порт",
+        "routes": "Что через него идёт",
+        "routesHint": "Трафик к этим сайтам выходит через это исходящее подключение.",
+        "routesHintDefault": "Это подключение по умолчанию (последнее включённое): всё, что не направлено выше, уже идёт сюда, поэтому списки не нужны. Они снова используются, если поднять его выше.",
+        "username": "Имя пользователя"
+      },
+      "disable": "Выключить",
+      "domesticChip": "Внутренние ({region})",
+      "drag": "Перетащите, чтобы изменить порядок",
+      "edited": "Изменено здесь: обновления сохраняют ваши списки",
+      "enable": "Включить",
+      "enabled": "Включено",
+      "everythingElse": "Всё остальное идёт сюда",
+      "followsDefaults": "Использует встроенные списки, обновляемые при апгрейде",
+      "howto": "Исходящие подключения проверяются сверху вниз: трафик уходит через первое, в списке которого есть его сайт. Последнее включённое исходящее подключение является подключением по умолчанию и получает всё остальное. Перетащите или используйте стрелки, чтобы изменить порядок.",
+      "idle": "Не используется",
+      "idleHint": "В нём нет сайтов, геосайтов или наборов правил, поэтому через него ничего не идёт. Измените его, чтобы добавить, или переместите в конец, чтобы сделать подключением по умолчанию.",
+      "list": {
+        "browse": "Обзор наборов правил",
+        "geosites": "Геосайты / GeoIP (xray)",
+        "geositesHint": "Одна запись xray на строку с префиксом: geosite:google или geoip:ir (имя без префикса означает geosite:). Неизвестный тег останавливает xray, поэтому используйте известные.",
+        "geositesPlaceholder": "geosite:google\ngeoip:ir",
+        "rule_sets": "Наборы правил (hiddify-core)",
+        "rule_setsHint": "Один URL набора правил на строку (.srs или исходник .json). Если ввести имя SagerNet, например geosite-netflix, оно превратится в его URL.",
+        "rule_setsPlaceholder": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
+        "sites": "Сайты",
+        "sitesHint": "Один домен на строку; поддомены включаются.",
+        "sitesPlaceholder": "example.com"
+      },
+      "makeDefault": "Сделать подключением по умолчанию (переместить в конец)",
+      "mode": {
+        "block": "Блокировка",
+        "core_endpoint": "endpoint hiddify-core (sing-box)",
+        "core_outbound": "outbound hiddify-core (sing-box)",
+        "direct": "Direct",
+        "psiphon": "Psiphon",
+        "socks": "SOCKS",
+        "tor": "Tor",
+        "warp": "WARP",
+        "xray_outbound": "outbound xray"
+      },
+      "modeHint": {
+        "block": "Отбрасывается",
+        "core_endpoint": "Ваш собственный endpoint hiddify-core, например WireGuard (JSON); xray подключается к нему через локальный SOCKS-мост",
+        "core_outbound": "Ваш собственный outbound hiddify-core (JSON); xray подключается к нему через локальный SOCKS-мост",
+        "direct": "Напрямую с этого сервера",
+        "psiphon": "Через Psiphon (запускается hiddify-core)",
+        "socks": "Через SOCKS5-прокси",
+        "tor": "Через сеть Tor (запускается hiddify-core)",
+        "warp": "Через Cloudflare WARP на этом сервере",
+        "xray_outbound": "Ваш собственный outbound xray (JSON); hiddify-core подключается к нему через локальный SOCKS-мост"
+      },
+      "more": "Другие действия",
+      "moveDown": "Вниз",
+      "moveUp": "Вверх",
+      "notChanged": "Не изменено",
+      "nowDefault": "{name} теперь по умолчанию",
+      "off": "Выкл.",
+      "region": {
+        "cn": "Китай",
+        "ir": "Иран",
+        "other": "ваш регион",
+        "ru": "Россия"
+      },
+      "reset": "Сбросить к значениям по умолчанию",
+      "resetDone": "{name} снова использует встроенные списки",
+      "resetMessage": "Ваши изменения сайтов, геосайтов и наборов правил будут заменены встроенными списками, которые затем обновляются при апгрейдах.",
+      "resetTitle": "Сбросить {name} к встроенным спискам?",
+      "saved": "{name} сохранено",
+      "subtitle": "Выберите по порядку, куда трафик выходит с этого сервера: через WARP, напрямую, блокировка или выход через SOCKS, Tor или Psiphon.",
+      "title": "Исходящие подключения"
+    },
+    "passwordRules": {
+      "common": "не распространённый пароль",
+      "digit": "цифру",
+      "label": "Для надёжного пароля нужны",
+      "length": "{n}+ символов",
+      "lower": "строчную букву",
+      "name": "не ваше имя и не ID",
+      "upper": "заглавную букву"
+    },
+    "primevue": {
+      "accept": "Да",
+      "apply": "Применить",
+      "cancel": "Отмена",
+      "choose": "Выбрать",
+      "clear": "Очистить",
+      "emptyFilterMessage": "Результатов не найдено",
+      "emptyMessage": "Нет доступных вариантов",
+      "emptySearchMessage": "Результатов не найдено",
+      "reject": "Нет",
+      "upload": "Загрузить"
+    },
+    "protocols": {
+      "changed": "Изменено",
+      "disableAll": "Отключить все",
+      "enableAll": "Включить все",
+      "enabledOf": "Включено {on} из {total}",
+      "filterAll": "Все",
+      "filterOff": "Выкл.",
+      "filterOn": "Вкл.",
+      "groups": {
+        "other": {
+          "hint": "Другие переключатели",
+          "title": "Другое"
+        },
+        "protocols": {
+          "hint": "Прокси-протоколы, предлагаемые клиентам",
+          "title": "Протоколы"
+        },
+        "security": {
+          "hint": "Reality, трюки с TLS и мультиплексирование",
+          "title": "Безопасность и трюки"
+        },
+        "transports": {
+          "hint": "Как переносится трафик (TCP, WebSocket, gRPC, …)",
+          "title": "Транспорты"
+        }
+      },
+      "instantChip": "Мгновенно",
+      "leaveUnsaved": "У вас есть несохранённые изменения. Всё равно уйти?",
+      "noMatch": "Ничего не соответствует вашему поиску.",
+      "reinstallChip": "Нужна переустановка",
+      "relatedSettings": "Настройки",
+      "search": "Поиск протоколов…",
+      "subtitle": "Включайте и отключайте протоколы, транспорты и трюки с TLS для всей панели.",
+      "summaryHint": "Нажмите на карточку, чтобы переключить её, затем сохраните.",
+      "title": "Протоколы"
+    },
+    "proxy": {
+      "addClient": "Добавить клиент",
+      "addClientConfig": "Добавить конфигурацию для этого ядра",
+      "addCoreConfig": "Добавить конфигурацию ядра",
+      "allowedProtocols": "Разрешённые протоколы",
+      "alpn": "ALPN",
+      "alpnLabels": {
+        "custom": "Своё",
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "tls_h2": "TLS H2",
+        "tls_h3": "QUIC"
+      },
+      "autoClient": "авто",
+      "baseConfigTemplate": "Переопределение базовой конфигурации",
+      "baseConfigTemplateHint": "Необязательная полная оболочка клиента xray в {% block base_config %}. Оставьте пустым, чтобы использовать глобальную базовую конфигурацию.",
+      "builtinDefaultHint": "Встроенный пресет, синхронизированный из каталога. Включите собственное содержимое на вкладках «Сервер» или «Клиент», чтобы редактировать эти стороны.",
+      "builtinReadOnly": "Встроенный пресет: можно изменить только имя и состояние включения. Дублируйте его для полного редактирования.",
+      "bundleContextProxyCount": "Включённые прокси",
+      "cannotEnable": "Не удаётся включить этот прокси",
+      "categories": "Категории",
+      "categoriesAdd": "Добавить категорию",
+      "categoriesAddNew": "Добавить новую",
+      "categoriesAddPlaceholder": "Новая категория",
+      "categoriesFilter": "Фильтр по категориям",
+      "categoriesHeader": "Доступные категории",
+      "categoriesHint": "Выберите существующие категории или добавьте новую в нижней части списка",
+      "categoriesPlaceholder": "Выберите категории",
+      "categoriesRemoveAll": "Удалить все",
+      "clashFormatJson": "JSON",
+      "clashFormatYaml": "YAML",
+      "clientBuiltinCustomized": "Пользовательская конфигурация клиента",
+      "clientBuiltinDefault": "Используется конфигурация клиента по умолчанию из каталога",
+      "clientConfigDefault": "Конфигурация клиента",
+      "clientCoreConfigs": "Конфигурации ядер клиента",
+      "clientCores": "Ядра клиента",
+      "commonProxyBadge": "Общий",
+      "core": "Ядро",
+      "customPath": "Свой путь",
+      "customPathAuto": "Генерируется автоматически для HTTP-прокси",
+      "defaultTagName": "Тег по умолчанию: {name}",
+      "directPortAccess": "Прямой доступ к порту",
+      "directPortAccessHint": "Используйте осторожно: может сделать ваш сервер обнаруживаемым на публичном интерфейсе",
+      "doBase64After": "Base64 после рендеринга",
+      "domainIds": "Домены",
+      "domainIdsEmptyAll": "Пусто = все подходящие домены; прокси на основе IP игнорируют домены",
+      "domainModeLabels": {
+        "cdn": "CDN",
+        "direct": "Direct",
+        "direct-dns": "Direct DNS",
+        "direct-fake": "Direct fake",
+        "direct-reality": "Direct REALITY",
+        "direct-valid": "Direct valid",
+        "fake": "Fake TLS",
+        "reality": "REALITY",
+        "relay": "Relay",
+        "relay-fake": "Relay fake",
+        "relay-reality": "Relay REALITY",
+        "relay-valid": "Relay valid",
+        "special": "Special (REALITY)"
+      },
+      "domainModes": "Режимы доменов",
+      "domains": "Домены",
+      "downloadAlpns": "ALPN загрузки",
+      "downloadAlpnsHint": "Только xHTTP. Пусто = как основной ALPN. Варианты конфигурации = основной × ALPN загрузки.",
+      "downloadDomainModes": "Режимы домена загрузки",
+      "downloadTcpUdp": "TCP или UDP для загрузки",
+      "downloadTlsLayer": "Слой TLS для загрузки",
+      "exampleContext": "Контекст рендеринга",
+      "exampleContextDomain": "Домен",
+      "exampleContextIp": "IP",
+      "exampleContextProxy": "ID прокси",
+      "exampleContextUa": "User-Agent",
+      "exampleContextUser": "Пользователь",
+      "exampleDomain": "Домен",
+      "exampleDomainAll": "Все домены",
+      "exampleDomainAllHint": "Включить все домены, подходящие этому прокси (как в выводе подписки).",
+      "exampleDomainCustom": "Свой домен",
+      "exampleDomainPick": "Выбрать из панели",
+      "exampleIp": "IP-адрес",
+      "exampleUaCustom": "Свой User-Agent",
+      "exampleUaPreset": "Пресет",
+      "exampleUser": "Пользователь",
+      "exampleUserAgent": "User-Agent",
+      "exampleUserPick": "Выбрать пользователя панели",
+      "exampleUserSample": "Пример пользователя",
+      "export": "Экспорт",
+      "exportFailed": "Не удалось экспортировать",
+      "fieldOverride": "Переопределить",
+      "generateBundle": "Сгенерировать все конфигурации",
+      "generateBundleOk": "Набор успешно сгенерирован",
+      "generateBundlePartial": "Набор сгенерирован с предупреждениями или ошибками",
+      "generateExample": "Сгенерировать пример",
+      "generateExampleOk": "Пример успешно сгенерирован",
+      "generateExamplePartial": "Пример сгенерирован с предупреждениями или ошибками",
+      "goToSettings": "Перейти к настройкам",
+      "ignoreSkip": "Игнорировать теги skip",
+      "ignoreSkipHint": "Рендерить конфигурацию, даже если блок skip шаблона обычно пропускает фрагмент",
+      "import": "Импорт",
+      "importFailed": "Не удалось импортировать",
+      "importSuccess": "Успешно импортировано (шаблонов: {count})",
+      "inboundPort": "Входящий порт",
+      "inboundPortAuto": "Оставьте пустым для автоматического",
+      "inboundPortAutoCalculated": "Порты вычисляются автоматически для каждого домена",
+      "inboundTcpPorts": "Входящие TCP-порты",
+      "inboundTcpPortsHint": "Статические TCP-порты через запятую",
+      "inboundTemplate": "Шаблон inbound",
+      "inboundUdpPorts": "Входящие UDP-порты",
+      "inboundUdpPortsHint": "Статические UDP-порты через запятую; если пусто, по умолчанию используются TCP-порты",
+      "isCommonProxy": "Общий прокси",
+      "isCommonProxyHint": "Этот протокол есть и в Xray, и в Hiddify Core. Настройка Common Proxy Core оставляет включённым только выбранное ядро.",
+      "l7Proto": "Протокол L7 reverse proxy",
+      "l7ReverseProto": "Протокол L7 reverse proxy",
+      "linkSettings": "Настройки ссылки",
+      "linkTemplate": "Шаблон ссылки",
+      "listTitle": "Пользовательские прокси",
+      "mode": "Режим",
+      "modeLabels": {
+        "domain_native": "Нативный домен",
+        "domains_auto_public_ports": "Несколько доменов, автопорты",
+        "domains_dns_gateway": "DNS-шлюз домена",
+        "domains_l7_gateway": "L7-шлюз домена",
+        "domains_single_public_port": "Несколько доменов, статический порт",
+        "domains_sni_gateway": "SNI-шлюз домена",
+        "ip": "На основе IP",
+        "no_inbound": "Без inbound"
+      },
+      "modeSettings": "Режим и маршрутизация",
+      "name": "Имя",
+      "nameRequired": "Укажите имя прокси перед сохранением: это подпись его ссылок.",
+      "needGlobalEnable": "Чтобы включить этот прокси, нужно глобально включить {names}. Открыть настройки?",
+      "new": "Новый прокси",
+      "noClientConfigs": "Конфигураций клиента пока нет. Добавьте клиент, чтобы начать.",
+      "outboundTagTemplate": "Шаблон тега outbound",
+      "outboundTagTemplateHint": "Jinja для тега outbound каждого клиента. По умолчанию: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
+      "outboundsTemplate": "Шаблон outbounds",
+      "protocol": "Протокол",
+      "quick": {
+        "any": "Любой",
+        "clear": "Сбросить фильтры",
+        "label": "Фильтры",
+        "modified": "Изменённые",
+        "modifiedHint": "Изменено относительно значения по умолчанию из каталога",
+        "nSelected": "Выбрано: {n}",
+        "other": "Другое",
+        "showing": "Показано {n} из {total}"
+      },
+      "regeneratePath": "Пересоздать путь",
+      "renderErrorClickHint": "Нажмите для подробностей",
+      "renderErrorDetail": "Подробности ошибки рендеринга",
+      "renderErrorDetailTitle": "Ошибка рендеринга: {label}",
+      "renderErrorNoDetail": "Для этой ошибки нет дополнительного контекста.",
+      "renderErrorRenderedSource": "Результат рендеринга",
+      "renderErrorTemplateSource": "Исходник шаблона",
+      "resetAll": "Сбросить всё к значениям по умолчанию",
+      "resetAllConfirm": "Отменить все изменения встроенных прокси (тег, режимы доменов, TLS, конфигурации сервера и клиента) и восстановить значения по умолчанию из каталога? Созданные вами прокси не затрагиваются.",
+      "resetAllDone": "Прокси сброшено к значениям по умолчанию: {n}",
+      "resetTagName": "Сбросить имя тега к значению по умолчанию",
+      "resetToBuiltin": "Сбросить к значению по умолчанию из каталога",
+      "searchAll": "Поиск по всем столбцам...",
+      "serverBuiltinCustomized": "Пользовательская конфигурация сервера",
+      "serverBuiltinDefault": "Используется конфигурация сервера по умолчанию из каталога",
+      "serverCore": "Ядро сервера",
+      "slug": "Slug",
+      "sublink": "Sublink",
+      "sublinkBase64": {
+        "content": "Содержимое",
+        "formatJson": "Форматировать JSON",
+        "protocol": "uri.protocol"
+      },
+      "sublinkBase64Detail": "Подробности Base64",
+      "sublinkFormat": "Формат ссылки",
+      "sublinkFormatBase64": "Формат Base64",
+      "sublinkFormatDecoded": "Декодированные поля",
+      "sublinkFormatRaw": "Отрендеренная ссылка",
+      "sublinkFormatRawLink": "Исходная ссылка",
+      "sublinkFormatUri": "Формат URI",
+      "sublinkUri": {
+        "fragment": "uri.fragment",
+        "host": "uri.host",
+        "password": "uri.password",
+        "path": "uri.path",
+        "port": "uri.port",
+        "protocol": "uri.protocol",
+        "query_params": "uri.query_params (JSON)",
+        "user": "uri.user"
+      },
+      "sublinkUriDetail": "Подробности URI",
+      "tabClient": "Клиент",
+      "tabClients": "Клиенты",
+      "tabGeneral": "Общие",
+      "tabServer": "Сервер",
+      "tabServers": "Серверы",
+      "tag": "Тег",
+      "tcpUdp": "TCP или UDP",
+      "tcpUdpHint": "Транспортный протокол для вычисленных входящих портов",
+      "tcpUdpLabels": {
+        "both": "TCP + UDP",
+        "tcp": "TCP",
+        "udp": "UDP"
+      },
+      "templateSlugs": "Включения шаблона",
+      "tlsLayer": "Слой TLS",
+      "tlsLayerLabels": {
+        "http": "-",
+        "quic_tcp_tls": "QUIC + TLS H2 H1",
+        "quic_tls": "QUIC",
+        "tls": "TLS H2 H1",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2"
+      },
+      "tlsLayerSpecialConflict": "Слой HTTP TLS несовместим с режимами домена REALITY",
+      "transport": "Транспорт",
+      "transportLabels": {
+        "grpc": "gRPC",
+        "http": "HTTP (raw)",
+        "httpupgrade": "HTTP Upgrade",
+        "other": "Другое",
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "xhttp": "xHTTP"
+      },
+      "uploadTcpUdp": "TCP или UDP для отдачи",
+      "version": "Версия"
+    },
+    "qr": {
+      "clickToCopy": "Нажмите, чтобы скопировать изображение",
+      "copiedBoth": "Сообщение и QR-код скопированы",
+      "copiedBothClick": "Почта и документы вставляют и то, и другое. Чат-приложения вставляют только текст: после вставки нажмите на QR-код, чтобы скопировать изображение, и вставьте его тоже.",
+      "copiedBothShare": "Почта и документы вставляют и то, и другое. Чат-приложения вставляют только текст: используйте «Поделиться», чтобы отправить оба, или нажмите на QR-код, чтобы скопировать изображение.",
+      "copy": "Копировать QR",
+      "copyUnsupported": "Этот браузер не может копировать изображения. Используйте «Скачать».",
+      "share": "Поделиться",
+      "shareFailed": "Здесь поделиться не получилось. Скопируйте сообщение, затем нажмите на QR-код, чтобы скопировать изображение.",
+      "shareHint": "Отправьте текст и QR-изображение вместе в Telegram, WhatsApp, почту…",
+      "textOnly": "Сообщение скопировано. Этот браузер не смог добавить QR-изображение; скопируйте его, нажав на код."
+    },
+    "quickSetup": {
+      "back": "Назад",
+      "countries": {
+        "ir": "Иран",
+        "other": "Другие",
+        "ru": "Россия",
+        "zh": "Китай"
+      },
+      "domains": {
+        "block": "Блокировать внутренние сайты",
+        "blockHint": "Блокирует внутренние сайты, чтобы избежать обнаружения государством.",
+        "changeMode": "Изменить использование {name}",
+        "copied": "{ip} скопирован",
+        "decoy": "Сайт-приманка",
+        "decoyHint": "Фейковый сайт, показываемый, когда кто-то открывает ваш домен напрямую.",
+        "decoyWarn1": "Не используйте финансовые, иранские или известные сайты, а также сайты с входом, такие как Google, Yahoo, Wikipedia или PayPal.",
+        "decoyWarn2": "Внимательно проверьте сайт и убедитесь, что он правильный, иначе можно получить предупреждение о фишинге.",
+        "decoyWarn3": "Проверьте этот домен ещё раз, чтобы в будущем не было проблем.",
+        "detecting": "Проверка…",
+        "domains": "Домены",
+        "domainsHint": "Здесь можно добавить любые домены: direct, CDN, REALITY, relay… Каждый проверяется автоматически; нажмите на его тип, чтобы изменить. Нужен минимум один домен direct, CDN или ссылки подписки (IP этого сервера считается direct).",
+        "how1": "Направьте свой домен или поддомен на эти IP (запись A для IPv4, AAAA для IPv6).",
+        "how2": "Затем введите домен ниже. Можно добавить несколько; нажимайте Enter или запятую после каждого.",
+        "ipsTitle": "IP вашего сервера",
+        "modeHelp": {
+          "cdn": "За CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …), который пересылает на этот сервер. Скрывает IP вашего сервера.",
+          "direct": "Указывает прямо на IP этого сервера. Самый быстрый; определяется, когда домен разрешается в этот сервер.",
+          "reality": "Чужой популярный сайт (TLS 1.3 + HTTP/2). Не указывает на ваш сервер; этот сервер имитирует его.",
+          "relay": "Указывает на другой сервер, который пересылает трафик на этот (relay/туннель). Задаётся вручную."
+        },
+        "modes": {
+          "cdn": "CDN",
+          "direct": "Direct",
+          "reality": "REALITY",
+          "relay": "Relay"
+        },
+        "noIp": "Не удалось определить IP сервера.",
+        "notes": {
+          "not_friendly": "Возможно, этот сайт не поддерживает TLS 1.3 + HTTP/2, которые нужны для REALITY.",
+          "unresolved": "Этот домен пока не разрешается. Проверьте его DNS-запись."
+        },
+        "recommended": "Настоятельно рекомендуется",
+        "remove": "Удалить {name}",
+        "required": "Добавьте хотя бы один домен direct, CDN или ссылки подписки (одних доменов REALITY и relay недостаточно). IP этого сервера считается direct-доменом.",
+        "sublink": "Домен ссылки подписки",
+        "sublinkHint": "Обслуживает только ссылки подписки, а не прокси. Может указывать на этот сервер или идти через CDN.",
+        "sublinkWhy": "Используйте отдельный домен для ссылок подписки пользователей, лучше за CDN. Если ваш сервер или прокси-домены заблокируют, пользователи всё равно смогут обновить подписку и получить новые рабочие конфигурации, так что их это не затронет.",
+        "useIp": "Использовать этот IP как direct-домен"
+      },
+      "finish": {
+        "button": "Завершить",
+        "docs": "Читать документацию дальше",
+        "off": "Выкл.",
+        "on": "Вкл.",
+        "ready": "Всё готово",
+        "readyHint": "Проверьте свой выбор, затем завершите настройку.",
+        "running": "Завершение настройки",
+        "whatHappens": "«Завершить» применяет конфигурацию и переустанавливает службы с вашими доменами. Это занимает несколько минут; во время работы показываются журнал и ваши новые админ-ссылки."
+      },
+      "language": {
+        "adminLang": "Язык админ-панели",
+        "adminLangHint": "Язык административной части.",
+        "country": "Страна",
+        "countryHint": "Применяет подходящие настройки для условий фильтрации в этой стране."
+      },
+      "next": "Далее",
+      "nodes": {
+        "question": "Хотите добавить другие узлы? Добавьте полную админ-ссылку каждой другой панели; после подключения она появится здесь. Это можно сделать и позже.",
+        "skip": "Пропустить"
+      },
+      "optional": "необязательно",
+      "password": {
+        "confirm": "Повторите пароль",
+        "label": "Новый пароль",
+        "medium": "Средний",
+        "min": "Пароль должен содержать не менее {min} символов.",
+        "mismatch": "Пароли не совпадают.",
+        "ok": "Пароли совпадают",
+        "prompt": "Не менее {min} символов",
+        "strong": "Надёжный",
+        "weak": "Слабый",
+        "why": "Этим паролем вы будете входить в админку. Используйте не менее 8 символов."
+      },
+      "skip": "Пропустить пока",
+      "stepOf": "Шаг {n} из {total}",
+      "steps": {
+        "domains": {
+          "lead": "Подключите свой домен к этому серверу.",
+          "title": "Домены"
+        },
+        "finish": {
+          "lead": "Выполним итоговую настройку, чтобы завершить установку.",
+          "title": "Завершение"
+        },
+        "language": {
+          "lead": "Выберите язык админки и страну, в которой находятся ваши пользователи.",
+          "title": "Добро пожаловать"
+        },
+        "nodes": {
+          "lead": "При желании подключите другие серверы Hiddify, чтобы управлять ими отсюда.",
+          "title": "Узлы"
+        },
+        "password": {
+          "lead": "Защитите админку паролем.",
+          "title": "Пароль"
+        },
+        "protocols": {
+          "lead": "Выберите предлагаемые протоколы. Выбирайте как можно меньше.",
+          "title": "Протоколы"
+        }
+      },
+      "subtitle": "Несколько шагов, и ваша панель готова.",
+      "title": "Быстрая настройка"
+    },
+    "saveBar": {
+      "discard": "Отменить",
+      "unsaved": "{count} несохранённое изменение | {count} несохранённых изменений"
+    },
+    "settings": {
+      "adminPathChanged": "Путь админки изменился. После применения конфигураций админ-панель будет по адресу",
+      "advancedBadge": "Дополнительно",
+      "categories": "Категории настроек",
+      "changed": "Изменено",
+      "fixErrors": "Исправьте выделенные поля.",
+      "hiddenCount": "{count} дополнительная настройка скрыта | {count} дополнительных настроек скрыто",
+      "invalid": "Это значение недопустимо.",
+      "leaveUnsaved": "У вас есть несохранённые изменения. Всё равно уйти?",
+      "noMatch": "Нет настроек, подходящих под ваш поиск.",
+      "openProtocols": "Протоколы",
+      "reinstallBadge": "Переустановка",
+      "reinstallHint": "Для вступления этого изменения в силу нужна переустановка",
+      "reloading": "Язык изменён, перезагрузка…",
+      "required": "Это поле обязательно.",
+      "search": "Поиск по всем настройкам…",
+      "showAdvanced": "Показать дополнительные настройки",
+      "showAdvancedIn": "Показать {count} дополнительную настройку | Показать {count} дополнительных настроек",
+      "showLess": "Показать меньше",
+      "showMore": "Показать ещё {count} дополнительную настройку | Показать ещё {count} дополнительных настроек",
+      "subtitle": "Всё о том, как работает эта панель. Сначала обычные настройки; дополнительные по запросу.",
+      "title": "Настройки"
+    },
+    "tags": {
+      "addTag": "Тег",
+      "bulk": "Тег",
+      "bulkHint": "Теги выбранных: галочка означает, что тег есть у всех",
+      "clear": "Очистить",
+      "color": "Цвет",
+      "colors": {
+        "black": "Чёрный",
+        "blue": "Синий",
+        "green": "Зелёный",
+        "orange": "Оранжевый",
+        "red": "Красный"
+      },
+      "create": "Создать",
+      "created": "Тег создан",
+      "default": {
+        "family": "Семья",
+        "free": "Бесплатно",
+        "friends": "Друзья",
+        "important": "Важное",
+        "work": "Работа"
+      },
+      "delete": "Удалить тег",
+      "deleteConfirm": "Удалить тег «{name}»? Он будет снят со всех, у кого он есть.",
+      "deleted": "Тег удалён",
+      "edit": "Изменить тег",
+      "editTags": "Изменить теги",
+      "filterLabel": "Фильтр по тегу",
+      "namePlaceholder": "Назовите свой тег",
+      "newTag": "Новый тег",
+      "none": "Тегов пока нет",
+      "pick": "Выбрать теги",
+      "pickHint": "Можно выбрать несколько",
+      "rename": "Переименовать",
+      "save": "Сохранить",
+      "saveFailed": "Не удалось сохранить теги",
+      "tagCount": "Тегов: {n}",
+      "tagged": "С тегами",
+      "taggedHint": "Все, у кого есть хотя бы один тег",
+      "title": "Теги",
+      "untagged": "Без тега",
+      "use": "Используется: {n}"
+    },
+    "telegram": {
+      "benefit": {
+        "backup": "Получать автоматические резервные копии",
+        "manage": "Управлять пользователями прямо из Telegram",
+        "notify": "Получать уведомления о важных событиях"
+      },
+      "check": "Я подключился",
+      "connect": "Подключить Telegram",
+      "connectHint": "Получайте уведомления и резервные копии от {bot} и управляйте панелью из Telegram.",
+      "connectTitle": "Подключите свой Telegram",
+      "connected": "подключено",
+      "connectedHint": "Вы получаете уведомления и резервные копии от {bot}.",
+      "connectedTitle": "Telegram подключён",
+      "later": "Вы можете подключить его в любой момент в разделе «Мой аккаунт».",
+      "notNow": "Не сейчас",
+      "notYet": "Ещё не подключено: нажмите Start в боте, затем проверьте снова.",
+      "nowConnected": "Telegram подключён",
+      "openWeb": "Открыть в браузере",
+      "promptLead": "У этой панели есть Telegram-бот {bot}. Привяжите его к своему аккаунту:",
+      "promptTitle": "Подключить Telegram?",
+      "reconnect": "Подключить снова",
+      "scan": "Или отсканируйте это камерой телефона."
+    },
+    "template": {
+      "builtin": "Встроенный",
+      "builtinCustomized": "Изменённый встроенный",
+      "builtinDefault": "Используется значение по умолчанию из каталога",
+      "builtinDefaultHint": "Встроенный шаблон, синхронизированный из каталога. Включите собственное содержимое, чтобы редактировать его.",
+      "builtinReadOnly": "Встроенный шаблон: дублируйте его, чтобы создать редактируемую копию.",
+      "category": "Категория",
+      "clone": "Клонировать как свой",
+      "cloneDescription": "Своё описание",
+      "cloneName": "Своё имя",
+      "cloned": "Шаблон клонирован",
+      "content": "Содержимое",
+      "core": "Ядро",
+      "customContent": "Собственное содержимое",
+      "description": "Описание",
+      "editable": "Редактируемый",
+      "empty": "Для этого ядра нет шаблонов",
+      "included": "Включён",
+      "insert": "Вставить в редактор",
+      "listTitle": "Шаблоны",
+      "name": "Имя",
+      "new": "Новый шаблон",
+      "notFound": "Шаблон не найден",
+      "referenced": "Есть ссылка",
+      "referencedTemplates": "Шаблоны, на которые есть ссылки",
+      "sidePanel": "Шаблоны",
+      "sidePanelHint": "Откройте вкладку «Сервер» или «Клиент», чтобы просмотреть шаблоны",
+      "slug": "Slug",
+      "slugDuplicate": "Этот slug шаблона уже используется. Выберите другой slug.",
+      "slugHint": "Можно изменить только часть после core/category",
+      "sysTooltip": "Встроенный (системный) элемент"
+    },
+    "templateVariables": {
+      "access": "Доступ",
+      "currentValue": "Текущее значение",
+      "description": "Описание",
+      "group": "Группа",
+      "label": "Метка",
+      "listTitle": "Переменные шаблонов",
+      "loadValues": "Загрузить текущие значения",
+      "name": "Имя",
+      "skipHint": "Выведите SKIP или вызовите skip(), чтобы пропустить рендеринг этого прокси, если условие не выполнено"
+    },
+    "theme": {
+      "dark": "Тёмная тема",
+      "light": "Светлая тема"
+    },
+    "users": {
+      "add": "Добавить пользователя",
+      "addLimits": {
+        "apply": "Добавить",
+        "days": "Дней для добавления",
+        "gb": "Данных для добавления",
+        "hint": "Данные и дни добавляются к тому, что уже есть у каждого пользователя.",
+        "note": "Пользователи с безлимитными данными или днями остаются безлимитными. Оставьте 0 в одном поле, чтобы добавить только другое.",
+        "title": "Добавить лимиты {n} пользователю | Добавить лимиты {n} пользователям"
+      },
+      "added": "{name} добавлен",
+      "afterFirstShort": "{n} дн. после первого использования",
+      "all": "Все",
+      "bulk": {
+        "add_days": "+7 дней",
+        "add_limits": "Добавить лимиты",
+        "delete": "Удалить",
+        "disable": "Отключить",
+        "enable": "Включить",
+        "reset_days": "Сбросить дни",
+        "reset_usage": "Сбросить трафик"
+      },
+      "bulkConfirm": {
+        "delete": "Удалить {n} пользователя? | Удалить {n} пользователей?",
+        "disable": "Отключить {n} пользователя? | Отключить {n} пользователей?",
+        "reset_days": "Сбросить дни у {n} пользователя? | Сбросить дни у {n} пользователей?",
+        "reset_usage": "Сбросить трафик у {n} пользователя? | Сбросить трафик у {n} пользователей?"
+      },
+      "bulkConfirmText": {
+        "delete": "Они больше не смогут подключаться.",
+        "disable": "Они не смогут подключаться, пока их снова не включат.",
+        "reset_days": "Их пакет начнётся заново при следующем подключении.",
+        "reset_usage": "Их использованные данные вернутся к нулю."
+      },
+      "bulkDone": {
+        "add_days": "7 дней добавлено {n} пользователю | 7 дней добавлено {n} пользователям",
+        "add_limits": "Лимиты добавлены {n} пользователю | Лимиты добавлены {n} пользователям",
+        "delete": "Удалён {n} пользователь | Удалено пользователей: {n}",
+        "disable": "Отключён {n} пользователь | Отключено пользователей: {n}",
+        "enable": "Включён {n} пользователь | Включено пользователей: {n}",
+        "reset_days": "Дни сброшены у {n} пользователя | Дни сброшены у {n} пользователей",
+        "reset_usage": "Трафик сброшен у {n} пользователя | Трафик сброшен у {n} пользователей"
+      },
+      "clearSearch": "Очистить поиск",
+      "clearSelection": "Снять выделение",
+      "col": {
+        "expire": "Истекает",
+        "id": "ID",
+        "lastOnline": "Последнее подключение",
+        "name": "Имя",
+        "status": "Статус",
+        "usage": "Трафик"
+      },
+      "configs": {
+        "addOffline": "Добавить офлайн-конфигурацию",
+        "addSubscription": "Добавить подписку",
+        "badUrl": "Подписка должна быть URL http(s)",
+        "empty": "Пусто: заполните или удалите",
+        "hint": "Дополнительные конфигурации, добавляемые в подписку этого пользователя: вставьте одну (офлайн) или укажите URL, который будет загружаться для пользователя (подписка). Выберите, для какого формата приложения она предназначена, или Авто для всех.",
+        "inherited": "Дополнительно получает {n} конфигурацию от вышестоящих админов | Дополнительно получает {n} конфигураций от вышестоящих админов",
+        "kind": {
+          "offline": "Офлайн",
+          "subscription": "Подписка"
+        },
+        "offlinePlaceholder": "vless://…  или конфигурация JSON / YAML",
+        "target": {
+          "auto": "Авто (все форматы)",
+          "clash": "Clash",
+          "hiddify-core": "Hiddify / sing-box",
+          "sublink": "Ссылки для обмена",
+          "xray": "Xray"
+        },
+        "title": "Дополнительные конфигурации",
+        "urlPlaceholder": "https://example.com/sub/…"
+      },
+      "daysLeft": "Остался {n} день | Осталось дней: {n}",
+      "deleteMessage": "Пользователь больше не сможет подключаться. Его UUID можно будет использовать снова позже.",
+      "deleteTitle": "Удалить {name}?",
+      "deleted": "{name} удалён",
+      "done": {
+        "reset_days": "{name} начнёт заново при следующем подключении",
+        "reset_usage": "Трафик {name} сброшен"
+      },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "У пользователя выбран свой исходящий канал (outbound)",
+        "subs": "{n} доп. подписка | {n} доп. подписки",
+        "subsHint": "Дополнительные конфигурации подписки для этого пользователя",
+        "telegramHint": "Аккаунт Telegram привязан"
+      },
+      "filter": {
+        "active": "Активные",
+        "activeHint": "Включены, остались дни и данные",
+        "all": "Все",
+        "allHint": "Все пользователи",
+        "data_low": "Мало данных",
+        "data_lowHint": "Активные, использовано 80% данных или больше",
+        "disabled": "Отключённые",
+        "disabledHint": "Отключены админом",
+        "expired": "Истёк срок",
+        "expiredHint": "Дней не осталось",
+        "expiring": "Скоро истекает",
+        "expiringHint": "Активные, заканчиваются в течение недели",
+        "no_data": "Нет данных",
+        "no_dataHint": "Весь лимит трафика использован",
+        "not_started": "Не начат",
+        "not_startedHint": "Ещё не подключались: их дни начинаются с первого подключения",
+        "unseen_week": "Не появлялись неделю",
+        "unseen_weekHint": "Подключались раньше, но не за последние 7 дней"
+      },
+      "filtersLabel": "Фильтр пользователей",
+      "form": {
+        "add": "Добавить пользователя",
+        "addSubtitle": "После сохранения откроются ссылка и QR-код пользователя, готовые к отправке.",
+        "addTitle": "Новый пользователь",
+        "advanced": "Дополнительно",
+        "data": "Данные",
+        "daysCount": "{n} день | {n} дней",
+        "daysUnit": "дн.",
+        "disabled": "Отключён",
+        "editSubtitle": "Изменения применяются сразу.",
+        "editTimeTitle": "Срок: {name}",
+        "editTitle": "Изменить {name}",
+        "editUsageTitle": "Трафик: {name}",
+        "enableHint": "Отключённый пользователь не может подключаться.",
+        "enabled": "Включён",
+        "endedWhen": "закончился {when}",
+        "endsWhen": "заканчивается {when}",
+        "expiresOn": "заканчивается {date}",
+        "extra": "Дополнительные параметры (JSON)",
+        "extraHint": "Расширенные настройки, используемые шаблонами. Маршрутизация и дополнительные конфигурации задаются выше.",
+        "extraInvalid": "Это недопустимый JSON",
+        "extraNotObject": "Дополнительные параметры должны быть JSON-объектом (в фигурных скобках)",
+        "limit": "Лимит трафика",
+        "mode": "Период сброса",
+        "name": "Имя",
+        "namePlaceholder": "напр. Телефон Сары",
+        "nameRequired": "Требуется имя",
+        "neverExpires": "никогда не истекает",
+        "newUuid": "Новый UUID",
+        "nextReset": "следующий сброс {when}",
+        "notStarted": "Не начат",
+        "notStartedHint": "Начнётся при первом подключении",
+        "note": "Заметка",
+        "notePlaceholder": "Видят только админы",
+        "optional": "необязательно",
+        "outbound": "Предпочтительное исходящее подключение",
+        "outboundAuto": "Автоматически (по правилам исходящих подключений)",
+        "outboundHint": "Весь трафик этого пользователя выходит через это исходящее подключение (страница «Исходящие»). Выключенное исходящее подключение игнорируется.",
+        "outboundOff": "выключено",
+        "owner": "Субадмин",
+        "ownerMe": "{name} (вы)",
+        "packageDays": "Дней в пакете",
+        "packageLength": "Длительность пакета",
+        "period": {
+          "month": "1 месяц",
+          "months3": "3 месяца",
+          "months6": "6 месяцев",
+          "unlimited": "Без ограничений",
+          "week": "1 неделя",
+          "year": "1 год"
+        },
+        "reset": "Сбросить",
+        "resetDays": "Сбросить дни",
+        "resetDaysHint": "Запустить пакет заново: его дни считаются со следующего подключения",
+        "resetUsage": "Сбросить трафик",
+        "resetUsagePending": "Трафик будет сброшен при сохранении",
+        "restart": "Перезапустить",
+        "restartPending": "Перезапуск при сохранении: его дни снова считаются со следующего подключения",
+        "routing": "Маршрутизация",
+        "setDays": "Задать дни",
+        "startedWhen": "Начат {when}",
+        "summaryConfigs": "{n} дополнительная конфигурация | {n} дополнительных конфигураций",
+        "summaryExtra": "заданы дополнительные параметры",
+        "summaryOutbound": "Выходит через {name}",
+        "telegram": "Telegram ID",
+        "time": "Время",
+        "undo": "Отменить",
+        "unlimited": "Без ограничений",
+        "usageReadOnly": "Использованный трафик считает сервер; его можно только сбросить.",
+        "used": "Использовано",
+        "uuidEditHint": "Изменение изменит ссылку пользователя: старая ссылка перестанет работать.",
+        "uuidHint": "Генерируется автоматически.",
+        "uuidInvalid": "Это недопустимый UUID",
+        "waitingText": "{n} дн. начнутся при первом подключении.",
+        "waitingUnlimited": "Начнётся при первом подключении и никогда не истекает.",
+        "who": "Кто"
+      },
+      "groupByOwner": "Группировать по админам",
+      "groupCount": "{n} пользователь | {n} пользователей",
+      "inlineEdit": "Правка в списке",
+      "inlineHint": "Правка в списке включена: нажмите на имя, лимит трафика, срок, режим или заметку, чтобы изменить прямо в списке. Сам трафик можно только сбросить.",
+      "limitReached": "Вы достигли лимита пользователей. Попросите вышестоящего админа увеличить его.",
+      "link": "Ссылка",
+      "linkTitle": "Ссылка {name}",
+      "mode": {
+        "daily": "Ежедневно",
+        "monthly": "Ежемесячно",
+        "no_reset": "Без сброса",
+        "weekly": "Еженедельно"
+      },
+      "modeHint": {
+        "daily": "Трафик сбрасывается каждый день.",
+        "monthly": "Трафик сбрасывается каждые 30 дней с начала.",
+        "no_reset": "Трафик никогда не сбрасывается: лимит действует на весь пакет.",
+        "weekly": "Трафик сбрасывается каждые 7 дней с начала."
+      },
+      "more": "Другие действия",
+      "never": "Никогда",
+      "noMatch": "Нет подходящих пользователей",
+      "noTimeLimit": "Без ограничения по времени",
+      "none": "Пользователей пока нет",
+      "of": "из",
+      "online": "Онлайн",
+      "pageReport": "{first}–{last} из {totalRecords}",
+      "perPage": "Пользователей на странице",
+      "refresh": "Обновить",
+      "resetTag": {
+        "daily": "Ежедневный сброс",
+        "monthly": "Ежемесячный сброс",
+        "weekly": "Еженедельный сброс"
+      },
+      "saved": "{name} сохранён",
+      "search": "Поиск по имени, UUID или заметке",
+      "select": "Выбрать",
+      "selectAll": "Выбрать все ({n}) | Выбрать все ({n})",
+      "selected": "Выбрано: {n} | Выбрано: {n}",
+      "showDates": "Показывать даты окончания",
+      "showLink": "Показать ссылку пользователя",
+      "showMore": "Показать ещё {n}",
+      "showRelative": "Показывать оставшееся время",
+      "sortById": "Сортировать по ID",
+      "status": {
+        "active": "Активен",
+        "disabled": "Отключён",
+        "expired": "Истёк срок",
+        "no_data": "Нет данных"
+      },
+      "statusHint": {
+        "active": "Включены, остались дни и данные",
+        "disabled": "Отключены админом",
+        "expired": "В пакете не осталось дней",
+        "no_data": "Весь лимит трафика использован"
+      },
+      "subtitle": "Все, кто подключается через эту панель: их данные, оставшееся время и ссылки.",
+      "title": "Пользователи"
+    },
+    "utils": {
+      "addQuery": "Добавить параметр",
+      "autoSwapped": "Похоже на Base64, поэтому стороны поменялись местами.",
+      "base64Label": "Base64",
+      "base64Live": "Меняйте любую сторону, вторая обновляется сразу. protocol:// в начале (например, vmess://) сохраняется и игнорируется при декодировании. Base64, вставленный в текстовую сторону, автоматически меняет стороны местами.",
+      "base64Tab": "Base64",
+      "clear": "Очистить",
+      "decode": "Декодировать",
+      "emptyLinks": "Вставьте ссылки слева, чтобы просмотреть их здесь.",
+      "encode": "Кодировать",
+      "extraHint": "JSON с URL-декодированием. Оставьте пустым, чтобы не включать extra в ссылку.",
+      "extraJson": "extra (JSON)",
+      "fragment": "Имя",
+      "input": "Ввод",
+      "links": "Ссылки для обмена",
+      "linksPlaceholder": "Вставьте одну или несколько ссылок vless://, vmess://, ss://, trojan:// (или подписку в base64)",
+      "method": "Метод",
+      "noQuery": "Нет параметров запроса. Нажмите «Добавить параметр», чтобы вставить.",
+      "notBase64": "Это некорректный Base64.",
+      "notUrlEncoded": "Это некорректный URL-кодированный текст.",
+      "output": "Вывод",
+      "pass": "Пароль",
+      "path": "UrlPath",
+      "port": "Порт",
+      "pretty": "Декодировано",
+      "protocol": "Протокол",
+      "queryKey": "Ключ",
+      "queryParams": "Параметры запроса",
+      "queryValue": "Значение",
+      "server": "Сервер",
+      "sublinkHint": "Вставьте ссылки слева. Справа показаны декодированные поля. Параметры запроса — редактируемые строки; extra — JSON. Изменения справа переписывают ссылки.",
+      "sublinkTab": "Sublink",
+      "subtitle": "Кодируйте, декодируйте и анализируйте ссылки для обмена в браузере — на сервер ничего не отправляется.",
+      "swap": "Поменять",
+      "textLabel": "Текст",
+      "title": "Утилиты",
+      "unwrappedSubscription": "Обнаружена подписка в base64 и декодирована в отдельные ссылки.",
+      "urlEncodedLabel": "URL-кодировка",
+      "urlLive": "Меняйте любую сторону, вторая обновляется сразу. URL-кодированный текст, вставленный в текстовую сторону, автоматически меняет стороны местами.",
+      "urlSafe": "URL-safe",
+      "urlTab": "URL",
+      "user": "Пользователь",
+      "vmessJson": "vmess JSON",
+      "vmessObject": "vmess JSON должен быть объектом"
+    },
+    "validation": {
+      "errors": "Ошибки",
+      "preview": "Скомпилированный предпросмотр",
+      "title": "Проверка",
+      "warnings": "Предупреждения"
+    }
+  },
   "adminuser": {
     "force_update_usage": "ℹ️Информация пользователей обновлеятся каждые 6 минут. Чтобы обновить сейчас, <a href=\"%(link)s\" class=\"btn btn-info\">Нажмите здесь</a>"
   },
@@ -319,12 +2274,12 @@
   "android": "Android",
   "app": {
     "clash_verge_rev": {
-      "description": "",
-      "title": ""
+      "description": "Клиент Clash Verge Rev для компьютера",
+      "title": "Clash Verge Rev"
     },
     "cmfa": {
-      "description": "",
-      "title": ""
+      "description": "Clash Meta для Android",
+      "title": "Clash Meta for Android"
     },
     "foxray": {
       "description": "Описание фоксрея",
@@ -377,15 +2332,15 @@
       "title": "Streisand"
     },
     "v2rayn": {
-      "title": ""
+      "title": "v2rayN"
     },
     "v2rayng": {
       "description": "Описание V2RayNG",
       "title": "V2RayNG"
     }
   },
-  "at least one domain should exist": "",
-  "at least one user should exist": "",
+  "at least one domain should exist": "должен существовать хотя бы один домен",
+  "at least one user should exist": "должен существовать хотя бы один пользователь",
   "auto": "Авто",
   "auto_cdn_ip": "☑️ Автоматический выбор IP-адреса CDN",
   "bot": {
@@ -394,14 +2349,14 @@
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {
-    "failed": "cf-delete.failed"
+    "failed": "Не удалось удалить в Cloudflare"
   },
-  "child has been removed!": "Дочерний элемент удален!",
   "child": {
     "register-failed": "child.register-не удалось",
     "register-success": "child.register-успех",
     "sync-failed": "child.sync-не удалось"
   },
+  "child has been removed!": "Дочерний элемент удален!",
   "clickable copy": "Ссылка для социальных сетей",
   "close": "Закрыть",
   "cloudflare": {
@@ -417,20 +2372,20 @@
     "Invalid_proxy_path": "Неверный Proxy Path Это должна быть строка ASCI (a-z A-Z 0-9).",
     "Invalid_telegram_bot_token": "Неверный токен Telegram bot",
     "additional_configs": {
-      "description": "",
-      "label": ""
+      "description": "Объединять дополнительные конфигурации со сгенерированными подписками",
+      "label": "Дополнительные конфигурации"
     },
     "additional_configs_singbox": {
-      "description": "",
-      "label": ""
+      "description": "Вы можете добавить к результату другие outbounds singbox",
+      "label": "Дополнительные конфигурации для Singbox"
     },
     "additional_configs_urls": {
-      "description": "",
-      "label": ""
+      "description": "Можно добавить http:// https:// или прокси в формате v2ray, например vless://",
+      "label": "Дополнительные URL"
     },
     "additional_configs_xrayjson": {
-      "description": "",
-      "label": ""
+      "description": "Дополнительные outbounds для Xray JSON",
+      "label": "Дополнительные конфигурации для Xray JSON"
     },
     "admin": {
       "description": "Раздел предназначен для настройки параметров, связанных с администратором.",
@@ -438,13 +2393,13 @@
     },
     "admin_lang": {
       "description": "Выберите язык для раздела администрирования",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 Английский",
+      "fa": "🇮🇷 Персидский - فارسی",
       "label": "🗺️ Язык панели администратора",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 Бирманский",
+      "pt": "🇧🇷 Португальский",
+      "ru": "🇷🇺 Русский",
+      "zh": "🇨🇳 Китайский"
     },
     "admin_secret": {
       "description": "Admin Secret будет использоваться для доступа к панели администратора.",
@@ -459,8 +2414,8 @@
       "label": "🆗 Разрешить неверный SNI"
     },
     "anytls_enable": {
-      "description": "",
-      "label": ""
+      "description": "Включить протокол AnyTLS",
+      "label": "AnyTLS"
     },
     "auto_update": {
       "description": "Система автоматически обновится в 3:00 утра при наличии обновлений",
@@ -495,11 +2450,11 @@
       "label": "🔑 API Cloudflare"
     },
     "common_proxy_core": {
-      "both": "",
-      "description": "",
-      "hiddify_core": "",
-      "label": "",
-      "xray": ""
+      "both": "Оба",
+      "description": "Если протокол есть и в Xray, и в Hiddify Core, включённым остаётся только выбранное ядро. Выберите «Оба», чтобы оставить оба.",
+      "hiddify_core": "Hiddify Core (singbox)",
+      "label": "🎛️ Общее ядро прокси",
+      "xray": "Xray"
     },
     "core_type": {
       "description": "☢️ XRay: хорошее ядро\n<br>\n📦 Singbox: разработан SagerNet. Это также хорошее ядро",
@@ -510,48 +2465,48 @@
       "label": "🌍 Страна"
     },
     "create_easysetup_link": {
-      "description": "config.create_easysetup_link.description",
-      "label": "config.create_easysetup_link.label"
+      "description": "Создать ссылку easy-setup для первоначальной настройки",
+      "label": "Создать ссылку Easy Setup"
     },
     "db_version": {
       "description": "Описание версии базы данных",
       "label": "Label версии базы данных"
     },
     "dbvalues": {
-      "description": "config.dbvalues.description",
-      "label": "config.dbvalues.label"
+      "description": "Внутренние значения базы данных (расширенные)",
+      "label": "Значения БД"
     },
     "decoy_domain": {
       "description": "Поддельный сайт: имитирует сайт, когда кто-то напрямую посещает ваш домен.<br>\n⚠️ Не используйте финансовые, иранские и известные сайты или сайты с авторизацией, такие как Google, Yahoo, Wikipedia, PayPal.<br>\n⛔ Обязательно проверьте сайт и убедитесь, что это правильный сайт, иначе вы можете получить предупреждение о фишинге.<br>\n⛔⛔ Проверьте этот домен еще раз, чтобы не было проблем в будущем",
       "label": "📺 Сайт-приманка"
     },
     "default_useragent_string": {
-      "description": "",
-      "label": ""
+      "description": "Строка User-Agent по умолчанию, используемая в сгенерированных клиентских конфигурациях",
+      "label": "🪪 User Agent по умолчанию"
     },
     "dns_server": {
       "description": "✳️ По умолчанию 1.1.1.1 <br>\n🚧 Блокировать вредоносное ПО 1.1.1.2 <br>\n🔞 Блокировать порно 1.1.1.3",
       "label": "🖥 DNS-сервер"
     },
     "dnstt": {
-      "description": "",
-      "label": ""
+      "description": "Настройки туннеля DNSTT",
+      "label": "DNSTT"
     },
     "dnstt_enable": {
-      "description": "",
-      "label": ""
+      "description": "Включить протокол DNSTT",
+      "label": "Включить DNSTT"
     },
     "dnstt_private_key": {
-      "description": "",
-      "label": ""
+      "description": "Приватный ключ DNSTT",
+      "label": "Приватный ключ DNSTT"
     },
     "dnstt_public_key": {
-      "description": "",
-      "label": ""
+      "description": "Публичный ключ DNSTT",
+      "label": "Публичный ключ DNSTT"
     },
     "dnstt_resolvers": {
-      "description": "",
-      "label": ""
+      "description": "DNS-резолверы для DNSTT через запятую",
+      "label": "Резолверы DNSTT"
     },
     "domain_fronting": {
       "description": "Это используется для имитации другого веб-сайта вместо вашего в SNI. поэтому GTW не может фильтровать ваш домен\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>Руководство</a>. ⚠️CloudFlare не поддерживает фронтирование домена.",
@@ -574,8 +2529,8 @@
       "label": "🛡️ Firewall"
     },
     "first_setup": {
-      "description": "config.first_setup.description",
-      "label": "config.first_setup.label"
+      "description": "Находится ли панель в режиме первой настройки",
+      "label": "Первая настройка"
     },
     "general": {
       "description": "Это общие настройки системы.",
@@ -590,16 +2545,16 @@
       "label": "🔵 h2"
     },
     "health_secret_path": {
-      "description": "",
-      "label": ""
+      "description": "Секретный путь для проверок состояния",
+      "label": "Секретный путь проверки состояния"
     },
     "hidden": {
-      "description": "config.hidden.description",
-      "label": "config.hidden.label"
+      "description": "Скрытая внутренняя настройка",
+      "label": "Скрытое"
     },
     "hiddifycli_enable": {
-      "description": "config.hiddifycli_enable.description",
-      "label": "config.hiddifycli_enable.label"
+      "description": "Включить функции Hiddify CLI",
+      "label": "Включить Hiddify CLI"
     },
     "http": {
       "description": "Конфигурации HTTP можно установить в этом разделе",
@@ -644,7 +2599,7 @@
     "invalid-pattern-for-warp-sites": "⚠️ Сайт, введенный в Варп, не соответствует указанному шаблону.",
     "invalid_uuid": "Неверный UUID пользователя. пример: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
     "is_parent": {
-      "description": "config.is_parent.description",
+      "description": "Выступает ли эта панель в роли родительской",
       "label": "Главная панель"
     },
     "kcp": {
@@ -661,79 +2616,79 @@
     },
     "lang": {
       "description": "Выберите язык пользовательского интерфейса, чтобы персонализировать свой опыт использования пользовательской зоны.",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 Английский",
+      "fa": "🇮🇷 Персидский - فارسی",
       "label": "🗺️ Язык раздела пользователя",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 Бирманский",
+      "pt": "🇧🇷 Португальский",
+      "ru": "🇷🇺 Русский",
+      "zh": "🇨🇳 Китайский"
     },
     "last_hash": {
-      "description": "config.last_hash.description",
-      "label": "config.last_hash.label"
+      "description": "Хеш последней применённой конфигурации",
+      "label": "Последний хеш"
     },
     "last_priodic_usage_check": {
-      "description": "config.last_priodic_usage_check.description",
-      "label": "config.last_priodic_usage_check.label"
+      "description": "Время последней периодической проверки трафика",
+      "label": "Последняя периодическая проверка трафика"
     },
     "last_users_sync": {
-      "description": "",
-      "label": ""
+      "description": "Время последней успешной синхронизации пользователей с родительской панелью",
+      "label": "Последняя синхронизация пользователей"
     },
     "license": {
       "description": "Для коммерческого использования этого продукта вам необходимо приобрести его лицензию.",
       "label": "License  Code"
     },
     "log_level": {
-      "CRITICAL": "",
-      "DEBUG": "",
-      "ERROR": "",
-      "INFO": "",
-      "SUCCESS": "",
-      "TRACE": "",
-      "WARNING": "",
-      "description": "config.log_level.description",
-      "label": "config.log_level.label"
+      "CRITICAL": "Критический",
+      "DEBUG": "Отладка",
+      "ERROR": "Ошибка",
+      "INFO": "Информация",
+      "SUCCESS": "Успех",
+      "TRACE": "Трассировка",
+      "WARNING": "Предупреждение",
+      "description": "Уровень подробности журнала панели",
+      "label": "Уровень журнала"
     },
     "master_dns_encrypt_key": {
-      "description": "",
-      "label": ""
+      "description": "Ключ шифрования данных MasterDNS (hex)",
+      "label": "Ключ шифрования MasterDNS"
     },
     "max_proxy_ips_per_version": {
-      "description": "",
-      "label": ""
+      "description": "Максимальное число адресов IPv4 и IPv6, используемых для генерации прокси для каждого домена (каждая версия ограничивается отдельно).",
+      "label": "Макс. IP прокси на версию"
     },
     "mieru": {
-      "description": "",
-      "label": ""
+      "description": "Протокол Mieru — безопасный децентрализованный протокол связи, предназначенный для передачи данных в распределённых сетях без центрального сервера",
+      "label": "⚡️ Mieru"
     },
     "mieru_enable": {
-      "description": "",
-      "label": ""
+      "description": "Mieru — быстрый прокси",
+      "label": "⚡️ Включить Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "",
-      "HANDSHAKE_NO_WAIT": "",
-      "HANDSHAKE_STANDARD": "",
-      "description": "",
-      "label": ""
+      "HANDSHAKE_DEFAULT": "📄 По умолчанию",
+      "HANDSHAKE_NO_WAIT": "⏳ Без ожидания",
+      "HANDSHAKE_STANDARD": "📝 Стандартный",
+      "description": "Рукопожатие Mieru устанавливает безопасное соединение, проверяя и аутентифицируя обе стороны перед обменом данными",
+      "label": "🤝 Рукопожатие Mieru"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "",
-      "MULTIPLEXING_HIGH": "",
-      "MULTIPLEXING_LOW": "",
-      "MULTIPLEXING_MIDDLE": "",
-      "description": "",
-      "label": ""
+      "MULTIPLEXING_DEFAULT": "📄 По умолчанию",
+      "MULTIPLEXING_HIGH": "📈 Высокий",
+      "MULTIPLEXING_LOW": "📉 Низкий",
+      "MULTIPLEXING_MIDDLE": "📊 Средний",
+      "description": "Мультиплексирование Mieru обеспечивает эффективную передачу данных, позволяя одновременно обрабатывать несколько соединений",
+      "label": "🔄 Режим мультиплексирования Mieru"
     },
     "mieru_tcp_ports": {
-      "description": "",
-      "label": ""
+      "description": "Целые числа через запятую, обозначающие порты (1234,1235,1237)",
+      "label": "🔍 TCP-порты Mieru"
     },
     "mieru_udp_ports": {
-      "description": "",
-      "label": ""
+      "description": "Целые числа через запятую, обозначающие порты (1234,1235,1237)",
+      "label": "🔎 UDP-порты Mieru"
     },
     "mux": {
       "description": "Настройки конфигурации MUX (Multiplex)",
@@ -776,20 +2731,20 @@
       "label": "♍️ Протокол MUX"
     },
     "naive_enable": {
-      "description": "",
-      "label": ""
+      "description": "Naive использует точно такой же стек Chrome, чтобы избежать обнаружения",
+      "label": "🛡 Включить Naive"
     },
     "naive_port": {
-      "description": "",
-      "label": ""
+      "description": "Эта опция задаёт порт Naive",
+      "label": "🔎 Порт Naive"
     },
     "netdata": {
       "description": "Для отображения ресурсов, используется процессор вашего сервера, но нагрузка не слишком высокая",
       "label": "Netdata"
     },
     "node_name": {
-      "description": "",
-      "label": ""
+      "description": "Имя этого узла, показываемое в родительской панели",
+      "label": "Имя узла"
     },
     "not_found": {
       "description": "Конфигурация не найдена",
@@ -804,19 +2759,19 @@
       "label": "🔄 Режим обновления пакетов"
     },
     "panel_mode": {
-      "child": "",
-      "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label",
-      "parent": "",
-      "standalone": ""
+      "child": "Дочерняя",
+      "description": "Режим работы панели: автономная, родительская или дочерняя",
+      "label": "Режим панели",
+      "parent": "Родительская",
+      "standalone": "Автономная"
     },
     "parent_admin_proxy_path": {
-      "description": "config.parent_admin_proxy_path.description",
-      "label": "config.parent_admin_proxy_path.label"
+      "description": "Путь admin proxy в родительской панели",
+      "label": "Путь admin proxy родителя"
     },
     "parent_domain": {
-      "description": "config.parent_domain.description",
-      "label": "config.parent_domain.label"
+      "description": "Домен родительской панели",
+      "label": "Домен родителя"
     },
     "parent_panel": {
       "description": "Вы можете подключиться к главной панели, чтобы добавить пользователя в одном месте, а использование всех серверов будет добавлено автоматически. ",
@@ -827,16 +2782,16 @@
       "label": "ℹ️ Путь gRPC"
     },
     "path_http": {
-      "description": "",
-      "label": ""
+      "description": "должен быть случайным",
+      "label": "ℹ️ Путь HTTP"
     },
     "path_httpupgrade": {
       "description": "должен быть случайным",
       "label": "ℹ️ Путь обновления HTTP"
     },
     "path_naive": {
-      "description": "",
-      "label": ""
+      "description": "Для ссылки Naive",
+      "label": "ℹ️ Путь Naive"
     },
     "path_ss": {
       "description": "Путь Shadowsocks в ссылках",
@@ -903,8 +2858,8 @@
       "label": "🌍 Резервный домен Reality"
     },
     "reality_port": {
-      "description": "",
-      "label": ""
+      "description": "Порт Reality",
+      "label": "Порт REALITY"
     },
     "reality_private_key": {
       "description": "Не меняйте это",
@@ -923,16 +2878,16 @@
       "label": "🆔 Short IDs"
     },
     "restls": {
-      "description": "config.restls.description",
+      "description": "Настройки протокола RestLS",
       "label": "RestTLS"
     },
     "restls1_2_domain": {
-      "description": "config.restls1_2_domain.description",
-      "label": "config.restls1_2_domain.label"
+      "description": "Домен, используемый для RestLS 1.2",
+      "label": "Домен RestLS 1.2"
     },
     "restls1_3_domain": {
-      "description": "config.restls1_3_domain.description",
-      "label": "config.restls1_3_domain.label"
+      "description": "Домен, используемый для RestLS 1.3",
+      "label": "Домен RestLS 1.3"
     },
     "shadowsocks": {
       "description": "Shadowsocks - это быстрый прокси-туннель, который помогает вам обходить фаерволы",
@@ -971,12 +2926,12 @@
       "label": "👁️‍🗨️ Показать использование в доп.ссылке"
     },
     "snell_enable": {
-      "description": "",
-      "label": ""
+      "description": "Включить протокол Snell",
+      "label": "Snell"
     },
     "socks_enable": {
-      "description": "",
-      "label": ""
+      "description": "Включить протокол SOCKS",
+      "label": "SOCKS"
     },
     "special_port": {
       "description": "Вы можете установить индивидуальный порт для вашего сервера Reality, чтобы снизить нагрузку на систему. (Разрешить прямое подключение к прокси должно быть да)",
@@ -1003,36 +2958,36 @@
       "label": "SSH Proxy"
     },
     "ssh_host_dsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "Приватный ключ DSA хоста SSH",
+      "label": "Приватный ключ DSA хоста SSH"
     },
     "ssh_host_dsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "Публичный ключ DSA хоста SSH",
+      "label": "Публичный ключ DSA хоста SSH"
     },
     "ssh_host_ecdsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "Приватный ключ ECDSA хоста SSH",
+      "label": "Приватный ключ ECDSA хоста SSH"
     },
     "ssh_host_ecdsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "Публичный ключ ECDSA хоста SSH",
+      "label": "Публичный ключ ECDSA хоста SSH"
     },
     "ssh_host_ed25519_pk": {
-      "description": "",
-      "label": ""
+      "description": "Приватный ключ Ed25519 хоста SSH",
+      "label": "Приватный ключ Ed25519 хоста SSH"
     },
     "ssh_host_ed25519_pub": {
-      "description": "",
-      "label": ""
+      "description": "Публичный ключ Ed25519 хоста SSH",
+      "label": "Публичный ключ Ed25519 хоста SSH"
     },
     "ssh_host_rsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "Приватный ключ RSA хоста SSH",
+      "label": "Приватный ключ RSA хоста SSH"
     },
     "ssh_host_rsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "Публичный ключ RSA хоста SSH",
+      "label": "Публичный ключ RSA хоста SSH"
     },
     "ssh_server_enable": {
       "description": "SSH Proxy полностью отличается от оригинального SSH Server",
@@ -1063,32 +3018,32 @@
       "label": "Поддельный домен SSR"
     },
     "sub_full_clash_enable": {
-      "description": "config.sub_full_clash_enable.description",
-      "label": "config.sub_full_clash_enable.label"
+      "description": "Включить конечную точку полной подписки Clash",
+      "label": "Включить полную подписку Clash"
     },
     "sub_full_clash_meta_enable": {
-      "description": "config.sub_full_clash_meta_enable.description",
-      "label": "config.sub_full_clash_meta_enable.label"
+      "description": "Включить конечную точку полной подписки Clash Meta",
+      "label": "Включить полную подписку Clash Meta"
     },
     "sub_full_links_b64_enable": {
-      "description": "config.sub_full_links_b64_enable.description",
-      "label": "config.sub_full_links_b64_enable.label"
+      "description": "Включить конечную точку ссылок подписки в base64",
+      "label": "Включить полные ссылки (Base64)"
     },
     "sub_full_links_enable": {
-      "description": "config.sub_full_links_enable.description",
-      "label": "config.sub_full_links_enable.label"
+      "description": "Включить конечную точку ссылок подписки в виде обычного текста",
+      "label": "Включить полные ссылки"
     },
     "sub_full_singbox_enable": {
-      "description": "config.sub_full_singbox_enable.description",
-      "label": "config.sub_full_singbox_enable.label"
+      "description": "Включить конечную точку полной подписки Sing-box",
+      "label": "Включить полную подписку Sing-box"
     },
     "sub_full_xray_json_enable": {
       "description": "Полная ссылка XRay предоставляет комплексные возможности настройки параметров, специфичных для XRay. Сюда входит пользовательская фрагментация и мультиплексирование (мультиплексирование) в таких приложениях, как v2rayNG, которые поддерживают протоколы XRay для точного управления настройкой прокси-сервера XRay.",
       "label": "⚙️ Ссылка на полную конфигурацию XRay"
     },
     "sub_singbox_ssh_enable": {
-      "description": "config.sub_singbox_ssh_enable.description",
-      "label": "config.sub_singbox_ssh_enable.label"
+      "description": "Включить конечную точку подписки Sing-box SSH",
+      "label": "Включить подписку Sing-box SSH"
     },
     "tcp_enable": {
       "description": "Включает протокол TCP",
@@ -1123,16 +3078,16 @@
       "label": "Настройки TLS"
     },
     "tls_ech_enable": {
-      "description": "",
-      "label": ""
+      "description": "Добавляет ECH в сгенерированные ссылки подписки TLS",
+      "label": "🔐 Включить TLS ECH"
     },
     "tls_fragment_enable": {
       "description": "При некоторых обстоятельствах, это позволяет обойти систему черного списка SNI. <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(подробнее)</a>",
       "label": "⏯ TLS Fragment"
     },
     "tls_fragment_packets": {
-      "description": "",
-      "label": ""
+      "description": "Режим фрагментации пакетов (например: tlshello или 1-3)",
+      "label": "📦 Фрагментация пакетов TLS"
     },
     "tls_fragment_size": {
       "description": "Размер каждого пакета",
@@ -1187,12 +3142,12 @@
       "label": "🔎 Порты TUIС"
     },
     "unique_id": {
-      "description": "config.unique_id.description",
-      "label": "config.unique_id.label"
+      "description": "Уникальный идентификатор этого экземпляра панели",
+      "label": "Уникальный ID"
     },
     "use_ip_in_config": {
-      "description": "",
-      "label": ""
+      "description": "Это помогает уменьшить проблемы с разрешением IP сервера. Будет использоваться случайный IP выбранного домена.",
+      "label": "Использовать IP в конфигурациях"
     },
     "utls": {
       "description": "Эта опция будет имитировать разные браузеры, поэтому GFW не сможет обнаружить ваш браузер",
@@ -1206,20 +3161,20 @@
     "validation-success": "Конфигурации успешно изменены. Нажмите %(link)s, чтобы применить их. Это может занять 2 минуты",
     "validation-success-no-reset": "✅ Конфигурации успешно изменены",
     "vless_decryption": {
-      "description": "",
-      "label": ""
+      "description": "Параметр расшифровки VLESS для ссылок обмена",
+      "label": "Расшифровка VLESS"
     },
     "vless_enable": {
       "description": "Включить протокол VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "",
-      "label": ""
+      "description": "Метод шифрования VLESS для ссылок обмена",
+      "label": "Шифрование VLESS"
     },
     "vless_flow": {
-      "description": "",
-      "label": ""
+      "description": "Управление потоком VLESS (например, xtls-rprx-vision)",
+      "label": "VLESS flow"
     },
     "vmess_enable": {
       "description": "Несколько человек сообщили, что VMess позволляет правительствам обнаруживать систему.  Не рекомендуется",
@@ -1297,6 +3252,18 @@
     "xtls_enable": {
       "description": "Включает протокол XTLS",
       "label": "🟢XTLS"
+    },
+    "path_splithttp": {
+      "description": "Путь XHTTP",
+      "label": "Путь XHTTP"
+    },
+    "splithttp_enable": {
+      "description": "XHTTP позволяет разделить потоки загрузки и отдачи, унифицирует gRPC, H2, H1 и также поддерживает QUIC.",
+      "label": "Включить XHTTP"
+    },
+    "tls_ech": {
+      "description": "Значение ECH в формате: cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "Значение TLS ECH"
     }
   },
   "copy": "Копировать",
@@ -1304,25 +3271,25 @@
   "days": "Дни",
   "desktop": "ПК",
   "direct": "➡️ На прямую",
-  "dnstt": "",
+  "dnstt": "DNSTT",
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Ваши домены изменились. пожалуйста, не забудьте скопировать ссылки администратора, иначе вы больше не сможете получить доступ к панели управления",
-    "current_server_IPs": "",
+    "current_server_IPs": "🔢 Текущие IP сервера:",
     "custom_proxy": {
-      "description": "",
+      "description": "Необязательная привязка прокси. Перечислены только прокси, поддерживающие комбинацию режимов этого домена. Оставьте пустым, чтобы использовать все подходящие прокси.",
       "group": {
-        "dns_gateway": "",
-        "ip_based": "",
-        "l7_gateway": "",
-        "other": "",
-        "sni_gateway": ""
+        "dns_gateway": "DNS-шлюз",
+        "ip_based": "На основе IP",
+        "l7_gateway": "L7-шлюз",
+        "other": "Другое",
+        "sni_gateway": "SNI-шлюз"
       },
-      "label": "",
-      "reality_only": "",
-      "reality_required": "",
-      "sni_l7_mutex": "",
-      "sni_single_only": ""
+      "label": "Пользовательские прокси",
+      "reality_only": "Домены REALITY могут использовать только L7-прокси домена-шлюза, режимы домена которых включают REALITY. Оставьте пустым, чтобы использовать все подходящие L7-прокси REALITY.",
+      "reality_required": "Домены REALITY могут использовать только L7-прокси домена-шлюза, режимы домена которых включают REALITY",
+      "sni_l7_mutex": "SNI-шлюз и L7-шлюз нельзя выбрать вместе для одного домена",
+      "sni_single_only": "Для домена можно выбрать только один SNI-шлюз"
     },
     "description": "Пожалуйста, внимательно и правильно заполните это поле. В противном случае у прокси могут возникнуть проблемы. Посетите <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردام نه'> Помогите</a> Узнайте, как создать subdomain.",
     "domain": "Домен",
@@ -1331,15 +3298,15 @@
       "label": "🔒 Фронтирование домена TLS"
     },
     "ech": {
-      "description": "",
-      "label": ""
+      "description": "Получать и использовать Encrypted Client Hello (ECH) для этого домена CDN. Требуется включённый TLS ECH в настройках панели.",
+      "label": "🔐 ECH"
     },
     "empty": {
-      "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+      "allowed_for_fake_only": "Пустой домен допускается только в режиме fake"
     },
     "fake_mode": {
-      "description": "",
-      "label": ""
+      "description": "Valid использует настоящий сертификат. Fake и Reality предназначены для decoy TLS и протоколов REALITY.",
+      "label": "Режим TLS"
     },
     "intro": "1️⃣ В этом разделе вы можете добавить свой Домен.<inlang-LineFeed><br>\n2. Если вы хотите уменьшить вероятность использования грязного IP-адреса, вы можете добавить сервер с несколькими ретрансляторами. <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Подробнее</a> .<inlang-LineFeed><br>\n3. Если у вас в Panel несколько IPv4 или IPv6, вам необходимо добавить указанный на них домен в качестве ретранслятора.",
     "ip": "IP",
@@ -1348,30 +3315,36 @@
       "asn_issue": "Выбранный домен для REALITY не находится в том же ASN. Для более эффективного использования протокола лучше найти Домен в том же ASN"
     },
     "resolveip": {
-      "description": "",
-      "label": ""
+      "description": "Использовать IP вместо доменного имени в прокси. Полезно при сильных помехах в DNS.",
+      "label": "🔢 Разрешать IP"
     },
     "server_domain": {
-      "description": "",
-      "label": "",
-      "must_be_valid_direct_or_relay": ""
+      "description": "Домен вышестоящего сервера для этой записи. Должен быть допустимым доменом Direct или Relay.",
+      "label": "Домен сервера",
+      "must_be_valid_direct_or_relay": "Домен сервера должен быть допустимым доменом Direct или Relay"
     },
     "show_domains_description": "Для посетителей пользовательской области с этим доменом, укажите, какие домены они могут видеть.\n<br>\nПредложение: Для домена с IP-адресом не попадащим под фильтры, отличного от других, выберите все остальные домены (кроме текущего). В результате, поскольку этот IP-адрес используется не для прокси-сервера, а для простого веб-сайта, этот домен и IP-адрес никогда не будут заблокированы, и ваши пользователи смогут легко обновлять свои профили.",
     "tls_status": {
-      "description": ""
+      "description": "Сертификат, сохранённый для этого домена: действительный от CA, самоподписанный, истёкший, недействительный или отсутствует.",
+      "expired": "Истёк",
+      "invalid": "Недействителен",
+      "label": "TLS",
+      "missing": "Нет сертификата",
+      "self_signed": "Самоподписанный",
+      "valid": "Действителен"
     }
   },
   "download": "Direct Download",
   "download_domain": {
-    "description": "",
-    "label": ""
+    "description": "Только для XHTTP: позволяет, например, выполнять загрузку с другого домена, чем отдачу. Это усложняет обнаружение и может улучшить общее качество.",
+    "label": "📈 Домен загрузки"
   },
   "fake": "🆎 Поддельный сайт",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {
     "description": "ℹ️ gRPC — это протокол на основе HTTP 2. Возможно, в вашей ситуации он будет быстрее!"
   },
-  "in\n          parent panel": "",
+  "in\n          parent panel": "в\n          родительской панели",
   "in parent panel": "В центральной панели",
   "install from google play": "<i class='fa-brands fa-google-play'></i> Google Play",
   "ios": "iOS",
@@ -1389,7 +3362,7 @@
       "erlang": "✴️ Erlang: хорошая производительность",
       "go": "✅ Go: Нормальный функционал – без поддержки рекламы",
       "python": "☑️ Python: низкая производительность",
-      "telemt": ""
+      "telemt": "❇️ Telemt: быстрый, безопасный, надёжный"
     }
   },
   "log": "📄 Log",
@@ -1413,7 +3386,7 @@
   "next": "Следующий",
   "no_reset": "⭐️ Без сброса",
   "node": {
-    "diff-version": "node.diff-version",
+    "diff-version": "Версия панели узла отличается от этой панели",
     "mode": {
       "dscr": "Это поле определяет режим для узла.",
       "label": "Режим Node "
@@ -1433,9 +3406,9 @@
   "package days?": "пакетные дни?",
   "package size?": "Размер посылки?",
   "parent": {
-    "invalid-parent-url": "parent.invalid-parent-url",
-    "panel-not-active": "",
-    "sync-req-failed": "parent.sync-req-failed"
+    "invalid-parent-url": "Недопустимый URL родительской панели",
+    "panel-not-active": "Родительская панель не активна",
+    "sync-req-failed": "Не удался запрос синхронизации с родителем"
   },
   "previous": "Предыдущий",
   "quicksetup": {
@@ -1460,7 +3433,7 @@
     }
   },
   "singbox: ssh": "SingBox: SSH",
-  "special": "",
+  "special": "особый",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",

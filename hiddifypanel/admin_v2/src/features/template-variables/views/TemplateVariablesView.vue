@@ -1,8 +1,10 @@
 <template>
   <PageHeader :title="t('templateVariables.listTitle')" />
+  <ListFilterStatus :shown="filteredCount ?? variables.length" :total="variables.length" :active="filtersActive" @reset="resetFilters" />
   <Panel>
     <DataTable
       v-model:filters="filters"
+      @filter="onFilter"
       :value="variables"
       :loading="loading"
       striped-rows
@@ -13,6 +15,10 @@
       filter-display="row"
       data-key="access"
     >
+      <template #empty>
+        <ListNoMatch v-if="filtersActive" @reset="resetFilters" />
+        <span v-else-if="!loading">{{ t('common.none') }}</span>
+      </template>
       <template #header>
         <div class="flex flex-wrap justify-between items-center gap-3">
           <div class="flex flex-wrap gap-2 items-center">
@@ -58,7 +64,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { useHashState } from '@/shared/composables/useHashState'
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FilterMatchMode } from '@primevue/core/api'
 import DataTable from 'primevue/datatable'
@@ -86,6 +95,16 @@ const filterCategory = ref<string | null>(null)
 const filters = ref({
   global: { value: null as string | null, matchMode: FilterMatchMode.CONTAINS },
 })
+const filteredCount = ref<number | null>(null)
+function onFilter(e: { filteredValue: unknown[] }) {
+  filteredCount.value = e.filteredValue.length
+}
+const filtersActive = computed(() => Boolean((filters.value.global.value ?? '').trim() || filterCategory.value))
+function resetFilters() {
+  filters.value.global.value = null
+  filterCategory.value = null
+}
+useHashState({ q: toRef(filters.value.global, 'value'), cat: filterCategory })
 
 const categoryOptions = computed(() => groups.value)
 

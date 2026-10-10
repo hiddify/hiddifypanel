@@ -187,7 +187,18 @@ class SettingsApi(MethodView):
 
         form = get_config_form(formdata=_formdata(current, values), meta={"csrf": False})
         if not form.validate():
-            return {"errors": [_("config.validation-error")], "field_errors": _field_errors(form)}, 422
+            # Only what is being changed can fail the save. The form checks every setting each time, and a value that
+            # was already saved (or that the checks of another setting now reject, like two fake domains that share a
+            # name) must not block an unrelated change.
+            stored = {f.short_name: f.data for c in current if isinstance(c, wtf.FormField) for f in c.form}
+
+            def is_changed(key: str) -> bool:
+                old, new = stored.get(key), values[key]
+                return bool(old) != bool(new) if isinstance(old, bool) else str("" if old is None else old) != str("" if new is None else new)
+
+            blocking = {key: msgs for key, msgs in _field_errors(form).items() if key in values and is_changed(key)}
+            if blocking:
+                return {"errors": [_("config.validation-error")], "field_errors": blocking}, 422
 
         set_hconfig(ConfigEnum.first_setup, False)
         admin_lang = hconfig(ConfigEnum.admin_lang)

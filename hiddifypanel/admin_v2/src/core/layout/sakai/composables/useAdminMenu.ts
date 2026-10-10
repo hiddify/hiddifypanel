@@ -35,14 +35,16 @@ export function useAdminMenu() {
     label: t('menu.proxyEditor'),
     icon: 'pi pi-fw pi-server',
     items: [
-      { label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' },
       { label: t('menu.customProxies'), icon: 'pi pi-fw pi-share-alt', to: '/custom-proxies' },
-      ...(isSuperAdmin.value ? [{ label: t('menu.outbounds'), icon: 'pi pi-fw pi-directions', to: '/outbounds' }] : []),
       { label: t('menu.baseConfigs'), icon: 'pi pi-fw pi-cog', to: '/base-configs' },
       { label: t('menu.templates'), icon: 'pi pi-fw pi-file-edit', to: '/templates' },
       { label: t('menu.templateVariables'), icon: 'pi pi-fw pi-list', to: '/template-variables' },
     ],
   }))
+
+  // Their own entries in Settings (not inside the proxy editor).
+  const protocols = computed<AdminMenuItem>(() => ({ label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' }))
+  const outbounds = computed<AdminMenuItem>(() => ({ label: t('menu.outbounds'), icon: 'pi pi-fw pi-directions', to: '/outbounds' }))
 
   const menuGroups = computed<AdminMenuGroup[]>(() => {
     // Same-origin classic pages open inside the new shell (legacy frame); external links stay as they are.
@@ -59,8 +61,15 @@ export function useAdminMenu() {
             ...serverItems('manager'),
             { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
           ],
+      // Domains, protocols, outbounds, settings, the proxy editor, then the rest (backup, apply, ...).
       // The proxy editor lives in Settings in every panel mode; agents don't get it.
-      settings: [...(isAgent.value ? [] : [proxyEditor.value]), ...serverItems('settings')],
+      settings: (() => {
+        const all = serverItems('settings')
+        const first = (to: string) => all.find((item) => item.to === to)
+        const lead = [first('/domains'), ...(isAgent.value ? [] : [protocols.value]), ...(isAgent.value || !isSuperAdmin.value ? [] : [outbounds.value]), first('/settings'), ...(isAgent.value ? [] : [proxyEditor.value])]
+        const placed = new Set(lead)
+        return [...lead.filter((item): item is AdminMenuItem => !!item), ...all.filter((item) => !placed.has(item))]
+      })(),
       help: serverItems('help'),
     }
     return GROUP_ORDER.map((id) => ({ id, label: t(`menu.group.${id}`), items: items[id] })).filter((group) => group.items.length > 0)

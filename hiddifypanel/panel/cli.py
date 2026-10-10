@@ -217,7 +217,7 @@ def init_app(app):
                 if hconfig(boolmap[k]) is None:
                     data.append(BoolConfig(key=boolmap[k], value=config[k]))
                 else:
-                    BoolConfig.query.filter(BoolConfig.key == strmap[k]).update({"value": config[k]})
+                    BoolConfig.query.filter(BoolConfig.key == boolmap[k]).update({"value": config[k]})
         if len(data):
             db.session.bulk_save_objects(data)
         db.session.commit()

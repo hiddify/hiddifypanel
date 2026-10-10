@@ -279,7 +279,7 @@ def get_ips(domain_db: Domain) -> IPVar:
         elif domain_db.mode.is_direct():
             ips.merge(hutils.network.get_ips())
 
-    return cap_ipvar(ips, only_ipv4=hconfig(ConfigEnum.only_ipv4), max_per_version=hconfig(ConfigEnum.max_proxy_ips_per_version))
+    return cap_ipvar(ips, only_ipv4=hconfig(ConfigEnum.only_ipv4) or not hutils.network.kernel_ipv6_available(), max_per_version=hconfig(ConfigEnum.max_proxy_ips_per_version))
 
 
 def _ips_for_host(host: str) -> IPVar:

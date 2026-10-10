@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -21,6 +22,22 @@ const MONACO_URL_MARKER = '/monaco/vs/'
 function monacoFileWanted(relative: string): boolean {
   const rel = relative.split(path.sep).join('/')
   return !(rel === 'language' || rel.startsWith('language/') || /^nls\.messages\./.test(rel))
+}
+
+/** Content hash of the prebuilt Monaco files that get copied: the URL changes exactly when they do. */
+function monacoTreeHash(): string {
+  const hash = createHash('sha256')
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      const full = path.join(dir, entry.name)
+      const relative = path.relative(monacoMinDir, full).split(path.sep).join('/')
+      if (!monacoFileWanted(relative)) continue
+      if (entry.isDirectory()) walk(full)
+      else if (entry.isFile()) hash.update(`${relative}\0`).update(fs.readFileSync(full))
+    }
+  }
+  walk(monacoMinDir)
+  return hash.digest('hex').slice(0, 8)
 }
 
 /**
@@ -59,7 +76,7 @@ function prebuiltMonaco(): Plugin {
       })
     },
     writeBundle() {
-      fs.cpSync(monacoMinDir, path.join(outDir, 'monaco', 'vs'), {
+      fs.cpSync(monacoMinDir, path.join(outDir, 'monaco', monacoTreeHash(), 'vs'), {
         recursive: true,
         filter: (src) => monacoFileWanted(path.relative(monacoMinDir, src)),
       })

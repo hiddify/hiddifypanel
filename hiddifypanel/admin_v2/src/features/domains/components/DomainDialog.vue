@@ -26,11 +26,12 @@ import {
   type DomainMode,
   type DomainPayload,
   type DomainRow,
+  type DomainsOptions,
   type DomainsState,
   type TlsMode,
 } from '@/features/domains/api'
 
-const props = defineProps<{ row: DomainRow | null; state: DomainsState | null }>()
+const props = defineProps<{ row: DomainRow | null; state: DomainsState | null; options: DomainsOptions | null }>()
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ saved: [state: DomainsState, row: DomainRow] }>()
 
@@ -100,7 +101,8 @@ const isReality = computed(() => fakeMode.value === 'reality')
 /** Telegram / ShadowTLS / SS FakeTLS front domain: like Reality, but no custom proxies and no download domain. */
 const isFakeProxy = computed(() => isFakeProxyMode(fakeMode.value))
 const takenFakeModes = computed(() => others.value.map((d) => d.fake_mode).filter(isFakeProxyMode))
-const compatibleIds = computed(() => meta.value?.compatible[`${mode.value}:${fakeMode.value}`] ?? [])
+// Until the options arrive every proxy is offered, so nothing is dropped from the selection.
+const compatibleIds = computed(() => (props.options ? (props.options.compatible[`${mode.value}:${fakeMode.value}`] ?? []) : (meta.value?.proxies ?? []).map((p) => p.id)))
 // Another mode: drop the proxies that do not fit it (the server would drop them too).
 watch(compatibleIds, (ids) => {
   if (visible.value) proxyIds.value = proxyIds.value.filter((id) => ids.includes(id))
@@ -110,7 +112,7 @@ watch(compatibleIds, (ids) => {
 const showDomainsAllowed = computed(() => isSublink.value || (!meta.value?.has_sublink && fakeMode.value === 'valid'))
 /** Like the classic page: `Node[name] alias [domain] mode(tls)` for nodes' domains. */
 const showOptions = computed(() =>
-  (meta.value?.show_options ?? []).map((d) => {
+  (props.options?.show_options ?? []).map((d) => {
     const name = d.alias && d.alias !== d.domain ? `${d.alias} [${d.domain || t('domains.noName')}]` : d.domain || t('domains.noName')
     const kind = `${t(`domains.kind.${kindOf(d.mode)}.name`)} (${t(`domains.tlsMode.${d.fake_mode}`)})`
     return { id: d.id, label: `${d.node ? `Node[${d.node}] ` : ''}${name} ${kind}` }

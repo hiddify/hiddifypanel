@@ -2,6 +2,7 @@
 /** Every port this server needs open to the internet (TCP and UDP) and what uses it, ready for a firewall. */
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -13,11 +14,14 @@ type PortMap = Record<string, string>
 interface PublicPorts {
   tcp: PortMap
   udp: PortMap
+  /** Service name -> custom proxy id, for the ports that belong to a custom proxy. */
+  proxies?: Record<string, { id: number; name: string }>
 }
 
 const visible = defineModel<boolean>('visible', { required: true })
 const { t } = useI18n()
 const toast = useToast()
+const router = useRouter()
 
 const data = ref<PublicPorts | null>(null)
 const loading = ref(false)
@@ -49,6 +53,13 @@ const sections = computed(() => [
   { proto: 'tcp' as const, rows: groups(data.value?.tcp), count: Object.keys(data.value?.tcp ?? {}).length },
   { proto: 'udp' as const, rows: groups(data.value?.udp), count: Object.keys(data.value?.udp ?? {}).length },
 ])
+
+function openProxy(service: string) {
+  const id = data.value?.proxies?.[service]?.id
+  if (id == null) return
+  visible.value = false
+  void router.push({ name: 'custom-proxy-edit', params: { id: String(id) } })
+}
 
 function list(proto: 'tcp' | 'udp'): string {
   return Object.keys(data.value?.[proto] ?? {}).join(',')
@@ -91,8 +102,18 @@ const SERVICE_ICON: Record<string, string> = {
             <Button icon="pi pi-copy" text rounded size="small" :aria-label="t('actions.ports.copyList')" v-tooltip.top="t('actions.ports.copyList')" :disabled="!s.count" @click="copy(list(s.proto), s.proto.toUpperCase())" />
           </header>
           <ul class="pp-rows">
-            <li v-for="r in s.rows" :key="r.service" class="pp-row">
-              <span class="pp-row__service"><i :class="SERVICE_ICON[r.service] ?? 'pi pi-circle'" />{{ r.service }}</span>
+            <li
+              v-for="r in s.rows"
+              :key="r.service"
+              class="pp-row"
+              :class="{ 'pp-row--link': data.proxies?.[r.service] }"
+              :role="data.proxies?.[r.service] ? 'link' : undefined"
+              :tabindex="data.proxies?.[r.service] ? 0 : undefined"
+              v-tooltip.top="data.proxies?.[r.service] ? `${t('actions.ports.openProxy')} (${r.service})` : undefined"
+              @click="openProxy(r.service)"
+              @keydown.enter="openProxy(r.service)"
+            >
+              <span class="pp-row__service"><i :class="SERVICE_ICON[r.service] ?? 'pi pi-circle'" />{{ data.proxies?.[r.service]?.name || r.service }}</span>
               <span class="pp-row__ports" dir="ltr">
                 <code v-for="p in r.ports" :key="p">{{ p }}</code>
               </span>
@@ -188,6 +209,20 @@ const SERVICE_ICON: Record<string, string> = {
   border-radius: 7px;
   font-size: 0.78rem;
   background: var(--p-content-hover-background, rgba(127, 127, 127, 0.1));
+}
+.pp-row--link {
+  cursor: pointer;
+}
+.pp-row--link:hover,
+.pp-row--link:focus-visible {
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.1));
+  outline: none;
+}
+.pp-row--link .pp-row__service {
+  text-transform: none;
+}
+.pp-row--link:hover .pp-row__service {
+  color: var(--p-primary-color);
 }
 .pp-row--empty {
   justify-content: center;

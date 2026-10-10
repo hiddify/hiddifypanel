@@ -1,16 +1,16 @@
 {
   " Search\n            Settings": " Procurar\nConfigurações",
-  "%(count)s records were successfully deleted.": "",
+  "%(count)s records were successfully deleted.": "%(count)s registros foram excluídos com sucesso.",
   "%(count)s records were successfully disabled.": "%(count)s registros foram desativados com sucesso.",
   "%(count)s records were successfully enabled.": "%(count)s registros foram ativados com sucesso.",
-  "%(count)s records were successfully reset days.": "",
-  "%(count)s records were successfully reset usage.": "",
-  "%(count)s records were successfully updated.": "",
+  "%(count)s records were successfully reset days.": "%(count)s registros tiveram os dias redefinidos com sucesso.",
+  "%(count)s records were successfully reset usage.": "%(count)s registros tiveram o uso redefinido com sucesso.",
+  "%(count)s records were successfully updated.": "%(count)s registros foram atualizados com sucesso.",
   "%(expire_days)s days": "%(expire_days)s dias",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "Último dia",
-  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
-  "A fake domain needs a real domain name": "",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "<a href=\"%(user_link)s\"> %(user)s</a>",
+  "A fake domain needs a real domain name": "Um domínio falso precisa de um nome de domínio real",
   "Access Denied!": "Acesso negado",
   "Actions": "Ações",
   "Active": "ativo",
@@ -19,7 +19,7 @@
   "Add some text that is only visible to super_admin.": "Adicione algum texto que seja visível apenas para o superadministrador",
   "Add some text that is only visible to you.": "Você pode adicionar algum texto, será visível apenas para voce",
   "Added by": "Adicionado por",
-  "Admin Links": "",
+  "Admin Links": "Links de administrador",
   "Admins": "Administradores",
   "Alias": "Pseudônimo",
   "All": "Todos",
@@ -34,21 +34,21 @@
   "Beta": "☑️Beta",
   "Bridge Servers": "➖ Servidores Bridge",
   "Bug": "Bug/recurso",
-  "CDN and worker domains must use valid fake mode": "",
+  "CDN and worker domains must use valid fake mode": "Domínios CDN e worker devem usar um modo falso válido",
   "CPU %(cores)s Cores": "CPU %(cores)s Núcleos ",
   "Can add sub admin": "👥 Pode adicionar subadministrador",
-  "Change": "",
+  "Change": "Alterar",
   "Check again": "Verifique novamente",
   "Childs": "Crianças",
   "China": "🇨🇳 China",
   "Click here to see the complete log": "Clique aqui para ver o registro completo",
-  "Click to Import": "Click to Import",
+  "Click to Import": "Toque para importar",
   "Click to Start Anti-Filter.": "<i class='fa-solid fa-play'></i> Toque para iniciar o Antifiltro.",
   "Close": "Fechar",
   "Commercial use": "Utilização comercial",
   "Config file is incorrect": "O arquivo de configuração está incorreto.",
   "Copy Link": "Link de cópia",
-  "Copy QR image": "",
+  "Copy QR image": "Copiar imagem do QR",
   "Couldn't find your ip addresses": "Não foi possível encontrar seus endereços IP",
   "Count:": "Contar:",
   "Create": "Criar",
@@ -67,7 +67,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "Domain (%(domain)s)-> IP = %(domain_ip)s não é igual ao seu IP = %(server_ip)s . isso é necessário no modo direto",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": " O IP do domínio = %(domain_ip)s não corresponde ao seu IP = %(server_ip)s, o que é necessário no modo direto",
   "Domain can not be resolved! there is a problem in your domain": "O domínio não pode ser resolvido! Há um problema em seu domínio. Verifique as configurações do seu Domínio.",
-  "Domain cannot be resolved! Please check DNS settings": "",
+  "Domain cannot be resolved! Please check DNS settings": "Não foi possível resolver o domínio! Verifique as configurações de DNS",
   "Domain is not REALITY friendly!": "O domínio não é compatível com Reality!",
   "Domain?": "Domínio?",
   "Donation": {
@@ -75,19 +75,20 @@
     "title": "Doação"
   },
   "Download App": "<i class='fa-solid fa-download'></i> Baixar aplicativo",
+  "Download Domain": "📈 Domínio de download",
   "Edit": "Editar",
   "Edit Proxy Names": "✏️ Modificando Proxies",
   "Enable": "❇️ Habilitar",
-  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
-  "Error in Config Generation": "",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "Ative o TLS ECH nas configurações do painel antes de usar ECH em um domínio CDN",
+  "Error in Config Generation": "Erro na geração da configuração",
   "Error in auto cdn format": "⚠️ Erro no formato CDN automático",
   "Error! auto cdn ip can not be find, please contact admin.": "Erro no Auto CDN IP! Não pode ser encontrado, entre em contato com o administrador",
   "Example Domains": "Test and Suggest Domain ",
-  "Expired": "",
+  "Expired": "Expirado",
   "Expired Users": "Usuários expirados",
   "Export": "Exportar",
   "Fake": "➖ Falso",
-  "Fake domains can only be direct or relay": "",
+  "Fake domains can only be direct or relay": "Domínios falsos só podem ser direct ou relay",
   "Filter": "Filtro",
   "Finished": "Finalizado...",
   "From Last Restart": "Da última reinicialização",
@@ -99,8 +100,8 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>Recommended</span>",
   "HiddifyNG intro": "Instale o HiddifyNG a partir de um destes links: %(dl_link)s %(play_link)s.\nEm seguida, clique no link abaixo e abra-o no HiddifyNG.",
   "HiddigyN": "HiddigyN <span class='badge badge-success'>Recommended</span>",
-  "Home Link": "",
-  "Hover the user to see the reason": "Hover the user to see the reason",
+  "Home Link": "Link da página inicial",
+  "Hover the user to see the reason": "Passe o mouse sobre o usuário para ver o motivo",
   "How many days this package should be available?": "Quantos dias é este pacote?",
   "How many?": "Quantos?",
   "If monthly is enabled, the usage will be reset after 30 days from this date.": "Se a opção mensal estiver habilitada, quando esse número chegar a 30, o uso do usuário será zerado! (para semanal, e diário o número será  7 e 1)",
@@ -112,7 +113,7 @@
   "Incorrect Password": "⚠️ Senha incorreta",
   "Install": "Instalar",
   "Install Hiddify Application": "Instalação do Painel Hidify",
-  "Invalid": "",
+  "Invalid": "Inválido",
   "Invalid IP or domain": "IP ou domínio inválido",
   "Invalid REALITY hostnames": "Nomes de host REALITY inválidos",
   "Invalid admin link": "Link de administrador inválido",
@@ -121,8 +122,8 @@
   "It will override the root admin to the current user": "Irá substituir o administrador proprietário do arquivo de backup pelo administrador atual.",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Junte-se ao nosso canal Hiddify Telegram para obter as atualizações mais recentes sobre o Hiddify.",
   "Last Online": "Última vez online",
-  "Last node to parent": "",
-  "Last parent to node": "",
+  "Last node to parent": "Último nó para o pai",
+  "Last parent to node": "Último pai para o nó",
   "Link is changed!": "ℹ️ O link foi alterado!",
   "Linux": "Linux",
   "Max Active Users": "Máximo de usuários ativos",
@@ -133,21 +134,21 @@
   "More Applications": "Mais aplicativos",
   "Network": "Rede",
   "New": "Novo",
-  "No certificate": "",
+  "No certificate": "Sem certificado",
   "No children!": "sem filhos",
-  "No main domains found, please add at least one domain with valid certificate": "",
-  "Nodes": "",
-  "Not Secure": "",
+  "No main domains found, please add at least one domain with valid certificate": "Nenhum domínio principal encontrado. Adicione pelo menos um domínio com certificado válido",
+  "Nodes": "Nós",
+  "Not Secure": "Não seguro",
   "Note": "📝 Observação",
   "Offline more than 1 day": "Offline por mais de 1 dia",
   "Offline more than 1 hour": "Offline por mais de 1 hora",
   "Offline more than 1 week": "Offline há mais de uma semana",
   "Ok": "OK",
-  "Online": "",
+  "Online": "Online",
   "Online Users": "Usuários online",
   "Only Blocked and Local websites": "☑️ Somente sites bloqueados localmente",
   "Only for sublink?": "🌍 Use apenas para link de assinatura",
-  "Only one domain of this kind can be added": "",
+  "Only one domain of this kind can be added": "Só é possível adicionar um domínio deste tipo",
   "Oops! Something went wrong.": "Ops! algo deu errado.",
   "Open in Application": "Abrir no aplicativo",
   "Others": "🇺🇳 Outros",
@@ -169,18 +170,18 @@
   "Please type your message to send to the telegram:": "✏️ Por favor, escreva sua mensagem para enviar para o Telegram:",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "Por favor, entenda que o painel principal está em teste e o plano e as condições de uso podem mudar a qualquer momento.",
   "Please wait ": "Por favor, aguarde",
-  "Port 80 and 443 can not be selected": "",
+  "Port 80 and 443 can not be selected": "As portas 80 e 443 não podem ser selecionadas",
   "Port is already used! in": "A porta já é usada em:",
   "Premium Description": "O painel Hiddify é feito para uso não comercial. Mas se você usar este painel comercialmente, ajude o projeto a crescer com uma doação. <br/>\nEm troca de seu suporte financeiro, também fornecemos facilidades especiais para seu produto comercial.\n<br/>\n<br/>\nComo:\n<ul><li>\n<li>A possibilidade de sincronizar com o Cloudflare: ou seja, adicionando um domínio no painel, as configurações relevantes também podem ser feitas no Cloudflare</li>\n<li>Possibilidade de exibir sua marca no painel</li>\n<li>Possibilidade de Utilizar o Painel Central para Gerenciar Mais de 1 Servidor em Apenas um Painel, Assim Não É Mais Necessário Cadastrar Usuários em Servidores Diferentes, E Seu Volume Será Coletado em Todos os Servidores.\n</li>\n<li>\nA possibilidade de usar o bot do Telegram\n</li>\n<li>\nCapacidade de alterar nomes de proxy\n</li>\n</ul>\n\nEntre em contato com <a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a> após a doação.\nEnvie uma mensagem para obter uma versão especial para usuários corporativos.",
-  "Proxy Editor": "",
+  "Proxy Editor": "Editor de proxy",
   "ProxyPath is already used! use different proxy path": "ProxyPath já está em uso! usar caminho de proxy diferente",
   "QR code": "🧾 Código QR",
-  "QR code image copied": "",
+  "QR code image copied": "Imagem do QR code copiada",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "BATER",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY Fallback Domain não é compatível com nomes de servidores!",
-  "REALITY Fallback domain is not compatible with server names!": "",
-  "Relay domains with non-valid fake mode require an IP address": "",
+  "REALITY Fallback domain is not compatible with server names!": "O domínio de fallback REALITY não é compatível com os nomes de servidor!",
+  "Relay domains with non-valid fake mode require an IP address": "Domínios relay com modo falso não válido exigem um endereço IP",
   "Release": "✅ Liberação",
   "Remaining about %(relative)s, exactly %(days)s days": "Restam cerca de %(relative)s, exatamente %(days)s dias",
   "Remote nodes are not supported yet!": "Nós remotos ainda não são suportados!",
@@ -205,12 +206,12 @@
   "Save": "Salvar",
   "Save & Add More": "Salvar e adicionar mais",
   "Save Link": "Link salvo",
-  "Search Settings": "",
+  "Search Settings": "Pesquisar configurações",
   "Select all records": "Selecionar todos os registros",
   "Select record": "Selecionar registro",
-  "Selected proxy does not support this domain mode combination": "",
+  "Selected proxy does not support this domain mode combination": "O proxy selecionado não oferece suporte a esta combinação de modo de domínio",
   "Seleted Users": "Usuários selecionados",
-  "Self-signed": "",
+  "Self-signed": "Autoassinado",
   "Send Message to User's Telegram": "📣 Enviar mensagem para o telegram do usuário",
   "Sending": "Enviando...",
   "Should be a valid domain": "Deve ser um domínio válido",
@@ -219,40 +220,40 @@
   "Simplifies the process of employing the link elsewhere.": "Simplifica o processo de utilização do link em outro lugar",
   "SingBox": "📦 SingBox",
   "Sort by %(name)s": "Ordenar por %(name)s",
-  "Specifying CDN IP is only valid for CDN mode": "",
+  "Specifying CDN IP is only valid for CDN mode": "Especificar o IP da CDN só é válido para o modo CDN",
   "Start Date": "Data de início",
   "Started %(days)s days ago": "Iniciado há %(days)s dias",
   "Started from %(relative)s": "Iniciado em %(relative)s",
   "Status": "Status",
-  "SubLink": "",
+  "SubLink": "SubLink",
   "Submit": "Enviar",
   "Success": "Sucesso",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ Sucesso! Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado",
-  "TLS": "",
-  "Telegram Bot": "Telegram Bot",
-  "Telegram Bot Link": "",
+  "TLS": "TLS",
+  "Telegram Bot": "Bot do Telegram",
+  "Telegram Bot Link": "Link do bot do Telegram",
   "Temporary Short Link": "⏱️ Link curto temporário",
   "The message has been sent.": "A mensagem foi enviada.",
-  "The message was not sent to": "The message was not sent to",
+  "The message was not sent to": "A mensagem não foi enviada para",
   "The name shown in the configs for this domain.": "O nome que será mostrado nas Configs deste Domínio.",
   "This can be used for giving your users a permanent non blockable links.": "Isso pode ser usado para fornecer aos seus usuários links permanentes não bloqueáveis.",
   "This domain %(domain_name)s is invalid": "O domínio %(domain_name)s é inválido",
   "This domain does not exist in the panel!": "Este Domínio não existe no Painel!",
-  "This restore has expired. Start it again from the Backup page.": "",
+  "This restore has expired. Start it again from the Backup page.": "Esta restauração expirou. Inicie-a novamente na página de Backup.",
   "Today Usage": "Hoje",
   "Too many Connected IPs": "Muitos IPs conectados",
   "Total Usage": "Uso total",
   "Turn of VPN": "Desativar VPN",
   "Unified link for all application.": "Link unificado para todos os aplicativos.",
   "Upload File": "Upload de arquivo",
-  "Use HiddifyNext:": "Use HiddifyNext:",
+  "Use HiddifyNext:": "Use o Hiddify:",
   "User activated!": "Usuário ativado",
   "User is inactive": "O usuário está inativo",
   "V2rayNG": "Alternativa v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>",
   "V2rayNG intro": "Instale o v2rayNG a partir de um destes links: %(dl_link)s %(play_link)s.\nEntão copie o link abaixo e cole no v2rayNG conforme o vídeo tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -question'></i> </button>.\n<br />",
-  "Valid": "",
+  "Valid": "Válido",
   "View in Telegram": "Ver no Telegram",
-  "Waiting for the process to start...": "",
+  "Waiting for the process to start...": "Aguardando o início do processo...",
   "Want to enjoy more with telegram?": "Conecte sua conta ao Telegram",
   "Welcome %(user)s": "Bem-vindo %(user)s",
   "Why Going to Premium?": "Por que ir para premium?",
@@ -265,11 +266,10 @@
   "You can restore your configs from previously downloaded configs": "Você pode restaurar suas configurações do arquivo de backup baixado anteriormente",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "Você tem muitos usuários! Você pode ter apenas %(active)s usuários ativos e %(total)s usuários",
   "You have used this domain in: ": "Já utilizou este Domínio em:",
-  "You need to enable %(names)s globally to enable this proxy.": "",
+  "You need to enable %(names)s globally to enable this proxy.": "Você precisa ativar %(names)s globalmente para ativar este proxy.",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Suas informações de instância do Hiddify\nDomínio: {}\nLimite de uso: {} GB\nUso atual: {} GB\nExpira em: {}\nDias restantes: {}\n\n\nBoa sorte! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Mensagem visível apenas pelo administrador]: Você pode alterar esta mensagem nas configurações.",
   "actions": "Ações",
-  "admin link": "Link do administrador",
   "admin": {
     "Actions:apply_configs": "Aplicar configurações",
     "action_done_sucess": "✅ A Ação Feita com Sucesso. Agora você pode sair desta página",
@@ -291,7 +291,7 @@
     "menu": {
       "api": "API",
       "config": "Configurações",
-      "dashboard_v2": "",
+      "dashboard_v2": "Próximo",
       "domain": "domínios",
       "home": "Painel",
       "proxy": "Proxies",
@@ -312,6 +312,1961 @@
     "save_panel_link": "Por favor, note que seu painel pode ser acessado apenas através do link a seguir. por favor, salve este link.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado. durante esse período, copie e salve seus links de proxy, que são:"
   },
+  "admin link": "Link do administrador",
+  "adminV2": {
+    "account": {
+      "aliasActive": "Deixe vazio e salve para removê-lo.",
+      "aliasCleared": "Nome de usuário removido",
+      "aliasHint": "Entre com este nome de usuário e sua senha em vez do ID. Os links que você compartilha não terão o ID.",
+      "aliasNeedsStrong": "Defina antes uma senha forte acima: um nome de usuário só funciona com uma senha forte.",
+      "aliasOn": "Ativado",
+      "aliasPlaceholder": "ex.: sara.vendas",
+      "aliasProblem": {
+        "bad_chars": "Somente a-z, 0-9, ponto, hífen e sublinhado, começando com letra ou dígito",
+        "looks_like_uuid": "Não pode parecer um ID (UUID)",
+        "too_short": "Pelo menos {n} caracteres"
+      },
+      "aliasSaved": "Agora você pode entrar como {alias}",
+      "aliasSuper": "Super administradores entram apenas com o link de administrador, então não têm nome de usuário.",
+      "aliasTitle": "Nome de usuário de login",
+      "canAddAdmins": "Pode adicionar subadministradores",
+      "changePassword": "Alterar senha",
+      "configsCount": "{n} config para todos os meus usuários | {n} configs para todos os meus usuários",
+      "configsEmpty": "Ainda não há configs. Adicione um link de assinatura ou cole uma config: todos os seus usuários a receberão.",
+      "configsSave": "Salvar configs",
+      "configsSaved": "Configs salvas",
+      "configsSub": "Adicionadas à assinatura de todos os seus usuários e dos usuários dos seus subadministradores, além das de cada usuário.",
+      "configsTitle": "Configs para meus usuários",
+      "configsUnsaved": "Ainda não salvo",
+      "copyLink": "Copiar meu link de administrador",
+      "current": "Senha atual",
+      "editConfigs": "Editar configs",
+      "generate": "Gerar",
+      "generatedCopied": "Uma senha forte foi gerada e copiada",
+      "inheritedConfigs": "+ {n} herdadas de administradores acima",
+      "languageDefault": "Padrão do painel ({name})",
+      "languageHint": "O idioma das suas páginas de administração",
+      "languageTitle": "Idioma",
+      "limitsSub": "Seus usuários e todos os usuários dos seus subadministradores contam para estes limites.",
+      "limitsTitle": "Meus limites",
+      "loginHint": "Depois de salvar, entre com seu link de administrador e esta senha.",
+      "minLength": "Pelo menos {n} caracteres",
+      "mismatch": "As senhas não coincidem",
+      "nearLimit": "Você está perto de um limite. Peça ao administrador acima de você para aumentá-lo ou desative usuários de que não precisa mais.",
+      "new": "Nova senha",
+      "noLimits": "Super administradores não têm limites.",
+      "noPasswordSub": "Você não tem senha: qualquer pessoa com seu link pode entrar. Defina uma para proteger sua conta.",
+      "outboundApply": "Aplique as alterações para que entrem em vigor.",
+      "outboundNone": "Ainda não há outbounds. Um super administrador os configura.",
+      "outboundSaved": "Outbound padrão salvo",
+      "outboundSub": "Por onde saem meus usuários e os usuários dos meus subadministradores, a menos que um usuário (ou um administrador mais próximo) escolha outro.",
+      "outboundTitle": "Outbound padrão",
+      "passwordNone": "Sem senha: qualquer pessoa com seu link pode entrar",
+      "passwordSet": "Uma senha protege sua conta",
+      "passwordSub": "Altere a senha usada para entrar.",
+      "passwordTitle": "Senha",
+      "repeat": "Repita a nova senha",
+      "save": "Salvar senha",
+      "saved": "Senha alterada",
+      "setPassword": "Definir uma senha",
+      "settingsSub": "Seu idioma, senha e nome de login.",
+      "settingsTitle": "Configurações",
+      "strength": {
+        "medium": "Média",
+        "prompt": "Digite uma senha",
+        "strong": "Forte",
+        "weak": "Fraca"
+      },
+      "subAdmins": "Subadministradores",
+      "subtitle": "Seus limites, quanto você usa deles e sua senha.",
+      "superText": "Você pode adicionar quantos usuários e administradores precisar.",
+      "tabs": {
+        "overview": "Visão geral",
+        "security": "Segurança",
+        "users": "Meus usuários"
+      },
+      "title": "Minha conta",
+      "under": "Sob {name}",
+      "unlimited": "Sem limite",
+      "wrongCurrent": "A senha atual está incorreta"
+    },
+    "actions": {
+      "applyConfigs": "Aplicar configs",
+      "applyConfigsHint": "Gera novamente as configs do servidor e as aplica aos serviços em execução.",
+      "confirm": "Tem certeza de que deseja realizar esta ação?",
+      "ports": {
+        "copied": "{what} copiado",
+        "copyList": "Copiar a lista",
+        "count": "{n} portas",
+        "firewall": "Comandos de firewall (ufw)",
+        "hint": "Todas as portas que este servidor precisa ter abertas para a internet, prontas para um firewall.",
+        "lead": "Abra estas portas no firewall do seu servidor (ou provedor de nuvem) para que os usuários possam se conectar.",
+        "none": "nenhuma",
+        "openProxy": "Abrir este proxy personalizado",
+        "refresh": "Atualizar",
+        "title": "Portas públicas"
+      },
+      "reinstall": "Reinstalar",
+      "reinstallHint": "Executa o instalador completo novamente. Os serviços ficarão fora do ar por alguns minutos.",
+      "resetCache": "Limpar cache",
+      "resetCacheDone": "Cache limpo",
+      "resetCacheFailed": "Falha ao limpar o cache",
+      "resetCacheHint": "Limpa os dados em cache do painel e os templates renderizados. Seguro; sem reinício de serviços.",
+      "restart": "Reiniciar sistema",
+      "restartHint": "Reinicia todos os serviços. As conexões ativas serão interrompidas.",
+      "status": "Status",
+      "statusHint": "Executa uma verificação de status de todos os serviços e mostra o log.",
+      "subtitle": "Manutenção e operações do sistema para este painel.",
+      "title": "Ações",
+      "update": "Atualizar",
+      "updateHint": "Atualiza o painel e todos os serviços para a versão mais recente.",
+      "viewlogs": "Ver logs",
+      "viewlogsHint": "Navegue pelos arquivos de log do sistema."
+    },
+    "admins": {
+      "add": "Adicionar administrador",
+      "canAddHint": "Este administrador pode criar seus próprios subadministradores",
+      "canAddShort": "Adiciona subadministradores",
+      "clearSearch": "Limpar pesquisa",
+      "col": {
+        "link": "Link de administrador",
+        "mode": "Modo",
+        "name": "Nome",
+        "note": "Nota",
+        "subAdmins": "Subadministradores",
+        "users": "Usuários"
+      },
+      "collapse": "Ocultar subadministradores de {name}",
+      "copyLink": "Copiar link",
+      "credentials": {
+        "copyMessage": "Copiar mensagem",
+        "copyMessageHint": "Copia a mensagem junto com a imagem do QR code",
+        "createdTitle": "{name} está pronto",
+        "done": "Concluído",
+        "lead": "Envie isto ao administrador. Ele abre o link e entra com a senha.",
+        "link": "Link de administrador",
+        "message": "Para entrar, abra o seguinte link:\n{link}\ne entre com a senha: {password}",
+        "messageAlias": "Para entrar, abra o seguinte link:\n{link}\ne entre com o nome de usuário: {alias}\ne a senha: {password}",
+        "messageLabel": "Mensagem a enviar",
+        "once": "A senha é exibida somente agora. Copie-a antes de fechar; caso contrário, redefina-a novamente.",
+        "password": "Senha",
+        "resetTitle": "Nova senha para {name}",
+        "show": "Mostrar senha",
+        "username": "Nome de usuário"
+      },
+      "deleteMessage": "Este administrador é excluído e seus usuários passam para você.",
+      "deleteMessageWithSubs": "Este administrador e seu {count} subadministrador são excluídos, e os usuários deles passam para você. | Este administrador e seus {count} subadministradores são excluídos, e os usuários deles passam para você.",
+      "deleteTitle": "Excluir {name}?",
+      "deleted": "{name} excluído",
+      "empty": {
+        "cta": "Adicione seu primeiro administrador",
+        "text": "Adicione agentes para dividir o trabalho. Cada um recebe seu próprio link, senha e limites.",
+        "textNoPermission": "Você não tem permissão para adicionar administradores. Peça ao administrador acima de você, se precisar.",
+        "title": "Ainda não há subadministradores"
+      },
+      "expand": "Mostrar subadministradores de {name}",
+      "filter": {
+        "anyMode": "Qualquer modo",
+        "anySub": "Qualquer permissão",
+        "canAdd": "Pode adicionar subadministradores",
+        "cannotAdd": "Não pode adicionar subadministradores",
+        "clear": "Limpar filtros",
+        "mode": "Filtrar por modo",
+        "sub": "Filtrar por permissão de subadministrador"
+      },
+      "form": {
+        "advanced": "Avançado",
+        "advancedHint": "Sob {name}",
+        "alias": "Nome de usuário de login",
+        "aliasHint": "Com um nome de usuário, entram com usuário + senha, e os links compartilhados não terão o ID.",
+        "canAddAdmin": "Pode adicionar subadministradores",
+        "canAddAdminHint": "Permite que este administrador crie seus próprios agentes, dentro dos seus limites.",
+        "configs": "Configs para os usuários deste administrador",
+        "configsCount": "{n} config | {n} configs",
+        "configsHint": "Adicionadas à assinatura de todos os usuários deste administrador e de seus subadministradores.",
+        "create": "Criar administrador",
+        "createSubtitle": "Cria um agente. Uma senha segura é gerada para ele.",
+        "createTitle": "Novo administrador",
+        "editSubtitle": "As alterações são aplicadas imediatamente.",
+        "editTitle": "Editar {name}",
+        "emptyNoLimit": "Deixe vazio para não ter limite",
+        "limits": "Limites",
+        "limitsHint": "Contados sobre os usuários deste administrador e de todos os usuários de seus subadministradores. Ao atingir um, não é possível adicionar novos usuários.",
+        "name": "Nome",
+        "namePlaceholder": "ex.: Equipe de vendas",
+        "nameRequired": "O nome é obrigatório",
+        "newUuid": "Novo UUID",
+        "noLimit": "Sem limite",
+        "note": "Nota",
+        "notePlaceholder": "Visível apenas para os administradores acima dele",
+        "optional": "opcional",
+        "outbound": "Outbound padrão",
+        "outboundHint": "Por onde saem os usuários deste administrador (e os de seus subadministradores), a menos que um usuário escolha outro.",
+        "parent": "Administrador pai",
+        "parentHint": "O novo administrador, seus usuários e seus limites ficam sob este administrador.",
+        "passwordInfo": "Uma senha segura é criada automaticamente. Você pode copiá-la com o link de login logo após salvar.",
+        "placement": "Posicionar na equipe",
+        "superNoLimits": "Super administradores não têm limites.",
+        "upTo": "Até {max} (seu limite)",
+        "uuidHint": "Gerado automaticamente. Altere somente para reutilizar um ID conhecido.",
+        "uuidInvalid": "Este não é um UUID válido"
+      },
+      "limit": {
+        "max_active_users": "Máx. de usuários ativos",
+        "max_online_users": "Máx. de usuários online",
+        "max_total_usage_GB": "Máx. de tráfego usado (total)",
+        "max_users": "Máx. de usuários no total"
+      },
+      "linkDialog": {
+        "pwHint": "As senhas nunca são exibidas novamente. Para fornecer uma nova, redefina-a.",
+        "pwNone": "Sem senha: só este link já permite entrar",
+        "pwSet": "Entra com este link e uma senha",
+        "title": "Link de administrador de {name}",
+        "username": "Nome de usuário",
+        "usernameHint": "Este link abre a página de login; entram com este nome de usuário e sua senha."
+      },
+      "meLocked": "Este é você: aqui só é possível alterar as configs dos seus usuários. Altere sua senha em Minha conta.",
+      "meter": {
+        "active": "Ativos",
+        "activeHint": "Usuários ativados e com dias e tráfego restantes, do número permitido",
+        "online": "Online",
+        "onlineHint": "Usuários vistos nas últimas 24 horas, do número permitido",
+        "total": "Total",
+        "totalHint": "Todos os usuários, do número permitido",
+        "traffic": "Tráfego",
+        "trafficHint": "Tráfego usado por todos esses usuários, do total permitido"
+      },
+      "mode": {
+        "admin": "Administrador",
+        "agent": "Agente",
+        "super_admin": "Super administrador"
+      },
+      "more": "Mais ações",
+      "myConfigs": "Configs para meus usuários",
+      "myConfigsHint": "Configs para meus usuários: adicionadas à assinatura de todos os seus usuários e dos usuários dos seus subadministradores",
+      "noMatch": "Nenhum administrador corresponde a estes filtros",
+      "outbound": {
+        "auto": "Automático",
+        "inherit": "Igual ao acima: {name}"
+      },
+      "refresh": "Atualizar",
+      "resetMessage": "Uma nova senha é gerada e a antiga deixa de funcionar imediatamente.",
+      "resetPassword": "Redefinir senha",
+      "resetTitle": "Redefinir a senha de {name}?",
+      "saved": "{name} salvo",
+      "search": "Pesquisar nome ou UUID",
+      "showLink": "Link de administrador",
+      "subCount": "{n} subadministrador | {n} subadministradores",
+      "subtitle": "Sua equipe de administradores em forma de árvore. Os limites de cada administrador cobrem seus próprios usuários e todos abaixo dele.",
+      "summary": {
+        "admins": "administrador | administradores",
+        "online": "online",
+        "users": "usuário | usuários"
+      },
+      "title": "Administradores",
+      "you": "Você"
+    },
+    "appTitle": "HiddifyManager",
+    "apply": {
+      "action": {
+        "apply": {
+          "button": "Aplicar agora",
+          "desc": "Coloca em vigor suas configurações, usuários e alterações de domínio. Rápido, e a escolha usual depois de mudar algo.",
+          "done": "As alterações foram aplicadas",
+          "running": "Aplicando alterações",
+          "title": "Aplicar alterações"
+        },
+        "install": {
+          "button": "Reinstalar",
+          "confirm": "Tudo será instalado novamente. As conexões podem cair por alguns minutos. Continuar?",
+          "desc": "Instala tudo novamente e reconstrói todos os serviços. Use quando aplicar não bastar, por exemplo após alterar o caminho do painel ou os protocolos.",
+          "done": "Reinstalação concluída",
+          "running": "Reinstalando",
+          "title": "Reinstalar"
+        },
+        "restart": {
+          "button": "Reiniciar",
+          "confirm": "Todos os serviços serão reiniciados. As conexões caem por um instante. Continuar?",
+          "desc": "Reinicia todos os serviços do Hiddify sem reinstalar nada. Uma boa primeira tentativa quando algo funciona mal.",
+          "done": "Serviços reiniciados",
+          "running": "Reiniciando serviços",
+          "title": "Reiniciar serviços"
+        },
+        "status": {
+          "button": "Verificar agora",
+          "desc": "Mostra se cada serviço está em execução, além do IP público do servidor e do Warp. Não altera nada.",
+          "done": "Status verificado",
+          "running": "Verificando status",
+          "title": "Verificar status"
+        },
+        "update": {
+          "button": "Atualizar",
+          "confirm": "O Hiddify será atualizado para a versão mais recente. O painel reinicia e as conexões podem cair por alguns minutos. Continuar?",
+          "desc": "Baixa e instala a versão mais recente do Hiddify e depois a aplica. Leva um tempo; o painel reinicia no final.",
+          "done": "Atualização concluída",
+          "running": "Atualizando",
+          "title": "Atualizar o Hiddify"
+        }
+      },
+      "busyOutside": "Algo está sendo executado no servidor agora.",
+      "lastRun": "Última execução {when}",
+      "log": {
+        "clear": "Limpar",
+        "clearConfirm": "Esvaziar \"{name}\"? O texto dele será excluído do servidor.",
+        "clearFailed": "Não foi possível limpar o log",
+        "cleared": "Log limpo",
+        "copied": "Log copiado",
+        "download": "Baixar",
+        "empty": "Nada ainda…",
+        "follow": "Mais recente",
+        "hide": "Ocultar log",
+        "loading": "Carregando…",
+        "show": "Mostrar log",
+        "showingEnd": "mostrando o final",
+        "terminal": "log",
+        "wrap": "Quebrar linhas"
+      },
+      "logs": {
+        "clearAll": "Limpar tudo",
+        "clearAllConfirm": "Esvaziar todos os arquivos de log? O texto é excluído do servidor (um log sendo gravado por uma ação em execução é mantido).",
+        "clearFailed": "Não foi possível limpar alguns logs",
+        "clearSkipped": "{n} em uso foram mantidos",
+        "clearedAll": "Logs limpos",
+        "empty": "Ainda não há logs",
+        "sub": "O que cada ação fez, direto do servidor.",
+        "title": "Logs",
+        "view": "Ver"
+      },
+      "minutes": "~{n} min",
+      "notStarted": "Não foi possível iniciar",
+      "recommended": "recomendado",
+      "run": {
+        "dontClose": "Você pode sair desta página; a execução continua no servidor.",
+        "hide": "Ocultar",
+        "links": "Links de administrador nos seus domínios (podem ter mudado)",
+        "reconnecting": "O painel está reiniciando, reconectando…",
+        "reload": "O painel foi atualizado. Recarregue para usar a nova versão.",
+        "reloadBtn": "Recarregar",
+        "stalled": "Nada de novo no log há muito tempo. Verifique o log abaixo.",
+        "starting": "Iniciando…",
+        "waitingStart": "Aguardando o início…",
+        "working": "Trabalhando…"
+      },
+      "subtitle": "Aplique alterações, atualize o servidor e veja como tudo está funcionando",
+      "takes": "Quanto tempo leva, aproximadamente",
+      "title": "Aplicar e status",
+      "watch": "Acompanhar"
+    },
+    "applyNotice": {
+      "apply": "Salvo. Aplique as configs para que as alterações entrem em vigor.",
+      "later": "Depois",
+      "reinstall": "Salvo. Algumas alterações exigem reinstalação para entrar em vigor.",
+      "update": "Salvo. O canal de atualização mudou; execute uma atualização para trocar."
+    },
+    "backup": {
+      "auto": {
+        "connect": "Conectar o Telegram",
+        "deleteFailed": "Não foi possível excluir",
+        "deleteMessage": "O backup de {when} é removido do servidor.",
+        "deleteTitle": "Excluir este backup?",
+        "download": "Baixar",
+        "empty": "Ainda não há backups no servidor",
+        "latest": "mais recente",
+        "restore": "Restaurar este",
+        "showAll": "Mostrar todos os {n}",
+        "showLess": "Mostrar menos",
+        "sub": "Criados automaticamente de tempos em tempos e quando você salva um aqui.",
+        "telegramOff": "Os backups automáticos também podem ser enviados a você pelo Telegram.",
+        "telegramOn": "Cada backup automático também é enviado a você pelo Telegram.",
+        "title": "Backups no servidor"
+      },
+      "count": {
+        "admins": "administradores",
+        "custom_proxies": "proxies personalizados",
+        "domains": "domínios",
+        "nodes": "nós",
+        "settings": "configurações",
+        "users": "usuários"
+      },
+      "restore": {
+        "advanced": "Avançado",
+        "change": "Escolher outro",
+        "confirmMessage": "Estas partes do painel serão substituídas: {parts}. Faça um backup antes se puder querer recuperá-las.",
+        "confirmTitle": "Restaurar este backup?",
+        "drop": "Solte um arquivo de backup aqui",
+        "dropHint": "ou clique para escolher um backup .json",
+        "fromFile": "Do seu dispositivo",
+        "fromServer": "Deste servidor",
+        "notJson": "Escolha um arquivo de backup .json",
+        "part": {
+          "domains": "Domínios",
+          "domainsHint": "Domínios, seus certificados e proxies personalizados",
+          "settings": "Configurações",
+          "settingsHint": "Configurações do painel, proxies e suas configs",
+          "users": "Usuários",
+          "usersHint": "Usuários, seu uso e limites, e os administradores"
+        },
+        "pathChanges": "Este backup vem de outro painel: após restaurar, o link de administrador muda. Os novos links são exibidos ao concluir.",
+        "replaceOwner": "Manter o GUID do proprietário do backup",
+        "replaceOwnerHint": "O proprietário deste painel assume o GUID do proprietário do backup, para que os links de administrador antigos continuem funcionando. Funciona sem restaurar usuários. Seu link de administrador atual muda.",
+        "run": "Restaurar",
+        "running": "Restaurando o backup",
+        "sub": "Recupere um backup deste painel ou de outro.",
+        "title": "Restaurar",
+        "unreadable": "Este arquivo não é um backup do Hiddify",
+        "whatHappens": "A restauração substitui o que você escolheu e depois reinstala as configs do servidor. Você pode acompanhar o progresso; leva alguns minutos."
+      },
+      "save": {
+        "created": "Backup salvo no servidor",
+        "download": "Baixar backup",
+        "downloaded": "Backup baixado",
+        "failed": "Não foi possível fazer o backup",
+        "onServer": "Salvar no servidor",
+        "secret": "O arquivo contém senhas, links de usuários e chaves privadas. Guarde-o em um local seguro.",
+        "sub": "Tudo em um único arquivo: configurações, usuários, administradores, domínios, proxies e certificados.",
+        "title": "Fazer um backup"
+      },
+      "subtitle": "Mantenha uma cópia de todo o seu painel e recupere-a quando precisar",
+      "title": "Backup e restauração"
+    },
+    "baseConfig": {
+      "builtinDefaultHint": "Config base integrada sincronizada do catálogo. Ative o conteúdo personalizado para editá-la.",
+      "builtinReadOnly": "Config base integrada — só o nome e o estado de ativação podem ser alterados. Duplique para editar totalmente.",
+      "content": "Config completa",
+      "core": "Core",
+      "description": "Descrição",
+      "listTitle": "Configs base",
+      "name": "Nome",
+      "new": "Nova config base",
+      "side": "Lado",
+      "version": "Versão"
+    },
+    "common": {
+      "actions": "Ações",
+      "add": "Adicionar",
+      "back": "Voltar",
+      "cancel": "Cancelar",
+      "collapse": "menos",
+      "confirmDelete": "Tem certeza de que deseja excluir este item?",
+      "copied": "Copiado",
+      "copy": "Copiar",
+      "delete": "Excluir",
+      "deleted": "Excluído com sucesso",
+      "disabled": "Desativado",
+      "duplicate": "Duplicar",
+      "edit": "Editar",
+      "enabled": "Ativado",
+      "filter": "Filtrar",
+      "filteredOf": "Filtrado: mostrando {n} de {total}",
+      "format": "Formatar",
+      "loadFailed": "Falha ao carregar os dados",
+      "no": "Não",
+      "noMatch": "Nada corresponde a estes filtros",
+      "noMatchHint": "Tente remover um filtro ou alterar a pesquisa.",
+      "resetFilters": "Redefinir filtros",
+      "save": "Salvar",
+      "saveFailed": "Falha ao salvar",
+      "saved": "Salvo com sucesso",
+      "search": "Pesquisar...",
+      "validate": "Validar",
+      "validationFailed": "Falha na validação",
+      "validationOk": "Validação concluída",
+      "yes": "Sim"
+    },
+    "dashboard": {
+      "allNodes": "Todos os nós",
+      "available": "Disponível",
+      "averageHint": "Média de usuários online por dia, só nos dias em que alguém esteve online.",
+      "breakdown": "Detalhamento",
+      "cached": "Em cache",
+      "clickForProcesses": "Clique para mostrar os principais processos",
+      "collapse": "Recolher detalhes",
+      "connections": "Conexões",
+      "core": "Núcleo {index}",
+      "cpu": "CPU",
+      "cpuCores": "CPU · {count} núcleos",
+      "dailyOnline": "Usuários online por dia",
+      "dailyUsage": "Uso diário",
+      "disk": "Disco",
+      "download": "Download",
+      "downloadSinceBoot": "Download desde o boot",
+      "durationDaysHours": "{days}d {hours}h",
+      "durationHoursMinutes": "{hours}h {minutes}m",
+      "durationMinutes": "{minutes}m",
+      "enabledUsers": "Usuários ativados",
+      "expand": "Expandir detalhes",
+      "free": "Livre",
+      "hiddify": "Hiddify",
+      "hiddifyData": "Dados do Hiddify",
+      "hostname": "Host",
+      "inFiveMinutes": "Nos últimos 5 minutos",
+      "lastNDays": "Últimos {days} dias",
+      "lastdayOnline": "Online no último dia",
+      "liveThroughput": "Vazão ao vivo",
+      "liveUpdated": "Ao vivo · atualizado {time}",
+      "load15m": "15 min",
+      "load1m": "1 min",
+      "load5m": "5 min",
+      "loadAverage": "Carga média",
+      "loadFailed": "Não foi possível carregar os dados do painel",
+      "loadFailedHint": "O painel não conseguiu acessar a API. Verifique se você ainda está conectado.",
+      "modeAverage": "Média",
+      "modePeak": "Pico",
+      "modeUnique": "Únicos",
+      "monthUsage": "Uso do mês",
+      "monthUsers": "Mês",
+      "monthlyAverage": "Média mensal",
+      "monthlyOnline": "Online no mês",
+      "nDays": "{days}d",
+      "network": "Rede",
+      "noData": "Ainda não há dados",
+      "node": "Nó",
+      "nodeHealth": "Saúde dos nós",
+      "nodeHealthHint": "CPU, RAM e disco ao vivo da API de cada nó",
+      "nodeHealthStackedHint": "CPU, RAM e disco empilhados por nó",
+      "nodeNetworkHint": "Upload e download ao vivo por nó",
+      "nodeOffline": "Offline",
+      "nodeOnline": "Online",
+      "nodeUnreachable": "Não foi possível acessar este nó",
+      "none": "Nenhum",
+      "onlineEnabledUsers": "Usuários online / ativos",
+      "onlineNow": "Online agora",
+      "onlineOnDay": "Online: {count}",
+      "onlineToday": "Online hoje: {count} / {total}",
+      "onlineUsers": "Usuários online",
+      "panelVersion": "Versão do painel",
+      "pause": "Pausar",
+      "paused": "Atualizações ao vivo pausadas",
+      "peakDay": "Dia de pico",
+      "peakHint": "O maior número de usuários online em um dia.",
+      "perCore": "Por núcleo",
+      "perDay": "{value} / dia",
+      "ram": "RAM",
+      "range": "Intervalo do histórico",
+      "refresh": "Atualizar agora",
+      "resume": "Ao vivo",
+      "rollingAverage": "Média de 7 dias",
+      "subtitle": "Tráfego, usuários e saúde do servidor num relance",
+      "swap": "Swap",
+      "thisServer": "Este servidor",
+      "title": "Painel",
+      "today": "Hoje",
+      "todayOnline": "Online hoje",
+      "todayUsage": "Uso de hoje",
+      "topFolders": "Maiores pastas",
+      "topProcesses": "Principais processos",
+      "totalUsage": "Uso total",
+      "totalUsers": "Total de usuários",
+      "uniqueHint": "Usuários distintos vistos em cada período, painel inteiro.",
+      "uniqueIps": "IPs únicos",
+      "uniqueMonth": "Usuários distintos, últimos 30 dias",
+      "uniqueWeek": "Usuários distintos, últimos 7 dias",
+      "upload": "Upload",
+      "uploadSinceBoot": "Upload desde o boot",
+      "uptime": "Tempo ativo",
+      "usageComparison": "Comparação de uso",
+      "usageComparisonHint": "Hoje e ontem em relação à média diária semanal e mensal",
+      "usageOnDay": "Uso: {value}",
+      "usageStackedHint": "Uso empilhado por nó · o total é a área preenchida",
+      "usageTrend": "Tendência de uso",
+      "used": "Usado",
+      "usersComparison": "Comparação de usuários",
+      "usersComparisonHint": "Usuários distintos vistos por período",
+      "usersSummary": "{total} usuários · {enabled} ativados",
+      "usersTrend": "Tendência de usuários",
+      "vsPreviousMonth": "em relação aos 30 dias anteriores",
+      "vsPreviousWeek": "em relação aos 7 dias anteriores",
+      "vsYesterday": "em relação a ontem",
+      "weekUsage": "Uso da semana",
+      "weekUsers": "Semana",
+      "weeklyAverage": "Média semanal",
+      "weeklyOnline": "Online na semana",
+      "yesterday": "Ontem"
+    },
+    "domain": {
+      "addFailed": "Não foi possível adicionar o domínio",
+      "addTitle": "Adicionar domínio",
+      "alias": "Alias",
+      "domain": "Domínio",
+      "mode": "Modo"
+    },
+    "domains": {
+      "add": "Adicionar domínio",
+      "advanced": "Avançado",
+      "badge": {
+        "cdnIp": "IPs forçados",
+        "frontingHint": "Domain fronting: as configs mostram este nome em vez do domínio",
+        "resolveIp": "IP"
+      },
+      "cert": {
+        "failed": "Não foi possível obter um certificado",
+        "failedHint": "Um certificado autoassinado é usado até que um real possa ser emitido.",
+        "ok": "Certificado emitido",
+        "okHint": "Os usuários se conectam com um certificado real e confiável. Ele é renovado automaticamente.",
+        "retry": "Tentar novamente",
+        "secondsLeft": "cerca de {n}s",
+        "steps": {
+          "contact": "Contatando o Let's Encrypt",
+          "install": "Instalando",
+          "verify": "Verificando o domínio"
+        },
+        "timeout": "Ainda aguardando o certificado",
+        "timeoutHint": "Está demorando mais que o normal; continua em segundo plano e esta página é atualizada quando terminar.",
+        "tips": {
+          "cdn": "Muitas solicitações em pouco tempo são recusadas pelo Let's Encrypt; tente novamente mais tarde.",
+          "dns": "O domínio deve apontar para este servidor (ou para a CDN na frente dele).",
+          "port80": "A porta 80 deve estar acessível pela internet."
+        },
+        "waiting": "Obtendo um certificado…"
+      },
+      "copyDomain": "Copiar domínio",
+      "deleteMessage": "As configs dele deixam de funcionar para todos os usuários. Pelo menos um domínio deve permanecer.",
+      "deleteTitle": "Remover {name}?",
+      "deleted": "{name} removido",
+      "drag": "Arraste para reordenar",
+      "editTitle": "Editar domínio",
+      "field": {
+        "alias": "Nome de exibição",
+        "aliasHint": "Exibido nos apps dos usuários em vez do domínio.",
+        "cdnIp": "🔂 Forçar as configs a usar estes IPs / domínios",
+        "cdnIpHint": "Coloque-os nos links dos usuários em vez do IP do domínio, separados por vírgulas ou novas linhas. Templates de operadora também funcionam.",
+        "domain": "Domínio",
+        "domainInvalid": "Isto não parece um domínio",
+        "domainRequired": "Digite um domínio",
+        "downloadDomain": "📈 Domínio de download",
+        "downloadDomainHint": "Somente para XHTTP: os downloads podem vir de um domínio diferente dos uploads. Mais difícil de detectar, geralmente mais rápido.",
+        "ech": "🔐 ECH",
+        "echHint": "Obtém e usa o Encrypted Client Hello para este domínio CDN.",
+        "echNeedsSetting": "Ative primeiro o TLS ECH nas configurações do painel.",
+        "extra": "Parâmetros extras",
+        "extraInvalid": "JSON inválido",
+        "extraObject": "Deve ser um objeto JSON",
+        "fronting": "🎭 Domain fronting",
+        "frontingHint": "Opcional. Os apps dos usuários exibem um destes nomes (SNI) em vez do seu domínio, de modo que um filtro vê apenas outro site. Use sites na mesma CDN do seu domínio (ex.: outros sites da Cloudflare). Vazio: sem fronting.",
+        "frontingPlaceholder": "outro-site.com, site-cdn.net",
+        "hostnamesInvalid": "Use nomes de host separados por vírgulas, como site.com",
+        "mode": "Modo",
+        "none": "Nenhum",
+        "ports": "Portas do gateway",
+        "portsHint": "Por onde os usuários acessam os proxies SNI e L7 deste domínio: uma porta TLS e uma porta HTTP. Vazio usa o padrão. O firewall as redireciona para 443 / 80, então nada no servidor pode escutá-las, e uma porta TLS não pode ser a porta HTTP de outro domínio.",
+        "proxies": "Proxies personalizados",
+        "relayNeedsIp": "Um relay que não usa um certificado real precisa do IP do servidor relay em Avançado → Forçar IPs.",
+        "resolveIp": "🔢 Resolver IP",
+        "resolveIpHint": "Usa o IP em vez do nome de domínio nos proxies. Útil quando o DNS é instável.",
+        "serverDomain": "Domínio do servidor",
+        "serverDomainHint": "Domínio do servidor upstream usado nesta entrada. Deve ser um domínio Direct ou Relay válido.",
+        "servernames": "Nomes de servidor",
+        "servernamesHint": "Sites cujo TLS o Reality toma emprestado, separados por vírgulas. Vazio: o próprio domínio.",
+        "showAll": "Todos os domínios",
+        "showDomains": "Mostrar configs de",
+        "showDomainsHint": "Os usuários que abrem sua página neste domínio veem as configs destes domínios.",
+        "tlsMode": "Modo TLS"
+      },
+      "getCert": "Obter certificado",
+      "howto": "A ordem importa: arraste (ou use as setas) para ordenar. As configs listam os domínios nesta ordem, e o primeiro é usado para os links do painel.",
+      "howtoFiltered": "Limpe a pesquisa e os filtros para alterar a ordem.",
+      "ips": {
+        "elsewhere": "outro servidor / CDN",
+        "none": "Nenhum registro DNS encontrado para este domínio.",
+        "thisServer": "este servidor",
+        "title": "Para onde aponta (DNS)"
+      },
+      "kind": {
+        "cdn": {
+          "desc": "Seu domínio passa por uma CDN como a Cloudflare (nuvem laranja / proxy ativado). Oculta o IP deste servidor e continua funcionando quando o IP é bloqueado.",
+          "name": "CDN"
+        },
+        "direct": {
+          "desc": "Seu domínio aponta diretamente para o IP deste servidor. Se estiver na Cloudflare (ou DNS semelhante), mantenha a nuvem desativada: somente DNS.",
+          "name": "Direct"
+        },
+        "relay": {
+          "desc": "Os usuários se conectam a outro servidor intermediário, que repassa o tráfego para este. O domínio aponta para esse servidor intermediário.",
+          "name": "Relay"
+        },
+        "sublink": {
+          "desc": "Somente para os links de assinatura dos usuários, sem proxies. O ideal é ficar atrás de uma CDN: se seus domínios de proxy forem bloqueados, os usuários ainda podem atualizar a assinatura e receber novas configs funcionais.",
+          "name": "Somente assinatura"
+        },
+        "worker": {
+          "desc": "Cloudflare workers são criados automaticamente para este domínio.",
+          "name": "Cloudflare Worker"
+        }
+      },
+      "more": "Mais",
+      "moveDown": "Mover para baixo",
+      "moveUp": "Mover para cima",
+      "noMatch": "Nenhum domínio corresponde aos filtros",
+      "noName": "(sem nome)",
+      "notChanged": "Não alterado",
+      "openPanel": "Abrir o painel neste domínio",
+      "port": {
+        "busy": "outro programa a utiliza ({name})",
+        "checking": "verificando…",
+        "default": "padrão",
+        "free": "livre",
+        "invalid": "não é uma porta válida",
+        "system": "uma porta do sistema",
+        "unknown": "não foi possível verificar esta porta",
+        "usedByDomain": "usada por {name} para o outro protocolo",
+        "usedByGateway": {
+          "http": "uma porta de gateway HTTP",
+          "tls": "uma porta de gateway TLS"
+        },
+        "usedByProxy": "usada pelo proxy {name}",
+        "usedBySetting": "usada por {name}"
+      },
+      "proxies": {
+        "auto": "Automático",
+        "autoHint": "Todos os proxies que combinam com este domínio",
+        "autoShort": "automático",
+        "group": {
+          "ip": "Baseado em IP",
+          "l7": "Gateway L7",
+          "sni": "Gateway SNI"
+        },
+        "noneFit": "Nenhum proxy personalizado combina com este tipo de domínio; os proxies integrados são usados.",
+        "noneTicked": "Nada escolhido: funciona como Automático.",
+        "off": "desativado",
+        "pick": "Escolher",
+        "pickHint": "Somente os proxies que você escolher",
+        "rule": "Um proxy SNI ou proxies L7; os dois não podem ser misturados. Os baseados em IP combinam com qualquer um.",
+        "selectAll": "Selecionar tudo",
+        "selectNone": "Desmarcar tudo",
+        "sniOne": " · no máximo um"
+      },
+      "readMore": "Saiba mais",
+      "renewCert": "Renovar certificado",
+      "saved": "{name} salvo",
+      "search": "Pesquisar domínio ou nome",
+      "stats": {
+        "all": "domínios",
+        "attention": "precisam de certificado",
+        "decoy": "TLS isca",
+        "valid": "certificados OK"
+      },
+      "subtitle": "Os endereços aos quais os usuários se conectam, como cada um chega a este servidor e seus certificados",
+      "title": "Domínios",
+      "tls": {
+        "decoy": "TLS isca",
+        "decoyHint": "Domínios TLS Fake e Reality não precisam de certificado próprio.",
+        "expired": "Expirado",
+        "expiredHint": "O certificado expirou.",
+        "expires": "Expira em",
+        "expiresIn": "{n} dias restantes",
+        "invalid": "Inválido",
+        "invalidHint": "O certificado não corresponde a este domínio.",
+        "issuer": "Emissor",
+        "missing": "Sem certificado",
+        "missingHint": "Ainda não há certificado.",
+        "running": "Obtendo certificado",
+        "self_signed": "Autoassinado",
+        "self_signedHint": "Um certificado autoassinado temporário: os apps avisam ou recusam. Obtenha um real.",
+        "valid": "Válido",
+        "validHint": "Um certificado real; é renovado automaticamente."
+      },
+      "tlsMode": {
+        "dns": "DNS",
+        "dnsHint": "Somente túnel DNS.",
+        "fake": "Fake",
+        "fakeHint": "TLS isca com o nome de um site falso (ex.: soft98.ir) para passar por uma whitelist de SNI. Não recomendado.",
+        "fakeProxyNote": "Este domínio é o nome fake-TLS de um servidor integrado e acompanha a configuração dele. Não tem proxies personalizados nem domínio de download.",
+        "locked": "Este modo sempre usa um certificado válido.",
+        "other": "Outro",
+        "otherHint": "Domínios de fachada fake-TLS dos servidores Telegram, ShadowTLS e Shadowsocks FakeTLS. Um de cada.",
+        "reality": "Reality",
+        "realityHint": "Toma emprestado o TLS de outro site com o protocolo Reality; você pode ter vários desses domínios.",
+        "shadowtls": "ShadowTLS",
+        "shadowtlsHint": "Domínio falso do servidor ShadowTLS.",
+        "ssfaketls": "SS FakeTLS",
+        "ssfaketlsHint": "Domínio falso do servidor Shadowsocks FakeTLS.",
+        "taken": "Já adicionado",
+        "telegram": "Proxy do Telegram",
+        "telegramHint": "Domínio falso do MTProxy do Telegram.",
+        "valid": "TLS válido",
+        "validHint": "Um certificado real, emitido automaticamente."
+      },
+      "warning": "Salvo, com um aviso",
+      "wizard": {
+        "add": "Adicionar domínio",
+        "added": "{name} adicionado",
+        "aliasLead": "Um nome curto exibido nos apps para as configs deste domínio.",
+        "aliasQ": "O que os usuários devem ver?",
+        "check": "Verificar",
+        "checking": "Verificando DNS…",
+        "continueBackground": "Fechar (continua em segundo plano)",
+        "dnsHint": "No seu DNS, adicione o registro abaixo para este domínio (o valor é o endereço deste servidor).",
+        "dnsTitle": "Aponte-o para este servidor",
+        "finish": "Concluído",
+        "found": {
+          "cdn": "Está atrás de {cdn}.",
+          "direct": "Aponta diretamente para este servidor ({ips}).",
+          "external": "Aponta para outro servidor ({ips}): bom para Reality, um relay ou Fake TLS.",
+          "externalNotFriendly": "Aponta para outro servidor ({ips}), mas esse site não é compatível com Reality (requer TLS 1.3 e HTTP/2).",
+          "unresolved": "Ainda não tem registro DNS. Adicione-o primeiro no seu provedor de DNS ou use-o com Fake TLS."
+        },
+        "mismatch": {
+          "cdn": "O domínio não parece estar atrás de uma CDN. Ative o modo proxy no seu provedor de CDN.",
+          "direct": "Direct exige que o domínio aponte para o IP deste servidor. Ao salvar, isso é verificado novamente.",
+          "reality": "Reality precisa de um site real que seja resolvido.",
+          "relay": "Um domínio relay aponta para o servidor intermediário, não para este servidor.",
+          "sublink": "O domínio deve apontar para este servidor ou para uma CDN.",
+          "worker": "Workers exigem o domínio na Cloudflare."
+        },
+        "modeQ": "Como está configurado?",
+        "moreSettings": "Mais configurações",
+        "nameLead": "Digite o domínio ou subdomínio. Verificamos o DNS dele para sugerir o modo certo.",
+        "nameQ": "Qual domínio?",
+        "next": "Próximo",
+        "noCert": "Não foi necessário solicitar certificado.",
+        "noCertDecoy": "TLS Fake e Reality não precisam de certificado. Aplique as alterações para começar a usá-lo.",
+        "recommended": "combina",
+        "saving": "Salvando e verificando…",
+        "steps": {
+          "alias": "Nome",
+          "cert": "Certificado",
+          "mode": "Modo",
+          "name": "Domínio"
+        },
+        "taken": "Este domínio já foi adicionado",
+        "title": "Adicionar um domínio",
+        "tlsQ": "Qual TLS?",
+        "unlikely": "O DNS não corresponde"
+      }
+    },
+    "donation": {
+      "close": "Fechar",
+      "copied": "Endereço {name} copiado",
+      "copiedShort": "Copiado",
+      "qr": "QR code",
+      "qrOf": "QR code do endereço {name}",
+      "showQr": "Mostrar QR code de {name}",
+      "title": "Doação"
+    },
+    "editor": {
+      "cannotFormatJinja": "Não é possível formatar automaticamente enquanto houver tags Jinja",
+      "excludeBuiltinTemplates": "Excluir templates integrados da exportação",
+      "exportBundle": "Exportar pacote",
+      "includeTemplate": "Incluir template",
+      "insertVariable": "Inserir variável",
+      "jinjaHint": "JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}",
+      "loadFailed": "Não foi possível carregar o editor. Verifique sua conexão e recarregue a página.",
+      "loading": "Carregando editor…",
+      "noVariables": "Nenhuma variável corresponde à sua pesquisa",
+      "preview": "Pré-visualizar",
+      "previewFailed": "Falha na solicitação de pré-visualização",
+      "previewOk": "Pré-visualização gerada com sucesso",
+      "previewParams": "Parâmetros da pré-visualização",
+      "previewPartial": "Pré-visualização gerada com avisos",
+      "previewTitle": "Pré-visualização do template"
+    },
+    "footer": {
+      "text": "HiddifyManager"
+    },
+    "legacy": {
+      "loading": "Carregando…",
+      "refresh": "Atualizar",
+      "title": "Página de administração clássica"
+    },
+    "linkShare": {
+      "copyLink": "Copiar link",
+      "domain": "Domínio",
+      "download": "Baixar",
+      "kind": {
+        "auto": "CDN automática",
+        "cdn": "CDN",
+        "current": "Atual"
+      },
+      "link": "Link",
+      "open": "Abrir"
+    },
+    "login": {
+      "brand": "Hiddify",
+      "error_expired": "Esta página ficou aberta por muito tempo. Entre novamente.",
+      "error_invalid": "O ID, o nome de usuário ou a senha não estão corretos. Verifique e tente novamente.",
+      "error_locked": "Muitas tentativas a partir da sua rede. Aguarde 15 minutos e tente novamente.",
+      "hide": "Ocultar senha",
+      "pageTitle": "Entrar",
+      "password": "Senha",
+      "passwordHint": "Deixe vazio se o seu link de administrador não tiver senha.",
+      "passwordPlaceholder": "Sua senha",
+      "show": "Mostrar senha",
+      "signingIn": "Entrando…",
+      "submit": "Entrar",
+      "subtitle": "Painel de administração",
+      "tipLink": "Abrir seu link de administrador preenche seu ID automaticamente.",
+      "tipLost": "Perdeu sua senha? Peça ao administrador que o adicionou para redefini-la.",
+      "title": "Bem-vindo de volta",
+      "username": "ID ou nome de usuário do administrador",
+      "usernameHint": "O ID do seu link de administrador, ou o nome de usuário que lhe foi dado.",
+      "usernamePlaceholder": "xxxxxxxx-xxxx-… ou seu nome de usuário"
+    },
+    "menu": {
+      "baseConfigs": "Configs base",
+      "customProxies": "Proxies",
+      "dashboard": "Painel",
+      "group": {
+        "help": "Ajuda",
+        "manager": "Gerenciador",
+        "settings": "Configurações"
+      },
+      "myAccount": "Minha conta",
+      "nodeHome": "Nó",
+      "outbounds": "Outbounds",
+      "protocols": "Protocolos",
+      "proxyEditor": "Editor de proxy",
+      "signOut": "Sair",
+      "templateVariables": "Variáveis de template",
+      "templates": "Templates",
+      "utils": "Utilitários"
+    },
+    "nodeHome": {
+      "connectedTo": "Este nó está conectado ao painel pai",
+      "managedOnParent": "Usuários, administradores e o painel são gerenciados no painel pai. Aqui você gerencia apenas os domínios, proxies e o servidor deste nó.",
+      "noParent": "Este nó ainda não está conectado a um painel pai.",
+      "openParent": "Abrir painel do pai",
+      "subtitle": "Este painel é um nó de um painel pai.",
+      "title": "Nó",
+      "titleNamed": "Nó: {name}"
+    },
+    "nodes": {
+      "add": {
+        "connecting": "Conectando ao nó… isso pode levar até um minuto.",
+        "linkHint": "Parece com https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
+        "linkInvalid": "Isto não parece um link de administrador completo. Deve começar com https:// e conter o ID do administrador.",
+        "linkLabel": "Link de administrador do nó",
+        "linkOk": "Nó em {host}",
+        "nameLabel": "Nome",
+        "namePlaceholder": "ex.: Alemanha 1",
+        "optional": "opcional",
+        "step1": "Abra o painel de administração do servidor que você quer adicionar.",
+        "step2": "Copie o endereço completo da barra de endereços do navegador.",
+        "step3": "Cole-o abaixo e pressione Conectar.",
+        "submit": "Conectar nó",
+        "success": "Nó conectado",
+        "title": "Adicionar um nó"
+      },
+      "addNode": "Adicionar nó",
+      "checkConnection": "Verificar conexão",
+      "checking": "Verificando…",
+      "connection": "Conexão",
+      "differentVersion": "O nó executa {node}, este painel executa {panel}. Mantenha-os na mesma versão.",
+      "empty": {
+        "cta": "Adicione seu primeiro nó",
+        "point1": "Usuários e administradores são sincronizados automaticamente",
+        "point2": "O uso é coletado aqui",
+        "point3": "Um clique para abrir a administração de cada nó",
+        "text": "Adicione outro servidor Hiddify como nó para gerenciar todos os seus servidores a partir deste painel.",
+        "title": "Ainda não há nós"
+      },
+      "errors": {
+        "invalid_link": "O link não é um link de administrador válido.",
+        "rejected": "O nó recusou a conexão. Ele pode já pertencer a outro painel pai, ou sua versão é muito antiga.",
+        "self": "Este é o link deste painel. Use o link do servidor do nó.",
+        "timeout": "O nó demorou demais para responder. Verifique-o e tente novamente.",
+        "unreachable": "Não foi possível acessar o nó. Verifique o link e se o nó está online."
+      },
+      "info": {
+        "fromNode": "Última mensagem do nó",
+        "lastUsage": "Última atualização de uso dos usuários",
+        "noUsageYet": "Nenhum uso informado ainda",
+        "toNode": "Última mensagem para o nó",
+        "todayOnline": "Usuários online hoje",
+        "todayTraffic": "Tráfego hoje",
+        "usageReport": "{users} usuário com tráfego, {traffic} | {users} usuários com tráfego, {traffic}"
+      },
+      "justNow": "Agora mesmo",
+      "lastSeen": "Último contato",
+      "moreInfo": "Mais informações",
+      "neverSeen": "Nunca",
+      "openAdmin": "Abrir",
+      "reachable": "Acessível",
+      "refresh": "Atualizar",
+      "remove": "Remover",
+      "removeMessage": "O nó é removido deste painel junto com seus domínios e volta a ser um painel independente (o link do pai é apagado). Para conectá-lo depois, adicione-o novamente.",
+      "removeTitle": "Remover {name}?",
+      "removed": "{name} removido",
+      "removedNotUnlinked": "Não foi possível acessar o nó, então ele ainda tem este painel como pai. Limpe o link do pai nas configurações dele, ou ele continuará tentando sincronizar.",
+      "rename": "Renomear",
+      "renamed": "Renomeado para {name}",
+      "renamedHereOnly": "Renomeado para {name} somente neste painel",
+      "renamedHereOnlyDetail": "Não foi possível acessar o nó ou ele é muito antigo para aceitar o nome; pode exibir o nome antigo depois de se registrar novamente.",
+      "sameVersion": "Mesma versão deste painel",
+      "showLess": "Mostrar menos",
+      "status": {
+        "late": "Atrasado",
+        "never": "Ainda não conectado",
+        "offline": "Offline",
+        "online": "Online"
+      },
+      "subtitle": "Outros servidores Hiddify conectados a este painel. Usuários e administradores são compartilhados com eles automaticamente.",
+      "syncFailed": "Não foi possível sincronizar {name}",
+      "syncNow": "Sincronizar agora",
+      "synced": "{name} sincronizado",
+      "title": "Nós",
+      "unreachable": "Inacessível"
+    },
+    "outbounds": {
+      "add": "Adicionar outbound",
+      "count": {
+        "geosites": "geosite | geosites",
+        "rule_sets": "rule-set | rule-sets",
+        "sites": "site | sites"
+      },
+      "default": "Padrão",
+      "defaultHint": "O último outbound ativado: tudo que não for roteado acima vai para cá",
+      "deleteMessage": "A partir de agora, os sites dele vão para o outbound padrão.",
+      "deleteMessageDefault": "Este é o outbound padrão: o outbound ativado acima dele passa a ser o padrão.",
+      "deleteTitle": "Excluir {name}?",
+      "deleted": "{name} excluído",
+      "dialog": {
+        "add": "Adicionar outbound",
+        "addTitle": "Adicionar outbound {mode}",
+        "config": "JSON",
+        "configBridge": "O painel o chamou de \"{tag}\"; o roteamento usa essa tag e o outro core se conecta a ele em 127.0.0.1:{port}.",
+        "configBridgeNew": "O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o roteamento a usa e o outro core se conecta a ele por uma ponte SOCKS local.",
+        "configExample": "Inserir um exemplo",
+        "configHint": {
+          "core_endpoint": "Um objeto de endpoint do hiddify-core (sing-box), ex.: um endpoint WireGuard. É verificado pelo hiddify-core antes de salvar.",
+          "core_outbound": "Um objeto de outbound do hiddify-core (sing-box), ex.: {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. É verificado pelo hiddify-core antes de salvar.",
+          "xray_outbound": "Um objeto de outbound do xray, ex.: {\"protocol\": \"socks\", \"settings\": {…}}. É verificado pelo xray antes de salvar."
+        },
+        "configInvalid": "JSON inválido: {error}",
+        "configRequired": "O JSON é obrigatório",
+        "domestic": "Sites domésticos de {region}",
+        "editTitle": "Editar {name}",
+        "endpoint": "Conexão",
+        "endpointHint": {
+          "psiphon": "Executa dentro do hiddify-core. O xray o acessa pela porta SOCKS local {endpoint}.",
+          "tor": "Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste servidor). O xray o acessa pela porta SOCKS local {endpoint}."
+        },
+        "host": "Host",
+        "name": "Nome",
+        "nameRequired": "O nome é obrigatório",
+        "optional": "opcional",
+        "password": "Senha",
+        "passwordKeep": "Deixe vazio para manter a senha atual",
+        "port": "Porta",
+        "routes": "O que passa por ele",
+        "routesHint": "O tráfego para estes sites sai por este outbound.",
+        "routesHintDefault": "Este é o padrão (o último outbound ativado): tudo que não for roteado acima já vai para cá, então não precisa de listas. Elas voltam a ser usadas se você o mover para cima.",
+        "username": "Nome de usuário"
+      },
+      "disable": "Desativar",
+      "domesticChip": "Doméstico ({region})",
+      "drag": "Arraste para alterar a ordem",
+      "edited": "Editado aqui: as atualizações mantêm suas listas",
+      "enable": "Ativar",
+      "enabled": "Ativado",
+      "everythingElse": "Todo o resto vai para cá",
+      "followsDefaults": "Usa as listas integradas, atualizadas a cada upgrade",
+      "howto": "Os outbounds são verificados de cima para baixo: o tráfego sai pelo primeiro que listar o site. O último outbound ativado é o padrão e recebe todo o resto. Arraste ou use as setas para alterar a ordem.",
+      "idle": "Não utilizado",
+      "idleHint": "Não tem sites, geosites nem rule-sets, então nada passa por ele. Edite-o para adicionar alguns ou mova-o para o final para torná-lo o padrão.",
+      "list": {
+        "browse": "Procurar rule-sets",
+        "geosites": "Geosites / GeoIPs (xray)",
+        "geositesHint": "Uma entrada do xray por linha com seu prefixo: geosite:google ou geoip:ir (um nome sem prefixo significa geosite:). Uma tag desconhecida faz o xray parar, então use as conhecidas.",
+        "geositesPlaceholder": "geosite:google\ngeoip:ir",
+        "rule_sets": "Rule-sets (hiddify-core)",
+        "rule_setsHint": "Uma URL de rule-set por linha (.srs ou fonte .json). Digitar um nome do SagerNet como geosite-netflix o converte na URL correspondente.",
+        "rule_setsPlaceholder": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
+        "sites": "Sites",
+        "sitesHint": "Um domínio por linha; os subdomínios estão incluídos.",
+        "sitesPlaceholder": "example.com"
+      },
+      "makeDefault": "Tornar padrão (mover para o final)",
+      "mode": {
+        "block": "Bloquear",
+        "core_endpoint": "Endpoint do hiddify-core (sing-box)",
+        "core_outbound": "Outbound do hiddify-core (sing-box)",
+        "direct": "Direct",
+        "psiphon": "Psiphon",
+        "socks": "SOCKS",
+        "tor": "Tor",
+        "warp": "WARP",
+        "xray_outbound": "Outbound do xray"
+      },
+      "modeHint": {
+        "block": "Descartado",
+        "core_endpoint": "Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa por uma ponte SOCKS local",
+        "core_outbound": "Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte SOCKS local",
+        "direct": "Direto deste servidor",
+        "psiphon": "Via Psiphon (executado pelo hiddify-core)",
+        "socks": "Via um proxy SOCKS5",
+        "tor": "Via rede Tor (executada pelo hiddify-core)",
+        "warp": "Via Cloudflare WARP neste servidor",
+        "xray_outbound": "Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte SOCKS local"
+      },
+      "more": "Mais ações",
+      "moveDown": "Mover para baixo",
+      "moveUp": "Mover para cima",
+      "notChanged": "Não alterado",
+      "nowDefault": "{name} agora é o padrão",
+      "off": "Desativado",
+      "region": {
+        "cn": "China",
+        "ir": "Irã",
+        "other": "sua região",
+        "ru": "Rússia"
+      },
+      "reset": "Restaurar padrões",
+      "resetDone": "{name} usa as listas integradas novamente",
+      "resetMessage": "Suas alterações nos sites, geosites e rule-sets dele serão substituídas pelas listas integradas, que as atualizações passam a manter em dia.",
+      "resetTitle": "Restaurar {name} para as listas integradas?",
+      "saved": "{name} salvo",
+      "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída SOCKS, Tor ou Psiphon.",
+      "title": "Outbounds"
+    },
+    "passwordRules": {
+      "common": "não ser uma senha comum",
+      "digit": "um dígito",
+      "label": "Uma senha forte precisa de",
+      "length": "{n}+ caracteres",
+      "lower": "uma letra minúscula",
+      "name": "não ser seu nome ou ID",
+      "upper": "uma letra maiúscula"
+    },
+    "primevue": {
+      "accept": "Sim",
+      "apply": "Aplicar",
+      "cancel": "Cancelar",
+      "choose": "Escolher",
+      "clear": "Limpar",
+      "emptyFilterMessage": "Nenhum resultado encontrado",
+      "emptyMessage": "Nenhuma opção disponível",
+      "emptySearchMessage": "Nenhum resultado encontrado",
+      "reject": "Não",
+      "upload": "Enviar"
+    },
+    "protocols": {
+      "changed": "Alterado",
+      "disableAll": "Desativar todos",
+      "enableAll": "Ativar todos",
+      "enabledOf": "{on} de {total} ativados",
+      "filterAll": "Todos",
+      "filterOff": "Desativado",
+      "filterOn": "Ativado",
+      "groups": {
+        "other": {
+          "hint": "Outras opções",
+          "title": "Outros"
+        },
+        "protocols": {
+          "hint": "Protocolos de proxy oferecidos aos clientes",
+          "title": "Protocolos"
+        },
+        "security": {
+          "hint": "Reality, truques de TLS e multiplexação",
+          "title": "Segurança e truques"
+        },
+        "transports": {
+          "hint": "Como o tráfego é transportado (TCP, WebSocket, gRPC, …)",
+          "title": "Transportes"
+        }
+      },
+      "instantChip": "Instantâneo",
+      "leaveUnsaved": "Você tem alterações não salvas. Sair mesmo assim?",
+      "noMatch": "Nada corresponde à sua pesquisa.",
+      "reinstallChip": "Requer reinstalação",
+      "relatedSettings": "Configurações",
+      "search": "Pesquisar protocolos…",
+      "subtitle": "Ative ou desative protocolos, transportes e truques de TLS para todo o painel.",
+      "summaryHint": "Toque em um cartão para alternar e depois salve.",
+      "title": "Protocolos"
+    },
+    "proxy": {
+      "addClient": "Adicionar cliente",
+      "addClientConfig": "Adicionar config para este core",
+      "addCoreConfig": "Adicionar config de core",
+      "allowedProtocols": "Protocolos permitidos",
+      "alpn": "ALPN",
+      "alpnLabels": {
+        "custom": "Personalizado",
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "tls_h2": "TLS H2",
+        "tls_h3": "QUIC"
+      },
+      "autoClient": "automático",
+      "baseConfigTemplate": "Substituição da config base",
+      "baseConfigTemplateHint": "Shell completo opcional do cliente xray em {% block base_config %}. Deixe vazio para usar a config base global.",
+      "builtinDefaultHint": "Predefinição integrada sincronizada do catálogo. Ative o conteúdo personalizado nas abas Servidor ou Cliente para editar esses lados.",
+      "builtinReadOnly": "Predefinição integrada — só o nome e o estado de ativação podem ser alterados. Duplique para editar totalmente.",
+      "bundleContextProxyCount": "Proxies ativados",
+      "cannotEnable": "Não é possível ativar este proxy",
+      "categories": "Categorias",
+      "categoriesAdd": "Adicionar categoria",
+      "categoriesAddNew": "Adicionar nova",
+      "categoriesAddPlaceholder": "Nova categoria",
+      "categoriesFilter": "Filtrar por categorias",
+      "categoriesHeader": "Categorias disponíveis",
+      "categoriesHint": "Selecione categorias existentes ou adicione uma nova no rodapé da lista",
+      "categoriesPlaceholder": "Selecionar categorias",
+      "categoriesRemoveAll": "Remover todas",
+      "clashFormatJson": "JSON",
+      "clashFormatYaml": "YAML",
+      "clientBuiltinCustomized": "Config de cliente personalizada",
+      "clientBuiltinDefault": "Usando a config de cliente padrão do catálogo",
+      "clientConfigDefault": "Config do cliente",
+      "clientCoreConfigs": "Configs de core do cliente",
+      "clientCores": "Cores do cliente",
+      "commonProxyBadge": "Comum",
+      "core": "Core",
+      "customPath": "Caminho personalizado",
+      "customPathAuto": "Gerado automaticamente para proxies HTTP",
+      "defaultTagName": "Tag padrão: {name}",
+      "directPortAccess": "Acesso direto à porta",
+      "directPortAccessHint": "Use com cuidado — pode tornar seu servidor detectável na interface pública",
+      "doBase64After": "Base64 após renderizar",
+      "domainIds": "Domínios",
+      "domainIdsEmptyAll": "Vazio = todos os domínios correspondentes; proxies baseados em IP ignoram domínios",
+      "domainModeLabels": {
+        "cdn": "CDN",
+        "direct": "Direct",
+        "direct-dns": "Direct DNS",
+        "direct-fake": "Direct fake",
+        "direct-reality": "Direct REALITY",
+        "direct-valid": "Direct válido",
+        "fake": "Fake TLS",
+        "reality": "REALITY",
+        "relay": "Relay",
+        "relay-fake": "Relay fake",
+        "relay-reality": "Relay REALITY",
+        "relay-valid": "Relay válido",
+        "special": "Especial (REALITY)"
+      },
+      "domainModes": "Modos de domínio",
+      "domains": "Domínios",
+      "downloadAlpns": "ALPNs de download",
+      "downloadAlpnsHint": "Somente xHTTP. Vazio = igual ao ALPN principal. Variantes de config = principal × ALPN de download.",
+      "downloadDomainModes": "Modos de domínio de download",
+      "downloadTcpUdp": "TCP ou UDP de download",
+      "downloadTlsLayer": "Camada TLS de download",
+      "exampleContext": "Contexto de renderização",
+      "exampleContextDomain": "Domínio",
+      "exampleContextIp": "IP",
+      "exampleContextProxy": "ID do proxy",
+      "exampleContextUa": "User-Agent",
+      "exampleContextUser": "Usuário",
+      "exampleDomain": "Domínio",
+      "exampleDomainAll": "Todos os domínios",
+      "exampleDomainAllHint": "Inclui todos os domínios que combinam com este proxy (igual à saída da assinatura).",
+      "exampleDomainCustom": "Domínio personalizado",
+      "exampleDomainPick": "Escolher do painel",
+      "exampleIp": "Endereço IP",
+      "exampleUaCustom": "User-Agent personalizado",
+      "exampleUaPreset": "Predefinição",
+      "exampleUser": "Usuário",
+      "exampleUserAgent": "User-Agent",
+      "exampleUserPick": "Escolher usuário do painel",
+      "exampleUserSample": "Usuário de exemplo",
+      "export": "Exportar",
+      "exportFailed": "Falha na exportação",
+      "fieldOverride": "Substituir",
+      "generateBundle": "Gerar todas as configs",
+      "generateBundleOk": "Pacote gerado com sucesso",
+      "generateBundlePartial": "Pacote gerado com avisos ou erros",
+      "generateExample": "Gerar exemplo",
+      "generateExampleOk": "Exemplo gerado com sucesso",
+      "generateExamplePartial": "Exemplo gerado com avisos ou erros",
+      "goToSettings": "Ir para as configurações",
+      "ignoreSkip": "Ignorar tags skip",
+      "ignoreSkipHint": "Renderiza a config mesmo quando um bloco skip do template normalmente ignoraria um fragmento",
+      "import": "Importar",
+      "importFailed": "Falha na importação",
+      "importSuccess": "Importado com sucesso ({count} templates)",
+      "inboundPort": "Porta de entrada",
+      "inboundPortAuto": "Deixe vazio para automático",
+      "inboundPortAutoCalculated": "As portas são calculadas automaticamente por domínio",
+      "inboundTcpPorts": "Portas TCP de entrada",
+      "inboundTcpPortsHint": "Portas TCP estáticas separadas por vírgula",
+      "inboundTemplate": "Template de inbound",
+      "inboundUdpPorts": "Portas UDP de entrada",
+      "inboundUdpPortsHint": "Portas UDP estáticas separadas por vírgula; se vazio, usa as portas TCP",
+      "isCommonProxy": "Proxy comum",
+      "isCommonProxyHint": "Este protocolo existe no Xray e no Hiddify Core. A configuração Core do proxy comum mantém ativado apenas o core selecionado.",
+      "l7Proto": "Protocolo de proxy reverso L7",
+      "l7ReverseProto": "Protocolo de proxy reverso L7",
+      "linkSettings": "Configurações do link",
+      "linkTemplate": "Template do link",
+      "listTitle": "Proxies personalizados",
+      "mode": "Modo",
+      "modeLabels": {
+        "domain_native": "Nativo de domínio",
+        "domains_auto_public_ports": "Multidomínio com portas automáticas",
+        "domains_dns_gateway": "Gateway DNS de domínio",
+        "domains_l7_gateway": "Gateway L7 de domínio",
+        "domains_single_public_port": "Multidomínio com porta estática",
+        "domains_sni_gateway": "Gateway SNI de domínio",
+        "ip": "Baseado em IP",
+        "no_inbound": "Sem inbound"
+      },
+      "modeSettings": "Modo e roteamento",
+      "name": "Nome",
+      "nameRequired": "Dê um nome ao proxy antes de salvar: é o rótulo dos seus links.",
+      "needGlobalEnable": "Você precisa ativar {names} globalmente para ativar este proxy. Deseja abrir as configurações?",
+      "new": "Novo proxy",
+      "noClientConfigs": "Ainda não há configs de cliente. Adicione um cliente para começar.",
+      "outboundTagTemplate": "Template da tag de outbound",
+      "outboundTagTemplateHint": "Jinja para a tag de outbound de cada cliente. Padrão: {{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
+      "outboundsTemplate": "Template de outbounds",
+      "protocol": "Protocolo",
+      "quick": {
+        "any": "Qualquer",
+        "clear": "Redefinir filtros",
+        "label": "Filtros",
+        "modified": "Modificado",
+        "modifiedHint": "Alterado em relação ao padrão do catálogo",
+        "nSelected": "{n} selecionados",
+        "other": "Outro",
+        "showing": "Mostrando {n} de {total}"
+      },
+      "regeneratePath": "Regenerar caminho",
+      "renderErrorClickHint": "Clique para ver detalhes",
+      "renderErrorDetail": "Detalhes do erro de renderização",
+      "renderErrorDetailTitle": "Erro de renderização: {label}",
+      "renderErrorNoDetail": "Não há contexto adicional disponível para este erro.",
+      "renderErrorRenderedSource": "Saída renderizada",
+      "renderErrorTemplateSource": "Código-fonte do template",
+      "resetAll": "Restaurar todos os padrões",
+      "resetAllConfirm": "Descartar todas as alterações feitas nos proxies integrados (tag, modos de domínio, TLS, configs de servidor e cliente) e restaurar os padrões do catálogo? Os proxies criados por você não são afetados.",
+      "resetAllDone": "{n} proxies restaurados aos padrões",
+      "resetTagName": "Restaurar o nome da tag ao padrão",
+      "resetToBuiltin": "Restaurar ao padrão do catálogo",
+      "searchAll": "Pesquisar em todas as colunas...",
+      "serverBuiltinCustomized": "Config de servidor personalizada",
+      "serverBuiltinDefault": "Usando a config de servidor padrão do catálogo",
+      "serverCore": "Core do servidor",
+      "slug": "Slug",
+      "sublink": "Sublink",
+      "sublinkBase64": {
+        "content": "Conteúdo",
+        "formatJson": "Formatar JSON",
+        "protocol": "uri.protocol"
+      },
+      "sublinkBase64Detail": "Detalhe Base64",
+      "sublinkFormat": "Formato do link",
+      "sublinkFormatBase64": "Formato Base64",
+      "sublinkFormatDecoded": "Campos decodificados",
+      "sublinkFormatRaw": "Link renderizado",
+      "sublinkFormatRawLink": "Link bruto",
+      "sublinkFormatUri": "Formato URI",
+      "sublinkUri": {
+        "fragment": "uri.fragment",
+        "host": "uri.host",
+        "password": "uri.password",
+        "path": "uri.path",
+        "port": "uri.port",
+        "protocol": "uri.protocol",
+        "query_params": "uri.query_params (JSON)",
+        "user": "uri.user"
+      },
+      "sublinkUriDetail": "Detalhe da URI",
+      "tabClient": "Cliente",
+      "tabClients": "Clientes",
+      "tabGeneral": "Geral",
+      "tabServer": "Servidor",
+      "tabServers": "Servidores",
+      "tag": "Tag",
+      "tcpUdp": "TCP ou UDP",
+      "tcpUdpHint": "Protocolo de transporte para as portas de entrada resolvidas",
+      "tcpUdpLabels": {
+        "both": "TCP + UDP",
+        "tcp": "TCP",
+        "udp": "UDP"
+      },
+      "templateSlugs": "Inclusões do template",
+      "tlsLayer": "Camada TLS",
+      "tlsLayerLabels": {
+        "http": "-",
+        "quic_tcp_tls": "QUIC + TLS H2 H1",
+        "quic_tls": "QUIC",
+        "tls": "TLS H2 H1",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2"
+      },
+      "tlsLayerSpecialConflict": "A camada TLS HTTP não é compatível com os modos de domínio REALITY",
+      "transport": "Transporte",
+      "transportLabels": {
+        "grpc": "gRPC",
+        "http": "HTTP (bruto)",
+        "httpupgrade": "HTTP Upgrade",
+        "other": "Outro",
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "xhttp": "xHTTP"
+      },
+      "uploadTcpUdp": "Upload TCP ou UDP",
+      "version": "Versão"
+    },
+    "qr": {
+      "clickToCopy": "Clique para copiar a imagem",
+      "copiedBoth": "Mensagem e QR code copiados",
+      "copiedBothClick": "E-mail e documentos colam ambos. Apps de chat colam apenas o texto: depois de colar, clique no QR code para copiar a imagem e cole-a também.",
+      "copiedBothShare": "E-mail e documentos colam ambos. Apps de chat colam apenas o texto: use Compartilhar para enviar ambos, ou clique no QR code para copiar a imagem.",
+      "copy": "Copiar QR",
+      "copyUnsupported": "Este navegador não consegue copiar imagens. Use Baixar.",
+      "share": "Compartilhar",
+      "shareFailed": "O compartilhamento não funcionou aqui. Copie a mensagem e clique no QR code para copiar a imagem.",
+      "shareHint": "Envie o texto e a imagem do QR juntos para Telegram, WhatsApp, e-mail…",
+      "textOnly": "A mensagem foi copiada. Este navegador não conseguiu adicionar a imagem do QR; copie-a clicando no código."
+    },
+    "quickSetup": {
+      "back": "Voltar",
+      "countries": {
+        "ir": "Irã",
+        "other": "Outros",
+        "ru": "Rússia",
+        "zh": "China"
+      },
+      "domains": {
+        "block": "Bloquear sites domésticos",
+        "blockHint": "Bloqueia sites domésticos para evitar a detecção pelo governo.",
+        "changeMode": "Alterar como {name} é usado",
+        "copied": "{ip} copiado",
+        "decoy": "Site isca",
+        "decoyHint": "Um site falso exibido quando alguém abre seu domínio diretamente.",
+        "decoyWarn1": "Não use sites financeiros, iranianos, famosos ou com login, como Google, Yahoo, Wikipedia ou PayPal.",
+        "decoyWarn2": "Verifique o site com atenção e confirme que é o correto; caso contrário, você pode receber um alerta de phishing.",
+        "decoyWarn3": "Verifique este domínio novamente para que não haja problemas no futuro.",
+        "detecting": "Verificando…",
+        "domains": "Domínios",
+        "domainsHint": "Você pode adicionar aqui quaisquer domínios: direct, CDN, REALITY, relay… Cada um é verificado automaticamente; toque no tipo para alterá-lo. Você precisa de pelo menos um domínio direct, CDN ou de link de assinatura (o IP deste servidor conta como direct).",
+        "how1": "Aponte seu domínio ou subdomínio para estes IPs (um registro A para IPv4, AAAA para IPv6).",
+        "how2": "Depois digite o domínio abaixo. Você pode adicionar vários; pressione Enter ou vírgula após cada um.",
+        "ipsTitle": "IPs do seu servidor",
+        "modeHelp": {
+          "cdn": "Atrás de uma CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …) que encaminha para este servidor. Oculta o IP do seu servidor.",
+          "direct": "Aponta diretamente para o IP deste servidor. O mais rápido; detectado quando o domínio é resolvido para este servidor.",
+          "reality": "O site popular de outra pessoa (TLS 1.3 + HTTP/2). Não aponta para o seu servidor; este servidor o imita.",
+          "relay": "Aponta para outro servidor que encaminha o tráfego para este (relay/túnel). Configure manualmente."
+        },
+        "modes": {
+          "cdn": "CDN",
+          "direct": "Direct",
+          "reality": "REALITY",
+          "relay": "Relay"
+        },
+        "noIp": "Não foi possível detectar o IP do servidor.",
+        "notes": {
+          "not_friendly": "Este site pode não oferecer suporte a TLS 1.3 + HTTP/2, que o REALITY exige.",
+          "unresolved": "Este domínio ainda não é resolvido. Verifique o registro DNS dele."
+        },
+        "recommended": "Altamente recomendado",
+        "remove": "Remover {name}",
+        "required": "Adicione pelo menos um domínio direct, CDN ou de link de assinatura (domínios REALITY e relay sozinhos não bastam). O IP deste servidor conta como domínio direct.",
+        "sublink": "Domínio do link de assinatura",
+        "sublinkHint": "Serve apenas links de assinatura, não proxies. Pode apontar para este servidor ou passar por uma CDN.",
+        "sublinkWhy": "Use um domínio diferente para os links de assinatura dos usuários, de preferência atrás de uma CDN. Se seu servidor ou seus domínios de proxy forem bloqueados, os usuários ainda podem atualizar a assinatura e receber novas configs funcionais, sem serem afetados.",
+        "useIp": "Usar este IP como domínio direct"
+      },
+      "finish": {
+        "button": "Concluir",
+        "docs": "Ler mais documentação",
+        "off": "Desativado",
+        "on": "Ativado",
+        "ready": "Tudo pronto",
+        "readyHint": "Revise suas escolhas e conclua a configuração.",
+        "running": "Concluindo a configuração",
+        "whatHappens": "Concluir aplica a configuração e reinstala os serviços com seus domínios. Leva alguns minutos; o log e seus novos links de administrador são exibidos durante a execução."
+      },
+      "language": {
+        "adminLang": "Idioma do painel de administração",
+        "adminLangHint": "O idioma da área de administração.",
+        "country": "País",
+        "countryHint": "Aplica as configurações adequadas às condições de filtragem desse país."
+      },
+      "next": "Próximo",
+      "nodes": {
+        "question": "Deseja adicionar outros nós? Adicione o link de administrador completo de cada outro painel; depois de conectar, ele aparece listado aqui. Você também pode fazer isso depois.",
+        "skip": "Pular"
+      },
+      "optional": "opcional",
+      "password": {
+        "confirm": "Repita a senha",
+        "label": "Nova senha",
+        "medium": "Média",
+        "min": "A senha deve ter pelo menos {min} caracteres.",
+        "mismatch": "As senhas não coincidem.",
+        "ok": "As senhas coincidem",
+        "prompt": "Pelo menos {min} caracteres",
+        "strong": "Forte",
+        "weak": "Fraca",
+        "why": "Você usará esta senha para entrar na área de administração. Use pelo menos 8 caracteres."
+      },
+      "skip": "Pular por enquanto",
+      "stepOf": "Etapa {n} de {total}",
+      "steps": {
+        "domains": {
+          "lead": "Conecte seu domínio a este servidor.",
+          "title": "Domínios"
+        },
+        "finish": {
+          "lead": "Vamos fazer a configuração final para concluir a instalação.",
+          "title": "Concluir"
+        },
+        "language": {
+          "lead": "Escolha o idioma do administrador e o país onde estão seus usuários.",
+          "title": "Boas-vindas"
+        },
+        "nodes": {
+          "lead": "Opcionalmente, conecte outros servidores Hiddify para gerenciá-los a partir daqui.",
+          "title": "Nós"
+        },
+        "password": {
+          "lead": "Proteja a área de administração com uma senha.",
+          "title": "Senha"
+        },
+        "protocols": {
+          "lead": "Escolha os protocolos a oferecer. Escolha o mínimo possível.",
+          "title": "Protocolos"
+        }
+      },
+      "subtitle": "Alguns passos e seu painel estará pronto.",
+      "title": "Configuração rápida"
+    },
+    "saveBar": {
+      "discard": "Descartar",
+      "unsaved": "{count} alteração não salva | {count} alterações não salvas"
+    },
+    "settings": {
+      "adminPathChanged": "O caminho de administração mudou. Depois de aplicar as configs, o painel de administração estará em",
+      "advancedBadge": "Avançado",
+      "categories": "Categorias de configurações",
+      "changed": "Alterado",
+      "fixErrors": "Corrija os campos destacados.",
+      "hiddenCount": "{count} configuração avançada oculta | {count} configurações avançadas ocultas",
+      "invalid": "Este valor não é válido.",
+      "leaveUnsaved": "Você tem alterações não salvas. Sair mesmo assim?",
+      "noMatch": "Nenhuma configuração corresponde à sua pesquisa.",
+      "openProtocols": "Protocolos",
+      "reinstallBadge": "Reinstalar",
+      "reinstallHint": "Alterar isto requer uma reinstalação para entrar em vigor",
+      "reloading": "Idioma alterado, recarregando…",
+      "required": "Este campo é obrigatório.",
+      "search": "Pesquisar todas as configurações…",
+      "showAdvanced": "Mostrar configurações avançadas",
+      "showAdvancedIn": "Mostrar {count} configuração avançada | Mostrar {count} configurações avançadas",
+      "showLess": "Mostrar menos",
+      "showMore": "Mostrar mais {count} configuração avançada | Mostrar mais {count} configurações avançadas",
+      "subtitle": "Tudo sobre como este painel funciona. Configurações comuns primeiro; as avançadas sob demanda.",
+      "title": "Configurações"
+    },
+    "tags": {
+      "addTag": "Tag",
+      "bulk": "Tag",
+      "bulkHint": "Tags dos selecionados: uma marca significa que todos a têm",
+      "clear": "Limpar",
+      "color": "Cor",
+      "colors": {
+        "black": "Preto",
+        "blue": "Azul",
+        "green": "Verde",
+        "orange": "Laranja",
+        "red": "Vermelho"
+      },
+      "create": "Criar",
+      "created": "Tag criada",
+      "default": {
+        "family": "Família",
+        "free": "Grátis",
+        "friends": "Amigos",
+        "important": "Importante",
+        "work": "Trabalho"
+      },
+      "delete": "Excluir tag",
+      "deleteConfirm": "Excluir a tag \"{name}\"? Ela é removida de todos que a têm.",
+      "deleted": "Tag excluída",
+      "edit": "Editar tag",
+      "editTags": "Editar tags",
+      "filterLabel": "Filtrar por tag",
+      "namePlaceholder": "Dê um nome à sua própria tag",
+      "newTag": "Nova tag",
+      "none": "Ainda não há tags",
+      "pick": "Escolher tags",
+      "pickHint": "Você pode escolher várias",
+      "rename": "Renomear",
+      "save": "Salvar",
+      "saveFailed": "Não foi possível salvar as tags",
+      "tagCount": "{n} tags",
+      "tagged": "Com tag",
+      "taggedHint": "Todos que têm pelo menos uma tag",
+      "title": "Tags",
+      "untagged": "Sem tag",
+      "use": "{n} em uso"
+    },
+    "telegram": {
+      "benefit": {
+        "backup": "Receber os backups automáticos",
+        "manage": "Gerenciar usuários diretamente pelo Telegram",
+        "notify": "Receber notificações sobre eventos importantes"
+      },
+      "check": "Já conectei",
+      "connect": "Conectar o Telegram",
+      "connectHint": "Receba notificações e backups de {bot} e gerencie o painel pelo Telegram.",
+      "connectTitle": "Conecte seu Telegram",
+      "connected": "conectado",
+      "connectedHint": "Você recebe notificações e backups de {bot}.",
+      "connectedTitle": "O Telegram está conectado",
+      "later": "Você pode conectá-lo a qualquer momento em Minha conta.",
+      "notNow": "Agora não",
+      "notYet": "Ainda não conectado: pressione Start no bot e verifique novamente.",
+      "nowConnected": "O Telegram está conectado",
+      "openWeb": "Abrir no navegador",
+      "promptLead": "Este painel tem um bot do Telegram, {bot}. Vincule-o à sua conta:",
+      "promptTitle": "Conectar seu Telegram?",
+      "reconnect": "Conectar novamente",
+      "scan": "Ou escaneie isto com a câmera do seu celular."
+    },
+    "template": {
+      "builtin": "Integrado",
+      "builtinCustomized": "Integrado personalizado",
+      "builtinDefault": "Usando o padrão do catálogo",
+      "builtinDefaultHint": "Template integrado sincronizado do catálogo. Ative o conteúdo personalizado para editá-lo.",
+      "builtinReadOnly": "Template integrado — duplique para criar uma cópia editável.",
+      "category": "Categoria",
+      "clone": "Clonar como personalizado",
+      "cloneDescription": "Descrição personalizada",
+      "cloneName": "Nome personalizado",
+      "cloned": "Template clonado",
+      "content": "Conteúdo",
+      "core": "Core",
+      "customContent": "Conteúdo personalizado",
+      "description": "Descrição",
+      "editable": "Editável",
+      "empty": "Não há templates para este core",
+      "included": "Incluído",
+      "insert": "Inserir no editor",
+      "listTitle": "Templates",
+      "name": "Nome",
+      "new": "Novo template",
+      "notFound": "Template não encontrado",
+      "referenced": "Referenciado",
+      "referencedTemplates": "Templates referenciados",
+      "sidePanel": "Templates",
+      "sidePanelHint": "Abra a aba Servidor ou Cliente para navegar pelos templates",
+      "slug": "Slug",
+      "slugDuplicate": "Este slug de template já está em uso. Escolha um slug diferente.",
+      "slugHint": "Somente a parte após core/categoria pode ser editada",
+      "sysTooltip": "Item integrado (do sistema)"
+    },
+    "templateVariables": {
+      "access": "Acesso",
+      "currentValue": "Valor atual",
+      "description": "Descrição",
+      "group": "Grupo",
+      "label": "Rótulo",
+      "listTitle": "Variáveis de template",
+      "loadValues": "Carregar valores atuais",
+      "name": "Nome",
+      "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
+    },
+    "theme": {
+      "dark": "Modo escuro",
+      "light": "Modo claro"
+    },
+    "users": {
+      "add": "Adicionar usuário",
+      "addLimits": {
+        "apply": "Adicionar",
+        "days": "Dias a adicionar",
+        "gb": "Dados a adicionar",
+        "hint": "Os dados e os dias são somados ao que cada usuário já tem.",
+        "note": "Usuários com dados ou dias ilimitados continuam ilimitados. Deixe um em 0 para adicionar apenas o outro.",
+        "title": "Adicionar limites a {n} usuário | Adicionar limites a {n} usuários"
+      },
+      "added": "{name} adicionado",
+      "afterFirstShort": "{n} dias após o primeiro uso",
+      "all": "Todos",
+      "bulk": {
+        "add_days": "+7 dias",
+        "add_limits": "Adicionar limites",
+        "delete": "Excluir",
+        "disable": "Desativar",
+        "enable": "Ativar",
+        "reset_days": "Redefinir dias",
+        "reset_usage": "Redefinir uso"
+      },
+      "bulkConfirm": {
+        "delete": "Excluir {n} usuário? | Excluir {n} usuários?",
+        "disable": "Desativar {n} usuário? | Desativar {n} usuários?",
+        "reset_days": "Redefinir os dias de {n} usuário? | Redefinir os dias de {n} usuários?",
+        "reset_usage": "Redefinir o uso de {n} usuário? | Redefinir o uso de {n} usuários?"
+      },
+      "bulkConfirmText": {
+        "delete": "Eles não poderão mais se conectar.",
+        "disable": "Eles não poderão se conectar até serem ativados novamente.",
+        "reset_days": "O pacote deles recomeça na próxima conexão.",
+        "reset_usage": "Os dados usados voltam a zero."
+      },
+      "bulkDone": {
+        "add_days": "7 dias adicionados a {n} usuário | 7 dias adicionados a {n} usuários",
+        "add_limits": "Limites adicionados a {n} usuário | Limites adicionados a {n} usuários",
+        "delete": "{n} usuário excluído | {n} usuários excluídos",
+        "disable": "{n} usuário desativado | {n} usuários desativados",
+        "enable": "{n} usuário ativado | {n} usuários ativados",
+        "reset_days": "Dias redefinidos para {n} usuário | Dias redefinidos para {n} usuários",
+        "reset_usage": "Uso redefinido para {n} usuário | Uso redefinido para {n} usuários"
+      },
+      "clearSearch": "Limpar pesquisa",
+      "clearSelection": "Limpar seleção",
+      "col": {
+        "expire": "Expira",
+        "id": "ID",
+        "lastOnline": "Última conexão",
+        "name": "Nome",
+        "status": "Status",
+        "usage": "Uso"
+      },
+      "configs": {
+        "addOffline": "Adicionar config offline",
+        "addSubscription": "Adicionar assinatura",
+        "badUrl": "Uma assinatura deve ser uma URL http(s)",
+        "empty": "Vazio: preencha ou remova",
+        "hint": "Configs extras adicionadas à assinatura deste usuário: cole uma (offline) ou informe uma URL que será buscada para o usuário (assinatura). Escolha para qual formato de app ela serve, ou Auto para todos.",
+        "inherited": "Também recebe {n} config dos administradores acima | Também recebe {n} configs dos administradores acima",
+        "kind": {
+          "offline": "Offline",
+          "subscription": "Assinatura"
+        },
+        "offlinePlaceholder": "vless://…  ou uma config JSON / YAML",
+        "target": {
+          "auto": "Auto (todos os formatos)",
+          "clash": "Clash",
+          "hiddify-core": "Hiddify / sing-box",
+          "sublink": "Links de compartilhamento",
+          "xray": "Xray"
+        },
+        "title": "Configs adicionais",
+        "urlPlaceholder": "https://example.com/sub/…"
+      },
+      "daysLeft": "{n} dia restante | {n} dias restantes",
+      "deleteMessage": "O usuário não poderá mais se conectar. O UUID dele poderá ser usado novamente depois.",
+      "deleteTitle": "Excluir {name}?",
+      "deleted": "{name} excluído",
+      "done": {
+        "reset_days": "{name} recomeça na próxima conexão",
+        "reset_usage": "Uso de {name} redefinido"
+      },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "Este usuário tem uma saída (outbound) própria",
+        "subs": "{n} sub extra | {n} subs extras",
+        "subsHint": "Configurações de assinatura extras para este usuário",
+        "telegramHint": "Conta do Telegram vinculada"
+      },
+      "filter": {
+        "active": "Ativos",
+        "activeHint": "Ativados, com dias e dados restantes",
+        "all": "Todos",
+        "allHint": "Todos os usuários",
+        "data_low": "Poucos dados",
+        "data_lowHint": "Ativos, com 80% ou mais dos dados usados",
+        "disabled": "Desativados",
+        "disabledHint": "Desativados por um administrador",
+        "expired": "Expirados",
+        "expiredHint": "Sem dias restantes",
+        "expiring": "Expirando em breve",
+        "expiringHint": "Ativos, terminando em até uma semana",
+        "no_data": "Sem dados",
+        "no_dataHint": "Usaram todo o limite de uso",
+        "not_started": "Não iniciados",
+        "not_startedHint": "Nunca se conectaram: os dias deles começam na primeira conexão",
+        "unseen_week": "Sem ser visto há uma semana",
+        "unseen_weekHint": "Já se conectaram, mas não nos últimos 7 dias"
+      },
+      "filtersLabel": "Filtrar usuários",
+      "form": {
+        "add": "Adicionar usuário",
+        "addSubtitle": "Depois de salvar, o link e o QR code do usuário abrem, prontos para enviar.",
+        "addTitle": "Novo usuário",
+        "advanced": "Avançado",
+        "data": "Dados",
+        "daysCount": "{n} dia | {n} dias",
+        "daysUnit": "dias",
+        "disabled": "Desativado",
+        "editSubtitle": "As alterações são aplicadas imediatamente.",
+        "editTimeTitle": "Editar tempo: {name}",
+        "editTitle": "Editar {name}",
+        "editUsageTitle": "Editar uso: {name}",
+        "enableHint": "Um usuário desativado não pode se conectar.",
+        "enabled": "Ativado",
+        "endedWhen": "terminou {when}",
+        "endsWhen": "termina {when}",
+        "expiresOn": "termina {date}",
+        "extra": "Parâmetros extras (JSON)",
+        "extraHint": "Configurações avançadas usadas pelos templates. O roteamento e as configs adicionais são definidos acima.",
+        "extraInvalid": "Isto não é um JSON válido",
+        "extraNotObject": "Os parâmetros extras devem ser um objeto JSON (entre chaves)",
+        "limit": "Limite de uso",
+        "mode": "Período de redefinição",
+        "name": "Nome",
+        "namePlaceholder": "ex.: Celular da Sara",
+        "nameRequired": "O nome é obrigatório",
+        "neverExpires": "nunca expira",
+        "newUuid": "Novo UUID",
+        "nextReset": "próxima redefinição {when}",
+        "notStarted": "Não iniciado",
+        "notStartedHint": "Começa na primeira conexão",
+        "note": "Nota",
+        "notePlaceholder": "Somente administradores veem isto",
+        "optional": "opcional",
+        "outbound": "Outbound preferido",
+        "outboundAuto": "Automático (seguir as regras de outbound)",
+        "outboundHint": "Todo o tráfego deste usuário sai por este outbound (página Outbounds). Um outbound desativado é ignorado.",
+        "outboundOff": "desativado",
+        "owner": "Subadministrador",
+        "ownerMe": "{name} (você)",
+        "packageDays": "Dias do pacote",
+        "packageLength": "Duração do pacote",
+        "period": {
+          "month": "1 mês",
+          "months3": "3 meses",
+          "months6": "6 meses",
+          "unlimited": "Ilimitado",
+          "week": "1 semana",
+          "year": "1 ano"
+        },
+        "reset": "Redefinir",
+        "resetDays": "Redefinir dias",
+        "resetDaysHint": "Reinicia o pacote: os dias contam a partir da próxima conexão",
+        "resetUsage": "Redefinir uso",
+        "resetUsagePending": "O uso será redefinido ao salvar",
+        "restart": "Reiniciar",
+        "restartPending": "Reinicia ao salvar: os dias voltam a contar a partir da próxima conexão",
+        "routing": "Roteamento",
+        "setDays": "Definir dias",
+        "startedWhen": "Iniciado {when}",
+        "summaryConfigs": "{n} config adicional | {n} configs adicionais",
+        "summaryExtra": "parâmetros extras definidos",
+        "summaryOutbound": "Sai por {name}",
+        "telegram": "ID do Telegram",
+        "time": "Hora",
+        "undo": "Desfazer",
+        "unlimited": "Ilimitado",
+        "usageReadOnly": "Os dados usados são contados pelo servidor; só podem ser redefinidos.",
+        "used": "Usado",
+        "uuidEditHint": "Alterá-lo muda o link do usuário: o link antigo deixa de funcionar.",
+        "uuidHint": "Gerado automaticamente.",
+        "uuidInvalid": "Este não é um UUID válido",
+        "waitingText": "Os {n} dias começam na primeira conexão.",
+        "waitingUnlimited": "Começa na primeira conexão e nunca expira.",
+        "who": "Quem"
+      },
+      "groupByOwner": "Agrupar por administrador",
+      "groupCount": "{n} usuário | {n} usuários",
+      "inlineEdit": "Edição em linha",
+      "inlineHint": "A edição em linha está ativada: clique em um nome, limite de uso, validade, modo ou nota para alterá-lo diretamente na lista. O uso em si só pode ser redefinido.",
+      "limitReached": "Você atingiu seu limite de usuários. Peça ao administrador acima de você para aumentá-lo.",
+      "link": "Link",
+      "linkTitle": "Link de {name}",
+      "mode": {
+        "daily": "Diário",
+        "monthly": "Mensal",
+        "no_reset": "Sem redefinição",
+        "weekly": "Semanal"
+      },
+      "modeHint": {
+        "daily": "O uso é redefinido todos os dias.",
+        "monthly": "O uso é redefinido a cada 30 dias a partir do início.",
+        "no_reset": "O uso nunca é redefinido: o limite vale para todo o pacote.",
+        "weekly": "O uso é redefinido a cada 7 dias a partir do início."
+      },
+      "more": "Mais ações",
+      "never": "Nunca",
+      "noMatch": "Nenhum usuário corresponde",
+      "noTimeLimit": "Sem limite de tempo",
+      "none": "Ainda não há usuários",
+      "of": "de",
+      "online": "Online",
+      "pageReport": "{first}–{last} de {totalRecords}",
+      "perPage": "Usuários por página",
+      "refresh": "Atualizar",
+      "resetTag": {
+        "daily": "Redefinição diária",
+        "monthly": "Redefinição mensal",
+        "weekly": "Redefinição semanal"
+      },
+      "saved": "{name} salvo",
+      "search": "Pesquisar nome, UUID ou nota",
+      "select": "Selecionar",
+      "selectAll": "Selecionar todos os {n} | Selecionar todos os {n}",
+      "selected": "{n} selecionado | {n} selecionados",
+      "showDates": "Mostrar datas de término",
+      "showLink": "Mostrar link do usuário",
+      "showMore": "Mostrar mais {n}",
+      "showRelative": "Mostrar tempo restante",
+      "sortById": "Ordenar por ID",
+      "status": {
+        "active": "Ativo",
+        "disabled": "Desativado",
+        "expired": "Expirado",
+        "no_data": "Sem dados"
+      },
+      "statusHint": {
+        "active": "Ativado, com dias e dados restantes",
+        "disabled": "Desativado por um administrador",
+        "expired": "Sem dias restantes no pacote",
+        "no_data": "Usou todo o limite de uso"
+      },
+      "subtitle": "Todos que se conectam por este painel: seus dados, tempo restante e links.",
+      "title": "Usuários"
+    },
+    "utils": {
+      "addQuery": "Adicionar consulta",
+      "autoSwapped": "Parecia Base64, então os lados foram trocados.",
+      "base64Label": "Base64",
+      "base64Live": "Edite um lado e o outro é atualizado enquanto você digita. Um protocol:// no início (como vmess://) é mantido e ignorado ao decodificar. Base64 colado no lado do texto troca os lados automaticamente.",
+      "base64Tab": "Base64",
+      "clear": "Limpar",
+      "decode": "Decodificar",
+      "emptyLinks": "Cole links de compartilhamento à esquerda para inspecioná-los aqui.",
+      "encode": "Codificar",
+      "extraHint": "JSON decodificado da URL. Deixe vazio para omitir extra do link.",
+      "extraJson": "extra (JSON)",
+      "fragment": "Nome",
+      "input": "Entrada",
+      "links": "Links de compartilhamento",
+      "linksPlaceholder": "Cole um ou mais links vless://, vmess://, ss://, trojan:// (ou uma assinatura base64)",
+      "method": "Método",
+      "noQuery": "Sem parâmetros de consulta. Use Adicionar consulta para inserir um.",
+      "notBase64": "Isto não é Base64 válido.",
+      "notUrlEncoded": "Este não é um texto codificado em URL válido.",
+      "output": "Saída",
+      "pass": "Senha",
+      "path": "UrlPath",
+      "port": "Porta",
+      "pretty": "Decodificado",
+      "protocol": "Protocolo",
+      "queryKey": "Chave",
+      "queryParams": "Parâmetros de consulta",
+      "queryValue": "Valor",
+      "server": "Servidor",
+      "sublinkHint": "Cole os links à esquerda. O lado direito mostra os campos decodificados. Os parâmetros de consulta são linhas editáveis; extra é JSON. As alterações à direita reescrevem os links.",
+      "sublinkTab": "Sublink",
+      "subtitle": "Codifique, decodifique e inspecione links de compartilhamento no navegador — nada é enviado ao servidor.",
+      "swap": "Trocar",
+      "textLabel": "Texto",
+      "title": "Utilitários",
+      "unwrappedSubscription": "Foi detectada uma assinatura base64 e decodificada em links individuais.",
+      "urlEncodedLabel": "Codificado em URL",
+      "urlLive": "Edite um lado e o outro é atualizado enquanto você digita. Texto codificado em porcentagem colado no lado do texto troca os lados automaticamente.",
+      "urlSafe": "Seguro para URL",
+      "urlTab": "URL",
+      "user": "Usuário",
+      "vmessJson": "JSON vmess",
+      "vmessObject": "O JSON vmess deve ser um objeto"
+    },
+    "validation": {
+      "errors": "Erros",
+      "preview": "Pré-visualização compilada",
+      "title": "Validação",
+      "warnings": "Avisos"
+    }
+  },
   "adminuser": {
     "force_update_usage": "A cada 6 minutos o uso está sendo atualizado. Para atualizá-lo agora <a href=\"%(link)s\" class=\"btn btn-info\">clique aqui</a>"
   },
@@ -319,12 +2274,12 @@
   "android": "Android",
   "app": {
     "clash_verge_rev": {
-      "description": "",
-      "title": ""
+      "description": "Cliente Clash Verge Rev para desktop",
+      "title": "Clash Verge Rev"
     },
     "cmfa": {
-      "description": "",
-      "title": ""
+      "description": "Clash Meta para Android",
+      "title": "Clash Meta para Android"
     },
     "foxray": {
       "description": "Descrição do FoXray",
@@ -377,15 +2332,15 @@
       "title": "Streisand"
     },
     "v2rayn": {
-      "title": ""
+      "title": "v2rayN"
     },
     "v2rayng": {
       "description": "Descrição do V2RayNG",
       "title": "V2RayNG"
     }
   },
-  "at least one domain should exist": "",
-  "at least one user should exist": "",
+  "at least one domain should exist": "deve existir pelo menos um domínio",
+  "at least one user should exist": "deve existir pelo menos um usuário",
   "auto": "Auto",
   "auto_cdn_ip": "Seletor automático de CDN IP",
   "bot": {
@@ -396,16 +2351,16 @@
   "cf-delete": {
     "failed": "cf-delete.falhou"
   },
-  "child has been removed!": "Child removido",
   "child": {
     "register-failed": "child.register-falhou",
     "register-success": "child.register-sucesso",
     "sync-failed": "child.sync-falhou"
   },
+  "child has been removed!": "Child removido",
   "clickable copy": "Link para mídias sociais",
   "close": "Fechar",
   "cloudflare": {
-    "error": "cloudflare.error"
+    "error": "Erro da Cloudflare"
   },
   "config": {
     "Domain_already_used": "O domínio existe na seção de domínios. Usar outro domínio",
@@ -417,20 +2372,20 @@
     "Invalid_proxy_path": "Caminho de proxy inválido. Deve ser uma string ASCI (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Token do bot telegram inválido",
     "additional_configs": {
-      "description": "",
-      "label": ""
+      "description": "Mescla configs extras nas assinaturas geradas",
+      "label": "Configs adicionais"
     },
     "additional_configs_singbox": {
-      "description": "",
-      "label": ""
+      "description": "Você pode acrescentar outros outbounds do singbox ao resultado",
+      "label": "Configs adicionais para Singbox"
     },
     "additional_configs_urls": {
-      "description": "",
-      "label": ""
+      "description": "Você pode adicionar proxies http:// https:// ou em formato v2ray como vless://",
+      "label": "URLs adicionais"
     },
     "additional_configs_xrayjson": {
-      "description": "",
-      "label": ""
+      "description": "Outbounds adicionais para Xray Json",
+      "label": "Configs adicionais para Xray JSON"
     },
     "admin": {
       "description": "A seção Admin é para definir as configurações relacionadas ao administrador",
@@ -438,13 +2393,13 @@
     },
     "admin_lang": {
       "description": "Escolha o idioma para a área administrativa",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 Inglês",
+      "fa": "🇮🇷 Persa - فارسی",
       "label": "Idioma do Painel Administrativo",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 Birmanês",
+      "pt": "🇧🇷 Português",
+      "ru": "🇷🇺 Russo",
+      "zh": "🇨🇳 Chinês"
     },
     "admin_secret": {
       "description": "O segredo do administrador será usado para acessar o painel de administração",
@@ -459,8 +2414,8 @@
       "label": "🆗 Permitir SNI inválido"
     },
     "anytls_enable": {
-      "description": "",
-      "label": ""
+      "description": "Ativar o protocolo AnyTLS",
+      "label": "AnyTLS"
     },
     "auto_update": {
       "description": "Todos os dias às 3:00 da manhã, verificaremos se há uma nova atualização. se houver uma nova atualização disponível, atualizaremos o sistema automaticamente",
@@ -495,11 +2450,11 @@
       "label": "🔑 API Cloudflare"
     },
     "common_proxy_core": {
-      "both": "",
-      "description": "",
-      "hiddify_core": "",
-      "label": "",
-      "xray": ""
+      "both": "Ambos",
+      "description": "Quando um protocolo existe tanto no Xray quanto no Hiddify Core, apenas o core selecionado permanece ativado. Escolha Ambos para manter os dois.",
+      "hiddify_core": "Hiddify Core (singbox)",
+      "label": "🎛️ Core de proxy comum",
+      "xray": "Xray"
     },
     "core_type": {
       "description": "☢️ XRay: é um núcleo completo\n<br>\n📦 Singbox: Desenvolvido por SagerNet. Também é um bom núcleo",
@@ -511,7 +2466,7 @@
     },
     "create_easysetup_link": {
       "description": "config.create_easysetup_link.descrição",
-      "label": "config.create_easysetup_link.label"
+      "label": "Criar link de configuração fácil"
     },
     "db_version": {
       "description": "Descrição da versão do banco de dados",
@@ -519,39 +2474,39 @@
     },
     "dbvalues": {
       "description": "config.dbvalues.descrição",
-      "label": "config.dbvalues.label"
+      "label": "Valores do BD"
     },
     "decoy_domain": {
       "description": "Site falso: simula um site quando alguém visita seu domínio.\nPor favor, não use sites iranianos, sites populares bem conhecidos como: Google, Yahoo, Wikipedia, etc.",
       "label": "🔀 Site Decoy"
     },
     "default_useragent_string": {
-      "description": "",
-      "label": ""
+      "description": "String de User-Agent padrão usada nas configs de cliente geradas",
+      "label": "🪪 User-Agent padrão"
     },
     "dns_server": {
       "description": "✳️ Padrão 1.1.1.1 <br>\n🚧 Bloquear Malware 1.1.1.2 <br>\n🔞 Bloquear pornografia 1.1.1.3",
       "label": "🖥 Servidor DNS"
     },
     "dnstt": {
-      "description": "",
-      "label": ""
+      "description": "Configurações do túnel DNSTT",
+      "label": "DNSTT"
     },
     "dnstt_enable": {
-      "description": "",
-      "label": ""
+      "description": "Ativar o protocolo DNSTT",
+      "label": "Ativar DNSTT"
     },
     "dnstt_private_key": {
-      "description": "",
-      "label": ""
+      "description": "Chave privada do DNSTT",
+      "label": "Chave privada do DNSTT"
     },
     "dnstt_public_key": {
-      "description": "",
-      "label": ""
+      "description": "Chave pública do DNSTT",
+      "label": "Chave pública do DNSTT"
     },
     "dnstt_resolvers": {
-      "description": "",
-      "label": ""
+      "description": "Resolvedores DNS separados por vírgula para o DNSTT",
+      "label": "Resolvedores do DNSTT"
     },
     "domain_fronting": {
       "description": "Ele é usado para simular outro site em vez do seu site no SNI. portanto, GTW não pode filtrar seu domínio\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>Guia</a>.",
@@ -574,8 +2529,8 @@
       "label": "🛡️ Firewall"
     },
     "first_setup": {
-      "description": "config.first_setup.description",
-      "label": "config.first_setup.label"
+      "description": "Se o painel está no modo de primeira configuração",
+      "label": "Primeira configuração"
     },
     "general": {
       "description": "É Configurações Gerais do Sistema",
@@ -590,16 +2545,16 @@
       "label": "🔵h2"
     },
     "health_secret_path": {
-      "description": "",
-      "label": ""
+      "description": "Caminho secreto para verificações de integridade",
+      "label": "Caminho secreto de integridade"
     },
     "hidden": {
-      "description": "config.hidden.description",
-      "label": "config.hidden.label"
+      "description": "Configuração interna oculta",
+      "label": "Oculto"
     },
     "hiddifycli_enable": {
       "description": "config.hiddifycli_enable.descrição",
-      "label": "config.hiddifycli_enable.label"
+      "label": "Ativar o Hiddify CLI"
     },
     "http": {
       "description": "As configurações HTTP podem ser definidas nesta seção",
@@ -644,7 +2599,7 @@
     "invalid-pattern-for-warp-sites": "⚠️ O Site inserido para o Warp não corresponde ao modelo especificado",
     "invalid_uuid": "Secret UUID inválido. exemplo: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
     "is_parent": {
-      "description": "config.is_parent.description",
+      "description": "Se este painel atua como painel pai",
       "label": "Painel pai"
     },
     "kcp": {
@@ -661,79 +2616,79 @@
     },
     "lang": {
       "description": "Selecione o idioma da interface do usuário para personalizar sua experiência na área do usuário.",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 Inglês",
+      "fa": "🇮🇷 Persa - فارسی",
       "label": "🗺️ Idioma da área do usuário",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 Birmanês",
+      "pt": "🇧🇷 Português",
+      "ru": "🇷🇺 Russo",
+      "zh": "🇨🇳 Chinês"
     },
     "last_hash": {
-      "description": "config.last_hash.description",
-      "label": "config.last_hash.label"
+      "description": "Hash da última configuração aplicada",
+      "label": "Último hash"
     },
     "last_priodic_usage_check": {
-      "description": "config.last_priodic_usage_check.description",
-      "label": "config.last_priodic_usage_check.label"
+      "description": "Data e hora da última verificação periódica de uso",
+      "label": "Última verificação periódica de uso"
     },
     "last_users_sync": {
-      "description": "",
-      "label": ""
+      "description": "Data e hora da última sincronização bem-sucedida de usuários com o painel pai",
+      "label": "Última sincronização de usuários"
     },
     "license": {
       "description": "Para uso comercial deste produto, você deve comprar sua licença",
       "label": "Código de licença"
     },
     "log_level": {
-      "CRITICAL": "",
-      "DEBUG": "",
-      "ERROR": "",
-      "INFO": "",
-      "SUCCESS": "",
-      "TRACE": "",
-      "WARNING": "",
+      "CRITICAL": "Crítico",
+      "DEBUG": "Depuração",
+      "ERROR": "Erro",
+      "INFO": "Informação",
+      "SUCCESS": "Sucesso",
+      "TRACE": "Rastreamento",
+      "WARNING": "Aviso",
       "description": "config.log_level.descrição",
-      "label": "config.log_level.label"
+      "label": "Nível de log"
     },
     "master_dns_encrypt_key": {
-      "description": "",
-      "label": ""
+      "description": "Chave de criptografia de payload do MasterDNS (hex)",
+      "label": "Chave de criptografia do MasterDNS"
     },
     "max_proxy_ips_per_version": {
-      "description": "",
-      "label": ""
+      "description": "Número máximo de endereços IPv4 e IPv6 usados para gerar proxies para cada domínio (cada versão tem seu próprio limite).",
+      "label": "Máx. de IPs de proxy por versão"
     },
     "mieru": {
-      "description": "",
-      "label": ""
+      "description": "O protocolo Mieru é um protocolo de comunicação seguro e descentralizado projetado para facilitar a transferência de dados em redes distribuídas sem necessidade de um servidor central",
+      "label": "⚡️ Mieru"
     },
     "mieru_enable": {
-      "description": "",
-      "label": ""
+      "description": "Meiru é um proxy rápido",
+      "label": "⚡️ Ativar Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "",
-      "HANDSHAKE_NO_WAIT": "",
-      "HANDSHAKE_STANDARD": "",
-      "description": "",
-      "label": ""
+      "HANDSHAKE_DEFAULT": "📄 Padrão",
+      "HANDSHAKE_NO_WAIT": "⏳ Sem espera",
+      "HANDSHAKE_STANDARD": "📝 Padrão (Standard)",
+      "description": "O handshake do Mieru estabelece uma conexão segura verificando e autenticando ambas as partes antes da troca de dados",
+      "label": "🤝 Handshake do Mieru"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "",
-      "MULTIPLEXING_HIGH": "",
-      "MULTIPLEXING_LOW": "",
-      "MULTIPLEXING_MIDDLE": "",
-      "description": "",
-      "label": ""
+      "MULTIPLEXING_DEFAULT": "📄 Padrão",
+      "MULTIPLEXING_HIGH": "📈 Alta",
+      "MULTIPLEXING_LOW": "📉 Baixa",
+      "MULTIPLEXING_MIDDLE": "📊 Média",
+      "description": "A multiplexação do Mieru permite uma transferência de dados eficiente ao tratar várias conexões simultaneamente",
+      "label": "🔄 Modo de multiplexação do Mieru"
     },
     "mieru_tcp_ports": {
-      "description": "",
-      "label": ""
+      "description": "Números inteiros separados por vírgula indicando as portas (1234,1235,1237)",
+      "label": "🔍 Portas TCP do Mieru"
     },
     "mieru_udp_ports": {
-      "description": "",
-      "label": ""
+      "description": "Números inteiros separados por vírgula indicando as portas (1234,1235,1237)",
+      "label": "🔎 Portas UDP do Mieru"
     },
     "mux": {
       "description": "As configurações MUX (Multiplex) podem ser definidas nesta seção",
@@ -776,20 +2731,20 @@
       "label": "♍️ Protocolo MUX"
     },
     "naive_enable": {
-      "description": "",
-      "label": ""
+      "description": "O Naive usa exatamente a pilha do Chrome para evitar detecção",
+      "label": "🛡 Ativar Naive"
     },
     "naive_port": {
-      "description": "",
-      "label": ""
+      "description": "Esta opção configura uma porta do Naive",
+      "label": "🔎 Porta do Naive"
     },
     "netdata": {
       "description": "Para exibir recursos. usa a CPU do seu servidor, mas não é muito.",
       "label": "Netdata"
     },
     "node_name": {
-      "description": "",
-      "label": ""
+      "description": "O nome deste nó, exibido no painel pai",
+      "label": "Nome do nó"
     },
     "not_found": {
       "description": "Configuração não encontrada",
@@ -804,19 +2759,19 @@
       "label": "🔄 Modo de atualização de pacotes"
     },
     "panel_mode": {
-      "child": "",
+      "child": "Filho",
       "description": "config.panel_mode.descrição",
-      "label": "config.panel_mode.label",
-      "parent": "",
-      "standalone": ""
+      "label": "Modo do painel",
+      "parent": "Pai",
+      "standalone": "Independente"
     },
     "parent_admin_proxy_path": {
-      "description": "config.parent_admin_proxy_path.description",
-      "label": "config.parent_admin_proxy_path.label"
+      "description": "Caminho do proxy de administração no painel pai",
+      "label": "Caminho do proxy de administração do pai"
     },
     "parent_domain": {
-      "description": "config.parent_domain.description",
-      "label": "config.parent_domain.label"
+      "description": "Domínio do painel pai",
+      "label": "Domínio do pai"
     },
     "parent_panel": {
       "description": "Você pode se conectar ao Painel Central para definir apenas um usuário e o uso de todos os servidores será adicionado cumulativamente.",
@@ -827,16 +2782,16 @@
       "label": "ℹ️ caminho gRPC"
     },
     "path_http": {
-      "description": "",
-      "label": ""
+      "description": "deve ser aleatório",
+      "label": "ℹ️ Caminho HTTP"
     },
     "path_httpupgrade": {
       "description": "deveria ser aleatório",
       "label": "ℹ️ Caminho de atualização HTTP"
     },
     "path_naive": {
-      "description": "",
-      "label": ""
+      "description": "Para o link do Naive",
+      "label": "ℹ️ Caminho do Naive"
     },
     "path_ss": {
       "description": "Caminho Shadowsocks nos Links",
@@ -903,8 +2858,8 @@
       "label": "🌍 Domínio alternativo"
     },
     "reality_port": {
-      "description": "",
-      "label": ""
+      "description": "Porta Reality",
+      "label": "Porta REALITY"
     },
     "reality_private_key": {
       "description": "Não mude isso",
@@ -923,16 +2878,16 @@
       "label": "🆔 IDs curtos"
     },
     "restls": {
-      "description": "config.restls.description",
+      "description": "Configurações do protocolo RestLS",
       "label": "RestTLS"
     },
     "restls1_2_domain": {
-      "description": "config.restls1_2_domain.description",
-      "label": "config.restls1_2_domain.label"
+      "description": "Domínio usado para o RestLS 1.2",
+      "label": "Domínio RestLS 1.2"
     },
     "restls1_3_domain": {
-      "description": "config.restls1_3_domain.description",
-      "label": "config.restls1_3_domain.label"
+      "description": "Domínio usado para o RestLS 1.3",
+      "label": "Domínio RestLS 1.3"
     },
     "shadowsocks": {
       "description": "Shadowsocks é um proxy de túnel rápido que ajuda a contornar firewalls",
@@ -971,12 +2926,12 @@
       "label": "💬 Mostrar uso no sublink"
     },
     "snell_enable": {
-      "description": "",
-      "label": ""
+      "description": "Ativar o protocolo Snell",
+      "label": "Snell"
     },
     "socks_enable": {
-      "description": "",
-      "label": ""
+      "description": "Ativar o protocolo SOCKS",
+      "label": "SOCKS"
     },
     "special_port": {
       "description": "Você pode definir uma porta personalizada para seu servidor de Reality para reduzir a sobrecarga do sistema. (Permitir conexão direta com proxies deve ser sim)",
@@ -1003,36 +2958,36 @@
       "label": "Proxy SSH"
     },
     "ssh_host_dsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "Chave privada DSA do host SSH",
+      "label": "Chave privada DSA do host SSH"
     },
     "ssh_host_dsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "Chave pública DSA do host SSH",
+      "label": "Chave pública DSA do host SSH"
     },
     "ssh_host_ecdsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "Chave privada ECDSA do host SSH",
+      "label": "Chave privada ECDSA do host SSH"
     },
     "ssh_host_ecdsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "Chave pública ECDSA do host SSH",
+      "label": "Chave pública ECDSA do host SSH"
     },
     "ssh_host_ed25519_pk": {
-      "description": "",
-      "label": ""
+      "description": "Chave privada Ed25519 do host SSH",
+      "label": "Chave privada Ed25519 do host SSH"
     },
     "ssh_host_ed25519_pub": {
-      "description": "",
-      "label": ""
+      "description": "Chave pública Ed25519 do host SSH",
+      "label": "Chave pública Ed25519 do host SSH"
     },
     "ssh_host_rsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "Chave privada RSA do host SSH",
+      "label": "Chave privada RSA do host SSH"
     },
     "ssh_host_rsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "Chave pública RSA do host SSH",
+      "label": "Chave pública RSA do host SSH"
     },
     "ssh_server_enable": {
       "description": "O proxy SSH é completamente diferente do servidor ssh original.",
@@ -1064,31 +3019,31 @@
     },
     "sub_full_clash_enable": {
       "description": "config.sub_full_clash_enable.descrição",
-      "label": "config.sub_full_clash_enable.label"
+      "label": "Ativar Clash Sub completo"
     },
     "sub_full_clash_meta_enable": {
-      "description": "config.sub_full_clash_meta_enable.description",
-      "label": "config.sub_full_clash_meta_enable.label"
+      "description": "Ativar o endpoint de assinatura Clash Meta completa",
+      "label": "Ativar Clash Meta Sub completo"
     },
     "sub_full_links_b64_enable": {
-      "description": "config.sub_full_links_b64_enable.description",
-      "label": "config.sub_full_links_b64_enable.label"
+      "description": "Ativar o endpoint de links de assinatura em base64",
+      "label": "Ativar links completos (Base64)"
     },
     "sub_full_links_enable": {
-      "description": "config.sub_full_links_enable.description",
-      "label": "config.sub_full_links_enable.label"
+      "description": "Ativar o endpoint de links de assinatura em texto simples",
+      "label": "Ativar links completos"
     },
     "sub_full_singbox_enable": {
-      "description": "config.sub_full_singbox_enable.description",
-      "label": "config.sub_full_singbox_enable.label"
+      "description": "Ativar o endpoint de assinatura Sing-box completa",
+      "label": "Ativar Sing-box Sub completo"
     },
     "sub_full_xray_json_enable": {
       "description": "O link completo do XRay fornece opções de configuração abrangentes para configurações específicas do XRay. Isso inclui fragmentação e multiplexação personalizadas (mux) em aplicativos como v2rayNG que suportam protocolos XRay para controle ajustado sobre a configuração do proxy XRay.",
       "label": "⚙️ Link de configuração completa do XRay"
     },
     "sub_singbox_ssh_enable": {
-      "description": "config.sub_singbox_ssh_enable.description",
-      "label": "config.sub_singbox_ssh_enable.label"
+      "description": "Ativar o endpoint de assinatura SSH do Sing-box",
+      "label": "Ativar Sing-box SSH Sub"
     },
     "tcp_enable": {
       "description": "Ativa o protocolo TCP",
@@ -1123,16 +3078,16 @@
       "label": "Configurações de TLS"
     },
     "tls_ech_enable": {
-      "description": "",
-      "label": ""
+      "description": "Adiciona ECH aos links de assinatura TLS gerados",
+      "label": "🔐 Ativar TLS ECH"
     },
     "tls_fragment_enable": {
       "description": "Em algumas circunstâncias, pode contornar o sistema de lista negra do SNI. <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">(Consulte Mais informação)</a>",
       "label": "⏯ TLS Fragment"
     },
     "tls_fragment_packets": {
-      "description": "",
-      "label": ""
+      "description": "Modo de fragmentação de pacotes (por exemplo: tlshello ou 1-3)",
+      "label": "📦 Pacotes de fragmentação TLS"
     },
     "tls_fragment_size": {
       "description": "O tamanho de cada pacote",
@@ -1187,12 +3142,12 @@
       "label": "🔎 Portas TUIC"
     },
     "unique_id": {
-      "description": "config.unique_id.description",
-      "label": "config.unique_id.label"
+      "description": "Identificador único desta instância do painel",
+      "label": "ID único"
     },
     "use_ip_in_config": {
-      "description": "",
-      "label": ""
+      "description": "Isto ajuda a reduzir problemas que podem ocorrer ao resolver o IP do servidor. Será usado um IP aleatório do domínio selecionado.",
+      "label": "Usar IP nas configs"
     },
     "utls": {
       "description": "Esta opção irá simular diferentes navegadores, portanto, GFW não pode detectar sua navegação",
@@ -1206,20 +3161,20 @@
     "validation-success": "As configurações foram alteradas com sucesso. Clique em %(link)s para aplicar as configurações. Pode levar 2 minutos para aplicar",
     "validation-success-no-reset": "✅ As configurações foram alteradas com sucesso",
     "vless_decryption": {
-      "description": "",
-      "label": ""
+      "description": "Parâmetro de descriptografia VLESS para links de compartilhamento",
+      "label": "Descriptografia VLESS"
     },
     "vless_enable": {
       "description": "Habilitar protocolo VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "",
-      "label": ""
+      "description": "Método de criptografia VLESS para links de compartilhamento",
+      "label": "Criptografia VLESS"
     },
     "vless_flow": {
-      "description": "",
-      "label": ""
+      "description": "Controle de fluxo VLESS (ex.: xtls-rprx-vision)",
+      "label": "Fluxo VLESS"
     },
     "vmess_enable": {
       "description": "É relatado por várias pessoas que o VMess faz com que o sistema seja detectado pelo governo. Então não é recomendado",
@@ -1297,6 +3252,18 @@
     "xtls_enable": {
       "description": "Ativa o protocolo XTLS",
       "label": "🟢XTLS"
+    },
+    "path_splithttp": {
+      "description": "Caminho XHTTP",
+      "label": "Caminho XHTTP"
+    },
+    "splithttp_enable": {
+      "description": "O XHTTP permite fluxos separados de download e upload, uniformizando gRPC, H2 e H1, e também oferece suporte a QUIC.",
+      "label": "Ativar XHTTP"
+    },
+    "tls_ech": {
+      "description": "Valor ECH no formato: cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "Valor do TLS ECH"
     }
   },
   "copy": "cópia de",
@@ -1304,25 +3271,25 @@
   "days": "Dias",
   "desktop": "Área de Trabalho",
   "direct": "➡️ Direto",
-  "dnstt": "",
+  "dnstt": "DNSTT",
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ Seus domínios mudaram. por favor, não se esqueça de copiar os links do administrador, caso contrário, você não poderá mais acessar o painel",
-    "current_server_IPs": "",
+    "current_server_IPs": "🔢 Os IPs atuais do servidor são",
     "custom_proxy": {
-      "description": "",
+      "description": "Vínculo de proxy opcional. Somente os proxies que oferecem suporte à combinação de modos deste domínio são listados. Deixe vazio para usar todos os proxies correspondentes.",
       "group": {
-        "dns_gateway": "",
-        "ip_based": "",
-        "l7_gateway": "",
-        "other": "",
-        "sni_gateway": ""
+        "dns_gateway": "Gateway DNS",
+        "ip_based": "Baseado em IP",
+        "l7_gateway": "Gateway L7",
+        "other": "Outro",
+        "sni_gateway": "Gateway SNI"
       },
-      "label": "",
-      "reality_only": "",
-      "reality_required": "",
-      "sni_l7_mutex": "",
-      "sni_single_only": ""
+      "label": "Proxies personalizados",
+      "reality_only": "Domínios REALITY só podem usar proxies de gateway de domínio L7 cujos modos de domínio incluam REALITY. Deixe vazio para usar todos os proxies L7 REALITY correspondentes.",
+      "reality_required": "Domínios REALITY só podem usar proxies de gateway de domínio L7 cujos modos de domínio incluam REALITY",
+      "sni_l7_mutex": "Gateway SNI e gateway L7 não podem ser selecionados juntos para um mesmo domínio",
+      "sni_single_only": "Somente um gateway SNI pode ser selecionado para um domínio"
     },
     "description": "Por favor, preencha este campo com cuidado e corretamente. Caso contrário, os proxies terão problemas. Visite <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Ajuda</a> para aprenda como criar um subdomínio.",
     "domain": "Domínio",
@@ -1331,15 +3298,15 @@
       "label": "🔒 Fronting de domínio de TLS"
     },
     "ech": {
-      "description": "",
-      "label": ""
+      "description": "Obtém e usa o Encrypted Client Hello (ECH) para este domínio CDN. Requer que o TLS ECH esteja ativado nas configurações do painel.",
+      "label": "🔐 ECH"
     },
     "empty": {
-      "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+      "allowed_for_fake_only": "Domínio vazio só é permitido no modo fake"
     },
     "fake_mode": {
-      "description": "",
-      "label": ""
+      "description": "Valid usa um certificado real. Fake e Reality servem para TLS isca e protocolos REALITY.",
+      "label": "Modo TLS"
     },
     "intro": "1️⃣ Nesta seção, você pode adicionar seu domínio.\\n<br>\n2️⃣ Se você deseja diminuir a probabilidade de ter um IP sujo, pode adicionar Multiple Relay Server <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Leia mais</a>.\\n<br>\n3️⃣ Se você tiver Múltiplos IPv4 ou IPv6 em seu Painel, deverá adicionar o domínio apontado para eles como Relay.\"",
     "ip": "IP",
@@ -1348,30 +3315,36 @@
       "asn_issue": "O domínio selecionado para REALITY não está no mesmo ASN.\nPara melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN"
     },
     "resolveip": {
-      "description": "",
-      "label": ""
+      "description": "Usa o IP em vez do nome de domínio nos proxies. Útil quando há muito ruído no DNS.",
+      "label": "🔢 Resolver IP"
     },
     "server_domain": {
-      "description": "",
-      "label": "",
-      "must_be_valid_direct_or_relay": ""
+      "description": "Domínio do servidor upstream usado nesta entrada. Deve ser um domínio Direct ou Relay válido.",
+      "label": "Domínio do servidor",
+      "must_be_valid_direct_or_relay": "O domínio do servidor deve ser um domínio Direct ou Relay válido"
     },
     "show_domains_description": "Para os usuários que visitam a área do usuário com este domínio, especifique que eles podem ver os proxies de quais domínios.\n<br>\nSugestão: Para um domínio com IP não filtrado e diferente dos demais, selecione todos os outros domínios (exceto o domínio atual). Como resultado, como o uso deste IP não é para proxy e é um site simples, este domínio e IP nunca serão bloqueados e seus usuários poderão facilmente atualizar novos perfis.",
     "tls_status": {
-      "description": ""
+      "description": "Certificado armazenado para este domínio: CA válida, autoassinado, expirado, inválido ou ausente.",
+      "expired": "Expirado",
+      "invalid": "Inválido",
+      "label": "TLS",
+      "missing": "Sem certificado",
+      "self_signed": "Autoassinado",
+      "valid": "Válido"
     }
   },
   "download": "Download direto",
   "download_domain": {
-    "description": "",
-    "label": ""
+    "description": "Somente para XHTTP: isso permite, por exemplo, que os downloads venham de um domínio diferente dos uploads. Isso dificulta a detecção e também pode melhorar a qualidade geral.",
+    "label": "📈 Domínio de download"
   },
   "fake": "🆎 Site falso",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {
     "description": "ℹ️ gRPC é um protocolo baseado em H2. Talvez seja mais rápido para você!"
   },
-  "in\n          parent panel": "",
+  "in\n          parent panel": "no\n          painel pai",
   "in parent panel": "No Painel Central",
   "install from google play": "<i class='fa-brands fa-google-play'></i>Google Play",
   "ios": "iOS",
@@ -1389,7 +3362,7 @@
       "erlang": "✴️ Erlang: Bom desempenho",
       "go": "✅ Ir: alto desempenho - sem suporte de anúncios",
       "python": "☑️ Python: baixo desempenho",
-      "telemt": ""
+      "telemt": "❇️ Telemt: rápido, seguro, confiável"
     }
   },
   "log": "📄 Log",
@@ -1413,7 +3386,7 @@
   "next": "Próximo",
   "no_reset": "⭐️ Sem reinicialização",
   "node": {
-    "diff-version": "node.diff-version",
+    "diff-version": "A versão do painel do nó difere deste painel",
     "mode": {
       "dscr": "Este campo define o modo para o Node",
       "label": "Modo de Node "
@@ -1433,9 +3406,9 @@
   "package days?": "dias de pacote?",
   "package size?": "tamanho do pacote?",
   "parent": {
-    "invalid-parent-url": "parent.invalid-parent-url",
-    "panel-not-active": "",
-    "sync-req-failed": "parent.sync-req-failed"
+    "invalid-parent-url": "URL do painel pai inválida",
+    "panel-not-active": "O painel pai não está ativo",
+    "sync-req-failed": "Falha na solicitação de sincronização do pai"
   },
   "previous": "Anterior",
   "quicksetup": {
@@ -1460,7 +3433,7 @@
     }
   },
   "singbox: ssh": "caixa de som: ssh",
-  "special": "",
+  "special": "especial",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",

@@ -85,7 +85,7 @@ const chartSeries = computed(() => {
       <div class="users-footer">
         <MiniStat
           :label="t('dashboard.onlineEnabledUsers')"
-          :value="`${users?.online.m5 ?? 0}/${users?.enabled ?? 0}`"
+          :value="`${users?.online.m5 ?? 0}/${users?.active ?? 0}`"
           icon="pi pi-id-card"
           :accent="SERIES.users"
         />

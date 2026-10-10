@@ -227,6 +227,10 @@ class CustomProxiesApi(MethodView):
     @app.input(CustomProxySchema, arg_name="data")
     @app.output(CustomProxySchema)
     def post(self, data):
+        # A new proxy never takes over another one's slug (the model would treat it as an update of that proxy).
+        slug = str(data.get("slug") or "").strip()
+        if slug and CustomProxy.query.filter(CustomProxy.slug == slug, CustomProxy.child_id == _child_id()).first():
+            abort(400, f"Slug '{slug}' is already used by another proxy")
         data = _prepare_create_data(data)
         proxy = _save_or_400(lambda: CustomProxy.add_or_update(child_id=_child_id(), **data))
         return proxy.to_dict()
@@ -260,6 +264,29 @@ class CustomProxyApi(MethodView):
         db.session.delete(proxy)
         db.session.commit()
         return "", 204
+
+
+class CustomProxyResetAllApi(MethodView):
+    """Drop every admin override on the built-in proxies so they follow the catalog again."""
+
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self):
+        from hiddifypanel.database import db
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import ensure_builtin_migrated, set_field_override
+
+        reset = 0
+        rows = CustomProxy.query.filter(CustomProxy.child_id == _child_id(), CustomProxy.is_builtin.is_(True)).all()
+        for row in rows:
+            ensure_builtin_migrated(row)
+            keys = [key for key, on in (row.builtin_overrides or {}).items() if on]
+            for key in keys:
+                set_field_override(row, key, False)
+            if keys or row.server_override:
+                row.server_override = False
+                reset += 1
+        db.session.commit()
+        return {"reset": reset}
 
 
 class CustomProxyEnableApi(MethodView):

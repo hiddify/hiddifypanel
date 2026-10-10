@@ -42,6 +42,7 @@ from .inbound_builder import (
     supports_xray_preset,
 )
 from .preset_slots import H3_PROTOS, PresetSlot, iter_grouped_preset_slots, preset_display_name, preset_slug_name, tls_layer_for_xhttp_alpn
+from .proxy_matrix import is_wireguard_endpoint
 
 V2RAY_GATEWAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
 
@@ -557,7 +558,7 @@ def _build_preset(
     inbound_tcp_ports: tuple[int, ...] = ()
     inbound_udp_ports: tuple[int, ...] = ()
     if mode == CustomProxyMode.ip:
-        if proto == "wireguard":
+        if proto == "wireguard" and not is_wireguard_endpoint(primary):
             # WireGuard listens on hconfig.wireguard_port (wg-quick / firewall), not a slug port.
             public_port = _hconfig_port(ConfigEnum.wireguard_port, child_id, fallback_slug=slug)
         else:
@@ -603,7 +604,8 @@ def _build_preset(
         tcp_udp=tcp_udp,
         download_tcp_udp=download_tcp_udp,
         is_common_proxy=is_common_proxy,
-        legacy_slugs=(legacy_slug,) if legacy_slug != slug else (),
+        # Snell v4 became v5 (same wire protocol): its row, with its settings, is the v5 one now
+        legacy_slugs=("hiddify-core-custom-snell", "snell-hc") if slug == "snell-v5-hc" else ((legacy_slug,) if legacy_slug != slug else ()),
     )
 
 

@@ -136,7 +136,7 @@ class ConfigEnum(metaclass=FastEnum):
     wireguard_noise_trick = _StrConfigDscr(ConfigCategory.wireguard, ApplyMode.apply_config)
 
     ssh_server_redis_url = _StrConfigDscr(ConfigCategory.hidden, hide_in_virtual_child=True)
-    ssh_server_port = _StrConfigDscr(ConfigCategory.ssh, ApplyMode.apply_config, hide_in_virtual_child=True)
+    ssh_server_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     ssh_use_tls_port = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.apply_config, hide_in_virtual_child=True)
     ssh_server_enable = _BoolConfigDscr(ConfigCategory.ssh, ApplyMode.reinstall)
     first_setup = _BoolConfigDscr(ConfigCategory.hidden)
@@ -257,7 +257,7 @@ class ConfigEnum(metaclass=FastEnum):
     torrent_block = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config)
 
     tuic_enable = _BoolConfigDscr(ConfigCategory.tuic, ApplyMode.apply_config)
-    tuic_port = _StrConfigDscr(ConfigCategory.tuic, ApplyMode.apply_config, hide_in_virtual_child=True)
+    tuic_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     # the hysteria is refereing to hysteria2
     hysteria_enable = _BoolConfigDscr(ConfigCategory.hysteria, ApplyMode.apply_config)
@@ -269,7 +269,7 @@ class ConfigEnum(metaclass=FastEnum):
 
     shadowsocks2022_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config)
     shadowsocks2022_method = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
-    shadowsocks2022_port = _StrConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config)
+    shadowsocks2022_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     ssfaketls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.reinstall)
     ssfaketls_fakedomain = _StrConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config, hide_in_virtual_child=True)
     shadowtls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config)
@@ -291,7 +291,7 @@ class ConfigEnum(metaclass=FastEnum):
     xhttp_different_up_down_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     naive_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
-    naive_port = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    naive_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     mieru_enable = _BoolConfigDscr(ConfigCategory.mieru, ApplyMode.apply_config)
     mieru_multiplexing = _TypedConfigDscr(MieruMultiplexing, ConfigCategory.mieru)
     mieru_handshake = _TypedConfigDscr(MieruHandshake, ConfigCategory.mieru)

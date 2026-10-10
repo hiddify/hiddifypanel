@@ -5,6 +5,7 @@
  */
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
@@ -34,6 +35,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ added: [state: DomainsState, row: DomainRow]; edit: [row: DomainRow] }>()
 
 const { t } = useI18n()
+const toast = useToast()
 
 type Step = 'name' | 'mode' | 'alias' | 'saving' | 'cert' | 'done'
 const STEPS: Step[] = ['name', 'mode', 'alias', 'cert']
@@ -185,6 +187,17 @@ function back() {
   if (step.value === 'mode') step.value = 'name'
   else if (step.value === 'alias') step.value = 'mode'
 }
+
+/** This server's public addresses: what the new domain's A / AAAA record should point to. */
+const serverIps = computed(() => props.state?.meta.server_ips ?? [])
+async function copyIp(ip: string) {
+  try {
+    await navigator.clipboard.writeText(ip)
+    toast.add({ severity: 'success', summary: t('common.copied'), life: 1500 })
+  } catch {
+    /* clipboard blocked */
+  }
+}
 </script>
 
 <template>
@@ -227,6 +240,19 @@ function back() {
         </div>
         <small v-if="nameError" class="wz__err">{{ nameError }}</small>
         <small v-else-if="takenLocally" class="wz__err">{{ t('domains.wizard.taken') }}</small>
+        <!-- What to put in the DNS record, ready to copy -->
+        <section v-if="serverIps.length" class="wz__dns" :aria-label="t('domains.wizard.dnsTitle')">
+          <h4 class="wz__dns-title"><i class="pi pi-server" />{{ t('domains.wizard.dnsTitle') }}</h4>
+          <p class="wz__dns-hint">{{ t('domains.wizard.dnsHint') }}</p>
+          <ul class="wz__dns-list">
+            <li v-for="row in serverIps" :key="row.ip" class="wz__dns-row">
+              <span class="wz__dns-type">{{ row.version === 4 ? 'A' : 'AAAA' }}</span>
+              <code dir="ltr" class="wz__dns-ip">{{ row.ip }}</code>
+              <small v-if="row.label" class="wz__dns-label">{{ row.label }}</small>
+              <Button type="button" icon="pi pi-copy" text rounded size="small" :aria-label="t('common.copy')" v-tooltip.top="t('common.copy')" @click="copyIp(row.ip)" />
+            </li>
+          </ul>
+        </section>
         <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
         <div class="wz__actions">
           <span />
@@ -306,6 +332,56 @@ function back() {
 </template>
 
 <style scoped>
+.wz__dns {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px dashed var(--p-content-border-color);
+  border-radius: 12px;
+}
+.wz__dns-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.wz__dns-hint {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+}
+.wz__dns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wz__dns-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.wz__dns-type {
+  min-width: 3rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.wz__dns-label {
+  color: var(--p-text-muted-color);
+}
+.wz__dns-ip {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .wz__steps {
   display: flex;
   gap: 0.35rem;

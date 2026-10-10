@@ -1,6 +1,16 @@
 @use 'primeicons/primeicons.css';
 @use 'vazirmatn/Vazirmatn-Variable-font-face.css';
+// Persian pages: the same font with Persian digit shapes (۰۱۲۳), also on charts (canvas text)
+@use 'vazirmatn/misc/Farsi-Digits/Vazirmatn-FD-font-face.css';
 @use './layout/layout.scss';
+
+/* Flag emojis as a font: Windows has none. Only the flag characters use it. */
+@font-face {
+  font-family: 'Twemoji Country Flags';
+  unicode-range: U+1F1E6-1F1FF, U+1F3F4, U+E0062-E007F;
+  src: url('../fonts/TwemojiCountryFlags.woff2') format('woff2');
+  font-display: swap;
+}
 
 .p-tooltip-text {
   white-space: pre-line;

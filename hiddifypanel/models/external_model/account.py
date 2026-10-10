@@ -26,7 +26,7 @@ class AccountModel(HBaseModel):
     @field_validator("uuid", mode="before")
     @classmethod
     def _uuid_str(cls, value: object) -> str | None:
-        return None if value is None else str(value)
+        return None if value is None else str(value).strip().lower()  # canonical form, as stored
 
     @field_validator("name", "comment", mode="before")
     @classmethod

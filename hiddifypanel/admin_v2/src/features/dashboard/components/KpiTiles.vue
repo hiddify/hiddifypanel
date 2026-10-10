@@ -35,7 +35,7 @@ const sparkLabels = computed(() => props.series.map((point) => formatDayLabel(po
 const tiles = computed<Tile[]>(() => [
   {
     label: t('dashboard.onlineUsers'),
-    value: `${props.users?.online.m5 ?? 0} / ${props.users?.total ?? 0}`,
+    value: `${props.users?.online.m5 ?? 0} / ${props.users?.active ?? 0}`,
     icon: 'pi pi-users',
     accent: SERIES.online,
     caption: t('dashboard.inFiveMinutes'),
@@ -57,11 +57,11 @@ const tiles = computed<Tile[]>(() => [
     accent: SERIES.usage,
     trend: props.usage?.trends.day ?? null,
     trendLabel: t('dashboard.vsYesterday'),
-    caption: t('dashboard.onlineToday', { count: props.users?.online.today ?? 0, total: props.users?.total ?? 0 }),
+    caption: t('dashboard.onlineToday', { count: props.users?.online.today ?? 0, total: props.users?.active ?? 0 }),
     tooltip: [
       `${t('dashboard.today')}: ${formatBytes(props.usage?.totals.today ?? 0)}`,
       `${t('dashboard.yesterday')}: ${formatBytes(props.usage?.totals.yesterday ?? 0)}`,
-      t('dashboard.onlineToday', { count: props.users?.online.today ?? 0, total: props.users?.total ?? 0 }),
+      t('dashboard.onlineToday', { count: props.users?.online.today ?? 0, total: props.users?.active ?? 0 }),
     ].join('\n'),
     sparkline: usageSpark.value.slice(-14),
     sparkLabels: sparkLabels.value.slice(-14),

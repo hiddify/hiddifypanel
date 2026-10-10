@@ -1,5 +1,7 @@
 /** Display helpers shared by the users list and form (relative times as the classic user list shows them). */
 
+import { unitLabel } from '@/shared/utils/format-metrics'
+
 export type Tone = 'ok' | 'warn' | 'danger' | 'muted'
 
 export const ONE_GIG = 1024 ** 3
@@ -60,14 +62,41 @@ export function lastSeen(iso: string | null, now: number, locale: string, labels
   return { text: rtf.format(Math.round(seconds / size), unit), tone: days <= 1 ? 'ok' : days <= 3 ? 'warn' : 'danger', online: false }
 }
 
+/** A user's data amount from GB, never smaller than MB: `40 MB`, `12.5 GB` (`۴۰ مگ`, `۱۲٫۵ گیگ` in Persian). */
+export function sizeText(gigabytes: number, locale: string): string {
+  const value = Number(gigabytes) || 0
+  const number = (n: number, max: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: max }).format(n)
+  if (value >= 1024) return `${number(value / 1024, 2)} ${unitLabel('TB', locale)}`
+  if (value >= 1) return `${number(value, value < 100 ? 2 : 1)} ${unitLabel('GB', locale)}`
+  const mb = value * 1024
+  return `${number(mb, mb < 10 ? 1 : 0)} ${unitLabel('MB', locale)}`
+}
+
 /** `0.029`, `12.5`, `3000`: GB without needless zeros. */
 export function gb(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, { maximumFractionDigits: value < 1 ? 3 : value < 100 ? 2 : 1 }).format(value || 0)
 }
 
+/** Persian shows the Persian (Jalali) calendar, everything else the Gregorian one. */
+export function dateLocale(locale: string): string {
+  return locale.toLowerCase().startsWith('fa') ? 'fa-IR-u-ca-persian' : locale
+}
+
 export function shortDate(iso: string | null, locale: string): string {
   if (!iso) return ''
-  return new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })
+  return new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString(dateLocale(locale), { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+/** "Tuesday, 14 October 2026" (Jalali in Persian): the full date, for a long press. */
+export function exactDate(iso: string | null, locale: string): string {
+  if (!iso) return ''
+  return new Date(`${iso.slice(0, 10)}T00:00:00`).toLocaleDateString(dateLocale(locale), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+/** Date and time, e.g. for a last-online tooltip. */
+export function exactDateTime(iso: string | null, locale: string): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleString(dateLocale(locale), { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 /** Days from today to an ISO date (negative: in the past). */

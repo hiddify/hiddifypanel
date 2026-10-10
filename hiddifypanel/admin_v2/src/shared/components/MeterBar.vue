@@ -32,7 +32,7 @@ const props = withDefaults(
     max: number | null | undefined
     text: string
     label?: string
-    size?: 'sm' | 'md' | 'lg'
+    size?: 'xs' | 'sm' | 'md' | 'lg'
     /** Optional per-node slices (same unit as `used`): colored segments replace the gradient. */
     segments?: { value: number; color: string }[] | null
   }>(),
@@ -90,6 +90,12 @@ const segmentSlices = computed(() => {
     color-mix(in srgb, var(--p-primary-color) 7%, transparent) 0 6px,
     color-mix(in srgb, var(--p-primary-color) 12%, transparent) 6px 12px
   );
+}
+.mbar--xs {
+  height: 0.95rem;
+}
+.mbar--xs .mbar__text {
+  font-size: 0.64rem;
 }
 .mbar--sm {
   height: 1.15rem;

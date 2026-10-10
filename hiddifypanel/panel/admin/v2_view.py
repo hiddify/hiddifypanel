@@ -50,6 +50,17 @@ def _admin_v2_entry_files() -> tuple[str, str]:
         return entry["file"], css or _ADMIN_V2_ENTRY_FALLBACK[1]
     return _ADMIN_V2_ENTRY_FALLBACK
 
+
+def _admin_v2_monaco_vs() -> str:
+    """`monaco/<...>/vs` of the built Monaco copy, relative to `static/admin-v2/`.
+
+    The build copies the prebuilt Monaco under a content-hashed directory (see
+    admin_v2/vite.config.ts) so no cache can mix versions; old builds without a hashed
+    directory keep working through the un-hashed path.
+    """
+    hashed = sorted(p for p in (_ADMIN_V2_DIR / "monaco").glob("*/vs/loader.js") if p.is_file())
+    return f"monaco/{hashed[-1].parts[-3]}/vs" if hashed else "monaco/vs"
+
 def _node_info() -> dict | None:
     """What a node's home page shows: its name and the parent it is connected to."""
     if not hutils.node.is_child():
@@ -84,13 +95,19 @@ def _needs_quick_setup() -> bool:
     return needs_quick_setup()
 
 
+def _admin_locale() -> str:
+    """The signed-in admin's own language (My account), else the panel's default admin language."""
+    own = getattr(g.account, "lang", None)
+    return (str(getattr(own, "value", own)) if own else "") or hconfig(ConfigEnum.admin_lang) or "en"
+
+
 def _admin_v2_bootstrap_payload() -> dict:
     proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
     return {
         "proxy_path": proxy_path,
         "api_base": f"/{proxy_path}/api/v2/admin/",
         "router_base": f"/{proxy_path}/admin/v2/",
-        "locale": hconfig(ConfigEnum.admin_lang) or "en",
+        "locale": _admin_locale(),
         "panel_version": _panel_version(),
         "panel_logo_url": _panel_logo_url(proxy_path),
         "menu": build_admin_v2_menu(),
@@ -123,11 +140,12 @@ def register_v2_routes(flask_app, admin_bp):
     @login_required(roles=_ADMIN_V2_ROLES)
     def admin_v2(subpath=""):
         proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
-        lang = hconfig(ConfigEnum.admin_lang) or "en"
+        lang = _admin_locale()
         static_prefix = f"/{proxy_path}/static/admin-v2"
         static_js_file, static_css_file = _admin_v2_entry_files()
         static_js = f"{static_prefix}/{static_js_file}"
         static_css = f"{static_prefix}/{static_css_file}"
+        monaco_base = f"{static_prefix}/{_admin_v2_monaco_vs()}"
         # First setup is handled by the SPA's /quick-setup route (super admins only; see bootstrap).
 
         return render_template(
@@ -136,6 +154,7 @@ def register_v2_routes(flask_app, admin_bp):
             router_base=f"/{proxy_path}/admin/v2/",
             static_js=static_js,
             static_css=static_css,
+            monaco_base=monaco_base,
             proxy_path=proxy_path,
             locale=lang,
             panel_version=_panel_version(),

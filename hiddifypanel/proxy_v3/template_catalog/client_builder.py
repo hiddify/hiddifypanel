@@ -23,6 +23,8 @@ from .template_defaults import default_sublink_link_template
 
 CLIENT_CORES = ("xray", "singbox", "hiddify-core", "clash", "sublink")
 
+from .snell_version import with_snell_version
+
 _HIDDIFY_CLIENT_ROOT = "hiddify-core"
 
 
@@ -71,7 +73,8 @@ def _is_plain_ss2022(combo: ProxyCombination) -> bool:
 
 def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
     proto = combo.proto.lower()
-    return proto in ("socks", "ssh", "mieru", "wireguard") or _is_plain_ss2022(combo)
+    # Snell has its own obfuscation and no TLS section: hiddify-core rejects an unknown "tls" field on it
+    return proto in ("socks", "ssh", "mieru", "wireguard", "snell") or _is_plain_ss2022(combo)
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
@@ -474,14 +477,14 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
     ):
         try:
             outbound, _slugs = build_hiddify_client_outbound(combo)
-            configs.append(_builtin_client_core_entry("hiddify-core", outbound))
+            configs.append(_builtin_client_core_entry("hiddify-core", with_snell_version(outbound, combo)))
         except ValueError:
             if combo.proto == "mieru":
                 configs.append(_builtin_client_core_entry("hiddify-core", "{% block outbounds %}\n{% endblock %}\n"))
 
     try:
         link, _slugs = build_sublink_client(combo)
-        configs.append(_builtin_client_core_entry("sublink", link))
+        configs.append(_builtin_client_core_entry("sublink", with_snell_version(link, combo)))
     except (ValueError, FileNotFoundError):
         pass
 

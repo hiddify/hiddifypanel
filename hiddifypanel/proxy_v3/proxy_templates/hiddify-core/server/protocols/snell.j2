@@ -1,7 +1,9 @@
 {{ skip("hiddify_core version " ~ ctx.platform.hiddifycore_version ~ " does not support snell") if  ctx.platform.hiddifycore_version < "4.1.0"  }}
+{# Snell v5 or v6: the preset sets snell_version. The key is the shared secret (v6 needs 12 to 255 bytes). #}
+{% set v = snell_version|default(5) %}
 "type": "snell",
-"version": 4,
-"psk": "{{ ctx.hconfig.proxy_path }}",
+"version": {{ v }},
+"psk": "{{ ctx.hconfig.shared_secret }}",
 "users": [
   {% for user in ctx.users %}
   {

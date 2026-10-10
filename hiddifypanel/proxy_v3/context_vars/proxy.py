@@ -26,8 +26,6 @@ from .hconfig import HConfigVar
 from .ports import GATEWAY_CLIENT_HTTP_PORT, GATEWAY_CLIENT_TLS_PORT, gateway_client_port, normalize_port_list, ports_list_to_ranges, resolve_inbound_ports
 from .version import TemplateVersion
 
-
-
 _REALITY_TLS_LAYERS: frozenset[TlsLayer] = frozenset({TlsLayer.tls, TlsLayer.tls_h2})
 
 
@@ -37,6 +35,7 @@ def _tls_layer_allows_reality(transport: CustomProxyTransport, tls_layer: TlsLay
     if tls_layer in _REALITY_TLS_LAYERS:
         return True
     return tls_layer == TlsLayer.tls_h1 and transport == CustomProxyTransport.http
+
 
 class ConfigVar(BaseModel):
     class Config:
@@ -145,7 +144,7 @@ class ProxyVar(BaseModel):
         return cls(
             id=proxy_id,
             mode=mode,
-            tag=proxy.name or proxy.slug or "",
+            tag=(proxy.name or "").strip() or proxy.slug or str(proxy.id),
             tcp_ports=list(resolved.tcp_ports),
             udp_ports=list(resolved.udp_ports),
             path=normalize_custom_path(proxy.custom_path),
@@ -327,11 +326,16 @@ class ClientProxyDomainVar(ClientBuilderProxyVar):
             tcp_udp=proxy.tcp_udp,
             tls_layer=proxy.tls_layer,
         )
+        tcp_ports, udp_ports = list(resolved.tcp_ports), list(resolved.udp_ports)
+        if proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway):
+            # Clients connect to the domain's own gateway port when it has one.
+            tcp_ports = [domain_gateway_port(domain, p) for p in tcp_ports]
+            udp_ports = [domain_gateway_port(domain, p) for p in udp_ports]
         return cls(
             domain=_l7_client_domain_ports(domain, proxy),
             **proxy.model_dump(exclude={"domain", "server_config", "tcp_ports", "udp_ports", "domains"}),
-            tcp_ports=list(resolved.tcp_ports),
-            udp_ports=list(resolved.udp_ports),
+            tcp_ports=tcp_ports,
+            udp_ports=udp_ports,
         )
 
     @property

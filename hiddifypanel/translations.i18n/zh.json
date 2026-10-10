@@ -1,16 +1,16 @@
 {
   " Search\n            Settings": " 搜索<inlang-LineFeed>设置",
-  "%(count)s records were successfully deleted.": "",
+  "%(count)s records were successfully deleted.": "%(count)s 条记录已成功删除。",
   "%(count)s records were successfully disabled.": "%(count)s 条记录已成功禁用。",
   "%(count)s records were successfully enabled.": "%(count)s 条记录已成功启用。",
-  "%(count)s records were successfully reset days.": "",
-  "%(count)s records were successfully reset usage.": "",
-  "%(count)s records were successfully updated.": "",
+  "%(count)s records were successfully reset days.": "%(count)s 条记录已成功重置天数。",
+  "%(count)s records were successfully reset usage.": "%(count)s 条记录已成功重置用量。",
+  "%(count)s records were successfully updated.": "%(count)s 条记录已成功更新。",
   "%(expire_days)s days": "%(expire_days)s 天",
   "%(placeholder)s": "%(placeholder)s",
   "0 - Last day": "最后一天",
-  "<a href=\"%(user_link)s\"> %(user)s</a>": "",
-  "A fake domain needs a real domain name": "",
+  "<a href=\"%(user_link)s\"> %(user)s</a>": "<a href=\"%(user_link)s\"> %(user)s</a>",
+  "A fake domain needs a real domain name": "伪装域名需要真实域名",
   "Access Denied!": "拒绝访问",
   "Actions": "行动",
   "Active": "积极",
@@ -19,7 +19,7 @@
   "Add some text that is only visible to super_admin.": "添加一些只有超级管理员可见的文本",
   "Add some text that is only visible to you.": "您可以添加一些只有您可见的文本",
   "Added by": "添加者",
-  "Admin Links": "",
+  "Admin Links": "管理员链接",
   "Admins": "管理员",
   "Alias": "别名",
   "All": "全部",
@@ -34,10 +34,10 @@
   "Beta": "☑️ 测试版",
   "Bridge Servers": "➖ 桥接服务器",
   "Bug": "错误/功能",
-  "CDN and worker domains must use valid fake mode": "",
+  "CDN and worker domains must use valid fake mode": "CDN 和 worker 域名必须使用有效的伪装模式",
   "CPU %(cores)s Cores": "CPU %(cores)s 核心",
   "Can add sub admin": "👥 可以添加子管理员",
-  "Change": "",
+  "Change": "更改",
   "Check again": "再检查一遍",
   "Childs": "孩子们",
   "China": "🇨🇳中国",
@@ -48,7 +48,7 @@
   "Commercial use": "商业用途",
   "Config file is incorrect": "配置文件不正确。",
   "Copy Link": "复制链接",
-  "Copy QR image": "",
+  "Copy QR image": "复制二维码图片",
   "Couldn't find your ip addresses": "找不到您的 IP 地址",
   "Count:": "数数：",
   "Create": "创造",
@@ -67,7 +67,7 @@
   "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "域 (%(domain)s)-> IP = %(domain_ip)s 与您的 IP = %(server_ip)s 不同。这在直接模式下是必需的",
   "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "域名IP=%(domain_ip)s is not matched with your ip=%(server_ip)s需要用于直连模式",
   "Domain can not be resolved! there is a problem in your domain": "域名无法解析！您的域有问题。请检查您的域配置。",
-  "Domain cannot be resolved! Please check DNS settings": "",
+  "Domain cannot be resolved! Please check DNS settings": "无法解析域名！请检查 DNS 设置",
   "Domain is not REALITY friendly!": "域名对现实不友好！",
   "Domain?": "域名？",
   "Donation": {
@@ -75,19 +75,20 @@
     "title": "捐款"
   },
   "Download App": "下载应用程序",
+  "Download Domain": "📈 下载域名",
   "Edit": "编辑",
   "Edit Proxy Names": "✏️ 修改代理",
   "Enable": "❇️启用",
-  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "",
-  "Error in Config Generation": "",
+  "Enable TLS ECH in panel settings before using ECH on a CDN domain": "在 CDN 域名上使用 ECH 前，请先在面板设置中启用 TLS ECH",
+  "Error in Config Generation": "配置生成出错",
   "Error in auto cdn format": "⚠️ 自动 CDN 格式错误",
   "Error! auto cdn ip can not be find, please contact admin.": "自动 CDN IP 错误！找不到，请联系管理员",
   "Example Domains": "测试并推荐域名",
-  "Expired": "",
+  "Expired": "已过期",
   "Expired Users": "过期用户",
   "Export": "导入",
   "Fake": "➖ 假",
-  "Fake domains can only be direct or relay": "",
+  "Fake domains can only be direct or relay": "伪装域名只能是直连或中继",
   "Filter": "过滤",
   "Finished": "完成的...",
   "From Last Restart": "从上次重新启动开始",
@@ -99,7 +100,7 @@
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>推荐</span>",
   "HiddifyNG intro": "📌 请从以下任一链接安装 HiddifyNG：\n<br/>\n %(dl_link)s %(play_link)s\n<br/>\n然后单击下面的链接并在 HiddifyNG 中打开它。\n<br/>",
   "HiddigyN": "HiddifyN <span class='badge badge-success'>推荐</span>",
-  "Home Link": "",
+  "Home Link": "主页链接",
   "Hover the user to see the reason": "将鼠标悬停在用户上即可查看原因",
   "How many days this package should be available?": "这个套餐有多少天？",
   "How many?": "多少？",
@@ -112,7 +113,7 @@
   "Incorrect Password": "⚠️密码错误",
   "Install": "安装",
   "Install Hiddify Application": "Hiddify 管理器安装",
-  "Invalid": "",
+  "Invalid": "无效",
   "Invalid IP or domain": "错误的IP或域名",
   "Invalid REALITY hostnames": "无效的 REALITY 主机名",
   "Invalid admin link": "管理员链接无效",
@@ -121,8 +122,8 @@
   "It will override the root admin to the current user": "它会将备份文件的所有者管理员覆盖为当前管理员。",
   "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "加入我们的 Hiddify Telegram 频道，获取 Hiddify 的最新动态。",
   "Last Online": "最后一次连接",
-  "Last node to parent": "",
-  "Last parent to node": "",
+  "Last node to parent": "最后一次 节点到父节点",
+  "Last parent to node": "最后一次 父节点到节点",
   "Link is changed!": "ℹ️链接已更改！",
   "Linux": "Linux",
   "Max Active Users": "最大活跃用户数",
@@ -133,21 +134,21 @@
   "More Applications": "更多应用",
   "Network": "网络",
   "New": "新",
-  "No certificate": "",
+  "No certificate": "无证书",
   "No children!": "没有孩子",
-  "No main domains found, please add at least one domain with valid certificate": "",
-  "Nodes": "",
-  "Not Secure": "",
+  "No main domains found, please add at least one domain with valid certificate": "未找到主域名，请至少添加一个带有效证书的域名",
+  "Nodes": "节点",
+  "Not Secure": "不安全",
   "Note": "📝 注意",
   "Offline more than 1 day": "离线超过1天",
   "Offline more than 1 hour": "离线1小时以上",
   "Offline more than 1 week": "离线超过1周",
   "Ok": "好的",
-  "Online": "",
+  "Online": "在线",
   "Online Users": "在线用户",
   "Only Blocked and Local websites": "☑️ 仅屏蔽和本地网站",
   "Only for sublink?": "🌍 仅用于订阅链接",
-  "Only one domain of this kind can be added": "",
+  "Only one domain of this kind can be added": "此类域名只能添加一个",
   "Oops! Something went wrong.": "哎呀！出了些问题。",
   "Open in Application": "在应用程序中打开",
   "Others": "🇺🇳其他",
@@ -169,18 +170,18 @@
   "Please type your message to send to the telegram:": "✏️ 请写下您要发送到 Telegram 的消息：",
   "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "请理解，家长面板正在测试中，计划和使用条件可能随时发生变化。",
   "Please wait ": "请稍等",
-  "Port 80 and 443 can not be selected": "",
+  "Port 80 and 443 can not be selected": "不能选择 80 和 443 端口",
   "Port is already used! in": "端口已用于：",
   "Premium Description": "Hiddify Manager 仅供非商业用途。但如果您将此面板用于商业用途，请通过捐赠来帮助该项目发展。 <br/>\n为了换取您的财务支持，我们还为您的商业产品提供特殊设施。\n<br/>\n<br/>\n例如：\n<ul><li>\n<li>同步到Cloudflare的可能性：即通过在面板中添加域名，也可以在Cloudflare中进行相关设置</li>\n<li>可以在面板中显示您的品牌</li>\n<li>可以使用中央面板在一个面板中管理多于一台服务器，因此不再需要在不同服务器中注册用户，并且用户的数量将在所有服务器中收集。\n</li>\n<li>\n使用 Telegram 机器人的可能性\n</li>\n<li>\n能够更改代理名称\n</li>\n</ul>\n\n捐赠后请联系<a href='tg://resolve?domain=HiddifyCommercial'>@HiddifyCommercial</a>。\n发送消息获取商业用户专用版本。",
-  "Proxy Editor": "",
+  "Proxy Editor": "代理编辑器",
   "ProxyPath is already used! use different proxy path": "ProxyPath 已被使用！使用不同的代理路径",
   "QR code": "🧾 二维码",
-  "QR code image copied": "",
+  "QR code image copied": "二维码图片已复制",
   "QRCode": "<i class='fa-solid fa-qrcode'></i> QRCode",
   "RAM": "内存",
   "REALITY Fallback domain is not compaitble with server names!": "REALITY 后备域与服务器名称不兼容！",
-  "REALITY Fallback domain is not compatible with server names!": "",
-  "Relay domains with non-valid fake mode require an IP address": "",
+  "REALITY Fallback domain is not compatible with server names!": "REALITY 回退域名与服务器名称不兼容！",
+  "Relay domains with non-valid fake mode require an IP address": "伪装模式无效的中继域名需要 IP 地址",
   "Release": "✅ 发布",
   "Remaining about %(relative)s, exactly %(days)s days": "还剩下大约 %(relative)s，正好 %(days)s 天",
   "Remote nodes are not supported yet!": "尚不支持远程节点！",
@@ -205,12 +206,12 @@
   "Save": "保存",
   "Save & Add More": "保存并添加更多",
   "Save Link": "保存链接",
-  "Search Settings": "",
+  "Search Settings": "搜索设置",
   "Select all records": "选择所有记录",
   "Select record": "选择记录",
-  "Selected proxy does not support this domain mode combination": "",
+  "Selected proxy does not support this domain mode combination": "所选代理不支持此域名模式组合",
   "Seleted Users": "选定用户",
-  "Self-signed": "",
+  "Self-signed": "自签名",
   "Send Message to User's Telegram": "📣 向用户的 Telegram 发送消息",
   "Sending": "正在发送...",
   "Should be a valid domain": "应该是有效域名",
@@ -219,18 +220,18 @@
   "Simplifies the process of employing the link elsewhere.": "简化了在其他地方使用链接的过程",
   "SingBox": "📦 歌盒",
   "Sort by %(name)s": "以%(name)s排序",
-  "Specifying CDN IP is only valid for CDN mode": "",
+  "Specifying CDN IP is only valid for CDN mode": "指定 CDN IP 仅对 CDN 模式有效",
   "Start Date": "开始日期",
   "Started %(days)s days ago": "已于 %(days)s 天前开始",
   "Started from %(relative)s": "从 %(relative)s 开始",
   "Status": "地位",
-  "SubLink": "",
+  "SubLink": "SubLink",
   "Submit": "提交",
   "Success": "成功",
   "Success! Please wait around 5 minutes to make sure everything is updated.": "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新",
-  "TLS": "",
+  "TLS": "TLS",
   "Telegram Bot": "Telegram 机器人",
-  "Telegram Bot Link": "",
+  "Telegram Bot Link": "Telegram 机器人链接",
   "Temporary Short Link": "⏱️临时短链接",
   "The message has been sent.": "消息已发送。",
   "The message was not sent to": "该消息未发送至",
@@ -238,7 +239,7 @@
   "This can be used for giving your users a permanent non blockable links.": "这可用于为您的用户提供永久的不可阻止链接。",
   "This domain %(domain_name)s is invalid": "域名 %(domain_name)s 无效",
   "This domain does not exist in the panel!": "该域名在面板中不存在！",
-  "This restore has expired. Start it again from the Backup page.": "",
+  "This restore has expired. Start it again from the Backup page.": "此恢复已过期。请从备份页面重新开始。",
   "Today Usage": "今天",
   "Too many Connected IPs": "连接的IP太多",
   "Total Usage": "总使用量",
@@ -250,9 +251,9 @@
   "User is inactive": "用户处于非活动状态",
   "V2rayNG": "替代 v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br/>\n<br/>",
   "V2rayNG intro": "请从以下任一链接安装 v2rayNG：%(dl_link)s %(play_link)s。\n然后按照视频教程复制下面的链接粘贴到v2rayNG中 <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa -问题'></i> </按钮>。\n<br/>",
-  "Valid": "",
+  "Valid": "有效",
   "View in Telegram": "在电报中查看",
-  "Waiting for the process to start...": "",
+  "Waiting for the process to start...": "正在等待进程启动...",
   "Want to enjoy more with telegram?": "ℹ️ 将您的帐户连接到 Telegram",
   "Welcome %(user)s": "欢迎%(user)s",
   "Why Going to Premium?": "为什么要选择高级版？",
@@ -265,11 +266,10 @@
   "You can restore your configs from previously downloaded configs": "ℹ️您可以从以前下载的备份文件恢复您的配置",
   "You have too much users! You can have only %(active)s active users and %(total)s users": "你的用户太多了！您只能拥有 %(active)s 个活跃用户和 %(total)s 个用户",
   "You have used this domain in: ": "您已在以下位置使用过该域名：",
-  "You need to enable %(names)s globally to enable this proxy.": "",
+  "You need to enable %(names)s globally to enable this proxy.": "您需要全局启用 %(names)s 才能启用此代理。",
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "您的 Hiddify 实例信息\n领域： {}\n使用限制：{} GB\n当前使用情况：{} GB\n到期时间：{}\n剩余天数：{}\n\n\n祝你好运！ 🎉🎉🎉",
   "[Admin only visible message:] You can change this message from settings": "[管理员专用消息]：可通过设置自定义。",
   "actions": "行动",
-  "admin link": "行政",
   "admin": {
     "Actions:apply_configs": "应用配置",
     "action_done_sucess": "✅ 行动成功完成。您现在可以离开此页面",
@@ -291,7 +291,7 @@
     "menu": {
       "api": "应用程序编程接口",
       "config": "设置",
-      "dashboard_v2": "",
+      "dashboard_v2": "下一步",
       "domain": "域名",
       "home": "仪表板",
       "proxy": "代理",
@@ -312,6 +312,1961 @@
     "save_panel_link": "请注意，您的面板只能通过以下链接访问。请保存此链接。\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "⚠️ 请等待大约 5 分钟以确保所有内容均已更新。在此期间，请复制并保存您的代理链接："
   },
+  "admin link": "行政",
+  "adminV2": {
+    "account": {
+      "aliasActive": "留空并保存即可移除。",
+      "aliasCleared": "用户名已移除",
+      "aliasHint": "使用此用户名和密码登录，无需使用 ID。这样您分享的链接中不再包含 ID。",
+      "aliasNeedsStrong": "请先在上方设置强密码：用户名仅在使用强密码时有效。",
+      "aliasOn": "开启",
+      "aliasPlaceholder": "例如 sara.sales",
+      "aliasProblem": {
+        "bad_chars": "仅限 a-z、0-9、点、短横线和下划线，且以字母或数字开头",
+        "looks_like_uuid": "不能看起来像 ID (UUID)",
+        "too_short": "至少 {n} 个字符"
+      },
+      "aliasSaved": "现在可以用 {alias} 登录了",
+      "aliasSuper": "超级管理员只能通过其管理员链接登录，因此没有用户名。",
+      "aliasTitle": "登录用户名",
+      "canAddAdmins": "可添加子管理员",
+      "changePassword": "修改密码",
+      "configsCount": "{n} 个配置供我的所有用户使用 | {n} 个配置供我的所有用户使用",
+      "configsEmpty": "暂无配置。添加订阅链接或粘贴配置：您的所有用户都会获得。",
+      "configsSave": "保存配置",
+      "configsSaved": "配置已保存",
+      "configsSub": "除每位用户自己的配置外，还会添加到您所有用户及子管理员用户的订阅中。",
+      "configsTitle": "我的用户的配置",
+      "configsUnsaved": "尚未保存",
+      "copyLink": "复制我的管理员链接",
+      "current": "当前密码",
+      "editConfigs": "编辑配置",
+      "generate": "生成",
+      "generatedCopied": "已生成并复制强密码",
+      "inheritedConfigs": "+ 继承自上级管理员的 {n} 个",
+      "languageDefault": "面板默认（{name}）",
+      "languageHint": "您的管理页面使用的语言",
+      "languageTitle": "语言",
+      "limitsSub": "您的用户及所有子管理员的用户都计入这些限制。",
+      "limitsTitle": "我的限制",
+      "loginHint": "保存后，请使用您的管理员链接和此密码登录。",
+      "minLength": "至少 {n} 个字符",
+      "mismatch": "两次输入的密码不一致",
+      "nearLimit": "您已接近限制。请联系上级管理员提高限制，或禁用不再需要的用户。",
+      "new": "新密码",
+      "noLimits": "超级管理员没有限制。",
+      "noPasswordSub": "您没有密码：任何拥有您链接的人都可以登录。请设置密码以保护您的账户。",
+      "outboundApply": "应用更改以使其生效。",
+      "outboundNone": "暂无出站。由超级管理员设置。",
+      "outboundSaved": "默认出站已保存",
+      "outboundSub": "我的用户及子管理员的用户将从这里出站，除非用户（或更近一级的管理员）选择了其他出站。",
+      "outboundTitle": "默认出站",
+      "passwordNone": "无密码：任何拥有您链接的人都可以登录",
+      "passwordSet": "密码已保护您的账户",
+      "passwordSub": "更改您登录时使用的密码。",
+      "passwordTitle": "密码",
+      "repeat": "重复新密码",
+      "save": "保存密码",
+      "saved": "密码已修改",
+      "setPassword": "设置密码",
+      "settingsSub": "您的语言、密码和登录名。",
+      "settingsTitle": "设置",
+      "strength": {
+        "medium": "中",
+        "prompt": "请输入密码",
+        "strong": "强",
+        "weak": "弱"
+      },
+      "subAdmins": "子管理员",
+      "subtitle": "您的限制、已使用量以及您的密码。",
+      "superText": "您可以根据需要添加任意数量的用户和管理员。",
+      "tabs": {
+        "overview": "概览",
+        "security": "安全",
+        "users": "我的用户"
+      },
+      "title": "我的账户",
+      "under": "在 {name} 之下",
+      "unlimited": "无限制",
+      "wrongCurrent": "当前密码错误"
+    },
+    "actions": {
+      "applyConfigs": "应用配置",
+      "applyConfigsHint": "重新生成服务器配置并应用到正在运行的服务。",
+      "confirm": "确定要执行此操作吗？",
+      "ports": {
+        "copied": "已复制{what}",
+        "copyList": "复制列表",
+        "count": "{n} 个端口",
+        "firewall": "防火墙命令 (ufw)",
+        "hint": "此服务器需要对互联网开放的所有端口，可直接用于防火墙。",
+        "lead": "请在服务器（或云服务商）的防火墙中开放这些端口，以便用户连接。",
+        "none": "无",
+        "openProxy": "打开此自定义代理",
+        "refresh": "刷新",
+        "title": "公开端口"
+      },
+      "reinstall": "重新安装",
+      "reinstallHint": "重新运行完整安装程序。服务将中断几分钟。",
+      "resetCache": "重置缓存",
+      "resetCacheDone": "缓存已清除",
+      "resetCacheFailed": "重置缓存失败",
+      "resetCacheHint": "清除面板的缓存数据和已渲染的模板。安全；无需重启服务。",
+      "restart": "重启系统",
+      "restartHint": "重启所有服务。活动连接将被断开。",
+      "status": "状态",
+      "statusHint": "对所有服务进行状态检查并显示日志。",
+      "subtitle": "此面板的维护和系统操作。",
+      "title": "操作",
+      "update": "更新",
+      "updateHint": "将面板和所有服务更新到最新版本。",
+      "viewlogs": "查看日志",
+      "viewlogsHint": "浏览系统日志文件。"
+    },
+    "admins": {
+      "add": "添加管理员",
+      "canAddHint": "该管理员可以创建自己的子管理员",
+      "canAddShort": "添加子管理员",
+      "clearSearch": "清除搜索",
+      "col": {
+        "link": "管理员链接",
+        "mode": "模式",
+        "name": "名称",
+        "note": "备注",
+        "subAdmins": "子管理员",
+        "users": "用户"
+      },
+      "collapse": "隐藏 {name} 的子管理员",
+      "copyLink": "复制链接",
+      "credentials": {
+        "copyMessage": "复制消息",
+        "copyMessageHint": "同时复制消息和二维码图片",
+        "createdTitle": "{name} 已就绪",
+        "done": "完成",
+        "lead": "请将这些信息发送给管理员。他们打开链接并使用密码登录。",
+        "link": "管理员链接",
+        "message": "要登录，请打开以下链接：\n{link}\n并使用密码登录：{password}",
+        "messageAlias": "要登录，请打开以下链接：\n{link}\n并使用用户名：{alias}\n和密码：{password} 登录",
+        "messageLabel": "要发送的消息",
+        "once": "密码仅显示这一次。请在关闭前复制；否则请重新重置。",
+        "password": "密码",
+        "resetTitle": "{name} 的新密码",
+        "show": "显示密码",
+        "username": "用户名"
+      },
+      "deleteMessage": "该管理员将被删除，其用户将转移给您。",
+      "deleteMessageWithSubs": "该管理员及其 {count} 个子管理员将被删除，其用户将转移给您。 | 该管理员及其 {count} 个子管理员将被删除，其用户将转移给您。",
+      "deleteTitle": "删除 {name}？",
+      "deleted": "{name} 已删除",
+      "empty": {
+        "cta": "添加您的第一位管理员",
+        "text": "添加代理来分担工作。每位代理都有自己的链接、密码和限制。",
+        "textNoPermission": "您没有添加管理员的权限。如需要，请联系上级管理员。",
+        "title": "暂无子管理员"
+      },
+      "expand": "显示 {name} 的子管理员",
+      "filter": {
+        "anyMode": "任意模式",
+        "anySub": "任意权限",
+        "canAdd": "可添加子管理员",
+        "cannotAdd": "不可添加子管理员",
+        "clear": "清除筛选",
+        "mode": "按模式筛选",
+        "sub": "按子管理员权限筛选"
+      },
+      "form": {
+        "advanced": "高级",
+        "advancedHint": "在 {name} 之下",
+        "alias": "登录用户名",
+        "aliasHint": "设置用户名后，他们使用用户名 + 密码登录，分享的链接中不包含 ID。",
+        "canAddAdmin": "可添加子管理员",
+        "canAddAdminHint": "允许该管理员在其限制范围内创建自己的代理。",
+        "configs": "该管理员用户的配置",
+        "configsCount": "{n} 个配置 | {n} 个配置",
+        "configsHint": "添加到该管理员及其子管理员所有用户的订阅中。",
+        "create": "创建管理员",
+        "createSubtitle": "创建一个代理。将为其生成安全密码。",
+        "createTitle": "新建管理员",
+        "editSubtitle": "更改立即生效。",
+        "editTitle": "编辑 {name}",
+        "emptyNoLimit": "留空表示无限制",
+        "limits": "限制",
+        "limitsHint": "按该管理员的用户及其所有子管理员的用户统计。达到限制后，无法再添加新用户。",
+        "name": "名称",
+        "namePlaceholder": "例如 销售团队",
+        "nameRequired": "名称为必填项",
+        "newUuid": "新 UUID",
+        "noLimit": "无限制",
+        "note": "备注",
+        "notePlaceholder": "仅对其上级管理员可见",
+        "optional": "可选",
+        "outbound": "默认出站",
+        "outboundHint": "该管理员的用户（及其子管理员的用户）将从这里出站，除非用户选择了其他出站。",
+        "parent": "上级管理员",
+        "parentHint": "新管理员、其用户及其限制都归属于此管理员之下。",
+        "passwordInfo": "安全密码会自动创建。保存后您可以将其与登录链接一起复制。",
+        "placement": "在团队中的位置",
+        "superNoLimits": "超级管理员没有限制。",
+        "upTo": "最多 {max}（您的限制）",
+        "uuidHint": "自动生成。仅在需要重用已知 ID 时才修改。",
+        "uuidInvalid": "这不是有效的 UUID"
+      },
+      "limit": {
+        "max_active_users": "最大活跃用户数",
+        "max_online_users": "最大在线用户数",
+        "max_total_usage_GB": "最大已用流量（总计）",
+        "max_users": "最大用户总数"
+      },
+      "linkDialog": {
+        "pwHint": "密码不会再次显示。如需新密码，请重置。",
+        "pwNone": "无密码：仅凭此链接即可登录",
+        "pwSet": "使用此链接和密码登录",
+        "title": "{name} 的管理员链接",
+        "username": "用户名",
+        "usernameHint": "此链接打开登录页面；他们使用此用户名和密码登录。"
+      },
+      "meLocked": "这是您自己：此处只能更改您用户的配置。请在“我的账户”中修改密码。",
+      "meter": {
+        "active": "活跃",
+        "activeHint": "已启用且仍有剩余天数和流量的用户数，占允许数量",
+        "online": "在线",
+        "onlineHint": "过去 24 小时内出现过的用户数，占允许数量",
+        "total": "总计",
+        "totalHint": "全部用户，占允许数量",
+        "traffic": "流量",
+        "trafficHint": "所有这些用户已用的流量，占允许总量"
+      },
+      "mode": {
+        "admin": "管理员",
+        "agent": "代理",
+        "super_admin": "超级管理员"
+      },
+      "more": "更多操作",
+      "myConfigs": "我的用户的配置",
+      "myConfigsHint": "我的用户的配置：添加到您所有用户及子管理员用户的订阅中",
+      "noMatch": "没有管理员符合这些筛选条件",
+      "outbound": {
+        "auto": "自动",
+        "inherit": "与上级相同：{name}"
+      },
+      "refresh": "刷新",
+      "resetMessage": "将生成新密码，旧密码立即失效。",
+      "resetPassword": "重置密码",
+      "resetTitle": "重置 {name} 的密码？",
+      "saved": "{name} 已保存",
+      "search": "搜索名称或 UUID",
+      "showLink": "管理员链接",
+      "subCount": "{n} 个子管理员 | {n} 个子管理员",
+      "subtitle": "以树形展示您的管理员团队。每位管理员的限制涵盖其自己的用户及其下所有人。",
+      "summary": {
+        "admins": "管理员",
+        "online": "在线",
+        "users": "用户"
+      },
+      "title": "管理员",
+      "you": "您"
+    },
+    "appTitle": "HiddifyManager",
+    "apply": {
+      "action": {
+        "apply": {
+          "button": "立即应用",
+          "desc": "使您的设置、用户和域名更改生效。快速，更改后通常选择此项。",
+          "done": "更改已应用",
+          "running": "正在应用更改",
+          "title": "应用更改"
+        },
+        "install": {
+          "button": "重新安装",
+          "confirm": "所有内容将重新安装。连接可能中断几分钟。是否继续？",
+          "desc": "重新安装所有内容并重建所有服务。当仅应用不够时使用，例如更改面板路径或协议后。",
+          "done": "重新安装完成",
+          "running": "正在重新安装",
+          "title": "重新安装"
+        },
+        "restart": {
+          "button": "重启",
+          "confirm": "所有服务将重启。连接会短暂中断。是否继续？",
+          "desc": "重启所有 Hiddify 服务而不重新安装任何内容。出现异常时的首选尝试。",
+          "done": "服务已重启",
+          "running": "正在重启服务",
+          "title": "重启服务"
+        },
+        "status": {
+          "button": "立即检查",
+          "desc": "显示每个服务是否正在运行，以及服务器的公网 IP 和 Warp。不会更改任何内容。",
+          "done": "状态检查完成",
+          "running": "正在检查状态",
+          "title": "检查状态"
+        },
+        "update": {
+          "button": "更新",
+          "confirm": "Hiddify 将更新到最新版本。面板将重启，连接可能中断几分钟。是否继续？",
+          "desc": "下载并安装最新版 Hiddify，然后应用。需要一些时间；结束时面板会重启。",
+          "done": "更新完成",
+          "running": "正在更新",
+          "title": "更新 Hiddify"
+        }
+      },
+      "busyOutside": "服务器上当前有任务正在运行。",
+      "lastRun": "上次运行 {when}",
+      "log": {
+        "clear": "清空",
+        "clearConfirm": "清空“{name}”？其文本将从服务器删除。",
+        "clearFailed": "无法清空日志",
+        "cleared": "日志已清空",
+        "copied": "日志已复制",
+        "download": "下载",
+        "empty": "暂无内容…",
+        "follow": "最新",
+        "hide": "隐藏日志",
+        "loading": "加载中…",
+        "show": "显示日志",
+        "showingEnd": "显示末尾",
+        "terminal": "终端",
+        "wrap": "自动换行"
+      },
+      "logs": {
+        "clearAll": "全部清空",
+        "clearAllConfirm": "清空所有日志文件？文本将从服务器删除（正在运行的操作写入的日志会保留）。",
+        "clearFailed": "无法清空部分日志",
+        "clearSkipped": "{n} 个正在使用的已保留",
+        "clearedAll": "日志已清空",
+        "empty": "暂无日志",
+        "sub": "服务器上每个操作的执行情况。",
+        "title": "日志",
+        "view": "查看"
+      },
+      "minutes": "约 {n} 分钟",
+      "notStarted": "无法启动",
+      "recommended": "推荐",
+      "run": {
+        "dontClose": "您可以离开此页面；它会继续在服务器上运行。",
+        "hide": "隐藏",
+        "links": "您域名上的管理员链接（可能已更改）",
+        "reconnecting": "面板正在重启，正在重新连接…",
+        "reload": "面板已更新。请重新加载以使用新版本。",
+        "reloadBtn": "重新加载",
+        "stalled": "日志长时间没有新内容。请查看下方日志。",
+        "starting": "正在启动…",
+        "waitingStart": "正在等待启动…",
+        "working": "处理中…"
+      },
+      "subtitle": "使更改生效、更新服务器并查看各项运行状况",
+      "takes": "大约所需时间",
+      "title": "应用与状态",
+      "watch": "查看进度"
+    },
+    "applyNotice": {
+      "apply": "已保存。请应用配置使更改生效。",
+      "later": "稍后",
+      "reinstall": "已保存。部分更改需要重新安装才能生效。",
+      "update": "已保存。更新通道已更改；请运行更新以切换。"
+    },
+    "backup": {
+      "auto": {
+        "connect": "连接 Telegram",
+        "deleteFailed": "无法删除",
+        "deleteMessage": "{when} 的备份将从服务器中移除。",
+        "deleteTitle": "删除此备份？",
+        "download": "下载",
+        "empty": "服务器上暂无备份",
+        "latest": "最新",
+        "restore": "恢复此备份",
+        "showAll": "显示全部 {n} 个",
+        "showLess": "显示较少",
+        "sub": "会不时自动生成，也会在您在此保存时生成。",
+        "telegramOff": "自动备份也可以通过 Telegram 发送给您。",
+        "telegramOn": "每次自动备份也会通过 Telegram 发送给您。",
+        "title": "服务器上的备份"
+      },
+      "count": {
+        "admins": "管理员",
+        "custom_proxies": "自定义代理",
+        "domains": "域名",
+        "nodes": "节点",
+        "settings": "设置",
+        "users": "用户"
+      },
+      "restore": {
+        "advanced": "高级",
+        "change": "选择其他",
+        "confirmMessage": "面板的以下部分将被替换：{parts}。如果之后可能需要恢复，请先做一次备份。",
+        "confirmTitle": "恢复此备份？",
+        "drop": "将备份文件拖放到此处",
+        "dropHint": "或点击选择 .json 备份文件",
+        "fromFile": "来自您的设备",
+        "fromServer": "来自此服务器",
+        "notJson": "请选择 .json 备份文件",
+        "part": {
+          "domains": "域名",
+          "domainsHint": "域名、其证书和自定义代理",
+          "settings": "设置",
+          "settingsHint": "面板设置、代理及其配置",
+          "users": "用户",
+          "usersHint": "用户、其用量和限制，以及管理员"
+        },
+        "pathChanges": "此备份来自另一个面板：恢复后管理员链接会改变。完成后将显示新链接。",
+        "replaceOwner": "保留备份所有者的 GUID",
+        "replaceOwnerHint": "此面板的所有者将采用备份所有者的 GUID，因此旧的管理员链接仍然有效。无需恢复用户即可使用。您当前的管理员链接会改变。",
+        "run": "恢复",
+        "running": "正在恢复备份",
+        "sub": "恢复来自此面板或另一个面板的备份。",
+        "title": "恢复",
+        "unreadable": "此文件不是 Hiddify 备份",
+        "whatHappens": "恢复会替换您所选的内容，然后重新安装服务器配置。您可以查看进度；需要几分钟。"
+      },
+      "save": {
+        "created": "备份已保存到服务器",
+        "download": "下载备份",
+        "downloaded": "备份已下载",
+        "failed": "无法创建备份",
+        "onServer": "保存到服务器",
+        "secret": "该文件包含密码、用户链接和私钥。请妥善保管。",
+        "sub": "一个文件包含全部内容：设置、用户、管理员、域名、代理和证书。",
+        "title": "创建备份"
+      },
+      "subtitle": "保留整个面板的副本，需要时可以恢复",
+      "title": "备份与恢复"
+    },
+    "baseConfig": {
+      "builtinDefaultHint": "从目录同步的内置基础配置。启用自定义内容后方可编辑。",
+      "builtinReadOnly": "内置基础配置 — 只能更改名称和启用状态。复制后可完整编辑。",
+      "content": "完整配置",
+      "core": "核心",
+      "description": "描述",
+      "listTitle": "基础配置",
+      "name": "名称",
+      "new": "新建基础配置",
+      "side": "端",
+      "version": "版本"
+    },
+    "common": {
+      "actions": "操作",
+      "add": "添加",
+      "back": "返回",
+      "cancel": "取消",
+      "collapse": "收起",
+      "confirmDelete": "确定要删除此项吗？",
+      "copied": "已复制",
+      "copy": "复制",
+      "delete": "删除",
+      "deleted": "删除成功",
+      "disabled": "已禁用",
+      "duplicate": "复制",
+      "edit": "编辑",
+      "enabled": "已启用",
+      "filter": "筛选",
+      "filteredOf": "已筛选：显示 {n} / {total}",
+      "format": "格式",
+      "loadFailed": "加载数据失败",
+      "no": "否",
+      "noMatch": "没有符合这些筛选条件的内容",
+      "noMatchHint": "请尝试移除筛选或更改搜索。",
+      "resetFilters": "重置筛选",
+      "save": "保存",
+      "saveFailed": "保存失败",
+      "saved": "保存成功",
+      "search": "搜索...",
+      "validate": "验证",
+      "validationFailed": "验证失败",
+      "validationOk": "验证通过",
+      "yes": "是"
+    },
+    "dashboard": {
+      "allNodes": "所有节点",
+      "available": "可用",
+      "averageHint": "每天在线用户的平均数，仅统计有人在线的日子。",
+      "breakdown": "明细",
+      "cached": "缓存",
+      "clickForProcesses": "点击显示占用最多的进程",
+      "collapse": "收起详情",
+      "connections": "连接数",
+      "core": "核心 {index}",
+      "cpu": "CPU",
+      "cpuCores": "CPU · {count} 核",
+      "dailyOnline": "每日在线用户",
+      "dailyUsage": "每日用量",
+      "disk": "磁盘",
+      "download": "下载",
+      "downloadSinceBoot": "运行期间下载",
+      "durationDaysHours": "{days}天 {hours}小时",
+      "durationHoursMinutes": "{hours}小时 {minutes}分",
+      "durationMinutes": "{minutes}分",
+      "enabledUsers": "已启用用户",
+      "expand": "展开详情",
+      "free": "空闲",
+      "hiddify": "Hiddify",
+      "hiddifyData": "Hiddify 数据",
+      "hostname": "主机",
+      "inFiveMinutes": "最近 5 分钟",
+      "lastNDays": "最近 {days} 天",
+      "lastdayOnline": "最近一天在线",
+      "liveThroughput": "实时吞吐量",
+      "liveUpdated": "实时 · 更新于 {time}",
+      "load15m": "15 分钟",
+      "load1m": "1 分钟",
+      "load5m": "5 分钟",
+      "loadAverage": "平均负载",
+      "loadFailed": "无法加载仪表盘数据",
+      "loadFailedHint": "仪表盘无法连接面板 API。请检查您是否仍处于登录状态。",
+      "modeAverage": "平均",
+      "modePeak": "峰值",
+      "modeUnique": "不同用户",
+      "monthUsage": "本月用量",
+      "monthUsers": "本月",
+      "monthlyAverage": "月均",
+      "monthlyOnline": "每月在线",
+      "nDays": "{days}天",
+      "network": "网络",
+      "noData": "暂无数据",
+      "node": "节点",
+      "nodeHealth": "节点健康",
+      "nodeHealthHint": "来自各节点 API 的实时 CPU、内存和磁盘",
+      "nodeHealthStackedHint": "各节点 CPU、内存和磁盘堆叠图",
+      "nodeNetworkHint": "各节点实时上传和下载",
+      "nodeOffline": "离线",
+      "nodeOnline": "在线",
+      "nodeUnreachable": "无法连接此节点",
+      "none": "无",
+      "onlineEnabledUsers": "在线 / 活跃用户",
+      "onlineNow": "当前在线",
+      "onlineOnDay": "在线：{count}",
+      "onlineToday": "今日在线：{count} / {total}",
+      "onlineUsers": "在线用户",
+      "panelVersion": "面板版本",
+      "pause": "暂停",
+      "paused": "实时更新已暂停",
+      "peakDay": "峰值日",
+      "peakHint": "单日在线用户的最大数。",
+      "perCore": "每核",
+      "perDay": "{value} / 天",
+      "ram": "内存",
+      "range": "历史范围",
+      "refresh": "立即刷新",
+      "resume": "实时",
+      "rollingAverage": "7 日平均",
+      "subtitle": "流量、用户和服务器健康状况一目了然",
+      "swap": "交换分区",
+      "thisServer": "此服务器",
+      "title": "仪表盘",
+      "today": "今天",
+      "todayOnline": "今日在线",
+      "todayUsage": "今日用量",
+      "topFolders": "最大的文件夹",
+      "topProcesses": "占用最多的进程",
+      "totalUsage": "总用量",
+      "totalUsers": "总用户数",
+      "uniqueHint": "每个时间段内出现的不同用户，整个面板。",
+      "uniqueIps": "唯一 IP",
+      "uniqueMonth": "近 30 天的不同用户",
+      "uniqueWeek": "近 7 天的不同用户",
+      "upload": "上传",
+      "uploadSinceBoot": "运行期间上传",
+      "uptime": "运行时间",
+      "usageComparison": "用量对比",
+      "usageComparisonHint": "今天和昨天与每周、每月日均对比",
+      "usageOnDay": "用量：{value}",
+      "usageStackedHint": "各节点用量堆叠 · 总量为填充区域",
+      "usageTrend": "用量趋势",
+      "used": "已用",
+      "usersComparison": "用户对比",
+      "usersComparisonHint": "每个时段出现的不重复用户",
+      "usersSummary": "{total} 个用户 · {enabled} 个已启用",
+      "usersTrend": "用户趋势",
+      "vsPreviousMonth": "相比前 30 天",
+      "vsPreviousWeek": "相比前 7 天",
+      "vsYesterday": "相比昨天",
+      "weekUsage": "本周用量",
+      "weekUsers": "本周",
+      "weeklyAverage": "周均",
+      "weeklyOnline": "每周在线",
+      "yesterday": "昨天"
+    },
+    "domain": {
+      "addFailed": "无法添加域名",
+      "addTitle": "添加域名",
+      "alias": "别名",
+      "domain": "域名",
+      "mode": "模式"
+    },
+    "domains": {
+      "add": "添加域名",
+      "advanced": "高级",
+      "badge": {
+        "cdnIp": "强制 IP",
+        "frontingHint": "域名前置：配置中显示此名称而非域名",
+        "resolveIp": "IP"
+      },
+      "cert": {
+        "failed": "无法获取证书",
+        "failedHint": "在签发真实证书之前，将使用自签名证书。",
+        "ok": "证书已签发",
+        "okHint": "用户使用真实可信的证书连接。它会自动续期。",
+        "retry": "重试",
+        "secondsLeft": "约 {n} 秒",
+        "steps": {
+          "contact": "正在联系 Let's Encrypt",
+          "install": "正在安装",
+          "verify": "正在验证域名"
+        },
+        "timeout": "仍在等待证书",
+        "timeoutHint": "耗时比平时更长；它会在后台继续，完成后此页面会更新。",
+        "tips": {
+          "cdn": "短时间内请求过多会被 Let's Encrypt 拒绝；请稍后再试。",
+          "dns": "域名必须指向此服务器（或其前面的 CDN）。",
+          "port80": "80 端口必须可从互联网访问。"
+        },
+        "waiting": "正在获取证书…"
+      },
+      "copyDomain": "复制域名",
+      "deleteMessage": "其配置将对所有用户失效。至少必须保留一个域名。",
+      "deleteTitle": "移除 {name}？",
+      "deleted": "{name} 已移除",
+      "drag": "拖动以重新排序",
+      "editTitle": "编辑域名",
+      "field": {
+        "alias": "显示名称",
+        "aliasHint": "在用户的应用中显示，代替域名。",
+        "cdnIp": "🔂 强制配置使用这些 IP / 域名",
+        "cdnIpHint": "将这些放入用户链接中，代替域名的 IP，以逗号或换行分隔。也支持运营商模板。",
+        "domain": "域名",
+        "domainInvalid": "这看起来不像域名",
+        "domainRequired": "请输入域名",
+        "downloadDomain": "📈 下载域名",
+        "downloadDomainHint": "仅适用于 XHTTP：下载可以来自与上传不同的域名。更难被检测，通常更快。",
+        "ech": "🔐 ECH",
+        "echHint": "为此 CDN 域名获取并使用 Encrypted Client Hello。",
+        "echNeedsSetting": "请先在面板设置中开启 TLS ECH。",
+        "extra": "额外参数",
+        "extraInvalid": "不是有效的 JSON",
+        "extraObject": "必须是 JSON 对象",
+        "fronting": "🎭 域名前置",
+        "frontingHint": "可选。用户的应用显示这些名称（SNI）之一而不是您的域名，因此过滤器只会看到另一个站点。请使用与您的域名在同一 CDN 上的站点（例如其他 Cloudflare 站点）。留空：不使用前置。",
+        "frontingPlaceholder": "another-site.com, cdn-site.net",
+        "hostnamesInvalid": "请使用以逗号分隔的主机名，例如 site.com",
+        "mode": "模式",
+        "none": "无",
+        "ports": "网关端口",
+        "portsHint": "用户访问此域名的 SNI 和 L7 代理所用的端口：一个 TLS 端口和一个 HTTP 端口。留空使用默认值。防火墙会将其重定向到 443 / 80，因此服务器上不能有任何程序监听它们，且 TLS 端口不能是其他域名的 HTTP 端口。",
+        "proxies": "自定义代理",
+        "relayNeedsIp": "未使用真实证书的中继需要在 高级 → 强制 IP 中填写中继服务器的 IP。",
+        "resolveIp": "🔢 解析 IP",
+        "resolveIpHint": "在代理中使用 IP 而不是域名。DNS 不稳定时很有用。",
+        "serverDomain": "服务器域名",
+        "serverDomainHint": "此条目使用的上游服务器域名。必须是有效的直连或中继域名。",
+        "servernames": "服务器名称",
+        "servernamesHint": "TLS Reality 借用的站点，以逗号分隔。留空：域名本身。",
+        "showAll": "所有域名",
+        "showDomains": "显示配置来自",
+        "showDomainsHint": "在此域名上打开自己页面的用户会看到这些域名的配置。",
+        "tlsMode": "TLS 模式"
+      },
+      "getCert": "获取证书",
+      "howto": "顺序很重要：拖动（或使用箭头）进行排序。配置按此顺序列出域名，第一个用于面板链接。",
+      "howtoFiltered": "请清除搜索和筛选后再更改顺序。",
+      "ips": {
+        "elsewhere": "其他服务器 / CDN",
+        "none": "未找到此域名的 DNS 记录。",
+        "thisServer": "此服务器",
+        "title": "指向位置 (DNS)"
+      },
+      "kind": {
+        "cdn": {
+          "desc": "您的域名经过 CDN（如 Cloudflare，橙色云朵 / 代理已开启）。它会隐藏此服务器的 IP，并在 IP 被封锁时仍可使用。",
+          "name": "CDN"
+        },
+        "direct": {
+          "desc": "您的域名直接指向此服务器的 IP。如果使用 Cloudflare（或类似 DNS），请保持云朵关闭：仅 DNS。",
+          "name": "直连"
+        },
+        "relay": {
+          "desc": "用户连接到中间的另一台服务器，由它将流量转发到此服务器。域名指向该中间服务器。",
+          "name": "中继"
+        },
+        "sublink": {
+          "desc": "仅用于用户的订阅链接，不含代理。最好放在 CDN 之后：即使您的代理域名被封锁，用户仍可更新订阅并获取新的可用配置。",
+          "name": "仅订阅"
+        },
+        "worker": {
+          "desc": "将自动为此域名创建 Cloudflare worker。",
+          "name": "Cloudflare Worker"
+        }
+      },
+      "more": "更多",
+      "moveDown": "下移",
+      "moveUp": "上移",
+      "noMatch": "没有域名符合筛选条件",
+      "noName": "（无名称）",
+      "notChanged": "未更改",
+      "openPanel": "在此域名上打开面板",
+      "port": {
+        "busy": "另一个程序正在监听该端口（{name}）",
+        "checking": "检查中…",
+        "default": "默认",
+        "free": "空闲",
+        "invalid": "不是有效的端口",
+        "system": "系统端口",
+        "unknown": "无法检查此端口",
+        "usedByDomain": "被 {name} 用于另一种协议",
+        "usedByGateway": {
+          "http": "HTTP 网关端口",
+          "tls": "TLS 网关端口"
+        },
+        "usedByProxy": "被代理 {name} 使用",
+        "usedBySetting": "被 {name} 使用"
+      },
+      "proxies": {
+        "auto": "自动",
+        "autoHint": "适合此域名的所有代理",
+        "autoShort": "自动",
+        "group": {
+          "ip": "基于 IP",
+          "l7": "L7 网关",
+          "sni": "SNI 网关"
+        },
+        "noneFit": "没有适合此类域名的自定义代理；将使用内置代理。",
+        "noneTicked": "未选择任何项：效果与自动相同。",
+        "off": "关闭",
+        "pick": "选择",
+        "pickHint": "仅您选择的代理",
+        "rule": "一个 SNI 代理，或多个 L7 代理；两者不能混用。基于 IP 的可与任一种搭配。",
+        "selectAll": "全选",
+        "selectNone": "全不选",
+        "sniOne": " · 最多一个"
+      },
+      "readMore": "阅读更多",
+      "renewCert": "更新证书",
+      "saved": "{name} 已保存",
+      "search": "搜索域名或名称",
+      "stats": {
+        "all": "域名",
+        "attention": "需要证书",
+        "decoy": "伪装 TLS",
+        "valid": "证书正常"
+      },
+      "subtitle": "用户连接的地址、每个地址如何到达此服务器，以及它们的证书",
+      "title": "域名",
+      "tls": {
+        "decoy": "伪装 TLS",
+        "decoyHint": "Fake 和 Reality TLS 域名不需要自己的证书。",
+        "expired": "已过期",
+        "expiredHint": "证书已过期。",
+        "expires": "到期时间",
+        "expiresIn": "剩余 {n} 天",
+        "invalid": "无效",
+        "invalidHint": "证书与此域名不匹配。",
+        "issuer": "颁发者",
+        "missing": "无证书",
+        "missingHint": "尚无证书。",
+        "running": "正在获取证书",
+        "self_signed": "自签名",
+        "self_signedHint": "临时自签名证书：应用会警告或拒绝连接。请获取真实证书。",
+        "valid": "有效",
+        "validHint": "真实证书；会自动续期。"
+      },
+      "tlsMode": {
+        "dns": "DNS",
+        "dnsHint": "仅 DNS 隧道。",
+        "fake": "Fake",
+        "fakeHint": "使用伪造站点名称（如 soft98.ir）的伪装 TLS，用于通过 SNI 白名单。不推荐。",
+        "fakeProxyNote": "此域名是内置服务器的 fake-TLS 名称，并与其设置保持同步。它没有自定义代理或下载域名。",
+        "locked": "此模式始终使用有效证书。",
+        "other": "其他",
+        "otherHint": "Telegram、ShadowTLS 和 Shadowsocks FakeTLS 服务器的 Fake-TLS 前置域名。每种一个。",
+        "reality": "Reality",
+        "realityHint": "通过 Reality 协议借用其他站点的 TLS；您可以拥有多个此类域名。",
+        "shadowtls": "ShadowTLS",
+        "shadowtlsHint": "ShadowTLS 服务器的伪装域名。",
+        "ssfaketls": "SS FakeTLS",
+        "ssfaketlsHint": "Shadowsocks FakeTLS 服务器的伪装域名。",
+        "taken": "已添加",
+        "telegram": "Telegram 代理",
+        "telegramHint": "Telegram MTProxy 的伪装域名。",
+        "valid": "有效 TLS",
+        "validHint": "自动签发的真实证书。"
+      },
+      "warning": "已保存，有警告",
+      "wizard": {
+        "add": "添加域名",
+        "added": "已添加 {name}",
+        "aliasLead": "在应用中为此域名的配置显示的简短名称。",
+        "aliasQ": "用户应该看到什么？",
+        "check": "检查",
+        "checking": "正在检查 DNS…",
+        "continueBackground": "关闭（继续运行）",
+        "dnsHint": "在 DNS 中为该域名添加下面的记录（值为此服务器的地址）。",
+        "dnsTitle": "将其指向此服务器",
+        "finish": "完成",
+        "found": {
+          "cdn": "位于 {cdn} 之后。",
+          "direct": "直接指向此服务器（{ips}）。",
+          "external": "指向另一台服务器（{ips}）：适合 Reality、中继或 Fake TLS。",
+          "externalNotFriendly": "指向另一台服务器（{ips}），但该站点对 Reality 不友好（需要 TLS 1.3 和 HTTP/2）。",
+          "unresolved": "尚无 DNS 记录。请先在您的 DNS 服务商处添加，或将其用于 Fake TLS。"
+        },
+        "mismatch": {
+          "cdn": "该域名看起来不在 CDN 之后。请在您的 CDN 服务商处开启代理模式。",
+          "direct": "直连需要域名指向此服务器的 IP。保存时会再次检查。",
+          "reality": "Reality 需要一个可解析的真实站点。",
+          "relay": "中继域名指向中间服务器，而不是此服务器。",
+          "sublink": "域名必须指向此服务器或 CDN。",
+          "worker": "Worker 需要域名托管在 Cloudflare 上。"
+        },
+        "modeQ": "如何设置？",
+        "moreSettings": "更多设置",
+        "nameLead": "输入域名或子域名。我们会检查其 DNS 以建议合适的模式。",
+        "nameQ": "哪个域名？",
+        "next": "下一步",
+        "noCert": "无需证书申请。",
+        "noCertDecoy": "Fake 和 Reality TLS 不需要证书。应用更改后即可开始使用。",
+        "recommended": "匹配",
+        "saving": "正在保存并检查…",
+        "steps": {
+          "alias": "名称",
+          "cert": "证书",
+          "mode": "模式",
+          "name": "域名"
+        },
+        "taken": "此域名已添加",
+        "title": "添加域名",
+        "tlsQ": "哪种 TLS？",
+        "unlikely": "DNS 不匹配"
+      }
+    },
+    "donation": {
+      "close": "关闭",
+      "copied": "已复制 {name} 地址",
+      "copiedShort": "已复制",
+      "qr": "二维码",
+      "qrOf": "{name} 地址的二维码",
+      "showQr": "显示 {name} 的二维码",
+      "title": "捐赠"
+    },
+    "editor": {
+      "cannotFormatJinja": "存在 Jinja 标签时无法自动格式化",
+      "excludeBuiltinTemplates": "导出时排除内置模板",
+      "exportBundle": "导出包",
+      "includeTemplate": "包含模板",
+      "insertVariable": "插入变量",
+      "jinjaHint": "JSON5 + Jinja：使用 {{ proxy.port }}、{{ proxy.tag }}、{% for %}…{% endfor %}",
+      "loadFailed": "无法加载编辑器。请检查网络连接并重新加载页面。",
+      "loading": "正在加载编辑器…",
+      "noVariables": "没有变量符合您的搜索",
+      "preview": "预览",
+      "previewFailed": "预览请求失败",
+      "previewOk": "预览生成成功",
+      "previewParams": "预览参数",
+      "previewPartial": "预览已生成，但有警告",
+      "previewTitle": "模板预览"
+    },
+    "footer": {
+      "text": "HiddifyManager"
+    },
+    "legacy": {
+      "loading": "加载中…",
+      "refresh": "刷新",
+      "title": "经典管理页面"
+    },
+    "linkShare": {
+      "copyLink": "复制链接",
+      "domain": "域名",
+      "download": "下载",
+      "kind": {
+        "auto": "自动 CDN",
+        "cdn": "CDN",
+        "current": "当前"
+      },
+      "link": "链接",
+      "open": "打开"
+    },
+    "login": {
+      "brand": "Hiddify",
+      "error_expired": "此页面打开时间过长。请重新登录。",
+      "error_invalid": "ID、用户名或密码不正确。请检查后重试。",
+      "error_locked": "您的网络尝试次数过多。请等待 15 分钟后再试。",
+      "hide": "隐藏密码",
+      "pageTitle": "登录",
+      "password": "密码",
+      "passwordHint": "如果您的管理员链接没有密码，请留空。",
+      "passwordPlaceholder": "您的密码",
+      "show": "显示密码",
+      "signingIn": "正在登录…",
+      "submit": "登录",
+      "subtitle": "管理面板",
+      "tipLink": "打开您的管理员链接会自动填入您的 ID。",
+      "tipLost": "忘记密码？请联系添加您的管理员重置。",
+      "title": "欢迎回来",
+      "username": "管理员 ID 或用户名",
+      "usernameHint": "您管理员链接中的 ID，或分配给您的用户名。",
+      "usernamePlaceholder": "xxxxxxxx-xxxx-… 或您的用户名"
+    },
+    "menu": {
+      "baseConfigs": "基础配置",
+      "customProxies": "代理",
+      "dashboard": "仪表盘",
+      "group": {
+        "help": "帮助",
+        "manager": "管理器",
+        "settings": "设置"
+      },
+      "myAccount": "我的账户",
+      "nodeHome": "节点",
+      "outbounds": "出站",
+      "protocols": "协议",
+      "proxyEditor": "代理编辑器",
+      "signOut": "退出登录",
+      "templateVariables": "模板变量",
+      "templates": "模板",
+      "utils": "工具"
+    },
+    "nodeHome": {
+      "connectedTo": "此节点已连接到父面板",
+      "managedOnParent": "用户、管理员和仪表盘在父面板上管理。此处仅管理此节点的域名、代理和服务器。",
+      "noParent": "此节点尚未连接到父面板。",
+      "openParent": "打开父面板仪表盘",
+      "subtitle": "此面板是父面板的一个节点。",
+      "title": "节点",
+      "titleNamed": "节点：{name}"
+    },
+    "nodes": {
+      "add": {
+        "connecting": "正在连接节点…可能需要一分钟。",
+        "linkHint": "形如 https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
+        "linkInvalid": "这看起来不像完整的管理员链接。它必须以 https:// 开头并包含管理员 ID。",
+        "linkLabel": "节点管理员链接",
+        "linkOk": "位于 {host} 的节点",
+        "nameLabel": "名称",
+        "namePlaceholder": "例如 德国 1",
+        "optional": "可选",
+        "step1": "打开您要添加的服务器的管理面板。",
+        "step2": "从浏览器地址栏复制其完整地址。",
+        "step3": "粘贴到下方并点击连接。",
+        "submit": "连接节点",
+        "success": "节点已连接",
+        "title": "添加节点"
+      },
+      "addNode": "添加节点",
+      "checkConnection": "检查连接",
+      "checking": "检查中…",
+      "connection": "连接",
+      "differentVersion": "节点运行 {node}，此面板运行 {panel}。请保持版本一致。",
+      "empty": {
+        "cta": "添加您的第一个节点",
+        "point1": "用户和管理员自动同步",
+        "point2": "用量在此处汇总",
+        "point3": "一键打开每个节点的管理页面",
+        "text": "将另一台 Hiddify 服务器添加为节点，即可在此面板中管理您的所有服务器。",
+        "title": "暂无节点"
+      },
+      "errors": {
+        "invalid_link": "该链接不是有效的管理员链接。",
+        "rejected": "节点拒绝连接。它可能已属于另一个父面板，或其版本过旧。",
+        "self": "这是此面板的链接。请使用节点服务器的链接。",
+        "timeout": "节点响应时间过长。请检查后重试。",
+        "unreachable": "无法连接节点。请检查链接以及节点是否在线。"
+      },
+      "info": {
+        "fromNode": "节点最后一条消息",
+        "lastUsage": "最后一次用户用量更新",
+        "noUsageYet": "尚无用量报告",
+        "toNode": "发送给节点的最后一条消息",
+        "todayOnline": "今日在线用户",
+        "todayTraffic": "今日流量",
+        "usageReport": "{users} 个用户有流量，{traffic} | {users} 个用户有流量，{traffic}"
+      },
+      "justNow": "刚刚",
+      "lastSeen": "最后联系",
+      "moreInfo": "更多信息",
+      "neverSeen": "从未",
+      "openAdmin": "打开",
+      "reachable": "可连接",
+      "refresh": "刷新",
+      "remove": "移除",
+      "removeMessage": "节点将连同其域名一起从此面板移除，并重新成为独立面板（其父链接将被清除）。之后如需连接，请重新添加。",
+      "removeTitle": "移除 {name}？",
+      "removed": "{name} 已移除",
+      "removedNotUnlinked": "无法连接该节点，因此它仍将此面板作为父面板。请在其设置中清除父链接，否则它会持续尝试同步。",
+      "rename": "重命名",
+      "renamed": "已重命名为 {name}",
+      "renamedHereOnly": "仅在此面板上重命名为 {name}",
+      "renamedHereOnlyDetail": "无法连接该节点或其版本过旧，无法应用名称；重新注册后它可能仍显示旧名称。",
+      "sameVersion": "与此面板版本相同",
+      "showLess": "显示较少",
+      "status": {
+        "late": "延迟",
+        "never": "尚未连接",
+        "offline": "离线",
+        "online": "在线"
+      },
+      "subtitle": "连接到此面板的其他 Hiddify 服务器。用户和管理员会自动与它们共享。",
+      "syncFailed": "无法同步 {name}",
+      "syncNow": "立即同步",
+      "synced": "{name} 已同步",
+      "title": "节点",
+      "unreachable": "无法连接"
+    },
+    "outbounds": {
+      "add": "添加出站",
+      "count": {
+        "geosites": "geosite | geosite",
+        "rule_sets": "rule-set | rule-set",
+        "sites": "站点 | 站点"
+      },
+      "default": "默认",
+      "defaultHint": "最后一个已启用的出站：上面未路由的所有流量都走这里",
+      "deleteMessage": "其站点今后将使用默认出站。",
+      "deleteMessageDefault": "这是默认出站：它上方已启用的出站将成为默认出站。",
+      "deleteTitle": "删除 {name}？",
+      "deleted": "{name} 已删除",
+      "dialog": {
+        "add": "添加出站",
+        "addTitle": "添加 {mode} 出站",
+        "config": "JSON",
+        "configBridge": "面板将其命名为 \"{tag}\"；路由使用该标签，另一个核心通过 127.0.0.1:{port} 连接到它。",
+        "configBridgeNew": "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 SOCKS 桥接连接到它。",
+        "configExample": "插入示例",
+        "configHint": {
+          "core_endpoint": "一个 hiddify-core (sing-box) endpoint 对象，例如 WireGuard endpoint。保存前会由 hiddify-core 检查。",
+          "core_outbound": "一个 hiddify-core (sing-box) outbound 对象，例如 {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}。保存前会由 hiddify-core 检查。",
+          "xray_outbound": "一个 xray outbound 对象，例如 {\"protocol\": \"socks\", \"settings\": {…}}。保存前会由 xray 检查。"
+        },
+        "configInvalid": "不是有效的 JSON：{error}",
+        "configRequired": "JSON 为必填项",
+        "domestic": "{region} 的国内站点",
+        "editTitle": "编辑 {name}",
+        "endpoint": "连接",
+        "endpointHint": {
+          "psiphon": "在 hiddify-core 内运行。xray 通过本地 SOCKS 端口 {endpoint} 访问它。",
+          "tor": "在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+        },
+        "host": "主机",
+        "name": "名称",
+        "nameRequired": "名称为必填项",
+        "optional": "可选",
+        "password": "密码",
+        "passwordKeep": "留空以保留当前密码",
+        "port": "端口",
+        "routes": "经由它的流量",
+        "routesHint": "访问这些站点的流量将通过此出站。",
+        "routesHintDefault": "这是默认出站（最后一个已启用的出站）：上面未路由的所有流量已经走这里，因此无需列表。如果您将其上移，则会再次使用这些列表。",
+        "username": "用户名"
+      },
+      "disable": "关闭",
+      "domesticChip": "国内（{region}）",
+      "drag": "拖动以更改顺序",
+      "edited": "已在此处编辑：升级时会保留您的列表",
+      "enable": "开启",
+      "enabled": "已启用",
+      "everythingElse": "其余所有流量走这里",
+      "followsDefaults": "使用内置列表，升级时更新",
+      "howto": "出站按从上到下的顺序检查：流量从第一个列出其站点的出站发出。最后一个已启用的出站是默认出站，接收其余所有流量。拖动或使用箭头更改顺序。",
+      "idle": "未使用",
+      "idleHint": "它没有站点、geosite 或 rule-set，因此没有流量经过它。请编辑添加，或将其移到末尾使其成为默认出站。",
+      "list": {
+        "browse": "浏览 rule-set",
+        "geosites": "Geosite / GeoIP (xray)",
+        "geositesHint": "每行一个 xray 条目并带前缀：geosite:google 或 geoip:ir（仅写名称表示 geosite:）。未知标签会导致 xray 停止，请使用已知标签。",
+        "geositesPlaceholder": "geosite:google\ngeoip:ir",
+        "rule_sets": "Rule-set (hiddify-core)",
+        "rule_setsHint": "每行一个 rule-set URL（.srs 或 .json 源）。输入 SagerNet 名称如 geosite-netflix 会将其转换为对应 URL。",
+        "rule_setsPlaceholder": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs",
+        "sites": "站点",
+        "sitesHint": "每行一个域名；包含其子域名。",
+        "sitesPlaceholder": "example.com"
+      },
+      "makeDefault": "设为默认（移到末尾）",
+      "mode": {
+        "block": "屏蔽",
+        "core_endpoint": "hiddify-core (sing-box) endpoint",
+        "core_outbound": "hiddify-core (sing-box) outbound",
+        "direct": "直连",
+        "psiphon": "Psiphon",
+        "socks": "SOCKS",
+        "tor": "Tor",
+        "warp": "WARP",
+        "xray_outbound": "xray outbound"
+      },
+      "modeHint": {
+        "block": "丢弃",
+        "core_endpoint": "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 SOCKS 桥接访问它",
+        "core_outbound": "您自己的 hiddify-core outbound (JSON)；xray 通过本地 SOCKS 桥接访问它",
+        "direct": "直接从此服务器发出",
+        "psiphon": "通过 Psiphon（由 hiddify-core 运行）",
+        "socks": "通过 SOCKS5 代理",
+        "tor": "通过 Tor 网络（由 hiddify-core 运行）",
+        "warp": "通过此服务器上的 Cloudflare WARP",
+        "xray_outbound": "您自己的 xray outbound (JSON)；hiddify-core 通过本地 SOCKS 桥接访问它"
+      },
+      "more": "更多操作",
+      "moveDown": "下移",
+      "moveUp": "上移",
+      "notChanged": "未更改",
+      "nowDefault": "{name} 现在是默认出站",
+      "off": "关闭",
+      "region": {
+        "cn": "中国",
+        "ir": "伊朗",
+        "other": "您所在的地区",
+        "ru": "俄罗斯"
+      },
+      "reset": "重置为默认",
+      "resetDone": "{name} 重新使用内置列表",
+      "resetMessage": "您对其站点、geosite 和 rule-set 的更改将被内置列表替换，升级时会使其保持最新。",
+      "resetTitle": "将 {name} 重置为内置列表？",
+      "saved": "{name} 已保存",
+      "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 SOCKS、Tor 或 Psiphon 出口。",
+      "title": "出站"
+    },
+    "passwordRules": {
+      "common": "不是常见密码",
+      "digit": "一个数字",
+      "label": "强密码需要",
+      "length": "{n}+ 个字符",
+      "lower": "一个小写字母",
+      "name": "不是您的名称或 ID",
+      "upper": "一个大写字母"
+    },
+    "primevue": {
+      "accept": "是",
+      "apply": "应用",
+      "cancel": "取消",
+      "choose": "选择",
+      "clear": "清除",
+      "emptyFilterMessage": "未找到结果",
+      "emptyMessage": "没有可用选项",
+      "emptySearchMessage": "未找到结果",
+      "reject": "否",
+      "upload": "上传"
+    },
+    "protocols": {
+      "changed": "已更改",
+      "disableAll": "全部禁用",
+      "enableAll": "全部启用",
+      "enabledOf": "已启用 {on} / {total}",
+      "filterAll": "全部",
+      "filterOff": "关闭",
+      "filterOn": "开启",
+      "groups": {
+        "other": {
+          "hint": "其他开关",
+          "title": "其他"
+        },
+        "protocols": {
+          "hint": "提供给客户端的代理协议",
+          "title": "协议"
+        },
+        "security": {
+          "hint": "Reality、TLS 技巧和多路复用",
+          "title": "安全与技巧"
+        },
+        "transports": {
+          "hint": "流量的承载方式（TCP、WebSocket、gRPC 等）",
+          "title": "传输"
+        }
+      },
+      "instantChip": "即时",
+      "leaveUnsaved": "您有未保存的更改。仍要离开吗？",
+      "noMatch": "没有符合您搜索的内容。",
+      "reinstallChip": "需要重新安装",
+      "relatedSettings": "设置",
+      "search": "搜索协议…",
+      "subtitle": "为整个面板开启或关闭协议、传输和 TLS 技巧。",
+      "summaryHint": "点击卡片切换，然后保存。",
+      "title": "协议"
+    },
+    "proxy": {
+      "addClient": "添加客户端",
+      "addClientConfig": "为此核心添加配置",
+      "addCoreConfig": "添加核心配置",
+      "allowedProtocols": "允许的协议",
+      "alpn": "ALPN",
+      "alpnLabels": {
+        "custom": "自定义",
+        "http": "HTTP",
+        "tls_h1": "TLS H1",
+        "tls_h1_h2": "TLS H1 + H2",
+        "tls_h1_h2_h3": "TLS H1 + H2 + QUIC",
+        "tls_h2": "TLS H2",
+        "tls_h3": "QUIC"
+      },
+      "autoClient": "自动",
+      "baseConfigTemplate": "基础配置覆盖",
+      "baseConfigTemplateHint": "{% block base_config %} 中可选的完整 xray 客户端外壳。留空则使用全局基础配置。",
+      "builtinDefaultHint": "从目录同步的内置预设。在服务端或客户端选项卡中启用自定义内容后可编辑相应部分。",
+      "builtinReadOnly": "内置预设 — 只能更改名称和启用状态。复制后可完整编辑。",
+      "bundleContextProxyCount": "已启用的代理",
+      "cannotEnable": "无法启用此代理",
+      "categories": "分类",
+      "categoriesAdd": "添加分类",
+      "categoriesAddNew": "新增",
+      "categoriesAddPlaceholder": "新分类",
+      "categoriesFilter": "按分类筛选",
+      "categoriesHeader": "可用分类",
+      "categoriesHint": "选择现有分类，或从下拉底部添加新分类",
+      "categoriesPlaceholder": "选择分类",
+      "categoriesRemoveAll": "全部移除",
+      "clashFormatJson": "JSON",
+      "clashFormatYaml": "YAML",
+      "clientBuiltinCustomized": "自定义客户端配置",
+      "clientBuiltinDefault": "使用目录默认客户端配置",
+      "clientConfigDefault": "客户端配置",
+      "clientCoreConfigs": "客户端核心配置",
+      "clientCores": "客户端核心",
+      "commonProxyBadge": "通用",
+      "core": "核心",
+      "customPath": "自定义路径",
+      "customPathAuto": "为 HTTP 代理自动生成",
+      "defaultTagName": "默认标签：{name}",
+      "directPortAccess": "直接端口访问",
+      "directPortAccessHint": "请谨慎使用 — 可能使您的服务器在公网接口上被发现",
+      "doBase64After": "渲染后进行 Base64",
+      "domainIds": "域名",
+      "domainIdsEmptyAll": "留空 = 所有匹配的域名；基于 IP 的代理忽略域名",
+      "domainModeLabels": {
+        "cdn": "CDN",
+        "direct": "直连",
+        "direct-dns": "直连 DNS",
+        "direct-fake": "直连 fake",
+        "direct-reality": "直连 REALITY",
+        "direct-valid": "直连 valid",
+        "fake": "Fake TLS",
+        "reality": "REALITY",
+        "relay": "中继",
+        "relay-fake": "中继 fake",
+        "relay-reality": "中继 REALITY",
+        "relay-valid": "中继 valid",
+        "special": "特殊 (REALITY)"
+      },
+      "domainModes": "域名模式",
+      "domains": "域名",
+      "downloadAlpns": "下载 ALPN",
+      "downloadAlpnsHint": "仅 xHTTP。留空 = 与主 ALPN 相同。配置变体 = 主 × 下载 ALPN。",
+      "downloadDomainModes": "下载域名模式",
+      "downloadTcpUdp": "下载 TCP 或 UDP",
+      "downloadTlsLayer": "下载 TLS 层",
+      "exampleContext": "渲染上下文",
+      "exampleContextDomain": "域名",
+      "exampleContextIp": "IP",
+      "exampleContextProxy": "代理 ID",
+      "exampleContextUa": "User-Agent",
+      "exampleContextUser": "用户",
+      "exampleDomain": "域名",
+      "exampleDomainAll": "所有域名",
+      "exampleDomainAllHint": "包含与此代理匹配的所有域名（与订阅输出相同）。",
+      "exampleDomainCustom": "自定义域名",
+      "exampleDomainPick": "从面板选择",
+      "exampleIp": "IP 地址",
+      "exampleUaCustom": "自定义 User-Agent",
+      "exampleUaPreset": "预设",
+      "exampleUser": "用户",
+      "exampleUserAgent": "User-Agent",
+      "exampleUserPick": "选择面板用户",
+      "exampleUserSample": "示例用户",
+      "export": "导出",
+      "exportFailed": "导出失败",
+      "fieldOverride": "覆盖",
+      "generateBundle": "生成所有配置",
+      "generateBundleOk": "配置包生成成功",
+      "generateBundlePartial": "配置包已生成，但有警告或错误",
+      "generateExample": "生成示例",
+      "generateExampleOk": "示例生成成功",
+      "generateExamplePartial": "示例已生成，但有警告或错误",
+      "goToSettings": "前往设置",
+      "ignoreSkip": "忽略 skip 标签",
+      "ignoreSkipHint": "即使模板 skip 块通常会跳过某个片段，也渲染配置",
+      "import": "导入",
+      "importFailed": "导入失败",
+      "importSuccess": "导入成功（{count} 个模板）",
+      "inboundPort": "入站端口",
+      "inboundPortAuto": "留空则自动",
+      "inboundPortAutoCalculated": "端口按域名自动计算",
+      "inboundTcpPorts": "入站 TCP 端口",
+      "inboundTcpPortsHint": "以逗号分隔的静态 TCP 端口",
+      "inboundTemplate": "入站模板",
+      "inboundUdpPorts": "入站 UDP 端口",
+      "inboundUdpPortsHint": "以逗号分隔的静态 UDP 端口；留空时默认使用 TCP 端口",
+      "isCommonProxy": "通用代理",
+      "isCommonProxyHint": "此协议同时存在于 Xray 和 Hiddify Core。“通用代理核心”设置只会保持所选核心启用。",
+      "l7Proto": "L7 反向代理协议",
+      "l7ReverseProto": "L7 反向代理协议",
+      "linkSettings": "链接设置",
+      "linkTemplate": "链接模板",
+      "listTitle": "自定义代理",
+      "mode": "模式",
+      "modeLabels": {
+        "domain_native": "域名原生",
+        "domains_auto_public_ports": "多域名自动端口",
+        "domains_dns_gateway": "域名 DNS 网关",
+        "domains_l7_gateway": "域名 L7 网关",
+        "domains_single_public_port": "多域名静态端口",
+        "domains_sni_gateway": "域名 SNI 网关",
+        "ip": "基于 IP",
+        "no_inbound": "无入站"
+      },
+      "modeSettings": "模式与路由",
+      "name": "名称",
+      "nameRequired": "保存前请先给代理起个名字：它是其链接的标签。",
+      "needGlobalEnable": "您需要全局启用 {names} 才能启用此代理。是否打开设置？",
+      "new": "新建代理",
+      "noClientConfigs": "暂无客户端配置。请添加客户端开始使用。",
+      "outboundTagTemplate": "出站标签模板",
+      "outboundTagTemplateHint": "每个客户端出站标签的 Jinja。默认：{{ proxy.tag }} {{ domain.alias or domain.name }} {{ proxy.alpn }}",
+      "outboundsTemplate": "出站模板",
+      "protocol": "协议",
+      "quick": {
+        "any": "任意",
+        "clear": "重置筛选",
+        "label": "筛选",
+        "modified": "已修改",
+        "modifiedHint": "与目录默认值相比已更改",
+        "nSelected": "已选 {n} 项",
+        "other": "其他",
+        "showing": "显示 {n} / {total}"
+      },
+      "regeneratePath": "重新生成路径",
+      "renderErrorClickHint": "点击查看详情",
+      "renderErrorDetail": "渲染错误详情",
+      "renderErrorDetailTitle": "渲染错误：{label}",
+      "renderErrorNoDetail": "此错误没有更多可用上下文。",
+      "renderErrorRenderedSource": "渲染输出",
+      "renderErrorTemplateSource": "模板源",
+      "resetAll": "全部重置为默认",
+      "resetAllConfirm": "丢弃您对内置代理所做的所有更改（标签、域名模式、TLS、服务端和客户端配置）并恢复目录默认值？您自己创建的代理不受影响。",
+      "resetAllDone": "{n} 个代理已重置为默认",
+      "resetTagName": "将标签名称重置为默认",
+      "resetToBuiltin": "重置为目录默认值",
+      "searchAll": "搜索所有列...",
+      "serverBuiltinCustomized": "自定义服务端配置",
+      "serverBuiltinDefault": "使用目录默认服务端配置",
+      "serverCore": "服务端核心",
+      "slug": "Slug",
+      "sublink": "Sublink",
+      "sublinkBase64": {
+        "content": "内容",
+        "formatJson": "格式化 JSON",
+        "protocol": "uri.protocol"
+      },
+      "sublinkBase64Detail": "Base64 详情",
+      "sublinkFormat": "链接格式",
+      "sublinkFormatBase64": "Base64 格式",
+      "sublinkFormatDecoded": "解码字段",
+      "sublinkFormatRaw": "渲染后的链接",
+      "sublinkFormatRawLink": "原始链接",
+      "sublinkFormatUri": "URI 格式",
+      "sublinkUri": {
+        "fragment": "uri.fragment",
+        "host": "uri.host",
+        "password": "uri.password",
+        "path": "uri.path",
+        "port": "uri.port",
+        "protocol": "uri.protocol",
+        "query_params": "uri.query_params (JSON)",
+        "user": "uri.user"
+      },
+      "sublinkUriDetail": "URI 详情",
+      "tabClient": "客户端",
+      "tabClients": "客户端",
+      "tabGeneral": "常规",
+      "tabServer": "服务端",
+      "tabServers": "服务端",
+      "tag": "标签",
+      "tcpUdp": "TCP 或 UDP",
+      "tcpUdpHint": "解析后的入站端口所用的传输协议",
+      "tcpUdpLabels": {
+        "both": "TCP + UDP",
+        "tcp": "TCP",
+        "udp": "UDP"
+      },
+      "templateSlugs": "模板包含",
+      "tlsLayer": "TLS 层",
+      "tlsLayerLabels": {
+        "http": "-",
+        "quic_tcp_tls": "QUIC + TLS H2 H1",
+        "quic_tls": "QUIC",
+        "tls": "TLS H2 H1",
+        "tls_h1": "TLS H1",
+        "tls_h2": "TLS H2"
+      },
+      "tlsLayerSpecialConflict": "HTTP TLS 层与 REALITY 域名模式不兼容",
+      "transport": "传输",
+      "transportLabels": {
+        "grpc": "gRPC",
+        "http": "HTTP (raw)",
+        "httpupgrade": "HTTP Upgrade",
+        "other": "其他",
+        "tcp": "TCP",
+        "ws": "WebSocket",
+        "xhttp": "xHTTP"
+      },
+      "uploadTcpUdp": "上传 TCP 或 UDP",
+      "version": "版本"
+    },
+    "qr": {
+      "clickToCopy": "点击复制图片",
+      "copiedBoth": "消息和二维码已复制",
+      "copiedBothClick": "邮件和文档会同时粘贴两者。聊天应用只粘贴文本：粘贴后点击二维码复制图片，再粘贴即可。",
+      "copiedBothShare": "邮件和文档会同时粘贴两者。聊天应用只粘贴文本：使用“分享”一次性发送两者，或点击二维码复制图片。",
+      "copy": "复制二维码",
+      "copyUnsupported": "此浏览器无法复制图片。请改用下载。",
+      "share": "分享",
+      "shareFailed": "此处分享不可用。请复制消息，然后点击二维码复制图片。",
+      "shareHint": "将文本和二维码图片一起发送到 Telegram、WhatsApp、邮件…",
+      "textOnly": "消息已复制。此浏览器无法添加二维码图片；请点击二维码进行复制。"
+    },
+    "quickSetup": {
+      "back": "返回",
+      "countries": {
+        "ir": "伊朗",
+        "other": "其他",
+        "ru": "俄罗斯",
+        "zh": "中国"
+      },
+      "domains": {
+        "block": "屏蔽国内站点",
+        "blockHint": "屏蔽国内站点以防止被政府检测。",
+        "changeMode": "更改 {name} 的使用方式",
+        "copied": "已复制 {ip}",
+        "decoy": "伪装站点",
+        "decoyHint": "当有人直接打开您的域名时显示的假站点。",
+        "decoyWarn1": "请勿使用金融类、伊朗站点或需要登录的知名站点，如 Google、Yahoo、Wikipedia 或 PayPal。",
+        "decoyWarn2": "请仔细检查该站点并确保正确，否则可能收到钓鱼警告。",
+        "decoyWarn3": "请再次检查此域名，以免将来出现问题。",
+        "detecting": "检查中…",
+        "domains": "域名",
+        "domainsHint": "您可以在此添加任意域名：直连、CDN、REALITY、中继…… 每个都会自动检测；点击其类型可更改。您至少需要一个直连、CDN 或订阅链接域名（此服务器的 IP 视为直连）。",
+        "how1": "将您的域名或子域名指向这些 IP（IPv4 用 A 记录，IPv6 用 AAAA 记录）。",
+        "how2": "然后在下方输入域名。可以添加多个；每个输入后按回车或逗号。",
+        "ipsTitle": "您服务器的 IP",
+        "modeHelp": {
+          "cdn": "位于转发到此服务器的 CDN（Cloudflare、Fastly、ArvanCloud、Akamai 等）之后。隐藏您服务器的 IP。",
+          "direct": "直接指向此服务器的 IP。最快；当域名解析到此服务器时会被检测到。",
+          "reality": "他人的热门站点（TLS 1.3 + HTTP/2）。不指向您的服务器；此服务器会模仿它。",
+          "relay": "指向另一台将流量转发到此服务器的服务器（中继/隧道）。需手动设置。"
+        },
+        "modes": {
+          "cdn": "CDN",
+          "direct": "直连",
+          "reality": "REALITY",
+          "relay": "中继"
+        },
+        "noIp": "无法检测到服务器的 IP。",
+        "notes": {
+          "not_friendly": "此站点可能不支持 REALITY 所需的 TLS 1.3 + HTTP/2。",
+          "unresolved": "此域名尚未解析。请检查其 DNS 记录。"
+        },
+        "recommended": "强烈推荐",
+        "remove": "移除 {name}",
+        "required": "请至少添加一个直连、CDN 或订阅链接域名（仅有 REALITY 和中继域名是不够的）。此服务器的 IP 视为直连域名。",
+        "sublink": "订阅链接域名",
+        "sublinkHint": "仅提供订阅链接，不提供代理。可以指向此服务器或经由 CDN。",
+        "sublinkWhy": "为用户的订阅链接使用不同的域名，最好位于 CDN 之后。如果您的服务器或代理域名被封锁，用户仍可更新订阅并获取新的可用配置，不受影响。",
+        "useIp": "将此 IP 用作直连域名"
+      },
+      "finish": {
+        "button": "完成",
+        "docs": "阅读更多文档",
+        "off": "关闭",
+        "on": "开启",
+        "ready": "一切就绪",
+        "readyHint": "请检查您的选择，然后完成设置。",
+        "running": "正在完成设置",
+        "whatHappens": "完成将应用配置并使用您的域名重新安装服务。需要几分钟；运行期间会显示日志和您新的管理员链接。"
+      },
+      "language": {
+        "adminLang": "管理面板语言",
+        "adminLangHint": "管理区域的语言。",
+        "country": "国家",
+        "countryHint": "根据该国家的过滤情况应用合适的设置。"
+      },
+      "next": "下一步",
+      "nodes": {
+        "question": "是否要添加其他节点？请添加其他每个面板的完整管理员链接；连接后会列在此处。您也可以稍后再做。",
+        "skip": "跳过"
+      },
+      "optional": "可选",
+      "password": {
+        "confirm": "重复密码",
+        "label": "新密码",
+        "medium": "中",
+        "min": "密码至少需要 {min} 个字符。",
+        "mismatch": "两次输入的密码不一致。",
+        "ok": "密码一致",
+        "prompt": "至少 {min} 个字符",
+        "strong": "强",
+        "weak": "弱",
+        "why": "您将使用此密码登录管理区域。请使用至少 8 个字符。"
+      },
+      "skip": "暂时跳过",
+      "stepOf": "第 {n} 步，共 {total} 步",
+      "steps": {
+        "domains": {
+          "lead": "将您的域名连接到此服务器。",
+          "title": "域名"
+        },
+        "finish": {
+          "lead": "进行最后的配置以完成设置。",
+          "title": "完成"
+        },
+        "language": {
+          "lead": "选择管理员语言和您的用户所在的国家。",
+          "title": "欢迎"
+        },
+        "nodes": {
+          "lead": "可选择连接其他 Hiddify 服务器，从这里统一管理。",
+          "title": "节点"
+        },
+        "password": {
+          "lead": "用密码保护管理区域。",
+          "title": "密码"
+        },
+        "protocols": {
+          "lead": "选择要提供的协议。请尽量少选。",
+          "title": "协议"
+        }
+      },
+      "subtitle": "只需几步，面板即可就绪。",
+      "title": "快速设置"
+    },
+    "saveBar": {
+      "discard": "放弃",
+      "unsaved": "{count} 项未保存的更改 | {count} 项未保存的更改"
+    },
+    "settings": {
+      "adminPathChanged": "管理路径已更改。应用配置后，管理面板将位于",
+      "advancedBadge": "高级",
+      "categories": "设置分类",
+      "changed": "已更改",
+      "fixErrors": "请修正高亮的字段。",
+      "hiddenCount": "已隐藏 {count} 项高级设置 | 已隐藏 {count} 项高级设置",
+      "invalid": "此值无效。",
+      "leaveUnsaved": "您有未保存的更改。仍要离开吗？",
+      "noMatch": "没有符合您搜索的设置。",
+      "openProtocols": "协议",
+      "reinstallBadge": "重新安装",
+      "reinstallHint": "更改此项需要重新安装才能生效",
+      "reloading": "语言已更改，正在重新加载…",
+      "required": "此字段为必填项。",
+      "search": "搜索所有设置…",
+      "showAdvanced": "显示高级设置",
+      "showAdvancedIn": "显示 {count} 项高级设置 | 显示 {count} 项高级设置",
+      "showLess": "显示较少",
+      "showMore": "再显示 {count} 项高级设置 | 再显示 {count} 项高级设置",
+      "subtitle": "关于此面板运行方式的一切。常用设置在前；高级设置按需显示。",
+      "title": "设置"
+    },
+    "tags": {
+      "addTag": "标签",
+      "bulk": "标签",
+      "bulkHint": "所选用户的标签：勾选表示所有用户都有该标签",
+      "clear": "清除",
+      "color": "颜色",
+      "colors": {
+        "black": "黑色",
+        "blue": "蓝色",
+        "green": "绿色",
+        "orange": "橙色",
+        "red": "红色"
+      },
+      "create": "创建",
+      "created": "标签已创建",
+      "default": {
+        "family": "家人",
+        "free": "免费",
+        "friends": "朋友",
+        "important": "重要",
+        "work": "工作"
+      },
+      "delete": "删除标签",
+      "deleteConfirm": "删除标签“{name}”？它将从所有带有该标签的用户上移除。",
+      "deleted": "标签已删除",
+      "edit": "编辑标签",
+      "editTags": "编辑标签",
+      "filterLabel": "按标签筛选",
+      "namePlaceholder": "为您自己的标签命名",
+      "newTag": "新标签",
+      "none": "暂无标签",
+      "pick": "选择标签",
+      "pickHint": "可选择多个",
+      "rename": "重命名",
+      "save": "保存",
+      "saveFailed": "无法保存标签",
+      "tagCount": "{n} 个标签",
+      "tagged": "已标记",
+      "taggedHint": "至少有一个标签的所有用户",
+      "title": "标签",
+      "untagged": "无标签",
+      "use": "{n} 个在使用"
+    },
+    "telegram": {
+      "benefit": {
+        "backup": "接收自动备份",
+        "manage": "直接在 Telegram 中管理用户",
+        "notify": "接收重要事件通知"
+      },
+      "check": "我已连接",
+      "connect": "连接 Telegram",
+      "connectHint": "从 {bot} 获取通知和备份，并通过 Telegram 管理面板。",
+      "connectTitle": "连接您的 Telegram",
+      "connected": "已连接",
+      "connectedHint": "您将从 {bot} 获得通知和备份。",
+      "connectedTitle": "Telegram 已连接",
+      "later": "您可以随时在“我的账户”中连接。",
+      "notNow": "暂不",
+      "notYet": "尚未连接：请在机器人中点击 Start，然后再次检查。",
+      "nowConnected": "Telegram 已连接",
+      "openWeb": "在浏览器中打开",
+      "promptLead": "此面板有一个 Telegram 机器人 {bot}。将其关联到您的账户：",
+      "promptTitle": "连接您的 Telegram？",
+      "reconnect": "重新连接",
+      "scan": "或用手机相机扫描此码。"
+    },
+    "template": {
+      "builtin": "内置",
+      "builtinCustomized": "自定义的内置",
+      "builtinDefault": "使用目录默认值",
+      "builtinDefaultHint": "从目录同步的内置模板。启用自定义内容后可编辑。",
+      "builtinReadOnly": "内置模板 — 请复制以创建可编辑的副本。",
+      "category": "分类",
+      "clone": "克隆为自定义",
+      "cloneDescription": "自定义描述",
+      "cloneName": "自定义名称",
+      "cloned": "模板已克隆",
+      "content": "内容",
+      "core": "核心",
+      "customContent": "自定义内容",
+      "description": "描述",
+      "editable": "可编辑",
+      "empty": "此核心没有模板",
+      "included": "已包含",
+      "insert": "插入到编辑器",
+      "listTitle": "模板",
+      "name": "名称",
+      "new": "新建模板",
+      "notFound": "未找到模板",
+      "referenced": "被引用",
+      "referencedTemplates": "被引用的模板",
+      "sidePanel": "模板",
+      "sidePanelHint": "打开服务端或客户端选项卡以浏览模板",
+      "slug": "Slug",
+      "slugDuplicate": "此模板 slug 已被使用。请选择不同的 slug。",
+      "slugHint": "只能编辑 core/category 之后的部分",
+      "sysTooltip": "内置（系统）项"
+    },
+    "templateVariables": {
+      "access": "访问",
+      "currentValue": "当前值",
+      "description": "描述",
+      "group": "分组",
+      "label": "标签",
+      "listTitle": "模板变量",
+      "loadValues": "加载当前值",
+      "name": "名称",
+      "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
+    },
+    "theme": {
+      "dark": "深色模式",
+      "light": "浅色模式"
+    },
+    "users": {
+      "add": "添加用户",
+      "addLimits": {
+        "apply": "添加",
+        "days": "要增加的天数",
+        "gb": "要增加的流量",
+        "hint": "流量和天数会叠加在每位用户已有的数值之上。",
+        "note": "流量或天数无限的用户保持无限。将其中一项保留为 0 则仅增加另一项。",
+        "title": "为 {n} 个用户添加限制 | 为 {n} 个用户添加限制"
+      },
+      "added": "已添加 {name}",
+      "afterFirstShort": "首次使用后 {n} 天",
+      "all": "全部",
+      "bulk": {
+        "add_days": "+7 天",
+        "add_limits": "添加限制",
+        "delete": "删除",
+        "disable": "禁用",
+        "enable": "启用",
+        "reset_days": "重置天数",
+        "reset_usage": "重置用量"
+      },
+      "bulkConfirm": {
+        "delete": "删除 {n} 个用户？ | 删除 {n} 个用户？",
+        "disable": "禁用 {n} 个用户？ | 禁用 {n} 个用户？",
+        "reset_days": "重置 {n} 个用户的天数？ | 重置 {n} 个用户的天数？",
+        "reset_usage": "重置 {n} 个用户的用量？ | 重置 {n} 个用户的用量？"
+      },
+      "bulkConfirmText": {
+        "delete": "他们将无法再连接。",
+        "disable": "重新启用前他们无法连接。",
+        "reset_days": "他们的套餐将在下次连接时重新开始。",
+        "reset_usage": "他们已用的流量将归零。"
+      },
+      "bulkDone": {
+        "add_days": "已为 {n} 个用户增加 7 天 | 已为 {n} 个用户增加 7 天",
+        "add_limits": "已为 {n} 个用户添加限制 | 已为 {n} 个用户添加限制",
+        "delete": "已删除 {n} 个用户 | 已删除 {n} 个用户",
+        "disable": "已禁用 {n} 个用户 | 已禁用 {n} 个用户",
+        "enable": "已启用 {n} 个用户 | 已启用 {n} 个用户",
+        "reset_days": "已重置 {n} 个用户的天数 | 已重置 {n} 个用户的天数",
+        "reset_usage": "已重置 {n} 个用户的用量 | 已重置 {n} 个用户的用量"
+      },
+      "clearSearch": "清除搜索",
+      "clearSelection": "清除选择",
+      "col": {
+        "expire": "到期",
+        "id": "ID",
+        "lastOnline": "最后连接",
+        "name": "名称",
+        "status": "状态",
+        "usage": "用量"
+      },
+      "configs": {
+        "addOffline": "添加离线配置",
+        "addSubscription": "添加订阅",
+        "badUrl": "订阅必须是 http(s) URL",
+        "empty": "为空：请填写或移除",
+        "hint": "添加到此用户订阅中的额外配置：粘贴一个（离线），或提供为用户获取的 URL（订阅）。选择它适用的应用格式，或选“自动”适用于所有。",
+        "inherited": "还从上级管理员获得 {n} 个配置 | 还从上级管理员获得 {n} 个配置",
+        "kind": {
+          "offline": "离线",
+          "subscription": "订阅"
+        },
+        "offlinePlaceholder": "vless://…  或 JSON / YAML 配置",
+        "target": {
+          "auto": "自动（所有格式）",
+          "clash": "Clash",
+          "hiddify-core": "Hiddify / sing-box",
+          "sublink": "分享链接",
+          "xray": "Xray"
+        },
+        "title": "额外配置",
+        "urlPlaceholder": "https://example.com/sub/…"
+      },
+      "daysLeft": "剩余 {n} 天 | 剩余 {n} 天",
+      "deleteMessage": "该用户将无法再连接。其 UUID 之后可以再次使用。",
+      "deleteTitle": "删除 {name}？",
+      "deleted": "{name} 已删除",
+      "done": {
+        "reset_days": "{name} 将在下次连接时重新开始",
+        "reset_usage": "{name} 的用量已重置"
+      },
+      "extra": {
+        "outbound": "outbound={name}",
+        "outboundHint": "该用户选择了专属出站（outbound）",
+        "subs": "额外订阅 {n} 个 | 额外订阅 {n} 个",
+        "subsHint": "为该用户添加的额外订阅配置",
+        "telegramHint": "已绑定 Telegram 账号"
+      },
+      "filter": {
+        "active": "活跃",
+        "activeHint": "已启用，有剩余天数和流量",
+        "all": "全部",
+        "allHint": "所有用户",
+        "data_low": "流量不足",
+        "data_lowHint": "活跃，已用流量达到 80% 或以上",
+        "disabled": "已禁用",
+        "disabledHint": "已被管理员关闭",
+        "expired": "已过期",
+        "expiredHint": "无剩余天数",
+        "expiring": "即将到期",
+        "expiringHint": "活跃，将在一周内结束",
+        "no_data": "流量用尽",
+        "no_dataHint": "已用完全部流量限额",
+        "not_started": "未开始",
+        "not_startedHint": "尚未连接过：其天数从首次连接开始计算",
+        "unseen_week": "一周未见",
+        "unseen_weekHint": "之前连接过，但最近 7 天内没有"
+      },
+      "filtersLabel": "筛选用户",
+      "form": {
+        "add": "添加用户",
+        "addSubtitle": "保存后，将打开用户的链接和二维码，可随时发送。",
+        "addTitle": "新建用户",
+        "advanced": "高级",
+        "data": "流量",
+        "daysCount": "{n} 天 | {n} 天",
+        "daysUnit": "天",
+        "disabled": "已禁用",
+        "editSubtitle": "更改立即生效。",
+        "editTimeTitle": "编辑时长：{name}",
+        "editTitle": "编辑 {name}",
+        "editUsageTitle": "编辑流量：{name}",
+        "enableHint": "已禁用的用户无法连接。",
+        "enabled": "已启用",
+        "endedWhen": "{when}已结束",
+        "endsWhen": "{when}结束",
+        "expiresOn": "{date}结束",
+        "extra": "额外参数 (JSON)",
+        "extraHint": "模板使用的高级设置。路由和额外配置在上方设置。",
+        "extraInvalid": "这不是有效的 JSON",
+        "extraNotObject": "额外参数必须是 JSON 对象（花括号之间）",
+        "limit": "用量限制",
+        "mode": "重置周期",
+        "name": "名称",
+        "namePlaceholder": "例如 Sara 的手机",
+        "nameRequired": "名称为必填项",
+        "neverExpires": "永不过期",
+        "newUuid": "新 UUID",
+        "nextReset": "下次重置 {when}",
+        "notStarted": "未开始",
+        "notStartedHint": "首次连接时开始",
+        "note": "备注",
+        "notePlaceholder": "仅管理员可见",
+        "optional": "可选",
+        "outbound": "首选出站",
+        "outboundAuto": "自动（遵循出站规则）",
+        "outboundHint": "此用户的所有流量都通过此出站发出（出站页面）。已关闭的出站会被忽略。",
+        "outboundOff": "已关闭",
+        "owner": "子管理员",
+        "ownerMe": "{name}（您）",
+        "packageDays": "套餐天数",
+        "packageLength": "套餐时长",
+        "period": {
+          "month": "1 个月",
+          "months3": "3 个月",
+          "months6": "6 个月",
+          "unlimited": "无限",
+          "week": "1 周",
+          "year": "1 年"
+        },
+        "reset": "重置",
+        "resetDays": "重置天数",
+        "resetDaysHint": "重新开始套餐：天数从下次连接开始计算",
+        "resetUsage": "重置用量",
+        "resetUsagePending": "保存时将重置用量",
+        "restart": "重新开始",
+        "restartPending": "保存时重新开始：其天数从下次连接起重新计算",
+        "routing": "路由",
+        "setDays": "设置天数",
+        "startedWhen": "{when}开始",
+        "summaryConfigs": "{n} 个额外配置 | {n} 个额外配置",
+        "summaryExtra": "已设置额外参数",
+        "summaryOutbound": "通过 {name} 出站",
+        "telegram": "Telegram ID",
+        "time": "时间",
+        "undo": "撤销",
+        "unlimited": "无限",
+        "usageReadOnly": "已用流量由服务器统计；只能重置。",
+        "used": "已用",
+        "uuidEditHint": "更改它会改变用户的链接：旧链接将失效。",
+        "uuidHint": "自动生成。",
+        "uuidInvalid": "这不是有效的 UUID",
+        "waitingText": "{n} 天从首次连接时开始。",
+        "waitingUnlimited": "从首次连接时开始，且永不过期。",
+        "who": "谁"
+      },
+      "groupByOwner": "按管理员分组",
+      "groupCount": "{n} 个用户 | {n} 个用户",
+      "inlineEdit": "行内编辑",
+      "inlineHint": "行内编辑已开启：点击名称、用量限制、到期时间、模式或备注，即可直接在列表中更改。用量本身只能重置。",
+      "limitReached": "您已达到用户数量上限。请联系上级管理员提高。",
+      "link": "链接",
+      "linkTitle": "{name} 的链接",
+      "mode": {
+        "daily": "每日",
+        "monthly": "每月",
+        "no_reset": "不重置",
+        "weekly": "每周"
+      },
+      "modeHint": {
+        "daily": "用量每天重置。",
+        "monthly": "用量自开始起每 30 天重置一次。",
+        "no_reset": "用量永不重置：限额适用于整个套餐。",
+        "weekly": "用量自开始起每 7 天重置一次。"
+      },
+      "more": "更多操作",
+      "never": "从未",
+      "noMatch": "没有匹配的用户",
+      "noTimeLimit": "无时间限制",
+      "none": "暂无用户",
+      "of": "/",
+      "online": "在线",
+      "pageReport": "{first}–{last} / {totalRecords}",
+      "perPage": "每页用户数",
+      "refresh": "刷新",
+      "resetTag": {
+        "daily": "每日重置",
+        "monthly": "每月重置",
+        "weekly": "每周重置"
+      },
+      "saved": "{name} 已保存",
+      "search": "搜索名称、UUID 或备注",
+      "select": "选择",
+      "selectAll": "全选 {n} 个 | 全选 {n} 个",
+      "selected": "已选 {n} 个 | 已选 {n} 个",
+      "showDates": "显示结束日期",
+      "showLink": "显示用户链接",
+      "showMore": "再显示 {n} 个",
+      "showRelative": "显示剩余时间",
+      "sortById": "按 ID 排序",
+      "status": {
+        "active": "活跃",
+        "disabled": "已禁用",
+        "expired": "已过期",
+        "no_data": "流量用尽"
+      },
+      "statusHint": {
+        "active": "已启用，有剩余天数和流量",
+        "disabled": "已被管理员关闭",
+        "expired": "套餐已无剩余天数",
+        "no_data": "已用完全部流量限额"
+      },
+      "subtitle": "通过此面板连接的所有人：他们的流量、剩余时间和链接。",
+      "title": "用户"
+    },
+    "utils": {
+      "addQuery": "添加查询",
+      "autoSwapped": "看起来是 Base64，已自动交换两侧。",
+      "base64Label": "Base64",
+      "base64Live": "编辑任意一侧，另一侧会实时更新。开头的 protocol://（如 vmess://）会被保留，解码时忽略。把 Base64 粘贴到文本一侧会自动交换两侧。",
+      "base64Tab": "Base64",
+      "clear": "清除",
+      "decode": "解码",
+      "emptyLinks": "在左侧粘贴分享链接，即可在此检查。",
+      "encode": "编码",
+      "extraHint": "URL 解码后的 JSON。留空则从链接中省略 extra。",
+      "extraJson": "extra (JSON)",
+      "fragment": "名称",
+      "input": "输入",
+      "links": "分享链接",
+      "linksPlaceholder": "粘贴一个或多个 vless://、vmess://、ss://、trojan:// 链接（或 base64 订阅）",
+      "method": "方法",
+      "noQuery": "无查询参数。使用“添加查询”插入一个。",
+      "notBase64": "这不是有效的 Base64。",
+      "notUrlEncoded": "这不是有效的 URL 编码文本。",
+      "output": "输出",
+      "pass": "Pass",
+      "path": "UrlPath",
+      "port": "端口",
+      "pretty": "已解码",
+      "protocol": "协议",
+      "queryKey": "键",
+      "queryParams": "查询参数",
+      "queryValue": "值",
+      "server": "服务器",
+      "sublinkHint": "在左侧粘贴链接。右侧显示解码后的字段。查询参数是可编辑的行；extra 为 JSON。在右侧所做的更改会改写链接。",
+      "sublinkTab": "Sublink",
+      "subtitle": "在浏览器中编码、解码和检查分享链接 — 不会向服务器发送任何内容。",
+      "swap": "交换",
+      "textLabel": "文本",
+      "title": "工具",
+      "unwrappedSubscription": "检测到 base64 订阅，并已解码为单独的链接。",
+      "urlEncodedLabel": "URL 编码",
+      "urlLive": "编辑任意一侧，另一侧会实时更新。把百分号编码的文本粘贴到文本一侧会自动交换两侧。",
+      "urlSafe": "URL 安全",
+      "urlTab": "URL",
+      "user": "用户",
+      "vmessJson": "vmess JSON",
+      "vmessObject": "vmess JSON 必须是对象"
+    },
+    "validation": {
+      "errors": "错误",
+      "preview": "编译预览",
+      "title": "验证",
+      "warnings": "警告"
+    }
+  },
   "adminuser": {
     "force_update_usage": "每 6 分钟更新一次使用情况。如需立即更新，<a href=\"%(link)s\" class=\"btn btn-info\">请点击此处</a>"
   },
@@ -319,12 +2274,12 @@
   "android": "安卓",
   "app": {
     "clash_verge_rev": {
-      "description": "",
-      "title": ""
+      "description": "适用于桌面的 Clash Verge Rev 客户端",
+      "title": "Clash Verge Rev"
     },
     "cmfa": {
-      "description": "",
-      "title": ""
+      "description": "适用于 Android 的 Clash Meta",
+      "title": "Clash Meta for Android"
     },
     "foxray": {
       "description": "福克斯射线描述",
@@ -377,15 +2332,15 @@
       "title": "Streisand"
     },
     "v2rayn": {
-      "title": ""
+      "title": "v2rayN"
     },
     "v2rayng": {
       "description": "V2RayNG 说明",
       "title": "V2RayNG"
     }
   },
-  "at least one domain should exist": "",
-  "at least one user should exist": "",
+  "at least one domain should exist": "至少应存在一个域名",
+  "at least one user should exist": "至少应存在一个用户",
   "auto": "自动",
   "auto_cdn_ip": "☑️ 自动 CDN IP 选择器",
   "bot": {
@@ -396,16 +2351,16 @@
   "cf-delete": {
     "failed": "cf-删除失败"
   },
-  "child has been removed!": "孩子已被移走！",
   "child": {
     "register-failed": "child.register-失败",
-    "register-success": "child.register-success",
+    "register-success": "子面板注册成功",
     "sync-failed": "child.sync-失败"
   },
+  "child has been removed!": "孩子已被移走！",
   "clickable copy": "社交媒体链接",
   "close": "关闭",
   "cloudflare": {
-    "error": "cloudflare.error"
+    "error": "Cloudflare 错误"
   },
   "config": {
     "Domain_already_used": "域存在于域部分。使用另一个域",
@@ -417,20 +2372,20 @@
     "Invalid_proxy_path": "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Telegram 机器人令牌无效",
     "additional_configs": {
-      "description": "",
-      "label": ""
+      "description": "将额外配置合并到生成的订阅中",
+      "label": "附加配置"
     },
     "additional_configs_singbox": {
-      "description": "",
-      "label": ""
+      "description": "您可以将其他 singbox 出站追加到结果中",
+      "label": "Singbox 附加配置"
     },
     "additional_configs_urls": {
-      "description": "",
-      "label": ""
+      "description": "您可以添加 http:// https:// 或 v2ray 格式的代理，如 vless://",
+      "label": "附加 URL"
     },
     "additional_configs_xrayjson": {
-      "description": "",
-      "label": ""
+      "description": "Xray Json 的附加出站",
+      "label": "Xray JSON 附加配置"
     },
     "admin": {
       "description": "管理部分用于配置管理相关设置",
@@ -438,13 +2393,13 @@
     },
     "admin_lang": {
       "description": "选择管理区域的语言",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 英语",
+      "fa": "🇮🇷 波斯语 - فارسی",
       "label": "🗺️ 管理面板语言",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 缅甸语",
+      "pt": "🇧🇷 葡萄牙语",
+      "ru": "🇷🇺 俄语",
+      "zh": "🇨🇳 中文"
     },
     "admin_secret": {
       "description": "管理员密码将用于访问管理面板",
@@ -459,8 +2414,8 @@
       "label": "🆗 允许无效的 SNI"
     },
     "anytls_enable": {
-      "description": "",
-      "label": ""
+      "description": "启用 AnyTLS 协议",
+      "label": "AnyTLS"
     },
     "auto_update": {
       "description": "每天凌晨 3:00，我们都会检查是否有新更新。如果有新的更新可用，我们将自动更新系统",
@@ -495,11 +2450,11 @@
       "label": "🔑 Cloudflare API"
     },
     "common_proxy_core": {
-      "both": "",
-      "description": "",
-      "hiddify_core": "",
-      "label": "",
-      "xray": ""
+      "both": "两者",
+      "description": "当协议同时存在于 Xray 和 Hiddify Core 时，仅所选核心保持启用。选择“两者”则同时保留。",
+      "hiddify_core": "Hiddify Core (singbox)",
+      "label": "🎛️ 通用代理核心",
+      "xray": "Xray"
     },
     "core_type": {
       "description": "☢️ XRay：是一个完整的核心\n<br>\n📦 Singbox：由 SagerNet 开发。也是一个不错的核心",
@@ -510,48 +2465,48 @@
       "label": "🌍国家"
     },
     "create_easysetup_link": {
-      "description": "config.create_easysetup_link.description",
-      "label": "config.create_easysetup_link.label"
+      "description": "创建用于首次配置的便捷设置链接",
+      "label": "创建便捷设置链接"
     },
     "db_version": {
       "description": "数据库版本说明",
       "label": "数据库版本标签"
     },
     "dbvalues": {
-      "description": "config.dbvalues.description",
-      "label": "config.dbvalues.label"
+      "description": "内部数据库值（高级）",
+      "label": "数据库值"
     },
     "decoy_domain": {
       "description": "假网站：当有人直接访问您的域时模拟网站。<br>\n⚠️ 不要使用金融、伊朗和著名网站或需要登录的网站，例如 Google、Yahoo、Wikipedia、PayPal。<br>\n⛔ 请务必检查该网站并确保它是正确的网站，否则您可能会收到网络钓鱼警告。<br>\n⛔⛔ 再次检查该域名，以免以后出现问题",
       "label": "📺 诱饵网站"
     },
     "default_useragent_string": {
-      "description": "",
-      "label": ""
+      "description": "生成的客户端配置中使用的默认 User-Agent 字符串",
+      "label": "🪪 默认 User Agent"
     },
     "dns_server": {
       "description": "✳️默认1.1.1.1 <br>\n🚧 阻止恶意软件 1.1.1.2 <br>\n🔞 阻止色情 1.1.1.3",
       "label": "🖥 DNS 服务器"
     },
     "dnstt": {
-      "description": "",
-      "label": ""
+      "description": "DNSTT 隧道设置",
+      "label": "DNSTT"
     },
     "dnstt_enable": {
-      "description": "",
-      "label": ""
+      "description": "启用 DNSTT 协议",
+      "label": "启用 DNSTT"
     },
     "dnstt_private_key": {
-      "description": "",
-      "label": ""
+      "description": "DNSTT 私钥",
+      "label": "DNSTT 私钥"
     },
     "dnstt_public_key": {
-      "description": "",
-      "label": ""
+      "description": "DNSTT 公钥",
+      "label": "DNSTT 公钥"
     },
     "dnstt_resolvers": {
-      "description": "",
-      "label": ""
+      "description": "DNSTT 使用的 DNS 解析器，以逗号分隔",
+      "label": "DNSTT 解析器"
     },
     "domain_fronting": {
       "description": "它用于在 SNI 中模拟另一个网站而不是您的网站。因此，GFW 无法过滤您的域名\n<a href='https://github.com/hiddify/hiddify-config/wiki/%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87- %D8%A7%D8%B2-%D8%AF%D8%A7%D9%85%DB%8C%D9%86-%D9%81%D8%B1%D8%A7%D9%86%D8%AA %DB%8C%D9%86%DA%AF'>指南</a>。 ⚠️CloudFlare 不支持域前置。",
@@ -590,16 +2545,16 @@
       "label": "🔵 h2"
     },
     "health_secret_path": {
-      "description": "",
-      "label": ""
+      "description": "用于健康检查的密钥路径",
+      "label": "健康检查密钥路径"
     },
     "hidden": {
       "description": "配置.隐藏.描述",
       "label": "配置.隐藏.标签"
     },
     "hiddifycli_enable": {
-      "description": "config.hiddifycli_enable.description",
-      "label": "config.hiddifycli_enable.label"
+      "description": "启用 Hiddify CLI 功能",
+      "label": "启用 Hiddify CLI"
     },
     "http": {
       "description": "HTTP 配置可以在此部分设置",
@@ -644,7 +2599,7 @@
     "invalid-pattern-for-warp-sites": "⚠️ 输入的 Warp 站点与指定的模板不匹配",
     "invalid_uuid": "UUID 秘密无效。示例：6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
     "is_parent": {
-      "description": "config.is_parent.description",
+      "description": "此面板是否作为父面板",
       "label": "家长小组"
     },
     "kcp": {
@@ -661,13 +2616,13 @@
     },
     "lang": {
       "description": "选择用户界面的语言来个性化您在用户区域的体验。",
-      "en": "",
-      "fa": "",
+      "en": "🇺🇸 英语",
+      "fa": "🇮🇷 波斯语 - فارسی",
       "label": "🗺️ 用户区语言",
-      "my": "",
-      "pt": "",
-      "ru": "",
-      "zh": ""
+      "my": "🇲🇲 缅甸语",
+      "pt": "🇧🇷 葡萄牙语",
+      "ru": "🇷🇺 俄语",
+      "zh": "🇨🇳 中文"
     },
     "last_hash": {
       "description": "config.last_hash.描述",
@@ -678,62 +2633,62 @@
       "label": "config.last_priodic_usage_check.标签"
     },
     "last_users_sync": {
-      "description": "",
-      "label": ""
+      "description": "与父面板最后一次成功同步用户的时间戳",
+      "label": "最后用户同步"
     },
     "license": {
       "description": "要将本产品用于商业用途，您必须购买其许可证",
       "label": "许可证代码"
     },
     "log_level": {
-      "CRITICAL": "",
-      "DEBUG": "",
-      "ERROR": "",
-      "INFO": "",
-      "SUCCESS": "",
-      "TRACE": "",
-      "WARNING": "",
-      "description": "config.log_level.description",
-      "label": "config.log_level.label"
+      "CRITICAL": "严重",
+      "DEBUG": "调试",
+      "ERROR": "错误",
+      "INFO": "信息",
+      "SUCCESS": "成功",
+      "TRACE": "跟踪",
+      "WARNING": "警告",
+      "description": "面板日志详细级别",
+      "label": "日志级别"
     },
     "master_dns_encrypt_key": {
-      "description": "",
-      "label": ""
+      "description": "MasterDNS 载荷加密密钥 (hex)",
+      "label": "MasterDNS 加密密钥"
     },
     "max_proxy_ips_per_version": {
-      "description": "",
-      "label": ""
+      "description": "为每个域名生成代理所使用的 IPv4 和 IPv6 地址的最大数量（每个版本分别限制）。",
+      "label": "每个版本的最大代理 IP 数"
     },
     "mieru": {
-      "description": "",
-      "label": ""
+      "description": "Mieru 协议是一种安全的去中心化通信协议，旨在无需中央服务器即可在分布式网络中传输数据",
+      "label": "⚡️ Mieru"
     },
     "mieru_enable": {
-      "description": "",
-      "label": ""
+      "description": "Meiru 是一种快速代理",
+      "label": "⚡️ 启用 Mieru"
     },
     "mieru_handshake": {
-      "HANDSHAKE_DEFAULT": "",
-      "HANDSHAKE_NO_WAIT": "",
-      "HANDSHAKE_STANDARD": "",
-      "description": "",
-      "label": ""
+      "HANDSHAKE_DEFAULT": "📄 默认",
+      "HANDSHAKE_NO_WAIT": "⏳ 不等待",
+      "HANDSHAKE_STANDARD": "📝 标准",
+      "description": "Mieru 握手通过在数据交换前验证双方身份来建立安全连接",
+      "label": "🤝 Mieru 握手"
     },
     "mieru_multiplexing": {
-      "MULTIPLEXING_DEFAULT": "",
-      "MULTIPLEXING_HIGH": "",
-      "MULTIPLEXING_LOW": "",
-      "MULTIPLEXING_MIDDLE": "",
-      "description": "",
-      "label": ""
+      "MULTIPLEXING_DEFAULT": "📄 默认",
+      "MULTIPLEXING_HIGH": "📈 高",
+      "MULTIPLEXING_LOW": "📉 低",
+      "MULTIPLEXING_MIDDLE": "📊 中",
+      "description": "Mieru 多路复用允许同时处理多个连接，从而实现高效的数据传输",
+      "label": "🔄 Mieru 多路复用模式"
     },
     "mieru_tcp_ports": {
-      "description": "",
-      "label": ""
+      "description": "以逗号分隔的整数，表示端口（1234,1235,1237）",
+      "label": "🔍 Mieru TCP 端口"
     },
     "mieru_udp_ports": {
-      "description": "",
-      "label": ""
+      "description": "以逗号分隔的整数，表示端口（1234,1235,1237）",
+      "label": "🔎 Mieru UDP 端口"
     },
     "mux": {
       "description": "可以在此部分设置 MUX（多路复用）配置",
@@ -776,20 +2731,20 @@
       "label": "♍️ MUX 协议"
     },
     "naive_enable": {
-      "description": "",
-      "label": ""
+      "description": "Naive 使用与 Chrome 完全相同的协议栈以避免被检测",
+      "label": "🛡 启用 Naive"
     },
     "naive_port": {
-      "description": "",
-      "label": ""
+      "description": "用于配置 Naive 端口的选项",
+      "label": "🔎 Naive 端口"
     },
     "netdata": {
       "description": "用于显示资源。使用您服务器的 CPU，但不会太多。",
       "label": "Netdata"
     },
     "node_name": {
-      "description": "",
-      "label": ""
+      "description": "此节点的名称，显示在父面板中",
+      "label": "节点名称"
     },
     "not_found": {
       "description": "未找到配置",
@@ -804,19 +2759,19 @@
       "label": "🔄 包更新模式"
     },
     "panel_mode": {
-      "child": "",
-      "description": "config.panel_mode.description",
-      "label": "config.panel_mode.label",
-      "parent": "",
-      "standalone": ""
+      "child": "子",
+      "description": "面板运行模式：独立、父或子",
+      "label": "面板模式",
+      "parent": "父",
+      "standalone": "独立"
     },
     "parent_admin_proxy_path": {
-      "description": "config.parent_admin_proxy_path.description",
-      "label": "config.parent_admin_proxy_path.label"
+      "description": "父面板上的管理员代理路径",
+      "label": "父面板管理员代理路径"
     },
     "parent_domain": {
-      "description": "config.parent_domain.description",
-      "label": "config.parent_domain.label"
+      "description": "父面板的域名",
+      "label": "父面板域名"
     },
     "parent_panel": {
       "description": "您可以连接到中央面板仅定义一个用户，所有服务器的使用情况将累积添加。",
@@ -827,16 +2782,20 @@
       "label": "ℹ️ gRPC 路径"
     },
     "path_http": {
-      "description": "",
-      "label": ""
+      "description": "应为随机值",
+      "label": "ℹ️ HTTP 路径"
     },
     "path_httpupgrade": {
       "description": "应该是随机的",
       "label": "ℹ️ HTTP 升级路径"
     },
     "path_naive": {
-      "description": "",
-      "label": ""
+      "description": "用于 Naive 链接",
+      "label": "ℹ️ Naive 路径"
+    },
+    "path_splithttp": {
+      "description": "XHTTP 路径",
+      "label": "XHTTP 路径"
     },
     "path_ss": {
       "description": "链接中的 Shadowsocks 路径",
@@ -903,8 +2862,8 @@
       "label": "🌍 现实后备域"
     },
     "reality_port": {
-      "description": "",
-      "label": ""
+      "description": "Reality 端口",
+      "label": "REALITY 端口"
     },
     "reality_private_key": {
       "description": "不要改变它",
@@ -923,16 +2882,16 @@
       "label": "🆔 短 ID"
     },
     "restls": {
-      "description": "config.restls.description",
+      "description": "RestLS 协议设置",
       "label": "配置.restls.标签"
     },
     "restls1_2_domain": {
-      "description": "config.restls1_2_domain.description",
-      "label": "config.restls1_2_domain.label"
+      "description": "用于 RestLS 1.2 的域名",
+      "label": "RestLS 1.2 域名"
     },
     "restls1_3_domain": {
-      "description": "config.restls1_3_domain.description",
-      "label": "config.restls1_3_domain.label"
+      "description": "用于 RestLS 1.3 的域名",
+      "label": "RestLS 1.3 域名"
     },
     "shadowsocks": {
       "description": "Shadowsocks 是一款快速隧道代理，可帮助你绕过防火墙",
@@ -971,12 +2930,12 @@
       "label": "👁️‍🗨️ 在子链接中显示用法"
     },
     "snell_enable": {
-      "description": "",
-      "label": ""
+      "description": "启用 Snell 协议",
+      "label": "Snell"
     },
     "socks_enable": {
-      "description": "",
-      "label": ""
+      "description": "启用 SOCKS 协议",
+      "label": "SOCKS"
     },
     "special_port": {
       "description": "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）",
@@ -985,6 +2944,10 @@
     "speed_test": {
       "description": "允许您的用户进行速度测试。它可以帮助他们识别链接质量",
       "label": "🚀 速度测试"
+    },
+    "splithttp_enable": {
+      "description": "XHTTP 允许分离下载和上传流，统一 gRPC、H2、H1，并且也支持 Quic。",
+      "label": "启用 XHTTP"
     },
     "ssfaketls": {
       "description": "Shadowsocks FakeTLS 是一个简单的混淆工具，将日期封装在 tls 数据包中",
@@ -1003,36 +2966,36 @@
       "label": "SSH 代理"
     },
     "ssh_host_dsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 DSA 私钥",
+      "label": "SSH 主机 DSA 私钥"
     },
     "ssh_host_dsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 DSA 公钥",
+      "label": "SSH 主机 DSA 公钥"
     },
     "ssh_host_ecdsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 ECDSA 私钥",
+      "label": "SSH 主机 ECDSA 私钥"
     },
     "ssh_host_ecdsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 ECDSA 公钥",
+      "label": "SSH 主机 ECDSA 公钥"
     },
     "ssh_host_ed25519_pk": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 Ed25519 私钥",
+      "label": "SSH 主机 Ed25519 私钥"
     },
     "ssh_host_ed25519_pub": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 Ed25519 公钥",
+      "label": "SSH 主机 Ed25519 公钥"
     },
     "ssh_host_rsa_pk": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 RSA 私钥",
+      "label": "SSH 主机 RSA 私钥"
     },
     "ssh_host_rsa_pub": {
-      "description": "",
-      "label": ""
+      "description": "SSH 主机 RSA 公钥",
+      "label": "SSH 主机 RSA 公钥"
     },
     "ssh_server_enable": {
       "description": "SSH Proxy 与原来的 SSH Server 完全不同",
@@ -1063,32 +3026,32 @@
       "label": "SSR 假域名"
     },
     "sub_full_clash_enable": {
-      "description": "config.sub_full_clash_enable.description",
+      "description": "启用完整 Clash 订阅端点",
       "label": "config.sub_full_clash_enable.标签"
     },
     "sub_full_clash_meta_enable": {
-      "description": "config.sub_full_clash_meta_enable.description",
+      "description": "启用完整 Clash Meta 订阅端点",
       "label": "config.sub_full_clash_meta_enable.标签"
     },
     "sub_full_links_b64_enable": {
-      "description": "config.sub_full_links_b64_enable.description",
+      "description": "启用 base64 订阅链接端点",
       "label": "config.sub_full_links_b64_enable.标签"
     },
     "sub_full_links_enable": {
-      "description": "config.sub_full_links_enable.description",
-      "label": "config.sub_full_links_enable.label"
+      "description": "启用纯文本订阅链接端点",
+      "label": "启用完整链接"
     },
     "sub_full_singbox_enable": {
-      "description": "config.sub_full_singbox_enable.description",
-      "label": "config.sub_full_singbox_enable.label"
+      "description": "启用完整 Sing-box 订阅端点",
+      "label": "启用完整 Sing-box 订阅"
     },
     "sub_full_xray_json_enable": {
       "description": "XRay 全链路为 XRay 特定设置提供了全面的配置选项。这包括支持 XRay 协议的应用程序（例如 v2rayNG）中的自定义分段和多路复用 (mux)，以便对 XRay 代理设置进行精细控制。",
       "label": "⚙️ XRay 完整配置链接"
     },
     "sub_singbox_ssh_enable": {
-      "description": "config.sub_singbox_ssh_enable.description",
-      "label": "config.sub_singbox_ssh_enable.label"
+      "description": "启用 Sing-box SSH 订阅端点",
+      "label": "启用 Sing-box SSH 订阅"
     },
     "tcp_enable": {
       "description": "启用 TCP 协议",
@@ -1122,17 +3085,21 @@
       "description": "可以在此部分设置 TLS 配置。",
       "label": "TLS 设置"
     },
+    "tls_ech": {
+      "description": "ECH 值，格式：cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "TLS ECH 值"
+    },
     "tls_ech_enable": {
-      "description": "",
-      "label": ""
+      "description": "将 ECH 添加到生成的 TLS 订阅链接中",
+      "label": "🔐 启用 TLS ECH"
     },
     "tls_fragment_enable": {
       "description": "在某些情况下，它可以绕过 SNI 黑名单系统。 <a href=\"https://hiddify.com/manager/basic-concepts-and-troubleshooting/How-the-TLS-Trick-works-and-its-usage/\" target=\"_blank\">（阅读更多）</a>",
       "label": "⏯ TLS Fragment"
     },
     "tls_fragment_packets": {
-      "description": "",
-      "label": ""
+      "description": "分片数据包模式（例如：tlshello 或 1-3）",
+      "label": "📦 TLS 分片数据包"
     },
     "tls_fragment_size": {
       "description": "每个数据包的大小",
@@ -1187,12 +3154,12 @@
       "label": "🔎 TUIC 端口"
     },
     "unique_id": {
-      "description": "config.unique_id.description",
-      "label": "config.unique_id.label"
+      "description": "此面板实例的唯一标识符",
+      "label": "唯一 ID"
     },
     "use_ip_in_config": {
-      "description": "",
-      "label": ""
+      "description": "这有助于减少解析服务器 IP 时可能出现的问题。将使用所选域名的随机 IP。",
+      "label": "在配置中使用 IP"
     },
     "utls": {
       "description": "此选项将模拟不同的浏览器，因此 GFW 无法检测到您的浏览",
@@ -1206,30 +3173,30 @@
     "validation-success": "配置已成功更改。单击 %(link)s 应用配置。申请可能需要 2 分钟",
     "validation-success-no-reset": "✅ 配置已成功更改",
     "vless_decryption": {
-      "description": "",
-      "label": ""
+      "description": "用于分享链接的 VLESS 解密参数",
+      "label": "VLESS 解密"
     },
     "vless_enable": {
       "description": "启用 VLess 协议",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "",
-      "label": ""
+      "description": "用于分享链接的 VLESS 加密方式",
+      "label": "VLESS 加密"
     },
     "vless_flow": {
-      "description": "",
-      "label": ""
+      "description": "VLESS 流控（例如 xtls-rprx-vision）",
+      "label": "VLESS 流控"
     },
     "vmess_enable": {
       "description": "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "config.warp-https-domain-for-warp-site",
     "warp": {
       "description": "Warp 是一种在出站流量中隐藏服务器 IP 的工具。这意味着如果用户访问网站，则暴露的是 Warp IP，而不是我们的服务器 IP。\n<br>\n例如，如果您在 Google 上遇到验证码问题，则可能会通过这种方式修复。",
       "label": "WARP➕"
     },
+    "warp-https-domain-for-warp-site": "用于 WARP 站点路由的 HTTPS 域名",
     "warp_enable": {
       "description": "WARP 通过隐藏服务器 IP 帮助您绕过 Google、Spotify 和 Netflix 限制",
       "label": "启用 WARP+"
@@ -1304,25 +3271,25 @@
   "days": "天",
   "desktop": "桌面",
   "direct": "➡️直接",
-  "dnstt": "",
+  "dnstt": "DNSTT",
   "domain": {
     "cdn": "CDN",
     "changed_in_domain_warning": "⚠️ 您的域名已更改。请不要忘记复制管理链接，否则您将无法再访问面板",
-    "current_server_IPs": "",
+    "current_server_IPs": "🔢 当前服务器 IP 为",
     "custom_proxy": {
-      "description": "",
+      "description": "可选的代理绑定。仅列出支持此域名模式组合的代理。留空则使用所有匹配的代理。",
       "group": {
-        "dns_gateway": "",
-        "ip_based": "",
-        "l7_gateway": "",
-        "other": "",
-        "sni_gateway": ""
+        "dns_gateway": "DNS 网关",
+        "ip_based": "基于 IP",
+        "l7_gateway": "L7 网关",
+        "other": "其他",
+        "sni_gateway": "SNI 网关"
       },
-      "label": "",
-      "reality_only": "",
-      "reality_required": "",
-      "sni_l7_mutex": "",
-      "sni_single_only": ""
+      "label": "自定义代理",
+      "reality_only": "REALITY 域名只能使用域名模式包含 REALITY 的 L7 域名网关代理。留空则使用所有匹配的 REALITY L7 代理。",
+      "reality_required": "REALITY 域名只能使用域名模式包含 REALITY 的 L7 域名网关代理",
+      "sni_l7_mutex": "同一个域名不能同时选择 SNI 网关和 L7 网关",
+      "sni_single_only": "一个域名只能选择一个 SNI 网关"
     },
     "description": "请仔细、正确地填写此字段。否则，代理将会遇到问题。请访问<a href='https://github.com/hiddify/hiddify-config/wiki/??????-??????-??-??????-??????-??????#??????-??????????????????>帮助</a>了解如何创建子域。",
     "domain": "领域",
@@ -1331,15 +3298,15 @@
       "label": "🔒 TLS 的域前端"
     },
     "ech": {
-      "description": "",
-      "label": ""
+      "description": "获取并为此 CDN 域名使用 Encrypted Client Hello (ECH)。需要在面板设置中启用 TLS ECH。",
+      "label": "🔐 ECH"
     },
     "empty": {
-      "allowed_for_fake_only": "domain.empty.allowed_for_fake_only"
+      "allowed_for_fake_only": "仅伪装模式允许域名为空"
     },
     "fake_mode": {
-      "description": "",
-      "label": ""
+      "description": "Valid 使用真实证书。Fake 和 Reality 用于伪装 TLS 和 REALITY 协议。",
+      "label": "TLS 模式"
     },
     "intro": "1️⃣ 在此部分，您可以添加您的域。<inlang-LineFeed><br>\n2️⃣如果您想减少拥有脏IP的概率，您可以添加多个中继服务器<a href='https://github.com/hiddify/hiddify-config/discussions/129'>阅读更多</a>。<inlang-LineFeed><br>\n3️⃣如果您的面板中有多个 IPv4 或 IPv6，则必须将指向它们的域添加为中继。",
     "ip": "知识产权",
@@ -1348,30 +3315,36 @@
       "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
     },
     "resolveip": {
-      "description": "",
-      "label": ""
+      "description": "在代理中使用 IP 而不是域名。DNS 噪声很大时有用。",
+      "label": "🔢 解析 IP"
     },
     "server_domain": {
-      "description": "",
-      "label": "",
-      "must_be_valid_direct_or_relay": ""
+      "description": "此条目使用的上游服务器域名。必须是有效的直连或中继域名。",
+      "label": "服务器域名",
+      "must_be_valid_direct_or_relay": "服务器域名必须是有效的直连或中继域名"
     },
     "show_domains_description": "对于访问该域的用户区的用户，指定他们可以看到哪些域的代理。\n<br>\n建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。",
     "tls_status": {
-      "description": ""
+      "description": "为此域名存储的证书：有效 CA、自签名、已过期、无效或缺失。",
+      "expired": "已过期",
+      "invalid": "无效",
+      "label": "TLS",
+      "missing": "无证书",
+      "self_signed": "自签名",
+      "valid": "有效"
     }
   },
   "download": "直接下载",
   "download_domain": {
-    "description": "",
-    "label": ""
+    "description": "仅适用于 XHTTP：例如，允许从与上传不同的域名下载。这使检测更困难，也能提升整体质量。",
+    "label": "📈 下载域名"
   },
   "fake": "🆎 假网站",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {
     "description": "ℹ️ gRPC 是一个基于 H2 的协议。也许对你来说更快！"
   },
-  "in\n          parent panel": "",
+  "in\n          parent panel": "在\n          父面板",
   "in parent panel": "在中央面板",
   "install from google play": "<i class='fa-brands fa-google-play'></i> Google Play",
   "ios": "iOS",
@@ -1389,7 +3362,7 @@
       "erlang": "✴️ Erlang：性能良好",
       "go": "✅ Go：正常性能 - 不支持广告",
       "python": "☑️ Python：性能低下",
-      "telemt": ""
+      "telemt": "❇️ Telemt：快速、安全、可靠"
     }
   },
   "log": "📄 Log",
@@ -1413,7 +3386,7 @@
   "next": "下一个",
   "no_reset": "⭐️无需重置",
   "node": {
-    "diff-version": "node.diff-version",
+    "diff-version": "节点面板版本与此面板不同",
     "mode": {
       "dscr": "该字段定义 Node 的模式",
       "label": "Node 模式"
@@ -1433,9 +3406,9 @@
   "package days?": "包天数？",
   "package size?": "包装尺寸？",
   "parent": {
-    "invalid-parent-url": "parent.invalid-parent-url",
-    "panel-not-active": "",
-    "sync-req-failed": "parent.sync-req-failed"
+    "invalid-parent-url": "无效的父面板 URL",
+    "panel-not-active": "父面板未激活",
+    "sync-req-failed": "父面板同步请求失败"
   },
   "previous": "以前的",
   "quicksetup": {
@@ -1460,7 +3433,7 @@
     }
   },
   "singbox: ssh": "歌手盒：SSH",
-  "special": "",
+  "special": "特殊",
   "special_reality_grpc": "🔀 Reality gRPC",
   "special_reality_tcp": "🔁 Reality TCP",
   "special_reality_xhttp": "🈁 Reality xHTTP",

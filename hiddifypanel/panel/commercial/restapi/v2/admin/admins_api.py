@@ -17,6 +17,7 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, ConfigEnum, Domain, DomainType, User, hconfig
 from hiddifypanel.models.admin import AdminMode
+from hiddifypanel.models.config_enum import Lang
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import user_configs
@@ -415,6 +416,10 @@ class MyAdminAccountApi(MethodView):
             "strong_password": creds.is_strong(actor.password, avoid=creds.admin_avoid(actor)),
             "telegram_connected": bool(actor.telegram_id),
             "alias": actor.alias or "",
+            # My own interface language ("" = the panel's default admin language).
+            "lang": str(getattr(actor.lang, "value", actor.lang)) if actor.lang else "",
+            "default_lang": str(hconfig(ConfigEnum.admin_lang) or "en"),
+            "languages": [lang.value for lang in Lang],
             "can_alias": actor.mode != AdminMode.super_admin,
             "login_link": _login_link(actor),
             "admin_link": _admin_link(actor),
@@ -463,6 +468,20 @@ class MyAdminAliasApi(MethodView):
         _apply_alias(actor, (request.get_json(silent=True) or {}).get("alias"))
         db.session.commit()
         return {"alias": actor.alias or "", "login_link": _login_link(actor)}
+
+
+class MyAdminLanguageApi(MethodView):
+    decorators = [login_required(ALL_ROLES)]
+
+    def put(self):
+        """My account: the language of my admin interface (empty: the panel's default)"""
+        actor: AdminUser = g.account
+        value = str((request.get_json(silent=True) or {}).get("lang") or "").strip()
+        if value and value not in {lang.value for lang in Lang}:
+            abort(400, "Unknown language")
+        actor.lang = Lang(value) if value else None
+        db.session.commit()
+        return {"lang": value}
 
 
 class MyAdminPasswordApi(MethodView):

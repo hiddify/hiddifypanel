@@ -1,13 +1,17 @@
 {# https://manual.nssurge.com/policies/snell.html #}
+{# snell://<userkey>@<server>:<port>?psk=<psk>&version=<4 or 6>&obfs=<type>&host=<host>  (v6: &mode=<mode>) #}
+{# A v5 server speaks the v4 wire protocol, so its link says version 4. #}
+{% set v = snell_version|default(5) %}
 {% for ctx in ctx.iter_ctx_domains() %}
   {% set proxy = ctx.proxy %}
-  {% set uri = namespace(
-    protocol='snell',
-    user=ctx.hconfig.proxy_path,
-    host=proxy.server,
-    port=proxy.port,
-    query_params=namespace(version='4'),
-  ) %}
-  {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
-  {% include 'sublink/uri/final_link_maker' %}
+  {% set raw_host = proxy.server or '' %}
+  {% set host = ('[' ~ raw_host ~ ']') if (':' in raw_host and not raw_host.startswith('[')) else raw_host %}
+  {% set qp = namespace(psk=ctx.hconfig.shared_secret, version=(6 if v == 6 else 4)|string) %}
+  {% if v == 6 %}
+    {% set qp.mode = 'default' %}
+  {% else %}
+    {% set qp.obfs = 'none' %}
+  {% endif %}
+  {% set fragment %}{%- include 'sublink/tag' -%}{% endset %}
+snell://{{ ctx.user.uuid }}@{{ host }}:{{ proxy.port }}?{{ qp|urlencoded }}#{{ fragment|trim_no_line|urlencoded }}
 {% endfor %}

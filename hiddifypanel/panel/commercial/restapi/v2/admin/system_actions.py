@@ -96,4 +96,7 @@ class AllPublicPortsApi(MethodView):
 
     def get(self):
         """Public Ports"""
-        return json.dumps(hutils.network.all_public_ports(), indent=2)
+        data = hutils.network.all_public_ports()
+        # Lets the UI open the custom proxy behind a port; not part of all_public_ports() (the firewall reads that).
+        data["proxies"] = hutils.network.public_port_proxy_ids()
+        return json.dumps(data, indent=2)

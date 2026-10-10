@@ -13,14 +13,18 @@
     <Message v-else-if="loadError" severity="error" :closable="false">{{ loadError }}</Message>
 
     <template v-else-if="state">
-      <!-- Overview -->
-      <div class="dm-stats">
+      <!-- Search and filters: one row of same-shaped pills -->
+      <div class="dm-filters">
+        <IconField v-if="state.domains.length > 4" class="dm-filters__search">
+          <InputIcon class="pi pi-search" />
+          <InputText v-model="search" :placeholder="t('domains.search')" fluid />
+        </IconField>
         <button
           v-for="s in stats"
           :key="s.key"
           type="button"
-          class="dm-stat"
-          :class="[`dm-stat--${s.key}`, { 'dm-stat--on': tlsFilter === s.key }]"
+          class="dm-pill dm-stat"
+          :class="[`dm-stat--${s.key}`, { 'dm-pill--on': tlsFilter === s.key }]"
           :aria-pressed="tlsFilter === s.key"
           @click="tlsFilter = tlsFilter === s.key ? null : s.key"
         >
@@ -28,29 +32,24 @@
           <b>{{ s.n }}</b>
           <span>{{ t(`domains.stats.${s.key}`) }}</span>
         </button>
-      </div>
-
-      <div v-if="state.domains.length > 4" class="dm-tools">
-        <IconField class="dm-tools__search">
-          <InputIcon class="pi pi-search" />
-          <InputText v-model="search" :placeholder="t('domains.search')" fluid />
-        </IconField>
-        <div class="dm-tools__kinds">
+        <template v-if="state.domains.length > 4">
           <button
             v-for="k in presentKinds"
             :key="k"
             type="button"
-            class="dm-kind-chip"
-            :class="{ 'dm-kind-chip--on': kindFilter === k }"
-            :style="{ '--kind-color': KIND_META[k].color }"
+            class="dm-pill dm-kind-chip"
+            :class="{ 'dm-pill--on': kindFilter === k }"
+            :style="{ '--tone': KIND_META[k].color }"
             :aria-pressed="kindFilter === k"
             @click="kindFilter = kindFilter === k ? null : k"
           >
-            {{ KIND_META[k].emoji }} {{ t(`domains.kind.${k}.name`) }}
+            <span>{{ KIND_META[k].emoji }}</span>
+            <span>{{ t(`domains.kind.${k}.name`) }}</span>
           </button>
-        </div>
+        </template>
       </div>
 
+      <ListFilterStatus :shown="rows.length" :total="state.domains.length" :active="filtering" @reset="resetFilters" />
       <p class="dm-howto"><i class="pi pi-sort-alt" />{{ filtering ? t('domains.howtoFiltered') : t('domains.howto') }}</p>
 
       <TransitionGroup name="dm-row" tag="ol" class="dm-list" :class="{ 'dm-list--dragging': dragId !== null }">
@@ -60,6 +59,7 @@
           class="dm-row"
           :style="{ '--kind-color': KIND_META[kindOf(d.mode)].color }"
           :class="{
+            'dm-row--minor': isFakeProxyMode(d.fake_mode),
             'dm-row--new': d.id === justChanged,
             'dm-row--drag': d.id === dragId,
             'dm-row--over': d.id === overId && d.id !== dragId,
@@ -112,7 +112,7 @@
               <span v-if="d.download_domain_id" class="dm-badge dm-badge--soft" dir="ltr">📈 {{ domainName(d.download_domain_id) }}</span>
             </div>
 
-            <div v-if="d.mode !== 'sub_link_only'" class="dm-row__line">
+            <div v-if="d.mode !== 'sub_link_only' && !isFakeProxyMode(d.fake_mode)" class="dm-row__line">
               <span class="dm-row__key"><i class="pi pi-sitemap" />{{ t('domains.field.proxies') }}</span>
               <template v-if="proxiesOf(d).length">
                 <span v-for="p in proxiesOf(d)" :key="p.id" class="dm-proxy" :class="{ 'dm-proxy--off': !p.enabled }">
@@ -121,7 +121,7 @@
               </template>
               <span v-else class="dm-row__auto">{{ t('domains.proxies.autoShort') }}</span>
             </div>
-            <div v-if="showsConfigs(d)" class="dm-row__line">
+            <div v-if="showsConfigs(d) && !isFakeProxyMode(d.fake_mode)" class="dm-row__line">
               <span class="dm-row__key"><i class="pi pi-eye" />{{ t('domains.field.showDomains') }}</span>
               <template v-if="d.show_domain_ids.length">
                 <span v-for="id in d.show_domain_ids.slice(0, 4)" :key="id" class="dm-proxy" dir="ltr">{{ showName(id) }}</span>
@@ -153,12 +153,12 @@
           </div>
         </li>
       </TransitionGroup>
-      <p v-if="!rows.length" class="dm-empty"><i class="pi pi-filter-slash" />{{ t('domains.noMatch') }}</p>
+      <ListNoMatch v-if="!rows.length" @reset="resetFilters" />
     </template>
 
-    <Menu ref="rowMenu" :model="rowItems" popup />
+    <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
     <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
-    <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" @saved="onSaved" />
+    <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
 
     <Dialog v-model:visible="certVisible" modal :draggable="false" :header="t('domains.getCert')" :style="{ width: 'min(32rem, calc(100vw - 1.5rem))' }" @after-hide="onCertClosed">
@@ -171,7 +171,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
+import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import { useHashState } from '@/shared/composables/useHashState'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -192,13 +195,15 @@ import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
 import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
-import { KIND_META, KINDS, TLS_ICON, domainsApi, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsState } from '@/features/domains/api'
+import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type DomainsState } from '@/features/domains/api'
 
 const { t } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 
 const state = ref<DomainsState | null>(null)
+/** Loaded after the list so the page shows right away. */
+const options = ref<DomainsOptions | null>(null)
 const loading = ref(true)
 const loadError = ref<string | null>(null)
 const pendingApply = ref<RestartMode>('nothing')
@@ -209,12 +214,15 @@ const search = ref('')
 const kindFilter = ref<DomainKind | null>(null)
 type TlsFilter = 'all' | 'valid' | 'attention' | 'decoy'
 const tlsFilter = ref<TlsFilter | null>(null)
+useHashState({ q: search, kind: kindFilter, tls: tlsFilter })
 
 const editVisible = ref(false)
 const editing = ref<DomainRow | null>(null)
 const wizardVisible = ref(false)
 const rowMenu = ref<InstanceType<typeof Menu> | null>(null)
 const menuRow = ref<DomainRow | null>(null)
+// Recreating the popup after each change drops its stale scroll handler/target.
+const menuKey = ref(0)
 
 const ipsVisible = ref(false)
 const ipsId = ref<number | null>(null)
@@ -253,6 +261,12 @@ const stats = computed(() => {
 const presentKinds = computed(() => [...KINDS, 'worker' as DomainKind].filter((k) => (state.value?.domains ?? []).some((d) => kindOf(d.mode) === k)))
 const filtering = computed(() => !!search.value.trim() || kindFilter.value !== null || (tlsFilter.value !== null && tlsFilter.value !== 'all'))
 
+function resetFilters() {
+  search.value = ''
+  kindFilter.value = null
+  tlsFilter.value = null
+}
+
 const rows = computed(() => {
   const q = search.value.trim().toLowerCase()
   return (state.value?.domains ?? []).filter((d) => {
@@ -273,7 +287,7 @@ function domainName(id: number | null): string {
 }
 /** A shown domain, also a node's (as `Node[name] domain`). */
 function showName(id: number): string {
-  const o = state.value?.meta.show_options.find((x) => x.id === id)
+  const o = options.value?.show_options.find((x) => x.id === id)
   if (!o) return domainName(id)
   return o.node ? `Node[${o.node}] ${o.domain}` : o.domain
 }
@@ -319,6 +333,8 @@ const rowItems = computed<MenuItem[]>(() => {
 
 function apply(next: DomainsState) {
   state.value = next
+  menuKey.value++
+  void loadOptions()
   if (next.restart_mode) pendingApply.value = strongerRestartMode(pendingApply.value, next.restart_mode)
   for (const w of next.warnings ?? []) toast.add({ severity: 'warn', summary: t('domains.warning'), detail: w.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ''), life: 9000 })
 }
@@ -329,11 +345,20 @@ function flash(id: number | null | undefined) {
   window.setTimeout(() => (justChanged.value = null), 2200)
 }
 
+async function loadOptions() {
+  try {
+    options.value = await domainsApi.options()
+  } catch {
+    // the dialog falls back to every proxy, and shown domains to this panel's names
+  }
+}
+
 async function load(quiet = false) {
   if (!quiet) loading.value = true
   loadError.value = null
   try {
     state.value = await domainsApi.list()
+    void loadOptions()
   } catch (err) {
     if (!quiet) loadError.value = apiErrorMessage(err) || t('common.loadFailed')
   } finally {
@@ -405,7 +430,11 @@ function onDrop(target: DomainRow) {
 
 function openMenu(e: Event, d: DomainRow) {
   menuRow.value = d
-  rowMenu.value?.toggle(e)
+  const menu = rowMenu.value
+  const target = e.currentTarget as HTMLElement | null
+  // Always re-show instead of toggling so a stuck open state can't swallow the tap.
+  menu?.hide()
+  void nextTick(() => menu?.show(e, target ?? undefined))
 }
 
 function openEdit(d: DomainRow) {
@@ -484,22 +513,34 @@ onBeforeUnmount(() => window.clearInterval(refresher))
 }
 
 /* Overview tiles (also TLS filters) */
-.dm-stats {
+.dm-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.45rem;
   margin-bottom: 1rem;
 }
-.dm-stat {
+.dm-filters__search {
+  flex: 1 1 14rem;
+  max-width: 20rem;
+}
+.dm-filters__search :deep(input) {
+  height: 2.4rem;
+  border-radius: 12px;
+  font-size: 0.84rem;
+}
+/* Every filter is the same pill: one height, radius, border and font. */
+.dm-pill {
   --tone: var(--p-primary-color);
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.85rem;
+  gap: 0.4rem;
+  height: 2.4rem;
+  padding: 0 0.8rem;
   border-radius: 12px;
   border: 1px solid var(--p-content-border-color);
   background: var(--p-content-background);
-  color: var(--p-text-color);
+  color: var(--p-text-muted-color);
   font: inherit;
   font-size: 0.84rem;
   cursor: pointer;
@@ -507,15 +548,15 @@ onBeforeUnmount(() => window.clearInterval(refresher))
     border-color 0.15s ease,
     background 0.15s ease;
 }
-.dm-stat i {
-  color: var(--tone);
+.dm-pill:hover {
+  border-color: var(--tone);
 }
-.dm-stat b {
-  font-size: 1rem;
+.dm-pill b {
+  color: var(--p-text-color);
   font-variant-numeric: tabular-nums;
 }
-.dm-stat span {
-  color: var(--p-text-muted-color);
+.dm-stat i {
+  color: var(--tone);
 }
 .dm-stat--valid {
   --tone: var(--p-green-500, #22c55e);
@@ -526,40 +567,17 @@ onBeforeUnmount(() => window.clearInterval(refresher))
 .dm-stat--decoy {
   --tone: var(--p-violet-500, #8b5cf6);
 }
-.dm-stat--on {
+.dm-pill--on {
   border-color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 10%, var(--p-content-background));
-}
-
-.dm-tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.9rem;
-}
-.dm-tools__search {
-  flex: 1 1 14rem;
-  max-width: 22rem;
-}
-.dm-tools__kinds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-.dm-kind-chip {
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid var(--p-content-border-color);
-  background: var(--p-content-background);
+  box-shadow: inset 0 0 0 1px var(--tone);
+  background: color-mix(in srgb, var(--tone) 11%, var(--p-content-background));
   color: var(--p-text-color);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
 }
-.dm-kind-chip--on {
-  border-color: var(--kind-color);
-  background: color-mix(in srgb, var(--kind-color) 12%, var(--p-content-background));
+@media (max-width: 560px) {
+  .dm-filters__search {
+    flex-basis: 100%;
+    max-width: none;
+  }
 }
 
 .dm-howto {
@@ -602,6 +620,31 @@ onBeforeUnmount(() => window.clearInterval(refresher))
 }
 .dm-row:hover {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+/* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: smaller and quieter than real domains. */
+.dm-row.dm-row--minor {
+  gap: 0.5rem 0.6rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+  border-radius: 10px;
+  border-inline-start-width: 3px;
+  background: transparent;
+  opacity: 0.72;
+}
+.dm-row.dm-row--minor:hover {
+  opacity: 1;
+  box-shadow: none;
+}
+.dm-row--minor .dm-row__emoji {
+  width: 1.9rem;
+  height: 1.9rem;
+  font-size: 0.95rem;
+}
+.dm-row--minor .dm-row__domain {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.dm-row--minor .dm-row__chips {
+  margin-top: 0.1rem;
 }
 .dm-row--new {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
@@ -843,7 +886,7 @@ a.dm-row__domain:hover {
   .dm-row__side:not(:has(.dm-row__cert)) {
     justify-content: flex-end;
   }
-  .dm-tools__search {
+  .dm-filters__search {
     max-width: none;
   }
 }

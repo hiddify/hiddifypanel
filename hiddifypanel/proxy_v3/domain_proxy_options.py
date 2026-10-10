@@ -53,13 +53,17 @@ def list_domain_proxy_options(
     child_id: int,
     mode: DomainType,
     fake_mode: FakeMode,
+    proxies: list[CustomProxy] | None = None,
 ) -> list[dict]:
+    """``proxies`` lets a caller that lists many (mode, fake_mode) pairs load the child's proxies once."""
     buckets = set(proxy_buckets_for_domain(mode, fake_mode))
     rows: list[CustomProxy] = []
-    for proxy in CustomProxy.query.filter(
-        CustomProxy.enable == True,
-        CustomProxy.child_id == child_id,
-    ).all():
+    if proxies is None:
+        proxies = CustomProxy.query.filter(
+            CustomProxy.enable == True,
+            CustomProxy.child_id == child_id,
+        ).all()
+    for proxy in proxies:
         if not proxy.enable or proxy.slug == REALITY_TERMINATION_SLUG:
             continue
         if fake_mode == FakeMode.reality:

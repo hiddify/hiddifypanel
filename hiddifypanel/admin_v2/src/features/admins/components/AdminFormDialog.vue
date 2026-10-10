@@ -14,6 +14,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundSelect.vue'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
+import { unitLabel } from '@/shared/utils/format-metrics'
 import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
 import { adminsApi, type AdminCredentials, type AdminLimits, type AdminPayload, type AdminRow, type AdminsTree } from '@/features/admins/api'
 
@@ -144,7 +145,7 @@ const limitFields = computed(() =>
       { key: 'max_online_users', icon: 'pi pi-wifi', optional: true, suffix: '' },
       { key: 'max_active_users', icon: 'pi pi-bolt', optional: false, suffix: '' },
       { key: 'max_users', icon: 'pi pi-users', optional: false, suffix: '' },
-      { key: 'max_total_usage_GB', icon: 'pi pi-arrow-right-arrow-left', optional: true, suffix: ' GB' },
+      { key: 'max_total_usage_GB', icon: 'pi pi-arrow-right-arrow-left', optional: true, suffix: ` ${unitLabel('GB')}` },
     ] as const
   ).map((field) => {
     const mine = myLimits.value?.[field.key] ?? null

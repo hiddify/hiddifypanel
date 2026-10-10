@@ -1,0 +1,17 @@
+"type": "wireguard",
+"system": false,
+"mtu": 1380,
+"address": ["{{ ctx.hconfig.wireguard_ipv4 }}/16", "{{ ctx.hconfig.wireguard_ipv6 }}/90"],
+"private_key": "{{ ctx.hconfig.wireguard_private_key }}",
+"peers": [
+  {% for user in ctx.users %}
+  {% if user.wg_pub %}
+  {
+    "name": "{{ user.uuid }}",
+    "public_key": "{{ user.wg_pub }}",
+    "pre_shared_key": "{{ user.wg_psk }}",
+    "allowed_ips": ["{{ user.wg_ipv4 }}/32", "{{ user.wg_ipv6 }}/128"]
+  },
+  {% endif %}
+  {% endfor %}
+]
