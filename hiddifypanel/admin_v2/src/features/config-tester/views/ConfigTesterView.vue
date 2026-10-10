@@ -59,7 +59,7 @@
         <span v-if="fetched" class="ct-recv__meta" dir="ltr" :title="fetched.user_agent">HTTP {{ fetched.status }} · {{ fetched.content_type || '?' }} · {{ fmtBytes(fetched.bytes) }} · {{ rows.length }} configs</span>
         <span v-if="fetched" class="ct-recv__ua" dir="ltr">{{ fetched.user_agent }}</span>
       </span>
-      <span class="ct-recv__go">{{ t('configTester.sub.view') }}<i class="pi pi-arrow-right" /></span>
+      <span class="ct-recv__go">{{ t('configTester.sub.view') }}<i class="pi" :class="rtl ? 'pi-arrow-left' : 'pi-arrow-right'" /></span>
     </button>
 
     <!-- Counters double as filters -->
@@ -198,7 +198,8 @@ import SubscriptionViewer from '@/features/config-tester/components/Subscription
 import JsonTree from '@/features/config-tester/components/JsonTree.vue'
 import CodeBlock from '@/features/config-tester/components/CodeBlock.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const rtl = computed(() => ['fa', 'ar'].includes(locale.value))
 const route = useRoute()
 const router = useRouter()
 
@@ -865,9 +866,6 @@ onBeforeUnmount(stop)
 }
 .ct-recv__go i {
   font-size: 0.8rem;
-}
-:global([dir='rtl']) .ct-recv__go i {
-  transform: scaleX(-1);
 }
 .ct-treebox {
   max-height: 60vh;

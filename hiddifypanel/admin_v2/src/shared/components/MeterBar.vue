@@ -1,7 +1,6 @@
 <template>
   <div
     class="mbar"
-    dir="ltr"
     :class="[`mbar--${tone}`, `mbar--${size}`]"
     role="meter"
     :aria-label="label"
@@ -11,10 +10,10 @@
     :aria-valuetext="text"
   >
     <!-- Text over the empty part -->
-    <span class="mbar__text" dir="ltr">{{ text }}</span>
+    <span class="mbar__text">{{ text }}</span>
     <!-- Same text, clipped to the filled part, in the fill's contrast color -->
     <span class="mbar__fill" :style="{ width: `${percent}%` }">
-      <span class="mbar__text mbar__text--on-fill" dir="ltr">{{ text }}</span>
+      <span class="mbar__text mbar__text--on-fill">{{ text }}</span>
     </span>
   </div>
 </template>
@@ -63,6 +62,16 @@ const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.m
 .mbar--danger {
   --fill: linear-gradient(90deg, #fb923c, #f43f5e 55%, #e11d48);
   --fill-glow: rgba(244, 63, 94, 0.5);
+}
+/* Fill still grows from the start of the line: the right side when the page is RTL. */
+.mbar:dir(rtl) {
+  --fill: linear-gradient(to left, #34d399, #10b981 55%, #059669);
+}
+.mbar--warn:dir(rtl) {
+  --fill: linear-gradient(to left, #fde047, #facc15 50%, #f59e0b);
+}
+.mbar--danger:dir(rtl) {
+  --fill: linear-gradient(to left, #fb923c, #f43f5e 55%, #e11d48);
 }
 .mbar--none {
   background: repeating-linear-gradient(
