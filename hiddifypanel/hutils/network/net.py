@@ -104,6 +104,19 @@ def kernel_ipv6_available() -> bool:
         return False
 
 
+def _warp_addresses() -> set[ipaddress.IPv4Address | ipaddress.IPv6Address]:
+    """Addresses on the WARP tunnel. They are not this server's addresses."""
+    found: set[ipaddress.IPv4Address | ipaddress.IPv6Address] = set()
+    try:
+        for addr in psutil.net_if_addrs().get("warp", []):
+            if addr.family not in (socket.AF_INET, socket.AF_INET6):
+                continue
+            found.add(ipaddress.ip_address(addr.address.split("%")[0]))
+    except (OSError, ValueError):
+        pass
+    return found
+
+
 def get_socket_public_ip(version: Literal[4, 6]) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     try:
         s = socket.socket(socket.AF_INET6 if version == 6 else socket.AF_INET, socket.SOCK_DGRAM)
@@ -113,7 +126,9 @@ def get_socket_public_ip(version: Literal[4, 6]) -> ipaddress.IPv4Address | ipad
             s.connect(("8.8.8.8", 80))
         ip_address = ipaddress.ip_address(s.getsockname()[0])
         s.close()
-        return ip_address if ip_address.is_global else None
+        if not ip_address.is_global or ip_address in _warp_addresses():
+            return None
+        return ip_address
     except OSError:
         return None
 
@@ -122,7 +137,9 @@ def get_interface_public_ip(version: Literal[4, 6]) -> list[ipaddress.IPv4Addres
     addresses = []
     try:
         interfaces = psutil.net_if_addrs()
-        for interface_addresses in interfaces.values():
+        for name, interface_addresses in interfaces.items():
+            if name == "warp":
+                continue
             for addr in interface_addresses:
                 if version == 4 and addr.family == socket.AF_INET:
                     ip = addr.address
@@ -168,8 +185,8 @@ def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address 
     except BaseException:
         pass
 
-    # remove duplicates
-    return list(set(addrs))
+    # remove duplicates and any WARP tunnel address that slipped in
+    return [ip for ip in set(addrs) if ip not in _warp_addresses()]
 
 
 _ips_snapshot: dict[int, list] = {}
