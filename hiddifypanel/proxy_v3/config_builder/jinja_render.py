@@ -68,7 +68,10 @@ def _jinja_tojson(value: Any) -> str:
 
 
 def _jinja_choose_random(value: Any) -> str:
-    parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
+    if isinstance(value, (list, tuple, set)):
+        parts = [str(part).strip() for part in value if str(part).strip()]
+    else:
+        parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
     if not parts:
         return ""
     return random.choice(parts)
