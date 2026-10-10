@@ -2392,6 +2392,30 @@ msgstr ""
 "Adds force_xray_json=1 to the link, so the panel gives xray configs even if "
 "that subscription is off in its settings."
 
+msgid "adminV2.configTester.history.again"
+msgstr "Test this one again"
+
+msgid "adminV2.configTester.history.avg"
+msgstr "Average"
+
+msgid "adminV2.configTester.history.header"
+msgstr "Ping history: {name}"
+
+msgid "adminV2.configTester.history.max"
+msgstr "Slowest"
+
+msgid "adminV2.configTester.history.min"
+msgstr "Fastest"
+
+msgid "adminV2.configTester.history.more"
+msgstr "Test 3 more times"
+
+msgid "adminV2.configTester.history.success"
+msgstr "Worked"
+
+msgid "adminV2.configTester.history.title"
+msgstr "Ping history"
+
 msgid "adminV2.configTester.log"
 msgstr "Log (trace)"
 
@@ -2418,6 +2442,9 @@ msgstr "Parsed by hiddify-core"
 
 msgid "adminV2.configTester.raw"
 msgstr "Original (as received)"
+
+msgid "adminV2.configTester.repeats"
+msgstr "Tests per config"
 
 msgid "adminV2.configTester.rerun"
 msgstr "Test again"
@@ -2475,6 +2502,63 @@ msgstr "Status"
 
 msgid "adminV2.configTester.stop"
 msgstr "Stop"
+
+msgid "adminV2.configTester.sub.clickToEdit"
+msgstr "Tap a link to edit it"
+
+msgid "adminV2.configTester.sub.collapseAll"
+msgstr "Collapse"
+
+msgid "adminV2.configTester.sub.configs"
+msgstr "Configs"
+
+msgid "adminV2.configTester.sub.copyLink"
+msgstr "Copy link"
+
+msgid "adminV2.configTester.sub.count"
+msgstr "{n} links"
+
+msgid "adminV2.configTester.sub.countOf"
+msgstr "{n} of {total} links"
+
+msgid "adminV2.configTester.sub.expandAll"
+msgstr "Expand all"
+
+msgid "adminV2.configTester.sub.inDecoded"
+msgstr "in decoded part"
+
+msgid "adminV2.configTester.sub.items"
+msgstr "{n} configs"
+
+msgid "adminV2.configTester.sub.keys"
+msgstr "{n} keys"
+
+msgid "adminV2.configTester.sub.links"
+msgstr "Share links"
+
+msgid "adminV2.configTester.sub.noMatch"
+msgstr "Nothing matches."
+
+msgid "adminV2.configTester.sub.none"
+msgstr "No links found."
+
+msgid "adminV2.configTester.sub.parsedHint"
+msgstr "What hiddify-core made of the links; this is what was tested."
+
+msgid "adminV2.configTester.sub.received"
+msgstr "Subscription received"
+
+msgid "adminV2.configTester.sub.reset"
+msgstr "Undo changes"
+
+msgid "adminV2.configTester.sub.search"
+msgstr "Search links and configs…"
+
+msgid "adminV2.configTester.sub.text"
+msgstr "Text"
+
+msgid "adminV2.configTester.sub.view"
+msgstr "View"
 
 msgid "adminV2.configTester.subscription"
 msgstr "Subscription"

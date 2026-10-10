@@ -2379,6 +2379,30 @@ msgstr ""
 "force_xray_json=1 به لینک اضافه می‌شود تا پنل حتی با خاموش بودن این اشتراک "
 "در تنظیمات، کانفیگ xray بدهد."
 
+msgid "adminV2.configTester.history.again"
+msgstr "تست دوباره‌ی همین مورد"
+
+msgid "adminV2.configTester.history.avg"
+msgstr "میانگین"
+
+msgid "adminV2.configTester.history.header"
+msgstr "تاریخچه‌ی پینگ: {name}"
+
+msgid "adminV2.configTester.history.max"
+msgstr "کندترین"
+
+msgid "adminV2.configTester.history.min"
+msgstr "سریع‌ترین"
+
+msgid "adminV2.configTester.history.more"
+msgstr "۳ تست دیگر"
+
+msgid "adminV2.configTester.history.success"
+msgstr "موفق"
+
+msgid "adminV2.configTester.history.title"
+msgstr "تاریخچه‌ی پینگ"
+
 msgid "adminV2.configTester.log"
 msgstr "لاگ (trace)"
 
@@ -2405,6 +2429,9 @@ msgstr "تبدیل‌شده با hiddify-core"
 
 msgid "adminV2.configTester.raw"
 msgstr "اصل (دریافتی)"
+
+msgid "adminV2.configTester.repeats"
+msgstr "تعداد تست هر کانفیگ"
 
 msgid "adminV2.configTester.rerun"
 msgstr "تست دوباره"
@@ -2462,6 +2489,63 @@ msgstr "وضعیت"
 
 msgid "adminV2.configTester.stop"
 msgstr "توقف"
+
+msgid "adminV2.configTester.sub.clickToEdit"
+msgstr "برای ویرایش روی لینک بزنید"
+
+msgid "adminV2.configTester.sub.collapseAll"
+msgstr "بستن"
+
+msgid "adminV2.configTester.sub.configs"
+msgstr "کانفیگ‌ها"
+
+msgid "adminV2.configTester.sub.copyLink"
+msgstr "کپی لینک"
+
+msgid "adminV2.configTester.sub.count"
+msgstr "{n} لینک"
+
+msgid "adminV2.configTester.sub.countOf"
+msgstr "{n} از {total} لینک"
+
+msgid "adminV2.configTester.sub.expandAll"
+msgstr "باز کردن همه"
+
+msgid "adminV2.configTester.sub.inDecoded"
+msgstr "در بخش دیکد‌شده"
+
+msgid "adminV2.configTester.sub.items"
+msgstr "{n} کانفیگ"
+
+msgid "adminV2.configTester.sub.keys"
+msgstr "{n} کلید"
+
+msgid "adminV2.configTester.sub.links"
+msgstr "لینک‌ها"
+
+msgid "adminV2.configTester.sub.noMatch"
+msgstr "موردی پیدا نشد."
+
+msgid "adminV2.configTester.sub.none"
+msgstr "لینکی پیدا نشد."
+
+msgid "adminV2.configTester.sub.parsedHint"
+msgstr "خروجی hiddify-core از روی لینک‌ها؛ همین تست شد."
+
+msgid "adminV2.configTester.sub.received"
+msgstr "اشتراک دریافت‌شده"
+
+msgid "adminV2.configTester.sub.reset"
+msgstr "برگرداندن تغییرات"
+
+msgid "adminV2.configTester.sub.search"
+msgstr "جستجو در لینک‌ها و کانفیگ‌ها…"
+
+msgid "adminV2.configTester.sub.text"
+msgstr "متن"
+
+msgid "adminV2.configTester.sub.view"
+msgstr "مشاهده"
 
 msgid "adminV2.configTester.subscription"
 msgstr "اشتراک"

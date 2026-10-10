@@ -5,6 +5,20 @@
 
 #### New
 
+* Add advanced config tester. 
+
+* Add wiregaurd proxy generator. 
+
+* Add snell v4 and v6. 
+
+* Add domain ip in domain wizard. 
+
+* Add wiregaurd by hiddify-core. 
+
+* Add extra information in the user row, refactor mobile view, add easy click for change limits, add persian date for exact finish time. 
+
+* Add state for filters in views, make a deep link, fix tranlstions. 
+
 * Add finalmask support. 
 
 * Add psiphone and tor backend. 
@@ -50,6 +64,36 @@
 * Better integration with the old panel. 
 
 #### Fix
+
+* Bug. 
+
+* Handle exceptions when retrieving Telegram usage data in TelemtApi. 
+
+* Hiddify version. 
+
+* Hysteria and vmess quic. 
+
+* Update TLS handling in _skips_hiddify_client_tls to include 'snell' protocol for improved compatibility. 
+
+* Remove unused ports settings. 
+
+* Improve form validation logic to allow unrelated changes when some fields are invalid. 
+
+* Content-hash the prebuilt Monaco copy. 
+  _Same cache problem the content-hashed Vue assets fix: the prebuilt Monaco is copied
+from node_modules outside Rollup, so its files kept stable URLs (monaco/vs/...).
+After an update a browser or CDN cache could keep serving an old loader.js /
+workerMain.js against the new UI and break the editor.
+
+- vite.config.ts: copy the tree to monaco/<content-hash>/vs — the hash covers exactly
+  the files that are copied, so it is stable across builds and only changes when the
+  Monaco content does
+- v2_view.py: resolve the hashed directory (falls back to monaco/vs for old builds)
+  and pass it to the shell
+- admin_v2.html: expose it as window.__MONACO_BASE__
+- monaco.ts: prefer window.__MONACO_BASE__ over deriving the path from the entry chunk
+  URL; dev flow and old-shell fallback unchanged
+- client.ts: declare __MONACO_BASE__ on Window_
 
 * Uuid not restored. 
 
@@ -103,6 +147,43 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: add logging for user application and command execution in hiddify.py and run_commander.py. 
+
+* Better persian support. 
+
+* Fixed bug in progress bar persian. 
+
+* Feat: enhance domain ordering and caching in various components. 
+
+* Feat: implement WARP address filtering in IP retrieval functions. 
+
+* Faster outbound apply. 
+
+* Faster apply users. 
+
+* Feat: add support for Telegram MTProxy (telemt) including configuration and server driver. 
+
+* Feat: add ApplyRunDialog component for running apply actions in a dialog; update ApplyNotice to utilize the new dialog and enhance user experience. 
+
+* Feat: improve backup functionality for custom proxies, including unique slug generation and restoration of built-in proxies. 
+
+* Refactor: replace CodecPanel with LiveCodecPanel for real-time encoding/decoding; remove unused CodecPanel component. 
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #44 from AnonymousContributorAlpha/vite-monaco-hash. 
+  _fix: content-hash the prebuilt Monaco_
+
+* Feat: enhance Persian support; enhance user metrics with active user count. 
+
+* Add admin customizable lang. 
+
+* Restore trojan httpupgrade and xhttp. 
+
+* Feat: add reset all functionality for built-in proxies and enhance custom proxy list view with quick filters. 
+
+* Link public port to the custom proxy. 
 
 * Redirectspeed test page. 
 
