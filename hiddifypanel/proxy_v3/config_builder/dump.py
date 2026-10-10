@@ -264,19 +264,30 @@ def dump_all_server_configs(
     *,
     pretty: bool = True,
     invalidate_cache: bool | None = None,
+    cores: list[str] | tuple[str, ...] | None = None,
 ) -> ServerConfigDumpResult:
     # apply_users only refreshes user lists; wiping Redis/Jinja would stall the panel.
     if invalidate_cache is None:
         invalidate_cache = os.environ.get("MODE") != "apply_users"
     if invalidate_cache:
         invalidate_config_caches()
+    known = {name for name, _filename in SERVER_CONFIG_FILES}
+    selected = None
+    if cores:
+        unknown = [core for core in cores if core not in known]
+        if unknown:
+            raise ValueError(f"Unsupported server core: {', '.join(unknown)}")
+        selected = set(cores)
     target = Path(output_dir)
     target.mkdir(parents=True, exist_ok=True)
 
     dump = ServerConfigDumpResult(output_dir=target, child_id=child_id)
-    _clear_dns_proxy_generated(target)
+    if selected is None or "dns_proxy" in selected:
+        _clear_dns_proxy_generated(target)
 
     for core, filename in SERVER_CONFIG_FILES:
+        if selected is not None and core not in selected:
+            continue
         try:
             result = build_server_config_for_core(child_id, core)
         except Exception as exc:
