@@ -14,6 +14,7 @@ from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCore
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
+from hiddifypanel.proxy_v3.config_builder.telemt.server import TelemtServerDriver
 from hiddifypanel.proxy_v3.config_builder.wireguard.server import WireguardServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
@@ -33,6 +34,7 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
     "dns_proxy": DnsProxyServerDriver,
     "wireguard": WireguardServerDriver,
+    "telemt": TelemtServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -43,6 +45,7 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
     ("dns_proxy", "dnstm.json"),
     ("wireguard", "wireguard.conf"),
+    ("telemt", "telemt.toml"),
 )
 
 
@@ -146,6 +149,8 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
         stats["services"] = len(re.findall(r"(?m)^\s*\[protocols\.[^\]]+\]", text))
     elif core == "wireguard":
         stats["peers"] = len(re.findall(r"(?m)^\[Peer\]", text))
+    elif core == "telemt":
+        stats["users"] = len(re.findall(r"(?m)^[0-9a-fA-F]{32} = ", text))
 
     return stats
 
@@ -176,6 +181,8 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
                 _n(stats.get("backends", 0), "backend"),
             ]
         )
+    elif filename == "telemt.toml":
+        parts.append(_n(stats.get("users", 0), "user"))
     elif filename.endswith(".toml"):
         parts.append(_n(stats.get("services", 0), "service"))
     elif filename == "wireguard.conf":

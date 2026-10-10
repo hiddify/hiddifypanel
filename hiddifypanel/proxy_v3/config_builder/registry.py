@@ -33,6 +33,7 @@ def _load_drivers() -> None:
     from .nginx import server as nginx_server
     from .rust_rpxy_l4 import server as rust_rpxy_l4_server
     from .singbox.client import SingboxClientDriver
+    from .telemt import server as telemt_server
     from .wireguard import server as wireguard_server
     from .xray import server as xray_server
     from .xray.client import XrayClientDriver
@@ -47,6 +48,7 @@ def _load_drivers() -> None:
     _register(rust_rpxy_l4_server.RustRpxyL4ServerDriver())
     _register(dns_proxy_server.DnsProxyServerDriver())
     _register(wireguard_server.WireguardServerDriver())
+    _register(telemt_server.TelemtServerDriver())
 
 
 def ensure_drivers_loaded() -> None:
