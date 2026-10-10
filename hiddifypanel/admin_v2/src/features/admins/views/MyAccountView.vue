@@ -273,7 +273,7 @@ async function saveOutbound() {
   try {
     await adminsApi.setMyOutbound(myOutbound.value)
     savedOutbound.value = myOutbound.value
-    toast.add({ severity: 'success', summary: t('account.outboundSaved'), detail: t('account.outboundApply'), life: 5000 })
+    toast.add({ severity: 'success', summary: t('account.outboundSaved'), life: 3000 })
   } catch (err) {
     toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
   } finally {
