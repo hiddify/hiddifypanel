@@ -1,6 +1,7 @@
 <template>
   <div
     class="mbar"
+    dir="ltr"
     :class="[`mbar--${tone}`, `mbar--${size}`]"
     role="meter"
     :aria-label="label"
