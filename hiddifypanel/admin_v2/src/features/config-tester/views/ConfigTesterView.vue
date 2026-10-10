@@ -14,7 +14,7 @@
 
     <div class="ct-field">
       <label for="ct-ua" class="ct-label"><span class="ct-step">2</span>{{ t('configTester.ua') }}</label>
-      <Select id="ct-ua" ref="uaSelect" v-model="userAgent" :options="UA_PRESETS" option-label="value" option-value="value" editable dir="ltr" class="ct-ua font-mono" :disabled="busy" @click="openUa" @focus="openUa">
+      <Select id="ct-ua" ref="uaSelect" v-model="userAgent" :options="UA_PRESETS" option-label="value" option-value="value" editable dir="ltr" overlay-class="ct-ua-overlay" :pt="{ overlay: { dir: 'ltr' } }" class="ct-ua font-mono" :disabled="busy" @click="openUa" @focus="openUa">
         <template #option="{ option }">
           <div class="flex flex-col min-w-0" dir="ltr">
             <span class="font-medium">{{ option.label }}</span>
@@ -498,6 +498,11 @@ onBeforeUnmount(stop)
 }
 .ct-ua {
   width: 100%;
+}
+/* The menu is teleported onto the page, so it would otherwise follow the page direction. */
+:global(.ct-ua-overlay) {
+  direction: ltr;
+  text-align: left;
 }
 .ct-wrap {
   overflow-wrap: anywhere;
