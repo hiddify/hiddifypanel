@@ -267,10 +267,12 @@ class UserView(FlaskView):
         if re.match("^(Clash|Stash)", ua, re.IGNORECASE):
             return self.clash_config_imp(meta_or_normal="normal")
 
-        if hconfig(ConfigEnum.sub_full_xray_json_enable):
+        # ?force_xray_json=1 acts as if the xray JSON subscription setting were on (used by the admin config tester)
+        force_xray_json = request.args.get("force_xray_json") == "1"
+        if hconfig(ConfigEnum.sub_full_xray_json_enable) or force_xray_json:
             if g.user_agent.get("is_v2rayng") and hutils.flask.is_client_version(hutils.flask.ClientVersion.v2ryang, 1, 8, 17):
                 return self.xray()
-            elif g.user_agent.get("is_streisand"):
+            elif g.user_agent.get("is_streisand") or (force_xray_json and g.user_agent.get("is_xray")):
                 return self.xray()
 
         if re.match("^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|Streisand)", ua, re.IGNORECASE):

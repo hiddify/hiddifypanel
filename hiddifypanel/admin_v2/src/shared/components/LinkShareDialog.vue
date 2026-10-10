@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -7,6 +8,7 @@ import Dialog from 'primevue/dialog'
 import Select from 'primevue/select'
 import HiddifyQrCode from '@/shared/components/HiddifyQrCode.vue'
 import { canShareImages, downloadQrPng, qrPngFile, shareWithImage } from '@/shared/utils/hiddify-qr'
+import { isSuperAdmin } from '@/core/panelShell'
 import type { ShareDomain } from '@/shared/utils/share-domain'
 
 /**
@@ -22,11 +24,14 @@ const props = defineProps<{
   path: string
   /** Used when there are no domains. */
   fallbackLink?: string
+  /** Adds "Test configs": opens the config tester with this link (super admins only). */
+  testable?: boolean
 }>()
 const visible = defineModel<boolean>('visible', { required: true })
 
 const { t } = useI18n()
 const toast = useToast()
+const router = useRouter()
 
 const domain = ref('')
 const qrCode = ref<InstanceType<typeof HiddifyQrCode> | null>(null)
@@ -106,6 +111,11 @@ async function share() {
   }
 }
 
+function testConfigs() {
+  visible.value = false
+  void router.push({ name: 'config-tester', query: { url: link.value.split('#')[0], start: '1' } })
+}
+
 async function copyQr() {
   if (await qrCode.value?.copy()) flash('qr')
 }
@@ -164,6 +174,7 @@ function downloadQr() {
           <div class="link-dlg__link-actions">
             <Button :icon="copied === 'link' ? 'pi pi-check' : 'pi pi-copy'" :label="copied === 'link' ? t('common.copied') : t('linkShare.copyLink')" @click="copyLink" />
             <Button as="a" :href="link" target="_blank" rel="noopener" icon="pi pi-external-link" :label="t('linkShare.open')" severity="secondary" outlined />
+            <Button v-if="testable && isSuperAdmin" icon="pi pi-bolt" :label="t('configTester.menu')" severity="secondary" outlined @click="testConfigs" />
             <Button v-if="canShare" icon="pi pi-share-alt" :label="t('qr.share')" severity="secondary" outlined :loading="sharing" v-tooltip.top="t('qr.shareHint')" @click="share" />
           </div>
           <slot />

@@ -270,6 +270,7 @@
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Информация о вашем экземпляре Hiddify\nДомен: {}\nЛимит: {} ГБ\nИспользовано: {} ГБ\nСрок действия истекает: {}\nОставшиеся дни: {}\n\n\nУдачи! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Сообщение, видимое только администратору]: Вы можете изменить это сообщение в настройках",
   "actions": "Операции",
+  "admin link": "Админ",
   "admin": {
     "Actions:apply_configs": "Применить конфигурацию",
     "action_done_sucess": "✅Действие выполнено успешно. Теперь вы можете покинуть эту страницу",
@@ -312,7 +313,6 @@
     "save_panel_link": "Обратите внимание, что доступ к вашей панели возможен только по следующей ссылке. пожалуйста, сохраните эту ссылку.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: Break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "⚠️ Подождите около 5 минут, чтобы убедиться, что все обновлено. в течение этого времени скопируйте и сохраните ссылки для прокси-серверов:"
   },
-  "admin link": "Админ",
   "adminV2": {
     "account": {
       "aliasActive": "Оставьте пустым и сохраните, чтобы удалить.",
@@ -2351,12 +2351,12 @@
   "cf-delete": {
     "failed": "Не удалось удалить в Cloudflare"
   },
+  "child has been removed!": "Дочерний элемент удален!",
   "child": {
     "register-failed": "child.register-не удалось",
     "register-success": "child.register-успех",
     "sync-failed": "child.sync-не удалось"
   },
-  "child has been removed!": "Дочерний элемент удален!",
   "clickable copy": "Ссылка для социальных сетей",
   "close": "Закрыть",
   "cloudflare": {
@@ -2793,6 +2793,10 @@
       "description": "Для ссылки Naive",
       "label": "ℹ️ Путь Naive"
     },
+    "path_splithttp": {
+      "description": "Путь XHTTP",
+      "label": "Путь XHTTP"
+    },
     "path_ss": {
       "description": "Путь Shadowsocks в ссылках",
       "label": "Путь Shadowsocks"
@@ -2941,6 +2945,10 @@
       "description": "Разрешите вашим пользователям выполнять тест скорости. Это помогает им определить качество связи.",
       "label": "🚀 Тест скорости"
     },
+    "splithttp_enable": {
+      "description": "XHTTP позволяет разделить потоки загрузки и отдачи, унифицирует gRPC, H2, H1 и также поддерживает QUIC.",
+      "label": "Включить XHTTP"
+    },
     "ssfaketls": {
       "description": "Shadowsocks FakeTLS — это простой инструмент для запутывания, который инкапсулирует данные в пакете tls.",
       "label": "Shadowsocks FakeTLS"
@@ -3076,6 +3084,10 @@
     "tls": {
       "description": "В этом разделе можно установить конфигурации TLS",
       "label": "Настройки TLS"
+    },
+    "tls_ech": {
+      "description": "Значение ECH в формате: cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "Значение TLS ECH"
     },
     "tls_ech_enable": {
       "description": "Добавляет ECH в сгенерированные ссылки подписки TLS",
@@ -3252,18 +3264,6 @@
     "xtls_enable": {
       "description": "Включает протокол XTLS",
       "label": "🟢XTLS"
-    },
-    "path_splithttp": {
-      "description": "Путь XHTTP",
-      "label": "Путь XHTTP"
-    },
-    "splithttp_enable": {
-      "description": "XHTTP позволяет разделить потоки загрузки и отдачи, унифицирует gRPC, H2, H1 и также поддерживает QUIC.",
-      "label": "Включить XHTTP"
-    },
-    "tls_ech": {
-      "description": "Значение ECH в формате: cloudflare-ech.com+https://8.8.8.8/dns-query",
-      "label": "Значение TLS ECH"
     }
   },
   "copy": "Копировать",

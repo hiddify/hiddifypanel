@@ -60,6 +60,7 @@ export function useAdminMenu() {
             { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
             ...serverItems('manager'),
             { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
+            ...(isSuperAdmin.value ? [{ label: t('menu.configTester'), icon: 'pi pi-fw pi-bolt', to: '/config-tester' }] : []),
           ],
       // Domains, protocols, outbounds, settings, the proxy editor, then the rest (backup, apply, ...).
       // The proxy editor lives in Settings in every panel mode; agents don't get it.

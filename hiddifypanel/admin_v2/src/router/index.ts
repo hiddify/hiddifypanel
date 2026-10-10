@@ -147,6 +147,13 @@ const routes = [
         component: () => import('@/features/utils/views/UtilsView.vue'),
       },
       {
+        path: 'config-tester',
+        name: 'config-tester',
+        component: () => import('@/features/config-tester/views/ConfigTesterView.vue'),
+        // Runs cores on the server: super admins only.
+        beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
+      },
+      {
         path: 'apply',
         name: 'apply',
         component: () => import('@/features/apply/views/ApplyView.vue'),

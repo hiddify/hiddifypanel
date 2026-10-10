@@ -10,7 +10,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
-msgstr ""
+msgstr "Успешно удалено записей: %(count)s."
 
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s записей были успешно отключены."
@@ -19,13 +19,13 @@ msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s записей были успешно включены."
 
 msgid "%(count)s records were successfully reset days."
-msgstr ""
+msgstr "Дни успешно сброшены у записей: %(count)s."
 
 msgid "%(count)s records were successfully reset usage."
-msgstr ""
+msgstr "Трафик успешно сброшен у записей: %(count)s."
 
 msgid "%(count)s records were successfully updated."
-msgstr ""
+msgstr "Успешно обновлено записей: %(count)s."
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s дней"
@@ -37,10 +37,10 @@ msgid "0 - Last day"
 msgstr "Последний день"
 
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
-msgstr ""
+msgstr "<a href=\"%(user_link)s\"> %(user)s</a>"
 
 msgid "A fake domain needs a real domain name"
-msgstr ""
+msgstr "Для фейкового домена нужно настоящее доменное имя"
 
 msgid "Access Denied!"
 msgstr "Доступ запрещен"
@@ -67,7 +67,7 @@ msgid "Added by"
 msgstr "Добавлено"
 
 msgid "Admin Links"
-msgstr ""
+msgstr "Ссылки администратора"
 
 msgid "Admins"
 msgstr "Администраторы"
@@ -112,7 +112,7 @@ msgid "Bug"
 msgstr "Баги/Предложения"
 
 msgid "CDN and worker domains must use valid fake mode"
-msgstr ""
+msgstr "Домены CDN и worker должны использовать допустимый fake-режим"
 
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s Ядро"
@@ -121,7 +121,7 @@ msgid "Can add sub admin"
 msgstr "👥 Может добавлять администраторов"
 
 msgid "Change"
-msgstr ""
+msgstr "Изменить"
 
 msgid "Check again"
 msgstr "Проверить снова"
@@ -154,7 +154,7 @@ msgid "Copy Link"
 msgstr "Копировать ссылку"
 
 msgid "Copy QR image"
-msgstr ""
+msgstr "Копировать QR-изображение"
 
 msgid "Couldn't find your ip addresses"
 msgstr "Не удалось найти ваши IP-адреса"
@@ -247,7 +247,7 @@ msgstr ""
 "проблема. Пожалуйста, проверьте настройки."
 
 msgid "Domain cannot be resolved! Please check DNS settings"
-msgstr ""
+msgstr "Не удаётся разрешить домен! Проверьте настройки DNS"
 
 msgid "Domain is not REALITY friendly!"
 msgstr "Домен не подходит для использования с REALITY!"
@@ -302,6 +302,9 @@ msgstr "Пожертвование"
 msgid "Download App"
 msgstr "<i class='fa-solid fa-download'></i> Загрузить приложение"
 
+msgid "Download Domain"
+msgstr "📈 Домен загрузки"
+
 msgid "Edit"
 msgstr "Изменить"
 
@@ -313,9 +316,11 @@ msgstr "❇️ Включить"
 
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
+"Включите TLS ECH в настройках панели, прежде чем использовать ECH на домене "
+"CDN"
 
 msgid "Error in Config Generation"
-msgstr ""
+msgstr "Ошибка генерации конфигурации"
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ Ошибка в формате Auto CDN"
@@ -328,7 +333,7 @@ msgid "Example Domains"
 msgstr "Тестируйте и предложите домеy"
 
 msgid "Expired"
-msgstr ""
+msgstr "Истёк"
 
 msgid "Expired Users"
 msgstr "Пользователи с истекшим сроком действия"
@@ -340,7 +345,7 @@ msgid "Fake"
 msgstr "➖ Фейковый сайт"
 
 msgid "Fake domains can only be direct or relay"
-msgstr ""
+msgstr "Фейковые домены могут быть только прямыми или relay"
 
 msgid "Filter"
 msgstr "Фильтровать"
@@ -362,7 +367,7 @@ msgid "Hiddify"
 msgstr "Hiddify"
 
 msgid "Hiddify Android"
-msgstr "Hiddify Android"
+msgstr "Hiddify Android "
 
 msgid "HiddifyClash"
 msgstr "HiddifyClash"
@@ -389,7 +394,7 @@ msgid "HiddigyN"
 msgstr "Рекомендуется<span class='badge Badge-success'>HiddifyN</span>"
 
 msgid "Home Link"
-msgstr ""
+msgstr "Ссылка на главную"
 
 msgid "Hover the user to see the reason"
 msgstr "Наведите курсор на пользователя, чтобы увидеть причину"
@@ -440,7 +445,7 @@ msgid "Install Hiddify Application"
 msgstr "Установка панели Hidify"
 
 msgid "Invalid"
-msgstr ""
+msgstr "Недействителен"
 
 msgid "Invalid IP or domain"
 msgstr "Неверный IP или Домен"
@@ -476,10 +481,10 @@ msgid "Last Online"
 msgstr "Последнее соединение"
 
 msgid "Last node to parent"
-msgstr ""
+msgstr "Последний узел к родителю"
 
 msgid "Last parent to node"
-msgstr ""
+msgstr "Последний родитель к узлу"
 
 msgid "Link is changed!"
 msgstr "ℹ️Ссылка изменена!"
@@ -512,7 +517,7 @@ msgid "New"
 msgstr "Новый"
 
 msgid "No certificate"
-msgstr ""
+msgstr "Нет сертификата"
 
 msgid "No children!"
 msgstr "Нет дочерних"
@@ -520,12 +525,14 @@ msgstr "Нет дочерних"
 msgid ""
 "No main domains found, please add at least one domain with valid certificate"
 msgstr ""
+"Основные домены не найдены, добавьте хотя бы один домен с действительным "
+"сертификатом"
 
 msgid "Nodes"
-msgstr ""
+msgstr "Узлы"
 
 msgid "Not Secure"
-msgstr ""
+msgstr "Небезопасно"
 
 msgid "Note"
 msgstr "📝 Примечание"
@@ -543,7 +550,7 @@ msgid "Ok"
 msgstr "Хорошо"
 
 msgid "Online"
-msgstr ""
+msgstr "Онлайн"
 
 msgid "Online Users"
 msgstr "Пользователей в сети"
@@ -555,7 +562,7 @@ msgid "Only for sublink?"
 msgstr "🌍 Используйте только для ссылки на подпискy"
 
 msgid "Only one domain of this kind can be added"
-msgstr ""
+msgstr "Можно добавить только один домен такого типа"
 
 msgid "Oops! Something went wrong."
 msgstr "Упс! что-то пошло не так"
@@ -632,7 +639,7 @@ msgid "Please wait "
 msgstr "Пожалуйста, подождите"
 
 msgid "Port 80 and 443 can not be selected"
-msgstr ""
+msgstr "Порты 80 и 443 выбрать нельзя"
 
 msgid "Port is already used! in"
 msgstr "Порт уже используется в:"
@@ -661,7 +668,7 @@ msgstr ""
 "Отправьте сообщение, чтобы получить специальную версию для бизнес-пользователей."
 
 msgid "Proxy Editor"
-msgstr ""
+msgstr "Редактор прокси"
 
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath уже используется! используйте другой путь прокси"
@@ -670,7 +677,7 @@ msgid "QR code"
 msgstr "🧾 QR-код"
 
 msgid "QR code image copied"
-msgstr ""
+msgstr "QR-изображение скопировано"
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QR-код"
@@ -682,10 +689,10 @@ msgid "REALITY Fallback domain is not compaitble with server names!"
 msgstr "REALITY Fallback Domain несовместим с именами серверов!"
 
 msgid "REALITY Fallback domain is not compatible with server names!"
-msgstr ""
+msgstr "Резервный домен REALITY несовместим с именами серверов!"
 
 msgid "Relay domains with non-valid fake mode require an IP address"
-msgstr ""
+msgstr "Relay-домены с недопустимым fake-режимом требуют IP-адрес"
 
 msgid "Release"
 msgstr "✅ Релиз"
@@ -745,7 +752,7 @@ msgid "Restore Users description"
 msgstr "Выберите этот вариант, чтобы восстановить всех пользователей"
 
 msgid "Root"
-msgstr "Root"
+msgstr "Корень"
 
 msgid "Russia"
 msgstr "Россия"
@@ -760,7 +767,7 @@ msgid "Save Link"
 msgstr "Сохранить ссылку"
 
 msgid "Search Settings"
-msgstr ""
+msgstr "Поиск по настройкам"
 
 msgid "Select all records"
 msgstr "Выбрать все записи"
@@ -769,13 +776,13 @@ msgid "Select record"
 msgstr "Выберите запись"
 
 msgid "Selected proxy does not support this domain mode combination"
-msgstr ""
+msgstr "Выбранный прокси не поддерживает эту комбинацию режимов домена"
 
 msgid "Seleted Users"
 msgstr "Выбранные пользователи"
 
 msgid "Self-signed"
-msgstr ""
+msgstr "Самоподписанный"
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 Отправить сообщение в Telegram пользователя"
@@ -802,7 +809,7 @@ msgid "Sort by %(name)s"
 msgstr "Сортировать по %(name)s"
 
 msgid "Specifying CDN IP is only valid for CDN mode"
-msgstr ""
+msgstr "Указание IP CDN допустимо только в режиме CDN"
 
 msgid "Start Date"
 msgstr "Дата начала"
@@ -817,7 +824,7 @@ msgid "Status"
 msgstr "Статус"
 
 msgid "SubLink"
-msgstr ""
+msgstr "SubLink"
 
 msgid "Submit"
 msgstr "Подтвердить"
@@ -832,13 +839,13 @@ msgstr ""
 "убедиться, что все обновлено."
 
 msgid "TLS"
-msgstr ""
+msgstr "TLS"
 
 msgid "Telegram Bot"
 msgstr "Telegram-бот"
 
 msgid "Telegram Bot Link"
-msgstr ""
+msgstr "Ссылка на Telegram-бота"
 
 msgid "Temporary Short Link"
 msgstr "⏱️ Временная ссылка"
@@ -866,6 +873,8 @@ msgstr "Этого домена не существует в панели упр
 
 msgid "This restore has expired. Start it again from the Backup page."
 msgstr ""
+"Срок этого восстановления истёк. Запустите его снова на странице резервных "
+"копий."
 
 msgid "Today Usage"
 msgstr "Сегодня"
@@ -907,13 +916,13 @@ msgstr ""
 "<br />"
 
 msgid "Valid"
-msgstr ""
+msgstr "Действителен"
 
 msgid "View in Telegram"
 msgstr "Посмотреть в Telegram"
 
 msgid "Waiting for the process to start..."
-msgstr ""
+msgstr "Ожидание запуска процесса..."
 
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ Подключите свой аккаунт к Telegram"
@@ -970,7 +979,7 @@ msgid "You have used this domain in: "
 msgstr "Вы уже используете этот домен в:"
 
 msgid "You need to enable %(names)s globally to enable this proxy."
-msgstr ""
+msgstr "Чтобы включить этот прокси, нужно глобально включить %(names)s."
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1053,7 +1062,7 @@ msgid "admin.menu.config"
 msgstr "Настройки"
 
 msgid "admin.menu.dashboard_v2"
-msgstr ""
+msgstr "Далее"
 
 msgid "admin.menu.domain"
 msgstr "Домены"
@@ -1109,6 +1118,5331 @@ msgstr ""
 "⚠️ Подождите около 5 минут, чтобы убедиться, что все обновлено. в течение "
 "этого времени скопируйте и сохраните ссылки для прокси-серверов:"
 
+msgid "adminV2.account.aliasActive"
+msgstr "Оставьте пустым и сохраните, чтобы удалить."
+
+msgid "adminV2.account.aliasCleared"
+msgstr "Имя пользователя удалено"
+
+msgid "adminV2.account.aliasHint"
+msgstr ""
+"Входите с этим именем пользователя и паролем вместо ID. Ссылки, которыми вы "
+"делитесь, не будут содержать ID."
+
+msgid "adminV2.account.aliasNeedsStrong"
+msgstr ""
+"Сначала задайте выше надёжный пароль: имя пользователя работает только с "
+"надёжным паролем."
+
+msgid "adminV2.account.aliasOn"
+msgstr "Вкл."
+
+msgid "adminV2.account.aliasPlaceholder"
+msgstr "напр. sara.sales"
+
+msgid "adminV2.account.aliasProblem.bad_chars"
+msgstr ""
+"Только a-z, 0-9, точка, дефис и подчёркивание; начинается с буквы или цифры"
+
+msgid "adminV2.account.aliasProblem.looks_like_uuid"
+msgstr "Не должно выглядеть как ID (UUID)"
+
+msgid "adminV2.account.aliasProblem.too_short"
+msgstr "Не менее {n} симв."
+
+msgid "adminV2.account.aliasSaved"
+msgstr "Теперь вы можете войти как {alias}"
+
+msgid "adminV2.account.aliasSuper"
+msgstr ""
+"Суперадмины входят только по своей админ-ссылке, поэтому у них нет имени "
+"пользователя."
+
+msgid "adminV2.account.aliasTitle"
+msgstr "Имя пользователя для входа"
+
+msgid "adminV2.account.canAddAdmins"
+msgstr "Может добавлять субадминов"
+
+msgid "adminV2.account.changePassword"
+msgstr "Сменить пароль"
+
+msgid "adminV2.account.configsCount"
+msgstr ""
+"{n} конфигурация для всех моих пользователей | {n} конфигураций для всех "
+"моих пользователей"
+
+msgid "adminV2.account.configsEmpty"
+msgstr ""
+"Конфигураций пока нет. Добавьте ссылку на подписку или вставьте "
+"конфигурацию: её получат все ваши пользователи."
+
+msgid "adminV2.account.configsSave"
+msgstr "Сохранить конфигурации"
+
+msgid "adminV2.account.configsSaved"
+msgstr "Конфигурации сохранены"
+
+msgid "adminV2.account.configsSub"
+msgstr ""
+"Добавляются в подписку всех ваших пользователей и пользователей ваших "
+"субадминов, поверх собственных конфигураций каждого пользователя."
+
+msgid "adminV2.account.configsTitle"
+msgstr "Конфигурации для моих пользователей"
+
+msgid "adminV2.account.configsUnsaved"
+msgstr "Ещё не сохранено"
+
+msgid "adminV2.account.copyLink"
+msgstr "Копировать мою админ-ссылку"
+
+msgid "adminV2.account.current"
+msgstr "Текущий пароль"
+
+msgid "adminV2.account.editConfigs"
+msgstr "Изменить конфигурации"
+
+msgid "adminV2.account.generate"
+msgstr "Сгенерировать"
+
+msgid "adminV2.account.generatedCopied"
+msgstr "Надёжный пароль сгенерирован и скопирован"
+
+msgid "adminV2.account.inheritedConfigs"
+msgstr "+ {n} унаследовано от вышестоящих админов"
+
+msgid "adminV2.account.languageDefault"
+msgstr "По умолчанию панели ({name})"
+
+msgid "adminV2.account.languageHint"
+msgstr "Язык ваших страниц администратора"
+
+msgid "adminV2.account.languageTitle"
+msgstr "Язык"
+
+msgid "adminV2.account.limitsSub"
+msgstr ""
+"Ваши пользователи и все пользователи ваших субадминов учитываются в этих "
+"лимитах."
+
+msgid "adminV2.account.limitsTitle"
+msgstr "Мои лимиты"
+
+msgid "adminV2.account.loginHint"
+msgstr "После сохранения входите по своей админ-ссылке и этому паролю."
+
+msgid "adminV2.account.minLength"
+msgstr "Не менее {n} симв."
+
+msgid "adminV2.account.mismatch"
+msgstr "Пароли не совпадают"
+
+msgid "adminV2.account.nearLimit"
+msgstr ""
+"Вы близки к лимиту. Попросите вышестоящего админа увеличить его или "
+"отключите ненужных пользователей."
+
+msgid "adminV2.account.new"
+msgstr "Новый пароль"
+
+msgid "adminV2.account.noLimits"
+msgstr "У суперадминов нет лимитов."
+
+msgid "adminV2.account.noPasswordSub"
+msgstr ""
+"У вас нет пароля: любой, у кого есть ваша ссылка, может войти. Задайте "
+"пароль, чтобы защитить аккаунт."
+
+msgid "adminV2.account.outboundApply"
+msgstr "Примените изменения, чтобы они вступили в силу."
+
+msgid "adminV2.account.outboundNone"
+msgstr "Исходящих подключений пока нет. Их настраивает суперадмин."
+
+msgid "adminV2.account.outboundSaved"
+msgstr "Исходящее подключение по умолчанию сохранено"
+
+msgid "adminV2.account.outboundSub"
+msgstr ""
+"Через какое подключение выходят мои пользователи и пользователи моих "
+"субадминов, если пользователь (или ближайший админ) не выбрал другое."
+
+msgid "adminV2.account.outboundTitle"
+msgstr "Исходящее подключение по умолчанию"
+
+msgid "adminV2.account.passwordNone"
+msgstr "Пароля нет: любой, у кого есть ваша ссылка, может войти"
+
+msgid "adminV2.account.passwordSet"
+msgstr "Аккаунт защищён паролем"
+
+msgid "adminV2.account.passwordSub"
+msgstr "Измените пароль, с которым вы входите."
+
+msgid "adminV2.account.passwordTitle"
+msgstr "Пароль"
+
+msgid "adminV2.account.repeat"
+msgstr "Повторите новый пароль"
+
+msgid "adminV2.account.save"
+msgstr "Сохранить пароль"
+
+msgid "adminV2.account.saved"
+msgstr "Пароль изменён"
+
+msgid "adminV2.account.setPassword"
+msgstr "Задать пароль"
+
+msgid "adminV2.account.settingsSub"
+msgstr "Ваш язык, пароль и имя для входа."
+
+msgid "adminV2.account.settingsTitle"
+msgstr "Настройки"
+
+msgid "adminV2.account.strength.medium"
+msgstr "Средний"
+
+msgid "adminV2.account.strength.prompt"
+msgstr "Введите пароль"
+
+msgid "adminV2.account.strength.strong"
+msgstr "Надёжный"
+
+msgid "adminV2.account.strength.weak"
+msgstr "Слабый"
+
+msgid "adminV2.account.subAdmins"
+msgstr "Субадмины"
+
+msgid "adminV2.account.subtitle"
+msgstr "Ваши лимиты, сколько из них вы используете, и ваш пароль."
+
+msgid "adminV2.account.superText"
+msgstr "Вы можете добавлять сколько угодно пользователей и админов."
+
+msgid "adminV2.account.tabs.overview"
+msgstr "Обзор"
+
+msgid "adminV2.account.tabs.security"
+msgstr "Безопасность"
+
+msgid "adminV2.account.tabs.users"
+msgstr "Мои пользователи"
+
+msgid "adminV2.account.title"
+msgstr "Мой аккаунт"
+
+msgid "adminV2.account.under"
+msgstr "Под {name}"
+
+msgid "adminV2.account.unlimited"
+msgstr "Без ограничений"
+
+msgid "adminV2.account.wrongCurrent"
+msgstr "Текущий пароль неверный"
+
+msgid "adminV2.actions.applyConfigs"
+msgstr "Применить конфигурации"
+
+msgid "adminV2.actions.applyConfigsHint"
+msgstr "Пересоздать конфигурации сервера и применить их к запущенным службам."
+
+msgid "adminV2.actions.confirm"
+msgstr "Вы уверены, что хотите выполнить это действие?"
+
+msgid "adminV2.actions.ports.copied"
+msgstr "{what} скопировано"
+
+msgid "adminV2.actions.ports.copyList"
+msgstr "Копировать список"
+
+msgid "adminV2.actions.ports.count"
+msgstr "{n} портов"
+
+msgid "adminV2.actions.ports.firewall"
+msgstr "Команды брандмауэра (ufw)"
+
+msgid "adminV2.actions.ports.hint"
+msgstr ""
+"Все порты, которые должны быть открыты в интернет на этом сервере, в виде, "
+"готовом для брандмауэра."
+
+msgid "adminV2.actions.ports.lead"
+msgstr ""
+"Откройте эти порты в брандмауэре вашего сервера (или облачного провайдера), "
+"чтобы пользователи могли подключаться."
+
+msgid "adminV2.actions.ports.none"
+msgstr "нет"
+
+msgid "adminV2.actions.ports.openProxy"
+msgstr "Открыть этот пользовательский прокси"
+
+msgid "adminV2.actions.ports.refresh"
+msgstr "Обновить"
+
+msgid "adminV2.actions.ports.title"
+msgstr "Публичные порты"
+
+msgid "adminV2.actions.reinstall"
+msgstr "Переустановить"
+
+msgid "adminV2.actions.reinstallHint"
+msgstr ""
+"Запустить полный установщик заново. Службы будут недоступны несколько минут."
+
+msgid "adminV2.actions.resetCache"
+msgstr "Сбросить кэш"
+
+msgid "adminV2.actions.resetCacheDone"
+msgstr "Кэш очищен"
+
+msgid "adminV2.actions.resetCacheFailed"
+msgstr "Не удалось сбросить кэш"
+
+msgid "adminV2.actions.resetCacheHint"
+msgstr ""
+"Очистить кэшированные данные панели и отрендеренные шаблоны. Безопасно; "
+"перезапуск служб не требуется."
+
+msgid "adminV2.actions.restart"
+msgstr "Перезагрузить систему"
+
+msgid "adminV2.actions.restartHint"
+msgstr "Перезапустить все службы. Активные соединения будут разорваны."
+
+msgid "adminV2.actions.status"
+msgstr "Статус"
+
+msgid "adminV2.actions.statusHint"
+msgstr "Проверить состояние всех служб и показать журнал проверки."
+
+msgid "adminV2.actions.subtitle"
+msgstr "Обслуживание и системные операции этой панели."
+
+msgid "adminV2.actions.title"
+msgstr "Действия"
+
+msgid "adminV2.actions.update"
+msgstr "Обновить"
+
+msgid "adminV2.actions.updateHint"
+msgstr "Обновить панель и все службы до последней версии."
+
+msgid "adminV2.actions.viewlogs"
+msgstr "Просмотр журналов"
+
+msgid "adminV2.actions.viewlogsHint"
+msgstr "Просмотр файлов системных журналов."
+
+msgid "adminV2.admins.add"
+msgstr "Добавить админа"
+
+msgid "adminV2.admins.canAddHint"
+msgstr "Этот админ может создавать собственных субадминов"
+
+msgid "adminV2.admins.canAddShort"
+msgstr "Добавляет субадминов"
+
+msgid "adminV2.admins.clearSearch"
+msgstr "Очистить поиск"
+
+msgid "adminV2.admins.col.link"
+msgstr "Админ-ссылка"
+
+msgid "adminV2.admins.col.mode"
+msgstr "Режим"
+
+msgid "adminV2.admins.col.name"
+msgstr "Имя"
+
+msgid "adminV2.admins.col.note"
+msgstr "Заметка"
+
+msgid "adminV2.admins.col.subAdmins"
+msgstr "Субадмины"
+
+msgid "adminV2.admins.col.users"
+msgstr "Пользователи"
+
+msgid "adminV2.admins.collapse"
+msgstr "Скрыть субадминов {name}"
+
+msgid "adminV2.admins.copyLink"
+msgstr "Копировать ссылку"
+
+msgid "adminV2.admins.credentials.copyMessage"
+msgstr "Копировать сообщение"
+
+msgid "adminV2.admins.credentials.copyMessageHint"
+msgstr "Копирует сообщение вместе с QR-кодом"
+
+msgid "adminV2.admins.credentials.createdTitle"
+msgstr "{name} готов"
+
+msgid "adminV2.admins.credentials.done"
+msgstr "Готово"
+
+msgid "adminV2.admins.credentials.lead"
+msgstr "Отправьте это админу. Он откроет ссылку и войдёт с паролем."
+
+msgid "adminV2.admins.credentials.link"
+msgstr "Админ-ссылка"
+
+msgid "adminV2.admins.credentials.message"
+msgstr ""
+"Чтобы войти, откройте ссылку:\n"
+"{link}\n"
+"и войдите с паролем: {password}"
+
+msgid "adminV2.admins.credentials.messageAlias"
+msgstr ""
+"Чтобы войти, откройте ссылку:\n"
+"{link}\n"
+"и войдите с именем пользователя: {alias}\n"
+"и паролем: {password}"
+
+msgid "adminV2.admins.credentials.messageLabel"
+msgstr "Сообщение для отправки"
+
+msgid "adminV2.admins.credentials.once"
+msgstr ""
+"Пароль показывается только сейчас. Скопируйте его, прежде чем закрыть; иначе"
+" сбросьте его снова."
+
+msgid "adminV2.admins.credentials.password"
+msgstr "Пароль"
+
+msgid "adminV2.admins.credentials.resetTitle"
+msgstr "Новый пароль для {name}"
+
+msgid "adminV2.admins.credentials.show"
+msgstr "Показать пароль"
+
+msgid "adminV2.admins.credentials.username"
+msgstr "Имя пользователя"
+
+msgid "adminV2.admins.deleteMessage"
+msgstr "Этот админ будет удалён, а его пользователи перейдут к вам."
+
+msgid "adminV2.admins.deleteMessageWithSubs"
+msgstr ""
+"Этот админ и его субадмин ({count}) будут удалены, а их пользователи "
+"перейдут к вам. | Этот админ и его субадмины ({count}) будут удалены, а их "
+"пользователи перейдут к вам."
+
+msgid "adminV2.admins.deleteTitle"
+msgstr "Удалить {name}?"
+
+msgid "adminV2.admins.deleted"
+msgstr "{name} удалён"
+
+msgid "adminV2.admins.empty.cta"
+msgstr "Добавьте первого админа"
+
+msgid "adminV2.admins.empty.text"
+msgstr ""
+"Добавьте агентов, чтобы разделить работу. У каждого будут своя ссылка, "
+"пароль и лимиты."
+
+msgid "adminV2.admins.empty.textNoPermission"
+msgstr ""
+"У вас нет прав добавлять админов. Обратитесь к вышестоящему админу, если это"
+" нужно."
+
+msgid "adminV2.admins.empty.title"
+msgstr "Субадминов пока нет"
+
+msgid "adminV2.admins.expand"
+msgstr "Показать субадминов {name}"
+
+msgid "adminV2.admins.filter.anyMode"
+msgstr "Любой режим"
+
+msgid "adminV2.admins.filter.anySub"
+msgstr "Любое разрешение"
+
+msgid "adminV2.admins.filter.canAdd"
+msgstr "Может добавлять субадминов"
+
+msgid "adminV2.admins.filter.cannotAdd"
+msgstr "Не может добавлять субадминов"
+
+msgid "adminV2.admins.filter.clear"
+msgstr "Сбросить фильтры"
+
+msgid "adminV2.admins.filter.mode"
+msgstr "Фильтр по режиму"
+
+msgid "adminV2.admins.filter.sub"
+msgstr "Фильтр по праву на субадминов"
+
+msgid "adminV2.admins.form.advanced"
+msgstr "Дополнительно"
+
+msgid "adminV2.admins.form.advancedHint"
+msgstr "Под {name}"
+
+msgid "adminV2.admins.form.alias"
+msgstr "Имя пользователя для входа"
+
+msgid "adminV2.admins.form.aliasHint"
+msgstr ""
+"С именем пользователя вход выполняется по имени и паролю, а общие ссылки не "
+"содержат ID."
+
+msgid "adminV2.admins.form.canAddAdmin"
+msgstr "Может добавлять субадминов"
+
+msgid "adminV2.admins.form.canAddAdminHint"
+msgstr ""
+"Позволяет этому админу создавать собственных агентов в рамках его лимитов."
+
+msgid "adminV2.admins.form.configs"
+msgstr "Конфигурации для пользователей этого админа"
+
+msgid "adminV2.admins.form.configsCount"
+msgstr "{n} конфигурация | {n} конфигураций"
+
+msgid "adminV2.admins.form.configsHint"
+msgstr ""
+"Добавляются в подписку каждого пользователя этого админа и его субадминов."
+
+msgid "adminV2.admins.form.create"
+msgstr "Создать админа"
+
+msgid "adminV2.admins.form.createSubtitle"
+msgstr "Создаёт агента. Для него генерируется надёжный пароль."
+
+msgid "adminV2.admins.form.createTitle"
+msgstr "Новый админ"
+
+msgid "adminV2.admins.form.editSubtitle"
+msgstr "Изменения применяются сразу."
+
+msgid "adminV2.admins.form.editTitle"
+msgstr "Изменить {name}"
+
+msgid "adminV2.admins.form.emptyNoLimit"
+msgstr "Оставьте пустым для отсутствия лимита"
+
+msgid "adminV2.admins.form.limits"
+msgstr "Лимиты"
+
+msgid "adminV2.admins.form.limitsHint"
+msgstr ""
+"Считаются по пользователям этого админа и всех его субадминов. При "
+"достижении лимита новых пользователей добавить нельзя."
+
+msgid "adminV2.admins.form.name"
+msgstr "Имя"
+
+msgid "adminV2.admins.form.namePlaceholder"
+msgstr "напр. Отдел продаж"
+
+msgid "adminV2.admins.form.nameRequired"
+msgstr "Требуется имя"
+
+msgid "adminV2.admins.form.newUuid"
+msgstr "Новый UUID"
+
+msgid "adminV2.admins.form.noLimit"
+msgstr "Без ограничений"
+
+msgid "adminV2.admins.form.note"
+msgstr "Заметка"
+
+msgid "adminV2.admins.form.notePlaceholder"
+msgstr "Видна только вышестоящим админам"
+
+msgid "adminV2.admins.form.optional"
+msgstr "необязательно"
+
+msgid "adminV2.admins.form.outbound"
+msgstr "Исходящее подключение по умолчанию"
+
+msgid "adminV2.admins.form.outboundHint"
+msgstr ""
+"Через какое подключение выходят пользователи этого админа (и его "
+"субадминов), если пользователь не выбрал другое."
+
+msgid "adminV2.admins.form.parent"
+msgstr "Родительский админ"
+
+msgid "adminV2.admins.form.parentHint"
+msgstr "Новый админ, его пользователи и лимиты находятся под этим админом."
+
+msgid "adminV2.admins.form.passwordInfo"
+msgstr ""
+"Надёжный пароль создаётся автоматически. Вы сможете скопировать его вместе "
+"со ссылкой для входа сразу после сохранения."
+
+msgid "adminV2.admins.form.placement"
+msgstr "Место в команде"
+
+msgid "adminV2.admins.form.superNoLimits"
+msgstr "У суперадминов нет лимитов."
+
+msgid "adminV2.admins.form.upTo"
+msgstr "До {max} (ваш лимит)"
+
+msgid "adminV2.admins.form.uuidHint"
+msgstr ""
+"Генерируется автоматически. Меняйте только чтобы повторно использовать "
+"известный ID."
+
+msgid "adminV2.admins.form.uuidInvalid"
+msgstr "Это недопустимый UUID"
+
+msgid "adminV2.admins.limit.max_active_users"
+msgstr "Макс. активных пользователей"
+
+msgid "adminV2.admins.limit.max_online_users"
+msgstr "Макс. пользователей онлайн"
+
+msgid "adminV2.admins.limit.max_total_usage_GB"
+msgstr "Макс. использованный трафик (всего)"
+
+msgid "adminV2.admins.limit.max_users"
+msgstr "Макс. всего пользователей"
+
+msgid "adminV2.admins.linkDialog.pwHint"
+msgstr "Пароли больше не показываются. Чтобы выдать новый, сбросьте его."
+
+msgid "adminV2.admins.linkDialog.pwNone"
+msgstr "Пароля нет: вход только по этой ссылке"
+
+msgid "adminV2.admins.linkDialog.pwSet"
+msgstr "Вход по этой ссылке и паролю"
+
+msgid "adminV2.admins.linkDialog.title"
+msgstr "Админ-ссылка {name}"
+
+msgid "adminV2.admins.linkDialog.username"
+msgstr "Имя пользователя"
+
+msgid "adminV2.admins.linkDialog.usernameHint"
+msgstr ""
+"Эта ссылка открывает страницу входа; он входит с этим именем пользователя и "
+"своим паролем."
+
+msgid "adminV2.admins.meLocked"
+msgstr ""
+"Это вы: здесь можно изменить только конфигурации ваших пользователей. Пароль"
+" меняется в разделе «Мой аккаунт»."
+
+msgid "adminV2.admins.meter.active"
+msgstr "Активные"
+
+msgid "adminV2.admins.meter.activeHint"
+msgstr ""
+"Пользователи, которые включены и у которых остались дни и трафик, из "
+"разрешённого числа"
+
+msgid "adminV2.admins.meter.online"
+msgstr "Онлайн"
+
+msgid "adminV2.admins.meter.onlineHint"
+msgstr "Пользователи, замеченные за последние 24 часа, из разрешённого числа"
+
+msgid "adminV2.admins.meter.total"
+msgstr "Всего"
+
+msgid "adminV2.admins.meter.totalHint"
+msgstr "Все пользователи, из разрешённого числа"
+
+msgid "adminV2.admins.meter.traffic"
+msgstr "Трафик"
+
+msgid "adminV2.admins.meter.trafficHint"
+msgstr ""
+"Трафик, использованный всеми этими пользователями, из разрешённого общего "
+"объёма"
+
+msgid "adminV2.admins.mode.admin"
+msgstr "Админ"
+
+msgid "adminV2.admins.mode.agent"
+msgstr "Агент"
+
+msgid "adminV2.admins.mode.super_admin"
+msgstr "Суперадмин"
+
+msgid "adminV2.admins.more"
+msgstr "Другие действия"
+
+msgid "adminV2.admins.myConfigs"
+msgstr "Конфигурации для моих пользователей"
+
+msgid "adminV2.admins.myConfigsHint"
+msgstr ""
+"Конфигурации для моих пользователей: добавляются в подписку всех ваших "
+"пользователей и пользователей ваших субадминов"
+
+msgid "adminV2.admins.noMatch"
+msgstr "Нет админов, подходящих под фильтры"
+
+msgid "adminV2.admins.outbound.auto"
+msgstr "Автоматически"
+
+msgid "adminV2.admins.outbound.inherit"
+msgstr "Как выше: {name}"
+
+msgid "adminV2.admins.refresh"
+msgstr "Обновить"
+
+msgid "adminV2.admins.resetMessage"
+msgstr "Будет сгенерирован новый пароль, а старый сразу перестанет работать."
+
+msgid "adminV2.admins.resetPassword"
+msgstr "Сбросить пароль"
+
+msgid "adminV2.admins.resetTitle"
+msgstr "Сбросить пароль {name}?"
+
+msgid "adminV2.admins.saved"
+msgstr "{name} сохранён"
+
+msgid "adminV2.admins.search"
+msgstr "Поиск по имени или UUID"
+
+msgid "adminV2.admins.showLink"
+msgstr "Админ-ссылка"
+
+msgid "adminV2.admins.subCount"
+msgstr "{n} субадмин | {n} субадминов"
+
+msgid "adminV2.admins.subtitle"
+msgstr ""
+"Ваша команда админов в виде дерева. Лимиты каждого админа охватывают его "
+"пользователей и всех, кто ниже."
+
+msgid "adminV2.admins.summary.admins"
+msgstr "админ | админов"
+
+msgid "adminV2.admins.summary.online"
+msgstr "онлайн"
+
+msgid "adminV2.admins.summary.users"
+msgstr "пользователь | пользователей"
+
+msgid "adminV2.admins.title"
+msgstr "Админы"
+
+msgid "adminV2.admins.you"
+msgstr "Вы"
+
+msgid "adminV2.appTitle"
+msgstr "HiddifyManager"
+
+msgid "adminV2.apply.action.apply.button"
+msgstr "Применить сейчас"
+
+msgid "adminV2.apply.action.apply.desc"
+msgstr ""
+"Применяет изменения настроек, пользователей и доменов. Быстро; обычный выбор"
+" после любых изменений."
+
+msgid "adminV2.apply.action.apply.done"
+msgstr "Изменения применены"
+
+msgid "adminV2.apply.action.apply.running"
+msgstr "Применение изменений"
+
+msgid "adminV2.apply.action.apply.title"
+msgstr "Применить изменения"
+
+msgid "adminV2.apply.action.install.button"
+msgstr "Переустановить"
+
+msgid "adminV2.apply.action.install.confirm"
+msgstr ""
+"Всё будет установлено заново. Соединения могут прерваться на несколько "
+"минут. Продолжить?"
+
+msgid "adminV2.apply.action.install.desc"
+msgstr ""
+"Устанавливает всё заново и пересобирает все службы. Используйте, когда "
+"применения недостаточно, например после смены пути панели или протоколов."
+
+msgid "adminV2.apply.action.install.done"
+msgstr "Переустановка завершена"
+
+msgid "adminV2.apply.action.install.running"
+msgstr "Переустановка"
+
+msgid "adminV2.apply.action.install.title"
+msgstr "Переустановить"
+
+msgid "adminV2.apply.action.restart.button"
+msgstr "Перезапуск"
+
+msgid "adminV2.apply.action.restart.confirm"
+msgstr ""
+"Все службы перезапустятся. Соединения ненадолго прервутся. Продолжить?"
+
+msgid "adminV2.apply.action.restart.desc"
+msgstr ""
+"Перезапускает все службы Hiddify без переустановки. Хороший первый шаг, если"
+" что-то работает неправильно."
+
+msgid "adminV2.apply.action.restart.done"
+msgstr "Службы перезапущены"
+
+msgid "adminV2.apply.action.restart.running"
+msgstr "Перезапуск служб"
+
+msgid "adminV2.apply.action.restart.title"
+msgstr "Перезапустить службы"
+
+msgid "adminV2.apply.action.status.button"
+msgstr "Проверить сейчас"
+
+msgid "adminV2.apply.action.status.desc"
+msgstr ""
+"Показывает, работает ли каждая служба, а также публичный IP сервера и Warp. "
+"Ничего не меняет."
+
+msgid "adminV2.apply.action.status.done"
+msgstr "Статус проверен"
+
+msgid "adminV2.apply.action.status.running"
+msgstr "Проверка статуса"
+
+msgid "adminV2.apply.action.status.title"
+msgstr "Проверить статус"
+
+msgid "adminV2.apply.action.update.button"
+msgstr "Обновить"
+
+msgid "adminV2.apply.action.update.confirm"
+msgstr ""
+"Hiddify будет обновлён до последней версии. Панель перезапустится, "
+"соединения могут прерваться на несколько минут. Продолжить?"
+
+msgid "adminV2.apply.action.update.desc"
+msgstr ""
+"Скачивает и устанавливает последнюю версию Hiddify, затем применяет её. Это "
+"занимает время; в конце панель перезапустится."
+
+msgid "adminV2.apply.action.update.done"
+msgstr "Обновление завершено"
+
+msgid "adminV2.apply.action.update.running"
+msgstr "Обновление"
+
+msgid "adminV2.apply.action.update.title"
+msgstr "Обновить Hiddify"
+
+msgid "adminV2.apply.busyOutside"
+msgstr "На сервере сейчас что-то выполняется."
+
+msgid "adminV2.apply.lastRun"
+msgstr "Последний запуск {when}"
+
+msgid "adminV2.apply.log.clear"
+msgstr "Очистить"
+
+msgid "adminV2.apply.log.clearConfirm"
+msgstr "Очистить «{name}»? Его текст будет удалён с сервера."
+
+msgid "adminV2.apply.log.clearFailed"
+msgstr "Не удалось очистить журнал"
+
+msgid "adminV2.apply.log.cleared"
+msgstr "Журнал очищен"
+
+msgid "adminV2.apply.log.copied"
+msgstr "Журнал скопирован"
+
+msgid "adminV2.apply.log.download"
+msgstr "Скачать"
+
+msgid "adminV2.apply.log.empty"
+msgstr "Пока ничего…"
+
+msgid "adminV2.apply.log.follow"
+msgstr "Последние"
+
+msgid "adminV2.apply.log.hide"
+msgstr "Скрыть журнал"
+
+msgid "adminV2.apply.log.loading"
+msgstr "Загрузка…"
+
+msgid "adminV2.apply.log.show"
+msgstr "Показать журнал"
+
+msgid "adminV2.apply.log.showingEnd"
+msgstr "показан конец"
+
+msgid "adminV2.apply.log.terminal"
+msgstr "журнал"
+
+msgid "adminV2.apply.log.wrap"
+msgstr "Переносить строки"
+
+msgid "adminV2.apply.logs.clearAll"
+msgstr "Очистить всё"
+
+msgid "adminV2.apply.logs.clearAllConfirm"
+msgstr ""
+"Очистить все файлы журналов? Текст будет удалён с сервера (журнал, который "
+"сейчас пишет запущенное действие, сохраняется)."
+
+msgid "adminV2.apply.logs.clearFailed"
+msgstr "Не удалось очистить некоторые журналы"
+
+msgid "adminV2.apply.logs.clearSkipped"
+msgstr "Сохранено используемых: {n}"
+
+msgid "adminV2.apply.logs.clearedAll"
+msgstr "Журналы очищены"
+
+msgid "adminV2.apply.logs.empty"
+msgstr "Журналов пока нет"
+
+msgid "adminV2.apply.logs.sub"
+msgstr "Что делало каждое действие, по данным сервера."
+
+msgid "adminV2.apply.logs.title"
+msgstr "Журналы"
+
+msgid "adminV2.apply.logs.view"
+msgstr "Открыть"
+
+msgid "adminV2.apply.minutes"
+msgstr "~{n} мин"
+
+msgid "adminV2.apply.notStarted"
+msgstr "Не удалось запустить"
+
+msgid "adminV2.apply.recommended"
+msgstr "рекомендуется"
+
+msgid "adminV2.apply.run.dontClose"
+msgstr ""
+"Вы можете покинуть эту страницу; процесс продолжит работать на сервере."
+
+msgid "adminV2.apply.run.hide"
+msgstr "Скрыть"
+
+msgid "adminV2.apply.run.links"
+msgstr "Админ-ссылки на ваших доменах (они могли измениться)"
+
+msgid "adminV2.apply.run.reconnecting"
+msgstr "Панель перезапускается, повторное подключение…"
+
+msgid "adminV2.apply.run.reload"
+msgstr ""
+"Панель обновлена. Перезагрузите страницу, чтобы использовать новую версию."
+
+msgid "adminV2.apply.run.reloadBtn"
+msgstr "Перезагрузить"
+
+msgid "adminV2.apply.run.stalled"
+msgstr "Долгое время в журнале нет ничего нового. Проверьте журнал ниже."
+
+msgid "adminV2.apply.run.starting"
+msgstr "Запуск…"
+
+msgid "adminV2.apply.run.waitingStart"
+msgstr "Ожидание запуска…"
+
+msgid "adminV2.apply.run.working"
+msgstr "Выполняется…"
+
+msgid "adminV2.apply.subtitle"
+msgstr "Применить изменения, обновить сервер и посмотреть, как всё работает"
+
+msgid "adminV2.apply.takes"
+msgstr "Примерное время выполнения"
+
+msgid "adminV2.apply.title"
+msgstr "Применение и статус"
+
+msgid "adminV2.apply.watch"
+msgstr "Следить"
+
+msgid "adminV2.applyNotice.apply"
+msgstr "Сохранено. Примените конфигурации, чтобы изменения вступили в силу."
+
+msgid "adminV2.applyNotice.later"
+msgstr "Позже"
+
+msgid "adminV2.applyNotice.reinstall"
+msgstr ""
+"Сохранено. Для вступления некоторых изменений в силу нужна переустановка."
+
+msgid "adminV2.applyNotice.update"
+msgstr ""
+"Сохранено. Канал обновлений изменён; запустите обновление, чтобы "
+"переключиться."
+
+msgid "adminV2.backup.auto.connect"
+msgstr "Подключить Telegram"
+
+msgid "adminV2.backup.auto.deleteFailed"
+msgstr "Не удалось удалить"
+
+msgid "adminV2.backup.auto.deleteMessage"
+msgstr "Резервная копия от {when} будет удалена с сервера."
+
+msgid "adminV2.backup.auto.deleteTitle"
+msgstr "Удалить эту резервную копию?"
+
+msgid "adminV2.backup.auto.download"
+msgstr "Скачать"
+
+msgid "adminV2.backup.auto.empty"
+msgstr "На сервере пока нет резервных копий"
+
+msgid "adminV2.backup.auto.latest"
+msgstr "последняя"
+
+msgid "adminV2.backup.auto.restore"
+msgstr "Восстановить эту"
+
+msgid "adminV2.backup.auto.showAll"
+msgstr "Показать все ({n})"
+
+msgid "adminV2.backup.auto.showLess"
+msgstr "Показать меньше"
+
+msgid "adminV2.backup.auto.sub"
+msgstr ""
+"Создаются автоматически время от времени, а также когда вы сохраняете копию "
+"здесь."
+
+msgid "adminV2.backup.auto.telegramOff"
+msgstr "Автоматические резервные копии можно также получать в Telegram."
+
+msgid "adminV2.backup.auto.telegramOn"
+msgstr ""
+"Каждая автоматическая резервная копия также отправляется вам в Telegram."
+
+msgid "adminV2.backup.auto.title"
+msgstr "Резервные копии на сервере"
+
+msgid "adminV2.backup.count.admins"
+msgstr "админы"
+
+msgid "adminV2.backup.count.custom_proxies"
+msgstr "пользовательские прокси"
+
+msgid "adminV2.backup.count.domains"
+msgstr "домены"
+
+msgid "adminV2.backup.count.nodes"
+msgstr "узлы"
+
+msgid "adminV2.backup.count.settings"
+msgstr "настройки"
+
+msgid "adminV2.backup.count.users"
+msgstr "пользователи"
+
+msgid "adminV2.backup.restore.advanced"
+msgstr "Дополнительно"
+
+msgid "adminV2.backup.restore.change"
+msgstr "Выбрать другую"
+
+msgid "adminV2.backup.restore.confirmMessage"
+msgstr ""
+"Эти части панели будут заменены: {parts}. Сначала сделайте резервную копию, "
+"если они могут понадобиться."
+
+msgid "adminV2.backup.restore.confirmTitle"
+msgstr "Восстановить эту резервную копию?"
+
+msgid "adminV2.backup.restore.drop"
+msgstr "Перетащите сюда файл резервной копии"
+
+msgid "adminV2.backup.restore.dropHint"
+msgstr "или нажмите, чтобы выбрать резервную копию .json"
+
+msgid "adminV2.backup.restore.fromFile"
+msgstr "С вашего устройства"
+
+msgid "adminV2.backup.restore.fromServer"
+msgstr "С этого сервера"
+
+msgid "adminV2.backup.restore.notJson"
+msgstr "Выберите файл резервной копии .json"
+
+msgid "adminV2.backup.restore.part.domains"
+msgstr "Домены"
+
+msgid "adminV2.backup.restore.part.domainsHint"
+msgstr "Домены, их сертификаты и пользовательские прокси"
+
+msgid "adminV2.backup.restore.part.settings"
+msgstr "Настройки"
+
+msgid "adminV2.backup.restore.part.settingsHint"
+msgstr "Настройки панели, прокси и их конфигурации"
+
+msgid "adminV2.backup.restore.part.users"
+msgstr "Пользователи"
+
+msgid "adminV2.backup.restore.part.usersHint"
+msgstr "Пользователи, их трафик и лимиты, а также админы"
+
+msgid "adminV2.backup.restore.pathChanges"
+msgstr ""
+"Эта резервная копия создана в другой панели: после восстановления админ-"
+"ссылка изменится. Новые ссылки будут показаны по завершении."
+
+msgid "adminV2.backup.restore.replaceOwner"
+msgstr "Сохранить GUID владельца резервной копии"
+
+msgid "adminV2.backup.restore.replaceOwnerHint"
+msgstr ""
+"Владелец этой панели получит GUID владельца резервной копии, поэтому старые "
+"админ-ссылки продолжат работать. Работает без восстановления пользователей. "
+"Ваша текущая админ-ссылка изменится."
+
+msgid "adminV2.backup.restore.run"
+msgstr "Восстановить"
+
+msgid "adminV2.backup.restore.running"
+msgstr "Восстановление резервной копии"
+
+msgid "adminV2.backup.restore.sub"
+msgstr "Восстановите резервную копию из этой или другой панели."
+
+msgid "adminV2.backup.restore.title"
+msgstr "Восстановление"
+
+msgid "adminV2.backup.restore.unreadable"
+msgstr "Этот файл не является резервной копией Hiddify"
+
+msgid "adminV2.backup.restore.whatHappens"
+msgstr ""
+"Восстановление заменяет выбранное, а затем переустанавливает конфигурации "
+"сервера. Вы можете следить за ходом; это занимает несколько минут."
+
+msgid "adminV2.backup.save.created"
+msgstr "Резервная копия сохранена на сервере"
+
+msgid "adminV2.backup.save.download"
+msgstr "Скачать резервную копию"
+
+msgid "adminV2.backup.save.downloaded"
+msgstr "Резервная копия скачана"
+
+msgid "adminV2.backup.save.failed"
+msgstr "Не удалось создать резервную копию"
+
+msgid "adminV2.backup.save.onServer"
+msgstr "Сохранить на сервере"
+
+msgid "adminV2.backup.save.secret"
+msgstr ""
+"Файл содержит пароли, ссылки пользователей и приватные ключи. Храните его в "
+"безопасном месте."
+
+msgid "adminV2.backup.save.sub"
+msgstr ""
+"Всё в одном файле: настройки, пользователи, админы, домены, прокси и "
+"сертификаты."
+
+msgid "adminV2.backup.save.title"
+msgstr "Создать резервную копию"
+
+msgid "adminV2.backup.subtitle"
+msgstr "Сохраните копию всей панели и восстановите её, когда понадобится"
+
+msgid "adminV2.backup.title"
+msgstr "Резервное копирование и восстановление"
+
+msgid "adminV2.baseConfig.builtinDefaultHint"
+msgstr ""
+"Встроенная базовая конфигурация, синхронизированная из каталога. Включите "
+"собственное содержимое, чтобы редактировать её."
+
+msgid "adminV2.baseConfig.builtinReadOnly"
+msgstr ""
+"Встроенная базовая конфигурация: можно изменить только имя и состояние "
+"включения. Дублируйте её для полного редактирования."
+
+msgid "adminV2.baseConfig.content"
+msgstr "Полная конфигурация"
+
+msgid "adminV2.baseConfig.core"
+msgstr "Ядро"
+
+msgid "adminV2.baseConfig.description"
+msgstr "Описание"
+
+msgid "adminV2.baseConfig.listTitle"
+msgstr "Базовые конфигурации"
+
+msgid "adminV2.baseConfig.name"
+msgstr "Имя"
+
+msgid "adminV2.baseConfig.new"
+msgstr "Новая базовая конфигурация"
+
+msgid "adminV2.baseConfig.side"
+msgstr "Сторона"
+
+msgid "adminV2.baseConfig.version"
+msgstr "Версия"
+
+msgid "adminV2.common.actions"
+msgstr "Действия"
+
+msgid "adminV2.common.add"
+msgstr "Добавить"
+
+msgid "adminV2.common.back"
+msgstr "Назад"
+
+msgid "adminV2.common.cancel"
+msgstr "Отмена"
+
+msgid "adminV2.common.collapse"
+msgstr "меньше"
+
+msgid "adminV2.common.confirmDelete"
+msgstr "Вы уверены, что хотите удалить этот элемент?"
+
+msgid "adminV2.common.copied"
+msgstr "Скопировано"
+
+msgid "adminV2.common.copy"
+msgstr "Копировать"
+
+msgid "adminV2.common.delete"
+msgstr "Удалить"
+
+msgid "adminV2.common.deleted"
+msgstr "Успешно удалено"
+
+msgid "adminV2.common.disabled"
+msgstr "Отключено"
+
+msgid "adminV2.common.duplicate"
+msgstr "Дублировать"
+
+msgid "adminV2.common.edit"
+msgstr "Изменить"
+
+msgid "adminV2.common.enabled"
+msgstr "Включено"
+
+msgid "adminV2.common.filter"
+msgstr "Фильтр"
+
+msgid "adminV2.common.filteredOf"
+msgstr "Отфильтровано: показано {n} из {total}"
+
+msgid "adminV2.common.format"
+msgstr "Форматировать"
+
+msgid "adminV2.common.loadFailed"
+msgstr "Не удалось загрузить данные"
+
+msgid "adminV2.common.no"
+msgstr "Нет"
+
+msgid "adminV2.common.noMatch"
+msgstr "Ничего не соответствует этим фильтрам"
+
+msgid "adminV2.common.noMatchHint"
+msgstr "Попробуйте убрать фильтр или изменить поиск."
+
+msgid "adminV2.common.resetFilters"
+msgstr "Сбросить фильтры"
+
+msgid "adminV2.common.save"
+msgstr "Сохранить"
+
+msgid "adminV2.common.saveFailed"
+msgstr "Не удалось сохранить"
+
+msgid "adminV2.common.saved"
+msgstr "Успешно сохранено"
+
+msgid "adminV2.common.search"
+msgstr "Поиск..."
+
+msgid "adminV2.common.validate"
+msgstr "Проверить"
+
+msgid "adminV2.common.validationFailed"
+msgstr "Проверка не пройдена"
+
+msgid "adminV2.common.validationOk"
+msgstr "Проверка пройдена"
+
+msgid "adminV2.common.yes"
+msgstr "Да"
+
+msgid "adminV2.dashboard.allNodes"
+msgstr "Все узлы"
+
+msgid "adminV2.dashboard.available"
+msgstr "Доступно"
+
+msgid "adminV2.dashboard.averageHint"
+msgstr ""
+"Среднее число пользователей онлайн в день, только по дням, когда кто-то был "
+"онлайн."
+
+msgid "adminV2.dashboard.breakdown"
+msgstr "Детализация"
+
+msgid "adminV2.dashboard.cached"
+msgstr "В кэше"
+
+msgid "adminV2.dashboard.clickForProcesses"
+msgstr "Нажмите, чтобы показать самые тяжёлые процессы"
+
+msgid "adminV2.dashboard.collapse"
+msgstr "Свернуть подробности"
+
+msgid "adminV2.dashboard.connections"
+msgstr "Соединения"
+
+msgid "adminV2.dashboard.core"
+msgstr "Ядро {index}"
+
+msgid "adminV2.dashboard.cpu"
+msgstr "CPU"
+
+msgid "adminV2.dashboard.cpuCores"
+msgstr "CPU · ядер: {count}"
+
+msgid "adminV2.dashboard.dailyOnline"
+msgstr "Пользователи онлайн по дням"
+
+msgid "adminV2.dashboard.dailyUsage"
+msgstr "Трафик по дням"
+
+msgid "adminV2.dashboard.disk"
+msgstr "Диск"
+
+msgid "adminV2.dashboard.download"
+msgstr "Загрузка"
+
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "Загрузка с момента запуска"
+
+msgid "adminV2.dashboard.durationDaysHours"
+msgstr "{days} д {hours} ч"
+
+msgid "adminV2.dashboard.durationHoursMinutes"
+msgstr "{hours} ч {minutes} мин"
+
+msgid "adminV2.dashboard.durationMinutes"
+msgstr "{minutes} мин"
+
+msgid "adminV2.dashboard.enabledUsers"
+msgstr "Включённые пользователи"
+
+msgid "adminV2.dashboard.expand"
+msgstr "Развернуть подробности"
+
+msgid "adminV2.dashboard.free"
+msgstr "Свободно"
+
+msgid "adminV2.dashboard.hiddify"
+msgstr "Hiddify"
+
+msgid "adminV2.dashboard.hiddifyData"
+msgstr "Данные Hiddify"
+
+msgid "adminV2.dashboard.hostname"
+msgstr "Хост"
+
+msgid "adminV2.dashboard.inFiveMinutes"
+msgstr "За последние 5 минут"
+
+msgid "adminV2.dashboard.lastNDays"
+msgstr "Последние {days} дн."
+
+msgid "adminV2.dashboard.lastdayOnline"
+msgstr "Онлайн за последний день"
+
+msgid "adminV2.dashboard.liveThroughput"
+msgstr "Текущая пропускная способность"
+
+msgid "adminV2.dashboard.liveUpdated"
+msgstr "Онлайн · обновлено {time}"
+
+msgid "adminV2.dashboard.load15m"
+msgstr "15 мин"
+
+msgid "adminV2.dashboard.load1m"
+msgstr "1 мин"
+
+msgid "adminV2.dashboard.load5m"
+msgstr "5 мин"
+
+msgid "adminV2.dashboard.loadAverage"
+msgstr "Средняя нагрузка"
+
+msgid "adminV2.dashboard.loadFailed"
+msgstr "Не удалось загрузить данные панели"
+
+msgid "adminV2.dashboard.loadFailedHint"
+msgstr ""
+"Панель управления не смогла связаться с API панели. Проверьте, что вы всё "
+"ещё авторизованы."
+
+msgid "adminV2.dashboard.modeAverage"
+msgstr "Среднее"
+
+msgid "adminV2.dashboard.modePeak"
+msgstr "Пик"
+
+msgid "adminV2.dashboard.modeUnique"
+msgstr "Уникальные"
+
+msgid "adminV2.dashboard.monthUsage"
+msgstr "Трафик за месяц"
+
+msgid "adminV2.dashboard.monthUsers"
+msgstr "Месяц"
+
+msgid "adminV2.dashboard.monthlyAverage"
+msgstr "Среднее за месяц"
+
+msgid "adminV2.dashboard.monthlyOnline"
+msgstr "Онлайн за месяц"
+
+msgid "adminV2.dashboard.nDays"
+msgstr "{days} д"
+
+msgid "adminV2.dashboard.network"
+msgstr "Сеть"
+
+msgid "adminV2.dashboard.noData"
+msgstr "Данных пока нет"
+
+msgid "adminV2.dashboard.node"
+msgstr "Узел"
+
+msgid "adminV2.dashboard.nodeHealth"
+msgstr "Состояние узлов"
+
+msgid "adminV2.dashboard.nodeHealthHint"
+msgstr "Текущие CPU, RAM и диск из API каждого узла"
+
+msgid "adminV2.dashboard.nodeHealthStackedHint"
+msgstr "CPU, RAM и диск по узлам с накоплением"
+
+msgid "adminV2.dashboard.nodeNetworkHint"
+msgstr "Текущая отдача и загрузка по узлам"
+
+msgid "adminV2.dashboard.nodeOffline"
+msgstr "Офлайн"
+
+msgid "adminV2.dashboard.nodeOnline"
+msgstr "Онлайн"
+
+msgid "adminV2.dashboard.nodeUnreachable"
+msgstr "Не удалось связаться с этим узлом"
+
+msgid "adminV2.dashboard.none"
+msgstr "Нет"
+
+msgid "adminV2.dashboard.onlineEnabledUsers"
+msgstr "Онлайн / активные пользователи"
+
+msgid "adminV2.dashboard.onlineNow"
+msgstr "Сейчас онлайн"
+
+msgid "adminV2.dashboard.onlineOnDay"
+msgstr "Онлайн: {count}"
+
+msgid "adminV2.dashboard.onlineToday"
+msgstr "Онлайн сегодня: {count} / {total}"
+
+msgid "adminV2.dashboard.onlineUsers"
+msgstr "Пользователи онлайн"
+
+msgid "adminV2.dashboard.panelVersion"
+msgstr "Версия панели"
+
+msgid "adminV2.dashboard.pause"
+msgstr "Пауза"
+
+msgid "adminV2.dashboard.paused"
+msgstr "Обновление в реальном времени приостановлено"
+
+msgid "adminV2.dashboard.peakDay"
+msgstr "Пиковый день"
+
+msgid "adminV2.dashboard.peakHint"
+msgstr "Максимум пользователей онлайн за один день."
+
+msgid "adminV2.dashboard.perCore"
+msgstr "По ядрам"
+
+msgid "adminV2.dashboard.perDay"
+msgstr "{value} / день"
+
+msgid "adminV2.dashboard.ram"
+msgstr "RAM"
+
+msgid "adminV2.dashboard.range"
+msgstr "Период истории"
+
+msgid "adminV2.dashboard.refresh"
+msgstr "Обновить сейчас"
+
+msgid "adminV2.dashboard.resume"
+msgstr "Онлайн"
+
+msgid "adminV2.dashboard.rollingAverage"
+msgstr "Среднее за 7 дней"
+
+msgid "adminV2.dashboard.subtitle"
+msgstr "Трафик, пользователи и состояние сервера с первого взгляда"
+
+msgid "adminV2.dashboard.swap"
+msgstr "Swap"
+
+msgid "adminV2.dashboard.thisServer"
+msgstr "Этот сервер"
+
+msgid "adminV2.dashboard.title"
+msgstr "Панель управления"
+
+msgid "adminV2.dashboard.today"
+msgstr "Сегодня"
+
+msgid "adminV2.dashboard.todayOnline"
+msgstr "Онлайн сегодня"
+
+msgid "adminV2.dashboard.todayUsage"
+msgstr "Трафик за сегодня"
+
+msgid "adminV2.dashboard.topFolders"
+msgstr "Самые большие папки"
+
+msgid "adminV2.dashboard.topProcesses"
+msgstr "Самые тяжёлые процессы"
+
+msgid "adminV2.dashboard.totalUsage"
+msgstr "Общий трафик"
+
+msgid "adminV2.dashboard.totalUsers"
+msgstr "Всего пользователей"
+
+msgid "adminV2.dashboard.uniqueHint"
+msgstr "Уникальные пользователи за каждый период, вся панель."
+
+msgid "adminV2.dashboard.uniqueIps"
+msgstr "Уникальные IP"
+
+msgid "adminV2.dashboard.uniqueMonth"
+msgstr "Уникальных пользователей за 30 дней"
+
+msgid "adminV2.dashboard.uniqueWeek"
+msgstr "Уникальных пользователей за 7 дней"
+
+msgid "adminV2.dashboard.upload"
+msgstr "Отдача"
+
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "Отдача с момента запуска"
+
+msgid "adminV2.dashboard.uptime"
+msgstr "Время работы"
+
+msgid "adminV2.dashboard.usageComparison"
+msgstr "Сравнение трафика"
+
+msgid "adminV2.dashboard.usageComparisonHint"
+msgstr "Сегодня и вчера в сравнении со средним за день за неделю и месяц"
+
+msgid "adminV2.dashboard.usageOnDay"
+msgstr "Трафик: {value}"
+
+msgid "adminV2.dashboard.usageStackedHint"
+msgstr "Трафик по узлам с накоплением · общий показан заливкой"
+
+msgid "adminV2.dashboard.usageTrend"
+msgstr "Динамика трафика"
+
+msgid "adminV2.dashboard.used"
+msgstr "Использовано"
+
+msgid "adminV2.dashboard.usersComparison"
+msgstr "Сравнение пользователей"
+
+msgid "adminV2.dashboard.usersComparisonHint"
+msgstr "Уникальные пользователи за период"
+
+msgid "adminV2.dashboard.usersSummary"
+msgstr "Пользователей: {total} · включено: {enabled}"
+
+msgid "adminV2.dashboard.usersTrend"
+msgstr "Динамика пользователей"
+
+msgid "adminV2.dashboard.vsPreviousMonth"
+msgstr "по сравнению с предыдущими 30 днями"
+
+msgid "adminV2.dashboard.vsPreviousWeek"
+msgstr "по сравнению с предыдущими 7 днями"
+
+msgid "adminV2.dashboard.vsYesterday"
+msgstr "по сравнению со вчера"
+
+msgid "adminV2.dashboard.weekUsage"
+msgstr "Трафик за неделю"
+
+msgid "adminV2.dashboard.weekUsers"
+msgstr "Неделя"
+
+msgid "adminV2.dashboard.weeklyAverage"
+msgstr "Среднее за неделю"
+
+msgid "adminV2.dashboard.weeklyOnline"
+msgstr "Онлайн за неделю"
+
+msgid "adminV2.dashboard.yesterday"
+msgstr "Вчера"
+
+msgid "adminV2.domain.addFailed"
+msgstr "Не удалось добавить домен"
+
+msgid "adminV2.domain.addTitle"
+msgstr "Добавить домен"
+
+msgid "adminV2.domain.alias"
+msgstr "Псевдоним"
+
+msgid "adminV2.domain.domain"
+msgstr "Домен"
+
+msgid "adminV2.domain.mode"
+msgstr "Режим"
+
+msgid "adminV2.domains.add"
+msgstr "Добавить домен"
+
+msgid "adminV2.domains.advanced"
+msgstr "Дополнительно"
+
+msgid "adminV2.domains.badge.cdnIp"
+msgstr "Принудительные IP"
+
+msgid "adminV2.domains.badge.frontingHint"
+msgstr "Domain fronting: в конфигурациях показывается это имя вместо домена"
+
+msgid "adminV2.domains.badge.resolveIp"
+msgstr "IP"
+
+msgid "adminV2.domains.cert.failed"
+msgstr "Не удалось получить сертификат"
+
+msgid "adminV2.domains.cert.failedHint"
+msgstr ""
+"Пока не удастся выпустить настоящий, используется самоподписанный "
+"сертификат."
+
+msgid "adminV2.domains.cert.ok"
+msgstr "Сертификат выпущен"
+
+msgid "adminV2.domains.cert.okHint"
+msgstr ""
+"Пользователи подключаются с настоящим доверенным сертификатом. Он "
+"продлевается автоматически."
+
+msgid "adminV2.domains.cert.retry"
+msgstr "Повторить"
+
+msgid "adminV2.domains.cert.secondsLeft"
+msgstr "около {n} с"
+
+msgid "adminV2.domains.cert.steps.contact"
+msgstr "Связь с Let's Encrypt"
+
+msgid "adminV2.domains.cert.steps.install"
+msgstr "Установка"
+
+msgid "adminV2.domains.cert.steps.verify"
+msgstr "Проверка домена"
+
+msgid "adminV2.domains.cert.timeout"
+msgstr "Сертификат всё ещё ожидается"
+
+msgid "adminV2.domains.cert.timeoutHint"
+msgstr ""
+"Это занимает больше времени, чем обычно; процесс продолжается в фоне, и "
+"страница обновится по его завершении."
+
+msgid "adminV2.domains.cert.tips.cdn"
+msgstr ""
+"Let's Encrypt отклоняет слишком много запросов за короткое время; повторите "
+"позже."
+
+msgid "adminV2.domains.cert.tips.dns"
+msgstr "Домен должен указывать на этот сервер (или на CDN перед ним)."
+
+msgid "adminV2.domains.cert.tips.port80"
+msgstr "Порт 80 должен быть доступен из интернета."
+
+msgid "adminV2.domains.cert.waiting"
+msgstr "Получение сертификата…"
+
+msgid "adminV2.domains.copyDomain"
+msgstr "Копировать домен"
+
+msgid "adminV2.domains.deleteMessage"
+msgstr ""
+"Его конфигурации перестанут работать у всех пользователей. Должен остаться "
+"хотя бы один домен."
+
+msgid "adminV2.domains.deleteTitle"
+msgstr "Удалить {name}?"
+
+msgid "adminV2.domains.deleted"
+msgstr "{name} удалён"
+
+msgid "adminV2.domains.drag"
+msgstr "Перетащите, чтобы изменить порядок"
+
+msgid "adminV2.domains.editTitle"
+msgstr "Изменить домен"
+
+msgid "adminV2.domains.field.alias"
+msgstr "Отображаемое имя"
+
+msgid "adminV2.domains.field.aliasHint"
+msgstr "Показывается в приложениях пользователей вместо домена."
+
+msgid "adminV2.domains.field.cdnIp"
+msgstr "🔂 Принудительно использовать в конфигурациях эти IP / домены"
+
+msgid "adminV2.domains.field.cdnIpHint"
+msgstr ""
+"Подставляются в ссылки пользователей вместо IP домена; разделяйте запятыми "
+"или переводами строки. Шаблоны оператора тоже работают."
+
+msgid "adminV2.domains.field.domain"
+msgstr "Домен"
+
+msgid "adminV2.domains.field.domainInvalid"
+msgstr "Это не похоже на домен"
+
+msgid "adminV2.domains.field.domainRequired"
+msgstr "Введите домен"
+
+msgid "adminV2.domains.field.downloadDomain"
+msgstr "📈 Домен загрузки"
+
+msgid "adminV2.domains.field.downloadDomainHint"
+msgstr ""
+"Только для XHTTP: загрузка может идти с другого домена, чем отдача. Сложнее "
+"обнаружить, часто быстрее."
+
+msgid "adminV2.domains.field.ech"
+msgstr "🔐 ECH"
+
+msgid "adminV2.domains.field.echHint"
+msgstr "Получать и использовать Encrypted Client Hello для этого домена CDN."
+
+msgid "adminV2.domains.field.echNeedsSetting"
+msgstr "Сначала включите TLS ECH в настройках панели."
+
+msgid "adminV2.domains.field.extra"
+msgstr "Дополнительные параметры"
+
+msgid "adminV2.domains.field.extraInvalid"
+msgstr "Недопустимый JSON"
+
+msgid "adminV2.domains.field.extraObject"
+msgstr "Должен быть JSON-объект"
+
+msgid "adminV2.domains.field.fronting"
+msgstr "🎭 Domain fronting"
+
+msgid "adminV2.domains.field.frontingHint"
+msgstr ""
+"Необязательно. Приложения пользователей показывают одно из этих имён (SNI) "
+"вместо вашего домена, поэтому фильтр видит только другой сайт. Используйте "
+"сайты на том же CDN, что и ваш домен (например, другие сайты Cloudflare). "
+"Пусто: без fronting."
+
+msgid "adminV2.domains.field.frontingPlaceholder"
+msgstr "another-site.com, cdn-site.net"
+
+msgid "adminV2.domains.field.hostnamesInvalid"
+msgstr "Укажите имена хостов через запятую, например site.com"
+
+msgid "adminV2.domains.field.mode"
+msgstr "Режим"
+
+msgid "adminV2.domains.field.none"
+msgstr "Нет"
+
+msgid "adminV2.domains.field.ports"
+msgstr "Порты шлюза"
+
+msgid "adminV2.domains.field.portsHint"
+msgstr ""
+"Порты, на которые пользователи подключаются к SNI и L7-прокси этого домена: "
+"один порт TLS и один порт HTTP. Пусто: по умолчанию. Брандмауэр "
+"перенаправляет их на 443 / 80, поэтому на сервере ничто не должно их "
+"слушать, а порт TLS не может быть портом HTTP другого домена."
+
+msgid "adminV2.domains.field.proxies"
+msgstr "Пользовательские прокси"
+
+msgid "adminV2.domains.field.relayNeedsIp"
+msgstr ""
+"Relay без настоящего сертификата требует IP relay-сервера в разделе "
+"«Дополнительно» → «Принудительные IP»."
+
+msgid "adminV2.domains.field.resolveIp"
+msgstr "🔢 Разрешать IP"
+
+msgid "adminV2.domains.field.resolveIpHint"
+msgstr ""
+"Использовать в прокси IP вместо доменного имени. Полезно при проблемах с "
+"DNS."
+
+msgid "adminV2.domains.field.serverDomain"
+msgstr "Домен сервера"
+
+msgid "adminV2.domains.field.serverDomainHint"
+msgstr ""
+"Домен вышестоящего сервера для этой записи. Должен быть допустимым доменом "
+"Direct или Relay."
+
+msgid "adminV2.domains.field.servernames"
+msgstr "Имена серверов"
+
+msgid "adminV2.domains.field.servernamesHint"
+msgstr "Сайты, чей TLS заимствует Reality, через запятую. Пусто: сам домен."
+
+msgid "adminV2.domains.field.showAll"
+msgstr "Все домены"
+
+msgid "adminV2.domains.field.showDomains"
+msgstr "Показывать конфигурации"
+
+msgid "adminV2.domains.field.showDomainsHint"
+msgstr ""
+"Пользователи, открывающие свою страницу на этом домене, видят конфигурации "
+"этих доменов."
+
+msgid "adminV2.domains.field.tlsMode"
+msgstr "Режим TLS"
+
+msgid "adminV2.domains.getCert"
+msgstr "Получить сертификат"
+
+msgid "adminV2.domains.howto"
+msgstr ""
+"Порядок важен: перетащите (или используйте стрелки) для сортировки. "
+"Конфигурации перечисляют домены в этом порядке, а первый используется для "
+"ссылок панели."
+
+msgid "adminV2.domains.howtoFiltered"
+msgstr "Очистите поиск и фильтры, чтобы изменить порядок."
+
+msgid "adminV2.domains.ips.elsewhere"
+msgstr "другой сервер / CDN"
+
+msgid "adminV2.domains.ips.none"
+msgstr "Для этого домена не найдено DNS-записи."
+
+msgid "adminV2.domains.ips.thisServer"
+msgstr "этот сервер"
+
+msgid "adminV2.domains.ips.title"
+msgstr "Куда указывает (DNS)"
+
+msgid "adminV2.domains.kind.cdn.desc"
+msgstr ""
+"Ваш домен проходит через CDN, например Cloudflare (оранжевое облако / прокси"
+" включён). Скрывает IP этого сервера и продолжает работать при блокировке "
+"IP."
+
+msgid "adminV2.domains.kind.cdn.name"
+msgstr "CDN"
+
+msgid "adminV2.domains.kind.direct.desc"
+msgstr ""
+"Ваш домен указывает прямо на IP этого сервера. Если он на Cloudflare (или "
+"похожем DNS), держите облако выключенным: только DNS."
+
+msgid "adminV2.domains.kind.direct.name"
+msgstr "Direct"
+
+msgid "adminV2.domains.kind.relay.desc"
+msgstr ""
+"Пользователи подключаются к другому серверу-посреднику, который передаёт их "
+"трафик на этот. Домен указывает на этот промежуточный сервер."
+
+msgid "adminV2.domains.kind.relay.name"
+msgstr "Relay"
+
+msgid "adminV2.domains.kind.sublink.desc"
+msgstr ""
+"Только для ссылок подписки пользователей, без прокси. Лучше за CDN: если "
+"ваши прокси-домены заблокируют, пользователи всё равно смогут обновить "
+"подписку и получить новые рабочие конфигурации."
+
+msgid "adminV2.domains.kind.sublink.name"
+msgstr "Только подписка"
+
+msgid "adminV2.domains.kind.worker.desc"
+msgstr "Для этого домена автоматически создаются Cloudflare workers."
+
+msgid "adminV2.domains.kind.worker.name"
+msgstr "Cloudflare Worker"
+
+msgid "adminV2.domains.more"
+msgstr "Ещё"
+
+msgid "adminV2.domains.moveDown"
+msgstr "Вниз"
+
+msgid "adminV2.domains.moveUp"
+msgstr "Вверх"
+
+msgid "adminV2.domains.noMatch"
+msgstr "Нет доменов, подходящих под фильтры"
+
+msgid "adminV2.domains.noName"
+msgstr "(без имени)"
+
+msgid "adminV2.domains.notChanged"
+msgstr "Не изменено"
+
+msgid "adminV2.domains.openPanel"
+msgstr "Открыть панель на этом домене"
+
+msgid "adminV2.domains.port.busy"
+msgstr "его слушает другая программа ({name})"
+
+msgid "adminV2.domains.port.checking"
+msgstr "проверка…"
+
+msgid "adminV2.domains.port.default"
+msgstr "по умолчанию"
+
+msgid "adminV2.domains.port.free"
+msgstr "свободен"
+
+msgid "adminV2.domains.port.invalid"
+msgstr "недопустимый порт"
+
+msgid "adminV2.domains.port.system"
+msgstr "системный порт"
+
+msgid "adminV2.domains.port.unknown"
+msgstr "не удалось проверить этот порт"
+
+msgid "adminV2.domains.port.usedByDomain"
+msgstr "используется {name} для другого протокола"
+
+msgid "adminV2.domains.port.usedByGateway.http"
+msgstr "порт HTTP-шлюза"
+
+msgid "adminV2.domains.port.usedByGateway.tls"
+msgstr "порт TLS-шлюза"
+
+msgid "adminV2.domains.port.usedByProxy"
+msgstr "используется прокси {name}"
+
+msgid "adminV2.domains.port.usedBySetting"
+msgstr "используется: {name}"
+
+msgid "adminV2.domains.proxies.auto"
+msgstr "Автоматически"
+
+msgid "adminV2.domains.proxies.autoHint"
+msgstr "Все прокси, подходящие этому домену"
+
+msgid "adminV2.domains.proxies.autoShort"
+msgstr "автоматически"
+
+msgid "adminV2.domains.proxies.group.ip"
+msgstr "На основе IP"
+
+msgid "adminV2.domains.proxies.group.l7"
+msgstr "L7-шлюз"
+
+msgid "adminV2.domains.proxies.group.sni"
+msgstr "SNI-шлюз"
+
+msgid "adminV2.domains.proxies.noneFit"
+msgstr ""
+"Ни один пользовательский прокси не подходит для этого типа домена; "
+"используются встроенные прокси."
+
+msgid "adminV2.domains.proxies.noneTicked"
+msgstr "Ничего не выбрано: работает как «Автоматически»."
+
+msgid "adminV2.domains.proxies.off"
+msgstr "выкл."
+
+msgid "adminV2.domains.proxies.pick"
+msgstr "Выбрать"
+
+msgid "adminV2.domains.proxies.pickHint"
+msgstr "Только выбранные вами прокси"
+
+msgid "adminV2.domains.proxies.rule"
+msgstr ""
+"Один SNI-прокси или L7-прокси; их нельзя смешивать. Прокси на основе IP "
+"подходят к любому варианту."
+
+msgid "adminV2.domains.proxies.selectAll"
+msgstr "Выбрать все"
+
+msgid "adminV2.domains.proxies.selectNone"
+msgstr "Снять выбор"
+
+msgid "adminV2.domains.proxies.sniOne"
+msgstr " · не более одного"
+
+msgid "adminV2.domains.readMore"
+msgstr "Подробнее"
+
+msgid "adminV2.domains.renewCert"
+msgstr "Продлить сертификат"
+
+msgid "adminV2.domains.saved"
+msgstr "{name} сохранён"
+
+msgid "adminV2.domains.search"
+msgstr "Поиск по домену или имени"
+
+msgid "adminV2.domains.stats.all"
+msgstr "доменов"
+
+msgid "adminV2.domains.stats.attention"
+msgstr "нужен сертификат"
+
+msgid "adminV2.domains.stats.decoy"
+msgstr "decoy TLS"
+
+msgid "adminV2.domains.stats.valid"
+msgstr "сертификаты в порядке"
+
+msgid "adminV2.domains.subtitle"
+msgstr ""
+"Адреса, к которым подключаются пользователи, способ доступа каждого к этому "
+"серверу и их сертификаты"
+
+msgid "adminV2.domains.title"
+msgstr "Домены"
+
+msgid "adminV2.domains.tls.decoy"
+msgstr "Decoy TLS"
+
+msgid "adminV2.domains.tls.decoyHint"
+msgstr ""
+"Для фейковых доменов и доменов Reality TLS собственный сертификат не нужен."
+
+msgid "adminV2.domains.tls.expired"
+msgstr "Истёк"
+
+msgid "adminV2.domains.tls.expiredHint"
+msgstr "Срок действия сертификата истёк."
+
+msgid "adminV2.domains.tls.expires"
+msgstr "Истекает"
+
+msgid "adminV2.domains.tls.expiresIn"
+msgstr "Осталось дней: {n}"
+
+msgid "adminV2.domains.tls.invalid"
+msgstr "Недействителен"
+
+msgid "adminV2.domains.tls.invalidHint"
+msgstr "Сертификат не соответствует этому домену."
+
+msgid "adminV2.domains.tls.issuer"
+msgstr "Выдавший"
+
+msgid "adminV2.domains.tls.missing"
+msgstr "Нет сертификата"
+
+msgid "adminV2.domains.tls.missingHint"
+msgstr "Сертификата пока нет."
+
+msgid "adminV2.domains.tls.running"
+msgstr "Получение сертификата"
+
+msgid "adminV2.domains.tls.self_signed"
+msgstr "Самоподписанный"
+
+msgid "adminV2.domains.tls.self_signedHint"
+msgstr ""
+"Временный самоподписанный сертификат: приложения предупреждают или "
+"отказывают. Получите настоящий."
+
+msgid "adminV2.domains.tls.valid"
+msgstr "Действителен"
+
+msgid "adminV2.domains.tls.validHint"
+msgstr "Настоящий сертификат; продлевается автоматически."
+
+msgid "adminV2.domains.tlsMode.dns"
+msgstr "DNS"
+
+msgid "adminV2.domains.tlsMode.dnsHint"
+msgstr "Только DNS-туннель."
+
+msgid "adminV2.domains.tlsMode.fake"
+msgstr "Fake"
+
+msgid "adminV2.domains.tlsMode.fakeHint"
+msgstr ""
+"Decoy TLS с именем фейкового сайта (например, soft98.ir) для обхода белого "
+"списка SNI. Не рекомендуется."
+
+msgid "adminV2.domains.tlsMode.fakeProxyNote"
+msgstr ""
+"Этот домен является fake-TLS именем встроенного сервера и синхронизируется с"
+" его настройкой. У него нет пользовательских прокси и домена загрузки."
+
+msgid "adminV2.domains.tlsMode.locked"
+msgstr "Этот режим всегда использует действительный сертификат."
+
+msgid "adminV2.domains.tlsMode.other"
+msgstr "Другое"
+
+msgid "adminV2.domains.tlsMode.otherHint"
+msgstr ""
+"Fake-TLS фронт-домены серверов Telegram, ShadowTLS и Shadowsocks FakeTLS. По"
+" одному каждого."
+
+msgid "adminV2.domains.tlsMode.reality"
+msgstr "Reality"
+
+msgid "adminV2.domains.tlsMode.realityHint"
+msgstr ""
+"Заимствует TLS чужого сайта по протоколу Reality; таких доменов может быть "
+"много."
+
+msgid "adminV2.domains.tlsMode.shadowtls"
+msgstr "ShadowTLS"
+
+msgid "adminV2.domains.tlsMode.shadowtlsHint"
+msgstr "Фейковый домен сервера ShadowTLS."
+
+msgid "adminV2.domains.tlsMode.ssfaketls"
+msgstr "SS FakeTLS"
+
+msgid "adminV2.domains.tlsMode.ssfaketlsHint"
+msgstr "Фейковый домен сервера Shadowsocks FakeTLS."
+
+msgid "adminV2.domains.tlsMode.taken"
+msgstr "Уже добавлен"
+
+msgid "adminV2.domains.tlsMode.telegram"
+msgstr "Telegram-прокси"
+
+msgid "adminV2.domains.tlsMode.telegramHint"
+msgstr "Фейковый домен Telegram MTProxy."
+
+msgid "adminV2.domains.tlsMode.valid"
+msgstr "Действительный TLS"
+
+msgid "adminV2.domains.tlsMode.validHint"
+msgstr "Настоящий сертификат, выдаётся автоматически."
+
+msgid "adminV2.domains.warning"
+msgstr "Сохранено, с предупреждением"
+
+msgid "adminV2.domains.wizard.add"
+msgstr "Добавить домен"
+
+msgid "adminV2.domains.wizard.added"
+msgstr "{name} добавлен"
+
+msgid "adminV2.domains.wizard.aliasLead"
+msgstr ""
+"Короткое имя, которое показывается в приложениях для конфигураций этого "
+"домена."
+
+msgid "adminV2.domains.wizard.aliasQ"
+msgstr "Что должны видеть пользователи?"
+
+msgid "adminV2.domains.wizard.check"
+msgstr "Проверить"
+
+msgid "adminV2.domains.wizard.checking"
+msgstr "Проверка DNS…"
+
+msgid "adminV2.domains.wizard.continueBackground"
+msgstr "Закрыть (процесс продолжится)"
+
+msgid "adminV2.domains.wizard.dnsHint"
+msgstr ""
+"В DNS добавьте для этого домена запись ниже (значение — адрес этого "
+"сервера)."
+
+msgid "adminV2.domains.wizard.dnsTitle"
+msgstr "Направьте его на этот сервер"
+
+msgid "adminV2.domains.wizard.finish"
+msgstr "Готово"
+
+msgid "adminV2.domains.wizard.found.cdn"
+msgstr "Находится за {cdn}."
+
+msgid "adminV2.domains.wizard.found.direct"
+msgstr "Указывает прямо на этот сервер ({ips})."
+
+msgid "adminV2.domains.wizard.found.external"
+msgstr ""
+"Указывает на другой сервер ({ips}): подходит для Reality, relay или Fake "
+"TLS."
+
+msgid "adminV2.domains.wizard.found.externalNotFriendly"
+msgstr ""
+"Указывает на другой сервер ({ips}), но этот сайт не подходит для Reality "
+"(нужны TLS 1.3 и HTTP/2)."
+
+msgid "adminV2.domains.wizard.found.unresolved"
+msgstr ""
+"DNS-записи пока нет. Сначала добавьте её у своего DNS-провайдера или "
+"используйте домен с Fake TLS."
+
+msgid "adminV2.domains.wizard.mismatch.cdn"
+msgstr ""
+"Домен не похож на находящийся за CDN. Включите режим прокси у вашего CDN-"
+"провайдера."
+
+msgid "adminV2.domains.wizard.mismatch.direct"
+msgstr ""
+"Для Direct домен должен указывать на IP этого сервера. При сохранении это "
+"проверится снова."
+
+msgid "adminV2.domains.wizard.mismatch.reality"
+msgstr "Для Reality нужен настоящий сайт, который разрешается."
+
+msgid "adminV2.domains.wizard.mismatch.relay"
+msgstr "Relay-домен указывает на промежуточный сервер, а не на этот."
+
+msgid "adminV2.domains.wizard.mismatch.sublink"
+msgstr "Домен должен указывать на этот сервер или CDN."
+
+msgid "adminV2.domains.wizard.mismatch.worker"
+msgstr "Для workers домен должен быть на Cloudflare."
+
+msgid "adminV2.domains.wizard.modeQ"
+msgstr "Как это настроено?"
+
+msgid "adminV2.domains.wizard.moreSettings"
+msgstr "Больше настроек"
+
+msgid "adminV2.domains.wizard.nameLead"
+msgstr ""
+"Введите домен или поддомен. Мы проверим его DNS и предложим подходящий "
+"режим."
+
+msgid "adminV2.domains.wizard.nameQ"
+msgstr "Какой домен?"
+
+msgid "adminV2.domains.wizard.next"
+msgstr "Далее"
+
+msgid "adminV2.domains.wizard.noCert"
+msgstr "Запрос сертификата не потребовался."
+
+msgid "adminV2.domains.wizard.noCertDecoy"
+msgstr ""
+"Для Fake и Reality TLS сертификат не нужен. Примените изменения, чтобы "
+"начать использовать."
+
+msgid "adminV2.domains.wizard.recommended"
+msgstr "подходит"
+
+msgid "adminV2.domains.wizard.saving"
+msgstr "Сохранение и проверка…"
+
+msgid "adminV2.domains.wizard.steps.alias"
+msgstr "Имя"
+
+msgid "adminV2.domains.wizard.steps.cert"
+msgstr "Сертификат"
+
+msgid "adminV2.domains.wizard.steps.mode"
+msgstr "Режим"
+
+msgid "adminV2.domains.wizard.steps.name"
+msgstr "Домен"
+
+msgid "adminV2.domains.wizard.taken"
+msgstr "Этот домен уже добавлен"
+
+msgid "adminV2.domains.wizard.title"
+msgstr "Добавить домен"
+
+msgid "adminV2.domains.wizard.tlsQ"
+msgstr "Какой TLS?"
+
+msgid "adminV2.domains.wizard.unlikely"
+msgstr "DNS не совпадает"
+
+msgid "adminV2.donation.close"
+msgstr "Закрыть"
+
+msgid "adminV2.donation.copied"
+msgstr "Адрес {name} скопирован"
+
+msgid "adminV2.donation.copiedShort"
+msgstr "Скопировано"
+
+msgid "adminV2.donation.qr"
+msgstr "QR-код"
+
+msgid "adminV2.donation.qrOf"
+msgstr "QR-код адреса {name}"
+
+msgid "adminV2.donation.showQr"
+msgstr "Показать QR-код для {name}"
+
+msgid "adminV2.donation.title"
+msgstr "Пожертвование"
+
+msgid "adminV2.editor.cannotFormatJinja"
+msgstr "Автоформатирование невозможно, пока есть теги Jinja"
+
+msgid "adminV2.editor.excludeBuiltinTemplates"
+msgstr "Исключить встроенные шаблоны из экспорта"
+
+msgid "adminV2.editor.exportBundle"
+msgstr "Экспортировать набор"
+
+msgid "adminV2.editor.includeTemplate"
+msgstr "Включить шаблон"
+
+msgid "adminV2.editor.insertVariable"
+msgstr "Вставить переменную"
+
+msgid "adminV2.editor.jinjaHint"
+msgstr ""
+"JSON5 + Jinja: используйте {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% "
+"endfor %}"
+
+msgid "adminV2.editor.loadFailed"
+msgstr ""
+"Не удалось загрузить редактор. Проверьте соединение и перезагрузите "
+"страницу."
+
+msgid "adminV2.editor.loading"
+msgstr "Загрузка редактора…"
+
+msgid "adminV2.editor.noVariables"
+msgstr "Нет переменных, подходящих под поиск"
+
+msgid "adminV2.editor.preview"
+msgstr "Предпросмотр"
+
+msgid "adminV2.editor.previewFailed"
+msgstr "Не удалось выполнить запрос предпросмотра"
+
+msgid "adminV2.editor.previewOk"
+msgstr "Предпросмотр успешно сформирован"
+
+msgid "adminV2.editor.previewParams"
+msgstr "Параметры предпросмотра"
+
+msgid "adminV2.editor.previewPartial"
+msgstr "Предпросмотр сформирован с предупреждениями"
+
+msgid "adminV2.editor.previewTitle"
+msgstr "Предпросмотр шаблона"
+
+msgid "adminV2.footer.text"
+msgstr "HiddifyManager"
+
+msgid "adminV2.legacy.loading"
+msgstr "Загрузка…"
+
+msgid "adminV2.legacy.refresh"
+msgstr "Обновить"
+
+msgid "adminV2.legacy.title"
+msgstr "Классическая страница админки"
+
+msgid "adminV2.linkShare.copyLink"
+msgstr "Копировать ссылку"
+
+msgid "adminV2.linkShare.domain"
+msgstr "Домен"
+
+msgid "adminV2.linkShare.download"
+msgstr "Скачать"
+
+msgid "adminV2.linkShare.kind.auto"
+msgstr "Авто CDN"
+
+msgid "adminV2.linkShare.kind.cdn"
+msgstr "CDN"
+
+msgid "adminV2.linkShare.kind.current"
+msgstr "Текущий"
+
+msgid "adminV2.linkShare.link"
+msgstr "Ссылка"
+
+msgid "adminV2.linkShare.open"
+msgstr "Открыть"
+
+msgid "adminV2.login.brand"
+msgstr "Hiddify"
+
+msgid "adminV2.login.error_expired"
+msgstr "Эта страница была открыта слишком долго. Войдите снова."
+
+msgid "adminV2.login.error_invalid"
+msgstr ""
+"ID, имя пользователя или пароль неверны. Проверьте их и повторите попытку."
+
+msgid "adminV2.login.error_locked"
+msgstr "Слишком много попыток из вашей сети. Подождите 15 минут и повторите."
+
+msgid "adminV2.login.hide"
+msgstr "Скрыть пароль"
+
+msgid "adminV2.login.pageTitle"
+msgstr "Вход"
+
+msgid "adminV2.login.password"
+msgstr "Пароль"
+
+msgid "adminV2.login.passwordHint"
+msgstr "Оставьте пустым, если у вашей админ-ссылки нет пароля."
+
+msgid "adminV2.login.passwordPlaceholder"
+msgstr "Ваш пароль"
+
+msgid "adminV2.login.show"
+msgstr "Показать пароль"
+
+msgid "adminV2.login.signingIn"
+msgstr "Вход…"
+
+msgid "adminV2.login.submit"
+msgstr "Войти"
+
+msgid "adminV2.login.subtitle"
+msgstr "Панель администратора"
+
+msgid "adminV2.login.tipLink"
+msgstr "При открытии вашей админ-ссылки ID подставляется автоматически."
+
+msgid "adminV2.login.tipLost"
+msgstr "Потеряли пароль? Попросите админа, который вас добавил, сбросить его."
+
+msgid "adminV2.login.title"
+msgstr "С возвращением"
+
+msgid "adminV2.login.username"
+msgstr "ID админа или имя пользователя"
+
+msgid "adminV2.login.usernameHint"
+msgstr "ID из вашей админ-ссылки или выданное вам имя пользователя."
+
+msgid "adminV2.login.usernamePlaceholder"
+msgstr "xxxxxxxx-xxxx-… или ваше имя пользователя"
+
+msgid "adminV2.menu.baseConfigs"
+msgstr "Базовые конфигурации"
+
+msgid "adminV2.menu.customProxies"
+msgstr "Прокси"
+
+msgid "adminV2.menu.dashboard"
+msgstr "Панель управления"
+
+msgid "adminV2.menu.group.help"
+msgstr "Помощь"
+
+msgid "adminV2.menu.group.manager"
+msgstr "Менеджер"
+
+msgid "adminV2.menu.group.settings"
+msgstr "Настройки"
+
+msgid "adminV2.menu.myAccount"
+msgstr "Мой аккаунт"
+
+msgid "adminV2.menu.nodeHome"
+msgstr "Узел"
+
+msgid "adminV2.menu.outbounds"
+msgstr "Исходящие"
+
+msgid "adminV2.menu.protocols"
+msgstr "Протоколы"
+
+msgid "adminV2.menu.proxyEditor"
+msgstr "Редактор прокси"
+
+msgid "adminV2.menu.signOut"
+msgstr "Выйти"
+
+msgid "adminV2.menu.templateVariables"
+msgstr "Переменные шаблонов"
+
+msgid "adminV2.menu.templates"
+msgstr "Шаблоны"
+
+msgid "adminV2.menu.utils"
+msgstr "Утилиты"
+
+msgid "adminV2.nodeHome.connectedTo"
+msgstr "Этот узел подключён к родительской панели"
+
+msgid "adminV2.nodeHome.managedOnParent"
+msgstr ""
+"Пользователи, админы и панель управления управляются в родительской панели. "
+"Здесь вы управляете только доменами, прокси и сервером этого узла."
+
+msgid "adminV2.nodeHome.noParent"
+msgstr "Этот узел ещё не подключён к родительской панели."
+
+msgid "adminV2.nodeHome.openParent"
+msgstr "Открыть панель управления родителя"
+
+msgid "adminV2.nodeHome.subtitle"
+msgstr "Эта панель является узлом родительской панели."
+
+msgid "adminV2.nodeHome.title"
+msgstr "Узел"
+
+msgid "adminV2.nodeHome.titleNamed"
+msgstr "Узел: {name}"
+
+msgid "adminV2.nodes.add.connecting"
+msgstr "Подключение к узлу… это может занять до минуты."
+
+msgid "adminV2.nodes.add.linkHint"
+msgstr "Выглядит как https://node.example.com/…/xxxxxxxx-xxxx-…/admin/"
+
+msgid "adminV2.nodes.add.linkInvalid"
+msgstr ""
+"Это не похоже на полную админ-ссылку. Она должна начинаться с https:// и "
+"содержать ID админа."
+
+msgid "adminV2.nodes.add.linkLabel"
+msgstr "Админ-ссылка узла"
+
+msgid "adminV2.nodes.add.linkOk"
+msgstr "Узел на {host}"
+
+msgid "adminV2.nodes.add.nameLabel"
+msgstr "Имя"
+
+msgid "adminV2.nodes.add.namePlaceholder"
+msgstr "напр. Германия 1"
+
+msgid "adminV2.nodes.add.optional"
+msgstr "необязательно"
+
+msgid "adminV2.nodes.add.step1"
+msgstr "Откройте админ-панель сервера, который хотите добавить."
+
+msgid "adminV2.nodes.add.step2"
+msgstr "Скопируйте её полный адрес из адресной строки браузера."
+
+msgid "adminV2.nodes.add.step3"
+msgstr "Вставьте его ниже и нажмите «Подключить»."
+
+msgid "adminV2.nodes.add.submit"
+msgstr "Подключить узел"
+
+msgid "adminV2.nodes.add.success"
+msgstr "Узел подключён"
+
+msgid "adminV2.nodes.add.title"
+msgstr "Добавить узел"
+
+msgid "adminV2.nodes.addNode"
+msgstr "Добавить узел"
+
+msgid "adminV2.nodes.checkConnection"
+msgstr "Проверить соединение"
+
+msgid "adminV2.nodes.checking"
+msgstr "Проверка…"
+
+msgid "adminV2.nodes.connection"
+msgstr "Соединение"
+
+msgid "adminV2.nodes.differentVersion"
+msgstr ""
+"На узле версия {node}, на этой панели {panel}. Держите их на одной версии."
+
+msgid "adminV2.nodes.empty.cta"
+msgstr "Добавьте первый узел"
+
+msgid "adminV2.nodes.empty.point1"
+msgstr "Пользователи и админы синхронизируются автоматически"
+
+msgid "adminV2.nodes.empty.point2"
+msgstr "Трафик собирается здесь"
+
+msgid "adminV2.nodes.empty.point3"
+msgstr "Один клик, чтобы открыть админку каждого узла"
+
+msgid "adminV2.nodes.empty.text"
+msgstr ""
+"Добавьте другой сервер Hiddify как узел, чтобы управлять всеми серверами из "
+"этой панели."
+
+msgid "adminV2.nodes.empty.title"
+msgstr "Узлов пока нет"
+
+msgid "adminV2.nodes.errors.invalid_link"
+msgstr "Ссылка не является действительной админ-ссылкой."
+
+msgid "adminV2.nodes.errors.rejected"
+msgstr ""
+"Узел отказался подключаться. Возможно, он уже принадлежит другой "
+"родительской панели или его версия слишком старая."
+
+msgid "adminV2.nodes.errors.self"
+msgstr "Это ссылка этой панели. Используйте ссылку сервера узла."
+
+msgid "adminV2.nodes.errors.timeout"
+msgstr "Узел слишком долго отвечал. Проверьте его и повторите попытку."
+
+msgid "adminV2.nodes.errors.unreachable"
+msgstr ""
+"Не удалось связаться с узлом. Проверьте ссылку и убедитесь, что узел в сети."
+
+msgid "adminV2.nodes.info.fromNode"
+msgstr "Последнее сообщение от узла"
+
+msgid "adminV2.nodes.info.lastUsage"
+msgstr "Последнее обновление трафика пользователей"
+
+msgid "adminV2.nodes.info.noUsageYet"
+msgstr "Трафик пока не передан"
+
+msgid "adminV2.nodes.info.toNode"
+msgstr "Последнее сообщение узлу"
+
+msgid "adminV2.nodes.info.todayOnline"
+msgstr "Пользователи онлайн сегодня"
+
+msgid "adminV2.nodes.info.todayTraffic"
+msgstr "Трафик за сегодня"
+
+msgid "adminV2.nodes.info.usageReport"
+msgstr ""
+"{users} пользователь с трафиком, {traffic} | {users} пользователей с "
+"трафиком, {traffic}"
+
+msgid "adminV2.nodes.justNow"
+msgstr "Только что"
+
+msgid "adminV2.nodes.lastSeen"
+msgstr "Последний контакт"
+
+msgid "adminV2.nodes.moreInfo"
+msgstr "Дополнительная информация"
+
+msgid "adminV2.nodes.neverSeen"
+msgstr "Никогда"
+
+msgid "adminV2.nodes.openAdmin"
+msgstr "Открыть"
+
+msgid "adminV2.nodes.reachable"
+msgstr "Доступен"
+
+msgid "adminV2.nodes.refresh"
+msgstr "Обновить"
+
+msgid "adminV2.nodes.remove"
+msgstr "Удалить"
+
+msgid "adminV2.nodes.removeMessage"
+msgstr ""
+"Узел будет удалён из этой панели вместе со своими доменами и снова станет "
+"самостоятельной панелью (ссылка на родителя очищается). Чтобы подключить его"
+" позже, добавьте его снова."
+
+msgid "adminV2.nodes.removeTitle"
+msgstr "Удалить {name}?"
+
+msgid "adminV2.nodes.removed"
+msgstr "{name} удалён"
+
+msgid "adminV2.nodes.removedNotUnlinked"
+msgstr ""
+"Не удалось связаться с узлом, поэтому у него всё ещё указана эта панель как "
+"родитель. Очистите ссылку на родителя в его настройках, иначе он будет "
+"продолжать пытаться синхронизироваться."
+
+msgid "adminV2.nodes.rename"
+msgstr "Переименовать"
+
+msgid "adminV2.nodes.renamed"
+msgstr "Переименован в {name}"
+
+msgid "adminV2.nodes.renamedHereOnly"
+msgstr "Переименован в {name} только в этой панели"
+
+msgid "adminV2.nodes.renamedHereOnlyDetail"
+msgstr ""
+"Не удалось связаться с узлом, или он слишком старый, чтобы принять имя; "
+"после повторной регистрации он может показывать старое имя."
+
+msgid "adminV2.nodes.sameVersion"
+msgstr "Та же версия, что и у этой панели"
+
+msgid "adminV2.nodes.showLess"
+msgstr "Показать меньше"
+
+msgid "adminV2.nodes.status.late"
+msgstr "Опаздывает"
+
+msgid "adminV2.nodes.status.never"
+msgstr "Ещё не подключён"
+
+msgid "adminV2.nodes.status.offline"
+msgstr "Офлайн"
+
+msgid "adminV2.nodes.status.online"
+msgstr "Онлайн"
+
+msgid "adminV2.nodes.subtitle"
+msgstr ""
+"Другие серверы Hiddify, подключённые к этой панели. Пользователи и админы "
+"автоматически разделяются с ними."
+
+msgid "adminV2.nodes.syncFailed"
+msgstr "Не удалось синхронизировать {name}"
+
+msgid "adminV2.nodes.syncNow"
+msgstr "Синхронизировать сейчас"
+
+msgid "adminV2.nodes.synced"
+msgstr "{name} синхронизирован"
+
+msgid "adminV2.nodes.title"
+msgstr "Узлы"
+
+msgid "adminV2.nodes.unreachable"
+msgstr "Недоступен"
+
+msgid "adminV2.outbounds.add"
+msgstr "Добавить исходящее подключение"
+
+msgid "adminV2.outbounds.count.geosites"
+msgstr "геосайт | геосайтов"
+
+msgid "adminV2.outbounds.count.rule_sets"
+msgstr "набор правил | наборов правил"
+
+msgid "adminV2.outbounds.count.sites"
+msgstr "сайт | сайтов"
+
+msgid "adminV2.outbounds.default"
+msgstr "По умолчанию"
+
+msgid "adminV2.outbounds.defaultHint"
+msgstr ""
+"Последнее включённое исходящее подключение: всё, что не направлено выше, "
+"идёт сюда"
+
+msgid "adminV2.outbounds.deleteMessage"
+msgstr ""
+"Его сайты с этого момента будут идти через исходящее подключение по "
+"умолчанию."
+
+msgid "adminV2.outbounds.deleteMessageDefault"
+msgstr ""
+"Это исходящее подключение по умолчанию: включённое выше станет подключением "
+"по умолчанию."
+
+msgid "adminV2.outbounds.deleteTitle"
+msgstr "Удалить {name}?"
+
+msgid "adminV2.outbounds.deleted"
+msgstr "{name} удалено"
+
+msgid "adminV2.outbounds.dialog.add"
+msgstr "Добавить исходящее подключение"
+
+msgid "adminV2.outbounds.dialog.addTitle"
+msgstr "Добавить исходящее подключение: {mode}"
+
+msgid "adminV2.outbounds.dialog.config"
+msgstr "JSON"
+
+msgid "adminV2.outbounds.dialog.configBridge"
+msgstr ""
+"Панель назвала его «{tag}»; маршрутизация использует этот тег, а другое ядро"
+" подключается к нему на 127.0.0.1:{port}."
+
+msgid "adminV2.outbounds.dialog.configBridgeNew"
+msgstr ""
+"Панель сама назначает ему тег (написанный вами тег игнорируется); "
+"маршрутизация использует его, а другое ядро подключается к нему через "
+"локальный SOCKS-мост."
+
+msgid "adminV2.outbounds.dialog.configExample"
+msgstr "Вставить пример"
+
+msgid "adminV2.outbounds.dialog.configHint.core_endpoint"
+msgstr ""
+"Один объект endpoint hiddify-core (sing-box), например endpoint WireGuard. "
+"Проверяется hiddify-core перед сохранением."
+
+msgid "adminV2.outbounds.dialog.configHint.core_outbound"
+msgstr ""
+"Один объект outbound hiddify-core (sing-box), например {\"type\": \"socks\","
+" \"server\": \"…\", \"server_port\": 1080}. Проверяется hiddify-core перед "
+"сохранением."
+
+msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
+msgstr ""
+"Один объект outbound xray, например {\"protocol\": \"socks\", \"settings\": "
+"{…}}. Проверяется xray перед сохранением."
+
+msgid "adminV2.outbounds.dialog.configInvalid"
+msgstr "Недопустимый JSON: {error}"
+
+msgid "adminV2.outbounds.dialog.configRequired"
+msgstr "JSON обязателен"
+
+msgid "adminV2.outbounds.dialog.domestic"
+msgstr "Внутренние сайты региона {region}"
+
+msgid "adminV2.outbounds.dialog.editTitle"
+msgstr "Изменить {name}"
+
+msgid "adminV2.outbounds.dialog.endpoint"
+msgstr "Подключение"
+
+msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
+msgstr ""
+"Работает внутри hiddify-core. xray подключается к нему через локальный "
+"SOCKS-порт {endpoint}."
+
+msgid "adminV2.outbounds.dialog.endpointHint.tor"
+msgstr ""
+"Работает внутри hiddify-core (на этом сервере должна быть установлена "
+"программа `tor`). xray подключается к нему через локальный SOCKS-порт "
+"{endpoint}."
+
+msgid "adminV2.outbounds.dialog.host"
+msgstr "Хост"
+
+msgid "adminV2.outbounds.dialog.name"
+msgstr "Имя"
+
+msgid "adminV2.outbounds.dialog.nameRequired"
+msgstr "Требуется имя"
+
+msgid "adminV2.outbounds.dialog.optional"
+msgstr "необязательно"
+
+msgid "adminV2.outbounds.dialog.password"
+msgstr "Пароль"
+
+msgid "adminV2.outbounds.dialog.passwordKeep"
+msgstr "Оставьте пустым, чтобы сохранить текущий пароль"
+
+msgid "adminV2.outbounds.dialog.port"
+msgstr "Порт"
+
+msgid "adminV2.outbounds.dialog.routes"
+msgstr "Что через него идёт"
+
+msgid "adminV2.outbounds.dialog.routesHint"
+msgstr "Трафик к этим сайтам выходит через это исходящее подключение."
+
+msgid "adminV2.outbounds.dialog.routesHintDefault"
+msgstr ""
+"Это подключение по умолчанию (последнее включённое): всё, что не направлено "
+"выше, уже идёт сюда, поэтому списки не нужны. Они снова используются, если "
+"поднять его выше."
+
+msgid "adminV2.outbounds.dialog.username"
+msgstr "Имя пользователя"
+
+msgid "adminV2.outbounds.disable"
+msgstr "Выключить"
+
+msgid "adminV2.outbounds.domesticChip"
+msgstr "Внутренние ({region})"
+
+msgid "adminV2.outbounds.drag"
+msgstr "Перетащите, чтобы изменить порядок"
+
+msgid "adminV2.outbounds.edited"
+msgstr "Изменено здесь: обновления сохраняют ваши списки"
+
+msgid "adminV2.outbounds.enable"
+msgstr "Включить"
+
+msgid "adminV2.outbounds.enabled"
+msgstr "Включено"
+
+msgid "adminV2.outbounds.everythingElse"
+msgstr "Всё остальное идёт сюда"
+
+msgid "adminV2.outbounds.followsDefaults"
+msgstr "Использует встроенные списки, обновляемые при апгрейде"
+
+msgid "adminV2.outbounds.howto"
+msgstr ""
+"Исходящие подключения проверяются сверху вниз: трафик уходит через первое, в"
+" списке которого есть его сайт. Последнее включённое исходящее подключение "
+"является подключением по умолчанию и получает всё остальное. Перетащите или "
+"используйте стрелки, чтобы изменить порядок."
+
+msgid "adminV2.outbounds.idle"
+msgstr "Не используется"
+
+msgid "adminV2.outbounds.idleHint"
+msgstr ""
+"В нём нет сайтов, геосайтов или наборов правил, поэтому через него ничего не"
+" идёт. Измените его, чтобы добавить, или переместите в конец, чтобы сделать "
+"подключением по умолчанию."
+
+msgid "adminV2.outbounds.list.browse"
+msgstr "Обзор наборов правил"
+
+msgid "adminV2.outbounds.list.geosites"
+msgstr "Геосайты / GeoIP (xray)"
+
+msgid "adminV2.outbounds.list.geositesHint"
+msgstr ""
+"Одна запись xray на строку с префиксом: geosite:google или geoip:ir (имя без"
+" префикса означает geosite:). Неизвестный тег останавливает xray, поэтому "
+"используйте известные."
+
+msgid "adminV2.outbounds.list.geositesPlaceholder"
+msgstr ""
+"geosite:google\n"
+"geoip:ir"
+
+msgid "adminV2.outbounds.list.rule_sets"
+msgstr "Наборы правил (hiddify-core)"
+
+msgid "adminV2.outbounds.list.rule_setsHint"
+msgstr ""
+"Один URL набора правил на строку (.srs или исходник .json). Если ввести имя "
+"SagerNet, например geosite-netflix, оно превратится в его URL."
+
+msgid "adminV2.outbounds.list.rule_setsPlaceholder"
+msgstr ""
+"https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-"
+"netflix.srs"
+
+msgid "adminV2.outbounds.list.sites"
+msgstr "Сайты"
+
+msgid "adminV2.outbounds.list.sitesHint"
+msgstr "Один домен на строку; поддомены включаются."
+
+msgid "adminV2.outbounds.list.sitesPlaceholder"
+msgstr "example.com"
+
+msgid "adminV2.outbounds.makeDefault"
+msgstr "Сделать подключением по умолчанию (переместить в конец)"
+
+msgid "adminV2.outbounds.mode.block"
+msgstr "Блокировка"
+
+msgid "adminV2.outbounds.mode.core_endpoint"
+msgstr "endpoint hiddify-core (sing-box)"
+
+msgid "adminV2.outbounds.mode.core_outbound"
+msgstr "outbound hiddify-core (sing-box)"
+
+msgid "adminV2.outbounds.mode.direct"
+msgstr "Direct"
+
+msgid "adminV2.outbounds.mode.psiphon"
+msgstr "Psiphon"
+
+msgid "adminV2.outbounds.mode.socks"
+msgstr "SOCKS"
+
+msgid "adminV2.outbounds.mode.tor"
+msgstr "Tor"
+
+msgid "adminV2.outbounds.mode.warp"
+msgstr "WARP"
+
+msgid "adminV2.outbounds.mode.xray_outbound"
+msgstr "outbound xray"
+
+msgid "adminV2.outbounds.modeHint.block"
+msgstr "Отбрасывается"
+
+msgid "adminV2.outbounds.modeHint.core_endpoint"
+msgstr ""
+"Ваш собственный endpoint hiddify-core, например WireGuard (JSON); xray "
+"подключается к нему через локальный SOCKS-мост"
+
+msgid "adminV2.outbounds.modeHint.core_outbound"
+msgstr ""
+"Ваш собственный outbound hiddify-core (JSON); xray подключается к нему через"
+" локальный SOCKS-мост"
+
+msgid "adminV2.outbounds.modeHint.direct"
+msgstr "Напрямую с этого сервера"
+
+msgid "adminV2.outbounds.modeHint.psiphon"
+msgstr "Через Psiphon (запускается hiddify-core)"
+
+msgid "adminV2.outbounds.modeHint.socks"
+msgstr "Через SOCKS5-прокси"
+
+msgid "adminV2.outbounds.modeHint.tor"
+msgstr "Через сеть Tor (запускается hiddify-core)"
+
+msgid "adminV2.outbounds.modeHint.warp"
+msgstr "Через Cloudflare WARP на этом сервере"
+
+msgid "adminV2.outbounds.modeHint.xray_outbound"
+msgstr ""
+"Ваш собственный outbound xray (JSON); hiddify-core подключается к нему через"
+" локальный SOCKS-мост"
+
+msgid "adminV2.outbounds.more"
+msgstr "Другие действия"
+
+msgid "adminV2.outbounds.moveDown"
+msgstr "Вниз"
+
+msgid "adminV2.outbounds.moveUp"
+msgstr "Вверх"
+
+msgid "adminV2.outbounds.notChanged"
+msgstr "Не изменено"
+
+msgid "adminV2.outbounds.nowDefault"
+msgstr "{name} теперь по умолчанию"
+
+msgid "adminV2.outbounds.off"
+msgstr "Выкл."
+
+msgid "adminV2.outbounds.region.cn"
+msgstr "Китай"
+
+msgid "adminV2.outbounds.region.ir"
+msgstr "Иран"
+
+msgid "adminV2.outbounds.region.other"
+msgstr "ваш регион"
+
+msgid "adminV2.outbounds.region.ru"
+msgstr "Россия"
+
+msgid "adminV2.outbounds.reset"
+msgstr "Сбросить к значениям по умолчанию"
+
+msgid "adminV2.outbounds.resetDone"
+msgstr "{name} снова использует встроенные списки"
+
+msgid "adminV2.outbounds.resetMessage"
+msgstr ""
+"Ваши изменения сайтов, геосайтов и наборов правил будут заменены встроенными"
+" списками, которые затем обновляются при апгрейдах."
+
+msgid "adminV2.outbounds.resetTitle"
+msgstr "Сбросить {name} к встроенным спискам?"
+
+msgid "adminV2.outbounds.saved"
+msgstr "{name} сохранено"
+
+msgid "adminV2.outbounds.subtitle"
+msgstr ""
+"Выберите по порядку, куда трафик выходит с этого сервера: через WARP, "
+"напрямую, блокировка или выход через SOCKS, Tor или Psiphon."
+
+msgid "adminV2.outbounds.title"
+msgstr "Исходящие подключения"
+
+msgid "adminV2.passwordRules.common"
+msgstr "не распространённый пароль"
+
+msgid "adminV2.passwordRules.digit"
+msgstr "цифру"
+
+msgid "adminV2.passwordRules.label"
+msgstr "Для надёжного пароля нужны"
+
+msgid "adminV2.passwordRules.length"
+msgstr "{n}+ символов"
+
+msgid "adminV2.passwordRules.lower"
+msgstr "строчную букву"
+
+msgid "adminV2.passwordRules.name"
+msgstr "не ваше имя и не ID"
+
+msgid "adminV2.passwordRules.upper"
+msgstr "заглавную букву"
+
+msgid "adminV2.primevue.accept"
+msgstr "Да"
+
+msgid "adminV2.primevue.apply"
+msgstr "Применить"
+
+msgid "adminV2.primevue.cancel"
+msgstr "Отмена"
+
+msgid "adminV2.primevue.choose"
+msgstr "Выбрать"
+
+msgid "adminV2.primevue.clear"
+msgstr "Очистить"
+
+msgid "adminV2.primevue.emptyFilterMessage"
+msgstr "Результатов не найдено"
+
+msgid "adminV2.primevue.emptyMessage"
+msgstr "Нет доступных вариантов"
+
+msgid "adminV2.primevue.emptySearchMessage"
+msgstr "Результатов не найдено"
+
+msgid "adminV2.primevue.reject"
+msgstr "Нет"
+
+msgid "adminV2.primevue.upload"
+msgstr "Загрузить"
+
+msgid "adminV2.protocols.changed"
+msgstr "Изменено"
+
+msgid "adminV2.protocols.disableAll"
+msgstr "Отключить все"
+
+msgid "adminV2.protocols.enableAll"
+msgstr "Включить все"
+
+msgid "adminV2.protocols.enabledOf"
+msgstr "Включено {on} из {total}"
+
+msgid "adminV2.protocols.filterAll"
+msgstr "Все"
+
+msgid "adminV2.protocols.filterOff"
+msgstr "Выкл."
+
+msgid "adminV2.protocols.filterOn"
+msgstr "Вкл."
+
+msgid "adminV2.protocols.groups.other.hint"
+msgstr "Другие переключатели"
+
+msgid "adminV2.protocols.groups.other.title"
+msgstr "Другое"
+
+msgid "adminV2.protocols.groups.protocols.hint"
+msgstr "Прокси-протоколы, предлагаемые клиентам"
+
+msgid "adminV2.protocols.groups.protocols.title"
+msgstr "Протоколы"
+
+msgid "adminV2.protocols.groups.security.hint"
+msgstr "Reality, трюки с TLS и мультиплексирование"
+
+msgid "adminV2.protocols.groups.security.title"
+msgstr "Безопасность и трюки"
+
+msgid "adminV2.protocols.groups.transports.hint"
+msgstr "Как переносится трафик (TCP, WebSocket, gRPC, …)"
+
+msgid "adminV2.protocols.groups.transports.title"
+msgstr "Транспорты"
+
+msgid "adminV2.protocols.instantChip"
+msgstr "Мгновенно"
+
+msgid "adminV2.protocols.leaveUnsaved"
+msgstr "У вас есть несохранённые изменения. Всё равно уйти?"
+
+msgid "adminV2.protocols.noMatch"
+msgstr "Ничего не соответствует вашему поиску."
+
+msgid "adminV2.protocols.reinstallChip"
+msgstr "Нужна переустановка"
+
+msgid "adminV2.protocols.relatedSettings"
+msgstr "Настройки"
+
+msgid "adminV2.protocols.search"
+msgstr "Поиск протоколов…"
+
+msgid "adminV2.protocols.subtitle"
+msgstr ""
+"Включайте и отключайте протоколы, транспорты и трюки с TLS для всей панели."
+
+msgid "adminV2.protocols.summaryHint"
+msgstr "Нажмите на карточку, чтобы переключить её, затем сохраните."
+
+msgid "adminV2.protocols.title"
+msgstr "Протоколы"
+
+msgid "adminV2.proxy.addClient"
+msgstr "Добавить клиент"
+
+msgid "adminV2.proxy.addClientConfig"
+msgstr "Добавить конфигурацию для этого ядра"
+
+msgid "adminV2.proxy.addCoreConfig"
+msgstr "Добавить конфигурацию ядра"
+
+msgid "adminV2.proxy.allowedProtocols"
+msgstr "Разрешённые протоколы"
+
+msgid "adminV2.proxy.alpn"
+msgstr "ALPN"
+
+msgid "adminV2.proxy.alpnLabels.custom"
+msgstr "Своё"
+
+msgid "adminV2.proxy.alpnLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2"
+msgstr "TLS H1 + H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2_h3"
+msgstr "TLS H1 + H2 + QUIC"
+
+msgid "adminV2.proxy.alpnLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h3"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.autoClient"
+msgstr "авто"
+
+msgid "adminV2.proxy.baseConfigTemplate"
+msgstr "Переопределение базовой конфигурации"
+
+msgid "adminV2.proxy.baseConfigTemplateHint"
+msgstr ""
+"Необязательная полная оболочка клиента xray в {% block base_config %}. "
+"Оставьте пустым, чтобы использовать глобальную базовую конфигурацию."
+
+msgid "adminV2.proxy.builtinDefaultHint"
+msgstr ""
+"Встроенный пресет, синхронизированный из каталога. Включите собственное "
+"содержимое на вкладках «Сервер» или «Клиент», чтобы редактировать эти "
+"стороны."
+
+msgid "adminV2.proxy.builtinReadOnly"
+msgstr ""
+"Встроенный пресет: можно изменить только имя и состояние включения. "
+"Дублируйте его для полного редактирования."
+
+msgid "adminV2.proxy.bundleContextProxyCount"
+msgstr "Включённые прокси"
+
+msgid "adminV2.proxy.cannotEnable"
+msgstr "Не удаётся включить этот прокси"
+
+msgid "adminV2.proxy.categories"
+msgstr "Категории"
+
+msgid "adminV2.proxy.categoriesAdd"
+msgstr "Добавить категорию"
+
+msgid "adminV2.proxy.categoriesAddNew"
+msgstr "Добавить новую"
+
+msgid "adminV2.proxy.categoriesAddPlaceholder"
+msgstr "Новая категория"
+
+msgid "adminV2.proxy.categoriesFilter"
+msgstr "Фильтр по категориям"
+
+msgid "adminV2.proxy.categoriesHeader"
+msgstr "Доступные категории"
+
+msgid "adminV2.proxy.categoriesHint"
+msgstr ""
+"Выберите существующие категории или добавьте новую в нижней части списка"
+
+msgid "adminV2.proxy.categoriesPlaceholder"
+msgstr "Выберите категории"
+
+msgid "adminV2.proxy.categoriesRemoveAll"
+msgstr "Удалить все"
+
+msgid "adminV2.proxy.clashFormatJson"
+msgstr "JSON"
+
+msgid "adminV2.proxy.clashFormatYaml"
+msgstr "YAML"
+
+msgid "adminV2.proxy.clientBuiltinCustomized"
+msgstr "Пользовательская конфигурация клиента"
+
+msgid "adminV2.proxy.clientBuiltinDefault"
+msgstr "Используется конфигурация клиента по умолчанию из каталога"
+
+msgid "adminV2.proxy.clientConfigDefault"
+msgstr "Конфигурация клиента"
+
+msgid "adminV2.proxy.clientCoreConfigs"
+msgstr "Конфигурации ядер клиента"
+
+msgid "adminV2.proxy.clientCores"
+msgstr "Ядра клиента"
+
+msgid "adminV2.proxy.commonProxyBadge"
+msgstr "Общий"
+
+msgid "adminV2.proxy.core"
+msgstr "Ядро"
+
+msgid "adminV2.proxy.customPath"
+msgstr "Свой путь"
+
+msgid "adminV2.proxy.customPathAuto"
+msgstr "Генерируется автоматически для HTTP-прокси"
+
+msgid "adminV2.proxy.defaultTagName"
+msgstr "Тег по умолчанию: {name}"
+
+msgid "adminV2.proxy.directPortAccess"
+msgstr "Прямой доступ к порту"
+
+msgid "adminV2.proxy.directPortAccessHint"
+msgstr ""
+"Используйте осторожно: может сделать ваш сервер обнаруживаемым на публичном "
+"интерфейсе"
+
+msgid "adminV2.proxy.doBase64After"
+msgstr "Base64 после рендеринга"
+
+msgid "adminV2.proxy.domainIds"
+msgstr "Домены"
+
+msgid "adminV2.proxy.domainIdsEmptyAll"
+msgstr "Пусто = все подходящие домены; прокси на основе IP игнорируют домены"
+
+msgid "adminV2.proxy.domainModeLabels.cdn"
+msgstr "CDN"
+
+msgid "adminV2.proxy.domainModeLabels.direct"
+msgstr "Direct"
+
+msgid "adminV2.proxy.domainModeLabels.direct-dns"
+msgstr "Direct DNS"
+
+msgid "adminV2.proxy.domainModeLabels.direct-fake"
+msgstr "Direct fake"
+
+msgid "adminV2.proxy.domainModeLabels.direct-reality"
+msgstr "Direct REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "Direct valid"
+
+msgid "adminV2.proxy.domainModeLabels.fake"
+msgstr "Fake TLS"
+
+msgid "adminV2.proxy.domainModeLabels.reality"
+msgstr "REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay"
+msgstr "Relay"
+
+msgid "adminV2.proxy.domainModeLabels.relay-fake"
+msgstr "Relay fake"
+
+msgid "adminV2.proxy.domainModeLabels.relay-reality"
+msgstr "Relay REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "Relay valid"
+
+msgid "adminV2.proxy.domainModeLabels.special"
+msgstr "Special (REALITY)"
+
+msgid "adminV2.proxy.domainModes"
+msgstr "Режимы доменов"
+
+msgid "adminV2.proxy.domains"
+msgstr "Домены"
+
+msgid "adminV2.proxy.downloadAlpns"
+msgstr "ALPN загрузки"
+
+msgid "adminV2.proxy.downloadAlpnsHint"
+msgstr ""
+"Только xHTTP. Пусто = как основной ALPN. Варианты конфигурации = основной × "
+"ALPN загрузки."
+
+msgid "adminV2.proxy.downloadDomainModes"
+msgstr "Режимы домена загрузки"
+
+msgid "adminV2.proxy.downloadTcpUdp"
+msgstr "TCP или UDP для загрузки"
+
+msgid "adminV2.proxy.downloadTlsLayer"
+msgstr "Слой TLS для загрузки"
+
+msgid "adminV2.proxy.exampleContext"
+msgstr "Контекст рендеринга"
+
+msgid "adminV2.proxy.exampleContextDomain"
+msgstr "Домен"
+
+msgid "adminV2.proxy.exampleContextIp"
+msgstr "IP"
+
+msgid "adminV2.proxy.exampleContextProxy"
+msgstr "ID прокси"
+
+msgid "adminV2.proxy.exampleContextUa"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleContextUser"
+msgstr "Пользователь"
+
+msgid "adminV2.proxy.exampleDomain"
+msgstr "Домен"
+
+msgid "adminV2.proxy.exampleDomainAll"
+msgstr "Все домены"
+
+msgid "adminV2.proxy.exampleDomainAllHint"
+msgstr "Включить все домены, подходящие этому прокси (как в выводе подписки)."
+
+msgid "adminV2.proxy.exampleDomainCustom"
+msgstr "Свой домен"
+
+msgid "adminV2.proxy.exampleDomainPick"
+msgstr "Выбрать из панели"
+
+msgid "adminV2.proxy.exampleIp"
+msgstr "IP-адрес"
+
+msgid "adminV2.proxy.exampleUaCustom"
+msgstr "Свой User-Agent"
+
+msgid "adminV2.proxy.exampleUaPreset"
+msgstr "Пресет"
+
+msgid "adminV2.proxy.exampleUser"
+msgstr "Пользователь"
+
+msgid "adminV2.proxy.exampleUserAgent"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleUserPick"
+msgstr "Выбрать пользователя панели"
+
+msgid "adminV2.proxy.exampleUserSample"
+msgstr "Пример пользователя"
+
+msgid "adminV2.proxy.export"
+msgstr "Экспорт"
+
+msgid "adminV2.proxy.exportFailed"
+msgstr "Не удалось экспортировать"
+
+msgid "adminV2.proxy.fieldOverride"
+msgstr "Переопределить"
+
+msgid "adminV2.proxy.generateBundle"
+msgstr "Сгенерировать все конфигурации"
+
+msgid "adminV2.proxy.generateBundleOk"
+msgstr "Набор успешно сгенерирован"
+
+msgid "adminV2.proxy.generateBundlePartial"
+msgstr "Набор сгенерирован с предупреждениями или ошибками"
+
+msgid "adminV2.proxy.generateExample"
+msgstr "Сгенерировать пример"
+
+msgid "adminV2.proxy.generateExampleOk"
+msgstr "Пример успешно сгенерирован"
+
+msgid "adminV2.proxy.generateExamplePartial"
+msgstr "Пример сгенерирован с предупреждениями или ошибками"
+
+msgid "adminV2.proxy.goToSettings"
+msgstr "Перейти к настройкам"
+
+msgid "adminV2.proxy.ignoreSkip"
+msgstr "Игнорировать теги skip"
+
+msgid "adminV2.proxy.ignoreSkipHint"
+msgstr ""
+"Рендерить конфигурацию, даже если блок skip шаблона обычно пропускает "
+"фрагмент"
+
+msgid "adminV2.proxy.import"
+msgstr "Импорт"
+
+msgid "adminV2.proxy.importFailed"
+msgstr "Не удалось импортировать"
+
+msgid "adminV2.proxy.importSuccess"
+msgstr "Успешно импортировано (шаблонов: {count})"
+
+msgid "adminV2.proxy.inboundPort"
+msgstr "Входящий порт"
+
+msgid "adminV2.proxy.inboundPortAuto"
+msgstr "Оставьте пустым для автоматического"
+
+msgid "adminV2.proxy.inboundPortAutoCalculated"
+msgstr "Порты вычисляются автоматически для каждого домена"
+
+msgid "adminV2.proxy.inboundTcpPorts"
+msgstr "Входящие TCP-порты"
+
+msgid "adminV2.proxy.inboundTcpPortsHint"
+msgstr "Статические TCP-порты через запятую"
+
+msgid "adminV2.proxy.inboundTemplate"
+msgstr "Шаблон inbound"
+
+msgid "adminV2.proxy.inboundUdpPorts"
+msgstr "Входящие UDP-порты"
+
+msgid "adminV2.proxy.inboundUdpPortsHint"
+msgstr ""
+"Статические UDP-порты через запятую; если пусто, по умолчанию используются "
+"TCP-порты"
+
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "Общий прокси"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"Этот протокол есть и в Xray, и в Hiddify Core. Настройка Common Proxy Core "
+"оставляет включённым только выбранное ядро."
+
+msgid "adminV2.proxy.l7Proto"
+msgstr "Протокол L7 reverse proxy"
+
+msgid "adminV2.proxy.l7ReverseProto"
+msgstr "Протокол L7 reverse proxy"
+
+msgid "adminV2.proxy.linkSettings"
+msgstr "Настройки ссылки"
+
+msgid "adminV2.proxy.linkTemplate"
+msgstr "Шаблон ссылки"
+
+msgid "adminV2.proxy.listTitle"
+msgstr "Пользовательские прокси"
+
+msgid "adminV2.proxy.mode"
+msgstr "Режим"
+
+msgid "adminV2.proxy.modeLabels.domain_native"
+msgstr "Нативный домен"
+
+msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
+msgstr "Несколько доменов, автопорты"
+
+msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
+msgstr "DNS-шлюз домена"
+
+msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
+msgstr "L7-шлюз домена"
+
+msgid "adminV2.proxy.modeLabels.domains_single_public_port"
+msgstr "Несколько доменов, статический порт"
+
+msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
+msgstr "SNI-шлюз домена"
+
+msgid "adminV2.proxy.modeLabels.ip"
+msgstr "На основе IP"
+
+msgid "adminV2.proxy.modeLabels.no_inbound"
+msgstr "Без inbound"
+
+msgid "adminV2.proxy.modeSettings"
+msgstr "Режим и маршрутизация"
+
+msgid "adminV2.proxy.name"
+msgstr "Имя"
+
+msgid "adminV2.proxy.nameRequired"
+msgstr "Укажите имя прокси перед сохранением: это подпись его ссылок."
+
+msgid "adminV2.proxy.needGlobalEnable"
+msgstr ""
+"Чтобы включить этот прокси, нужно глобально включить {names}. Открыть "
+"настройки?"
+
+msgid "adminV2.proxy.new"
+msgstr "Новый прокси"
+
+msgid "adminV2.proxy.noClientConfigs"
+msgstr "Конфигураций клиента пока нет. Добавьте клиент, чтобы начать."
+
+msgid "adminV2.proxy.outboundTagTemplate"
+msgstr "Шаблон тега outbound"
+
+msgid "adminV2.proxy.outboundTagTemplateHint"
+msgstr ""
+"Jinja для тега outbound каждого клиента. По умолчанию: {{ proxy.tag }} {{ "
+"domain.alias or domain.name }} {{ proxy.alpn }}"
+
+msgid "adminV2.proxy.outboundsTemplate"
+msgstr "Шаблон outbounds"
+
+msgid "adminV2.proxy.protocol"
+msgstr "Протокол"
+
+msgid "adminV2.proxy.quick.any"
+msgstr "Любой"
+
+msgid "adminV2.proxy.quick.clear"
+msgstr "Сбросить фильтры"
+
+msgid "adminV2.proxy.quick.label"
+msgstr "Фильтры"
+
+msgid "adminV2.proxy.quick.modified"
+msgstr "Изменённые"
+
+msgid "adminV2.proxy.quick.modifiedHint"
+msgstr "Изменено относительно значения по умолчанию из каталога"
+
+msgid "adminV2.proxy.quick.nSelected"
+msgstr "Выбрано: {n}"
+
+msgid "adminV2.proxy.quick.other"
+msgstr "Другое"
+
+msgid "adminV2.proxy.quick.showing"
+msgstr "Показано {n} из {total}"
+
+msgid "adminV2.proxy.regeneratePath"
+msgstr "Пересоздать путь"
+
+msgid "adminV2.proxy.renderErrorClickHint"
+msgstr "Нажмите для подробностей"
+
+msgid "adminV2.proxy.renderErrorDetail"
+msgstr "Подробности ошибки рендеринга"
+
+msgid "adminV2.proxy.renderErrorDetailTitle"
+msgstr "Ошибка рендеринга: {label}"
+
+msgid "adminV2.proxy.renderErrorNoDetail"
+msgstr "Для этой ошибки нет дополнительного контекста."
+
+msgid "adminV2.proxy.renderErrorRenderedSource"
+msgstr "Результат рендеринга"
+
+msgid "adminV2.proxy.renderErrorTemplateSource"
+msgstr "Исходник шаблона"
+
+msgid "adminV2.proxy.resetAll"
+msgstr "Сбросить всё к значениям по умолчанию"
+
+msgid "adminV2.proxy.resetAllConfirm"
+msgstr ""
+"Отменить все изменения встроенных прокси (тег, режимы доменов, TLS, "
+"конфигурации сервера и клиента) и восстановить значения по умолчанию из "
+"каталога? Созданные вами прокси не затрагиваются."
+
+msgid "adminV2.proxy.resetAllDone"
+msgstr "Прокси сброшено к значениям по умолчанию: {n}"
+
+msgid "adminV2.proxy.resetTagName"
+msgstr "Сбросить имя тега к значению по умолчанию"
+
+msgid "adminV2.proxy.resetToBuiltin"
+msgstr "Сбросить к значению по умолчанию из каталога"
+
+msgid "adminV2.proxy.searchAll"
+msgstr "Поиск по всем столбцам..."
+
+msgid "adminV2.proxy.serverBuiltinCustomized"
+msgstr "Пользовательская конфигурация сервера"
+
+msgid "adminV2.proxy.serverBuiltinDefault"
+msgstr "Используется конфигурация сервера по умолчанию из каталога"
+
+msgid "adminV2.proxy.serverCore"
+msgstr "Ядро сервера"
+
+msgid "adminV2.proxy.slug"
+msgstr "Slug"
+
+msgid "adminV2.proxy.sublink"
+msgstr "Sublink"
+
+msgid "adminV2.proxy.sublinkBase64.content"
+msgstr "Содержимое"
+
+msgid "adminV2.proxy.sublinkBase64.formatJson"
+msgstr "Форматировать JSON"
+
+msgid "adminV2.proxy.sublinkBase64.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkBase64Detail"
+msgstr "Подробности Base64"
+
+msgid "adminV2.proxy.sublinkFormat"
+msgstr "Формат ссылки"
+
+msgid "adminV2.proxy.sublinkFormatBase64"
+msgstr "Формат Base64"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "Декодированные поля"
+
+msgid "adminV2.proxy.sublinkFormatRaw"
+msgstr "Отрендеренная ссылка"
+
+msgid "adminV2.proxy.sublinkFormatRawLink"
+msgstr "Исходная ссылка"
+
+msgid "adminV2.proxy.sublinkFormatUri"
+msgstr "Формат URI"
+
+msgid "adminV2.proxy.sublinkUri.fragment"
+msgstr "uri.fragment"
+
+msgid "adminV2.proxy.sublinkUri.host"
+msgstr "uri.host"
+
+msgid "adminV2.proxy.sublinkUri.password"
+msgstr "uri.password"
+
+msgid "adminV2.proxy.sublinkUri.path"
+msgstr "uri.path"
+
+msgid "adminV2.proxy.sublinkUri.port"
+msgstr "uri.port"
+
+msgid "adminV2.proxy.sublinkUri.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkUri.query_params"
+msgstr "uri.query_params (JSON)"
+
+msgid "adminV2.proxy.sublinkUri.user"
+msgstr "uri.user"
+
+msgid "adminV2.proxy.sublinkUriDetail"
+msgstr "Подробности URI"
+
+msgid "adminV2.proxy.tabClient"
+msgstr "Клиент"
+
+msgid "adminV2.proxy.tabClients"
+msgstr "Клиенты"
+
+msgid "adminV2.proxy.tabGeneral"
+msgstr "Общие"
+
+msgid "adminV2.proxy.tabServer"
+msgstr "Сервер"
+
+msgid "adminV2.proxy.tabServers"
+msgstr "Серверы"
+
+msgid "adminV2.proxy.tag"
+msgstr "Тег"
+
+msgid "adminV2.proxy.tcpUdp"
+msgstr "TCP или UDP"
+
+msgid "adminV2.proxy.tcpUdpHint"
+msgstr "Транспортный протокол для вычисленных входящих портов"
+
+msgid "adminV2.proxy.tcpUdpLabels.both"
+msgstr "TCP + UDP"
+
+msgid "adminV2.proxy.tcpUdpLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.tcpUdpLabels.udp"
+msgstr "UDP"
+
+msgid "adminV2.proxy.templateSlugs"
+msgstr "Включения шаблона"
+
+msgid "adminV2.proxy.tlsLayer"
+msgstr "Слой TLS"
+
+msgid "adminV2.proxy.tlsLayerLabels.http"
+msgstr "-"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.tlsLayerSpecialConflict"
+msgstr "Слой HTTP TLS несовместим с режимами домена REALITY"
+
+msgid "adminV2.proxy.transport"
+msgstr "Транспорт"
+
+msgid "adminV2.proxy.transportLabels.grpc"
+msgstr "gRPC"
+
+msgid "adminV2.proxy.transportLabels.http"
+msgstr "HTTP (raw)"
+
+msgid "adminV2.proxy.transportLabels.httpupgrade"
+msgstr "HTTP Upgrade"
+
+msgid "adminV2.proxy.transportLabels.other"
+msgstr "Другое"
+
+msgid "adminV2.proxy.transportLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.transportLabels.ws"
+msgstr "WebSocket"
+
+msgid "adminV2.proxy.transportLabels.xhttp"
+msgstr "xHTTP"
+
+msgid "adminV2.proxy.uploadTcpUdp"
+msgstr "TCP или UDP для отдачи"
+
+msgid "adminV2.proxy.version"
+msgstr "Версия"
+
+msgid "adminV2.qr.clickToCopy"
+msgstr "Нажмите, чтобы скопировать изображение"
+
+msgid "adminV2.qr.copiedBoth"
+msgstr "Сообщение и QR-код скопированы"
+
+msgid "adminV2.qr.copiedBothClick"
+msgstr ""
+"Почта и документы вставляют и то, и другое. Чат-приложения вставляют только "
+"текст: после вставки нажмите на QR-код, чтобы скопировать изображение, и "
+"вставьте его тоже."
+
+msgid "adminV2.qr.copiedBothShare"
+msgstr ""
+"Почта и документы вставляют и то, и другое. Чат-приложения вставляют только "
+"текст: используйте «Поделиться», чтобы отправить оба, или нажмите на QR-код,"
+" чтобы скопировать изображение."
+
+msgid "adminV2.qr.copy"
+msgstr "Копировать QR"
+
+msgid "adminV2.qr.copyUnsupported"
+msgstr "Этот браузер не может копировать изображения. Используйте «Скачать»."
+
+msgid "adminV2.qr.share"
+msgstr "Поделиться"
+
+msgid "adminV2.qr.shareFailed"
+msgstr ""
+"Здесь поделиться не получилось. Скопируйте сообщение, затем нажмите на QR-"
+"код, чтобы скопировать изображение."
+
+msgid "adminV2.qr.shareHint"
+msgstr "Отправьте текст и QR-изображение вместе в Telegram, WhatsApp, почту…"
+
+msgid "adminV2.qr.textOnly"
+msgstr ""
+"Сообщение скопировано. Этот браузер не смог добавить QR-изображение; "
+"скопируйте его, нажав на код."
+
+msgid "adminV2.quickSetup.back"
+msgstr "Назад"
+
+msgid "adminV2.quickSetup.countries.ir"
+msgstr "Иран"
+
+msgid "adminV2.quickSetup.countries.other"
+msgstr "Другие"
+
+msgid "adminV2.quickSetup.countries.ru"
+msgstr "Россия"
+
+msgid "adminV2.quickSetup.countries.zh"
+msgstr "Китай"
+
+msgid "adminV2.quickSetup.domains.block"
+msgstr "Блокировать внутренние сайты"
+
+msgid "adminV2.quickSetup.domains.blockHint"
+msgstr "Блокирует внутренние сайты, чтобы избежать обнаружения государством."
+
+msgid "adminV2.quickSetup.domains.changeMode"
+msgstr "Изменить использование {name}"
+
+msgid "adminV2.quickSetup.domains.copied"
+msgstr "{ip} скопирован"
+
+msgid "adminV2.quickSetup.domains.decoy"
+msgstr "Сайт-приманка"
+
+msgid "adminV2.quickSetup.domains.decoyHint"
+msgstr ""
+"Фейковый сайт, показываемый, когда кто-то открывает ваш домен напрямую."
+
+msgid "adminV2.quickSetup.domains.decoyWarn1"
+msgstr ""
+"Не используйте финансовые, иранские или известные сайты, а также сайты с "
+"входом, такие как Google, Yahoo, Wikipedia или PayPal."
+
+msgid "adminV2.quickSetup.domains.decoyWarn2"
+msgstr ""
+"Внимательно проверьте сайт и убедитесь, что он правильный, иначе можно "
+"получить предупреждение о фишинге."
+
+msgid "adminV2.quickSetup.domains.decoyWarn3"
+msgstr "Проверьте этот домен ещё раз, чтобы в будущем не было проблем."
+
+msgid "adminV2.quickSetup.domains.detecting"
+msgstr "Проверка…"
+
+msgid "adminV2.quickSetup.domains.domains"
+msgstr "Домены"
+
+msgid "adminV2.quickSetup.domains.domainsHint"
+msgstr ""
+"Здесь можно добавить любые домены: direct, CDN, REALITY, relay… Каждый "
+"проверяется автоматически; нажмите на его тип, чтобы изменить. Нужен минимум"
+" один домен direct, CDN или ссылки подписки (IP этого сервера считается "
+"direct)."
+
+msgid "adminV2.quickSetup.domains.how1"
+msgstr ""
+"Направьте свой домен или поддомен на эти IP (запись A для IPv4, AAAA для "
+"IPv6)."
+
+msgid "adminV2.quickSetup.domains.how2"
+msgstr ""
+"Затем введите домен ниже. Можно добавить несколько; нажимайте Enter или "
+"запятую после каждого."
+
+msgid "adminV2.quickSetup.domains.ipsTitle"
+msgstr "IP вашего сервера"
+
+msgid "adminV2.quickSetup.domains.modeHelp.cdn"
+msgstr ""
+"За CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …), который пересылает на "
+"этот сервер. Скрывает IP вашего сервера."
+
+msgid "adminV2.quickSetup.domains.modeHelp.direct"
+msgstr ""
+"Указывает прямо на IP этого сервера. Самый быстрый; определяется, когда "
+"домен разрешается в этот сервер."
+
+msgid "adminV2.quickSetup.domains.modeHelp.reality"
+msgstr ""
+"Чужой популярный сайт (TLS 1.3 + HTTP/2). Не указывает на ваш сервер; этот "
+"сервер имитирует его."
+
+msgid "adminV2.quickSetup.domains.modeHelp.relay"
+msgstr ""
+"Указывает на другой сервер, который пересылает трафик на этот "
+"(relay/туннель). Задаётся вручную."
+
+msgid "adminV2.quickSetup.domains.modes.cdn"
+msgstr "CDN"
+
+msgid "adminV2.quickSetup.domains.modes.direct"
+msgstr "Direct"
+
+msgid "adminV2.quickSetup.domains.modes.reality"
+msgstr "REALITY"
+
+msgid "adminV2.quickSetup.domains.modes.relay"
+msgstr "Relay"
+
+msgid "adminV2.quickSetup.domains.noIp"
+msgstr "Не удалось определить IP сервера."
+
+msgid "adminV2.quickSetup.domains.notes.not_friendly"
+msgstr ""
+"Возможно, этот сайт не поддерживает TLS 1.3 + HTTP/2, которые нужны для "
+"REALITY."
+
+msgid "adminV2.quickSetup.domains.notes.unresolved"
+msgstr "Этот домен пока не разрешается. Проверьте его DNS-запись."
+
+msgid "adminV2.quickSetup.domains.recommended"
+msgstr "Настоятельно рекомендуется"
+
+msgid "adminV2.quickSetup.domains.remove"
+msgstr "Удалить {name}"
+
+msgid "adminV2.quickSetup.domains.required"
+msgstr ""
+"Добавьте хотя бы один домен direct, CDN или ссылки подписки (одних доменов "
+"REALITY и relay недостаточно). IP этого сервера считается direct-доменом."
+
+msgid "adminV2.quickSetup.domains.sublink"
+msgstr "Домен ссылки подписки"
+
+msgid "adminV2.quickSetup.domains.sublinkHint"
+msgstr ""
+"Обслуживает только ссылки подписки, а не прокси. Может указывать на этот "
+"сервер или идти через CDN."
+
+msgid "adminV2.quickSetup.domains.sublinkWhy"
+msgstr ""
+"Используйте отдельный домен для ссылок подписки пользователей, лучше за CDN."
+" Если ваш сервер или прокси-домены заблокируют, пользователи всё равно "
+"смогут обновить подписку и получить новые рабочие конфигурации, так что их "
+"это не затронет."
+
+msgid "adminV2.quickSetup.domains.useIp"
+msgstr "Использовать этот IP как direct-домен"
+
+msgid "adminV2.quickSetup.finish.button"
+msgstr "Завершить"
+
+msgid "adminV2.quickSetup.finish.docs"
+msgstr "Читать документацию дальше"
+
+msgid "adminV2.quickSetup.finish.off"
+msgstr "Выкл."
+
+msgid "adminV2.quickSetup.finish.on"
+msgstr "Вкл."
+
+msgid "adminV2.quickSetup.finish.ready"
+msgstr "Всё готово"
+
+msgid "adminV2.quickSetup.finish.readyHint"
+msgstr "Проверьте свой выбор, затем завершите настройку."
+
+msgid "adminV2.quickSetup.finish.running"
+msgstr "Завершение настройки"
+
+msgid "adminV2.quickSetup.finish.whatHappens"
+msgstr ""
+"«Завершить» применяет конфигурацию и переустанавливает службы с вашими "
+"доменами. Это занимает несколько минут; во время работы показываются журнал "
+"и ваши новые админ-ссылки."
+
+msgid "adminV2.quickSetup.language.adminLang"
+msgstr "Язык админ-панели"
+
+msgid "adminV2.quickSetup.language.adminLangHint"
+msgstr "Язык административной части."
+
+msgid "adminV2.quickSetup.language.country"
+msgstr "Страна"
+
+msgid "adminV2.quickSetup.language.countryHint"
+msgstr "Применяет подходящие настройки для условий фильтрации в этой стране."
+
+msgid "adminV2.quickSetup.next"
+msgstr "Далее"
+
+msgid "adminV2.quickSetup.nodes.question"
+msgstr ""
+"Хотите добавить другие узлы? Добавьте полную админ-ссылку каждой другой "
+"панели; после подключения она появится здесь. Это можно сделать и позже."
+
+msgid "adminV2.quickSetup.nodes.skip"
+msgstr "Пропустить"
+
+msgid "adminV2.quickSetup.optional"
+msgstr "необязательно"
+
+msgid "adminV2.quickSetup.password.confirm"
+msgstr "Повторите пароль"
+
+msgid "adminV2.quickSetup.password.label"
+msgstr "Новый пароль"
+
+msgid "adminV2.quickSetup.password.medium"
+msgstr "Средний"
+
+msgid "adminV2.quickSetup.password.min"
+msgstr "Пароль должен содержать не менее {min} символов."
+
+msgid "adminV2.quickSetup.password.mismatch"
+msgstr "Пароли не совпадают."
+
+msgid "adminV2.quickSetup.password.ok"
+msgstr "Пароли совпадают"
+
+msgid "adminV2.quickSetup.password.prompt"
+msgstr "Не менее {min} символов"
+
+msgid "adminV2.quickSetup.password.strong"
+msgstr "Надёжный"
+
+msgid "adminV2.quickSetup.password.weak"
+msgstr "Слабый"
+
+msgid "adminV2.quickSetup.password.why"
+msgstr ""
+"Этим паролем вы будете входить в админку. Используйте не менее 8 символов."
+
+msgid "adminV2.quickSetup.skip"
+msgstr "Пропустить пока"
+
+msgid "adminV2.quickSetup.stepOf"
+msgstr "Шаг {n} из {total}"
+
+msgid "adminV2.quickSetup.steps.domains.lead"
+msgstr "Подключите свой домен к этому серверу."
+
+msgid "adminV2.quickSetup.steps.domains.title"
+msgstr "Домены"
+
+msgid "adminV2.quickSetup.steps.finish.lead"
+msgstr "Выполним итоговую настройку, чтобы завершить установку."
+
+msgid "adminV2.quickSetup.steps.finish.title"
+msgstr "Завершение"
+
+msgid "adminV2.quickSetup.steps.language.lead"
+msgstr ""
+"Выберите язык админки и страну, в которой находятся ваши пользователи."
+
+msgid "adminV2.quickSetup.steps.language.title"
+msgstr "Добро пожаловать"
+
+msgid "adminV2.quickSetup.steps.nodes.lead"
+msgstr ""
+"При желании подключите другие серверы Hiddify, чтобы управлять ими отсюда."
+
+msgid "adminV2.quickSetup.steps.nodes.title"
+msgstr "Узлы"
+
+msgid "adminV2.quickSetup.steps.password.lead"
+msgstr "Защитите админку паролем."
+
+msgid "adminV2.quickSetup.steps.password.title"
+msgstr "Пароль"
+
+msgid "adminV2.quickSetup.steps.protocols.lead"
+msgstr "Выберите предлагаемые протоколы. Выбирайте как можно меньше."
+
+msgid "adminV2.quickSetup.steps.protocols.title"
+msgstr "Протоколы"
+
+msgid "adminV2.quickSetup.subtitle"
+msgstr "Несколько шагов, и ваша панель готова."
+
+msgid "adminV2.quickSetup.title"
+msgstr "Быстрая настройка"
+
+msgid "adminV2.saveBar.discard"
+msgstr "Отменить"
+
+msgid "adminV2.saveBar.unsaved"
+msgstr "{count} несохранённое изменение | {count} несохранённых изменений"
+
+msgid "adminV2.settings.adminPathChanged"
+msgstr ""
+"Путь админки изменился. После применения конфигураций админ-панель будет по "
+"адресу"
+
+msgid "adminV2.settings.advancedBadge"
+msgstr "Дополнительно"
+
+msgid "adminV2.settings.categories"
+msgstr "Категории настроек"
+
+msgid "adminV2.settings.changed"
+msgstr "Изменено"
+
+msgid "adminV2.settings.fixErrors"
+msgstr "Исправьте выделенные поля."
+
+msgid "adminV2.settings.hiddenCount"
+msgstr ""
+"{count} дополнительная настройка скрыта | {count} дополнительных настроек "
+"скрыто"
+
+msgid "adminV2.settings.invalid"
+msgstr "Это значение недопустимо."
+
+msgid "adminV2.settings.leaveUnsaved"
+msgstr "У вас есть несохранённые изменения. Всё равно уйти?"
+
+msgid "adminV2.settings.noMatch"
+msgstr "Нет настроек, подходящих под ваш поиск."
+
+msgid "adminV2.settings.openProtocols"
+msgstr "Протоколы"
+
+msgid "adminV2.settings.reinstallBadge"
+msgstr "Переустановка"
+
+msgid "adminV2.settings.reinstallHint"
+msgstr "Для вступления этого изменения в силу нужна переустановка"
+
+msgid "adminV2.settings.reloading"
+msgstr "Язык изменён, перезагрузка…"
+
+msgid "adminV2.settings.required"
+msgstr "Это поле обязательно."
+
+msgid "adminV2.settings.search"
+msgstr "Поиск по всем настройкам…"
+
+msgid "adminV2.settings.showAdvanced"
+msgstr "Показать дополнительные настройки"
+
+msgid "adminV2.settings.showAdvancedIn"
+msgstr ""
+"Показать {count} дополнительную настройку | Показать {count} дополнительных "
+"настроек"
+
+msgid "adminV2.settings.showLess"
+msgstr "Показать меньше"
+
+msgid "adminV2.settings.showMore"
+msgstr ""
+"Показать ещё {count} дополнительную настройку | Показать ещё {count} "
+"дополнительных настроек"
+
+msgid "adminV2.settings.subtitle"
+msgstr ""
+"Всё о том, как работает эта панель. Сначала обычные настройки; "
+"дополнительные по запросу."
+
+msgid "adminV2.settings.title"
+msgstr "Настройки"
+
+msgid "adminV2.tags.addTag"
+msgstr "Тег"
+
+msgid "adminV2.tags.bulk"
+msgstr "Тег"
+
+msgid "adminV2.tags.bulkHint"
+msgstr "Теги выбранных: галочка означает, что тег есть у всех"
+
+msgid "adminV2.tags.clear"
+msgstr "Очистить"
+
+msgid "adminV2.tags.color"
+msgstr "Цвет"
+
+msgid "adminV2.tags.colors.black"
+msgstr "Чёрный"
+
+msgid "adminV2.tags.colors.blue"
+msgstr "Синий"
+
+msgid "adminV2.tags.colors.green"
+msgstr "Зелёный"
+
+msgid "adminV2.tags.colors.orange"
+msgstr "Оранжевый"
+
+msgid "adminV2.tags.colors.red"
+msgstr "Красный"
+
+msgid "adminV2.tags.create"
+msgstr "Создать"
+
+msgid "adminV2.tags.created"
+msgstr "Тег создан"
+
+msgid "adminV2.tags.default.family"
+msgstr "Семья"
+
+msgid "adminV2.tags.default.free"
+msgstr "Бесплатно"
+
+msgid "adminV2.tags.default.friends"
+msgstr "Друзья"
+
+msgid "adminV2.tags.default.important"
+msgstr "Важное"
+
+msgid "adminV2.tags.default.work"
+msgstr "Работа"
+
+msgid "adminV2.tags.delete"
+msgstr "Удалить тег"
+
+msgid "adminV2.tags.deleteConfirm"
+msgstr "Удалить тег «{name}»? Он будет снят со всех, у кого он есть."
+
+msgid "adminV2.tags.deleted"
+msgstr "Тег удалён"
+
+msgid "adminV2.tags.edit"
+msgstr "Изменить тег"
+
+msgid "adminV2.tags.editTags"
+msgstr "Изменить теги"
+
+msgid "adminV2.tags.filterLabel"
+msgstr "Фильтр по тегу"
+
+msgid "adminV2.tags.namePlaceholder"
+msgstr "Назовите свой тег"
+
+msgid "adminV2.tags.newTag"
+msgstr "Новый тег"
+
+msgid "adminV2.tags.none"
+msgstr "Тегов пока нет"
+
+msgid "adminV2.tags.pick"
+msgstr "Выбрать теги"
+
+msgid "adminV2.tags.pickHint"
+msgstr "Можно выбрать несколько"
+
+msgid "adminV2.tags.rename"
+msgstr "Переименовать"
+
+msgid "adminV2.tags.save"
+msgstr "Сохранить"
+
+msgid "adminV2.tags.saveFailed"
+msgstr "Не удалось сохранить теги"
+
+msgid "adminV2.tags.tagCount"
+msgstr "Тегов: {n}"
+
+msgid "adminV2.tags.tagged"
+msgstr "С тегами"
+
+msgid "adminV2.tags.taggedHint"
+msgstr "Все, у кого есть хотя бы один тег"
+
+msgid "adminV2.tags.title"
+msgstr "Теги"
+
+msgid "adminV2.tags.untagged"
+msgstr "Без тега"
+
+msgid "adminV2.tags.use"
+msgstr "Используется: {n}"
+
+msgid "adminV2.telegram.benefit.backup"
+msgstr "Получать автоматические резервные копии"
+
+msgid "adminV2.telegram.benefit.manage"
+msgstr "Управлять пользователями прямо из Telegram"
+
+msgid "adminV2.telegram.benefit.notify"
+msgstr "Получать уведомления о важных событиях"
+
+msgid "adminV2.telegram.check"
+msgstr "Я подключился"
+
+msgid "adminV2.telegram.connect"
+msgstr "Подключить Telegram"
+
+msgid "adminV2.telegram.connectHint"
+msgstr ""
+"Получайте уведомления и резервные копии от {bot} и управляйте панелью из "
+"Telegram."
+
+msgid "adminV2.telegram.connectTitle"
+msgstr "Подключите свой Telegram"
+
+msgid "adminV2.telegram.connected"
+msgstr "подключено"
+
+msgid "adminV2.telegram.connectedHint"
+msgstr "Вы получаете уведомления и резервные копии от {bot}."
+
+msgid "adminV2.telegram.connectedTitle"
+msgstr "Telegram подключён"
+
+msgid "adminV2.telegram.later"
+msgstr "Вы можете подключить его в любой момент в разделе «Мой аккаунт»."
+
+msgid "adminV2.telegram.notNow"
+msgstr "Не сейчас"
+
+msgid "adminV2.telegram.notYet"
+msgstr "Ещё не подключено: нажмите Start в боте, затем проверьте снова."
+
+msgid "adminV2.telegram.nowConnected"
+msgstr "Telegram подключён"
+
+msgid "adminV2.telegram.openWeb"
+msgstr "Открыть в браузере"
+
+msgid "adminV2.telegram.promptLead"
+msgstr ""
+"У этой панели есть Telegram-бот {bot}. Привяжите его к своему аккаунту:"
+
+msgid "adminV2.telegram.promptTitle"
+msgstr "Подключить Telegram?"
+
+msgid "adminV2.telegram.reconnect"
+msgstr "Подключить снова"
+
+msgid "adminV2.telegram.scan"
+msgstr "Или отсканируйте это камерой телефона."
+
+msgid "adminV2.template.builtin"
+msgstr "Встроенный"
+
+msgid "adminV2.template.builtinCustomized"
+msgstr "Изменённый встроенный"
+
+msgid "adminV2.template.builtinDefault"
+msgstr "Используется значение по умолчанию из каталога"
+
+msgid "adminV2.template.builtinDefaultHint"
+msgstr ""
+"Встроенный шаблон, синхронизированный из каталога. Включите собственное "
+"содержимое, чтобы редактировать его."
+
+msgid "adminV2.template.builtinReadOnly"
+msgstr "Встроенный шаблон: дублируйте его, чтобы создать редактируемую копию."
+
+msgid "adminV2.template.category"
+msgstr "Категория"
+
+msgid "adminV2.template.clone"
+msgstr "Клонировать как свой"
+
+msgid "adminV2.template.cloneDescription"
+msgstr "Своё описание"
+
+msgid "adminV2.template.cloneName"
+msgstr "Своё имя"
+
+msgid "adminV2.template.cloned"
+msgstr "Шаблон клонирован"
+
+msgid "adminV2.template.content"
+msgstr "Содержимое"
+
+msgid "adminV2.template.core"
+msgstr "Ядро"
+
+msgid "adminV2.template.customContent"
+msgstr "Собственное содержимое"
+
+msgid "adminV2.template.description"
+msgstr "Описание"
+
+msgid "adminV2.template.editable"
+msgstr "Редактируемый"
+
+msgid "adminV2.template.empty"
+msgstr "Для этого ядра нет шаблонов"
+
+msgid "adminV2.template.included"
+msgstr "Включён"
+
+msgid "adminV2.template.insert"
+msgstr "Вставить в редактор"
+
+msgid "adminV2.template.listTitle"
+msgstr "Шаблоны"
+
+msgid "adminV2.template.name"
+msgstr "Имя"
+
+msgid "adminV2.template.new"
+msgstr "Новый шаблон"
+
+msgid "adminV2.template.notFound"
+msgstr "Шаблон не найден"
+
+msgid "adminV2.template.referenced"
+msgstr "Есть ссылка"
+
+msgid "adminV2.template.referencedTemplates"
+msgstr "Шаблоны, на которые есть ссылки"
+
+msgid "adminV2.template.sidePanel"
+msgstr "Шаблоны"
+
+msgid "adminV2.template.sidePanelHint"
+msgstr "Откройте вкладку «Сервер» или «Клиент», чтобы просмотреть шаблоны"
+
+msgid "adminV2.template.slug"
+msgstr "Slug"
+
+msgid "adminV2.template.slugDuplicate"
+msgstr "Этот slug шаблона уже используется. Выберите другой slug."
+
+msgid "adminV2.template.slugHint"
+msgstr "Можно изменить только часть после core/category"
+
+msgid "adminV2.template.sysTooltip"
+msgstr "Встроенный (системный) элемент"
+
+msgid "adminV2.templateVariables.access"
+msgstr "Доступ"
+
+msgid "adminV2.templateVariables.currentValue"
+msgstr "Текущее значение"
+
+msgid "adminV2.templateVariables.description"
+msgstr "Описание"
+
+msgid "adminV2.templateVariables.group"
+msgstr "Группа"
+
+msgid "adminV2.templateVariables.label"
+msgstr "Метка"
+
+msgid "adminV2.templateVariables.listTitle"
+msgstr "Переменные шаблонов"
+
+msgid "adminV2.templateVariables.loadValues"
+msgstr "Загрузить текущие значения"
+
+msgid "adminV2.templateVariables.name"
+msgstr "Имя"
+
+msgid "adminV2.templateVariables.skipHint"
+msgstr ""
+"Выведите SKIP или вызовите skip(), чтобы пропустить рендеринг этого прокси, "
+"если условие не выполнено"
+
+msgid "adminV2.theme.dark"
+msgstr "Тёмная тема"
+
+msgid "adminV2.theme.light"
+msgstr "Светлая тема"
+
+msgid "adminV2.users.add"
+msgstr "Добавить пользователя"
+
+msgid "adminV2.users.addLimits.apply"
+msgstr "Добавить"
+
+msgid "adminV2.users.addLimits.days"
+msgstr "Дней для добавления"
+
+msgid "adminV2.users.addLimits.gb"
+msgstr "Данных для добавления"
+
+msgid "adminV2.users.addLimits.hint"
+msgstr "Данные и дни добавляются к тому, что уже есть у каждого пользователя."
+
+msgid "adminV2.users.addLimits.note"
+msgstr ""
+"Пользователи с безлимитными данными или днями остаются безлимитными. "
+"Оставьте 0 в одном поле, чтобы добавить только другое."
+
+msgid "adminV2.users.addLimits.title"
+msgstr "Добавить лимиты {n} пользователю | Добавить лимиты {n} пользователям"
+
+msgid "adminV2.users.added"
+msgstr "{name} добавлен"
+
+msgid "adminV2.users.afterFirstShort"
+msgstr "{n} дн. после первого использования"
+
+msgid "adminV2.users.all"
+msgstr "Все"
+
+msgid "adminV2.users.bulk.add_days"
+msgstr "+7 дней"
+
+msgid "adminV2.users.bulk.add_limits"
+msgstr "Добавить лимиты"
+
+msgid "adminV2.users.bulk.delete"
+msgstr "Удалить"
+
+msgid "adminV2.users.bulk.disable"
+msgstr "Отключить"
+
+msgid "adminV2.users.bulk.enable"
+msgstr "Включить"
+
+msgid "adminV2.users.bulk.reset_days"
+msgstr "Сбросить дни"
+
+msgid "adminV2.users.bulk.reset_usage"
+msgstr "Сбросить трафик"
+
+msgid "adminV2.users.bulkConfirm.delete"
+msgstr "Удалить {n} пользователя? | Удалить {n} пользователей?"
+
+msgid "adminV2.users.bulkConfirm.disable"
+msgstr "Отключить {n} пользователя? | Отключить {n} пользователей?"
+
+msgid "adminV2.users.bulkConfirm.reset_days"
+msgstr "Сбросить дни у {n} пользователя? | Сбросить дни у {n} пользователей?"
+
+msgid "adminV2.users.bulkConfirm.reset_usage"
+msgstr ""
+"Сбросить трафик у {n} пользователя? | Сбросить трафик у {n} пользователей?"
+
+msgid "adminV2.users.bulkConfirmText.delete"
+msgstr "Они больше не смогут подключаться."
+
+msgid "adminV2.users.bulkConfirmText.disable"
+msgstr "Они не смогут подключаться, пока их снова не включат."
+
+msgid "adminV2.users.bulkConfirmText.reset_days"
+msgstr "Их пакет начнётся заново при следующем подключении."
+
+msgid "adminV2.users.bulkConfirmText.reset_usage"
+msgstr "Их использованные данные вернутся к нулю."
+
+msgid "adminV2.users.bulkDone.add_days"
+msgstr ""
+"7 дней добавлено {n} пользователю | 7 дней добавлено {n} пользователям"
+
+msgid "adminV2.users.bulkDone.add_limits"
+msgstr ""
+"Лимиты добавлены {n} пользователю | Лимиты добавлены {n} пользователям"
+
+msgid "adminV2.users.bulkDone.delete"
+msgstr "Удалён {n} пользователь | Удалено пользователей: {n}"
+
+msgid "adminV2.users.bulkDone.disable"
+msgstr "Отключён {n} пользователь | Отключено пользователей: {n}"
+
+msgid "adminV2.users.bulkDone.enable"
+msgstr "Включён {n} пользователь | Включено пользователей: {n}"
+
+msgid "adminV2.users.bulkDone.reset_days"
+msgstr "Дни сброшены у {n} пользователя | Дни сброшены у {n} пользователей"
+
+msgid "adminV2.users.bulkDone.reset_usage"
+msgstr ""
+"Трафик сброшен у {n} пользователя | Трафик сброшен у {n} пользователей"
+
+msgid "adminV2.users.clearSearch"
+msgstr "Очистить поиск"
+
+msgid "adminV2.users.clearSelection"
+msgstr "Снять выделение"
+
+msgid "adminV2.users.col.expire"
+msgstr "Истекает"
+
+msgid "adminV2.users.col.id"
+msgstr "ID"
+
+msgid "adminV2.users.col.lastOnline"
+msgstr "Последнее подключение"
+
+msgid "adminV2.users.col.name"
+msgstr "Имя"
+
+msgid "adminV2.users.col.status"
+msgstr "Статус"
+
+msgid "adminV2.users.col.usage"
+msgstr "Трафик"
+
+msgid "adminV2.users.configs.addOffline"
+msgstr "Добавить офлайн-конфигурацию"
+
+msgid "adminV2.users.configs.addSubscription"
+msgstr "Добавить подписку"
+
+msgid "adminV2.users.configs.badUrl"
+msgstr "Подписка должна быть URL http(s)"
+
+msgid "adminV2.users.configs.empty"
+msgstr "Пусто: заполните или удалите"
+
+msgid "adminV2.users.configs.hint"
+msgstr ""
+"Дополнительные конфигурации, добавляемые в подписку этого пользователя: "
+"вставьте одну (офлайн) или укажите URL, который будет загружаться для "
+"пользователя (подписка). Выберите, для какого формата приложения она "
+"предназначена, или Авто для всех."
+
+msgid "adminV2.users.configs.inherited"
+msgstr ""
+"Дополнительно получает {n} конфигурацию от вышестоящих админов | "
+"Дополнительно получает {n} конфигураций от вышестоящих админов"
+
+msgid "adminV2.users.configs.kind.offline"
+msgstr "Офлайн"
+
+msgid "adminV2.users.configs.kind.subscription"
+msgstr "Подписка"
+
+msgid "adminV2.users.configs.offlinePlaceholder"
+msgstr "vless://…  или конфигурация JSON / YAML"
+
+msgid "adminV2.users.configs.target.auto"
+msgstr "Авто (все форматы)"
+
+msgid "adminV2.users.configs.target.clash"
+msgstr "Clash"
+
+msgid "adminV2.users.configs.target.hiddify-core"
+msgstr "Hiddify / sing-box"
+
+msgid "adminV2.users.configs.target.sublink"
+msgstr "Ссылки для обмена"
+
+msgid "adminV2.users.configs.target.xray"
+msgstr "Xray"
+
+msgid "adminV2.users.configs.title"
+msgstr "Дополнительные конфигурации"
+
+msgid "adminV2.users.configs.urlPlaceholder"
+msgstr "https://example.com/sub/…"
+
+msgid "adminV2.users.daysLeft"
+msgstr "Остался {n} день | Осталось дней: {n}"
+
+msgid "adminV2.users.deleteMessage"
+msgstr ""
+"Пользователь больше не сможет подключаться. Его UUID можно будет "
+"использовать снова позже."
+
+msgid "adminV2.users.deleteTitle"
+msgstr "Удалить {name}?"
+
+msgid "adminV2.users.deleted"
+msgstr "{name} удалён"
+
+msgid "adminV2.users.done.reset_days"
+msgstr "{name} начнёт заново при следующем подключении"
+
+msgid "adminV2.users.done.reset_usage"
+msgstr "Трафик {name} сброшен"
+
+msgid "adminV2.users.extra.outbound"
+msgstr "outbound={name}"
+
+msgid "adminV2.users.extra.outboundHint"
+msgstr "У пользователя выбран свой исходящий канал (outbound)"
+
+msgid "adminV2.users.extra.subs"
+msgstr "{n} доп. подписка | {n} доп. подписки"
+
+msgid "adminV2.users.extra.subsHint"
+msgstr "Дополнительные конфигурации подписки для этого пользователя"
+
+msgid "adminV2.users.extra.telegramHint"
+msgstr "Аккаунт Telegram привязан"
+
+msgid "adminV2.users.filter.active"
+msgstr "Активные"
+
+msgid "adminV2.users.filter.activeHint"
+msgstr "Включены, остались дни и данные"
+
+msgid "adminV2.users.filter.all"
+msgstr "Все"
+
+msgid "adminV2.users.filter.allHint"
+msgstr "Все пользователи"
+
+msgid "adminV2.users.filter.data_low"
+msgstr "Мало данных"
+
+msgid "adminV2.users.filter.data_lowHint"
+msgstr "Активные, использовано 80% данных или больше"
+
+msgid "adminV2.users.filter.disabled"
+msgstr "Отключённые"
+
+msgid "adminV2.users.filter.disabledHint"
+msgstr "Отключены админом"
+
+msgid "adminV2.users.filter.expired"
+msgstr "Истёк срок"
+
+msgid "adminV2.users.filter.expiredHint"
+msgstr "Дней не осталось"
+
+msgid "adminV2.users.filter.expiring"
+msgstr "Скоро истекает"
+
+msgid "adminV2.users.filter.expiringHint"
+msgstr "Активные, заканчиваются в течение недели"
+
+msgid "adminV2.users.filter.no_data"
+msgstr "Нет данных"
+
+msgid "adminV2.users.filter.no_dataHint"
+msgstr "Весь лимит трафика использован"
+
+msgid "adminV2.users.filter.not_started"
+msgstr "Не начат"
+
+msgid "adminV2.users.filter.not_startedHint"
+msgstr "Ещё не подключались: их дни начинаются с первого подключения"
+
+msgid "adminV2.users.filter.unseen_week"
+msgstr "Не появлялись неделю"
+
+msgid "adminV2.users.filter.unseen_weekHint"
+msgstr "Подключались раньше, но не за последние 7 дней"
+
+msgid "adminV2.users.filtersLabel"
+msgstr "Фильтр пользователей"
+
+msgid "adminV2.users.form.add"
+msgstr "Добавить пользователя"
+
+msgid "adminV2.users.form.addSubtitle"
+msgstr ""
+"После сохранения откроются ссылка и QR-код пользователя, готовые к отправке."
+
+msgid "adminV2.users.form.addTitle"
+msgstr "Новый пользователь"
+
+msgid "adminV2.users.form.advanced"
+msgstr "Дополнительно"
+
+msgid "adminV2.users.form.data"
+msgstr "Данные"
+
+msgid "adminV2.users.form.daysCount"
+msgstr "{n} день | {n} дней"
+
+msgid "adminV2.users.form.daysUnit"
+msgstr "дн."
+
+msgid "adminV2.users.form.disabled"
+msgstr "Отключён"
+
+msgid "adminV2.users.form.editSubtitle"
+msgstr "Изменения применяются сразу."
+
+msgid "adminV2.users.form.editTimeTitle"
+msgstr "Срок: {name}"
+
+msgid "adminV2.users.form.editTitle"
+msgstr "Изменить {name}"
+
+msgid "adminV2.users.form.editUsageTitle"
+msgstr "Трафик: {name}"
+
+msgid "adminV2.users.form.enableHint"
+msgstr "Отключённый пользователь не может подключаться."
+
+msgid "adminV2.users.form.enabled"
+msgstr "Включён"
+
+msgid "adminV2.users.form.endedWhen"
+msgstr "закончился {when}"
+
+msgid "adminV2.users.form.endsWhen"
+msgstr "заканчивается {when}"
+
+msgid "adminV2.users.form.expiresOn"
+msgstr "заканчивается {date}"
+
+msgid "adminV2.users.form.extra"
+msgstr "Дополнительные параметры (JSON)"
+
+msgid "adminV2.users.form.extraHint"
+msgstr ""
+"Расширенные настройки, используемые шаблонами. Маршрутизация и "
+"дополнительные конфигурации задаются выше."
+
+msgid "adminV2.users.form.extraInvalid"
+msgstr "Это недопустимый JSON"
+
+msgid "adminV2.users.form.extraNotObject"
+msgstr ""
+"Дополнительные параметры должны быть JSON-объектом (в фигурных скобках)"
+
+msgid "adminV2.users.form.limit"
+msgstr "Лимит трафика"
+
+msgid "adminV2.users.form.mode"
+msgstr "Период сброса"
+
+msgid "adminV2.users.form.name"
+msgstr "Имя"
+
+msgid "adminV2.users.form.namePlaceholder"
+msgstr "напр. Телефон Сары"
+
+msgid "adminV2.users.form.nameRequired"
+msgstr "Требуется имя"
+
+msgid "adminV2.users.form.neverExpires"
+msgstr "никогда не истекает"
+
+msgid "adminV2.users.form.newUuid"
+msgstr "Новый UUID"
+
+msgid "adminV2.users.form.nextReset"
+msgstr "следующий сброс {when}"
+
+msgid "adminV2.users.form.notStarted"
+msgstr "Не начат"
+
+msgid "adminV2.users.form.notStartedHint"
+msgstr "Начнётся при первом подключении"
+
+msgid "adminV2.users.form.note"
+msgstr "Заметка"
+
+msgid "adminV2.users.form.notePlaceholder"
+msgstr "Видят только админы"
+
+msgid "adminV2.users.form.optional"
+msgstr "необязательно"
+
+msgid "adminV2.users.form.outbound"
+msgstr "Предпочтительное исходящее подключение"
+
+msgid "adminV2.users.form.outboundAuto"
+msgstr "Автоматически (по правилам исходящих подключений)"
+
+msgid "adminV2.users.form.outboundHint"
+msgstr ""
+"Весь трафик этого пользователя выходит через это исходящее подключение "
+"(страница «Исходящие»). Выключенное исходящее подключение игнорируется."
+
+msgid "adminV2.users.form.outboundOff"
+msgstr "выключено"
+
+msgid "adminV2.users.form.owner"
+msgstr "Субадмин"
+
+msgid "adminV2.users.form.ownerMe"
+msgstr "{name} (вы)"
+
+msgid "adminV2.users.form.packageDays"
+msgstr "Дней в пакете"
+
+msgid "adminV2.users.form.packageLength"
+msgstr "Длительность пакета"
+
+msgid "adminV2.users.form.period.month"
+msgstr "1 месяц"
+
+msgid "adminV2.users.form.period.months3"
+msgstr "3 месяца"
+
+msgid "adminV2.users.form.period.months6"
+msgstr "6 месяцев"
+
+msgid "adminV2.users.form.period.unlimited"
+msgstr "Без ограничений"
+
+msgid "adminV2.users.form.period.week"
+msgstr "1 неделя"
+
+msgid "adminV2.users.form.period.year"
+msgstr "1 год"
+
+msgid "adminV2.users.form.reset"
+msgstr "Сбросить"
+
+msgid "adminV2.users.form.resetDays"
+msgstr "Сбросить дни"
+
+msgid "adminV2.users.form.resetDaysHint"
+msgstr "Запустить пакет заново: его дни считаются со следующего подключения"
+
+msgid "adminV2.users.form.resetUsage"
+msgstr "Сбросить трафик"
+
+msgid "adminV2.users.form.resetUsagePending"
+msgstr "Трафик будет сброшен при сохранении"
+
+msgid "adminV2.users.form.restart"
+msgstr "Перезапустить"
+
+msgid "adminV2.users.form.restartPending"
+msgstr ""
+"Перезапуск при сохранении: его дни снова считаются со следующего подключения"
+
+msgid "adminV2.users.form.routing"
+msgstr "Маршрутизация"
+
+msgid "adminV2.users.form.setDays"
+msgstr "Задать дни"
+
+msgid "adminV2.users.form.startedWhen"
+msgstr "Начат {when}"
+
+msgid "adminV2.users.form.summaryConfigs"
+msgstr "{n} дополнительная конфигурация | {n} дополнительных конфигураций"
+
+msgid "adminV2.users.form.summaryExtra"
+msgstr "заданы дополнительные параметры"
+
+msgid "adminV2.users.form.summaryOutbound"
+msgstr "Выходит через {name}"
+
+msgid "adminV2.users.form.telegram"
+msgstr "Telegram ID"
+
+msgid "adminV2.users.form.time"
+msgstr "Время"
+
+msgid "adminV2.users.form.undo"
+msgstr "Отменить"
+
+msgid "adminV2.users.form.unlimited"
+msgstr "Без ограничений"
+
+msgid "adminV2.users.form.usageReadOnly"
+msgstr "Использованный трафик считает сервер; его можно только сбросить."
+
+msgid "adminV2.users.form.used"
+msgstr "Использовано"
+
+msgid "adminV2.users.form.uuidEditHint"
+msgstr ""
+"Изменение изменит ссылку пользователя: старая ссылка перестанет работать."
+
+msgid "adminV2.users.form.uuidHint"
+msgstr "Генерируется автоматически."
+
+msgid "adminV2.users.form.uuidInvalid"
+msgstr "Это недопустимый UUID"
+
+msgid "adminV2.users.form.waitingText"
+msgstr "{n} дн. начнутся при первом подключении."
+
+msgid "adminV2.users.form.waitingUnlimited"
+msgstr "Начнётся при первом подключении и никогда не истекает."
+
+msgid "adminV2.users.form.who"
+msgstr "Кто"
+
+msgid "adminV2.users.groupByOwner"
+msgstr "Группировать по админам"
+
+msgid "adminV2.users.groupCount"
+msgstr "{n} пользователь | {n} пользователей"
+
+msgid "adminV2.users.inlineEdit"
+msgstr "Правка в списке"
+
+msgid "adminV2.users.inlineHint"
+msgstr ""
+"Правка в списке включена: нажмите на имя, лимит трафика, срок, режим или "
+"заметку, чтобы изменить прямо в списке. Сам трафик можно только сбросить."
+
+msgid "adminV2.users.limitReached"
+msgstr ""
+"Вы достигли лимита пользователей. Попросите вышестоящего админа увеличить "
+"его."
+
+msgid "adminV2.users.link"
+msgstr "Ссылка"
+
+msgid "adminV2.users.linkTitle"
+msgstr "Ссылка {name}"
+
+msgid "adminV2.users.mode.daily"
+msgstr "Ежедневно"
+
+msgid "adminV2.users.mode.monthly"
+msgstr "Ежемесячно"
+
+msgid "adminV2.users.mode.no_reset"
+msgstr "Без сброса"
+
+msgid "adminV2.users.mode.weekly"
+msgstr "Еженедельно"
+
+msgid "adminV2.users.modeHint.daily"
+msgstr "Трафик сбрасывается каждый день."
+
+msgid "adminV2.users.modeHint.monthly"
+msgstr "Трафик сбрасывается каждые 30 дней с начала."
+
+msgid "adminV2.users.modeHint.no_reset"
+msgstr "Трафик никогда не сбрасывается: лимит действует на весь пакет."
+
+msgid "adminV2.users.modeHint.weekly"
+msgstr "Трафик сбрасывается каждые 7 дней с начала."
+
+msgid "adminV2.users.more"
+msgstr "Другие действия"
+
+msgid "adminV2.users.never"
+msgstr "Никогда"
+
+msgid "adminV2.users.noMatch"
+msgstr "Нет подходящих пользователей"
+
+msgid "adminV2.users.noTimeLimit"
+msgstr "Без ограничения по времени"
+
+msgid "adminV2.users.none"
+msgstr "Пользователей пока нет"
+
+msgid "adminV2.users.of"
+msgstr "из"
+
+msgid "adminV2.users.online"
+msgstr "Онлайн"
+
+msgid "adminV2.users.pageReport"
+msgstr "{first}–{last} из {totalRecords}"
+
+msgid "adminV2.users.perPage"
+msgstr "Пользователей на странице"
+
+msgid "adminV2.users.refresh"
+msgstr "Обновить"
+
+msgid "adminV2.users.resetTag.daily"
+msgstr "Ежедневный сброс"
+
+msgid "adminV2.users.resetTag.monthly"
+msgstr "Ежемесячный сброс"
+
+msgid "adminV2.users.resetTag.weekly"
+msgstr "Еженедельный сброс"
+
+msgid "adminV2.users.saved"
+msgstr "{name} сохранён"
+
+msgid "adminV2.users.search"
+msgstr "Поиск по имени, UUID или заметке"
+
+msgid "adminV2.users.select"
+msgstr "Выбрать"
+
+msgid "adminV2.users.selectAll"
+msgstr "Выбрать все ({n}) | Выбрать все ({n})"
+
+msgid "adminV2.users.selected"
+msgstr "Выбрано: {n} | Выбрано: {n}"
+
+msgid "adminV2.users.showDates"
+msgstr "Показывать даты окончания"
+
+msgid "adminV2.users.showLink"
+msgstr "Показать ссылку пользователя"
+
+msgid "adminV2.users.showMore"
+msgstr "Показать ещё {n}"
+
+msgid "adminV2.users.showRelative"
+msgstr "Показывать оставшееся время"
+
+msgid "adminV2.users.sortById"
+msgstr "Сортировать по ID"
+
+msgid "adminV2.users.status.active"
+msgstr "Активен"
+
+msgid "adminV2.users.status.disabled"
+msgstr "Отключён"
+
+msgid "adminV2.users.status.expired"
+msgstr "Истёк срок"
+
+msgid "adminV2.users.status.no_data"
+msgstr "Нет данных"
+
+msgid "adminV2.users.statusHint.active"
+msgstr "Включены, остались дни и данные"
+
+msgid "adminV2.users.statusHint.disabled"
+msgstr "Отключены админом"
+
+msgid "adminV2.users.statusHint.expired"
+msgstr "В пакете не осталось дней"
+
+msgid "adminV2.users.statusHint.no_data"
+msgstr "Весь лимит трафика использован"
+
+msgid "adminV2.users.subtitle"
+msgstr ""
+"Все, кто подключается через эту панель: их данные, оставшееся время и "
+"ссылки."
+
+msgid "adminV2.users.title"
+msgstr "Пользователи"
+
+msgid "adminV2.utils.addQuery"
+msgstr "Добавить параметр"
+
+msgid "adminV2.utils.autoSwapped"
+msgstr "Похоже на Base64, поэтому стороны поменялись местами."
+
+msgid "adminV2.utils.base64Label"
+msgstr "Base64"
+
+msgid "adminV2.utils.base64Live"
+msgstr ""
+"Меняйте любую сторону, вторая обновляется сразу. protocol:// в начале "
+"(например, vmess://) сохраняется и игнорируется при декодировании. Base64, "
+"вставленный в текстовую сторону, автоматически меняет стороны местами."
+
+msgid "adminV2.utils.base64Tab"
+msgstr "Base64"
+
+msgid "adminV2.utils.clear"
+msgstr "Очистить"
+
+msgid "adminV2.utils.decode"
+msgstr "Декодировать"
+
+msgid "adminV2.utils.emptyLinks"
+msgstr "Вставьте ссылки слева, чтобы просмотреть их здесь."
+
+msgid "adminV2.utils.encode"
+msgstr "Кодировать"
+
+msgid "adminV2.utils.extraHint"
+msgstr ""
+"JSON с URL-декодированием. Оставьте пустым, чтобы не включать extra в "
+"ссылку."
+
+msgid "adminV2.utils.extraJson"
+msgstr "extra (JSON)"
+
+msgid "adminV2.utils.fragment"
+msgstr "Имя"
+
+msgid "adminV2.utils.input"
+msgstr "Ввод"
+
+msgid "adminV2.utils.links"
+msgstr "Ссылки для обмена"
+
+msgid "adminV2.utils.linksPlaceholder"
+msgstr ""
+"Вставьте одну или несколько ссылок vless://, vmess://, ss://, trojan:// (или"
+" подписку в base64)"
+
+msgid "adminV2.utils.method"
+msgstr "Метод"
+
+msgid "adminV2.utils.noQuery"
+msgstr "Нет параметров запроса. Нажмите «Добавить параметр», чтобы вставить."
+
+msgid "adminV2.utils.notBase64"
+msgstr "Это некорректный Base64."
+
+msgid "adminV2.utils.notUrlEncoded"
+msgstr "Это некорректный URL-кодированный текст."
+
+msgid "adminV2.utils.output"
+msgstr "Вывод"
+
+msgid "adminV2.utils.pass"
+msgstr "Пароль"
+
+msgid "adminV2.utils.path"
+msgstr "UrlPath"
+
+msgid "adminV2.utils.port"
+msgstr "Порт"
+
+msgid "adminV2.utils.pretty"
+msgstr "Декодировано"
+
+msgid "adminV2.utils.protocol"
+msgstr "Протокол"
+
+msgid "adminV2.utils.queryKey"
+msgstr "Ключ"
+
+msgid "adminV2.utils.queryParams"
+msgstr "Параметры запроса"
+
+msgid "adminV2.utils.queryValue"
+msgstr "Значение"
+
+msgid "adminV2.utils.server"
+msgstr "Сервер"
+
+msgid "adminV2.utils.sublinkHint"
+msgstr ""
+"Вставьте ссылки слева. Справа показаны декодированные поля. Параметры "
+"запроса — редактируемые строки; extra — JSON. Изменения справа переписывают "
+"ссылки."
+
+msgid "adminV2.utils.sublinkTab"
+msgstr "Sublink"
+
+msgid "adminV2.utils.subtitle"
+msgstr ""
+"Кодируйте, декодируйте и анализируйте ссылки для обмена в браузере — на "
+"сервер ничего не отправляется."
+
+msgid "adminV2.utils.swap"
+msgstr "Поменять"
+
+msgid "adminV2.utils.textLabel"
+msgstr "Текст"
+
+msgid "adminV2.utils.title"
+msgstr "Утилиты"
+
+msgid "adminV2.utils.unwrappedSubscription"
+msgstr "Обнаружена подписка в base64 и декодирована в отдельные ссылки."
+
+msgid "adminV2.utils.urlEncodedLabel"
+msgstr "URL-кодировка"
+
+msgid "adminV2.utils.urlLive"
+msgstr ""
+"Меняйте любую сторону, вторая обновляется сразу. URL-кодированный текст, "
+"вставленный в текстовую сторону, автоматически меняет стороны местами."
+
+msgid "adminV2.utils.urlSafe"
+msgstr "URL-safe"
+
+msgid "adminV2.utils.urlTab"
+msgstr "URL"
+
+msgid "adminV2.utils.user"
+msgstr "Пользователь"
+
+msgid "adminV2.utils.vmessJson"
+msgstr "vmess JSON"
+
+msgid "adminV2.utils.vmessObject"
+msgstr "vmess JSON должен быть объектом"
+
+msgid "adminV2.validation.errors"
+msgstr "Ошибки"
+
+msgid "adminV2.validation.preview"
+msgstr "Скомпилированный предпросмотр"
+
+msgid "adminV2.validation.title"
+msgstr "Проверка"
+
+msgid "adminV2.validation.warnings"
+msgstr "Предупреждения"
+
 msgid "adminuser.force_update_usage"
 msgstr ""
 "ℹ️Информация пользователей обновлеятся каждые 6 минут. Чтобы обновить "
@@ -1121,16 +6455,16 @@ msgid "android"
 msgstr "Android"
 
 msgid "app.clash_verge_rev.description"
-msgstr ""
+msgstr "Клиент Clash Verge Rev для компьютера"
 
 msgid "app.clash_verge_rev.title"
-msgstr ""
+msgstr "Clash Verge Rev"
 
 msgid "app.cmfa.description"
-msgstr ""
+msgstr "Clash Meta для Android"
 
 msgid "app.cmfa.title"
-msgstr ""
+msgstr "Clash Meta for Android"
 
 msgid "app.foxray.description"
 msgstr "Описание фоксрея"
@@ -1209,7 +6543,7 @@ msgid "app.streisand.title"
 msgstr "Streisand"
 
 msgid "app.v2rayn.title"
-msgstr ""
+msgstr "v2rayN"
 
 msgid "app.v2rayng.description"
 msgstr "Описание V2RayNG"
@@ -1218,10 +6552,10 @@ msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
 msgid "at least one domain should exist"
-msgstr ""
+msgstr "должен существовать хотя бы один домен"
 
 msgid "at least one user should exist"
-msgstr ""
+msgstr "должен существовать хотя бы один пользователь"
 
 msgid "auto"
 msgstr "Авто"
@@ -1242,7 +6576,7 @@ msgid "cdn"
 msgstr "🔀 CDN (Cloudflare Proxy, ...)"
 
 msgid "cf-delete.failed"
-msgstr "cf-delete.failed"
+msgstr "Не удалось удалить в Cloudflare"
 
 msgid "child has been removed!"
 msgstr "Дочерний элемент удален!"
@@ -1294,28 +6628,30 @@ msgid "config.Invalid_telegram_bot_token"
 msgstr "Неверный токен Telegram bot"
 
 msgid "config.additional_configs.description"
-msgstr ""
+msgstr "Объединять дополнительные конфигурации со сгенерированными подписками"
 
 msgid "config.additional_configs.label"
-msgstr ""
+msgstr "Дополнительные конфигурации"
 
 msgid "config.additional_configs_singbox.description"
-msgstr ""
+msgstr "Вы можете добавить к результату другие outbounds singbox"
 
 msgid "config.additional_configs_singbox.label"
-msgstr ""
+msgstr "Дополнительные конфигурации для Singbox"
 
 msgid "config.additional_configs_urls.description"
 msgstr ""
+"Можно добавить http:// https:// или прокси в формате v2ray, например "
+"vless://"
 
 msgid "config.additional_configs_urls.label"
-msgstr ""
+msgstr "Дополнительные URL"
 
 msgid "config.additional_configs_xrayjson.description"
-msgstr ""
+msgstr "Дополнительные outbounds для Xray JSON"
 
 msgid "config.additional_configs_xrayjson.label"
-msgstr ""
+msgstr "Дополнительные конфигурации для Xray JSON"
 
 msgid "config.admin.description"
 msgstr ""
@@ -1328,25 +6664,25 @@ msgid "config.admin_lang.description"
 msgstr "Выберите язык для раздела администрирования"
 
 msgid "config.admin_lang.en"
-msgstr ""
+msgstr "🇺🇸 Английский"
 
 msgid "config.admin_lang.fa"
-msgstr ""
+msgstr "🇮🇷 Персидский - فارسی"
 
 msgid "config.admin_lang.label"
 msgstr "🗺️ Язык панели администратора"
 
 msgid "config.admin_lang.my"
-msgstr ""
+msgstr "🇲🇲 Бирманский"
 
 msgid "config.admin_lang.pt"
-msgstr ""
+msgstr "🇧🇷 Португальский"
 
 msgid "config.admin_lang.ru"
-msgstr ""
+msgstr "🇷🇺 Русский"
 
 msgid "config.admin_lang.zh"
-msgstr ""
+msgstr "🇨🇳 Китайский"
 
 msgid "config.admin_secret.description"
 msgstr ""
@@ -1372,10 +6708,10 @@ msgid "config.allow_invalid_sni.label"
 msgstr "🆗 Разрешить неверный SNI"
 
 msgid "config.anytls_enable.description"
-msgstr ""
+msgstr "Включить протокол AnyTLS"
 
 msgid "config.anytls_enable.label"
-msgstr ""
+msgstr "AnyTLS"
 
 msgid "config.auto_update.description"
 msgstr "Система автоматически обновится в 3:00 утра при наличии обновлений"
@@ -1444,19 +6780,21 @@ msgid "config.cloudflare.label"
 msgstr "🔑 API Cloudflare"
 
 msgid "config.common_proxy_core.both"
-msgstr ""
+msgstr "Оба"
 
 msgid "config.common_proxy_core.description"
 msgstr ""
+"Если протокол есть и в Xray, и в Hiddify Core, включённым остаётся только "
+"выбранное ядро. Выберите «Оба», чтобы оставить оба."
 
 msgid "config.common_proxy_core.hiddify_core"
-msgstr ""
+msgstr "Hiddify Core (singbox)"
 
 msgid "config.common_proxy_core.label"
-msgstr ""
+msgstr "🎛️ Общее ядро прокси"
 
 msgid "config.common_proxy_core.xray"
-msgstr ""
+msgstr "Xray"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1476,10 +6814,10 @@ msgid "config.country.label"
 msgstr "🌍 Страна"
 
 msgid "config.create_easysetup_link.description"
-msgstr "config.create_easysetup_link.description"
+msgstr "Создать ссылку easy-setup для первоначальной настройки"
 
 msgid "config.create_easysetup_link.label"
-msgstr "config.create_easysetup_link.label"
+msgstr "Создать ссылку Easy Setup"
 
 msgid "config.db_version.description"
 msgstr "Описание версии базы данных"
@@ -1488,10 +6826,10 @@ msgid "config.db_version.label"
 msgstr "Label версии базы данных"
 
 msgid "config.dbvalues.description"
-msgstr "config.dbvalues.description"
+msgstr "Внутренние значения базы данных (расширенные)"
 
 msgid "config.dbvalues.label"
-msgstr "config.dbvalues.label"
+msgstr "Значения БД"
 
 msgid "config.decoy_domain.description"
 msgstr ""
@@ -1505,9 +6843,11 @@ msgstr "📺 Сайт-приманка"
 
 msgid "config.default_useragent_string.description"
 msgstr ""
+"Строка User-Agent по умолчанию, используемая в сгенерированных клиентских "
+"конфигурациях"
 
 msgid "config.default_useragent_string.label"
-msgstr ""
+msgstr "🪪 User Agent по умолчанию"
 
 msgid "config.dns_server.description"
 msgstr ""
@@ -1519,34 +6859,34 @@ msgid "config.dns_server.label"
 msgstr "🖥 DNS-сервер"
 
 msgid "config.dnstt.description"
-msgstr ""
+msgstr "Настройки туннеля DNSTT"
 
 msgid "config.dnstt.label"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "config.dnstt_enable.description"
-msgstr ""
+msgstr "Включить протокол DNSTT"
 
 msgid "config.dnstt_enable.label"
-msgstr ""
+msgstr "Включить DNSTT"
 
 msgid "config.dnstt_private_key.description"
-msgstr ""
+msgstr "Приватный ключ DNSTT"
 
 msgid "config.dnstt_private_key.label"
-msgstr ""
+msgstr "Приватный ключ DNSTT"
 
 msgid "config.dnstt_public_key.description"
-msgstr ""
+msgstr "Публичный ключ DNSTT"
 
 msgid "config.dnstt_public_key.label"
-msgstr ""
+msgstr "Публичный ключ DNSTT"
 
 msgid "config.dnstt_resolvers.description"
-msgstr ""
+msgstr "DNS-резолверы для DNSTT через запятую"
 
 msgid "config.dnstt_resolvers.label"
-msgstr ""
+msgstr "Резолверы DNSTT"
 
 msgid "config.domain_fronting.description"
 msgstr ""
@@ -1589,10 +6929,10 @@ msgid "config.firewall.label"
 msgstr "🛡️ Firewall"
 
 msgid "config.first_setup.description"
-msgstr "config.first_setup.description"
+msgstr "Находится ли панель в режиме первой настройки"
 
 msgid "config.first_setup.label"
-msgstr "config.first_setup.label"
+msgstr "Первая настройка"
 
 msgid "config.general.description"
 msgstr "Это общие настройки системы."
@@ -1616,22 +6956,22 @@ msgid "config.h2_enable.label"
 msgstr "🔵 h2"
 
 msgid "config.health_secret_path.description"
-msgstr ""
+msgstr "Секретный путь для проверок состояния"
 
 msgid "config.health_secret_path.label"
-msgstr ""
+msgstr "Секретный путь проверки состояния"
 
 msgid "config.hidden.description"
-msgstr "config.hidden.description"
+msgstr "Скрытая внутренняя настройка"
 
 msgid "config.hidden.label"
-msgstr "config.hidden.label"
+msgstr "Скрытое"
 
 msgid "config.hiddifycli_enable.description"
-msgstr "config.hiddifycli_enable.description"
+msgstr "Включить функции Hiddify CLI"
 
 msgid "config.hiddifycli_enable.label"
-msgstr "config.hiddifycli_enable.label"
+msgstr "Включить Hiddify CLI"
 
 msgid "config.http.description"
 msgstr "Конфигурации HTTP можно установить в этом разделе"
@@ -1712,7 +7052,7 @@ msgstr ""
 "Неверный UUID пользователя. пример: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6"
 
 msgid "config.is_parent.description"
-msgstr "config.is_parent.description"
+msgstr "Выступает ли эта панель в роли родительской"
 
 msgid "config.is_parent.label"
 msgstr "Главная панель"
@@ -1743,43 +7083,44 @@ msgstr ""
 "опыт использования пользовательской зоны."
 
 msgid "config.lang.en"
-msgstr ""
+msgstr "🇺🇸 Английский"
 
 msgid "config.lang.fa"
-msgstr ""
+msgstr "🇮🇷 Персидский - فارسی"
 
 msgid "config.lang.label"
 msgstr "🗺️ Язык раздела пользователя"
 
 msgid "config.lang.my"
-msgstr ""
+msgstr "🇲🇲 Бирманский"
 
 msgid "config.lang.pt"
-msgstr ""
+msgstr "🇧🇷 Португальский"
 
 msgid "config.lang.ru"
-msgstr ""
+msgstr "🇷🇺 Русский"
 
 msgid "config.lang.zh"
-msgstr ""
+msgstr "🇨🇳 Китайский"
 
 msgid "config.last_hash.description"
-msgstr "config.last_hash.description"
+msgstr "Хеш последней применённой конфигурации"
 
 msgid "config.last_hash.label"
-msgstr "config.last_hash.label"
+msgstr "Последний хеш"
 
 msgid "config.last_priodic_usage_check.description"
-msgstr "config.last_priodic_usage_check.description"
+msgstr "Время последней периодической проверки трафика"
 
 msgid "config.last_priodic_usage_check.label"
-msgstr "config.last_priodic_usage_check.label"
+msgstr "Последняя периодическая проверка трафика"
 
 msgid "config.last_users_sync.description"
 msgstr ""
+"Время последней успешной синхронизации пользователей с родительской панелью"
 
 msgid "config.last_users_sync.label"
-msgstr ""
+msgstr "Последняя синхронизация пользователей"
 
 msgid "config.license.description"
 msgstr ""
@@ -1790,100 +7131,109 @@ msgid "config.license.label"
 msgstr "License  Code"
 
 msgid "config.log_level.CRITICAL"
-msgstr ""
+msgstr "Критический"
 
 msgid "config.log_level.DEBUG"
-msgstr ""
+msgstr "Отладка"
 
 msgid "config.log_level.ERROR"
-msgstr ""
+msgstr "Ошибка"
 
 msgid "config.log_level.INFO"
-msgstr ""
+msgstr "Информация"
 
 msgid "config.log_level.SUCCESS"
-msgstr ""
+msgstr "Успех"
 
 msgid "config.log_level.TRACE"
-msgstr ""
+msgstr "Трассировка"
 
 msgid "config.log_level.WARNING"
-msgstr ""
+msgstr "Предупреждение"
 
 msgid "config.log_level.description"
-msgstr "config.log_level.description"
+msgstr "Уровень подробности журнала панели"
 
 msgid "config.log_level.label"
-msgstr "config.log_level.label"
+msgstr "Уровень журнала"
 
 msgid "config.master_dns_encrypt_key.description"
-msgstr ""
+msgstr "Ключ шифрования данных MasterDNS (hex)"
 
 msgid "config.master_dns_encrypt_key.label"
-msgstr ""
+msgstr "Ключ шифрования MasterDNS"
 
 msgid "config.max_proxy_ips_per_version.description"
 msgstr ""
+"Максимальное число адресов IPv4 и IPv6, используемых для генерации прокси "
+"для каждого домена (каждая версия ограничивается отдельно)."
 
 msgid "config.max_proxy_ips_per_version.label"
-msgstr ""
+msgstr "Макс. IP прокси на версию"
 
 msgid "config.mieru.description"
 msgstr ""
+"Протокол Mieru — безопасный децентрализованный протокол связи, "
+"предназначенный для передачи данных в распределённых сетях без центрального "
+"сервера"
 
 msgid "config.mieru.label"
-msgstr ""
+msgstr "⚡️ Mieru"
 
 msgid "config.mieru_enable.description"
-msgstr ""
+msgstr "Mieru — быстрый прокси"
 
 msgid "config.mieru_enable.label"
-msgstr ""
+msgstr "⚡️ Включить Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr ""
+msgstr "📄 По умолчанию"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr ""
+msgstr "⏳ Без ожидания"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr ""
+msgstr "📝 Стандартный"
 
 msgid "config.mieru_handshake.description"
 msgstr ""
+"Рукопожатие Mieru устанавливает безопасное соединение, проверяя и "
+"аутентифицируя обе стороны перед обменом данными"
 
 msgid "config.mieru_handshake.label"
-msgstr ""
+msgstr "🤝 Рукопожатие Mieru"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr ""
+msgstr "📄 По умолчанию"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr ""
+msgstr "📈 Высокий"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr ""
+msgstr "📉 Низкий"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr ""
+msgstr "📊 Средний"
 
 msgid "config.mieru_multiplexing.description"
 msgstr ""
+"Мультиплексирование Mieru обеспечивает эффективную передачу данных, позволяя"
+" одновременно обрабатывать несколько соединений"
 
 msgid "config.mieru_multiplexing.label"
-msgstr ""
+msgstr "🔄 Режим мультиплексирования Mieru"
 
 msgid "config.mieru_tcp_ports.description"
-msgstr ""
+msgstr "Целые числа через запятую, обозначающие порты (1234,1235,1237)"
 
 msgid "config.mieru_tcp_ports.label"
-msgstr ""
+msgstr "🔍 TCP-порты Mieru"
 
 msgid "config.mieru_udp_ports.description"
-msgstr ""
+msgstr "Целые числа через запятую, обозначающие порты (1234,1235,1237)"
 
 msgid "config.mieru_udp_ports.label"
-msgstr ""
+msgstr "🔎 UDP-порты Mieru"
 
 msgid "config.mux.description"
 msgstr "Настройки конфигурации MUX (Multiplex)"
@@ -1959,15 +7309,16 @@ msgstr "♍️ Протокол MUX"
 
 msgid "config.naive_enable.description"
 msgstr ""
+"Naive использует точно такой же стек Chrome, чтобы избежать обнаружения"
 
 msgid "config.naive_enable.label"
-msgstr ""
+msgstr "🛡 Включить Naive"
 
 msgid "config.naive_port.description"
-msgstr ""
+msgstr "Эта опция задаёт порт Naive"
 
 msgid "config.naive_port.label"
-msgstr ""
+msgstr "🔎 Порт Naive"
 
 msgid "config.netdata.description"
 msgstr ""
@@ -1978,10 +7329,10 @@ msgid "config.netdata.label"
 msgstr "Netdata"
 
 msgid "config.node_name.description"
-msgstr ""
+msgstr "Имя этого узла, показываемое в родительской панели"
 
 msgid "config.node_name.label"
-msgstr ""
+msgstr "Имя узла"
 
 msgid "config.not_found.description"
 msgstr "Конфигурация не найдена"
@@ -2003,31 +7354,31 @@ msgid "config.package_mode.label"
 msgstr "🔄 Режим обновления пакетов"
 
 msgid "config.panel_mode.child"
-msgstr ""
+msgstr "Дочерняя"
 
 msgid "config.panel_mode.description"
-msgstr "config.panel_mode.description"
+msgstr "Режим работы панели: автономная, родительская или дочерняя"
 
 msgid "config.panel_mode.label"
-msgstr "config.panel_mode.label"
+msgstr "Режим панели"
 
 msgid "config.panel_mode.parent"
-msgstr ""
+msgstr "Родительская"
 
 msgid "config.panel_mode.standalone"
-msgstr ""
+msgstr "Автономная"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "config.parent_admin_proxy_path.description"
+msgstr "Путь admin proxy в родительской панели"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "config.parent_admin_proxy_path.label"
+msgstr "Путь admin proxy родителя"
 
 msgid "config.parent_domain.description"
-msgstr "config.parent_domain.description"
+msgstr "Домен родительской панели"
 
 msgid "config.parent_domain.label"
-msgstr "config.parent_domain.label"
+msgstr "Домен родителя"
 
 msgid "config.parent_panel.description"
 msgstr ""
@@ -2044,10 +7395,10 @@ msgid "config.path_grpc.label"
 msgstr "ℹ️ Путь gRPC"
 
 msgid "config.path_http.description"
-msgstr ""
+msgstr "должен быть случайным"
 
 msgid "config.path_http.label"
-msgstr ""
+msgstr "ℹ️ Путь HTTP"
 
 msgid "config.path_httpupgrade.description"
 msgstr "должен быть случайным"
@@ -2056,10 +7407,16 @@ msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ Путь обновления HTTP"
 
 msgid "config.path_naive.description"
-msgstr ""
+msgstr "Для ссылки Naive"
 
 msgid "config.path_naive.label"
-msgstr ""
+msgstr "ℹ️ Путь Naive"
+
+msgid "config.path_splithttp.description"
+msgstr "Путь XHTTP"
+
+msgid "config.path_splithttp.label"
+msgstr "Путь XHTTP"
 
 msgid "config.path_ss.description"
 msgstr "Путь Shadowsocks в ссылках"
@@ -2163,10 +7520,10 @@ msgid "config.reality_fallback_domain.label"
 msgstr "🌍 Резервный домен Reality"
 
 msgid "config.reality_port.description"
-msgstr ""
+msgstr "Порт Reality"
 
 msgid "config.reality_port.label"
-msgstr ""
+msgstr "Порт REALITY"
 
 msgid "config.reality_private_key.description"
 msgstr "Не меняйте это"
@@ -2193,22 +7550,22 @@ msgid "config.reality_short_ids.label"
 msgstr "🆔 Short IDs"
 
 msgid "config.restls.description"
-msgstr "config.restls.description"
+msgstr "Настройки протокола RestLS"
 
 msgid "config.restls.label"
 msgstr "RestTLS"
 
 msgid "config.restls1_2_domain.description"
-msgstr "config.restls1_2_domain.description"
+msgstr "Домен, используемый для RestLS 1.2"
 
 msgid "config.restls1_2_domain.label"
-msgstr "config.restls1_2_domain.label"
+msgstr "Домен RestLS 1.2"
 
 msgid "config.restls1_3_domain.description"
-msgstr "config.restls1_3_domain.description"
+msgstr "Домен, используемый для RestLS 1.3"
 
 msgid "config.restls1_3_domain.label"
-msgstr "config.restls1_3_domain.label"
+msgstr "Домен RestLS 1.3"
 
 msgid "config.shadowsocks.description"
 msgstr ""
@@ -2283,16 +7640,16 @@ msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ Показать использование в доп.ссылке"
 
 msgid "config.snell_enable.description"
-msgstr ""
+msgstr "Включить протокол Snell"
 
 msgid "config.snell_enable.label"
-msgstr ""
+msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr ""
+msgstr "Включить протокол SOCKS"
 
 msgid "config.socks_enable.label"
-msgstr ""
+msgstr "SOCKS"
 
 msgid "config.special_port.description"
 msgstr ""
@@ -2310,6 +7667,14 @@ msgstr ""
 
 msgid "config.speed_test.label"
 msgstr "🚀 Тест скорости"
+
+msgid "config.splithttp_enable.description"
+msgstr ""
+"XHTTP позволяет разделить потоки загрузки и отдачи, унифицирует gRPC, H2, H1"
+" и также поддерживает QUIC."
+
+msgid "config.splithttp_enable.label"
+msgstr "Включить XHTTP"
 
 msgid "config.ssfaketls.description"
 msgstr ""
@@ -2346,52 +7711,52 @@ msgid "config.ssh.label"
 msgstr "SSH Proxy"
 
 msgid "config.ssh_host_dsa_pk.description"
-msgstr ""
+msgstr "Приватный ключ DSA хоста SSH"
 
 msgid "config.ssh_host_dsa_pk.label"
-msgstr ""
+msgstr "Приватный ключ DSA хоста SSH"
 
 msgid "config.ssh_host_dsa_pub.description"
-msgstr ""
+msgstr "Публичный ключ DSA хоста SSH"
 
 msgid "config.ssh_host_dsa_pub.label"
-msgstr ""
+msgstr "Публичный ключ DSA хоста SSH"
 
 msgid "config.ssh_host_ecdsa_pk.description"
-msgstr ""
+msgstr "Приватный ключ ECDSA хоста SSH"
 
 msgid "config.ssh_host_ecdsa_pk.label"
-msgstr ""
+msgstr "Приватный ключ ECDSA хоста SSH"
 
 msgid "config.ssh_host_ecdsa_pub.description"
-msgstr ""
+msgstr "Публичный ключ ECDSA хоста SSH"
 
 msgid "config.ssh_host_ecdsa_pub.label"
-msgstr ""
+msgstr "Публичный ключ ECDSA хоста SSH"
 
 msgid "config.ssh_host_ed25519_pk.description"
-msgstr ""
+msgstr "Приватный ключ Ed25519 хоста SSH"
 
 msgid "config.ssh_host_ed25519_pk.label"
-msgstr ""
+msgstr "Приватный ключ Ed25519 хоста SSH"
 
 msgid "config.ssh_host_ed25519_pub.description"
-msgstr ""
+msgstr "Публичный ключ Ed25519 хоста SSH"
 
 msgid "config.ssh_host_ed25519_pub.label"
-msgstr ""
+msgstr "Публичный ключ Ed25519 хоста SSH"
 
 msgid "config.ssh_host_rsa_pk.description"
-msgstr ""
+msgstr "Приватный ключ RSA хоста SSH"
 
 msgid "config.ssh_host_rsa_pk.label"
-msgstr ""
+msgstr "Приватный ключ RSA хоста SSH"
 
 msgid "config.ssh_host_rsa_pub.description"
-msgstr ""
+msgstr "Публичный ключ RSA хоста SSH"
 
 msgid "config.ssh_host_rsa_pub.label"
-msgstr ""
+msgstr "Публичный ключ RSA хоста SSH"
 
 msgid "config.ssh_server_enable.description"
 msgstr "SSH Proxy полностью отличается от оригинального SSH Server"
@@ -2448,34 +7813,34 @@ msgid "config.ssr_fakedomain.label"
 msgstr "Поддельный домен SSR"
 
 msgid "config.sub_full_clash_enable.description"
-msgstr "config.sub_full_clash_enable.description"
+msgstr "Включить конечную точку полной подписки Clash"
 
 msgid "config.sub_full_clash_enable.label"
-msgstr "config.sub_full_clash_enable.label"
+msgstr "Включить полную подписку Clash"
 
 msgid "config.sub_full_clash_meta_enable.description"
-msgstr "config.sub_full_clash_meta_enable.description"
+msgstr "Включить конечную точку полной подписки Clash Meta"
 
 msgid "config.sub_full_clash_meta_enable.label"
-msgstr "config.sub_full_clash_meta_enable.label"
+msgstr "Включить полную подписку Clash Meta"
 
 msgid "config.sub_full_links_b64_enable.description"
-msgstr "config.sub_full_links_b64_enable.description"
+msgstr "Включить конечную точку ссылок подписки в base64"
 
 msgid "config.sub_full_links_b64_enable.label"
-msgstr "config.sub_full_links_b64_enable.label"
+msgstr "Включить полные ссылки (Base64)"
 
 msgid "config.sub_full_links_enable.description"
-msgstr "config.sub_full_links_enable.description"
+msgstr "Включить конечную точку ссылок подписки в виде обычного текста"
 
 msgid "config.sub_full_links_enable.label"
-msgstr "config.sub_full_links_enable.label"
+msgstr "Включить полные ссылки"
 
 msgid "config.sub_full_singbox_enable.description"
-msgstr "config.sub_full_singbox_enable.description"
+msgstr "Включить конечную точку полной подписки Sing-box"
 
 msgid "config.sub_full_singbox_enable.label"
-msgstr "config.sub_full_singbox_enable.label"
+msgstr "Включить полную подписку Sing-box"
 
 msgid "config.sub_full_xray_json_enable.description"
 msgstr ""
@@ -2489,10 +7854,10 @@ msgid "config.sub_full_xray_json_enable.label"
 msgstr "⚙️ Ссылка на полную конфигурацию XRay"
 
 msgid "config.sub_singbox_ssh_enable.description"
-msgstr "config.sub_singbox_ssh_enable.description"
+msgstr "Включить конечную точку подписки Sing-box SSH"
 
 msgid "config.sub_singbox_ssh_enable.label"
-msgstr "config.sub_singbox_ssh_enable.label"
+msgstr "Включить подписку Sing-box SSH"
 
 msgid "config.tcp_enable.description"
 msgstr "Включает протокол TCP"
@@ -2556,11 +7921,17 @@ msgstr "В этом разделе можно установить конфиг�
 msgid "config.tls.label"
 msgstr "Настройки TLS"
 
+msgid "config.tls_ech.description"
+msgstr "Значение ECH в формате: cloudflare-ech.com+https://8.8.8.8/dns-query"
+
+msgid "config.tls_ech.label"
+msgstr "Значение TLS ECH"
+
 msgid "config.tls_ech_enable.description"
-msgstr ""
+msgstr "Добавляет ECH в сгенерированные ссылки подписки TLS"
 
 msgid "config.tls_ech_enable.label"
-msgstr ""
+msgstr "🔐 Включить TLS ECH"
 
 msgid "config.tls_fragment_enable.description"
 msgstr ""
@@ -2573,10 +7944,10 @@ msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
 
 msgid "config.tls_fragment_packets.description"
-msgstr ""
+msgstr "Режим фрагментации пакетов (например: tlshello или 1-3)"
 
 msgid "config.tls_fragment_packets.label"
-msgstr ""
+msgstr "📦 Фрагментация пакетов TLS"
 
 msgid "config.tls_fragment_size.description"
 msgstr "Размер каждого пакета"
@@ -2668,16 +8039,18 @@ msgid "config.tuic_port.label"
 msgstr "🔎 Порты TUIС"
 
 msgid "config.unique_id.description"
-msgstr "config.unique_id.description"
+msgstr "Уникальный идентификатор этого экземпляра панели"
 
 msgid "config.unique_id.label"
-msgstr "config.unique_id.label"
+msgstr "Уникальный ID"
 
 msgid "config.use_ip_in_config.description"
 msgstr ""
+"Это помогает уменьшить проблемы с разрешением IP сервера. Будет "
+"использоваться случайный IP выбранного домена."
 
 msgid "config.use_ip_in_config.label"
-msgstr ""
+msgstr "Использовать IP в конфигурациях"
 
 msgid "config.utls.description"
 msgstr ""
@@ -2705,10 +8078,10 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ Конфигурации успешно изменены"
 
 msgid "config.vless_decryption.description"
-msgstr ""
+msgstr "Параметр расшифровки VLESS для ссылок обмена"
 
 msgid "config.vless_decryption.label"
-msgstr ""
+msgstr "Расшифровка VLESS"
 
 msgid "config.vless_enable.description"
 msgstr "Включить протокол VLess"
@@ -2717,16 +8090,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr ""
+msgstr "Метод шифрования VLESS для ссылок обмена"
 
 msgid "config.vless_encryption.label"
-msgstr ""
+msgstr "Шифрование VLESS"
 
 msgid "config.vless_flow.description"
-msgstr ""
+msgstr "Управление потоком VLESS (например, xtls-rprx-vision)"
 
 msgid "config.vless_flow.label"
-msgstr ""
+msgstr "VLESS flow"
 
 msgid "config.vmess_enable.description"
 msgstr ""
@@ -2894,7 +8267,7 @@ msgid "direct"
 msgstr "➡️ На прямую"
 
 msgid "dnstt"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "domain.cdn"
 msgstr "CDN"
@@ -2906,40 +8279,48 @@ msgstr ""
 "управления"
 
 msgid "domain.current_server_IPs"
-msgstr ""
+msgstr "🔢 Текущие IP сервера:"
 
 msgid "domain.custom_proxy.description"
 msgstr ""
+"Необязательная привязка прокси. Перечислены только прокси, поддерживающие "
+"комбинацию режимов этого домена. Оставьте пустым, чтобы использовать все "
+"подходящие прокси."
 
 msgid "domain.custom_proxy.group.dns_gateway"
-msgstr ""
+msgstr "DNS-шлюз"
 
 msgid "domain.custom_proxy.group.ip_based"
-msgstr ""
+msgstr "На основе IP"
 
 msgid "domain.custom_proxy.group.l7_gateway"
-msgstr ""
+msgstr "L7-шлюз"
 
 msgid "domain.custom_proxy.group.other"
-msgstr ""
+msgstr "Другое"
 
 msgid "domain.custom_proxy.group.sni_gateway"
-msgstr ""
+msgstr "SNI-шлюз"
 
 msgid "domain.custom_proxy.label"
-msgstr ""
+msgstr "Пользовательские прокси"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr ""
+"Домены REALITY могут использовать только L7-прокси домена-шлюза, режимы "
+"домена которых включают REALITY. Оставьте пустым, чтобы использовать все "
+"подходящие L7-прокси REALITY."
 
 msgid "domain.custom_proxy.reality_required"
 msgstr ""
+"Домены REALITY могут использовать только L7-прокси домена-шлюза, режимы "
+"домена которых включают REALITY"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
-msgstr ""
+msgstr "SNI-шлюз и L7-шлюз нельзя выбрать вместе для одного домена"
 
 msgid "domain.custom_proxy.sni_single_only"
-msgstr ""
+msgstr "Для домена можно выбрать только один SNI-шлюз"
 
 msgid "domain.description"
 msgstr ""
@@ -2962,18 +8343,22 @@ msgstr "🔒 Фронтирование домена TLS"
 
 msgid "domain.ech.description"
 msgstr ""
+"Получать и использовать Encrypted Client Hello (ECH) для этого домена CDN. "
+"Требуется включённый TLS ECH в настройках панели."
 
 msgid "domain.ech.label"
-msgstr ""
+msgstr "🔐 ECH"
 
 msgid "domain.empty.allowed_for_fake_only"
-msgstr "domain.empty.allowed_for_fake_only"
+msgstr "Пустой домен допускается только в режиме fake"
 
 msgid "domain.fake_mode.description"
 msgstr ""
+"Valid использует настоящий сертификат. Fake и Reality предназначены для "
+"decoy TLS и протоколов REALITY."
 
 msgid "domain.fake_mode.label"
-msgstr ""
+msgstr "Режим TLS"
 
 msgid "domain.intro"
 msgstr ""
@@ -2994,18 +8379,22 @@ msgstr ""
 
 msgid "domain.resolveip.description"
 msgstr ""
+"Использовать IP вместо доменного имени в прокси. Полезно при сильных помехах"
+" в DNS."
 
 msgid "domain.resolveip.label"
-msgstr ""
+msgstr "🔢 Разрешать IP"
 
 msgid "domain.server_domain.description"
 msgstr ""
+"Домен вышестоящего сервера для этой записи. Должен быть допустимым доменом "
+"Direct или Relay."
 
 msgid "domain.server_domain.label"
-msgstr ""
+msgstr "Домен сервера"
 
 msgid "domain.server_domain.must_be_valid_direct_or_relay"
-msgstr ""
+msgstr "Домен сервера должен быть допустимым доменом Direct или Relay"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -3015,15 +8404,37 @@ msgstr ""
 
 msgid "domain.tls_status.description"
 msgstr ""
+"Сертификат, сохранённый для этого домена: действительный от CA, "
+"самоподписанный, истёкший, недействительный или отсутствует."
+
+msgid "domain.tls_status.expired"
+msgstr "Истёк"
+
+msgid "domain.tls_status.invalid"
+msgstr "Недействителен"
+
+msgid "domain.tls_status.label"
+msgstr "TLS"
+
+msgid "domain.tls_status.missing"
+msgstr "Нет сертификата"
+
+msgid "domain.tls_status.self_signed"
+msgstr "Самоподписанный"
+
+msgid "domain.tls_status.valid"
+msgstr "Действителен"
 
 msgid "download"
 msgstr "Direct Download"
 
 msgid "download_domain.description"
 msgstr ""
+"Только для XHTTP: позволяет, например, выполнять загрузку с другого домена, "
+"чем отдачу. Это усложняет обнаружение и может улучшить общее качество."
 
 msgid "download_domain.label"
-msgstr ""
+msgstr "📈 Домен загрузки"
 
 msgid "fake"
 msgstr "🆎 Поддельный сайт"
@@ -3040,6 +8451,8 @@ msgid ""
 "in\n"
 "          parent panel"
 msgstr ""
+"в\n"
+"          родительской панели"
 
 msgid "in parent panel"
 msgstr "В центральной панели"
@@ -3081,7 +8494,7 @@ msgid "lib.telegram.python"
 msgstr "☑️ Python: низкая производительность"
 
 msgid "lib.telegram.telemt"
-msgstr ""
+msgstr "❇️ Telemt: быстрый, безопасный, надёжный"
 
 msgid "log"
 msgstr "📄 Log"
@@ -3123,7 +8536,7 @@ msgid "no_reset"
 msgstr "⭐️ Без сброса"
 
 msgid "node.diff-version"
-msgstr "node.diff-version"
+msgstr "Версия панели узла отличается от этой панели"
 
 msgid "node.mode.dscr"
 msgstr "Это поле определяет режим для узла."
@@ -3161,13 +8574,13 @@ msgid "package size?"
 msgstr "Размер посылки?"
 
 msgid "parent.invalid-parent-url"
-msgstr "parent.invalid-parent-url"
+msgstr "Недопустимый URL родительской панели"
 
 msgid "parent.panel-not-active"
-msgstr ""
+msgstr "Родительская панель не активна"
 
 msgid "parent.sync-req-failed"
-msgstr "parent.sync-req-failed"
+msgstr "Не удался запрос синхронизации с родителем"
 
 msgid "previous"
 msgstr "Предыдущий"
@@ -3212,7 +8625,7 @@ msgid "singbox: ssh"
 msgstr "SingBox: SSH"
 
 msgid "special"
-msgstr ""
+msgstr "особый"
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"
