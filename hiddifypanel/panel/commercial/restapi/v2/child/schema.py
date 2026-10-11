@@ -4,6 +4,7 @@ from typing import Literal
 
 from pydantic import Field
 
+from hiddifypanel.panel.commercial.restapi.v2.parent.schema import PanelHostSchema
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.proxy_v3.config_builder.dump import CLIENT_CONFIG_FILES
 
@@ -15,6 +16,7 @@ class RegisterWithParentInputSchema(ApiModel):
     parent_panel: str = Field(description="The parent panel url")
     name: str = Field(description="The child's name in the parent panel")
     apikey: str = Field(description="The parent's apikey")
+    parent_hosts: list[PanelHostSchema] | None = Field(default=None, description="The parent's domains, direct first: the node tries them in this order")
 
 
 class ClientConfigsIn(ApiModel):

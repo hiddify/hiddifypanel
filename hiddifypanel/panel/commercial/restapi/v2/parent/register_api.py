@@ -8,11 +8,11 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
-from hiddifypanel.hutils.node import async_job, steplog
+from hiddifypanel.hutils.node import async_job, endpoints, steplog
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
 from hiddifypanel.proxy_v3 import outbounds as ob
 
-from .schema import RegisterInputSchema, RegisterOutputSchema, RegisterUsersInputSchema
+from .schema import PanelHostSchema, RegisterInputSchema, RegisterOutputSchema, RegisterUsersInputSchema
 
 
 class RegisterApi(MethodView):
@@ -42,13 +42,15 @@ class RegisterApi(MethodView):
             abort(400, "The panel in child, not a parent nor standalone")
 
         if async_job.wants_job():  # storing a big panel's users takes long: answer now, the node asks for the result
-            job = async_job.start(lambda: self._process(data, reg).model_dump(mode="json"))
+            job = async_job.start(lambda: self._process(data, reg, paged=True).model_dump(mode="json"))
             answer = jsonify({"job": job})
             answer.status_code = 202  # a Response is passed through by @app.output as it is; a (Response, 202) tuple would not be
             return answer
         return self._process(data, reg)
 
-    def _process(self, data: RegisterInputSchema, reg: str) -> RegisterOutputSchema:
+    def _process(self, data: RegisterInputSchema, reg: str, paged: bool = False) -> RegisterOutputSchema:
+        """Store what the node sent and build the answer. ``paged``: the users are not in the answer (every user of a big panel in one
+        response is megabytes; a CDN or a proxy cuts or refuses that): the node reads them page by page (``RegisterJobUsersApi``)."""
         from hiddifypanel import hutils
 
         panel_data = data.panel_data
@@ -56,6 +58,8 @@ class RegisterApi(MethodView):
         missing = self._missing_user_uuids(data.user_uuids) if data.user_uuids is not None else None
         with steplog.step(reg, "parent", "store the node"):
             child = self._upsert_child(data)
+        if data.panel_hosts is not None:
+            endpoints.remember_node_hosts(child.unique_id, (endpoints.PanelHost(h.domain, h.mode) for h in data.panel_hosts))
         try:
             with steplog.step(reg, "parent", "store the node's admins, users and domains", admins=len(panel_data.admin_users), users=len(panel_data.users), domains=len(panel_data.domains)):
                 AdminUser.bulk_register([a.model_dump(exclude={"default_outbound_slug"}) for a in panel_data.admin_users], commit=False)
@@ -75,11 +79,13 @@ class RegisterApi(MethodView):
             cache.invalidate_all_cached_functions()
             try:
                 return RegisterOutputSchema(
-                    users=[u.to_schema() for u in User.query.all()],
+                    users=[] if paged else [u.to_schema() for u in User.query.all()],
+                    users_total=User.query.count() if paged else None,
                     admin_users=[a.to_schema() for a in AdminUser.query.all()],
                     outbounds=ob.export_rows(),
                     parent_unique_id=hconfig(ConfigEnum.unique_id),
                     missing_user_uuids=missing if missing is not None else [],
+                    parent_hosts=[PanelHostSchema(domain=h.domain, mode=h.mode) for h in endpoints.own_hosts()],
                 )
             except Exception as err:  # noqa: BLE001
                 logger.exception(f"[register {reg or '-'} parent] building the answer failed")
@@ -144,3 +150,23 @@ class RegisterUsersApi(MethodView):
                 logger.exception(f"[register {reg or '-'} parent] storing the node's missing users failed")
                 abort(400, str(err))
         return {"status": 200, "stored": len(data.users)}
+
+
+class RegisterJobUsersApi(MethodView):
+    """A page of the users of a finished registration job (``?offset=&limit=``, at most ``MAX_PAGE``), in a fixed order."""
+
+    decorators = [login_required(roles={Role.super_admin}, node_auth=True)]
+    MAX_PAGE = 500
+
+    def get(self, job_id: str):
+        state = async_job.read(job_id)
+        if state is None:
+            abort(404, "This registration is gone")
+        try:
+            offset = max(0, int(request.args.get("offset", "0")))
+            limit = max(1, min(int(request.args.get("limit", str(self.MAX_PAGE))), self.MAX_PAGE))
+        except ValueError:
+            abort(400, "offset and limit must be numbers")
+        total = User.query.count()
+        users = User.query.order_by(User.id).offset(offset).limit(limit).all()
+        return jsonify({"users": [u.to_schema().model_dump(mode="json") for u in users], "total": total})

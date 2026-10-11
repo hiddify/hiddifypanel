@@ -11,8 +11,9 @@ from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import Child, ChildMode, ConfigEnum, Domain, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.child.schema import RegisterWithParentInputSchema
+from hiddifypanel.panel.commercial.restapi.v2.parent.schema import PanelHostSchema
 
-from . import async_job, steplog
+from . import async_job, endpoints, steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -83,11 +84,14 @@ def _panel_base_url_for_nodes() -> str:
     """
     from flask import has_request_context, request
 
-    host = request.host if has_request_context() else ""
-    domains = Domain.get_domains()
-    known = {d.domain.lower() for d in domains}
-    if not host or host.split(":", 1)[0].lower() not in known:
-        host = domains[0].domain if domains else host
+    # A direct domain first, then a relay one, then a CDN one (the node tries the others when this one is down).
+    host = endpoints.best_own_host() or ""
+    if not host:
+        host = request.host if has_request_context() else ""
+        domains = Domain.get_domains()
+        known = {d.domain.lower() for d in domains}
+        if not host or host.split(":", 1)[0].lower() not in known:
+            host = domains[0].domain if domains else host
     return f"https://{host}/{hconfig(ConfigEnum.proxy_path_admin)}/"
 
 
@@ -196,6 +200,7 @@ def register_node(node_admin_link: str, name: str = "") -> Child | None:
         parent_panel=parent_base,
         name=(name or "").strip() or base_url.split("://", 1)[-1].split("/", 1)[0],
         apikey=str(g.account.uuid),
+        parent_hosts=[PanelHostSchema(domain=h.domain, mode=h.mode) for h in endpoints.own_hosts()],
     )
     # The node calls back while we wait (see NODE_REGISTER_TIMEOUT). Registering twice is harmless: a node of this parent just registers again.
     headers = {steplog.REG_HEADER: reg, async_job.ASYNC_HEADER: "1"}

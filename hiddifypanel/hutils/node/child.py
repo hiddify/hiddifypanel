@@ -15,11 +15,13 @@ from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, Child, ChildMode, ConfigEnum, Domain, UnsyncedUsage, UsageData, User, hconfig, set_hconfig
 from hiddifypanel.panel import hiddify, usage
+from hiddifypanel.panel.commercial.restapi.v2.admin.schema import UserSchema
 
 # import schmeas
 from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
     ChildStatusInputSchema,
     ChildStatusOutputSchema,
+    PanelHostSchema,
     RegisterDataSchema,
     RegisterInputSchema,
     RegisterOutputSchema,
@@ -30,7 +32,7 @@ from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
     UsageResponseSchema,
 )
 
-from . import async_job, steplog
+from . import async_job, endpoints, steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -40,12 +42,14 @@ def __get_register_data_for_api(name: str, mode: ChildMode, *, uuids_only: bool 
     main_domains = Domain.get_domains()
     if not main_domains:
         raise ValueError(_("No main domains found, please add at least one domain with valid certificate"))
-    base_url, uuid = hutils.flask.extract_parent_info_from_url(hiddify.get_account_panel_link(g.account, main_domains[0].domain))
+    # The parent calls the node on this address first: a direct domain, else a relay one, else a CDN one (it knows the others from the domains below).
+    base_url, uuid = hutils.flask.extract_parent_info_from_url(hiddify.get_account_panel_link(g.account, endpoints.best_own_host() or main_domains[0].domain))
     register_data = RegisterInputSchema(
         unique_id=hconfig(ConfigEnum.unique_id),
         name=name,
         mode=mode,
         node_base_url=base_url,
+        panel_hosts=[PanelHostSchema(domain=h.domain, mode=h.mode) for h in endpoints.own_hosts()],
         user_uuids=[str(u.uuid) for u in User.query.filter(User.deleted.is_(False)).with_entities(User.uuid).all()] if uuids_only else None,
         panel_data=RegisterDataSchema(
             admin_users=[admin_user.to_schema() for admin_user in AdminUser.query.all()],
@@ -61,7 +65,7 @@ def __get_register_data_for_api(name: str, mode: ChildMode, *, uuids_only: bool 
 
 def __get_sync_data_for_api() -> SyncInputSchema:
     # Only domains go up; users and admins come back down. Proxies and hconfigs stay on the node.
-    return SyncInputSchema(domains=[domain.to_schema() for domain in Domain.query.all()])
+    return SyncInputSchema(domains=[domain.to_schema() for domain in Domain.query.all()], panel_hosts=[PanelHostSchema(domain=h.domain, mode=h.mode) for h in endpoints.own_hosts()])
 
 
 def _active_user_uuids() -> set[str]:
@@ -199,7 +203,7 @@ def _register_call(p_url: str, apikey: str, payload: RegisterInputSchema, header
     the panels cuts them), or at once from a parent that is too old to know jobs."""
     # A parent that knows jobs answers at once; one that does not answers when it is done, so the first request may wait long
     # (and is not repeated: the first one may still be running).
-    starter = NodeApiClient(p_url, apikey, max_retry=1, timeout=REGISTER_TIMEOUT, extra_headers=headers)
+    starter = NodeApiClient(p_url, apikey, max_retry=3, timeout=REGISTER_TIMEOUT, retry_on_timeout=False, extra_headers=headers)
     started = starter.put("/api/v2/parent/register/", payload, dict)
     if isinstance(started, NodeApiErrorSchema):
         return started
@@ -216,9 +220,44 @@ def _register_call(p_url: str, apikey: str, payload: RegisterInputSchema, header
     if state["state"] == "failed":
         return async_job.failed_as_error(state)
     try:
-        return RegisterOutputSchema.model_validate(state.get("result"))
+        answer = RegisterOutputSchema.model_validate(state.get("result"))
     except ValueError as e:
         return NodeApiErrorSchema(msg=f"Unexpected response: {e}", code=200, reason="bad_response")
+    if answer.users_total is None:  # the users are in the answer (a parent that does not page them)
+        return answer
+    users, failure = _read_users_pages(poller, f"/api/v2/parent/register-job/{job}/users/", answer.users_total)
+    if failure is not None:
+        return failure
+    return answer.model_copy(update={"users": users})
+
+
+#: Users of the parent are read in pages of this size: each response is small enough for any proxy or CDN in the way.
+USERS_PAGE = 500
+
+
+def _read_users_pages(client: NodeApiClient, path: str, total: int) -> tuple[list[UserSchema], NodeApiErrorSchema | None]:
+    users: list[UserSchema] = []
+    offset = 0
+    while offset < total:
+        page = client.get(f"{path}?offset={offset}&limit={USERS_PAGE}", dict)
+        if isinstance(page, NodeApiErrorSchema):
+            return users, page
+        try:
+            rows = page.get("users")
+            got = [UserSchema.model_validate(u) for u in rows] if isinstance(rows, list) else []
+        except ValueError as e:
+            return users, NodeApiErrorSchema(msg=f"Unexpected response: {e}", code=200, reason="bad_response")
+        if not got:  # fewer users than it said (some were removed meanwhile): that is all there is
+            break
+        users.extend(got)
+        offset += len(got)
+    return users, None
+
+
+def _remember_parent_hosts(hosts: list[PanelHostSchema] | None) -> None:
+    """The parent's domains came with its answer: kept, for the next time the one in use is down."""
+    if hosts:
+        endpoints.remember_parent_hosts(endpoints.PanelHost(h.domain, h.mode) for h in hosts)
 
 
 def _send_register(payload: RegisterInputSchema, p_url: str, apikey: str, parent_host: str, reg: str, headers: dict[str, str]) -> RegisterOutputSchema | NodeApiErrorSchema:
@@ -300,6 +339,7 @@ def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildM
             logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not accept it: {failure.kind}: {failure.reason}")
             return failure
     missing_users = res.missing_user_uuids or []
+    _remember_parent_hosts(res.parent_hosts)
 
     if not res.parent_unique_id:
         return RegisterFailure("reading the parent's answer", "parent_bad_answer", "the parent did not return its unique id", parent_host)
@@ -370,6 +410,7 @@ def sync_with_parent(pull_users: bool = True) -> bool:
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while syncing with parent: {res.msg}")
         return False
+    _remember_parent_hosts(res.parent_hosts)
     if not pull_users:
         # An older parent may still send the users; they are not needed for this call.
         logger.success("Sent domains to parent")

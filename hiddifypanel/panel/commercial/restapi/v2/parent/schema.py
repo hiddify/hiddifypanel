@@ -88,11 +88,17 @@ class UsageInputOutputSchema(ApiModel):
         return {item.uuid: item for item in self.usages if item.uuid}
 
 
+class PanelHostSchema(ApiModel):
+    domain: str = Field(description="A domain of the panel with a valid certificate")
+    mode: str = Field(description="direct, relay, cdn or sub_link_only: the order the other side tries them in")
+
+
 class SyncInputSchema(ApiModel):
     domains: list[DomainSchema] | None = Field(default=None, description="The list of domains")
     # Deprecated: accepted from older nodes but ignored by the parent.
     proxies: list[ProxySchema] | None = Field(default=None, description="Deprecated, ignored")
     hconfigs: list[HConfigSchema] | None = Field(default=None, description="Deprecated, ignored")
+    panel_hosts: list[PanelHostSchema] | None = Field(default=None, description="The node's own domains that the parent can call (valid certificate), best first")
 
     @model_validator(mode="after")
     def _at_least_one(self) -> SyncInputSchema:
@@ -105,6 +111,7 @@ class SyncOutputSchema(ApiModel):
     users: list[UserSchema] = Field(default_factory=list, description="The list of users")
     admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")
     outbounds: list[OutboundModel] | None = Field(default=None, description="All outbounds of the parent (None: an older parent, keep the local ones)")
+    parent_hosts: list[PanelHostSchema] | None = Field(default=None, description="The parent's domains (the node uses another one when the one it has is down)")
 
 
 class ChildStatusInputSchema(ApiModel):
@@ -129,6 +136,7 @@ class RegisterInputSchema(ApiModel):
     name: str = Field(description="The child's name")
     mode: ChildMode = Field(description="The child's mode")
     node_base_url: str | None = Field(default=None, description="The child's node base url")
+    panel_hosts: list[PanelHostSchema] | None = Field(default=None, description="The child's own domains that the parent can call (valid certificate), best first")
     user_uuids: list[str] | None = Field(
         default=None,
         description="The uuids of the child's users that panel_data.users does not carry. The parent answers which of them it does not have (missing_user_uuids): only those are sent, by register-users",
@@ -144,4 +152,6 @@ class RegisterOutputSchema(ApiModel):
     users: list[UserSchema] = Field(default_factory=list, description="The list of users")
     admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")
     outbounds: list[OutboundModel] | None = Field(default=None, description="All outbounds of the parent")
+    parent_hosts: list[PanelHostSchema] | None = Field(default=None, description="The parent's domains (the node uses another one when the one it has is down)")
+    users_total: int | None = Field(default=None, description="Set when the users are not in this answer but in pages: register-job/<job>/users/ (None: they are in `users`)")
     missing_user_uuids: list[str] | None = Field(default=None, description="Of the child's user_uuids, the ones the parent does not have (None: an older parent that does not know user_uuids)")

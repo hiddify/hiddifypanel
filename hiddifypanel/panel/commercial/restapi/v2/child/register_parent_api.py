@@ -8,7 +8,7 @@ from hiddifypanel import current_app as app
 from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
-from hiddifypanel.hutils.node import async_job, steplog
+from hiddifypanel.hutils.node import async_job, endpoints, steplog
 from hiddifypanel.models import Child, ChildMode, ConfigEnum, PanelMode, Role, hconfig, set_hconfig
 
 from .schema import RegisterWithParentInputSchema
@@ -42,6 +42,8 @@ class RegisterWithParentApi(MethodView):
             logger.warning(f"[register {reg or '-'} node] this panel was {'a parent' if was_parent else 'a node of ' + steplog.host_of(old_parent)}: the owner moves it to {parent_host}")
         old_parent_ids = {c.id for c in Child.query.filter(Child.mode == ChildMode.parent).all()}
 
+        if data.parent_hosts:  # the parent's other domains: used when the one in parent_panel is down
+            endpoints.remember_parent_hosts(endpoints.PanelHost(h.domain, h.mode) for h in data.parent_hosts)
         set_hconfig(ConfigEnum.parent_panel, data.parent_panel)
         if data.name:
             set_hconfig(ConfigEnum.node_name, data.name)

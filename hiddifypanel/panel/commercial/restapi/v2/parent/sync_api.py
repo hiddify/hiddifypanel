@@ -10,11 +10,12 @@ from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
+from hiddifypanel.hutils.node import endpoints
 from hiddifypanel.models import AdminUser, Domain, User
 from hiddifypanel.models.child import Child
 from hiddifypanel.proxy_v3 import outbounds as ob
 
-from .schema import SyncInputSchema, SyncOutputSchema
+from .schema import PanelHostSchema, SyncInputSchema, SyncOutputSchema
 
 # One sync per node at a time: two overlapping syncs of the same node would both find a new
 # domain missing and insert it twice (and fight over the same rows).
@@ -25,6 +26,11 @@ _node_locks_guard = threading.Lock()
 def _node_lock(unique_id: str) -> threading.Lock:
     with _node_locks_guard:
         return _node_locks.setdefault(unique_id, threading.Lock())
+
+
+def _parent_hosts() -> list[PanelHostSchema]:
+    """This panel's domains, direct first: the node moves on to the next when the one it calls is down."""
+    return [PanelHostSchema(domain=h.domain, mode=h.mode) for h in endpoints.own_hosts()]
 
 
 class SyncApi(MethodView):
@@ -49,15 +55,18 @@ class SyncApi(MethodView):
 
         with _node_lock(child.unique_id):
             self._store(payload, child)
+        if data.panel_hosts is not None:
+            endpoints.remember_node_hosts(child.unique_id, (endpoints.PanelHost(h.domain, h.mode) for h in data.panel_hosts))
 
         if request.args.get("users") == "0":
             # The node only reported config changes: skip building (and sending) every user.
-            return SyncOutputSchema()
+            return SyncOutputSchema(parent_hosts=_parent_hosts())
 
         res = SyncOutputSchema(
             users=[u.to_schema() for u in User.query.all()],
             admin_users=[a.to_schema() for a in AdminUser.query.all()],
             outbounds=ob.export_rows(),
+            parent_hosts=_parent_hosts(),
         )
 
         logger.info("Returning sync output")
