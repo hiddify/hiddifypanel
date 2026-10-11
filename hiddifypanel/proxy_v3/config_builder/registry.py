@@ -26,15 +26,18 @@ def get_config_builder_driver(core: TemplateCore, side: BaseConfigSide) -> BaseC
 def _load_drivers() -> None:
     if _DRIVERS:
         return
+    from .dns_proxy import server as dns_proxy_server
     from .haproxy import server as haproxy_server
     from .hiddify_core import client as hiddify_core_client
     from .hiddify_core import server as hiddify_core_server
-    from .dns_proxy import server as dns_proxy_server
     from .nginx import server as nginx_server
     from .rust_rpxy_l4 import server as rust_rpxy_l4_server
     from .singbox.client import SingboxClientDriver
+    from .telemt import server as telemt_server
+    from .wireguard import server as wireguard_server
     from .xray import server as xray_server
     from .xray.client import XrayClientDriver
+
     _register(hiddify_core_server.HiddifyCoreServerDriver())
     _register(hiddify_core_client.HiddifyCoreClientDriver())
     _register(SingboxClientDriver())
@@ -44,6 +47,8 @@ def _load_drivers() -> None:
     _register(nginx_server.NginxServerDriver())
     _register(rust_rpxy_l4_server.RustRpxyL4ServerDriver())
     _register(dns_proxy_server.DnsProxyServerDriver())
+    _register(wireguard_server.WireguardServerDriver())
+    _register(telemt_server.TelemtServerDriver())
 
 
 def ensure_drivers_loaded() -> None:

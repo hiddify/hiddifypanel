@@ -353,6 +353,8 @@ class AdminsTreeApi(MethodView):
             _apply_alias(admin, body.get("alias"))
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
+        if "default_outbound" in body:
+            hiddify.quick_apply_users()
         return {"uuid": admin.uuid, "name": admin.name, **_credentials(admin, password)}
 
 
@@ -375,8 +377,9 @@ class AdminTreeItemApi(MethodView):
         AdminUser.add_or_update(commit=False, old_uuid=admin.uuid, uuid=admin.uuid, **payload)
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
-        # The server's routing follows the users' (and admins') outbounds.
-        return {"status": 200, "msg": "ok", **({"restart_mode": "apply_config"} if "default_outbound" in body else {})}
+        if "default_outbound" in body:
+            hiddify.quick_apply_users()
+        return {"status": 200, "msg": "ok"}
 
     def delete(self, uuid):
         """Admins page: delete a sub-admin (its sub-admins too; their users move to you)"""
@@ -456,7 +459,8 @@ class MyAdminOutboundApi(MethodView):
         _apply_default_outbound(actor, (request.get_json(silent=True) or {}).get("default_outbound"))
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
-        return {"default_outbound": actor.default_outbound_id, "restart_mode": "apply_config"}
+        hiddify.quick_apply_users()
+        return {"default_outbound": actor.default_outbound_id}
 
 
 class MyAdminAliasApi(MethodView):

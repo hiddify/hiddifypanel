@@ -270,6 +270,7 @@
   "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Suas informações de instância do Hiddify\nDomínio: {}\nLimite de uso: {} GB\nUso atual: {} GB\nExpira em: {}\nDias restantes: {}\n\n\nBoa sorte! 🎉 🎉 🎉",
   "[Admin only visible message:] You can change this message from settings": "[Mensagem visível apenas pelo administrador]: Você pode alterar esta mensagem nas configurações.",
   "actions": "Ações",
+  "admin link": "Link do administrador",
   "admin": {
     "Actions:apply_configs": "Aplicar configurações",
     "action_done_sucess": "✅ A Ação Feita com Sucesso. Agora você pode sair desta página",
@@ -312,7 +313,6 @@
     "save_panel_link": "Por favor, note que seu painel pode ser acessado apenas através do link a seguir. por favor, salve este link.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p>",
     "waiting_for_update": "Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado. durante esse período, copie e salve seus links de proxy, que são:"
   },
-  "admin link": "Link do administrador",
   "adminV2": {
     "account": {
       "aliasActive": "Deixe vazio e salve para removê-lo.",
@@ -2351,12 +2351,12 @@
   "cf-delete": {
     "failed": "cf-delete.falhou"
   },
+  "child has been removed!": "Child removido",
   "child": {
     "register-failed": "child.register-falhou",
     "register-success": "child.register-sucesso",
     "sync-failed": "child.sync-falhou"
   },
-  "child has been removed!": "Child removido",
   "clickable copy": "Link para mídias sociais",
   "close": "Fechar",
   "cloudflare": {
@@ -2793,6 +2793,10 @@
       "description": "Para o link do Naive",
       "label": "ℹ️ Caminho do Naive"
     },
+    "path_splithttp": {
+      "description": "Caminho XHTTP",
+      "label": "Caminho XHTTP"
+    },
     "path_ss": {
       "description": "Caminho Shadowsocks nos Links",
       "label": "Caminho Shadowsocks "
@@ -2941,6 +2945,10 @@
       "description": "Permita que seus usuários façam o teste de velocidade. Isso os ajuda a identificar a qualidade do link",
       "label": "🚀 Teste de velocidade"
     },
+    "splithttp_enable": {
+      "description": "O XHTTP permite fluxos separados de download e upload, uniformizando gRPC, H2 e H1, e também oferece suporte a QUIC.",
+      "label": "Ativar XHTTP"
+    },
     "ssfaketls": {
       "description": "Shadowsocks FakeTLS é uma ferramenta de ofuscação simples que encapsula a data In tls package",
       "label": "Shadowsocks FakeTLS"
@@ -3076,6 +3084,10 @@
     "tls": {
       "description": "As configurações de TLS podem ser definidas nesta seção.",
       "label": "Configurações de TLS"
+    },
+    "tls_ech": {
+      "description": "Valor ECH no formato: cloudflare-ech.com+https://8.8.8.8/dns-query",
+      "label": "Valor do TLS ECH"
     },
     "tls_ech_enable": {
       "description": "Adiciona ECH aos links de assinatura TLS gerados",
@@ -3252,18 +3264,6 @@
     "xtls_enable": {
       "description": "Ativa o protocolo XTLS",
       "label": "🟢XTLS"
-    },
-    "path_splithttp": {
-      "description": "Caminho XHTTP",
-      "label": "Caminho XHTTP"
-    },
-    "splithttp_enable": {
-      "description": "O XHTTP permite fluxos separados de download e upload, uniformizando gRPC, H2 e H1, e também oferece suporte a QUIC.",
-      "label": "Ativar XHTTP"
-    },
-    "tls_ech": {
-      "description": "Valor ECH no formato: cloudflare-ech.com+https://8.8.8.8/dns-query",
-      "label": "Valor do TLS ECH"
     }
   },
   "copy": "cópia de",

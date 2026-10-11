@@ -20,7 +20,6 @@ from pydantic import BaseModel, Field
 
 from hiddifypanel.database import db
 from hiddifypanel.models.external_model.outbound import OutboundModel
-from hiddifypanel.proxy_v3 import outbound_custom as custom_config
 from hiddifypanel.models.outbound import (
     BUILTIN_MODES,
     CONFIGURABLE_ENDPOINT_MODES,
@@ -32,6 +31,7 @@ from hiddifypanel.models.outbound import (
     Outbound,
     OutboundMode,
 )
+from hiddifypanel.proxy_v3 import outbound_custom as custom_config
 
 DEFAULTS_FILE = Path(__file__).resolve().parent / "proxy_templates" / "outbounds" / "defaults.yaml"
 
@@ -760,7 +760,12 @@ def _user_routes(rows: list[Outbound], items: list[OutboundVar]) -> list[UserRou
         if target is not None:
             uuids.setdefault(target.id, []).append(user.uuid)
     return [
-        UserRouteVar(xray_tag=o.xray_tag, singbox_tag=o.singbox_tag, block=o.mode == OutboundMode.block, uuids=sorted(uuids[o.id]))
+        UserRouteVar(
+            xray_tag=o.xray_tag,
+            singbox_tag=o.singbox_tag,
+            block=o.mode == OutboundMode.block,
+            uuids=sorted(uuids[o.id]),
+        )
         for o in items
         if o.id in uuids
     ]

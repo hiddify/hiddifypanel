@@ -317,6 +317,7 @@
       :name="linkUser.name"
       :domains="state.link_domains"
       :path="userLinkPath(linkUser)"
+      testable
     />
   </div>
 </template>

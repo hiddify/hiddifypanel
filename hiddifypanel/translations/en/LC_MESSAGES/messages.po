@@ -1199,6 +1199,15 @@ msgstr "A strong password was generated and copied"
 msgid "adminV2.account.inheritedConfigs"
 msgstr "+ {n} inherited from admins above"
 
+msgid "adminV2.account.languageDefault"
+msgstr "Panel default ({name})"
+
+msgid "adminV2.account.languageHint"
+msgstr "The language of your admin pages"
+
+msgid "adminV2.account.languageTitle"
+msgstr "Language"
+
 msgid "adminV2.account.limitsSub"
 msgstr "Your users and all your sub-admins' users count toward these."
 
@@ -1270,6 +1279,12 @@ msgstr "Password changed"
 
 msgid "adminV2.account.setPassword"
 msgstr "Set a password"
+
+msgid "adminV2.account.settingsSub"
+msgstr "Your language, password and sign-in name."
+
+msgid "adminV2.account.settingsTitle"
+msgstr "Settings"
 
 msgid "adminV2.account.strength.medium"
 msgstr "Medium"
@@ -1345,6 +1360,9 @@ msgstr ""
 
 msgid "adminV2.actions.ports.none"
 msgstr "none"
+
+msgid "adminV2.actions.ports.openProxy"
+msgstr "Open this custom proxy"
 
 msgid "adminV2.actions.ports.refresh"
 msgstr "Refresh"
@@ -1986,6 +2004,9 @@ msgstr "recommended"
 msgid "adminV2.apply.run.dontClose"
 msgstr "You can leave this page; it keeps running on the server."
 
+msgid "adminV2.apply.run.hide"
+msgstr "Hide"
+
 msgid "adminV2.apply.run.links"
 msgstr "Admin links on your domains (they may have changed)"
 
@@ -2288,6 +2309,9 @@ msgstr "Enabled"
 msgid "adminV2.common.filter"
 msgstr "Filter"
 
+msgid "adminV2.common.filteredOf"
+msgstr "Filtered: showing {n} of {total}"
+
 msgid "adminV2.common.format"
 msgstr "Format"
 
@@ -2296,6 +2320,15 @@ msgstr "Failed to load data"
 
 msgid "adminV2.common.no"
 msgstr "No"
+
+msgid "adminV2.common.noMatch"
+msgstr "Nothing matches these filters"
+
+msgid "adminV2.common.noMatchHint"
+msgstr "Try removing a filter or changing your search."
+
+msgid "adminV2.common.resetFilters"
+msgstr "Reset filters"
 
 msgid "adminV2.common.save"
 msgstr "Save"
@@ -2321,11 +2354,264 @@ msgstr "Validation passed"
 msgid "adminV2.common.yes"
 msgstr "Yes"
 
+msgid "adminV2.configTester.advanced"
+msgstr "More options"
+
+msgid "adminV2.configTester.copyName"
+msgstr "Copy name"
+
+msgid "adminV2.configTester.delay"
+msgstr "Delay"
+
+msgid "adminV2.configTester.details"
+msgstr "Details"
+
+msgid "adminV2.configTester.empty"
+msgstr "(empty)"
+
+msgid "adminV2.configTester.failed"
+msgstr "Failed"
+
+msgid "adminV2.configTester.fetchedWith"
+msgstr "Fetched with"
+
+msgid "adminV2.configTester.filter.all"
+msgstr "All"
+
+msgid "adminV2.configTester.filter.failed"
+msgstr "Not working"
+
+msgid "adminV2.configTester.filter.ok"
+msgstr "Working"
+
+msgid "adminV2.configTester.forceXray"
+msgstr "Ask for xray JSON"
+
+msgid "adminV2.configTester.forceXrayHint"
+msgstr ""
+"Adds force_xray_json=1 to the link, so the panel gives xray configs even if "
+"that subscription is off in its settings."
+
+msgid "adminV2.configTester.history.again"
+msgstr "Test this one again"
+
+msgid "adminV2.configTester.history.avg"
+msgstr "Average"
+
+msgid "adminV2.configTester.history.header"
+msgstr "Ping history: {name}"
+
+msgid "adminV2.configTester.history.max"
+msgstr "Slowest"
+
+msgid "adminV2.configTester.history.min"
+msgstr "Fastest"
+
+msgid "adminV2.configTester.history.more"
+msgstr "Test 3 more times"
+
+msgid "adminV2.configTester.history.success"
+msgstr "Worked"
+
+msgid "adminV2.configTester.history.title"
+msgstr "Ping history"
+
+msgid "adminV2.configTester.log"
+msgstr "Log (trace)"
+
+msgid "adminV2.configTester.name"
+msgstr "Config"
+
+msgid "adminV2.configTester.noMatch"
+msgstr "Nothing here."
+
+msgid "adminV2.configTester.ok"
+msgstr "Works"
+
+msgid "adminV2.configTester.onlyWorking"
+msgstr "Only working"
+
+msgid "adminV2.configTester.open"
+msgstr "Details"
+
+msgid "adminV2.configTester.original"
+msgstr "Original config"
+
+msgid "adminV2.configTester.parsed"
+msgstr "Parsed by hiddify-core"
+
+msgid "adminV2.configTester.raw"
+msgstr "Original (as received)"
+
+msgid "adminV2.configTester.repeats"
+msgstr "Tests per config"
+
+msgid "adminV2.configTester.rerun"
+msgstr "Test again"
+
+msgid "adminV2.configTester.rerunAll"
+msgstr "Test all again"
+
+msgid "adminV2.configTester.rerunFailed"
+msgstr "Test failed again"
+
+msgid "adminV2.configTester.runConfig"
+msgstr "Config that ran"
+
+msgid "adminV2.configTester.sort.delay"
+msgstr "Fastest first"
+
+msgid "adminV2.configTester.sort.label"
+msgstr "Sort"
+
+msgid "adminV2.configTester.sort.name"
+msgstr "Name"
+
+msgid "adminV2.configTester.sort.order"
+msgstr "Subscription order"
+
+msgid "adminV2.configTester.sortDelay"
+msgstr "Sort by delay"
+
+msgid "adminV2.configTester.sourceCore"
+msgstr "hiddify-core subscription"
+
+msgid "adminV2.configTester.sourceParsed"
+msgstr "Links converted by hiddify-core"
+
+msgid "adminV2.configTester.sourceXray"
+msgstr "xray subscription"
+
+msgid "adminV2.configTester.start"
+msgstr "Start test"
+
+msgid "adminV2.configTester.state.failed"
+msgstr "Failed"
+
+msgid "adminV2.configTester.state.idle"
+msgstr "Not tested"
+
+msgid "adminV2.configTester.state.ok"
+msgstr "Works"
+
+msgid "adminV2.configTester.state.waiting"
+msgstr "Testing…"
+
+msgid "adminV2.configTester.status"
+msgstr "Status"
+
+msgid "adminV2.configTester.stop"
+msgstr "Stop"
+
+msgid "adminV2.configTester.sub.clickToEdit"
+msgstr "Tap a link to edit it"
+
+msgid "adminV2.configTester.sub.collapseAll"
+msgstr "Collapse"
+
+msgid "adminV2.configTester.sub.configs"
+msgstr "Configs"
+
+msgid "adminV2.configTester.sub.copyLink"
+msgstr "Copy link"
+
+msgid "adminV2.configTester.sub.count"
+msgstr "{n} links"
+
+msgid "adminV2.configTester.sub.countOf"
+msgstr "{n} of {total} links"
+
+msgid "adminV2.configTester.sub.expandAll"
+msgstr "Expand all"
+
+msgid "adminV2.configTester.sub.inDecoded"
+msgstr "in decoded part"
+
+msgid "adminV2.configTester.sub.items"
+msgstr "{n} configs"
+
+msgid "adminV2.configTester.sub.keys"
+msgstr "{n} keys"
+
+msgid "adminV2.configTester.sub.links"
+msgstr "Share links"
+
+msgid "adminV2.configTester.sub.noMatch"
+msgstr "Nothing matches."
+
+msgid "adminV2.configTester.sub.none"
+msgstr "No links found."
+
+msgid "adminV2.configTester.sub.parsedHint"
+msgstr "What hiddify-core made of the links; this is what was tested."
+
+msgid "adminV2.configTester.sub.received"
+msgstr "Subscription received"
+
+msgid "adminV2.configTester.sub.reset"
+msgstr "Undo changes"
+
+msgid "adminV2.configTester.sub.search"
+msgstr "Search links and configs…"
+
+msgid "adminV2.configTester.sub.text"
+msgstr "Text"
+
+msgid "adminV2.configTester.sub.view"
+msgstr "View"
+
+msgid "adminV2.configTester.subscription"
+msgstr "Subscription"
+
+msgid "adminV2.configTester.subtitle"
+msgstr ""
+"Run every config of a subscription in its own core and check that it "
+"connects."
+
+msgid "adminV2.configTester.summary"
+msgstr "{ok} of {done} work ({total} total)"
+
+msgid "adminV2.configTester.testUrl"
+msgstr "Test URL"
+
+msgid "adminV2.configTester.timeout"
+msgstr "Timeout (s)"
+
+msgid "adminV2.configTester.title"
+msgstr "Config tester"
+
+msgid "adminV2.configTester.ua"
+msgstr "User agent"
+
+msgid "adminV2.configTester.uaHint"
+msgstr ""
+"Sent when fetching the link, so the panel gives the xray or hiddify-core "
+"format."
+
+msgid "adminV2.configTester.uaPreset"
+msgstr "Preset"
+
+msgid "adminV2.configTester.url"
+msgstr "Subscription link"
+
+msgid "adminV2.configTester.urlPlaceholder"
+msgstr "https://domain/path/uuid/…"
+
+msgid "adminV2.configTester.waiting"
+msgstr "Waiting"
+
+msgid "adminV2.configTester.workers"
+msgstr "Parallel workers"
+
 msgid "adminV2.dashboard.allNodes"
 msgstr "All nodes"
 
 msgid "adminV2.dashboard.available"
 msgstr "Available"
+
+msgid "adminV2.dashboard.averageHint"
+msgstr ""
+"Average users online per day, counting only days when someone was online."
 
 msgid "adminV2.dashboard.breakdown"
 msgstr "Breakdown"
@@ -2428,6 +2714,15 @@ msgstr ""
 "The dashboard could not reach the panel API. Check that you are still signed"
 " in."
 
+msgid "adminV2.dashboard.modeAverage"
+msgstr "Average"
+
+msgid "adminV2.dashboard.modePeak"
+msgstr "Peak"
+
+msgid "adminV2.dashboard.modeUnique"
+msgstr "Unique"
+
 msgid "adminV2.dashboard.monthUsage"
 msgstr "Month usage"
 
@@ -2477,7 +2772,7 @@ msgid "adminV2.dashboard.none"
 msgstr "None"
 
 msgid "adminV2.dashboard.onlineEnabledUsers"
-msgstr "Online / Enabled users"
+msgstr "Online / Active users"
 
 msgid "adminV2.dashboard.onlineNow"
 msgstr "Online now"
@@ -2502,6 +2797,9 @@ msgstr "Live updates paused"
 
 msgid "adminV2.dashboard.peakDay"
 msgstr "Peak day"
+
+msgid "adminV2.dashboard.peakHint"
+msgstr "The most users online in a single day."
 
 msgid "adminV2.dashboard.perCore"
 msgstr "Per core"
@@ -2557,8 +2855,17 @@ msgstr "Total usage"
 msgid "adminV2.dashboard.totalUsers"
 msgstr "Total users"
 
+msgid "adminV2.dashboard.uniqueHint"
+msgstr "Distinct users seen in each period, whole panel."
+
 msgid "adminV2.dashboard.uniqueIps"
 msgstr "Unique IPs"
+
+msgid "adminV2.dashboard.uniqueMonth"
+msgstr "Distinct users, last 30 days"
+
+msgid "adminV2.dashboard.uniqueWeek"
+msgstr "Distinct users, last 7 days"
 
 msgid "adminV2.dashboard.upload"
 msgstr "Upload"
@@ -3182,6 +3489,14 @@ msgstr "Checking DNS…"
 msgid "adminV2.domains.wizard.continueBackground"
 msgstr "Close (keeps going)"
 
+msgid "adminV2.domains.wizard.dnsHint"
+msgstr ""
+"In your DNS, add the record below for this domain (the value is this "
+"server's address)."
+
+msgid "adminV2.domains.wizard.dnsTitle"
+msgstr "Point it at this server"
+
 msgid "adminV2.domains.wizard.finish"
 msgstr "Done"
 
@@ -3444,6 +3759,9 @@ msgstr "xxxxxxxx-xxxx-… or your username"
 
 msgid "adminV2.menu.baseConfigs"
 msgstr "Base Configs"
+
+msgid "adminV2.menu.configTester"
+msgstr "Config tester"
 
 msgid "adminV2.menu.customProxies"
 msgstr "Proxies"
@@ -4557,6 +4875,9 @@ msgstr "Mode & routing"
 msgid "adminV2.proxy.name"
 msgstr "Name"
 
+msgid "adminV2.proxy.nameRequired"
+msgstr "Give the proxy a name before saving: it is the label of its links."
+
 msgid "adminV2.proxy.needGlobalEnable"
 msgstr ""
 "You need to enable {names} globally to enable this proxy. Do you want to "
@@ -4582,6 +4903,30 @@ msgstr "Outbounds template"
 msgid "adminV2.proxy.protocol"
 msgstr "Protocol"
 
+msgid "adminV2.proxy.quick.any"
+msgstr "Any"
+
+msgid "adminV2.proxy.quick.clear"
+msgstr "Reset filters"
+
+msgid "adminV2.proxy.quick.label"
+msgstr "Filters"
+
+msgid "adminV2.proxy.quick.modified"
+msgstr "Modified"
+
+msgid "adminV2.proxy.quick.modifiedHint"
+msgstr "Changed from the catalog default"
+
+msgid "adminV2.proxy.quick.nSelected"
+msgstr "{n} selected"
+
+msgid "adminV2.proxy.quick.other"
+msgstr "Other"
+
+msgid "adminV2.proxy.quick.showing"
+msgstr "Showing {n} of {total}"
+
 msgid "adminV2.proxy.regeneratePath"
 msgstr "Regenerate path"
 
@@ -4602,6 +4947,18 @@ msgstr "Rendered output"
 
 msgid "adminV2.proxy.renderErrorTemplateSource"
 msgstr "Template source"
+
+msgid "adminV2.proxy.resetAll"
+msgstr "Reset all to defaults"
+
+msgid "adminV2.proxy.resetAllConfirm"
+msgstr ""
+"Drop every change you made to the built-in proxies (tag, domain modes, TLS, "
+"server and client configs) and restore the catalog defaults? Proxies you "
+"created yourself are not touched."
+
+msgid "adminV2.proxy.resetAllDone"
+msgstr "{n} proxies reset to defaults"
 
 msgid "adminV2.proxy.resetTagName"
 msgstr "Reset tag name to default"
@@ -5649,6 +6006,21 @@ msgstr "{name} starts again at the next connection"
 msgid "adminV2.users.done.reset_usage"
 msgstr "Usage of {name} reset"
 
+msgid "adminV2.users.extra.outbound"
+msgstr "outbound={name}"
+
+msgid "adminV2.users.extra.outboundHint"
+msgstr "This user has its own outbound selected"
+
+msgid "adminV2.users.extra.subs"
+msgstr "{n} extra sub | {n} extra subs"
+
+msgid "adminV2.users.extra.subsHint"
+msgstr "Extra subscription configs added for this user"
+
+msgid "adminV2.users.extra.telegramHint"
+msgstr "Telegram account linked"
+
 msgid "adminV2.users.filter.active"
 msgstr "Active"
 
@@ -5733,8 +6105,14 @@ msgstr "Disabled"
 msgid "adminV2.users.form.editSubtitle"
 msgstr "Changes apply right away."
 
+msgid "adminV2.users.form.editTimeTitle"
+msgstr "Edit time: {name}"
+
 msgid "adminV2.users.form.editTitle"
 msgstr "Edit {name}"
+
+msgid "adminV2.users.form.editUsageTitle"
+msgstr "Edit usage: {name}"
 
 msgid "adminV2.users.form.enableHint"
 msgstr "A disabled user can not connect."
@@ -6036,6 +6414,9 @@ msgstr "Show {n} more"
 msgid "adminV2.users.showRelative"
 msgstr "Show time left"
 
+msgid "adminV2.users.sortById"
+msgstr "Sort by ID"
+
 msgid "adminV2.users.status.active"
 msgstr "Active"
 
@@ -6070,8 +6451,23 @@ msgstr "Users"
 msgid "adminV2.utils.addQuery"
 msgstr "Add query"
 
+msgid "adminV2.utils.autoSwapped"
+msgstr "It looked like Base64, so the sides were swapped."
+
+msgid "adminV2.utils.base64Label"
+msgstr "Base64"
+
+msgid "adminV2.utils.base64Live"
+msgstr ""
+"Edit either side and the other updates as you type. A leading protocol:// "
+"(like vmess://) is kept and ignored when decoding. Base64 pasted into the "
+"text side swaps the sides by itself."
+
 msgid "adminV2.utils.base64Tab"
 msgstr "Base64"
+
+msgid "adminV2.utils.clear"
+msgstr "Clear"
 
 msgid "adminV2.utils.decode"
 msgstr "Decode"
@@ -6107,6 +6503,12 @@ msgstr "Method"
 
 msgid "adminV2.utils.noQuery"
 msgstr "No query parameters. Use Add query to insert one."
+
+msgid "adminV2.utils.notBase64"
+msgstr "This is not valid Base64."
+
+msgid "adminV2.utils.notUrlEncoded"
+msgstr "This is not valid URL-encoded text."
 
 msgid "adminV2.utils.output"
 msgstr "Output"
@@ -6154,11 +6556,22 @@ msgstr ""
 msgid "adminV2.utils.swap"
 msgstr "Swap"
 
+msgid "adminV2.utils.textLabel"
+msgstr "Text"
+
 msgid "adminV2.utils.title"
 msgstr "Utils"
 
 msgid "adminV2.utils.unwrappedSubscription"
 msgstr "Detected a base64 subscription and decoded it into individual links."
+
+msgid "adminV2.utils.urlEncodedLabel"
+msgstr "URL encoded"
+
+msgid "adminV2.utils.urlLive"
+msgstr ""
+"Edit either side and the other updates as you type. Percent-encoded text "
+"pasted into the text side swaps the sides by itself."
 
 msgid "adminV2.utils.urlSafe"
 msgstr "URL-safe"
@@ -7056,10 +7469,10 @@ msgid "config.netdata.label"
 msgstr "Netdata"
 
 msgid "config.node_name.description"
-msgstr "config.node_name.description"
+msgstr "The name of this node, shown in the parent panel"
 
 msgid "config.node_name.label"
-msgstr "config.node_name.label"
+msgstr "Node name"
 
 msgid "config.not_found.description"
 msgstr "Config Not Found"
@@ -7121,10 +7534,10 @@ msgid "config.path_grpc.label"
 msgstr "ℹ️ gRPC Path"
 
 msgid "config.path_http.description"
-msgstr "config.path_http.description"
+msgstr "should be random"
 
 msgid "config.path_http.label"
-msgstr "config.path_http.label"
+msgstr "ℹ️ HTTP Path"
 
 msgid "config.path_httpupgrade.description"
 msgstr "should be random"
@@ -8284,7 +8697,7 @@ msgid "parent.invalid-parent-url"
 msgstr "Invalid parent panel URL"
 
 msgid "parent.panel-not-active"
-msgstr "parent.panel-not-active"
+msgstr "The parent panel is not active"
 
 msgid "parent.sync-req-failed"
 msgstr "Parent sync request failed"

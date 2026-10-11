@@ -21,9 +21,6 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3 import outbound_custom as custom_config
 from hiddifypanel.proxy_v3 import outbounds as ob
 
-#: Every change needs the server configs regenerated.
-APPLY = "apply_config"
-
 
 def _parent_only() -> None:
     """Outbounds are defined on the parent panel and copied to its nodes."""
@@ -34,10 +31,12 @@ def _parent_only() -> None:
 
 
 def _changed() -> None:
-    """Commit is done: ask the nodes to take the new outbounds (users and admins refer to their ids)."""
+    """Commit is done: refresh the user configs and ask the nodes to take the new outbounds."""
     from hiddifypanel import hutils
+    from hiddifypanel.panel import hiddify
 
     hutils.node.parent.notify_childs_users_changed()
+    hiddify.quick_apply_users()
 
 
 def _child_id() -> int:
@@ -214,7 +213,7 @@ class OutboundsApi(MethodView):
         _finalize_or_400(child_id, rows)
         db.session.commit()
         _changed()
-        return {"created_id": row.id, "restart_mode": APPLY, **_list_out(child_id)}
+        return {"created_id": row.id, **_list_out(child_id)}
 
 
 def _get_row(outbound_id: int) -> Outbound:
@@ -233,7 +232,7 @@ class OutboundApi(MethodView):
         _finalize_or_400(_child_id(), ob.ordered_rows(_child_id()))
         db.session.commit()
         _changed()
-        return {"restart_mode": APPLY, **_list_out(_child_id())}
+        return _list_out(_child_id())
 
     def delete(self, outbound_id: int):
         """Outbounds: delete a SOCKS, Tor or Psiphon outbound"""
@@ -249,7 +248,7 @@ class OutboundApi(MethodView):
         _finalize_or_400(child_id, ob.ordered_rows(child_id))
         db.session.commit()
         _changed()
-        return {"restart_mode": APPLY, **_list_out(child_id)}
+        return _list_out(child_id)
 
 
 class OutboundOrderApi(MethodView):
@@ -269,7 +268,7 @@ class OutboundOrderApi(MethodView):
         _finalize_or_400(child_id, ordered)
         db.session.commit()
         _changed()
-        return {"restart_mode": APPLY, **_list_out(child_id)}
+        return _list_out(child_id)
 
 
 class OutboundDefaultApi(MethodView):
@@ -285,7 +284,7 @@ class OutboundDefaultApi(MethodView):
         _finalize_or_400(_child_id(), ob.move_to_end(ob.ordered_rows(_child_id()), row))
         db.session.commit()
         _changed()
-        return {"restart_mode": APPLY, **_list_out(_child_id())}
+        return _list_out(_child_id())
 
 
 class OutboundResetApi(MethodView):
@@ -300,4 +299,4 @@ class OutboundResetApi(MethodView):
         ob.reset_builtin_lists(row)
         db.session.commit()
         _changed()
-        return {"restart_mode": APPLY, **_list_out(_child_id())}
+        return _list_out(_child_id())

@@ -83,6 +83,7 @@ def quick_apply_users():
     with _apply_users_lock:
         if _apply_users_state["running"]:
             _apply_users_state["pending"] = True
+            logger.info("apply users: already running, queued to run once more")
             return {"status": "queued"}
         _apply_users_state["running"] = True
     threading.Thread(target=_apply_users_worker, daemon=True).start()

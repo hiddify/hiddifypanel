@@ -48,6 +48,10 @@ def init_app(app):
 
         bp.add_url_rule("/protocols/", view_func=ProtocolSwitchesApi)
 
+        from .config_tester_api import ConfigTesterApi
+
+        bp.add_url_rule("/config-tester/", view_func=ConfigTesterApi, methods=["POST"])
+
         from hiddifypanel.proxy_v3.outbounds import subscribe_events as subscribe_outbound_events
 
         from .outbounds_api import OutboundApi, OutboundDefaultApi, OutboundOrderApi, OutboundResetApi, OutboundsApi

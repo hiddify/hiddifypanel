@@ -15,6 +15,9 @@ class TextServerDriver(BaseConfigBuilderDriver):
 
     block_names = ()
 
+    def extra_jinja(self, ctx: ServerContextVar) -> dict:
+        return {}
+
     def build(self, child_id: int, ctx: ServerContextVar) -> ConfigBuilderModel:
         messages: list[MessageModel] = []
         base = resolve_base_config_content(child_id, self.side, self.core, TemplateVersion("0.0.0"))
@@ -34,10 +37,12 @@ class TextServerDriver(BaseConfigBuilderDriver):
             )
             return ConfigBuilderModel(core=self.core, side=self.side, config="", messages=messages)
 
+        jinja_ctx = make_jinja_context(ctx)
+        jinja_ctx.update(self.extra_jinja(ctx))
         section = render_section(
             base,
             child_id,
-            make_jinja_context(ctx),
+            jinja_ctx,
             as_json_object=False,
             parse_json=False,
         )

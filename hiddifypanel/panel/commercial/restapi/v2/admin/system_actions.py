@@ -36,10 +36,16 @@ class DumpServerConfigsApi(MethodView):
         from hiddifypanel.proxy_v3.jinja_context import HIDDIFY_MANAGER_ROOT
 
         no_invalidate_cache = request.args.get("no_invalidate_cache") in ("1", "true", "True")
-        result = dump_all_server_configs(
-            f"{HIDDIFY_MANAGER_ROOT}/generated",
-            invalidate_cache=not no_invalidate_cache,
-        )
+        raw_cores = request.args.get("cores") or ""
+        cores = [core.strip() for core in raw_cores.split(",") if core.strip()] or None
+        try:
+            result = dump_all_server_configs(
+                f"{HIDDIFY_MANAGER_ROOT}/generated",
+                invalidate_cache=not no_invalidate_cache,
+                cores=cores,
+            )
+        except ValueError as exc:
+            return json.dumps({"ok": False, "message": str(exc)}), 400
         payload = {"ok": result.ok, "written": result.written, "messages": result.messages}
         return json.dumps(payload, indent=2), (200 if result.ok else 500)
 

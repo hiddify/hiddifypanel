@@ -114,7 +114,7 @@ def filter_server_proxy(proxy: ProxyVar) -> bool:
 
 @cache.cache(600)
 def get_server_domains(child_id: int = 0) -> list[DomainIPVar]:
-    return [DomainIPVar.from_domain(domain) for domain in Domain.query.filter(Domain.child_id == child_id).all()]
+    return [DomainIPVar.from_domain(domain) for domain in Domain.query.filter(Domain.child_id == child_id).order_by(*Domain.ordering()).all()]
 
 
 @cache.cache(600)
@@ -143,7 +143,7 @@ def _domains_for_custom_proxy(proxy: CustomProxy, child_id: int) -> list[DomainI
         for row in Domain.query.filter(
             Domain.child_id == child_id,
             Domain.mode != DomainType.sub_link_only,
-        ).all()
+        ).order_by(*Domain.ordering()).all()
         if proxy.slug == REALITY_TERMINATION_SLUG or not row.custom_proxy_ids or proxy_id in row.custom_proxy_ids
     ]
     matched = _domains_for_proxy_row(proxy, domain_rows)

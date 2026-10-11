@@ -10,7 +10,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
-msgstr ""
+msgstr "%(count)s registros foram excluídos com sucesso."
 
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s registros foram desativados com sucesso."
@@ -19,13 +19,13 @@ msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s registros foram ativados com sucesso."
 
 msgid "%(count)s records were successfully reset days."
-msgstr ""
+msgstr "%(count)s registros tiveram os dias redefinidos com sucesso."
 
 msgid "%(count)s records were successfully reset usage."
-msgstr ""
+msgstr "%(count)s registros tiveram o uso redefinido com sucesso."
 
 msgid "%(count)s records were successfully updated."
-msgstr ""
+msgstr "%(count)s registros foram atualizados com sucesso."
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s dias"
@@ -37,10 +37,10 @@ msgid "0 - Last day"
 msgstr "Último dia"
 
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
-msgstr ""
+msgstr "<a href=\"%(user_link)s\"> %(user)s</a>"
 
 msgid "A fake domain needs a real domain name"
-msgstr ""
+msgstr "Um domínio falso precisa de um nome de domínio real"
 
 msgid "Access Denied!"
 msgstr "Acesso negado"
@@ -68,7 +68,7 @@ msgid "Added by"
 msgstr "Adicionado por"
 
 msgid "Admin Links"
-msgstr ""
+msgstr "Links de administrador"
 
 msgid "Admins"
 msgstr "Administradores"
@@ -113,7 +113,7 @@ msgid "Bug"
 msgstr "Bug/recurso"
 
 msgid "CDN and worker domains must use valid fake mode"
-msgstr ""
+msgstr "Domínios CDN e worker devem usar um modo falso válido"
 
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s Núcleos "
@@ -122,7 +122,7 @@ msgid "Can add sub admin"
 msgstr "👥 Pode adicionar subadministrador"
 
 msgid "Change"
-msgstr ""
+msgstr "Alterar"
 
 msgid "Check again"
 msgstr "Verifique novamente"
@@ -137,7 +137,7 @@ msgid "Click here to see the complete log"
 msgstr "Clique aqui para ver o registro completo"
 
 msgid "Click to Import"
-msgstr "Click to Import"
+msgstr "Toque para importar"
 
 msgid "Click to Start Anti-Filter."
 msgstr "<i class='fa-solid fa-play'></i> Toque para iniciar o Antifiltro."
@@ -155,7 +155,7 @@ msgid "Copy Link"
 msgstr "Link de cópia"
 
 msgid "Copy QR image"
-msgstr ""
+msgstr "Copiar imagem do QR"
 
 msgid "Couldn't find your ip addresses"
 msgstr "Não foi possível encontrar seus endereços IP"
@@ -244,6 +244,7 @@ msgstr ""
 
 msgid "Domain cannot be resolved! Please check DNS settings"
 msgstr ""
+"Não foi possível resolver o domínio! Verifique as configurações de DNS"
 
 msgid "Domain is not REALITY friendly!"
 msgstr "O domínio não é compatível com Reality!"
@@ -274,6 +275,9 @@ msgstr "Doação"
 msgid "Download App"
 msgstr "<i class='fa-solid fa-download'></i> Baixar aplicativo"
 
+msgid "Download Domain"
+msgstr "📈 Domínio de download"
+
 msgid "Edit"
 msgstr "Editar"
 
@@ -285,9 +289,11 @@ msgstr "❇️ Habilitar"
 
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
 msgstr ""
+"Ative o TLS ECH nas configurações do painel antes de usar ECH em um domínio "
+"CDN"
 
 msgid "Error in Config Generation"
-msgstr ""
+msgstr "Erro na geração da configuração"
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ Erro no formato CDN automático"
@@ -301,7 +307,7 @@ msgid "Example Domains"
 msgstr "Test and Suggest Domain "
 
 msgid "Expired"
-msgstr ""
+msgstr "Expirado"
 
 msgid "Expired Users"
 msgstr "Usuários expirados"
@@ -313,7 +319,7 @@ msgid "Fake"
 msgstr "➖ Falso"
 
 msgid "Fake domains can only be direct or relay"
-msgstr ""
+msgstr "Domínios falsos só podem ser direct ou relay"
 
 msgid "Filter"
 msgstr "Filtro"
@@ -358,10 +364,10 @@ msgid "HiddigyN"
 msgstr "HiddigyN <span class='badge badge-success'>Recommended</span>"
 
 msgid "Home Link"
-msgstr ""
+msgstr "Link da página inicial"
 
 msgid "Hover the user to see the reason"
-msgstr "Hover the user to see the reason"
+msgstr "Passe o mouse sobre o usuário para ver o motivo"
 
 msgid "How many days this package should be available?"
 msgstr "Quantos dias é este pacote?"
@@ -409,7 +415,7 @@ msgid "Install Hiddify Application"
 msgstr "Instalação do Painel Hidify"
 
 msgid "Invalid"
-msgstr ""
+msgstr "Inválido"
 
 msgid "Invalid IP or domain"
 msgstr "IP ou domínio inválido"
@@ -445,10 +451,10 @@ msgid "Last Online"
 msgstr "Última vez online"
 
 msgid "Last node to parent"
-msgstr ""
+msgstr "Último nó para o pai"
 
 msgid "Last parent to node"
-msgstr ""
+msgstr "Último pai para o nó"
 
 msgid "Link is changed!"
 msgstr "ℹ️ O link foi alterado!"
@@ -481,7 +487,7 @@ msgid "New"
 msgstr "Novo"
 
 msgid "No certificate"
-msgstr ""
+msgstr "Sem certificado"
 
 msgid "No children!"
 msgstr "sem filhos"
@@ -489,12 +495,14 @@ msgstr "sem filhos"
 msgid ""
 "No main domains found, please add at least one domain with valid certificate"
 msgstr ""
+"Nenhum domínio principal encontrado. Adicione pelo menos um domínio com "
+"certificado válido"
 
 msgid "Nodes"
-msgstr ""
+msgstr "Nós"
 
 msgid "Not Secure"
-msgstr ""
+msgstr "Não seguro"
 
 msgid "Note"
 msgstr "📝 Observação"
@@ -512,7 +520,7 @@ msgid "Ok"
 msgstr "OK"
 
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 msgid "Online Users"
 msgstr "Usuários online"
@@ -524,7 +532,7 @@ msgid "Only for sublink?"
 msgstr "🌍 Use apenas para link de assinatura"
 
 msgid "Only one domain of this kind can be added"
-msgstr ""
+msgstr "Só é possível adicionar um domínio deste tipo"
 
 msgid "Oops! Something went wrong."
 msgstr "Ops! algo deu errado."
@@ -600,7 +608,7 @@ msgid "Please wait "
 msgstr "Por favor, aguarde"
 
 msgid "Port 80 and 443 can not be selected"
-msgstr ""
+msgstr "As portas 80 e 443 não podem ser selecionadas"
 
 msgid "Port is already used! in"
 msgstr "A porta já é usada em:"
@@ -629,7 +637,7 @@ msgstr ""
 "Envie uma mensagem para obter uma versão especial para usuários corporativos."
 
 msgid "Proxy Editor"
-msgstr ""
+msgstr "Editor de proxy"
 
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath já está em uso! usar caminho de proxy diferente"
@@ -638,7 +646,7 @@ msgid "QR code"
 msgstr "🧾 Código QR"
 
 msgid "QR code image copied"
-msgstr ""
+msgstr "Imagem do QR code copiada"
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"
@@ -651,9 +659,10 @@ msgstr "REALITY Fallback Domain não é compatível com nomes de servidores!"
 
 msgid "REALITY Fallback domain is not compatible with server names!"
 msgstr ""
+"O domínio de fallback REALITY não é compatível com os nomes de servidor!"
 
 msgid "Relay domains with non-valid fake mode require an IP address"
-msgstr ""
+msgstr "Domínios relay com modo falso não válido exigem um endereço IP"
 
 msgid "Release"
 msgstr "✅ Liberação"
@@ -728,7 +737,7 @@ msgid "Save Link"
 msgstr "Link salvo"
 
 msgid "Search Settings"
-msgstr ""
+msgstr "Pesquisar configurações"
 
 msgid "Select all records"
 msgstr "Selecionar todos os registros"
@@ -738,12 +747,13 @@ msgstr "Selecionar registro"
 
 msgid "Selected proxy does not support this domain mode combination"
 msgstr ""
+"O proxy selecionado não oferece suporte a esta combinação de modo de domínio"
 
 msgid "Seleted Users"
 msgstr "Usuários selecionados"
 
 msgid "Self-signed"
-msgstr ""
+msgstr "Autoassinado"
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 Enviar mensagem para o telegram do usuário"
@@ -770,7 +780,7 @@ msgid "Sort by %(name)s"
 msgstr "Ordenar por %(name)s"
 
 msgid "Specifying CDN IP is only valid for CDN mode"
-msgstr ""
+msgstr "Especificar o IP da CDN só é válido para o modo CDN"
 
 msgid "Start Date"
 msgstr "Data de início"
@@ -785,7 +795,7 @@ msgid "Status"
 msgstr "Status"
 
 msgid "SubLink"
-msgstr ""
+msgstr "SubLink"
 
 msgid "Submit"
 msgstr "Enviar"
@@ -800,13 +810,13 @@ msgstr ""
 "atualizado"
 
 msgid "TLS"
-msgstr ""
+msgstr "TLS"
 
 msgid "Telegram Bot"
-msgstr "Telegram Bot"
+msgstr "Bot do Telegram"
 
 msgid "Telegram Bot Link"
-msgstr ""
+msgstr "Link do bot do Telegram"
 
 msgid "Temporary Short Link"
 msgstr "⏱️ Link curto temporário"
@@ -815,7 +825,7 @@ msgid "The message has been sent."
 msgstr "A mensagem foi enviada."
 
 msgid "The message was not sent to"
-msgstr "The message was not sent to"
+msgstr "A mensagem não foi enviada para"
 
 msgid "The name shown in the configs for this domain."
 msgstr "O nome que será mostrado nas Configs deste Domínio."
@@ -833,7 +843,7 @@ msgid "This domain does not exist in the panel!"
 msgstr "Este Domínio não existe no Painel!"
 
 msgid "This restore has expired. Start it again from the Backup page."
-msgstr ""
+msgstr "Esta restauração expirou. Inicie-a novamente na página de Backup."
 
 msgid "Today Usage"
 msgstr "Hoje"
@@ -854,7 +864,7 @@ msgid "Upload File"
 msgstr "Upload de arquivo"
 
 msgid "Use HiddifyNext:"
-msgstr "Use HiddifyNext:"
+msgstr "Use o Hiddify:"
 
 msgid "User activated!"
 msgstr "Usuário ativado"
@@ -875,13 +885,13 @@ msgstr ""
 "<br />"
 
 msgid "Valid"
-msgstr ""
+msgstr "Válido"
 
 msgid "View in Telegram"
 msgstr "Ver no Telegram"
 
 msgid "Waiting for the process to start..."
-msgstr ""
+msgstr "Aguardando o início do processo..."
 
 msgid "Want to enjoy more with telegram?"
 msgstr "Conecte sua conta ao Telegram"
@@ -938,7 +948,7 @@ msgid "You have used this domain in: "
 msgstr "Já utilizou este Domínio em:"
 
 msgid "You need to enable %(names)s globally to enable this proxy."
-msgstr ""
+msgstr "Você precisa ativar %(names)s globalmente para ativar este proxy."
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1022,7 +1032,7 @@ msgid "admin.menu.config"
 msgstr "Configurações"
 
 msgid "admin.menu.dashboard_v2"
-msgstr ""
+msgstr "Próximo"
 
 msgid "admin.menu.domain"
 msgstr "domínios"
@@ -1078,6 +1088,5324 @@ msgstr ""
 "Aguarde cerca de 5 minutos para garantir que tudo esteja atualizado. durante"
 " esse período, copie e salve seus links de proxy, que são:"
 
+msgid "adminV2.account.aliasActive"
+msgstr "Deixe vazio e salve para removê-lo."
+
+msgid "adminV2.account.aliasCleared"
+msgstr "Nome de usuário removido"
+
+msgid "adminV2.account.aliasHint"
+msgstr ""
+"Entre com este nome de usuário e sua senha em vez do ID. Os links que você "
+"compartilha não terão o ID."
+
+msgid "adminV2.account.aliasNeedsStrong"
+msgstr ""
+"Defina antes uma senha forte acima: um nome de usuário só funciona com uma "
+"senha forte."
+
+msgid "adminV2.account.aliasOn"
+msgstr "Ativado"
+
+msgid "adminV2.account.aliasPlaceholder"
+msgstr "ex.: sara.vendas"
+
+msgid "adminV2.account.aliasProblem.bad_chars"
+msgstr ""
+"Somente a-z, 0-9, ponto, hífen e sublinhado, começando com letra ou dígito"
+
+msgid "adminV2.account.aliasProblem.looks_like_uuid"
+msgstr "Não pode parecer um ID (UUID)"
+
+msgid "adminV2.account.aliasProblem.too_short"
+msgstr "Pelo menos {n} caracteres"
+
+msgid "adminV2.account.aliasSaved"
+msgstr "Agora você pode entrar como {alias}"
+
+msgid "adminV2.account.aliasSuper"
+msgstr ""
+"Super administradores entram apenas com o link de administrador, então não "
+"têm nome de usuário."
+
+msgid "adminV2.account.aliasTitle"
+msgstr "Nome de usuário de login"
+
+msgid "adminV2.account.canAddAdmins"
+msgstr "Pode adicionar subadministradores"
+
+msgid "adminV2.account.changePassword"
+msgstr "Alterar senha"
+
+msgid "adminV2.account.configsCount"
+msgstr ""
+"{n} config para todos os meus usuários | {n} configs para todos os meus "
+"usuários"
+
+msgid "adminV2.account.configsEmpty"
+msgstr ""
+"Ainda não há configs. Adicione um link de assinatura ou cole uma config: "
+"todos os seus usuários a receberão."
+
+msgid "adminV2.account.configsSave"
+msgstr "Salvar configs"
+
+msgid "adminV2.account.configsSaved"
+msgstr "Configs salvas"
+
+msgid "adminV2.account.configsSub"
+msgstr ""
+"Adicionadas à assinatura de todos os seus usuários e dos usuários dos seus "
+"subadministradores, além das de cada usuário."
+
+msgid "adminV2.account.configsTitle"
+msgstr "Configs para meus usuários"
+
+msgid "adminV2.account.configsUnsaved"
+msgstr "Ainda não salvo"
+
+msgid "adminV2.account.copyLink"
+msgstr "Copiar meu link de administrador"
+
+msgid "adminV2.account.current"
+msgstr "Senha atual"
+
+msgid "adminV2.account.editConfigs"
+msgstr "Editar configs"
+
+msgid "adminV2.account.generate"
+msgstr "Gerar"
+
+msgid "adminV2.account.generatedCopied"
+msgstr "Uma senha forte foi gerada e copiada"
+
+msgid "adminV2.account.inheritedConfigs"
+msgstr "+ {n} herdadas de administradores acima"
+
+msgid "adminV2.account.languageDefault"
+msgstr "Padrão do painel ({name})"
+
+msgid "adminV2.account.languageHint"
+msgstr "O idioma das suas páginas de administração"
+
+msgid "adminV2.account.languageTitle"
+msgstr "Idioma"
+
+msgid "adminV2.account.limitsSub"
+msgstr ""
+"Seus usuários e todos os usuários dos seus subadministradores contam para "
+"estes limites."
+
+msgid "adminV2.account.limitsTitle"
+msgstr "Meus limites"
+
+msgid "adminV2.account.loginHint"
+msgstr "Depois de salvar, entre com seu link de administrador e esta senha."
+
+msgid "adminV2.account.minLength"
+msgstr "Pelo menos {n} caracteres"
+
+msgid "adminV2.account.mismatch"
+msgstr "As senhas não coincidem"
+
+msgid "adminV2.account.nearLimit"
+msgstr ""
+"Você está perto de um limite. Peça ao administrador acima de você para "
+"aumentá-lo ou desative usuários de que não precisa mais."
+
+msgid "adminV2.account.new"
+msgstr "Nova senha"
+
+msgid "adminV2.account.noLimits"
+msgstr "Super administradores não têm limites."
+
+msgid "adminV2.account.noPasswordSub"
+msgstr ""
+"Você não tem senha: qualquer pessoa com seu link pode entrar. Defina uma "
+"para proteger sua conta."
+
+msgid "adminV2.account.outboundApply"
+msgstr "Aplique as alterações para que entrem em vigor."
+
+msgid "adminV2.account.outboundNone"
+msgstr "Ainda não há outbounds. Um super administrador os configura."
+
+msgid "adminV2.account.outboundSaved"
+msgstr "Outbound padrão salvo"
+
+msgid "adminV2.account.outboundSub"
+msgstr ""
+"Por onde saem meus usuários e os usuários dos meus subadministradores, a "
+"menos que um usuário (ou um administrador mais próximo) escolha outro."
+
+msgid "adminV2.account.outboundTitle"
+msgstr "Outbound padrão"
+
+msgid "adminV2.account.passwordNone"
+msgstr "Sem senha: qualquer pessoa com seu link pode entrar"
+
+msgid "adminV2.account.passwordSet"
+msgstr "Uma senha protege sua conta"
+
+msgid "adminV2.account.passwordSub"
+msgstr "Altere a senha usada para entrar."
+
+msgid "adminV2.account.passwordTitle"
+msgstr "Senha"
+
+msgid "adminV2.account.repeat"
+msgstr "Repita a nova senha"
+
+msgid "adminV2.account.save"
+msgstr "Salvar senha"
+
+msgid "adminV2.account.saved"
+msgstr "Senha alterada"
+
+msgid "adminV2.account.setPassword"
+msgstr "Definir uma senha"
+
+msgid "adminV2.account.settingsSub"
+msgstr "Seu idioma, senha e nome de login."
+
+msgid "adminV2.account.settingsTitle"
+msgstr "Configurações"
+
+msgid "adminV2.account.strength.medium"
+msgstr "Média"
+
+msgid "adminV2.account.strength.prompt"
+msgstr "Digite uma senha"
+
+msgid "adminV2.account.strength.strong"
+msgstr "Forte"
+
+msgid "adminV2.account.strength.weak"
+msgstr "Fraca"
+
+msgid "adminV2.account.subAdmins"
+msgstr "Subadministradores"
+
+msgid "adminV2.account.subtitle"
+msgstr "Seus limites, quanto você usa deles e sua senha."
+
+msgid "adminV2.account.superText"
+msgstr "Você pode adicionar quantos usuários e administradores precisar."
+
+msgid "adminV2.account.tabs.overview"
+msgstr "Visão geral"
+
+msgid "adminV2.account.tabs.security"
+msgstr "Segurança"
+
+msgid "adminV2.account.tabs.users"
+msgstr "Meus usuários"
+
+msgid "adminV2.account.title"
+msgstr "Minha conta"
+
+msgid "adminV2.account.under"
+msgstr "Sob {name}"
+
+msgid "adminV2.account.unlimited"
+msgstr "Sem limite"
+
+msgid "adminV2.account.wrongCurrent"
+msgstr "A senha atual está incorreta"
+
+msgid "adminV2.actions.applyConfigs"
+msgstr "Aplicar configs"
+
+msgid "adminV2.actions.applyConfigsHint"
+msgstr ""
+"Gera novamente as configs do servidor e as aplica aos serviços em execução."
+
+msgid "adminV2.actions.confirm"
+msgstr "Tem certeza de que deseja realizar esta ação?"
+
+msgid "adminV2.actions.ports.copied"
+msgstr "{what} copiado"
+
+msgid "adminV2.actions.ports.copyList"
+msgstr "Copiar a lista"
+
+msgid "adminV2.actions.ports.count"
+msgstr "{n} portas"
+
+msgid "adminV2.actions.ports.firewall"
+msgstr "Comandos de firewall (ufw)"
+
+msgid "adminV2.actions.ports.hint"
+msgstr ""
+"Todas as portas que este servidor precisa ter abertas para a internet, "
+"prontas para um firewall."
+
+msgid "adminV2.actions.ports.lead"
+msgstr ""
+"Abra estas portas no firewall do seu servidor (ou provedor de nuvem) para "
+"que os usuários possam se conectar."
+
+msgid "adminV2.actions.ports.none"
+msgstr "nenhuma"
+
+msgid "adminV2.actions.ports.openProxy"
+msgstr "Abrir este proxy personalizado"
+
+msgid "adminV2.actions.ports.refresh"
+msgstr "Atualizar"
+
+msgid "adminV2.actions.ports.title"
+msgstr "Portas públicas"
+
+msgid "adminV2.actions.reinstall"
+msgstr "Reinstalar"
+
+msgid "adminV2.actions.reinstallHint"
+msgstr ""
+"Executa o instalador completo novamente. Os serviços ficarão fora do ar por "
+"alguns minutos."
+
+msgid "adminV2.actions.resetCache"
+msgstr "Limpar cache"
+
+msgid "adminV2.actions.resetCacheDone"
+msgstr "Cache limpo"
+
+msgid "adminV2.actions.resetCacheFailed"
+msgstr "Falha ao limpar o cache"
+
+msgid "adminV2.actions.resetCacheHint"
+msgstr ""
+"Limpa os dados em cache do painel e os templates renderizados. Seguro; sem "
+"reinício de serviços."
+
+msgid "adminV2.actions.restart"
+msgstr "Reiniciar sistema"
+
+msgid "adminV2.actions.restartHint"
+msgstr "Reinicia todos os serviços. As conexões ativas serão interrompidas."
+
+msgid "adminV2.actions.status"
+msgstr "Status"
+
+msgid "adminV2.actions.statusHint"
+msgstr ""
+"Executa uma verificação de status de todos os serviços e mostra o log."
+
+msgid "adminV2.actions.subtitle"
+msgstr "Manutenção e operações do sistema para este painel."
+
+msgid "adminV2.actions.title"
+msgstr "Ações"
+
+msgid "adminV2.actions.update"
+msgstr "Atualizar"
+
+msgid "adminV2.actions.updateHint"
+msgstr "Atualiza o painel e todos os serviços para a versão mais recente."
+
+msgid "adminV2.actions.viewlogs"
+msgstr "Ver logs"
+
+msgid "adminV2.actions.viewlogsHint"
+msgstr "Navegue pelos arquivos de log do sistema."
+
+msgid "adminV2.admins.add"
+msgstr "Adicionar administrador"
+
+msgid "adminV2.admins.canAddHint"
+msgstr "Este administrador pode criar seus próprios subadministradores"
+
+msgid "adminV2.admins.canAddShort"
+msgstr "Adiciona subadministradores"
+
+msgid "adminV2.admins.clearSearch"
+msgstr "Limpar pesquisa"
+
+msgid "adminV2.admins.col.link"
+msgstr "Link de administrador"
+
+msgid "adminV2.admins.col.mode"
+msgstr "Modo"
+
+msgid "adminV2.admins.col.name"
+msgstr "Nome"
+
+msgid "adminV2.admins.col.note"
+msgstr "Nota"
+
+msgid "adminV2.admins.col.subAdmins"
+msgstr "Subadministradores"
+
+msgid "adminV2.admins.col.users"
+msgstr "Usuários"
+
+msgid "adminV2.admins.collapse"
+msgstr "Ocultar subadministradores de {name}"
+
+msgid "adminV2.admins.copyLink"
+msgstr "Copiar link"
+
+msgid "adminV2.admins.credentials.copyMessage"
+msgstr "Copiar mensagem"
+
+msgid "adminV2.admins.credentials.copyMessageHint"
+msgstr "Copia a mensagem junto com a imagem do QR code"
+
+msgid "adminV2.admins.credentials.createdTitle"
+msgstr "{name} está pronto"
+
+msgid "adminV2.admins.credentials.done"
+msgstr "Concluído"
+
+msgid "adminV2.admins.credentials.lead"
+msgstr "Envie isto ao administrador. Ele abre o link e entra com a senha."
+
+msgid "adminV2.admins.credentials.link"
+msgstr "Link de administrador"
+
+msgid "adminV2.admins.credentials.message"
+msgstr ""
+"Para entrar, abra o seguinte link:\n"
+"{link}\n"
+"e entre com a senha: {password}"
+
+msgid "adminV2.admins.credentials.messageAlias"
+msgstr ""
+"Para entrar, abra o seguinte link:\n"
+"{link}\n"
+"e entre com o nome de usuário: {alias}\n"
+"e a senha: {password}"
+
+msgid "adminV2.admins.credentials.messageLabel"
+msgstr "Mensagem a enviar"
+
+msgid "adminV2.admins.credentials.once"
+msgstr ""
+"A senha é exibida somente agora. Copie-a antes de fechar; caso contrário, "
+"redefina-a novamente."
+
+msgid "adminV2.admins.credentials.password"
+msgstr "Senha"
+
+msgid "adminV2.admins.credentials.resetTitle"
+msgstr "Nova senha para {name}"
+
+msgid "adminV2.admins.credentials.show"
+msgstr "Mostrar senha"
+
+msgid "adminV2.admins.credentials.username"
+msgstr "Nome de usuário"
+
+msgid "adminV2.admins.deleteMessage"
+msgstr "Este administrador é excluído e seus usuários passam para você."
+
+msgid "adminV2.admins.deleteMessageWithSubs"
+msgstr ""
+"Este administrador e seu {count} subadministrador são excluídos, e os "
+"usuários deles passam para você. | Este administrador e seus {count} "
+"subadministradores são excluídos, e os usuários deles passam para você."
+
+msgid "adminV2.admins.deleteTitle"
+msgstr "Excluir {name}?"
+
+msgid "adminV2.admins.deleted"
+msgstr "{name} excluído"
+
+msgid "adminV2.admins.empty.cta"
+msgstr "Adicione seu primeiro administrador"
+
+msgid "adminV2.admins.empty.text"
+msgstr ""
+"Adicione agentes para dividir o trabalho. Cada um recebe seu próprio link, "
+"senha e limites."
+
+msgid "adminV2.admins.empty.textNoPermission"
+msgstr ""
+"Você não tem permissão para adicionar administradores. Peça ao administrador"
+" acima de você, se precisar."
+
+msgid "adminV2.admins.empty.title"
+msgstr "Ainda não há subadministradores"
+
+msgid "adminV2.admins.expand"
+msgstr "Mostrar subadministradores de {name}"
+
+msgid "adminV2.admins.filter.anyMode"
+msgstr "Qualquer modo"
+
+msgid "adminV2.admins.filter.anySub"
+msgstr "Qualquer permissão"
+
+msgid "adminV2.admins.filter.canAdd"
+msgstr "Pode adicionar subadministradores"
+
+msgid "adminV2.admins.filter.cannotAdd"
+msgstr "Não pode adicionar subadministradores"
+
+msgid "adminV2.admins.filter.clear"
+msgstr "Limpar filtros"
+
+msgid "adminV2.admins.filter.mode"
+msgstr "Filtrar por modo"
+
+msgid "adminV2.admins.filter.sub"
+msgstr "Filtrar por permissão de subadministrador"
+
+msgid "adminV2.admins.form.advanced"
+msgstr "Avançado"
+
+msgid "adminV2.admins.form.advancedHint"
+msgstr "Sob {name}"
+
+msgid "adminV2.admins.form.alias"
+msgstr "Nome de usuário de login"
+
+msgid "adminV2.admins.form.aliasHint"
+msgstr ""
+"Com um nome de usuário, entram com usuário + senha, e os links "
+"compartilhados não terão o ID."
+
+msgid "adminV2.admins.form.canAddAdmin"
+msgstr "Pode adicionar subadministradores"
+
+msgid "adminV2.admins.form.canAddAdminHint"
+msgstr ""
+"Permite que este administrador crie seus próprios agentes, dentro dos seus "
+"limites."
+
+msgid "adminV2.admins.form.configs"
+msgstr "Configs para os usuários deste administrador"
+
+msgid "adminV2.admins.form.configsCount"
+msgstr "{n} config | {n} configs"
+
+msgid "adminV2.admins.form.configsHint"
+msgstr ""
+"Adicionadas à assinatura de todos os usuários deste administrador e de seus "
+"subadministradores."
+
+msgid "adminV2.admins.form.create"
+msgstr "Criar administrador"
+
+msgid "adminV2.admins.form.createSubtitle"
+msgstr "Cria um agente. Uma senha segura é gerada para ele."
+
+msgid "adminV2.admins.form.createTitle"
+msgstr "Novo administrador"
+
+msgid "adminV2.admins.form.editSubtitle"
+msgstr "As alterações são aplicadas imediatamente."
+
+msgid "adminV2.admins.form.editTitle"
+msgstr "Editar {name}"
+
+msgid "adminV2.admins.form.emptyNoLimit"
+msgstr "Deixe vazio para não ter limite"
+
+msgid "adminV2.admins.form.limits"
+msgstr "Limites"
+
+msgid "adminV2.admins.form.limitsHint"
+msgstr ""
+"Contados sobre os usuários deste administrador e de todos os usuários de "
+"seus subadministradores. Ao atingir um, não é possível adicionar novos "
+"usuários."
+
+msgid "adminV2.admins.form.name"
+msgstr "Nome"
+
+msgid "adminV2.admins.form.namePlaceholder"
+msgstr "ex.: Equipe de vendas"
+
+msgid "adminV2.admins.form.nameRequired"
+msgstr "O nome é obrigatório"
+
+msgid "adminV2.admins.form.newUuid"
+msgstr "Novo UUID"
+
+msgid "adminV2.admins.form.noLimit"
+msgstr "Sem limite"
+
+msgid "adminV2.admins.form.note"
+msgstr "Nota"
+
+msgid "adminV2.admins.form.notePlaceholder"
+msgstr "Visível apenas para os administradores acima dele"
+
+msgid "adminV2.admins.form.optional"
+msgstr "opcional"
+
+msgid "adminV2.admins.form.outbound"
+msgstr "Outbound padrão"
+
+msgid "adminV2.admins.form.outboundHint"
+msgstr ""
+"Por onde saem os usuários deste administrador (e os de seus "
+"subadministradores), a menos que um usuário escolha outro."
+
+msgid "adminV2.admins.form.parent"
+msgstr "Administrador pai"
+
+msgid "adminV2.admins.form.parentHint"
+msgstr ""
+"O novo administrador, seus usuários e seus limites ficam sob este "
+"administrador."
+
+msgid "adminV2.admins.form.passwordInfo"
+msgstr ""
+"Uma senha segura é criada automaticamente. Você pode copiá-la com o link de "
+"login logo após salvar."
+
+msgid "adminV2.admins.form.placement"
+msgstr "Posicionar na equipe"
+
+msgid "adminV2.admins.form.superNoLimits"
+msgstr "Super administradores não têm limites."
+
+msgid "adminV2.admins.form.upTo"
+msgstr "Até {max} (seu limite)"
+
+msgid "adminV2.admins.form.uuidHint"
+msgstr ""
+"Gerado automaticamente. Altere somente para reutilizar um ID conhecido."
+
+msgid "adminV2.admins.form.uuidInvalid"
+msgstr "Este não é um UUID válido"
+
+msgid "adminV2.admins.limit.max_active_users"
+msgstr "Máx. de usuários ativos"
+
+msgid "adminV2.admins.limit.max_online_users"
+msgstr "Máx. de usuários online"
+
+msgid "adminV2.admins.limit.max_total_usage_GB"
+msgstr "Máx. de tráfego usado (total)"
+
+msgid "adminV2.admins.limit.max_users"
+msgstr "Máx. de usuários no total"
+
+msgid "adminV2.admins.linkDialog.pwHint"
+msgstr ""
+"As senhas nunca são exibidas novamente. Para fornecer uma nova, redefina-a."
+
+msgid "adminV2.admins.linkDialog.pwNone"
+msgstr "Sem senha: só este link já permite entrar"
+
+msgid "adminV2.admins.linkDialog.pwSet"
+msgstr "Entra com este link e uma senha"
+
+msgid "adminV2.admins.linkDialog.title"
+msgstr "Link de administrador de {name}"
+
+msgid "adminV2.admins.linkDialog.username"
+msgstr "Nome de usuário"
+
+msgid "adminV2.admins.linkDialog.usernameHint"
+msgstr ""
+"Este link abre a página de login; entram com este nome de usuário e sua "
+"senha."
+
+msgid "adminV2.admins.meLocked"
+msgstr ""
+"Este é você: aqui só é possível alterar as configs dos seus usuários. Altere"
+" sua senha em Minha conta."
+
+msgid "adminV2.admins.meter.active"
+msgstr "Ativos"
+
+msgid "adminV2.admins.meter.activeHint"
+msgstr "Usuários ativados e com dias e tráfego restantes, do número permitido"
+
+msgid "adminV2.admins.meter.online"
+msgstr "Online"
+
+msgid "adminV2.admins.meter.onlineHint"
+msgstr "Usuários vistos nas últimas 24 horas, do número permitido"
+
+msgid "adminV2.admins.meter.total"
+msgstr "Total"
+
+msgid "adminV2.admins.meter.totalHint"
+msgstr "Todos os usuários, do número permitido"
+
+msgid "adminV2.admins.meter.traffic"
+msgstr "Tráfego"
+
+msgid "adminV2.admins.meter.trafficHint"
+msgstr "Tráfego usado por todos esses usuários, do total permitido"
+
+msgid "adminV2.admins.mode.admin"
+msgstr "Administrador"
+
+msgid "adminV2.admins.mode.agent"
+msgstr "Agente"
+
+msgid "adminV2.admins.mode.super_admin"
+msgstr "Super administrador"
+
+msgid "adminV2.admins.more"
+msgstr "Mais ações"
+
+msgid "adminV2.admins.myConfigs"
+msgstr "Configs para meus usuários"
+
+msgid "adminV2.admins.myConfigsHint"
+msgstr ""
+"Configs para meus usuários: adicionadas à assinatura de todos os seus "
+"usuários e dos usuários dos seus subadministradores"
+
+msgid "adminV2.admins.noMatch"
+msgstr "Nenhum administrador corresponde a estes filtros"
+
+msgid "adminV2.admins.outbound.auto"
+msgstr "Automático"
+
+msgid "adminV2.admins.outbound.inherit"
+msgstr "Igual ao acima: {name}"
+
+msgid "adminV2.admins.refresh"
+msgstr "Atualizar"
+
+msgid "adminV2.admins.resetMessage"
+msgstr "Uma nova senha é gerada e a antiga deixa de funcionar imediatamente."
+
+msgid "adminV2.admins.resetPassword"
+msgstr "Redefinir senha"
+
+msgid "adminV2.admins.resetTitle"
+msgstr "Redefinir a senha de {name}?"
+
+msgid "adminV2.admins.saved"
+msgstr "{name} salvo"
+
+msgid "adminV2.admins.search"
+msgstr "Pesquisar nome ou UUID"
+
+msgid "adminV2.admins.showLink"
+msgstr "Link de administrador"
+
+msgid "adminV2.admins.subCount"
+msgstr "{n} subadministrador | {n} subadministradores"
+
+msgid "adminV2.admins.subtitle"
+msgstr ""
+"Sua equipe de administradores em forma de árvore. Os limites de cada "
+"administrador cobrem seus próprios usuários e todos abaixo dele."
+
+msgid "adminV2.admins.summary.admins"
+msgstr "administrador | administradores"
+
+msgid "adminV2.admins.summary.online"
+msgstr "online"
+
+msgid "adminV2.admins.summary.users"
+msgstr "usuário | usuários"
+
+msgid "adminV2.admins.title"
+msgstr "Administradores"
+
+msgid "adminV2.admins.you"
+msgstr "Você"
+
+msgid "adminV2.appTitle"
+msgstr "HiddifyManager"
+
+msgid "adminV2.apply.action.apply.button"
+msgstr "Aplicar agora"
+
+msgid "adminV2.apply.action.apply.desc"
+msgstr ""
+"Coloca em vigor suas configurações, usuários e alterações de domínio. "
+"Rápido, e a escolha usual depois de mudar algo."
+
+msgid "adminV2.apply.action.apply.done"
+msgstr "As alterações foram aplicadas"
+
+msgid "adminV2.apply.action.apply.running"
+msgstr "Aplicando alterações"
+
+msgid "adminV2.apply.action.apply.title"
+msgstr "Aplicar alterações"
+
+msgid "adminV2.apply.action.install.button"
+msgstr "Reinstalar"
+
+msgid "adminV2.apply.action.install.confirm"
+msgstr ""
+"Tudo será instalado novamente. As conexões podem cair por alguns minutos. "
+"Continuar?"
+
+msgid "adminV2.apply.action.install.desc"
+msgstr ""
+"Instala tudo novamente e reconstrói todos os serviços. Use quando aplicar "
+"não bastar, por exemplo após alterar o caminho do painel ou os protocolos."
+
+msgid "adminV2.apply.action.install.done"
+msgstr "Reinstalação concluída"
+
+msgid "adminV2.apply.action.install.running"
+msgstr "Reinstalando"
+
+msgid "adminV2.apply.action.install.title"
+msgstr "Reinstalar"
+
+msgid "adminV2.apply.action.restart.button"
+msgstr "Reiniciar"
+
+msgid "adminV2.apply.action.restart.confirm"
+msgstr ""
+"Todos os serviços serão reiniciados. As conexões caem por um instante. "
+"Continuar?"
+
+msgid "adminV2.apply.action.restart.desc"
+msgstr ""
+"Reinicia todos os serviços do Hiddify sem reinstalar nada. Uma boa primeira "
+"tentativa quando algo funciona mal."
+
+msgid "adminV2.apply.action.restart.done"
+msgstr "Serviços reiniciados"
+
+msgid "adminV2.apply.action.restart.running"
+msgstr "Reiniciando serviços"
+
+msgid "adminV2.apply.action.restart.title"
+msgstr "Reiniciar serviços"
+
+msgid "adminV2.apply.action.status.button"
+msgstr "Verificar agora"
+
+msgid "adminV2.apply.action.status.desc"
+msgstr ""
+"Mostra se cada serviço está em execução, além do IP público do servidor e do"
+" Warp. Não altera nada."
+
+msgid "adminV2.apply.action.status.done"
+msgstr "Status verificado"
+
+msgid "adminV2.apply.action.status.running"
+msgstr "Verificando status"
+
+msgid "adminV2.apply.action.status.title"
+msgstr "Verificar status"
+
+msgid "adminV2.apply.action.update.button"
+msgstr "Atualizar"
+
+msgid "adminV2.apply.action.update.confirm"
+msgstr ""
+"O Hiddify será atualizado para a versão mais recente. O painel reinicia e as"
+" conexões podem cair por alguns minutos. Continuar?"
+
+msgid "adminV2.apply.action.update.desc"
+msgstr ""
+"Baixa e instala a versão mais recente do Hiddify e depois a aplica. Leva um "
+"tempo; o painel reinicia no final."
+
+msgid "adminV2.apply.action.update.done"
+msgstr "Atualização concluída"
+
+msgid "adminV2.apply.action.update.running"
+msgstr "Atualizando"
+
+msgid "adminV2.apply.action.update.title"
+msgstr "Atualizar o Hiddify"
+
+msgid "adminV2.apply.busyOutside"
+msgstr "Algo está sendo executado no servidor agora."
+
+msgid "adminV2.apply.lastRun"
+msgstr "Última execução {when}"
+
+msgid "adminV2.apply.log.clear"
+msgstr "Limpar"
+
+msgid "adminV2.apply.log.clearConfirm"
+msgstr "Esvaziar \"{name}\"? O texto dele será excluído do servidor."
+
+msgid "adminV2.apply.log.clearFailed"
+msgstr "Não foi possível limpar o log"
+
+msgid "adminV2.apply.log.cleared"
+msgstr "Log limpo"
+
+msgid "adminV2.apply.log.copied"
+msgstr "Log copiado"
+
+msgid "adminV2.apply.log.download"
+msgstr "Baixar"
+
+msgid "adminV2.apply.log.empty"
+msgstr "Nada ainda…"
+
+msgid "adminV2.apply.log.follow"
+msgstr "Mais recente"
+
+msgid "adminV2.apply.log.hide"
+msgstr "Ocultar log"
+
+msgid "adminV2.apply.log.loading"
+msgstr "Carregando…"
+
+msgid "adminV2.apply.log.show"
+msgstr "Mostrar log"
+
+msgid "adminV2.apply.log.showingEnd"
+msgstr "mostrando o final"
+
+msgid "adminV2.apply.log.terminal"
+msgstr "log"
+
+msgid "adminV2.apply.log.wrap"
+msgstr "Quebrar linhas"
+
+msgid "adminV2.apply.logs.clearAll"
+msgstr "Limpar tudo"
+
+msgid "adminV2.apply.logs.clearAllConfirm"
+msgstr ""
+"Esvaziar todos os arquivos de log? O texto é excluído do servidor (um log "
+"sendo gravado por uma ação em execução é mantido)."
+
+msgid "adminV2.apply.logs.clearFailed"
+msgstr "Não foi possível limpar alguns logs"
+
+msgid "adminV2.apply.logs.clearSkipped"
+msgstr "{n} em uso foram mantidos"
+
+msgid "adminV2.apply.logs.clearedAll"
+msgstr "Logs limpos"
+
+msgid "adminV2.apply.logs.empty"
+msgstr "Ainda não há logs"
+
+msgid "adminV2.apply.logs.sub"
+msgstr "O que cada ação fez, direto do servidor."
+
+msgid "adminV2.apply.logs.title"
+msgstr "Logs"
+
+msgid "adminV2.apply.logs.view"
+msgstr "Ver"
+
+msgid "adminV2.apply.minutes"
+msgstr "~{n} min"
+
+msgid "adminV2.apply.notStarted"
+msgstr "Não foi possível iniciar"
+
+msgid "adminV2.apply.recommended"
+msgstr "recomendado"
+
+msgid "adminV2.apply.run.dontClose"
+msgstr "Você pode sair desta página; a execução continua no servidor."
+
+msgid "adminV2.apply.run.hide"
+msgstr "Ocultar"
+
+msgid "adminV2.apply.run.links"
+msgstr "Links de administrador nos seus domínios (podem ter mudado)"
+
+msgid "adminV2.apply.run.reconnecting"
+msgstr "O painel está reiniciando, reconectando…"
+
+msgid "adminV2.apply.run.reload"
+msgstr "O painel foi atualizado. Recarregue para usar a nova versão."
+
+msgid "adminV2.apply.run.reloadBtn"
+msgstr "Recarregar"
+
+msgid "adminV2.apply.run.stalled"
+msgstr "Nada de novo no log há muito tempo. Verifique o log abaixo."
+
+msgid "adminV2.apply.run.starting"
+msgstr "Iniciando…"
+
+msgid "adminV2.apply.run.waitingStart"
+msgstr "Aguardando o início…"
+
+msgid "adminV2.apply.run.working"
+msgstr "Trabalhando…"
+
+msgid "adminV2.apply.subtitle"
+msgstr ""
+"Aplique alterações, atualize o servidor e veja como tudo está funcionando"
+
+msgid "adminV2.apply.takes"
+msgstr "Quanto tempo leva, aproximadamente"
+
+msgid "adminV2.apply.title"
+msgstr "Aplicar e status"
+
+msgid "adminV2.apply.watch"
+msgstr "Acompanhar"
+
+msgid "adminV2.applyNotice.apply"
+msgstr "Salvo. Aplique as configs para que as alterações entrem em vigor."
+
+msgid "adminV2.applyNotice.later"
+msgstr "Depois"
+
+msgid "adminV2.applyNotice.reinstall"
+msgstr "Salvo. Algumas alterações exigem reinstalação para entrar em vigor."
+
+msgid "adminV2.applyNotice.update"
+msgstr ""
+"Salvo. O canal de atualização mudou; execute uma atualização para trocar."
+
+msgid "adminV2.backup.auto.connect"
+msgstr "Conectar o Telegram"
+
+msgid "adminV2.backup.auto.deleteFailed"
+msgstr "Não foi possível excluir"
+
+msgid "adminV2.backup.auto.deleteMessage"
+msgstr "O backup de {when} é removido do servidor."
+
+msgid "adminV2.backup.auto.deleteTitle"
+msgstr "Excluir este backup?"
+
+msgid "adminV2.backup.auto.download"
+msgstr "Baixar"
+
+msgid "adminV2.backup.auto.empty"
+msgstr "Ainda não há backups no servidor"
+
+msgid "adminV2.backup.auto.latest"
+msgstr "mais recente"
+
+msgid "adminV2.backup.auto.restore"
+msgstr "Restaurar este"
+
+msgid "adminV2.backup.auto.showAll"
+msgstr "Mostrar todos os {n}"
+
+msgid "adminV2.backup.auto.showLess"
+msgstr "Mostrar menos"
+
+msgid "adminV2.backup.auto.sub"
+msgstr ""
+"Criados automaticamente de tempos em tempos e quando você salva um aqui."
+
+msgid "adminV2.backup.auto.telegramOff"
+msgstr ""
+"Os backups automáticos também podem ser enviados a você pelo Telegram."
+
+msgid "adminV2.backup.auto.telegramOn"
+msgstr "Cada backup automático também é enviado a você pelo Telegram."
+
+msgid "adminV2.backup.auto.title"
+msgstr "Backups no servidor"
+
+msgid "adminV2.backup.count.admins"
+msgstr "administradores"
+
+msgid "adminV2.backup.count.custom_proxies"
+msgstr "proxies personalizados"
+
+msgid "adminV2.backup.count.domains"
+msgstr "domínios"
+
+msgid "adminV2.backup.count.nodes"
+msgstr "nós"
+
+msgid "adminV2.backup.count.settings"
+msgstr "configurações"
+
+msgid "adminV2.backup.count.users"
+msgstr "usuários"
+
+msgid "adminV2.backup.restore.advanced"
+msgstr "Avançado"
+
+msgid "adminV2.backup.restore.change"
+msgstr "Escolher outro"
+
+msgid "adminV2.backup.restore.confirmMessage"
+msgstr ""
+"Estas partes do painel serão substituídas: {parts}. Faça um backup antes se "
+"puder querer recuperá-las."
+
+msgid "adminV2.backup.restore.confirmTitle"
+msgstr "Restaurar este backup?"
+
+msgid "adminV2.backup.restore.drop"
+msgstr "Solte um arquivo de backup aqui"
+
+msgid "adminV2.backup.restore.dropHint"
+msgstr "ou clique para escolher um backup .json"
+
+msgid "adminV2.backup.restore.fromFile"
+msgstr "Do seu dispositivo"
+
+msgid "adminV2.backup.restore.fromServer"
+msgstr "Deste servidor"
+
+msgid "adminV2.backup.restore.notJson"
+msgstr "Escolha um arquivo de backup .json"
+
+msgid "adminV2.backup.restore.part.domains"
+msgstr "Domínios"
+
+msgid "adminV2.backup.restore.part.domainsHint"
+msgstr "Domínios, seus certificados e proxies personalizados"
+
+msgid "adminV2.backup.restore.part.settings"
+msgstr "Configurações"
+
+msgid "adminV2.backup.restore.part.settingsHint"
+msgstr "Configurações do painel, proxies e suas configs"
+
+msgid "adminV2.backup.restore.part.users"
+msgstr "Usuários"
+
+msgid "adminV2.backup.restore.part.usersHint"
+msgstr "Usuários, seu uso e limites, e os administradores"
+
+msgid "adminV2.backup.restore.pathChanges"
+msgstr ""
+"Este backup vem de outro painel: após restaurar, o link de administrador "
+"muda. Os novos links são exibidos ao concluir."
+
+msgid "adminV2.backup.restore.replaceOwner"
+msgstr "Manter o GUID do proprietário do backup"
+
+msgid "adminV2.backup.restore.replaceOwnerHint"
+msgstr ""
+"O proprietário deste painel assume o GUID do proprietário do backup, para "
+"que os links de administrador antigos continuem funcionando. Funciona sem "
+"restaurar usuários. Seu link de administrador atual muda."
+
+msgid "adminV2.backup.restore.run"
+msgstr "Restaurar"
+
+msgid "adminV2.backup.restore.running"
+msgstr "Restaurando o backup"
+
+msgid "adminV2.backup.restore.sub"
+msgstr "Recupere um backup deste painel ou de outro."
+
+msgid "adminV2.backup.restore.title"
+msgstr "Restaurar"
+
+msgid "adminV2.backup.restore.unreadable"
+msgstr "Este arquivo não é um backup do Hiddify"
+
+msgid "adminV2.backup.restore.whatHappens"
+msgstr ""
+"A restauração substitui o que você escolheu e depois reinstala as configs do"
+" servidor. Você pode acompanhar o progresso; leva alguns minutos."
+
+msgid "adminV2.backup.save.created"
+msgstr "Backup salvo no servidor"
+
+msgid "adminV2.backup.save.download"
+msgstr "Baixar backup"
+
+msgid "adminV2.backup.save.downloaded"
+msgstr "Backup baixado"
+
+msgid "adminV2.backup.save.failed"
+msgstr "Não foi possível fazer o backup"
+
+msgid "adminV2.backup.save.onServer"
+msgstr "Salvar no servidor"
+
+msgid "adminV2.backup.save.secret"
+msgstr ""
+"O arquivo contém senhas, links de usuários e chaves privadas. Guarde-o em um"
+" local seguro."
+
+msgid "adminV2.backup.save.sub"
+msgstr ""
+"Tudo em um único arquivo: configurações, usuários, administradores, "
+"domínios, proxies e certificados."
+
+msgid "adminV2.backup.save.title"
+msgstr "Fazer um backup"
+
+msgid "adminV2.backup.subtitle"
+msgstr "Mantenha uma cópia de todo o seu painel e recupere-a quando precisar"
+
+msgid "adminV2.backup.title"
+msgstr "Backup e restauração"
+
+msgid "adminV2.baseConfig.builtinDefaultHint"
+msgstr ""
+"Config base integrada sincronizada do catálogo. Ative o conteúdo "
+"personalizado para editá-la."
+
+msgid "adminV2.baseConfig.builtinReadOnly"
+msgstr ""
+"Config base integrada — só o nome e o estado de ativação podem ser "
+"alterados. Duplique para editar totalmente."
+
+msgid "adminV2.baseConfig.content"
+msgstr "Config completa"
+
+msgid "adminV2.baseConfig.core"
+msgstr "Core"
+
+msgid "adminV2.baseConfig.description"
+msgstr "Descrição"
+
+msgid "adminV2.baseConfig.listTitle"
+msgstr "Configs base"
+
+msgid "adminV2.baseConfig.name"
+msgstr "Nome"
+
+msgid "adminV2.baseConfig.new"
+msgstr "Nova config base"
+
+msgid "adminV2.baseConfig.side"
+msgstr "Lado"
+
+msgid "adminV2.baseConfig.version"
+msgstr "Versão"
+
+msgid "adminV2.common.actions"
+msgstr "Ações"
+
+msgid "adminV2.common.add"
+msgstr "Adicionar"
+
+msgid "adminV2.common.back"
+msgstr "Voltar"
+
+msgid "adminV2.common.cancel"
+msgstr "Cancelar"
+
+msgid "adminV2.common.collapse"
+msgstr "menos"
+
+msgid "adminV2.common.confirmDelete"
+msgstr "Tem certeza de que deseja excluir este item?"
+
+msgid "adminV2.common.copied"
+msgstr "Copiado"
+
+msgid "adminV2.common.copy"
+msgstr "Copiar"
+
+msgid "adminV2.common.delete"
+msgstr "Excluir"
+
+msgid "adminV2.common.deleted"
+msgstr "Excluído com sucesso"
+
+msgid "adminV2.common.disabled"
+msgstr "Desativado"
+
+msgid "adminV2.common.duplicate"
+msgstr "Duplicar"
+
+msgid "adminV2.common.edit"
+msgstr "Editar"
+
+msgid "adminV2.common.enabled"
+msgstr "Ativado"
+
+msgid "adminV2.common.filter"
+msgstr "Filtrar"
+
+msgid "adminV2.common.filteredOf"
+msgstr "Filtrado: mostrando {n} de {total}"
+
+msgid "adminV2.common.format"
+msgstr "Formatar"
+
+msgid "adminV2.common.loadFailed"
+msgstr "Falha ao carregar os dados"
+
+msgid "adminV2.common.no"
+msgstr "Não"
+
+msgid "adminV2.common.noMatch"
+msgstr "Nada corresponde a estes filtros"
+
+msgid "adminV2.common.noMatchHint"
+msgstr "Tente remover um filtro ou alterar a pesquisa."
+
+msgid "adminV2.common.resetFilters"
+msgstr "Redefinir filtros"
+
+msgid "adminV2.common.save"
+msgstr "Salvar"
+
+msgid "adminV2.common.saveFailed"
+msgstr "Falha ao salvar"
+
+msgid "adminV2.common.saved"
+msgstr "Salvo com sucesso"
+
+msgid "adminV2.common.search"
+msgstr "Pesquisar..."
+
+msgid "adminV2.common.validate"
+msgstr "Validar"
+
+msgid "adminV2.common.validationFailed"
+msgstr "Falha na validação"
+
+msgid "adminV2.common.validationOk"
+msgstr "Validação concluída"
+
+msgid "adminV2.common.yes"
+msgstr "Sim"
+
+msgid "adminV2.dashboard.allNodes"
+msgstr "Todos os nós"
+
+msgid "adminV2.dashboard.available"
+msgstr "Disponível"
+
+msgid "adminV2.dashboard.averageHint"
+msgstr ""
+"Média de usuários online por dia, só nos dias em que alguém esteve online."
+
+msgid "adminV2.dashboard.breakdown"
+msgstr "Detalhamento"
+
+msgid "adminV2.dashboard.cached"
+msgstr "Em cache"
+
+msgid "adminV2.dashboard.clickForProcesses"
+msgstr "Clique para mostrar os principais processos"
+
+msgid "adminV2.dashboard.collapse"
+msgstr "Recolher detalhes"
+
+msgid "adminV2.dashboard.connections"
+msgstr "Conexões"
+
+msgid "adminV2.dashboard.core"
+msgstr "Núcleo {index}"
+
+msgid "adminV2.dashboard.cpu"
+msgstr "CPU"
+
+msgid "adminV2.dashboard.cpuCores"
+msgstr "CPU · {count} núcleos"
+
+msgid "adminV2.dashboard.dailyOnline"
+msgstr "Usuários online por dia"
+
+msgid "adminV2.dashboard.dailyUsage"
+msgstr "Uso diário"
+
+msgid "adminV2.dashboard.disk"
+msgstr "Disco"
+
+msgid "adminV2.dashboard.download"
+msgstr "Download"
+
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "Download desde o boot"
+
+msgid "adminV2.dashboard.durationDaysHours"
+msgstr "{days}d {hours}h"
+
+msgid "adminV2.dashboard.durationHoursMinutes"
+msgstr "{hours}h {minutes}m"
+
+msgid "adminV2.dashboard.durationMinutes"
+msgstr "{minutes}m"
+
+msgid "adminV2.dashboard.enabledUsers"
+msgstr "Usuários ativados"
+
+msgid "adminV2.dashboard.expand"
+msgstr "Expandir detalhes"
+
+msgid "adminV2.dashboard.free"
+msgstr "Livre"
+
+msgid "adminV2.dashboard.hiddify"
+msgstr "Hiddify"
+
+msgid "adminV2.dashboard.hiddifyData"
+msgstr "Dados do Hiddify"
+
+msgid "adminV2.dashboard.hostname"
+msgstr "Host"
+
+msgid "adminV2.dashboard.inFiveMinutes"
+msgstr "Nos últimos 5 minutos"
+
+msgid "adminV2.dashboard.lastNDays"
+msgstr "Últimos {days} dias"
+
+msgid "adminV2.dashboard.lastdayOnline"
+msgstr "Online no último dia"
+
+msgid "adminV2.dashboard.liveThroughput"
+msgstr "Vazão ao vivo"
+
+msgid "adminV2.dashboard.liveUpdated"
+msgstr "Ao vivo · atualizado {time}"
+
+msgid "adminV2.dashboard.load15m"
+msgstr "15 min"
+
+msgid "adminV2.dashboard.load1m"
+msgstr "1 min"
+
+msgid "adminV2.dashboard.load5m"
+msgstr "5 min"
+
+msgid "adminV2.dashboard.loadAverage"
+msgstr "Carga média"
+
+msgid "adminV2.dashboard.loadFailed"
+msgstr "Não foi possível carregar os dados do painel"
+
+msgid "adminV2.dashboard.loadFailedHint"
+msgstr ""
+"O painel não conseguiu acessar a API. Verifique se você ainda está "
+"conectado."
+
+msgid "adminV2.dashboard.modeAverage"
+msgstr "Média"
+
+msgid "adminV2.dashboard.modePeak"
+msgstr "Pico"
+
+msgid "adminV2.dashboard.modeUnique"
+msgstr "Únicos"
+
+msgid "adminV2.dashboard.monthUsage"
+msgstr "Uso do mês"
+
+msgid "adminV2.dashboard.monthUsers"
+msgstr "Mês"
+
+msgid "adminV2.dashboard.monthlyAverage"
+msgstr "Média mensal"
+
+msgid "adminV2.dashboard.monthlyOnline"
+msgstr "Online no mês"
+
+msgid "adminV2.dashboard.nDays"
+msgstr "{days}d"
+
+msgid "adminV2.dashboard.network"
+msgstr "Rede"
+
+msgid "adminV2.dashboard.noData"
+msgstr "Ainda não há dados"
+
+msgid "adminV2.dashboard.node"
+msgstr "Nó"
+
+msgid "adminV2.dashboard.nodeHealth"
+msgstr "Saúde dos nós"
+
+msgid "adminV2.dashboard.nodeHealthHint"
+msgstr "CPU, RAM e disco ao vivo da API de cada nó"
+
+msgid "adminV2.dashboard.nodeHealthStackedHint"
+msgstr "CPU, RAM e disco empilhados por nó"
+
+msgid "adminV2.dashboard.nodeNetworkHint"
+msgstr "Upload e download ao vivo por nó"
+
+msgid "adminV2.dashboard.nodeOffline"
+msgstr "Offline"
+
+msgid "adminV2.dashboard.nodeOnline"
+msgstr "Online"
+
+msgid "adminV2.dashboard.nodeUnreachable"
+msgstr "Não foi possível acessar este nó"
+
+msgid "adminV2.dashboard.none"
+msgstr "Nenhum"
+
+msgid "adminV2.dashboard.onlineEnabledUsers"
+msgstr "Usuários online / ativos"
+
+msgid "adminV2.dashboard.onlineNow"
+msgstr "Online agora"
+
+msgid "adminV2.dashboard.onlineOnDay"
+msgstr "Online: {count}"
+
+msgid "adminV2.dashboard.onlineToday"
+msgstr "Online hoje: {count} / {total}"
+
+msgid "adminV2.dashboard.onlineUsers"
+msgstr "Usuários online"
+
+msgid "adminV2.dashboard.panelVersion"
+msgstr "Versão do painel"
+
+msgid "adminV2.dashboard.pause"
+msgstr "Pausar"
+
+msgid "adminV2.dashboard.paused"
+msgstr "Atualizações ao vivo pausadas"
+
+msgid "adminV2.dashboard.peakDay"
+msgstr "Dia de pico"
+
+msgid "adminV2.dashboard.peakHint"
+msgstr "O maior número de usuários online em um dia."
+
+msgid "adminV2.dashboard.perCore"
+msgstr "Por núcleo"
+
+msgid "adminV2.dashboard.perDay"
+msgstr "{value} / dia"
+
+msgid "adminV2.dashboard.ram"
+msgstr "RAM"
+
+msgid "adminV2.dashboard.range"
+msgstr "Intervalo do histórico"
+
+msgid "adminV2.dashboard.refresh"
+msgstr "Atualizar agora"
+
+msgid "adminV2.dashboard.resume"
+msgstr "Ao vivo"
+
+msgid "adminV2.dashboard.rollingAverage"
+msgstr "Média de 7 dias"
+
+msgid "adminV2.dashboard.subtitle"
+msgstr "Tráfego, usuários e saúde do servidor num relance"
+
+msgid "adminV2.dashboard.swap"
+msgstr "Swap"
+
+msgid "adminV2.dashboard.thisServer"
+msgstr "Este servidor"
+
+msgid "adminV2.dashboard.title"
+msgstr "Painel"
+
+msgid "adminV2.dashboard.today"
+msgstr "Hoje"
+
+msgid "adminV2.dashboard.todayOnline"
+msgstr "Online hoje"
+
+msgid "adminV2.dashboard.todayUsage"
+msgstr "Uso de hoje"
+
+msgid "adminV2.dashboard.topFolders"
+msgstr "Maiores pastas"
+
+msgid "adminV2.dashboard.topProcesses"
+msgstr "Principais processos"
+
+msgid "adminV2.dashboard.totalUsage"
+msgstr "Uso total"
+
+msgid "adminV2.dashboard.totalUsers"
+msgstr "Total de usuários"
+
+msgid "adminV2.dashboard.uniqueHint"
+msgstr "Usuários distintos vistos em cada período, painel inteiro."
+
+msgid "adminV2.dashboard.uniqueIps"
+msgstr "IPs únicos"
+
+msgid "adminV2.dashboard.uniqueMonth"
+msgstr "Usuários distintos, últimos 30 dias"
+
+msgid "adminV2.dashboard.uniqueWeek"
+msgstr "Usuários distintos, últimos 7 dias"
+
+msgid "adminV2.dashboard.upload"
+msgstr "Upload"
+
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "Upload desde o boot"
+
+msgid "adminV2.dashboard.uptime"
+msgstr "Tempo ativo"
+
+msgid "adminV2.dashboard.usageComparison"
+msgstr "Comparação de uso"
+
+msgid "adminV2.dashboard.usageComparisonHint"
+msgstr "Hoje e ontem em relação à média diária semanal e mensal"
+
+msgid "adminV2.dashboard.usageOnDay"
+msgstr "Uso: {value}"
+
+msgid "adminV2.dashboard.usageStackedHint"
+msgstr "Uso empilhado por nó · o total é a área preenchida"
+
+msgid "adminV2.dashboard.usageTrend"
+msgstr "Tendência de uso"
+
+msgid "adminV2.dashboard.used"
+msgstr "Usado"
+
+msgid "adminV2.dashboard.usersComparison"
+msgstr "Comparação de usuários"
+
+msgid "adminV2.dashboard.usersComparisonHint"
+msgstr "Usuários distintos vistos por período"
+
+msgid "adminV2.dashboard.usersSummary"
+msgstr "{total} usuários · {enabled} ativados"
+
+msgid "adminV2.dashboard.usersTrend"
+msgstr "Tendência de usuários"
+
+msgid "adminV2.dashboard.vsPreviousMonth"
+msgstr "em relação aos 30 dias anteriores"
+
+msgid "adminV2.dashboard.vsPreviousWeek"
+msgstr "em relação aos 7 dias anteriores"
+
+msgid "adminV2.dashboard.vsYesterday"
+msgstr "em relação a ontem"
+
+msgid "adminV2.dashboard.weekUsage"
+msgstr "Uso da semana"
+
+msgid "adminV2.dashboard.weekUsers"
+msgstr "Semana"
+
+msgid "adminV2.dashboard.weeklyAverage"
+msgstr "Média semanal"
+
+msgid "adminV2.dashboard.weeklyOnline"
+msgstr "Online na semana"
+
+msgid "adminV2.dashboard.yesterday"
+msgstr "Ontem"
+
+msgid "adminV2.domain.addFailed"
+msgstr "Não foi possível adicionar o domínio"
+
+msgid "adminV2.domain.addTitle"
+msgstr "Adicionar domínio"
+
+msgid "adminV2.domain.alias"
+msgstr "Alias"
+
+msgid "adminV2.domain.domain"
+msgstr "Domínio"
+
+msgid "adminV2.domain.mode"
+msgstr "Modo"
+
+msgid "adminV2.domains.add"
+msgstr "Adicionar domínio"
+
+msgid "adminV2.domains.advanced"
+msgstr "Avançado"
+
+msgid "adminV2.domains.badge.cdnIp"
+msgstr "IPs forçados"
+
+msgid "adminV2.domains.badge.frontingHint"
+msgstr "Domain fronting: as configs mostram este nome em vez do domínio"
+
+msgid "adminV2.domains.badge.resolveIp"
+msgstr "IP"
+
+msgid "adminV2.domains.cert.failed"
+msgstr "Não foi possível obter um certificado"
+
+msgid "adminV2.domains.cert.failedHint"
+msgstr ""
+"Um certificado autoassinado é usado até que um real possa ser emitido."
+
+msgid "adminV2.domains.cert.ok"
+msgstr "Certificado emitido"
+
+msgid "adminV2.domains.cert.okHint"
+msgstr ""
+"Os usuários se conectam com um certificado real e confiável. Ele é renovado "
+"automaticamente."
+
+msgid "adminV2.domains.cert.retry"
+msgstr "Tentar novamente"
+
+msgid "adminV2.domains.cert.secondsLeft"
+msgstr "cerca de {n}s"
+
+msgid "adminV2.domains.cert.steps.contact"
+msgstr "Contatando o Let's Encrypt"
+
+msgid "adminV2.domains.cert.steps.install"
+msgstr "Instalando"
+
+msgid "adminV2.domains.cert.steps.verify"
+msgstr "Verificando o domínio"
+
+msgid "adminV2.domains.cert.timeout"
+msgstr "Ainda aguardando o certificado"
+
+msgid "adminV2.domains.cert.timeoutHint"
+msgstr ""
+"Está demorando mais que o normal; continua em segundo plano e esta página é "
+"atualizada quando terminar."
+
+msgid "adminV2.domains.cert.tips.cdn"
+msgstr ""
+"Muitas solicitações em pouco tempo são recusadas pelo Let's Encrypt; tente "
+"novamente mais tarde."
+
+msgid "adminV2.domains.cert.tips.dns"
+msgstr ""
+"O domínio deve apontar para este servidor (ou para a CDN na frente dele)."
+
+msgid "adminV2.domains.cert.tips.port80"
+msgstr "A porta 80 deve estar acessível pela internet."
+
+msgid "adminV2.domains.cert.waiting"
+msgstr "Obtendo um certificado…"
+
+msgid "adminV2.domains.copyDomain"
+msgstr "Copiar domínio"
+
+msgid "adminV2.domains.deleteMessage"
+msgstr ""
+"As configs dele deixam de funcionar para todos os usuários. Pelo menos um "
+"domínio deve permanecer."
+
+msgid "adminV2.domains.deleteTitle"
+msgstr "Remover {name}?"
+
+msgid "adminV2.domains.deleted"
+msgstr "{name} removido"
+
+msgid "adminV2.domains.drag"
+msgstr "Arraste para reordenar"
+
+msgid "adminV2.domains.editTitle"
+msgstr "Editar domínio"
+
+msgid "adminV2.domains.field.alias"
+msgstr "Nome de exibição"
+
+msgid "adminV2.domains.field.aliasHint"
+msgstr "Exibido nos apps dos usuários em vez do domínio."
+
+msgid "adminV2.domains.field.cdnIp"
+msgstr "🔂 Forçar as configs a usar estes IPs / domínios"
+
+msgid "adminV2.domains.field.cdnIpHint"
+msgstr ""
+"Coloque-os nos links dos usuários em vez do IP do domínio, separados por "
+"vírgulas ou novas linhas. Templates de operadora também funcionam."
+
+msgid "adminV2.domains.field.domain"
+msgstr "Domínio"
+
+msgid "adminV2.domains.field.domainInvalid"
+msgstr "Isto não parece um domínio"
+
+msgid "adminV2.domains.field.domainRequired"
+msgstr "Digite um domínio"
+
+msgid "adminV2.domains.field.downloadDomain"
+msgstr "📈 Domínio de download"
+
+msgid "adminV2.domains.field.downloadDomainHint"
+msgstr ""
+"Somente para XHTTP: os downloads podem vir de um domínio diferente dos "
+"uploads. Mais difícil de detectar, geralmente mais rápido."
+
+msgid "adminV2.domains.field.ech"
+msgstr "🔐 ECH"
+
+msgid "adminV2.domains.field.echHint"
+msgstr "Obtém e usa o Encrypted Client Hello para este domínio CDN."
+
+msgid "adminV2.domains.field.echNeedsSetting"
+msgstr "Ative primeiro o TLS ECH nas configurações do painel."
+
+msgid "adminV2.domains.field.extra"
+msgstr "Parâmetros extras"
+
+msgid "adminV2.domains.field.extraInvalid"
+msgstr "JSON inválido"
+
+msgid "adminV2.domains.field.extraObject"
+msgstr "Deve ser um objeto JSON"
+
+msgid "adminV2.domains.field.fronting"
+msgstr "🎭 Domain fronting"
+
+msgid "adminV2.domains.field.frontingHint"
+msgstr ""
+"Opcional. Os apps dos usuários exibem um destes nomes (SNI) em vez do seu "
+"domínio, de modo que um filtro vê apenas outro site. Use sites na mesma CDN "
+"do seu domínio (ex.: outros sites da Cloudflare). Vazio: sem fronting."
+
+msgid "adminV2.domains.field.frontingPlaceholder"
+msgstr "outro-site.com, site-cdn.net"
+
+msgid "adminV2.domains.field.hostnamesInvalid"
+msgstr "Use nomes de host separados por vírgulas, como site.com"
+
+msgid "adminV2.domains.field.mode"
+msgstr "Modo"
+
+msgid "adminV2.domains.field.none"
+msgstr "Nenhum"
+
+msgid "adminV2.domains.field.ports"
+msgstr "Portas do gateway"
+
+msgid "adminV2.domains.field.portsHint"
+msgstr ""
+"Por onde os usuários acessam os proxies SNI e L7 deste domínio: uma porta "
+"TLS e uma porta HTTP. Vazio usa o padrão. O firewall as redireciona para 443"
+" / 80, então nada no servidor pode escutá-las, e uma porta TLS não pode ser "
+"a porta HTTP de outro domínio."
+
+msgid "adminV2.domains.field.proxies"
+msgstr "Proxies personalizados"
+
+msgid "adminV2.domains.field.relayNeedsIp"
+msgstr ""
+"Um relay que não usa um certificado real precisa do IP do servidor relay em "
+"Avançado → Forçar IPs."
+
+msgid "adminV2.domains.field.resolveIp"
+msgstr "🔢 Resolver IP"
+
+msgid "adminV2.domains.field.resolveIpHint"
+msgstr ""
+"Usa o IP em vez do nome de domínio nos proxies. Útil quando o DNS é "
+"instável."
+
+msgid "adminV2.domains.field.serverDomain"
+msgstr "Domínio do servidor"
+
+msgid "adminV2.domains.field.serverDomainHint"
+msgstr ""
+"Domínio do servidor upstream usado nesta entrada. Deve ser um domínio Direct"
+" ou Relay válido."
+
+msgid "adminV2.domains.field.servernames"
+msgstr "Nomes de servidor"
+
+msgid "adminV2.domains.field.servernamesHint"
+msgstr ""
+"Sites cujo TLS o Reality toma emprestado, separados por vírgulas. Vazio: o "
+"próprio domínio."
+
+msgid "adminV2.domains.field.showAll"
+msgstr "Todos os domínios"
+
+msgid "adminV2.domains.field.showDomains"
+msgstr "Mostrar configs de"
+
+msgid "adminV2.domains.field.showDomainsHint"
+msgstr ""
+"Os usuários que abrem sua página neste domínio veem as configs destes "
+"domínios."
+
+msgid "adminV2.domains.field.tlsMode"
+msgstr "Modo TLS"
+
+msgid "adminV2.domains.getCert"
+msgstr "Obter certificado"
+
+msgid "adminV2.domains.howto"
+msgstr ""
+"A ordem importa: arraste (ou use as setas) para ordenar. As configs listam "
+"os domínios nesta ordem, e o primeiro é usado para os links do painel."
+
+msgid "adminV2.domains.howtoFiltered"
+msgstr "Limpe a pesquisa e os filtros para alterar a ordem."
+
+msgid "adminV2.domains.ips.elsewhere"
+msgstr "outro servidor / CDN"
+
+msgid "adminV2.domains.ips.none"
+msgstr "Nenhum registro DNS encontrado para este domínio."
+
+msgid "adminV2.domains.ips.thisServer"
+msgstr "este servidor"
+
+msgid "adminV2.domains.ips.title"
+msgstr "Para onde aponta (DNS)"
+
+msgid "adminV2.domains.kind.cdn.desc"
+msgstr ""
+"Seu domínio passa por uma CDN como a Cloudflare (nuvem laranja / proxy "
+"ativado). Oculta o IP deste servidor e continua funcionando quando o IP é "
+"bloqueado."
+
+msgid "adminV2.domains.kind.cdn.name"
+msgstr "CDN"
+
+msgid "adminV2.domains.kind.direct.desc"
+msgstr ""
+"Seu domínio aponta diretamente para o IP deste servidor. Se estiver na "
+"Cloudflare (ou DNS semelhante), mantenha a nuvem desativada: somente DNS."
+
+msgid "adminV2.domains.kind.direct.name"
+msgstr "Direct"
+
+msgid "adminV2.domains.kind.relay.desc"
+msgstr ""
+"Os usuários se conectam a outro servidor intermediário, que repassa o "
+"tráfego para este. O domínio aponta para esse servidor intermediário."
+
+msgid "adminV2.domains.kind.relay.name"
+msgstr "Relay"
+
+msgid "adminV2.domains.kind.sublink.desc"
+msgstr ""
+"Somente para os links de assinatura dos usuários, sem proxies. O ideal é "
+"ficar atrás de uma CDN: se seus domínios de proxy forem bloqueados, os "
+"usuários ainda podem atualizar a assinatura e receber novas configs "
+"funcionais."
+
+msgid "adminV2.domains.kind.sublink.name"
+msgstr "Somente assinatura"
+
+msgid "adminV2.domains.kind.worker.desc"
+msgstr "Cloudflare workers são criados automaticamente para este domínio."
+
+msgid "adminV2.domains.kind.worker.name"
+msgstr "Cloudflare Worker"
+
+msgid "adminV2.domains.more"
+msgstr "Mais"
+
+msgid "adminV2.domains.moveDown"
+msgstr "Mover para baixo"
+
+msgid "adminV2.domains.moveUp"
+msgstr "Mover para cima"
+
+msgid "adminV2.domains.noMatch"
+msgstr "Nenhum domínio corresponde aos filtros"
+
+msgid "adminV2.domains.noName"
+msgstr "(sem nome)"
+
+msgid "adminV2.domains.notChanged"
+msgstr "Não alterado"
+
+msgid "adminV2.domains.openPanel"
+msgstr "Abrir o painel neste domínio"
+
+msgid "adminV2.domains.port.busy"
+msgstr "outro programa a utiliza ({name})"
+
+msgid "adminV2.domains.port.checking"
+msgstr "verificando…"
+
+msgid "adminV2.domains.port.default"
+msgstr "padrão"
+
+msgid "adminV2.domains.port.free"
+msgstr "livre"
+
+msgid "adminV2.domains.port.invalid"
+msgstr "não é uma porta válida"
+
+msgid "adminV2.domains.port.system"
+msgstr "uma porta do sistema"
+
+msgid "adminV2.domains.port.unknown"
+msgstr "não foi possível verificar esta porta"
+
+msgid "adminV2.domains.port.usedByDomain"
+msgstr "usada por {name} para o outro protocolo"
+
+msgid "adminV2.domains.port.usedByGateway.http"
+msgstr "uma porta de gateway HTTP"
+
+msgid "adminV2.domains.port.usedByGateway.tls"
+msgstr "uma porta de gateway TLS"
+
+msgid "adminV2.domains.port.usedByProxy"
+msgstr "usada pelo proxy {name}"
+
+msgid "adminV2.domains.port.usedBySetting"
+msgstr "usada por {name}"
+
+msgid "adminV2.domains.proxies.auto"
+msgstr "Automático"
+
+msgid "adminV2.domains.proxies.autoHint"
+msgstr "Todos os proxies que combinam com este domínio"
+
+msgid "adminV2.domains.proxies.autoShort"
+msgstr "automático"
+
+msgid "adminV2.domains.proxies.group.ip"
+msgstr "Baseado em IP"
+
+msgid "adminV2.domains.proxies.group.l7"
+msgstr "Gateway L7"
+
+msgid "adminV2.domains.proxies.group.sni"
+msgstr "Gateway SNI"
+
+msgid "adminV2.domains.proxies.noneFit"
+msgstr ""
+"Nenhum proxy personalizado combina com este tipo de domínio; os proxies "
+"integrados são usados."
+
+msgid "adminV2.domains.proxies.noneTicked"
+msgstr "Nada escolhido: funciona como Automático."
+
+msgid "adminV2.domains.proxies.off"
+msgstr "desativado"
+
+msgid "adminV2.domains.proxies.pick"
+msgstr "Escolher"
+
+msgid "adminV2.domains.proxies.pickHint"
+msgstr "Somente os proxies que você escolher"
+
+msgid "adminV2.domains.proxies.rule"
+msgstr ""
+"Um proxy SNI ou proxies L7; os dois não podem ser misturados. Os baseados em"
+" IP combinam com qualquer um."
+
+msgid "adminV2.domains.proxies.selectAll"
+msgstr "Selecionar tudo"
+
+msgid "adminV2.domains.proxies.selectNone"
+msgstr "Desmarcar tudo"
+
+msgid "adminV2.domains.proxies.sniOne"
+msgstr " · no máximo um"
+
+msgid "adminV2.domains.readMore"
+msgstr "Saiba mais"
+
+msgid "adminV2.domains.renewCert"
+msgstr "Renovar certificado"
+
+msgid "adminV2.domains.saved"
+msgstr "{name} salvo"
+
+msgid "adminV2.domains.search"
+msgstr "Pesquisar domínio ou nome"
+
+msgid "adminV2.domains.stats.all"
+msgstr "domínios"
+
+msgid "adminV2.domains.stats.attention"
+msgstr "precisam de certificado"
+
+msgid "adminV2.domains.stats.decoy"
+msgstr "TLS isca"
+
+msgid "adminV2.domains.stats.valid"
+msgstr "certificados OK"
+
+msgid "adminV2.domains.subtitle"
+msgstr ""
+"Os endereços aos quais os usuários se conectam, como cada um chega a este "
+"servidor e seus certificados"
+
+msgid "adminV2.domains.title"
+msgstr "Domínios"
+
+msgid "adminV2.domains.tls.decoy"
+msgstr "TLS isca"
+
+msgid "adminV2.domains.tls.decoyHint"
+msgstr "Domínios TLS Fake e Reality não precisam de certificado próprio."
+
+msgid "adminV2.domains.tls.expired"
+msgstr "Expirado"
+
+msgid "adminV2.domains.tls.expiredHint"
+msgstr "O certificado expirou."
+
+msgid "adminV2.domains.tls.expires"
+msgstr "Expira em"
+
+msgid "adminV2.domains.tls.expiresIn"
+msgstr "{n} dias restantes"
+
+msgid "adminV2.domains.tls.invalid"
+msgstr "Inválido"
+
+msgid "adminV2.domains.tls.invalidHint"
+msgstr "O certificado não corresponde a este domínio."
+
+msgid "adminV2.domains.tls.issuer"
+msgstr "Emissor"
+
+msgid "adminV2.domains.tls.missing"
+msgstr "Sem certificado"
+
+msgid "adminV2.domains.tls.missingHint"
+msgstr "Ainda não há certificado."
+
+msgid "adminV2.domains.tls.running"
+msgstr "Obtendo certificado"
+
+msgid "adminV2.domains.tls.self_signed"
+msgstr "Autoassinado"
+
+msgid "adminV2.domains.tls.self_signedHint"
+msgstr ""
+"Um certificado autoassinado temporário: os apps avisam ou recusam. Obtenha "
+"um real."
+
+msgid "adminV2.domains.tls.valid"
+msgstr "Válido"
+
+msgid "adminV2.domains.tls.validHint"
+msgstr "Um certificado real; é renovado automaticamente."
+
+msgid "adminV2.domains.tlsMode.dns"
+msgstr "DNS"
+
+msgid "adminV2.domains.tlsMode.dnsHint"
+msgstr "Somente túnel DNS."
+
+msgid "adminV2.domains.tlsMode.fake"
+msgstr "Fake"
+
+msgid "adminV2.domains.tlsMode.fakeHint"
+msgstr ""
+"TLS isca com o nome de um site falso (ex.: soft98.ir) para passar por uma "
+"whitelist de SNI. Não recomendado."
+
+msgid "adminV2.domains.tlsMode.fakeProxyNote"
+msgstr ""
+"Este domínio é o nome fake-TLS de um servidor integrado e acompanha a "
+"configuração dele. Não tem proxies personalizados nem domínio de download."
+
+msgid "adminV2.domains.tlsMode.locked"
+msgstr "Este modo sempre usa um certificado válido."
+
+msgid "adminV2.domains.tlsMode.other"
+msgstr "Outro"
+
+msgid "adminV2.domains.tlsMode.otherHint"
+msgstr ""
+"Domínios de fachada fake-TLS dos servidores Telegram, ShadowTLS e "
+"Shadowsocks FakeTLS. Um de cada."
+
+msgid "adminV2.domains.tlsMode.reality"
+msgstr "Reality"
+
+msgid "adminV2.domains.tlsMode.realityHint"
+msgstr ""
+"Toma emprestado o TLS de outro site com o protocolo Reality; você pode ter "
+"vários desses domínios."
+
+msgid "adminV2.domains.tlsMode.shadowtls"
+msgstr "ShadowTLS"
+
+msgid "adminV2.domains.tlsMode.shadowtlsHint"
+msgstr "Domínio falso do servidor ShadowTLS."
+
+msgid "adminV2.domains.tlsMode.ssfaketls"
+msgstr "SS FakeTLS"
+
+msgid "adminV2.domains.tlsMode.ssfaketlsHint"
+msgstr "Domínio falso do servidor Shadowsocks FakeTLS."
+
+msgid "adminV2.domains.tlsMode.taken"
+msgstr "Já adicionado"
+
+msgid "adminV2.domains.tlsMode.telegram"
+msgstr "Proxy do Telegram"
+
+msgid "adminV2.domains.tlsMode.telegramHint"
+msgstr "Domínio falso do MTProxy do Telegram."
+
+msgid "adminV2.domains.tlsMode.valid"
+msgstr "TLS válido"
+
+msgid "adminV2.domains.tlsMode.validHint"
+msgstr "Um certificado real, emitido automaticamente."
+
+msgid "adminV2.domains.warning"
+msgstr "Salvo, com um aviso"
+
+msgid "adminV2.domains.wizard.add"
+msgstr "Adicionar domínio"
+
+msgid "adminV2.domains.wizard.added"
+msgstr "{name} adicionado"
+
+msgid "adminV2.domains.wizard.aliasLead"
+msgstr "Um nome curto exibido nos apps para as configs deste domínio."
+
+msgid "adminV2.domains.wizard.aliasQ"
+msgstr "O que os usuários devem ver?"
+
+msgid "adminV2.domains.wizard.check"
+msgstr "Verificar"
+
+msgid "adminV2.domains.wizard.checking"
+msgstr "Verificando DNS…"
+
+msgid "adminV2.domains.wizard.continueBackground"
+msgstr "Fechar (continua em segundo plano)"
+
+msgid "adminV2.domains.wizard.dnsHint"
+msgstr ""
+"No seu DNS, adicione o registro abaixo para este domínio (o valor é o "
+"endereço deste servidor)."
+
+msgid "adminV2.domains.wizard.dnsTitle"
+msgstr "Aponte-o para este servidor"
+
+msgid "adminV2.domains.wizard.finish"
+msgstr "Concluído"
+
+msgid "adminV2.domains.wizard.found.cdn"
+msgstr "Está atrás de {cdn}."
+
+msgid "adminV2.domains.wizard.found.direct"
+msgstr "Aponta diretamente para este servidor ({ips})."
+
+msgid "adminV2.domains.wizard.found.external"
+msgstr ""
+"Aponta para outro servidor ({ips}): bom para Reality, um relay ou Fake TLS."
+
+msgid "adminV2.domains.wizard.found.externalNotFriendly"
+msgstr ""
+"Aponta para outro servidor ({ips}), mas esse site não é compatível com "
+"Reality (requer TLS 1.3 e HTTP/2)."
+
+msgid "adminV2.domains.wizard.found.unresolved"
+msgstr ""
+"Ainda não tem registro DNS. Adicione-o primeiro no seu provedor de DNS ou "
+"use-o com Fake TLS."
+
+msgid "adminV2.domains.wizard.mismatch.cdn"
+msgstr ""
+"O domínio não parece estar atrás de uma CDN. Ative o modo proxy no seu "
+"provedor de CDN."
+
+msgid "adminV2.domains.wizard.mismatch.direct"
+msgstr ""
+"Direct exige que o domínio aponte para o IP deste servidor. Ao salvar, isso "
+"é verificado novamente."
+
+msgid "adminV2.domains.wizard.mismatch.reality"
+msgstr "Reality precisa de um site real que seja resolvido."
+
+msgid "adminV2.domains.wizard.mismatch.relay"
+msgstr ""
+"Um domínio relay aponta para o servidor intermediário, não para este "
+"servidor."
+
+msgid "adminV2.domains.wizard.mismatch.sublink"
+msgstr "O domínio deve apontar para este servidor ou para uma CDN."
+
+msgid "adminV2.domains.wizard.mismatch.worker"
+msgstr "Workers exigem o domínio na Cloudflare."
+
+msgid "adminV2.domains.wizard.modeQ"
+msgstr "Como está configurado?"
+
+msgid "adminV2.domains.wizard.moreSettings"
+msgstr "Mais configurações"
+
+msgid "adminV2.domains.wizard.nameLead"
+msgstr ""
+"Digite o domínio ou subdomínio. Verificamos o DNS dele para sugerir o modo "
+"certo."
+
+msgid "adminV2.domains.wizard.nameQ"
+msgstr "Qual domínio?"
+
+msgid "adminV2.domains.wizard.next"
+msgstr "Próximo"
+
+msgid "adminV2.domains.wizard.noCert"
+msgstr "Não foi necessário solicitar certificado."
+
+msgid "adminV2.domains.wizard.noCertDecoy"
+msgstr ""
+"TLS Fake e Reality não precisam de certificado. Aplique as alterações para "
+"começar a usá-lo."
+
+msgid "adminV2.domains.wizard.recommended"
+msgstr "combina"
+
+msgid "adminV2.domains.wizard.saving"
+msgstr "Salvando e verificando…"
+
+msgid "adminV2.domains.wizard.steps.alias"
+msgstr "Nome"
+
+msgid "adminV2.domains.wizard.steps.cert"
+msgstr "Certificado"
+
+msgid "adminV2.domains.wizard.steps.mode"
+msgstr "Modo"
+
+msgid "adminV2.domains.wizard.steps.name"
+msgstr "Domínio"
+
+msgid "adminV2.domains.wizard.taken"
+msgstr "Este domínio já foi adicionado"
+
+msgid "adminV2.domains.wizard.title"
+msgstr "Adicionar um domínio"
+
+msgid "adminV2.domains.wizard.tlsQ"
+msgstr "Qual TLS?"
+
+msgid "adminV2.domains.wizard.unlikely"
+msgstr "O DNS não corresponde"
+
+msgid "adminV2.donation.close"
+msgstr "Fechar"
+
+msgid "adminV2.donation.copied"
+msgstr "Endereço {name} copiado"
+
+msgid "adminV2.donation.copiedShort"
+msgstr "Copiado"
+
+msgid "adminV2.donation.qr"
+msgstr "QR code"
+
+msgid "adminV2.donation.qrOf"
+msgstr "QR code do endereço {name}"
+
+msgid "adminV2.donation.showQr"
+msgstr "Mostrar QR code de {name}"
+
+msgid "adminV2.donation.title"
+msgstr "Doação"
+
+msgid "adminV2.editor.cannotFormatJinja"
+msgstr "Não é possível formatar automaticamente enquanto houver tags Jinja"
+
+msgid "adminV2.editor.excludeBuiltinTemplates"
+msgstr "Excluir templates integrados da exportação"
+
+msgid "adminV2.editor.exportBundle"
+msgstr "Exportar pacote"
+
+msgid "adminV2.editor.includeTemplate"
+msgstr "Incluir template"
+
+msgid "adminV2.editor.insertVariable"
+msgstr "Inserir variável"
+
+msgid "adminV2.editor.jinjaHint"
+msgstr ""
+"JSON5 + Jinja: use {{ proxy.port }}, {{ proxy.tag }}, {% for %}…{% endfor %}"
+
+msgid "adminV2.editor.loadFailed"
+msgstr ""
+"Não foi possível carregar o editor. Verifique sua conexão e recarregue a "
+"página."
+
+msgid "adminV2.editor.loading"
+msgstr "Carregando editor…"
+
+msgid "adminV2.editor.noVariables"
+msgstr "Nenhuma variável corresponde à sua pesquisa"
+
+msgid "adminV2.editor.preview"
+msgstr "Pré-visualizar"
+
+msgid "adminV2.editor.previewFailed"
+msgstr "Falha na solicitação de pré-visualização"
+
+msgid "adminV2.editor.previewOk"
+msgstr "Pré-visualização gerada com sucesso"
+
+msgid "adminV2.editor.previewParams"
+msgstr "Parâmetros da pré-visualização"
+
+msgid "adminV2.editor.previewPartial"
+msgstr "Pré-visualização gerada com avisos"
+
+msgid "adminV2.editor.previewTitle"
+msgstr "Pré-visualização do template"
+
+msgid "adminV2.footer.text"
+msgstr "HiddifyManager"
+
+msgid "adminV2.legacy.loading"
+msgstr "Carregando…"
+
+msgid "adminV2.legacy.refresh"
+msgstr "Atualizar"
+
+msgid "adminV2.legacy.title"
+msgstr "Página de administração clássica"
+
+msgid "adminV2.linkShare.copyLink"
+msgstr "Copiar link"
+
+msgid "adminV2.linkShare.domain"
+msgstr "Domínio"
+
+msgid "adminV2.linkShare.download"
+msgstr "Baixar"
+
+msgid "adminV2.linkShare.kind.auto"
+msgstr "CDN automática"
+
+msgid "adminV2.linkShare.kind.cdn"
+msgstr "CDN"
+
+msgid "adminV2.linkShare.kind.current"
+msgstr "Atual"
+
+msgid "adminV2.linkShare.link"
+msgstr "Link"
+
+msgid "adminV2.linkShare.open"
+msgstr "Abrir"
+
+msgid "adminV2.login.brand"
+msgstr "Hiddify"
+
+msgid "adminV2.login.error_expired"
+msgstr "Esta página ficou aberta por muito tempo. Entre novamente."
+
+msgid "adminV2.login.error_invalid"
+msgstr ""
+"O ID, o nome de usuário ou a senha não estão corretos. Verifique e tente "
+"novamente."
+
+msgid "adminV2.login.error_locked"
+msgstr ""
+"Muitas tentativas a partir da sua rede. Aguarde 15 minutos e tente "
+"novamente."
+
+msgid "adminV2.login.hide"
+msgstr "Ocultar senha"
+
+msgid "adminV2.login.pageTitle"
+msgstr "Entrar"
+
+msgid "adminV2.login.password"
+msgstr "Senha"
+
+msgid "adminV2.login.passwordHint"
+msgstr "Deixe vazio se o seu link de administrador não tiver senha."
+
+msgid "adminV2.login.passwordPlaceholder"
+msgstr "Sua senha"
+
+msgid "adminV2.login.show"
+msgstr "Mostrar senha"
+
+msgid "adminV2.login.signingIn"
+msgstr "Entrando…"
+
+msgid "adminV2.login.submit"
+msgstr "Entrar"
+
+msgid "adminV2.login.subtitle"
+msgstr "Painel de administração"
+
+msgid "adminV2.login.tipLink"
+msgstr "Abrir seu link de administrador preenche seu ID automaticamente."
+
+msgid "adminV2.login.tipLost"
+msgstr ""
+"Perdeu sua senha? Peça ao administrador que o adicionou para redefini-la."
+
+msgid "adminV2.login.title"
+msgstr "Bem-vindo de volta"
+
+msgid "adminV2.login.username"
+msgstr "ID ou nome de usuário do administrador"
+
+msgid "adminV2.login.usernameHint"
+msgstr ""
+"O ID do seu link de administrador, ou o nome de usuário que lhe foi dado."
+
+msgid "adminV2.login.usernamePlaceholder"
+msgstr "xxxxxxxx-xxxx-… ou seu nome de usuário"
+
+msgid "adminV2.menu.baseConfigs"
+msgstr "Configs base"
+
+msgid "adminV2.menu.customProxies"
+msgstr "Proxies"
+
+msgid "adminV2.menu.dashboard"
+msgstr "Painel"
+
+msgid "adminV2.menu.group.help"
+msgstr "Ajuda"
+
+msgid "adminV2.menu.group.manager"
+msgstr "Gerenciador"
+
+msgid "adminV2.menu.group.settings"
+msgstr "Configurações"
+
+msgid "adminV2.menu.myAccount"
+msgstr "Minha conta"
+
+msgid "adminV2.menu.nodeHome"
+msgstr "Nó"
+
+msgid "adminV2.menu.outbounds"
+msgstr "Outbounds"
+
+msgid "adminV2.menu.protocols"
+msgstr "Protocolos"
+
+msgid "adminV2.menu.proxyEditor"
+msgstr "Editor de proxy"
+
+msgid "adminV2.menu.signOut"
+msgstr "Sair"
+
+msgid "adminV2.menu.templateVariables"
+msgstr "Variáveis de template"
+
+msgid "adminV2.menu.templates"
+msgstr "Templates"
+
+msgid "adminV2.menu.utils"
+msgstr "Utilitários"
+
+msgid "adminV2.nodeHome.connectedTo"
+msgstr "Este nó está conectado ao painel pai"
+
+msgid "adminV2.nodeHome.managedOnParent"
+msgstr ""
+"Usuários, administradores e o painel são gerenciados no painel pai. Aqui "
+"você gerencia apenas os domínios, proxies e o servidor deste nó."
+
+msgid "adminV2.nodeHome.noParent"
+msgstr "Este nó ainda não está conectado a um painel pai."
+
+msgid "adminV2.nodeHome.openParent"
+msgstr "Abrir painel do pai"
+
+msgid "adminV2.nodeHome.subtitle"
+msgstr "Este painel é um nó de um painel pai."
+
+msgid "adminV2.nodeHome.title"
+msgstr "Nó"
+
+msgid "adminV2.nodeHome.titleNamed"
+msgstr "Nó: {name}"
+
+msgid "adminV2.nodes.add.connecting"
+msgstr "Conectando ao nó… isso pode levar até um minuto."
+
+msgid "adminV2.nodes.add.linkHint"
+msgstr "Parece com https://node.example.com/…/xxxxxxxx-xxxx-…/admin/"
+
+msgid "adminV2.nodes.add.linkInvalid"
+msgstr ""
+"Isto não parece um link de administrador completo. Deve começar com https://"
+" e conter o ID do administrador."
+
+msgid "adminV2.nodes.add.linkLabel"
+msgstr "Link de administrador do nó"
+
+msgid "adminV2.nodes.add.linkOk"
+msgstr "Nó em {host}"
+
+msgid "adminV2.nodes.add.nameLabel"
+msgstr "Nome"
+
+msgid "adminV2.nodes.add.namePlaceholder"
+msgstr "ex.: Alemanha 1"
+
+msgid "adminV2.nodes.add.optional"
+msgstr "opcional"
+
+msgid "adminV2.nodes.add.step1"
+msgstr "Abra o painel de administração do servidor que você quer adicionar."
+
+msgid "adminV2.nodes.add.step2"
+msgstr "Copie o endereço completo da barra de endereços do navegador."
+
+msgid "adminV2.nodes.add.step3"
+msgstr "Cole-o abaixo e pressione Conectar."
+
+msgid "adminV2.nodes.add.submit"
+msgstr "Conectar nó"
+
+msgid "adminV2.nodes.add.success"
+msgstr "Nó conectado"
+
+msgid "adminV2.nodes.add.title"
+msgstr "Adicionar um nó"
+
+msgid "adminV2.nodes.addNode"
+msgstr "Adicionar nó"
+
+msgid "adminV2.nodes.checkConnection"
+msgstr "Verificar conexão"
+
+msgid "adminV2.nodes.checking"
+msgstr "Verificando…"
+
+msgid "adminV2.nodes.connection"
+msgstr "Conexão"
+
+msgid "adminV2.nodes.differentVersion"
+msgstr ""
+"O nó executa {node}, este painel executa {panel}. Mantenha-os na mesma "
+"versão."
+
+msgid "adminV2.nodes.empty.cta"
+msgstr "Adicione seu primeiro nó"
+
+msgid "adminV2.nodes.empty.point1"
+msgstr "Usuários e administradores são sincronizados automaticamente"
+
+msgid "adminV2.nodes.empty.point2"
+msgstr "O uso é coletado aqui"
+
+msgid "adminV2.nodes.empty.point3"
+msgstr "Um clique para abrir a administração de cada nó"
+
+msgid "adminV2.nodes.empty.text"
+msgstr ""
+"Adicione outro servidor Hiddify como nó para gerenciar todos os seus "
+"servidores a partir deste painel."
+
+msgid "adminV2.nodes.empty.title"
+msgstr "Ainda não há nós"
+
+msgid "adminV2.nodes.errors.invalid_link"
+msgstr "O link não é um link de administrador válido."
+
+msgid "adminV2.nodes.errors.rejected"
+msgstr ""
+"O nó recusou a conexão. Ele pode já pertencer a outro painel pai, ou sua "
+"versão é muito antiga."
+
+msgid "adminV2.nodes.errors.self"
+msgstr "Este é o link deste painel. Use o link do servidor do nó."
+
+msgid "adminV2.nodes.errors.timeout"
+msgstr "O nó demorou demais para responder. Verifique-o e tente novamente."
+
+msgid "adminV2.nodes.errors.unreachable"
+msgstr ""
+"Não foi possível acessar o nó. Verifique o link e se o nó está online."
+
+msgid "adminV2.nodes.info.fromNode"
+msgstr "Última mensagem do nó"
+
+msgid "adminV2.nodes.info.lastUsage"
+msgstr "Última atualização de uso dos usuários"
+
+msgid "adminV2.nodes.info.noUsageYet"
+msgstr "Nenhum uso informado ainda"
+
+msgid "adminV2.nodes.info.toNode"
+msgstr "Última mensagem para o nó"
+
+msgid "adminV2.nodes.info.todayOnline"
+msgstr "Usuários online hoje"
+
+msgid "adminV2.nodes.info.todayTraffic"
+msgstr "Tráfego hoje"
+
+msgid "adminV2.nodes.info.usageReport"
+msgstr ""
+"{users} usuário com tráfego, {traffic} | {users} usuários com tráfego, "
+"{traffic}"
+
+msgid "adminV2.nodes.justNow"
+msgstr "Agora mesmo"
+
+msgid "adminV2.nodes.lastSeen"
+msgstr "Último contato"
+
+msgid "adminV2.nodes.moreInfo"
+msgstr "Mais informações"
+
+msgid "adminV2.nodes.neverSeen"
+msgstr "Nunca"
+
+msgid "adminV2.nodes.openAdmin"
+msgstr "Abrir"
+
+msgid "adminV2.nodes.reachable"
+msgstr "Acessível"
+
+msgid "adminV2.nodes.refresh"
+msgstr "Atualizar"
+
+msgid "adminV2.nodes.remove"
+msgstr "Remover"
+
+msgid "adminV2.nodes.removeMessage"
+msgstr ""
+"O nó é removido deste painel junto com seus domínios e volta a ser um painel"
+" independente (o link do pai é apagado). Para conectá-lo depois, adicione-o "
+"novamente."
+
+msgid "adminV2.nodes.removeTitle"
+msgstr "Remover {name}?"
+
+msgid "adminV2.nodes.removed"
+msgstr "{name} removido"
+
+msgid "adminV2.nodes.removedNotUnlinked"
+msgstr ""
+"Não foi possível acessar o nó, então ele ainda tem este painel como pai. "
+"Limpe o link do pai nas configurações dele, ou ele continuará tentando "
+"sincronizar."
+
+msgid "adminV2.nodes.rename"
+msgstr "Renomear"
+
+msgid "adminV2.nodes.renamed"
+msgstr "Renomeado para {name}"
+
+msgid "adminV2.nodes.renamedHereOnly"
+msgstr "Renomeado para {name} somente neste painel"
+
+msgid "adminV2.nodes.renamedHereOnlyDetail"
+msgstr ""
+"Não foi possível acessar o nó ou ele é muito antigo para aceitar o nome; "
+"pode exibir o nome antigo depois de se registrar novamente."
+
+msgid "adminV2.nodes.sameVersion"
+msgstr "Mesma versão deste painel"
+
+msgid "adminV2.nodes.showLess"
+msgstr "Mostrar menos"
+
+msgid "adminV2.nodes.status.late"
+msgstr "Atrasado"
+
+msgid "adminV2.nodes.status.never"
+msgstr "Ainda não conectado"
+
+msgid "adminV2.nodes.status.offline"
+msgstr "Offline"
+
+msgid "adminV2.nodes.status.online"
+msgstr "Online"
+
+msgid "adminV2.nodes.subtitle"
+msgstr ""
+"Outros servidores Hiddify conectados a este painel. Usuários e "
+"administradores são compartilhados com eles automaticamente."
+
+msgid "adminV2.nodes.syncFailed"
+msgstr "Não foi possível sincronizar {name}"
+
+msgid "adminV2.nodes.syncNow"
+msgstr "Sincronizar agora"
+
+msgid "adminV2.nodes.synced"
+msgstr "{name} sincronizado"
+
+msgid "adminV2.nodes.title"
+msgstr "Nós"
+
+msgid "adminV2.nodes.unreachable"
+msgstr "Inacessível"
+
+msgid "adminV2.outbounds.add"
+msgstr "Adicionar outbound"
+
+msgid "adminV2.outbounds.count.geosites"
+msgstr "geosite | geosites"
+
+msgid "adminV2.outbounds.count.rule_sets"
+msgstr "rule-set | rule-sets"
+
+msgid "adminV2.outbounds.count.sites"
+msgstr "site | sites"
+
+msgid "adminV2.outbounds.default"
+msgstr "Padrão"
+
+msgid "adminV2.outbounds.defaultHint"
+msgstr "O último outbound ativado: tudo que não for roteado acima vai para cá"
+
+msgid "adminV2.outbounds.deleteMessage"
+msgstr "A partir de agora, os sites dele vão para o outbound padrão."
+
+msgid "adminV2.outbounds.deleteMessageDefault"
+msgstr ""
+"Este é o outbound padrão: o outbound ativado acima dele passa a ser o "
+"padrão."
+
+msgid "adminV2.outbounds.deleteTitle"
+msgstr "Excluir {name}?"
+
+msgid "adminV2.outbounds.deleted"
+msgstr "{name} excluído"
+
+msgid "adminV2.outbounds.dialog.add"
+msgstr "Adicionar outbound"
+
+msgid "adminV2.outbounds.dialog.addTitle"
+msgstr "Adicionar outbound {mode}"
+
+msgid "adminV2.outbounds.dialog.config"
+msgstr "JSON"
+
+msgid "adminV2.outbounds.dialog.configBridge"
+msgstr ""
+"O painel o chamou de \"{tag}\"; o roteamento usa essa tag e o outro core se "
+"conecta a ele em 127.0.0.1:{port}."
+
+msgid "adminV2.outbounds.dialog.configBridgeNew"
+msgstr ""
+"O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o "
+"roteamento a usa e o outro core se conecta a ele por uma ponte SOCKS local."
+
+msgid "adminV2.outbounds.dialog.configExample"
+msgstr "Inserir um exemplo"
+
+msgid "adminV2.outbounds.dialog.configHint.core_endpoint"
+msgstr ""
+"Um objeto de endpoint do hiddify-core (sing-box), ex.: um endpoint "
+"WireGuard. É verificado pelo hiddify-core antes de salvar."
+
+msgid "adminV2.outbounds.dialog.configHint.core_outbound"
+msgstr ""
+"Um objeto de outbound do hiddify-core (sing-box), ex.: {\"type\": \"socks\","
+" \"server\": \"…\", \"server_port\": 1080}. É verificado pelo hiddify-core "
+"antes de salvar."
+
+msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
+msgstr ""
+"Um objeto de outbound do xray, ex.: {\"protocol\": \"socks\", \"settings\": "
+"{…}}. É verificado pelo xray antes de salvar."
+
+msgid "adminV2.outbounds.dialog.configInvalid"
+msgstr "JSON inválido: {error}"
+
+msgid "adminV2.outbounds.dialog.configRequired"
+msgstr "O JSON é obrigatório"
+
+msgid "adminV2.outbounds.dialog.domestic"
+msgstr "Sites domésticos de {region}"
+
+msgid "adminV2.outbounds.dialog.editTitle"
+msgstr "Editar {name}"
+
+msgid "adminV2.outbounds.dialog.endpoint"
+msgstr "Conexão"
+
+msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
+msgstr ""
+"Executa dentro do hiddify-core. O xray o acessa pela porta SOCKS local "
+"{endpoint}."
+
+msgid "adminV2.outbounds.dialog.endpointHint.tor"
+msgstr ""
+"Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste "
+"servidor). O xray o acessa pela porta SOCKS local {endpoint}."
+
+msgid "adminV2.outbounds.dialog.host"
+msgstr "Host"
+
+msgid "adminV2.outbounds.dialog.name"
+msgstr "Nome"
+
+msgid "adminV2.outbounds.dialog.nameRequired"
+msgstr "O nome é obrigatório"
+
+msgid "adminV2.outbounds.dialog.optional"
+msgstr "opcional"
+
+msgid "adminV2.outbounds.dialog.password"
+msgstr "Senha"
+
+msgid "adminV2.outbounds.dialog.passwordKeep"
+msgstr "Deixe vazio para manter a senha atual"
+
+msgid "adminV2.outbounds.dialog.port"
+msgstr "Porta"
+
+msgid "adminV2.outbounds.dialog.routes"
+msgstr "O que passa por ele"
+
+msgid "adminV2.outbounds.dialog.routesHint"
+msgstr "O tráfego para estes sites sai por este outbound."
+
+msgid "adminV2.outbounds.dialog.routesHintDefault"
+msgstr ""
+"Este é o padrão (o último outbound ativado): tudo que não for roteado acima "
+"já vai para cá, então não precisa de listas. Elas voltam a ser usadas se "
+"você o mover para cima."
+
+msgid "adminV2.outbounds.dialog.username"
+msgstr "Nome de usuário"
+
+msgid "adminV2.outbounds.disable"
+msgstr "Desativar"
+
+msgid "adminV2.outbounds.domesticChip"
+msgstr "Doméstico ({region})"
+
+msgid "adminV2.outbounds.drag"
+msgstr "Arraste para alterar a ordem"
+
+msgid "adminV2.outbounds.edited"
+msgstr "Editado aqui: as atualizações mantêm suas listas"
+
+msgid "adminV2.outbounds.enable"
+msgstr "Ativar"
+
+msgid "adminV2.outbounds.enabled"
+msgstr "Ativado"
+
+msgid "adminV2.outbounds.everythingElse"
+msgstr "Todo o resto vai para cá"
+
+msgid "adminV2.outbounds.followsDefaults"
+msgstr "Usa as listas integradas, atualizadas a cada upgrade"
+
+msgid "adminV2.outbounds.howto"
+msgstr ""
+"Os outbounds são verificados de cima para baixo: o tráfego sai pelo primeiro"
+" que listar o site. O último outbound ativado é o padrão e recebe todo o "
+"resto. Arraste ou use as setas para alterar a ordem."
+
+msgid "adminV2.outbounds.idle"
+msgstr "Não utilizado"
+
+msgid "adminV2.outbounds.idleHint"
+msgstr ""
+"Não tem sites, geosites nem rule-sets, então nada passa por ele. Edite-o "
+"para adicionar alguns ou mova-o para o final para torná-lo o padrão."
+
+msgid "adminV2.outbounds.list.browse"
+msgstr "Procurar rule-sets"
+
+msgid "adminV2.outbounds.list.geosites"
+msgstr "Geosites / GeoIPs (xray)"
+
+msgid "adminV2.outbounds.list.geositesHint"
+msgstr ""
+"Uma entrada do xray por linha com seu prefixo: geosite:google ou geoip:ir "
+"(um nome sem prefixo significa geosite:). Uma tag desconhecida faz o xray "
+"parar, então use as conhecidas."
+
+msgid "adminV2.outbounds.list.geositesPlaceholder"
+msgstr ""
+"geosite:google\n"
+"geoip:ir"
+
+msgid "adminV2.outbounds.list.rule_sets"
+msgstr "Rule-sets (hiddify-core)"
+
+msgid "adminV2.outbounds.list.rule_setsHint"
+msgstr ""
+"Uma URL de rule-set por linha (.srs ou fonte .json). Digitar um nome do "
+"SagerNet como geosite-netflix o converte na URL correspondente."
+
+msgid "adminV2.outbounds.list.rule_setsPlaceholder"
+msgstr ""
+"https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-"
+"netflix.srs"
+
+msgid "adminV2.outbounds.list.sites"
+msgstr "Sites"
+
+msgid "adminV2.outbounds.list.sitesHint"
+msgstr "Um domínio por linha; os subdomínios estão incluídos."
+
+msgid "adminV2.outbounds.list.sitesPlaceholder"
+msgstr "example.com"
+
+msgid "adminV2.outbounds.makeDefault"
+msgstr "Tornar padrão (mover para o final)"
+
+msgid "adminV2.outbounds.mode.block"
+msgstr "Bloquear"
+
+msgid "adminV2.outbounds.mode.core_endpoint"
+msgstr "Endpoint do hiddify-core (sing-box)"
+
+msgid "adminV2.outbounds.mode.core_outbound"
+msgstr "Outbound do hiddify-core (sing-box)"
+
+msgid "adminV2.outbounds.mode.direct"
+msgstr "Direct"
+
+msgid "adminV2.outbounds.mode.psiphon"
+msgstr "Psiphon"
+
+msgid "adminV2.outbounds.mode.socks"
+msgstr "SOCKS"
+
+msgid "adminV2.outbounds.mode.tor"
+msgstr "Tor"
+
+msgid "adminV2.outbounds.mode.warp"
+msgstr "WARP"
+
+msgid "adminV2.outbounds.mode.xray_outbound"
+msgstr "Outbound do xray"
+
+msgid "adminV2.outbounds.modeHint.block"
+msgstr "Descartado"
+
+msgid "adminV2.outbounds.modeHint.core_endpoint"
+msgstr ""
+"Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa"
+" por uma ponte SOCKS local"
+
+msgid "adminV2.outbounds.modeHint.core_outbound"
+msgstr ""
+"Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte "
+"SOCKS local"
+
+msgid "adminV2.outbounds.modeHint.direct"
+msgstr "Direto deste servidor"
+
+msgid "adminV2.outbounds.modeHint.psiphon"
+msgstr "Via Psiphon (executado pelo hiddify-core)"
+
+msgid "adminV2.outbounds.modeHint.socks"
+msgstr "Via um proxy SOCKS5"
+
+msgid "adminV2.outbounds.modeHint.tor"
+msgstr "Via rede Tor (executada pelo hiddify-core)"
+
+msgid "adminV2.outbounds.modeHint.warp"
+msgstr "Via Cloudflare WARP neste servidor"
+
+msgid "adminV2.outbounds.modeHint.xray_outbound"
+msgstr ""
+"Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte "
+"SOCKS local"
+
+msgid "adminV2.outbounds.more"
+msgstr "Mais ações"
+
+msgid "adminV2.outbounds.moveDown"
+msgstr "Mover para baixo"
+
+msgid "adminV2.outbounds.moveUp"
+msgstr "Mover para cima"
+
+msgid "adminV2.outbounds.notChanged"
+msgstr "Não alterado"
+
+msgid "adminV2.outbounds.nowDefault"
+msgstr "{name} agora é o padrão"
+
+msgid "adminV2.outbounds.off"
+msgstr "Desativado"
+
+msgid "adminV2.outbounds.region.cn"
+msgstr "China"
+
+msgid "adminV2.outbounds.region.ir"
+msgstr "Irã"
+
+msgid "adminV2.outbounds.region.other"
+msgstr "sua região"
+
+msgid "adminV2.outbounds.region.ru"
+msgstr "Rússia"
+
+msgid "adminV2.outbounds.reset"
+msgstr "Restaurar padrões"
+
+msgid "adminV2.outbounds.resetDone"
+msgstr "{name} usa as listas integradas novamente"
+
+msgid "adminV2.outbounds.resetMessage"
+msgstr ""
+"Suas alterações nos sites, geosites e rule-sets dele serão substituídas "
+"pelas listas integradas, que as atualizações passam a manter em dia."
+
+msgid "adminV2.outbounds.resetTitle"
+msgstr "Restaurar {name} para as listas integradas?"
+
+msgid "adminV2.outbounds.saved"
+msgstr "{name} salvo"
+
+msgid "adminV2.outbounds.subtitle"
+msgstr ""
+"Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto,"
+" bloqueado ou por uma saída SOCKS, Tor ou Psiphon."
+
+msgid "adminV2.outbounds.title"
+msgstr "Outbounds"
+
+msgid "adminV2.passwordRules.common"
+msgstr "não ser uma senha comum"
+
+msgid "adminV2.passwordRules.digit"
+msgstr "um dígito"
+
+msgid "adminV2.passwordRules.label"
+msgstr "Uma senha forte precisa de"
+
+msgid "adminV2.passwordRules.length"
+msgstr "{n}+ caracteres"
+
+msgid "adminV2.passwordRules.lower"
+msgstr "uma letra minúscula"
+
+msgid "adminV2.passwordRules.name"
+msgstr "não ser seu nome ou ID"
+
+msgid "adminV2.passwordRules.upper"
+msgstr "uma letra maiúscula"
+
+msgid "adminV2.primevue.accept"
+msgstr "Sim"
+
+msgid "adminV2.primevue.apply"
+msgstr "Aplicar"
+
+msgid "adminV2.primevue.cancel"
+msgstr "Cancelar"
+
+msgid "adminV2.primevue.choose"
+msgstr "Escolher"
+
+msgid "adminV2.primevue.clear"
+msgstr "Limpar"
+
+msgid "adminV2.primevue.emptyFilterMessage"
+msgstr "Nenhum resultado encontrado"
+
+msgid "adminV2.primevue.emptyMessage"
+msgstr "Nenhuma opção disponível"
+
+msgid "adminV2.primevue.emptySearchMessage"
+msgstr "Nenhum resultado encontrado"
+
+msgid "adminV2.primevue.reject"
+msgstr "Não"
+
+msgid "adminV2.primevue.upload"
+msgstr "Enviar"
+
+msgid "adminV2.protocols.changed"
+msgstr "Alterado"
+
+msgid "adminV2.protocols.disableAll"
+msgstr "Desativar todos"
+
+msgid "adminV2.protocols.enableAll"
+msgstr "Ativar todos"
+
+msgid "adminV2.protocols.enabledOf"
+msgstr "{on} de {total} ativados"
+
+msgid "adminV2.protocols.filterAll"
+msgstr "Todos"
+
+msgid "adminV2.protocols.filterOff"
+msgstr "Desativado"
+
+msgid "adminV2.protocols.filterOn"
+msgstr "Ativado"
+
+msgid "adminV2.protocols.groups.other.hint"
+msgstr "Outras opções"
+
+msgid "adminV2.protocols.groups.other.title"
+msgstr "Outros"
+
+msgid "adminV2.protocols.groups.protocols.hint"
+msgstr "Protocolos de proxy oferecidos aos clientes"
+
+msgid "adminV2.protocols.groups.protocols.title"
+msgstr "Protocolos"
+
+msgid "adminV2.protocols.groups.security.hint"
+msgstr "Reality, truques de TLS e multiplexação"
+
+msgid "adminV2.protocols.groups.security.title"
+msgstr "Segurança e truques"
+
+msgid "adminV2.protocols.groups.transports.hint"
+msgstr "Como o tráfego é transportado (TCP, WebSocket, gRPC, …)"
+
+msgid "adminV2.protocols.groups.transports.title"
+msgstr "Transportes"
+
+msgid "adminV2.protocols.instantChip"
+msgstr "Instantâneo"
+
+msgid "adminV2.protocols.leaveUnsaved"
+msgstr "Você tem alterações não salvas. Sair mesmo assim?"
+
+msgid "adminV2.protocols.noMatch"
+msgstr "Nada corresponde à sua pesquisa."
+
+msgid "adminV2.protocols.reinstallChip"
+msgstr "Requer reinstalação"
+
+msgid "adminV2.protocols.relatedSettings"
+msgstr "Configurações"
+
+msgid "adminV2.protocols.search"
+msgstr "Pesquisar protocolos…"
+
+msgid "adminV2.protocols.subtitle"
+msgstr ""
+"Ative ou desative protocolos, transportes e truques de TLS para todo o "
+"painel."
+
+msgid "adminV2.protocols.summaryHint"
+msgstr "Toque em um cartão para alternar e depois salve."
+
+msgid "adminV2.protocols.title"
+msgstr "Protocolos"
+
+msgid "adminV2.proxy.addClient"
+msgstr "Adicionar cliente"
+
+msgid "adminV2.proxy.addClientConfig"
+msgstr "Adicionar config para este core"
+
+msgid "adminV2.proxy.addCoreConfig"
+msgstr "Adicionar config de core"
+
+msgid "adminV2.proxy.allowedProtocols"
+msgstr "Protocolos permitidos"
+
+msgid "adminV2.proxy.alpn"
+msgstr "ALPN"
+
+msgid "adminV2.proxy.alpnLabels.custom"
+msgstr "Personalizado"
+
+msgid "adminV2.proxy.alpnLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2"
+msgstr "TLS H1 + H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2_h3"
+msgstr "TLS H1 + H2 + QUIC"
+
+msgid "adminV2.proxy.alpnLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h3"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.autoClient"
+msgstr "automático"
+
+msgid "adminV2.proxy.baseConfigTemplate"
+msgstr "Substituição da config base"
+
+msgid "adminV2.proxy.baseConfigTemplateHint"
+msgstr ""
+"Shell completo opcional do cliente xray em {% block base_config %}. Deixe "
+"vazio para usar a config base global."
+
+msgid "adminV2.proxy.builtinDefaultHint"
+msgstr ""
+"Predefinição integrada sincronizada do catálogo. Ative o conteúdo "
+"personalizado nas abas Servidor ou Cliente para editar esses lados."
+
+msgid "adminV2.proxy.builtinReadOnly"
+msgstr ""
+"Predefinição integrada — só o nome e o estado de ativação podem ser "
+"alterados. Duplique para editar totalmente."
+
+msgid "adminV2.proxy.bundleContextProxyCount"
+msgstr "Proxies ativados"
+
+msgid "adminV2.proxy.cannotEnable"
+msgstr "Não é possível ativar este proxy"
+
+msgid "adminV2.proxy.categories"
+msgstr "Categorias"
+
+msgid "adminV2.proxy.categoriesAdd"
+msgstr "Adicionar categoria"
+
+msgid "adminV2.proxy.categoriesAddNew"
+msgstr "Adicionar nova"
+
+msgid "adminV2.proxy.categoriesAddPlaceholder"
+msgstr "Nova categoria"
+
+msgid "adminV2.proxy.categoriesFilter"
+msgstr "Filtrar por categorias"
+
+msgid "adminV2.proxy.categoriesHeader"
+msgstr "Categorias disponíveis"
+
+msgid "adminV2.proxy.categoriesHint"
+msgstr ""
+"Selecione categorias existentes ou adicione uma nova no rodapé da lista"
+
+msgid "adminV2.proxy.categoriesPlaceholder"
+msgstr "Selecionar categorias"
+
+msgid "adminV2.proxy.categoriesRemoveAll"
+msgstr "Remover todas"
+
+msgid "adminV2.proxy.clashFormatJson"
+msgstr "JSON"
+
+msgid "adminV2.proxy.clashFormatYaml"
+msgstr "YAML"
+
+msgid "adminV2.proxy.clientBuiltinCustomized"
+msgstr "Config de cliente personalizada"
+
+msgid "adminV2.proxy.clientBuiltinDefault"
+msgstr "Usando a config de cliente padrão do catálogo"
+
+msgid "adminV2.proxy.clientConfigDefault"
+msgstr "Config do cliente"
+
+msgid "adminV2.proxy.clientCoreConfigs"
+msgstr "Configs de core do cliente"
+
+msgid "adminV2.proxy.clientCores"
+msgstr "Cores do cliente"
+
+msgid "adminV2.proxy.commonProxyBadge"
+msgstr "Comum"
+
+msgid "adminV2.proxy.core"
+msgstr "Core"
+
+msgid "adminV2.proxy.customPath"
+msgstr "Caminho personalizado"
+
+msgid "adminV2.proxy.customPathAuto"
+msgstr "Gerado automaticamente para proxies HTTP"
+
+msgid "adminV2.proxy.defaultTagName"
+msgstr "Tag padrão: {name}"
+
+msgid "adminV2.proxy.directPortAccess"
+msgstr "Acesso direto à porta"
+
+msgid "adminV2.proxy.directPortAccessHint"
+msgstr ""
+"Use com cuidado — pode tornar seu servidor detectável na interface pública"
+
+msgid "adminV2.proxy.doBase64After"
+msgstr "Base64 após renderizar"
+
+msgid "adminV2.proxy.domainIds"
+msgstr "Domínios"
+
+msgid "adminV2.proxy.domainIdsEmptyAll"
+msgstr ""
+"Vazio = todos os domínios correspondentes; proxies baseados em IP ignoram "
+"domínios"
+
+msgid "adminV2.proxy.domainModeLabels.cdn"
+msgstr "CDN"
+
+msgid "adminV2.proxy.domainModeLabels.direct"
+msgstr "Direct"
+
+msgid "adminV2.proxy.domainModeLabels.direct-dns"
+msgstr "Direct DNS"
+
+msgid "adminV2.proxy.domainModeLabels.direct-fake"
+msgstr "Direct fake"
+
+msgid "adminV2.proxy.domainModeLabels.direct-reality"
+msgstr "Direct REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "Direct válido"
+
+msgid "adminV2.proxy.domainModeLabels.fake"
+msgstr "Fake TLS"
+
+msgid "adminV2.proxy.domainModeLabels.reality"
+msgstr "REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay"
+msgstr "Relay"
+
+msgid "adminV2.proxy.domainModeLabels.relay-fake"
+msgstr "Relay fake"
+
+msgid "adminV2.proxy.domainModeLabels.relay-reality"
+msgstr "Relay REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "Relay válido"
+
+msgid "adminV2.proxy.domainModeLabels.special"
+msgstr "Especial (REALITY)"
+
+msgid "adminV2.proxy.domainModes"
+msgstr "Modos de domínio"
+
+msgid "adminV2.proxy.domains"
+msgstr "Domínios"
+
+msgid "adminV2.proxy.downloadAlpns"
+msgstr "ALPNs de download"
+
+msgid "adminV2.proxy.downloadAlpnsHint"
+msgstr ""
+"Somente xHTTP. Vazio = igual ao ALPN principal. Variantes de config = "
+"principal × ALPN de download."
+
+msgid "adminV2.proxy.downloadDomainModes"
+msgstr "Modos de domínio de download"
+
+msgid "adminV2.proxy.downloadTcpUdp"
+msgstr "TCP ou UDP de download"
+
+msgid "adminV2.proxy.downloadTlsLayer"
+msgstr "Camada TLS de download"
+
+msgid "adminV2.proxy.exampleContext"
+msgstr "Contexto de renderização"
+
+msgid "adminV2.proxy.exampleContextDomain"
+msgstr "Domínio"
+
+msgid "adminV2.proxy.exampleContextIp"
+msgstr "IP"
+
+msgid "adminV2.proxy.exampleContextProxy"
+msgstr "ID do proxy"
+
+msgid "adminV2.proxy.exampleContextUa"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleContextUser"
+msgstr "Usuário"
+
+msgid "adminV2.proxy.exampleDomain"
+msgstr "Domínio"
+
+msgid "adminV2.proxy.exampleDomainAll"
+msgstr "Todos os domínios"
+
+msgid "adminV2.proxy.exampleDomainAllHint"
+msgstr ""
+"Inclui todos os domínios que combinam com este proxy (igual à saída da "
+"assinatura)."
+
+msgid "adminV2.proxy.exampleDomainCustom"
+msgstr "Domínio personalizado"
+
+msgid "adminV2.proxy.exampleDomainPick"
+msgstr "Escolher do painel"
+
+msgid "adminV2.proxy.exampleIp"
+msgstr "Endereço IP"
+
+msgid "adminV2.proxy.exampleUaCustom"
+msgstr "User-Agent personalizado"
+
+msgid "adminV2.proxy.exampleUaPreset"
+msgstr "Predefinição"
+
+msgid "adminV2.proxy.exampleUser"
+msgstr "Usuário"
+
+msgid "adminV2.proxy.exampleUserAgent"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleUserPick"
+msgstr "Escolher usuário do painel"
+
+msgid "adminV2.proxy.exampleUserSample"
+msgstr "Usuário de exemplo"
+
+msgid "adminV2.proxy.export"
+msgstr "Exportar"
+
+msgid "adminV2.proxy.exportFailed"
+msgstr "Falha na exportação"
+
+msgid "adminV2.proxy.fieldOverride"
+msgstr "Substituir"
+
+msgid "adminV2.proxy.generateBundle"
+msgstr "Gerar todas as configs"
+
+msgid "adminV2.proxy.generateBundleOk"
+msgstr "Pacote gerado com sucesso"
+
+msgid "adminV2.proxy.generateBundlePartial"
+msgstr "Pacote gerado com avisos ou erros"
+
+msgid "adminV2.proxy.generateExample"
+msgstr "Gerar exemplo"
+
+msgid "adminV2.proxy.generateExampleOk"
+msgstr "Exemplo gerado com sucesso"
+
+msgid "adminV2.proxy.generateExamplePartial"
+msgstr "Exemplo gerado com avisos ou erros"
+
+msgid "adminV2.proxy.goToSettings"
+msgstr "Ir para as configurações"
+
+msgid "adminV2.proxy.ignoreSkip"
+msgstr "Ignorar tags skip"
+
+msgid "adminV2.proxy.ignoreSkipHint"
+msgstr ""
+"Renderiza a config mesmo quando um bloco skip do template normalmente "
+"ignoraria um fragmento"
+
+msgid "adminV2.proxy.import"
+msgstr "Importar"
+
+msgid "adminV2.proxy.importFailed"
+msgstr "Falha na importação"
+
+msgid "adminV2.proxy.importSuccess"
+msgstr "Importado com sucesso ({count} templates)"
+
+msgid "adminV2.proxy.inboundPort"
+msgstr "Porta de entrada"
+
+msgid "adminV2.proxy.inboundPortAuto"
+msgstr "Deixe vazio para automático"
+
+msgid "adminV2.proxy.inboundPortAutoCalculated"
+msgstr "As portas são calculadas automaticamente por domínio"
+
+msgid "adminV2.proxy.inboundTcpPorts"
+msgstr "Portas TCP de entrada"
+
+msgid "adminV2.proxy.inboundTcpPortsHint"
+msgstr "Portas TCP estáticas separadas por vírgula"
+
+msgid "adminV2.proxy.inboundTemplate"
+msgstr "Template de inbound"
+
+msgid "adminV2.proxy.inboundUdpPorts"
+msgstr "Portas UDP de entrada"
+
+msgid "adminV2.proxy.inboundUdpPortsHint"
+msgstr ""
+"Portas UDP estáticas separadas por vírgula; se vazio, usa as portas TCP"
+
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "Proxy comum"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr ""
+"Este protocolo existe no Xray e no Hiddify Core. A configuração Core do "
+"proxy comum mantém ativado apenas o core selecionado."
+
+msgid "adminV2.proxy.l7Proto"
+msgstr "Protocolo de proxy reverso L7"
+
+msgid "adminV2.proxy.l7ReverseProto"
+msgstr "Protocolo de proxy reverso L7"
+
+msgid "adminV2.proxy.linkSettings"
+msgstr "Configurações do link"
+
+msgid "adminV2.proxy.linkTemplate"
+msgstr "Template do link"
+
+msgid "adminV2.proxy.listTitle"
+msgstr "Proxies personalizados"
+
+msgid "adminV2.proxy.mode"
+msgstr "Modo"
+
+msgid "adminV2.proxy.modeLabels.domain_native"
+msgstr "Nativo de domínio"
+
+msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
+msgstr "Multidomínio com portas automáticas"
+
+msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
+msgstr "Gateway DNS de domínio"
+
+msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
+msgstr "Gateway L7 de domínio"
+
+msgid "adminV2.proxy.modeLabels.domains_single_public_port"
+msgstr "Multidomínio com porta estática"
+
+msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
+msgstr "Gateway SNI de domínio"
+
+msgid "adminV2.proxy.modeLabels.ip"
+msgstr "Baseado em IP"
+
+msgid "adminV2.proxy.modeLabels.no_inbound"
+msgstr "Sem inbound"
+
+msgid "adminV2.proxy.modeSettings"
+msgstr "Modo e roteamento"
+
+msgid "adminV2.proxy.name"
+msgstr "Nome"
+
+msgid "adminV2.proxy.nameRequired"
+msgstr "Dê um nome ao proxy antes de salvar: é o rótulo dos seus links."
+
+msgid "adminV2.proxy.needGlobalEnable"
+msgstr ""
+"Você precisa ativar {names} globalmente para ativar este proxy. Deseja abrir"
+" as configurações?"
+
+msgid "adminV2.proxy.new"
+msgstr "Novo proxy"
+
+msgid "adminV2.proxy.noClientConfigs"
+msgstr "Ainda não há configs de cliente. Adicione um cliente para começar."
+
+msgid "adminV2.proxy.outboundTagTemplate"
+msgstr "Template da tag de outbound"
+
+msgid "adminV2.proxy.outboundTagTemplateHint"
+msgstr ""
+"Jinja para a tag de outbound de cada cliente. Padrão: {{ proxy.tag }} {{ "
+"domain.alias or domain.name }} {{ proxy.alpn }}"
+
+msgid "adminV2.proxy.outboundsTemplate"
+msgstr "Template de outbounds"
+
+msgid "adminV2.proxy.protocol"
+msgstr "Protocolo"
+
+msgid "adminV2.proxy.quick.any"
+msgstr "Qualquer"
+
+msgid "adminV2.proxy.quick.clear"
+msgstr "Redefinir filtros"
+
+msgid "adminV2.proxy.quick.label"
+msgstr "Filtros"
+
+msgid "adminV2.proxy.quick.modified"
+msgstr "Modificado"
+
+msgid "adminV2.proxy.quick.modifiedHint"
+msgstr "Alterado em relação ao padrão do catálogo"
+
+msgid "adminV2.proxy.quick.nSelected"
+msgstr "{n} selecionados"
+
+msgid "adminV2.proxy.quick.other"
+msgstr "Outro"
+
+msgid "adminV2.proxy.quick.showing"
+msgstr "Mostrando {n} de {total}"
+
+msgid "adminV2.proxy.regeneratePath"
+msgstr "Regenerar caminho"
+
+msgid "adminV2.proxy.renderErrorClickHint"
+msgstr "Clique para ver detalhes"
+
+msgid "adminV2.proxy.renderErrorDetail"
+msgstr "Detalhes do erro de renderização"
+
+msgid "adminV2.proxy.renderErrorDetailTitle"
+msgstr "Erro de renderização: {label}"
+
+msgid "adminV2.proxy.renderErrorNoDetail"
+msgstr "Não há contexto adicional disponível para este erro."
+
+msgid "adminV2.proxy.renderErrorRenderedSource"
+msgstr "Saída renderizada"
+
+msgid "adminV2.proxy.renderErrorTemplateSource"
+msgstr "Código-fonte do template"
+
+msgid "adminV2.proxy.resetAll"
+msgstr "Restaurar todos os padrões"
+
+msgid "adminV2.proxy.resetAllConfirm"
+msgstr ""
+"Descartar todas as alterações feitas nos proxies integrados (tag, modos de "
+"domínio, TLS, configs de servidor e cliente) e restaurar os padrões do "
+"catálogo? Os proxies criados por você não são afetados."
+
+msgid "adminV2.proxy.resetAllDone"
+msgstr "{n} proxies restaurados aos padrões"
+
+msgid "adminV2.proxy.resetTagName"
+msgstr "Restaurar o nome da tag ao padrão"
+
+msgid "adminV2.proxy.resetToBuiltin"
+msgstr "Restaurar ao padrão do catálogo"
+
+msgid "adminV2.proxy.searchAll"
+msgstr "Pesquisar em todas as colunas..."
+
+msgid "adminV2.proxy.serverBuiltinCustomized"
+msgstr "Config de servidor personalizada"
+
+msgid "adminV2.proxy.serverBuiltinDefault"
+msgstr "Usando a config de servidor padrão do catálogo"
+
+msgid "adminV2.proxy.serverCore"
+msgstr "Core do servidor"
+
+msgid "adminV2.proxy.slug"
+msgstr "Slug"
+
+msgid "adminV2.proxy.sublink"
+msgstr "Sublink"
+
+msgid "adminV2.proxy.sublinkBase64.content"
+msgstr "Conteúdo"
+
+msgid "adminV2.proxy.sublinkBase64.formatJson"
+msgstr "Formatar JSON"
+
+msgid "adminV2.proxy.sublinkBase64.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkBase64Detail"
+msgstr "Detalhe Base64"
+
+msgid "adminV2.proxy.sublinkFormat"
+msgstr "Formato do link"
+
+msgid "adminV2.proxy.sublinkFormatBase64"
+msgstr "Formato Base64"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "Campos decodificados"
+
+msgid "adminV2.proxy.sublinkFormatRaw"
+msgstr "Link renderizado"
+
+msgid "adminV2.proxy.sublinkFormatRawLink"
+msgstr "Link bruto"
+
+msgid "adminV2.proxy.sublinkFormatUri"
+msgstr "Formato URI"
+
+msgid "adminV2.proxy.sublinkUri.fragment"
+msgstr "uri.fragment"
+
+msgid "adminV2.proxy.sublinkUri.host"
+msgstr "uri.host"
+
+msgid "adminV2.proxy.sublinkUri.password"
+msgstr "uri.password"
+
+msgid "adminV2.proxy.sublinkUri.path"
+msgstr "uri.path"
+
+msgid "adminV2.proxy.sublinkUri.port"
+msgstr "uri.port"
+
+msgid "adminV2.proxy.sublinkUri.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkUri.query_params"
+msgstr "uri.query_params (JSON)"
+
+msgid "adminV2.proxy.sublinkUri.user"
+msgstr "uri.user"
+
+msgid "adminV2.proxy.sublinkUriDetail"
+msgstr "Detalhe da URI"
+
+msgid "adminV2.proxy.tabClient"
+msgstr "Cliente"
+
+msgid "adminV2.proxy.tabClients"
+msgstr "Clientes"
+
+msgid "adminV2.proxy.tabGeneral"
+msgstr "Geral"
+
+msgid "adminV2.proxy.tabServer"
+msgstr "Servidor"
+
+msgid "adminV2.proxy.tabServers"
+msgstr "Servidores"
+
+msgid "adminV2.proxy.tag"
+msgstr "Tag"
+
+msgid "adminV2.proxy.tcpUdp"
+msgstr "TCP ou UDP"
+
+msgid "adminV2.proxy.tcpUdpHint"
+msgstr "Protocolo de transporte para as portas de entrada resolvidas"
+
+msgid "adminV2.proxy.tcpUdpLabels.both"
+msgstr "TCP + UDP"
+
+msgid "adminV2.proxy.tcpUdpLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.tcpUdpLabels.udp"
+msgstr "UDP"
+
+msgid "adminV2.proxy.templateSlugs"
+msgstr "Inclusões do template"
+
+msgid "adminV2.proxy.tlsLayer"
+msgstr "Camada TLS"
+
+msgid "adminV2.proxy.tlsLayerLabels.http"
+msgstr "-"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.tlsLayerSpecialConflict"
+msgstr "A camada TLS HTTP não é compatível com os modos de domínio REALITY"
+
+msgid "adminV2.proxy.transport"
+msgstr "Transporte"
+
+msgid "adminV2.proxy.transportLabels.grpc"
+msgstr "gRPC"
+
+msgid "adminV2.proxy.transportLabels.http"
+msgstr "HTTP (bruto)"
+
+msgid "adminV2.proxy.transportLabels.httpupgrade"
+msgstr "HTTP Upgrade"
+
+msgid "adminV2.proxy.transportLabels.other"
+msgstr "Outro"
+
+msgid "adminV2.proxy.transportLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.transportLabels.ws"
+msgstr "WebSocket"
+
+msgid "adminV2.proxy.transportLabels.xhttp"
+msgstr "xHTTP"
+
+msgid "adminV2.proxy.uploadTcpUdp"
+msgstr "Upload TCP ou UDP"
+
+msgid "adminV2.proxy.version"
+msgstr "Versão"
+
+msgid "adminV2.qr.clickToCopy"
+msgstr "Clique para copiar a imagem"
+
+msgid "adminV2.qr.copiedBoth"
+msgstr "Mensagem e QR code copiados"
+
+msgid "adminV2.qr.copiedBothClick"
+msgstr ""
+"E-mail e documentos colam ambos. Apps de chat colam apenas o texto: depois "
+"de colar, clique no QR code para copiar a imagem e cole-a também."
+
+msgid "adminV2.qr.copiedBothShare"
+msgstr ""
+"E-mail e documentos colam ambos. Apps de chat colam apenas o texto: use "
+"Compartilhar para enviar ambos, ou clique no QR code para copiar a imagem."
+
+msgid "adminV2.qr.copy"
+msgstr "Copiar QR"
+
+msgid "adminV2.qr.copyUnsupported"
+msgstr "Este navegador não consegue copiar imagens. Use Baixar."
+
+msgid "adminV2.qr.share"
+msgstr "Compartilhar"
+
+msgid "adminV2.qr.shareFailed"
+msgstr ""
+"O compartilhamento não funcionou aqui. Copie a mensagem e clique no QR code "
+"para copiar a imagem."
+
+msgid "adminV2.qr.shareHint"
+msgstr ""
+"Envie o texto e a imagem do QR juntos para Telegram, WhatsApp, e-mail…"
+
+msgid "adminV2.qr.textOnly"
+msgstr ""
+"A mensagem foi copiada. Este navegador não conseguiu adicionar a imagem do "
+"QR; copie-a clicando no código."
+
+msgid "adminV2.quickSetup.back"
+msgstr "Voltar"
+
+msgid "adminV2.quickSetup.countries.ir"
+msgstr "Irã"
+
+msgid "adminV2.quickSetup.countries.other"
+msgstr "Outros"
+
+msgid "adminV2.quickSetup.countries.ru"
+msgstr "Rússia"
+
+msgid "adminV2.quickSetup.countries.zh"
+msgstr "China"
+
+msgid "adminV2.quickSetup.domains.block"
+msgstr "Bloquear sites domésticos"
+
+msgid "adminV2.quickSetup.domains.blockHint"
+msgstr "Bloqueia sites domésticos para evitar a detecção pelo governo."
+
+msgid "adminV2.quickSetup.domains.changeMode"
+msgstr "Alterar como {name} é usado"
+
+msgid "adminV2.quickSetup.domains.copied"
+msgstr "{ip} copiado"
+
+msgid "adminV2.quickSetup.domains.decoy"
+msgstr "Site isca"
+
+msgid "adminV2.quickSetup.domains.decoyHint"
+msgstr "Um site falso exibido quando alguém abre seu domínio diretamente."
+
+msgid "adminV2.quickSetup.domains.decoyWarn1"
+msgstr ""
+"Não use sites financeiros, iranianos, famosos ou com login, como Google, "
+"Yahoo, Wikipedia ou PayPal."
+
+msgid "adminV2.quickSetup.domains.decoyWarn2"
+msgstr ""
+"Verifique o site com atenção e confirme que é o correto; caso contrário, "
+"você pode receber um alerta de phishing."
+
+msgid "adminV2.quickSetup.domains.decoyWarn3"
+msgstr ""
+"Verifique este domínio novamente para que não haja problemas no futuro."
+
+msgid "adminV2.quickSetup.domains.detecting"
+msgstr "Verificando…"
+
+msgid "adminV2.quickSetup.domains.domains"
+msgstr "Domínios"
+
+msgid "adminV2.quickSetup.domains.domainsHint"
+msgstr ""
+"Você pode adicionar aqui quaisquer domínios: direct, CDN, REALITY, relay… "
+"Cada um é verificado automaticamente; toque no tipo para alterá-lo. Você "
+"precisa de pelo menos um domínio direct, CDN ou de link de assinatura (o IP "
+"deste servidor conta como direct)."
+
+msgid "adminV2.quickSetup.domains.how1"
+msgstr ""
+"Aponte seu domínio ou subdomínio para estes IPs (um registro A para IPv4, "
+"AAAA para IPv6)."
+
+msgid "adminV2.quickSetup.domains.how2"
+msgstr ""
+"Depois digite o domínio abaixo. Você pode adicionar vários; pressione Enter "
+"ou vírgula após cada um."
+
+msgid "adminV2.quickSetup.domains.ipsTitle"
+msgstr "IPs do seu servidor"
+
+msgid "adminV2.quickSetup.domains.modeHelp.cdn"
+msgstr ""
+"Atrás de uma CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …) que encaminha "
+"para este servidor. Oculta o IP do seu servidor."
+
+msgid "adminV2.quickSetup.domains.modeHelp.direct"
+msgstr ""
+"Aponta diretamente para o IP deste servidor. O mais rápido; detectado quando"
+" o domínio é resolvido para este servidor."
+
+msgid "adminV2.quickSetup.domains.modeHelp.reality"
+msgstr ""
+"O site popular de outra pessoa (TLS 1.3 + HTTP/2). Não aponta para o seu "
+"servidor; este servidor o imita."
+
+msgid "adminV2.quickSetup.domains.modeHelp.relay"
+msgstr ""
+"Aponta para outro servidor que encaminha o tráfego para este (relay/túnel). "
+"Configure manualmente."
+
+msgid "adminV2.quickSetup.domains.modes.cdn"
+msgstr "CDN"
+
+msgid "adminV2.quickSetup.domains.modes.direct"
+msgstr "Direct"
+
+msgid "adminV2.quickSetup.domains.modes.reality"
+msgstr "REALITY"
+
+msgid "adminV2.quickSetup.domains.modes.relay"
+msgstr "Relay"
+
+msgid "adminV2.quickSetup.domains.noIp"
+msgstr "Não foi possível detectar o IP do servidor."
+
+msgid "adminV2.quickSetup.domains.notes.not_friendly"
+msgstr ""
+"Este site pode não oferecer suporte a TLS 1.3 + HTTP/2, que o REALITY exige."
+
+msgid "adminV2.quickSetup.domains.notes.unresolved"
+msgstr "Este domínio ainda não é resolvido. Verifique o registro DNS dele."
+
+msgid "adminV2.quickSetup.domains.recommended"
+msgstr "Altamente recomendado"
+
+msgid "adminV2.quickSetup.domains.remove"
+msgstr "Remover {name}"
+
+msgid "adminV2.quickSetup.domains.required"
+msgstr ""
+"Adicione pelo menos um domínio direct, CDN ou de link de assinatura "
+"(domínios REALITY e relay sozinhos não bastam). O IP deste servidor conta "
+"como domínio direct."
+
+msgid "adminV2.quickSetup.domains.sublink"
+msgstr "Domínio do link de assinatura"
+
+msgid "adminV2.quickSetup.domains.sublinkHint"
+msgstr ""
+"Serve apenas links de assinatura, não proxies. Pode apontar para este "
+"servidor ou passar por uma CDN."
+
+msgid "adminV2.quickSetup.domains.sublinkWhy"
+msgstr ""
+"Use um domínio diferente para os links de assinatura dos usuários, de "
+"preferência atrás de uma CDN. Se seu servidor ou seus domínios de proxy "
+"forem bloqueados, os usuários ainda podem atualizar a assinatura e receber "
+"novas configs funcionais, sem serem afetados."
+
+msgid "adminV2.quickSetup.domains.useIp"
+msgstr "Usar este IP como domínio direct"
+
+msgid "adminV2.quickSetup.finish.button"
+msgstr "Concluir"
+
+msgid "adminV2.quickSetup.finish.docs"
+msgstr "Ler mais documentação"
+
+msgid "adminV2.quickSetup.finish.off"
+msgstr "Desativado"
+
+msgid "adminV2.quickSetup.finish.on"
+msgstr "Ativado"
+
+msgid "adminV2.quickSetup.finish.ready"
+msgstr "Tudo pronto"
+
+msgid "adminV2.quickSetup.finish.readyHint"
+msgstr "Revise suas escolhas e conclua a configuração."
+
+msgid "adminV2.quickSetup.finish.running"
+msgstr "Concluindo a configuração"
+
+msgid "adminV2.quickSetup.finish.whatHappens"
+msgstr ""
+"Concluir aplica a configuração e reinstala os serviços com seus domínios. "
+"Leva alguns minutos; o log e seus novos links de administrador são exibidos "
+"durante a execução."
+
+msgid "adminV2.quickSetup.language.adminLang"
+msgstr "Idioma do painel de administração"
+
+msgid "adminV2.quickSetup.language.adminLangHint"
+msgstr "O idioma da área de administração."
+
+msgid "adminV2.quickSetup.language.country"
+msgstr "País"
+
+msgid "adminV2.quickSetup.language.countryHint"
+msgstr ""
+"Aplica as configurações adequadas às condições de filtragem desse país."
+
+msgid "adminV2.quickSetup.next"
+msgstr "Próximo"
+
+msgid "adminV2.quickSetup.nodes.question"
+msgstr ""
+"Deseja adicionar outros nós? Adicione o link de administrador completo de "
+"cada outro painel; depois de conectar, ele aparece listado aqui. Você também"
+" pode fazer isso depois."
+
+msgid "adminV2.quickSetup.nodes.skip"
+msgstr "Pular"
+
+msgid "adminV2.quickSetup.optional"
+msgstr "opcional"
+
+msgid "adminV2.quickSetup.password.confirm"
+msgstr "Repita a senha"
+
+msgid "adminV2.quickSetup.password.label"
+msgstr "Nova senha"
+
+msgid "adminV2.quickSetup.password.medium"
+msgstr "Média"
+
+msgid "adminV2.quickSetup.password.min"
+msgstr "A senha deve ter pelo menos {min} caracteres."
+
+msgid "adminV2.quickSetup.password.mismatch"
+msgstr "As senhas não coincidem."
+
+msgid "adminV2.quickSetup.password.ok"
+msgstr "As senhas coincidem"
+
+msgid "adminV2.quickSetup.password.prompt"
+msgstr "Pelo menos {min} caracteres"
+
+msgid "adminV2.quickSetup.password.strong"
+msgstr "Forte"
+
+msgid "adminV2.quickSetup.password.weak"
+msgstr "Fraca"
+
+msgid "adminV2.quickSetup.password.why"
+msgstr ""
+"Você usará esta senha para entrar na área de administração. Use pelo menos 8"
+" caracteres."
+
+msgid "adminV2.quickSetup.skip"
+msgstr "Pular por enquanto"
+
+msgid "adminV2.quickSetup.stepOf"
+msgstr "Etapa {n} de {total}"
+
+msgid "adminV2.quickSetup.steps.domains.lead"
+msgstr "Conecte seu domínio a este servidor."
+
+msgid "adminV2.quickSetup.steps.domains.title"
+msgstr "Domínios"
+
+msgid "adminV2.quickSetup.steps.finish.lead"
+msgstr "Vamos fazer a configuração final para concluir a instalação."
+
+msgid "adminV2.quickSetup.steps.finish.title"
+msgstr "Concluir"
+
+msgid "adminV2.quickSetup.steps.language.lead"
+msgstr "Escolha o idioma do administrador e o país onde estão seus usuários."
+
+msgid "adminV2.quickSetup.steps.language.title"
+msgstr "Boas-vindas"
+
+msgid "adminV2.quickSetup.steps.nodes.lead"
+msgstr ""
+"Opcionalmente, conecte outros servidores Hiddify para gerenciá-los a partir "
+"daqui."
+
+msgid "adminV2.quickSetup.steps.nodes.title"
+msgstr "Nós"
+
+msgid "adminV2.quickSetup.steps.password.lead"
+msgstr "Proteja a área de administração com uma senha."
+
+msgid "adminV2.quickSetup.steps.password.title"
+msgstr "Senha"
+
+msgid "adminV2.quickSetup.steps.protocols.lead"
+msgstr "Escolha os protocolos a oferecer. Escolha o mínimo possível."
+
+msgid "adminV2.quickSetup.steps.protocols.title"
+msgstr "Protocolos"
+
+msgid "adminV2.quickSetup.subtitle"
+msgstr "Alguns passos e seu painel estará pronto."
+
+msgid "adminV2.quickSetup.title"
+msgstr "Configuração rápida"
+
+msgid "adminV2.saveBar.discard"
+msgstr "Descartar"
+
+msgid "adminV2.saveBar.unsaved"
+msgstr "{count} alteração não salva | {count} alterações não salvas"
+
+msgid "adminV2.settings.adminPathChanged"
+msgstr ""
+"O caminho de administração mudou. Depois de aplicar as configs, o painel de "
+"administração estará em"
+
+msgid "adminV2.settings.advancedBadge"
+msgstr "Avançado"
+
+msgid "adminV2.settings.categories"
+msgstr "Categorias de configurações"
+
+msgid "adminV2.settings.changed"
+msgstr "Alterado"
+
+msgid "adminV2.settings.fixErrors"
+msgstr "Corrija os campos destacados."
+
+msgid "adminV2.settings.hiddenCount"
+msgstr ""
+"{count} configuração avançada oculta | {count} configurações avançadas "
+"ocultas"
+
+msgid "adminV2.settings.invalid"
+msgstr "Este valor não é válido."
+
+msgid "adminV2.settings.leaveUnsaved"
+msgstr "Você tem alterações não salvas. Sair mesmo assim?"
+
+msgid "adminV2.settings.noMatch"
+msgstr "Nenhuma configuração corresponde à sua pesquisa."
+
+msgid "adminV2.settings.openProtocols"
+msgstr "Protocolos"
+
+msgid "adminV2.settings.reinstallBadge"
+msgstr "Reinstalar"
+
+msgid "adminV2.settings.reinstallHint"
+msgstr "Alterar isto requer uma reinstalação para entrar em vigor"
+
+msgid "adminV2.settings.reloading"
+msgstr "Idioma alterado, recarregando…"
+
+msgid "adminV2.settings.required"
+msgstr "Este campo é obrigatório."
+
+msgid "adminV2.settings.search"
+msgstr "Pesquisar todas as configurações…"
+
+msgid "adminV2.settings.showAdvanced"
+msgstr "Mostrar configurações avançadas"
+
+msgid "adminV2.settings.showAdvancedIn"
+msgstr ""
+"Mostrar {count} configuração avançada | Mostrar {count} configurações "
+"avançadas"
+
+msgid "adminV2.settings.showLess"
+msgstr "Mostrar menos"
+
+msgid "adminV2.settings.showMore"
+msgstr ""
+"Mostrar mais {count} configuração avançada | Mostrar mais {count} "
+"configurações avançadas"
+
+msgid "adminV2.settings.subtitle"
+msgstr ""
+"Tudo sobre como este painel funciona. Configurações comuns primeiro; as "
+"avançadas sob demanda."
+
+msgid "adminV2.settings.title"
+msgstr "Configurações"
+
+msgid "adminV2.tags.addTag"
+msgstr "Tag"
+
+msgid "adminV2.tags.bulk"
+msgstr "Tag"
+
+msgid "adminV2.tags.bulkHint"
+msgstr "Tags dos selecionados: uma marca significa que todos a têm"
+
+msgid "adminV2.tags.clear"
+msgstr "Limpar"
+
+msgid "adminV2.tags.color"
+msgstr "Cor"
+
+msgid "adminV2.tags.colors.black"
+msgstr "Preto"
+
+msgid "adminV2.tags.colors.blue"
+msgstr "Azul"
+
+msgid "adminV2.tags.colors.green"
+msgstr "Verde"
+
+msgid "adminV2.tags.colors.orange"
+msgstr "Laranja"
+
+msgid "adminV2.tags.colors.red"
+msgstr "Vermelho"
+
+msgid "adminV2.tags.create"
+msgstr "Criar"
+
+msgid "adminV2.tags.created"
+msgstr "Tag criada"
+
+msgid "adminV2.tags.default.family"
+msgstr "Família"
+
+msgid "adminV2.tags.default.free"
+msgstr "Grátis"
+
+msgid "adminV2.tags.default.friends"
+msgstr "Amigos"
+
+msgid "adminV2.tags.default.important"
+msgstr "Importante"
+
+msgid "adminV2.tags.default.work"
+msgstr "Trabalho"
+
+msgid "adminV2.tags.delete"
+msgstr "Excluir tag"
+
+msgid "adminV2.tags.deleteConfirm"
+msgstr "Excluir a tag \"{name}\"? Ela é removida de todos que a têm."
+
+msgid "adminV2.tags.deleted"
+msgstr "Tag excluída"
+
+msgid "adminV2.tags.edit"
+msgstr "Editar tag"
+
+msgid "adminV2.tags.editTags"
+msgstr "Editar tags"
+
+msgid "adminV2.tags.filterLabel"
+msgstr "Filtrar por tag"
+
+msgid "adminV2.tags.namePlaceholder"
+msgstr "Dê um nome à sua própria tag"
+
+msgid "adminV2.tags.newTag"
+msgstr "Nova tag"
+
+msgid "adminV2.tags.none"
+msgstr "Ainda não há tags"
+
+msgid "adminV2.tags.pick"
+msgstr "Escolher tags"
+
+msgid "adminV2.tags.pickHint"
+msgstr "Você pode escolher várias"
+
+msgid "adminV2.tags.rename"
+msgstr "Renomear"
+
+msgid "adminV2.tags.save"
+msgstr "Salvar"
+
+msgid "adminV2.tags.saveFailed"
+msgstr "Não foi possível salvar as tags"
+
+msgid "adminV2.tags.tagCount"
+msgstr "{n} tags"
+
+msgid "adminV2.tags.tagged"
+msgstr "Com tag"
+
+msgid "adminV2.tags.taggedHint"
+msgstr "Todos que têm pelo menos uma tag"
+
+msgid "adminV2.tags.title"
+msgstr "Tags"
+
+msgid "adminV2.tags.untagged"
+msgstr "Sem tag"
+
+msgid "adminV2.tags.use"
+msgstr "{n} em uso"
+
+msgid "adminV2.telegram.benefit.backup"
+msgstr "Receber os backups automáticos"
+
+msgid "adminV2.telegram.benefit.manage"
+msgstr "Gerenciar usuários diretamente pelo Telegram"
+
+msgid "adminV2.telegram.benefit.notify"
+msgstr "Receber notificações sobre eventos importantes"
+
+msgid "adminV2.telegram.check"
+msgstr "Já conectei"
+
+msgid "adminV2.telegram.connect"
+msgstr "Conectar o Telegram"
+
+msgid "adminV2.telegram.connectHint"
+msgstr ""
+"Receba notificações e backups de {bot} e gerencie o painel pelo Telegram."
+
+msgid "adminV2.telegram.connectTitle"
+msgstr "Conecte seu Telegram"
+
+msgid "adminV2.telegram.connected"
+msgstr "conectado"
+
+msgid "adminV2.telegram.connectedHint"
+msgstr "Você recebe notificações e backups de {bot}."
+
+msgid "adminV2.telegram.connectedTitle"
+msgstr "O Telegram está conectado"
+
+msgid "adminV2.telegram.later"
+msgstr "Você pode conectá-lo a qualquer momento em Minha conta."
+
+msgid "adminV2.telegram.notNow"
+msgstr "Agora não"
+
+msgid "adminV2.telegram.notYet"
+msgstr "Ainda não conectado: pressione Start no bot e verifique novamente."
+
+msgid "adminV2.telegram.nowConnected"
+msgstr "O Telegram está conectado"
+
+msgid "adminV2.telegram.openWeb"
+msgstr "Abrir no navegador"
+
+msgid "adminV2.telegram.promptLead"
+msgstr "Este painel tem um bot do Telegram, {bot}. Vincule-o à sua conta:"
+
+msgid "adminV2.telegram.promptTitle"
+msgstr "Conectar seu Telegram?"
+
+msgid "adminV2.telegram.reconnect"
+msgstr "Conectar novamente"
+
+msgid "adminV2.telegram.scan"
+msgstr "Ou escaneie isto com a câmera do seu celular."
+
+msgid "adminV2.template.builtin"
+msgstr "Integrado"
+
+msgid "adminV2.template.builtinCustomized"
+msgstr "Integrado personalizado"
+
+msgid "adminV2.template.builtinDefault"
+msgstr "Usando o padrão do catálogo"
+
+msgid "adminV2.template.builtinDefaultHint"
+msgstr ""
+"Template integrado sincronizado do catálogo. Ative o conteúdo personalizado "
+"para editá-lo."
+
+msgid "adminV2.template.builtinReadOnly"
+msgstr "Template integrado — duplique para criar uma cópia editável."
+
+msgid "adminV2.template.category"
+msgstr "Categoria"
+
+msgid "adminV2.template.clone"
+msgstr "Clonar como personalizado"
+
+msgid "adminV2.template.cloneDescription"
+msgstr "Descrição personalizada"
+
+msgid "adminV2.template.cloneName"
+msgstr "Nome personalizado"
+
+msgid "adminV2.template.cloned"
+msgstr "Template clonado"
+
+msgid "adminV2.template.content"
+msgstr "Conteúdo"
+
+msgid "adminV2.template.core"
+msgstr "Core"
+
+msgid "adminV2.template.customContent"
+msgstr "Conteúdo personalizado"
+
+msgid "adminV2.template.description"
+msgstr "Descrição"
+
+msgid "adminV2.template.editable"
+msgstr "Editável"
+
+msgid "adminV2.template.empty"
+msgstr "Não há templates para este core"
+
+msgid "adminV2.template.included"
+msgstr "Incluído"
+
+msgid "adminV2.template.insert"
+msgstr "Inserir no editor"
+
+msgid "adminV2.template.listTitle"
+msgstr "Templates"
+
+msgid "adminV2.template.name"
+msgstr "Nome"
+
+msgid "adminV2.template.new"
+msgstr "Novo template"
+
+msgid "adminV2.template.notFound"
+msgstr "Template não encontrado"
+
+msgid "adminV2.template.referenced"
+msgstr "Referenciado"
+
+msgid "adminV2.template.referencedTemplates"
+msgstr "Templates referenciados"
+
+msgid "adminV2.template.sidePanel"
+msgstr "Templates"
+
+msgid "adminV2.template.sidePanelHint"
+msgstr "Abra a aba Servidor ou Cliente para navegar pelos templates"
+
+msgid "adminV2.template.slug"
+msgstr "Slug"
+
+msgid "adminV2.template.slugDuplicate"
+msgstr "Este slug de template já está em uso. Escolha um slug diferente."
+
+msgid "adminV2.template.slugHint"
+msgstr "Somente a parte após core/categoria pode ser editada"
+
+msgid "adminV2.template.sysTooltip"
+msgstr "Item integrado (do sistema)"
+
+msgid "adminV2.templateVariables.access"
+msgstr "Acesso"
+
+msgid "adminV2.templateVariables.currentValue"
+msgstr "Valor atual"
+
+msgid "adminV2.templateVariables.description"
+msgstr "Descrição"
+
+msgid "adminV2.templateVariables.group"
+msgstr "Grupo"
+
+msgid "adminV2.templateVariables.label"
+msgstr "Rótulo"
+
+msgid "adminV2.templateVariables.listTitle"
+msgstr "Variáveis de template"
+
+msgid "adminV2.templateVariables.loadValues"
+msgstr "Carregar valores atuais"
+
+msgid "adminV2.templateVariables.name"
+msgstr "Nome"
+
+msgid "adminV2.templateVariables.skipHint"
+msgstr ""
+"Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma "
+"condição não for atendida"
+
+msgid "adminV2.theme.dark"
+msgstr "Modo escuro"
+
+msgid "adminV2.theme.light"
+msgstr "Modo claro"
+
+msgid "adminV2.users.add"
+msgstr "Adicionar usuário"
+
+msgid "adminV2.users.addLimits.apply"
+msgstr "Adicionar"
+
+msgid "adminV2.users.addLimits.days"
+msgstr "Dias a adicionar"
+
+msgid "adminV2.users.addLimits.gb"
+msgstr "Dados a adicionar"
+
+msgid "adminV2.users.addLimits.hint"
+msgstr "Os dados e os dias são somados ao que cada usuário já tem."
+
+msgid "adminV2.users.addLimits.note"
+msgstr ""
+"Usuários com dados ou dias ilimitados continuam ilimitados. Deixe um em 0 "
+"para adicionar apenas o outro."
+
+msgid "adminV2.users.addLimits.title"
+msgstr "Adicionar limites a {n} usuário | Adicionar limites a {n} usuários"
+
+msgid "adminV2.users.added"
+msgstr "{name} adicionado"
+
+msgid "adminV2.users.afterFirstShort"
+msgstr "{n} dias após o primeiro uso"
+
+msgid "adminV2.users.all"
+msgstr "Todos"
+
+msgid "adminV2.users.bulk.add_days"
+msgstr "+7 dias"
+
+msgid "adminV2.users.bulk.add_limits"
+msgstr "Adicionar limites"
+
+msgid "adminV2.users.bulk.delete"
+msgstr "Excluir"
+
+msgid "adminV2.users.bulk.disable"
+msgstr "Desativar"
+
+msgid "adminV2.users.bulk.enable"
+msgstr "Ativar"
+
+msgid "adminV2.users.bulk.reset_days"
+msgstr "Redefinir dias"
+
+msgid "adminV2.users.bulk.reset_usage"
+msgstr "Redefinir uso"
+
+msgid "adminV2.users.bulkConfirm.delete"
+msgstr "Excluir {n} usuário? | Excluir {n} usuários?"
+
+msgid "adminV2.users.bulkConfirm.disable"
+msgstr "Desativar {n} usuário? | Desativar {n} usuários?"
+
+msgid "adminV2.users.bulkConfirm.reset_days"
+msgstr ""
+"Redefinir os dias de {n} usuário? | Redefinir os dias de {n} usuários?"
+
+msgid "adminV2.users.bulkConfirm.reset_usage"
+msgstr "Redefinir o uso de {n} usuário? | Redefinir o uso de {n} usuários?"
+
+msgid "adminV2.users.bulkConfirmText.delete"
+msgstr "Eles não poderão mais se conectar."
+
+msgid "adminV2.users.bulkConfirmText.disable"
+msgstr "Eles não poderão se conectar até serem ativados novamente."
+
+msgid "adminV2.users.bulkConfirmText.reset_days"
+msgstr "O pacote deles recomeça na próxima conexão."
+
+msgid "adminV2.users.bulkConfirmText.reset_usage"
+msgstr "Os dados usados voltam a zero."
+
+msgid "adminV2.users.bulkDone.add_days"
+msgstr "7 dias adicionados a {n} usuário | 7 dias adicionados a {n} usuários"
+
+msgid "adminV2.users.bulkDone.add_limits"
+msgstr ""
+"Limites adicionados a {n} usuário | Limites adicionados a {n} usuários"
+
+msgid "adminV2.users.bulkDone.delete"
+msgstr "{n} usuário excluído | {n} usuários excluídos"
+
+msgid "adminV2.users.bulkDone.disable"
+msgstr "{n} usuário desativado | {n} usuários desativados"
+
+msgid "adminV2.users.bulkDone.enable"
+msgstr "{n} usuário ativado | {n} usuários ativados"
+
+msgid "adminV2.users.bulkDone.reset_days"
+msgstr ""
+"Dias redefinidos para {n} usuário | Dias redefinidos para {n} usuários"
+
+msgid "adminV2.users.bulkDone.reset_usage"
+msgstr "Uso redefinido para {n} usuário | Uso redefinido para {n} usuários"
+
+msgid "adminV2.users.clearSearch"
+msgstr "Limpar pesquisa"
+
+msgid "adminV2.users.clearSelection"
+msgstr "Limpar seleção"
+
+msgid "adminV2.users.col.expire"
+msgstr "Expira"
+
+msgid "adminV2.users.col.id"
+msgstr "ID"
+
+msgid "adminV2.users.col.lastOnline"
+msgstr "Última conexão"
+
+msgid "adminV2.users.col.name"
+msgstr "Nome"
+
+msgid "adminV2.users.col.status"
+msgstr "Status"
+
+msgid "adminV2.users.col.usage"
+msgstr "Uso"
+
+msgid "adminV2.users.configs.addOffline"
+msgstr "Adicionar config offline"
+
+msgid "adminV2.users.configs.addSubscription"
+msgstr "Adicionar assinatura"
+
+msgid "adminV2.users.configs.badUrl"
+msgstr "Uma assinatura deve ser uma URL http(s)"
+
+msgid "adminV2.users.configs.empty"
+msgstr "Vazio: preencha ou remova"
+
+msgid "adminV2.users.configs.hint"
+msgstr ""
+"Configs extras adicionadas à assinatura deste usuário: cole uma (offline) ou"
+" informe uma URL que será buscada para o usuário (assinatura). Escolha para "
+"qual formato de app ela serve, ou Auto para todos."
+
+msgid "adminV2.users.configs.inherited"
+msgstr ""
+"Também recebe {n} config dos administradores acima | Também recebe {n} "
+"configs dos administradores acima"
+
+msgid "adminV2.users.configs.kind.offline"
+msgstr "Offline"
+
+msgid "adminV2.users.configs.kind.subscription"
+msgstr "Assinatura"
+
+msgid "adminV2.users.configs.offlinePlaceholder"
+msgstr "vless://…  ou uma config JSON / YAML"
+
+msgid "adminV2.users.configs.target.auto"
+msgstr "Auto (todos os formatos)"
+
+msgid "adminV2.users.configs.target.clash"
+msgstr "Clash"
+
+msgid "adminV2.users.configs.target.hiddify-core"
+msgstr "Hiddify / sing-box"
+
+msgid "adminV2.users.configs.target.sublink"
+msgstr "Links de compartilhamento"
+
+msgid "adminV2.users.configs.target.xray"
+msgstr "Xray"
+
+msgid "adminV2.users.configs.title"
+msgstr "Configs adicionais"
+
+msgid "adminV2.users.configs.urlPlaceholder"
+msgstr "https://example.com/sub/…"
+
+msgid "adminV2.users.daysLeft"
+msgstr "{n} dia restante | {n} dias restantes"
+
+msgid "adminV2.users.deleteMessage"
+msgstr ""
+"O usuário não poderá mais se conectar. O UUID dele poderá ser usado "
+"novamente depois."
+
+msgid "adminV2.users.deleteTitle"
+msgstr "Excluir {name}?"
+
+msgid "adminV2.users.deleted"
+msgstr "{name} excluído"
+
+msgid "adminV2.users.done.reset_days"
+msgstr "{name} recomeça na próxima conexão"
+
+msgid "adminV2.users.done.reset_usage"
+msgstr "Uso de {name} redefinido"
+
+msgid "adminV2.users.extra.outbound"
+msgstr "outbound={name}"
+
+msgid "adminV2.users.extra.outboundHint"
+msgstr "Este usuário tem uma saída (outbound) própria"
+
+msgid "adminV2.users.extra.subs"
+msgstr "{n} sub extra | {n} subs extras"
+
+msgid "adminV2.users.extra.subsHint"
+msgstr "Configurações de assinatura extras para este usuário"
+
+msgid "adminV2.users.extra.telegramHint"
+msgstr "Conta do Telegram vinculada"
+
+msgid "adminV2.users.filter.active"
+msgstr "Ativos"
+
+msgid "adminV2.users.filter.activeHint"
+msgstr "Ativados, com dias e dados restantes"
+
+msgid "adminV2.users.filter.all"
+msgstr "Todos"
+
+msgid "adminV2.users.filter.allHint"
+msgstr "Todos os usuários"
+
+msgid "adminV2.users.filter.data_low"
+msgstr "Poucos dados"
+
+msgid "adminV2.users.filter.data_lowHint"
+msgstr "Ativos, com 80% ou mais dos dados usados"
+
+msgid "adminV2.users.filter.disabled"
+msgstr "Desativados"
+
+msgid "adminV2.users.filter.disabledHint"
+msgstr "Desativados por um administrador"
+
+msgid "adminV2.users.filter.expired"
+msgstr "Expirados"
+
+msgid "adminV2.users.filter.expiredHint"
+msgstr "Sem dias restantes"
+
+msgid "adminV2.users.filter.expiring"
+msgstr "Expirando em breve"
+
+msgid "adminV2.users.filter.expiringHint"
+msgstr "Ativos, terminando em até uma semana"
+
+msgid "adminV2.users.filter.no_data"
+msgstr "Sem dados"
+
+msgid "adminV2.users.filter.no_dataHint"
+msgstr "Usaram todo o limite de uso"
+
+msgid "adminV2.users.filter.not_started"
+msgstr "Não iniciados"
+
+msgid "adminV2.users.filter.not_startedHint"
+msgstr "Nunca se conectaram: os dias deles começam na primeira conexão"
+
+msgid "adminV2.users.filter.unseen_week"
+msgstr "Sem ser visto há uma semana"
+
+msgid "adminV2.users.filter.unseen_weekHint"
+msgstr "Já se conectaram, mas não nos últimos 7 dias"
+
+msgid "adminV2.users.filtersLabel"
+msgstr "Filtrar usuários"
+
+msgid "adminV2.users.form.add"
+msgstr "Adicionar usuário"
+
+msgid "adminV2.users.form.addSubtitle"
+msgstr ""
+"Depois de salvar, o link e o QR code do usuário abrem, prontos para enviar."
+
+msgid "adminV2.users.form.addTitle"
+msgstr "Novo usuário"
+
+msgid "adminV2.users.form.advanced"
+msgstr "Avançado"
+
+msgid "adminV2.users.form.data"
+msgstr "Dados"
+
+msgid "adminV2.users.form.daysCount"
+msgstr "{n} dia | {n} dias"
+
+msgid "adminV2.users.form.daysUnit"
+msgstr "dias"
+
+msgid "adminV2.users.form.disabled"
+msgstr "Desativado"
+
+msgid "adminV2.users.form.editSubtitle"
+msgstr "As alterações são aplicadas imediatamente."
+
+msgid "adminV2.users.form.editTimeTitle"
+msgstr "Editar tempo: {name}"
+
+msgid "adminV2.users.form.editTitle"
+msgstr "Editar {name}"
+
+msgid "adminV2.users.form.editUsageTitle"
+msgstr "Editar uso: {name}"
+
+msgid "adminV2.users.form.enableHint"
+msgstr "Um usuário desativado não pode se conectar."
+
+msgid "adminV2.users.form.enabled"
+msgstr "Ativado"
+
+msgid "adminV2.users.form.endedWhen"
+msgstr "terminou {when}"
+
+msgid "adminV2.users.form.endsWhen"
+msgstr "termina {when}"
+
+msgid "adminV2.users.form.expiresOn"
+msgstr "termina {date}"
+
+msgid "adminV2.users.form.extra"
+msgstr "Parâmetros extras (JSON)"
+
+msgid "adminV2.users.form.extraHint"
+msgstr ""
+"Configurações avançadas usadas pelos templates. O roteamento e as configs "
+"adicionais são definidos acima."
+
+msgid "adminV2.users.form.extraInvalid"
+msgstr "Isto não é um JSON válido"
+
+msgid "adminV2.users.form.extraNotObject"
+msgstr "Os parâmetros extras devem ser um objeto JSON (entre chaves)"
+
+msgid "adminV2.users.form.limit"
+msgstr "Limite de uso"
+
+msgid "adminV2.users.form.mode"
+msgstr "Período de redefinição"
+
+msgid "adminV2.users.form.name"
+msgstr "Nome"
+
+msgid "adminV2.users.form.namePlaceholder"
+msgstr "ex.: Celular da Sara"
+
+msgid "adminV2.users.form.nameRequired"
+msgstr "O nome é obrigatório"
+
+msgid "adminV2.users.form.neverExpires"
+msgstr "nunca expira"
+
+msgid "adminV2.users.form.newUuid"
+msgstr "Novo UUID"
+
+msgid "adminV2.users.form.nextReset"
+msgstr "próxima redefinição {when}"
+
+msgid "adminV2.users.form.notStarted"
+msgstr "Não iniciado"
+
+msgid "adminV2.users.form.notStartedHint"
+msgstr "Começa na primeira conexão"
+
+msgid "adminV2.users.form.note"
+msgstr "Nota"
+
+msgid "adminV2.users.form.notePlaceholder"
+msgstr "Somente administradores veem isto"
+
+msgid "adminV2.users.form.optional"
+msgstr "opcional"
+
+msgid "adminV2.users.form.outbound"
+msgstr "Outbound preferido"
+
+msgid "adminV2.users.form.outboundAuto"
+msgstr "Automático (seguir as regras de outbound)"
+
+msgid "adminV2.users.form.outboundHint"
+msgstr ""
+"Todo o tráfego deste usuário sai por este outbound (página Outbounds). Um "
+"outbound desativado é ignorado."
+
+msgid "adminV2.users.form.outboundOff"
+msgstr "desativado"
+
+msgid "adminV2.users.form.owner"
+msgstr "Subadministrador"
+
+msgid "adminV2.users.form.ownerMe"
+msgstr "{name} (você)"
+
+msgid "adminV2.users.form.packageDays"
+msgstr "Dias do pacote"
+
+msgid "adminV2.users.form.packageLength"
+msgstr "Duração do pacote"
+
+msgid "adminV2.users.form.period.month"
+msgstr "1 mês"
+
+msgid "adminV2.users.form.period.months3"
+msgstr "3 meses"
+
+msgid "adminV2.users.form.period.months6"
+msgstr "6 meses"
+
+msgid "adminV2.users.form.period.unlimited"
+msgstr "Ilimitado"
+
+msgid "adminV2.users.form.period.week"
+msgstr "1 semana"
+
+msgid "adminV2.users.form.period.year"
+msgstr "1 ano"
+
+msgid "adminV2.users.form.reset"
+msgstr "Redefinir"
+
+msgid "adminV2.users.form.resetDays"
+msgstr "Redefinir dias"
+
+msgid "adminV2.users.form.resetDaysHint"
+msgstr "Reinicia o pacote: os dias contam a partir da próxima conexão"
+
+msgid "adminV2.users.form.resetUsage"
+msgstr "Redefinir uso"
+
+msgid "adminV2.users.form.resetUsagePending"
+msgstr "O uso será redefinido ao salvar"
+
+msgid "adminV2.users.form.restart"
+msgstr "Reiniciar"
+
+msgid "adminV2.users.form.restartPending"
+msgstr ""
+"Reinicia ao salvar: os dias voltam a contar a partir da próxima conexão"
+
+msgid "adminV2.users.form.routing"
+msgstr "Roteamento"
+
+msgid "adminV2.users.form.setDays"
+msgstr "Definir dias"
+
+msgid "adminV2.users.form.startedWhen"
+msgstr "Iniciado {when}"
+
+msgid "adminV2.users.form.summaryConfigs"
+msgstr "{n} config adicional | {n} configs adicionais"
+
+msgid "adminV2.users.form.summaryExtra"
+msgstr "parâmetros extras definidos"
+
+msgid "adminV2.users.form.summaryOutbound"
+msgstr "Sai por {name}"
+
+msgid "adminV2.users.form.telegram"
+msgstr "ID do Telegram"
+
+msgid "adminV2.users.form.time"
+msgstr "Hora"
+
+msgid "adminV2.users.form.undo"
+msgstr "Desfazer"
+
+msgid "adminV2.users.form.unlimited"
+msgstr "Ilimitado"
+
+msgid "adminV2.users.form.usageReadOnly"
+msgstr "Os dados usados são contados pelo servidor; só podem ser redefinidos."
+
+msgid "adminV2.users.form.used"
+msgstr "Usado"
+
+msgid "adminV2.users.form.uuidEditHint"
+msgstr "Alterá-lo muda o link do usuário: o link antigo deixa de funcionar."
+
+msgid "adminV2.users.form.uuidHint"
+msgstr "Gerado automaticamente."
+
+msgid "adminV2.users.form.uuidInvalid"
+msgstr "Este não é um UUID válido"
+
+msgid "adminV2.users.form.waitingText"
+msgstr "Os {n} dias começam na primeira conexão."
+
+msgid "adminV2.users.form.waitingUnlimited"
+msgstr "Começa na primeira conexão e nunca expira."
+
+msgid "adminV2.users.form.who"
+msgstr "Quem"
+
+msgid "adminV2.users.groupByOwner"
+msgstr "Agrupar por administrador"
+
+msgid "adminV2.users.groupCount"
+msgstr "{n} usuário | {n} usuários"
+
+msgid "adminV2.users.inlineEdit"
+msgstr "Edição em linha"
+
+msgid "adminV2.users.inlineHint"
+msgstr ""
+"A edição em linha está ativada: clique em um nome, limite de uso, validade, "
+"modo ou nota para alterá-lo diretamente na lista. O uso em si só pode ser "
+"redefinido."
+
+msgid "adminV2.users.limitReached"
+msgstr ""
+"Você atingiu seu limite de usuários. Peça ao administrador acima de você "
+"para aumentá-lo."
+
+msgid "adminV2.users.link"
+msgstr "Link"
+
+msgid "adminV2.users.linkTitle"
+msgstr "Link de {name}"
+
+msgid "adminV2.users.mode.daily"
+msgstr "Diário"
+
+msgid "adminV2.users.mode.monthly"
+msgstr "Mensal"
+
+msgid "adminV2.users.mode.no_reset"
+msgstr "Sem redefinição"
+
+msgid "adminV2.users.mode.weekly"
+msgstr "Semanal"
+
+msgid "adminV2.users.modeHint.daily"
+msgstr "O uso é redefinido todos os dias."
+
+msgid "adminV2.users.modeHint.monthly"
+msgstr "O uso é redefinido a cada 30 dias a partir do início."
+
+msgid "adminV2.users.modeHint.no_reset"
+msgstr "O uso nunca é redefinido: o limite vale para todo o pacote."
+
+msgid "adminV2.users.modeHint.weekly"
+msgstr "O uso é redefinido a cada 7 dias a partir do início."
+
+msgid "adminV2.users.more"
+msgstr "Mais ações"
+
+msgid "adminV2.users.never"
+msgstr "Nunca"
+
+msgid "adminV2.users.noMatch"
+msgstr "Nenhum usuário corresponde"
+
+msgid "adminV2.users.noTimeLimit"
+msgstr "Sem limite de tempo"
+
+msgid "adminV2.users.none"
+msgstr "Ainda não há usuários"
+
+msgid "adminV2.users.of"
+msgstr "de"
+
+msgid "adminV2.users.online"
+msgstr "Online"
+
+msgid "adminV2.users.pageReport"
+msgstr "{first}–{last} de {totalRecords}"
+
+msgid "adminV2.users.perPage"
+msgstr "Usuários por página"
+
+msgid "adminV2.users.refresh"
+msgstr "Atualizar"
+
+msgid "adminV2.users.resetTag.daily"
+msgstr "Redefinição diária"
+
+msgid "adminV2.users.resetTag.monthly"
+msgstr "Redefinição mensal"
+
+msgid "adminV2.users.resetTag.weekly"
+msgstr "Redefinição semanal"
+
+msgid "adminV2.users.saved"
+msgstr "{name} salvo"
+
+msgid "adminV2.users.search"
+msgstr "Pesquisar nome, UUID ou nota"
+
+msgid "adminV2.users.select"
+msgstr "Selecionar"
+
+msgid "adminV2.users.selectAll"
+msgstr "Selecionar todos os {n} | Selecionar todos os {n}"
+
+msgid "adminV2.users.selected"
+msgstr "{n} selecionado | {n} selecionados"
+
+msgid "adminV2.users.showDates"
+msgstr "Mostrar datas de término"
+
+msgid "adminV2.users.showLink"
+msgstr "Mostrar link do usuário"
+
+msgid "adminV2.users.showMore"
+msgstr "Mostrar mais {n}"
+
+msgid "adminV2.users.showRelative"
+msgstr "Mostrar tempo restante"
+
+msgid "adminV2.users.sortById"
+msgstr "Ordenar por ID"
+
+msgid "adminV2.users.status.active"
+msgstr "Ativo"
+
+msgid "adminV2.users.status.disabled"
+msgstr "Desativado"
+
+msgid "adminV2.users.status.expired"
+msgstr "Expirado"
+
+msgid "adminV2.users.status.no_data"
+msgstr "Sem dados"
+
+msgid "adminV2.users.statusHint.active"
+msgstr "Ativado, com dias e dados restantes"
+
+msgid "adminV2.users.statusHint.disabled"
+msgstr "Desativado por um administrador"
+
+msgid "adminV2.users.statusHint.expired"
+msgstr "Sem dias restantes no pacote"
+
+msgid "adminV2.users.statusHint.no_data"
+msgstr "Usou todo o limite de uso"
+
+msgid "adminV2.users.subtitle"
+msgstr ""
+"Todos que se conectam por este painel: seus dados, tempo restante e links."
+
+msgid "adminV2.users.title"
+msgstr "Usuários"
+
+msgid "adminV2.utils.addQuery"
+msgstr "Adicionar consulta"
+
+msgid "adminV2.utils.autoSwapped"
+msgstr "Parecia Base64, então os lados foram trocados."
+
+msgid "adminV2.utils.base64Label"
+msgstr "Base64"
+
+msgid "adminV2.utils.base64Live"
+msgstr ""
+"Edite um lado e o outro é atualizado enquanto você digita. Um protocol:// no"
+" início (como vmess://) é mantido e ignorado ao decodificar. Base64 colado "
+"no lado do texto troca os lados automaticamente."
+
+msgid "adminV2.utils.base64Tab"
+msgstr "Base64"
+
+msgid "adminV2.utils.clear"
+msgstr "Limpar"
+
+msgid "adminV2.utils.decode"
+msgstr "Decodificar"
+
+msgid "adminV2.utils.emptyLinks"
+msgstr "Cole links de compartilhamento à esquerda para inspecioná-los aqui."
+
+msgid "adminV2.utils.encode"
+msgstr "Codificar"
+
+msgid "adminV2.utils.extraHint"
+msgstr "JSON decodificado da URL. Deixe vazio para omitir extra do link."
+
+msgid "adminV2.utils.extraJson"
+msgstr "extra (JSON)"
+
+msgid "adminV2.utils.fragment"
+msgstr "Nome"
+
+msgid "adminV2.utils.input"
+msgstr "Entrada"
+
+msgid "adminV2.utils.links"
+msgstr "Links de compartilhamento"
+
+msgid "adminV2.utils.linksPlaceholder"
+msgstr ""
+"Cole um ou mais links vless://, vmess://, ss://, trojan:// (ou uma "
+"assinatura base64)"
+
+msgid "adminV2.utils.method"
+msgstr "Método"
+
+msgid "adminV2.utils.noQuery"
+msgstr "Sem parâmetros de consulta. Use Adicionar consulta para inserir um."
+
+msgid "adminV2.utils.notBase64"
+msgstr "Isto não é Base64 válido."
+
+msgid "adminV2.utils.notUrlEncoded"
+msgstr "Este não é um texto codificado em URL válido."
+
+msgid "adminV2.utils.output"
+msgstr "Saída"
+
+msgid "adminV2.utils.pass"
+msgstr "Senha"
+
+msgid "adminV2.utils.path"
+msgstr "UrlPath"
+
+msgid "adminV2.utils.port"
+msgstr "Porta"
+
+msgid "adminV2.utils.pretty"
+msgstr "Decodificado"
+
+msgid "adminV2.utils.protocol"
+msgstr "Protocolo"
+
+msgid "adminV2.utils.queryKey"
+msgstr "Chave"
+
+msgid "adminV2.utils.queryParams"
+msgstr "Parâmetros de consulta"
+
+msgid "adminV2.utils.queryValue"
+msgstr "Valor"
+
+msgid "adminV2.utils.server"
+msgstr "Servidor"
+
+msgid "adminV2.utils.sublinkHint"
+msgstr ""
+"Cole os links à esquerda. O lado direito mostra os campos decodificados. Os "
+"parâmetros de consulta são linhas editáveis; extra é JSON. As alterações à "
+"direita reescrevem os links."
+
+msgid "adminV2.utils.sublinkTab"
+msgstr "Sublink"
+
+msgid "adminV2.utils.subtitle"
+msgstr ""
+"Codifique, decodifique e inspecione links de compartilhamento no navegador —"
+" nada é enviado ao servidor."
+
+msgid "adminV2.utils.swap"
+msgstr "Trocar"
+
+msgid "adminV2.utils.textLabel"
+msgstr "Texto"
+
+msgid "adminV2.utils.title"
+msgstr "Utilitários"
+
+msgid "adminV2.utils.unwrappedSubscription"
+msgstr ""
+"Foi detectada uma assinatura base64 e decodificada em links individuais."
+
+msgid "adminV2.utils.urlEncodedLabel"
+msgstr "Codificado em URL"
+
+msgid "adminV2.utils.urlLive"
+msgstr ""
+"Edite um lado e o outro é atualizado enquanto você digita. Texto codificado "
+"em porcentagem colado no lado do texto troca os lados automaticamente."
+
+msgid "adminV2.utils.urlSafe"
+msgstr "Seguro para URL"
+
+msgid "adminV2.utils.urlTab"
+msgstr "URL"
+
+msgid "adminV2.utils.user"
+msgstr "Usuário"
+
+msgid "adminV2.utils.vmessJson"
+msgstr "JSON vmess"
+
+msgid "adminV2.utils.vmessObject"
+msgstr "O JSON vmess deve ser um objeto"
+
+msgid "adminV2.validation.errors"
+msgstr "Erros"
+
+msgid "adminV2.validation.preview"
+msgstr "Pré-visualização compilada"
+
+msgid "adminV2.validation.title"
+msgstr "Validação"
+
+msgid "adminV2.validation.warnings"
+msgstr "Avisos"
+
 msgid "adminuser.force_update_usage"
 msgstr ""
 "A cada 6 minutos o uso está sendo atualizado. Para atualizá-lo agora <a "
@@ -1090,16 +6418,16 @@ msgid "android"
 msgstr "Android"
 
 msgid "app.clash_verge_rev.description"
-msgstr ""
+msgstr "Cliente Clash Verge Rev para desktop"
 
 msgid "app.clash_verge_rev.title"
-msgstr ""
+msgstr "Clash Verge Rev"
 
 msgid "app.cmfa.description"
-msgstr ""
+msgstr "Clash Meta para Android"
 
 msgid "app.cmfa.title"
-msgstr ""
+msgstr "Clash Meta para Android"
 
 msgid "app.foxray.description"
 msgstr "Descrição do FoXray"
@@ -1178,7 +6506,7 @@ msgid "app.streisand.title"
 msgstr "Streisand"
 
 msgid "app.v2rayn.title"
-msgstr ""
+msgstr "v2rayN"
 
 msgid "app.v2rayng.description"
 msgstr "Descrição do V2RayNG"
@@ -1187,10 +6515,10 @@ msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
 msgid "at least one domain should exist"
-msgstr ""
+msgstr "deve existir pelo menos um domínio"
 
 msgid "at least one user should exist"
-msgstr ""
+msgstr "deve existir pelo menos um usuário"
 
 msgid "auto"
 msgstr "Auto"
@@ -1232,7 +6560,7 @@ msgid "close"
 msgstr "Fechar"
 
 msgid "cloudflare.error"
-msgstr "cloudflare.error"
+msgstr "Erro da Cloudflare"
 
 msgid "config.Domain_already_used"
 msgstr "O domínio existe na seção de domínios. Usar outro domínio"
@@ -1261,28 +6589,30 @@ msgid "config.Invalid_telegram_bot_token"
 msgstr "Token do bot telegram inválido"
 
 msgid "config.additional_configs.description"
-msgstr ""
+msgstr "Mescla configs extras nas assinaturas geradas"
 
 msgid "config.additional_configs.label"
-msgstr ""
+msgstr "Configs adicionais"
 
 msgid "config.additional_configs_singbox.description"
-msgstr ""
+msgstr "Você pode acrescentar outros outbounds do singbox ao resultado"
 
 msgid "config.additional_configs_singbox.label"
-msgstr ""
+msgstr "Configs adicionais para Singbox"
 
 msgid "config.additional_configs_urls.description"
 msgstr ""
+"Você pode adicionar proxies http:// https:// ou em formato v2ray como "
+"vless://"
 
 msgid "config.additional_configs_urls.label"
-msgstr ""
+msgstr "URLs adicionais"
 
 msgid "config.additional_configs_xrayjson.description"
-msgstr ""
+msgstr "Outbounds adicionais para Xray Json"
 
 msgid "config.additional_configs_xrayjson.label"
-msgstr ""
+msgstr "Configs adicionais para Xray JSON"
 
 msgid "config.admin.description"
 msgstr ""
@@ -1295,25 +6625,25 @@ msgid "config.admin_lang.description"
 msgstr "Escolha o idioma para a área administrativa"
 
 msgid "config.admin_lang.en"
-msgstr ""
+msgstr "🇺🇸 Inglês"
 
 msgid "config.admin_lang.fa"
-msgstr ""
+msgstr "🇮🇷 Persa - فارسی"
 
 msgid "config.admin_lang.label"
 msgstr "Idioma do Painel Administrativo"
 
 msgid "config.admin_lang.my"
-msgstr ""
+msgstr "🇲🇲 Birmanês"
 
 msgid "config.admin_lang.pt"
-msgstr ""
+msgstr "🇧🇷 Português"
 
 msgid "config.admin_lang.ru"
-msgstr ""
+msgstr "🇷🇺 Russo"
 
 msgid "config.admin_lang.zh"
-msgstr ""
+msgstr "🇨🇳 Chinês"
 
 msgid "config.admin_secret.description"
 msgstr ""
@@ -1339,10 +6669,10 @@ msgid "config.allow_invalid_sni.label"
 msgstr "🆗 Permitir SNI inválido"
 
 msgid "config.anytls_enable.description"
-msgstr ""
+msgstr "Ativar o protocolo AnyTLS"
 
 msgid "config.anytls_enable.label"
-msgstr ""
+msgstr "AnyTLS"
 
 msgid "config.auto_update.description"
 msgstr ""
@@ -1413,19 +6743,21 @@ msgid "config.cloudflare.label"
 msgstr "🔑 API Cloudflare"
 
 msgid "config.common_proxy_core.both"
-msgstr ""
+msgstr "Ambos"
 
 msgid "config.common_proxy_core.description"
 msgstr ""
+"Quando um protocolo existe tanto no Xray quanto no Hiddify Core, apenas o "
+"core selecionado permanece ativado. Escolha Ambos para manter os dois."
 
 msgid "config.common_proxy_core.hiddify_core"
-msgstr ""
+msgstr "Hiddify Core (singbox)"
 
 msgid "config.common_proxy_core.label"
-msgstr ""
+msgstr "🎛️ Core de proxy comum"
 
 msgid "config.common_proxy_core.xray"
-msgstr ""
+msgstr "Xray"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1448,7 +6780,7 @@ msgid "config.create_easysetup_link.description"
 msgstr "config.create_easysetup_link.descrição"
 
 msgid "config.create_easysetup_link.label"
-msgstr "config.create_easysetup_link.label"
+msgstr "Criar link de configuração fácil"
 
 msgid "config.db_version.description"
 msgstr "Descrição da versão do banco de dados"
@@ -1460,7 +6792,7 @@ msgid "config.dbvalues.description"
 msgstr "config.dbvalues.descrição"
 
 msgid "config.dbvalues.label"
-msgstr "config.dbvalues.label"
+msgstr "Valores do BD"
 
 msgid "config.decoy_domain.description"
 msgstr ""
@@ -1471,10 +6803,10 @@ msgid "config.decoy_domain.label"
 msgstr "🔀 Site Decoy"
 
 msgid "config.default_useragent_string.description"
-msgstr ""
+msgstr "String de User-Agent padrão usada nas configs de cliente geradas"
 
 msgid "config.default_useragent_string.label"
-msgstr ""
+msgstr "🪪 User-Agent padrão"
 
 msgid "config.dns_server.description"
 msgstr ""
@@ -1486,34 +6818,34 @@ msgid "config.dns_server.label"
 msgstr "🖥 Servidor DNS"
 
 msgid "config.dnstt.description"
-msgstr ""
+msgstr "Configurações do túnel DNSTT"
 
 msgid "config.dnstt.label"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "config.dnstt_enable.description"
-msgstr ""
+msgstr "Ativar o protocolo DNSTT"
 
 msgid "config.dnstt_enable.label"
-msgstr ""
+msgstr "Ativar DNSTT"
 
 msgid "config.dnstt_private_key.description"
-msgstr ""
+msgstr "Chave privada do DNSTT"
 
 msgid "config.dnstt_private_key.label"
-msgstr ""
+msgstr "Chave privada do DNSTT"
 
 msgid "config.dnstt_public_key.description"
-msgstr ""
+msgstr "Chave pública do DNSTT"
 
 msgid "config.dnstt_public_key.label"
-msgstr ""
+msgstr "Chave pública do DNSTT"
 
 msgid "config.dnstt_resolvers.description"
-msgstr ""
+msgstr "Resolvedores DNS separados por vírgula para o DNSTT"
 
 msgid "config.dnstt_resolvers.label"
-msgstr ""
+msgstr "Resolvedores do DNSTT"
 
 msgid "config.domain_fronting.description"
 msgstr ""
@@ -1556,10 +6888,10 @@ msgid "config.firewall.label"
 msgstr "🛡️ Firewall"
 
 msgid "config.first_setup.description"
-msgstr "config.first_setup.description"
+msgstr "Se o painel está no modo de primeira configuração"
 
 msgid "config.first_setup.label"
-msgstr "config.first_setup.label"
+msgstr "Primeira configuração"
 
 msgid "config.general.description"
 msgstr "É Configurações Gerais do Sistema"
@@ -1582,22 +6914,22 @@ msgid "config.h2_enable.label"
 msgstr "🔵h2"
 
 msgid "config.health_secret_path.description"
-msgstr ""
+msgstr "Caminho secreto para verificações de integridade"
 
 msgid "config.health_secret_path.label"
-msgstr ""
+msgstr "Caminho secreto de integridade"
 
 msgid "config.hidden.description"
-msgstr "config.hidden.description"
+msgstr "Configuração interna oculta"
 
 msgid "config.hidden.label"
-msgstr "config.hidden.label"
+msgstr "Oculto"
 
 msgid "config.hiddifycli_enable.description"
 msgstr "config.hiddifycli_enable.descrição"
 
 msgid "config.hiddifycli_enable.label"
-msgstr "config.hiddifycli_enable.label"
+msgstr "Ativar o Hiddify CLI"
 
 msgid "config.http.description"
 msgstr "As configurações HTTP podem ser definidas nesta seção"
@@ -1676,7 +7008,7 @@ msgid "config.invalid_uuid"
 msgstr "Secret UUID inválido. exemplo: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6"
 
 msgid "config.is_parent.description"
-msgstr "config.is_parent.description"
+msgstr "Se este painel atua como painel pai"
 
 msgid "config.is_parent.label"
 msgstr "Painel pai"
@@ -1707,43 +7039,45 @@ msgstr ""
 " na área do usuário."
 
 msgid "config.lang.en"
-msgstr ""
+msgstr "🇺🇸 Inglês"
 
 msgid "config.lang.fa"
-msgstr ""
+msgstr "🇮🇷 Persa - فارسی"
 
 msgid "config.lang.label"
 msgstr "🗺️ Idioma da área do usuário"
 
 msgid "config.lang.my"
-msgstr ""
+msgstr "🇲🇲 Birmanês"
 
 msgid "config.lang.pt"
-msgstr ""
+msgstr "🇧🇷 Português"
 
 msgid "config.lang.ru"
-msgstr ""
+msgstr "🇷🇺 Russo"
 
 msgid "config.lang.zh"
-msgstr ""
+msgstr "🇨🇳 Chinês"
 
 msgid "config.last_hash.description"
-msgstr "config.last_hash.description"
+msgstr "Hash da última configuração aplicada"
 
 msgid "config.last_hash.label"
-msgstr "config.last_hash.label"
+msgstr "Último hash"
 
 msgid "config.last_priodic_usage_check.description"
-msgstr "config.last_priodic_usage_check.description"
+msgstr "Data e hora da última verificação periódica de uso"
 
 msgid "config.last_priodic_usage_check.label"
-msgstr "config.last_priodic_usage_check.label"
+msgstr "Última verificação periódica de uso"
 
 msgid "config.last_users_sync.description"
 msgstr ""
+"Data e hora da última sincronização bem-sucedida de usuários com o painel "
+"pai"
 
 msgid "config.last_users_sync.label"
-msgstr ""
+msgstr "Última sincronização de usuários"
 
 msgid "config.license.description"
 msgstr "Para uso comercial deste produto, você deve comprar sua licença"
@@ -1752,100 +7086,111 @@ msgid "config.license.label"
 msgstr "Código de licença"
 
 msgid "config.log_level.CRITICAL"
-msgstr ""
+msgstr "Crítico"
 
 msgid "config.log_level.DEBUG"
-msgstr ""
+msgstr "Depuração"
 
 msgid "config.log_level.ERROR"
-msgstr ""
+msgstr "Erro"
 
 msgid "config.log_level.INFO"
-msgstr ""
+msgstr "Informação"
 
 msgid "config.log_level.SUCCESS"
-msgstr ""
+msgstr "Sucesso"
 
 msgid "config.log_level.TRACE"
-msgstr ""
+msgstr "Rastreamento"
 
 msgid "config.log_level.WARNING"
-msgstr ""
+msgstr "Aviso"
 
 msgid "config.log_level.description"
 msgstr "config.log_level.descrição"
 
 msgid "config.log_level.label"
-msgstr "config.log_level.label"
+msgstr "Nível de log"
 
 msgid "config.master_dns_encrypt_key.description"
-msgstr ""
+msgstr "Chave de criptografia de payload do MasterDNS (hex)"
 
 msgid "config.master_dns_encrypt_key.label"
-msgstr ""
+msgstr "Chave de criptografia do MasterDNS"
 
 msgid "config.max_proxy_ips_per_version.description"
 msgstr ""
+"Número máximo de endereços IPv4 e IPv6 usados para gerar proxies para cada "
+"domínio (cada versão tem seu próprio limite)."
 
 msgid "config.max_proxy_ips_per_version.label"
-msgstr ""
+msgstr "Máx. de IPs de proxy por versão"
 
 msgid "config.mieru.description"
 msgstr ""
+"O protocolo Mieru é um protocolo de comunicação seguro e descentralizado "
+"projetado para facilitar a transferência de dados em redes distribuídas sem "
+"necessidade de um servidor central"
 
 msgid "config.mieru.label"
-msgstr ""
+msgstr "⚡️ Mieru"
 
 msgid "config.mieru_enable.description"
-msgstr ""
+msgstr "Meiru é um proxy rápido"
 
 msgid "config.mieru_enable.label"
-msgstr ""
+msgstr "⚡️ Ativar Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr ""
+msgstr "📄 Padrão"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr ""
+msgstr "⏳ Sem espera"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr ""
+msgstr "📝 Padrão (Standard)"
 
 msgid "config.mieru_handshake.description"
 msgstr ""
+"O handshake do Mieru estabelece uma conexão segura verificando e "
+"autenticando ambas as partes antes da troca de dados"
 
 msgid "config.mieru_handshake.label"
-msgstr ""
+msgstr "🤝 Handshake do Mieru"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr ""
+msgstr "📄 Padrão"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr ""
+msgstr "📈 Alta"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr ""
+msgstr "📉 Baixa"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr ""
+msgstr "📊 Média"
 
 msgid "config.mieru_multiplexing.description"
 msgstr ""
+"A multiplexação do Mieru permite uma transferência de dados eficiente ao "
+"tratar várias conexões simultaneamente"
 
 msgid "config.mieru_multiplexing.label"
-msgstr ""
+msgstr "🔄 Modo de multiplexação do Mieru"
 
 msgid "config.mieru_tcp_ports.description"
 msgstr ""
+"Números inteiros separados por vírgula indicando as portas (1234,1235,1237)"
 
 msgid "config.mieru_tcp_ports.label"
-msgstr ""
+msgstr "🔍 Portas TCP do Mieru"
 
 msgid "config.mieru_udp_ports.description"
 msgstr ""
+"Números inteiros separados por vírgula indicando as portas (1234,1235,1237)"
 
 msgid "config.mieru_udp_ports.label"
-msgstr ""
+msgstr "🔎 Portas UDP do Mieru"
 
 msgid "config.mux.description"
 msgstr "As configurações MUX (Multiplex) podem ser definidas nesta seção"
@@ -1919,16 +7264,16 @@ msgid "config.mux_protocol.label"
 msgstr "♍️ Protocolo MUX"
 
 msgid "config.naive_enable.description"
-msgstr ""
+msgstr "O Naive usa exatamente a pilha do Chrome para evitar detecção"
 
 msgid "config.naive_enable.label"
-msgstr ""
+msgstr "🛡 Ativar Naive"
 
 msgid "config.naive_port.description"
-msgstr ""
+msgstr "Esta opção configura uma porta do Naive"
 
 msgid "config.naive_port.label"
-msgstr ""
+msgstr "🔎 Porta do Naive"
 
 msgid "config.netdata.description"
 msgstr "Para exibir recursos. usa a CPU do seu servidor, mas não é muito."
@@ -1937,10 +7282,10 @@ msgid "config.netdata.label"
 msgstr "Netdata"
 
 msgid "config.node_name.description"
-msgstr ""
+msgstr "O nome deste nó, exibido no painel pai"
 
 msgid "config.node_name.label"
-msgstr ""
+msgstr "Nome do nó"
 
 msgid "config.not_found.description"
 msgstr "Configuração não encontrada"
@@ -1961,31 +7306,31 @@ msgid "config.package_mode.label"
 msgstr "🔄 Modo de atualização de pacotes"
 
 msgid "config.panel_mode.child"
-msgstr ""
+msgstr "Filho"
 
 msgid "config.panel_mode.description"
 msgstr "config.panel_mode.descrição"
 
 msgid "config.panel_mode.label"
-msgstr "config.panel_mode.label"
+msgstr "Modo do painel"
 
 msgid "config.panel_mode.parent"
-msgstr ""
+msgstr "Pai"
 
 msgid "config.panel_mode.standalone"
-msgstr ""
+msgstr "Independente"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "config.parent_admin_proxy_path.description"
+msgstr "Caminho do proxy de administração no painel pai"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "config.parent_admin_proxy_path.label"
+msgstr "Caminho do proxy de administração do pai"
 
 msgid "config.parent_domain.description"
-msgstr "config.parent_domain.description"
+msgstr "Domínio do painel pai"
 
 msgid "config.parent_domain.label"
-msgstr "config.parent_domain.label"
+msgstr "Domínio do pai"
 
 msgid "config.parent_panel.description"
 msgstr ""
@@ -2002,10 +7347,10 @@ msgid "config.path_grpc.label"
 msgstr "ℹ️ caminho gRPC"
 
 msgid "config.path_http.description"
-msgstr ""
+msgstr "deve ser aleatório"
 
 msgid "config.path_http.label"
-msgstr ""
+msgstr "ℹ️ Caminho HTTP"
 
 msgid "config.path_httpupgrade.description"
 msgstr "deveria ser aleatório"
@@ -2014,10 +7359,16 @@ msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ Caminho de atualização HTTP"
 
 msgid "config.path_naive.description"
-msgstr ""
+msgstr "Para o link do Naive"
 
 msgid "config.path_naive.label"
-msgstr ""
+msgstr "ℹ️ Caminho do Naive"
+
+msgid "config.path_splithttp.description"
+msgstr "Caminho XHTTP"
+
+msgid "config.path_splithttp.label"
+msgstr "Caminho XHTTP"
 
 msgid "config.path_ss.description"
 msgstr "Caminho Shadowsocks nos Links"
@@ -2122,10 +7473,10 @@ msgid "config.reality_fallback_domain.label"
 msgstr "🌍 Domínio alternativo"
 
 msgid "config.reality_port.description"
-msgstr ""
+msgstr "Porta Reality"
 
 msgid "config.reality_port.label"
-msgstr ""
+msgstr "Porta REALITY"
 
 msgid "config.reality_private_key.description"
 msgstr "Não mude isso"
@@ -2154,22 +7505,22 @@ msgid "config.reality_short_ids.label"
 msgstr "🆔 IDs curtos"
 
 msgid "config.restls.description"
-msgstr "config.restls.description"
+msgstr "Configurações do protocolo RestLS"
 
 msgid "config.restls.label"
 msgstr "RestTLS"
 
 msgid "config.restls1_2_domain.description"
-msgstr "config.restls1_2_domain.description"
+msgstr "Domínio usado para o RestLS 1.2"
 
 msgid "config.restls1_2_domain.label"
-msgstr "config.restls1_2_domain.label"
+msgstr "Domínio RestLS 1.2"
 
 msgid "config.restls1_3_domain.description"
-msgstr "config.restls1_3_domain.description"
+msgstr "Domínio usado para o RestLS 1.3"
 
 msgid "config.restls1_3_domain.label"
-msgstr "config.restls1_3_domain.label"
+msgstr "Domínio RestLS 1.3"
 
 msgid "config.shadowsocks.description"
 msgstr ""
@@ -2242,16 +7593,16 @@ msgid "config.show_usage_in_sublink.label"
 msgstr "💬 Mostrar uso no sublink"
 
 msgid "config.snell_enable.description"
-msgstr ""
+msgstr "Ativar o protocolo Snell"
 
 msgid "config.snell_enable.label"
-msgstr ""
+msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr ""
+msgstr "Ativar o protocolo SOCKS"
 
 msgid "config.socks_enable.label"
-msgstr ""
+msgstr "SOCKS"
 
 msgid "config.special_port.description"
 msgstr ""
@@ -2269,6 +7620,14 @@ msgstr ""
 
 msgid "config.speed_test.label"
 msgstr "🚀 Teste de velocidade"
+
+msgid "config.splithttp_enable.description"
+msgstr ""
+"O XHTTP permite fluxos separados de download e upload, uniformizando gRPC, "
+"H2 e H1, e também oferece suporte a QUIC."
+
+msgid "config.splithttp_enable.label"
+msgstr "Ativar XHTTP"
 
 msgid "config.ssfaketls.description"
 msgstr ""
@@ -2303,52 +7662,52 @@ msgid "config.ssh.label"
 msgstr "Proxy SSH"
 
 msgid "config.ssh_host_dsa_pk.description"
-msgstr ""
+msgstr "Chave privada DSA do host SSH"
 
 msgid "config.ssh_host_dsa_pk.label"
-msgstr ""
+msgstr "Chave privada DSA do host SSH"
 
 msgid "config.ssh_host_dsa_pub.description"
-msgstr ""
+msgstr "Chave pública DSA do host SSH"
 
 msgid "config.ssh_host_dsa_pub.label"
-msgstr ""
+msgstr "Chave pública DSA do host SSH"
 
 msgid "config.ssh_host_ecdsa_pk.description"
-msgstr ""
+msgstr "Chave privada ECDSA do host SSH"
 
 msgid "config.ssh_host_ecdsa_pk.label"
-msgstr ""
+msgstr "Chave privada ECDSA do host SSH"
 
 msgid "config.ssh_host_ecdsa_pub.description"
-msgstr ""
+msgstr "Chave pública ECDSA do host SSH"
 
 msgid "config.ssh_host_ecdsa_pub.label"
-msgstr ""
+msgstr "Chave pública ECDSA do host SSH"
 
 msgid "config.ssh_host_ed25519_pk.description"
-msgstr ""
+msgstr "Chave privada Ed25519 do host SSH"
 
 msgid "config.ssh_host_ed25519_pk.label"
-msgstr ""
+msgstr "Chave privada Ed25519 do host SSH"
 
 msgid "config.ssh_host_ed25519_pub.description"
-msgstr ""
+msgstr "Chave pública Ed25519 do host SSH"
 
 msgid "config.ssh_host_ed25519_pub.label"
-msgstr ""
+msgstr "Chave pública Ed25519 do host SSH"
 
 msgid "config.ssh_host_rsa_pk.description"
-msgstr ""
+msgstr "Chave privada RSA do host SSH"
 
 msgid "config.ssh_host_rsa_pk.label"
-msgstr ""
+msgstr "Chave privada RSA do host SSH"
 
 msgid "config.ssh_host_rsa_pub.description"
-msgstr ""
+msgstr "Chave pública RSA do host SSH"
 
 msgid "config.ssh_host_rsa_pub.label"
-msgstr ""
+msgstr "Chave pública RSA do host SSH"
 
 msgid "config.ssh_server_enable.description"
 msgstr "O proxy SSH é completamente diferente do servidor ssh original."
@@ -2409,31 +7768,31 @@ msgid "config.sub_full_clash_enable.description"
 msgstr "config.sub_full_clash_enable.descrição"
 
 msgid "config.sub_full_clash_enable.label"
-msgstr "config.sub_full_clash_enable.label"
+msgstr "Ativar Clash Sub completo"
 
 msgid "config.sub_full_clash_meta_enable.description"
-msgstr "config.sub_full_clash_meta_enable.description"
+msgstr "Ativar o endpoint de assinatura Clash Meta completa"
 
 msgid "config.sub_full_clash_meta_enable.label"
-msgstr "config.sub_full_clash_meta_enable.label"
+msgstr "Ativar Clash Meta Sub completo"
 
 msgid "config.sub_full_links_b64_enable.description"
-msgstr "config.sub_full_links_b64_enable.description"
+msgstr "Ativar o endpoint de links de assinatura em base64"
 
 msgid "config.sub_full_links_b64_enable.label"
-msgstr "config.sub_full_links_b64_enable.label"
+msgstr "Ativar links completos (Base64)"
 
 msgid "config.sub_full_links_enable.description"
-msgstr "config.sub_full_links_enable.description"
+msgstr "Ativar o endpoint de links de assinatura em texto simples"
 
 msgid "config.sub_full_links_enable.label"
-msgstr "config.sub_full_links_enable.label"
+msgstr "Ativar links completos"
 
 msgid "config.sub_full_singbox_enable.description"
-msgstr "config.sub_full_singbox_enable.description"
+msgstr "Ativar o endpoint de assinatura Sing-box completa"
 
 msgid "config.sub_full_singbox_enable.label"
-msgstr "config.sub_full_singbox_enable.label"
+msgstr "Ativar Sing-box Sub completo"
 
 msgid "config.sub_full_xray_json_enable.description"
 msgstr ""
@@ -2446,10 +7805,10 @@ msgid "config.sub_full_xray_json_enable.label"
 msgstr "⚙️ Link de configuração completa do XRay"
 
 msgid "config.sub_singbox_ssh_enable.description"
-msgstr "config.sub_singbox_ssh_enable.description"
+msgstr "Ativar o endpoint de assinatura SSH do Sing-box"
 
 msgid "config.sub_singbox_ssh_enable.label"
-msgstr "config.sub_singbox_ssh_enable.label"
+msgstr "Ativar Sing-box SSH Sub"
 
 msgid "config.tcp_enable.description"
 msgstr "Ativa o protocolo TCP"
@@ -2509,11 +7868,17 @@ msgstr "As configurações de TLS podem ser definidas nesta seção."
 msgid "config.tls.label"
 msgstr "Configurações de TLS"
 
+msgid "config.tls_ech.description"
+msgstr "Valor ECH no formato: cloudflare-ech.com+https://8.8.8.8/dns-query"
+
+msgid "config.tls_ech.label"
+msgstr "Valor do TLS ECH"
+
 msgid "config.tls_ech_enable.description"
-msgstr ""
+msgstr "Adiciona ECH aos links de assinatura TLS gerados"
 
 msgid "config.tls_ech_enable.label"
-msgstr ""
+msgstr "🔐 Ativar TLS ECH"
 
 msgid "config.tls_fragment_enable.description"
 msgstr ""
@@ -2526,10 +7891,10 @@ msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
 
 msgid "config.tls_fragment_packets.description"
-msgstr ""
+msgstr "Modo de fragmentação de pacotes (por exemplo: tlshello ou 1-3)"
 
 msgid "config.tls_fragment_packets.label"
-msgstr ""
+msgstr "📦 Pacotes de fragmentação TLS"
 
 msgid "config.tls_fragment_size.description"
 msgstr "O tamanho de cada pacote"
@@ -2621,16 +7986,18 @@ msgid "config.tuic_port.label"
 msgstr "🔎 Portas TUIC"
 
 msgid "config.unique_id.description"
-msgstr "config.unique_id.description"
+msgstr "Identificador único desta instância do painel"
 
 msgid "config.unique_id.label"
-msgstr "config.unique_id.label"
+msgstr "ID único"
 
 msgid "config.use_ip_in_config.description"
 msgstr ""
+"Isto ajuda a reduzir problemas que podem ocorrer ao resolver o IP do "
+"servidor. Será usado um IP aleatório do domínio selecionado."
 
 msgid "config.use_ip_in_config.label"
-msgstr ""
+msgstr "Usar IP nas configs"
 
 msgid "config.utls.description"
 msgstr ""
@@ -2658,10 +8025,10 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ As configurações foram alteradas com sucesso"
 
 msgid "config.vless_decryption.description"
-msgstr ""
+msgstr "Parâmetro de descriptografia VLESS para links de compartilhamento"
 
 msgid "config.vless_decryption.label"
-msgstr ""
+msgstr "Descriptografia VLESS"
 
 msgid "config.vless_enable.description"
 msgstr "Habilitar protocolo VLess"
@@ -2670,16 +8037,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr ""
+msgstr "Método de criptografia VLESS para links de compartilhamento"
 
 msgid "config.vless_encryption.label"
-msgstr ""
+msgstr "Criptografia VLESS"
 
 msgid "config.vless_flow.description"
-msgstr ""
+msgstr "Controle de fluxo VLESS (ex.: xtls-rprx-vision)"
 
 msgid "config.vless_flow.label"
-msgstr ""
+msgstr "Fluxo VLESS"
 
 msgid "config.vmess_enable.description"
 msgstr ""
@@ -2850,7 +8217,7 @@ msgid "direct"
 msgstr "➡️ Direto"
 
 msgid "dnstt"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "domain.cdn"
 msgstr "CDN"
@@ -2861,40 +8228,50 @@ msgstr ""
 "administrador, caso contrário, você não poderá mais acessar o painel"
 
 msgid "domain.current_server_IPs"
-msgstr ""
+msgstr "🔢 Os IPs atuais do servidor são"
 
 msgid "domain.custom_proxy.description"
 msgstr ""
+"Vínculo de proxy opcional. Somente os proxies que oferecem suporte à "
+"combinação de modos deste domínio são listados. Deixe vazio para usar todos "
+"os proxies correspondentes."
 
 msgid "domain.custom_proxy.group.dns_gateway"
-msgstr ""
+msgstr "Gateway DNS"
 
 msgid "domain.custom_proxy.group.ip_based"
-msgstr ""
+msgstr "Baseado em IP"
 
 msgid "domain.custom_proxy.group.l7_gateway"
-msgstr ""
+msgstr "Gateway L7"
 
 msgid "domain.custom_proxy.group.other"
-msgstr ""
+msgstr "Outro"
 
 msgid "domain.custom_proxy.group.sni_gateway"
-msgstr ""
+msgstr "Gateway SNI"
 
 msgid "domain.custom_proxy.label"
-msgstr ""
+msgstr "Proxies personalizados"
 
 msgid "domain.custom_proxy.reality_only"
 msgstr ""
+"Domínios REALITY só podem usar proxies de gateway de domínio L7 cujos modos "
+"de domínio incluam REALITY. Deixe vazio para usar todos os proxies L7 "
+"REALITY correspondentes."
 
 msgid "domain.custom_proxy.reality_required"
 msgstr ""
+"Domínios REALITY só podem usar proxies de gateway de domínio L7 cujos modos "
+"de domínio incluam REALITY"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
 msgstr ""
+"Gateway SNI e gateway L7 não podem ser selecionados juntos para um mesmo "
+"domínio"
 
 msgid "domain.custom_proxy.sni_single_only"
-msgstr ""
+msgstr "Somente um gateway SNI pode ser selecionado para um domínio"
 
 msgid "domain.description"
 msgstr ""
@@ -2917,18 +8294,22 @@ msgstr "🔒 Fronting de domínio de TLS"
 
 msgid "domain.ech.description"
 msgstr ""
+"Obtém e usa o Encrypted Client Hello (ECH) para este domínio CDN. Requer que"
+" o TLS ECH esteja ativado nas configurações do painel."
 
 msgid "domain.ech.label"
-msgstr ""
+msgstr "🔐 ECH"
 
 msgid "domain.empty.allowed_for_fake_only"
-msgstr "domain.empty.allowed_for_fake_only"
+msgstr "Domínio vazio só é permitido no modo fake"
 
 msgid "domain.fake_mode.description"
 msgstr ""
+"Valid usa um certificado real. Fake e Reality servem para TLS isca e "
+"protocolos REALITY."
 
 msgid "domain.fake_mode.label"
-msgstr ""
+msgstr "Modo TLS"
 
 msgid "domain.intro"
 msgstr ""
@@ -2949,18 +8330,22 @@ msgstr ""
 
 msgid "domain.resolveip.description"
 msgstr ""
+"Usa o IP em vez do nome de domínio nos proxies. Útil quando há muito ruído "
+"no DNS."
 
 msgid "domain.resolveip.label"
-msgstr ""
+msgstr "🔢 Resolver IP"
 
 msgid "domain.server_domain.description"
 msgstr ""
+"Domínio do servidor upstream usado nesta entrada. Deve ser um domínio Direct"
+" ou Relay válido."
 
 msgid "domain.server_domain.label"
-msgstr ""
+msgstr "Domínio do servidor"
 
 msgid "domain.server_domain.must_be_valid_direct_or_relay"
-msgstr ""
+msgstr "O domínio do servidor deve ser um domínio Direct ou Relay válido"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -2970,15 +8355,38 @@ msgstr ""
 
 msgid "domain.tls_status.description"
 msgstr ""
+"Certificado armazenado para este domínio: CA válida, autoassinado, expirado,"
+" inválido ou ausente."
+
+msgid "domain.tls_status.expired"
+msgstr "Expirado"
+
+msgid "domain.tls_status.invalid"
+msgstr "Inválido"
+
+msgid "domain.tls_status.label"
+msgstr "TLS"
+
+msgid "domain.tls_status.missing"
+msgstr "Sem certificado"
+
+msgid "domain.tls_status.self_signed"
+msgstr "Autoassinado"
+
+msgid "domain.tls_status.valid"
+msgstr "Válido"
 
 msgid "download"
 msgstr "Download direto"
 
 msgid "download_domain.description"
 msgstr ""
+"Somente para XHTTP: isso permite, por exemplo, que os downloads venham de um"
+" domínio diferente dos uploads. Isso dificulta a detecção e também pode "
+"melhorar a qualidade geral."
 
 msgid "download_domain.label"
-msgstr ""
+msgstr "📈 Domínio de download"
 
 msgid "fake"
 msgstr "🆎 Site falso"
@@ -2994,6 +8402,8 @@ msgid ""
 "in\n"
 "          parent panel"
 msgstr ""
+"no\n"
+"          painel pai"
 
 msgid "in parent panel"
 msgstr "No Painel Central"
@@ -3035,7 +8445,7 @@ msgid "lib.telegram.python"
 msgstr "☑️ Python: baixo desempenho"
 
 msgid "lib.telegram.telemt"
-msgstr ""
+msgstr "❇️ Telemt: rápido, seguro, confiável"
 
 msgid "log"
 msgstr "📄 Log"
@@ -3074,7 +8484,7 @@ msgid "no_reset"
 msgstr "⭐️ Sem reinicialização"
 
 msgid "node.diff-version"
-msgstr "node.diff-version"
+msgstr "A versão do painel do nó difere deste painel"
 
 msgid "node.mode.dscr"
 msgstr "Este campo define o modo para o Node"
@@ -3112,13 +8522,13 @@ msgid "package size?"
 msgstr "tamanho do pacote?"
 
 msgid "parent.invalid-parent-url"
-msgstr "parent.invalid-parent-url"
+msgstr "URL do painel pai inválida"
 
 msgid "parent.panel-not-active"
-msgstr ""
+msgstr "O painel pai não está ativo"
 
 msgid "parent.sync-req-failed"
-msgstr "parent.sync-req-failed"
+msgstr "Falha na solicitação de sincronização do pai"
 
 msgid "previous"
 msgstr "Anterior"
@@ -3162,7 +8572,7 @@ msgid "singbox: ssh"
 msgstr "caixa de som: ssh"
 
 msgid "special"
-msgstr ""
+msgstr "especial"
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

@@ -90,12 +90,15 @@ def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIP
 
     Domains with a bound ``server_domain`` or ``cdn_ip`` keep that address and are not expanded.
     """
-    unique: list[tuple[DomainIPVar, str]] = []
+    # A better-ranked domain still claims a shared IP, but the entry stays where the
+    # admin put that domain in the list (not alphabetical).
+    unique: list[tuple[int, DomainIPVar, str]] = []
     seen: set[tuple[str, int]] = set()
-    kept: list[DomainIPVar] = []
-    for domain in sorted(domains, key=_ip_mode_domain_rank):
+    kept: list[tuple[int, DomainIPVar]] = []
+    ranked = sorted(enumerate(domains), key=lambda item: (*_ip_mode_domain_rank(item[1]), item[0]))
+    for index, domain in ranked:
         if domain.keeps_dst_server:
-            kept.append(domain)
+            kept.append((index, domain))
             continue
         bound = proxy.with_domain(domain)
         port = int(bound.port or 0)
@@ -109,10 +112,10 @@ def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIP
             if key in seen:
                 continue
             seen.add(key)
-            unique.append((domain, ip))
+            unique.append((index, domain, ip))
 
-    result: list[DomainIPVar] = list(kept)
-    for domain, ip in unique:
+    result: list[DomainIPVar] = [domain for _, domain in sorted(kept)]
+    for _, domain, ip in sorted(unique):
         result.append(
             domain.model_copy(
                 update={

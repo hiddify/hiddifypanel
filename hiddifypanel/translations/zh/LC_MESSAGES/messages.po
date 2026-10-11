@@ -10,7 +10,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "%(count)s records were successfully deleted."
-msgstr ""
+msgstr "%(count)s 条记录已成功删除。"
 
 msgid "%(count)s records were successfully disabled."
 msgstr "%(count)s 条记录已成功禁用。"
@@ -19,13 +19,13 @@ msgid "%(count)s records were successfully enabled."
 msgstr "%(count)s 条记录已成功启用。"
 
 msgid "%(count)s records were successfully reset days."
-msgstr ""
+msgstr "%(count)s 条记录已成功重置天数。"
 
 msgid "%(count)s records were successfully reset usage."
-msgstr ""
+msgstr "%(count)s 条记录已成功重置用量。"
 
 msgid "%(count)s records were successfully updated."
-msgstr ""
+msgstr "%(count)s 条记录已成功更新。"
 
 msgid "%(expire_days)s days"
 msgstr "%(expire_days)s 天"
@@ -37,10 +37,10 @@ msgid "0 - Last day"
 msgstr "最后一天"
 
 msgid "<a href=\"%(user_link)s\"> %(user)s</a>"
-msgstr ""
+msgstr "<a href=\"%(user_link)s\"> %(user)s</a>"
 
 msgid "A fake domain needs a real domain name"
-msgstr ""
+msgstr "伪装域名需要真实域名"
 
 msgid "Access Denied!"
 msgstr "拒绝访问"
@@ -67,7 +67,7 @@ msgid "Added by"
 msgstr "添加者"
 
 msgid "Admin Links"
-msgstr ""
+msgstr "管理员链接"
 
 msgid "Admins"
 msgstr "管理员"
@@ -112,7 +112,7 @@ msgid "Bug"
 msgstr "错误/功能"
 
 msgid "CDN and worker domains must use valid fake mode"
-msgstr ""
+msgstr "CDN 和 worker 域名必须使用有效的伪装模式"
 
 msgid "CPU %(cores)s Cores"
 msgstr "CPU %(cores)s 核心"
@@ -121,7 +121,7 @@ msgid "Can add sub admin"
 msgstr "👥 可以添加子管理员"
 
 msgid "Change"
-msgstr ""
+msgstr "更改"
 
 msgid "Check again"
 msgstr "再检查一遍"
@@ -154,7 +154,7 @@ msgid "Copy Link"
 msgstr "复制链接"
 
 msgid "Copy QR image"
-msgstr ""
+msgstr "复制二维码图片"
 
 msgid "Couldn't find your ip addresses"
 msgstr "找不到您的 IP 地址"
@@ -242,7 +242,7 @@ msgid "Domain can not be resolved! there is a problem in your domain"
 msgstr "域名无法解析！您的域有问题。请检查您的域配置。"
 
 msgid "Domain cannot be resolved! Please check DNS settings"
-msgstr ""
+msgstr "无法解析域名！请检查 DNS 设置"
 
 msgid "Domain is not REALITY friendly!"
 msgstr "域名对现实不友好！"
@@ -305,6 +305,9 @@ msgstr "捐款"
 msgid "Download App"
 msgstr "下载应用程序"
 
+msgid "Download Domain"
+msgstr "📈 下载域名"
+
 msgid "Edit"
 msgstr "编辑"
 
@@ -315,10 +318,10 @@ msgid "Enable"
 msgstr "❇️启用"
 
 msgid "Enable TLS ECH in panel settings before using ECH on a CDN domain"
-msgstr ""
+msgstr "在 CDN 域名上使用 ECH 前，请先在面板设置中启用 TLS ECH"
 
 msgid "Error in Config Generation"
-msgstr ""
+msgstr "配置生成出错"
 
 msgid "Error in auto cdn format"
 msgstr "⚠️ 自动 CDN 格式错误"
@@ -330,7 +333,7 @@ msgid "Example Domains"
 msgstr "测试并推荐域名"
 
 msgid "Expired"
-msgstr ""
+msgstr "已过期"
 
 msgid "Expired Users"
 msgstr "过期用户"
@@ -342,7 +345,7 @@ msgid "Fake"
 msgstr "➖ 假"
 
 msgid "Fake domains can only be direct or relay"
-msgstr ""
+msgstr "伪装域名只能是直连或中继"
 
 msgid "Filter"
 msgstr "过滤"
@@ -389,7 +392,7 @@ msgid "HiddigyN"
 msgstr "HiddifyN <span class='badge badge-success'>推荐</span>"
 
 msgid "Home Link"
-msgstr ""
+msgstr "主页链接"
 
 msgid "Hover the user to see the reason"
 msgstr "将鼠标悬停在用户上即可查看原因"
@@ -437,7 +440,7 @@ msgid "Install Hiddify Application"
 msgstr "Hiddify 管理器安装"
 
 msgid "Invalid"
-msgstr ""
+msgstr "无效"
 
 msgid "Invalid IP or domain"
 msgstr "错误的IP或域名"
@@ -467,10 +470,10 @@ msgid "Last Online"
 msgstr "最后一次连接"
 
 msgid "Last node to parent"
-msgstr ""
+msgstr "最后一次 节点到父节点"
 
 msgid "Last parent to node"
-msgstr ""
+msgstr "最后一次 父节点到节点"
 
 msgid "Link is changed!"
 msgstr "ℹ️链接已更改！"
@@ -503,20 +506,20 @@ msgid "New"
 msgstr "新"
 
 msgid "No certificate"
-msgstr ""
+msgstr "无证书"
 
 msgid "No children!"
 msgstr "没有孩子"
 
 msgid ""
 "No main domains found, please add at least one domain with valid certificate"
-msgstr ""
+msgstr "未找到主域名，请至少添加一个带有效证书的域名"
 
 msgid "Nodes"
-msgstr ""
+msgstr "节点"
 
 msgid "Not Secure"
-msgstr ""
+msgstr "不安全"
 
 msgid "Note"
 msgstr "📝 注意"
@@ -534,7 +537,7 @@ msgid "Ok"
 msgstr "好的"
 
 msgid "Online"
-msgstr ""
+msgstr "在线"
 
 msgid "Online Users"
 msgstr "在线用户"
@@ -546,7 +549,7 @@ msgid "Only for sublink?"
 msgstr "🌍 仅用于订阅链接"
 
 msgid "Only one domain of this kind can be added"
-msgstr ""
+msgstr "此类域名只能添加一个"
 
 msgid "Oops! Something went wrong."
 msgstr "哎呀！出了些问题。"
@@ -619,7 +622,7 @@ msgid "Please wait "
 msgstr "请稍等"
 
 msgid "Port 80 and 443 can not be selected"
-msgstr ""
+msgstr "不能选择 80 和 443 端口"
 
 msgid "Port is already used! in"
 msgstr "端口已用于："
@@ -648,7 +651,7 @@ msgstr ""
 "发送消息获取商业用户专用版本。"
 
 msgid "Proxy Editor"
-msgstr ""
+msgstr "代理编辑器"
 
 msgid "ProxyPath is already used! use different proxy path"
 msgstr "ProxyPath 已被使用！使用不同的代理路径"
@@ -657,7 +660,7 @@ msgid "QR code"
 msgstr "🧾 二维码"
 
 msgid "QR code image copied"
-msgstr ""
+msgstr "二维码图片已复制"
 
 msgid "QRCode"
 msgstr "<i class='fa-solid fa-qrcode'></i> QRCode"
@@ -669,10 +672,10 @@ msgid "REALITY Fallback domain is not compaitble with server names!"
 msgstr "REALITY 后备域与服务器名称不兼容！"
 
 msgid "REALITY Fallback domain is not compatible with server names!"
-msgstr ""
+msgstr "REALITY 回退域名与服务器名称不兼容！"
 
 msgid "Relay domains with non-valid fake mode require an IP address"
-msgstr ""
+msgstr "伪装模式无效的中继域名需要 IP 地址"
 
 msgid "Release"
 msgstr "✅ 发布"
@@ -747,7 +750,7 @@ msgid "Save Link"
 msgstr "保存链接"
 
 msgid "Search Settings"
-msgstr ""
+msgstr "搜索设置"
 
 msgid "Select all records"
 msgstr "选择所有记录"
@@ -756,13 +759,13 @@ msgid "Select record"
 msgstr "选择记录"
 
 msgid "Selected proxy does not support this domain mode combination"
-msgstr ""
+msgstr "所选代理不支持此域名模式组合"
 
 msgid "Seleted Users"
 msgstr "选定用户"
 
 msgid "Self-signed"
-msgstr ""
+msgstr "自签名"
 
 msgid "Send Message to User's Telegram"
 msgstr "📣 向用户的 Telegram 发送消息"
@@ -789,7 +792,7 @@ msgid "Sort by %(name)s"
 msgstr "以%(name)s排序"
 
 msgid "Specifying CDN IP is only valid for CDN mode"
-msgstr ""
+msgstr "指定 CDN IP 仅对 CDN 模式有效"
 
 msgid "Start Date"
 msgstr "开始日期"
@@ -804,7 +807,7 @@ msgid "Status"
 msgstr "地位"
 
 msgid "SubLink"
-msgstr ""
+msgstr "SubLink"
 
 msgid "Submit"
 msgstr "提交"
@@ -817,13 +820,13 @@ msgid ""
 msgstr "✔️ 成功！请等待大约 5 分钟以确保所有内容均已更新"
 
 msgid "TLS"
-msgstr ""
+msgstr "TLS"
 
 msgid "Telegram Bot"
 msgstr "Telegram 机器人"
 
 msgid "Telegram Bot Link"
-msgstr ""
+msgstr "Telegram 机器人链接"
 
 msgid "Temporary Short Link"
 msgstr "⏱️临时短链接"
@@ -848,7 +851,7 @@ msgid "This domain does not exist in the panel!"
 msgstr "该域名在面板中不存在！"
 
 msgid "This restore has expired. Start it again from the Backup page."
-msgstr ""
+msgstr "此恢复已过期。请从备份页面重新开始。"
 
 msgid "Today Usage"
 msgstr "今天"
@@ -890,13 +893,13 @@ msgstr ""
 "<br/>"
 
 msgid "Valid"
-msgstr ""
+msgstr "有效"
 
 msgid "View in Telegram"
 msgstr "在电报中查看"
 
 msgid "Waiting for the process to start..."
-msgstr ""
+msgstr "正在等待进程启动..."
 
 msgid "Want to enjoy more with telegram?"
 msgstr "ℹ️ 将您的帐户连接到 Telegram"
@@ -949,7 +952,7 @@ msgid "You have used this domain in: "
 msgstr "您已在以下位置使用过该域名："
 
 msgid "You need to enable %(names)s globally to enable this proxy."
-msgstr ""
+msgstr "您需要全局启用 %(names)s 才能启用此代理。"
 
 msgid ""
 "Your hiddify instance information \n"
@@ -1030,7 +1033,7 @@ msgid "admin.menu.config"
 msgstr "设置"
 
 msgid "admin.menu.dashboard_v2"
-msgstr ""
+msgstr "下一步"
 
 msgid "admin.menu.domain"
 msgstr "域名"
@@ -1082,6 +1085,4960 @@ msgstr ""
 msgid "admin.waiting_for_update"
 msgstr "⚠️ 请等待大约 5 分钟以确保所有内容均已更新。在此期间，请复制并保存您的代理链接："
 
+msgid "adminV2.account.aliasActive"
+msgstr "留空并保存即可移除。"
+
+msgid "adminV2.account.aliasCleared"
+msgstr "用户名已移除"
+
+msgid "adminV2.account.aliasHint"
+msgstr "使用此用户名和密码登录，无需使用 ID。这样您分享的链接中不再包含 ID。"
+
+msgid "adminV2.account.aliasNeedsStrong"
+msgstr "请先在上方设置强密码：用户名仅在使用强密码时有效。"
+
+msgid "adminV2.account.aliasOn"
+msgstr "开启"
+
+msgid "adminV2.account.aliasPlaceholder"
+msgstr "例如 sara.sales"
+
+msgid "adminV2.account.aliasProblem.bad_chars"
+msgstr "仅限 a-z、0-9、点、短横线和下划线，且以字母或数字开头"
+
+msgid "adminV2.account.aliasProblem.looks_like_uuid"
+msgstr "不能看起来像 ID (UUID)"
+
+msgid "adminV2.account.aliasProblem.too_short"
+msgstr "至少 {n} 个字符"
+
+msgid "adminV2.account.aliasSaved"
+msgstr "现在可以用 {alias} 登录了"
+
+msgid "adminV2.account.aliasSuper"
+msgstr "超级管理员只能通过其管理员链接登录，因此没有用户名。"
+
+msgid "adminV2.account.aliasTitle"
+msgstr "登录用户名"
+
+msgid "adminV2.account.canAddAdmins"
+msgstr "可添加子管理员"
+
+msgid "adminV2.account.changePassword"
+msgstr "修改密码"
+
+msgid "adminV2.account.configsCount"
+msgstr "{n} 个配置供我的所有用户使用 | {n} 个配置供我的所有用户使用"
+
+msgid "adminV2.account.configsEmpty"
+msgstr "暂无配置。添加订阅链接或粘贴配置：您的所有用户都会获得。"
+
+msgid "adminV2.account.configsSave"
+msgstr "保存配置"
+
+msgid "adminV2.account.configsSaved"
+msgstr "配置已保存"
+
+msgid "adminV2.account.configsSub"
+msgstr "除每位用户自己的配置外，还会添加到您所有用户及子管理员用户的订阅中。"
+
+msgid "adminV2.account.configsTitle"
+msgstr "我的用户的配置"
+
+msgid "adminV2.account.configsUnsaved"
+msgstr "尚未保存"
+
+msgid "adminV2.account.copyLink"
+msgstr "复制我的管理员链接"
+
+msgid "adminV2.account.current"
+msgstr "当前密码"
+
+msgid "adminV2.account.editConfigs"
+msgstr "编辑配置"
+
+msgid "adminV2.account.generate"
+msgstr "生成"
+
+msgid "adminV2.account.generatedCopied"
+msgstr "已生成并复制强密码"
+
+msgid "adminV2.account.inheritedConfigs"
+msgstr "+ 继承自上级管理员的 {n} 个"
+
+msgid "adminV2.account.languageDefault"
+msgstr "面板默认（{name}）"
+
+msgid "adminV2.account.languageHint"
+msgstr "您的管理页面使用的语言"
+
+msgid "adminV2.account.languageTitle"
+msgstr "语言"
+
+msgid "adminV2.account.limitsSub"
+msgstr "您的用户及所有子管理员的用户都计入这些限制。"
+
+msgid "adminV2.account.limitsTitle"
+msgstr "我的限制"
+
+msgid "adminV2.account.loginHint"
+msgstr "保存后，请使用您的管理员链接和此密码登录。"
+
+msgid "adminV2.account.minLength"
+msgstr "至少 {n} 个字符"
+
+msgid "adminV2.account.mismatch"
+msgstr "两次输入的密码不一致"
+
+msgid "adminV2.account.nearLimit"
+msgstr "您已接近限制。请联系上级管理员提高限制，或禁用不再需要的用户。"
+
+msgid "adminV2.account.new"
+msgstr "新密码"
+
+msgid "adminV2.account.noLimits"
+msgstr "超级管理员没有限制。"
+
+msgid "adminV2.account.noPasswordSub"
+msgstr "您没有密码：任何拥有您链接的人都可以登录。请设置密码以保护您的账户。"
+
+msgid "adminV2.account.outboundApply"
+msgstr "应用更改以使其生效。"
+
+msgid "adminV2.account.outboundNone"
+msgstr "暂无出站。由超级管理员设置。"
+
+msgid "adminV2.account.outboundSaved"
+msgstr "默认出站已保存"
+
+msgid "adminV2.account.outboundSub"
+msgstr "我的用户及子管理员的用户将从这里出站，除非用户（或更近一级的管理员）选择了其他出站。"
+
+msgid "adminV2.account.outboundTitle"
+msgstr "默认出站"
+
+msgid "adminV2.account.passwordNone"
+msgstr "无密码：任何拥有您链接的人都可以登录"
+
+msgid "adminV2.account.passwordSet"
+msgstr "密码已保护您的账户"
+
+msgid "adminV2.account.passwordSub"
+msgstr "更改您登录时使用的密码。"
+
+msgid "adminV2.account.passwordTitle"
+msgstr "密码"
+
+msgid "adminV2.account.repeat"
+msgstr "重复新密码"
+
+msgid "adminV2.account.save"
+msgstr "保存密码"
+
+msgid "adminV2.account.saved"
+msgstr "密码已修改"
+
+msgid "adminV2.account.setPassword"
+msgstr "设置密码"
+
+msgid "adminV2.account.settingsSub"
+msgstr "您的语言、密码和登录名。"
+
+msgid "adminV2.account.settingsTitle"
+msgstr "设置"
+
+msgid "adminV2.account.strength.medium"
+msgstr "中"
+
+msgid "adminV2.account.strength.prompt"
+msgstr "请输入密码"
+
+msgid "adminV2.account.strength.strong"
+msgstr "强"
+
+msgid "adminV2.account.strength.weak"
+msgstr "弱"
+
+msgid "adminV2.account.subAdmins"
+msgstr "子管理员"
+
+msgid "adminV2.account.subtitle"
+msgstr "您的限制、已使用量以及您的密码。"
+
+msgid "adminV2.account.superText"
+msgstr "您可以根据需要添加任意数量的用户和管理员。"
+
+msgid "adminV2.account.tabs.overview"
+msgstr "概览"
+
+msgid "adminV2.account.tabs.security"
+msgstr "安全"
+
+msgid "adminV2.account.tabs.users"
+msgstr "我的用户"
+
+msgid "adminV2.account.title"
+msgstr "我的账户"
+
+msgid "adminV2.account.under"
+msgstr "在 {name} 之下"
+
+msgid "adminV2.account.unlimited"
+msgstr "无限制"
+
+msgid "adminV2.account.wrongCurrent"
+msgstr "当前密码错误"
+
+msgid "adminV2.actions.applyConfigs"
+msgstr "应用配置"
+
+msgid "adminV2.actions.applyConfigsHint"
+msgstr "重新生成服务器配置并应用到正在运行的服务。"
+
+msgid "adminV2.actions.confirm"
+msgstr "确定要执行此操作吗？"
+
+msgid "adminV2.actions.ports.copied"
+msgstr "已复制{what}"
+
+msgid "adminV2.actions.ports.copyList"
+msgstr "复制列表"
+
+msgid "adminV2.actions.ports.count"
+msgstr "{n} 个端口"
+
+msgid "adminV2.actions.ports.firewall"
+msgstr "防火墙命令 (ufw)"
+
+msgid "adminV2.actions.ports.hint"
+msgstr "此服务器需要对互联网开放的所有端口，可直接用于防火墙。"
+
+msgid "adminV2.actions.ports.lead"
+msgstr "请在服务器（或云服务商）的防火墙中开放这些端口，以便用户连接。"
+
+msgid "adminV2.actions.ports.none"
+msgstr "无"
+
+msgid "adminV2.actions.ports.openProxy"
+msgstr "打开此自定义代理"
+
+msgid "adminV2.actions.ports.refresh"
+msgstr "刷新"
+
+msgid "adminV2.actions.ports.title"
+msgstr "公开端口"
+
+msgid "adminV2.actions.reinstall"
+msgstr "重新安装"
+
+msgid "adminV2.actions.reinstallHint"
+msgstr "重新运行完整安装程序。服务将中断几分钟。"
+
+msgid "adminV2.actions.resetCache"
+msgstr "重置缓存"
+
+msgid "adminV2.actions.resetCacheDone"
+msgstr "缓存已清除"
+
+msgid "adminV2.actions.resetCacheFailed"
+msgstr "重置缓存失败"
+
+msgid "adminV2.actions.resetCacheHint"
+msgstr "清除面板的缓存数据和已渲染的模板。安全；无需重启服务。"
+
+msgid "adminV2.actions.restart"
+msgstr "重启系统"
+
+msgid "adminV2.actions.restartHint"
+msgstr "重启所有服务。活动连接将被断开。"
+
+msgid "adminV2.actions.status"
+msgstr "状态"
+
+msgid "adminV2.actions.statusHint"
+msgstr "对所有服务进行状态检查并显示日志。"
+
+msgid "adminV2.actions.subtitle"
+msgstr "此面板的维护和系统操作。"
+
+msgid "adminV2.actions.title"
+msgstr "操作"
+
+msgid "adminV2.actions.update"
+msgstr "更新"
+
+msgid "adminV2.actions.updateHint"
+msgstr "将面板和所有服务更新到最新版本。"
+
+msgid "adminV2.actions.viewlogs"
+msgstr "查看日志"
+
+msgid "adminV2.actions.viewlogsHint"
+msgstr "浏览系统日志文件。"
+
+msgid "adminV2.admins.add"
+msgstr "添加管理员"
+
+msgid "adminV2.admins.canAddHint"
+msgstr "该管理员可以创建自己的子管理员"
+
+msgid "adminV2.admins.canAddShort"
+msgstr "添加子管理员"
+
+msgid "adminV2.admins.clearSearch"
+msgstr "清除搜索"
+
+msgid "adminV2.admins.col.link"
+msgstr "管理员链接"
+
+msgid "adminV2.admins.col.mode"
+msgstr "模式"
+
+msgid "adminV2.admins.col.name"
+msgstr "名称"
+
+msgid "adminV2.admins.col.note"
+msgstr "备注"
+
+msgid "adminV2.admins.col.subAdmins"
+msgstr "子管理员"
+
+msgid "adminV2.admins.col.users"
+msgstr "用户"
+
+msgid "adminV2.admins.collapse"
+msgstr "隐藏 {name} 的子管理员"
+
+msgid "adminV2.admins.copyLink"
+msgstr "复制链接"
+
+msgid "adminV2.admins.credentials.copyMessage"
+msgstr "复制消息"
+
+msgid "adminV2.admins.credentials.copyMessageHint"
+msgstr "同时复制消息和二维码图片"
+
+msgid "adminV2.admins.credentials.createdTitle"
+msgstr "{name} 已就绪"
+
+msgid "adminV2.admins.credentials.done"
+msgstr "完成"
+
+msgid "adminV2.admins.credentials.lead"
+msgstr "请将这些信息发送给管理员。他们打开链接并使用密码登录。"
+
+msgid "adminV2.admins.credentials.link"
+msgstr "管理员链接"
+
+msgid "adminV2.admins.credentials.message"
+msgstr ""
+"要登录，请打开以下链接：\n"
+"{link}\n"
+"并使用密码登录：{password}"
+
+msgid "adminV2.admins.credentials.messageAlias"
+msgstr ""
+"要登录，请打开以下链接：\n"
+"{link}\n"
+"并使用用户名：{alias}\n"
+"和密码：{password} 登录"
+
+msgid "adminV2.admins.credentials.messageLabel"
+msgstr "要发送的消息"
+
+msgid "adminV2.admins.credentials.once"
+msgstr "密码仅显示这一次。请在关闭前复制；否则请重新重置。"
+
+msgid "adminV2.admins.credentials.password"
+msgstr "密码"
+
+msgid "adminV2.admins.credentials.resetTitle"
+msgstr "{name} 的新密码"
+
+msgid "adminV2.admins.credentials.show"
+msgstr "显示密码"
+
+msgid "adminV2.admins.credentials.username"
+msgstr "用户名"
+
+msgid "adminV2.admins.deleteMessage"
+msgstr "该管理员将被删除，其用户将转移给您。"
+
+msgid "adminV2.admins.deleteMessageWithSubs"
+msgstr ""
+"该管理员及其 {count} 个子管理员将被删除，其用户将转移给您。 | 该管理员及其 {count} 个子管理员将被删除，其用户将转移给您。"
+
+msgid "adminV2.admins.deleteTitle"
+msgstr "删除 {name}？"
+
+msgid "adminV2.admins.deleted"
+msgstr "{name} 已删除"
+
+msgid "adminV2.admins.empty.cta"
+msgstr "添加您的第一位管理员"
+
+msgid "adminV2.admins.empty.text"
+msgstr "添加代理来分担工作。每位代理都有自己的链接、密码和限制。"
+
+msgid "adminV2.admins.empty.textNoPermission"
+msgstr "您没有添加管理员的权限。如需要，请联系上级管理员。"
+
+msgid "adminV2.admins.empty.title"
+msgstr "暂无子管理员"
+
+msgid "adminV2.admins.expand"
+msgstr "显示 {name} 的子管理员"
+
+msgid "adminV2.admins.filter.anyMode"
+msgstr "任意模式"
+
+msgid "adminV2.admins.filter.anySub"
+msgstr "任意权限"
+
+msgid "adminV2.admins.filter.canAdd"
+msgstr "可添加子管理员"
+
+msgid "adminV2.admins.filter.cannotAdd"
+msgstr "不可添加子管理员"
+
+msgid "adminV2.admins.filter.clear"
+msgstr "清除筛选"
+
+msgid "adminV2.admins.filter.mode"
+msgstr "按模式筛选"
+
+msgid "adminV2.admins.filter.sub"
+msgstr "按子管理员权限筛选"
+
+msgid "adminV2.admins.form.advanced"
+msgstr "高级"
+
+msgid "adminV2.admins.form.advancedHint"
+msgstr "在 {name} 之下"
+
+msgid "adminV2.admins.form.alias"
+msgstr "登录用户名"
+
+msgid "adminV2.admins.form.aliasHint"
+msgstr "设置用户名后，他们使用用户名 + 密码登录，分享的链接中不包含 ID。"
+
+msgid "adminV2.admins.form.canAddAdmin"
+msgstr "可添加子管理员"
+
+msgid "adminV2.admins.form.canAddAdminHint"
+msgstr "允许该管理员在其限制范围内创建自己的代理。"
+
+msgid "adminV2.admins.form.configs"
+msgstr "该管理员用户的配置"
+
+msgid "adminV2.admins.form.configsCount"
+msgstr "{n} 个配置 | {n} 个配置"
+
+msgid "adminV2.admins.form.configsHint"
+msgstr "添加到该管理员及其子管理员所有用户的订阅中。"
+
+msgid "adminV2.admins.form.create"
+msgstr "创建管理员"
+
+msgid "adminV2.admins.form.createSubtitle"
+msgstr "创建一个代理。将为其生成安全密码。"
+
+msgid "adminV2.admins.form.createTitle"
+msgstr "新建管理员"
+
+msgid "adminV2.admins.form.editSubtitle"
+msgstr "更改立即生效。"
+
+msgid "adminV2.admins.form.editTitle"
+msgstr "编辑 {name}"
+
+msgid "adminV2.admins.form.emptyNoLimit"
+msgstr "留空表示无限制"
+
+msgid "adminV2.admins.form.limits"
+msgstr "限制"
+
+msgid "adminV2.admins.form.limitsHint"
+msgstr "按该管理员的用户及其所有子管理员的用户统计。达到限制后，无法再添加新用户。"
+
+msgid "adminV2.admins.form.name"
+msgstr "名称"
+
+msgid "adminV2.admins.form.namePlaceholder"
+msgstr "例如 销售团队"
+
+msgid "adminV2.admins.form.nameRequired"
+msgstr "名称为必填项"
+
+msgid "adminV2.admins.form.newUuid"
+msgstr "新 UUID"
+
+msgid "adminV2.admins.form.noLimit"
+msgstr "无限制"
+
+msgid "adminV2.admins.form.note"
+msgstr "备注"
+
+msgid "adminV2.admins.form.notePlaceholder"
+msgstr "仅对其上级管理员可见"
+
+msgid "adminV2.admins.form.optional"
+msgstr "可选"
+
+msgid "adminV2.admins.form.outbound"
+msgstr "默认出站"
+
+msgid "adminV2.admins.form.outboundHint"
+msgstr "该管理员的用户（及其子管理员的用户）将从这里出站，除非用户选择了其他出站。"
+
+msgid "adminV2.admins.form.parent"
+msgstr "上级管理员"
+
+msgid "adminV2.admins.form.parentHint"
+msgstr "新管理员、其用户及其限制都归属于此管理员之下。"
+
+msgid "adminV2.admins.form.passwordInfo"
+msgstr "安全密码会自动创建。保存后您可以将其与登录链接一起复制。"
+
+msgid "adminV2.admins.form.placement"
+msgstr "在团队中的位置"
+
+msgid "adminV2.admins.form.superNoLimits"
+msgstr "超级管理员没有限制。"
+
+msgid "adminV2.admins.form.upTo"
+msgstr "最多 {max}（您的限制）"
+
+msgid "adminV2.admins.form.uuidHint"
+msgstr "自动生成。仅在需要重用已知 ID 时才修改。"
+
+msgid "adminV2.admins.form.uuidInvalid"
+msgstr "这不是有效的 UUID"
+
+msgid "adminV2.admins.limit.max_active_users"
+msgstr "最大活跃用户数"
+
+msgid "adminV2.admins.limit.max_online_users"
+msgstr "最大在线用户数"
+
+msgid "adminV2.admins.limit.max_total_usage_GB"
+msgstr "最大已用流量（总计）"
+
+msgid "adminV2.admins.limit.max_users"
+msgstr "最大用户总数"
+
+msgid "adminV2.admins.linkDialog.pwHint"
+msgstr "密码不会再次显示。如需新密码，请重置。"
+
+msgid "adminV2.admins.linkDialog.pwNone"
+msgstr "无密码：仅凭此链接即可登录"
+
+msgid "adminV2.admins.linkDialog.pwSet"
+msgstr "使用此链接和密码登录"
+
+msgid "adminV2.admins.linkDialog.title"
+msgstr "{name} 的管理员链接"
+
+msgid "adminV2.admins.linkDialog.username"
+msgstr "用户名"
+
+msgid "adminV2.admins.linkDialog.usernameHint"
+msgstr "此链接打开登录页面；他们使用此用户名和密码登录。"
+
+msgid "adminV2.admins.meLocked"
+msgstr "这是您自己：此处只能更改您用户的配置。请在“我的账户”中修改密码。"
+
+msgid "adminV2.admins.meter.active"
+msgstr "活跃"
+
+msgid "adminV2.admins.meter.activeHint"
+msgstr "已启用且仍有剩余天数和流量的用户数，占允许数量"
+
+msgid "adminV2.admins.meter.online"
+msgstr "在线"
+
+msgid "adminV2.admins.meter.onlineHint"
+msgstr "过去 24 小时内出现过的用户数，占允许数量"
+
+msgid "adminV2.admins.meter.total"
+msgstr "总计"
+
+msgid "adminV2.admins.meter.totalHint"
+msgstr "全部用户，占允许数量"
+
+msgid "adminV2.admins.meter.traffic"
+msgstr "流量"
+
+msgid "adminV2.admins.meter.trafficHint"
+msgstr "所有这些用户已用的流量，占允许总量"
+
+msgid "adminV2.admins.mode.admin"
+msgstr "管理员"
+
+msgid "adminV2.admins.mode.agent"
+msgstr "代理"
+
+msgid "adminV2.admins.mode.super_admin"
+msgstr "超级管理员"
+
+msgid "adminV2.admins.more"
+msgstr "更多操作"
+
+msgid "adminV2.admins.myConfigs"
+msgstr "我的用户的配置"
+
+msgid "adminV2.admins.myConfigsHint"
+msgstr "我的用户的配置：添加到您所有用户及子管理员用户的订阅中"
+
+msgid "adminV2.admins.noMatch"
+msgstr "没有管理员符合这些筛选条件"
+
+msgid "adminV2.admins.outbound.auto"
+msgstr "自动"
+
+msgid "adminV2.admins.outbound.inherit"
+msgstr "与上级相同：{name}"
+
+msgid "adminV2.admins.refresh"
+msgstr "刷新"
+
+msgid "adminV2.admins.resetMessage"
+msgstr "将生成新密码，旧密码立即失效。"
+
+msgid "adminV2.admins.resetPassword"
+msgstr "重置密码"
+
+msgid "adminV2.admins.resetTitle"
+msgstr "重置 {name} 的密码？"
+
+msgid "adminV2.admins.saved"
+msgstr "{name} 已保存"
+
+msgid "adminV2.admins.search"
+msgstr "搜索名称或 UUID"
+
+msgid "adminV2.admins.showLink"
+msgstr "管理员链接"
+
+msgid "adminV2.admins.subCount"
+msgstr "{n} 个子管理员 | {n} 个子管理员"
+
+msgid "adminV2.admins.subtitle"
+msgstr "以树形展示您的管理员团队。每位管理员的限制涵盖其自己的用户及其下所有人。"
+
+msgid "adminV2.admins.summary.admins"
+msgstr "管理员"
+
+msgid "adminV2.admins.summary.online"
+msgstr "在线"
+
+msgid "adminV2.admins.summary.users"
+msgstr "用户"
+
+msgid "adminV2.admins.title"
+msgstr "管理员"
+
+msgid "adminV2.admins.you"
+msgstr "您"
+
+msgid "adminV2.appTitle"
+msgstr "HiddifyManager"
+
+msgid "adminV2.apply.action.apply.button"
+msgstr "立即应用"
+
+msgid "adminV2.apply.action.apply.desc"
+msgstr "使您的设置、用户和域名更改生效。快速，更改后通常选择此项。"
+
+msgid "adminV2.apply.action.apply.done"
+msgstr "更改已应用"
+
+msgid "adminV2.apply.action.apply.running"
+msgstr "正在应用更改"
+
+msgid "adminV2.apply.action.apply.title"
+msgstr "应用更改"
+
+msgid "adminV2.apply.action.install.button"
+msgstr "重新安装"
+
+msgid "adminV2.apply.action.install.confirm"
+msgstr "所有内容将重新安装。连接可能中断几分钟。是否继续？"
+
+msgid "adminV2.apply.action.install.desc"
+msgstr "重新安装所有内容并重建所有服务。当仅应用不够时使用，例如更改面板路径或协议后。"
+
+msgid "adminV2.apply.action.install.done"
+msgstr "重新安装完成"
+
+msgid "adminV2.apply.action.install.running"
+msgstr "正在重新安装"
+
+msgid "adminV2.apply.action.install.title"
+msgstr "重新安装"
+
+msgid "adminV2.apply.action.restart.button"
+msgstr "重启"
+
+msgid "adminV2.apply.action.restart.confirm"
+msgstr "所有服务将重启。连接会短暂中断。是否继续？"
+
+msgid "adminV2.apply.action.restart.desc"
+msgstr "重启所有 Hiddify 服务而不重新安装任何内容。出现异常时的首选尝试。"
+
+msgid "adminV2.apply.action.restart.done"
+msgstr "服务已重启"
+
+msgid "adminV2.apply.action.restart.running"
+msgstr "正在重启服务"
+
+msgid "adminV2.apply.action.restart.title"
+msgstr "重启服务"
+
+msgid "adminV2.apply.action.status.button"
+msgstr "立即检查"
+
+msgid "adminV2.apply.action.status.desc"
+msgstr "显示每个服务是否正在运行，以及服务器的公网 IP 和 Warp。不会更改任何内容。"
+
+msgid "adminV2.apply.action.status.done"
+msgstr "状态检查完成"
+
+msgid "adminV2.apply.action.status.running"
+msgstr "正在检查状态"
+
+msgid "adminV2.apply.action.status.title"
+msgstr "检查状态"
+
+msgid "adminV2.apply.action.update.button"
+msgstr "更新"
+
+msgid "adminV2.apply.action.update.confirm"
+msgstr "Hiddify 将更新到最新版本。面板将重启，连接可能中断几分钟。是否继续？"
+
+msgid "adminV2.apply.action.update.desc"
+msgstr "下载并安装最新版 Hiddify，然后应用。需要一些时间；结束时面板会重启。"
+
+msgid "adminV2.apply.action.update.done"
+msgstr "更新完成"
+
+msgid "adminV2.apply.action.update.running"
+msgstr "正在更新"
+
+msgid "adminV2.apply.action.update.title"
+msgstr "更新 Hiddify"
+
+msgid "adminV2.apply.busyOutside"
+msgstr "服务器上当前有任务正在运行。"
+
+msgid "adminV2.apply.lastRun"
+msgstr "上次运行 {when}"
+
+msgid "adminV2.apply.log.clear"
+msgstr "清空"
+
+msgid "adminV2.apply.log.clearConfirm"
+msgstr "清空“{name}”？其文本将从服务器删除。"
+
+msgid "adminV2.apply.log.clearFailed"
+msgstr "无法清空日志"
+
+msgid "adminV2.apply.log.cleared"
+msgstr "日志已清空"
+
+msgid "adminV2.apply.log.copied"
+msgstr "日志已复制"
+
+msgid "adminV2.apply.log.download"
+msgstr "下载"
+
+msgid "adminV2.apply.log.empty"
+msgstr "暂无内容…"
+
+msgid "adminV2.apply.log.follow"
+msgstr "最新"
+
+msgid "adminV2.apply.log.hide"
+msgstr "隐藏日志"
+
+msgid "adminV2.apply.log.loading"
+msgstr "加载中…"
+
+msgid "adminV2.apply.log.show"
+msgstr "显示日志"
+
+msgid "adminV2.apply.log.showingEnd"
+msgstr "显示末尾"
+
+msgid "adminV2.apply.log.terminal"
+msgstr "终端"
+
+msgid "adminV2.apply.log.wrap"
+msgstr "自动换行"
+
+msgid "adminV2.apply.logs.clearAll"
+msgstr "全部清空"
+
+msgid "adminV2.apply.logs.clearAllConfirm"
+msgstr "清空所有日志文件？文本将从服务器删除（正在运行的操作写入的日志会保留）。"
+
+msgid "adminV2.apply.logs.clearFailed"
+msgstr "无法清空部分日志"
+
+msgid "adminV2.apply.logs.clearSkipped"
+msgstr "{n} 个正在使用的已保留"
+
+msgid "adminV2.apply.logs.clearedAll"
+msgstr "日志已清空"
+
+msgid "adminV2.apply.logs.empty"
+msgstr "暂无日志"
+
+msgid "adminV2.apply.logs.sub"
+msgstr "服务器上每个操作的执行情况。"
+
+msgid "adminV2.apply.logs.title"
+msgstr "日志"
+
+msgid "adminV2.apply.logs.view"
+msgstr "查看"
+
+msgid "adminV2.apply.minutes"
+msgstr "约 {n} 分钟"
+
+msgid "adminV2.apply.notStarted"
+msgstr "无法启动"
+
+msgid "adminV2.apply.recommended"
+msgstr "推荐"
+
+msgid "adminV2.apply.run.dontClose"
+msgstr "您可以离开此页面；它会继续在服务器上运行。"
+
+msgid "adminV2.apply.run.hide"
+msgstr "隐藏"
+
+msgid "adminV2.apply.run.links"
+msgstr "您域名上的管理员链接（可能已更改）"
+
+msgid "adminV2.apply.run.reconnecting"
+msgstr "面板正在重启，正在重新连接…"
+
+msgid "adminV2.apply.run.reload"
+msgstr "面板已更新。请重新加载以使用新版本。"
+
+msgid "adminV2.apply.run.reloadBtn"
+msgstr "重新加载"
+
+msgid "adminV2.apply.run.stalled"
+msgstr "日志长时间没有新内容。请查看下方日志。"
+
+msgid "adminV2.apply.run.starting"
+msgstr "正在启动…"
+
+msgid "adminV2.apply.run.waitingStart"
+msgstr "正在等待启动…"
+
+msgid "adminV2.apply.run.working"
+msgstr "处理中…"
+
+msgid "adminV2.apply.subtitle"
+msgstr "使更改生效、更新服务器并查看各项运行状况"
+
+msgid "adminV2.apply.takes"
+msgstr "大约所需时间"
+
+msgid "adminV2.apply.title"
+msgstr "应用与状态"
+
+msgid "adminV2.apply.watch"
+msgstr "查看进度"
+
+msgid "adminV2.applyNotice.apply"
+msgstr "已保存。请应用配置使更改生效。"
+
+msgid "adminV2.applyNotice.later"
+msgstr "稍后"
+
+msgid "adminV2.applyNotice.reinstall"
+msgstr "已保存。部分更改需要重新安装才能生效。"
+
+msgid "adminV2.applyNotice.update"
+msgstr "已保存。更新通道已更改；请运行更新以切换。"
+
+msgid "adminV2.backup.auto.connect"
+msgstr "连接 Telegram"
+
+msgid "adminV2.backup.auto.deleteFailed"
+msgstr "无法删除"
+
+msgid "adminV2.backup.auto.deleteMessage"
+msgstr "{when} 的备份将从服务器中移除。"
+
+msgid "adminV2.backup.auto.deleteTitle"
+msgstr "删除此备份？"
+
+msgid "adminV2.backup.auto.download"
+msgstr "下载"
+
+msgid "adminV2.backup.auto.empty"
+msgstr "服务器上暂无备份"
+
+msgid "adminV2.backup.auto.latest"
+msgstr "最新"
+
+msgid "adminV2.backup.auto.restore"
+msgstr "恢复此备份"
+
+msgid "adminV2.backup.auto.showAll"
+msgstr "显示全部 {n} 个"
+
+msgid "adminV2.backup.auto.showLess"
+msgstr "显示较少"
+
+msgid "adminV2.backup.auto.sub"
+msgstr "会不时自动生成，也会在您在此保存时生成。"
+
+msgid "adminV2.backup.auto.telegramOff"
+msgstr "自动备份也可以通过 Telegram 发送给您。"
+
+msgid "adminV2.backup.auto.telegramOn"
+msgstr "每次自动备份也会通过 Telegram 发送给您。"
+
+msgid "adminV2.backup.auto.title"
+msgstr "服务器上的备份"
+
+msgid "adminV2.backup.count.admins"
+msgstr "管理员"
+
+msgid "adminV2.backup.count.custom_proxies"
+msgstr "自定义代理"
+
+msgid "adminV2.backup.count.domains"
+msgstr "域名"
+
+msgid "adminV2.backup.count.nodes"
+msgstr "节点"
+
+msgid "adminV2.backup.count.settings"
+msgstr "设置"
+
+msgid "adminV2.backup.count.users"
+msgstr "用户"
+
+msgid "adminV2.backup.restore.advanced"
+msgstr "高级"
+
+msgid "adminV2.backup.restore.change"
+msgstr "选择其他"
+
+msgid "adminV2.backup.restore.confirmMessage"
+msgstr "面板的以下部分将被替换：{parts}。如果之后可能需要恢复，请先做一次备份。"
+
+msgid "adminV2.backup.restore.confirmTitle"
+msgstr "恢复此备份？"
+
+msgid "adminV2.backup.restore.drop"
+msgstr "将备份文件拖放到此处"
+
+msgid "adminV2.backup.restore.dropHint"
+msgstr "或点击选择 .json 备份文件"
+
+msgid "adminV2.backup.restore.fromFile"
+msgstr "来自您的设备"
+
+msgid "adminV2.backup.restore.fromServer"
+msgstr "来自此服务器"
+
+msgid "adminV2.backup.restore.notJson"
+msgstr "请选择 .json 备份文件"
+
+msgid "adminV2.backup.restore.part.domains"
+msgstr "域名"
+
+msgid "adminV2.backup.restore.part.domainsHint"
+msgstr "域名、其证书和自定义代理"
+
+msgid "adminV2.backup.restore.part.settings"
+msgstr "设置"
+
+msgid "adminV2.backup.restore.part.settingsHint"
+msgstr "面板设置、代理及其配置"
+
+msgid "adminV2.backup.restore.part.users"
+msgstr "用户"
+
+msgid "adminV2.backup.restore.part.usersHint"
+msgstr "用户、其用量和限制，以及管理员"
+
+msgid "adminV2.backup.restore.pathChanges"
+msgstr "此备份来自另一个面板：恢复后管理员链接会改变。完成后将显示新链接。"
+
+msgid "adminV2.backup.restore.replaceOwner"
+msgstr "保留备份所有者的 GUID"
+
+msgid "adminV2.backup.restore.replaceOwnerHint"
+msgstr "此面板的所有者将采用备份所有者的 GUID，因此旧的管理员链接仍然有效。无需恢复用户即可使用。您当前的管理员链接会改变。"
+
+msgid "adminV2.backup.restore.run"
+msgstr "恢复"
+
+msgid "adminV2.backup.restore.running"
+msgstr "正在恢复备份"
+
+msgid "adminV2.backup.restore.sub"
+msgstr "恢复来自此面板或另一个面板的备份。"
+
+msgid "adminV2.backup.restore.title"
+msgstr "恢复"
+
+msgid "adminV2.backup.restore.unreadable"
+msgstr "此文件不是 Hiddify 备份"
+
+msgid "adminV2.backup.restore.whatHappens"
+msgstr "恢复会替换您所选的内容，然后重新安装服务器配置。您可以查看进度；需要几分钟。"
+
+msgid "adminV2.backup.save.created"
+msgstr "备份已保存到服务器"
+
+msgid "adminV2.backup.save.download"
+msgstr "下载备份"
+
+msgid "adminV2.backup.save.downloaded"
+msgstr "备份已下载"
+
+msgid "adminV2.backup.save.failed"
+msgstr "无法创建备份"
+
+msgid "adminV2.backup.save.onServer"
+msgstr "保存到服务器"
+
+msgid "adminV2.backup.save.secret"
+msgstr "该文件包含密码、用户链接和私钥。请妥善保管。"
+
+msgid "adminV2.backup.save.sub"
+msgstr "一个文件包含全部内容：设置、用户、管理员、域名、代理和证书。"
+
+msgid "adminV2.backup.save.title"
+msgstr "创建备份"
+
+msgid "adminV2.backup.subtitle"
+msgstr "保留整个面板的副本，需要时可以恢复"
+
+msgid "adminV2.backup.title"
+msgstr "备份与恢复"
+
+msgid "adminV2.baseConfig.builtinDefaultHint"
+msgstr "从目录同步的内置基础配置。启用自定义内容后方可编辑。"
+
+msgid "adminV2.baseConfig.builtinReadOnly"
+msgstr "内置基础配置 — 只能更改名称和启用状态。复制后可完整编辑。"
+
+msgid "adminV2.baseConfig.content"
+msgstr "完整配置"
+
+msgid "adminV2.baseConfig.core"
+msgstr "核心"
+
+msgid "adminV2.baseConfig.description"
+msgstr "描述"
+
+msgid "adminV2.baseConfig.listTitle"
+msgstr "基础配置"
+
+msgid "adminV2.baseConfig.name"
+msgstr "名称"
+
+msgid "adminV2.baseConfig.new"
+msgstr "新建基础配置"
+
+msgid "adminV2.baseConfig.side"
+msgstr "端"
+
+msgid "adminV2.baseConfig.version"
+msgstr "版本"
+
+msgid "adminV2.common.actions"
+msgstr "操作"
+
+msgid "adminV2.common.add"
+msgstr "添加"
+
+msgid "adminV2.common.back"
+msgstr "返回"
+
+msgid "adminV2.common.cancel"
+msgstr "取消"
+
+msgid "adminV2.common.collapse"
+msgstr "收起"
+
+msgid "adminV2.common.confirmDelete"
+msgstr "确定要删除此项吗？"
+
+msgid "adminV2.common.copied"
+msgstr "已复制"
+
+msgid "adminV2.common.copy"
+msgstr "复制"
+
+msgid "adminV2.common.delete"
+msgstr "删除"
+
+msgid "adminV2.common.deleted"
+msgstr "删除成功"
+
+msgid "adminV2.common.disabled"
+msgstr "已禁用"
+
+msgid "adminV2.common.duplicate"
+msgstr "复制"
+
+msgid "adminV2.common.edit"
+msgstr "编辑"
+
+msgid "adminV2.common.enabled"
+msgstr "已启用"
+
+msgid "adminV2.common.filter"
+msgstr "筛选"
+
+msgid "adminV2.common.filteredOf"
+msgstr "已筛选：显示 {n} / {total}"
+
+msgid "adminV2.common.format"
+msgstr "格式"
+
+msgid "adminV2.common.loadFailed"
+msgstr "加载数据失败"
+
+msgid "adminV2.common.no"
+msgstr "否"
+
+msgid "adminV2.common.noMatch"
+msgstr "没有符合这些筛选条件的内容"
+
+msgid "adminV2.common.noMatchHint"
+msgstr "请尝试移除筛选或更改搜索。"
+
+msgid "adminV2.common.resetFilters"
+msgstr "重置筛选"
+
+msgid "adminV2.common.save"
+msgstr "保存"
+
+msgid "adminV2.common.saveFailed"
+msgstr "保存失败"
+
+msgid "adminV2.common.saved"
+msgstr "保存成功"
+
+msgid "adminV2.common.search"
+msgstr "搜索..."
+
+msgid "adminV2.common.validate"
+msgstr "验证"
+
+msgid "adminV2.common.validationFailed"
+msgstr "验证失败"
+
+msgid "adminV2.common.validationOk"
+msgstr "验证通过"
+
+msgid "adminV2.common.yes"
+msgstr "是"
+
+msgid "adminV2.dashboard.allNodes"
+msgstr "所有节点"
+
+msgid "adminV2.dashboard.available"
+msgstr "可用"
+
+msgid "adminV2.dashboard.averageHint"
+msgstr "每天在线用户的平均数，仅统计有人在线的日子。"
+
+msgid "adminV2.dashboard.breakdown"
+msgstr "明细"
+
+msgid "adminV2.dashboard.cached"
+msgstr "缓存"
+
+msgid "adminV2.dashboard.clickForProcesses"
+msgstr "点击显示占用最多的进程"
+
+msgid "adminV2.dashboard.collapse"
+msgstr "收起详情"
+
+msgid "adminV2.dashboard.connections"
+msgstr "连接数"
+
+msgid "adminV2.dashboard.core"
+msgstr "核心 {index}"
+
+msgid "adminV2.dashboard.cpu"
+msgstr "CPU"
+
+msgid "adminV2.dashboard.cpuCores"
+msgstr "CPU · {count} 核"
+
+msgid "adminV2.dashboard.dailyOnline"
+msgstr "每日在线用户"
+
+msgid "adminV2.dashboard.dailyUsage"
+msgstr "每日用量"
+
+msgid "adminV2.dashboard.disk"
+msgstr "磁盘"
+
+msgid "adminV2.dashboard.download"
+msgstr "下载"
+
+msgid "adminV2.dashboard.downloadSinceBoot"
+msgstr "运行期间下载"
+
+msgid "adminV2.dashboard.durationDaysHours"
+msgstr "{days}天 {hours}小时"
+
+msgid "adminV2.dashboard.durationHoursMinutes"
+msgstr "{hours}小时 {minutes}分"
+
+msgid "adminV2.dashboard.durationMinutes"
+msgstr "{minutes}分"
+
+msgid "adminV2.dashboard.enabledUsers"
+msgstr "已启用用户"
+
+msgid "adminV2.dashboard.expand"
+msgstr "展开详情"
+
+msgid "adminV2.dashboard.free"
+msgstr "空闲"
+
+msgid "adminV2.dashboard.hiddify"
+msgstr "Hiddify"
+
+msgid "adminV2.dashboard.hiddifyData"
+msgstr "Hiddify 数据"
+
+msgid "adminV2.dashboard.hostname"
+msgstr "主机"
+
+msgid "adminV2.dashboard.inFiveMinutes"
+msgstr "最近 5 分钟"
+
+msgid "adminV2.dashboard.lastNDays"
+msgstr "最近 {days} 天"
+
+msgid "adminV2.dashboard.lastdayOnline"
+msgstr "最近一天在线"
+
+msgid "adminV2.dashboard.liveThroughput"
+msgstr "实时吞吐量"
+
+msgid "adminV2.dashboard.liveUpdated"
+msgstr "实时 · 更新于 {time}"
+
+msgid "adminV2.dashboard.load15m"
+msgstr "15 分钟"
+
+msgid "adminV2.dashboard.load1m"
+msgstr "1 分钟"
+
+msgid "adminV2.dashboard.load5m"
+msgstr "5 分钟"
+
+msgid "adminV2.dashboard.loadAverage"
+msgstr "平均负载"
+
+msgid "adminV2.dashboard.loadFailed"
+msgstr "无法加载仪表盘数据"
+
+msgid "adminV2.dashboard.loadFailedHint"
+msgstr "仪表盘无法连接面板 API。请检查您是否仍处于登录状态。"
+
+msgid "adminV2.dashboard.modeAverage"
+msgstr "平均"
+
+msgid "adminV2.dashboard.modePeak"
+msgstr "峰值"
+
+msgid "adminV2.dashboard.modeUnique"
+msgstr "不同用户"
+
+msgid "adminV2.dashboard.monthUsage"
+msgstr "本月用量"
+
+msgid "adminV2.dashboard.monthUsers"
+msgstr "本月"
+
+msgid "adminV2.dashboard.monthlyAverage"
+msgstr "月均"
+
+msgid "adminV2.dashboard.monthlyOnline"
+msgstr "每月在线"
+
+msgid "adminV2.dashboard.nDays"
+msgstr "{days}天"
+
+msgid "adminV2.dashboard.network"
+msgstr "网络"
+
+msgid "adminV2.dashboard.noData"
+msgstr "暂无数据"
+
+msgid "adminV2.dashboard.node"
+msgstr "节点"
+
+msgid "adminV2.dashboard.nodeHealth"
+msgstr "节点健康"
+
+msgid "adminV2.dashboard.nodeHealthHint"
+msgstr "来自各节点 API 的实时 CPU、内存和磁盘"
+
+msgid "adminV2.dashboard.nodeHealthStackedHint"
+msgstr "各节点 CPU、内存和磁盘堆叠图"
+
+msgid "adminV2.dashboard.nodeNetworkHint"
+msgstr "各节点实时上传和下载"
+
+msgid "adminV2.dashboard.nodeOffline"
+msgstr "离线"
+
+msgid "adminV2.dashboard.nodeOnline"
+msgstr "在线"
+
+msgid "adminV2.dashboard.nodeUnreachable"
+msgstr "无法连接此节点"
+
+msgid "adminV2.dashboard.none"
+msgstr "无"
+
+msgid "adminV2.dashboard.onlineEnabledUsers"
+msgstr "在线 / 活跃用户"
+
+msgid "adminV2.dashboard.onlineNow"
+msgstr "当前在线"
+
+msgid "adminV2.dashboard.onlineOnDay"
+msgstr "在线：{count}"
+
+msgid "adminV2.dashboard.onlineToday"
+msgstr "今日在线：{count} / {total}"
+
+msgid "adminV2.dashboard.onlineUsers"
+msgstr "在线用户"
+
+msgid "adminV2.dashboard.panelVersion"
+msgstr "面板版本"
+
+msgid "adminV2.dashboard.pause"
+msgstr "暂停"
+
+msgid "adminV2.dashboard.paused"
+msgstr "实时更新已暂停"
+
+msgid "adminV2.dashboard.peakDay"
+msgstr "峰值日"
+
+msgid "adminV2.dashboard.peakHint"
+msgstr "单日在线用户的最大数。"
+
+msgid "adminV2.dashboard.perCore"
+msgstr "每核"
+
+msgid "adminV2.dashboard.perDay"
+msgstr "{value} / 天"
+
+msgid "adminV2.dashboard.ram"
+msgstr "内存"
+
+msgid "adminV2.dashboard.range"
+msgstr "历史范围"
+
+msgid "adminV2.dashboard.refresh"
+msgstr "立即刷新"
+
+msgid "adminV2.dashboard.resume"
+msgstr "实时"
+
+msgid "adminV2.dashboard.rollingAverage"
+msgstr "7 日平均"
+
+msgid "adminV2.dashboard.subtitle"
+msgstr "流量、用户和服务器健康状况一目了然"
+
+msgid "adminV2.dashboard.swap"
+msgstr "交换分区"
+
+msgid "adminV2.dashboard.thisServer"
+msgstr "此服务器"
+
+msgid "adminV2.dashboard.title"
+msgstr "仪表盘"
+
+msgid "adminV2.dashboard.today"
+msgstr "今天"
+
+msgid "adminV2.dashboard.todayOnline"
+msgstr "今日在线"
+
+msgid "adminV2.dashboard.todayUsage"
+msgstr "今日用量"
+
+msgid "adminV2.dashboard.topFolders"
+msgstr "最大的文件夹"
+
+msgid "adminV2.dashboard.topProcesses"
+msgstr "占用最多的进程"
+
+msgid "adminV2.dashboard.totalUsage"
+msgstr "总用量"
+
+msgid "adminV2.dashboard.totalUsers"
+msgstr "总用户数"
+
+msgid "adminV2.dashboard.uniqueHint"
+msgstr "每个时间段内出现的不同用户，整个面板。"
+
+msgid "adminV2.dashboard.uniqueIps"
+msgstr "唯一 IP"
+
+msgid "adminV2.dashboard.uniqueMonth"
+msgstr "近 30 天的不同用户"
+
+msgid "adminV2.dashboard.uniqueWeek"
+msgstr "近 7 天的不同用户"
+
+msgid "adminV2.dashboard.upload"
+msgstr "上传"
+
+msgid "adminV2.dashboard.uploadSinceBoot"
+msgstr "运行期间上传"
+
+msgid "adminV2.dashboard.uptime"
+msgstr "运行时间"
+
+msgid "adminV2.dashboard.usageComparison"
+msgstr "用量对比"
+
+msgid "adminV2.dashboard.usageComparisonHint"
+msgstr "今天和昨天与每周、每月日均对比"
+
+msgid "adminV2.dashboard.usageOnDay"
+msgstr "用量：{value}"
+
+msgid "adminV2.dashboard.usageStackedHint"
+msgstr "各节点用量堆叠 · 总量为填充区域"
+
+msgid "adminV2.dashboard.usageTrend"
+msgstr "用量趋势"
+
+msgid "adminV2.dashboard.used"
+msgstr "已用"
+
+msgid "adminV2.dashboard.usersComparison"
+msgstr "用户对比"
+
+msgid "adminV2.dashboard.usersComparisonHint"
+msgstr "每个时段出现的不重复用户"
+
+msgid "adminV2.dashboard.usersSummary"
+msgstr "{total} 个用户 · {enabled} 个已启用"
+
+msgid "adminV2.dashboard.usersTrend"
+msgstr "用户趋势"
+
+msgid "adminV2.dashboard.vsPreviousMonth"
+msgstr "相比前 30 天"
+
+msgid "adminV2.dashboard.vsPreviousWeek"
+msgstr "相比前 7 天"
+
+msgid "adminV2.dashboard.vsYesterday"
+msgstr "相比昨天"
+
+msgid "adminV2.dashboard.weekUsage"
+msgstr "本周用量"
+
+msgid "adminV2.dashboard.weekUsers"
+msgstr "本周"
+
+msgid "adminV2.dashboard.weeklyAverage"
+msgstr "周均"
+
+msgid "adminV2.dashboard.weeklyOnline"
+msgstr "每周在线"
+
+msgid "adminV2.dashboard.yesterday"
+msgstr "昨天"
+
+msgid "adminV2.domain.addFailed"
+msgstr "无法添加域名"
+
+msgid "adminV2.domain.addTitle"
+msgstr "添加域名"
+
+msgid "adminV2.domain.alias"
+msgstr "别名"
+
+msgid "adminV2.domain.domain"
+msgstr "域名"
+
+msgid "adminV2.domain.mode"
+msgstr "模式"
+
+msgid "adminV2.domains.add"
+msgstr "添加域名"
+
+msgid "adminV2.domains.advanced"
+msgstr "高级"
+
+msgid "adminV2.domains.badge.cdnIp"
+msgstr "强制 IP"
+
+msgid "adminV2.domains.badge.frontingHint"
+msgstr "域名前置：配置中显示此名称而非域名"
+
+msgid "adminV2.domains.badge.resolveIp"
+msgstr "IP"
+
+msgid "adminV2.domains.cert.failed"
+msgstr "无法获取证书"
+
+msgid "adminV2.domains.cert.failedHint"
+msgstr "在签发真实证书之前，将使用自签名证书。"
+
+msgid "adminV2.domains.cert.ok"
+msgstr "证书已签发"
+
+msgid "adminV2.domains.cert.okHint"
+msgstr "用户使用真实可信的证书连接。它会自动续期。"
+
+msgid "adminV2.domains.cert.retry"
+msgstr "重试"
+
+msgid "adminV2.domains.cert.secondsLeft"
+msgstr "约 {n} 秒"
+
+msgid "adminV2.domains.cert.steps.contact"
+msgstr "正在联系 Let's Encrypt"
+
+msgid "adminV2.domains.cert.steps.install"
+msgstr "正在安装"
+
+msgid "adminV2.domains.cert.steps.verify"
+msgstr "正在验证域名"
+
+msgid "adminV2.domains.cert.timeout"
+msgstr "仍在等待证书"
+
+msgid "adminV2.domains.cert.timeoutHint"
+msgstr "耗时比平时更长；它会在后台继续，完成后此页面会更新。"
+
+msgid "adminV2.domains.cert.tips.cdn"
+msgstr "短时间内请求过多会被 Let's Encrypt 拒绝；请稍后再试。"
+
+msgid "adminV2.domains.cert.tips.dns"
+msgstr "域名必须指向此服务器（或其前面的 CDN）。"
+
+msgid "adminV2.domains.cert.tips.port80"
+msgstr "80 端口必须可从互联网访问。"
+
+msgid "adminV2.domains.cert.waiting"
+msgstr "正在获取证书…"
+
+msgid "adminV2.domains.copyDomain"
+msgstr "复制域名"
+
+msgid "adminV2.domains.deleteMessage"
+msgstr "其配置将对所有用户失效。至少必须保留一个域名。"
+
+msgid "adminV2.domains.deleteTitle"
+msgstr "移除 {name}？"
+
+msgid "adminV2.domains.deleted"
+msgstr "{name} 已移除"
+
+msgid "adminV2.domains.drag"
+msgstr "拖动以重新排序"
+
+msgid "adminV2.domains.editTitle"
+msgstr "编辑域名"
+
+msgid "adminV2.domains.field.alias"
+msgstr "显示名称"
+
+msgid "adminV2.domains.field.aliasHint"
+msgstr "在用户的应用中显示，代替域名。"
+
+msgid "adminV2.domains.field.cdnIp"
+msgstr "🔂 强制配置使用这些 IP / 域名"
+
+msgid "adminV2.domains.field.cdnIpHint"
+msgstr "将这些放入用户链接中，代替域名的 IP，以逗号或换行分隔。也支持运营商模板。"
+
+msgid "adminV2.domains.field.domain"
+msgstr "域名"
+
+msgid "adminV2.domains.field.domainInvalid"
+msgstr "这看起来不像域名"
+
+msgid "adminV2.domains.field.domainRequired"
+msgstr "请输入域名"
+
+msgid "adminV2.domains.field.downloadDomain"
+msgstr "📈 下载域名"
+
+msgid "adminV2.domains.field.downloadDomainHint"
+msgstr "仅适用于 XHTTP：下载可以来自与上传不同的域名。更难被检测，通常更快。"
+
+msgid "adminV2.domains.field.ech"
+msgstr "🔐 ECH"
+
+msgid "adminV2.domains.field.echHint"
+msgstr "为此 CDN 域名获取并使用 Encrypted Client Hello。"
+
+msgid "adminV2.domains.field.echNeedsSetting"
+msgstr "请先在面板设置中开启 TLS ECH。"
+
+msgid "adminV2.domains.field.extra"
+msgstr "额外参数"
+
+msgid "adminV2.domains.field.extraInvalid"
+msgstr "不是有效的 JSON"
+
+msgid "adminV2.domains.field.extraObject"
+msgstr "必须是 JSON 对象"
+
+msgid "adminV2.domains.field.fronting"
+msgstr "🎭 域名前置"
+
+msgid "adminV2.domains.field.frontingHint"
+msgstr ""
+"可选。用户的应用显示这些名称（SNI）之一而不是您的域名，因此过滤器只会看到另一个站点。请使用与您的域名在同一 CDN 上的站点（例如其他 "
+"Cloudflare 站点）。留空：不使用前置。"
+
+msgid "adminV2.domains.field.frontingPlaceholder"
+msgstr "another-site.com, cdn-site.net"
+
+msgid "adminV2.domains.field.hostnamesInvalid"
+msgstr "请使用以逗号分隔的主机名，例如 site.com"
+
+msgid "adminV2.domains.field.mode"
+msgstr "模式"
+
+msgid "adminV2.domains.field.none"
+msgstr "无"
+
+msgid "adminV2.domains.field.ports"
+msgstr "网关端口"
+
+msgid "adminV2.domains.field.portsHint"
+msgstr ""
+"用户访问此域名的 SNI 和 L7 代理所用的端口：一个 TLS 端口和一个 HTTP 端口。留空使用默认值。防火墙会将其重定向到 443 / "
+"80，因此服务器上不能有任何程序监听它们，且 TLS 端口不能是其他域名的 HTTP 端口。"
+
+msgid "adminV2.domains.field.proxies"
+msgstr "自定义代理"
+
+msgid "adminV2.domains.field.relayNeedsIp"
+msgstr "未使用真实证书的中继需要在 高级 → 强制 IP 中填写中继服务器的 IP。"
+
+msgid "adminV2.domains.field.resolveIp"
+msgstr "🔢 解析 IP"
+
+msgid "adminV2.domains.field.resolveIpHint"
+msgstr "在代理中使用 IP 而不是域名。DNS 不稳定时很有用。"
+
+msgid "adminV2.domains.field.serverDomain"
+msgstr "服务器域名"
+
+msgid "adminV2.domains.field.serverDomainHint"
+msgstr "此条目使用的上游服务器域名。必须是有效的直连或中继域名。"
+
+msgid "adminV2.domains.field.servernames"
+msgstr "服务器名称"
+
+msgid "adminV2.domains.field.servernamesHint"
+msgstr "TLS Reality 借用的站点，以逗号分隔。留空：域名本身。"
+
+msgid "adminV2.domains.field.showAll"
+msgstr "所有域名"
+
+msgid "adminV2.domains.field.showDomains"
+msgstr "显示配置来自"
+
+msgid "adminV2.domains.field.showDomainsHint"
+msgstr "在此域名上打开自己页面的用户会看到这些域名的配置。"
+
+msgid "adminV2.domains.field.tlsMode"
+msgstr "TLS 模式"
+
+msgid "adminV2.domains.getCert"
+msgstr "获取证书"
+
+msgid "adminV2.domains.howto"
+msgstr "顺序很重要：拖动（或使用箭头）进行排序。配置按此顺序列出域名，第一个用于面板链接。"
+
+msgid "adminV2.domains.howtoFiltered"
+msgstr "请清除搜索和筛选后再更改顺序。"
+
+msgid "adminV2.domains.ips.elsewhere"
+msgstr "其他服务器 / CDN"
+
+msgid "adminV2.domains.ips.none"
+msgstr "未找到此域名的 DNS 记录。"
+
+msgid "adminV2.domains.ips.thisServer"
+msgstr "此服务器"
+
+msgid "adminV2.domains.ips.title"
+msgstr "指向位置 (DNS)"
+
+msgid "adminV2.domains.kind.cdn.desc"
+msgstr "您的域名经过 CDN（如 Cloudflare，橙色云朵 / 代理已开启）。它会隐藏此服务器的 IP，并在 IP 被封锁时仍可使用。"
+
+msgid "adminV2.domains.kind.cdn.name"
+msgstr "CDN"
+
+msgid "adminV2.domains.kind.direct.desc"
+msgstr "您的域名直接指向此服务器的 IP。如果使用 Cloudflare（或类似 DNS），请保持云朵关闭：仅 DNS。"
+
+msgid "adminV2.domains.kind.direct.name"
+msgstr "直连"
+
+msgid "adminV2.domains.kind.relay.desc"
+msgstr "用户连接到中间的另一台服务器，由它将流量转发到此服务器。域名指向该中间服务器。"
+
+msgid "adminV2.domains.kind.relay.name"
+msgstr "中继"
+
+msgid "adminV2.domains.kind.sublink.desc"
+msgstr "仅用于用户的订阅链接，不含代理。最好放在 CDN 之后：即使您的代理域名被封锁，用户仍可更新订阅并获取新的可用配置。"
+
+msgid "adminV2.domains.kind.sublink.name"
+msgstr "仅订阅"
+
+msgid "adminV2.domains.kind.worker.desc"
+msgstr "将自动为此域名创建 Cloudflare worker。"
+
+msgid "adminV2.domains.kind.worker.name"
+msgstr "Cloudflare Worker"
+
+msgid "adminV2.domains.more"
+msgstr "更多"
+
+msgid "adminV2.domains.moveDown"
+msgstr "下移"
+
+msgid "adminV2.domains.moveUp"
+msgstr "上移"
+
+msgid "adminV2.domains.noMatch"
+msgstr "没有域名符合筛选条件"
+
+msgid "adminV2.domains.noName"
+msgstr "（无名称）"
+
+msgid "adminV2.domains.notChanged"
+msgstr "未更改"
+
+msgid "adminV2.domains.openPanel"
+msgstr "在此域名上打开面板"
+
+msgid "adminV2.domains.port.busy"
+msgstr "另一个程序正在监听该端口（{name}）"
+
+msgid "adminV2.domains.port.checking"
+msgstr "检查中…"
+
+msgid "adminV2.domains.port.default"
+msgstr "默认"
+
+msgid "adminV2.domains.port.free"
+msgstr "空闲"
+
+msgid "adminV2.domains.port.invalid"
+msgstr "不是有效的端口"
+
+msgid "adminV2.domains.port.system"
+msgstr "系统端口"
+
+msgid "adminV2.domains.port.unknown"
+msgstr "无法检查此端口"
+
+msgid "adminV2.domains.port.usedByDomain"
+msgstr "被 {name} 用于另一种协议"
+
+msgid "adminV2.domains.port.usedByGateway.http"
+msgstr "HTTP 网关端口"
+
+msgid "adminV2.domains.port.usedByGateway.tls"
+msgstr "TLS 网关端口"
+
+msgid "adminV2.domains.port.usedByProxy"
+msgstr "被代理 {name} 使用"
+
+msgid "adminV2.domains.port.usedBySetting"
+msgstr "被 {name} 使用"
+
+msgid "adminV2.domains.proxies.auto"
+msgstr "自动"
+
+msgid "adminV2.domains.proxies.autoHint"
+msgstr "适合此域名的所有代理"
+
+msgid "adminV2.domains.proxies.autoShort"
+msgstr "自动"
+
+msgid "adminV2.domains.proxies.group.ip"
+msgstr "基于 IP"
+
+msgid "adminV2.domains.proxies.group.l7"
+msgstr "L7 网关"
+
+msgid "adminV2.domains.proxies.group.sni"
+msgstr "SNI 网关"
+
+msgid "adminV2.domains.proxies.noneFit"
+msgstr "没有适合此类域名的自定义代理；将使用内置代理。"
+
+msgid "adminV2.domains.proxies.noneTicked"
+msgstr "未选择任何项：效果与自动相同。"
+
+msgid "adminV2.domains.proxies.off"
+msgstr "关闭"
+
+msgid "adminV2.domains.proxies.pick"
+msgstr "选择"
+
+msgid "adminV2.domains.proxies.pickHint"
+msgstr "仅您选择的代理"
+
+msgid "adminV2.domains.proxies.rule"
+msgstr "一个 SNI 代理，或多个 L7 代理；两者不能混用。基于 IP 的可与任一种搭配。"
+
+msgid "adminV2.domains.proxies.selectAll"
+msgstr "全选"
+
+msgid "adminV2.domains.proxies.selectNone"
+msgstr "全不选"
+
+msgid "adminV2.domains.proxies.sniOne"
+msgstr " · 最多一个"
+
+msgid "adminV2.domains.readMore"
+msgstr "阅读更多"
+
+msgid "adminV2.domains.renewCert"
+msgstr "更新证书"
+
+msgid "adminV2.domains.saved"
+msgstr "{name} 已保存"
+
+msgid "adminV2.domains.search"
+msgstr "搜索域名或名称"
+
+msgid "adminV2.domains.stats.all"
+msgstr "域名"
+
+msgid "adminV2.domains.stats.attention"
+msgstr "需要证书"
+
+msgid "adminV2.domains.stats.decoy"
+msgstr "伪装 TLS"
+
+msgid "adminV2.domains.stats.valid"
+msgstr "证书正常"
+
+msgid "adminV2.domains.subtitle"
+msgstr "用户连接的地址、每个地址如何到达此服务器，以及它们的证书"
+
+msgid "adminV2.domains.title"
+msgstr "域名"
+
+msgid "adminV2.domains.tls.decoy"
+msgstr "伪装 TLS"
+
+msgid "adminV2.domains.tls.decoyHint"
+msgstr "Fake 和 Reality TLS 域名不需要自己的证书。"
+
+msgid "adminV2.domains.tls.expired"
+msgstr "已过期"
+
+msgid "adminV2.domains.tls.expiredHint"
+msgstr "证书已过期。"
+
+msgid "adminV2.domains.tls.expires"
+msgstr "到期时间"
+
+msgid "adminV2.domains.tls.expiresIn"
+msgstr "剩余 {n} 天"
+
+msgid "adminV2.domains.tls.invalid"
+msgstr "无效"
+
+msgid "adminV2.domains.tls.invalidHint"
+msgstr "证书与此域名不匹配。"
+
+msgid "adminV2.domains.tls.issuer"
+msgstr "颁发者"
+
+msgid "adminV2.domains.tls.missing"
+msgstr "无证书"
+
+msgid "adminV2.domains.tls.missingHint"
+msgstr "尚无证书。"
+
+msgid "adminV2.domains.tls.running"
+msgstr "正在获取证书"
+
+msgid "adminV2.domains.tls.self_signed"
+msgstr "自签名"
+
+msgid "adminV2.domains.tls.self_signedHint"
+msgstr "临时自签名证书：应用会警告或拒绝连接。请获取真实证书。"
+
+msgid "adminV2.domains.tls.valid"
+msgstr "有效"
+
+msgid "adminV2.domains.tls.validHint"
+msgstr "真实证书；会自动续期。"
+
+msgid "adminV2.domains.tlsMode.dns"
+msgstr "DNS"
+
+msgid "adminV2.domains.tlsMode.dnsHint"
+msgstr "仅 DNS 隧道。"
+
+msgid "adminV2.domains.tlsMode.fake"
+msgstr "Fake"
+
+msgid "adminV2.domains.tlsMode.fakeHint"
+msgstr "使用伪造站点名称（如 soft98.ir）的伪装 TLS，用于通过 SNI 白名单。不推荐。"
+
+msgid "adminV2.domains.tlsMode.fakeProxyNote"
+msgstr "此域名是内置服务器的 fake-TLS 名称，并与其设置保持同步。它没有自定义代理或下载域名。"
+
+msgid "adminV2.domains.tlsMode.locked"
+msgstr "此模式始终使用有效证书。"
+
+msgid "adminV2.domains.tlsMode.other"
+msgstr "其他"
+
+msgid "adminV2.domains.tlsMode.otherHint"
+msgstr "Telegram、ShadowTLS 和 Shadowsocks FakeTLS 服务器的 Fake-TLS 前置域名。每种一个。"
+
+msgid "adminV2.domains.tlsMode.reality"
+msgstr "Reality"
+
+msgid "adminV2.domains.tlsMode.realityHint"
+msgstr "通过 Reality 协议借用其他站点的 TLS；您可以拥有多个此类域名。"
+
+msgid "adminV2.domains.tlsMode.shadowtls"
+msgstr "ShadowTLS"
+
+msgid "adminV2.domains.tlsMode.shadowtlsHint"
+msgstr "ShadowTLS 服务器的伪装域名。"
+
+msgid "adminV2.domains.tlsMode.ssfaketls"
+msgstr "SS FakeTLS"
+
+msgid "adminV2.domains.tlsMode.ssfaketlsHint"
+msgstr "Shadowsocks FakeTLS 服务器的伪装域名。"
+
+msgid "adminV2.domains.tlsMode.taken"
+msgstr "已添加"
+
+msgid "adminV2.domains.tlsMode.telegram"
+msgstr "Telegram 代理"
+
+msgid "adminV2.domains.tlsMode.telegramHint"
+msgstr "Telegram MTProxy 的伪装域名。"
+
+msgid "adminV2.domains.tlsMode.valid"
+msgstr "有效 TLS"
+
+msgid "adminV2.domains.tlsMode.validHint"
+msgstr "自动签发的真实证书。"
+
+msgid "adminV2.domains.warning"
+msgstr "已保存，有警告"
+
+msgid "adminV2.domains.wizard.add"
+msgstr "添加域名"
+
+msgid "adminV2.domains.wizard.added"
+msgstr "已添加 {name}"
+
+msgid "adminV2.domains.wizard.aliasLead"
+msgstr "在应用中为此域名的配置显示的简短名称。"
+
+msgid "adminV2.domains.wizard.aliasQ"
+msgstr "用户应该看到什么？"
+
+msgid "adminV2.domains.wizard.check"
+msgstr "检查"
+
+msgid "adminV2.domains.wizard.checking"
+msgstr "正在检查 DNS…"
+
+msgid "adminV2.domains.wizard.continueBackground"
+msgstr "关闭（继续运行）"
+
+msgid "adminV2.domains.wizard.dnsHint"
+msgstr "在 DNS 中为该域名添加下面的记录（值为此服务器的地址）。"
+
+msgid "adminV2.domains.wizard.dnsTitle"
+msgstr "将其指向此服务器"
+
+msgid "adminV2.domains.wizard.finish"
+msgstr "完成"
+
+msgid "adminV2.domains.wizard.found.cdn"
+msgstr "位于 {cdn} 之后。"
+
+msgid "adminV2.domains.wizard.found.direct"
+msgstr "直接指向此服务器（{ips}）。"
+
+msgid "adminV2.domains.wizard.found.external"
+msgstr "指向另一台服务器（{ips}）：适合 Reality、中继或 Fake TLS。"
+
+msgid "adminV2.domains.wizard.found.externalNotFriendly"
+msgstr "指向另一台服务器（{ips}），但该站点对 Reality 不友好（需要 TLS 1.3 和 HTTP/2）。"
+
+msgid "adminV2.domains.wizard.found.unresolved"
+msgstr "尚无 DNS 记录。请先在您的 DNS 服务商处添加，或将其用于 Fake TLS。"
+
+msgid "adminV2.domains.wizard.mismatch.cdn"
+msgstr "该域名看起来不在 CDN 之后。请在您的 CDN 服务商处开启代理模式。"
+
+msgid "adminV2.domains.wizard.mismatch.direct"
+msgstr "直连需要域名指向此服务器的 IP。保存时会再次检查。"
+
+msgid "adminV2.domains.wizard.mismatch.reality"
+msgstr "Reality 需要一个可解析的真实站点。"
+
+msgid "adminV2.domains.wizard.mismatch.relay"
+msgstr "中继域名指向中间服务器，而不是此服务器。"
+
+msgid "adminV2.domains.wizard.mismatch.sublink"
+msgstr "域名必须指向此服务器或 CDN。"
+
+msgid "adminV2.domains.wizard.mismatch.worker"
+msgstr "Worker 需要域名托管在 Cloudflare 上。"
+
+msgid "adminV2.domains.wizard.modeQ"
+msgstr "如何设置？"
+
+msgid "adminV2.domains.wizard.moreSettings"
+msgstr "更多设置"
+
+msgid "adminV2.domains.wizard.nameLead"
+msgstr "输入域名或子域名。我们会检查其 DNS 以建议合适的模式。"
+
+msgid "adminV2.domains.wizard.nameQ"
+msgstr "哪个域名？"
+
+msgid "adminV2.domains.wizard.next"
+msgstr "下一步"
+
+msgid "adminV2.domains.wizard.noCert"
+msgstr "无需证书申请。"
+
+msgid "adminV2.domains.wizard.noCertDecoy"
+msgstr "Fake 和 Reality TLS 不需要证书。应用更改后即可开始使用。"
+
+msgid "adminV2.domains.wizard.recommended"
+msgstr "匹配"
+
+msgid "adminV2.domains.wizard.saving"
+msgstr "正在保存并检查…"
+
+msgid "adminV2.domains.wizard.steps.alias"
+msgstr "名称"
+
+msgid "adminV2.domains.wizard.steps.cert"
+msgstr "证书"
+
+msgid "adminV2.domains.wizard.steps.mode"
+msgstr "模式"
+
+msgid "adminV2.domains.wizard.steps.name"
+msgstr "域名"
+
+msgid "adminV2.domains.wizard.taken"
+msgstr "此域名已添加"
+
+msgid "adminV2.domains.wizard.title"
+msgstr "添加域名"
+
+msgid "adminV2.domains.wizard.tlsQ"
+msgstr "哪种 TLS？"
+
+msgid "adminV2.domains.wizard.unlikely"
+msgstr "DNS 不匹配"
+
+msgid "adminV2.donation.close"
+msgstr "关闭"
+
+msgid "adminV2.donation.copied"
+msgstr "已复制 {name} 地址"
+
+msgid "adminV2.donation.copiedShort"
+msgstr "已复制"
+
+msgid "adminV2.donation.qr"
+msgstr "二维码"
+
+msgid "adminV2.donation.qrOf"
+msgstr "{name} 地址的二维码"
+
+msgid "adminV2.donation.showQr"
+msgstr "显示 {name} 的二维码"
+
+msgid "adminV2.donation.title"
+msgstr "捐赠"
+
+msgid "adminV2.editor.cannotFormatJinja"
+msgstr "存在 Jinja 标签时无法自动格式化"
+
+msgid "adminV2.editor.excludeBuiltinTemplates"
+msgstr "导出时排除内置模板"
+
+msgid "adminV2.editor.exportBundle"
+msgstr "导出包"
+
+msgid "adminV2.editor.includeTemplate"
+msgstr "包含模板"
+
+msgid "adminV2.editor.insertVariable"
+msgstr "插入变量"
+
+msgid "adminV2.editor.jinjaHint"
+msgstr ""
+"JSON5 + Jinja：使用 {{ proxy.port }}、{{ proxy.tag }}、{% for %}…{% endfor %}"
+
+msgid "adminV2.editor.loadFailed"
+msgstr "无法加载编辑器。请检查网络连接并重新加载页面。"
+
+msgid "adminV2.editor.loading"
+msgstr "正在加载编辑器…"
+
+msgid "adminV2.editor.noVariables"
+msgstr "没有变量符合您的搜索"
+
+msgid "adminV2.editor.preview"
+msgstr "预览"
+
+msgid "adminV2.editor.previewFailed"
+msgstr "预览请求失败"
+
+msgid "adminV2.editor.previewOk"
+msgstr "预览生成成功"
+
+msgid "adminV2.editor.previewParams"
+msgstr "预览参数"
+
+msgid "adminV2.editor.previewPartial"
+msgstr "预览已生成，但有警告"
+
+msgid "adminV2.editor.previewTitle"
+msgstr "模板预览"
+
+msgid "adminV2.footer.text"
+msgstr "HiddifyManager"
+
+msgid "adminV2.legacy.loading"
+msgstr "加载中…"
+
+msgid "adminV2.legacy.refresh"
+msgstr "刷新"
+
+msgid "adminV2.legacy.title"
+msgstr "经典管理页面"
+
+msgid "adminV2.linkShare.copyLink"
+msgstr "复制链接"
+
+msgid "adminV2.linkShare.domain"
+msgstr "域名"
+
+msgid "adminV2.linkShare.download"
+msgstr "下载"
+
+msgid "adminV2.linkShare.kind.auto"
+msgstr "自动 CDN"
+
+msgid "adminV2.linkShare.kind.cdn"
+msgstr "CDN"
+
+msgid "adminV2.linkShare.kind.current"
+msgstr "当前"
+
+msgid "adminV2.linkShare.link"
+msgstr "链接"
+
+msgid "adminV2.linkShare.open"
+msgstr "打开"
+
+msgid "adminV2.login.brand"
+msgstr "Hiddify"
+
+msgid "adminV2.login.error_expired"
+msgstr "此页面打开时间过长。请重新登录。"
+
+msgid "adminV2.login.error_invalid"
+msgstr "ID、用户名或密码不正确。请检查后重试。"
+
+msgid "adminV2.login.error_locked"
+msgstr "您的网络尝试次数过多。请等待 15 分钟后再试。"
+
+msgid "adminV2.login.hide"
+msgstr "隐藏密码"
+
+msgid "adminV2.login.pageTitle"
+msgstr "登录"
+
+msgid "adminV2.login.password"
+msgstr "密码"
+
+msgid "adminV2.login.passwordHint"
+msgstr "如果您的管理员链接没有密码，请留空。"
+
+msgid "adminV2.login.passwordPlaceholder"
+msgstr "您的密码"
+
+msgid "adminV2.login.show"
+msgstr "显示密码"
+
+msgid "adminV2.login.signingIn"
+msgstr "正在登录…"
+
+msgid "adminV2.login.submit"
+msgstr "登录"
+
+msgid "adminV2.login.subtitle"
+msgstr "管理面板"
+
+msgid "adminV2.login.tipLink"
+msgstr "打开您的管理员链接会自动填入您的 ID。"
+
+msgid "adminV2.login.tipLost"
+msgstr "忘记密码？请联系添加您的管理员重置。"
+
+msgid "adminV2.login.title"
+msgstr "欢迎回来"
+
+msgid "adminV2.login.username"
+msgstr "管理员 ID 或用户名"
+
+msgid "adminV2.login.usernameHint"
+msgstr "您管理员链接中的 ID，或分配给您的用户名。"
+
+msgid "adminV2.login.usernamePlaceholder"
+msgstr "xxxxxxxx-xxxx-… 或您的用户名"
+
+msgid "adminV2.menu.baseConfigs"
+msgstr "基础配置"
+
+msgid "adminV2.menu.customProxies"
+msgstr "代理"
+
+msgid "adminV2.menu.dashboard"
+msgstr "仪表盘"
+
+msgid "adminV2.menu.group.help"
+msgstr "帮助"
+
+msgid "adminV2.menu.group.manager"
+msgstr "管理器"
+
+msgid "adminV2.menu.group.settings"
+msgstr "设置"
+
+msgid "adminV2.menu.myAccount"
+msgstr "我的账户"
+
+msgid "adminV2.menu.nodeHome"
+msgstr "节点"
+
+msgid "adminV2.menu.outbounds"
+msgstr "出站"
+
+msgid "adminV2.menu.protocols"
+msgstr "协议"
+
+msgid "adminV2.menu.proxyEditor"
+msgstr "代理编辑器"
+
+msgid "adminV2.menu.signOut"
+msgstr "退出登录"
+
+msgid "adminV2.menu.templateVariables"
+msgstr "模板变量"
+
+msgid "adminV2.menu.templates"
+msgstr "模板"
+
+msgid "adminV2.menu.utils"
+msgstr "工具"
+
+msgid "adminV2.nodeHome.connectedTo"
+msgstr "此节点已连接到父面板"
+
+msgid "adminV2.nodeHome.managedOnParent"
+msgstr "用户、管理员和仪表盘在父面板上管理。此处仅管理此节点的域名、代理和服务器。"
+
+msgid "adminV2.nodeHome.noParent"
+msgstr "此节点尚未连接到父面板。"
+
+msgid "adminV2.nodeHome.openParent"
+msgstr "打开父面板仪表盘"
+
+msgid "adminV2.nodeHome.subtitle"
+msgstr "此面板是父面板的一个节点。"
+
+msgid "adminV2.nodeHome.title"
+msgstr "节点"
+
+msgid "adminV2.nodeHome.titleNamed"
+msgstr "节点：{name}"
+
+msgid "adminV2.nodes.add.connecting"
+msgstr "正在连接节点…可能需要一分钟。"
+
+msgid "adminV2.nodes.add.linkHint"
+msgstr "形如 https://node.example.com/…/xxxxxxxx-xxxx-…/admin/"
+
+msgid "adminV2.nodes.add.linkInvalid"
+msgstr "这看起来不像完整的管理员链接。它必须以 https:// 开头并包含管理员 ID。"
+
+msgid "adminV2.nodes.add.linkLabel"
+msgstr "节点管理员链接"
+
+msgid "adminV2.nodes.add.linkOk"
+msgstr "位于 {host} 的节点"
+
+msgid "adminV2.nodes.add.nameLabel"
+msgstr "名称"
+
+msgid "adminV2.nodes.add.namePlaceholder"
+msgstr "例如 德国 1"
+
+msgid "adminV2.nodes.add.optional"
+msgstr "可选"
+
+msgid "adminV2.nodes.add.step1"
+msgstr "打开您要添加的服务器的管理面板。"
+
+msgid "adminV2.nodes.add.step2"
+msgstr "从浏览器地址栏复制其完整地址。"
+
+msgid "adminV2.nodes.add.step3"
+msgstr "粘贴到下方并点击连接。"
+
+msgid "adminV2.nodes.add.submit"
+msgstr "连接节点"
+
+msgid "adminV2.nodes.add.success"
+msgstr "节点已连接"
+
+msgid "adminV2.nodes.add.title"
+msgstr "添加节点"
+
+msgid "adminV2.nodes.addNode"
+msgstr "添加节点"
+
+msgid "adminV2.nodes.checkConnection"
+msgstr "检查连接"
+
+msgid "adminV2.nodes.checking"
+msgstr "检查中…"
+
+msgid "adminV2.nodes.connection"
+msgstr "连接"
+
+msgid "adminV2.nodes.differentVersion"
+msgstr "节点运行 {node}，此面板运行 {panel}。请保持版本一致。"
+
+msgid "adminV2.nodes.empty.cta"
+msgstr "添加您的第一个节点"
+
+msgid "adminV2.nodes.empty.point1"
+msgstr "用户和管理员自动同步"
+
+msgid "adminV2.nodes.empty.point2"
+msgstr "用量在此处汇总"
+
+msgid "adminV2.nodes.empty.point3"
+msgstr "一键打开每个节点的管理页面"
+
+msgid "adminV2.nodes.empty.text"
+msgstr "将另一台 Hiddify 服务器添加为节点，即可在此面板中管理您的所有服务器。"
+
+msgid "adminV2.nodes.empty.title"
+msgstr "暂无节点"
+
+msgid "adminV2.nodes.errors.invalid_link"
+msgstr "该链接不是有效的管理员链接。"
+
+msgid "adminV2.nodes.errors.rejected"
+msgstr "节点拒绝连接。它可能已属于另一个父面板，或其版本过旧。"
+
+msgid "adminV2.nodes.errors.self"
+msgstr "这是此面板的链接。请使用节点服务器的链接。"
+
+msgid "adminV2.nodes.errors.timeout"
+msgstr "节点响应时间过长。请检查后重试。"
+
+msgid "adminV2.nodes.errors.unreachable"
+msgstr "无法连接节点。请检查链接以及节点是否在线。"
+
+msgid "adminV2.nodes.info.fromNode"
+msgstr "节点最后一条消息"
+
+msgid "adminV2.nodes.info.lastUsage"
+msgstr "最后一次用户用量更新"
+
+msgid "adminV2.nodes.info.noUsageYet"
+msgstr "尚无用量报告"
+
+msgid "adminV2.nodes.info.toNode"
+msgstr "发送给节点的最后一条消息"
+
+msgid "adminV2.nodes.info.todayOnline"
+msgstr "今日在线用户"
+
+msgid "adminV2.nodes.info.todayTraffic"
+msgstr "今日流量"
+
+msgid "adminV2.nodes.info.usageReport"
+msgstr "{users} 个用户有流量，{traffic} | {users} 个用户有流量，{traffic}"
+
+msgid "adminV2.nodes.justNow"
+msgstr "刚刚"
+
+msgid "adminV2.nodes.lastSeen"
+msgstr "最后联系"
+
+msgid "adminV2.nodes.moreInfo"
+msgstr "更多信息"
+
+msgid "adminV2.nodes.neverSeen"
+msgstr "从未"
+
+msgid "adminV2.nodes.openAdmin"
+msgstr "打开"
+
+msgid "adminV2.nodes.reachable"
+msgstr "可连接"
+
+msgid "adminV2.nodes.refresh"
+msgstr "刷新"
+
+msgid "adminV2.nodes.remove"
+msgstr "移除"
+
+msgid "adminV2.nodes.removeMessage"
+msgstr "节点将连同其域名一起从此面板移除，并重新成为独立面板（其父链接将被清除）。之后如需连接，请重新添加。"
+
+msgid "adminV2.nodes.removeTitle"
+msgstr "移除 {name}？"
+
+msgid "adminV2.nodes.removed"
+msgstr "{name} 已移除"
+
+msgid "adminV2.nodes.removedNotUnlinked"
+msgstr "无法连接该节点，因此它仍将此面板作为父面板。请在其设置中清除父链接，否则它会持续尝试同步。"
+
+msgid "adminV2.nodes.rename"
+msgstr "重命名"
+
+msgid "adminV2.nodes.renamed"
+msgstr "已重命名为 {name}"
+
+msgid "adminV2.nodes.renamedHereOnly"
+msgstr "仅在此面板上重命名为 {name}"
+
+msgid "adminV2.nodes.renamedHereOnlyDetail"
+msgstr "无法连接该节点或其版本过旧，无法应用名称；重新注册后它可能仍显示旧名称。"
+
+msgid "adminV2.nodes.sameVersion"
+msgstr "与此面板版本相同"
+
+msgid "adminV2.nodes.showLess"
+msgstr "显示较少"
+
+msgid "adminV2.nodes.status.late"
+msgstr "延迟"
+
+msgid "adminV2.nodes.status.never"
+msgstr "尚未连接"
+
+msgid "adminV2.nodes.status.offline"
+msgstr "离线"
+
+msgid "adminV2.nodes.status.online"
+msgstr "在线"
+
+msgid "adminV2.nodes.subtitle"
+msgstr "连接到此面板的其他 Hiddify 服务器。用户和管理员会自动与它们共享。"
+
+msgid "adminV2.nodes.syncFailed"
+msgstr "无法同步 {name}"
+
+msgid "adminV2.nodes.syncNow"
+msgstr "立即同步"
+
+msgid "adminV2.nodes.synced"
+msgstr "{name} 已同步"
+
+msgid "adminV2.nodes.title"
+msgstr "节点"
+
+msgid "adminV2.nodes.unreachable"
+msgstr "无法连接"
+
+msgid "adminV2.outbounds.add"
+msgstr "添加出站"
+
+msgid "adminV2.outbounds.count.geosites"
+msgstr "geosite | geosite"
+
+msgid "adminV2.outbounds.count.rule_sets"
+msgstr "rule-set | rule-set"
+
+msgid "adminV2.outbounds.count.sites"
+msgstr "站点 | 站点"
+
+msgid "adminV2.outbounds.default"
+msgstr "默认"
+
+msgid "adminV2.outbounds.defaultHint"
+msgstr "最后一个已启用的出站：上面未路由的所有流量都走这里"
+
+msgid "adminV2.outbounds.deleteMessage"
+msgstr "其站点今后将使用默认出站。"
+
+msgid "adminV2.outbounds.deleteMessageDefault"
+msgstr "这是默认出站：它上方已启用的出站将成为默认出站。"
+
+msgid "adminV2.outbounds.deleteTitle"
+msgstr "删除 {name}？"
+
+msgid "adminV2.outbounds.deleted"
+msgstr "{name} 已删除"
+
+msgid "adminV2.outbounds.dialog.add"
+msgstr "添加出站"
+
+msgid "adminV2.outbounds.dialog.addTitle"
+msgstr "添加 {mode} 出站"
+
+msgid "adminV2.outbounds.dialog.config"
+msgstr "JSON"
+
+msgid "adminV2.outbounds.dialog.configBridge"
+msgstr "面板将其命名为 \"{tag}\"；路由使用该标签，另一个核心通过 127.0.0.1:{port} 连接到它。"
+
+msgid "adminV2.outbounds.dialog.configBridgeNew"
+msgstr "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 SOCKS 桥接连接到它。"
+
+msgid "adminV2.outbounds.dialog.configExample"
+msgstr "插入示例"
+
+msgid "adminV2.outbounds.dialog.configHint.core_endpoint"
+msgstr ""
+"一个 hiddify-core (sing-box) endpoint 对象，例如 WireGuard endpoint。保存前会由 hiddify-"
+"core 检查。"
+
+msgid "adminV2.outbounds.dialog.configHint.core_outbound"
+msgstr ""
+"一个 hiddify-core (sing-box) outbound 对象，例如 {\"type\": \"socks\", \"server\": "
+"\"…\", \"server_port\": 1080}。保存前会由 hiddify-core 检查。"
+
+msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
+msgstr ""
+"一个 xray outbound 对象，例如 {\"protocol\": \"socks\", \"settings\": {…}}。保存前会由 "
+"xray 检查。"
+
+msgid "adminV2.outbounds.dialog.configInvalid"
+msgstr "不是有效的 JSON：{error}"
+
+msgid "adminV2.outbounds.dialog.configRequired"
+msgstr "JSON 为必填项"
+
+msgid "adminV2.outbounds.dialog.domestic"
+msgstr "{region} 的国内站点"
+
+msgid "adminV2.outbounds.dialog.editTitle"
+msgstr "编辑 {name}"
+
+msgid "adminV2.outbounds.dialog.endpoint"
+msgstr "连接"
+
+msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
+msgstr "在 hiddify-core 内运行。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+
+msgid "adminV2.outbounds.dialog.endpointHint.tor"
+msgstr ""
+"在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+
+msgid "adminV2.outbounds.dialog.host"
+msgstr "主机"
+
+msgid "adminV2.outbounds.dialog.name"
+msgstr "名称"
+
+msgid "adminV2.outbounds.dialog.nameRequired"
+msgstr "名称为必填项"
+
+msgid "adminV2.outbounds.dialog.optional"
+msgstr "可选"
+
+msgid "adminV2.outbounds.dialog.password"
+msgstr "密码"
+
+msgid "adminV2.outbounds.dialog.passwordKeep"
+msgstr "留空以保留当前密码"
+
+msgid "adminV2.outbounds.dialog.port"
+msgstr "端口"
+
+msgid "adminV2.outbounds.dialog.routes"
+msgstr "经由它的流量"
+
+msgid "adminV2.outbounds.dialog.routesHint"
+msgstr "访问这些站点的流量将通过此出站。"
+
+msgid "adminV2.outbounds.dialog.routesHintDefault"
+msgstr "这是默认出站（最后一个已启用的出站）：上面未路由的所有流量已经走这里，因此无需列表。如果您将其上移，则会再次使用这些列表。"
+
+msgid "adminV2.outbounds.dialog.username"
+msgstr "用户名"
+
+msgid "adminV2.outbounds.disable"
+msgstr "关闭"
+
+msgid "adminV2.outbounds.domesticChip"
+msgstr "国内（{region}）"
+
+msgid "adminV2.outbounds.drag"
+msgstr "拖动以更改顺序"
+
+msgid "adminV2.outbounds.edited"
+msgstr "已在此处编辑：升级时会保留您的列表"
+
+msgid "adminV2.outbounds.enable"
+msgstr "开启"
+
+msgid "adminV2.outbounds.enabled"
+msgstr "已启用"
+
+msgid "adminV2.outbounds.everythingElse"
+msgstr "其余所有流量走这里"
+
+msgid "adminV2.outbounds.followsDefaults"
+msgstr "使用内置列表，升级时更新"
+
+msgid "adminV2.outbounds.howto"
+msgstr "出站按从上到下的顺序检查：流量从第一个列出其站点的出站发出。最后一个已启用的出站是默认出站，接收其余所有流量。拖动或使用箭头更改顺序。"
+
+msgid "adminV2.outbounds.idle"
+msgstr "未使用"
+
+msgid "adminV2.outbounds.idleHint"
+msgstr "它没有站点、geosite 或 rule-set，因此没有流量经过它。请编辑添加，或将其移到末尾使其成为默认出站。"
+
+msgid "adminV2.outbounds.list.browse"
+msgstr "浏览 rule-set"
+
+msgid "adminV2.outbounds.list.geosites"
+msgstr "Geosite / GeoIP (xray)"
+
+msgid "adminV2.outbounds.list.geositesHint"
+msgstr ""
+"每行一个 xray 条目并带前缀：geosite:google 或 geoip:ir（仅写名称表示 geosite:）。未知标签会导致 xray "
+"停止，请使用已知标签。"
+
+msgid "adminV2.outbounds.list.geositesPlaceholder"
+msgstr ""
+"geosite:google\n"
+"geoip:ir"
+
+msgid "adminV2.outbounds.list.rule_sets"
+msgstr "Rule-set (hiddify-core)"
+
+msgid "adminV2.outbounds.list.rule_setsHint"
+msgstr ""
+"每行一个 rule-set URL（.srs 或 .json 源）。输入 SagerNet 名称如 geosite-netflix 会将其转换为对应 "
+"URL。"
+
+msgid "adminV2.outbounds.list.rule_setsPlaceholder"
+msgstr ""
+"https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-"
+"netflix.srs"
+
+msgid "adminV2.outbounds.list.sites"
+msgstr "站点"
+
+msgid "adminV2.outbounds.list.sitesHint"
+msgstr "每行一个域名；包含其子域名。"
+
+msgid "adminV2.outbounds.list.sitesPlaceholder"
+msgstr "example.com"
+
+msgid "adminV2.outbounds.makeDefault"
+msgstr "设为默认（移到末尾）"
+
+msgid "adminV2.outbounds.mode.block"
+msgstr "屏蔽"
+
+msgid "adminV2.outbounds.mode.core_endpoint"
+msgstr "hiddify-core (sing-box) endpoint"
+
+msgid "adminV2.outbounds.mode.core_outbound"
+msgstr "hiddify-core (sing-box) outbound"
+
+msgid "adminV2.outbounds.mode.direct"
+msgstr "直连"
+
+msgid "adminV2.outbounds.mode.psiphon"
+msgstr "Psiphon"
+
+msgid "adminV2.outbounds.mode.socks"
+msgstr "SOCKS"
+
+msgid "adminV2.outbounds.mode.tor"
+msgstr "Tor"
+
+msgid "adminV2.outbounds.mode.warp"
+msgstr "WARP"
+
+msgid "adminV2.outbounds.mode.xray_outbound"
+msgstr "xray outbound"
+
+msgid "adminV2.outbounds.modeHint.block"
+msgstr "丢弃"
+
+msgid "adminV2.outbounds.modeHint.core_endpoint"
+msgstr "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 SOCKS 桥接访问它"
+
+msgid "adminV2.outbounds.modeHint.core_outbound"
+msgstr "您自己的 hiddify-core outbound (JSON)；xray 通过本地 SOCKS 桥接访问它"
+
+msgid "adminV2.outbounds.modeHint.direct"
+msgstr "直接从此服务器发出"
+
+msgid "adminV2.outbounds.modeHint.psiphon"
+msgstr "通过 Psiphon（由 hiddify-core 运行）"
+
+msgid "adminV2.outbounds.modeHint.socks"
+msgstr "通过 SOCKS5 代理"
+
+msgid "adminV2.outbounds.modeHint.tor"
+msgstr "通过 Tor 网络（由 hiddify-core 运行）"
+
+msgid "adminV2.outbounds.modeHint.warp"
+msgstr "通过此服务器上的 Cloudflare WARP"
+
+msgid "adminV2.outbounds.modeHint.xray_outbound"
+msgstr "您自己的 xray outbound (JSON)；hiddify-core 通过本地 SOCKS 桥接访问它"
+
+msgid "adminV2.outbounds.more"
+msgstr "更多操作"
+
+msgid "adminV2.outbounds.moveDown"
+msgstr "下移"
+
+msgid "adminV2.outbounds.moveUp"
+msgstr "上移"
+
+msgid "adminV2.outbounds.notChanged"
+msgstr "未更改"
+
+msgid "adminV2.outbounds.nowDefault"
+msgstr "{name} 现在是默认出站"
+
+msgid "adminV2.outbounds.off"
+msgstr "关闭"
+
+msgid "adminV2.outbounds.region.cn"
+msgstr "中国"
+
+msgid "adminV2.outbounds.region.ir"
+msgstr "伊朗"
+
+msgid "adminV2.outbounds.region.other"
+msgstr "您所在的地区"
+
+msgid "adminV2.outbounds.region.ru"
+msgstr "俄罗斯"
+
+msgid "adminV2.outbounds.reset"
+msgstr "重置为默认"
+
+msgid "adminV2.outbounds.resetDone"
+msgstr "{name} 重新使用内置列表"
+
+msgid "adminV2.outbounds.resetMessage"
+msgstr "您对其站点、geosite 和 rule-set 的更改将被内置列表替换，升级时会使其保持最新。"
+
+msgid "adminV2.outbounds.resetTitle"
+msgstr "将 {name} 重置为内置列表？"
+
+msgid "adminV2.outbounds.saved"
+msgstr "{name} 已保存"
+
+msgid "adminV2.outbounds.subtitle"
+msgstr "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 SOCKS、Tor 或 Psiphon 出口。"
+
+msgid "adminV2.outbounds.title"
+msgstr "出站"
+
+msgid "adminV2.passwordRules.common"
+msgstr "不是常见密码"
+
+msgid "adminV2.passwordRules.digit"
+msgstr "一个数字"
+
+msgid "adminV2.passwordRules.label"
+msgstr "强密码需要"
+
+msgid "adminV2.passwordRules.length"
+msgstr "{n}+ 个字符"
+
+msgid "adminV2.passwordRules.lower"
+msgstr "一个小写字母"
+
+msgid "adminV2.passwordRules.name"
+msgstr "不是您的名称或 ID"
+
+msgid "adminV2.passwordRules.upper"
+msgstr "一个大写字母"
+
+msgid "adminV2.primevue.accept"
+msgstr "是"
+
+msgid "adminV2.primevue.apply"
+msgstr "应用"
+
+msgid "adminV2.primevue.cancel"
+msgstr "取消"
+
+msgid "adminV2.primevue.choose"
+msgstr "选择"
+
+msgid "adminV2.primevue.clear"
+msgstr "清除"
+
+msgid "adminV2.primevue.emptyFilterMessage"
+msgstr "未找到结果"
+
+msgid "adminV2.primevue.emptyMessage"
+msgstr "没有可用选项"
+
+msgid "adminV2.primevue.emptySearchMessage"
+msgstr "未找到结果"
+
+msgid "adminV2.primevue.reject"
+msgstr "否"
+
+msgid "adminV2.primevue.upload"
+msgstr "上传"
+
+msgid "adminV2.protocols.changed"
+msgstr "已更改"
+
+msgid "adminV2.protocols.disableAll"
+msgstr "全部禁用"
+
+msgid "adminV2.protocols.enableAll"
+msgstr "全部启用"
+
+msgid "adminV2.protocols.enabledOf"
+msgstr "已启用 {on} / {total}"
+
+msgid "adminV2.protocols.filterAll"
+msgstr "全部"
+
+msgid "adminV2.protocols.filterOff"
+msgstr "关闭"
+
+msgid "adminV2.protocols.filterOn"
+msgstr "开启"
+
+msgid "adminV2.protocols.groups.other.hint"
+msgstr "其他开关"
+
+msgid "adminV2.protocols.groups.other.title"
+msgstr "其他"
+
+msgid "adminV2.protocols.groups.protocols.hint"
+msgstr "提供给客户端的代理协议"
+
+msgid "adminV2.protocols.groups.protocols.title"
+msgstr "协议"
+
+msgid "adminV2.protocols.groups.security.hint"
+msgstr "Reality、TLS 技巧和多路复用"
+
+msgid "adminV2.protocols.groups.security.title"
+msgstr "安全与技巧"
+
+msgid "adminV2.protocols.groups.transports.hint"
+msgstr "流量的承载方式（TCP、WebSocket、gRPC 等）"
+
+msgid "adminV2.protocols.groups.transports.title"
+msgstr "传输"
+
+msgid "adminV2.protocols.instantChip"
+msgstr "即时"
+
+msgid "adminV2.protocols.leaveUnsaved"
+msgstr "您有未保存的更改。仍要离开吗？"
+
+msgid "adminV2.protocols.noMatch"
+msgstr "没有符合您搜索的内容。"
+
+msgid "adminV2.protocols.reinstallChip"
+msgstr "需要重新安装"
+
+msgid "adminV2.protocols.relatedSettings"
+msgstr "设置"
+
+msgid "adminV2.protocols.search"
+msgstr "搜索协议…"
+
+msgid "adminV2.protocols.subtitle"
+msgstr "为整个面板开启或关闭协议、传输和 TLS 技巧。"
+
+msgid "adminV2.protocols.summaryHint"
+msgstr "点击卡片切换，然后保存。"
+
+msgid "adminV2.protocols.title"
+msgstr "协议"
+
+msgid "adminV2.proxy.addClient"
+msgstr "添加客户端"
+
+msgid "adminV2.proxy.addClientConfig"
+msgstr "为此核心添加配置"
+
+msgid "adminV2.proxy.addCoreConfig"
+msgstr "添加核心配置"
+
+msgid "adminV2.proxy.allowedProtocols"
+msgstr "允许的协议"
+
+msgid "adminV2.proxy.alpn"
+msgstr "ALPN"
+
+msgid "adminV2.proxy.alpnLabels.custom"
+msgstr "自定义"
+
+msgid "adminV2.proxy.alpnLabels.http"
+msgstr "HTTP"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2"
+msgstr "TLS H1 + H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h1_h2_h3"
+msgstr "TLS H1 + H2 + QUIC"
+
+msgid "adminV2.proxy.alpnLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.alpnLabels.tls_h3"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.autoClient"
+msgstr "自动"
+
+msgid "adminV2.proxy.baseConfigTemplate"
+msgstr "基础配置覆盖"
+
+msgid "adminV2.proxy.baseConfigTemplateHint"
+msgstr "{% block base_config %} 中可选的完整 xray 客户端外壳。留空则使用全局基础配置。"
+
+msgid "adminV2.proxy.builtinDefaultHint"
+msgstr "从目录同步的内置预设。在服务端或客户端选项卡中启用自定义内容后可编辑相应部分。"
+
+msgid "adminV2.proxy.builtinReadOnly"
+msgstr "内置预设 — 只能更改名称和启用状态。复制后可完整编辑。"
+
+msgid "adminV2.proxy.bundleContextProxyCount"
+msgstr "已启用的代理"
+
+msgid "adminV2.proxy.cannotEnable"
+msgstr "无法启用此代理"
+
+msgid "adminV2.proxy.categories"
+msgstr "分类"
+
+msgid "adminV2.proxy.categoriesAdd"
+msgstr "添加分类"
+
+msgid "adminV2.proxy.categoriesAddNew"
+msgstr "新增"
+
+msgid "adminV2.proxy.categoriesAddPlaceholder"
+msgstr "新分类"
+
+msgid "adminV2.proxy.categoriesFilter"
+msgstr "按分类筛选"
+
+msgid "adminV2.proxy.categoriesHeader"
+msgstr "可用分类"
+
+msgid "adminV2.proxy.categoriesHint"
+msgstr "选择现有分类，或从下拉底部添加新分类"
+
+msgid "adminV2.proxy.categoriesPlaceholder"
+msgstr "选择分类"
+
+msgid "adminV2.proxy.categoriesRemoveAll"
+msgstr "全部移除"
+
+msgid "adminV2.proxy.clashFormatJson"
+msgstr "JSON"
+
+msgid "adminV2.proxy.clashFormatYaml"
+msgstr "YAML"
+
+msgid "adminV2.proxy.clientBuiltinCustomized"
+msgstr "自定义客户端配置"
+
+msgid "adminV2.proxy.clientBuiltinDefault"
+msgstr "使用目录默认客户端配置"
+
+msgid "adminV2.proxy.clientConfigDefault"
+msgstr "客户端配置"
+
+msgid "adminV2.proxy.clientCoreConfigs"
+msgstr "客户端核心配置"
+
+msgid "adminV2.proxy.clientCores"
+msgstr "客户端核心"
+
+msgid "adminV2.proxy.commonProxyBadge"
+msgstr "通用"
+
+msgid "adminV2.proxy.core"
+msgstr "核心"
+
+msgid "adminV2.proxy.customPath"
+msgstr "自定义路径"
+
+msgid "adminV2.proxy.customPathAuto"
+msgstr "为 HTTP 代理自动生成"
+
+msgid "adminV2.proxy.defaultTagName"
+msgstr "默认标签：{name}"
+
+msgid "adminV2.proxy.directPortAccess"
+msgstr "直接端口访问"
+
+msgid "adminV2.proxy.directPortAccessHint"
+msgstr "请谨慎使用 — 可能使您的服务器在公网接口上被发现"
+
+msgid "adminV2.proxy.doBase64After"
+msgstr "渲染后进行 Base64"
+
+msgid "adminV2.proxy.domainIds"
+msgstr "域名"
+
+msgid "adminV2.proxy.domainIdsEmptyAll"
+msgstr "留空 = 所有匹配的域名；基于 IP 的代理忽略域名"
+
+msgid "adminV2.proxy.domainModeLabels.cdn"
+msgstr "CDN"
+
+msgid "adminV2.proxy.domainModeLabels.direct"
+msgstr "直连"
+
+msgid "adminV2.proxy.domainModeLabels.direct-dns"
+msgstr "直连 DNS"
+
+msgid "adminV2.proxy.domainModeLabels.direct-fake"
+msgstr "直连 fake"
+
+msgid "adminV2.proxy.domainModeLabels.direct-reality"
+msgstr "直连 REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.direct-valid"
+msgstr "直连 valid"
+
+msgid "adminV2.proxy.domainModeLabels.fake"
+msgstr "Fake TLS"
+
+msgid "adminV2.proxy.domainModeLabels.reality"
+msgstr "REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay"
+msgstr "中继"
+
+msgid "adminV2.proxy.domainModeLabels.relay-fake"
+msgstr "中继 fake"
+
+msgid "adminV2.proxy.domainModeLabels.relay-reality"
+msgstr "中继 REALITY"
+
+msgid "adminV2.proxy.domainModeLabels.relay-valid"
+msgstr "中继 valid"
+
+msgid "adminV2.proxy.domainModeLabels.special"
+msgstr "特殊 (REALITY)"
+
+msgid "adminV2.proxy.domainModes"
+msgstr "域名模式"
+
+msgid "adminV2.proxy.domains"
+msgstr "域名"
+
+msgid "adminV2.proxy.downloadAlpns"
+msgstr "下载 ALPN"
+
+msgid "adminV2.proxy.downloadAlpnsHint"
+msgstr "仅 xHTTP。留空 = 与主 ALPN 相同。配置变体 = 主 × 下载 ALPN。"
+
+msgid "adminV2.proxy.downloadDomainModes"
+msgstr "下载域名模式"
+
+msgid "adminV2.proxy.downloadTcpUdp"
+msgstr "下载 TCP 或 UDP"
+
+msgid "adminV2.proxy.downloadTlsLayer"
+msgstr "下载 TLS 层"
+
+msgid "adminV2.proxy.exampleContext"
+msgstr "渲染上下文"
+
+msgid "adminV2.proxy.exampleContextDomain"
+msgstr "域名"
+
+msgid "adminV2.proxy.exampleContextIp"
+msgstr "IP"
+
+msgid "adminV2.proxy.exampleContextProxy"
+msgstr "代理 ID"
+
+msgid "adminV2.proxy.exampleContextUa"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleContextUser"
+msgstr "用户"
+
+msgid "adminV2.proxy.exampleDomain"
+msgstr "域名"
+
+msgid "adminV2.proxy.exampleDomainAll"
+msgstr "所有域名"
+
+msgid "adminV2.proxy.exampleDomainAllHint"
+msgstr "包含与此代理匹配的所有域名（与订阅输出相同）。"
+
+msgid "adminV2.proxy.exampleDomainCustom"
+msgstr "自定义域名"
+
+msgid "adminV2.proxy.exampleDomainPick"
+msgstr "从面板选择"
+
+msgid "adminV2.proxy.exampleIp"
+msgstr "IP 地址"
+
+msgid "adminV2.proxy.exampleUaCustom"
+msgstr "自定义 User-Agent"
+
+msgid "adminV2.proxy.exampleUaPreset"
+msgstr "预设"
+
+msgid "adminV2.proxy.exampleUser"
+msgstr "用户"
+
+msgid "adminV2.proxy.exampleUserAgent"
+msgstr "User-Agent"
+
+msgid "adminV2.proxy.exampleUserPick"
+msgstr "选择面板用户"
+
+msgid "adminV2.proxy.exampleUserSample"
+msgstr "示例用户"
+
+msgid "adminV2.proxy.export"
+msgstr "导出"
+
+msgid "adminV2.proxy.exportFailed"
+msgstr "导出失败"
+
+msgid "adminV2.proxy.fieldOverride"
+msgstr "覆盖"
+
+msgid "adminV2.proxy.generateBundle"
+msgstr "生成所有配置"
+
+msgid "adminV2.proxy.generateBundleOk"
+msgstr "配置包生成成功"
+
+msgid "adminV2.proxy.generateBundlePartial"
+msgstr "配置包已生成，但有警告或错误"
+
+msgid "adminV2.proxy.generateExample"
+msgstr "生成示例"
+
+msgid "adminV2.proxy.generateExampleOk"
+msgstr "示例生成成功"
+
+msgid "adminV2.proxy.generateExamplePartial"
+msgstr "示例已生成，但有警告或错误"
+
+msgid "adminV2.proxy.goToSettings"
+msgstr "前往设置"
+
+msgid "adminV2.proxy.ignoreSkip"
+msgstr "忽略 skip 标签"
+
+msgid "adminV2.proxy.ignoreSkipHint"
+msgstr "即使模板 skip 块通常会跳过某个片段，也渲染配置"
+
+msgid "adminV2.proxy.import"
+msgstr "导入"
+
+msgid "adminV2.proxy.importFailed"
+msgstr "导入失败"
+
+msgid "adminV2.proxy.importSuccess"
+msgstr "导入成功（{count} 个模板）"
+
+msgid "adminV2.proxy.inboundPort"
+msgstr "入站端口"
+
+msgid "adminV2.proxy.inboundPortAuto"
+msgstr "留空则自动"
+
+msgid "adminV2.proxy.inboundPortAutoCalculated"
+msgstr "端口按域名自动计算"
+
+msgid "adminV2.proxy.inboundTcpPorts"
+msgstr "入站 TCP 端口"
+
+msgid "adminV2.proxy.inboundTcpPortsHint"
+msgstr "以逗号分隔的静态 TCP 端口"
+
+msgid "adminV2.proxy.inboundTemplate"
+msgstr "入站模板"
+
+msgid "adminV2.proxy.inboundUdpPorts"
+msgstr "入站 UDP 端口"
+
+msgid "adminV2.proxy.inboundUdpPortsHint"
+msgstr "以逗号分隔的静态 UDP 端口；留空时默认使用 TCP 端口"
+
+msgid "adminV2.proxy.isCommonProxy"
+msgstr "通用代理"
+
+msgid "adminV2.proxy.isCommonProxyHint"
+msgstr "此协议同时存在于 Xray 和 Hiddify Core。“通用代理核心”设置只会保持所选核心启用。"
+
+msgid "adminV2.proxy.l7Proto"
+msgstr "L7 反向代理协议"
+
+msgid "adminV2.proxy.l7ReverseProto"
+msgstr "L7 反向代理协议"
+
+msgid "adminV2.proxy.linkSettings"
+msgstr "链接设置"
+
+msgid "adminV2.proxy.linkTemplate"
+msgstr "链接模板"
+
+msgid "adminV2.proxy.listTitle"
+msgstr "自定义代理"
+
+msgid "adminV2.proxy.mode"
+msgstr "模式"
+
+msgid "adminV2.proxy.modeLabels.domain_native"
+msgstr "域名原生"
+
+msgid "adminV2.proxy.modeLabels.domains_auto_public_ports"
+msgstr "多域名自动端口"
+
+msgid "adminV2.proxy.modeLabels.domains_dns_gateway"
+msgstr "域名 DNS 网关"
+
+msgid "adminV2.proxy.modeLabels.domains_l7_gateway"
+msgstr "域名 L7 网关"
+
+msgid "adminV2.proxy.modeLabels.domains_single_public_port"
+msgstr "多域名静态端口"
+
+msgid "adminV2.proxy.modeLabels.domains_sni_gateway"
+msgstr "域名 SNI 网关"
+
+msgid "adminV2.proxy.modeLabels.ip"
+msgstr "基于 IP"
+
+msgid "adminV2.proxy.modeLabels.no_inbound"
+msgstr "无入站"
+
+msgid "adminV2.proxy.modeSettings"
+msgstr "模式与路由"
+
+msgid "adminV2.proxy.name"
+msgstr "名称"
+
+msgid "adminV2.proxy.nameRequired"
+msgstr "保存前请先给代理起个名字：它是其链接的标签。"
+
+msgid "adminV2.proxy.needGlobalEnable"
+msgstr "您需要全局启用 {names} 才能启用此代理。是否打开设置？"
+
+msgid "adminV2.proxy.new"
+msgstr "新建代理"
+
+msgid "adminV2.proxy.noClientConfigs"
+msgstr "暂无客户端配置。请添加客户端开始使用。"
+
+msgid "adminV2.proxy.outboundTagTemplate"
+msgstr "出站标签模板"
+
+msgid "adminV2.proxy.outboundTagTemplateHint"
+msgstr ""
+"每个客户端出站标签的 Jinja。默认：{{ proxy.tag }} {{ domain.alias or domain.name }} {{ "
+"proxy.alpn }}"
+
+msgid "adminV2.proxy.outboundsTemplate"
+msgstr "出站模板"
+
+msgid "adminV2.proxy.protocol"
+msgstr "协议"
+
+msgid "adminV2.proxy.quick.any"
+msgstr "任意"
+
+msgid "adminV2.proxy.quick.clear"
+msgstr "重置筛选"
+
+msgid "adminV2.proxy.quick.label"
+msgstr "筛选"
+
+msgid "adminV2.proxy.quick.modified"
+msgstr "已修改"
+
+msgid "adminV2.proxy.quick.modifiedHint"
+msgstr "与目录默认值相比已更改"
+
+msgid "adminV2.proxy.quick.nSelected"
+msgstr "已选 {n} 项"
+
+msgid "adminV2.proxy.quick.other"
+msgstr "其他"
+
+msgid "adminV2.proxy.quick.showing"
+msgstr "显示 {n} / {total}"
+
+msgid "adminV2.proxy.regeneratePath"
+msgstr "重新生成路径"
+
+msgid "adminV2.proxy.renderErrorClickHint"
+msgstr "点击查看详情"
+
+msgid "adminV2.proxy.renderErrorDetail"
+msgstr "渲染错误详情"
+
+msgid "adminV2.proxy.renderErrorDetailTitle"
+msgstr "渲染错误：{label}"
+
+msgid "adminV2.proxy.renderErrorNoDetail"
+msgstr "此错误没有更多可用上下文。"
+
+msgid "adminV2.proxy.renderErrorRenderedSource"
+msgstr "渲染输出"
+
+msgid "adminV2.proxy.renderErrorTemplateSource"
+msgstr "模板源"
+
+msgid "adminV2.proxy.resetAll"
+msgstr "全部重置为默认"
+
+msgid "adminV2.proxy.resetAllConfirm"
+msgstr "丢弃您对内置代理所做的所有更改（标签、域名模式、TLS、服务端和客户端配置）并恢复目录默认值？您自己创建的代理不受影响。"
+
+msgid "adminV2.proxy.resetAllDone"
+msgstr "{n} 个代理已重置为默认"
+
+msgid "adminV2.proxy.resetTagName"
+msgstr "将标签名称重置为默认"
+
+msgid "adminV2.proxy.resetToBuiltin"
+msgstr "重置为目录默认值"
+
+msgid "adminV2.proxy.searchAll"
+msgstr "搜索所有列..."
+
+msgid "adminV2.proxy.serverBuiltinCustomized"
+msgstr "自定义服务端配置"
+
+msgid "adminV2.proxy.serverBuiltinDefault"
+msgstr "使用目录默认服务端配置"
+
+msgid "adminV2.proxy.serverCore"
+msgstr "服务端核心"
+
+msgid "adminV2.proxy.slug"
+msgstr "Slug"
+
+msgid "adminV2.proxy.sublink"
+msgstr "Sublink"
+
+msgid "adminV2.proxy.sublinkBase64.content"
+msgstr "内容"
+
+msgid "adminV2.proxy.sublinkBase64.formatJson"
+msgstr "格式化 JSON"
+
+msgid "adminV2.proxy.sublinkBase64.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkBase64Detail"
+msgstr "Base64 详情"
+
+msgid "adminV2.proxy.sublinkFormat"
+msgstr "链接格式"
+
+msgid "adminV2.proxy.sublinkFormatBase64"
+msgstr "Base64 格式"
+
+msgid "adminV2.proxy.sublinkFormatDecoded"
+msgstr "解码字段"
+
+msgid "adminV2.proxy.sublinkFormatRaw"
+msgstr "渲染后的链接"
+
+msgid "adminV2.proxy.sublinkFormatRawLink"
+msgstr "原始链接"
+
+msgid "adminV2.proxy.sublinkFormatUri"
+msgstr "URI 格式"
+
+msgid "adminV2.proxy.sublinkUri.fragment"
+msgstr "uri.fragment"
+
+msgid "adminV2.proxy.sublinkUri.host"
+msgstr "uri.host"
+
+msgid "adminV2.proxy.sublinkUri.password"
+msgstr "uri.password"
+
+msgid "adminV2.proxy.sublinkUri.path"
+msgstr "uri.path"
+
+msgid "adminV2.proxy.sublinkUri.port"
+msgstr "uri.port"
+
+msgid "adminV2.proxy.sublinkUri.protocol"
+msgstr "uri.protocol"
+
+msgid "adminV2.proxy.sublinkUri.query_params"
+msgstr "uri.query_params (JSON)"
+
+msgid "adminV2.proxy.sublinkUri.user"
+msgstr "uri.user"
+
+msgid "adminV2.proxy.sublinkUriDetail"
+msgstr "URI 详情"
+
+msgid "adminV2.proxy.tabClient"
+msgstr "客户端"
+
+msgid "adminV2.proxy.tabClients"
+msgstr "客户端"
+
+msgid "adminV2.proxy.tabGeneral"
+msgstr "常规"
+
+msgid "adminV2.proxy.tabServer"
+msgstr "服务端"
+
+msgid "adminV2.proxy.tabServers"
+msgstr "服务端"
+
+msgid "adminV2.proxy.tag"
+msgstr "标签"
+
+msgid "adminV2.proxy.tcpUdp"
+msgstr "TCP 或 UDP"
+
+msgid "adminV2.proxy.tcpUdpHint"
+msgstr "解析后的入站端口所用的传输协议"
+
+msgid "adminV2.proxy.tcpUdpLabels.both"
+msgstr "TCP + UDP"
+
+msgid "adminV2.proxy.tcpUdpLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.tcpUdpLabels.udp"
+msgstr "UDP"
+
+msgid "adminV2.proxy.templateSlugs"
+msgstr "模板包含"
+
+msgid "adminV2.proxy.tlsLayer"
+msgstr "TLS 层"
+
+msgid "adminV2.proxy.tlsLayerLabels.http"
+msgstr "-"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tcp_tls"
+msgstr "QUIC + TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.quic_tls"
+msgstr "QUIC"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls"
+msgstr "TLS H2 H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h1"
+msgstr "TLS H1"
+
+msgid "adminV2.proxy.tlsLayerLabels.tls_h2"
+msgstr "TLS H2"
+
+msgid "adminV2.proxy.tlsLayerSpecialConflict"
+msgstr "HTTP TLS 层与 REALITY 域名模式不兼容"
+
+msgid "adminV2.proxy.transport"
+msgstr "传输"
+
+msgid "adminV2.proxy.transportLabels.grpc"
+msgstr "gRPC"
+
+msgid "adminV2.proxy.transportLabels.http"
+msgstr "HTTP (raw)"
+
+msgid "adminV2.proxy.transportLabels.httpupgrade"
+msgstr "HTTP Upgrade"
+
+msgid "adminV2.proxy.transportLabels.other"
+msgstr "其他"
+
+msgid "adminV2.proxy.transportLabels.tcp"
+msgstr "TCP"
+
+msgid "adminV2.proxy.transportLabels.ws"
+msgstr "WebSocket"
+
+msgid "adminV2.proxy.transportLabels.xhttp"
+msgstr "xHTTP"
+
+msgid "adminV2.proxy.uploadTcpUdp"
+msgstr "上传 TCP 或 UDP"
+
+msgid "adminV2.proxy.version"
+msgstr "版本"
+
+msgid "adminV2.qr.clickToCopy"
+msgstr "点击复制图片"
+
+msgid "adminV2.qr.copiedBoth"
+msgstr "消息和二维码已复制"
+
+msgid "adminV2.qr.copiedBothClick"
+msgstr "邮件和文档会同时粘贴两者。聊天应用只粘贴文本：粘贴后点击二维码复制图片，再粘贴即可。"
+
+msgid "adminV2.qr.copiedBothShare"
+msgstr "邮件和文档会同时粘贴两者。聊天应用只粘贴文本：使用“分享”一次性发送两者，或点击二维码复制图片。"
+
+msgid "adminV2.qr.copy"
+msgstr "复制二维码"
+
+msgid "adminV2.qr.copyUnsupported"
+msgstr "此浏览器无法复制图片。请改用下载。"
+
+msgid "adminV2.qr.share"
+msgstr "分享"
+
+msgid "adminV2.qr.shareFailed"
+msgstr "此处分享不可用。请复制消息，然后点击二维码复制图片。"
+
+msgid "adminV2.qr.shareHint"
+msgstr "将文本和二维码图片一起发送到 Telegram、WhatsApp、邮件…"
+
+msgid "adminV2.qr.textOnly"
+msgstr "消息已复制。此浏览器无法添加二维码图片；请点击二维码进行复制。"
+
+msgid "adminV2.quickSetup.back"
+msgstr "返回"
+
+msgid "adminV2.quickSetup.countries.ir"
+msgstr "伊朗"
+
+msgid "adminV2.quickSetup.countries.other"
+msgstr "其他"
+
+msgid "adminV2.quickSetup.countries.ru"
+msgstr "俄罗斯"
+
+msgid "adminV2.quickSetup.countries.zh"
+msgstr "中国"
+
+msgid "adminV2.quickSetup.domains.block"
+msgstr "屏蔽国内站点"
+
+msgid "adminV2.quickSetup.domains.blockHint"
+msgstr "屏蔽国内站点以防止被政府检测。"
+
+msgid "adminV2.quickSetup.domains.changeMode"
+msgstr "更改 {name} 的使用方式"
+
+msgid "adminV2.quickSetup.domains.copied"
+msgstr "已复制 {ip}"
+
+msgid "adminV2.quickSetup.domains.decoy"
+msgstr "伪装站点"
+
+msgid "adminV2.quickSetup.domains.decoyHint"
+msgstr "当有人直接打开您的域名时显示的假站点。"
+
+msgid "adminV2.quickSetup.domains.decoyWarn1"
+msgstr "请勿使用金融类、伊朗站点或需要登录的知名站点，如 Google、Yahoo、Wikipedia 或 PayPal。"
+
+msgid "adminV2.quickSetup.domains.decoyWarn2"
+msgstr "请仔细检查该站点并确保正确，否则可能收到钓鱼警告。"
+
+msgid "adminV2.quickSetup.domains.decoyWarn3"
+msgstr "请再次检查此域名，以免将来出现问题。"
+
+msgid "adminV2.quickSetup.domains.detecting"
+msgstr "检查中…"
+
+msgid "adminV2.quickSetup.domains.domains"
+msgstr "域名"
+
+msgid "adminV2.quickSetup.domains.domainsHint"
+msgstr ""
+"您可以在此添加任意域名：直连、CDN、REALITY、中继…… 每个都会自动检测；点击其类型可更改。您至少需要一个直连、CDN "
+"或订阅链接域名（此服务器的 IP 视为直连）。"
+
+msgid "adminV2.quickSetup.domains.how1"
+msgstr "将您的域名或子域名指向这些 IP（IPv4 用 A 记录，IPv6 用 AAAA 记录）。"
+
+msgid "adminV2.quickSetup.domains.how2"
+msgstr "然后在下方输入域名。可以添加多个；每个输入后按回车或逗号。"
+
+msgid "adminV2.quickSetup.domains.ipsTitle"
+msgstr "您服务器的 IP"
+
+msgid "adminV2.quickSetup.domains.modeHelp.cdn"
+msgstr "位于转发到此服务器的 CDN（Cloudflare、Fastly、ArvanCloud、Akamai 等）之后。隐藏您服务器的 IP。"
+
+msgid "adminV2.quickSetup.domains.modeHelp.direct"
+msgstr "直接指向此服务器的 IP。最快；当域名解析到此服务器时会被检测到。"
+
+msgid "adminV2.quickSetup.domains.modeHelp.reality"
+msgstr "他人的热门站点（TLS 1.3 + HTTP/2）。不指向您的服务器；此服务器会模仿它。"
+
+msgid "adminV2.quickSetup.domains.modeHelp.relay"
+msgstr "指向另一台将流量转发到此服务器的服务器（中继/隧道）。需手动设置。"
+
+msgid "adminV2.quickSetup.domains.modes.cdn"
+msgstr "CDN"
+
+msgid "adminV2.quickSetup.domains.modes.direct"
+msgstr "直连"
+
+msgid "adminV2.quickSetup.domains.modes.reality"
+msgstr "REALITY"
+
+msgid "adminV2.quickSetup.domains.modes.relay"
+msgstr "中继"
+
+msgid "adminV2.quickSetup.domains.noIp"
+msgstr "无法检测到服务器的 IP。"
+
+msgid "adminV2.quickSetup.domains.notes.not_friendly"
+msgstr "此站点可能不支持 REALITY 所需的 TLS 1.3 + HTTP/2。"
+
+msgid "adminV2.quickSetup.domains.notes.unresolved"
+msgstr "此域名尚未解析。请检查其 DNS 记录。"
+
+msgid "adminV2.quickSetup.domains.recommended"
+msgstr "强烈推荐"
+
+msgid "adminV2.quickSetup.domains.remove"
+msgstr "移除 {name}"
+
+msgid "adminV2.quickSetup.domains.required"
+msgstr "请至少添加一个直连、CDN 或订阅链接域名（仅有 REALITY 和中继域名是不够的）。此服务器的 IP 视为直连域名。"
+
+msgid "adminV2.quickSetup.domains.sublink"
+msgstr "订阅链接域名"
+
+msgid "adminV2.quickSetup.domains.sublinkHint"
+msgstr "仅提供订阅链接，不提供代理。可以指向此服务器或经由 CDN。"
+
+msgid "adminV2.quickSetup.domains.sublinkWhy"
+msgstr "为用户的订阅链接使用不同的域名，最好位于 CDN 之后。如果您的服务器或代理域名被封锁，用户仍可更新订阅并获取新的可用配置，不受影响。"
+
+msgid "adminV2.quickSetup.domains.useIp"
+msgstr "将此 IP 用作直连域名"
+
+msgid "adminV2.quickSetup.finish.button"
+msgstr "完成"
+
+msgid "adminV2.quickSetup.finish.docs"
+msgstr "阅读更多文档"
+
+msgid "adminV2.quickSetup.finish.off"
+msgstr "关闭"
+
+msgid "adminV2.quickSetup.finish.on"
+msgstr "开启"
+
+msgid "adminV2.quickSetup.finish.ready"
+msgstr "一切就绪"
+
+msgid "adminV2.quickSetup.finish.readyHint"
+msgstr "请检查您的选择，然后完成设置。"
+
+msgid "adminV2.quickSetup.finish.running"
+msgstr "正在完成设置"
+
+msgid "adminV2.quickSetup.finish.whatHappens"
+msgstr "完成将应用配置并使用您的域名重新安装服务。需要几分钟；运行期间会显示日志和您新的管理员链接。"
+
+msgid "adminV2.quickSetup.language.adminLang"
+msgstr "管理面板语言"
+
+msgid "adminV2.quickSetup.language.adminLangHint"
+msgstr "管理区域的语言。"
+
+msgid "adminV2.quickSetup.language.country"
+msgstr "国家"
+
+msgid "adminV2.quickSetup.language.countryHint"
+msgstr "根据该国家的过滤情况应用合适的设置。"
+
+msgid "adminV2.quickSetup.next"
+msgstr "下一步"
+
+msgid "adminV2.quickSetup.nodes.question"
+msgstr "是否要添加其他节点？请添加其他每个面板的完整管理员链接；连接后会列在此处。您也可以稍后再做。"
+
+msgid "adminV2.quickSetup.nodes.skip"
+msgstr "跳过"
+
+msgid "adminV2.quickSetup.optional"
+msgstr "可选"
+
+msgid "adminV2.quickSetup.password.confirm"
+msgstr "重复密码"
+
+msgid "adminV2.quickSetup.password.label"
+msgstr "新密码"
+
+msgid "adminV2.quickSetup.password.medium"
+msgstr "中"
+
+msgid "adminV2.quickSetup.password.min"
+msgstr "密码至少需要 {min} 个字符。"
+
+msgid "adminV2.quickSetup.password.mismatch"
+msgstr "两次输入的密码不一致。"
+
+msgid "adminV2.quickSetup.password.ok"
+msgstr "密码一致"
+
+msgid "adminV2.quickSetup.password.prompt"
+msgstr "至少 {min} 个字符"
+
+msgid "adminV2.quickSetup.password.strong"
+msgstr "强"
+
+msgid "adminV2.quickSetup.password.weak"
+msgstr "弱"
+
+msgid "adminV2.quickSetup.password.why"
+msgstr "您将使用此密码登录管理区域。请使用至少 8 个字符。"
+
+msgid "adminV2.quickSetup.skip"
+msgstr "暂时跳过"
+
+msgid "adminV2.quickSetup.stepOf"
+msgstr "第 {n} 步，共 {total} 步"
+
+msgid "adminV2.quickSetup.steps.domains.lead"
+msgstr "将您的域名连接到此服务器。"
+
+msgid "adminV2.quickSetup.steps.domains.title"
+msgstr "域名"
+
+msgid "adminV2.quickSetup.steps.finish.lead"
+msgstr "进行最后的配置以完成设置。"
+
+msgid "adminV2.quickSetup.steps.finish.title"
+msgstr "完成"
+
+msgid "adminV2.quickSetup.steps.language.lead"
+msgstr "选择管理员语言和您的用户所在的国家。"
+
+msgid "adminV2.quickSetup.steps.language.title"
+msgstr "欢迎"
+
+msgid "adminV2.quickSetup.steps.nodes.lead"
+msgstr "可选择连接其他 Hiddify 服务器，从这里统一管理。"
+
+msgid "adminV2.quickSetup.steps.nodes.title"
+msgstr "节点"
+
+msgid "adminV2.quickSetup.steps.password.lead"
+msgstr "用密码保护管理区域。"
+
+msgid "adminV2.quickSetup.steps.password.title"
+msgstr "密码"
+
+msgid "adminV2.quickSetup.steps.protocols.lead"
+msgstr "选择要提供的协议。请尽量少选。"
+
+msgid "adminV2.quickSetup.steps.protocols.title"
+msgstr "协议"
+
+msgid "adminV2.quickSetup.subtitle"
+msgstr "只需几步，面板即可就绪。"
+
+msgid "adminV2.quickSetup.title"
+msgstr "快速设置"
+
+msgid "adminV2.saveBar.discard"
+msgstr "放弃"
+
+msgid "adminV2.saveBar.unsaved"
+msgstr "{count} 项未保存的更改 | {count} 项未保存的更改"
+
+msgid "adminV2.settings.adminPathChanged"
+msgstr "管理路径已更改。应用配置后，管理面板将位于"
+
+msgid "adminV2.settings.advancedBadge"
+msgstr "高级"
+
+msgid "adminV2.settings.categories"
+msgstr "设置分类"
+
+msgid "adminV2.settings.changed"
+msgstr "已更改"
+
+msgid "adminV2.settings.fixErrors"
+msgstr "请修正高亮的字段。"
+
+msgid "adminV2.settings.hiddenCount"
+msgstr "已隐藏 {count} 项高级设置 | 已隐藏 {count} 项高级设置"
+
+msgid "adminV2.settings.invalid"
+msgstr "此值无效。"
+
+msgid "adminV2.settings.leaveUnsaved"
+msgstr "您有未保存的更改。仍要离开吗？"
+
+msgid "adminV2.settings.noMatch"
+msgstr "没有符合您搜索的设置。"
+
+msgid "adminV2.settings.openProtocols"
+msgstr "协议"
+
+msgid "adminV2.settings.reinstallBadge"
+msgstr "重新安装"
+
+msgid "adminV2.settings.reinstallHint"
+msgstr "更改此项需要重新安装才能生效"
+
+msgid "adminV2.settings.reloading"
+msgstr "语言已更改，正在重新加载…"
+
+msgid "adminV2.settings.required"
+msgstr "此字段为必填项。"
+
+msgid "adminV2.settings.search"
+msgstr "搜索所有设置…"
+
+msgid "adminV2.settings.showAdvanced"
+msgstr "显示高级设置"
+
+msgid "adminV2.settings.showAdvancedIn"
+msgstr "显示 {count} 项高级设置 | 显示 {count} 项高级设置"
+
+msgid "adminV2.settings.showLess"
+msgstr "显示较少"
+
+msgid "adminV2.settings.showMore"
+msgstr "再显示 {count} 项高级设置 | 再显示 {count} 项高级设置"
+
+msgid "adminV2.settings.subtitle"
+msgstr "关于此面板运行方式的一切。常用设置在前；高级设置按需显示。"
+
+msgid "adminV2.settings.title"
+msgstr "设置"
+
+msgid "adminV2.tags.addTag"
+msgstr "标签"
+
+msgid "adminV2.tags.bulk"
+msgstr "标签"
+
+msgid "adminV2.tags.bulkHint"
+msgstr "所选用户的标签：勾选表示所有用户都有该标签"
+
+msgid "adminV2.tags.clear"
+msgstr "清除"
+
+msgid "adminV2.tags.color"
+msgstr "颜色"
+
+msgid "adminV2.tags.colors.black"
+msgstr "黑色"
+
+msgid "adminV2.tags.colors.blue"
+msgstr "蓝色"
+
+msgid "adminV2.tags.colors.green"
+msgstr "绿色"
+
+msgid "adminV2.tags.colors.orange"
+msgstr "橙色"
+
+msgid "adminV2.tags.colors.red"
+msgstr "红色"
+
+msgid "adminV2.tags.create"
+msgstr "创建"
+
+msgid "adminV2.tags.created"
+msgstr "标签已创建"
+
+msgid "adminV2.tags.default.family"
+msgstr "家人"
+
+msgid "adminV2.tags.default.free"
+msgstr "免费"
+
+msgid "adminV2.tags.default.friends"
+msgstr "朋友"
+
+msgid "adminV2.tags.default.important"
+msgstr "重要"
+
+msgid "adminV2.tags.default.work"
+msgstr "工作"
+
+msgid "adminV2.tags.delete"
+msgstr "删除标签"
+
+msgid "adminV2.tags.deleteConfirm"
+msgstr "删除标签“{name}”？它将从所有带有该标签的用户上移除。"
+
+msgid "adminV2.tags.deleted"
+msgstr "标签已删除"
+
+msgid "adminV2.tags.edit"
+msgstr "编辑标签"
+
+msgid "adminV2.tags.editTags"
+msgstr "编辑标签"
+
+msgid "adminV2.tags.filterLabel"
+msgstr "按标签筛选"
+
+msgid "adminV2.tags.namePlaceholder"
+msgstr "为您自己的标签命名"
+
+msgid "adminV2.tags.newTag"
+msgstr "新标签"
+
+msgid "adminV2.tags.none"
+msgstr "暂无标签"
+
+msgid "adminV2.tags.pick"
+msgstr "选择标签"
+
+msgid "adminV2.tags.pickHint"
+msgstr "可选择多个"
+
+msgid "adminV2.tags.rename"
+msgstr "重命名"
+
+msgid "adminV2.tags.save"
+msgstr "保存"
+
+msgid "adminV2.tags.saveFailed"
+msgstr "无法保存标签"
+
+msgid "adminV2.tags.tagCount"
+msgstr "{n} 个标签"
+
+msgid "adminV2.tags.tagged"
+msgstr "已标记"
+
+msgid "adminV2.tags.taggedHint"
+msgstr "至少有一个标签的所有用户"
+
+msgid "adminV2.tags.title"
+msgstr "标签"
+
+msgid "adminV2.tags.untagged"
+msgstr "无标签"
+
+msgid "adminV2.tags.use"
+msgstr "{n} 个在使用"
+
+msgid "adminV2.telegram.benefit.backup"
+msgstr "接收自动备份"
+
+msgid "adminV2.telegram.benefit.manage"
+msgstr "直接在 Telegram 中管理用户"
+
+msgid "adminV2.telegram.benefit.notify"
+msgstr "接收重要事件通知"
+
+msgid "adminV2.telegram.check"
+msgstr "我已连接"
+
+msgid "adminV2.telegram.connect"
+msgstr "连接 Telegram"
+
+msgid "adminV2.telegram.connectHint"
+msgstr "从 {bot} 获取通知和备份，并通过 Telegram 管理面板。"
+
+msgid "adminV2.telegram.connectTitle"
+msgstr "连接您的 Telegram"
+
+msgid "adminV2.telegram.connected"
+msgstr "已连接"
+
+msgid "adminV2.telegram.connectedHint"
+msgstr "您将从 {bot} 获得通知和备份。"
+
+msgid "adminV2.telegram.connectedTitle"
+msgstr "Telegram 已连接"
+
+msgid "adminV2.telegram.later"
+msgstr "您可以随时在“我的账户”中连接。"
+
+msgid "adminV2.telegram.notNow"
+msgstr "暂不"
+
+msgid "adminV2.telegram.notYet"
+msgstr "尚未连接：请在机器人中点击 Start，然后再次检查。"
+
+msgid "adminV2.telegram.nowConnected"
+msgstr "Telegram 已连接"
+
+msgid "adminV2.telegram.openWeb"
+msgstr "在浏览器中打开"
+
+msgid "adminV2.telegram.promptLead"
+msgstr "此面板有一个 Telegram 机器人 {bot}。将其关联到您的账户："
+
+msgid "adminV2.telegram.promptTitle"
+msgstr "连接您的 Telegram？"
+
+msgid "adminV2.telegram.reconnect"
+msgstr "重新连接"
+
+msgid "adminV2.telegram.scan"
+msgstr "或用手机相机扫描此码。"
+
+msgid "adminV2.template.builtin"
+msgstr "内置"
+
+msgid "adminV2.template.builtinCustomized"
+msgstr "自定义的内置"
+
+msgid "adminV2.template.builtinDefault"
+msgstr "使用目录默认值"
+
+msgid "adminV2.template.builtinDefaultHint"
+msgstr "从目录同步的内置模板。启用自定义内容后可编辑。"
+
+msgid "adminV2.template.builtinReadOnly"
+msgstr "内置模板 — 请复制以创建可编辑的副本。"
+
+msgid "adminV2.template.category"
+msgstr "分类"
+
+msgid "adminV2.template.clone"
+msgstr "克隆为自定义"
+
+msgid "adminV2.template.cloneDescription"
+msgstr "自定义描述"
+
+msgid "adminV2.template.cloneName"
+msgstr "自定义名称"
+
+msgid "adminV2.template.cloned"
+msgstr "模板已克隆"
+
+msgid "adminV2.template.content"
+msgstr "内容"
+
+msgid "adminV2.template.core"
+msgstr "核心"
+
+msgid "adminV2.template.customContent"
+msgstr "自定义内容"
+
+msgid "adminV2.template.description"
+msgstr "描述"
+
+msgid "adminV2.template.editable"
+msgstr "可编辑"
+
+msgid "adminV2.template.empty"
+msgstr "此核心没有模板"
+
+msgid "adminV2.template.included"
+msgstr "已包含"
+
+msgid "adminV2.template.insert"
+msgstr "插入到编辑器"
+
+msgid "adminV2.template.listTitle"
+msgstr "模板"
+
+msgid "adminV2.template.name"
+msgstr "名称"
+
+msgid "adminV2.template.new"
+msgstr "新建模板"
+
+msgid "adminV2.template.notFound"
+msgstr "未找到模板"
+
+msgid "adminV2.template.referenced"
+msgstr "被引用"
+
+msgid "adminV2.template.referencedTemplates"
+msgstr "被引用的模板"
+
+msgid "adminV2.template.sidePanel"
+msgstr "模板"
+
+msgid "adminV2.template.sidePanelHint"
+msgstr "打开服务端或客户端选项卡以浏览模板"
+
+msgid "adminV2.template.slug"
+msgstr "Slug"
+
+msgid "adminV2.template.slugDuplicate"
+msgstr "此模板 slug 已被使用。请选择不同的 slug。"
+
+msgid "adminV2.template.slugHint"
+msgstr "只能编辑 core/category 之后的部分"
+
+msgid "adminV2.template.sysTooltip"
+msgstr "内置（系统）项"
+
+msgid "adminV2.templateVariables.access"
+msgstr "访问"
+
+msgid "adminV2.templateVariables.currentValue"
+msgstr "当前值"
+
+msgid "adminV2.templateVariables.description"
+msgstr "描述"
+
+msgid "adminV2.templateVariables.group"
+msgstr "分组"
+
+msgid "adminV2.templateVariables.label"
+msgstr "标签"
+
+msgid "adminV2.templateVariables.listTitle"
+msgstr "模板变量"
+
+msgid "adminV2.templateVariables.loadValues"
+msgstr "加载当前值"
+
+msgid "adminV2.templateVariables.name"
+msgstr "名称"
+
+msgid "adminV2.templateVariables.skipHint"
+msgstr "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
+
+msgid "adminV2.theme.dark"
+msgstr "深色模式"
+
+msgid "adminV2.theme.light"
+msgstr "浅色模式"
+
+msgid "adminV2.users.add"
+msgstr "添加用户"
+
+msgid "adminV2.users.addLimits.apply"
+msgstr "添加"
+
+msgid "adminV2.users.addLimits.days"
+msgstr "要增加的天数"
+
+msgid "adminV2.users.addLimits.gb"
+msgstr "要增加的流量"
+
+msgid "adminV2.users.addLimits.hint"
+msgstr "流量和天数会叠加在每位用户已有的数值之上。"
+
+msgid "adminV2.users.addLimits.note"
+msgstr "流量或天数无限的用户保持无限。将其中一项保留为 0 则仅增加另一项。"
+
+msgid "adminV2.users.addLimits.title"
+msgstr "为 {n} 个用户添加限制 | 为 {n} 个用户添加限制"
+
+msgid "adminV2.users.added"
+msgstr "已添加 {name}"
+
+msgid "adminV2.users.afterFirstShort"
+msgstr "首次使用后 {n} 天"
+
+msgid "adminV2.users.all"
+msgstr "全部"
+
+msgid "adminV2.users.bulk.add_days"
+msgstr "+7 天"
+
+msgid "adminV2.users.bulk.add_limits"
+msgstr "添加限制"
+
+msgid "adminV2.users.bulk.delete"
+msgstr "删除"
+
+msgid "adminV2.users.bulk.disable"
+msgstr "禁用"
+
+msgid "adminV2.users.bulk.enable"
+msgstr "启用"
+
+msgid "adminV2.users.bulk.reset_days"
+msgstr "重置天数"
+
+msgid "adminV2.users.bulk.reset_usage"
+msgstr "重置用量"
+
+msgid "adminV2.users.bulkConfirm.delete"
+msgstr "删除 {n} 个用户？ | 删除 {n} 个用户？"
+
+msgid "adminV2.users.bulkConfirm.disable"
+msgstr "禁用 {n} 个用户？ | 禁用 {n} 个用户？"
+
+msgid "adminV2.users.bulkConfirm.reset_days"
+msgstr "重置 {n} 个用户的天数？ | 重置 {n} 个用户的天数？"
+
+msgid "adminV2.users.bulkConfirm.reset_usage"
+msgstr "重置 {n} 个用户的用量？ | 重置 {n} 个用户的用量？"
+
+msgid "adminV2.users.bulkConfirmText.delete"
+msgstr "他们将无法再连接。"
+
+msgid "adminV2.users.bulkConfirmText.disable"
+msgstr "重新启用前他们无法连接。"
+
+msgid "adminV2.users.bulkConfirmText.reset_days"
+msgstr "他们的套餐将在下次连接时重新开始。"
+
+msgid "adminV2.users.bulkConfirmText.reset_usage"
+msgstr "他们已用的流量将归零。"
+
+msgid "adminV2.users.bulkDone.add_days"
+msgstr "已为 {n} 个用户增加 7 天 | 已为 {n} 个用户增加 7 天"
+
+msgid "adminV2.users.bulkDone.add_limits"
+msgstr "已为 {n} 个用户添加限制 | 已为 {n} 个用户添加限制"
+
+msgid "adminV2.users.bulkDone.delete"
+msgstr "已删除 {n} 个用户 | 已删除 {n} 个用户"
+
+msgid "adminV2.users.bulkDone.disable"
+msgstr "已禁用 {n} 个用户 | 已禁用 {n} 个用户"
+
+msgid "adminV2.users.bulkDone.enable"
+msgstr "已启用 {n} 个用户 | 已启用 {n} 个用户"
+
+msgid "adminV2.users.bulkDone.reset_days"
+msgstr "已重置 {n} 个用户的天数 | 已重置 {n} 个用户的天数"
+
+msgid "adminV2.users.bulkDone.reset_usage"
+msgstr "已重置 {n} 个用户的用量 | 已重置 {n} 个用户的用量"
+
+msgid "adminV2.users.clearSearch"
+msgstr "清除搜索"
+
+msgid "adminV2.users.clearSelection"
+msgstr "清除选择"
+
+msgid "adminV2.users.col.expire"
+msgstr "到期"
+
+msgid "adminV2.users.col.id"
+msgstr "ID"
+
+msgid "adminV2.users.col.lastOnline"
+msgstr "最后连接"
+
+msgid "adminV2.users.col.name"
+msgstr "名称"
+
+msgid "adminV2.users.col.status"
+msgstr "状态"
+
+msgid "adminV2.users.col.usage"
+msgstr "用量"
+
+msgid "adminV2.users.configs.addOffline"
+msgstr "添加离线配置"
+
+msgid "adminV2.users.configs.addSubscription"
+msgstr "添加订阅"
+
+msgid "adminV2.users.configs.badUrl"
+msgstr "订阅必须是 http(s) URL"
+
+msgid "adminV2.users.configs.empty"
+msgstr "为空：请填写或移除"
+
+msgid "adminV2.users.configs.hint"
+msgstr "添加到此用户订阅中的额外配置：粘贴一个（离线），或提供为用户获取的 URL（订阅）。选择它适用的应用格式，或选“自动”适用于所有。"
+
+msgid "adminV2.users.configs.inherited"
+msgstr "还从上级管理员获得 {n} 个配置 | 还从上级管理员获得 {n} 个配置"
+
+msgid "adminV2.users.configs.kind.offline"
+msgstr "离线"
+
+msgid "adminV2.users.configs.kind.subscription"
+msgstr "订阅"
+
+msgid "adminV2.users.configs.offlinePlaceholder"
+msgstr "vless://…  或 JSON / YAML 配置"
+
+msgid "adminV2.users.configs.target.auto"
+msgstr "自动（所有格式）"
+
+msgid "adminV2.users.configs.target.clash"
+msgstr "Clash"
+
+msgid "adminV2.users.configs.target.hiddify-core"
+msgstr "Hiddify / sing-box"
+
+msgid "adminV2.users.configs.target.sublink"
+msgstr "分享链接"
+
+msgid "adminV2.users.configs.target.xray"
+msgstr "Xray"
+
+msgid "adminV2.users.configs.title"
+msgstr "额外配置"
+
+msgid "adminV2.users.configs.urlPlaceholder"
+msgstr "https://example.com/sub/…"
+
+msgid "adminV2.users.daysLeft"
+msgstr "剩余 {n} 天 | 剩余 {n} 天"
+
+msgid "adminV2.users.deleteMessage"
+msgstr "该用户将无法再连接。其 UUID 之后可以再次使用。"
+
+msgid "adminV2.users.deleteTitle"
+msgstr "删除 {name}？"
+
+msgid "adminV2.users.deleted"
+msgstr "{name} 已删除"
+
+msgid "adminV2.users.done.reset_days"
+msgstr "{name} 将在下次连接时重新开始"
+
+msgid "adminV2.users.done.reset_usage"
+msgstr "{name} 的用量已重置"
+
+msgid "adminV2.users.extra.outbound"
+msgstr "outbound={name}"
+
+msgid "adminV2.users.extra.outboundHint"
+msgstr "该用户选择了专属出站（outbound）"
+
+msgid "adminV2.users.extra.subs"
+msgstr "额外订阅 {n} 个 | 额外订阅 {n} 个"
+
+msgid "adminV2.users.extra.subsHint"
+msgstr "为该用户添加的额外订阅配置"
+
+msgid "adminV2.users.extra.telegramHint"
+msgstr "已绑定 Telegram 账号"
+
+msgid "adminV2.users.filter.active"
+msgstr "活跃"
+
+msgid "adminV2.users.filter.activeHint"
+msgstr "已启用，有剩余天数和流量"
+
+msgid "adminV2.users.filter.all"
+msgstr "全部"
+
+msgid "adminV2.users.filter.allHint"
+msgstr "所有用户"
+
+msgid "adminV2.users.filter.data_low"
+msgstr "流量不足"
+
+msgid "adminV2.users.filter.data_lowHint"
+msgstr "活跃，已用流量达到 80% 或以上"
+
+msgid "adminV2.users.filter.disabled"
+msgstr "已禁用"
+
+msgid "adminV2.users.filter.disabledHint"
+msgstr "已被管理员关闭"
+
+msgid "adminV2.users.filter.expired"
+msgstr "已过期"
+
+msgid "adminV2.users.filter.expiredHint"
+msgstr "无剩余天数"
+
+msgid "adminV2.users.filter.expiring"
+msgstr "即将到期"
+
+msgid "adminV2.users.filter.expiringHint"
+msgstr "活跃，将在一周内结束"
+
+msgid "adminV2.users.filter.no_data"
+msgstr "流量用尽"
+
+msgid "adminV2.users.filter.no_dataHint"
+msgstr "已用完全部流量限额"
+
+msgid "adminV2.users.filter.not_started"
+msgstr "未开始"
+
+msgid "adminV2.users.filter.not_startedHint"
+msgstr "尚未连接过：其天数从首次连接开始计算"
+
+msgid "adminV2.users.filter.unseen_week"
+msgstr "一周未见"
+
+msgid "adminV2.users.filter.unseen_weekHint"
+msgstr "之前连接过，但最近 7 天内没有"
+
+msgid "adminV2.users.filtersLabel"
+msgstr "筛选用户"
+
+msgid "adminV2.users.form.add"
+msgstr "添加用户"
+
+msgid "adminV2.users.form.addSubtitle"
+msgstr "保存后，将打开用户的链接和二维码，可随时发送。"
+
+msgid "adminV2.users.form.addTitle"
+msgstr "新建用户"
+
+msgid "adminV2.users.form.advanced"
+msgstr "高级"
+
+msgid "adminV2.users.form.data"
+msgstr "流量"
+
+msgid "adminV2.users.form.daysCount"
+msgstr "{n} 天 | {n} 天"
+
+msgid "adminV2.users.form.daysUnit"
+msgstr "天"
+
+msgid "adminV2.users.form.disabled"
+msgstr "已禁用"
+
+msgid "adminV2.users.form.editSubtitle"
+msgstr "更改立即生效。"
+
+msgid "adminV2.users.form.editTimeTitle"
+msgstr "编辑时长：{name}"
+
+msgid "adminV2.users.form.editTitle"
+msgstr "编辑 {name}"
+
+msgid "adminV2.users.form.editUsageTitle"
+msgstr "编辑流量：{name}"
+
+msgid "adminV2.users.form.enableHint"
+msgstr "已禁用的用户无法连接。"
+
+msgid "adminV2.users.form.enabled"
+msgstr "已启用"
+
+msgid "adminV2.users.form.endedWhen"
+msgstr "{when}已结束"
+
+msgid "adminV2.users.form.endsWhen"
+msgstr "{when}结束"
+
+msgid "adminV2.users.form.expiresOn"
+msgstr "{date}结束"
+
+msgid "adminV2.users.form.extra"
+msgstr "额外参数 (JSON)"
+
+msgid "adminV2.users.form.extraHint"
+msgstr "模板使用的高级设置。路由和额外配置在上方设置。"
+
+msgid "adminV2.users.form.extraInvalid"
+msgstr "这不是有效的 JSON"
+
+msgid "adminV2.users.form.extraNotObject"
+msgstr "额外参数必须是 JSON 对象（花括号之间）"
+
+msgid "adminV2.users.form.limit"
+msgstr "用量限制"
+
+msgid "adminV2.users.form.mode"
+msgstr "重置周期"
+
+msgid "adminV2.users.form.name"
+msgstr "名称"
+
+msgid "adminV2.users.form.namePlaceholder"
+msgstr "例如 Sara 的手机"
+
+msgid "adminV2.users.form.nameRequired"
+msgstr "名称为必填项"
+
+msgid "adminV2.users.form.neverExpires"
+msgstr "永不过期"
+
+msgid "adminV2.users.form.newUuid"
+msgstr "新 UUID"
+
+msgid "adminV2.users.form.nextReset"
+msgstr "下次重置 {when}"
+
+msgid "adminV2.users.form.notStarted"
+msgstr "未开始"
+
+msgid "adminV2.users.form.notStartedHint"
+msgstr "首次连接时开始"
+
+msgid "adminV2.users.form.note"
+msgstr "备注"
+
+msgid "adminV2.users.form.notePlaceholder"
+msgstr "仅管理员可见"
+
+msgid "adminV2.users.form.optional"
+msgstr "可选"
+
+msgid "adminV2.users.form.outbound"
+msgstr "首选出站"
+
+msgid "adminV2.users.form.outboundAuto"
+msgstr "自动（遵循出站规则）"
+
+msgid "adminV2.users.form.outboundHint"
+msgstr "此用户的所有流量都通过此出站发出（出站页面）。已关闭的出站会被忽略。"
+
+msgid "adminV2.users.form.outboundOff"
+msgstr "已关闭"
+
+msgid "adminV2.users.form.owner"
+msgstr "子管理员"
+
+msgid "adminV2.users.form.ownerMe"
+msgstr "{name}（您）"
+
+msgid "adminV2.users.form.packageDays"
+msgstr "套餐天数"
+
+msgid "adminV2.users.form.packageLength"
+msgstr "套餐时长"
+
+msgid "adminV2.users.form.period.month"
+msgstr "1 个月"
+
+msgid "adminV2.users.form.period.months3"
+msgstr "3 个月"
+
+msgid "adminV2.users.form.period.months6"
+msgstr "6 个月"
+
+msgid "adminV2.users.form.period.unlimited"
+msgstr "无限"
+
+msgid "adminV2.users.form.period.week"
+msgstr "1 周"
+
+msgid "adminV2.users.form.period.year"
+msgstr "1 年"
+
+msgid "adminV2.users.form.reset"
+msgstr "重置"
+
+msgid "adminV2.users.form.resetDays"
+msgstr "重置天数"
+
+msgid "adminV2.users.form.resetDaysHint"
+msgstr "重新开始套餐：天数从下次连接开始计算"
+
+msgid "adminV2.users.form.resetUsage"
+msgstr "重置用量"
+
+msgid "adminV2.users.form.resetUsagePending"
+msgstr "保存时将重置用量"
+
+msgid "adminV2.users.form.restart"
+msgstr "重新开始"
+
+msgid "adminV2.users.form.restartPending"
+msgstr "保存时重新开始：其天数从下次连接起重新计算"
+
+msgid "adminV2.users.form.routing"
+msgstr "路由"
+
+msgid "adminV2.users.form.setDays"
+msgstr "设置天数"
+
+msgid "adminV2.users.form.startedWhen"
+msgstr "{when}开始"
+
+msgid "adminV2.users.form.summaryConfigs"
+msgstr "{n} 个额外配置 | {n} 个额外配置"
+
+msgid "adminV2.users.form.summaryExtra"
+msgstr "已设置额外参数"
+
+msgid "adminV2.users.form.summaryOutbound"
+msgstr "通过 {name} 出站"
+
+msgid "adminV2.users.form.telegram"
+msgstr "Telegram ID"
+
+msgid "adminV2.users.form.time"
+msgstr "时间"
+
+msgid "adminV2.users.form.undo"
+msgstr "撤销"
+
+msgid "adminV2.users.form.unlimited"
+msgstr "无限"
+
+msgid "adminV2.users.form.usageReadOnly"
+msgstr "已用流量由服务器统计；只能重置。"
+
+msgid "adminV2.users.form.used"
+msgstr "已用"
+
+msgid "adminV2.users.form.uuidEditHint"
+msgstr "更改它会改变用户的链接：旧链接将失效。"
+
+msgid "adminV2.users.form.uuidHint"
+msgstr "自动生成。"
+
+msgid "adminV2.users.form.uuidInvalid"
+msgstr "这不是有效的 UUID"
+
+msgid "adminV2.users.form.waitingText"
+msgstr "{n} 天从首次连接时开始。"
+
+msgid "adminV2.users.form.waitingUnlimited"
+msgstr "从首次连接时开始，且永不过期。"
+
+msgid "adminV2.users.form.who"
+msgstr "谁"
+
+msgid "adminV2.users.groupByOwner"
+msgstr "按管理员分组"
+
+msgid "adminV2.users.groupCount"
+msgstr "{n} 个用户 | {n} 个用户"
+
+msgid "adminV2.users.inlineEdit"
+msgstr "行内编辑"
+
+msgid "adminV2.users.inlineHint"
+msgstr "行内编辑已开启：点击名称、用量限制、到期时间、模式或备注，即可直接在列表中更改。用量本身只能重置。"
+
+msgid "adminV2.users.limitReached"
+msgstr "您已达到用户数量上限。请联系上级管理员提高。"
+
+msgid "adminV2.users.link"
+msgstr "链接"
+
+msgid "adminV2.users.linkTitle"
+msgstr "{name} 的链接"
+
+msgid "adminV2.users.mode.daily"
+msgstr "每日"
+
+msgid "adminV2.users.mode.monthly"
+msgstr "每月"
+
+msgid "adminV2.users.mode.no_reset"
+msgstr "不重置"
+
+msgid "adminV2.users.mode.weekly"
+msgstr "每周"
+
+msgid "adminV2.users.modeHint.daily"
+msgstr "用量每天重置。"
+
+msgid "adminV2.users.modeHint.monthly"
+msgstr "用量自开始起每 30 天重置一次。"
+
+msgid "adminV2.users.modeHint.no_reset"
+msgstr "用量永不重置：限额适用于整个套餐。"
+
+msgid "adminV2.users.modeHint.weekly"
+msgstr "用量自开始起每 7 天重置一次。"
+
+msgid "adminV2.users.more"
+msgstr "更多操作"
+
+msgid "adminV2.users.never"
+msgstr "从未"
+
+msgid "adminV2.users.noMatch"
+msgstr "没有匹配的用户"
+
+msgid "adminV2.users.noTimeLimit"
+msgstr "无时间限制"
+
+msgid "adminV2.users.none"
+msgstr "暂无用户"
+
+msgid "adminV2.users.of"
+msgstr "/"
+
+msgid "adminV2.users.online"
+msgstr "在线"
+
+msgid "adminV2.users.pageReport"
+msgstr "{first}–{last} / {totalRecords}"
+
+msgid "adminV2.users.perPage"
+msgstr "每页用户数"
+
+msgid "adminV2.users.refresh"
+msgstr "刷新"
+
+msgid "adminV2.users.resetTag.daily"
+msgstr "每日重置"
+
+msgid "adminV2.users.resetTag.monthly"
+msgstr "每月重置"
+
+msgid "adminV2.users.resetTag.weekly"
+msgstr "每周重置"
+
+msgid "adminV2.users.saved"
+msgstr "{name} 已保存"
+
+msgid "adminV2.users.search"
+msgstr "搜索名称、UUID 或备注"
+
+msgid "adminV2.users.select"
+msgstr "选择"
+
+msgid "adminV2.users.selectAll"
+msgstr "全选 {n} 个 | 全选 {n} 个"
+
+msgid "adminV2.users.selected"
+msgstr "已选 {n} 个 | 已选 {n} 个"
+
+msgid "adminV2.users.showDates"
+msgstr "显示结束日期"
+
+msgid "adminV2.users.showLink"
+msgstr "显示用户链接"
+
+msgid "adminV2.users.showMore"
+msgstr "再显示 {n} 个"
+
+msgid "adminV2.users.showRelative"
+msgstr "显示剩余时间"
+
+msgid "adminV2.users.sortById"
+msgstr "按 ID 排序"
+
+msgid "adminV2.users.status.active"
+msgstr "活跃"
+
+msgid "adminV2.users.status.disabled"
+msgstr "已禁用"
+
+msgid "adminV2.users.status.expired"
+msgstr "已过期"
+
+msgid "adminV2.users.status.no_data"
+msgstr "流量用尽"
+
+msgid "adminV2.users.statusHint.active"
+msgstr "已启用，有剩余天数和流量"
+
+msgid "adminV2.users.statusHint.disabled"
+msgstr "已被管理员关闭"
+
+msgid "adminV2.users.statusHint.expired"
+msgstr "套餐已无剩余天数"
+
+msgid "adminV2.users.statusHint.no_data"
+msgstr "已用完全部流量限额"
+
+msgid "adminV2.users.subtitle"
+msgstr "通过此面板连接的所有人：他们的流量、剩余时间和链接。"
+
+msgid "adminV2.users.title"
+msgstr "用户"
+
+msgid "adminV2.utils.addQuery"
+msgstr "添加查询"
+
+msgid "adminV2.utils.autoSwapped"
+msgstr "看起来是 Base64，已自动交换两侧。"
+
+msgid "adminV2.utils.base64Label"
+msgstr "Base64"
+
+msgid "adminV2.utils.base64Live"
+msgstr ""
+"编辑任意一侧，另一侧会实时更新。开头的 protocol://（如 vmess://）会被保留，解码时忽略。把 Base64 "
+"粘贴到文本一侧会自动交换两侧。"
+
+msgid "adminV2.utils.base64Tab"
+msgstr "Base64"
+
+msgid "adminV2.utils.clear"
+msgstr "清除"
+
+msgid "adminV2.utils.decode"
+msgstr "解码"
+
+msgid "adminV2.utils.emptyLinks"
+msgstr "在左侧粘贴分享链接，即可在此检查。"
+
+msgid "adminV2.utils.encode"
+msgstr "编码"
+
+msgid "adminV2.utils.extraHint"
+msgstr "URL 解码后的 JSON。留空则从链接中省略 extra。"
+
+msgid "adminV2.utils.extraJson"
+msgstr "extra (JSON)"
+
+msgid "adminV2.utils.fragment"
+msgstr "名称"
+
+msgid "adminV2.utils.input"
+msgstr "输入"
+
+msgid "adminV2.utils.links"
+msgstr "分享链接"
+
+msgid "adminV2.utils.linksPlaceholder"
+msgstr "粘贴一个或多个 vless://、vmess://、ss://、trojan:// 链接（或 base64 订阅）"
+
+msgid "adminV2.utils.method"
+msgstr "方法"
+
+msgid "adminV2.utils.noQuery"
+msgstr "无查询参数。使用“添加查询”插入一个。"
+
+msgid "adminV2.utils.notBase64"
+msgstr "这不是有效的 Base64。"
+
+msgid "adminV2.utils.notUrlEncoded"
+msgstr "这不是有效的 URL 编码文本。"
+
+msgid "adminV2.utils.output"
+msgstr "输出"
+
+msgid "adminV2.utils.pass"
+msgstr "Pass"
+
+msgid "adminV2.utils.path"
+msgstr "UrlPath"
+
+msgid "adminV2.utils.port"
+msgstr "端口"
+
+msgid "adminV2.utils.pretty"
+msgstr "已解码"
+
+msgid "adminV2.utils.protocol"
+msgstr "协议"
+
+msgid "adminV2.utils.queryKey"
+msgstr "键"
+
+msgid "adminV2.utils.queryParams"
+msgstr "查询参数"
+
+msgid "adminV2.utils.queryValue"
+msgstr "值"
+
+msgid "adminV2.utils.server"
+msgstr "服务器"
+
+msgid "adminV2.utils.sublinkHint"
+msgstr "在左侧粘贴链接。右侧显示解码后的字段。查询参数是可编辑的行；extra 为 JSON。在右侧所做的更改会改写链接。"
+
+msgid "adminV2.utils.sublinkTab"
+msgstr "Sublink"
+
+msgid "adminV2.utils.subtitle"
+msgstr "在浏览器中编码、解码和检查分享链接 — 不会向服务器发送任何内容。"
+
+msgid "adminV2.utils.swap"
+msgstr "交换"
+
+msgid "adminV2.utils.textLabel"
+msgstr "文本"
+
+msgid "adminV2.utils.title"
+msgstr "工具"
+
+msgid "adminV2.utils.unwrappedSubscription"
+msgstr "检测到 base64 订阅，并已解码为单独的链接。"
+
+msgid "adminV2.utils.urlEncodedLabel"
+msgstr "URL 编码"
+
+msgid "adminV2.utils.urlLive"
+msgstr "编辑任意一侧，另一侧会实时更新。把百分号编码的文本粘贴到文本一侧会自动交换两侧。"
+
+msgid "adminV2.utils.urlSafe"
+msgstr "URL 安全"
+
+msgid "adminV2.utils.urlTab"
+msgstr "URL"
+
+msgid "adminV2.utils.user"
+msgstr "用户"
+
+msgid "adminV2.utils.vmessJson"
+msgstr "vmess JSON"
+
+msgid "adminV2.utils.vmessObject"
+msgstr "vmess JSON 必须是对象"
+
+msgid "adminV2.validation.errors"
+msgstr "错误"
+
+msgid "adminV2.validation.preview"
+msgstr "编译预览"
+
+msgid "adminV2.validation.title"
+msgstr "验证"
+
+msgid "adminV2.validation.warnings"
+msgstr "警告"
+
 msgid "adminuser.force_update_usage"
 msgstr "每 6 分钟更新一次使用情况。如需立即更新，<a href=\"%(link)s\" class=\"btn btn-info\">请点击此处</a>"
 
@@ -1092,16 +6049,16 @@ msgid "android"
 msgstr "安卓"
 
 msgid "app.clash_verge_rev.description"
-msgstr ""
+msgstr "适用于桌面的 Clash Verge Rev 客户端"
 
 msgid "app.clash_verge_rev.title"
-msgstr ""
+msgstr "Clash Verge Rev"
 
 msgid "app.cmfa.description"
-msgstr ""
+msgstr "适用于 Android 的 Clash Meta"
 
 msgid "app.cmfa.title"
-msgstr ""
+msgstr "Clash Meta for Android"
 
 msgid "app.foxray.description"
 msgstr "福克斯射线描述"
@@ -1176,7 +6133,7 @@ msgid "app.streisand.title"
 msgstr "Streisand"
 
 msgid "app.v2rayn.title"
-msgstr ""
+msgstr "v2rayN"
 
 msgid "app.v2rayng.description"
 msgstr "V2RayNG 说明"
@@ -1185,10 +6142,10 @@ msgid "app.v2rayng.title"
 msgstr "V2RayNG"
 
 msgid "at least one domain should exist"
-msgstr ""
+msgstr "至少应存在一个域名"
 
 msgid "at least one user should exist"
-msgstr ""
+msgstr "至少应存在一个用户"
 
 msgid "auto"
 msgstr "自动"
@@ -1218,7 +6175,7 @@ msgid "child.register-failed"
 msgstr "child.register-失败"
 
 msgid "child.register-success"
-msgstr "child.register-success"
+msgstr "子面板注册成功"
 
 msgid "child.sync-failed"
 msgstr "child.sync-失败"
@@ -1230,7 +6187,7 @@ msgid "close"
 msgstr "关闭"
 
 msgid "cloudflare.error"
-msgstr "cloudflare.error"
+msgstr "Cloudflare 错误"
 
 msgid "config.Domain_already_used"
 msgstr "域存在于域部分。使用另一个域"
@@ -1257,28 +6214,28 @@ msgid "config.Invalid_telegram_bot_token"
 msgstr "Telegram 机器人令牌无效"
 
 msgid "config.additional_configs.description"
-msgstr ""
+msgstr "将额外配置合并到生成的订阅中"
 
 msgid "config.additional_configs.label"
-msgstr ""
+msgstr "附加配置"
 
 msgid "config.additional_configs_singbox.description"
-msgstr ""
+msgstr "您可以将其他 singbox 出站追加到结果中"
 
 msgid "config.additional_configs_singbox.label"
-msgstr ""
+msgstr "Singbox 附加配置"
 
 msgid "config.additional_configs_urls.description"
-msgstr ""
+msgstr "您可以添加 http:// https:// 或 v2ray 格式的代理，如 vless://"
 
 msgid "config.additional_configs_urls.label"
-msgstr ""
+msgstr "附加 URL"
 
 msgid "config.additional_configs_xrayjson.description"
-msgstr ""
+msgstr "Xray Json 的附加出站"
 
 msgid "config.additional_configs_xrayjson.label"
-msgstr ""
+msgstr "Xray JSON 附加配置"
 
 msgid "config.admin.description"
 msgstr "管理部分用于配置管理相关设置"
@@ -1290,25 +6247,25 @@ msgid "config.admin_lang.description"
 msgstr "选择管理区域的语言"
 
 msgid "config.admin_lang.en"
-msgstr ""
+msgstr "🇺🇸 英语"
 
 msgid "config.admin_lang.fa"
-msgstr ""
+msgstr "🇮🇷 波斯语 - فارسی"
 
 msgid "config.admin_lang.label"
 msgstr "🗺️ 管理面板语言"
 
 msgid "config.admin_lang.my"
-msgstr ""
+msgstr "🇲🇲 缅甸语"
 
 msgid "config.admin_lang.pt"
-msgstr ""
+msgstr "🇧🇷 葡萄牙语"
 
 msgid "config.admin_lang.ru"
-msgstr ""
+msgstr "🇷🇺 俄语"
 
 msgid "config.admin_lang.zh"
-msgstr ""
+msgstr "🇨🇳 中文"
 
 msgid "config.admin_secret.description"
 msgstr "管理员密码将用于访问管理面板"
@@ -1329,10 +6286,10 @@ msgid "config.allow_invalid_sni.label"
 msgstr "🆗 允许无效的 SNI"
 
 msgid "config.anytls_enable.description"
-msgstr ""
+msgstr "启用 AnyTLS 协议"
 
 msgid "config.anytls_enable.label"
-msgstr ""
+msgstr "AnyTLS"
 
 msgid "config.auto_update.description"
 msgstr "每天凌晨 3:00，我们都会检查是否有新更新。如果有新的更新可用，我们将自动更新系统"
@@ -1391,19 +6348,19 @@ msgid "config.cloudflare.label"
 msgstr "🔑 Cloudflare API"
 
 msgid "config.common_proxy_core.both"
-msgstr ""
+msgstr "两者"
 
 msgid "config.common_proxy_core.description"
-msgstr ""
+msgstr "当协议同时存在于 Xray 和 Hiddify Core 时，仅所选核心保持启用。选择“两者”则同时保留。"
 
 msgid "config.common_proxy_core.hiddify_core"
-msgstr ""
+msgstr "Hiddify Core (singbox)"
 
 msgid "config.common_proxy_core.label"
-msgstr ""
+msgstr "🎛️ 通用代理核心"
 
 msgid "config.common_proxy_core.xray"
-msgstr ""
+msgstr "Xray"
 
 msgid "config.core_type.description"
 msgstr ""
@@ -1421,10 +6378,10 @@ msgid "config.country.label"
 msgstr "🌍国家"
 
 msgid "config.create_easysetup_link.description"
-msgstr "config.create_easysetup_link.description"
+msgstr "创建用于首次配置的便捷设置链接"
 
 msgid "config.create_easysetup_link.label"
-msgstr "config.create_easysetup_link.label"
+msgstr "创建便捷设置链接"
 
 msgid "config.db_version.description"
 msgstr "数据库版本说明"
@@ -1433,10 +6390,10 @@ msgid "config.db_version.label"
 msgstr "数据库版本标签"
 
 msgid "config.dbvalues.description"
-msgstr "config.dbvalues.description"
+msgstr "内部数据库值（高级）"
 
 msgid "config.dbvalues.label"
-msgstr "config.dbvalues.label"
+msgstr "数据库值"
 
 msgid "config.decoy_domain.description"
 msgstr ""
@@ -1449,10 +6406,10 @@ msgid "config.decoy_domain.label"
 msgstr "📺 诱饵网站"
 
 msgid "config.default_useragent_string.description"
-msgstr ""
+msgstr "生成的客户端配置中使用的默认 User-Agent 字符串"
 
 msgid "config.default_useragent_string.label"
-msgstr ""
+msgstr "🪪 默认 User Agent"
 
 msgid "config.dns_server.description"
 msgstr ""
@@ -1464,34 +6421,34 @@ msgid "config.dns_server.label"
 msgstr "🖥 DNS 服务器"
 
 msgid "config.dnstt.description"
-msgstr ""
+msgstr "DNSTT 隧道设置"
 
 msgid "config.dnstt.label"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "config.dnstt_enable.description"
-msgstr ""
+msgstr "启用 DNSTT 协议"
 
 msgid "config.dnstt_enable.label"
-msgstr ""
+msgstr "启用 DNSTT"
 
 msgid "config.dnstt_private_key.description"
-msgstr ""
+msgstr "DNSTT 私钥"
 
 msgid "config.dnstt_private_key.label"
-msgstr ""
+msgstr "DNSTT 私钥"
 
 msgid "config.dnstt_public_key.description"
-msgstr ""
+msgstr "DNSTT 公钥"
 
 msgid "config.dnstt_public_key.label"
-msgstr ""
+msgstr "DNSTT 公钥"
 
 msgid "config.dnstt_resolvers.description"
-msgstr ""
+msgstr "DNSTT 使用的 DNS 解析器，以逗号分隔"
 
 msgid "config.dnstt_resolvers.label"
-msgstr ""
+msgstr "DNSTT 解析器"
 
 msgid "config.domain_fronting.description"
 msgstr ""
@@ -1550,10 +6507,10 @@ msgid "config.h2_enable.label"
 msgstr "🔵 h2"
 
 msgid "config.health_secret_path.description"
-msgstr ""
+msgstr "用于健康检查的密钥路径"
 
 msgid "config.health_secret_path.label"
-msgstr ""
+msgstr "健康检查密钥路径"
 
 msgid "config.hidden.description"
 msgstr "配置.隐藏.描述"
@@ -1562,10 +6519,10 @@ msgid "config.hidden.label"
 msgstr "配置.隐藏.标签"
 
 msgid "config.hiddifycli_enable.description"
-msgstr "config.hiddifycli_enable.description"
+msgstr "启用 Hiddify CLI 功能"
 
 msgid "config.hiddifycli_enable.label"
-msgstr "config.hiddifycli_enable.label"
+msgstr "启用 Hiddify CLI"
 
 msgid "config.http.description"
 msgstr "HTTP 配置可以在此部分设置"
@@ -1637,7 +6594,7 @@ msgid "config.invalid_uuid"
 msgstr "UUID 秘密无效。示例：6098ea35-8cb2-4a08-ba15-2be25bc49cb6"
 
 msgid "config.is_parent.description"
-msgstr "config.is_parent.description"
+msgstr "此面板是否作为父面板"
 
 msgid "config.is_parent.label"
 msgstr "家长小组"
@@ -1664,25 +6621,25 @@ msgid "config.lang.description"
 msgstr "选择用户界面的语言来个性化您在用户区域的体验。"
 
 msgid "config.lang.en"
-msgstr ""
+msgstr "🇺🇸 英语"
 
 msgid "config.lang.fa"
-msgstr ""
+msgstr "🇮🇷 波斯语 - فارسی"
 
 msgid "config.lang.label"
 msgstr "🗺️ 用户区语言"
 
 msgid "config.lang.my"
-msgstr ""
+msgstr "🇲🇲 缅甸语"
 
 msgid "config.lang.pt"
-msgstr ""
+msgstr "🇧🇷 葡萄牙语"
 
 msgid "config.lang.ru"
-msgstr ""
+msgstr "🇷🇺 俄语"
 
 msgid "config.lang.zh"
-msgstr ""
+msgstr "🇨🇳 中文"
 
 msgid "config.last_hash.description"
 msgstr "config.last_hash.描述"
@@ -1697,10 +6654,10 @@ msgid "config.last_priodic_usage_check.label"
 msgstr "config.last_priodic_usage_check.标签"
 
 msgid "config.last_users_sync.description"
-msgstr ""
+msgstr "与父面板最后一次成功同步用户的时间戳"
 
 msgid "config.last_users_sync.label"
-msgstr ""
+msgstr "最后用户同步"
 
 msgid "config.license.description"
 msgstr "要将本产品用于商业用途，您必须购买其许可证"
@@ -1709,100 +6666,100 @@ msgid "config.license.label"
 msgstr "许可证代码"
 
 msgid "config.log_level.CRITICAL"
-msgstr ""
+msgstr "严重"
 
 msgid "config.log_level.DEBUG"
-msgstr ""
+msgstr "调试"
 
 msgid "config.log_level.ERROR"
-msgstr ""
+msgstr "错误"
 
 msgid "config.log_level.INFO"
-msgstr ""
+msgstr "信息"
 
 msgid "config.log_level.SUCCESS"
-msgstr ""
+msgstr "成功"
 
 msgid "config.log_level.TRACE"
-msgstr ""
+msgstr "跟踪"
 
 msgid "config.log_level.WARNING"
-msgstr ""
+msgstr "警告"
 
 msgid "config.log_level.description"
-msgstr "config.log_level.description"
+msgstr "面板日志详细级别"
 
 msgid "config.log_level.label"
-msgstr "config.log_level.label"
+msgstr "日志级别"
 
 msgid "config.master_dns_encrypt_key.description"
-msgstr ""
+msgstr "MasterDNS 载荷加密密钥 (hex)"
 
 msgid "config.master_dns_encrypt_key.label"
-msgstr ""
+msgstr "MasterDNS 加密密钥"
 
 msgid "config.max_proxy_ips_per_version.description"
-msgstr ""
+msgstr "为每个域名生成代理所使用的 IPv4 和 IPv6 地址的最大数量（每个版本分别限制）。"
 
 msgid "config.max_proxy_ips_per_version.label"
-msgstr ""
+msgstr "每个版本的最大代理 IP 数"
 
 msgid "config.mieru.description"
-msgstr ""
+msgstr "Mieru 协议是一种安全的去中心化通信协议，旨在无需中央服务器即可在分布式网络中传输数据"
 
 msgid "config.mieru.label"
-msgstr ""
+msgstr "⚡️ Mieru"
 
 msgid "config.mieru_enable.description"
-msgstr ""
+msgstr "Meiru 是一种快速代理"
 
 msgid "config.mieru_enable.label"
-msgstr ""
+msgstr "⚡️ 启用 Mieru"
 
 msgid "config.mieru_handshake.HANDSHAKE_DEFAULT"
-msgstr ""
+msgstr "📄 默认"
 
 msgid "config.mieru_handshake.HANDSHAKE_NO_WAIT"
-msgstr ""
+msgstr "⏳ 不等待"
 
 msgid "config.mieru_handshake.HANDSHAKE_STANDARD"
-msgstr ""
+msgstr "📝 标准"
 
 msgid "config.mieru_handshake.description"
-msgstr ""
+msgstr "Mieru 握手通过在数据交换前验证双方身份来建立安全连接"
 
 msgid "config.mieru_handshake.label"
-msgstr ""
+msgstr "🤝 Mieru 握手"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_DEFAULT"
-msgstr ""
+msgstr "📄 默认"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_HIGH"
-msgstr ""
+msgstr "📈 高"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_LOW"
-msgstr ""
+msgstr "📉 低"
 
 msgid "config.mieru_multiplexing.MULTIPLEXING_MIDDLE"
-msgstr ""
+msgstr "📊 中"
 
 msgid "config.mieru_multiplexing.description"
-msgstr ""
+msgstr "Mieru 多路复用允许同时处理多个连接，从而实现高效的数据传输"
 
 msgid "config.mieru_multiplexing.label"
-msgstr ""
+msgstr "🔄 Mieru 多路复用模式"
 
 msgid "config.mieru_tcp_ports.description"
-msgstr ""
+msgstr "以逗号分隔的整数，表示端口（1234,1235,1237）"
 
 msgid "config.mieru_tcp_ports.label"
-msgstr ""
+msgstr "🔍 Mieru TCP 端口"
 
 msgid "config.mieru_udp_ports.description"
-msgstr ""
+msgstr "以逗号分隔的整数，表示端口（1234,1235,1237）"
 
 msgid "config.mieru_udp_ports.label"
-msgstr ""
+msgstr "🔎 Mieru UDP 端口"
 
 msgid "config.mux.description"
 msgstr "可以在此部分设置 MUX（多路复用）配置"
@@ -1870,16 +6827,16 @@ msgid "config.mux_protocol.label"
 msgstr "♍️ MUX 协议"
 
 msgid "config.naive_enable.description"
-msgstr ""
+msgstr "Naive 使用与 Chrome 完全相同的协议栈以避免被检测"
 
 msgid "config.naive_enable.label"
-msgstr ""
+msgstr "🛡 启用 Naive"
 
 msgid "config.naive_port.description"
-msgstr ""
+msgstr "用于配置 Naive 端口的选项"
 
 msgid "config.naive_port.label"
-msgstr ""
+msgstr "🔎 Naive 端口"
 
 msgid "config.netdata.description"
 msgstr "用于显示资源。使用您服务器的 CPU，但不会太多。"
@@ -1888,10 +6845,10 @@ msgid "config.netdata.label"
 msgstr "Netdata"
 
 msgid "config.node_name.description"
-msgstr ""
+msgstr "此节点的名称，显示在父面板中"
 
 msgid "config.node_name.label"
-msgstr ""
+msgstr "节点名称"
 
 msgid "config.not_found.description"
 msgstr "未找到配置"
@@ -1912,31 +6869,31 @@ msgid "config.package_mode.label"
 msgstr "🔄 包更新模式"
 
 msgid "config.panel_mode.child"
-msgstr ""
+msgstr "子"
 
 msgid "config.panel_mode.description"
-msgstr "config.panel_mode.description"
+msgstr "面板运行模式：独立、父或子"
 
 msgid "config.panel_mode.label"
-msgstr "config.panel_mode.label"
+msgstr "面板模式"
 
 msgid "config.panel_mode.parent"
-msgstr ""
+msgstr "父"
 
 msgid "config.panel_mode.standalone"
-msgstr ""
+msgstr "独立"
 
 msgid "config.parent_admin_proxy_path.description"
-msgstr "config.parent_admin_proxy_path.description"
+msgstr "父面板上的管理员代理路径"
 
 msgid "config.parent_admin_proxy_path.label"
-msgstr "config.parent_admin_proxy_path.label"
+msgstr "父面板管理员代理路径"
 
 msgid "config.parent_domain.description"
-msgstr "config.parent_domain.description"
+msgstr "父面板的域名"
 
 msgid "config.parent_domain.label"
-msgstr "config.parent_domain.label"
+msgstr "父面板域名"
 
 msgid "config.parent_panel.description"
 msgstr "您可以连接到中央面板仅定义一个用户，所有服务器的使用情况将累积添加。"
@@ -1951,10 +6908,10 @@ msgid "config.path_grpc.label"
 msgstr "ℹ️ gRPC 路径"
 
 msgid "config.path_http.description"
-msgstr ""
+msgstr "应为随机值"
 
 msgid "config.path_http.label"
-msgstr ""
+msgstr "ℹ️ HTTP 路径"
 
 msgid "config.path_httpupgrade.description"
 msgstr "应该是随机的"
@@ -1963,10 +6920,16 @@ msgid "config.path_httpupgrade.label"
 msgstr "ℹ️ HTTP 升级路径"
 
 msgid "config.path_naive.description"
-msgstr ""
+msgstr "用于 Naive 链接"
 
 msgid "config.path_naive.label"
-msgstr ""
+msgstr "ℹ️ Naive 路径"
+
+msgid "config.path_splithttp.description"
+msgstr "XHTTP 路径"
+
+msgid "config.path_splithttp.label"
+msgstr "XHTTP 路径"
 
 msgid "config.path_ss.description"
 msgstr "链接中的 Shadowsocks 路径"
@@ -2065,10 +7028,10 @@ msgid "config.reality_fallback_domain.label"
 msgstr "🌍 现实后备域"
 
 msgid "config.reality_port.description"
-msgstr ""
+msgstr "Reality 端口"
 
 msgid "config.reality_port.label"
-msgstr ""
+msgstr "REALITY 端口"
 
 msgid "config.reality_private_key.description"
 msgstr "不要改变它"
@@ -2095,22 +7058,22 @@ msgid "config.reality_short_ids.label"
 msgstr "🆔 短 ID"
 
 msgid "config.restls.description"
-msgstr "config.restls.description"
+msgstr "RestLS 协议设置"
 
 msgid "config.restls.label"
 msgstr "配置.restls.标签"
 
 msgid "config.restls1_2_domain.description"
-msgstr "config.restls1_2_domain.description"
+msgstr "用于 RestLS 1.2 的域名"
 
 msgid "config.restls1_2_domain.label"
-msgstr "config.restls1_2_domain.label"
+msgstr "RestLS 1.2 域名"
 
 msgid "config.restls1_3_domain.description"
-msgstr "config.restls1_3_domain.description"
+msgstr "用于 RestLS 1.3 的域名"
 
 msgid "config.restls1_3_domain.label"
-msgstr "config.restls1_3_domain.label"
+msgstr "RestLS 1.3 域名"
 
 msgid "config.shadowsocks.description"
 msgstr "Shadowsocks 是一款快速隧道代理，可帮助你绕过防火墙"
@@ -2171,16 +7134,16 @@ msgid "config.show_usage_in_sublink.label"
 msgstr "👁️‍🗨️ 在子链接中显示用法"
 
 msgid "config.snell_enable.description"
-msgstr ""
+msgstr "启用 Snell 协议"
 
 msgid "config.snell_enable.label"
-msgstr ""
+msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr ""
+msgstr "启用 SOCKS 协议"
 
 msgid "config.socks_enable.label"
-msgstr ""
+msgstr "SOCKS"
 
 msgid "config.special_port.description"
 msgstr "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）"
@@ -2193,6 +7156,12 @@ msgstr "允许您的用户进行速度测试。它可以帮助他们识别链接
 
 msgid "config.speed_test.label"
 msgstr "🚀 速度测试"
+
+msgid "config.splithttp_enable.description"
+msgstr "XHTTP 允许分离下载和上传流，统一 gRPC、H2、H1，并且也支持 Quic。"
+
+msgid "config.splithttp_enable.label"
+msgstr "启用 XHTTP"
 
 msgid "config.ssfaketls.description"
 msgstr "Shadowsocks FakeTLS 是一个简单的混淆工具，将日期封装在 tls 数据包中"
@@ -2221,52 +7190,52 @@ msgid "config.ssh.label"
 msgstr "SSH 代理"
 
 msgid "config.ssh_host_dsa_pk.description"
-msgstr ""
+msgstr "SSH 主机 DSA 私钥"
 
 msgid "config.ssh_host_dsa_pk.label"
-msgstr ""
+msgstr "SSH 主机 DSA 私钥"
 
 msgid "config.ssh_host_dsa_pub.description"
-msgstr ""
+msgstr "SSH 主机 DSA 公钥"
 
 msgid "config.ssh_host_dsa_pub.label"
-msgstr ""
+msgstr "SSH 主机 DSA 公钥"
 
 msgid "config.ssh_host_ecdsa_pk.description"
-msgstr ""
+msgstr "SSH 主机 ECDSA 私钥"
 
 msgid "config.ssh_host_ecdsa_pk.label"
-msgstr ""
+msgstr "SSH 主机 ECDSA 私钥"
 
 msgid "config.ssh_host_ecdsa_pub.description"
-msgstr ""
+msgstr "SSH 主机 ECDSA 公钥"
 
 msgid "config.ssh_host_ecdsa_pub.label"
-msgstr ""
+msgstr "SSH 主机 ECDSA 公钥"
 
 msgid "config.ssh_host_ed25519_pk.description"
-msgstr ""
+msgstr "SSH 主机 Ed25519 私钥"
 
 msgid "config.ssh_host_ed25519_pk.label"
-msgstr ""
+msgstr "SSH 主机 Ed25519 私钥"
 
 msgid "config.ssh_host_ed25519_pub.description"
-msgstr ""
+msgstr "SSH 主机 Ed25519 公钥"
 
 msgid "config.ssh_host_ed25519_pub.label"
-msgstr ""
+msgstr "SSH 主机 Ed25519 公钥"
 
 msgid "config.ssh_host_rsa_pk.description"
-msgstr ""
+msgstr "SSH 主机 RSA 私钥"
 
 msgid "config.ssh_host_rsa_pk.label"
-msgstr ""
+msgstr "SSH 主机 RSA 私钥"
 
 msgid "config.ssh_host_rsa_pub.description"
-msgstr ""
+msgstr "SSH 主机 RSA 公钥"
 
 msgid "config.ssh_host_rsa_pub.label"
-msgstr ""
+msgstr "SSH 主机 RSA 公钥"
 
 msgid "config.ssh_server_enable.description"
 msgstr "SSH Proxy 与原来的 SSH Server 完全不同"
@@ -2313,34 +7282,34 @@ msgid "config.ssr_fakedomain.label"
 msgstr "SSR 假域名"
 
 msgid "config.sub_full_clash_enable.description"
-msgstr "config.sub_full_clash_enable.description"
+msgstr "启用完整 Clash 订阅端点"
 
 msgid "config.sub_full_clash_enable.label"
 msgstr "config.sub_full_clash_enable.标签"
 
 msgid "config.sub_full_clash_meta_enable.description"
-msgstr "config.sub_full_clash_meta_enable.description"
+msgstr "启用完整 Clash Meta 订阅端点"
 
 msgid "config.sub_full_clash_meta_enable.label"
 msgstr "config.sub_full_clash_meta_enable.标签"
 
 msgid "config.sub_full_links_b64_enable.description"
-msgstr "config.sub_full_links_b64_enable.description"
+msgstr "启用 base64 订阅链接端点"
 
 msgid "config.sub_full_links_b64_enable.label"
 msgstr "config.sub_full_links_b64_enable.标签"
 
 msgid "config.sub_full_links_enable.description"
-msgstr "config.sub_full_links_enable.description"
+msgstr "启用纯文本订阅链接端点"
 
 msgid "config.sub_full_links_enable.label"
-msgstr "config.sub_full_links_enable.label"
+msgstr "启用完整链接"
 
 msgid "config.sub_full_singbox_enable.description"
-msgstr "config.sub_full_singbox_enable.description"
+msgstr "启用完整 Sing-box 订阅端点"
 
 msgid "config.sub_full_singbox_enable.label"
-msgstr "config.sub_full_singbox_enable.label"
+msgstr "启用完整 Sing-box 订阅"
 
 msgid "config.sub_full_xray_json_enable.description"
 msgstr ""
@@ -2351,10 +7320,10 @@ msgid "config.sub_full_xray_json_enable.label"
 msgstr "⚙️ XRay 完整配置链接"
 
 msgid "config.sub_singbox_ssh_enable.description"
-msgstr "config.sub_singbox_ssh_enable.description"
+msgstr "启用 Sing-box SSH 订阅端点"
 
 msgid "config.sub_singbox_ssh_enable.label"
-msgstr "config.sub_singbox_ssh_enable.label"
+msgstr "启用 Sing-box SSH 订阅"
 
 msgid "config.tcp_enable.description"
 msgstr "启用 TCP 协议"
@@ -2407,11 +7376,17 @@ msgstr "可以在此部分设置 TLS 配置。"
 msgid "config.tls.label"
 msgstr "TLS 设置"
 
+msgid "config.tls_ech.description"
+msgstr "ECH 值，格式：cloudflare-ech.com+https://8.8.8.8/dns-query"
+
+msgid "config.tls_ech.label"
+msgstr "TLS ECH 值"
+
 msgid "config.tls_ech_enable.description"
-msgstr ""
+msgstr "将 ECH 添加到生成的 TLS 订阅链接中"
 
 msgid "config.tls_ech_enable.label"
-msgstr ""
+msgstr "🔐 启用 TLS ECH"
 
 msgid "config.tls_fragment_enable.description"
 msgstr ""
@@ -2423,10 +7398,10 @@ msgid "config.tls_fragment_enable.label"
 msgstr "⏯ TLS Fragment"
 
 msgid "config.tls_fragment_packets.description"
-msgstr ""
+msgstr "分片数据包模式（例如：tlshello 或 1-3）"
 
 msgid "config.tls_fragment_packets.label"
-msgstr ""
+msgstr "📦 TLS 分片数据包"
 
 msgid "config.tls_fragment_size.description"
 msgstr "每个数据包的大小"
@@ -2513,16 +7488,16 @@ msgid "config.tuic_port.label"
 msgstr "🔎 TUIC 端口"
 
 msgid "config.unique_id.description"
-msgstr "config.unique_id.description"
+msgstr "此面板实例的唯一标识符"
 
 msgid "config.unique_id.label"
-msgstr "config.unique_id.label"
+msgstr "唯一 ID"
 
 msgid "config.use_ip_in_config.description"
-msgstr ""
+msgstr "这有助于减少解析服务器 IP 时可能出现的问题。将使用所选域名的随机 IP。"
 
 msgid "config.use_ip_in_config.label"
-msgstr ""
+msgstr "在配置中使用 IP"
 
 msgid "config.utls.description"
 msgstr "此选项将模拟不同的浏览器，因此 GFW 无法检测到您的浏览"
@@ -2546,10 +7521,10 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ 配置已成功更改"
 
 msgid "config.vless_decryption.description"
-msgstr ""
+msgstr "用于分享链接的 VLESS 解密参数"
 
 msgid "config.vless_decryption.label"
-msgstr ""
+msgstr "VLESS 解密"
 
 msgid "config.vless_enable.description"
 msgstr "启用 VLess 协议"
@@ -2558,16 +7533,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr ""
+msgstr "用于分享链接的 VLESS 加密方式"
 
 msgid "config.vless_encryption.label"
-msgstr ""
+msgstr "VLESS 加密"
 
 msgid "config.vless_flow.description"
-msgstr ""
+msgstr "VLESS 流控（例如 xtls-rprx-vision）"
 
 msgid "config.vless_flow.label"
-msgstr ""
+msgstr "VLESS 流控"
 
 msgid "config.vmess_enable.description"
 msgstr "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐"
@@ -2576,7 +7551,7 @@ msgid "config.vmess_enable.label"
 msgstr "🟣 VMess"
 
 msgid "config.warp-https-domain-for-warp-site"
-msgstr "config.warp-https-domain-for-warp-site"
+msgstr "用于 WARP 站点路由的 HTTPS 域名"
 
 msgid "config.warp.description"
 msgstr ""
@@ -2720,7 +7695,7 @@ msgid "direct"
 msgstr "➡️直接"
 
 msgid "dnstt"
-msgstr ""
+msgstr "DNSTT"
 
 msgid "domain.cdn"
 msgstr "CDN"
@@ -2729,40 +7704,40 @@ msgid "domain.changed_in_domain_warning"
 msgstr "⚠️ 您的域名已更改。请不要忘记复制管理链接，否则您将无法再访问面板"
 
 msgid "domain.current_server_IPs"
-msgstr ""
+msgstr "🔢 当前服务器 IP 为"
 
 msgid "domain.custom_proxy.description"
-msgstr ""
+msgstr "可选的代理绑定。仅列出支持此域名模式组合的代理。留空则使用所有匹配的代理。"
 
 msgid "domain.custom_proxy.group.dns_gateway"
-msgstr ""
+msgstr "DNS 网关"
 
 msgid "domain.custom_proxy.group.ip_based"
-msgstr ""
+msgstr "基于 IP"
 
 msgid "domain.custom_proxy.group.l7_gateway"
-msgstr ""
+msgstr "L7 网关"
 
 msgid "domain.custom_proxy.group.other"
-msgstr ""
+msgstr "其他"
 
 msgid "domain.custom_proxy.group.sni_gateway"
-msgstr ""
+msgstr "SNI 网关"
 
 msgid "domain.custom_proxy.label"
-msgstr ""
+msgstr "自定义代理"
 
 msgid "domain.custom_proxy.reality_only"
-msgstr ""
+msgstr "REALITY 域名只能使用域名模式包含 REALITY 的 L7 域名网关代理。留空则使用所有匹配的 REALITY L7 代理。"
 
 msgid "domain.custom_proxy.reality_required"
-msgstr ""
+msgstr "REALITY 域名只能使用域名模式包含 REALITY 的 L7 域名网关代理"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
-msgstr ""
+msgstr "同一个域名不能同时选择 SNI 网关和 L7 网关"
 
 msgid "domain.custom_proxy.sni_single_only"
-msgstr ""
+msgstr "一个域名只能选择一个 SNI 网关"
 
 msgid "domain.description"
 msgstr ""
@@ -2781,19 +7756,19 @@ msgid "domain.domain_fronting.label"
 msgstr "🔒 TLS 的域前端"
 
 msgid "domain.ech.description"
-msgstr ""
+msgstr "获取并为此 CDN 域名使用 Encrypted Client Hello (ECH)。需要在面板设置中启用 TLS ECH。"
 
 msgid "domain.ech.label"
-msgstr ""
+msgstr "🔐 ECH"
 
 msgid "domain.empty.allowed_for_fake_only"
-msgstr "domain.empty.allowed_for_fake_only"
+msgstr "仅伪装模式允许域名为空"
 
 msgid "domain.fake_mode.description"
-msgstr ""
+msgstr "Valid 使用真实证书。Fake 和 Reality 用于伪装 TLS 和 REALITY 协议。"
 
 msgid "domain.fake_mode.label"
-msgstr ""
+msgstr "TLS 模式"
 
 msgid "domain.intro"
 msgstr ""
@@ -2811,19 +7786,19 @@ msgid "domain.reality.asn_issue"
 msgstr "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
 
 msgid "domain.resolveip.description"
-msgstr ""
+msgstr "在代理中使用 IP 而不是域名。DNS 噪声很大时有用。"
 
 msgid "domain.resolveip.label"
-msgstr ""
+msgstr "🔢 解析 IP"
 
 msgid "domain.server_domain.description"
-msgstr ""
+msgstr "此条目使用的上游服务器域名。必须是有效的直连或中继域名。"
 
 msgid "domain.server_domain.label"
-msgstr ""
+msgstr "服务器域名"
 
 msgid "domain.server_domain.must_be_valid_direct_or_relay"
-msgstr ""
+msgstr "服务器域名必须是有效的直连或中继域名"
 
 msgid "domain.show_domains_description"
 msgstr ""
@@ -2832,16 +7807,34 @@ msgstr ""
 "建议：对于IP未过滤且与其他域不同的域，选择所有其他域（当前域除外）。因此，由于该 IP 的使用不是用于代理，并且它是一个简单的网站，因此该域名和 IP 永远不会被阻止，您的用户可以轻松更新新的配置文件。"
 
 msgid "domain.tls_status.description"
-msgstr ""
+msgstr "为此域名存储的证书：有效 CA、自签名、已过期、无效或缺失。"
+
+msgid "domain.tls_status.expired"
+msgstr "已过期"
+
+msgid "domain.tls_status.invalid"
+msgstr "无效"
+
+msgid "domain.tls_status.label"
+msgstr "TLS"
+
+msgid "domain.tls_status.missing"
+msgstr "无证书"
+
+msgid "domain.tls_status.self_signed"
+msgstr "自签名"
+
+msgid "domain.tls_status.valid"
+msgstr "有效"
 
 msgid "download"
 msgstr "直接下载"
 
 msgid "download_domain.description"
-msgstr ""
+msgstr "仅适用于 XHTTP：例如，允许从与上传不同的域名下载。这使检测更困难，也能提升整体质量。"
 
 msgid "download_domain.label"
-msgstr ""
+msgstr "📈 下载域名"
 
 msgid "fake"
 msgstr "🆎 假网站"
@@ -2856,6 +7849,8 @@ msgid ""
 "in\n"
 "          parent panel"
 msgstr ""
+"在\n"
+"          父面板"
 
 msgid "in parent panel"
 msgstr "在中央面板"
@@ -2897,7 +7892,7 @@ msgid "lib.telegram.python"
 msgstr "☑️ Python：性能低下"
 
 msgid "lib.telegram.telemt"
-msgstr ""
+msgstr "❇️ Telemt：快速、安全、可靠"
 
 msgid "log"
 msgstr "📄 Log"
@@ -2936,7 +7931,7 @@ msgid "no_reset"
 msgstr "⭐️无需重置"
 
 msgid "node.diff-version"
-msgstr "node.diff-version"
+msgstr "节点面板版本与此面板不同"
 
 msgid "node.mode.dscr"
 msgstr "该字段定义 Node 的模式"
@@ -2972,13 +7967,13 @@ msgid "package size?"
 msgstr "包装尺寸？"
 
 msgid "parent.invalid-parent-url"
-msgstr "parent.invalid-parent-url"
+msgstr "无效的父面板 URL"
 
 msgid "parent.panel-not-active"
-msgstr ""
+msgstr "父面板未激活"
 
 msgid "parent.sync-req-failed"
-msgstr "parent.sync-req-failed"
+msgstr "父面板同步请求失败"
 
 msgid "previous"
 msgstr "以前的"
@@ -3018,7 +8013,7 @@ msgid "singbox: ssh"
 msgstr "歌手盒：SSH"
 
 msgid "special"
-msgstr ""
+msgstr "特殊"
 
 msgid "special_reality_grpc"
 msgstr "🔀 Reality gRPC"

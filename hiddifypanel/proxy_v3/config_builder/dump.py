@@ -14,6 +14,8 @@ from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCore
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
+from hiddifypanel.proxy_v3.config_builder.telemt.server import TelemtServerDriver
+from hiddifypanel.proxy_v3.config_builder.wireguard.server import WireguardServerDriver
 from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
 from hiddifypanel.proxy_v3.context_vars.builder.utils import parse_json_for_dump
@@ -31,6 +33,8 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
     "dns_proxy": DnsProxyServerDriver,
+    "wireguard": WireguardServerDriver,
+    "telemt": TelemtServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -40,6 +44,8 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
     ("dns_proxy", "dnstm.json"),
+    ("wireguard", "wireguard.conf"),
+    ("telemt", "telemt.toml"),
 )
 
 
@@ -141,6 +147,10 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
         stats["backends"] = len(re.findall(r"(?m)^\s*backend\s+\S+", text))
     elif core == "rust-rpxy-l4":
         stats["services"] = len(re.findall(r"(?m)^\s*\[protocols\.[^\]]+\]", text))
+    elif core == "wireguard":
+        stats["peers"] = len(re.findall(r"(?m)^\[Peer\]", text))
+    elif core == "telemt":
+        stats["users"] = len(re.findall(r"(?m)^[0-9a-fA-F]{32} = ", text))
 
     return stats
 
@@ -171,8 +181,12 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
                 _n(stats.get("backends", 0), "backend"),
             ]
         )
+    elif filename == "telemt.toml":
+        parts.append(_n(stats.get("users", 0), "user"))
     elif filename.endswith(".toml"):
         parts.append(_n(stats.get("services", 0), "service"))
+    elif filename == "wireguard.conf":
+        parts.append(_n(stats.get("peers", 0), "peer"))
     return ", ".join(parts)
 
 
@@ -250,19 +264,30 @@ def dump_all_server_configs(
     *,
     pretty: bool = True,
     invalidate_cache: bool | None = None,
+    cores: list[str] | tuple[str, ...] | None = None,
 ) -> ServerConfigDumpResult:
     # apply_users only refreshes user lists; wiping Redis/Jinja would stall the panel.
     if invalidate_cache is None:
         invalidate_cache = os.environ.get("MODE") != "apply_users"
     if invalidate_cache:
         invalidate_config_caches()
+    known = {name for name, _filename in SERVER_CONFIG_FILES}
+    selected = None
+    if cores:
+        unknown = [core for core in cores if core not in known]
+        if unknown:
+            raise ValueError(f"Unsupported server core: {', '.join(unknown)}")
+        selected = set(cores)
     target = Path(output_dir)
     target.mkdir(parents=True, exist_ok=True)
 
     dump = ServerConfigDumpResult(output_dir=target, child_id=child_id)
-    _clear_dns_proxy_generated(target)
+    if selected is None or "dns_proxy" in selected:
+        _clear_dns_proxy_generated(target)
 
     for core, filename in SERVER_CONFIG_FILES:
+        if selected is not None and core not in selected:
+            continue
         try:
             result = build_server_config_for_core(child_id, core)
         except Exception as exc:

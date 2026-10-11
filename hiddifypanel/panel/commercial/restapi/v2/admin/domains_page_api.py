@@ -21,6 +21,7 @@ from sqlalchemy.orm import selectinload
 
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
+from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.models import Child, ConfigEnum, CustomProxy, CustomProxyMode, Domain, DomainType, FakeMode, Role, hconfig, set_hconfig
 from hiddifypanel.models.domain import normalize_domain_name
@@ -530,6 +531,8 @@ class DomainsPageOrderApi(MethodView):
         for pos, domain_id in enumerate(ids):
             rows[domain_id].sort_order = pos
         db.session.commit()
+        # Client config lists are cached; without this they keep the previous domain order.
+        cache.invalidate_all_cached_functions()
         return {"restart_mode": APPLY, **_list_out(child_id)}
 
 
