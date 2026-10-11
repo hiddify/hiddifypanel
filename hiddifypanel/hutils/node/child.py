@@ -23,6 +23,7 @@ from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
     RegisterDataSchema,
     RegisterInputSchema,
     RegisterOutputSchema,
+    RegisterUsersInputSchema,
     SyncInputSchema,
     SyncOutputSchema,
     UsageInputOutputSchema,
@@ -33,7 +34,9 @@ from . import async_job, steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
-def __get_register_data_for_api(name: str, mode: ChildMode) -> RegisterInputSchema:
+def __get_register_data_for_api(name: str, mode: ChildMode, *, uuids_only: bool = True) -> RegisterInputSchema:
+    """What the node says about itself. With ``uuids_only`` its users are only listed by uuid: the parent says which it lacks, and only
+    those are sent (a parent that cannot do that is sent all of them)."""
     main_domains = Domain.get_domains()
     if not main_domains:
         raise ValueError(_("No main domains found, please add at least one domain with valid certificate"))
@@ -43,9 +46,10 @@ def __get_register_data_for_api(name: str, mode: ChildMode) -> RegisterInputSche
         name=name,
         mode=mode,
         node_base_url=base_url,
+        user_uuids=[str(u.uuid) for u in User.query.filter(User.deleted.is_(False)).with_entities(User.uuid).all()] if uuids_only else None,
         panel_data=RegisterDataSchema(
             admin_users=[admin_user.to_schema() for admin_user in AdminUser.query.all()],
-            users=[user.to_schema() for user in User.query.all()],
+            users=[] if uuids_only else [user.to_schema() for user in User.query.all()],
             domains=[domain.to_schema(for_parent=True) for domain in Domain.query.all()],
             # proxies=[proxy.to_schema() for proxy in Proxy.query.all()],
             # hconfigs=[*[u.to_schema() for u in StrConfig.query.all()], *[u.to_schema() for u in BoolConfig.query.all()]],
@@ -217,6 +221,29 @@ def _register_call(p_url: str, apikey: str, payload: RegisterInputSchema, header
         return NodeApiErrorSchema(msg=f"Unexpected response: {e}", code=200, reason="bad_response")
 
 
+def _send_register(payload: RegisterInputSchema, p_url: str, apikey: str, parent_host: str, reg: str, headers: dict[str, str]) -> RegisterOutputSchema | NodeApiErrorSchema:
+    data = payload.panel_data
+    with steplog.step(reg, "node", "send the data to the parent", parent=parent_host, admins=len(data.admin_users), users_in_call=len(data.users), user_uuids=len(payload.user_uuids or []), domains=len(data.domains), timeout=REGISTER_TIMEOUT):
+        return _register_call(p_url, apikey, payload, headers)
+
+
+#: Users go to the parent in chunks of this size: each request is short, and the parent stores them as they come.
+USERS_CHUNK = 300
+
+
+def _send_missing_users(p_url: str, apikey: str, uuids: list[str], parent_host: str, reg: str) -> RegisterFailure | None:
+    """Send the node's users that the parent lacks (``None`` when all went)."""
+    client = NodeApiClient(p_url, apikey, max_retry=3, timeout=120, retry_on_timeout=False, extra_headers={steplog.REG_HEADER: reg} if reg else None)
+    step = "sending the users the parent did not have"
+    with steplog.step(reg, "node", step, users=len(uuids), chunk=USERS_CHUNK, parent=parent_host):
+        for i in range(0, len(uuids), USERS_CHUNK):
+            chunk = User.query.filter(User.uuid.in_(uuids[i : i + USERS_CHUNK])).all()
+            res = client.put("/api/v2/parent/register-users/", RegisterUsersInputSchema(users=[u.to_schema() for u in chunk]), dict)
+            if isinstance(res, NodeApiErrorSchema):
+                return _classify_parent_error(res, parent_host, step)
+    return None
+
+
 def _parent_error_message(res: NodeApiErrorSchema) -> str:
     """What the parent said when it refused: its own message when its answer is JSON, else the HTTP error."""
     _, _, body = res.msg.partition(" | body=")
@@ -229,8 +256,7 @@ def _parent_error_message(res: NodeApiErrorSchema) -> str:
     return res.msg
 
 
-def _classify_parent_error(res: NodeApiErrorSchema, parent_host: str) -> RegisterFailure:
-    step = "sending this node's data to the parent"
+def _classify_parent_error(res: NodeApiErrorSchema, parent_host: str, step: str = "sending this node's data to the parent") -> RegisterFailure:
     if res.reason == "ReadTimeout":
         return RegisterFailure(step, "parent_timeout", f"no answer within {REGISTER_TIMEOUT}s ({res.msg})", parent_host)
     if res.code == 0:  # no HTTP answer at all: ConnectTimeout, SSLError, ConnectionError...
@@ -257,14 +283,23 @@ def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildM
             payload = __get_register_data_for_api(name, mode)
         except ValueError as e:  # no main domain
             return RegisterFailure("collecting this node's data", "no_domain", str(e))
-    panel_data = payload.panel_data
     headers = {async_job.ASYNC_HEADER: "1", **({steplog.REG_HEADER: reg} if reg else {})}
-    with steplog.step(reg, "node", "send the data to the parent", parent=parent_host, admins=len(panel_data.admin_users), users=len(panel_data.users), domains=len(panel_data.domains), timeout=REGISTER_TIMEOUT):
-        res = _register_call(p_url, apikey, payload, headers)
+    res = _send_register(payload, p_url, apikey, parent_host, reg, headers)
     if isinstance(res, NodeApiErrorSchema):
         failure = _classify_parent_error(res, parent_host)
         logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not accept it: {failure.kind}: {failure.reason}")
         return failure
+    if res.missing_user_uuids is None and payload.user_uuids:
+        # An older parent does not know the list of uuids: it takes the users in the register call, as it always did.
+        logger.info(f"[register {reg or '-'} node] the parent {parent_host} is an older version: sending it all the users in the register call")
+        with steplog.step(reg, "node", "collect this node's data"):
+            payload = __get_register_data_for_api(name, mode, uuids_only=False)
+        res = _send_register(payload, p_url, apikey, parent_host, reg, headers)
+        if isinstance(res, NodeApiErrorSchema):
+            failure = _classify_parent_error(res, parent_host)
+            logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not accept it: {failure.kind}: {failure.reason}")
+            return failure
+    missing_users = res.missing_user_uuids or []
 
     if not res.parent_unique_id:
         return RegisterFailure("reading the parent's answer", "parent_bad_answer", "the parent did not return its unique id", parent_host)
@@ -291,6 +326,11 @@ def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildM
         logger.exception(f"[register {reg or '-'} node] saving the parent's data failed")
         return RegisterFailure("saving the data the parent sent", "node_data", f"{type(e).__name__}: {e}", parent_host)
 
+    if missing_users:  # only the users the parent did not have: not the ones it just sent here
+        failure = _send_missing_users(p_url, apikey, missing_users, parent_host, reg)
+        if failure is not None:
+            logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not take the node's own users: {failure.kind}: {failure.reason}")
+            return failure
     logger.success(f"[register {reg or '-'} node] registered with the parent {parent_host}")
     cache.invalidate_all_cached_functions()
     if defer_apply:

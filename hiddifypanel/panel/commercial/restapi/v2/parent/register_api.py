@@ -12,7 +12,7 @@ from hiddifypanel.hutils.node import async_job, steplog
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
 from hiddifypanel.proxy_v3 import outbounds as ob
 
-from .schema import RegisterInputSchema, RegisterOutputSchema
+from .schema import RegisterInputSchema, RegisterOutputSchema, RegisterUsersInputSchema
 
 
 class RegisterApi(MethodView):
@@ -52,6 +52,8 @@ class RegisterApi(MethodView):
         from hiddifypanel import hutils
 
         panel_data = data.panel_data
+        # Only the uuids of the node's other users came: the ones this panel does not have are asked for after, the others are not sent at all.
+        missing = self._missing_user_uuids(data.user_uuids) if data.user_uuids is not None else None
         with steplog.step(reg, "parent", "store the node"):
             child = self._upsert_child(data)
         try:
@@ -77,10 +79,17 @@ class RegisterApi(MethodView):
                     admin_users=[a.to_schema() for a in AdminUser.query.all()],
                     outbounds=ob.export_rows(),
                     parent_unique_id=hconfig(ConfigEnum.unique_id),
+                    missing_user_uuids=missing if missing is not None else [],
                 )
             except Exception as err:  # noqa: BLE001
                 logger.exception(f"[register {reg or '-'} parent] building the answer failed")
                 abort(500, str(err))
+
+    @staticmethod
+    def _missing_user_uuids(uuids: list[str]) -> list[str]:
+        """Of ``uuids``, the users this panel does not have (a user removed here counts as having it: it is not brought back)."""
+        have = {row[0] for row in db.session.query(User.uuid).all()}
+        return [u for u in dict.fromkeys(uuids) if u not in have]
 
     @staticmethod
     def _upsert_child(data: RegisterInputSchema) -> Child:
@@ -114,3 +123,24 @@ class RegisterJobApi(MethodView):
         if state is None:
             abort(404, "This registration is gone")
         return jsonify(state)
+
+
+class RegisterUsersApi(MethodView):
+    """The users of a node that the parent did not have, sent in chunks after the registration (see ``user_uuids`` of the register call)."""
+
+    decorators = [login_required(roles={Role.super_admin}, node_auth=True)]
+
+    @app.input(RegisterUsersInputSchema, arg_name="data")
+    def put(self, data: RegisterUsersInputSchema):
+        reg = request.headers.get(steplog.REG_HEADER, "")
+        node = g.get("node")
+        if node is None and (not g.account or g.account.role != Role.super_admin):
+            abort(403, "Unauthorized")
+        with steplog.step(reg, "parent", "store users of the node that were missing here", users=len(data.users)):
+            try:
+                User.bulk_register([u.model_dump(exclude={"preferred_outbound_slug"}) for u in data.users], commit=True)
+            except Exception as err:  # noqa: BLE001
+                db.session.rollback()
+                logger.exception(f"[register {reg or '-'} parent] storing the node's missing users failed")
+                abort(400, str(err))
+        return {"status": 200, "stored": len(data.users)}

@@ -129,6 +129,14 @@ class RegisterInputSchema(ApiModel):
     name: str = Field(description="The child's name")
     mode: ChildMode = Field(description="The child's mode")
     node_base_url: str | None = Field(default=None, description="The child's node base url")
+    user_uuids: list[str] | None = Field(
+        default=None,
+        description="The uuids of the child's users that panel_data.users does not carry. The parent answers which of them it does not have (missing_user_uuids): only those are sent, by register-users",
+    )
+
+
+class RegisterUsersInputSchema(ApiModel):
+    users: list[UserSchema] = Field(description="Users of the child that the parent does not have")
 
 
 class RegisterOutputSchema(ApiModel):
@@ -136,3 +144,4 @@ class RegisterOutputSchema(ApiModel):
     users: list[UserSchema] = Field(default_factory=list, description="The list of users")
     admin_users: list[AdminSchema] = Field(default_factory=list, description="The list of admin users")
     outbounds: list[OutboundModel] | None = Field(default=None, description="All outbounds of the parent")
+    missing_user_uuids: list[str] | None = Field(default=None, description="Of the child's user_uuids, the ones the parent does not have (None: an older parent that does not know user_uuids)")
