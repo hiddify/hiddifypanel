@@ -1,5 +1,5 @@
 from apiflask import abort
-from flask import request
+from flask import jsonify, request
 from flask.views import MethodView
 from loguru import logger
 
@@ -8,7 +8,7 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
-from hiddifypanel.hutils.node import steplog
+from hiddifypanel.hutils.node import async_job, steplog
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
 from hiddifypanel.proxy_v3 import outbounds as ob
 
@@ -36,15 +36,26 @@ class RegisterApi(MethodView):
 
         reg = request.headers.get(steplog.REG_HEADER, "")
         panel_data = data.panel_data
-        logger.info(f"[register {reg or '-'} parent] node {data.name} ({data.unique_id}) registers: admins={len(panel_data.admin_users)} users={len(panel_data.users)} domains={len(panel_data.domains)}")
+        logger.info(f"[register {reg or '-'} parent] node {data.name} ({data.unique_id}) registers: admins={len(panel_data.admin_users)} users={len(panel_data.users)} domains={len(panel_data.domains)} async={async_job.wants_job()}")
         if hutils.node.is_child():
             logger.error("The panel in child, not a parent nor standalone")
             abort(400, "The panel in child, not a parent nor standalone")
 
+        if async_job.wants_job():  # storing a big panel's users takes long: answer now, the node asks for the result
+            job = async_job.start(lambda: self._process(data, reg).model_dump(mode="json"))
+            answer = jsonify({"job": job})
+            answer.status_code = 202  # a Response is passed through by @app.output as it is; a (Response, 202) tuple would not be
+            return answer
+        return self._process(data, reg)
+
+    def _process(self, data: RegisterInputSchema, reg: str) -> RegisterOutputSchema:
+        from hiddifypanel import hutils
+
+        panel_data = data.panel_data
         with steplog.step(reg, "parent", "store the node"):
             child = self._upsert_child(data)
         try:
-            with steplog.step(reg, "parent", "store the node's admins, users and domains"):
+            with steplog.step(reg, "parent", "store the node's admins, users and domains", admins=len(panel_data.admin_users), users=len(panel_data.users), domains=len(panel_data.domains)):
                 AdminUser.bulk_register([a.model_dump(exclude={"default_outbound_slug"}) for a in panel_data.admin_users], commit=False)
                 User.bulk_register([u.model_dump(exclude={"preferred_outbound_slug"}) for u in panel_data.users], commit=False)
                 Domain.bulk_register(panel_data.domains, remove=True, commit=False, force_child_unique_id=child.unique_id)
@@ -91,3 +102,15 @@ class RegisterApi(MethodView):
             child.mark_node_to_parent()
             db.session.commit()
         return child
+
+
+class RegisterJobApi(MethodView):
+    """The result of a registration started with ``X-Async-Job`` (see hutils/node/async_job.py)."""
+
+    decorators = [login_required(roles={Role.super_admin}, node_auth=True)]
+
+    def get(self, job_id: str):
+        state = async_job.read(job_id)
+        if state is None:
+            abort(404, "This registration is gone")
+        return jsonify(state)

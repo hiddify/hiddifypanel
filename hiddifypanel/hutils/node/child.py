@@ -29,7 +29,7 @@ from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
     UsageResponseSchema,
 )
 
-from . import steplog
+from . import async_job, steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -163,17 +163,17 @@ def is_registered() -> bool:
         return False
 
 
-#: The parent stores this node's users, admins and domains before it answers: that can take long on a big panel.
-REGISTER_TIMEOUT = 120
-#: How long after the answer to the parent the new configs are applied: applying restarts the web servers, which cuts
-#: the connection the answer travels on ("SSL: UNEXPECTED_EOF_WHILE_READING" on the other side).
+#: The parent stores this node's users, admins and domains before it has the answer: that can take long on a big panel (it is a job:
+#: every request is short, this is how long the node waits for the job).
+REGISTER_TIMEOUT = 600
+#: How long after the answer (when it is not a job) the new configs are applied: applying restarts the web servers, which cuts the
+#: connection the answer travels on ("SSL: UNEXPECTED_EOF_WHILE_READING" on the other side).
 APPLY_DELAY_SECONDS = 5
 
 
 def _after_answer(action: Callable[[], None]) -> None:
-    timer = threading.Timer(APPLY_DELAY_SECONDS, action)
-    timer.daemon = True
-    timer.start()
+    """Do ``action`` once the answer of this registration has been read (see ``async_job.after_fetched``)."""
+    async_job.after_fetched(action, fallback_delay=APPLY_DELAY_SECONDS)
 
 
 @dataclass(frozen=True)
@@ -188,6 +188,33 @@ class RegisterFailure:
     def text(self) -> str:
         where = f" ({self.parent_host})" if self.parent_host else ""
         return f"{self.step}{where}: {self.reason}"
+
+
+def _register_call(p_url: str, apikey: str, payload: RegisterInputSchema, headers: dict[str, str]) -> RegisterOutputSchema | NodeApiErrorSchema:
+    """Send this node's data and get the parent's answer: as a job (the parent says 202 and a job id; short requests, nothing between
+    the panels cuts them), or at once from a parent that is too old to know jobs."""
+    # A parent that knows jobs answers at once; one that does not answers when it is done, so the first request may wait long
+    # (and is not repeated: the first one may still be running).
+    starter = NodeApiClient(p_url, apikey, max_retry=1, timeout=REGISTER_TIMEOUT, extra_headers=headers)
+    started = starter.put("/api/v2/parent/register/", payload, dict)
+    if isinstance(started, NodeApiErrorSchema):
+        return started
+    job = started.get("job")
+    if not isinstance(job, str):  # the old, one-request answer
+        try:
+            return RegisterOutputSchema.model_validate(started)
+        except ValueError as e:
+            return NodeApiErrorSchema(msg=f"Unexpected response: {e}", code=200, reason="bad_response")
+    poller = NodeApiClient(p_url, apikey, max_retry=3, timeout=30, extra_headers=headers)
+    state = async_job.wait(poller, f"/api/v2/parent/register-job/{job}/", REGISTER_TIMEOUT)
+    if isinstance(state, NodeApiErrorSchema):
+        return state
+    if state["state"] == "failed":
+        return async_job.failed_as_error(state)
+    try:
+        return RegisterOutputSchema.model_validate(state.get("result"))
+    except ValueError as e:
+        return NodeApiErrorSchema(msg=f"Unexpected response: {e}", code=200, reason="bad_response")
 
 
 def _parent_error_message(res: NodeApiErrorSchema) -> str:
@@ -231,9 +258,9 @@ def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildM
         except ValueError as e:  # no main domain
             return RegisterFailure("collecting this node's data", "no_domain", str(e))
     panel_data = payload.panel_data
-    headers = {steplog.REG_HEADER: reg} if reg else None
+    headers = {async_job.ASYNC_HEADER: "1", **({steplog.REG_HEADER: reg} if reg else {})}
     with steplog.step(reg, "node", "send the data to the parent", parent=parent_host, admins=len(panel_data.admin_users), users=len(panel_data.users), domains=len(panel_data.domains), timeout=REGISTER_TIMEOUT):
-        res = NodeApiClient(p_url, apikey, max_retry=1, timeout=REGISTER_TIMEOUT, extra_headers=headers).put("/api/v2/parent/register/", payload, RegisterOutputSchema)
+        res = _register_call(p_url, apikey, payload, headers)
     if isinstance(res, NodeApiErrorSchema):
         failure = _classify_parent_error(res, parent_host)
         logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not accept it: {failure.kind}: {failure.reason}")

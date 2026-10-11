@@ -39,15 +39,60 @@ export interface NodeRegisterError {
   reg?: string
 }
 
+/** How long the page waits for a registration (the node waits for this panel, which stores the node's data). */
+const REGISTER_WAIT_MS = 16 * 60_000
+
+interface NodeJobState {
+  state: 'running' | 'done' | 'failed'
+  result?: { ok: boolean; node?: PanelNode | null; error?: NodeRegisterError }
+  error?: { status: number; message: string }
+}
+
+/** Shaped like a failed axios request, so the dialog reads it the way it reads a 400 of the panel. */
+class RegisterFailure extends Error {
+  response: { data: NodeRegisterError }
+  constructor(data: NodeRegisterError) {
+    super(data.message ?? data.code ?? 'registration failed')
+    this.response = { data }
+  }
+}
+
+function registerFailure(data: NodeRegisterError): RegisterFailure {
+  return new RegisterFailure(data)
+}
+
 export const nodesApi = {
   async list(): Promise<{ nodes: PanelNode[]; panel_version: string }> {
     const { data } = await getHttp().get<{ nodes: PanelNode[]; panel_version: string }>('nodes/')
     return data
   },
+  /**
+   * Registers a node. It is a job on the panel (the node and this panel talk to each other for a while, longer than a web
+   * server or CDN waits for one request): this starts it and asks for the result until it is there.
+   * A failure throws an error shaped like a failed request, with the {@link NodeRegisterError} as `response.data`.
+   */
   async register(adminLink: string, name: string): Promise<PanelNode | null> {
-    // The node calls this panel back while we wait, so this can take a while.
-    const { data } = await getHttp().post<{ node: PanelNode | null }>('nodes/', { admin_link: adminLink, name }, { timeout: 90_000 })
-    return data.node
+    const http = getHttp()
+    const { data: started } = await http.post<{ job: string }>('nodes/', { admin_link: adminLink, name }, { headers: { 'X-Async-Job': '1' }, timeout: 30_000 })
+    const deadline = Date.now() + REGISTER_WAIT_MS
+    let failures = 0
+    while (Date.now() < deadline) {
+      await new Promise((resolve) => window.setTimeout(resolve, 1500))
+      try {
+        const { data: state } = await http.get<NodeJobState>(`nodes/jobs/${started.job}/`, { timeout: 30_000 })
+        failures = 0
+        if (state.state === 'running') continue
+        if (state.state === 'failed') throw registerFailure({ code: 'rejected', message: state.error?.message ?? '' })
+        const result = state.result
+        if (result?.ok) return result.node ?? null
+        throw registerFailure(result?.error ?? { code: 'rejected', message: '' })
+      } catch (e) {
+        if (e instanceof RegisterFailure) throw e
+        // A poll that did not get through (the panel is busy or restarting): the registration goes on, ask again.
+        if (++failures >= 20) throw e
+      }
+    }
+    throw registerFailure({ code: 'timeout', message: '' })
   },
   async rename(id: number, name: string): Promise<{ node: PanelNode; synced_to_node: boolean }> {
     const { data } = await getHttp().patch<{ node: PanelNode; synced_to_node: boolean }>(`nodes/${id}/`, { name }, { timeout: 30_000 })

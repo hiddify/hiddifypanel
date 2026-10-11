@@ -1,6 +1,6 @@
 from apiflask import abort
+from flask import jsonify, request
 from flask.views import MethodView
-from flask import request
 from flask_babel import gettext as _
 from loguru import logger
 
@@ -8,7 +8,7 @@ from hiddifypanel import current_app as app
 from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
-from hiddifypanel.hutils.node import steplog
+from hiddifypanel.hutils.node import async_job, steplog
 from hiddifypanel.models import Child, ChildMode, ConfigEnum, PanelMode, Role, hconfig, set_hconfig
 
 from .schema import RegisterWithParentInputSchema
@@ -24,6 +24,12 @@ class RegisterWithParentApi(MethodView):
     def post(self, data: RegisterWithParentInputSchema):
         reg = request.headers.get(steplog.REG_HEADER, "")
         parent_host = steplog.host_of(data.parent_panel)
+        if async_job.wants_job():  # registering waits for the parent, which can take long: answer now, the parent asks for the result
+            job = async_job.start(lambda: self._run(data, reg, parent_host))
+            return jsonify({"job": job}), 202
+        return self._run(data, reg, parent_host)
+
+    def _run(self, data: RegisterWithParentInputSchema, reg: str, parent_host: str) -> dict[str, str | int]:
         with steplog.step(reg, "node", "registration asked by the parent", parent=parent_host, name=data.name):
             return self._register(data, reg, parent_host)
 
@@ -67,3 +73,15 @@ class RegisterWithParentApi(MethodView):
         if old_parent_ids:
             Child.query.filter(Child.id.in_(old_parent_ids)).delete(synchronize_session=False)
             db.session.commit()
+
+
+class RegisterWithParentJobApi(MethodView):
+    """The result of a registration started with ``X-Async-Job`` (see hutils/node/async_job.py)."""
+
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self, job_id: str):
+        state = async_job.read(job_id)
+        if state is None:
+            abort(404, "This registration is gone")
+        return jsonify(state)

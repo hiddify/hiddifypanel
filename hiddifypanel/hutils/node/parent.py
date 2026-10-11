@@ -2,9 +2,9 @@ import json
 import threading
 
 from flask import has_request_context
-from pydantic import BaseModel
 from flask_babel import lazy_gettext as _
 from loguru import logger
+from pydantic import BaseModel
 
 from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
@@ -12,7 +12,7 @@ from hiddifypanel.database import db
 from hiddifypanel.models import Child, ChildMode, ConfigEnum, Domain, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.child.schema import RegisterWithParentInputSchema
 
-from . import steplog
+from . import async_job, steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -142,9 +142,27 @@ def _classify_node_error(res: NodeApiErrorSchema, node_host: str, reg: str) -> N
     return NodeRegisterError("rejected", f"{node_host} answered HTTP {res.code}: {res.msg[:300]}", "node", reg)
 
 
-#: The node registers with us while we wait (it has up to child.REGISTER_TIMEOUT for that). Registering again is harmless, so a dropped
-#: connection is retried; a timeout is not (the first call may still be running).
-NODE_REGISTER_TIMEOUT = 180
+#: The node registers with us while we wait (it is a job on the node: short requests; this is how long we wait for it, the node itself
+#: waits up to child.REGISTER_TIMEOUT for our side). Registering again is harmless, so a dropped connection is retried; a timeout is not
+#: (the first call may still be running).
+NODE_REGISTER_TIMEOUT = 900
+
+
+def _ask_node_to_register(base_url: str, node_apikey: str, payload: RegisterWithParentInputSchema, headers: dict[str, str]) -> NodeApiErrorSchema | None:
+    """Ask the node to register with this panel: as a job (the node says 202 and a job id; short requests, nothing between the panels
+    cuts them), or at once from a node that is too old to know jobs. ``None`` when it worked."""
+    starter = NodeApiClient(base_url, node_apikey, max_retry=3, timeout=NODE_REGISTER_TIMEOUT, retry_on_timeout=False, extra_headers=headers)
+    started = starter.post("/api/v2/child/register-parent/", payload, dict)
+    if isinstance(started, NodeApiErrorSchema):
+        return started
+    job = started.get("job")
+    if not isinstance(job, str):  # the old, one-request answer: it is done
+        return None
+    poller = NodeApiClient(base_url, node_apikey, max_retry=3, timeout=30, extra_headers=headers)
+    state = async_job.wait(poller, f"/api/v2/child/register-parent-job/{job}/", NODE_REGISTER_TIMEOUT)
+    if isinstance(state, NodeApiErrorSchema):
+        return state
+    return async_job.failed_as_error(state) if state["state"] == "failed" else None
 
 
 def register_node(node_admin_link: str, name: str = "") -> Child | None:
@@ -180,9 +198,9 @@ def register_node(node_admin_link: str, name: str = "") -> Child | None:
         apikey=str(g.account.uuid),
     )
     # The node calls back while we wait (see NODE_REGISTER_TIMEOUT). Registering twice is harmless: a node of this parent just registers again.
-    client = NodeApiClient(base_url, node_apikey, max_retry=3, timeout=NODE_REGISTER_TIMEOUT, retry_on_timeout=False, extra_headers={steplog.REG_HEADER: reg})
+    headers = {steplog.REG_HEADER: reg, async_job.ASYNC_HEADER: "1"}
     with steplog.step(reg, "parent", "ask the node to register with this panel", node=node_host, timeout=NODE_REGISTER_TIMEOUT):
-        res = client.post("/api/v2/child/register-parent/", payload, dict)
+        res = _ask_node_to_register(base_url, node_apikey, payload, headers)
     if isinstance(res, NodeApiErrorSchema):
         error = _classify_node_error(res, node_host, reg)
         logger.error(f"[register {reg} parent] the node did not register: {error.code} on the {error.side} side: {error.detail}")

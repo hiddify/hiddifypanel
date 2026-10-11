@@ -5,12 +5,13 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 
 from apiflask import abort
-from flask import request
+from flask import jsonify, request
 from flask.views import MethodView
 
 import hiddifypanel
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
+from hiddifypanel.hutils.node import async_job
 from hiddifypanel.models import Child, ChildMode, Role
 
 # A node reports usage every few minutes; past these it is shown as late / offline.
@@ -94,13 +95,37 @@ class NodesApi(MethodView):
         _only_on_parent_or_standalone()
         body = request.get_json(silent=True) or {}
         link = str(body.get("admin_link") or "").strip()
+        name = str(body.get("name") or "")
         if not link:
             abort(400, "admin_link is required")
-        try:
-            child = hutils.node.parent.register_node(link, str(body.get("name") or ""))
-        except hutils.node.parent.NodeRegisterError as err:
-            return {"code": err.code, "message": err.detail or err.code, "side": err.side, "reg": err.reg}, 400
-        return {"node": _node_row(child) if child else None}
+        if async_job.wants_job():  # it can take minutes: answer now, the page asks for the result (nothing cuts a short request)
+            return jsonify({"job": async_job.start(lambda: _register_result(link, name))}), 202
+        result = _register_result(link, name)
+        if result["ok"]:
+            return {"node": result["node"]}
+        return result["error"], 400
+
+
+def _register_result(link: str, name: str) -> dict[str, object]:
+    """``{"ok": True, "node": ...}`` or ``{"ok": False, "error": {code, message, side, reg}}``: both are answers, not exceptions."""
+    try:
+        child = hutils.node.parent.register_node(link, name)
+    except hutils.node.parent.NodeRegisterError as err:
+        return {"ok": False, "error": {"code": err.code, "message": err.detail or err.code, "side": err.side, "reg": err.reg}}
+    return {"ok": True, "node": _node_row(child) if child else None}
+
+
+class NodeJobApi(MethodView):
+    """The result of a registration started with ``X-Async-Job``: `{"state": "running" | "done" | "failed", "result": {ok, node | error}}`."""
+
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self, job_id: str):
+        _only_on_parent_or_standalone()
+        state = async_job.read(job_id)
+        if state is None:
+            abort(404, "This registration is gone (results are kept for 15 minutes)")
+        return jsonify(state)
 
 
 class NodeApi(MethodView):
