@@ -150,6 +150,14 @@ Addresses CWE-78_
 
 #### Other
 
+* Feat: enhance user registration handling in node-parent communication. 
+  _- Introduced a new API endpoint for registering users that the parent does not have, allowing for improved synchronization of user data.
+- Updated the registration logic to handle user UUIDs more effectively, ensuring that only missing users are sent to the parent.
+- Enhanced the RegisterInputSchema to include user UUIDs and added corresponding handling in the registration process.
+- Improved error handling and logging for user registration failures, aiding in better monitoring and debugging._
+
+* Make async node registration. 
+
 * Feat: improve node registration error handling and logging. 
   _- Enhanced the NodeRegisterError class to include additional context such as the side of the failure and registration ID.
 - Updated error handling in the registration process to provide more detailed feedback on failures.
