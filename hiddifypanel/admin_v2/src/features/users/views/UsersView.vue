@@ -167,8 +167,8 @@
 
         <Column field="usage_ratio" :header="t('users.col.usage')" sortable header-style="width: 12rem">
           <template #body="{ data }">
-            <div class="u-usage u-tap" role="button" tabindex="0" @click="openQuick(data, 'usage')" @keydown.enter="openQuick(data, 'usage')">
-              <MeterBar :used="data.current_usage_GB" :max="unlimitedGb(data.usage_limit_GB) ? null : data.usage_limit_GB" :text="usageText(data)" size="sm" />
+            <div class="u-usage u-tap" role="button" tabindex="0" :class="{ 'u-usage--nodes': data.nodes.length }" @click="openQuick(data, 'usage')" @keydown.enter="openQuick(data, 'usage')" @mouseenter="showNodes($event, data)" @mouseleave="hideNodesSoon()">
+              <MeterBar :used="data.current_usage_GB" :max="unlimitedGb(data.usage_limit_GB) ? null : data.usage_limit_GB" :text="usageText(data)" size="sm" :segments="usageSegments(data)" />
               <span v-if="data.mode !== 'no_reset'" class="u-reset" v-tooltip.top="t(`users.modeHint.${data.mode}`)">
                 <i class="pi pi-sync" />{{ t(`users.resetTag.${data.mode}`) }}<template v-if="data.days_to_reset !== null"> · {{ relativeDays(data.days_to_reset, locale) }}</template>
               </span>
@@ -205,7 +205,7 @@
 
         <Column field="last_online_ts" :header="t('users.col.lastOnline')" sortable header-style="width: 9rem">
           <template #body="{ data }">
-            <span class="u-online" :class="`u-tone--${seen(data).tone}`" :title="data.last_online && !seen(data).online ? exactDateTime(data.last_online, locale) : undefined">
+            <span class="u-online" :class="[`u-tone--${seen(data).tone}`, { 'u-online--hover': data.nodes.length }]" :title="data.last_online && !seen(data).online ? exactDateTime(data.last_online, locale) : undefined" @mouseenter="showNodes($event, data)" @mouseleave="hideNodesSoon()" @click="openNodes($event, data)">
               <span v-if="seen(data).online" class="u-dot" />{{ seen(data).text }}
             </span>
           </template>
@@ -217,10 +217,17 @@
     <!-- Phones: compact cards -->
     <div v-else-if="state" class="u-cards">
       <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
-      <label v-if="rows.length" class="u-selectall">
-        <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
-        <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
-      </label>
+      <div v-if="rows.length" class="u-listbar">
+        <label class="u-selectall">
+          <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
+          <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
+        </label>
+        <!-- Sorting: the table's headers do this on a wide screen -->
+        <div class="u-sortbar">
+          <Select :model-value="sortField" :options="sortOptions" option-label="label" option-value="value" size="small" show-clear class="u-sortbar__select" :placeholder="t('users.sort')" :aria-label="t('users.sort')" @update:model-value="setSort" />
+          <Button v-if="sortField" :icon="sortOrder === 1 ? 'pi pi-sort-amount-up-alt' : 'pi pi-sort-amount-down-alt'" text rounded size="small" severity="secondary" :aria-label="t('users.sortDir')" @click="toggleSortDir" />
+        </div>
+      </div>
       <template v-for="group in cardGroups" :key="group.key">
         <div v-if="groupByOwner" class="users-group users-group--card"><i class="pi pi-sitemap" /><b>{{ group.owner || '—' }}</b><span class="text-muted-color">{{ group.users.length }}</span></div>
         <article v-for="u in group.users" :key="u.uuid" class="u-card" :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u) }]">
@@ -241,14 +248,14 @@
               </span>
             </button>
             <!-- Usage where the edit button was: tapping the name edits -->
-            <MeterBar class="u-card__meter u-tap" role="button" tabindex="0" :aria-label="t('users.form.editUsageTitle', { name: u.name })" @click="openQuick(u, 'usage')" @keydown.enter="openQuick(u, 'usage')" :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="xs" />
+            <MeterBar class="u-card__meter u-tap" role="button" tabindex="0" :aria-label="t('users.form.editUsageTitle', { name: u.name })" @click="openQuick(u, 'usage')" @keydown.enter="openQuick(u, 'usage')" :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="xs" :segments="usageSegments(u)" />
           </header>
           <div class="u-card__body">
             <div class="u-card__pills">
               <button type="button" class="u-pill" :class="`u-tone--${expireToneOf(u)}`" :aria-label="t('users.col.expire')" @click="expireClick(u)" @pointerdown="pressStart(u)" @pointerup="pressEnd" @pointerleave="pressEnd" @pointercancel="pressEnd" @contextmenu.prevent>
                 <i :class="u.start_date ? 'pi pi-calendar' : 'pi pi-hourglass'" />{{ expireText(u) }}
               </button>
-              <span class="u-pill" :class="`u-tone--${seen(u).tone}`"><span v-if="seen(u).online" class="u-dot" /><i v-else class="pi pi-wifi" />{{ seen(u).text }}</span>
+              <span class="u-pill" :class="[`u-tone--${seen(u).tone}`, { 'u-nodes-tap': u.nodes.length }]" :role="u.nodes.length ? 'button' : undefined" :tabindex="u.nodes.length ? 0 : undefined" @click="openNodes($event, u)" @keydown.enter="openNodes($event, u)"><span v-if="seen(u).online" class="u-dot" /><i v-else class="pi pi-wifi" />{{ seen(u).text }}</span>
               <span v-if="u.mode !== 'no_reset'" class="u-pill u-pill--reset"><i class="pi pi-sync" />{{ t(`users.resetTag.${u.mode}`) }}</span>
             </div>
             <!-- What is special about the user, as many as fit on the line -->
@@ -265,6 +272,19 @@
     </div>
 
     <Menu ref="rowMenu" :model="menuItems" popup />
+
+    <!-- Hover breakdown of the last status / usage cell: one row per node -->
+    <Popover ref="nodesPop" append-to="body" @mouseenter="cancelHideNodes" @mouseleave="hideNodesSoon" @hide="onNodesHide">
+      <div v-if="nodesBreakdown.length" class="un">
+        <div class="un__title"><i class="pi pi-sitemap" />{{ t('users.nodes.title') }}</div>
+        <div v-for="n in nodesBreakdown" :key="n.key" class="un__row">
+          <span class="un__dot" :style="{ background: n.color }" />
+          <span class="un__name" :title="n.name">{{ n.name }}</span>
+          <span class="un__seen" :class="`u-tone--${n.seen.tone}`"><span v-if="n.seen.online" class="u-dot" />{{ n.seen.text }}</span>
+          <span class="un__usage" dir="ltr">{{ n.usage }}</span>
+        </div>
+      </div>
+    </Popover>
 
     <!-- Add limits: data and days on top of what the selected users have -->
     <Dialog v-model:visible="limitsVisible" modal :draggable="false" :header="t('users.addLimits.title', { n: selected.length }, selected.length)" :style="{ width: '24rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
@@ -340,7 +360,7 @@ import TagFilter from '@/features/tags/components/TagFilter.vue'
 import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersState } from '@/features/users/api'
-import { sizeText, exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
+import { exactDate, exactDateTime, expireTone, gb, lastSeen, nodeColor, ONE_GIG, relativeDays, shortDate, sizeText, type Tone } from '@/features/users/format'
 
 /** Highlights the search match. */
 const MarkText = defineComponent({
@@ -545,9 +565,44 @@ async function bulkTag(id: number, on: boolean) {
   await Promise.all([load(true), loadTags(true)])
 }
 
+/** Phones: sorting from the list bar (the table sorts via its headers, same state). */
+const sortOptions = computed<{ value: string; label: string; dir: 1 | -1 }[]>(() => [
+  { value: 'id', label: t('users.col.id'), dir: -1 },
+  { value: 'name', label: t('users.col.name'), dir: 1 },
+  { value: 'usage_ratio', label: t('users.col.usage'), dir: -1 },
+  { value: 'remaining_days', label: t('users.col.expire'), dir: 1 },
+  { value: 'last_online_ts', label: t('users.col.lastOnline'), dir: -1 },
+])
+const SORT_KEYS: Record<string, (u: Row) => number | string> = {
+  id: (u) => u.id,
+  name: (u) => u.name.toLowerCase(),
+  usage_ratio: (u) => u.usage_ratio,
+  remaining_days: (u) => u.remaining_days,
+  last_online_ts: (u) => u.last_online_ts,
+}
+function setSort(field: string | undefined) {
+  sortField.value = field
+  sortOrder.value = field ? (sortOptions.value.find((o) => o.value === field)?.dir ?? -1) : undefined
+  first.value = 0
+}
+function toggleSortDir() {
+  if (sortField.value) sortOrder.value = sortOrder.value === 1 ? -1 : 1
+}
+const sortedRows = computed(() => {
+  const get = sortField.value ? SORT_KEYS[sortField.value] : undefined
+  const dir = sortOrder.value
+  if (!get || !dir) return rows.value
+  return [...rows.value].sort((a, b) => {
+    const va = get(a)
+    const vb = get(b)
+    const cmp = typeof va === 'string' || typeof vb === 'string' ? String(va).localeCompare(String(vb)) : Number(va) - Number(vb)
+    return cmp * dir
+  })
+})
+
 /** Phones: the current page, grouped when asked. */
 const pageRows = computed(() => {
-  const list = groupByOwner.value ? [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : rows.value
+  const list = groupByOwner.value ? [...sortedRows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : sortedRows.value
   return paged.value ? list.slice(first.value, first.value + pageSize.value) : list
 })
 const cardGroups = computed(() => {
@@ -581,6 +636,79 @@ function expireTitle(u: UserRow): string {
 function seen(u: UserRow) {
   return lastSeen(u.last_online, now.value, locale.value, { online: t('users.online'), never: t('users.never') })
 }
+
+/** Hover / tap breakdown: one popover for the table and the phone cards. */
+const nodesPop = ref()
+const nodesRow = ref<Row | null>(null)
+/** Set by a click / tap: the popover then stays until it is closed (hover alone still auto-hides). */
+const nodesPinned = ref(false)
+let nodesHideTimer: number | undefined
+
+function cancelHideNodes() {
+  if (nodesHideTimer) window.clearTimeout(nodesHideTimer)
+  nodesHideTimer = undefined
+}
+function hideNodesSoon() {
+  if (nodesPinned.value) return
+  cancelHideNodes()
+  nodesHideTimer = window.setTimeout(() => {
+    nodesRow.value = null
+    nodesPop.value?.hide()
+  }, 220)
+}
+function showNodes(event: Event, u: Row) {
+  if (nodesPinned.value || !u.nodes.length) return
+  cancelHideNodes()
+  nodesRow.value = u
+  nodesPop.value?.show(event)
+}
+/** Click / tap: pin it open; clicking the same target again closes it (like a click outside). */
+function openNodes(event: Event, u: Row) {
+  if (!u.nodes.length) return
+  if (nodesPinned.value && nodesRow.value?.uuid === u.uuid) {
+    nodesPinned.value = false
+    nodesRow.value = null
+    cancelHideNodes()
+    nodesPop.value?.hide()
+    return
+  }
+  cancelHideNodes()
+  nodesPinned.value = true
+  nodesRow.value = u
+  nodesPop.value?.show(event)
+}
+/** The popover closed (outside click, Esc, or the hover timer): the pin goes with it. */
+function onNodesHide() {
+  nodesPinned.value = false
+  nodesRow.value = null
+  cancelHideNodes()
+}
+
+/** Per-node usage slices for the bar; with fewer than two slices the classic gradient stays. */
+function usageSegments(u: UserRow): { value: number; color: string }[] {
+  const slices = u.nodes.filter((n) => n.usage > 0).map((n) => ({ value: n.usage / ONE_GIG, color: nodeColor(n.child_id) }))
+  const rest = u.current_usage_GB - slices.reduce((sum, s) => sum + s.value, 0)
+  if (rest > 0.001) slices.push({ value: rest, color: 'var(--p-text-muted-color)' })
+  return slices.length > 1 ? slices : []
+}
+
+const nodesBreakdown = computed(() => {
+  const u = nodesRow.value
+  if (!u) return []
+  const rows = u.nodes.map((n) => ({
+    key: `n${n.child_id}`,
+    name: n.name,
+    color: nodeColor(n.child_id),
+    seen: lastSeen(n.last_online, now.value, locale.value, { online: t('users.online'), never: t('users.never') }),
+    usage: `${gb(n.usage / ONE_GIG, locale.value)} GB`,
+  }))
+  const rest = u.current_usage_GB - u.nodes.reduce((sum, n) => sum + n.usage / ONE_GIG, 0)
+  if (rest > 0.001) {
+    rows.push({ key: 'rest', name: t('users.nodes.other'), color: 'var(--p-text-muted-color)', seen: { text: '—', tone: 'muted' as Tone, online: false }, usage: `${gb(rest, locale.value)} GB` })
+  }
+  return rows
+})
+
 function rowClass(u: Row) {
   return u.status === 'active' ? '' : `u-row--${u.status}`
 }
@@ -1234,6 +1362,9 @@ onBeforeUnmount(() => {
   width: 11rem;
   max-width: 100%;
 }
+.u-usage--nodes {
+  cursor: pointer;
+}
 .u-reset {
   display: inline-flex;
   align-items: center;
@@ -1316,6 +1447,9 @@ onBeforeUnmount(() => {
 .u-online i {
   font-size: 0.7rem;
 }
+.u-online--hover {
+  cursor: help;
+}
 .u-dot {
   position: relative;
   width: 0.5rem;
@@ -1335,6 +1469,62 @@ onBeforeUnmount(() => {
   display: flex;
 }
 
+/* Hover breakdown popover (last status / usage cells) */
+.un {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 14rem;
+}
+.un__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.un__title i {
+  color: var(--p-primary-color);
+}
+.un__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.un__dot {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+.un__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.un__seen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: none;
+  white-space: nowrap;
+  color: var(--tone);
+}
+.un__usage {
+  flex: none;
+  min-width: 4.5rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  color: var(--p-text-muted-color);
+}
+
 /* Cards (phones) */
 .u-cards {
   display: flex;
@@ -1351,6 +1541,27 @@ onBeforeUnmount(() => {
   background: var(--p-content-background);
   font-size: 0.88rem;
   font-weight: 500;
+  cursor: pointer;
+}
+/* Cards header: select-all and sort on one line */
+.u-listbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.u-listbar .u-selectall {
+  flex: 1 1 11rem;
+}
+.u-sortbar {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+.u-sortbar__select {
+  min-width: 9.5rem;
+}
+.u-nodes-tap {
   cursor: pointer;
 }
 .u-card {

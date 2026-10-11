@@ -14,6 +14,15 @@ export const UNLIMITED_DAYS = 10_000
 import type { AdditionalConfig } from '@/shared/utils/additional-configs'
 export { CONFIG_TARGETS, type AdditionalConfig, type ConfigKind, type ConfigTarget } from '@/shared/utils/additional-configs'
 
+/** One node's status for a user: when it last saw them and their usage through it. */
+export interface UserNode {
+  child_id: number
+  name: string
+  last_online: string | null
+  /** Bytes used through this node in the current period. */
+  usage: number
+}
+
 export interface UserRow {
   id: number
   uuid: string
@@ -33,6 +42,8 @@ export interface UserRow {
   days_to_reset: number | null
   last_reset_time: string | null
   last_online: string | null
+  /** Per-node status, newest connection first. */
+  nodes: UserNode[]
   owner_uuid: string | null
   owner_name: string
   preferred_outbound: number | null

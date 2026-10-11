@@ -2270,6 +2270,10 @@
       },
       "more": "More actions",
       "never": "Never",
+      "nodes": {
+        "other": "Other",
+        "title": "By node"
+      },
       "noMatch": "No user matches",
       "noTimeLimit": "No time limit",
       "none": "No users yet",
@@ -2292,7 +2296,9 @@
       "showLink": "Show user link",
       "showMore": "Show {n} more",
       "showRelative": "Show time left",
+      "sort": "Sort by",
       "sortById": "Sort by ID",
+      "sortDir": "Sort direction",
       "status": {
         "active": "Active",
         "disabled": "Disabled",
