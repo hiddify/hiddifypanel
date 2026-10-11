@@ -3,16 +3,34 @@
 
   <!-- 1. What to test -->
   <Panel class="ct-form">
-    <div class="ct-field">
+    <SelectButton v-model="mode" :options="MODES" option-value="key" :allow-empty="false" :disabled="busy" size="small" class="ct-mode" :aria-label="t('configTester.mode.label')">
+      <template #option="{ option }"><i :class="option.icon" /> {{ t(`configTester.mode.${option.key}`) }}</template>
+    </SelectButton>
+
+    <!-- 1. What to test: a subscription link, or the contents themselves -->
+    <div v-if="mode === 'link'" class="ct-field">
       <label for="ct-url" class="ct-label"><span class="ct-step">1</span>{{ t('configTester.url') }}</label>
       <div class="ct-urlrow">
         <InputText id="ct-url" v-model="url" dir="ltr" class="ct-url font-mono" spellcheck="false" autocomplete="off" :placeholder="t('configTester.urlPlaceholder')" :disabled="busy" @keydown.enter="start" />
-        <Button v-if="!busy" icon="pi pi-play" :label="t('configTester.start')" :disabled="!url.trim()" @click="start" />
+        <Button v-if="!busy" icon="pi pi-play" :label="t('configTester.start')" :disabled="!canStart" @click="start" />
+        <Button v-else icon="pi pi-stop" :label="t('configTester.stop')" severity="danger" @click="stop" />
+      </div>
+    </div>
+    <div v-else class="ct-field">
+      <label for="ct-content" class="ct-label"><span class="ct-step">1</span>{{ t('configTester.contentLabel') }}</label>
+      <!-- Once tested, the contents are shown as the subscription viewer; "Edit text" brings the text back -->
+      <template v-if="showViewer">
+        <div class="ct-inline-viewer"><SubscriptionViewer :raw="raw" :edited="edits" @edit="onLinkEdit" @test="testEdited" @json-edit="onJsonEdit" @test-all="testAllEdited" /></div>
+      </template>
+      <Textarea v-else id="ct-content" v-model="content" dir="ltr" class="ct-content font-mono" spellcheck="false" :rows="9" :auto-resize="false" :placeholder="t('configTester.contentPlaceholder')" :disabled="busy" />
+      <div class="ct-urlrow ct-urlrow--end">
+        <Button v-if="rows.length && !busy" :icon="showViewer ? 'pi pi-file-edit' : 'pi pi-eye'" :label="showViewer ? t('configTester.editText') : t('configTester.showViewer')" severity="secondary" outlined @click="editText = !editText" />
+        <Button v-if="!busy" icon="pi pi-play" :label="t('configTester.start')" :disabled="!canStart" @click="start" />
         <Button v-else icon="pi pi-stop" :label="t('configTester.stop')" severity="danger" @click="stop" />
       </div>
     </div>
 
-    <div class="ct-field">
+    <div v-if="mode === 'link'" class="ct-field">
       <label for="ct-ua" class="ct-label"><span class="ct-step">2</span>{{ t('configTester.ua') }}</label>
       <Select id="ct-ua" ref="uaSelect" v-model="userAgent" :options="UA_PRESETS" option-label="value" option-value="value" editable dir="ltr" overlay-class="ct-ua-overlay" :pt="{ overlay: { dir: 'ltr' } }" class="ct-ua font-mono" :disabled="busy" @click="openUa" @focus="openUa">
         <template #option="{ option }">
@@ -55,9 +73,12 @@
     <button type="button" class="ct-recv" @click="subOpen = true">
       <span class="ct-recv__ico"><i class="pi pi-cloud-download" /></span>
       <span class="ct-recv__txt">
-        <span class="ct-recv__title">{{ t('configTester.sub.received') }} <Tag :value="sourceLabel" severity="info" /></span>
-        <span v-if="fetched" class="ct-recv__meta" dir="ltr" :title="fetched.user_agent">HTTP {{ fetched.status }} · {{ fetched.content_type || '?' }} · {{ fmtBytes(fetched.bytes) }} · {{ rows.length }} configs</span>
-        <span v-if="fetched" class="ct-recv__ua" dir="ltr">{{ fetched.user_agent }}</span>
+        <span class="ct-recv__title">{{ fetched?.pasted ? t('configTester.pasted') : t('configTester.sub.received') }} <Tag :value="sourceLabel" severity="info" /></span>
+        <span v-if="fetched?.pasted" class="ct-recv__meta">{{ t('configTester.pasted') }} · {{ fmtBytes(fetched.bytes) }} · {{ rows.length }} configs</span>
+        <template v-else-if="fetched">
+          <span class="ct-recv__meta" dir="ltr" :title="fetched.user_agent">HTTP {{ fetched.status }} · {{ fetched.content_type || '?' }} · {{ fmtBytes(fetched.bytes) }} · {{ rows.length }} configs</span>
+          <span class="ct-recv__ua" dir="ltr">{{ fetched.user_agent }}</span>
+        </template>
       </span>
       <span class="ct-recv__go">{{ t('configTester.sub.view') }}<i class="pi" :class="rtl ? 'pi-arrow-left' : 'pi-arrow-right'" /></span>
     </button>
@@ -70,6 +91,7 @@
         <span class="ct-stat__l">{{ t(`configTester.filter.${f.key}`) }}</span>
       </button>
     </div>
+    <p v-if="reconnecting" class="ct-reconnect"><i class="pi pi-spin pi-spinner" /> {{ t('configTester.reconnecting') }}</p>
     <ProgressBar v-if="pending" :value="Math.round((doneCount * 100) / rows.length)" :show-value="false" class="ct-progress" />
 
     <div class="ct-toolbar">
@@ -98,6 +120,7 @@
           <div class="ct-name" dir="ltr">{{ r.name }}</div>
           <div class="ct-sub">
             <Tag :value="r.kind === 'xray' ? 'xray' : 'hiddify-core'" severity="secondary" class="ct-kind" />
+            <Tag v-if="edits[r.index]" :value="t('configTester.sub.edited')" severity="warn" class="ct-kind" />
             <span v-if="r.state === 'ok'" class="text-muted-color">{{ t('configTester.state.ok') }}<template v-if="r.passed"> · {{ r.passed }}</template></span>
             <span v-else class="text-muted-color">{{ t(`configTester.state.${r.state}`) }}</span>
           </div>
@@ -108,8 +131,8 @@
           <span v-if="r.history.length > 1" class="ct-delay__n">×{{ r.history.length }}</span>
         </button>
         <div class="ct-acts">
-          <Button icon="pi pi-refresh" text rounded size="small" :disabled="!r.run_config || r.state === 'waiting'" :aria-label="t('configTester.rerun')" v-tooltip.top="t('configTester.rerun')" @click="rerunMany([r])" />
-          <Button icon="pi pi-search" text rounded size="small" :disabled="!r.run_config" :aria-label="t('configTester.open')" v-tooltip.top="t('configTester.open')" @click="detail = r" />
+          <Button icon="pi pi-refresh" text rounded size="small" :disabled="(!r.run_config && !edits[r.index]) || r.state === 'waiting'" :aria-label="t('configTester.rerun')" v-tooltip.top="t('configTester.rerun')" @click="rerunMany([r])" />
+          <Button icon="pi pi-search" text rounded size="small" :disabled="!r.run_config && !r.original" :aria-label="t('configTester.open')" v-tooltip.top="t('configTester.open')" @click="detail = r" />
         </div>
       </li>
       <li v-if="!shown.length" class="ct-empty">{{ t('configTester.noMatch') }}</li>
@@ -162,7 +185,7 @@
         <Tab value="text">{{ t('configTester.sub.text') }}</Tab>
       </TabList>
       <TabPanels>
-        <TabPanel value="configs"><SubscriptionViewer :raw="raw" /></TabPanel>
+        <TabPanel value="configs"><SubscriptionViewer :raw="raw" :edited="edits" @edit="onLinkEdit" @test="testEdited" @json-edit="onJsonEdit" @test-all="testAllEdited" /></TabPanel>
         <TabPanel v-if="parsed" value="parsed">
           <p class="text-sm text-muted-color mt-0">{{ t('configTester.sub.parsedHint') }}</p>
           <div class="ct-treebox"><JsonTree :value="parsed" :open-depth="2" /></div>
@@ -174,7 +197,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onErrorCaptured, onMounted, ref, shallowRef, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Panel from 'primevue/panel'
@@ -186,6 +209,8 @@ import Tag from 'primevue/tag'
 import ToggleSwitch from 'primevue/toggleswitch'
 import ProgressBar from 'primevue/progressbar'
 import Select from 'primevue/select'
+import SelectButton from 'primevue/selectbutton'
+import Textarea from 'primevue/textarea'
 import Dialog from 'primevue/dialog'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -193,9 +218,11 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import PageHeader from '@/shared/components/PageHeader.vue'
-import { getApiBase } from '@/core/api/client'
+import { apiErrorMessage, getHttp } from '@/core/api/client'
+import type { Fetched, Json, JobPage, JsonObject, Kind, ResultEvent, Source, TesterEvent } from '@/features/config-tester/types'
 import SubscriptionViewer from '@/features/config-tester/components/SubscriptionViewer.vue'
 import JsonTree from '@/features/config-tester/components/JsonTree.vue'
+import { unwrapSubscriptionText } from '@/shared/utils/sublink-pretty'
 import CodeBlock from '@/features/config-tester/components/CodeBlock.vue'
 
 const { t, locale } = useI18n()
@@ -222,14 +249,14 @@ type State = 'waiting' | 'ok' | 'failed' | 'idle'
 interface Row {
   index: number
   name: string
-  kind: 'xray' | 'core'
+  kind: Kind
   tag?: string
   state: State
   delay_ms?: number
   error?: string
   log?: string
-  original?: unknown
-  run_config?: unknown
+  original?: Json
+  run_config?: JsonObject
   /** Pings that worked out of those made in the last test, e.g. `2/3`. */
   passed?: string
   /** A single test run again replaces this history entry. */
@@ -239,6 +266,15 @@ interface Row {
 }
 
 const DEFAULT_TEST_URL = 'https://www.gstatic.com/generate_204'
+const MODES = [
+  { key: 'link', icon: 'pi pi-link' },
+  { key: 'content', icon: 'pi pi-file-edit' },
+]
+const mode = ref<'link' | 'content'>('link')
+const content = ref('')
+/** Pasted contents: show the text itself (not the viewer) even after a test. */
+const editText = ref(true)
+const showViewer = computed(() => mode.value === 'content' && rows.value.length > 0 && !editText.value)
 const url = ref('')
 const userAgent = ref(UA_PRESETS[0].value)
 const testUrl = ref(DEFAULT_TEST_URL)
@@ -247,15 +283,20 @@ const timeout = ref(10)
 const repeats = ref(3)
 const advanced = ref(false)
 const error = ref('')
-const source = ref('')
-const rows = ref<Row[]>([])
+const source = ref<Source | ''>('')
+// Typed by hand: Vue cannot work out the "unwrapped" type of a recursive JSON value (it never ends), so these are not inferred.
+const rows = ref([]) as Ref<Row[]>
 const raw = ref('')
-const parsed = ref<unknown>(null)
-const fetched = ref<{ user_agent: string; status: number; content_type: string; bytes: number } | null>(null)
+/** Share links the admin edited in the viewer, by their place in the list: tested again, they are tested as edited. */
+const edits = ref<Record<number, string>>({})
+/** The JSON subscription as edited in the viewer (null: not edited); configs tested again are taken from it. */
+const jsonEdited = ref<string | null>(null)
+const parsed = shallowRef<JsonObject | null>(null)
+const fetched = ref<Fetched | null>(null)
 const filter = ref<'all' | 'ok' | 'failed'>('all')
 const sort = ref<'delay' | 'order' | 'name'>('delay')
-const detail = ref<Row | null>(null)
-const historyRow = ref<Row | null>(null)
+const detail = ref(null) as Ref<Row | null>
+const historyRow = ref(null) as Ref<Row | null>
 const historyOpen = computed({ get: () => !!historyRow.value, set: (v) => { if (!v) historyRow.value = null } })
 /** Newest first, with each entry's place in the history. */
 const historyList = computed(() => (historyRow.value?.history ?? []).map((h, index) => ({ h, index })).reverse())
@@ -269,9 +310,10 @@ const subOpen = ref(false)
 const subTab = ref('configs')
 const detailOpen = computed({ get: () => !!detail.value, set: (v) => { if (!v) detail.value = null } })
 
-const controllers = new Set<AbortController>()
+const controllers = new Map<AbortController, string>()
 const active = ref(0)
 const busy = computed(() => active.value > 0)
+const canStart = computed(() => (mode.value === 'link' ? !!url.value.trim() : !!content.value.trim()))
 
 const counts = computed(() => ({
   all: rows.value.length,
@@ -319,68 +361,143 @@ function openUa(event?: Event) {
   if ((!el || el.tagName === 'INPUT') && !uaSelect.value?.overlayVisible) uaSelect.value?.show()
 }
 
-function onEvent(ev: Record<string, any>) {
+function onEvent(ev: TesterEvent) {
   if (ev.event === 'start') {
     source.value = ev.source
-    raw.value = ev.raw ?? ''
-    parsed.value = ev.parsed ?? null
-    fetched.value = ev.fetched ?? null
+    raw.value = ev.raw
+    if (mode.value === 'content' && !content.value) content.value = ev.raw
+    edits.value = {}
+    jsonEdited.value = null
+    parsed.value = ev.parsed
+    fetched.value = ev.fetched
     subTab.value = 'configs'
-    rows.value = ev.items.map((i: any) => ({ ...i, state: 'waiting', history: [] }))
+    rows.value = ev.items.map((i) => ({ ...i, state: 'waiting', history: [] }))
   } else if (ev.event === 'result') {
-    const row = rows.value[ev.index]
-    if (!row) return
-    // Every ping goes in the history (old servers send none: then the result itself is one). A single test run again takes the place of the one clicked.
-    const pings: { ok: boolean; delay_ms?: number; error?: string }[] = ev.pings ?? [{ ok: !!ev.ok, delay_ms: ev.delay_ms, error: ev.error }]
-    const entries = pings.map((p) => ({ at: Date.now(), ok: !!p.ok, delay_ms: p.delay_ms, error: p.error }))
-    if (row.replaceAt != null && row.history[row.replaceAt]) row.history[row.replaceAt] = entries[0]
-    else row.history.push(...entries)
-    row.replaceAt = undefined
-    Object.assign(row, { log: ev.log, original: ev.original, run_config: ev.run_config, tag: ev.tag }, summary(row.history, ev.error))
+    onResult(ev)
   } else if (ev.event === 'error') {
     error.value = ev.error
   }
 }
 
-/** POST and read the NDJSON answer line by line. */
-async function stream(body: Record<string, unknown>) {
+function onResult(ev: ResultEvent) {
+  const row = rows.value[ev.index]
+  if (!row) return
+  // Every ping goes in the history. A single test run again takes the place of the one clicked.
+  const pings = ev.pings ?? [{ ok: ev.ok, delay_ms: ev.delay_ms, error: ev.error }]
+  const entries = pings.map((p) => ({ at: Date.now(), ok: p.ok, delay_ms: p.delay_ms, error: p.error }))
+  if (row.replaceAt != null && row.history[row.replaceAt]) row.history[row.replaceAt] = entries[0]
+  else row.history.push(...entries)
+  row.replaceAt = undefined
+  Object.assign(row, { log: ev.log, original: ev.original, run_config: ev.run_config, tag: ev.tag }, summary(row.history, ev.error))
+}
+
+/** The HTTP status of a failed call (none for a network error). */
+function statusOf(e: unknown): number | undefined {
+  return typeof e === 'object' && e !== null && 'response' in e ? (e as { response?: { status?: number } }).response?.status : undefined
+}
+
+/** What to tell about a failed call: signed out is said, never acted on by leaving this page. */
+function failure(e: unknown): string {
+  const status = statusOf(e)
+  return status === 401 || status === 403 ? t('configTester.signedOut') : apiErrorMessage(e)
+}
+
+const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))
+const reconnecting = ref(false)
+
+/**
+ * Start a test (a job on the server) and follow it. The test does not depend on this page: if the connection drops
+ * or the page is reloaded it goes on, and the page picks it up again by its job (kept in the address).
+ */
+async function stream(body: Record<string, unknown>, remember = false) {
   const controller = new AbortController()
-  controllers.add(controller)
+  controllers.set(controller, '')
   active.value++
   try {
-    const res = await fetch(`${getApiBase()}config-tester/`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      body: JSON.stringify({ test_url: testUrl.value, workers: workers.value, timeout: timeout.value, repeats: repeats.value, ...body }),
-    })
-    if (!res.ok || !res.body) {
-      const data = await res.json().catch(() => null)
-      throw new Error(data?.message || data?.detail || `HTTP ${res.status}`)
+    let job = ''
+    try {
+      const { data } = await getHttp().post<{ job: string }>('config-tester/', { test_url: testUrl.value, workers: workers.value, timeout: timeout.value, repeats: repeats.value, ...body }, { signal: controller.signal, skipAuthRedirect: true })
+      job = data.job
+    } catch (e) {
+      if (!controller.signal.aborted) error.value = failure(e)
+      return
     }
-    const reader = res.body.getReader()
-    const decoder = new TextDecoder()
-    let buffer = ''
-    for (;;) {
-      const { done, value } = await reader.read()
-      if (done) break
-      buffer += decoder.decode(value, { stream: true })
-      let nl: number
-      while ((nl = buffer.indexOf('\n')) >= 0) {
-        const line = buffer.slice(0, nl).trim()
-        buffer = buffer.slice(nl + 1)
-        if (line) onEvent(JSON.parse(line))
-      }
-    }
-  } catch (e: any) {
-    if (e?.name !== 'AbortError') error.value = e?.message || String(e)
+    controllers.set(controller, job)
+    if (remember) rememberJob(job)
+    await follow(job, controller)
   } finally {
-    controllers.delete(controller)
-    active.value--
-    // What did not get a result (stopped, or the request failed) is not "waiting" any more.
-    if (!active.value) rows.value.forEach((r) => { if (r.state === 'waiting') r.state = r.history.length ? summary(r.history).state : 'idle' })
+    finish(controller)
   }
+}
+
+function finish(controller: AbortController) {
+  controllers.delete(controller)
+  active.value--
+  reconnecting.value = false
+  // What did not get a result (stopped, or the test ended early) is not "waiting" any more.
+  if (!active.value) rows.value.forEach((r) => { if (r.state === 'waiting') r.state = r.history.length ? summary(r.history).state : 'idle' })
+}
+
+/** Read the events of a job, again and again, until it is done. A dropped connection is just tried again. */
+async function follow(job: string, controller: AbortController, after = 0) {
+  let failures = 0
+  while (!controller.signal.aborted) {
+    try {
+      const { data } = await getHttp().get<JobPage>(`config-tester/${job}/`, { params: { after }, signal: controller.signal, skipAuthRedirect: true })
+      failures = 0
+      reconnecting.value = false
+      data.events.forEach(onEvent)
+      after = data.next
+      if (data.done) return
+      if (data.lost) {
+        error.value = t('configTester.lost')
+        return
+      }
+      await sleep(data.events.length ? 200 : 700)
+    } catch (e) {
+      if (controller.signal.aborted) return
+      const status = statusOf(e)
+      if (status === 404) {
+        error.value = t('configTester.gone')
+        return
+      }
+      if (status === 401 || status === 403) {
+        error.value = failure(e) // the test goes on in the panel; signing in again and reloading shows it
+        return
+      }
+      // The panel or the network is away for a moment: keep asking, the test goes on without us.
+      failures++
+      reconnecting.value = true
+      if (failures > 90) {
+        error.value = failure(e)
+        return
+      }
+      await sleep(Math.min(500 * failures, 4000))
+    }
+  }
+}
+
+/** The test is in the address: a reload shows it again (and goes on following it) instead of starting over. */
+function rememberJob(job: string) {
+  void router.replace({ query: { ...route.query, job } })
+}
+
+async function resume(job: string): Promise<boolean> {
+  const controller = new AbortController()
+  controllers.set(controller, job)
+  active.value++
+  try {
+    await getHttp().get(`config-tester/${job}/`, { params: { after: 0 }, signal: controller.signal, skipAuthRedirect: true })
+  } catch {
+    finish(controller)
+    return false // gone (an hour passed, or the panel forgot it): the caller starts anew
+  }
+  try {
+    await follow(job, controller)
+  } finally {
+    finish(controller)
+  }
+  return true
 }
 
 /** An xray client asks for xray JSON: the panel is told so (force_xray_json=1) even when that subscription is off in its settings. */
@@ -399,14 +516,60 @@ function subLink(): string {
 }
 
 async function start() {
-  if (busy.value || !url.value.trim()) return
+  if (busy.value || !canStart.value) return
   error.value = ''
   rows.value = []
   detail.value = null
   historyRow.value = null
   filter.value = 'all'
+  if (mode.value === 'content') {
+    void router.replace({ query: { mode: 'content' } }) // the contents are not put in the address: only the test is
+    editText.value = false
+    await stream({ content: content.value }, true)
+    return
+  }
   syncLink()
-  await stream({ url: subLink(), user_agent: userAgent.value })
+  await stream({ url: subLink(), user_agent: userAgent.value }, true)
+}
+
+function onJsonEdit(text: string, original: string) {
+  jsonEdited.value = text === original ? null : text
+  if (mode.value === 'content') content.value = text
+}
+
+/** Everything tested again from the edited JSON. */
+function testAllEdited() {
+  subOpen.value = false
+  void rerunMany(rows.value)
+}
+
+function onLinkEdit(index: number, text: string, original: string) {
+  if (text === original) delete edits.value[index]
+  else edits.value[index] = text
+  if (mode.value === 'content') setContentLine(index, text)
+}
+
+/** The pasted contents follow the edits made in the viewer: the same line, changed (base64 contents become plain lines). */
+function setContentLine(index: number, text: string) {
+  const lines = unwrapSubscriptionText(content.value).text.split(/\r?\n/)
+  let n = -1
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i].trim()
+    if (!l || l.startsWith('#') || l.startsWith('//')) continue
+    if (++n === index) {
+      lines[i] = text
+      content.value = lines.join('\n')
+      return
+    }
+  }
+}
+
+/** "Test this" in the link editor: the edited link, tested now. */
+function testEdited(index: number) {
+  const row = rows.value.find((r) => r.index === index)
+  if (!row) return
+  subOpen.value = false
+  void rerunMany([row])
 }
 
 /** The history dialog: three more tests of this config, or one test again (its own entry is replaced). */
@@ -414,10 +577,11 @@ const moreTests = (r: Row) => rerunMany([r], { repeats: 3 })
 const oneTestAgain = (r: Row, i: number) => rerunMany([r], { repeats: 1, replaceAt: i })
 
 async function rerunMany(list: Row[], opts: { repeats?: number; replaceAt?: number } = {}) {
-  const todo = list.filter((r) => r.run_config && r.state !== 'waiting')
+  const todo = list.filter((r) => (r.run_config || edits.value[r.index]) && r.state !== 'waiting')
   if (!todo.length || busy.value) return
   error.value = ''
-  const items = todo.map((r) => ({ index: r.index, name: r.name, kind: r.kind, tag: r.tag, original: r.original, config: r.run_config }))
+  // A share link edited in the viewer is sent as it is now, to be parsed again; otherwise the config it had.
+  const items = todo.map((r) => ({ index: r.index, name: r.name, kind: r.kind, tag: r.tag, original: r.original, config: r.run_config, content: source.value === 'parsed' ? edits.value[r.index] : (jsonEdited.value ?? undefined) }))
   todo.forEach((r) => {
     r.state = 'waiting'
     r.replaceAt = opts.replaceAt
@@ -426,7 +590,10 @@ async function rerunMany(list: Row[], opts: { repeats?: number; replaceAt?: numb
 }
 
 function stop() {
-  controllers.forEach((c) => c.abort())
+  controllers.forEach((job, c) => {
+    c.abort()
+    if (job) void getHttp().delete(`config-tester/${job}/`, { skipAuthRedirect: true }).catch(() => undefined) // the server stops it too
+  })
 }
 
 /** The address carries what is being tested, so a refresh (or a shared link) runs the same test again. */
@@ -447,17 +614,34 @@ onMounted(() => {
     const n = Number(str(v))
     return Number.isFinite(n) && n >= min && n <= max ? n : null
   }
-  if (!str(q.url)) return
+  const job = str(q.job)
+  if (q.mode === 'content') mode.value = 'content'
+  if (!str(q.url) && !job) return
   url.value = str(q.url)
   if (str(q.ua)) userAgent.value = str(q.ua)
   if (str(q.test)) testUrl.value = str(q.test)
   workers.value = num(q.workers, 1, 32) ?? workers.value
   timeout.value = num(q.timeout, 2, 60) ?? timeout.value
   repeats.value = num(q.repeats, 1, 10) ?? repeats.value
-  if (q.start === '1') void start()
+  void (async () => {
+    // A test already running (or finished) for this address is shown again, not run again.
+    if (job && (await resume(job))) {
+      editText.value = false
+      return
+    }
+    if (q.start === '1' && str(q.url)) void start()
+  })()
 })
 
-onBeforeUnmount(stop)
+// Whatever fails inside this page is shown here: nothing leaves the page, reloads it, or takes the panel down with it.
+onErrorCaptured((err) => {
+  console.error(err)
+  error.value = err instanceof Error ? err.message : String(err)
+  return false
+})
+
+// Leaving the page does not stop the test (it goes on in the panel, and the address brings it back).
+onBeforeUnmount(() => controllers.forEach((_job, c) => c.abort()))
 </script>
 
 <style scoped>
@@ -491,6 +675,24 @@ onBeforeUnmount(stop)
 .ct-urlrow {
   display: flex;
   gap: 0.5rem;
+}
+.ct-urlrow--end {
+  justify-content: flex-end;
+}
+.ct-mode {
+  align-self: flex-start;
+}
+.ct-inline-viewer {
+  max-height: 60vh;
+  overflow: auto;
+  padding: 0.75rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+}
+.ct-content {
+  width: 100%;
+  font-size: 0.8rem;
+  resize: vertical;
 }
 .ct-url {
   flex: 1;
@@ -590,6 +792,11 @@ onBeforeUnmount(stop)
 .ct-stat.is-active {
   border-color: var(--tone);
   background: color-mix(in srgb, var(--tone) 10%, var(--p-content-background));
+}
+.ct-reconnect {
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
 }
 .ct-progress {
   height: 0.35rem;

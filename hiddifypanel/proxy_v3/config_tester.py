@@ -1,13 +1,17 @@
-"""Config tester: fetch a subscription, run each config in its own xray / hiddify-core process (a local SOCKS port each, in parallel) and time a request through it.
+"""Config tester: fetch a subscription, run each config in its own xray / hiddify-core process (a local SOCKS port each, in parallel) and time requests through it.
 
 * xray subscription (JSON config or list of configs): every config runs in ``xray`` with its inbounds replaced by one SOCKS inbound.
 * hiddify-core / sing-box subscription (JSON with ``outbounds``): every proxy outbound runs alone in ``hiddify-core srun``.
-* anything else (links, base64, clash...): ``hiddify-core parse`` turns it into a hiddify-core config first.
+* share links (also base64): each one goes through ``hiddify-core parse`` on its own.
+* anything else (clash...): ``hiddify-core parse`` turns it into a hiddify-core config first.
+
+Errors that belong to the input are ``TesterError`` (their text is shown to the admin); one config that fails never stops the others.
 """
 
 from __future__ import annotations
 
 import base64
+import binascii
 import copy
 import json
 import os
@@ -16,194 +20,293 @@ import shutil
 import socket
 import subprocess
 import tempfile
+import threading
 import time
+from collections import deque
+from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
 from pathlib import Path
-from queue import Queue
-from typing import Any, Iterator
+from urllib.parse import unquote
 
 import requests
 
+from hiddifypanel.proxy_v3.config_tester_types import (
+    DoneEvent,
+    Event,
+    Fetched,
+    FetchedHttp,
+    FetchedPasted,
+    Item,
+    ItemInfo,
+    Json,
+    JsonObject,
+    Kind,
+    KeepAliveEvent,
+    PingOut,
+    PingResult,
+    ResultEvent,
+    Source,
+    StartEvent,
+    TesterError,
+    obj,
+    objects,
+    text,
+)
 from hiddifypanel.proxy_v3.outbound_custom import CORE_BIN, CORE_DIR, XRAY_BIN
+
+__all__ = ["DEFAULT_REPEATS", "DEFAULT_TEST_URL", "TesterError", "rerun", "run"]
 
 MAX_CONFIGS = 300
 MAX_BODY = 20_000_000
 RAW_LIMIT = 500_000
 FETCH_TIMEOUT = 30
 STARTUP_TIMEOUT = 8
+MAX_REPEATS = 10
+MAX_WORKERS = 32
 DEFAULT_UA = "HiddifyNext/5.0.0 (linux) like ClashMeta v2ray sing-box"
 DEFAULT_REPEATS = 3
 DEFAULT_TEST_URL = "https://www.gstatic.com/generate_204"
 PORT_RANGE = (21000, 29000)
+LOG_HEAD = 100_000
+LOG_TAIL = 200_000
+NO_CONFIG = "hiddify-core could not find any config in the subscription: "
 
 #: sing-box outbounds that route or group other outbounds and are not a proxy themselves.
 _NOT_PROXY = {"direct", "block", "dns", "selector", "urltest", "fallback", "loadbalance"}
-
-
-class TesterError(Exception):
-    pass
-
-
-@dataclass
-class Item:
-    index: int
-    name: str
-    kind: str  # xray | core
-    config: dict[str, Any]
-    tag: str = ""  # core: the outbound / endpoint to route to
-    original: Any = None  # the config as the subscription has it
+_XRAY_NOT_PROXY = {"freedom", "blackhole", "dns", "loopback"}
+_LINK = re.compile(r"^[a-z][a-z0-9+.-]*://", re.IGNORECASE)
+_ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 
 # --------------------------------------------------------------------------- fetch and split
 
 
-def fetch(url: str, user_agent: str) -> tuple[str, dict[str, Any]]:
+def fetch(url: str, user_agent: str) -> tuple[str, FetchedHttp]:
     """The subscription text and what was asked / answered (so the page can show the user agent really sent)."""
     ua = user_agent.strip() or DEFAULT_UA
     try:
         res = requests.get(url, headers={"User-Agent": ua}, timeout=FETCH_TIMEOUT, stream=True)
         res.raise_for_status()
         body = res.raw.read(MAX_BODY + 1, decode_content=True)
-    except requests.RequestException as e:
+    except Exception as e:  # requests, urllib3 and the network all have their own errors: all of them are "could not fetch"
         raise TesterError(f"Could not fetch the subscription: {e}") from None
     if len(body) > MAX_BODY:
         raise TesterError("The subscription is too large")
-    info = {"user_agent": ua, "status": res.status_code, "content_type": res.headers.get("Content-Type", ""), "bytes": len(body)}
+    info = FetchedHttp(user_agent=ua, status=res.status_code, content_type=res.headers.get("Content-Type", ""), bytes=len(body))
     return body.decode("utf-8", errors="replace"), info
 
 
-def _json(text: str) -> Any:
+def _parse_json(raw: str) -> Json:
     try:
-        return json.loads(text)
-    except ValueError:
+        value: Json = json.loads(raw)
+    except (ValueError, RecursionError):
         return None
+    return value
 
 
-def _is_xray(cfg: Any) -> bool:
-    return isinstance(cfg, dict) and any(isinstance(o, dict) and "protocol" in o for o in cfg.get("outbounds") or [])
+def _is_xray(cfg: Json) -> bool:
+    return any("protocol" in o for o in objects(obj(cfg).get("outbounds")))
 
 
-def _is_core(cfg: Any) -> bool:
-    return isinstance(cfg, dict) and any(isinstance(o, dict) and "type" in o for o in [*(cfg.get("outbounds") or []), *(cfg.get("endpoints") or [])])
+def _is_core(cfg: Json) -> bool:
+    config = obj(cfg)
+    return any("type" in o for o in [*objects(config.get("outbounds")), *objects(config.get("endpoints"))])
 
 
-def _xray_name(cfg: dict[str, Any], i: int) -> str:
-    if cfg.get("remarks"):
-        return str(cfg["remarks"])
-    for o in cfg.get("outbounds") or []:
-        if o.get("protocol") not in ("freedom", "blackhole", "dns", "loopback"):
-            return f"{o.get('protocol')} {i + 1}"
+def _xray_name(cfg: JsonObject, i: int) -> str:
+    if remarks := text(cfg.get("remarks")):
+        return remarks
+    for o in objects(cfg.get("outbounds")):
+        protocol = text(o.get("protocol"))
+        if protocol and protocol not in _XRAY_NOT_PROXY:
+            return f"{protocol} {i + 1}"
     return f"config {i + 1}"
 
 
-def split(text: str) -> tuple[str, list[Item], dict[str, Any] | None]:
-    """``(source kind, items, parsed)``: ``xray``, ``core`` or ``parsed`` (links converted by hiddify-core, that result is ``parsed``)."""
-    data = _json(text)
-    if data is None:
-        stripped = text.strip()
-        try:  # a base64 body of links
-            decoded = base64.b64decode(stripped + "=" * (-len(stripped) % 4), validate=False).decode("utf-8")
-            if "://" in decoded:
-                text = decoded
-        except Exception:
-            pass
-    if isinstance(data, dict) and not _is_xray(data) and not _is_core(data):
-        data = None
+def _xray_item(index: int, cfg: JsonObject) -> Item:
+    return Item(index, _xray_name(cfg, index), "xray", cfg, original=cfg)
+
+
+def _decode_base64_links(raw: str) -> str:
+    """The text of a base64 body of links; the text itself when it is not one."""
+    stripped = raw.strip()
+    try:
+        decoded = base64.b64decode(stripped + "=" * (-len(stripped) % 4)).decode("utf-8")
+    except (binascii.Error, ValueError):  # not base64, or not text (UnicodeDecodeError is a ValueError)
+        return raw
+    return decoded if "://" in decoded else raw
+
+
+def split(raw: str) -> tuple[Source, list[Item], JsonObject | None]:
+    """``(source, items, parsed)``: ``xray``, ``core`` or ``parsed`` (links converted by hiddify-core; that result is ``parsed``)."""
+    data = _parse_json(raw)
     if isinstance(data, list):
-        configs = [c for c in data if _is_xray(c)]
+        configs = [c for c in objects(data) if _is_xray(c)]
         if configs:
-            return "xray", [Item(i, _xray_name(c, i), "xray", c, original=c) for i, c in enumerate(configs[:MAX_CONFIGS])], None
-        data = None
-    if data is not None and _is_xray(data):
-        return "xray", [Item(0, _xray_name(data, 0), "xray", data, original=data)], None
-    if data is not None:
-        return "core", _core_items(data), None
-    parsed = parse_with_core(text)
-    return "parsed", _core_items(parsed), parsed
+            return "xray", [_xray_item(i, c) for i, c in enumerate(configs[:MAX_CONFIGS])], None
+    elif isinstance(data, dict):
+        if _is_xray(data):
+            return "xray", [_xray_item(0, data)], None
+        if _is_core(data):
+            return "core", _core_items(data), None
+    # not a config in JSON: links (also base64), or something hiddify-core can read
+    body = _decode_base64_links(raw) if data is None else raw
+    lines = _link_lines(body)
+    if lines:  # one link at a time: hiddify-core joins a link into the next line when it ends oddly, and one unknown link must not fail the rest
+        items, parsed = parse_links(lines)
+        return "parsed", items, parsed
+    parsed_config = parse_with_core(body)
+    return "parsed", _core_items(parsed_config), parsed_config
 
 
-def _core_items(cfg: dict[str, Any]) -> list[Item]:
+def _core_items(cfg: JsonObject) -> list[Item]:
     sections = ("outbounds", "endpoints")
-    by_tag = {str(o["tag"]): (sec, o) for sec in sections for o in cfg.get(sec) or [] if isinstance(o, dict) and o.get("tag")}
+    by_tag: dict[str, tuple[str, JsonObject]] = {}
+    for sec in sections:
+        for o in objects(cfg.get(sec)):
+            if tag := text(o.get("tag")):
+                by_tag[tag] = (sec, o)
     items: list[Item] = []
     for section in sections:
-        for o in cfg.get(section) or []:
-            if not isinstance(o, dict) or not o.get("tag") or str(o.get("type")) in _NOT_PROXY:
+        for o in objects(cfg.get(section)):
+            tag = text(o.get("tag"))
+            if not tag or text(o.get("type")) in _NOT_PROXY:
                 continue
             # the entry and the chain it dials through (detour); nothing else needs to run
-            base: dict[str, Any] = {}
-            sec, cur, seen = section, o, set()
-            while cur is not None and str(cur["tag"]) not in seen:
-                seen.add(str(cur["tag"]))
-                base.setdefault(sec, []).append(copy.deepcopy(cur))
-                nxt = by_tag.get(str(cur.get("detour") or ""))
-                sec, cur = nxt if nxt else (sec, None)
-            items.append(Item(len(items), str(o["tag"]), "core", base, tag=str(o["tag"]), original=o))
+            base: JsonObject = {}
+            seen: set[str] = set()
+            current: tuple[str, JsonObject] | None = (section, o)
+            while current is not None and text(current[1].get("tag")) not in seen:
+                sec, node = current
+                seen.add(text(node.get("tag")))
+                chain = base.setdefault(sec, [])
+                if isinstance(chain, list):
+                    chain.append(copy.deepcopy(node))
+                current = by_tag.get(text(node.get("detour")))
+            items.append(Item(len(items), tag, "core", base, tag=tag, original=o))
             if len(items) >= MAX_CONFIGS:
                 return items
     return items
 
 
-def parse_with_core(text: str) -> dict[str, Any]:
+def _link_lines(raw: str) -> list[str]:
+    """The lines when the text is nothing but share links (comments aside), else none."""
+    lines = [line.strip() for line in raw.splitlines() if line.strip() and not line.strip().startswith(("#", "//"))]
+    return lines if lines and all(_LINK.match(line) for line in lines) else []
+
+
+def _clean(raw: str) -> str:
+    return _ANSI.sub("", raw)
+
+
+def _core_error(message: str) -> str:
+    """The line of hiddify-core's complaint that says what is wrong."""
+    lines = [_clean(line).strip() for line in message.splitlines() if line.strip()]
+    useful = [line for line in lines if not line.startswith(("Error in", "FATAL", "Convert using")) and "unable to determine" not in line]
+    return (useful or lines or ["could not be parsed"])[0][:200]
+
+
+def _failed_link(index: int, name: str, line: str, error: str) -> Item:
+    return Item(index, name, "core", {}, original={"link": line}, error=error)
+
+
+def _parse_link(index: int, line: str) -> Item:
+    name = unquote(line.split("#", 1)[1]).strip() if "#" in line else line[:60]
+    name = name or line[:60]
+    try:
+        cfg = parse_with_core(line)
+    except TesterError as e:
+        return _failed_link(index, name, line, str(e).removeprefix(NO_CONFIG))
+    got = _core_items(cfg)
+    if not got:
+        return _failed_link(index, name, line, "nothing to test in this link")
+    item = got[0]
+    item.index = index
+    if item.tag:  # hiddify-core numbers tags by their place in what it was given: here, the place in the whole list
+        new = re.sub(r" § \d+$", f" § {index}", item.tag)
+        for sec in ("outbounds", "endpoints"):
+            for o in objects(item.config.get(sec)):
+                if text(o.get("tag")) == item.tag:
+                    o["tag"] = new
+        if isinstance(item.original, dict):
+            item.original["tag"] = new
+        item.name = item.tag = new
+    return item
+
+
+def parse_links(lines: list[str]) -> tuple[list[Item], JsonObject]:
+    """Each link through ``hiddify-core parse`` (a few at once). A link that fails is an item that failed, in its place."""
+    chosen = lines[:MAX_CONFIGS]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        items = list(pool.map(_parse_link, range(len(chosen)), chosen))
+    working = [i for i in items if not i.error]
+    parsed: JsonObject = {}
+    if outbounds := [i.original for i in working if i.config.get("outbounds")]:
+        parsed["outbounds"] = outbounds
+    if endpoints := [i.original for i in working if i.config.get("endpoints") and not i.config.get("outbounds")]:
+        parsed["endpoints"] = endpoints
+    return items, parsed
+
+
+def parse_with_core(raw: str) -> JsonObject:
     if not CORE_BIN.exists():
         raise TesterError("hiddify-core is not installed")
     with tempfile.TemporaryDirectory(prefix="cfgtest-parse-") as tmp:
         src = Path(tmp) / "sub.txt"
-        src.write_text(text, encoding="utf-8")
+        src.write_text(raw, encoding="utf-8")
         try:
-            res = subprocess.run([str(CORE_BIN), "parse", str(src), "-D", tmp], capture_output=True, text=True, timeout=60, cwd=str(CORE_DIR if CORE_DIR.is_dir() else tmp))
+            res = subprocess.run([str(CORE_BIN), "parse", str(src), "-D", tmp], capture_output=True, text=True, timeout=60, cwd=str(CORE_DIR if CORE_DIR.is_dir() else tmp), check=False)
         except subprocess.TimeoutExpired:
             raise TesterError("hiddify-core parse timed out") from None
-    out = res.stdout
-    start = out.find("{")
-    cfg = _json(out[start:]) if start >= 0 else None
+        except OSError as e:
+            raise TesterError(f"hiddify-core could not be run: {e}") from None
+    start = res.stdout.find("{")
+    cfg = _parse_json(res.stdout[start:]) if start >= 0 else None
     if not isinstance(cfg, dict) or not _is_core(cfg):
-        raise TesterError("hiddify-core could not find any config in the subscription: " + (res.stderr or out)[-300:].strip())
+        raise TesterError(NO_CONFIG + _core_error(res.stderr or res.stdout))
     return cfg
 
 
 # --------------------------------------------------------------------------- run one
 
 
-def _free_port(taken: set[int]) -> int:
+def _free_port(taken: set[int], lock: threading.Lock) -> int:
+    """A local port nothing listens on, reserved in ``taken`` until the caller discards it."""
     for _ in range(200):
         port = PORT_RANGE[0] + int.from_bytes(os.urandom(2), "big") % (PORT_RANGE[1] - PORT_RANGE[0])
-        if port in taken:
-            continue
-        with socket.socket() as s:
-            try:
-                s.bind(("127.0.0.1", port))
-            except OSError:
+        with lock:
+            if port in taken:
                 continue
-        taken.add(port)
-        return port
+            with socket.socket() as s:
+                try:
+                    s.bind(("127.0.0.1", port))
+                except OSError:  # in use
+                    continue
+            taken.add(port)
+            return port
     raise TesterError("No free local port")
 
 
-def build_config(item: Item, port: int) -> dict[str, Any]:
+def build_config(item: Item, port: int) -> JsonObject:
+    """The config as it runs: the same, with one local SOCKS inbound and logs on."""
+    cfg = copy.deepcopy(item.config)
     if item.kind == "xray":
-        cfg = copy.deepcopy(item.config)
         cfg["log"] = {"loglevel": "debug"}
         cfg["inbounds"] = [{"tag": "test-in", "listen": "127.0.0.1", "port": port, "protocol": "socks", "settings": {"udp": False}}]
-        cfg.pop("routing", None)  # the first outbound is the default
-        cfg.pop("api", None)
-        cfg.pop("stats", None)
-        cfg.pop("policy", None)
+        for key in ("routing", "api", "stats", "policy"):  # without routing the first outbound is the default
+            cfg.pop(key, None)
         return cfg
-    cfg = copy.deepcopy(item.config)
+    outbounds = objects(cfg.get("outbounds"))
+    have = {text(o.get("tag")) for o in outbounds}
+    extra: list[Json] = [{"tag": tag, "type": "direct"} for tag in ("direct", "freedom") if tag not in have]
+    cfg["outbounds"] = [*outbounds, *extra]
     cfg["log"] = {"level": "trace", "timestamp": True}
-    cfg.setdefault("outbounds", [])
-    have = {o.get("tag") for o in cfg["outbounds"]}
-    for t, typ in (("direct", "direct"), ("freedom", "direct")):
-        if t not in have:
-            cfg["outbounds"].append({"tag": t, "type": typ})
     cfg["inbounds"] = [{"type": "mixed", "tag": "test-in", "listen": "127.0.0.1", "listen_port": port}]
     cfg["route"] = {"final": item.tag, "auto_detect_interface": False}
     return cfg
 
 
-def _wait_port(port: int, proc: subprocess.Popen, timeout: float) -> bool:
+def _wait_port(port: int, proc: subprocess.Popen[bytes], timeout: float) -> bool:
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         if proc.poll() is not None:
@@ -216,25 +319,15 @@ def _wait_port(port: int, proc: subprocess.Popen, timeout: float) -> bool:
     return False
 
 
-def _tail(text: str) -> str:
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
+def _last_line(raw: str) -> str:
+    lines = [line.strip() for line in raw.splitlines() if line.strip()]
     return (lines[-1] if lines else "")[-300:]
-
-
-_ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
-LOG_HEAD = 100_000
-LOG_TAIL = 200_000
-
-
-def _clean(text: str) -> str:
-    return _ANSI.sub("", text)
 
 
 def _read_log(path: Path) -> str:
     """The core's trace log without colours; a huge one keeps its start and its end."""
     try:
-        with open(path, "rb") as f:
-            data = f.read()
+        data = path.read_bytes()
     except OSError:
         return ""
     if len(data) > LOG_HEAD + LOG_TAIL:
@@ -242,131 +335,227 @@ def _read_log(path: Path) -> str:
     return _clean(data.decode("utf-8", errors="replace"))
 
 
-def _ping(port: int, test_url: str, timeout: int) -> dict[str, Any]:
+def _ping(port: int, test_url: str, timeout: int) -> PingResult:
     """One request through the local SOCKS port."""
+    cmd = ["curl", "-sS", "-v", "-o", "/dev/null", "-x", f"socks5h://127.0.0.1:{port}", "--max-time", str(timeout), "-w", "%{http_code} %{time_connect} %{time_starttransfer} %{time_total}", test_url]
     try:
-        res = subprocess.run(
-            ["curl", "-sS", "-v", "-o", "/dev/null", "-x", f"socks5h://127.0.0.1:{port}", "--max-time", str(timeout), "-w", "%{http_code} %{time_connect} %{time_starttransfer} %{time_total}", test_url],
-            capture_output=True,
-            text=True,
-            timeout=timeout + 5,
-        )
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout + 5, check=False)
     except subprocess.TimeoutExpired:
-        return {"ok": False, "error": "timeout"}
+        return PingResult(ok=False, error="timeout")
+    except OSError as e:
+        return PingResult(ok=False, error=f"curl could not be run: {e}")
     parts = res.stdout.split()
     if res.returncode == 0 and len(parts) == 4 and parts[0].startswith(("2", "3")):
-        return {"ok": True, "status": int(parts[0]), "connect_ms": int(float(parts[1]) * 1000), "ttfb_ms": int(float(parts[2]) * 1000), "delay_ms": int(float(parts[3]) * 1000), "curl_log": res.stderr}
-    err_lines = [l for l in res.stderr.splitlines() if l.startswith("curl:")]
-    return {"ok": False, "error": (err_lines[-1] if err_lines else "") or (f"HTTP {parts[0]}" if parts else "failed"), "curl_log": res.stderr}
+        try:
+            return PingResult(ok=True, status=int(parts[0]), connect_ms=int(float(parts[1]) * 1000), ttfb_ms=int(float(parts[2]) * 1000), delay_ms=int(float(parts[3]) * 1000), curl_log=res.stderr)
+        except ValueError:
+            pass  # curl wrote something else than numbers: counted as a failure below
+    err_lines = [line for line in res.stderr.splitlines() if line.startswith("curl:")]
+    return PingResult(ok=False, error=(err_lines[-1] if err_lines else "") or (f"HTTP {parts[0]}" if parts else "failed"), curl_log=res.stderr)
 
 
-def run_one(item: Item, port: int, test_url: str, timeout: int, repeats: int = 3) -> dict[str, Any]:
-    out: dict[str, Any] = {"index": item.index, "name": item.name, "kind": item.kind, "ok": False, "original": item.original, "tag": item.tag}
+def _ping_out(p: PingResult) -> PingOut:
+    out = PingOut(ok=p.ok)
+    if p.ok:
+        out["delay_ms"] = p.delay_ms
+    else:
+        out["error"] = p.error
+    return out
+
+
+def _failed_result(item: Item, error: str, *, log: str = "") -> ResultEvent:
+    """A result for a config that did not get to run (or that no test could pass)."""
+    result = ResultEvent(event="result", index=item.index, name=item.name, kind=item.kind, ok=False, tag=item.tag, original=item.original, error=error, pings=[PingOut(ok=False, error=error)], tries=1, ok_count=0)
+    if log:
+        result["log"] = log
+    return result
+
+
+def run_one(item: Item, port: int, test_url: str, timeout: int, repeats: int = DEFAULT_REPEATS) -> ResultEvent:
+    """Start the config in its core, send ``repeats`` requests through it, stop it. The result tells how it went; it never raises."""
+    result = ResultEvent(event="result", index=item.index, name=item.name, kind=item.kind, ok=False, tag=item.tag, original=item.original)
     tmp = tempfile.mkdtemp(prefix="cfgtest-")
-    proc: subprocess.Popen | None = None
+    proc: subprocess.Popen[bytes] | None = None
     log_path = Path(tmp) / "core.log"
-    curl_log = ""
+    curl_logs: list[str] = []
     try:
-        path = Path(tmp) / "config.json"
         run_cfg = build_config(item, port)
-        out["run_config"] = run_cfg
+        result["run_config"] = run_cfg
+        path = Path(tmp) / "config.json"
         path.write_text(json.dumps(run_cfg), encoding="utf-8")
-        if item.kind == "xray":
-            binary = XRAY_BIN
-            cmd = [str(binary), "run", "-c", str(path)]
-        else:
-            binary = CORE_BIN
-            cmd = [str(binary), "srun", "-c", str(path), "-D", tmp]
+        binary = XRAY_BIN if item.kind == "xray" else CORE_BIN
+        cmd = [str(binary), "run", "-c", str(path)] if item.kind == "xray" else [str(binary), "srun", "-c", str(path), "-D", tmp]
         if not binary.exists():
-            out["error"] = f"{binary.name} is not installed"
-            return out
-        with open(log_path, "wb") as log_file:  # a file, not a pipe: a trace log would fill the pipe and stop the core
-            proc = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT, cwd=str(CORE_DIR if item.kind == "core" and CORE_DIR.is_dir() else tmp))
+            result["error"] = f"{binary.name} is not installed"
+            return result
+        cwd = str(CORE_DIR) if item.kind == "core" and CORE_DIR.is_dir() else tmp
+        with log_path.open("wb") as log_file:  # a file, not a pipe: a trace log would fill the pipe and stop the core
+            proc = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT, cwd=cwd)
         if not _wait_port(port, proc, STARTUP_TIMEOUT):
-            if proc.poll() is not None:
-                out["error"] = "config rejected: " + _tail(_read_log(log_path))
-            else:
-                out["error"] = "the core did not start in time"
-            return out
-        pings: list[dict[str, Any]] = []
+            result["error"] = ("config rejected: " + _last_line(_read_log(log_path))) if proc.poll() is not None else "the core did not start in time"
+            return result
         started = time.monotonic()
-        for n in range(max(1, repeats)):
+        pings: list[PingResult] = []
+        for n in range(max(1, min(repeats, MAX_REPEATS))):
             pings.append(_ping(port, test_url, timeout))
-            curl_log += f"\n----- test {n + 1} -----\n" + pings[-1].pop("curl_log", "")
-        out["elapsed_ms"] = int((time.monotonic() - started) * 1000)
-        good = [p for p in pings if p["ok"]]
-        out["pings"] = pings
-        out["tries"] = len(pings)
-        out["ok_count"] = len(good)
+            curl_logs.append(f"----- test {n + 1} -----\n{pings[-1].curl_log}")
+        good = [p for p in pings if p.ok]
+        result["elapsed_ms"] = int((time.monotonic() - started) * 1000)
+        result["pings"] = [_ping_out(p) for p in pings]
+        result["tries"] = len(pings)
+        result["ok_count"] = len(good)
         if good:
-            out.update(ok=True, delay_ms=round(sum(p["delay_ms"] for p in good) / len(good)), status=good[-1]["status"], connect_ms=good[-1]["connect_ms"], ttfb_ms=good[-1]["ttfb_ms"])
+            result["ok"] = True
+            result["delay_ms"] = round(sum(p.delay_ms for p in good) / len(good))
+            result["status"], result["connect_ms"], result["ttfb_ms"] = good[-1].status, good[-1].connect_ms, good[-1].ttfb_ms
         else:
-            out["error"] = pings[-1].get("error") or "failed"
-        return out
-    except Exception as e:  # one bad config must never stop the others
-        out["error"] = str(e)[:300]
-        return out
+            result["error"] = pings[-1].error or "failed"
+        return result
+    except Exception as e:  # one bad config must never stop the others  # noqa: BLE001
+        result["error"] = str(e)[:300] or type(e).__name__
+        return result
     finally:
-        if proc and proc.poll() is None:
+        if proc is not None and proc.poll() is None:
             proc.kill()
             try:
                 proc.wait(timeout=3)
             except subprocess.TimeoutExpired:
-                pass
+                pass  # it is killed; the system collects it
         log = _read_log(log_path)
-        if curl_log:
-            log += "\n\n===== curl =====\n" + curl_log
-        out["log"] = log
+        if curl_logs:
+            log += "\n\n===== curl =====\n" + "\n".join(curl_logs)
+        result["log"] = log
         shutil.rmtree(tmp, ignore_errors=True)
 
 
 # --------------------------------------------------------------------------- the whole run
 
 
-def run(url: str, user_agent: str, *, test_url: str = DEFAULT_TEST_URL, workers: int = 8, timeout: int = 10, repeats: int = DEFAULT_REPEATS) -> Iterator[dict[str, Any]]:
-    """Events: ``{"event": "start", source, total, items}``, one ``{"event": "result", ...}`` per config, then ``{"event": "done"}``."""
-    text, fetched = fetch(url, user_agent)
-    source, items, parsed = split(text)
+def run(
+    url: str,
+    user_agent: str,
+    *,
+    content: str | None = None,
+    test_url: str = DEFAULT_TEST_URL,
+    workers: int = 8,
+    timeout: int = 10,
+    repeats: int = DEFAULT_REPEATS,
+    should_stop: Callable[[], bool] | None = None,
+) -> Iterator[Event]:
+    """Events: ``start`` (once), a ``result`` per config, ``ping`` while nothing finishes, then ``done``."""
+    fetched: Fetched
+    if content is not None:  # pasted: nothing to fetch
+        size = len(content.encode())
+        if size > MAX_BODY:
+            raise TesterError("The contents are too large")
+        raw, fetched = content, FetchedPasted(pasted=True, bytes=size)
+    else:
+        raw, fetched = fetch(url, user_agent)
+    source, items, parsed = split(raw)
     if not items:
         raise TesterError("No config found in the subscription")
-    yield {"event": "start", "source": source, "total": len(items), "fetched": fetched, "raw": text[:RAW_LIMIT], "parsed": parsed, "items": [{"index": i.index, "name": i.name, "kind": i.kind} for i in items]}
-    yield from _execute(items, test_url, workers, timeout, repeats)
+    yield StartEvent(
+        event="start",
+        source=source,
+        total=len(items),
+        fetched=fetched,
+        raw=raw[:RAW_LIMIT],
+        parsed=parsed,
+        items=[ItemInfo(index=i.index, name=i.name, kind=i.kind) for i in items],
+    )
+    yield from _execute(items, test_url, workers, timeout, repeats, should_stop)
 
 
-def rerun(raw_items: list[dict[str, Any]], *, test_url: str = DEFAULT_TEST_URL, workers: int = 8, timeout: int = 10, repeats: int = DEFAULT_REPEATS) -> Iterator[dict[str, Any]]:
-    """Test configs again. Each is ``{index, name, kind, tag, config}`` as the page has it from an earlier result (``config`` is its ``run_config``)."""
-    items: list[Item] = []
-    for r in raw_items[:MAX_CONFIGS]:
-        cfg = r.get("config")
-        if r.get("kind") not in ("xray", "core") or not isinstance(cfg, dict):
-            raise TesterError("Bad config to test again")
-        original = r.get("original")
-        items.append(Item(int(r["index"]), str(r.get("name") or ""), str(r["kind"]), cfg, tag=str(r.get("tag") or ""), original=original if original is not None else cfg))
-    yield from _execute(items, test_url, workers, timeout, repeats)
+def _rerun_item(raw: object, split_cache: dict[str, list[Item]]) -> Item:
+    """One config to test again, as the page sends it: ``{index, name, kind, tag, original, config, content}``."""
+    entry = obj(raw)
+    index = entry.get("index")
+    if isinstance(index, bool) or not isinstance(index, int):
+        raise TesterError("Bad config to test again: it has no place number")
+    name = text(entry.get("name"))
+    edited = text(entry.get("content"))
+    if edited.strip():  # the link or the JSON was edited: test what it says now
+        lines = _link_lines(edited)
+        if lines:
+            item = _parse_link(index, lines[0])
+        else:
+            if edited not in split_cache:
+                split_cache[edited] = split(edited)[1]
+            same = next((i for i in split_cache[edited] if i.index == index), None)
+            if same is None:
+                raise TesterError("The edited subscription has no config in the place of this one")
+            item = copy.copy(same)
+        item.index = index
+        item.name = name or item.name
+        return item
+    kind = entry.get("kind")
+    config = entry.get("config")
+    if kind not in ("xray", "core") or not isinstance(config, dict):
+        raise TesterError("Bad config to test again")
+    original = entry.get("original")
+    typed_kind: Kind = "xray" if kind == "xray" else "core"
+    return Item(index, name, typed_kind, config, tag=text(entry.get("tag")), original=config if original is None else original)
 
 
-def _execute(items: list[Item], test_url: str, workers: int, timeout: int, repeats: int) -> Iterator[dict[str, Any]]:
-    workers = max(1, min(int(workers), 32))
-    q: Queue = Queue()
+def rerun(
+    raw_items: list[object],
+    *,
+    test_url: str = DEFAULT_TEST_URL,
+    workers: int = 8,
+    timeout: int = 10,
+    repeats: int = DEFAULT_REPEATS,
+    should_stop: Callable[[], bool] | None = None,
+) -> Iterator[Event]:
+    """Test configs again (the ones the page has from an earlier result, or edited)."""
+    split_cache: dict[str, list[Item]] = {}
+    items = [_rerun_item(raw, split_cache) for raw in raw_items[:MAX_CONFIGS]]
+    yield from _execute(items, test_url, workers, timeout, repeats, should_stop)
+
+
+def _execute(items: list[Item], test_url: str, workers: int, timeout: int, repeats: int, should_stop: Callable[[], bool] | None = None) -> Iterator[Event]:
+    # Finished tests are handed over with a condition, not a queue with a timeout: that raises an exception on every quiet
+    # moment, and a debugger stopping on exceptions would freeze the whole panel there.
+    results: deque[ResultEvent] = deque()
+    cond = threading.Condition()
     taken: set[int] = set()
+    taken_lock = threading.Lock()
+
+    def put(ev: ResultEvent) -> None:
+        with cond:
+            results.append(ev)
+            cond.notify()
 
     def job(item: Item) -> None:
         try:
-            port = _free_port(taken)
-        except TesterError as e:
-            q.put({"event": "result", "index": item.index, "name": item.name, "kind": item.kind, "ok": False, "error": str(e)})
-            return
-        try:
-            q.put({"event": "result", **run_one(item, port, test_url, timeout, max(1, min(int(repeats), 10)))})
-        finally:
-            taken.discard(port)
+            if item.error:  # nothing to run: it is its own failure
+                put(_failed_result(item, item.error, log=item.error))
+                return
+            port = _free_port(taken, taken_lock)
+            try:
+                put(run_one(item, port, test_url, timeout, repeats))
+            finally:
+                with taken_lock:
+                    taken.discard(port)
+        except Exception as e:  # whatever happens, the page gets a result for it and does not wait for it  # noqa: BLE001
+            put(_failed_result(item, str(e) or type(e).__name__))
 
-    pool = ThreadPoolExecutor(max_workers=workers)
+    pool = ThreadPoolExecutor(max_workers=max(1, min(workers, MAX_WORKERS)))
     try:
-        for i in items:
-            pool.submit(job, i)
-        for _ in items:
-            yield q.get()
-    finally:  # also when the client went away: stop what has not started
+        for item in items:
+            pool.submit(job, item)
+        done = 0
+        while done < len(items):
+            if should_stop is not None and should_stop():  # asked to stop: leave through the end below, nothing not started will start
+                break
+            with cond:
+                if not results:
+                    cond.wait(5)
+                ev = results.popleft() if results else None
+            if ev is None:  # nothing finished for a while: a line anyway, so nothing takes the test for dead
+                yield KeepAliveEvent(event="ping")
+            else:
+                done += 1
+                yield ev
+    finally:  # also when the reader went away: stop what has not started
         pool.shutdown(wait=False, cancel_futures=True)
-    yield {"event": "done"}
+    yield DoneEvent(event="done")

@@ -8,10 +8,13 @@
         <InputIcon class="pi pi-search" />
         <InputText v-model="search" :placeholder="t('configTester.sub.search')" dir="auto" spellcheck="false" fluid />
       </IconField>
+      <Tag v-if="jsonChanged" :value="t('configTester.sub.edited')" severity="warn" />
+      <Button v-if="jsonChanged" icon="pi pi-bolt" :label="t('configTester.sub.testEdited')" size="small" @click="emit('testAll')" />
+      <Button v-if="jsonChanged" icon="pi pi-undo" :label="t('configTester.sub.reset')" size="small" severity="secondary" text @click="resetJson" />
       <Button icon="pi pi-angle-double-down" :label="t('configTester.sub.expandAll')" size="small" text @click="setDepth(99)" />
       <Button icon="pi pi-angle-double-up" :label="t('configTester.sub.collapseAll')" size="small" text @click="setDepth(1)" />
     </div>
-    <div class="sv__tree"><JsonTree :key="treeKey" :value="json" :open-depth="depth" :query="search" />
+    <div class="sv__tree"><JsonTree :key="treeKey" :value="doc" :open-depth="depth" :query="search" editable @set="setJson" @edit-node="openNode" />
       <p v-if="search.trim() && !jsonHits" class="sv__empty">{{ t('configTester.sub.noMatch') }}</p></div>
   </div>
 
@@ -41,6 +44,7 @@
         <div v-if="openIndex === i" class="sv__edit">
           <SublinkEditor v-model:links="editing" id-prefix="ct-sub-" @change="onEdit(i)" />
           <div class="sv__edit-actions">
+            <Button icon="pi pi-bolt" :label="t('configTester.sub.testThis')" size="small" @click="emit('test', i)" />
             <Button icon="pi pi-copy" :label="t('configTester.sub.copyLink')" size="small" severity="secondary" outlined @click="copy(l.text)" />
             <Button v-if="l.text !== l.original" icon="pi pi-undo" :label="t('configTester.sub.reset')" size="small" severity="secondary" text @click="reset(i)" />
           </div>
@@ -49,6 +53,17 @@
       </li>
     </ul>
   </div>
+
+  <!-- A whole object or list as text: for adding and removing what the tree cannot -->
+  <Dialog v-model:visible="nodeOpen" modal :header="t('configTester.sub.editNode')" :style="{ width: '44rem', maxWidth: '96vw' }" :breakpoints="{ '640px': '100vw' }">
+    <p class="sv__hint sv__path" dir="ltr">{{ nodePath.length ? nodePath.join(' › ') : t('configTester.sub.whole') }}</p>
+    <Textarea v-model="nodeText" class="sv__node font-mono" dir="ltr" :rows="16" :auto-resize="false" spellcheck="false" fluid />
+    <Message v-if="nodeError" severity="error" class="mt-2" :closable="false">{{ nodeError }}</Message>
+    <template #footer>
+      <Button :label="t('common.cancel')" severity="secondary" text @click="nodeOpen = false" />
+      <Button icon="pi pi-check" :label="t('configTester.sub.apply')" @click="applyNode" />
+    </template>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -57,6 +72,8 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import Dialog from 'primevue/dialog'
+import Textarea from 'primevue/textarea'
 import Tag from 'primevue/tag'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
@@ -69,7 +86,8 @@ import { parseSublinks, tryStringifySublinks, unwrapSubscriptionText, type Prett
  * What the panel answered: JSON as a tree, share links one per line (also when the whole body is base64);
  * a line opens the same editor as Utils (parse, edit, copy).
  */
-const props = defineProps<{ raw: string }>()
+const props = defineProps<{ raw: string; edited?: Record<number, string> }>()
+const emit = defineEmits<{ edit: [index: number, text: string, original: string]; test: [index: number]; jsonEdit: [text: string, original: string]; testAll: [] }>()
 const { t } = useI18n()
 const toast = useToast()
 
@@ -87,6 +105,61 @@ const jsonSummary = computed(() => {
   if (Array.isArray(v)) return t('configTester.sub.items', { n: v.length })
   return v && typeof v === 'object' ? t('configTester.sub.keys', { n: Object.keys(v).length }) : ''
 })
+/** The JSON as edited here; `json` stays what was received. */
+const doc = ref<unknown>(null)
+const jsonChanged = computed(() => json.value !== undefined && JSON.stringify(doc.value) !== JSON.stringify(json.value))
+watch(
+  json,
+  (v) => {
+    doc.value = v === undefined ? null : JSON.parse(JSON.stringify(v))
+  },
+  { immediate: true },
+)
+
+type Path = (string | number)[]
+
+function setAtPath(root: unknown, path: Path, value: unknown): unknown {
+  if (!path.length) return value
+  let node = root as Record<string | number, unknown>
+  for (const key of path.slice(0, -1)) node = node[key] as Record<string | number, unknown>
+  node[path[path.length - 1]] = value
+  return root
+}
+function changed() {
+  emit('jsonEdit', JSON.stringify(doc.value, null, 2), JSON.stringify(json.value, null, 2))
+}
+function setJson(path: Path, value: unknown) {
+  doc.value = setAtPath(doc.value, path, value)
+  changed()
+}
+function resetJson() {
+  doc.value = JSON.parse(JSON.stringify(json.value))
+  treeKey.value++
+  changed()
+}
+
+const nodeOpen = ref(false)
+const nodePath = ref<Path>([])
+const nodeText = ref('')
+const nodeError = ref('')
+function openNode(path: Path, value: unknown) {
+  nodePath.value = path
+  nodeText.value = JSON.stringify(value, null, 2)
+  nodeError.value = ''
+  nodeOpen.value = true
+}
+function applyNode() {
+  try {
+    const value = JSON.parse(nodeText.value)
+    doc.value = setAtPath(doc.value, nodePath.value, value)
+    nodeOpen.value = false
+    treeKey.value++
+    changed()
+  } catch (e) {
+    nodeError.value = e instanceof Error ? e.message : String(e)
+  }
+}
+
 const search = ref('')
 const needle = computed(() => search.value.trim().toLowerCase())
 
@@ -155,7 +228,7 @@ watch(
       .split(/\r?\n/)
       .map((l) => l.trim())
       .filter((l) => l && !l.startsWith('#') && !l.startsWith('//'))
-      .map((l) => ({ text: l, original: l }))
+      .map((l, i) => ({ text: props.edited?.[i] ?? l, original: l }))
     openIndex.value = null
   },
   { immediate: true },
@@ -183,10 +256,14 @@ function onEdit(i: number) {
   if (syncing) return
   const { text, error } = tryStringifySublinks(editing.value)
   editError.value = error ?? ''
-  if (!error) lines.value[i].text = text
+  if (!error) {
+    lines.value[i].text = text
+    emit('edit', i, text, lines.value[i].original)
+  }
 }
 function reset(i: number) {
   lines.value[i].text = lines.value[i].original
+  emit('edit', i, lines.value[i].original, lines.value[i].original)
   load(i)
 }
 function protocolOf(line: string): string {
@@ -225,6 +302,14 @@ async function copy(text: string) {
 .sv__hint {
   color: var(--p-text-muted-color);
   font-size: 0.82rem;
+}
+.sv__node {
+  width: 100%;
+  font-size: 0.8rem;
+}
+.sv__path {
+  margin: 0 0 0.5rem;
+  overflow-wrap: anywhere;
 }
 .sv__tree {
   max-height: 60vh;

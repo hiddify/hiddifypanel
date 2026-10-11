@@ -849,7 +849,13 @@
         "reset": "Undo changes",
         "search": "Search links and configs…",
         "text": "Text",
-        "view": "View"
+        "view": "View",
+        "testThis": "Test this link",
+        "edited": "edited",
+        "testEdited": "Test with edits",
+        "editNode": "Edit as JSON",
+        "whole": "The whole subscription",
+        "apply": "Apply"
       },
       "subscription": "Subscription",
       "subtitle": "Run every config of a subscription in its own core and check that it connects.",
@@ -863,7 +869,21 @@
       "url": "Subscription link",
       "urlPlaceholder": "https://domain/path/uuid/…",
       "waiting": "Waiting",
-      "workers": "Parallel workers"
+      "workers": "Parallel workers",
+      "mode": {
+        "label": "What to test",
+        "link": "Subscription link",
+        "content": "Contents"
+      },
+      "contentLabel": "Contents to test",
+      "contentPlaceholder": "Paste share links (one per line, or base64), an xray / hiddify-core / sing-box JSON…",
+      "pasted": "Pasted contents",
+      "editText": "Edit text",
+      "showViewer": "Show viewer",
+      "lost": "The test stopped because the panel was restarted. Start it again for the rest.",
+      "gone": "This test is no longer kept (tests are kept for an hour). Start it again.",
+      "reconnecting": "Reconnecting… the test goes on in the panel.",
+      "signedOut": "You are signed out of the panel. The test goes on in the panel: sign in again, then open this page again."
     },
     "dashboard": {
       "allNodes": "All nodes",

@@ -1,6 +1,13 @@
 import axios, { type AxiosInstance } from 'axios'
 import { applyBootstrapResponse, legacyMenu } from '@/core/panelShell'
 
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    /** A 401 is handed to the caller, which shows it, instead of leaving the page for the sign-in page. */
+    skipAuthRedirect?: boolean
+  }
+}
+
 declare global {
   interface Window {
     __API_BASE__?: string
@@ -186,7 +193,7 @@ export async function initApiClient(): Promise<void> {
       // Not signed in (or the session ended): to the sign-in page, then back here.
       // (The Vite dev server forwards /<proxy_path>/ to the panel, so this works in development too.)
       if (status === 401) {
-        goToLogin()
+        if (!error?.config?.skipAuthRedirect) goToLogin()
       } else if (status === 401 || status === 403) {
         console.error('Admin V2 API auth failed — log in via the panel first, then reload this page.')
       }

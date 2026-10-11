@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import redis
 
@@ -10,6 +11,8 @@ from hiddifypanel.panel.run_commander import Command, commander
 from .abstract_driver import DriverABS
 
 USERS_USAGE = "wg:users-usage"
+# One usage update asks twice (who is enabled, then the usage): both take the same `wg show` instead of running it twice.
+WG_USAGE_CACHE_SECONDS = 60
 
 
 class WireguardApi(DriverABS):
@@ -25,6 +28,7 @@ class WireguardApi(DriverABS):
     def __init__(self) -> None:
         super().__init__()
         self.pub_uuid_map = {}
+        self._wg_usages_cache: tuple[float, dict] | None = None
 
     def __load_pubkey_uuid_map(self):
         from hiddifypanel.database import db
@@ -46,6 +50,14 @@ class WireguardApi(DriverABS):
         return res
 
     def __get_wg_usages(self) -> dict:
+        cached = self._wg_usages_cache
+        if cached and time.monotonic() - cached[0] < WG_USAGE_CACHE_SECONDS:
+            return cached[1]
+        data = self.__read_wg_usages()
+        self._wg_usages_cache = (time.monotonic(), data)
+        return data
+
+    def __read_wg_usages(self) -> dict:
         raw_output = commander(Command.update_wg_usage, run_in_background=False)
         data = {}
         for line in raw_output.split("\n"):
@@ -114,7 +126,7 @@ class WireguardApi(DriverABS):
         enabled = {u["uuid"]: 1 for u in old_usages.values()}
         not_included = new_wg_pubs - old_wg_pubs
         if not_included:
-            users = User.query.filter(User.wg_pub.in_(not_included).all())
+            users = User.query.filter(User.wg_pub.in_(not_included)).all()
             for u in users:
                 enabled[u.uuid] = 1
 
