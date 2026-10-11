@@ -1,4 +1,5 @@
 from apiflask import abort
+from flask import request
 from flask.views import MethodView
 from loguru import logger
 
@@ -7,6 +8,7 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
+from hiddifypanel.hutils.node import steplog
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
 from hiddifypanel.proxy_v3 import outbounds as ob
 
@@ -32,11 +34,45 @@ class RegisterApi(MethodView):
 
         from hiddifypanel import hutils
 
-        logger.info("Register child panel with unique_id: {}", data.unique_id)
+        reg = request.headers.get(steplog.REG_HEADER, "")
+        panel_data = data.panel_data
+        logger.info(f"[register {reg or '-'} parent] node {data.name} ({data.unique_id}) registers: admins={len(panel_data.admin_users)} users={len(panel_data.users)} domains={len(panel_data.domains)}")
         if hutils.node.is_child():
             logger.error("The panel in child, not a parent nor standalone")
             abort(400, "The panel in child, not a parent nor standalone")
 
+        with steplog.step(reg, "parent", "store the node"):
+            child = self._upsert_child(data)
+        try:
+            with steplog.step(reg, "parent", "store the node's admins, users and domains"):
+                AdminUser.bulk_register([a.model_dump(exclude={"default_outbound_slug"}) for a in panel_data.admin_users], commit=False)
+                User.bulk_register([u.model_dump(exclude={"preferred_outbound_slug"}) for u in panel_data.users], commit=False)
+                Domain.bulk_register(panel_data.domains, remove=True, commit=False, force_child_unique_id=child.unique_id)
+                db.session.commit()
+        except Exception as err:  # noqa: BLE001
+            db.session.rollback()
+            logger.exception(f"[register {reg or '-'} parent] storing the node's data failed")
+            abort(400, str(err))
+
+        if not hutils.node.is_parent():
+            logger.info(f"[register {reg or '-'} parent] setting panel to parent mode")
+            set_hconfig(ConfigEnum.panel_mode, PanelMode.parent)
+
+        with steplog.step(reg, "parent", "build the answer for the node"):
+            cache.invalidate_all_cached_functions()
+            try:
+                return RegisterOutputSchema(
+                    users=[u.to_schema() for u in User.query.all()],
+                    admin_users=[a.to_schema() for a in AdminUser.query.all()],
+                    outbounds=ob.export_rows(),
+                    parent_unique_id=hconfig(ConfigEnum.unique_id),
+                )
+            except Exception as err:  # noqa: BLE001
+                logger.exception(f"[register {reg or '-'} parent] building the answer failed")
+                abort(500, str(err))
+
+    @staticmethod
+    def _upsert_child(data: RegisterInputSchema) -> Child:
         child = Child.query.filter(Child.unique_id == data.unique_id).first()
         if not child:
             logger.info("Adding new child with unique_id: {}", data.unique_id)
@@ -54,40 +90,4 @@ class RegisterApi(MethodView):
             child.node_base_url = data.node_base_url
             child.mark_node_to_parent()
             db.session.commit()
-
-        try:
-            # add data
-            logger.info("Adding admin users...")
-            # The node's outbound ids mean nothing here: outbounds are the parent's.
-            AdminUser.bulk_register([a.model_dump(exclude={"default_outbound_slug"}) for a in data.panel_data.admin_users], commit=False)
-            logger.info("Adding users...")
-            User.bulk_register([u.model_dump(exclude={"preferred_outbound_slug"}) for u in data.panel_data.users], commit=False)
-            logger.info("Adding domains...")
-            Domain.bulk_register(data.panel_data.domains, remove=True, commit=False, force_child_unique_id=child.unique_id)
-            # logger.info("Adding hconfigs...")
-            # bulk_register_configs(data.panel_data.hconfigs, commit=False, froce_child_unique_id=child.unique_id)
-            # logger.info("Adding proxies...")
-            # Proxy.bulk_register(data.panel_data.proxies, commit=False, force_child_unique_id=child.unique_id)
-            db.session.commit()
-        except Exception as err:
-            db.session.rollback()
-            with logger.contextualize(error=err):
-                logger.exception("Error while registering data")
-            abort(400, str(err))
-
-        if not hutils.node.is_parent():
-            logger.info("Setting panel to parent mode")
-            set_hconfig(ConfigEnum.panel_mode, PanelMode.parent)
-
-        cache.invalidate_all_cached_functions()
-        logger.info("Returning register output")
-        try:
-            return RegisterOutputSchema(
-                users=[u.to_schema() for u in User.query.all()],
-                admin_users=[a.to_schema() for a in AdminUser.query.all()],
-                outbounds=ob.export_rows(),
-                parent_unique_id=hconfig(ConfigEnum.unique_id),
-            )
-        except Exception as err:
-            logger.exception("Error while building register output")
-            abort(500, str(err))
+        return child

@@ -1,6 +1,10 @@
+import json
 import re
 import threading
+from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import datetime
+from typing import Literal
 
 from flask_babel import gettext as _
 from loguru import logger
@@ -25,6 +29,7 @@ from hiddifypanel.panel.commercial.restapi.v2.parent.schema import (
     UsageResponseSchema,
 )
 
+from . import steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -158,49 +163,127 @@ def is_registered() -> bool:
         return False
 
 
-def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remote) -> tuple[bool, str]:
+#: The parent stores this node's users, admins and domains before it answers: that can take long on a big panel.
+REGISTER_TIMEOUT = 120
+#: How long after the answer to the parent the new configs are applied: applying restarts the web servers, which cuts
+#: the connection the answer travels on ("SSL: UNEXPECTED_EOF_WHILE_READING" on the other side).
+APPLY_DELAY_SECONDS = 5
+
+
+def _after_answer(action: Callable[[], None]) -> None:
+    timer = threading.Timer(APPLY_DELAY_SECONDS, action)
+    timer.daemon = True
+    timer.start()
+
+
+@dataclass(frozen=True)
+class RegisterFailure:
+    """Why this panel (the node) could not register with its parent. Always the node's side tells it."""
+
+    step: str  # what the node was doing
+    kind: Literal["no_parent_url", "no_domain", "parent_timeout", "parent_connection", "parent_rejected", "parent_bad_answer", "node_data"]
+    reason: str  # the technical detail
+    parent_host: str = ""
+
+    def text(self) -> str:
+        where = f" ({self.parent_host})" if self.parent_host else ""
+        return f"{self.step}{where}: {self.reason}"
+
+
+def _parent_error_message(res: NodeApiErrorSchema) -> str:
+    """What the parent said when it refused: its own message when its answer is JSON, else the HTTP error."""
+    _, _, body = res.msg.partition(" | body=")
+    try:
+        said = json.loads(body) if body else None
+    except ValueError:
+        said = None
+    if isinstance(said, dict) and isinstance(said.get("message"), str) and said["message"]:
+        return said["message"]
+    return res.msg
+
+
+def _classify_parent_error(res: NodeApiErrorSchema, parent_host: str) -> RegisterFailure:
+    step = "sending this node's data to the parent"
+    if res.reason == "ReadTimeout":
+        return RegisterFailure(step, "parent_timeout", f"no answer within {REGISTER_TIMEOUT}s ({res.msg})", parent_host)
+    if res.code == 0:  # no HTTP answer at all: ConnectTimeout, SSLError, ConnectionError...
+        return RegisterFailure(step, "parent_connection", f"{res.reason or 'connection error'}: {res.msg}", parent_host)
+    if res.reason == "bad_response" or res.msg == "Empty response":
+        return RegisterFailure(step, "parent_bad_answer", res.msg, parent_host)
+    return RegisterFailure(step, "parent_rejected", f"HTTP {res.code}: {_parent_error_message(res)}", parent_host)
+
+
+def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildMode.remote, *, defer_apply: bool = False, reg: str = "") -> RegisterFailure | None:
+    """Register this panel with its parent; ``None`` when it worked. ``reg`` is the registration id of the log lines.
+
+    ``defer_apply``: the caller answers a request next, so what needs a restart waits for that.
+    """
     # get parent link its format is "https://panel.hiddify.com/<admin_proxy_path>/"
     p_url = __get_parent_panel_url()
+    parent_host = steplog.host_of(p_url) if p_url else ""
     if not p_url:
-        logger.error("Parent url is empty")
-        return False, "Parent url is empty"
+        logger.error(f"[register {reg or '-'} node] the parent address is empty")
+        return RegisterFailure("reading the parent address", "no_parent_url", "Parent url is empty")
 
-    payload = __get_register_data_for_api(name, mode)
-    res = NodeApiClient(p_url, apikey).put("/api/v2/parent/register/", payload, RegisterOutputSchema)
+    with steplog.step(reg, "node", "collect this node's data"):
+        try:
+            payload = __get_register_data_for_api(name, mode)
+        except ValueError as e:  # no main domain
+            return RegisterFailure("collecting this node's data", "no_domain", str(e))
+    panel_data = payload.panel_data
+    headers = {steplog.REG_HEADER: reg} if reg else None
+    with steplog.step(reg, "node", "send the data to the parent", parent=parent_host, admins=len(panel_data.admin_users), users=len(panel_data.users), domains=len(panel_data.domains), timeout=REGISTER_TIMEOUT):
+        res = NodeApiClient(p_url, apikey, max_retry=1, timeout=REGISTER_TIMEOUT, extra_headers=headers).put("/api/v2/parent/register/", payload, RegisterOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
-        logger.error(f"Error while registering to parent: {res.msg}")
-        return False, res.msg
+        failure = _classify_parent_error(res, parent_host)
+        logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not accept it: {failure.kind}: {failure.reason}")
+        return failure
 
     if not res.parent_unique_id:
-        return False, "Parent did not return its unique id"
+        return RegisterFailure("reading the parent's answer", "parent_bad_answer", "the parent did not return its unique id", parent_host)
 
     # The parent has already stored this node; a failure here must not surface as a 500
     # (and re-registering must work), so upsert the parent row and report errors.
     active_before = _active_user_uuids()
     try:
-        # TODO: change the bulk_register and such methods to accept models instead of dict
-        outbounds_changed = _apply_outbounds(res.outbounds)
-        AdminUser.bulk_register(res.admin_users, commit=False)
-        User.bulk_register(res.users, commit=False)
+        with steplog.step(reg, "node", "save what the parent sent", admins=len(res.admin_users), users=len(res.users)):
+            # TODO: change the bulk_register and such methods to accept models instead of dict
+            outbounds_changed = _apply_outbounds(res.outbounds)
+            AdminUser.bulk_register(res.admin_users, commit=False)
+            User.bulk_register(res.users, commit=False)
 
-        parent = Child.by_unique_id(res.parent_unique_id)
-        if parent is None:
-            db.session.add(Child(unique_id=res.parent_unique_id, name=res.parent_unique_id, mode=ChildMode.parent))
-        else:
-            parent.mode = ChildMode.parent
+            parent = Child.by_unique_id(res.parent_unique_id)
+            if parent is None:
+                db.session.add(Child(unique_id=res.parent_unique_id, name=res.parent_unique_id, mode=ChildMode.parent))
+            else:
+                parent.mode = ChildMode.parent
 
-        db.session.commit()
-    except Exception as e:
+            db.session.commit()
+    except Exception as e:  # noqa: BLE001
         db.session.rollback()
-        logger.exception("Error while saving parent data after registering")
-        return False, str(e)
+        logger.exception(f"[register {reg or '-'} node] saving the parent's data failed")
+        return RegisterFailure("saving the data the parent sent", "node_data", f"{type(e).__name__}: {e}", parent_host)
 
-    logger.success("Successfully registered to parent")
+    logger.success(f"[register {reg or '-'} node] registered with the parent {parent_host}")
     cache.invalidate_all_cached_functions()
+    if defer_apply:
+        logger.info(f"[register {reg or '-'} node] applying users and configs in {APPLY_DELAY_SECONDS}s, after the answer has gone out")
+        _after_answer(lambda: _apply_registered(active_before, outbounds_changed))
+    else:
+        _apply_registered(active_before, outbounds_changed)
+    return None
+
+
+def register_to_parent(name: str, apikey: str, mode: ChildMode = ChildMode.remote, *, defer_apply: bool = False) -> tuple[bool, str]:
+    """``register_to_parent_detailed`` as ``(worked, message)``."""
+    failure = register_to_parent_detailed(name, apikey, mode, defer_apply=defer_apply)
+    return (True, "") if failure is None else (False, failure.text())
+
+
+def _apply_registered(active_before: set[str], outbounds_changed: bool) -> None:
     _apply_users_if_changed(active_before)
     if outbounds_changed:
         _apply_server_config()
-    return True, ""
 
 
 def sync_with_parent(pull_users: bool = True) -> bool:

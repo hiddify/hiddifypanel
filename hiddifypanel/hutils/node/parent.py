@@ -1,3 +1,4 @@
+import json
 import threading
 
 from flask import has_request_context
@@ -11,6 +12,7 @@ from hiddifypanel.database import db
 from hiddifypanel.models import Child, ChildMode, ConfigEnum, Domain, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.child.schema import RegisterWithParentInputSchema
 
+from . import steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
@@ -94,12 +96,55 @@ class _NodeName(BaseModel):
 
 
 class NodeRegisterError(Exception):
-    """``code`` is stable for the UI to translate; ``detail`` is the technical reason."""
+    """``code`` is stable for the UI to translate; ``detail`` is the technical reason.
 
-    def __init__(self, code: str, detail: str = ""):
+    ``side`` says where it went wrong: ``parent`` (this panel), ``node`` (the panel being added) or ``between`` (the
+    connection between them). ``reg`` is the registration id of the log lines on both sides.
+    """
+
+    def __init__(self, code: str, detail: str = "", side: str = "", reg: str = ""):
         super().__init__(f"{code}: {detail}" if detail else code)
         self.code = code
         self.detail = detail
+        self.side = side
+        self.reg = reg
+
+
+def _node_said(res: NodeApiErrorSchema) -> dict[str, object]:
+    """The structured failure a node of this version sends (``detail`` of its 400 answer); empty for anything else."""
+    _, _, body = res.msg.partition(" | body=")
+    try:
+        said = json.loads(body) if body else None
+    except ValueError:
+        return {}
+    detail = said.get("detail") if isinstance(said, dict) else None
+    return detail if isinstance(detail, dict) and detail.get("where") == "node" else {}
+
+
+def _classify_node_error(res: NodeApiErrorSchema, node_host: str, reg: str) -> NodeRegisterError:
+    """Which side failed, doing what, and why, from what came back when this panel asked the node to register."""
+    said = _node_said(res)
+    if said:  # the node answered and told what went wrong on its side
+        kind = str(said.get("kind") or "other")
+        host = str(said.get("parent_host") or "")
+        detail = f"node {node_host}: {said.get('step')}{f' ({host})' if host else ''}: {said.get('reason')}"
+        # the node could not talk to *this* panel: the fault is on the way to us or here
+        side = "parent" if kind in ("parent_timeout", "parent_rejected", "parent_bad_answer") else ("between" if kind == "parent_connection" else "node")
+        return NodeRegisterError(f"node_{kind}", detail, side, reg)
+    if res.reason == "ReadTimeout":
+        return NodeRegisterError("node_timeout", f"no answer from {node_host} within {NODE_REGISTER_TIMEOUT}s", "node", reg)
+    if res.code == 0:
+        return NodeRegisterError("node_connection", f"{res.reason or 'connection error'} to {node_host}: {res.msg}", "between", reg)
+    if res.code in (401, 403):
+        return NodeRegisterError("node_auth", f"{node_host} answered HTTP {res.code}", "node", reg)
+    if res.code in (404, 405):
+        return NodeRegisterError("node_old", f"{node_host} answered HTTP {res.code}: it does not know this call", "node", reg)
+    return NodeRegisterError("rejected", f"{node_host} answered HTTP {res.code}: {res.msg[:300]}", "node", reg)
+
+
+#: The node registers with us while we wait (it has up to child.REGISTER_TIMEOUT for that). Registering again is harmless, so a dropped
+#: connection is retried; a timeout is not (the first call may still be running).
+NODE_REGISTER_TIMEOUT = 180
 
 
 def register_node(node_admin_link: str, name: str = "") -> Child | None:
@@ -108,20 +153,25 @@ def register_node(node_admin_link: str, name: str = "") -> Child | None:
     The node is asked to register itself here (``/api/v2/child/register-parent/``),
     which runs the normal node→parent registration. Raises ``NodeRegisterError``.
     """
+    reg = steplog.new_id()  # the same id is in the node's log lines: they tell one registration
     link = (node_admin_link or "").strip()
     if link and not link.endswith("/"):
         link += "/"
     base_url, node_apikey = hutils.flask.extract_parent_info_from_url(link)
     if not base_url or not node_apikey:
-        raise NodeRegisterError("invalid_link")
+        logger.warning(f"[register {reg} parent] the link is not an admin link")
+        raise NodeRegisterError("invalid_link", side="parent", reg=reg)
+    node_host = steplog.host_of(base_url)
 
     parent_base = _panel_base_url_for_nodes()
     if base_url.rstrip("/").lower() == parent_base.rstrip("/").lower():
-        raise NodeRegisterError("self")
+        raise NodeRegisterError("self", side="parent", reg=reg)
 
-    active, error = hutils.node.is_panel_active(base_url, node_apikey)
+    with steplog.step(reg, "parent", "check that the node is reachable", node=node_host):
+        active, error = hutils.node.is_panel_active(base_url, node_apikey)
     if not active:
-        raise NodeRegisterError("unreachable", error)
+        logger.error(f"[register {reg} parent] node {node_host} is not reachable: {error}")
+        raise NodeRegisterError("unreachable", f"{node_host}: {error}", "between", reg)
 
     before = {c.id for c in Child.query.filter(Child.mode == ChildMode.remote).all()}
     payload = RegisterWithParentInputSchema(
@@ -129,17 +179,20 @@ def register_node(node_admin_link: str, name: str = "") -> Child | None:
         name=(name or "").strip() or base_url.split("://", 1)[-1].split("/", 1)[0],
         apikey=str(g.account.uuid),
     )
-    # The node calls back while we wait, so allow for its own round trip; do not retry (not idempotent).
-    res = NodeApiClient(base_url, node_apikey, max_retry=1, timeout=60).post("/api/v2/child/register-parent/", payload, dict)
+    # The node calls back while we wait (see NODE_REGISTER_TIMEOUT). Registering twice is harmless: a node of this parent just registers again.
+    client = NodeApiClient(base_url, node_apikey, max_retry=3, timeout=NODE_REGISTER_TIMEOUT, retry_on_timeout=False, extra_headers={steplog.REG_HEADER: reg})
+    with steplog.step(reg, "parent", "ask the node to register with this panel", node=node_host, timeout=NODE_REGISTER_TIMEOUT):
+        res = client.post("/api/v2/child/register-parent/", payload, dict)
     if isinstance(res, NodeApiErrorSchema):
-        logger.error(f"Error while registering node {base_url}: {res.msg}")
-        raise NodeRegisterError("rejected", res.msg)
+        error = _classify_node_error(res, node_host, reg)
+        logger.error(f"[register {reg} parent] the node did not register: {error.code} on the {error.side} side: {error.detail}")
+        raise error
 
     db.session.expire_all()
     remotes = Child.query.filter(Child.mode == ChildMode.remote).order_by(Child.id.desc()).all()
     child = next((c for c in remotes if c.id not in before), None) or next((c for c in remotes if c.name == payload.name), None)
     cache.invalidate_all_cached_functions()
-    logger.success(f"Registered node {payload.name} ({base_url})")
+    logger.success(f"[register {reg} parent] node {payload.name} ({node_host}) registered")
     return child
 
 

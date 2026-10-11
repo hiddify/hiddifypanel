@@ -41,8 +41,11 @@ watch(visible, (open) => {
 function errorText(err: unknown): string {
   const body = (err as { response?: { data?: NodeRegisterError } })?.response?.data
   if (body?.code && te(`nodes.errors.${body.code}`)) {
-    const text = t(`nodes.errors.${body.code}`)
-    return body.message && body.message !== body.code ? `${text}\n${body.message}` : text
+    // Which side failed, what it says, the technical reason, and the id to find the log lines of both panels.
+    const lines = [body.side && te(`nodes.errorSide.${body.side}`) ? `${t(`nodes.errorSide.${body.side}`)}: ${t(`nodes.errors.${body.code}`)}` : t(`nodes.errors.${body.code}`)]
+    if (body.message && body.message !== body.code) lines.push(body.message)
+    if (body.reg) lines.push(t('nodes.errorReg', { id: body.reg }))
+    return lines.join('\n')
   }
   if ((err as { code?: string })?.code === 'ECONNABORTED') return t('nodes.errors.timeout')
   return apiErrorMessage(err)

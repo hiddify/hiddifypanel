@@ -1377,7 +1377,18 @@
         "rejected": "The node refused to connect. It may already belong to another parent panel, or its version is too old.",
         "self": "This is the link of this panel. Use the link of the node server.",
         "timeout": "The node took too long to answer. Check it and try again.",
-        "unreachable": "The node could not be reached. Check the link and that the node is online."
+        "unreachable": "The node could not be reached. Check the link and that the node is online.",
+        "node_timeout": "The node did not answer in time. It may be busy or restarting: check it and try again.",
+        "node_connection": "The connection between this panel and the node broke while it was registering (the node may have restarted its web server). Try again in a minute.",
+        "node_auth": "The node did not accept the admin link. Copy the node's admin link again.",
+        "node_old": "The node is too old to be added from here. Update the node first.",
+        "node_parent_timeout": "The node tried to register with this panel, but this panel did not answer in time (probably busy saving the node's data). Try again.",
+        "node_parent_connection": "The node could not reach this panel. Check that this panel's address opens from the node's server.",
+        "node_parent_rejected": "The node reached this panel, but this panel refused it. The detail says why.",
+        "node_parent_bad_answer": "This panel gave the node an answer it could not read. Update both panels to the same version.",
+        "node_no_parent_url": "The node does not know the address of this panel.",
+        "node_no_domain": "The node has no main domain with a valid certificate. Add one on the node first.",
+        "node_node_data": "The node failed while saving the data it got from this panel."
       },
       "info": {
         "fromNode": "Last message from node",
@@ -1417,7 +1428,13 @@
       "syncNow": "Sync now",
       "synced": "{name} synced",
       "title": "Nodes",
-      "unreachable": "Not reachable"
+      "unreachable": "Not reachable",
+      "errorSide": {
+        "parent": "Failed on this panel",
+        "node": "Failed on the node",
+        "between": "Failed on the way between this panel and the node"
+      },
+      "errorReg": "Registration id {id} (it is in the log lines of both panels)"
     },
     "outbounds": {
       "add": "Add outbound",

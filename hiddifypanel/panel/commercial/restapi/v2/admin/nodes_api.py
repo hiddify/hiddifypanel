@@ -99,7 +99,7 @@ class NodesApi(MethodView):
         try:
             child = hutils.node.parent.register_node(link, str(body.get("name") or ""))
         except hutils.node.parent.NodeRegisterError as err:
-            return {"code": err.code, "message": err.detail or err.code}, 400
+            return {"code": err.code, "message": err.detail or err.code, "side": err.side, "reg": err.reg}, 400
         return {"node": _node_row(child) if child else None}
 
 

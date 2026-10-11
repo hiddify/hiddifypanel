@@ -33,6 +33,10 @@ export interface NodePing {
 export interface NodeRegisterError {
   code?: 'invalid_link' | 'self' | 'unreachable' | 'rejected' | string
   message?: string
+  /** Where it went wrong: this panel, the node, or the way between them. */
+  side?: 'parent' | 'node' | 'between' | ''
+  /** The id the log lines of both panels have for this registration. */
+  reg?: string
 }
 
 export const nodesApi = {

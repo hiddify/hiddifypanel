@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import time
 import traceback
 from typing import TypeVar
+from urllib.parse import urlparse
 
 import requests
 from loguru import logger
@@ -37,17 +39,20 @@ def _load_output(output_schema: type[T], data: object) -> T:
 
 
 class NodeApiClient:
-    def __init__(self, base_url: str, apikey: str | None = None, max_retry: int = 3, timeout: float = 8):
+    def __init__(self, base_url: str, apikey: str | None = None, max_retry: int = 3, timeout: float = 8, retry_on_timeout: bool = True, extra_headers: dict[str, str] | None = None):
         self.base_url = base_url if base_url.endswith("/") else base_url + "/"
         self.max_retry = max_retry
         self.timeout = timeout
-        self.headers = {"Hiddify-API-Key": apikey or hconfig(ConfigEnum.unique_id)}
+        # False for a call that may still be running on the other side when it times out: asking again would run it twice, at once.
+        self.retry_on_timeout = retry_on_timeout
+        self.headers = {"Hiddify-API-Key": apikey or hconfig(ConfigEnum.unique_id), **(extra_headers or {})}
 
     def __call(self, method: str, path: str, payload: BaseModel | None, output_schema: type[T]) -> T | NodeApiErrorSchema:
         retry_count = 1
         full_url = self.base_url + path.removeprefix("/")
         response: requests.Response | None = None
         while True:
+            attempt_started = time.monotonic()
             try:
                 logger.trace(f"Attempting {method} request to node at {full_url}")
 
@@ -106,11 +111,12 @@ class NodeApiClient:
                 retry_count += 1
 
             except (requests.Timeout, requests.ConnectionError) as e:
-                if retry_count >= self.max_retry:
+                if retry_count >= self.max_retry or (isinstance(e, requests.ReadTimeout) and not self.retry_on_timeout):
                     err = NodeApiErrorSchema(msg=str(e), stacktrace=traceback.format_exc(), code=0, reason=type(e).__name__)
-                    logger.error(f"Node request to {full_url} failed after {self.max_retry} retries: {e}")
+                    logger.error(f"Node request to {urlparse(full_url).netloc} failed ({type(e).__name__}) after {time.monotonic() - attempt_started:.1f}s on try {retry_count}/{self.max_retry}: {e}")
                     return err
-                logger.warning(f"Timeout/connection error from {full_url}, retrying... ({retry_count}/{self.max_retry})")
+                logger.warning(f"Timeout/connection error ({type(e).__name__}) after {time.monotonic() - attempt_started:.1f}s from {urlparse(full_url).netloc}, retrying... ({retry_count}/{self.max_retry})")
+                time.sleep(min(1.5 * retry_count, 6))  # a reload of the other side's web server takes a moment
                 retry_count += 1
 
     def get(self, path: str, output: type[T]) -> T | NodeApiErrorSchema:
