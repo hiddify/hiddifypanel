@@ -5,6 +5,8 @@
 
 #### New
 
+* Improve node registeration. 
+
 * Add advanced config tester. 
 
 * Add wiregaurd proxy generator. 
@@ -149,6 +151,8 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Make sure the proxies will not have a same tag in the server side. 
 
 * Feat: enhance user registration handling in node-parent communication. 
   _- Introduced a new API endpoint for registering users that the parent does not have, allowing for improved synchronization of user data.
