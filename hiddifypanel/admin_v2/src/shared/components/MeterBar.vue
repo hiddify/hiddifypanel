@@ -13,7 +13,7 @@
     <span class="mbar__text">{{ text }}</span>
     <!-- Same text, clipped to the filled part, in the fill's contrast color -->
     <span class="mbar__fill" :class="{ 'mbar__fill--segments': segmentSlices.length > 0 }" :style="{ width: `${percent}%` }">
-      <span v-for="(seg, i) in segmentSlices" :key="i" class="mbar__seg" :style="{ width: `${seg.width}%`, background: seg.color }" />
+      <span v-for="(seg, i) in segmentSlices" :key="i" class="mbar__seg" :style="{ width: `${seg.width}%`, background: seg.background }" />
       <span class="mbar__text mbar__text--on-fill">{{ text }}</span>
     </span>
   </div>
@@ -52,12 +52,20 @@ const tone = computed(() => {
 // A sliver stays visible once anything is used, so 1 of 1000 still shows.
 const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.min(100, (props.used * 100) / props.max)) : 0) : 0))
 
+/** Where two node colors meet, they blend over this short distance so the join is soft. */
+const SEG_BLEND = '6px'
+
 // Segments are relative to the used value, so they always fill the same part of the bar.
 const segmentSlices = computed(() => {
   const segments = (props.segments ?? []).filter((s) => s.value > 0)
   const total = segments.reduce((sum, s) => sum + s.value, 0)
   if (!segments.length || total <= 0) return []
-  return segments.map((s) => ({ width: (s.value / total) * 100, color: s.color }))
+  // Each slice after the first fades in from the previous slice's color at its leading edge
+  // (--seg-blend flips the gradient side for RTL).
+  return segments.map((s, i) => ({
+    width: (s.value / total) * 100,
+    background: i === 0 ? s.color : `linear-gradient(var(--seg-blend), ${segments[i - 1]?.color ?? s.color} 0px, ${s.color} ${SEG_BLEND})`,
+  }))
 })
 </script>
 
@@ -66,6 +74,7 @@ const segmentSlices = computed(() => {
   --fill: linear-gradient(90deg, #34d399, #10b981 55%, #059669);
   --fill-glow: rgba(16, 185, 129, 0.45);
   --on-fill: #fff;
+  --seg-blend: to right;
   /* cqw below = this bar's width, so the clipped text lines up with the one under it. */
   container-type: inline-size;
   position: relative;
@@ -87,6 +96,7 @@ const segmentSlices = computed(() => {
 /* Fill still grows from the start of the line: the right side when the page is RTL. */
 .mbar:dir(rtl) {
   --fill: linear-gradient(to left, #34d399, #10b981 55%, #059669);
+  --seg-blend: to left;
 }
 .mbar--warn:dir(rtl) {
   --fill: linear-gradient(to left, #fde047, #facc15 50%, #f59e0b);
