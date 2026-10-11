@@ -2,7 +2,9 @@ import secrets
 import string
 
 from apiflask import abort
+from flask import request
 from flask.views import MethodView
+from sqlalchemy.orm import selectinload
 
 from hiddifypanel import current_app as app
 from hiddifypanel import g
@@ -221,8 +223,16 @@ class CustomProxiesApi(MethodView):
 
     @app.output(list[CustomProxySchema])
     def get(self):
-        proxies = CustomProxy.query.filter(CustomProxy.child_id == _child_id()).order_by(CustomProxy.sort_order, CustomProxy.id).all()
-        return [p.to_dict() for p in proxies]
+        """The proxies of this panel, as the list shows them: without their templates (``GET /custom-proxies/<id>/`` has the whole proxy)."""
+        proxies = (
+            CustomProxy.query.options(selectinload(CustomProxy.client_cores))  # one query for all of them, not one per proxy
+            .filter(CustomProxy.child_id == _child_id())
+            .order_by(CustomProxy.sort_order, CustomProxy.id)
+            .all()
+        )
+        if request.args.get("full") == "1":  # callers that want every field of every proxy
+            return [p.to_dict() for p in proxies]
+        return [p.to_list_dict() for p in proxies]
 
     @app.input(CustomProxySchema, arg_name="data")
     @app.output(CustomProxySchema)

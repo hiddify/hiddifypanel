@@ -174,7 +174,7 @@ function downloadQr() {
           <div class="link-dlg__link-actions">
             <Button :icon="copied === 'link' ? 'pi pi-check' : 'pi pi-copy'" :label="copied === 'link' ? t('common.copied') : t('linkShare.copyLink')" @click="copyLink" />
             <Button as="a" :href="link" target="_blank" rel="noopener" icon="pi pi-external-link" :label="t('linkShare.open')" severity="secondary" outlined />
-            <Button v-if="testable && isSuperAdmin" icon="pi pi-bolt" :label="t('configTester.menu')" severity="secondary" outlined @click="testConfigs" />
+            <Button v-if="testable && isSuperAdmin" icon="pi pi-bolt" :label="t('menu.configTester')" severity="secondary" outlined @click="testConfigs" />
             <Button v-if="canShare" icon="pi pi-share-alt" :label="t('qr.share')" severity="secondary" outlined :loading="sharing" v-tooltip.top="t('qr.shareHint')" @click="share" />
           </div>
           <slot />

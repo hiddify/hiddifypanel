@@ -553,6 +553,46 @@ class CustomProxy(db.Model):  # type: ignore
     def to_dict(self) -> dict[str, Any]:
         return self.to_model().to_dict()
 
+    def to_list_model(self) -> CustomProxyModel:
+        """What a list of proxies shows: ``to_model`` without the templates (the server and client configs, the catalog's copy of them).
+        Those are most of a proxy's size (13 KB of 14) and cost the most to build; the editor gets them by ``GET /custom-proxies/<id>/``."""
+        from hiddifypanel.models.external_model.proxy_v3 import BlockedByModel, CustomProxyModel
+        from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import client_override_key
+
+        blocked = self.blocked_parent_enables()
+        stored_enable = bool(self._enable)
+        overrides = self.builtin_overrides or {}
+        return CustomProxyModel(
+            id=self.id,
+            child_id=self.child_id,
+            name=self.name,
+            slug=self.slug,
+            enable=stored_enable,
+            effective_enable=stored_enable and not blocked,
+            blocked_by=[BlockedByModel(key=b["key"], label=b["label"]) for b in blocked],
+            mode=self.mode,
+            proto=self.proto,
+            transport=self.transport,
+            tls_layer=self.tls_layer,
+            l7_reverse_proto=self.l7_reverse_proto,
+            download_tls_layer=self.download_tls_layer,
+            download_domain_modes=list(self.download_domain_modes or []),
+            categories=self.categories or [],
+            domain_modes=list(self.domain_modes or []),
+            custom_path=self.custom_path or "",
+            builtin_overrides={key: bool(on) for key, on in overrides.items()} if self.is_builtin else {},
+            server_override=bool(overrides.get("server_config")),
+            client_override=any(overrides.get(client_override_key(row.core.value)) for row in self.client_cores if row.core),
+            sort_order=self.sort_order or 0,
+            is_builtin=bool(self.is_builtin),
+            is_common_proxy=bool(self.is_common_proxy),
+            client_cores=[row.core.value for row in self.client_cores if row.core],
+            server_core=self.server_core,
+        )
+
+    def to_list_dict(self) -> dict[str, Any]:
+        return self.to_list_model().to_dict()
+
     def to_backup_dict(self, default_enable: bool | None = None) -> dict[str, Any] | None:
         """What a backup keeps. Your own proxies: everything. A built-in: only what you changed from the catalog
         (the overridden fields, and enable when it differs from the default); nothing at all when it is untouched."""

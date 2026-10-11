@@ -2,7 +2,7 @@
 {% block inbounds %}
     {% for ctx in ctx.iter_ctx_domains() %}
         {
-            "tag": "reality terminator {{ctx.proxy.tag}} {{ctx.proxy.domain.name}}",
+            "tag": "reality terminator {{ctx.proxy.id}} {{ctx.proxy.tag}} {{ctx.proxy.domain.name}}",
             "listen":"127.0.0.1",
             "port": {{ ctx.proxy.tcp_port }}, 
             "protocol": "vless",
