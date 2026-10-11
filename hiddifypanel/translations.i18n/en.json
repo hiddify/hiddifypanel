@@ -774,9 +774,12 @@
     },
     "configTester": {
       "advanced": "More options",
+      "contentLabel": "Contents to test",
+      "contentPlaceholder": "Paste share links (one per line, or base64), an xray / hiddify-core / sing-box JSON…",
       "copyName": "Copy name",
       "delay": "Delay",
       "details": "Details",
+      "editText": "Edit text",
       "empty": "(empty)",
       "failed": "Failed",
       "fetchedWith": "Fetched with",
@@ -787,6 +790,7 @@
       },
       "forceXray": "Ask for xray JSON",
       "forceXrayHint": "Adds force_xray_json=1 to the link, so the panel gives xray configs even if that subscription is off in its settings.",
+      "gone": "This test is no longer kept (tests are kept for an hour). Start it again.",
       "history": {
         "again": "Test this one again",
         "avg": "Average",
@@ -798,6 +802,12 @@
         "title": "Ping history"
       },
       "log": "Log (trace)",
+      "lost": "The test stopped because the panel was restarted. Start it again for the rest.",
+      "mode": {
+        "content": "Contents",
+        "label": "What to test",
+        "link": "Subscription link"
+      },
       "name": "Config",
       "noMatch": "Nothing here.",
       "ok": "Works",
@@ -805,12 +815,16 @@
       "open": "Details",
       "original": "Original config",
       "parsed": "Parsed by hiddify-core",
+      "pasted": "Pasted contents",
       "raw": "Original (as received)",
+      "reconnecting": "Reconnecting… the test goes on in the panel.",
       "repeats": "Tests per config",
       "rerun": "Test again",
       "rerunAll": "Test all again",
       "rerunFailed": "Test failed again",
       "runConfig": "Config that ran",
+      "showViewer": "Show viewer",
+      "signedOut": "You are signed out of the panel. The test goes on in the panel: sign in again, then open this page again.",
       "sort": {
         "delay": "Fastest first",
         "label": "Sort",
@@ -831,12 +845,15 @@
       "status": "Status",
       "stop": "Stop",
       "sub": {
+        "apply": "Apply",
         "clickToEdit": "Tap a link to edit it",
         "collapseAll": "Collapse",
         "configs": "Configs",
         "copyLink": "Copy link",
         "count": "{n} links",
         "countOf": "{n} of {total} links",
+        "editNode": "Edit as JSON",
+        "edited": "edited",
         "expandAll": "Expand all",
         "inDecoded": "in decoded part",
         "items": "{n} configs",
@@ -848,14 +865,11 @@
         "received": "Subscription received",
         "reset": "Undo changes",
         "search": "Search links and configs…",
+        "testEdited": "Test with edits",
+        "testThis": "Test this link",
         "text": "Text",
         "view": "View",
-        "testThis": "Test this link",
-        "edited": "edited",
-        "testEdited": "Test with edits",
-        "editNode": "Edit as JSON",
-        "whole": "The whole subscription",
-        "apply": "Apply"
+        "whole": "The whole subscription"
       },
       "subscription": "Subscription",
       "subtitle": "Run every config of a subscription in its own core and check that it connects.",
@@ -869,21 +883,7 @@
       "url": "Subscription link",
       "urlPlaceholder": "https://domain/path/uuid/…",
       "waiting": "Waiting",
-      "workers": "Parallel workers",
-      "mode": {
-        "label": "What to test",
-        "link": "Subscription link",
-        "content": "Contents"
-      },
-      "contentLabel": "Contents to test",
-      "contentPlaceholder": "Paste share links (one per line, or base64), an xray / hiddify-core / sing-box JSON…",
-      "pasted": "Pasted contents",
-      "editText": "Edit text",
-      "showViewer": "Show viewer",
-      "lost": "The test stopped because the panel was restarted. Start it again for the rest.",
-      "gone": "This test is no longer kept (tests are kept for an hour). Start it again.",
-      "reconnecting": "Reconnecting… the test goes on in the panel.",
-      "signedOut": "You are signed out of the panel. The test goes on in the panel: sign in again, then open this page again."
+      "workers": "Parallel workers"
     },
     "dashboard": {
       "allNodes": "All nodes",
@@ -1372,23 +1372,29 @@
         "text": "Add another Hiddify server as a node to manage all your servers from this panel.",
         "title": "No nodes yet"
       },
+      "errorReg": "Registration id {id} (it is in the log lines of both panels)",
+      "errorSide": {
+        "between": "Failed on the way between this panel and the node",
+        "node": "Failed on the node",
+        "parent": "Failed on this panel"
+      },
       "errors": {
         "invalid_link": "The link is not a valid admin link.",
+        "node_auth": "The node did not accept the admin link. Copy the node's admin link again.",
+        "node_connection": "The connection between this panel and the node broke while it was registering (the node may have restarted its web server). Try again in a minute.",
+        "node_no_domain": "The node has no main domain with a valid certificate. Add one on the node first.",
+        "node_no_parent_url": "The node does not know the address of this panel.",
+        "node_node_data": "The node failed while saving the data it got from this panel.",
+        "node_old": "The node is too old to be added from here. Update the node first.",
+        "node_parent_bad_answer": "This panel gave the node an answer it could not read. Update both panels to the same version.",
+        "node_parent_connection": "The node could not reach this panel. Check that this panel's address opens from the node's server.",
+        "node_parent_rejected": "The node reached this panel, but this panel refused it. The detail says why.",
+        "node_parent_timeout": "The node tried to register with this panel, but this panel did not answer in time (probably busy saving the node's data). Try again.",
+        "node_timeout": "The node did not answer in time. It may be busy or restarting: check it and try again.",
         "rejected": "The node refused to connect. It may already belong to another parent panel, or its version is too old.",
         "self": "This is the link of this panel. Use the link of the node server.",
         "timeout": "The node took too long to answer. Check it and try again.",
-        "unreachable": "The node could not be reached. Check the link and that the node is online.",
-        "node_timeout": "The node did not answer in time. It may be busy or restarting: check it and try again.",
-        "node_connection": "The connection between this panel and the node broke while it was registering (the node may have restarted its web server). Try again in a minute.",
-        "node_auth": "The node did not accept the admin link. Copy the node's admin link again.",
-        "node_old": "The node is too old to be added from here. Update the node first.",
-        "node_parent_timeout": "The node tried to register with this panel, but this panel did not answer in time (probably busy saving the node's data). Try again.",
-        "node_parent_connection": "The node could not reach this panel. Check that this panel's address opens from the node's server.",
-        "node_parent_rejected": "The node reached this panel, but this panel refused it. The detail says why.",
-        "node_parent_bad_answer": "This panel gave the node an answer it could not read. Update both panels to the same version.",
-        "node_no_parent_url": "The node does not know the address of this panel.",
-        "node_no_domain": "The node has no main domain with a valid certificate. Add one on the node first.",
-        "node_node_data": "The node failed while saving the data it got from this panel."
+        "unreachable": "The node could not be reached. Check the link and that the node is online."
       },
       "info": {
         "fromNode": "Last message from node",
@@ -1428,13 +1434,7 @@
       "syncNow": "Sync now",
       "synced": "{name} synced",
       "title": "Nodes",
-      "unreachable": "Not reachable",
-      "errorSide": {
-        "parent": "Failed on this panel",
-        "node": "Failed on the node",
-        "between": "Failed on the way between this panel and the node"
-      },
-      "errorReg": "Registration id {id} (it is in the log lines of both panels)"
+      "unreachable": "Not reachable"
     },
     "outbounds": {
       "add": "Add outbound",

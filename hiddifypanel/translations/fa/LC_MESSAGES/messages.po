@@ -2344,6 +2344,14 @@ msgstr "بله"
 msgid "adminV2.configTester.advanced"
 msgstr "گزینه‌های بیشتر"
 
+msgid "adminV2.configTester.contentLabel"
+msgstr "محتوای تست"
+
+msgid "adminV2.configTester.contentPlaceholder"
+msgstr ""
+"لینک‌ها (هر خط یکی، یا base64) یا JSON اکسری / hiddify-core / sing-box را "
+"بچسبانید…"
+
 msgid "adminV2.configTester.copyName"
 msgstr "کپی نام"
 
@@ -2352,6 +2360,9 @@ msgstr "تأخیر"
 
 msgid "adminV2.configTester.details"
 msgstr "جزئیات"
+
+msgid "adminV2.configTester.editText"
+msgstr "ویرایش متن"
 
 msgid "adminV2.configTester.empty"
 msgstr "(خالی)"
@@ -2378,6 +2389,10 @@ msgid "adminV2.configTester.forceXrayHint"
 msgstr ""
 "force_xray_json=1 به لینک اضافه می‌شود تا پنل حتی با خاموش بودن این اشتراک "
 "در تنظیمات، کانفیگ xray بدهد."
+
+msgid "adminV2.configTester.gone"
+msgstr ""
+"این تست دیگر نگه‌داری نمی‌شود (تست‌ها یک ساعت می‌مانند). دوباره شروع کنید."
 
 msgid "adminV2.configTester.history.again"
 msgstr "تست دوباره‌ی همین مورد"
@@ -2406,6 +2421,19 @@ msgstr "تاریخچه‌ی پینگ"
 msgid "adminV2.configTester.log"
 msgstr "لاگ (trace)"
 
+msgid "adminV2.configTester.lost"
+msgstr ""
+"تست متوقف شد چون پنل دوباره راه‌اندازی شد. برای بقیه دوباره شروع کنید."
+
+msgid "adminV2.configTester.mode.content"
+msgstr "محتوا"
+
+msgid "adminV2.configTester.mode.label"
+msgstr "چه چیزی تست شود"
+
+msgid "adminV2.configTester.mode.link"
+msgstr "لینک اشتراک"
+
 msgid "adminV2.configTester.name"
 msgstr "کانفیگ"
 
@@ -2427,8 +2455,14 @@ msgstr "کانفیگ اصلی"
 msgid "adminV2.configTester.parsed"
 msgstr "تبدیل‌شده با hiddify-core"
 
+msgid "adminV2.configTester.pasted"
+msgstr "محتوای واردشده"
+
 msgid "adminV2.configTester.raw"
 msgstr "اصل (دریافتی)"
+
+msgid "adminV2.configTester.reconnecting"
+msgstr "در حال اتصال دوباره… تست در پنل ادامه دارد."
 
 msgid "adminV2.configTester.repeats"
 msgstr "تعداد تست هر کانفیگ"
@@ -2444,6 +2478,14 @@ msgstr "تست دوباره‌ی ناموفق‌ها"
 
 msgid "adminV2.configTester.runConfig"
 msgstr "کانفیگی که اجرا شد"
+
+msgid "adminV2.configTester.showViewer"
+msgstr "نمایش بیننده"
+
+msgid "adminV2.configTester.signedOut"
+msgstr ""
+"از پنل خارج شده‌اید. تست در پنل ادامه دارد: دوباره وارد شوید و این صفحه را "
+"دوباره باز کنید."
 
 msgid "adminV2.configTester.sort.delay"
 msgstr "سریع‌ترین اول"
@@ -2490,6 +2532,9 @@ msgstr "وضعیت"
 msgid "adminV2.configTester.stop"
 msgstr "توقف"
 
+msgid "adminV2.configTester.sub.apply"
+msgstr "اعمال"
+
 msgid "adminV2.configTester.sub.clickToEdit"
 msgstr "برای ویرایش روی لینک بزنید"
 
@@ -2507,6 +2552,12 @@ msgstr "{n} لینک"
 
 msgid "adminV2.configTester.sub.countOf"
 msgstr "{n} از {total} لینک"
+
+msgid "adminV2.configTester.sub.editNode"
+msgstr "ویرایش به‌صورت JSON"
+
+msgid "adminV2.configTester.sub.edited"
+msgstr "ویرایش‌شده"
 
 msgid "adminV2.configTester.sub.expandAll"
 msgstr "باز کردن همه"
@@ -2541,11 +2592,20 @@ msgstr "برگرداندن تغییرات"
 msgid "adminV2.configTester.sub.search"
 msgstr "جستجو در لینک‌ها و کانفیگ‌ها…"
 
+msgid "adminV2.configTester.sub.testEdited"
+msgstr "تست با ویرایش‌ها"
+
+msgid "adminV2.configTester.sub.testThis"
+msgstr "تست همین لینک"
+
 msgid "adminV2.configTester.sub.text"
 msgstr "متن"
 
 msgid "adminV2.configTester.sub.view"
 msgstr "مشاهده"
+
+msgid "adminV2.configTester.sub.whole"
+msgstr "کل اشتراک"
 
 msgid "adminV2.configTester.subscription"
 msgstr "اشتراک"
@@ -3898,8 +3958,63 @@ msgstr ""
 msgid "adminV2.nodes.empty.title"
 msgstr "هنوز نودی ندارید"
 
+msgid "adminV2.nodes.errorReg"
+msgstr "شناسه‌ی ثبت‌نام {id} (در لاگ هر دو پنل هست)"
+
+msgid "adminV2.nodes.errorSide.between"
+msgstr "خطا در مسیر بین این پنل و نود"
+
+msgid "adminV2.nodes.errorSide.node"
+msgstr "خطا در نود"
+
+msgid "adminV2.nodes.errorSide.parent"
+msgstr "خطا در این پنل"
+
 msgid "adminV2.nodes.errors.invalid_link"
 msgstr "این لینک، لینک معتبر ادمین نیست."
+
+msgid "adminV2.nodes.errors.node_auth"
+msgstr "نود لینک ادمین را نپذیرفت. لینک ادمین نود را دوباره کپی کنید."
+
+msgid "adminV2.nodes.errors.node_connection"
+msgstr ""
+"ارتباط بین این پنل و نود هنگام ثبت‌نام قطع شد (ممکن است نود وب‌سرور را "
+"دوباره راه‌اندازی کرده باشد). یک دقیقه بعد دوباره تلاش کنید."
+
+msgid "adminV2.nodes.errors.node_no_domain"
+msgstr "نود دامنه‌ی اصلی با گواهی معتبر ندارد. ابتدا روی نود یکی اضافه کنید."
+
+msgid "adminV2.nodes.errors.node_no_parent_url"
+msgstr "نود آدرس این پنل را نمی‌داند."
+
+msgid "adminV2.nodes.errors.node_node_data"
+msgstr "نود هنگام ذخیره‌ی داده‌هایی که از این پنل گرفت خطا داشت."
+
+msgid "adminV2.nodes.errors.node_old"
+msgstr "نسخه‌ی نود برای افزودن از اینجا قدیمی است. ابتدا نود را به‌روز کنید."
+
+msgid "adminV2.nodes.errors.node_parent_bad_answer"
+msgstr ""
+"این پنل جوابی به نود داد که قابل خواندن نبود. هر دو پنل را به یک نسخه به‌روز"
+" کنید."
+
+msgid "adminV2.nodes.errors.node_parent_connection"
+msgstr ""
+"نود نتوانست به این پنل برسد. بررسی کنید آدرس این پنل از سرور نود باز می‌شود."
+
+msgid "adminV2.nodes.errors.node_parent_rejected"
+msgstr ""
+"نود به این پنل رسید ولی این پنل آن را نپذیرفت. جزئیات دلیلش را می‌گوید."
+
+msgid "adminV2.nodes.errors.node_parent_timeout"
+msgstr ""
+"نود خواست در این پنل ثبت شود، ولی این پنل به‌موقع پاسخ نداد (احتمالاً مشغول "
+"ذخیره‌ی داده‌های نود است). دوباره تلاش کنید."
+
+msgid "adminV2.nodes.errors.node_timeout"
+msgstr ""
+"نود به‌موقع پاسخ نداد. ممکن است مشغول یا در حال راه‌اندازی دوباره باشد: آن "
+"را بررسی و دوباره تلاش کنید."
 
 msgid "adminV2.nodes.errors.rejected"
 msgstr ""

@@ -2357,6 +2357,14 @@ msgstr "Yes"
 msgid "adminV2.configTester.advanced"
 msgstr "More options"
 
+msgid "adminV2.configTester.contentLabel"
+msgstr "Contents to test"
+
+msgid "adminV2.configTester.contentPlaceholder"
+msgstr ""
+"Paste share links (one per line, or base64), an xray / hiddify-core / sing-"
+"box JSON…"
+
 msgid "adminV2.configTester.copyName"
 msgstr "Copy name"
 
@@ -2365,6 +2373,9 @@ msgstr "Delay"
 
 msgid "adminV2.configTester.details"
 msgstr "Details"
+
+msgid "adminV2.configTester.editText"
+msgstr "Edit text"
 
 msgid "adminV2.configTester.empty"
 msgstr "(empty)"
@@ -2391,6 +2402,10 @@ msgid "adminV2.configTester.forceXrayHint"
 msgstr ""
 "Adds force_xray_json=1 to the link, so the panel gives xray configs even if "
 "that subscription is off in its settings."
+
+msgid "adminV2.configTester.gone"
+msgstr ""
+"This test is no longer kept (tests are kept for an hour). Start it again."
 
 msgid "adminV2.configTester.history.again"
 msgstr "Test this one again"
@@ -2419,6 +2434,20 @@ msgstr "Ping history"
 msgid "adminV2.configTester.log"
 msgstr "Log (trace)"
 
+msgid "adminV2.configTester.lost"
+msgstr ""
+"The test stopped because the panel was restarted. Start it again for the "
+"rest."
+
+msgid "adminV2.configTester.mode.content"
+msgstr "Contents"
+
+msgid "adminV2.configTester.mode.label"
+msgstr "What to test"
+
+msgid "adminV2.configTester.mode.link"
+msgstr "Subscription link"
+
 msgid "adminV2.configTester.name"
 msgstr "Config"
 
@@ -2440,8 +2469,14 @@ msgstr "Original config"
 msgid "adminV2.configTester.parsed"
 msgstr "Parsed by hiddify-core"
 
+msgid "adminV2.configTester.pasted"
+msgstr "Pasted contents"
+
 msgid "adminV2.configTester.raw"
 msgstr "Original (as received)"
+
+msgid "adminV2.configTester.reconnecting"
+msgstr "Reconnecting… the test goes on in the panel."
 
 msgid "adminV2.configTester.repeats"
 msgstr "Tests per config"
@@ -2457,6 +2492,14 @@ msgstr "Test failed again"
 
 msgid "adminV2.configTester.runConfig"
 msgstr "Config that ran"
+
+msgid "adminV2.configTester.showViewer"
+msgstr "Show viewer"
+
+msgid "adminV2.configTester.signedOut"
+msgstr ""
+"You are signed out of the panel. The test goes on in the panel: sign in "
+"again, then open this page again."
 
 msgid "adminV2.configTester.sort.delay"
 msgstr "Fastest first"
@@ -2503,6 +2546,9 @@ msgstr "Status"
 msgid "adminV2.configTester.stop"
 msgstr "Stop"
 
+msgid "adminV2.configTester.sub.apply"
+msgstr "Apply"
+
 msgid "adminV2.configTester.sub.clickToEdit"
 msgstr "Tap a link to edit it"
 
@@ -2520,6 +2566,12 @@ msgstr "{n} links"
 
 msgid "adminV2.configTester.sub.countOf"
 msgstr "{n} of {total} links"
+
+msgid "adminV2.configTester.sub.editNode"
+msgstr "Edit as JSON"
+
+msgid "adminV2.configTester.sub.edited"
+msgstr "edited"
 
 msgid "adminV2.configTester.sub.expandAll"
 msgstr "Expand all"
@@ -2554,11 +2606,20 @@ msgstr "Undo changes"
 msgid "adminV2.configTester.sub.search"
 msgstr "Search links and configs…"
 
+msgid "adminV2.configTester.sub.testEdited"
+msgstr "Test with edits"
+
+msgid "adminV2.configTester.sub.testThis"
+msgstr "Test this link"
+
 msgid "adminV2.configTester.sub.text"
 msgstr "Text"
 
 msgid "adminV2.configTester.sub.view"
 msgstr "View"
+
+msgid "adminV2.configTester.sub.whole"
+msgstr "The whole subscription"
 
 msgid "adminV2.configTester.subscription"
 msgstr "Subscription"
@@ -3908,8 +3969,68 @@ msgstr ""
 msgid "adminV2.nodes.empty.title"
 msgstr "No nodes yet"
 
+msgid "adminV2.nodes.errorReg"
+msgstr "Registration id {id} (it is in the log lines of both panels)"
+
+msgid "adminV2.nodes.errorSide.between"
+msgstr "Failed on the way between this panel and the node"
+
+msgid "adminV2.nodes.errorSide.node"
+msgstr "Failed on the node"
+
+msgid "adminV2.nodes.errorSide.parent"
+msgstr "Failed on this panel"
+
 msgid "adminV2.nodes.errors.invalid_link"
 msgstr "The link is not a valid admin link."
+
+msgid "adminV2.nodes.errors.node_auth"
+msgstr ""
+"The node did not accept the admin link. Copy the node's admin link again."
+
+msgid "adminV2.nodes.errors.node_connection"
+msgstr ""
+"The connection between this panel and the node broke while it was "
+"registering (the node may have restarted its web server). Try again in a "
+"minute."
+
+msgid "adminV2.nodes.errors.node_no_domain"
+msgstr ""
+"The node has no main domain with a valid certificate. Add one on the node "
+"first."
+
+msgid "adminV2.nodes.errors.node_no_parent_url"
+msgstr "The node does not know the address of this panel."
+
+msgid "adminV2.nodes.errors.node_node_data"
+msgstr "The node failed while saving the data it got from this panel."
+
+msgid "adminV2.nodes.errors.node_old"
+msgstr "The node is too old to be added from here. Update the node first."
+
+msgid "adminV2.nodes.errors.node_parent_bad_answer"
+msgstr ""
+"This panel gave the node an answer it could not read. Update both panels to "
+"the same version."
+
+msgid "adminV2.nodes.errors.node_parent_connection"
+msgstr ""
+"The node could not reach this panel. Check that this panel's address opens "
+"from the node's server."
+
+msgid "adminV2.nodes.errors.node_parent_rejected"
+msgstr ""
+"The node reached this panel, but this panel refused it. The detail says why."
+
+msgid "adminV2.nodes.errors.node_parent_timeout"
+msgstr ""
+"The node tried to register with this panel, but this panel did not answer in"
+" time (probably busy saving the node's data). Try again."
+
+msgid "adminV2.nodes.errors.node_timeout"
+msgstr ""
+"The node did not answer in time. It may be busy or restarting: check it and "
+"try again."
 
 msgid "adminV2.nodes.errors.rejected"
 msgstr ""

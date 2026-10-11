@@ -67,6 +67,8 @@
 
 * Bug. 
 
+* Bug. 
+
 * Handle exceptions when retrieving Telegram usage data in TelemtApi. 
 
 * Hiddify version. 
@@ -147,6 +149,20 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: improve node registration error handling and logging. 
+  _- Enhanced the NodeRegisterError class to include additional context such as the side of the failure and registration ID.
+- Updated error handling in the registration process to provide more detailed feedback on failures.
+- Introduced a new logging mechanism to trace registration steps and errors, aiding in debugging and monitoring.
+- Added translations for new error messages related to node registration failures._
+
+* Feat: enhance parent-child registration logic in RegisterWithParentApi. 
+
+* Feat: implement config tester job management and event handling. 
+  _- Added new API endpoints for managing config tester jobs, allowing for job creation, retrieval of events, and cancellation.
+- Introduced types for events and job pages to standardize data handling.
+- Enhanced the config tester functionality to support asynchronous job processing and event streaming.
+- Updated the client-side components to handle editable JSON structures and improved user interaction in the config tester view._
 
 * Feat: add logging for user application and command execution in hiddify.py and run_commander.py. 
 
