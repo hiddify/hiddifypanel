@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import json5
-from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, Text, event
+from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, Text, UniqueConstraint, event, update
 from sqlalchemy.orm import DynamicMapped, Mapped, mapped_column, relationship
 from strenum import StrEnum
 
@@ -48,6 +48,8 @@ class UserDetail(db.Model):
     last_online: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.min)
     current_usage: Mapped[int] = mapped_column(BigInteger, default=0)
     connected_devices: Mapped[str] = mapped_column(String(512), default="")
+    # One row per (user, node): the usage sync upserts on this key.
+    __table_args__ = (UniqueConstraint("user_id", "child_id", name="uq_user_detail_user_child"),)
 
     @property
     def current_usage_GB(self):
@@ -173,9 +175,9 @@ class User(BaseAccount):
         self.last_reset_time = datetime.date.today()
         self.current_usage_GB = 0
 
-        # there's no usage of UserDetail yet, but we reset it too
-        # if ud := UserDetail.query.filter(UserDetail.user_id == self.id).first():
-        #    ud.current_usage_GB = 0
+        # The per-node breakdown (user_detail) counts within the same period as the total.
+        if self.id:
+            db.session.execute(update(UserDetail).where(UserDetail.user_id == self.id).values(current_usage=0))
 
         if commit:
             db.session.commit()

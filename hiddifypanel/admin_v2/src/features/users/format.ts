@@ -4,6 +4,15 @@ import { unitLabel } from '@/shared/utils/format-metrics'
 
 export type Tone = 'ok' | 'warn' | 'danger' | 'muted'
 
+export const ONE_GIG = 1024 ** 3
+
+/** Stable colors for the per-node usage breakdown (same node id → same color everywhere). */
+export const NODE_COLORS = ['#6366f1', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#84cc16', '#f43f5e'] as const
+
+export function nodeColor(childId: number): string {
+  return NODE_COLORS[Math.abs(childId) % NODE_COLORS.length]!
+}
+
 const DAY_UNITS: [Intl.RelativeTimeFormatUnit, number, number][] = [
   // unit, size in days, used below this many days
   ['day', 1, 14],
