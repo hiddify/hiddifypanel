@@ -27,7 +27,7 @@ def host_of(url: str) -> str:
 
 
 @contextmanager
-def step(reg: str, side: str, name: str, **info: object) -> Iterator[None]:
+def step(reg: str, side: str, title: str, /, **info: object) -> Iterator[None]:
     """Log the start and the end (with the time it took) of a step, and where it failed if it did.
 
     ``side`` is ``parent`` or ``node``: the side this log is written on.
@@ -35,10 +35,10 @@ def step(reg: str, side: str, name: str, **info: object) -> Iterator[None]:
     tag = f"[register {reg or '-'} {side}]"
     details = " ".join(f"{k}={v}" for k, v in info.items())
     started = time.monotonic()
-    logger.info(f"{tag} {name}: start {details}".rstrip())
+    logger.info(f"{tag} {title}: start {details}".rstrip())
     try:
         yield
     except BaseException as e:
-        logger.error(f"{tag} {name}: FAILED after {time.monotonic() - started:.2f}s with {type(e).__name__}: {str(e)[:300]}")
+        logger.error(f"{tag} {title}: FAILED after {time.monotonic() - started:.2f}s with {type(e).__name__}: {str(e)[:300]}")
         raise
-    logger.info(f"{tag} {name}: done in {time.monotonic() - started:.2f}s")
+    logger.info(f"{tag} {title}: done in {time.monotonic() - started:.2f}s")
