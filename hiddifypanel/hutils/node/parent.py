@@ -24,6 +24,10 @@ def get_child_base_url(child: Child) -> str:
 def request_childs_to_sync():
     # Only remote nodes can be asked (virtual ones live in this panel and have no address).
     for c in Child.query.filter(Child.id != 0, Child.mode == ChildMode.remote).all():
+        from .ws_server import is_connected
+
+        if is_connected(c.unique_id):
+            continue  # it gets the changes over its WebSocket
         if not request_child_to_sync(c):
             logger.error(f"{c.name}: {_('parent.sync-req-failed')}")
             if has_request_context():

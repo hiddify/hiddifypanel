@@ -75,12 +75,18 @@ class RegisterApi(MethodView):
             logger.info(f"[register {reg or '-'} parent] setting panel to parent mode")
             set_hconfig(ConfigEnum.panel_mode, PanelMode.parent)
 
-        with steplog.step(reg, "parent", "build the answer for the node"):
+        with steplog.step(reg, "parent", "build the answer for the node", users_via_ws=data.ws_sync):
             cache.invalidate_all_cached_functions()
             try:
+                if data.ws_sync:  # the node reads them from the change feed, in batches it confirms
+                    users, users_total = [], 0
+                else:
+                    users = [] if paged else [u.to_schema() for u in User.query.all()]
+                    users_total = User.query.count() if paged else None
                 return RegisterOutputSchema(
-                    users=[] if paged else [u.to_schema() for u in User.query.all()],
-                    users_total=User.query.count() if paged else None,
+                    users=users,
+                    users_total=users_total,
+                    users_via_ws=data.ws_sync,
                     admin_users=[a.to_schema() for a in AdminUser.query.all()],
                     outbounds=ob.export_rows(),
                     parent_unique_id=hconfig(ConfigEnum.unique_id),

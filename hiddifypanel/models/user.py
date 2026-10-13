@@ -5,7 +5,6 @@ import json
 from collections.abc import Iterable
 from enum import auto
 from typing import TYPE_CHECKING, Any
-from uuid import uuid4
 
 import json5
 from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, Text, event
@@ -218,10 +217,10 @@ class User(BaseAccount):
         from hiddifypanel.drivers import user_driver
 
         user_driver.remove_client(self)
-        self.deleted = True
-        self.enable = False
-        if commit:
-            db.session.commit()
+        super().remove(commit=commit)
+
+    def removed_by_sync(self) -> None:
+        self.remove(commit=False)
 
     def purge(self, commit: bool = True) -> None:
         """Permanently remove the user row (frees the UUID for reuse)."""
@@ -234,11 +233,6 @@ class User(BaseAccount):
         else:
             db.session.flush()
 
-    def undelete(self, commit: bool = True) -> None:
-        self.deleted = False
-        if commit:
-            db.session.commit()
-
     @classmethod
     def purge_by_uuid(cls, uuid: str, commit: bool = True) -> bool:
         """Hard-delete any user (including soft-deleted) with this UUID. Returns True if a row was removed."""
@@ -249,29 +243,8 @@ class User(BaseAccount):
         return True
 
     @classmethod
-    def by_uuid(cls, uuid: str, create: bool = False, include_deleted: bool = False) -> "User":
-        if not isinstance(uuid, str):
-            uuid = str(uuid)
-        query = User.query.filter(User.uuid == uuid)
-        account = query.first()
-        if account and account.deleted and not include_deleted and not create:
-            return None  # type: ignore[return-value]
-        if account and account.deleted and create:
-            account.deleted = False
-            account.enable = True
-            db.session.commit()
-            return account
-        if not account and create:
-            from hiddifypanel import hutils
-
-            if not hutils.auth.is_uuid_valid(uuid):
-                uuid = str(uuid4())
-
-            dbuser = User(uuid=uuid, name="unknown", added_by=AdminUser.current_admin_or_owner().id)
-            db.session.add(dbuser)
-            db.session.commit()
-            account = User.by_uuid(uuid, False)
-        return account
+    def new_for_uuid(cls, uuid: str) -> User:
+        return User(uuid=uuid, name="unknown", added_by=AdminUser.current_admin_or_owner().id)
 
     @classmethod
     def remove_by_uuid(cls, uuid: str, commit: bool = True):
@@ -290,16 +263,7 @@ class User(BaseAccount):
         from hiddifypanel.models.external_model import as_row
 
         # Preserve soft-delete flag from backup; only default when missing (before validation).
-        rows = cls.external_model().coerce_many({"deleted": False, **as_row(account)} for account in accounts)
-        for row in rows:
-            cls.upsert(row, commit=False)
-        if remove:
-            keep = {str(row.uuid) for row in rows if row.uuid}
-            for d in cls.query.filter(cls.deleted.is_(False)).all():
-                if d.uuid not in keep:
-                    d.remove(commit=False)
-        if commit:
-            db.session.commit()
+        super().bulk_register(({"deleted": False, **as_row(account)} for account in accounts), commit=commit, remove=remove)
 
     @classmethod
     def add_or_update(cls, commit: bool = True, old_uuid: str | None = None, **data) -> User:
@@ -336,9 +300,6 @@ class User(BaseAccount):
 
         if row.enable is not None:
             dbuser.enable = row.enable
-
-        if row.deleted is not None:
-            dbuser.deleted = row.deleted
 
         if row.ed25519_private_key and row.ed25519_public_key:
             dbuser.ed25519_private_key = row.ed25519_private_key

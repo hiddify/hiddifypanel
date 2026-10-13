@@ -322,6 +322,9 @@ def _set_cert_job(domain_id: int, job: dict[str, Any]) -> None:
         redis_client.set(_cert_key(domain_id), json.dumps(job), ex=CERT_JOB_TTL)
     except Exception as e:
         logger.debug(f"cert job state unavailable: {e}")
+    from hiddifypanel.live import changes
+
+    changes.publish(["cert", f"cert:{domain_id}"])
 
 
 def start_certificate(d: Domain) -> bool:

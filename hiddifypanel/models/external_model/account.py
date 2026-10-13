@@ -22,6 +22,8 @@ class AccountModel(HBaseModel):
     lang: Lang | None = None
     id: int | None = None
     """Output only (``dump_id``); never used to match rows."""
+    deleted: bool | None = None
+    """Soft-deleted (see ``BaseAccount``); ``None``: not sent, the account is there."""
 
     @field_validator("uuid", mode="before")
     @classmethod

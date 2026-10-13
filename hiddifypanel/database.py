@@ -58,8 +58,16 @@ def _engine_options(uri: str | None) -> dict:
     do not rely on repeatable reads, so each statement seeing the latest committed data is right.
     """
     if (uri or "").startswith(("mysql", "mariadb")):
-        return {"isolation_level": "READ COMMITTED"}
+        return {"isolation_level": "READ COMMITTED", **_pool_options()}
     return {}
+
+
+def _pool_options() -> dict:
+    """Enough connections for every thread that can hold one at once (requests, live updates, WebSockets: see
+    live/app_thread.py); the default pool (5 + 10) would make them wait, then fail."""
+    threads = sum(int(os.environ.get(name) or default) for name, default in (("HIDDIFY_PANEL_THREADS", 10), ("HIDDIFY_LIVE_THREADS", 4), ("HIDDIFY_WS_THREADS", 4)))
+    size = int(os.environ.get("HIDDIFY_DB_POOL") or threads + 2)
+    return {"pool_size": size, "max_overflow": 10, "pool_pre_ping": True}
 
 
 def init_no_flask():

@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import Enum, ForeignKey, String, event
-from sqlalchemy.types import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.types import JSON
 from strenum import StrEnum
 
 from hiddifypanel import g
@@ -46,6 +46,8 @@ class AdminUser(BaseAccount):
     account expiration date, usage limit, package days, mode, start date, current usage, last reset time, and comment.
     """
 
+    hide_deleted = True
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     mode: Mapped[AdminMode] = mapped_column(Enum(AdminMode), default=AdminMode.agent)
     can_add_admin: Mapped[bool] = mapped_column(default=False)
@@ -67,7 +69,8 @@ class AdminUser(BaseAccount):
     users: Mapped[list[User]] = relationship("User", backref="admin")
     usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)
-    parent_admin: Mapped[AdminUser | None] = relationship("AdminUser", remote_side=[id], backref="sub_admins")
+    # post_update: the owner is its own parent; a row that depends on itself can only be written with its parent set after it.
+    parent_admin: Mapped[AdminUser | None] = relationship("AdminUser", remote_side=[id], backref="sub_admins", post_update=True)
 
     @property
     def role(self) -> Role | None:
@@ -111,31 +114,16 @@ class AdminUser(BaseAccount):
             max_online_users=self.max_online_users,
             max_total_usage_GB=self.max_total_usage_GB,
             **({"default_outbound_slug": slug} if (slug := _outbound_slug(self.default_outbound_id)) else {}),
+            # Only a deleted admin carries it (it travels to the nodes); backups never see one, since queries hide them.
+            **({"deleted": True} if self.deleted else {}),
         )
 
     def to_dict(self, convert_date=True, dump_id=False) -> dict:
         return self.to_model().to_dict(exclude=None if dump_id else {"id"})
 
     @classmethod
-    def by_uuid(cls, uuid: str | None, create: bool = False) -> BaseAccount | None:
-        if uuid is None or uuid == "":
-            if not create:
-                return None
-            uuid = str(uuid4())
-        elif not isinstance(uuid, str):
-            uuid = str(uuid)
-        account = AdminUser.query.filter(AdminUser.uuid == uuid).first()
-        if not account and create:
-            from hiddifypanel import hutils
-
-            if not hutils.auth.is_uuid_valid(uuid):
-                uuid = str(uuid4())
-            dbuser = AdminUser(uuid=uuid, name="unknown", parent_admin_id=AdminUser.current_admin_or_owner().id)
-            db.session.add(dbuser)
-            db.session.commit()
-            account = AdminUser.by_uuid(uuid, False)
-
-        return account
+    def new_for_uuid(cls, uuid: str) -> AdminUser:
+        return AdminUser(uuid=uuid, name="unknown", parent_admin_id=AdminUser.current_admin_or_owner().id)
 
     @classmethod
     def external_model(cls) -> type[AdminModel]:
@@ -180,6 +168,10 @@ class AdminUser(BaseAccount):
             from hiddifypanel.models.outbound import Outbound
 
             dbuser.default_outbound_id = Outbound.id_by_slug(row.default_outbound_slug)
+        if dbuser.id == 1 and dbuser.deleted:  # the owner is never deleted
+            dbuser.undelete(commit=False)
+        elif dbuser.deleted:  # deleted on the other panel: what is still under it here goes to the owner
+            dbuser.hand_over_to(cls.get_super_admin())
         if commit:
             db.session.commit()
         return dbuser
@@ -238,7 +230,8 @@ class AdminUser(BaseAccount):
                 sub_admin_ids += sub_admin.recursive_sub_admins_ids(depth - 1, seen=seen)
         return sub_admin_ids
 
-    def remove(self):
+    def remove(self, commit: bool = True) -> None:
+        """Delete this admin and its sub-admins (kept as deleted); their users and usage go to the admin who deletes them."""
         if self.id == 1 or self.id == g.account.id:
             # raise ValidationError(_("Owner can not be deleted!"))
             from apiflask import abort
@@ -249,10 +242,27 @@ class AdminUser(BaseAccount):
         for u in users:
             u.added_by = g.account.id
 
-        DailyUsage.query.filter(DailyUsage.admin_id.in_(self.recursive_sub_admins_ids())).update({"admin_id": g.account.id})
-        AdminUser.query.filter(AdminUser.id.in_(self.recursive_sub_admins_ids())).delete()
+        ids = self.recursive_sub_admins_ids()
+        DailyUsage.query.filter(DailyUsage.admin_id.in_(ids)).update({"admin_id": g.account.id})
+        for admin in AdminUser.query.filter(AdminUser.id.in_(ids)).all():
+            admin.soft_delete(commit=False)
+        if commit:
+            db.session.commit()
 
-        db.session.commit()
+    def removed_by_sync(self) -> None:
+        if self.id != 1:
+            super().removed_by_sync()
+            self.hand_over_to(AdminUser.get_super_admin())
+
+    def hand_over_to(self, heir: AdminUser) -> None:
+        """This admin's own users and sub-admins go to ``heir`` (a deleted admin would hide them from every list)."""
+        from .user import User
+
+        now = datetime.datetime.now()  # bulk updates skip the ORM hooks: the nodes see these rows changed
+        User.query.filter(User.added_by == self.id).update({"added_by": heir.id, "last_modified_time": now}, synchronize_session=False)
+        AdminUser.query_with_deleted().filter(AdminUser.parent_admin_id == self.id, AdminUser.id != self.id).update(
+            {"parent_admin_id": heir.id, "last_modified_time": now}, synchronize_session=False
+        )
 
     def __str__(self):
         return str(self.name)
@@ -277,7 +287,7 @@ class AdminUser(BaseAccount):
     def current_admin_or_owner():
         if g and hasattr(g, "account") and g.account and isinstance(g.account, AdminUser):
             return g.account
-        return AdminUser.query.filter(AdminUser.id == 1).first()
+        return AdminUser.by_id(1)  # from the session once loaded (it is asked for every new user)
 
 
 @event.listens_for(AdminUser, "before_insert")

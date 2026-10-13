@@ -46,6 +46,12 @@ class SyncWithParentApi(MethodView):
     def post(self):
         # Answer right away: the parent must not time out (and retry) while this node pulls
         # and rewrites every user; the sync runs in the background, one at a time.
+        from hiddifypanel.hutils.node import ws_client
+
+        # The parent's changes come over the WebSocket already: what it is asked for is its inventory (what differs is put right).
+        if ws_client.request_inventory():
+            logger.info(f"Sync with parent requested by {g.node.unique_id}: asking for its inventory over the WebSocket")
+            return {"status": 200, "msg": "ok"}
         logger.info(f"Syncing panel with parent requested by {g.node.unique_id}")
         request_sync_in_background()
         return {"status": 200, "msg": "ok"}

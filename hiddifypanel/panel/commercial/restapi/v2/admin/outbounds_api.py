@@ -6,6 +6,7 @@ Outbounds are rules in order; the last enabled one is the default (everything el
 
 from __future__ import annotations
 
+import datetime
 from typing import Any
 
 from apiflask import abort
@@ -242,7 +243,8 @@ class OutboundApi(MethodView):
             abort(400, "WARP, Direct and Block can not be deleted")
         child_id = _child_id()
         # Admins whose default it was go back to automatic.
-        AdminUser.query.filter(AdminUser.default_outbound_id == row.id).update({"default_outbound_id": None})
+        # A bulk update skips the ORM hooks: last_modified_time is set here, so the nodes get these admins again.
+        AdminUser.query.filter(AdminUser.default_outbound_id == row.id).update({"default_outbound_id": None, "last_modified_time": datetime.datetime.now()})
         db.session.delete(row)
         db.session.flush()
         _finalize_or_400(child_id, ob.ordered_rows(child_id))

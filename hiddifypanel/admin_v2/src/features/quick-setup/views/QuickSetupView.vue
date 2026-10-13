@@ -95,7 +95,7 @@
 
     <Toast />
     <ConfirmDialog />
-    <LegacyActionDialog />
+    <ApplyRunDialog v-model:visible="reinstallVisible" action="install" />
   </div>
 </template>
 
@@ -109,9 +109,9 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 import Toast from 'primevue/toast'
-import LegacyActionDialog from '@/shared/components/LegacyActionDialog.vue'
+import ApplyRunDialog from '@/features/apply/components/ApplyRunDialog.vue'
 import { apiErrorMessage } from '@/core/api/client'
-import { legacyActionDialog, needsQuickSetup, openLegacyAction } from '@/core/panelShell'
+import { needsQuickSetup } from '@/core/panelShell'
 import { QUICK_SETUP_SKIPPED_KEY } from '@/router'
 import ProtocolsView from '@/features/protocols/views/ProtocolsView.vue'
 import NodesView from '@/features/nodes/views/NodesView.vue'
@@ -131,6 +131,7 @@ const { t, locale } = useI18n()
 const toast = useToast()
 const route = useRoute()
 const router = useRouter()
+const reinstallVisible = ref(false)
 
 const state = ref<QuickSetupState | null>(null)
 const loading = ref(true)
@@ -210,30 +211,25 @@ async function next(skipSave = false) {
 async function finish() {
   busy.value = true
   try {
-    const { reinstall_url } = await quickSetupApi.finish()
+    await quickSetupApi.finish()
     needsQuickSetup.value = false
-    // The reinstall applies the new domains; its page shows the live log and the new admin links.
-    let left = false
-    const toDashboard = () => {
-      if (left) return
-      left = true
-      legacyActionDialog.value = null
-      void router.replace({ path: '/' })
-    }
-    openLegacyAction({
-      title: t('quickSetup.finish.running'),
-      url: reinstall_url,
-      method: 'post',
-      // Give the success message a moment, then land on the dashboard.
-      onFinish: () => setTimeout(toDashboard, 2500),
-      onClose: toDashboard,
-    })
+    // The reinstall applies the new domains; its dialog shows the live log and the new admin links.
+    reinstallVisible.value = true
   } catch (err) {
     showError(apiErrorMessage(err))
   } finally {
     busy.value = false
   }
 }
+
+function toDashboard() {
+  void router.replace({ path: '/' })
+}
+
+// Closing the dialog (after the run, or hidden while it runs) lands on the dashboard.
+watch(reinstallVisible, (open) => {
+  if (!open) toDashboard()
+})
 
 function skip() {
   try {

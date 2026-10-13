@@ -218,6 +218,7 @@ import Skeleton from 'primevue/skeleton'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
+import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
 import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
@@ -415,16 +416,28 @@ async function onAdded(node: PanelNode | null) {
   }
 }
 
+let feed: Subscription | null = null
+
 onMounted(async () => {
+  // "Last seen" and usage: pushed when a node reports (its row changes), and at least every REFRESH_MS.
+  feed = liveWatch<{ nodes: PanelNode[]; panel_version: string }>('nodes/', {
+    intervalMs: REFRESH_MS,
+    tags: ['child'],
+    onData: (res) => {
+      nodes.value = res.nodes
+      panelVersion.value = res.panel_version
+      now.value = Date.now()
+    },
+  })
+  timer = window.setInterval(() => (now.value = Date.now()), 30_000) // relative times move on between updates
   await load()
   void Promise.all(nodes.value.map((node) => pingNode(node)))
-  timer = window.setInterval(() => {
-    now.value = Date.now()
-    if (!document.hidden) void load(true)
-  }, REFRESH_MS)
 })
 
-onBeforeUnmount(() => window.clearInterval(timer))
+onBeforeUnmount(() => {
+  feed?.stop()
+  window.clearInterval(timer)
+})
 </script>
 
 <style scoped>

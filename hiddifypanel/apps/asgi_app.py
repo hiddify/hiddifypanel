@@ -1,7 +1,7 @@
 #!/opt/hiddify-manager/.venv313/bin/python
 
 from hiddifypanel import create_app_wsgi
-from asgiref.wsgi import WsgiToAsgi
+from hiddifypanel.asgi import build_asgi
 
-app = create_app_wsgi()  # noqa
-asgi_app = WsgiToAsgi(app)
+flask_app = create_app_wsgi()  # noqa
+app = build_asgi(flask_app)

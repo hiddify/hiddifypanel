@@ -138,6 +138,10 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
         cur_time=cur_time.strftime("%Y-%m-%d %H:%M:%S"),
         commit=True,
     )
+    if usage_payload:  # raw SQL: the commit hook of the ORM does not see it
+        from hiddifypanel.live import changes
+
+        changes.publish(["user"])
 
     usage_map = {use.uuid: use for use in usages}
 

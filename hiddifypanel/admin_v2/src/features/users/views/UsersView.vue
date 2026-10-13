@@ -332,6 +332,7 @@ import LinkShareDialog from '@/shared/components/LinkShareDialog.vue'
 import MeterBar from '@/shared/components/MeterBar.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
+import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatCount } from '@/shared/utils/format-metrics'
 import { matchesTags, useTags } from '@/features/tags/useTags'
 import { tagsApi } from '@/features/tags/api'
@@ -822,16 +823,39 @@ function bulk(action: BulkAction) {
   void run()
 }
 
+/** Users from the live channel: pushed when users or admins change (usage too), at least every minute. While a user is
+ * being edited the latest is kept aside and shown when the editing ends. */
+let feed: Subscription | null = null
+let held: UsersState | null = null
+
+function takeLive(next: UsersState) {
+  if (formVisible.value || inlineEdit.value) {
+    held = next
+    return
+  }
+  held = null
+  state.value = next
+  const keep = new Set(next.users.map((u) => u.uuid))
+  selected.value = selected.value.filter((s) => keep.has(s.uuid))
+  now.value = Date.now()
+}
+
+watch(
+  () => !formVisible.value && !inlineEdit.value,
+  (free) => {
+    if (free && held) takeLive(held)
+  },
+)
+
 onMounted(async () => {
   narrowQuery.addEventListener('change', onNarrow)
+  feed = liveWatch<UsersState>('users/', { intervalMs: 60_000, tags: ['user', 'admin_user'], onData: takeLive })
   await load()
-  timer = window.setInterval(() => {
-    now.value = Date.now()
-    if (!document.hidden && !formVisible.value && !inlineEdit.value) void load(true)
-  }, 60_000)
+  timer = window.setInterval(() => (now.value = Date.now()), 60_000) // "days left" and "last online" move on between updates
 })
 onBeforeUnmount(() => {
   narrowQuery.removeEventListener('change', onNarrow)
+  feed?.stop()
   window.clearInterval(timer)
 })
 </script>

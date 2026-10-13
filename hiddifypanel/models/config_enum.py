@@ -310,6 +310,8 @@ class ConfigEnum(metaclass=FastEnum):
     db_version = _StrConfigDscr(ConfigCategory.hidden)
     last_priodic_usage_check = _IntConfigDscr(ConfigCategory.hidden)
     last_users_sync = _StrConfigDscr(ConfigCategory.hidden)
+    #: Where this node is in its parent's change feed (hutils/node/sync_feed.py), as JSON; empty: from the start.
+    parent_sync_cursor = _StrConfigDscr(ConfigCategory.hidden)
 
     branding_title = _StrConfigDscr(ConfigCategory.branding)
     branding_site = _StrConfigDscr(ConfigCategory.branding)

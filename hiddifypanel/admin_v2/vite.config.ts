@@ -116,8 +116,7 @@ function resolveDevBase(env: Record<string, string>): string {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const apiTarget = env.VITE_API_TARGET || 'http://127.0.0.1:9001'
-  const devPort = Number(env.VITE_DEV_PORT || 9000)
+  const devPort = Number(env.VITE_DEV_PORT || 9001)
   const devHost = env.VITE_DEV_HOST || '127.0.0.1'
   const devBase = resolveDevBase(env)
   const proxyPath = readProxyPath(env)
@@ -138,13 +137,6 @@ export default defineConfig(({ mode }) => {
         'import.meta.env.VITE_API_BASE': JSON.stringify(`/${proxyPath}/api/v2/admin/`),
       }
       : {}
-
-  const flaskProxy = {
-    target: apiTarget,
-    changeOrigin: false,
-    secure: false,
-    cookieDomainRewrite: '',
-  }
 
   return {
     base,
@@ -175,17 +167,6 @@ export default defineConfig(({ mode }) => {
       port: devPort,
       allowedHosts: true,
       strictPort: true,
-      hmr: devBase !== '/' ? { path: devBase } : undefined,
-      proxy: {
-        '/__admin_v2_bootstrap': flaskProxy,
-        '^/(?![@.])[^/]+/__admin_v2_bootstrap': flaskProxy,
-        // Panel API (admin, user, panel, …)
-        '^/(?![@.])[^/]+/api': flaskProxy,
-        // Legacy admin dashboard — everything under /admin except /admin/v2 (Vite SPA)
-        '^/(?![@.])[^/]+/(?!admin/v2(?:/|$))': flaskProxy,
-        // Legacy admin static assets
-        '^/(?![@.])[^/]+/static': flaskProxy,
-      },
     },
     build: {
       outDir: '../static/admin-v2',

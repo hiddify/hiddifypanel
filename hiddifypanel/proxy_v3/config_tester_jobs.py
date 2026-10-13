@@ -45,6 +45,9 @@ def _push(job: str, ev: Event, client: RedisClient) -> None:
     key = _key(job, "events")
     client.rpush(key, json.dumps(ev))
     client.expire(key, TTL)
+    from hiddifypanel.live import changes
+
+    changes.publish([f"cfgtest:{job}"])  # the live page follows the job without asking again
 
 
 def create(job: str, first: Event, events: Iterator[Event], client: RedisClient) -> str:

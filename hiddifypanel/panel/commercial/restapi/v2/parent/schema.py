@@ -141,6 +141,7 @@ class RegisterInputSchema(ApiModel):
         default=None,
         description="The uuids of the child's users that panel_data.users does not carry. The parent answers which of them it does not have (missing_user_uuids): only those are sent, by register-users",
     )
+    ws_sync: bool = Field(default=False, description="The child takes the parent's users over its WebSocket (api/v2/node/ws/): the parent leaves them out of the answer")
 
 
 class RegisterUsersInputSchema(ApiModel):
@@ -155,3 +156,4 @@ class RegisterOutputSchema(ApiModel):
     parent_hosts: list[PanelHostSchema] | None = Field(default=None, description="The parent's domains (the node uses another one when the one it has is down)")
     users_total: int | None = Field(default=None, description="Set when the users are not in this answer but in pages: register-job/<job>/users/ (None: they are in `users`)")
     missing_user_uuids: list[str] | None = Field(default=None, description="Of the child's user_uuids, the ones the parent does not have (None: an older parent that does not know user_uuids)")
+    users_via_ws: bool = Field(default=False, description="The users are not in this answer: the child gets them over its WebSocket (it asked with ws_sync)")

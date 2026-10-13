@@ -1,4 +1,5 @@
 import { getHttp } from '@/core/api/client'
+import { liveStream } from '@/core/live/live'
 
 export type NodeStatus = 'online' | 'late' | 'offline' | 'never'
 
@@ -68,31 +69,43 @@ export const nodesApi = {
   },
   /**
    * Registers a node. It is a job on the panel (the node and this panel talk to each other for a while, longer than a web
-   * server or CDN waits for one request): this starts it and asks for the result until it is there.
+   * server or CDN waits for one request): this starts it, and its result is pushed over the live channel when it is there
+   * (asked over HTTP every few seconds while the live channel is down).
    * A failure throws an error shaped like a failed request, with the {@link NodeRegisterError} as `response.data`.
    */
   async register(adminLink: string, name: string): Promise<PanelNode | null> {
     const http = getHttp()
     const { data: started } = await http.post<{ job: string }>('nodes/', { admin_link: adminLink, name }, { headers: { 'X-Async-Job': '1' }, timeout: 30_000 })
-    const deadline = Date.now() + REGISTER_WAIT_MS
-    let failures = 0
-    while (Date.now() < deadline) {
-      await new Promise((resolve) => window.setTimeout(resolve, 1500))
-      try {
-        const { data: state } = await http.get<NodeJobState>(`nodes/jobs/${started.job}/`, { timeout: 30_000 })
-        failures = 0
-        if (state.state === 'running') continue
-        if (state.state === 'failed') throw registerFailure({ code: 'rejected', message: state.error?.message ?? '' })
-        const result = state.result
-        if (result?.ok) return result.node ?? null
-        throw registerFailure(result?.error ?? { code: 'rejected', message: '' })
-      } catch (e) {
-        if (e instanceof RegisterFailure) throw e
-        // A poll that did not get through (the panel is busy or restarting): the registration goes on, ask again.
-        if (++failures >= 20) throw e
+    const state = await new Promise<NodeJobState>((resolve, reject) => {
+      let failures = 0
+      let over = false
+      const finish = (result: NodeJobState | null, error?: unknown) => {
+        if (over) return
+        over = true
+        window.clearTimeout(deadline)
+        feed.stop()
+        if (result) resolve(result)
+        else reject(error)
       }
-    }
-    throw registerFailure({ code: 'timeout', message: '' })
+      const deadline = window.setTimeout(() => finish(null, registerFailure({ code: 'timeout', message: '' })), REGISTER_WAIT_MS)
+      const feed = liveStream<NodeJobState>('node.job', () => ({ job: started.job }), {
+        onData: (s) => {
+          failures = 0
+          if (s.state !== 'running') finish(s)
+        },
+        onError: (e) => {
+          if (e.status === 401 || e.status === 403 || e.status === 404) return finish(null, registerFailure({ code: 'rejected', message: e.message }))
+          // A request that did not get through (the panel is busy or restarting): the registration goes on, ask again.
+          if (e.fallback && ++failures >= 20) finish(null, registerFailure({ code: 'rejected', message: e.message }))
+        },
+        pauseWhenHidden: false,
+        fallbackMs: 1500,
+        fallback: async () => (await http.get<NodeJobState>(`nodes/jobs/${started.job}/`, { timeout: 30_000 })).data,
+      })
+    })
+    if (state.state === 'failed') throw registerFailure({ code: 'rejected', message: state.error?.message ?? '' })
+    if (state.result?.ok) return state.result.node ?? null
+    throw registerFailure(state.result?.error ?? { code: 'rejected', message: '' })
   },
   async rename(id: number, name: string): Promise<{ node: PanelNode; synced_to_node: boolean }> {
     const { data } = await getHttp().patch<{ node: PanelNode; synced_to_node: boolean }>(`nodes/${id}/`, { name }, { timeout: 30_000 })

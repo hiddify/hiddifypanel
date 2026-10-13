@@ -24,6 +24,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v167(child_id):
+    """Nodes read users and admins from the parent in the order they changed (hutils/node/sync_feed.py)."""
+    execute("CREATE INDEX ix_user_lmt_id ON user (last_modified_time, id)")
+    execute("CREATE INDEX ix_admin_user_lmt_id ON admin_user (last_modified_time, id)")
+    add_config_if_not_exist(ConfigEnum.parent_sync_cursor, "", child_id)
+
+
 def _v166(child_id):
     """Custom JSON outbounds (hiddify-core outbound / endpoint, xray outbound): the `outbound.config` column and the new
     outbound modes are added by the generic column / enum sync that runs before every upgrade."""

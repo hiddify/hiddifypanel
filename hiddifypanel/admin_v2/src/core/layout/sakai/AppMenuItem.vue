@@ -129,8 +129,9 @@ function onMouseEnter() {
     <router-link
       v-if="item.to && !item.items && item.visible !== false"
       :to="item.to as string"
-      :class="item.class as string"
-      active-class="active-route"
+      :class="[item.class as string, { 'active-route': isActive }]"
+      active-class=""
+      exact-active-class=""
       tabindex="0"
       @click="itemClick($event, item)"
       @mouseenter="onMouseEnter"

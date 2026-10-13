@@ -7,6 +7,7 @@ keep a copy of the file's lists in ``builtin_lists``; while the admin has not ed
 
 from __future__ import annotations
 
+import datetime
 import hashlib
 import json
 import re
@@ -272,7 +273,8 @@ def _repoint_outbound_ids(mapping: dict[int, int]) -> None:
     from hiddifypanel.models.user import User
 
     for old, new in mapping.items():
-        AdminUser.query.filter(AdminUser.default_outbound_id == old).update({"default_outbound_id": new})
+        # A bulk update skips the ORM hooks: last_modified_time is set here, so the nodes get these admins again.
+        AdminUser.query.filter(AdminUser.default_outbound_id == old).update({"default_outbound_id": new, "last_modified_time": datetime.datetime.now()})
     for user in User.query.filter(User.extra_params.isnot(None), User.extra_params != "", User.extra_params != "{}").all():
         extra = user.extra_params_json()
         oid = preferred_outbound_id(extra)

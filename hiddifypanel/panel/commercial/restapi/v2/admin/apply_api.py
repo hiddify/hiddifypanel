@@ -224,6 +224,9 @@ def start_action(action: str) -> dict[str, Any]:
     except Exception as e:
         logger.exception(e)
         abort(500, "Could not start the action")
+    from hiddifypanel.live import changes
+
+    changes.publish(["apply"])
     return {"action": action, "log": spec["log"], "started": started, **_state()}
 
 

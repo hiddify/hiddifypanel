@@ -1,13 +1,15 @@
 <script setup lang="ts">
 /**
- * Waits (at most CERT_WAIT_SECONDS) for a requested certificate: polls the server, shows a progress bar,
- * then whether a real certificate was issued. `start` asks for one first (the add wizard already did).
+ * Waits (at most CERT_WAIT_SECONDS) for a requested certificate: its state is pushed over the live channel (at once when
+ * the job moves on), with a progress bar, then whether a real certificate was issued. `start` asks for one first (the add
+ * wizard already did).
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 import { apiErrorMessage } from '@/core/api/client'
+import { liveWatch, type Subscription } from '@/core/live/live'
 import { CERT_WAIT_SECONDS, domainsApi, type DomainTls } from '@/features/domains/api'
 
 const props = defineProps<{ domainId: number; domain: string; start?: boolean }>()
@@ -22,8 +24,9 @@ const tls = ref<DomainTls | null>(null)
 const error = ref('')
 let startedAt = Date.now()
 let tick: number | undefined
-let poll: number | undefined
+let feed: Subscription | null = null
 let stopped = false
+let unmounted = false
 
 /** Moves steadily but slows down near the end, so a slow ACME server does not look stuck at 100%. */
 const percent = computed(() => {
@@ -39,7 +42,8 @@ const step = computed(() => (elapsed.value < 8 ? 0 : elapsed.value < 30 ? 1 : 2)
 function stop() {
   stopped = true
   window.clearInterval(tick)
-  window.clearTimeout(poll)
+  feed?.stop()
+  feed = null
 }
 
 function finish(next: Phase) {
@@ -52,27 +56,32 @@ function newerThanStart(iso: string | null): boolean {
   return !!iso && Date.parse(iso) >= startedAt - 2000
 }
 
-async function check() {
+function take(cur: DomainTls) {
   if (stopped) return
-  try {
-    const cur = await domainsApi.certificate(props.domainId)
-    tls.value = cur
-    const job = cur.job
-    if (cur.status === 'valid' && (job?.state === 'done' || newerThanStart(cur.updated_at))) return finish('ok')
-    if (job?.state === 'failed') {
-      error.value = job.error || cur.error
-      return finish('failed')
-    }
-    if (job?.state === 'done') {
-      // The script finished but there is no real certificate (DNS, firewall or rate limit).
-      error.value = cur.error
-      return finish(cur.status === 'valid' ? 'ok' : 'failed')
-    }
-  } catch {
-    // Keep waiting: the panel may be busy while acme.sh runs.
+  tls.value = cur
+  const job = cur.job
+  if (cur.status === 'valid' && (job?.state === 'done' || newerThanStart(cur.updated_at))) return finish('ok')
+  if (job?.state === 'failed') {
+    error.value = job.error || cur.error
+    return finish('failed')
   }
-  if (elapsed.value >= CERT_WAIT_SECONDS) return finish(tls.value?.status === 'valid' ? 'ok' : 'timeout')
-  poll = window.setTimeout(check, 3000)
+  if (job?.state === 'done') {
+    // The script finished but there is no real certificate (DNS, firewall or rate limit).
+    error.value = cur.error
+    return finish(cur.status === 'valid' ? 'ok' : 'failed')
+  }
+}
+
+function clock() {
+  elapsed.value = (Date.now() - startedAt) / 1000
+  if (!stopped && elapsed.value >= CERT_WAIT_SECONDS) finish(tls.value?.status === 'valid' ? 'ok' : 'timeout')
+}
+
+function follow() {
+  feed?.stop()
+  if (stopped) return // left (or finished) while the certificate was being asked for
+  // The panel may be busy while acme.sh runs: a failed read just waits for the next one.
+  feed = liveWatch<DomainTls>(`domains-page/${props.domainId}/certificate/`, { intervalMs: 3000, tags: [`cert:${props.domainId}`], onData: take, pauseWhenHidden: false })
 }
 
 async function begin() {
@@ -82,7 +91,7 @@ async function begin() {
   elapsed.value = 0
   startedAt = Date.now()
   window.clearInterval(tick)
-  tick = window.setInterval(() => (elapsed.value = (Date.now() - startedAt) / 1000), 250)
+  tick = window.setInterval(clock, 250)
   if (props.start) {
     try {
       await domainsApi.requestCertificate(props.domainId)
@@ -91,7 +100,7 @@ async function begin() {
       return finish('failed')
     }
   }
-  poll = window.setTimeout(check, 2500)
+  follow()
 }
 
 /** Ask again (after fixing DNS or the firewall). */
@@ -102,17 +111,22 @@ async function retry() {
     error.value = apiErrorMessage(err)
     return
   }
+  if (unmounted) return
   stopped = false
   phase.value = 'waiting'
   error.value = ''
   elapsed.value = 0
   startedAt = Date.now()
-  tick = window.setInterval(() => (elapsed.value = (Date.now() - startedAt) / 1000), 250)
-  poll = window.setTimeout(check, 2500)
+  window.clearInterval(tick)
+  tick = window.setInterval(clock, 250)
+  follow()
 }
 
 onMounted(begin)
-onBeforeUnmount(stop)
+onBeforeUnmount(() => {
+  unmounted = true
+  stop()
+})
 </script>
 
 <template>

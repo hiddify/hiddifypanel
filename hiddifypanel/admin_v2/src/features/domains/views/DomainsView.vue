@@ -190,6 +190,7 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import ApplyNotice from '@/shared/components/ApplyNotice.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
+import { liveWatch, type Subscription } from '@/core/live/live'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
@@ -489,15 +490,20 @@ function confirmDelete(d: DomainRow) {
   })
 }
 
-// Certificates requested elsewhere finish in the background: refresh now and then while one is running.
-let refresher: number | undefined
+// Certificates requested elsewhere finish in the background: the list is pushed again when a certificate job moves on.
+// (Not on every domain change: this page's own saves answer with the new list, and the list request itself may write.)
+let feed: Subscription | null = null
 onMounted(async () => {
+  feed = liveWatch<DomainsState>('domains-page/', {
+    intervalMs: 5 * 60_000,
+    tags: ['cert'],
+    onData: (next) => {
+      if (!certVisible.value) state.value = next // as load() does (no warnings again: they came with the save)
+    },
+  })
   await load()
-  refresher = window.setInterval(() => {
-    if (!certVisible.value && state.value?.domains.some((d) => d.tls.job?.state === 'running')) void load(true)
-  }, 8000)
 })
-onBeforeUnmount(() => window.clearInterval(refresher))
+onBeforeUnmount(() => feed?.stop())
 </script>
 
 <style scoped>

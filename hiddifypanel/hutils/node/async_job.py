@@ -114,6 +114,9 @@ def _save(client: redis.Redis[bytes], job: str, state: JobState) -> None:
         client.set(_key(job), json.dumps(state), ex=TTL)
     except redis.RedisError:
         logger.warning("a node job could not be saved in Redis (it is kept in this process)")
+    from hiddifypanel.live import changes
+
+    changes.publish([f"nodejob:{job}"])
 
 
 def start(work: Callable[[], JsonObject]) -> str:

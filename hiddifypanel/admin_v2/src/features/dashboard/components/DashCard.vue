@@ -60,16 +60,19 @@ defineProps<{
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
   padding: 1rem 1.25rem 0.5rem;
 }
 .dash-card__heading {
+  flex: 1 1 12rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
 }
 .dash-card__icon {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -1,11 +1,12 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { dashboardApi, type DashboardNode, type DashboardNodeStats, type DashboardSnapshot } from '@/core/api/generated'
+import { liveWatch, type Subscription } from '@/core/live/live'
 import { useMetricHistory } from './useMetricHistory'
 
 /** Ranges the dashboard API accepts for the usage/users history charts. */
 export const RANGE_OPTIONS = [7, 30, 90, 180] as const
 export const DEFAULT_RANGE = 30
-/** Live server metrics refresh; the usage aggregation is much cheaper to poll slowly. */
+/** Live server metrics refresh; the usage aggregation is much cheaper to refresh slowly (and at once when users or nodes change). */
 export const SYSTEM_REFRESH_MS = 5000
 export const ANALYTICS_REFRESH_MS = 60000
 
@@ -30,8 +31,8 @@ function storedNode(): number | null {
 }
 
 /**
- * Single source of truth for the dashboard. Server metrics poll on a short
- * interval while usage/user aggregates refresh slowly, both pausing while the
+ * Single source of truth for the dashboard, pushed over the live channel: server metrics on a short
+ * interval, usage/user aggregates slowly and whenever users or nodes change; both pause while the
  * browser tab is hidden.
  */
 export function useDashboard() {
@@ -49,8 +50,9 @@ export function useDashboard() {
   const failed = ref(false)
   const updatedAt = ref<Date | null>(null)
 
-  const timers: number[] = []
   let inFlight = false
+  let systemFeed: Subscription | null = null
+  let analyticsFeed: Subscription | null = null
 
   const debug = debugNodes()
   const query = () => ({
@@ -73,14 +75,19 @@ export function useDashboard() {
     failed.value = false
   }
 
+  function applyAnalytics(snapshot: DashboardSnapshot) {
+    analytics.value = snapshot
+    applySystem(snapshot)
+    loading.value = false
+  }
+
+  /** Asked by the refresh button: at once, over HTTP. */
   async function loadAnalytics() {
     if (inFlight) return
     inFlight = true
     refreshing.value = true
     try {
-      const snapshot = await dashboardApi.get({ ...query(), processes: 16 })
-      analytics.value = snapshot
-      applySystem(snapshot)
+      applyAnalytics(await dashboardApi.get({ ...query(), processes: 16 }))
     } catch {
       failed.value = true
     } finally {
@@ -90,67 +97,51 @@ export function useDashboard() {
     }
   }
 
-  async function loadSystem() {
-    if (inFlight) return
-    try {
-      applySystem(await dashboardApi.get({ ...query(), include: 'system', processes: 16 }))
-    } catch {
-      failed.value = true
-    }
+  function onError() {
+    failed.value = true
+    loading.value = false
   }
 
-  function stopTimers() {
-    while (timers.length) window.clearInterval(timers.pop())
+  function stopFeeds() {
+    systemFeed?.stop()
+    analyticsFeed?.stop()
+    systemFeed = analyticsFeed = null
   }
 
-  function startTimers() {
-    stopTimers()
-    if (!live.value || document.hidden) return
-    timers.push(window.setInterval(loadSystem, SYSTEM_REFRESH_MS))
-    timers.push(window.setInterval(loadAnalytics, ANALYTICS_REFRESH_MS))
+  function startFeeds() {
+    stopFeeds()
+    if (!live.value) return // paused: neither the metrics nor the totals are refreshed
+    analyticsFeed = liveWatch<DashboardSnapshot>('dashboard/', {
+      query: () => ({ ...query(), processes: 16 }),
+      intervalMs: ANALYTICS_REFRESH_MS,
+      tags: ['user', 'child'],
+      onData: applyAnalytics,
+      onError,
+    })
+    systemFeed = liveWatch<DashboardSnapshot>('dashboard/', {
+      query: () => ({ ...query(), include: 'system', processes: 16 }),
+      intervalMs: SYSTEM_REFRESH_MS,
+      onData: applySystem,
+      onError,
+    })
   }
 
-  function onVisibilityChange() {
-    if (document.hidden) {
-      stopTimers()
-      return
-    }
-    if (live.value) {
-      void loadAnalytics()
-      startTimers()
-    }
-  }
-
-  watch(live, (enabled) => {
-    if (enabled) {
-      void loadSystem()
-      startTimers()
-    } else {
-      stopTimers()
-    }
-  })
+  watch(live, startFeeds)
 
   watch(rangeDays, (days) => {
     localStorage.setItem(RANGE_STORAGE_KEY, String(days))
-    void loadAnalytics()
+    analyticsFeed?.restart()
   })
 
   watch(childId, (id) => {
     localStorage.setItem(NODE_STORAGE_KEY, id === null ? 'all' : String(id))
     history.reset?.()
-    void loadAnalytics()
+    analyticsFeed?.restart()
+    systemFeed?.restart()
   })
 
-  onMounted(() => {
-    void loadAnalytics()
-    startTimers()
-    document.addEventListener('visibilitychange', onVisibilityChange)
-  })
-
-  onBeforeUnmount(() => {
-    stopTimers()
-    document.removeEventListener('visibilitychange', onVisibilityChange)
-  })
+  onMounted(startFeeds)
+  onBeforeUnmount(stopFeeds)
 
   const nodes = computed<DashboardNode[]>(() => analytics.value?.nodes ?? [])
 

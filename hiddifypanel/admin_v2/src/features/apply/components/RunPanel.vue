@@ -1,13 +1,15 @@
 <script setup lang="ts">
 /**
  * One run, live: a progress bar with the step in words, the elapsed time, the log as a terminal and, at the
- * end, whether it worked. Keeps asking while the panel restarts (installs restart it at the end).
+ * end, whether it worked. The log is pushed over the live channel; while the panel restarts (installs restart it at the
+ * end) it is read over HTTP from whatever address still answers.
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 import { ACTION_META, LogReader, type ApplyAction, type LogChunk, type LogSources } from '@/features/apply/api'
+import { liveStream, type Subscription } from '@/core/live/live'
 import TerminalView from '@/features/apply/components/TerminalView.vue'
 import { AnsiParser, type AnsiSpan } from '@/shared/utils/ansi'
 
@@ -32,7 +34,7 @@ const STALL_SECONDS = 15 * 60
 
 let offset = 0
 const reader = new LogReader(props.file, props.sources)
-let timer: number | undefined
+let feed: Subscription | null = null
 let clock: number | undefined
 let startedAt = Date.now()
 let lastGrowth = Date.now()
@@ -62,40 +64,60 @@ function append(text: string) {
 }
 
 function finish(ok: boolean) {
+  if (stopped) return
   phase.value = 'done'
   stopped = true
-  window.clearTimeout(timer)
+  feed?.stop()
   window.clearInterval(clock)
   emit('finished', ok)
 }
 
-async function poll() {
+/** A piece of the log, from the live stream or (while it is down) from the reader. */
+function take(chunk: LogChunk) {
   if (stopped) return
-  try {
-    const chunk = await reader.read({ offset, since: props.started })
-    failures = 0
-    reconnecting.value = false
-    if (!chunk.started) {
-      phase.value = 'starting'
-    } else {
-      if (phase.value === 'starting') phase.value = 'running'
-      if (chunk.reset) {
-        spans.value = []
-        offset = 0
-      }
-      if (chunk.offset > offset) append(chunk.text)
-      offset = chunk.offset
-      if (chunk.progress) progress.value = chunk.progress
-      if (chunk.finished) return finish(true)
-      if (quiet.value && Date.now() - lastGrowth > QUIET_SECONDS * 1000 && spans.value.length) return finish(true)
-    }
-  } catch {
-    // The panel restarts at the end of an install: keep trying.
-    failures++
-    reconnecting.value = failures >= 2
+  failures = 0
+  reconnecting.value = false
+  if (!chunk.started) {
+    phase.value = 'starting'
+    return
   }
-  if (phase.value !== 'done' && Date.now() - lastGrowth > STALL_SECONDS * 1000) phase.value = 'stalled'
-  timer = window.setTimeout(poll, 1000)
+  if (phase.value === 'starting') phase.value = 'running'
+  if (chunk.reset) {
+    spans.value = []
+    offset = 0
+  }
+  if (chunk.offset > offset) append(chunk.text)
+  offset = chunk.offset
+  if (chunk.progress) progress.value = chunk.progress
+  if (chunk.finished) finish(true)
+}
+
+/** Every half second: the quiet end of restart/status, and a run that stopped writing. */
+function checkClock() {
+  elapsed.value = (Date.now() - startedAt) / 1000
+  if (stopped) return
+  if (phase.value !== 'starting' && quiet.value && Date.now() - lastGrowth > QUIET_SECONDS * 1000 && spans.value.length) return finish(true)
+  if (Date.now() - lastGrowth > STALL_SECONDS * 1000) phase.value = 'stalled'
+}
+
+function follow() {
+  // Pushed over the live channel. While it is down (the panel restarts during most runs), or if it refuses the stream (the
+  // session is gone after a domain change), read over HTTP every second on whatever address still answers.
+  feed = liveStream<LogChunk>('apply.log', () => ({ file: props.file, offset, since: props.started || undefined }), {
+    onData: take,
+    fallbackMs: 1000,
+    fallback: () => reader.read({ offset, since: props.started }),
+    onError: (error) => {
+      if (!error.fallback) return
+      failures++
+      reconnecting.value = failures >= 2
+    },
+    // Ended without "Finished!" (the panel went away mid-run): follow again in a moment, from the same offset.
+    onEnd: () => {
+      if (!stopped) window.setTimeout(() => !stopped && follow(), 1000)
+    },
+    pauseWhenHidden: false,
+  })
 }
 
 function reload() {
@@ -105,12 +127,12 @@ function reload() {
 onMounted(() => {
   startedAt = Date.now()
   lastGrowth = Date.now()
-  clock = window.setInterval(() => (elapsed.value = (Date.now() - startedAt) / 1000), 500)
-  void poll()
+  clock = window.setInterval(checkClock, 500)
+  follow()
 })
 onBeforeUnmount(() => {
   stopped = true
-  window.clearTimeout(timer)
+  feed?.stop()
   window.clearInterval(clock)
 })
 </script>

@@ -219,6 +219,7 @@ import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { apiErrorMessage, getHttp } from '@/core/api/client'
+import { liveRequest, liveStream, type Subscription } from '@/core/live/live'
 import type { Fetched, Json, JobPage, JsonObject, Kind, ResultEvent, Source, TesterEvent } from '@/features/config-tester/types'
 import SubscriptionViewer from '@/features/config-tester/components/SubscriptionViewer.vue'
 import JsonTree from '@/features/config-tester/components/JsonTree.vue'
@@ -402,7 +403,6 @@ function failure(e: unknown): string {
   return status === 401 || status === 403 ? t('configTester.signedOut') : apiErrorMessage(e)
 }
 
-const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms))
 const reconnecting = ref(false)
 
 /**
@@ -416,12 +416,13 @@ async function stream(body: Record<string, unknown>, remember = false) {
   try {
     let job = ''
     try {
-      const { data } = await getHttp().post<{ job: string }>('config-tester/', { test_url: testUrl.value, workers: workers.value, timeout: timeout.value, repeats: repeats.value, ...body }, { signal: controller.signal, skipAuthRedirect: true })
-      job = data.job
+      const request = { test_url: testUrl.value, workers: workers.value, timeout: timeout.value, repeats: repeats.value, ...body }
+      job = (await liveRequest<{ job: string }>('POST', 'config-tester/', { body: request, skipAuthRedirect: true })).job
     } catch (e) {
       if (!controller.signal.aborted) error.value = failure(e)
       return
     }
+    if (controller.signal.aborted) return cancel(job) // stopped while it was starting
     controllers.set(controller, job)
     if (remember) rememberJob(job)
     await follow(job, controller)
@@ -438,43 +439,62 @@ function finish(controller: AbortController) {
   if (!active.value) rows.value.forEach((r) => { if (r.state === 'waiting') r.state = r.history.length ? summary(r.history).state : 'idle' })
 }
 
-/** Read the events of a job, again and again, until it is done. A dropped connection is just tried again. */
-async function follow(job: string, controller: AbortController, after = 0) {
-  let failures = 0
-  while (!controller.signal.aborted) {
-    try {
-      const { data } = await getHttp().get<JobPage>(`config-tester/${job}/`, { params: { after }, signal: controller.signal, skipAuthRedirect: true })
+/**
+ * Follow the events of a job until it is done: pushed over the live channel as the job adds them; while that is down,
+ * read over HTTP (a dropped connection is just tried again, the test goes on without us).
+ */
+function follow(job: string, controller: AbortController, after = 0, resuming = false): Promise<boolean> {
+  return new Promise((resolve) => {
+    let seen = false
+    let failures = 0
+    let over = false
+    let feed: Subscription | undefined
+    const end = (followed = true) => {
+      if (over) return
+      over = true
+      feed?.stop()
+      controller.signal.removeEventListener('abort', onAbort)
+      reconnecting.value = false
+      resolve(followed)
+    }
+    const onAbort = () => end()
+    const take = (data: JobPage) => {
+      seen = true
       failures = 0
       reconnecting.value = false
       data.events.forEach(onEvent)
       after = data.next
-      if (data.done) return
+      if (data.done) return end()
       if (data.lost) {
         error.value = t('configTester.lost')
-        return
+        end()
       }
-      await sleep(data.events.length ? 200 : 700)
-    } catch (e) {
-      if (controller.signal.aborted) return
-      const status = statusOf(e)
-      if (status === 404) {
-        error.value = t('configTester.gone')
-        return
-      }
-      if (status === 401 || status === 403) {
-        error.value = failure(e) // the test goes on in the panel; signing in again and reloading shows it
-        return
-      }
-      // The panel or the network is away for a moment: keep asking, the test goes on without us.
-      failures++
-      reconnecting.value = true
-      if (failures > 90) {
-        error.value = failure(e)
-        return
-      }
-      await sleep(Math.min(500 * failures, 4000))
     }
-  }
+    const refused = (status: number, message: string) => {
+      if (status === 404 && resuming && !seen) return end(false) // gone (an hour passed, or the panel forgot it): the caller starts anew
+      if (status === 404) error.value = t('configTester.gone')
+      else if (status === 401 || status === 403) error.value = t('configTester.signedOut') // the test goes on in the panel; signing in again and reloading shows it
+      else error.value = message
+      end()
+    }
+    if (controller.signal.aborted) return end()
+    controller.signal.addEventListener('abort', onAbort)
+    feed = liveStream<JobPage>('config-tester', () => ({ job, after }), {
+      onData: take,
+      onError: (e) => {
+        if (e.status === 404 || e.status === 401 || e.status === 403) return refused(e.status, e.message)
+        if (!e.fallback) return // the server failed this time: the stream goes on over HTTP
+        // The panel or the network is away for a moment: keep asking, the test goes on without us.
+        failures++
+        reconnecting.value = true
+        if (failures > 90) refused(0, e.message)
+      },
+      onEnd: end,
+      pauseWhenHidden: false,
+      fallbackMs: (n) => (n ? Math.min(500 * n, 4000) : 700),
+      fallback: async () => (await getHttp().get<JobPage>(`config-tester/${job}/`, { params: { after }, signal: controller.signal, skipAuthRedirect: true })).data,
+    })
+  })
 }
 
 /** The test is in the address: a reload shows it again (and goes on following it) instead of starting over. */
@@ -487,17 +507,10 @@ async function resume(job: string): Promise<boolean> {
   controllers.set(controller, job)
   active.value++
   try {
-    await getHttp().get(`config-tester/${job}/`, { params: { after: 0 }, signal: controller.signal, skipAuthRedirect: true })
-  } catch {
-    finish(controller)
-    return false // gone (an hour passed, or the panel forgot it): the caller starts anew
-  }
-  try {
-    await follow(job, controller)
+    return await follow(job, controller, 0, true)
   } finally {
     finish(controller)
   }
-  return true
 }
 
 /** An xray client asks for xray JSON: the panel is told so (force_xray_json=1) even when that subscription is off in its settings. */
@@ -589,10 +602,15 @@ async function rerunMany(list: Row[], opts: { repeats?: number; replaceAt?: numb
   await stream(opts.repeats ? { items, repeats: opts.repeats } : { items })
 }
 
+/** Stop a test on the server (it stops by itself too when nobody follows it). */
+function cancel(job: string) {
+  void liveRequest('DELETE', `config-tester/${job}/`, { skipAuthRedirect: true }).catch(() => undefined)
+}
+
 function stop() {
   controllers.forEach((job, c) => {
     c.abort()
-    if (job) void getHttp().delete(`config-tester/${job}/`, { skipAuthRedirect: true }).catch(() => undefined) // the server stops it too
+    if (job) cancel(job)
   })
 }
 

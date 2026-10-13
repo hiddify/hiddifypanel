@@ -45,6 +45,7 @@
       <section class="ap-tools">
         <Button :label="t('actions.resetCache')" icon="pi pi-eraser" severity="secondary" outlined size="small" :loading="resetting" @click="resetCache" />
         <Button :label="t('actions.ports.title')" icon="pi pi-sitemap" severity="secondary" outlined size="small" @click="portsVisible = true" />
+        <Button :label="t('wsTest.button')" icon="pi pi-wifi" severity="secondary" outlined size="small" @click="wsTestVisible = true" />
       </section>
 
       <!-- Logs -->
@@ -75,11 +76,12 @@
 
     <LogViewerDialog v-model:visible="logVisible" :file="logFile" @cleared="refresh(true)" />
     <PublicPortsDialog v-model:visible="portsVisible" />
+    <WsTestDialog v-model:visible="wsTestVisible" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -92,6 +94,8 @@ import { apiErrorMessage, getHttp } from '@/core/api/client'
 import LogViewerDialog from '@/features/apply/components/LogViewerDialog.vue'
 import RunPanel from '@/features/apply/components/RunPanel.vue'
 import PublicPortsDialog from '@/features/actions/components/PublicPortsDialog.vue'
+import WsTestDialog from '@/features/apply/components/WsTestDialog.vue'
+import { liveWatch, type Subscription } from '@/core/live/live'
 import { ACTIONS, ACTION_LOG, ACTION_META, LOG_ICON, applyApi, formatSize, type ApplyAction, type ApplyState, type LogFile, type StartedRun } from '@/features/apply/api'
 
 const { t, locale } = useI18n()
@@ -109,7 +113,10 @@ const resetting = ref(false)
 const portsVisible = ref(false)
 const logVisible = ref(false)
 const logFile = ref<LogFile | null>(null)
-let timer: number | undefined
+const wsTestVisible = ref(false)
+let feed: Subscription | null = null
+/** The latest state (live channel or refresh); while a run is shown it waits, and is shown when the run panel closes. */
+let latest: ApplyState | null = null
 
 const files = computed(() => state.value?.files ?? [])
 const busyOutside = computed(() => !!state.value?.running.length)
@@ -141,7 +148,7 @@ function ago(seconds: number): string {
 
 async function refresh(quiet = false) {
   try {
-    state.value = await applyApi.state()
+    state.value = latest = await applyApi.state()
     loadError.value = null
   } catch (err) {
     if (!quiet) loadError.value = apiErrorMessage(err) || t('common.loadFailed')
@@ -225,7 +232,20 @@ async function resetCache() {
   }
 }
 
+watch(run, (shown) => {
+  if (!shown && latest) state.value = latest
+})
+
 onMounted(async () => {
+  // What runs and the logs: pushed when it changes (at once when an action starts).
+  feed = liveWatch<ApplyState>('apply/', {
+    intervalMs: 10_000,
+    tags: ['apply'],
+    onData: (next) => {
+      latest = next
+      if (!run.value) state.value = next
+    },
+  })
   await refresh()
   // Sent here by "Apply" notices elsewhere: ?run=apply asks for it right away.
   const wanted = String(route.query.run ?? '') as ApplyAction
@@ -233,9 +253,8 @@ onMounted(async () => {
     void router.replace({ query: {} })
     ask(wanted)
   }
-  timer = window.setInterval(() => !run.value && void refresh(true), 10_000)
 })
-onBeforeUnmount(() => window.clearInterval(timer))
+onBeforeUnmount(() => feed?.stop())
 </script>
 
 <style scoped>

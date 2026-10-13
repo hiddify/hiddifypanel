@@ -51,6 +51,7 @@ def __get_register_data_for_api(name: str, mode: ChildMode, *, uuids_only: bool 
         node_base_url=base_url,
         panel_hosts=[PanelHostSchema(domain=h.domain, mode=h.mode) for h in endpoints.own_hosts()],
         user_uuids=[str(u.uuid) for u in User.query.filter(User.deleted.is_(False)).with_entities(User.uuid).all()] if uuids_only else None,
+        ws_sync=True,
         panel_data=RegisterDataSchema(
             admin_users=[admin_user.to_schema() for admin_user in AdminUser.query.all()],
             users=[] if uuids_only else [user.to_schema() for user in User.query.all()],
@@ -371,7 +372,12 @@ def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildM
         if failure is not None:
             logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not take the node's own users: {failure.kind}: {failure.reason}")
             return failure
-    logger.success(f"[register {reg or '-'} node] registered with the parent {parent_host}")
+    via_ws = ": its users come over the WebSocket" if res.users_via_ws else ""
+    logger.success(f"[register {reg or '-'} node] registered with the parent {parent_host}{via_ws}")
+    from . import sync_feed, ws_client
+
+    sync_feed.reset_cursor()  # registering (again) starts the parent's change feed from the beginning
+    ws_client.wake()
     cache.invalidate_all_cached_functions()
     if defer_apply:
         logger.info(f"[register {reg or '-'} node] applying users and configs in {APPLY_DELAY_SECONDS}s, after the answer has gone out")

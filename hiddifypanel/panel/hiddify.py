@@ -268,7 +268,7 @@ def set_db_from_json(
     if replace_owner_admin and len(uuids_without_parent):
         new_owner_uuid = uuids_without_parent[0]
         old_owner = AdminUser.query.filter(AdminUser.id == 1).first()
-        old_uuid_admin = AdminUser.query.filter(AdminUser.uuid == new_owner_uuid).first()
+        old_uuid_admin = AdminUser.query_with_deleted().filter(AdminUser.uuid == new_owner_uuid).first()  # a deleted admin keeps its uuid
         if old_owner and not old_uuid_admin:
             old_owner.uuid = new_owner_uuid
             db.session.commit()
