@@ -1,3 +1,3 @@
 {% if ctx.proxy.domain.extra.finalmask and ctx.platform.hiddify.version >= "5.0.0" %}
-  "finalmask": "{{ ctx.proxy.domain.extra.finalmask }}",
+    "final_mask": {{ ctx.proxy.domain.extra.finalmask | compactjson }},
 {% endif %}
