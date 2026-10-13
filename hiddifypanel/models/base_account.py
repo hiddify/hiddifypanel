@@ -210,7 +210,7 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
             cls.upsert(row, commit=False)
         if remove:
             keep = {str(row.uuid) for row in rows if row.uuid}
-            for d in cls.query.filter(cls.deleted.is_(False)).all():
+            for d in cls.query.filter(cls.deleted.isnot(True)).all():
                 if d.uuid not in keep:
                     d.removed_by_sync()
         if commit:
@@ -224,7 +224,8 @@ def _hide_deleted_accounts(state: ORMExecuteState) -> None:
     if not state.is_select or state.is_column_load or state.execution_options.get("include_deleted"):
         return
     for cls in _hidden_classes():
-        state.statement = state.statement.options(with_loader_criteria(cls, lambda c: c.deleted.is_(False), include_aliases=True))
+        # IS NOT TRUE: rows from before the column was used have NULL there, and they are not deleted.
+        state.statement = state.statement.options(with_loader_criteria(cls, lambda c: c.deleted.isnot(True), include_aliases=True))
 
 
 def _hidden_classes() -> list[type[BaseAccount]]:

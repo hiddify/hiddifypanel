@@ -131,7 +131,7 @@ class _TableFeed:
 
     def live_uuids(self) -> list[str]:
         m = self.model
-        return sorted(str(u) for (u,) in db.session.query(m.uuid).filter(m.deleted.is_(False)).execution_options(include_deleted=True).all())
+        return sorted(str(u) for (u,) in db.session.query(m.uuid).filter(m.deleted.isnot(True)).execution_options(include_deleted=True).all())
 
     def _forget_old(self) -> None:
         if self.pos is None:
@@ -224,7 +224,7 @@ class Applied:
 
 
 def local_user_uuids() -> list[str]:
-    return sorted(str(u) for (u,) in db.session.query(User.uuid).filter(User.deleted.is_(False)).all())
+    return sorted(str(u) for (u,) in db.session.query(User.uuid).filter(User.deleted.isnot(True)).all())
 
 
 @dataclass(frozen=True)
@@ -254,7 +254,7 @@ def _reconcile[A: BaseAccount](model: type[A], local: list[str], parent: list[st
 def reconcile_admins(parent_admins: list[str]) -> Reconciled:
     """Make this node's admins the parent's: what the parent no longer has is deleted here (a uuid changed there, a row the feed
     could not send), what it has and this node lacks is asked for again."""
-    local = sorted(str(u) for (u,) in db.session.query(AdminUser.uuid).filter(AdminUser.deleted.is_(False)).all())
+    local = sorted(str(u) for (u,) in db.session.query(AdminUser.uuid).filter(AdminUser.deleted.isnot(True)).all())
     return _reconcile(AdminUser, local, parent_admins)
 
 

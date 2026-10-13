@@ -320,7 +320,8 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <template #body="{ data }">
           <button v-if="data.ok" type="button" class="disk-cell" @click="openDisk({ id: data.id, title: data.title })">
             {{ data.diskPercent !== null ? formatPercent(data.diskPercent, 1) : '—' }}
-            <span v-if="false" v-if1="data.diskUsedGb !== null" class="disk-cell__sub">{{ formatGb(data.diskUsedGb, 1) }} / {{ formatGb(data.diskTotalGb ?? 0, 1) }}</span>
+            <!-- hidden for now; shown again with v-if="data.diskUsedGb !== null" -->
+            <span v-if="false" class="disk-cell__sub">{{ formatGb(data.diskUsedGb, 1) }} / {{ formatGb(data.diskTotalGb ?? 0, 1) }}</span>
             <i class="pi pi-external-link" />
           </button>
           <span v-else>—</span>

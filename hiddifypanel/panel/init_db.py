@@ -24,6 +24,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v168(child_id):
+    """Admins are soft-deleted now: rows from before have NULL in admin_user.deleted (users got theirs in _v140)."""
+    execute("UPDATE admin_user SET deleted=0 WHERE deleted IS NULL")
+
+
 def _v167(child_id):
     """Nodes read users and admins from the parent in the order they changed (hutils/node/sync_feed.py)."""
     execute("CREATE INDEX ix_user_lmt_id ON user (last_modified_time, id)")
