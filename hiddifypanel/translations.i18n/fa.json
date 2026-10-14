@@ -1832,7 +1832,10 @@
         "xhttp": "xHTTP"
       },
       "uploadTcpUdp": "TCP یا UDP آپلود",
-      "version": "نسخه"
+      "version": "نسخه",
+      "quickEnableHint": "این پروکسی به این تنظیمات نیاز دارد. همین‌جا تنظیمشان کنید و پروکسی را فعال کنید:",
+      "quickEnable": "فعال‌سازی سریع",
+      "quickEnableDone": "تنظیمات ذخیره و پروکسی فعال شد"
     },
     "qr": {
       "clickToCopy": "برای کپی تصویر کلیک کنید",

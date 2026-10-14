@@ -378,6 +378,7 @@
   </Popover>
 
   <GenerateBundleDialog v-model:visible="bundleDialogVisible" :meta="meta" />
+  <ParentEnableDialog />
 </template>
 
 <script setup lang="ts">
@@ -412,6 +413,7 @@ import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import GenerateBundleDialog from '@/features/custom-proxy/components/GenerateBundleDialog.vue'
 import { customProxiesApi, type CustomProxy, type CustomProxyMeta } from '@/core/api/generated'
+import ParentEnableDialog from '@/features/custom-proxy/components/ParentEnableDialog.vue'
 import { isEffectivelyEnabled, blockedParentEnables, isBlockedByParent, parentEnableConflict, useParentEnablePrompt } from '@/features/custom-proxy/parent-enable'
 
 const { t } = useI18n()
@@ -876,7 +878,13 @@ async function load() {
 
 function rejectBlockedEnable(row: CustomProxy) {
   enableSwitchEpoch.value += 1
-  promptParentEnable(blockedParentEnables(row), meta.value?.parent_enable_settings_url)
+  promptParentEnable(blockedParentEnables(row), meta.value?.parent_enable_settings_url, () => enableAfterSettings(row))
+}
+
+/** The blocking settings were just saved from the prompt: enable the proxy itself. */
+async function enableAfterSettings(row: CustomProxy) {
+  if (!row.id) return
+  Object.assign(row, await customProxiesApi.enable(row.id, true))
 }
 
 async function toggleEnable(row: CustomProxy, enable: boolean) {
@@ -896,7 +904,7 @@ async function toggleEnable(row: CustomProxy, enable: boolean) {
     const conflict = parentEnableConflict(err)
     if (conflict) {
       enableSwitchEpoch.value += 1
-      promptParentEnable(conflict.blocked_by, conflict.settings_url)
+      promptParentEnable(conflict.blocked_by, conflict.settings_url, () => enableAfterSettings(row))
       return
     }
     enableSwitchEpoch.value += 1

@@ -1834,7 +1834,10 @@
         "xhttp": "xHTTP"
       },
       "uploadTcpUdp": "Upload TCP or UDP",
-      "version": "Version"
+      "version": "Version",
+      "quickEnableHint": "This proxy needs these settings. Set them here and enable it now:",
+      "quickEnable": "Enable now",
+      "quickEnableDone": "Settings saved and proxy enabled"
     },
     "qr": {
       "clickToCopy": "Click to copy the image",

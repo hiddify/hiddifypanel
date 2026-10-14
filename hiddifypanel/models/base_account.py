@@ -217,6 +217,11 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
             db.session.commit()
 
 
+def _not_deleted(c):
+    # A module-level function, not a lambda: loaded rows keep this option, and the redis cache pickles them.
+    return c.deleted.isnot(True)
+
+
 @event.listens_for(Session, "do_orm_execute")
 def _hide_deleted_accounts(state: ORMExecuteState) -> None:
     """Leave deleted rows of the classes with ``hide_deleted`` out of a query, unless it asks for them (``query_with_deleted``).
@@ -225,7 +230,7 @@ def _hide_deleted_accounts(state: ORMExecuteState) -> None:
         return
     for cls in _hidden_classes():
         # IS NOT TRUE: rows from before the column was used have NULL there, and they are not deleted.
-        state.statement = state.statement.options(with_loader_criteria(cls, lambda c: c.deleted.isnot(True), include_aliases=True))
+        state.statement = state.statement.options(with_loader_criteria(cls, _not_deleted, include_aliases=True))
 
 
 def _hidden_classes() -> list[type[BaseAccount]]:

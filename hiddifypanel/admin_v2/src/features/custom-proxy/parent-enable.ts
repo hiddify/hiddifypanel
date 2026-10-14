@@ -1,6 +1,5 @@
 import type { CustomProxy, ParentEnableBlock } from '@/core/api/generated'
-import { useConfirm } from 'primevue/useconfirm'
-import { useI18n } from 'vue-i18n'
+import { reactive } from 'vue'
 
 export function blockedParentEnables(proxy: Partial<CustomProxy>): ParentEnableBlock[] {
   return proxy.blocked_by ?? []
@@ -28,22 +27,18 @@ export function parentEnableConflict(err: unknown): { blocked_by: ParentEnableBl
   }
 }
 
-export function useParentEnablePrompt() {
-  const confirm = useConfirm()
-  const { t } = useI18n()
+/** One prompt at a time for the whole app; ParentEnableDialog renders it. */
+export const parentEnablePrompt = reactive<{
+  visible: boolean
+  blocked: ParentEnableBlock[]
+  settingsUrl?: string
+  onEnabled?: () => void | Promise<void>
+}>({ visible: false, blocked: [] })
 
-  function promptParentEnable(blocked: ParentEnableBlock[], settingsUrl?: string) {
-    const names = blocked.map((item) => item.label).join(', ')
-    confirm.require({
-      message: t('proxy.needGlobalEnable', { names }),
-      header: t('proxy.cannotEnable'),
-      icon: 'pi pi-exclamation-triangle',
-      rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
-      acceptProps: { label: t('proxy.goToSettings') },
-      accept: () => {
-        if (settingsUrl) window.open(settingsUrl, '_blank', 'noopener,noreferrer')
-      },
-    })
+export function useParentEnablePrompt() {
+  /** Asks for the settings that block the proxy. `onEnabled` runs after they are saved here, to enable the proxy itself. */
+  function promptParentEnable(blocked: ParentEnableBlock[], settingsUrl?: string, onEnabled?: () => void | Promise<void>) {
+    Object.assign(parentEnablePrompt, { visible: true, blocked, settingsUrl, onEnabled })
   }
 
   return { promptParentEnable }

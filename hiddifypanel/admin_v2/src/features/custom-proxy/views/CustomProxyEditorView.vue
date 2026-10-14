@@ -535,6 +535,7 @@
       <Button :label="t('common.add')" icon="pi pi-plus" @click="confirmAddClient" />
     </template>
   </Dialog>
+  <ParentEnableDialog />
 </template>
 
 <script setup lang="ts">
@@ -542,6 +543,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
+import ParentEnableDialog from '@/features/custom-proxy/components/ParentEnableDialog.vue'
 import { blockedParentEnables, isBlockedByParent, isEffectivelyEnabled, useParentEnablePrompt } from '@/features/custom-proxy/parent-enable'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -894,7 +896,10 @@ function onEnableToggle(value: boolean) {
   if (value) {
     if (isBlockedByParent(form)) {
       enableSwitchEpoch.value += 1
-      promptParentEnable(blockedParent.value, meta.value?.parent_enable_settings_url)
+      promptParentEnable(blockedParent.value, meta.value?.parent_enable_settings_url, () => {
+        // The settings are saved; the proxy turns on when this form is saved.
+        Object.assign(form, { enable: true, blocked_by: [] })
+      })
       return
     }
     form.enable = true
