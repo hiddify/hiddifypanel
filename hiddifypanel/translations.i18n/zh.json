@@ -1328,8 +1328,8 @@
         "configExample": "插入示例",
         "configHint": {
           "core_endpoint": "一个 hiddify-core (sing-box) endpoint 对象，例如 WireGuard endpoint。保存前会由 hiddify-core 检查。",
-          "core_outbound": "一个 hiddify-core (sing-box) outbound 对象，例如 {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}。保存前会由 hiddify-core 检查。",
-          "xray_outbound": "一个 xray outbound 对象，例如 {\"protocol\": \"socks\", \"settings\": {…}}。保存前会由 xray 检查。"
+          "core_outbound": "一个 hiddify-core (sing-box) outbound 对象，例如 {'{'}\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}。保存前会由 hiddify-core 检查。",
+          "xray_outbound": "一个 xray outbound 对象，例如 {'{'}\"protocol\": \"socks\", \"settings\": {'{'}…{'}'}{'}'}。保存前会由 xray 检查。"
         },
         "configInvalid": "不是有效的 JSON：{error}",
         "configRequired": "JSON 为必填项",

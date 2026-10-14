@@ -771,7 +771,8 @@
       "validate": "Validate",
       "validationFailed": "Validation failed",
       "validationOk": "Validation passed",
-      "yes": "Yes"
+      "yes": "Yes",
+      "none": "None"
     },
     "configTester": {
       "advanced": "More options",
@@ -1462,8 +1463,8 @@
         "configExample": "Insert an example",
         "configHint": {
           "core_endpoint": "One hiddify-core (sing-box) endpoint object, e.g. a WireGuard endpoint. It is checked by hiddify-core before saving.",
-          "core_outbound": "One hiddify-core (sing-box) outbound object, e.g. {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. It is checked by hiddify-core before saving.",
-          "xray_outbound": "One xray outbound object, e.g. {\"protocol\": \"socks\", \"settings\": {…}}. It is checked by xray before saving."
+          "core_outbound": "One hiddify-core (sing-box) outbound object, e.g. {'{'}\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}. It is checked by hiddify-core before saving.",
+          "xray_outbound": "One xray outbound object, e.g. {'{'}\"protocol\": \"socks\", \"settings\": {'{'}…{'}'}{'}'}. It is checked by xray before saving."
         },
         "configInvalid": "Not valid JSON: {error}",
         "configRequired": "The JSON is required",

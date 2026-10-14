@@ -770,7 +770,8 @@
       "validate": "اعتبارسنجی",
       "validationFailed": "اعتبارسنجی ناموفق",
       "validationOk": "اعتبارسنجی موفق",
-      "yes": "بله"
+      "yes": "بله",
+      "none": "هیچ"
     },
     "configTester": {
       "advanced": "گزینه‌های بیشتر",
@@ -1460,8 +1461,8 @@
         "configExample": "درج یک نمونه",
         "configHint": {
           "core_endpoint": "یک endpoint هیدیفای‌کور (sing-box) مثل WireGuard. پیش از ذخیره با hiddify-core بررسی می‌شود.",
-          "core_outbound": "یک outbound هیدیفای‌کور (sing-box)، مثلاً {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. پیش از ذخیره با hiddify-core بررسی می‌شود.",
-          "xray_outbound": "یک outbound ایکس‌ری، مثلاً {\"protocol\": \"socks\", \"settings\": {…}}. پیش از ذخیره با xray بررسی می‌شود."
+          "core_outbound": "یک outbound هیدیفای‌کور (sing-box)، مثلاً {'{'}\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}. پیش از ذخیره با hiddify-core بررسی می‌شود.",
+          "xray_outbound": "یک outbound ایکس‌ری، مثلاً {'{'}\"protocol\": \"socks\", \"settings\": {'{'}…{'}'}{'}'}. پیش از ذخیره با xray بررسی می‌شود."
         },
         "configInvalid": "JSON معتبر نیست: {error}",
         "configRequired": "JSON لازم است",

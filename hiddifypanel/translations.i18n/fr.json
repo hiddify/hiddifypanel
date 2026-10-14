@@ -1332,8 +1332,8 @@
         "configExample": "Insérer un exemple",
         "configHint": {
           "core_endpoint": "Un objet endpoint hiddify-core (sing-box), p. ex. un endpoint WireGuard. Il est vérifié par hiddify-core avant l'enregistrement.",
-          "core_outbound": "Un objet outbound hiddify-core (sing-box), p. ex. {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}. Il est vérifié par hiddify-core avant l'enregistrement.",
-          "xray_outbound": "Un objet outbound xray, p. ex. {\"protocol\": \"socks\", \"settings\": {…}}. Il est vérifié par xray avant l'enregistrement."
+          "core_outbound": "Un objet outbound hiddify-core (sing-box), p. ex. {'{'}\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}. Il est vérifié par hiddify-core avant l'enregistrement.",
+          "xray_outbound": "Un objet outbound xray, p. ex. {'{'}\"protocol\": \"socks\", \"settings\": {'{'}…{'}'}{'}'}. Il est vérifié par xray avant l'enregistrement."
         },
         "configInvalid": "JSON non valide : {error}",
         "configRequired": "Le JSON est requis",

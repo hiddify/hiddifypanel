@@ -1332,8 +1332,8 @@
         "configExample": "နမူနာတစ်ခု ထည့်ရန်",
         "configHint": {
           "core_endpoint": "hiddify-core (sing-box) endpoint object တစ်ခု၊ ဥပမာ WireGuard endpoint။ မသိမ်းမီ hiddify-core က စစ်ဆေးသည်။",
-          "core_outbound": "hiddify-core (sing-box) outbound object တစ်ခု၊ ဥပမာ {\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080}။ မသိမ်းမီ hiddify-core က စစ်ဆေးသည်။",
-          "xray_outbound": "xray outbound object တစ်ခု၊ ဥပမာ {\"protocol\": \"socks\", \"settings\": {…}}။ မသိမ်းမီ xray က စစ်ဆေးသည်။"
+          "core_outbound": "hiddify-core (sing-box) outbound object တစ်ခု၊ ဥပမာ {'{'}\"type\": \"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}။ မသိမ်းမီ hiddify-core က စစ်ဆေးသည်။",
+          "xray_outbound": "xray outbound object တစ်ခု၊ ဥပမာ {'{'}\"protocol\": \"socks\", \"settings\": {'{'}…{'}'}{'}'}။ မသိမ်းမီ xray က စစ်ဆေးသည်။"
         },
         "configInvalid": "မှန်ကန်သော JSON မဟုတ်ပါ: {error}",
         "configRequired": "JSON လိုအပ်သည်",

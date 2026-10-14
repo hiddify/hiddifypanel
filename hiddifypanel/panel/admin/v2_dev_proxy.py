@@ -94,11 +94,15 @@ async def _proxy_websocket(scope: Scope, receive: Receive, send: Send, host: str
     try:
         writer.write(_ws_request(scope, host, port))
         await writer.drain()
-        status, _headers, _transfer = await _read_response_head(reader)
+        status, headers, _transfer = await _read_response_head(reader)
         if status != 101:
             await send({"type": "websocket.close", "code": 1011})
             return
-        await send({"type": "websocket.accept"})
+        # Echo the subprotocol Vite chose ("vite-hmr"): a browser drops a socket whose requested protocol is not answered.
+        accept: dict = {"type": "websocket.accept"}
+        if subprotocol := next((v.decode("latin-1") for k, v in headers if k.lower() == b"sec-websocket-protocol"), None):
+            accept["subprotocol"] = subprotocol
+        await send(accept)
         incoming = asyncio.create_task(_ws_from_client(receive, writer))
         outgoing = asyncio.create_task(_ws_from_vite(reader, send))
         _done, pending = await asyncio.wait({incoming, outgoing}, return_when=asyncio.FIRST_COMPLETED)
