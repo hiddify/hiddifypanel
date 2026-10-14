@@ -64,9 +64,9 @@ export function useAdminMenu() {
 
     const items: Record<GroupId, AdminMenuItem[]> = {
       // A node: its parent panel first, then this node's home, then the rest.
-      // Otherwise: the dashboard first; tools at the end.
+      // Otherwise: the dashboard first. Tools at the end in both.
       manager: isChildPanel.value
-        ? [...serverItems('manager'), { label: t('menu.nodeHome'), icon: 'pi pi-fw pi-server', to: '/node' }]
+        ? [...serverItems('manager'), { label: t('menu.nodeHome'), icon: 'pi pi-fw pi-server', to: '/node' }, tools.value]
         : [
             { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
             ...serverItems('manager'),
