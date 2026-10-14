@@ -20,7 +20,7 @@
  */
 import { getCurrentScope, onScopeDispose, ref } from 'vue'
 import { getHttp, goToLogin } from '@/core/api/client'
-import { makeTransport, type Transport, type TransportKind } from './transports'
+import { connectBest, type LiveChoice, type Transport, type TransportKind } from './transports'
 
 export type LiveState = 'idle' | 'connecting' | 'open' | 'offline'
 export interface LiveError {
@@ -60,30 +60,7 @@ export const liveProtocol = ref<string | null>(null)
 /** Why the last way tried was not taken (the WebSocket test shows it). */
 export const liveIssue = ref('')
 
-/**
- * Which way the channel goes: `auto` — a stream if it rides HTTP/3 or HTTP/2 (the page's own connection), else a WebSocket,
- * else a stream on whatever is left; or only one of `h3`, `h2` (a stream that must ride it) and `ws`. The browser picks the
- * HTTP version itself (Alt-Svc): `h3` / `h2` check what it picked, they can not make it.
- */
-export type LiveChoice = 'auto' | 'h3' | 'h2' | 'ws'
 let choice: LiveChoice = 'auto'
-
-interface Attempt {
-  kind: TransportKind
-  accepts: (protocol: string) => boolean
-}
-
-const ANY = () => true
-const ATTEMPTS: Record<LiveChoice, Attempt[]> = {
-  auto: [
-    { kind: 'stream', accepts: (p) => p === 'h3' || p === 'h2' },
-    { kind: 'websocket', accepts: ANY },
-    { kind: 'stream', accepts: ANY },
-  ],
-  h3: [{ kind: 'stream', accepts: (p) => p === 'h3' }],
-  h2: [{ kind: 'stream', accepts: (p) => p === 'h2' }],
-  ws: [{ kind: 'websocket', accepts: ANY }],
-}
 
 type Kind = 'watch' | 'stream'
 interface ServerMessage {
@@ -239,41 +216,20 @@ class LiveClient {
     }
     liveState.value = 'connecting'
     this.connecting = true
-    void this.openFirst(ATTEMPTS[choice], ++this.attempt)
+    void this.openFirst(++this.attempt)
   }
 
-  private async openFirst(attempts: Attempt[], attempt: number) {
-    for (const { kind, accepts } of attempts) {
-      let transport: Transport | null = null
-      transport = makeTransport(kind, {
-        onMessage: (text) => this.transport === transport && this.received(text),
-        onClose: () => this.transport === transport && this.closed(),
-      })
-      try {
-        await transport.open()
-      } catch (e) {
-        transport.close()
-        liveIssue.value = `${kind}: ${(e as Error)?.message ?? e}`
-        if (attempt !== this.attempt) return
-        continue
-      }
-      if (!accepts(transport.protocol)) {
-        liveIssue.value = `${kind} rode ${transport.protocol || 'an unknown protocol'}`
-        transport.close()
-        if (attempt !== this.attempt) return
-        continue
-      }
-      if (attempt !== this.attempt) {
-        transport.close() // overtaken by a reconnect
-        return
-      }
-      this.connecting = false
-      this.opened(transport)
-      return
-    }
+  private async openFirst(attempt: number) {
+    const transport = await connectBest('live', choice, {
+      onMessage: (text, t) => this.transport === t && this.received(text),
+      onClose: (t) => this.transport === t && this.closed(),
+      onIssue: (issue) => (liveIssue.value = issue),
+      stale: () => attempt !== this.attempt,
+    })
     if (attempt !== this.attempt) return
     this.connecting = false
-    this.closed()
+    if (transport) this.opened(transport)
+    else this.closed()
   }
 
   private opened(transport: Transport) {
@@ -551,4 +507,4 @@ export function liveChoose(next: LiveChoice) {
   client.reconnect()
 }
 
-export type { TransportKind }
+export type { LiveChoice, TransportKind }

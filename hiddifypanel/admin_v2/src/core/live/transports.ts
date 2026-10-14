@@ -34,8 +34,11 @@ export interface Transport {
 
 const OPEN_TIMEOUT_MS = 8000
 
-function liveUrl(path: string): URL {
-  return new URL(`${getApiBase()}live/${path}`, window.location.href)
+/** A channel of the admin API: `live` (the pages' updates), `ssh` (the SSH page). */
+export type Channel = 'live' | 'ssh'
+
+function channelUrl(channel: Channel, path: string): URL {
+  return new URL(`${getApiBase()}${channel}/${path}`, window.location.href)
 }
 
 export class WebSocketTransport implements Transport {
@@ -43,11 +46,14 @@ export class WebSocketTransport implements Transport {
   readonly protocol = 'websocket'
   private socket: WebSocket | null = null
 
-  constructor(private readonly handlers: TransportHandlers) {}
+  constructor(
+    private readonly handlers: TransportHandlers,
+    private readonly channel: Channel = 'live',
+  ) {}
 
   open(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const url = liveUrl('')
+      const url = channelUrl(this.channel, '')
       url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
       let socket: WebSocket
       try {
@@ -150,9 +156,14 @@ export class StreamTransport implements Transport {
   private opened = false
   private closedByPage = false
   private queue: string[] = []
-  private posting = false
+  /** POSTs not answered yet, and the number of the next one (the server takes them in that order). */
+  private inFlight = 0
+  private seq = 0
 
-  constructor(private readonly handlers: TransportHandlers) {}
+  constructor(
+    private readonly handlers: TransportHandlers,
+    private readonly channel: Channel = 'live',
+  ) {}
 
   open(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -170,7 +181,7 @@ export class StreamTransport implements Transport {
       })
       void (async () => {
         try {
-          const response = await fetch(liveUrl('stream/'), {
+          const response = await fetch(channelUrl(this.channel, 'stream/'), {
             credentials: 'include',
             cache: 'no-store',
             headers: { Accept: 'text/event-stream' },
@@ -201,7 +212,7 @@ export class StreamTransport implements Transport {
   }
 
   private async probe() {
-    const url = liveUrl(`${this.session}/`).toString()
+    const url = channelUrl(this.channel, `${this.session}/`).toString()
     try {
       await fetch(url, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: '[]' })
     } catch {
@@ -213,30 +224,35 @@ export class StreamTransport implements Transport {
   send(message: object): boolean {
     if (!this.opened || this.closedByPage) return false
     this.queue.push(JSON.stringify(message))
-    void this.flush()
+    this.flush()
     return true
   }
 
-  /** One POST at a time, carrying everything queued meanwhile: messages arrive in the order they were sent. */
-  private async flush() {
-    if (this.posting || !this.queue.length) return
-    this.posting = true
-    const batch = this.queue.splice(0)
-    try {
-      const response = await fetch(liveUrl(`${this.session}/`), {
+  /**
+   * Each message leaves at once, without waiting for the last POST's answer (a key typed in a terminal must not wait a
+   * round trip behind the one before): POSTs are numbered and the server takes them in order. Past `MAX_IN_FLIGHT`
+   * unanswered ones, what is queued meanwhile goes together in the next.
+   */
+  private flush() {
+    while (this.inFlight < MAX_IN_FLIGHT && this.queue.length && !this.closedByPage) {
+      const batch = this.queue.splice(0)
+      const seq = this.seq++
+      this.inFlight++
+      fetch(channelUrl(this.channel, `${this.session}/?seq=${seq}`), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(batch),
       })
-      if (!response.ok) throw new Error(`The session answered ${response.status}`)
-    } catch {
-      this.ended() // the session is gone (or unreachable): the channel opens again, subscriptions start over
-      return
-    } finally {
-      this.posting = false
+        .then((response) => {
+          if (!response.ok) throw new Error(`The session answered ${response.status}`)
+        })
+        .catch(() => this.ended()) // the session is gone (or unreachable): the channel opens again, subscriptions start over
+        .finally(() => {
+          this.inFlight--
+          this.flush()
+        })
     }
-    void this.flush()
   }
 
   close() {
@@ -246,6 +262,76 @@ export class StreamTransport implements Transport {
   }
 }
 
-export function makeTransport(kind: TransportKind, handlers: TransportHandlers): Transport {
-  return kind === 'stream' ? new StreamTransport(handlers) : new WebSocketTransport(handlers)
+/** Unanswered POSTs at a time on a stream transport. */
+const MAX_IN_FLIGHT = 8
+
+export function makeTransport(kind: TransportKind, handlers: TransportHandlers, channel: Channel = 'live'): Transport {
+  return kind === 'stream' ? new StreamTransport(handlers, channel) : new WebSocketTransport(handlers, channel)
+}
+
+/**
+ * Which way a channel goes: `auto` — a stream if it rides HTTP/3 or HTTP/2 (the page's own connection), else a WebSocket,
+ * else a stream on whatever is left; or only one of `h3`, `h2` (a stream that must ride it) and `ws`. The browser picks the
+ * HTTP version itself (Alt-Svc): `h3` / `h2` check what it picked, they can not make it.
+ */
+export type LiveChoice = 'auto' | 'h3' | 'h2' | 'ws'
+
+interface Attempt {
+  kind: TransportKind
+  accepts: (protocol: string) => boolean
+}
+
+const ANY = () => true
+const ATTEMPTS: Record<LiveChoice, Attempt[]> = {
+  auto: [
+    { kind: 'stream', accepts: (p) => p === 'h3' || p === 'h2' },
+    { kind: 'websocket', accepts: ANY },
+    { kind: 'stream', accepts: ANY },
+  ],
+  h3: [{ kind: 'stream', accepts: (p) => p === 'h3' }],
+  h2: [{ kind: 'stream', accepts: (p) => p === 'h2' }],
+  ws: [{ kind: 'websocket', accepts: ANY }],
+}
+
+export interface ConnectHandlers {
+  onMessage: (text: string, transport: Transport) => void
+  onClose: (transport: Transport) => void
+  /** Why a way tried was not taken. */
+  onIssue?: (issue: string) => void
+  /** True when the caller no longer wants this attempt (it closes what it opened). */
+  stale?: () => boolean
+}
+
+/** Open `channel` the best way `choice` allows (h3 → h2 → WebSocket for `auto`); null when none works (or `stale()`). */
+export async function connectBest(channel: Channel, choice: LiveChoice, handlers: ConnectHandlers): Promise<Transport | null> {
+  for (const { kind, accepts } of ATTEMPTS[choice]) {
+    let transport: Transport | null = null
+    transport = makeTransport(
+      kind,
+      {
+        onMessage: (text) => transport && handlers.onMessage(text, transport),
+        onClose: () => transport && handlers.onClose(transport),
+      },
+      channel,
+    )
+    try {
+      await transport.open()
+    } catch (e) {
+      transport.close()
+      handlers.onIssue?.(`${kind}: ${(e as Error)?.message ?? e}`)
+      if (handlers.stale?.()) return null
+      continue
+    }
+    if (handlers.stale?.()) {
+      transport.close()
+      return null
+    }
+    if (!accepts(transport.protocol)) {
+      handlers.onIssue?.(`${kind} rode ${transport.protocol || 'an unknown protocol'}`)
+      transport.close()
+      continue
+    }
+    return transport
+  }
+  return null
 }

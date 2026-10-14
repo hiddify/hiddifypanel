@@ -8,9 +8,10 @@ backend panel
   http-request set-header X-Real-IP %[src]
   http-request set-header X-Forwarded-Proto https
   http-response set-header X-Robots-Tag "noindex, nofollow"
-  # HTTP/2 to the panel (the live channel's stream and its POSTs share one connection); WebSockets need HTTP/1.1 upgrades
-  # there (granian has no WebSocket over HTTP/2), so they go to the same port as HTTP/1.1.
-  use-server s_ws if { req.hdr(upgrade) -i websocket }
+  # HTTP/2 to the panel (the live channel's stream and its POSTs share one connection). WebSockets go as HTTP/1.1 upgrades,
+  # whatever the browser used (over its HTTP/2 connection a WebSocket is an Extended CONNECT): granian has no WebSocket over
+  # HTTP/2. This covers the live channel, the nodes' channel and Vite's hot reload in development.
+  use-server s_ws if { req.hdr(upgrade) -i websocket } or METH_CONNECT
   server s 127.0.0.1:9000 proto h2
   server s_ws 127.0.0.1:9000 weight 0
 

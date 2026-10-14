@@ -42,6 +42,17 @@ export function useAdminMenu() {
     ],
   }))
 
+  // Opens and closes like the proxy editor: config tester, text decoders, SSH terminal.
+  const tools = computed<AdminMenuItem>(() => ({
+    label: t('menu.tools'),
+    icon: 'pi pi-fw pi-wrench',
+    items: [
+      ...(isSuperAdmin.value ? [{ label: t('menu.configTester'), icon: 'pi pi-fw pi-bolt', to: '/config-tester' }] : []),
+      { label: t('menu.textDecoders'), icon: 'pi pi-fw pi-code', to: '/utils' },
+      ...(isSuperAdmin.value ? [{ label: t('menu.ssh'), icon: 'pi pi-fw pi-desktop', to: '/ssh' }] : []),
+    ],
+  }))
+
   // Their own entries in Settings (not inside the proxy editor).
   const protocols = computed<AdminMenuItem>(() => ({ label: t('menu.protocols'), icon: 'pi pi-fw pi-sliders-h', to: '/protocols' }))
   const outbounds = computed<AdminMenuItem>(() => ({ label: t('menu.outbounds'), icon: 'pi pi-fw pi-directions', to: '/outbounds' }))
@@ -59,8 +70,7 @@ export function useAdminMenu() {
         : [
             { label: t('menu.dashboard'), icon: 'pi pi-fw pi-home', to: '/' },
             ...serverItems('manager'),
-            { label: t('menu.utils'), icon: 'pi pi-fw pi-wrench', to: '/utils' },
-            ...(isSuperAdmin.value ? [{ label: t('menu.configTester'), icon: 'pi pi-fw pi-bolt', to: '/config-tester' }] : []),
+            tools.value,
           ],
       // Domains, protocols, outbounds, settings, the proxy editor, then the rest (backup, apply, ...).
       // The proxy editor lives in Settings in every panel mode; agents don't get it.

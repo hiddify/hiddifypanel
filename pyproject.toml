@@ -69,6 +69,7 @@ dependencies = [
     "a2wsgi>=1.10.10",
     "websockets>=15.0",
     "httpx[http2]>=0.28",
+    "asyncssh>=2.21",
     "polib>=1.2.0",
     "apscheduler>=3.11.3,<4.0.0",
 ]

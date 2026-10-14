@@ -39,7 +39,7 @@ class Route:
 
 def _routes() -> list[Route]:
     from hiddifypanel.hutils.node import ws_server
-    from hiddifypanel.live import channel
+    from hiddifypanel.live import channel, ssh
 
     def route(kind: str, method: str | None, pattern: str, handler: Handler) -> Route:
         return Route(kind, method, re.compile(pattern), handler)
@@ -49,6 +49,10 @@ def _routes() -> list[Route]:
         route("websocket", None, _ADMIN + r"/admin/live/?$", lambda app, m, scope, receive, send: channel.handle(app, m["proxy_path"], scope, receive, send)),
         route("http", "GET", _ADMIN + r"/admin/live/stream/?$", lambda app, m, scope, receive, send: channel.handle_stream(app, m["proxy_path"], scope, receive, send)),
         route("http", "POST", _ADMIN + r"/admin/live/" + _SESSION + r"/?$", lambda app, m, scope, receive, send: channel.handle_post(scope, receive, send, m["session"])),
+        # SSH from the panel (live/ssh.py): the same transports
+        route("websocket", None, _ADMIN + r"/admin/ssh/?$", lambda app, m, scope, receive, send: ssh.handle(app, m["proxy_path"], scope, receive, send)),
+        route("http", "GET", _ADMIN + r"/admin/ssh/stream/?$", lambda app, m, scope, receive, send: ssh.handle_stream(app, m["proxy_path"], scope, receive, send)),
+        route("http", "POST", _ADMIN + r"/admin/ssh/" + _SESSION + r"/?$", lambda app, m, scope, receive, send: ssh.handle_post(scope, receive, send, m["session"])),
         # the nodes' channel
         route("websocket", None, _ADMIN + r"/node/ws/?$", lambda app, m, scope, receive, send: ws_server.handle(app, m["proxy_path"], scope, receive, send)),
         route("http", "GET", _ADMIN + r"/node/stream/?$", lambda app, m, scope, receive, send: ws_server.handle_stream(app, m["proxy_path"], scope, receive, send)),

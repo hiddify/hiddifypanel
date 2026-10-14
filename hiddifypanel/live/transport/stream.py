@@ -24,6 +24,8 @@ from .base import Codec, Connection, Frame
 KEEPALIVE = 15.0
 CLEANUP_TIMEOUT = 5.0
 MAX_POST = 16 * 1024 * 1024
+#: how many numbered POSTs may arrive before one that is missing
+MAX_AHEAD = 256
 HEADERS = [
     (b"content-type", b"text/event-stream; charset=utf-8"),
     (b"cache-control", b"no-store"),
@@ -40,6 +42,27 @@ class StreamConnection(Connection):
         self.channel = channel
         self.session = secrets.token_urlsafe(24)
         self._out: asyncio.Queue[str | None] = asyncio.Queue()
+        #: POSTs may overtake one another (the page sends the next before the last is answered, for a terminal to keep up
+        #: with typing): numbered, and their frames taken in that order
+        self._next_seq = 0
+        self._held: dict[int, list[str]] = {}
+
+    def deliver(self, frames: list[str], seq: int | None = None) -> bool:
+        """The frames of one POST; with its number, held until the ones before it are in. False: too far ahead (lost ones)."""
+        if seq is None:
+            for frame in frames:
+                self.received(frame)
+            return True
+        if seq < self._next_seq:
+            return True  # a repeat
+        if seq - self._next_seq > MAX_AHEAD:
+            return False
+        self._held[seq] = frames
+        while self._next_seq in self._held:
+            for frame in self._held.pop(self._next_seq):
+                self.received(frame)
+            self._next_seq += 1
+        return True
 
     async def _write(self, frame: Frame) -> None:
         self._out.put_nowait(frame if isinstance(frame, str) else frame.decode())
@@ -146,6 +169,19 @@ async def handle_post(scope: Scope, receive: Receive, send: Send, channel: str, 
         return await refuse(send, 400, "not JSON")
     if not isinstance(frames, list) or not all(isinstance(f, str) for f in frames):
         return await refuse(send, 400, "a list of frames is expected")
-    for frame in frames:
-        conn.received(frame)
+    seq = _seq(scope)
+    if not conn.deliver(frames, seq):
+        conn.ended()
+        return await refuse(send, 409, "messages were lost (open a new stream)")
     await _respond(send, 204)
+
+
+def _seq(scope: Scope) -> int | None:
+    """The POST's number (``?seq=``), when the page numbers them."""
+    from urllib.parse import parse_qs
+
+    raw = parse_qs((scope.get("query_string") or b"").decode("latin-1")).get("seq")
+    try:
+        return int(raw[0]) if raw else None
+    except ValueError:
+        return None

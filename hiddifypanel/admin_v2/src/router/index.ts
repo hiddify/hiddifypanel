@@ -154,6 +154,13 @@ const routes = [
         beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
       },
       {
+        path: 'ssh',
+        name: 'ssh',
+        component: () => import('@/features/ssh/views/SshView.vue'),
+        // A terminal on any server, from this panel: super admins only.
+        beforeEnter: () => (isSuperAdmin.value ? true : { name: 'dashboard' }),
+      },
+      {
         path: 'apply',
         name: 'apply',
         component: () => import('@/features/apply/views/ApplyView.vue'),
