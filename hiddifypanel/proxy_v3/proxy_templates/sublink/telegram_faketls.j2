@@ -1,0 +1,23 @@
+{#
+  Builtin telegram_faketls (subscription links): Telegram MTProxy FakeTLS links; rust-rpxy sends the fake domain's SNI on
+  :443 to telemt. Direct / relay domains with the Telegram fake domains (fake_mode telegram) of their server, plus the
+  fake domains' own IPs; with no Telegram fake domain, the setting's fake domain on every direct / relay domain.
+  tg://proxy?server=<server>&port=443&secret=ee<secret hex><fake domain hex>
+#}
+{%- if ctx.hconfig.telegram_enable %}
+{%- set secret = ((ctx.user.uuid if ctx.hconfig.telegram_lib == 'telemt' else ctx.hconfig.shared_secret) or '') | replace('-', '') | lower %}
+{%- set servers = ctx.proxy.domains | selectattr('fake_mode', 'equalto', 'valid') | selectattr('mode', 'in', ['direct', 'relay']) | list %}
+{%- set fronts = ctx.proxy.domains | selectattr('fake_mode', 'equalto', 'telegram') | list %}
+{%- if secret and not fronts and ctx.hconfig.telegram_fakedomain %}
+{%- for d in servers %}
+tg://proxy?server={{ d.name }}&port=443&secret=ee{{ secret }}{{ ctx.hconfig.telegram_fakedomain.encode('utf-8').hex() }}
+{%- endfor %}
+{%- elif secret %}
+{%- for f in fronts %}
+{%- set fake_hex = f.name.encode('utf-8').hex() %}
+{%- for server in (servers | selectattr('child_id', 'equalto', f.child_id) | map(attribute='name') | list) + (f.ips.ipsv4 | sort) + (f.ips.ipsv6 | sort) %}
+tg://proxy?server={{ server }}&port=443&secret=ee{{ secret }}{{ fake_hex }}
+{%- endfor %}
+{%- endfor %}
+{%- endif %}
+{%- endif %}

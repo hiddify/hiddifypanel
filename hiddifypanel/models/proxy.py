@@ -62,6 +62,7 @@ class ProxyProto(StrEnum):
     slipstream = auto()
     masterdns = auto()
     snell = auto()
+    telegram = auto()
 
 
 class ProxyL3(StrEnum):

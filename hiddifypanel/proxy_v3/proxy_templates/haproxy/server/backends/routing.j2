@@ -22,6 +22,21 @@ backend default_decoy
 
 
 
+{% if ctx.hconfig.telegram_enable and ctx.hconfig.telegram_webproxy_enable and ctx.hconfig.telegram_lib == 'telemt' and ctx.hconfig.telegram_base_path %}
+# Telegram web proxy: telemt reads the client IP from X-Forwarded-For (trusts 127.0.0.1 only)
+backend telemt_web
+  mode http
+  http-request set-header X-Forwarded-For %[src]
+  timeout tunnel 1h
+  server s 127.0.0.1:18080
+
+# What telemt answers on its vhosts when a request is not a proxy one
+frontend telemt_decoy
+  bind 127.0.0.1:18081
+  mode http
+  default_backend default_decoy
+{% endif %}
+
 backend to_https_in_http_mode
     server s abns@https_in_http_mode send-proxy-v2
 
@@ -34,6 +49,11 @@ backend to_httpmode
 
 backend to_https_in_ssl
     server s abns@https_in_ssl send-proxy-v2 tfo
+
+# The built-in speed test page is gone: send users to Cloudflare's.
+backend speedtest_redirect
+    mode http
+    http-request redirect location https://speed.cloudflare.com/ code 302
 
 backend generate_204
     mode http

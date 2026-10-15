@@ -74,10 +74,7 @@
         <dl class="ns__dl">
           <dt>{{ t('nodeSync.parentUrl') }}</dt>
           <dd class="ns__mono ns__wrap">{{ data?.parent.url || '—' }}</dd>
-          <dt>{{ t('nodeSync.parentId') }}</dt>
-          <dd class="ns__mono ns__wrap">{{ data?.parent.unique_id || '—' }}</dd>
-          <dt>{{ t('nodeSync.nodeId') }}</dt>
-          <dd class="ns__mono ns__wrap">{{ data?.node.unique_id || '—' }}</dd>
+         
           <dt>{{ t('nodeSync.cursor') }}</dt>
           <dd class="ns__mono ns__wrap">{{ cursorText }}</dd>
         </dl>

@@ -24,6 +24,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v169(child_id):
+    """Secret path of the Telegram web proxy (telemt web transport behind HAProxy on every HTTPS domain)."""
+    add_config_if_not_exist(ConfigEnum.telegram_webproxy_enable, True)
+    add_config_if_not_exist(ConfigEnum.telegram_base_path, hutils.random.get_random_string(7, 15))
+
+
 def _v168(child_id):
     """Admins are soft-deleted now: rows from before have NULL in admin_user.deleted (users got theirs in _v140)."""
     execute("UPDATE admin_user SET deleted=0 WHERE deleted IS NULL")
@@ -1343,7 +1349,7 @@ def init_db():
 
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 160, commit=True)
+    set_hconfig(ConfigEnum.db_version, 168, commit=True)
     db_version = current_db_version()
     if db_version >= latest_db_version():
         return

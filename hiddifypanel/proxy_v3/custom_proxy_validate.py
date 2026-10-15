@@ -1743,7 +1743,7 @@ def _infer_proxy_l3(data: dict[str, Any]) -> str:
 
 
 _TRANSPORT_CATEGORIES = frozenset({"ws", "grpc", "tcp", "http", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
-_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "slipstream", "masterdns", "snell"})
+_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "slipstream", "masterdns", "snell", "telegram"})
 
 
 def _infer_proxy_transport(data: dict[str, Any]) -> str:

@@ -76,6 +76,7 @@ protocol_config_map: dict[ProxyProto, ConfigEnum] = {
     ProxyProto.masterdns: ConfigEnum.dnstt_enable,
     ProxyProto.snell: ConfigEnum.snell_enable,
     ProxyProto.socks: ConfigEnum.socks_enable,
+    ProxyProto.telegram: ConfigEnum.telegram_enable,
 }
 
 transport_config_map: dict[CustomProxyTransport, ConfigEnum] = {

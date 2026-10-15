@@ -5,7 +5,14 @@
 {%- endfor %}
 ############## end of L7 gateway ##############
 
+# Telegram web proxy (telemt web transport; telemt picks the vhost by Host)
+{%- if ctx.hconfig.telegram_enable and ctx.hconfig.telegram_webproxy_enable and ctx.hconfig.telegram_lib == 'telemt' and ctx.hconfig.telegram_base_path %}
+/{{ ctx.hconfig.telegram_base_path |ljust(30)}} telemt_web
+{%- endif %}
+
 # Panel and static paths
+/{{ ctx.hconfig.proxy_path_client}}/speedtest/ speedtest_redirect
+/{{ ctx.hconfig.proxy_path}}/speedtest/ speedtest_redirect
 /{{ ctx.hconfig.proxy_path_client}}/generate_204 generate_204
 /{{ ctx.hconfig.proxy_path}}/generate_204 generate_204
 

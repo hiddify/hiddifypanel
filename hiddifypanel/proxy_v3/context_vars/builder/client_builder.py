@@ -6,7 +6,8 @@ from hiddifypanel.models.child import Child
 from hiddifypanel.models.config import get_hconfigs, get_hconfigs_json
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
-from hiddifypanel.models.domain import Domain, DomainType
+from hiddifypanel.models.domain import Domain, DomainType, FakeMode
+from hiddifypanel.models.proxy import ProxyProto
 from hiddifypanel.models.user import User
 from hiddifypanel.proxy_v3.context_vars.builder.utils import normalize_common_proxy_core
 from hiddifypanel.proxy_v3.context_vars.cert import CertVar, select_shared_certificate
@@ -86,6 +87,9 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.mode == CustomProxyMode.no_inbound:
         # Keep available domains (all children) so get_nodes_configs can split by child_id.
         # Still drop sub-link-only hosts; never treat no_inbound as "ignore every filter".
+        # Telegram proxies also need the Telegram fake domains (fake_mode telegram) for their FakeTLS links.
+        if d.fake_mode == FakeMode.telegram and proxy.proto == ProxyProto.telegram:
+            return True
         return not d.is_sub_link_only() and not d.is_fake_proxy()
     if d.is_sub_link_only() or d.is_fake_proxy():
         return False

@@ -39,8 +39,10 @@ ipv4 = true
 prefer = 4
 multipath = false
 
-[server]
-admin_port = 10088
+[server.api]
+enabled = true
+listen = "127.0.0.1:10088"
+whitelist = ["127.0.0.1/32", "::1/128"]
 
 [[server.listeners]]
 ip = "127.0.0.1"
@@ -48,36 +50,49 @@ port = 1001
 transport = "mtproxy"
 proxy_protocol = true
 
-{%for i,domain in enumerate(ctx.domains) if domain.cert.is_valid %}
+{#- Web transport: HAProxy sends /<telegram_base_path> on every domain here; telemt picks the vhost by Host.
+    One vhost per domain with fake_mode valid (as sublink/telegram_web). A vhost needs at least one profile, and web needs a vhost. #}
+{%- set web_domains = [] %}
+{%- for d in ctx.domains if ctx.hconfig.telegram_webproxy_enable and d.fake_mode == 'valid' and d.name not in web_domains %}
+{%- set _ = web_domains.append(d.name) %}
+{%- endfor %}
+{%- set web_users = ctx.users | selectattr('uuid_hex') | list %}
+{%- set web_on = web_domains and web_users %}
+{%- if web_on %}
+
 [[server.listeners]]
 ip = "127.0.0.1"
-port = {{1010+i}}
+port = 18080
 transport = "web"
 proxy_protocol = false
 web_client_ip_source = "x_forwarded_for"
 web_trusted_proxy_cidrs = ["127.0.0.1/32"]
-
-[[web.vhosts]]
-host = "{{domain.name}}"
-base_path = "ctx.hconfig.telegram_base_path"
-public_addr = "{{ctx.current_server_ip}}:443"
-
-{% endfor %}
+{%- endif %}
 
 [web]
-enabled = true
-carriers = ["websocket-lanes", "websocket","https-lanes","https"]
+enabled = {{ 'true' if web_on else 'false' }}
+carriers = ["websocket-lanes", "websocket", "https-lanes", "https"]
 decoy_fasttrack_mode = "off"
+{%- if web_on %}
+{%- for host in web_domains %}
+
+[[web.vhosts]]
+host = "{{ host }}"
+base_path = "{{ ctx.hconfig.telegram_base_path }}"
+{#- only used for the links telemt prints; must be ip:port #}
+public_addr = "{{ (ctx.ips.ipsv4 or ['127.0.0.1'])[0] }}:443"
 
 [web.vhosts.decoy]
 mode = "http_upstream"
-upstream = "http://127.0.0.1:808"
+upstream = "http://127.0.0.1:18081"
+{%- for u in web_users %}
 
-{%for u in ctx.users %}
 [[web.vhosts.profiles]]
-user = "{{u.uuid_hex}}"
+user = "{{ u.uuid_hex }}"
 secret_mode = "dd"
-{% endfor %}
+{%- endfor %}
+{%- endfor %}
+{%- endif %}
 
 [censorship]
 tls_domain = "{{ ctx.hconfig.telegram_fakedomain or '' }}"

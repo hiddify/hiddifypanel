@@ -67,6 +67,12 @@ ADDITIONAL_CONFIG_CLIENT_SLUGS = {
     "sublink": "sublink/additional_config",
 }
 USER_CONFIGS_SLUG = "user-configs"
+TELEGRAM_WEB_SLUG = "telegram-web"
+TELEGRAM_WEB_SERVER_SLUG = "hiddify-core/server/telegram_web"
+TELEGRAM_WEB_CLIENT_SLUG = "sublink/telegram_web"
+TELEGRAM_FAKETLS_SLUG = "telegram-faketls"
+TELEGRAM_FAKETLS_SERVER_SLUG = "hiddify-core/server/telegram_faketls"
+TELEGRAM_FAKETLS_CLIENT_SLUG = "sublink/telegram_faketls"
 USER_CONFIGS_SERVER_SLUG = "hiddify-core/server/user_configs"
 USER_CONFIGS_CLIENT_SLUGS = {
     "hiddify-core": "hiddify-core/client/user_configs",
@@ -293,6 +299,39 @@ def build_user_configs_preset(child_id: int = 0) -> CustomProxyPreset:
         client_cores=client_cores,
         tcp_udp=InboundTcpUdp.both,
     )
+
+
+def _telegram_preset(name: str, slug: str, server_slug: str, client_slug: str, tag: str) -> CustomProxyPreset:
+    """Client-only Telegram proxy: no server inbound (telemt serves it, telemt/server/base.j2); only the sublink client,
+    whose links open in Telegram. Links come from its sublink template."""
+    return CustomProxyPreset(
+        name=name,
+        slug=slug,
+        enable=True,
+        mode=CustomProxyMode.no_inbound,
+        proto="telegram",
+        transport="other",
+        tls_layer="http",
+        l7_reverse_proto=None,
+        categories=("telegram",),
+        domain_modes=(),
+        custom_path="",
+        server_config=PresetServerConfig(core="hiddify-core", inbound_template=load_template_slug(server_slug), template_slugs=(server_slug,), tag=tag),
+        client_cores=(PresetClientCore(core="sublink", version="", slug="client-sublink", outbounds_template=load_template_slug(client_slug)),),
+        tcp_udp=InboundTcpUdp.tcp,
+    )
+
+
+def build_telegram_web_preset(child_id: int = 0) -> CustomProxyPreset:
+    """tg://webproxy links on every domain with fake_mode valid (HAProxy -> telemt web listener)."""
+    del child_id  # presets are child-agnostic; sync applies child_id
+    return _telegram_preset("Telegram Web Proxy", TELEGRAM_WEB_SLUG, TELEGRAM_WEB_SERVER_SLUG, TELEGRAM_WEB_CLIENT_SLUG, "telegram-web")
+
+
+def build_telegram_faketls_preset(child_id: int = 0) -> CustomProxyPreset:
+    """tg://proxy FakeTLS links (rust-rpxy routes the fake domain's SNI to telemt's mtproxy listener)."""
+    del child_id  # presets are child-agnostic; sync applies child_id
+    return _telegram_preset("Telegram FakeTLS", TELEGRAM_FAKETLS_SLUG, TELEGRAM_FAKETLS_SERVER_SLUG, TELEGRAM_FAKETLS_CLIENT_SLUG, "telegram-faketls")
 
 
 def _preset_l7_reverse_proto(
@@ -684,11 +723,13 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
     rows.append(build_additional_config_preset(child_id))
     rows.append(build_node_configs_preset(child_id))
     rows.append(build_user_configs_preset(child_id))
+    rows.append(build_telegram_web_preset(child_id))
+    rows.append(build_telegram_faketls_preset(child_id))
     return _mark_common_proxies(rows)
 
 
 _COMMON_PROXY_CORES = frozenset({"xray", "hiddify-core"})
-_COMMON_PROXY_SKIP_SLUGS = frozenset({"additional-config", "node-configs", "user-configs", "xray-reality-termination"})
+_COMMON_PROXY_SKIP_SLUGS = frozenset({"additional-config", "node-configs", "user-configs", "telegram-web", "telegram-faketls", "xray-reality-termination"})
 
 
 def _preset_slot_key(preset: CustomProxyPreset) -> str | None:

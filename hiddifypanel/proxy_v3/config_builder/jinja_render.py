@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import os
 import random
@@ -137,6 +138,11 @@ def _urlencode_pair(key: Any, val: Any) -> tuple[str, Any] | None:
     return (str(key), val)
 
 
+def _jinja_hex_b64url(value: Any) -> str:
+    """Hex string -> unpadded base64url of its bytes (Telegram web-proxy secrets)."""
+    return base64.urlsafe_b64encode(bytes.fromhex(str(value or ""))).decode().rstrip("=")
+
+
 def _jinja_urlencode(value: Any) -> str:
     normalized = _to_json_value(value)
     if isinstance(normalized, dict):
@@ -239,6 +245,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.filters["asdict"] = _to_json_value
     env.filters["b64encode"] = hutils.encode.do_base_64
     env.filters["urlencoded"] = _jinja_urlencode
+    env.filters["hex_b64url"] = _jinja_hex_b64url
 
     env.filters["trim_no_line"] = _jinja_trim_no_line
     env.filters["compactjson"] = _jinja_compact_json

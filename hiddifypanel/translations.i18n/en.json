@@ -3196,6 +3196,14 @@
       "description": "should be random",
       "label": "ℹ️ HTTP Upgrade Path"
     },
+    "telegram_webproxy_enable": {
+      "description": "Telegram proxy over HTTPS (web proxy links) on every domain with a valid certificate",
+      "label": "Enable Telegram Web Proxy"
+    },
+    "telegram_base_path": {
+      "description": "Secret path of the Telegram web proxy on HTTPS domains",
+      "label": "ℹ️ Telegram Web Proxy Path"
+    },
     "path_naive": {
       "description": "For Naive Link",
       "label": "ℹ️ Naive Path"

@@ -747,7 +747,8 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
 
 
-def _build_sublink_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
+def render_sublink_links(child_id: int, contexts: list[ClientContextVar]) -> tuple[list[str], list[MessageModel]]:
+    """The share links of each proxy's sublink template, without the subscription's base config around them."""
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
@@ -777,6 +778,15 @@ def _build_sublink_client_config(child_id: int, contexts: list[ClientContextVar]
             text = line.strip().strip('"')
             if text and "://" in text:
                 links.append(text)
+    return links, messages
+
+
+def _build_sublink_client_config(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
+    from hiddifypanel.proxy_v3.config_builder.models import MessageModel
+    from hiddifypanel.proxy_v3.config_builder.render import render_section
+    from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
+
+    links, messages = render_sublink_links(child_id, contexts)
     links_text = "\n".join(links)
     if not contexts:
         return links_text, messages
