@@ -184,6 +184,14 @@
             @click="syncNode(node)"
           />
           <Button
+            icon="pi pi-chart-line"
+            severity="secondary"
+            outlined
+            :aria-label="t('nodes.syncInfo')"
+            v-tooltip.top="t('nodes.syncInfo')"
+            @click="syncInfoNode = node"
+          />
+          <Button
             icon="pi pi-wifi"
             severity="secondary"
             outlined
@@ -204,6 +212,18 @@
     </TransitionGroup>
 
     <AddNodeDialog v-model:visible="addVisible" @added="onAdded" />
+    <Dialog
+      :visible="syncInfoNode !== null"
+      modal
+      maximizable
+      dismissable-mask
+      :header="syncInfoNode ? t('nodes.syncInfoTitle', { name: syncInfoNode.name }) : ''"
+      :style="{ width: '64rem' }"
+      :breakpoints="{ '1199px': '90vw', '575px': '100vw' }"
+      @update:visible="(v: boolean) => !v && (syncInfoNode = null)"
+    >
+      <NodeSyncPanel v-if="syncInfoNode" :key="syncInfoNode.id" :loader="syncReportLoader(syncInfoNode.id)" embedded />
+    </Dialog>
   </div>
 </template>
 
@@ -221,6 +241,9 @@ import { apiErrorMessage } from '@/core/api/client'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
+import Dialog from 'primevue/dialog'
+import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
+import type { NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
 import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
 
 interface PingState {
@@ -245,6 +268,17 @@ const loading = ref(true)
 const refreshing = ref(false)
 const loadError = ref<string | null>(null)
 const addVisible = ref(false)
+/** The node whose sync report is open. */
+const syncInfoNode = ref<PanelNode | null>(null)
+
+/** The node's report through this panel; a node that cannot be asked shows the reason as the panel's error. */
+function syncReportLoader(id: number): NodeSyncLoader {
+  return async () => {
+    const res = await nodesApi.syncReport(id)
+    if (!res.report) throw new Error(res.error || t('nodes.syncInfoUnavailable'))
+    return res.report
+  }
+}
 const syncing = ref<number | null>(null)
 const justAdded = ref<number | null>(null)
 const pings = reactive<Record<number, PingState>>({})

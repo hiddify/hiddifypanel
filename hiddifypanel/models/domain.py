@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import json5
 from flask import request
-from sqlalchemy import Enum, ForeignKey, String, Text, event, or_
+from sqlalchemy import Enum, ForeignKey, String, Text, event, func, or_
 from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
 from strenum import StrEnum
 
@@ -79,6 +79,11 @@ class Domain(db.Model):
     domain: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     alias: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     mode: Mapped[DomainType] = mapped_column(Enum(DomainType), default=DomainType.direct)
+
+    @classmethod
+    def count_by_mode(cls, child_id: int) -> dict[DomainType, int]:
+        """Domains of ``child_id`` of each mode."""
+        return {mode: n for mode, n in db.session.query(cls.mode, func.count()).filter(cls.child_id == child_id).group_by(cls.mode).all()}
     fake_mode: Mapped[FakeMode] = mapped_column(Enum(FakeMode), default=FakeMode.valid)
     cdn_ip: Mapped[str] = mapped_column(Text(2000), nullable=False, default="")
     server_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id"), default=None)

@@ -11,8 +11,10 @@ from flask.views import MethodView
 import hiddifypanel
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
-from hiddifypanel.hutils.node import async_job
+from hiddifypanel.hutils.node import async_job, ws_server
+from hiddifypanel.hutils.node.sync_report import NodeSyncReport
 from hiddifypanel.models import Child, ChildMode, Role
+from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 
 # A node reports usage every few minutes; past these it is shown as late / offline.
 _ONLINE_WINDOW = timedelta(minutes=15)
@@ -172,3 +174,30 @@ class NodeSyncApi(MethodView):
         if not hutils.node.parent.request_child_to_sync(_remote_or_404(node_id)):
             abort(502, "The node did not answer the sync request")
         return {"status": 200, "msg": "ok"}
+
+
+class NodeSyncStatusOut(ApiModel):
+    #: None when the node could not be asked (offline, too old for this call)
+    report: NodeSyncReport | None = None
+    error: str = ""
+    #: the parent's side of the link
+    websocket_connected: bool
+    last_seen: str | None = None
+
+
+class NodeSyncReportApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    @hiddifypanel.current_app.output(NodeSyncStatusOut)
+    def get(self, node_id: int) -> NodeSyncStatusOut:
+        """Nodes: Ask a node how its sync with this panel is going (read only)"""
+        _only_on_parent_or_standalone()
+        child = _remote_or_404(node_id)
+        last_seen = _last_seen(child)
+        report = hutils.node.parent.node_sync_report(child)
+        return NodeSyncStatusOut(
+            report=report if isinstance(report, NodeSyncReport) else None,
+            error=report if isinstance(report, str) else "",
+            websocket_connected=ws_server.is_connected(child.unique_id),
+            last_seen=last_seen.isoformat() if last_seen else None,
+        )

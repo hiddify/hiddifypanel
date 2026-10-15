@@ -1,5 +1,6 @@
 import json
 import threading
+from typing import TYPE_CHECKING
 
 from flask import has_request_context
 from flask_babel import lazy_gettext as _
@@ -15,6 +16,9 @@ from hiddifypanel.panel.commercial.restapi.v2.parent.schema import PanelHostSche
 
 from . import async_job, endpoints, steplog
 from .api_client import NodeApiClient, NodeApiErrorSchema
+
+if TYPE_CHECKING:
+    from .sync_report import NodeSyncReport
 
 
 def get_child_base_url(child: Child) -> str:
@@ -221,6 +225,19 @@ def register_node(node_admin_link: str, name: str = "") -> Child | None:
     cache.invalidate_all_cached_functions()
     logger.success(f"[register {reg} parent] node {payload.name} ({node_host}) registered")
     return child
+
+
+def node_sync_report(child: Child) -> "NodeSyncReport | str":
+    """The node's own sync report (``sync_report.build`` there), or why it could not be read."""
+    from .sync_report import NodeSyncReport
+
+    base_url = (child.node_base_url or "").strip()
+    if not base_url:
+        return "The node has no address"
+    res = NodeApiClient(base_url, max_retry=1).get("/api/v2/child/sync-status/", NodeSyncReport)
+    if isinstance(res, NodeApiErrorSchema):
+        return str(res.msg) or "The node did not answer"
+    return res
 
 
 def rename_node(child: Child, name: str) -> bool:

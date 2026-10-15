@@ -1,5 +1,6 @@
 import { getHttp } from '@/core/api/client'
 import { liveStream } from '@/core/live/live'
+import type { NodeSyncStatus } from '@/features/node-home/api'
 
 export type NodeStatus = 'online' | 'late' | 'offline' | 'never'
 
@@ -22,6 +23,16 @@ export interface PanelNode {
   status: NodeStatus
   domains: string[]
   details: NodeDetails
+}
+
+/** GET nodes/<id>/sync-status/: the node's own sync report, asked by this panel. */
+export interface NodeSyncReportOut {
+  /** null when the node could not be asked (offline, or too old for this call): see `error`. */
+  report: NodeSyncStatus | null
+  error: string
+  /** This panel's side of the link. */
+  websocket_connected: boolean
+  last_seen: string | null
 }
 
 export interface NodePing {
@@ -118,6 +129,10 @@ export const nodesApi = {
   },
   async ping(id: number): Promise<NodePing> {
     const { data } = await getHttp().get<NodePing>(`nodes/${id}/ping/`, { timeout: 30_000 })
+    return data
+  },
+  async syncReport(id: number): Promise<NodeSyncReportOut> {
+    const { data } = await getHttp().get<NodeSyncReportOut>(`nodes/${id}/sync-status/`, { timeout: 30_000 })
     return data
   },
   async sync(id: number): Promise<void> {

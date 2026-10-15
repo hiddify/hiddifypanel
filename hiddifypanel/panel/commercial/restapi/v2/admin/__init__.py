@@ -83,13 +83,18 @@ def init_app(app):
         bp.add_url_rule("/quick-setup/domains/", view_func=QuickSetupDomainsApi)
         bp.add_url_rule("/quick-setup/finish/", view_func=QuickSetupFinishApi)
 
-        from .nodes_api import NodeApi, NodeJobApi, NodePingApi, NodesApi, NodeSyncApi
+        from .nodes_api import NodeApi, NodeJobApi, NodePingApi, NodesApi, NodeSyncApi, NodeSyncReportApi
 
         bp.add_url_rule("/nodes/", view_func=NodesApi)
         bp.add_url_rule("/nodes/jobs/<string:job_id>/", view_func=NodeJobApi)
         bp.add_url_rule("/nodes/<int:node_id>/", view_func=NodeApi)
         bp.add_url_rule("/nodes/<int:node_id>/ping/", view_func=NodePingApi)
         bp.add_url_rule("/nodes/<int:node_id>/sync/", view_func=NodeSyncApi)
+        bp.add_url_rule("/nodes/<int:node_id>/sync-status/", view_func=NodeSyncReportApi)
+
+        from .node_sync_status_api import NodeSyncStatusApi
+
+        bp.add_url_rule("/node/sync-status/", view_func=NodeSyncStatusApi)
 
         bp.add_url_rule("/all-public-port/", view_func=AllPublicPortsApi)
 

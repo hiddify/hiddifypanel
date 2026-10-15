@@ -5,7 +5,7 @@ from enum import auto
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import Enum, ForeignKey, String, event
+from sqlalchemy import Enum, ForeignKey, String, event, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 from strenum import StrEnum
@@ -50,6 +50,11 @@ class AdminUser(BaseAccount):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     mode: Mapped[AdminMode] = mapped_column(Enum(AdminMode), default=AdminMode.agent)
+
+    @classmethod
+    def count_by_mode(cls) -> dict[AdminMode, int]:
+        """Admins (not deleted) of each mode."""
+        return {mode: n for mode, n in db.session.query(cls.mode, func.count()).group_by(cls.mode).all()}
     can_add_admin: Mapped[bool] = mapped_column(default=False)
     max_users: Mapped[int] = mapped_column(default=100)
     max_active_users: Mapped[int] = mapped_column(default=100)

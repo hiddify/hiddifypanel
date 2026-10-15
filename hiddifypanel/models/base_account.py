@@ -5,10 +5,11 @@ import uuid
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from contextvars import ContextVar
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, ClassVar, Self
 
 from flask_login import UserMixin as FlaskLoginUserMixin
-from sqlalchemy import BigInteger, DateTime, Enum, String, event
+from sqlalchemy import BigInteger, DateTime, Enum, String, event, func
 from sqlalchemy.orm import Mapped, ORMExecuteState, Query, Session, mapped_column, with_loader_criteria
 
 from hiddifypanel.database import db
@@ -21,6 +22,13 @@ if TYPE_CHECKING:
 
 #: Rows looked up ahead by ``BaseAccount.prefetch``: (class, uuid) -> the row, or None when there is none.
 _prefetched: ContextVar[dict[tuple[type, str], Any] | None] = ContextVar("account_prefetch", default=None)
+
+
+@dataclass(frozen=True)
+class AccountCounts:
+    total: int
+    enabled: int
+    deleted: int
 
 
 class BaseAccount(db.Model, FlaskLoginUserMixin):
@@ -49,6 +57,17 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
     @classmethod
     def query_with_deleted(cls) -> Query[Self]:
         return cls.query.execution_options(include_deleted=True)
+
+    @classmethod
+    def count_summary(cls) -> AccountCounts:
+        """How many rows: not deleted, of those enabled, and deleted (kept, marked)."""
+        deleted = cls.deleted.is_(True)
+        rows = db.session.query(deleted, cls.enable, func.count()).execution_options(include_deleted=True).group_by(deleted, cls.enable).all()
+        return AccountCounts(
+            total=sum(n for is_deleted, _enable, n in rows if not is_deleted),
+            enabled=sum(n for is_deleted, enable, n in rows if not is_deleted and enable),
+            deleted=sum(n for is_deleted, _enable, n in rows if is_deleted),
+        )
 
     def soft_delete(self, commit: bool = True) -> None:
         """Keep the row, marked as deleted."""

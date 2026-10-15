@@ -18,13 +18,17 @@ import random
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from loguru import logger
 
 from hiddifypanel.live.app_thread import in_app
 
-from . import links, ws_proto
+from . import links, sync_status, ws_proto
+from .sync_status import SyncKind, SyncSource
+
+if TYPE_CHECKING:
+    from .sync_feed import Applied
 from .links import Link, Refused
 
 #: The ways to the parent (links.py), tried in this order (the stream first once a WebSocket was refused).
@@ -124,6 +128,17 @@ def _after_batches(users_changed: bool, outbounds_changed: bool, admins_changed:
         child._apply_server_config()
 
 
+def _note_batch(batch: ws_proto.ChangesMessage, applied: Applied) -> None:
+    """A change-feed batch, in the sync log; the WebSocket state goes with it (it runs in this process only)."""
+    if applied.admins:
+        sync_status.record(SyncKind.admins, SyncSource.ws_feed, applied.admins)
+    if applied.users:
+        sync_status.record(SyncKind.users, SyncSource.ws_feed, applied.users, more=bool(batch.get("more")))
+    if batch.get("outbounds") is not None:
+        sync_status.record(SyncKind.outbounds, SyncSource.ws_feed, len(batch["outbounds"]))
+    sync_status.save_ws(status())
+
+
 def _http_sync() -> bool:
     from . import child
 
@@ -209,6 +224,7 @@ class _Client:
             except Exception as e:
                 logger.exception("node-ws: failed")
                 _status["last_error"] = f"{type(e).__name__}: {e}"
+                sync_status.save_ws(status())
                 next_try = time.monotonic() + self._backoff()
             _status["next_try_in"] = round(max(0.0, next_try - time.monotonic()), 1)
             _wake.clear()
@@ -282,6 +298,7 @@ class _Client:
         outbox: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
         _connected, _outbox = True, outbox
         _status.update(host=session.host, transport=session.link.kind, connected_since=time.time(), last_error="", next_try_in=None)
+        sync_status.save_ws(status())
         talker = asyncio.get_running_loop().create_task(self._talk(session, outbox))
         try:
             async for message in session.messages():
@@ -289,6 +306,7 @@ class _Client:
         finally:
             _connected, _outbox = False, None
             self.disconnected_since = time.monotonic()
+            sync_status.save_ws(status())
             talker.cancel()
             if session.pending.any():  # batches written before the connection ended still need it
                 await in_app(self.app, _after_batches, session.pending.users, session.pending.outbounds, session.pending.admins)
@@ -318,6 +336,7 @@ class _Client:
             session.rows += applied.users + applied.admins
             _status["rows"] += applied.users + applied.admins
             _status["last_batch_at"] = time.time()
+            await in_app(self.app, _note_batch, batch, applied)
             session.pending.users |= applied.users_changed
             session.pending.outbounds |= applied.outbounds_changed
             session.pending.admins |= applied.admins > 0
@@ -330,6 +349,7 @@ class _Client:
         elif kind == "inventory":
             inventory = ws_proto.parse_inventory(message)
             admins = await in_app(self.app, sync_feed.reconcile_admins, inventory["admins"])
+            sync_status.record(SyncKind.admins, SyncSource.inventory, len(inventory["admins"]), removed=admins.removed, missing=len(admins.missing))
             if admins.removed:
                 logger.info(f"node-ws: {admins.removed} admins are no longer on the parent: removed here")
                 session.pending.admins = True
@@ -339,7 +359,9 @@ class _Client:
             if await in_app(self.app, sync_feed.local_users_digest) != inventory["users_digest"]:
                 await session.send({"type": "users_list_please"})
         elif kind == "users_list":
-            users = await in_app(self.app, sync_feed.reconcile_users, ws_proto.str_list(message.get("users", []), "users_list.users"))
+            parent_users = ws_proto.str_list(message.get("users", []), "users_list.users")
+            users = await in_app(self.app, sync_feed.reconcile_users, parent_users)
+            sync_status.record(SyncKind.users, SyncSource.inventory, len(parent_users), removed=users.removed, missing=len(users.missing))
             if users.removed:
                 logger.info(f"node-ws: {users.removed} users are no longer on the parent: removed here")
                 session.pending.users = True

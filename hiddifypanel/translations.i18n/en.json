@@ -1439,7 +1439,10 @@
       "syncNow": "Sync now",
       "synced": "{name} synced",
       "title": "Nodes",
-      "unreachable": "Not reachable"
+      "unreachable": "Not reachable",
+      "syncInfo": "Sync details",
+      "syncInfoTitle": "Sync details: {name}",
+      "syncInfoUnavailable": "The node could not be asked"
     },
     "outbounds": {
       "add": "Add outbound",
@@ -2322,6 +2325,8 @@
       "online": "Online",
       "pageReport": "{first}–{last} of {totalRecords}",
       "perPage": "Users per page",
+      "autoRefresh": "Auto refresh",
+      "autoRefreshOff": "Off",
       "refresh": "Refresh",
       "resetTag": {
         "daily": "Daily reset",
@@ -2616,6 +2621,57 @@
       "preview": "Compiled preview",
       "title": "Validation",
       "warnings": "Warnings"
+    },
+    "nodeSync": {
+      "title": "Sync with the parent",
+      "subtitle": "Read only, for debugging: what this node holds and when each kind of data last came from the parent.",
+      "took": "{ms} ms",
+      "autoOn": "Auto refresh",
+      "autoOff": "Paused",
+      "never": "No sync noted yet",
+      "state": {
+        "fresh": "Synced in the last 10 minutes",
+        "stale": "Last sync is older than 10 minutes",
+        "never": "No sync noted",
+        "error": "The last try failed"
+      },
+      "kind": {
+        "admins": "Admins",
+        "users": "Users",
+        "domains": "Domains",
+        "outbounds": "Outbounds",
+        "usage": "Usage report"
+      },
+      "source": {
+        "register": "register",
+        "http_sync": "HTTP sync",
+        "ws_feed": "live feed",
+        "inventory": "inventory check",
+        "usage_report": "usage report"
+      },
+      "active": "{n} active",
+      "enabled": "{n} enabled",
+      "deleted": "{n} deleted",
+      "link": "Link to the parent",
+      "websocket": "Live connection",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "noWs": "No state yet",
+      "connectedSince": "Connected since",
+      "host": "Parent host",
+      "lastBatch": "Last change batch",
+      "rows": "{n} rows",
+      "lastHttpSync": "Last HTTP fallback sync",
+      "lastError": "Last error",
+      "lastUsage": "Last usage sync (parent time)",
+      "ids": "Identifiers",
+      "parentUrl": "Parent address",
+      "parentId": "Parent unique id",
+      "nodeId": "This node's unique id",
+      "cursor": "Feed cursor",
+      "recent": "Recent syncs",
+      "noLog": "No syncs noted yet.",
+      "refresh": "Refresh"
     }
   },
   "adminuser": {

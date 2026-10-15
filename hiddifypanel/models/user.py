@@ -126,6 +126,14 @@ class User(BaseAccount):
     def usage_limit_GB(self, value):
         self.usage_limit = min(1000000 * ONE_GIG, (value or 0) * ONE_GIG)
 
+    @classmethod
+    def count_active(cls, limit: int) -> int | None:
+        """Users the cores accept now (``is_active``: expiry and usage limit too, so each row is checked in Python).
+        ``None`` above ``limit`` users, where that would be slow."""
+        if cls.query.count() > limit:
+            return None
+        return sum(1 for user in cls.query.all() if user.is_active)
+
     @property
     def is_active(self) -> bool:
         """

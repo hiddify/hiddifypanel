@@ -1,6 +1,6 @@
 from .config_enum import ApplyMode, CommonProxyCore, ConfigCategory, ConfigEnum, Lang, LogLevel, MieruHandshake, MieruMultiplexing, PanelMode
 from .role import AccountType, Role
-from .base_account import BaseAccount
+from .base_account import AccountCounts, BaseAccount
 from .admin import AdminMode, AdminUser
 from .child import Child, ChildMode
 from .config import BoolConfig, StrConfig, add_or_update_config, bulk_register_configs, get_hconfigs, get_hconfigs_json, hconfig, set_hconfig, get_hconfigs_childs_json

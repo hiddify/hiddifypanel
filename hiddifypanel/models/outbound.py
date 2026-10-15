@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from enum import auto
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import Enum, String, Text
+from sqlalchemy import Enum, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import JSON
 from strenum import StrEnum
@@ -58,6 +58,12 @@ class Outbound(db.Model):  # type: ignore
     name: Mapped[str] = mapped_column(String(100))
     mode: Mapped[OutboundMode] = mapped_column(Enum(OutboundMode))
     enabled: Mapped[bool] = mapped_column(default=True)
+
+    @classmethod
+    def count_enabled(cls) -> tuple[int, int]:
+        """``(total, enabled)``."""
+        rows = dict(db.session.query(cls.enabled, func.count()).group_by(cls.enabled).all())
+        return sum(rows.values()), rows.get(True, 0)
     #: Rule order (1 = checked first). The last enabled outbound is the default (route final).
     position: Mapped[int | None] = mapped_column(default=None)
     #: Kept equal to "last enabled" (see proxy_v3.outbounds.finalize).

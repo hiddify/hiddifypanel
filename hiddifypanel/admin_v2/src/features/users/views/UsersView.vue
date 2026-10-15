@@ -40,7 +40,15 @@
           <InputText v-model="query" :placeholder="t('users.search')" class="w-full" :aria-label="t('users.search')" />
           <InputIcon v-if="query" class="pi pi-times users-bar__clear" role="button" :aria-label="t('users.clearSearch')" @click="query = ''" />
         </IconField>
-        <Button icon="pi pi-refresh" text rounded severity="secondary" class="users-bar__refresh" :loading="refreshing" :aria-label="t('users.refresh')" v-tooltip.bottom="t('users.refresh')" @click="refresh" />
+        <div class="users-refresh" :class="{ 'is-auto': autoRefresh > 0 }">
+          <button type="button" class="users-refresh__now" :aria-label="t('users.refresh')" v-tooltip.bottom="t('users.refresh')" :disabled="refreshing" @click="refresh">
+            <i class="pi pi-refresh" :class="{ 'pi-spin': refreshing }" />
+          </button>
+          <button type="button" class="users-refresh__every" :aria-label="t('users.autoRefresh')" v-tooltip.bottom="t('users.autoRefresh')" aria-haspopup="menu" @click="refreshMenu?.toggle($event)">
+            <span>{{ autoRefreshLabel(autoRefresh) }}</span><i class="pi pi-angle-down" />
+          </button>
+          <Menu ref="refreshMenu" :model="refreshMenuItems" popup />
+        </div>
       </div>
       <div class="users-bar__options">
         <label class="users-check"><Checkbox v-model="groupByOwner" binary /><span>{{ t('users.groupByOwner') }}</span></label>
@@ -404,10 +412,13 @@ const prefs = readPrefs()
 const groupByOwner = ref(Boolean(prefs.groupByOwner))
 const showDates = ref(Boolean(prefs.showDates))
 const pageSize = ref<number>([10, 100, 0].includes(Number(prefs.pageSize)) ? Number(prefs.pageSize) : 10)
+const AUTO_REFRESH_SECONDS = [0, 10, 30, 60, 300]
+/** Seconds between live updates (0 = off); changes are still pushed at once while on. */
+const autoRefresh = ref<number>(AUTO_REFRESH_SECONDS.includes(Number(prefs.autoRefresh)) ? Number(prefs.autoRefresh) : 60)
 const inlineEdit = ref(false)
-watch([groupByOwner, showDates, pageSize], () => {
+watch([groupByOwner, showDates, pageSize, autoRefresh], () => {
   try {
-    localStorage.setItem(PREFS_KEY, JSON.stringify({ groupByOwner: groupByOwner.value, showDates: showDates.value, pageSize: pageSize.value }))
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ groupByOwner: groupByOwner.value, showDates: showDates.value, pageSize: pageSize.value, autoRefresh: autoRefresh.value }))
   } catch {
     /* private mode: not remembered */
   }
@@ -419,6 +430,20 @@ const pageOptions = computed(() => [
   { value: 10, label: '10' },
   { value: 100, label: '100' },
   { value: 0, label: t('users.all') },
+])
+const refreshMenu = ref<InstanceType<typeof Menu> | null>(null)
+function autoRefreshLabel(v: number): string {
+  return v === 0 ? t('users.autoRefreshOff') : v < 60 ? `${v}s` : `${v / 60}m`
+}
+const refreshMenuItems = computed<MenuItem[]>(() => [
+  {
+    label: t('users.autoRefresh'),
+    items: AUTO_REFRESH_SECONDS.map((v) => ({
+      label: autoRefreshLabel(v),
+      icon: v === autoRefresh.value ? 'pi pi-check' : 'pi pi-fw',
+      command: () => (autoRefresh.value = v),
+    })),
+  },
 ])
 
 // Narrow screens get cards.
@@ -823,7 +848,7 @@ function bulk(action: BulkAction) {
   void run()
 }
 
-/** Users from the live channel: pushed when users or admins change (usage too), at least every minute. While a user is
+/** Users from the live channel: pushed when users or admins change (usage too), at least every `autoRefresh` seconds. While a user is
  * being edited the latest is kept aside and shown when the editing ends. */
 let feed: Subscription | null = null
 let held: UsersState | null = null
@@ -847,9 +872,15 @@ watch(
   },
 )
 
+function startFeed() {
+  feed?.stop()
+  feed = autoRefresh.value > 0 ? liveWatch<UsersState>('users/', { intervalMs: autoRefresh.value * 1000, tags: ['user', 'admin_user'], onData: takeLive }) : null
+}
+watch(autoRefresh, startFeed)
+
 onMounted(async () => {
   narrowQuery.addEventListener('change', onNarrow)
-  feed = liveWatch<UsersState>('users/', { intervalMs: 60_000, tags: ['user', 'admin_user'], onData: takeLive })
+  startFeed()
   await load()
   timer = window.setInterval(() => (now.value = Date.now()), 60_000) // "days left" and "last online" move on between updates
 })
@@ -963,7 +994,7 @@ onBeforeUnmount(() => {
 .users-bar__find {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   flex: 1 1 18rem;
   max-width: 29rem;
   min-width: 0;
@@ -972,8 +1003,49 @@ onBeforeUnmount(() => {
   flex: 1;
   min-width: 0;
 }
-.users-bar__refresh {
+.users-refresh {
+  display: inline-flex;
   flex-shrink: 0;
+  align-items: stretch;
+  height: 2.5rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 999px;
+  overflow: hidden;
+  color: var(--p-text-muted-color);
+}
+.users-refresh button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.users-refresh button:hover:not(:disabled) {
+  background: var(--p-content-hover-background);
+  color: var(--p-text-color);
+}
+.users-refresh button:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: -2px;
+}
+.users-refresh__now {
+  padding: 0 0.75rem;
+}
+.users-refresh__every {
+  padding: 0 0.6rem 0 0.5rem;
+  border-inline-start: 1px solid var(--p-content-border-color) !important;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.users-refresh__every .pi {
+  font-size: 0.7rem;
+}
+.users-refresh.is-auto .users-refresh__every {
+  color: var(--p-primary-color);
 }
 .users-bar__clear {
   cursor: pointer;

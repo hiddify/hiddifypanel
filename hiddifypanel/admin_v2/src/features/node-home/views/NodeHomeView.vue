@@ -35,6 +35,7 @@
       </div>
     </template>
   </Card>
+  <NodeSyncPanel />
 </template>
 
 <script setup lang="ts">
@@ -44,6 +45,7 @@ import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import PageHeader from '@/shared/components/PageHeader.vue'
+import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
 import { nodeInfo } from '@/core/panelShell'
 
 const { t } = useI18n()
