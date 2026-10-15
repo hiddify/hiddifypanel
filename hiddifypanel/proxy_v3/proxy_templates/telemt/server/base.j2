@@ -40,24 +40,44 @@ prefer = 4
 multipath = false
 
 [server]
-port = 1001
-listen_addr_ipv4 = "127.0.0.1"
-listen_addr_ipv6 = "::1"
-proxy_protocol = true
-metrics_port=10087
-metrics_whitelist = [
-    "127.0.0.1/32",
-    "::1/128",
-]
-listeners = []
+admin_port = 10088
 
-[timeouts]
-client_handshake = 15
-tg_connect = 10
-client_keepalive = 60
-client_ack = 300
-me_one_retry = 3
-me_one_timeout_ms = 1500
+[[server.listeners]]
+ip = "127.0.0.1"
+port = 1001
+transport = "mtproxy"
+proxy_protocol = true
+
+{%for i,domain in enumerate(ctx.domains) if domain.cert.is_valid %}
+[[server.listeners]]
+ip = "127.0.0.1"
+port = {{1010+i}}
+transport = "web"
+proxy_protocol = false
+web_client_ip_source = "x_forwarded_for"
+web_trusted_proxy_cidrs = ["127.0.0.1/32"]
+
+[[web.vhosts]]
+host = "{{domain.name}}"
+base_path = "ctx.hconfig.telegram_base_path"
+public_addr = "{{ctx.current_server_ip}}:443"
+
+{% endfor %}
+
+[web]
+enabled = true
+carriers = ["websocket-lanes", "websocket","https-lanes","https"]
+decoy_fasttrack_mode = "off"
+
+[web.vhosts.decoy]
+mode = "http_upstream"
+upstream = "http://127.0.0.1:808"
+
+{%for u in ctx.users %}
+[[web.vhosts.profiles]]
+user = "{{u.uuid_hex}}"
+secret_mode = "dd"
+{% endfor %}
 
 [censorship]
 tls_domain = "{{ ctx.hconfig.telegram_fakedomain or '' }}"

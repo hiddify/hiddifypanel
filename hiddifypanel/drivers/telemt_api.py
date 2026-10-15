@@ -1,6 +1,8 @@
 import json
 import os
-import re
+from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import Any, Literal, TypedDict, cast
 
 import redis
 import requests
@@ -11,32 +13,77 @@ from hiddifypanel.models.usage_data import UsageData
 from .abstract_driver import DriverABS
 
 USERS_USAGE = "tele:users-usage"
+API_URL = "http://localhost:10088/v1"
+API_TIMEOUT = 5
+
+HttpMethod = Literal["GET", "PATCH", "DELETE"]
+
+
+class LocalUsage(TypedDict):
+    """What is kept in redis per telemt username, to turn telemt's running total into increments."""
+
+    uuid: str
+    total: int
+
+
+class PatchUserRequest(TypedDict, total=False):
+    secret: str
+    enabled: bool | None
+
+
+@dataclass(frozen=True)
+class TelemtUser:
+    """The part of a `GET /v1/users` entry this driver uses."""
+
+    username: str
+    enabled: bool
+    total_octets: int
+
+    @classmethod
+    def parse(cls, raw: object) -> "TelemtUser | None":
+        if not isinstance(raw, dict):
+            return None
+        username = raw.get("username")
+        if not isinstance(username, str) or not username:
+            return None
+        octets = raw.get("total_octets")
+        return cls(
+            username=username,
+            enabled=raw.get("enabled") is True,
+            total_octets=octets if isinstance(octets, int) and octets > 0 else 0,
+        )
+
+
+def tg_username(uuid: str) -> str:
+    """telemt's username (and secret) for a user: the uuid without dashes."""
+    return uuid.replace("-", "")
 
 
 class TelemtApi(DriverABS):
-    def get_redis_client(self):
-        if not hasattr(self, "redis_client"):
-            self.redis_client = redis.from_url(os.environ.get("REDIS_URI_MAIN", ""))
-
-        return self.redis_client
-
-    def is_enabled(self) -> bool:
-        return hconfig(ConfigEnum.telegram_enable) and hconfig(ConfigEnum.telegram_lib) == "telemt"
+    redis_client: "redis.Redis | None" = None
 
     def __init__(self) -> None:
         super().__init__()
         self.tg_uuid_map: dict[str, str] = {}
 
-    def __load_tg_uuid_map(self):
+    def get_redis_client(self) -> "redis.Redis":
+        if self.redis_client is None:
+            self.redis_client = redis.from_url(os.environ.get("REDIS_URI_MAIN", ""))
+        return self.redis_client
+
+    def is_enabled(self) -> bool:
+        return bool(hconfig(ConfigEnum.telegram_enable)) and hconfig(ConfigEnum.telegram_lib) == "telemt"
+
+    def __load_tg_uuid_map(self) -> None:
         from hiddifypanel.database import db
 
         users = db.session.query(User).all()
-        self.tg_uuid_map = {u.uuid.replace("-", ""): u.uuid for u in users}
+        self.tg_uuid_map = {tg_username(str(u.uuid)): str(u.uuid) for u in users}
 
-    def __convert_tg_to_uuid(self, pubkeys):
-        res = {}
+    def __convert_tg_to_uuid(self, usernames: Iterable[str]) -> dict[str, str]:
+        res: dict[str, str] = {}
         can_reload_map = True
-        for key in pubkeys:
+        for key in usernames:
             if uuid := self.tg_uuid_map.get(key):
                 res[key] = uuid
             elif can_reload_map:
@@ -46,117 +93,93 @@ class TelemtApi(DriverABS):
                     res[key] = uuid
         return res
 
-    def get_metric(self):
-        resp = requests.get("http://localhost:10087/metrics", timeout=5)
+    def __request(self, method: HttpMethod, path: str, body: PatchUserRequest | None = None) -> requests.Response:
+        # requests wants a JSON mapping; a TypedDict is open, so hand it over as a plain dict of JSON values
+        json_body = cast("dict[str, str | bool | None] | None", dict(body) if body is not None else None)
+        return requests.request(method, f"{API_URL}{path}", json=json_body, timeout=API_TIMEOUT)
+
+    def __get_tg_users(self) -> list[TelemtUser]:
+        resp = self.__request("GET", "/users")
         resp.raise_for_status()
-        return resp.text
+        payload: object = resp.json()
+        data = payload.get("data") if isinstance(payload, dict) else None
+        if not isinstance(data, list):
+            return []
+        return [u for raw in data if (u := TelemtUser.parse(raw))]
 
-    def __get_tg_usages(self) -> dict:
-        raw_output = self.get_metric()
-        data = {}
+    def __get_tg_usages(self) -> dict[str, int]:
+        """Total octets per username; users at zero have not been seen yet, so they are left out."""
+        return {u.username: u.total_octets for u in self.__get_tg_users() if u.total_octets > 0}
 
-        # Example lines:
-        # telemt_user_octets_from_client{user="uuid"} 1983
-        # telemt_user_octets_to_client{user="uuid"} 2171
-
-        pattern = re.compile(r'telemt_user_octets_(from_client|to_client)\{user="([^"]+)"\}\s+(\d+)')
-
-        for line in raw_output.splitlines():
-            match = pattern.search(line)
-            if not match:
+    def __get_local_usage(self) -> dict[str, LocalUsage]:
+        raw = cast("bytes | None", self.get_redis_client().get(USERS_USAGE))
+        if not raw:
+            return {}
+        try:
+            data: Any = json.loads(raw)
+        except ValueError:
+            return {}
+        if not isinstance(data, dict):
+            return {}
+        res: dict[str, LocalUsage] = {}
+        for name, item in data.items():
+            if not isinstance(item, dict) or not isinstance(item.get("uuid"), str) or not isinstance(item.get("total"), int):
                 continue
+            res[str(name)] = LocalUsage(uuid=item["uuid"], total=item["total"])
+        return res
 
-            direction, user, value = match.groups()
-            value = int(value)
-
-            if user not in data:
-                data[user] = {"down": 0, "up": 0}
-
-            if direction == "from_client":
-                data[user]["up"] = value
-            else:  # to_client
-                data[user]["down"] = value
-
-        return data
-
-    def __get_local_usage(self) -> dict:
-        usage_data = self.get_redis_client().get(USERS_USAGE)
-        if usage_data:
-            return json.loads(usage_data)
-
-        return {}
-
-    def __sync_local_usages(self) -> dict:
+    def __sync_local_usages(self) -> dict[str, int]:
         local_usage = self.__get_local_usage()
         try:
-            tg_usage = self.__get_tg_usages()
-        except Exception as e:
+            tg_usages = self.__get_tg_usages()
+        except (requests.RequestException, ValueError) as e:
             print(f"Error getting tg usage: {e}")
             return {}
 
-        res = {}
-        # remove local usage that is removed from wg usage
-        for local_uuid in local_usage.copy().keys():
-            if local_uuid not in tg_usage:
-                del local_usage[local_uuid]
+        # forget users telemt no longer has
+        for name in list(local_usage):
+            if name not in tg_usages:
+                del local_usage[name]
 
-        uuid_map = self.__convert_tg_to_uuid(tg_usage.keys())
-        for tg_uuid, tg_usage in tg_usage.items():
-            uuid = uuid_map.get(tg_uuid)
-
-            if not local_usage.get(tg_uuid):
-                local_usage[tg_uuid] = {"uuid": uuid, "usage": tg_usage}
+        res: dict[str, int] = {}
+        uuid_map = self.__convert_tg_to_uuid(tg_usages.keys())
+        for name, total in tg_usages.items():
+            uuid = uuid_map.get(name)
+            if not uuid:
                 continue
-            res[uuid] = self.calculate_reset(local_usage[tg_uuid]["usage"], tg_usage)
-            local_usage[tg_uuid] = {"uuid": uuid, "usage": tg_usage}
+            if last := local_usage.get(name):
+                res[uuid] = self.calculate_reset(last["total"], total)
+            local_usage[name] = LocalUsage(uuid=uuid, total=total)
 
         self.get_redis_client().set(USERS_USAGE, json.dumps(local_usage))
-
         return res
 
-    def calculate_reset(self, last_usage: dict, current_usage: dict) -> dict:
-        res = {
-            "up": current_usage["up"] - last_usage["up"],
-            "down": current_usage["down"] - last_usage["down"],
-        }
+    def calculate_reset(self, last_total: int, current_total: int) -> int:
+        """Octets since the last read; a smaller total means telemt restarted and counted again from 0."""
+        return current_total - last_total if current_total >= last_total else current_total
 
-        if res["up"] < 0:
-            res["up"] = 0
-        if res["down"] < 0:
-            res["down"] = 0
-        return res
-
-    def get_enabled_users(self):
+    def get_enabled_users(self) -> dict[str, int]:
         if not self.is_enabled():
             return {}
-        usages = self.__get_tg_usages()
-        new_wg_pubs = set(usages.keys())
-        old_usages = self.__get_local_usage()
-        old_wg_pubs = set(old_usages.keys())
-        enabled = {u["uuid"]: 1 for u in old_usages.values()}
-        not_included = new_wg_pubs - old_wg_pubs
-        if not_included:
-            users = User.query.filter(User.wg_pub.in_(not_included).all())
-            for u in users:
-                enabled[u.uuid] = 1
+        names = [u.username for u in self.__get_tg_users() if u.enabled]
+        return {uuid: 1 for uuid in self.__convert_tg_to_uuid(names).values()}
 
-        return enabled
+    def add_client(self, user: User) -> None:
+        if not self.is_enabled():
+            return
+        name = tg_username(str(user.uuid))
+        resp = self.__request("PATCH", f"/users/{name}", PatchUserRequest(secret=name, enabled=True))
+        resp.raise_for_status()
 
-    def add_client(self, user):
-        pass
+    def remove_client(self, user: User) -> None:
+        if not self.is_enabled():
+            return
+        resp = self.__request("DELETE", f"/users/{tg_username(str(user.uuid))}")
+        if resp.status_code != 404:
+            resp.raise_for_status()
 
-    def remove_client(self, user):
-        pass
-
-    def get_all_usage(self, reset=True) -> dict[str, UsageData]:
+    def get_all_usage(self, reset: bool = True) -> dict[str, UsageData]:
         if not self.is_enabled():
             return {}
-        all_usages = self.__sync_local_usages()
-        res: dict[str, UsageData] = {}
-        for uuid, use in all_usages.items():
-            res[str(uuid)] = UsageData(
-                uuid=str(uuid),
-                upload=int(use.get("up") or 0),
-                download=int(use.get("down") or 0),
-            )
-        return res
+        # telemt has no up/down split: the whole increment is reported as download
+        return {uuid: UsageData(uuid=uuid, download=used) for uuid, used in self.__sync_local_usages().items()}
