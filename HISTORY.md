@@ -71,6 +71,8 @@
 
 #### Fix
 
+* Telegram proxy. 
+
 * Update admin menu structure to include tools at the end for consistency. 
 
 * Bug. 
@@ -157,6 +159,12 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Refactor: streamline Telegram web proxy template logic for improved clarity and efficiency. 
+
+* Feat: enhance UI components with improved layout and accessibility features and fix domain download mode. 
+
+* Feat: enhance Telegram proxy support with new templates and configuration updates. 
 
 * Feat: add Persian translations for SSH terminal features and related utilities. 
 
