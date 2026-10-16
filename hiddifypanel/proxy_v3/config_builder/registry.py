@@ -27,6 +27,7 @@ def _load_drivers() -> None:
     if _DRIVERS:
         return
     from .dns_proxy import server as dns_proxy_server
+    from .firewall import server as firewall_server
     from .haproxy import server as haproxy_server
     from .hiddify_core import client as hiddify_core_client
     from .hiddify_core import server as hiddify_core_server
@@ -49,6 +50,7 @@ def _load_drivers() -> None:
     _register(dns_proxy_server.DnsProxyServerDriver())
     _register(wireguard_server.WireguardServerDriver())
     _register(telemt_server.TelemtServerDriver())
+    _register(firewall_server.FirewallServerDriver())
 
 
 def ensure_drivers_loaded() -> None:

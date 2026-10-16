@@ -20,7 +20,7 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4', 'dns_proxy', 'wireguard', 'telemt'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'nginx', 'rust-rpxy-l4', 'dns_proxy', 'wireguard', 'telemt', 'firewall'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
@@ -252,6 +252,13 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'version': '1.0.0',
         'name': 'Server Telemt Base',
         'description': 'Telegram MTProxy (telemt) config: ad tag, fake TLS domain, and one user secret per panel user',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'firewall',
+        'version': '1.0.0',
+        'name': 'Server Firewall Base',
+        'description': 'iptables rules (bash): the public ports to open, domain port redirects and the default policy',
     },
 ]
 

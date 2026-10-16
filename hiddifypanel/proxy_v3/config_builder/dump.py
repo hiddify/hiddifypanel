@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from hiddifypanel.proxy_v3.config_builder.dns_proxy.server import DnsProxyServerDriver
+from hiddifypanel.proxy_v3.config_builder.firewall.server import FirewallServerDriver
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
@@ -35,6 +36,7 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "dns_proxy": DnsProxyServerDriver,
     "wireguard": WireguardServerDriver,
     "telemt": TelemtServerDriver,
+    "firewall": FirewallServerDriver,
 }
 
 SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
@@ -46,6 +48,7 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("dns_proxy", "dnstm.json"),
     ("wireguard", "wireguard.conf"),
     ("telemt", "telemt.toml"),
+    ("firewall", "firewall.sh"),
 )
 
 
@@ -151,6 +154,8 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
         stats["peers"] = len(re.findall(r"(?m)^\[Peer\]", text))
     elif core == "telemt":
         stats["users"] = len(re.findall(r"(?m)^[0-9a-fA-F]{32} = ", text))
+    elif core == "firewall":
+        stats["ports"] = len(re.findall(r"(?m)^allow_port ", text))
 
     return stats
 
@@ -181,6 +186,8 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
                 _n(stats.get("backends", 0), "backend"),
             ]
         )
+    elif filename == "firewall.sh":
+        parts.append(_n(stats.get("ports", 0), "port"))
     elif filename == "telemt.toml":
         parts.append(_n(stats.get("users", 0), "user"))
     elif filename.endswith(".toml"):
@@ -476,11 +483,7 @@ def _resolve_dump_user_obj(*, user_uuid: str | None) -> User:
 def _resolve_sublink_domain(child_id: int = 0) -> str:
     from hiddifypanel.models.domain import Domain, DomainType
 
-    row = (
-        Domain.query.filter(Domain.child_id == child_id, Domain.mode == DomainType.sub_link_only)
-        .order_by(Domain.id)
-        .first()
-    )
+    row = Domain.query.filter(Domain.child_id == child_id, Domain.mode == DomainType.sub_link_only).order_by(Domain.id).first()
     if row is None:
         row = Domain.query.filter(Domain.child_id == child_id).order_by(Domain.id).first()
     return row.domain if row else ""
