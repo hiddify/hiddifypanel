@@ -6,7 +6,6 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-import json5
 import yaml
 from jinja2 import TemplateSyntaxError, UndefinedError
 from jinja2.exceptions import TemplateError
@@ -18,6 +17,7 @@ from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.proxy_base_config import BaseConfigSide
+from hiddifypanel.proxy_v3 import fast_json5
 from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
 from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
 from hiddifypanel.proxy_v3.config_builder.render import render_fragment_section as _render_fragment_section_impl
@@ -475,7 +475,7 @@ def parse_json5(text: str) -> tuple[Any | None, str | None]:
     if not stripped:
         return None, None
     try:
-        return json5.loads(stripped), None
+        return fast_json5.loads(stripped), None
     except Exception as e:
         return None, str(e)
 

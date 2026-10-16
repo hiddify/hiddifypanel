@@ -250,7 +250,8 @@ class ConfigEnum(metaclass=FastEnum):
     telegram_enable = _BoolConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall)
     # telegram_secret=auto()
     telegram_adtag = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
-    telegram_lib = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
+    # Always "telemt" now (the other Telegram proxies are deprecated): not shown.
+    telegram_lib = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
     telegram_fakedomain = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
     telegram_webproxy_enable = _BoolConfigDscr(ConfigCategory.telegram, ApplyMode.apply_config)
     telegram_base_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)

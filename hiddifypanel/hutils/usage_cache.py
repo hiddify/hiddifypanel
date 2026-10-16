@@ -8,12 +8,13 @@ from __future__ import annotations
 
 import datetime
 
-from hiddifypanel.cache import cache
+from sqlalchemy import func
+
+from hiddifypanel.cache import CacheMode, cache
 from hiddifypanel.database import db
 from hiddifypanel.hutils.usage_stats import DailyPoint, NodeDailyPoint, stacked_series
 from hiddifypanel.models.usage import DailyUsage
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DashboardDailyPoint
-from sqlalchemy import func
 
 # Closed days barely change; keep them until the next calendar day.
 CLOSED_DAY_TTL = 24 * 3600
@@ -50,31 +51,31 @@ def _query_day_by_child(admin_ids: list[int], day: datetime.date) -> list[tuple[
     return [(int(row[0] or 0), int(row[1] or 0), int(row[2] or 0)) for row in rows]
 
 
-@cache.cache(ttl=CLOSED_DAY_TTL)
+@cache.cache(ttl=CLOSED_DAY_TTL, modes=(CacheMode.users,))
 def _closed_day(admin_key: str, child_id: int | None, day_iso: str) -> tuple[int, int]:
     admin_ids = [int(part) for part in admin_key.split(",") if part]
     return _query_day(admin_ids, child_id, datetime.date.fromisoformat(day_iso))
 
 
-@cache.cache(ttl=TODAY_TTL)
+@cache.cache(ttl=TODAY_TTL, modes=(CacheMode.users,))
 def _today_day(admin_key: str, child_id: int | None, day_iso: str) -> tuple[int, int]:
     admin_ids = [int(part) for part in admin_key.split(",") if part]
     return _query_day(admin_ids, child_id, datetime.date.fromisoformat(day_iso))
 
 
-@cache.cache(ttl=CLOSED_DAY_TTL)
+@cache.cache(ttl=CLOSED_DAY_TTL, modes=(CacheMode.users,))
 def _closed_day_by_child(admin_key: str, day_iso: str) -> list[tuple[int, int, int]]:
     admin_ids = [int(part) for part in admin_key.split(",") if part]
     return _query_day_by_child(admin_ids, datetime.date.fromisoformat(day_iso))
 
 
-@cache.cache(ttl=TODAY_TTL)
+@cache.cache(ttl=TODAY_TTL, modes=(CacheMode.users,))
 def _today_day_by_child(admin_key: str, day_iso: str) -> list[tuple[int, int, int]]:
     admin_ids = [int(part) for part in admin_key.split(",") if part]
     return _query_day_by_child(admin_ids, datetime.date.fromisoformat(day_iso))
 
 
-@cache.cache(ttl=CLOSED_DAY_TTL)
+@cache.cache(ttl=CLOSED_DAY_TTL, modes=(CacheMode.users,))
 def _closed_lifetime(admin_key: str, child_id: int | None, before_iso: str) -> int:
     admin_ids = [int(part) for part in admin_key.split(",") if part]
     before = datetime.date.fromisoformat(before_iso)

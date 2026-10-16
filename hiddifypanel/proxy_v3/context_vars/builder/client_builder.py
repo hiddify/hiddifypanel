@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import selectinload
 
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, CacheMode, cache
 from hiddifypanel.models.child import Child
 from hiddifypanel.models.config import get_hconfigs, get_hconfigs_json
 from hiddifypanel.models.config_enum import ConfigEnum
@@ -135,17 +135,17 @@ def filter_proxy(base: BaseVar) -> bool:
     return True
 
 
-@cache.cache(600)
+@cache.cache(600, modes=(CacheMode.settings, CacheMode.nodes))
 def get_client_hconfigs_child(child_id: int | None):
     return HConfigVar(get_hconfigs_json(child_id), server_side=False)
 
 
-@cache.cache(600)
+@cache.cache(600, modes=(CacheMode.settings, CacheMode.nodes))
 def get_all_hconfigs():
     return {child.id: HConfigVar(get_hconfigs_json(child.id), server_side=False) for child in Child.query.all()}
 
 
-@cache.cache(600)
+@cache.cache(600, modes=STATIC)
 def get_platform_var(user_agent: str) -> PlatformVar:
     return PlatformVar.from_user_agent(user_agent)
 

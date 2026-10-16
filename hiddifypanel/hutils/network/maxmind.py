@@ -7,7 +7,7 @@ from typing import Any
 
 from loguru import logger
 
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
 
 _IPASN: Any = None
 _IPCOUNTRY: Any = None
@@ -74,7 +74,7 @@ def is_available() -> bool:
     return _AVAILABLE
 
 
-@cache.cache()
+@cache.cache(modes=STATIC)
 def get_ip_info(ip: str) -> IpInfo:
     """
     Look up country / ASN info for ``ip`` (lazy-loads MaxMind DBs on first call).

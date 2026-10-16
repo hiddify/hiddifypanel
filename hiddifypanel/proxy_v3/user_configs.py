@@ -19,10 +19,10 @@ import base64
 import binascii
 from typing import Any
 
-import json5
 import yaml
 from jinja2 import pass_context
 
+from . import fast_json5
 from .jinja_download import download
 
 KINDS = ("offline", "subscription")
@@ -90,7 +90,7 @@ def _parse_offline(content: str, core: str) -> Any:
         # Only Clash documents (a "proxies" list); other formats' JSON is not for Clash.
         return data if isinstance(data, dict) and isinstance(data.get("proxies"), list) else None
     try:
-        data = json5.loads(text)
+        data = fast_json5.loads(text)
     except ValueError:
         return None
     return data if isinstance(data, (dict, list)) else None

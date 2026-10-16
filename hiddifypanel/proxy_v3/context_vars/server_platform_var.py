@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
 
 from .version import TemplateVersion
 
@@ -29,8 +31,28 @@ class ServerPlatformVar(BaseModel):
     singbox_version: TemplateVersion
 
 
-@cache.cache(600)
+_XRAY_BIN = Path("/opt/hiddify-manager/services/xray/bin/xray")
+
+
+def _binaries_stamp() -> tuple[int, ...]:
+    """Modification times of the binaries whose versions are read: a new value whenever one is upgraded."""
+    stamp = []
+    for path in (shutil.which("haproxy"), _XRAY_BIN, _CORE_BIN):
+        try:
+            stamp.append(os.stat(path).st_mtime_ns if path else 0)
+        except OSError:
+            stamp.append(0)
+    return tuple(stamp)
+
+
 def get_server_platform_var() -> ServerPlatformVar:
+    return _server_platform_var(_binaries_stamp())
+
+
+# Running the binaries for their versions takes ~0.2 s: kept across config dumps (no setting changes them) and keyed by
+# the binaries' modification times, so an upgraded core is seen at once.
+@cache.cache(86400, modes=STATIC)
+def _server_platform_var(_stamp: tuple[int, ...]) -> ServerPlatformVar:
     return ServerPlatformVar(
         haproxy_version=(get_haproxy_version()),
         xray_version=(get_xray_version()),
@@ -50,7 +72,7 @@ def get_haproxy_version() -> TemplateVersion:
 
 def get_xray_version() -> TemplateVersion:
     try:
-        version = subprocess.check_output(["/opt/hiddify-manager/services/xray/bin/xray", "version"]).decode("utf-8").split(" ")[1]
+        version = subprocess.check_output([str(_XRAY_BIN), "version"]).decode("utf-8").split(" ")[1]
         return TemplateVersion(version)
     except Exception as e:
         logger.error(f"Error getting xray version: {e}")

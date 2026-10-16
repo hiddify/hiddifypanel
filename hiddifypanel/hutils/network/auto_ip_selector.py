@@ -5,7 +5,7 @@ from flask import has_request_context, request
 from flask_babel import gettext as _
 
 from hiddifypanel import hutils
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 
@@ -53,7 +53,7 @@ def get_real_user_ip_debug(user_ip: str = "") -> str:
     return __get_real_user_ip_debug_imp(user_ip or get_real_user_ip())
 
 
-@cache.cache()
+@cache.cache(modes=STATIC)
 def __get_real_user_ip_debug_imp(user_ip: str) -> str:
     info = maxmind.get_ip_info(user_ip)
     default = __get_host_base_on_asn(DEFAULT_IPs, info.short_name).replace(".ircf.space", "")

@@ -8,15 +8,15 @@ from datetime import datetime
 from enum import auto
 from typing import TYPE_CHECKING
 
-import json5
 from flask import request
 from sqlalchemy import Enum, ForeignKey, String, Text, event, func, or_
-from sqlalchemy.orm import Mapped, backref, mapped_column, relationship
+from sqlalchemy.orm import Mapped, backref, mapped_column, relationship, validates
 from strenum import StrEnum
 
 from hiddifypanel.database import db
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
+from hiddifypanel.proxy_v3 import fast_json5
 
 from .child import Child
 
@@ -84,6 +84,7 @@ class Domain(db.Model):
     def count_by_mode(cls, child_id: int) -> dict[DomainType, int]:
         """Domains of ``child_id`` of each mode."""
         return {mode: n for mode, n in db.session.query(cls.mode, func.count()).filter(cls.child_id == child_id).group_by(cls.mode).all()}
+
     fake_mode: Mapped[FakeMode] = mapped_column(Enum(FakeMode), default=FakeMode.valid)
     cdn_ip: Mapped[str] = mapped_column(Text(2000), nullable=False, default="")
     server_domain_id: Mapped[int | None] = mapped_column(ForeignKey("domain.id"), default=None)
@@ -172,12 +173,13 @@ class Domain(db.Model):
             return self.fake_mode == FakeMode.valid
         return self.fake_mode == FakeMode.valid
 
-    def extra_params_json(self):
+    @validates("extra_params")
+    def _normalize_extra_params(self, _key, value):
+        # Stored as plain JSON, so reading it never needs the (slow) JSON5 parser.
+        return fast_json5.normalize(value)
 
-        try:
-            return json5.loads(self.extra_params)
-        except:
-            return {}
+    def extra_params_json(self):
+        return fast_json5.loads_object(self.extra_params)
 
     def __repr__(self):
         return f"{self.domain}"
@@ -363,19 +365,23 @@ class Domain(db.Model):
     def get_panel_link(cls, child_id: int | None = None) -> str | None:
         if child_id is None:
             child_id = Child.current().id
-        domains = Domain.query.filter(
-            Domain.mode.in_(
-                [
-                    DomainType.direct,
-                    DomainType.cdn,
-                    DomainType.worker,
-                    DomainType.relay,
-                    DomainType.sub_link_only,
-                ]
-            ),
-            Domain.fake_mode == FakeMode.valid,
-            Domain.child_id == child_id,
-        ).order_by(*Domain.ordering()).all()
+        domains = (
+            Domain.query.filter(
+                Domain.mode.in_(
+                    [
+                        DomainType.direct,
+                        DomainType.cdn,
+                        DomainType.worker,
+                        DomainType.relay,
+                        DomainType.sub_link_only,
+                    ]
+                ),
+                Domain.fake_mode == FakeMode.valid,
+                Domain.child_id == child_id,
+            )
+            .order_by(*Domain.ordering())
+            .all()
+        )
         if not domains:
             return None
         return domains[0].domain

@@ -380,9 +380,10 @@ def init_app(app):
     @click.option("--child-id", "-c", default=0, show_default=True, type=int)
     @click.option("--refresh-db", is_flag=True, help="Sync builtin proxy catalog from disk before rendering")
     @click.option("--compact", is_flag=True, help="Emit compact JSON instead of indented output")
-    @click.option("--no-invalidate-cache", is_flag=True, help="Do not flush Redis/Jinja caches (used by apply_users)")
+    @click.option("--invalidate-cache", is_flag=True, help="Flush Redis/Jinja caches first (they are cleared when settings, domains or proxies change)")
+    @click.option("--no-invalidate-cache", is_flag=True, help="Default now; kept for older scripts")
     @click.option("--cores", default="", help="Comma-separated cores to render (default: all)")
-    def dump_server_configs(output_dir, child_id, refresh_db, compact, no_invalidate_cache, cores):
+    def dump_server_configs(output_dir, child_id, refresh_db, compact, invalidate_cache, no_invalidate_cache, cores):
         """Render and write xray, hiddify-core, haproxy, and nginx server configs to a directory."""
         from pathlib import Path
 
@@ -391,7 +392,7 @@ def init_app(app):
         if refresh_db:
             _run_sync_builtin_catalog(child_id)
 
-        invalidate_cache = False if no_invalidate_cache else None
+        invalidate_cache = invalidate_cache and not no_invalidate_cache
         selected = [core.strip() for core in cores.split(",") if core.strip()] or None
         result = dump_all_server_configs(
             output_dir,

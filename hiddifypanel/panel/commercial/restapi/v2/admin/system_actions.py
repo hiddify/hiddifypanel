@@ -35,13 +35,15 @@ class DumpServerConfigsApi(MethodView):
         from hiddifypanel.proxy_v3.config_builder.dump import dump_all_server_configs
         from hiddifypanel.proxy_v3.jinja_context import HIDDIFY_MANAGER_ROOT
 
-        no_invalidate_cache = request.args.get("no_invalidate_cache") in ("1", "true", "True")
+        # Caches are cleared when settings / domains / proxies change; ?invalidate_cache=1 forces it (no_invalidate_cache
+        # is still accepted and is the default now).
+        invalidate_cache = request.args.get("invalidate_cache") in ("1", "true", "True")
         raw_cores = request.args.get("cores") or ""
         cores = [core.strip() for core in raw_cores.split(",") if core.strip()] or None
         try:
             result = dump_all_server_configs(
                 f"{HIDDIFY_MANAGER_ROOT}/generated",
-                invalidate_cache=not no_invalidate_cache,
+                invalidate_cache=invalidate_cache,
                 cores=cores,
             )
         except ValueError as exc:

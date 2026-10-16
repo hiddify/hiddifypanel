@@ -19,7 +19,7 @@ from strenum import StrEnum
 from wtforms.validators import ValidationError
 
 from hiddifypanel import current_app, g, hutils
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
 from hiddifypanel.models import AdminUser, ApplyMode, Child, ConfigEnum, Role, hconfig
 
 
@@ -141,7 +141,7 @@ def parse_user_agent(ua: str) -> UserAgentInfo:
     return UserAgentInfo.from_dict(data)
 
 
-@cache.cache()
+@cache.cache(modes=STATIC)
 def __parse_user_agent(ua: str) -> dict:
     # Example: SFA/1.8.0 (239; sing-box 1.8.0)
     # Example: SFA/1.7.0 (239; sing-box 1.7.0)

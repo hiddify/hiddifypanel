@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import hashlib
 import re
 import subprocess
@@ -8,6 +9,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
 from loguru import logger
 
 from hiddifypanel.database import db
@@ -27,22 +30,21 @@ def cert_paths_for_domain(domain: str) -> tuple[Path, Path]:
     return SSL_ROOT / f"{key}.crt", SSL_ROOT / f"{key}.crt.key"
 
 
-def _leaf_cert_der(cert_pem: str) -> bytes | None:
-    """First (leaf) certificate in a PEM bundle as DER. Matches ``openssl x509``."""
+@functools.lru_cache(maxsize=256)
+def _leaf_cert(cert_pem: str) -> x509.Certificate | None:
+    """First (leaf) certificate of a PEM bundle, parsed in-process (an openssl process per call made every dump slow)."""
     if not cert_pem.strip():
         return None
     try:
-        proc = subprocess.run(
-            ["openssl", "x509", "-outform", "der"],
-            input=cert_pem.encode() if isinstance(cert_pem, str) else cert_pem,
-            capture_output=True,
-            check=False,
-        )
-    except OSError:
+        return x509.load_pem_x509_certificate(cert_pem.encode())
+    except ValueError:
         return None
-    if proc.returncode != 0 or not proc.stdout:
-        return None
-    return proc.stdout
+
+
+def _leaf_cert_der(cert_pem: str) -> bytes | None:
+    """First (leaf) certificate in a PEM bundle as DER. Matches ``openssl x509``."""
+    cert = _leaf_cert(cert_pem)
+    return cert.public_bytes(serialization.Encoding.DER) if cert else None
 
 
 def cert_sha256_hex_from_pem(cert_pem: str) -> str | None:
@@ -58,30 +60,13 @@ def cert_sha256_hex_from_pem(cert_pem: str) -> str | None:
 
 
 def public_key_sha256_from_pem(cert_pem: str) -> str | None:
-    """sing-box / hiddify-core ``certificate_public_key_sha256``: SPKI SHA-256, base64."""
-    if not cert_pem.strip():
+    """sing-box / hiddify-core ``certificate_public_key_sha256``: SPKI SHA-256, base64. Matches
+    ``openssl x509 -pubkey | openssl pkey -pubin -outform der | sha256``."""
+    cert = _leaf_cert(cert_pem)
+    if cert is None:
         return None
-    try:
-        proc = subprocess.run(
-            ["openssl", "x509", "-pubkey", "-noout"],
-            input=cert_pem,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if proc.returncode != 0 or not proc.stdout.strip():
-            return None
-        proc2 = subprocess.run(
-            ["openssl", "pkey", "-pubin", "-outform", "der"],
-            input=proc.stdout.encode(),
-            capture_output=True,
-            check=False,
-        )
-        if proc2.returncode != 0:
-            return None
-        return b64encode(hashlib.sha256(proc2.stdout).digest()).decode()
-    except OSError:
-        return None
+    spki = cert.public_key().public_bytes(serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo)
+    return b64encode(hashlib.sha256(spki).digest()).decode()
 
 
 def _sha256_pin_from_pem(cert_pem: str) -> str | None:

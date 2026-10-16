@@ -1,15 +1,14 @@
-from flask_babel import lazy_gettext as _
-from hiddifypanel.hutils import LazyLoader
-requests=LazyLoader("requests")
-from packaging.version import Version
 import re
 import sys
 
-from hiddifypanel.models.config import hconfig, ConfigEnum
+from packaging.version import Version
+
 from hiddifypanel import __version__ as current_version
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
+from hiddifypanel.hutils import LazyLoader
+from hiddifypanel.models.config import ConfigEnum, hconfig
 
-
+requests = LazyLoader("requests")
 to_gig_d = 1000 * 1000 * 1000
 
 
@@ -17,14 +16,14 @@ def error(str):
     print(str, file=sys.stderr)
 
 
-@cache.cache(ttl=60000)
+@cache.cache(ttl=60000, modes=STATIC)
 def get_latest_release_url(repo):
-    latest_url = requests.get(f'{repo}/releases/latest').url.strip()
-    version = latest_url.split('tag/')[1].strip()
+    latest_url = requests.get(f"{repo}/releases/latest").url.strip()
+    version = latest_url.split("tag/")[1].strip()
     return (latest_url, version)
 
 
-@cache.cache(ttl=600)
+@cache.cache(ttl=600, modes=STATIC)
 def get_latest_release_version(repo_name):
     try:
         url = f"https://github.com/hiddify/{repo_name}/releases/latest"
@@ -34,7 +33,7 @@ def get_latest_release_version(repo_name):
         if location_header:
             version = re.search(r"/([^/]+)/?$", location_header)
             if version:
-                ver = version.group(1).replace('v', '')
+                ver = version.group(1).replace("v", "")
                 if ver == "latest":
                     return get_latest_release_version(repo_name.replace("-", ""))
                 return ver
@@ -48,8 +47,8 @@ def is_panel_outdated() -> bool:
     # TODO: handle beta and develop version too
     pm = hconfig(ConfigEnum.package_mode)
     try:
-        if pm == 'release':
-            if latest_v := get_latest_release_version('hiddifypanel'):
+        if pm == "release":
+            if latest_v := get_latest_release_version("hiddifypanel"):
                 if compare_versions(latest_v, current_version) == 1:
                     return True
     except:

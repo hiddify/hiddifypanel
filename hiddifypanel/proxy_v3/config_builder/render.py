@@ -4,15 +4,15 @@ import json
 import re
 from typing import Any
 
-import json5
 from jinja2 import TemplateSyntaxError, UndefinedError
 from jinja2.exceptions import TemplateError
 
+from hiddifypanel.proxy_v3 import fast_json5
 from hiddifypanel.proxy_v3.context_vars.builder.utils import fix_duplicate_json_commas
 from hiddifypanel.proxy_v3.jinja_context import TemplateSkip
 
 from .models import RenderErrorDetail, RenderSectionResult
-from .template_blocks import extract_block_body, fragment_block_body
+from .template_blocks import extract_block_body
 
 
 def _trim_leading_empty_lines(text: str) -> str:
@@ -65,7 +65,7 @@ def _parse_json5(text: str) -> tuple[Any | None, str | None]:
     if not stripped:
         return None, None
     try:
-        return json5.loads(stripped), None
+        return fast_json5.loads(stripped), None
     except Exception as exc:
         return None, str(exc)
 

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 from hiddifypanel import hutils
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import CacheMode, cache
 from hiddifypanel.models.config import get_hconfigs_json
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.models.domain import Domain, DomainType
@@ -124,7 +124,7 @@ def get_server_builder_proxies(child_id: int = 0) -> list[ServerBuilderProxyVar]
     return [ServerBuilderProxyVar.from_custom_proxy(proxy, hconfig) for proxy in custom_proxies if proxy.enable]
 
 
-@cache.cache(600)
+@cache.cache(600, modes=(CacheMode.settings, CacheMode.nodes))
 def get_server_hconfigs_child(child_id: int | None) -> HConfigVar:
     return HConfigVar(get_hconfigs_json(child_id), server_side=True)
 

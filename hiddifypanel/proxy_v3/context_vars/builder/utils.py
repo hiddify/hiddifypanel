@@ -3,13 +3,13 @@ import re
 from collections.abc import Callable, Sequence
 from typing import Any, Protocol
 
-import json5
 from pydantic import BaseModel
 
 from hiddifypanel.models import ConfigEnum
 from hiddifypanel.models.config_enum import CommonProxyCore
 from hiddifypanel.models.custom_proxy import CustomProxyTransport, ServerCore, TlsLayer
 from hiddifypanel.models.proxy import ProxyProto
+from hiddifypanel.proxy_v3 import fast_json5
 from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, fake_ip_for_sub_link, include_path, jsbool, skip_proxy
 
 
@@ -27,7 +27,7 @@ def make_jinja_context(ctx: BaseModel) -> dict[str, Any]:
 
 def load_json5(text: str) -> list[dict[str, Any]]:
     try:
-        return json5.loads(fix_duplicate_json_commas(text))
+        return fast_json5.loads(fix_duplicate_json_commas(text))
     except ValueError as e:
         print(f"Invalid JSON5: {e}")
         print(text)
@@ -53,7 +53,7 @@ def parse_json_for_dump(rendered: str) -> Any:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
-    return json5.loads(fix_duplicate_json_commas(text))
+    return fast_json5.loads(fix_duplicate_json_commas(text))
 
 
 protocol_config_map: dict[ProxyProto, ConfigEnum] = {

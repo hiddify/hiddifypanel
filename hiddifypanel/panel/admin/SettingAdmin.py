@@ -286,13 +286,8 @@ def get_config_form(**form_kwargs):
             elif c.key == ConfigEnum.telegram_lib:
                 # if hconfig(ConfigEnum.telegram_lib)=='python':
                 #     continue6
-                libs = [
-                    ("erlang", _("lib.telegram.erlang")),
-                    ("python", _("lib.telegram.python")),
-                    ("tgo", _("lib.telegram.go")),
-                    ("telemt", _("lib.telegram.telemt")),
-                    # ("orig", _("lib.telegram.orignal")),
-                ]
+                # telemt is the only Telegram proxy (erlang, python, tgo and orig are deprecated).
+                libs = [("telemt", _("lib.telegram.telemt"))]
                 field = wtf.SelectField(_("config.telegram_lib.label"), choices=libs, description=_("config.telegram_lib.description"), default=hconfig(ConfigEnum.telegram_lib))
             elif c.key == ConfigEnum.mux_protocol:
                 choices = [("smux", "smux"), ("yamux", "yamux"), ("h2mux", "h2mux")]

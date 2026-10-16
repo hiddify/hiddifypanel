@@ -17,7 +17,7 @@ import psutil
 import requests
 from dns.rdtypes.svcbbase import ECHParam
 
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
 from hiddifypanel.hutils.network import maxmind
 from hiddifypanel.models import *
 
@@ -59,7 +59,7 @@ def get_domain_ip(domain: str, retry: int = 3, version: Literal[4, 6] | None = N
     return get_domain_ip_old(domain, 0)
 
 
-@cache.cache(300)
+@cache.cache(300, modes=STATIC)
 def get_domain_ips_cached(domain: str, retry: int = 3) -> set[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     try:
         return set(ipaddress.ip_address(domain))
@@ -161,7 +161,7 @@ def get_interface_public_ip(version: Literal[4, 6]) -> list[ipaddress.IPv4Addres
         return []
 
 
-@cache.cache(ttl=600)
+@cache.cache(ttl=600, modes=STATIC)
 def get_ips(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Address | ipaddress.IPv6Address]:
     if not version:
         return [*get_ips(4), *get_ips(6)]
@@ -219,7 +219,7 @@ def get_ips_lazy(version: Literal[4, 6] | None = None) -> list[ipaddress.IPv4Add
     return out
 
 
-@cache.cache(ttl=600)
+@cache.cache(ttl=600, modes=STATIC)
 def get_ip_str(version: Literal[4, 6], retry: int = 5) -> str | None:
     ip = get_ip(version, retry)
     if ip is None:
@@ -227,7 +227,7 @@ def get_ip_str(version: Literal[4, 6], retry: int = 5) -> str | None:
     return str(ip)
 
 
-@cache.cache(ttl=600)
+@cache.cache(ttl=600, modes=STATIC)
 def get_ip(version: Literal[4, 6], retry: int = 5) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     ips = get_interface_public_ip(version)
     ip = None
@@ -500,7 +500,7 @@ def add_number_to_ipv6(ip: str, number: int) -> str:
     return modified_ipv6
 
 
-@cache.cache(600)
+@cache.cache(600, modes=STATIC)
 def is_in_same_asn(domain_or_ip: str, domain_or_ip_target: str) -> bool:
     """Returns True if domain is in panel ASN"""
     try:
@@ -525,7 +525,7 @@ def is_in_same_asn(domain_or_ip: str, domain_or_ip_target: str) -> bool:
         #                    f"<br> Server ASN={asn_ipv4.get('autonomous_system_organization','unknown')}<br>{domain}_ASN={asn_dip.get('autonomous_system_organization','unknown')}", "warning")
 
 
-@cache.cache(600)
+@cache.cache(600, modes=STATIC)
 def get_ip_asn(ip: ipaddress.IPv4Address | ipaddress.IPv6Address | str) -> str:
     info = maxmind.get_ip_info(str(ip))
     if not info.db_available:
@@ -541,7 +541,7 @@ def __get_ip_asn_api(ip: ipaddress.IPv4Address | ipaddress.IPv6Address | str) ->
     return str(requests.get(endpoint).content)
 
 
-@cache.cache(3600)
+@cache.cache(3600, modes=STATIC)
 def is_ip(input: str):
     try:
         _ = ipaddress.ip_address(input)
@@ -557,7 +557,7 @@ def resolve_domain_with_api(domain: str) -> str:
     return str(requests.get(endpoint).json().get("query"))
 
 
-@cache.cache(ttl=3600)
+@cache.cache(ttl=3600, modes=STATIC)
 def get_tls_peer_pins(host: str, server_name: str, port: int = 443) -> tuple[str, str]:
     """Leaf cert SHA-256 hex and SPKI SHA-256 b64 as seen by a TLS client.
 
@@ -584,7 +584,7 @@ def get_tls_peer_pins(host: str, server_name: str, port: int = 443) -> tuple[str
     return (cert_sha256_hex_from_pem(pem) or "", public_key_sha256_from_pem(pem) or "")
 
 
-@cache.cache(600)
+@cache.cache(600, modes=STATIC)
 def get_ech_info(domain: str) -> str | None:
     try:
         resolver = dns.resolver.Resolver()
@@ -605,13 +605,14 @@ def get_ech_info(domain: str) -> str | None:
 CLOUDFLARE_ECH_DOMAIN = "cloudflare-ech.com"
 
 
-@cache.cache(600)
+@cache.cache(600, modes=STATIC)
 def get_domain_ech_info(domain: str) -> str | None:
     """ECH config of the domain; Cloudflare-hosted domains fall back to the shared cloudflare-ech.com config."""
     if ech := get_ech_info(domain):
         return ech
     try:
         from hiddifypanel.hutils.network import domain_detect
+
         if (domain_detect.detect_domain(domain).get("cdn") or "").lower() != "cloudflare":
             return None
     except Exception:
@@ -625,17 +626,17 @@ def get_ech_public_name(ech_b64: str) -> str:
         data = base64.b64decode(ech_b64)
         pos = 2  # ECHConfigList length
         while pos + 4 <= len(data):
-            version, length = int.from_bytes(data[pos:pos + 2], "big"), int.from_bytes(data[pos + 2:pos + 4], "big")
-            body = data[pos + 4:pos + 4 + length]
+            version, length = int.from_bytes(data[pos : pos + 2], "big"), int.from_bytes(data[pos + 2 : pos + 4], "big")
+            body = data[pos + 4 : pos + 4 + length]
             pos += 4 + length
             if version != 0xFE0D:
                 continue
             i = 3  # config_id(1) + kem_id(2)
-            i += 2 + int.from_bytes(body[i:i + 2], "big")  # public_key
-            i += 2 + int.from_bytes(body[i:i + 2], "big")  # cipher_suites
+            i += 2 + int.from_bytes(body[i : i + 2], "big")  # public_key
+            i += 2 + int.from_bytes(body[i : i + 2], "big")  # cipher_suites
             i += 1  # maximum_name_length
             n = body[i]
-            return body[i + 1:i + 1 + n].decode()
+            return body[i + 1 : i + 1 + n].decode()
     except Exception:
         pass
     return ""

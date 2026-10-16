@@ -6,15 +6,15 @@ from collections.abc import Iterable
 from enum import auto
 from typing import TYPE_CHECKING, Any
 
-import json5
 from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, Text, event
-from sqlalchemy.orm import DynamicMapped, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DynamicMapped, Mapped, mapped_column, relationship, validates
 from strenum import StrEnum
 
 from hiddifypanel.database import db
 from hiddifypanel.models.admin import AdminUser
 from hiddifypanel.models.base_account import BaseAccount
 from hiddifypanel.models.role import Role
+from hiddifypanel.proxy_v3 import fast_json5
 
 if TYPE_CHECKING:
     from hiddifypanel.models.external_model.account import AccountModel, UserModel
@@ -96,12 +96,13 @@ class User(BaseAccount):
     #: traffic leaves there) and ``additional_configs`` ([kind, target, value] rows, see USER_CONFIG_*).
     extra_params: Mapped[str | None] = mapped_column(Text, default="{}")
 
+    @validates("extra_params")
+    def _normalize_extra_params(self, _key, value):
+        # Stored as plain JSON, so reading it never needs the (slow) JSON5 parser.
+        return fast_json5.normalize(value)
+
     def extra_params_json(self):
-        try:
-            data = json5.loads(self.extra_params or "{}")
-        except Exception:
-            return {}
-        return data if isinstance(data, dict) else {}
+        return fast_json5.loads_object(self.extra_params)
 
     @property
     def role(self) -> Role | None:

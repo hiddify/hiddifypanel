@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel import Events
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import CacheMode, cache
 from hiddifypanel.database import db
 from hiddifypanel.models.child import Child, ChildMode
 from hiddifypanel.models.config_enum import ConfigEnum
@@ -65,7 +65,7 @@ class StrConfig(db.Model):
         return HConfigSchema.model_validate(conf_dict)
 
 
-@cache.cache(ttl=500)
+@cache.cache(ttl=500, modes=(CacheMode.settings, CacheMode.nodes))
 def hconfig(key: ConfigEnum, child_id: int | None = None):  # -> str | int | StrEnum | None:
     if child_id is None:
         child_id = Child.current().id
@@ -165,7 +165,7 @@ def __parse_hconfig(u: StrConfig) -> Any:
     return u.value
 
 
-@cache.cache(ttl=500)
+@cache.cache(ttl=500, modes=(CacheMode.settings, CacheMode.nodes))
 def get_hconfigs(child_id: int | None = None) -> dict[ConfigEnum, bool | int | str]:
     if child_id is None:
         child_id = Child.current().id
@@ -179,7 +179,7 @@ def get_hconfigs(child_id: int | None = None) -> dict[ConfigEnum, bool | int | s
     }
 
 
-@cache.cache(ttl=500)
+@cache.cache(ttl=500, modes=(CacheMode.settings, CacheMode.nodes))
 def get_hconfigs_json(child_id: int | None = None) -> dict[str, bool | int | str]:
     return {str(k): v for k, v in get_hconfigs(child_id).items()}
 

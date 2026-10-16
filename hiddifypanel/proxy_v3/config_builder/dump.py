@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 import traceback
 from dataclasses import dataclass, field
@@ -21,6 +20,7 @@ from hiddifypanel.proxy_v3.config_builder.xray.server import XrayServerDriver
 from hiddifypanel.proxy_v3.context_vars.builder.server_builder import build_server_template_context
 from hiddifypanel.proxy_v3.context_vars.builder.utils import parse_json_for_dump
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
+from hiddifypanel.proxy_v3.context_vars.ctx_server import ServerContextVar
 from hiddifypanel.proxy_v3.jinja_context import HIDDIFY_MANAGER_ROOT
 
 if TYPE_CHECKING:
@@ -197,11 +197,18 @@ def format_dump_stats(filename: str, size: int, stats: dict[str, int] | None) ->
     return ", ".join(parts)
 
 
-def build_server_config_for_core(child_id: int, core: str) -> ConfigBuilderModel:
+def build_server_config_for_core(child_id: int, core: str, ctx_cache: dict[int, ServerContextVar] | None = None) -> ConfigBuilderModel:
+    """``ctx_cache`` shares one context between the cores of a dump (building it reads every user, ~1 s each time)."""
     driver_cls = SERVER_CONFIG_DRIVERS.get(core)
     if driver_cls is None:
         raise ValueError(f"Unsupported server core: {core}")
-    ctx = build_server_template_context(child_id)
+    if ctx_cache is None:
+        ctx = build_server_template_context(child_id)
+    else:
+        if child_id not in ctx_cache:
+            ctx_cache[child_id] = build_server_template_context(child_id)
+        # Drivers add to client_proxy_tags (hiddify-core): each core gets its own list.
+        ctx = ctx_cache[child_id].model_copy(update={"client_proxy_tags": []})
     return driver_cls().build(child_id, ctx)
 
 
@@ -273,9 +280,8 @@ def dump_all_server_configs(
     invalidate_cache: bool | None = None,
     cores: list[str] | tuple[str, ...] | None = None,
 ) -> ServerConfigDumpResult:
-    # apply_users only refreshes user lists; wiping Redis/Jinja would stall the panel.
-    if invalidate_cache is None:
-        invalidate_cache = os.environ.get("MODE") != "apply_users"
+    # The caches are cleared when what they are built from changes (settings, domains, proxies, templates: see
+    # models/cache_events.py), so a dump does not clear them; ``invalidate_cache=True`` still forces it.
     if invalidate_cache:
         invalidate_config_caches()
     known = {name for name, _filename in SERVER_CONFIG_FILES}
@@ -292,11 +298,12 @@ def dump_all_server_configs(
     if selected is None or "dns_proxy" in selected:
         _clear_dns_proxy_generated(target)
 
+    ctx_cache: dict[int, ServerContextVar] = {}
     for core, filename in SERVER_CONFIG_FILES:
         if selected is not None and core not in selected:
             continue
         try:
-            result = build_server_config_for_core(child_id, core)
+            result = build_server_config_for_core(child_id, core, ctx_cache)
         except Exception as exc:
             dump.messages.append(
                 {

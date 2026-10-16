@@ -13,7 +13,7 @@ from loguru import logger
 
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import admin_session_is_exist, login_required
-from hiddifypanel.cache import cache
+from hiddifypanel.cache import STATIC, cache
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3.config_builder.dump import render_client_configs
@@ -496,7 +496,7 @@ def add_headers(res, c, mimetype="text/plain"):
     return resp
 
 
-@cache.cache(ttl=300)
+@cache.cache(ttl=300, modes=STATIC)
 def fetch_url(url: str):
     if not (url.startswith("http://") or url.startswith("https://")):
         return url
