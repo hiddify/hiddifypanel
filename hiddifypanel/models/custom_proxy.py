@@ -145,6 +145,8 @@ class ServerCore(JinjaEnum):
     dns_gateway = "dns_gateway"
     dns_proxy = "dns_proxy"
     dnstt = "dnstt"
+    #: Telegram proxies (telemt): no inbound in any core config; telemt/server/base.j2 serves them
+    telegram = "telegram"
 
     def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)

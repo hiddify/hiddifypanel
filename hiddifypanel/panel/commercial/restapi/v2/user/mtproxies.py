@@ -7,12 +7,11 @@ from flask.views import MethodView
 from hiddifypanel import current_app as app
 from hiddifypanel import g
 from hiddifypanel.auth import login_required
-from hiddifypanel.models.proxy import ProxyProto
+from hiddifypanel.models.config import hconfig
+from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
-from hiddifypanel.panel.user.user import get_common_data
-from hiddifypanel.proxy_v3.config_builder.dump import render_sublink_links
-from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
+from hiddifypanel.proxy_v3.config_builder.dump import render_client_configs
 
 
 class MtproxySchema(ApiModel):
@@ -25,14 +24,13 @@ class MTProxiesAPI(MethodView):
 
     @app.output(list[MtproxySchema])
     def get(self):
-        c = get_common_data(g.account.uuid, "new")
-
-        if not c["telegram_enable"]:
+        if not hconfig(ConfigEnum.telegram_enable):
             abort(status_code=404, message="Telegram mtproxy is not enable")
 
-        # Every enabled Telegram custom proxy (proto telegram), rendered by its own sublink template, as in the sub link.
-        contexts = [ctx for ctx in build_client_template_context(c["user"], request.host, request.user_agent.string) if ctx.proxy.proto == ProxyProto.telegram]
-        links, _messages = render_sublink_links(0, contexts)
+        # Exactly the user's subscription (same domain, same custom proxies and templates), kept to its Telegram links:
+        # what the Telegram custom proxies (proto telegram, sublink/telegram_*.j2) put in it.
+        result = render_client_configs(user=g.account, child_id=0, sublink_domain=request.host, user_agent=request.user_agent.string, cores=("sublink",))
+        links = [line.strip() for line in (result.configs.get("sublink") or "").splitlines() if line.strip().startswith("tg://")]
         # TODO: Remove duplicated domains mapped to a same ipv4 and v6
         return [MtproxySchema(title=_title(link), link=link) for link in dict.fromkeys(links)]
 

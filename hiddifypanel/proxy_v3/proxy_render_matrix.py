@@ -106,6 +106,14 @@ def client_domain_vars_for_proxy(child_id: int, proxy_id: int) -> list[DomainIPV
     if not proxy:
         return []
 
+    if proxy.mode == CustomProxyMode.no_inbound:
+        # No inbound of its own: in the subscription it gets the domains the client builder keeps for it (e.g. the
+        # Telegram proxies make their links from them), so the preview does the same.
+        from hiddifypanel.proxy_v3.context_vars.builder.client_builder import filter_domain_for_proxy
+
+        rows = Domain.query.filter(Domain.child_id == child_id).order_by(*Domain.ordering()).all()
+        return [d for d in (DomainIPVar.from_domain(row) for row in rows) if filter_domain_for_proxy(d, proxy)]
+
     domain_rows = [
         domain
         for domain in Domain.query.filter(

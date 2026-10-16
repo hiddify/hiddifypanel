@@ -24,17 +24,24 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
+def _v171(child_id):
+    """Custom JSON outbounds (hiddify-core outbound / endpoint, xray outbound): the `outbound.config` column and the new
+    outbound modes are added by the generic column / enum sync that runs before every upgrade."""
+
+
 def _v170(child_id):
     """telemt is the only Telegram proxy (erlang, python, tgo and orig are deprecated). Extra params are stored as plain
-    JSON (User / Domain normalize them on save): rewrite the old JSON5 ones, with SQL so users' last_modified_time stays."""
+    JSON (User / Domain normalize them on save): rewrite the old JSON5 ones. A query-level update: it fires no per-row
+    events, so users' last_modified_time stays (nodes do not resync every user)."""
     from hiddifypanel.proxy_v3 import fast_json5
 
     set_hconfig(ConfigEnum.telegram_lib, "telemt")
-    for table in ("user", "domain"):
-        for row_id, extra in db_execute(f"SELECT id, extra_params FROM {table}", return_val=True):
+    for model in (User, Domain):
+        for row_id, extra in db.session.query(model.id, model.extra_params).all():
             normalized = fast_json5.normalize(extra)
             if normalized != extra:
-                db_execute(f"UPDATE {table} SET extra_params = :extra WHERE id = :id", extra=normalized, id=row_id)
+                db.session.query(model).filter(model.id == row_id).update({model.extra_params: normalized}, synchronize_session=False)
+    db.session.commit()
 
 
 def _v169(child_id):
@@ -53,11 +60,6 @@ def _v167(child_id):
     execute("CREATE INDEX ix_user_lmt_id ON user (last_modified_time, id)")
     execute("CREATE INDEX ix_admin_user_lmt_id ON admin_user (last_modified_time, id)")
     add_config_if_not_exist(ConfigEnum.parent_sync_cursor, "", child_id)
-
-
-def _v166(child_id):
-    """Custom JSON outbounds (hiddify-core outbound / endpoint, xray outbound): the `outbound.config` column and the new
-    outbound modes are added by the generic column / enum sync that runs before every upgrade."""
 
 
 def _v163(child_id):

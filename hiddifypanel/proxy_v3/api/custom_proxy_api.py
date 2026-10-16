@@ -483,7 +483,7 @@ class CustomProxyMetaApi(MethodView):
                 "relay-reality",
                 "cdn",
             ],
-            "server_cores": ["hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4"],
+            "server_cores": ["hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4", "telegram"],
             "client_cores": ["sublink", "xray", "singbox", "hiddify-core", "clash"],
             "template_categories": [c.value for c in TEMPLATE_CATEGORIES_ACTIVE],
             "suggested_categories": _collect_suggested_categories(_child_id()),

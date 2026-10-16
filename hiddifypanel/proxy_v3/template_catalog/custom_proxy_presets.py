@@ -68,10 +68,10 @@ ADDITIONAL_CONFIG_CLIENT_SLUGS = {
 }
 USER_CONFIGS_SLUG = "user-configs"
 TELEGRAM_WEB_SLUG = "telegram-web"
-TELEGRAM_WEB_SERVER_SLUG = "hiddify-core/server/telegram_web"
+TELEGRAM_WEB_SERVER_SLUG = "telemt/server/telegram_web"
 TELEGRAM_WEB_CLIENT_SLUG = "sublink/telegram_web"
 TELEGRAM_FAKETLS_SLUG = "telegram-faketls"
-TELEGRAM_FAKETLS_SERVER_SLUG = "hiddify-core/server/telegram_faketls"
+TELEGRAM_FAKETLS_SERVER_SLUG = "telemt/server/telegram_faketls"
 TELEGRAM_FAKETLS_CLIENT_SLUG = "sublink/telegram_faketls"
 USER_CONFIGS_SERVER_SLUG = "hiddify-core/server/user_configs"
 USER_CONFIGS_CLIENT_SLUGS = {
@@ -316,7 +316,7 @@ def _telegram_preset(name: str, slug: str, server_slug: str, client_slug: str, t
         categories=("telegram",),
         domain_modes=(),
         custom_path="",
-        server_config=PresetServerConfig(core="hiddify-core", inbound_template=load_template_slug(server_slug), template_slugs=(server_slug,), tag=tag),
+        server_config=PresetServerConfig(core="telegram", inbound_template=load_template_slug(server_slug), template_slugs=(server_slug,), tag=tag),
         client_cores=(PresetClientCore(core="sublink", version="", slug="client-sublink", outbounds_template=load_template_slug(client_slug)),),
         tcp_udp=InboundTcpUdp.tcp,
     )

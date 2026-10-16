@@ -1338,7 +1338,11 @@ def preview_proxy_template_fragment(
     block_name = _server_block_name(core) if server_side else _client_block_name(core)
 
     if server_side or core == "sublink":
-        frag = _render_fragment_section(child_id, ctx, tpl, block_name, parse_json=False)
+        if core == "sublink" and not server_side and _extract_block_body(tpl, block_name) is None:
+            # Share-link templates are rendered whole (no {% block %}), as in the subscription (dump.render_sublink_links).
+            frag = _render_section(tpl, child_id, ctx, as_json_object=False, parse_json=False)
+        else:
+            frag = _render_fragment_section(child_id, ctx, tpl, block_name, parse_json=False)
         if frag.get("skipped"):
             return {"ok": True, "rendered": "SKIP", "parsed": None, "skipped": True, "error": None, "warnings": []}
         if frag.get("error"):
