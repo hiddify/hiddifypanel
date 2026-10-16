@@ -5,19 +5,12 @@
   tg://proxy?server=<server>&port=443&secret=ee<secret hex><fake domain hex>
 #}
 {%- if ctx.hconfig.telegram_enable %}
-{%- set secret = ((ctx.user.uuid if ctx.hconfig.telegram_lib == 'telemt' else ctx.hconfig.shared_secret) or '') | replace('-', '') | lower %}
-{%- set servers = ctx.proxy.domains | selectattr('fake_mode', 'equalto', 'valid') | selectattr('mode', 'in', ['direct', 'relay']) | list %}
-{%- set fronts = ctx.proxy.domains | selectattr('fake_mode', 'equalto', 'telegram') | list %}
-{%- if secret and not fronts and ctx.hconfig.telegram_fakedomain %}
-{%- for d in servers %}
-tg://proxy?server={{ d.name }}&port=443&secret=ee{{ secret }}{{ ctx.hconfig.telegram_fakedomain.encode('utf-8').hex() }}
-{%- endfor %}
-{%- elif secret %}
-{%- for f in fronts %}
-{%- set fake_hex = f.name.encode('utf-8').hex() %}
-{%- for server in (servers | selectattr('child_id', 'equalto', f.child_id) | map(attribute='name') | list) + (f.ips.ipsv4 | sort) + (f.ips.ipsv6 | sort) %}
+  {%- set secret = ((ctx.user.uuid if ctx.hconfig.telegram_lib == 'telemt' else ctx.hconfig.shared_secret) or '') | replace('-', '') | lower %}
+  
+  {%- for f in ctx.proxy.domains if f.fake_mode == 'telegram' %}
+    {%- set fake_hex = f.name.encode('utf-8').hex() %}
+    {%- for server in f.ips.ips %}
 tg://proxy?server={{ server }}&port=443&secret=ee{{ secret }}{{ fake_hex }}
-{%- endfor %}
-{%- endfor %}
-{%- endif %}
+    {%- endfor %}
+  {%- endfor %}
 {%- endif %}

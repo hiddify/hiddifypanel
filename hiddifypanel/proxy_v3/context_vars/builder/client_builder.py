@@ -171,7 +171,9 @@ def get_domains_by_name(domain_names: list[str] | None) -> list[DomainIPVar]:
 
 
 def _proxy_domain_rows(domains: list[Domain]) -> list[Domain]:
-    return [d for d in domains if not d.is_sub_link_only() and not d.is_fake_proxy()]
+    # Telegram fake domains stay: the Telegram proxies make their FakeTLS links from them; filter_domain_for_proxy
+    # keeps them for those only (every other proxy still drops fake-proxy domains).
+    return [d for d in domains if not d.is_sub_link_only() and (not d.is_fake_proxy() or d.fake_mode == FakeMode.telegram)]
 
 
 @cache.cache(600)

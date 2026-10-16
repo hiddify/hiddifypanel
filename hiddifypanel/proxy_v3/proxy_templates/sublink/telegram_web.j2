@@ -3,11 +3,10 @@
   (telemt/server/base.j2 has a vhost for each). HAProxy sends https://<domain>/<telegram_base_path> to telemt.
   tg://webproxy?server=<domain>%2F<path>&secret=<base64url(0x70 0xdd <user secret>)>
 #}
-{%- if ctx.hconfig.telegram_enable and ctx.hconfig.telegram_webproxy_enable and ctx.hconfig.telegram_lib == 'telemt' and ctx.hconfig.telegram_base_path %}
+{%- if ctx.hconfig.telegram_webproxy_enable %}
 {%- set secret = ('70dd' ~ ctx.user.uuid_hex) | hex_b64url %}
-{%- set seen = [] %}
-{%- for d in ctx.proxy.domains if d.support_telegram_webproxy() and d.name not in seen %}
-{%- set _ = seen.append(d.name) %}
+
+{%- for d in ctx.proxy.domains if d.support_telegram_webproxy() %}
 tg://webproxy?server={{ (d.name ~ '/' ~ ctx.hconfig.telegram_base_path) | urlencoded }}&secret={{ secret }}
 {%- endfor %}
 {%- endif %}
