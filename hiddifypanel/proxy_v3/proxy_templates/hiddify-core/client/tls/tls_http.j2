@@ -41,7 +41,7 @@
     "ech": {
       "enabled": true,
       {% if domain.echinfo %}
-      "config": ["-----BEGIN ECH CONFIGS-----", "{{ domain.echinfo }}", "-----END ECH CONFIGS-----"]
+      "config": ["-----BEGIN ECH CONFIGS-----", "{{ domain.echinfo }}", "-----END ECH CONFIGS-----","cloudflare-ech.com+udp://1.1.1.1"]
       {% else %}
       "config": [],
       "query_server_name": "{{ domain.sni }}"

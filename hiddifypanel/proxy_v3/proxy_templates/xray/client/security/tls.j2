@@ -27,7 +27,7 @@
     
     "alpn": {{ tls_layer.alpns() }},
     {% if ctx.hconfig.tls_ech_enable and domain.echinfo %}
-    "echConfigList": "{{ domain.echinfo }}",
+    "echConfigList": ["{{ domain.echinfo }}","cloudflare-ech.com+udp://1.1.1.1"],
     {% endif %}
   },
   {# TLS fragment for this leg's domain (also the xhttp download leg, which renders this with its own domain). #}
