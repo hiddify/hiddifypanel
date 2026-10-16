@@ -87,8 +87,9 @@ class DomainIPVar(BaseModel):
             return False
         try:
             ipaddress.ip_address(self.name.strip("[]"))
+            return False
         except ValueError:
-            return True
+            pass
         if self.cert.is_trusted:
             return True
         return False
