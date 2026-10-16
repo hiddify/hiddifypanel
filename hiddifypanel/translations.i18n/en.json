@@ -563,7 +563,8 @@
         "users": "user | users"
       },
       "title": "Admins",
-      "you": "You"
+      "you": "You",
+      "readOnlyNode": "Admins are managed on the parent panel: here they are shown read-only."
     },
     "appTitle": "HiddifyManager",
     "apply": {
@@ -2356,7 +2357,8 @@
         "no_data": "Used all of the usage limit"
       },
       "subtitle": "Everyone who connects through this panel: their data, time left and links.",
-      "title": "Users"
+      "title": "Users",
+      "readOnlyNode": "Users are managed on the parent panel: here they are shown read-only."
     },
     "utils": {
       "addQuery": "Add query",
@@ -2649,7 +2651,7 @@
         "inventory": "inventory check",
         "usage_report": "usage report"
       },
-      "active": "{n} active",
+      "active": "Active",
       "enabled": "{n} enabled",
       "deleted": "{n} deleted",
       "link": "Link to the parent",
@@ -2671,7 +2673,22 @@
       "cursor": "Feed cursor",
       "recent": "Recent syncs",
       "noLog": "No syncs noted yet.",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "items": "Exchanged items ({n})",
+      "itemsMore": "… and {n} more",
+      "showList": "Show the list",
+      "usersOnNode": "Users on this node",
+      "adminsOnNode": "Admins on this node",
+      "search": "Search",
+      "all": "All",
+      "inactive": "Inactive",
+      "disabled": "Disabled",
+      "listEmpty": "Nothing matches.",
+      "listShown": "{n} of {total}",
+      "showData": "Show what was exchanged",
+      "rawData": "Data ({size})",
+      "rawTruncated": "only its beginning is kept",
+      "rawUnreadable": "The data could not be read."
     }
   },
   "adminuser": {

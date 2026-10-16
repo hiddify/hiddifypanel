@@ -4,6 +4,7 @@
       <PageHeader :title="t('admins.title')" :subtitle="t('admins.subtitle')" />
       <Button v-if="tree?.can_create" icon="pi pi-user-plus" :label="t('admins.add')" class="admins-head__add" @click="openCreate" />
     </div>
+    <Message v-if="tree?.read_only" severity="info" :closable="false" size="small" class="mb-3" icon="pi pi-lock">{{ t('admins.readOnlyNode') }}</Message>
 
     <!-- Summary + search -->
     <section v-if="tree" class="admins-bar">
@@ -120,6 +121,7 @@
                 <!-- Your own row: only your users' additional configs can be changed here -->
                 <div v-if="row(node).is_me" class="admins-actions">
                   <Button
+                    v-if="!tree?.read_only"
                     icon="pi pi-paperclip"
                     text
                     rounded

@@ -29,6 +29,7 @@ from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import outbounds as ob
 from hiddifypanel.proxy_v3 import user_configs
 
+from . import node_read_only
 from .admins_api import _link_domains
 
 ALL_ROLES = {Role.super_admin, Role.admin, Role.agent}
@@ -130,7 +131,8 @@ def _meta(admins: dict[int, AdminUser]) -> dict[str, Any]:
             for a in sorted(admins.values(), key=lambda a: a.id)
         ],
         "outbounds": [{"id": o.id, "name": o.name, "mode": str(o.mode), "enabled": bool(o.enabled)} for o in outbounds],
-        "can_add": actor.can_have_more_users(),
+        "can_add": actor.can_have_more_users() and not node_read_only.is_read_only(),
+        "read_only": node_read_only.is_read_only(),
     }
 
 
@@ -242,6 +244,7 @@ class UsersPageApi(MethodView):
 
     def post(self):
         """Users page: add a user"""
+        node_read_only.deny_write_on_node()
         body = request.get_json(silent=True) or {}
         actor: AdminUser = g.account
         if not actor.can_have_more_users():
@@ -275,6 +278,7 @@ class UserPageApi(MethodView):
 
     def patch(self, uuid):
         """Users page: update a user (also inline edits and quick resets)"""
+        node_read_only.deny_write_on_node()
         user = _get_user(uuid)
         body = request.get_json(silent=True) or {}
         if "uuid" in body and str(body["uuid"]).strip().lower() != user.uuid:
@@ -295,6 +299,7 @@ class UserPageApi(MethodView):
 
     def delete(self, uuid):
         """Users page: delete a user (kept as deleted; the UUID is freed when reused)"""
+        node_read_only.deny_write_on_node()
         user = _get_user(uuid)
         if User.query.filter(User.deleted.is_(False)).count() <= 1:
             abort(400, "At least one user must exist")
@@ -313,6 +318,7 @@ class UsersBulkApi(MethodView):
 
     def post(self):
         """Users page: one action on many users (enable, disable, delete, reset usage, reset days, add days, add limits)"""
+        node_read_only.deny_write_on_node()
         body = request.get_json(silent=True) or {}
         action = str(body.get("action") or "")
         if action not in BULK_ACTIONS:

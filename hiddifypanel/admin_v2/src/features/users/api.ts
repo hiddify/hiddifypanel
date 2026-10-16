@@ -58,6 +58,8 @@ export interface UsersState {
   admins: { uuid: string; name: string; parent_uuid: string | null }[]
   outbounds: { id: number; name: string; mode: string; enabled: boolean }[]
   can_add: boolean
+  /** A node: users come from the parent panel and cannot be changed here. */
+  read_only?: boolean
 }
 
 export interface UserPayload {

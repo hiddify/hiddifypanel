@@ -107,9 +107,15 @@ def _settings_items(*, node: bool) -> list[dict]:
 
 def _manager_items() -> list[dict]:
     if hutils.node.is_child():
-        # Users, admins and the dashboard live on the parent; the shell adds the node's home page after this.
+        # Users, admins and the dashboard are managed on the parent; the node shows its users and admins read-only.
+        # The shell adds the node's home page after this.
         parent_url = hutils.node.child.parent_admin_dashboard_url(g.account.uuid)
-        return [_item(_("Parent Panel"), parent_url, "pi pi-fw pi-home")] if parent_url else []
+        items = [_item(_("Parent Panel"), parent_url, "pi pi-fw pi-home")] if parent_url else []
+        return [
+            *items,
+            {"label": _("admin.menu.user"), "to": "/users", "icon": "pi pi-fw pi-users"},
+            {"label": _("Admins"), "to": "/admins", "icon": "pi pi-fw pi-sitemap"},
+        ]
     if hconfig(ConfigEnum.parent_panel):
         items = [
             _item(_("admin.menu.user"), hconfig(ConfigEnum.parent_panel) + "admin/user/", "pi pi-fw pi-users"),

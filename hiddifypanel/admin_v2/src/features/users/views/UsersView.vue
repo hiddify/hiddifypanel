@@ -3,6 +3,7 @@
     <div class="users-head">
       <PageHeader :title="t('users.title')" :subtitle="t('users.subtitle')" />
       <Button
+        v-if="!readOnly"
         icon="pi pi-user-plus"
         :label="t('users.add')"
         class="users-head__add"
@@ -11,6 +12,8 @@
         @click="openAdd"
       />
     </div>
+
+    <Message v-if="readOnly" severity="info" :closable="false" size="small" class="mb-3" icon="pi pi-lock">{{ t('users.readOnlyNode') }}</Message>
 
     <!-- Filters with counts: states and what needs attention -->
     <section v-if="state" class="users-filters" :aria-label="t('users.filtersLabel')">
@@ -52,7 +55,7 @@
       </div>
       <div class="users-bar__options">
         <label class="users-check"><Checkbox v-model="groupByOwner" binary /><span>{{ t('users.groupByOwner') }}</span></label>
-        <label class="users-check"><ToggleSwitch v-model="inlineEdit" /><span>{{ t('users.inlineEdit') }}</span></label>
+        <label v-if="!readOnly" class="users-check"><ToggleSwitch v-model="inlineEdit" /><span>{{ t('users.inlineEdit') }}</span></label>
         <Select v-model="pageSize" :options="pageOptions" option-label="label" option-value="value" size="small" class="users-bar__page" :aria-label="t('users.perPage')">
           <template #value="{ value }"><i class="pi pi-list" /> {{ pageOptions.find((o) => o.value === value)?.label }}</template>
         </Select>
@@ -63,7 +66,7 @@
 
     <!-- Bulk actions -->
     <Transition name="users-fade">
-      <section v-if="selected.length" class="users-bulk">
+      <section v-if="selected.length && !readOnly" class="users-bulk">
         <span class="users-bulk__count"><i class="pi pi-check-square" />{{ t('users.selected', { n: selected.length }, selected.length) }}</span>
         <div class="users-bulk__actions">
           <Button size="small" icon="pi pi-check-circle" :label="t('users.bulk.enable')" severity="secondary" outlined @click="bulk('enable')" />
@@ -124,13 +127,13 @@
           </div>
         </template>
 
-        <Column selection-mode="multiple" header-style="width: 2.5rem" />
+        <Column v-if="!readOnly" selection-mode="multiple" header-style="width: 2.5rem" />
         <!-- No ID column: this one sorts by id -->
         <Column field="id" sortable header-style="width: 6rem" body-class="u-actions-cell">
           <template #header><span class="u-idhead" v-tooltip.top="t('users.sortById')">#</span></template>
           <template #body="{ data }">
             <div class="u-actions">
-              <Button icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(data)" />
+              <Button v-if="!readOnly" icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(data)" />
               <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('users.more')" aria-haspopup="true" @click="openMenu($event, data)" />
             </div>
           </template>
@@ -225,7 +228,7 @@
     <!-- Phones: compact cards -->
     <div v-else-if="state" class="u-cards">
       <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
-      <label v-if="rows.length" class="u-selectall">
+      <label v-if="rows.length && !readOnly" class="u-selectall">
         <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
         <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
       </label>
@@ -233,7 +236,7 @@
         <div v-if="groupByOwner" class="users-group users-group--card"><i class="pi pi-sitemap" /><b>{{ group.owner || '—' }}</b><span class="text-muted-color">{{ group.users.length }}</span></div>
         <article v-for="u in group.users" :key="u.uuid" class="u-card" :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u) }]">
           <header class="u-card__head">
-            <Checkbox :model-value="isSelected(u)" binary class="u-card__check" :aria-label="t('users.select')" @update:model-value="(v: boolean) => toggleSelect(u, v)" />
+            <Checkbox v-if="!readOnly" :model-value="isSelected(u)" binary class="u-card__check" :aria-label="t('users.select')" @update:model-value="(v: boolean) => toggleSelect(u, v)" />
             <!-- Status-tinted QR button: the link, first, on every card -->
             <button type="button" class="u-card__qr" :aria-label="t('users.showLink')" @click="openLink(u)">
               <i class="pi pi-qrcode" />
@@ -379,6 +382,8 @@ const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 
 const state = ref<UsersState | null>(null)
+/** On a node users come from the parent panel: shown, not changed (the server refuses changes too). */
+const readOnly = computed(() => !!state.value?.read_only)
 const loading = ref(true)
 const refreshing = ref(false)
 const loadError = ref<string | null>(null)
@@ -678,6 +683,7 @@ function replaceRow(user: UserDetail) {
 }
 
 async function patch(u: UserRow, payload: UserPayload, done?: string) {
+  if (readOnly.value) return
   try {
     replaceRow(await usersApi.update(u.uuid, payload))
     if (done) toast.add({ severity: 'success', summary: done, life: 2500 })
@@ -705,6 +711,7 @@ function quick(u: UserRow, action: 'reset_usage' | 'reset_days') {
 }
 
 function openAdd() {
+  if (readOnly.value) return
   editingUser.value = null
   formFocus.value = null
   formVisible.value = true
@@ -744,6 +751,7 @@ function exactExpire(u: UserRow): string {
 }
 
 function openEdit(u: UserRow, focus: 'usage' | 'time' | null = null) {
+  if (readOnly.value) return
   formFocus.value = focus
   editingUser.value = u
   formVisible.value = true
@@ -768,6 +776,7 @@ function openMenu(e: Event, u: UserRow) {
 const menuItems = computed<MenuItem[]>(() => {
   const u = menuUser.value
   if (!u) return []
+  if (readOnly.value) return [{ label: t('users.showLink'), icon: 'pi pi-qrcode', command: () => openLink(u) }]
   return [
     { label: t('common.edit'), icon: 'pi pi-pencil', command: () => openEdit(u) },
     { label: t('users.showLink'), icon: 'pi pi-qrcode', command: () => openLink(u) },
@@ -781,6 +790,7 @@ const menuItems = computed<MenuItem[]>(() => {
 })
 
 function confirmDelete(u: UserRow) {
+  if (readOnly.value) return
   dangerConfirm({
     header: t('users.deleteTitle', { name: u.name }),
     message: t('users.deleteMessage'),
@@ -823,6 +833,7 @@ async function applyLimits() {
 }
 
 function bulk(action: BulkAction) {
+  if (readOnly.value) return
   const uuids = selected.value.map((u) => u.uuid)
   const n = uuids.length
   const run = async (days?: number) => {

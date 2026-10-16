@@ -14,6 +14,27 @@ export interface NodeSyncEntry {
   count: number | null
   ok: boolean
   detail: Record<string, string | number | boolean>
+  /** What was exchanged, one short line per row (at most 50; `items_more` are not listed). */
+  items?: string[]
+  items_more?: number
+  /** The exchanged rows as JSON: zlib, then base64 (see `rawJson`). `raw_truncated`: only its beginning. */
+  raw_z?: string
+  raw_size?: number
+  raw_truncated?: boolean
+}
+
+/** The JSON of an entry's exchanged rows (pretty when it is whole). */
+export async function rawJson(entry: NodeSyncEntry): Promise<string> {
+  if (!entry.raw_z) return ''
+  const bytes = Uint8Array.from(atob(entry.raw_z), (c) => c.charCodeAt(0))
+  // "deflate" is the zlib format (what Python's zlib.compress writes).
+  const text = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'))).text()
+  if (entry.raw_truncated) return text
+  try {
+    return JSON.stringify(JSON.parse(text), null, 2)
+  } catch {
+    return text
+  }
 }
 
 export interface NodeSyncWebsocket {
@@ -59,9 +80,29 @@ export interface NodeSyncStatus {
   last_error: Partial<Record<SyncKind, NodeSyncEntry | null>>
   log: NodeSyncEntry[]
   websocket: NodeSyncWebsocket | null
+  /** This node's users (at most 5000; `users_more` are not listed) and admins. Missing from older nodes. */
+  users?: NodeUserItem[]
+  users_more?: number
+  admins?: NodeAdminItem[]
   /** Why the sync log could not be read; the counts are still there. */
   error: string
   took_ms: number
+}
+
+/** A user as the node has it: enabled is what the parent sent, active is whether it is served here. */
+export interface NodeUserItem {
+  name: string
+  uuid: string
+  enable: boolean
+  is_active: boolean
+  owner: string
+}
+
+export interface NodeAdminItem {
+  name: string
+  uuid: string
+  mode: string
+  parent: string
 }
 
 export const nodeSyncApi = {

@@ -22,6 +22,8 @@ from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import user_configs
 
+from . import node_read_only
+
 PASSWORD_LENGTH = 16
 # Same window as the classic admin list: online = seen in the last 24 hours.
 ONLINE_WINDOW = datetime.timedelta(days=1)
@@ -208,8 +210,8 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         # Outbound id this admin's users use unless they choose another (null: automatic / inherited).
         "default_outbound": admin.default_outbound_id,
         "inherited_outbound": _inherited_outbound(admin),
-        "can_edit": manageable and (not _is_super(admin) or _is_super(actor)),
-        "can_delete": manageable and (not _is_super(admin) or _is_super(actor)),
+        "can_edit": manageable and (not _is_super(admin) or _is_super(actor)) and not node_read_only.is_read_only(),
+        "can_delete": manageable and (not _is_super(admin) or _is_super(actor)) and not node_read_only.is_read_only(),
     }
 
 
@@ -325,7 +327,8 @@ class AdminsTreeApi(MethodView):
         visible = {a.id for a in admins}
         return {
             "me_uuid": actor.uuid,
-            "can_create": _can_create(actor),
+            "can_create": _can_create(actor) and not node_read_only.is_read_only(),
+            "read_only": node_read_only.is_read_only(),
             "my_limits": _limits(actor),
             "link_domains": _link_domains(),
             "outbounds": _outbound_options(),
@@ -334,6 +337,7 @@ class AdminsTreeApi(MethodView):
 
     def post(self):
         """Admins page: create an agent with a generated password"""
+        node_read_only.deny_write_on_node()
         actor: AdminUser = g.account
         if not _can_create(actor):
             abort(403, "You don't have permission to add admins")
@@ -363,6 +367,7 @@ class AdminTreeItemApi(MethodView):
 
     def patch(self, uuid):
         """Admins page: update a sub-admin"""
+        node_read_only.deny_write_on_node()
         admin = _managed_target(uuid)
         body = request.get_json(silent=True) or {}
         payload = _clean_payload(body, target=admin)
@@ -383,6 +388,7 @@ class AdminTreeItemApi(MethodView):
 
     def delete(self, uuid):
         """Admins page: delete a sub-admin (its sub-admins too; their users move to you)"""
+        node_read_only.deny_write_on_node()
         admin = _managed_target(uuid)
         admin.remove()
         hutils.node.parent.notify_childs_users_changed()
@@ -394,6 +400,7 @@ class AdminResetPasswordApi(MethodView):
 
     def post(self, uuid):
         """Admins page: give a sub-admin a new generated password"""
+        node_read_only.deny_write_on_node()
         admin = _managed_target(uuid)
         password = _new_password()
         admin.update_password(password)
@@ -443,6 +450,7 @@ class MyAdminConfigsApi(MethodView):
 
     def put(self):
         """My account: additional configs for all users of the signed-in admin and its sub-admins"""
+        node_read_only.deny_write_on_node()
         actor: AdminUser = g.account
         actor.additional_configs = _configs_or_400(request.get_json(silent=True) or {})
         db.session.commit()

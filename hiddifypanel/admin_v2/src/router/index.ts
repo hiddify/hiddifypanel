@@ -48,15 +48,15 @@ const routes = [
         path: 'users',
         name: 'users',
         component: () => import('@/features/users/views/UsersView.vue'),
-        // Users are managed on the parent panel.
-        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+        // On a node users are managed on the parent panel: shown read-only, and only to the owner (super admin).
+        beforeEnter: () => (isChildPanel.value && !isSuperAdmin.value ? { name: 'node-home' } : true),
       },
       {
         path: 'admins',
         name: 'admins',
         component: () => import('@/features/admins/views/AdminsView.vue'),
-        // Admins are managed on the parent panel.
-        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+        // On a node admins are managed on the parent panel: shown read-only, and only to the owner (super admin).
+        beforeEnter: () => (isChildPanel.value && !isSuperAdmin.value ? { name: 'node-home' } : true),
       },
       {
         path: 'account',

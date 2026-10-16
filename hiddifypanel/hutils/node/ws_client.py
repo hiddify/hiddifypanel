@@ -131,11 +131,11 @@ def _after_batches(users_changed: bool, outbounds_changed: bool, admins_changed:
 def _note_batch(batch: ws_proto.ChangesMessage, applied: Applied) -> None:
     """A change-feed batch, in the sync log; the WebSocket state goes with it (it runs in this process only)."""
     if applied.admins:
-        sync_status.record(SyncKind.admins, SyncSource.ws_feed, applied.admins)
+        sync_status.record(SyncKind.admins, SyncSource.ws_feed, applied.admins, items=batch.get("admins"))
     if applied.users:
-        sync_status.record(SyncKind.users, SyncSource.ws_feed, applied.users, more=bool(batch.get("more")))
+        sync_status.record(SyncKind.users, SyncSource.ws_feed, applied.users, items=batch.get("users"), more=bool(batch.get("more")))
     if batch.get("outbounds") is not None:
-        sync_status.record(SyncKind.outbounds, SyncSource.ws_feed, len(batch["outbounds"]))
+        sync_status.record(SyncKind.outbounds, SyncSource.ws_feed, len(batch["outbounds"]), items=batch["outbounds"])
     sync_status.save_ws(status())
 
 
@@ -349,7 +349,7 @@ class _Client:
         elif kind == "inventory":
             inventory = ws_proto.parse_inventory(message)
             admins = await in_app(self.app, sync_feed.reconcile_admins, inventory["admins"])
-            sync_status.record(SyncKind.admins, SyncSource.inventory, len(inventory["admins"]), removed=admins.removed, missing=len(admins.missing))
+            sync_status.record(SyncKind.admins, SyncSource.inventory, len(inventory["admins"]), items=inventory["admins"], removed=admins.removed, missing=len(admins.missing))
             if admins.removed:
                 logger.info(f"node-ws: {admins.removed} admins are no longer on the parent: removed here")
                 session.pending.admins = True
@@ -361,7 +361,7 @@ class _Client:
         elif kind == "users_list":
             parent_users = ws_proto.str_list(message.get("users", []), "users_list.users")
             users = await in_app(self.app, sync_feed.reconcile_users, parent_users)
-            sync_status.record(SyncKind.users, SyncSource.inventory, len(parent_users), removed=users.removed, missing=len(users.missing))
+            sync_status.record(SyncKind.users, SyncSource.inventory, len(parent_users), items=parent_users, removed=users.removed, missing=len(users.missing))
             if users.removed:
                 logger.info(f"node-ws: {users.removed} users are no longer on the parent: removed here")
                 session.pending.users = True

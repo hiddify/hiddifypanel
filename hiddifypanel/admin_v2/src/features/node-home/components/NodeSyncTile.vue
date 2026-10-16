@@ -1,5 +1,13 @@
 <template>
-  <article class="tile" :class="`tile--${tile.state}`">
+  <article
+    class="tile"
+    :class="[`tile--${tile.state}`, { 'tile--clickable': clickable }]"
+    :role="clickable ? 'button' : undefined"
+    :tabindex="clickable ? 0 : undefined"
+    :title="clickable ? t('nodeSync.showList') : undefined"
+    @click="clickable && emit('open')"
+    @keydown.enter="clickable && emit('open')"
+  >
     <div class="tile__top">
       <span class="tile__icon"><i :class="tile.icon" /></span>
       <span class="tile__label">{{ t(`nodeSync.kind.${tile.kind}`) }}</span>
@@ -32,12 +40,23 @@ defineProps<{
   tile: SyncTile
   ago: (at: number) => string
   absolute: (at: number) => string
+  /** Opens the list of what the tile counts (users, admins). */
+  clickable?: boolean
 }>()
+const emit = defineEmits<{ open: [] }>()
 
 const { t, locale } = useI18n()
 </script>
 
 <style scoped>
+.tile--clickable {
+  cursor: pointer;
+}
+.tile--clickable:hover,
+.tile--clickable:focus-visible {
+  border-color: var(--p-primary-color);
+  outline: none;
+}
 .tile {
   --tile-accent: var(--p-text-muted-color);
   position: relative;

@@ -373,9 +373,9 @@ def register_to_parent_detailed(name: str, apikey: str, mode: ChildMode = ChildM
         if failure is not None:
             logger.error(f"[register {reg or '-'} node] the parent {parent_host} did not take the node's own users: {failure.kind}: {failure.reason}")
             return failure
-    sync_status.record(SyncKind.admins, SyncSource.register, len(res.admin_users))
-    sync_status.record(SyncKind.users, SyncSource.register, len(res.users), via_ws=bool(res.users_via_ws), missing_sent=len(missing_users))
-    sync_status.record(SyncKind.domains, SyncSource.register, len(payload.panel_data.domains), direction="sent")
+    sync_status.record(SyncKind.admins, SyncSource.register, len(res.admin_users), items=res.admin_users)
+    sync_status.record(SyncKind.users, SyncSource.register, len(res.users), items=res.users, via_ws=bool(res.users_via_ws), missing_sent=len(missing_users))
+    sync_status.record(SyncKind.domains, SyncSource.register, len(payload.panel_data.domains), items=payload.panel_data.domains, direction="sent")
     via_ws = ": its users come over the WebSocket" if res.users_via_ws else ""
     logger.success(f"[register {reg or '-'} node] registered with the parent {parent_host}{via_ws}")
     from . import sync_feed, ws_client
@@ -419,10 +419,10 @@ def sync_with_parent(pull_users: bool = True) -> bool:
     res = NodeApiClient(p_url).put(path, payload, SyncOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while syncing with parent: {res.msg}")
-        sync_status.record(SyncKind.domains, SyncSource.http_sync, ok=False, error=str(res.msg))
+        sync_status.record(SyncKind.domains, SyncSource.http_sync, ok=False, items=payload.domains, error=str(res.msg))
         return False
     _remember_parent_hosts(res.parent_hosts)
-    sync_status.record(SyncKind.domains, SyncSource.http_sync, len(payload.domains), direction="sent")
+    sync_status.record(SyncKind.domains, SyncSource.http_sync, len(payload.domains), items=payload.domains, direction="sent")
     if not pull_users:
         # An older parent may still send the users; they are not needed for this call.
         logger.success("Sent domains to parent")
@@ -432,10 +432,10 @@ def sync_with_parent(pull_users: bool = True) -> bool:
     AdminUser.bulk_register(res.admin_users, commit=False, remove=True)
     User.bulk_register(res.users, commit=False, remove=True)
     db.session.commit()
-    sync_status.record(SyncKind.admins, SyncSource.http_sync, len(res.admin_users))
-    sync_status.record(SyncKind.users, SyncSource.http_sync, len(res.users))
+    sync_status.record(SyncKind.admins, SyncSource.http_sync, len(res.admin_users), items=res.admin_users)
+    sync_status.record(SyncKind.users, SyncSource.http_sync, len(res.users), items=res.users)
     if res.outbounds is not None:
-        sync_status.record(SyncKind.outbounds, SyncSource.http_sync, len(res.outbounds))
+        sync_status.record(SyncKind.outbounds, SyncSource.http_sync, len(res.outbounds), items=res.outbounds)
     logger.success("Successfully synced with parent")
     cache.invalidate_all_cached_functions()
     _apply_users_if_changed(active_before)
@@ -476,7 +476,7 @@ def sync_users_usage_with_parent(usages: list[UsageData]) -> bool:
     res = _send_to_parent(payload)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while syncing users usage with parent: {res.msg}")
-        sync_status.record(SyncKind.usage, SyncSource.usage_report, len(to_send), ok=False, error=str(res.msg))
+        sync_status.record(SyncKind.usage, SyncSource.usage_report, len(to_send), ok=False, items=to_send, error=str(res.msg))
         UnsyncedUsage.add_usages(usages)
         usage.add_users_usage_new(usages, 0)
         return False
@@ -492,7 +492,7 @@ def sync_users_usage_with_parent(usages: list[UsageData]) -> bool:
 
     sync_time = hutils.convert.time_to_json(res.response_time)
     set_hconfig(ConfigEnum.last_users_sync, sync_time, commit=True)
-    sync_status.record(SyncKind.usage, SyncSource.usage_report, len(to_send), users_back=len(res.users))
+    sync_status.record(SyncKind.usage, SyncSource.usage_report, len(to_send), items=to_send, users_back=len(res.users))
     logger.success(f"Successfully synced users usage with parent: {len(res.users)} users at {sync_time}")
     return True
 

@@ -67,6 +67,8 @@ export interface OutboundOption {
 export interface AdminsTree {
   me_uuid: string
   can_create: boolean
+  /** A node: admins come from the parent panel and cannot be changed here. */
+  read_only?: boolean
   my_limits: AdminLimits | null
   link_domains: LinkDomain[]
   outbounds: OutboundOption[]

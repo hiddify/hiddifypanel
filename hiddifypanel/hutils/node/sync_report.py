@@ -67,6 +67,27 @@ class NodeIds(BaseModel):
     unique_id: str
 
 
+#: users listed in the report (the counts are of all of them)
+LISTED_USERS_LIMIT = 5000
+
+
+class NodeUserItem(BaseModel):
+    """A user as this node has it: what the parent sent, and whether it is active here."""
+
+    name: str
+    uuid: str
+    enable: bool
+    is_active: bool
+    owner: str = ""
+
+
+class NodeAdminItem(BaseModel):
+    name: str
+    uuid: str
+    mode: str
+    parent: str = ""
+
+
 class NodeSyncReport(sync_status.SyncLog):
     is_node: bool
     #: Unix seconds: the page measures "how long ago" with this clock, not the browser's
@@ -75,6 +96,10 @@ class NodeSyncReport(sync_status.SyncLog):
     node: NodeIds
     counts: Counts
     active_count_limit: int
+    #: this node's users (at most LISTED_USERS_LIMIT) and admins, to compare with the parent
+    users: list[NodeUserItem] = []
+    users_more: int = 0
+    admins: list[NodeAdminItem] = []
     #: why the sync log could not be read (the counts are still there)
     error: str = ""
     took_ms: float
@@ -92,6 +117,23 @@ def counts() -> Counts:
     )
 
 
+def listed_users() -> tuple[list[NodeUserItem], int]:
+    admins = {a.id: a.name for a in AdminUser.query.all()}
+    query = User.query.filter(User.deleted.is_(False))
+    users = query.order_by(User.id).limit(LISTED_USERS_LIMIT + 1).all()
+    items = [
+        NodeUserItem(name=u.name or "", uuid=str(u.uuid), enable=bool(u.enable), is_active=bool(u.is_active), owner=admins.get(u.added_by, ""))
+        for u in users[:LISTED_USERS_LIMIT]
+    ]
+    return items, query.count() - LISTED_USERS_LIMIT if len(users) > LISTED_USERS_LIMIT else 0
+
+
+def listed_admins() -> list[NodeAdminItem]:
+    admins = AdminUser.query.filter(AdminUser.deleted.is_(False)).order_by(AdminUser.id).all()
+    names = {a.id: a.name for a in admins}
+    return [NodeAdminItem(name=a.name or "", uuid=str(a.uuid), mode=str(a.mode), parent=names.get(a.parent_admin_id, "") if a.parent_admin_id != a.id else "") for a in admins]
+
+
 def build() -> NodeSyncReport:
     started = time.perf_counter()
     error = ""
@@ -102,6 +144,7 @@ def build() -> NodeSyncReport:
         error = f"{type(e).__name__}: {e}"
     parent = Child.query.filter(Child.mode == ChildMode.parent).first()
     report_counts = counts()
+    users, users_more = listed_users()
     return NodeSyncReport(
         **dict(log),
         is_node=shared.is_child(),
@@ -115,6 +158,9 @@ def build() -> NodeSyncReport:
         node=NodeIds(name=hconfig(ConfigEnum.node_name) or "", unique_id=hconfig(ConfigEnum.unique_id) or ""),
         counts=report_counts,
         active_count_limit=ACTIVE_COUNT_LIMIT,
+        users=users,
+        users_more=users_more,
+        admins=listed_admins(),
         error=error,
         took_ms=round((time.perf_counter() - started) * 1000, 1),
     )
