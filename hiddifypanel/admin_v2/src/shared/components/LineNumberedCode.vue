@@ -10,7 +10,8 @@ const lines = computed(() => props.text.split('\n'))
 </script>
 
 <template>
-  <div class="line-numbered-code">
+  <!-- Code reads left to right also in RTL languages -->
+  <div class="line-numbered-code" dir="ltr">
     <table class="line-numbered-code__table">
       <tbody>
         <tr

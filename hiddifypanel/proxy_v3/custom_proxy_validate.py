@@ -385,6 +385,9 @@ def build_render_context(
             "proto": _infer_proxy_proto(data),
             "tls_layer": str(data.get("tls_layer") or "http").lower(),
             "download_tls_layer": str(data.get("download_tls_layer") or "").lower() or None,
+            # The client side reads it too (a REALITY download domain is only valid over L7 h2): without it the preview
+            # dropped such domains and rendered nothing.
+            "l7_reverse_proto": str(data.get("l7_reverse_proto") or "").lower() or None,
             "download_domain_modes": list(data.get("download_domain_modes") or []),
             "domain_modes": list(data.get("domain_modes") or []),
             "server_inbound_tcp_ports": stored_tcp,
@@ -2205,19 +2208,24 @@ def _scope_example_context(
     domain_host: str | None,
     server_side: bool,
 ) -> None:
-    del proxy_id, server_side
+    del proxy_id
     typed = ctx.get("ctx")
     proxy = getattr(typed, "proxy", None)
-    domains = list(getattr(proxy, "domains", None) or [])
-    if not domains:
+    if proxy is None:
         return
+    domains = list(getattr(proxy, "domains", None) or [])
+    host = (domain_host or "").strip().lower()
     if domain_id is not None:
         scoped_domains = [item for item in domains if _domain_var_id(item) == int(domain_id)]
-    elif (domain_host or "").strip():
-        host = domain_host.strip().lower()
+    elif host:
         scoped_domains = [item for item in domains if _domain_var_host(item) == host]
     else:
         return
+    if not scoped_domains and not server_side:
+        # A client preview / example for a domain the proxy does not list: still only that domain (with its download domain).
+        row = Domain.query.filter(Domain.id == int(domain_id)).first() if domain_id is not None else Domain.query.filter(Domain.domain == host).first()
+        if row is not None:
+            scoped_domains = [DomainIPVar.from_domain(row)]
     if not scoped_domains:
         return
     proxy.domains = scoped_domains

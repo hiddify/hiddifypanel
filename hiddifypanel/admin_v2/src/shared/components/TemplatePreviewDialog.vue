@@ -63,7 +63,7 @@ const displayText = computed(() => {
         </li>
       </ul>
 
-      <ScrollPanel v-if="displayText" class="preview-scroll-panel" :style="{ width: '100%', height: '420px' }">
+      <ScrollPanel v-if="displayText" dir="ltr" class="preview-scroll-panel" :style="{ width: '100%', height: '420px' }">
         <LineNumberedCode :text="displayText" />
       </ScrollPanel>
     </div>

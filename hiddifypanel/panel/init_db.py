@@ -24,7 +24,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
 MAX_DB_VERSION = 200
 
 
-def _v171(child_id):
+def _v172(child_id):
     """Custom JSON outbounds (hiddify-core outbound / endpoint, xray outbound): the `outbound.config` column and the new
     outbound modes are added by the generic column / enum sync that runs before every upgrade."""
 

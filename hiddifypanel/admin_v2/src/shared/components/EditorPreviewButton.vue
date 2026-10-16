@@ -127,8 +127,8 @@ async function onPopoverShow() {
   </InputGroup>
 
   <Popover ref="popoverRef" class="editor-preview-popover" @show="onPopoverShow">
-    <div class="flex flex-col gap-3 w-72 max-w-full p-1">
-      <HorizontalField :label="t('proxy.exampleDomain')" input-id="preview-domain-mode">
+    <div class="editor-preview-params flex flex-col gap-1 w-80 max-w-full p-1">
+      <HorizontalField stacked :label="t('proxy.exampleDomain')" input-id="preview-domain-mode">
         <div class="flex flex-col gap-2 w-full">
           <Select
             id="preview-domain-mode"
@@ -159,7 +159,7 @@ async function onPopoverShow() {
         </div>
       </HorizontalField>
 
-      <HorizontalField v-if="requireUser" :label="t('proxy.exampleUser')" input-id="preview-user-mode">
+      <HorizontalField stacked v-if="requireUser" :label="t('proxy.exampleUser')" input-id="preview-user-mode">
         <div class="flex flex-col gap-2 w-full">
           <Select
             id="preview-user-mode"
@@ -184,7 +184,7 @@ async function onPopoverShow() {
         </div>
       </HorizontalField>
 
-      <HorizontalField :label="t('proxy.exampleUserAgent')" input-id="preview-ua-mode">
+      <HorizontalField stacked :label="t('proxy.exampleUserAgent')" input-id="preview-ua-mode">
         <div class="flex flex-col gap-2 w-full">
           <Select
             id="preview-ua-mode"
@@ -214,9 +214,13 @@ async function onPopoverShow() {
         </div>
       </HorizontalField>
 
-      <HorizontalField :label="t('proxy.ignoreSkip')" input-id="preview-ignore-skip" :hint="t('proxy.ignoreSkipHint')">
-        <Checkbox id="preview-ignore-skip" v-model="settings.ignoreSkip" binary />
-      </HorizontalField>
+      <div class="mb-2">
+        <label class="flex items-center gap-2 font-semibold cursor-pointer" for="preview-ignore-skip">
+          <Checkbox input-id="preview-ignore-skip" v-model="settings.ignoreSkip" binary />
+          {{ t('proxy.ignoreSkip') }}
+        </label>
+        <small class="block mt-1 text-muted-color">{{ t('proxy.ignoreSkipHint') }}</small>
+      </div>
     </div>
   </Popover>
   </span>
