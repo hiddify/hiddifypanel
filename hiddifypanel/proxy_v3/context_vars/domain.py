@@ -81,6 +81,18 @@ class DomainIPVar(BaseModel):
     def is_fake_proxy(self) -> bool:
         return self.fake_mode in FAKE_PROXY_MODES
 
+    def support_telegram_webproxy(self) -> bool:
+        """Served by telemt's Telegram web proxy (HAProxy -> telemt, a vhost per host): a real (valid) domain name, not an IP."""
+        if self.fake_mode != FakeMode.valid or not self.name:
+            return False
+        try:
+            ipaddress.ip_address(self.name.strip("[]"))
+        except ValueError:
+            return True
+        if self.cert.is_trusted:
+            return True
+        return False
+
     def uses_public_edge_tls(self) -> bool:
         """CDN/worker: the client sees the CDN edge cert, not the origin cert in tls_store."""
         return self.mode in (DomainType.cdn, DomainType.worker)

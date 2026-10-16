@@ -54,6 +54,7 @@ proxy_protocol = true
 
 
 
+{%- if ctx.hconfig.telegram_webproxy_enable %}
 
 [[server.listeners]]
 ip = "127.0.0.1"
@@ -65,12 +66,12 @@ web_trusted_proxy_cidrs = ["127.0.0.1/32"]
 
 
 [web]
-enabled = {{ 'true' if web_on else 'false' }}
+enabled = true 
 carriers = ["websocket-lanes", "websocket", "https-lanes", "https"]
 decoy_fasttrack_mode = "off"
+limits.max_profiles = {{ (ctx.users | length)*(ctx.domains | length) }}
 
 
-{%- if ctx.hconfig.telegram_webproxy_enable %}
 {%- set decoy = '{ mode = "http_upstream", upstream = "http://127.0.0.1:18081" }' %}
 {%- set profiles %}[
 {%- for u in ctx.users if u.uuid_hex %}
@@ -78,7 +79,10 @@ decoy_fasttrack_mode = "off"
 {%- endfor %}
 ]{%- endset %}
 
-{%- for d in ctx.domains if d.fake_mode == 'valid' and  not (d.name.replace('.', '').isdigit() or ':' in d.name)%}
+{%- set vhosts = [] %}
+{#- telemt refuses a duplicate vhost host: each domain name once #}
+{%- for d in ctx.domains if d.support_telegram_webproxy() and d.name not in vhosts %}
+{%- set _ = vhosts.append(d.name) %}
 
 [[web.vhosts]]
 host = "{{ d.name }}"
@@ -87,8 +91,9 @@ public_addr = "{{ (d.ips.ips or ['127.0.0.1'])[0] }}:443"
 decoy = {{ decoy }}
 profiles = {{ profiles }}
 {%- endfor %}
-{%- endif %}
 
+
+{% endif %}
 
 [censorship]
 tls_domain = "{{ ctx.hconfig.telegram_fakedomain or '' }}"
