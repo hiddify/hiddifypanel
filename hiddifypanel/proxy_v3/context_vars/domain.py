@@ -9,9 +9,9 @@ from hiddifypanel import hutils
 from hiddifypanel.hutils.network.auto_ip_selector import split_pattern
 from hiddifypanel.hutils.proxy import random_or_none
 from hiddifypanel.models import Domain, DomainType, FakeMode
-from hiddifypanel.models.domain import FAKE_PROXY_MODES
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
+from hiddifypanel.models.domain import FAKE_PROXY_MODES
 
 from .cert import CertVar
 from .ip import IPVar

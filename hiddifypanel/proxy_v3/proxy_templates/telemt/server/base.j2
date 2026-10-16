@@ -2,7 +2,9 @@ upstreams = []
 show_link = []
 
 [general]
-ad_tag = "{{ ctx.hconfig.telegram_adtag or '' }}"
+{% if ctx.hconfig.telegram_adtag %}
+ad_tag = "{{ ctx.hconfig.telegram_adtag }}"
+{% endif %}
 prefer_ipv6 = false
 fast_mode = true
 use_middle_proxy = false
@@ -50,15 +52,8 @@ port = 1001
 transport = "mtproxy"
 proxy_protocol = true
 
-{#- Web transport: HAProxy sends /<telegram_base_path> on every domain here; telemt picks the vhost by Host.
-    One vhost per domain with fake_mode valid (as sublink/telegram_web). A vhost needs at least one profile, and web needs a vhost. #}
-{%- set web_domains = [] %}
-{%- for d in ctx.domains if ctx.hconfig.telegram_webproxy_enable and d.fake_mode == 'valid' and d.name not in web_domains %}
-{%- set _ = web_domains.append(d.name) %}
-{%- endfor %}
-{%- set web_users = ctx.users | selectattr('uuid_hex') | list %}
-{%- set web_on = web_domains and web_users %}
-{%- if web_on %}
+
+
 
 [[server.listeners]]
 ip = "127.0.0.1"
@@ -67,32 +62,33 @@ transport = "web"
 proxy_protocol = false
 web_client_ip_source = "x_forwarded_for"
 web_trusted_proxy_cidrs = ["127.0.0.1/32"]
-{%- endif %}
+
 
 [web]
 enabled = {{ 'true' if web_on else 'false' }}
 carriers = ["websocket-lanes", "websocket", "https-lanes", "https"]
 decoy_fasttrack_mode = "off"
-{%- if web_on %}
-{%- for host in web_domains %}
+
+
+{%- if ctx.hconfig.telegram_webproxy_enable %}
+{%- set decoy = '{ mode = "http_upstream", upstream = "http://127.0.0.1:18081" }' %}
+{%- set profiles %}[
+{%- for u in ctx.users if u.uuid_hex %}
+  { user = "{{ u.uuid_hex }}", secret_mode = "dd" },
+{%- endfor %}
+]{%- endset %}
+
+{%- for d in ctx.domains if d.fake_mode == 'valid' and  not (d.name.replace('.', '').isdigit() or ':' in d.name)%}
 
 [[web.vhosts]]
-host = "{{ host }}"
+host = "{{ d.name }}"
 base_path = "{{ ctx.hconfig.telegram_base_path }}"
-{#- only used for the links telemt prints; must be ip:port #}
-public_addr = "{{ (ctx.ips.ipsv4 or ['127.0.0.1'])[0] }}:443"
-
-[web.vhosts.decoy]
-mode = "http_upstream"
-upstream = "http://127.0.0.1:18081"
-{%- for u in web_users %}
-
-[[web.vhosts.profiles]]
-user = "{{ u.uuid_hex }}"
-secret_mode = "dd"
-{%- endfor %}
+public_addr = "{{ (d.ips.ips or ['127.0.0.1'])[0] }}:443"
+decoy = {{ decoy }}
+profiles = {{ profiles }}
 {%- endfor %}
 {%- endif %}
+
 
 [censorship]
 tls_domain = "{{ ctx.hconfig.telegram_fakedomain or '' }}"
@@ -110,7 +106,7 @@ ignore_time_skew = false
 
 [access.users]
 default = "{{ (ctx.hconfig.shared_secret or '') | replace('-', '') }}"
-{% for user in ctx.users if user.uuid_hex %}
+{% for user in ctx.users  %}
 {{ user.uuid_hex }} = "{{ user.uuid_hex }}"
 {% endfor %}
 

@@ -456,11 +456,9 @@ def get_backup_child_unique_id(backupdata: dict) -> str:
 
 
 def all_configs_for_cli():
-    valid_users = [u.to_dict(dump_id=True) for u in User.query.filter(User.usage_limit > User.current_usage).all() if u.is_active]
     host_child_ids = [c.id for c in Child.query.filter(Child.mode == ChildMode.virtual).all()]
     domains = Domain.query.filter(Domain.child_id.in_(host_child_ids), ~Domain.domain.contains("*")).all()
     configs = {
-        "users": valid_users,
         "domains": [u.to_dict(dump_ports=True, dump_child_id=True) for u in domains],
         # "hconfigs": get_hconfigs(json=True),
         "chconfigs": get_hconfigs_childs_json(host_child_ids),
