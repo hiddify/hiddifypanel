@@ -3655,13 +3655,13 @@ msgstr ""
 
 msgid "adminV2.outbounds.dialog.configHint.core_outbound"
 msgstr ""
-"一个 hiddify-core (sing-box) outbound 对象，例如 {\"type\": \"socks\", \"server\": "
-"\"…\", \"server_port\": 1080}。保存前会由 hiddify-core 检查。"
+"一个 hiddify-core (sing-box) outbound 对象，例如 {'{'}\"type\": \"socks\", "
+"\"server\": \"…\", \"server_port\": 1080{'}'}。保存前会由 hiddify-core 检查。"
 
 msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
 msgstr ""
-"一个 xray outbound 对象，例如 {\"protocol\": \"socks\", \"settings\": {…}}。保存前会由 "
-"xray 检查。"
+"一个 xray outbound 对象，例如 {'{'}\"protocol\": \"socks\", \"settings\": "
+"{'{'}…{'}'}{'}'}。保存前会由 xray 检查。"
 
 msgid "adminV2.outbounds.dialog.configInvalid"
 msgstr "不是有效的 JSON：{error}"
@@ -6901,6 +6901,12 @@ msgstr "您可以连接到中央面板仅定义一个用户，所有服务器的
 msgid "config.parent_panel.label"
 msgstr "父面板（多服务器）"
 
+msgid "config.parent_sync_cursor.description"
+msgstr ""
+
+msgid "config.parent_sync_cursor.label"
+msgstr ""
+
 msgid "config.path_grpc.description"
 msgstr "配置中的 gRPC 路径"
 
@@ -7345,6 +7351,12 @@ msgstr ""
 msgid "config.telegram_adtag.label"
 msgstr "📍 Telegram 广告标签"
 
+msgid "config.telegram_base_path.description"
+msgstr ""
+
+msgid "config.telegram_base_path.label"
+msgstr ""
+
 msgid "config.telegram_bot_token.description"
 msgstr "添加 Telegram 机器人功能。您需要使用@BotFather创建一个机器人并在此字段中输入API代码"
 
@@ -7369,6 +7381,12 @@ msgstr ""
 
 msgid "config.telegram_lib.label"
 msgstr "🔢 Telegram 代理库"
+
+msgid "config.telegram_webproxy_enable.description"
+msgstr ""
+
+msgid "config.telegram_webproxy_enable.label"
+msgstr ""
 
 msgid "config.tls.description"
 msgstr "可以在此部分设置 TLS 配置。"

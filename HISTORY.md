@@ -5,6 +5,10 @@
 
 #### New
 
+* Add telegram webproxy. 
+
+* Add quick enable of disabled settings. 
+
 * Improve node registeration. 
 
 * Add advanced config tester. 
@@ -66,6 +70,8 @@
 * Better integration with the old panel. 
 
 #### Fix
+
+* Update admin menu structure to include tools at the end for consistency. 
 
 * Bug. 
 
@@ -151,6 +157,43 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: add Persian translations for SSH terminal features and related utilities. 
+
+* Feat: implement read-only mode for users and admins on child nodes, enhancing UI and API to reflect parent panel management. 
+
+* Feat: add Cloudflare ECH configuration support in TLS templates. 
+
+* Imporove telegram proxy support. 
+
+* Speed up apply configs, and cache managemnt. 
+
+* Move firewall to database. 
+
+* Speed up dump config by removing users. 
+
+* Feat: implement node synchronization status tracking and UI components. 
+
+* Feat: enhance Telemt API integration with new user management and usage tracking. 
+
+* Feat: enhance WebSocket handling and improve translations. 
+
+* Feat: new add advanced full ssh terminal with file editor and multi ssh command runner. 
+  _- Integrated SSH functionality into the admin interface, allowing users to connect and manage SSH sessions.
+- Implemented SSH session handling with support for terminal output and command execution.
+- Added components for file editing and output viewing, enhancing user experience.
+- Introduced a vault for securely storing SSH credentials and configurations.
+- Updated routing to include SSH-related endpoints in the ASGI application.
+- Enhanced the admin menu to include SSH tools and utilities._
+
+* Refactor: update deleted filter checks to use isnot for consistency. 
+
+* Feat: big change, stream support no more pulling.... 
+  _- Added ASGI support by introducing `hiddifypanel/asgi.py` and `hiddifypanel/asgi_types.py`, allowing the application to handle asynchronous requests.
+- Updated WSGI application to use the new ASGI builder.
+- Implemented live channel features in the admin interface, including a new `live.ts` module for managing live data streams and a `WsTestDialog` component for WebSocket testing.
+- Enhanced database connection pooling options to improve performance under load.
+- Updated dependencies in `pyproject.toml` to include `a2wsgi`, `websockets`, and `httpx` for better async handling._
 
 * Make sure the proxies will not have a same tag in the server side. 
 

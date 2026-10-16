@@ -3905,14 +3905,14 @@ msgstr ""
 
 msgid "adminV2.outbounds.dialog.configHint.core_outbound"
 msgstr ""
-"Один объект outbound hiddify-core (sing-box), например {\"type\": \"socks\","
-" \"server\": \"…\", \"server_port\": 1080}. Проверяется hiddify-core перед "
-"сохранением."
+"Один объект outbound hiddify-core (sing-box), например {'{'}\"type\": "
+"\"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}. Проверяется "
+"hiddify-core перед сохранением."
 
 msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
 msgstr ""
-"Один объект outbound xray, например {\"protocol\": \"socks\", \"settings\": "
-"{…}}. Проверяется xray перед сохранением."
+"Один объект outbound xray, например {'{'}\"protocol\": \"socks\", "
+"\"settings\": {'{'}…{'}'}{'}'}. Проверяется xray перед сохранением."
 
 msgid "adminV2.outbounds.dialog.configInvalid"
 msgstr "Недопустимый JSON: {error}"
@@ -7388,6 +7388,12 @@ msgstr ""
 msgid "config.parent_panel.label"
 msgstr "Главная панель (мультисервер)"
 
+msgid "config.parent_sync_cursor.description"
+msgstr ""
+
+msgid "config.parent_sync_cursor.label"
+msgstr ""
+
 msgid "config.path_grpc.description"
 msgstr "Путь gRPC в конфигурации"
 
@@ -7880,6 +7886,12 @@ msgstr ""
 msgid "config.telegram_adtag.label"
 msgstr "📍 Тег Telegram AD"
 
+msgid "config.telegram_base_path.description"
+msgstr ""
+
+msgid "config.telegram_base_path.label"
+msgstr ""
+
 msgid "config.telegram_bot_token.description"
 msgstr ""
 "Чтобы добавить функцию бота Telegram вам нужно создать бота с @BotFather и "
@@ -7914,6 +7926,12 @@ msgstr ""
 
 msgid "config.telegram_lib.label"
 msgstr "🔢 Библиотека Telegram Proxy"
+
+msgid "config.telegram_webproxy_enable.description"
+msgstr ""
+
+msgid "config.telegram_webproxy_enable.label"
+msgstr ""
 
 msgid "config.tls.description"
 msgstr "В этом разделе можно установить конфигурации TLS"

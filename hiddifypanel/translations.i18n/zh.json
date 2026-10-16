@@ -2777,6 +2777,10 @@
       "description": "您可以连接到中央面板仅定义一个用户，所有服务器的使用情况将累积添加。",
       "label": "父面板（多服务器）"
     },
+    "parent_sync_cursor": {
+      "description": "",
+      "label": ""
+    },
     "path_grpc": {
       "description": "配置中的 gRPC 路径",
       "label": "ℹ️ gRPC 路径"
@@ -3065,6 +3069,10 @@
       "description": "它用于在客户端的聊天列表中显示赞助频道。要宣传频道，请从 @MTProxybot 获取标签。\n在该机器人中输入代码 0123456789ABCDEF0123456789ABCDEF。",
       "label": "📍 Telegram 广告标签"
     },
+    "telegram_base_path": {
+      "description": "",
+      "label": ""
+    },
     "telegram_bot_token": {
       "description": "添加 Telegram 机器人功能。您需要使用@BotFather创建一个机器人并在此字段中输入API代码",
       "label": "🔐 Telegram 机器人代币"
@@ -3080,6 +3088,10 @@
     "telegram_lib": {
       "description": "您可以在不同的 Telegram 库之间切换。请注意，只有Python可以在所有服务器上运行，其他服务器可能会出现一些问题。更改后测试代理。",
       "label": "🔢 Telegram 代理库"
+    },
+    "telegram_webproxy_enable": {
+      "description": "",
+      "label": ""
     },
     "tls": {
       "description": "可以在此部分设置 TLS 配置。",

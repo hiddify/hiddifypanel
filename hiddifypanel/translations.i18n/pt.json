@@ -2777,6 +2777,10 @@
       "description": "Você pode se conectar ao Painel Central para definir apenas um usuário e o uso de todos os servidores será adicionado cumulativamente.",
       "label": "Painel Pai (Multi-servidor)"
     },
+    "parent_sync_cursor": {
+      "description": "",
+      "label": ""
+    },
     "path_grpc": {
       "description": "Caminho gRPC nas configurações",
       "label": "ℹ️ caminho gRPC"
@@ -3065,6 +3069,10 @@
       "description": "É usado para mostrar um canal patrocinado na lista de chat do cliente. Para anunciar um canal, obtenha uma tag de @MTProxybot .\ndigite o código 0123456789ABCDEF0123456789ABCDEF nesse bot.",
       "label": "📍Telegram AD Tag"
     },
+    "telegram_base_path": {
+      "description": "",
+      "label": ""
+    },
     "telegram_bot_token": {
       "description": "Para adicionar o recurso de bot do Telegram. você precisa criar um bot com @BotFather e inserir o código da API neste campo",
       "label": "🔐 Token de Bot do Telegram"
@@ -3080,6 +3088,10 @@
     "telegram_lib": {
       "description": "Você pode alternar entre diferentes Bibliotecas do Telegram. Observe que apenas o Python funciona em todos os servidores, outros podem ter algum problema. Proxy de teste após alterá-lo.",
       "label": "🔢 Biblioteca de proxy do Telegram"
+    },
+    "telegram_webproxy_enable": {
+      "description": "",
+      "label": ""
     },
     "tls": {
       "description": "As configurações de TLS podem ser definidas nesta seção.",

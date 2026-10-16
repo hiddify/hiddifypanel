@@ -1753,6 +1753,9 @@ msgstr "خودکار"
 msgid "adminV2.admins.outbound.inherit"
 msgstr "مثل بالادست: {name}"
 
+msgid "adminV2.admins.readOnlyNode"
+msgstr "ادمین‌ها در پنل اصلی مدیریت می‌شوند: اینجا فقط قابل مشاهده‌اند."
+
 msgid "adminV2.admins.refresh"
 msgstr "بارگذاری دوباره"
 
@@ -2313,6 +2316,9 @@ msgstr "هیچ مورد با این فیلترها مطابقت ندارد"
 
 msgid "adminV2.common.noMatchHint"
 msgstr "یک فیلتر را بردارید یا جستجو را تغییر دهید."
+
+msgid "adminV2.common.none"
+msgstr "هیچ"
 
 msgid "adminV2.common.resetFilters"
 msgstr "بازنشانی فیلترها"
@@ -3846,11 +3852,20 @@ msgstr "ویرایشگر پروکسی"
 msgid "adminV2.menu.signOut"
 msgstr "خروج"
 
+msgid "adminV2.menu.ssh"
+msgstr "ترمینال SSH"
+
 msgid "adminV2.menu.templateVariables"
 msgstr "متغیرهای قالب"
 
 msgid "adminV2.menu.templates"
 msgstr "قالب‌ها"
+
+msgid "adminV2.menu.textDecoders"
+msgstr "رمزگشای متن"
+
+msgid "adminV2.menu.tools"
+msgstr "ابزارها"
 
 msgid "adminV2.menu.utils"
 msgstr "ابزارها"
@@ -3877,6 +3892,182 @@ msgstr "نود"
 
 msgid "adminV2.nodeHome.titleNamed"
 msgstr "نود: {name}"
+
+msgid "adminV2.nodeSync.active"
+msgstr "فعال"
+
+msgid "adminV2.nodeSync.adminsOnNode"
+msgstr "ادمین‌های این نود"
+
+msgid "adminV2.nodeSync.all"
+msgstr "همه"
+
+msgid "adminV2.nodeSync.autoOff"
+msgstr "متوقف"
+
+msgid "adminV2.nodeSync.autoOn"
+msgstr "به‌روزرسانی خودکار"
+
+msgid "adminV2.nodeSync.connected"
+msgstr "متصل"
+
+msgid "adminV2.nodeSync.connectedSince"
+msgstr "متصل از"
+
+msgid "adminV2.nodeSync.cursor"
+msgstr "نشانگر فید"
+
+msgid "adminV2.nodeSync.deleted"
+msgstr "{n} حذف‌شده"
+
+msgid "adminV2.nodeSync.disabled"
+msgstr "خاموش"
+
+msgid "adminV2.nodeSync.disconnected"
+msgstr "قطع"
+
+msgid "adminV2.nodeSync.enabled"
+msgstr "{n} روشن"
+
+msgid "adminV2.nodeSync.host"
+msgstr "میزبان پنل اصلی"
+
+msgid "adminV2.nodeSync.ids"
+msgstr "شناسه‌ها"
+
+msgid "adminV2.nodeSync.inactive"
+msgstr "غیرفعال"
+
+msgid "adminV2.nodeSync.items"
+msgstr "موارد مبادله‌شده ({n})"
+
+msgid "adminV2.nodeSync.itemsMore"
+msgstr "… و {n} مورد دیگر"
+
+msgid "adminV2.nodeSync.kind.admins"
+msgstr "ادمین‌ها"
+
+msgid "adminV2.nodeSync.kind.domains"
+msgstr "دامنه‌ها"
+
+msgid "adminV2.nodeSync.kind.outbounds"
+msgstr "خروجی‌ها"
+
+msgid "adminV2.nodeSync.kind.usage"
+msgstr "گزارش مصرف"
+
+msgid "adminV2.nodeSync.kind.users"
+msgstr "کاربران"
+
+msgid "adminV2.nodeSync.lastBatch"
+msgstr "آخرین دسته تغییرات"
+
+msgid "adminV2.nodeSync.lastError"
+msgstr "آخرین خطا"
+
+msgid "adminV2.nodeSync.lastHttpSync"
+msgstr "آخرین همگام‌سازی پشتیبان HTTP"
+
+msgid "adminV2.nodeSync.lastUsage"
+msgstr "آخرین همگام‌سازی مصرف (زمان پنل اصلی)"
+
+msgid "adminV2.nodeSync.link"
+msgstr "ارتباط با پنل اصلی"
+
+msgid "adminV2.nodeSync.listEmpty"
+msgstr "موردی پیدا نشد."
+
+msgid "adminV2.nodeSync.listShown"
+msgstr "{n} از {total}"
+
+msgid "adminV2.nodeSync.never"
+msgstr "هنوز همگام‌سازی ثبت نشده"
+
+msgid "adminV2.nodeSync.noLog"
+msgstr "هنوز همگام‌سازی ثبت نشده."
+
+msgid "adminV2.nodeSync.noWs"
+msgstr "هنوز وضعیتی نیست"
+
+msgid "adminV2.nodeSync.nodeId"
+msgstr "شناسه یکتای این نود"
+
+msgid "adminV2.nodeSync.parentId"
+msgstr "شناسه یکتای پنل اصلی"
+
+msgid "adminV2.nodeSync.parentUrl"
+msgstr "آدرس پنل اصلی"
+
+msgid "adminV2.nodeSync.rawData"
+msgstr "داده‌ها ({size})"
+
+msgid "adminV2.nodeSync.rawTruncated"
+msgstr "فقط ابتدای آن نگه داشته شده است"
+
+msgid "adminV2.nodeSync.rawUnreadable"
+msgstr "داده‌ها خوانده نشد."
+
+msgid "adminV2.nodeSync.recent"
+msgstr "همگام‌سازی‌های اخیر"
+
+msgid "adminV2.nodeSync.refresh"
+msgstr "بازخوانی"
+
+msgid "adminV2.nodeSync.rows"
+msgstr "{n} ردیف"
+
+msgid "adminV2.nodeSync.search"
+msgstr "جستجو"
+
+msgid "adminV2.nodeSync.showData"
+msgstr "نمایش داده‌های منتقل‌شده"
+
+msgid "adminV2.nodeSync.showList"
+msgstr "نمایش فهرست"
+
+msgid "adminV2.nodeSync.source.http_sync"
+msgstr "همگام‌سازی HTTP"
+
+msgid "adminV2.nodeSync.source.inventory"
+msgstr "بررسی فهرست"
+
+msgid "adminV2.nodeSync.source.register"
+msgstr "ثبت نود"
+
+msgid "adminV2.nodeSync.source.usage_report"
+msgstr "گزارش مصرف"
+
+msgid "adminV2.nodeSync.source.ws_feed"
+msgstr "فید زنده"
+
+msgid "adminV2.nodeSync.state.error"
+msgstr "آخرین تلاش ناموفق بود"
+
+msgid "adminV2.nodeSync.state.fresh"
+msgstr "در ۱۰ دقیقه اخیر همگام شده"
+
+msgid "adminV2.nodeSync.state.never"
+msgstr "همگام‌سازی ثبت نشده"
+
+msgid "adminV2.nodeSync.state.stale"
+msgstr "آخرین همگام‌سازی بیش از ۱۰ دقیقه پیش بوده"
+
+msgid "adminV2.nodeSync.subtitle"
+msgstr ""
+"فقط خواندنی، برای عیب‌یابی: این نود چه دارد و هر نوع داده آخرین بار کی از "
+"پنل اصلی رسیده است."
+
+msgid "adminV2.nodeSync.title"
+msgstr "همگام‌سازی با پنل اصلی"
+
+msgid "adminV2.nodeSync.took"
+msgstr "{ms} میلی‌ثانیه"
+
+msgid "adminV2.nodeSync.usersOnNode"
+msgstr "کاربران این نود"
+
+msgid "adminV2.nodeSync.websocket"
+msgstr "اتصال زنده"
 
 msgid "adminV2.nodes.add.connecting"
 msgstr "در حال اتصال به نود… ممکن است تا یک دقیقه طول بکشد."
@@ -4132,6 +4323,15 @@ msgstr ""
 msgid "adminV2.nodes.syncFailed"
 msgstr "همگام‌سازی {name} ناموفق بود"
 
+msgid "adminV2.nodes.syncInfo"
+msgstr "جزئیات همگام‌سازی"
+
+msgid "adminV2.nodes.syncInfoTitle"
+msgstr "جزئیات همگام‌سازی: {name}"
+
+msgid "adminV2.nodes.syncInfoUnavailable"
+msgstr "از نود نمی‌شود پرسید"
+
 msgid "adminV2.nodes.syncNow"
 msgstr "همگام‌سازی"
 
@@ -4203,13 +4403,14 @@ msgstr ""
 
 msgid "adminV2.outbounds.dialog.configHint.core_outbound"
 msgstr ""
-"یک outbound هیدیفای‌کور (sing-box)، مثلاً {\"type\": \"socks\", \"server\": "
-"\"…\", \"server_port\": 1080}. پیش از ذخیره با hiddify-core بررسی می‌شود."
+"یک outbound هیدیفای‌کور (sing-box)، مثلاً {'{'}\"type\": \"socks\", "
+"\"server\": \"…\", \"server_port\": 1080{'}'}. پیش از ذخیره با hiddify-core "
+"بررسی می‌شود."
 
 msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
 msgstr ""
-"یک outbound ایکس‌ری، مثلاً {\"protocol\": \"socks\", \"settings\": {…}}. پیش"
-" از ذخیره با xray بررسی می‌شود."
+"یک outbound ایکس‌ری، مثلاً {'{'}\"protocol\": \"socks\", \"settings\": "
+"{'{'}…{'}'}{'}'}. پیش از ذخیره با xray بررسی می‌شود."
 
 msgid "adminV2.outbounds.dialog.configInvalid"
 msgstr "JSON معتبر نیست: {error}"
@@ -5028,6 +5229,17 @@ msgstr "سایر"
 msgid "adminV2.proxy.quick.showing"
 msgstr "نمایش {n} از {total}"
 
+msgid "adminV2.proxy.quickEnable"
+msgstr "فعال‌سازی سریع"
+
+msgid "adminV2.proxy.quickEnableDone"
+msgstr "تنظیمات ذخیره و پروکسی فعال شد"
+
+msgid "adminV2.proxy.quickEnableHint"
+msgstr ""
+"این پروکسی به این تنظیمات نیاز دارد. همین‌جا تنظیمشان کنید و پروکسی را فعال "
+"کنید:"
+
 msgid "adminV2.proxy.regeneratePath"
 msgstr "بازتولید مسیر"
 
@@ -5618,6 +5830,436 @@ msgstr ""
 msgid "adminV2.settings.title"
 msgstr "تنظیمات"
 
+msgid "adminV2.ssh.add"
+msgstr "جدید / بارگذاری"
+
+msgid "adminV2.ssh.addCommand"
+msgstr "دستور جدید"
+
+msgid "adminV2.ssh.all"
+msgstr "همه"
+
+msgid "adminV2.ssh.binary"
+msgstr "این فایل متنی نیست ({size}). می‌توانید آن را دانلود کنید."
+
+msgid "adminV2.ssh.builtin"
+msgstr "پیش‌فرض"
+
+msgid "adminV2.ssh.byKey"
+msgstr "کلید خصوصی"
+
+msgid "adminV2.ssh.byPassword"
+msgstr "رمز عبور"
+
+msgid "adminV2.ssh.cannotSave"
+msgstr "اینجا در دسترس نیست: صفحه باید با HTTPS باز شود."
+
+msgid "adminV2.ssh.chooseFile"
+msgstr "انتخاب فایل"
+
+msgid "adminV2.ssh.close"
+msgstr "بستن"
+
+msgid "adminV2.ssh.closeConfirm"
+msgstr "{name} بسته شود؟ اتصال آن قطع می‌شود."
+
+msgid "adminV2.ssh.closeRunConfirm"
+msgstr ""
+"این نتایج بسته شوند؟ دستورهایی که هنوز در حال اجرا هستند متوقف می‌شوند."
+
+msgid "adminV2.ssh.closeTab"
+msgstr "بستن"
+
+msgid "adminV2.ssh.closed"
+msgstr "اتصال بسته شد."
+
+msgid "adminV2.ssh.cmd.installHiddify"
+msgstr "نصب هیدیفای منیجر"
+
+msgid "adminV2.ssh.commandName"
+msgstr "نام"
+
+msgid "adminV2.ssh.commandPlaceholder"
+msgstr "مثلاً systemctl status hiddify-panel"
+
+msgid "adminV2.ssh.commands"
+msgstr "دستورها"
+
+msgid "adminV2.ssh.commandsHint"
+msgstr "دستورهای ذخیره‌شده، که هم‌زمان روی یک یا چند اتصال باز اجرا می‌شوند."
+
+msgid "adminV2.ssh.conflictText"
+msgstr ""
+"از قبل در این پوشه است. جایگزین شود، یا هر دو نگه داشته شوند (فایل جدید یک "
+"شماره می‌گیرد)؟"
+
+msgid "adminV2.ssh.conflictTitle"
+msgstr "فایلی با این نام وجود دارد"
+
+msgid "adminV2.ssh.connect"
+msgstr "اتصال"
+
+msgid "adminV2.ssh.copyLink"
+msgstr "کپی لینک"
+
+msgid "adminV2.ssh.copyLinkHint"
+msgstr "لینکی که این اتصال را دوباره باز می‌کند، فقط برای حساب شما"
+
+msgid "adminV2.ssh.couldNotConnect"
+msgstr "اتصال برقرار نشد"
+
+msgid "adminV2.ssh.create"
+msgstr "ساختن"
+
+msgid "adminV2.ssh.discard"
+msgstr "بدون ذخیرهٔ تغییرات بسته شود؟"
+
+msgid "adminV2.ssh.discardGo"
+msgstr "دور ریختن تغییرات"
+
+msgid "adminV2.ssh.disconnect"
+msgstr "قطع اتصال"
+
+msgid "adminV2.ssh.download"
+msgstr "دانلود"
+
+msgid "adminV2.ssh.dropHere"
+msgstr "فایل‌ها را برای بارگذاری اینجا رها کنید"
+
+msgid "adminV2.ssh.edit"
+msgstr "ویرایش"
+
+msgid "adminV2.ssh.editCommand"
+msgstr "ویرایش دستور"
+
+msgid "adminV2.ssh.emptyDir"
+msgstr "این پوشه خالی است."
+
+msgid "adminV2.ssh.err.badName"
+msgstr "این نام اینجا مجاز نیست."
+
+msgid "adminV2.ssh.err.connection"
+msgstr "اتصال به سرور قطع شد. دوباره وصل شوید و امتحان کنید."
+
+msgid "adminV2.ssh.err.exists"
+msgstr "{name} از قبل وجود دارد."
+
+msgid "adminV2.ssh.err.isDir"
+msgstr "{name} یک پوشه است."
+
+msgid "adminV2.ssh.err.missingTool"
+msgstr ""
+"{tool} روی سرور نصب نیست: آن را آنجا نصب کنید (مثلاً apt install {tool}) و "
+"دوباره امتحان کنید."
+
+msgid "adminV2.ssh.err.noSpace"
+msgstr "دیسک سرور پر است (یا سهمیهٔ شما تمام شده است)."
+
+msgid "adminV2.ssh.err.notDir"
+msgstr "{name} پوشه نیست."
+
+msgid "adminV2.ssh.err.notEmpty"
+msgstr "پوشه خالی نیست."
+
+msgid "adminV2.ssh.err.notFound"
+msgstr ""
+"{name} آنجا نیست (ممکن است جابه‌جا یا حذف شده باشد). فهرست را بروزرسانی "
+"کنید."
+
+msgid "adminV2.ssh.err.permission"
+msgstr ""
+"دسترسی رد شد: کاربر شما اجازهٔ این کار را با {name} ندارد. با کاربری که "
+"اجازه دارد وارد شوید، یا دسترسی‌های آن را تغییر دهید."
+
+msgid "adminV2.ssh.err.readonly"
+msgstr "سیستم فایل اینجا فقط خواندنی است."
+
+msgid "adminV2.ssh.err.timeout"
+msgstr "پاسخ سرور خیلی طول کشید."
+
+msgid "adminV2.ssh.err.tooLarge"
+msgstr "فایل خیلی بزرگ است."
+
+msgid "adminV2.ssh.exited"
+msgstr "نشست تمام شد (کد خروج {status})."
+
+msgid "adminV2.ssh.extract"
+msgstr "استخراج"
+
+msgid "adminV2.ssh.extractHere"
+msgstr "استخراج"
+
+msgid "adminV2.ssh.extractInto"
+msgstr "استخراج در"
+
+msgid "adminV2.ssh.extractedTo"
+msgstr "در {path} استخراج شد"
+
+msgid "adminV2.ssh.extracting"
+msgstr "در حال استخراج…"
+
+msgid "adminV2.ssh.files"
+msgstr "فایل‌ها"
+
+msgid "adminV2.ssh.forget"
+msgstr "فراموش کن"
+
+msgid "adminV2.ssh.home"
+msgstr "پوشهٔ خانه"
+
+msgid "adminV2.ssh.host"
+msgstr "سرور"
+
+msgid "adminV2.ssh.inFolder"
+msgstr "در {path}"
+
+msgid "adminV2.ssh.keepBoth"
+msgstr "نگه داشتن هر دو"
+
+msgid "adminV2.ssh.keepEditing"
+msgstr "ادامهٔ ویرایش"
+
+msgid "adminV2.ssh.keyChanged"
+msgstr "کلید سرور تغییر کرده است"
+
+msgid "adminV2.ssh.keyChangedHint"
+msgstr ""
+"این سرور با کلیدی متفاوت از کلیدی که قبلاً به آن اعتماد کرده بودید پاسخ داد."
+" این بعد از نصب دوباره پیش می‌آید، ولی ممکن است یعنی کسی در میانهٔ ارتباط "
+"است. فقط اگر انتظارش را دارید ادامه دهید."
+
+msgid "adminV2.ssh.keyName"
+msgstr "نام این کلید"
+
+msgid "adminV2.ssh.keyNamePlaceholder"
+msgstr "مثلاً کلید لپ‌تاپ من"
+
+msgid "adminV2.ssh.keyPad"
+msgstr "صفحه‌کلید"
+
+msgid "adminV2.ssh.keyText"
+msgstr "کلید خصوصی جدید"
+
+msgid "adminV2.ssh.keys"
+msgstr "کلیدهای اضافه"
+
+msgid "adminV2.ssh.lastResults"
+msgstr "آخرین نتایج"
+
+msgid "adminV2.ssh.linkCopied"
+msgstr "لینک کپی شد"
+
+msgid "adminV2.ssh.linkHint"
+msgstr "از اینجا کپی کنید (مرورگر اجازهٔ کپی نداد)."
+
+msgid "adminV2.ssh.linkNotYours"
+msgstr ""
+"این لینک رمزی ندارد که بتوانید باز کنید (ادمین دیگری ساخته یا بدون رمز است):"
+" برای پر کردنش وارد شوید."
+
+msgid "adminV2.ssh.linkTitle"
+msgstr "لینک این اتصال"
+
+msgid "adminV2.ssh.name"
+msgstr "نام"
+
+msgid "adminV2.ssh.needsTrust"
+msgstr ""
+"هنوز به کلید میزبان آن اعتماد نشده است: در زبانهٔ خودش به آن اعتماد کنید"
+
+msgid "adminV2.ssh.newConnection"
+msgstr "اتصال جدید"
+
+msgid "adminV2.ssh.newFile"
+msgstr "فایل جدید"
+
+msgid "adminV2.ssh.newFolder"
+msgstr "پوشهٔ جدید"
+
+msgid "adminV2.ssh.newHost"
+msgstr "به این سرور اعتماد می‌کنید؟"
+
+msgid "adminV2.ssh.newKey"
+msgstr "+ کلید جدید"
+
+msgid "adminV2.ssh.newTab"
+msgstr "اتصال جدید"
+
+msgid "adminV2.ssh.noCommands"
+msgstr "هنوز دستوری ذخیره نشده است: پایین یکی اضافه کنید."
+
+msgid "adminV2.ssh.noConnected"
+msgstr "هنوز هیچ اتصالی باز نیست."
+
+msgid "adminV2.ssh.noOutput"
+msgstr "بدون خروجی"
+
+msgid "adminV2.ssh.noSecret"
+msgstr "رمز یا کلیدی ذخیره نشده است"
+
+msgid "adminV2.ssh.none"
+msgstr "هیچ‌کدام"
+
+msgid "adminV2.ssh.note"
+msgstr ""
+"پنل از سرور خودش وصل می‌شود. رمزها و کلیدها فقط برای همین اتصال استفاده "
+"می‌شوند و ذخیره نمی‌شوند."
+
+msgid "adminV2.ssh.noteSaved"
+msgstr ""
+"پنل از سرور خودش وصل می‌شود. اتصال، همراه با رمز یا کلیدش، رمزگذاری‌شده برای"
+" حساب شما در این مرورگر نگه داشته می‌شود."
+
+msgid "adminV2.ssh.openTab"
+msgstr "باز کردن زبانه"
+
+msgid "adminV2.ssh.optional"
+msgstr "فقط اگر کلید رمز دارد"
+
+msgid "adminV2.ssh.passphrase"
+msgstr "رمز کلید"
+
+msgid "adminV2.ssh.password"
+msgstr "رمز عبور"
+
+msgid "adminV2.ssh.permExec"
+msgstr "اجرا / ورود"
+
+msgid "adminV2.ssh.permNone"
+msgstr "بدون دسترسی"
+
+msgid "adminV2.ssh.permRead"
+msgstr "خواندن"
+
+msgid "adminV2.ssh.permWrite"
+msgstr "نوشتن"
+
+msgid "adminV2.ssh.port"
+msgstr "پورت"
+
+msgid "adminV2.ssh.privateKey"
+msgstr "کلید خصوصی"
+
+msgid "adminV2.ssh.ranOn"
+msgstr "به {n} اتصال فرستاده شد"
+
+msgid "adminV2.ssh.readOnly"
+msgstr "فقط خواندنی"
+
+msgid "adminV2.ssh.reconnect"
+msgstr "اتصال دوباره"
+
+msgid "adminV2.ssh.refresh"
+msgstr "بروزرسانی"
+
+msgid "adminV2.ssh.removeArchive"
+msgstr "بعد از استخراج، فایل فشرده حذف شود"
+
+msgid "adminV2.ssh.replace"
+msgstr "{name} از قبل وجود دارد. جایگزین شود؟"
+
+msgid "adminV2.ssh.replaceGo"
+msgstr "جایگزینی"
+
+msgid "adminV2.ssh.resize"
+msgstr "تغییر اندازهٔ بخش فایل‌ها"
+
+msgid "adminV2.ssh.run"
+msgstr "اجرا"
+
+msgid "adminV2.ssh.runOn"
+msgstr "اجرا روی"
+
+msgid "adminV2.ssh.runOnChosen"
+msgstr "اجرا روی {n} اتصال"
+
+msgid "adminV2.ssh.runOnOpen"
+msgstr "نشست‌های باز"
+
+msgid "adminV2.ssh.runOnSaved"
+msgstr "اتصال‌های ذخیره‌شده"
+
+msgid "adminV2.ssh.runOnce"
+msgstr "اجرا بدون ذخیره"
+
+msgid "adminV2.ssh.save"
+msgstr "ذخیره"
+
+msgid "adminV2.ssh.saveIt"
+msgstr "این اتصال را در این مرورگر ذخیره کن"
+
+msgid "adminV2.ssh.saved"
+msgstr "اتصال‌های ذخیره‌شده"
+
+msgid "adminV2.ssh.savedPick"
+msgstr "اتصال‌های ذخیره‌شده ({n})… برای جستجو تایپ کنید"
+
+msgid "adminV2.ssh.savedUnreadable"
+msgstr "اتصال‌های ذخیره‌شدهٔ این مرورگر خوانده نشد."
+
+msgid "adminV2.ssh.stConnecting"
+msgstr "در حال اتصال…"
+
+msgid "adminV2.ssh.stExit"
+msgstr "خروج {status}"
+
+msgid "adminV2.ssh.stFailed"
+msgstr "ناموفق"
+
+msgid "adminV2.ssh.stRunning"
+msgstr "در حال اجرا…"
+
+msgid "adminV2.ssh.stopAll"
+msgstr "توقف همه"
+
+msgid "adminV2.ssh.subtitle"
+msgstr "از داخل پنل روی هر سروری ترمینال باز کنید و فایل‌هایش را ببینید."
+
+msgid "adminV2.ssh.summary"
+msgstr "{ok} موفق · {failed} ناموفق · {running} در حال اجرا"
+
+msgid "adminV2.ssh.terminal"
+msgstr "ترمینال"
+
+msgid "adminV2.ssh.title"
+msgstr "ترمینال SSH"
+
+msgid "adminV2.ssh.tooLarge"
+msgstr "حجم این فایل {size} است: برای نمایش در اینجا خیلی بزرگ است."
+
+msgid "adminV2.ssh.tooManyTabs"
+msgstr "زبانه‌های زیادی باز است: چندتا را ببندید و دوباره اجرا کنید"
+
+msgid "adminV2.ssh.truncated"
+msgstr "فقط ۵۰۰۰ مورد اول نمایش داده می‌شود."
+
+msgid "adminV2.ssh.trust"
+msgstr "اعتماد و اتصال"
+
+msgid "adminV2.ssh.trustHint"
+msgstr ""
+"این اولین اتصال به {host} از این مرورگر است. پیش از فرستادن رمز، بررسی کنید "
+"که کلید زیر کلید سرور شماست (روی کلید میزبان آن ssh-keygen -lf را اجرا "
+"کنید)."
+
+msgid "adminV2.ssh.unsaved"
+msgstr "ذخیره نشده"
+
+msgid "adminV2.ssh.uploadExtract"
+msgstr "بارگذاری و استخراج"
+
+msgid "adminV2.ssh.uploadExtractGo"
+msgstr "بارگذاری و استخراج"
+
+msgid "adminV2.ssh.uploadFiles"
+msgstr "بارگذاری فایل‌ها"
+
+msgid "adminV2.ssh.username"
+msgstr "کاربر"
+
+msgid "adminV2.ssh.yourAccess"
+msgstr "دسترسی شما"
+
 msgid "adminV2.tags.addTag"
 msgstr "تگ"
 
@@ -5944,6 +6586,12 @@ msgstr "{n} روز پس از اولین استفاده"
 
 msgid "adminV2.users.all"
 msgstr "همه"
+
+msgid "adminV2.users.autoRefresh"
+msgstr "بروزرسانی خودکار"
+
+msgid "adminV2.users.autoRefreshOff"
+msgstr "خاموش"
 
 msgid "adminV2.users.bulk.add_days"
 msgstr "+۷ روز"
@@ -6474,6 +7122,9 @@ msgstr "{first}–{last} از {totalRecords}"
 
 msgid "adminV2.users.perPage"
 msgstr "تعداد کاربر در صفحه"
+
+msgid "adminV2.users.readOnlyNode"
+msgstr "کاربران در پنل اصلی مدیریت می‌شوند: اینجا فقط قابل مشاهده‌اند."
 
 msgid "adminV2.users.refresh"
 msgstr "بارگذاری دوباره"
@@ -7633,6 +8284,12 @@ msgstr ""
 msgid "config.parent_panel.label"
 msgstr "پنل مرکزی (مالتی سرور)"
 
+msgid "config.parent_sync_cursor.description"
+msgstr ""
+
+msgid "config.parent_sync_cursor.label"
+msgstr ""
+
 msgid "config.path_grpc.description"
 msgstr "مسیر gRPC در کانفیگ ها"
 
@@ -8124,6 +8781,12 @@ msgstr ""
 msgid "config.telegram_adtag.label"
 msgstr "📍 تگ تبلیغاتی تلگرام"
 
+msgid "config.telegram_base_path.description"
+msgstr ""
+
+msgid "config.telegram_base_path.label"
+msgstr ""
+
 msgid "config.telegram_bot_token.description"
 msgstr ""
 "برای افزودن قابلیت ربات تلگرام نیاز است تا یک ربات با <a "
@@ -8158,6 +8821,12 @@ msgstr ""
 
 msgid "config.telegram_lib.label"
 msgstr "🔢  کتابخانه پروکسی تلگرام"
+
+msgid "config.telegram_webproxy_enable.description"
+msgstr ""
+
+msgid "config.telegram_webproxy_enable.label"
+msgstr ""
 
 msgid "config.tls.description"
 msgstr "تنظیمات مربوط به اتصال TLS"

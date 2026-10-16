@@ -3874,14 +3874,14 @@ msgstr ""
 
 msgid "adminV2.outbounds.dialog.configHint.core_outbound"
 msgstr ""
-"Um objeto de outbound do hiddify-core (sing-box), ex.: {\"type\": \"socks\","
-" \"server\": \"…\", \"server_port\": 1080}. É verificado pelo hiddify-core "
-"antes de salvar."
+"Um objeto de outbound do hiddify-core (sing-box), ex.: {'{'}\"type\": "
+"\"socks\", \"server\": \"…\", \"server_port\": 1080{'}'}. É verificado pelo "
+"hiddify-core antes de salvar."
 
 msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
 msgstr ""
-"Um objeto de outbound do xray, ex.: {\"protocol\": \"socks\", \"settings\": "
-"{…}}. É verificado pelo xray antes de salvar."
+"Um objeto de outbound do xray, ex.: {'{'}\"protocol\": \"socks\", "
+"\"settings\": {'{'}…{'}'}{'}'}. É verificado pelo xray antes de salvar."
 
 msgid "adminV2.outbounds.dialog.configInvalid"
 msgstr "JSON inválido: {error}"
@@ -7340,6 +7340,12 @@ msgstr ""
 msgid "config.parent_panel.label"
 msgstr "Painel Pai (Multi-servidor)"
 
+msgid "config.parent_sync_cursor.description"
+msgstr ""
+
+msgid "config.parent_sync_cursor.label"
+msgstr ""
+
 msgid "config.path_grpc.description"
 msgstr "Caminho gRPC nas configurações"
 
@@ -7830,6 +7836,12 @@ msgstr ""
 msgid "config.telegram_adtag.label"
 msgstr "📍Telegram AD Tag"
 
+msgid "config.telegram_base_path.description"
+msgstr ""
+
+msgid "config.telegram_base_path.label"
+msgstr ""
+
 msgid "config.telegram_bot_token.description"
 msgstr ""
 "Para adicionar o recurso de bot do Telegram. você precisa criar um bot com "
@@ -7861,6 +7873,12 @@ msgstr ""
 
 msgid "config.telegram_lib.label"
 msgstr "🔢 Biblioteca de proxy do Telegram"
+
+msgid "config.telegram_webproxy_enable.description"
+msgstr ""
+
+msgid "config.telegram_webproxy_enable.label"
+msgstr ""
 
 msgid "config.tls.description"
 msgstr "As configurações de TLS podem ser definidas nesta seção."

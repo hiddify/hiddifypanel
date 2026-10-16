@@ -1770,6 +1770,10 @@ msgstr "Automatic"
 msgid "adminV2.admins.outbound.inherit"
 msgstr "Same as above: {name}"
 
+msgid "adminV2.admins.readOnlyNode"
+msgstr ""
+"Admins are managed on the parent panel: here they are shown read-only."
+
 msgid "adminV2.admins.refresh"
 msgstr "Refresh"
 
@@ -2276,6 +2280,9 @@ msgstr "Back"
 msgid "adminV2.common.cancel"
 msgstr "Cancel"
 
+msgid "adminV2.common.close"
+msgstr "Close"
+
 msgid "adminV2.common.collapse"
 msgstr "less"
 
@@ -2326,6 +2333,9 @@ msgstr "Nothing matches these filters"
 
 msgid "adminV2.common.noMatchHint"
 msgstr "Try removing a filter or changing your search."
+
+msgid "adminV2.common.none"
+msgstr "None"
 
 msgid "adminV2.common.resetFilters"
 msgstr "Reset filters"
@@ -3857,11 +3867,20 @@ msgstr "Proxy Editor"
 msgid "adminV2.menu.signOut"
 msgstr "Sign out"
 
+msgid "adminV2.menu.ssh"
+msgstr "SSH terminal"
+
 msgid "adminV2.menu.templateVariables"
 msgstr "Template Variables"
 
 msgid "adminV2.menu.templates"
 msgstr "Templates"
+
+msgid "adminV2.menu.textDecoders"
+msgstr "Text decoders"
+
+msgid "adminV2.menu.tools"
+msgstr "Tools"
 
 msgid "adminV2.menu.utils"
 msgstr "Utils"
@@ -3888,6 +3907,182 @@ msgstr "Node"
 
 msgid "adminV2.nodeHome.titleNamed"
 msgstr "Node: {name}"
+
+msgid "adminV2.nodeSync.active"
+msgstr "Active"
+
+msgid "adminV2.nodeSync.adminsOnNode"
+msgstr "Admins on this node"
+
+msgid "adminV2.nodeSync.all"
+msgstr "All"
+
+msgid "adminV2.nodeSync.autoOff"
+msgstr "Paused"
+
+msgid "adminV2.nodeSync.autoOn"
+msgstr "Auto refresh"
+
+msgid "adminV2.nodeSync.connected"
+msgstr "Connected"
+
+msgid "adminV2.nodeSync.connectedSince"
+msgstr "Connected since"
+
+msgid "adminV2.nodeSync.cursor"
+msgstr "Feed cursor"
+
+msgid "adminV2.nodeSync.deleted"
+msgstr "{n} deleted"
+
+msgid "adminV2.nodeSync.disabled"
+msgstr "Disabled"
+
+msgid "adminV2.nodeSync.disconnected"
+msgstr "Disconnected"
+
+msgid "adminV2.nodeSync.enabled"
+msgstr "{n} enabled"
+
+msgid "adminV2.nodeSync.host"
+msgstr "Parent host"
+
+msgid "adminV2.nodeSync.ids"
+msgstr "Identifiers"
+
+msgid "adminV2.nodeSync.inactive"
+msgstr "Inactive"
+
+msgid "adminV2.nodeSync.items"
+msgstr "Exchanged items ({n})"
+
+msgid "adminV2.nodeSync.itemsMore"
+msgstr "… and {n} more"
+
+msgid "adminV2.nodeSync.kind.admins"
+msgstr "Admins"
+
+msgid "adminV2.nodeSync.kind.domains"
+msgstr "Domains"
+
+msgid "adminV2.nodeSync.kind.outbounds"
+msgstr "Outbounds"
+
+msgid "adminV2.nodeSync.kind.usage"
+msgstr "Usage report"
+
+msgid "adminV2.nodeSync.kind.users"
+msgstr "Users"
+
+msgid "adminV2.nodeSync.lastBatch"
+msgstr "Last change batch"
+
+msgid "adminV2.nodeSync.lastError"
+msgstr "Last error"
+
+msgid "adminV2.nodeSync.lastHttpSync"
+msgstr "Last HTTP fallback sync"
+
+msgid "adminV2.nodeSync.lastUsage"
+msgstr "Last usage sync (parent time)"
+
+msgid "adminV2.nodeSync.link"
+msgstr "Link to the parent"
+
+msgid "adminV2.nodeSync.listEmpty"
+msgstr "Nothing matches."
+
+msgid "adminV2.nodeSync.listShown"
+msgstr "{n} of {total}"
+
+msgid "adminV2.nodeSync.never"
+msgstr "No sync noted yet"
+
+msgid "adminV2.nodeSync.noLog"
+msgstr "No syncs noted yet."
+
+msgid "adminV2.nodeSync.noWs"
+msgstr "No state yet"
+
+msgid "adminV2.nodeSync.nodeId"
+msgstr "This node's unique id"
+
+msgid "adminV2.nodeSync.parentId"
+msgstr "Parent unique id"
+
+msgid "adminV2.nodeSync.parentUrl"
+msgstr "Parent address"
+
+msgid "adminV2.nodeSync.rawData"
+msgstr "Data ({size})"
+
+msgid "adminV2.nodeSync.rawTruncated"
+msgstr "only its beginning is kept"
+
+msgid "adminV2.nodeSync.rawUnreadable"
+msgstr "The data could not be read."
+
+msgid "adminV2.nodeSync.recent"
+msgstr "Recent syncs"
+
+msgid "adminV2.nodeSync.refresh"
+msgstr "Refresh"
+
+msgid "adminV2.nodeSync.rows"
+msgstr "{n} rows"
+
+msgid "adminV2.nodeSync.search"
+msgstr "Search"
+
+msgid "adminV2.nodeSync.showData"
+msgstr "Show what was exchanged"
+
+msgid "adminV2.nodeSync.showList"
+msgstr "Show the list"
+
+msgid "adminV2.nodeSync.source.http_sync"
+msgstr "HTTP sync"
+
+msgid "adminV2.nodeSync.source.inventory"
+msgstr "inventory check"
+
+msgid "adminV2.nodeSync.source.register"
+msgstr "register"
+
+msgid "adminV2.nodeSync.source.usage_report"
+msgstr "usage report"
+
+msgid "adminV2.nodeSync.source.ws_feed"
+msgstr "live feed"
+
+msgid "adminV2.nodeSync.state.error"
+msgstr "The last try failed"
+
+msgid "adminV2.nodeSync.state.fresh"
+msgstr "Synced in the last 10 minutes"
+
+msgid "adminV2.nodeSync.state.never"
+msgstr "No sync noted"
+
+msgid "adminV2.nodeSync.state.stale"
+msgstr "Last sync is older than 10 minutes"
+
+msgid "adminV2.nodeSync.subtitle"
+msgstr ""
+"Read only, for debugging: what this node holds and when each kind of data "
+"last came from the parent."
+
+msgid "adminV2.nodeSync.title"
+msgstr "Sync with the parent"
+
+msgid "adminV2.nodeSync.took"
+msgstr "{ms} ms"
+
+msgid "adminV2.nodeSync.usersOnNode"
+msgstr "Users on this node"
+
+msgid "adminV2.nodeSync.websocket"
+msgstr "Live connection"
 
 msgid "adminV2.nodes.add.connecting"
 msgstr "Connecting to the node… this can take up to a minute."
@@ -4150,6 +4345,15 @@ msgstr ""
 msgid "adminV2.nodes.syncFailed"
 msgstr "Could not sync {name}"
 
+msgid "adminV2.nodes.syncInfo"
+msgstr "Sync details"
+
+msgid "adminV2.nodes.syncInfoTitle"
+msgstr "Sync details: {name}"
+
+msgid "adminV2.nodes.syncInfoUnavailable"
+msgstr "The node could not be asked"
+
 msgid "adminV2.nodes.syncNow"
 msgstr "Sync now"
 
@@ -4223,14 +4427,14 @@ msgstr ""
 
 msgid "adminV2.outbounds.dialog.configHint.core_outbound"
 msgstr ""
-"One hiddify-core (sing-box) outbound object, e.g. {\"type\": \"socks\", "
-"\"server\": \"…\", \"server_port\": 1080}. It is checked by hiddify-core "
-"before saving."
+"One hiddify-core (sing-box) outbound object, e.g. {'{'}\"type\": \"socks\", "
+"\"server\": \"…\", \"server_port\": 1080{'}'}. It is checked by hiddify-core"
+" before saving."
 
 msgid "adminV2.outbounds.dialog.configHint.xray_outbound"
 msgstr ""
-"One xray outbound object, e.g. {\"protocol\": \"socks\", \"settings\": {…}}."
-" It is checked by xray before saving."
+"One xray outbound object, e.g. {'{'}\"protocol\": \"socks\", \"settings\": "
+"{'{'}…{'}'}{'}'}. It is checked by xray before saving."
 
 msgid "adminV2.outbounds.dialog.configInvalid"
 msgstr "Not valid JSON: {error}"
@@ -5048,6 +5252,15 @@ msgstr "Other"
 msgid "adminV2.proxy.quick.showing"
 msgstr "Showing {n} of {total}"
 
+msgid "adminV2.proxy.quickEnable"
+msgstr "Enable now"
+
+msgid "adminV2.proxy.quickEnableDone"
+msgstr "Settings saved and proxy enabled"
+
+msgid "adminV2.proxy.quickEnableHint"
+msgstr "This proxy needs these settings. Set them here and enable it now:"
+
 msgid "adminV2.proxy.regeneratePath"
 msgstr "Regenerate path"
 
@@ -5638,6 +5851,434 @@ msgstr ""
 msgid "adminV2.settings.title"
 msgstr "Settings"
 
+msgid "adminV2.ssh.add"
+msgstr "New / upload"
+
+msgid "adminV2.ssh.addCommand"
+msgstr "New command"
+
+msgid "adminV2.ssh.all"
+msgstr "All"
+
+msgid "adminV2.ssh.binary"
+msgstr "This is not a text file ({size}). You can download it."
+
+msgid "adminV2.ssh.builtin"
+msgstr "built-in"
+
+msgid "adminV2.ssh.byKey"
+msgstr "Private key"
+
+msgid "adminV2.ssh.byPassword"
+msgstr "Password"
+
+msgid "adminV2.ssh.cannotSave"
+msgstr "Not available here: the page needs HTTPS."
+
+msgid "adminV2.ssh.chooseFile"
+msgstr "Choose file"
+
+msgid "adminV2.ssh.close"
+msgstr "Close"
+
+msgid "adminV2.ssh.closeConfirm"
+msgstr "Close {name}? Its connection will be disconnected."
+
+msgid "adminV2.ssh.closeRunConfirm"
+msgstr "Close these results? Commands still running will be stopped."
+
+msgid "adminV2.ssh.closeTab"
+msgstr "Close"
+
+msgid "adminV2.ssh.closed"
+msgstr "The connection closed."
+
+msgid "adminV2.ssh.cmd.installHiddify"
+msgstr "Install Hiddify Manager"
+
+msgid "adminV2.ssh.commandName"
+msgstr "Name"
+
+msgid "adminV2.ssh.commandPlaceholder"
+msgstr "e.g. systemctl status hiddify-panel"
+
+msgid "adminV2.ssh.commands"
+msgstr "Commands"
+
+msgid "adminV2.ssh.commandsHint"
+msgstr "Saved commands, run on one or several open connections at once."
+
+msgid "adminV2.ssh.conflictText"
+msgstr ""
+"is already in this folder. Replace it, or keep both (the new one gets a "
+"number)?"
+
+msgid "adminV2.ssh.conflictTitle"
+msgstr "A file with this name exists"
+
+msgid "adminV2.ssh.connect"
+msgstr "Connect"
+
+msgid "adminV2.ssh.copyLink"
+msgstr "Copy link"
+
+msgid "adminV2.ssh.copyLinkHint"
+msgstr "A link that opens this connection again, for your account only"
+
+msgid "adminV2.ssh.couldNotConnect"
+msgstr "Could not connect"
+
+msgid "adminV2.ssh.create"
+msgstr "Create"
+
+msgid "adminV2.ssh.discard"
+msgstr "Close without saving your changes?"
+
+msgid "adminV2.ssh.discardGo"
+msgstr "Discard changes"
+
+msgid "adminV2.ssh.disconnect"
+msgstr "Disconnect"
+
+msgid "adminV2.ssh.download"
+msgstr "Download"
+
+msgid "adminV2.ssh.dropHere"
+msgstr "Drop files to upload here"
+
+msgid "adminV2.ssh.edit"
+msgstr "Edit"
+
+msgid "adminV2.ssh.editCommand"
+msgstr "Edit command"
+
+msgid "adminV2.ssh.emptyDir"
+msgstr "This folder is empty."
+
+msgid "adminV2.ssh.err.badName"
+msgstr "This name is not allowed here."
+
+msgid "adminV2.ssh.err.connection"
+msgstr "The connection to the server was lost. Reconnect and try again."
+
+msgid "adminV2.ssh.err.exists"
+msgstr "{name} already exists."
+
+msgid "adminV2.ssh.err.isDir"
+msgstr "{name} is a folder."
+
+msgid "adminV2.ssh.err.missingTool"
+msgstr ""
+"{tool} is not installed on the server: install it there (e.g. apt install "
+"{tool}) and try again."
+
+msgid "adminV2.ssh.err.noSpace"
+msgstr "The server's disk is full (or your quota is used up)."
+
+msgid "adminV2.ssh.err.notDir"
+msgstr "{name} is not a folder."
+
+msgid "adminV2.ssh.err.notEmpty"
+msgstr "The folder is not empty."
+
+msgid "adminV2.ssh.err.notFound"
+msgstr ""
+"{name} is not there (it may have been moved or deleted). Refresh the list."
+
+msgid "adminV2.ssh.err.permission"
+msgstr ""
+"Permission denied: your user may not do this with {name}. Log in as a user "
+"who may, or change its permissions."
+
+msgid "adminV2.ssh.err.readonly"
+msgstr "The file system is read-only here."
+
+msgid "adminV2.ssh.err.timeout"
+msgstr "The server took too long to answer."
+
+msgid "adminV2.ssh.err.tooLarge"
+msgstr "The file is too large."
+
+msgid "adminV2.ssh.exited"
+msgstr "The session ended (exit code {status})."
+
+msgid "adminV2.ssh.extract"
+msgstr "Extract"
+
+msgid "adminV2.ssh.extractHere"
+msgstr "Extract"
+
+msgid "adminV2.ssh.extractInto"
+msgstr "Extract into"
+
+msgid "adminV2.ssh.extractedTo"
+msgstr "extracted to {path}"
+
+msgid "adminV2.ssh.extracting"
+msgstr "extracting…"
+
+msgid "adminV2.ssh.files"
+msgstr "Files"
+
+msgid "adminV2.ssh.forget"
+msgstr "Forget"
+
+msgid "adminV2.ssh.home"
+msgstr "Home folder"
+
+msgid "adminV2.ssh.host"
+msgstr "Server"
+
+msgid "adminV2.ssh.inFolder"
+msgstr "in {path}"
+
+msgid "adminV2.ssh.keepBoth"
+msgstr "Keep both"
+
+msgid "adminV2.ssh.keepEditing"
+msgstr "Keep editing"
+
+msgid "adminV2.ssh.keyChanged"
+msgstr "The server's key has changed"
+
+msgid "adminV2.ssh.keyChangedHint"
+msgstr ""
+"This server answered with a different key than the one you trusted before. "
+"This happens after a reinstall, but it can also mean someone is in the "
+"middle. Only continue if you expect it."
+
+msgid "adminV2.ssh.keyName"
+msgstr "Name of this key"
+
+msgid "adminV2.ssh.keyNamePlaceholder"
+msgstr "e.g. my laptop key"
+
+msgid "adminV2.ssh.keyPad"
+msgstr "Key pad"
+
+msgid "adminV2.ssh.keyText"
+msgstr "New private key"
+
+msgid "adminV2.ssh.keys"
+msgstr "Extra keys"
+
+msgid "adminV2.ssh.lastResults"
+msgstr "Last results"
+
+msgid "adminV2.ssh.linkCopied"
+msgstr "Link copied"
+
+msgid "adminV2.ssh.linkHint"
+msgstr "Copy it from here (the browser did not allow copying)."
+
+msgid "adminV2.ssh.linkNotYours"
+msgstr ""
+"This link has no secret you can open (made by another admin, or without "
+"one): sign in to fill it in."
+
+msgid "adminV2.ssh.linkTitle"
+msgstr "Link to this connection"
+
+msgid "adminV2.ssh.name"
+msgstr "Name"
+
+msgid "adminV2.ssh.needsTrust"
+msgstr "Its host key is not trusted yet: trust it in its tab"
+
+msgid "adminV2.ssh.newConnection"
+msgstr "New connection"
+
+msgid "adminV2.ssh.newFile"
+msgstr "New file"
+
+msgid "adminV2.ssh.newFolder"
+msgstr "New folder"
+
+msgid "adminV2.ssh.newHost"
+msgstr "Trust this server?"
+
+msgid "adminV2.ssh.newKey"
+msgstr "+ New key"
+
+msgid "adminV2.ssh.newTab"
+msgstr "New connection"
+
+msgid "adminV2.ssh.noCommands"
+msgstr "No saved command yet: add one below."
+
+msgid "adminV2.ssh.noConnected"
+msgstr "No connection is open yet."
+
+msgid "adminV2.ssh.noOutput"
+msgstr "No output"
+
+msgid "adminV2.ssh.noSecret"
+msgstr "No saved password or key"
+
+msgid "adminV2.ssh.none"
+msgstr "None"
+
+msgid "adminV2.ssh.note"
+msgstr ""
+"The panel connects from its own server. Passwords and keys are used for this"
+" connection only and never saved."
+
+msgid "adminV2.ssh.noteSaved"
+msgstr ""
+"The panel connects from its own server. The connection, with its password or"
+" key, is kept in this browser, encrypted for your account."
+
+msgid "adminV2.ssh.openTab"
+msgstr "Open tab"
+
+msgid "adminV2.ssh.optional"
+msgstr "Only if the key has one"
+
+msgid "adminV2.ssh.passphrase"
+msgstr "Key passphrase"
+
+msgid "adminV2.ssh.password"
+msgstr "Password"
+
+msgid "adminV2.ssh.permExec"
+msgstr "Execute / enter"
+
+msgid "adminV2.ssh.permNone"
+msgstr "No access"
+
+msgid "adminV2.ssh.permRead"
+msgstr "Read"
+
+msgid "adminV2.ssh.permWrite"
+msgstr "Write"
+
+msgid "adminV2.ssh.port"
+msgstr "Port"
+
+msgid "adminV2.ssh.privateKey"
+msgstr "Private key"
+
+msgid "adminV2.ssh.ranOn"
+msgstr "Sent to {n} connection(s)"
+
+msgid "adminV2.ssh.readOnly"
+msgstr "Read-only"
+
+msgid "adminV2.ssh.reconnect"
+msgstr "Reconnect"
+
+msgid "adminV2.ssh.refresh"
+msgstr "Refresh"
+
+msgid "adminV2.ssh.removeArchive"
+msgstr "Delete the archive afterwards"
+
+msgid "adminV2.ssh.replace"
+msgstr "{name} is already there. Replace it?"
+
+msgid "adminV2.ssh.replaceGo"
+msgstr "Replace"
+
+msgid "adminV2.ssh.resize"
+msgstr "Resize the files panel"
+
+msgid "adminV2.ssh.run"
+msgstr "Run"
+
+msgid "adminV2.ssh.runOn"
+msgstr "Run on"
+
+msgid "adminV2.ssh.runOnChosen"
+msgstr "Run on {n} connection(s)"
+
+msgid "adminV2.ssh.runOnOpen"
+msgstr "Open sessions"
+
+msgid "adminV2.ssh.runOnSaved"
+msgstr "Saved connections"
+
+msgid "adminV2.ssh.runOnce"
+msgstr "Run without saving"
+
+msgid "adminV2.ssh.save"
+msgstr "Save"
+
+msgid "adminV2.ssh.saveIt"
+msgstr "Save this connection in this browser"
+
+msgid "adminV2.ssh.saved"
+msgstr "Saved connections"
+
+msgid "adminV2.ssh.savedPick"
+msgstr "Saved connections ({n})… type to search"
+
+msgid "adminV2.ssh.savedUnreadable"
+msgstr "The saved connections of this browser could not be read."
+
+msgid "adminV2.ssh.stConnecting"
+msgstr "connecting…"
+
+msgid "adminV2.ssh.stExit"
+msgstr "exit {status}"
+
+msgid "adminV2.ssh.stFailed"
+msgstr "failed"
+
+msgid "adminV2.ssh.stRunning"
+msgstr "running…"
+
+msgid "adminV2.ssh.stopAll"
+msgstr "Stop all"
+
+msgid "adminV2.ssh.subtitle"
+msgstr ""
+"Open a terminal on any server and browse its files, right from the panel."
+
+msgid "adminV2.ssh.summary"
+msgstr "{ok} succeeded · {failed} failed · {running} running"
+
+msgid "adminV2.ssh.terminal"
+msgstr "Terminal"
+
+msgid "adminV2.ssh.title"
+msgstr "SSH terminal"
+
+msgid "adminV2.ssh.tooLarge"
+msgstr "This file is {size}: too large to show here."
+
+msgid "adminV2.ssh.tooManyTabs"
+msgstr "Too many tabs open: close some and run again"
+
+msgid "adminV2.ssh.truncated"
+msgstr "Only the first 5000 entries are shown."
+
+msgid "adminV2.ssh.trust"
+msgstr "Trust and connect"
+
+msgid "adminV2.ssh.trustHint"
+msgstr ""
+"This is the first connection to {host} from this browser. Check that the key"
+" below is your server's (run ssh-keygen -lf on its host key) before sending "
+"your password."
+
+msgid "adminV2.ssh.unsaved"
+msgstr "Not saved"
+
+msgid "adminV2.ssh.uploadExtract"
+msgstr "Upload & extract"
+
+msgid "adminV2.ssh.uploadExtractGo"
+msgstr "Upload & extract"
+
+msgid "adminV2.ssh.uploadFiles"
+msgstr "Upload files"
+
+msgid "adminV2.ssh.username"
+msgstr "User"
+
+msgid "adminV2.ssh.yourAccess"
+msgstr "what you may do"
+
 msgid "adminV2.tags.addTag"
 msgstr "Tag"
 
@@ -5965,6 +6606,12 @@ msgstr "{n} days after first use"
 
 msgid "adminV2.users.all"
 msgstr "All"
+
+msgid "adminV2.users.autoRefresh"
+msgstr "Auto refresh"
+
+msgid "adminV2.users.autoRefreshOff"
+msgstr "Off"
 
 msgid "adminV2.users.bulk.add_days"
 msgstr "+7 days"
@@ -6496,6 +7143,9 @@ msgstr "{first}–{last} of {totalRecords}"
 msgid "adminV2.users.perPage"
 msgstr "Users per page"
 
+msgid "adminV2.users.readOnlyNode"
+msgstr "Users are managed on the parent panel: here they are shown read-only."
+
 msgid "adminV2.users.refresh"
 msgstr "Refresh"
 
@@ -6720,6 +7370,200 @@ msgstr "Validation"
 
 msgid "adminV2.validation.warnings"
 msgstr "Warnings"
+
+msgid "adminV2.wsTest.admins"
+msgstr "Admins"
+
+msgid "adminV2.wsTest.autoPing"
+msgstr "Every second"
+
+msgid "adminV2.wsTest.avg"
+msgstr "Average"
+
+msgid "adminV2.wsTest.buildTime"
+msgstr "Built in"
+
+msgid "adminV2.wsTest.button"
+msgstr "Live connection test"
+
+msgid "adminV2.wsTest.choice.auto"
+msgstr "Automatic"
+
+msgid "adminV2.wsTest.clear"
+msgstr "Clear"
+
+msgid "adminV2.wsTest.connected"
+msgstr "Connected"
+
+msgid "adminV2.wsTest.echo"
+msgstr "Download"
+
+msgid "adminV2.wsTest.echoResult"
+msgstr "{size} in {ms} ms ({speed})"
+
+msgid "adminV2.wsTest.empty"
+msgstr "No messages yet."
+
+msgid "adminV2.wsTest.feed"
+msgstr "Node feed"
+
+msgid "adminV2.wsTest.feedHint"
+msgstr "The first batch a new node would receive, and its size on the wire."
+
+msgid "adminV2.wsTest.gapAvg"
+msgstr "Average gap"
+
+msgid "adminV2.wsTest.issue"
+msgstr "Not taken: {issue}"
+
+msgid "adminV2.wsTest.jitter"
+msgstr "Jitter"
+
+msgid "adminV2.wsTest.jsonSize"
+msgstr "JSON"
+
+msgid "adminV2.wsTest.last"
+msgstr "Last"
+
+msgid "adminV2.wsTest.lastBatch"
+msgstr "Last batch"
+
+msgid "adminV2.wsTest.lastError"
+msgstr "Last error"
+
+msgid "adminV2.wsTest.lastSeen"
+msgstr "Last seen"
+
+msgid "adminV2.wsTest.latency"
+msgstr "Latency"
+
+msgid "adminV2.wsTest.log"
+msgstr "Messages"
+
+msgid "adminV2.wsTest.max"
+msgstr "Max"
+
+msgid "adminV2.wsTest.min"
+msgstr "Min"
+
+msgid "adminV2.wsTest.noNodes"
+msgstr "This panel has no nodes."
+
+msgid "adminV2.wsTest.node"
+msgstr "Node"
+
+msgid "adminV2.wsTest.nodes"
+msgstr "Nodes"
+
+msgid "adminV2.wsTest.notConnected"
+msgstr "Not connected"
+
+msgid "adminV2.wsTest.parentHost"
+msgstr "Parent address"
+
+msgid "adminV2.wsTest.ping"
+msgstr "Ping"
+
+msgid "adminV2.wsTest.preview"
+msgstr "Preview"
+
+msgid "adminV2.wsTest.publish"
+msgstr "Publish a change"
+
+msgid "adminV2.wsTest.push"
+msgstr "Change notification"
+
+msgid "adminV2.wsTest.pushHint"
+msgstr ""
+"Publishes a change on Redis, as an edit does; open pages and connected nodes"
+" are woken the same way."
+
+msgid "adminV2.wsTest.pushResult"
+msgstr "Came back after {ms} ms"
+
+msgid "adminV2.wsTest.pushTimeout"
+msgstr ""
+"No notification within 5 seconds: Redis pub/sub is not reaching this server."
+
+msgid "adminV2.wsTest.pushVerdict.missing"
+msgstr ""
+"Not all messages came: something on the way holds the stream back (buffering"
+" proxy?)."
+
+msgid "adminV2.wsTest.pushVerdict.ok"
+msgstr "All messages came without asking: the server pushes."
+
+msgid "adminV2.wsTest.received"
+msgstr "Received"
+
+msgid "adminV2.wsTest.reconnect"
+msgstr "Reconnect"
+
+msgid "adminV2.wsTest.refresh"
+msgstr "Refresh"
+
+msgid "adminV2.wsTest.rows"
+msgstr "Rows received"
+
+msgid "adminV2.wsTest.server"
+msgstr ""
+"Process {pid} · {threads} threads · node protocol v{protocol} · clock "
+"difference {skew}"
+
+msgid "adminV2.wsTest.serverPush"
+msgstr "Server push"
+
+msgid "adminV2.wsTest.serverPushHint"
+msgstr ""
+"The server sends 5 messages, one a second, on its own: nothing is asked for "
+"in between."
+
+msgid "adminV2.wsTest.startPush"
+msgstr "Start"
+
+msgid "adminV2.wsTest.state.connecting"
+msgstr "Connecting"
+
+msgid "adminV2.wsTest.state.idle"
+msgstr "Not used yet"
+
+msgid "adminV2.wsTest.state.offline"
+msgstr "Disconnected (pages fall back to asking over HTTP)"
+
+msgid "adminV2.wsTest.state.open"
+msgstr "Connected"
+
+msgid "adminV2.wsTest.subtitle"
+msgstr ""
+"The connection the pages use for updates: which way it goes (HTTP/3, HTTP/2,"
+" WebSocket), latency, throughput, and messages the server pushes on its own."
+
+msgid "adminV2.wsTest.throughput"
+msgstr "Throughput"
+
+msgid "adminV2.wsTest.title"
+msgstr "Live connection test"
+
+msgid "adminV2.wsTest.toParent"
+msgstr "WebSocket to parent"
+
+msgid "adminV2.wsTest.transport.auto"
+msgstr "Automatic"
+
+msgid "adminV2.wsTest.transport.stream"
+msgstr "Stream"
+
+msgid "adminV2.wsTest.transport.websocket"
+msgstr "WebSocket"
+
+msgid "adminV2.wsTest.users"
+msgstr "Users"
+
+msgid "adminV2.wsTest.websocket"
+msgstr "WebSocket"
+
+msgid "adminV2.wsTest.wireSize"
+msgstr "Compressed"
 
 msgid "adminuser.force_update_usage"
 msgstr ""
@@ -7648,6 +8492,12 @@ msgstr ""
 msgid "config.parent_panel.label"
 msgstr "Parent Panel (Multi Server)"
 
+msgid "config.parent_sync_cursor.description"
+msgstr "config.parent_sync_cursor.description"
+
+msgid "config.parent_sync_cursor.label"
+msgstr "config.parent_sync_cursor.label"
+
 msgid "config.path_grpc.description"
 msgstr "gRPC Path In Configs"
 
@@ -8131,6 +8981,12 @@ msgstr ""
 msgid "config.telegram_adtag.label"
 msgstr "📍 Telegram AD Tag"
 
+msgid "config.telegram_base_path.description"
+msgstr "Secret path of the Telegram web proxy on HTTPS domains"
+
+msgid "config.telegram_base_path.label"
+msgstr "ℹ️ Telegram Web Proxy Path"
+
 msgid "config.telegram_bot_token.description"
 msgstr ""
 "To add Telegram bot feature. you need to create a bot with <a "
@@ -8165,6 +9021,14 @@ msgstr ""
 
 msgid "config.telegram_lib.label"
 msgstr "🔢  Telegram Proxy Library"
+
+msgid "config.telegram_webproxy_enable.description"
+msgstr ""
+"Telegram proxy over HTTPS (web proxy links) on every domain with a valid "
+"certificate"
+
+msgid "config.telegram_webproxy_enable.label"
+msgstr "Enable Telegram Web Proxy"
 
 msgid "config.tls.description"
 msgstr "TLS Configurations could be set in this section"
