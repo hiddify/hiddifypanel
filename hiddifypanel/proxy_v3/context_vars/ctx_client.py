@@ -35,7 +35,7 @@ class ClientContextVar(BaseModel):
     include_telegram_links: bool = False
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
-        domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]
+        domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy) and _client_can_use(domain, self.proxy, self.render_core, self.hconfig)]
         domains = expand_client_domains(self.proxy, domains)
         for domain in domains:
             yield ClientContextDomainVar(
@@ -55,6 +55,43 @@ class ClientContextDomainVar(ClientContextVar):
     """Client context bound to one domain (``ctx.proxy.domain``)."""
 
     proxy: ClientProxyDomainVar
+
+
+#: Outputs read by Xray-based apps (v2rayN, v2rayNG, Happ, …): the xray JSON and the plain subscription links.
+_XRAY_CLIENT_CORES = frozenset({"xray", "sublink"})
+_XHTTP_LEGS_NOT_THROUGH_CDN = (TlsLayer.http, TlsLayer.tls_h1)
+
+
+def _client_can_use(domain: DomainIPVar, proxy: ClientBuilderProxyVar, render_core: str, hconfig: HConfigVar) -> bool:
+    """Leave out the profiles the client can not use (each one was tested: they never connected).
+
+    - Through a CDN (Cloudflare), gRPC needs TLS, and an xhttp leg over plain HTTP or TLS h1 does not get through.
+    - Xray 26.x refuses VLESS without TLS or VLESS encryption, and Trojan without TLS, to a public address
+      ("... is prohibited unless the server address is a private IP"); VLESS encryption exists only on an xray server.
+    - Xray 26.10's httpupgrade sends Sec-WebSocket-Key/-Version, and the hiddify-core (sing-box) httpupgrade server
+      answers 404: only the xray-served httpupgrade profiles work for it.
+    """
+    transport = proxy.transport
+    upload = proxy.effective_tls_layer()
+    if domain.mode.is_cdn():
+        if transport == CustomProxyTransport.grpc and upload == TlsLayer.http:
+            return False
+        if transport == CustomProxyTransport.xhttp and upload in _XHTTP_LEGS_NOT_THROUGH_CDN:
+            return False
+    download_domain = domain.download if domain.download is not None else domain
+    if transport == CustomProxyTransport.xhttp and download_domain.mode.is_cdn() and proxy.effective_download_tls_layer() in _XHTTP_LEGS_NOT_THROUGH_CDN:
+        return False
+
+    if (render_core or "").lower() in _XRAY_CLIENT_CORES:
+        xray_server = (proxy.server_core or "").lower() == "xray"
+        if upload == TlsLayer.http and not domain.is_reality():
+            if proxy.proto == ProxyProto.trojan:
+                return False
+            if proxy.proto == ProxyProto.vless and not (xray_server and hconfig.vless_encryption):
+                return False
+        if transport == CustomProxyTransport.httpupgrade and proxy.server_core and not xray_server:
+            return False
+    return True
 
 
 def _client_domain_allowed(domain: DomainIPVar, proxy: ClientBuilderProxyVar) -> bool:
