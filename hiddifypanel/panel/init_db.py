@@ -8,6 +8,7 @@ import uuid
 from datetime import datetime
 
 from loguru import logger
+from sqlalchemy import update as sa_update
 
 from hiddifypanel import Events, g, hutils
 from hiddifypanel.cache import cache
@@ -22,6 +23,14 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates
 
 MAX_DB_VERSION = 200
+
+
+def _v174(child_id):
+    """Deleted accounts free their username (a new account may take it). A bulk update: no per-row events, so the rows'
+    last_modified_time stays (nodes do not resync them)."""
+    for model in (User, AdminUser):
+        db.session.execute(sa_update(model).where(model.deleted.is_(True)).values(username=None))
+    db.session.commit()
 
 
 def _v173(child_id):

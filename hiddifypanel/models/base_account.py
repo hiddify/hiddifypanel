@@ -70,9 +70,10 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
         )
 
     def soft_delete(self, commit: bool = True) -> None:
-        """Keep the row, marked as deleted."""
+        """Keep the row, marked as deleted; its username is freed for a new account."""
         self.deleted = True
         self.enable = False
+        self.username = None
         if commit:
             db.session.commit()
 
@@ -98,11 +99,13 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
         return f"{self.__class__.name}_{self.id if self.hasattr('id') else '-'}"
 
     def is_username_unique(self) -> bool:
-        cls = self.__class__()
-        model = cls.query.filter(cls.username == self.username, cls.id != self.id).first()
-        if model:
-            return False
-        return True
+        # type(self), not self.__class__(): an instance's attributes are values, not columns (the filter was always false)
+        cls = type(self)
+        with db.session.no_autoflush:  # called from before_insert
+            q = cls.query_with_deleted().filter(cls.username == self.username, cls.deleted.isnot(True))  # deleted ones have none
+            if self.id is not None:
+                q = q.filter(cls.id != self.id)
+            return q.first() is None
 
     def to_model(self) -> AccountModel:
         from hiddifypanel.models.external_model.account import AccountModel
@@ -205,6 +208,7 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
         # Written means there, unless it says it is deleted (a deleted account from the other panel; its ``enable`` is its own).
         if data.deleted:
             db_account.deleted = True
+            db_account.username = None  # freed, as soft_delete does
         elif db_account.deleted:
             db_account.undelete(commit=False)
 
