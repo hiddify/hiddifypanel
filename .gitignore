@@ -154,5 +154,10 @@ hiddifypanel/admin_v2/.env.*
 !hiddifypanel/admin_v2/.env.example
 hiddifypanel/admin_v2/*.tsbuildinfo
 
+# User front (independent module, same model as admin_v2):
+# source in hiddifypanel/user_front/, bundle in static/user-front/.
+hiddifypanel/static/user-front/
+hiddifypanel/user_front/node_modules/
+hiddifypanel/user_front/dist/
 
 node_modules

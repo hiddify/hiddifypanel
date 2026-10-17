@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import unquote, urlparse
 
 from flask import request
@@ -15,6 +15,9 @@ from hiddifypanel.models import ConfigEnum, Role, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.panel.user.user import get_common_data
 
+#: Subscription endpoints (full sub / clash / wireguard zip) vs one share-link per proxy.
+ConfigCategory = Literal["subscription", "config"]
+
 
 class ConfigSchema(ApiModel):
     name: str = ""
@@ -24,6 +27,7 @@ class ConfigSchema(ApiModel):
     transport: str = ""
     security: str = ""
     type: str = ""
+    category: ConfigCategory = "config"
 
 
 def _enum_str(value: Any) -> str:
@@ -141,7 +145,7 @@ class AllConfigsAPI(MethodView):
 
     @app.output(list[ConfigSchema])
     def get(self):
-        def create_item(name, domain, type, protocol, transport, security, link):
+        def create_item(name, domain, type, protocol, transport, security, link, *, category: ConfigCategory = "config"):
             dto = ConfigSchema()
             dto.name = name
             dto.type = type
@@ -150,16 +154,18 @@ class AllConfigsAPI(MethodView):
             dto.transport = transport
             dto.security = security
             dto.link = link
+            dto.category = category
             return dto
 
-        items = []
+        # Subscriptions first, then individual proxy share-links (UI shows them as two sections).
+        subscriptions: list[ConfigSchema] = []
+        configs: list[ConfigSchema] = []
         base_url = f"https://{urlparse(request.base_url).hostname}/{g.proxy_path}/{g.account.uuid}/"
         c = get_common_data(g.account.uuid, "new")
         config_name = hutils.encode.url_encode(c["user"].name)
         child_id = int(getattr(c.get("db_domain"), "child_id", 0) or 0)
 
-        # Add Auto
-        items.append(
+        subscriptions.append(
             create_item(
                 "Auto",
                 "ALL",
@@ -168,24 +174,26 @@ class AllConfigsAPI(MethodView):
                 "",
                 "",
                 f"{base_url}auto/?asn={c['asn']}#{config_name}",
+                category="subscription",
             )
         )
 
         if hconfig(ConfigEnum.sub_full_singbox_enable):
-            items.append(
+            subscriptions.append(
                 create_item(
-                    "Full Singbox",
+                    "Hiddify / Singbox",
                     "ALL",
                     "",
                     "",
                     "",
                     "",
                     f"{base_url}singbox/?asn={c['asn']}#{config_name}",
+                    category="subscription",
                 )
             )
 
         if hconfig(ConfigEnum.sub_full_xray_json_enable):
-            items.append(
+            subscriptions.append(
                 create_item(
                     "Full Xray",
                     "ALL",
@@ -194,11 +202,12 @@ class AllConfigsAPI(MethodView):
                     "",
                     "",
                     f"{base_url}xray/#{config_name}",
+                    category="subscription",
                 )
             )
 
         if hconfig(ConfigEnum.sub_full_links_enable):
-            items.append(
+            subscriptions.append(
                 create_item(
                     "Subscription link",
                     "ALL",
@@ -207,11 +216,12 @@ class AllConfigsAPI(MethodView):
                     "",
                     "",
                     f"{base_url}sub/?asn={c['asn']}#{config_name}",
+                    category="subscription",
                 )
             )
 
         if hconfig(ConfigEnum.sub_full_links_b64_enable):
-            items.append(
+            subscriptions.append(
                 create_item(
                     "Subscription link b64",
                     "ALL",
@@ -220,11 +230,12 @@ class AllConfigsAPI(MethodView):
                     "",
                     "",
                     f"{base_url}sub64/?asn={c['asn']}#{config_name}",
+                    category="subscription",
                 )
             )
         # One Clash Meta (Mihomo) subscription — /clashmeta/ (and /clash/ for older clients).
         if hconfig(ConfigEnum.sub_full_clash_meta_enable) or hconfig(ConfigEnum.sub_full_clash_enable):
-            items.append(
+            subscriptions.append(
                 create_item(
                     "Clash Meta",
                     "ALL",
@@ -233,11 +244,12 @@ class AllConfigsAPI(MethodView):
                     "",
                     "",
                     f"{base_url}clashmeta/?asn={c['asn']}#{config_name}",
+                    category="subscription",
                 )
             )
 
         if hconfig(ConfigEnum.wireguard_enable):
-            items.append(
+            subscriptions.append(
                 create_item(
                     "Wireguard",
                     "Wireguard",
@@ -246,18 +258,7 @@ class AllConfigsAPI(MethodView):
                     "",
                     "",
                     f"{base_url}wireguard/#{config_name}",
-                )
-            )
-        if hconfig(ConfigEnum.sub_singbox_ssh_enable) and hconfig(ConfigEnum.ssh_server_enable):
-            items.append(
-                create_item(
-                    "Singbox: SSH",
-                    "SSH",
-                    "",
-                    "",
-                    "",
-                    "",
-                    f"{base_url}singbox-ssh/?asn={c['asn']}#{config_name}",
+                    category="subscription",
                 )
             )
 
@@ -267,7 +268,7 @@ class AllConfigsAPI(MethodView):
             user_agent=request.user_agent.string,
             child_id=child_id,
         ):
-            items.append(
+            configs.append(
                 create_item(
                     row["name"],
                     row["domain"],
@@ -276,7 +277,8 @@ class AllConfigsAPI(MethodView):
                     row["transport"],
                     row["security"],
                     row["link"],
+                    category="config",
                 )
             )
 
-        return items
+        return [*subscriptions, *configs]

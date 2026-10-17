@@ -35,14 +35,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: npm
-        cache-dependency-path: hiddifypanel/admin_v2/package-lock.json
+        cache-dependency-path: |
+          hiddifypanel/admin_v2/package-lock.json
+          hiddifypanel/user_front/package-lock.json
     - name: Build Admin V2 UI
       working-directory: hiddifypanel/admin_v2
       run: npm ci && npm run build
+    - name: Build User Panel UI
+      env:
+        HIDDIFY_USER_FRONT_HEAP_MB: "2048"
+      run: bash hiddifypanel/user_front/scripts/build.sh
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
     - name: Build and publish
@@ -55,17 +63,23 @@ jobs:
         # uv build builds the sdist first and the wheel from that sdist, so an
         # incomplete sdist fails here instead of shipping a broken release.
         uv build
-        # The npm build above leaves a 271MB node_modules inside the package directory.
+        # The npm builds above leave node_modules inside the package directory.
         # If it ever reaches the wheel again, the upload fails with a bare 400.
         if unzip -l dist/*.whl | grep -q node_modules; then
           echo "::error::wheel contains node_modules — check MANIFEST.in and [tool.setuptools.packages.find]"
           exit 1
         fi
-        # admin_v2/ is excluded as build-time source; what ships is vite's output in
-        # static/admin-v2/, which is not in git: without the npm build above the
-        # wheel would have no admin UI at all.
+        # Frontend source trees are pruned; what ships is vite output under static/.
         if ! unzip -l dist/*.whl | grep -q 'hiddifypanel/static/admin-v2/index.html'; then
           echo "::error::wheel has no built admin UI — did the 'Build Admin V2 UI' step run?"
+          exit 1
+        fi
+        if ! unzip -l dist/*.whl | grep -q 'hiddifypanel/static/user-front/manifest.json'; then
+          echo "::error::wheel has no built user UI — did the 'Build User Panel UI' step run?"
+          exit 1
+        fi
+        if ! unzip -l dist/*.whl | grep -q 'hiddifypanel/panel/user/templates/user_front.html'; then
+          echo "::error::wheel is missing user_front.html shell template"
           exit 1
         fi
         ls -lh dist/

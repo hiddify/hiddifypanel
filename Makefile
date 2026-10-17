@@ -18,6 +18,17 @@ prepare:             ## Show the help.
 build-admin-v2:      ## Build Admin V2 UI into hiddifypanel/static/admin-v2/
 	cd hiddifypanel/admin_v2 && bash scripts/build.sh
 
+.PHONY: build-user-front
+build-user-front:    ## Build user_front from source → static/user-front/
+	bash hiddifypanel/user_front/scripts/build.sh
+
+.PHONY: build-user-front-prebuilt
+build-user-front-prebuilt: ## Install prebuilt user_front (gh-pages; low memory)
+	bash hiddifypanel/user_front/scripts/install_prebuilt.sh
+
+.PHONY: build-ui
+build-ui: build-admin-v2 build-user-front-prebuilt  ## Build admin UI + install user panel
+
 
 update_req:
 	upgrade-requirements 

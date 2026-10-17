@@ -254,7 +254,25 @@ class UserView(FlaskView):
 
         c = get_common_data(g.account.uuid, mode="new")
         user_agent = user_agents.parse(request.user_agent.string)
-        return render_template("new.html", **c, ua=user_agent)
+        return self._render_user_front(c, user_agent)
+
+    def _render_user_front(self, common: dict, ua):
+        """Serve the user SPA shell (admin_v2-style: Vite manifest + Jinja)."""
+        from hiddifypanel import __version__
+        from hiddifypanel.panel.user.user_front_assets import user_front_entry_files
+
+        proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_client) or hconfig(ConfigEnum.proxy_path)
+        static_prefix = f"/{proxy_path}/static/user-front"
+        js_file, css_file = user_front_entry_files()
+        return render_template(
+            "user_front.html",
+            **common,
+            ua=ua,
+            version=__version__,
+            static_prefix=static_prefix,
+            static_js=f"{static_prefix}/{js_file}",
+            static_css=f"{static_prefix}/{css_file}" if css_file else "",
+        )
 
     def get_proper_config(self):
         """Returns proper config based on user agent"""

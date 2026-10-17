@@ -108,7 +108,7 @@ build-backend = "setuptools.build_meta"
 # "hiddifypanel" alone matches only the top-level package, which left the 32
 # real subpackages to reach the wheel as grafted data rather than as packages.
 include = ["hiddifypanel*"]
-exclude = ["tests*", ".github", "hiddifypanel.admin_v2*"]
+exclude = ["tests*", ".github", "hiddifypanel.admin_v2*", "hiddifypanel.user_front*"]
 
 [tool.setuptools.package-data]
 "hiddifypanel" = [

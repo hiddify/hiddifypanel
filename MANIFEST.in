@@ -14,7 +14,8 @@ global-exclude *.c
 global-exclude */__pycache__/*
 global-include *.so
 
-# admin_v2 is the Vue frontend's build-time source only: vite writes the shipped
-# assets to hiddifypanel/static/admin-v2/. Without this, `graft hiddifypanel`
-# above sweeps its node_modules (271MB) into the sdist and wheel.
+# admin_v2 / user_front are frontend build-time sources only: vite writes the
+# shipped assets to hiddifypanel/static/admin-v2/ and static/user-front/. Without this,
+# `graft hiddifypanel` would sweep their node_modules into the sdist and wheel.
 prune hiddifypanel/admin_v2
+prune hiddifypanel/user_front

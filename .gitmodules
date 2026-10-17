@@ -1,0 +1,4 @@
+[submodule "hiddifypanel/user_front"]
+	path = hiddifypanel/user_front
+	url = https://github.com/hiddify/hiddify-user-front.git
+	branch = main

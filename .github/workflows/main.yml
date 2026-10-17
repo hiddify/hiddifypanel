@@ -24,6 +24,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -33,13 +35,19 @@ jobs:
         with:
           node-version: '20'
           cache: npm
-          cache-dependency-path: hiddifypanel/admin_v2/package-lock.json
+          cache-dependency-path: |
+            hiddifypanel/admin_v2/package-lock.json
+            hiddifypanel/user_front/package-lock.json
       - name: Build Admin V2 UI
         working-directory: hiddifypanel/admin_v2
         run: npm ci && npm run build
+      - name: Build User Panel UI
+        env:
+          HIDDIFY_USER_FRONT_HEAP_MB: "2048"
+        run: bash hiddifypanel/user_front/scripts/build.sh
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # The UI build above only checks that it builds; the bundle is not committed (.gitignore).
+          # The UI builds above only check that they build; bundles are not committed (.gitignore).
           commit_message: Update translations
 
       # - name: Install project
