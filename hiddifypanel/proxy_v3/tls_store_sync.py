@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import functools
 import hashlib
+import ipaddress
 import re
 import subprocess
 from base64 import b64encode
@@ -181,20 +182,16 @@ def _private_key_valid(key_pem: str) -> bool:
 
 
 def _subject_alt_names(cert_pem: str) -> list[str]:
-    """Return SAN entries as lowercase host/IP strings (no DNS:/IP: prefix)."""
-    raw = _openssl_x509(cert_pem, "-ext", "subjectAltName")
-    if not raw:
+    """SAN entries as lowercase names and IP addresses (IPv6 compressed, as domains store it), read in-process."""
+    cert = _leaf_cert(cert_pem)
+    if cert is None:
         return []
-    names: list[str] = []
-    for part in re.split(r"[\n,]", raw):
-        part = part.strip()
-        if not part or part.lower().startswith("x509v3") or part.lower() == "subject alternative name:":
-            continue
-        lower = part.lower()
-        if lower.startswith("dns:"):
-            names.append(part.split(":", 1)[1].strip().lower().rstrip("."))
-        elif lower.startswith("ip address:") or lower.startswith("ip:"):
-            names.append(part.split(":", 1)[1].strip().lower())
+    try:
+        san = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName).value
+    except x509.ExtensionNotFound:
+        return []
+    names = [name.lower().rstrip(".") for name in san.get_values_for_type(x509.DNSName)]
+    names += [str(ip) for ip in san.get_values_for_type(x509.IPAddress)]
     return names
 
 
@@ -211,6 +208,10 @@ def hostname_matches_cert_name(hostname: str, name: str) -> bool:
         return False
     if host == cert_name:
         return True
+    try:  # an IP address: compare addresses, not text (2001:db8::1 is 2001:DB8:0:0:0:0:0:1)
+        return ipaddress.ip_address(host.strip("[]")) == ipaddress.ip_address(cert_name.strip("[]"))
+    except ValueError:
+        pass
     if cert_name.startswith("*.") and cert_name.count(".") >= 2:
         # *.example.com matches foo.example.com, not example.com or a.b.example.com
         suffix = cert_name[1:]  # .example.com
