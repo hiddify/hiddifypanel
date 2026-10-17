@@ -65,7 +65,7 @@ def get_server_base(child_id: int) -> ServerBase:
 
     proxies: list[ServerBuilderProxyVar] = get_server_builder_proxies(child_id)
     for proxy in proxies:
-        proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy)]
+        proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy, reality_enable=bool(hconfig.reality_enable))]
     proxies = [b for b in proxies if filter_server_proxy(b)]
     return ServerBase(
         domains=domains,
@@ -143,10 +143,12 @@ def _domains_for_custom_proxy(proxy: CustomProxy, child_id: int) -> list[DomainI
         for row in Domain.query.filter(
             Domain.child_id == child_id,
             Domain.mode != DomainType.sub_link_only,
-        ).order_by(*Domain.ordering()).all()
+        )
+        .order_by(*Domain.ordering())
+        .all()
         if proxy.slug == REALITY_TERMINATION_SLUG or not row.custom_proxy_ids or proxy_id in row.custom_proxy_ids
     ]
-    matched = _domains_for_proxy_row(proxy, domain_rows)
+    matched = _domains_for_proxy_row(proxy, domain_rows, reality_enable=bool(get_server_hconfigs_child(child_id).reality_enable))
     return [DomainIPVar.from_domain(domain) for domain in matched]
 
 

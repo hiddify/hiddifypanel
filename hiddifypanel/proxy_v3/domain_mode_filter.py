@@ -158,3 +158,13 @@ def domain_ip_matches_modes(domain: _DomainLike, modes: list[str]) -> bool:
     if not modes:
         return True
     return any(_domain_matches_bucket(domain, bucket) for bucket in modes)
+
+
+class _MaybeReality(Protocol):
+    def is_reality(self) -> bool: ...
+
+
+def reality_allowed(domain: _MaybeReality, reality_enable: bool) -> bool:
+    """False for a REALITY domain while REALITY is off in the settings: its inbounds and profiles go, the proxy's other
+    domains stay."""
+    return reality_enable or not domain.is_reality()

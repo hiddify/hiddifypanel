@@ -101,9 +101,9 @@ category_config_map: dict[str, ConfigEnum] = {
     "faketls": ConfigEnum.ssfaketls_enable,
 }
 
-domain_mode_config_map: dict[str, ConfigEnum] = {
-    "reality": ConfigEnum.reality_enable,
-}
+# REALITY is not here: domain modes are stored as direct-reality / relay-reality, and a proxy mixing valid and REALITY
+# domains must keep its other ones. With REALITY off its domains are left out instead (reality_allowed).
+domain_mode_config_map: dict[str, ConfigEnum] = {}
 
 ConfigFlagGetter = Callable[[ConfigEnum], bool | None]
 

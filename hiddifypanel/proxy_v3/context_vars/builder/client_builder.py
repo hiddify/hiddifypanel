@@ -17,7 +17,7 @@ from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 from hiddifypanel.proxy_v3.context_vars.platform import PlatformVar
 from hiddifypanel.proxy_v3.context_vars.proxy import ClientBuilderProxyVar, ProxyVar
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
-from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
+from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes, reality_allowed
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
 
@@ -72,7 +72,8 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
             continue
         child_id = int(p.child_id or 0)
         proxy_var = ClientBuilderProxyVar.from_custom_proxy(p, child_hconfigs[child_id])
-        proxy_var.domains = [d for d in domains if filter_domain_for_proxy(d, proxy_var)]
+        reality_on = bool(child_hconfigs[child_id].reality_enable)
+        proxy_var.domains = [d for d in domains if filter_domain_for_proxy(d, proxy_var, reality_enable=reality_on)]
         base = BaseVar(
             proxy=proxy_var,
             hconfig=child_hconfigs[child_id],
@@ -83,7 +84,8 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
     return [b for b in all_bases if filter_proxy(b)]
 
 
-def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
+def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar, *, reality_enable: bool = True) -> bool:
+    """``reality_enable``: the REALITY setting; off, REALITY domains are left out."""
     if proxy.mode == CustomProxyMode.no_inbound:
         # Keep available domains (all children) so get_nodes_configs can split by child_id.
         # Still drop sub-link-only hosts; never treat no_inbound as "ignore every filter".
@@ -96,6 +98,8 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if d.child_id != Child.current().id:
         return False
     if proxy.slug == REALITY_TERMINATION_SLUG:
+        return False
+    if not reality_allowed(d, reality_enable):
         return False
 
     if d.is_reality():

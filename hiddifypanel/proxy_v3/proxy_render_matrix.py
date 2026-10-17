@@ -4,13 +4,13 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from hiddifypanel import hutils
-from hiddifypanel.models import Domain, DomainType, get_hconfigs
+from hiddifypanel.models import ConfigEnum, Domain, DomainType, get_hconfigs, hconfig
 from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
 from hiddifypanel.proxy_v3.context_vars.domain import DomainIPVar
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 
 from .custom_proxy_ports import default_domain_modes_for_mode, ports_dict_for_proxy_row
-from .domain_mode_filter import domain_matches_modes
+from .domain_mode_filter import domain_matches_modes, reality_allowed
 
 
 @dataclass
@@ -37,7 +37,7 @@ class ProxyRenderCache:
         for row in rows:
             from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import effective_field
 
-            related = _domains_for_proxy_row(row, domain_rows)
+            related = _domains_for_proxy_row(row, domain_rows, reality_enable=bool(hconfigs.get(ConfigEnum.reality_enable)))
             entry = {
                 "id": row.id,
                 "enable": bool(row.enable),
@@ -80,7 +80,9 @@ def _domain_dict_for_proxy(domain_db: Domain, hconfigs: dict) -> dict[str, Any]:
     return base
 
 
-def _domains_for_proxy_row(proxy: CustomProxy, all_domains: list[Domain]) -> list[Domain]:
+def _domains_for_proxy_row(proxy: CustomProxy, all_domains: list[Domain], *, reality_enable: bool = True) -> list[Domain]:
+    # REALITY off in the settings: no REALITY domain gets an inbound (the proxy's other domains keep theirs)
+    all_domains = [d for d in all_domains if reality_allowed(d, reality_enable)]
     if proxy.mode == CustomProxyMode.no_inbound:
         return []
     if proxy.slug == REALITY_TERMINATION_SLUG:
@@ -112,14 +114,18 @@ def client_domain_vars_for_proxy(child_id: int, proxy_id: int) -> list[DomainIPV
         from hiddifypanel.proxy_v3.context_vars.builder.client_builder import filter_domain_for_proxy
 
         rows = Domain.query.filter(Domain.child_id == child_id).order_by(*Domain.ordering()).all()
-        return [d for d in (DomainIPVar.from_domain(row) for row in rows) if filter_domain_for_proxy(d, proxy)]
+        reality_on = bool(hconfig(ConfigEnum.reality_enable, child_id))
+        return [d for d in (DomainIPVar.from_domain(row) for row in rows) if filter_domain_for_proxy(d, proxy, reality_enable=reality_on)]
 
     domain_rows = [
         domain
         for domain in Domain.query.filter(
             Domain.child_id == child_id,
             Domain.mode != DomainType.sub_link_only,
-        ).order_by(*Domain.ordering()).all()
+        )
+        .order_by(*Domain.ordering())
+        .all()
         if proxy.slug == REALITY_TERMINATION_SLUG or not domain.custom_proxy_ids or proxy_id in domain.custom_proxy_ids
     ]
-    return [DomainIPVar.from_domain(domain_db) for domain_db in _domains_for_proxy_row(proxy, domain_rows)]
+    reality_on = bool(hconfig(ConfigEnum.reality_enable, child_id))
+    return [DomainIPVar.from_domain(domain_db) for domain_db in _domains_for_proxy_row(proxy, domain_rows, reality_enable=reality_on)]
