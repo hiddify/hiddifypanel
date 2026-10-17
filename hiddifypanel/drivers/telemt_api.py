@@ -72,7 +72,8 @@ class TelemtApi(DriverABS):
         return self.redis_client
 
     def is_enabled(self) -> bool:
-        return bool(hconfig(ConfigEnum.telegram_enable)) and hconfig(ConfigEnum.telegram_lib) == "telemt"
+        # telemt serves both Telegram proxies: FakeTLS (telegram_enable) and the web proxy (telegram_webproxy_enable)
+        return bool(hconfig(ConfigEnum.telegram_enable) or hconfig(ConfigEnum.telegram_webproxy_enable)) and hconfig(ConfigEnum.telegram_lib) == "telemt"
 
     def __load_tg_uuid_map(self) -> None:
         from hiddifypanel.database import db

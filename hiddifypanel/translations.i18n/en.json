@@ -2428,7 +2428,9 @@
         "not_started": "Not started",
         "not_startedHint": "Never connected yet: their days start at the first connection",
         "unseen_week": "Not seen for a week",
-        "unseen_weekHint": "Connected before, but not in the last 7 days"
+        "unseen_weekHint": "Connected before, but not in the last 7 days",
+        "online": "Online",
+        "onlineHint": "Connected in the last 2 minutes"
       },
       "filtersLabel": "Filter users",
       "form": {
@@ -2689,6 +2691,24 @@
       "users": "Users",
       "websocket": "WebSocket",
       "wireSize": "Compressed"
+    },
+    "pwa": {
+      "title": "Install the panel as an app",
+      "text": "Keep the panel one tap away, like any app on your phone or computer.",
+      "install": "Install",
+      "later": "Not now",
+      "never": "Do not show this again",
+      "installButton": "Install as an app",
+      "iosShare": "Tap the Share button",
+      "iosAdd": "Choose “Add to Home Screen”",
+      "bannerTitle": "Install the panel as an app",
+      "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
+      "menuOpen": "Open the browser menu",
+      "menuInstall": "Choose “Install app” (or “Add to Home screen”)",
+      "perkFast": "One tap from your home screen",
+      "perkWindow": "Its own full-screen window, no browser bars",
+      "perkFresh": "Always the latest version of the panel",
+      "gotIt": "Got it"
     }
   },
   "adminuser": {
@@ -3502,8 +3522,8 @@
       "label": "🔐 Telegram Bot Token"
     },
     "telegram_enable": {
-      "description": "Telegram MTProto is used for Encapsulate Telegram Proxy as a tls traffic<br>⚠️ <span style=\"color:#d32f2f;\"><strong>This protocol requires a Direct Domain</strong></span>",
-      "label": "✔️ Telegram MTProto"
+      "label": "✔️ MTProxy FakeTLS Enable",
+      "description": "Telegram MTProxy hidden as TLS to the Telegram fake domain (tg://proxy links, served by telemt)<br>⚠️ <span style=\"color:#d32f2f;\"><strong>Needs a Direct or Relay domain</strong></span>"
     },
     "telegram_fakedomain": {
       "description": "Please use a well known domain in your data center. for example, If you are in Azure data center, microsoft-update.com is a good example",
@@ -3514,8 +3534,8 @@
       "label": "🔢  Telegram Proxy Library"
     },
     "telegram_webproxy_enable": {
-      "description": "Telegram proxy over HTTPS (web proxy links) on every domain with a valid certificate",
-      "label": "Enable Telegram Web Proxy"
+      "label": "✔️ Telegram Web Proxy Enable",
+      "description": "Telegram proxy over HTTPS on every domain with a real certificate, CDN included (tg://webproxy links, served by telemt)"
     },
     "tls": {
       "description": "TLS Configurations could be set in this section",

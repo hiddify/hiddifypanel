@@ -24,7 +24,7 @@ class MTProxiesAPI(MethodView):
 
     @app.output(list[MtproxySchema])
     def get(self):
-        if not hconfig(ConfigEnum.telegram_enable):
+        if not (hconfig(ConfigEnum.telegram_enable) or hconfig(ConfigEnum.telegram_webproxy_enable)):
             abort(status_code=404, message="Telegram mtproxy is not enable")
 
         # Exactly the user's subscription (same domain, same custom proxies and templates), kept to its Telegram links:

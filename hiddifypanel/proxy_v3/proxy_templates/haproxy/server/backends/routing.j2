@@ -22,7 +22,7 @@ backend default_decoy
 
 
 
-{% if ctx.hconfig.telegram_enable and ctx.hconfig.telegram_webproxy_enable and ctx.hconfig.telegram_lib == 'telemt' and ctx.hconfig.telegram_base_path %}
+{% if ctx.hconfig.telegram_webproxy_enable  %}
 # Telegram web proxy: telemt reads the client IP from X-Forwarded-For (trusts 127.0.0.1 only)
 backend telemt_web
   mode http

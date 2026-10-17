@@ -405,6 +405,9 @@ def get_account_panel_link(account: BaseAccount, host: str, is_https: bool = Tru
 
 
 def is_telegram_proxy_enable(domains=None) -> bool:
+    """The user page's Telegram tab: the web proxy (any domain) or MTProxy FakeTLS (needs a direct / relay domain)."""
+    if hconfig(ConfigEnum.telegram_webproxy_enable):
+        return True
     if not hconfig(ConfigEnum.telegram_enable):
         return False
 

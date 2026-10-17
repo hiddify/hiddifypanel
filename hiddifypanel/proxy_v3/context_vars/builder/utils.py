@@ -76,7 +76,6 @@ protocol_config_map: dict[ProxyProto, ConfigEnum] = {
     ProxyProto.masterdns: ConfigEnum.dnstt_enable,
     ProxyProto.snell: ConfigEnum.snell_enable,
     ProxyProto.socks: ConfigEnum.socks_enable,
-    ProxyProto.telegram: ConfigEnum.telegram_enable,
 }
 
 transport_config_map: dict[CustomProxyTransport, ConfigEnum] = {
@@ -95,6 +94,9 @@ tls_layer_config_map: dict[TlsLayer, ConfigEnum] = {
 }
 
 category_config_map: dict[str, ConfigEnum] = {
+    # The two Telegram proxies have their own switch each (both are proto telegram).
+    "telegram_faketls": ConfigEnum.telegram_enable,
+    "telegram_web": ConfigEnum.telegram_webproxy_enable,
     "shadowtls": ConfigEnum.shadowtls_enable,
     "faketls": ConfigEnum.ssfaketls_enable,
 }

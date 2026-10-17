@@ -70,7 +70,7 @@ enabled = true
 carriers = ["websocket-lanes", "websocket", "https-lanes", "https"]
 decoy_fasttrack_mode = "off"
 limits.max_profiles = {{ (ctx.users | length)*(ctx.domains | length) }}
-
+limits.max_vhosts = {{ ctx.domains | length }}
 
 {%- set decoy = '{ mode = "http_upstream", upstream = "http://127.0.0.1:18081" }' %}
 {%- set profiles %}[
@@ -79,10 +79,8 @@ limits.max_profiles = {{ (ctx.users | length)*(ctx.domains | length) }}
 {%- endfor %}
 ]{%- endset %}
 
-{%- set vhosts = [] %}
 {#- telemt refuses a duplicate vhost host: each domain name once #}
-{%- for d in ctx.domains if d.support_telegram_webproxy() and d.name not in vhosts %}
-{%- set _ = vhosts.append(d.name) %}
+{%- for d in ctx.domains if d.support_telegram_webproxy() %}
 
 [[web.vhosts]]
 host = "{{ d.name }}"
