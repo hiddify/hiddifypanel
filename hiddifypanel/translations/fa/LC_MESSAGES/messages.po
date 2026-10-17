@@ -3027,6 +3027,15 @@ msgid "adminV2.domains.cert.okHint"
 msgstr ""
 "کاربران با گواهی واقعی و مورد اعتماد وصل می‌شوند. خودکار تمدید می‌شود."
 
+msgid "adminV2.domains.cert.rateLimited"
+msgstr "محدودیت تعداد درخواست مرکز صدور گواهی"
+
+msgid "adminV2.domains.cert.rateLimitedHint"
+msgstr ""
+"Let's Encrypt و ZeroSSL به‌خاطر درخواست‌های زیاد اخیر گواهی ندادند. تا آن "
+"موقع گواهی خودامضا استفاده می‌شود و پنل بعد از پایان محدودیت خودش دوباره "
+"تلاش می‌کند."
+
 msgid "adminV2.domains.cert.retry"
 msgstr "تلاش دوباره"
 
@@ -3425,6 +3434,9 @@ msgstr "انقضا"
 msgid "adminV2.domains.tls.expiresIn"
 msgstr "{n} روز مانده"
 
+msgid "adminV2.domains.tls.failed"
+msgstr "گرفتن گواهی ناموفق"
+
 msgid "adminV2.domains.tls.invalid"
 msgstr "نامعتبر"
 
@@ -3439,6 +3451,12 @@ msgstr "بدون گواهی"
 
 msgid "adminV2.domains.tls.missingHint"
 msgstr "هنوز گواهی ندارد."
+
+msgid "adminV2.domains.tls.rateLimited"
+msgstr "محدودیت تعداد درخواست"
+
+msgid "adminV2.domains.tls.renewFailed"
+msgstr "معتبر · تمدید ناموفق"
 
 msgid "adminV2.domains.tls.running"
 msgstr "در حال گرفتن گواهی"
@@ -5444,6 +5462,57 @@ msgstr "TCP یا UDP آپلود"
 msgid "adminV2.proxy.version"
 msgstr "نسخه"
 
+msgid "adminV2.pwa.bannerText"
+msgstr ""
+"از صفحهٔ اصلی گوشی یا دسکتاپ، در پنجرهٔ خودش و مثل یک برنامه بازش کنید."
+
+msgid "adminV2.pwa.bannerTitle"
+msgstr "پنل را به‌صورت برنامه نصب کنید"
+
+msgid "adminV2.pwa.gotIt"
+msgstr "متوجه شدم"
+
+msgid "adminV2.pwa.install"
+msgstr "نصب"
+
+msgid "adminV2.pwa.installButton"
+msgstr "نصب به‌صورت برنامه"
+
+msgid "adminV2.pwa.iosAdd"
+msgstr "«افزودن به صفحهٔ اصلی» را انتخاب کنید"
+
+msgid "adminV2.pwa.iosShare"
+msgstr "دکمهٔ اشتراک‌گذاری را بزنید"
+
+msgid "adminV2.pwa.later"
+msgstr "الان نه"
+
+msgid "adminV2.pwa.menuInstall"
+msgstr "«نصب برنامه» (یا «افزودن به صفحهٔ اصلی») را انتخاب کنید"
+
+msgid "adminV2.pwa.menuOpen"
+msgstr "منوی مرورگر را باز کنید"
+
+msgid "adminV2.pwa.never"
+msgstr "دیگر نشان نده"
+
+msgid "adminV2.pwa.perkFast"
+msgstr "با یک لمس از صفحهٔ اصلی"
+
+msgid "adminV2.pwa.perkFresh"
+msgstr "همیشه آخرین نسخهٔ پنل"
+
+msgid "adminV2.pwa.perkWindow"
+msgstr "پنجرهٔ تمام‌صفحهٔ خودش، بدون نوار مرورگر"
+
+msgid "adminV2.pwa.text"
+msgstr ""
+"پنل را مثل هر برنامهٔ دیگری روی گوشی یا کامپیوتر، فقط یک لمس دورتر داشته "
+"باشید."
+
+msgid "adminV2.pwa.title"
+msgstr "نصب پنل به‌صورت برنامه"
+
 msgid "adminV2.qr.clickToCopy"
 msgstr "برای کپی تصویر کلیک کنید"
 
@@ -6817,6 +6886,12 @@ msgstr "شروع نشده"
 msgid "adminV2.users.filter.not_startedHint"
 msgstr "هنوز وصل نشده: روزهایش از اولین اتصال شروع می‌شود"
 
+msgid "adminV2.users.filter.online"
+msgstr "آنلاین"
+
+msgid "adminV2.users.filter.onlineHint"
+msgstr "در ۲ دقیقهٔ گذشته وصل بوده‌اند"
+
 msgid "adminV2.users.filter.unseen_week"
 msgstr "یک هفته بدون اتصال"
 
@@ -7531,6 +7606,20 @@ msgstr "مسیر پروکسی نامعتبر است. باید رشته متن as
 
 msgid "config.Invalid_telegram_bot_token"
 msgstr "توکن ربات تلگرام نامعتبر است"
+
+msgid "config.acme_accounts.description"
+msgstr ""
+
+msgid "config.acme_accounts.label"
+msgstr ""
+
+msgid "config.acme_email.description"
+msgstr ""
+"ایمیل حساب‌های Let's Encrypt و ZeroSSL که پنل با آن‌ها گواهی می‌گیرد. با "
+"تغییر آن، حساب‌های جدید ساخته می‌شوند."
+
+msgid "config.acme_email.label"
+msgstr "📧 ایمیل گواهی (ACME)"
 
 msgid "config.additional_configs.description"
 msgstr "ادغام کانفیگ‌های اضافی در اشتراک‌های تولیدشده"
@@ -8798,12 +8887,12 @@ msgstr "🔐 توکن ربات تلگرام"
 
 msgid "config.telegram_enable.description"
 msgstr ""
-"برای کپسوله کردن پروکسی تلگرام در قالب ترافیک TLS استفاده می‌شود<br>⚠️ <span"
-" style=\"color:#d32f2f;\"><strong>این پروتکل نیاز به دامنه مستقیم "
-"دارد</strong></span>"
+"پروکسی MTProto تلگرام در قالب TLS به دامنهٔ فیک تلگرام (لینک‌های tg://proxy،"
+" با telemt)<br>⚠️ <span style=\"color:#d32f2f;\"><strong>به دامنهٔ مستقیم یا"
+" رله نیاز دارد</strong></span>"
 
 msgid "config.telegram_enable.label"
-msgstr "✔️ فعال کردن پروکسی تلگرام (MTProto)"
+msgstr "✔️ فعال کردن MTProxy FakeTLS"
 
 msgid "config.telegram_fakedomain.description"
 msgstr ""
@@ -8824,9 +8913,11 @@ msgstr "🔢  کتابخانه پروکسی تلگرام"
 
 msgid "config.telegram_webproxy_enable.description"
 msgstr ""
+"پروکسی تلگرام روی HTTPS، روی همهٔ دامنه‌های دارای گواهی معتبر، از جمله CDN "
+"(لینک‌های tg://webproxy، با telemt)"
 
 msgid "config.telegram_webproxy_enable.label"
-msgstr ""
+msgstr "✔️ فعال کردن پروکسی وب تلگرام"
 
 msgid "config.tls.description"
 msgstr "تنظیمات مربوط به اتصال TLS"

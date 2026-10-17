@@ -2371,6 +2371,14 @@
     "Invalid_port": "端口无效。它应该是逗号分隔的整数，例如2052,2053",
     "Invalid_proxy_path": "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Telegram 机器人令牌无效",
+    "acme_accounts": {
+      "description": "",
+      "label": ""
+    },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "additional_configs": {
       "description": "将额外配置合并到生成的订阅中",
       "label": "附加配置"
@@ -3096,10 +3104,6 @@
     "tls": {
       "description": "可以在此部分设置 TLS 配置。",
       "label": "TLS 设置"
-    },
-    "acme_email": {
-      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
-      "label": "📧 Certificate (ACME) Email"
     },
     "tls_ech": {
       "description": "ECH 值，格式：cloudflare-ech.com+https://8.8.8.8/dns-query",

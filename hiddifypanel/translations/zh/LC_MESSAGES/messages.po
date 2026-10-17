@@ -6213,6 +6213,20 @@ msgstr "代理路径无效。它应该是 ASCI 字符串 (a-z A-Z 0-9)"
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Telegram 机器人令牌无效"
 
+msgid "config.acme_accounts.description"
+msgstr ""
+
+msgid "config.acme_accounts.label"
+msgstr ""
+
+msgid "config.acme_email.description"
+msgstr ""
+"Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets "
+"certificates with. Changing it registers new accounts."
+
+msgid "config.acme_email.label"
+msgstr "📧 Certificate (ACME) Email"
+
 msgid "config.additional_configs.description"
 msgstr "将额外配置合并到生成的订阅中"
 

@@ -1171,14 +1171,14 @@
         "expiredHint": "The certificate has expired.",
         "expires": "Expires",
         "expiresIn": "{n} days left",
+        "failed": "Certificate failed",
         "invalid": "Invalid",
         "invalidHint": "The certificate does not match this domain.",
         "issuer": "Issuer",
         "missing": "No certificate",
         "missingHint": "No certificate yet.",
-        "failed": "Certificate failed",
-        "renewFailed": "Valid · renewal failed",
         "rateLimited": "Rate limited",
+        "renewFailed": "Valid · renewal failed",
         "running": "Getting certificate",
         "self_signed": "Self-signed",
         "self_signedHint": "A temporary self-signed certificate: apps warn or refuse. Get a real one.",
@@ -1915,6 +1915,24 @@
       "uploadTcpUdp": "Upload TCP or UDP",
       "version": "Version"
     },
+    "pwa": {
+      "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
+      "bannerTitle": "Install the panel as an app",
+      "gotIt": "Got it",
+      "install": "Install",
+      "installButton": "Install as an app",
+      "iosAdd": "Choose “Add to Home Screen”",
+      "iosShare": "Tap the Share button",
+      "later": "Not now",
+      "menuInstall": "Choose “Install app” (or “Add to Home screen”)",
+      "menuOpen": "Open the browser menu",
+      "never": "Do not show this again",
+      "perkFast": "One tap from your home screen",
+      "perkFresh": "Always the latest version of the panel",
+      "perkWindow": "Its own full-screen window, no browser bars",
+      "text": "Keep the panel one tap away, like any app on your phone or computer.",
+      "title": "Install the panel as an app"
+    },
     "qr": {
       "clickToCopy": "Click to copy the image",
       "copiedBoth": "Message and QR code copied",
@@ -2432,10 +2450,10 @@
         "no_dataHint": "Used all of the usage limit",
         "not_started": "Not started",
         "not_startedHint": "Never connected yet: their days start at the first connection",
-        "unseen_week": "Not seen for a week",
-        "unseen_weekHint": "Connected before, but not in the last 7 days",
         "online": "Online",
-        "onlineHint": "Connected in the last 2 minutes"
+        "onlineHint": "Connected in the last 2 minutes",
+        "unseen_week": "Not seen for a week",
+        "unseen_weekHint": "Connected before, but not in the last 7 days"
       },
       "filtersLabel": "Filter users",
       "form": {
@@ -2696,24 +2714,6 @@
       "users": "Users",
       "websocket": "WebSocket",
       "wireSize": "Compressed"
-    },
-    "pwa": {
-      "title": "Install the panel as an app",
-      "text": "Keep the panel one tap away, like any app on your phone or computer.",
-      "install": "Install",
-      "later": "Not now",
-      "never": "Do not show this again",
-      "installButton": "Install as an app",
-      "iosShare": "Tap the Share button",
-      "iosAdd": "Choose “Add to Home Screen”",
-      "bannerTitle": "Install the panel as an app",
-      "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
-      "menuOpen": "Open the browser menu",
-      "menuInstall": "Choose “Install app” (or “Add to Home screen”)",
-      "perkFast": "One tap from your home screen",
-      "perkWindow": "Its own full-screen window, no browser bars",
-      "perkFresh": "Always the latest version of the panel",
-      "gotIt": "Got it"
     }
   },
   "adminuser": {
@@ -2820,6 +2820,14 @@
     "Invalid_port": "Invalid Port. it should be comma separated Integer e.g.  2052,2053",
     "Invalid_proxy_path": "Invalid Proxy Path. It should be ASCI string (a-z A-Z 0-9)",
     "Invalid_telegram_bot_token": "Invalid Telegram Bot Token",
+    "acme_accounts": {
+      "description": "config.acme_accounts.description",
+      "label": "config.acme_accounts.label"
+    },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "additional_configs": {
       "description": "Merge extra configs into generated subscriptions",
       "label": "Additional Configs"
@@ -3527,8 +3535,8 @@
       "label": "🔐 Telegram Bot Token"
     },
     "telegram_enable": {
-      "label": "✔️ MTProxy FakeTLS Enable",
-      "description": "Telegram MTProxy hidden as TLS to the Telegram fake domain (tg://proxy links, served by telemt)<br>⚠️ <span style=\"color:#d32f2f;\"><strong>Needs a Direct or Relay domain</strong></span>"
+      "description": "Telegram MTProxy hidden as TLS to the Telegram fake domain (tg://proxy links, served by telemt)<br>⚠️ <span style=\"color:#d32f2f;\"><strong>Needs a Direct or Relay domain</strong></span>",
+      "label": "✔️ MTProxy FakeTLS Enable"
     },
     "telegram_fakedomain": {
       "description": "Please use a well known domain in your data center. for example, If you are in Azure data center, microsoft-update.com is a good example",
@@ -3539,16 +3547,12 @@
       "label": "🔢  Telegram Proxy Library"
     },
     "telegram_webproxy_enable": {
-      "label": "✔️ Telegram Web Proxy Enable",
-      "description": "Telegram proxy over HTTPS on every domain with a real certificate, CDN included (tg://webproxy links, served by telemt)"
+      "description": "Telegram proxy over HTTPS on every domain with a real certificate, CDN included (tg://webproxy links, served by telemt)",
+      "label": "✔️ Telegram Web Proxy Enable"
     },
     "tls": {
       "description": "TLS Configurations could be set in this section",
       "label": "TLS Settings"
-    },
-    "acme_email": {
-      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
-      "label": "📧 Certificate (ACME) Email"
     },
     "tls_ech": {
       "description": "ECH value in format: cloudflare-ech.com+https://8.8.8.8/dns-query",

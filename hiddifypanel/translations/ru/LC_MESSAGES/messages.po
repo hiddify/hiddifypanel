@@ -6627,6 +6627,20 @@ msgstr "Неверный Proxy Path Это должна быть строка AS
 msgid "config.Invalid_telegram_bot_token"
 msgstr "Неверный токен Telegram bot"
 
+msgid "config.acme_accounts.description"
+msgstr ""
+
+msgid "config.acme_accounts.label"
+msgstr ""
+
+msgid "config.acme_email.description"
+msgstr ""
+"Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets "
+"certificates with. Changing it registers new accounts."
+
+msgid "config.acme_email.label"
+msgstr "📧 Certificate (ACME) Email"
+
 msgid "config.additional_configs.description"
 msgstr "Объединять дополнительные конфигурации со сгенерированными подписками"
 

@@ -2371,6 +2371,14 @@
     "Invalid_port": "Неверный порт. это должно быть целое число, разделенное запятыми, например. 2052,2053",
     "Invalid_proxy_path": "Неверный Proxy Path Это должна быть строка ASCI (a-z A-Z 0-9).",
     "Invalid_telegram_bot_token": "Неверный токен Telegram bot",
+    "acme_accounts": {
+      "description": "",
+      "label": ""
+    },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "additional_configs": {
       "description": "Объединять дополнительные конфигурации со сгенерированными подписками",
       "label": "Дополнительные конфигурации"
@@ -3096,10 +3104,6 @@
     "tls": {
       "description": "В этом разделе можно установить конфигурации TLS",
       "label": "Настройки TLS"
-    },
-    "acme_email": {
-      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
-      "label": "📧 Certificate (ACME) Email"
     },
     "tls_ech": {
       "description": "Значение ECH в формате: cloudflare-ech.com+https://8.8.8.8/dns-query",

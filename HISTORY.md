@@ -5,6 +5,8 @@
 
 #### New
 
+* Advancced cert management and deprecate nginx and acme.sh. 
+
 * Add telegram webproxy. 
 
 * Add quick enable of disabled settings. 
@@ -70,6 +72,20 @@
 * Better integration with the old panel. 
 
 #### Fix
+
+* Update ECH configuration handling in TLS templates to prioritize extra configuration over existing settings. 
+
+* Add remarks for usage and package status in proxy configuration template. 
+
+* Websocket host issue. 
+
+* Backup from 13 to 14. 
+
+* Adding a domain fails with "Cloudflare error: Missing required argument: 'ttl'" whenever a Cloudflare token is set. 
+
+* IP-mode proxies (Hysteria2/TUIC) ignore the domain's "Resolve IP" switch. 
+
+* Update IP-based proxy logic to include relay domains for validation. 
 
 * Telegram proxy. 
 
@@ -159,6 +175,18 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Support short link directly in haproxy deprecating nginx. 
+
+* Deprecate custom port for tls and http globally. 
+
+* Feat: improve ApplyView functionality by adding run panel visibility control and enhancing user interaction with running actions. 
+
+* Feat: enhance Telegram proxy functionality by adding support for web proxy and updating configuration options. 
+
+* Feat: add PWA support with manifest and icons for improved installation experience. 
+
+* Feat: implement PWA installation dialog and related functionality for enhanced user experience. 
 
 * Refactor: streamline Telegram web proxy template logic for improved clarity and efficiency. 
 
