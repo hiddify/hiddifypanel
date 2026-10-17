@@ -8,11 +8,11 @@
     <template v-else-if="state">
       <!-- The run in progress (or just finished) -->
       <Transition name="ap-run">
-        <RunPanel v-if="run" :key="run.started" class="ap-run" :action="run.action" :file="run.log" :started="run.started" :sources="run" @finished="onFinished" @close="run = null" />
+        <RunPanel v-if="run" :key="run.started" class="ap-run" :action="run.action" :file="run.log" :started="run.started" :sources="run" @finished="onFinished" @close="closeRun" />
       </Transition>
 
       <Message v-if="!run && busyOutside" severity="info" :closable="false" class="ap-busy">
-        <span class="ap-busy__row"><i class="pi pi-spin pi-cog" />{{ t('apply.busyOutside') }}<Button :label="t('apply.watch')" size="small" text @click="watchRunning" /></span>
+        <span class="ap-busy__row"><i class="pi pi-spin pi-cog" />{{ t('apply.busyOutside') }}<Button :label="t('apply.watch')" size="small" text @click="watchRunning(); showRunPanel()" /></span>
       </Message>
 
       <!-- Actions -->
@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -167,12 +167,39 @@ function ask(key: ApplyAction) {
   })
 }
 
+/** Bring the run's panel (at the top of the page) into view: after a click far down, the progress is not on screen. */
+function showRunPanel() {
+  void nextTick(() => {
+    const panel = document.querySelector<HTMLElement>('.ap-page .ap-run')
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (panel) panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+  })
+}
+
+/** A running action the admin closed: not opened again by itself until another one runs. */
+let closedRunning = ''
+function closeRun() {
+  closedRunning = state.value?.running.join(',') ?? ''
+  run.value = null
+}
+
+/** Something runs (started here before, elsewhere, or by cron) and no panel shows it: open it. */
+function openRunning() {
+  const key = (state.value?.running ?? []).join(',')
+  if (run.value || !key || key === closedRunning) return
+  watchRunning()
+  showRunPanel()
+}
+
 async function start(key: ApplyAction) {
   starting.value = key
   try {
     run.value = await applyApi.start(key)
     runDone.value = false
     state.value = run.value
+    closedRunning = ''
+    showRunPanel()
   } catch (err) {
     toast.add({ severity: 'warn', summary: t('apply.notStarted'), detail: apiErrorMessage(err), life: 7000 })
   } finally {
@@ -243,16 +270,25 @@ onMounted(async () => {
     tags: ['apply'],
     onData: (next) => {
       latest = next
-      if (!run.value) state.value = next
+      if (!run.value) {
+        state.value = next
+        openRunning() // started meanwhile (another tab, the console, cron)
+      }
+      if (!next.running.length) closedRunning = '' // over: the next run opens again
     },
   })
   await refresh()
+  openRunning()
   // Sent here by "Apply" notices elsewhere: ?run=apply asks for it right away.
   const wanted = String(route.query.run ?? '') as ApplyAction
   if (ACTIONS.includes(wanted) && !busyOutside.value) {
     void router.replace({ query: {} })
     ask(wanted)
   }
+})
+// The page is kept alive between visits: coming back while something runs opens it too.
+onActivated(() => {
+  if (state.value) openRunning()
 })
 onBeforeUnmount(() => feed?.stop())
 </script>
