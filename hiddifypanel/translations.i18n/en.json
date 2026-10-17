@@ -290,6 +290,7 @@
     "incomplete_setup_warning": "It seems that you have not setup the system completely. <a class='btn btn-success' href='%(quick_setup)s'>Click here</a> to complete setup.",
     "menu": {
       "api": "API",
+      "broadcast": "Send message",
       "config": "Settings",
       "dashboard_v2": "Next",
       "domain": "Domains",
@@ -740,6 +741,108 @@
       "new": "New Base Config",
       "side": "Side",
       "version": "Version"
+    },
+    "broadcast": {
+      "audience": {
+        "active": "Active",
+        "all": "Everyone",
+        "expired": "Expired or disabled",
+        "hint": "Only users who started your bot are counted; deleted users never get messages.",
+        "offline_1d": "Offline 1 day+",
+        "offline_1h": "Offline 1 hour+",
+        "offline_1w": "Offline 1 week+",
+        "selected": "Selected users",
+        "title": "Who gets it"
+      },
+      "confirm": {
+        "text": "It goes to {n} user ({audience}) in Telegram. It can not be taken back. | It goes to {n} users ({audience}) in Telegram. It can not be taken back.",
+        "title": "Send this message?"
+      },
+      "extra": {
+        "addImage": "Add an image",
+        "badType": "Use a JPEG, PNG or WebP image.",
+        "imageHint": "Click or drop · JPEG, PNG or WebP · up to 10 MB",
+        "removeImage": "Remove the image",
+        "title": "Image and options",
+        "tooBig": "The image is larger than 10 MB.",
+        "usage": "Add each user's usage and buttons",
+        "usageHint": "Their remaining data and days, with buttons to their usage and panel, after your text."
+      },
+      "format": {
+        "plain": "Plain"
+      },
+      "dialogTitle": "Message to {n} selected user | Message to {n} selected users",
+      "recipients": {
+        "title": "Who gets it",
+        "search": "Search by name or Telegram id",
+        "count": "{n} of {total} chosen",
+        "all": "All",
+        "none": "None",
+        "empty": "No user of this audience started the bot.",
+        "noMatch": "No user matches.",
+        "active": "Active",
+        "inactive": "Expired or disabled",
+        "never": "never online",
+        "more": "Show {n} more",
+        "failed": "Could not load the users"
+      },
+      "fromUsers": "Message",
+      "message": {
+        "help": {
+          "html": "Telegram's tags: b, i, u, s, a, code, pre, blockquote, tg-spoiler.",
+          "markdown": "**bold** _italic_ __underline__ ~~strike~~ ||spoiler|| `code` > quote",
+          "plain": "Sent exactly as written."
+        },
+        "placeholder": {
+          "html": "<b>Hello</b> <i>there</i>…",
+          "markdown": "Write your message… **bold**, _italic_, [link](https://…)",
+          "plain": "Write your message…"
+        },
+        "title": "Message",
+        "toolbar": "Formatting"
+      },
+      "noBot": {
+        "action": "Open settings",
+        "text": "Add your bot's token in the settings; users who start the bot can then get messages.",
+        "title": "The Telegram bot is not set up"
+      },
+      "preview": {
+        "bot": "Your bot",
+        "botLabel": "bot",
+        "buttonLink": "🔗 My panel",
+        "buttonUsage": "📊 Usage",
+        "empty": "Your message appears here as users will see it.",
+        "title": "Preview",
+        "usage": "Each user's usage goes here"
+      },
+      "progress": {
+        "again": "New message",
+        "counts": "{sent} of {total} delivered",
+        "done": "Sent",
+        "errors": "Why {n} were not delivered",
+        "failed": "{n} not delivered",
+        "sending": "Sending…"
+      },
+      "send": {
+        "button": "Send",
+        "choose": "Choose who gets it",
+        "failed": "Could not send",
+        "to": "To {n} user | To {n} users"
+      },
+      "subtitle": "Reach your users in Telegram, with text, formatting and an image",
+      "title": "Send message",
+      "tool": {
+        "bold": "Bold",
+        "code": "Code",
+        "italic": "Italic",
+        "link": "Link",
+        "list": "List",
+        "pre": "Code block",
+        "quote": "Quote",
+        "spoiler": "Spoiler",
+        "strike": "Strikethrough",
+        "underline": "Underline"
+      }
     },
     "common": {
       "actions": "Actions",
@@ -1802,7 +1905,6 @@
       "l7ReverseProto": "L7 reverse proxy protocol",
       "linkSettings": "Link settings",
       "linkTemplate": "Link template",
-      "wireguardTemplate": "WireGuard .conf template",
       "listTitle": "Custom Proxies",
       "mode": "Mode",
       "modeLabels": {
@@ -1914,7 +2016,8 @@
         "xhttp": "xHTTP"
       },
       "uploadTcpUdp": "Upload TCP or UDP",
-      "version": "Version"
+      "version": "Version",
+      "wireguardTemplate": "WireGuard .conf template"
     },
     "pwa": {
       "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
@@ -2432,6 +2535,7 @@
         "outboundHint": "This user has its own outbound selected",
         "subs": "{n} extra sub | {n} extra subs",
         "subsHint": "Extra subscription configs added for this user",
+        "telegramMessage": "Send a Telegram message to this user",
         "telegramHint": "Telegram account linked"
       },
       "filter": {
@@ -2453,6 +2557,8 @@
         "not_startedHint": "Never connected yet: their days start at the first connection",
         "online": "Online",
         "onlineHint": "Connected in the last 2 minutes",
+        "telegram": "Has Telegram",
+        "telegramHint": "Users who started the bot: they can get messages",
         "unseen_week": "Not seen for a week",
         "unseen_weekHint": "Connected before, but not in the last 7 days"
       },

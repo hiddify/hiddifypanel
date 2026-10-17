@@ -47,8 +47,13 @@ class SendMsgResource(Resource):
         if not hasattr(g, "account"):
             return []
 
-        query = User.query.filter(User.added_by.in_(g.account.recursive_sub_admins_ids()))
-        query = query.filter(User.telegram_id is not None, User.telegram_id != 0)
+        # Not deleted users, with a telegram id (``telegram_id is not None`` in Python was always true)
+        query = User.query.filter(
+            User.added_by.in_(g.account.recursive_sub_admins_ids()),
+            User.deleted.isnot(True),
+            User.telegram_id.isnot(None),
+            User.telegram_id != 0,
+        )
 
         # user selected many ids as users identifier
         if isinstance(identifier, list):

@@ -79,8 +79,8 @@ export const quickSetupApi = {
     const { data } = await getHttp().put<QuickSetupState>('quick-setup/domains/', input, { timeout: 60_000 })
     return data
   },
-  async finish(): Promise<{ reinstall_url: string }> {
-    const { data } = await getHttp().post<{ reinstall_url: string }>('quick-setup/finish/')
+  async finish(): Promise<{ finished: boolean }> {
+    const { data } = await getHttp().post<{ finished: boolean }>('quick-setup/finish/')
     return data
   },
 }

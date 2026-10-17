@@ -291,6 +291,7 @@
     "incomplete_setup_warning": "Parece que você não configurou o sistema completamente. <a class='btn btn-success' href='%(quick_setup)s'>Clique aqui</a> para concluir a configuração.",
     "menu": {
       "api": "API",
+      "broadcast": "Enviar mensagem",
       "config": "Configurações",
       "dashboard_v2": "Próximo",
       "domain": "domínios",

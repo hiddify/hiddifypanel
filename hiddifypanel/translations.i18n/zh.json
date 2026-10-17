@@ -291,6 +291,7 @@
     "incomplete_setup_warning": "看来你还没有完全安装系统。 <a class='btn btn-success' href='%(quick_setup)s'>单击此处</a>完成设置。",
     "menu": {
       "api": "应用程序编程接口",
+      "broadcast": "发送消息",
       "config": "设置",
       "dashboard_v2": "下一步",
       "domain": "域名",

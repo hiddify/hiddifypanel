@@ -10,7 +10,7 @@ from hiddifypanel.hutils import flask as hutils_flask
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import ConfigEnum, Role, hconfig
 
-from .v2_menu import build_admin_v2_menu, build_admin_v2_notices, build_admin_v2_system_actions
+from .v2_menu import build_admin_v2_menu, build_admin_v2_notices
 
 
 def _panel_version() -> str:
@@ -116,7 +116,6 @@ def _admin_v2_bootstrap_payload() -> dict:
         "pwa_icon_url": hutils.flask.static_url_for(filename="images/hiddify-dark.png"),
         "menu": build_admin_v2_menu(),
         "notices": build_admin_v2_notices(),
-        "system_actions": build_admin_v2_system_actions(),
         "panel_mode": str(hconfig(ConfigEnum.panel_mode) or ""),
         "node_info": _node_info(),
         "account_mode": str(g.account.mode),
@@ -165,7 +164,6 @@ def register_v2_routes(flask_app, admin_bp):
             panel_logo_url=_panel_logo_url(proxy_path),
             admin_menu=build_admin_v2_menu(),
             admin_notices=build_admin_v2_notices(),
-            admin_system_actions=build_admin_v2_system_actions(),
             panel_mode=str(hconfig(ConfigEnum.panel_mode) or ""),
             node_info=_node_info(),
             account_mode=str(g.account.mode),

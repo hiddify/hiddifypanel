@@ -69,7 +69,8 @@ def _parent_enable_conflict(proxy: CustomProxy) -> dict:
 def _parent_enable_settings_url() -> str:
     from hiddifypanel.hutils.flask import hurl_for
 
-    return hurl_for("admin.ProxyAdmin:index")
+    # The global protocol switches: admin_v2's Protocols page (the classic ProxyAdmin is only there in debug mode)
+    return hurl_for("admin.admin_v2", subpath="protocols")
 
 
 def _child_id() -> int:

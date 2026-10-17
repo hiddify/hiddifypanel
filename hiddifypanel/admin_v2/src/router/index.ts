@@ -52,6 +52,13 @@ const routes = [
         beforeEnter: () => (isChildPanel.value && !isSuperAdmin.value ? { name: 'node-home' } : true),
       },
       {
+        // A message to users over the Telegram bot (?ids=1,2,3: the users selected on the users page)
+        path: 'message',
+        name: 'broadcast',
+        component: () => import('@/features/broadcast/views/BroadcastView.vue'),
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+      },
+      {
         path: 'admins',
         name: 'admins',
         component: () => import('@/features/admins/views/AdminsView.vue'),

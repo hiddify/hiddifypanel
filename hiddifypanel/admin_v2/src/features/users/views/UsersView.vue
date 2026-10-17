@@ -69,6 +69,7 @@
       <section v-if="selected.length && !readOnly" class="users-bulk">
         <span class="users-bulk__count"><i class="pi pi-check-square" />{{ t('users.selected', { n: selected.length }, selected.length) }}</span>
         <div class="users-bulk__actions">
+          <Button size="small" icon="pi pi-send" :label="t('broadcast.fromUsers')" severity="secondary" outlined @click="messageSelected" />
           <Button size="small" icon="pi pi-check-circle" :label="t('users.bulk.enable')" severity="secondary" outlined @click="bulk('enable')" />
           <Button size="small" icon="pi pi-ban" :label="t('users.bulk.disable')" severity="secondary" outlined @click="bulk('disable')" />
           <Button size="small" icon="pi pi-refresh" :label="t('users.bulk.reset_usage')" severity="secondary" outlined @click="bulk('reset_usage')" />
@@ -164,7 +165,17 @@
             </div>
             <!-- What is special about this user, in the room right of the name -->
             <div v-if="extrasOf(data).length" class="u-extras">
-              <span v-for="x in extrasOf(data)" :key="x.key" class="u-extra" :class="`u-extra--${x.key}`" v-tooltip.top="x.title"><i :class="x.icon" />{{ x.text }}</span>
+              <component
+                :is="x.key === 'telegram' && !readOnly ? 'button' : 'span'"
+                v-for="x in extrasOf(data)"
+                :key="x.key"
+                :type="x.key === 'telegram' && !readOnly ? 'button' : undefined"
+                class="u-extra"
+                :class="[`u-extra--${x.key}`, { 'u-extra--action': x.key === 'telegram' && !readOnly }]"
+                v-tooltip.top="x.key === 'telegram' && !readOnly ? t('users.extra.telegramMessage') : x.title"
+                @click.stop="x.key === 'telegram' && !readOnly && messageUser(data)"
+                ><i :class="x.icon" />{{ x.text }}</component
+              >
             </div>
             </div>
           </template>
@@ -264,7 +275,17 @@
             </div>
             <!-- What is special about the user, as many as fit on the line -->
             <div v-if="extrasOf(u).length" class="u-card__extras">
-              <span v-for="x in extrasOf(u)" :key="x.key" class="u-extra" :class="`u-extra--${x.key}`" v-tooltip.top="x.title"><i :class="x.icon" />{{ x.text }}</span>
+              <component
+                :is="x.key === 'telegram' && !readOnly ? 'button' : 'span'"
+                v-for="x in extrasOf(u)"
+                :key="x.key"
+                :type="x.key === 'telegram' && !readOnly ? 'button' : undefined"
+                class="u-extra"
+                :class="[`u-extra--${x.key}`, { 'u-extra--action': x.key === 'telegram' && !readOnly }]"
+                v-tooltip.top="x.key === 'telegram' && !readOnly ? t('users.extra.telegramMessage') : x.title"
+                @click.stop="x.key === 'telegram' && !readOnly && messageUser(u)"
+                ><i :class="x.icon" />{{ x.text }}</component
+              >
             </div>
             <Button icon="pi pi-ellipsis-h" text rounded size="small" severity="secondary" class="u-card__more" :aria-label="t('users.more')" @click="openMenu($event, u)" />
           </div>
@@ -276,6 +297,20 @@
     </div>
 
     <Menu ref="rowMenu" :model="menuItems" popup />
+
+    <!-- Send a Telegram message to the selected users -->
+    <Dialog
+      v-model:visible="messageVisible"
+      modal
+      maximizable
+      :draggable="false"
+      :header="t('broadcast.dialogTitle', { n: messageIds.length }, messageIds.length)"
+      :style="{ width: 'min(72rem, 96vw)' }"
+      :breakpoints="{ '767px': '100vw' }"
+      :pt="{ root: { class: 'users-message-dialog' } }"
+    >
+      <BroadcastComposer v-if="messageVisible" :ids="messageIds" in-dialog />
+    </Dialog>
 
     <!-- Add limits: data and days on top of what the selected users have -->
     <Dialog v-model:visible="limitsVisible" modal :draggable="false" :header="t('users.addLimits.title', { n: selected.length }, selected.length)" :style="{ width: '24rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
@@ -318,7 +353,7 @@ import { unitLabel } from '@/shared/utils/format-metrics'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import { numberListCodec, optionalNumberCodec, useHashState } from '@/shared/composables/useHashState'
-import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
+import { computed, defineAsyncComponent, defineComponent, h, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -339,6 +374,8 @@ import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
 import ToggleSwitch from 'primevue/toggleswitch'
 import PageHeader from '@/shared/components/PageHeader.vue'
+// Loaded with the dialog's first opening (the users page stays light)
+const BroadcastComposer = defineAsyncComponent(() => import('@/features/broadcast/components/BroadcastComposer.vue'))
 import LinkShareDialog from '@/shared/components/LinkShareDialog.vue'
 import MeterBar from '@/shared/components/MeterBar.vue'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
@@ -368,7 +405,7 @@ const MarkText = defineComponent({
 })
 
 type Row = UserRow & { status_rank: number; usage_ratio: number; last_online_ts: number; owner_key: string }
-type FilterKey = 'all' | 'online' | UserStatus | 'expiring' | 'data_low' | 'not_started' | 'unseen_week'
+type FilterKey = 'all' | 'online' | UserStatus | 'expiring' | 'data_low' | 'not_started' | 'unseen_week' | 'telegram'
 
 const STATUS_ORDER: UserStatus[] = ['active', 'no_data', 'expired', 'disabled']
 /** "Soon": a week left, or 80% of the data used. */
@@ -393,6 +430,18 @@ const query = ref('')
 const filter = ref<FilterKey>('all')
 const pickedTags = ref<number[]>([])
 const selected = ref<Row[]>([])
+// A Telegram message to the selected users: the send-message form in a dialog, with them as its audience
+const messageVisible = ref(false)
+const messageIds = ref<number[]>([])
+function messageSelected() {
+  messageIds.value = selected.value.map((u) => u.id)
+  messageVisible.value = true
+}
+/** The Telegram tag of a user: a message to that user only. */
+function messageUser(u: Row) {
+  messageIds.value = [u.id]
+  messageVisible.value = true
+}
 const sortField = ref<string | undefined>(undefined)
 const sortOrder = ref<1 | -1 | 0 | undefined>(undefined)
 const first = ref(0)
@@ -521,6 +570,8 @@ const MATCH: Record<FilterKey, (u: Row) => boolean> = {
   unseen_week: (u) => u.last_online_ts > 0 && now.value - u.last_online_ts > WEEK_MS,
   // Connected in the last 2 minutes: the users with the green "Online" dot (format.ts lastSeen).
   online: (u) => u.last_online_ts > 0 && now.value - u.last_online_ts < ONLINE_MS,
+  // Started the bot: these can get a Telegram message
+  telegram: (u) => !!u.telegram_id,
 }
 const FILTER_ICON: Record<FilterKey, string> = {
   all: 'pi pi-users',
@@ -530,10 +581,11 @@ const FILTER_ICON: Record<FilterKey, string> = {
   not_started: 'pi pi-hourglass',
   unseen_week: 'pi pi-eye-slash',
   online: 'pi pi-wifi',
+  telegram: 'pi pi-telegram',
 }
 const ALWAYS_SHOWN: FilterKey[] = ['all', 'online', 'active', 'expiring', 'data_low']
 const filters = computed(() =>
-  (['all', 'online', 'active', 'expiring', 'data_low', 'unseen_week', 'not_started', 'no_data', 'expired', 'disabled'] as FilterKey[])
+  (['all', 'online', 'active', 'expiring', 'data_low', 'telegram', 'unseen_week', 'not_started', 'no_data', 'expired', 'disabled'] as FilterKey[])
     .map((key) => ({ key, icon: FILTER_ICON[key], count: allRows.value.filter(MATCH[key]).length }))
     // The everyday ones always show (even at 0); the rest only when they have users.
     .filter((f) => ALWAYS_SHOWN.includes(f.key) || f.count > 0 || filter.value === f.key),
@@ -1251,6 +1303,20 @@ onBeforeUnmount(() => {
 .u-extra--subs i {
   color: var(--p-violet-500, #8b5cf6);
 }
+.u-extra--action {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.u-extra--action:hover,
+.u-extra--action:focus-visible {
+  background: color-mix(in srgb, #2aabee 18%, transparent);
+  color: #1e88c7;
+  outline: none;
+}
 .u-extra--telegram i {
   color: var(--p-blue-500, #3b82f6);
 }
@@ -1713,6 +1779,16 @@ button.u-pill {
 </style>
 
 <style>
+/* The send-message dialog: the whole screen on a phone */
+@media (max-width: 767px) {
+  .users-message-dialog.p-dialog {
+    width: 100vw !important;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+}
 .u-menu--danger .p-menu-item-icon,
 .u-menu--danger .p-menu-item-label {
   color: var(--p-red-500, #ef4444);

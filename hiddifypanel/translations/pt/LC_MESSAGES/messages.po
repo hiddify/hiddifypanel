@@ -1028,6 +1028,9 @@ msgstr ""
 msgid "admin.menu.api"
 msgstr "API"
 
+msgid "admin.menu.broadcast"
+msgstr "Enviar mensagem"
+
 msgid "admin.menu.config"
 msgstr "Configurações"
 

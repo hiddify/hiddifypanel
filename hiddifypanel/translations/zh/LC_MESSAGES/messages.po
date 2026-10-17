@@ -1029,6 +1029,9 @@ msgstr ""
 msgid "admin.menu.api"
 msgstr "应用程序编程接口"
 
+msgid "admin.menu.broadcast"
+msgstr "发送消息"
+
 msgid "admin.menu.config"
 msgstr "设置"
 

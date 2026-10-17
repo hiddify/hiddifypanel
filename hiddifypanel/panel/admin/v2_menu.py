@@ -19,20 +19,6 @@ def _item(label: str, url: str, icon: str, *, target: str = "_self", badge: str 
     return row
 
 
-def build_admin_v2_system_actions() -> dict[str, str]:
-    """Legacy system action URLs used by the Admin V2 Actions page (super_admin only)."""
-    if g.account.mode != "super_admin":
-        return {}
-    return {
-        "status": hurl_for("admin.Actions:status"),
-        "viewlogs": hurl_for("admin.Actions:viewlogs"),
-        "apply_configs": hurl_for("admin.Actions:apply_configs"),
-        "update": hurl_for("admin.Actions:update"),
-        "reinstall": hurl_for("admin.Actions:reinstall"),
-        "reset": hurl_for("admin.Actions:reset"),
-    }
-
-
 _DONATION_TAGS = frozenset({"a", "br", "ul", "ol", "li", "h5", "h6", "p", "strong", "b", "em", "div", "span"})
 _DONATION_ATTRS = {"a": ["href", "target", "rel", "data-copy", "class"], "div": ["class"]}
 
@@ -125,6 +111,7 @@ def _manager_items() -> list[dict]:
         items = [
             {"label": _("admin.menu.user"), "to": "/users", "icon": "pi pi-fw pi-users"},
             {"label": _("Admins"), "to": "/admins", "icon": "pi pi-fw pi-sitemap"},
+            {"label": _("admin.menu.broadcast"), "to": "/message", "icon": "pi pi-fw pi-send"},
         ]
     if g.account.mode == "super_admin":
         items.append({"label": _("Nodes"), "to": "/nodes", "icon": "pi pi-fw pi-server"})
@@ -161,7 +148,7 @@ def build_admin_v2_notices() -> list[dict]:
     sslip_domains = [d.domain for d in domains if "sslip.io" in d.domain]
 
     if def_user and sslip_domains:
-        quick_setup = hurl_for("admin.QuickSetup:index")
+        quick_setup = hurl_for("admin.admin_v2", subpath="quick-setup")  # admin_v2's own page (the classic one is debug-only)
         notices.append(
             {
                 "severity": "warn",

@@ -291,6 +291,7 @@
     "incomplete_setup_warning": "Похоже, вы не до конца настроили систему. <a class='btn btn-success' href='%(quick_setup)s'>Нажмите здесь</a>, чтобы завершить настройку",
     "menu": {
       "api": "API",
+      "broadcast": "Отправить сообщение",
       "config": "Настройки",
       "dashboard_v2": "Далее",
       "domain": "Домены",

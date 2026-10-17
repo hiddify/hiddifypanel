@@ -27,7 +27,6 @@ declare global {
       detail?: string
       toast?: boolean
     }>
-    __ADMIN_SYSTEM_ACTIONS__?: Record<string, string>
     __PANEL_MODE__?: string
     __ACCOUNT_MODE__?: string
     __NEEDS_QUICK_SETUP__?: boolean

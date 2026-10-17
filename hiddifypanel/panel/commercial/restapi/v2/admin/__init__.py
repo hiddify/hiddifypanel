@@ -211,6 +211,12 @@ def init_app(app):
             ServerIpsApi,
         )
 
+        from .broadcast_api import BroadcastApi, BroadcastJobApi, BroadcastPreviewApi, BroadcastRecipientsApi
+
+        bp.add_url_rule("/broadcast/", view_func=BroadcastApi)
+        bp.add_url_rule("/broadcast/recipients/", view_func=BroadcastRecipientsApi)
+        bp.add_url_rule("/broadcast/preview/", view_func=BroadcastPreviewApi)
+        bp.add_url_rule("/broadcast/<string:job_id>/", view_func=BroadcastJobApi)
         bp.add_url_rule("/server-ips/", view_func=ServerIpsApi)
         bp.add_url_rule("/server-ips/<int:ip_id>/", view_func=ServerIpApi)
         bp.add_url_rule("/server-ips/<int:ip_id>/health-check/", view_func=ServerIpHealthCheckApi)

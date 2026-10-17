@@ -14,7 +14,6 @@ from flask_babel import gettext as _
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
-from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import Child, ConfigEnum, Domain, DomainType, FakeMode, Role, StrConfig, User, get_hconfigs, hconfig, set_hconfig
 from hiddifypanel.models.domain import normalize_domain_name
 
@@ -282,6 +281,6 @@ class QuickSetupFinishApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
     def post(self):
-        """Quick setup: finish. Returns the classic reinstall to run (domain changed), shown with its log."""
+        """Quick setup: finish. The page then runs the install (its dialog shows the log and the new admin links)."""
         set_hconfig(ConfigEnum.first_setup, False)
-        return {"reinstall_url": hurl_for("admin.Actions:reinstall", domain_changed="true")}
+        return {"finished": True}

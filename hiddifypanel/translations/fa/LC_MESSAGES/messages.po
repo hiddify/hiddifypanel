@@ -1042,6 +1042,9 @@ msgstr ""
 msgid "admin.menu.api"
 msgstr "API"
 
+msgid "admin.menu.broadcast"
+msgstr "ارسال پیام"
+
 msgid "admin.menu.config"
 msgstr "تنظیمات"
 
@@ -2253,6 +2256,196 @@ msgstr "سمت"
 
 msgid "adminV2.baseConfig.version"
 msgstr "نسخه"
+
+msgid "adminV2.broadcast.audience.active"
+msgstr "فعال"
+
+msgid "adminV2.broadcast.audience.all"
+msgstr "همه"
+
+msgid "adminV2.broadcast.audience.expired"
+msgstr "منقضی یا غیرفعال"
+
+msgid "adminV2.broadcast.audience.hint"
+msgstr ""
+"فقط کاربرانی که ربات را استارت کرده‌اند شمرده می‌شوند؛ کاربران حذف‌شده "
+"هیچ‌وقت پیام نمی‌گیرند."
+
+msgid "adminV2.broadcast.audience.offline_1d"
+msgstr "آفلاین بیش از ۱ روز"
+
+msgid "adminV2.broadcast.audience.offline_1h"
+msgstr "آفلاین بیش از ۱ ساعت"
+
+msgid "adminV2.broadcast.audience.offline_1w"
+msgstr "آفلاین بیش از ۱ هفته"
+
+msgid "adminV2.broadcast.audience.selected"
+msgstr "کاربران انتخاب‌شده"
+
+msgid "adminV2.broadcast.audience.title"
+msgstr "گیرندگان"
+
+msgid "adminV2.broadcast.confirm.text"
+msgstr ""
+"برای {n} کاربر ({audience}) در تلگرام فرستاده می‌شود و قابل پس گرفتن نیست. |"
+" برای {n} کاربر ({audience}) در تلگرام فرستاده می‌شود و قابل پس گرفتن نیست."
+
+msgid "adminV2.broadcast.confirm.title"
+msgstr "این پیام فرستاده شود؟"
+
+msgid "adminV2.broadcast.extra.addImage"
+msgstr "افزودن تصویر"
+
+msgid "adminV2.broadcast.extra.badType"
+msgstr "از تصویر JPEG، PNG یا WebP استفاده کنید."
+
+msgid "adminV2.broadcast.extra.imageHint"
+msgstr "کلیک کنید یا بکشید · JPEG، PNG یا WebP · تا ۱۰ مگابایت"
+
+msgid "adminV2.broadcast.extra.removeImage"
+msgstr "حذف تصویر"
+
+msgid "adminV2.broadcast.extra.title"
+msgstr "تصویر و گزینه‌ها"
+
+msgid "adminV2.broadcast.extra.tooBig"
+msgstr "تصویر بزرگ‌تر از ۱۰ مگابایت است."
+
+msgid "adminV2.broadcast.extra.usage"
+msgstr "افزودن مصرف و دکمه‌های هر کاربر"
+
+msgid "adminV2.broadcast.extra.usageHint"
+msgstr ""
+"حجم و روزهای باقی‌مانده‌ی هر کاربر، با دکمه‌های مصرف و پنل، بعد از متن شما."
+
+msgid "adminV2.broadcast.format.plain"
+msgstr "ساده"
+
+msgid "adminV2.broadcast.fromUsers"
+msgstr "پیام"
+
+msgid "adminV2.broadcast.message.help.html"
+msgstr "تگ‌های تلگرام: b، i، u، s، a، code، pre، blockquote، tg-spoiler."
+
+msgid "adminV2.broadcast.message.help.markdown"
+msgstr "**پررنگ** _کج_ __زیرخط__ ~~خط‌خورده~~ ||مخفی|| `کد` > نقل‌قول"
+
+msgid "adminV2.broadcast.message.help.plain"
+msgstr "دقیقاً همان‌طور که نوشته‌اید فرستاده می‌شود."
+
+msgid "adminV2.broadcast.message.placeholder.html"
+msgstr "<b>سلام</b> <i>دوستان</i>…"
+
+msgid "adminV2.broadcast.message.placeholder.markdown"
+msgstr "پیامتان را بنویسید… **پررنگ**، _کج_، [لینک](https://…)"
+
+msgid "adminV2.broadcast.message.placeholder.plain"
+msgstr "پیامتان را بنویسید…"
+
+msgid "adminV2.broadcast.message.title"
+msgstr "پیام"
+
+msgid "adminV2.broadcast.message.toolbar"
+msgstr "قالب‌بندی"
+
+msgid "adminV2.broadcast.noBot.action"
+msgstr "باز کردن تنظیمات"
+
+msgid "adminV2.broadcast.noBot.text"
+msgstr ""
+"توکن ربات را در تنظیمات وارد کنید؛ کاربرانی که ربات را استارت کنند پیام "
+"می‌گیرند."
+
+msgid "adminV2.broadcast.noBot.title"
+msgstr "ربات تلگرام تنظیم نشده"
+
+msgid "adminV2.broadcast.preview.bot"
+msgstr "ربات شما"
+
+msgid "adminV2.broadcast.preview.botLabel"
+msgstr "ربات"
+
+msgid "adminV2.broadcast.preview.buttonLink"
+msgstr "🔗 پنل من"
+
+msgid "adminV2.broadcast.preview.buttonUsage"
+msgstr "📊 مصرف"
+
+msgid "adminV2.broadcast.preview.empty"
+msgstr "پیامتان همان‌طور که کاربران می‌بینند اینجا نمایش داده می‌شود."
+
+msgid "adminV2.broadcast.preview.title"
+msgstr "پیش‌نمایش"
+
+msgid "adminV2.broadcast.preview.usage"
+msgstr "مصرف هر کاربر اینجا می‌آید"
+
+msgid "adminV2.broadcast.progress.again"
+msgstr "پیام جدید"
+
+msgid "adminV2.broadcast.progress.counts"
+msgstr "{sent} از {total} تحویل شد"
+
+msgid "adminV2.broadcast.progress.done"
+msgstr "ارسال شد"
+
+msgid "adminV2.broadcast.progress.errors"
+msgstr "چرا {n} پیام تحویل نشد"
+
+msgid "adminV2.broadcast.progress.failed"
+msgstr "{n} تحویل نشد"
+
+msgid "adminV2.broadcast.progress.sending"
+msgstr "در حال ارسال…"
+
+msgid "adminV2.broadcast.send.button"
+msgstr "ارسال"
+
+msgid "adminV2.broadcast.send.choose"
+msgstr "گیرندگان را انتخاب کنید"
+
+msgid "adminV2.broadcast.send.failed"
+msgstr "ارسال نشد"
+
+msgid "adminV2.broadcast.send.to"
+msgstr "به {n} کاربر | به {n} کاربر"
+
+msgid "adminV2.broadcast.subtitle"
+msgstr "به کاربرانتان در تلگرام پیام بدهید؛ با متن، قالب‌بندی و تصویر"
+
+msgid "adminV2.broadcast.title"
+msgstr "ارسال پیام"
+
+msgid "adminV2.broadcast.tool.bold"
+msgstr "پررنگ"
+
+msgid "adminV2.broadcast.tool.code"
+msgstr "کد"
+
+msgid "adminV2.broadcast.tool.italic"
+msgstr "کج"
+
+msgid "adminV2.broadcast.tool.link"
+msgstr "لینک"
+
+msgid "adminV2.broadcast.tool.list"
+msgstr "فهرست"
+
+msgid "adminV2.broadcast.tool.pre"
+msgstr "بلوک کد"
+
+msgid "adminV2.broadcast.tool.quote"
+msgstr "نقل‌قول"
+
+msgid "adminV2.broadcast.tool.spoiler"
+msgstr "مخفی"
+
+msgid "adminV2.broadcast.tool.strike"
+msgstr "خط‌خورده"
+
+msgid "adminV2.broadcast.tool.underline"
+msgstr "زیرخط"
 
 msgid "adminV2.common.actions"
 msgstr "عملیات"
@@ -5461,6 +5654,9 @@ msgstr "TCP یا UDP آپلود"
 
 msgid "adminV2.proxy.version"
 msgstr "نسخه"
+
+msgid "adminV2.proxy.wireguardTemplate"
+msgstr "قالب فایل ‎.conf‎ وایرگارد"
 
 msgid "adminV2.pwa.bannerText"
 msgstr ""

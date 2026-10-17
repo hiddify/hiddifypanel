@@ -65,10 +65,6 @@ export interface PanelNotice {
   id?: string
 }
 
-/** Legacy system action URLs (POST-only except `status`/`viewlogs`), keyed by action; empty for non-super admins. */
-export type SystemActionUrls = Partial<Record<'status' | 'viewlogs' | 'apply_configs' | 'update' | 'reinstall' | 'reset', string>>
-
-export const systemActionUrls = ref<SystemActionUrls>(window.__ADMIN_SYSTEM_ACTIONS__ ?? {})
 /** `panel_mode` hconfig: `standalone` | `parent` | `child`. */
 export const panelMode = ref<string>(window.__PANEL_MODE__ ?? '')
 /** A node only manages its domains/proxies/server; dashboard and users live on the parent. */
@@ -111,7 +107,6 @@ export const panelNotices = ref<PanelNotice[]>(window.__ADMIN_NOTICES__ ?? [])
 export function applyBootstrapShell(data: {
   menu?: AdminMenuGroup[]
   notices?: PanelNotice[]
-  system_actions?: SystemActionUrls
   panel_mode?: string
   node_info?: NodeInfo | null
   account_mode?: string
@@ -130,10 +125,6 @@ export function applyBootstrapShell(data: {
   if (data.notices) {
     panelNotices.value = data.notices
     window.__ADMIN_NOTICES__ = data.notices
-  }
-  if (data.system_actions) {
-    systemActionUrls.value = data.system_actions
-    window.__ADMIN_SYSTEM_ACTIONS__ = data.system_actions
   }
   if (data.panel_mode !== undefined) {
     panelMode.value = data.panel_mode
@@ -181,7 +172,6 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
   applyBootstrapShell({
     menu: data.menu as AdminMenuGroup[] | undefined,
     notices: data.notices as PanelNotice[] | undefined,
-    system_actions: data.system_actions as SystemActionUrls | undefined,
     panel_mode: data.panel_mode as string | undefined,
     node_info: data.node_info as NodeInfo | null | undefined,
     account_mode: data.account_mode as string | undefined,

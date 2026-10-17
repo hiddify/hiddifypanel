@@ -26,7 +26,6 @@ from loguru import logger
 from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
-from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import AdminUser, Child, ConfigEnum, CustomProxy, Domain, Role, User, hconfig
 from hiddifypanel.panel import hiddify
 
@@ -262,7 +261,7 @@ class BackupRestoreApi(MethodView):
         except Exception as e:
             logger.exception(e)
             abort(500, "Could not prepare the restore")
-        return {"summary": summary, "token": token, "run_url": hurl_for("admin.Backup:restore_run", token=token)}
+        return {"summary": summary, "token": token}
 
 
 class BackupRestoreRunApi(MethodView):

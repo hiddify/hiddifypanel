@@ -1048,6 +1048,9 @@ msgstr ""
 msgid "admin.menu.api"
 msgstr "API"
 
+msgid "admin.menu.broadcast"
+msgstr "Send message"
+
 msgid "admin.menu.config"
 msgstr "Settings"
 
@@ -2267,6 +2270,197 @@ msgstr "Side"
 
 msgid "adminV2.baseConfig.version"
 msgstr "Version"
+
+msgid "adminV2.broadcast.audience.active"
+msgstr "Active"
+
+msgid "adminV2.broadcast.audience.all"
+msgstr "Everyone"
+
+msgid "adminV2.broadcast.audience.expired"
+msgstr "Expired or disabled"
+
+msgid "adminV2.broadcast.audience.hint"
+msgstr ""
+"Only users who started your bot are counted; deleted users never get "
+"messages."
+
+msgid "adminV2.broadcast.audience.offline_1d"
+msgstr "Offline 1 day+"
+
+msgid "adminV2.broadcast.audience.offline_1h"
+msgstr "Offline 1 hour+"
+
+msgid "adminV2.broadcast.audience.offline_1w"
+msgstr "Offline 1 week+"
+
+msgid "adminV2.broadcast.audience.selected"
+msgstr "Selected users"
+
+msgid "adminV2.broadcast.audience.title"
+msgstr "Who gets it"
+
+msgid "adminV2.broadcast.confirm.text"
+msgstr ""
+"It goes to {n} user ({audience}) in Telegram. It can not be taken back. | It"
+" goes to {n} users ({audience}) in Telegram. It can not be taken back."
+
+msgid "adminV2.broadcast.confirm.title"
+msgstr "Send this message?"
+
+msgid "adminV2.broadcast.extra.addImage"
+msgstr "Add an image"
+
+msgid "adminV2.broadcast.extra.badType"
+msgstr "Use a JPEG, PNG or WebP image."
+
+msgid "adminV2.broadcast.extra.imageHint"
+msgstr "Click or drop · JPEG, PNG or WebP · up to 10 MB"
+
+msgid "adminV2.broadcast.extra.removeImage"
+msgstr "Remove the image"
+
+msgid "adminV2.broadcast.extra.title"
+msgstr "Image and options"
+
+msgid "adminV2.broadcast.extra.tooBig"
+msgstr "The image is larger than 10 MB."
+
+msgid "adminV2.broadcast.extra.usage"
+msgstr "Add each user's usage and buttons"
+
+msgid "adminV2.broadcast.extra.usageHint"
+msgstr ""
+"Their remaining data and days, with buttons to their usage and panel, after "
+"your text."
+
+msgid "adminV2.broadcast.format.plain"
+msgstr "Plain"
+
+msgid "adminV2.broadcast.fromUsers"
+msgstr "Message"
+
+msgid "adminV2.broadcast.message.help.html"
+msgstr "Telegram's tags: b, i, u, s, a, code, pre, blockquote, tg-spoiler."
+
+msgid "adminV2.broadcast.message.help.markdown"
+msgstr "**bold** _italic_ __underline__ ~~strike~~ ||spoiler|| `code` > quote"
+
+msgid "adminV2.broadcast.message.help.plain"
+msgstr "Sent exactly as written."
+
+msgid "adminV2.broadcast.message.placeholder.html"
+msgstr "<b>Hello</b> <i>there</i>…"
+
+msgid "adminV2.broadcast.message.placeholder.markdown"
+msgstr "Write your message… **bold**, _italic_, [link](https://…)"
+
+msgid "adminV2.broadcast.message.placeholder.plain"
+msgstr "Write your message…"
+
+msgid "adminV2.broadcast.message.title"
+msgstr "Message"
+
+msgid "adminV2.broadcast.message.toolbar"
+msgstr "Formatting"
+
+msgid "adminV2.broadcast.noBot.action"
+msgstr "Open settings"
+
+msgid "adminV2.broadcast.noBot.text"
+msgstr ""
+"Add your bot's token in the settings; users who start the bot can then get "
+"messages."
+
+msgid "adminV2.broadcast.noBot.title"
+msgstr "The Telegram bot is not set up"
+
+msgid "adminV2.broadcast.preview.bot"
+msgstr "Your bot"
+
+msgid "adminV2.broadcast.preview.botLabel"
+msgstr "bot"
+
+msgid "adminV2.broadcast.preview.buttonLink"
+msgstr "🔗 My panel"
+
+msgid "adminV2.broadcast.preview.buttonUsage"
+msgstr "📊 Usage"
+
+msgid "adminV2.broadcast.preview.empty"
+msgstr "Your message appears here as users will see it."
+
+msgid "adminV2.broadcast.preview.title"
+msgstr "Preview"
+
+msgid "adminV2.broadcast.preview.usage"
+msgstr "Each user's usage goes here"
+
+msgid "adminV2.broadcast.progress.again"
+msgstr "New message"
+
+msgid "adminV2.broadcast.progress.counts"
+msgstr "{sent} of {total} delivered"
+
+msgid "adminV2.broadcast.progress.done"
+msgstr "Sent"
+
+msgid "adminV2.broadcast.progress.errors"
+msgstr "Why {n} were not delivered"
+
+msgid "adminV2.broadcast.progress.failed"
+msgstr "{n} not delivered"
+
+msgid "adminV2.broadcast.progress.sending"
+msgstr "Sending…"
+
+msgid "adminV2.broadcast.send.button"
+msgstr "Send"
+
+msgid "adminV2.broadcast.send.choose"
+msgstr "Choose who gets it"
+
+msgid "adminV2.broadcast.send.failed"
+msgstr "Could not send"
+
+msgid "adminV2.broadcast.send.to"
+msgstr "To {n} user | To {n} users"
+
+msgid "adminV2.broadcast.subtitle"
+msgstr "Reach your users in Telegram, with text, formatting and an image"
+
+msgid "adminV2.broadcast.title"
+msgstr "Send message"
+
+msgid "adminV2.broadcast.tool.bold"
+msgstr "Bold"
+
+msgid "adminV2.broadcast.tool.code"
+msgstr "Code"
+
+msgid "adminV2.broadcast.tool.italic"
+msgstr "Italic"
+
+msgid "adminV2.broadcast.tool.link"
+msgstr "Link"
+
+msgid "adminV2.broadcast.tool.list"
+msgstr "List"
+
+msgid "adminV2.broadcast.tool.pre"
+msgstr "Code block"
+
+msgid "adminV2.broadcast.tool.quote"
+msgstr "Quote"
+
+msgid "adminV2.broadcast.tool.spoiler"
+msgstr "Spoiler"
+
+msgid "adminV2.broadcast.tool.strike"
+msgstr "Strikethrough"
+
+msgid "adminV2.broadcast.tool.underline"
+msgstr "Underline"
 
 msgid "adminV2.common.actions"
 msgstr "Actions"
@@ -5482,6 +5676,9 @@ msgstr "Upload TCP or UDP"
 
 msgid "adminV2.proxy.version"
 msgstr "Version"
+
+msgid "adminV2.proxy.wireguardTemplate"
+msgstr "WireGuard .conf template"
 
 msgid "adminV2.pwa.bannerText"
 msgstr ""
