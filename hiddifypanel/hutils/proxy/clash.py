@@ -125,6 +125,8 @@ def to_clash(proxy, meta_or_normal):
     if proxy["proto"] == "trojan":
         base["password"] = proxy["uuid"]
         base["sni"] = proxy["sni"]
+        # Trojan is always TLS; Mihomo needs tls=true for ech-opts (unlike VLESS which sets it below).
+        base["tls"] = True
     elif proxy["proto"] == "hysteria2":
         base["password"] = proxy["uuid"]
         base["obfs"] = "salamander"
@@ -134,6 +136,9 @@ def to_clash(proxy, meta_or_normal):
         base["uuid"] = proxy["uuid"]
         base["servername"] = proxy["sni"]
         base["tls"] = "tls" in proxy["l3"] or "reality" in proxy["l3"]
+    # Trojan always uses TLS in Mihomo (tls may be omitted); still attach ECH when present.
+    if meta_or_normal == "meta" and proxy.get("ech") and (base.get("tls") or proxy["proto"] == "trojan"):
+        base["ech-opts"] = {"enable": True, "config": proxy["ech"]}
     if proxy["proto"] in ["vless", "vmess"]:
         base["packet-encoding"] = "xudp"
 

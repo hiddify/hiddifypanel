@@ -28,7 +28,7 @@
     "alpn": {{ tls_layer.alpns() }},
     {% if domain.extra.ech_config %}
     "echConfigList": "{{ domain.extra.ech_config }}",
-    {% elif ctx.hconfig.tls_ech_enable and domain.echinfo %}
+    {% elif domain.ech and domain.echinfo %}
     "echConfigList": "{{ domain.echinfo }}",
     {% endif %}
   },

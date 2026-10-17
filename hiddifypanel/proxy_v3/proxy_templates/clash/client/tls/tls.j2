@@ -28,4 +28,16 @@
 {% elif domain.allow_insecure %}
 "skip-cert-verify": true,
 {% endif %}
+{# Same ECH gate as hiddify-core/xray/sublink: per-domain toggle (works for vless and trojan). #}
+{% set ech_cfg = domain.extra.ech_config or domain.echinfo %}
+{% if not domain.is_reality() and (ech_cfg or domain.ech) %}
+"ech-opts": {
+  "enable": true,
+  {% if ech_cfg %}
+  "config": "{{ ech_cfg }}",
+  {% else %}
+  "query-server-name": "{{ domain.sni }}",
+  {% endif %}
+},
+{% endif %}
 {% endif %}

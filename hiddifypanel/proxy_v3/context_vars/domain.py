@@ -43,6 +43,7 @@ class DomainIPVar(BaseModel):
     alias: str = ""
     need_valid_ssl: bool = True
     child_id: int = 0
+    ech: bool = False
     echinfo: str = ""
     resolve_ip: bool = False
     has_server_domain: bool = False
@@ -145,7 +146,8 @@ class DomainIPVar(BaseModel):
             alias=domain_db.alias or domain_db.name,
             need_valid_ssl=bool(domain_db.need_valid_ssl),
             child_id=int(domain_db.child_id or 0),
-            echinfo=_resolve_domain_ech(domain_db),
+            ech=bool(domain_db.ech) and domain_db.mode.is_cdn(),
+            echinfo=_resolve_domain_ech(domain_db, sni=sni),
             cert=cert,
             extra_params=extra,
             resolve_ip=bool(domain_db.resolve_ip),
@@ -345,11 +347,18 @@ def sni_host_ip_extractor(domain_db: Domain) -> _ExtractedSniHost:
     return {"sni": sni, "host": host}
 
 
-def _resolve_domain_ech(domain_db: Domain) -> str:
+def _resolve_domain_ech(domain_db: Domain, *, sni: str = "") -> str:
+    """ECH config for the domain toggle: try hostname then SNI (legacy attach_domain_ech uses SNI)."""
     if not domain_db.ech or not domain_db.mode.is_cdn():
         return ""
 
     hostname = str(domain_db.domain or "").replace("*", hutils.random.get_random_string(5, 15))
-    if not hostname:
-        return ""
-    return hutils.network.get_domain_ech_info(hostname) or ""
+    seen: set[str] = set()
+    for candidate in (hostname, sni):
+        name = str(candidate or "").strip()
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        if ech := hutils.network.get_domain_ech_info(name):
+            return ech
+    return ""

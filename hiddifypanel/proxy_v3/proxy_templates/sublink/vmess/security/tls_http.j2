@@ -16,7 +16,7 @@
         {% set data.tls = 'tls' %}    
         {% if ctx.proxy.domain.extra.ech_config %}
             {% set data.ech = ctx.proxy.domain.extra.ech_config %}
-        {% elif ctx.proxy.domain.echinfo %}
+        {% elif ctx.proxy.domain.ech and ctx.proxy.domain.echinfo %}
             {% set data.ech = ctx.proxy.domain.echinfo %}
         {% endif %}
         {# TLS fragment: real TLS to CDN domains. #}
