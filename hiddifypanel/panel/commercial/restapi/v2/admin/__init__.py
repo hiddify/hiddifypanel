@@ -280,7 +280,8 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
     - Assigned ``mode`` must not exceed the caller's mode.
     - Only ``super_admin`` may assign ``super_admin`` or grant ``can_add_admin``.
     - Callers cannot raise their own ``mode`` / ``can_add_admin``.
-    - Non-super callers are parented under themselves.
+    - Non-super callers create/update others under themselves; self-patches never
+      rewrite ``parent_admin_uuid`` (that would make the admin its own parent).
     """
     from apiflask import abort
 
@@ -291,8 +292,9 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
     actor_mode = _as_admin_mode(actor.mode)
     actor_rank = _ADMIN_MODE_RANK[actor_mode]
     out = dict(payload)
+    self_target = target is not None and getattr(target, "id", None) == getattr(actor, "id", None)
 
-    if target is not None and getattr(target, "id", None) == getattr(actor, "id", None):
+    if self_target:
         if "mode" in out and out["mode"] is not None and _as_admin_mode(out["mode"]) != _as_admin_mode(target.mode):
             abort(403, "Cannot change your own mode")
         if "can_add_admin" in out and out["can_add_admin"] is not None and bool(out["can_add_admin"]) != bool(target.can_add_admin):
@@ -318,7 +320,11 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
                 out["can_add_admin"] = want
 
     if actor_mode != AdminMode.super_admin:
-        out["parent_admin_uuid"] = actor.uuid
+        if self_target:
+            # Keep the existing parent; never set parent_admin_uuid to the actor's own UUID.
+            out.pop("parent_admin_uuid", None)
+        else:
+            out["parent_admin_uuid"] = actor.uuid
 
     return out
 

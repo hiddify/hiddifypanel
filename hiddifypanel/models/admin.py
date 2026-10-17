@@ -152,9 +152,15 @@ class AdminUser(BaseAccount):
                 parent_admin = cls.current_admin_or_owner()
             else:
                 parent_admin = cls.by_uuid(parent, create=False) or cls.current_admin_or_owner()
-            dbuser.parent_admin_id = parent_admin.id
+            # Never make an admin its own parent (detaches from the tree / parent quotas).
+            if parent_admin.id == dbuser.id:
+                if not dbuser.parent_admin_id:
+                    dbuser.parent_admin_id = cls.get_super_admin().id
+            else:
+                dbuser.parent_admin_id = parent_admin.id
         elif dbuser.id != 1 and not dbuser.parent_admin_id:
-            dbuser.parent_admin_id = cls.current_admin_or_owner().id
+            owner = cls.current_admin_or_owner()
+            dbuser.parent_admin_id = owner.id if owner.id != dbuser.id else cls.get_super_admin().id
 
         if row.mode is not None:
             dbuser.mode = row.mode
