@@ -11,7 +11,7 @@
     
 
     {% set fp = ctx.hconfig.utls or "" %}
-    {% if fp and fp!="none" %}
+    {% if fp and fp!="none" and "h3" not in tls_layer.alpns() %}
       "utls": {
         "enabled": true,
         "fingerprint": "{{ fp }}"
