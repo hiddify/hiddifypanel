@@ -233,7 +233,8 @@ def has_permission(model) -> bool:
         return True
     if isinstance(model, AdminUser) and model.parent_admin_id == g.account.id:
         return True
-    elif isinstance(model, User) and model.added_by == g.account.id:
+    # Users of the admin's whole tree, as the users list (users_api) and the users page show them
+    elif isinstance(model, User) and model.added_by in g.account.recursive_sub_admins_ids():
         return True
 
     return False
