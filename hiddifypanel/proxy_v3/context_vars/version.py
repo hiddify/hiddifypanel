@@ -47,7 +47,7 @@ class TemplateVersion:
         return other_version == self.version
 
     def __ne__(self, other: object) -> bool:
-        return self.version != other
+        return self.version != self.str_to_version(other)
 
     def __lt__(self, other: Any) -> bool:
         other_version = self.str_to_version(other)

@@ -66,12 +66,15 @@ class AlpnTags:
     def filter(self, hconfigs: HConfigVar, protocol: ProxyProto) -> AlpnTags:
 
         alpns = copy.deepcopy(self)
-        if not hconfigs.get(ConfigEnum.h2_enable) and self.tls_h2:
-            alpns.tls_h2 = False
-        if not hconfigs.get(ConfigEnum.quic_enable) and self.tls_h3:
-            alpns.tls_h3 = False
-        if not hconfigs.get(ConfigEnum.http_proxy_enable) and self.h1:
-            alpns.h1 = False
+        # The panel's toggles only when there are settings: no settings ({} from the catalog / validation) means no toggle
+        # filter, not "everything disabled". The protocol's own limits below always apply.
+        if hconfigs:
+            if not hconfigs.get(ConfigEnum.h2_enable) and self.tls_h2:
+                alpns.tls_h2 = False
+            if not hconfigs.get(ConfigEnum.quic_enable) and self.tls_h3:
+                alpns.tls_h3 = False
+            if not hconfigs.get(ConfigEnum.http_proxy_enable) and self.h1:
+                alpns.h1 = False
         if protocol == ProxyProto.trojan:
             alpns.h1 = False
         if protocol in {ProxyProto.hysteria, ProxyProto.hysteria2, ProxyProto.tuic}:
