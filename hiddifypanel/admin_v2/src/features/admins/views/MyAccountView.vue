@@ -38,6 +38,15 @@
               @click="copyLink"
             />
           </div>
+          <!-- Install the panel as an app (only when this browser can) -->
+          <div v-if="pwa.available.value" class="account-pwa" role="region" :aria-label="t('pwa.bannerTitle')">
+            <span class="account-pwa__icon" aria-hidden="true"><i class="pi pi-mobile" /></span>
+            <div class="account-pwa__body">
+              <div class="account-pwa__title">{{ t('pwa.bannerTitle') }}</div>
+              <p class="account-pwa__text">{{ t('pwa.bannerText') }}</p>
+            </div>
+            <Button icon="pi pi-download" :label="t('pwa.install')" class="account-pwa__btn" :loading="pwaBusy" @click="installPwa" />
+          </div>
           <header class="account-card__head">
             <span class="account-card__icon"><i class="pi pi-gauge" /></span>
             <div class="flex-1 min-w-0">
@@ -207,6 +216,7 @@
         </template>
       </Dialog>
     </template>
+    <PwaInstallDialog v-model:visible="pwaVisible" manual />
   </div>
 </template>
 
@@ -216,6 +226,8 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import PwaInstallDialog from '@/shared/components/PwaInstallDialog.vue'
+import { usePwaInstall } from '@/shared/composables/usePwaInstall'
 import Message from 'primevue/message'
 import Password from 'primevue/password'
 import Select from 'primevue/select'
@@ -237,6 +249,24 @@ import { adminsApi, meterTone, type MyAccount } from '@/features/admins/api'
 
 
 const { t } = useI18n()
+const pwa = usePwaInstall()
+const pwaVisible = ref(false)
+const pwaBusy = ref(false)
+/** The browser's own install dialog when it allows one (Chrome, Edge, Android); else our dialog with the steps. */
+async function installPwa() {
+  if (!pwa.canPrompt.value) {
+    pwaVisible.value = true
+    return
+  }
+  pwaBusy.value = true
+  try {
+    await pwa.install()
+  } catch {
+    pwaVisible.value = true // the browser refused: show the steps
+  } finally {
+    pwaBusy.value = false
+  }
+}
 const toast = useToast()
 
 const me = ref<MyAccount | null>(null)
@@ -647,6 +677,55 @@ onMounted(load)
 }
 .account-telegram {
   margin-top: 1rem;
+}
+/* Install as an app: a soft primary banner; the button goes under the text on narrow screens */
+.account-pwa {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 30%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--p-primary-color) 12%, var(--p-content-background)), var(--p-content-background));
+}
+.account-pwa__icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 12px;
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+  font-size: 1.3rem;
+}
+.account-pwa__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.account-pwa__title {
+  font-weight: 700;
+}
+.account-pwa__text {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
+}
+.account-pwa__btn {
+  flex: 0 0 auto;
+}
+@media (max-width: 575px) {
+  /* icon and text side by side, the button under them, full width */
+  .account-pwa {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 0.75rem;
+  }
+  .account-pwa__btn {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
 }
 .account-card {
   display: flex;

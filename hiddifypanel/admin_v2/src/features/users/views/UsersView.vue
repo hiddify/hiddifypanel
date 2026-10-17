@@ -368,13 +368,15 @@ const MarkText = defineComponent({
 })
 
 type Row = UserRow & { status_rank: number; usage_ratio: number; last_online_ts: number; owner_key: string }
-type FilterKey = 'all' | UserStatus | 'expiring' | 'data_low' | 'not_started' | 'unseen_week'
+type FilterKey = 'all' | 'online' | UserStatus | 'expiring' | 'data_low' | 'not_started' | 'unseen_week'
 
 const STATUS_ORDER: UserStatus[] = ['active', 'no_data', 'expired', 'disabled']
 /** "Soon": a week left, or 80% of the data used. */
 const SOON_DAYS = 7
 const SOON_USAGE = 0.8
 const WEEK_MS = 7 * 86400_000
+/** Online: connected within this (as the "Online" label, format.ts lastSeen). */
+const ONLINE_MS = 120_000
 const PREFS_KEY = 'hiddify.users.prefs'
 
 const { t, locale } = useI18n()
@@ -517,6 +519,8 @@ const MATCH: Record<FilterKey, (u: Row) => boolean> = {
   not_started: (u) => u.enable && !u.start_date,
   // Connected before, but not in the last 7 days (never connected: see "Not started").
   unseen_week: (u) => u.last_online_ts > 0 && now.value - u.last_online_ts > WEEK_MS,
+  // Connected in the last 2 minutes: the users with the green "Online" dot (format.ts lastSeen).
+  online: (u) => u.last_online_ts > 0 && now.value - u.last_online_ts < ONLINE_MS,
 }
 const FILTER_ICON: Record<FilterKey, string> = {
   all: 'pi pi-users',
@@ -525,10 +529,11 @@ const FILTER_ICON: Record<FilterKey, string> = {
   data_low: 'pi pi-chart-pie',
   not_started: 'pi pi-hourglass',
   unseen_week: 'pi pi-eye-slash',
+  online: 'pi pi-wifi',
 }
-const ALWAYS_SHOWN: FilterKey[] = ['all', 'active', 'expiring', 'data_low']
+const ALWAYS_SHOWN: FilterKey[] = ['all', 'online', 'active', 'expiring', 'data_low']
 const filters = computed(() =>
-  (['all', 'active', 'expiring', 'data_low', 'unseen_week', 'not_started', 'no_data', 'expired', 'disabled'] as FilterKey[])
+  (['all', 'online', 'active', 'expiring', 'data_low', 'unseen_week', 'not_started', 'no_data', 'expired', 'disabled'] as FilterKey[])
     .map((key) => ({ key, icon: FILTER_ICON[key], count: allRows.value.filter(MATCH[key]).length }))
     // The everyday ones always show (even at 0); the rest only when they have users.
     .filter((f) => ALWAYS_SHOWN.includes(f.key) || f.count > 0 || filter.value === f.key),

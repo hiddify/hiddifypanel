@@ -10,6 +10,8 @@ import '@/assets/sakai/tailwind.css'
 import '@/assets/sakai/styles.scss'
 
 import App from './App.vue'
+// Early, to catch the browser's install event (it can come before any view).
+import '@/shared/composables/usePwaInstall'
 import { createAppRouter } from './router'
 import { i18n, primeVueLocale, setLocale } from './core/i18n'
 import { initApiClient, getRouterBase } from './core/api/client'

@@ -120,6 +120,8 @@ export function applyBootstrapShell(data: {
   locale?: string
   panel_version?: string
   panel_logo_url?: string
+  pwa_manifest_url?: string
+  pwa_icon_url?: string
 }) {
   if (data.menu?.length) {
     legacyMenu.value = data.menu
@@ -162,6 +164,17 @@ export function applyBootstrapShell(data: {
   if (data.panel_logo_url) {
     window.__PANEL_LOGO_URL__ = data.panel_logo_url
   }
+  ensureHeadLink('manifest', data.pwa_manifest_url)
+  ensureHeadLink('apple-touch-icon', data.pwa_icon_url)
+}
+
+/** Add `<link rel=…>` when the page has none (the production template has them; the Vite dev page does not). */
+function ensureHeadLink(rel: string, href: string | undefined) {
+  if (!href || typeof document === 'undefined' || document.head.querySelector(`link[rel="${rel}"]`)) return
+  const link = document.createElement('link')
+  link.rel = rel
+  link.href = href
+  document.head.appendChild(link)
 }
 
 export function applyBootstrapResponse(data: Record<string, unknown>) {
@@ -173,6 +186,8 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
     node_info: data.node_info as NodeInfo | null | undefined,
     account_mode: data.account_mode as string | undefined,
     needs_quick_setup: data.needs_quick_setup as boolean | undefined,
+    pwa_manifest_url: data.pwa_manifest_url as string | undefined,
+    pwa_icon_url: data.pwa_icon_url as string | undefined,
     telegram: data.telegram as TelegramInfo | null | undefined,
     locale: data.locale as string | undefined,
     panel_version: data.panel_version as string | undefined,

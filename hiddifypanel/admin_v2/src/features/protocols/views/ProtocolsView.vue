@@ -157,6 +157,7 @@ const GROUP_OF: Record<string, GroupId> = {
   wireguard_enable: 'protocols',
   ssh_server_enable: 'protocols',
   telegram_enable: 'protocols',
+  telegram_webproxy_enable: 'protocols',
   dnstt_enable: 'protocols',
   http_proxy_enable: 'protocols',
   tcp_enable: 'transports',
