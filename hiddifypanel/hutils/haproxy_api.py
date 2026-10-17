@@ -25,7 +25,10 @@ def command(cmd: str, payload: str | None = None, timeout: float = 3) -> str | N
     """
     data = cmd.encode()
     if payload is not None:
-        data += b" <<\n" + payload.strip().encode() + b"\n\n"
+        # The payload ends at the first empty line: one inside it (e.g. between the certificates of a chain, as ACME
+        # returns it) would cut it there and HAProxy would serve the certificate without its chain.
+        body = "\n".join(line for line in payload.splitlines() if line.strip())
+        data += b" <<\n" + body.encode() + b"\n\n"
     else:
         data += b"\n"
     try:

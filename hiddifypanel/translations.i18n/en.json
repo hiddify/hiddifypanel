@@ -790,7 +790,7 @@
       "message": {
         "help": {
           "html": "Telegram's tags: b, i, u, s, a, code, pre, blockquote, tg-spoiler.",
-          "markdown": "**bold** _italic_ __underline__ ~~strike~~ ||spoiler|| `code` > quote",
+          "markdown": "**bold** _italic_ __underline__ ~~strike~~ {'|'}{'|'}spoiler{'|'}{'|'} `code` > quote",
           "plain": "Sent exactly as written."
         },
         "placeholder": {

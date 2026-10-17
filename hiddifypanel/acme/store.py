@@ -138,14 +138,21 @@ def _ok(answer: str | None) -> bool:
 
 def haproxy_install(name: str, cert_pem: str, key_pem: str) -> bool:
     """Put a certificate into the running HAProxy (no reload). False when it could not (the files are used at its
-    next start anyway)."""
+    next start anyway).
+
+    A certificate is loaded (``show ssl cert``) and, to be served for its name, in the folder's crt-list (SNI picks from
+    it). A loaded one missing from the list (e.g. left by an earlier failed install) is added to it: otherwise HAProxy
+    keeps sending its default certificate for that name.
+    """
     cert_path = str(cert_paths_for_domain(name)[0])
     with _SslLock():
         shown = haproxy_api.command("show ssl cert")
-        if shown is None:
+        listed_text = haproxy_api.command(f"show ssl crt-list {CERT_ROOT}")
+        if shown is None or listed_text is None:
             logger.debug(f"certificates: HAProxy not reachable; {name} is loaded at its next start")
             return False
         known = cert_path in shown.splitlines()
+        listed = cert_path in listed_text.splitlines()
         steps: list[tuple[str, str | None]] = []
         if known:
             # Loaded from <name>.crt + <name>.crt.key: the key is updated under its own file name (in the same
@@ -154,13 +161,15 @@ def haproxy_install(name: str, cert_pem: str, key_pem: str) -> bool:
         else:
             steps += [(f"new ssl cert {cert_path}", None), (f"set ssl cert {cert_path}", cert_pem.strip() + "\n" + key_pem.strip())]
         steps.append((f"commit ssl cert {cert_path}", None))
-        if not known:
+        if not listed:
             steps.append((f"add ssl crt-list {CERT_ROOT} {cert_path}", None))
         for cmd, body in steps:
             answer = haproxy_api.command(cmd, body, timeout=10)
             if not _ok(answer):
                 logger.warning(f"certificates: HAProxy refused '{cmd}' for {name}: {answer}")
                 haproxy_api.command(f"abort ssl cert {cert_path}")
+                if not known and not listed:  # the empty slot "new ssl cert" made: a retry starts clean
+                    haproxy_api.command(f"del ssl cert {cert_path}")
                 return False
     logger.info(f"certificates: HAProxy serves the new certificate of {name}")
     return True
