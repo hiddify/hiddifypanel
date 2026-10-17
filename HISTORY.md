@@ -196,6 +196,12 @@ Addresses CWE-78_
 
 #### Other
 
+* Refactor(node): streamline panel mode handling and remove deprecated configurations. 
+  _- Introduced a new `panel_mode` function to determine the current panel mode (`child`, `parent`, or `standalone`).
+- Updated references in various modules to utilize the new `panel_mode` function.
+- Removed deprecated configurations related to panel mode from `ConfigEnum` and adjusted related logic in admin views and API endpoints.
+- Enhanced clarity and maintainability of the codebase by consolidating panel mode checks._
+
 * Feat(proxy_v3): add Hysteria and Tuic protocol templates with SNI and insecure handling. 
 
 * Fix(proxy_v3): handle optional WireGuard client configuration gracefully. 
