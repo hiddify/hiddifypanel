@@ -1,5 +1,5 @@
 {% set domain = domain if domain is defined else ctx.proxy.domain %}
-{% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or "http" %}
+{% set tls_layer = tls_layer | default(ctx.proxy.tls_layer, true) or "http" %}
 
 {% if tls_layer != 'http' %}
 "tls": {
