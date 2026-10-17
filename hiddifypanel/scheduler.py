@@ -38,6 +38,11 @@ def init_app(app):
         name="backup_task",
     )
 
+    from hiddifypanel.hutils import short_link
+
+    # Short links: HAProxy's in-memory map follows redis (expired ones out; live ones back after an HAProxy restart).
+    scheduler.add_job(short_link.sync, trigger=IntervalTrigger(seconds=60), id="short_links_sync", name="short links sync")
+
     scheduler.start()
     _scheduler = scheduler
     logger.info("APScheduler started: jobs={}", [j.id for j in scheduler.get_jobs()])

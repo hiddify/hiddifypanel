@@ -4,3 +4,5 @@ global
     log /opt/hiddify-manager/data/log/system/haproxy.err.log local0 warning
     {% endif %}
     expose-experimental-directives
+    # The panel (group hiddify-panel) changes maps at runtime through this socket, e.g. short links (hutils/short_link.py)
+    stats socket /run/hiddify-haproxy-api.sock mode 660 group hiddify-panel level admin

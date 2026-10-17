@@ -27,31 +27,11 @@ to_gig_d = 1000 * 1000 * 1000
 #     g.temp_admin_link = temp_admin_link
 
 
-# with user panel url format we don't really need this function
-def add_short_link(link: str, period_min: int = 5) -> tuple[str, int]:
-    short_code, expire_date = add_short_link_imp(link, period_min)
-    return short_code, (expire_date - datetime.now()).seconds
+def add_short_link(link: str, period_min: int = 10) -> tuple[str, int]:
+    """A temporary short link (https://<host>/<slug>) to ``link``, served by HAProxy: (slug, seconds left)."""
+    from hiddifypanel.hutils import short_link
 
-
-@cache.cache(ttl=300)
-# TODO: Change ttl dynamically
-def add_short_link_imp(link: str, period_min: int = 5) -> tuple[str, datetime]:
-    # pattern = "\^/([^/]+)(/)?\?\$\ {return 302 " + re.escape(link) + ";}"
-
-    pattern = r"([^/]+)\("
-
-    with open(os.environ["HIDDIFY_CONFIG_PATH"] + "/data/services/nginx/parts/short-link.conf") as f:
-        for line in f:
-            if link in line:
-                return re.search(pattern, line).group(1), datetime.now() + timedelta(minutes=period_min)
-
-    short_code = hutils.random.get_random_string(6, 10).lower()
-    # exec_command(
-    #     f'sudo /opt/hiddify-manager/services/nginx/add2shortlink.sh {link} {short_code} {period_min} &')
-
-    commander(Command.temporary_short_link, url=link, slug=short_code, period=period_min)
-
-    return short_code, datetime.now() + timedelta(minutes=period_min)
+    return short_link.add(link, period_min)
 
 
 def exec_command(cmd, cwd=None):

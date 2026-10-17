@@ -36,6 +36,8 @@ frontend in-httpmode
   http-request set-var(txn.naive_pass) req.hdr(Proxy-Authorization),field(2," "),b64dec,field(2,":") if { req.hdr(Proxy-Authorization) -m found } { var(txn.backend) -m str default_decoy }
   http-request set-var(txn.backend) var(txn.naive_pass),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.naive_pass) -m found }
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
+  
+  http-request redirect location %[path,map_str(virt@short_links)] code 302 if { var(txn.backend) -m str default_decoy } { path,map_str(virt@short_links) -m found }
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
 
