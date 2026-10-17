@@ -3,7 +3,8 @@
 {% set proxy = ctx.proxy %}
 {% set host = proxy.server|string %}
 [Interface]
-# Name = {% include 'sublink/tag' %}
+{% set name |trim_no_line %}{%- include 'sublink/tag' -%}{% endset %}
+# Name = {{ name }}
 Address = {{ ctx.user.wg_ipv4 }}/32{% if ctx.user.wg_ipv6 %}, {{ ctx.user.wg_ipv6 }}/128{% endif %}
 PrivateKey = {{ ctx.user.wg_pk }}
 MTU = 1380

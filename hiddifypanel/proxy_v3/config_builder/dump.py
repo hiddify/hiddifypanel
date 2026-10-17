@@ -382,6 +382,9 @@ CLIENT_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("singbox", "singbox.json"),
 )
 
+# Client WireGuard .conf only exists when the user has a wireguard client core; empty is not a failure.
+_OPTIONAL_EMPTY_CLIENT_CORES = frozenset({"wireguard"})
+
 DEFAULT_CLIENT_UA = "HiddifyNext/3.0.0 (android) like ClashMeta v2ray sing-box"
 
 
@@ -678,7 +681,9 @@ def dump_all_client_configs(
     for core, filename in CLIENT_CONFIG_FILES:
         text = rendered.configs.get(core) or ""
         if not text.strip():
-            dump.missing.append(filename)
+            # No wireguard proxies → no .conf; do not treat that as a dump failure.
+            if core not in _OPTIONAL_EMPTY_CLIENT_CORES:
+                dump.missing.append(filename)
             continue
         out_path = target / filename
         with open(out_path, "w", encoding="utf-8") as fp:
