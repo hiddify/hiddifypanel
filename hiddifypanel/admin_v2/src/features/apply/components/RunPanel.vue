@@ -31,6 +31,9 @@ const MAX_SPANS = 6000
 const QUIET_ACTIONS: ApplyAction[] = ['restart', 'status']
 const QUIET_SECONDS = 6
 const STALL_SECONDS = 15 * 60
+// The stream can be left half-open by a panel restart (no data, no error, no end): after this long without a chunk the
+// log is read once over HTTP, and when that finds lines the stream missed, the stream is replaced.
+const WATCHDOG_MS = 8000
 
 let offset = 0
 const reader = new LogReader(props.file, props.sources)
@@ -39,7 +42,8 @@ let clock: number | undefined
 let startedAt = Date.now()
 let lastGrowth = Date.now()
 let stopped = false
-let failures = 0
+let lastChunk = Date.now() // the last answer of any kind (stream or HTTP)
+let checking = false
 
 const meta = computed(() => ACTION_META[props.action])
 const quiet = computed(() => QUIET_ACTIONS.includes(props.action))
@@ -75,7 +79,7 @@ function finish(ok: boolean) {
 /** A piece of the log, from the live stream or (while it is down) from the reader. */
 function take(chunk: LogChunk) {
   if (stopped) return
-  failures = 0
+  lastChunk = Date.now()
   reconnecting.value = false
   if (!chunk.started) {
     phase.value = 'starting'
@@ -98,6 +102,28 @@ function checkClock() {
   if (stopped) return
   if (phase.value !== 'starting' && quiet.value && Date.now() - lastGrowth > QUIET_SECONDS * 1000 && spans.value.length) return finish(true)
   if (Date.now() - lastGrowth > STALL_SECONDS * 1000) phase.value = 'stalled'
+  if (!checking && Date.now() - lastChunk > WATCHDOG_MS) void checkOverHttp()
+}
+
+/** The stream has been silent: is it the run (a quiet step) or the stream (dead after a restart)? */
+async function checkOverHttp() {
+  checking = true
+  const before = offset
+  try {
+    const chunk = await reader.read({ offset, since: props.started })
+    take(chunk)
+    if (!stopped && chunk.offset > before) restartFeed() // the stream missed lines: it is gone
+  } catch {
+    reconnecting.value = true // nothing answers (the panel is restarting): the clock tries again
+  } finally {
+    checking = false
+  }
+}
+
+function restartFeed() {
+  feed?.stop()
+  feed = null
+  follow()
 }
 
 function follow() {
@@ -107,11 +133,6 @@ function follow() {
     onData: take,
     fallbackMs: 1000,
     fallback: () => reader.read({ offset, since: props.started }),
-    onError: (error) => {
-      if (!error.fallback) return
-      failures++
-      reconnecting.value = failures >= 2
-    },
     // Ended without "Finished!" (the panel went away mid-run): follow again in a moment, from the same offset.
     onEnd: () => {
       if (!stopped) window.setTimeout(() => !stopped && follow(), 1000)
