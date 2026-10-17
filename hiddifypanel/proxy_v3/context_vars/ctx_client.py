@@ -9,7 +9,7 @@ from hiddifypanel.models.custom_proxy import CustomProxyMode, CustomProxyTranspo
 from hiddifypanel.proxy_v3.context_vars.ip import IPVar
 
 from .cert import CertVar
-from .domain import DomainIPVar, expand_sni_domain_servers
+from .domain import DomainIPVar, _keeps_hostname, expand_sni_domain_servers
 from .hconfig import HConfigVar
 from .platform import PlatformVar
 from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar
@@ -88,7 +88,8 @@ def _ip_mode_domain_rank(domain: DomainIPVar) -> tuple[int, str]:
 def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIPVar]) -> list[DomainIPVar]:
     """IP-mode clients connect by address:port; emit one entry per distinct IP.
 
-    Domains with a bound ``server_domain`` or ``cdn_ip`` keep that address and are not expanded.
+    Domains with a bound ``server_domain`` or ``cdn_ip`` keep that address, and domains with ``resolve_ip`` off keep their
+    hostname: neither is expanded.
     """
     # A better-ranked domain still claims a shared IP, but the entry stays where the
     # admin put that domain in the list (not alphabetical).
@@ -97,7 +98,9 @@ def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIP
     kept: list[tuple[int, DomainIPVar]] = []
     ranked = sorted(enumerate(domains), key=lambda item: (*_ip_mode_domain_rank(item[1]), item[0]))
     for index, domain in ranked:
-        if domain.keeps_dst_server:
+        # A bound server domain / CDN IP, or "Resolve IP" off on a dialable hostname (the client resolves it, as for
+        # the other proxies in expand_sni_domain_servers): kept as it is, not replaced by its IPs.
+        if domain.keeps_dst_server or _keeps_hostname(domain):
             kept.append((index, domain))
             continue
         bound = proxy.with_domain(domain)
