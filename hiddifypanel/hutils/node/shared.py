@@ -7,7 +7,7 @@ from typing import Any
 from flask import copy_current_request_context
 from loguru import logger
 
-from hiddifypanel.models import ConfigEnum, PanelMode, hconfig
+from hiddifypanel.models import ConfigEnum, hconfig
 from hiddifypanel.panel.commercial.restapi.v2.panel.schema import PanelInfoOutputSchema, PongOutputSchema
 from hiddifypanel.panel.commercial.restapi.v2.parent.schema import UsageInputOutputSchema
 
@@ -15,11 +15,20 @@ from .api_client import NodeApiClient, NodeApiErrorSchema
 
 
 def is_child() -> bool:
-    return hconfig(ConfigEnum.panel_mode) == PanelMode.child
+    """A node: it has a parent panel."""
+    return bool(hconfig(ConfigEnum.parent_panel))
 
 
 def is_parent() -> bool:
-    return hconfig(ConfigEnum.panel_mode) == PanelMode.parent
+    """A parent: it has nodes of its own."""
+    from hiddifypanel.models import Child, ChildMode
+
+    return not is_child() and Child.query.filter(Child.id != 0, Child.mode != ChildMode.parent).first() is not None
+
+
+def panel_mode() -> str:
+    """`child`, `parent` or `standalone`, as the admin UI reads it."""
+    return "child" if is_child() else "parent" if is_parent() else "standalone"
 
 
 # region usage

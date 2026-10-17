@@ -394,9 +394,9 @@ def sync_builtin_outbounds(child_id: int = 0, *, commit: bool = True) -> int:
 def _is_child_panel() -> bool:
     """A node: its outbounds come from the parent panel and are not edited here."""
     try:
-        from hiddifypanel.models import ConfigEnum, PanelMode, hconfig
+        from hiddifypanel.hutils.node.shared import is_child
 
-        return hconfig(ConfigEnum.panel_mode) == PanelMode.child
+        return is_child()
     except Exception:
         return False
 

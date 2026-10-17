@@ -5,7 +5,7 @@ from hiddifypanel import g
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
-from hiddifypanel.models import Child, ChildMode, ConfigEnum, PanelMode, set_hconfig
+from hiddifypanel.models import Child, ChildMode, ConfigEnum, set_hconfig
 
 
 class UnregisterParentApi(MethodView):
@@ -17,7 +17,6 @@ class UnregisterParentApi(MethodView):
         parent = g.node
         logger.info(f"Parent {parent.unique_id} removed this node: switching to standalone")
         set_hconfig(ConfigEnum.parent_panel, "", commit=False)
-        set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone, commit=False)
         # The parent's row on this node (mode=parent) is what authenticates it; drop it too.
         if parent is not None and parent.id != 0 and parent.mode == ChildMode.parent:
             Child.query.filter(Child.id == parent.id).delete(synchronize_session=False)

@@ -172,11 +172,7 @@ def save_config_form(form) -> SettingsSaveResult:
             sucess, msg = False, str(e)
         if not sucess:
             result.warnings.append(str(_("child.register-failed") + f": {msg}"))
-            set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
-        else:
-            set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
-    elif hconfig(ConfigEnum.parent_panel) and hconfig(ConfigEnum.panel_mode) != PanelMode.parent:
-        set_hconfig(ConfigEnum.panel_mode, PanelMode.standalone)
+            set_hconfig(ConfigEnum.parent_panel, "")
 
     cache.invalidate_all_cached_functions()
     # hutils.proxy.get_proxies.invalidate_all()

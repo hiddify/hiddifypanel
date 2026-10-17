@@ -178,8 +178,7 @@ class ConfigEnum(metaclass=FastEnum):
     parent_domain = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
     parent_admin_proxy_path = _StrConfigDscr(ConfigCategory.hidden)  # deprecated
 
-    # the panel mode could be one of these: "parent", "child", "standalone"
-    # this config value would be 'standalone' by default. and would be set by panel itself
+    # deprecated: derived instead (hutils.node.panel_mode): a node has parent_panel, a parent has nodes
     panel_mode = _TypedConfigDscr(PanelMode, ConfigCategory.hidden, hide_in_virtual_child=True)
     # endregion
 

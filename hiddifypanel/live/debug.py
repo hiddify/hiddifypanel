@@ -17,7 +17,8 @@ MAX_FEED_LIMIT = 5000
 def _panel_mode() -> str:
     from hiddifypanel.hutils.node import shared
 
-    return "node" if shared.is_child() else "parent" if shared.is_parent() else "standalone"
+    mode = shared.panel_mode()
+    return "node" if mode == "child" else mode
 
 
 def hello() -> dict[str, Any]:

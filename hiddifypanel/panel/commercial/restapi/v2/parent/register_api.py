@@ -9,7 +9,7 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
 from hiddifypanel.hutils.node import async_job, endpoints, steplog
-from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, PanelMode, Role, User, hconfig, set_hconfig
+from hiddifypanel.models import AdminUser, Child, ConfigEnum, Domain, Role, User, hconfig, set_hconfig
 from hiddifypanel.proxy_v3 import outbounds as ob
 
 from .schema import PanelHostSchema, RegisterInputSchema, RegisterOutputSchema, RegisterUsersInputSchema
@@ -70,10 +70,6 @@ class RegisterApi(MethodView):
             db.session.rollback()
             logger.exception(f"[register {reg or '-'} parent] storing the node's data failed")
             abort(400, str(err))
-
-        if not hutils.node.is_parent():
-            logger.info(f"[register {reg or '-'} parent] setting panel to parent mode")
-            set_hconfig(ConfigEnum.panel_mode, PanelMode.parent)
 
         with steplog.step(reg, "parent", "build the answer for the node", users_via_ws=data.ws_sync):
             cache.invalidate_all_cached_functions()

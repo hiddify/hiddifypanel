@@ -9,7 +9,7 @@ from hiddifypanel import hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.hutils.node import async_job, endpoints, steplog
-from hiddifypanel.models import Child, ChildMode, ConfigEnum, PanelMode, Role, hconfig, set_hconfig
+from hiddifypanel.models import Child, ChildMode, ConfigEnum, Role, hconfig, set_hconfig
 
 from .schema import RegisterWithParentInputSchema
 
@@ -58,8 +58,7 @@ class RegisterWithParentApi(MethodView):
         with steplog.step(reg, "node", "leave the old relations", was_parent=was_parent, old_parents=len(old_parent_ids)):
             if switching:
                 self._leave_old_relations(was_parent, old_parent_ids)
-        set_hconfig(ConfigEnum.panel_mode, PanelMode.child)
-        logger.info(f"[register {reg or '-'} node] panel mode is now child")
+        logger.info(f"[register {reg or '-'} node] panel is now a node of {parent_host}")
         return {"status": 200, "msg": "ok"}
 
     @staticmethod
