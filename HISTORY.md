@@ -73,6 +73,14 @@
 
 #### Fix
 
+* Implement watchdog mechanism for stream monitoring and enhance log handling during panel restarts. 
+
+* Enhance URL handling for IPv6 addresses and improve logging error handling. 
+
+* Update log file paths for consistency across the application. 
+
+* Update lock file path in apply_api.py for consistency. 
+
 * Update ECH configuration handling in TLS templates to prioritize extra configuration over existing settings. 
 
 * Add remarks for usage and package status in proxy configuration template. 
@@ -175,6 +183,8 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: implement UniqueTags class for managing unique outbound tags across configurations. 
 
 * Support short link directly in haproxy deprecating nginx. 
 
