@@ -244,11 +244,9 @@ def reserved_ports(child_id: int, *, kind: str, domain_id: int | None = None) ->
     for key in OTHER_SERVICE_PORTS:
         for p in _ports(hconfig(key)):
             used.setdefault(p, f"setting:{key.name}")
-    # The gateway ports the panel itself serves (settings), for both kinds.
-    for p in _ports(hconfig(ConfigEnum.tls_ports)) | {GATEWAY_CLIENT_TLS_PORT}:
-        used.setdefault(p, "gateway:tls")
-    for p in _ports(hconfig(ConfigEnum.http_ports)) | {GATEWAY_CLIENT_HTTP_PORT}:
-        used.setdefault(p, "gateway:http")
+    # The gateway ports the panel itself serves (443 / 80; the old tls_ports / http_ports settings are not read).
+    used.setdefault(GATEWAY_CLIENT_TLS_PORT, "gateway:tls")
+    used.setdefault(GATEWAY_CLIENT_HTTP_PORT, "gateway:http")
     # A TLS port of one domain can not be the HTTP port of another one (same server), and the other way round.
     for d in Domain.query.filter(Domain.child_id == child_id).all():
         if d.id == domain_id:

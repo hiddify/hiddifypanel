@@ -683,9 +683,8 @@ def all_public_ports():
     if hconfig(ConfigEnum.wireguard_enable):
         add(udp_ports, ConfigEnum.wireguard_port, "wireguard")
 
-    add(tcp_ports, ConfigEnum.tls_ports, "tls")
-    add(udp_ports, ConfigEnum.tls_ports, "quic")
-    add(tcp_ports, ConfigEnum.http_ports, "http")
+    # The gateway listens on 80 / 443 only (above); the old tls_ports / http_ports settings (hidden) would still open the
+    # ports a server had in them. A domain's own ports are added below.
 
     child_id = Child.current().id
     domains = Domain.query.filter(Domain.child_id == child_id).all()

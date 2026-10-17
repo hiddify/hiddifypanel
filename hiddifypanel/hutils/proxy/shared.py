@@ -257,14 +257,14 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
                     #     continue
                     if proxy.proto in [ProxyProto.ssh]:
                         if hconfigs.get(ConfigEnum.ssh_use_tls_port):
-                            ports = ["443"] + [p.strip() for p in str(hconfigs.get(ConfigEnum.tls_ports) or "").split(",") if p.strip()]
-                            options = [{"pport": p} for p in dict.fromkeys(ports)]
+                            # The gateway's TLS port: the old tls_ports setting (hidden) is not read any more
+                            options = [{"pport": "443"}]
                         else:
                             options = [{"pport": hconfigs[ConfigEnum.ssh_server_port]}]
                     elif proxy.proto in [ProxyProto.wireguard]:
                         if hconfigs.get(ConfigEnum.wireguard_use_quic_port):
-                            ports = ["443"] + [p.strip() for p in str(hconfigs.get(ConfigEnum.tls_ports) or "").split(",") if p.strip()]
-                            options = [{"pport": p} for p in dict.fromkeys(ports)]
+                            # The gateway's TLS port: the old tls_ports setting (hidden) is not read any more
+                            options = [{"pport": "443"}]
                         else:
                             options = [{"pport": hconfigs[ConfigEnum.wireguard_port]}]
                     elif proxy.transport in [ProxyTransport.shadowsocks]:
@@ -284,7 +284,9 @@ def get_valid_proxies(domains: list[Domain]) -> list[dict]:
             else:
                 protos = ["http", "tls"] if hconfigs.get(ConfigEnum.http_proxy_enable) else ["tls"]
                 for t in protos:
-                    for port in hconfigs[ConfigEnum.http_ports if t == "http" else ConfigEnum.tls_ports].split(","):
+                    # The gateway's ports (a domain's own ports are redirected to them); the old tls_ports / http_ports
+                    # settings (hidden) are not read any more.
+                    for port in ["80"] if t == "http" else ["443"]:
                         phttp = port if t == "http" else None
                         ptls = port if t == "tls" else None
                         if phttp and len(allphttp) and phttp not in allphttp:

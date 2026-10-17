@@ -1,7 +1,7 @@
 {# rust-rpxy-l4 server base — TLS/QUIC SNI gateway to local proxy ports #}
 
-{% set tls_ports = (["443"] + ctx.hconfig.tls_ports.split(',')) | map('trim') | list | unique %}
-#listen_port = {{ tls_ports[0] }}
+{#- Always 443: a domain's own TLS port reaches it through the firewall's redirect (redirect_domain_ports); the old
+    tls_ports setting (hidden) is not read any more. #}
 listen_port = 443
 listen_ipv6 = {{ 'true' if ctx.hconfig.ipv6_enabled else 'false' }}
 tcp_backlog = 4096

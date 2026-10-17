@@ -2,9 +2,8 @@
 # SNI Proxy Frontend
 # =====================
 frontend https-in
-    {% for port in (["443"] + ctx.hconfig.tls_ports.split(',')) | unique %}
-    bind :{{ port }}{% if ctx.hconfig.ipv6_enabled %},:::{{ port }} v4v6{% endif %} tfo
-    {% endfor %}
+    {#- 443 only: a domain's own TLS port is redirected to it by the firewall (the old tls_ports setting is not read) #}
+    bind :443{% if ctx.hconfig.ipv6_enabled %},:::443 v4v6{% endif %} tfo
     tcp-request inspect-delay 5s
     tcp-request content accept if { req.ssl_hello_type 1 }
 

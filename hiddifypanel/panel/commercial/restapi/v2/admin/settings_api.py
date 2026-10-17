@@ -36,8 +36,6 @@ ESSENTIAL_KEYS = frozenset(
         ConfigEnum.block_iran_sites,
         ConfigEnum.decoy_domain,
         ConfigEnum.telegram_bot_token,
-        ConfigEnum.tls_ports,
-        ConfigEnum.http_ports,
         ConfigEnum.warp_mode,
         ConfigEnum.package_mode,
     }
