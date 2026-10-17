@@ -14,7 +14,9 @@
         {% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or 'http' %}
         {% set data.alpn = ",".join(tls_layer.alpns()) %}
         {% set data.tls = 'tls' %}    
-        {% if ctx.proxy.domain.echinfo %}
+        {% if ctx.proxy.domain.extra.ech_config %}
+            {% set data.ech = ctx.proxy.domain.extra.ech_config %}
+        {% elif ctx.proxy.domain.echinfo %}
             {% set data.ech = ctx.proxy.domain.echinfo %}
         {% endif %}
         {# TLS fragment: real TLS to CDN domains. #}

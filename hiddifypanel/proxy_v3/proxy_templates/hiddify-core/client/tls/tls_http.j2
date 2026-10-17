@@ -37,7 +37,13 @@
 
     {%endif%}
 
-    {% if ctx.hconfig.tls_ech_enable and domain.mode=="cdn" %}
+    
+    {% if domain.extra.ech_config %}
+    "ech": {
+      "enabled": true,
+      "query_server_name": "{{ domain.extra.ech_config.split('+')[0] | trim }}"
+    },
+    {% elif ctx.hconfig.tls_ech_enable and domain.mode=="cdn" %}
     "ech": {
       "enabled": true,
       {% if domain.echinfo %}

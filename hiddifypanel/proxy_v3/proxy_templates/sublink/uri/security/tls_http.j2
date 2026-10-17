@@ -18,7 +18,9 @@
             {% set qp.pcs = ",".join(domain.cert.pinnedPeerCertSha256)%}
         {% endif %}
 
-        {% if domain.echinfo %}
+        {% if domain.extra.ech_config %}
+            {% set qp.ech = domain.extra.ech_config %}
+        {% elif domain.echinfo %}
             {% set qp.ech = domain.echinfo %}
         {% endif %}
         {# TLS fragment: real TLS to CDN domains. #}
