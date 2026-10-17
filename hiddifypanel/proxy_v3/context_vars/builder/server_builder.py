@@ -65,7 +65,7 @@ def get_server_base(child_id: int) -> ServerBase:
 
     proxies: list[ServerBuilderProxyVar] = get_server_builder_proxies(child_id)
     for proxy in proxies:
-        proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy, reality_enable=bool(hconfig.reality_enable))]
+        proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy)]
     proxies = [b for b in proxies if filter_server_proxy(b)]
     return ServerBase(
         domains=domains,

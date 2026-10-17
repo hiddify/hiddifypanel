@@ -31,7 +31,11 @@ frontend in-httpmode
 
   mode http
   # ACME HTTP-01 challenges (panel: hiddifypanel/acme/challenges.py fills this in-memory map only while an order is
-  # pending): answered here, before any routing, for every domain and IP
+  # pending): answered here, before any routing, for every domain and IP — including hosts in http_domain
+  # (anytls/naive/hysteria/… SNI decoys). If this ran after map_dom, those hosts would miss the challenge.
+  http-request return status 200 content-type text/plain lf-string "%[path,map_str(virt@acme_challenges)]" if { path,map_str(virt@acme_challenges) -m found }
+  http-request redirect location %[path,map_str(virt@short_links)] code 302 if { path,map_str(virt@short_links) -m found }
+
   http-request set-var(txn.backend) str(default_decoy)
   http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},default_decoy)
   http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { req.hdr(x-api-key) -m found } { var(txn.backend) -m str default_decoy }
@@ -39,8 +43,6 @@ frontend in-httpmode
   http-request set-var(txn.backend) var(txn.naive_pass),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.naive_pass) -m found }
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
   
-  http-request redirect location %[path,map_str(virt@short_links)] code 302 if { var(txn.backend) -m str default_decoy } { path,map_str(virt@short_links) -m found }
-  http-request return status 200 content-type text/plain lf-string "%[path,map_str(virt@acme_challenges)]" if { var(txn.backend) -m str default_decoy } { path,map_str(virt@acme_challenges) -m found }
 
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
