@@ -66,9 +66,10 @@ class WireguardApi(DriverABS):
             sections = line.split()
             if len(sections) < 3:
                 continue
+            # `wg show <if> transfer`: <pubkey> <received> <sent>, from the server's side
             data[sections[0]] = {
-                "down": int(sections[1]),
-                "up": int(sections[2]),
+                "up": int(sections[1]),  # received by the server = the client's upload
+                "down": int(sections[2]),  # sent by the server = the client's download
             }
 
         return data
@@ -81,6 +82,7 @@ class WireguardApi(DriverABS):
         return {}
 
     def __sync_local_usages(self) -> dict:
+        had_state = bool(self.get_redis_client().exists(USERS_USAGE))  # not the first read since redis was empty
         local_usage = self.__get_local_usage()
         wg_usage = self.__get_wg_usages()
 
@@ -95,6 +97,8 @@ class WireguardApi(DriverABS):
             uuid = uuid_map.get(wg_pub)
 
             if not local_usage.get(wg_pub):
+                if had_state and uuid:  # a peer added since the last read (a re-enabled user): its counters started at 0
+                    res[uuid] = {"up": wg_usage["up"], "down": wg_usage["down"]}
                 local_usage[wg_pub] = {"uuid": uuid, "usage": wg_usage}
                 continue
             res[uuid] = self.calculate_reset(local_usage[wg_pub]["usage"], wg_usage)
@@ -105,15 +109,12 @@ class WireguardApi(DriverABS):
         return res
 
     def calculate_reset(self, last_usage: dict, current_usage: dict) -> dict:
-        res = {
-            "up": current_usage["up"] - last_usage["up"],
-            "down": current_usage["down"] - last_usage["down"],
-        }
-
-        if res["up"] < 0:
-            res["up"] = 0
-        if res["down"] < 0:
-            res["down"] = 0
+        """Bytes since the last read; a smaller counter means the interface was recreated and counted again from 0 (as
+        the telemt driver does)."""
+        res = {}
+        for key in ("up", "down"):
+            delta = current_usage[key] - last_usage[key]
+            res[key] = delta if delta >= 0 else current_usage[key]
         return res
 
     def get_enabled_users(self):

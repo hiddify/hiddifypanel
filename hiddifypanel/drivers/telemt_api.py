@@ -109,8 +109,8 @@ class TelemtApi(DriverABS):
         return [u for raw in data if (u := TelemtUser.parse(raw))]
 
     def __get_tg_usages(self) -> dict[str, int]:
-        """Total octets per username; users at zero have not been seen yet, so they are left out."""
-        return {u.username: u.total_octets for u in self.__get_tg_users() if u.total_octets > 0}
+        """Total octets per username; zero too: it is the baseline of the next increment (a new user, or after a restart)."""
+        return {u.username: u.total_octets for u in self.__get_tg_users()}
 
     def __get_local_usage(self) -> dict[str, LocalUsage]:
         raw = cast("bytes | None", self.get_redis_client().get(USERS_USAGE))
