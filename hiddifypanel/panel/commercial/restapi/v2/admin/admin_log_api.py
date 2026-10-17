@@ -26,7 +26,7 @@ class AdminLogApi(MethodView):
         if not file_name or not _LOG_NAME_RE.match(file_name):
             abort(400, "Parameter issue: 'file'")
 
-        log_dir = os.path.realpath(os.path.join(app.config["HIDDIFY_CONFIG_PATH"], "data/log/system"))
+        log_dir = os.path.realpath(os.path.join(app.config["HIDDIFY_CONFIG_PATH"], "data/log"))
         file_path = os.path.realpath(os.path.join(log_dir, os.path.basename(file_name)))
         if os.path.commonpath([log_dir, file_path]) != log_dir or not os.path.isfile(file_path):
             abort(404, "Invalid log file")

@@ -1,7 +1,7 @@
 """Apply page API (admin v2, super admins): apply configs, reinstall, update, restart and check status,
 with the run's live progress read from its log.
 
-The scripts write ``####percent####title####text####`` lines into ``data/log/system/<name>.log`` and end with
+The scripts write ``####percent####title####text####`` lines into ``data/log/<name>.log`` and end with
 ``----Finished!----``; ``GET apply/log/`` hands the page what is new since its last read, plus the parsed progress.
 """
 
@@ -43,7 +43,7 @@ ACTIONS: dict[str, dict[str, Any]] = {  # "lock": the installer lock the run hol
 
 
 def log_dir() -> Path:
-    return Path(os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/")) / "data" / "log" / "system"
+    return Path(os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/")) / "data" / "log"
 
 
 def _lock_held(name: str) -> bool:
@@ -291,13 +291,22 @@ class ApplyLogApi(MethodView):
 
 
 def _clear(path: Path) -> bool:
-    """Empty a log in place (the writers keep their file). False when the file can not be written."""
+    """Empty a log in place (the writers keep their file). Root-owned logs (the services' and the installer's) are
+    emptied through the commander (sudo). False when it could not be emptied."""
     try:
         with path.open("r+b") as fh:
             fh.truncate(0)
         return True
+    except PermissionError:
+        pass
     except OSError as e:
         logger.warning(f"Could not clear {path.name}: {e}")
+        return False
+    try:
+        commander(Command.clear_log, run_in_background=False, name=path.name)
+        return True
+    except Exception as e:
+        logger.warning(f"Could not clear {path.name} through the commander: {e}")
         return False
 
 

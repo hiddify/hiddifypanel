@@ -25,6 +25,7 @@ class Command(StrEnum):
     port_owner = "port-owner"
     apply_users = "apply-users"
     update_wg_usage = "update-wg-usage"
+    clear_log = "clear-log"
 
 
 def commander(command: Command, run_in_background=True, **kwargs: str | int) -> str | None:
@@ -59,6 +60,11 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
         base_cmd.extend(["--port", port])
     elif command == Command.update_usage:
         base_cmd.append("update-usage")
+    elif command == Command.clear_log:
+        name = str(kwargs.get("name") or "")
+        if not name or name != os.path.basename(name):
+            raise ValueError("Invalid log name for the clear-log command")
+        base_cmd.extend(["clear-log", "--name", name])
     elif command == Command.port_owner:
         port = str(kwargs.get("port"))
         if not port.isnumeric():
