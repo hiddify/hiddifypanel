@@ -254,42 +254,26 @@ def init_app(app):
         """Alias for sync-builtin-configs."""
         _run_sync_builtin_catalog(child_id)
 
-    @app.cli.command("sync-tls-store")
-    @click.option("--domain", "-d", default=None, help="Sync by domain hostname")
-    @click.option("--domain-id", default=None, type=int, help="Sync by domain.id")
-    @click.option("--child-id", "-c", default=0, show_default=True, type=int)
-    def sync_tls_store(domain, domain_id, child_id):
-        """Import TLS certificates from /opt/hiddify-manager/data/ssl/ into tls_store."""
-        from hiddifypanel.proxy_v3.tls_store_sync import (
-            sync_tls_store_all,
-            sync_tls_store_for_domain,
-            sync_tls_store_for_domain_id,
-        )
+    @app.cli.command("export-certificates")
+    def export_certificates():
+        """Write tls_store to data/cert for HAProxy: a self-signed certificate for each domain with none, removed domains'
+        files deleted."""
+        from hiddifypanel.acme import store
 
-        if domain_id is not None:
-            row = sync_tls_store_for_domain_id(domain_id)
-            if row:
-                host = row.domain.domain if row.domain else domain_id
-                click.echo(
-                    f"synced certificate for domain_id={row.domain_id} ({host}) "
-                    f"issuer={row.issuer} self_signed={bool(row.self_signed)}"
-                )
-            else:
-                click.echo(f"no certificate files found for domain_id={domain_id}", err=True)
-            return
-        if domain:
-            row = sync_tls_store_for_domain(domain, child_id=child_id)
-            if row:
-                host = row.domain.domain if row.domain else domain
-                click.echo(
-                    f"synced certificate for domain_id={row.domain_id} ({host}) "
-                    f"issuer={row.issuer} self_signed={bool(row.self_signed)}"
-                )
-            else:
-                click.echo(f"no certificate files found for {domain}", err=True)
-            return
-        count = sync_tls_store_all(child_id)
-        click.echo(f"synced {count} tls_store row(s)")
+        click.echo(f"certificates: {store.export_all(install=False)}")
+
+    @app.cli.command("issue-certificates")
+    @click.option("--force", is_flag=True, help="Also the domains waiting after a failure or a rate limit")
+    @click.option("--first", is_flag=True, help="Only when no domain has a real certificate yet (the installer waits for it)")
+    @click.option("--no-apply", is_flag=True, help="Do not rebuild the cores' configs when a certificate changed")
+    def issue_certificates(force: bool, first: bool, no_apply: bool):
+        """Get (or renew) the domains' certificates from Let's Encrypt / ZeroSSL now. Exit code 3: a certificate changed."""
+        from hiddifypanel.acme import renew
+
+        summary = renew.run(force=force, wait_lock=True, apply=not no_apply, only_without_valid=first)
+        click.echo(json.dumps(summary.to_dict(), indent=2))
+        if summary.changed:
+            raise SystemExit(3)
 
     @app.cli.command("reset-wip-proxy-db")
     @click.option("--child-id", "-c", default=0, show_default=True, type=int)
@@ -384,7 +368,7 @@ def init_app(app):
     @click.option("--no-invalidate-cache", is_flag=True, help="Default now; kept for older scripts")
     @click.option("--cores", default="", help="Comma-separated cores to render (default: all)")
     def dump_server_configs(output_dir, child_id, refresh_db, compact, invalidate_cache, no_invalidate_cache, cores):
-        """Render and write xray, hiddify-core, haproxy, and nginx server configs to a directory."""
+        """Render and write xray, hiddify-core, haproxy, and the other server configs to a directory."""
         from pathlib import Path
 
         from hiddifypanel.proxy_v3.config_builder.dump import dump_all_server_configs

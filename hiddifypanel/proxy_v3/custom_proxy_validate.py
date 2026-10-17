@@ -108,7 +108,7 @@ def _singbox_skip_warning(label: str, data: dict[str, Any], template: str) -> st
 
 SAMPLE_UUID = "00000000-0000-0000-0000-000000000001"
 
-SERVER_BUNDLE_CORES: tuple[str, ...] = ("hiddify-core", "xray", "haproxy", "nginx", "rust-rpxy-l4")
+SERVER_BUNDLE_CORES: tuple[str, ...] = ("hiddify-core", "xray", "haproxy", "rust-rpxy-l4")
 
 
 def _keep_common_proxy_client_core(is_common_proxy: bool, core_name: str, child_id: int) -> bool:
@@ -1451,7 +1451,7 @@ def preview_base_config_content(
             return {"ok": False, "rendered": "", "parsed": None, "skipped": False, "error": str(e), "warnings": []}
 
     base = _extract_block_body(content, "base_config") or content
-    as_json = core not in ("haproxy", "nginx", "rust-rpxy-l4")
+    as_json = core not in ("haproxy", "rust-rpxy-l4")
     section = _render_section(base, child_id, ctx, as_json_object=as_json)
     parsed = section.get("parsed")
     if isinstance(parsed, dict):
@@ -1969,7 +1969,7 @@ def _render_base_section(
 ) -> dict[str, Any]:
     base = resolve_base_config_content(child_id, side, core, version)
     base = _extract_block_body(base, "base_config") or base
-    as_json = core not in ("haproxy", "nginx", "rust-rpxy-l4")
+    as_json = core not in ("haproxy", "rust-rpxy-l4")
     section = _render_section(base, child_id, context, as_json_object=as_json)
     parsed = section.get("parsed")
     if isinstance(parsed, dict):

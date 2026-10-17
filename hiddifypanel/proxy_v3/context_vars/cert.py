@@ -74,21 +74,15 @@ class CertVar(BaseModel):
         return cls.from_tls_store(resolve_tls_store(domain_db), verify_peer=verify_peer)
 
 
-def resolve_tls_store(domain_db: Domain, *, auto_sync: bool = True) -> TlsStore | None:
-    """Load or sync the TlsStore row for a domain."""
+def resolve_tls_store(domain_db: Domain) -> TlsStore | None:
+    """The TlsStore row of a domain (the panel keeps the certificates there)."""
     linked = domain_db.certificate
     if isinstance(linked, TlsStore):
         return linked
     domain_id = domain_db.id
     if not isinstance(domain_id, int):
         return None
-    row = TlsStore.by_domain_id(domain_id)
-    if row is not None or not auto_sync:
-        return row
-
-    from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_for_domain_id
-
-    return sync_tls_store_for_domain_id(domain_id, commit=True)
+    return TlsStore.by_domain_id(domain_id)
 
 
 def _domain_hostname(domain: Domain) -> str:

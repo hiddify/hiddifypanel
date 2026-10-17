@@ -140,7 +140,7 @@ class ServerCore(JinjaEnum):
     xray = "xray"
     hiddify_core = "hiddify-core"
     haproxy = "haproxy"
-    nginx = "nginx"
+    nginx = "nginx"  # deprecated (v14: nginx is removed); kept so old rows still load
     rust_rpxy_l4 = "rust-rpxy-l4"
     dns_gateway = "dns_gateway"
     dns_proxy = "dns_proxy"
@@ -176,7 +176,7 @@ class TemplateCore(JinjaEnum):
     sublink = "sublink"
     haproxy = "haproxy"
     clash = "clash"
-    nginx = "nginx"
+    nginx = "nginx"  # deprecated (v14: nginx is removed); kept so old rows still load
     rust_rpxy_l4 = "rust-rpxy-l4"
     dnstt = "dnstt"
     dns_gateway = "dns_gateway"

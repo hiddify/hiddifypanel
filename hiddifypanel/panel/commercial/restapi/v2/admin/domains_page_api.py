@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import json
 import re
-import threading
-import time
 from typing import Any
 
 from apiflask import abort
@@ -20,6 +18,9 @@ from loguru import logger
 from sqlalchemy.orm import selectinload
 
 from hiddifypanel import g, hutils
+from hiddifypanel.acme import renew as acme_renew
+from hiddifypanel.acme import state as acme_state
+from hiddifypanel.acme import store as acme_store
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
@@ -28,8 +29,8 @@ from hiddifypanel.models.domain import normalize_domain_name
 from hiddifypanel.models.tls_store import TlsStore
 from hiddifypanel.panel import domain_rules
 from hiddifypanel.proxy_v3.context_vars.ports import GATEWAY_CLIENT_HTTP_PORT, GATEWAY_CLIENT_TLS_PORT
-from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG, list_domain_proxy_options, proxy_mode_group
 from hiddifypanel.proxy_v3.domain_mode_filter import domain_modes_use_reality
+from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG, list_domain_proxy_options, proxy_mode_group
 
 APPLY = "apply_config"
 ROLES = {Role.super_admin, Role.admin}
@@ -48,7 +49,6 @@ OTHER_SERVICE_PORTS = (
 )
 #: Ports no gateway may use (system services, the panel's own internal ports).
 SYSTEM_PORTS = {22, 53, 3306, 6379, 9000}
-CERT_JOB_TTL = 600
 
 
 def _child_id() -> int:
@@ -300,51 +300,16 @@ def port_problem(port: int | None, *, kind: str, child_id: int, domain_id: int |
 # ---------------------------------------------------------------------------------------------- certificates
 
 
-def _cert_key(domain_id: int) -> str:
-    return f"domains-page:cert:{domain_id}"
-
-
 def _cert_job(d: Domain) -> dict[str, Any] | None:
-    try:
-        from hiddifypanel.cache import redis_client
-
-        raw = redis_client.get(_cert_key(d.id))
-        return json.loads(raw) if raw else None
-    except Exception:
-        return None
-
-
-def _set_cert_job(domain_id: int, job: dict[str, Any]) -> None:
-    try:
-        from hiddifypanel.cache import redis_client
-
-        redis_client.set(_cert_key(domain_id), json.dumps(job), ex=CERT_JOB_TTL)
-    except Exception as e:
-        logger.debug(f"cert job state unavailable: {e}")
-    from hiddifypanel.live import changes
-
-    changes.publish(["cert", f"cert:{domain_id}"])
+    job = acme_state.get_job(d.id)
+    return job.to_dict() if job else None
 
 
 def start_certificate(d: Domain) -> bool:
-    """Ask acme.sh for a real certificate in the background; its state is kept for the page to poll."""
-    from hiddifypanel.panel.run_commander import Command, commander
-
-    if not d.need_valid_ssl or not d.domain or "*" in d.domain:
+    """Ask for a real certificate in the background (the panel's ACME client); its state is kept for the page to poll."""
+    if not acme_renew.can_issue(d):
         return False
-    domain_id, name = d.id, d.domain
-    _set_cert_job(domain_id, {"state": "running", "started": time.time()})
-
-    def run():
-        try:
-            commander(Command.get_cert, run_in_background=False, domain=name)
-            _set_cert_job(domain_id, {"state": "done", "finished": time.time()})
-        except Exception as e:
-            logger.warning(f"get-cert failed for {name}: {e}")
-            _set_cert_job(domain_id, {"state": "failed", "finished": time.time(), "error": str(e)[-500:]})
-
-    threading.Thread(target=run, daemon=True).start()
-    return True
+    return acme_renew.start(d.id)
 
 
 # ---------------------------------------------------------------------------------------------- saving
@@ -515,8 +480,13 @@ class DomainsPageItemApi(MethodView):
         for other in Domain.query.filter(Domain.child_id == child_id).all():
             if other.server_domain_id == d.id:
                 other.server_domain = None
+        name = d.domain or ""
         db.session.delete(d)
         db.session.commit()
+        try:
+            acme_store.remove_domain(name)
+        except Exception as e:
+            logger.warning(f"certificate of the deleted domain {name} not removed yet: {e}")
         return {"warnings": warnings, "restart_mode": APPLY, **_list_out(child_id)}
 
 
@@ -571,14 +541,8 @@ class DomainsPageCertificateApi(MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self, domain_id: int):
-        """Certificate status (re-read from disk), and the state of a running request"""
-        from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_for_domain_id
-
+        """Certificate status, and the state of a running request"""
         d = _get_domain(domain_id)
-        try:
-            sync_tls_store_for_domain_id(d.id)
-        except Exception as e:
-            logger.debug(f"TLS sync for {d.domain} failed: {e}")
         db.session.refresh(d)
         return _tls_out(d)
 

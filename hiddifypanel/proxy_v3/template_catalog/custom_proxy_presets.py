@@ -784,9 +784,6 @@ def sync_builtin_presets(child_id: int = 0) -> int:
         sync_custom_proxy_presets,
         sync_templates,
     )
-    from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
-
-    sync_tls_store_all(child_id)
     sync_templates(child_id)
     sync_base_configs(child_id, refresh_builtin=True)
     added, _updated, _removed, _demoted = sync_custom_proxy_presets(child_id)

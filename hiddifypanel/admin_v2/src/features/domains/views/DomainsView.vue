@@ -97,9 +97,9 @@
                 :class="`dm-tls--${certState(d)}`"
                 v-tooltip.top="tlsTooltip(d)"
               >
-                <i :class="certState(d) === 'running' ? 'pi pi-spin pi-spinner' : TLS_ICON[d.tls.status]" />
-                {{ certState(d) === 'running' ? t('domains.tls.running') : t(`domains.tls.${d.tls.status}`) }}
-                <template v-if="d.tls.status === 'valid' && expiresIn(d) !== null && expiresIn(d)! <= 14"> · {{ t('domains.tls.expiresIn', { n: expiresIn(d) }) }}</template>
+                <i :class="certIcon(d)" />
+                {{ certLabel(d) }}
+                <template v-if="d.tls.status === 'valid' && expiresIn(d) !== null"> · {{ t('domains.tls.expiresIn', { n: expiresIn(d) }) }}</template>
               </span>
               <span v-else class="dm-badge dm-tls--decoy" v-tooltip.top="t('domains.tls.decoyHint')"><i class="pi pi-eye-slash" />{{ t('domains.tls.decoy') }}</span>
               <span v-if="d.tls_port" class="dm-badge dm-badge--port" dir="ltr">TLS :{{ d.tls_port }}</span>
@@ -110,6 +110,15 @@
               <span v-if="d.cdn_ip && d.fake_mode === 'valid'" class="dm-badge dm-badge--soft" v-tooltip.top="d.cdn_ip">🔂 {{ t('domains.badge.cdnIp') }}</span>
               <span v-if="d.server_domain_id" class="dm-badge dm-badge--soft" dir="ltr"><i class="pi pi-arrow-right" />{{ domainName(d.server_domain_id) }}</span>
               <span v-if="d.download_domain_id" class="dm-badge dm-badge--soft" dir="ltr">📈 {{ domainName(d.download_domain_id) }}</span>
+            </div>
+            <!-- The last certificate request failed: shown on the row, not only in the badge's tooltip -->
+            <div v-if="certFailed(d)" class="dm-row__cert-error" role="alert">
+              <i :class="isRateLimited(d) ? 'pi pi-hourglass' : 'pi pi-exclamation-triangle'" />
+              <span class="dm-row__cert-error-text">
+                <b>{{ t(isRateLimited(d) ? 'domains.tls.rateLimited' : d.tls.status === 'valid' ? 'domains.tls.renewFailed' : 'domains.tls.failed') }}</b>
+                <span v-if="certError(d)" dir="ltr" :title="certError(d)">{{ certError(d) }}</span>
+              </span>
+              <Button :label="t('domains.cert.retry')" icon="pi pi-refresh" size="small" text @click.stop="openCert(d)" />
             </div>
 
             <div v-if="d.mode !== 'sub_link_only' && !isFakeProxyMode(d.fake_mode)" class="dm-row__line">
@@ -178,6 +187,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
+import { daysUntil, longDate } from '@/shared/utils/dates'
 import Dialog from 'primevue/dialog'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
@@ -196,9 +206,9 @@ import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
 import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
-import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type DomainsState } from '@/features/domains/api'
+import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type TlsStatus, type DomainsState } from '@/features/domains/api'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 
@@ -302,18 +312,45 @@ function showsConfigs(d: DomainRow): boolean {
 function canGetCert(d: DomainRow): boolean {
   return d.tls.needs_valid && !!d.domain && !d.domain.includes('*') && d.tls.status !== 'valid'
 }
-function certState(d: DomainRow): string {
+/** The last request failed (ACME error kept on the certificate, or the page's job) and none is running now. */
+function certFailed(d: DomainRow): boolean {
+  if (!d.tls.needs_valid || d.tls.job?.state === 'running') return false
+  return d.tls.job?.state === 'failed' || !!d.tls.error
+}
+/** Every CA refused for its rate limits (the job says so; after it expires, the stored error does). */
+function isRateLimited(d: DomainRow): boolean {
+  return !!d.tls.job?.rate_limited || certError(d).startsWith('rate limited')
+}
+function certError(d: DomainRow): string {
+  return (d.tls.job?.state === 'failed' && d.tls.job.error) || d.tls.error || ''
+}
+type CertState = TlsStatus | 'running' | 'failed' | 'renew_failed'
+function certState(d: DomainRow): CertState {
   if (d.tls.job?.state === 'running') return 'running'
+  if (certFailed(d)) return d.tls.status === 'valid' ? 'renew_failed' : 'failed'
   return d.tls.status
 }
+function certIcon(d: DomainRow): string {
+  const state = certState(d)
+  if (state === 'running') return 'pi pi-spin pi-spinner'
+  if (state === 'failed') return 'pi pi-times-circle'
+  if (state === 'renew_failed') return 'pi pi-exclamation-triangle'
+  return TLS_ICON[state]
+}
+function certLabel(d: DomainRow): string {
+  const state = certState(d)
+  if (state === 'running') return t('domains.tls.running')
+  if (state === 'failed') return t(isRateLimited(d) ? 'domains.tls.rateLimited' : 'domains.tls.failed')
+  if (state === 'renew_failed') return t('domains.tls.renewFailed')
+  return t(`domains.tls.${state}`)
+}
 function expiresIn(d: DomainRow): number | null {
-  if (!d.tls.expires_at) return null
-  return Math.max(0, Math.round((Date.parse(d.tls.expires_at) - Date.now()) / 86_400_000))
+  return daysUntil(d.tls.expires_at)
 }
 function tlsTooltip(d: DomainRow): string {
   const parts = [t(`domains.tls.${d.tls.status}Hint`)]
   if (d.tls.issuer) parts.push(`${t('domains.tls.issuer')}: ${d.tls.issuer}`)
-  if (d.tls.expires_at) parts.push(`${t('domains.tls.expires')}: ${new Date(d.tls.expires_at).toLocaleDateString()}`)
+  if (d.tls.expires_at) parts.push(`${t('domains.tls.expires')}: ${longDate(d.tls.expires_at, locale.value)} (${t('domains.tls.expiresIn', { n: expiresIn(d) })})`)
   if (d.tls.error) parts.push(d.tls.error)
   return parts.join('\n')
 }
@@ -805,12 +842,40 @@ a.dm-row__domain:hover {
 .dm-tls--missing {
   --tone: var(--p-amber-600, #d97706);
 }
+.dm-tls--renew_failed {
+  --tone: var(--p-amber-600, #d97706);
+}
 .dm-tls--expired,
+.dm-tls--failed,
 .dm-tls--invalid {
   --tone: var(--p-red-500, #ef4444);
 }
 .dm-tls--running {
   --tone: var(--p-primary-color);
+}
+.dm-row__cert-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  color: var(--p-red-600, #dc2626);
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p-red-500, #ef4444) 30%, transparent);
+}
+.dm-row__cert-error-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.dm-row__cert-error-text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--p-text-muted-color);
 }
 .dm-tls--decoy {
   --tone: var(--p-violet-500, #8b5cf6);

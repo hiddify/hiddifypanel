@@ -44,7 +44,6 @@ PINNED_PROCESS_LABELS = (
     "rpxy-l4",
     "xray",
     "haproxy",
-    "nginx",
     "telemt",
 )
 _PINNED_TOKENS: tuple[tuple[str, tuple[str, ...]], ...] = (
@@ -53,7 +52,6 @@ _PINNED_TOKENS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("rpxy-l4", ("rpxy-l4", "rust-rpxy-l4", "rust-rpxy", "rpxy")),
     ("xray", ("xray",)),
     ("haproxy", ("haproxy",)),
-    ("nginx", ("nginx",)),
     ("telemt", ("telemt",)),
 )
 

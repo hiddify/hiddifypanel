@@ -1018,6 +1018,8 @@
         "failedHint": "A self-signed certificate is used until a real one can be issued.",
         "ok": "Certificate issued",
         "okHint": "Users connect with a real, trusted certificate. It renews by itself.",
+        "rateLimited": "Rate limited by the certificate authority",
+        "rateLimitedHint": "Let's Encrypt and ZeroSSL refused because too many certificates were asked for recently. A self-signed certificate is used meanwhile; the panel tries again by itself when the limit is over.",
         "retry": "Try again",
         "secondsLeft": "about {n}s",
         "steps": {
@@ -1174,6 +1176,9 @@
         "issuer": "Issuer",
         "missing": "No certificate",
         "missingHint": "No certificate yet.",
+        "failed": "Certificate failed",
+        "renewFailed": "Valid · renewal failed",
+        "rateLimited": "Rate limited",
         "running": "Getting certificate",
         "self_signed": "Self-signed",
         "self_signedHint": "A temporary self-signed certificate: apps warn or refuse. Get a real one.",
@@ -3540,6 +3545,10 @@
     "tls": {
       "description": "TLS Configurations could be set in this section",
       "label": "TLS Settings"
+    },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
     },
     "tls_ech": {
       "description": "ECH value in format: cloudflare-ech.com+https://8.8.8.8/dns-query",

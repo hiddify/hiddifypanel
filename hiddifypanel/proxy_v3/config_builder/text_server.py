@@ -11,7 +11,7 @@ from hiddifypanel.proxy_v3.template_catalog.base_configs import default_base_con
 
 
 class TextServerDriver(BaseConfigBuilderDriver):
-    """Render plain-text server base shells (HAProxy, nginx fallback, etc.)."""
+    """Render plain-text server base shells (HAProxy, rust-rpxy-l4, etc.)."""
 
     block_names = ()
 

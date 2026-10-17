@@ -3089,6 +3089,10 @@
       "description": "TLS Configurations ကို ဤကဏ္ဍတွင် သတ်မှတ်နိုင်ပါသည်။",
       "label": "TLS အပြင်အဆင်များ"
     },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "tls_ech": {
       "description": "ECH တန်ဖိုး ဖော်မက်: cloudflare-ech.com+https://8.8.8.8/dns-query",
       "label": "TLS ECH တန်ဖိုး"

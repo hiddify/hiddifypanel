@@ -197,6 +197,10 @@ class ConfigEnum(metaclass=FastEnum):
     # tls
     tls_ports = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
 
+    # ACME (Let's Encrypt / ZeroSSL) certificates issued by the panel (hiddifypanel/acme)
+    acme_email = _StrConfigDscr(ConfigCategory.tls, ApplyMode.nothing, hide_in_virtual_child=True)
+    acme_accounts = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.nothing, hide_in_virtual_child=True)
+
     tls_fragment_enable = _BoolConfigDscr(ConfigCategory.tls_trick)
     tls_fragment_size = _StrConfigDscr(ConfigCategory.tls_trick)
     tls_fragment_sleep = _StrConfigDscr(ConfigCategory.tls_trick)

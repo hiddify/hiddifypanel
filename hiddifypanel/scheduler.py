@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.date import DateTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 from loguru import logger
 
@@ -42,6 +45,20 @@ def init_app(app):
 
     # Short links: HAProxy's in-memory map follows redis (expired ones out; live ones back after an HAProxy restart).
     scheduler.add_job(short_link.sync, trigger=IntervalTrigger(seconds=60), id="short_links_sync", name="short links sync")
+
+    from hiddifypanel.acme import challenges, renew
+
+    # ACME: pending HTTP-01 challenges back into HAProxy's in-memory map after a restart; certificates renewed twice a
+    # day (and once soon after the panel starts: new domains, an install or an upgrade).
+    scheduler.add_job(challenges.sync, trigger=IntervalTrigger(seconds=60), id="acme_challenges_sync", name="ACME challenges sync")
+    scheduler.add_job(run_in_app_context, args=(renew.run,), trigger=IntervalTrigger(hours=12, jitter=1800), id="acme_renew", name="ACME renew")
+    scheduler.add_job(
+        run_in_app_context,
+        args=(renew.run,),
+        trigger=DateTrigger(run_date=datetime.now() + timedelta(seconds=90)),
+        id="acme_renew_startup",
+        name="ACME renew after start",
+    )
 
     scheduler.start()
     _scheduler = scheduler

@@ -1,7 +1,7 @@
 # =====================
 # L7 Gateway Proxy Backends
 # mode=domains_l7_gateway, proto from proxy.l7_proto
-# Alt-Svc per-backend so regular web traffic (nginx) is unaffected
+# Alt-Svc per-backend so regular web traffic is unaffected
 # =====================
 
 {% for proxy in ctx.proxies if proxy.mode =="domains_l7_gateway" %}

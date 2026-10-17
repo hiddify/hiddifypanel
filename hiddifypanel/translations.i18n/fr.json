@@ -3241,6 +3241,10 @@
       "description": "Clé publique RSA de l'hôte SSH",
       "label": "Clé publique RSA de l'hôte SSH"
     },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "tls_ech": {
       "description": "Valeur ECH au format : cloudflare-ech.com+https://8.8.8.8/dns-query",
       "label": "Valeur TLS ECH"

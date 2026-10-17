@@ -12,7 +12,6 @@ from hiddifypanel.proxy_v3.config_builder.firewall.server import FirewallServerD
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.hiddify_core.server import HiddifyCoreServerDriver
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
-from hiddifypanel.proxy_v3.config_builder.nginx.server import NginxServerDriver
 from hiddifypanel.proxy_v3.config_builder.rust_rpxy_l4.server import RustRpxyL4ServerDriver
 from hiddifypanel.proxy_v3.config_builder.telemt.server import TelemtServerDriver
 from hiddifypanel.proxy_v3.config_builder.wireguard.server import WireguardServerDriver
@@ -31,7 +30,6 @@ SERVER_CONFIG_DRIVERS: dict[str, type] = {
     "hiddify-core": HiddifyCoreServerDriver,
     "xray": XrayServerDriver,
     "haproxy": HaproxyServerDriver,
-    "nginx": NginxServerDriver,
     "rust-rpxy-l4": RustRpxyL4ServerDriver,
     "dns_proxy": DnsProxyServerDriver,
     "wireguard": WireguardServerDriver,
@@ -43,7 +41,6 @@ SERVER_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("xray", "xray.json"),
     ("hiddify-core", "hiddify-core.json"),
     ("haproxy", "haproxy.cfg"),
-    ("nginx", "nginx.cfg"),
     ("rust-rpxy-l4", "rust-rpxy-l4.toml"),
     ("dns_proxy", "dnstm.json"),
     ("wireguard", "wireguard.conf"),

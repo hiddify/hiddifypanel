@@ -16,7 +16,7 @@ def init_app(app):
         from .admin_users_api import AdminUsersApi
         from .dashboard_api import AdminDashboardApi, AdminDashboardDiskApi
         from .server_status_api import AdminServerStatusApi
-        from .system_actions import AllConfigsApi, AllPublicPortsApi, DumpServerConfigsApi, ResetCacheApi, SyncTlsStoreApi, UpdateUserUsageApi
+        from .system_actions import AllConfigsApi, AllPublicPortsApi, DumpServerConfigsApi, ResetCacheApi, UpdateUserUsageApi
 
         bp.add_url_rule("/me/", view_func=AdminInfoApi)
         bp.add_url_rule("/server_status/", view_func=AdminServerStatusApi)
@@ -41,7 +41,6 @@ def init_app(app):
         bp.add_url_rule("/update_user_usage/", view_func=UpdateUserUsageApi)
         bp.add_url_rule("/all-configs/", view_func=AllConfigsApi)
         bp.add_url_rule("/dump-server-configs/", view_func=DumpServerConfigsApi)
-        bp.add_url_rule("/sync-tls-store/", view_func=SyncTlsStoreApi)
         bp.add_url_rule("/reset-cache/", view_func=ResetCacheApi)
 
         from .protocols_api import ProtocolSwitchesApi

@@ -5,7 +5,7 @@
 frontend in-httpmode-ssl
   # there is a bug in haproxy or xray in which when http/1.1 is set it send alpn as h2 and therefore it makes a confusion for haproxy in http mode so i seperate them
   mode tcp
-  bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1
+  bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/cert/ alpn h2,http/1.1
   tcp-request inspect-delay 500ms
   tcp-request content accept if HTTP
   use_backend %[path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_tcp')}},to_httpmode)]
@@ -24,12 +24,14 @@ frontend in-reality-tcpmode
 
 frontend in-httpmode
   bind abns@http_in_h2 accept-proxy
-  bind abns@https_in_http_mode accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1
-  #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
-  bind quic4@127.0.0.1:902 ssl crt /opt/hiddify-manager/data/ssl/ alpn h3
+  bind abns@https_in_http_mode accept-proxy allow-0rtt ssl crt /opt/hiddify-manager/data/cert/ alpn h2,http/1.1
+  #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt /opt/hiddify-manager/data/cert/ alpn h3
+  bind quic4@127.0.0.1:902 ssl crt /opt/hiddify-manager/data/cert/ alpn h3
  
 
   mode http
+  # ACME HTTP-01 challenges (panel: hiddifypanel/acme/challenges.py fills this in-memory map only while an order is
+  # pending): answered here, before any routing, for every domain and IP
   http-request set-var(txn.backend) str(default_decoy)
   http-request set-var(txn.backend) path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_v10') }},default_decoy)
   http-request set-var(txn.backend) req.hdr(x-api-key),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { req.hdr(x-api-key) -m found } { var(txn.backend) -m str default_decoy }
@@ -38,6 +40,8 @@ frontend in-httpmode
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
   
   http-request redirect location %[path,map_str(virt@short_links)] code 302 if { var(txn.backend) -m str default_decoy } { path,map_str(virt@short_links) -m found }
+  http-request return status 200 content-type text/plain lf-string "%[path,map_str(virt@acme_challenges)]" if { var(txn.backend) -m str default_decoy } { path,map_str(virt@acme_challenges) -m found }
+
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
 

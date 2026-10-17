@@ -250,10 +250,7 @@ def before_delete(model: Domain) -> list[str]:
 
 
 def request_certificate(model: Domain) -> bool:
-    """Ask acme.sh for a real certificate (runs in the background). False when the domain needs none."""
-    from hiddifypanel.panel.run_commander import Command, commander
+    """Ask for a real certificate (the panel's ACME client, in the background). False when the domain needs none."""
+    from hiddifypanel.acme import renew
 
-    if not model.need_valid_ssl or "*" in (model.domain or "") or not model.domain:
-        return False
-    commander(Command.get_cert, domain=model.domain)
-    return True
+    return renew.can_issue(model) and renew.start(model.id)

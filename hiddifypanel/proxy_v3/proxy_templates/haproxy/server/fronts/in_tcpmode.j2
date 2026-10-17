@@ -4,7 +4,7 @@
 frontend in-tcpmode
     {#- 80 only: a domain's own HTTP port is redirected to it by the firewall (the old http_ports setting is not read) #}
     bind :80{% if ctx.hconfig.ipv6_enabled %},:::80 v4v6{% endif %} tfo
-    bind abns@https_in_ssl tfo accept-proxy ssl crt /opt/hiddify-manager/data/ssl/ alpn h2,http/1.1,h3 allow-0rtt
+    bind abns@https_in_ssl tfo accept-proxy ssl crt /opt/hiddify-manager/data/cert/ alpn h2,http/1.1,h3 allow-0rtt
     acl h2 ssl_fc_alpn -i h2
     acl h3 ssl_fc_alpn -i h3
     tcp-request inspect-delay 5s

@@ -1,5 +1,6 @@
 /** Display helpers shared by the users list and form (relative times as the classic user list shows them). */
 
+import { dateLocale } from '@/shared/utils/dates'
 import { unitLabel } from '@/shared/utils/format-metrics'
 
 export type Tone = 'ok' | 'warn' | 'danger' | 'muted'
@@ -68,10 +69,7 @@ export function gb(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, { maximumFractionDigits: value < 1 ? 3 : value < 100 ? 2 : 1 }).format(value || 0)
 }
 
-/** Persian shows the Persian (Jalali) calendar, everything else the Gregorian one. */
-export function dateLocale(locale: string): string {
-  return locale.toLowerCase().startsWith('fa') ? 'fa-IR-u-ca-persian' : locale
-}
+export { dateLocale }
 
 export function shortDate(iso: string | null, locale: string): string {
   if (!iso) return ''

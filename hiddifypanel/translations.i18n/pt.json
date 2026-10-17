@@ -3097,6 +3097,10 @@
       "description": "As configurações de TLS podem ser definidas nesta seção.",
       "label": "Configurações de TLS"
     },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "tls_ech": {
       "description": "Valor ECH no formato: cloudflare-ech.com+https://8.8.8.8/dns-query",
       "label": "Valor do TLS ECH"

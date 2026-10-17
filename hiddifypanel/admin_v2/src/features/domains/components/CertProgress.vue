@@ -9,19 +9,21 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 import { apiErrorMessage } from '@/core/api/client'
+import { daysUntil, longDate } from '@/shared/utils/dates'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { CERT_WAIT_SECONDS, domainsApi, type DomainTls } from '@/features/domains/api'
 
 const props = defineProps<{ domainId: number; domain: string; start?: boolean }>()
 const emit = defineEmits<{ finished: [tls: DomainTls | null, ok: boolean] }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 type Phase = 'waiting' | 'ok' | 'failed' | 'timeout'
 const phase = ref<Phase>('waiting')
 const elapsed = ref(0)
 const tls = ref<DomainTls | null>(null)
 const error = ref('')
+const rateLimited = computed(() => !!tls.value?.job?.rate_limited)
 let startedAt = Date.now()
 let tick: number | undefined
 let feed: Subscription | null = null
@@ -60,11 +62,13 @@ function take(cur: DomainTls) {
   if (stopped) return
   tls.value = cur
   const job = cur.job
-  if (cur.status === 'valid' && (job?.state === 'done' || newerThanStart(cur.updated_at))) return finish('ok')
+  // The job's result first: a failed renewal keeps the old (still valid) certificate, and saving its error touches the row.
   if (job?.state === 'failed') {
     error.value = job.error || cur.error
     return finish('failed')
   }
+  if (job?.state === 'running') return
+  if (cur.status === 'valid' && !cur.error && (job?.state === 'done' || newerThanStart(cur.updated_at))) return finish('ok')
   if (job?.state === 'done') {
     // The script finished but there is no real certificate (DNS, firewall or rate limit).
     error.value = cur.error
@@ -80,7 +84,7 @@ function clock() {
 function follow() {
   feed?.stop()
   if (stopped) return // left (or finished) while the certificate was being asked for
-  // The panel may be busy while acme.sh runs: a failed read just waits for the next one.
+  // A failed read (the panel is busy) just waits for the next one.
   feed = liveWatch<DomainTls>(`domains-page/${props.domainId}/certificate/`, { intervalMs: 3000, tags: [`cert:${props.domainId}`], onData: take, pauseWhenHidden: false })
 }
 
@@ -139,7 +143,7 @@ onBeforeUnmount(() => {
     </div>
 
     <div class="cert__body">
-      <p class="cert__title">{{ t(`domains.cert.${phase}`) }}</p>
+      <p class="cert__title">{{ rateLimited && phase === 'failed' ? t('domains.cert.rateLimited') : t(`domains.cert.${phase}`) }}</p>
       <p class="cert__domain" dir="ltr">{{ domain }}</p>
 
       <template v-if="phase === 'waiting'">
@@ -157,12 +161,15 @@ onBeforeUnmount(() => {
           {{ t('domains.cert.okHint') }}
           <span v-if="tls?.issuer" class="cert__issuer">{{ tls.issuer }}</span>
         </p>
+        <p v-if="tls?.expires_at" class="cert__hint">
+          {{ t('domains.tls.expires') }}: {{ longDate(tls.expires_at, locale) }} · {{ t('domains.tls.expiresIn', { n: daysUntil(tls.expires_at) }) }}
+        </p>
       </template>
 
       <template v-else>
-        <p class="cert__hint">{{ t(phase === 'timeout' ? 'domains.cert.timeoutHint' : 'domains.cert.failedHint') }}</p>
+        <p class="cert__hint">{{ t(rateLimited ? 'domains.cert.rateLimitedHint' : phase === 'timeout' ? 'domains.cert.timeoutHint' : 'domains.cert.failedHint') }}</p>
         <pre v-if="error" class="cert__error" dir="ltr">{{ error }}</pre>
-        <ul class="cert__tips">
+        <ul v-if="!rateLimited" class="cert__tips">
           <li>{{ t('domains.cert.tips.dns') }}</li>
           <li>{{ t('domains.cert.tips.port80') }}</li>
           <li>{{ t('domains.cert.tips.cdn') }}</li>

@@ -131,7 +131,7 @@ def _strip_progress(text: str) -> str:
 def _api_bases() -> list[str]:
     """Where the page can poll the log: the current admin path, and the new one if it just changed.
 
-    While apply/install runs after a proxy_path change, the new path only routes once nginx is regenerated
+    While apply/install runs after a proxy_path change, the new path only routes once HAProxy is regenerated
     and the old one stops once the panel restarts, so the page tries both (as the classic result page does).
     """
     current = f"/{g.proxy_path}/api/v2/admin/"

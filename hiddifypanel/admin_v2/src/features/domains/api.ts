@@ -13,6 +13,10 @@ export interface CertJob {
   started?: number
   finished?: number
   error?: string
+  /** Every CA refused because of its rate limits (a self-signed certificate is used meanwhile). */
+  rate_limited?: boolean
+  /** The CA that issued it ('letsencrypt' / 'zerossl'). */
+  ca?: string
 }
 
 export interface DomainTls {

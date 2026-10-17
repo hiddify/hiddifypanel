@@ -3097,6 +3097,10 @@
       "description": "可以在此部分设置 TLS 配置。",
       "label": "TLS 设置"
     },
+    "acme_email": {
+      "description": "Contact email of the Let's Encrypt and ZeroSSL accounts the panel gets certificates with. Changing it registers new accounts.",
+      "label": "📧 Certificate (ACME) Email"
+    },
     "tls_ech": {
       "description": "ECH 值，格式：cloudflare-ech.com+https://8.8.8.8/dns-query",
       "label": "TLS ECH 值"

@@ -19,9 +19,20 @@ from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_cat
 from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
     sync_builtin_presets,
 )
-from hiddifypanel.proxy_v3.tls_store_sync import sync_tls_store_all
+from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates
 
 MAX_DB_VERSION = 200
+
+
+def _v173(child_id):
+    """Certificates are issued by the panel (hiddifypanel/acme; acme.sh and nginx are deprecated): its ACME settings, and
+    the certificates acme.sh left in data/ssl imported into tls_store (the panel writes data/cert from it)."""
+    add_config_if_not_exist(ConfigEnum.acme_email, hutils.random.get_random_string(10, 20) + "@gmail.com")
+    add_config_if_not_exist(ConfigEnum.acme_accounts, "{}")
+    try:
+        import_legacy_certificates(child_id)
+    except Exception as exc:
+        logger.warning("TLS store import from data/ssl skipped: {}", exc)
 
 
 def _v172(child_id):
@@ -306,7 +317,7 @@ def _v130(child_id):
     seed_proxy_catalog(child_id, refresh_builtin_base_configs=True)
     sync_builtin_presets(child_id)
     try:
-        sync_tls_store_all(child_id)
+        import_legacy_certificates(child_id)
     except Exception as exc:
         logger.warning("TLS store sync skipped during _v130: {}", exc)
     try:
@@ -1364,7 +1375,7 @@ def init_db():
 
     # WIP proxy reset: use `flask reset-wip-proxy-db` then restart — not on every boot.
     # _drop_wip_proxy_tables()
-    # set_hconfig(ConfigEnum.db_version, 168, commit=True)
+    # set_hconfig(ConfigEnum.db_version, 172, commit=True)
     db_version = current_db_version()
     if db_version >= latest_db_version():
         return

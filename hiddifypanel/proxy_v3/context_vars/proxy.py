@@ -19,7 +19,7 @@ from hiddifypanel.models.proxy import ProxyProto
 if TYPE_CHECKING:
     from hiddifypanel.models.custom_proxy import CustomProxy
 
-from hiddifypanel.models.custom_proxy import TemplateCore
+from hiddifypanel.models.custom_proxy import ServerCore, TemplateCore
 
 from .domain import DomainIPVar
 from .hconfig import HConfigVar
@@ -41,7 +41,9 @@ class ConfigVar(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    core: TemplateCore
+    # A client config is a template core; a server config is the proxy's server core (some have no template core of
+    # their own, e.g. telegram: no inbound, telemt/server/base.j2 serves them)
+    core: TemplateCore | ServerCore
     version: TemplateVersion
     content: str = ""
 

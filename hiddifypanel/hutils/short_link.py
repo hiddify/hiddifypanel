@@ -11,14 +11,13 @@ from __future__ import annotations
 
 import hashlib
 import re
-import socket
 
 from loguru import logger
 
 from hiddifypanel import hutils
+from hiddifypanel.hutils import haproxy_api
 
 MAP = "virt@short_links"
-API_SOCKET = "/run/hiddify-haproxy-api.sock"
 DEFAULT_MINUTES = 10
 _SLUG_KEY = "hiddify:short_link:slug:"  # slug -> url
 _URL_KEY = "hiddify:short_link:url:"  # sha1(url) -> slug, to give the same link again while it lives
@@ -29,22 +28,6 @@ def _redis():
     from hiddifypanel.cache import redis_client
 
     return redis_client
-
-
-def _haproxy(command: str) -> str | None:
-    """One command on HAProxy's API socket: its answer, or None when HAProxy can not be reached."""
-    try:
-        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
-            s.settimeout(3)
-            s.connect(API_SOCKET)
-            s.sendall(command.encode() + b"\n")
-            chunks = []
-            while chunk := s.recv(65536):
-                chunks.append(chunk)
-    except OSError as e:
-        logger.debug(f"short links: HAProxy API not reachable ({e}); the next sync adds the link")
-        return None
-    return b"".join(chunks).decode(errors="replace").strip()
 
 
 def _keys(slug: str) -> tuple[str, str]:
@@ -67,9 +50,8 @@ def add(url: str, minutes: int = DEFAULT_MINUTES) -> tuple[str, int]:
             break
     r.set(url_key, slug, ex=seconds)
     for key in _keys(slug):
-        answer = _haproxy(f"add map {MAP} {key} {url}")
-        if answer:
-            logger.warning(f"short links: HAProxy answered 'add map': {answer}")
+        if not haproxy_api.add_map(MAP, key, url):
+            logger.debug(f"short links: {key} not in HAProxy yet; the next sync adds it")
     return slug, seconds
 
 
@@ -85,17 +67,4 @@ def _live() -> dict[str, str]:
 
 def sync() -> None:
     """Make HAProxy's map match redis: drop expired links, add the live ones it lacks (after an HAProxy restart)."""
-    shown = _haproxy(f"show map {MAP}")
-    if shown is None:
-        return
-    in_haproxy: dict[str, str] = {}  # map key ("/<slug>" or "/<slug>/") -> url
-    for line in shown.splitlines():
-        parts = line.split(" ", 2)  # "<id> <key> <url>"
-        if len(parts) == 3 and parts[1].startswith("/"):
-            in_haproxy[parts[1]] = parts[2]
-    wanted = {key: url for slug, url in _live().items() for key in _keys(slug)}
-    for key in in_haproxy.keys() - wanted.keys():
-        _haproxy(f"del map {MAP} {key}")
-    for key, url in wanted.items():
-        if in_haproxy.get(key) != url:
-            _haproxy(f"set map {MAP} {key} {url}" if key in in_haproxy else f"add map {MAP} {key} {url}")
+    haproxy_api.sync_map(MAP, {key: url for slug, url in _live().items() for key in _keys(slug)})
