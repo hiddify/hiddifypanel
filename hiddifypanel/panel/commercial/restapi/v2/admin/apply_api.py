@@ -48,7 +48,7 @@ def log_dir() -> Path:
 
 def _lock_held(name: str) -> bool:
     """Is the installer's flock (``scripts/common/utils.sh`` set_lock) held right now?"""
-    path = Path(os.environ.get("HIDDIFY_LOCKS") or Path(os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager/")) / "data" / "locks") / f"{name}.lock"
+    path = Path(os.environ.get("HIDDIFY_LOCKS") or "/run/hiddify/locks") / f"{name}.lock"
     try:
         fd = os.open(path, os.O_RDONLY)
     except OSError:
