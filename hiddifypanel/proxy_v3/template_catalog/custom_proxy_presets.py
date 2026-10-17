@@ -118,17 +118,27 @@ def build_reality_termination_preset(child_id: int = 0) -> CustomProxyPreset:
 
 
 # Raw VLESS over REALITY needs no inbound of its own: the REALITY termination inbound is a
-# VLESS inbound and serves it directly (only other traffic falls back to the gateway).
-RAW_VLESS_REALITY_SERVER_TEMPLATE = "{# raw VLESS over REALITY is served by the REALITY termination proxy #}"
+# VLESS inbound and serves it directly. Trojan over REALITY uses the terminator's fallbacks
+# into HAProxy (same REALITY domains); both are client-only presets here.
+RAW_VLESS_REALITY_SERVER_TEMPLATE = "{# raw VLESS/Trojan over REALITY is served by the REALITY termination proxy #}"
+
+
+def is_raw_reality_slot(slot: PresetSlot) -> bool:
+    """TCP REALITY client-only slot for VLESS (direct auth) or Trojan (fallback to gateway)."""
+    primary = slot.primary
+    return primary.proto.lower() in ("vless", "trojan") and _raw_transport(primary.transport) == "tcp" and str(primary.l3).lower() == "reality"
 
 
 def is_raw_vless_reality_slot(slot: PresetSlot) -> bool:
-    primary = slot.primary
-    return primary.proto.lower() == "vless" and _raw_transport(primary.transport) == "tcp" and str(primary.l3).lower() == "reality"
+    """Deprecated alias; use is_raw_reality_slot."""
+    return is_raw_reality_slot(slot) and slot.primary.proto.lower() == "vless"
 
 
 def build_raw_vless_reality_preset(slot: PresetSlot, child_id: int = 0) -> CustomProxyPreset:
-    """Client-only L7-gateway proxy on REALITY domains (direct/relay); the termination serves it."""
+    """Client-only L7-gateway proxy on REALITY domains (direct/relay); the termination serves it.
+
+    Used for both VLESS TCP REALITY and Trojan TCP REALITY (display name comes from the slot).
+    """
     # Clients use the TLS templates: on a REALITY domain they switch to REALITY themselves.
     client_combo = replace(slot.primary, l3="tls")
     built = _build_preset(replace(slot, primary=client_combo, related=(client_combo,), tls_layer="tls"), "xray", RAW_VLESS_REALITY_SERVER_TEMPLATE, [], child_id)
@@ -696,7 +706,7 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
         if primary.proto.lower() in DNS_GATEWAY_PROTOS:
             rows.append(_build_dns_gateway_preset(slot, child_id))
             continue
-        if is_raw_vless_reality_slot(slot):
+        if is_raw_reality_slot(slot):
             rows.append(build_raw_vless_reality_preset(slot, child_id))
             continue
         l7_gateway = _preset_protocol(primary) == CustomProxyMode.domains_l7_gateway

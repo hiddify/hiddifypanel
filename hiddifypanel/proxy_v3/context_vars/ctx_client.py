@@ -132,7 +132,8 @@ def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIP
     return result
 
 
-# based on xtls documentation https://xtls.github.io/en/protocol/reality/ only vless and xhttp and grpc and raw is supported
+# Xray REALITY works with VLESS and Trojan on tcp/raw, xhttp, and grpc
+# (https://xtls.github.io/en/config/transport.html — security × protocol matrix).
 def is_reality_domain_valid(domain: ClientProxyDomainVar | DomainIPVar, proxy: ClientBuilderProxyVar) -> bool:
     if domain.is_reality():
         if proxy.tls_layer in [TlsLayer.quic_tls, TlsLayer.http]:
@@ -145,7 +146,7 @@ def is_reality_domain_valid(domain: ClientProxyDomainVar | DomainIPVar, proxy: C
             return False
         if proxy.mode != CustomProxyMode.domains_l7_gateway:
             return False
-        if proxy.proto not in [ProxyProto.vless]:
+        if proxy.proto not in [ProxyProto.vless, ProxyProto.trojan]:
             return False
     return True
 

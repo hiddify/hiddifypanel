@@ -108,8 +108,8 @@ def normalize_domain_modes(modes: Iterable[str] | None, *, default: Iterable[str
 
 
 def transport_tls_supports_reality(transport: str | None, tls_layer: str | None) -> bool:
-    """REALITY is only supported on gRPC, xHTTP H2, raw HTTP with TLS, and raw TCP (VLESS served
-    by the REALITY termination inbound)."""
+    """REALITY is only supported on gRPC, xHTTP H2, raw HTTP with TLS, and raw TCP (VLESS/Trojan
+    via the REALITY termination inbound; Trojan uses terminator fallbacks to the L7 gateway)."""
     transport_key = str(transport or "").strip().lower()
     layer = str(tls_layer or "").strip().lower()
     if transport_key == "http":

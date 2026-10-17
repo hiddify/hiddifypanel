@@ -26,6 +26,7 @@ PROXY_CFG_STRINGS: list[str] = [
     "xhttp direct trojan",
     "tcp direct vless",
     "tcp direct vmess",
+    "tcp direct trojan",
     "http direct vless",
     "http direct trojan",
     "http direct vmess",
@@ -46,6 +47,7 @@ PROXY_CFG_STRINGS: list[str] = [
     "xhttp relay trojan",
     "tcp relay vless",
     "tcp relay vmess",
+    "tcp relay trojan",
     "http relay vless",
     "http relay trojan",
     "http relay vmess",
@@ -159,10 +161,10 @@ def iter_proxy_combinations(cfgs: list[str] | None = None) -> Iterator[ProxyComb
             if l3_s in ("kcp", "reality") and cdn != "direct":
                 continue
             # REALITY rides TCP, xHTTP (h2), gRPC and raw HTTP ("rawhttp", transport "http") over TLS;
-            # clients only offer it for VLESS (context_vars/ctx_client.is_reality_domain_valid).
-            if l3_s == "reality" and (transport not in ("tcp", "XTLS", ProxyTransport.xhttp, "grpc", "http") or proto != "vless"):
+            # clients offer it for VLESS and Trojan (context_vars/ctx_client.is_reality_domain_valid).
+            if l3_s == "reality" and (transport not in ("tcp", "XTLS", ProxyTransport.xhttp, "grpc", "http") or proto not in ("vless", "trojan")):
                 continue
-            if proto == "trojan" and l3_s not in ("tls", "xtls", "tls_h2", "h3_quic"):
+            if proto == "trojan" and l3_s not in ("tls", "xtls", "tls_h2", "h3_quic", "reality"):
                 continue
             if transport in ("grpc", "XTLS", "faketls") and l3_s == "http":
                 if proto not in ("vless", "vmess"):
