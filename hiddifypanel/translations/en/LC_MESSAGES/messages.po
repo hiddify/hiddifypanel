@@ -2308,6 +2308,9 @@ msgstr ""
 msgid "adminV2.broadcast.confirm.title"
 msgstr "Send this message?"
 
+msgid "adminV2.broadcast.dialogTitle"
+msgstr "Message to {n} selected user | Message to {n} selected users"
+
 msgid "adminV2.broadcast.extra.addImage"
 msgstr "Add an image"
 
@@ -2344,7 +2347,9 @@ msgid "adminV2.broadcast.message.help.html"
 msgstr "Telegram's tags: b, i, u, s, a, code, pre, blockquote, tg-spoiler."
 
 msgid "adminV2.broadcast.message.help.markdown"
-msgstr "**bold** _italic_ __underline__ ~~strike~~ ||spoiler|| `code` > quote"
+msgstr ""
+"**bold** _italic_ __underline__ ~~strike~~ {'|'}{'|'}spoiler{'|'}{'|'} "
+"`code` > quote"
 
 msgid "adminV2.broadcast.message.help.plain"
 msgstr "Sent exactly as written."
@@ -2413,6 +2418,42 @@ msgstr "{n} not delivered"
 
 msgid "adminV2.broadcast.progress.sending"
 msgstr "Sending…"
+
+msgid "adminV2.broadcast.recipients.active"
+msgstr "Active"
+
+msgid "adminV2.broadcast.recipients.all"
+msgstr "All"
+
+msgid "adminV2.broadcast.recipients.count"
+msgstr "{n} of {total} chosen"
+
+msgid "adminV2.broadcast.recipients.empty"
+msgstr "No user of this audience started the bot."
+
+msgid "adminV2.broadcast.recipients.failed"
+msgstr "Could not load the users"
+
+msgid "adminV2.broadcast.recipients.inactive"
+msgstr "Expired or disabled"
+
+msgid "adminV2.broadcast.recipients.more"
+msgstr "Show {n} more"
+
+msgid "adminV2.broadcast.recipients.never"
+msgstr "never online"
+
+msgid "adminV2.broadcast.recipients.noMatch"
+msgstr "No user matches."
+
+msgid "adminV2.broadcast.recipients.none"
+msgstr "None"
+
+msgid "adminV2.broadcast.recipients.search"
+msgstr "Search by name or Telegram id"
+
+msgid "adminV2.broadcast.recipients.title"
+msgstr "Who gets it"
 
 msgid "adminV2.broadcast.send.button"
 msgstr "Send"
@@ -2567,7 +2608,7 @@ msgstr "Contents to test"
 msgid "adminV2.configTester.contentPlaceholder"
 msgstr ""
 "Paste share links (one per line, or base64), an xray / hiddify-core / sing-"
-"box JSON…"
+"box JSON, or Clash Meta YAML…"
 
 msgid "adminV2.configTester.copyName"
 msgstr "Copy name"
@@ -2719,6 +2760,9 @@ msgstr "Subscription order"
 
 msgid "adminV2.configTester.sortDelay"
 msgstr "Sort by delay"
+
+msgid "adminV2.configTester.sourceClash"
+msgstr "Clash Meta subscription"
 
 msgid "adminV2.configTester.sourceCore"
 msgstr "hiddify-core subscription"
@@ -4903,6 +4947,12 @@ msgstr ""
 msgid "adminV2.outbounds.title"
 msgstr "Outbounds"
 
+msgid "adminV2.outbounds.torMissing"
+msgstr ""
+"Tor is enabled but the `tor` program is not installed on this server, so it "
+"is left out of the configs. Install Tor (e.g. apt install tor) and Apply "
+"Configs."
+
 msgid "adminV2.passwordRules.common"
 msgstr "not a common password"
 
@@ -7053,6 +7103,9 @@ msgstr "Extra subscription configs added for this user"
 msgid "adminV2.users.extra.telegramHint"
 msgstr "Telegram account linked"
 
+msgid "adminV2.users.extra.telegramMessage"
+msgstr "Send a Telegram message to this user"
+
 msgid "adminV2.users.filter.active"
 msgstr "Active"
 
@@ -7106,6 +7159,12 @@ msgstr "Online"
 
 msgid "adminV2.users.filter.onlineHint"
 msgstr "Connected in the last 2 minutes"
+
+msgid "adminV2.users.filter.telegram"
+msgstr "Has Telegram"
+
+msgid "adminV2.users.filter.telegramHint"
+msgstr "Users who started the bot: they can get messages"
 
 msgid "adminV2.users.filter.unseen_week"
 msgstr "Not seen for a week"

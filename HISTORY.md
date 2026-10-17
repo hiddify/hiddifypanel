@@ -73,6 +73,14 @@
 
 #### Fix
 
+* Prevent admins from being their own parent in admin hierarchy and update validation logic for self-patching. 
+
+* Admin permission security issue. 
+
+* Enhance HAProxy certificate handling by ensuring proper addition to crt-list and refining payload processing in haproxy_api. 
+
+* Deleted user username. 
+
 * Implement watchdog mechanism for stream monitoring and enhance log handling during panel restarts. 
 
 * Enhance URL handling for IPv6 addresses and improve logging error handling. 
@@ -183,6 +191,42 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat: implement download/upload differentiation in proxy configurations, enhancing xHTTP settings and TLS handling for improved domain management. 
+
+* Feat: add Tor availability check and user notifications in outbound configurations, enhancing error handling and user experience. 
+
+* Feat: enhance support for Trojan in REALITY configurations, updating documentation and validation logic for proxy protocols. 
+
+* Feat: enhance ECH support in proxy configurations, adding per-domain toggles and improving TLS handling for various protocols. 
+
+* Chore: update subproject reference for user front module. 
+
+* Feat: integrate user front module with build and deployment processes, including new Makefile targets and GitHub Actions updates. 
+
+* Refactor: introduce PEM normalization for certificate handling and improve error logging in write_files. 
+
+* Feat: add support for Clash Meta configuration in proxy_v3, including new types and templates for client protocols and streams. 
+
+* Proxy_v3: the reality_enable setting has no effect (domain_mode_config_map key never matches the stored modes) 
+
+* IPVar.merge drops addresses, so the domain field cdn_ip (forced connect address) has no effect in 13.x. 
+
+* API v2: users of sub-admins appear in GET /admin/user/ but GET/PATCH/DELETE /admin/user/<uuid>/ on them return 403. 
+
+* Feat: implement broadcast feature for sending messages via Telegram bot, including UI components for message composition and recipient selection. 
+
+* Add  new wiregaurd output model .conf and .zip in case of multiple. 
+
+* Proxy_v3 small correctness bugs: alpn_helpers treats {} as "filter by hconfigs", and TemplateVersion.__ne__ against a string is always True. 
+
+* Usage accounting: node usage is silently dropped when the usage lock is busy, and admin/update_user_usage runs the accounting without the lock. 
+
+* Usage drivers lose or mislabel traffic: WireGuard rx/tx swapped and counter resets dropped, telemt zero baseline discarded, 
+
+* Tls_store_sync: a valid Let's Encrypt IP certificate for an IPv6 address gets valid_cert=False (SAN compared as a string) 
+
+* "Online yesterday" and average online stats are multiplied by the number of nodes. 
 
 * Feat: implement UniqueTags class for managing unique outbound tags across configurations. 
 

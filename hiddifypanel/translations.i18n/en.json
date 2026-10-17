@@ -758,6 +758,7 @@
         "text": "It goes to {n} user ({audience}) in Telegram. It can not be taken back. | It goes to {n} users ({audience}) in Telegram. It can not be taken back.",
         "title": "Send this message?"
       },
+      "dialogTitle": "Message to {n} selected user | Message to {n} selected users",
       "extra": {
         "addImage": "Add an image",
         "badType": "Use a JPEG, PNG or WebP image.",
@@ -770,21 +771,6 @@
       },
       "format": {
         "plain": "Plain"
-      },
-      "dialogTitle": "Message to {n} selected user | Message to {n} selected users",
-      "recipients": {
-        "title": "Who gets it",
-        "search": "Search by name or Telegram id",
-        "count": "{n} of {total} chosen",
-        "all": "All",
-        "none": "None",
-        "empty": "No user of this audience started the bot.",
-        "noMatch": "No user matches.",
-        "active": "Active",
-        "inactive": "Expired or disabled",
-        "never": "never online",
-        "more": "Show {n} more",
-        "failed": "Could not load the users"
       },
       "fromUsers": "Message",
       "message": {
@@ -822,6 +808,20 @@
         "errors": "Why {n} were not delivered",
         "failed": "{n} not delivered",
         "sending": "Sending…"
+      },
+      "recipients": {
+        "active": "Active",
+        "all": "All",
+        "count": "{n} of {total} chosen",
+        "empty": "No user of this audience started the bot.",
+        "failed": "Could not load the users",
+        "inactive": "Expired or disabled",
+        "more": "Show {n} more",
+        "never": "never online",
+        "noMatch": "No user matches.",
+        "none": "None",
+        "search": "Search by name or Telegram id",
+        "title": "Who gets it"
       },
       "send": {
         "button": "Send",
@@ -1675,7 +1675,6 @@
       "everythingElse": "Everything else goes here",
       "followsDefaults": "Uses the built-in lists, updated on upgrade",
       "howto": "Outbounds are checked from top to bottom: traffic goes out through the first one that lists its site. The last enabled outbound is the default and gets everything else. Drag or use the arrows to change the order.",
-      "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs.",
       "idle": "Not used",
       "idleHint": "It has no sites, geosites or rule-sets, so nothing goes through it. Edit it to add some, or move it to the end to make it the default.",
       "list": {
@@ -1731,7 +1730,8 @@
       "resetTitle": "Reset {name} to the built-in lists?",
       "saved": "{name} saved",
       "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a SOCKS, Tor or Psiphon exit.",
-      "title": "Outbounds"
+      "title": "Outbounds",
+      "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs."
     },
     "passwordRules": {
       "common": "not a common password",
@@ -2537,8 +2537,8 @@
         "outboundHint": "This user has its own outbound selected",
         "subs": "{n} extra sub | {n} extra subs",
         "subsHint": "Extra subscription configs added for this user",
-        "telegramMessage": "Send a Telegram message to this user",
-        "telegramHint": "Telegram account linked"
+        "telegramHint": "Telegram account linked",
+        "telegramMessage": "Send a Telegram message to this user"
       },
       "filter": {
         "active": "Active",

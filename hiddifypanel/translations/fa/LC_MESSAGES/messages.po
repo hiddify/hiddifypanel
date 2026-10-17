@@ -2294,6 +2294,9 @@ msgstr ""
 msgid "adminV2.broadcast.confirm.title"
 msgstr "این پیام فرستاده شود؟"
 
+msgid "adminV2.broadcast.dialogTitle"
+msgstr "پیام به {n} کاربر انتخاب‌شده | پیام به {n} کاربر انتخاب‌شده"
+
 msgid "adminV2.broadcast.extra.addImage"
 msgstr "افزودن تصویر"
 
@@ -2329,7 +2332,9 @@ msgid "adminV2.broadcast.message.help.html"
 msgstr "تگ‌های تلگرام: b، i، u، s، a، code، pre، blockquote، tg-spoiler."
 
 msgid "adminV2.broadcast.message.help.markdown"
-msgstr "**پررنگ** _کج_ __زیرخط__ ~~خط‌خورده~~ ||مخفی|| `کد` > نقل‌قول"
+msgstr ""
+"**پررنگ** _کج_ __زیرخط__ ~~خط‌خورده~~ {'|'}{'|'}مخفی{'|'}{'|'} `کد` > "
+"نقل‌قول"
 
 msgid "adminV2.broadcast.message.help.plain"
 msgstr "دقیقاً همان‌طور که نوشته‌اید فرستاده می‌شود."
@@ -2398,6 +2403,42 @@ msgstr "{n} تحویل نشد"
 
 msgid "adminV2.broadcast.progress.sending"
 msgstr "در حال ارسال…"
+
+msgid "adminV2.broadcast.recipients.active"
+msgstr "فعال"
+
+msgid "adminV2.broadcast.recipients.all"
+msgstr "همه"
+
+msgid "adminV2.broadcast.recipients.count"
+msgstr "{n} از {total} انتخاب شده"
+
+msgid "adminV2.broadcast.recipients.empty"
+msgstr "هیچ کاربری از این گروه ربات را استارت نکرده است."
+
+msgid "adminV2.broadcast.recipients.failed"
+msgstr "کاربران بارگیری نشدند"
+
+msgid "adminV2.broadcast.recipients.inactive"
+msgstr "منقضی یا غیرفعال"
+
+msgid "adminV2.broadcast.recipients.more"
+msgstr "نمایش {n} مورد دیگر"
+
+msgid "adminV2.broadcast.recipients.never"
+msgstr "هیچ‌وقت آنلاین نشده"
+
+msgid "adminV2.broadcast.recipients.noMatch"
+msgstr "کاربری پیدا نشد."
+
+msgid "adminV2.broadcast.recipients.none"
+msgstr "هیچ‌کدام"
+
+msgid "adminV2.broadcast.recipients.search"
+msgstr "جستجو با نام یا شناسه‌ی تلگرام"
+
+msgid "adminV2.broadcast.recipients.title"
+msgstr "گیرندگان"
 
 msgid "adminV2.broadcast.send.button"
 msgstr "ارسال"
@@ -2548,8 +2589,8 @@ msgstr "محتوای تست"
 
 msgid "adminV2.configTester.contentPlaceholder"
 msgstr ""
-"لینک‌ها (هر خط یکی، یا base64) یا JSON اکسری / hiddify-core / sing-box را "
-"بچسبانید…"
+"لینک‌ها (هر خط یکی، یا base64)، JSON اکسری / hiddify-core / sing-box، یا "
+"YAML کلش متا را بچسبانید…"
 
 msgid "adminV2.configTester.copyName"
 msgstr "کپی نام"
@@ -2700,6 +2741,9 @@ msgstr "ترتیب اشتراک"
 
 msgid "adminV2.configTester.sortDelay"
 msgstr "مرتب‌سازی بر اساس تأخیر"
+
+msgid "adminV2.configTester.sourceClash"
+msgstr "اشتراک Clash Meta"
 
 msgid "adminV2.configTester.sourceCore"
 msgstr "اشتراک hiddify-core"
@@ -4879,6 +4923,11 @@ msgstr ""
 msgid "adminV2.outbounds.title"
 msgstr "خروجی‌ها"
 
+msgid "adminV2.outbounds.torMissing"
+msgstr ""
+"Tor روشن است ولی برنامهٔ `tor` روی سرور نصب نیست؛ بنابراین از کانفیگ‌ها حذف "
+"می‌شود. Tor را نصب کنید (مثلاً apt install tor) و Apply Configs را بزنید."
+
 msgid "adminV2.passwordRules.common"
 msgstr "رمز رایج نباشد"
 
@@ -7034,6 +7083,9 @@ msgstr "پیکربندی‌های اشتراک اضافی برای این کار
 msgid "adminV2.users.extra.telegramHint"
 msgstr "حساب تلگرام متصل است"
 
+msgid "adminV2.users.extra.telegramMessage"
+msgstr "ارسال پیام تلگرام به این کاربر"
+
 msgid "adminV2.users.filter.active"
 msgstr "فعال"
 
@@ -7087,6 +7139,12 @@ msgstr "آنلاین"
 
 msgid "adminV2.users.filter.onlineHint"
 msgstr "در ۲ دقیقهٔ گذشته وصل بوده‌اند"
+
+msgid "adminV2.users.filter.telegram"
+msgstr "دارای تلگرام"
+
+msgid "adminV2.users.filter.telegramHint"
+msgstr "کاربرانی که ربات را استارت کرده‌اند و می‌توانند پیام بگیرند"
 
 msgid "adminV2.users.filter.unseen_week"
 msgstr "یک هفته بدون اتصال"
