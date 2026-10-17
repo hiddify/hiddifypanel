@@ -1,3 +1,4 @@
+import ipaddress
 import os
 import re
 import subprocess
@@ -365,6 +366,15 @@ def is_fake_domain(model: Domain):
     return model.fake_mode in {FakeMode.fake, FakeMode.reality}
 
 
+def url_host(host: str) -> str:
+    """A host as it goes in a URL: an IPv6 address in brackets (https://[2001:db8::1]/), anything else as it is."""
+    bare = host.strip("[]")
+    try:
+        return f"[{bare}]" if ipaddress.ip_address(bare).version == 6 else host
+    except ValueError:
+        return host
+
+
 def get_account_panel_link(account: BaseAccount, host: str, is_https: bool = True, prefere_path_only: bool = False, child_id=None):
     if child_id is None:
         child_id = Child.current().id
@@ -376,7 +386,7 @@ def get_account_panel_link(account: BaseAccount, host: str, is_https: bool = Tru
         link = "https://" if is_https else "http://"
         if basic_auth:
             link += f"{account.uuid}@"
-        link += str(host)
+        link += url_host(str(host))
     proxy_path = hconfig(ConfigEnum.proxy_path_admin if is_admin else ConfigEnum.proxy_path_client, child_id)
     link += f"/{proxy_path}/"
 

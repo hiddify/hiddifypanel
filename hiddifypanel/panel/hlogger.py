@@ -33,4 +33,8 @@ def init_logger(app, cli):
 
 
 def set_level(app, level):
-    logger.add(app.config["HIDDIFY_CONFIG_PATH"] + "/data/log/panel.log", format=logger_dynamic_formatter, level=level, colorize=True, catch=True, enqueue=True, diagnose=False, backtrace=True)
+    path = app.config["HIDDIFY_CONFIG_PATH"] + "/data/log/panel.log"
+    try:
+        logger.add(path, format=logger_dynamic_formatter, level=level, colorize=True, catch=True, enqueue=True, diagnose=False, backtrace=True)
+    except OSError as e:  # the log file must never stop the panel (e.g. not writable by the panel's user): stderr only
+        logger.warning(f"Panel log file {path} not writable ({e}); logging to stderr only")
