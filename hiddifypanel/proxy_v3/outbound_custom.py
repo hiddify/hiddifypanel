@@ -31,6 +31,7 @@ MANAGER_ROOT = Path(os.environ.get("HIDDIFY_CONFIG_PATH") or "/opt/hiddify-manag
 XRAY_BIN = MANAGER_ROOT / "services" / "xray" / "bin" / "xray"
 CORE_DIR = MANAGER_ROOT / "services" / "hiddify-core"
 CORE_BIN = CORE_DIR / "hiddify-core"
+CLASH_BIN = MANAGER_ROOT / "services" / "clash" / "mihomo"
 
 #: How long hiddify-core must stay up before its config counts as good (decode errors show in well under a second).
 CORE_STARTUP_SECONDS = 4

@@ -1,0 +1,14 @@
+"type": "hysteria2",
+"server": "{{ proxy.server }}",
+"port": {{ proxy.udp_port or ctx.proxy.port }},
+"password": "{{ ctx.user.uuid }}",
+{% if ctx.hconfig.hysteria_up_mbps %}"up": "{{ ctx.hconfig.hysteria_up_mbps }}",{% endif %}
+{% if ctx.hconfig.hysteria_down_mbps %}"down": "{{ ctx.hconfig.hysteria_down_mbps }}",{% endif %}
+{% if ctx.hconfig.hysteria_obfs_enable %}
+"obfs": "salamander",
+"obfs-password": "{{ ctx.hconfig.proxy_path }}",
+{% endif %}
+"sni": "{{ domain.sni }}",
+{% if domain.allow_insecure %}
+"skip-cert-verify": true,
+{% endif %}

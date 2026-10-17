@@ -119,7 +119,7 @@
         <div class="ct-main">
           <div class="ct-name" dir="ltr">{{ r.name }}</div>
           <div class="ct-sub">
-            <Tag :value="r.kind === 'xray' ? 'xray' : 'hiddify-core'" severity="secondary" class="ct-kind" />
+            <Tag :value="r.kind === 'xray' ? 'xray' : r.kind === 'clash' ? 'clash' : 'hiddify-core'" severity="secondary" class="ct-kind" />
             <Tag v-if="edits[r.index]" :value="t('configTester.sub.edited')" severity="warn" class="ct-kind" />
             <span v-if="r.state === 'ok'" class="text-muted-color">{{ t('configTester.state.ok') }}<template v-if="r.passed"> · {{ r.passed }}</template></span>
             <span v-else class="text-muted-color">{{ t(`configTester.state.${r.state}`) }}</span>
@@ -236,7 +236,7 @@ const UA_PRESETS = [
   { label: 'sing-box', value: 'SFA/1.13.0 (sing-box 1.13.0)' },
   { label: 'xray JSON (v2rayNG)', value: 'v2rayNG/1.9.0' },
   { label: 'xray JSON (xray)', value: 'xray/26.3.27' },
-  { label: 'Clash Meta', value: 'clash.meta/1.18.0' },
+  { label: 'Clash Meta', value: 'clash.meta/1.19.32' },
   { label: 'Links (plain)', value: 'Hiddify/2.0 (links)' },
 ]
 const FILTERS = [
@@ -323,7 +323,13 @@ const counts = computed(() => ({
 }))
 const doneCount = computed(() => rows.value.filter((r) => r.state === 'ok' || r.state === 'failed' || r.state === 'idle').length)
 const pending = computed(() => rows.value.some((r) => r.state === 'waiting'))
-const sourceLabel = computed(() => t(`configTester.source${source.value === 'xray' ? 'Xray' : source.value === 'core' ? 'Core' : 'Parsed'}`))
+const sourceLabel = computed(() =>
+  t(
+    `configTester.source${
+      source.value === 'xray' ? 'Xray' : source.value === 'core' ? 'Core' : source.value === 'clash' ? 'Clash' : 'Parsed'
+    }`,
+  ),
+)
 
 const shown = computed(() => {
   const list = rows.value.filter((r) => filter.value === 'all' || r.state === filter.value)

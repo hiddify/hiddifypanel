@@ -1,0 +1,11 @@
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set proxy = ctx.proxy %}
+{% set domain = ctx.proxy.domain %}
+{% set tag %}{%- include 'clash/client/tag' -%}{% endset %}
+{
+  "name": "{{ tag | trim_no_line }}",
+  {% include '__PROTO_SLUG__' %},
+  {% include '__STREAM_SLUG__' %},
+  {% include '__TLS_SLUG__' %},
+},
+{% endfor %}

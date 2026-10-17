@@ -1,0 +1,31 @@
+{# Mihomo: TLS fields live on the proxy root (no nested tls block).
+   Map from sing-box/Xray: server_name→servername, utls→client-fingerprint, reality→reality-opts.
+   See https://core-tutorial.argsment.com/compare/ #}
+{% set domain = domain if domain is defined else ctx.proxy.domain %}
+{% set tls_layer = (tls_layer if tls_layer is defined else ctx.proxy.tls_layer) or "http" %}
+
+{% if tls_layer != 'http' %}
+"tls": true,
+{% if ctx.proxy.proto == "trojan" %}
+"sni": "{{ domain.sni }}",
+{% else %}
+"servername": "{{ domain.sni }}",
+{% endif %}
+{% set fp = ctx.hconfig.utls or "" %}
+{% if fp and fp != "none" %}
+"client-fingerprint": "{{ fp }}",
+{% elif domain.is_reality() %}
+"client-fingerprint": "chrome",
+{% endif %}
+{% if tls_layer != 'http' and not domain.is_reality() %}
+"alpn": {{ tls_layer.alpns() | tojson }},
+{% endif %}
+{% if domain.is_reality() %}
+"reality-opts": {
+  "public-key": "{{ ctx.hconfig.reality_public_key }}",
+  "short-id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
+},
+{% elif domain.allow_insecure %}
+"skip-cert-verify": true,
+{% endif %}
+{% endif %}

@@ -1,0 +1,11 @@
+"type": "tuic",
+"server": "{{ proxy.server }}",
+"port": {{ proxy.udp_port or ctx.proxy.port }},
+"uuid": "{{ ctx.user.uuid }}",
+"password": "{{ ctx.user.uuid }}",
+"udp-relay-mode": "native",
+"reduce-rtt": true,
+"sni": "{{ domain.sni }}",
+{% if domain.allow_insecure %}
+"skip-cert-verify": true,
+{% endif %}

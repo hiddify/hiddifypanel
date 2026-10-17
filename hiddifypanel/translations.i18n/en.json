@@ -881,7 +881,7 @@
     "configTester": {
       "advanced": "More options",
       "contentLabel": "Contents to test",
-      "contentPlaceholder": "Paste share links (one per line, or base64), an xray / hiddify-core / sing-box JSON…",
+      "contentPlaceholder": "Paste share links (one per line, or base64), an xray / hiddify-core / sing-box JSON, or Clash Meta YAML…",
       "copyName": "Copy name",
       "delay": "Delay",
       "details": "Details",
@@ -938,6 +938,7 @@
         "order": "Subscription order"
       },
       "sortDelay": "Sort by delay",
+      "sourceClash": "Clash Meta subscription",
       "sourceCore": "hiddify-core subscription",
       "sourceParsed": "Links converted by hiddify-core",
       "sourceXray": "xray subscription",

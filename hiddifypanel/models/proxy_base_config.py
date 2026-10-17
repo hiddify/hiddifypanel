@@ -198,6 +198,13 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'description': 'Sublink bundle base structure',
     },
     {
+        'side': BaseConfigSide.client,
+        'core': 'clash',
+        'version': '1.0.0',
+        'name': 'Client Clash / Mihomo Base',
+        'description': 'Clash Meta (Mihomo) client config shell: proxies, proxy-groups, DNS, rules',
+    },
+    {
         'side': BaseConfigSide.server,
         'core': 'xray',
         'version': '1.0.0',

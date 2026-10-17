@@ -722,7 +722,10 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     if not contexts:
         return "", messages
 
-    base = resolve_base_config_content(child_id, BaseConfigSide.client, TemplateCore.clash, contexts[0].platform.app_version)
+    # Same as JSON client drivers: base shells are not gated on the client app version.
+    from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+
+    base = resolve_base_config_content(child_id, BaseConfigSide.client, TemplateCore.clash, TemplateVersion("0.0.0"))
     base = extract_base_config_shell(base) or base
     base_section = render_section(base, child_id, make_jinja_context(contexts[0]), as_json_object=True)
     parsed = base_section.parsed if isinstance(base_section.parsed, dict) else {"proxies": []}

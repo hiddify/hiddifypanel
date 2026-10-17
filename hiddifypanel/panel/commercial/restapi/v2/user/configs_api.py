@@ -222,7 +222,8 @@ class AllConfigsAPI(MethodView):
                     f"{base_url}sub64/?asn={c['asn']}#{config_name}",
                 )
             )
-        if hconfig(ConfigEnum.sub_full_clash_meta_enable):
+        # One Clash Meta (Mihomo) subscription — /clashmeta/ (and /clash/ for older clients).
+        if hconfig(ConfigEnum.sub_full_clash_meta_enable) or hconfig(ConfigEnum.sub_full_clash_enable):
             items.append(
                 create_item(
                     "Clash Meta",
@@ -232,19 +233,6 @@ class AllConfigsAPI(MethodView):
                     "",
                     "",
                     f"{base_url}clashmeta/?asn={c['asn']}#{config_name}",
-                )
-            )
-
-        if hconfig(ConfigEnum.sub_full_clash_enable):
-            items.append(
-                create_item(
-                    "Clash",
-                    "ALL",
-                    "Except VLess",
-                    "",
-                    "",
-                    "",
-                    f"{base_url}clash/?asn={c['asn']}#{config_name}",
                 )
             )
 

@@ -880,7 +880,7 @@
     "configTester": {
       "advanced": "گزینه‌های بیشتر",
       "contentLabel": "محتوای تست",
-      "contentPlaceholder": "لینک‌ها (هر خط یکی، یا base64) یا JSON اکسری / hiddify-core / sing-box را بچسبانید…",
+      "contentPlaceholder": "لینک‌ها (هر خط یکی، یا base64)، JSON اکسری / hiddify-core / sing-box، یا YAML کلش متا را بچسبانید…",
       "copyName": "کپی نام",
       "delay": "تأخیر",
       "details": "جزئیات",
@@ -937,6 +937,7 @@
         "order": "ترتیب اشتراک"
       },
       "sortDelay": "مرتب‌سازی بر اساس تأخیر",
+      "sourceClash": "اشتراک Clash Meta",
       "sourceCore": "اشتراک hiddify-core",
       "sourceParsed": "لینک‌ها که با hiddify-core تبدیل شدند",
       "sourceXray": "اشتراک xray",

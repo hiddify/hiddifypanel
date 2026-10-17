@@ -1,9 +1,10 @@
-"""Config tester: fetch a subscription, run each config in its own xray / hiddify-core process (a local SOCKS port each, in parallel) and time requests through it.
+"""Config tester: fetch a subscription, run each config in its own xray / hiddify-core / mihomo process (a local SOCKS port each, in parallel) and time requests through it.
 
 * xray subscription (JSON config or list of configs): every config runs in ``xray`` with its inbounds replaced by one SOCKS inbound.
 * hiddify-core / sing-box subscription (JSON with ``outbounds``): every proxy outbound runs alone in ``hiddify-core srun``.
+* Clash Meta / Mihomo YAML (``proxies`` list): every proxy runs alone in ``mihomo``.
 * share links (also base64): each one goes through ``hiddify-core parse`` on its own.
-* anything else (clash...): ``hiddify-core parse`` turns it into a hiddify-core config first.
+* anything else: ``hiddify-core parse`` turns it into a hiddify-core config first.
 
 Errors that belong to the input are ``TesterError`` (their text is shown to the admin); one config that fails never stops the others.
 """
@@ -52,7 +53,7 @@ from hiddifypanel.proxy_v3.config_tester_types import (
     objects,
     text,
 )
-from hiddifypanel.proxy_v3.outbound_custom import CORE_BIN, CORE_DIR, XRAY_BIN
+from hiddifypanel.proxy_v3.outbound_custom import CLASH_BIN, CORE_BIN, CORE_DIR, XRAY_BIN
 
 __all__ = ["DEFAULT_REPEATS", "DEFAULT_TEST_URL", "TesterError", "rerun", "run"]
 
@@ -113,6 +114,35 @@ def _is_core(cfg: Json) -> bool:
     return any("type" in o for o in [*objects(config.get("outbounds")), *objects(config.get("endpoints"))])
 
 
+def _is_clash(cfg: Json) -> bool:
+    """True when the value is a Clash / Mihomo document with at least one named proxy."""
+    proxies = obj(cfg).get("proxies")
+    return isinstance(proxies, list) and any(isinstance(p, dict) and text(p.get("name")) and text(p.get("type")) for p in proxies)
+
+
+def _parse_clash(raw: str) -> JsonObject | None:
+    """Clash YAML (or JSON) with a ``proxies`` list; ``None`` when the text is not that."""
+    import yaml
+
+    try:
+        data = yaml.safe_load(raw)
+    except yaml.YAMLError:
+        return None
+    return data if isinstance(data, dict) and _is_clash(data) else None
+
+
+def _clash_items(cfg: JsonObject) -> list[Item]:
+    items: list[Item] = []
+    for p in objects(cfg.get("proxies")):
+        name = text(p.get("name"))
+        if not name or not text(p.get("type")):
+            continue
+        items.append(Item(len(items), name, "clash", {"proxy": copy.deepcopy(p)}, tag=name, original=copy.deepcopy(p)))
+        if len(items) >= MAX_CONFIGS:
+            break
+    return items
+
+
 def _xray_name(cfg: JsonObject, i: int) -> str:
     if remarks := text(cfg.get("remarks")):
         return remarks
@@ -138,7 +168,7 @@ def _decode_base64_links(raw: str) -> str:
 
 
 def split(raw: str) -> tuple[Source, list[Item], JsonObject | None]:
-    """``(source, items, parsed)``: ``xray``, ``core`` or ``parsed`` (links converted by hiddify-core; that result is ``parsed``)."""
+    """``(source, items, parsed)``: ``xray``, ``core``, ``clash``, or ``parsed`` (links converted by hiddify-core; that result is ``parsed``)."""
     data = _parse_json(raw)
     if isinstance(data, list):
         configs = [c for c in objects(data) if _is_xray(c)]
@@ -149,7 +179,12 @@ def split(raw: str) -> tuple[Source, list[Item], JsonObject | None]:
             return "xray", [_xray_item(0, data)], None
         if _is_core(data):
             return "core", _core_items(data), None
-    # not a config in JSON: links (also base64), or something hiddify-core can read
+        if _is_clash(data):
+            return "clash", _clash_items(data), None
+    # Clash Meta YAML (not JSON), then links / hiddify-core parse
+    if data is None:
+        if clash := _parse_clash(raw):
+            return "clash", _clash_items(clash), None
     body = _decode_base64_links(raw) if data is None else raw
     lines = _link_lines(body)
     if lines:  # one link at a time: hiddify-core joins a link into the next line when it ends oddly, and one unknown link must not fail the rest
@@ -296,6 +331,21 @@ def build_config(item: Item, port: int) -> JsonObject:
         for key in ("routing", "api", "stats", "policy"):  # without routing the first outbound is the default
             cfg.pop(key, None)
         return cfg
+    if item.kind == "clash":
+        proxy = copy.deepcopy(obj(cfg.get("proxy")))
+        name = text(proxy.get("name")) or item.name or "proxy"
+        proxy["name"] = name
+        return {
+            "mixed-port": port,
+            "allow-lan": False,
+            "bind-address": "127.0.0.1",
+            "mode": "rule",
+            "log-level": "debug",
+            "ipv6": True,
+            "proxies": [proxy],
+            "proxy-groups": [{"name": "PROXY", "type": "select", "proxies": [name]}],
+            "rules": ["MATCH,PROXY"],
+        }
     outbounds = objects(cfg.get("outbounds"))
     have = {text(o.get("tag")) for o in outbounds}
     extra: list[Json] = [{"tag": tag, "type": "direct"} for tag in ("direct", "freedom") if tag not in have]
@@ -381,14 +431,23 @@ def run_one(item: Item, port: int, test_url: str, timeout: int, repeats: int = D
     try:
         run_cfg = build_config(item, port)
         result["run_config"] = run_cfg
-        path = Path(tmp) / "config.json"
-        path.write_text(json.dumps(run_cfg), encoding="utf-8")
-        binary = XRAY_BIN if item.kind == "xray" else CORE_BIN
-        cmd = [str(binary), "run", "-c", str(path)] if item.kind == "xray" else [str(binary), "srun", "-c", str(path), "-D", tmp]
+        if item.kind == "clash":
+            import yaml
+
+            path = Path(tmp) / "config.yaml"
+            path.write_text(yaml.dump(run_cfg, sort_keys=False, allow_unicode=True) or "", encoding="utf-8")
+            binary = CLASH_BIN
+            cmd = [str(binary), "-f", str(path), "-d", tmp]
+            cwd = tmp
+        else:
+            path = Path(tmp) / "config.json"
+            path.write_text(json.dumps(run_cfg), encoding="utf-8")
+            binary = XRAY_BIN if item.kind == "xray" else CORE_BIN
+            cmd = [str(binary), "run", "-c", str(path)] if item.kind == "xray" else [str(binary), "srun", "-c", str(path), "-D", tmp]
+            cwd = str(CORE_DIR) if item.kind == "core" and CORE_DIR.is_dir() else tmp
         if not binary.exists():
             result["error"] = f"{binary.name} is not installed"
             return result
-        cwd = str(CORE_DIR) if item.kind == "core" and CORE_DIR.is_dir() else tmp
         with log_path.open("wb") as log_file:  # a file, not a pipe: a trace log would fill the pipe and stop the core
             proc = subprocess.Popen(cmd, stdout=log_file, stderr=subprocess.STDOUT, cwd=cwd)
         if not _wait_port(port, proc, STARTUP_TIMEOUT):
@@ -490,10 +549,10 @@ def _rerun_item(raw: object, split_cache: dict[str, list[Item]]) -> Item:
         return item
     kind = entry.get("kind")
     config = entry.get("config")
-    if kind not in ("xray", "core") or not isinstance(config, dict):
+    if kind not in ("xray", "core", "clash") or not isinstance(config, dict):
         raise TesterError("Bad config to test again")
     original = entry.get("original")
-    typed_kind: Kind = "xray" if kind == "xray" else "core"
+    typed_kind: Kind = "xray" if kind == "xray" else "clash" if kind == "clash" else "core"
     return Item(index, name, typed_kind, config, tag=text(entry.get("tag")), original=config if original is None else original)
 
 

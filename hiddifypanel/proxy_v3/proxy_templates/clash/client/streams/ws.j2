@@ -1,0 +1,9 @@
+{{ skip("ws_enable = " ~ ctx.hconfig.ws_enable) if not ctx.hconfig.ws_enable }}
+"network": "ws",
+"ws-opts": {
+  "path": "/{{ proxy.path }}",
+  "headers": {
+    "Host": "{{ proxy.domain.host }}"
+  },
+  "early-data-header-name": "Sec-WebSocket-Protocol"
+},

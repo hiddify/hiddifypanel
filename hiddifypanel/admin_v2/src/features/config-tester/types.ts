@@ -3,8 +3,8 @@
 export type Json = null | boolean | number | string | Json[] | { [key: string]: Json }
 export type JsonObject = { [key: string]: Json }
 
-export type Kind = 'xray' | 'core'
-export type Source = 'xray' | 'core' | 'parsed'
+export type Kind = 'xray' | 'core' | 'clash'
+export type Source = 'xray' | 'core' | 'clash' | 'parsed'
 
 export type Fetched = { user_agent: string; status: number; content_type: string; bytes: number; pasted?: undefined } | { pasted: true; bytes: number; user_agent?: undefined; status?: undefined; content_type?: undefined }
 

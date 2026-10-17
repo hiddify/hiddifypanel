@@ -232,15 +232,15 @@ class UserView(FlaskView):
     @route("/clash")
     @login_required(roles={Role.user})
     def clash(self):
-        """Returns clash client config"""
-        return self.clash_config_imp(meta_or_normal="normal")
+        """Same Clash Meta (Mihomo) YAML as ``/clashmeta/`` (kept for older clients / deeplinks)."""
+        return self.clash_config_imp()
 
     @route("/clashmeta/")
     @route("/clashmeta")
     @login_required(roles={Role.user})
     def clashmeta(self):
-        """Returns clash meta client config"""
-        return self.clash_config_imp(meta_or_normal="meta")
+        """Returns Clash Meta / Mihomo client YAML (proxies, groups, rules)."""
+        return self.clash_config_imp()
 
     # endregion
 
@@ -265,10 +265,8 @@ class UserView(FlaskView):
         if g.user_agent["is_singbox"] or re.match("^(HiddifyNext|Dart|SFI|SFA)", ua, re.IGNORECASE):
             return self.full_singbox_imp()
 
-        if re.match("^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)", ua, re.IGNORECASE):
-            return self.clash_config_imp(meta_or_normal="meta")
-        if re.match("^(Clash|Stash)", ua, re.IGNORECASE):
-            return self.clash_config_imp(meta_or_normal="normal")
+        if re.match("^(Clash|Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)", ua, re.IGNORECASE):
+            return self.clash_config_imp()
 
         # ?force_xray_json=1 acts as if the xray JSON subscription setting were on (used by the admin config tester)
         force_xray_json = request.args.get("force_xray_json") == "1"
@@ -284,26 +282,26 @@ class UserView(FlaskView):
     @route("/clash/<meta_or_normal>/proxies.yml")
     @route("/clash/proxies.yml")
     @login_required(roles={Role.user})
-    def clash_proxies(self, meta_or_normal="normal"):
+    def clash_proxies(self, meta_or_normal="meta"):
+        del meta_or_normal  # only one Clash Meta format remains
+        if not (hconfig(ConfigEnum.sub_full_clash_meta_enable) or hconfig(ConfigEnum.sub_full_clash_enable)):
+            return "The Clash Meta subscription is disabled"
+
         mode = request.args.get("mode")
         domain = request.args.get("domain", None)
 
         c = get_common_data(g.account.uuid, mode, filter_domain=domain)
         text = self._render_core_config("clash", c, pretty=False)
         proxies_only = _clash_proxies_yaml(text)
-        resp = Response(proxies_only)
-        resp.mimetype = "text/plain"
-        return resp
+        return add_headers(proxies_only, c)
 
     @route("/clash/<typ>.yml", methods=["GET", "HEAD"])
     @route("/clash/<meta_or_normal>/<typ>.yml", methods=["GET", "HEAD"])
     @login_required(roles={Role.user})
-    def clash_config_imp(self, meta_or_normal="normal", typ="all.yml"):
-        del typ  # proxy_v3 clash base already selects full client shell
-        if meta_or_normal == "meta" and not hconfig(ConfigEnum.sub_full_clash_meta_enable):
-            return "The Clash meta subscription is disabled"
-        elif meta_or_normal == "normal" and not hconfig(ConfigEnum.sub_full_clash_enable):
-            return "The Clash subscription is disabled"
+    def clash_config_imp(self, meta_or_normal="meta", typ="all.yml"):
+        del meta_or_normal, typ  # proxy_v3 clash base is Clash Meta only
+        if not (hconfig(ConfigEnum.sub_full_clash_meta_enable) or hconfig(ConfigEnum.sub_full_clash_enable)):
+            return "The Clash Meta subscription is disabled"
 
         c = get_common_data(g.account.uuid, request.args.get("mode"))
         if request.method == "HEAD":

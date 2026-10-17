@@ -1,0 +1,11 @@
+{# Mihomo models HTTPUpgrade as WebSocket + v2ray-http-upgrade (see VLESS→Clash converter). #}
+{{ skip("httpupgrade_enable = " ~ ctx.hconfig.httpupgrade_enable) if not ctx.hconfig.httpupgrade_enable }}
+"network": "ws",
+"ws-opts": {
+  "path": "/{{ proxy.path }}",
+  "headers": {
+    "Host": "{{ proxy.domain.host }}"
+  },
+  "v2ray-http-upgrade": true,
+  "v2ray-http-upgrade-fast-open": true
+},

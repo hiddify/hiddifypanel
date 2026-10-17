@@ -427,21 +427,104 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
     return content, slugs
 
 
+_CLASH_V2RAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
+_CLASH_STANDALONE_PROTOS = frozenset({"ss", "hysteria2", "tuic", "hysteria"})
+_CLASH_UNSUPPORTED_TRANSPORTS = frozenset(
+    {
+        "faketls",
+        "shadowtls",
+        "custom",
+        "ssh",
+        "shadowsocks",
+        "udp",
+        "none",
+    }
+)
+
+
+def _clash_client_proto_slug(combo: ProxyCombination) -> str | None:
+    proto = _client_proto_file(combo.proto)
+    if not proto:
+        return None
+    if combo.proto == "v2ray":
+        # Shadowsocks + v2ray-plugin is not a first-class Clash type here.
+        return None
+    if proto == "hysteria":
+        proto = "hysteria2"
+    slug = f"clash/client/protocols/{proto}"
+    try:
+        load_template_slug(slug)
+        return slug
+    except FileNotFoundError:
+        return None
+
+
+def _clash_client_streams_slug(combo: ProxyCombination) -> str | None:
+    mapped = _transport_file(combo.transport)
+    if not mapped or mapped == "none":
+        return None
+    slug = f"clash/client/streams/{mapped}"
+    try:
+        load_template_slug(slug)
+        return slug
+    except FileNotFoundError:
+        return "clash/client/streams/tcp"
+
+
+def supports_clash_preset(combo: ProxyCombination) -> bool:
+    """True when Mihomo/Clash Meta can express this combo as a proxy entry."""
+    proto = _client_proto_file(combo.proto)
+    if not proto:
+        return False
+    if combo.proto == "v2ray":
+        return False
+    if proto in _CLASH_V2RAY_PROTOS:
+        if _raw_transport(combo.transport) in _CLASH_UNSUPPORTED_TRANSPORTS:
+            return False
+        return _clash_client_streams_slug(combo) is not None and _clash_client_proto_slug(combo) is not None
+    if proto in _CLASH_STANDALONE_PROTOS or proto == "hysteria":
+        # FakeTLS / ShadowTLS need Clash plugins we do not emit yet.
+        if _raw_transport(combo.transport) in ("faketls", "shadowtls"):
+            return False
+        return _clash_client_proto_slug(combo) is not None
+    return False
+
+
 def build_clash_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
-    """Mihomo/Clash JSON proxy entry (YAML grammar JSON subset)."""
-    network = _transport_file(combo.transport) or "tcp"
-    if network == "http":
-        network = "tcp"
-    proto = _proto_file(combo.proto) or "vless"
+    """Mihomo/Clash Meta proxy entry (JSON subset; dumped as YAML for the subscription).
+
+    Field names follow the sing-box → mihomo map in
+    https://core-tutorial.argsment.com/compare/ and the VLESS→Clash converter
+    (servername, client-fingerprint, reality-opts, ws + v2ray-http-upgrade, …).
+    """
+    proto_slug = _clash_client_proto_slug(combo)
+    if not proto_slug:
+        raise ValueError(f"Unsupported clash client preset: {combo.name}")
+    proto = _client_proto_file(combo.proto) or ""
+    tls_slug = "clash/client/tls/tls"
+    if proto in _CLASH_V2RAY_PROTOS:
+        stream_slug = _clash_client_streams_slug(combo)
+        if not stream_slug:
+            raise ValueError(f"Unsupported clash client transport: {combo.name}")
+        slugs = [proto_slug, stream_slug, tls_slug, "client/tag"]
+        content = _render_shell(
+            "clash",
+            "outbound_v2ray",
+            {
+                "__PROTO_SLUG__": proto_slug,
+                "__STREAM_SLUG__": stream_slug,
+                "__TLS_SLUG__": tls_slug,
+            },
+        )
+        return content, slugs
+    # tuic / hysteria2 embed their own sni / skip-cert-verify; ss has no TLS section.
+    slugs = [proto_slug, "client/tag"]
     content = _render_shell(
         "clash",
         "outbound_general",
-        {
-            "__PROTO__": proto,
-            "__NETWORK__": network,
-        },
+        {"__PROTO_SLUG__": proto_slug},
     )
-    return content, ["client/tag"]
+    return content, slugs
 
 
 def _builtin_client_core_entry(core: str, outbound: str) -> dict[str, Any]:
@@ -491,7 +574,7 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
     if combo.proto == "wireguard":  # the WireGuard apps' own format (/wireguard, client core "wireguard")
         configs.append(_builtin_client_core_entry("wireguard", load_template_slug("wireguard/client/conf")))
 
-    if supports_xray_preset(combo):
+    if supports_clash_preset(combo):
         try:
             clash_outbound, _clash_slugs = build_clash_client_outbound(combo)
             configs.append(_builtin_client_core_entry("clash", clash_outbound))

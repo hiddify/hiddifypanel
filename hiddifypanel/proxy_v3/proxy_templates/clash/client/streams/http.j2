@@ -1,0 +1,17 @@
+{% set tls_layer = (tls_layer if tls_layer is defined else ctx.proxy.tls_layer) or "http" %}
+{% set alpns = tls_layer.alpns() if tls_layer != "http" else [] %}
+{% if "h2" in alpns and "http/1.1" not in alpns %}
+"network": "h2",
+"h2-opts": {
+  "path": "/{{ proxy.path }}",
+  "host": ["{{ proxy.domain.host }}"]
+},
+{% else %}
+"network": "http",
+"http-opts": {
+  "path": ["/{{ proxy.path }}"],
+  "headers": {
+    "Host": ["{{ proxy.domain.host }}"]
+  }
+},
+{% endif %}

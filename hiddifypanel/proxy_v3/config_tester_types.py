@@ -11,8 +11,8 @@ from typing import Literal, NotRequired, TypedDict
 type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
 type JsonObject = dict[str, Json]
 
-type Kind = Literal["xray", "core"]
-type Source = Literal["xray", "core", "parsed"]
+type Kind = Literal["xray", "core", "clash"]
+type Source = Literal["xray", "core", "clash", "parsed"]
 
 
 class TesterError(Exception):

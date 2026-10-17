@@ -1,0 +1,5 @@
+{{ skip("grpc_enable = " ~ ctx.hconfig.grpc_enable) if not ctx.hconfig.grpc_enable }}
+"network": "grpc",
+"grpc-opts": {
+  "grpc-service-name": "{{ proxy.path }}"
+},

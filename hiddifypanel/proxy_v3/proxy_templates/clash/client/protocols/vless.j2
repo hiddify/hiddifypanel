@@ -1,0 +1,15 @@
+{# Mihomo VLESS — field map: https://shipengtao.com/en/tools/vless-to-clash/ #}
+{% set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+{% set encryption = 'none' if reality_terminated else (ctx.hconfig.vless_encryption or 'none') %}
+"type": "vless",
+"server": "{{ proxy.server }}",
+"port": {{ ctx.proxy.port }},
+"uuid": "{{ ctx.user.uuid }}",
+"udp": true,
+"packet-encoding": "xudp",
+{% if encryption and encryption != "none" %}
+"encryption": "{{ encryption }}",
+{% endif %}
+{% if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_flow and ctx.proxy.transport == "tcp" %}
+"flow": "{{ ctx.hconfig.vless_flow }}",
+{% endif %}
