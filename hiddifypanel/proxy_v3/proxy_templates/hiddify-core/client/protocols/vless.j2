@@ -1,11 +1,16 @@
 {# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
 {%set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+{%set encryption = 'none' if reality_terminated else (ctx.hconfig.vless_encryption or 'none') %}
+{# sing-box (SFA, SFI, ...) has no VLESS encryption: its config refuses the field, and it can not reach a server that requires it #}
+{{ skip("VLESS encryption needs the Hiddify app (sing-box does not support it)") if ctx.proxy.server_core == "xray" and encryption != "none" and not ctx.platform.is_hiddify }}
 
 "type": "vless",
 "server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
 {% if ctx.proxy.server_core == "xray" %}
-"encryption": "{{ 'none' if reality_terminated else ctx.hconfig.vless_encryption }}",
+{% if ctx.platform.is_hiddify %}
+"encryption": "{{ encryption }}",
+{% endif %}
 "flow": "{{ ctx.hconfig.vless_flow }}",
 {% endif %}
