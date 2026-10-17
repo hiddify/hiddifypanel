@@ -1,3 +1,5 @@
+{#- The remarks: the usage and days left, when the panel shows them in the sublink. #}
+{% set tag = '' %}
 {% if ctx.hconfig.show_usage_in_sublink %}
 {% set tag = '⏳ ' if ctx.user.is_active else '✖ ' %}
 {% if ctx.user.usage_limit_GB < 1000 %}
@@ -14,6 +16,7 @@
 
 {% endif %}
 {% set tag = tag|trim %}
+{% endif %}
 
 
 {% if ctx.user.is_active and ctx.client_proxy_tags %}
@@ -53,8 +56,8 @@
     "probeInterval": "10s",
     "enableConcurrency": true
   }
-  {% endif %}
 }
+{#- No usable proxy, or the package ended: a config that blocks everything and says why #}
 {%else%}
 {
   "remarks": "{{ _('✖ Package Ended') }} {{tag |trim_no_line}}",
