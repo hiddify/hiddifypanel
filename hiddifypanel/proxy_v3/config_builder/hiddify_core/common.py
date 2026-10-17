@@ -17,6 +17,7 @@ from hiddifypanel.proxy_v3.config_builder.template_blocks import (
 )
 from hiddifypanel.proxy_v3.context_vars.builder.utils import load_json5, make_jinja_context
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+from hiddifypanel.proxy_v3.outbound_tags import UniqueTags
 
 
 def merge_fragment(blocks: list[ProxyBlock], block_names: tuple[str, ...]) -> str:
@@ -45,7 +46,16 @@ def client_selector_tags(blocks: list[ProxyBlock]) -> list[str]:
     return tags
 
 
-def render_template_blocks(child_id: int, jinja_ctx: dict[str, Any], template: str, block_names: tuple[str, ...], proxy_label: str, messages: list[MessageModel]) -> list[ProxyBlock]:
+def render_template_blocks(
+    child_id: int,
+    jinja_ctx: dict[str, Any],
+    template: str,
+    block_names: tuple[str, ...],
+    proxy_label: str,
+    messages: list[MessageModel],
+    tags: UniqueTags | None = None,
+) -> list[ProxyBlock]:
+    """``tags``: the tags already used in the config (a client config shares one across its proxies)."""
     outbound_tpl = (template or "").strip()
     if not outbound_tpl:
         return []
@@ -73,7 +83,7 @@ def render_template_blocks(child_id: int, jinja_ctx: dict[str, Any], template: s
         if content:
             blocks.append(ProxyBlock(block_name=block_name, content=content))
 
-    return extract_tags_convert_unique_ids(blocks, messages=messages, proxy_label=proxy_label)
+    return extract_tags_convert_unique_ids(blocks, messages=messages, proxy_label=proxy_label, tags=tags)
 
 
 def compose_config_from_blocks(
@@ -117,8 +127,9 @@ def extract_tags_convert_unique_ids(
     *,
     messages: list[MessageModel] | None = None,
     proxy_label: str = "",
+    tags: UniqueTags | None = None,
 ) -> list[ProxyBlock]:
-    names: set[str] = set()
+    tags = tags if tags is not None else UniqueTags()
     kept: list[ProxyBlock] = []
     for block in blocks:
         try:
@@ -155,15 +166,10 @@ def extract_tags_convert_unique_ids(
                     )
                 continue
             if tag := item.get("tag"):
-                newtag = tag
-                if tag in names:
-                    for i in range(1, 100):
-                        if f"{tag}-{i}" not in names:
-                            newtag = f"{tag}§{i}"
-                            break
+                newtag = tags.claim(str(tag))
+                if newtag != tag:
                     renamed[tag] = newtag
                 block.extracted_tags.append(newtag)
-                names.add(newtag)
                 item["tag"] = newtag
         for item in data:
             if isinstance(item, dict) and "detour" in item and (new_detour := renamed.get(item["detour"])):

@@ -705,6 +705,7 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
     from hiddifypanel.proxy_v3.config_builder.render import render_section
     from hiddifypanel.proxy_v3.context_vars.builder.utils import load_json5, make_jinja_context
+    from hiddifypanel.proxy_v3.outbound_tags import UniqueTags
 
     messages: list[MessageModel] = []
     if not contexts:
@@ -715,6 +716,10 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     base_section = render_section(base, child_id, make_jinja_context(contexts[0]), as_json_object=True)
     parsed = base_section.parsed if isinstance(base_section.parsed, dict) else {"proxies": []}
     proxies: list[dict[str, Any]] = list(parsed.get("proxies") or [])
+    names = UniqueTags()  # Clash refuses two proxies with one name
+    for proxy in proxies:
+        if isinstance(proxy, dict) and proxy.get("name"):
+            proxy["name"] = names.claim(str(proxy["name"]))
 
     for ctx in contexts:
         ctx.render_core = TemplateCore.clash.value
@@ -747,6 +752,8 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
                     item["tag"] = item["name"]
                 if item.get("tag") and not item.get("name"):
                     item["name"] = item["tag"]
+                if item.get("name"):
+                    item["name"] = item["tag"] = names.claim(str(item["name"]))
                 proxies.append(item)
 
     parsed["proxies"] = proxies

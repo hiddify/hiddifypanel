@@ -13,6 +13,7 @@ from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
 from hiddifypanel.proxy_v3.context_vars.ctx_client import ClientContextVar
 from hiddifypanel.proxy_v3.context_vars.proxy import ConfigVar
 from hiddifypanel.proxy_v3.context_vars.version import TemplateVersion
+from hiddifypanel.proxy_v3.outbound_tags import UniqueTags
 
 _USE_HIDDIFY_CORE_RE = re.compile(r"\{#\s*use_hiddify_core\s*\(\s*\)\s*#\}")
 
@@ -22,12 +23,14 @@ class JsonClientOutboundDriver(BaseConfigBuilderDriver):
 
     side = BaseConfigSide.client
     block_names = ("outbounds", "endpoints")
+    _tags: UniqueTags | None = None  # the tags of the config being built (collect_proxy_blocks)
 
     def build(self, child_id: int, ctx: ClientContextVar) -> ConfigBuilderModel:
         return self.build_all(child_id, [ctx])
 
     def collect_proxy_blocks(self, child_id: int, contexts: list[ClientContextVar], messages: list[MessageModel]) -> list[ProxyBlock]:
         proxy_blocks: list[ProxyBlock] = []
+        self._tags = UniqueTags()  # every tag once in the whole config, across its proxies
         for ctx in contexts:
             ctx.render_core = self.core.value
             client_config = self._select_client_config(ctx)
@@ -94,6 +97,7 @@ class JsonClientOutboundDriver(BaseConfigBuilderDriver):
             self.block_names,
             ctx.proxy.tag or str(ctx.proxy.id),
             messages,
+            tags=self._tags,
         )
 
     def _resolve_client_template(

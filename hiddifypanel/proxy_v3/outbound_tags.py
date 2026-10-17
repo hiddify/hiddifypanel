@@ -10,6 +10,23 @@ from jinja2 import Environment
 from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
 
 
+class UniqueTags:
+    """Tags handed out once in a config: a tag seen before becomes ``tag §1``, ``tag §2``, ... (clients refuse duplicate
+    outbound / proxy tags, e.g. sing-box "duplicate outbound/endpoint tag")."""
+
+    def __init__(self) -> None:
+        self.used: set[str] = set()
+
+    def claim(self, tag: str) -> str:
+        unique = tag
+        n = 0
+        while unique in self.used:
+            n += 1
+            unique = f"{tag} §{n}"
+        self.used.add(unique)
+        return unique
+
+
 def default_outbound_tag_template() -> str:
     return load_template_slug("client/tag", normalize=False)
 
