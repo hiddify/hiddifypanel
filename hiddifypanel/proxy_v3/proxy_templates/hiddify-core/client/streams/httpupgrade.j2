@@ -1,6 +1,8 @@
 {{ skip("httpupgrade_enable = " ~ ctx.hconfig.httpupgrade_enable) if not ctx.hconfig.httpupgrade_enable }}
 "transport": {
   "type": "httpupgrade",
+  {#- without it sing-box sends the server address (a CDN IP) as Host, and the CDN answers 403 #}
+  "host": "{{ proxy.domain.host }}",
   "path": "/{{ proxy.path }}",
   "headers":{
     {% include 'hiddify-core/client/default_headers' %}

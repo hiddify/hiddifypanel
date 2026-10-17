@@ -4,6 +4,7 @@
   "path": "/{{ proxy.path }}",
   "early_data_header_name": "Sec-WebSocket-Protocol",
   "headers": {
+    "Host": "{{ proxy.domain.host }}",
     {% include 'hiddify-core/client/default_headers' %}
   },
 
