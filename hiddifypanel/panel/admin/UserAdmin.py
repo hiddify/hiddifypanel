@@ -327,8 +327,10 @@ class UserAdmin(AdminLTEModelView):
         if not model.added_by or model.added_by == 1:
             model.added_by = g.account.id
 
-        # Validate user limits
-        if not g.account.can_have_more_users():
+        # Validate user limits: the limit is about ADDING a user, so only enforce it on create.
+        # On edit the user already exists and is counted, so can_have_more_users() would be False
+        # exactly at the limit and would reject every edit of an existing user.
+        if is_created and not g.account.can_have_more_users():
             raise ValidationError(_("You have too much users! You can have only %(active)s active users and %(total)s users", active=g.account.max_active_users, total=g.account.max_users))
 
         # Handle UUID changes
