@@ -31,14 +31,12 @@ def add_or_update_dns_record(domain: str, ip: str, dns_type: str = "A", proxied:
     zone = __get_zone(zone_name)
     if zone:
         record = __get_dns_record(zone, domain,dns_type)
-        dns_name = domain[:-len(zone.name)].replace('.', '')
-        # if the input domain is root itself
-        dns_name = '@' if not dns_name else dns_name
-        
+        # The full name: the API takes it as is (cutting the zone off and dropping the dots turned a.b.example.com into
+        # "ab"). ttl is required since cloudflare 4 / 5; 1 means "Automatic".
         if not record:
-            api_res = __cf.dns.records.create(zone_id=zone.id, name=dns_name,type=dns_type,content=ip,proxied=proxied)
+            api_res = __cf.dns.records.create(zone_id=zone.id, name=domain, type=dns_type, content=ip, proxied=proxied, ttl=1)
         else:
-            api_res = __cf.dns.records.edit(zone_id=zone.id,dns_record_id= record.id, name=dns_name,type=dns_type,content=ip,proxied=proxied)
+            api_res = __cf.dns.records.edit(zone_id=zone.id, dns_record_id=record.id, name=domain, type=dns_type, content=ip, proxied=proxied, ttl=1)
 
         # validate api response
         if api_res.name == domain and api_res.type == dns_type and api_res.content == ip:
