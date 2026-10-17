@@ -73,6 +73,10 @@
 
 #### Fix
 
+* Reality L7 inbounds, cert/fingerprint defaults, xray driver and admin limits Attach Reality domains to xhttp/grpc server proxies, add _v176 to re-enable Reality after upgrade, default Reality fingerprint to chrome when uTLS is none, read xray protocol/flow from generated config, and fix restore migrations, sublink commas, haproxy proto None, and admin user-limit checks on enable. 
+
+* Cert issue in sni domain. 
+
 * Prevent admins from being their own parent in admin hierarchy and update validation logic for self-patching. 
 
 * Admin permission security issue. 
@@ -191,6 +195,31 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Fix(proxy_v3): ensure tls_layer function is called in xhttp templates for consistent TLS handling. 
+
+* Refactor: update desktop detection logic to use matchMedia for improved responsiveness. 
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #48 from Survivor-viper/fix/xhttp-download-tls-http. 
+  _fix(proxy_v3): keep TLS on xhttp download leg when download_tls_layer is empty (#5591)_
+
+* Refactor tls_layer assignment to use default filter. 
+
+* Fix(proxy_v3): keep TLS on the xhttp download leg when download_tls_layer is empty. 
+  _hiddify-core/client/tls/tls_http.j2 used `tls_layer is defined` to decide
+whether the layer was passed in. It is included from the xhttp stream with
+`{% with tls_layer=proxy.download_tls_layer %}`, and download_tls_layer=None
+means "same as upload". `{% with tls_layer=None %}` still makes the variable
+*defined*, so `None or "http"` gave "http" and the download leg was rendered
+with no tls block -- a plain-HTTP stream to port 443 that breaks immediately
+(the "closed pipe" download handshake error in #5591).
+
+Use a truthiness test, matching the sublink template
+(sublink/uri/security/tls_http.j2), so None falls back to the upload layer._
+
+* Refactor: simplify download handling in proxy domain validation and update xHTTP download settings template for improved clarity. 
 
 * Feat: implement download/upload differentiation in proxy configurations, enhancing xHTTP settings and TLS handling for improved domain management. 
 
