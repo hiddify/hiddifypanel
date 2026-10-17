@@ -117,7 +117,8 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
             daily_usage[adm.id] = DailyUsage(date=today, admin_id=adm.id, child_id=child_id, usage=0)
             db.session.add(daily_usage[adm.id])
             db_changes = True
-        daily_usage[adm.id].online = db.session.query(User).filter(User.added_by == adm.id).filter(func.DATE(User.last_online) == today).count()
+        if child_id == 0:  # a global count from the shared user table: per-node rows would multiply it when summed
+            daily_usage[adm.id].online = db.session.query(User).filter(User.added_by == adm.id).filter(func.DATE(User.last_online) == today).count()
     if db_changes:
         db.session.commit()
 

@@ -25,6 +25,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates
 MAX_DB_VERSION = 200
 
 
+def _v175(child_id):
+    """The online count is global (the shared user table): only the panel's own row (child 0) keeps it. The nodes' rows
+    had it too, so the dashboard's sums counted every online user once per node."""
+    db.session.execute(sa_update(DailyUsage).where(DailyUsage.child_id != 0).values(online=0))
+    db.session.commit()
+
+
 def _v174(child_id):
     """Deleted accounts free their username (a new account may take it). A bulk update: no per-row events, so the rows'
     last_modified_time stays (nodes do not resync them)."""
