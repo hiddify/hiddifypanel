@@ -1,5 +1,6 @@
 import datetime
 import json
+import time
 from collections.abc import Callable
 from typing import Any
 
@@ -23,14 +24,25 @@ def _user_package_end_date():
     return func.adddate(User.start_date, User.package_days)
 
 
-def update_local_usage():
-    return locked_execute("lock-update-local-usage", update_local_usage_not_lock)
-    # return {"status": 'success', "comments":res}
+USAGE_LOCK = "lock-update-local-usage"
+USAGE_LOCK_WAIT = 60  # seconds a usage report waits for the running update before it is refused (409: sent again later)
+BUSY = {"msg": "last run of this task is not finished yet."}
 
 
-def locked_execute(lock_key: str, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
-    if not cache.redis_client.set(lock_key, "locked", nx=True, ex=60):
-        return {"msg": "last run of this task is not finished yet."}
+def update_local_usage(wait: float = 0):
+    """The periodic accounting (the scheduler skips a minute when the last run still holds the lock); ``wait``: how long to
+    wait for it instead (a manual run)."""
+    return locked_execute(USAGE_LOCK, update_local_usage_not_lock, wait=wait)
+
+
+def locked_execute(lock_key: str, func: Callable[..., Any], *args: Any, wait: float = 0, **kwargs: Any) -> Any:
+    """Run ``func`` holding the redis lock ``lock_key``; when another run holds it, wait up to ``wait`` seconds for it,
+    then give up with ``BUSY`` (nothing done). Not re-entrant: code already inside the lock calls the function directly."""
+    deadline = time.monotonic() + wait
+    while not cache.redis_client.set(lock_key, "locked", nx=True, ex=60):
+        if time.monotonic() >= deadline:
+            return dict(BUSY)
+        time.sleep(0.5)
     try:
         return func(*args, **kwargs)
     finally:
@@ -52,7 +64,6 @@ def update_local_usage_not_lock():
 def _reset_priodic_usage() -> bool:
     apply_changes = False
     last_usage_check: int = hconfig(ConfigEnum.last_priodic_usage_check) or 0
-    import time
 
     current_time = int(time.time())
     if current_time - last_usage_check < 60 * 60 * 6:
@@ -98,7 +109,9 @@ def _reset_priodic_usage() -> bool:
 
 def add_users_usage_new(usages: list[UsageData], child_id: int) -> dict[str, Any]:
     """Apply usage deltas under the globzal usage lock."""
-    return locked_execute("lock-update-local-usage", _add_users_usage_new_impl, usages, child_id)
+    # Wait for the running update instead of dropping the deltas (a node's report, or the parent's own run). A node's report
+    # waits this long over HTTP: HAProxy's panel backend and the node's request time out later (USAGE_REPORT_TIMEOUT).
+    return locked_execute(USAGE_LOCK, _add_users_usage_new_impl, usages, child_id, wait=USAGE_LOCK_WAIT)
 
 
 def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[str, Any]:

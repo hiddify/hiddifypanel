@@ -12,6 +12,8 @@ backend panel
   # whatever the browser used (over its HTTP/2 connection a WebSocket is an Extended CONNECT): granian has no WebSocket over
   # HTTP/2. This covers the live channel, the nodes' channel and Vite's hot reload in development.
   use-server s_ws if { req.hdr(upgrade) -i websocket } or METH_CONNECT
+  # A node's usage report may wait up to 120 s for the parent's usage update (panel/usage.py USAGE_LOCK_WAIT)
+  timeout server 150s
   server s 127.0.0.1:9000 proto h2
   server s_ws 127.0.0.1:9000 weight 0
 

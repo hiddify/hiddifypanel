@@ -14,9 +14,8 @@ class UpdateUserUsageApi(MethodView):
 
     def get(self):
         """System: Update User Usage"""
-        # time.sleep(5)
-
-        return json.dumps(usage.update_local_usage_not_lock(), indent=2)
+        # Through the lock: a run beside the scheduled one would count the same deltas twice
+        return json.dumps(usage.update_local_usage(wait=30), indent=2)
 
 
 class AllConfigsApi(MethodView):

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
+from apiflask import abort
 from flask.views import MethodView
 from loguru import logger
 
@@ -30,7 +31,10 @@ class UsageApi(MethodView):
 
         if increased:
             logger.info(f"Adding increased usages to parent for child_id={g.node.id}")
-            add_users_usage_new(increased, int(g.node.id))
+            res = add_users_usage_new(increased, int(g.node.id))
+            if res.get("status") != "success":
+                # Not added (the usage update stayed busy): not 200, so the node keeps them (UnsyncedUsage) and sends them again
+                abort(409, "usage update is busy, retry later")
 
         g.node.mark_node_to_parent(commit=True)
         from hiddifypanel.hutils.node.usage_report import record_usage_report

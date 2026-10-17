@@ -449,7 +449,9 @@ def _send_to_parent(payload: UsageInputOutputSchema) -> UsageResponseSchema | No
     if not p_url:
         logger.error("Parent url is empty")
         return NodeApiErrorSchema(msg="Parent url is empty")
-    client = NodeApiClient(p_url)
+    # The parent may wait up to usage.USAGE_LOCK_WAIT for its usage update: wait longer than that, and never resend on a
+    # timeout (the parent may still add it: it would count twice). A failed report stays in UnsyncedUsage for the next one.
+    client = NodeApiClient(p_url, timeout=usage.USAGE_LOCK_WAIT + 30, retry_on_timeout=False)
     res = client.put("/api/v2/parent/usage/", payload, UsageResponseSchema)
     return res
 
@@ -478,7 +480,7 @@ def sync_users_usage_with_parent(usages: list[UsageData]) -> bool:
         logger.error(f"Error while syncing users usage with parent: {res.msg}")
         sync_status.record(SyncKind.usage, SyncSource.usage_report, len(to_send), ok=False, items=to_send, error=str(res.msg))
         UnsyncedUsage.add_usages(usages)
-        usage.add_users_usage_new(usages, 0)
+        usage._add_users_usage_new_impl(usages, 0)  # this runs inside update_local_usage's lock: taking it again would do nothing
         return False
 
     active_before = _active_user_uuids()
