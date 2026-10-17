@@ -196,6 +196,12 @@ Addresses CWE-78_
 
 #### Other
 
+* Feat(proxy_v3): add Hysteria and Tuic protocol templates with SNI and insecure handling. 
+
+* Fix(proxy_v3): handle optional WireGuard client configuration gracefully. 
+
+* Fix(proxy_v3): update VLESS encryption handling for Hiddify 5+ compatibility. 
+
 * Fix(proxy_v3): ensure tls_layer function is called in xhttp templates for consistent TLS handling. 
 
 * Refactor: update desktop detection logic to use matchMedia for improved responsiveness. 
