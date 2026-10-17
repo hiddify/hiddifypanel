@@ -706,10 +706,16 @@ NATIVE_MODES = (OutboundMode.tor, OutboundMode.psiphon)
 
 
 def tor_available() -> bool:
-    """hiddify-core starts the ``tor`` program itself; without it the whole core would refuse to start."""
+    """hiddify-core starts the ``tor`` program itself; without it the whole core would refuse to start.
+
+    Check PATH and the usual absolute locations (systemd unit PATH is often short).
+    """
+    import os
     import shutil
 
-    return shutil.which("tor") is not None
+    if shutil.which("tor"):
+        return True
+    return any(os.path.isfile(p) and os.access(p, os.X_OK) for p in ("/usr/bin/tor", "/usr/sbin/tor", "/bin/tor"))
 
 
 def preferred_outbound_id(extra: dict[str, Any]) -> int | None:

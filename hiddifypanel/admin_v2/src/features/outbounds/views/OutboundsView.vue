@@ -22,6 +22,14 @@
 
     <template v-else-if="state">
       <p class="ob-howto"><i class="pi pi-info-circle" />{{ t('outbounds.howto') }}</p>
+      <Message
+        v-if="state.tor_available === false && state.outbounds.some((o) => o.mode === 'tor' && o.enabled)"
+        severity="warn"
+        :closable="false"
+        class="mb-3"
+      >
+        {{ t('outbounds.torMissing') }}
+      </Message>
 
       <TransitionGroup name="ob-row" tag="ol" class="ob-list" :class="{ 'ob-list--dragging': dragId !== null }">
         <li

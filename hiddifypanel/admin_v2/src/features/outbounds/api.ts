@@ -65,6 +65,8 @@ export interface OutboundsState {
   restart_mode?: RestartMode
   /** POST: the new outbound. */
   created_id?: number
+  /** False when the `tor` binary is missing: a Tor outbound stays in the list but is left out of server configs. */
+  tor_available?: boolean
 }
 
 export interface OutboundPayload extends Partial<OutboundLists> {

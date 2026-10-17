@@ -1675,6 +1675,7 @@
       "everythingElse": "Everything else goes here",
       "followsDefaults": "Uses the built-in lists, updated on upgrade",
       "howto": "Outbounds are checked from top to bottom: traffic goes out through the first one that lists its site. The last enabled outbound is the default and gets everything else. Drag or use the arrows to change the order.",
+      "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs.",
       "idle": "Not used",
       "idleHint": "It has no sites, geosites or rule-sets, so nothing goes through it. Edit it to add some, or move it to the end to make it the default.",
       "list": {

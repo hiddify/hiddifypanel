@@ -17,10 +17,14 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, ConfigEnum, hconfig
 from hiddifypanel.models.child import Child
+from hiddifypanel.models.config_enum import ApplyMode
 from hiddifypanel.models.outbound import BUILTIN_MODES, CONFIGURABLE_ENDPOINT_MODES, CUSTOM_CONFIG_MODES, ENDPOINT_MODES, LIST_FIELDS, MULTI_MODES, Outbound, OutboundMode
 from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3 import outbound_custom as custom_config
 from hiddifypanel.proxy_v3 import outbounds as ob
+
+#: Tor / Psiphon / SOCKS / WARP changes rewrite hiddify-core and xray server routing — same as Domains.
+APPLY = ApplyMode.apply_config.value
 
 
 def _parent_only() -> None:
@@ -32,12 +36,20 @@ def _parent_only() -> None:
 
 
 def _changed() -> None:
-    """Commit is done: refresh the user configs and ask the nodes to take the new outbounds."""
+    """Commit is done: refresh the user configs and ask the nodes to take the new outbounds.
+
+    Server routing (Tor/Psiphon/WARP) still needs Apply Configs — responses include ``restart_mode``.
+    """
     from hiddifypanel import hutils
     from hiddifypanel.panel import hiddify
 
     hutils.node.parent.notify_childs_users_changed()
     hiddify.quick_apply_users()
+
+
+def _mutated(child_id: int, **extra: Any) -> dict[str, Any]:
+    """List payload plus ``restart_mode`` so the admin UI shows Apply Configs."""
+    return {"restart_mode": APPLY, **extra, **_list_out(child_id)}
 
 
 def _child_id() -> int:
@@ -102,6 +114,8 @@ def _list_out(child_id: int) -> dict[str, Any]:
         # Modes that can still be added (single-instance ones only once).
         "addable_modes": [str(m) for m in OutboundMode if m not in BUILTIN_MODES and (m in MULTI_MODES or str(m) not in used_single)],
         "endpoints": {str(m): ob.default_endpoint(m) for m in ENDPOINT_MODES},
+        # False: Tor outbound is on in the DB but left out of server configs (no `tor` binary).
+        "tor_available": ob.tor_available(),
     }
 
 
@@ -214,7 +228,7 @@ class OutboundsApi(MethodView):
         _finalize_or_400(child_id, rows)
         db.session.commit()
         _changed()
-        return {"created_id": row.id, **_list_out(child_id)}
+        return _mutated(child_id, created_id=row.id)
 
 
 def _get_row(outbound_id: int) -> Outbound:
@@ -228,12 +242,13 @@ class OutboundApi(MethodView):
     def patch(self, outbound_id: int):
         """Outbounds: update one"""
         _parent_only()
+        child_id = _child_id()
         row = _get_row(outbound_id)
         _apply_body(row, request.get_json(silent=True) or {}, creating=False)
-        _finalize_or_400(_child_id(), ob.ordered_rows(_child_id()))
+        _finalize_or_400(child_id, ob.ordered_rows(child_id))
         db.session.commit()
         _changed()
-        return _list_out(_child_id())
+        return _mutated(child_id)
 
     def delete(self, outbound_id: int):
         """Outbounds: delete a SOCKS, Tor or Psiphon outbound"""
@@ -250,7 +265,7 @@ class OutboundApi(MethodView):
         _finalize_or_400(child_id, ob.ordered_rows(child_id))
         db.session.commit()
         _changed()
-        return _list_out(child_id)
+        return _mutated(child_id)
 
 
 class OutboundOrderApi(MethodView):
@@ -270,7 +285,7 @@ class OutboundOrderApi(MethodView):
         _finalize_or_400(child_id, ordered)
         db.session.commit()
         _changed()
-        return _list_out(child_id)
+        return _mutated(child_id)
 
 
 class OutboundDefaultApi(MethodView):
@@ -279,14 +294,15 @@ class OutboundDefaultApi(MethodView):
     def post(self, outbound_id: int):
         """Outbounds: make one the default (turns it on and moves it to the end)"""
         _parent_only()
+        child_id = _child_id()
         row = _get_row(outbound_id)
         if row.mode == OutboundMode.block:
             abort(400, "Block can not be the default: it would block everything")
         row.enabled = True
-        _finalize_or_400(_child_id(), ob.move_to_end(ob.ordered_rows(_child_id()), row))
+        _finalize_or_400(child_id, ob.move_to_end(ob.ordered_rows(child_id), row))
         db.session.commit()
         _changed()
-        return _list_out(_child_id())
+        return _mutated(child_id)
 
 
 class OutboundResetApi(MethodView):
@@ -295,10 +311,11 @@ class OutboundResetApi(MethodView):
     def post(self, outbound_id: int):
         """Outbounds: put a built-in outbound's lists back to the defaults file (upgrades update them again)"""
         _parent_only()
+        child_id = _child_id()
         row = _get_row(outbound_id)
         if not row.is_builtin:
             abort(400, "Only built-in outbounds have default lists")
         ob.reset_builtin_lists(row)
         db.session.commit()
         _changed()
-        return _list_out(_child_id())
+        return _mutated(child_id)
