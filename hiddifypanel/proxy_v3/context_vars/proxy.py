@@ -207,19 +207,30 @@ def _l7_client_domain_ports(domain: DomainIPVar, proxy: ProxyVar) -> DomainIPVar
     return domain.model_copy(update={"port": upload_port, "download": download})
 
 
+def is_download_upload_different(domain: DomainIPVar, proxy: ProxyVar) -> bool:
+    """Whether client templates should emit xHTTP ``downloadSettings``.
+
+    ``DomainIPVar.download`` is always set (self-copy when no separate download domain), so
+    callers must use this — not a bare ``domain.download`` check — before including download
+    settings or validating a REALITY download leg.
+    """
+    dl = domain.download
+    if dl is None:
+        return False
+    if dl.name != domain.name:
+        return True
+    if proxy.effective_download_tls_layer() != proxy.effective_tls_layer():
+        return True
+    if dl.server() != domain.server():
+        return True
+    return False
+
+
 class ProxyDomainVar(ProxyVar):
     domain: DomainIPVar
 
     def is_download_upload_different(self) -> bool:
-        if self.domain.download is None:
-            return False
-        if self.domain.download.name != self.domain.name:
-            return True
-        if self.effective_download_tls_layer() != self.effective_tls_layer():
-            return True
-        if self.domain.download.server() != self.domain.server():
-            return True
-        return False
+        return is_download_upload_different(self.domain, self)
 
     @classmethod
     def from_proxy(cls, proxy: ProxyVar, domain: DomainIPVar, *, server_side: bool = True) -> ProxyDomainVar:
@@ -303,18 +314,10 @@ class ServerBuilderProxyVar(ProxyVar):
 class ClientProxyDomainVar(ClientBuilderProxyVar):
     """Proxy bound to a domain."""
 
-    def is_download_upload_different(self) -> bool:
-        if self.domain.download is None:
-            return False
-        if self.domain.download.name != self.domain.name:
-            return True
-        if self.effective_download_tls_layer() != self.effective_tls_layer():
-            return True
-        if self.domain.download.server() != self.domain.server():
-            return True
-        return False
-
     domain: DomainIPVar
+
+    def is_download_upload_different(self) -> bool:
+        return is_download_upload_different(self.domain, self)
 
     @classmethod
     def from_proxy(cls, proxy: ProxyVar, domain: DomainIPVar) -> ClientProxyDomainVar:

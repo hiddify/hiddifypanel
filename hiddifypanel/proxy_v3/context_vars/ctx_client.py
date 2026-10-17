@@ -12,7 +12,7 @@ from .cert import CertVar
 from .domain import DomainIPVar, _keeps_hostname, expand_sni_domain_servers
 from .hconfig import HConfigVar
 from .platform import PlatformVar
-from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar
+from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar, is_download_upload_different
 from .user import UserVar
 
 
@@ -59,7 +59,15 @@ def _client_domain_allowed(domain: DomainIPVar, proxy: ClientBuilderProxyVar) ->
 
     if domain.is_reality() and not is_reality_domain_valid(domain, proxy):
         return False
-    if domain.download and domain.download.is_reality() and not (is_reality_domain_valid(domain.download, proxy) and is_reality_download_valid(proxy)):
+    # downloadSettings (and thus download REALITY) only apply when upload≠download.
+    # DomainIPVar.download is always a self-copy when unset — do not treat that as a
+    # download leg (it wrongly dropped every non-xHTTP REALITY config).
+    if (
+        is_download_upload_different(domain, proxy)
+        and domain.download
+        and domain.download.is_reality()
+        and not is_reality_download_leg_valid(proxy)
+    ):
         return False
 
     return True
@@ -132,28 +140,50 @@ def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIP
     return result
 
 
-# Xray REALITY works with VLESS and Trojan on tcp/raw, xhttp, and grpc
+# Xray REALITY works with VLESS / Trojan / VMess on tcp/raw, xhttp, and grpc
 # (https://xtls.github.io/en/config/transport.html — security × protocol matrix).
+_REALITY_PROTOS = frozenset({ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess})
+_REALITY_TRANSPORTS = frozenset(
+    {CustomProxyTransport.xhttp, CustomProxyTransport.grpc, CustomProxyTransport.tcp, CustomProxyTransport.http}
+)
+
+
 def is_reality_domain_valid(domain: ClientProxyDomainVar | DomainIPVar, proxy: ClientBuilderProxyVar) -> bool:
+    """Whether this proxy's *upload* leg can speak REALITY to ``domain``."""
     if domain.is_reality():
         if proxy.tls_layer in [TlsLayer.quic_tls, TlsLayer.http]:
             return False
         # http = raw TCP with an HTTP header ("rawhttp"); with TLS it can ride REALITY
         # (domain_mode_filter.transport_tls_supports_reality offers it the reality domain modes).
-        if proxy.transport not in [CustomProxyTransport.xhttp, CustomProxyTransport.grpc, CustomProxyTransport.tcp, CustomProxyTransport.http]:
+        if proxy.transport not in _REALITY_TRANSPORTS:
             return False
         if proxy.l7_reverse_proto not in [L7Proto.h2] and proxy.transport in [CustomProxyTransport.xhttp]:
             return False
         if proxy.mode != CustomProxyMode.domains_l7_gateway:
             return False
-        if proxy.proto not in [ProxyProto.vless, ProxyProto.trojan]:
+        if proxy.proto not in _REALITY_PROTOS:
             return False
     return True
 
 
 def is_reality_download_valid(proxy: ClientBuilderProxyVar) -> bool:
-    """xHTTP download REALITY cannot use QUIC or TLS H1; plain HTTP is allowed."""
+    """xHTTP download REALITY only on TLS H2 (same rule as transport_tls_supports_reality)."""
     if proxy.transport != CustomProxyTransport.xhttp:
         return True
     layer = proxy.download_tls_layer if proxy.download_tls_layer is not None else proxy.tls_layer
-    return layer not in (TlsLayer.quic_tls, TlsLayer.quic_tcp_tls, TlsLayer.tls_h1)
+    return layer == TlsLayer.tls_h2
+
+
+def is_reality_download_leg_valid(proxy: ClientBuilderProxyVar) -> bool:
+    """Whether this proxy can emit a REALITY downloadSettings leg (xHTTP download domain).
+
+    Checks the download TLS layer; upload may be HTTP/H1/QUIC while download is TLS H2 REALITY.
+    """
+    if proxy.mode != CustomProxyMode.domains_l7_gateway:
+        return False
+    if proxy.transport != CustomProxyTransport.xhttp:
+        # Download domain is only wired into xHTTP client templates.
+        return False
+    if proxy.proto not in _REALITY_PROTOS:
+        return False
+    return is_reality_download_valid(proxy)

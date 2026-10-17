@@ -4,7 +4,7 @@
 {% set qp.host = ctx.proxy.domain.host %}
 
 {% if proxy.is_download_upload_different() %}
-    {%with tls_layer=proxy.download_tls_layer %}
+    {%with tls_layer=proxy.effective_download_tls_layer %}
         {% set qp.extra | compactjson %}
         {
             "downloadSettings":{% include 'sublink/xhttp_download_settings' %},

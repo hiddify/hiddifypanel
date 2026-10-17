@@ -1,13 +1,15 @@
+{# Only included when proxy.is_download_upload_different() #}
+{% set dl = proxy.domain.download %}
 {
-  "address": "{{ proxy.domain.download.server() if proxy.domain.download else proxy.domain.server() }}",
-  "port": {{ proxy.download_port }},
+  "address": "{{ dl.server() }}",
+  "port": {{ dl.port or proxy.download_port }},
   "network": "xhttp",
-  {% with domain=proxy.domain.download, tls_layer=proxy.download_tls_layer %}
+  {% with domain=dl, tls_layer=proxy.effective_download_tls_layer %}
     {% include 'xray/client/security/tls' %}
   {% endwith %}
   "xhttpSettings": {
     "path": "/{{ proxy.path }}",
-    "host": "{{ proxy.domain.host }}",
+    "host": "{{ dl.host }}",
     "mode": "auto",
     "headers": {
         {%if ctx.hconfig.default_useragent_string %}"User-Agent": "{{ctx.hconfig.default_useragent_string}}" {%endif%}
