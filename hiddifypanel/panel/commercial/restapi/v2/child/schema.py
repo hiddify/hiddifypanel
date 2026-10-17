@@ -9,7 +9,7 @@ from hiddifypanel.panel.commercial.restapi.v2.pydantic_schema import ApiModel
 from hiddifypanel.proxy_v3.config_builder.dump import CLIENT_CONFIG_FILES
 
 CLIENT_CORES = tuple(core for core, _filename in CLIENT_CONFIG_FILES)
-ClientCore = Literal["hiddify-core", "xray", "sublink", "clash", "singbox"]
+ClientCore = Literal["hiddify-core", "xray", "sublink", "clash", "singbox", "wireguard"]
 
 
 class RegisterWithParentInputSchema(ApiModel):

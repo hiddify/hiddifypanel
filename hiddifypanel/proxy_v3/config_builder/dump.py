@@ -377,6 +377,7 @@ CLIENT_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("hiddify-core", "hiddify-core.json"),
     ("xray", "xray.json"),
     ("sublink", "sublink.txt"),
+    ("wireguard", "wireguard.conf"),
     ("clash", "clash.yaml"),
     ("singbox", "singbox.json"),
 )
@@ -440,6 +441,8 @@ def summarize_client_dumped_config(core: str, filename: str, rendered: str) -> d
         stats["proxies"] = len(proxies) if isinstance(proxies, list) else 0
     elif core == "sublink":
         stats["links"] = len([line for line in text.splitlines() if line.strip() and "://" in line])
+    elif core == "wireguard":
+        stats["peers"] = text.count("[Peer]")
 
     return stats
 
@@ -616,6 +619,14 @@ def render_client_configs(
                 }
             )
 
+    if "wireguard" in wanted:
+        try:
+            wg_text, wg_msgs = render_wireguard_conf(child_id, contexts)
+            _append_render_messages(result, "wireguard", wg_msgs)
+            result.configs["wireguard"] = wg_text
+        except Exception as exc:
+            result.messages.append({"core": "wireguard", "level": "error", "message": str(exc), "data": {"stacktrace": traceback.format_exc()}})
+
     if "sublink" in wanted:
         try:
             sublink_text, sublink_msgs = _build_sublink_client_config(child_id, contexts)
@@ -759,6 +770,36 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     parsed["proxies"] = proxies
     parsed = _omit_empty_values(parsed)
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
+
+
+def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
+    """The WireGuard .conf of every proxy with a "wireguard" client config, one after another (client core "wireguard")."""
+    from hiddifypanel.models.custom_proxy import TemplateCore
+    from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
+    from hiddifypanel.proxy_v3.config_builder.models import MessageModel
+    from hiddifypanel.proxy_v3.config_builder.render import render_section
+    from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
+
+    messages: list[MessageModel] = []
+    sections: list[str] = []
+    for ctx in contexts:
+        ctx.render_core = TemplateCore.wireguard.value
+        client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.wireguard, ctx.platform.app_version)
+        if client_config is None or not (client_config.content or "").strip():
+            continue
+        section = render_section(client_config.content, child_id, make_jinja_context(ctx), as_json_object=False, parse_json=False)
+        if section.error:
+            messages.append(
+                MessageModel(
+                    level="error",
+                    message=f"{ctx.proxy.tag or ctx.proxy.id}: {section.error}",
+                    data={"details": section.error_detail.model_dump() if section.error_detail else {}},
+                )
+            )
+            continue
+        if not section.skipped and (text := "\n".join(line.rstrip() for line in (section.rendered or "").strip().splitlines())):
+            sections.append(text)
+    return ("\n\n".join(sections) + "\n") if sections else "", messages
 
 
 def render_sublink_links(child_id: int, contexts: list[ClientContextVar]) -> tuple[list[str], list[MessageModel]]:

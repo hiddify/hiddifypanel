@@ -161,12 +161,18 @@ class ClientCore(JinjaEnum):
     singbox = "singbox"
     hiddify_core = "hiddify-core"
     clash = "clash"
+    #: a WireGuard .conf for the WireGuard apps (/wireguard)
+    wireguard = "wireguard"
 
     def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)
 
     def __hash__(self) -> int:
         return hash(str(self))
+
+
+#: Client cores whose output is plain text, rendered whole (no JSON / YAML blocks)
+TEXT_CLIENT_CORES = frozenset({"sublink", "wireguard"})
 
 
 class TemplateCore(JinjaEnum):

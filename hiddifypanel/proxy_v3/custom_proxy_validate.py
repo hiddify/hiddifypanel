@@ -13,6 +13,7 @@ from jinja2.exceptions import TemplateError
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import parse_user_agent
 from hiddifypanel.models import CustomProxy, CustomProxyMode
+from hiddifypanel.models.custom_proxy import TEXT_CLIENT_CORES
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.domain import Domain
@@ -783,7 +784,7 @@ def _validate_no_inbound_client(
         except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
             errors.append({"code": "client_jinja_error", "message": f"{label}: {e}"})
             continue
-        if core_name == "sublink":
+        if core_name in TEXT_CLIENT_CORES:  # plain text (share links, a WireGuard .conf): no JSON / YAML to check
             continue
         for block_name, output in outputs.items():
             body = fix_duplicate_json_commas(output).strip()
@@ -996,6 +997,14 @@ def validate_proxy_payload(
             tpl = cc.get("outbounds_template") or ""
             if not tpl.strip():
                 continue
+            if core_name == "wireguard":  # a .conf: it only has to render
+                try:
+                    _render_section(tpl, child_id, ctx_client, as_json_object=False, parse_json=False)
+                except TemplateSkip:
+                    pass
+                except (TemplateError, TemplateSyntaxError, UndefinedError) as e:
+                    errors.append({"code": "jinja_error", "message": f"{core_label}: {e}"})
+                continue
             if core_name == "singbox" and _template_uses_hiddify_core(tpl):
                 # Marker-only stub: real outbound JSON lives on the hiddify-core entry.
                 continue
@@ -1180,7 +1189,7 @@ def validate_base_config_content(data: dict[str, Any], child_id: int = 0) -> dic
     if not content.strip():
         return {"ok": True, "errors": errors, "warnings": warnings}
     ctx = build_sample_context(child_id=child_id)
-    if core == "sublink":
+    if core in TEXT_CLIENT_CORES:
         try:
             render_template_text(content, child_id, ctx)
         except TemplateSkip:
@@ -1217,7 +1226,7 @@ def _format_fragment_preview(rendered: str, core: str) -> dict[str, Any]:
     text = (rendered or "").strip()
     if not text:
         return {"ok": True, "rendered": "", "parsed": None, "skipped": False, "error": None, "warnings": []}
-    if core == "sublink":
+    if core in TEXT_CLIENT_CORES:
         return {"ok": True, "rendered": rendered, "parsed": None, "skipped": False, "error": None, "warnings": []}
     wrapped = _json5_text_for_parse(text)
     parsed = None
@@ -1340,8 +1349,8 @@ def preview_proxy_template_fragment(
 
     block_name = _server_block_name(core) if server_side else _client_block_name(core)
 
-    if server_side or core == "sublink":
-        if core == "sublink" and not server_side and _extract_block_body(tpl, block_name) is None:
+    if server_side or core in TEXT_CLIENT_CORES:
+        if core in TEXT_CLIENT_CORES and not server_side and _extract_block_body(tpl, block_name) is None:
             # Share-link templates are rendered whole (no {% block %}), as in the subscription (dump.render_sublink_links).
             frag = _render_section(tpl, child_id, ctx, as_json_object=False, parse_json=False)
         else:
@@ -1441,7 +1450,7 @@ def preview_base_config_content(
         server_side=server_side,
     )
 
-    if core == "sublink":
+    if core in TEXT_CLIENT_CORES:
         try:
             rendered = render_template_text(content, child_id, ctx)
             return {"ok": True, "rendered": rendered, "parsed": None, "skipped": False, "error": None, "warnings": []}
@@ -3002,6 +3011,14 @@ def generate_proxy_example(
             elif formats.get("parse_error"):
                 warnings.append({"code": "sublink_parse", "message": f"{label}: {formats['parse_error']}"})
             continue
+        if core_name == "wireguard":  # the .conf as it is
+            section = _render_section(cc.get("outbounds_template") or "", child_id, client_ctx, as_json_object=False, parse_json=False)
+            clients.append(
+                {"core": core_name, "version": version or None, "label": label, "index": idx, "auto": _client_is_auto(core_name), **section}
+            )
+            if section.get("error"):
+                _append_render_issue(errors, code="client_render", message=f"{label}: {section['error']}", section=section, label=label)
+            continue
         if core_name == "clash":
             tpl = cc.get("outbounds_template") or ""
             if not tpl.strip():
@@ -3901,6 +3918,13 @@ def _collect_sublink_links(entry: dict[str, Any]) -> list[str]:
     return [line.strip() for line in rendered.splitlines() if line.strip() and "://" in line]
 
 
+def _merge_text_client_entries(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    """Text outputs (a WireGuard .conf of each proxy): one after another."""
+    base = copy.deepcopy(entries[0])
+    base["rendered"] = "\n\n".join(text for e in entries if (text := str(e.get("rendered") or "").strip()))
+    return base
+
+
 def _merge_sublink_client_entries(entries: list[dict[str, Any]]) -> dict[str, Any]:
     base = copy.deepcopy(entries[0])
     links: list[str] = []
@@ -3986,6 +4010,8 @@ def _merge_bundle_client_entries(
         return _merge_xray_client_entries(entries)
     if core == "sublink":
         return _merge_sublink_client_entries(entries)
+    if core == "wireguard":
+        return _merge_text_client_entries(entries)
     if core == "clash":
         return _merge_clash_client_entries(entries)
     if core in ("hiddify-core", "singbox"):

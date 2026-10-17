@@ -1803,6 +1803,7 @@
       "l7ReverseProto": "پروتکل ریورس پروکسی لایه ۷",
       "linkSettings": "تنظیمات لینک",
       "linkTemplate": "قالب لینک",
+      "wireguardTemplate": "قالب فایل ‎.conf‎ وایرگارد",
       "listTitle": "پروکسی‌های سفارشی",
       "mode": "حالت",
       "modeLabels": {

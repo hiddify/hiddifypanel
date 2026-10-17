@@ -1,0 +1,20 @@
+{# A WireGuard .conf (client core "wireguard"): one [Interface]/[Peer] pair per domain of the proxy #}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set proxy = ctx.proxy %}
+{% set host = proxy.server|string %}
+[Interface]
+# Name = {% include 'sublink/tag' %}
+Address = {{ ctx.user.wg_ipv4 }}/32{% if ctx.user.wg_ipv6 %}, {{ ctx.user.wg_ipv6 }}/128{% endif %}
+PrivateKey = {{ ctx.user.wg_pk }}
+MTU = 1380
+DNS = 1.1.1.1
+
+[Peer]
+PublicKey = {{ ctx.hconfig.wireguard_public_key }}
+PresharedKey = {{ ctx.user.wg_psk }}
+{# an IPv6 server goes in brackets: [2001:db8::10]:51820 #}
+Endpoint = {% if ':' in host and not host.startswith('[') %}[{{ host }}]{% else %}{{ host }}{% endif %}:{{ proxy.udp_port or proxy.port }}
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25
+
+{% endfor %}

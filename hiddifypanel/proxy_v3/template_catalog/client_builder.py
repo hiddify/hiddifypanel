@@ -455,7 +455,7 @@ def _builtin_client_core_entry(core: str, outbound: str) -> dict[str, Any]:
 
 
 def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[dict[str, Any]]:
-    """Four client cores per builtin preset: xray, singbox, hiddify-core, sublink."""
+    """The client cores of a builtin preset: xray, singbox, hiddify-core, sublink, clash; WireGuard also gets its .conf."""
     configs: list[dict[str, Any]] = []
 
     if supports_xray_preset(combo):
@@ -487,6 +487,9 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
         configs.append(_builtin_client_core_entry("sublink", with_snell_version(link, combo)))
     except (ValueError, FileNotFoundError):
         pass
+
+    if combo.proto == "wireguard":  # the WireGuard apps' own format (/wireguard, client core "wireguard")
+        configs.append(_builtin_client_core_entry("wireguard", load_template_slug("wireguard/client/conf")))
 
     if supports_xray_preset(combo):
         try:

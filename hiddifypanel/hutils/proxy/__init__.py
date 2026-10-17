@@ -4,7 +4,7 @@ import importlib
 
 from .shared import *
 
-_LAZY_SUBMODULES = frozenset({'xray', 'xrayjson', 'singbox', 'clash', 'wireguard'})
+_LAZY_SUBMODULES = frozenset({'xray', 'xrayjson', 'singbox', 'clash'})
 
 
 def __getattr__(name: str):

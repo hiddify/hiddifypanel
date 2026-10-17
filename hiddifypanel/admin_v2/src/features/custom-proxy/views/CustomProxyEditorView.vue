@@ -670,6 +670,7 @@ function syncActiveClientCoreTab() {
 }
 
 function outboundsTemplateLabel(core: string) {
+  if (core === 'wireguard') return t('proxy.wireguardTemplate')
   return isSublinkCore(core) ? t('proxy.linkTemplate') : t('proxy.outboundsTemplate')
 }
 

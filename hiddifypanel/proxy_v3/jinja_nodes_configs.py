@@ -102,7 +102,7 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
 
     available = get_available_domains(context)
     # Children render clash as YAML (a JSON parse would hand back the raw text).
-    content_type = {"sublink": "txt", "clash": "yaml"}.get(core_name, "json")
+    content_type = {"sublink": "txt", "clash": "yaml", "wireguard": "txt"}.get(core_name, "json")
     merged: list[Any] = []
 
     for child in _remote_children():

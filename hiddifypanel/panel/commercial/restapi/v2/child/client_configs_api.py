@@ -49,7 +49,7 @@ def _render(data: ClientConfigsIn) -> ClientConfigsOut:
 def _maybe_raw(data: ClientConfigsIn, out: ClientConfigsOut) -> ClientConfigsOut | Response:
     if not data.raw:
         return out
-    mime = {"sublink": "text/plain; charset=utf-8", "clash": "application/yaml; charset=utf-8"}.get(data.core, "application/json")
+    mime = {"sublink": "text/plain; charset=utf-8", "wireguard": "text/plain; charset=utf-8", "clash": "application/yaml; charset=utf-8"}.get(data.core, "application/json")
     return Response(out.config or "", mimetype=mime)
 
 
