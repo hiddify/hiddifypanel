@@ -11,7 +11,7 @@
     "host": "{{ domain.download.host }}",
     "server": "{{ domain.download.server() }}",
     "port": {{ domain.download.port or proxy.download_port }},
-    {% with domain=domain.download, tls_layer=proxy.effective_download_tls_layer %}
+    {% with domain=domain.download, tls_layer=proxy.effective_download_tls_layer() %}
       {% include 'clash/client/tls/tls' %}
     {% endwith %}
   },

@@ -3,7 +3,7 @@
   "address": "{{ dl.server() }}",
   "port": {{ dl.port or proxy.download_port }},
   "network": "xhttp",
-  {% with domain=dl, tls_layer=proxy.effective_download_tls_layer %}
+  {% with domain=dl, tls_layer=proxy.effective_download_tls_layer() %}
     {% include 'xray/client/security/tls' %}
   {% endwith %}
   "xhttpSettings": {
