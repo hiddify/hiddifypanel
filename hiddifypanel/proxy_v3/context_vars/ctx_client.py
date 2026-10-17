@@ -12,7 +12,7 @@ from .cert import CertVar
 from .domain import DomainIPVar, _keeps_hostname, expand_sni_domain_servers
 from .hconfig import HConfigVar
 from .platform import PlatformVar
-from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar, is_download_upload_different
+from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar
 from .user import UserVar
 
 
@@ -59,15 +59,10 @@ def _client_domain_allowed(domain: DomainIPVar, proxy: ClientBuilderProxyVar) ->
 
     if domain.is_reality() and not is_reality_domain_valid(domain, proxy):
         return False
-    # downloadSettings (and thus download REALITY) only apply when upload≠download.
-    # DomainIPVar.download is always a self-copy when unset — do not treat that as a
-    # download leg (it wrongly dropped every non-xHTTP REALITY config).
-    if (
-        is_download_upload_different(domain, proxy)
-        and domain.download
-        and domain.download.is_reality()
-        and not is_reality_download_leg_valid(proxy)
-    ):
+    # Download REALITY is a separate leg (xHTTP downloadSettings): validate the *download*
+    # TLS layer, not the upload one. Using is_reality_domain_valid here dropped every config
+    # whose upload was HTTP/H1/QUIC even when download was TLS H2 REALITY.
+    if domain.download and domain.download.is_reality() and not is_reality_download_leg_valid(proxy):
         return False
 
     return True
@@ -143,9 +138,7 @@ def _unique_ip_mode_domains(proxy: ClientBuilderProxyVar, domains: list[DomainIP
 # Xray REALITY works with VLESS / Trojan / VMess on tcp/raw, xhttp, and grpc
 # (https://xtls.github.io/en/config/transport.html — security × protocol matrix).
 _REALITY_PROTOS = frozenset({ProxyProto.vless, ProxyProto.trojan, ProxyProto.vmess})
-_REALITY_TRANSPORTS = frozenset(
-    {CustomProxyTransport.xhttp, CustomProxyTransport.grpc, CustomProxyTransport.tcp, CustomProxyTransport.http}
-)
+_REALITY_TRANSPORTS = frozenset({CustomProxyTransport.xhttp, CustomProxyTransport.grpc, CustomProxyTransport.tcp, CustomProxyTransport.http})
 
 
 def is_reality_domain_valid(domain: ClientProxyDomainVar | DomainIPVar, proxy: ClientBuilderProxyVar) -> bool:

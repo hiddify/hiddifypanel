@@ -1,5 +1,4 @@
-{# Only included when proxy.is_download_upload_different() #}
-{% set dl = proxy.domain.download %}
+{% set dl = proxy.domain.download if proxy.domain.download else proxy.domain %}
 {
   "address": "{{ dl.server() }}",
   "port": {{ dl.port or proxy.download_port }},
