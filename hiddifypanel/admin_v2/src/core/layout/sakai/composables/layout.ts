@@ -15,8 +15,11 @@ const layoutState = reactive({
   activePath: null as string | null,
 })
 
+// Match `_responsive.scss` (min-width: 992px); avoid innerWidth which can drift after mobile zoom-out.
+const desktopMq = typeof window !== 'undefined' ? window.matchMedia('(min-width: 992px)') : null
+
 function isDesktop() {
-  return window.innerWidth > 991
+  return desktopMq?.matches ?? false
 }
 
 function applyDarkClass(enabled: boolean) {
