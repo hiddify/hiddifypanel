@@ -3,7 +3,11 @@
 
 {% if tls_layer != 'http' %}
 
-    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set qp.fp = ctx.hconfig.utls %}{% endif %}
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
+        {% set qp.fp = ctx.hconfig.utls %}
+    {% elif domain.is_reality() %}
+        {% set qp.fp = 'chrome' %}
+    {% endif %}
     {% set qp.sni = domain.sni %}
     {% if domain.is_reality() %}
         {% set qp.security = 'reality' %}

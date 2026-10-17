@@ -6,7 +6,7 @@
   "security": "reality",
   "realitySettings": {
     "serverName": "{{ domain.sni }}",
-    "fingerprint": "{{ ctx.hconfig.utls }}",
+    "fingerprint": "{% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{{ ctx.hconfig.utls }}{% else %}chrome{% endif %}",
     "shortId": "{{ ctx.hconfig.reality_short_ids | choose_random }}",
     "publicKey": "{{ ctx.hconfig.reality_public_key }}",
     "show": false

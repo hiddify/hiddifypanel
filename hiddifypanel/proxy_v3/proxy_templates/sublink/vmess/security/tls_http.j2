@@ -1,7 +1,11 @@
 {% set domain=ctx.proxy.domain%}
 {% if proxy.uses_tls %}
     {% set data.sni = ctx.proxy.domain.sni %}
-    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}{% set data.fp = ctx.hconfig.utls %}{% endif %}
+    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
+        {% set data.fp = ctx.hconfig.utls %}
+    {% elif ctx.proxy.domain.is_reality() %}
+        {% set data.fp = 'chrome' %}
+    {% endif %}
 
     
     {% if ctx.proxy.domain.is_reality() %}

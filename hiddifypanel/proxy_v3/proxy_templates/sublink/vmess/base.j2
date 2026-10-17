@@ -14,10 +14,10 @@
     alpn=proxy.alpn|default('h2,http/1.1'),
     path="/"~proxy.path|default(''),
     sni=domain.sni,
-    fp=ctx.hconfig.utls|default(''),
+    fp='',
   ) %}
   {% set data.ps |trim_no_line %}{% include 'sublink/tag' %}{% endset %}
-  {% if ctx.proxy.domain.extra.finalmask %}{% set data.fm = ctx.proxy.domain.extra.finalmask %},{% endif %}
+  {% if ctx.proxy.domain.extra.finalmask %}{% set data.fm = ctx.proxy.domain.extra.finalmask %}{% endif %}
 
   {% include '__VMESS_TRANSPORT_SLUG__' %}
   {% include '__VMESS_SECURITY_SLUG__' %}

@@ -16,6 +16,11 @@
         "enabled": true,
         "fingerprint": "{{ fp }}"
       },
+    {% elif domain.is_reality() %}
+      "utls": {
+        "enabled": true,
+        "fingerprint": "chrome"
+      },
     {% endif %}
   {% endif %}
   {% if domain.is_reality() %}

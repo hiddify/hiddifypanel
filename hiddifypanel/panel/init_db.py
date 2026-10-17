@@ -25,6 +25,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates
 MAX_DB_VERSION = 200
 
 
+def _v176(child_id):
+    """Upgrades left Reality off even when Reality domains already existed; turn it on so inbounds/profiles return."""
+    if Domain.query.filter(Domain.child_id == child_id, Domain.fake_mode == FakeMode.reality).first():
+        set_hconfig(ConfigEnum.reality_enable, True, child_id, commit=False)
+
+
 def _v175(child_id):
     """The online count is global (the shared user table): only the panel's own row (child 0) keeps it. The nodes' rows
     had it too, so the dashboard's sums counted every online user once per node."""

@@ -346,6 +346,24 @@ def set_db_from_json(
 
     db.session.commit()
 
+    # Old backups keep their db_version; data-only migrations (_v148 download modes, _v176 Reality) would be skipped.
+    _reapply_restore_data_fixes()
+
+
+def _reapply_restore_data_fixes() -> None:
+    """Re-run selected data migrations after restore regardless of the backup's db_version."""
+    from hiddifypanel.panel import init_db as init_db_mod
+
+    for child in Child.query.filter(Child.mode == ChildMode.virtual).all():
+        for ver in (148, 176):
+            action = getattr(init_db_mod, f"_v{ver}", None)
+            if action:
+                try:
+                    action(child.id)
+                except Exception as e:
+                    logger.warning(f"restore data fix _v{ver} child={child.id}: {e}")
+    db.session.commit()
+
 
 def get_domain_btn_link(domain):
     text = domain.alias or domain.domain

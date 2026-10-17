@@ -15,7 +15,7 @@ from hiddifypanel.proxy_v3.context_vars.hconfig import HConfigVar
 from hiddifypanel.proxy_v3.context_vars.proxy import ProxyVar, ServerBuilderProxyVar
 from hiddifypanel.proxy_v3.context_vars.server_platform_var import ServerPlatformVar, get_server_platform_var
 from hiddifypanel.proxy_v3.context_vars.user import UserVar
-from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes
+from hiddifypanel.proxy_v3.domain_mode_filter import domain_ip_matches_modes, reality_allowed
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG
 from hiddifypanel.proxy_v3.outbounds import build_outbounds_var
 from hiddifypanel.proxy_v3.proxy_render_matrix import _domains_for_proxy_row
@@ -64,8 +64,9 @@ def get_server_base(child_id: int) -> ServerBase:
     shared_cert = select_shared_certificate()
 
     proxies: list[ServerBuilderProxyVar] = get_server_builder_proxies(child_id)
+    reality_on = bool(hconfig.reality_enable)
     for proxy in proxies:
-        proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy)]
+        proxy.domains = [d for d in domains if filter_domain_for_proxy(d, proxy, reality_enable=reality_on)]
     proxies = [b for b in proxies if filter_server_proxy(b)]
     return ServerBase(
         domains=domains,
@@ -77,13 +78,25 @@ def get_server_base(child_id: int) -> ServerBase:
     )
 
 
-def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
+def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar, *, reality_enable: bool = True) -> bool:
+    """Attach REALITY domains to L7 proxies (xhttp/grpc/tcp/…) so server inbounds match client configs.
+
+    Previously every REALITY domain was forced onto ``xray-reality-termination`` only: clients still got
+    xhttp/grpc Reality profiles, but the server had no matching inbound and traffic fell through to decoy.
+    """
     if d.is_fake_proxy():
         return False
     if proxy.slug == REALITY_TERMINATION_SLUG:
-        return d.is_reality()
-    if d.is_reality():
+        return d.is_reality() and reality_allowed(d, reality_enable)
+    if not reality_allowed(d, reality_enable):
         return False
+
+    if d.is_reality():
+        if not domain_ip_matches_modes(d, proxy.domain_modes):
+            return False
+        if d.custom_proxy_ids:
+            return proxy.id in d.custom_proxy_ids
+        return _download_domain_ok(d, proxy)
 
     proxy_id = proxy.id
     if proxy.mode in (CustomProxyMode.domains_sni_gateway, CustomProxyMode.domains_dns_gateway):
@@ -95,12 +108,17 @@ def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if not domain_ip_matches_modes(d, proxy.domain_modes):
         return False
 
+    return _download_domain_ok(d, proxy)
+
+
+def _download_domain_ok(d: DomainIPVar, proxy: ProxyVar) -> bool:
     if proxy.transport != ProxyTransport.xhttp:
         return True
-    if (d.download is None or d.download.name == d.name) or domain_ip_matches_modes(d.download, proxy.download_domain_modes):
+    if not proxy.download_domain_modes:
         return True
-
-    return False
+    if d.download is None or d.download.name == d.name:
+        return True
+    return domain_ip_matches_modes(d.download, proxy.download_domain_modes)
 
 
 def filter_server_proxy(proxy: ProxyVar) -> bool:

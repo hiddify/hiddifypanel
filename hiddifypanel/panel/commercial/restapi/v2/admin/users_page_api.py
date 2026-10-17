@@ -158,7 +158,12 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
     if "comment" in body:
         user.comment = str(body.get("comment") or "")[:512]
     if "enable" in body:
-        user.enable = bool(body.get("enable"))
+        want = bool(body.get("enable"))
+        if want and not user.is_active:
+            actor = g.account
+            if actor and not actor.can_have_more_users():
+                abort(400, "You have too many users for your limit")
+        user.enable = want
     if "usage_limit_GB" in body:
         user.usage_limit_GB = _number(body, "usage_limit_GB", low=0, high=MAX_USAGE_GB, integer=False)
     if "package_days" in body:
@@ -344,8 +349,11 @@ class UsersBulkApi(MethodView):
             days = _number({"days": body.get("days") or 0}, "days", low=0, high=3650, integer=True)
             if not add_gb and not days:
                 abort(400, "Give some data (GB) or days to add")
+        actor = g.account
         for user in users:
             if action in ("enable", "disable"):
+                if action == "enable" and not user.is_active and not actor.can_have_more_users():
+                    abort(400, "You have too many users for your limit")
                 user.enable = action == "enable"
             elif action == "reset_usage":
                 user.reset_usage()
