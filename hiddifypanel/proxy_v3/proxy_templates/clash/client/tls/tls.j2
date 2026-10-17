@@ -3,6 +3,7 @@
    See https://core-tutorial.argsment.com/compare/ #}
 {% set domain = domain if domain is defined else ctx.proxy.domain %}
 {% set tls_layer = (tls_layer if tls_layer is defined else ctx.proxy.tls_layer) or "http" %}
+{% set transport = (ctx.proxy.transport or "")|string|lower %}
 
 {% if tls_layer != 'http' %}
 "tls": true,
@@ -11,14 +12,20 @@
 {% else %}
 "servername": "{{ domain.sni }}",
 {% endif %}
+{# Mihomo VLESS/VMess often need a uTLS fingerprint; default chrome when unset. #}
 {% set fp = ctx.hconfig.utls or "" %}
 {% if fp and fp != "none" %}
 "client-fingerprint": "{{ fp }}",
-{% elif domain.is_reality() %}
+{% else %}
 "client-fingerprint": "chrome",
 {% endif %}
-{% if tls_layer != 'http' and not domain.is_reality() %}
+{% if not domain.is_reality() %}
+{# gRPC must negotiate h2; mixed ALPN can pick http/1.1 and break the stream. #}
+{% if transport == "grpc" %}
+"alpn": ["h2"],
+{% else %}
 "alpn": {{ tls_layer.alpns() | tojson }},
+{% endif %}
 {% endif %}
 {% if domain.is_reality() %}
 "reality-opts": {

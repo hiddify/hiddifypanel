@@ -1,3 +1,5 @@
+{% set sni = ctx.shared_cert.server_name or domain.sni %}
+{% set insecure = (not ctx.shared_cert.is_trusted) or domain.allow_insecure %}
 "type": "hysteria2",
 "server": "{{ proxy.server }}",
 "port": {{ proxy.udp_port or ctx.proxy.port }},
@@ -8,7 +10,8 @@
 "obfs": "salamander",
 "obfs-password": "{{ ctx.hconfig.proxy_path }}",
 {% endif %}
-"sni": "{{ domain.sni }}",
-{% if domain.allow_insecure %}
+"sni": "{{ sni }}",
+"alpn": ["h3"],
+{% if insecure %}
 "skip-cert-verify": true,
 {% endif %}

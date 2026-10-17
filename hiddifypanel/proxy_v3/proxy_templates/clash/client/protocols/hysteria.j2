@@ -1,0 +1,16 @@
+{% set sni = ctx.shared_cert.server_name or domain.sni %}
+{% set insecure = (not ctx.shared_cert.is_trusted) or domain.allow_insecure %}
+"type": "hysteria",
+"server": "{{ proxy.server }}",
+"port": {{ proxy.udp_port or ctx.proxy.port }},
+"auth-str": "{{ ctx.user.uuid }}",
+"protocol": "udp",
+{% if ctx.hconfig.hysteria_up_mbps %}"up": "{{ ctx.hconfig.hysteria_up_mbps }}",{% endif %}
+{% if ctx.hconfig.hysteria_down_mbps %}"down": "{{ ctx.hconfig.hysteria_down_mbps }}",{% endif %}
+{% if ctx.hconfig.hysteria_obfs_enable %}
+"obfs": "{{ ctx.hconfig.proxy_path }}",
+{% endif %}
+"sni": "{{ sni }}",
+{% if insecure %}
+"skip-cert-verify": true,
+{% endif %}

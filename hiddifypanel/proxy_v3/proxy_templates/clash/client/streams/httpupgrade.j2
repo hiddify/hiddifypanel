@@ -1,5 +1,8 @@
-{# Mihomo models HTTPUpgrade as WebSocket + v2ray-http-upgrade (see VLESS→Clash converter). #}
+{# Mihomo models HTTPUpgrade as WebSocket + v2ray-http-upgrade (wiki.metacubex.one transport).
+   Against Xray httpupgrade inbounds this still fails in Mihomo 1.19.x (A/B: plain ws OK,
+   same proxy with v2ray-http-upgrade flags fails; Xray client OK). Hide until fixed. #}
 {{ skip("httpupgrade_enable = " ~ ctx.hconfig.httpupgrade_enable) if not ctx.hconfig.httpupgrade_enable }}
+{{ skip("Mihomo httpupgrade fails against Xray httpupgrade; use an Xray client") }}
 "network": "ws",
 "ws-opts": {
   "path": "/{{ proxy.path }}",

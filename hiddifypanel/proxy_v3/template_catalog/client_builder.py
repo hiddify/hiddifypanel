@@ -449,8 +449,6 @@ def _clash_client_proto_slug(combo: ProxyCombination) -> str | None:
     if combo.proto == "v2ray":
         # Shadowsocks + v2ray-plugin is not a first-class Clash type here.
         return None
-    if proto == "hysteria":
-        proto = "hysteria2"
     slug = f"clash/client/protocols/{proto}"
     try:
         load_template_slug(slug)
@@ -462,6 +460,9 @@ def _clash_client_proto_slug(combo: ProxyCombination) -> str | None:
 def _clash_client_streams_slug(combo: ProxyCombination) -> str | None:
     mapped = _transport_file(combo.transport)
     if not mapped or mapped == "none":
+        return None
+    # Mihomo network "xhttp" is VLESS-only (wiki.metacubex.one transport docs).
+    if mapped == "xhttp" and (_client_proto_file(combo.proto) or "") != "vless":
         return None
     slug = f"clash/client/streams/{mapped}"
     try:
@@ -481,8 +482,10 @@ def supports_clash_preset(combo: ProxyCombination) -> bool:
     if proto in _CLASH_V2RAY_PROTOS:
         if _raw_transport(combo.transport) in _CLASH_UNSUPPORTED_TRANSPORTS:
             return False
+        if _raw_transport(combo.transport) == "xhttp" and proto != "vless":
+            return False
         return _clash_client_streams_slug(combo) is not None and _clash_client_proto_slug(combo) is not None
-    if proto in _CLASH_STANDALONE_PROTOS or proto == "hysteria":
+    if proto in _CLASH_STANDALONE_PROTOS:
         # FakeTLS / ShadowTLS need Clash plugins we do not emit yet.
         if _raw_transport(combo.transport) in ("faketls", "shadowtls"):
             return False

@@ -1,5 +1,7 @@
-{# XHTTP needs Mihomo 1.19+ — https://shipengtao.com/en/tools/vless-to-clash/ #}
+{# XHTTP needs Mihomo 1.19+ — https://wiki.metacubex.one/en/config/proxies/transport/
+   Only VLESS supports network xhttp in Mihomo; VMess/Trojan must not emit it. #}
 {{ skip("xhttp needs Mihomo ≥ 1.19") if ctx.platform.app_group == "clash" and ctx.platform.app.version > "0.0.0" and ctx.platform.app.version < "1.19.0" }}
+{{ skip("Mihomo xhttp is VLESS-only") if ctx.proxy.proto != "vless" }}
 "network": "xhttp",
 "xhttp-opts": {
   "path": "/{{ proxy.path }}",

@@ -1,6 +1,10 @@
-{# Mihomo VLESS — field map: https://shipengtao.com/en/tools/vless-to-clash/ #}
+{# Mihomo VLESS — field map: https://shipengtao.com/en/tools/vless-to-clash/
+   Encryption: same gate as sublink (xray server only; reality TCP terminator cannot use it).
+   Mihomo 1.19.x negotiates VLESS encryption on raw/tcp, but stream transports (ws/grpc/xhttp/…)
+   fail against Xray while Xray clients succeed — skip those until Mihomo works. #}
 {% set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
-{% set encryption = 'none' if reality_terminated else (ctx.hconfig.vless_encryption or 'none') %}
+{% set encryption = 'none' if reality_terminated or ctx.proxy.server_core != "xray" else (ctx.hconfig.vless_encryption or 'none') %}
+{{ skip("Mihomo: VLESS encryption works on raw/tcp only; use an Xray client for stream VLESS while vless_encryption is set") if encryption and encryption != "none" and (ctx.proxy.transport or "tcp")|string|lower != "tcp" }}
 "type": "vless",
 "server": "{{ proxy.server }}",
 "port": {{ ctx.proxy.port }},
