@@ -316,6 +316,13 @@ def set_db_from_json(
         bulk_register_configs(json_data["hconfigs"], commit=True, override_unique_id=override_unique_id)
         if "proxies" in json_data:
             Proxy.bulk_register(json_data["proxies"], commit=False)
+        if not json_data.get("outbounds"):
+            # A backup from before the Outbound manager (13): its routing is in the old settings (warp_mode, warp_sites,
+            # block_iran_sites). Carry them over as the upgrade did (_v154); else the settings said e.g. "all through
+            # WARP" while every connection still went Direct.
+            from hiddifypanel.proxy_v3.outbounds import migrate_legacy_settings
+
+            migrate_legacy_settings(Child.current().id)
 
     # Newer backup sections (optional; ignored by older restore paths).
     if set_domains or set_settings:
