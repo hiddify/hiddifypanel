@@ -168,15 +168,6 @@ def build_admin_v2_notices() -> list[dict]:
                 "summary": _("admin.incomplete_setup_warning", quick_setup=quick_setup),
             }
         )
-        if hutils.node.is_parent():
-            notices.append(
-                {
-                    "severity": "error",
-                    "summary": _(
-                        "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.",
-                    ),
-                }
-            )
     elif sslip_domains:
         notices.append(
             {
@@ -187,15 +178,6 @@ def build_admin_v2_notices() -> list[dict]:
                 ),
             }
         )
-        if hutils.node.is_parent():
-            notices.append(
-                {
-                    "severity": "error",
-                    "summary": _(
-                        "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.",
-                    ),
-                }
-            )
     elif def_user:
         d = domains[0] if domains else None
         if d:

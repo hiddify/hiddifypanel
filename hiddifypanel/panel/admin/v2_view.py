@@ -110,6 +110,10 @@ def _admin_v2_bootstrap_payload() -> dict:
         "locale": _admin_locale(),
         "panel_version": _panel_version(),
         "panel_logo_url": _panel_logo_url(proxy_path),
+        # The installed-app (PWA) manifest and icon: the frontend adds the <link>s when the page lacks them (the Vite dev
+        # server's index.html has none, so without these the browser never offered to install the panel).
+        "pwa_manifest_url": hurl_for("common_bp.LoginView:create_pwa_manifest", secret_uuid=g.account.uuid or ""),
+        "pwa_icon_url": hutils.flask.static_url_for(filename="images/hiddify-dark.png"),
         "menu": build_admin_v2_menu(),
         "notices": build_admin_v2_notices(),
         "system_actions": build_admin_v2_system_actions(),

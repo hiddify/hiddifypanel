@@ -240,22 +240,25 @@ class LoginView(FlaskView):
         admin_call=hutils.flask.is_admin_panel_call()
         account=AdminUser.by_uuid(g.uuid) if admin_call else User.by_uuid(g.uuid)
         name = (domain if admin_call  else account.name)
-        return jsonify({
+        start_url = hiddify.get_account_panel_link(account, domain)
+        icon = hutils.flask.static_url_for(filename='images/hiddify-dark.png')
+        response = jsonify({
+            # A stable id per account and panel, so the installed app is not mixed up with the decoy site at the root.
+            "id": start_url,
             "name": f"Hiddify {name}",
             "short_name": f"{name}"[:12],
             "theme_color": "#f2f4fb",
             "background_color": "#1a1b21",
             "display": "standalone",
             "scope": f"/",
-            "start_url": hiddify.get_account_panel_link(account, domain) + "?pwa=true",
+            "start_url": start_url + "?pwa=true",
             "description": "Hiddify, for a free Internet",
             "orientation": "any",
             "icons": [
-                {
-                    "src": hutils.flask.static_url_for(filename='images/hiddify-dark.png'),
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "maskable any"
-                }
+                {"src": icon, "sizes": "512x512", "type": "image/png", "purpose": "any"},
+                {"src": icon, "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
             ]
         })
+        # The type browsers expect for a web app manifest (a plain JSON type also works, but this one is the standard).
+        response.mimetype = "application/manifest+json"
+        return response
