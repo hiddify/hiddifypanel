@@ -143,8 +143,9 @@ _PROXY_KIND = {
 
 
 def ip_based_allowed(mode, fake_mode) -> bool:
-    """IP-based custom proxies are only offered for valid direct domains."""
-    return mode == DomainType.direct and fake_mode == FakeMode.valid
+    """IP-based custom proxies (SSH, Hysteria, TUIC, WireGuard, ...) are offered for valid direct and relay domains: a relay
+    passes the traffic on to this server, and those proxies take relay-valid among their domain modes."""
+    return mode in (DomainType.direct, DomainType.relay) and fake_mode == FakeMode.valid
 
 
 def _proxies_list(child_id: int) -> list[dict[str, Any]]:
@@ -406,7 +407,7 @@ def _apply_body(d: Domain, body: dict[str, Any], child_id: int) -> None:
         by_id = {p.id: p for p in rows}
         d.custom_proxies = [by_id[i] for i in dict.fromkeys(ids)]
     if d.custom_proxies and not ip_based_allowed(d.mode, d.fake_mode):
-        # Another mode: IP-based proxies do not apply (only valid direct domains use them).
+        # Another mode: IP-based proxies do not apply (only valid direct and relay domains use them).
         d.custom_proxies = [p for p in d.custom_proxies if _PROXY_KIND.get(p.mode) != "ip"]
     if "show_domain_ids" in body:
         ids = [int(i) for i in body.get("show_domain_ids") or []]
