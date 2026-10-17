@@ -40,11 +40,13 @@ class IPVar(BaseModel):
             add(value)
         return cls(ipsv4=v4, ipsv6=v6)
 
-    def merge(self, other: IPVar | list[str]):
-        if isinstance(other, Iterable):
-            other = IPVar.from_strings(*other)
+    def merge(self, other: IPVar | str | Iterable[str]) -> IPVar:
+        # The concrete types first: a pydantic model is Iterable too (it yields (field, value) pairs), and so is a str
+        # (its characters) — checking Iterable first merged nothing (e.g. a domain's cdn_ip was ignored).
         if isinstance(other, str):
             other = IPVar.from_strings(other)
+        elif not isinstance(other, IPVar):
+            other = IPVar.from_strings(*other)
         self.ipsv4.update(other.ipsv4)
         self.ipsv6.update(other.ipsv6)
         return self
