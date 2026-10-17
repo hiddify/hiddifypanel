@@ -62,22 +62,25 @@ def _write(path: Path, content: str) -> None:
         raise
 
 
+def normalize_pem(pem: str) -> str:
+    """PEM blocks without empty lines (ACME puts some between the certificates of a chain), one trailing newline: the
+    same text in the folder and in the running HAProxy (whose API payload ends at an empty line)."""
+    return "\n".join(line.strip() for line in (pem or "").splitlines() if line.strip()) + "\n"
+
+
 def write_files(name: str, cert_pem: str, key_pem: str) -> bool:
-    """Write ``<name>.crt`` and ``.crt.key`` when they differ. True when something changed."""
+    """Write ``<name>.crt`` and ``.crt.key`` when they differ (HAProxy loads them at a start or reload). True when
+    something changed; raises OSError when they can not be written."""
     if not ensure_folder():
-        return False
+        raise OSError(f"{CERT_ROOT} can not be created")
     cert_path, key_path = cert_paths_for_domain(name)
     changed = False
-    try:
-        for path, content in ((key_path, key_pem), (cert_path, cert_pem)):  # the key first: HAProxy reads the pair
-            want = content.strip() + "\n"
-            if path.is_file() and path.read_text(encoding="utf-8") == want:
-                continue
-            _write(path, want)
-            changed = True
-    except OSError as e:
-        logger.error(f"certificates: can not write {cert_path}: {e}")
-        return False
+    for path, content in ((key_path, key_pem), (cert_path, cert_pem)):  # the key first: HAProxy reads the pair
+        want = normalize_pem(content)
+        if path.is_file() and path.read_text(encoding="utf-8") == want:
+            continue
+        _write(path, want)
+        changed = True
     if changed:
         logger.debug(f"certificates: wrote {cert_path}")
     return changed
@@ -157,9 +160,9 @@ def haproxy_install(name: str, cert_pem: str, key_pem: str) -> bool:
         if known:
             # Loaded from <name>.crt + <name>.crt.key: the key is updated under its own file name (in the same
             # transaction); a key inside the certificate's payload fails the commit ("unable to load SSL private key").
-            steps += [(f"set ssl cert {cert_path}", cert_pem), (f"set ssl cert {cert_path}.key", key_pem)]
+            steps += [(f"set ssl cert {cert_path}", normalize_pem(cert_pem)), (f"set ssl cert {cert_path}.key", normalize_pem(key_pem))]
         else:
-            steps += [(f"new ssl cert {cert_path}", None), (f"set ssl cert {cert_path}", cert_pem.strip() + "\n" + key_pem.strip())]
+            steps += [(f"new ssl cert {cert_path}", None), (f"set ssl cert {cert_path}", normalize_pem(cert_pem) + normalize_pem(key_pem))]
         steps.append((f"commit ssl cert {cert_path}", None))
         if not listed:
             steps.append((f"add ssl crt-list {CERT_ROOT} {cert_path}", None))
@@ -221,7 +224,15 @@ def save(domain: Domain, cert_pem: str, key_pem: str, *, error: str | None = Non
     row.last_renewal_error = error
     row.updated_at = datetime.utcnow()
     db.session.commit()
-    files_changed = write_files(host, row.certificate, row.private_key)
+    # The files first: a reload / restart of HAProxy loads them. The running HAProxy gets it only once they are written,
+    # so the two never differ (a reload would bring the old certificate back).
+    try:
+        files_changed = write_files(host, row.certificate, row.private_key)
+    except OSError as e:
+        logger.error(f"certificates: {host}: can not write its files ({e}); not put into the running HAProxy either")
+        row.last_renewal_error = f"the certificate files could not be written: {e}"
+        db.session.commit()
+        return changed
     if install and (changed or files_changed):
         haproxy_install(host, row.certificate, row.private_key)
     return changed
@@ -274,7 +285,7 @@ def export_all(*, install: bool = False) -> ExportStats:
                 continue
             row = TlsStore.by_domain_id(d.id)
             if row and (row.certificate or "").strip() and (row.private_key or "").strip():
-                if write_files(host, row.certificate, row.private_key):
+                if write_files(host, row.certificate, row.private_key):  # OSError: logged below, the next domain goes on
                     stats.written += 1
                     if install:
                         haproxy_install(host, row.certificate, row.private_key)
