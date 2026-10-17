@@ -222,11 +222,12 @@ def _visible_admins(actor: AdminUser) -> list[AdminUser]:
 
 def _managed_target(uuid) -> AdminUser:
     actor: AdminUser = g.account
-    admin = AdminUser.by_uuid(str(uuid)) or abort(404, "Admin not found")
+    admin = AdminUser.by_uuid(str(uuid))
+    # Out-of-tree (and owner id=1 for non-self) must look missing — same as the users page.
+    if not admin or admin.id == 1 or admin.id not in actor.recursive_sub_admins_ids():
+        abort(404, "Admin not found")
     if admin.id == actor.id:
         abort(403, "Your own account can not be changed here")
-    if admin.id == 1 or admin.id not in actor.recursive_sub_admins_ids():
-        abort(403, "You don't have permission to manage this admin")
     if _is_super(admin) and not _is_super(actor):
         abort(403, "Only a super admin can manage a super admin")
     return admin

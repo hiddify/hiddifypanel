@@ -15,22 +15,22 @@ from .schema import PatchUserSchema, SuccessfulSchema, UserSchema
 class UserApi(MethodView):
     decorators = [login_required({Role.super_admin, Role.admin, Role.agent})]
 
+    def _scoped_user(self, uuid):
+        user = User.by_uuid(uuid)
+        if not user or not has_permission(user):
+            abort(404, "User not found")
+        return user
+
     @app.output(UserSchema)
     def get(self, uuid):
         """User: Get details of a user"""
-        user = User.by_uuid(uuid) or abort(404, "User not found")
-        if not has_permission(user):
-            abort(403, "You don't have permission to access this user")
-
-        return user.to_schema()
+        return self._scoped_user(uuid).to_schema()
 
     @app.input(PatchUserSchema, arg_name="data")
     @app.output(UserSchema)
     def patch(self, uuid, data: PatchUserSchema):
         """User: Update a user"""
-        user = User.by_uuid(uuid) or abort(404, "user not found")
-        if not has_permission(user):
-            abort(403, "You don't have permission to access this user")
+        user = self._scoped_user(uuid)
 
         payload = data.model_dump(exclude_unset=True)
         if "added_by_uuid" in payload:
@@ -46,9 +46,7 @@ class UserApi(MethodView):
     @app.output(SuccessfulSchema)
     def delete(self, uuid):
         """User: Delete a User"""
-        user = User.by_uuid(uuid) or abort(404, "user not found")
-        if not has_permission(user):
-            abort(403, "You don't have permission to access this user")
+        user = self._scoped_user(uuid)
         user.remove()
         hiddify.quick_apply_users()
         hutils.node.parent.notify_childs_users_changed()

@@ -1,5 +1,6 @@
 import datetime
 
+from apiflask import abort
 from flask import request  # type: ignore
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
@@ -195,6 +196,17 @@ class AdminstratorAdmin(AdminLTEModelView):
         query = query.filter(AdminUser.id.in_(admin_ids))
 
         return query
+
+    def get_one(self, id):
+        """Same scope as get_query(): Flask-Admin's default get_one() ignores list filters (IDOR)."""
+        model = super().get_one(id)
+        if model is None:
+            return None
+        allowed = set(g.account.recursive_sub_admins_ids())
+        # Mirror list filter: only admins in the caller's tree (owner id=1 is only visible if in that set).
+        if model.id not in allowed:
+            abort(404)
+        return model
 
     def on_model_change(self, form, model, is_created):
 

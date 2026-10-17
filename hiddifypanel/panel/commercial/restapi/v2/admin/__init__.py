@@ -226,17 +226,24 @@ def init_app(app):
 
 
 def has_permission(model) -> bool:
-    """Check if the authenticated account has permission to do an action(get,insert,update,delete) on the another admin"""
-    if g.account.uuid == AdminUser.get_super_admin_uuid():
-        return True
-    if isinstance(model, AdminUser) and model.id == g.account.id:
-        return True
-    if isinstance(model, AdminUser) and model.parent_admin_id == g.account.id:
-        return True
-    # Users of the admin's whole tree, as the users list (users_api) and the users page show them
-    elif isinstance(model, User) and model.added_by in g.account.recursive_sub_admins_ids():
-        return True
+    """Whether the signed-in admin may access this user/admin — same tree as the list APIs.
 
+    AdminUser: id in ``recursive_sub_admins_ids()`` (self + descendants).
+    User: ``added_by`` in that set and not soft-deleted.
+    Out-of-tree records must look missing (callers should abort 404), never leak via 403.
+    """
+    actor = g.account
+    if actor is None:
+        return False
+    if getattr(actor, "uuid", None) == AdminUser.get_super_admin_uuid():
+        return True
+    allowed = set(actor.recursive_sub_admins_ids())
+    if isinstance(model, AdminUser):
+        return model.id in allowed
+    if isinstance(model, User):
+        if getattr(model, "deleted", False):
+            return False
+        return model.added_by in allowed
     return False
 
 

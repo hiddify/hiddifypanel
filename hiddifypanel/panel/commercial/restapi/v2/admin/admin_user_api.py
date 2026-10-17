@@ -13,21 +13,22 @@ from .schema import AdminSchema, PatchAdminSchema, SuccessfulSchema
 class AdminUserApi(MethodView):
     decorators = [login_required({Role.super_admin, Role.admin})]
 
+    def _scoped_admin(self, uuid):
+        admin = AdminUser.by_uuid(uuid)
+        if not admin or not has_permission(admin):
+            abort(404, "Admin not found")
+        return admin
+
     @app.output(AdminSchema)
     def get(self, uuid):
         """Admin: Get an admin"""
-        admin = AdminUser.by_uuid(uuid) or abort(404, "Admin not found")
-        if not has_permission(admin):
-            abort(403, "you don't have permission to access this admin")
-        return admin.to_schema()
+        return self._scoped_admin(uuid).to_schema()
 
     @app.input(PatchAdminSchema, arg_name="data")
     @app.output(AdminSchema)
     def patch(self, uuid, data: PatchAdminSchema):
         """Admin: Update an admin"""
-        admin = AdminUser.by_uuid(uuid) or abort(404, "Admin not found")
-        if not has_permission(admin):
-            abort(403, "You don't have permission to access this admin")
+        admin = self._scoped_admin(uuid)
 
         # Only validate fields the client actually sent (exclude_unset), then merge.
         requested = validate_admin_write_payload(data.model_dump(exclude_unset=True), target=admin)
@@ -49,9 +50,7 @@ class AdminUserApi(MethodView):
     @app.output(SuccessfulSchema)
     def delete(self, uuid):
         """Admin: Delete an admin"""
-        admin = AdminUser.by_uuid(uuid) or abort(404, "Admin not found")
-        if not has_permission(admin):
-            abort(403, "You don't have permission to access this admin")
+        admin = self._scoped_admin(uuid)
         admin.remove()
         hutils.node.parent.notify_childs_users_changed()
         return {"status": 200, "msg": "ok"}

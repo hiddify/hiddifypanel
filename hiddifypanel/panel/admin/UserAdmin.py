@@ -448,6 +448,16 @@ class UserAdmin(AdminLTEModelView):
 
         return query
 
+    def get_one(self, id):
+        """Same scope as get_query(): Flask-Admin's default get_one() ignores list filters (IDOR)."""
+        model = super().get_one(id)
+        if model is None:
+            return None
+        allowed = set(g.account.recursive_sub_admins_ids())
+        if model.added_by not in allowed or model.deleted:
+            abort(404)
+        return model
+
     @action("disable", "Disable", "Are you sure you want to disable selected users?")
     def action_disable(self, ids):
         query = tools.get_query_for_ids(self.get_query(), self.model, ids)
