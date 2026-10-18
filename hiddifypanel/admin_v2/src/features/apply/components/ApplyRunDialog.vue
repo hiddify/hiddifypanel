@@ -2,6 +2,7 @@
 /**
  * Apply configs / reinstall / update as a dialog over the page you are on (settings, domains...): asks first when
  * the action is disruptive, then shows the live run, so there is no trip to the Apply page.
+ * ``skipConfirm``: start right away (quick setup Finish already asked the user to continue).
  */
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -12,7 +13,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import { ACTION_META, applyApi, type ApplyAction, type StartedRun } from '@/features/apply/api'
 import RunPanel from '@/features/apply/components/RunPanel.vue'
 
-const props = defineProps<{ action: ApplyAction | null }>()
+const props = withDefaults(defineProps<{ action: ApplyAction | null; skipConfirm?: boolean }>(), { skipConfirm: false })
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ finished: [action: ApplyAction, ok: boolean] }>()
 
@@ -45,8 +46,8 @@ watch(visible, (open) => {
   run.value = null
   error.value = null
   finished.value = false
-  // The harmless ones just run; the disruptive ones ask first
-  if (ACTION_META[props.action].confirm) stage.value = 'confirm'
+  // The harmless ones just run; the disruptive ones ask first (unless the caller already confirmed)
+  if (ACTION_META[props.action].confirm && !props.skipConfirm) stage.value = 'confirm'
   else void start()
 })
 

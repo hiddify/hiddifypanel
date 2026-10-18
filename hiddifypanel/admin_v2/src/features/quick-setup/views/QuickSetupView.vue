@@ -95,7 +95,7 @@
 
     <Toast />
     <ConfirmDialog />
-    <ApplyRunDialog v-model:visible="reinstallVisible" action="install" />
+    <ApplyRunDialog v-model:visible="reinstallVisible" action="install" skip-confirm />
   </div>
 </template>
 
