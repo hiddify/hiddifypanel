@@ -644,10 +644,13 @@
       "run": {
         "dontClose": "您可以离开此页面；它会继续在服务器上运行。",
         "hide": "隐藏",
+        "insecure": "不安全",
+        "linkCopied": "已复制管理链接",
         "links": "您域名上的管理员链接（可能已更改）",
         "reconnecting": "面板正在重启，正在重新连接…",
         "reload": "面板已更新。请重新加载以使用新版本。",
         "reloadBtn": "重新加载",
+        "secure": "安全",
         "stalled": "日志长时间没有新内容。请查看下方日志。",
         "starting": "正在启动…",
         "waitingStart": "正在等待启动…",

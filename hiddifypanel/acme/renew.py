@@ -218,8 +218,9 @@ def run(*, force: bool = False, wait_lock: bool = False, apply: bool = True, onl
     """Renew what is due (in the caller's app context).
 
     ``force``: also the domains waiting after a failure or a rate limit. ``wait_lock``: wait for another process's run
-    instead of skipping. ``only_without_valid``: nothing when a domain has a real certificate already (the installer
-    waits only for the first one). ``apply``: rebuild the cores' configs when a certificate changed.
+    instead of skipping. ``only_without_valid``: nothing when a domain has a real certificate already (legacy
+    ``--first``; the installer issues every due domain instead). ``apply``: rebuild the cores' configs when a
+    certificate changed.
     """
     summary = RenewSummary()
     with state.renewal_lock(1800 if wait_lock else 0) as got:

@@ -156,16 +156,28 @@ def log_sources() -> dict[str, Any]:
     return {"api_bases": _api_bases(), "domains": _domains(), "api_key": g.account.uuid, "admin_links": _admin_links()}
 
 
-def _admin_links() -> list[str]:
-    """The panel's admin link on each domain: after a domain or path change these are the new addresses."""
+def _admin_links() -> list[dict[str, Any]]:
+    """Admin panel URLs after a run: ``secure`` when the domain has a real (non-self-signed) certificate.
+
+    HTTPS only for secure domains (browsers accept them). Domains still on a self-signed stand-in, and the
+    bare server IP, use HTTP and ``secure: false`` so Close does not send the admin into a cert warning.
+    """
+    from hiddifypanel.models import Domain
     from hiddifypanel.panel import hiddify
 
-    out = []
-    for name in _domains():
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for d in Domain.get_domains(always_add_all_domains=True, always_add_ip=True):
+        name = str(d.domain or "").replace("*", hutils.random.get_random_string(3, 6))
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        secure = d.tls_status == "valid"
         try:
-            out.append(hiddify.get_account_panel_link(g.account, name))
+            url = hiddify.get_account_panel_link(g.account, name, is_https=secure)
         except Exception:
             continue
+        out.append({"url": url, "host": name, "secure": secure})
     return out[:8]
 
 

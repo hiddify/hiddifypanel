@@ -15,6 +15,14 @@ export interface LogFile {
   mtime: number
 }
 
+/** One admin panel URL after apply/install: HTTPS only when the domain has a real certificate. */
+export interface AdminLink {
+  url: string
+  host: string
+  /** Real CA-signed cert (Let's Encrypt / ZeroSSL). Self-signed / missing → false (HTTP link). */
+  secure: boolean
+}
+
 /** How to keep reading a log while the admin path or a domain changes under a run. */
 export interface LogSources {
   /** API paths, newest admin path first. */
@@ -24,7 +32,7 @@ export interface LogSources {
   /** The login for requests to another domain (no cookies there). */
   api_key: string
   /** The admin link on each domain (new addresses after a domain or path change). */
-  admin_links: string[]
+  admin_links: AdminLink[]
 }
 
 export interface ApplyState extends LogSources {
@@ -178,20 +186,28 @@ function adminLinkHostScore(host: string): number {
   return 2
 }
 
-/**
- * After apply/install, if the panel's domains changed, Close should leave the old origin and open a new admin link.
- * Same host → null (the SPA can stay). Different host → best admin_links URL (real domain over IP/sslip).
- */
-export function preferredAdminRedirect(links: string[], currentHost: string = window.location.host): string | null {
-  const others: { url: string; score: number }[] = []
-  for (const link of links) {
-    try {
-      const url = new URL(link)
-      if (url.host !== currentHost) others.push({ url: link, score: adminLinkHostScore(url.host) })
-    } catch {
-      // ignore malformed links
-    }
+function linkHost(link: AdminLink): string {
+  try {
+    return new URL(link.url).host
+  } catch {
+    return link.host
   }
+}
+
+/** True when any admin link is on a different host than the page (domains changed under the run). */
+export function adminDomainChanged(links: AdminLink[], currentHost: string = window.location.host): boolean {
+  return links.some((l) => linkHost(l) !== currentHost)
+}
+
+/**
+ * After apply/install, Close may leave the old origin for a new admin link.
+ * Only HTTPS links with a real certificate (``secure``): never send the browser into a cert warning.
+ * Same host → null. Different host → best secure link (real domain over IP/sslip).
+ */
+export function preferredAdminRedirect(links: AdminLink[], currentHost: string = window.location.host): string | null {
+  const others = links
+    .filter((l) => l.secure && linkHost(l) !== currentHost)
+    .map((l) => ({ url: l.url, score: adminLinkHostScore(linkHost(l)) }))
   if (!others.length) return null
   others.sort((a, b) => b.score - a.score)
   return others[0]?.url ?? null

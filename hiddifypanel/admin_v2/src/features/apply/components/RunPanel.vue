@@ -6,9 +6,10 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
-import { ACTION_META, LogReader, type ApplyAction, type LogChunk, type LogSources } from '@/features/apply/api'
+import { ACTION_META, adminDomainChanged, LogReader, type AdminLink, type ApplyAction, type LogChunk, type LogSources } from '@/features/apply/api'
 import { liveStream, type Subscription } from '@/core/live/live'
 import TerminalView from '@/features/apply/components/TerminalView.vue'
 import { AnsiParser, type AnsiSpan } from '@/shared/utils/ansi'
@@ -16,6 +17,7 @@ import { AnsiParser, type AnsiSpan } from '@/shared/utils/ansi'
 const props = defineProps<{ action: ApplyAction; file: string; started: number; sources: LogSources }>()
 const emit = defineEmits<{ finished: [ok: boolean]; close: [] }>()
 const { t } = useI18n()
+const toast = useToast()
 
 type Phase = 'starting' | 'running' | 'done' | 'stalled'
 const phase = ref<Phase>('starting')
@@ -145,6 +147,28 @@ function reload() {
   window.location.reload()
 }
 
+/** Domains changed under the run: reload would stay on the old (often broken) origin — show the new links instead. */
+const domainChanged = computed(() => adminDomainChanged(props.sources.admin_links ?? []))
+const showReload = computed(
+  () => phase.value === 'done' && !domainChanged.value && (props.action === 'install' || props.action === 'update' || props.action === 'apply'),
+)
+const showLinks = computed(
+  () => phase.value === 'done' && (props.sources.admin_links?.length ?? 0) > 0 && props.action !== 'status' && props.action !== 'restart',
+)
+
+function linkLabel(link: AdminLink): string {
+  return link.url.replace(/^https?:\/\//, '')
+}
+
+async function copyLink(link: AdminLink) {
+  try {
+    await navigator.clipboard.writeText(link.url)
+    toast.add({ severity: 'success', summary: t('apply.run.linkCopied'), life: 2500 })
+  } catch {
+    toast.add({ severity: 'warn', summary: t('common.copy'), detail: link.url, life: 5000 })
+  }
+}
+
 onMounted(() => {
   startedAt = Date.now()
   lastGrowth = Date.now()
@@ -183,14 +207,38 @@ onBeforeUnmount(() => {
       <span v-else-if="action === 'install' || action === 'update'" class="run__hint">{{ t('apply.run.dontClose') }}</span>
     </div>
 
-    <p v-if="phase === 'done' && (action === 'install' || action === 'update' || action === 'apply')" class="run__after">
+    <p v-if="showReload" class="run__after">
       <i class="pi pi-info-circle" />{{ t('apply.run.reload') }}
       <Button :label="t('apply.run.reloadBtn')" icon="pi pi-refresh" size="small" text @click="reload" />
     </p>
 
-    <div v-if="phase === 'done' && sources.admin_links.length && action !== 'status' && action !== 'restart'" class="run__links">
+    <div v-if="showLinks" class="run__links">
       <span class="run__links-title"><i class="pi pi-link" />{{ t('apply.run.links') }}</span>
-      <a v-for="l in sources.admin_links" :key="l" :href="l" target="_blank" rel="noopener" dir="ltr">{{ l.replace(/^https?:\/\//, '') }}</a>
+      <div class="run__link-list">
+        <div
+          v-for="l in sources.admin_links"
+          :key="l.url"
+          class="run__link-chip"
+          :class="l.secure ? 'run__link-chip--secure' : 'run__link-chip--insecure'"
+        >
+          <span class="run__link-chip__flag" :title="l.secure ? t('apply.run.secure') : t('apply.run.insecure')">
+            <i :class="l.secure ? 'pi pi-lock' : 'pi pi-lock-open'" />
+            {{ l.secure ? t('apply.run.secure') : t('apply.run.insecure') }}
+          </span>
+          <a class="run__link-chip__url" :href="l.url" target="_blank" rel="noopener" dir="ltr">{{ linkLabel(l) }}</a>
+          <Button
+            type="button"
+            icon="pi pi-copy"
+            text
+            rounded
+            size="small"
+            severity="secondary"
+            :aria-label="t('common.copy')"
+            v-tooltip.top="t('common.copy')"
+            @click="copyLink(l)"
+          />
+        </div>
+      </div>
     </div>
 
     <Button class="run__toggle" :label="showLog ? t('apply.log.hide') : t('apply.log.show')" :icon="showLog ? 'pi pi-chevron-up' : 'pi pi-chevron-down'" text size="small" severity="secondary" @click="showLog = !showLog" />
@@ -306,7 +354,7 @@ onBeforeUnmount(() => {
 .run__links {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.55rem;
   padding: 0.7rem 0.85rem;
   border-radius: 12px;
   background: var(--p-content-hover-background, rgba(127, 127, 127, 0.07));
@@ -318,10 +366,58 @@ onBeforeUnmount(() => {
   gap: 0.4rem;
   font-weight: 600;
 }
-.run__links a {
-  color: var(--p-primary-color);
-  overflow-wrap: anywhere;
+.run__link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.run__link-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  min-width: 0;
+}
+.run__link-chip--secure {
+  border-color: color-mix(in srgb, var(--p-green-500, #22c55e) 45%, var(--p-content-border-color));
+  background: color-mix(in srgb, var(--p-green-500, #22c55e) 8%, var(--p-content-background));
+}
+.run__link-chip--insecure {
+  border-color: color-mix(in srgb, var(--p-red-500, #ef4444) 45%, var(--p-content-border-color));
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 8%, var(--p-content-background));
+}
+.run__link-chip__flag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.run__link-chip--secure .run__link-chip__flag {
+  color: var(--p-green-600, #16a34a);
+}
+.run__link-chip--insecure .run__link-chip__flag {
+  color: var(--p-red-600, #dc2626);
+}
+.run__link-chip__url {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--p-text-color);
   text-align: start;
+  text-decoration: none;
+}
+.run__link-chip__url:hover {
+  color: var(--p-primary-color);
+  text-decoration: underline;
 }
 .run__toggle {
   align-self: flex-start;

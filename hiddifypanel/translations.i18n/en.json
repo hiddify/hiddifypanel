@@ -644,10 +644,13 @@
       "run": {
         "dontClose": "You can leave this page; it keeps running on the server.",
         "hide": "Hide",
+        "insecure": "Not secure",
+        "linkCopied": "Admin link copied",
         "links": "Admin links on your domains (they may have changed)",
         "reconnecting": "Panel is restarting, reconnecting…",
         "reload": "The panel was updated. Reload to use the new version.",
         "reloadBtn": "Reload",
+        "secure": "Secure",
         "stalled": "Nothing new in the log for a long time. Check the log below.",
         "starting": "Starting…",
         "waitingStart": "Waiting for it to start…",

@@ -264,7 +264,11 @@ def init_app(app):
 
     @app.cli.command("issue-certificates")
     @click.option("--force", is_flag=True, help="Also the domains waiting after a failure or a rate limit")
-    @click.option("--first", is_flag=True, help="Only when no domain has a real certificate yet (the installer waits for it)")
+    @click.option(
+        "--first",
+        is_flag=True,
+        help="Skip entirely if any domain already has a real certificate (legacy; the installer issues all due domains instead)",
+    )
     @click.option("--no-apply", is_flag=True, help="Do not rebuild the cores' configs when a certificate changed")
     def issue_certificates(force: bool, first: bool, no_apply: bool):
         """Get (or renew) the domains' certificates from Let's Encrypt / ZeroSSL now. Exit code 3: a certificate changed."""
