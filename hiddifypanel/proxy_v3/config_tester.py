@@ -32,6 +32,7 @@ from urllib.parse import unquote
 import requests
 
 from hiddifypanel.proxy_v3.config_tester_types import (
+    App,
     DoneEvent,
     Event,
     Fetched,
@@ -41,8 +42,8 @@ from hiddifypanel.proxy_v3.config_tester_types import (
     ItemInfo,
     Json,
     JsonObject,
-    Kind,
     KeepAliveEvent,
+    Kind,
     PingOut,
     PingResult,
     ResultEvent,
@@ -167,8 +168,42 @@ def _decode_base64_links(raw: str) -> str:
     return decoded if "://" in decoded else raw
 
 
-def split(raw: str) -> tuple[Source, list[Item], JsonObject | None]:
-    """``(source, items, parsed)``: ``xray``, ``core``, ``clash``, or ``parsed`` (links converted by hiddify-core; that result is ``parsed``)."""
+_APP_NAMES = {"hiddify": "Hiddify", "xray": "Xray", "clash": "Clash Mihomo"}
+_FORMAT_NAMES = {"xray": "xray JSON", "core": "sing-box JSON", "clash": "Clash YAML", "parsed": "share links"}
+#: What each client reads; share links are converted for it (Clash Mihomo does not take them).
+_APP_FORMATS: dict[str, set[str]] = {"hiddify": {"core", "clash", "parsed"}, "xray": {"xray", "parsed"}, "clash": {"clash"}}
+
+
+def _format_of(raw: str) -> Source:
+    data = _parse_json(raw)
+    if isinstance(data, list) and any(_is_xray(c) for c in objects(data)):
+        return "xray"
+    if isinstance(data, dict):
+        if _is_xray(data):
+            return "xray"
+        if _is_core(data):
+            return "core"
+        if _is_clash(data):
+            return "clash"
+    if data is None and _parse_clash(raw):
+        return "clash"
+    return "parsed"
+
+
+def split(raw: str, app: App | None = None) -> tuple[Source, list[Item], JsonObject | None]:
+    """``(source, items, parsed)``: ``xray``, ``core``, ``clash``, or ``parsed`` (links converted by hiddify-core; that result is ``parsed``).
+
+    With ``app``, a format that client cannot read is an error; links are converted to xray JSON for ``xray``."""
+    if app is not None:
+        fmt = _format_of(raw)
+        if fmt not in _APP_FORMATS[app]:
+            raise TesterError(f"{_APP_NAMES[app]} does not support this subscription ({_FORMAT_NAMES[fmt]})")
+        if app == "xray" and fmt == "parsed":
+            lines = _link_lines(_decode_base64_links(raw))
+            if not lines:
+                raise TesterError(f"{_APP_NAMES[app]} does not support this subscription")
+            items, parsed = parse_links(lines, xray=True)
+            return "parsed", items, parsed
     data = _parse_json(raw)
     if isinstance(data, list):
         configs = [c for c in objects(data) if _is_xray(c)]
@@ -241,13 +276,37 @@ def _core_error(message: str) -> str:
     return (useful or lines or ["could not be parsed"])[0][:200]
 
 
+def _xray_error(message: str) -> str:
+    """What ``parse --xray`` says is wrong (its FATAL line, without the prefix)."""
+    lines = [_clean(line).strip() for line in message.splitlines() if line.strip()]
+    fatal = [line.removeprefix("FATAL").split("]", 1)[-1].strip() for line in lines if line.startswith("FATAL")]
+    return (fatal or lines or ["could not be parsed"])[-1][:200]
+
+
 def _failed_link(index: int, name: str, line: str, error: str) -> Item:
     return Item(index, name, "core", {}, original={"link": line}, error=error)
 
 
+def _link_name(line: str) -> str:
+    name = unquote(line.split("#", 1)[1]).strip() if "#" in line else ""
+    return name or line[:60]
+
+
+def _parse_link_xray(index: int, line: str) -> Item:
+    name = _link_name(line)
+    try:
+        cfg = parse_with_core(line, xray=True)
+    except TesterError as e:
+        return Item(index, name, "xray", {}, original={"link": line}, error=str(e).removeprefix(NO_CONFIG))
+    proxies = [o for o in objects(cfg.get("outbounds")) if text(o.get("protocol")) not in _XRAY_NOT_PROXY]
+    if not proxies:
+        return Item(index, name, "xray", {}, original={"link": line}, error="nothing to test in this link")
+    outbound = proxies[0]
+    return Item(index, text(outbound.get("tag")) or name, "xray", {"outbounds": [outbound]}, original=outbound)
+
+
 def _parse_link(index: int, line: str) -> Item:
-    name = unquote(line.split("#", 1)[1]).strip() if "#" in line else line[:60]
-    name = name or line[:60]
+    name = _link_name(line)
     try:
         cfg = parse_with_core(line)
     except TesterError as e:
@@ -269,13 +328,17 @@ def _parse_link(index: int, line: str) -> Item:
     return item
 
 
-def parse_links(lines: list[str]) -> tuple[list[Item], JsonObject]:
-    """Each link through ``hiddify-core parse`` (a few at once). A link that fails is an item that failed, in its place."""
+def parse_links(lines: list[str], xray: bool = False) -> tuple[list[Item], JsonObject]:
+    """Each link through ``hiddify-core parse`` (``--xray``: to xray JSON) a few at once. A link that fails is an item that failed, in its place."""
     chosen = lines[:MAX_CONFIGS]
     with ThreadPoolExecutor(max_workers=8) as pool:
-        items = list(pool.map(_parse_link, range(len(chosen)), chosen))
+        items = list(pool.map(_parse_link_xray if xray else _parse_link, range(len(chosen)), chosen))
     working = [i for i in items if not i.error]
     parsed: JsonObject = {}
+    if xray:
+        if outbounds := [i.original for i in working]:
+            parsed["outbounds"] = outbounds
+        return items, parsed
     if outbounds := [i.original for i in working if i.config.get("outbounds")]:
         parsed["outbounds"] = outbounds
     if endpoints := [i.original for i in working if i.config.get("endpoints") and not i.config.get("outbounds")]:
@@ -283,20 +346,26 @@ def parse_links(lines: list[str]) -> tuple[list[Item], JsonObject]:
     return items, parsed
 
 
-def parse_with_core(raw: str) -> JsonObject:
+def parse_with_core(raw: str, xray: bool = False) -> JsonObject:
+    """The hiddify-core (sing-box) config of the text; with ``xray``, the xray JSON of share links (``parse --xray``)."""
     if not CORE_BIN.exists():
         raise TesterError("hiddify-core is not installed")
     with tempfile.TemporaryDirectory(prefix="cfgtest-parse-") as tmp:
         src = Path(tmp) / "sub.txt"
         src.write_text(raw, encoding="utf-8")
+        cmd = [str(CORE_BIN), "parse", str(src), *(["--xray"] if xray else []), "-D", tmp]
         try:
-            res = subprocess.run([str(CORE_BIN), "parse", str(src), "-D", tmp], capture_output=True, text=True, timeout=60, cwd=str(CORE_DIR if CORE_DIR.is_dir() else tmp), check=False)
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=str(CORE_DIR if CORE_DIR.is_dir() else tmp), check=False)
         except subprocess.TimeoutExpired:
             raise TesterError("hiddify-core parse timed out") from None
         except OSError as e:
             raise TesterError(f"hiddify-core could not be run: {e}") from None
     start = res.stdout.find("{")
     cfg = _parse_json(res.stdout[start:]) if start >= 0 else None
+    if xray:
+        if not isinstance(cfg, dict) or not _is_xray(cfg):
+            raise TesterError(NO_CONFIG + _xray_error(res.stderr or res.stdout))
+        return cfg
     if not isinstance(cfg, dict) or not _is_core(cfg):
         raise TesterError(NO_CONFIG + _core_error(res.stderr or res.stdout))
     return cfg
@@ -332,7 +401,16 @@ def build_config(item: Item, port: int) -> JsonObject:
             cfg.pop(key, None)
         return cfg
     if item.kind == "clash":
-        proxy = copy.deepcopy(obj(cfg.get("proxy")))
+        # First run stores {"proxy": <one proxy>}; a UI retest sends the previous run_config
+        # (full mihomo doc with "proxies": [...]). Without unwrapping, proxies[0] is only
+        # {name} and mihomo fatals with "proxy 0: missing type".
+        proxy = obj(cfg.get("proxy"))
+        if not text(proxy.get("type")):
+            for candidate in objects(cfg.get("proxies")):
+                if text(candidate.get("type")):
+                    proxy = candidate
+                    break
+        proxy = copy.deepcopy(proxy)
         name = text(proxy.get("name")) or item.name or "proxy"
         proxy["name"] = name
         return {
@@ -495,6 +573,7 @@ def run(
     user_agent: str,
     *,
     content: str | None = None,
+    app: App | None = None,
     test_url: str = DEFAULT_TEST_URL,
     workers: int = 8,
     timeout: int = 10,
@@ -510,7 +589,7 @@ def run(
         raw, fetched = content, FetchedPasted(pasted=True, bytes=size)
     else:
         raw, fetched = fetch(url, user_agent)
-    source, items, parsed = split(raw)
+    source, items, parsed = split(raw, app)
     if not items:
         raise TesterError("No config found in the subscription")
     yield StartEvent(
@@ -525,7 +604,7 @@ def run(
     yield from _execute(items, test_url, workers, timeout, repeats, should_stop)
 
 
-def _rerun_item(raw: object, split_cache: dict[str, list[Item]]) -> Item:
+def _rerun_item(raw: object, split_cache: dict[str, list[Item]], app: App | None = None) -> Item:
     """One config to test again, as the page sends it: ``{index, name, kind, tag, original, config, content}``."""
     entry = obj(raw)
     index = entry.get("index")
@@ -535,11 +614,13 @@ def _rerun_item(raw: object, split_cache: dict[str, list[Item]]) -> Item:
     edited = text(entry.get("content"))
     if edited.strip():  # the link or the JSON was edited: test what it says now
         lines = _link_lines(edited)
-        if lines:
+        if lines and app == "xray":
+            item = _parse_link_xray(index, lines[0])
+        elif lines and app != "clash":
             item = _parse_link(index, lines[0])
         else:
             if edited not in split_cache:
-                split_cache[edited] = split(edited)[1]
+                split_cache[edited] = split(edited, app)[1]
             same = next((i for i in split_cache[edited] if i.index == index), None)
             if same is None:
                 raise TesterError("The edited subscription has no config in the place of this one")
@@ -559,6 +640,7 @@ def _rerun_item(raw: object, split_cache: dict[str, list[Item]]) -> Item:
 def rerun(
     raw_items: list[object],
     *,
+    app: App | None = None,
     test_url: str = DEFAULT_TEST_URL,
     workers: int = 8,
     timeout: int = 10,
@@ -567,7 +649,7 @@ def rerun(
 ) -> Iterator[Event]:
     """Test configs again (the ones the page has from an earlier result, or edited)."""
     split_cache: dict[str, list[Item]] = {}
-    items = [_rerun_item(raw, split_cache) for raw in raw_items[:MAX_CONFIGS]]
+    items = [_rerun_item(raw, split_cache, app) for raw in raw_items[:MAX_CONFIGS]]
     yield from _execute(items, test_url, workers, timeout, repeats, should_stop)
 
 

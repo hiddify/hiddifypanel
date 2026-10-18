@@ -162,7 +162,7 @@ def __parse_user_agent(ua: str) -> dict:
     res["os"] = uaa.os.family
     res["os_version"] = list(uaa.os.version or [])
     res["is_clash"] = bool(re.match("^(Clash|Stash)", ua, re.IGNORECASE))
-    res["is_clash_meta"] = bool(re.match("^(Clash-verge|Clash-?Meta|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)", ua, re.IGNORECASE))
+    res["is_clash_meta"] = bool(re.match("^(Clash-verge|Clash[-.]?Meta|mihomo|Stash|NekoBox|NekoRay|Pharos|hiddify-desktop)", ua, re.IGNORECASE))
     res["is_singbox"] = bool(re.match("^(HiddifyNext|Dart|SFI|SFA)", ua, re.IGNORECASE))
     res["is_hiddify"] = bool(re.match("^(HiddifyNext)", ua, re.IGNORECASE))
     res["is_hiddify_prefere_xray"] = bool(re.match("^(HiddifyNextX)", ua, re.IGNORECASE))

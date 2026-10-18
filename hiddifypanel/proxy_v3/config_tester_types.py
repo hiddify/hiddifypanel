@@ -13,6 +13,8 @@ type JsonObject = dict[str, Json]
 
 type Kind = Literal["xray", "core", "clash"]
 type Source = Literal["xray", "core", "clash", "parsed"]
+#: The client the subscription is for: what it cannot read is an error, not tested with another client.
+type App = Literal["hiddify", "xray", "clash"]
 
 
 class TesterError(Exception):

@@ -69,6 +69,9 @@ class ConfigTesterApi(MethodView):
         workers = _number(body, "workers", 8, 1, 32)
         timeout = _number(body, "timeout", 10, 2, 60)
         repeats = _number(body, "repeats", config_tester.DEFAULT_REPEATS, 1, 10)
+        app = _text(body, "app") or None
+        if app not in (None, "hiddify", "xray", "clash"):
+            _bad("app must be hiddify, xray or clash")
 
         job = config_tester_jobs.new_id()
 
@@ -76,9 +79,9 @@ class ConfigTesterApi(MethodView):
             return config_tester_jobs.is_cancelled(job, redis_client)
 
         if again is not None:  # test given configs again (no link needed)
-            events = config_tester.rerun(again, test_url=test_url, workers=workers, timeout=timeout, repeats=repeats, should_stop=stop)
+            events = config_tester.rerun(again, app=app, test_url=test_url, workers=workers, timeout=timeout, repeats=repeats, should_stop=stop)
         else:
-            events = config_tester.run(url, _text(body, "user_agent"), content=content, test_url=test_url, workers=workers, timeout=timeout, repeats=repeats, should_stop=stop)
+            events = config_tester.run(url, _text(body, "user_agent"), content=content, app=app, test_url=test_url, workers=workers, timeout=timeout, repeats=repeats, should_stop=stop)
         first: Event
         try:
             first = next(events)  # fetch and parse errors are a normal HTTP error

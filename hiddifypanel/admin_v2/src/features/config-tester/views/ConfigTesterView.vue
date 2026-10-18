@@ -30,23 +30,21 @@
       </div>
     </div>
 
-    <div v-if="mode === 'link'" class="ct-field">
-      <label for="ct-ua" class="ct-label"><span class="ct-step">2</span>{{ t('configTester.ua') }}</label>
-      <Select id="ct-ua" ref="uaSelect" v-model="userAgent" :options="UA_PRESETS" option-label="value" option-value="value" editable dir="ltr" overlay-class="ct-ua-overlay" :pt="{ overlay: { dir: 'ltr' } }" class="ct-ua font-mono" :disabled="busy" @click="openUa" @focus="openUa">
-        <template #option="{ option }">
-          <div class="flex flex-col min-w-0" dir="ltr">
-            <span class="font-medium">{{ option.label }}</span>
-            <span class="text-xs text-muted-color font-mono ct-wrap">{{ option.value }}</span>
-          </div>
-        </template>
-      </Select>
-      <small class="text-muted-color">{{ t('configTester.uaHint') }}</small>
+    <div class="ct-field">
+      <label for="ct-app" class="ct-label"><span class="ct-step">2</span>{{ t('configTester.app') }}</label>
+      <Select v-model="app" input-id="ct-app" :options="APPS" option-label="label" option-value="key" class="ct-ua" :disabled="busy" @change="onApp" />
+      <small class="text-muted-color">{{ t('configTester.appHint') }}</small>
     </div>
 
     <button type="button" class="ct-adv" :aria-expanded="advanced" @click="advanced = !advanced">
       <i class="pi" :class="advanced ? 'pi-chevron-down' : 'pi-chevron-right'" />{{ t('configTester.advanced') }}
     </button>
     <div v-show="advanced" class="ct-adv-body">
+      <div v-if="mode === 'link'" class="ct-field ct-field--wide">
+        <label for="ct-ua" class="ct-label">{{ t('configTester.ua') }}</label>
+        <InputText id="ct-ua" v-model="userAgent" dir="ltr" class="ct-ua font-mono" spellcheck="false" autocomplete="off" :disabled="busy" />
+        <small class="text-muted-color">{{ t('configTester.uaHint') }}</small>
+      </div>
       <div class="ct-field ct-field--wide">
         <label for="ct-test" class="ct-label">{{ t('configTester.testUrl') }}</label>
         <InputText id="ct-test" v-model="testUrl" dir="ltr" class="font-mono" spellcheck="false" :disabled="busy" />
@@ -231,13 +229,12 @@ const rtl = computed(() => ['fa', 'ar'].includes(locale.value))
 const route = useRoute()
 const router = useRouter()
 
-const UA_PRESETS = [
-  { label: 'Hiddify (hiddify-core)', value: 'HiddifyNext/5.0.0 (linux) like ClashMeta v2ray sing-box' },
-  { label: 'sing-box', value: 'SFA/1.13.0 (sing-box 1.13.0)' },
-  { label: 'xray JSON (v2rayNG)', value: 'v2rayNG/1.9.0' },
-  { label: 'xray JSON (xray)', value: 'xray/26.3.27' },
-  { label: 'Clash Meta', value: 'clash.meta/1.19.32' },
-  { label: 'Links (plain)', value: 'Hiddify/2.0 (links)' },
+/** The client the subscription is tested for: its user agent fetches the link, and a format it cannot read is an error. */
+type App = 'hiddify' | 'xray' | 'clash'
+const APPS: { key: App; label: string; ua: string }[] = [
+  { key: 'hiddify', label: 'Hiddify v5.0.2', ua: 'HiddifyNext/5.0.2 (linux) like ClashMeta v2ray sing-box' },
+  { key: 'xray', label: 'Xray v26.3.27', ua: 'xray/26.3.27' },
+  { key: 'clash', label: 'Clash Mihomo 1.92.32', ua: 'clash.meta/1.92.32' },
 ]
 const FILTERS = [
   { key: 'all', icon: 'pi pi-list' },
@@ -277,7 +274,8 @@ const content = ref('')
 const editText = ref(true)
 const showViewer = computed(() => mode.value === 'content' && rows.value.length > 0 && !editText.value)
 const url = ref('')
-const userAgent = ref(UA_PRESETS[0].value)
+const app = ref<App>('hiddify')
+const userAgent = ref(APPS[0].ua)
 const testUrl = ref(DEFAULT_TEST_URL)
 const workers = ref(8)
 const timeout = ref(10)
@@ -360,12 +358,14 @@ function pretty(value: unknown): string {
   return value == null ? '' : JSON.stringify(value, null, 2)
 }
 
-const uaSelect = ref<{ show: () => void; overlayVisible?: boolean } | null>(null)
+/** Choosing a client puts its user agent in; it can be changed after. */
+function onApp() {
+  userAgent.value = APPS.find((a) => a.key === app.value)?.ua ?? userAgent.value
+}
 
-/** The list opens when the text box is clicked or focused, not only from its arrow. */
-function openUa(event?: Event) {
-  const el = event?.target as HTMLElement | undefined
-  if ((!el || el.tagName === 'INPUT') && !uaSelect.value?.overlayVisible) uaSelect.value?.show()
+/** The client a user agent is from (a link opened with only `ua`). */
+function appOfUa(ua: string): App {
+  return XRAY_UA.test(ua) ? 'xray' : /^(clash|mihomo|stash)/i.test(ua) ? 'clash' : 'hiddify'
 }
 
 function onEvent(ev: TesterEvent) {
@@ -422,7 +422,7 @@ async function stream(body: Record<string, unknown>, remember = false) {
   try {
     let job = ''
     try {
-      const request = { test_url: testUrl.value, workers: workers.value, timeout: timeout.value, repeats: repeats.value, ...body }
+      const request = { app: app.value, test_url: testUrl.value, workers: workers.value, timeout: timeout.value, repeats: repeats.value, ...body }
       job = (await liveRequest<{ job: string }>('POST', 'config-tester/', { body: request, skipAuthRedirect: true })).job
     } catch (e) {
       if (!controller.signal.aborted) error.value = failure(e)
@@ -524,7 +524,7 @@ const XRAY_UA = /^(xray|v2rayNG|v2rayN|streisand)/i
 
 function subLink(): string {
   const link = url.value.trim()
-  if (!XRAY_UA.test(userAgent.value.trim())) return link
+  if (app.value !== 'xray' && !XRAY_UA.test(userAgent.value.trim())) return link
   try {
     const u = new URL(link)
     u.searchParams.set('force_xray_json', '1')
@@ -600,7 +600,16 @@ async function rerunMany(list: Row[], opts: { repeats?: number; replaceAt?: numb
   if (!todo.length || busy.value) return
   error.value = ''
   // A share link edited in the viewer is sent as it is now, to be parsed again; otherwise the config it had.
-  const items = todo.map((r) => ({ index: r.index, name: r.name, kind: r.kind, tag: r.tag, original: r.original, config: r.run_config, content: source.value === 'parsed' ? edits.value[r.index] : (jsonEdited.value ?? undefined) }))
+  // Clash items expect {proxy: oneProxy}; run_config is the full mihomo doc (proxies: [...]).
+  const items = todo.map((r) => {
+    let config: JsonObject | undefined = r.run_config
+    if (r.kind === 'clash') {
+      const fromOriginal = r.original && typeof r.original === 'object' && !Array.isArray(r.original) ? (r.original as JsonObject) : undefined
+      const fromRun = Array.isArray(r.run_config?.proxies) ? (r.run_config.proxies[0] as JsonObject | undefined) : undefined
+      config = { proxy: fromOriginal ?? fromRun }
+    }
+    return { index: r.index, name: r.name, kind: r.kind, tag: r.tag, original: r.original, config, content: source.value === 'parsed' ? edits.value[r.index] : (jsonEdited.value ?? undefined) }
+  })
   todo.forEach((r) => {
     r.state = 'waiting'
     r.replaceAt = opts.replaceAt
@@ -622,7 +631,7 @@ function stop() {
 
 /** The address carries what is being tested, so a refresh (or a shared link) runs the same test again. */
 function syncLink() {
-  const query: Record<string, string> = { url: url.value.trim(), ua: userAgent.value, start: '1' }
+  const query: Record<string, string> = { url: url.value.trim(), app: app.value, ua: userAgent.value, start: '1' }
   if (testUrl.value !== DEFAULT_TEST_URL) query.test = testUrl.value
   if (workers.value !== 8) query.workers = String(workers.value)
   if (timeout.value !== 10) query.timeout = String(timeout.value)
@@ -642,7 +651,8 @@ onMounted(() => {
   if (q.mode === 'content') mode.value = 'content'
   if (!str(q.url) && !job) return
   url.value = str(q.url)
-  if (str(q.ua)) userAgent.value = str(q.ua)
+  app.value = APPS.some((a) => a.key === q.app) ? (q.app as App) : str(q.ua) ? appOfUa(str(q.ua)) : app.value
+  userAgent.value = str(q.ua) || (APPS.find((a) => a.key === app.value)?.ua ?? userAgent.value)
   if (str(q.test)) testUrl.value = str(q.test)
   workers.value = num(q.workers, 1, 32) ?? workers.value
   timeout.value = num(q.timeout, 2, 60) ?? timeout.value
@@ -724,11 +734,6 @@ onBeforeUnmount(() => controllers.forEach((_job, c) => c.abort()))
 }
 .ct-ua {
   width: 100%;
-}
-/* The menu is teleported onto the page, so it would otherwise follow the page direction. */
-:global(.ct-ua-overlay) {
-  direction: ltr;
-  text-align: left;
 }
 .ct-wrap {
   overflow-wrap: anywhere;

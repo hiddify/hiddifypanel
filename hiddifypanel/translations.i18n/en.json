@@ -880,6 +880,8 @@
     },
     "configTester": {
       "advanced": "More options",
+      "app": "Application",
+      "appHint": "The client the subscription is for: a format it cannot read is shown as an error. Xray gets share links converted to xray JSON.",
       "contentLabel": "Contents to test",
       "contentPlaceholder": "Paste share links (one per line, or base64), an xray / hiddify-core / sing-box JSON, or Clash Meta YAML…",
       "copyName": "Copy name",

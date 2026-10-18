@@ -879,6 +879,8 @@
     },
     "configTester": {
       "advanced": "گزینه‌های بیشتر",
+      "app": "برنامه",
+      "appHint": "کلاینتی که اشتراک برای آن است: فرمتی که نمی‌تواند بخواند خطا نشان داده می‌شود. لینک‌ها برای Xray به JSON ایکس‌ری تبدیل می‌شوند.",
       "contentLabel": "محتوای تست",
       "contentPlaceholder": "لینک‌ها (هر خط یکی، یا base64)، JSON اکسری / hiddify-core / sing-box، یا YAML کلش متا را بچسبانید…",
       "copyName": "کپی نام",
