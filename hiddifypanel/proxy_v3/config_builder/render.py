@@ -201,8 +201,9 @@ def render_section(
             error=parse_err,
             error_detail=error_detail,
         )
-    except TemplateSkip:
-        return RenderSectionResult(rendered="SKIP", skipped=True)
+    except TemplateSkip as skip:
+        reason = (getattr(skip, "reason", None) or str(skip) or "").strip()
+        return RenderSectionResult(rendered="SKIP", skipped=True, skip_reason=reason or None)
     except (TemplateError, TemplateSyntaxError, UndefinedError) as exc:
         message = str(exc)
         lineno = getattr(exc, "lineno", None)

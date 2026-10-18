@@ -1233,6 +1233,26 @@ def _format_fragment_preview(rendered: str, core: str) -> dict[str, Any]:
     parse_err = None
     if wrapped.strip().startswith(("{", "[")):
         parsed, parse_err = parse_json5(wrapped)
+    # Clash dumps are YAML; show pretty JSON in the sub/preview dialog when JSON5 fails.
+    core_norm = (core or "").replace("_", "-")
+    if parsed is None and (core_norm == "clash" or not wrapped.strip().startswith(("{", "["))):
+        try:
+            yaml_parsed = yaml.safe_load(text)
+        except yaml.YAMLError as exc:
+            if core_norm == "clash":
+                return {
+                    "ok": False,
+                    "rendered": rendered,
+                    "parsed": None,
+                    "skipped": False,
+                    "error": str(exc),
+                    "warnings": [],
+                }
+            yaml_parsed = None
+        else:
+            if isinstance(yaml_parsed, (dict, list)):
+                parsed = yaml_parsed
+                parse_err = None
     if parse_err:
         return {
             "ok": False,

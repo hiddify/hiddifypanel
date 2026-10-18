@@ -27,6 +27,7 @@ class RenderSectionResult(BaseModel):
     rendered: str = ""
     parsed: Any | None = None
     skipped: bool = False
+    skip_reason: str | None = None
     error: str | None = None
     error_detail: RenderErrorDetail | None = None
 

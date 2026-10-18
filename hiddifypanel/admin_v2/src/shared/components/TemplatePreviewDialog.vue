@@ -20,6 +20,14 @@ const { t } = useI18n()
 const displayText = computed(() => {
   if (!props.result) return ''
   if (props.result.skipped) return 'SKIP'
+  // Prefer structured parse from the API (Clash YAML is converted to JSON there).
+  if (props.result.parsed != null) {
+    try {
+      return JSON.stringify(props.result.parsed, null, 2)
+    } catch {
+      /* fall through */
+    }
+  }
   const text = props.result.rendered ?? ''
   const trimmed = text.trim()
   if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {

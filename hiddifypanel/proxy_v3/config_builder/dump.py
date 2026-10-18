@@ -756,6 +756,14 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
             )
             continue
         if section.skipped:
+            reason = (section.skip_reason or "SKIP").strip()
+            messages.append(
+                MessageModel(
+                    level="info",
+                    message=f"{ctx.proxy.tag or ctx.proxy.id}: skipped — {reason}",
+                    data={"skip_reason": reason},
+                )
+            )
             continue
         raw = (section.rendered or "").strip().rstrip(",")
         if not raw:

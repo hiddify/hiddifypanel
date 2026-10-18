@@ -83,8 +83,14 @@ export function formatSectionText(
       return parsedToYaml(section.parsed)
     }
   }
+  // JSON view: prefer structured parse (API converts Clash YAML → object).
   if (section.parsed != null) {
     return formatJson(section.parsed)
   }
-  return tryPrettyJson(section.rendered || '')
+  const pretty = tryPrettyJson(section.rendered || '')
+  if (pretty !== (section.rendered || '')) {
+    return pretty
+  }
+  // Last resort: rendered may already be pretty JSON from the clash preview path.
+  return section.rendered || ''
 }
