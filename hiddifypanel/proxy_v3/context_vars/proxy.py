@@ -213,7 +213,12 @@ def is_download_upload_different(domain: DomainIPVar, proxy: ProxyVar) -> bool:
     ``DomainIPVar.download`` is always set (self-copy when no separate download domain), so
     callers must use this — not a bare ``domain.download`` check — before including download
     settings or validating a REALITY download leg.
+
+    Only xHTTP has a separate download leg: every other proxy ignores the domain's download domain and is built
+    as usual (a REALITY download domain used to drop them all).
     """
+    if proxy.transport != CustomProxyTransport.xhttp:
+        return False
     dl = domain.download
     if dl is None:
         return False
