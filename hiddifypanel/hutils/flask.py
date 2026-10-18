@@ -187,14 +187,17 @@ def __parse_user_agent(ua: str) -> dict:
 
     if res["is_hiddify"]:
         res["hiddify_version"] = generic_version
+        # Bundled sing-box approx for feature gates (snell, …) when UA has no "sing-box X.Y".
         if generic_version[0] == 0 and generic_version[1] <= 14:
             res["singbox_version"] = [1, 7, 0]
         elif generic_version[0] < 3:
             res["singbox_version"] = [1, 8, 0]
         elif generic_version[0] < 4:
             res["singbox_version"] = [1, 10, 0]
+        elif generic_version[0] < 5:
+            res["singbox_version"] = [1, 12, 0]
         else:
-            res["singbox_version"] = [1, 13, 0]
+            res["singbox_version"] = [1, 14, 0]
 
     res["is_v2ray"] = bool(re.match("^(Hiddify|FoXray|Fair|v2rayNG|SagerNet|Shadowrocket|V2Box|Loon|Liberty|xray)", ua, re.IGNORECASE))
 

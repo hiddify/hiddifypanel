@@ -131,7 +131,10 @@ def get_nodes_configs(context: Any, core: str, cache: str | int = "1h") -> list[
                 "domains": domains,
             },
         )
-        merged.extend(item for item in chunk if item is not None)
+        for item in chunk:
+            if item is None:
+                continue
+            merged.append(item)
     return merged
 
 

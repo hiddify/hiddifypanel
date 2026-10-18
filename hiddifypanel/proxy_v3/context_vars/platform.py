@@ -97,10 +97,15 @@ class PlatformVar(BaseModel):
 
     @staticmethod
     def _detect_app(ua: str, info: dict[str, Any]) -> str:
-        if info.get("app"):
-            return str(info["app"]).lower()
+        # HiddifyNext / HiddifyNextX parse as browser family "HiddifyNext"; templates
+        # and gates use the canonical name "hiddify" (see snell / VLESS encryption skips).
         if info.get("is_hiddify"):
             return "hiddify"
+        if info.get("app"):
+            raw = str(info["app"]).lower()
+            if raw.startswith("hiddify"):
+                return "hiddify"
+            return raw
         if info.get("is_singbox"):
             return "singbox"
         if info.get("is_v2rayng"):
