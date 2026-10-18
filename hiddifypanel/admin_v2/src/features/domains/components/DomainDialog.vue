@@ -65,35 +65,36 @@ const error = ref<string | null>(null)
 const meta = computed(() => props.state?.meta)
 const others = computed(() => (props.state?.domains ?? []).filter((d) => d.id !== props.row?.id))
 
-watch(visible, (open) => {
-  if (open) hideMobileMenu()
-  if (!open) {
+watch(
+  visible,
+  (open) => {
     hideMobileMenu()
-    return
-  }
-  if (!props.row) return
-  const r = props.row
-  domain.value = r.domain
-  alias.value = r.alias
-  mode.value = r.mode
-  fakeMode.value = r.fake_mode
-  proxyIds.value = [...r.custom_proxy_ids]
-  choosingL7.value = false
-  showIds.value = [...r.show_domain_ids]
-  serverDomainId.value = r.server_domain_id
-  downloadDomainId.value = r.download_domain_id
-  cdnIp.value = r.cdn_ip
-  resolveIp.value = r.resolve_ip
-  ech.value = r.ech
-  servernames.value = r.servernames
-  extraText.value = r.extra_params || '{}'
-  tlsPort.value = r.tls_port
-  httpPort.value = r.http_port
-  error.value = null
-  busy.value = false
-  // Open Advanced right away when something in it is set.
-  showAdvanced.value = !!((r.mode === 'cdn' && r.servernames) || r.tls_port || r.http_port || r.server_domain_id || r.download_domain_id || (r.cdn_ip && r.fake_mode === 'valid') || r.resolve_ip || r.ech || (r.extra_params && r.extra_params !== '{}'))
-})
+    if (!open || !props.row) return
+    // immediate: parent mounts us with v-if when already open, so false→true never fires.
+    const r = props.row
+    domain.value = r.domain
+    alias.value = r.alias
+    mode.value = r.mode
+    fakeMode.value = r.fake_mode
+    proxyIds.value = [...r.custom_proxy_ids]
+    choosingL7.value = false
+    showIds.value = [...r.show_domain_ids]
+    serverDomainId.value = r.server_domain_id
+    downloadDomainId.value = r.download_domain_id
+    cdnIp.value = r.cdn_ip
+    resolveIp.value = r.resolve_ip
+    ech.value = r.ech
+    servernames.value = r.servernames
+    extraText.value = r.extra_params || '{}'
+    tlsPort.value = r.tls_port
+    httpPort.value = r.http_port
+    error.value = null
+    busy.value = false
+    // Open Advanced right away when something in it is set.
+    showAdvanced.value = !!((r.mode === 'cdn' && r.servernames) || r.tls_port || r.http_port || r.server_domain_id || r.download_domain_id || (r.cdn_ip && r.fake_mode === 'valid') || r.resolve_ip || r.ech || (r.extra_params && r.extra_params !== '{}'))
+  },
+  { immediate: true },
+)
 
 const kind = computed<DomainKind>({
   get: () => kindOf(mode.value),
