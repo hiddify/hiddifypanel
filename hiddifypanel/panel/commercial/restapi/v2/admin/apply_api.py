@@ -239,8 +239,10 @@ class ApplyActionApi(MethodView):
 
 
 class ApplyLogApi(MethodView):
-    decorators = [login_required(ROLES)]
+    # No class-level login: OPTIONS is the CORS preflight and browsers do not send Hiddify-API-Key on it
+    # (same pattern as AdminLogApi). GET still requires a super admin.
 
+    @login_required(ROLES)
     def get(self):
         """New log text since ``offset`` (``tail=1``: the end of the file), with the parsed progress"""
         path = _log_path(request.args.get("file", ""))
@@ -284,9 +286,12 @@ class ApplyLogApi(MethodView):
         )
 
     def options(self):
-        """CORS preflight: the page may read the log through another of the panel's domains."""
-        if g.proxy_path != hconfig(ConfigEnum.proxy_path_admin):
-            abort(403)
+        """CORS preflight: the page may read the log through another of the panel's domains.
+
+        Always answer with CORS headers (no login, no proxy-path check): during apply/install the admin path
+        and domains change mid-run, and a 401/403 here without ACAO makes the browser report a CORS failure
+        instead of letting LogReader try the next URL.
+        """
         return _cors({}, preflight=True)
 
 
