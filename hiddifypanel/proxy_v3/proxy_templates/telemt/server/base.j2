@@ -53,8 +53,8 @@ transport = "mtproxy"
 proxy_protocol = true
 
 
-
-{%- if ctx.hconfig.telegram_webproxy_enable %}
+{%- set webdomains = [] %}{% for d in ctx.domains if d.support_telegram_webproxy() %}{% set _ = webdomains.append(d) %}{% endfor %}
+{%- if ctx.hconfig.telegram_webproxy_enable and webdomains %}
 
 [[server.listeners]]
 ip = "127.0.0.1"
@@ -69,8 +69,8 @@ web_trusted_proxy_cidrs = ["127.0.0.1/32"]
 enabled = true 
 carriers = ["websocket-lanes", "websocket", "https-lanes", "https"]
 decoy_fasttrack_mode = "off"
-limits.max_profiles = {{ (ctx.users | length)*(ctx.domains | length) }}
-limits.max_vhosts = {{ ctx.domains | length }}
+limits.max_profiles = {{ (ctx.users | length)*((webdomains| length)+2) }}
+limits.max_vhosts = {{ webdomains | length }}
 
 {%- set decoy = '{ mode = "http_upstream", upstream = "http://127.0.0.1:18081" }' %}
 {%- set profiles %}[
@@ -80,7 +80,7 @@ limits.max_vhosts = {{ ctx.domains | length }}
 ]{%- endset %}
 
 {#- telemt refuses a duplicate vhost host: each domain name once #}
-{%- for d in ctx.domains if d.support_telegram_webproxy() %}
+{%- for d in webdomains %}
 
 [[web.vhosts]]
 host = "{{ d.name }}"
