@@ -149,7 +149,8 @@ class User(BaseAccount):
             return False
         if not self.enable:
             return False
-        elif self.usage_limit < self.current_usage:
+        # Column defaults are not on the instance until flush; create payloads can hit this with None.
+        elif (self.usage_limit or 0) < (self.current_usage or 0):
             return False
         elif self.remaining_days < 0:
             return False

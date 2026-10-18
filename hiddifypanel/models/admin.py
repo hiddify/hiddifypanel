@@ -217,13 +217,15 @@ class AdminUser(BaseAccount):
         if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
             return False
         users_count = self.recursive_users_query().count()
-        if users_count >= self.max_users:
+        max_users = self.max_users if self.max_users is not None else 10**9
+        max_active = self.max_active_users if self.max_active_users is not None else 10**9
+        if users_count >= max_users:
             return False
-        if users_count < self.max_active_users:
+        if users_count < max_active:
             return True
 
         actives = [u for u in self.recursive_users_query().all() if u.is_active]
-        return len(actives) < self.max_active_users
+        return len(actives) < max_active
 
     def can_have_more_users(self):
         # A sub-admin's users also count against its parents' limits.

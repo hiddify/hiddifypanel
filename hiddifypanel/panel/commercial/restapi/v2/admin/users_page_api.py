@@ -57,7 +57,7 @@ def _status(user: User) -> str:
         return "disabled"
     if user.remaining_days < 0:
         return "expired"
-    if user.usage_limit < user.current_usage:
+    if (user.usage_limit or 0) < (user.current_usage or 0):
         return "no_data"
     return "active"
 
@@ -157,6 +157,12 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
         user.name = name
     if "comment" in body:
         user.comment = str(body.get("comment") or "")[:512]
+    # Limits/days before enable: is_active compares usage_limit, which is still None until flush
+    # (and until these fields are applied on create).
+    if "usage_limit_GB" in body:
+        user.usage_limit_GB = _number(body, "usage_limit_GB", low=0, high=MAX_USAGE_GB, integer=False)
+    if "package_days" in body:
+        user.package_days = _number(body, "package_days", low=0, high=MAX_PACKAGE_DAYS, integer=True)
     if "enable" in body:
         want = bool(body.get("enable"))
         if want and not user.is_active:
@@ -164,10 +170,6 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
             if actor and not actor.can_have_more_users():
                 abort(400, "You have too many users for your limit")
         user.enable = want
-    if "usage_limit_GB" in body:
-        user.usage_limit_GB = _number(body, "usage_limit_GB", low=0, high=MAX_USAGE_GB, integer=False)
-    if "package_days" in body:
-        user.package_days = _number(body, "package_days", low=0, high=MAX_PACKAGE_DAYS, integer=True)
     if "mode" in body:
         try:
             user.mode = UserMode(str(body.get("mode")))
