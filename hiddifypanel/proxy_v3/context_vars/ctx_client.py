@@ -12,7 +12,7 @@ from .cert import CertVar
 from .domain import DomainIPVar, _keeps_hostname, expand_sni_domain_servers
 from .hconfig import HConfigVar
 from .platform import PlatformVar
-from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar
+from .proxy import ClientBuilderProxyVar, ClientProxyDomainVar, is_download_upload_different
 from .user import UserVar
 
 
@@ -62,7 +62,14 @@ def _client_domain_allowed(domain: DomainIPVar, proxy: ClientBuilderProxyVar) ->
     # Download REALITY is a separate leg (xHTTP downloadSettings): validate the *download*
     # TLS layer, not the upload one. Using is_reality_domain_valid here dropped every config
     # whose upload was HTTP/H1/QUIC even when download was TLS H2 REALITY.
-    if domain.download and domain.download.is_reality() and not is_reality_download_leg_valid(proxy):
+    # DomainIPVar.download is always a self-copy when no separate download domain is set —
+    # only validate a REALITY download leg when upload/download actually differ.
+    if (
+        domain.download
+        and domain.download.is_reality()
+        and is_download_upload_different(domain, proxy)
+        and not is_reality_download_leg_valid(proxy)
+    ):
         return False
 
     return True
