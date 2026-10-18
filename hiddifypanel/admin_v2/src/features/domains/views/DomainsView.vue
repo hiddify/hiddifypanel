@@ -167,7 +167,7 @@
 
     <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
     <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
-    <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
+    <DomainDialog v-if="editVisible" v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
 
     <Dialog v-model:visible="certVisible" modal :draggable="false" :header="t('domains.getCert')" :style="{ width: 'min(32rem, calc(100vw - 1.5rem))' }" @after-hide="onCertClosed">

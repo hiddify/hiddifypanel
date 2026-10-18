@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -9,8 +9,8 @@ import MultiSelect from 'primevue/multiselect'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
-import Json5Editor from '@/shared/components/Json5Editor.vue'
 import { apiErrorMessage } from '@/core/api/client'
+import { useLayout } from '@/core/layout/sakai/composables/layout'
 import KindPicker from '@/features/domains/components/KindPicker.vue'
 import TlsPicker from '@/features/domains/components/TlsPicker.vue'
 import PortField from '@/features/domains/components/PortField.vue'
@@ -31,11 +31,14 @@ import {
   type TlsMode,
 } from '@/features/domains/api'
 
+const Json5Editor = defineAsyncComponent(() => import('@/shared/components/Json5Editor.vue'))
+
 const props = defineProps<{ row: DomainRow | null; state: DomainsState | null; options: DomainsOptions | null }>()
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ saved: [state: DomainsState, row: DomainRow] }>()
 
 const { t } = useI18n()
+const { hideMobileMenu } = useLayout()
 
 const domain = ref('')
 const alias = ref('')
@@ -63,7 +66,12 @@ const meta = computed(() => props.state?.meta)
 const others = computed(() => (props.state?.domains ?? []).filter((d) => d.id !== props.row?.id))
 
 watch(visible, (open) => {
-  if (!open || !props.row) return
+  if (open) hideMobileMenu()
+  if (!open) {
+    hideMobileMenu()
+    return
+  }
+  if (!props.row) return
   const r = props.row
   domain.value = r.domain
   alias.value = r.alias
@@ -171,7 +179,6 @@ async function save() {
     mode: mode.value,
     fake_mode: fakeMode.value,
     custom_proxy_ids: isFakeProxy.value ? [] : proxyIds.value,
-    show_domain_ids: showDomainsAllowed.value ? showIds.value : [],
     server_domain_id: serverDomainId.value,
     download_domain_id: isFakeProxy.value ? null : downloadDomainId.value,
     // Subscription-only domains run no proxies: no forced IPs, resolve IP or gateway ports.
@@ -184,6 +191,7 @@ async function save() {
     tls_port: isSublink.value ? null : tlsPort.value,
     http_port: isSublink.value ? null : httpPort.value,
   }
+  if (showDomainsAllowed.value) payload.show_domain_ids = showIds.value
   try {
     const next = await domainsApi.update(props.row.id, payload)
     const saved = next.domains.find((d) => d.id === props.row!.id) ?? props.row
@@ -198,7 +206,7 @@ async function save() {
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal :draggable="false" class="dd" :style="{ width: 'min(46rem, calc(100vw - 1.5rem))' }" :breakpoints="{ '640px': '100vw' }">
+  <Dialog v-model:visible="visible" modal :draggable="false" class="dd" :style="{ width: 'min(46rem, calc(100vw - 1.5rem))' }" :breakpoints="{ '640px': '100vw' }" @after-hide="hideMobileMenu">
     <template #header>
       <div class="dd__head">
         <span class="dd__emoji" :style="{ '--kind-color': KIND_META[kind].color }">{{ KIND_META[kind].emoji }}</span>
@@ -275,7 +283,7 @@ async function save() {
         <i class="pi dd__chev" :class="showAdvanced ? 'pi-chevron-up' : 'pi-chevron-down'" />
       </button>
 
-      <div v-show="showAdvanced" class="dd__adv">
+      <div v-if="showAdvanced" class="dd__adv">
         <section v-if="isCdn" class="dd__section">
           <label class="dd__field">
             <span class="dd__label">{{ t('domains.field.fronting') }}</span>

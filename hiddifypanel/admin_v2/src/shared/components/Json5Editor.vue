@@ -34,8 +34,15 @@ const localError = ref<string | null>(null)
 /** Monaco loads on first use (see shared/monaco/monaco.ts). */
 const loadState = ref<'loading' | 'ready' | 'error'>('loading')
 let editor: Monaco.editor.IStandaloneCodeEditor | null = null
+let monacoApi: typeof Monaco | null = null
 let unmounted = false
 let stopFitting: (() => void) | null = null
+let themeObserver: MutationObserver | null = null
+
+function syncEditorTheme() {
+  const theme = editorTheme()
+  monacoApi?.editor.setTheme(theme)
+}
 
 function editorTheme(): string {
   return document.documentElement.classList.contains('app-dark') ? 'vs-dark' : 'vs'
@@ -61,6 +68,7 @@ onMounted(async () => {
   let monaco: typeof Monaco
   try {
     monaco = await ensureMonaco()
+    monacoApi = monaco
   } catch (err) {
     console.error(err)
     loadState.value = 'error'
@@ -95,6 +103,8 @@ onMounted(async () => {
   editor.onDidFocusEditorWidget(() => {
     emit('focus')
   })
+  themeObserver = new MutationObserver(() => syncEditorTheme())
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 })
 
 watch(
@@ -116,12 +126,18 @@ watch(
 
 onBeforeUnmount(() => {
   unmounted = true
+  themeObserver?.disconnect()
+  themeObserver = null
   stopFitting?.()
   editor?.dispose()
+  monacoApi = null
 })
 </script>
 
 <style scoped>
+.json5-editor {
+  overflow: hidden;
+}
 .monaco-loading {
   display: flex;
   align-items: center;

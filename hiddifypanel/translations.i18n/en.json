@@ -1180,7 +1180,7 @@
         "servernamesHint": "Sites whose TLS Reality borrows, comma separated. Empty: the domain itself.",
         "showAll": "All domains",
         "showDomains": "Show configs of",
-        "showDomainsHint": "Users opening their page on this domain see the configs of these domains.",
+        "showDomainsHint": "Users opening their page on this domain see the configs of these domains. Node REALITY entries need a Node Configs proxy enabled for clients to use them.",
         "tlsMode": "TLS mode"
       },
       "getCert": "Get certificate",
