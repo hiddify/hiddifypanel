@@ -1,9 +1,10 @@
 import base64
 import os
 import subprocess
-import sys
+import tempfile
+
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import x25519, ed25519
+from cryptography.hazmat.primitives.asymmetric import ed25519, x25519
 
 _VLESS_ENC_METHOD = "mlkem768x25519plus"
 _VLESS_ENC_MODE = "native"
@@ -75,24 +76,23 @@ def vless_encryption_decryption(quantum: bool = False) -> tuple[str, str]:
 
 
 def generate_ssh_host_keys():
-    key_types = ["dsa", "ecdsa", "ed25519", "rsa"]
+    # DSA is gone from modern OpenSSH ("unknown key type dsa"); callers only use rsa/ecdsa/ed25519.
+    key_types = ["ecdsa", "ed25519", "rsa"]
     keys_dict = {}
 
-    # Generate and read keys
-    for key_type in key_types:
-        key_file = f"ssh_host_{key_type}_key"
-        try:
-            subprocess.run(["ssh-keygen", "-t", key_type, "-f", key_file, "-N", ""], check=True, stdout=sys.stderr)
-
-            keys_dict[key_type] = {}
-            with open(key_file, "r") as f:
-                keys_dict[key_type]["pk"] = f.read()
-            with open(f"{key_file}.pub", "r") as f:
-                keys_dict[key_type]["pub"] = f.read()
-
-            os.remove(key_file)
-            os.remove(f"{key_file}.pub")  # Remove the public key if not needed
-        except subprocess.CalledProcessError as e:
-            print(f"Error: {e}")
+    with tempfile.TemporaryDirectory(prefix="hiddify-ssh-host-") as tmp:
+        for key_type in key_types:
+            key_file = os.path.join(tmp, f"ssh_host_{key_type}_key")
+            subprocess.run(
+                ["ssh-keygen", "-t", key_type, "-f", key_file, "-N", ""],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            with open(key_file) as f:
+                pk = f.read()
+            with open(f"{key_file}.pub") as f:
+                pub = f.read()
+            keys_dict[key_type] = {"pk": pk, "pub": pub}
 
     return keys_dict
