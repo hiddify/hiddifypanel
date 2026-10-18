@@ -2192,6 +2192,8 @@
       "reinstallBadge": "نصب مجدد",
       "reinstallHint": "تغییر این مورد نیاز به نصب مجدد دارد",
       "reloading": "زبان تغییر کرد، در حال بارگذاری مجدد…",
+      "telegramConnected": "ربات تلگرام متصل شد: ‎@{username}",
+      "telegramFailed": "اتصال ربات تلگرام ناموفق بود",
       "required": "این فیلد الزامی است.",
       "search": "جستجو در همه تنظیمات…",
       "showAdvanced": "نمایش تنظیمات پیشرفته",

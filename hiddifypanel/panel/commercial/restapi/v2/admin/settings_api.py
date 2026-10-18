@@ -210,6 +210,8 @@ class SettingsApi(MethodView):
             "categories": describe_settings(get_config_form(formdata=None, meta={"csrf": False})),
             "restart_mode": _restart_mode(result.old_configs),
             "warnings": result.warnings,
+            # {"ok", "username", "error"} when the Telegram bot token changed, else null.
+            "telegram": result.telegram,
             "changed": sorted(str(k) for k in result.changed_configs),
             # The UI language changed: the page must reload to pick it up.
             "reload": hconfig(ConfigEnum.admin_lang) != admin_lang,

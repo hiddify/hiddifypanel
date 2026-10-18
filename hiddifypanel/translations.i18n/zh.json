@@ -1850,6 +1850,8 @@
       "reinstallBadge": "重新安装",
       "reinstallHint": "更改此项需要重新安装才能生效",
       "reloading": "语言已更改，正在重新加载…",
+      "telegramConnected": "Telegram 机器人已连接：@{username}",
+      "telegramFailed": "Telegram 机器人连接失败",
       "required": "此字段为必填项。",
       "search": "搜索所有设置…",
       "showAdvanced": "显示高级设置",

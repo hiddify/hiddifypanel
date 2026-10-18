@@ -1850,6 +1850,8 @@
       "reinstallBadge": "Réinstaller",
       "reinstallHint": "Modifier ceci nécessite une réinstallation pour prendre effet",
       "reloading": "Langue modifiée, rechargement…",
+      "telegramConnected": "Bot Telegram connecté : @{username}",
+      "telegramFailed": "Impossible de connecter le bot Telegram",
       "required": "Ce champ est obligatoire.",
       "search": "Rechercher dans tous les paramètres…",
       "showAdvanced": "Afficher les paramètres avancés",

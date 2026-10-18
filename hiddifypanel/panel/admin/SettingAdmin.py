@@ -1,7 +1,6 @@
 import re
 from dataclasses import dataclass
 from dataclasses import field as dc_field
-from loguru import logger
 
 import flask_babel
 import wtforms as wtf
@@ -16,6 +15,7 @@ from flask_bootstrap import SwitchField
 # from gettext import gettext as _
 from flask_classful import FlaskView
 from flask_wtf import FlaskForm
+from loguru import logger
 from markupsafe import Markup
 
 from hiddifypanel import g, hutils
@@ -90,6 +90,8 @@ class SettingsSaveResult:
     warnings: list[str] = dc_field(default_factory=list)
     old_configs: dict = dc_field(default_factory=dict)
     changed_configs: dict = dc_field(default_factory=dict)
+    # Set when the Telegram bot token changed: the result of connecting it.
+    telegram: dict | None = None
 
     def fail(self, message) -> "SettingsSaveResult":
         self.errors.append(str(message))
@@ -141,7 +143,7 @@ def save_config_form(form) -> SettingsSaveResult:
     if len(set([merged_configs[ConfigEnum.proxy_path], merged_configs[ConfigEnum.proxy_path_client], merged_configs[ConfigEnum.proxy_path_admin]])) != 3:
         return result.fail(_("ProxyPath is already used! use different proxy path"))
     parent_apikey = ""
-    
+
     if p_p := changed_configs.get(ConfigEnum.parent_panel):
         parent_baseurl, uuid = hutils.flask.extract_parent_info_from_url(p_p.strip())
         if not parent_baseurl or not uuid:
@@ -178,7 +180,9 @@ def save_config_form(form) -> SettingsSaveResult:
     # hutils.proxy.get_proxies.invalidate_all()
     from hiddifypanel.panel.commercial.telegrambot import register_bot
 
-    register_bot(set_hook=True)
+    telegram = register_bot(set_hook=True)
+    if old_configs.get(ConfigEnum.telegram_bot_token) != hconfig(ConfigEnum.telegram_bot_token) and hconfig(ConfigEnum.telegram_bot_token):
+        result.telegram = telegram
 
     # sync with parent if needed
     if hutils.node.is_child():

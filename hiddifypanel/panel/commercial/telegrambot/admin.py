@@ -12,7 +12,7 @@ from hiddifypanel.panel import hiddify
 from . import bot
 
 
-@bot.message_handler(commands=["start"], func=lambda message: "admin" in message.text)
+@bot.message_handler(commands=["start"], func=lambda message: "admin" in (message.text or ""))
 def send_welcome(message):
     text = message.text
     # print("dddd",text)

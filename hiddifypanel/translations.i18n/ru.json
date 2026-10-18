@@ -1850,6 +1850,8 @@
       "reinstallBadge": "Переустановка",
       "reinstallHint": "Для вступления этого изменения в силу нужна переустановка",
       "reloading": "Язык изменён, перезагрузка…",
+      "telegramConnected": "Telegram-бот подключён: @{username}",
+      "telegramFailed": "Не удалось подключить Telegram-бота",
       "required": "Это поле обязательно.",
       "search": "Поиск по всем настройкам…",
       "showAdvanced": "Показать дополнительные настройки",

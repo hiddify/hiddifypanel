@@ -378,6 +378,11 @@ async function save() {
     if (res.new_admin_path) newAdminPath.value = res.new_admin_path
     for (const warning of res.warnings) toast.add({ severity: 'warn', summary: warning, life: 8000 })
     toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
+    if (res.telegram?.ok) {
+      toast.add({ severity: 'success', summary: t('settings.telegramConnected', { username: res.telegram.username }), life: 8000 })
+    } else if (res.telegram) {
+      toast.add({ severity: 'error', summary: t('settings.telegramFailed'), detail: res.telegram.error, life: 12000 })
+    }
     if (res.reload) {
       toast.add({ severity: 'info', summary: t('settings.reloading'), life: 2000 })
       window.setTimeout(() => window.location.reload(), 900)

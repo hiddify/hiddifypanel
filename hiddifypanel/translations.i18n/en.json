@@ -2191,6 +2191,8 @@
       "reinstallBadge": "Reinstall",
       "reinstallHint": "Changing this needs a reinstall to take effect",
       "reloading": "Language changed, reloading…",
+      "telegramConnected": "Telegram bot connected: @{username}",
+      "telegramFailed": "Telegram bot could not connect",
       "required": "This field is required.",
       "search": "Search all settings…",
       "showAdvanced": "Show advanced settings",

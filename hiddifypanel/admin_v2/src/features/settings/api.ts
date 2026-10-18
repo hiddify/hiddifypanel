@@ -37,6 +37,8 @@ export interface SettingsSaveOut {
   changed: string[]
   reload: boolean
   new_admin_path: string | null
+  /** Set when the Telegram bot token changed: whether the bot connected. */
+  telegram: { ok: boolean; username: string; error: string } | null
 }
 
 /** 400/422 body: form-level messages and per-setting messages. */

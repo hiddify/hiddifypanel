@@ -1853,6 +1853,8 @@
       "reinstallBadge": "ပြန်လည်ထည့်သွင်းရန်",
       "reinstallHint": "၎င်းကို ပြောင်းလျှင် အသက်ဝင်ရန် ပြန်လည်ထည့်သွင်းရန် လိုသည်",
       "reloading": "ဘာသာစကား ပြောင်းပြီးပါပြီ၊ ပြန်ဖွင့်နေသည်…",
+      "telegramConnected": "Telegram bot ချိတ်ဆက်ပြီး: @{username}",
+      "telegramFailed": "Telegram bot ချိတ်ဆက်၍ မရပါ",
       "required": "ဤ field လိုအပ်သည်။",
       "search": "ဆက်တင်အားလုံး ရှာရန်…",
       "showAdvanced": "အဆင့်မြင့်ဆက်တင်များ ပြရန်",
