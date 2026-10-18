@@ -214,6 +214,7 @@ class AdminUser(BaseAccount):
         return (used or 0) / 1024**3
 
     def _has_room_for_one_more_user(self) -> bool:
+        """Room to *create* another user (max_users and max_active_users)."""
         if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
             return False
         users_count = self.recursive_users_query().count()
@@ -224,12 +225,28 @@ class AdminUser(BaseAccount):
         if users_count < max_active:
             return True
 
-        actives = [u for u in self.recursive_users_query().all() if u.is_active]
-        return len(actives) < max_active
+        actives = sum(1 for u in self.recursive_users_query().all() if u.is_active)
+        return actives < max_active
 
-    def can_have_more_users(self):
+    def _has_room_to_activate_user(self, *, excluding_user_id: int | None = None) -> bool:
+        """Room to turn an existing inactive user on again (max_active_users + traffic only).
+
+        The user already counts toward max_users, so that ceiling must not block edits or re-enable.
+        ``excluding_user_id`` skips a row that is already ``is_active`` in-session after the form applied.
+        """
+        if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
+            return False
+        max_active = self.max_active_users if self.max_active_users is not None else 10**9
+        actives = sum(1 for u in self.recursive_users_query().all() if u.is_active and u.id != excluding_user_id)
+        return actives < max_active
+
+    def can_have_more_users(self) -> bool:
         # A sub-admin's users also count against its parents' limits.
         return all(admin._has_room_for_one_more_user() for admin in self.limited_ancestors())
+
+    def can_activate_more_users(self, *, excluding_user_id: int | None = None) -> bool:
+        """Whether this admin may re-enable / activate an existing user under max_active_users."""
+        return all(admin._has_room_to_activate_user(excluding_user_id=excluding_user_id) for admin in self.limited_ancestors())
 
     def recursive_sub_admins_ids(self, depth=20, seen=None):
         if seen is None:

@@ -165,10 +165,12 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
         user.package_days = _number(body, "package_days", low=0, high=MAX_PACKAGE_DAYS, integer=True)
     if "enable" in body:
         want = bool(body.get("enable"))
-        if want and not user.is_active:
+        # Creating is gated in post(); here only enable off→on checks the *active* ceiling —
+        # max_users must not block editing or turning someone back on.
+        if want and not user.enable:
             actor = g.account
-            if actor and not actor.can_have_more_users():
-                abort(400, "You have too many users for your limit")
+            if actor and not actor.can_activate_more_users():
+                abort(400, "Active user limit reached: disable another user or raise max active users")
         user.enable = want
     if "mode" in body:
         try:
@@ -354,8 +356,8 @@ class UsersBulkApi(MethodView):
         actor = g.account
         for user in users:
             if action in ("enable", "disable"):
-                if action == "enable" and not user.is_active and not actor.can_have_more_users():
-                    abort(400, "You have too many users for your limit")
+                if action == "enable" and not user.enable and not actor.can_activate_more_users():
+                    abort(400, "Active user limit reached: disable another user or raise max active users")
                 user.enable = action == "enable"
             elif action == "reset_usage":
                 user.reset_usage()

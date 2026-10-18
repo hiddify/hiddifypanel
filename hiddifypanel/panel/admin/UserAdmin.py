@@ -327,9 +327,23 @@ class UserAdmin(AdminLTEModelView):
         if not model.added_by or model.added_by == 1:
             model.added_by = g.account.id
 
-        # Validate user limits
-        if not g.account.can_have_more_users():
-            raise ValidationError(_("You have too much users! You can have only %(active)s active users and %(total)s users", active=g.account.max_active_users, total=g.account.max_users))
+        # Create: max_users + max_active_users. Edit: only when enable flips off→on and the user
+        # would be active — max_users must not block ordinary edits at the total ceiling.
+        limit_msg = _(
+            "You have too much users! You can have only %(active)s active users and %(total)s users",
+            active=g.account.max_active_users,
+            total=g.account.max_users,
+        )
+        if is_created:
+            if not g.account.can_have_more_users():
+                raise ValidationError(limit_msg)
+        elif model.is_active:
+            from sqlalchemy import inspect as sa_inspect
+
+            enable_hist = sa_inspect(model).attrs.enable.history
+            flipped_on = bool(enable_hist.has_changes() and enable_hist.deleted and not enable_hist.deleted[0] and model.enable)
+            if flipped_on and not g.account.can_activate_more_users(excluding_user_id=model.id):
+                raise ValidationError(limit_msg)
 
         # Handle UUID changes
         if old_user and old_user.uuid != model.uuid:

@@ -2,7 +2,7 @@ from apiflask import abort
 from flask.views import MethodView
 
 from hiddifypanel import current_app as app
-from hiddifypanel import hutils
+from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import Role, User
@@ -33,6 +33,9 @@ class UserApi(MethodView):
         user = self._scoped_user(uuid)
 
         payload = data.model_dump(exclude_unset=True)
+        # Re-enable respects max_active_users only; max_users must not block edits.
+        if payload.get("enable") and not user.enable and g.account and not g.account.can_activate_more_users():
+            abort(400, "Active user limit reached: disable another user or raise max active users")
         if "added_by_uuid" in payload:
             payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
         user_driver.remove_client(user)
