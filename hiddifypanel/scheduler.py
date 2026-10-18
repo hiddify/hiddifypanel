@@ -41,6 +41,18 @@ def init_app(app):
         name="backup_task",
     )
 
+    def telegram_notify():
+        from hiddifypanel.models import ConfigEnum, hconfig
+
+        # Importing the bot loads telebot: only on panels that have one.
+        if hconfig(ConfigEnum.telegram_bot_token):
+            from hiddifypanel.panel.commercial.telegrambot import notify
+
+            notify.run()
+
+    # Telegram: users whose package is ending hear about it, and their admins get one summary.
+    scheduler.add_job(run_in_app_context, args=(telegram_notify,), trigger=CronTrigger(hour="10", minute="0"), id="tgbot_notify", name="telegram expiry notices")
+
     from hiddifypanel.hutils import short_link
 
     # Short links: HAProxy's in-memory map follows redis (expired ones out; live ones back after an HAProxy restart).
