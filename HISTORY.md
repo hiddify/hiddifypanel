@@ -1,6 +1,44 @@
 # Changelog
 
 
+## v14.0.1 (2026-10-18)
+
+#### New
+
+* Add search for user in config tester. 
+
+#### Fix
+
+* Redirect to another domain after status. 
+
+* Edit button in ssh. 
+
+* Error of mtproxy when no domains exist. 
+
+* Download in sublink. 
+
+#### Other
+
+* Feat(telegrambot): enhance bot functionality with user notifications and new API endpoints. 
+  _- Updated dependencies in `pyproject.toml` to include `pillow` and `segno`.
+- Added a scheduled notification feature for users nearing package expiration.
+- Introduced new API resources for Telegram app integration.
+- Refactored existing bot handlers and removed deprecated response handling.
+- Improved user and admin interaction through enhanced command handling and status updates._
+
+* Improve telegram bot support. 
+
+* Fix(apply): improve scroll behavior to ensure run panel visibility. 
+
+* Feat(apply): streamline certificate refresh process across components. 
+  _- Replaced commander calls with hiddify.quick_apply_users() for refreshing core configurations after certificate changes.
+- Ensured immediate application of changes in DomainAdmin and domains_page_api.
+- Added a dedicated function to handle core updates after domain modifications._
+
+* Refactor(crypto): update SSH key generation to use temporary directory and remove DSA key type. 
+
+
+
 ## v14.0.0 (2026-10-18)
 
 #### New

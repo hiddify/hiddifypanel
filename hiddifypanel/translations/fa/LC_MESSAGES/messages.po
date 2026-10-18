@@ -2639,6 +2639,17 @@ msgstr "ناسالم"
 msgid "adminV2.configTester.filter.ok"
 msgstr "سالم"
 
+msgid "adminV2.configTester.find"
+msgstr "Find"
+
+msgid "adminV2.configTester.findEmpty"
+msgstr "کاربری پیدا نشد"
+
+msgid "adminV2.configTester.findHint"
+msgstr ""
+"کلیک کنید تا لیست کاربران بیاید، یا نام / یادداشت / uuid را تایپ کنید — با "
+"انتخاب، لینک اشتراک پر می‌شود"
+
 msgid "adminV2.configTester.forceXray"
 msgstr "درخواست JSON اکسری"
 
@@ -2899,7 +2910,7 @@ msgid "adminV2.configTester.url"
 msgstr "لینک اشتراک"
 
 msgid "adminV2.configTester.urlPlaceholder"
-msgstr "https://domain/path/uuid/…"
+msgstr "لینک را بچسبانید یا کاربر را انتخاب کنید…"
 
 msgid "adminV2.configTester.waiting"
 msgstr "در انتظار"
@@ -6159,6 +6170,12 @@ msgstr ""
 "همه چیز درباره نحوه کار این پنل. تنظیمات رایج اول؛ تنظیمات پیشرفته در صورت "
 "درخواست."
 
+msgid "adminV2.settings.telegramConnected"
+msgstr "ربات تلگرام متصل شد: ‎@{username}"
+
+msgid "adminV2.settings.telegramFailed"
+msgstr "اتصال ربات تلگرام ناموفق بود"
+
 msgid "adminV2.settings.title"
 msgstr "تنظیمات"
 
@@ -6394,6 +6411,9 @@ msgstr "لینک این اتصال"
 
 msgid "adminV2.ssh.name"
 msgstr "نام"
+
+msgid "adminV2.ssh.namePlaceholder"
+msgstr "مثلاً سرور اصلی، نود ۱"
 
 msgid "adminV2.ssh.needsTrust"
 msgstr ""
@@ -7819,14 +7839,386 @@ msgstr "خودکار"
 msgid "auto_cdn_ip"
 msgstr "☑️ انتخاب کننده آی‌پی CDN به صورت خودکار"
 
+msgid "bot.account_title"
+msgstr "حساب من"
+
+msgid "bot.add_days"
+msgstr "📅 افزودن روز"
+
+msgid "bot.add_gb"
+msgstr "📦 افزودن حجم"
+
+msgid "bot.added_days"
+msgstr "{n} روز اضافه شد"
+
+msgid "bot.added_gb"
+msgstr "{n} گیگ اضافه شد"
+
+msgid "bot.admin_hello"
+msgstr "👋 سلام <b>{name}</b>"
+
+msgid "bot.admin_summary"
+msgstr ""
+"👥 کاربران  <b>{total}</b>\n"
+"🟢 فعال  <b>{active}</b>\n"
+"⚡️ آنلاین  <b>{online}</b>\n"
+"⏳ رو به اتمام  <b>{expiring}</b>"
+
 msgid "bot.admin_welcome"
 msgstr "به ربات ادمین خوش آمدید. عملیات مورد نظر را انتخاب کنید."
 
+msgid "bot.ago_days"
+msgstr "{n} روز پیش"
+
+msgid "bot.ago_hours"
+msgstr "{n} ساعت پیش"
+
+msgid "bot.ago_minutes"
+msgstr "{n} دقیقه پیش"
+
+msgid "bot.back"
+msgstr "‹ بازگشت"
+
+msgid "bot.backup_caption"
+msgstr "💾 بکاپ پنل"
+
+msgid "bot.backup_failed"
+msgstr "بکاپ ناموفق بود."
+
+msgid "bot.backup_working"
+msgstr "در حال آماده‌سازی بکاپ…"
+
+msgid "bot.btn_backup"
+msgstr "💾 بکاپ"
+
+msgid "bot.btn_new"
+msgstr "➕ کاربر جدید"
+
+msgid "bot.btn_panel"
+msgstr "🖥 باز کردن پنل"
+
+msgid "bot.btn_status"
+msgstr "📊 وضعیت سرور"
+
+msgid "bot.btn_users"
+msgstr "👥 کاربران"
+
+msgid "bot.cancel"
+msgstr "✖️ انصراف"
+
+msgid "bot.close"
+msgstr "✖️ بستن"
+
+msgid "bot.confirm"
+msgstr "✅ تأیید"
+
+msgid "bot.cpu"
+msgstr "پردازنده"
+
+msgid "bot.data"
+msgstr "حجم"
+
+msgid "bot.days_expired"
+msgstr "بسته تمام شده"
+
+msgid "bot.days_left"
+msgstr "<b>{left}</b> از {total} روز باقی‌مانده  ·  تا {date}"
+
+msgid "bot.days_not_started"
+msgstr "{total} روز  ·  از اولین اتصال شروع می‌شود"
+
+msgid "bot.delete"
+msgstr "🗑 حذف"
+
+msgid "bot.delete_confirm"
+msgstr "⚠️ این کاربر حذف شود؟ کانفیگ‌هایش فوراً از کار می‌افتند."
+
+msgid "bot.deleted"
+msgstr "{name} حذف شد"
+
+msgid "bot.disable"
+msgstr "⏸ غیرفعال"
+
+msgid "bot.disabled"
+msgstr "غیرفعال شد"
+
+msgid "bot.disk"
+msgstr "دیسک"
+
+msgid "bot.done"
+msgstr "انجام شد"
+
+msgid "bot.enable"
+msgstr "▶️ فعال‌سازی"
+
+msgid "bot.enabled"
+msgstr "فعال شد"
+
+msgid "bot.f_active"
+msgstr "فعال"
+
+msgid "bot.f_all"
+msgstr "همه"
+
+msgid "bot.f_ended"
+msgstr "تمام شده"
+
+msgid "bot.f_expiring"
+msgstr "رو به اتمام"
+
+msgid "bot.f_online"
+msgstr "آنلاین"
+
+msgid "bot.gb"
+msgstr "گیگ"
+
+msgid "bot.gone"
+msgstr "این کاربر دیگر وجود ندارد."
+
+msgid "bot.last_online"
+msgstr "آخرین اتصال"
+
+msgid "bot.last_user"
+msgstr "دست‌کم یک کاربر باید بماند."
+
+msgid "bot.limit_reached"
+msgstr "به سقف تعداد کاربران رسیده‌اید."
+
+msgid "bot.link_hiddify"
+msgstr "افزودن به اپ هیدیفای"
+
+msgid "bot.link_home"
+msgstr "صفحهٔ شخصی"
+
+msgid "bot.link_sub"
+msgstr "لینک اشتراک (ساب)"
+
+msgid "bot.linked"
+msgstr "تلگرام شما متصل شد."
+
+msgid "bot.links"
+msgstr "🔗 لینک‌ها"
+
+msgid "bot.links_hint"
+msgstr "برای کپی روی لینک بزنید."
+
+msgid "bot.links_title"
+msgstr "لینک‌ها"
+
+msgid "bot.manage"
+msgstr "⚙️ مدیریت"
+
+msgid "bot.menu"
+msgstr "🏠 منو"
+
+msgid "bot.my_page"
+msgstr "🌐 صفحهٔ من"
+
+msgid "bot.never"
+msgstr "هرگز"
+
+msgid "bot.new_count"
+msgstr "👥 چند کاربر؟"
+
+msgid "bot.new_create"
+msgstr "✅ ساختن"
+
+msgid "bot.new_days"
+msgstr "📅 چند روزه؟"
+
+msgid "bot.new_done_many"
+msgstr ""
+"<b>{n} کاربر ساخته شد</b>  ·  {gb} گیگ  ·  {days} روز\n"
+"هر کارت بالا را می‌توانید برای کاربرش فوروارد کنید."
+
+msgid "bot.new_done_one"
+msgstr "کاربر ساخته شد: کارتش بالاست و آمادهٔ فوروارد است."
+
+msgid "bot.new_gb"
+msgstr "📦 حجم چقدر باشد؟"
+
+msgid "bot.new_name"
+msgstr "✏️ نام"
+
+msgid "bot.new_name_prompt"
+msgstr ""
+"نام کاربر(ها) را بفرستید. برای چند کاربر، شماره به انتهای نام اضافه می‌شود."
+
+msgid "bot.new_summary"
+msgstr ""
+"📦 حجم  <b>{gb}</b>\n"
+"📅 مدت  <b>{days}</b>\n"
+"👥 تعداد  <b>{count}</b>\n"
+"🏷 نام  <b>{name}</b>"
+
+msgid "bot.new_title"
+msgstr "کاربر جدید"
+
+msgid "bot.new_working"
+msgstr "در حال ساخت…"
+
+msgid "bot.not_allowed"
+msgstr "به این بخش دسترسی ندارید."
+
+msgid "bot.notify_admin"
+msgstr "⏳ <b>{n} کاربر رو به اتمام هستند</b>"
+
+msgid "bot.notify_admin_line"
+msgstr "• {name} · {days} روز · {used}/{total} گیگ"
+
+msgid "bot.notify_admin_more"
+msgstr "…و {n} کاربر دیگر"
+
+msgid "bot.notify_data"
+msgstr ""
+"<b>{name}</b>، فقط <b>{left}</b> حجم باقی مانده است. برای تمدید با پشتیبانی "
+"تماس بگیرید."
+
+msgid "bot.notify_days"
+msgstr ""
+"<b>{name}</b>، بستهٔ شما تا <b>{n} روز</b> دیگر تمام می‌شود. برای تمدید با "
+"پشتیبانی تماس بگیرید."
+
+msgid "bot.online_line"
+msgstr "الان آنلاین <b>{now}</b> · امروز <b>{today}</b>"
+
+msgid "bot.online_now"
+msgstr "الان آنلاین"
+
+msgid "bot.owner"
+msgstr "مالک"
+
+msgid "bot.panel"
+msgstr "پنل"
+
+msgid "bot.pick_days"
+msgstr "چند روز اضافه شود؟"
+
+msgid "bot.pick_gb"
+msgstr "چه مقدار حجم اضافه شود؟"
+
+msgid "bot.qr"
+msgstr "📷 کد QR"
+
+msgid "bot.ram"
+msgstr "رم"
+
+msgid "bot.read_only_node"
+msgstr "این یک نود است: کاربران را در پنل اصلی مدیریت کنید."
+
+msgid "bot.refresh"
+msgstr "🔄 به‌روزرسانی"
+
+msgid "bot.renew"
+msgstr "♻️ تمدید"
+
+msgid "bot.renewed"
+msgstr "بسته تمدید شد"
+
+msgid "bot.reset_usage"
+msgstr "🔄 ریست مصرف"
+
+msgid "bot.resets_in"
+msgstr "ریست مصرف تا {n} روز دیگر"
+
+msgid "bot.search"
+msgstr "🔍 جستجو"
+
+msgid "bot.search_clear"
+msgstr "✖️ پاک کردن"
+
+msgid "bot.search_prompt"
+msgstr "نام، UUID، توضیح یا آیدی تلگرام را بفرستید."
+
+msgid "bot.search_results"
+msgstr "نتایج «{q}»"
+
+msgid "bot.sending"
+msgstr "در حال ارسال {n} کارت کاربر…"
+
+msgid "bot.status_active"
+msgstr "<b>فعال</b>"
+
+msgid "bot.status_disabled"
+msgstr "<b>غیرفعال</b>"
+
+msgid "bot.status_expired"
+msgstr "<b>منقضی شده</b>"
+
+msgid "bot.status_no_data"
+msgstr "<b>حجم تمام شده</b>"
+
+msgid "bot.status_title"
+msgstr "وضعیت سرور"
+
+msgid "bot.time"
+msgstr "زمان"
+
+msgid "bot.traffic"
+msgstr "ترافیک"
+
+msgid "bot.traffic_month"
+msgstr "۳۰ روز"
+
+msgid "bot.traffic_today"
+msgstr "امروز"
+
+msgid "bot.traffic_total"
+msgstr "کل"
+
+msgid "bot.traffic_week"
+msgstr "۷ روز"
+
+msgid "bot.traffic_yesterday"
+msgstr "دیروز"
+
+msgid "bot.unit_d"
+msgstr "روز"
+
+msgid "bot.unit_h"
+msgstr "ساعت"
+
+msgid "bot.unit_m"
+msgstr "دقیقه"
+
+msgid "bot.unknown"
+msgstr "متوجه نشدم. از دکمه‌های زیر استفاده کنید 👇"
+
+msgid "bot.updated"
+msgstr "به‌روز شد ✓"
+
+msgid "bot.updated_at"
+msgstr "به‌روزرسانی {time}"
+
+msgid "bot.uptime"
+msgstr "زمان روشن بودن"
+
+msgid "bot.usage_reset"
+msgstr "مصرف ریست شد"
+
+msgid "bot.used_of"
+msgstr "<b>{used}</b> مصرف از {total}  ·  {left} باقی‌مانده"
+
+msgid "bot.users_block"
+msgstr "کاربران"
+
+msgid "bot.users_count"
+msgstr "{n} کاربر"
+
+msgid "bot.users_empty"
+msgstr "کاربری اینجا نیست."
+
+msgid "bot.users_line"
+msgstr "کل <b>{total}</b> · فعال <b>{active}</b>"
+
+msgid "bot.users_title"
+msgstr "کاربران"
+
 msgid "bot.welcome"
 msgstr ""
-"هورا !!! 🎉 🎉 🎉 \n"
-"به ربات هیدیفای خوش آمدید.\n"
-"برای شروع روی لینک مربوطه در پنل کلیک نموده یا UUID خود را وارد کنید."
+"👋 <b>به هیدیفای خوش آمدید!</b>\n"
+"\n"
+"صفحهٔ حساب خود را در پنل باز کنید و دکمهٔ تلگرام را بزنید، یا لینک اشتراک یا UUID خود را برای من بفرستید."
 
 msgid "cdn"
 msgstr "🔀 سی‌دی‌ان (پروکسی کلودفلر و ...)"

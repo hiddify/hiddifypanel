@@ -5350,6 +5350,12 @@ msgstr ""
 "Всё о том, как работает эта панель. Сначала обычные настройки; "
 "дополнительные по запросу."
 
+msgid "adminV2.settings.telegramConnected"
+msgstr "Telegram-бот подключён: @{username}"
+
+msgid "adminV2.settings.telegramFailed"
+msgstr "Не удалось подключить Telegram-бота"
+
 msgid "adminV2.settings.title"
 msgstr "Настройки"
 

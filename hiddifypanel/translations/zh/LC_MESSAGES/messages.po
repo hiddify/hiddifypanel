@@ -4993,6 +4993,12 @@ msgstr "再显示 {count} 项高级设置 | 再显示 {count} 项高级设置"
 msgid "adminV2.settings.subtitle"
 msgstr "关于此面板运行方式的一切。常用设置在前；高级设置按需显示。"
 
+msgid "adminV2.settings.telegramConnected"
+msgstr "Telegram 机器人已连接：@{username}"
+
+msgid "adminV2.settings.telegramFailed"
+msgstr "Telegram 机器人连接失败"
+
 msgid "adminV2.settings.title"
 msgstr "设置"
 

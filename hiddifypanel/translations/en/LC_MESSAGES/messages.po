@@ -2657,6 +2657,17 @@ msgstr "Not working"
 msgid "adminV2.configTester.filter.ok"
 msgstr "Working"
 
+msgid "adminV2.configTester.find"
+msgstr "Find"
+
+msgid "adminV2.configTester.findEmpty"
+msgstr "No matching user"
+
+msgid "adminV2.configTester.findHint"
+msgstr ""
+"Click to browse users, or type a name, note, or uuid — pick one to fill "
+"their subscription link"
+
 msgid "adminV2.configTester.forceXray"
 msgstr "Ask for xray JSON"
 
@@ -2921,7 +2932,7 @@ msgid "adminV2.configTester.url"
 msgstr "Subscription link"
 
 msgid "adminV2.configTester.urlPlaceholder"
-msgstr "https://domain/path/uuid/…"
+msgstr "Paste a link, or pick a user…"
 
 msgid "adminV2.configTester.waiting"
 msgstr "Waiting"
@@ -6181,6 +6192,12 @@ msgstr ""
 "Everything about how this panel runs. Common settings first; advanced ones "
 "on request."
 
+msgid "adminV2.settings.telegramConnected"
+msgstr "Telegram bot connected: @{username}"
+
+msgid "adminV2.settings.telegramFailed"
+msgstr "Telegram bot could not connect"
+
 msgid "adminV2.settings.title"
 msgstr "Settings"
 
@@ -6414,6 +6431,9 @@ msgstr "Link to this connection"
 
 msgid "adminV2.ssh.name"
 msgstr "Name"
+
+msgid "adminV2.ssh.namePlaceholder"
+msgstr "e.g. Main server, Node 1"
 
 msgid "adminV2.ssh.needsTrust"
 msgstr "Its host key is not trusted yet: trust it in its tab"
@@ -8033,14 +8053,385 @@ msgstr "Auto"
 msgid "auto_cdn_ip"
 msgstr "☑️ Automatic CDN IP Selector"
 
+msgid "bot.account_title"
+msgstr "My account"
+
+msgid "bot.add_days"
+msgstr "📅 Add days"
+
+msgid "bot.add_gb"
+msgstr "📦 Add data"
+
+msgid "bot.added_days"
+msgstr "{n} days added"
+
+msgid "bot.added_gb"
+msgstr "{n} GB added"
+
+msgid "bot.admin_hello"
+msgstr "👋 Hi <b>{name}</b>"
+
+msgid "bot.admin_summary"
+msgstr ""
+"👥 Users  <b>{total}</b>\n"
+"🟢 Active  <b>{active}</b>\n"
+"⚡️ Online  <b>{online}</b>\n"
+"⏳ Ending soon  <b>{expiring}</b>"
+
 msgid "bot.admin_welcome"
 msgstr "Hooray 🎉 🎉 🎉 Welcome to admin bot. Choose your action"
 
+msgid "bot.ago_days"
+msgstr "{n} days ago"
+
+msgid "bot.ago_hours"
+msgstr "{n} h ago"
+
+msgid "bot.ago_minutes"
+msgstr "{n} min ago"
+
+msgid "bot.back"
+msgstr "‹ Back"
+
+msgid "bot.backup_caption"
+msgstr "💾 Panel backup"
+
+msgid "bot.backup_failed"
+msgstr "Backup failed."
+
+msgid "bot.backup_working"
+msgstr "Preparing backup…"
+
+msgid "bot.btn_backup"
+msgstr "💾 Backup"
+
+msgid "bot.btn_new"
+msgstr "➕ New user"
+
+msgid "bot.btn_panel"
+msgstr "🖥 Open panel"
+
+msgid "bot.btn_status"
+msgstr "📊 Server status"
+
+msgid "bot.btn_users"
+msgstr "👥 Users"
+
+msgid "bot.cancel"
+msgstr "✖️ Cancel"
+
+msgid "bot.close"
+msgstr "✖️ Close"
+
+msgid "bot.confirm"
+msgstr "✅ Confirm"
+
+msgid "bot.cpu"
+msgstr "CPU"
+
+msgid "bot.data"
+msgstr "Data"
+
+msgid "bot.days_expired"
+msgstr "Package ended"
+
+msgid "bot.days_left"
+msgstr "<b>{left}</b> of {total} days left  ·  until {date}"
+
+msgid "bot.days_not_started"
+msgstr "{total} days  ·  starts on first connection"
+
+msgid "bot.delete"
+msgstr "🗑 Delete"
+
+msgid "bot.delete_confirm"
+msgstr "⚠️ Delete this user? Their configs stop working right away."
+
+msgid "bot.deleted"
+msgstr "{name} deleted"
+
+msgid "bot.disable"
+msgstr "⏸ Disable"
+
+msgid "bot.disabled"
+msgstr "Disabled"
+
+msgid "bot.disk"
+msgstr "Disk"
+
+msgid "bot.done"
+msgstr "Done"
+
+msgid "bot.enable"
+msgstr "▶️ Enable"
+
+msgid "bot.enabled"
+msgstr "Enabled"
+
+msgid "bot.f_active"
+msgstr "Active"
+
+msgid "bot.f_all"
+msgstr "All"
+
+msgid "bot.f_ended"
+msgstr "Ended"
+
+msgid "bot.f_expiring"
+msgstr "Ending soon"
+
+msgid "bot.f_online"
+msgstr "Online"
+
+msgid "bot.gb"
+msgstr "GB"
+
+msgid "bot.gone"
+msgstr "This user no longer exists."
+
+msgid "bot.last_online"
+msgstr "Last online"
+
+msgid "bot.last_user"
+msgstr "At least one user must remain."
+
+msgid "bot.limit_reached"
+msgstr "Your user limit is reached."
+
+msgid "bot.link_hiddify"
+msgstr "Import into Hiddify app"
+
+msgid "bot.link_home"
+msgstr "Personal page"
+
+msgid "bot.link_sub"
+msgstr "Subscription link"
+
+msgid "bot.linked"
+msgstr "Your Telegram is now linked."
+
+msgid "bot.links"
+msgstr "🔗 Links"
+
+msgid "bot.links_hint"
+msgstr "Tap a link to copy it."
+
+msgid "bot.links_title"
+msgstr "Links"
+
+msgid "bot.manage"
+msgstr "⚙️ Manage"
+
+msgid "bot.menu"
+msgstr "🏠 Menu"
+
+msgid "bot.my_page"
+msgstr "🌐 My page"
+
+msgid "bot.never"
+msgstr "never"
+
+msgid "bot.new_count"
+msgstr "👥 How many users?"
+
+msgid "bot.new_create"
+msgstr "✅ Create"
+
+msgid "bot.new_days"
+msgstr "📅 How many days?"
+
+msgid "bot.new_done_many"
+msgstr ""
+"<b>{n} users created</b>  ·  {gb} GB  ·  {days} days\n"
+"Each card above can be forwarded to its user."
+
+msgid "bot.new_done_one"
+msgstr "User created: its card is above, ready to forward."
+
+msgid "bot.new_gb"
+msgstr "📦 How much data?"
+
+msgid "bot.new_name"
+msgstr "✏️ Name"
+
+msgid "bot.new_name_prompt"
+msgstr "Send a name for the new user(s). Several users get numbers after it."
+
+msgid "bot.new_summary"
+msgstr ""
+"📦 Data  <b>{gb}</b>\n"
+"📅 Days  <b>{days}</b>\n"
+"👥 Count  <b>{count}</b>\n"
+"🏷 Name  <b>{name}</b>"
+
+msgid "bot.new_title"
+msgstr "New user"
+
+msgid "bot.new_working"
+msgstr "Creating…"
+
+msgid "bot.not_allowed"
+msgstr "You don't have access to this."
+
+msgid "bot.notify_admin"
+msgstr "⏳ <b>{n} users are ending soon</b>"
+
+msgid "bot.notify_admin_line"
+msgstr "• {name} · {days}d · {used}/{total} GB"
+
+msgid "bot.notify_admin_more"
+msgstr "…and {n} more"
+
+msgid "bot.notify_data"
+msgstr ""
+"<b>{name}</b>, only <b>{left}</b> of data is left. Contact your provider to "
+"renew."
+
+msgid "bot.notify_days"
+msgstr ""
+"<b>{name}</b>, your package ends in <b>{n} days</b>. Contact your provider "
+"to renew."
+
+msgid "bot.online_line"
+msgstr "Online now <b>{now}</b> · today <b>{today}</b>"
+
+msgid "bot.online_now"
+msgstr "Online now"
+
+msgid "bot.owner"
+msgstr "Owner"
+
+msgid "bot.panel"
+msgstr "Panel"
+
+msgid "bot.pick_days"
+msgstr "How many days to add?"
+
+msgid "bot.pick_gb"
+msgstr "How much data to add?"
+
+msgid "bot.qr"
+msgstr "📷 QR code"
+
+msgid "bot.ram"
+msgstr "RAM"
+
+msgid "bot.read_only_node"
+msgstr "This is a node: manage users on the parent panel."
+
+msgid "bot.refresh"
+msgstr "🔄 Refresh"
+
+msgid "bot.renew"
+msgstr "♻️ Renew"
+
+msgid "bot.renewed"
+msgstr "Package renewed"
+
+msgid "bot.reset_usage"
+msgstr "🔄 Reset usage"
+
+msgid "bot.resets_in"
+msgstr "Usage resets in {n} days"
+
+msgid "bot.search"
+msgstr "🔍 Search"
+
+msgid "bot.search_clear"
+msgstr "✖️ Clear"
+
+msgid "bot.search_prompt"
+msgstr "Send a name, UUID, comment or Telegram id."
+
+msgid "bot.search_results"
+msgstr "Results for “{q}”"
+
+msgid "bot.sending"
+msgstr "Sending {n} user cards…"
+
+msgid "bot.status_active"
+msgstr "<b>Active</b>"
+
+msgid "bot.status_disabled"
+msgstr "<b>Disabled</b>"
+
+msgid "bot.status_expired"
+msgstr "<b>Expired</b>"
+
+msgid "bot.status_no_data"
+msgstr "<b>Out of data</b>"
+
+msgid "bot.status_title"
+msgstr "Server status"
+
+msgid "bot.time"
+msgstr "Time"
+
+msgid "bot.traffic"
+msgstr "Traffic"
+
+msgid "bot.traffic_month"
+msgstr "30 days"
+
+msgid "bot.traffic_today"
+msgstr "Today"
+
+msgid "bot.traffic_total"
+msgstr "All time"
+
+msgid "bot.traffic_week"
+msgstr "7 days"
+
+msgid "bot.traffic_yesterday"
+msgstr "Yesterday"
+
+msgid "bot.unit_d"
+msgstr "d"
+
+msgid "bot.unit_h"
+msgstr "h"
+
+msgid "bot.unit_m"
+msgstr "m"
+
+msgid "bot.unknown"
+msgstr "I didn't get that. Use the buttons below 👇"
+
+msgid "bot.updated"
+msgstr "Updated ✓"
+
+msgid "bot.updated_at"
+msgstr "Updated {time}"
+
+msgid "bot.uptime"
+msgstr "Uptime"
+
+msgid "bot.usage_reset"
+msgstr "Usage reset"
+
+msgid "bot.used_of"
+msgstr "<b>{used}</b> used of {total}  ·  {left} left"
+
+msgid "bot.users_block"
+msgstr "Users"
+
+msgid "bot.users_count"
+msgstr "{n} users"
+
+msgid "bot.users_empty"
+msgstr "No users here."
+
+msgid "bot.users_line"
+msgstr "Total <b>{total}</b> · active <b>{active}</b>"
+
+msgid "bot.users_title"
+msgstr "Users"
+
 msgid "bot.welcome"
 msgstr ""
-"Hooray 🎉 🎉 🎉 \n"
-"Welcome to Hiddify bot\n"
-"Start by clicking the link on the Panel or entering your UUID user."
+"👋 <b>Welcome to Hiddify!</b>\n"
+"\n"
+"Open your account page in the panel and tap the Telegram button, or just send me your subscription link or UUID."
 
 msgid "cdn"
 msgstr "🔀 CDN (Cloudflare Proxy, ...)"

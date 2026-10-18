@@ -5320,6 +5320,12 @@ msgstr ""
 "Tudo sobre como este painel funciona. Configurações comuns primeiro; as "
 "avançadas sob demanda."
 
+msgid "adminV2.settings.telegramConnected"
+msgstr "Bot do Telegram conectado: @{username}"
+
+msgid "adminV2.settings.telegramFailed"
+msgstr "Não foi possível conectar o bot do Telegram"
+
 msgid "adminV2.settings.title"
 msgstr "Configurações"
 
