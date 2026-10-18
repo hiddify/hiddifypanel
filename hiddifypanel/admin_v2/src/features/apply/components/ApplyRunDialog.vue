@@ -10,7 +10,7 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import { apiErrorMessage } from '@/core/api/client'
-import { ACTION_META, applyApi, type ApplyAction, type StartedRun } from '@/features/apply/api'
+import { ACTION_META, applyApi, preferredAdminRedirect, type ApplyAction, type StartedRun } from '@/features/apply/api'
 import RunPanel from '@/features/apply/components/RunPanel.vue'
 
 const props = withDefaults(defineProps<{ action: ApplyAction | null; skipConfirm?: boolean }>(), { skipConfirm: false })
@@ -51,12 +51,29 @@ watch(visible, (open) => {
   else void start()
 })
 
-function onFinished(ok: boolean) {
+async function onFinished(ok: boolean) {
   finished.value = true
+  // Domains may have changed during the run: refresh the admin links before Close.
+  if (ok && run.value) {
+    try {
+      const fresh = await applyApi.state()
+      run.value = { ...run.value, admin_links: fresh.admin_links, domains: fresh.domains, api_bases: fresh.api_bases }
+    } catch {
+      // keep the links from when the run started
+    }
+  }
   if (props.action) emit('finished', props.action, ok)
 }
 
 function close() {
+  // After a finished apply/install, leave an old origin (e.g. sslip.io) for a new domain's admin link.
+  if (finished.value && run.value?.admin_links?.length) {
+    const next = preferredAdminRedirect(run.value.admin_links)
+    if (next) {
+      window.location.assign(next)
+      return
+    }
+  }
   visible.value = false
 }
 </script>

@@ -170,3 +170,29 @@ export function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
+
+/** Prefer a real domain over an IP or sslip.io when choosing where to send the admin after a domain change. */
+function adminLinkHostScore(host: string): number {
+  if (/\.sslip\.io$/i.test(host) || /\.nip\.io$/i.test(host)) return 0
+  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(host) || host.includes(':')) return 1
+  return 2
+}
+
+/**
+ * After apply/install, if the panel's domains changed, Close should leave the old origin and open a new admin link.
+ * Same host → null (the SPA can stay). Different host → best admin_links URL (real domain over IP/sslip).
+ */
+export function preferredAdminRedirect(links: string[], currentHost: string = window.location.host): string | null {
+  const others: { url: string; score: number }[] = []
+  for (const link of links) {
+    try {
+      const url = new URL(link)
+      if (url.host !== currentHost) others.push({ url: link, score: adminLinkHostScore(url.host) })
+    } catch {
+      // ignore malformed links
+    }
+  }
+  if (!others.length) return null
+  others.sort((a, b) => b.score - a.score)
+  return others[0]?.url ?? null
+}

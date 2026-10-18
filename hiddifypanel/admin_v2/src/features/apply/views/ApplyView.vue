@@ -96,7 +96,7 @@ import RunPanel from '@/features/apply/components/RunPanel.vue'
 import PublicPortsDialog from '@/features/actions/components/PublicPortsDialog.vue'
 import WsTestDialog from '@/features/apply/components/WsTestDialog.vue'
 import { liveWatch, type Subscription } from '@/core/live/live'
-import { ACTIONS, ACTION_LOG, ACTION_META, LOG_ICON, applyApi, formatSize, type ApplyAction, type ApplyState, type LogFile, type StartedRun } from '@/features/apply/api'
+import { ACTIONS, ACTION_LOG, ACTION_META, LOG_ICON, applyApi, formatSize, preferredAdminRedirect, type ApplyAction, type ApplyState, type LogFile, type StartedRun } from '@/features/apply/api'
 
 const { t, locale } = useI18n()
 const toast = useToast()
@@ -180,6 +180,15 @@ function showRunPanel() {
 /** A running action the admin closed: not opened again by itself until another one runs. */
 let closedRunning = ''
 function closeRun() {
+  // Domain changed under the run: leave this origin for a new admin link (same as ApplyRunDialog).
+  if (runDone.value) {
+    const links = run.value?.admin_links?.length ? run.value.admin_links : state.value?.admin_links
+    const next = links?.length ? preferredAdminRedirect(links) : null
+    if (next) {
+      window.location.assign(next)
+      return
+    }
+  }
   closedRunning = state.value?.running.join(',') ?? ''
   run.value = null
 }
@@ -215,9 +224,13 @@ function watchRunning() {
   runDone.value = false
 }
 
-function onFinished() {
+async function onFinished() {
   runDone.value = true
-  void refresh(true)
+  await refresh(true)
+  // Keep the run panel's links in sync with the refreshed state (new domains after install).
+  if (run.value && state.value) {
+    run.value = { ...run.value, admin_links: state.value.admin_links, domains: state.value.domains, api_bases: state.value.api_bases }
+  }
 }
 
 const clearing = ref(false)
