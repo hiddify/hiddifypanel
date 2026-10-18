@@ -5,27 +5,36 @@
       <form class="sess-card" @submit.prevent="connect">
         <Select
           v-if="vault.connections.value.length"
+          ref="savedSelect"
           :model-value="null"
           :options="vault.connections.value"
-          :option-label="connectionLabel"
+          :option-label="connectionTitle"
           filter
-          :filter-fields="['host', 'username']"
+          :filter-fields="['name', 'host', 'username']"
           :placeholder="t('ssh.savedPick', { n: vault.connections.value.length })"
           class="sess-saved"
           :disabled="phase === 'connecting'"
-          @update:model-value="(c) => c && useSaved(c, true)"
+          @update:model-value="onSavedPick"
         >
           <template #option="{ option }">
             <div class="sess-saved__opt">
               <i :class="option.auth === 'key' ? 'pi pi-key' : 'pi pi-lock'" />
-              <span class="sess-saved__name" dir="ltr">{{ connectionLabel(option) }}</span>
-              <small class="sess-muted">{{ ago(option.lastUsed) }}</small>
-              <Button icon="pi pi-pencil" text rounded size="small" severity="secondary" :aria-label="t('ssh.edit')" @click.stop="useSaved(option, false)" />
-              <Button icon="pi pi-trash" text rounded size="small" severity="danger" :aria-label="t('ssh.forget')" @click.stop="vault.removeConnection(option.id)" />
+              <span class="sess-saved__text">
+                <span class="sess-saved__name" dir="auto">{{ option.name?.trim() || connectionAddr(option) }}</span>
+                <small v-if="option.name?.trim()" class="sess-muted" dir="ltr">{{ connectionAddr(option) }}</small>
+              </span>
+              <small class="sess-muted sess-saved__ago">{{ ago(option.lastUsed) }}</small>
+              <!-- stop: otherwise Select treats the row as chosen and connects -->
+              <Button icon="pi pi-pencil" text rounded size="small" severity="secondary" :aria-label="t('ssh.edit')" @pointerdown.stop.prevent @mousedown.stop.prevent @click.stop.prevent="editSaved(option)" />
+              <Button icon="pi pi-trash" text rounded size="small" severity="danger" :aria-label="t('ssh.forget')" @pointerdown.stop.prevent @mousedown.stop.prevent @click.stop.prevent="forgetSaved(option.id)" />
             </div>
           </template>
         </Select>
 
+        <div class="sess-field">
+          <label :for="`n-${uid}`">{{ t('ssh.name') }}</label>
+          <InputText :id="`n-${uid}`" v-model.trim="form.name" :placeholder="t('ssh.namePlaceholder')" autocomplete="off" :disabled="phase === 'connecting'" />
+        </div>
         <div class="sess-row">
           <div class="sess-field sess-field--grow">
             <label :for="`h-${uid}`">{{ t('ssh.host') }}</label>
@@ -235,7 +244,7 @@ import Tag from 'primevue/tag'
 import Textarea from 'primevue/textarea'
 import SshFiles from '@/features/ssh/components/SshFiles.vue'
 import { lastTarget, useSsh, type SshPhase } from '@/features/ssh/useSsh'
-import { useVault, type ConnectTarget, type DeepLink, type VaultConnection } from '@/features/ssh/vault'
+import { connectionAddr, connectionTitle, useVault, type ConnectTarget, type DeepLink, type VaultConnection } from '@/features/ssh/vault'
 
 const props = defineProps<{
   active: boolean
@@ -256,6 +265,7 @@ const NEW_KEY = '__new__'
 
 const last = lastTarget()
 const form = reactive({
+  name: '',
   host: last.host ?? '',
   port: last.port ?? 22,
   username: last.username ?? 'root',
@@ -273,6 +283,10 @@ const authOptions = computed(() => [
 const keyChoice = ref<string>(NEW_KEY)
 const keyOptions = computed(() => [...vault.keys.value.map((k) => ({ label: k.name, value: k.id })), { label: t('ssh.newKey'), value: NEW_KEY }])
 const keyFile = ref<HTMLInputElement | null>(null)
+/** Saved-connections Select: closed after Edit so the list does not stay open over the form. */
+const savedSelect = ref<{ hide?: () => void } | null>(null)
+/** Which saved connection the form is editing (kept when saving so a rename does not create a duplicate). */
+const editingId = ref<string | null>(null)
 const terminalBox = ref<HTMLElement | null>(null)
 const filesOpen = ref(false)
 /** Files beside the terminal on a wide screen, unless the admin hid them (remembered in this browser). */
@@ -363,7 +377,10 @@ const {
   stopExec,
 } = useSsh((data) => term?.write(data))
 
-const title = computed(() => (form.host ? `${form.username}@${form.host}${form.port !== 22 ? `:${form.port}` : ''}` : t('ssh.newTab')))
+const title = computed(() => {
+  if (form.name.trim()) return form.name.trim()
+  return form.host ? connectionAddr(form) : t('ssh.newTab')
+})
 const canConnect = computed(() => {
   if (!form.host || !form.username) return false
   if (authKind.value === 'password') return !!form.password
@@ -381,10 +398,6 @@ watch(
   { immediate: true },
 )
 
-function connectionLabel(c: VaultConnection): string {
-  return `${c.username}@${c.host}${c.port !== 22 ? `:${c.port}` : ''}`
-}
-
 function ago(when: number): string {
   const minutes = Math.round((when - Date.now()) / 60_000)
   const rtf = new Intl.RelativeTimeFormat(locale.value, { numeric: 'auto' })
@@ -395,6 +408,7 @@ function ago(when: number): string {
 
 function useSaved(c: VaultConnection, connectNow: boolean) {
   Object.assign(form, {
+    name: c.name ?? '',
     host: c.host,
     port: c.port,
     username: c.username,
@@ -406,7 +420,37 @@ function useSaved(c: VaultConnection, connectNow: boolean) {
   authKind.value = c.auth
   if (c.auth === 'key') keyChoice.value = vault.keyOf(c)?.id ?? NEW_KEY
   saveIt.value = true
+  editingId.value = c.id
   if (connectNow && canConnect.value) void connect()
+}
+
+/** Set while the pencil/trash is pressed so Select's option-select does not also connect. */
+let suppressPick = false
+
+/** Choosing a row in the list connects; the pencil only fills the form (see ``editSaved``). */
+function onSavedPick(c: VaultConnection | null) {
+  if (suppressPick || !c) return
+  useSaved(c, true)
+}
+
+/** Fill the form to edit; do not connect. */
+function editSaved(c: VaultConnection) {
+  suppressPick = true
+  useSaved(c, false)
+  savedSelect.value?.hide?.()
+  void nextTick(() => {
+    suppressPick = false
+  })
+}
+
+function forgetSaved(id: string) {
+  suppressPick = true
+  void vault.removeConnection(id)
+  if (editingId.value === id) editingId.value = null
+  savedSelect.value?.hide?.()
+  void nextTick(() => {
+    suppressPick = false
+  })
 }
 
 /** A connection with its secret (a deep link): the key in it is matched to a saved one when there is one. */
@@ -500,7 +544,9 @@ async function remember(done: ConnectTarget) {
     if (keyId) await vault.useKey(keyId)
     else if (done.privateKey) keyId = keyChoice.value = await vault.saveKey(done.keyName ?? '', done.privateKey, done.passphrase)
   }
-  await vault.saveConnection({
+  const saved = await vault.saveConnection({
+    id: editingId.value ?? undefined,
+    name: form.name.trim() || undefined,
     host: done.host,
     port: done.port,
     username: done.username,
@@ -508,6 +554,7 @@ async function remember(done: ConnectTarget) {
     password: done.auth === 'password' ? done.password : undefined,
     keyId,
   })
+  editingId.value = saved.id
 }
 
 function reconnect() {
@@ -744,15 +791,31 @@ onBeforeUnmount(() => {
 }
 .sess-saved__opt i {
   color: var(--p-primary-color);
+  flex-shrink: 0;
 }
-.sess-saved__name {
+.sess-saved__text {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+.sess-saved__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.sess-saved__text .sess-muted {
   font-family: ui-monospace, Menlo, Consolas, monospace;
-  font-size: 0.88rem;
+  font-size: 0.72rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sess-saved__ago {
+  flex-shrink: 0;
+  font-size: 0.75rem;
 }
 .sess-muted {
   color: var(--p-text-muted-color);

@@ -66,9 +66,10 @@
               </div>
               <label v-for="c in closedSaved" :key="c.id" class="ssh-target">
                 <Checkbox v-model="chosenSaved" :value="c.id" />
-                <span dir="ltr"
-                  >{{ c.username }}@{{ c.host }}<template v-if="c.port !== 22">:{{ c.port }}</template></span
-                >
+                <span class="ssh-target__label">
+                  <span dir="auto">{{ connectionTitle(c) }}</span>
+                  <small v-if="c.name?.trim()" class="ssh-muted" dir="ltr">{{ connectionAddr(c) }}</small>
+                </span>
               </label>
             </template>
           </div>
@@ -150,7 +151,7 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import RunPane, { type Run, type RunResult } from '@/features/ssh/components/RunPane.vue'
 import SshSession from '@/features/ssh/components/SshSession.vue'
 import type { ExecResult, SshPhase } from '@/features/ssh/useSsh'
-import { openDeepLink, useVault, type ConnectTarget, type DeepLink, type VaultCommand, type VaultConnection } from '@/features/ssh/vault'
+import { connectionAddr, connectionTitle, openDeepLink, useVault, type ConnectTarget, type DeepLink, type VaultCommand, type VaultConnection } from '@/features/ssh/vault'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -321,7 +322,7 @@ function toggleAllSaved() {
 }
 
 function label(c: VaultConnection): string {
-  return `${c.username}@${c.host}${c.port !== 22 ? `:${c.port}` : ''}`
+  return connectionTitle(c)
 }
 
 function runIcon(run: Run): string {
@@ -592,8 +593,23 @@ onMounted(async () => {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  font-family: ui-monospace, Menlo, Consolas, monospace;
   font-size: 0.88rem;
+}
+.ssh-target__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+.ssh-target__label > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.ssh-target__label > small {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
 }
 .ssh-cmds {
   list-style: none;

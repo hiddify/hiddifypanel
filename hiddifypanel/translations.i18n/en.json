@@ -2278,6 +2278,7 @@
       "linkNotYours": "This link has no secret you can open (made by another admin, or without one): sign in to fill it in.",
       "linkTitle": "Link to this connection",
       "name": "Name",
+      "namePlaceholder": "e.g. Main server, Node 1",
       "needsTrust": "Its host key is not trusted yet: trust it in its tab",
       "newConnection": "New connection",
       "newFile": "New file",

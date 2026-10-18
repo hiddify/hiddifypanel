@@ -16,6 +16,8 @@ export interface VaultKey {
 
 export interface VaultConnection {
   id: string
+  /** Optional label the admin chose (e.g. "Main server", "Node 3") so many similar hosts stay distinct. */
+  name?: string
   host: string
   port: number
   username: string
@@ -23,6 +25,17 @@ export interface VaultConnection {
   password?: string
   keyId?: string
   lastUsed: number
+}
+
+/** Address as `user@host` (with port when not 22). */
+export function connectionAddr(c: Pick<VaultConnection, 'host' | 'port' | 'username'>): string {
+  return `${c.username}@${c.host}${c.port !== 22 ? `:${c.port}` : ''}`
+}
+
+/** What to show for a saved connection: its name, or the address when it has none. */
+export function connectionTitle(c: VaultConnection): string {
+  const name = c.name?.trim()
+  return name || connectionAddr(c)
 }
 
 export interface VaultCommand {
@@ -137,6 +150,7 @@ async function migrate(): Promise<VaultData | null> {
       }
       data.connections.push({
         id: c.id,
+        name: (c as { name?: string }).name,
         host: c.host,
         port: c.port,
         username: c.username,
@@ -220,17 +234,20 @@ export function useVault() {
       await persist()
     },
 
-    /** Adds or updates (same user, host and port) and marks it used now. */
-    async saveConnection(c: Omit<VaultConnection, 'id' | 'lastUsed'>) {
-      const same = (o: VaultConnection) => o.host.toLowerCase() === c.host.toLowerCase() && o.port === c.port && o.username === c.username
-      const found = state.data.connections.find(same)
+    /** Adds or updates (by ``id`` when given, else same user/host/port) and marks it used now. */
+    async saveConnection(c: Omit<VaultConnection, 'id' | 'lastUsed'> & { id?: string }) {
+      const sameHost = (o: VaultConnection) => o.host.toLowerCase() === c.host.toLowerCase() && o.port === c.port && o.username === c.username
+      const found = (c.id ? state.data.connections.find((o) => o.id === c.id) : undefined) ?? state.data.connections.find(sameHost)
+      const name = (c.name ?? found?.name)?.trim() || undefined
       const next: VaultConnection = {
         ...c,
-        id: found?.id ?? crypto.randomUUID(),
+        name,
+        id: found?.id ?? c.id ?? crypto.randomUUID(),
         lastUsed: Date.now(),
       }
-      state.data.connections = [next, ...state.data.connections.filter((o) => !same(o))]
+      state.data.connections = [next, ...state.data.connections.filter((o) => o.id !== next.id && !sameHost(o))]
       await persist()
+      return next
     },
 
     async removeConnection(id: string) {
