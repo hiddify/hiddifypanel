@@ -182,7 +182,8 @@ _OS_NORMALIZE = {
 _APP_GROUP_MAP: list[tuple[str, str]] = [
     (r"(?i)(hiddify|sing-box|singbox|sfa|sfi|dart)", "singbox"),
     (r"(?i)(clash|stash|nekobox|nekoray|pharos|meta)", "clash"),
-    (r"(?i)(v2ray|v2rayng|sagernet|foxray|fair|shadowrocket|v2box|loon|liberty)", "xray"),
+    # Xray-core apps: they get Xray-only features such as VLESS encryption.
+    (r"(?i)(v2ray|v2rayng|sagernet|foxray|fair|shadowrocket|v2box|loon|liberty|streisand|v2raytun|\bhapp\b)", "xray"),
     (r"(?i)(sub|subscription|sublink)", "sublink"),
 ]
 
