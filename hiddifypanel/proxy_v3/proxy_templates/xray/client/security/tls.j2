@@ -22,7 +22,9 @@
         "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",
       {%endif%}
     {%endif%}
-    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}"fingerprint": "{{ ctx.hconfig.utls }}",{% endif %}
+    {% if tls_layer not in ["quic_tls", "quic_tcp_tls"] and ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
+      "fingerprint": "{{ ctx.hconfig.utls }}",
+    {% endif %}
 
     
     "alpn": {{ tls_layer.alpns() }},

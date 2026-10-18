@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue'
+import { setLocale } from '@/core/i18n'
 
 export interface AdminMenuItem {
   label: string
@@ -148,6 +149,7 @@ export function applyBootstrapShell(data: {
   }
   if (data.locale) {
     window.__LOCALE__ = data.locale
+    setLocale(data.locale)
   }
   if (data.panel_version) {
     window.__PANEL_VERSION__ = data.panel_version

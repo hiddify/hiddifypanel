@@ -1,10 +1,14 @@
 {% set domain=ctx.proxy.domain%}
 {% if proxy.uses_tls %}
     {% set data.sni = ctx.proxy.domain.sni %}
+    {% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or 'http' %}
+    {# uTLS fingerprint is TCP-only; omit fp on QUIC (h3) links. #}
+    {% if tls_layer not in ["quic_tls", "quic_tcp_tls"] %}
     {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
         {% set data.fp = ctx.hconfig.utls %}
     {% elif ctx.proxy.domain.is_reality() %}
         {% set data.fp = 'chrome' %}
+    {% endif %}
     {% endif %}
 
     
@@ -15,7 +19,6 @@
         {% set data.sid = ctx.hconfig.reality_short_ids | choose_random %}
     {%else%}
         {# The ALPN follows the TLS layer (h3 for QUIC), as in the vless / other links #}
-        {% set tls_layer = (tls_layer if tls_layer else ctx.proxy.tls_layer) or 'http' %}
         {% set data.alpn = ",".join(tls_layer.alpns()) %}
         {% set data.tls = 'tls' %}    
         {% if ctx.proxy.domain.extra.ech_config %}

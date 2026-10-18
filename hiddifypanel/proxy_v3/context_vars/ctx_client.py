@@ -31,6 +31,8 @@ class ClientContextVar(BaseModel):
     render_core: str = ""
     # Rendering for a parent panel (child/client-configs): the parent adds its own groups and status.
     for_parent: bool = False
+    # True → render only telegram proxies (mtproxies); False → all except telegram.
+    include_telegram_links: bool = False
 
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]
@@ -44,6 +46,8 @@ class ClientContextVar(BaseModel):
                 shared_cert=self.shared_cert,
                 client_proxy_tags=list(self.client_proxy_tags),
                 render_core=self.render_core,
+                for_parent=self.for_parent,
+                include_telegram_links=self.include_telegram_links,
             )
 
 

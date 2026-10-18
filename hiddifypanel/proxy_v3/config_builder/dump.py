@@ -539,12 +539,15 @@ def render_client_configs(
     cores: tuple[str, ...] | None = None,
     invalidate_cache: bool = False,
     for_parent: bool = False,
+    include_telegram_links: bool | None = None,
 ) -> ClientConfigRenderResult:
     """Render client configs for one user via typed ``ClientContextVar`` (one ctx per proxy).
 
     ``domains`` renders an explicit list of domain names instead of the ones
     ``sublink_domain`` exposes; names with no matching domain are ignored.
     ``for_parent`` omits proxy groups and subscription status (the parent adds its own).
+    ``include_telegram_links``: ``True`` = sublink is telegram-only (mtproxies API);
+    ``False``/``None`` = all proxies except telegram.
     """
     from hiddifypanel.models.user import User
     from hiddifypanel.proxy_v3.context_vars.builder.client_builder import build_client_template_context
@@ -568,6 +571,8 @@ def render_client_configs(
         contexts = build_client_template_context(user_obj, domain, ua, domains)
         for ctx in contexts:
             ctx.for_parent = for_parent
+            if include_telegram_links is not None:
+                ctx.include_telegram_links = include_telegram_links
     except Exception as exc:
         result.messages.append(
             {
@@ -821,6 +826,7 @@ def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar]) -> tu
 def render_sublink_links(child_id: int, contexts: list[ClientContextVar]) -> tuple[list[str], list[MessageModel]]:
     """The share links of each proxy's sublink template, without the subscription's base config around them."""
     from hiddifypanel.models.custom_proxy import TemplateCore
+    from hiddifypanel.models.proxy import ProxyProto
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
     from hiddifypanel.proxy_v3.config_builder.render import render_section
@@ -829,6 +835,13 @@ def render_sublink_links(child_id: int, contexts: list[ClientContextVar]) -> tup
     messages: list[MessageModel] = []
     links: list[str] = []
     for ctx in contexts:
+        is_tg = ctx.proxy.proto == ProxyProto.telegram
+        # True → telegram only (mtproxies); False → everything except telegram.
+        if ctx.include_telegram_links:
+            if not is_tg:
+                continue
+        elif is_tg:
+            continue
         ctx.render_core = TemplateCore.sublink.value
         client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.sublink, ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():

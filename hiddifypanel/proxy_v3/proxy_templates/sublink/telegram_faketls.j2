@@ -3,6 +3,7 @@
   :443 to telemt. Direct / relay domains with the Telegram fake domains (fake_mode telegram) of their server, plus the
   fake domains' own IPs; with no Telegram fake domain, the setting's fake domain on every direct / relay domain.
   tg://proxy?server=<server>&port=443&secret=ee<secret hex><fake domain hex>
+  Gated in render_sublink_links: only when include_telegram_links (mtproxies API).
 #}
 {%- if ctx.hconfig.telegram_enable %}
   {%- set secret = ((ctx.user.uuid if ctx.hconfig.telegram_lib == 'telemt' else ctx.hconfig.shared_secret) or '') | replace('-', '') | lower %}

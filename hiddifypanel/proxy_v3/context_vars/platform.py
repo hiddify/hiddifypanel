@@ -24,6 +24,8 @@ class PlatformVar(BaseModel):
     useragent: str = ""
     tls_engine: str = "go"
     is_hiddify: bool = False
+    # Mozilla* UAs (panel SPA / browsers); used to gate tg:// subscription lines.
+    is_browser: bool = False
 
     os: PlatformPart = Field(default_factory=lambda: PlatformPart("linux"))
     app: PlatformPart = Field(default_factory=lambda: PlatformPart("unknown"))
@@ -60,6 +62,7 @@ class PlatformVar(BaseModel):
             useragent=raw,
             tls_engine=cls._tls_engine(os_family),
             is_hiddify=bool(info.get("is_hiddify")),
+            is_browser=bool(info.get("is_browser")),
         )
         var.os = PlatformPart(os_family, os_version)
         var.app = PlatformPart(app, app_version)

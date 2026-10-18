@@ -2,6 +2,7 @@
   Builtin telegram_web (subscription links): Telegram web-proxy links, one per domain that supports it (DomainIPVar.support_telegram_webproxy)
   (telemt/server/base.j2 has a vhost for each). HAProxy sends https://<domain>/<telegram_base_path> to telemt.
   tg://webproxy?server=<domain>%2F<path>&secret=<base64url(0x70 0xdd <user secret>)>
+  Gated in render_sublink_links: only when include_telegram_links (mtproxies API).
 #}
 {%- if ctx.hconfig.telegram_webproxy_enable %}
 {%- set secret = ('70dd' ~ ctx.user.uuid_hex) | hex_b64url %}

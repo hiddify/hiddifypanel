@@ -29,7 +29,15 @@ class MTProxiesAPI(MethodView):
 
         # Exactly the user's subscription (same domain, same custom proxies and templates), kept to its Telegram links:
         # what the Telegram custom proxies (proto telegram, sublink/telegram_*.j2) put in it.
-        result = render_client_configs(user=g.account, child_id=0, sublink_domain=request.host, user_agent=request.user_agent.string, cores=("sublink",))
+        # Telegram-only sublink (include_telegram_links skips every other proto).
+        result = render_client_configs(
+            user=g.account,
+            child_id=0,
+            sublink_domain=request.host,
+            user_agent=request.user_agent.string,
+            cores=("sublink",),
+            include_telegram_links=True,
+        )
         links = [line.strip() for line in (result.configs.get("sublink") or "").splitlines() if line.strip().startswith("tg://")]
         # TODO: Remove duplicated domains mapped to a same ipv4 and v6
         return [MtproxySchema(title=_title(link), link=link) for link in dict.fromkeys(links)]

@@ -3,10 +3,13 @@
 
 {% if tls_layer != 'http' %}
 
+    {# uTLS fingerprint is TCP-only; omit fp on QUIC (h3) links. #}
+    {% if tls_layer not in ["quic_tls", "quic_tcp_tls"] %}
     {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
         {% set qp.fp = ctx.hconfig.utls %}
     {% elif domain.is_reality() %}
         {% set qp.fp = 'chrome' %}
+    {% endif %}
     {% endif %}
     {% set qp.sni = domain.sni %}
     {% if domain.is_reality() %}

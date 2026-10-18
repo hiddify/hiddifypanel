@@ -38,6 +38,7 @@ def build_client_template_context(user: User, sublink_domain: str, user_agent: s
     bases = get_bases(sublink_domain, _common_proxy_core_cache_token(), domain_names)
     user_var = UserVar.from_user(user)
     platform_var = get_platform_var(user_agent)
+    # Telegram links only when the caller sets include_telegram_links (mtproxies API).
     return [
         ClientContextVar(
             user=user_var,
@@ -45,6 +46,7 @@ def build_client_template_context(user: User, sublink_domain: str, user_agent: s
             hconfig=b.hconfig,
             proxy=b.proxy,
             shared_cert=b.shared_cert,
+            include_telegram_links=False,
         )
         for b in bases
     ]

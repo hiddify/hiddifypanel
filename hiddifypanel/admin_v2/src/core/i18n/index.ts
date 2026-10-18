@@ -25,8 +25,10 @@ export const i18n = createI18n({
 
 export function applyDocumentLocale(loc: string) {
   const rtl = loc === 'fa' || loc === 'ar'
+  const dir = rtl ? 'rtl' : 'ltr'
   document.documentElement.lang = loc
-  document.documentElement.dir = rtl ? 'rtl' : 'ltr'
+  document.documentElement.dir = dir
+  if (document.body) document.body.dir = dir
 }
 
 /** PrimeVue's built-in texts (confirm buttons, empty filter results, …) in the panel language. */

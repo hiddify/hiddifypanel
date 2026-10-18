@@ -12,12 +12,15 @@
 {% else %}
 "servername": "{{ domain.sni }}",
 {% endif %}
-{# Mihomo VLESS/VMess often need a uTLS fingerprint; default chrome when unset. #}
+{# Mihomo VLESS/VMess often need a uTLS fingerprint; default chrome when unset.
+   Skip on QUIC — client-fingerprint is TCP uTLS, not for h3. #}
+{% if tls_layer not in ["quic_tls", "quic_tcp_tls"] %}
 {% set fp = ctx.hconfig.utls or "" %}
 {% if fp and fp != "none" %}
 "client-fingerprint": "{{ fp }}",
 {% else %}
 "client-fingerprint": "chrome",
+{% endif %}
 {% endif %}
 {% if not domain.is_reality() %}
 {# gRPC must negotiate h2; mixed ALPN can pick http/1.1 and break the stream. #}
