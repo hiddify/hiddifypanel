@@ -47,9 +47,10 @@ def init_app(app):
 
         bp.add_url_rule("/protocols/", view_func=ProtocolSwitchesApi)
 
-        from .config_tester_api import ConfigTesterApi, ConfigTesterJobApi
+        from .config_tester_api import ConfigTesterApi, ConfigTesterJobApi, ConfigTesterUserLinkApi
 
         bp.add_url_rule("/config-tester/", view_func=ConfigTesterApi, methods=["POST"])
+        bp.add_url_rule("/config-tester/user-link/", view_func=ConfigTesterUserLinkApi, methods=["GET"])
         bp.add_url_rule("/config-tester/<string:job_id>/", view_func=ConfigTesterJobApi, methods=["GET", "DELETE"])
 
         from hiddifypanel.proxy_v3.outbounds import subscribe_events as subscribe_outbound_events

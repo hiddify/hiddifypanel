@@ -899,6 +899,9 @@
         "failed": "Not working",
         "ok": "Working"
       },
+      "find": "Find",
+      "findEmpty": "No matching user",
+      "findHint": "Click to browse users, or type a name, note, or uuid — pick one to fill their subscription link",
       "forceXray": "Ask for xray JSON",
       "forceXrayHint": "Adds force_xray_json=1 to the link, so the panel gives xray configs even if that subscription is off in its settings.",
       "gone": "This test is no longer kept (tests are kept for an hour). Start it again.",
@@ -993,7 +996,7 @@
       "uaHint": "Sent when fetching the link, so the panel gives the xray or hiddify-core format.",
       "uaPreset": "Preset",
       "url": "Subscription link",
-      "urlPlaceholder": "https://domain/path/uuid/…",
+      "urlPlaceholder": "Paste a link, or pick a user…",
       "waiting": "Waiting",
       "workers": "Parallel workers"
     },

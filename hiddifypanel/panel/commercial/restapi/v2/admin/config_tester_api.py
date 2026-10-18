@@ -1,23 +1,27 @@
 """Config tester (super admins): run every config of a subscription through xray / hiddify-core and time requests through each.
 
 A test is a job (config_tester_jobs): POST starts it, the page reads its events with GET and can stop it with DELETE.
+GET ``/config-tester/user-link/?q=…`` searches users by name/uuid and returns their subscription URLs for the typeahead.
 """
 
 from __future__ import annotations
 
-from typing import NoReturn
+from typing import Any, NoReturn
 
 from apiflask import abort
 from flask import request
 from flask.views import MethodView
+from sqlalchemy import case, func, or_
 
 from hiddifypanel.auth import login_required
 from hiddifypanel.cache import redis_client
+from hiddifypanel.models import ConfigEnum, User, hconfig
 from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3 import config_tester, config_tester_jobs
 from hiddifypanel.proxy_v3.config_tester_types import Event, JobPage, TesterError
 
 PAGE_SIZE = 100
+USER_SEARCH_LIMIT = 30
 
 
 def _bad(message: str) -> NoReturn:
@@ -48,6 +52,76 @@ def _number(body: dict[str, object], key: str, default: int, low: int, high: int
     except ValueError:
         _bad(f"{key} must be a number")
     return max(low, min(number, high))
+
+
+def _user_subscription_url(user: User) -> str:
+    """Full subscription URL on this panel's host (same shape as the Users page share link, without the #name)."""
+    from hiddifypanel.panel.commercial.restapi.v2.admin.admins_api import _link_domains
+
+    domains = _link_domains(ConfigEnum.proxy_path_client)
+    base = domains[0]["base"] if domains else f"https://{request.host}/{hconfig(ConfigEnum.proxy_path_client)}/"
+    return f"{base}{user.uuid}/"
+
+
+def _user_status(user: User) -> str:
+    """disabled > expired > no_data > active (same idea as the Users page)."""
+    if not user.enable:
+        return "disabled"
+    if user.remaining_days < 0:
+        return "expired"
+    if (user.usage_limit or 0) < (user.current_usage or 0):
+        return "no_data"
+    return "active"
+
+
+def _user_hit(user: User) -> dict[str, Any]:
+    return {
+        "name": user.name or "",
+        "comment": user.comment or "",
+        "uuid": user.uuid,
+        "url": _user_subscription_url(user),
+        "status": _user_status(user),
+        "remaining_days": user.remaining_days,
+        "package_days": user.package_days or 0,
+        "current_usage_GB": round(user.current_usage_GB, 3),
+        "usage_limit_GB": round(user.usage_limit_GB, 3),
+    }
+
+
+def _search_users(q: str, *, limit: int = USER_SEARCH_LIMIT) -> list[User]:
+    """Users for the typeahead: empty ``q`` = recent list; else match name, note (comment) or uuid."""
+    needle = q.strip()
+    if needle.lower().startswith(("http://", "https://")):
+        return []
+    base = User.query.filter(User.deleted.is_(False))
+    if not needle:
+        return base.order_by(User.enable.desc(), User.id.desc()).limit(limit).all()
+    lowered = needle.lower().removeprefix("uuid:")
+    name_l = func.lower(User.name)
+    comment_l = func.lower(func.coalesce(User.comment, ""))
+    uuid_l = func.lower(User.uuid)
+    rank = case(
+        (name_l == lowered, 0),
+        (name_l.like(f"{lowered}%"), 1),
+        (uuid_l.like(f"{lowered}%"), 2),
+        (comment_l.like(f"{lowered}%"), 3),
+        else_=4,
+    )
+    return (
+        base.filter(or_(name_l.like(f"%{lowered}%"), comment_l.like(f"%{lowered}%"), uuid_l.like(f"%{lowered}%")))
+        .order_by(rank, User.enable.desc(), User.id.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+class ConfigTesterUserLinkApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self) -> dict[str, Any]:
+        """Config tester: users for the link typeahead (name / note / uuid); empty ``q`` lists recent users"""
+        users = _search_users(str(request.args.get("q") or ""))
+        return {"users": [_user_hit(u) for u in users]}
 
 
 class ConfigTesterApi(MethodView):

@@ -3,7 +3,7 @@
 
   <!-- 1. What to test -->
   <Panel class="ct-form">
-    <SelectButton v-model="mode" :options="MODES" option-value="key" :allow-empty="false" :disabled="busy" size="small" class="ct-mode" :aria-label="t('configTester.mode.label')">
+    <SelectButton v-model="mode" :options="MODES" option-label="key" option-value="key" :allow-empty="false" :disabled="busy" size="small" class="ct-mode" :aria-label="t('configTester.mode.label')">
       <template #option="{ option }"><i :class="option.icon" /> {{ t(`configTester.mode.${option.key}`) }}</template>
     </SelectButton>
 
@@ -11,10 +11,11 @@
     <div v-if="mode === 'link'" class="ct-field">
       <label for="ct-url" class="ct-label"><span class="ct-step">1</span>{{ t('configTester.url') }}</label>
       <div class="ct-urlrow">
-        <InputText id="ct-url" v-model="url" dir="ltr" class="ct-url font-mono" spellcheck="false" autocomplete="off" :placeholder="t('configTester.urlPlaceholder')" :disabled="busy" @keydown.enter="start" />
+        <UserLinkPicker v-model="url" input-id="ct-url" :disabled="busy" @enter="onUrlEnter" @pick="error = ''" />
         <Button v-if="!busy" icon="pi pi-play" :label="t('configTester.start')" :disabled="!canStart" @click="start" />
         <Button v-else icon="pi pi-stop" :label="t('configTester.stop')" severity="danger" @click="stop" />
       </div>
+      <small class="text-muted-color">{{ t('configTester.findHint') }}</small>
     </div>
     <div v-else class="ct-field">
       <label for="ct-content" class="ct-label"><span class="ct-step">1</span>{{ t('configTester.contentLabel') }}</label>
@@ -221,6 +222,7 @@ import { liveRequest, liveStream, type Subscription } from '@/core/live/live'
 import type { Fetched, Json, JobPage, JsonObject, Kind, ResultEvent, Source, TesterEvent } from '@/features/config-tester/types'
 import SubscriptionViewer from '@/features/config-tester/components/SubscriptionViewer.vue'
 import JsonTree from '@/features/config-tester/components/JsonTree.vue'
+import UserLinkPicker from '@/features/config-tester/components/UserLinkPicker.vue'
 import { unwrapSubscriptionText } from '@/shared/utils/sublink-pretty'
 import CodeBlock from '@/features/config-tester/components/CodeBlock.vue'
 
@@ -312,7 +314,13 @@ const detailOpen = computed({ get: () => !!detail.value, set: (v) => { if (!v) d
 const controllers = new Map<AbortController, string>()
 const active = ref(0)
 const busy = computed(() => active.value > 0)
-const canStart = computed(() => (mode.value === 'link' ? !!url.value.trim() : !!content.value.trim()))
+/** URL field text (never assume a string — the picker may briefly hold a user object). */
+function urlText(): string {
+  const v = url.value as unknown
+  if (v && typeof v === 'object' && 'url' in (v as object)) return String((v as { url: string }).url || '')
+  return typeof v === 'string' ? v.trim() : ''
+}
+const canStart = computed(() => (mode.value === 'link' ? !!urlText() : !!content.value.trim()))
 
 const counts = computed(() => ({
   all: rows.value.length,
@@ -523,7 +531,7 @@ async function resume(job: string): Promise<boolean> {
 const XRAY_UA = /^(xray|v2rayNG|v2rayN|streisand)/i
 
 function subLink(): string {
-  const link = url.value.trim()
+  const link = urlText()
   if (app.value !== 'xray' && !XRAY_UA.test(userAgent.value.trim())) return link
   try {
     const u = new URL(link)
@@ -532,6 +540,13 @@ function subLink(): string {
   } catch {
     return link + (link.includes('?') ? '&' : '?') + 'force_xray_json=1'
   }
+}
+
+/** Enter starts the test when the field is already a link. */
+function onUrlEnter(event: KeyboardEvent) {
+  if (!/^https?:\/\//i.test(urlText())) return
+  event.preventDefault()
+  void start()
 }
 
 async function start() {
@@ -631,7 +646,7 @@ function stop() {
 
 /** The address carries what is being tested, so a refresh (or a shared link) runs the same test again. */
 function syncLink() {
-  const query: Record<string, string> = { url: url.value.trim(), app: app.value, ua: userAgent.value, start: '1' }
+  const query: Record<string, string> = { url: urlText(), app: app.value, ua: userAgent.value, start: '1' }
   if (testUrl.value !== DEFAULT_TEST_URL) query.test = testUrl.value
   if (workers.value !== 8) query.workers = String(workers.value)
   if (timeout.value !== 10) query.timeout = String(timeout.value)
@@ -708,10 +723,17 @@ onBeforeUnmount(() => controllers.forEach((_job, c) => c.abort()))
 }
 .ct-urlrow {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: stretch;
 }
 .ct-urlrow--end {
   justify-content: flex-end;
+}
+@media (max-width: 640px) {
+  .ct-urlrow > .p-button {
+    width: 100%;
+  }
 }
 .ct-mode {
   align-self: flex-start;
@@ -728,7 +750,7 @@ onBeforeUnmount(() => controllers.forEach((_job, c) => c.abort()))
   font-size: 0.8rem;
   resize: vertical;
 }
-.ct-url {
+.ct-urlrow > :first-child {
   flex: 1;
   min-width: 0;
 }
