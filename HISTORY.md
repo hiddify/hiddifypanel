@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v14.0.2 (2026-10-18)
+
+#### Other
+
+* Fix(proxy): ensure download leg handling for non-xHTTP transports. 
+
+* Refactor(finalmask): streamline finalmask handling in templates. 
+
+* Feat(telegrambot): improve admin and user linking logic. 
+
+* Feat(platform): enhance VLESS and HTTPUpgrade support for Mihomo compatibility. 
+  _- Updated VLESS protocol handling to include additional app versions and features.
+- Improved error messaging for VLESS encryption requirements based on Mihomo version.
+- Enhanced HTTPUpgrade compatibility notes for Mihomo 1.19.32 with Xray.
+- Refactored finalmask handling in templates to treat it as an object instead of a string._
+
+
+
 ## v14.0.1 (2026-10-18)
 
 #### New
