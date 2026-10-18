@@ -38,6 +38,23 @@
             "outboundTag": {{ route.xray_tag|tojson }}
         },
         {% endfor %}
+        {# Panel / subscription domains and this server's IPs: never Block (domestic .ir / geoip:ir). #}
+        {% if ctx.outbounds.allow_sites %}
+        {
+            "type": "field",
+            "outboundTag": "freedom",
+            "domain": [
+                {% for d in ctx.outbounds.allow_sites %}"domain:{{ d }}"{% if not loop.last %},{% endif %}{% endfor %}
+            ]
+        },
+        {% endif %}
+        {% if ctx.outbounds.allow_ips %}
+        {
+            "type": "field",
+            "outboundTag": "freedom",
+            "ip": {{ ctx.outbounds.allow_ips|tojson }}
+        },
+        {% endif %}
         {# Outbound manager: each outbound's sites and geosite:/geoip: entries, in order
            (block, SOCKS/Tor/Psiphon, WARP, direct). Lists are edited in Admin → Outbounds. #}
         {% for o in ctx.outbounds.items if o.has_xray_rules %}

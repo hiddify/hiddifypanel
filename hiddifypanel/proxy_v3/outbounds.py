@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import ipaddress
 import json
 import re
 from functools import lru_cache
@@ -616,9 +617,25 @@ class OutboundsVar(BaseModel):
     items: list[OutboundVar] = Field(default_factory=list)
     #: Per-user preferred outbounds; these rules come before the site rules.
     user_routes: list[UserRouteVar] = Field(default_factory=list)
+    #: Panel / subscription hostnames — always routed to freedom before Block (e.g. domestic .ir).
+    allow_sites: list[str] = Field(default_factory=list)
+    #: Panel / machine public IPs — same; avoids geoip:ir blocking the node itself.
+    allow_ips: list[str] = Field(default_factory=list)
     region: str = ""
     default_xray_tag: str = "freedom"
     default_singbox_tag: str = "freedom"
+
+    @property
+    def allow_ip_cidrs(self) -> list[str]:
+        """sing-box ``ip_cidr`` entries for ``allow_ips``."""
+        out: list[str] = []
+        for raw in self.allow_ips:
+            try:
+                addr = ipaddress.ip_address(raw)
+            except ValueError:
+                continue
+            out.append(f"{addr}/32" if addr.version == 4 else f"{addr}/128")
+        return out
 
     @property
     def custom(self) -> list[OutboundVar]:
@@ -779,6 +796,66 @@ def _user_routes(rows: list[Outbound], items: list[OutboundVar]) -> list[UserRou
     ]
 
 
+def _panel_routing_allowlist(child_id: int = 0) -> tuple[list[str], list[str]]:
+    """Hostnames and IPs that must never hit Block (panel, sub domains, this server)."""
+    from hiddifypanel import hutils
+    from hiddifypanel.models.domain import Domain
+    from hiddifypanel.models.server_ip import ServerIp
+
+    sites: list[str] = []
+    ips: list[str] = []
+
+    def add_host(raw: str | None) -> None:
+        text = (raw or "").strip()
+        if not text or "*" in text:
+            return
+        if text.startswith("["):
+            text = text[1:].split("]", 1)[0]
+        elif text.count(":") == 1 and not text.startswith(":"):
+            # host:port (not bare IPv6)
+            left, right = text.split(":", 1)
+            if right.isdigit():
+                text = left
+        text = text.strip().lower().strip(".")
+        if not text:
+            return
+        try:
+            ip = str(ipaddress.ip_address(text))
+        except ValueError:
+            site = _clean_site(text)
+            if site and site not in sites and _DOMAIN_RE.match(site):
+                sites.append(site)
+            return
+        if ip not in ips:
+            ips.append(ip)
+
+    for row in Domain.query.filter(Domain.child_id == child_id).all():
+        add_host(row.domain)
+        if sd := row.usable_server_domain():
+            add_host(sd.domain)
+        if dd := row.download_domain:
+            add_host(dd.domain)
+        for part in re.split(r"[\s,|;]+", row.cdn_ip or ""):
+            add_host(part)
+
+    for ip_row in ServerIp.query.filter(ServerIp.child_id == child_id, ServerIp.enabled.is_(True)).all():
+        add_host(ip_row.address)
+
+    try:
+        for ip in hutils.network.get_ips():
+            add_host(str(ip))
+    except Exception as e:
+        logger.debug(f"panel allowlist: machine IPs unavailable: {e}")
+
+    try:
+        if hutils.node.is_child():
+            add_host(hutils.node.child.parent_panel_host())
+    except Exception as e:
+        logger.debug(f"panel allowlist: parent host unavailable: {e}")
+
+    return sites, ips
+
+
 def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
     """The routing data for the server templates of ``child_id``."""
     from hiddifypanel.models import ConfigEnum
@@ -792,6 +869,7 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
     region = REGION_BY_COUNTRY.get(str(conf(ConfigEnum.country) or ""), "cn")
     domestic = (load_defaults().get("domestic") or {}).get(region) or {}
     warp_available = str(conf(ConfigEnum.warp_mode) or "disable") != "disable"
+    allow_sites, allow_ips = _panel_routing_allowlist(child_id)
 
     # In the admin's order; the last enabled one is the default (route final).
     rows = [r for r in ordered_rows(child_id) if r.enabled]
@@ -856,7 +934,13 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
             )
         )
 
-    out = OutboundsVar(items=items, region=region, user_routes=_user_routes(rows, items))
+    out = OutboundsVar(
+        items=items,
+        region=region,
+        user_routes=_user_routes(rows, items),
+        allow_sites=allow_sites,
+        allow_ips=allow_ips,
+    )
     final = next((o for o in items if o.is_default), None)
     if final is not None:
         out.default_xray_tag, out.default_singbox_tag = final.xray_tag, final.singbox_tag
