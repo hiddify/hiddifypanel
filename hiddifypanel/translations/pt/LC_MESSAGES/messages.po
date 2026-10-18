@@ -2006,6 +2006,12 @@ msgstr "Você pode sair desta página; a execução continua no servidor."
 msgid "adminV2.apply.run.hide"
 msgstr "Ocultar"
 
+msgid "adminV2.apply.run.insecure"
+msgstr "Não seguro"
+
+msgid "adminV2.apply.run.linkCopied"
+msgstr "Link de administrador copiado"
+
 msgid "adminV2.apply.run.links"
 msgstr "Links de administrador nos seus domínios (podem ter mudado)"
 
@@ -2017,6 +2023,9 @@ msgstr "O painel foi atualizado. Recarregue para usar a nova versão."
 
 msgid "adminV2.apply.run.reloadBtn"
 msgstr "Recarregar"
+
+msgid "adminV2.apply.run.secure"
+msgstr "Seguro"
 
 msgid "adminV2.apply.run.stalled"
 msgstr "Nada de novo no log há muito tempo. Verifique o log abaixo."

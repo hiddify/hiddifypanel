@@ -2014,6 +2014,12 @@ msgstr "You can leave this page; it keeps running on the server."
 msgid "adminV2.apply.run.hide"
 msgstr "Hide"
 
+msgid "adminV2.apply.run.insecure"
+msgstr "Not secure"
+
+msgid "adminV2.apply.run.linkCopied"
+msgstr "Admin link copied"
+
 msgid "adminV2.apply.run.links"
 msgstr "Admin links on your domains (they may have changed)"
 
@@ -2025,6 +2031,9 @@ msgstr "The panel was updated. Reload to use the new version."
 
 msgid "adminV2.apply.run.reloadBtn"
 msgstr "Reload"
+
+msgid "adminV2.apply.run.secure"
+msgstr "Secure"
 
 msgid "adminV2.apply.run.stalled"
 msgstr "Nothing new in the log for a long time. Check the log below."
@@ -2601,6 +2610,14 @@ msgstr "Yes"
 
 msgid "adminV2.configTester.advanced"
 msgstr "More options"
+
+msgid "adminV2.configTester.app"
+msgstr "Application"
+
+msgid "adminV2.configTester.appHint"
+msgstr ""
+"The client the subscription is for: a format it cannot read is shown as an "
+"error. Xray gets share links converted to xray JSON."
 
 msgid "adminV2.configTester.contentLabel"
 msgstr "Contents to test"
@@ -3465,7 +3482,9 @@ msgstr "Show configs of"
 
 msgid "adminV2.domains.field.showDomainsHint"
 msgstr ""
-"Users opening their page on this domain see the configs of these domains."
+"Users opening their page on this domain see the configs of these domains. "
+"Node REALITY entries need a Node Configs proxy enabled for clients to use "
+"them."
 
 msgid "adminV2.domains.field.tlsMode"
 msgstr "TLS mode"

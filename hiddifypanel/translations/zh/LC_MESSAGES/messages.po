@@ -1921,6 +1921,12 @@ msgstr "您可以离开此页面；它会继续在服务器上运行。"
 msgid "adminV2.apply.run.hide"
 msgstr "隐藏"
 
+msgid "adminV2.apply.run.insecure"
+msgstr "不安全"
+
+msgid "adminV2.apply.run.linkCopied"
+msgstr "已复制管理链接"
+
 msgid "adminV2.apply.run.links"
 msgstr "您域名上的管理员链接（可能已更改）"
 
@@ -1932,6 +1938,9 @@ msgstr "面板已更新。请重新加载以使用新版本。"
 
 msgid "adminV2.apply.run.reloadBtn"
 msgstr "重新加载"
+
+msgid "adminV2.apply.run.secure"
+msgstr "安全"
 
 msgid "adminV2.apply.run.stalled"
 msgstr "日志长时间没有新内容。请查看下方日志。"

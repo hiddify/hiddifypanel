@@ -1998,6 +1998,12 @@ msgstr "می‌توانید از این صفحه بروید؛ روی سرور ا
 msgid "adminV2.apply.run.hide"
 msgstr "پنهان کردن"
 
+msgid "adminV2.apply.run.insecure"
+msgstr "ناامن"
+
+msgid "adminV2.apply.run.linkCopied"
+msgstr "لینک ادمین کپی شد"
+
 msgid "adminV2.apply.run.links"
 msgstr "لینک‌های ادمین روی دامنه‌های شما (ممکن است تغییر کرده باشند)"
 
@@ -2010,6 +2016,9 @@ msgstr ""
 
 msgid "adminV2.apply.run.reloadBtn"
 msgstr "بارگذاری مجدد"
+
+msgid "adminV2.apply.run.secure"
+msgstr "امن"
 
 msgid "adminV2.apply.run.stalled"
 msgstr "مدت زیادی است چیز تازه‌ای در لاگ نیست. لاگ پایین را ببینید."
@@ -2583,6 +2592,14 @@ msgstr "بله"
 
 msgid "adminV2.configTester.advanced"
 msgstr "گزینه‌های بیشتر"
+
+msgid "adminV2.configTester.app"
+msgstr "برنامه"
+
+msgid "adminV2.configTester.appHint"
+msgstr ""
+"کلاینتی که اشتراک برای آن است: فرمتی که نمی‌تواند بخواند خطا نشان داده "
+"می‌شود. لینک‌ها برای Xray به JSON ایکس‌ری تبدیل می‌شوند."
 
 msgid "adminV2.configTester.contentLabel"
 msgstr "محتوای تست"
@@ -3448,7 +3465,8 @@ msgstr "نمایش کانفیگ‌های"
 msgid "adminV2.domains.field.showDomainsHint"
 msgstr ""
 "کاربرانی که صفحه خود را روی این دامنه باز می‌کنند، کانفیگ‌های این دامنه‌ها "
-"را می‌بینند."
+"را می‌بینند. دامنه‌های REALITY نود برای استفاده در اشتراک، به پروکسی «Node "
+"Configs» فعال نیاز دارند."
 
 msgid "adminV2.domains.field.tlsMode"
 msgstr "حالت TLS"

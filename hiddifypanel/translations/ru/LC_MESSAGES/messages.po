@@ -2032,6 +2032,12 @@ msgstr ""
 msgid "adminV2.apply.run.hide"
 msgstr "Скрыть"
 
+msgid "adminV2.apply.run.insecure"
+msgstr "Небезопасно"
+
+msgid "adminV2.apply.run.linkCopied"
+msgstr "Ссылка администратора скопирована"
+
 msgid "adminV2.apply.run.links"
 msgstr "Админ-ссылки на ваших доменах (они могли измениться)"
 
@@ -2044,6 +2050,9 @@ msgstr ""
 
 msgid "adminV2.apply.run.reloadBtn"
 msgstr "Перезагрузить"
+
+msgid "adminV2.apply.run.secure"
+msgstr "Безопасно"
 
 msgid "adminV2.apply.run.stalled"
 msgstr "Долгое время в журнале нет ничего нового. Проверьте журнал ниже."

@@ -1,7 +1,7 @@
 # Changelog
 
 
-## (unreleased)
+## v14.0.0 (2026-10-18)
 
 #### New
 
@@ -72,6 +72,8 @@
 * Better integration with the old panel. 
 
 #### Fix
+
+* Domain bug. 
 
 * Reality L7 inbounds, cert/fingerprint defaults, xray driver and admin limits Attach Reality domains to xhttp/grpc server proxies, add _v176 to re-enable Reality after upgrade, default Reality fingerprint to chrome when uTLS is none, read xray protocol/flow from generated config, and fix restore migrations, sublink commas, haproxy proto None, and admin user-limit checks on enable. 
 
@@ -195,6 +197,56 @@ Addresses CWE-78_
 * Standardize default TLS layer to 'http' across various components. 
 
 #### Other
+
+* Feat(apply): enhance admin link handling and UI updates. 
+  _- Introduced AdminLink interface to manage secure and insecure admin URLs.
+- Updated RunPanel component to display admin links with security status and copy functionality.
+- Improved user experience by showing relevant links after apply/install processes.
+- Added translations for new link-related messages in multiple languages._
+
+* Feat(apply): implement preferred admin link redirection after domain changes. 
+
+* Fix(apply): update CORS handling in ApplyLogApi to ensure proper log access during apply/install processes. 
+
+* Feat(apply): add skipConfirm prop to ApplyRunDialog for immediate execution. 
+
+* Refactor(domains): improve RTL handling and enhance DomainDialog functionality. 
+
+* Enhance telegram links rendering. 
+
+* Feat(config-tester): update application selection and user agent handling. 
+  _- Replaced user agent selection with an application dropdown in the ConfigTesterView for better clarity.
+- Introduced a new App type to manage application-specific user agents.
+- Updated backend API to validate the selected application and adjust request handling accordingly.
+- Enhanced user agent parsing logic to accommodate new application formats and improve error handling for unsupported formats.
+- Added translations for the new application selection feature in English and Persian._
+
+* Sync haproxy ssl during upgrade. 
+
+* Feat(proxy_v3): enhance rendering and parsing logic for Clash YAML and JSON. 
+  _- Improved the handling of Clash YAML by adding structured parsing to display pretty JSON in the preview dialog when JSON5 parsing fails.
+- Updated the RenderSectionResult model to include a skip_reason for better context on skipped sections.
+- Enhanced the rendering logic to conditionally return pretty JSON or the original rendered output based on formatting checks.
+- Adjusted the HTTP upgrade template to conditionally skip based on the server core type._
+
+* Feat(admin): enhance user management limits with new activation checks. 
+  _- Added methods to check for room to activate users and handle user limits more effectively.
+- Updated validation logic in UserAdmin and API endpoints to respect max active users during user activation.
+- Improved clarity in method documentation for better understanding of user limit constraints._
+
+* Refactor(ui): update layout padding and enhance DomainDialog component functionality. 
+  _- Adjusted padding properties in the main layout SCSS for improved responsiveness.
+- Modified DomainDialog to use async component loading for Json5Editor and added mobile menu handling on dialog visibility changes.
+- Updated DomainsView to conditionally render DomainDialog based on visibility state.
+- Enhanced translations for showDomainsHint in English and Persian to clarify usage requirements._
+
+* Fix(admin): improve user limits handling by adding default values for max users and active users checks. 
+
+* Feat(proxy_v3): implement allowlist for panel routing to bypass blocking for specified domains and IPs. 
+
+* Fix(proxy_v3): update user agent parsing and protocol templates for Hiddify and Sing-box compatibility. 
+
+* Fix(proxy_v3): enhance REALITY download leg validation logic. 
 
 * Refactor(node): streamline panel mode handling and remove deprecated configurations. 
   _- Introduced a new `panel_mode` function to determine the current panel mode (`child`, `parent`, or `standalone`).
