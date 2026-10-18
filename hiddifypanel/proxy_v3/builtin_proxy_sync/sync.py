@@ -207,6 +207,43 @@ def effective_base_config_content(row) -> str:
     return disk or row.builtin_content or row.content or ""
 
 
+def _norm_template_text(value: str | None) -> str:
+    return (value or "").strip()
+
+
+def _sync_catalog_override_content(row, *, catalog_content: str) -> bool:
+    """Apply catalog text to a builtin row.
+
+    An override whose body is still exactly the *previous* catalog default is treated as
+    accidental (common after early beta "edit" flows) and is reset to the new builtin.
+    Other overrides are kept; only ``builtin_content`` is updated to the new catalog.
+    """
+    changed = False
+    old_builtin = _norm_template_text(row.builtin_content)
+    new_builtin = _norm_template_text(catalog_content)
+    content = _norm_template_text(row.content)
+
+    if row.builtin_override:
+        if old_builtin != new_builtin and content == old_builtin:
+            row.builtin_content = catalog_content
+            row.builtin_override = False
+            row.content = catalog_content
+            return True
+        if row.builtin_content != catalog_content:
+            row.builtin_content = catalog_content
+            changed = True
+        return changed
+
+    if row.builtin_content != catalog_content:
+        row.builtin_content = catalog_content
+        changed = True
+    effective = row.builtin_content or ""
+    if row.content != effective:
+        row.content = effective
+        changed = True
+    return changed
+
+
 def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:
     if not row.is_builtin:
         return False
@@ -214,11 +251,7 @@ def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:
         catalog_data = catalog.model_dump() if hasattr(catalog, "model_dump") else catalog.dict()
     else:
         catalog_data = catalog
-    changed = False
-    catalog_content = catalog_data.get("content") or ""
-    if row.builtin_content != catalog_content:
-        row.builtin_content = catalog_content
-        changed = True
+    changed = _sync_catalog_override_content(row, catalog_content=catalog_data.get("content") or "")
     # Names are the admin's to change; sync only fills an empty one.
     if not row.name and catalog_data.get("name"):
         row.name = catalog_data["name"]
@@ -231,22 +264,13 @@ def sync_builtin_template(row, catalog: BuiltinTemplateRecord | dict) -> bool:
     if category is not None and row.category != category:
         row.category = category
         changed = True
-    if not row.builtin_override:
-        effective = row.builtin_content or ""
-        if row.content != effective:
-            row.content = effective
-            changed = True
     return changed
 
 
 def sync_builtin_base_config(row, catalog: dict) -> bool:
     if not row.is_builtin:
         return False
-    changed = False
-    catalog_content = catalog.get("content") or ""
-    if row.builtin_content != catalog_content:
-        row.builtin_content = catalog_content
-        changed = True
+    changed = _sync_catalog_override_content(row, catalog_content=catalog.get("content") or "")
     # Names are the admin's to change; sync only fills an empty one.
     if not row.name and catalog.get("name"):
         row.name = catalog["name"]
@@ -255,11 +279,6 @@ def sync_builtin_base_config(row, catalog: dict) -> bool:
     if row.description != val:
         row.description = val
         changed = True
-    if not row.builtin_override:
-        effective = row.builtin_content or ""
-        if row.content != effective:
-            row.content = effective
-            changed = True
     return changed
 
 

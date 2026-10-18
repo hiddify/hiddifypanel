@@ -2,8 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import ToggleSwitch from 'primevue/toggleswitch'
 import SysBadge from '@/shared/components/SysBadge.vue'
-
-const props = defineProps<{
+defineProps<{
   showToggle?: boolean
   override?: boolean
   defaultLabel?: string

@@ -19,8 +19,8 @@ from hiddifypanel.models import Child
 from hiddifypanel.models.domain import Domain
 from hiddifypanel.models.tls_store import TlsStore
 
-# The certificates HAProxy serves: written by the panel from tls_store (hiddifypanel/acme/store.py), the database is the
-# source of truth. data/ssl is the folder of acme.sh (before v14): only read once, to import its certificates.
+# HAProxy and the panel only use data/cert. tls_store (DB) is the source of truth; export writes data/cert.
+# data/ssl is the old acme.sh folder (pre-b16): import into tls_store once, then move leftover files into data/cert.
 CERT_ROOT = Path("/opt/hiddify-manager/data/cert")
 LEGACY_SSL_ROOT = Path("/opt/hiddify-manager/data/ssl")
 
@@ -341,7 +341,7 @@ def _import_row(domain_db: Domain, *, commit: bool = True) -> TlsStore | None:
 
 def import_legacy_certificates(child_id: int | None = None, *, commit: bool = True) -> int:
     """Upgrade only: import the certificate files left by acme.sh (data/ssl) or a previous export (data/cert) into
-    tls_store. After that tls_store is the only source (the panel issues the certificates and writes the files)."""
+    tls_store. After that tls_store is the only source (the panel issues the certificates and writes data/cert)."""
     from hiddifypanel.models.domain import Domain
 
     if child_id is None:
@@ -354,3 +354,56 @@ def import_legacy_certificates(child_id: int | None = None, *, commit: bool = Tr
     if commit and synced:
         db.session.commit()
     return synced
+
+
+def move_legacy_ssl_files_to_cert() -> int:
+    """Move leftover ``data/ssl/*.crt`` (+ ``.crt.key``) into ``data/cert`` when the dest is missing.
+
+    Prefer tls_store → export for the live files; this only preserves on-disk pairs that were never imported.
+    Returns how many ``.crt`` files were moved.
+    """
+    if not LEGACY_SSL_ROOT.is_dir():
+        return 0
+    try:
+        CERT_ROOT.mkdir(mode=0o2750, parents=True, exist_ok=True)
+    except OSError as exc:
+        logger.warning("certificates: can not create {}: {}", CERT_ROOT, exc)
+        return 0
+    moved = 0
+    for src_crt in sorted(LEGACY_SSL_ROOT.glob("*.crt")):
+        if not src_crt.is_file():
+            continue
+        dest_crt = CERT_ROOT / src_crt.name
+        src_key = Path(str(src_crt) + ".key")
+        dest_key = CERT_ROOT / (src_crt.name + ".key")
+        try:
+            if not dest_crt.exists():
+                src_crt.replace(dest_crt)
+                moved += 1
+                logger.info("certificates: moved {} → {}", src_crt, dest_crt)
+            else:
+                src_crt.unlink(missing_ok=True)
+            if src_key.is_file():
+                if not dest_key.exists():
+                    src_key.replace(dest_key)
+                else:
+                    src_key.unlink(missing_ok=True)
+        except OSError as exc:
+            logger.warning("certificates: can not move {}: {}", src_crt, exc)
+    return moved
+
+
+def migrate_certs_to_data_cert(*, child_id: int | None = None, export: bool = True) -> dict[str, int]:
+    """Upgrade path: import data/ssl into tls_store, move leftover files into data/cert, re-export from the DB.
+
+    Only ``data/cert`` is supported afterwards; HAProxy must not load ``data/ssl``.
+    """
+    imported = import_legacy_certificates(child_id, commit=True)
+    moved = move_legacy_ssl_files_to_cert()
+    exported = 0
+    if export:
+        from hiddifypanel.acme.store import export_all
+
+        stats = export_all(install=False)
+        exported = int(getattr(stats, "written", 0) or 0) + int(getattr(stats, "self_signed", 0) or 0)
+    return {"imported": imported, "moved": moved, "exported": exported}

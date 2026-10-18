@@ -20,9 +20,20 @@ from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_cat
 from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
     sync_builtin_presets,
 )
-from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates
+from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
 MAX_DB_VERSION = 200
+
+
+def _v177(child_id):
+    """Only data/cert is supported: import data/ssl into tls_store, move leftovers into data/cert, re-export from DB."""
+    if child_id != 0:
+        return
+    try:
+        stats = migrate_certs_to_data_cert(child_id=child_id, export=True)
+        logger.info("certificates: migrate to data/cert {}", stats)
+    except Exception as exc:
+        logger.warning("certificates: migrate to data/cert skipped: {}", exc)
 
 
 def _v176(child_id):

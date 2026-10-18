@@ -14,6 +14,10 @@ from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, fake_ip_for_sub_link
 
 
 def make_jinja_context(ctx: BaseModel) -> dict[str, Any]:
+    from hiddifypanel.proxy_v3.tls_store_sync import CERT_ROOT
+
+    # Always injected (not from editable templates): HAProxy must load panel-exported certs.
+    haproxy_cert_dir = str(CERT_ROOT).rstrip("/") + "/"
     return {
         "ctx": ctx,
         "skip": skip_proxy,
@@ -22,6 +26,7 @@ def make_jinja_context(ctx: BaseModel) -> dict[str, Any]:
         "ConfigEnum": ConfigEnum,
         "enumerate": enumerate,
         "fake_ip_for_sub_link": fake_ip_for_sub_link(),
+        "haproxy_cert_dir": haproxy_cert_dir,
     }
 
 
