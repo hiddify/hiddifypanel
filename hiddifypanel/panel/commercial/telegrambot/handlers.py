@@ -28,16 +28,21 @@ def context(chat_id: int, message_id: int | None = None, call_id: str | None = N
 
 
 def _link_admin(chat_id: int, uuid: str) -> AdminUser | None:
+    """One chat is one admin: linking here unlinks it from any other admin (the bot would otherwise keep answering
+    as whichever admin it found first)."""
     found = AdminUser.by_uuid(uuid)
     if found:
+        AdminUser.query.filter(AdminUser.telegram_id == chat_id, AdminUser.id != found.id).update({AdminUser.telegram_id: None})
         found.telegram_id = chat_id
         db.session.commit()
     return found
 
 
 def _link_user(chat_id: int, uuid: str) -> User | None:
+    """One chat is one user account, the same way."""
     found = User.by_uuid(uuid)
     if found:
+        User.query.filter(User.telegram_id == chat_id, User.id != found.id).update({User.telegram_id: None})
         found.telegram_id = chat_id
         db.session.commit()
     return found
