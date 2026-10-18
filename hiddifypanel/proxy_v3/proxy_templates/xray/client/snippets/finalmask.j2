@@ -1,5 +1,5 @@
 {# finalmask is an object, never a quoted string. #}
-{% set finalmask = ctx.proxy.domain.extra.finalmask | compactjson if ctx.proxy.domain.extra.finalmask else "" %}
+{% set finalmask = ctx.proxy.domain.extra.finalmask if ctx.proxy.domain.extra.finalmask else "" %}
 {% if finalmask %}
   "finalmask": {{ finalmask }},
 {% endif %}

@@ -54,7 +54,8 @@
     "ech": {
       "enabled": true,
       {% if domain.echinfo %}
-      "config": ["-----BEGIN ECH CONFIGS-----", "{{ domain.echinfo }}", "-----END ECH CONFIGS-----","cloudflare-ech.com+udp://1.1.1.1"]
+      {# Only PEM lines: an Xray-style "name+udp://dns" entry here makes the core fail ("invalid ECH configs pem"). #}
+      "config": ["-----BEGIN ECH CONFIGS-----", "{{ domain.echinfo }}", "-----END ECH CONFIGS-----"]
       {% else %}
       "config": [],
       "query_server_name": "{{ domain.sni }}"
