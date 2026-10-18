@@ -1,5 +1,7 @@
 {% set data.net = 'xhttp' %}
 {% set data.type = 'auto' %}
 {% if proxy.is_download_upload_different() %}
-{% set data.extra | compactjson %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
+{% set _extra %}{"downloadSettings":{% include 'sublink/xhttp_download_settings' %}}{% endset %}
+{% set compacted = _extra | compactjson %}
+{% if compacted %}{% set data.extra = compacted %}{% endif %}
 {% endif %}

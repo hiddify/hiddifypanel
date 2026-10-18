@@ -105,22 +105,37 @@ def _jinja_compact_json(value: Any) -> str:
 
     Accepts dict/list/namespace objects, or a JSON text block (as produced by
     ``{% set x | compactjson %}...{% endset %}``) which is parsed then re-dumped.
+
+    Never returns the JSON literal ``null`` (that became ``extra=null`` in sublink query
+    strings when parse failed or the value was empty/Undefined). Empty / failed → ``""``
+    so ``urlencoded`` omits the param.
     """
     from hiddifypanel.hutils.proxy.shared import ProxyJsonEncoder
+
+    if isinstance(value, Undefined) or value is None:
+        return ""
 
     if isinstance(value, str):
         text = value.strip()
         if not text:
             return ""
-        try:
-            from hiddifypanel.proxy_v3.config_builder.render import _parse_json5
+        from hiddifypanel.proxy_v3.config_builder.render import _parse_json5
 
-            value, _ = _parse_json5(text)
-        except json.JSONDecodeError:
-            # Not JSON — collapse whitespace rather than double-encode.
+        # ``_parse_json5`` returns ``(None, err)`` on failure instead of raising — do not
+        # treat that as a successful parse of JSON null (that became ``extra=null`` in links).
+        parsed, err = _parse_json5(text)
+        if err is not None:
+            if text.lstrip()[:1] in "{[":
+                return ""  # broken JSON object/array: omit the param
+            # Plain text block — collapse whitespace rather than double-encode.
             return re.sub(r"\s+", " ", text).strip()
+        if parsed is None:
+            return ""
+        value = parsed
 
     value = _omit_empty_json_values(_to_json_value(value))
+    if value is None or value == "" or value == [] or value == {}:
+        return ""
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), cls=ProxyJsonEncoder)
 
 
@@ -129,12 +144,17 @@ PANEL_STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
 
 
 def _urlencode_pair(key: Any, val: Any) -> tuple[str, Any] | None:
-    if val is None or val == "":
+    if val is None or val == "" or isinstance(val, Undefined):
+        return None
+    # compactjson used to emit the literal "null" on parse failure; never put that in a query.
+    if isinstance(val, str) and val.strip().lower() == "null":
         return None
     if isinstance(val, bool):
         val = "true" if val else "false"
     elif isinstance(val, (dict, list)):
         val = json.dumps(val, ensure_ascii=False, separators=(",", ":"))
+        if val in ("null", "{}", "[]"):
+            return None
     return (str(key), val)
 
 

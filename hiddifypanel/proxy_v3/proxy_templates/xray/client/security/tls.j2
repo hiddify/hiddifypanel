@@ -27,7 +27,7 @@
     {% endif %}
 
     
-    "alpn": {{ tls_layer.alpns() }},
+    "alpn": {{ tls_layer.alpns() | tojson }},
     {% if domain.extra.ech_config %}
     "echConfigList": "{{ domain.extra.ech_config }}",
     {% elif domain.ech and domain.echinfo %}
