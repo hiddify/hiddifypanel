@@ -167,7 +167,7 @@
 
     <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
     <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
-    <DomainDialog v-if="editVisible" v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
+    <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
 
     <Dialog v-model:visible="certVisible" modal :draggable="false" :header="t('domains.getCert')" :style="{ width: 'min(32rem, calc(100vw - 1.5rem))' }" @after-hide="onCertClosed">
@@ -646,11 +646,15 @@ onBeforeUnmount(() => feed?.stop())
   list-style: none;
 }
 .dm-row {
+  /* Keep card chrome LTR (accent + number on the left) in Persian too — mirroring the
+     whole grid made the list look broken vs English / the users table. Body text still RTL. */
+  direction: ltr;
   display: grid;
   grid-template-columns: auto auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.85rem;
-  padding: 0.85rem 1rem 0.85rem 0.6rem;
+  padding-block: 0.85rem;
+  padding-inline: 0.6rem 1rem;
   border-radius: 16px;
   background: var(--p-content-background);
   border: 1px solid var(--p-content-border-color);
@@ -661,13 +665,18 @@ onBeforeUnmount(() => feed?.stop())
     box-shadow 0.2s ease,
     transform 0.15s ease;
 }
+html[dir='rtl'] .dm-row__body {
+  direction: rtl;
+  text-align: start;
+}
 .dm-row:hover {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
 }
 /* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: smaller and quieter than real domains. */
 .dm-row.dm-row--minor {
   gap: 0.5rem 0.6rem;
-  padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+  padding-block: 0.35rem;
+  padding-inline: 0.4rem 0.75rem;
   border-radius: 10px;
   border-inline-start-width: 3px;
   background: transparent;
@@ -942,7 +951,8 @@ a.dm-row__domain:hover {
   .dm-row {
     grid-template-columns: auto auto minmax(0, 1fr);
     gap: 0.6rem 0.7rem;
-    padding: 0.75rem 0.75rem 0.6rem 0.4rem;
+    padding-block: 0.75rem 0.6rem;
+    padding-inline: 0.4rem 0.75rem;
     border-radius: 14px;
   }
   .dm-row__handle {

@@ -624,10 +624,12 @@ async function copyIp(ip: string) {
   opacity: 0;
   transform: translateX(-14px);
 }
-:global([dir='rtl']) .wz-slide-enter-from {
+/* Use html[dir] (not :global([dir]) .foo) — the latter compiles to bare [dir] {…}
+   and was translating <html>/<body>, shifting the whole Domains page. */
+html[dir='rtl'] .wz-slide-enter-from {
   transform: translateX(-14px);
 }
-:global([dir='rtl']) .wz-slide-leave-to {
+html[dir='rtl'] .wz-slide-leave-to {
   transform: translateX(14px);
 }
 @keyframes wz-pop {
