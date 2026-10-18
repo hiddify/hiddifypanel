@@ -1,7 +1,8 @@
 """Domains page API (admin v2): list, add (with detection), edit, order, certificates and gateway port checks.
 
-Saving uses the same rules as the classic page (panel/domain_rules.py). Every change needs the server
-configs regenerated (``restart_mode: apply_config``).
+Saving uses the same rules as the classic page (panel/domain_rules.py). Core configs (certs inline) are
+rebuilt immediately via ``apply-users``; HAProxy / full gateway still needs Apply Configs
+(``restart_mode: apply_config``).
 """
 
 from __future__ import annotations
@@ -406,6 +407,13 @@ def _apply_body(d: Domain, body: dict[str, Any], child_id: int) -> None:
             setattr(d, key, None if port in (None, 0, default) else port)
 
 
+def _cores_after_domain_change() -> None:
+    """Dump + reload xray / hiddify-core / … so new or changed domains (and their certs) are live in the cores."""
+    from hiddifypanel.panel import hiddify
+
+    hiddify.quick_apply_users()
+
+
 def _save(d: Domain, *, is_created: bool) -> list[str]:
     try:
         warnings = domain_rules.validate_domain(d, is_created=is_created)
@@ -417,6 +425,7 @@ def _save(d: Domain, *, is_created: bool) -> list[str]:
     db.session.commit()
     if hconfig(ConfigEnum.first_setup):
         set_hconfig(ConfigEnum.first_setup, False)
+    _cores_after_domain_change()
     return warnings
 
 
@@ -487,6 +496,7 @@ class DomainsPageItemApi(MethodView):
             acme_store.remove_domain(name)
         except Exception as e:
             logger.warning(f"certificate of the deleted domain {name} not removed yet: {e}")
+        _cores_after_domain_change()
         return {"warnings": warnings, "restart_mode": APPLY, **_list_out(child_id)}
 
 

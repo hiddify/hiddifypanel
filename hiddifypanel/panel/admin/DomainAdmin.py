@@ -258,10 +258,17 @@ class DomainAdmin(AdminLTEModelView):
     def after_model_change(self, form, model, is_created):
         if hconfig(ConfigEnum.first_setup):
             set_hconfig(ConfigEnum.first_setup, False)
-        from hiddifypanel.panel import domain_rules
+        from hiddifypanel.panel import domain_rules, hiddify
 
         domain_rules.request_certificate(model)
+        # Cores keep certificates / domain lists inline: refresh them now (HAProxy still wants Apply Configs).
+        hiddify.quick_apply_users()
         # Nodes notify the parent from the commit hook (models/cache_events.py).
+
+    def after_model_delete(self, model):
+        from hiddifypanel.panel import hiddify
+
+        hiddify.quick_apply_users()
 
     def is_accessible(self):
         if login_required(roles={Role.super_admin, Role.admin})(lambda: True)() != True:
