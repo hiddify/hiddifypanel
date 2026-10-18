@@ -167,13 +167,19 @@ function ask(key: ApplyAction) {
   })
 }
 
-/** Bring the run's panel (at the top of the page) into view: after a click far down, the progress is not on screen. */
+/** Jump to the absolute top of the page so the run panel (under the title) is on screen after a click far down. */
 function showRunPanel() {
   void nextTick(() => {
-    const panel = document.querySelector<HTMLElement>('.ap-page .ap-run')
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    if (panel) panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
-    else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+    // Instant: smooth scrollIntoView on .ap-run stopped short (left PageHeader above the fold).
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+    // If a layout ancestor is the real scroller, reset that too.
+    for (let el = document.querySelector('.ap-page')?.parentElement; el; el = el.parentElement) {
+      if (!(el instanceof HTMLElement)) continue
+      const oy = getComputedStyle(el).overflowY
+      if ((oy === 'auto' || oy === 'scroll') && el.scrollTop) el.scrollTop = 0
+    }
   })
 }
 
