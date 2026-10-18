@@ -63,7 +63,8 @@ class BaseVar(BaseModel):
 @cache.cache(600)
 def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: list[str] | None = None) -> list[BaseVar]:
     del common_core_token  # cache key only; selection is re-read from hconfig below
-    proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).all()
+    # In the proxies' own order (it was the database's, whatever sort_order said)
+    proxies: list[CustomProxy] = CustomProxy.query.options(selectinload(CustomProxy.client_cores)).filter(CustomProxy.enable == True).order_by(CustomProxy.sort_order, CustomProxy.id).all()
     child_hconfigs: dict[int, HConfigVar] = get_all_hconfigs()
     # ``domain_names is not None``: explicit list (including []) — never fall back to "all".
     domains: list[DomainIPVar] = get_domains_by_name(domain_names) if domain_names is not None else get_availble_domains(sublink_domain)
@@ -83,7 +84,25 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
         )
         all_bases.append(base)
 
-    return [b for b in all_bases if filter_proxy(b)]
+    return _domain_major([b for b in all_bases if filter_proxy(b)], domains)
+
+
+def _domain_major(bases: list[BaseVar], domains: list[DomainIPVar]) -> list[BaseVar]:
+    """The first domain's profiles first, as the Domains page says, then the next domain's: one base per (domain, proxy)
+    for the domain gateways (the list was grouped by proxy, so reordering domains changed nothing visible). IP-mode and
+    no-inbound proxies merge their domains (one profile per IP), so they stay whole, at their first domain."""
+    rank = {d.id: i for i, d in enumerate(domains)}
+    last = len(rank)
+    keyed: list[tuple[tuple[int, int, int], BaseVar]] = []
+    for index, base in enumerate(bases):
+        doms = base.proxy.domains
+        if base.proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway) and len(doms) > 1:
+            for d in doms:
+                keyed.append(((rank.get(d.id, last), 0, index), BaseVar(proxy=base.proxy.model_copy(update={"domains": [d]}), hconfig=base.hconfig, shared_cert=base.shared_cert)))
+        else:
+            keyed.append(((min((rank.get(d.id, last) for d in doms), default=last), 1, index), base))
+    keyed.sort(key=lambda item: item[0])
+    return [base for _, base in keyed]
 
 
 def filter_domain_for_proxy(d: DomainIPVar, proxy: ProxyVar, *, reality_enable: bool = True) -> bool:
