@@ -200,11 +200,14 @@ export function adminDomainChanged(links: AdminLink[], currentHost: string = win
 }
 
 /**
- * After apply/install, Close may leave the old origin for a new admin link.
- * Only HTTPS links with a real certificate (``secure``): never send the browser into a cert warning.
- * Same host → null. Different host → best secure link (real domain over IP/sslip).
+ * After apply/install/status, Close may leave this origin for another admin link — but only when this one is no longer
+ * usable: the current host is missing from ``links``, or it is there without a real certificate (``secure: false``).
+ * Never redirect just because a nicer domain also exists. Only HTTPS + real cert destinations.
  */
 export function preferredAdminRedirect(links: AdminLink[], currentHost: string = window.location.host): string | null {
+  const current = links.find((l) => linkHost(l) === currentHost)
+  // Still here with a valid cert: stay (do not jump to another domain).
+  if (current?.secure) return null
   const others = links
     .filter((l) => l.secure && linkHost(l) !== currentHost)
     .map((l) => ({ url: l.url, score: adminLinkHostScore(linkHost(l)) }))
