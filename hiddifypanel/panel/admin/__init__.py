@@ -19,6 +19,13 @@ admin_bp = APIBlueprint("admin", __name__, template_folder="templates", enable_o
 flaskadmin = Admin(endpoint="admin", base_template="flaskadmin-layout.html", translations_path="./hiddifypanel/translations/")
 
 
+@flask_bp.before_request
+def redirect_legacy_admin():
+    # The legacy Flask-Admin pages only work in debug mode (their layout needs the legacy Dashboard); otherwise use admin_v2.
+    if hconfig(ConfigEnum.log_level) != "debug":
+        return redirect(f"/{request.view_args.get('proxy_path')}/admin/v2/")
+
+
 def init_app(app):
 
     from .UserAdmin import UserAdmin
