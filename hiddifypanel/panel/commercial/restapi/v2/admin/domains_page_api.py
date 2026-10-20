@@ -145,8 +145,9 @@ _PROXY_KIND = {
 
 def ip_based_allowed(mode, fake_mode) -> bool:
     """IP-based custom proxies (SSH, Hysteria, TUIC, WireGuard, ...) are offered for valid direct and relay domains: a relay
-    passes the traffic on to this server, and those proxies take relay-valid among their domain modes."""
-    return mode in (DomainType.direct, DomainType.relay) and fake_mode == FakeMode.valid
+    passes the traffic on to this server, and those proxies take relay-valid among their domain modes. A direct fake
+    domain (decoy name, no DNS check) takes them too, as in v12; the proxy still needs direct-fake in its domain modes."""
+    return (mode in (DomainType.direct, DomainType.relay) and fake_mode == FakeMode.valid) or (mode == DomainType.direct and fake_mode == FakeMode.fake)
 
 
 def _proxies_list(child_id: int) -> list[dict[str, Any]]:
