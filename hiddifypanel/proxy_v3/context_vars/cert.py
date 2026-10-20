@@ -3,9 +3,11 @@ from __future__ import annotations
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy import case
 from sqlalchemy.orm import joinedload
 
-from hiddifypanel.models.domain import Domain
+from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
+from hiddifypanel.models.domain import Domain, DomainType
 from hiddifypanel.models.tls_store import TlsStore
 
 
@@ -100,12 +102,23 @@ def _cert_from_store(row: TlsStore) -> CertVar:
 def select_shared_certificate() -> CertVar:
     """Pick one cert for IP-based proxies: valid if possible, otherwise any usable cert.
 
-    Same ORM query for client and server: trusted, then valid, then lowest domain id.
+    Same ORM query for client and server: a domain with an IP-based proxy attached first, then trusted, then valid, then
+    not a subscription-only domain (its name would show up as the TLS server name of the proxies and tie them to the
+    subscription link), then lowest domain id.
     """
     row: TlsStore | None = (
-        TlsStore.query.options(joinedload(TlsStore.domain))
+        TlsStore.query.join(TlsStore.domain)
+        .options(joinedload(TlsStore.domain))
         .filter(TlsStore.certificate != "", TlsStore.private_key != "")
-        .order_by(TlsStore.valid_cert.desc(), TlsStore.self_signed.asc(), TlsStore.domain_id.asc())
+        .order_by(
+            # A domain the admin attached an IP-based proxy to (e.g. a fake decoy name for Hysteria2) is the name those
+            # proxies should present, even when its cert is self-signed and another domain has a trusted one.
+            case((Domain.custom_proxies.any(CustomProxy.mode == CustomProxyMode.ip), 0), else_=1),
+            TlsStore.valid_cert.desc(),
+            TlsStore.self_signed.asc(),
+            case((Domain.mode == DomainType.sub_link_only, 1), else_=0),
+            TlsStore.domain_id.asc(),
+        )
         .first()
     )
     if row is None:
