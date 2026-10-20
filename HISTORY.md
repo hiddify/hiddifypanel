@@ -1,6 +1,14 @@
 # Changelog
 
 
+## v14.0.5 (2026-10-20)
+
+#### Other
+
+* Chore: update subproject reference in user_front to latest commit. 
+
+
+
 ## v14.0.4 (2026-10-20)
 
 #### Other
