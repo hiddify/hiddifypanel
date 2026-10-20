@@ -1,7 +1,7 @@
 import flask_admin
 from apiflask import APIBlueprint
 from flask import redirect, render_template, request
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView, expose
 from flask_adminlte3 import AdminLTE3
 
 from hiddifypanel import Events
@@ -16,7 +16,18 @@ from .DomainAdmin import DomainAdmin
 flask_bp = APIBlueprint("flask", __name__, template_folder="templates", enable_openapi=False)
 admin_bp = APIBlueprint("admin", __name__, template_folder="templates", enable_openapi=False)
 
-flaskadmin = Admin(endpoint="admin", base_template="flaskadmin-layout.html", translations_path="./hiddifypanel/translations/")
+
+
+class LegacyIndexView(AdminIndexView):
+    # The legacy Dashboard is only registered in debug mode; otherwise send /admin/ to admin_v2.
+    @expose("/")
+    def index(self):
+        if hconfig(ConfigEnum.log_level) != "debug":
+            return redirect(f"/{request.view_args.get('proxy_path')}/admin/v2/")
+        return super().index()
+
+
+flaskadmin = Admin(endpoint="admin", index_view=LegacyIndexView(), base_template="flaskadmin-layout.html", translations_path="./hiddifypanel/translations/")
 
 
 @flask_bp.before_request
