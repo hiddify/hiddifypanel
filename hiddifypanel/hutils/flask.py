@@ -44,6 +44,17 @@ def static_url_for(**values):
 
 
 def hurl_for(endpoint, **values):
+    # Legacy pages can still render their sidebar when debug-only views are absent.
+    # Keep registered legacy views in debug mode; otherwise link to Admin V2.
+    legacy_sections = {
+        "admin.Dashboard:index": "",
+        "admin.ProxyAdmin:index": "custom-proxies",
+        "admin.SettingAdmin:index": "settings",
+        "admin.Backup:index": "backup",
+    }
+    if endpoint in legacy_sections and endpoint not in current_app.view_functions:
+        values.setdefault("subpath", legacy_sections[endpoint])
+        endpoint = "admin.admin_v2"
     if Child.current().id != 0:
         new_endpoint = "child_" + endpoint
         if new_endpoint in current_app.view_functions:
