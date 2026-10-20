@@ -826,14 +826,17 @@ def _v45():
 
 def _v42():
 
-    for k in [
+    keys = [
         ConfigEnum.telegram_fakedomain,
         ConfigEnum.ssfaketls_fakedomain,
         ConfigEnum.shadowtls_fakedomain,
-    ]:
+    ]
+    decoy = hconfig(ConfigEnum.decoy_domain)
+    domains = [d for d in dict.fromkeys(hutils.network.get_random_domains(len(keys) + 1)) if d != decoy]
+    domains += hutils.network.random_fake_sites(len(keys), exclude={decoy, *domains})  # OONI returned too few
+    for k, domain in zip(keys, domains):
         if not hconfig(k):
-            rnd_domains = hutils.network.get_random_domains(1)
-            add_config_if_not_exist(k, rnd_domains[0])
+            add_config_if_not_exist(k, domain)
 
 
 def _v41():

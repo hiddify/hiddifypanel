@@ -21,6 +21,8 @@ from hiddifypanel.cache import STATIC, cache
 from hiddifypanel.hutils.network import maxmind
 from hiddifypanel.models import *
 
+from .fake_sites import FAKE_SITES
+
 
 def get_domain_ip_old(domain: str, retry: int = 3, version: Literal[4, 6] | None = None) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     res = None
@@ -262,6 +264,11 @@ def get_random_user_agent():
     return "Mozilla/5.0"
 
 
+def random_fake_sites(count: int, exclude: set[str] = frozenset()) -> list[str]:
+    """Distinct random fake domains (decoy / Telegram FakeTLS ...) from the checked list."""
+    return random.sample([d for d in FAKE_SITES if d not in exclude], count)
+
+
 _FALLBACK_DOMAINS = [
     "fa.wikipedia.org",
     "en.wikipedia.org",
@@ -290,7 +297,7 @@ _FALLBACK_DOMAINS = [
 
 
 def get_random_domains(count: int = 1, retry: int = 2) -> list[str]:
-    """Pick random domains for decoy/reality.
+    """Pick random domains for decoy/reality from OONI (sites reachable in Iran); FAKE_SITES when it fails.
 
     Network calls are hard-capped so a fresh ``init_db`` cannot hang for minutes
     when OONI/CDN is unreachable (common in Docker / restricted networks).
@@ -305,16 +312,13 @@ def get_random_domains(count: int = 1, retry: int = 2) -> list[str]:
         if len(domains) >= count:
             return random.sample(domains, count)
         if domains:
-            padded = list(domains)
-            while len(padded) < count:
-                padded.append(random.choice(_FALLBACK_DOMAINS))
-            return padded[:count]
+            return domains + random_fake_sites(count - len(domains), exclude=set(domains))
         raise ValueError("OONI returned no usable domains")
     except BaseException as e:
         print("Error, getting random domains... ", e, "retrying...", retry)
         if retry <= 0:
-            print("Error, using default domains")
-            return random.sample(_FALLBACK_DOMAINS, min(count, len(_FALLBACK_DOMAINS)))
+            print("Error, using the fake sites list")
+            return random_fake_sites(count)
         return get_random_domains(count, retry - 1)
 
 
@@ -380,11 +384,6 @@ def get_random_decoy_domain() -> str:
                     continue
         return None
 
-    local = random.sample(_FALLBACK_DOMAINS, min(8, len(_FALLBACK_DOMAINS)))
-    found = _first_letsencrypt(local)
-    if found:
-        return found
-
     try:
         found = _first_letsencrypt(get_random_domains(8, retry=1))
         if found:
@@ -392,7 +391,9 @@ def get_random_decoy_domain() -> str:
     except BaseException:
         pass
 
-    return "www.wikipedia.org"
+    # OONI failed or had no Let's Encrypt site: the checked list (still on Let's Encrypt? offline: any of them).
+    candidates = random_fake_sites(8)
+    return _first_letsencrypt(candidates) or candidates[0]
 
 
 def is_domain_use_letsencrypt(domain: str) -> bool:
