@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v14.0.3 (2026-10-20)
+
+#### Other
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Feat(admin): implement legacy dashboard redirection in debug mode. 
+
+* Feat(apply): enhance quick_apply_users to handle domain changes. 
+
+* Feat(admin): implement legacy dashboard redirection in debug mode. 
+
+
+
 ## v14.0.2 (2026-10-18)
 
 #### Other
