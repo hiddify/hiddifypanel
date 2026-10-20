@@ -51,6 +51,8 @@ def commander(command: Command, run_in_background=True, **kwargs: str | int) -> 
         base_cmd.append("restart-services")
     elif command == Command.apply_users:
         base_cmd.append("apply-users")
+        if kwargs.get("domain"):
+            base_cmd.append("--domain")
     elif command == Command.temporary_access:
         port = str(kwargs.get("port"))
         if not port or not port.isnumeric():
