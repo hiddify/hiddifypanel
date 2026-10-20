@@ -66,7 +66,9 @@ def _iso(value: datetime.date | datetime.datetime | None) -> str | None:
     if value is None:
         return None
     if isinstance(value, datetime.datetime):
-        return None if value.year < 1970 else value.isoformat()
+        # Naive database times follow the panel process timezone (UTC in Docker).
+        # Include the offset so browsers do not parse them as browser-local time.
+        return None if value.year < 1970 else value.astimezone(datetime.timezone.utc).isoformat()
     return value.isoformat()
 
 
