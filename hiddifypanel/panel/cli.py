@@ -1,4 +1,5 @@
 import datetime
+import html
 import ipaddress
 import json
 import os
@@ -56,7 +57,7 @@ def backup_task():
             caption = backup_caption()
             with open(dst, "rb") as document:
                 try:
-                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.split("backup/")[-1], caption=caption[:1000])
+                    bot.send_document(admin.telegram_id, document, visible_file_name=dst.split("backup/")[-1], caption=caption, parse_mode="HTML")
                 except Exception as e:
                     logger.exception(e)
 
@@ -106,7 +107,7 @@ def remove_old_backups(dst_dir: str):
 
 
 def backup_caption() -> str:
-    """The Telegram backup message: the owner's panel links, one block per kind."""
+    """The Telegram backup message (HTML): one clickable line per panel link; kept under the 1024-char caption limit."""
     owner = AdminUser.get_super_admin()
 
     def kind(d: Domain) -> str:
@@ -115,13 +116,21 @@ def backup_caption() -> str:
         except ValueError:
             return "CDN" if d.mode == DomainType.cdn else "Relay" if d.mode == DomainType.relay else "Domain"
 
-    blocks = ["📀 Backup:"]
+    def link(title: str, url: str) -> str:
+        return f'<a href="{html.escape(url)}">{title}</a>'
+
+    blocks = ["📀 <b>Backup:</b>"]
     server_ip = hutils.network.get_ip_str(4)
     if server_ip:
-        blocks.append(f"⚠️ Not Secure IPv4\n{hiddify.get_account_panel_link(owner, server_ip, is_https=False)}")
+        blocks.append("⚠️ " + link("Not Secure IPv4", hiddify.get_account_panel_link(owner, server_ip, is_https=False)))
     for d in Domain.get_domains():
-        blocks.append(f"🔐 Secure {kind(d)}\n{hiddify.get_account_panel_link(owner, d.domain)}")
-    return "\n\n".join(blocks)
+        blocks.append("🔐 " + link(f"Secure {kind(d)}", hiddify.get_account_panel_link(owner, d.domain)))
+    caption = blocks[0]
+    for b in blocks[1:]:
+        if len(caption) + len(b) + 2 > 1024:
+            break
+        caption += "\n\n" + b
+    return caption
 
 
 def admin_path():
