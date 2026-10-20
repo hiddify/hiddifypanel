@@ -2431,6 +2431,10 @@
       "description": "Ativar o protocolo AnyTLS",
       "label": "AnyTLS"
     },
+    "backup_keep_days": {
+      "description": "Automatic backups older than this are deleted so they do not fill the disk. 0 keeps them all",
+      "label": "🗄️ Keep Backups (days)"
+    },
     "auto_update": {
       "description": "Todos os dias às 3:00 da manhã, verificaremos se há uma nova atualização. se houver uma nova atualização disponível, atualizaremos o sistema automaticamente",
       "label": "🔄 Atualização automática"

@@ -1,4 +1,5 @@
 import datetime
+import ipaddress
 import json
 import os
 import uuid
@@ -44,6 +45,7 @@ def backup_task():
     with os.fdopen(fd, "w", encoding="utf-8") as fp:
         json.dump(dbdict, fp, indent=2, sort_keys=True, default=str)
     print(dst)
+    remove_old_backups(dst_dir)
     if hconfig(ConfigEnum.telegram_bot_token):
         from hiddifypanel.panel.commercial.telegrambot import bot, register_bot
 
@@ -51,7 +53,7 @@ def backup_task():
             register_bot(True)
 
         for admin in db.session.query(AdminUser).filter(AdminUser.mode == AdminMode.super_admin, AdminUser.telegram_id is not None, AdminUser.telegram_id != 0).all():
-            caption = "Backup \n" + admin_links()
+            caption = backup_caption()
             with open(dst, "rb") as document:
                 try:
                     bot.send_document(admin.telegram_id, document, visible_file_name=dst.split("backup/")[-1], caption=caption[:1000])
@@ -83,6 +85,43 @@ def admin_links():
 
     print(admin_links)
     return admin_links
+
+
+def remove_old_backups(dst_dir: str):
+    """Delete automatic backups older than backup_keep_days (0: keep them all)."""
+    from hiddifypanel.panel.commercial.restapi.v2.admin.backup_api import FILE_RE
+
+    keep_days = int(hconfig(ConfigEnum.backup_keep_days) or 0)
+    if keep_days <= 0:
+        return
+    oldest = datetime.datetime.now() - datetime.timedelta(days=keep_days)
+    for name in os.listdir(dst_dir):
+        if not FILE_RE.match(name):
+            continue
+        if datetime.datetime.strptime(name, "%Y_%m_%d__%H_%M_%S.json") < oldest:
+            try:
+                os.remove(os.path.join(dst_dir, name))
+            except OSError as e:
+                logger.warning(f"backup: could not remove {name}: {e}")
+
+
+def backup_caption() -> str:
+    """The Telegram backup message: the owner's panel links, one block per kind."""
+    owner = AdminUser.get_super_admin()
+
+    def kind(d: Domain) -> str:
+        try:
+            return f"IPv{ipaddress.ip_address(d.domain.strip('[]')).version}"
+        except ValueError:
+            return "CDN" if d.mode == DomainType.cdn else "Relay" if d.mode == DomainType.relay else "Domain"
+
+    blocks = ["📀 Backup:"]
+    server_ip = hutils.network.get_ip_str(4)
+    if server_ip:
+        blocks.append(f"⚠️ Not Secure IPv4\n{hiddify.get_account_panel_link(owner, server_ip, is_https=False)}")
+    for d in Domain.get_domains():
+        blocks.append(f"🔐 Secure {kind(d)}\n{hiddify.get_account_panel_link(owner, d.domain)}")
+    return "\n\n".join(blocks)
 
 
 def admin_path():

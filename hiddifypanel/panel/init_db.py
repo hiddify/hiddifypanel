@@ -25,6 +25,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v178(child_id):
+    """Automatic backups were never removed and could fill the disk: keep 30 days by default."""
+    if child_id != 0:
+        return
+    add_config_if_not_exist(ConfigEnum.backup_keep_days, 30, child_id)
+
+
 def _v177(child_id):
     """Only data/cert is supported: import data/ssl into tls_store, move leftovers into data/cert, re-export from DB."""
     if child_id != 0:

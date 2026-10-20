@@ -3113,6 +3113,10 @@
       "description": "Enable AnyTLS protocol",
       "label": "AnyTLS"
     },
+    "backup_keep_days": {
+      "description": "Automatic backups older than this are deleted so they do not fill the disk. 0 keeps them all",
+      "label": "🗄️ Keep Backups (days)"
+    },
     "auto_update": {
       "description": "Every day at 3:00 AM, we will check for a new update. if there is a new update available, we will update the system automatically",
       "label": "🔄 Auto Update"

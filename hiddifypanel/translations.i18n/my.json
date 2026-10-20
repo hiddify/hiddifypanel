@@ -2426,6 +2426,10 @@
       "description": "AnyTLS protocol ကို ဖွင့်ပါ",
       "label": "AnyTLS"
     },
+    "backup_keep_days": {
+      "description": "Automatic backups older than this are deleted so they do not fill the disk. 0 keeps them all",
+      "label": "🗄️ Keep Backups (days)"
+    },
     "auto_update": {
       "description": "နေ့စဉ် နံနက် 3:00 နာရီတွင် အပ်ဒိတ်အသစ်ကို စစ်ဆေးပါမည်။ အပ်ဒိတ်အသစ်ရရှိပါက၊ ကျွန်ုပ်တို့သည် စနစ်အား အလိုအလျောက် မွမ်းမံပါမည်။",
       "label": "🔄 အလိုအလျောက် မွမ်းမံ"

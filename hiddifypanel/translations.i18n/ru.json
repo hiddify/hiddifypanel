@@ -2431,6 +2431,10 @@
       "description": "Включить протокол AnyTLS",
       "label": "AnyTLS"
     },
+    "backup_keep_days": {
+      "description": "Automatic backups older than this are deleted so they do not fill the disk. 0 keeps them all",
+      "label": "🗄️ Keep Backups (days)"
+    },
     "auto_update": {
       "description": "Система автоматически обновится в 3:00 утра при наличии обновлений",
       "label": "🔄 Автоматическое обновление"

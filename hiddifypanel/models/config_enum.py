@@ -247,6 +247,7 @@ class ConfigEnum(metaclass=FastEnum):
     speed_test = _BoolConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)
     only_ipv4 = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
     max_proxy_ips_per_version = _IntConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
+    backup_keep_days = _IntConfigDscr(ConfigCategory.general, hide_in_virtual_child=True)
 
     shared_secret = _StrConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config, hide_in_virtual_child=True)
 

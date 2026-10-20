@@ -2403,6 +2403,10 @@
       "description": "Si vous autorisez un SNI non valide, vous pouvez utiliser n'importe quel domaine plutôt que votre domaine d'origine pour accéder au proxy (non recommandé)",
       "label": "🆗 Autoriser le SNI invalide"
     },
+    "backup_keep_days": {
+      "description": "Automatic backups older than this are deleted so they do not fill the disk. 0 keeps them all",
+      "label": "🗄️ Keep Backups (days)"
+    },
     "auto_update": {
       "description": "Chaque jour à 3h00, nous rechercherons une nouvelle mise à jour. si une nouvelle mise à jour est disponible, nous mettrons à jour le système automatiquement",
       "label": "🔄 Mise à jour automatique"

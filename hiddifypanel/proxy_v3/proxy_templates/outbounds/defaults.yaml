@@ -54,8 +54,8 @@ outbounds:
       - homedepot.com
       - flutter.dev
       - adobe.com
+    # No Google: Gemini does not work over WARP IPs, so Google goes direct.
     geosites:
-      - geosite:google
       - geosite:netflix
       - geosite:spotify
       - geosite:nvidia
@@ -65,7 +65,6 @@ outbounds:
       - geosite:reddit
       - geosite:openai
     rule_sets:
-      - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs
       - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-netflix.srs
       - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-spotify.srs
       - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-nvidia.srs
@@ -81,7 +80,6 @@ outbounds:
       - https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-homedepot.srs
       # IP ranges, for apps that connect by IP. SagerNet's sing-geoip only has countries
       # (used in `domestic:` below), so service ranges come from MetaCubeX meta-rules-dat.
-      - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/google.srs
       - https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/netflix.srs
   direct:
     name: Direct
