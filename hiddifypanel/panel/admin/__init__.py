@@ -4,7 +4,7 @@ from flask import redirect, render_template, request
 from flask_admin import Admin, AdminIndexView, expose
 from flask_adminlte3 import AdminLTE3
 
-from hiddifypanel import Events
+from hiddifypanel import Events, hutils
 from hiddifypanel import g as g
 from hiddifypanel.database import db
 from hiddifypanel.models import *
@@ -23,7 +23,7 @@ class LegacyIndexView(AdminIndexView):
     @expose("/")
     def index(self):
         if hconfig(ConfigEnum.log_level) != "debug":
-            return redirect(f"/{request.view_args.get('proxy_path')}/admin/v2/")
+            return redirect(hutils.flask.hurl_for("admin.admin_v2"))
         return super().index()
 
 
@@ -34,7 +34,7 @@ flaskadmin = Admin(endpoint="admin", index_view=LegacyIndexView(), base_template
 def redirect_legacy_admin():
     # The legacy Flask-Admin pages only work in debug mode (their layout needs the legacy Dashboard); otherwise use admin_v2.
     if hconfig(ConfigEnum.log_level) != "debug":
-        return redirect(f"/{request.view_args.get('proxy_path')}/admin/v2/")
+        return redirect(hutils.flask.hurl_for("admin.admin_v2"))
 
 
 def init_app(app):
