@@ -55,7 +55,7 @@ const checked = computed({
       <label :for="inputId" class="setting-row__label">
         {{ label }}
         <span v-if="markAdvanced && !field.essential" class="setting-badge">{{ t('settings.advancedBadge') }}</span>
-        <span v-if="field.apply_mode === 'reinstall'" class="setting-badge setting-badge--warn" :title="t('settings.reinstallHint')">
+        <span v-if="field.apply_mode === 'reinstall'" class="setting-badge setting-badge--warn setting-badge--on-hover" :title="t('settings.reinstallHint')">
           <i class="pi pi-refresh" />{{ t('settings.reinstallBadge') }}
         </span>
         <Transition name="setting-fade">
@@ -206,6 +206,10 @@ const checked = computed({
 .setting-badge--warn {
   color: var(--p-orange-600, #c2410c);
   background: color-mix(in srgb, var(--p-orange-400, #fb923c) 18%, transparent);
+}
+/* Not an error: only shown while looking at the row or once it is changed (saving then says what is needed). */
+.setting-row:not(:hover, :focus-within, .setting-row--changed) .setting-badge--on-hover {
+  display: none;
 }
 .setting-badge--changed {
   color: var(--p-primary-color);

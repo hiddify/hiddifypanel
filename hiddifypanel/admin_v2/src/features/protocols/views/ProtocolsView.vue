@@ -87,7 +87,7 @@
                 >
                   <i class="pi pi-cog" />{{ t('protocols.relatedSettings') }}
                 </RouterLink>
-                <span v-if="item.apply_mode === 'reinstall'" class="proto-chip proto-chip--warn"><i class="pi pi-refresh" />{{ t('protocols.reinstallChip') }}</span>
+                <span v-if="item.apply_mode === 'reinstall'" class="proto-chip proto-chip--warn proto-chip--on-hover" :class="{ 'proto-chip--shown': isChanged(item) }"><i class="pi pi-refresh" />{{ t('protocols.reinstallChip') }}</span>
                 <span v-else-if="item.apply_mode === 'nothing'" class="proto-chip"><i class="pi pi-bolt" />{{ t('protocols.instantChip') }}</span>
                 <Transition name="proto-fade">
                   <span v-if="isChanged(item)" class="proto-chip proto-chip--changed"><i class="pi pi-pencil" />{{ t('protocols.changed') }}</span>
@@ -524,6 +524,10 @@ onBeforeUnmount(() => window.removeEventListener('beforeunload', onBeforeUnload)
 .proto-chip--warn {
   color: var(--p-orange-600, #c2410c);
   background: color-mix(in srgb, var(--p-orange-400, #fb923c) 18%, transparent);
+}
+/* Not an error: only shown while looking at the tile or once it is changed (saving then says what is needed). */
+.proto-tile:not(:hover, :focus-within) .proto-chip--on-hover:not(.proto-chip--shown) {
+  display: none;
 }
 .proto-chip--link {
   text-decoration: none;
