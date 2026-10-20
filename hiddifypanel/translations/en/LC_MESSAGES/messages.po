@@ -8589,6 +8589,14 @@ msgstr ""
 msgid "config.auto_update.label"
 msgstr "🔄 Auto Update"
 
+msgid "config.backup_keep_days.description"
+msgstr ""
+"Automatic backups older than this are deleted so they do not fill the disk. "
+"0 keeps them all"
+
+msgid "config.backup_keep_days.label"
+msgstr "🗄️ Keep Backups (days)"
+
 msgid "config.block_iran_sites.description"
 msgstr "Block domestic Sites to prevent detection by the government"
 

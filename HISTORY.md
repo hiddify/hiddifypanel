@@ -1,6 +1,52 @@
 # Changelog
 
 
+## v14.0.4 (2026-10-20)
+
+#### Other
+
+* Feat(network): add fallback fake sites for decoy domains and enhance random domain selection logic. 
+
+* Feat(backup): enhance Telegram backup captions with HTML formatting and clickable links. 
+
+* Feat(backup): introduce backup retention policy and enhance backup functionality. 
+
+* Feat(protocols, settings): enhance hover behavior for reinstall indicators and add Persian font support. 
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #54 from saeed-jalilian/feat/shared-cert-prefer-ip-proxy-domain. 
+  _feat(tls): prefer the cert of a domain with an IP-based proxy attached as the shared cert_
+
+* Feat(tls): prefer the cert of a domain that has an IP-based proxy attached as the shared cert. 
+
+* Fix(tls): do not pick a subscription-only domain's cert as the shared cert of IP-based proxies. 
+
+* Merge pull request #50 from davodm/fix/wireguard-server-ipv4-only. 
+  _fix(wireguard): skip IPv6 in the server config when the kernel has no IPv6_
+
+* Fix(wireguard): skip IPv6 address, ip6tables and peer IPv6 when the kernel has no IPv6. 
+  _wg-quick failed with 'ipv6: IPv6 is disabled on this device' on IPv4-only
+servers (disable_ipv6=1), leaving hiddifywg down. Gate the IPv6 parts of the
+server template on ctx.hconfig.ipv6_enabled, like haproxy/xray/rpxy-l4 do._
+
+* Merge pull request #55 from 2Grey/fix/admin-legacy-navigation. 
+  _fix(admin): resolve missing legacy navigation links to Admin V2_
+
+* Fix(admin): resolve absent legacy navigation views to Admin V2. 
+
+* Merge pull request #56 from 2Grey/fix/telegram-broadcast-multipart. 
+  _fix(telegram): preserve multipart data when sending broadcasts_
+
+* Fix(telegram): send broadcast text and images as multipart. 
+
+* Merge pull request #57 from 2Grey/fix/users-last-online-timezone. 
+  _fix(users): include timezone offsets in last-online timestamps_
+
+* Fix(users): include UTC offsets in last-online timestamps. 
+
+
+
 ## v14.0.3 (2026-10-20)
 
 #### Other

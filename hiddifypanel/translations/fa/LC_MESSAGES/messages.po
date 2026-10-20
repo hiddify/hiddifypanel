@@ -8377,6 +8377,14 @@ msgstr ""
 msgid "config.auto_update.label"
 msgstr "🔄 به‌روز‌ رسانی خودکار"
 
+msgid "config.backup_keep_days.description"
+msgstr ""
+"بکاپ‌های خودکار قدیمی‌تر از این حذف می‌شوند تا هارد سرور پر نشود. ۰ یعنی همه"
+" نگه داشته شوند"
+
+msgid "config.backup_keep_days.label"
+msgstr "🗄️ نگهداری بکاپ‌ها (روز)"
+
 msgid "config.block_iran_sites.description"
 msgstr ""
 "برای جلوگیری از شناسایی توسط فیلترچی، دسترسی به سایت های ایرانی را مسدود "

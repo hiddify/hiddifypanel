@@ -6329,6 +6329,14 @@ msgstr "每天凌晨 3:00，我们都会检查是否有新更新。如果有新�
 msgid "config.auto_update.label"
 msgstr "🔄 自动更新"
 
+msgid "config.backup_keep_days.description"
+msgstr ""
+"Automatic backups older than this are deleted so they do not fill the disk. "
+"0 keeps them all"
+
+msgid "config.backup_keep_days.label"
+msgstr "🗄️ Keep Backups (days)"
+
 msgid "config.block_iran_sites.description"
 msgstr "封锁国内网站以防止被政府发现"
 

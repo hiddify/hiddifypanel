@@ -6751,6 +6751,14 @@ msgstr "Система автоматически обновится в 3:00 у�
 msgid "config.auto_update.label"
 msgstr "🔄 Автоматическое обновление"
 
+msgid "config.backup_keep_days.description"
+msgstr ""
+"Automatic backups older than this are deleted so they do not fill the disk. "
+"0 keeps them all"
+
+msgid "config.backup_keep_days.label"
+msgstr "🗄️ Keep Backups (days)"
+
 msgid "config.block_iran_sites.description"
 msgstr ""
 "Блокируйте иранские сайты, чтобы предотвратить их обнаружение правительством"
