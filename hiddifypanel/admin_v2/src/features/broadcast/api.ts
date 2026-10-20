@@ -65,7 +65,7 @@ export const broadcastApi = {
     form.append('ids', input.ids.join(','))
     form.append('add_usage', String(input.addUsage))
     if (input.image) form.append('image', input.image)
-    const { data } = await getHttp().post<BroadcastJob>('broadcast/', form)
+    const { data } = await getHttp().post<BroadcastJob>('broadcast/', form, { headers: { 'Content-Type': undefined } })
     return data
   },
 }
