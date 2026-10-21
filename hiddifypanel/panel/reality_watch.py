@@ -97,14 +97,81 @@ def _best_spare(isp: str, data: dict) -> str | None:
     used = {d.domain.lower() for d in Domain.query.all() if d.domain}
     for name in spares():
         seen = data.get(name, {})
-        if name not in used and seen.get(isp, {}).get("ok") and all(v.get("ok") for v in seen.values()):
+        if name not in used and seen.get(isp, {}).get("ok") and all(v.get("ok") for v in seen.values()) and reality_works(name):
             return name
     return None
 
 
+def _free_port() -> int:
+    import socket
+
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+def reality_works(sni: str, timeout: int = 10) -> bool:
+    """A real REALITY connection with this site as the target, through a throwaway xray server and client on this
+    machine. TLS 1.3 + h2 is not enough: some such sites (e.g. one answering with a HelloRetryRequest) close REALITY's
+    handshake, and every client would fail after the switch."""
+    import subprocess
+    import tempfile
+    import uuid
+
+    from hiddifypanel.proxy_v3.outbound_custom import XRAY_BIN
+
+    if not XRAY_BIN.exists():
+        return False
+    keys = subprocess.run([str(XRAY_BIN), "x25519"], capture_output=True, text=True, timeout=10).stdout.splitlines()
+    pick = lambda *names: next((line.split(":", 1)[1].strip() for line in keys if line.lower().startswith(names)), "")  # noqa: E731
+    private, public = pick("private"), pick("public", "password")
+    if not private or not public:
+        return False
+    user, short = str(uuid.uuid4()), "ab"
+    server_port, socks_port = _free_port(), _free_port()
+    server = {
+        "log": {"loglevel": "none"},
+        "inbounds": [{"listen": "127.0.0.1", "port": server_port, "protocol": "vless",
+                      "settings": {"clients": [{"id": user, "flow": "xtls-rprx-vision"}], "decryption": "none"},
+                      "streamSettings": {"network": "tcp", "security": "reality",
+                                         "realitySettings": {"target": f"{sni}:443", "serverNames": [sni], "privateKey": private, "shortIds": [short]}}}],
+        "outbounds": [{"protocol": "freedom"}],
+    }
+    client = {
+        "log": {"loglevel": "none"},
+        "inbounds": [{"listen": "127.0.0.1", "port": socks_port, "protocol": "socks"}],
+        "outbounds": [{"protocol": "vless",
+                       "settings": {"vnext": [{"address": "127.0.0.1", "port": server_port, "users": [{"id": user, "flow": "xtls-rprx-vision", "encryption": "none"}]}]},
+                       "streamSettings": {"network": "tcp", "security": "reality",
+                                          "realitySettings": {"serverName": sni, "fingerprint": "chrome", "publicKey": public, "shortId": short}}}],
+    }
+    procs = []
+    with tempfile.TemporaryDirectory(prefix="reality-") as tmp:
+        try:
+            for name, cfg in (("server", server), ("client", client)):
+                path = f"{tmp}/{name}.json"
+                with open(path, "w") as f:
+                    json.dump(cfg, f)
+                procs.append(subprocess.Popen([str(XRAY_BIN), "run", "-c", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
+            time.sleep(1.5)
+            out = subprocess.run(
+                ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", str(timeout), "-x", f"socks5h://127.0.0.1:{socks_port}", "https://cp.cloudflare.com/generate_204"],
+                capture_output=True, text=True, timeout=timeout + 5,
+            ).stdout
+            return out.strip() == "204"
+        except Exception:
+            return False
+        finally:
+            for p in procs:
+                p.terminate()
+                try:
+                    p.wait(5)
+                except Exception:
+                    p.kill()
+
+
 def switch(domain: Domain, new: str, *, isp: str = "", auto: bool = False) -> dict:
     """The REALITY domain now uses ``new`` as its SNI (name, server names, alias), and the cores get it."""
-    from hiddifypanel import hutils
     from hiddifypanel.panel.commercial.restapi.v2.admin.domains_page_api import _save
 
     new = new.strip().lower()
@@ -114,9 +181,9 @@ def switch(domain: Domain, new: str, *, isp: str = "", auto: bool = False) -> di
         raise WatchError("This name is already a domain of the panel")
     if domain.fake_mode != FakeMode.reality:
         raise WatchError("Not a REALITY domain")
-    # REALITY borrows the site's TLS: it must speak TLS 1.3 and h2 (checked from the server)
-    if not hutils.network.is_domain_reality_friendly(new):
-        raise WatchError("This site does not suit REALITY (it needs TLS 1.3 and HTTP/2)")
+    # REALITY borrows the site's TLS: a real REALITY connection to it must work (TLS 1.3 + h2 is not enough)
+    if not reality_works(new):
+        raise WatchError("REALITY does not work with this site (a test connection through it failed)")
     old = domain.domain
     domain.domain = new
     domain.servernames = new
