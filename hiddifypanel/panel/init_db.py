@@ -25,6 +25,14 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v180(child_id):
+    """REALITY SNI watch: spare SNIs and the automatic switch (off: the admin switches on the Clean IP page)."""
+    if child_id != 0:
+        return
+    add_config_if_not_exist(ConfigEnum.reality_sni_spares, "", child_id)
+    add_config_if_not_exist(ConfigEnum.reality_sni_auto, False, child_id)
+
+
 def _v178(child_id):
     """Automatic backups were never removed and could fill the disk: keep 30 days by default."""
     if child_id != 0:

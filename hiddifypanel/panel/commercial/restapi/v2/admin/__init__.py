@@ -196,7 +196,10 @@ def init_app(app):
 
         from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
-        from .clean_ip_api import CleanIpNetworkApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi
+        from .clean_ip_api import CleanIpNetworkApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi, RealitySniApi, RealitySniSwitchApi
+
+        bp.add_url_rule("/clean-ip/reality/", view_func=RealitySniApi)
+        bp.add_url_rule("/clean-ip/reality/<int:domain_id>/switch/", view_func=RealitySniSwitchApi)
 
         bp.add_url_rule("/clean-ip/network/", view_func=CleanIpNetworkApi)
         bp.add_url_rule("/clean-ip/token/", view_func=CleanIpTokenApi)

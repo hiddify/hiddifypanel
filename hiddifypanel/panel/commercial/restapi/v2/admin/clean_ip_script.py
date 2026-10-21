@@ -19,6 +19,10 @@ PER_RANGE = __PER_RANGE__
 TIMEOUT = 5
 WORKERS = 30
 RANGES = __RANGES__
+# REALITY SNIs (in use and spare): a TLS connection to this panel's server with each name, as a REALITY client opens it
+SNIS = __SNIS__
+SERVER_IP = __SERVER_IP__
+CONTROL = __CONTROL__
 
 
 def pick(cidr, n):
@@ -51,6 +55,36 @@ def probe(ip):
         return None
 
 
+def sni_ok(sni):
+    """Whether a TLS handshake with this name gets through to the panel's server (SNI filtering cuts it)."""
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    for _ in range(2):
+        try:
+            with socket.create_connection((SERVER_IP, 443), timeout=6) as raw:
+                with ctx.wrap_socket(raw, server_hostname=sni):
+                    return True
+        except Exception:
+            time.sleep(0.5)
+    return False
+
+
+def test_snis():
+    if not SNIS or not SERVER_IP:
+        return None, []
+    if not sni_ok(CONTROL):
+        print("\nREALITY SNIs: the server itself did not answer (with %s); SNIs not tested." % CONTROL)
+        return False, []
+    print("\nREALITY SNIs (as a REALITY client connects to the server):")
+    out = []
+    with ThreadPoolExecutor(8) as pool:
+        for sni, ok in zip(SNIS, pool.map(sni_ok, SNIS)):
+            out.append({"sni": sni, "ok": ok})
+            print("  %-40s %s" % (sni, "ok" if ok else "FILTERED"))
+    return True, out
+
+
 def main():
     ips = sorted({ip for cidr in RANGES for ip in pick(cidr, PER_RANGE)})
     random.shuffle(ips)
@@ -72,7 +106,8 @@ def main():
         print("  %-16s %5d ms  %s" % (r["ip"], r["ms"], r["colo"]))
     if not found:
         print("No IP passed. Is the VPN off? Try again later or on another network.")
-    body = json.dumps({"ips": found[:200], "tested": len(ips), "size": SIZE}).encode()
+    control, snis = test_snis()
+    body = json.dumps({"ips": found[:200], "tested": len(ips), "size": SIZE, "sni_control": control, "snis": snis}).encode()
     req = urllib.request.Request(REPORT, data=body, method="POST", headers={"Content-Type": "application/json", "User-Agent": "hiddify-clean-ip"})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
