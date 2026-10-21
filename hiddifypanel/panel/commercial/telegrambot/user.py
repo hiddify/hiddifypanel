@@ -59,7 +59,7 @@ def account_card(user: User, lang: str, *, note: str | None = None) -> str:
     if not online:
         lines.append(f"🕒 {t(T.last_online, lang)}  ·  {ago(user.last_online, lang)}")
     links = accounts.links(user)
-    lines += ["", f'🔗 <a href="{h(links.home)}">{t(T.link_home, lang)}</a>  ·  <a href="{h(links.sub)}">{t(T.link_sub, lang)}</a>']
+    lines += ["", f'🔗 <a href="{h(links.page)}">{t(T.link_home, lang)}</a>  ·  <a href="{h(links.sub)}">{t(T.link_sub, lang)}</a>']
     if note:
         lines += ["", f"✅ <i>{h(note)}</i>"]
     return "\n".join(lines)
@@ -72,7 +72,7 @@ def links_text(user: User, lang: str) -> str:
             f"🔗 <b>{t(T.links_title, lang)}</b>  ·  {h(user.name)}",
             "",
             f"🌐 <b>{t(T.link_home, lang)}</b>",
-            f"<code>{h(links.home)}</code>",
+            f"<code>{h(links.page)}</code>",
             "",
             f"📥 <b>{t(T.link_sub, lang)}</b>",
             f"<code>{h(links.sub)}</code>",
