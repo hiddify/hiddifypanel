@@ -12,6 +12,18 @@
         <span class="nodes-summary__count">{{ item.count }}</span>
         <span class="nodes-summary__label">{{ t(`nodes.status.${item.status}`) }}</span>
       </div>
+      <div class="nodes-summary__totals">
+        <div class="nodes-summary__item">
+          <i class="pi pi-arrow-right-arrow-left nodes-summary__icon" />
+          <span class="nodes-summary__count">{{ formatBytes(totals.traffic) }}</span>
+          <span class="nodes-summary__label">{{ t('nodes.info.todayTraffic') }}</span>
+        </div>
+        <div class="nodes-summary__item">
+          <i class="pi pi-users nodes-summary__icon" />
+          <span class="nodes-summary__count">{{ formatCount(totals.online) }}</span>
+          <span class="nodes-summary__label">{{ t('nodes.info.todayOnline') }}</span>
+        </div>
+      </div>
       <Button
         class="nodes-summary__refresh"
         icon="pi pi-refresh"
@@ -127,12 +139,13 @@
           </button>
         </div>
 
-        <button type="button" class="node-card__more" :aria-expanded="expandedInfo.has(node.id)" @click="toggleInfo(node.id)">
+        <!-- A few nodes have the room: their details are always shown, not behind "More information". -->
+        <button v-if="!few" type="button" class="node-card__more" :aria-expanded="expandedInfo.has(node.id)" @click="toggleInfo(node.id)">
           <i class="pi pi-info-circle" />
           <span class="flex-1">{{ t('nodes.moreInfo') }}</span>
           <i class="pi pi-angle-down node-card__more-caret" :class="{ 'node-card__more-caret--open': expandedInfo.has(node.id) }" />
         </button>
-        <div class="node-card__info-wrap" :class="{ 'node-card__info-wrap--open': expandedInfo.has(node.id) }">
+        <div class="node-card__info-wrap" :class="{ 'node-card__info-wrap--open': few || expandedInfo.has(node.id), 'node-card__info-wrap--inline': few }">
           <dl class="node-card__info">
             <div class="node-card__info-row node-card__info-row--wide">
               <dt><i class="pi pi-chart-line" />{{ t('nodes.info.lastUsage') }}</dt>
@@ -209,6 +222,12 @@
           />
         </footer>
       </article>
+      <!-- With a few nodes the row has empty room: offer the next one there. -->
+      <button v-if="few" key="add" type="button" class="nodes-add-tile" @click="addVisible = true">
+        <span class="nodes-add-tile__icon"><i class="pi pi-plus" /></span>
+        <span class="nodes-add-tile__title">{{ t('nodes.addNode') }}</span>
+        <span class="nodes-add-tile__text">{{ t('nodes.addTileText') }}</span>
+      </button>
     </TransitionGroup>
 
     <AddNodeDialog v-model:visible="addVisible" @added="onAdded" />
@@ -254,6 +273,8 @@ interface PingState {
 
 const REFRESH_MS = 60_000
 const DOMAIN_PREVIEW = 3
+/** Up to this many nodes, each card shows all its details and an "add node" tile fills the row. */
+const FEW_NODES = 3
 
 /** `embedded`: shown inside another page (quick setup), without the page header. */
 defineProps<{ embedded?: boolean }>()
@@ -294,6 +315,13 @@ const summary = computed(() =>
   (['online', 'late', 'offline', 'never'] as NodeStatus[])
     .map((status) => ({ status, count: nodes.value.filter((node) => node.status === status).length }))
     .filter((item) => item.count > 0 || item.status === 'online'),
+)
+
+const few = computed(() => nodes.value.length <= FEW_NODES)
+
+/** Today's traffic and online users of all nodes together. */
+const totals = computed(() =>
+  nodes.value.reduce((sum, node) => ({ traffic: sum.traffic + node.details.today_usage, online: sum.online + node.details.today_online }), { traffic: 0, online: 0 }),
 )
 
 function relativeTime(iso: string | null): string {
@@ -509,6 +537,17 @@ onBeforeUnmount(() => {
 }
 .nodes-summary__label {
   color: var(--p-text-muted-color);
+}
+.nodes-summary__icon {
+  font-size: 0.8rem;
+  color: var(--p-primary-color);
+}
+.nodes-summary__totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding-inline-start: 1.5rem;
+  border-inline-start: 1px solid var(--p-content-border-color);
 }
 .nodes-summary__refresh {
   margin-inline-start: auto;
@@ -804,6 +843,17 @@ onBeforeUnmount(() => {
   opacity: 1;
   padding-top: 0.25rem;
 }
+/* Always open (a few nodes): a quiet panel of its own instead of the toggle's drop-down. */
+.node-card__info-wrap--inline {
+  margin-top: 0;
+  transition: none;
+}
+.node-card__info-wrap--inline .node-card__info {
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.07));
+  transition: none;
+}
 .node-card__info-row--wide {
   grid-column: 1 / -1;
 }
@@ -830,6 +880,62 @@ onBeforeUnmount(() => {
 }
 .node-card__open {
   flex: 1;
+}
+
+/* "Add node" tile (a few nodes) */
+.nodes-add-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 13rem;
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  border: 1.5px dashed var(--p-content-border-color);
+  background: transparent;
+  color: var(--p-text-muted-color);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  animation: nodes-in 0.4s ease both;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+.nodes-add-tile:hover,
+.nodes-add-tile:focus-visible {
+  color: var(--p-primary-color);
+  border-color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 6%, transparent);
+}
+.nodes-add-tile:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 2px;
+}
+.nodes-add-tile__icon {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 1.2rem;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  transition: transform 0.18s ease;
+}
+.nodes-add-tile:hover .nodes-add-tile__icon {
+  transform: scale(1.08);
+}
+.nodes-add-tile__title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--p-text-color);
+}
+.nodes-add-tile__text {
+  max-width: 16rem;
+  font-size: 0.85rem;
 }
 
 /* Empty state */
@@ -960,6 +1066,17 @@ onBeforeUnmount(() => {
   .node-card {
     border-radius: 14px;
   }
+  /* Totals take their own line under the status counts. */
+  .nodes-summary__totals {
+    order: 1;
+    width: 100%;
+    padding: 0.6rem 0 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--p-content-border-color);
+  }
+  .nodes-add-tile {
+    min-height: 9rem;
+  }
 }
 /* Touch screens have no hover: keep the edit hint visible. */
 @media (hover: none) {
@@ -974,9 +1091,13 @@ onBeforeUnmount(() => {
     transition: none;
   }
   .node-card,
+  .nodes-add-tile,
   .nodes-dot--online::after,
   .nodes-empty__sat {
     animation: none;
+  }
+  .nodes-add-tile:hover .nodes-add-tile__icon {
+    transform: none;
   }
   .node-card:hover {
     transform: none;

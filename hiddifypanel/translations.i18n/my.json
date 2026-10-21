@@ -1254,6 +1254,7 @@
         "title": "Node တစ်ခု ထည့်ရန်"
       },
       "addNode": "Node ထည့်ရန်",
+      "addTileText": "နောက်ထပ် Hiddify server တစ်ခုကို ချိတ်ဆက်ပြီး ဒီနေရာကနေ စီမံပါ။",
       "checkConnection": "ချိတ်ဆက်မှု စစ်ဆေးရန်",
       "checking": "စစ်ဆေးနေသည်…",
       "connection": "ချိတ်ဆက်မှု",

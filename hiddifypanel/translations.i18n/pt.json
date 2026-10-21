@@ -1251,6 +1251,7 @@
         "title": "Adicionar um nó"
       },
       "addNode": "Adicionar nó",
+      "addTileText": "Conecte outro servidor Hiddify e gerencie-o daqui.",
       "checkConnection": "Verificar conexão",
       "checking": "Verificando…",
       "connection": "Conexão",

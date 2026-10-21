@@ -1251,6 +1251,7 @@
         "title": "Ajouter un nœud"
       },
       "addNode": "Ajouter un nœud",
+      "addTileText": "Connectez un autre serveur Hiddify et gérez-le d'ici.",
       "checkConnection": "Vérifier la connexion",
       "checking": "Vérification…",
       "connection": "Connexion",
