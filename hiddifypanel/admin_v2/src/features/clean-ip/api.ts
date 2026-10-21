@@ -34,7 +34,29 @@ export interface CleanIpReport {
   saved: string[]
 }
 
+/** A REALITY SNI's status per ISP (from full tests run in Iran). */
+export type SniStatus = Record<string, { ok: boolean; at: number }>
+export interface RealityState {
+  domains: { id: number; sni: string; status: SniStatus }[]
+  spares: { sni: string; status: SniStatus }[]
+  auto: boolean
+  events: { at: number; isp: string; old: string; new: string; auto: boolean }[]
+}
+
 export const cleanIpApi = {
+  async reality(): Promise<RealityState> {
+    const { data } = await getHttp().get<RealityState>('clean-ip/reality/')
+    return data
+  },
+  async saveReality(spares: string[], auto: boolean): Promise<RealityState> {
+    const { data } = await getHttp().put<RealityState>('clean-ip/reality/', { spares, auto })
+    return data
+  },
+  async switchSni(domainId: number, sni: string): Promise<RealityState> {
+    // the server first tests a real REALITY connection through the site, then applies the configs
+    const { data } = await getHttp().post<RealityState>(`clean-ip/reality/${domainId}/switch/`, { sni }, { timeout: 60_000 })
+    return data
+  },
   async network(): Promise<CleanIpNetwork> {
     const { data } = await getHttp().get<CleanIpNetwork>('clean-ip/network/')
     return data
