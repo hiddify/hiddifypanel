@@ -123,6 +123,10 @@ def switch(domain: Domain, new: str, *, isp: str = "", auto: bool = False) -> di
     if (domain.alias or "") in ("", old):
         domain.alias = new
     _save(domain, is_created=False)
+    # A new name: rpxy-l4 (which routes port 443 by SNI) and haproxy need it too, not only the cores _save reloads
+    from hiddifypanel.panel.run_commander import Command, commander
+
+    commander(Command.apply)
     event = {"at": int(time.time()), "isp": isp, "old": old, "new": new, "auto": auto}
     redis_client.set(_EVENTS, json.dumps((events() + [event])[-30:]))
     logger.info("REALITY SNI {} switched to {} ({})", old, new, "auto" if auto else "admin")
