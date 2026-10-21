@@ -196,6 +196,9 @@ def init_app(app):
 
         from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
+        from .config_health_api import ConfigHealthApi
+
+        bp.add_url_rule("/config-health/", view_func=ConfigHealthApi)
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
         bp.add_url_rule("/domains-page/options/", view_func=DomainsPageOptionsApi)
