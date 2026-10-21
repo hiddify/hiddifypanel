@@ -254,7 +254,29 @@ class UserView(FlaskView):
 
         c = get_common_data(g.account.uuid, mode="new")
         user_agent = user_agents.parse(request.user_agent.string)
-        return self._render_user_front(c, user_agent)
+        if hconfig(ConfigEnum.user_page_classic):
+            return self._render_user_front(c, user_agent)
+        return self._render_user_page(c)
+
+    def _render_user_page(self, common: dict):
+        """The user page (one template, no build): status, the subscription link and QR, apps, configs."""
+        from hiddifypanel import __version__
+
+        proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_client) or hconfig(ConfigEnum.proxy_path)
+        page_base = f"/{proxy_path}/{g.account.uuid}/"
+        user = common["user"]
+        lang = getattr(user.lang, "value", user.lang) or getattr(hconfig(ConfigEnum.lang), "value", hconfig(ConfigEnum.lang)) or "en"
+        branded = hconfig(ConfigEnum.branding_title)
+        return render_template(
+            "user_page.html",
+            user=user,
+            profile_url=common["profile_url"],
+            page_base=page_base,
+            api_base=f"{page_base}api/v2/user/",
+            lang=str(lang),
+            brand_title=branded or _("Hiddify"),
+            version=__version__,
+        )
 
     def _render_user_front(self, common: dict, ua):
         """Serve the user SPA shell (admin_v2-style: Vite manifest + Jinja)."""

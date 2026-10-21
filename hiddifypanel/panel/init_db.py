@@ -25,6 +25,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v179(child_id):
+    """The new user page is the default; the older one stays a setting away."""
+    add_config_if_not_exist(ConfigEnum.user_page_classic, False)
+
+
 def _v178(child_id):
     """Automatic backups were never removed and could fill the disk: keep 30 days by default."""
     if child_id != 0:

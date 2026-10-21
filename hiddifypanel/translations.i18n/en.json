@@ -3141,6 +3141,10 @@
       "description": "Enter a customized title to be shown on user page. (Before User's Welcome Text)",
       "label": "👁‍🗨 User Page Title"
     },
+    "user_page_classic": {
+      "description": "Show the older user page instead of the new one. The new page is lighter, works without any outside site, and shows status, the subscription link and QR code, apps and configs.",
+      "label": "🆕 Classic user page"
+    },
     "cdn_forced_host": {
       "description": "In this part you can use a set of specific domains or IPs for your server to be override in the user links. \n\nIf you use <a href='https://ircf.space/export.php'>this template </a>, the relevant IP will be selected according to the user's operator, and if you put a range of IPs The IP will be randomly selected from that range.\nUse <a target='_blank' href='https://ip-format.hiddify.com'>this link</a> to set personal IPs.",
       "label": "🔂 Force Config to Use Following IPs/Domains"

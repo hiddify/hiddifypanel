@@ -323,6 +323,8 @@ class ConfigEnum(metaclass=FastEnum):
     branding_title = _StrConfigDscr(ConfigCategory.branding)
     branding_site = _StrConfigDscr(ConfigCategory.branding)
     branding_freetext = _StrConfigDscr(ConfigCategory.branding)
+    # the user page: the new one, or the older React one (hiddify-user-front)
+    user_page_classic = _BoolConfigDscr(ConfigCategory.branding)
     not_found = _StrConfigDscr(ConfigCategory.hidden)
     path_vmess = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_vless = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
