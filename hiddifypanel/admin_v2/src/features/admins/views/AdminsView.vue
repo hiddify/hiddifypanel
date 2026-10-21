@@ -808,7 +808,8 @@ button.admins-avatar:focus-visible {
   background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 16%, transparent);
   font-size: 1rem;
 }
-:global(.app-dark) .admins-avatar:not(.admins-avatar--super_admin) {
+/* ":global(.app-dark) .x" compiled to ".app-dark {}" (the whole page took the avatar color in dark mode) */
+.app-dark .admins-avatar:not(.admins-avatar--super_admin) {
   color: hsl(var(--avatar-hue) 70% 70%);
 }
 .admins-who__name {

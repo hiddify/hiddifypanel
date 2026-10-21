@@ -66,7 +66,9 @@ const text = computed(() => {
   color: var(--p-text-muted-color);
   background: color-mix(in srgb, var(--p-text-color) 8%, transparent);
 }
-:global(.app-dark) .trend--up {
+/* In scoped CSS, ":global(.app-dark) .x" compiles to ".app-dark {}" (Vue drops what follows :global()): the whole page's
+   text turned green in dark mode. The ancestor written as is stays unscoped. */
+.app-dark .trend--up {
   color: var(--p-green-400);
 }
 </style>
