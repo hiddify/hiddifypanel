@@ -80,7 +80,6 @@ def check() -> dict | None:
     result: dict = {"at": int(time.time()), "user": user.name, "apps": {}}
     for app, path, agent in APPS:
         summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
-        originals: list = []  # the failed configs, to test once more
         try:
             for event in config_tester.run(page + path, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
                 if event.get("event") == "start":
@@ -92,15 +91,17 @@ def check() -> dict | None:
                         summary["ok"] += 1
                     else:
                         summary["failed"].append({"name": str(event.get("name") or ""), "error": str(event.get("error") or "")[:200]})
-                        originals.append(event.get("original"))
-            if originals:
-                # A config that failed is tested once more a little later: the cores reload when an admin saves a
-                # domain or applies, and the configs tested at that moment fail although nothing is wrong with them.
+            if summary["failed"]:
+                # The failed configs get a second chance a little later: the cores reload when an admin saves a domain
+                # or applies, and the configs tested at that moment fail although nothing is wrong with them. The whole
+                # subscription is fetched and run again (its configs can not be re-run from the results alone).
                 time.sleep(RETRY_AFTER)
+                failed = {f["name"] for f in summary["failed"]}
                 passed = set()
-                for event in config_tester.rerun(originals, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
-                    if event.get("event") == "result" and event.get("ok"):
-                        passed.add(str(event.get("name") or ""))
+                for event in config_tester.run(page + path, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
+                    name = str(event.get("name") or "")
+                    if event.get("event") == "result" and name in failed and event.get("ok"):
+                        passed.add(name)
                 summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
                 summary["ok"] += len(passed)
         except TesterError as e:
