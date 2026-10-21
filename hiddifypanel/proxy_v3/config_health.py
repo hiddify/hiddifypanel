@@ -27,6 +27,10 @@ APPS = (
     ("hiddify", "", "HiddifyNext/5.0.2 (linux) like ClashMeta v2ray sing-box"),
 )
 MAX_FAILED_LISTED = 60
+#: Cloudflare's, not Google's: panels often send Google through WARP, and a WARP hiccup is not a broken config
+TEST_URL = "https://cp.cloudflare.com/generate_204"
+#: two requests per config: one dropped request is not an alarm
+REPEATS = 2
 
 
 def last() -> dict | None:
@@ -55,6 +59,12 @@ def _host() -> str:
     return next((n for n in names if n), "")
 
 
+def _is_status_line(event: dict) -> bool:
+    """The subscription's first entry shows the user's usage and days ("⏳ 1.2/50GB 📅 27 days"): not a config."""
+    name = str(event.get("name") or "").strip()
+    return name.startswith("⏳") or "📅" in name
+
+
 def check() -> dict | None:
     """Tests every config once per app; returns (and keeps) the summary. None when there is nothing to test."""
     from hiddifypanel.panel import hiddify
@@ -69,9 +79,11 @@ def check() -> dict | None:
     for app, path, agent in APPS:
         summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
         try:
-            for event in config_tester.run(page + path, agent, workers=8, timeout=10, repeats=1):
+            for event in config_tester.run(page + path, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
                 if event.get("event") == "start":
                     summary["total"] = int(event.get("total") or 0)
+                elif event.get("event") == "result" and _is_status_line(event):
+                    summary["total"] -= 1
                 elif event.get("event") == "result":
                     if event.get("ok"):
                         summary["ok"] += 1
