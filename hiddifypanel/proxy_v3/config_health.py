@@ -31,6 +31,8 @@ MAX_FAILED_LISTED = 60
 TEST_URL = "https://cp.cloudflare.com/generate_204"
 #: two requests per config: one dropped request is not an alarm
 REPEATS = 2
+#: seconds before the failed configs are tested once more (a reload of the cores takes a few seconds)
+RETRY_AFTER = 30
 
 
 def last() -> dict | None:
@@ -78,6 +80,7 @@ def check() -> dict | None:
     result: dict = {"at": int(time.time()), "user": user.name, "apps": {}}
     for app, path, agent in APPS:
         summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
+        originals: list = []  # the failed configs, to test once more
         try:
             for event in config_tester.run(page + path, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
                 if event.get("event") == "start":
@@ -89,6 +92,17 @@ def check() -> dict | None:
                         summary["ok"] += 1
                     else:
                         summary["failed"].append({"name": str(event.get("name") or ""), "error": str(event.get("error") or "")[:200]})
+                        originals.append(event.get("original"))
+            if originals:
+                # A config that failed is tested once more a little later: the cores reload when an admin saves a
+                # domain or applies, and the configs tested at that moment fail although nothing is wrong with them.
+                time.sleep(RETRY_AFTER)
+                passed = set()
+                for event in config_tester.rerun(originals, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
+                    if event.get("event") == "result" and event.get("ok"):
+                        passed.add(str(event.get("name") or ""))
+                summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
+                summary["ok"] += len(passed)
         except TesterError as e:
             summary["error"] = str(e)
         except Exception as e:  # one app failing must not lose the other's result
