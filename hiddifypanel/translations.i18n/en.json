@@ -2874,7 +2874,20 @@
       "built": "{count} IPs for {isp}.",
       "kept": "Kept {count} IPs of other ISPs.",
       "dropped": "The old value had IPs without an ISP name; it is replaced (the two forms can't be mixed).",
-      "saved": "Saved on {domain}. Users get them with their next subscription update."
+      "saved": "Saved on {domain}. Users get them with their next subscription update.",
+      "fullTitle": "Full test (with upload)",
+      "fullHint": "Some ISPs let a connection open and then cut it after about 1.3 KB of upload. A browser can't test that; this command can. Run it on a computer or phone (Termux) on the ISP you want IPs for, with the VPN off: it tests each IP with a real upload and sends the working ones back here, saved for that ISP.",
+      "uploadSize": "Upload size",
+      "makeCommand": "Make the command",
+      "cmdUnix": "Linux, macOS, Android (Termux): needs python3",
+      "cmdWindows": "Windows (PowerShell): needs Python",
+      "cmdNote": "Valid for 24 hours. It can only add IPs to this domain. Run it again on each ISP (e.g. a phone on MCI, then on Irancell).",
+      "received": "Results received",
+      "waiting": "Waiting for a run of the command…",
+      "reportLine": "{tested} tested with {kb} KB upload, {found} work",
+      "reportSaved": "Saved {count} IPs for {isp}:",
+      "reportNotSaved": "Hiddify has no name for this ISP, so nothing was saved.",
+      "useThese": "Use these IPs above"
     }
   },
   "adminuser": {

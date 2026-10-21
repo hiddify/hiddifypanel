@@ -13,10 +13,39 @@ export interface CleanIpNetwork {
   db_available: boolean
 }
 
+/** A one-day command for the full test (with upload), run on a computer / phone on the ISP to test. */
+export interface CleanIpCommand {
+  token: string
+  expires_in: number
+  script_url: string
+  commands: { unix: string; windows: string }
+}
+
+/** What a run of that command sent back (saved for `short_name` when Hiddify knows the ISP). */
+export interface CleanIpReport {
+  at: number
+  short_name: string
+  asn: string
+  org: string
+  country: string
+  tested: number
+  size: number
+  ips: { ip: string; ms: number; colo: string }[]
+  saved: string[]
+}
+
 export const cleanIpApi = {
   async network(): Promise<CleanIpNetwork> {
     const { data } = await getHttp().get<CleanIpNetwork>('clean-ip/network/')
     return data
+  },
+  async command(payload: { domain_id: number; size: number; per_range: number; per_isp: number }): Promise<CleanIpCommand> {
+    const { data } = await getHttp().post<CleanIpCommand>('clean-ip/token/', payload)
+    return data
+  },
+  async reports(token: string): Promise<CleanIpReport[]> {
+    const { data } = await getHttp().get<{ reports: CleanIpReport[] }>(`clean-ip/token/${token}/`)
+    return data.reports
   },
 }
 

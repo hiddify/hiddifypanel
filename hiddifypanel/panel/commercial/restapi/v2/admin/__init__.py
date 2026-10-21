@@ -196,9 +196,13 @@ def init_app(app):
 
         from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
-        from .clean_ip_api import CleanIpNetworkApi
+        from .clean_ip_api import CleanIpNetworkApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi
 
         bp.add_url_rule("/clean-ip/network/", view_func=CleanIpNetworkApi)
+        bp.add_url_rule("/clean-ip/token/", view_func=CleanIpTokenApi)
+        bp.add_url_rule("/clean-ip/token/<token>/", view_func=CleanIpTokenStatusApi)
+        bp.add_url_rule("/clean-ip/run/<token>/script.py", view_func=CleanIpScriptApi)
+        bp.add_url_rule("/clean-ip/run/<token>/report/", view_func=CleanIpReportApi)
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
         bp.add_url_rule("/domains-page/options/", view_func=DomainsPageOptionsApi)
