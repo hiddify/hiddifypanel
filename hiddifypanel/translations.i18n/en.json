@@ -2471,7 +2471,18 @@
     },
     "theme": {
       "dark": "Dark mode",
-      "light": "Light mode"
+      "light": "Light mode",
+      "default": "Hiddify theme (default)",
+      "caddy": "Smart Caddy theme",
+      "colors": {
+        "red": "Red",
+        "pink": "Pink",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "green": "Green",
+        "blue": "Blue",
+        "purple": "Purple"
+      }
     },
     "users": {
       "add": "Add user",
