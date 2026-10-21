@@ -100,7 +100,8 @@ def get_visible(admin: AdminUser, user_id: int) -> User | None:
 
 @dataclass(frozen=True, slots=True)
 class Links:
-    home: str
+    home: str  # the user page, bare: Mini App buttons open it (Telegram puts its own data after "#")
+    page: str  # the user page as the panel gives it: ends with "#<name>", so apps name the profile
     sub: str
     hiddify: str
 
@@ -118,9 +119,10 @@ def user_host() -> str:
 def links(user: User) -> Links:
     host = user_host()
     home = hiddify.get_account_panel_link(user, host)
-    sub = f"{home}auto/"
-    name = (user.name or "Hiddify").replace(" ", "%20")
-    return Links(home=home, sub=sub, hiddify=f"hiddify://import/{sub}#{name}")
+    # The same links the panel gives (users list, user page): "#<name>" names the profile in the apps, and the
+    # subscription is sub/ (auto/ answered browsers with the user page, not the subscription)
+    name = hutils.encode.url_encode(user.name or "Hiddify")
+    return Links(home=home, page=f"{home}#{name}", sub=f"{home}sub/?asn=unknown#{name}", hiddify=f"hiddify://import/{home}#{name}")
 
 
 def panel_app_url() -> str | None:
