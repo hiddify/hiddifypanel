@@ -1549,6 +1549,7 @@
         "title": "Add a node"
       },
       "addNode": "Add node",
+      "addTileText": "Connect another Hiddify server and manage it from here.",
       "checkConnection": "Check connection",
       "checking": "Checking…",
       "connection": "Connection",

@@ -1251,6 +1251,7 @@
         "title": "添加节点"
       },
       "addNode": "添加节点",
+      "addTileText": "连接另一台 Hiddify 服务器，并在这里统一管理。",
       "checkConnection": "检查连接",
       "checking": "检查中…",
       "connection": "连接",
