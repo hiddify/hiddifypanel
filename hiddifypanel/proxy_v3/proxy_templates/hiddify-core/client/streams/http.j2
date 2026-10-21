@@ -4,7 +4,11 @@
   "host": ["{{ proxy.domain.host }}"],
   "idle_timeout": "15s",
   "ping_timeout": "15s",
+  {#- rawhttp: the server may be xray, which reads this header in one go and rejects one that comes in two pieces;
+      the long browser-like set (default_headers) often did (5 in 10 connections failed), so it stays short. -#}
   "headers":{
-    {% include 'hiddify-core/client/default_headers' %}
+    "User-Agent": "{{ctx.hconfig.default_useragent_string}}",
+    "Accept": "*/*",
+    "Connection": "keep-alive"
   },
 },

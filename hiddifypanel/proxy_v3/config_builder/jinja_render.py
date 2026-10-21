@@ -69,7 +69,12 @@ def _jinja_tojson(value: Any) -> str:
 
 
 def _jinja_choose_random(value: Any) -> str:
-    parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
+    """One of ``value``: a list, or a comma-separated string. (A list went through ``str()`` and split on commas:
+    ``["Android", "macOS", "Windows"]|choose_random`` gave texts like ``'Windows']``.)"""
+    if isinstance(value, (list, tuple, set)):
+        parts = [str(part).strip() for part in value if str(part).strip()]
+    else:
+        parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
     if not parts:
         return ""
     return random.choice(parts)
