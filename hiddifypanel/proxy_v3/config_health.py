@@ -67,11 +67,48 @@ def _is_status_line(event: dict) -> bool:
     return name.startswith("⏳") or "📅" in name
 
 
+def _test_app(url: str, agent: str, app: str) -> dict:
+    """Every config of the subscription as one kind of app gets it: {total, ok, failed, error}."""
+    from hiddifypanel.proxy_v3 import config_tester
+    from hiddifypanel.proxy_v3.config_tester_types import TesterError
+
+    summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
+    try:
+        for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
+            if event.get("event") == "start":
+                summary["total"] = int(event.get("total") or 0)
+            elif event.get("event") == "result" and _is_status_line(event):
+                summary["total"] -= 1
+            elif event.get("event") == "result":
+                if event.get("ok"):
+                    summary["ok"] += 1
+                else:
+                    summary["failed"].append({"name": str(event.get("name") or ""), "error": str(event.get("error") or "")[:200]})
+        if summary["failed"]:
+            # The failed configs get a second chance a little later: the cores reload when an admin saves a domain
+            # or applies, and the configs tested at that moment fail although nothing is wrong with them. The whole
+            # subscription is fetched and run again (its configs can not be re-run from the results alone).
+            time.sleep(RETRY_AFTER)
+            failed = {f["name"] for f in summary["failed"]}
+            passed = set()
+            for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
+                name = str(event.get("name") or "")
+                if event.get("event") == "result" and name in failed and event.get("ok"):
+                    passed.add(name)
+            summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
+            summary["ok"] += len(passed)
+    except TesterError as e:
+        summary["error"] = str(e)
+    except Exception as e:  # one app failing must not lose the other's result
+        logger.exception("config health: {} failed", app)
+        summary["error"] = type(e).__name__
+    summary["failed"] = summary["failed"][:MAX_FAILED_LISTED]
+    return summary
+
+
 def check() -> dict | None:
     """Tests every config once per app; returns (and keeps) the summary. None when there is nothing to test."""
     from hiddifypanel.panel import hiddify
-    from hiddifypanel.proxy_v3 import config_tester
-    from hiddifypanel.proxy_v3.config_tester_types import TesterError
 
     user, host = _probe_user(), _host()
     if user is None or not host:
@@ -79,37 +116,11 @@ def check() -> dict | None:
     page = hiddify.get_account_panel_link(user, host)
     result: dict = {"at": int(time.time()), "user": user.name, "apps": {}}
     for app, path, agent in APPS:
-        summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
-        try:
-            for event in config_tester.run(page + path, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
-                if event.get("event") == "start":
-                    summary["total"] = int(event.get("total") or 0)
-                elif event.get("event") == "result" and _is_status_line(event):
-                    summary["total"] -= 1
-                elif event.get("event") == "result":
-                    if event.get("ok"):
-                        summary["ok"] += 1
-                    else:
-                        summary["failed"].append({"name": str(event.get("name") or ""), "error": str(event.get("error") or "")[:200]})
-            if summary["failed"]:
-                # The failed configs get a second chance a little later: the cores reload when an admin saves a domain
-                # or applies, and the configs tested at that moment fail although nothing is wrong with them. The whole
-                # subscription is fetched and run again (its configs can not be re-run from the results alone).
-                time.sleep(RETRY_AFTER)
-                failed = {f["name"] for f in summary["failed"]}
-                passed = set()
-                for event in config_tester.run(page + path, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
-                    name = str(event.get("name") or "")
-                    if event.get("event") == "result" and name in failed and event.get("ok"):
-                        passed.add(name)
-                summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
-                summary["ok"] += len(passed)
-        except TesterError as e:
-            summary["error"] = str(e)
-        except Exception as e:  # one app failing must not lose the other's result
-            logger.exception("config health: {} failed", app)
-            summary["error"] = type(e).__name__
-        summary["failed"] = summary["failed"][:MAX_FAILED_LISTED]
+        summary = _test_app(page + path, agent, app)
+        if summary["error"]:
+            # The subscription could not be fetched (e.g. a reload of the cores right then): once more, later
+            time.sleep(RETRY_AFTER)
+            summary = _test_app(page + path, agent, app)
         result["apps"][app] = summary
     previous = last()
     redis_client.set(_LAST, json.dumps(result))
