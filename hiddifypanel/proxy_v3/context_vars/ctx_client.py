@@ -59,6 +59,8 @@ class ClientContextDomainVar(ClientContextVar):
 
 #: Outputs read by Xray-based apps (v2rayN, v2rayNG, Happ, …): the xray JSON and the plain subscription links.
 _XRAY_CLIENT_CORES = frozenset({"xray", "sublink"})
+#: Outputs read by sing-box-based apps (Hiddify, sing-box).
+_SINGBOX_CLIENT_CORES = frozenset({"hiddify-core", "singbox"})
 _XHTTP_LEGS_NOT_THROUGH_CDN = (TlsLayer.http, TlsLayer.tls_h1)
 
 
@@ -90,6 +92,11 @@ def _client_can_use(domain: DomainIPVar, proxy: ClientBuilderProxyVar, render_co
             if proxy.proto == ProxyProto.vless and not (xray_server and hconfig.vless_encryption):
                 return False
         if transport == CustomProxyTransport.httpupgrade and proxy.server_core and not xray_server:
+            return False
+    elif (render_core or "").lower() in _SINGBOX_CLIENT_CORES:
+        # rawhttp: sing-box's http transport is not xray's fake HTTP header; to an xray-served rawhttp inbound it
+        # connected 6 to 8 times in 10, to the hiddify-core one 10 in 10 (the panel offers both)
+        if transport == CustomProxyTransport.http and (proxy.server_core or "").lower() == "xray":
             return False
     return True
 
