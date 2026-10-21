@@ -1,14 +1,6 @@
+{#- rawhttp's fake request header: xray's server reads it in one go and rejects one that comes in two pieces
+    ("malformed MIME header: missing colon"); a long, browser-like header often did (1 in 2 to 9 in 10 connections
+    failed), so it stays short. -#}
 "User-Agent": ["{{ctx.hconfig.default_useragent_string}}"],
 "Accept": ["*/*"],
-"Accept-Language": ["en-US"],
-"Accept-Encoding": ["gzip, deflate, br, zstd"],
-"Connection": ["keep-alive"],
-"Cache-Control": ["no-cache"],
-"Pragma": ["no-cache"],
-"Referer": ["https://{{ proxy.domain.host }}/"],
-"sec-ch-ua": ["\"Not=A?Brand\";v=\"99\", \"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\""],
-"sec-ch-ua-mobile": ["?0"],
-"sec-ch-ua-platform": ["Android", "macOS", "Windows"],
-"Sec-Fetch-Dest": ["empty"],
-"Sec-Fetch-Mode": ["cors"],
-"Sec-Fetch-Site": ["same-origin"]
+"Connection": ["keep-alive"]
