@@ -687,7 +687,7 @@
     function renderMe() {
       if (!me) return;
       var total = me.profile_usage_total, used = me.profile_usage_current, days = me.profile_remaining_days;
-      var unlimitedGb = total >= 1000000 || total <= 0, unlimitedDays = days >= 9999;
+      var unlimitedGb = total >= 1000000 || total <= 0, unlimitedDays = days >= 5000;
       var percent = unlimitedGb ? 0 : Math.min(100, used / total * 100);
       var ended = (!unlimitedGb && used >= total) || days < 0;
       var ending = !ended && ((!unlimitedGb && percent >= 85) || (!unlimitedDays && days <= 2));
@@ -703,7 +703,7 @@
       $('daysValue').textContent = unlimitedDays ? t('unlimited') : days <= 0 ? (days === 0 ? t('today') : t('ended')) : t('days', { n: num(days) });
       $('daysBar').style.width = unlimitedDays ? '100%' : Math.max(0, Math.min(100, days / 30 * 100)) + '%';
       var reset = me.profile_reset_days;
-      $('resetValue').textContent = reset == null || reset >= 9999 ? t('never') : t('days', { n: num(reset) });
+      $('resetValue').textContent = reset == null || reset >= 1000 ? t('never') : t('days', { n: num(reset) });
 
       // bot
       if (me.telegram_bot_url) {
