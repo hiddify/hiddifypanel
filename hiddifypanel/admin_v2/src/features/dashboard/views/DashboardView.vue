@@ -6,7 +6,9 @@ import ProgressBar from 'primevue/progressbar'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import DashboardToolbar from '../components/DashboardToolbar.vue'
 import KpiTiles from '../components/KpiTiles.vue'
+import ConfigHealthCard from '../components/ConfigHealthCard.vue'
 import NodeHealthCard from '../components/NodeHealthCard.vue'
+import { isSuperAdmin } from '@/core/panelShell'
 import UsageComparisonCard from '../components/UsageComparisonCard.vue'
 import UsageTrendCard from '../components/UsageTrendCard.vue'
 import UsersComparisonCard from '../components/UsersComparisonCard.vue'
@@ -78,6 +80,9 @@ const {
       />
       <UsersComparisonCard :users="users" :series="series" :nodes="nodes" :stacked="childId === null" />
     </div>
+
+    <!-- Every config tested from the server every 6 hours (super admins: it runs cores on the server) -->
+    <ConfigHealthCard v-if="isSuperAdmin" />
 
     <NodeHealthCard :nodes="nodeStats" :history="nodeSamples" :child-id="childId" />
   </div>
