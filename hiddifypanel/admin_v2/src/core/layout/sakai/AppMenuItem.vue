@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { openTelegram, tgUrl } from '@/shared/utils/telegram'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -67,6 +68,12 @@ function itemClick(event: Event, item: Record<string, unknown>) {
     layoutState.overlayMenuActive = false
     layoutState.mobileMenuActive = false
     layoutState.menuHoverActive = false
+    return
+  }
+  if (typeof item.url === 'string' && tgUrl(item.url)) {
+    // Telegram links (the bot): the app first, the t.me page when no app takes it
+    event.preventDefault()
+    openTelegram(item.url)
     return
   }
   if (item.method === 'post' && item.url) {

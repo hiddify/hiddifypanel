@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import HiddifyQrCode from '@/shared/components/HiddifyQrCode.vue'
 import { telegramInfo } from '@/core/panelShell'
+import { openTelegram } from '@/shared/utils/telegram'
 
 const props = defineProps<{ connected?: boolean; showQr?: boolean }>()
 const emit = defineEmits<{ opened: []; check: [] }>()
@@ -18,8 +19,8 @@ const isConnected = computed(() => props.connected ?? info.value?.connected ?? f
 
 function open() {
   if (!info.value) return
-  // tg:// opens the app; the t.me link is the fallback (desktop without the app).
-  window.location.href = info.value.connect_url
+  // The app first (tg://), the t.me page when no app takes it: tg:// alone did nothing without the app
+  openTelegram(info.value.web_url)
   emit('opened')
 }
 </script>
