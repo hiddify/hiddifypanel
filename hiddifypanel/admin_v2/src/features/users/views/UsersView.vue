@@ -93,11 +93,15 @@
     <div v-else-if="state && !narrow" class="users-card">
       <DataTable
         v-model:selection="selected"
+        :select-all="allPicked"
+        @select-all-change="onSelectAllChange"
         v-model:first="first"
-        :value="rows"
+        :value="tableRows"
         data-key="uuid"
+        :lazy="!groupByOwner && !!sortField"
         :paginator="paged && rows.length > pageSize"
         :rows="paged ? pageSize : Math.max(rows.length, 1)"
+        :total-records="rows.length"
         paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
         :current-page-report-template="pageReport"
         :sort-field="groupByOwner ? 'owner_key' : sortField"
@@ -108,12 +112,14 @@
         removable-sort
         size="small"
         class="users-table"
+        :class="{ 'users-table--resizing': resizing }"
         :row-class="rowClass"
         resizable-columns
         column-resize-mode="fit"
         @sort="onSort"
         @cell-edit-complete="onCellEdit"
         @row-reorder="onRowReorder"
+        @column-resize-start="resizing = true"
         @column-resize-end="onColumnResize"
       >
         <template #empty>
@@ -417,6 +423,7 @@ import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
 import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
+import { localeComparator, resolveFieldData, sort as sortValues } from '@primeuix/utils/object'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersLayout, type UsersState } from '@/features/users/api'
 import { sizeText, exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
 
@@ -641,6 +648,23 @@ const rows = computed<Row[]>(() => {
   const match = MATCH[filter.value]
   return orderedRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
 })
+/**
+ * A column sort keeps the pinned users on top: they are sorted among themselves, then the others the same way
+ * (PrimeVue's own comparison, so the order is the one its header arrow promises). Grouping sorts in PrimeVue.
+ */
+const comparer = localeComparator()
+const sortedRows = computed<Row[]>(() => {
+  const field = sortField.value
+  if (!field || !sortOrder.value) return rows.value
+  const dir = sortOrder.value
+  const by = (list: Row[]) => [...list].sort((a, b) => sortValues(resolveFieldData(a, field), resolveFieldData(b, field), dir, comparer, 1))
+  return [...by(rows.value.filter((u) => isPinned(u))), ...by(rows.value.filter((u) => !isPinned(u)))]
+})
+/** A lazy table (a column sort) shows its rows as given: hand it the current page of the sorted list. */
+const tableRows = computed<Row[]>(() => {
+  if (groupByOwner.value || !sortField.value) return rows.value
+  return paged.value ? sortedRows.value.slice(first.value, first.value + pageSize.value) : sortedRows.value
+})
 const usersFiltered = computed(() => filter.value !== 'all' || Boolean(query.value.trim()) || pickedTags.value.length > 0)
 function resetUserFilters() {
   filter.value = 'all'
@@ -680,7 +704,7 @@ async function bulkTag(id: number, on: boolean) {
 
 /** Phones: the current page, grouped when asked. */
 const pageRows = computed(() => {
-  const list = groupByOwner.value ? [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : rows.value
+  const list = groupByOwner.value ? [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : sortedRows.value
   return paged.value ? list.slice(first.value, first.value + pageSize.value) : list
 })
 const cardGroups = computed(() => {
@@ -776,7 +800,11 @@ function onGuideSeen() {
 }
 
 /** The Name column's edge moved: keep the Usage column's new width (it is the next column, in either direction). */
+/** True while the Name column's edge is dragged: no text selection across the rows meanwhile. */
+const resizing = ref(false)
 function onColumnResize(e: DataTableColumnResizeEndEvent) {
+  resizing.value = false
+  window.getSelection()?.removeAllRanges()
   const usage = (e.element as HTMLElement).nextElementSibling as HTMLElement | null
   if (usage?.offsetWidth) usageWidthPx.value = Math.round(usage.offsetWidth)
 }
@@ -793,6 +821,11 @@ function toggleAll(on: boolean) {
   const shown = new Set(rows.value.map((u) => u.uuid))
   const others = selected.value.filter((s) => !shown.has(s.uuid))
   selected.value = on ? [...others, ...rows.value] : others
+}
+
+/** The header checkbox: every user the filter / search shows (not only this page), as before a sort was lazy. */
+function onSelectAllChange(e: { checked: boolean }) {
+  toggleAll(e.checked)
 }
 
 function toggleSelect(u: Row, on: boolean) {
@@ -1605,6 +1638,12 @@ onBeforeUnmount(() => {
 }
 .u-actions {
   display: flex;
+}
+/* Dragging the column edge: no blue text selection over the rows and cells. */
+.users-table--resizing,
+.users-table--resizing :deep(*) {
+  user-select: none;
+  -webkit-user-select: none;
 }
 /* PrimeVue puts a resizer on every column: only the Name column's edge (shared with Usage) keeps one. */
 .users-table :deep(th:not(.u-th-name) > .p-datatable-column-resizer) {
