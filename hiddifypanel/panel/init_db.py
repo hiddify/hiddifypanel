@@ -25,6 +25,14 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v181(child_id):
+    """ShadowTLS is an SNI proxy (its handshake goes to the domain the proxy is assigned to): no separate fake domain.
+    The rows that mirrored the old shadowtls_fakedomain setting carried no proxies: removed, with the setting."""
+    for row in Domain.query.filter(Domain.child_id == child_id, Domain.fake_mode == FakeMode.shadowtls).all():
+        db.session.delete(row)
+    set_hconfig(ConfigEnum.shadowtls_fakedomain, "", child_id, commit=False)
+
+
 def _v180(child_id):
     """REALITY SNI watch: spare SNIs and the automatic switch (off: the admin switches on the Clean IP page)."""
     if child_id != 0:
@@ -669,7 +677,6 @@ def _v74(child_id):
     set_hconfig(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     # db.session.bulk_save_objects(get_proxy_rows_v1())
 
-    set_hconfig(ConfigEnum.shadowtls_fakedomain, hutils.network.pick_reality_friendly_domain("captive.apple.com"))
 
 
 def _v71(child_id):
@@ -837,7 +844,6 @@ def _v42():
     keys = [
         ConfigEnum.telegram_fakedomain,
         ConfigEnum.ssfaketls_fakedomain,
-        ConfigEnum.shadowtls_fakedomain,
     ]
     decoy = hconfig(ConfigEnum.decoy_domain)
     domains = [d for d in dict.fromkeys(hutils.network.get_random_domains(len(keys) + 1)) if d != decoy]
@@ -948,7 +954,6 @@ def _v19():
     set_hconfig(ConfigEnum.path_ws, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.tuic_enable, False)
     add_config_if_not_exist(ConfigEnum.shadowtls_enable, False)
-    add_config_if_not_exist(ConfigEnum.shadowtls_fakedomain, "en.wikipedia.org")
     add_config_if_not_exist(ConfigEnum.utls, "chrome")
     add_config_if_not_exist(ConfigEnum.telegram_bot_token, "")
     add_config_if_not_exist(ConfigEnum.package_mode, "release")

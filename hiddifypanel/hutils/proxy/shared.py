@@ -515,8 +515,7 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         base["mode"] = "FakeTLS"
         return base
     elif "shadowtls" in proxy.transport:
-        base["fakedomain"] = hconfigs[ConfigEnum.shadowtls_fakedomain]
-        # base['sni'] = hconfigs[ConfigEnum.shadowtls_fakedomain]
+        base["fakedomain"] = base["sni"]  # an SNI proxy: the proxy's own domain
         base["shared_secret"] = hconfigs[ConfigEnum.shared_secret]
         base["mode"] = "ShadowTLS"
         return base

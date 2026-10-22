@@ -284,7 +284,8 @@ class ConfigEnum(metaclass=FastEnum):
     ssfaketls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.reinstall)
     ssfaketls_fakedomain = _StrConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config, hide_in_virtual_child=True)
     shadowtls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config)
-    shadowtls_fakedomain = _StrConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config, hide_in_virtual_child=True)
+    #: Legacy (no longer used): ShadowTLS is an SNI proxy whose handshake goes to the domain assigned to the proxy.
+    shadowtls_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
     ssr_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     # ssr_secret="ssr_secret"

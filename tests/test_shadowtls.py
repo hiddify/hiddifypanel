@@ -28,7 +28,6 @@ class ShadowTLSTests(unittest.TestCase):
         self.ctx = SimpleNamespace(
             hconfig=SimpleNamespace(
                 shadowtls_enable=True,
-                shadowtls_fakedomain="handshake.example",
                 shared_secret="01234567-89ab-cdef-0123-456789abcdef",
                 shadowsocks2022_method="2022-blake3-aes-256-gcm",
                 ipv6_enabled=False,
@@ -53,14 +52,20 @@ class ShadowTLSTests(unittest.TestCase):
         domains = [SimpleNamespace(tcp_port=p, udp_port=None, tcp_udp=tcp_udp, domain=SimpleNamespace(sni="own-server.example", name=f"server-{n}.example")) for n, p in enumerate(ports)]
         return SimpleNamespace(id=self.proxy_id, mode=mode, categories=categories, iter_proxies_with_domain=lambda: iter(domains))
 
-    def test_handshake_and_detour_match_client_transport(self):
+    # ShadowTLS is an SNI proxy: no separate fake domain (no shadowtls_fakedomain in ctx: StrictUndefined fails if used)
+    def test_handshake_goes_to_the_proxys_own_domain(self):
         fragment = self.render("hiddify-core/server/protocols/shadowtls")
         inbound = json5.loads(fix_duplicate_json_commas("{" + fragment + "}"))
-        self.assertEqual(inbound["handshake"], {"server": "handshake.example", "server_port": 443})
-        self.assertEqual(inbound["handshake_for_server_name"], {"handshake.example": inbound["handshake"]})
+        self.assertEqual(inbound["handshake"], {"server": "own-server.example", "server_port": 443})
+        self.assertEqual(inbound["handshake_for_server_name"], {"own-server.example": inbound["handshake"]})
         self.assertEqual(inbound["detour"], "shadowsocks_for_proxies")
         self.assertEqual(inbound["users"][0]["password"], self.ctx.hconfig.shared_secret)
-        self.assertNotIn("own-server.example", fragment)
+
+    def test_client_names_the_proxys_domain(self):
+        self.ctx.hconfig.utls = "chrome"
+        fragment = self.render("hiddify-core/client/protocols/shadowtls", proxy=SimpleNamespace(server="1.2.3.4", port=443), domain=SimpleNamespace(sni="own-server.example"))
+        outbound = json5.loads(fix_duplicate_json_commas("{" + fragment + "}"))
+        self.assertEqual(outbound["tls"]["server_name"], "own-server.example")
 
     def test_internal_ss2022_key_matches_client(self):
         for secret in ("01234567-89ab-cdef-0123-456789abcdef", "0123456789abcdef0123456789abcdef"):
@@ -73,26 +78,13 @@ class ShadowTLSTests(unittest.TestCase):
                 self.assertEqual(len(base64.b64decode(internal["password"])), 32)
                 self.assertEqual(client["password"].split(":", 1)[1], internal["users"][0]["password"])
 
-    def test_gateway_uses_allocated_shadowtls_ports_and_keeps_other_routes(self):
-        self.ctx.proxies = [self.proxy(20035, 20035, 20036), self.proxy(20040, categories=("anytls",))]
-        config = tomllib.loads(self.render("rust-rpxy-l4/server/base"))
-        route = config["protocols"]["shadowtls"]
-        self.assertEqual(route["server_names"], ["handshake.example"])
-        self.assertEqual(route["target"], ["127.0.0.1:20035", "127.0.0.1:20036"])
-        self.assertEqual(route["send_proxy_protocol"], "v2")
-        self.assertEqual(config["protocols"]["sp_96_server-0-example_tls"]["target"], ["127.0.0.1:20040"])
-
-    def test_no_fake_sni_route_without_shadowtls_backends(self):
-        for proxies in ([], [self.proxy(20040, categories=("anytls",))], [self.proxy(20035, mode="domains_l7_gateway")], [self.proxy(None)], [self.proxy(20035, tcp_udp="udp")]):
-            with self.subTest(proxies=proxies):
-                self.ctx.proxies = proxies
-                config = tomllib.loads(self.render("rust-rpxy-l4/server/base"))
-                self.assertNotIn("shadowtls", config["protocols"])
-
-    def test_disabled_shadowtls_has_no_fake_sni_route(self):
-        self.ctx.proxies = [self.proxy(20035)]
-        self.ctx.hconfig.shadowtls_enable = False
-        self.assertNotIn("shadowtls", tomllib.loads(self.render("rust-rpxy-l4/server/base"))["protocols"])
+    def test_gateway_routes_shadowtls_by_its_domain_like_any_sni_proxy(self):
+        self.ctx.proxies = [self.proxy(20035, 20036), self.proxy(20040, categories=("anytls",))]
+        protocols = tomllib.loads(self.render("rust-rpxy-l4/server/base"))["protocols"]
+        self.assertNotIn("shadowtls", protocols)
+        self.assertEqual(protocols["sp_95_server-0-example_tls"]["target"], ["127.0.0.1:20035"])
+        self.assertEqual(protocols["sp_95_server-1-example_tls"]["target"], ["127.0.0.1:20036"])
+        self.assertEqual(protocols["sp_96_server-0-example_tls"]["target"], ["127.0.0.1:20040"])
 
     def test_tester_hides_helper_but_retains_detour_dependency(self):
         helper = {"type": "shadowtls", "tag": "transport_out §hide§", "server": "own-server.example", "server_port": 443}

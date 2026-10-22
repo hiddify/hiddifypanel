@@ -1,6 +1,8 @@
-"""Domain rows for the fake-TLS front domains (Telegram MTProxy, Shadowsocks FakeTLS, ShadowTLS).
+"""Domain rows for the fake-TLS front domains (Telegram MTProxy, Shadowsocks FakeTLS).
 
-Each row (``fake_mode`` telegram / shadowtls / ssfaketls, one per node) is kept in sync, both ways, with the matching
+ShadowTLS has none: it is an SNI proxy, assigned to a domain like any other proxy.
+
+Each row (``fake_mode`` telegram / ssfaketls, one per node) is kept in sync, both ways, with the matching
 ``*_fakedomain`` setting: saving the row writes the setting, changing the setting updates (or creates) the row.
 """
 
@@ -15,7 +17,6 @@ from hiddifypanel.models.domain import FAKE_PROXY_MODES
 #: fake mode -> (setting holding the domain, setting that turns the feature on)
 FAKE_PROXY_CONFIGS: dict[FakeMode, tuple[ConfigEnum, ConfigEnum]] = {
     FakeMode.telegram: (ConfigEnum.telegram_fakedomain, ConfigEnum.telegram_enable),
-    FakeMode.shadowtls: (ConfigEnum.shadowtls_fakedomain, ConfigEnum.shadowtls_enable),
     FakeMode.ssfaketls: (ConfigEnum.ssfaketls_fakedomain, ConfigEnum.ssfaketls_enable),
 }
 

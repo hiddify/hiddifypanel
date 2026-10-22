@@ -5,13 +5,14 @@
 "users": [
   {"password": "{{ ctx.hconfig.shared_secret }}"}
 ],
+{# An SNI proxy: the domain assigned to this proxy is the site the handshake is relayed to (no separate fake domain). #}
 "handshake": {
-  "server": "{{ ctx.hconfig.shadowtls_fakedomain }}",
+  "server": "{{ ctx.domain.sni }}",
   "server_port": 443
 },
 "handshake_for_server_name": {
-  "{{ ctx.hconfig.shadowtls_fakedomain }}": {
-    "server": "{{ ctx.hconfig.shadowtls_fakedomain }}",
+  "{{ ctx.domain.sni }}": {
+    "server": "{{ ctx.domain.sni }}",
     "server_port": 443
   }
 },
