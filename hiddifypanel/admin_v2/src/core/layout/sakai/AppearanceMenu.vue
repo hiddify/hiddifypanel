@@ -123,8 +123,9 @@ function setDark(dark: boolean) {
           :aria-label="t('account.languageTitle')"
           @update:model-value="pickLanguage"
         >
+          <!-- Chosen: only its flag (the name is in the list, the tooltip and for screen readers) -->
           <template #value>
-            <span v-if="current" class="appearance__lang-value"><span class="appearance__flag">{{ current.flag }}</span>{{ current.label }}</span>
+            <span v-if="current" class="appearance__flag appearance__flag--chosen" role="img" :aria-label="current.label" :title="current.label">{{ current.flag }}</span>
           </template>
           <template #option="{ option }">
             <span class="appearance__lang-value"><span class="appearance__flag">{{ option.flag }}</span>{{ option.label }}</span>
@@ -223,8 +224,14 @@ function setDark(dark: boolean) {
   color: var(--p-primary-color);
 }
 .appearance__lang {
-  min-width: 0;
-  max-width: 12rem;
+  flex-shrink: 0;
+}
+.appearance__lang :deep(.p-select-label) {
+  padding-inline: 0.6rem 0.2rem;
+}
+/* The list keeps flag and name, a little wider than the flag-only button. */
+.appearance__lang :deep(.p-select-overlay) {
+  min-width: 11rem;
 }
 .appearance__lang-value {
   display: inline-flex;
@@ -238,6 +245,10 @@ function setDark(dark: boolean) {
 .appearance__flag {
   font-size: 1.1rem;
   line-height: 1;
+}
+.appearance__flag--chosen {
+  display: block;
+  font-size: 1.35rem;
 }
 .appearance__modes {
   display: grid;
@@ -298,7 +309,9 @@ function setDark(dark: boolean) {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.5rem;
 }
+/* Glass tiles: the color a little translucent, a bright edge and a light sweep across the top. */
 .appearance__swatch {
+  position: relative;
   width: 100%;
   max-width: 2.25rem;
   aspect-ratio: 1;
@@ -306,20 +319,49 @@ function setDark(dark: boolean) {
   display: grid;
   place-items: center;
   padding: 0;
-  border: 0;
-  border-radius: 10px;
-  background: var(--swatch);
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 11px;
+  background: transparent;
   color: #fff;
   font-size: 0.75rem;
   cursor: pointer;
-  box-shadow: 0 6px 14px -8px rgb(0 0 0 / 60%);
+  overflow: hidden;
+  isolation: isolate;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 55%),
+    inset 0 -6px 12px -6px rgb(0 0 0 / 25%),
+    0 8px 16px -10px rgb(0 0 0 / 55%);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.appearance__swatch::before,
+.appearance__swatch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.appearance__swatch::before {
+  background: var(--swatch);
+  opacity: 0.78;
+}
+.appearance__swatch::after {
+  background:
+    radial-gradient(120% 70% at 25% 0%, rgb(255 255 255 / 60%) 0%, rgb(255 255 255 / 0%) 55%),
+    linear-gradient(160deg, rgb(255 255 255 / 25%) 0%, rgb(255 255 255 / 0%) 45%);
+}
+.appearance__swatch .pi {
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 45%));
 }
 .appearance__swatch:hover {
   transform: translateY(-2px);
 }
 .appearance__swatch--active {
+  border-color: rgb(255 255 255 / 85%);
   box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
     0 0 0 2px var(--p-content-background),
     0 0 0 4px var(--p-text-color);
 }

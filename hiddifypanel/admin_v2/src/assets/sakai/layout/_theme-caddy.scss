@@ -45,12 +45,7 @@ html.theme-caddy.app-dark {
     --p-surface-900: #1a1526;
     --p-surface-950: #110d1b;
 
-    /* white text: it reads on the glass whatever the glow behind it */
-    --p-text-color: #ffffff;
-    --p-text-hover-color: #ffffff;
-    --p-text-muted-color: rgb(255 255 255 / 72%);
-    --p-text-hover-muted-color: rgb(255 255 255 / 88%);
-    --text-color-secondary: rgb(255 255 255 / 72%);
+    /* text: the translucent white of every dark theme (variables/_dark.scss) */
 
     --caddy-glass: rgb(22 17 34 / 58%);
     --caddy-glass-strong: rgb(20 15 31 / 82%);

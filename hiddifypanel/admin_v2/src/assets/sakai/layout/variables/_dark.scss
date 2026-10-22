@@ -2,4 +2,11 @@
     --surface-ground: var(--p-surface-950);
     --code-background: var(--p-surface-800);
     --code-color: var(--p-surface-100);
+
+    /* Text in translucent white (not grey): it takes a little of what is behind it, glass or plain dark. */
+    --p-text-color: rgb(255 255 255 / 92%);
+    --p-text-hover-color: #ffffff;
+    --p-text-muted-color: rgb(255 255 255 / 64%);
+    --p-text-hover-muted-color: rgb(255 255 255 / 85%);
+    --text-color-secondary: rgb(255 255 255 / 64%);
 }
