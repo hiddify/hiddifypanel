@@ -43,16 +43,16 @@ def exec_command(cmd, cwd=None):
 
 
 _apply_users_lock = threading.Lock()
-_apply_users_state = {"running": False, "pending": False, "domain": False}
+_apply_users_state = {"running": False, "pending": False, "domain": False, "users_only": True}
 
 
 def _apply_users_worker():
     while True:
         with _apply_users_lock:
-            domain = _apply_users_state["domain"]
-            _apply_users_state["domain"] = False
+            domain, users_only = _apply_users_state["domain"], _apply_users_state["users_only"]
+            _apply_users_state["domain"], _apply_users_state["users_only"] = False, True
         try:
-            commander(Command.apply_users, run_in_background=False, domain=int(domain))
+            commander(Command.apply_users, run_in_background=False, domain=int(domain), users_only=int(users_only))
         except Exception as e:
             logger.exception(f"apply users failed: {e}")
         with _apply_users_lock:
@@ -62,11 +62,13 @@ def _apply_users_worker():
             _apply_users_state["pending"] = False  # changes came in meanwhile: apply again
 
 
-def quick_apply_users(domain: bool = False):
+def quick_apply_users(domain: bool = False, users_only: bool = False):
     """Run install.sh apply_users. Asked again while it runs: it runs once more afterwards, so the last change is always applied.
-    domain: domains changed, so services that cannot hot-reload them (telemt) restart."""
+    domain: domains changed, so services that cannot hot-reload them (telemt) restart.
+    users_only: only users changed and user_driver already gave them to the cores' APIs: xray is not reloaded."""
     with _apply_users_lock:
         _apply_users_state["domain"] |= domain
+        _apply_users_state["users_only"] &= users_only
         if _apply_users_state["running"]:
             _apply_users_state["pending"] = True
             logger.info("apply users: already running, queued to run once more")

@@ -195,7 +195,7 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
             apply_changes = True
 
     if apply_changes:
-        hiddify.quick_apply_users()
+        hiddify.quick_apply_users(users_only=True)
 
     return {"status": "success", "comments": usage_payload, "date": hutils.convert.time_to_json(cur_time)}
 

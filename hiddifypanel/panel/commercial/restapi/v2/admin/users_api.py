@@ -49,6 +49,6 @@ class UsersApi(MethodView):
 
         dbuser = User.add_or_update(**payload) or abort(502, "Unknown issue: User is not added")
         user_driver.add_client(dbuser)
-        hiddify.quick_apply_users()
+        hiddify.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return dbuser.to_schema()

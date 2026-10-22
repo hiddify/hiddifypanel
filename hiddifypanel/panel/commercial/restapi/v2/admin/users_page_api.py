@@ -232,7 +232,7 @@ def _after_change(users: list[User]) -> None:
             user_driver.add_client(user)
         else:
             user_driver.remove_client(user)
-    hiddify.quick_apply_users()
+    hiddify.quick_apply_users(users_only=True)
     hutils.node.parent.notify_childs_users_changed()
 
 
@@ -316,7 +316,7 @@ class UserPageApi(MethodView):
             abort(400, "At least one user must exist")
         user.remove(commit=False)
         db.session.commit()
-        hiddify.quick_apply_users()
+        hiddify.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return {"status": 200, "msg": "ok"}
 
@@ -344,7 +344,7 @@ class UsersBulkApi(MethodView):
             for user in users:
                 user.remove(commit=False)
             db.session.commit()
-            hiddify.quick_apply_users()
+            hiddify.quick_apply_users(users_only=True)
             hutils.node.parent.notify_childs_users_changed()
             return {"count": len(users)}
         days = _number(body, "days", low=1, high=3650, integer=True) if action == "add_days" else 0
