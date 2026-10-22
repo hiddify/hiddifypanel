@@ -26,11 +26,12 @@ MAX_DB_VERSION = 200
 
 
 def _v181(child_id):
-    """ShadowTLS is an SNI proxy (its handshake goes to the domain the proxy is assigned to): no separate fake domain.
-    The rows that mirrored the old shadowtls_fakedomain setting carried no proxies: removed, with the setting."""
-    for row in Domain.query.filter(Domain.child_id == child_id, Domain.fake_mode == FakeMode.shadowtls).all():
+    """ShadowTLS and SS FakeTLS are SNI proxies (on the domains the proxies are assigned to): no separate fake domains.
+    The rows that mirrored the old *_fakedomain settings carried no proxies: removed, with the settings."""
+    for row in Domain.query.filter(Domain.child_id == child_id, Domain.fake_mode.in_([FakeMode.shadowtls, FakeMode.ssfaketls])).all():
         db.session.delete(row)
     set_hconfig(ConfigEnum.shadowtls_fakedomain, "", child_id, commit=False)
+    set_hconfig(ConfigEnum.ssfaketls_fakedomain, "", child_id, commit=False)
 
 
 def _v180(child_id):
@@ -843,7 +844,6 @@ def _v42():
 
     keys = [
         ConfigEnum.telegram_fakedomain,
-        ConfigEnum.ssfaketls_fakedomain,
     ]
     decoy = hconfig(ConfigEnum.decoy_domain)
     domains = [d for d in dict.fromkeys(hutils.network.get_random_domains(len(keys) + 1)) if d != decoy]

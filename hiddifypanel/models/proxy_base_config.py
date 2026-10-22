@@ -230,7 +230,7 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'core': 'rust-rpxy-l4',
         'version': '1.0.0',
         'name': 'Server rust-rpxy-l4 Base',
-        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway, ShadowTLS included; Telegram, FakeTLS)',
+        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway, ShadowTLS and SS FakeTLS included; Telegram)',
     },
     {
         'side': BaseConfigSide.server,

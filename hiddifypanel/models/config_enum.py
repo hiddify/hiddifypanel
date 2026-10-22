@@ -282,7 +282,8 @@ class ConfigEnum(metaclass=FastEnum):
     shadowsocks2022_method = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     shadowsocks2022_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     ssfaketls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.reinstall)
-    ssfaketls_fakedomain = _StrConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config, hide_in_virtual_child=True)
+    #: Legacy (no longer used): SS FakeTLS is an SNI proxy on the domains assigned to it.
+    ssfaketls_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     shadowtls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config)
     #: Legacy (no longer used): ShadowTLS is an SNI proxy whose handshake goes to the domain assigned to the proxy.
     shadowtls_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)

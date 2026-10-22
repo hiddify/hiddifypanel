@@ -29,6 +29,10 @@ from .version import TemplateVersion
 _REALITY_TLS_LAYERS: frozenset[TlsLayer] = frozenset({TlsLayer.tls, TlsLayer.tls_h2})
 
 
+#: The port of the SS FakeTLS service (obfs-server in services/ssfaketls).
+SS_FAKETLS_PORT = 1010
+
+
 def _tls_layer_allows_reality(transport: CustomProxyTransport, tls_layer: TlsLayer | None) -> bool:
     """TLS layers a REALITY domain can carry: TLS/TLS-h2, and TLS-h1 for raw HTTP (rawhttp)
     (see domain_mode_filter.transport_tls_supports_reality, which offers these domain modes)."""
@@ -250,6 +254,9 @@ class ProxyDomainVar(ProxyVar):
             tls_layer=proxy.tls_layer,
         )
         tcp_ports, udp_ports = list(resolved.tcp_ports), list(resolved.udp_ports)
+        if server_side and proxy.mode == CustomProxyMode.domains_sni_gateway and "faketls" in proxy.categories:
+            # SS FakeTLS is served by the obfs-server service (services/ssfaketls), not a core inbound
+            tcp_ports, udp_ports = [SS_FAKETLS_PORT], []
         if not server_side and proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway):
             # Clients connect to the domain's own gateway port when it has one.
             tcp_ports = [domain_gateway_port(domain, p) for p in tcp_ports]

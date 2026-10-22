@@ -86,6 +86,15 @@ class ShadowTLSTests(unittest.TestCase):
         self.assertEqual(protocols["sp_95_server-1-example_tls"]["target"], ["127.0.0.1:20036"])
         self.assertEqual(protocols["sp_96_server-0-example_tls"]["target"], ["127.0.0.1:20040"])
 
+    def test_ss_faketls_domains_go_to_its_service_port(self):
+        # SS FakeTLS is an SNI proxy too: its domains are routed by their own names, to the obfs-server service
+        from hiddifypanel.proxy_v3.context_vars.proxy import SS_FAKETLS_PORT
+
+        self.ctx.proxies = [self.proxy(SS_FAKETLS_PORT, categories=("ss", "faketls"))]
+        protocols = tomllib.loads(self.render("rust-rpxy-l4/server/base"))["protocols"]
+        self.assertNotIn("ssfaketls", protocols)
+        self.assertEqual(protocols["sp_95_server-0-example_tls"]["target"], [f"127.0.0.1:{SS_FAKETLS_PORT}"])
+
     def test_tester_hides_helper_but_retains_detour_dependency(self):
         helper = {"type": "shadowtls", "tag": "transport_out §hide§", "server": "own-server.example", "server_port": 443}
         main = {"type": "shadowsocks", "tag": "ShadowTLS", "detour": helper["tag"]}
