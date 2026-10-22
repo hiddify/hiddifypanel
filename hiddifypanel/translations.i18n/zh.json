@@ -1974,6 +1974,12 @@
       "name": "名称",
       "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
     },
+    "notifications": {
+      "title": "通知",
+      "unread": "{n} 条新通知 | {n} 条新通知",
+      "new": "新",
+      "dismiss": "关闭"
+    },
     "theme": {
       "caddy": "Smart Caddy 主题",
       "color": "主题",

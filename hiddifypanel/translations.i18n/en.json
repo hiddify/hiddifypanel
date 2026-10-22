@@ -2668,6 +2668,12 @@
       "name": "Name",
       "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
     },
+    "notifications": {
+      "title": "Notifications",
+      "unread": "{n} new notification | {n} new notifications",
+      "new": "New",
+      "dismiss": "Dismiss"
+    },
     "theme": {
       "caddy": "Smart Caddy theme",
       "color": "Theme",

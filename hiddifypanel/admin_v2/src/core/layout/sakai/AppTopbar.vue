@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLayout } from './composables/layout'
 import AppearanceMenu from './AppearanceMenu.vue'
+import NotificationsMenu from './NotificationsMenu.vue'
 import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
 import { isChildPanel, submitPostForm } from '@/core/panelShell'
 import { getRouterBase } from '@/core/api/client'
@@ -42,6 +43,8 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
       </router-link>
     </div>
     <div class="layout-topbar-actions">
+      <!-- The panel's notices (only while there are some) -->
+      <NotificationsMenu />
       <!-- My account: limits and password (a node's admins are managed on its parent) -->
       <router-link
         v-if="!isChildPanel"

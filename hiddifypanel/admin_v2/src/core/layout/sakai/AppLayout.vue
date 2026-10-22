@@ -4,7 +4,6 @@
     <AppSidebar />
     <div class="layout-main-container">
       <div class="layout-main">
-        <PanelNotices />
         <RouterView v-slot="{ Component, route }">
           <KeepAlive :include="keptViews">
             <component :is="Component" :key="route.name as string" />
@@ -34,7 +33,6 @@ import AppFooter from './AppFooter.vue'
 import AppSidebar from './AppSidebar.vue'
 const pwaVisible = ref(false)
 import AppTopbar from './AppTopbar.vue'
-import PanelNotices from './PanelNotices.vue'
 import { useLayout } from './composables/layout'
 
 const { layoutConfig, layoutState, hideMobileMenu } = useLayout()
