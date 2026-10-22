@@ -318,12 +318,15 @@ class ServerBuilderProxyVar(ProxyVar):
     @classmethod
     def from_custom_proxy(cls, proxy: CustomProxy, hconfig: HConfigVar) -> ServerBuilderProxyVar:
         base = ProxyVar.from_custom_proxy(proxy, hconfig, server_side=True)
+        # SS FakeTLS / Telegram MTProxy SNI proxies: their service (obfs-server, telemt) listens on the service port;
+        # a core inbound of their own would take that port too ("bind: address already in use").
+        service_served = proxy.mode == CustomProxyMode.domains_sni_gateway and any(c in SERVICE_SNI_PORTS for c in base.categories)
         return cls(
             **base.model_dump(),
             server_config=ConfigVar(
                 core=proxy.server_core,
                 version=TemplateVersion(),
-                content=proxy.effective_server_config_text(),
+                content="" if service_served else proxy.effective_server_config_text(),
             ),
         )
 
