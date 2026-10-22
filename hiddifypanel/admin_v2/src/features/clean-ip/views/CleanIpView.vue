@@ -153,6 +153,52 @@
         </div>
       </template>
     </div>
+
+    <!-- REALITY SNIs: filtered on which ISP (from the full tests), the spares, the switch -->
+    <div v-if="isSuperAdmin && reality" class="card">
+      <h3 class="cip__h"><i class="pi pi-shield" /> {{ t('cleanIp.realityTitle') }}</h3>
+      <p class="text-muted-color text-sm mt-0">{{ t('cleanIp.realityHint') }}</p>
+      <p v-if="!reality.domains.length" class="text-muted-color text-sm">{{ t('cleanIp.noReality') }}</p>
+      <div v-for="d in reality.domains" :key="d.id" class="cip__sni">
+        <div class="cip__sni-head">
+          <b class="ltr">{{ d.sni }}</b>
+          <span v-for="(st, ispName) in d.status" :key="ispName" class="cip__badge" :class="st.ok ? 'cip__badge--ok' : 'cip__badge--bad'">
+            {{ ispName }} {{ st.ok ? '✓' : t('cleanIp.filtered') }}
+          </span>
+          <span v-if="!Object.keys(d.status).length" class="text-muted-color text-sm">{{ t('cleanIp.notTested') }}</span>
+        </div>
+        <div class="cip__sni-switch">
+          <Select v-model="switchTo[d.id]" :options="reality.spares.map((s) => s.sni)" editable :placeholder="t('cleanIp.newSni')" class="cip__sni-select" />
+          <Button :label="t('cleanIp.switch')" icon="pi pi-sync" size="small" :loading="switching === d.id" :disabled="!switchTo[d.id]" @click="doSwitch(d.id)" />
+        </div>
+      </div>
+
+      <div class="cip__fields mt-3">
+        <label class="cip__field cip__field--wide">
+          <span>{{ t('cleanIp.spares') }}</span>
+          <Textarea v-model="sparesText" rows="4" class="font-mono text-sm" dir="ltr" :auto-resize="false" fluid spellcheck="false" :placeholder="t('cleanIp.sparesPlaceholder')" />
+        </label>
+      </div>
+      <div v-if="reality.spares.length" class="cip__spares">
+        <span v-for="s in reality.spares" :key="s.sni" class="ltr text-sm">
+          {{ s.sni }}
+          <span v-for="(st, ispName) in s.status" :key="ispName" class="cip__badge" :class="st.ok ? 'cip__badge--ok' : 'cip__badge--bad'">{{ ispName }} {{ st.ok ? '✓' : '✗' }}</span>
+        </span>
+      </div>
+      <label class="cip__auto">
+        <ToggleSwitch v-model="autoSwitch" />
+        <span>{{ t('cleanIp.auto') }}</span>
+      </label>
+      <Button :label="t('cleanIp.saveSettings')" icon="pi pi-save" size="small" class="mt-2" :loading="savingReality" @click="saveRealitySettings" />
+
+      <div v-if="reality.events.length" class="mt-3">
+        <div class="cip__label">{{ t('cleanIp.history') }}</div>
+        <div v-for="e in reality.events" :key="e.at" class="text-sm cip__event">
+          <span class="ltr">{{ e.old }} → {{ e.new }}</span>
+          <span class="text-muted-color"> · {{ e.auto ? t('cleanIp.byAuto', { isp: e.isp }) : t('cleanIp.byAdmin') }} · {{ new Date(e.at * 1000).toLocaleString() }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -166,10 +212,12 @@ import Message from 'primevue/message'
 import ProgressBar from 'primevue/progressbar'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
+import ToggleSwitch from 'primevue/toggleswitch'
+import { isSuperAdmin } from '@/core/panelShell'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { apiErrorMessage } from '@/core/api/client'
 import { domainsApi, type DomainRow } from '@/features/domains/api'
-import { CLOUDFLARE_RANGES, cleanIpApi, mergeCdnIp, probeIp, randomIps, type CleanIpCommand, type CleanIpNetwork, type CleanIpReport } from '../api'
+import { CLOUDFLARE_RANGES, cleanIpApi, mergeCdnIp, probeIp, randomIps, type CleanIpCommand, type CleanIpNetwork, type CleanIpReport, type RealityState } from '../api'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -199,6 +247,56 @@ const making = ref(false)
 const command = ref<CleanIpCommand | null>(null)
 const reports = ref<CleanIpReport[]>([])
 let pollTimer = 0
+
+// REALITY SNI watch
+const reality = ref<RealityState | null>(null)
+const sparesText = ref('')
+const autoSwitch = ref(false)
+const switchTo = ref<Record<number, string>>({})
+const switching = ref<number | null>(null)
+const savingReality = ref(false)
+
+function showReality(state: RealityState) {
+  reality.value = state
+  sparesText.value = state.spares.map((s) => s.sni).join('\n')
+  autoSwitch.value = state.auto
+}
+
+async function loadReality() {
+  if (!isSuperAdmin.value) return
+  try {
+    showReality(await cleanIpApi.reality())
+  } catch {
+    reality.value = null
+  }
+}
+
+async function saveRealitySettings() {
+  savingReality.value = true
+  try {
+    showReality(await cleanIpApi.saveReality(sparesText.value.split(/\s+/).filter(Boolean), autoSwitch.value))
+    toast.add({ severity: 'success', summary: t('cleanIp.settingsSaved'), life: 2500 })
+  } catch (e) {
+    toast.add({ severity: 'error', summary: apiErrorMessage(e), life: 5000 })
+  } finally {
+    savingReality.value = false
+  }
+}
+
+async function doSwitch(domainId: number) {
+  const sni = (switchTo.value[domainId] || '').trim()
+  if (!sni) return
+  switching.value = domainId
+  try {
+    showReality(await cleanIpApi.switchSni(domainId, sni))
+    switchTo.value[domainId] = ''
+    toast.add({ severity: 'success', summary: t('cleanIp.switched', { sni }), life: 5000 })
+  } catch (e) {
+    toast.add({ severity: 'error', summary: apiErrorMessage(e), life: 6000 })
+  } finally {
+    switching.value = null
+  }
+}
 
 const cdnDomains = computed(() => domains.value.filter((d) => d.mode === 'cdn' || d.mode === 'worker'))
 // Another country than the panel's: a VPN is on, so the scan would test the VPN, not the users' ISP
@@ -308,6 +406,7 @@ async function poll() {
       reports.value = list
       // a run saved IPs on the server: show the domain's new value
       if (list.some((report) => report.saved.length)) await loadDomains()
+      await loadReality()
       rebuild()
     }
   } catch {
@@ -336,6 +435,7 @@ watch([domainId, isp, perIsp], () => rebuild())
 onMounted(() => {
   loadNetwork()
   loadDomains()
+  loadReality()
 })
 onBeforeUnmount(() => {
   stopping.value = true
@@ -487,6 +587,56 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   gap: 0.25rem 0.85rem;
   align-items: baseline;
+}
+.cip__sni {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+.cip__sni-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+}
+.cip__sni-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.cip__sni-select {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+.cip__badge {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.cip__badge--ok {
+  color: var(--p-green-500);
+  background: color-mix(in srgb, var(--p-green-500) 14%, transparent);
+}
+.cip__badge--bad {
+  color: var(--p-red-400);
+  background: color-mix(in srgb, var(--p-red-400) 14%, transparent);
+}
+.cip__spares {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 0.5rem;
+}
+.cip__auto {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+}
+.cip__event {
+  padding: 0.25rem 0;
 }
 .ltr {
   direction: ltr;

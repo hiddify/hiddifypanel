@@ -2890,7 +2890,23 @@
       "reportLine": "{tested} tested with {kb} KB upload, {found} work",
       "reportSaved": "Saved {count} IPs for {isp}:",
       "reportNotSaved": "Hiddify has no name for this ISP, so nothing was saved.",
-      "useThese": "Use these IPs above"
+      "useThese": "Use these IPs above",
+      "realityTitle": "REALITY SNIs",
+      "realityHint": "The full test (the command above) also connects to this server with each REALITY SNI, as a REALITY client does, and tells you where it is filtered. Keep a few spare SNIs: a filtered one can be switched to a spare that works, by you or by itself. Before any switch the panel tests a real REALITY connection through the site, and applies the configs after it; users get the new SNI with their next subscription update.",
+      "noReality": "This panel has no REALITY domain.",
+      "filtered": "filtered",
+      "notTested": "Not tested yet: run the full test command.",
+      "newSni": "Another SNI",
+      "switch": "Switch",
+      "spares": "Spare SNIs (one per line)",
+      "sparesPlaceholder": "one site per line",
+      "auto": "Switch a filtered REALITY SNI to a working spare by itself",
+      "saveSettings": "Save",
+      "settingsSaved": "Saved.",
+      "history": "Switches",
+      "byAuto": "by itself, filtered on {isp}",
+      "byAdmin": "by an admin",
+      "switched": "Now using {sni}; the configs are being applied."
     }
   },
   "adminuser": {

@@ -26,6 +26,8 @@ from hiddifypanel.cache import redis_client
 from hiddifypanel.hutils.network import auto_ip_selector, maxmind
 from hiddifypanel.models import ConfigEnum, Domain, Role, hconfig
 
+from hiddifypanel.panel import reality_watch
+
 from .clean_ip_script import SCRIPT
 
 ROLES = {Role.super_admin, Role.admin}
@@ -99,6 +101,16 @@ def merge_cdn_ip(current: str, short: str, ips: list[str]) -> tuple[str, int]:
     return "\n".join(lines), kept
 
 
+def _server_ipv4() -> str:
+    from hiddifypanel.hutils.network import get_ips
+
+    try:
+        ips = get_ips(4)
+    except Exception:
+        ips = []
+    return str(ips[0]) if ips else ""
+
+
 def _int(value, default: int, lo: int, hi: int) -> int:
     try:
         return max(lo, min(int(value), hi))
@@ -120,6 +132,10 @@ class CleanIpTokenApi(MethodView):
             "per_range": _int(body.get("per_range"), 8, 1, 64),
             "per_isp": _int(body.get("per_isp"), 3, 1, 20),
             "reports": [],
+            # REALITY SNI watch: the names to test, and where (this server, as REALITY clients reach it)
+            "snis": reality_watch.targets(),
+            "server_ip": _server_ipv4(),
+            "control": request.host.split(":")[0],
         })
         url = f"https://{request.host}/{g.proxy_path}/api/v2/admin/clean-ip/run/{token}/script.py"
         return {
@@ -158,6 +174,9 @@ class CleanIpScriptApi(MethodView):
             .replace("__SIZE__", str(int(data["size"])))
             .replace("__PER_RANGE__", str(int(data["per_range"])))
             .replace("__RANGES__", json.dumps(CLOUDFLARE_RANGES))
+            .replace("__SNIS__", json.dumps(data.get("snis") or []))
+            .replace("__SERVER_IP__", json.dumps(data.get("server_ip") or ""))
+            .replace("__CONTROL__", json.dumps(data.get("control") or request.host.split(":")[0]))
         )
         return Response(text, mimetype="text/x-python")
 
@@ -207,6 +226,56 @@ class CleanIpReportApi(MethodView):
             message = "No working IP: nothing saved."
         else:
             message = "Hiddify has no name for this ISP: nothing saved. Pick the ISP on the Clean IP page and save the IPs from there."
+        # REALITY SNIs: only when the server answered with its own name (else the address is blocked, not the SNIs)
+        sni_results = [r for r in (body.get("snis") or []) if isinstance(r, dict)][:50]
+        if body.get("sni_control") and sni_results and short != "unknown":
+            report["snis"] = [{"sni": str(r.get("sni") or ""), "ok": bool(r.get("ok"))} for r in sni_results]
+            report["switches"] = reality_watch.record(short, report["snis"])
         data["reports"] = (data.get("reports") or [])[-19:] + [report]
         _store(token, data)
         return {"short_name": short, "message": message, "saved": report["saved"]}
+
+
+# ---------------------------------------------------------------------------------------------- REALITY SNI watch
+
+
+def _reality_state() -> dict:
+    data = reality_watch.status()
+    return {
+        "domains": [{"id": d.id, "sni": d.domain, "status": data.get(d.domain.lower(), {})} for d in reality_watch.reality_domains()],
+        "spares": [{"sni": s, "status": data.get(s, {})} for s in reality_watch.spares()],
+        "auto": reality_watch.settings()["auto"],
+        "events": reality_watch.events()[::-1],
+    }
+
+
+class RealitySniApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self):
+        """REALITY SNI watch: each SNI's status per ISP (from full tests run in Iran), the spares and the switches"""
+        return _reality_state()
+
+    def put(self):
+        """REALITY SNI watch: the spare SNIs and the automatic switch"""
+        body = request.get_json(silent=True) or {}
+        spares = body.get("spares") or []
+        if isinstance(spares, str):
+            spares = spares.split()
+        reality_watch.save_settings([str(x) for x in spares][:50], bool(body.get("auto")))
+        return _reality_state()
+
+
+class RealitySniSwitchApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self, domain_id: int):
+        """REALITY SNI watch: switch this REALITY domain to another SNI (it must suit REALITY)"""
+        domain = Domain.query.filter(Domain.id == domain_id).first()
+        if domain is None:
+            abort(404)
+        try:
+            reality_watch.switch(domain, str((request.get_json(silent=True) or {}).get("sni") or ""))
+        except reality_watch.WatchError as e:
+            abort(400, str(e))
+        return _reality_state()
