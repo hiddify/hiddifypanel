@@ -1974,8 +1974,21 @@
       "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
     },
     "theme": {
-      "dark": "Modo escuro",
-      "light": "Modo claro"
+      "dark": "Escuro",
+      "light": "Claro",
+      "appearance": "Aparência",
+      "hiddify": "Tema Hiddify",
+      "caddy": "Tema Smart Caddy",
+      "caddyHint": "sempre escuro, com uma cor de destaque",
+      "colors": {
+        "red": "Vermelho",
+        "pink": "Rosa",
+        "orange": "Laranja",
+        "yellow": "Amarelo",
+        "green": "Verde",
+        "blue": "Azul",
+        "purple": "Roxo"
+      }
     },
     "users": {
       "add": "Adicionar usuário",

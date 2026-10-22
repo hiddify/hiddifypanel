@@ -2470,8 +2470,21 @@
       "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
     },
     "theme": {
-      "dark": "Dark mode",
-      "light": "Light mode"
+      "dark": "Dark",
+      "light": "Light",
+      "caddy": "Smart Caddy theme",
+      "colors": {
+        "red": "Red",
+        "pink": "Pink",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "green": "Green",
+        "blue": "Blue",
+        "purple": "Purple"
+      },
+      "appearance": "Appearance",
+      "hiddify": "Hiddify theme",
+      "caddyHint": "always dark, in a color"
     },
     "users": {
       "add": "Add user",
