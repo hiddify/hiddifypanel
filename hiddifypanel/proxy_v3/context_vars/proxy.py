@@ -29,6 +29,14 @@ from .version import TemplateVersion
 _REALITY_TLS_LAYERS: frozenset[TlsLayer] = frozenset({TlsLayer.tls, TlsLayer.tls_h2})
 
 
+#: The port of the SS FakeTLS service (obfs-server in services/ssfaketls).
+SS_FAKETLS_PORT = 1010
+#: telemt's MTProxy listener (telemt/server/base.j2).
+TELEGRAM_FAKETLS_PORT = 1001
+#: SNI proxies served by a service of their own, not a core inbound: category -> its port.
+SERVICE_SNI_PORTS = {"faketls": SS_FAKETLS_PORT, "telegram_faketls": TELEGRAM_FAKETLS_PORT}
+
+
 def _tls_layer_allows_reality(transport: CustomProxyTransport, tls_layer: TlsLayer | None) -> bool:
     """TLS layers a REALITY domain can carry: TLS/TLS-h2, and TLS-h1 for raw HTTP (rawhttp)
     (see domain_mode_filter.transport_tls_supports_reality, which offers these domain modes)."""
@@ -250,6 +258,10 @@ class ProxyDomainVar(ProxyVar):
             tls_layer=proxy.tls_layer,
         )
         tcp_ports, udp_ports = list(resolved.tcp_ports), list(resolved.udp_ports)
+        service_port = next((port for category, port in SERVICE_SNI_PORTS.items() if category in proxy.categories), None)
+        if server_side and proxy.mode == CustomProxyMode.domains_sni_gateway and service_port:
+            # SS FakeTLS (obfs-server) and Telegram MTProxy (telemt) are services of their own, not core inbounds
+            tcp_ports, udp_ports = [service_port], []
         if not server_side and proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway):
             # Clients connect to the domain's own gateway port when it has one.
             tcp_ports = [domain_gateway_port(domain, p) for p in tcp_ports]

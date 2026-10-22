@@ -211,8 +211,8 @@ export function tlsModeSelectable(mode: DomainMode): boolean {
 export const TLS_MODES: TlsMode[] = ['valid', 'fake', 'reality']
 
 /** Fake-TLS front domains of the Telegram / ShadowTLS / SS FakeTLS servers: one each, no custom proxies or download domain. */
-/** Domains that mirror a fake-TLS front setting (ShadowTLS has none: an SNI proxy on the domain it is assigned to). */
-export const FAKE_PROXY_MODES: TlsMode[] = ['telegram', 'ssfaketls']
+/** Domains that mirror a fake-TLS front setting: none any more (Telegram / ShadowTLS / SS FakeTLS are SNI proxies). */
+export const FAKE_PROXY_MODES: TlsMode[] = []
 
 export function isFakeProxyMode(mode: TlsMode): boolean {
   return FAKE_PROXY_MODES.includes(mode)

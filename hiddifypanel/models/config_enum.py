@@ -260,7 +260,8 @@ class ConfigEnum(metaclass=FastEnum):
     telegram_adtag = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
     # Always "telemt" now (the other Telegram proxies are deprecated): not shown.
     telegram_lib = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
-    telegram_fakedomain = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
+    #: Legacy (no longer used): Telegram MTProxy is an SNI proxy on the domains assigned to it.
+    telegram_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
     telegram_webproxy_enable = _BoolConfigDscr(ConfigCategory.telegram, ApplyMode.apply_config)
     telegram_base_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
@@ -282,7 +283,8 @@ class ConfigEnum(metaclass=FastEnum):
     shadowsocks2022_method = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     shadowsocks2022_port = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)
     ssfaketls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.reinstall)
-    ssfaketls_fakedomain = _StrConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config, hide_in_virtual_child=True)
+    #: Legacy (no longer used): SS FakeTLS is an SNI proxy on the domains assigned to it.
+    ssfaketls_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     shadowtls_enable = _BoolConfigDscr(ConfigCategory.shadowsocks, ApplyMode.apply_config)
     #: Legacy (no longer used): ShadowTLS is an SNI proxy whose handshake goes to the domain assigned to the proxy.
     shadowtls_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)

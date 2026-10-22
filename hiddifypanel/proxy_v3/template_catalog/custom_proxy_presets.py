@@ -311,20 +311,30 @@ def build_user_configs_preset(child_id: int = 0) -> CustomProxyPreset:
     )
 
 
-def _telegram_preset(name: str, slug: str, server_slug: str, client_slug: str, tag: str, category: str) -> CustomProxyPreset:
+def _telegram_preset(
+    name: str,
+    slug: str,
+    server_slug: str,
+    client_slug: str,
+    tag: str,
+    category: str,
+    *,
+    mode: CustomProxyMode = CustomProxyMode.no_inbound,
+    domain_modes: tuple[str, ...] = (),
+) -> CustomProxyPreset:
     """Client-only Telegram proxy: no server inbound (telemt serves it, telemt/server/base.j2); only the sublink client,
     whose links open in Telegram. Links come from its sublink template."""
     return CustomProxyPreset(
         name=name,
         slug=slug,
         enable=True,
-        mode=CustomProxyMode.no_inbound,
+        mode=mode,
         proto="telegram",
         transport="other",
         tls_layer="tls",  # HTTPS (web proxy via HAProxy TLS, FakeTLS); "http" ties it to http_proxy_enable
         l7_reverse_proto=None,
         categories=("telegram", category),  # the category picks its switch (category_config_map)
-        domain_modes=(),
+        domain_modes=domain_modes,
         custom_path="",
         server_config=PresetServerConfig(core="telegram", inbound_template=load_template_slug(server_slug), template_slugs=(server_slug,), tag=tag),
         client_cores=(PresetClientCore(core="sublink", version="", slug="client-sublink", outbounds_template=load_template_slug(client_slug)),),
@@ -339,9 +349,19 @@ def build_telegram_web_preset(child_id: int = 0) -> CustomProxyPreset:
 
 
 def build_telegram_faketls_preset(child_id: int = 0) -> CustomProxyPreset:
-    """tg://proxy FakeTLS links (rust-rpxy routes the fake domain's SNI to telemt's mtproxy listener)."""
+    """tg://proxy FakeTLS links: an SNI proxy, like ShadowTLS / SS FakeTLS. The domains assigned to it are its FakeTLS
+    names (telemt's tls_domains); rust-rpxy routes their SNI to telemt's mtproxy listener."""
     del child_id  # presets are child-agnostic; sync applies child_id
-    return _telegram_preset("Telegram FakeTLS", TELEGRAM_FAKETLS_SLUG, TELEGRAM_FAKETLS_SERVER_SLUG, TELEGRAM_FAKETLS_CLIENT_SLUG, "telegram-faketls", "telegram_faketls")
+    return _telegram_preset(
+        "Telegram FakeTLS",
+        TELEGRAM_FAKETLS_SLUG,
+        TELEGRAM_FAKETLS_SERVER_SLUG,
+        TELEGRAM_FAKETLS_CLIENT_SLUG,
+        "telegram-faketls",
+        "telegram_faketls",
+        mode=CustomProxyMode.domains_sni_gateway,
+        domain_modes=tuple(VALID_FAKE_DIRECT_RELAY_DOMAIN_MODES),
+    )
 
 
 def _preset_l7_reverse_proto(

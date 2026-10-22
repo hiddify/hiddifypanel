@@ -93,9 +93,15 @@ profiles = {{ profiles }}
 
 {% endif %}
 
+{#- The FakeTLS names: the domains assigned to the Telegram FakeTLS proxy (an SNI proxy, like ShadowTLS) #}
+{%- set tg = namespace(names=[]) %}
+{%- for p in ctx.proxies if p.mode == "domains_sni_gateway" and "telegram_faketls" in p.categories %}
+{%- for pd in p.iter_proxies_with_domain() %}{% if pd.domain.sni not in tg.names %}{% set _ = tg.names.append(pd.domain.sni) %}{% endif %}{% endfor %}
+{%- endfor %}
 [censorship]
-tls_domain = "{{ ctx.hconfig.telegram_fakedomain or '' }}"
-#tls_domains = []
+{#- telemt refuses an empty name (and still runs the web proxy and its API): with no domain assigned, the decoy site #}
+tls_domain = {{ (tg.names[0] if tg.names else (ctx.hconfig.decoy_domain or 'www.wikipedia.org')) | tojson }}
+tls_domains = {{ tg.names[1:] | tojson }}
 mask = true
 mask_port = 443
 fake_cert_len = 2048
