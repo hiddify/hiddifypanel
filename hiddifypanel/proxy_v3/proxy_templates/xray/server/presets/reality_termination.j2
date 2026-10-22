@@ -26,8 +26,10 @@
                         "dest": "@@http_in_h2",
                         "xver":2
                     },               
+                    {# Everything else (raw Trojan over REALITY, HTTP/1.1) goes to the Trojan inbound below first: haproxy's
+                       HTTP front can not route raw Trojan, so it never connected. Non-Trojan traffic falls back to haproxy. #}
                     {
-                        "dest": "@@tcp_in_reality_h1",
+                        "dest": "@reality-trojan-{{ctx.proxy.id}}-{{ loop.index }}",
                         "xver":2
                     },
                 ]
@@ -50,6 +52,35 @@
                     ],
                     //"mldsa65Seed": "", //TODO: Optional: Run `./xray mldsa65` to generate an additional post-quantum signature for the certificate.
                 }
+            }
+        },
+        {
+            {# raw Trojan over REALITY: the terminator above hands it here (it only knows VLESS) #}
+            "tag": "reality trojan {{ctx.proxy.id}} {{ctx.proxy.tag}} {{ctx.proxy.domain.name}}",
+            "listen": "@reality-trojan-{{ctx.proxy.id}}-{{ loop.index }}",
+            "protocol": "trojan",
+            "settings": {
+                "clients": [
+                    {% for u in ctx.users %}
+                    {
+                    "password": "{{ u.uuid }}",
+                    "email": "{{ u.uuid }}",
+                    },
+                    {% endfor %}
+                ],
+                "fallbacks": [
+                    {
+                        "dest": "@@tcp_in_reality_h1",
+                        "xver":2
+                    },
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "tcpSettings": {
+                    "acceptProxyProtocol": true
+                },
+                "security": "none"
             }
         },
     {% endfor %}
