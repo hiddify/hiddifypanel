@@ -154,6 +154,11 @@ const routes = [
         component: () => import('@/features/utils/views/UtilsView.vue'),
       },
       {
+        path: 'clean-ip',
+        name: 'clean-ip',
+        component: () => import('@/features/clean-ip/views/CleanIpView.vue'),
+      },
+      {
         path: 'config-tester',
         name: 'config-tester',
         component: () => import('@/features/config-tester/views/ConfigTesterView.vue'),
