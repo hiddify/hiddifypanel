@@ -39,16 +39,7 @@ target = ["127.0.0.1:{{ctx.hconfig.wireguard_port}}"]
 idle_lifetime = 30
 {% endif %}
 
-############## Telegram SNI gateway ##############
-{#- ShadowTLS and SS FakeTLS are SNI proxies: routed by their own domains in the SNI gateway section below. #}
-
-{% if ctx.hconfig.telegram_enable and ctx.hconfig.telegram_fakedomain %}
-[protocols."telegram"]
-protocol = "tls"
-server_names = ["{{ ctx.hconfig.telegram_fakedomain }}"]
-target = ["127.0.0.1:1001"]
-load_balance = "none"
-{% endif %}
+{#- ShadowTLS, SS FakeTLS and Telegram MTProxy are SNI proxies: routed by their own domains in the SNI gateway section below. #}
 
 ############## SNI gateway (domains_sni_gateway) ##############
 {% for p in ctx.proxies if p.mode == "domains_sni_gateway" %}

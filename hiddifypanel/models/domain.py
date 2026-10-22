@@ -31,15 +31,15 @@ class FakeMode(StrEnum):
     fake = auto()
     reality = auto()
     dns = auto()
-    #: Fake-TLS front domain of the Telegram MTProxy server.
-    #: It only mirrors the telegram_fakedomain setting and never carries normal proxies.
+    #: Legacy, converted by _v182: Telegram MTProxy, ShadowTLS and SS FakeTLS are SNI proxies on the domains assigned
+    #: to them (these rows only mirrored the old *_fakedomain settings).
     telegram = auto()
-    #: Legacy, removed by _v181: ShadowTLS and SS FakeTLS are SNI proxies on the domains assigned to them.
     shadowtls = auto()
     ssfaketls = auto()
 
 
-FAKE_PROXY_MODES = frozenset({FakeMode.telegram})
+#: Domains that only mirror a fake-domain setting: none any more (see FakeMode.telegram).
+FAKE_PROXY_MODES: frozenset[FakeMode] = frozenset()
 
 
 class DomainType(StrEnum):

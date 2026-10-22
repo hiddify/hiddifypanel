@@ -1273,7 +1273,7 @@
         "off": "off",
         "pick": "Choose",
         "pickHint": "Only the proxies you pick",
-        "rule": "One SNI proxy, or L7 proxies; the two can not be mixed. IP-based ones go with either.",
+        "rule": "One SNI proxy alone, or IP-based and L7 proxies together; an SNI proxy is never mixed with the others.",
         "selectAll": "Select all",
         "selectNone": "Select none",
         "sniOne": " · one at most"
@@ -4232,7 +4232,7 @@
       "label": "Custom proxies",
       "reality_only": "REALITY domains can only use L7 domain-gateway proxies whose domain modes include REALITY. Leave empty to use every matching REALITY L7 proxy.",
       "reality_required": "REALITY domains can only use L7 domain-gateway proxies whose domain modes include REALITY",
-      "sni_l7_mutex": "SNI gateway and L7 gateway cannot be selected together for one domain",
+      "sni_l7_mutex": "An SNI gateway can not be selected together with other proxies for one domain",
       "sni_single_only": "Only one SNI gateway can be selected for a domain"
     },
     "description": "Please fill in this field carefully and correctly. Otherwise, proxies will run into problems. Please visit <a href='https://github.com/hiddify/hiddify-config/wiki/راهنمای-تنظیم-دامنه-و-نهایی-کردن-نصب#آموزش-ساخت-زیردامنه'> Help</a> to learn how to create a subdomain.",

@@ -25,13 +25,29 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v182(child_id):
+    """Telegram MTProxy, ShadowTLS and SS FakeTLS are SNI proxies on the domains assigned to them: no separate fake
+    domains. Each row that mirrored an old *_fakedomain setting (any node) becomes an ordinary domain, fake TLS, assigned
+    to the proxy of its kind, so its links keep working; the settings are emptied."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
+
+    category = {FakeMode.telegram: "telegram_faketls", FakeMode.shadowtls: "shadowtls", FakeMode.ssfaketls: "faketls"}
+    for row in Domain.query.filter(Domain.fake_mode.in_(list(category))).all():
+        proxies = [p for p in CustomProxy.query.filter(CustomProxy.child_id == row.child_id).all() if category[row.fake_mode] in (p.categories or [])]
+        for proxy in proxies:
+            if proxy.slug == "telegram-faketls":
+                proxy.mode = CustomProxyMode.domains_sni_gateway  # was client-only (no_inbound)
+            if proxy not in row.custom_proxies:
+                row.custom_proxies.append(proxy)
+        row.fake_mode = FakeMode.fake
+    for key in (ConfigEnum.telegram_fakedomain, ConfigEnum.shadowtls_fakedomain, ConfigEnum.ssfaketls_fakedomain):
+        set_hconfig(key, "", child_id, commit=False)
+
+
 def _v181(child_id):
-    """ShadowTLS and SS FakeTLS are SNI proxies (on the domains the proxies are assigned to): no separate fake domains.
-    The rows that mirrored the old *_fakedomain settings carried no proxies: removed, with the settings."""
-    for row in Domain.query.filter(Domain.child_id == child_id, Domain.fake_mode.in_([FakeMode.shadowtls, FakeMode.ssfaketls])).all():
-        db.session.delete(row)
-    set_hconfig(ConfigEnum.shadowtls_fakedomain, "", child_id, commit=False)
-    set_hconfig(ConfigEnum.ssfaketls_fakedomain, "", child_id, commit=False)
+    """Superseded by _v182 (the old ShadowTLS / SS FakeTLS fake domains are converted, not removed)."""
 
 
 def _v180(child_id):
@@ -842,9 +858,7 @@ def _v45():
 
 def _v42():
 
-    keys = [
-        ConfigEnum.telegram_fakedomain,
-    ]
+    keys: list[ConfigEnum] = []  # no fake-domain settings any more: Telegram / ShadowTLS / SS FakeTLS are SNI proxies
     decoy = hconfig(ConfigEnum.decoy_domain)
     domains = [d for d in dict.fromkeys(hutils.network.get_random_domains(len(keys) + 1)) if d != decoy]
     domains += hutils.network.random_fake_sites(len(keys), exclude={decoy, *domains})  # OONI returned too few

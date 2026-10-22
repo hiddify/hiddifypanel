@@ -33,12 +33,12 @@ def proxy_fits_domain(proxy, mode, fake_mode) -> bool:
 
 
 def check_proxy_selection(proxies) -> None:
-    """One SNI proxy at most, and SNI and L7 proxies are never mixed."""
-    sni = sum(1 for p in proxies if p and p.mode == CustomProxyMode.domains_sni_gateway)
-    has_l7 = any(p and p.mode == CustomProxyMode.domains_l7_gateway for p in proxies)
+    """An SNI proxy is alone on its domain: one at most, with no IP-based or L7 proxy (the domain's TLS is its own)."""
+    proxies = [p for p in proxies if p]
+    sni = sum(1 for p in proxies if p.mode == CustomProxyMode.domains_sni_gateway)
     if sni > 1:
         raise DomainRuleError(_("domain.custom_proxy.sni_single_only"))
-    if sni and has_l7:
+    if sni and len(proxies) > sni:
         raise DomainRuleError(_("domain.custom_proxy.sni_l7_mutex"))
 
 

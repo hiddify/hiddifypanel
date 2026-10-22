@@ -230,7 +230,7 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'core': 'rust-rpxy-l4',
         'version': '1.0.0',
         'name': 'Server rust-rpxy-l4 Base',
-        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway, ShadowTLS and SS FakeTLS included; Telegram)',
+        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway: ShadowTLS, SS FakeTLS and Telegram MTProxy included)',
     },
     {
         'side': BaseConfigSide.server,
@@ -251,7 +251,7 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'core': 'telemt',
         'version': '1.0.0',
         'name': 'Server Telemt Base',
-        'description': 'Telegram MTProxy (telemt) config: ad tag, fake TLS domain, and one user secret per panel user',
+        'description': 'Telegram MTProxy (telemt) config: ad tag, the FakeTLS names (domains of the Telegram FakeTLS proxy), and one user secret per panel user',
     },
     {
         'side': BaseConfigSide.server,

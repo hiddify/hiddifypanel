@@ -51,7 +51,7 @@ function pick(m: TlsMode) {
         <i v-if="shown === m" class="pi pi-check-circle tls__check" />
       </button>
     </div>
-    <div v-if="!locked" class="tls__other" role="group" :aria-label="t('domains.tlsMode.other')" v-tooltip.top="t('domains.tlsMode.otherHint')">
+    <div v-if="!locked && FAKE_PROXY_MODES.length" class="tls__other" role="group" :aria-label="t('domains.tlsMode.other')" v-tooltip.top="t('domains.tlsMode.otherHint')">
       <span class="tls__other-title">{{ t('domains.tlsMode.other') }}</span>
       <button
         v-for="m in FAKE_PROXY_MODES"

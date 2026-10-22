@@ -260,7 +260,8 @@ class ConfigEnum(metaclass=FastEnum):
     telegram_adtag = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
     # Always "telemt" now (the other Telegram proxies are deprecated): not shown.
     telegram_lib = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
-    telegram_fakedomain = _StrConfigDscr(ConfigCategory.telegram, ApplyMode.reinstall, hide_in_virtual_child=True)
+    #: Legacy (no longer used): Telegram MTProxy is an SNI proxy on the domains assigned to it.
+    telegram_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
     telegram_webproxy_enable = _BoolConfigDscr(ConfigCategory.telegram, ApplyMode.apply_config)
     telegram_base_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
 
