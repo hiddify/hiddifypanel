@@ -265,23 +265,7 @@ msgstr ""
 "    ℹ️ Также нам нужна финансовая помощь для дальнейшего развития этой панели и нашего сервиса (мы некоммерческая организация).\n"
 "    <br>\n"
 "    <h5>Способы оплаты:</h5>\n"
-"     <ul>\n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' role='button' class='btn btn-info share-link'>Tron</a> </div></li>\n"
-"    </ul>\n"
+"     <div class='donation-wallets'></div>\n"
 "    \n"
 "    <br>\n"
 "    \n"
@@ -3413,6 +3397,14 @@ msgstr "Адрес {name} скопирован"
 msgid "adminV2.donation.copiedShort"
 msgstr "Скопировано"
 
+msgid "adminV2.donation.copyAddress"
+msgstr "Скопировать адрес {name}"
+
+msgid "adminV2.donation.networkHint"
+msgstr ""
+"Отправляйте каждую монету только в сети, указанной рядом с её названием: "
+"перевод в другой сети будет потерян."
+
 msgid "adminV2.donation.qr"
 msgstr "QR-код"
 
@@ -3682,6 +3674,9 @@ msgstr "Добавить узел"
 
 msgid "adminV2.nodes.addNode"
 msgstr "Добавить узел"
+
+msgid "adminV2.nodes.addTileText"
+msgstr "Подключите ещё один сервер Hiddify и управляйте им отсюда."
 
 msgid "adminV2.nodes.checkConnection"
 msgstr "Проверить соединение"
@@ -5443,6 +5438,9 @@ msgstr "Выбрать теги"
 msgid "adminV2.tags.pickHint"
 msgstr "Можно выбрать несколько"
 
+msgid "adminV2.tags.pin"
+msgstr "Закрепить"
+
 msgid "adminV2.tags.rename"
 msgstr "Переименовать"
 
@@ -5651,11 +5649,64 @@ msgstr ""
 "Выведите SKIP или вызовите skip(), чтобы пропустить рендеринг этого прокси, "
 "если условие не выполнено"
 
+msgid "adminV2.theme.caddy"
+msgstr "Тема Smart Caddy"
+
+msgid "adminV2.theme.color"
+msgstr "Тема"
+
+msgid "adminV2.theme.colors.blue"
+msgstr "Синий"
+
+msgid "adminV2.theme.colors.brown"
+msgstr "Тёмно-коричневый"
+
+msgid "adminV2.theme.colors.graphite"
+msgstr "Графит"
+
+msgid "adminV2.theme.colors.green"
+msgstr "Зелёный"
+
+msgid "adminV2.theme.colors.orange"
+msgstr "Оранжевый"
+
+msgid "adminV2.theme.colors.pink"
+msgstr "Розовый"
+
+msgid "adminV2.theme.colors.purple"
+msgstr "Фиолетовый"
+
+msgid "adminV2.theme.colors.red"
+msgstr "Красный"
+
+msgid "adminV2.theme.colors.spacegray"
+msgstr "Серый космос"
+
+msgid "adminV2.theme.colors.yellow"
+msgstr "Жёлтый"
+
 msgid "adminV2.theme.dark"
 msgstr "Тёмная тема"
 
+msgid "adminV2.theme.default"
+msgstr "Тема Hiddify (по умолчанию)"
+
+msgid "adminV2.theme.glassHint"
+msgstr ""
+"Каждый цвет работает в светлой и тёмной теме: в светлой — матовое стекло на "
+"его свечении, в тёмной — тёмное стекло Smart Caddy."
+
 msgid "adminV2.theme.light"
 msgstr "Светлая тема"
+
+msgid "adminV2.theme.menu"
+msgstr "Оформление и язык"
+
+msgid "adminV2.theme.mode"
+msgstr "Светлая или тёмная"
+
+msgid "adminV2.theme.retry"
+msgstr "Повторить"
 
 msgid "adminV2.users.add"
 msgstr "Добавить пользователя"
@@ -6162,6 +6213,40 @@ msgstr "Группировать по админам"
 msgid "adminV2.users.groupCount"
 msgstr "{n} пользователь | {n} пользователей"
 
+msgid "adminV2.users.guide.dragText"
+msgstr ""
+"Перетащите строку за ручку, например с 5-й на 2-ю. Закреплённых можно менять"
+" местами между собой; остальные остаются ниже."
+
+msgid "adminV2.users.guide.dragTitle"
+msgstr "Перемещение между строками"
+
+msgid "adminV2.users.guide.gotIt"
+msgstr "Понятно"
+
+msgid "adminV2.users.guide.intro"
+msgstr "Держите самых нужных пользователей под рукой:"
+
+msgid "adminV2.users.guide.pinText"
+msgstr ""
+"Нажмите на кружок тега рядом с именем и выберите «Закрепить» — первый пункт "
+"меню: пользователь поднимется наверх и останется там. Фильтр по тегу › "
+"«Закрепить» покажет закреплённых."
+
+msgid "adminV2.users.guide.pinTitle"
+msgstr "Закрепление пользователей"
+
+msgid "adminV2.users.guide.resizeText"
+msgstr ""
+"Перетащите границу между «Имя» и «Расход»: «Расход» станет шире, «Имя» — "
+"уже."
+
+msgid "adminV2.users.guide.resizeTitle"
+msgstr "Расширение столбца «Расход»"
+
+msgid "adminV2.users.guide.title"
+msgstr "Добро пожаловать в новый раздел «Пользователи»"
+
 msgid "adminV2.users.inlineEdit"
 msgstr "Правка в списке"
 
@@ -6169,6 +6254,28 @@ msgid "adminV2.users.inlineHint"
 msgstr ""
 "Правка в списке включена: нажмите на имя, лимит трафика, срок, режим или "
 "заметку, чтобы изменить прямо в списке. Сам трафик можно только сбросить."
+
+msgid "adminV2.users.layout.crossGroups"
+msgstr ""
+"Закреплённые пользователи остаются выше остальных: закрепите или открепите, "
+"чтобы перенести."
+
+msgid "adminV2.users.layout.crossOwners"
+msgstr ""
+"При группировке по админу пользователь перемещается только среди "
+"пользователей этого админа."
+
+msgid "adminV2.users.layout.drag"
+msgstr "Перетащите, чтобы переместить"
+
+msgid "adminV2.users.layout.dragOff"
+msgstr "Снимите сортировку столбца, чтобы перемещать пользователей"
+
+msgid "adminV2.users.layout.pin"
+msgstr "Закрепить сверху"
+
+msgid "adminV2.users.layout.unpin"
+msgstr "Открепить"
 
 msgid "adminV2.users.limitReached"
 msgstr ""
@@ -7595,6 +7702,18 @@ msgstr "Не меняйте это"
 msgid "config.reality_short_ids.label"
 msgstr "🆔 Short IDs"
 
+msgid "config.reality_sni_auto.description"
+msgstr ""
+
+msgid "config.reality_sni_auto.label"
+msgstr ""
+
+msgid "config.reality_sni_spares.description"
+msgstr ""
+
+msgid "config.reality_sni_spares.label"
+msgstr ""
+
 msgid "config.restls.description"
 msgstr "Настройки протокола RestLS"
 
@@ -8109,6 +8228,16 @@ msgstr ""
 
 msgid "config.use_ip_in_config.label"
 msgstr "Использовать IP в конфигурациях"
+
+msgid "config.user_page_url.description"
+msgstr ""
+"Адрес статического сайта для страницы пользователя, например ваша сборка "
+"hiddify-user-front на GitHub Pages (https://<you>.github.io/hiddify-user-"
+"front/). Панель скачивает его и отдаёт со своего домена (работает, даже если"
+" сайт заблокирован). Оставьте пустым для встроенной страницы."
+
+msgid "config.user_page_url.label"
+msgstr "🎨 Своя страница пользователя"
 
 msgid "config.utls.description"
 msgstr ""

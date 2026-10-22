@@ -265,23 +265,7 @@ msgstr ""
 "    ℹ️ Also, we need financial help to further develop this panel and our service (we are Non-Profit).\n"
 "    <br>\n"
 "    <h5>Payment Methods :</h5>\n"
-"    <ul>\n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='UQDGA32X8-xgRrZnzW0uPP-ChssO2dRLQ5NPubKj3sBqHwNp' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' role='button' class='btn btn-info share-link'>Tron</a> </div></li>\n"
-"    </ul>\n"
+"    <div class='donation-wallets'></div>\n"
 "    \n"
 "    <br>\n"
 "    \n"
@@ -2512,6 +2496,549 @@ msgstr "Strikethrough"
 msgid "adminV2.broadcast.tool.underline"
 msgstr "Underline"
 
+msgid "adminV2.cleanIp.addCount"
+msgstr "Add {count}"
+
+msgid "adminV2.cleanIp.addSpares"
+msgstr "Add as spares"
+
+msgid "adminV2.cleanIp.advanced"
+msgstr "Full test with upload, from another device"
+
+msgid "adminV2.cleanIp.advancedHint"
+msgstr ""
+"Use it when the IPs found above still don't connect: some operators cut a "
+"connection after a little upload, which a browser can't test. Gives you a "
+"command to run on a phone or computer."
+
+msgid "adminV2.cleanIp.advancedTag"
+msgstr "Optional"
+
+msgid "adminV2.cleanIp.asUnknown"
+msgstr ""
+"The AS number of this network was not detected (the panel's IP database has "
+"no entry for it)."
+
+msgid "adminV2.cleanIp.auto"
+msgstr "Switch a filtered REALITY SNI to a working spare by itself"
+
+msgid "adminV2.cleanIp.autoTitle"
+msgstr "Automatic switch"
+
+msgid "adminV2.cleanIp.best"
+msgstr "best {ms} ms"
+
+msgid "adminV2.cleanIp.built"
+msgstr "{count} IPs for {isp}."
+
+msgid "adminV2.cleanIp.byAdmin"
+msgstr "by an admin"
+
+msgid "adminV2.cleanIp.byAuto"
+msgstr "by itself, filtered on {isp}"
+
+msgid "adminV2.cleanIp.candidates"
+msgstr "SNIs to test"
+
+msgid "adminV2.cleanIp.candidatesCount"
+msgstr "{count} names"
+
+msgid "adminV2.cleanIp.candidatesFound"
+msgstr "{ok} of {tested} SNIs to test work here"
+
+msgid "adminV2.cleanIp.candidatesFrom"
+msgstr "from OONI"
+
+msgid "adminV2.cleanIp.candidatesHint"
+msgstr ""
+"Sites OONI saw reachable in Iran, one per line; edit freely. The REALITY "
+"SNIs in use and the spares are always tested too."
+
+msgid "adminV2.cleanIp.candidatesReload"
+msgstr "Load again"
+
+msgid "adminV2.cleanIp.cmdNote"
+msgstr ""
+"Valid for 24 hours. It can only add IPs to this domain. Run it again on each"
+" ISP (e.g. a phone on MCI, then on Irancell)."
+
+msgid "adminV2.cleanIp.cmdUnix"
+msgstr "Linux, macOS, Android (Termux): needs python3"
+
+msgid "adminV2.cleanIp.cmdWindows"
+msgstr "Windows (PowerShell): needs Python"
+
+msgid "adminV2.cleanIp.copyAll"
+msgstr "Copy all"
+
+msgid "adminV2.cleanIp.domain"
+msgstr "CDN domain"
+
+msgid "adminV2.cleanIp.dropped"
+msgstr ""
+"The old value had IPs without an ISP name; it is replaced (the two forms "
+"can't be mixed)."
+
+msgid "adminV2.cleanIp.editScript"
+msgstr "Edit the template"
+
+msgid "adminV2.cleanIp.estimate"
+msgstr "About {count} IPs from {ranges} ranges."
+
+msgid "adminV2.cleanIp.existingWarn"
+msgstr ""
+"This domain already has {count} addresses for {who}; saving replaces them:"
+
+msgid "adminV2.cleanIp.filtered"
+msgstr "filtered"
+
+msgid "adminV2.cleanIp.flow1"
+msgstr "Where and for whom?"
+
+msgid "adminV2.cleanIp.flow1Domain"
+msgstr "Which domain?"
+
+msgid "adminV2.cleanIp.flow1DomainHint"
+msgstr "The CDN domain to put the IPs in."
+
+msgid "adminV2.cleanIp.flow1Hint"
+msgstr ""
+"The CDN domain to put IPs in, and the operator whose users will get them."
+
+msgid "adminV2.cleanIp.flow2"
+msgstr "Find IPs that work"
+
+msgid "adminV2.cleanIp.flow2Hint"
+msgstr ""
+"Tested from this browser, on the internet it is on now: open this page on "
+"the operator you picked above, with the VPN off."
+
+msgid "adminV2.cleanIp.flow3"
+msgstr "Add them to the domain"
+
+msgid "adminV2.cleanIp.flow3On"
+msgstr "on"
+
+msgid "adminV2.cleanIp.flow3Scanning"
+msgstr "Scanning… the fastest IPs show up here when it ends."
+
+msgid "adminV2.cleanIp.flow3Sentence"
+msgstr "These {count} IPs go to users of"
+
+msgid "adminV2.cleanIp.flow3Wait"
+msgstr "Run the scan above: its fastest IPs show up here."
+
+msgid "adminV2.cleanIp.flowAllHint"
+msgstr ""
+"What will be saved: the IPs above for this operator; the other operators' "
+"rows stay as they are. You can edit it."
+
+msgid "adminV2.cleanIp.flowIps"
+msgstr "IPs to save"
+
+msgid "adminV2.cleanIp.flowIpsHint"
+msgstr ""
+"The fastest of the scan; remove some, or add IPs, ranges or domains of your "
+"own."
+
+msgid "adminV2.cleanIp.flowShowAll"
+msgstr "Show all IPs of this domain (every operator)"
+
+msgid "adminV2.cleanIp.fullHint"
+msgstr ""
+"Some ISPs let a connection open and then cut it after about 1.3 KB of "
+"upload. A browser can't test that; this command can. Run it on a computer or"
+" phone (Termux) on the ISP you want IPs for, with the VPN off. Through each "
+"IP it uploads to this panel and checks the whole upload arrived; the IPs "
+"that pass are tested 3 more times, so flaky ones get a loss % and go last. "
+"The best ones are saved for that ISP."
+
+msgid "adminV2.cleanIp.fullLead"
+msgstr ""
+"For operators that cut connections after a little upload: test from a phone "
+"or computer on that operator."
+
+msgid "adminV2.cleanIp.fullTitle"
+msgstr "Full test (with upload)"
+
+msgid "adminV2.cleanIp.goDomains"
+msgstr "Go to Domains"
+
+msgid "adminV2.cleanIp.help"
+msgstr "What is this?"
+
+msgid "adminV2.cleanIp.history"
+msgstr "Switches"
+
+msgid "adminV2.cleanIp.howItWorks"
+msgstr ""
+"The scan runs in this browser, on the internet it is connected to (the "
+"panel's server is abroad and can't test it). Open this page on each ISP you "
+"care about, e.g. on a phone with MCI and then with Irancell, and save each "
+"result: Hiddify gives every user the IPs of their own ISP."
+
+msgid "adminV2.cleanIp.ip"
+msgstr "IP"
+
+msgid "adminV2.cleanIp.isp"
+msgstr "ISP"
+
+msgid "adminV2.cleanIp.kept"
+msgstr "Kept {count} IPs of other ISPs."
+
+msgid "adminV2.cleanIp.latency"
+msgstr "Latency"
+
+msgid "adminV2.cleanIp.loading"
+msgstr "Loading…"
+
+msgid "adminV2.cleanIp.loss"
+msgstr "{pct}% loss"
+
+msgid "adminV2.cleanIp.makeAgain"
+msgstr "Make a new command"
+
+msgid "adminV2.cleanIp.makeCommand"
+msgstr "Make the command"
+
+msgid "adminV2.cleanIp.newSni"
+msgstr "Another SNI"
+
+msgid "adminV2.cleanIp.noCdnDomain"
+msgstr "There is no CDN or worker domain. Add one on the Domains page first."
+
+msgid "adminV2.cleanIp.noReality"
+msgstr "This panel has no REALITY domain."
+
+msgid "adminV2.cleanIp.noSpares"
+msgstr ""
+"No spare yet: add a few ordinary sites below, or from an SNI test's results."
+
+msgid "adminV2.cleanIp.noneFound"
+msgstr "No IP answered. Try more IPs per range, or a longer timeout."
+
+msgid "adminV2.cleanIp.notTested"
+msgstr "Not tested yet: run the SNI test below on an operator."
+
+msgid "adminV2.cleanIp.notYet"
+msgstr "Press Start to scan."
+
+msgid "adminV2.cleanIp.off"
+msgstr "Off"
+
+msgid "adminV2.cleanIp.on"
+msgstr "On"
+
+msgid "adminV2.cleanIp.otherUsers"
+msgstr "every other operator"
+
+msgid "adminV2.cleanIp.ovAuto"
+msgstr "auto switch"
+
+msgid "adminV2.cleanIp.ovFiltered"
+msgstr "filtered"
+
+msgid "adminV2.cleanIp.ovHealthy"
+msgstr "healthy"
+
+msgid "adminV2.cleanIp.ovSnis"
+msgstr "REALITY SNIs"
+
+msgid "adminV2.cleanIp.ovSpares"
+msgstr "spares"
+
+msgid "adminV2.cleanIp.passed"
+msgstr "{count} work"
+
+msgid "adminV2.cleanIp.perIsp"
+msgstr "IPs for this ISP"
+
+msgid "adminV2.cleanIp.perRange"
+msgstr "Random IPs per range"
+
+msgid "adminV2.cleanIp.pickIsp"
+msgstr "Pick the ISP"
+
+msgid "adminV2.cleanIp.pickIspFirst"
+msgstr "Pick the ISP these results are for."
+
+msgid "adminV2.cleanIp.platformUnix"
+msgstr "Linux / macOS / Android"
+
+msgid "adminV2.cleanIp.platformWindows"
+msgstr "Windows"
+
+msgid "adminV2.cleanIp.preview"
+msgstr "CDN IP field (you can edit it)"
+
+msgid "adminV2.cleanIp.previewTitle"
+msgstr "IPs of this domain, per operator (editable)"
+
+msgid "adminV2.cleanIp.qHowMany"
+msgstr "How many IPs?"
+
+msgid "adminV2.cleanIp.qHowManyHint"
+msgstr "The fastest ones from your scan."
+
+msgid "adminV2.cleanIp.qWhere"
+msgstr "In which domain?"
+
+msgid "adminV2.cleanIp.qWhereHint"
+msgstr "The CDN domain in your users' links."
+
+msgid "adminV2.cleanIp.qWho"
+msgstr "For which operator's users?"
+
+msgid "adminV2.cleanIp.qWhoHint"
+msgstr "Users who connect with this operator get these IPs."
+
+msgid "adminV2.cleanIp.qWhoMulti"
+msgstr ""
+"Starts with your internet's AS; add other operators or AS numbers. None: "
+"every other operator."
+
+msgid "adminV2.cleanIp.ranges"
+msgstr "IP ranges"
+
+msgid "adminV2.cleanIp.rangesCloudflare"
+msgstr "Cloudflare"
+
+msgid "adminV2.cleanIp.rangesCount"
+msgstr "{count} ranges"
+
+msgid "adminV2.cleanIp.rangesCustom"
+msgstr "custom"
+
+msgid "adminV2.cleanIp.rangesDone"
+msgstr "Done"
+
+msgid "adminV2.cleanIp.rangesEdit"
+msgstr "Edit"
+
+msgid "adminV2.cleanIp.rangesHint"
+msgstr ""
+"One CIDR per line, /8 to /30. Random IPs are picked from each; the full test"
+" uses them too."
+
+msgid "adminV2.cleanIp.rangesInvalid"
+msgstr "Not an IPv4 range (like 104.16.0.0/13), skipped: {list}"
+
+msgid "adminV2.cleanIp.rangesReset"
+msgstr "Back to Cloudflare's ranges"
+
+msgid "adminV2.cleanIp.realityHint"
+msgstr ""
+"The REALITY SNI test connects to this server with each REALITY SNI, as a "
+"REALITY client does, and tells you on which operators it is filtered. Keep a"
+" few spare SNIs: a filtered one can be switched to a spare that works, by "
+"you or by itself. Before any switch the panel tests a real REALITY "
+"connection through the site, and applies the configs after it; users get the"
+" new SNI with their next subscription update."
+
+msgid "adminV2.cleanIp.realityTitle"
+msgstr "REALITY SNIs"
+
+msgid "adminV2.cleanIp.rebuild"
+msgstr "Rebuild"
+
+msgid "adminV2.cleanIp.received"
+msgstr "Results received"
+
+msgid "adminV2.cleanIp.refreshNetwork"
+msgstr "Detect again"
+
+msgid "adminV2.cleanIp.reportLine"
+msgstr "{tested} tested with {kb} KB upload to the panel, {found} work"
+
+msgid "adminV2.cleanIp.reportNotSaved"
+msgstr "Hiddify has no name for this ISP, so nothing was saved."
+
+msgid "adminV2.cleanIp.reportSaved"
+msgstr "Saved {count} IPs for {isp}:"
+
+msgid "adminV2.cleanIp.retry"
+msgstr "Try again"
+
+msgid "adminV2.cleanIp.save"
+msgstr "Save to the domain"
+
+msgid "adminV2.cleanIp.saveFirstScan"
+msgstr "Run step 1 first: its best IPs are put here."
+
+msgid "adminV2.cleanIp.saveHint"
+msgstr ""
+"The best IPs go into the CDN domain's “CDN IP” field as “IP ISP” pairs; the "
+"other ISPs' IPs already there are kept."
+
+msgid "adminV2.cleanIp.saveSettings"
+msgstr "Save"
+
+msgid "adminV2.cleanIp.saveTitle"
+msgstr "Save for this ISP"
+
+msgid "adminV2.cleanIp.saved"
+msgstr ""
+"Saved on {domain}. Users get them with their next subscription update."
+
+msgid "adminV2.cleanIp.scan"
+msgstr "Scan"
+
+msgid "adminV2.cleanIp.scanAgain"
+msgstr "Scan again"
+
+msgid "adminV2.cleanIp.scanSettings"
+msgstr "Scan settings"
+
+msgid "adminV2.cleanIp.scanSettingsSummary"
+msgstr "{ranges} ranges · about {count} IPs · {sec} s per IP"
+
+msgid "adminV2.cleanIp.scanning"
+msgstr "Scanning…"
+
+msgid "adminV2.cleanIp.scriptHint"
+msgstr ""
+"Made for this command from its template (Base configs page). An edit there "
+"applies to the next download of any command, this one too."
+
+msgid "adminV2.cleanIp.scriptTitle"
+msgstr "The script this command runs"
+
+msgid "adminV2.cleanIp.settingsSaved"
+msgstr "Saved."
+
+msgid "adminV2.cleanIp.showAllResults"
+msgstr "Show all {count} results"
+
+msgid "adminV2.cleanIp.showLess"
+msgstr "Show less"
+
+msgid "adminV2.cleanIp.sniServerBlocked"
+msgstr ""
+"The server itself did not answer on this operator (its address is blocked or"
+" down), so the SNIs were not judged."
+
+msgid "adminV2.cleanIp.sniTestHint"
+msgstr ""
+"It runs on a phone or computer, with the VPN off, on the operator to check. "
+"It first connects with the server's own name: if that fails, the server's "
+"address is blocked there and the SNIs are not judged. Run it once on each "
+"operator that matters."
+
+msgid "adminV2.cleanIp.sniTestLead"
+msgstr ""
+"Run this command on a device on the operator to check: it shows which SNIs "
+"that operator filters and records it here."
+
+msgid "adminV2.cleanIp.sniTestTitle"
+msgstr "Test the SNIs"
+
+msgid "adminV2.cleanIp.spares"
+msgstr "Spare SNIs (one per line)"
+
+msgid "adminV2.cleanIp.sparesAdded"
+msgstr "{count} spares added"
+
+msgid "adminV2.cleanIp.sparesFull"
+msgstr "At most {max} spares: the rest were not added."
+
+msgid "adminV2.cleanIp.sparesHint"
+msgstr ""
+"A filtered SNI is switched to one of these when it works on that operator. "
+"The full test checks them too."
+
+msgid "adminV2.cleanIp.sparesInvalid"
+msgstr "Not a site name, left in the box: {list}"
+
+msgid "adminV2.cleanIp.sparesPasteHint"
+msgstr ""
+"Paste a list too (one per line, or separated by spaces / commas). {count} of"
+" {max}."
+
+msgid "adminV2.cleanIp.sparesPlaceholder"
+msgstr "A site, e.g. www.example.com, or paste a list"
+
+msgid "adminV2.cleanIp.sparesTitle"
+msgstr "Spare SNIs"
+
+msgid "adminV2.cleanIp.start"
+msgstr "Start"
+
+msgid "adminV2.cleanIp.statBest"
+msgstr "fastest"
+
+msgid "adminV2.cleanIp.statTested"
+msgstr "tested"
+
+msgid "adminV2.cleanIp.statWorking"
+msgstr "working"
+
+msgid "adminV2.cleanIp.stateBad"
+msgstr "Filtered on {count}"
+
+msgid "adminV2.cleanIp.stateNone"
+msgstr "Not tested"
+
+msgid "adminV2.cleanIp.stateOk"
+msgstr "Healthy"
+
+msgid "adminV2.cleanIp.stop"
+msgstr "Stop"
+
+msgid "adminV2.cleanIp.subtitle"
+msgstr ""
+"Find Cloudflare IPs that work on your internet and give them to the users of"
+" your ISP"
+
+msgid "adminV2.cleanIp.switch"
+msgstr "Switch"
+
+msgid "adminV2.cleanIp.switched"
+msgstr "Now using {sni}; the configs are being applied."
+
+msgid "adminV2.cleanIp.tabIp"
+msgstr "IP scanner"
+
+msgid "adminV2.cleanIp.tabReality"
+msgstr "REALITY SNI"
+
+msgid "adminV2.cleanIp.tested"
+msgstr "{done} of {total} tested"
+
+msgid "adminV2.cleanIp.timeout"
+msgstr "Timeout per IP"
+
+msgid "adminV2.cleanIp.title"
+msgstr "Scanner"
+
+msgid "adminV2.cleanIp.unknownIsp"
+msgstr "An ISP Hiddify has no name for"
+
+msgid "adminV2.cleanIp.unknownIspAs"
+msgstr "AS{asn} (an operator Hiddify has no name for)"
+
+msgid "adminV2.cleanIp.unsaved"
+msgstr "not saved"
+
+msgid "adminV2.cleanIp.uploadSize"
+msgstr "Upload size"
+
+msgid "adminV2.cleanIp.useThese"
+msgstr "Use these IPs above"
+
+msgid "adminV2.cleanIp.viewScript"
+msgstr "View the script"
+
+msgid "adminV2.cleanIp.vpnWarning"
+msgstr ""
+"This browser is not in the panel's country: a VPN or proxy is probably on. "
+"Turn it off, otherwise you test the VPN, not your ISP."
+
+msgid "adminV2.cleanIp.waiting"
+msgstr "Waiting for a run of the command…"
+
+msgid "adminV2.cleanIp.yourNetwork"
+msgstr "Your network (as the panel sees it)"
+
 msgid "adminV2.common.actions"
 msgstr "Actions"
 
@@ -3007,6 +3534,35 @@ msgstr "Expand details"
 msgid "adminV2.dashboard.free"
 msgstr "Free"
 
+msgid "adminV2.dashboard.health.checkNow"
+msgstr "Check now"
+
+msgid "adminV2.dashboard.health.checked"
+msgstr "Every config tested from the server · {ago}"
+
+msgid "adminV2.dashboard.health.firstRun"
+msgstr "The first check is running; it takes a minute or two."
+
+msgid "adminV2.dashboard.health.never"
+msgstr "Not checked yet. Press “Check now”."
+
+msgid "adminV2.dashboard.health.note"
+msgstr ""
+"Tested with {user}'s subscription. A config that fails from the server "
+"itself never works for anyone; filtering in Iran is not tested here."
+
+msgid "adminV2.dashboard.health.running"
+msgstr "Checking…"
+
+msgid "adminV2.dashboard.health.subtitle"
+msgstr "Every config, tested from the server every 6 hours"
+
+msgid "adminV2.dashboard.health.title"
+msgstr "Config health"
+
+msgid "adminV2.dashboard.health.working"
+msgstr "{ok} of {total} work"
+
 msgid "adminV2.dashboard.hiddify"
 msgstr "Hiddify"
 
@@ -3388,6 +3944,17 @@ msgstr ""
 "Put these in the users' links instead of the domain's IP, separated by "
 "commas or new lines. Operator templates work too."
 
+msgid "adminV2.domains.field.cdnIpScanner"
+msgstr "Find working IPs with the scanner"
+
+msgid "adminV2.domains.field.cdnIpScannerGo"
+msgstr "Open the scanner"
+
+msgid "adminV2.domains.field.cdnIpScannerHint"
+msgstr ""
+"Scans Cloudflare IPs on your internet and saves the best ones here, per "
+"operator."
+
 msgid "adminV2.domains.field.domain"
 msgstr "Domain"
 
@@ -3655,8 +4222,8 @@ msgstr "Only the proxies you pick"
 
 msgid "adminV2.domains.proxies.rule"
 msgstr ""
-"One SNI proxy, or L7 proxies; the two can not be mixed. IP-based ones go "
-"with either."
+"One SNI proxy alone, or IP-based and L7 proxies together; an SNI proxy is "
+"never mixed with the others."
 
 msgid "adminV2.domains.proxies.selectAll"
 msgstr "Select all"
@@ -3962,6 +4529,14 @@ msgstr "{name} address copied"
 msgid "adminV2.donation.copiedShort"
 msgstr "Copied"
 
+msgid "adminV2.donation.copyAddress"
+msgstr "Copy the {name} address"
+
+msgid "adminV2.donation.networkHint"
+msgstr ""
+"Send each coin only on the network shown next to its name: a transfer on "
+"another network is lost."
+
 msgid "adminV2.donation.qr"
 msgstr "QR code"
 
@@ -4116,6 +4691,9 @@ msgstr "xxxxxxxx-xxxx-… or your username"
 
 msgid "adminV2.menu.baseConfigs"
 msgstr "Base Configs"
+
+msgid "adminV2.menu.cleanIp"
+msgstr "Scanner"
 
 msgid "adminV2.menu.configTester"
 msgstr "Config tester"
@@ -4417,6 +4995,9 @@ msgstr "Add a node"
 msgid "adminV2.nodes.addNode"
 msgstr "Add node"
 
+msgid "adminV2.nodes.addTileText"
+msgstr "Connect another Hiddify server and manage it from here."
+
 msgid "adminV2.nodes.checkConnection"
 msgstr "Check connection"
 
@@ -4651,6 +5232,93 @@ msgstr "Nodes"
 
 msgid "adminV2.nodes.unreachable"
 msgstr "Not reachable"
+
+msgid "adminV2.operatorIps.add"
+msgstr "Add"
+
+msgid "adminV2.operatorIps.addressCount"
+msgstr "{count} addresses for these operators"
+
+msgid "adminV2.operatorIps.asOption"
+msgstr "{code} (by AS number)"
+
+msgid "adminV2.operatorIps.asTable"
+msgstr "Edit as table"
+
+msgid "adminV2.operatorIps.asText"
+msgstr "Edit as text"
+
+msgid "adminV2.operatorIps.badAddress"
+msgstr "Not an IP, range or name: {list}"
+
+msgid "adminV2.operatorIps.defaults"
+msgstr "Fill the defaults"
+
+msgid "adminV2.operatorIps.defaultsHint"
+msgstr "Each operator without an address gets its ircf.space one"
+
+msgid "adminV2.operatorIps.for"
+msgstr "For"
+
+msgid "adminV2.operatorIps.host"
+msgstr "IP, range or domain, then space or Enter"
+
+msgid "adminV2.operatorIps.name.AFR"
+msgstr "Afranet"
+
+msgid "adminV2.operatorIps.name.ASK"
+msgstr "Andishe Sabz"
+
+msgid "adminV2.operatorIps.name.AST"
+msgstr "Asiatech"
+
+msgid "adminV2.operatorIps.name.HWB"
+msgstr "HiWeb"
+
+msgid "adminV2.operatorIps.name.ITC"
+msgstr "Zirsakht (ITC)"
+
+msgid "adminV2.operatorIps.name.MBT"
+msgstr "Mobinnet"
+
+msgid "adminV2.operatorIps.name.MCI"
+msgstr "Hamrah-e Aval"
+
+msgid "adminV2.operatorIps.name.MKH"
+msgstr "Mokhaberat"
+
+msgid "adminV2.operatorIps.name.MTN"
+msgstr "Irancell"
+
+msgid "adminV2.operatorIps.name.OTHER"
+msgstr "Other"
+
+msgid "adminV2.operatorIps.name.PRS"
+msgstr "ParsOnline"
+
+msgid "adminV2.operatorIps.name.PSM"
+msgstr "Pishgaman"
+
+msgid "adminV2.operatorIps.name.RSP"
+msgstr "Respina"
+
+msgid "adminV2.operatorIps.name.RTL"
+msgstr "Rightel"
+
+msgid "adminV2.operatorIps.name.SHT"
+msgstr "Shatel"
+
+msgid "adminV2.operatorIps.name.ZTL"
+msgstr "Zitel"
+
+msgid "adminV2.operatorIps.operator"
+msgstr "Operator"
+
+msgid "adminV2.operatorIps.remove"
+msgstr "Remove"
+
+msgid "adminV2.operatorIps.searchOrAs"
+msgstr "Search, or type AS254"
 
 msgid "adminV2.outbounds.add"
 msgstr "Add outbound"
@@ -6716,6 +7384,9 @@ msgstr "Choose tags"
 msgid "adminV2.tags.pickHint"
 msgstr "You can choose several"
 
+msgid "adminV2.tags.pin"
+msgstr "Pin"
+
 msgid "adminV2.tags.rename"
 msgstr "Rename"
 
@@ -6922,11 +7593,64 @@ msgstr ""
 "Output SKIP or call skip() to skip rendering this proxy when a condition is "
 "not met"
 
+msgid "adminV2.theme.caddy"
+msgstr "Smart Caddy theme"
+
+msgid "adminV2.theme.color"
+msgstr "Theme"
+
+msgid "adminV2.theme.colors.blue"
+msgstr "Blue"
+
+msgid "adminV2.theme.colors.brown"
+msgstr "Dark brown"
+
+msgid "adminV2.theme.colors.graphite"
+msgstr "Graphite"
+
+msgid "adminV2.theme.colors.green"
+msgstr "Green"
+
+msgid "adminV2.theme.colors.orange"
+msgstr "Orange"
+
+msgid "adminV2.theme.colors.pink"
+msgstr "Pink"
+
+msgid "adminV2.theme.colors.purple"
+msgstr "Purple"
+
+msgid "adminV2.theme.colors.red"
+msgstr "Red"
+
+msgid "adminV2.theme.colors.spacegray"
+msgstr "Space Gray"
+
+msgid "adminV2.theme.colors.yellow"
+msgstr "Yellow"
+
 msgid "adminV2.theme.dark"
 msgstr "Dark mode"
 
+msgid "adminV2.theme.default"
+msgstr "Hiddify theme (default)"
+
+msgid "adminV2.theme.glassHint"
+msgstr ""
+"Each color works in light and dark: light gives frosted glass over its glow,"
+" dark gives the Smart Caddy dark glass."
+
 msgid "adminV2.theme.light"
 msgstr "Light mode"
+
+msgid "adminV2.theme.menu"
+msgstr "Appearance & language"
+
+msgid "adminV2.theme.mode"
+msgstr "Light or dark"
+
+msgid "adminV2.theme.retry"
+msgstr "Try again"
 
 msgid "adminV2.users.add"
 msgstr "Add user"
@@ -7443,6 +8167,39 @@ msgstr "Group by admin"
 msgid "adminV2.users.groupCount"
 msgstr "{n} user | {n} users"
 
+msgid "adminV2.users.guide.dragText"
+msgstr ""
+"Drag a row by its handle, e.g. from row 5 to row 2. Pinned users can be "
+"reordered among themselves; the others stay below them."
+
+msgid "adminV2.users.guide.dragTitle"
+msgstr "Move users between rows"
+
+msgid "adminV2.users.guide.gotIt"
+msgstr "Got it"
+
+msgid "adminV2.users.guide.intro"
+msgstr "Keep the users you need most at hand:"
+
+msgid "adminV2.users.guide.pinText"
+msgstr ""
+"Click the tag circle next to a user's name and choose Pin, first in the "
+"menu: the user moves to the top rows and stays there. Filter by tag › Pin "
+"lists the pinned users."
+
+msgid "adminV2.users.guide.pinTitle"
+msgstr "Pin users"
+
+msgid "adminV2.users.guide.resizeText"
+msgstr ""
+"Drag the border between Name and Usage: Usage gets wider, Name narrower."
+
+msgid "adminV2.users.guide.resizeTitle"
+msgstr "Widen the Usage column"
+
+msgid "adminV2.users.guide.title"
+msgstr "Welcome to the new Users experience"
+
 msgid "adminV2.users.inlineEdit"
 msgstr "Inline edit"
 
@@ -7450,6 +8207,26 @@ msgid "adminV2.users.inlineHint"
 msgstr ""
 "Inline edit is on: click a name, usage limit, expiry, mode or note to change"
 " it right in the list. Usage itself can only be reset."
+
+msgid "adminV2.users.layout.crossGroups"
+msgstr ""
+"Pinned users stay above the others: unpin or pin a user to move it between "
+"them."
+
+msgid "adminV2.users.layout.crossOwners"
+msgstr "Grouped by admin: a user moves only among that admin's users."
+
+msgid "adminV2.users.layout.drag"
+msgstr "Drag to move this user"
+
+msgid "adminV2.users.layout.dragOff"
+msgstr "Clear the column sort to move users"
+
+msgid "adminV2.users.layout.pin"
+msgstr "Pin to the top"
+
+msgid "adminV2.users.layout.unpin"
+msgstr "Unpin"
 
 msgid "adminV2.users.limitReached"
 msgstr "You reached your user limit. Ask the admin above you to raise it."
@@ -9418,6 +10195,18 @@ msgstr "Do Not Change It"
 msgid "config.reality_short_ids.label"
 msgstr "🆔 Short IDs"
 
+msgid "config.reality_sni_auto.description"
+msgstr "config.reality_sni_auto.description"
+
+msgid "config.reality_sni_auto.label"
+msgstr "config.reality_sni_auto.label"
+
+msgid "config.reality_sni_spares.description"
+msgstr "config.reality_sni_spares.description"
+
+msgid "config.reality_sni_spares.label"
+msgstr "config.reality_sni_spares.label"
+
 msgid "config.restls.description"
 msgstr "RestLS protocol settings"
 
@@ -9927,6 +10716,16 @@ msgstr ""
 msgid "config.use_ip_in_config.label"
 msgstr "Use IP in configs"
 
+msgid "config.user_page_url.description"
+msgstr ""
+"The address of a static site to show as the user page, e.g. your build of "
+"hiddify-user-front on GitHub Pages (https://<you>.github.io/hiddify-user-"
+"front/). The panel downloads it and serves it from its own domain (so it "
+"works even where that site is filtered). Leave empty for the built-in page."
+
+msgid "config.user_page_url.label"
+msgstr "🎨 Custom user page"
+
 msgid "config.utls.description"
 msgstr ""
 "This Option Will Simulate Different Browsers, Therefore, GFW Can Not Detect "
@@ -10185,7 +10984,9 @@ msgstr ""
 "include REALITY"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
-msgstr "SNI gateway and L7 gateway cannot be selected together for one domain"
+msgstr ""
+"An SNI gateway can not be selected together with other proxies for one "
+"domain"
 
 msgid "domain.custom_proxy.sni_single_only"
 msgstr "Only one SNI gateway can be selected for a domain"

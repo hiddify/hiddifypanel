@@ -1,6 +1,337 @@
 # Changelog
 
 
+## (unreleased)
+
+#### New
+
+* Add shadowtls similar to all sni proxies. 
+
+* Add advanced ip/sni scanner. 
+
+#### Other
+
+* Feat(rawhttp): implement safe headers for rawhttp requests and enhance jinja rendering. 
+  _- Added a new module `rawhttp.py` to handle browser-like headers for rawhttp requests, ensuring safe transmission behind HAProxy.
+- Introduced `safe_headers` function to filter headers based on safety criteria.
+- Updated jinja rendering functions to include `rawhttp_headers` for generating headers in templates.
+- Enhanced `_jinja_choose_random` function to handle lists and strings more effectively.
+- Added unit tests for the new functionality in `test_rawhttp_headers.py` to ensure correctness._
+
+* Fix(hiddify-core): rawhttp header short for the Hiddify app too; choose_random takes a list. 
+  _The Hiddify app's rawhttp (sing-box http transport) to an xray rawhttp inbound had the same long header: 5/10 with it, 9/10 short. choose_random split str(list) on commas, so sec-ch-ua-platform was "'Windows']" (or "['Android'") in every ws / httpupgrade / xhttp profile of the Hiddify app._
+
+* Fix(xray): rawhttp configs failed every other connection (or 9 in 10 for VMess) 
+  _The fake HTTP request header of rawhttp (xray tcp header type http) carried 15 browser-like headers (~650 bytes). Xray's server reads that header in one go and rejects one that arrives in two pieces ("failed to read request header > malformed MIME header: missing colon: \"Refer\""); a long header often did. Tested from the server: rawhttp vless direct 10/20 and vmess 2/20 before, 20/20 both with the short header (User-Agent, Accept, Connection, plus Host)._
+
+* Merge pull request #79 from Plus98ir/feat/custom-user-page. 
+  _Custom user page: any URL (e.g. a hiddify-user-front gh-pages build) as the user page_
+
+* Merge branch 'dev' into feat/custom-user-page. 
+
+* Merge pull request #83 from Hiddify-Official/feat/users-layout. 
+  _feat(users): pin and reorder users, wider Usage, animated guide_
+
+* Merge branch 'dev' into feat/users-layout. 
+
+* Refactor: remove deprecated fake-TLS domain handling and update related logic. 
+  _- Removed the FAKE_PROXY_MODES as they no longer mirror any domains.
+- Updated ProxyPicker and TlsPicker components to reflect changes in proxy selection logic.
+- Adjusted domain rules and configurations to ensure SNI proxies are handled correctly without fake domains.
+- Updated translations to clarify proxy selection rules.
+- Added tests to verify that Telegram MTProxy domains route correctly to telemt's listener._
+
+* Make faketls ss proxy like other sni proxies. 
+
+* Feat(users): pin from the tag circle, Pin in the tag filter, animated guide. 
+  _- The pin button beside Edit (and on the phone cards) is gone: the tag
+  circle's menu has "Pin" first (no edit button), and a pinned user's
+  circle shows the pin before its tags.
+- Filter by tag has "Pin" first, with the number of pinned users; it
+  combines with tags like any tag (PIN_TAG = -1).
+- The users guide shows each feature as a small looping animation of the
+  real controls: pin from the tag menu, drag a row up, widen Usage from
+  the Name edge (a still frame with reduced motion)._
+
+* Fix(users): reorder within an admin's group; no text selection when resizing. 
+  _- Grouped by admin, rows can be dragged again, but only among the users
+  of the same admin; a drop into another admin's group is refused with a
+  hint. Pinned users still stay on top within each group.
+- Resizing the Name/Usage edge selected text across the rows in real
+  browsers: the selection starts on the resizer's mousedown, before the
+  "resizing" style applies. The mousedown is now prevented (PrimeVue
+  still handles it)._
+
+* Fix(users): pinned users stay on top in a column sort; no selection while resizing. 
+  _- A column sort (name, usage, expiry, …) sorts the pinned users among
+  themselves on top, then the others the same way; the table is lazy then
+  and gets its rows sorted (PrimeVue's comparison), the header arrow
+  still shows the sort. Grouping by admin sorts as before. The header
+  checkbox still picks every user of the filter, not only the page.
+- Dragging the Name/Usage edge no longer selects text across the rows
+  (user-select off while resizing, any selection cleared at the end)._
+
+* Fix(users): the usage bar follows the Usage column's width. 
+  _The usage cell had a fixed width (11rem), so widening the Usage column
+left the bar short. The cell now fills the column (at least 8rem), and
+the bar fills the cell, wider or narrower._
+
+* Feat(users): pin and reorder users, widen Usage, first-visit guide. 
+  _- Pin: a button next to Edit (and on the phone cards) moves a user to the
+  top rows; pinned users are tinted, with a line under the last one.
+- Reorder: drag a row by its handle; pinned users reorder among
+  themselves and the others stay below them (a drag across the two is
+  refused with a hint). Works in a filtered or paged view: hidden users
+  keep their places. Off while a column sort or grouping orders the rows.
+- The order is per admin, on the server: admin_user.users_layout (JSON:
+  pinned, order, guide_seen), GET/PUT admins/me/users-layout/, migration
+  _v181. It is not part of the admin's synced data.
+- Usage column: widened by dragging the Name column's edge (the only
+  resize handle); the width is kept per browser.
+- A first-visit guide, "Welcome to the new Users experience", shows
+  pinning, reordering and the resize; "Got it" closes it for good.
+- Strings in all 7 languages._
+
+* Merge PR #80: align ShadowTLS, TUIC and Mihomo templates. 
+
+* Fix(proxy): align ShadowTLS, TUIC and Mihomo templates. 
+  _Align ShadowTLS routing and SS2022 keys, export AnyTLS for Mihomo,
+preserve Vision flow on encrypted VLESS transports, and negotiate h3
+on both sides of TUIC. Disable HTTPUpgrade fast-open and keep hidden
+transport helpers out of standalone config tests._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #81 from Hiddify-Official/feat/appearance-themes. 
+  _feat(admin_v2): appearance menu: language, light/dark and glass themes_
+
+* Fix(admin_v2): light color themes: visible dividers and readable main buttons. 
+  _- Light glass set the content border color to white, so table row lines
+  (users, admins), section dividers and outlines vanished on the frosted
+  white. They get a faint dark line again; the glass cards keep their
+  white edge.
+- The main button's gradient in light starts from the color's 600 step
+  (was a pale 300-ish shade under white text): 600 to 800, white text,
+  readable for every color.
+- The popup-only border workaround is no longer needed.
+
+Dark mode is unchanged._
+
+* Feat(admin_v2): three dark theme colors: graphite, space gray, dark brown. 
+  _- New Smart Caddy colors, each a full palette with its gradient and glow,
+  in light and dark: graphite (pencil lead), Apple's space gray, and a
+  dark espresso brown.
+- Ten swatches now: two rows of five.
+- Their names in all 7 languages._
+
+* Feat(admin_v2): every color in both themes, very bright text in dark. 
+  _Two themes, light and dark, and each shows every color:
+
+- Light + a color: frosted white glass over the color's glow; dark + a
+  color: the Smart Caddy dark glass. The light/dark buttons work with any
+  color again (no forced dark, no lock note).
+- Dark text is very bright: white for text, 80% white for muted text,
+  in every dark mode.
+- Light glass: popups and dialogs keep a faint dark border, so the
+  choices inside them stay outlined on the frosted white._
+
+* Feat(admin_v2): glass theme swatches, flag-only language button, translucent white text. 
+  _- The theme swatches are glass tiles: the color slightly translucent, a
+  bright edge and a light sweep across the top.
+- The language button shows only the chosen language's flag; its name is
+  in the list, the tooltip and the aria label.
+- Every dark mode (the Hiddify theme's and the Smart Caddy colors) writes
+  text in translucent white: 92% for text, 64% for muted text, instead of
+  grey (variables/_dark.scss)._
+
+* Fix(admin_v2): Smart Caddy themes as in the original, white text, visible menu icon. 
+  _- A color theme is PR #64's Smart Caddy look again: always dark (the
+  light glass variant is gone). Light/dark is the Hiddify theme's
+  choice; with a color theme the two buttons are disabled with a note.
+- Dark glass sets white text (and 72% white for muted text), so labels,
+  the menu and tables read on the translucent cards.
+- The palette button stays visible while its menu is open: the active
+  style uses the topbar's own text color instead of the primary color,
+  which vanished on the primary-colored bar._
+
+* Feat(admin_v2): one appearance menu: language, light/dark and Smart Caddy themes. 
+  _Builds on the Smart Caddy theme: its colors become the themes of one
+appearance menu in the topbar, next to the admin's language and light or
+dark mode, instead of a second palette button.
+
+- The language is one control: the flag and name of the language in use;
+  a click lists the others (saved to the admin's account, the page
+  reloads in it).
+- Light or dark stays a choice of its own. Smart Caddy is no longer
+  always dark: a light variant (frosted white glass over the color's
+  glow) joins the dark one, so a color switches the whole page to the
+  glass theme in either mode. "Hiddify theme (default)" switches back.
+- _theme-caddy.scss: the color palettes apply in both modes, the glass
+  rules are shared, and dark and light set their own surfaces; map keys
+  quoted and sass:list used, so it compiles without warnings.
+- The theme strings in all 7 languages._
+
+* Feat(admin_v2): optional Smart Caddy theme in seven colors. 
+  _A palette button in the topbar opens seven swatches (red, pink, orange, yellow, green, blue, purple). Picking one switches to the Smart Caddy look in that color: dark glass cards over a colored glow and gradient buttons. "Hiddify theme (default)" switches back. The panel's own look stays the default, and the choice is kept per browser._
+
+* Merge pull request #82 from Hiddify-Official/feat/backup-caption. 
+  _feat(backup): clearer Telegram backup message, no IPv6 link_
+
+* Fix(backup): show only the link titles, not the IP or domain. 
+  _The titles (Secure IPv4, Secure Domain, …) are the links; the address
+after each one is no longer shown._
+
+* Feat(backup): name each link's host, add panel and time, not-secure last. 
+  _- Each line shows the domain or address it opens, so several domains
+  no longer read as identical "Secure Domain" lines.
+- A header names the panel (branding title, else HiddifyManager), its
+  version and the backup time.
+- The not-secure IPv4 link comes last: the secure ones are the ones to
+  open, and the first kept under the 1024-character caption limit._
+
+* Feat(backup): Telegram backup message: 🔒 for own links, no IPv6 link. 
+  _- Secure links to the server's own IPv4 or domain (and relays) use 🔒;
+  CDN links keep 🔐.
+- IPv6 admin links are no longer sent: they do not open from most
+  networks._
+
+* Feat(acme): add deadline handling for certificate issuance and renewal. 
+
+* Feat(clean-ip): introduce OperatorIpEditor component for managing IP and operator pairs. 
+  _- Added a new OperatorIpEditor component to handle the input of IP addresses and their associated operators.
+- Updated CleanIpView and DomainDialog to utilize the new OperatorIpEditor for better user experience.
+- Refactored mergeCdnIp function to accommodate the new operator handling logic, including the use of "OTHER" for operators without specific addresses.
+- Enhanced utility functions for parsing and serializing operator IPs.
+- Updated translations for operator-related terms in both English and Persian._
+
+* Custom user page: Settings > user_page_url (any static site or GitHub folder, e.g. a hiddify-user-front gh-pages build) served on the user's link, with the panel contract in window.__HIDDIFY__ 
+
+* Merge pull request #76 from Plus98ir/feat/config-health. 
+  _feat: config health — every config tested from the server every 6 hours, dashboard card, Telegram alert_
+
+* Merge branch 'dev' into feat/config-health. 
+
+* Merge pull request #77 from Plus98ir/feat/reality-sni-watch. 
+  _feat(reality): REALITY SNI watch — find filtered SNIs from Iran and switch to a spare (by hand or automatically)_
+
+* Feat(clean-ip): REALITY SNIs card — status per ISP, spares, switch, automatic switch, history. 
+
+* Reality watch: switch only to a site REALITY really works with (a test connection through a throwaway xray server and client) 
+  _TLS 1.3 + h2 (is_domain_reality_friendly) is not enough: www.microsoft.com passes it, but REALITY's handshake through it fails, so every client would break after the switch. Tested on the server: paltalk, speedtest, samsung work; microsoft does not._
+
+* Reality watch: apply configs after a switch (rpxy-l4 routes port 443 by SNI and kept the old name) 
+
+* Feat(reality): REALITY SNI watch — find filtered SNIs from Iran and switch them to a spare. 
+  _The full clean IP test (run on a device in Iran) also opens a TLS connection to this server with each REALITY SNI and each spare SNI, the way a REALITY client does; SNI filtering cuts it, whatever the address. The panel files the result per ISP (only when the server answered with its own name). A filtered REALITY SNI can be switched to a spare that worked there and suits REALITY (TLS 1.3 + h2, checked from the server): by the admin, or by itself when reality_sni_auto is on (_v180). GET/PUT clean-ip/reality/, POST clean-ip/reality/<id>/switch/ (super admins)._
+
+* Merge pull request #74 from Plus98ir/feat/clean-ip-scanner. 
+  _feat(admin_v2): clean IP scanner — find Cloudflare IPs that work on each ISP and save them for it_
+
+* Feat(clean-ip): full test with a real upload, through a one-day command. 
+  _Some ISPs cut a connection after ~1.3 KB of upload. A browser can not test that (it can not pick the TLS name for an IP, and its own handshake is ~0.6 KB), so the page makes a one-day command (curl … | python3 - / irm … | python -). It serves a standard-library Python script that tests each Cloudflare IP with TLS (the CDN domain as SNI) and an upload of the chosen size, then reports the working IPs; the panel saves them for the ISP the report comes from (MaxMind), merged like the page does. The page shows each run as it arrives. The token can only add IPs to one CDN domain, for 24 h._
+
+* Feat(admin_v2): clean IP scanner — find Cloudflare IPs that work on the admin's ISP and save them for that ISP. 
+  _The panel's server is abroad and can not test the internet in Iran, so the scan runs in the browser of whoever opens the page: random IPs from Cloudflare's ranges, a TLS request to each (a quick TLS error = the IP answers, no answer = blocked; checked against a real upload test: 58 of 60 IPs agree). The panel tells the page which ISP it is on (GET clean-ip/network/, MaxMind as for subscriptions), and the best IPs go into a CDN domain's CDN IP field as "IP SHORT" pairs, keeping other ISPs' pairs: Hiddify then gives each user the IPs of their own ISP. Tools › Clean IP scanner._
+
+* Merge pull request #70 from Plus98ir/perf/panel-compression. 
+  _perf(haproxy): gzip the panel and cache its hashed build files_
+
+* Enhance routing configuration with caching and compression. 
+  _Updated compression types and added static file caching rules._
+
+* Perf(haproxy): gzip the panel's text responses and let browsers keep the hashed build files. 
+  _Admin V2's main bundle (1.35 MB) was sent uncompressed with Cache-Control: no-cache, so every visit downloaded it again; on a slow connection the panel's few request threads were held by these files. Text is gzipped now, and the build's hashed files (static/admin-v2/assets, monaco/<hash>/) are cached as immutable. The live channel (text/event-stream) is not compressed._
+
+* Merge pull request #78 from Hiddify-Official/feat/donation-wallets. 
+  _feat(donation): one wallet list, new addresses, clearer dialog_
+
+* Feat(donation): one wallet list, new addresses and a clearer donate dialog. 
+  _The wallet addresses were copied into the Donation.description text of
+every language, and five of the seven copies still listed old wallets.
+The classic modal's TON copy button also copied another address than the
+one it showed.
+
+- The wallets live once in hutils/donation.py (Bitcoin, Tether BEP20,
+  Tron, Litecoin, Gram/TON); the translations only mark where they go.
+  The admin_v2 menu sends them as data and the classic modal renders them
+  from the same list.
+- The donate dialog shows each coin's icon, its network, the full
+  address with a copy button beside it, a QR code, and a hint to send
+  only on the shown network.
+- A catalog compiled before this change still has the old list in its
+  text: the dialog drops it and shows the new list in its place._
+
+* Introduced a users_only parameter to quick_apply_users to optimize user updates without reloading xray. 
+
+* Merge pull request #60 from Plus98ir/fix/bot-links. 
+  _fix(telegram): give the same user and subscription links as the panel_
+
+* Fix(telegram): give the same user and subscription links as the panel. 
+  _The bot built its own links: the user page had no #<name> and the subscription was auto/ with no name, unlike the links the panel copies. Now the user page is <home>#<name>, the subscription <home>sub/?asn=unknown#<name> and the Hiddify import uses <home>#<name>. The Mini App buttons keep the bare page URL (Telegram adds its own data after #)._
+
+* Merge pull request #61 from Plus98ir/fix/user-apps-api. 
+  _fix(user api): app list failed on iOS and "all"; v2rayN shown as V2RayNG_
+
+* Fix(user api): app list failed on iOS and "all"; v2rayN shown as V2RayNG. 
+  ___get_loon_app_dto() returned nothing, so the iOS list and platform=all failed validation (None in list[AppSchema]). v2rayN used the v2rayNG title and got no icon. The Linux check had an operator-precedence mistake._
+
+* Merge pull request #63 from Plus98ir/fix/full-width. 
+  _fix(admin_v2): pages take the whole width on wide screens_
+
+* Fix(admin_v2): pages take the whole width on wide screens. 
+  _Sakai's rule pinned .layout-main to 1504px and centered it above 1960px, so 2K/4K screens showed large empty sides._
+
+* Merge pull request #65 from Plus98ir/fix/sub-domain-order. 
+  _fix(sublink): the subscription follows the Domains page order_
+
+* Fix(sublink): the Domains page order had no visible effect on the subscription. 
+  _The Domains page says the first domain comes first in configs, but the list was grouped by
+proxy, so reordering domains only moved links inside each proxy's group; proxies came in the
+database's order, ignoring their sort_order. Profiles now go domain by domain (in the page's
+order), each domain's proxies by sort_order; IP-mode and no-inbound proxies, which merge
+their domains, stay whole at their first domain.
+Checked: the same 146 links (set diff empty), now following the domain order; Hiddify 4.1
+and 5.0 profiles parse._
+
+* Merge pull request #66 from Plus98ir/fix/dark-mode-css. 
+  _fix(admin_v2): two dark-mode rules applied to the whole page_
+
+* Fix(admin_v2): dark mode turned the whole page's text green / avatar-colored. 
+  _In scoped CSS, ":global(.app-dark) .x" compiles to ".app-dark {}": Vue drops what follows :global(). Opening the dashboard (TrendChip) set color: green-400 on <html class=app-dark>, and the admins page set the avatar color. Writing the ancestor as is keeps it unscoped and the rest scoped._
+
+* Merge pull request #59 from Hiddify-Official/feat/nodes-page-few-nodes. 
+  _feat(admin_v2): make the nodes page useful with only a few nodes_
+
+* Feat(admin_v2): make the nodes page useful with only a few nodes. 
+  _With up to three nodes the page left most of the row empty and hid each
+node's numbers behind "More information".
+
+- Each card shows its details (usage report, today's traffic and online
+  users, last message each way) inline when there are three nodes or fewer.
+- An "Add node" tile fills the empty space in the row.
+- The summary bar adds today's traffic and online users of all nodes._
+
+* Config health: a subscription that could not be fetched (a reload right then) is tried once more. 
+
+* Config health: the second chance runs the subscription again (rerun() needs the page's form of each config) 
+
+* Config health: test a failed config once more 30 s later (the cores reload when a domain is saved or configs are applied) 
+  _A check that ran while an admin saved a domain reported every config of that domain as broken (tested on a panel: 42 Cloudflare configs failed during the reload, 0 a minute later). Only configs that fail twice are reported._
+
+* Feat(dashboard): config health card (each app's working configs, the broken ones, Check now) 
+
+* Config health: test through Cloudflare's 204 (not Google, often sent through WARP), two requests per config, skip the status line. 
+
+* Feat(config-health): test every config of the subscription from the server every 6 hours. 
+  _Runs the config tester on one active user's subscription as the Xray apps and the Hiddify app get it, keeps the last result (GET/POST /api/v2/admin/config-health/, super admins) and tells the super admins on Telegram when configs break that worked before. A config that fails from the server itself never works for anyone._
+
+* Merge pull request #58 from 2Grey/fix/legacy-admin-redirect-path. 
+  _fix(admin): preserve proxy path in legacy redirects_
+
+* Fix(admin): preserve proxy path in legacy redirects. 
+
+
+
 ## v14.0.5 (2026-10-20)
 
 #### Other

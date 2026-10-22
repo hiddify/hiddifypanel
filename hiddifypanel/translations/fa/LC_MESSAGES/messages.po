@@ -264,23 +264,7 @@ msgstr ""
 "<br>\n"
 "<br>\n"
 "روش‌های حمایت مالی:\n"
-" <ul>\n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='UQDGA32X8-xgRrZnzW0uPP-ChssO2dRLQ5NPubKj3sBqHwNp' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' role='button' class='btn btn-info share-link'>Tron</a> </div></li>\n"
-"    </ul>\n"
+" <div class='donation-wallets'></div>\n"
 "    \n"
 "    <br>\n"
 "راه‌های دیگر برای حمایت از این پروژه: \n"
@@ -2497,6 +2481,548 @@ msgstr "خط‌خورده"
 msgid "adminV2.broadcast.tool.underline"
 msgstr "زیرخط"
 
+msgid "adminV2.cleanIp.addCount"
+msgstr "افزودن {count}"
+
+msgid "adminV2.cleanIp.addSpares"
+msgstr "افزودن به یدک‌ها"
+
+msgid "adminV2.cleanIp.advanced"
+msgstr "تست کامل با آپلود، از یک دستگاه دیگر"
+
+msgid "adminV2.cleanIp.advancedHint"
+msgstr ""
+"وقتی IPهای پیداشده در بالا باز هم وصل نمی‌شوند: بعضی اپراتورها بعد از کمی "
+"آپلود اتصال را قطع می‌کنند و مرورگر نمی‌تواند این را تست کند. یک دستور "
+"می‌دهد که روی گوشی یا کامپیوتر اجرا کنید."
+
+msgid "adminV2.cleanIp.advancedTag"
+msgstr "اختیاری"
+
+msgid "adminV2.cleanIp.asUnknown"
+msgstr ""
+"شمارهٔ AS این اینترنت تشخیص داده نشد (پایگاه دادهٔ IP پنل اطلاعاتی از آن "
+"ندارد)."
+
+msgid "adminV2.cleanIp.auto"
+msgstr "SNI ریالیتیِ فیلترشده خودکار با یک یدک سالم عوض شود"
+
+msgid "adminV2.cleanIp.autoTitle"
+msgstr "تعویض خودکار"
+
+msgid "adminV2.cleanIp.best"
+msgstr "بهترین {ms} میلی‌ثانیه"
+
+msgid "adminV2.cleanIp.built"
+msgstr "{count} IP برای {isp}."
+
+msgid "adminV2.cleanIp.byAdmin"
+msgstr "توسط ادمین"
+
+msgid "adminV2.cleanIp.byAuto"
+msgstr "خودکار، فیلتر روی {isp}"
+
+msgid "adminV2.cleanIp.candidates"
+msgstr "SNIهای مورد تست"
+
+msgid "adminV2.cleanIp.candidatesCount"
+msgstr "{count} نام"
+
+msgid "adminV2.cleanIp.candidatesFound"
+msgstr "{ok} از {tested} SNI مورد تست اینجا کار می‌کند"
+
+msgid "adminV2.cleanIp.candidatesFrom"
+msgstr "از OONI"
+
+msgid "adminV2.cleanIp.candidatesHint"
+msgstr ""
+"سایت‌هایی که OONI در ایران باز دیده، هر خط یکی؛ آزادانه ویرایش کنید. SNIهای "
+"ریالیتی فعلی و یدک‌ها همیشه تست می‌شوند."
+
+msgid "adminV2.cleanIp.candidatesReload"
+msgstr "بارگذاری دوباره"
+
+msgid "adminV2.cleanIp.cmdNote"
+msgstr ""
+"۲۴ ساعت معتبر است و فقط می‌تواند به همین دامنه IP اضافه کند. روی هر اپراتور "
+"یک بار اجرا کنید (مثلاً گوشی با همراه اول، بعد با ایرانسل)."
+
+msgid "adminV2.cleanIp.cmdUnix"
+msgstr "لینوکس، مک، اندروید (Termux): python3 لازم است"
+
+msgid "adminV2.cleanIp.cmdWindows"
+msgstr "ویندوز (PowerShell): Python لازم است"
+
+msgid "adminV2.cleanIp.copyAll"
+msgstr "کپی همه"
+
+msgid "adminV2.cleanIp.domain"
+msgstr "دامنهٔ CDN"
+
+msgid "adminV2.cleanIp.dropped"
+msgstr ""
+"مقدار قبلی IP بدون نام اپراتور داشت؛ جایگزین شد (دو شکل با هم قابل جمع "
+"نیستند)."
+
+msgid "adminV2.cleanIp.editScript"
+msgstr "ویرایش تمپلیت"
+
+msgid "adminV2.cleanIp.estimate"
+msgstr "حدود {count} IP از {ranges} رنج."
+
+msgid "adminV2.cleanIp.existingWarn"
+msgstr ""
+"این دامنه از قبل {count} آدرس برای {who} دارد؛ با ذخیره جایگزین می‌شوند:"
+
+msgid "adminV2.cleanIp.filtered"
+msgstr "فیلتر"
+
+msgid "adminV2.cleanIp.flow1"
+msgstr "کجا و برای چه کسانی؟"
+
+msgid "adminV2.cleanIp.flow1Domain"
+msgstr "کدام دامنه؟"
+
+msgid "adminV2.cleanIp.flow1DomainHint"
+msgstr "دامنهٔ CDN که IPها در آن گذاشته می‌شوند."
+
+msgid "adminV2.cleanIp.flow1Hint"
+msgstr ""
+"دامنهٔ CDN که IPها در آن گذاشته می‌شود، و اپراتوری که کاربرانش این IPها را "
+"می‌گیرند."
+
+msgid "adminV2.cleanIp.flow2"
+msgstr "پیدا کردن IPهای سالم"
+
+msgid "adminV2.cleanIp.flow2Hint"
+msgstr ""
+"از همین مرورگر و روی همین اینترنت تست می‌شود: این صفحه را با همان اپراتوری "
+"که بالا انتخاب کردید و با فیلترشکن خاموش باز کنید."
+
+msgid "adminV2.cleanIp.flow3"
+msgstr "افزودن به دامنه"
+
+msgid "adminV2.cleanIp.flow3On"
+msgstr "داده می‌شود، روی دامنهٔ"
+
+msgid "adminV2.cleanIp.flow3Scanning"
+msgstr "در حال اسکن… سریع‌ترین IPها بعد از پایان اینجا می‌آیند."
+
+msgid "adminV2.cleanIp.flow3Sentence"
+msgstr "این {count} IP به کاربران"
+
+msgid "adminV2.cleanIp.flow3Wait"
+msgstr "اسکن بالا را اجرا کنید: سریع‌ترین IPهایش اینجا نشان داده می‌شوند."
+
+msgid "adminV2.cleanIp.flowAllHint"
+msgstr ""
+"چیزی که ذخیره می‌شود: IPهای بالا برای این اپراتور؛ ردیف‌های اپراتورهای دیگر "
+"همان‌طور می‌مانند. قابل ویرایش است."
+
+msgid "adminV2.cleanIp.flowIps"
+msgstr "IPهای ذخیره"
+
+msgid "adminV2.cleanIp.flowIpsHint"
+msgstr ""
+"سریع‌ترین‌های اسکن؛ می‌توانید حذف کنید یا IP، رنج یا دامنهٔ دیگری اضافه "
+"کنید."
+
+msgid "adminV2.cleanIp.flowShowAll"
+msgstr "نمایش همهٔ IPهای این دامنه (همهٔ اپراتورها)"
+
+msgid "adminV2.cleanIp.fullHint"
+msgstr ""
+"بعضی اپراتورها اتصال را باز می‌گذارند و بعد از حدود ۱.۳ کیلوبایت آپلود قطعش "
+"می‌کنند. مرورگر این را نمی‌تواند تست کند؛ این دستور می‌تواند. آن را روی "
+"کامپیوتر یا گوشی (Termux) با همان اپراتوری که IP می‌خواهید و با فیلترشکن "
+"خاموش اجرا کنید. از طریق هر IP به همین پنل آپلود می‌کند و بررسی می‌کند کل "
+"آپلود رسیده باشد؛ IPهای سالم ۳ بار دیگر تست می‌شوند تا IPهای ناپایدار درصد "
+"افت بگیرند و آخر بروند. بهترین‌ها برای همان اپراتور ذخیره می‌شوند."
+
+msgid "adminV2.cleanIp.fullLead"
+msgstr ""
+"برای اپراتورهایی که بعد از کمی آپلود اتصال را قطع می‌کنند: از گوشی یا "
+"کامپیوتری با همان اپراتور تست کنید."
+
+msgid "adminV2.cleanIp.fullTitle"
+msgstr "تست کامل (با آپلود)"
+
+msgid "adminV2.cleanIp.goDomains"
+msgstr "رفتن به دامنه‌ها"
+
+msgid "adminV2.cleanIp.help"
+msgstr "این چیست؟"
+
+msgid "adminV2.cleanIp.history"
+msgstr "تعویض‌ها"
+
+msgid "adminV2.cleanIp.howItWorks"
+msgstr ""
+"اسکن در همین مرورگر و روی همین اینترنت انجام می‌شود (سرور پنل خارج از ایران "
+"است و نمی‌تواند آن را تست کند). این صفحه را روی هر اپراتوری که مهم است باز "
+"کنید، مثلاً یک بار با گوشیِ همراه اول و یک بار با ایرانسل، و هر نتیجه را "
+"ذخیره کنید؛ هیدیفای به هر کاربر IPهای اپراتور خودش را می‌دهد."
+
+msgid "adminV2.cleanIp.ip"
+msgstr "IP"
+
+msgid "adminV2.cleanIp.isp"
+msgstr "اپراتور"
+
+msgid "adminV2.cleanIp.kept"
+msgstr "{count} IP اپراتورهای دیگر نگه داشته شد."
+
+msgid "adminV2.cleanIp.latency"
+msgstr "تأخیر"
+
+msgid "adminV2.cleanIp.loading"
+msgstr "در حال بارگذاری…"
+
+msgid "adminV2.cleanIp.loss"
+msgstr "{pct}٪ افت"
+
+msgid "adminV2.cleanIp.makeAgain"
+msgstr "ساخت دستور جدید"
+
+msgid "adminV2.cleanIp.makeCommand"
+msgstr "ساخت دستور"
+
+msgid "adminV2.cleanIp.newSni"
+msgstr "SNI دیگر"
+
+msgid "adminV2.cleanIp.noCdnDomain"
+msgstr "دامنهٔ CDN یا worker ندارید. اول در صفحهٔ دامنه‌ها یکی اضافه کنید."
+
+msgid "adminV2.cleanIp.noReality"
+msgstr "این پنل دامنهٔ ریالیتی ندارد."
+
+msgid "adminV2.cleanIp.noSpares"
+msgstr ""
+"هنوز یدکی ندارید: چند سایت معمولی پایین اضافه کنید، یا از نتیجهٔ تست SNI."
+
+msgid "adminV2.cleanIp.noneFound"
+msgstr "هیچ IPای جواب نداد. تعداد IP یا مهلت را بیشتر کنید."
+
+msgid "adminV2.cleanIp.notTested"
+msgstr "هنوز تست نشده: تست SNI پایین را روی یک اپراتور اجرا کنید."
+
+msgid "adminV2.cleanIp.notYet"
+msgstr "برای اسکن «شروع» را بزنید."
+
+msgid "adminV2.cleanIp.off"
+msgstr "خاموش"
+
+msgid "adminV2.cleanIp.on"
+msgstr "روشن"
+
+msgid "adminV2.cleanIp.otherUsers"
+msgstr "اپراتورهای دیگر"
+
+msgid "adminV2.cleanIp.ovAuto"
+msgstr "تعویض خودکار"
+
+msgid "adminV2.cleanIp.ovFiltered"
+msgstr "فیلتر"
+
+msgid "adminV2.cleanIp.ovHealthy"
+msgstr "سالم"
+
+msgid "adminV2.cleanIp.ovSnis"
+msgstr "SNI ریالیتی"
+
+msgid "adminV2.cleanIp.ovSpares"
+msgstr "یدک"
+
+msgid "adminV2.cleanIp.passed"
+msgstr "{count} کار می‌کند"
+
+msgid "adminV2.cleanIp.perIsp"
+msgstr "تعداد IP برای این اپراتور"
+
+msgid "adminV2.cleanIp.perRange"
+msgstr "تعداد IP تصادفی از هر رنج"
+
+msgid "adminV2.cleanIp.pickIsp"
+msgstr "اپراتور را انتخاب کنید"
+
+msgid "adminV2.cleanIp.pickIspFirst"
+msgstr "اپراتوری که این نتیجه مال آن است را انتخاب کنید."
+
+msgid "adminV2.cleanIp.platformUnix"
+msgstr "لینوکس / مک / اندروید"
+
+msgid "adminV2.cleanIp.platformWindows"
+msgstr "ویندوز"
+
+msgid "adminV2.cleanIp.preview"
+msgstr "فیلد CDN IP (قابل ویرایش)"
+
+msgid "adminV2.cleanIp.previewTitle"
+msgstr "IPهای این دامنه برای هر اپراتور (قابل ویرایش)"
+
+msgid "adminV2.cleanIp.qHowMany"
+msgstr "چند IP؟"
+
+msgid "adminV2.cleanIp.qHowManyHint"
+msgstr "سریع‌ترین‌ها از نتیجهٔ اسکن شما."
+
+msgid "adminV2.cleanIp.qWhere"
+msgstr "در کدام دامنه؟"
+
+msgid "adminV2.cleanIp.qWhereHint"
+msgstr "دامنهٔ CDN که در لینک کاربران است."
+
+msgid "adminV2.cleanIp.qWho"
+msgstr "برای کاربران کدام اپراتور؟"
+
+msgid "adminV2.cleanIp.qWhoHint"
+msgstr "کاربرانی که با این اپراتور وصل می‌شوند این IPها را می‌گیرند."
+
+msgid "adminV2.cleanIp.qWhoMulti"
+msgstr ""
+"با AS اینترنت فعلی شما شروع می‌شود؛ اپراتور یا ASهای دیگر را اضافه کنید. "
+"هیچ: بقیهٔ اپراتورها."
+
+msgid "adminV2.cleanIp.ranges"
+msgstr "رنج‌های IP"
+
+msgid "adminV2.cleanIp.rangesCloudflare"
+msgstr "کلودفلر"
+
+msgid "adminV2.cleanIp.rangesCount"
+msgstr "{count} رنج"
+
+msgid "adminV2.cleanIp.rangesCustom"
+msgstr "سفارشی"
+
+msgid "adminV2.cleanIp.rangesDone"
+msgstr "تمام"
+
+msgid "adminV2.cleanIp.rangesEdit"
+msgstr "ویرایش"
+
+msgid "adminV2.cleanIp.rangesHint"
+msgstr ""
+"هر خط یک CIDR، از /8 تا /30. از هر رنج IP تصادفی انتخاب می‌شود؛ تست کامل هم "
+"از همین‌ها استفاده می‌کند."
+
+msgid "adminV2.cleanIp.rangesInvalid"
+msgstr "این‌ها رنج IPv4 معتبر نیستند و نادیده گرفته شدند: {list}"
+
+msgid "adminV2.cleanIp.rangesReset"
+msgstr "برگشت به رنج‌های کلودفلر"
+
+msgid "adminV2.cleanIp.realityHint"
+msgstr ""
+"تست SNI ریالیتی با هر SNI ریالیتی، مثل یک کاربر ریالیتی، به همین سرور وصل "
+"می‌شود و نشان می‌دهد روی کدام اپراتورها فیلتر است. چند SNI یدک نگه دارید: "
+"SNI فیلترشده با یک یدک سالم عوض می‌شود، با دست شما یا خودکار. پنل قبل از هر "
+"تعویض یک اتصال واقعی ریالیتی با آن سایت تست می‌کند و بعد کانفیگ‌ها را اعمال "
+"می‌کند؛ کاربرها با آپدیت بعدی ساب SNI جدید را می‌گیرند."
+
+msgid "adminV2.cleanIp.realityTitle"
+msgstr "SNIهای ریالیتی"
+
+msgid "adminV2.cleanIp.rebuild"
+msgstr "ساخت دوباره"
+
+msgid "adminV2.cleanIp.received"
+msgstr "نتیجه‌های رسیده"
+
+msgid "adminV2.cleanIp.refreshNetwork"
+msgstr "تشخیص دوباره"
+
+msgid "adminV2.cleanIp.reportLine"
+msgstr "{tested} تست با آپلود {kb} کیلوبایت تا پنل، {found} سالم"
+
+msgid "adminV2.cleanIp.reportNotSaved"
+msgstr "هیدیفای اسمی برای این اپراتور ندارد؛ چیزی ذخیره نشد."
+
+msgid "adminV2.cleanIp.reportSaved"
+msgstr "{count} IP برای {isp} ذخیره شد:"
+
+msgid "adminV2.cleanIp.retry"
+msgstr "تلاش دوباره"
+
+msgid "adminV2.cleanIp.save"
+msgstr "ذخیره در دامنه"
+
+msgid "adminV2.cleanIp.saveFirstScan"
+msgstr "اول مرحلهٔ ۱ را اجرا کنید: بهترین IPهایش اینجا گذاشته می‌شوند."
+
+msgid "adminV2.cleanIp.saveHint"
+msgstr ""
+"بهترین IPها به‌صورت جفت «IP اپراتور» در فیلد «CDN IP» دامنهٔ CDN گذاشته "
+"می‌شوند؛ IPهای اپراتورهای دیگر که از قبل هست می‌ماند."
+
+msgid "adminV2.cleanIp.saveSettings"
+msgstr "ذخیره"
+
+msgid "adminV2.cleanIp.saveTitle"
+msgstr "ذخیره برای این اپراتور"
+
+msgid "adminV2.cleanIp.saved"
+msgstr "روی {domain} ذخیره شد. کاربرها با آپدیت بعدی ساب آن را می‌گیرند."
+
+msgid "adminV2.cleanIp.scan"
+msgstr "اسکن"
+
+msgid "adminV2.cleanIp.scanAgain"
+msgstr "اسکن دوباره"
+
+msgid "adminV2.cleanIp.scanSettings"
+msgstr "تنظیمات اسکن"
+
+msgid "adminV2.cleanIp.scanSettingsSummary"
+msgstr "{ranges} رنج · حدود {count} IP · {sec} ثانیه برای هر IP"
+
+msgid "adminV2.cleanIp.scanning"
+msgstr "در حال اسکن…"
+
+msgid "adminV2.cleanIp.scriptHint"
+msgstr ""
+"برای همین دستور از تمپلیتش (صفحهٔ کانفیگ‌های پایه) ساخته شده. ویرایش آنجا "
+"روی دانلود بعدی همهٔ دستورها، همین یکی هم، اعمال می‌شود."
+
+msgid "adminV2.cleanIp.scriptTitle"
+msgstr "اسکریپتی که این دستور اجرا می‌کند"
+
+msgid "adminV2.cleanIp.settingsSaved"
+msgstr "ذخیره شد."
+
+msgid "adminV2.cleanIp.showAllResults"
+msgstr "نمایش همهٔ {count} نتیجه"
+
+msgid "adminV2.cleanIp.showLess"
+msgstr "کمتر"
+
+msgid "adminV2.cleanIp.sniServerBlocked"
+msgstr ""
+"خود سرور روی این اپراتور جواب نداد (آدرسش بسته یا خاموش است)، پس SNIها بررسی"
+" نشدند."
+
+msgid "adminV2.cleanIp.sniTestHint"
+msgstr ""
+"روی گوشی یا کامپیوتر، با فیلترشکن خاموش و با اپراتوری که می‌خواهید بررسی "
+"کنید اجرا می‌شود. اول با اسم خود سرور وصل می‌شود: اگر نشد، آدرس سرور روی آن "
+"اپراتور بسته است و درباره SNIها نظری نمی‌دهد. روی هر اپراتوری که مهم است یک "
+"بار اجرا کنید."
+
+msgid "adminV2.cleanIp.sniTestLead"
+msgstr ""
+"این دستور را روی دستگاهی با اپراتوری که می‌خواهید بررسی کنید اجرا کنید: نشان"
+" می‌دهد آن اپراتور کدام SNIها را فیلتر کرده و همین‌جا ثبت می‌کند."
+
+msgid "adminV2.cleanIp.sniTestTitle"
+msgstr "تست SNIها"
+
+msgid "adminV2.cleanIp.spares"
+msgstr "SNIهای یدک (هر خط یکی)"
+
+msgid "adminV2.cleanIp.sparesAdded"
+msgstr "{count} یدک اضافه شد"
+
+msgid "adminV2.cleanIp.sparesFull"
+msgstr "حداکثر {max} یدک: بقیه اضافه نشدند."
+
+msgid "adminV2.cleanIp.sparesHint"
+msgstr ""
+"SNI فیلترشده با یکی از این‌ها که روی همان اپراتور سالم است عوض می‌شود. تست "
+"کامل این‌ها را هم بررسی می‌کند."
+
+msgid "adminV2.cleanIp.sparesInvalid"
+msgstr "اسم سایت نیست و در کادر ماند: {list}"
+
+msgid "adminV2.cleanIp.sparesPasteHint"
+msgstr ""
+"می‌توانید یک لیست هم پیست کنید (هر خط یکی، یا با فاصله / ویرگول). {count} از"
+" {max}."
+
+msgid "adminV2.cleanIp.sparesPlaceholder"
+msgstr "یک سایت، مثلاً www.example.com، یا یک لیست پیست کنید"
+
+msgid "adminV2.cleanIp.sparesTitle"
+msgstr "SNIهای یدک"
+
+msgid "adminV2.cleanIp.start"
+msgstr "شروع"
+
+msgid "adminV2.cleanIp.statBest"
+msgstr "سریع‌ترین"
+
+msgid "adminV2.cleanIp.statTested"
+msgstr "تست شده"
+
+msgid "adminV2.cleanIp.statWorking"
+msgstr "سالم"
+
+msgid "adminV2.cleanIp.stateBad"
+msgstr "فیلتر روی {count} اپراتور"
+
+msgid "adminV2.cleanIp.stateNone"
+msgstr "تست نشده"
+
+msgid "adminV2.cleanIp.stateOk"
+msgstr "سالم"
+
+msgid "adminV2.cleanIp.stop"
+msgstr "توقف"
+
+msgid "adminV2.cleanIp.subtitle"
+msgstr ""
+"IPهای کلودفلری که روی اینترنت شما کار می‌کنند را پیدا کنید و به کاربرهای "
+"همان اپراتور بدهید"
+
+msgid "adminV2.cleanIp.switch"
+msgstr "تعویض"
+
+msgid "adminV2.cleanIp.switched"
+msgstr "الان از {sni} استفاده می‌شود؛ کانفیگ‌ها در حال اعمال‌اند."
+
+msgid "adminV2.cleanIp.tabIp"
+msgstr "اسکنر IP"
+
+msgid "adminV2.cleanIp.tabReality"
+msgstr "SNI ریالیتی"
+
+msgid "adminV2.cleanIp.tested"
+msgstr "{done} از {total} تست شد"
+
+msgid "adminV2.cleanIp.timeout"
+msgstr "مهلت هر IP"
+
+msgid "adminV2.cleanIp.title"
+msgstr "اسکنر"
+
+msgid "adminV2.cleanIp.unknownIsp"
+msgstr "اپراتوری که هیدیفای اسمی برایش ندارد"
+
+msgid "adminV2.cleanIp.unknownIspAs"
+msgstr "AS{asn} (اپراتوری که هیدیفای اسمی برایش ندارد)"
+
+msgid "adminV2.cleanIp.unsaved"
+msgstr "ذخیره نشده"
+
+msgid "adminV2.cleanIp.uploadSize"
+msgstr "حجم آپلود"
+
+msgid "adminV2.cleanIp.useThese"
+msgstr "استفاده از این IPها در بالا"
+
+msgid "adminV2.cleanIp.viewScript"
+msgstr "مشاهدهٔ اسکریپت"
+
+msgid "adminV2.cleanIp.vpnWarning"
+msgstr ""
+"این مرورگر در کشور پنل نیست؛ احتمالاً فیلترشکن یا پروکسی روشن است. خاموشش "
+"کنید، وگرنه فیلترشکن را تست می‌کنید نه اپراتورتان را."
+
+msgid "adminV2.cleanIp.waiting"
+msgstr "منتظر اجرای دستور…"
+
+msgid "adminV2.cleanIp.yourNetwork"
+msgstr "اینترنت شما (از دید پنل)"
+
 msgid "adminV2.common.actions"
 msgstr "عملیات"
 
@@ -2984,6 +3510,35 @@ msgstr "نمایش جزئیات"
 msgid "adminV2.dashboard.free"
 msgstr "آزاد"
 
+msgid "adminV2.dashboard.health.checkNow"
+msgstr "بررسی الان"
+
+msgid "adminV2.dashboard.health.checked"
+msgstr "همهٔ کانفیگ‌ها از خود سرور تست شد · {ago}"
+
+msgid "adminV2.dashboard.health.firstRun"
+msgstr "اولین بررسی در حال انجام است؛ یکی دو دقیقه طول می‌کشد."
+
+msgid "adminV2.dashboard.health.never"
+msgstr "هنوز بررسی نشده. «بررسی الان» را بزنید."
+
+msgid "adminV2.dashboard.health.note"
+msgstr ""
+"با ساب کاربر {user} تست شد. کانفیگی که از خود سرور کار نکند برای هیچ‌کس کار "
+"نمی‌کند؛ فیلترینگ ایران اینجا تست نمی‌شود."
+
+msgid "adminV2.dashboard.health.running"
+msgstr "در حال بررسی…"
+
+msgid "adminV2.dashboard.health.subtitle"
+msgstr "همهٔ کانفیگ‌ها، هر ۶ ساعت از خود سرور تست می‌شوند"
+
+msgid "adminV2.dashboard.health.title"
+msgstr "سلامت کانفیگ‌ها"
+
+msgid "adminV2.dashboard.health.working"
+msgstr "{ok} از {total} کار می‌کند"
+
 msgid "adminV2.dashboard.hiddify"
 msgstr "هیدیفای"
 
@@ -3364,12 +3919,23 @@ msgid "adminV2.domains.field.aliasHint"
 msgstr "به جای دامنه در برنامه کاربران نشان داده می‌شود."
 
 msgid "adminV2.domains.field.cdnIp"
-msgstr "🔂 اجبار کانفیگ‌ها به استفاده از این IPها یا دامنه‌ها"
+msgstr "اجبار به استفاده از این IPها یا دامنه‌ها"
 
 msgid "adminV2.domains.field.cdnIpHint"
 msgstr ""
 "به جای IP دامنه در لینک کاربران قرار می‌گیرند؛ با ویرگول یا خط جدید جدا "
 "کنید. قالب‌های اپراتور هم کار می‌کنند."
+
+msgid "adminV2.domains.field.cdnIpScanner"
+msgstr "پیدا کردن IPهای سالم با اسکنر"
+
+msgid "adminV2.domains.field.cdnIpScannerGo"
+msgstr "باز کردن اسکنر"
+
+msgid "adminV2.domains.field.cdnIpScannerHint"
+msgstr ""
+"IPهای کلودفلر را روی اینترنت شما اسکن می‌کند و بهترین‌ها را برای هر اپراتور "
+"همین‌جا ذخیره می‌کند."
 
 msgid "adminV2.domains.field.domain"
 msgstr "دامنه"
@@ -3638,8 +4204,8 @@ msgstr "فقط پروکسی‌هایی که انتخاب می‌کنید"
 
 msgid "adminV2.domains.proxies.rule"
 msgstr ""
-"یک پروکسی SNI یا پروکسی‌های L7؛ این دو با هم ترکیب نمی‌شوند. پروکسی‌های "
-"مبتنی بر IP با هر دو می‌آیند."
+"یک پروکسی SNI به‌تنهایی، یا پروکسی‌های مبتنی بر IP و L7 با هم؛ پروکسی SNI با"
+" بقیه ترکیب نمی‌شود."
 
 msgid "adminV2.domains.proxies.selectAll"
 msgstr "انتخاب همه"
@@ -3942,6 +4508,14 @@ msgstr "آدرس {name} کپی شد"
 msgid "adminV2.donation.copiedShort"
 msgstr "کپی شد"
 
+msgid "adminV2.donation.copyAddress"
+msgstr "کپی آدرس {name}"
+
+msgid "adminV2.donation.networkHint"
+msgstr ""
+"هر ارز را فقط روی شبکه‌ای که کنار نامش آمده بفرستید؛ انتقال روی شبکهٔ دیگر "
+"از دست می‌رود."
+
 msgid "adminV2.donation.qr"
 msgstr "کد QR"
 
@@ -4099,6 +4673,9 @@ msgstr "xxxxxxxx-xxxx-… یا نام کاربری شما"
 
 msgid "adminV2.menu.baseConfigs"
 msgstr "کانفیگ‌های پایه"
+
+msgid "adminV2.menu.cleanIp"
+msgstr "اسکنر"
 
 msgid "adminV2.menu.configTester"
 msgstr "تست کانفیگ"
@@ -4400,6 +4977,9 @@ msgstr "افزودن نود"
 msgid "adminV2.nodes.addNode"
 msgstr "افزودن نود"
 
+msgid "adminV2.nodes.addTileText"
+msgstr "یک سرور هیدیفای دیگر را وصل کنید و از همین‌جا مدیریتش کنید."
+
 msgid "adminV2.nodes.checkConnection"
 msgstr "بررسی اتصال"
 
@@ -4627,6 +5207,93 @@ msgstr "نودها"
 
 msgid "adminV2.nodes.unreachable"
 msgstr "در دسترس نیست"
+
+msgid "adminV2.operatorIps.add"
+msgstr "اضافه کردن"
+
+msgid "adminV2.operatorIps.addressCount"
+msgstr "{count} آدرس برای این اپراتورها"
+
+msgid "adminV2.operatorIps.asOption"
+msgstr "{code} (با شماره AS)"
+
+msgid "adminV2.operatorIps.asTable"
+msgstr "ویرایش به صورت جدول"
+
+msgid "adminV2.operatorIps.asText"
+msgstr "ویرایش به صورت متن"
+
+msgid "adminV2.operatorIps.badAddress"
+msgstr "IP، رنج یا دامنه نیست: {list}"
+
+msgid "adminV2.operatorIps.defaults"
+msgstr "پر کردن پیش‌فرض‌ها"
+
+msgid "adminV2.operatorIps.defaultsHint"
+msgstr "هر اپراتوری که آدرس ندارد، آدرس ircf.space خودش را می‌گیرد"
+
+msgid "adminV2.operatorIps.for"
+msgstr "برای"
+
+msgid "adminV2.operatorIps.host"
+msgstr "IP، رنج یا دامنه، بعد فاصله یا Enter"
+
+msgid "adminV2.operatorIps.name.AFR"
+msgstr "افرانت"
+
+msgid "adminV2.operatorIps.name.ASK"
+msgstr "اندیشه‌سبز"
+
+msgid "adminV2.operatorIps.name.AST"
+msgstr "آسیاتک"
+
+msgid "adminV2.operatorIps.name.HWB"
+msgstr "های‌وب"
+
+msgid "adminV2.operatorIps.name.ITC"
+msgstr "زیرساخت"
+
+msgid "adminV2.operatorIps.name.MBT"
+msgstr "مبین‌نت"
+
+msgid "adminV2.operatorIps.name.MCI"
+msgstr "همراه‌اول"
+
+msgid "adminV2.operatorIps.name.MKH"
+msgstr "مخابرات"
+
+msgid "adminV2.operatorIps.name.MTN"
+msgstr "ایرانسل"
+
+msgid "adminV2.operatorIps.name.OTHER"
+msgstr "سایر"
+
+msgid "adminV2.operatorIps.name.PRS"
+msgstr "پارس‌آنلاین"
+
+msgid "adminV2.operatorIps.name.PSM"
+msgstr "پیشگامان"
+
+msgid "adminV2.operatorIps.name.RSP"
+msgstr "رسپینا"
+
+msgid "adminV2.operatorIps.name.RTL"
+msgstr "رایتل"
+
+msgid "adminV2.operatorIps.name.SHT"
+msgstr "شاتل"
+
+msgid "adminV2.operatorIps.name.ZTL"
+msgstr "زی‌تل"
+
+msgid "adminV2.operatorIps.operator"
+msgstr "اپراتور"
+
+msgid "adminV2.operatorIps.remove"
+msgstr "حذف"
+
+msgid "adminV2.operatorIps.searchOrAs"
+msgstr "جستجو، یا تایپ AS254"
 
 msgid "adminV2.outbounds.add"
 msgstr "افزودن خروجی"
@@ -6696,6 +7363,9 @@ msgstr "انتخاب تگ"
 msgid "adminV2.tags.pickHint"
 msgstr "می‌توانید چند تگ انتخاب کنید"
 
+msgid "adminV2.tags.pin"
+msgstr "سنجاق"
+
 msgid "adminV2.tags.rename"
 msgstr "تغییر نام"
 
@@ -6901,11 +7571,64 @@ msgstr ""
 "خروجی SKIP بدهید یا skip() را صدا بزنید تا وقتی شرط برقرار نیست این پروکسی "
 "رندر نشود"
 
+msgid "adminV2.theme.caddy"
+msgstr "تم Smart Caddy"
+
+msgid "adminV2.theme.color"
+msgstr "تم"
+
+msgid "adminV2.theme.colors.blue"
+msgstr "آبی"
+
+msgid "adminV2.theme.colors.brown"
+msgstr "قهوه‌ای تیره"
+
+msgid "adminV2.theme.colors.graphite"
+msgstr "نوک مدادی"
+
+msgid "adminV2.theme.colors.green"
+msgstr "سبز"
+
+msgid "adminV2.theme.colors.orange"
+msgstr "نارنجی"
+
+msgid "adminV2.theme.colors.pink"
+msgstr "صورتی"
+
+msgid "adminV2.theme.colors.purple"
+msgstr "بنفش"
+
+msgid "adminV2.theme.colors.red"
+msgstr "قرمز"
+
+msgid "adminV2.theme.colors.spacegray"
+msgstr "خاکستری اپل (Space Gray)"
+
+msgid "adminV2.theme.colors.yellow"
+msgstr "زرد"
+
 msgid "adminV2.theme.dark"
 msgstr "حالت تاریک"
 
+msgid "adminV2.theme.default"
+msgstr "تم هیدیفای (پیش‌فرض)"
+
+msgid "adminV2.theme.glassHint"
+msgstr ""
+"هر رنگ هم در تم روشن کار می‌کند و هم در تم تاریک: در روشن شیشهٔ مات روی "
+"هالهٔ رنگ، در تاریک شیشهٔ تیرهٔ Smart Caddy."
+
 msgid "adminV2.theme.light"
 msgstr "حالت روشن"
+
+msgid "adminV2.theme.menu"
+msgstr "ظاهر و زبان"
+
+msgid "adminV2.theme.mode"
+msgstr "روشن یا تاریک"
+
+msgid "adminV2.theme.retry"
+msgstr "دوباره"
 
 msgid "adminV2.users.add"
 msgstr "افزودن کاربر"
@@ -7422,6 +8145,40 @@ msgstr "گروه‌بندی بر اساس ادمین"
 msgid "adminV2.users.groupCount"
 msgstr "{n} کاربر | {n} کاربر"
 
+msgid "adminV2.users.guide.dragText"
+msgstr ""
+"ردیف را از دستگیره‌اش بکشید، مثلاً از ردیف ۵ به ردیف ۲. کاربران سنجاق‌شده "
+"بین خودشان جابه‌جا می‌شوند و بقیه پایین‌تر می‌مانند."
+
+msgid "adminV2.users.guide.dragTitle"
+msgstr "جابه‌جایی کاربران بین ردیف‌ها"
+
+msgid "adminV2.users.guide.gotIt"
+msgstr "متوجه شدم"
+
+msgid "adminV2.users.guide.intro"
+msgstr "کاربرانی را که بیشتر لازم دارید دم دست نگه دارید:"
+
+msgid "adminV2.users.guide.pinText"
+msgstr ""
+"روی دایرهٔ برچسب کنار نام کاربر بزنید و «سنجاق» را که اول منو است انتخاب "
+"کنید: کاربر به ردیف‌های بالا می‌رود و همان‌جا می‌ماند. با «فیلتر برچسب › "
+"سنجاق» فقط کاربران سنجاق‌شده نمایش داده می‌شوند."
+
+msgid "adminV2.users.guide.pinTitle"
+msgstr "سنجاق کردن کاربران"
+
+msgid "adminV2.users.guide.resizeText"
+msgstr ""
+"مرز بین ستون نام و مصرف را بکشید: ستون مصرف پهن‌تر و ستون نام باریک‌تر "
+"می‌شود."
+
+msgid "adminV2.users.guide.resizeTitle"
+msgstr "پهن کردن ستون مصرف"
+
+msgid "adminV2.users.guide.title"
+msgstr "به تجربهٔ جدید صفحهٔ کاربران خوش آمدید"
+
 msgid "adminV2.users.inlineEdit"
 msgstr "ویرایش درجا"
 
@@ -7429,6 +8186,28 @@ msgid "adminV2.users.inlineHint"
 msgstr ""
 "ویرایش درجا روشن است: روی نام، سقف حجم، انقضا، دوره یا یادداشت کلیک کنید تا "
 "همان‌جا تغییرش دهید. حجم مصرف‌شده فقط بازنشانی می‌شود."
+
+msgid "adminV2.users.layout.crossGroups"
+msgstr ""
+"کاربران سنجاق‌شده بالای بقیه می‌مانند؛ برای جابه‌جایی بین این دو گروه، کاربر"
+" را سنجاق کنید یا سنجاقش را بردارید."
+
+msgid "adminV2.users.layout.crossOwners"
+msgstr ""
+"در حالت گروه‌بندی بر اساس ادمین، هر کاربر فقط بین کاربران همان ادمین جابه‌جا"
+" می‌شود."
+
+msgid "adminV2.users.layout.drag"
+msgstr "برای جابه‌جایی این کاربر بکشید"
+
+msgid "adminV2.users.layout.dragOff"
+msgstr "برای جابه‌جایی کاربران، مرتب‌سازی ستون را بردارید"
+
+msgid "adminV2.users.layout.pin"
+msgstr "سنجاق به بالای فهرست"
+
+msgid "adminV2.users.layout.unpin"
+msgstr "برداشتن سنجاق"
 
 msgid "adminV2.users.limitReached"
 msgstr "به سقف کاربران رسیده‌اید. از ادمین بالادست بخواهید آن را افزایش دهد."
@@ -9213,6 +9992,18 @@ msgstr "این کد را تغییر ندهید"
 msgid "config.reality_short_ids.label"
 msgstr "🆔 شناسه های کوتاه"
 
+msgid "config.reality_sni_auto.description"
+msgstr ""
+
+msgid "config.reality_sni_auto.label"
+msgstr ""
+
+msgid "config.reality_sni_spares.description"
+msgstr ""
+
+msgid "config.reality_sni_spares.label"
+msgstr ""
+
 msgid "config.restls.description"
 msgstr "تنظیمات پروتکل RestLS"
 
@@ -9726,6 +10517,16 @@ msgstr ""
 msgid "config.use_ip_in_config.label"
 msgstr "استفاده از IP در کانفیگها"
 
+msgid "config.user_page_url.description"
+msgstr ""
+"آدرس یک سایت استاتیک برای نمایش به‌جای صفحهٔ کاربر؛ مثلاً نسخهٔ ساخته‌شدهٔ "
+"شما از hiddify-user-front روی GitHub Pages (https://<you>.github.io/hiddify-"
+"user-front/). پنل آن را دانلود می‌کند و از دامنهٔ خودش نشان می‌دهد (پس حتی "
+"اگر آن سایت فیلتر باشد کار می‌کند). برای صفحهٔ پیش‌فرض خالی بگذارید."
+
+msgid "config.user_page_url.label"
+msgstr "🎨 صفحهٔ کاربر دلخواه"
+
 msgid "config.utls.description"
 msgstr ""
 "این گزینه مرورگرهای معروف را شبیه سازی میکند تا فیلترچی نتواند شما رو "
@@ -9988,7 +10789,8 @@ msgstr ""
 "حالت دامنه‌شان باشد"
 
 msgid "domain.custom_proxy.sni_l7_mutex"
-msgstr "برای یک دامنه نمی‌توان همزمان درگاه SNI و درگاه L7 را انتخاب کرد"
+msgstr ""
+"برای یک دامنه نمی‌توان درگاه SNI را همراه با پروکسی‌های دیگر انتخاب کرد"
 
 msgid "domain.custom_proxy.sni_single_only"
 msgstr "برای هر دامنه فقط یک درگاه SNI قابل انتخاب است"

@@ -1865,7 +1865,6 @@
       "title": "设置"
     },
     "tags": {
-      "pin": "置顶",
       "addTag": "标签",
       "bulk": "标签",
       "bulkHint": "所选用户的标签：勾选表示所有用户都有该标签",
@@ -1898,6 +1897,7 @@
       "none": "暂无标签",
       "pick": "选择标签",
       "pickHint": "可选择多个",
+      "pin": "置顶",
       "rename": "重命名",
       "save": "保存",
       "saveFailed": "无法保存标签",
@@ -1975,48 +1975,29 @@
       "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
     },
     "theme": {
-      "dark": "深色模式",
-      "light": "浅色模式",
-      "default": "Hiddify 主题（默认）",
       "caddy": "Smart Caddy 主题",
       "color": "主题",
+      "colors": {
+        "blue": "蓝色",
+        "brown": "深棕色",
+        "graphite": "石墨灰",
+        "green": "绿色",
+        "orange": "橙色",
+        "pink": "粉色",
+        "purple": "紫色",
+        "red": "红色",
+        "spacegray": "深空灰",
+        "yellow": "黄色"
+      },
+      "dark": "深色模式",
+      "default": "Hiddify 主题（默认）",
       "glassHint": "每种颜色都可用于浅色和深色：浅色为其光晕上的磨砂玻璃，深色为 Smart Caddy 深色玻璃。",
+      "light": "浅色模式",
       "menu": "外观与语言",
       "mode": "浅色或深色",
-      "retry": "重试",
-      "colors": {
-        "red": "红色",
-        "pink": "粉色",
-        "orange": "橙色",
-        "yellow": "黄色",
-        "green": "绿色",
-        "blue": "蓝色",
-        "purple": "紫色",
-        "graphite": "石墨灰",
-        "spacegray": "深空灰",
-        "brown": "深棕色"
-      }
+      "retry": "重试"
     },
     "users": {
-      "guide": {
-        "title": "欢迎使用全新的用户页面",
-        "intro": "让最常用的用户触手可及：",
-        "pinTitle": "置顶用户",
-        "pinText": "点击用户名旁的标签圆点，选择菜单顶部的“置顶”：用户会移到最上方并保持在那里。“按标签筛选 › 置顶”可只显示置顶用户。",
-        "dragTitle": "在行之间移动用户",
-        "dragText": "拖动行左侧的把手即可移动，例如从第 5 行移到第 2 行。置顶用户可在彼此之间调整顺序，其他用户保持在下方。",
-        "resizeTitle": "加宽“用量”列",
-        "resizeText": "拖动“名称”和“用量”之间的边框：用量列变宽，名称列变窄。",
-        "gotIt": "知道了"
-      },
-      "layout": {
-        "drag": "拖动以移动此用户",
-        "dragOff": "取消列排序后即可移动用户",
-        "pin": "置顶",
-        "unpin": "取消置顶",
-        "crossGroups": "置顶用户始终在其他用户之上：置顶或取消置顶即可在两组之间移动。",
-        "crossOwners": "按管理员分组时，用户只能在该管理员的用户之间移动。"
-      },
       "add": "添加用户",
       "addLimits": {
         "apply": "添加",
@@ -2206,8 +2187,27 @@
       },
       "groupByOwner": "按管理员分组",
       "groupCount": "{n} 个用户 | {n} 个用户",
+      "guide": {
+        "dragText": "拖动行左侧的把手即可移动，例如从第 5 行移到第 2 行。置顶用户可在彼此之间调整顺序，其他用户保持在下方。",
+        "dragTitle": "在行之间移动用户",
+        "gotIt": "知道了",
+        "intro": "让最常用的用户触手可及：",
+        "pinText": "点击用户名旁的标签圆点，选择菜单顶部的“置顶”：用户会移到最上方并保持在那里。“按标签筛选 › 置顶”可只显示置顶用户。",
+        "pinTitle": "置顶用户",
+        "resizeText": "拖动“名称”和“用量”之间的边框：用量列变宽，名称列变窄。",
+        "resizeTitle": "加宽“用量”列",
+        "title": "欢迎使用全新的用户页面"
+      },
       "inlineEdit": "行内编辑",
       "inlineHint": "行内编辑已开启：点击名称、用量限制、到期时间、模式或备注，即可直接在列表中更改。用量本身只能重置。",
+      "layout": {
+        "crossGroups": "置顶用户始终在其他用户之上：置顶或取消置顶即可在两组之间移动。",
+        "crossOwners": "按管理员分组时，用户只能在该管理员的用户之间移动。",
+        "drag": "拖动以移动此用户",
+        "dragOff": "取消列排序后即可移动用户",
+        "pin": "置顶",
+        "unpin": "取消置顶"
+      },
       "limitReached": "您已达到用户数量上限。请联系上级管理员提高。",
       "link": "链接",
       "linkTitle": "{name} 的链接",
@@ -2945,6 +2945,14 @@
       "description": "不要改变它",
       "label": "🆔 短 ID"
     },
+    "reality_sni_auto": {
+      "description": "",
+      "label": ""
+    },
+    "reality_sni_spares": {
+      "description": "",
+      "label": ""
+    },
     "restls": {
       "description": "RestLS 协议设置",
       "label": "配置.restls.标签"
@@ -3233,6 +3241,10 @@
       "description": "这有助于减少解析服务器 IP 时可能出现的问题。将使用所选域名的随机 IP。",
       "label": "在配置中使用 IP"
     },
+    "user_page_url": {
+      "description": "用作用户页面的静态网站地址，例如您在 GitHub Pages 上构建的 hiddify-user-front（https://<you>.github.io/hiddify-user-front/）。面板会下载它并从自己的域名提供（即使该网站被封锁也能使用）。留空则使用内置页面。",
+      "label": "🎨 自定义用户页面"
+    },
     "utls": {
       "description": "此选项将模拟不同的浏览器，因此 GFW 无法检测到您的浏览",
       "label": "❇️uTLS"
@@ -3336,10 +3348,6 @@
     "xtls_enable": {
       "description": "启用 XTLS 协议",
       "label": "🟢XTLS"
-    },
-    "user_page_url": {
-      "description": "用作用户页面的静态网站地址，例如您在 GitHub Pages 上构建的 hiddify-user-front（https://<you>.github.io/hiddify-user-front/）。面板会下载它并从自己的域名提供（即使该网站被封锁也能使用）。留空则使用内置页面。",
-      "label": "🎨 自定义用户页面"
     }
   },
   "copy": "复制",

@@ -256,16 +256,7 @@ msgid "Donation.description"
 msgstr ""
 "✳️ Precisamos da sua ajuda no desenvolvimento deste projeto<inlang-LineFeed><br>\n"
 "Se você é desenvolvedor ou produtor de conteúdo, entre em contato conosco pelo <a href='mailto:info@hiddify.com'>e-mail info@hiddify.com</a><inlang-LineFeed><br><br><inlang-LineFeed>\n"
-"ℹ️ Além disso, precisamos de ajuda financeira para desenvolver ainda mais este painel e nosso serviço (somos sem fins lucrativos).<inlang-LineFeed><br><inlang-LineFeed><h5> Métodos de Pagamento :</h5><inlang-LineFeed><ul><inlang-LineFeed><li><div class='btn-group'>\n"
-"<a role='button' data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>\n"
-"<a data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' role='button' class='btn btn-info share-link'>TONELADA</a></div></li><inlang-LineFeed><inlang-LineFeed><li><div class='btn-group'><inlang-LineFeed><a role='button' data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>\n"
-"<a data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' role='button' class='btn btn-info share-link'>USDT (TRC20)</a></div></li><inlang-LineFeed><inlang-LineFeed><li><div class='btn-group'><inlang-LineFeed><a role='button' data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>\n"
-"<a data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' role='button' class='btn btn-info share-link'>Litecoin</a></div></li><inlang-LineFeed><inlang-LineFeed><li><div class='btn-group'>\n"
-"<a role='button' data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>\n"
-"<a data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' role='button' class='btn btn-info share-link'>Ethereum</a></div></li><inlang-LineFeed><inlang-LineFeed><li><div class='btn-group'>\n"
-"<a role='button' data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>\n"
-"<a data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' role='button' class='btn btn-info share-link'>Bitcoin</a></div></li><inlang-LineFeed><inlang-LineFeed><li><div class='btn-group'><inlang-LineFeed><a role='button' data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>\n"
-"<a data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' role='button' class='btn btn-info share-link'>Dogecoin</a> </div></li><inlang-LineFeed></ul><inlang-LineFeed><inlang-LineFeed><br><inlang-LineFeed>\n"
+"ℹ️ Além disso, precisamos de ajuda financeira para desenvolver ainda mais este painel e nosso serviço (somos sem fins lucrativos).<inlang-LineFeed><br><inlang-LineFeed><h5> Métodos de Pagamento :</h5><inlang-LineFeed><div class='donation-wallets'></div><inlang-LineFeed><inlang-LineFeed><br><inlang-LineFeed>\n"
 "Precisamos também de outra ajuda:<inlang-LineFeed><ul><inlang-LineFeed><li> 👥 Compartilhe o Hiddify Manager com outras pessoas</li><inlang-LineFeed><li> 📝Desenvolvedor Python</li><inlang-LineFeed><li> 📝Desenvolvedor rápido</li><inlang-LineFeed><li> 📝Desenvolvedor Flutter</li><inlang-LineFeed><li> 📝Go Desenvolvedor</li><inlang-LineFeed><li> 🖥Provedores de conteúdo</li><inlang-LineFeed></ul><inlang-LineFeed><inlang-LineFeed>\n"
 "Entre em contato conosco em <a href='mailto:info@hiddify.com'>info@hiddify.com</a> se puder nos ajudar."
 
@@ -3382,6 +3373,14 @@ msgstr "Endereço {name} copiado"
 msgid "adminV2.donation.copiedShort"
 msgstr "Copiado"
 
+msgid "adminV2.donation.copyAddress"
+msgstr "Copiar o endereço {name}"
+
+msgid "adminV2.donation.networkHint"
+msgstr ""
+"Envie cada moeda apenas na rede indicada ao lado do nome: uma transferência "
+"em outra rede é perdida."
+
 msgid "adminV2.donation.qr"
 msgstr "QR code"
 
@@ -3655,6 +3654,9 @@ msgstr "Adicionar um nó"
 
 msgid "adminV2.nodes.addNode"
 msgstr "Adicionar nó"
+
+msgid "adminV2.nodes.addTileText"
+msgstr "Conecte outro servidor Hiddify e gerencie-o daqui."
 
 msgid "adminV2.nodes.checkConnection"
 msgstr "Verificar conexão"
@@ -5413,6 +5415,9 @@ msgstr "Escolher tags"
 msgid "adminV2.tags.pickHint"
 msgstr "Você pode escolher várias"
 
+msgid "adminV2.tags.pin"
+msgstr "Fixar"
+
 msgid "adminV2.tags.rename"
 msgstr "Renomear"
 
@@ -5619,11 +5624,64 @@ msgstr ""
 "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma "
 "condição não for atendida"
 
+msgid "adminV2.theme.caddy"
+msgstr "Tema Smart Caddy"
+
+msgid "adminV2.theme.color"
+msgstr "Tema"
+
+msgid "adminV2.theme.colors.blue"
+msgstr "Azul"
+
+msgid "adminV2.theme.colors.brown"
+msgstr "Marrom escuro"
+
+msgid "adminV2.theme.colors.graphite"
+msgstr "Grafite"
+
+msgid "adminV2.theme.colors.green"
+msgstr "Verde"
+
+msgid "adminV2.theme.colors.orange"
+msgstr "Laranja"
+
+msgid "adminV2.theme.colors.pink"
+msgstr "Rosa"
+
+msgid "adminV2.theme.colors.purple"
+msgstr "Roxo"
+
+msgid "adminV2.theme.colors.red"
+msgstr "Vermelho"
+
+msgid "adminV2.theme.colors.spacegray"
+msgstr "Cinza-espacial"
+
+msgid "adminV2.theme.colors.yellow"
+msgstr "Amarelo"
+
 msgid "adminV2.theme.dark"
 msgstr "Modo escuro"
 
+msgid "adminV2.theme.default"
+msgstr "Tema Hiddify (padrão)"
+
+msgid "adminV2.theme.glassHint"
+msgstr ""
+"Cada cor funciona no claro e no escuro: vidro fosco sobre o seu brilho no "
+"claro, o vidro escuro Smart Caddy no escuro."
+
 msgid "adminV2.theme.light"
 msgstr "Modo claro"
+
+msgid "adminV2.theme.menu"
+msgstr "Aparência e idioma"
+
+msgid "adminV2.theme.mode"
+msgstr "Claro ou escuro"
+
+msgid "adminV2.theme.retry"
+msgstr "Tentar de novo"
 
 msgid "adminV2.users.add"
 msgstr "Adicionar usuário"
@@ -6126,6 +6184,39 @@ msgstr "Agrupar por administrador"
 msgid "adminV2.users.groupCount"
 msgstr "{n} usuário | {n} usuários"
 
+msgid "adminV2.users.guide.dragText"
+msgstr ""
+"Arraste uma linha pela alça, por ex. da linha 5 para a 2. Os fixados se "
+"reordenam entre si; os outros ficam abaixo."
+
+msgid "adminV2.users.guide.dragTitle"
+msgstr "Mover usuários entre linhas"
+
+msgid "adminV2.users.guide.gotIt"
+msgstr "Entendi"
+
+msgid "adminV2.users.guide.intro"
+msgstr "Mantenha à mão os usuários de que mais precisa:"
+
+msgid "adminV2.users.guide.pinText"
+msgstr ""
+"Clique no círculo de etiqueta ao lado do nome e escolha Fixar, o primeiro do"
+" menu: o usuário vai para o topo e fica lá. Filtrar por etiqueta › Fixar "
+"lista os fixados."
+
+msgid "adminV2.users.guide.pinTitle"
+msgstr "Fixar usuários"
+
+msgid "adminV2.users.guide.resizeText"
+msgstr ""
+"Arraste a borda entre Nome e Uso: Uso fica mais largo, Nome mais estreito."
+
+msgid "adminV2.users.guide.resizeTitle"
+msgstr "Alargar a coluna Uso"
+
+msgid "adminV2.users.guide.title"
+msgstr "Bem-vindo à nova experiência de Usuários"
+
 msgid "adminV2.users.inlineEdit"
 msgstr "Edição em linha"
 
@@ -6134,6 +6225,27 @@ msgstr ""
 "A edição em linha está ativada: clique em um nome, limite de uso, validade, "
 "modo ou nota para alterá-lo diretamente na lista. O uso em si só pode ser "
 "redefinido."
+
+msgid "adminV2.users.layout.crossGroups"
+msgstr ""
+"Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre "
+"os grupos."
+
+msgid "adminV2.users.layout.crossOwners"
+msgstr ""
+"Agrupado por admin: um usuário só se move entre os usuários desse admin."
+
+msgid "adminV2.users.layout.drag"
+msgstr "Arraste para mover este usuário"
+
+msgid "adminV2.users.layout.dragOff"
+msgstr "Remova a ordenação da coluna para mover usuários"
+
+msgid "adminV2.users.layout.pin"
+msgstr "Fixar no topo"
+
+msgid "adminV2.users.layout.unpin"
+msgstr "Desafixar"
 
 msgid "adminV2.users.limitReached"
 msgstr ""
@@ -7550,6 +7662,18 @@ msgstr "não mude isso"
 msgid "config.reality_short_ids.label"
 msgstr "🆔 IDs curtos"
 
+msgid "config.reality_sni_auto.description"
+msgstr ""
+
+msgid "config.reality_sni_auto.label"
+msgstr ""
+
+msgid "config.reality_sni_spares.description"
+msgstr ""
+
+msgid "config.reality_sni_spares.label"
+msgstr ""
+
 msgid "config.restls.description"
 msgstr "Configurações do protocolo RestLS"
 
@@ -8056,6 +8180,17 @@ msgstr ""
 
 msgid "config.use_ip_in_config.label"
 msgstr "Usar IP nas configs"
+
+msgid "config.user_page_url.description"
+msgstr ""
+"Endereço de um site estático para usar como página do usuário, por exemplo "
+"sua build do hiddify-user-front no GitHub Pages "
+"(https://<you>.github.io/hiddify-user-front/). O painel o baixa e serve pelo"
+" próprio domínio (funciona mesmo se o site estiver bloqueado). Deixe vazio "
+"para a página padrão."
+
+msgid "config.user_page_url.label"
+msgstr "🎨 Página de usuário personalizada"
 
 msgid "config.utls.description"
 msgstr ""

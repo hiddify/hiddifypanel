@@ -1865,7 +1865,6 @@
       "title": "Configurações"
     },
     "tags": {
-      "pin": "Fixar",
       "addTag": "Tag",
       "bulk": "Tag",
       "bulkHint": "Tags dos selecionados: uma marca significa que todos a têm",
@@ -1898,6 +1897,7 @@
       "none": "Ainda não há tags",
       "pick": "Escolher tags",
       "pickHint": "Você pode escolher várias",
+      "pin": "Fixar",
       "rename": "Renomear",
       "save": "Salvar",
       "saveFailed": "Não foi possível salvar as tags",
@@ -1975,48 +1975,29 @@
       "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
     },
     "theme": {
-      "dark": "Modo escuro",
-      "light": "Modo claro",
-      "default": "Tema Hiddify (padrão)",
       "caddy": "Tema Smart Caddy",
       "color": "Tema",
+      "colors": {
+        "blue": "Azul",
+        "brown": "Marrom escuro",
+        "graphite": "Grafite",
+        "green": "Verde",
+        "orange": "Laranja",
+        "pink": "Rosa",
+        "purple": "Roxo",
+        "red": "Vermelho",
+        "spacegray": "Cinza-espacial",
+        "yellow": "Amarelo"
+      },
+      "dark": "Modo escuro",
+      "default": "Tema Hiddify (padrão)",
       "glassHint": "Cada cor funciona no claro e no escuro: vidro fosco sobre o seu brilho no claro, o vidro escuro Smart Caddy no escuro.",
+      "light": "Modo claro",
       "menu": "Aparência e idioma",
       "mode": "Claro ou escuro",
-      "retry": "Tentar de novo",
-      "colors": {
-        "red": "Vermelho",
-        "pink": "Rosa",
-        "orange": "Laranja",
-        "yellow": "Amarelo",
-        "green": "Verde",
-        "blue": "Azul",
-        "purple": "Roxo",
-        "graphite": "Grafite",
-        "spacegray": "Cinza-espacial",
-        "brown": "Marrom escuro"
-      }
+      "retry": "Tentar de novo"
     },
     "users": {
-      "guide": {
-        "title": "Bem-vindo à nova experiência de Usuários",
-        "intro": "Mantenha à mão os usuários de que mais precisa:",
-        "pinTitle": "Fixar usuários",
-        "pinText": "Clique no círculo de etiqueta ao lado do nome e escolha Fixar, o primeiro do menu: o usuário vai para o topo e fica lá. Filtrar por etiqueta › Fixar lista os fixados.",
-        "dragTitle": "Mover usuários entre linhas",
-        "dragText": "Arraste uma linha pela alça, por ex. da linha 5 para a 2. Os fixados se reordenam entre si; os outros ficam abaixo.",
-        "resizeTitle": "Alargar a coluna Uso",
-        "resizeText": "Arraste a borda entre Nome e Uso: Uso fica mais largo, Nome mais estreito.",
-        "gotIt": "Entendi"
-      },
-      "layout": {
-        "drag": "Arraste para mover este usuário",
-        "dragOff": "Remova a ordenação da coluna para mover usuários",
-        "pin": "Fixar no topo",
-        "unpin": "Desafixar",
-        "crossGroups": "Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre os grupos.",
-        "crossOwners": "Agrupado por admin: um usuário só se move entre os usuários desse admin."
-      },
       "add": "Adicionar usuário",
       "addLimits": {
         "apply": "Adicionar",
@@ -2206,8 +2187,27 @@
       },
       "groupByOwner": "Agrupar por administrador",
       "groupCount": "{n} usuário | {n} usuários",
+      "guide": {
+        "dragText": "Arraste uma linha pela alça, por ex. da linha 5 para a 2. Os fixados se reordenam entre si; os outros ficam abaixo.",
+        "dragTitle": "Mover usuários entre linhas",
+        "gotIt": "Entendi",
+        "intro": "Mantenha à mão os usuários de que mais precisa:",
+        "pinText": "Clique no círculo de etiqueta ao lado do nome e escolha Fixar, o primeiro do menu: o usuário vai para o topo e fica lá. Filtrar por etiqueta › Fixar lista os fixados.",
+        "pinTitle": "Fixar usuários",
+        "resizeText": "Arraste a borda entre Nome e Uso: Uso fica mais largo, Nome mais estreito.",
+        "resizeTitle": "Alargar a coluna Uso",
+        "title": "Bem-vindo à nova experiência de Usuários"
+      },
       "inlineEdit": "Edição em linha",
       "inlineHint": "A edição em linha está ativada: clique em um nome, limite de uso, validade, modo ou nota para alterá-lo diretamente na lista. O uso em si só pode ser redefinido.",
+      "layout": {
+        "crossGroups": "Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre os grupos.",
+        "crossOwners": "Agrupado por admin: um usuário só se move entre os usuários desse admin.",
+        "drag": "Arraste para mover este usuário",
+        "dragOff": "Remova a ordenação da coluna para mover usuários",
+        "pin": "Fixar no topo",
+        "unpin": "Desafixar"
+      },
       "limitReached": "Você atingiu seu limite de usuários. Peça ao administrador acima de você para aumentá-lo.",
       "link": "Link",
       "linkTitle": "Link de {name}",
@@ -2945,6 +2945,14 @@
       "description": "não mude isso",
       "label": "🆔 IDs curtos"
     },
+    "reality_sni_auto": {
+      "description": "",
+      "label": ""
+    },
+    "reality_sni_spares": {
+      "description": "",
+      "label": ""
+    },
     "restls": {
       "description": "Configurações do protocolo RestLS",
       "label": "RestTLS"
@@ -3233,6 +3241,10 @@
       "description": "Isto ajuda a reduzir problemas que podem ocorrer ao resolver o IP do servidor. Será usado um IP aleatório do domínio selecionado.",
       "label": "Usar IP nas configs"
     },
+    "user_page_url": {
+      "description": "Endereço de um site estático para usar como página do usuário, por exemplo sua build do hiddify-user-front no GitHub Pages (https://<you>.github.io/hiddify-user-front/). O painel o baixa e serve pelo próprio domínio (funciona mesmo se o site estiver bloqueado). Deixe vazio para a página padrão.",
+      "label": "🎨 Página de usuário personalizada"
+    },
     "utls": {
       "description": "Esta opção irá simular diferentes navegadores, portanto, GFW não pode detectar sua navegação",
       "label": "❇️ uTLS"
@@ -3336,10 +3348,6 @@
     "xtls_enable": {
       "description": "Ativa o protocolo XTLS",
       "label": "🟢XTLS"
-    },
-    "user_page_url": {
-      "description": "Endereço de um site estático para usar como página do usuário, por exemplo sua build do hiddify-user-front no GitHub Pages (https://<you>.github.io/hiddify-user-front/). O painel o baixa e serve pelo próprio domínio (funciona mesmo se o site estiver bloqueado). Deixe vazio para a página padrão.",
-      "label": "🎨 Página de usuário personalizada"
     }
   },
   "copy": "cópia de",

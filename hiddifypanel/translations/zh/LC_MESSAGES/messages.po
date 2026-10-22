@@ -260,31 +260,7 @@ msgstr ""
 "    ℹ️ 同样我们需要财政帮以便我们长远的发展和服务器费用 (we are Non-Profit).\n"
 "    <br>\n"
 "    <h5>Payment Methods :</h5>\n"
-"    <ul>\n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' role='button' class='btn btn-info share-link'>USDT (TRC20)</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' role='button' class='btn btn-info share-link'>Ethereum</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n"
-"    \n"
-"    <li> <div class='btn-group'>\n"
-"        <a role='button' data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n"
-"    <a data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' role='button' class='btn btn-info share-link'>Dogecoin</a> </div></li>\n"
-"    </ul>\n"
+"    <div class='donation-wallets'></div>\n"
 "    \n"
 "    <br>\n"
 "    \n"
@@ -3200,6 +3176,12 @@ msgstr "已复制 {name} 地址"
 msgid "adminV2.donation.copiedShort"
 msgstr "已复制"
 
+msgid "adminV2.donation.copyAddress"
+msgstr "复制 {name} 地址"
+
+msgid "adminV2.donation.networkHint"
+msgstr "请仅通过名称旁显示的网络发送每种币；在其他网络上的转账将会丢失。"
+
 msgid "adminV2.donation.qr"
 msgstr "二维码"
 
@@ -3461,6 +3443,9 @@ msgstr "添加节点"
 
 msgid "adminV2.nodes.addNode"
 msgstr "添加节点"
+
+msgid "adminV2.nodes.addTileText"
+msgstr "连接另一台 Hiddify 服务器，并在这里统一管理。"
 
 msgid "adminV2.nodes.checkConnection"
 msgstr "检查连接"
@@ -5086,6 +5071,9 @@ msgstr "选择标签"
 msgid "adminV2.tags.pickHint"
 msgstr "可选择多个"
 
+msgid "adminV2.tags.pin"
+msgstr "置顶"
+
 msgid "adminV2.tags.rename"
 msgstr "重命名"
 
@@ -5287,11 +5275,62 @@ msgstr "名称"
 msgid "adminV2.templateVariables.skipHint"
 msgstr "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
 
+msgid "adminV2.theme.caddy"
+msgstr "Smart Caddy 主题"
+
+msgid "adminV2.theme.color"
+msgstr "主题"
+
+msgid "adminV2.theme.colors.blue"
+msgstr "蓝色"
+
+msgid "adminV2.theme.colors.brown"
+msgstr "深棕色"
+
+msgid "adminV2.theme.colors.graphite"
+msgstr "石墨灰"
+
+msgid "adminV2.theme.colors.green"
+msgstr "绿色"
+
+msgid "adminV2.theme.colors.orange"
+msgstr "橙色"
+
+msgid "adminV2.theme.colors.pink"
+msgstr "粉色"
+
+msgid "adminV2.theme.colors.purple"
+msgstr "紫色"
+
+msgid "adminV2.theme.colors.red"
+msgstr "红色"
+
+msgid "adminV2.theme.colors.spacegray"
+msgstr "深空灰"
+
+msgid "adminV2.theme.colors.yellow"
+msgstr "黄色"
+
 msgid "adminV2.theme.dark"
 msgstr "深色模式"
 
+msgid "adminV2.theme.default"
+msgstr "Hiddify 主题（默认）"
+
+msgid "adminV2.theme.glassHint"
+msgstr "每种颜色都可用于浅色和深色：浅色为其光晕上的磨砂玻璃，深色为 Smart Caddy 深色玻璃。"
+
 msgid "adminV2.theme.light"
 msgstr "浅色模式"
+
+msgid "adminV2.theme.menu"
+msgstr "外观与语言"
+
+msgid "adminV2.theme.mode"
+msgstr "浅色或深色"
+
+msgid "adminV2.theme.retry"
+msgstr "重试"
 
 msgid "adminV2.users.add"
 msgstr "添加用户"
@@ -5776,11 +5815,56 @@ msgstr "按管理员分组"
 msgid "adminV2.users.groupCount"
 msgstr "{n} 个用户 | {n} 个用户"
 
+msgid "adminV2.users.guide.dragText"
+msgstr "拖动行左侧的把手即可移动，例如从第 5 行移到第 2 行。置顶用户可在彼此之间调整顺序，其他用户保持在下方。"
+
+msgid "adminV2.users.guide.dragTitle"
+msgstr "在行之间移动用户"
+
+msgid "adminV2.users.guide.gotIt"
+msgstr "知道了"
+
+msgid "adminV2.users.guide.intro"
+msgstr "让最常用的用户触手可及："
+
+msgid "adminV2.users.guide.pinText"
+msgstr "点击用户名旁的标签圆点，选择菜单顶部的“置顶”：用户会移到最上方并保持在那里。“按标签筛选 › 置顶”可只显示置顶用户。"
+
+msgid "adminV2.users.guide.pinTitle"
+msgstr "置顶用户"
+
+msgid "adminV2.users.guide.resizeText"
+msgstr "拖动“名称”和“用量”之间的边框：用量列变宽，名称列变窄。"
+
+msgid "adminV2.users.guide.resizeTitle"
+msgstr "加宽“用量”列"
+
+msgid "adminV2.users.guide.title"
+msgstr "欢迎使用全新的用户页面"
+
 msgid "adminV2.users.inlineEdit"
 msgstr "行内编辑"
 
 msgid "adminV2.users.inlineHint"
 msgstr "行内编辑已开启：点击名称、用量限制、到期时间、模式或备注，即可直接在列表中更改。用量本身只能重置。"
+
+msgid "adminV2.users.layout.crossGroups"
+msgstr "置顶用户始终在其他用户之上：置顶或取消置顶即可在两组之间移动。"
+
+msgid "adminV2.users.layout.crossOwners"
+msgstr "按管理员分组时，用户只能在该管理员的用户之间移动。"
+
+msgid "adminV2.users.layout.drag"
+msgstr "拖动以移动此用户"
+
+msgid "adminV2.users.layout.dragOff"
+msgstr "取消列排序后即可移动用户"
+
+msgid "adminV2.users.layout.pin"
+msgstr "置顶"
+
+msgid "adminV2.users.layout.unpin"
+msgstr "取消置顶"
 
 msgid "adminV2.users.limitReached"
 msgstr "您已达到用户数量上限。请联系上级管理员提高。"
@@ -7103,6 +7187,18 @@ msgstr "不要改变它"
 msgid "config.reality_short_ids.label"
 msgstr "🆔 短 ID"
 
+msgid "config.reality_sni_auto.description"
+msgstr ""
+
+msgid "config.reality_sni_auto.label"
+msgstr ""
+
+msgid "config.reality_sni_spares.description"
+msgstr ""
+
+msgid "config.reality_sni_spares.label"
+msgstr ""
+
 msgid "config.restls.description"
 msgstr "RestLS 协议设置"
 
@@ -7556,6 +7652,15 @@ msgstr "这有助于减少解析服务器 IP 时可能出现的问题。将使�
 
 msgid "config.use_ip_in_config.label"
 msgstr "在配置中使用 IP"
+
+msgid "config.user_page_url.description"
+msgstr ""
+"用作用户页面的静态网站地址，例如您在 GitHub Pages 上构建的 hiddify-user-"
+"front（https://<you>.github.io/hiddify-user-"
+"front/）。面板会下载它并从自己的域名提供（即使该网站被封锁也能使用）。留空则使用内置页面。"
+
+msgid "config.user_page_url.label"
+msgstr "🎨 自定义用户页面"
 
 msgid "config.utls.description"
 msgstr "此选项将模拟不同的浏览器，因此 GFW 无法检测到您的浏览"
