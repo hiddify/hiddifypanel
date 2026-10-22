@@ -15,11 +15,22 @@ export interface AdminMenuItem {
   action?: 'donation' | string
   /** Sanitized HTML body for `action` dialogs. */
   dialog_html?: string
+  /** `donation`: the project's wallets (hutils/donation.py), shown where the text has `.donation-wallets`. */
+  dialog_wallets?: DonationWallet[]
   items?: AdminMenuItem[]
 }
 
+export interface DonationWallet {
+  /** Picks the coin icon: `bitcoin`, `usdt-bep20`, `tron`, `litecoin`, `ton`. */
+  id: string
+  name: string
+  /** The coin / chain to send on (e.g. `BEP20`): a transfer on another network is lost. */
+  network: string
+  address: string
+}
+
 /** Dialog opened from a menu `action` item; null when closed. */
-export const shellDialog = ref<{ action: string; title: string; html: string } | null>(null)
+export const shellDialog = ref<{ action: string; title: string; html: string; wallets: DonationWallet[] } | null>(null)
 
 /** Navigate to `url` with a POST form submit (full page load, like the classic admin's `form_post`). */
 export function submitPostForm(url: string, target = '_self'): void {

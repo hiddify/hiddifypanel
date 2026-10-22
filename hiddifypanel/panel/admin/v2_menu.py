@@ -26,7 +26,14 @@ _DONATION_ATTRS = {"a": ["href", "target", "rel", "data-copy", "class"], "div": 
 def _donation_item() -> dict:
     """Opens the donation dialog in the shell (the classic UI shows it as a modal)."""
     html = bleach_clean(str(_("Donation.description")), tags=_DONATION_TAGS, attributes=_DONATION_ATTRS, strip=True)
-    return {"label": _("Donation.title"), "icon": "pi pi-fw pi-heart", "action": "donation", "dialog_html": html}
+    return {
+        "label": _("Donation.title"),
+        "icon": "pi pi-fw pi-heart",
+        "action": "donation",
+        "dialog_html": html,
+        # The wallets are data, not translated text: the dialog shows them where the text has WALLETS_MARK.
+        "dialog_wallets": hutils.donation.wallets(),
+    }
 
 
 def _wiki_support_url() -> str:
