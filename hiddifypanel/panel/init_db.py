@@ -25,6 +25,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v181(child_id):
+    """A custom user page: the URL of a static site the panel serves as the user page (empty: the built-in one)."""
+    if child_id != 0:
+        return
+    add_config_if_not_exist(ConfigEnum.user_page_url, "", child_id)
+
+
 def _v180(child_id):
     """REALITY SNI watch: spare SNIs and the automatic switch (off: the admin switches on the Clean IP page)."""
     if child_id != 0:

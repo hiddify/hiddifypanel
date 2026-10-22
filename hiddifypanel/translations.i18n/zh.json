@@ -3297,6 +3297,10 @@
     "xtls_enable": {
       "description": "启用 XTLS 协议",
       "label": "🟢XTLS"
+    },
+    "user_page_url": {
+      "description": "用作用户页面的静态网站地址，例如您在 GitHub Pages 上构建的 hiddify-user-front（https://<you>.github.io/hiddify-user-front/）。面板会下载它并从自己的域名提供（即使该网站被封锁也能使用）。留空则使用内置页面。",
+      "label": "🎨 自定义用户页面"
     }
   },
   "copy": "复制",

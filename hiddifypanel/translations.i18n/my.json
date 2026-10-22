@@ -3284,6 +3284,10 @@
     "xtls_enable": {
       "description": "XTLS ပရိုတိုကောလ်ကို ဖွင့်ရန်",
       "label": "🟢 XTLS"
+    },
+    "user_page_url": {
+      "description": "အသုံးပြုသူ စာမျက်နှာအဖြစ် ပြသမည့် static site လိပ်စာ (ဥပမာ GitHub Pages ပေါ်ရှိ hiddify-user-front build)။ Panel က ဒေါင်းလုဒ်လုပ်ပြီး မိမိ domain မှ ပြသပေးသည်။ မူလ စာမျက်နှာအတွက် ဗလာထားပါ။",
+      "label": "🎨 စိတ်ကြိုက် အသုံးပြုသူ စာမျက်နှာ"
     }
   },
   "copy": "ကူးယူ",
