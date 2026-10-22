@@ -90,10 +90,10 @@
               <InputNumber v-model="perIsp" :min="1" :max="20" show-buttons fluid />
             </label>
           </div>
-          <label class="cip__field cip__field--wide mt-2">
+          <div class="cip__field cip__field--wide mt-2">
             <span>{{ t('cleanIp.preview') }}</span>
-            <Textarea v-model="preview" rows="7" class="font-mono text-sm" dir="ltr" :auto-resize="false" fluid spellcheck="false" />
-          </label>
+            <OperatorIpEditor v-model="preview" />
+          </div>
           <p v-if="note" class="text-muted-color text-sm">{{ note }}</p>
           <div class="flex gap-2 flex-wrap mt-2">
             <Button :label="t('cleanIp.rebuild')" icon="pi pi-sync" severity="secondary" :disabled="!passed.length || !isp" @click="rebuild" />
@@ -214,6 +214,7 @@ import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { isSuperAdmin } from '@/core/panelShell'
+import OperatorIpEditor from '@/shared/components/OperatorIpEditor.vue'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { apiErrorMessage } from '@/core/api/client'
 import { domainsApi, type DomainRow } from '@/features/domains/api'

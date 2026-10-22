@@ -2850,6 +2850,34 @@
       "websocket": "WebSocket",
       "wireSize": "Compressed"
     },
+    "operatorIps": {
+      "host": "IP or subdomain",
+      "operator": "Operator",
+      "add": "Add",
+      "remove": "Remove",
+      "defaults": "Fill the defaults",
+      "defaultsHint": "Each operator without an address gets its ircf.space one",
+      "asText": "Edit as text",
+      "asTable": "Edit as table",
+      "name": {
+        "MCI": "Hamrah-e Aval",
+        "MTN": "Irancell",
+        "MKH": "Mokhaberat",
+        "RTL": "Rightel",
+        "HWB": "HiWeb",
+        "AST": "Asiatech",
+        "SHT": "Shatel",
+        "PRS": "ParsOnline",
+        "MBT": "Mobinnet",
+        "ASK": "Andishe Sabz",
+        "RSP": "Respina",
+        "AFR": "Afranet",
+        "ZTL": "Zitel",
+        "PSM": "Pishgaman",
+        "ITC": "Zirsakht (ITC)",
+        "OTHER": "Other"
+      }
+    },
     "cleanIp": {
       "title": "Clean IP scanner",
       "subtitle": "Find Cloudflare IPs that work on your internet and give them to the users of your ISP",

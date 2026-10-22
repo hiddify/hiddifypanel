@@ -1,4 +1,5 @@
 import { getHttp } from '@/core/api/client'
+import { OTHER } from '@/shared/utils/operator-ips'
 
 /** The network (ISP) this page is opened from, as the panel sees it. */
 export interface CleanIpNetwork {
@@ -137,18 +138,14 @@ export function mergeCdnIp(current: string, short: string, ips: string[], known:
   const lines = ips.map((ip) => `${ip} ${short}`)
   const tokens = (current || '').trim().split(/[\s;,]+/).filter(Boolean)
   let kept = 0
-  let dropped = false
-  if (tokens.length) {
-    if (tokens.length % 2 === 0 && tokens.some((x) => known.includes(x))) {
-      for (let i = 0; i < tokens.length; i += 2) {
-        if (tokens[i + 1] !== short) {
-          lines.push(`${tokens[i]} ${tokens[i + 1]}`)
-          kept++
-        }
-      }
-    } else {
-      dropped = true
+  const isPairs = tokens.length % 2 === 0 && tokens.some((x) => known.includes(x) || x === OTHER)
+  for (let i = 0; i < tokens.length; i += isPairs ? 2 : 1) {
+    // A plain list is for every operator without its own address: kept as "OTHER" (as merge_cdn_ip does).
+    const operator = isPairs ? tokens[i + 1] : OTHER
+    if (operator !== short) {
+      lines.push(`${tokens[i]} ${operator}`)
+      kept++
     }
   }
-  return { text: lines.join('\n'), kept, dropped }
+  return { text: lines.join('\n'), kept, dropped: false }
 }

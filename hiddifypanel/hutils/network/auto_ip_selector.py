@@ -11,6 +11,9 @@ from hiddifypanel.models.config_enum import ConfigEnum
 
 from . import maxmind
 
+#: Operator code of the CDN IP field for every operator that has no address of its own.
+OTHER_OPERATOR = "OTHER"
+
 DEFAULT_IPs = """
 mci.ircf.space		MCI
 mcix.ircf.space		MCI
@@ -83,17 +86,13 @@ def __get_host_base_on_asn(ips: str | list[str], asn_short: str) -> str:
         if len(valid_hosts) == 0:
             return ""
 
-    all_hosts = []
-    for i in range(0, len(ips), 2):
-        if asn_short == ips[i + 1]:
-            # print("selected ",ips[i],ips[i+1])
-            all_hosts.append(ips[i])
-
-    selected = random.sample(valid_hosts, 1)[0]
-    if len(all_hosts):
-        selected = random.sample(all_hosts, 1)[0]
-
-    return selected
+    pairs = [(ips[i], ips[i + 1]) for i in range(0, len(ips) - 1, 2)]
+    # The user's operator; else the "OTHER" rows (operators without their own); else any address.
+    for wanted in (asn_short, OTHER_OPERATOR):
+        hosts = [host for host, operator in pairs if operator == wanted]
+        if hosts:
+            return random.choice(hosts)
+    return random.choice(valid_hosts)
 
 
 def get_clean_ip(ips: str | list[str], resolve: bool = False) -> str:
@@ -117,7 +116,7 @@ def get_clean_ip_user(user_ip, ipliststr: str, default_asn: str = "") -> tuple[s
     asn_short = info.short_name
     country = info.country
     # print("Real user ip",get_real_user_ip_debug(), user_ip,asn_short,country)
-    is_morteza_format = any(name in ips for name in maxmind.ASN_SHORT_NAMES)
+    is_morteza_format = any(name in ips for name in maxmind.ASN_SHORT_NAMES) or OTHER_OPERATOR in ips
     # print("IPs",ips)
     if is_morteza_format:
         if str(country).lower() != hconfig(ConfigEnum.country) and default_asn:

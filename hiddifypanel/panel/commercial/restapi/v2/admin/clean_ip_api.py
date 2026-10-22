@@ -87,18 +87,18 @@ def _cdn_domain(domain_id) -> Domain:
 
 
 def merge_cdn_ip(current: str, short: str, ips: list[str]) -> tuple[str, int]:
-    """This ISP's pairs replaced by ``ips``, the other ISPs' pairs kept (a plain IP list, without ISP names, is
-    replaced: the two forms can not be mixed). Returns (text, how many other pairs were kept)."""
+    """This ISP's pairs replaced by ``ips``, the others kept: other ISPs' pairs, and a plain IP list as "OTHER" pairs
+    (for every operator without its own). Returns (text, how many were kept)."""
     lines = [f"{ip} {short}" for ip in ips]
     text = (current or "").strip()
     tokens = auto_ip_selector.split_pattern.split(text) if text else []
-    kept = 0
-    if tokens and len(tokens) % 2 == 0 and any(x in maxmind.ASN_SHORT_NAMES for x in tokens):
-        for i in range(0, len(tokens), 2):
-            if tokens[i + 1] != short:
-                lines.append(f"{tokens[i]} {tokens[i + 1]}")
-                kept += 1
-    return "\n".join(lines), kept
+    is_pairs = len(tokens) % 2 == 0 and any(x in maxmind.ASN_SHORT_NAMES or x == auto_ip_selector.OTHER_OPERATOR for x in tokens)
+    if is_pairs:
+        kept_pairs = [(tokens[i], tokens[i + 1]) for i in range(0, len(tokens), 2) if tokens[i + 1] != short]
+    else:
+        kept_pairs = [(host, auto_ip_selector.OTHER_OPERATOR) for host in tokens]
+    lines += [f"{host} {operator}" for host, operator in kept_pairs]
+    return "\n".join(lines), len(kept_pairs)
 
 
 def _server_ipv4() -> str:

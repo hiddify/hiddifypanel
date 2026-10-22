@@ -7,7 +7,6 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import MultiSelect from 'primevue/multiselect'
 import Select from 'primevue/select'
-import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { apiErrorMessage } from '@/core/api/client'
 import { useLayout } from '@/core/layout/sakai/composables/layout'
@@ -15,6 +14,7 @@ import KindPicker from '@/features/domains/components/KindPicker.vue'
 import TlsPicker from '@/features/domains/components/TlsPicker.vue'
 import PortField from '@/features/domains/components/PortField.vue'
 import ProxyPicker from '@/features/domains/components/ProxyPicker.vue'
+import OperatorIpEditor from '@/shared/components/OperatorIpEditor.vue'
 import {
   KIND_META,
   KINDS,
@@ -321,11 +321,11 @@ async function save() {
           </label>
         </div>
 
-        <label v-if="!isSublink" class="dd__field">
+        <div v-if="!isSublink" class="dd__field">
           <span class="dd__label">{{ t('domains.field.cdnIp') }}</span>
-          <Textarea v-model="cdnIp" dir="ltr" rows="2" auto-resize spellcheck="false" :invalid="relayNeedsIp" fluid />
+          <OperatorIpEditor v-model="cdnIp" :invalid="relayNeedsIp" />
           <small class="dd__hint">{{ t('domains.field.cdnIpHint') }}</small>
-        </label>
+        </div>
 
         <div v-if="!isSublink" class="dd__toggles">
           <label class="dd__toggle">
