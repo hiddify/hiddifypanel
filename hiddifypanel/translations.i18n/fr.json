@@ -2010,10 +2010,11 @@
       },
       "layout": {
         "drag": "Glisser pour déplacer cet utilisateur",
-        "dragOff": "Retirez le tri de colonne et le regroupement pour déplacer les utilisateurs",
+        "dragOff": "Retirez le tri de colonne pour déplacer les utilisateurs",
         "pin": "Épingler en haut",
         "unpin": "Désépingler",
-        "crossGroups": "Les utilisateurs épinglés restent au-dessus des autres : épinglez ou désépinglez pour passer de l'un à l'autre."
+        "crossGroups": "Les utilisateurs épinglés restent au-dessus des autres : épinglez ou désépinglez pour passer de l'un à l'autre.",
+        "crossOwners": "Groupé par admin : un utilisateur se déplace seulement parmi les utilisateurs de cet admin."
       },
       "add": "Ajouter un utilisateur",
       "addLimits": {

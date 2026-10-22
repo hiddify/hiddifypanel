@@ -2010,10 +2010,11 @@
       },
       "layout": {
         "drag": "Arraste para mover este usuário",
-        "dragOff": "Remova a ordenação e o agrupamento para mover usuários",
+        "dragOff": "Remova a ordenação da coluna para mover usuários",
         "pin": "Fixar no topo",
         "unpin": "Desafixar",
-        "crossGroups": "Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre os grupos."
+        "crossGroups": "Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre os grupos.",
+        "crossOwners": "Agrupado por admin: um usuário só se move entre os usuários desse admin."
       },
       "add": "Adicionar usuário",
       "addLimits": {

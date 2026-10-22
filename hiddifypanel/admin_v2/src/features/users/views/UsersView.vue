@@ -113,6 +113,7 @@
         size="small"
         class="users-table"
         :class="{ 'users-table--resizing': resizing }"
+        @mousedown.capture="onTableMouseDown"
         :row-class="rowClass"
         resizable-columns
         column-resize-mode="fit"
@@ -637,8 +638,8 @@ const orderedRows = computed(() => orderRows(allRows.value, layout.value))
 const pinnedSet = computed(() => new Set(layout.value.pinned))
 /** The last pinned row of the list: a line under it parts the pinned users from the rest. */
 const lastPinned = computed(() => orderedRows.value.filter((u) => pinnedSet.value.has(u.uuid)).at(-1)?.uuid)
-/** Dragging follows the admin's order: not while a column sort or grouping decides it. */
-const canReorder = computed(() => !sortField.value && !groupByOwner.value)
+/** Dragging follows the admin's order: not while a column sort decides it. Grouped by admin: within each group. */
+const canReorder = computed(() => !sortField.value)
 function isPinned(u: { uuid: string }): boolean {
   return pinnedSet.value.has(u.uuid)
 }
@@ -786,7 +787,19 @@ function onPin(u: Row) {
 }
 
 function onRowReorder(e: DataTableRowReorderEvent) {
-  const shown = (e.value as Row[]).map((u) => u.uuid)
+  const moved = e.value as Row[]
+  let shown = moved.map((u) => u.uuid)
+  if (groupByOwner.value) {
+    // Grouped by admin: a user moves only among the users of the same admin. The list comes sorted by admin, so
+    // a drop into another group shows as a different admin sequence.
+    const before = [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)).map((u) => u.owner_key)
+    if (moved.some((u, i) => u.owner_key !== before[i])) {
+      toast.add({ severity: 'info', summary: t('users.layout.crossOwners'), life: 5000 })
+      return
+    }
+    const group = moved[e.dropIndex]!.owner_key
+    shown = moved.filter((u) => u.owner_key === group).map((u) => u.uuid)
+  }
   const next = reorder(layout.value, orderedRows.value.map((r) => r.uuid), shown)
   if (!next) {
     toast.add({ severity: 'info', summary: t('users.layout.crossGroups'), life: 5000 })
@@ -802,6 +815,16 @@ function onGuideSeen() {
 /** The Name column's edge moved: keep the Usage column's new width (it is the next column, in either direction). */
 /** True while the Name column's edge is dragged: no text selection across the rows meanwhile. */
 const resizing = ref(false)
+/**
+ * The browser starts a text selection on the resizer's mousedown (PrimeVue does not prevent it), and it then
+ * spreads over every row the pointer passes. Prevent it on that mousedown: PrimeVue still gets the event.
+ */
+function onTableMouseDown(e: MouseEvent) {
+  if ((e.target as HTMLElement | null)?.closest('.p-datatable-column-resizer')) {
+    e.preventDefault()
+    window.getSelection()?.removeAllRanges()
+  }
+}
 function onColumnResize(e: DataTableColumnResizeEndEvent) {
   resizing.value = false
   window.getSelection()?.removeAllRanges()

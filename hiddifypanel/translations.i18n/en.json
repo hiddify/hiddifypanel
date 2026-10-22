@@ -2509,10 +2509,11 @@
       },
       "layout": {
         "drag": "Drag to move this user",
-        "dragOff": "Clear the column sort and grouping to move users",
+        "dragOff": "Clear the column sort to move users",
         "pin": "Pin to the top",
         "unpin": "Unpin",
-        "crossGroups": "Pinned users stay above the others: unpin or pin a user to move it between them."
+        "crossGroups": "Pinned users stay above the others: unpin or pin a user to move it between them.",
+        "crossOwners": "Grouped by admin: a user moves only among that admin's users."
       },
       "add": "Add user",
       "addLimits": {
