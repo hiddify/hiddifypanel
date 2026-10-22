@@ -71,6 +71,9 @@ class AdminUser(BaseAccount):
     #: Outbound id this admin's users (and its sub-admins' users) leave through, unless the user (or a nearer
     #: admin) chose another; None = automatic. See proxy_v3.outbounds.admin_default_outbounds.
     default_outbound_id: Mapped[int | None] = mapped_column(default=None, nullable=True)
+    # Admin V2 users page, this admin's own: {"pinned": [user uuid…], "order": [user uuid…], "guide_seen": bool}.
+    # Not part of the admin's synced data (AdminModel lists its fields), so it stays on this panel.
+    users_layout: Mapped[dict | None] = mapped_column(JSON, default=None, nullable=True)
     users: Mapped[list[User]] = relationship("User", backref="admin")
     usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)

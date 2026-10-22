@@ -497,6 +497,52 @@ class MyAdminLanguageApi(MethodView):
         return {"lang": value}
 
 
+_UUID_CHARS = set("0123456789abcdef-")
+_LAYOUT_MAX = 50_000
+
+
+def _uuid_list(value: object) -> list[str]:
+    """User uuids, in order, each once; anything else is dropped."""
+    out: list[str] = []
+    seen: set[str] = set()
+    for item in value if isinstance(value, list) else []:
+        u = str(item).strip().lower()
+        if len(u) == 36 and set(u) <= _UUID_CHARS and u not in seen:
+            seen.add(u)
+            out.append(u)
+    return out[:_LAYOUT_MAX]
+
+
+def _users_layout(raw: object) -> dict:
+    data = raw if isinstance(raw, dict) else {}
+    pinned = _uuid_list(data.get("pinned"))
+    return {
+        "pinned": pinned,
+        # a user is pinned or in the order, not both
+        "order": [u for u in _uuid_list(data.get("order")) if u not in set(pinned)],
+        "guide_seen": bool(data.get("guide_seen")),
+    }
+
+
+class MyAdminUsersLayoutApi(MethodView):
+    """My account: how the Users page lists my users (pinned on top, then my order) and whether I saw its guide."""
+
+    decorators = [login_required(ALL_ROLES)]
+
+    def get(self):
+        actor: AdminUser = g.account
+        return _users_layout(actor.users_layout)
+
+    def put(self):
+        actor: AdminUser = g.account
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            abort(400, "Expected {pinned, order, guide_seen}")
+        actor.users_layout = _users_layout(body)
+        db.session.commit()
+        return actor.users_layout
+
+
 class MyAdminPasswordApi(MethodView):
     decorators = [login_required(ALL_ROLES)]
 

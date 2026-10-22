@@ -25,7 +25,7 @@ def init_app(app):
         bp.add_url_rule("/admin_user/<uuid:uuid>/", view_func=AdminUserApi)
         bp.add_url_rule("/admin_user/", view_func=AdminUsersApi)
 
-        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminAliasApi, MyAdminLanguageApi, MyAdminOutboundApi, MyAdminConfigsApi, MyAdminPasswordApi
+        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminAliasApi, MyAdminLanguageApi, MyAdminOutboundApi, MyAdminUsersLayoutApi, MyAdminConfigsApi, MyAdminPasswordApi
 
         bp.add_url_rule("/admins/", view_func=AdminsTreeApi)
         bp.add_url_rule("/admins/me/", view_func=MyAdminAccountApi)
@@ -33,6 +33,7 @@ def init_app(app):
         bp.add_url_rule("/admins/me/additional-configs/", view_func=MyAdminConfigsApi)
         bp.add_url_rule("/admins/me/alias/", view_func=MyAdminAliasApi)
         bp.add_url_rule("/admins/me/language/", view_func=MyAdminLanguageApi)
+        bp.add_url_rule("/admins/me/users-layout/", view_func=MyAdminUsersLayoutApi)
         bp.add_url_rule("/admins/me/default-outbound/", view_func=MyAdminOutboundApi)
         bp.add_url_rule("/admins/<uuid:uuid>/", view_func=AdminTreeItemApi)
         bp.add_url_rule("/admins/<uuid:uuid>/reset-password/", view_func=AdminResetPasswordApi)

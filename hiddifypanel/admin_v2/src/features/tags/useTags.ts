@@ -72,6 +72,8 @@ export async function saveFormTags(kind: TagKind, uuid: string, wanted: number[]
 
 /** The filter's "Tagged" option: anyone with at least one tag. */
 export const ANY_TAG = 0
+/** Not a tag: the "Pin" entry of the users page (filter: pinned users). */
+export const PIN_TAG = -1
 
 /** A row passes when it has any of the picked tags (nothing picked: everyone). */
 export function matchesTags(ids: number[], picked: number[]): boolean {

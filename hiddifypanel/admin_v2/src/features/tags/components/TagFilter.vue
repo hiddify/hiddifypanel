@@ -2,11 +2,13 @@
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import MultiSelect from 'primevue/multiselect'
-import { ANY_TAG, useTags } from '../useTags'
+import { ANY_TAG, PIN_TAG, useTags } from '../useTags'
 
 const props = defineProps<{
   /** The tag ids of every row on the page, to count each option. */
   items: { tags: number[] }[]
+  /** Users page: a "Pin" option first, with this many pinned users; leave it out elsewhere. */
+  pinnedCount?: number
 }>()
 /** Picked tag ids; `ANY_TAG` (0) means "has at least one tag". */
 const picked = defineModel<number[]>({ required: true })
@@ -19,6 +21,7 @@ const options = computed(() => {
   const counts = new Map<number, number>()
   for (const item of props.items) for (const id of item.tags) counts.set(id, (counts.get(id) ?? 0) + 1)
   return [
+    ...(props.pinnedCount === undefined ? [] : [{ id: PIN_TAG, label: t('tags.pin'), color: '', count: props.pinnedCount }]),
     { id: ANY_TAG, label: t('tags.tagged'), color: '', count: props.items.filter((item) => item.tags.length).length },
     ...tags.value.map((tag) => ({ id: tag.id, label: label(tag), color: color(tag), count: counts.get(tag.id) ?? 0 })),
   ]
@@ -47,7 +50,8 @@ const byId = computed(() => new Map(options.value.map((o) => [o.id, o])))
         <template v-if="value?.length">
           <span class="tag-filter__dots">
             <template v-for="id in (value as number[]).slice(0, 3)" :key="id">
-              <i v-if="id === ANY_TAG" class="pi pi-star-fill tag-filter__star" />
+              <i v-if="id === PIN_TAG" class="pi pi-thumbtack tag-filter__pin" />
+              <i v-else-if="id === ANY_TAG" class="pi pi-star-fill tag-filter__star" />
               <span v-else class="tag-filter__dot" :style="{ '--c': byId.get(id)?.color }" />
             </template>
           </span>
@@ -58,7 +62,8 @@ const byId = computed(() => new Map(options.value.map((o) => [o.id, o])))
     </template>
     <template #option="{ option }">
       <span class="tag-filter__option">
-        <i v-if="option.id === ANY_TAG" class="pi pi-star-fill tag-filter__star" />
+        <i v-if="option.id === PIN_TAG" class="pi pi-thumbtack tag-filter__pin" />
+        <i v-else-if="option.id === ANY_TAG" class="pi pi-star-fill tag-filter__star" />
         <span v-else class="tag-filter__dot" :style="{ '--c': option.color }" />
         <span class="tag-filter__label">{{ option.label }}</span>
         <small>{{ option.count }}</small>
@@ -103,6 +108,11 @@ const byId = computed(() => new Map(options.value.map((o) => [o.id, o])))
 .tag-filter__star {
   color: #ffbe0b;
   font-size: 0.8rem;
+}
+.tag-filter__pin {
+  color: var(--p-primary-color);
+  font-size: 0.8rem;
+  transform: rotate(-30deg);
 }
 .tag-filter__option {
   display: flex;
