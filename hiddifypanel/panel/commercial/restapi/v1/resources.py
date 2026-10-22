@@ -29,7 +29,7 @@ class UserResource(Resource):
         User.add_or_update(**data)
         user = User.by_uuid(uuid) or abort(502, "unknown issue! user is not added")
         user_driver.add_client(user)
-        hiddify.quick_apply_users()
+        hiddify.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return jsonify({"status": 200, "msg": "ok"})
 
@@ -37,7 +37,7 @@ class UserResource(Resource):
         uuid = request.args.get("uuid") or abort(422, "Parameter issue: 'uuid'")
         user = User.by_uuid(uuid) or abort(404, "user not found")
         user.remove()
-        hiddify.quick_apply_users()
+        hiddify.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return jsonify({"status": 200, "msg": "ok"})
 

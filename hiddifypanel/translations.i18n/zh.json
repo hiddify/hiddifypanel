@@ -71,7 +71,7 @@
   "Domain is not REALITY friendly!": "域名对现实不友好！",
   "Domain?": "域名？",
   "Donation": {
-    "description": "✳️ 我们需要你的帮助来开发这个项目\n    <br>\n    如果你是开发者或者编程人员请联系我们 <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ 同样我们需要财政帮以便我们长远的发展和服务器费用 (we are Non-Profit).\n    <br>\n    <h5>Payment Methods :</h5>\n    <ul>\n    <li> <div class='btn-group'>\n        <a role='button' data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='EQCWnykA-YhavOXgH3sf-uxtXLjy83_9n5bJPGRPE8r2247_' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='TXZtFUxyBPMSykAWogu7C4zmbjySKqMcDE' role='button' class='btn btn-info share-link'>USDT (TRC20)</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='MCHoh7xwaDBBnQgANPpBtXiekagV6KpdrM' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='0xF5CFc65ee336B377C2a37EA3BCD0CaD0d0F0CbA0' role='button' class='btn btn-info share-link'>Ethereum</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='bc1qkfp7n3wxu2zc9mdy20cf27d5pujj65myww8f60' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='DPerFS2vCu5XnE3He32BaPVTkUDcKLsEaj' role='button' class='btn btn-info share-link'>Dogecoin</a> </div></li>\n    </ul>\n    \n    <br>\n    \n    我们也需要以下帮助:\n    <ul>\n    <li>👥 向其他人分享我们的软件</li>\n   <li>📝Python开发者</li>\n    <li>📝Swift 开发者</li>\n    <li>📝Flutter 开发者</li>\n    <li>📝Go 开发者</li>\n    <li>🖥内容提供者</li>\n    </ul>\n    请联系我们 <a href='mailto:info@hiddify.com'>info@hiddify.com</a> if you can help us.",
+    "description": "✳️ 我们需要你的帮助来开发这个项目\n    <br>\n    如果你是开发者或者编程人员请联系我们 <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ 同样我们需要财政帮以便我们长远的发展和服务器费用 (we are Non-Profit).\n    <br>\n    <h5>Payment Methods :</h5>\n    <div class='donation-wallets'></div>\n    \n    <br>\n    \n    我们也需要以下帮助:\n    <ul>\n    <li>👥 向其他人分享我们的软件</li>\n   <li>📝Python开发者</li>\n    <li>📝Swift 开发者</li>\n    <li>📝Flutter 开发者</li>\n    <li>📝Go 开发者</li>\n    <li>🖥内容提供者</li>\n    </ul>\n    请联系我们 <a href='mailto:info@hiddify.com'>info@hiddify.com</a> if you can help us.",
     "title": "捐款"
   },
   "Download App": "下载应用程序",
@@ -1142,6 +1142,8 @@
       "close": "关闭",
       "copied": "已复制 {name} 地址",
       "copiedShort": "已复制",
+      "copyAddress": "复制 {name} 地址",
+      "networkHint": "请仅通过名称旁显示的网络发送每种币；在其他网络上的转账将会丢失。",
       "qr": "二维码",
       "qrOf": "{name} 地址的二维码",
       "showQr": "显示 {name} 的二维码",
@@ -1251,6 +1253,7 @@
         "title": "添加节点"
       },
       "addNode": "添加节点",
+      "addTileText": "连接另一台 Hiddify 服务器，并在这里统一管理。",
       "checkConnection": "检查连接",
       "checking": "检查中…",
       "connection": "连接",

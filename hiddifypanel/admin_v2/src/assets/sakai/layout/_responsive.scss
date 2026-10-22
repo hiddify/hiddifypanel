@@ -1,10 +1,7 @@
-@media screen and (min-width: 1960px) {
-    .layout-main,
-    .landing-wrapper {
-        width: 1504px;
-        margin-inline-start: auto !important;
-        margin-inline-end: auto !important;
-    }
+// Pages always take the whole width: on wide screens (2K, 4K) a fixed 1504px column left large empty sides.
+.layout-main,
+.landing-wrapper {
+    width: 100%;
 }
 
 @media (min-width: 992px) {

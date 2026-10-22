@@ -2,7 +2,7 @@
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { shellDialog, submitPostForm } from '@/core/panelShell'
+import { shellDialog, submitPostForm, type DonationWallet } from '@/core/panelShell'
 import { useLayout } from './composables/layout'
 
 defineOptions({ name: 'AppMenuItem' })
@@ -63,7 +63,12 @@ function itemClick(event: Event, item: Record<string, unknown>) {
   }
   if (item.action) {
     event.preventDefault()
-    shellDialog.value = { action: String(item.action), title: String(item.label ?? ''), html: String(item.dialog_html ?? '') }
+    shellDialog.value = {
+      action: String(item.action),
+      title: String(item.label ?? ''),
+      html: String(item.dialog_html ?? ''),
+      wallets: Array.isArray(item.dialog_wallets) ? (item.dialog_wallets as DonationWallet[]) : [],
+    }
     layoutState.overlayMenuActive = false
     layoutState.mobileMenuActive = false
     layoutState.menuHoverActive = false

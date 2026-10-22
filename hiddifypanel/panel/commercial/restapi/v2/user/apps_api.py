@@ -161,7 +161,7 @@ class AppAPI(MethodView):
             return Platform.mac
         elif os == "iOS":
             return Platform.ios
-        elif "Linux" in request.user_agent.string and "X11" or "Wayland" in request.user_agent.string:
+        elif "Linux" in request.user_agent.string and ("X11" in request.user_agent.string or "Wayland" in request.user_agent.string):
             return Platform.linux
 
         return None
@@ -196,7 +196,7 @@ class AppAPI(MethodView):
             url = base + static_url_for(filename="apps-icon/clash_verge_rev.ico")
         elif app_name == _("app.hiddifyn.title"):
             url = base + static_url_for(filename="apps-icon/hiddifyn.ico")
-        elif app_name == _("app.v2rayng.title"):
+        elif app_name in (_("app.v2rayng.title"), _("app.v2rayn.title")):
             url = base + static_url_for(filename="apps-icon/v2rayng.ico")
         elif app_name == _("app.hiddifyng.title"):
             url = base + static_url_for(filename="apps-icon/hiddifyng.ico")
@@ -228,7 +228,7 @@ class AppAPI(MethodView):
 
     def __get_v2rayn_app_dto(self):
         dto = AppSchema()
-        dto.title = _("app.v2rayng.title")
+        dto.title = _("app.v2rayn.title")
         dto.description = _("app.v2rayng.description")
         dto.icon_url = self.__get_app_icon_url(_("app.v2rayn.title"))
         dto.guide_url = "https://www.youtube.com/watch?v=o9L2sI2T53Q"
@@ -316,6 +316,7 @@ class AppAPI(MethodView):
         dto.deeplink = f"loon://import?nodelist={self.user_panel_encoded_url}"
         ins_url = "https://apps.apple.com/app/id1373567447"
         dto.install = [self.__get_app_install_dto(AppInstallType.app_store, ins_url)]
+        return dto
 
     def __get_stash_app_dto(self):
         dto = AppSchema()
