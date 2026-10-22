@@ -15,7 +15,7 @@ import { LANGUAGE_LOOK } from '@/shared/utils/languages'
  *  in a color: _theme-caddy.scss). */
 const { t } = useI18n()
 const toast = useToast()
-const { isDarkTheme, toggleDarkMode, caddyAccent, setCaddyAccent } = useLayout()
+const { isDarkTheme, toggleDarkMode, isCaddyTheme, caddyAccent, setCaddyAccent } = useLayout()
 
 /** The swatch of each Smart Caddy color: the two ends of its accent gradient (as in _theme-caddy.scss). */
 const SWATCH: Record<CaddyAccent, string> = {
@@ -85,7 +85,8 @@ async function pickLanguage(lang: string) {
 }
 
 function setDark(dark: boolean) {
-  if (dark !== isDarkTheme.value) toggleDarkMode()
+  // A color theme is always dark; light/dark is the Hiddify theme's choice.
+  if (!isCaddyTheme.value && dark !== isDarkTheme.value) toggleDarkMode()
 }
 </script>
 
@@ -131,17 +132,18 @@ function setDark(dark: boolean) {
         </Select>
       </section>
 
-      <!-- Light / dark: this browser only -->
+      <!-- Light / dark: this browser only; for the Hiddify theme (the color themes are always dark) -->
       <section class="appearance__section">
         <span class="appearance__title"><i :class="['pi', isDarkTheme ? 'pi-moon' : 'pi-sun']" />{{ t('theme.mode') }}</span>
-        <div class="appearance__modes" role="radiogroup" :aria-label="t('theme.mode')">
-          <button type="button" role="radio" class="appearance__choice" :class="{ 'appearance__choice--active': !isDarkTheme }" :aria-checked="!isDarkTheme" @click="setDark(false)">
+        <div class="appearance__modes" role="radiogroup" :aria-label="t('theme.mode')" :aria-disabled="isCaddyTheme">
+          <button type="button" role="radio" class="appearance__choice" :class="{ 'appearance__choice--active': !isDarkTheme }" :aria-checked="!isDarkTheme" :disabled="isCaddyTheme" @click="setDark(false)">
             <i class="pi pi-sun" />{{ t('theme.light') }}
           </button>
-          <button type="button" role="radio" class="appearance__choice" :class="{ 'appearance__choice--active': isDarkTheme }" :aria-checked="isDarkTheme" @click="setDark(true)">
+          <button type="button" role="radio" class="appearance__choice" :class="{ 'appearance__choice--active': isDarkTheme }" :aria-checked="isDarkTheme" :disabled="isCaddyTheme" @click="setDark(true)">
             <i class="pi pi-moon" />{{ t('theme.dark') }}
           </button>
         </div>
+        <small v-if="isCaddyTheme" class="appearance__hint"><i class="pi pi-info-circle" /> {{ t('theme.modeLocked') }}</small>
       </section>
 
       <!-- Theme: the panel's own, or Smart Caddy glass in a color (light or dark as above); this browser only -->
@@ -181,9 +183,10 @@ function setDark(dark: boolean) {
 </template>
 
 <style scoped>
+/* On the topbar: its own text color (the primary color would vanish on the primary-colored bar). */
 .layout-topbar-action--active {
-  color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  color: var(--topbar-text, #fff);
+  background: var(--topbar-hover, rgb(255 255 255 / 14%));
 }
 .appearance {
   display: flex;
@@ -260,7 +263,11 @@ function setDark(dark: boolean) {
     background-color 0.15s ease,
     color 0.15s ease;
 }
-.appearance__choice:hover {
+.appearance__choice:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.appearance__choice:hover:not(:disabled) {
   border-color: color-mix(in srgb, var(--p-primary-color) 50%, var(--p-content-border-color));
   background: var(--p-content-hover-background);
 }
