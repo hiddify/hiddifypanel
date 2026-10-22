@@ -428,7 +428,7 @@ def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[st
 
 
 _CLASH_V2RAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
-_CLASH_STANDALONE_PROTOS = frozenset({"ss", "hysteria2", "tuic", "hysteria"})
+_CLASH_STANDALONE_PROTOS = frozenset({"ss", "hysteria2", "tuic", "hysteria", "anytls"})
 _CLASH_UNSUPPORTED_TRANSPORTS = frozenset(
     {
         "faketls",

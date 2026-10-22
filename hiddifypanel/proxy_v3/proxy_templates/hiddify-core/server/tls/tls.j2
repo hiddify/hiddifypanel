@@ -7,7 +7,9 @@
 "tls": {
   "enabled": true,
   "server_name": "{{ server_name }}",
-    {% if ctx.proxy.proto not in ["hysteria","tuic"] %}
+    {% if ctx.proxy.proto == "tuic" %}
+      "alpn": ["h3"],
+    {% elif ctx.proxy.proto != "hysteria" %}
       "alpn": {{ proxy.tls_layer.alpns() | tojson }},
     {% endif %}
   

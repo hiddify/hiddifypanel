@@ -14,6 +14,7 @@
 {% if encryption and encryption != "none" %}
 "encryption": "{{ encryption }}",
 {% endif %}
-{% if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_flow and ctx.proxy.transport == "tcp" %}
+{# VLESS Encryption also supports Vision over the other transports; match the Xray account flow. #}
+{% if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_flow and (ctx.proxy.transport == "tcp" or encryption != "none") %}
 "flow": "{{ ctx.hconfig.vless_flow }}",
 {% endif %}

@@ -240,7 +240,7 @@ def _core_items(cfg: JsonObject) -> list[Item]:
     for section in sections:
         for o in objects(cfg.get(section)):
             tag = text(o.get("tag"))
-            if not tag or text(o.get("type")) in _NOT_PROXY:
+            if not tag or "§hide§" in tag or text(o.get("type")) in _NOT_PROXY:
                 continue
             # the entry and the chain it dials through (detour); nothing else needs to run
             base: JsonObject = {}

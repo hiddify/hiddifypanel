@@ -1,5 +1,5 @@
 {# Mihomo models HTTPUpgrade as WebSocket + v2ray-http-upgrade (wiki.metacubex.one transport).
-   Mihomo 1.19.32 works against Xray 26.3 httpupgrade inbounds, fast-open included. #}
+   Disable fast-open: with VLESS Encryption it can intermittently close the connection with EOF. #}
 {{ skip("httpupgrade_enable = " ~ ctx.hconfig.httpupgrade_enable) if not ctx.hconfig.httpupgrade_enable }}
 "network": "ws",
 "ws-opts": {
@@ -8,5 +8,5 @@
     "Host": "{{ proxy.domain.host }}"
   },
   "v2ray-http-upgrade": true,
-  "v2ray-http-upgrade-fast-open": true
+  "v2ray-http-upgrade-fast-open": false
 },
