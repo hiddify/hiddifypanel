@@ -8,19 +8,18 @@ backend panel
   http-request set-header X-Real-IP %[src]
   http-request set-header X-Forwarded-Proto https
   http-response set-header X-Robots-Tag "noindex, nofollow"
-  # The panel sends its files through the same few request threads as its API: on a slow phone connection a large file
-  # (Monaco is 3.7 MB) held them, and the next page could not load. Text goes gzipped; the build's hashed files
-  # (admin-v2 assets, monaco/<hash>/) never change, so a browser keeps them instead of asking again.
-  # The live channel (text/event-stream) is not compressed: it would be buffered.
   compression algo gzip
-  compression type text/html text/css text/plain text/javascript application/javascript application/json image/svg+xml
-  http-request set-var(txn.immutable) bool(1) if { path_reg ^/[^/]+/static/admin-v2/(assets|monaco/[0-9a-f]+)/ }
+  compression type text/html text/css text/plain text/javascript application/javascript application/json application/manifest+json image/svg+xml image/x-icon image/vnd.microsoft.icon font/ttf font/otf application/vnd.ms-fontobject
+  
+  # Static files cached for a year (URLs look like /<proxy_path>/static/...); each line adds folders:
+  acl static_immutable path_reg ^/[^/]+/static/(admin-v2|user-front)/assets/      # Vite builds (hashed names)
+  acl static_immutable path_reg ^/[^/]+/static/admin-v2/monaco/                   # Monaco editor (versioned folder)
+  acl static_immutable path_reg ^/[^/]+/static/(apps-icon|fonts|images|webfonts)/ # icons, fonts and images
+  # The path is gone when the response comes: remember the match in a variable.
+  http-request set-var(txn.immutable) bool(true) if static_immutable
   http-response set-header Cache-Control "public, max-age=31536000, immutable" if { var(txn.immutable) -m bool } { status 200 }
-  # HTTP/2 to the panel (the live channel's stream and its POSTs share one connection). WebSockets go as HTTP/1.1 upgrades,
-  # whatever the browser used (over its HTTP/2 connection a WebSocket is an Extended CONNECT): granian has no WebSocket over
-  # HTTP/2. This covers the live channel, the nodes' channel and Vite's hot reload in development.
+  
   use-server s_ws if { req.hdr(upgrade) -i websocket } or METH_CONNECT
-  # A node's usage report may wait up to 120 s for the parent's usage update (panel/usage.py USAGE_LOCK_WAIT)
   timeout server 150s
   server s 127.0.0.1:9000 proto h2
   server s_ws 127.0.0.1:9000 weight 0
