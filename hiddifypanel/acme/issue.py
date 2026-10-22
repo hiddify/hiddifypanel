@@ -9,6 +9,7 @@ from __future__ import annotations
 import datetime
 import ipaddress
 import socket
+import time
 from dataclasses import dataclass, field
 
 from acme import challenges as acme_challenges
@@ -30,10 +31,11 @@ ZEROSSL_RESTRICTED = (".ir", ".ru", ".cn", ".by", ".cu", ".kp", ".sy", "amazonaw
 class IssueError(Exception):
     """Issuing failed. ``rate_limited``: every CA tried refused because of its rate limits (``retry_after``: seconds)."""
 
-    def __init__(self, message: str, *, rate_limited: bool = False, retry_after: int | None = None):
+    def __init__(self, message: str, *, rate_limited: bool = False, retry_after: int | None = None, timed_out: bool = False):
         super().__init__(message)
         self.rate_limited = rate_limited
         self.retry_after = retry_after
+        self.timed_out = timed_out
 
 
 @dataclass
@@ -119,7 +121,7 @@ def _self_check(path: str, expected: str) -> str:
         return f"not reachable ({e})"
 
 
-def _order(acme: client.Acme, host: str, log: list[str]) -> tuple[str, str]:
+def _order(acme: client.Acme, host: str, log: list[str], deadline: float | None = None) -> tuple[str, str]:
     key = ec.generate_private_key(ec.SECP256R1())
     key_pem = key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption())
     ip = ip_of(host)
@@ -148,8 +150,8 @@ def _order(acme: client.Acme, host: str, log: list[str]) -> tuple[str, str]:
             logger.debug(f"ACME {host}: challenge {challb.chall.path} local check: {_self_check(challb.chall.path, validation)}")
             acme.client.answer_challenge(challb, response)
         log.append(f"{acme.ca}: challenges answered")
-        deadline = datetime.datetime.now() + datetime.timedelta(seconds=ORDER_TIMEOUT)
-        done = acme.client.poll_and_finalize(order, deadline)
+        wait = ORDER_TIMEOUT if deadline is None else max(1.0, min(ORDER_TIMEOUT, deadline - time.monotonic()))
+        done = acme.client.poll_and_finalize(order, datetime.datetime.now() + datetime.timedelta(seconds=wait))
     finally:
         for token in tokens:
             challenges.remove(token)
@@ -159,8 +161,11 @@ def _order(acme: client.Acme, host: str, log: list[str]) -> tuple[str, str]:
     return done.fullchain_pem, key_pem.decode()
 
 
-def issue(host: str) -> Issued:
-    """A certificate for ``host``; raises IssueError (``rate_limited`` when every CA refused for its rate limits)."""
+def issue(host: str, deadline: float | None = None) -> Issued:
+    """A certificate for ``host``; raises IssueError (``rate_limited`` when every CA refused for its rate limits).
+
+    ``deadline`` (time.monotonic()): no new try after it, and the CA's validation is waited for until then at most
+    (``timed_out`` when it stopped there)."""
     host = (host or "").strip().lower().strip("[]")
     if not host or "*" in host:
         raise IssueError(f"no ACME certificate for {host!r} (wildcards come from the CDN)")
@@ -175,10 +180,12 @@ def issue(host: str) -> Issued:
     retry_after: int | None = None
     for ca in cas_for(host):
         for attempt in (1, 2):  # a second time only with a fresh account, when the CA did not know the stored one
+            if deadline is not None and time.monotonic() >= deadline:
+                raise IssueError(" | ".join([*errors, "timed out (the panel tries again later)"]), timed_out=True)
             try:
                 logger.info(f"ACME {host}: asking {ca}")
                 acme = client.get(ca)
-                cert_pem, key_pem = _order(acme, host, log)
+                cert_pem, key_pem = _order(acme, host, log, deadline)
                 logger.info(f"ACME {host}: issued by {ca}")
                 return Issued(cert_pem, key_pem, ca, log)
             except Exception as e:

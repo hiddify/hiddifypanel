@@ -318,11 +318,12 @@ def init_app(app):
         help="Skip entirely if any domain already has a real certificate (legacy; the installer issues all due domains instead)",
     )
     @click.option("--no-apply", is_flag=True, help="Do not rebuild the cores' configs when a certificate changed")
-    def issue_certificates(force: bool, first: bool, no_apply: bool):
+    @click.option("--timeout", default=300, show_default=True, type=int, help="Seconds for the whole run (0: no limit); unfinished domains are retried by the panel later")
+    def issue_certificates(force: bool, first: bool, no_apply: bool, timeout: int):
         """Get (or renew) the domains' certificates from Let's Encrypt / ZeroSSL now. Exit code 3: a certificate changed."""
         from hiddifypanel.acme import renew
 
-        summary = renew.run(force=force, wait_lock=True, apply=not no_apply, only_without_valid=first)
+        summary = renew.run(force=force, wait_lock=True, apply=not no_apply, only_without_valid=first, timeout=timeout or None)
         click.echo(json.dumps(summary.to_dict(), indent=2))
         if summary.changed:
             raise SystemExit(3)
