@@ -1,0 +1,15 @@
+{{ skip("Mihomo AnyTLS does not support Reality") if domain.is_reality() }}
+"type": "anytls",
+"server": {{ proxy.server | tojson }},
+"port": {{ proxy.port }},
+"password": {{ ctx.user.uuid | tojson }},
+"sni": {{ domain.sni | tojson }},
+"client-fingerprint": "chrome",
+"udp": true,
+"alpn": ["h2", "http/1.1"],
+"idle-session-check-interval": 30,
+"idle-session-timeout": 120,
+"min-idle-session": 1,
+{% if domain.allow_insecure or domain.is_fake_tls() %}
+"skip-cert-verify": true,
+{% endif %}

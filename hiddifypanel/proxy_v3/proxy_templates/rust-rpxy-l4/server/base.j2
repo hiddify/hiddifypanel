@@ -57,11 +57,20 @@ target = ["127.0.0.1:1001"]
 load_balance = "none"
 {% endif %}
 
-{% if ctx.hconfig.shadowtls_enable and ctx.hconfig.shadowtls_fakedomain %}
+{# ShadowTLS clients send the fake SNI, so route it to their allocated gateway backends. #}
+{% set shadowtls_backends = namespace(ports=[]) %}
+{% for p in ctx.proxies if p.mode == "domains_sni_gateway" and "shadowtls" in p.categories %}
+{% for pd in p.iter_proxies_with_domain() %}
+{% if pd.tcp_udp != "udp" and pd.tcp_port and pd.tcp_port not in shadowtls_backends.ports %}
+{% set _ = shadowtls_backends.ports.append(pd.tcp_port) %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% if ctx.hconfig.shadowtls_enable and ctx.hconfig.shadowtls_fakedomain and shadowtls_backends.ports %}
 [protocols."shadowtls"]
 protocol = "tls"
 server_names = ["{{ ctx.hconfig.shadowtls_fakedomain }}"]
-target = ["127.0.0.1:1030"]
+target = [{% for port in shadowtls_backends.ports %}"127.0.0.1:{{ port }}"{% if not loop.last %}, {% endif %}{% endfor %}]
 send_proxy_protocol = "v2"
 load_balance = "none"
 {% endif %}

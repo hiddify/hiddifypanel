@@ -6,14 +6,15 @@
   {"password": "{{ ctx.hconfig.shared_secret }}"}
 ],
 "handshake": {
-  "server": "{{ ctx.domain.sni }}",
+  "server": "{{ ctx.hconfig.shadowtls_fakedomain }}",
   "server_port": 443
 },
 "handshake_for_server_name": {
-  "{{ ctx.domain.sni }}": {
-    "server": "{{ ctx.domain.sni}}",
+  "{{ ctx.hconfig.shadowtls_fakedomain }}": {
+    "server": "{{ ctx.hconfig.shadowtls_fakedomain }}",
     "server_port": 443
   }
 },
+"detour": "shadowsocks_for_proxies",
 "strict_mode": false,
 {% include 'hiddify-core/server/snippets/inbound_meta' %}
