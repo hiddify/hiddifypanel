@@ -1499,8 +1499,12 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  width: 11rem;
-  max-width: 100%;
+  /* The whole column: the bar grows and shrinks with it when the Name column's edge is dragged. */
+  width: 100%;
+  min-width: 8rem;
+}
+.u-usage > :first-child {
+  width: 100%;
 }
 .u-reset {
   display: inline-flex;
