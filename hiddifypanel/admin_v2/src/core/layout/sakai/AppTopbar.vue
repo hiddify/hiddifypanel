@@ -2,12 +2,13 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLayout } from './composables/layout'
+import AppearanceMenu from './AppearanceMenu.vue'
 import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
 import { isChildPanel, submitPostForm } from '@/core/panelShell'
 import { getRouterBase } from '@/core/api/client'
 
 const { t } = useI18n()
-const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout()
+const { toggleMenu } = useLayout()
 
 const panelVersion = computed(() => getPanelVersion())
 
@@ -52,9 +53,8 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
       >
         <i class="pi pi-user" />
       </router-link>
-      <button type="button" class="layout-topbar-action" :aria-label="t('theme.dark')" @click="toggleDarkMode">
-        <i :class="['pi', isDarkTheme ? 'pi-sun' : 'pi-moon']" />
-      </button>
+      <!-- Language, light/dark and the theme (Hiddify or Smart Caddy glass in a color) -->
+      <AppearanceMenu />
       <button type="button" class="layout-topbar-action" :aria-label="t('menu.signOut')" v-tooltip.bottom="t('menu.signOut')" @click="signOut">
         <i class="pi pi-sign-out" />
       </button>
