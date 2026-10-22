@@ -11,6 +11,8 @@
 
 #### Other
 
+* Fix(proxy): handle service port conflicts for SNI proxies. 
+
 * Feat(rawhttp): implement safe headers for rawhttp requests and enhance jinja rendering. 
   _- Added a new module `rawhttp.py` to handle browser-like headers for rawhttp requests, ensuring safe transmission behind HAProxy.
 - Introduced `safe_headers` function to filter headers based on safety criteria.
