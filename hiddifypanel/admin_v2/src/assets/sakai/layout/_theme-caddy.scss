@@ -144,6 +144,12 @@ html.theme-caddy:not(.app-dark) {
     --p-form-field-background: rgb(255 255 255 / 72%);
     --p-form-field-border-color: rgb(15 23 42 / 12%);
     --p-form-field-hover-border-color: rgb(15 23 42 / 22%);
+    /* Dividers, table rows, outlines: a faint dark line (white ones vanish on the frosted white). The glass cards
+       keep their white edge: they use --caddy-border directly. */
+    --p-content-border-color: rgb(15 23 42 / 10%);
+    /* The main button's gradient in light: the color's deeper steps, so white text reads on every color. */
+    --caddy-accent: linear-gradient(135deg, var(--p-primary-600) 0%, var(--p-primary-800) 100%);
+    --p-primary-contrast-color: #ffffff;
 
     body {
         background-color: #f3f2f7;
@@ -167,12 +173,5 @@ html.theme-caddy:not(.app-dark) {
 
     .p-datatable .p-datatable-thead > tr > th {
         background: rgb(255 255 255 / 40%);
-    }
-
-    /* Inside popups and dialogs (frosted white), white edges would vanish: a faint dark line instead. */
-    .p-popover,
-    .p-dialog,
-    .p-select-overlay {
-        --p-content-border-color: rgb(15 23 42 / 12%);
     }
 }
