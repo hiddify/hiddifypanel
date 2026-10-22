@@ -2487,7 +2487,10 @@
         "yellow": "زرد",
         "green": "سبز",
         "blue": "آبی",
-        "purple": "بنفش"
+        "purple": "بنفش",
+        "graphite": "نوک مدادی",
+        "spacegray": "خاکستری اپل (Space Gray)",
+        "brown": "قهوه‌ای تیره"
       }
     },
     "users": {

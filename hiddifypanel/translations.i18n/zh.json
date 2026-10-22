@@ -1990,7 +1990,10 @@
         "yellow": "黄色",
         "green": "绿色",
         "blue": "蓝色",
-        "purple": "紫色"
+        "purple": "紫色",
+        "graphite": "石墨灰",
+        "spacegray": "深空灰",
+        "brown": "深棕色"
       }
     },
     "users": {

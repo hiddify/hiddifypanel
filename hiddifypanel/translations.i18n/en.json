@@ -2486,7 +2486,10 @@
         "yellow": "Yellow",
         "green": "Green",
         "blue": "Blue",
-        "purple": "Purple"
+        "purple": "Purple",
+        "graphite": "Graphite",
+        "spacegray": "Space Gray",
+        "brown": "Dark brown"
       }
     },
     "users": {

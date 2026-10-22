@@ -26,6 +26,9 @@ const SWATCH: Record<CaddyAccent, string> = {
   green: 'linear-gradient(135deg, #6ee7b7, #14b8a6)',
   blue: 'linear-gradient(135deg, #7dd3fc, #3b82f6)',
   purple: 'linear-gradient(135deg, #c4b5fd, #7c3aed)',
+  graphite: 'linear-gradient(135deg, #9a9ba6, #3f4049)',
+  spacegray: 'linear-gradient(135deg, #c3c5c9, #6c6f74)',
+  brown: 'linear-gradient(135deg, #c8a07c, #6b412b)',
 }
 
 const panel = ref<InstanceType<typeof Popover> | null>(null)
@@ -300,7 +303,8 @@ function setDark(dark: boolean) {
 }
 .appearance__swatches {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  /* Ten colors: two rows of five, so each tile stays a comfortable size. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.5rem;
 }
 /* Glass tiles: the color a little translucent, a bright edge and a light sweep across the top. */

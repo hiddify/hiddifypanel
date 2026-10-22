@@ -1990,7 +1990,10 @@
         "yellow": "Jaune",
         "green": "Vert",
         "blue": "Bleu",
-        "purple": "Violet"
+        "purple": "Violet",
+        "graphite": "Graphite",
+        "spacegray": "Gris sidéral",
+        "brown": "Brun foncé"
       }
     },
     "users": {

@@ -7,7 +7,7 @@ const ACCENT_KEY = 'admin_v2_caddy_accent'
 /** ``hiddify``: the panel's own look (the default). ``caddy``: the Smart Caddy glass look, light or dark. */
 export type ThemeName = 'hiddify' | 'caddy'
 /** Smart Caddy's colors (the swatches of the topbar's palette). */
-export const CADDY_ACCENTS = ['red', 'pink', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
+export const CADDY_ACCENTS = ['red', 'pink', 'orange', 'yellow', 'green', 'blue', 'purple', 'graphite', 'spacegray', 'brown'] as const
 export type CaddyAccent = (typeof CADDY_ACCENTS)[number]
 
 const layoutConfig = reactive({

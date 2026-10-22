@@ -13,6 +13,10 @@ $caddy-accents: (
     "green": (#ecfdf5 #d1fae5 #a7f3d0 #6ee7b7 #34d399 #10b981 #059669 #047857 #065f46 #064e3b #022c22, #6ee7b7, #14b8a6, rgb(15 110 90 / 50%), #0b1a16),
     "blue": (#eff6ff #dbeafe #bfdbfe #93c5fd #60a5fa #3b82f6 #2563eb #1d4ed8 #1e40af #1e3a8a #172554, #7dd3fc, #3b82f6, rgb(30 80 170 / 55%), #ffffff),
     "purple": (#f5f3ff #ede9fe #ddd6fe #c4b5fd #a78bfa #8b5cf6 #7c3aed #6d28d9 #5b21b6 #4c1d95 #2e1065, #c4b5fd, #7c3aed, rgb(90 40 160 / 55%), #ffffff),
+    // the dark ones: graphite (pencil lead), Apple's space gray, dark (espresso) brown
+    "graphite": (#f6f6f7 #e7e7ea #d1d1d6 #b0b0b8 #8d8d98 #6e6e79 #585862 #484851 #3d3d44 #333339 #1d1d21, #9a9ba6, #3f4049, rgb(70 72 86 / 55%), #ffffff),
+    "spacegray": (#f5f6f7 #e7e8ea #d1d3d6 #b3b6ba #94979c #787b81 #62656a #505257 #44464a #3a3b3f #202124, #c3c5c9, #6c6f74, rgb(110 116 128 / 45%), #ffffff),
+    "brown": (#fbf6f2 #f3e9df #e6d2bd #d5b393 #c08f69 #a8714c #8e5a3b #744731 #5e3a29 #4c3022 #2a1911, #c8a07c, #6b412b, rgb(115 65 35 / 55%), #ffffff),
 );
 $caddy-steps: 50 100 200 300 400 500 600 700 800 900 950;
 

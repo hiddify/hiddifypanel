@@ -1993,7 +1993,10 @@
         "yellow": "အဝါ",
         "green": "အစိမ်း",
         "blue": "အပြာ",
-        "purple": "ခရမ်း"
+        "purple": "ခရမ်း",
+        "graphite": "ခဲတံရောင်",
+        "spacegray": "Space Gray မီးခိုး",
+        "brown": "အညိုရင့်"
       }
     },
     "users": {
