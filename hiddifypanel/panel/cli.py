@@ -118,9 +118,8 @@ def backup_caption() -> str:
         except ValueError:
             return "CDN" if d.mode == DomainType.cdn else "Relay" if d.mode == DomainType.relay else "Domain"
 
-    def link(title: str, url: str, host: str) -> str:
-        # the host after the title: with several domains, each line says which one it opens
-        return f'<a href="{html.escape(url)}">{title}</a> · <code>{html.escape(host)}</code>'
+    def link(title: str, url: str) -> str:
+        return f'<a href="{html.escape(url)}">{title}</a>'
 
     # Which panel and when: the branding title (tags stripped) or the product name, the version, the backup time.
     name = re.sub(r"<[^>]+>", "", hconfig(ConfigEnum.branding_title) or "").strip() or "HiddifyManager"
@@ -130,11 +129,11 @@ def backup_caption() -> str:
         if k == "IPv6":  # an IPv6 admin link does not open from most networks: not sent
             continue
         # 🔒 the server's own address or domain, 🔐 through a CDN
-        blocks.append(("🔐 " if k == "CDN" else "🔒 ") + link(f"Secure {k}", hiddify.get_account_panel_link(owner, d.domain), d.domain.strip("[]")))
+        blocks.append(("🔐 " if k == "CDN" else "🔒 ") + link(f"Secure {k}", hiddify.get_account_panel_link(owner, d.domain)))
     # The not-secure link last: the secure ones are the ones to open (and the first to keep under the limit).
     server_ip = hutils.network.get_ip_str(4)
     if server_ip:
-        blocks.append("⚠️ " + link("Not Secure IPv4", hiddify.get_account_panel_link(owner, server_ip, is_https=False), server_ip))
+        blocks.append("⚠️ " + link("Not Secure IPv4", hiddify.get_account_panel_link(owner, server_ip, is_https=False)))
     caption = blocks[0]
     for b in blocks[1:]:
         if len(caption) + len(b) + 2 > 1024:
