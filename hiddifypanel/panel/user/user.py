@@ -254,7 +254,49 @@ class UserView(FlaskView):
 
         c = get_common_data(g.account.uuid, mode="new")
         user_agent = user_agents.parse(request.user_agent.string)
+        from hiddifypanel.panel.user import custom_page
+
+        if custom_page.base_url():
+            html = custom_page.page(self._user_page_contract(c), self._page_base() + "user-page/")
+            if html is not None:
+                return Response(html, mimetype="text/html")
+            logger.warning("custom user page: {} did not load; the built-in page is shown", custom_page.base_url())
         return self._render_user_front(c, user_agent)
+
+    def _page_base(self) -> str:
+        proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_client) or hconfig(ConfigEnum.proxy_path)
+        return f"/{proxy_path}/{g.account.uuid}/"
+
+    def _user_page_contract(self, common: dict) -> dict:
+        """What a custom user page gets in ``window.__HIDDIFY__`` (see hiddify-user-front's README)."""
+        from hiddifypanel import __version__
+
+        proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_client) or hconfig(ConfigEnum.proxy_path)
+        user = common["user"]
+        lang = getattr(user.lang, "value", user.lang) or getattr(hconfig(ConfigEnum.lang), "value", hconfig(ConfigEnum.lang)) or "en"
+        return {
+            "version": __version__,
+            "proxy_path": proxy_path,
+            "uuid": str(g.account.uuid),
+            "page_base": self._page_base(),
+            "api_base": self._page_base() + "api/v2/user/",
+            "static_base": f"/{proxy_path}/static/",
+            "profile_url": common["profile_url"],
+            "deep_link": f"hiddify://import/{common['profile_url']}",
+            "lang": str(lang),
+            "brand_title": hconfig(ConfigEnum.branding_title) or "",
+        }
+
+    @route("/user-page/<path:asset>")
+    @login_required(roles={Role.user})
+    def custom_user_page_asset(self, asset):
+        """A file of the custom user page (scripts, styles, fonts…), from the panel's own domain."""
+        from hiddifypanel.panel.user import custom_page
+
+        got = custom_page.fetch(asset)
+        if got is None:
+            abort(404)
+        return Response(got[0], content_type=got[1], headers={"Cache-Control": "public, max-age=3600"})
 
     def _render_user_front(self, common: dict, ua):
         """Serve the user SPA shell (admin_v2-style: Vite manifest + Jinja)."""

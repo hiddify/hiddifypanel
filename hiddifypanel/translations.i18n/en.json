@@ -4228,6 +4228,10 @@
     "xtls_enable": {
       "description": "Enables XTLS Protocol",
       "label": "🟢 XTLS"
+    },
+    "user_page_url": {
+      "description": "The address of a static site to show as the user page, e.g. your build of hiddify-user-front on GitHub Pages (https://<you>.github.io/hiddify-user-front/). The panel downloads it and serves it from its own domain (so it works even where that site is filtered). Leave empty for the built-in page.",
+      "label": "🎨 Custom user page"
     }
   },
   "copy": "Copy",

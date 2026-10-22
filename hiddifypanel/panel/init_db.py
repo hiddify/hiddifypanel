@@ -25,6 +25,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v184(child_id):
+    """A custom user page: the URL of a static site the panel serves as the user page (empty: the built-in one)."""
+    if child_id != 0:
+        return
+    add_config_if_not_exist(ConfigEnum.user_page_url, "", child_id)
+    
 def _v183(child_id):
     """Telegram MTProxy, ShadowTLS and SS FakeTLS are SNI proxies on the domains assigned to them: no separate fake
     domains. Each row that mirrored an old *_fakedomain setting (any node) becomes an ordinary domain, fake TLS, assigned

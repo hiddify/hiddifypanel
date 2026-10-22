@@ -3336,6 +3336,10 @@
     "xtls_enable": {
       "description": "Ativa o protocolo XTLS",
       "label": "🟢XTLS"
+    },
+    "user_page_url": {
+      "description": "Endereço de um site estático para usar como página do usuário, por exemplo sua build do hiddify-user-front no GitHub Pages (https://<you>.github.io/hiddify-user-front/). O painel o baixa e serve pelo próprio domínio (funciona mesmo se o site estiver bloqueado). Deixe vazio para a página padrão.",
+      "label": "🎨 Página de usuário personalizada"
     }
   },
   "copy": "cópia de",

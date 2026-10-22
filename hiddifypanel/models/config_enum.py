@@ -330,6 +330,8 @@ class ConfigEnum(metaclass=FastEnum):
     branding_title = _StrConfigDscr(ConfigCategory.branding)
     branding_site = _StrConfigDscr(ConfigCategory.branding)
     branding_freetext = _StrConfigDscr(ConfigCategory.branding)
+    # the user page: a static site (e.g. a hiddify-user-front build on GitHub Pages) the panel serves; empty: built-in
+    user_page_url = _StrConfigDscr(ConfigCategory.branding)
     not_found = _StrConfigDscr(ConfigCategory.hidden)
     path_vmess = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_vless = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
