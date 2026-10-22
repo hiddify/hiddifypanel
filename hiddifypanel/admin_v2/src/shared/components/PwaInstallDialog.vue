@@ -6,7 +6,7 @@
     :dismissable-mask="true"
     :position="narrow ? 'bottom' : 'center'"
     :draggable="false"
-    :style="{ width: 'min(25rem, 100vw)' }"
+    :style="{ width: 'min(27rem, 100vw)' }"
     :pt="{ root: { class: ['pwa-dialog', { 'pwa-dialog--sheet': narrow }] }, content: { class: 'pwa-dialog__content' } }"
   >
     <div class="pwa">
@@ -22,33 +22,19 @@
         <p class="pwa__text">{{ t('pwa.text') }}</p>
       </div>
 
-      <ul class="pwa__perks">
-        <li><span class="pwa__perk-icon"><i class="pi pi-bolt" /></span>{{ t('pwa.perkFast') }}</li>
-        <li><span class="pwa__perk-icon"><i class="pi pi-window-maximize" /></span>{{ t('pwa.perkWindow') }}</li>
-        <li><span class="pwa__perk-icon"><i class="pi pi-sync" /></span>{{ t('pwa.perkFresh') }}</li>
-      </ul>
-
-      <!-- No install dialog from the browser: how to add it by hand -->
-      <ol v-if="iosManual || !canPrompt" class="pwa__steps">
-        <template v-if="iosManual">
-          <li><span class="pwa__step-n">1</span>{{ t('pwa.iosShare') }} <i class="pi pi-upload pwa__step-icon" /></li>
-          <li><span class="pwa__step-n">2</span>{{ t('pwa.iosAdd') }} <i class="pi pi-plus-circle pwa__step-icon" /></li>
-        </template>
-        <template v-else>
-          <li><span class="pwa__step-n">1</span>{{ t('pwa.menuOpen') }} <i class="pi pi-ellipsis-v pwa__step-icon" /></li>
-          <li><span class="pwa__step-n">2</span>{{ t('pwa.menuInstall') }} <i class="pi pi-download pwa__step-icon" /></li>
-        </template>
-      </ol>
-
-      <div class="pwa__actions">
-        <Button v-if="canPrompt" icon="pi pi-download" :label="t('pwa.install')" size="large" class="pwa__install" :loading="busy" @click="doInstall" />
-        <Button :label="canPrompt ? t('pwa.later') : t('pwa.gotIt')" severity="secondary" text class="pwa__later" @click="close" />
-      </div>
+      <!-- How to install, animated for this device (Safari on iPhone, Chrome on Android or a computer) -->
+      <PwaInstallGuide />
 
       <label class="pwa__never">
         <Checkbox v-model="never" binary input-id="pwa-never" />
         <span>{{ t('pwa.never') }}</span>
       </label>
+
+      <div class="pwa__actions">
+        <Button :label="t('pwa.gotIt')" icon="pi pi-check" size="large" class="pwa__got" autofocus @click="close" />
+        <!-- The browser can install it right away: one click instead of the steps -->
+        <Button v-if="canPrompt" icon="pi pi-download" :label="t('pwa.installNow')" severity="secondary" outlined class="pwa__install" :loading="busy" @click="doInstall" />
+      </div>
     </div>
   </Dialog>
 </template>
@@ -56,17 +42,23 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import { usePwaInstall } from '@/shared/composables/usePwaInstall'
+import PwaInstallGuide from '@/shared/components/PwaInstallGuide.vue'
 
-/** `manual`: opened from a button (always shows); otherwise it offers itself once per visit, unless the user said never. */
+/**
+ * `manual`: opened from a button (always shows). Otherwise it offers itself on the dashboard (a node: its home), each
+ * time the panel is opened (once per page load), unless the panel already runs as the app or the user said never.
+ */
 const props = defineProps<{ manual?: boolean }>()
 const visible = defineModel<boolean>('visible', { default: false })
 
 const { t } = useI18n()
-const { available, canPrompt, iosManual, dismissed, install, dismissForever } = usePwaInstall()
+const { installed, canPrompt, dismissed, install, dismissForever } = usePwaInstall()
+const route = useRoute()
 const never = ref(false)
 const busy = ref(false)
 const icon = ref('')
@@ -81,32 +73,25 @@ function readIcon() {
   icon.value = document.head.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')?.href || window.__PANEL_LOGO_URL__ || ''
 }
 
-const SESSION_KEY = 'hiddify.pwaInstall.offered'
-function offeredThisVisit(): boolean {
-  try {
-    return sessionStorage.getItem(SESSION_KEY) === '1'
-  } catch {
-    return false
-  }
-}
+/** Offered once per page load (module state): coming back to the dashboard in the same visit does not repeat it. */
+let offeredThisLoad = false
+const HOME_ROUTES = ['dashboard', 'node-home']
 
 function offer() {
-  if (props.manual || visible.value || dismissed.value || offeredThisVisit() || !available.value) return
+  if (props.manual || visible.value || offeredThisLoad || dismissed.value || installed.value) return
+  if (!HOME_ROUTES.includes(String(route.name ?? ''))) return
+  offeredThisLoad = true
   readIcon()
   visible.value = true
-  try {
-    sessionStorage.setItem(SESSION_KEY, '1')
-  } catch {
-    /* ignore */
-  }
 }
 
 onMounted(() => {
   narrowQuery.addEventListener('change', onNarrow)
-  window.setTimeout(offer, 1500) // the browser's install event can come a little after the page
+  window.setTimeout(offer, 1200) // after the page has drawn (the browser's install event can come a little later too)
 })
 onBeforeUnmount(() => narrowQuery.removeEventListener('change', onNarrow))
-watch(available, (ok) => ok && window.setTimeout(offer, 500))
+// Opened on another page first: the guide waits for the dashboard.
+watch(() => route.name, () => window.setTimeout(offer, 600))
 watch(visible, (open) => open && readIcon())
 
 function close() {
@@ -204,71 +189,15 @@ async function doInstall() {
   line-height: 1.6;
 }
 
-.pwa__perks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.pwa__perks li {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-size: 0.9rem;
-}
-.pwa__perk-icon {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
-  color: var(--p-primary-color);
-}
 
-.pwa__steps {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  margin: 0;
-  padding: 0.75rem;
-  list-style: none;
-  border-radius: 12px;
-  background: var(--p-content-hover-background);
-}
-.pwa__steps li {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.88rem;
-}
-.pwa__step-n {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 999px;
-  background: var(--p-primary-color);
-  color: var(--p-primary-contrast-color);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-.pwa__step-icon {
-  margin-inline-start: auto;
-  color: var(--p-text-muted-color);
-}
 
 .pwa__actions {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
-.pwa__install,
-.pwa__later {
+.pwa__got,
+.pwa__install {
   width: 100%;
 }
 .pwa__never {

@@ -1977,6 +1977,31 @@
       "name": "အမည်",
       "skipHint": "အခြေအနေ မပြည့်မီသောအခါ ဤ proxy ၏ render ကို ကျော်ရန် SKIP ကို output လုပ်ပါ သို့မဟုတ် skip() ကို ခေါ်ပါ"
     },
+    "pwa": {
+      "guide": {
+        "platform": "သင့်စက်",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "Safari တွင် အောက်ဘားရှိ ••• ခလုတ်ကို နှိပ်ပါ",
+        "ios2": "Share ကို နှိပ်ပါ",
+        "ios3": "“Add to Home Screen” ကို ရွေးပါ",
+        "ios4": "Add ကို နှိပ်ပါ။ panel သည် home screen ပေါ်တွင် ရောက်ပါပြီ",
+        "android1": "Chrome တွင် အပေါ်ရှိ ⋮ မီနူးကို နှိပ်ပါ",
+        "android2": "“Add to home screen” (သို့ “Install app”) ကို ရွေးပါ",
+        "android3": "Install ကို နှိပ်ပါ။ panel သည် app ကဲ့သို့ ဖွင့်မည်",
+        "computer": "ကွန်ပျူတာ",
+        "desktop1": "Chrome တွင် လိပ်စာဘား အဆုံးရှိ install icon ကို နှိပ်ပါ",
+        "desktop2": "Install ကို နှိပ်ပါ",
+        "desktop3": "panel သည် ၎င်း၏ ကိုယ်ပိုင် window တွင် app ကဲ့သို့ ဖွင့်မည်"
+      },
+      "gotIt": "နားလည်ပါပြီ",
+      "installNow": "ယခု install လုပ်ရန်",
+      "later": "နောက်မှ",
+      "never": "နောက်ထပ် မပြပါနှင့်",
+      "text": "သင့်ဖုန်း သို့ ကွန်ပျူတာရှိ app များကဲ့သို့ panel ကို တစ်ချက်နှိပ်ရုံဖြင့် ဖွင့်နိုင်ပါသည်။",
+      "title": "panel ကို app အဖြစ် install လုပ်ရန်"
+    },
     "theme": {
       "dark": "မှောင်မုဒ်",
       "light": "လင်းမုဒ်",

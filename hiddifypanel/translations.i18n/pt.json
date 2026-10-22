@@ -1974,6 +1974,31 @@
       "name": "Nome",
       "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
     },
+    "pwa": {
+      "guide": {
+        "platform": "Seu dispositivo",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "No Safari, toque no botão ••• na barra de baixo",
+        "ios2": "Toque em Compartilhar",
+        "ios3": "Escolha “Adicionar à Tela de Início”",
+        "ios4": "Toque em Adicionar: o painel fica na tela de início",
+        "android1": "No Chrome, toque no menu ⋮ no topo",
+        "android2": "Escolha “Adicionar à tela inicial” (ou “Instalar app”)",
+        "android3": "Toque em Instalar: o painel abre como um app",
+        "computer": "Computador",
+        "desktop1": "No Chrome, clique no ícone de instalar no fim da barra de endereço",
+        "desktop2": "Clique em Instalar",
+        "desktop3": "O painel abre na própria janela, como um app"
+      },
+      "gotIt": "Entendi",
+      "installNow": "Instalar agora",
+      "later": "Agora não",
+      "never": "Não mostrar novamente",
+      "text": "Deixe o painel a um toque, como qualquer app do seu telefone ou computador.",
+      "title": "Instalar o painel como app"
+    },
     "theme": {
       "caddy": "Tema Smart Caddy",
       "color": "Tema",
