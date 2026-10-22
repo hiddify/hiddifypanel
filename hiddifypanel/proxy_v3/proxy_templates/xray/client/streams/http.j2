@@ -4,10 +4,9 @@
     "type": "http",
     "request": {
       "path": ["/{{ proxy.path }}"],
-      "headers": {
-          "Host": ["{{ proxy.domain.host }}"],
-          {% include 'xray/client/default_headers' %}
-      }
+      {#- the browser-like headers that xray's server can read: see rawhttp_headers -#}
+      {%- set headers %}{"Host": ["{{ proxy.domain.host }}"], {% include 'xray/client/default_headers' %}}{% endset %}
+      "headers": {{ rawhttp_headers(headers, "/" ~ proxy.path)|tojson }}
     }
   }
 },

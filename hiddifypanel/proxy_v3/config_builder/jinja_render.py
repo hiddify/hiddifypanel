@@ -19,6 +19,7 @@ from wcwidth import ljust
 
 from hiddifypanel import hutils
 from hiddifypanel.models.custom_proxy import ProxyTemplate
+from hiddifypanel.proxy_v3.config_builder.rawhttp import safe_headers as rawhttp_headers
 from hiddifypanel.proxy_v3.jinja_context import ConfigEnum, include_path, jsbool, skip_proxy
 from hiddifypanel.proxy_v3.jinja_download import download
 from hiddifypanel.proxy_v3.jinja_nodes_configs import get_nodes_configs, remote_endpoints, remote_proxy_outbounds
@@ -69,7 +70,12 @@ def _jinja_tojson(value: Any) -> str:
 
 
 def _jinja_choose_random(value: Any) -> str:
-    parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
+    """One of ``value``: a list, or a comma-separated string. (A list went through ``str()`` and split on commas:
+    ``["Android", "macOS", "Windows"]|choose_random`` gave texts like ``'Windows']``.)"""
+    if isinstance(value, (list, tuple, set)):
+        parts = [str(part).strip() for part in value if str(part).strip()]
+    else:
+        parts = [part.strip() for part in str(value or "").split(",") if part.strip()]
     if not parts:
         return ""
     return random.choice(parts)
@@ -249,6 +255,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     env.globals["skip"] = skip_proxy
     env.globals["include_path"] = include_path
     env.globals["download"] = download
+    env.globals["rawhttp_headers"] = rawhttp_headers
     env.globals["get_nodes_configs"] = get_nodes_configs
     env.globals["user_additional_configs"] = user_additional_configs
     env.globals["remote_proxy_outbounds"] = remote_proxy_outbounds

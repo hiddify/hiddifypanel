@@ -4,7 +4,7 @@
   "host": ["{{ proxy.domain.host }}"],
   "idle_timeout": "15s",
   "ping_timeout": "15s",
-  "headers":{
-    {% include 'hiddify-core/client/default_headers' %}
-  },
+  {#- rawhttp: the browser-like headers that xray's server can read, sent in any order: see rawhttp_headers -#}
+  {%- set headers %}{"Host": "{{ proxy.domain.host }}", {% include 'hiddify-core/client/default_headers' %}}{% endset %}
+  "headers": {{ rawhttp_headers(headers, "/" ~ proxy.path, method="PUT", xray=False)|tojson }},
 },
