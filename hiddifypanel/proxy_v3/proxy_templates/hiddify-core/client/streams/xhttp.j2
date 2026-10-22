@@ -11,7 +11,7 @@
   "downloadSettings": {
     "path": "/{{ proxy.path }}",
     "host": "{{ domain.download.host }}",
-    "server": "{{ domain.download.server() }}",
+    "server": "{{ domain.download.server(True) }}",
     "server_port": {{ domain.download.port or proxy.download_port }},
 
     "headers": {
