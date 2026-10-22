@@ -2364,6 +2364,7 @@
       "yourAccess": "what you may do"
     },
     "tags": {
+      "pin": "Pin",
       "addTag": "Tag",
       "bulk": "Tag",
       "bulkHint": "Tags of the selected: a tick means all of them have it",
@@ -2500,7 +2501,7 @@
         "title": "Welcome to the new Users experience",
         "intro": "Keep the users you need most at hand:",
         "pinTitle": "Pin users",
-        "pinText": "The pin next to Edit moves a user to the top rows, where it stays.",
+        "pinText": "Click the tag circle next to a user's name and choose Pin, first in the menu: the user moves to the top rows and stays there. Filter by tag › Pin lists the pinned users.",
         "dragTitle": "Move users between rows",
         "dragText": "Drag a row by its handle, e.g. from row 5 to row 2. Pinned users can be reordered among themselves; the others stay below them.",
         "resizeTitle": "Widen the Usage column",

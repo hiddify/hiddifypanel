@@ -31,7 +31,7 @@
         <span>{{ t(`users.filter.${f.key}`) }}</span>
       </button>
       <!-- Right after "All" -->
-      <TagFilter v-if="f.key === 'all'" v-model="pickedTags" :items="allRows" class="users-tagfilter" />
+      <TagFilter v-if="f.key === 'all'" v-model="pickedTags" :items="allRows" :pinned-count="pinnedCount" class="users-tagfilter" />
       </template>
     </section>
 
@@ -146,24 +146,11 @@
         </Column>
         <Column v-if="!readOnly" selection-mode="multiple" header-style="width: 2.5rem" />
         <!-- No ID column: this one sorts by id -->
-        <Column field="id" sortable header-style="width: 7.75rem" body-class="u-actions-cell">
+        <Column field="id" sortable header-style="width: 6rem" body-class="u-actions-cell">
           <template #header><span class="u-idhead" v-tooltip.top="t('users.sortById')">#</span></template>
           <template #body="{ data }">
             <div class="u-actions">
               <Button v-if="!readOnly" icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(data)" />
-              <Button
-                icon="pi pi-thumbtack"
-                text
-                rounded
-                size="small"
-                class="u-pin"
-                :class="{ 'u-pin--on': isPinned(data) }"
-                :severity="isPinned(data) ? undefined : 'secondary'"
-                :aria-pressed="isPinned(data)"
-                :aria-label="isPinned(data) ? t('users.layout.unpin') : t('users.layout.pin')"
-                v-tooltip.top="isPinned(data) ? t('users.layout.unpin') : t('users.layout.pin')"
-                @click="onPin(data)"
-              />
               <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('users.more')" aria-haspopup="true" @click="openMenu($event, data)" />
             </div>
           </template>
@@ -186,7 +173,7 @@
               <div class="u-who__line">
                 <!-- The link first: every row's QR button lines up -->
                 <Button icon="pi pi-qrcode" text rounded size="small" class="u-who__link" :aria-label="t('users.showLink')" v-tooltip.top="t('users.showLink')" @click.stop="openLink(data)" />
-                <TagDots kind="user" :uuid="data.uuid" :ids="data.tags" @changed="(ids: number[]) => setTags(data.uuid, ids)" />
+                <TagDots kind="user" :uuid="data.uuid" :ids="data.tags" :pinned="isPinned(data)" @changed="(ids: number[]) => setTags(data.uuid, ids)" @pin="(on: boolean) => setPinned(data, on)" />
                 <button type="button" class="u-who__name" :title="data.name" @click="openEdit(data)"><MarkText :text="data.name" :query="query" /></button>
               </div>
               <small v-if="data.comment" class="u-who__note" :title="data.comment"><MarkText :text="data.comment" :query="query" /></small>
@@ -283,7 +270,7 @@
               <i class="pi pi-qrcode" />
               <span class="u-card__badge" :aria-label="t(`users.status.${u.status}`)"><i :class="STATUS_ICON[u.status]" /></span>
             </button>
-            <TagDots kind="user" :uuid="u.uuid" :ids="u.tags" @changed="(ids: number[]) => setTags(u.uuid, ids)" />
+            <TagDots kind="user" :uuid="u.uuid" :ids="u.tags" :pinned="isPinned(u)" @changed="(ids: number[]) => setTags(u.uuid, ids)" @pin="(on: boolean) => setPinned(u, on)" />
             <button type="button" class="u-card__title" @click="openEdit(u)">
               <span class="u-card__name">{{ u.name }}</span>
               <!-- Say the state only when it needs attention (the badge on the QR already says "active") -->
@@ -291,9 +278,6 @@
                 <b v-if="u.status !== 'active'" class="u-card__state">{{ t(`users.status.${u.status}`) }}</b>
                 <template v-if="u.comment && u.status !== 'active'"> · </template>{{ u.comment }}
               </span>
-            </button>
-            <button type="button" class="u-card__pin" :class="{ 'u-card__pin--on': isPinned(u) }" :aria-pressed="isPinned(u)" :aria-label="isPinned(u) ? t('users.layout.unpin') : t('users.layout.pin')" @click="onPin(u)">
-              <i class="pi pi-thumbtack" />
             </button>
             <!-- Usage where the edit button was: tapping the name edits -->
             <MeterBar class="u-card__meter u-tap" role="button" tabindex="0" :aria-label="t('users.form.editUsageTitle', { name: u.name })" @click="openQuick(u, 'usage')" @keydown.enter="openQuick(u, 'usage')" :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="xs" />
@@ -416,7 +400,7 @@ import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatCount } from '@/shared/utils/format-metrics'
-import { matchesTags, useTags } from '@/features/tags/useTags'
+import { matchesTags, PIN_TAG, useTags } from '@/features/tags/useTags'
 import { tagsApi } from '@/features/tags/api'
 import TagDots from '@/features/tags/components/TagDots.vue'
 import TagFilter from '@/features/tags/components/TagFilter.vue'
@@ -643,11 +627,19 @@ const canReorder = computed(() => !sortField.value)
 function isPinned(u: { uuid: string }): boolean {
   return pinnedSet.value.has(u.uuid)
 }
+const pinnedCount = computed(() => allRows.value.filter((u) => isPinned(u)).length)
+/** The tag filter: any picked tag, or "Pin" (pinned users), like a tag. */
+function matchesPicked(u: Row): boolean {
+  const picked = pickedTags.value
+  if (!picked.length) return true
+  const tags = picked.filter((id) => id !== PIN_TAG)
+  return (picked.includes(PIN_TAG) && isPinned(u)) || (tags.length > 0 && matchesTags(u.tags, tags))
+}
 
 const rows = computed<Row[]>(() => {
   const q = query.value.trim().toLowerCase()
   const match = MATCH[filter.value]
-  return orderedRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
+  return orderedRows.value.filter((u) => match(u) && matchesPicked(u) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
 })
 /**
  * A column sort keeps the pinned users on top: they are sorted among themselves, then the others the same way
@@ -782,8 +774,9 @@ async function saveLayout(next: UsersLayout) {
   }
 }
 
-function onPin(u: Row) {
-  void saveLayout(togglePin(layout.value, orderedRows.value.map((r) => r.uuid), u.uuid))
+/** From the tag menu's "Pin" entry. */
+function setPinned(u: Row, on: boolean) {
+  if (on !== isPinned(u)) void saveLayout(togglePin(layout.value, orderedRows.value.map((r) => r.uuid), u.uuid))
 }
 
 function onRowReorder(e: DataTableRowReorderEvent) {
@@ -1692,36 +1685,12 @@ onBeforeUnmount(() => {
   cursor: help;
   opacity: 0.3;
 }
-.u-pin.u-pin--on :deep(.pi) {
-  color: var(--p-primary-color);
-  transform: rotate(-30deg);
-}
 /* Pinned users: a light tint, and a line under the last one parts them from the rest */
 .users-table :deep(tr.u-row--pinned > td) {
   background: color-mix(in srgb, var(--p-primary-color) 5%, transparent);
 }
 .users-table :deep(tr.u-row--pinned-last > td) {
   border-bottom: 2px solid color-mix(in srgb, var(--p-primary-color) 35%, transparent);
-}
-.u-card__pin {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--p-text-muted-color);
-  cursor: pointer;
-}
-.u-card__pin--on {
-  color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
-}
-.u-card__pin--on .pi {
-  transform: rotate(-30deg);
 }
 
 /* Cards (phones) */

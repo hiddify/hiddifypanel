@@ -1865,6 +1865,7 @@
       "title": "Paramètres"
     },
     "tags": {
+      "pin": "Épingler",
       "addTag": "Tag",
       "bulk": "Tag",
       "bulkHint": "Tags des éléments sélectionnés : une coche signifie que tous l'ont",
@@ -2001,7 +2002,7 @@
         "title": "Bienvenue dans la nouvelle page Utilisateurs",
         "intro": "Gardez sous la main les utilisateurs dont vous avez le plus besoin :",
         "pinTitle": "Épingler des utilisateurs",
-        "pinText": "L'épingle à côté de Modifier place l'utilisateur en haut, où il reste.",
+        "pinText": "Cliquez sur le cercle d'étiquette à côté du nom et choisissez Épingler, en tête du menu : l'utilisateur passe en haut et y reste. Filtrer par étiquette › Épingler liste les épinglés.",
         "dragTitle": "Déplacer les utilisateurs entre les lignes",
         "dragText": "Faites glisser une ligne par sa poignée, par ex. de la ligne 5 à la 2. Les épinglés se réordonnent entre eux ; les autres restent dessous.",
         "resizeTitle": "Élargir la colonne Consommation",

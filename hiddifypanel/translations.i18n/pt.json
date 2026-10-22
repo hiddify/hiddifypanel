@@ -1865,6 +1865,7 @@
       "title": "Configurações"
     },
     "tags": {
+      "pin": "Fixar",
       "addTag": "Tag",
       "bulk": "Tag",
       "bulkHint": "Tags dos selecionados: uma marca significa que todos a têm",
@@ -2001,7 +2002,7 @@
         "title": "Bem-vindo à nova experiência de Usuários",
         "intro": "Mantenha à mão os usuários de que mais precisa:",
         "pinTitle": "Fixar usuários",
-        "pinText": "O alfinete ao lado de Editar leva o usuário para as primeiras linhas, onde fica.",
+        "pinText": "Clique no círculo de etiqueta ao lado do nome e escolha Fixar, o primeiro do menu: o usuário vai para o topo e fica lá. Filtrar por etiqueta › Fixar lista os fixados.",
         "dragTitle": "Mover usuários entre linhas",
         "dragText": "Arraste uma linha pela alça, por ex. da linha 5 para a 2. Os fixados se reordenam entre si; os outros ficam abaixo.",
         "resizeTitle": "Alargar a coluna Uso",
