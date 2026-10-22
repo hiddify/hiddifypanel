@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import ipaddress
+import os
+import threading
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from loguru import logger
@@ -50,6 +54,30 @@ class IpInfo:
     db_available: bool = False
 
 
+def _db_folder() -> Path:
+    """Where services/panel/install.sh downloads the databases (not the working directory: a panel started from
+    elsewhere, e.g. the debugger, found nothing and saw every IP as unknown)."""
+    candidates = [Path(os.environ.get("HIDDIFY_CONFIG_PATH", "/opt/hiddify-manager")) / "services/panel", Path("/opt/hiddify-manager/services/panel"), Path.cwd()]
+    return next((c for c in candidates if (c / "GeoLite2-ASN.mmdb").is_file()), candidates[0])
+
+
+def normalize_ip(ip: str) -> str:
+    """The client address as a plain IP: the first of a list (X-Forwarded-For), no brackets or port, an IPv4 seen
+    through an IPv6 socket (::ffff:1.2.3.4) as IPv4. "" when it is not an IP."""
+    first = str(ip or "").split(",")[0].strip()
+    if first.startswith("["):
+        first = first[1:].split("]")[0]
+    elif first.count(":") == 1:  # 1.2.3.4:5678
+        first = first.split(":")[0]
+    try:
+        addr = ipaddress.ip_address(first)
+    except ValueError:
+        return ""
+    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped:
+        addr = addr.ipv4_mapped
+    return str(addr)
+
+
 def _ensure_loaded() -> None:
     global _IPASN, _IPCOUNTRY, _LOADED, _AVAILABLE
     if _LOADED:
@@ -58,11 +86,12 @@ def _ensure_loaded() -> None:
     try:
         import maxminddb
 
-        _IPASN = maxminddb.open_database("GeoLite2-ASN.mmdb")
-        _IPCOUNTRY = maxminddb.open_database("GeoLite2-Country.mmdb")
+        folder = _db_folder()
+        _IPASN = maxminddb.open_database(str(folder / "GeoLite2-ASN.mmdb"))
+        _IPCOUNTRY = maxminddb.open_database(str(folder / "GeoLite2-Country.mmdb"))
         _AVAILABLE = True
-    except BaseException:
-        logger.error("Error can not load maxminddb")
+    except BaseException as e:
+        logger.error(f"Error can not load maxminddb: {e}")
         _IPASN = {}
         _IPCOUNTRY = {}
         _AVAILABLE = False
@@ -74,22 +103,24 @@ def is_available() -> bool:
     return _AVAILABLE
 
 
-@cache.cache(modes=STATIC)
 def get_ip_info(ip: str) -> IpInfo:
     """
     Look up country / ASN info for ``ip`` (lazy-loads MaxMind DBs on first call).
 
-    Returns an :class:`IpInfo` with ``unknown`` fields when lookup fails.
+    Returns an :class:`IpInfo` with ``unknown`` fields when lookup fails. Only real lookups are cached: an answer from
+    a moment the databases were missing is not kept.
     """
+    ip = normalize_ip(ip)
     if not ip:
         return IpInfo(ip="", db_available=is_available())
-
-    if isinstance(ip, str) and "," in ip:
-        ip = ip.split(",")[0].strip()
-
     _ensure_loaded()
     if not _AVAILABLE:
         return IpInfo(ip=ip, db_available=False)
+    return _lookup(ip)
+
+
+@cache.cache(modes=STATIC)
+def _lookup(ip: str) -> IpInfo:
 
     country = "unknown"
     asn = "unknown"
@@ -120,3 +151,28 @@ def get_ip_info(ip: str) -> IpInfo:
         short_name=short_name,
         db_available=True,
     )
+
+
+_ASN_ORGS: dict[int, str] | None = None
+_ASN_ORGS_LOCK = threading.Lock()
+
+
+def asn_org(asn: int) -> str | None:
+    """The company of an AS number ("Respina Networks & Beyond PJSC" for 42337), from GeoLite2-ASN.
+
+    The database is keyed by IP range: the first call builds an AS number index from all of it (a few seconds, kept in
+    memory for this process). None when the AS is not in it or the database is missing.
+    """
+    global _ASN_ORGS
+    if _ASN_ORGS is None:
+        with _ASN_ORGS_LOCK:
+            if _ASN_ORGS is None:
+                _ensure_loaded()
+                index: dict[int, str] = {}
+                if _AVAILABLE:
+                    for _network, record in _IPASN:
+                        number = (record or {}).get("autonomous_system_number")
+                        if number and number not in index:
+                            index[number] = str(record.get("autonomous_system_organization") or "")
+                _ASN_ORGS = index
+    return _ASN_ORGS.get(int(asn)) or None

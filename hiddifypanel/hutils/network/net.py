@@ -265,8 +265,9 @@ def get_random_user_agent():
 
 
 def random_fake_sites(count: int, exclude: set[str] = frozenset()) -> list[str]:
-    """Distinct random fake domains (decoy / Telegram FakeTLS ...) from the checked list."""
-    return random.sample([d for d in FAKE_SITES if d not in exclude], count)
+    """Distinct random fake domains (decoy / Telegram FakeTLS ...) from the checked list (fewer when it has fewer)."""
+    pool = [d for d in FAKE_SITES if d not in exclude]
+    return random.sample(pool, min(max(count, 0), len(pool)))
 
 
 _FALLBACK_DOMAINS = [
@@ -305,10 +306,12 @@ def get_random_domains(count: int = 1, retry: int = 2) -> list[str]:
     count = max(1, int(count))
     try:
         region = "CN" if retry < 2 else "IR"
-        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc={region}&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit=100&offset={(2 - retry % 2) * 100}"
-        data_ir = requests.get(irurl, timeout=5).json()
+        # measurements repeat domains: ask for a few times more than wanted (OONI answers at most 1000 per call)
+        limit = min(max(100, count * 5), 1000)
+        irurl = f"https://api.ooni.io/api/v1/measurements?probe_cc={region}&test_name=web_connectivity&anomaly=false&confirmed=false&failure=false&limit={limit}&offset={(2 - retry % 2) * 100}"
+        data_ir = requests.get(irurl, timeout=5 if count <= 100 else 30).json()
         domains = [urlparse(d["input"]).netloc.lower() for d in data_ir.get("results", {}) if d.get("scores", {}).get("blocking_country") == 0.0]
-        domains = [d for d in domains if d and not d.endswith(".ir") and ".gov" not in d]
+        domains = list(dict.fromkeys(d for d in domains if d and not d.endswith(".ir") and ".gov" not in d))
         if len(domains) >= count:
             return random.sample(domains, count)
         if domains:

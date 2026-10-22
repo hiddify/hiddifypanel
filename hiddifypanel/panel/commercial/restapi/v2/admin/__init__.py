@@ -199,16 +199,19 @@ def init_app(app):
         from .config_health_api import ConfigHealthApi
 
         bp.add_url_rule("/config-health/", view_func=ConfigHealthApi)
-        from .clean_ip_api import CleanIpNetworkApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi, RealitySniApi, RealitySniSwitchApi
+        from .clean_ip_api import AsnNamesApi, CleanIpNetworkApi, CleanIpProbeApi, SniCandidatesApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi, RealitySniApi, RealitySniSwitchApi
 
         bp.add_url_rule("/clean-ip/reality/", view_func=RealitySniApi)
+        bp.add_url_rule("/clean-ip/sni-candidates/", view_func=SniCandidatesApi)
         bp.add_url_rule("/clean-ip/reality/<int:domain_id>/switch/", view_func=RealitySniSwitchApi)
 
         bp.add_url_rule("/clean-ip/network/", view_func=CleanIpNetworkApi)
+        bp.add_url_rule("/clean-ip/asn-names/", view_func=AsnNamesApi)
         bp.add_url_rule("/clean-ip/token/", view_func=CleanIpTokenApi)
         bp.add_url_rule("/clean-ip/token/<token>/", view_func=CleanIpTokenStatusApi)
         bp.add_url_rule("/clean-ip/run/<token>/script.py", view_func=CleanIpScriptApi)
         bp.add_url_rule("/clean-ip/run/<token>/report/", view_func=CleanIpReportApi)
+        bp.add_url_rule("/clean-ip/run/<token>/probe/", view_func=CleanIpProbeApi)
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
         bp.add_url_rule("/domains-page/options/", view_func=DomainsPageOptionsApi)

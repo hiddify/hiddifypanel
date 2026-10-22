@@ -48,7 +48,7 @@ export function useAdminMenu() {
     icon: 'pi pi-fw pi-wrench',
     items: [
       ...(isSuperAdmin.value ? [{ label: t('menu.configTester'), icon: 'pi pi-fw pi-bolt', to: '/config-tester' }] : []),
-      { label: t('menu.cleanIp'), icon: 'pi pi-fw pi-wifi', to: '/clean-ip' },
+      { label: t('menu.cleanIp'), icon: 'pi pi-fw pi-wifi', to: '/scanner' },
       { label: t('menu.textDecoders'), icon: 'pi pi-fw pi-code', to: '/utils' },
       ...(isSuperAdmin.value ? [{ label: t('menu.ssh'), icon: 'pi pi-fw pi-desktop', to: '/ssh' }] : []),
     ],

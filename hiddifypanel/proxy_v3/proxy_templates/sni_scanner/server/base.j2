@@ -1,0 +1,83 @@
+{#
+  Scanner page > REALITY SNI > test the SNIs: the Python script the command downloads (standard library only).
+  The panel fills in, per command:
+    report_url  where the result is sent (recorded for the reporting device's operator)
+    snis        every name to test: the REALITY SNIs in use and spare, then the candidates
+    watched     the REALITY SNIs in use and spare (their status is recorded)
+    server_ip   this server's IPv4 (the names are tested against it, as REALITY clients connect)
+    control     the server's own name (if even it fails, the address is blocked, not the SNIs)
+-#}
+#!/usr/bin/env python3
+# Hiddify REALITY SNI scanner: run it with the VPN OFF, on the internet (ISP) to check.
+import json, socket, ssl, sys, time, urllib.request
+from concurrent.futures import ThreadPoolExecutor
+
+REPORT = {{ report_url | tojson }}
+# The names to test: a TLS connection to this panel's server with each, as a REALITY client opens it. WATCHED are the
+# REALITY SNIs in use and spare (recorded per ISP); the others are candidates (the working ones can become spares).
+SNIS = {{ snis | tojson }}
+WATCHED = set({{ watched | tojson }})
+WORKERS = 32
+SERVER_IP = {{ server_ip | tojson }}
+CONTROL = {{ control | tojson }}
+
+
+def sni_ok(sni):
+    """Whether a TLS handshake with this name gets through to the panel's server (SNI filtering cuts it)."""
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    for _ in range(2):
+        try:
+            with socket.create_connection((SERVER_IP, 443), timeout=6) as raw:
+                with ctx.wrap_socket(raw, server_hostname=sni):
+                    return True
+        except Exception:
+            time.sleep(0.5)
+    return False
+
+def send(payload, fallback):
+    body = json.dumps(payload).encode()
+    req = urllib.request.Request(REPORT, data=body, method="POST", headers={"Content-Type": "application/json", "User-Agent": "hiddify-scanner"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            out = json.loads(r.read() or b"{}")
+        print("\nSent to the panel. ISP: %s." % (out.get("short_name") or "?"))
+        print(out.get("message") or "")
+    except Exception as e:
+        print("\nCould not send the result to the panel (%s)." % e)
+        print(fallback)
+
+
+def main():
+    if not SNIS or not SERVER_IP:
+        print("No REALITY SNI to test (or the server's IPv4 is unknown).")
+        return
+    print("Hiddify REALITY SNI scanner: %d SNIs against %s" % (len(SNIS), SERVER_IP))
+    print("Keep the VPN OFF: the test is for the internet this device is on.\n")
+    # The server's own name first: if it does not answer, the address is blocked, not the SNIs
+    if not sni_ok(CONTROL):
+        print("The server itself did not answer (with %s): its address is blocked or down, so the SNIs say nothing." % CONTROL)
+        send({"sni_control": False, "snis": []}, "Run it again later.")
+        return
+    out = []
+    with ThreadPoolExecutor(WORKERS) as pool:
+        for sni, ok in zip(SNIS, pool.map(sni_ok, SNIS)):
+            out.append({"sni": sni, "ok": ok})
+            sys.stdout.write("\r  tested %d/%d, working %d " % (len(out), len(SNIS), sum(1 for r in out if r["ok"])))
+            sys.stdout.flush()
+    print("\n")
+    watched = [r for r in out if r["sni"] in WATCHED]
+    if watched:
+        print("REALITY SNIs:")
+        for r in watched:
+            print("  %-40s %s" % (r["sni"], "ok" if r["ok"] else "FILTERED"))
+    candidates = [r for r in out if r["sni"] not in WATCHED]
+    if candidates:
+        good = [r["sni"] for r in candidates if r["ok"]]
+        print("\nCandidates: %d of %d work%s" % (len(good), len(candidates), (": " + ", ".join(good[:20]) + (" ..." if len(good) > 20 else "")) if good else ""))
+    send({"sni_control": True, "snis": out}, "Run it again later.")
+
+
+if __name__ == "__main__":
+    main()

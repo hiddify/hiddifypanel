@@ -1,5 +1,5 @@
 import { getHttp } from '@/core/api/client'
-import { OTHER } from '@/shared/utils/operator-ips'
+import { replaceOperatorIps, type OperatorKey } from '@/shared/utils/operator-ips'
 
 /** The network (ISP) this page is opened from, as the panel sees it. */
 export interface CleanIpNetwork {
@@ -14,26 +14,46 @@ export interface CleanIpNetwork {
   db_available: boolean
 }
 
-/** A one-day command for the full test (with upload), run on a computer / phone on the ISP to test. */
+/** What a command tests on the device it runs on: Cloudflare IPs with an upload, or the REALITY SNIs. */
+export type ScanKind = 'ip' | 'sni'
+
+/** A one-day command for a test run on a computer / phone on the ISP to test. */
 export interface CleanIpCommand {
   token: string
   expires_in: number
   script_url: string
+  /** The script's base config (Base configs page), to view or edit what the command runs. */
+  template_id: number | null
   commands: { unix: string; windows: string }
 }
 
-/** What a run of that command sent back (saved for `short_name` when Hiddify knows the ISP). */
-export interface CleanIpReport {
+/** What a run of a command sent back: the device's ISP, then the IP test's or the SNI test's results. */
+interface ReportBase {
   at: number
   short_name: string
   asn: string
   org: string
   country: string
+}
+/** IP test: the working IPs (saved for `short_name` when Hiddify knows the ISP). */
+export interface IpReport extends ReportBase {
   tested: number
   size: number
-  ips: { ip: string; ms: number; colo: string }[]
+  /** Reliable first, then fast. `loss`: % of the retries that failed (missing in reports of older scripts). */
+  ips: { ip: string; ms: number; loss?: number; colo: string }[]
   saved: string[]
 }
+/**
+ * SNI test: the REALITY SNIs' results (recorded for the ISP), and of the candidates, the ones that work. `control`
+ * false when the server itself did not answer (nothing is said then).
+ */
+export interface SniReport extends ReportBase {
+  control: boolean
+  snis: { sni: string; ok: boolean }[]
+  candidates_tested?: number
+  candidates_ok?: string[]
+}
+export type CleanIpReport = IpReport | SniReport
 
 /** A REALITY SNI's status per ISP (from full tests run in Iran). */
 export type SniStatus = Record<string, { ok: boolean; at: number }>
@@ -62,12 +82,19 @@ export const cleanIpApi = {
     const { data } = await getHttp().get<CleanIpNetwork>('clean-ip/network/')
     return data
   },
-  async command(payload: { domain_id: number; size: number; per_range: number; per_isp: number }): Promise<CleanIpCommand> {
+  /** SNI names to test (sites OONI saw reachable in Iran). */
+  async sniCandidates(): Promise<string[]> {
+    const { data } = await getHttp().get<{ snis: string[] }>('clean-ip/sni-candidates/', { timeout: 60_000 })
+    return data.snis
+  },
+  async command(
+    payload: { kind: 'ip'; domain_id: number; size: number; per_range: number; per_isp: number; ranges: string[] } | { kind: 'sni'; snis: string[] },
+  ): Promise<CleanIpCommand> {
     const { data } = await getHttp().post<CleanIpCommand>('clean-ip/token/', payload)
     return data
   },
-  async reports(token: string): Promise<CleanIpReport[]> {
-    const { data } = await getHttp().get<{ reports: CleanIpReport[] }>(`clean-ip/token/${token}/`)
+  async reports<R extends CleanIpReport>(token: string): Promise<R[]> {
+    const { data } = await getHttp().get<{ reports: R[] }>(`clean-ip/token/${token}/`)
     return data.reports
   },
 }
@@ -90,6 +117,19 @@ export const CLOUDFLARE_RANGES = [
   '172.64.0.0/13',
   '131.0.72.0/22',
 ]
+
+/** The IPv4 CIDRs of a text (one per line, or separated by spaces / commas), and the lines that are not one. */
+export function parseRanges(text: string): { ranges: string[]; invalid: string[] } {
+  const ranges: string[] = []
+  const invalid: string[] = []
+  for (const item of text.split(/[\s,;]+/).filter(Boolean)) {
+    const m = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d{1,2})$/.exec(item)
+    const ok = !!m && m.slice(1, 5).every((part) => Number(part) <= 255) && Number(m[5]) >= 8 && Number(m[5]) <= 30
+    if (ok && !ranges.includes(item)) ranges.push(item)
+    else if (!ok) invalid.push(item)
+  }
+  return { ranges, invalid }
+}
 
 /** `count` random host addresses of a CIDR range (no network / broadcast address). */
 export function randomIps(cidr: string, count: number): string[] {
@@ -130,22 +170,7 @@ export async function probeIp(ip: string, timeoutMs: number): Promise<{ ok: bool
   return { ok: !ctl.signal.aborted && ms < timeoutMs, ms }
 }
 
-/**
- * The CDN IP field with this ISP's pairs replaced by `ips` and the other ISPs' pairs kept. A value without ISP names
- * (a plain IP list) can not be mixed with pairs: it is replaced (`dropped`).
- */
-export function mergeCdnIp(current: string, short: string, ips: string[], known: string[]) {
-  const lines = ips.map((ip) => `${ip} ${short}`)
-  const tokens = (current || '').trim().split(/[\s;,]+/).filter(Boolean)
-  let kept = 0
-  const isPairs = tokens.length % 2 === 0 && tokens.some((x) => known.includes(x) || x === OTHER)
-  for (let i = 0; i < tokens.length; i += isPairs ? 2 : 1) {
-    // A plain list is for every operator without its own address: kept as "OTHER" (as merge_cdn_ip does).
-    const operator = isPairs ? tokens[i + 1] : OTHER
-    if (operator !== short) {
-      lines.push(`${tokens[i]} ${operator}`)
-      kept++
-    }
-  }
-  return { text: lines.join('\n'), kept, dropped: false }
+/** The CDN IP field with these operators' addresses replaced by ``ips`` (the other operators' kept). */
+export function mergeCdnIp(current: string, operators: OperatorKey[], ips: string[]) {
+  return replaceOperatorIps(current || '', operators, ips)
 }

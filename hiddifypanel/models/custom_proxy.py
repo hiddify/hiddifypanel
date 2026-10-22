@@ -190,6 +190,8 @@ class TemplateCore(JinjaEnum):
     wireguard = "wireguard"
     telemt = "telemt"
     firewall = "firewall"
+    ip_scanner = "ip_scanner"
+    sni_scanner = "sni_scanner"
 
     def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)

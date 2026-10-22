@@ -20,7 +20,7 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'rust-rpxy-l4', 'dns_proxy', 'wireguard', 'telemt', 'firewall'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'rust-rpxy-l4', 'dns_proxy', 'wireguard', 'telemt', 'firewall', 'ip_scanner', 'sni_scanner'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
@@ -259,6 +259,20 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'version': '1.0.0',
         'name': 'Server Firewall Base',
         'description': 'iptables rules (bash): the public ports to open, domain port redirects and the default policy',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'ip_scanner',
+        'version': '1.0.0',
+        'name': 'IP Scanner',
+        'description': 'Scanner page, full IP test: the Python script run on a device on an operator (upload through each Cloudflare IP to the panel)',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'sni_scanner',
+        'version': '1.0.0',
+        'name': 'SNI Scanner',
+        'description': 'Scanner page, REALITY SNI test: the Python script run on a device on an operator (a TLS handshake to this server per SNI)',
     },
 ]
 
