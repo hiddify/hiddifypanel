@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { telegramInfo } from '@/core/panelShell'
+import { openTelegram } from '@/shared/utils/telegram'
 
 const KEY = 'hiddify.admin.telegramPrompt'
 const { t } = useI18n()
@@ -37,7 +38,8 @@ function close() {
 function connect() {
   remember()
   visible.value = false
-  if (telegramInfo.value) window.location.href = telegramInfo.value.connect_url
+  // The app first (tg://), the t.me page when no app takes it: tg:// alone did nothing without the app
+  if (telegramInfo.value) openTelegram(telegramInfo.value.web_url)
 }
 
 onMounted(() => {

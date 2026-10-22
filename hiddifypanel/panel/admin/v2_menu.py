@@ -88,8 +88,11 @@ def _settings_items(*, node: bool) -> list[dict]:
         items.append(
             _item(
                 _("Telegram Bot"),
-                f"tg://resolve?domain={g.bot.username}&start=admin_{g.account.uuid}",
+                # t.me: Admin V2 opens the app first (tg://) and this page when no app takes it (tg:// alone did
+                # nothing without the app); a plain browser follows it as is
+                f"https://t.me/{g.bot.username}?start=admin_{g.account.uuid}",
                 "pi pi-fw pi-telegram",
+                target="_blank",
             ),
         )
     if g.account.mode == "super_admin":
