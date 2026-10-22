@@ -17,7 +17,6 @@ flask_bp = APIBlueprint("flask", __name__, template_folder="templates", enable_o
 admin_bp = APIBlueprint("admin", __name__, template_folder="templates", enable_openapi=False)
 
 
-
 class LegacyIndexView(AdminIndexView):
     # The legacy Dashboard is only registered in debug mode; otherwise send /admin/ to admin_v2.
     @expose("/")

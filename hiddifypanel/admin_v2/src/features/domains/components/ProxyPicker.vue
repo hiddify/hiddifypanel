@@ -31,7 +31,6 @@ const groups = computed(() =>
 const mode = computed<'auto' | 'pick'>(() => (model.value.length || choosing.value ? 'pick' : 'auto'))
 const picked = computed(() => model.value.map((id) => byId.value.get(id)).filter(Boolean) as DomainProxy[])
 const hasSni = computed(() => picked.value.some((p) => p.kind === 'sni'))
-const hasL7 = computed(() => picked.value.some((p) => p.kind === 'l7'))
 
 function setMode(m: 'auto' | 'pick') {
   choosing.value = m === 'pick'
@@ -42,9 +41,9 @@ function toggle(p: DomainProxy) {
   const on = model.value.includes(p.id)
   let ids = model.value.filter((id) => id !== p.id)
   if (!on) {
-    // One SNI proxy at most, and never together with L7 ones.
-    if (p.kind === 'sni') ids = ids.filter((id) => byId.value.get(id)?.kind === 'ip')
-    if (p.kind === 'l7') ids = ids.filter((id) => byId.value.get(id)?.kind !== 'sni')
+    // An SNI proxy is alone on its domain (the domain's TLS is its): picking it drops the others, and the others drop it.
+    if (p.kind === 'sni') ids = []
+    else ids = ids.filter((id) => byId.value.get(id)?.kind !== 'sni')
     ids.push(p.id)
   }
   model.value = ids
@@ -55,21 +54,23 @@ function allOn(items: DomainProxy[]): boolean {
   return items.every((p) => model.value.includes(p.id))
 }
 
-/** Tick (or untick) a whole group; ticking L7 ones drops the SNI proxy. */
+/** Tick (or untick) a whole group; ticking IP-based or L7 ones drops the SNI proxy. */
 function toggleAll(items: DomainProxy[]) {
   const ids = items.map((p) => p.id)
   if (allOn(items)) {
     model.value = model.value.filter((id) => !ids.includes(id))
   } else {
     let keep = model.value.filter((id) => !ids.includes(id))
-    if (items.some((p) => p.kind === 'l7')) keep = keep.filter((id) => byId.value.get(id)?.kind !== 'sni')
+    keep = keep.filter((id) => byId.value.get(id)?.kind !== 'sni')
     model.value = [...keep, ...ids]
   }
   choosing.value = true
 }
 
+/** Not combinable with what is picked: anything with an SNI proxy, and an SNI proxy with anything. */
 function blocked(p: DomainProxy): boolean {
-  return !model.value.includes(p.id) && ((p.kind === 'l7' && hasSni.value) || (p.kind === 'sni' && hasL7.value))
+  if (model.value.includes(p.id)) return false
+  return p.kind === 'sni' ? model.value.length > 0 : hasSni.value
 }
 </script>
 

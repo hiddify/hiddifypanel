@@ -110,13 +110,15 @@ def _failed(domain: Domain, res: DomainResult, error: str, *, rate_limited: bool
     return res
 
 
-def _issue(domain: Domain, res: DomainResult) -> DomainResult:
+def _issue(domain: Domain, res: DomainResult, deadline: float | None = None) -> DomainResult:
     host = res.domain
     started = time.time()
     state.set_job(domain.id, CertJob(JobState.running, started=started))
     try:
-        issued = acme_issue.issue(host)
+        issued = acme_issue.issue(host, deadline)
     except acme_issue.IssueError as e:
+        if e.timed_out:  # not the CA's fault: no back-off, the next renewal tries again
+            return _failed(domain, res, str(e))
         fail = state.add_failure(host, str(e), (e.retry_after or RATE_LIMIT_WAIT) if e.rate_limited else None)
         if e.rate_limited:
             return _failed(domain, res, f"rate limited (until {_utc(fail.rate_limited_until):%Y-%m-%d %H:%M} UTC): {e}", rate_limited=True)
@@ -129,7 +131,7 @@ def _issue(domain: Domain, res: DomainResult) -> DomainResult:
     return res
 
 
-def process(domain_id: int) -> DomainResult:
+def process(domain_id: int, deadline: float | None = None) -> DomainResult:
     """Get a certificate for one domain now (in the caller's app context). Never raises."""
     res = DomainResult(domain_id)
     with state.domain_lock(domain_id) as got:
@@ -146,7 +148,7 @@ def process(domain_id: int) -> DomainResult:
                 store.ensure_self_signed(domain, install=True)
                 res.error = "this domain does not get a real certificate"
                 return res
-            return _issue(domain, res)
+            return _issue(domain, res, deadline)
         except Exception as e:
             logger.exception(f"ACME {res.domain}: unexpected error: {e}")
             db.session.rollback()
@@ -157,10 +159,10 @@ def process(domain_id: int) -> DomainResult:
                 return res
 
 
-def _in_context(app: Flask, domain_id: int) -> DomainResult:
+def _in_context(app: Flask, domain_id: int, deadline: float | None = None) -> DomainResult:
     with app.app_context():
         try:
-            return process(domain_id)
+            return process(domain_id, deadline)
         finally:
             db.session.remove()
 
@@ -214,16 +216,19 @@ def has_real_certificate() -> bool:
     return any(renewal_due(d) is None for d in store.domains_of_this_server() if can_issue(d))
 
 
-def run(*, force: bool = False, wait_lock: bool = False, apply: bool = True, only_without_valid: bool = False) -> RenewSummary:
+def run(*, force: bool = False, wait_lock: bool = False, apply: bool = True, only_without_valid: bool = False, timeout: float | None = None) -> RenewSummary:
     """Renew what is due (in the caller's app context).
 
     ``force``: also the domains waiting after a failure or a rate limit. ``wait_lock``: wait for another process's run
     instead of skipping. ``only_without_valid``: nothing when a domain has a real certificate already (legacy
     ``--first``; the installer issues every due domain instead). ``apply``: rebuild the cores' configs when a
-    certificate changed.
+    certificate changed. ``timeout``: seconds for the whole run (about: a request in flight still ends); the domains
+    not done by then are reported as timed out and the next renewal tries them again.
     """
     summary = RenewSummary()
-    with state.renewal_lock(1800 if wait_lock else 0) as got:
+    deadline = None if timeout is None else time.monotonic() + timeout
+    lock_wait = 1800 if wait_lock else 0
+    with state.renewal_lock(lock_wait if deadline is None else min(lock_wait, timeout)) as got:
         if not got:
             summary.skipped.append("another renewal is running")
             return summary
@@ -240,7 +245,7 @@ def run(*, force: bool = False, wait_lock: bool = False, apply: bool = True, onl
             return summary
         app = _app()
         with ThreadPoolExecutor(max_workers=min(WORKERS, len(due)), thread_name_prefix="acme") as pool:
-            for res in pool.map(lambda domain_id: _in_context(app, domain_id), due):
+            for res in pool.map(lambda domain_id: _in_context(app, domain_id, deadline), due):
                 summary.add(res)
     logger.info(f"ACME: renewal done: {summary.issued} issued, {summary.failed} failed ({summary.rate_limited} rate limited)")
     if summary.changed and apply:

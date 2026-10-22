@@ -17,7 +17,7 @@
   {% if proxy.proto == 'v2ray' %}
     {% set qp.plugin = 'v2ray-plugin;mode=websocket;path=' ~ proxy.path ~ ';host=' ~ proxy.domain.host ~ ';tls' %}
   {% elif 'faketls' in (proxy.categories or []) or 'faketls' in (proxy.slug or '') %}
-    {% set qp.plugin = 'obfs-local;obfs=tls;obfs-host=' ~ ctx.hconfig.ssfaketls_fakedomain %}
+    {% set qp.plugin = 'obfs-local;obfs=tls;obfs-host=' ~ proxy.domain.sni %}
   {% endif %}
   
   {% include 'sublink/uri/final_link_maker' %}

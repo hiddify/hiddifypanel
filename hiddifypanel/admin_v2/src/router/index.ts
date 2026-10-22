@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type Router } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocation, type Router } from 'vue-router'
 import AppLayout from '@/core/layout/sakai/AppLayout.vue'
 import { isAgent, isChildPanel, isSuperAdmin, needsQuickSetup } from '@/core/panelShell'
 
@@ -154,10 +154,11 @@ const routes = [
         component: () => import('@/features/utils/views/UtilsView.vue'),
       },
       {
-        path: 'clean-ip',
-        name: 'clean-ip',
-        component: () => import('@/features/clean-ip/views/CleanIpView.vue'),
+        path: 'scanner',
+        name: 'scanner',
+        component: () => import('@/features/clean-ip/views/ScannerView.vue'),
       },
+      { path: 'clean-ip', redirect: (to: RouteLocation) => ({ name: 'scanner', query: to.query }) },
       {
         path: 'config-tester',
         name: 'config-tester',

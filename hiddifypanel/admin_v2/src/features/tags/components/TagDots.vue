@@ -7,8 +7,9 @@ import { tagsApi, type TagKind } from '../api'
 import { useTags } from '../useTags'
 import TagPicker from './TagPicker.vue'
 
-const props = defineProps<{ kind: TagKind; uuid: string; ids: number[] }>()
-const emit = defineEmits<{ changed: [ids: number[]] }>()
+/** `pinned` (users page): shown first, before the tags, and a "Pin" entry heads the menu; leave it out elsewhere. */
+const props = defineProps<{ kind: TagKind; uuid: string; ids: number[]; pinned?: boolean }>()
+const emit = defineEmits<{ changed: [ids: number[]]; pin: [on: boolean] }>()
 
 const { t } = useI18n()
 const toast = useToast()
@@ -46,18 +47,19 @@ function created(id: number) {
     <button
       type="button"
       class="dots__btn"
-      :class="{ 'dots__btn--empty': !shown.length }"
-      :aria-label="shown.length ? `${t('tags.editTags')}: ${names}` : t('tags.addTag')"
+      :class="{ 'dots__btn--empty': !shown.length && !pinned }"
+      :aria-label="(pinned ? `${t('tags.pin')} · ` : '') + (shown.length ? `${t('tags.editTags')}: ${names}` : t('tags.addTag'))"
       aria-haspopup="dialog"
-      :title="shown.length ? names : t('tags.addTag')"
+      :title="(pinned ? `${t('tags.pin')}${shown.length ? ' · ' : ''}` : '') + (shown.length ? names : pinned ? '' : t('tags.addTag'))"
       @click.stop="pop?.toggle($event)"
     >
-      <span v-if="!shown.length" class="dots__ring" />
+      <i v-if="pinned" class="pi pi-thumbtack dots__pin" />
+      <span v-if="!shown.length && !pinned" class="dots__ring" />
       <span v-for="(tag, i) in shown" :key="tag!.id" class="dots__dot" :style="{ '--c': color(tag!), zIndex: MAX_SHOWN - i }" />
       <span v-if="mine.length > MAX_SHOWN" class="dots__more">+{{ mine.length - MAX_SHOWN }}</span>
     </button>
     <Popover ref="pop" append-to="body">
-      <TagPicker :selected="ids" @toggle="toggle" @create="created" />
+      <TagPicker :selected="ids" :pinned="pinned" @toggle="toggle" @create="created" @pin="(on: boolean) => emit('pin', on)" />
     </Popover>
   </span>
 </template>
@@ -106,6 +108,14 @@ function created(id: number) {
 }
 .dots__dot + .dots__dot {
   margin-inline-start: -0.38rem;
+}
+.dots__pin {
+  font-size: 0.8rem;
+  color: var(--p-primary-color);
+  transform: rotate(-30deg);
+}
+.dots__pin + .dots__dot {
+  margin-inline-start: 0.3rem;
 }
 .dots__more {
   margin-inline-start: 0.3rem;

@@ -5,7 +5,7 @@
 "password": "{{ ctx.hconfig.shared_secret }}",
 "tls": {
   "enabled": true,
-  "server_name": "{{ ctx.hconfig.shadowtls_fakedomain }}",
+  "server_name": "{{ domain.sni }}",
   {% set fp = ctx.hconfig.utls or "" %}
   {% if fp and fp!="none" %}
   "utls": {

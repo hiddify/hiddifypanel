@@ -20,7 +20,7 @@ class BaseConfigSide(StrEnum):
 
 
 BASE_CONFIG_MATRIX: dict[str, list[str]] = {
-    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'rust-rpxy-l4', 'dns_proxy', 'wireguard', 'telemt', 'firewall'],
+    BaseConfigSide.server.value: ['xray', 'hiddify-core', 'haproxy', 'rust-rpxy-l4', 'dns_proxy', 'wireguard', 'telemt', 'firewall', 'ip_scanner', 'sni_scanner'],
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
@@ -230,7 +230,7 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'core': 'rust-rpxy-l4',
         'version': '1.0.0',
         'name': 'Server rust-rpxy-l4 Base',
-        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway, Telegram, FakeTLS, ShadowTLS)',
+        'description': 'L4 TLS/QUIC SNI gateway multiplexer (domains_sni_gateway: ShadowTLS, SS FakeTLS and Telegram MTProxy included)',
     },
     {
         'side': BaseConfigSide.server,
@@ -251,7 +251,7 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'core': 'telemt',
         'version': '1.0.0',
         'name': 'Server Telemt Base',
-        'description': 'Telegram MTProxy (telemt) config: ad tag, fake TLS domain, and one user secret per panel user',
+        'description': 'Telegram MTProxy (telemt) config: ad tag, the FakeTLS names (domains of the Telegram FakeTLS proxy), and one user secret per panel user',
     },
     {
         'side': BaseConfigSide.server,
@@ -259,6 +259,20 @@ BUILTIN_BASE_CONFIGS: list[dict[str, Any]] = [
         'version': '1.0.0',
         'name': 'Server Firewall Base',
         'description': 'iptables rules (bash): the public ports to open, domain port redirects and the default policy',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'ip_scanner',
+        'version': '1.0.0',
+        'name': 'IP Scanner',
+        'description': 'Scanner page, full IP test: the Python script run on a device on an operator (upload through each Cloudflare IP to the panel)',
+    },
+    {
+        'side': BaseConfigSide.server,
+        'core': 'sni_scanner',
+        'version': '1.0.0',
+        'name': 'SNI Scanner',
+        'description': 'Scanner page, REALITY SNI test: the Python script run on a device on an operator (a TLS handshake to this server per SNI)',
     },
 ]
 

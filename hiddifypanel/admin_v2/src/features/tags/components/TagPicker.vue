@@ -15,8 +15,10 @@ defineProps<{
   partial?: number[]
   title?: string
   hint?: string
+  /** Users page: a "Pin" entry first (pinned users stay on top of the list); null: none. */
+  pinned?: boolean | null
 }>()
-const emit = defineEmits<{ toggle: [id: number, on: boolean]; create: [id: number] }>()
+const emit = defineEmits<{ toggle: [id: number, on: boolean]; create: [id: number]; pin: [on: boolean] }>()
 
 const { t } = useI18n()
 const { tags, label, color, create, update, remove } = useTags()
@@ -84,6 +86,20 @@ async function add() {
     <p class="picker__title">{{ title ?? t('tags.pick') }}</p>
     <p class="picker__hint">{{ hint ?? t('tags.pickHint') }}</p>
 
+    <!-- Pin: not a tag (no edit), always first -->
+    <button
+      v-if="pinned !== undefined && pinned !== null"
+      type="button"
+      class="picker__row picker__pin"
+      :class="{ 'picker__row--on': pinned }"
+      role="checkbox"
+      :aria-checked="pinned ? 'true' : 'false'"
+      @click="emit('pin', !pinned)"
+    >
+      <span class="picker__pin-icon" :class="{ 'picker__pin-icon--on': pinned }"><i class="pi pi-thumbtack" /></span>
+      <span class="picker__name">{{ t('tags.pin') }}</span>
+      <i v-if="pinned" class="pi pi-check picker__pin-check" />
+    </button>
     <ul class="picker__list" role="group" :aria-label="title ?? t('tags.pick')">
       <li v-for="tag in tags" :key="tag.id" class="picker__item">
         <form v-if="editing === tag.id" class="picker__edit" @submit.prevent="saveEdit">
@@ -170,6 +186,31 @@ async function add() {
   margin: 0 0 0.25rem;
   font-size: 0.72rem;
   color: var(--p-text-muted-color);
+}
+.picker__pin {
+  margin-bottom: 0.25rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--p-content-border-color);
+  border-radius: 0.6rem 0.6rem 0 0;
+}
+.picker__pin-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+}
+.picker__pin-icon--on {
+  color: var(--p-primary-color);
+}
+.picker__pin-icon--on .pi {
+  transform: rotate(-30deg);
+}
+.picker__pin-check {
+  font-size: 0.75rem;
+  color: var(--p-primary-color);
 }
 .picker__list {
   display: flex;

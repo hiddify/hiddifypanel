@@ -3,12 +3,14 @@ import html
 import ipaddress
 import json
 import os
+import re
 import uuid
 
 import click
 from dateutil import relativedelta
 from loguru import logger
 
+import hiddifypanel
 from hiddifypanel import hutils
 from hiddifypanel.database import db
 from hiddifypanel.models import *
@@ -119,12 +121,19 @@ def backup_caption() -> str:
     def link(title: str, url: str) -> str:
         return f'<a href="{html.escape(url)}">{title}</a>'
 
-    blocks = ["📀 <b>Backup:</b>"]
+    # Which panel and when: the branding title (tags stripped) or the product name, the version, the backup time.
+    name = re.sub(r"<[^>]+>", "", hconfig(ConfigEnum.branding_title) or "").strip() or "HiddifyManager"
+    blocks = [f"📀 <b>Backup</b> · {html.escape(name)} v{html.escape(hiddifypanel.__version__)}\n🕒 {datetime.datetime.now():%Y-%m-%d %H:%M}"]
+    for d in Domain.get_domains():
+        k = kind(d)
+        if k == "IPv6":  # an IPv6 admin link does not open from most networks: not sent
+            continue
+        # 🔒 the server's own address or domain, 🔐 through a CDN
+        blocks.append(("🔐 " if k == "CDN" else "🔒 ") + link(f"Secure {k}", hiddify.get_account_panel_link(owner, d.domain)))
+    # The not-secure link last: the secure ones are the ones to open (and the first to keep under the limit).
     server_ip = hutils.network.get_ip_str(4)
     if server_ip:
         blocks.append("⚠️ " + link("Not Secure IPv4", hiddify.get_account_panel_link(owner, server_ip, is_https=False)))
-    for d in Domain.get_domains():
-        blocks.append("🔐 " + link(f"Secure {kind(d)}", hiddify.get_account_panel_link(owner, d.domain)))
     caption = blocks[0]
     for b in blocks[1:]:
         if len(caption) + len(b) + 2 > 1024:
@@ -232,9 +241,7 @@ def init_app(app):
                     )
 
         strmap = {
-            "TELEGRAM_FAKE_TLS_DOMAIN": ConfigEnum.telegram_fakedomain,
             "TELEGRAM_SECRET": ConfigEnum.shared_secret,
-            "SS_FAKE_TLS_DOMAIN": ConfigEnum.ssfaketls_fakedomain,
             "FAKE_CDN_DOMAIN": ConfigEnum.domain_fronting_domain,
             "BASE_PROXY_PATH": ConfigEnum.proxy_path,
             "ADMIN_SECRET": ConfigEnum.admin_secret,
@@ -318,11 +325,12 @@ def init_app(app):
         help="Skip entirely if any domain already has a real certificate (legacy; the installer issues all due domains instead)",
     )
     @click.option("--no-apply", is_flag=True, help="Do not rebuild the cores' configs when a certificate changed")
-    def issue_certificates(force: bool, first: bool, no_apply: bool):
+    @click.option("--timeout", default=300, show_default=True, type=int, help="Seconds for the whole run (0: no limit); unfinished domains are retried by the panel later")
+    def issue_certificates(force: bool, first: bool, no_apply: bool, timeout: int):
         """Get (or renew) the domains' certificates from Let's Encrypt / ZeroSSL now. Exit code 3: a certificate changed."""
         from hiddifypanel.acme import renew
 
-        summary = renew.run(force=force, wait_lock=True, apply=not no_apply, only_without_valid=first)
+        summary = renew.run(force=force, wait_lock=True, apply=not no_apply, only_without_valid=first, timeout=timeout or None)
         click.echo(json.dumps(summary.to_dict(), indent=2))
         if summary.changed:
             raise SystemExit(3)

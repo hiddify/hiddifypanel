@@ -1,7 +1,7 @@
 """REALITY SNI watch: which REALITY SNIs are filtered on which ISP, and switching a filtered one to a spare.
 
-The panel's server is abroad and can not see filtering in Iran. The full clean IP test (a command run on a device in
-Iran, ``clean_ip_script``) also opens a TLS connection to this server with each REALITY SNI and each spare SNI, the way
+The panel's server is abroad and can not see filtering in Iran. The SNI test (a command run on a device in Iran, the
+``sni_scanner`` base config) opens a TLS connection to this server with each REALITY SNI and each spare SNI, the way
 a REALITY client does: SNI filtering cuts it, whatever the address. Its report lands here, filed under the ISP it came
 from. A REALITY SNI that is filtered can be switched to a spare that worked on that ISP and that suits REALITY
 (TLS 1.3 + h2): by the admin on the Clean IP page, or by itself when ``reality_sni_auto`` is on.

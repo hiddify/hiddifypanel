@@ -7,7 +7,6 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import MultiSelect from 'primevue/multiselect'
 import Select from 'primevue/select'
-import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { apiErrorMessage } from '@/core/api/client'
 import { useLayout } from '@/core/layout/sakai/composables/layout'
@@ -15,6 +14,7 @@ import KindPicker from '@/features/domains/components/KindPicker.vue'
 import TlsPicker from '@/features/domains/components/TlsPicker.vue'
 import PortField from '@/features/domains/components/PortField.vue'
 import ProxyPicker from '@/features/domains/components/ProxyPicker.vue'
+import OperatorIpEditor from '@/shared/components/OperatorIpEditor.vue'
 import {
   KIND_META,
   KINDS,
@@ -321,11 +321,31 @@ async function save() {
           </label>
         </div>
 
-        <label v-if="!isSublink" class="dd__field">
-          <span class="dd__label">{{ t('domains.field.cdnIp') }}</span>
-          <Textarea v-model="cdnIp" dir="ltr" rows="2" auto-resize spellcheck="false" :invalid="relayNeedsIp" fluid />
-          <small class="dd__hint">{{ t('domains.field.cdnIpHint') }}</small>
-        </label>
+        <!-- the IPs users' links use, and the scanner that finds them: one panel -->
+        <section v-if="!isSublink" class="dd__cdnip" :class="{ 'dd__cdnip--invalid': relayNeedsIp }">
+          <header class="dd__cdnip-head">
+            <span class="dd__cdnip-icon"><i class="pi pi-sitemap" /></span>
+            <div class="dd__cdnip-title">
+              <div class="dd__cdnip-line">
+                <span class="dd__label">{{ t('domains.field.cdnIp') }}</span>
+                <!-- a saved CDN / worker domain: the scanner finds IPs that work on each operator and saves them here -->
+                <RouterLink
+                  v-if="row && (mode === 'cdn' || mode === 'worker')"
+                  v-tooltip.top="`${t('domains.field.cdnIpScanner')}: ${t('domains.field.cdnIpScannerHint')}`"
+                  :to="{ name: 'scanner', query: { domain: row.id } }"
+                  class="dd__scanner"
+                >
+                  <i class="pi pi-wifi" />
+                  <span>{{ t('domains.field.cdnIpScannerGo') }}</span>
+                </RouterLink>
+              </div>
+              <small>{{ t('domains.field.cdnIpHint') }}</small>
+            </div>
+          </header>
+          <div class="dd__cdnip-body">
+            <OperatorIpEditor v-model="cdnIp" :invalid="relayNeedsIp" />
+          </div>
+        </section>
 
         <div v-if="!isSublink" class="dd__toggles">
           <label class="dd__toggle">
@@ -363,6 +383,82 @@ async function save() {
 </template>
 
 <style scoped>
+.dd__cdnip {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: var(--p-content-background);
+}
+.dd__cdnip--invalid {
+  border-color: var(--p-red-400);
+}
+.dd__cdnip-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.6rem;
+}
+.dd__cdnip-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.8rem 0.9rem 0.6rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background)), var(--p-content-background));
+}
+.dd__cdnip-icon {
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 0.6rem;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+}
+.dd__cdnip-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.dd__cdnip-title small {
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--p-text-muted-color);
+}
+.dd__cdnip-body {
+  padding: 0.25rem 0.9rem 0.9rem;
+}
+/* next to the title: a button to the scanner */
+.dd__scanner {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  color: var(--p-primary-contrast-color);
+  background: var(--p-primary-color);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--p-primary-color) 30%, transparent);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.dd__scanner:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--p-primary-color) 38%, transparent);
+}
+.dd__scanner .pi {
+  font-size: 0.8rem;
+}
+
 .dd__head {
   display: flex;
   align-items: center;

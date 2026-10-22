@@ -1865,6 +1865,7 @@
       "title": "Configurações"
     },
     "tags": {
+      "pin": "Fixar",
       "addTag": "Tag",
       "bulk": "Tag",
       "bulkHint": "Tags dos selecionados: uma marca significa que todos a têm",
@@ -1975,9 +1976,47 @@
     },
     "theme": {
       "dark": "Modo escuro",
-      "light": "Modo claro"
+      "light": "Modo claro",
+      "default": "Tema Hiddify (padrão)",
+      "caddy": "Tema Smart Caddy",
+      "color": "Tema",
+      "glassHint": "Cada cor funciona no claro e no escuro: vidro fosco sobre o seu brilho no claro, o vidro escuro Smart Caddy no escuro.",
+      "menu": "Aparência e idioma",
+      "mode": "Claro ou escuro",
+      "retry": "Tentar de novo",
+      "colors": {
+        "red": "Vermelho",
+        "pink": "Rosa",
+        "orange": "Laranja",
+        "yellow": "Amarelo",
+        "green": "Verde",
+        "blue": "Azul",
+        "purple": "Roxo",
+        "graphite": "Grafite",
+        "spacegray": "Cinza-espacial",
+        "brown": "Marrom escuro"
+      }
     },
     "users": {
+      "guide": {
+        "title": "Bem-vindo à nova experiência de Usuários",
+        "intro": "Mantenha à mão os usuários de que mais precisa:",
+        "pinTitle": "Fixar usuários",
+        "pinText": "Clique no círculo de etiqueta ao lado do nome e escolha Fixar, o primeiro do menu: o usuário vai para o topo e fica lá. Filtrar por etiqueta › Fixar lista os fixados.",
+        "dragTitle": "Mover usuários entre linhas",
+        "dragText": "Arraste uma linha pela alça, por ex. da linha 5 para a 2. Os fixados se reordenam entre si; os outros ficam abaixo.",
+        "resizeTitle": "Alargar a coluna Uso",
+        "resizeText": "Arraste a borda entre Nome e Uso: Uso fica mais largo, Nome mais estreito.",
+        "gotIt": "Entendi"
+      },
+      "layout": {
+        "drag": "Arraste para mover este usuário",
+        "dragOff": "Remova a ordenação da coluna para mover usuários",
+        "pin": "Fixar no topo",
+        "unpin": "Desafixar",
+        "crossGroups": "Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre os grupos.",
+        "crossOwners": "Agrupado por admin: um usuário só se move entre os usuários desse admin."
+      },
       "add": "Adicionar usuário",
       "addLimits": {
         "apply": "Adicionar",

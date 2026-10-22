@@ -23,7 +23,7 @@
     "listen": "127.0.0.1",
     "listen_port": 2002,
     "method": "{{ ctx.hconfig.shadowsocks2022_method }}",
-    "password": "{{ ctx.hconfig.shared_secret|b64encode }}",
+    "password": "{{ ctx.hconfig.shared_secret.replace('-','')|b64encode }}",
     "users": [
         {% for user in ctx.users %}
         {

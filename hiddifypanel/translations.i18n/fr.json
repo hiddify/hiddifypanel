@@ -1865,6 +1865,7 @@
       "title": "Paramètres"
     },
     "tags": {
+      "pin": "Épingler",
       "addTag": "Tag",
       "bulk": "Tag",
       "bulkHint": "Tags des éléments sélectionnés : une coche signifie que tous l'ont",
@@ -1975,9 +1976,47 @@
     },
     "theme": {
       "dark": "Mode sombre",
-      "light": "Mode clair"
+      "light": "Mode clair",
+      "default": "Thème Hiddify (par défaut)",
+      "caddy": "Thème Smart Caddy",
+      "color": "Thème",
+      "glassHint": "Chaque couleur marche en clair et en sombre : verre dépoli sur son halo en clair, verre sombre Smart Caddy en sombre.",
+      "menu": "Apparence et langue",
+      "mode": "Clair ou sombre",
+      "retry": "Réessayer",
+      "colors": {
+        "red": "Rouge",
+        "pink": "Rose",
+        "orange": "Orange",
+        "yellow": "Jaune",
+        "green": "Vert",
+        "blue": "Bleu",
+        "purple": "Violet",
+        "graphite": "Graphite",
+        "spacegray": "Gris sidéral",
+        "brown": "Brun foncé"
+      }
     },
     "users": {
+      "guide": {
+        "title": "Bienvenue dans la nouvelle page Utilisateurs",
+        "intro": "Gardez sous la main les utilisateurs dont vous avez le plus besoin :",
+        "pinTitle": "Épingler des utilisateurs",
+        "pinText": "Cliquez sur le cercle d'étiquette à côté du nom et choisissez Épingler, en tête du menu : l'utilisateur passe en haut et y reste. Filtrer par étiquette › Épingler liste les épinglés.",
+        "dragTitle": "Déplacer les utilisateurs entre les lignes",
+        "dragText": "Faites glisser une ligne par sa poignée, par ex. de la ligne 5 à la 2. Les épinglés se réordonnent entre eux ; les autres restent dessous.",
+        "resizeTitle": "Élargir la colonne Consommation",
+        "resizeText": "Faites glisser la bordure entre Nom et Consommation : l'une s'élargit, l'autre se rétrécit.",
+        "gotIt": "Compris"
+      },
+      "layout": {
+        "drag": "Glisser pour déplacer cet utilisateur",
+        "dragOff": "Retirez le tri de colonne pour déplacer les utilisateurs",
+        "pin": "Épingler en haut",
+        "unpin": "Désépingler",
+        "crossGroups": "Les utilisateurs épinglés restent au-dessus des autres : épinglez ou désépinglez pour passer de l'un à l'autre.",
+        "crossOwners": "Groupé par admin : un utilisateur se déplace seulement parmi les utilisateurs de cet admin."
+      },
       "add": "Ajouter un utilisateur",
       "addLimits": {
         "apply": "Ajouter",

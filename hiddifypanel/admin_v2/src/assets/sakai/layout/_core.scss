@@ -33,6 +33,16 @@ html[dir='rtl'] {
         transform: scaleX(-1);
     }
 
+    // An empty LTR field (a link, a domain, an IP) shows its hint in the page's direction and font; what is typed
+    // is LTR again.
+    input[dir='ltr']:placeholder-shown,
+    textarea[dir='ltr']:placeholder-shown,
+    [dir='ltr'] input:placeholder-shown,
+    [dir='ltr'] textarea:placeholder-shown {
+        direction: rtl;
+        font-family: inherit;
+    }
+
     // Code and editors stay LTR.
     .monaco-editor,
     pre,

@@ -81,7 +81,22 @@ export interface UserPayload {
 
 export type BulkAction = 'enable' | 'disable' | 'delete' | 'reset_usage' | 'reset_days' | 'add_days' | 'add_limits'
 
+/** How the Users page lists this admin's users (admins/me/users-layout/): pinned on top, then the order; per admin. */
+export interface UsersLayout {
+  pinned: string[]
+  order: string[]
+  guide_seen: boolean
+}
+
 export const usersApi = {
+  async layout(): Promise<UsersLayout> {
+    const { data } = await getHttp().get<UsersLayout>('admins/me/users-layout/')
+    return data
+  },
+  async saveLayout(layout: UsersLayout): Promise<UsersLayout> {
+    const { data } = await getHttp().put<UsersLayout>('admins/me/users-layout/', layout)
+    return data
+  },
   async list(): Promise<UsersState> {
     const { data } = await getHttp().get<UsersState>('users/')
     return data

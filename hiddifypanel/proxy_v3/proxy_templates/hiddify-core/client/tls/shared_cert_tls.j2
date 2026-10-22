@@ -5,6 +5,9 @@
 "enabled": true,
 {%if not server_name%} "disable_sni": true {%endif%},
 "server_name": "{{ server_name }}",
+{% if ctx.proxy.proto == "tuic" %}
+"alpn": ["h3"],
+{% endif %}
 
 
 

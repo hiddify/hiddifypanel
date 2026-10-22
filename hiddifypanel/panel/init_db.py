@@ -25,11 +25,35 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
-def _v181(child_id):
+def _v184(child_id):
     """A custom user page: the URL of a static site the panel serves as the user page (empty: the built-in one)."""
     if child_id != 0:
         return
     add_config_if_not_exist(ConfigEnum.user_page_url, "", child_id)
+    
+def _v183(child_id):
+    """Telegram MTProxy, ShadowTLS and SS FakeTLS are SNI proxies on the domains assigned to them: no separate fake
+    domains. Each row that mirrored an old *_fakedomain setting (any node) becomes an ordinary domain, fake TLS, assigned
+    to the proxy of its kind, so its links keep working; the settings are emptied."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.custom_proxy import CustomProxy, CustomProxyMode
+
+    category = {FakeMode.telegram: "telegram_faketls", FakeMode.shadowtls: "shadowtls", FakeMode.ssfaketls: "faketls"}
+    for row in Domain.query.filter(Domain.fake_mode.in_(list(category))).all():
+        proxies = [p for p in CustomProxy.query.filter(CustomProxy.child_id == row.child_id).all() if category[row.fake_mode] in (p.categories or [])]
+        for proxy in proxies:
+            if proxy.slug == "telegram-faketls":
+                proxy.mode = CustomProxyMode.domains_sni_gateway  # was client-only (no_inbound)
+            if proxy not in row.custom_proxies:
+                row.custom_proxies.append(proxy)
+        row.fake_mode = FakeMode.fake
+    for key in (ConfigEnum.telegram_fakedomain, ConfigEnum.shadowtls_fakedomain, ConfigEnum.ssfaketls_fakedomain):
+        set_hconfig(key, "", child_id, commit=False)
+
+
+def _v181(child_id):
+    """Superseded by _v182 (the old ShadowTLS / SS FakeTLS fake domains are converted, not removed)."""
 
 
 def _v180(child_id):
@@ -676,7 +700,6 @@ def _v74(child_id):
     set_hconfig(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     # db.session.bulk_save_objects(get_proxy_rows_v1())
 
-    set_hconfig(ConfigEnum.shadowtls_fakedomain, hutils.network.pick_reality_friendly_domain("captive.apple.com"))
 
 
 def _v71(child_id):
@@ -841,11 +864,7 @@ def _v45():
 
 def _v42():
 
-    keys = [
-        ConfigEnum.telegram_fakedomain,
-        ConfigEnum.ssfaketls_fakedomain,
-        ConfigEnum.shadowtls_fakedomain,
-    ]
+    keys: list[ConfigEnum] = []  # no fake-domain settings any more: Telegram / ShadowTLS / SS FakeTLS are SNI proxies
     decoy = hconfig(ConfigEnum.decoy_domain)
     domains = [d for d in dict.fromkeys(hutils.network.get_random_domains(len(keys) + 1)) if d != decoy]
     domains += hutils.network.random_fake_sites(len(keys), exclude={decoy, *domains})  # OONI returned too few
@@ -955,7 +974,6 @@ def _v19():
     set_hconfig(ConfigEnum.path_ws, hutils.random.get_random_string(7, 15))
     add_config_if_not_exist(ConfigEnum.tuic_enable, False)
     add_config_if_not_exist(ConfigEnum.shadowtls_enable, False)
-    add_config_if_not_exist(ConfigEnum.shadowtls_fakedomain, "en.wikipedia.org")
     add_config_if_not_exist(ConfigEnum.utls, "chrome")
     add_config_if_not_exist(ConfigEnum.telegram_bot_token, "")
     add_config_if_not_exist(ConfigEnum.package_mode, "release")

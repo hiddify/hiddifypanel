@@ -1,0 +1,142 @@
+{#
+  Scanner page > IP scanner > full test with upload: the Python script the command downloads (standard library only).
+  The panel fills in, per command:
+    host        the CDN domain (TLS SNI and Host of each probe)
+    probe_path  the panel's probe path, reached through each Cloudflare IP
+    marker      what the probe answers ("<marker> <bytes received>")
+    report_url  where the result is sent (saved for the reporting device's operator)
+    size        upload bytes per probe
+    per_range   random IPs per range
+    ranges      the IPv4 CIDRs to pick from
+-#}
+#!/usr/bin/env python3
+# Hiddify IP scanner (full test with upload): run it with the VPN OFF, on the internet (ISP) you want IPs for.
+import ipaddress, json, os, random, socket, ssl, statistics, sys, threading, time, urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+HOST = {{ host | tojson }}
+PROBE_PATH = {{ probe_path | tojson }}
+MARKER = {{ marker | tojson }}
+REPORT = {{ report_url | tojson }}
+SIZE = {{ size | int }}
+PER_RANGE = {{ per_range | int }}
+PORT = 443
+TIMEOUT = 5
+WORKERS = 30
+# The IPs that pass the first round are tested again: one lucky answer is not a working IP
+RETRIES = 3
+RANGES = {{ ranges | tojson }}
+
+
+def pick(cidr, n):
+    net = ipaddress.ip_network(cidr)
+    size = net.num_addresses - 2
+    return {str(net.network_address + 1 + random.randrange(size)) for _ in range(min(n, size))}
+
+
+def probe(ip):
+    # The upload goes through the IP and Cloudflare to the panel, which answers with how many bytes arrived: only the
+    # whole upload reaching this server counts (an ISP that cuts the connection after a few KB fails here).
+    ctx = ssl.create_default_context()
+    ctx.set_alpn_protocols(["http/1.1"])
+    head = ("POST %s HTTP/1.1\r\nHost: %s\r\nUser-Agent: Mozilla/5.0\r\nContent-Type: application/octet-stream\r\n"
+            "Content-Length: %d\r\nConnection: close\r\n\r\n" % (PROBE_PATH, HOST, SIZE)).encode()
+    t0 = time.perf_counter()
+    try:
+        with socket.create_connection((ip, PORT), timeout=TIMEOUT) as raw:
+            with ctx.wrap_socket(raw, server_hostname=HOST) as s:
+                s.settimeout(TIMEOUT)
+                s.sendall(head + os.urandom(SIZE))
+                answer = b""
+                while len(answer) < 16384:
+                    chunk = s.recv(4096)
+                    if not chunk:
+                        break
+                    answer += chunk
+                    if MARKER.encode() in answer:
+                        break
+    except Exception:
+        return None
+    ms = round((time.perf_counter() - t0) * 1000)
+    if (b"%s %d" % (MARKER.encode(), SIZE)) not in answer:
+        return None
+    colo = ""
+    for line in answer.split(b"\r\n"):
+        if line.lower().startswith(b"cf-ray:"):
+            colo = line.split(b"-")[-1].strip().decode(errors="replace")
+    return {"ip": ip, "ms": ms, "colo": colo}
+
+
+def run_all(jobs, label):
+    results, done, lock = [], 0, threading.Lock()
+    with ThreadPoolExecutor(WORKERS) as pool:
+        futures = {pool.submit(probe, ip): ip for ip in jobs}
+        for fut in as_completed(futures):
+            r = fut.result()
+            with lock:
+                done += 1
+                results.append((futures[fut], r))
+                sys.stdout.write("\r  %s %d/%d, passed %d " % (label, done, len(jobs), sum(1 for _, x in results if x)))
+                sys.stdout.flush()
+    print()
+    return results
+
+def send(payload, fallback):
+    body = json.dumps(payload).encode()
+    req = urllib.request.Request(REPORT, data=body, method="POST", headers={"Content-Type": "application/json", "User-Agent": "hiddify-scanner"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            out = json.loads(r.read() or b"{}")
+        print("\nSent to the panel. ISP: %s." % (out.get("short_name") or "?"))
+        print(out.get("message") or "")
+    except Exception as e:
+        print("\nCould not send the result to the panel (%s)." % e)
+        print(fallback)
+
+
+def main():
+    print("Hiddify IP scanner: %d-byte upload through each Cloudflare IP to %s" % (SIZE, HOST))
+    print("Keep the VPN OFF: the test is for the internet this device is on.\n")
+    # The domain itself first (through its normal DNS): if even that fails, the IPs are not the problem
+    try:
+        direct = probe(socket.gethostbyname(HOST))
+    except Exception:
+        direct = None
+    if direct is None:
+        print("Warning: %s itself does not answer through Cloudflare from here (DNS, the domain's Cloudflare setup, or" % HOST)
+        print("the server). The results below may be all failures for that reason, not because of the IPs.\n")
+
+    ips = sorted({ip for cidr in RANGES for ip in pick(cidr, PER_RANGE)})
+    random.shuffle(ips)
+    print("Round 1: %d random IPs from %d ranges" % (len(ips), len(RANGES)))
+    first = {ip: r for ip, r in run_all(ips, "tested") if r}
+    if not first:
+        print("\nNo IP passed. Is the VPN off? Try a smaller upload, more IPs, or another time.")
+        send({"ips": [], "tested": len(ips), "size": SIZE}, "Run it again later.")
+        return
+
+    print("Round 2: each of the %d passing IPs %d more times" % (len(first), RETRIES))
+    times = {ip: [r["ms"]] for ip, r in first.items()}
+    fails = {ip: 0 for ip in first}
+    for ip, r in run_all([ip for ip in first for _ in range(RETRIES)], "retested"):
+        if r:
+            times[ip].append(r["ms"])
+        else:
+            fails[ip] += 1
+    found = []
+    for ip, r in first.items():
+        loss = round(fails[ip] * 100 / RETRIES)
+        if loss < 100:
+            found.append({"ip": ip, "ms": round(statistics.median(times[ip])), "loss": loss, "colo": r["colo"]})
+    found.sort(key=lambda r: (r["loss"], r["ms"]))
+
+    print("\n  %-16s %8s %6s  %s" % ("IP", "latency", "loss", "location"))
+    for r in found[:15]:
+        print("  %-16s %5d ms %5d%%  %s" % (r["ip"], r["ms"], r["loss"], r["colo"]))
+    stable = sum(1 for r in found if r["loss"] == 0)
+    print("\n%d of %d IPs work, %d of them with no loss." % (len(found), len(ips), stable))
+    send({"ips": found[:200], "tested": len(ips), "size": SIZE}, "Copy the IPs above into the panel's Scanner page by hand, or run this again.")
+
+
+if __name__ == "__main__":
+    main()
