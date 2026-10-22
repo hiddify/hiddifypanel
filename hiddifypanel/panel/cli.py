@@ -124,7 +124,11 @@ def backup_caption() -> str:
     if server_ip:
         blocks.append("⚠️ " + link("Not Secure IPv4", hiddify.get_account_panel_link(owner, server_ip, is_https=False)))
     for d in Domain.get_domains():
-        blocks.append("🔐 " + link(f"Secure {kind(d)}", hiddify.get_account_panel_link(owner, d.domain)))
+        k = kind(d)
+        if k == "IPv6":  # an IPv6 admin link does not open from most networks: not sent
+            continue
+        # 🔒 the server's own address or domain, 🔐 through a CDN
+        blocks.append(("🔐 " if k == "CDN" else "🔒 ") + link(f"Secure {k}", hiddify.get_account_panel_link(owner, d.domain)))
     caption = blocks[0]
     for b in blocks[1:]:
         if len(caption) + len(b) + 2 > 1024:
