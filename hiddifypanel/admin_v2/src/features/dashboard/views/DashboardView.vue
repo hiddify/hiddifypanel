@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TelegramPrompt from '@/shared/components/TelegramPrompt.vue'
 import Message from 'primevue/message'
@@ -33,6 +34,12 @@ const {
   updatedAt,
   refresh,
 } = useDashboard()
+
+/** CPU / RAM beside the usage: the chosen node, else the panel's own server (the first one reported). */
+const health = computed(() => {
+  const list = nodeStats.value.filter((node) => node.ok)
+  return (childId.value === null ? list.find((node) => node.id === 0) ?? list[0] : list.find((node) => node.id === childId.value)) ?? null
+})
 </script>
 
 <template>
@@ -66,6 +73,7 @@ const {
         :range-days="rangeDays"
         :nodes="nodes"
         :stacked="childId === null"
+        :health="health"
       />
       <UsageComparisonCard :usage="usage" :series="series" :nodes="nodes" :stacked="childId === null" />
     </div>
