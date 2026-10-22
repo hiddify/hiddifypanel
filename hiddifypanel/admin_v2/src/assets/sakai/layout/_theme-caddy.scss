@@ -1,35 +1,98 @@
-/* Smart Caddy: dark glass cards over a colored glow, accent buttons. Only with html.theme-caddy (picked in the
-   topbar, in one of the colors below); the panel's own look stays the default. The selectors outrank PrimeVue's
-   :root / .app-dark tokens. */
+/* Smart Caddy: glass cards over a colored glow, accent buttons. Only with html.theme-caddy (picked in the topbar's
+   appearance menu, in one of the colors below), in light or dark; the panel's own look stays the default.
+   The selectors outrank PrimeVue's :root / .app-dark tokens. */
+
+@use "sass:list";
 
 // accent: Tailwind-like palette 50…950, the gradient's two ends, the glow, the text on the accent
 $caddy-accents: (
-    red: (#fff3f1 #ffe3df #ffccc4 #ffa99c #ff7f6e #f8604f #e54434 #c13429 #9f2e26 #842b25 #48120f, #ff8a6e, #f2505f, rgb(140 32 60 / 55%), #ffffff),
-    pink: (#fdf2f8 #fce7f3 #fbcfe8 #f9a8d4 #f472b6 #ec4899 #db2777 #be185d #9d174d #831843 #500724, #f9a8d4, #d946ef, rgb(150 30 110 / 50%), #ffffff),
-    orange: (#fff7ed #ffedd5 #fed7aa #fdba74 #fb923c #f97316 #ea580c #c2410c #9a3412 #7c2d12 #431407, #fdba74, #f97316, rgb(150 70 20 / 50%), #ffffff),
-    yellow: (#fefce8 #fef9c3 #fef08a #fde047 #facc15 #eab308 #ca8a04 #a16207 #854d0e #713f12 #422006, #fde68a, #eab308, rgb(130 100 15 / 50%), #1a1526),
-    green: (#ecfdf5 #d1fae5 #a7f3d0 #6ee7b7 #34d399 #10b981 #059669 #047857 #065f46 #064e3b #022c22, #6ee7b7, #14b8a6, rgb(15 110 90 / 50%), #0b1a16),
-    blue: (#eff6ff #dbeafe #bfdbfe #93c5fd #60a5fa #3b82f6 #2563eb #1d4ed8 #1e40af #1e3a8a #172554, #7dd3fc, #3b82f6, rgb(30 80 170 / 55%), #ffffff),
-    purple: (#f5f3ff #ede9fe #ddd6fe #c4b5fd #a78bfa #8b5cf6 #7c3aed #6d28d9 #5b21b6 #4c1d95 #2e1065, #c4b5fd, #7c3aed, rgb(90 40 160 / 55%), #ffffff),
+    "red": (#fff3f1 #ffe3df #ffccc4 #ffa99c #ff7f6e #f8604f #e54434 #c13429 #9f2e26 #842b25 #48120f, #ff8a6e, #f2505f, rgb(140 32 60 / 55%), #ffffff),
+    "pink": (#fdf2f8 #fce7f3 #fbcfe8 #f9a8d4 #f472b6 #ec4899 #db2777 #be185d #9d174d #831843 #500724, #f9a8d4, #d946ef, rgb(150 30 110 / 50%), #ffffff),
+    "orange": (#fff7ed #ffedd5 #fed7aa #fdba74 #fb923c #f97316 #ea580c #c2410c #9a3412 #7c2d12 #431407, #fdba74, #f97316, rgb(150 70 20 / 50%), #ffffff),
+    "yellow": (#fefce8 #fef9c3 #fef08a #fde047 #facc15 #eab308 #ca8a04 #a16207 #854d0e #713f12 #422006, #fde68a, #eab308, rgb(130 100 15 / 50%), #1a1526),
+    "green": (#ecfdf5 #d1fae5 #a7f3d0 #6ee7b7 #34d399 #10b981 #059669 #047857 #065f46 #064e3b #022c22, #6ee7b7, #14b8a6, rgb(15 110 90 / 50%), #0b1a16),
+    "blue": (#eff6ff #dbeafe #bfdbfe #93c5fd #60a5fa #3b82f6 #2563eb #1d4ed8 #1e40af #1e3a8a #172554, #7dd3fc, #3b82f6, rgb(30 80 170 / 55%), #ffffff),
+    "purple": (#f5f3ff #ede9fe #ddd6fe #c4b5fd #a78bfa #8b5cf6 #7c3aed #6d28d9 #5b21b6 #4c1d95 #2e1065, #c4b5fd, #7c3aed, rgb(90 40 160 / 55%), #ffffff),
 );
 $caddy-steps: 50 100 200 300 400 500 600 700 800 900 950;
 
+/* The color: in both modes (light uses the palette's 500, as PrimeVue does; dark picks lighter steps below). */
 @each $name, $a in $caddy-accents {
-    html.theme-caddy.app-dark[data-caddy-accent='#{$name}'] {
-        $palette: nth($a, 1);
-        @for $i from 1 through length($caddy-steps) {
-            --p-primary-#{nth($caddy-steps, $i)}: #{nth($palette, $i)};
+    html.theme-caddy[data-caddy-accent='#{$name}'] {
+        $palette: list.nth($a, 1);
+        @for $i from 1 through list.length($caddy-steps) {
+            --p-primary-#{list.nth($caddy-steps, $i)}: #{list.nth($palette, $i)};
         }
-        --p-primary-color: #{nth($palette, 5)};
-        --p-primary-hover-color: #{nth($palette, 4)};
-        --p-primary-active-color: #{nth($palette, 3)};
-        --p-primary-contrast-color: #{nth($a, 5)};
-        --caddy-accent: linear-gradient(135deg, #{nth($a, 2)} 0%, #{nth($a, 3)} 100%);
-        --caddy-glow: #{nth($a, 4)};
+        --p-primary-contrast-color: #{list.nth($a, 5)};
+        --caddy-accent: linear-gradient(135deg, #{list.nth($a, 2)} 0%, #{list.nth($a, 3)} 100%);
+        --caddy-glow: #{list.nth($a, 4)};
+    }
+    html.theme-caddy.app-dark[data-caddy-accent='#{$name}'] {
+        $palette: list.nth($a, 1);
+        --p-primary-color: #{list.nth($palette, 5)};
+        --p-primary-hover-color: #{list.nth($palette, 4)};
+        --p-primary-active-color: #{list.nth($palette, 3)};
     }
 }
+
+/* Glass: the same in both modes, from the variables each mode sets below. */
+html.theme-caddy {
+    --p-content-background: var(--caddy-glass);
+    --p-content-border-color: var(--caddy-border);
+    --surface-ground: transparent;
+    --surface-overlay: var(--caddy-glass-strong);
+    --content-border-radius: 14px;
+
+    body {
+        background-attachment: fixed;
+    }
+
+    .card,
+    .layout-sidebar,
+    .p-panel,
+    .p-card {
+        background: var(--caddy-glass);
+        border: 1px solid var(--caddy-border);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    .layout-topbar {
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--caddy-border);
+    }
+
+    .layout-topbar-action--active {
+        color: var(--p-primary-contrast-color);
+        background: var(--caddy-accent);
+    }
+
+    /* the main button: the accent gradient */
+    .p-button:not(.p-button-secondary):not(.p-button-text):not(.p-button-outlined):not(.p-button-link):not(.p-button-danger):not(.p-button-success):not(.p-button-warn):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
+        background: var(--caddy-accent);
+        border-color: transparent;
+        color: var(--p-primary-contrast-color);
+        box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--p-primary-600) 75%, transparent);
+
+        &:not(:disabled):hover {
+            filter: brightness(1.08);
+        }
+    }
+
+    .p-dialog,
+    .p-popover,
+    .p-select-overlay,
+    .p-multiselect-overlay,
+    .p-menu,
+    .p-toast-message {
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+}
+
+/* Dark: dark glass on plum-navy surfaces. */
 html.theme-caddy.app-dark {
-    /* plum-navy surfaces (fields, menus, dialogs) */
     --p-surface-0: #ffffff;
     --p-surface-50: #f4f2f8;
     --p-surface-100: #e3dfec;
@@ -46,15 +109,9 @@ html.theme-caddy.app-dark {
     --caddy-glass: rgb(22 17 34 / 58%);
     --caddy-glass-strong: rgb(20 15 31 / 82%);
     --caddy-border: rgb(255 255 255 / 8%);
-
-    --p-content-background: var(--caddy-glass);
-    --p-content-border-color: var(--caddy-border);
     --p-form-field-background: rgb(10 8 18 / 55%);
     --p-form-field-border-color: rgb(255 255 255 / 10%);
     --p-form-field-hover-border-color: rgb(255 255 255 / 20%);
-    --surface-ground: transparent;
-    --surface-overlay: var(--caddy-glass-strong);
-    --content-border-radius: 14px;
 
     body {
         background-color: #120e1c;
@@ -62,57 +119,49 @@ html.theme-caddy.app-dark {
             radial-gradient(60rem 40rem at 0% 30%, var(--caddy-glow), transparent 70%),
             radial-gradient(55rem 45rem at 100% 20%, rgb(24 66 140 / 55%), transparent 70%),
             radial-gradient(40rem 30rem at 50% 110%, rgb(90 30 80 / 35%), transparent 70%);
-        background-attachment: fixed;
-    }
-
-    /* glass */
-    .card,
-    .layout-sidebar,
-    .p-panel,
-    .p-card {
-        background: var(--caddy-glass);
-        border: 1px solid var(--caddy-border);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
     }
 
     .layout-topbar {
         --topbar-bg: rgb(17 12 27 / 62%);
         --topbar-hover: rgb(255 255 255 / 8%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid var(--caddy-border);
         box-shadow: 0 8px 24px -16px rgb(0 0 0 / 80%);
-    }
-
-    .layout-topbar-action--active {
-        color: var(--p-primary-contrast-color);
-        background: var(--caddy-accent);
-    }
-
-    /* the main button: the coral gradient */
-    .p-button:not(.p-button-secondary):not(.p-button-text):not(.p-button-outlined):not(.p-button-link):not(.p-button-danger):not(.p-button-success):not(.p-button-warn):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
-        background: var(--caddy-accent);
-        border-color: transparent;
-        color: var(--p-primary-contrast-color);
-        box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--p-primary-600) 75%, transparent);
-
-        &:not(:disabled):hover {
-            filter: brightness(1.08);
-        }
     }
 
     .p-datatable .p-datatable-thead > tr > th {
         background: rgb(255 255 255 / 3%);
     }
+}
 
-    .p-dialog,
-    .p-popover,
-    .p-select-overlay,
-    .p-multiselect-overlay,
-    .p-menu,
-    .p-toast-message {
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+/* Light: frosted white glass over a soft glow of the color. */
+html.theme-caddy:not(.app-dark) {
+    --caddy-glass: rgb(255 255 255 / 52%);
+    --caddy-glass-strong: rgb(255 255 255 / 86%);
+    --caddy-border: rgb(255 255 255 / 75%);
+    --p-form-field-background: rgb(255 255 255 / 72%);
+    --p-form-field-border-color: rgb(15 23 42 / 12%);
+    --p-form-field-hover-border-color: rgb(15 23 42 / 22%);
+
+    body {
+        background-color: #f3f2f7;
+        background-image:
+            radial-gradient(60rem 40rem at 0% 30%, color-mix(in srgb, var(--p-primary-400) 55%, transparent), transparent 70%),
+            radial-gradient(55rem 45rem at 100% 20%, color-mix(in srgb, var(--p-primary-300) 65%, transparent), transparent 70%),
+            radial-gradient(45rem 35rem at 50% 110%, color-mix(in srgb, var(--p-primary-200) 70%, transparent), transparent 70%);
+    }
+
+    .card,
+    .layout-sidebar,
+    .p-panel,
+    .p-card {
+        box-shadow: 0 10px 30px -18px rgb(15 23 42 / 35%);
+    }
+
+    .layout-topbar {
+        --topbar-bg: linear-gradient(100deg, color-mix(in srgb, var(--p-primary-700) 86%, transparent) 0%, color-mix(in srgb, var(--p-primary-500) 80%, transparent) 100%);
+        box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--p-primary-700) 60%, transparent);
+    }
+
+    .p-datatable .p-datatable-thead > tr > th {
+        background: rgb(255 255 255 / 40%);
     }
 }

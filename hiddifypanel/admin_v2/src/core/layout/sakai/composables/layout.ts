@@ -4,7 +4,7 @@ const STORAGE_KEY = 'admin_v2_dark'
 const THEME_KEY = 'admin_v2_theme'
 const ACCENT_KEY = 'admin_v2_caddy_accent'
 
-/** ``hiddify``: the panel's own look (the default). ``caddy``: the Smart Caddy look, always dark. */
+/** ``hiddify``: the panel's own look (the default). ``caddy``: the Smart Caddy glass look, light or dark. */
 export type ThemeName = 'hiddify' | 'caddy'
 /** Smart Caddy's colors (the swatches of the topbar's palette). */
 export const CADDY_ACCENTS = ['red', 'pink', 'orange', 'yellow', 'green', 'blue', 'purple'] as const
@@ -58,7 +58,7 @@ function applyTheme() {
   document.documentElement.classList.toggle('theme-caddy', caddy)
   if (caddy) document.documentElement.setAttribute('data-caddy-accent', layoutConfig.accent)
   else document.documentElement.removeAttribute('data-caddy-accent')
-  applyDarkClass(caddy || layoutConfig.darkTheme)
+  applyDarkClass(layoutConfig.darkTheme)
 }
 
 layoutConfig.darkTheme = readStorage(STORAGE_KEY) === '1'
@@ -101,7 +101,7 @@ export function useLayout() {
 
   const isCaddyTheme = computed(() => layoutConfig.theme === 'caddy')
   const caddyAccent = computed(() => (layoutConfig.theme === 'caddy' ? layoutConfig.accent : null))
-  const isDarkTheme = computed(() => layoutConfig.darkTheme || isCaddyTheme.value)
+  const isDarkTheme = computed(() => layoutConfig.darkTheme)
   const hasOpenOverlay = computed(() => layoutState.overlayMenuActive)
 
   return {

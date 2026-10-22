@@ -2474,6 +2474,11 @@
       "light": "Light mode",
       "default": "Hiddify theme (default)",
       "caddy": "Smart Caddy theme",
+      "color": "Theme",
+      "glassHint": "A color gives the panel a glass look in that color.",
+      "menu": "Appearance & language",
+      "mode": "Light or dark",
+      "retry": "Try again",
       "colors": {
         "red": "Red",
         "pink": "Pink",

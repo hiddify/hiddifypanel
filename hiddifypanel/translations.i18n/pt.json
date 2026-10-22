@@ -1975,7 +1975,23 @@
     },
     "theme": {
       "dark": "Modo escuro",
-      "light": "Modo claro"
+      "light": "Modo claro",
+      "default": "Tema Hiddify (padrão)",
+      "caddy": "Tema Smart Caddy",
+      "color": "Tema",
+      "glassHint": "Uma cor dá ao painel um visual de vidro nessa cor.",
+      "menu": "Aparência e idioma",
+      "mode": "Claro ou escuro",
+      "retry": "Tentar de novo",
+      "colors": {
+        "red": "Vermelho",
+        "pink": "Rosa",
+        "orange": "Laranja",
+        "yellow": "Amarelo",
+        "green": "Verde",
+        "blue": "Azul",
+        "purple": "Roxo"
+      }
     },
     "users": {
       "add": "Adicionar usuário",

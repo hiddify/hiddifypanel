@@ -1975,7 +1975,23 @@
     },
     "theme": {
       "dark": "Mode sombre",
-      "light": "Mode clair"
+      "light": "Mode clair",
+      "default": "Thème Hiddify (par défaut)",
+      "caddy": "Thème Smart Caddy",
+      "color": "Thème",
+      "glassHint": "Une couleur donne au panneau un aspect verre dans cette couleur.",
+      "menu": "Apparence et langue",
+      "mode": "Clair ou sombre",
+      "retry": "Réessayer",
+      "colors": {
+        "red": "Rouge",
+        "pink": "Rose",
+        "orange": "Orange",
+        "yellow": "Jaune",
+        "green": "Vert",
+        "blue": "Bleu",
+        "purple": "Violet"
+      }
     },
     "users": {
       "add": "Ajouter un utilisateur",

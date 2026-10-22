@@ -1975,7 +1975,23 @@
     },
     "theme": {
       "dark": "深色模式",
-      "light": "浅色模式"
+      "light": "浅色模式",
+      "default": "Hiddify 主题（默认）",
+      "caddy": "Smart Caddy 主题",
+      "color": "主题",
+      "glassHint": "选择颜色后，面板会呈现该颜色的玻璃效果。",
+      "menu": "外观与语言",
+      "mode": "浅色或深色",
+      "retry": "重试",
+      "colors": {
+        "red": "红色",
+        "pink": "粉色",
+        "orange": "橙色",
+        "yellow": "黄色",
+        "green": "绿色",
+        "blue": "蓝色",
+        "purple": "紫色"
+      }
     },
     "users": {
       "add": "添加用户",
