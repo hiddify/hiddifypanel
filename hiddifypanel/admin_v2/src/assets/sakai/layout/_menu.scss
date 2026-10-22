@@ -75,6 +75,25 @@
                 margin-inline-end: 0.5rem;
             }
 
+            /* A coloured icon (menu-icons.ts): its colour on a soft chip of the same colour */
+            .layout-menuitem-icon[style*='--mi'] {
+                display: inline-grid;
+                place-items: center;
+                width: 1.75rem;
+                height: 1.75rem;
+                flex: none;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                color: var(--mi);
+                background: color-mix(in srgb, var(--mi) 14%, transparent);
+                transition: transform 0.15s ease, background-color 0.15s ease;
+            }
+
+            &:hover .layout-menuitem-icon[style*='--mi'] {
+                background: color-mix(in srgb, var(--mi) 22%, transparent);
+                transform: scale(1.06);
+            }
+
             .layout-submenu-toggler {
                 font-size: 75%;
                 margin-inline-start: auto;
