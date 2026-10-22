@@ -2471,7 +2471,26 @@
     },
     "theme": {
       "dark": "Dark mode",
-      "light": "Light mode"
+      "light": "Light mode",
+      "default": "Hiddify theme (default)",
+      "caddy": "Smart Caddy theme",
+      "color": "Theme",
+      "glassHint": "Each color works in light and dark: light gives frosted glass over its glow, dark gives the Smart Caddy dark glass.",
+      "menu": "Appearance & language",
+      "mode": "Light or dark",
+      "retry": "Try again",
+      "colors": {
+        "red": "Red",
+        "pink": "Pink",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "green": "Green",
+        "blue": "Blue",
+        "purple": "Purple",
+        "graphite": "Graphite",
+        "spacegray": "Space Gray",
+        "brown": "Dark brown"
+      }
     },
     "users": {
       "add": "Add user",

@@ -1975,7 +1975,26 @@
     },
     "theme": {
       "dark": "Mode sombre",
-      "light": "Mode clair"
+      "light": "Mode clair",
+      "default": "Thème Hiddify (par défaut)",
+      "caddy": "Thème Smart Caddy",
+      "color": "Thème",
+      "glassHint": "Chaque couleur marche en clair et en sombre : verre dépoli sur son halo en clair, verre sombre Smart Caddy en sombre.",
+      "menu": "Apparence et langue",
+      "mode": "Clair ou sombre",
+      "retry": "Réessayer",
+      "colors": {
+        "red": "Rouge",
+        "pink": "Rose",
+        "orange": "Orange",
+        "yellow": "Jaune",
+        "green": "Vert",
+        "blue": "Bleu",
+        "purple": "Violet",
+        "graphite": "Graphite",
+        "spacegray": "Gris sidéral",
+        "brown": "Brun foncé"
+      }
     },
     "users": {
       "add": "Ajouter un utilisateur",

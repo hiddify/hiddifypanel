@@ -1975,7 +1975,26 @@
     },
     "theme": {
       "dark": "Modo escuro",
-      "light": "Modo claro"
+      "light": "Modo claro",
+      "default": "Tema Hiddify (padrão)",
+      "caddy": "Tema Smart Caddy",
+      "color": "Tema",
+      "glassHint": "Cada cor funciona no claro e no escuro: vidro fosco sobre o seu brilho no claro, o vidro escuro Smart Caddy no escuro.",
+      "menu": "Aparência e idioma",
+      "mode": "Claro ou escuro",
+      "retry": "Tentar de novo",
+      "colors": {
+        "red": "Vermelho",
+        "pink": "Rosa",
+        "orange": "Laranja",
+        "yellow": "Amarelo",
+        "green": "Verde",
+        "blue": "Azul",
+        "purple": "Roxo",
+        "graphite": "Grafite",
+        "spacegray": "Cinza-espacial",
+        "brown": "Marrom escuro"
+      }
     },
     "users": {
       "add": "Adicionar usuário",
