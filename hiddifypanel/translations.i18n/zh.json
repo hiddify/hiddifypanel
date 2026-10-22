@@ -1974,8 +1974,21 @@
       "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
     },
     "theme": {
-      "dark": "深色模式",
-      "light": "浅色模式"
+      "dark": "深色",
+      "light": "浅色",
+      "appearance": "外观",
+      "hiddify": "Hiddify 主题",
+      "caddy": "Smart Caddy 主题",
+      "caddyHint": "始终为深色，可选强调色",
+      "colors": {
+        "red": "红色",
+        "pink": "粉色",
+        "orange": "橙色",
+        "yellow": "黄色",
+        "green": "绿色",
+        "blue": "蓝色",
+        "purple": "紫色"
+      }
     },
     "users": {
       "add": "添加用户",

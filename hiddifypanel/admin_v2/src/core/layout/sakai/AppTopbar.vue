@@ -7,7 +7,7 @@ import { isChildPanel, submitPostForm } from '@/core/panelShell'
 import { getRouterBase } from '@/core/api/client'
 
 const { t } = useI18n()
-const { toggleMenu, toggleDarkMode, isDarkTheme, isCaddyTheme, caddyAccent, setCaddyAccent } = useLayout()
+const { toggleMenu, isDarkTheme, isCaddyTheme, caddyAccent, setCaddyAccent, setHiddifyMode } = useLayout()
 const themePopover = ref()
 
 const panelVersion = computed(() => getPanelVersion())
@@ -53,20 +53,44 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
       >
         <i class="pi pi-user" />
       </router-link>
-      <!-- The Smart Caddy look in a color (optional; the panel's own look stays the default) -->
+      <!-- Appearance: the panel's own look (light / dark) or Smart Caddy in a color, in one dialog -->
       <button
         type="button"
         class="layout-topbar-action"
         :class="{ 'layout-topbar-action--active': isCaddyTheme }"
-        :aria-label="t('theme.caddy')"
-        v-tooltip.bottom="t('theme.caddy')"
+        :aria-label="t('theme.appearance')"
+        v-tooltip.bottom="t('theme.appearance')"
         @click="(e: Event) => themePopover.toggle(e)"
       >
-        <i class="pi pi-palette" />
+        <i :class="['pi', isCaddyTheme ? 'pi-palette' : isDarkTheme ? 'pi-moon' : 'pi-sun']" />
       </button>
       <Popover ref="themePopover">
         <div class="theme-picker">
-          <div class="theme-picker-title">{{ t('theme.caddy') }}</div>
+          <div class="theme-picker-title">{{ t('theme.hiddify') }}</div>
+          <div class="theme-picker-modes">
+            <button
+              type="button"
+              class="theme-mode"
+              :class="{ 'theme-mode--on': !isCaddyTheme && !isDarkTheme }"
+              @click="setHiddifyMode(false)"
+            >
+              <i class="pi pi-sun" />
+              {{ t('theme.light') }}
+            </button>
+            <button
+              type="button"
+              class="theme-mode"
+              :class="{ 'theme-mode--on': !isCaddyTheme && isDarkTheme }"
+              @click="setHiddifyMode(true)"
+            >
+              <i class="pi pi-moon" />
+              {{ t('theme.dark') }}
+            </button>
+          </div>
+          <div class="theme-picker-title">
+            {{ t('theme.caddy') }}
+            <small>{{ t('theme.caddyHint') }}</small>
+          </div>
           <div class="theme-picker-swatches">
             <button
               v-for="accent in CADDY_ACCENTS"
@@ -79,16 +103,8 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
               @click="setCaddyAccent(accent)"
             />
           </div>
-          <button type="button" class="theme-picker-default" :class="{ 'theme-picker-default--on': !isCaddyTheme }" @click="setCaddyAccent(null); themePopover.hide()">
-            <i class="pi pi-undo" />
-            {{ t('theme.default') }}
-          </button>
         </div>
       </Popover>
-      <!-- Smart Caddy is always dark -->
-      <button v-if="!isCaddyTheme" type="button" class="layout-topbar-action" :aria-label="t('theme.dark')" @click="toggleDarkMode">
-        <i :class="['pi', isDarkTheme ? 'pi-sun' : 'pi-moon']" />
-      </button>
       <button type="button" class="layout-topbar-action" :aria-label="t('menu.signOut')" v-tooltip.bottom="t('menu.signOut')" @click="signOut">
         <i class="pi pi-sign-out" />
       </button>
@@ -134,22 +150,38 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
 .theme-swatch--green { background: linear-gradient(135deg, #6ee7b7, #14b8a6); }
 .theme-swatch--blue { background: linear-gradient(135deg, #7dd3fc, #3b82f6); }
 .theme-swatch--purple { background: linear-gradient(135deg, #c4b5fd, #7c3aed); }
-.theme-picker-default {
+.theme-picker-title small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+}
+.theme-picker-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.theme-mode {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.75rem;
   border: 1px solid var(--p-content-border-color);
   background: transparent;
   color: var(--p-text-color);
   cursor: pointer;
   font: inherit;
 }
-.theme-picker-default--on {
+.theme-mode:hover {
+  border-color: var(--p-primary-color);
+}
+.theme-mode--on {
   border-color: var(--p-primary-color);
   color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  font-weight: 600;
 }
 
 .layout-topbar-action--active {

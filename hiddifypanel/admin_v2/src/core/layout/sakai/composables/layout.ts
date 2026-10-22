@@ -74,6 +74,15 @@ export function useLayout() {
     writeStorage(STORAGE_KEY, layoutConfig.darkTheme ? '1' : '0')
   }
 
+  /** The panel's own look, light or dark (leaves Smart Caddy). */
+  const setHiddifyMode = (dark: boolean) => {
+    layoutConfig.theme = 'hiddify'
+    layoutConfig.darkTheme = dark
+    applyTheme()
+    writeStorage(THEME_KEY, 'hiddify')
+    writeStorage(STORAGE_KEY, dark ? '1' : '0')
+  }
+
   /** Smart Caddy in ``accent``, or (null) the panel's own look. */
   const setCaddyAccent = (accent: CaddyAccent | null) => {
     layoutConfig.theme = accent ? 'caddy' : 'hiddify'
@@ -112,6 +121,7 @@ export function useLayout() {
     isCaddyTheme,
     caddyAccent,
     setCaddyAccent,
+    setHiddifyMode,
     toggleMenu,
     hideMobileMenu,
     isDesktop,
