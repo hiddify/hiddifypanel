@@ -1997,6 +1997,24 @@
       }
     },
     "users": {
+      "guide": {
+        "title": "Bienvenue dans la nouvelle page Utilisateurs",
+        "intro": "Gardez sous la main les utilisateurs dont vous avez le plus besoin :",
+        "pinTitle": "Épingler des utilisateurs",
+        "pinText": "L'épingle à côté de Modifier place l'utilisateur en haut, où il reste.",
+        "dragTitle": "Déplacer les utilisateurs entre les lignes",
+        "dragText": "Faites glisser une ligne par sa poignée, par ex. de la ligne 5 à la 2. Les épinglés se réordonnent entre eux ; les autres restent dessous.",
+        "resizeTitle": "Élargir la colonne Consommation",
+        "resizeText": "Faites glisser la bordure entre Nom et Consommation : l'une s'élargit, l'autre se rétrécit.",
+        "gotIt": "Compris"
+      },
+      "layout": {
+        "drag": "Glisser pour déplacer cet utilisateur",
+        "dragOff": "Retirez le tri de colonne et le regroupement pour déplacer les utilisateurs",
+        "pin": "Épingler en haut",
+        "unpin": "Désépingler",
+        "crossGroups": "Les utilisateurs épinglés restent au-dessus des autres : épinglez ou désépinglez pour passer de l'un à l'autre."
+      },
       "add": "Ajouter un utilisateur",
       "addLimits": {
         "apply": "Ajouter",

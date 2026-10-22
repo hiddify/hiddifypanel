@@ -25,6 +25,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v182(child_id):
+    """Users page layout per admin (pins, order, guide seen): the admin_user.users_layout column, added by migrate()."""
+    return
+
+
 def _v181(child_id):
     """ShadowTLS is an SNI proxy (its handshake goes to the domain the proxy is assigned to): no separate fake domain.
     The rows that mirrored the old shadowtls_fakedomain setting carried no proxies: removed, with the setting."""

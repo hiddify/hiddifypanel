@@ -2496,6 +2496,24 @@
       }
     },
     "users": {
+      "guide": {
+        "title": "Welcome to the new Users experience",
+        "intro": "Keep the users you need most at hand:",
+        "pinTitle": "Pin users",
+        "pinText": "The pin next to Edit moves a user to the top rows, where it stays.",
+        "dragTitle": "Move users between rows",
+        "dragText": "Drag a row by its handle, e.g. from row 5 to row 2. Pinned users can be reordered among themselves; the others stay below them.",
+        "resizeTitle": "Widen the Usage column",
+        "resizeText": "Drag the border between Name and Usage: Usage gets wider, Name narrower.",
+        "gotIt": "Got it"
+      },
+      "layout": {
+        "drag": "Drag to move this user",
+        "dragOff": "Clear the column sort and grouping to move users",
+        "pin": "Pin to the top",
+        "unpin": "Unpin",
+        "crossGroups": "Pinned users stay above the others: unpin or pin a user to move it between them."
+      },
       "add": "Add user",
       "addLimits": {
         "apply": "Add",

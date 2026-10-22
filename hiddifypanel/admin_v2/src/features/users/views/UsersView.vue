@@ -109,8 +109,12 @@
         size="small"
         class="users-table"
         :row-class="rowClass"
+        resizable-columns
+        column-resize-mode="fit"
         @sort="onSort"
         @cell-edit-complete="onCellEdit"
+        @row-reorder="onRowReorder"
+        @column-resize-end="onColumnResize"
       >
         <template #empty>
           <ListNoMatch v-if="usersFiltered && state.users.length" @reset="resetUserFilters" />
@@ -128,13 +132,31 @@
           </div>
         </template>
 
+        <!-- Drag a row to move it (the admin's own order, pinned users on top); off while a column sort or grouping orders the rows -->
+        <Column v-if="canReorder" row-reorder row-reorder-icon="pi pi-bars u-drag" header-style="width: 2.25rem" body-class="u-drag-cell" />
+        <Column v-else header-style="width: 2.25rem" body-class="u-drag-cell">
+          <template #body><i class="pi pi-bars u-drag u-drag--off" v-tooltip.top="t('users.layout.dragOff')" /></template>
+        </Column>
         <Column v-if="!readOnly" selection-mode="multiple" header-style="width: 2.5rem" />
         <!-- No ID column: this one sorts by id -->
-        <Column field="id" sortable header-style="width: 6rem" body-class="u-actions-cell">
+        <Column field="id" sortable header-style="width: 7.75rem" body-class="u-actions-cell">
           <template #header><span class="u-idhead" v-tooltip.top="t('users.sortById')">#</span></template>
           <template #body="{ data }">
             <div class="u-actions">
               <Button v-if="!readOnly" icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(data)" />
+              <Button
+                icon="pi pi-thumbtack"
+                text
+                rounded
+                size="small"
+                class="u-pin"
+                :class="{ 'u-pin--on': isPinned(data) }"
+                :severity="isPinned(data) ? undefined : 'secondary'"
+                :aria-pressed="isPinned(data)"
+                :aria-label="isPinned(data) ? t('users.layout.unpin') : t('users.layout.pin')"
+                v-tooltip.top="isPinned(data) ? t('users.layout.unpin') : t('users.layout.pin')"
+                @click="onPin(data)"
+              />
               <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('users.more')" aria-haspopup="true" @click="openMenu($event, data)" />
             </div>
           </template>
@@ -150,7 +172,7 @@
           </template>
         </Column>
 
-        <Column field="name" :header="t('users.col.name')" sortable>
+        <Column field="name" :header="t('users.col.name')" sortable header-class="u-th-name">
           <template #body="{ data }">
             <div class="u-namecell">
             <div class="u-who">
@@ -187,7 +209,8 @@
           </template>
         </Column>
 
-        <Column field="usage_ratio" :header="t('users.col.usage')" sortable header-style="width: 12rem">
+        <!-- Wider from the Name side only: the Name column's edge is the one resize handle (fit: the two share the room) -->
+        <Column field="usage_ratio" :header="t('users.col.usage')" sortable :header-style="{ width: usageWidth }">
           <template #body="{ data }">
             <div class="u-usage u-tap" role="button" tabindex="0" @click="openQuick(data, 'usage')" @keydown.enter="openQuick(data, 'usage')">
               <MeterBar :used="data.current_usage_GB" :max="unlimitedGb(data.usage_limit_GB) ? null : data.usage_limit_GB" :text="usageText(data)" size="sm" />
@@ -262,6 +285,9 @@
                 <template v-if="u.comment && u.status !== 'active'"> · </template>{{ u.comment }}
               </span>
             </button>
+            <button type="button" class="u-card__pin" :class="{ 'u-card__pin--on': isPinned(u) }" :aria-pressed="isPinned(u)" :aria-label="isPinned(u) ? t('users.layout.unpin') : t('users.layout.pin')" @click="onPin(u)">
+              <i class="pi pi-thumbtack" />
+            </button>
             <!-- Usage where the edit button was: tapping the name edits -->
             <MeterBar class="u-card__meter u-tap" role="button" tabindex="0" :aria-label="t('users.form.editUsageTitle', { name: u.name })" @click="openQuick(u, 'usage')" @keydown.enter="openQuick(u, 'usage')" :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="xs" />
           </header>
@@ -335,6 +361,7 @@
       <TagPicker :selected="bulkTagState.all" :partial="bulkTagState.some" :title="t('tags.bulk')" :hint="t('tags.bulkHint')" @toggle="bulkTag" @create="(id: number) => bulkTag(id, true)" />
     </Popover>
 
+    <UsersGuideDialog v-model:visible="guideVisible" @got-it="onGuideSeen" />
     <UserFormDialog v-model:visible="formVisible" :user="editingUser" :focus="formFocus" :state="state" @saved="onSaved" />
     <LinkShareDialog
       v-if="linkUser && state"
@@ -360,7 +387,7 @@ import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
-import DataTable, { type DataTableCellEditCompleteEvent, type DataTableSortEvent } from 'primevue/datatable'
+import DataTable, { type DataTableCellEditCompleteEvent, type DataTableColumnResizeEndEvent, type DataTableRowReorderEvent, type DataTableSortEvent } from 'primevue/datatable'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputNumber from 'primevue/inputnumber'
@@ -388,7 +415,9 @@ import TagDots from '@/features/tags/components/TagDots.vue'
 import TagFilter from '@/features/tags/components/TagFilter.vue'
 import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
-import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersState } from '@/features/users/api'
+import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
+import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
+import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersLayout, type UsersState } from '@/features/users/api'
 import { sizeText, exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
 
 /** Highlights the search match. */
@@ -472,9 +501,12 @@ const AUTO_REFRESH_SECONDS = [0, 10, 30, 60, 300]
 /** Seconds between live updates (0 = off); changes are still pushed at once while on. */
 const autoRefresh = ref<number>(AUTO_REFRESH_SECONDS.includes(Number(prefs.autoRefresh)) ? Number(prefs.autoRefresh) : 60)
 const inlineEdit = ref(false)
-watch([groupByOwner, showDates, pageSize, autoRefresh], () => {
+/** The Usage column's width (px) after a drag of the Name column's edge; default 12rem. */
+const usageWidthPx = ref<number | null>(Number(prefs.usageWidth) >= 120 ? Number(prefs.usageWidth) : null)
+const usageWidth = computed(() => (usageWidthPx.value ? `${usageWidthPx.value}px` : '12rem'))
+watch([groupByOwner, showDates, pageSize, autoRefresh, usageWidthPx], () => {
   try {
-    localStorage.setItem(PREFS_KEY, JSON.stringify({ groupByOwner: groupByOwner.value, showDates: showDates.value, pageSize: pageSize.value, autoRefresh: autoRefresh.value }))
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ groupByOwner: groupByOwner.value, showDates: showDates.value, pageSize: pageSize.value, autoRefresh: autoRefresh.value, usageWidth: usageWidthPx.value }))
   } catch {
     /* private mode: not remembered */
   }
@@ -591,10 +623,23 @@ const filters = computed(() =>
     .filter((f) => ALWAYS_SHOWN.includes(f.key) || f.count > 0 || filter.value === f.key),
 )
 
+// This admin's order (admins/me/users-layout/): pinned users first, then the order they set by dragging.
+const layout = ref<UsersLayout>({ pinned: [], order: [], guide_seen: true })
+const guideVisible = ref(false)
+const orderedRows = computed(() => orderRows(allRows.value, layout.value))
+const pinnedSet = computed(() => new Set(layout.value.pinned))
+/** The last pinned row of the list: a line under it parts the pinned users from the rest. */
+const lastPinned = computed(() => orderedRows.value.filter((u) => pinnedSet.value.has(u.uuid)).at(-1)?.uuid)
+/** Dragging follows the admin's order: not while a column sort or grouping decides it. */
+const canReorder = computed(() => !sortField.value && !groupByOwner.value)
+function isPinned(u: { uuid: string }): boolean {
+  return pinnedSet.value.has(u.uuid)
+}
+
 const rows = computed<Row[]>(() => {
   const q = query.value.trim().toLowerCase()
   const match = MATCH[filter.value]
-  return allRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
+  return orderedRows.value.filter((u) => match(u) && matchesTags(u.tags, pickedTags.value) && (!q || u.name.toLowerCase().includes(q) || u.uuid.includes(q) || String(u.id).includes(q) || u.comment.toLowerCase().includes(q)))
 })
 const usersFiltered = computed(() => filter.value !== 'all' || Boolean(query.value.trim()) || pickedTags.value.length > 0)
 function resetUserFilters() {
@@ -670,7 +715,8 @@ function seen(u: UserRow) {
   return lastSeen(u.last_online, now.value, locale.value, { online: t('users.online'), never: t('users.never') })
 }
 function rowClass(u: Row) {
-  return u.status === 'active' ? '' : `u-row--${u.status}`
+  const pinned = canReorder.value && isPinned(u) ? ` u-row--pinned${u.uuid === lastPinned.value ? ' u-row--pinned-last' : ''}` : ''
+  return (u.status === 'active' ? '' : `u-row--${u.status}`) + pinned
 }
 /** Short facts shown beside the name: a chosen outbound, extra subscription configs, a linked Telegram. */
 function extrasOf(u: Row): { key: string; icon: string; text: string; title: string }[] {
@@ -689,6 +735,50 @@ function extrasOf(u: Row): { key: string; icon: string; text: string; title: str
 function onSort(e: DataTableSortEvent) {
   sortField.value = (e.sortField as string) || undefined
   sortOrder.value = e.sortOrder ?? undefined
+}
+
+async function loadLayout() {
+  try {
+    layout.value = await usersApi.layout()
+    guideVisible.value = !layout.value.guide_seen
+  } catch {
+    // Not fatal: the list keeps the panel's order and the guide waits for the next visit.
+  }
+}
+
+/** Shown at once, then saved; on failure the saved layout comes back. */
+async function saveLayout(next: UsersLayout) {
+  layout.value = next
+  try {
+    layout.value = await usersApi.saveLayout(next)
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 5000 })
+    await loadLayout()
+  }
+}
+
+function onPin(u: Row) {
+  void saveLayout(togglePin(layout.value, orderedRows.value.map((r) => r.uuid), u.uuid))
+}
+
+function onRowReorder(e: DataTableRowReorderEvent) {
+  const shown = (e.value as Row[]).map((u) => u.uuid)
+  const next = reorder(layout.value, orderedRows.value.map((r) => r.uuid), shown)
+  if (!next) {
+    toast.add({ severity: 'info', summary: t('users.layout.crossGroups'), life: 5000 })
+    return
+  }
+  void saveLayout(next)
+}
+
+function onGuideSeen() {
+  void saveLayout({ ...layout.value, guide_seen: true })
+}
+
+/** The Name column's edge moved: keep the Usage column's new width (it is the next column, in either direction). */
+function onColumnResize(e: DataTableColumnResizeEndEvent) {
+  const usage = (e.element as HTMLElement).nextElementSibling as HTMLElement | null
+  if (usage?.offsetWidth) usageWidthPx.value = Math.round(usage.offsetWidth)
 }
 
 function isSelected(u: Row): boolean {
@@ -949,7 +1039,7 @@ watch(autoRefresh, startFeed)
 onMounted(async () => {
   narrowQuery.addEventListener('change', onNarrow)
   startFeed()
-  await load()
+  await Promise.all([load(), loadLayout()])
   timer = window.setInterval(() => (now.value = Date.now()), 60_000) // "days left" and "last online" move on between updates
 })
 onBeforeUnmount(() => {
@@ -1511,6 +1601,61 @@ onBeforeUnmount(() => {
 }
 .u-actions {
   display: flex;
+}
+/* PrimeVue puts a resizer on every column: only the Name column's edge (shared with Usage) keeps one. */
+.users-table :deep(th:not(.u-th-name) > .p-datatable-column-resizer) {
+  display: none;
+}
+.users-table :deep(.u-th-name > .p-datatable-column-resizer) {
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+.users-table :deep(.u-th-name > .p-datatable-column-resizer:hover) {
+  background: color-mix(in srgb, var(--p-primary-color) 35%, transparent);
+}
+/* Drag handle: the admin's order; muted (and a hint why) while a sort or grouping orders the rows */
+.users-table :deep(.u-drag-cell) {
+  padding-inline: 0.25rem;
+  text-align: center;
+}
+.u-drag {
+  color: var(--p-text-muted-color);
+  cursor: grab;
+}
+.u-drag--off {
+  cursor: help;
+  opacity: 0.3;
+}
+.u-pin.u-pin--on :deep(.pi) {
+  color: var(--p-primary-color);
+  transform: rotate(-30deg);
+}
+/* Pinned users: a light tint, and a line under the last one parts them from the rest */
+.users-table :deep(tr.u-row--pinned > td) {
+  background: color-mix(in srgb, var(--p-primary-color) 5%, transparent);
+}
+.users-table :deep(tr.u-row--pinned-last > td) {
+  border-bottom: 2px solid color-mix(in srgb, var(--p-primary-color) 35%, transparent);
+}
+.u-card__pin {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+}
+.u-card__pin--on {
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.u-card__pin--on .pi {
+  transform: rotate(-30deg);
 }
 
 /* Cards (phones) */
