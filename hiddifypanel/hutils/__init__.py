@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from . import node
     from . import utils
     from . import network
+    from . import donation
 else:
     # Define modules for lazy loading
     network = LazyLoader(".network", __name__)
@@ -50,3 +51,4 @@ else:
     crypto = LazyLoader(".crypto", __name__)
     proxy = LazyLoader(".proxy", __name__)
     node = LazyLoader(".node", __name__)
+    donation = LazyLoader(".donation", __name__)

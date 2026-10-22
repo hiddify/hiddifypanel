@@ -71,7 +71,7 @@
   "Domain is not REALITY friendly!": "Домен не подходит для использования с REALITY!",
   "Domain?": "Домен?",
   "Donation": {
-    "description": "✳️ Нам нужна ваша помощь в разработке нашего проекта!\n    <br>\n    Если вы разработчик или создатель контента, свяжитесь с нами по адресу <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ Также нам нужна финансовая помощь для дальнейшего развития этой панели и нашего сервиса (мы некоммерческая организация).\n    <br>\n    <h5>Способы оплаты:</h5>\n     <ul>\n    <li> <div class='btn-group'>\n        <a role='button' data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='UQAZzGDsc_1pG9zU_894p3fq9oKYU621ceU9WXGSxK1xcUYm' role='button' class='btn btn-info share-link'>TON</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='ltc1qwyd2hdn5wc04fkvp2mj7glayy5galxfm3luftg' role='button' class='btn btn-info share-link'>Litecoin</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='bc1quepmxl4pmfvy5sdrnmd4sxgnn83xd70lu30gkx' role='button' class='btn btn-info share-link'>Bitcoin</a> </div></li>\n    \n    <li> <div class='btn-group'>\n        <a role='button' data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' class='btn btn-secondary copy-link'><i class='fa-regular fa-copy'></i></a>    \n    <a data-copy='TMfrMgzY4DrjhyZh5s67YvCyrcHvJAkXjb' role='button' class='btn btn-info share-link'>Tron</a> </div></li>\n    </ul>\n    \n    <br>\n    \n    Другая помощь:\n    <ul>\n    <li>👥 Поделиться Hiddify Manager с друзьями</li>\n    <li>📝Python Developer</li>\n    <li>📝Swift Developer</li>\n    <li>📝Flutter Developer</li>\n    <li>📝Go Developer</li>\n    <li>🖥Content Providers</li>\n    </ul>\n   Свяжитесь с нами <a href='mailto:info@hiddify.com'>info@hiddify.com</a>.",
+    "description": "✳️ Нам нужна ваша помощь в разработке нашего проекта!\n    <br>\n    Если вы разработчик или создатель контента, свяжитесь с нами по адресу <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ Также нам нужна финансовая помощь для дальнейшего развития этой панели и нашего сервиса (мы некоммерческая организация).\n    <br>\n    <h5>Способы оплаты:</h5>\n     <div class='donation-wallets'></div>\n    \n    <br>\n    \n    Другая помощь:\n    <ul>\n    <li>👥 Поделиться Hiddify Manager с друзьями</li>\n    <li>📝Python Developer</li>\n    <li>📝Swift Developer</li>\n    <li>📝Flutter Developer</li>\n    <li>📝Go Developer</li>\n    <li>🖥Content Providers</li>\n    </ul>\n   Свяжитесь с нами <a href='mailto:info@hiddify.com'>info@hiddify.com</a>.",
     "title": "Пожертвование"
   },
   "Download App": "<i class='fa-solid fa-download'></i> Загрузить приложение",
@@ -1142,6 +1142,8 @@
       "close": "Закрыть",
       "copied": "Адрес {name} скопирован",
       "copiedShort": "Скопировано",
+      "copyAddress": "Скопировать адрес {name}",
+      "networkHint": "Отправляйте каждую монету только в сети, указанной рядом с её названием: перевод в другой сети будет потерян.",
       "qr": "QR-код",
       "qrOf": "QR-код адреса {name}",
       "showQr": "Показать QR-код для {name}",
