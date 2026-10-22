@@ -1108,7 +1108,18 @@
       "weekUsers": "Week",
       "weeklyAverage": "Weekly average",
       "weeklyOnline": "Weekly online",
-      "yesterday": "Yesterday"
+      "yesterday": "Yesterday",
+      "health": {
+        "title": "Config health",
+        "subtitle": "Every config, tested from the server every 6 hours",
+        "checked": "Every config tested from the server · {ago}",
+        "checkNow": "Check now",
+        "running": "Checking…",
+        "firstRun": "The first check is running; it takes a minute or two.",
+        "never": "Not checked yet. Press “Check now”.",
+        "working": "{ok} of {total} work",
+        "note": "Tested with {user}'s subscription. A config that fails from the server itself never works for anyone; filtering in Iran is not tested here."
+      }
     },
     "domain": {
       "addFailed": "Could not add domain",

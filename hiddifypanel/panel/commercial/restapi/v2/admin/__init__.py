@@ -196,6 +196,9 @@ def init_app(app):
 
         from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
 
+        from .config_health_api import ConfigHealthApi
+
+        bp.add_url_rule("/config-health/", view_func=ConfigHealthApi)
         from .clean_ip_api import CleanIpNetworkApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi, RealitySniApi, RealitySniSwitchApi
 
         bp.add_url_rule("/clean-ip/reality/", view_func=RealitySniApi)
