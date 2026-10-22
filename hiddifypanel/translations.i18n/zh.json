@@ -1928,6 +1928,9 @@
       "openWeb": "在浏览器中打开",
       "promptLead": "此面板有一个 Telegram 机器人 {bot}。将其关联到您的账户：",
       "promptTitle": "连接您的 Telegram？",
+      "stepCreate": "直接在聊天中创建新用户",
+      "stepStart": "启动机器人：打开它的菜单",
+      "stepUsers": "查看用户及其用量",
       "reconnect": "重新连接",
       "scan": "或用手机相机扫描此码。"
     },

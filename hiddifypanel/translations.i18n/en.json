@@ -2640,6 +2640,9 @@
       "openWeb": "Open in browser",
       "promptLead": "This panel has a Telegram bot, {bot}. Link it to your account:",
       "promptTitle": "Connect your Telegram?",
+      "stepCreate": "Create a new user right in the chat",
+      "stepStart": "Start the bot: its menu opens",
+      "stepUsers": "See your users and their usage",
       "reconnect": "Connect again",
       "scan": "Or scan this with your phone's camera."
     },

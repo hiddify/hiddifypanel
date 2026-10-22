@@ -48,10 +48,12 @@ import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import { usePwaInstall } from '@/shared/composables/usePwaInstall'
 import PwaInstallGuide from '@/shared/components/PwaInstallGuide.vue'
+import { telegramPromptDue } from '@/shared/composables/useSpotlights'
 
 /**
  * `manual`: opened from a button (always shows). Otherwise it offers itself on the dashboard (a node: its home), each
- * time the panel is opened (once per page load), unless the panel already runs as the app or the user said never.
+ * time the panel is opened (once per page load), unless the panel already runs as the app or the user said never,
+ * and not in a visit that shows the Telegram prompt.
  */
 const props = defineProps<{ manual?: boolean }>()
 const visible = defineModel<boolean>('visible', { default: false })
@@ -80,6 +82,8 @@ const HOME_ROUTES = ['dashboard', 'node-home']
 function offer() {
   if (props.manual || visible.value || offeredThisLoad || dismissed.value || installed.value) return
   if (!HOME_ROUTES.includes(String(route.name ?? ''))) return
+  // The Telegram prompt has this visit; the guide comes on the next one.
+  if (telegramPromptDue()) return
   offeredThisLoad = true
   readIcon()
   visible.value = true

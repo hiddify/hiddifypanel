@@ -1928,6 +1928,9 @@
       "openWeb": "Ouvrir dans le navigateur",
       "promptLead": "Ce panneau a un bot Telegram, {bot}. Liez-le à votre compte :",
       "promptTitle": "Connecter votre Telegram ?",
+      "stepCreate": "Créez un utilisateur directement dans le chat",
+      "stepStart": "Démarrez le bot : son menu s’ouvre",
+      "stepUsers": "Voyez vos utilisateurs et leur consommation",
       "reconnect": "Se reconnecter",
       "scan": "Ou scannez ceci avec l'appareil photo de votre téléphone."
     },
