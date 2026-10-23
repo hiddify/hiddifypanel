@@ -9,10 +9,19 @@ const props = defineProps<{ locked?: boolean; fit?: Partial<Record<TlsMode, 'goo
 const model = defineModel<TlsMode>({ required: true })
 const { t } = useI18n()
 
-const ICON: Record<TlsMode, string> = { valid: '🔒', fake: '🎭', reality: '🔂', dns: '🧭', telegram: '✈️', shadowtls: '🕶️', ssfaketls: '🥷' }
+/** The same icons as the modes' badges on the Domains page */
+const ICON: Record<TlsMode, string> = {
+  valid: 'pi pi-lock',
+  fake: 'pi pi-clone',
+  reality: 'pi pi-eye-slash',
+  dns: 'pi pi-database',
+  telegram: 'pi pi-telegram',
+  shadowtls: 'pi pi-shield',
+  ssfaketls: 'pi pi-key',
+}
 const COLOR: Record<TlsMode, string> = {
   valid: 'var(--p-green-500, #22c55e)',
-  fake: 'var(--p-pink-500, #ec4899)',
+  fake: 'var(--p-orange-500, #f97316)',
   reality: 'var(--p-violet-500, #8b5cf6)',
   dns: 'var(--p-sky-500, #0ea5e9)',
   telegram: 'var(--p-sky-500, #0ea5e9)',
@@ -42,7 +51,7 @@ function pick(m: TlsMode) {
         :disabled="locked && m !== 'valid'"
         @click="pick(m)"
       >
-        <span class="tls__icon" aria-hidden="true">{{ ICON[m] }}</span>
+        <span class="tls__icon" aria-hidden="true"><i :class="ICON[m]" /></span>
         <span class="tls__name">
           {{ t(`domains.tlsMode.${m}`) }}
           <i v-if="!locked && fit?.[m] === 'good'" class="pi pi-sparkles tls__good" v-tooltip.top="t('domains.wizard.recommended')" />
@@ -64,7 +73,7 @@ function pick(m: TlsMode) {
         :title="model !== m && taken?.includes(m) ? t('domains.tlsMode.taken') : t(`domains.tlsMode.${m}Hint`)"
         @click="model = model === m ? 'valid' : m"
       >
-        <span aria-hidden="true">{{ ICON[m] }}</span>{{ t(`domains.tlsMode.${m}`) }}
+        <i :class="ICON[m]" class="tls__chip-icon" aria-hidden="true" />{{ t(`domains.tlsMode.${m}`) }}
       </button>
     </div>
     <p v-if="locked" class="tls__lock"><i class="pi pi-lock" />{{ t('domains.tlsMode.locked') }}</p>
@@ -124,8 +133,17 @@ function pick(m: TlsMode) {
   opacity: 0.4;
 }
 .tls__icon {
-  font-size: 1.2rem;
-  line-height: 1.5rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+  font-size: 1rem;
+  color: var(--tls-color);
+  background: color-mix(in srgb, var(--tls-color) 13%, transparent);
+}
+.tls__chip-icon {
+  font-size: 0.8rem;
 }
 .tls__name {
   display: inline-flex;
