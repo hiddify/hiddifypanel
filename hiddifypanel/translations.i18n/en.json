@@ -1190,9 +1190,56 @@
         "checked": "Every config tested from the server · {ago}",
         "firstRun": "The first check is running; it takes a minute or two.",
         "never": "Not checked yet. Press “Check now”.",
+        "notTested": "Not tested",
         "note": "Tested with {user}'s subscription. A config that fails from the server itself never works for anyone; filtering in Iran is not tested here.",
+        "notice": {
+          "failed": "{n} of {total} configs do not work from the server.",
+          "where": "Details: Dashboard › Config health."
+        },
+        "problem": {
+          "certificate": {
+            "hint": "The certificate of {host} is missing, expired or made for another name. Check this domain in Domains and renew its certificate.",
+            "title": "The panel could not open its own subscription: the TLS certificate of {host} is not valid"
+          },
+          "core": {
+            "hint": "hiddify-core or Xray on the server could not read the subscription. Updating the panel usually fixes it.",
+            "title": "The config tester could not run"
+          },
+          "dns": {
+            "hint": "The server could not look up this domain. Check its DNS record: it must point to this server.",
+            "title": "The domain {host} could not be found"
+          },
+          "empty": {
+            "hint": "No usable config was found. Check that this app's protocols are on in Protocols and that the test user is active.",
+            "title": "The subscription has no config for this app"
+          },
+          "http": {
+            "hint": "The panel sent an HTTP error instead of the subscription. The panel's log shows why.",
+            "title": "The subscription page of {host} answered with an error"
+          },
+          "other": {
+            "hint": "The exact message is in the technical details below.",
+            "title": "The subscription could not be tested"
+          },
+          "timeout": {
+            "hint": "The server took too long to send it: it may be busy, or {host} may point to another server. Press “Check now” again in a minute.",
+            "title": "The panel's own subscription ({host}) did not answer in time"
+          },
+          "unreachable": {
+            "hint": "Nothing answered at this address. Check that {host} points to this server and that the panel's services (HAProxy, nginx) are running.",
+            "title": "The panel could not connect to {host}"
+          }
+        },
+        "reason": {
+          "closed": "The server closed the connection",
+          "noExit": "It connects, but traffic does not get out to the internet",
+          "refused": "The connection was refused",
+          "timeout": "No answer in time",
+          "tls": "The TLS handshake failed"
+        },
         "running": "Checking…",
         "subtitle": "Every config, tested from the server every 6 hours",
+        "technical": "Technical details",
         "title": "Config health",
         "working": "{ok} of {total} work"
       },

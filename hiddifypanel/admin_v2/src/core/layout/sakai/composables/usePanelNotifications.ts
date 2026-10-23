@@ -1,6 +1,8 @@
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
-import { panelNotices, type PanelNotice } from '@/core/panelShell'
+import { isChildPanel, isSuperAdmin, panelNotices, type PanelNotice } from '@/core/panelShell'
+import { configHealthProblems, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
 
 export type PanelNoticeSeverity = PanelNotice['severity']
 
@@ -40,9 +42,46 @@ function saveKeys(storageKey: string, keys: Set<string>) {
   }
 }
 
+const escapeHtml = (text: string) => text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
+/** Config health is looked at again this often (it runs every 6 hours, or on "Check now" from the dashboard) */
+const HEALTH_REFRESH_MS = 10 * 60_000
+
 export function usePanelNotifications() {
   const toast = useToast()
-  const notices = panelNotices
+  const { t } = useI18n()
+
+  /** Config health problems as notices: where it fails and what to look at (the dashboard card has the details). */
+  const healthNotices = computed<PanelNotice[]>(() =>
+    configHealthProblems.value.map(({ name, label, app, host }) => {
+      const head = `<b>${escapeHtml(t('dashboard.health.title'))} · ${escapeHtml(label)}</b><br>`
+      const where = t('dashboard.health.notice.where')
+      if (app.error) {
+        const kind = problemKind(app)
+        return {
+          id: `config-health:${name}:${kind}:${host}`,
+          severity: 'error',
+          summary: head + escapeHtml(t(`dashboard.health.problem.${kind}.title`, { host: host || '—' })),
+          detail: `${escapeHtml(t(`dashboard.health.problem.${kind}.hint`, { host: host || '—' }))} ${escapeHtml(where)}`,
+        }
+      }
+      // not the list's length: the panel keeps only the first 60 failed configs
+      const failed = Math.max(app.total - app.ok, app.failed.length)
+      return {
+        // the number in the id: more (or fewer) failing configs is news again
+        id: `config-health:${name}:failed:${failed}`,
+        severity: 'warn',
+        summary: head + escapeHtml(t('dashboard.health.notice.failed', { n: failed, total: app.total })),
+        detail: escapeHtml(where),
+      }
+    }),
+  )
+  // Errors first: a config that does not work matters more than the panel's advice
+  const notices = computed(() => [...healthNotices.value.filter((n) => n.severity === 'error'), ...panelNotices.value, ...healthNotices.value.filter((n) => n.severity !== 'error')])
+  let healthTimer = 0
+  function refreshHealth() {
+    void loadConfigHealth()
+    healthTimer = window.setTimeout(refreshHealth, HEALTH_REFRESH_MS)
+  }
   // Closed notices stay closed in this browser.
   const dismissed = ref<Set<string>>(readKeys(DISMISSED_KEY))
   const seen = ref<Set<string>>(readKeys(SEEN_KEY))
@@ -82,7 +121,10 @@ export function usePanelNotifications() {
 
   onMounted(() => {
     showToasts()
+    // Config health is the super admin's (the API is theirs), and a node's configs are tested by its parent panel
+    if (isSuperAdmin.value && !isChildPanel.value) refreshHealth()
   })
+  onBeforeUnmount(() => window.clearTimeout(healthTimer))
 
   watch(notices, (items) => {
     showToasts(items)
