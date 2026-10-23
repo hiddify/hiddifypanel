@@ -1453,6 +1453,18 @@
       "noMatch": "No domain matches the filters",
       "noName": "(no name)",
       "notChanged": "Not changed",
+      "notice": {
+        "expired": "Its certificate has expired: apps refuse to connect.",
+        "failed": "It has no valid certificate: getting one failed.",
+        "invalid": "Its certificate is not valid for this domain.",
+        "missing": "It has no certificate yet.",
+        "rate_limited": "Getting its certificate is paused: the certificate authorities' rate limit was reached. It is tried again later.",
+        "renew_failed": "Its certificate is still valid, but renewing it failed.",
+        "saved": "Domains · saved with a warning",
+        "self_signed": "It has only a temporary self-signed certificate: apps warn or refuse.",
+        "title": "Domains · {domain}",
+        "where": "Details: Domains page."
+      },
       "openPanel": "Open the panel on this domain",
       "port": {
         "busy": "another program listens on it ({name})",

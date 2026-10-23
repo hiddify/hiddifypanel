@@ -197,7 +197,7 @@ def init_app(app):
         bp.add_url_rule("/backup/restore/", view_func=BackupRestoreApi)
         bp.add_url_rule("/backup/restore/run/", view_func=BackupRestoreRunApi, methods=["POST"])
 
-        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
+        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi, DomainsPageProblemsApi
 
         from .config_health_api import ConfigHealthApi
 
@@ -217,6 +217,7 @@ def init_app(app):
         bp.add_url_rule("/clean-ip/run/<token>/probe/", view_func=CleanIpProbeApi)
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
+        bp.add_url_rule("/domains-page/problems/", view_func=DomainsPageProblemsApi)
         bp.add_url_rule("/domains-page/options/", view_func=DomainsPageOptionsApi)
         bp.add_url_rule("/domains-page/detect/", view_func=DomainsPageDetectApi)
         bp.add_url_rule("/domains-page/port-check/", view_func=DomainsPagePortCheckApi)

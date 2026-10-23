@@ -186,7 +186,7 @@
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import { useHashState } from '@/shared/composables/useHashState'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -209,6 +209,7 @@ import AddDomainWizard from '@/features/domains/components/AddDomainWizard.vue'
 import CertProgress from '@/features/domains/components/CertProgress.vue'
 import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
+import { loadDomainProblems, rememberDomainWarnings } from '@/shared/composables/useDomainNotices'
 import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type TlsStatus, type DomainsState } from '@/features/domains/api'
 
 const { t, locale } = useI18n()
@@ -218,6 +219,8 @@ const dangerConfirm = useDangerConfirm()
 /** The TLS mode's badge icon (domains without a certificate of their own) */
 const MODE_ICON: Record<string, string> = { reality: 'pi pi-eye-slash', fake: 'pi pi-clone', dns: 'pi pi-database' }
 const state = ref<DomainsState | null>(null)
+// The notifications follow the list (a certificate obtained or failed, a domain removed)
+watch(state, () => void loadDomainProblems())
 /** Loaded after the list so the page shows right away. */
 const options = ref<DomainsOptions | null>(null)
 const loading = ref(true)
@@ -379,7 +382,10 @@ function apply(next: DomainsState) {
   menuKey.value++
   void loadOptions()
   if (next.restart_mode) pendingApply.value = strongerRestartMode(pendingApply.value, next.restart_mode)
-  for (const w of next.warnings ?? []) toast.add({ severity: 'warn', summary: t('domains.warning'), detail: w.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ''), life: 9000 })
+  const warnings = (next.warnings ?? []).map((w) => w.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ''))
+  for (const w of warnings) toast.add({ severity: 'warn', summary: t('domains.warning'), detail: w, life: 9000 })
+  // Also in the topbar's notifications, for when the toast went by unread
+  rememberDomainWarnings(warnings)
 }
 
 function flash(id: number | null | undefined) {

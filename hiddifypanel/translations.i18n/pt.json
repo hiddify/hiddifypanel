@@ -1005,6 +1005,18 @@
       "noMatch": "Nenhum domínio corresponde aos filtros",
       "noName": "(sem nome)",
       "notChanged": "Não alterado",
+      "notice": {
+        "expired": "O certificado expirou: os apps recusam a conexão.",
+        "failed": "Não tem certificado válido: a obtenção falhou.",
+        "invalid": "O certificado não é válido para este domínio.",
+        "missing": "Ainda não tem certificado.",
+        "rate_limited": "A obtenção do certificado está pausada: o limite das autoridades certificadoras foi atingido. Será tentado mais tarde.",
+        "renew_failed": "O certificado ainda é válido, mas a renovação falhou.",
+        "saved": "Domínios · salvo com um aviso",
+        "self_signed": "Tem só um certificado autoassinado temporário: os apps avisam ou recusam.",
+        "title": "Domínios · {domain}",
+        "where": "Detalhes: página Domínios."
+      },
       "openPanel": "Abrir o painel neste domínio",
       "port": {
         "busy": "outro programa a utiliza ({name})",

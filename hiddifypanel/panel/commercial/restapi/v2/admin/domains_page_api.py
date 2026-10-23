@@ -519,6 +519,39 @@ class DomainsPageItemApi(MethodView):
         return {"warnings": warnings, "restart_mode": APPLY, **_list_out(child_id)}
 
 
+def domain_problems(child_id: int) -> list[dict[str, Any]]:
+    """What the Domains page marks on a row, for the notifications: a domain that needs a real certificate and has none
+    that works (failed, its renewal failed, rate limited, expired, self-signed, missing). Not while one is being asked for."""
+    out: list[dict[str, Any]] = []
+    for d in _domains(child_id):
+        if not d.need_valid_ssl or not d.domain:
+            continue
+        tls = _tls_out(d)
+        job = tls["job"] or {}
+        if job.get("state") == "running":
+            continue
+        error = (job.get("state") == "failed" and job.get("error")) or tls["error"] or ""
+        status = tls["status"]
+        if job.get("rate_limited") or str(error).startswith("rate limited"):
+            kind = "rate_limited"
+        elif error:
+            kind = "renew_failed" if status == "valid" else "failed"
+        elif status in ("expired", "self_signed", "missing", "invalid"):
+            kind = status
+        else:
+            continue
+        out.append({"id": d.id, "domain": d.domain, "kind": kind, "status": status, "error": str(error)[:300]})
+    return out
+
+
+class DomainsPageProblemsApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def get(self):
+        """Domains with a certificate problem (for the notifications; light, unlike the page's own list)"""
+        return {"problems": domain_problems(_child_id())}
+
+
 class DomainsPageOrderApi(MethodView):
     decorators = [login_required(ROLES)]
 
