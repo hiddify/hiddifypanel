@@ -195,6 +195,7 @@
     <Menu :key="menuKey" ref="rowMenu" :model="rowItems" popup />
     <DomainIpsDialog v-model:visible="ipsVisible" :domain-id="ipsId" />
     <DomainDialog v-model:visible="editVisible" :row="editing" :state="state" :options="options" @saved="onSaved" />
+    <DomainsGuideDialog v-model:visible="guideVisible" @got-it="guideSeen" />
     <AddDomainWizard v-model:visible="wizardVisible" :state="state" @added="onAdded" @edit="openEdit" />
 
     <Dialog v-model:visible="certVisible" modal :draggable="false" :header="t('domains.getCert')" :style="{ width: 'min(32rem, calc(100vw - 1.5rem))' }" @after-hide="onCertClosed">
@@ -234,6 +235,7 @@ import CertProgress from '@/features/domains/components/CertProgress.vue'
 import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
 import { loadDomainProblems, rememberDomainWarnings } from '@/shared/composables/useDomainNotices'
+import DomainsGuideDialog from '@/features/domains/components/DomainsGuideDialog.vue'
 import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type TlsStatus, type DomainsState } from '@/features/domains/api'
 
 const { t, locale } = useI18n()
@@ -245,6 +247,29 @@ const MODE_ICON: Record<string, string> = { reality: 'pi pi-eye-slash', fake: 'p
 const state = ref<DomainsState | null>(null)
 // The notifications follow the list (a certificate obtained or failed, a domain removed)
 watch(state, () => void loadDomainProblems())
+
+/** How to reorder, once in this browser: when the list first shows at least two domains (something to reorder). */
+const GUIDE_KEY = 'hiddify.domains.guide.seen'
+const guideVisible = ref(false)
+function guideWasSeen(): boolean {
+  try {
+    return localStorage.getItem(GUIDE_KEY) === '1'
+  } catch {
+    return true // no storage: it could not be kept from showing every visit
+  }
+}
+function guideSeen() {
+  try {
+    localStorage.setItem(GUIDE_KEY, '1')
+  } catch {
+    /* private mode */
+  }
+}
+const stopGuideWatch = watch(state, (s) => {
+  if (!s || s.domains.length < 2) return
+  stopGuideWatch()
+  if (!guideWasSeen()) window.setTimeout(() => (guideVisible.value = true), 700)
+})
 /** Loaded after the list so the page shows right away. */
 const options = ref<DomainsOptions | null>(null)
 const loading = ref(true)

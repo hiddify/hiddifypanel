@@ -1417,6 +1417,17 @@
         "tlsMode": "TLS mode"
       },
       "getCert": "Get certificate",
+      "guide": {
+        "dragText": "The rows make room; on a computer you can also focus the handle and press ↑ or ↓.",
+        "dragTitle": "Drag it up or down and let go",
+        "gotIt": "Got it",
+        "grabText": "The ☰ at the start of the row, with the mouse or your finger.",
+        "grabTitle": "Take a domain by its handle",
+        "lead": "The order matters: configs list your domains in this order, and the first one is used for panel links.",
+        "orderText": "It is saved at once: users' configs follow it from now on.",
+        "orderTitle": "That is the new order",
+        "title": "Put your domains in order"
+      },
       "howto": "Order matters: drag the ☰ handle to sort. Configs list domains in this order, and the first one is used for panel links.",
       "howtoFiltered": "Clear the search and filters to change the order.",
       "ips": {

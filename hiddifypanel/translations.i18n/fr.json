@@ -969,6 +969,17 @@
         "tlsMode": "Mode TLS"
       },
       "getCert": "Obtenir un certificat",
+      "guide": {
+        "dragText": "Les lignes font de la place ; sur ordinateur, vous pouvez aussi focaliser la poignée et appuyer sur ↑ ou ↓.",
+        "dragTitle": "Glissez-le vers le haut ou le bas et lâchez",
+        "gotIt": "Compris",
+        "grabText": "Le ☰ au début de la ligne, à la souris ou au doigt.",
+        "grabTitle": "Prenez un domaine par sa poignée",
+        "lead": "L'ordre compte : les configs listent vos domaines dans cet ordre, et le premier sert aux liens du panneau.",
+        "orderText": "Il est enregistré aussitôt : les configs des utilisateurs le suivent désormais.",
+        "orderTitle": "Voilà le nouvel ordre",
+        "title": "Mettez vos domaines dans l'ordre"
+      },
       "howto": "L'ordre compte : faites glisser la poignée ☰ pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
       "howtoFiltered": "Effacez la recherche et les filtres pour modifier l'ordre.",
       "ips": {
