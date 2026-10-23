@@ -71,7 +71,7 @@ interface ExternalTooltipContext {
  * Tooltip as real page text. Canvas text mixes Persian and Latin (server names, units) in the wrong order;
  * the browser's own layout of a right-to-left element gets it right.
  */
-function domTooltip(theme: { text: string; muted: string; surface: string; border: string }) {
+function domTooltip(theme: { text: string; muted: string; surface: string; border: string }, above = false) {
   return ({ chart, tooltip }: ExternalTooltipContext) => {
     const holder = chart.canvas.parentElement
     if (!holder) return
@@ -79,7 +79,6 @@ function domTooltip(theme: { text: string; muted: string; surface: string; borde
     if (!el) {
       el = document.createElement('div')
       el.className = 'chart-tip'
-      el.dir = 'rtl'
       el.style.cssText =
         'position:absolute;z-index:5;pointer-events:none;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.7;max-width:90%;white-space:nowrap;transition:opacity .1s;box-shadow:0 4px 14px rgba(0,0,0,.25)'
       holder.appendChild(el)
@@ -88,6 +87,8 @@ function domTooltip(theme: { text: string; muted: string; surface: string; borde
       el.style.opacity = '0'
       return
     }
+    // The page's direction (it is also used in English now: the short charts of the Nodes page)
+    el.dir = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
     el.style.background = theme.surface
     el.style.border = `1px solid ${theme.border}`
     el.style.color = theme.text
@@ -112,7 +113,8 @@ function domTooltip(theme: { text: string; muted: string; surface: string; borde
     const x = Math.max(0, Math.min(chart.width - el.offsetWidth, tooltip.caretX - el.offsetWidth / 2))
     const y = tooltip.caretY - el.offsetHeight - 14
     el.style.left = `${x}px`
-    el.style.top = `${y < 0 ? tooltip.caretY + 14 : y}px`
+    // ``above``: a short chart has no room inside it, the box goes over what is above it
+    el.style.top = `${y < 0 && !above ? tooltip.caretY + 14 : y}px`
   }
 }
 
@@ -133,6 +135,11 @@ export interface BaseOptions {
   legend?: boolean
   stacked?: boolean
   yMax?: number
+  /** The page-text tooltip in every language, above the point even outside the chart (a canvas tooltip is cut off in a
+   * short chart: a 48 px one showed the time and upload, not download) */
+  pageTooltip?: boolean
+  /** With ``yMax``, a fixed range below zero (a mirrored chart: -peak … +peak) */
+  yMin?: number
   yTitle?: string
   hideXGrid?: boolean
   maxXTicks?: number
@@ -220,8 +227,8 @@ export function useChartTheme() {
         },
         tooltip: {
           // Right-to-left: the page-text tooltip below (canvas text scrambles Persian next to Latin)
-          enabled: !rtl,
-          external: rtl ? domTooltip({ text, muted, surface, border }) : undefined,
+          enabled: !rtl && !options.pageTooltip,
+          external: rtl || options.pageTooltip ? domTooltip({ text, muted, surface, border }, !!options.pageTooltip) : undefined,
           rtl,
           textDirection: rtl ? 'rtl' : 'ltr',
           backgroundColor: surface,
@@ -278,6 +285,7 @@ export function useChartTheme() {
           stacked: options.stacked ?? false,
           beginAtZero: !options.mirror,
           max: options.yMax,
+          min: options.yMin,
           grid: { color: grid, drawBorder: false },
           border: { display: false },
           title: options.yTitle ? { display: true, text: options.yTitle, color: muted } : undefined,

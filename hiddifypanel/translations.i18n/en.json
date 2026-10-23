@@ -1776,6 +1776,12 @@
       },
       "justNow": "Just now",
       "lastSeen": "Last contact",
+      "live": {
+        "collecting": "Collecting live data… the charts fill in over the next minutes.",
+        "showLess": "Show less",
+        "showMore": "Show more",
+        "unavailable": "This node did not answer"
+      },
       "moreInfo": "More information",
       "neverSeen": "Never",
       "openAdmin": "Open",

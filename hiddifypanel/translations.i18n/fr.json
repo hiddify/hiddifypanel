@@ -1284,6 +1284,12 @@
       },
       "justNow": "À l'instant",
       "lastSeen": "Dernier contact",
+      "live": {
+        "collecting": "Collecte des données en direct… les graphiques se remplissent dans les prochaines minutes.",
+        "showLess": "Afficher moins",
+        "showMore": "Afficher plus",
+        "unavailable": "Ce nœud n'a pas répondu"
+      },
       "moreInfo": "Plus d'informations",
       "neverSeen": "Jamais",
       "openAdmin": "Ouvrir",

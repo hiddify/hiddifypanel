@@ -23,6 +23,8 @@ const props = withDefaults(
     legend?: boolean
     stacked?: boolean
     yMax?: number
+    yMin?: number
+    pageTooltip?: boolean
     maxXTicks?: number
     tooltipExtra?: (index: number) => string[]
     tooltipLabel?: (datasetIndex: number, dataIndex: number, formatted: string) => string | undefined
@@ -103,6 +105,8 @@ const options = computed(() =>
     legend: props.legend && props.series.length > 1,
     stacked: props.stacked,
     yMax: props.yMax,
+    yMin: props.yMin,
+    pageTooltip: props.pageTooltip,
     maxXTicks: isPhone.value ? Math.min(props.maxXTicks ?? 8, 5) : props.maxXTicks,
     tooltipExtra: props.tooltipExtra,
     tooltipLabel: props.tooltipLabel,

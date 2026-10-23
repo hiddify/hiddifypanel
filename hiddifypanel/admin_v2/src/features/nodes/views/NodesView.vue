@@ -1,5 +1,5 @@
 <template>
-  <div class="nodes-page">
+  <div ref="pageEl" class="nodes-page">
     <div class="nodes-head">
       <PageHeader v-if="!embedded" :title="t('nodes.title')" :subtitle="t('nodes.subtitle')" />
       <Button v-if="nodes.length" icon="pi pi-plus" :label="t('nodes.addNode')" class="nodes-head__add" @click="addVisible = true" />
@@ -68,7 +68,7 @@
         v-for="(node, index) in nodes"
         :key="node.id"
         class="node-card"
-        :class="[`node-card--${node.status}`, { 'node-card--new': node.id === justAdded }]"
+        :class="[`node-card--${node.status}`, { 'node-card--new': node.id === justAdded, 'node-card--live': liveOpen.has(node.id) }]"
         :style="{ '--node-delay': `${Math.min(index, 10) * 50}ms` }"
       >
         <header class="node-card__head">
@@ -221,9 +221,22 @@
             @click="confirmRemove(node)"
           />
         </footer>
+
+        <!-- This node's live charts (network, CPU, RAM), polled only while open -->
+        <button type="button" class="node-card__live-toggle" :aria-expanded="liveOpen.has(node.id)" @click="toggleLive(node.id)">
+          <i class="pi pi-chart-line" />
+          <span class="flex-1">{{ liveOpen.has(node.id) ? t('nodes.live.showLess') : t('nodes.live.showMore') }}</span>
+          <i class="pi pi-angle-down node-card__more-caret" :class="{ 'node-card__more-caret--open': liveOpen.has(node.id) }" />
+        </button>
+        <!-- Slides open and closed; kept once opened so it can slide closed (the feed stops when no card is open) -->
+        <div class="node-card__live-wrap" :class="{ 'node-card__live-wrap--open': liveOpen.has(node.id) }">
+          <div class="node-card__live" :class="{ 'node-card__live--settled': liveSettled.has(node.id) }">
+            <NodeLiveCharts v-if="liveSeen.has(node.id)" :samples="liveHistory.nodeSamples.value[node.id] ?? []" :error="liveErrors[node.id]" />
+          </div>
+        </div>
       </article>
       <!-- With a few nodes the row has empty room: offer the next one there. -->
-      <button v-if="few" key="add" type="button" class="nodes-add-tile" @click="addVisible = true">
+      <button v-if="few" key="add" type="button" class="nodes-add-tile" :style="tileHeight ? { height: `${tileHeight}px` } : undefined" @click="addVisible = true">
         <span class="nodes-add-tile__icon"><i class="pi pi-plus" /></span>
         <span class="nodes-add-tile__title">{{ t('nodes.addNode') }}</span>
         <span class="nodes-add-tile__text">{{ t('nodes.addTileText') }}</span>
@@ -247,7 +260,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUpdated, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -260,6 +273,10 @@ import { apiErrorMessage } from '@/core/api/client'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
+import NodeLiveCharts from '@/features/nodes/components/NodeLiveCharts.vue'
+import { useMetricHistory } from '@/features/dashboard/composables/useMetricHistory'
+import { SYSTEM_REFRESH_MS } from '@/features/dashboard/composables/useDashboard'
+import type { DashboardSnapshot } from '@/core/api/generated'
 import Dialog from 'primevue/dialog'
 import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
 import type { NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
@@ -415,6 +432,76 @@ async function pingNode(node: PanelNode) {
   }
 }
 
+/**
+ * The "Add node" tile is as tall as a node card that is not showing its charts: each card has its own height (one
+ * card's charts must not stretch its row), so the tile follows the closed cards, measured.
+ */
+const pageEl = ref<HTMLElement | null>(null)
+const tileHeight = ref<number | null>(null)
+const cardSizes = new ResizeObserver(() => measureTile())
+/** A card's height without its charts (open, opening or closed): with every card open there is no closed one to take. */
+function closedHeight(card: HTMLElement): number {
+  const wrap = card.querySelector<HTMLElement>('.node-card__live-wrap')
+  if (!wrap) return card.offsetHeight
+  const gap = parseFloat(getComputedStyle(card).rowGap) || 0
+  const top = parseFloat(getComputedStyle(wrap).marginTop) || 0
+  return card.offsetHeight - (wrap.getBoundingClientRect().height + gap + top)
+}
+function measureTile() {
+  const cards = [...(pageEl.value?.querySelectorAll<HTMLElement>('.node-card') ?? [])]
+  const tallest = Math.max(0, ...cards.map(closedHeight))
+  tileHeight.value = tallest > 0 ? Math.round(tallest) : null
+}
+function watchCards() {
+  for (const card of pageEl.value?.querySelectorAll<HTMLElement>('.node-card') ?? []) cardSizes.observe(card)
+  measureTile()
+}
+onUpdated(watchCards)
+onBeforeUnmount(() => cardSizes.disconnect())
+
+/**
+ * "Show more": the open cards' live charts. One feed for all of them (the dashboard's system snapshot lists every
+ * node), every 5 s while at least one is open; 60 samples kept, so the charts show the last 5 minutes.
+ */
+const liveOpen = ref<Set<number>>(new Set())
+/** Cards whose charts were opened once (they stay mounted, to slide closed) */
+const liveSeen = ref<Set<number>>(new Set())
+/** Fully open: the section stops clipping, so a chart's tooltip can go over its neighbours (clipped while sliding) */
+const liveSettled = ref<Set<number>>(new Set())
+const liveHistory = useMetricHistory(60)
+const liveErrors = reactive<Record<number, string>>({})
+let liveFeed: Subscription | null = null
+
+function toggleLive(id: number) {
+  const next = new Set(liveOpen.value)
+  if (!next.delete(id)) next.add(id)
+  liveOpen.value = next
+  if (next.has(id)) liveSeen.value = new Set(liveSeen.value).add(id)
+  const settled = new Set(liveSettled.value)
+  settled.delete(id)
+  liveSettled.value = settled
+  if (next.has(id)) window.setTimeout(() => liveOpen.value.has(id) && (liveSettled.value = new Set(liveSettled.value).add(id)), 380)
+  if (next.size && !liveFeed) {
+    liveFeed = liveWatch<DashboardSnapshot>('dashboard/', {
+      query: () => ({ days: 1, include: 'system', processes: 0 }),
+      intervalMs: SYSTEM_REFRESH_MS,
+      onData: (snapshot) => {
+        const stats = snapshot.node_stats ?? []
+        liveHistory.pushNodes(stats)
+        for (const node of stats) liveErrors[node.id] = node.ok ? '' : node.error || t('nodes.live.unavailable')
+      },
+      onError: () => {},
+    })
+  } else if (!next.size) {
+    stopLive()
+  }
+}
+
+function stopLive() {
+  liveFeed?.stop()
+  liveFeed = null
+}
+
 async function load(silent = false) {
   if (!silent) loading.value = true
   loadError.value = null
@@ -498,6 +585,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   feed?.stop()
+  stopLive()
   window.clearInterval(timer)
 })
 </script>
@@ -585,6 +673,8 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
   gap: 1rem;
+  /* Each card its own height: one card's open charts must not stretch the others in its row */
+  align-items: start;
 }
 .node-card {
   --node-accent: var(--p-surface-400, #94a3b8);
@@ -788,7 +878,8 @@ onBeforeUnmount(() => {
   opacity: 0;
   transform: scale(0.9);
 }
-.node-card__more {
+.node-card__more,
+.node-card__live-toggle {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -806,6 +897,7 @@ onBeforeUnmount(() => {
     color 0.15s ease,
     background-color 0.15s ease;
 }
+.node-card__live-toggle:hover,
 .node-card__more:hover {
   color: var(--p-primary-color);
   background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
@@ -817,6 +909,37 @@ onBeforeUnmount(() => {
   transform: rotate(180deg);
 }
 /* Height animation without measuring: grid rows 0fr -> 1fr. */
+/* The live charts slide down (as "More information"), the gap above them only while open */
+.node-card__live-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: -0.9rem;
+  transition:
+    grid-template-rows 0.35s ease,
+    margin-top 0.35s ease;
+}
+.node-card__live-wrap--open {
+  grid-template-rows: 1fr;
+  margin-top: 0;
+}
+.node-card__live {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.node-card__live-wrap--open .node-card__live {
+  opacity: 1;
+}
+.node-card__live--settled {
+  overflow: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .node-card__live-wrap,
+  .node-card__live {
+    transition: none;
+  }
+}
 .node-card__info-wrap {
   display: grid;
   grid-template-rows: 0fr;

@@ -1284,6 +1284,12 @@
       },
       "justNow": "Agora mesmo",
       "lastSeen": "Último contato",
+      "live": {
+        "collecting": "Coletando dados ao vivo… os gráficos se preenchem nos próximos minutos.",
+        "showLess": "Mostrar menos",
+        "showMore": "Mostrar mais",
+        "unavailable": "Este nó não respondeu"
+      },
       "moreInfo": "Mais informações",
       "neverSeen": "Nunca",
       "openAdmin": "Abrir",

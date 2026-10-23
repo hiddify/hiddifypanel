@@ -1284,6 +1284,12 @@
       },
       "justNow": "刚刚",
       "lastSeen": "最后联系",
+      "live": {
+        "collecting": "正在收集实时数据……图表将在接下来几分钟内填满。",
+        "showLess": "收起",
+        "showMore": "显示更多",
+        "unavailable": "此节点没有响应"
+      },
       "moreInfo": "更多信息",
       "neverSeen": "从未",
       "openAdmin": "打开",
