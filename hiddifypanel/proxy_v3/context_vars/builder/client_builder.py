@@ -1,3 +1,5 @@
+import ipaddress
+
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import selectinload
 
@@ -86,18 +88,33 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
     return _domain_major([b for b in all_bases if filter_proxy(b)], domains)
 
 
+def _is_ip_literal(name: str | None) -> bool:
+    try:
+        ipaddress.ip_address(str(name or "").strip("[]"))
+        return True
+    except ValueError:
+        return False
+
+
 def _domain_major(bases: list[BaseVar], domains: list[DomainIPVar]) -> list[BaseVar]:
     """The first domain's profiles first, as the Domains page says, then the next domain's: one base per (domain, proxy)
-    for the domain gateways (the list was grouped by proxy, so reordering domains changed nothing visible). IP-mode and
-    no-inbound proxies merge their domains (one profile per IP), so they stay whole, at their first domain."""
+    for the domain gateways (the list was grouped by proxy, so reordering domains changed nothing visible). IP-mode
+    proxies merge their domains (one profile per IP), so they stay whole: at the first IP address row of the page (they
+    connect by address), else at their first domain. No-inbound proxies (the
+    nodes' configs, user configs, Telegram web) belong to no one domain: after all the domains' profiles, in their order
+    (at the first domain they came between it and the second one)."""
     rank = {d.id: i for i, d in enumerate(domains)}
     last = len(rank)
     keyed: list[tuple[tuple[int, int, int], BaseVar]] = []
     for index, base in enumerate(bases):
         doms = base.proxy.domains
-        if base.proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway) and len(doms) > 1:
+        if base.proxy.mode == CustomProxyMode.no_inbound:
+            keyed.append(((last + 1, 1, index), base))
+        elif base.proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway) and len(doms) > 1:
             for d in doms:
                 keyed.append(((rank.get(d.id, last), 0, index), BaseVar(proxy=base.proxy.model_copy(update={"domains": [d]}), hconfig=base.hconfig, shared_cert=base.shared_cert)))
+        elif base.proxy.mode == CustomProxyMode.ip and any(_is_ip_literal(d.name) for d in doms):
+            keyed.append(((min(rank.get(d.id, last) for d in doms if _is_ip_literal(d.name)), 1, index), base))
         else:
             keyed.append(((min((rank.get(d.id, last) for d in doms), default=last), 1, index), base))
     keyed.sort(key=lambda item: item[0])
