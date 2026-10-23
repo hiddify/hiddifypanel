@@ -1947,6 +1947,9 @@
       "openWeb": "Ouvrir dans le navigateur",
       "promptLead": "Ce panneau a un bot Telegram, {bot}. Liez-le à votre compte :",
       "promptTitle": "Connecter votre Telegram ?",
+      "stepCreate": "Créez un utilisateur directement dans le chat",
+      "stepStart": "Démarrez le bot : son menu s’ouvre",
+      "stepUsers": "Voyez vos utilisateurs et leur consommation",
       "reconnect": "Se reconnecter",
       "scan": "Ou scannez ceci avec l'appareil photo de votre téléphone."
     },
@@ -1992,6 +1995,31 @@
       "loadValues": "Charger les valeurs actuelles",
       "name": "Nom",
       "skipHint": "Produisez SKIP ou appelez skip() pour ignorer le rendu de ce proxy lorsqu'une condition n'est pas remplie"
+    },
+    "pwa": {
+      "guide": {
+        "platform": "Votre appareil",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "Dans Safari, touchez le bouton ••• de la barre du bas",
+        "ios2": "Touchez Partager",
+        "ios3": "Choisissez « Sur l'écran d'accueil »",
+        "ios4": "Touchez Ajouter : le panneau est sur l'écran d'accueil",
+        "android1": "Dans Chrome, touchez le menu ⋮ en haut",
+        "android2": "Choisissez « Ajouter à l'écran d'accueil » (ou « Installer l'application »)",
+        "android3": "Touchez Installer : le panneau s'ouvre comme une application",
+        "computer": "Ordinateur",
+        "desktop1": "Dans Chrome, cliquez sur l'icône d'installation au bout de la barre d'adresse",
+        "desktop2": "Cliquez sur Installer",
+        "desktop3": "Le panneau s'ouvre dans sa propre fenêtre, comme une application"
+      },
+      "gotIt": "Compris",
+      "installNow": "Installer maintenant",
+      "later": "Plus tard",
+      "never": "Ne plus afficher",
+      "text": "Gardez le panneau à portée d'un geste, comme toute application de votre téléphone ou ordinateur.",
+      "title": "Installer le panneau comme application"
     },
     "theme": {
       "dark": "Mode sombre",

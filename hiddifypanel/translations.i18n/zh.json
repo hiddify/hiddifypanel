@@ -1947,6 +1947,9 @@
       "openWeb": "在浏览器中打开",
       "promptLead": "此面板有一个 Telegram 机器人 {bot}。将其关联到您的账户：",
       "promptTitle": "连接您的 Telegram？",
+      "stepCreate": "直接在聊天中创建新用户",
+      "stepStart": "启动机器人：打开它的菜单",
+      "stepUsers": "查看用户及其用量",
       "reconnect": "重新连接",
       "scan": "或用手机相机扫描此码。"
     },
@@ -1992,6 +1995,31 @@
       "loadValues": "加载当前值",
       "name": "名称",
       "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
+    },
+    "pwa": {
+      "guide": {
+        "platform": "您的设备",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "在 Safari 中，轻点底部栏的 ••• 按钮",
+        "ios2": "轻点“共享”",
+        "ios3": "选择“添加到主屏幕”",
+        "ios4": "轻点“添加”：面板就在主屏幕上了",
+        "android1": "在 Chrome 中，轻点顶部的 ⋮ 菜单",
+        "android2": "选择“添加到主屏幕”（或“安装应用”）",
+        "android3": "轻点“安装”：面板会像应用一样打开",
+        "computer": "电脑",
+        "desktop1": "在 Chrome 中，点击地址栏末尾的安装图标",
+        "desktop2": "点击“安装”",
+        "desktop3": "面板会在独立窗口中打开，就像应用一样"
+      },
+      "gotIt": "知道了",
+      "installNow": "立即安装",
+      "later": "以后再说",
+      "never": "不再显示",
+      "text": "像手机或电脑上的其他应用一样，一键打开面板。",
+      "title": "将面板安装为应用"
     },
     "theme": {
       "caddy": "Smart Caddy 主题",

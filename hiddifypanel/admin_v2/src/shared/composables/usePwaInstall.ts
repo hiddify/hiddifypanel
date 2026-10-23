@@ -25,6 +25,22 @@ function isIos(): boolean {
   return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 }
 
+/** Which install guide fits this device: Safari on iPhone / iPad, Chrome on Android, Chrome on a computer. */
+export type PwaPlatform = 'ios' | 'android' | 'desktop'
+export function detectPwaPlatform(): PwaPlatform {
+  if (isIos()) return 'ios'
+  if (typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent)) return 'android'
+  return 'desktop'
+}
+/** The computer's system, for the guide's title. */
+export function desktopOsName(): string {
+  const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent
+  if (/windows/i.test(ua)) return 'Windows'
+  if (/mac os|macintosh/i.test(ua)) return 'macOS'
+  if (/linux|x11|cros/i.test(ua)) return 'Linux'
+  return 'Windows · macOS · Linux'
+}
+
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault() // keep it for our own dialog / button

@@ -2262,6 +2262,24 @@
       "wireguardTemplate": "WireGuard .conf template"
     },
     "pwa": {
+      "guide": {
+        "platform": "Your device",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "In Safari, tap the ••• button in the bar at the bottom",
+        "ios2": "Tap Share",
+        "ios3": "Choose “Add to Home Screen”",
+        "ios4": "Tap Add: the panel is on your home screen",
+        "android1": "In Chrome, tap the ⋮ menu at the top",
+        "android2": "Choose “Add to home screen” (or “Install app”)",
+        "android3": "Tap Install: the panel opens like an app",
+        "computer": "Computer",
+        "desktop1": "In Chrome, click the install icon at the end of the address bar",
+        "desktop2": "Click Install",
+        "desktop3": "The panel opens in its own window, like an app"
+      },
+      "installNow": "Install now",
       "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
       "bannerTitle": "Install the panel as an app",
       "gotIt": "Got it",
@@ -2641,6 +2659,9 @@
       "openWeb": "Open in browser",
       "promptLead": "This panel has a Telegram bot, {bot}. Link it to your account:",
       "promptTitle": "Connect your Telegram?",
+      "stepCreate": "Create a new user right in the chat",
+      "stepStart": "Start the bot: its menu opens",
+      "stepUsers": "See your users and their usage",
       "reconnect": "Connect again",
       "scan": "Or scan this with your phone's camera."
     },
