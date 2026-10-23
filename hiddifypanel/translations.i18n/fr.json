@@ -1003,6 +1003,18 @@
       "noMatch": "Aucun domaine ne correspond aux filtres",
       "noName": "(sans nom)",
       "notChanged": "Inchangé",
+      "notice": {
+        "expired": "Son certificat a expiré : les applications refusent de se connecter.",
+        "failed": "Il n'a pas de certificat valide : l'obtention a échoué.",
+        "invalid": "Son certificat n'est pas valide pour ce domaine.",
+        "missing": "Il n'a pas encore de certificat.",
+        "rate_limited": "L'obtention du certificat est en pause : la limite des autorités de certification est atteinte. Nouvel essai plus tard.",
+        "renew_failed": "Son certificat est encore valide, mais le renouvellement a échoué.",
+        "saved": "Domaines · enregistré avec un avertissement",
+        "self_signed": "Il n'a qu'un certificat auto-signé temporaire : les applications avertissent ou refusent.",
+        "title": "Domaines · {domain}",
+        "where": "Détails : page Domaines."
+      },
       "openPanel": "Ouvrir le panneau sur ce domaine",
       "port": {
         "busy": "un autre programme l'écoute ({name})",

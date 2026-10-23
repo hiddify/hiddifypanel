@@ -1003,6 +1003,18 @@
       "noMatch": "没有域名符合筛选条件",
       "noName": "（无名称）",
       "notChanged": "未更改",
+      "notice": {
+        "expired": "证书已过期：应用会拒绝连接。",
+        "failed": "没有有效证书：申请失败。",
+        "invalid": "证书对此域名无效。",
+        "missing": "还没有证书。",
+        "rate_limited": "证书申请已暂停：已达到证书颁发机构的频率限制，稍后会重试。",
+        "renew_failed": "证书仍然有效，但续期失败。",
+        "saved": "域名 · 已保存但有警告",
+        "self_signed": "只有临时自签名证书：应用会警告或拒绝。",
+        "title": "域名 · {domain}",
+        "where": "详情：域名页面。"
+      },
       "openPanel": "在此域名上打开面板",
       "port": {
         "busy": "另一个程序正在监听该端口（{name}）",

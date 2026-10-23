@@ -1,7 +1,8 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
-import { isChildPanel, isSuperAdmin, panelNotices, type PanelNotice } from '@/core/panelShell'
+import { accountMode, isChildPanel, isSuperAdmin, panelNotices, type PanelNotice } from '@/core/panelShell'
+import { domainProblems, domainSaveWarnings, loadDomainProblems } from '@/shared/composables/useDomainNotices'
 import { configHealthProblems, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
 
 export type PanelNoticeSeverity = PanelNotice['severity']
@@ -75,11 +76,29 @@ export function usePanelNotifications() {
       }
     }),
   )
-  // Errors first: a config that does not work matters more than the panel's advice
-  const notices = computed(() => [...healthNotices.value.filter((n) => n.severity === 'error'), ...panelNotices.value, ...healthNotices.value.filter((n) => n.severity !== 'error')])
+  /** The Domains page's problems: certificates that do not work, and the warnings of the last saves. */
+  const domainNotices = computed<PanelNotice[]>(() => {
+    const head = (name: string) => `<b>${escapeHtml(t('domains.notice.title', { domain: name }))}</b><br>`
+    const out: PanelNotice[] = domainProblems.value.map((p) => ({
+      // the domain, the kind and the message in the id: a new failure is news again
+      id: `domains:${p.id}:${p.kind}:${p.error.slice(0, 40)}`,
+      severity: ['failed', 'expired', 'invalid'].includes(p.kind) ? 'error' : 'warn',
+      summary: head(p.domain) + escapeHtml(t(`domains.notice.${p.kind}`)),
+      detail: [p.error, t('domains.notice.where')].filter(Boolean).map(escapeHtml).join('<br>'),
+    }))
+    for (const w of domainSaveWarnings.value) {
+      out.push({ severity: 'warn', summary: `<b>${escapeHtml(t('domains.notice.saved'))}</b><br>${escapeHtml(w.text).replace(/\n/g, '<br>')}` })
+    }
+    return out
+  })
+  const extra = computed(() => [...healthNotices.value, ...domainNotices.value])
+  // Errors first: a config or a certificate that does not work matters more than the panel's advice
+  const notices = computed(() => [...extra.value.filter((n) => n.severity === 'error'), ...panelNotices.value, ...extra.value.filter((n) => n.severity !== 'error')])
   let healthTimer = 0
   function refreshHealth() {
-    void loadConfigHealth()
+    // Config health is the super admin's, and a node's configs are tested by its parent panel; every admin has Domains
+    if (isSuperAdmin.value && !isChildPanel.value) void loadConfigHealth()
+    if (isSuperAdmin.value || accountMode.value === 'admin') void loadDomainProblems()
     healthTimer = window.setTimeout(refreshHealth, HEALTH_REFRESH_MS)
   }
   // Closed notices stay closed in this browser.
@@ -121,8 +140,7 @@ export function usePanelNotifications() {
 
   onMounted(() => {
     showToasts()
-    // Config health is the super admin's (the API is theirs), and a node's configs are tested by its parent panel
-    if (isSuperAdmin.value && !isChildPanel.value) refreshHealth()
+    refreshHealth()
   })
   onBeforeUnmount(() => window.clearTimeout(healthTimer))
 
