@@ -17,6 +17,8 @@ export interface PanelNode {
   id: number
   name: string
   host: string
+  /** The country of the node's address (ISO code, e.g. "DE"); "" when unknown. */
+  country: string
   /** Opens the node's admin panel as the signed-in admin. */
   admin_url: string
   last_seen: string | null
