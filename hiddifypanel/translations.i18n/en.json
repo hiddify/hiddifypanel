@@ -1417,7 +1417,7 @@
         "tlsMode": "TLS mode"
       },
       "getCert": "Get certificate",
-      "howto": "Order matters: drag (or use the arrows) to sort. Configs list domains in this order, and the first one is used for panel links.",
+      "howto": "Order matters: drag the ☰ handle to sort. Configs list domains in this order, and the first one is used for panel links.",
       "howtoFiltered": "Clear the search and filters to change the order.",
       "ips": {
         "elsewhere": "another server / CDN",

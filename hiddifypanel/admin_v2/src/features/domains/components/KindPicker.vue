@@ -21,7 +21,7 @@ const { t } = useI18n()
       :aria-checked="model === k"
       @click="model = k"
     >
-      <span class="kind__emoji" aria-hidden="true">{{ KIND_META[k].emoji }}</span>
+      <span class="kind__emoji" aria-hidden="true" :style="{ color: KIND_META[k].color }"><i :class="KIND_META[k].icon" /></span>
       <span class="kind__text">
         <span class="kind__name">
           {{ t(`domains.kind.${k}.name`) }}

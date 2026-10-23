@@ -215,7 +215,7 @@ async function save() {
   <Dialog v-model:visible="visible" modal :draggable="false" class="dd" :style="{ width: 'min(46rem, calc(100vw - 1.5rem))' }" :breakpoints="{ '640px': '100vw' }" @after-hide="hideMobileMenu">
     <template #header>
       <div class="dd__head">
-        <span class="dd__emoji" :style="{ '--kind-color': KIND_META[kind].color }">{{ KIND_META[kind].emoji }}</span>
+        <span class="dd__emoji" :style="{ '--kind-color': KIND_META[kind].color, color: KIND_META[kind].color }"><i :class="KIND_META[kind].icon" /></span>
         <div class="dd__head-text">
           <span class="dd__title">{{ t('domains.editTitle') }}</span>
           <span class="dd__sub" dir="ltr">{{ row?.domain || t('domains.noName') }}</span>

@@ -969,7 +969,7 @@
         "tlsMode": "Mode TLS"
       },
       "getCert": "Obtenir un certificat",
-      "howto": "L'ordre compte : faites glisser (ou utilisez les flèches) pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
+      "howto": "L'ordre compte : faites glisser la poignée ☰ pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
       "howtoFiltered": "Effacez la recherche et les filtres pour modifier l'ordre.",
       "ips": {
         "elsewhere": "un autre serveur / CDN",
