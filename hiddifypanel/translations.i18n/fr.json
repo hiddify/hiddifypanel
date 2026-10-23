@@ -1284,9 +1284,28 @@
       },
       "justNow": "À l'instant",
       "lastSeen": "Dernier contact",
+      "live": {
+        "collecting": "Collecte des données en direct… les graphiques se remplissent dans les prochaines minutes.",
+        "showLess": "Afficher moins",
+        "showMore": "Afficher plus",
+        "unavailable": "Ce nœud n'a pas répondu"
+      },
       "moreInfo": "Plus d'informations",
       "neverSeen": "Jamais",
       "openAdmin": "Ouvrir",
+      "pingDialog": {
+        "avg": "moy",
+        "button": "Ping",
+        "hint": "{sent} envoyés, {received} réponses · le ping continue jusqu'à la fermeture de cette fenêtre",
+        "loss": "perte",
+        "max": "max",
+        "min": "min",
+        "noAddress": "L'adresse du nœud est inconnue",
+        "running": "ping en cours",
+        "tcp": "TCP (ICMP impossible)",
+        "timeout": "Pas de réponse",
+        "title": "Ping · {name}"
+      },
       "reachable": "Joignable",
       "refresh": "Actualiser",
       "remove": "Supprimer",

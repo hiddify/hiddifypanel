@@ -205,6 +205,54 @@ class NodePingApi(MethodView):
         return {"online": online, "version": getattr(info, "version", "") or "", "error": "" if online else error}
 
 
+def _ping_target(child: Child) -> tuple[str, int]:
+    """The node's address and port from its link (a name is resolved, IPv4 first)."""
+    import ipaddress
+    from urllib.parse import urlparse
+
+    url = urlparse((child.node_base_url or "").strip())
+    host, port = url.hostname or "", url.port or (80 if url.scheme == "http" else 443)
+    try:
+        return str(ipaddress.ip_address(host)), port
+    except ValueError:
+        ip = hutils.network.get_domain_ip(host, version=4) or hutils.network.get_domain_ip(host) if host else None
+        return (str(ip) if ip else ""), port
+
+
+def ping_once(ip: str, port: int) -> dict:
+    """One ICMP echo from this server (round trip in ms); when ICMP is not allowed here or is blocked on the way,
+    the time a TCP connection to the node's panel port takes instead (``method`` says which)."""
+    import re
+    import socket
+    import subprocess
+    import time
+
+    try:
+        res = subprocess.run(["ping", "-c", "1", "-W", "2", "-n", ip], capture_output=True, text=True, timeout=4)
+        found = re.search(r"time[=<]([\d.]+)\s*ms", res.stdout)
+        if res.returncode == 0 and found:
+            return {"ok": True, "ms": round(float(found.group(1)), 1), "method": "icmp", "error": ""}
+    except (OSError, subprocess.SubprocessError):
+        pass
+    start = time.perf_counter()
+    try:
+        with socket.create_connection((ip, port), timeout=3):
+            return {"ok": True, "ms": round((time.perf_counter() - start) * 1000, 1), "method": "tcp", "error": ""}
+    except OSError as e:
+        return {"ok": False, "ms": None, "method": "tcp", "error": e.strerror or type(e).__name__}
+
+
+class NodeIcmpPingApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self, node_id: int):
+        """Nodes: Ping the node's server once from this panel (the page asks again every second)"""
+        ip, port = _ping_target(_remote_or_404(node_id))
+        if not ip:
+            return {"ip": "", "ok": False, "ms": None, "method": "", "error": "no_address"}
+        return {"ip": ip, **ping_once(ip, port)}
+
+
 class NodeSyncApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 

@@ -1776,9 +1776,28 @@
       },
       "justNow": "Just now",
       "lastSeen": "Last contact",
+      "live": {
+        "collecting": "Collecting live data… the charts fill in over the next minutes.",
+        "showLess": "Show less",
+        "showMore": "Show more",
+        "unavailable": "This node did not answer"
+      },
       "moreInfo": "More information",
       "neverSeen": "Never",
       "openAdmin": "Open",
+      "pingDialog": {
+        "avg": "avg",
+        "button": "Ping",
+        "hint": "{sent} sent, {received} answered · it keeps pinging until you close this window",
+        "loss": "loss",
+        "max": "max",
+        "min": "min",
+        "noAddress": "The node's address is not known",
+        "running": "pinging",
+        "tcp": "TCP (ICMP not possible)",
+        "timeout": "No answer",
+        "title": "Ping · {name}"
+      },
       "reachable": "Reachable",
       "refresh": "Refresh",
       "remove": "Remove",

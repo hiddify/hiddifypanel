@@ -1284,9 +1284,28 @@
       },
       "justNow": "刚刚",
       "lastSeen": "最后联系",
+      "live": {
+        "collecting": "正在收集实时数据……图表将在接下来几分钟内填满。",
+        "showLess": "收起",
+        "showMore": "显示更多",
+        "unavailable": "此节点没有响应"
+      },
       "moreInfo": "更多信息",
       "neverSeen": "从未",
       "openAdmin": "打开",
+      "pingDialog": {
+        "avg": "平均",
+        "button": "Ping",
+        "hint": "已发送 {sent}，已应答 {received} · 关闭此窗口前会一直 ping",
+        "loss": "丢包",
+        "max": "最大",
+        "min": "最小",
+        "noAddress": "节点地址未知",
+        "running": "正在 ping",
+        "tcp": "TCP（无法使用 ICMP）",
+        "timeout": "无应答",
+        "title": "Ping · {name}"
+      },
       "reachable": "可连接",
       "refresh": "刷新",
       "remove": "移除",
