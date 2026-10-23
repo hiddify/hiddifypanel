@@ -187,6 +187,7 @@
             :label="t('nodes.openAdmin')"
             class="node-card__open"
           />
+          <Button icon="pi pi-wave-pulse" :label="t('nodes.pingDialog.button')" severity="secondary" outlined class="node-card__ping" :aria-pressed="pinging.has(node.id)" :class="{ 'node-card__ping--on': pinging.has(node.id) }" @click="togglePing(node.id)" />
           <Button
             icon="pi pi-sync"
             severity="secondary"
@@ -234,6 +235,8 @@
             <NodeLiveCharts v-if="liveSeen.has(node.id)" :samples="liveHistory.nodeSamples.value[node.id] ?? []" :error="liveErrors[node.id]" />
           </div>
         </div>
+        <!-- Ping: over this card, under its name (each card its own: several nodes at once) -->
+        <NodePingPanel v-if="pinging.has(node.id)" :node="node" class="node-card__ping-panel" @close="togglePing(node.id)" />
       </article>
       <!-- With a few nodes the row has empty room: offer the next one there. -->
       <button v-if="few" key="add" type="button" class="nodes-add-tile" :style="tileHeight ? { height: `${tileHeight}px` } : undefined" @click="addVisible = true">
@@ -277,6 +280,7 @@ import NodeLiveCharts from '@/features/nodes/components/NodeLiveCharts.vue'
 import { useMetricHistory } from '@/features/dashboard/composables/useMetricHistory'
 import { SYSTEM_REFRESH_MS } from '@/features/dashboard/composables/useDashboard'
 import type { DashboardSnapshot } from '@/core/api/generated'
+import NodePingPanel from '@/features/nodes/components/NodePingPanel.vue'
 import Dialog from 'primevue/dialog'
 import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
 import type { NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
@@ -306,6 +310,13 @@ const loading = ref(true)
 const refreshing = ref(false)
 const loadError = ref<string | null>(null)
 const addVisible = ref(false)
+/** The nodes being pinged (their panel is open on their card). */
+const pinging = ref<Set<number>>(new Set())
+function togglePing(id: number) {
+  const next = new Set(pinging.value)
+  if (!next.delete(id)) next.add(id)
+  pinging.value = next
+}
 /** The node whose sync report is open. */
 const syncInfoNode = ref<PanelNode | null>(null)
 
@@ -998,11 +1009,35 @@ onBeforeUnmount(() => {
 }
 .node-card__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: auto;
 }
 .node-card__open {
   flex: 1;
+}
+/* Labels on one line ("ورود به نود" broke into three beside "Ping"): the row wraps instead */
+.node-card__open,
+.node-card__ping {
+  flex-shrink: 0;
+  min-width: max-content;
+  white-space: nowrap;
+}
+/* The ping panel lies over the card below its head (icon, flag, name stay visible), at its own height: a card made
+   tall by its open charts does not stretch it */
+.node-card__ping-panel {
+  position: absolute;
+  z-index: 3;
+  inset: 4.6rem 0.6rem auto;
+  max-height: calc(100% - 5.2rem);
+}
+.node-card__ping--on {
+  border-color: var(--p-primary-color);
+  color: var(--p-primary-color);
+}
+/* Delete last, at the row's end (alone on a second row when the card is narrow) */
+.node-card__actions > :last-child {
+  margin-inline-start: auto;
 }
 
 /* "Add node" tile (a few nodes) */

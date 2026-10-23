@@ -41,6 +41,15 @@ export interface NodePing {
   error: string
 }
 
+export interface NodeIcmpPing {
+  ip: string
+  ok: boolean
+  /** round trip in milliseconds; null when it got no answer */
+  ms: number | null
+  method: 'icmp' | 'tcp' | ''
+  error: string
+}
+
 /** 400 body of a failed registration: `code` is translated by the UI. */
 export interface NodeRegisterError {
   code?: 'invalid_link' | 'self' | 'unreachable' | 'rejected' | string
@@ -129,6 +138,11 @@ export const nodesApi = {
   },
   async ping(id: number): Promise<NodePing> {
     const { data } = await getHttp().get<NodePing>(`nodes/${id}/ping/`, { timeout: 30_000 })
+    return data
+  },
+  /** One ping of the node's server from this panel (ICMP, or a TCP connect when ICMP is not possible). */
+  async icmp(id: number): Promise<NodeIcmpPing> {
+    const { data } = await getHttp().get<NodeIcmpPing>(`nodes/${id}/icmp/`, { timeout: 10_000 })
     return data
   },
   async syncReport(id: number): Promise<NodeSyncReportOut> {
