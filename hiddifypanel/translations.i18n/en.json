@@ -3181,6 +3181,7 @@
     "backup_failed": "Backup failed.",
     "backup_working": "Preparing backup…",
     "btn_backup": "💾 Backup",
+    "btn_check": "🩺 Check status",
     "btn_new": "➕ New user",
     "btn_panel": "🖥 Open panel",
     "btn_status": "📊 Server status",

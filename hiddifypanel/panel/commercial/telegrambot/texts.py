@@ -60,6 +60,7 @@ class T(StrEnum):
     btn_users = "btn_users"
     btn_new = "btn_new"
     btn_status = "btn_status"
+    btn_check = "btn_check"
     btn_backup = "btn_backup"
     btn_panel = "btn_panel"
     panel = "panel"

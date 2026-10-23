@@ -40,6 +40,7 @@ class Cb(StrEnum):
     new_name = "nn"  # nn:<gb>:<days>:<count>
     new_go = "ng"  # ng:<gb>:<days>:<count>
     status = "st"
+    check = "cs"  # the server's address and its services
     backup = "bk"
     me = "me"  # the user's own account
     me_links = "ml"
