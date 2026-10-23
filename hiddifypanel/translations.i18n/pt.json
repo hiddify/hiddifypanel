@@ -934,20 +934,20 @@
       "field": {
         "alias": "Nome de exibição",
         "aliasHint": "Exibido nos apps dos usuários em vez do domínio.",
-        "cdnIp": "🔂 Forçar as configs a usar estes IPs / domínios",
+        "cdnIp": "Forçar as configs a usar estes IPs / domínios",
         "cdnIpHint": "Coloque-os nos links dos usuários em vez do IP do domínio, separados por vírgulas ou novas linhas. Templates de operadora também funcionam.",
         "domain": "Domínio",
         "domainInvalid": "Isto não parece um domínio",
         "domainRequired": "Digite um domínio",
-        "downloadDomain": "📈 Domínio de download",
+        "downloadDomain": "Domínio de download",
         "downloadDomainHint": "Somente para XHTTP: os downloads podem vir de um domínio diferente dos uploads. Mais difícil de detectar, geralmente mais rápido.",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "Obtém e usa o Encrypted Client Hello para este domínio CDN.",
         "echNeedsSetting": "Ative primeiro o TLS ECH nas configurações do painel.",
         "extra": "Parâmetros extras",
         "extraInvalid": "JSON inválido",
         "extraObject": "Deve ser um objeto JSON",
-        "fronting": "🎭 Domain fronting",
+        "fronting": "Domain fronting",
         "frontingHint": "Opcional. Os apps dos usuários exibem um destes nomes (SNI) em vez do seu domínio, de modo que um filtro vê apenas outro site. Use sites na mesma CDN do seu domínio (ex.: outros sites da Cloudflare). Vazio: sem fronting.",
         "frontingPlaceholder": "outro-site.com, site-cdn.net",
         "hostnamesInvalid": "Use nomes de host separados por vírgulas, como site.com",
@@ -957,7 +957,7 @@
         "portsHint": "Por onde os usuários acessam os proxies SNI e L7 deste domínio: uma porta TLS e uma porta HTTP. Vazio usa o padrão. O firewall as redireciona para 443 / 80, então nada no servidor pode escutá-las, e uma porta TLS não pode ser a porta HTTP de outro domínio.",
         "proxies": "Proxies personalizados",
         "relayNeedsIp": "Um relay que não usa um certificado real precisa do IP do servidor relay em Avançado → Forçar IPs.",
-        "resolveIp": "🔢 Resolver IP",
+        "resolveIp": "Resolver IP",
         "resolveIpHint": "Usa o IP em vez do nome de domínio nos proxies. Útil quando o DNS é instável.",
         "serverDomain": "Domínio do servidor",
         "serverDomainHint": "Domínio do servidor upstream usado nesta entrada. Deve ser um domínio Direct ou Relay válido.",
@@ -969,7 +969,7 @@
         "tlsMode": "Modo TLS"
       },
       "getCert": "Obter certificado",
-      "howto": "A ordem importa: arraste (ou use as setas) para ordenar. As configs listam os domínios nesta ordem, e o primeiro é usado para os links do painel.",
+      "howto": "A ordem importa: arraste a alça ☰ para ordenar. As configs listam os domínios nesta ordem, e o primeiro é usado para os links do painel.",
       "howtoFiltered": "Limpe a pesquisa e os filtros para alterar a ordem.",
       "ips": {
         "elsewhere": "outro servidor / CDN",
@@ -2015,6 +2015,7 @@
       "unread": "{n} nova notificação | {n} novas notificações",
       "new": "Nova",
       "dismiss": "Dispensar"
+    },
     "pwa": {
       "guide": {
         "platform": "Seu dispositivo",

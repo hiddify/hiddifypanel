@@ -179,7 +179,10 @@ export const domainsApi = {
 }
 
 export interface KindMeta {
+  /** Shown in config names (the alias suggestions) */
   emoji: string
+  /** The type's icon on the page (PrimeIcons) */
+  icon: string
   mode: DomainMode
   /** Accent colour token. */
   color: string
@@ -191,11 +194,11 @@ export interface KindMeta {
 export const KINDS: DomainKind[] = ['direct', 'cdn', 'relay', 'sublink']
 
 export const KIND_META: Record<DomainKind, KindMeta> = {
-  direct: { emoji: '➡️', mode: 'direct', color: 'var(--p-green-500, #22c55e)' },
-  cdn: { emoji: '🔀', mode: 'cdn', color: 'var(--p-orange-500, #f97316)' },
-  relay: { emoji: '♾️', mode: 'relay', color: 'var(--p-cyan-500, #06b6d4)', link: 'https://github.com/hiddify/hiddify-config/discussions/129' },
-  worker: { emoji: '✴️', mode: 'worker', color: 'var(--p-amber-500, #f59e0b)' },
-  sublink: { emoji: '🔗', mode: 'sub_link_only', color: 'var(--p-blue-500, #3b82f6)' },
+  direct: { emoji: '➡️', icon: 'pi pi-server', mode: 'direct', color: 'var(--p-green-500, #22c55e)' },
+  cdn: { emoji: '🔀', icon: 'pi pi-cloud', mode: 'cdn', color: 'var(--p-orange-500, #f97316)' },
+  relay: { emoji: '♾️', icon: 'pi pi-arrow-right-arrow-left', mode: 'relay', color: 'var(--p-cyan-500, #06b6d4)', link: 'https://github.com/hiddify/hiddify-config/discussions/129' },
+  worker: { emoji: '✴️', icon: 'pi pi-bolt', mode: 'worker', color: 'var(--p-amber-500, #f59e0b)' },
+  sublink: { emoji: '🔗', icon: 'pi pi-link', mode: 'sub_link_only', color: 'var(--p-blue-500, #3b82f6)' },
 }
 
 export function kindOf(mode: DomainMode): DomainKind {

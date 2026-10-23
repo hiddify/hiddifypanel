@@ -311,7 +311,7 @@ async function copyIp(ip: string) {
           <button v-for="s in aliasSuggestions" :key="s" type="button" class="wz__chip" :class="{ 'wz__chip--on': alias === s }" :disabled="step === 'saving'" @click="alias = s">{{ s }}</button>
         </div>
         <div class="wz__summary">
-          <span class="wz__summary-emoji">{{ KIND_META[kind].emoji }}</span>
+          <span class="wz__summary-emoji" :style="{ color: KIND_META[kind].color }"><i :class="KIND_META[kind].icon" /></span>
           <span class="wz__summary-text">
             <b dir="ltr">{{ cleanName }}</b>
             <small>{{ t(`domains.kind.${kind}.name`) }}<template v-if="decoy"> · {{ t(`domains.tlsMode.${tlsMode}`) }}</template> · {{ alias || cleanName }}</small>
