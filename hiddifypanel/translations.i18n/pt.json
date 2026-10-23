@@ -1996,6 +1996,11 @@
       "name": "Nome",
       "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
     },
+    "notifications": {
+      "title": "Notificações",
+      "unread": "{n} nova notificação | {n} novas notificações",
+      "new": "Nova",
+      "dismiss": "Dispensar"
     "pwa": {
       "guide": {
         "platform": "Seu dispositivo",

@@ -1996,6 +1996,11 @@
       "name": "Nom",
       "skipHint": "Produisez SKIP ou appelez skip() pour ignorer le rendu de ce proxy lorsqu'une condition n'est pas remplie"
     },
+    "notifications": {
+      "title": "Notifications",
+      "unread": "{n} nouvelle notification | {n} nouvelles notifications",
+      "new": "Nouveau",
+      "dismiss": "Ignorer"
     "pwa": {
       "guide": {
         "platform": "Votre appareil",
