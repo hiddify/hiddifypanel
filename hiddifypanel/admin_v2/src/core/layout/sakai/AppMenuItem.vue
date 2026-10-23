@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { menuIconColor } from './menu-icons'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -55,6 +56,12 @@ const isActive = computed(() => {
   }
   return false
 })
+
+/** A coloured icon on a soft chip of its colour (menu-icons.ts); others keep the plain look. */
+function iconStyle(icon: unknown) {
+  const c = menuIconColor(icon)
+  return c ? { '--mi': c } : undefined
+}
 
 function itemClick(event: Event, item: Record<string, unknown>) {
   if (item.disabled) {
@@ -126,7 +133,7 @@ function onMouseEnter() {
       @click="itemClick($event, item)"
       @mouseenter="onMouseEnter"
     >
-      <i :class="item.icon" class="layout-menuitem-icon" />
+      <i :class="item.icon" class="layout-menuitem-icon" :style="iconStyle(item.icon)" />
       <span class="layout-menuitem-text">{{ item.label }}</span>
       <span v-if="item.badge" class="layout-menuitem-badge">{{ item.badge }}</span>
       <i v-if="item.items" class="pi pi-fw pi-angle-down layout-submenu-toggler" />
@@ -141,7 +148,7 @@ function onMouseEnter() {
       @click="itemClick($event, item)"
       @mouseenter="onMouseEnter"
     >
-      <i :class="item.icon" class="layout-menuitem-icon" />
+      <i :class="item.icon" class="layout-menuitem-icon" :style="iconStyle(item.icon)" />
       <span class="layout-menuitem-text">{{ item.label }}</span>
       <span v-if="item.badge" class="layout-menuitem-badge">{{ item.badge }}</span>
     </router-link>
