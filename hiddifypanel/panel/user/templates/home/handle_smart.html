@@ -1,5 +1,5 @@
 {% extends "master.html" %}
-{% block title %}{{hconfig(ConfigEnum.branding_title) or _('user.home.title')}}{% endblock %}
+{% block title %}{{user_hconfig(ConfigEnum.branding_title) or _('user.home.title')}}{% endblock %}
 {% from 'macros.html' import modal %}
 {% block body %}
 <script src="{{static_url_for(filename='js/custom-protocol-check.js',version=5.1)}}"> </script>

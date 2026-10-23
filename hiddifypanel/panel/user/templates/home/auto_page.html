@@ -1,5 +1,5 @@
 {% extends "master.html" %}
-{% block title %}{{hconfig(ConfigEnum.branding_title) or _('user.home.title')}}{% endblock %}
+{% block title %}{{user_hconfig(ConfigEnum.branding_title) or _('user.home.title')}}{% endblock %}
 {% from 'macros.html' import modal %}
 {% block body %}
 Trying to open related app: "Clash" "V2ray" "Generic"

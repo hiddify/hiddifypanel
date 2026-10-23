@@ -92,33 +92,35 @@ class ApplyMode(StrEnum):
     nothing = auto()
 
 
-def _BoolConfigDscr(category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False) -> "ConfigEnum":
-    return category, apply_mode, bool, show_in_parent
+def _BoolConfigDscr(category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False, admin_overridable: bool = False) -> "ConfigEnum":
+    return category, apply_mode, bool, show_in_parent, admin_overridable
 
 
-def _StrConfigDscr(category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False) -> "ConfigEnum":
-    return category, apply_mode, str, show_in_parent
+def _StrConfigDscr(category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False, admin_overridable: bool = False) -> "ConfigEnum":
+    return category, apply_mode, str, show_in_parent, admin_overridable
 
 
-def _IntConfigDscr(category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False) -> "ConfigEnum":
-    return category, apply_mode, int, show_in_parent
+def _IntConfigDscr(category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False, admin_overridable: bool = False) -> "ConfigEnum":
+    return category, apply_mode, int, show_in_parent, admin_overridable
 
 
-def _TypedConfigDscr(ctype: type, category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False) -> "ConfigEnum":
-    return category, apply_mode, ctype, show_in_parent
+def _TypedConfigDscr(ctype: type, category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.nothing, show_in_parent: bool = True, hide_in_virtual_child=False, admin_overridable: bool = False) -> "ConfigEnum":
+    return category, apply_mode, ctype, show_in_parent, admin_overridable
 
 
 class ConfigEnum(metaclass=FastEnum):
     # category: ConfigCategory
-    __slots__ = ("name", "value", "category", "apply_mode", "type", "show_in_parent", "hide_in_virtual_child")
+    __slots__ = ("name", "value", "category", "apply_mode", "type", "show_in_parent", "admin_overridable", "hide_in_virtual_child")
 
-    def __init__(self, category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.apply_config, ctype=type, show_in_parent: bool = True, hide_in_virtual_child=False, name=auto):
+    def __init__(self, category: ConfigCategory, apply_mode: ApplyMode = ApplyMode.apply_config, ctype=type, show_in_parent: bool = True, admin_overridable: bool = False, hide_in_virtual_child=False, name=auto):
         self.value = name
         self.name = name
         self.category = category
         self.apply_mode = apply_mode
         self.type = ctype
         self.show_in_parent = show_in_parent
+        #: An admin may set it for its own users (AdminUser.override_settings, see hiddifypanel.admin_overrides).
+        self.admin_overridable = admin_overridable
         self.hide_in_virtual_child = hide_in_virtual_child
 
     @classmethod
@@ -191,7 +193,7 @@ class ConfigEnum(metaclass=FastEnum):
     unique_id = _StrConfigDscr(ConfigCategory.hidden)
     last_hash = _StrConfigDscr(ConfigCategory.hidden)
     cdn_forced_host = _StrConfigDscr(ConfigCategory.hidden)  # removed
-    lang = _TypedConfigDscr(Lang, ConfigCategory.branding)
+    lang = _TypedConfigDscr(Lang, ConfigCategory.branding, admin_overridable=True)
     admin_lang = _TypedConfigDscr(Lang, ConfigCategory.admin)
     admin_secret = _StrConfigDscr(ConfigCategory.hidden)  # removed
 
@@ -327,11 +329,11 @@ class ConfigEnum(metaclass=FastEnum):
     #: Where this node is in its parent's change feed (hutils/node/sync_feed.py), as JSON; empty: from the start.
     parent_sync_cursor = _StrConfigDscr(ConfigCategory.hidden)
 
-    branding_title = _StrConfigDscr(ConfigCategory.branding)
-    branding_site = _StrConfigDscr(ConfigCategory.branding)
-    branding_freetext = _StrConfigDscr(ConfigCategory.branding)
+    branding_title = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
+    branding_site = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
+    branding_freetext = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     # the user page: a static site (e.g. a hiddify-user-front build on GitHub Pages) the panel serves; empty: built-in
-    user_page_url = _StrConfigDscr(ConfigCategory.branding)
+    user_page_url = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     not_found = _StrConfigDscr(ConfigCategory.hidden)
     path_vmess = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     path_vless = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)

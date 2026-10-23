@@ -388,7 +388,30 @@
       "title": "My account",
       "under": "Under {name}",
       "unlimited": "No limit",
-      "wrongCurrent": "The current password is wrong"
+      "wrongCurrent": "The current password is wrong",
+      "userPage": {
+        "title": "My users' page",
+        "sub": "What your users (and your sub-admins' users) see on their page. Empty fields use the panel's settings.",
+        "none": "Nothing changed: your users see the panel's page.",
+        "count": "{n} item customized | {n} items customized",
+        "edit": "Customize",
+        "intro": "Leave a field empty to keep what your users get now (shown in the field).",
+        "brandTitle": "Brand title",
+        "brandTitleHint": "Shown at the top of the user page, before the welcome text.",
+        "supportLink": "Support link",
+        "supportLinkHint": "Shown in the support box, e.g. your Telegram channel or chat.",
+        "supportText": "Support box text",
+        "supportTextHint": "Shown in the support box on the user page. HTML is allowed.",
+        "lang": "User page language",
+        "langHint": "For users who have not chosen their own.",
+        "advanced": "Advanced",
+        "customPage": "Custom user page",
+        "customPageHint": "The address of a static site shown instead of the user page (e.g. your build of hiddify-user-front on GitHub Pages). The panel serves it from its own domain.",
+        "inherit": "Now: {value}",
+        "empty": "Not set",
+        "badUrl": "Enter a full address starting with https://",
+        "saved": "User page saved"
+      }
     },
     "actions": {
       "applyConfigs": "Apply Configs",

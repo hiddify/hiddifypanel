@@ -25,12 +25,13 @@ def init_app(app):
         bp.add_url_rule("/admin_user/<uuid:uuid>/", view_func=AdminUserApi)
         bp.add_url_rule("/admin_user/", view_func=AdminUsersApi)
 
-        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminAliasApi, MyAdminLanguageApi, MyAdminOutboundApi, MyAdminUsersLayoutApi, MyAdminConfigsApi, MyAdminPasswordApi
+        from .admins_api import AdminResetPasswordApi, AdminsTreeApi, AdminTreeItemApi, MyAdminAccountApi, MyAdminAliasApi, MyAdminLanguageApi, MyAdminOutboundApi, MyAdminUsersLayoutApi, MyAdminConfigsApi, MyAdminOverridesApi, MyAdminPasswordApi
 
         bp.add_url_rule("/admins/", view_func=AdminsTreeApi)
         bp.add_url_rule("/admins/me/", view_func=MyAdminAccountApi)
         bp.add_url_rule("/admins/me/password/", view_func=MyAdminPasswordApi)
         bp.add_url_rule("/admins/me/additional-configs/", view_func=MyAdminConfigsApi)
+        bp.add_url_rule("/admins/me/override-settings/", view_func=MyAdminOverridesApi)
         bp.add_url_rule("/admins/me/alias/", view_func=MyAdminAliasApi)
         bp.add_url_rule("/admins/me/language/", view_func=MyAdminLanguageApi)
         bp.add_url_rule("/admins/me/users-layout/", view_func=MyAdminUsersLayoutApi)

@@ -15,6 +15,7 @@ from hiddifypanel import admin_credentials as creds
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
+from hiddifypanel import admin_overrides
 from hiddifypanel.models import AdminUser, ConfigEnum, Domain, DomainType, User, hconfig
 from hiddifypanel.models.admin import AdminMode
 from hiddifypanel.models.config_enum import Lang
@@ -207,6 +208,7 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         "sub_admins": sub_admins,
         # Added to the subscription of every user of this admin and its sub-admins.
         "additional_configs": user_configs.clean_rows(admin.additional_configs or [])[0],
+        **_override_info(admin),
         # Outbound id this admin's users use unless they choose another (null: automatic / inherited).
         "default_outbound": admin.default_outbound_id,
         "inherited_outbound": _inherited_outbound(admin),
@@ -311,6 +313,22 @@ def _configs_or_400(body: dict) -> list[list[str]]:
     return rows
 
 
+def _overrides_or_400(body: dict) -> dict[str, str]:
+    values, problems = admin_overrides.clean(body.get("override_settings"))
+    if problems:
+        abort(400, "Invalid settings: " + ", ".join(problems))
+    return values
+
+
+def _override_info(admin: AdminUser) -> dict:
+    """The user page's customization of ``admin`` and what its users see where it sets nothing (from above)."""
+    parent = admin.parent_admin if admin.parent_admin_id != admin.id else None
+    return {
+        "override_settings": admin_overrides.clean(admin.override_settings)[0],
+        "override_defaults": {str(k): str(getattr(v, "value", v) or "") for k in admin_overrides.OVERRIDABLE if (v := (admin_overrides.admin_value(parent, k) if parent else None) or hconfig(k)) is not None},
+    }
+
+
 def _credentials(admin: AdminUser, password: str) -> dict:
     # With an alias the admin signs in with username + password: the link carries no UUID.
     return {"password": password, "admin_link": _login_link(admin), "alias": admin.alias or ""}
@@ -349,6 +367,8 @@ class AdminsTreeApi(MethodView):
         payload["mode"] = AdminMode.agent
         admin = AdminUser.add_or_update(commit=False, **payload)
         admin.additional_configs = configs
+        if "override_settings" in body:
+            admin.override_settings = _overrides_or_400(body)
         if "default_outbound" in body:
             _apply_default_outbound(admin, body.get("default_outbound"))
         password = _new_password()
@@ -374,6 +394,8 @@ class AdminTreeItemApi(MethodView):
         payload = _clean_payload(body, target=admin)
         if "additional_configs" in body:
             admin.additional_configs = _configs_or_400(body)
+        if "override_settings" in body:
+            admin.override_settings = _overrides_or_400(body)
         if "alias" in body:
             _apply_alias(admin, body.get("alias"))
         if "default_outbound" in body:
@@ -438,6 +460,7 @@ class MyAdminAccountApi(MethodView):
             "stats": stats[actor.id],
             "sub_admins": len(admins) - 1,
             "additional_configs": user_configs.clean_rows(actor.additional_configs or [])[0],
+            **_override_info(actor),
             "default_outbound": actor.default_outbound_id,
             "inherited_outbound": _inherited_outbound(actor),
             "outbounds": _outbound_options(),
@@ -457,6 +480,18 @@ class MyAdminConfigsApi(MethodView):
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
         return {"additional_configs": actor.additional_configs}
+
+
+class MyAdminOverridesApi(MethodView):
+    decorators = [login_required(ALL_ROLES)]
+
+    def put(self):
+        """My account: my users' page customization (title, support link and text, language, custom page); empty: from above"""
+        node_read_only.deny_write_on_node()
+        actor: AdminUser = g.account
+        actor.override_settings = _overrides_or_400(request.get_json(silent=True) or {})
+        db.session.commit()
+        return _override_info(actor)
 
 
 class MyAdminOutboundApi(MethodView):

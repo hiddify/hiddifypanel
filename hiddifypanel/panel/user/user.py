@@ -15,6 +15,7 @@ from hiddifypanel import g, hutils
 from hiddifypanel.auth import admin_session_is_exist, login_required
 from hiddifypanel.cache import STATIC, cache
 from hiddifypanel.models import *
+from hiddifypanel.admin_overrides import user_hconfig
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3.config_builder.dump import render_client_configs
 
@@ -273,7 +274,7 @@ class UserView(FlaskView):
 
         proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_client) or hconfig(ConfigEnum.proxy_path)
         user = common["user"]
-        lang = getattr(user.lang, "value", user.lang) or getattr(hconfig(ConfigEnum.lang), "value", hconfig(ConfigEnum.lang)) or "en"
+        lang = getattr(user.lang, "value", user.lang) or getattr(user_hconfig(ConfigEnum.lang, user), "value", user_hconfig(ConfigEnum.lang, user)) or "en"
         return {
             "version": __version__,
             "proxy_path": proxy_path,
@@ -284,7 +285,7 @@ class UserView(FlaskView):
             "profile_url": common["profile_url"],
             "deep_link": f"hiddify://import/{common['profile_url']}",
             "lang": str(lang),
-            "brand_title": hconfig(ConfigEnum.branding_title) or "",
+            "brand_title": user_hconfig(ConfigEnum.branding_title, user) or "",
         }
 
     @route("/user-page/<path:asset>")
@@ -549,8 +550,8 @@ def add_headers(res, c, mimetype="text/plain"):
     resp.headers["Subscription-Userinfo"] = f"upload=0;download={c['usage_current_b']};total={c['usage_limit_b']};expire={c['expire_s']}"
     resp.headers["profile-web-page-url"] = request.base_url.rsplit("/", 1)[0].replace("http://", "https://") + "/"
 
-    if hconfig(ConfigEnum.branding_site):
-        resp.headers["support-url"] = hconfig(ConfigEnum.branding_site)
+    if support_url := user_hconfig(ConfigEnum.branding_site, c.get("user")):
+        resp.headers["support-url"] = support_url
     resp.headers["profile-update-interval"] = 1
     resp.headers["profile-title"] = "base64:" + hutils.encode.do_base_64(c["profile_title"])
 

@@ -6,6 +6,7 @@ from hiddifypanel import auth, g, hutils
 from hiddifypanel import current_app as app
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
+from hiddifypanel.admin_overrides import user_hconfig
 from hiddifypanel.models import Lang
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
@@ -58,15 +59,15 @@ class InfoAPI(MethodView):
         dto.telegram_id = c['user'].telegram_id
 
         dto.doh = f"https://{request.host}/{g.proxy_path}/dns/dns-query"
-        dto.lang = (c['user'].lang) or Lang(hconfig(ConfigEnum.lang))
-        dto.brand_icon_url = "" if hconfig(ConfigEnum.branding_title) else hutils.flask.static_url_for(filename="images/favicon.ico")
+        dto.lang = (c['user'].lang) or Lang(user_hconfig(ConfigEnum.lang, c['user']))
+        dto.brand_icon_url = "" if user_hconfig(ConfigEnum.branding_title, c['user']) else hutils.flask.static_url_for(filename="images/favicon.ico")
         # with force_locale("fa"):
-        dto.admin_message_html = hconfig(ConfigEnum.branding_freetext) or _("Join our Hiddify Telegram channel to get the latest updates on Hiddify.")
-        if not hconfig(ConfigEnum.branding_freetext) and auth.admin_session_is_exist():
+        dto.admin_message_html = user_hconfig(ConfigEnum.branding_freetext, c['user']) or _("Join our Hiddify Telegram channel to get the latest updates on Hiddify.")
+        if not user_hconfig(ConfigEnum.branding_freetext, c['user']) and auth.admin_session_is_exist():
             dto.admin_message_html += "<p style='font-style: italic;font-size:8px'>" + \
                 _("[Admin only visible message:] You can change this message from settings") + "</p>"
-        dto.admin_message_url = hconfig(ConfigEnum.branding_site) or "https://t.me/hiddify"
-        dto.brand_title = hconfig(ConfigEnum.branding_title) or _("Hiddify")
+        dto.admin_message_url = user_hconfig(ConfigEnum.branding_site, c['user']) or "https://t.me/hiddify"
+        dto.brand_title = user_hconfig(ConfigEnum.branding_title, c['user']) or _("Hiddify")
 
         dto.speedtest_enable = hconfig(ConfigEnum.speed_test)
         dto.telegram_proxy_enable = c.get('telegram_enable', False)

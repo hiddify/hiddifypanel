@@ -25,12 +25,17 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v185(child_id):
+    """Superseded by _v182 (the old ShadowTLS / SS FakeTLS fake domains are converted, not removed)."""
+
+
 def _v184(child_id):
     """A custom user page: the URL of a static site the panel serves as the user page (empty: the built-in one)."""
     if child_id != 0:
         return
     add_config_if_not_exist(ConfigEnum.user_page_url, "", child_id)
-    
+
+
 def _v183(child_id):
     """Telegram MTProxy, ShadowTLS and SS FakeTLS are SNI proxies on the domains assigned to them: no separate fake
     domains. Each row that mirrored an old *_fakedomain setting (any node) becomes an ordinary domain, fake TLS, assigned
@@ -50,10 +55,6 @@ def _v183(child_id):
         row.fake_mode = FakeMode.fake
     for key in (ConfigEnum.telegram_fakedomain, ConfigEnum.shadowtls_fakedomain, ConfigEnum.ssfaketls_fakedomain):
         set_hconfig(key, "", child_id, commit=False)
-
-
-def _v181(child_id):
-    """Superseded by _v182 (the old ShadowTLS / SS FakeTLS fake domains are converted, not removed)."""
 
 
 def _v180(child_id):
@@ -699,7 +700,6 @@ def _v74(child_id):
     set_hconfig(ConfigEnum.shadowsocks2022_enable, False)
     set_hconfig(ConfigEnum.path_httpupgrade, hutils.random.get_random_string(7, 15))
     # db.session.bulk_save_objects(get_proxy_rows_v1())
-
 
 
 def _v71(child_id):

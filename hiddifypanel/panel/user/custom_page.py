@@ -25,7 +25,8 @@ import requests
 from loguru import logger
 
 from hiddifypanel.cache import redis_client
-from hiddifypanel.models import ConfigEnum, hconfig
+from hiddifypanel.admin_overrides import user_hconfig
+from hiddifypanel.models import ConfigEnum
 
 CACHE_TTL = 3600
 MAX_FILE = 8_000_000
@@ -42,7 +43,7 @@ def base_url() -> str:
     A GitHub folder link (``https://github.com/<owner>/<repo>/tree/<branch>[/<dir>]``, e.g. a gh-pages branch) is read
     from raw.githubusercontent.com, so the repository does not need GitHub Pages turned on.
     """
-    url = str(hconfig(ConfigEnum.user_page_url) or "").strip()
+    url = str(user_hconfig(ConfigEnum.user_page_url) or "").strip()
     tree = _GITHUB_TREE.match(url.rstrip("/"))
     if tree:
         owner, repo, branch, sub = tree.groups()

@@ -74,6 +74,9 @@ class AdminUser(BaseAccount):
     # Admin V2 users page, this admin's own: {"pinned": [user uuid…], "order": [user uuid…], "guide_seen": bool}.
     # Not part of the admin's synced data (AdminModel lists its fields), so it stays on this panel.
     users_layout: Mapped[dict | None] = mapped_column(JSON, default=None, nullable=True)
+    #: {ConfigEnum key: value} for this admin's users and its sub-admins' users (the user page's customization);
+    #: see hiddifypanel.admin_overrides. Not synced to nodes, like additional_configs.
+    override_settings: Mapped[dict | None] = mapped_column(JSON, default=None, nullable=True)
     users: Mapped[list[User]] = relationship("User", backref="admin")
     usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)

@@ -7,6 +7,7 @@ from loguru import logger
 import hiddifypanel
 import hiddifypanel.auth as auth
 from hiddifypanel import g, hutils
+from hiddifypanel.admin_overrides import user_hconfig
 from hiddifypanel.auth import current_account
 from hiddifypanel.models import *
 from hiddifypanel.panel import hiddify
@@ -17,6 +18,8 @@ def init_app(app: APIFlask):
     app.jinja_env.globals["DomainType"] = DomainType
     app.jinja_env.globals["UserMode"] = UserMode
     app.jinja_env.globals["hconfig"] = hconfig
+    # the user page's customization as the signed-in user sees it (its admins' override_settings first)
+    app.jinja_env.globals["user_hconfig"] = user_hconfig
     app.jinja_env.globals["g"] = g
     app.jinja_env.globals["hutils"] = hutils
     app.jinja_env.globals["hiddify"] = hiddify
