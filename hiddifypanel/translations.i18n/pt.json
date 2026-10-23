@@ -1284,9 +1284,28 @@
       },
       "justNow": "Agora mesmo",
       "lastSeen": "Último contato",
+      "live": {
+        "collecting": "Coletando dados ao vivo… os gráficos se preenchem nos próximos minutos.",
+        "showLess": "Mostrar menos",
+        "showMore": "Mostrar mais",
+        "unavailable": "Este nó não respondeu"
+      },
       "moreInfo": "Mais informações",
       "neverSeen": "Nunca",
       "openAdmin": "Abrir",
+      "pingDialog": {
+        "avg": "média",
+        "button": "Ping",
+        "hint": "{sent} enviados, {received} respondidos · continua até você fechar esta janela",
+        "loss": "perda",
+        "max": "máx",
+        "min": "mín",
+        "noAddress": "O endereço do nó não é conhecido",
+        "running": "pingando",
+        "tcp": "TCP (ICMP indisponível)",
+        "timeout": "Sem resposta",
+        "title": "Ping · {name}"
+      },
       "reachable": "Acessível",
       "refresh": "Atualizar",
       "remove": "Remover",
@@ -1928,6 +1947,9 @@
       "openWeb": "Abrir no navegador",
       "promptLead": "Este painel tem um bot do Telegram, {bot}. Vincule-o à sua conta:",
       "promptTitle": "Conectar seu Telegram?",
+      "stepCreate": "Crie um novo usuário direto no chat",
+      "stepStart": "Inicie o bot: o menu dele abre",
+      "stepUsers": "Veja seus usuários e o consumo deles",
       "reconnect": "Conectar novamente",
       "scan": "Ou escaneie isto com a câmera do seu celular."
     },
@@ -1979,6 +2001,30 @@
       "unread": "{n} nova notificação | {n} novas notificações",
       "new": "Nova",
       "dismiss": "Dispensar"
+    "pwa": {
+      "guide": {
+        "platform": "Seu dispositivo",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "No Safari, toque no botão ••• na barra de baixo",
+        "ios2": "Toque em Compartilhar",
+        "ios3": "Escolha “Adicionar à Tela de Início”",
+        "ios4": "Toque em Adicionar: o painel fica na tela de início",
+        "android1": "No Chrome, toque no menu ⋮ no topo",
+        "android2": "Escolha “Adicionar à tela inicial” (ou “Instalar app”)",
+        "android3": "Toque em Instalar: o painel abre como um app",
+        "computer": "Computador",
+        "desktop1": "No Chrome, clique no ícone de instalar no fim da barra de endereço",
+        "desktop2": "Clique em Instalar",
+        "desktop3": "O painel abre na própria janela, como um app"
+      },
+      "gotIt": "Entendi",
+      "installNow": "Instalar agora",
+      "later": "Agora não",
+      "never": "Não mostrar novamente",
+      "text": "Deixe o painel a um toque, como qualquer app do seu telefone ou computador.",
+      "title": "Instalar o painel como app"
     },
     "theme": {
       "caddy": "Tema Smart Caddy",

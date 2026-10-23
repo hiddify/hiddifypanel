@@ -17,6 +17,8 @@ export interface PanelNode {
   id: number
   name: string
   host: string
+  /** The country of the node's address (ISO code, e.g. "DE"); "" when unknown. */
+  country: string
   /** Opens the node's admin panel as the signed-in admin. */
   admin_url: string
   last_seen: string | null
@@ -38,6 +40,15 @@ export interface NodeSyncReportOut {
 export interface NodePing {
   online: boolean
   version: string
+  error: string
+}
+
+export interface NodeIcmpPing {
+  ip: string
+  ok: boolean
+  /** round trip in milliseconds; null when it got no answer */
+  ms: number | null
+  method: 'icmp' | 'tcp' | ''
   error: string
 }
 
@@ -129,6 +140,11 @@ export const nodesApi = {
   },
   async ping(id: number): Promise<NodePing> {
     const { data } = await getHttp().get<NodePing>(`nodes/${id}/ping/`, { timeout: 30_000 })
+    return data
+  },
+  /** One ping of the node's server from this panel (ICMP, or a TCP connect when ICMP is not possible). */
+  async icmp(id: number): Promise<NodeIcmpPing> {
+    const { data } = await getHttp().get<NodeIcmpPing>(`nodes/${id}/icmp/`, { timeout: 10_000 })
     return data
   },
   async syncReport(id: number): Promise<NodeSyncReportOut> {
