@@ -90,7 +90,7 @@
             </div>
 
             <div class="dm-row__chips">
-              <span class="dm-badge dm-badge--kind">{{ t(`domains.kind.${kindOf(d.mode)}.name`) }}<template v-if="d.fake_mode !== 'valid'"> · {{ t(`domains.tlsMode.${d.fake_mode}`) }}</template></span>
+              <span class="dm-badge dm-badge--kind">{{ t(`domains.kind.${kindOf(d.mode)}.name`) }}</span>
               <span
                 v-if="d.tls.needs_valid"
                 class="dm-badge"
@@ -101,7 +101,10 @@
                 {{ certLabel(d) }}
                 <template v-if="d.tls.status === 'valid' && expiresIn(d) !== null"> · {{ t('domains.tls.expiresIn', { n: expiresIn(d) }) }}</template>
               </span>
-              <span v-else class="dm-badge dm-tls--decoy" v-tooltip.top="t('domains.tls.decoyHint')"><i class="pi pi-eye-slash" />{{ t('domains.tls.decoy') }}</span>
+              <!-- No certificate of its own: its TLS mode, each in its own colour (Valid is the certificate badge above) -->
+              <span v-else class="dm-badge dm-mode" :class="`dm-mode--${isFakeProxyMode(d.fake_mode) ? 'proxy' : d.fake_mode}`" v-tooltip.top="t('domains.tls.decoyHint')">
+                <i :class="MODE_ICON[d.fake_mode] ?? 'pi pi-eye-slash'" />{{ t(`domains.tlsMode.${d.fake_mode}`) }}
+              </span>
               <span v-if="d.tls_port" class="dm-badge dm-badge--port" dir="ltr">TLS :{{ d.tls_port }}</span>
               <span v-if="d.http_port" class="dm-badge dm-badge--port" dir="ltr">HTTP :{{ d.http_port }}</span>
               <span v-if="d.mode === 'cdn' && d.servernames" class="dm-badge dm-badge--soft" dir="ltr" v-tooltip.top="t('domains.badge.frontingHint')">🎭 {{ d.servernames.split(',')[0] }}<template v-if="d.servernames.split(',').length > 1"> +{{ d.servernames.split(',').length - 1 }}</template></span>
@@ -212,6 +215,8 @@ const { t, locale } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 
+/** The TLS mode's badge icon (domains without a certificate of their own) */
+const MODE_ICON: Record<string, string> = { reality: 'pi pi-eye-slash', fake: 'pi pi-clone', dns: 'pi pi-database' }
 const state = ref<DomainsState | null>(null)
 /** Loaded after the list so the page shows right away. */
 const options = ref<DomainsOptions | null>(null)
@@ -886,8 +891,18 @@ a.dm-row__domain:hover {
   white-space: nowrap;
   color: var(--p-text-muted-color);
 }
-.dm-tls--decoy {
+/* TLS modes without a certificate of their own: Reality, Fake, DNS, the built-in fake-TLS servers */
+.dm-mode--reality {
   --tone: var(--p-violet-500, #8b5cf6);
+}
+.dm-mode--fake {
+  --tone: var(--p-orange-500, #f97316);
+}
+.dm-mode--dns {
+  --tone: var(--p-slate-500, #64748b);
+}
+.dm-mode--proxy {
+  --tone: var(--p-sky-500, #0ea5e9);
 }
 .dm-proxy {
   display: inline-flex;
