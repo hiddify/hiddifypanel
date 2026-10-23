@@ -88,10 +88,10 @@
                 @update:model-value="saveLanguage"
               >
                 <template #value="{ value }">
-                  <span class="account-lang__opt"><span class="account-lang__flag">{{ flagOf(value) }}</span>{{ labelOf(value) }}</span>
+                  <span class="account-lang__opt"><span class="account-lang__flag"><template v-if="flagOf(value)">{{ flagOf(value) }}</template><i v-else class="pi pi-globe" /></span>{{ labelOf(value) }}</span>
                 </template>
                 <template #option="{ option }">
-                  <span class="account-lang__opt"><span class="account-lang__flag">{{ option.flag }}</span>{{ option.label }}</span>
+                  <span class="account-lang__opt"><span class="account-lang__flag"><template v-if="option.flag">{{ option.flag }}</template><i v-else class="pi pi-globe" /></span>{{ option.label }}</span>
                 </template>
                 <template #dropdownicon><i class="pi pi-language" /></template>
               </Select>
@@ -360,10 +360,11 @@ watch(aliasInput, () => (aliasServerError.value = null))
 
 const savingLang = ref(false)
 const languageOptions = computed(() => [
-  { value: '', flag: '🌐', label: t('account.languageDefault', { name: LANGUAGE_LOOK[me.value?.default_lang ?? 'en']?.name ?? me.value?.default_lang }) },
-  ...(me.value?.languages ?? []).map((value) => ({ value, flag: LANGUAGE_LOOK[value]?.flag ?? '🏳️', label: LANGUAGE_LOOK[value]?.name ?? value })),
+  // '' = no flag of its own (the panel's default, an unknown language): a globe icon
+  { value: '', flag: '', label: t('account.languageDefault', { name: LANGUAGE_LOOK[me.value?.default_lang ?? 'en']?.name ?? me.value?.default_lang }) },
+  ...(me.value?.languages ?? []).map((value) => ({ value, flag: LANGUAGE_LOOK[value]?.flag ?? '', label: LANGUAGE_LOOK[value]?.name ?? value })),
 ])
-const flagOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.flag ?? '🌐'
+const flagOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.flag ?? ''
 const labelOf = (value: string) => languageOptions.value.find((o) => o.value === value)?.label ?? value
 async function saveLanguage(lang: string) {
   if (!me.value || savingLang.value || lang === me.value.lang) return

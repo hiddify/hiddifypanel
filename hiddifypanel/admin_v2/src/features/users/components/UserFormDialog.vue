@@ -341,7 +341,7 @@ async function submit() {
             :class="{ 'uf-chip--on': usageLimit === v, 'uf-chip--extra': v === 200 || v === 500 }"
             @click="usageLimit = v"
           >
-            {{ v === UNLIMITED_GB ? '♾️' : v >= 1000 ? `${v / 1000} ${unitLabel('TB')}` : `${v} ${unitLabel('GB')}` }}
+            <svg v-if="v === UNLIMITED_GB" class="uf-chip__inf" viewBox="0 0 24 24" role="img" :aria-label="t('users.form.unlimited')"><path fill="currentColor" d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L12 10.66 10.48 12h.01L7.8 14.39c-.64.64-1.49.99-2.4.99-1.87 0-3.39-1.51-3.39-3.38S3.53 8.62 5.4 8.62c.91 0 1.76.35 2.44 1.03l1.13 1 1.51-1.34L9.22 8.2A5.37 5.37 0 0 0 5.4 6.62C2.42 6.62 0 9.04 0 12s2.42 5.38 5.4 5.38c1.44 0 2.8-.56 3.77-1.53l2.83-2.5.01.01L13.52 12h-.01l2.69-2.39c.64-.64 1.49-.99 2.4-.99 1.87 0 3.39 1.51 3.39 3.38s-1.52 3.38-3.39 3.38c-.9 0-1.76-.35-2.44-1.03l-1.14-1.01-1.51 1.34 1.27 1.12a5.386 5.386 0 0 0 3.82 1.57c2.98 0 5.4-2.41 5.4-5.38s-2.42-5.37-5.4-5.37z" /></svg><template v-else>{{ v >= 1000 ? `${v / 1000} ${unitLabel('TB')}` : `${v} ${unitLabel('GB')}` }}</template>
           </button>
         </div>
 
@@ -409,7 +409,7 @@ async function submit() {
             :class="{ 'uf-chip--on': packageDays === p.days, 'uf-chip--extra': p.key === 'week' }"
             @click="packageDays = p.days"
           >
-            {{ p.key === 'unlimited' ? '♾️' : t(`users.form.period.${p.key}`) }}
+            <svg v-if="p.key === 'unlimited'" class="uf-chip__inf" viewBox="0 0 24 24" role="img" :aria-label="t('users.form.unlimited')"><path fill="currentColor" d="M18.6 6.62c-1.44 0-2.8.56-3.77 1.53L12 10.66 10.48 12h.01L7.8 14.39c-.64.64-1.49.99-2.4.99-1.87 0-3.39-1.51-3.39-3.38S3.53 8.62 5.4 8.62c.91 0 1.76.35 2.44 1.03l1.13 1 1.51-1.34L9.22 8.2A5.37 5.37 0 0 0 5.4 6.62C2.42 6.62 0 9.04 0 12s2.42 5.38 5.4 5.38c1.44 0 2.8-.56 3.77-1.53l2.83-2.5.01.01L13.52 12h-.01l2.69-2.39c.64-.64 1.49-.99 2.4-.99 1.87 0 3.39 1.51 3.39 3.38s-1.52 3.38-3.39 3.38c-.9 0-1.76-.35-2.44-1.03l-1.14-1.01-1.51 1.34 1.27 1.12a5.386 5.386 0 0 0 3.82 1.57c2.98 0 5.4-2.41 5.4-5.38s-2.42-5.37-5.4-5.37z" /></svg><template v-else>{{ t(`users.form.period.${p.key}`) }}</template>
           </button>
         </div>
         <!-- One short line: relative by default, dates on request -->
@@ -947,5 +947,12 @@ async function submit() {
     padding: 0.85rem;
   }
 
+}
+/* Unlimited: an infinity icon (PrimeIcons has none), the chip's text height so the chips keep theirs */
+.uf-chip__inf {
+  display: inline-block;
+  width: 1.35em;
+  height: 1em;
+  vertical-align: -0.15em;
 }
 </style>

@@ -10,7 +10,8 @@ const emit = defineEmits<{ error: [message: string] }>()
 
 const { t } = useI18n()
 
-const COUNTRY_FLAG: Record<string, string> = { ir: '🇮🇷', zh: '🇨🇳', ru: '🇷🇺', other: '🌍' }
+/** Countries' flags; "other" (and an unknown one) gets a globe icon */
+const COUNTRY_FLAG: Record<string, string> = { ir: '🇮🇷', zh: '🇨🇳', ru: '🇷🇺' }
 
 const lang = ref(props.state.admin_lang)
 const country = ref(props.state.country)
@@ -52,7 +53,7 @@ defineExpose({ submit })
           :class="{ 'qs-option--on': lang === code }"
           @click="lang = code"
         >
-          <span class="qs-option__flag">{{ LANGUAGE_LOOK[code]?.flag ?? '🏳️' }}</span>
+          <span class="qs-option__flag"><template v-if="LANGUAGE_LOOK[code]?.flag">{{ LANGUAGE_LOOK[code]?.flag }}</template><i v-else class="pi pi-globe" /></span>
           <span class="qs-option__name">{{ LANGUAGE_LOOK[code]?.name ?? code }}</span>
           <i v-if="lang === code" class="pi pi-check-circle qs-option__check" />
         </button>
@@ -73,7 +74,7 @@ defineExpose({ submit })
           :class="{ 'qs-option--on': country === code }"
           @click="country = code"
         >
-          <span class="qs-option__flag">{{ COUNTRY_FLAG[code] ?? '🌍' }}</span>
+          <span class="qs-option__flag"><template v-if="COUNTRY_FLAG[code]">{{ COUNTRY_FLAG[code] }}</template><i v-else class="pi pi-globe" /></span>
           <span class="qs-option__name">{{ t(`quickSetup.countries.${code}`) }}</span>
           <i v-if="country === code" class="pi pi-check-circle qs-option__check" />
         </button>
