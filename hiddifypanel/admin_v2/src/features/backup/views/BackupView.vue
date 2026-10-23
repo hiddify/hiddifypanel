@@ -30,9 +30,20 @@
 
           <p class="bk-secret"><i class="pi pi-lock" />{{ t('backup.save.secret') }}</p>
 
-          <div class="bk-card__actions">
+          <div class="bk-card__actions" :class="{ 'bk-card__actions--tg': state.telegram.bot && state.telegram.connected }">
             <Button :label="t('backup.save.download')" icon="pi pi-download" :loading="downloading" class="bk-main-btn" @click="download" />
             <Button :label="t('backup.save.onServer')" icon="pi pi-server" severity="secondary" outlined :loading="creating" @click="createOnServer" />
+            <!-- With this admin's Telegram linked to the panel's bot: the backup goes there, not to the server -->
+            <Button
+              v-if="state.telegram.bot && state.telegram.connected"
+              :label="t('backup.save.onTelegram')"
+              icon="pi pi-telegram"
+              severity="secondary"
+              outlined
+              class="bk-tg-btn"
+              :loading="sending"
+              @click="sendToTelegram"
+            />
           </div>
         </section>
 
@@ -111,6 +122,7 @@ const loading = ref(true)
 const loadError = ref<string | null>(null)
 const downloading = ref(false)
 const creating = ref(false)
+const sending = ref(false)
 const justCreated = ref<string | null>(null)
 const showAll = ref(false)
 const restoreSource = ref<RestoreSource | null>(null)
@@ -182,6 +194,18 @@ async function createOnServer() {
     toast.add({ severity: 'error', summary: t('backup.save.failed'), detail: apiErrorMessage(err), life: 6000 })
   } finally {
     creating.value = false
+  }
+}
+
+async function sendToTelegram() {
+  sending.value = true
+  try {
+    await backupApi.sendToTelegram()
+    toast.add({ severity: 'success', summary: t('backup.save.sentTelegram'), life: 3000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('backup.save.failed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    sending.value = false
   }
 }
 
@@ -317,6 +341,16 @@ onMounted(load)
 .bk-main-btn {
   flex: 1 1 auto;
 }
+/* Three buttons: the download on its own row, the two "Save on…" side by side under it */
+.bk-card__actions--tg .bk-main-btn {
+  flex-basis: 100%;
+}
+.bk-card__actions--tg .p-button:not(.bk-main-btn) {
+  flex: 1 1 0;
+}
+.bk-tg-btn :deep(.p-button-icon) {
+  color: #229ed9;
+}
 .bk-history__count {
   padding: 0.1rem 0.6rem;
   border-radius: 999px;
@@ -449,7 +483,9 @@ onMounted(load)
   .bk-card {
     padding: 1rem;
   }
-  .bk-card__actions .p-button {
+  .bk-card__actions .p-button,
+  .bk-card__actions--tg .p-button:not(.bk-main-btn) {
+    flex: 1 1 100%;
     width: 100%;
   }
   .bk-file__tag {

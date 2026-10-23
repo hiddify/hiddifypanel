@@ -726,7 +726,9 @@
         "downloaded": "Sauvegarde téléchargée",
         "failed": "Impossible de créer la sauvegarde",
         "onServer": "Enregistrer sur le serveur",
+        "onTelegram": "Enregistrer sur Telegram",
         "secret": "Le fichier contient des mots de passe, des liens utilisateur et des clés privées. Conservez-le en lieu sûr.",
+        "sentTelegram": "Sauvegarde envoyée sur votre Telegram",
         "sub": "Tout dans un seul fichier : paramètres, utilisateurs, admins, domaines, proxies et certificats.",
         "title": "Créer une sauvegarde"
       },

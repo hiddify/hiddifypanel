@@ -726,7 +726,9 @@
         "downloaded": "Backup baixado",
         "failed": "Não foi possível fazer o backup",
         "onServer": "Salvar no servidor",
+        "onTelegram": "Salvar no Telegram",
         "secret": "O arquivo contém senhas, links de usuários e chaves privadas. Guarde-o em um local seguro.",
+        "sentTelegram": "Backup enviado para o seu Telegram",
         "sub": "Tudo em um único arquivo: configurações, usuários, administradores, domínios, proxies e certificados.",
         "title": "Fazer um backup"
       },
