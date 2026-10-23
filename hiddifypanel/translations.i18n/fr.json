@@ -934,20 +934,20 @@
       "field": {
         "alias": "Nom affiché",
         "aliasHint": "Affiché dans les applications des utilisateurs à la place du domaine.",
-        "cdnIp": "🔂 Forcer les configs à utiliser ces IP / domaines",
+        "cdnIp": "Forcer les configs à utiliser ces IP / domaines",
         "cdnIpHint": "Placez-les dans les liens des utilisateurs à la place de l'IP du domaine, séparés par des virgules ou des retours à la ligne. Les modèles d'opérateur fonctionnent aussi.",
         "domain": "Domaine",
         "domainInvalid": "Cela ne ressemble pas à un domaine",
         "domainRequired": "Saisissez un domaine",
-        "downloadDomain": "📈 Domaine de téléchargement",
+        "downloadDomain": "Domaine de téléchargement",
         "downloadDomainHint": "Uniquement pour XHTTP : les téléchargements peuvent provenir d'un autre domaine que les envois. Plus difficile à détecter, souvent plus rapide.",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "Récupère et utilise Encrypted Client Hello pour ce domaine CDN.",
         "echNeedsSetting": "Activez d'abord TLS ECH dans les paramètres du panneau.",
         "extra": "Paramètres supplémentaires",
         "extraInvalid": "JSON non valide",
         "extraObject": "Doit être un objet JSON",
-        "fronting": "🎭 Domain fronting",
+        "fronting": "Domain fronting",
         "frontingHint": "Facultatif. Les applications des utilisateurs affichent l'un de ces noms (SNI) à la place de votre domaine, de sorte qu'un filtre ne voit qu'un autre site. Utilisez des sites sur le même CDN que votre domaine (p. ex. d'autres sites Cloudflare). Vide : pas de fronting.",
         "frontingPlaceholder": "autre-site.com, site-cdn.net",
         "hostnamesInvalid": "Utilisez des noms d'hôte séparés par des virgules, comme site.com",
@@ -957,7 +957,7 @@
         "portsHint": "Où les utilisateurs atteignent les proxies SNI et L7 de ce domaine : un port TLS et un port HTTP. Vide : valeur par défaut. Le pare-feu les redirige vers 443 / 80, donc rien d'autre sur le serveur ne doit y écouter, et un port TLS ne peut pas être le port HTTP d'un autre domaine.",
         "proxies": "Proxies personnalisés",
         "relayNeedsIp": "Un relay qui n'utilise pas de vrai certificat nécessite l'IP du serveur relay dans Avancé → IP forcées.",
-        "resolveIp": "🔢 Résoudre l'IP",
+        "resolveIp": "Résoudre l'IP",
         "resolveIpHint": "Utilise l'IP à la place du nom de domaine dans les proxies. Utile quand le DNS est instable.",
         "serverDomain": "Domaine du serveur",
         "serverDomainHint": "Domaine du serveur amont utilisé pour cette entrée. Doit être un domaine Direct ou Relay valide.",
@@ -969,7 +969,18 @@
         "tlsMode": "Mode TLS"
       },
       "getCert": "Obtenir un certificat",
-      "howto": "L'ordre compte : faites glisser (ou utilisez les flèches) pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
+      "guide": {
+        "dragText": "Les lignes font de la place ; sur ordinateur, vous pouvez aussi focaliser la poignée et appuyer sur ↑ ou ↓.",
+        "dragTitle": "Glissez-le vers le haut ou le bas et lâchez",
+        "gotIt": "Compris",
+        "grabText": "Le ☰ au début de la ligne, à la souris ou au doigt.",
+        "grabTitle": "Prenez un domaine par sa poignée",
+        "lead": "L'ordre compte : les configs listent vos domaines dans cet ordre, et le premier sert aux liens du panneau.",
+        "orderText": "Il est enregistré aussitôt : les configs des utilisateurs le suivent désormais.",
+        "orderTitle": "Voilà le nouvel ordre",
+        "title": "Mettez vos domaines dans l'ordre"
+      },
+      "howto": "L'ordre compte : faites glisser la poignée ☰ pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
       "howtoFiltered": "Effacez la recherche et les filtres pour modifier l'ordre.",
       "ips": {
         "elsewhere": "un autre serveur / CDN",
@@ -2015,6 +2026,7 @@
       "unread": "{n} nouvelle notification | {n} nouvelles notifications",
       "new": "Nouveau",
       "dismiss": "Ignorer"
+    },
     "pwa": {
       "guide": {
         "platform": "Votre appareil",
