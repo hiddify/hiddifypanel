@@ -187,11 +187,12 @@ def init_app(app):
         bp.add_url_rule("/apply/logs/<string:name>/", view_func=ApplyLogClearApi, methods=["DELETE"])
         bp.add_url_rule("/apply/<string:action>/", view_func=ApplyActionApi, methods=["POST"])
 
-        from .backup_api import BackupApi, BackupDownloadApi, BackupFileApi, BackupFilesApi, BackupRestoreApi, BackupRestoreRunApi
+        from .backup_api import BackupApi, BackupDownloadApi, BackupFileApi, BackupFilesApi, BackupRestoreApi, BackupRestoreRunApi, BackupTelegramApi
 
         bp.add_url_rule("/backup/", view_func=BackupApi)
         bp.add_url_rule("/backup/download/", view_func=BackupDownloadApi)
         bp.add_url_rule("/backup/files/", view_func=BackupFilesApi)
+        bp.add_url_rule("/backup/telegram/", view_func=BackupTelegramApi)
         bp.add_url_rule("/backup/files/<string:name>/", view_func=BackupFileApi)
         bp.add_url_rule("/backup/restore/", view_func=BackupRestoreApi)
         bp.add_url_rule("/backup/restore/run/", view_func=BackupRestoreRunApi, methods=["POST"])

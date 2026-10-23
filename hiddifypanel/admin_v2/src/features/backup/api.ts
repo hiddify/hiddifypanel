@@ -93,6 +93,11 @@ export const backupApi = {
     const { data } = await getHttp().post<BackupState>('backup/files/', {}, { timeout: 180_000 })
     return data
   },
+  /** A backup sent to my Telegram by the panel's bot; nothing is kept on the server. */
+  async sendToTelegram(): Promise<{ sent: string }> {
+    const { data } = await getHttp().post<{ sent: string }>('backup/telegram/', {}, { timeout: 180_000 })
+    return data
+  },
   async downloadFile(name: string): Promise<void> {
     const res = await getHttp().get<Blob>(`backup/files/${encodeURIComponent(name)}/`, { responseType: 'blob', timeout: 180_000 })
     save(res.data, `hiddify-${name}`)

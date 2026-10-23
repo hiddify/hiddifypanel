@@ -726,7 +726,9 @@
         "downloaded": "备份已下载",
         "failed": "无法创建备份",
         "onServer": "保存到服务器",
+        "onTelegram": "保存到 Telegram",
         "secret": "该文件包含密码、用户链接和私钥。请妥善保管。",
+        "sentTelegram": "备份已发送到你的 Telegram",
         "sub": "一个文件包含全部内容：设置、用户、管理员、域名、代理和证书。",
         "title": "创建备份"
       },
