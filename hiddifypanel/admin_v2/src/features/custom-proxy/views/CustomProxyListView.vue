@@ -455,8 +455,11 @@ function domainModeFamilies(modes: string[]): string[] {
   return families
 }
 
+/** The families in their own spelling (Direct, Relay, CDN), as the tags and the filter show them */
 function domainModesSummary(modes: string[]): string {
-  return domainModeFamilies(modes).join(', ')
+  return domainModeFamilies(modes)
+    .map((family) => t(`proxy.domainModeLabels.${family}`, family))
+    .join(', ')
 }
 
 function domainModesNeedsExpand(modes: string[]): boolean {
