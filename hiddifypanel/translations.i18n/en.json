@@ -575,7 +575,7 @@
           "desc": "Puts your settings, users and domain changes into effect. Quick, and the usual choice after you change something.",
           "done": "Changes are applied",
           "running": "Applying changes",
-          "title": "Apply changes"
+          "title": "Apply Changes"
         },
         "install": {
           "button": "Reinstall",
@@ -591,14 +591,14 @@
           "desc": "Restarts all Hiddify services without reinstalling anything. A good first try when something misbehaves.",
           "done": "Services restarted",
           "running": "Restarting services",
-          "title": "Restart services"
+          "title": "Restart Services"
         },
         "status": {
           "button": "Check now",
           "desc": "Shows whether each service is running, plus the server's public IP and Warp. Changes nothing.",
           "done": "Status checked",
           "running": "Checking status",
-          "title": "Check status"
+          "title": "Check Status"
         },
         "update": {
           "button": "Update",
@@ -658,7 +658,7 @@
       },
       "subtitle": "Put changes into effect, update the server, and see how everything is doing",
       "takes": "About how long it takes",
-      "title": "Apply & status",
+      "title": "Apply & Status",
       "watch": "Watch it"
     },
     "applyNotice": {
