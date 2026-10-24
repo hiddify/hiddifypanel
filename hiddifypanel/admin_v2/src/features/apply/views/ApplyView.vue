@@ -43,9 +43,9 @@
 
       <!-- Tools -->
       <section class="ap-tools">
-        <Button :label="t('actions.resetCache')" icon="pi pi-eraser" severity="secondary" outlined size="small" :loading="resetting" @click="resetCache" />
-        <Button :label="t('actions.ports.title')" icon="pi pi-sitemap" severity="secondary" outlined size="small" @click="portsVisible = true" />
-        <Button :label="t('wsTest.button')" icon="pi pi-wifi" severity="secondary" outlined size="small" @click="wsTestVisible = true" />
+        <Button :label="t('actions.resetCache')" icon="pi pi-eraser" outlined class="ap-tool ap-tool--cache" :loading="resetting" @click="resetCache" />
+        <Button :label="t('actions.ports.title')" icon="pi pi-sitemap" outlined class="ap-tool ap-tool--ports" @click="portsVisible = true" />
+        <Button :label="t('wsTest.button')" icon="pi pi-wifi" outlined class="ap-tool ap-tool--live" @click="wsTestVisible = true" />
       </section>
 
       <!-- Logs -->
@@ -427,8 +427,29 @@ onBeforeUnmount(() => feed?.stop())
 .ap-tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
   margin-bottom: 1.5rem;
+}
+/* The tools: one color each, none of the action cards' (primary, orange, violet, red, green) */
+.ap-tool {
+  --tool: var(--p-teal-600, #0d9488);
+  padding: 0.6rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--tool);
+  border-color: color-mix(in srgb, var(--tool) 45%, transparent);
+  background: color-mix(in srgb, var(--tool) 10%, transparent);
+}
+.ap-tool:not(:disabled):hover {
+  color: var(--tool);
+  border-color: var(--tool);
+  background: color-mix(in srgb, var(--tool) 18%, transparent);
+}
+.ap-tool--ports {
+  --tool: var(--p-pink-500, #ec4899);
+}
+.ap-tool--live {
+  --tool: var(--p-yellow-600, #ca8a04);
 }
 .ap-logs {
   display: flex;
