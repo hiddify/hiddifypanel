@@ -1367,7 +1367,7 @@
         "addTitle": "{mode} outbound ထည့်ရန်",
         "config": "JSON",
         "configBridge": "ပန်နယ်က ၎င်းကို \"{tag}\" ဟု အမည်ပေးသည်။ routing က ထို tag ကို သုံးပြီး အခြား core က 127.0.0.1:{port} ဖြင့် ချိတ်ဆက်သည်။",
-        "configBridgeNew": "ပန်နယ်က tag ပေးသည် (သင်ရေးသော tag ကို လျစ်လျူရှုသည်)။ routing က ၎င်းကို သုံးပြီး အခြား core က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်။",
+        "configBridgeNew": "ပန်နယ်က tag ပေးသည် (သင်ရေးသော tag ကို လျစ်လျူရှုသည်)။ routing က ၎င်းကို သုံးပြီး အခြား core က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်။",
         "configExample": "နမူနာတစ်ခု ထည့်ရန်",
         "configHint": {
           "core_endpoint": "hiddify-core (sing-box) endpoint object တစ်ခု၊ ဥပမာ WireGuard endpoint။ မသိမ်းမီ hiddify-core က စစ်ဆေးသည်။",
@@ -1380,8 +1380,8 @@
         "editTitle": "{name} ကို တည်းဖြတ်ရန်",
         "endpoint": "ချိတ်ဆက်မှု",
         "endpointHint": {
-          "psiphon": "hiddify-core အတွင်း လည်ပတ်သည်။ xray က local SOCKS ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။",
-          "tor": "hiddify-core အတွင်း လည်ပတ်သည် (ဤဆာဗာတွင် `tor` ပရိုဂရမ်ကို ထည့်သွင်းထားရမည်)။ xray က local SOCKS ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။"
+          "psiphon": "hiddify-core အတွင်း လည်ပတ်သည်။ xray က local Socks ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။",
+          "tor": "hiddify-core အတွင်း လည်ပတ်သည် (ဤဆာဗာတွင် `tor` ပရိုဂရမ်ကို ထည့်သွင်းထားရမည်)။ xray က local Socks ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။"
         },
         "host": "Host",
         "name": "အမည်",
@@ -1425,21 +1425,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "ဖယ်ချ",
-        "core_endpoint": "သင့်ကိုယ်ပိုင် hiddify-core endpoint၊ ဥပမာ WireGuard (JSON); xray က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
-        "core_outbound": "သင့်ကိုယ်ပိုင် hiddify-core outbound (JSON); xray က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
+        "core_endpoint": "သင့်ကိုယ်ပိုင် hiddify-core endpoint၊ ဥပမာ WireGuard (JSON); xray က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
+        "core_outbound": "သင့်ကိုယ်ပိုင် hiddify-core outbound (JSON); xray က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
         "direct": "ဤဆာဗာမှ တိုက်ရိုက်",
         "psiphon": "Psiphon မှတစ်ဆင့် (hiddify-core က လည်ပတ်စေသည်)",
         "socks": "SOCKS5 proxy မှတစ်ဆင့်",
         "tor": "Tor ကွန်ရက်မှတစ်ဆင့် (hiddify-core က လည်ပတ်စေသည်)",
         "warp": "ဤဆာဗာပေါ်ရှိ Cloudflare WARP မှတစ်ဆင့်",
-        "xray_outbound": "သင့်ကိုယ်ပိုင် xray outbound (JSON); hiddify-core က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်"
+        "xray_outbound": "သင့်ကိုယ်ပိုင် xray outbound (JSON); hiddify-core က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်"
       },
       "more": "နောက်ထပ်လုပ်ဆောင်ချက်များ",
       "moveDown": "အောက်သို့ရွှေ့ရန်",
@@ -1458,7 +1458,7 @@
       "resetMessage": "၎င်း၏ site၊ geosite နှင့် rule-set များတွင် သင်ပြောင်းထားသည်များကို built-in စာရင်းများဖြင့် အစားထိုးမည်၊ အဆင့်မြှင့်သည့်အခါ ၎င်းတို့ကို အပ်ဒိတ်ထားမည်။",
       "resetTitle": "{name} ကို built-in စာရင်းများသို့ ပြန်လည်သတ်မှတ်မလား?",
       "saved": "{name} ကို သိမ်းပြီးပါပြီ",
-      "subtitle": "traffic သည် ဤဆာဗာမှ ထွက်ရာနေရာကို အစီအစဉ်အတိုင်း ရွေးပါ: WARP မှတစ်ဆင့်၊ တိုက်ရိုက်၊ ပိတ်ဆို့ သို့မဟုတ် SOCKS၊ Tor၊ Psiphon မှ ထွက်။",
+      "subtitle": "traffic သည် ဤဆာဗာမှ ထွက်ရာနေရာကို အစီအစဉ်အတိုင်း ရွေးပါ: WARP မှတစ်ဆင့်၊ တိုက်ရိုက်၊ ပိတ်ဆို့ သို့မဟုတ် Socks၊ Tor၊ Psiphon မှ ထွက်။",
       "title": "Outbound များ"
     },
     "passwordRules": {
@@ -1635,15 +1635,15 @@
       "l7ReverseProto": "L7 reverse proxy protocol",
       "linkSettings": "လင့်ခ်ဆက်တင်များ",
       "linkTemplate": "လင့်ခ် template",
-      "listTitle": "စိတ်ကြိုက် Proxy များ",
+      "listTitle": "Proxy များ",
       "mode": "မုဒ်",
       "modeLabels": {
         "domain_native": "Domain native",
         "domains_auto_public_ports": "ဒိုမိန်းပေါင်းစုံ auto ပို့တ်များ",
-        "domains_dns_gateway": "Domain DNS gateway",
-        "domains_l7_gateway": "Domain L7 gateway",
+        "domains_dns_gateway": "Domain DNS Gateway",
+        "domains_l7_gateway": "Domain L7 Gateway",
         "domains_single_public_port": "ဒိုမိန်းပေါင်းစုံ static ပို့တ်",
-        "domains_sni_gateway": "Domain SNI gateway",
+        "domains_sni_gateway": "Domain SNI Gateway",
         "ip": "IP အခြေပြု",
         "no_inbound": "Inbound မရှိ"
       },
@@ -2018,6 +2018,7 @@
       "unread": "အသိပေးချက်အသစ် {n} ခု | အသိပေးချက်အသစ် {n} ခု",
       "new": "အသစ်",
       "dismiss": "ပိတ်ရန်"
+    },
     "pwa": {
       "guide": {
         "platform": "သင့်စက်",
@@ -2374,8 +2375,8 @@
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "အသုံးပြုသူ",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON သည် object ဖြစ်ရမည်"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON သည် object ဖြစ်ရမည်"
     },
     "validation": {
       "errors": "အမှားများ",
@@ -2497,7 +2498,7 @@
       "label": "Singbox အတွက် အပိုကွန်ဖစ်များ"
     },
     "additional_configs_urls": {
-      "description": "http:// https:// သို့မဟုတ် vless:// ကဲ့သို့ v2ray ဖော်မက် proxy များ ထည့်နိုင်သည်",
+      "description": "http:// https:// သို့မဟုတ် vless:// ကဲ့သို့ V2Ray ဖော်မက် proxy များ ထည့်နိုင်သည်",
       "label": "အပို URL များ"
     },
     "additional_configs_xrayjson": {
@@ -2703,7 +2704,7 @@
     },
     "hysteria_enable": {
       "description": "UDP အခြေပြု Hysteria ပရိုတိုကောလ် ကိုဖွင့်ရန်",
-      "label": "⚫️ Hysteria2"
+      "label": "⚫️ Hysteria 2"
     },
     "hysteria_obfs_enable": {
       "description": " Hysteria Obfuscation (Salamander) ကို ဖွင့်ရန်",
@@ -2711,7 +2712,7 @@
     },
     "hysteria_port": {
       "description": "Hysteria UDP Port ဥပမာ 5678",
-      "label": "🔍 Hysteria2 Port"
+      "label": "🔍 Hysteria 2 Port"
     },
     "hysteria_up_mbps": {
       "description": "Hysteria အများဆုံး အပ်လုပ် အမြန်နှုန်း",
@@ -2928,7 +2929,7 @@
     },
     "path_trojan": {
       "description": "TROJAN-Links အတွက်",
-      "label": "ℹ️ TROJAN လမ်းကြောင်း"
+      "label": "ℹ️ Trojan လမ်းကြောင်း"
     },
     "path_v2ray": {
       "description": "V2Ray Configs လမ်းကြောင်းကို သတ်မှတ်ပါ။",
@@ -3031,7 +3032,7 @@
       "label": "↔️ Shadowsocks 2022 Port"
     },
     "shadowtls": {
-      "description": "tls အစစ်အမှန်များကို firewall သို့ လက်ဆွဲနှုတ်ဆက်ရန် ပရောက်စီ။<inlang-LineFeed>\n၎င်းသည် TROJAN ကဲ့သို့အလုပ်လုပ်သော်လည်း၊ ၎င်းသည် လက်မှတ်ထိုးရန် မလိုအပ်ပါ။ Firewall သည် သင်ရွေးချယ်သော တရားဝင်လက်မှတ်ဖြင့် tls အစစ်အမှန် လက်ဆွဲနှုတ်ဆက်သည်ကို တွေ့ရလိမ့်မည်။",
+      "description": "tls အစစ်အမှန်များကို firewall သို့ လက်ဆွဲနှုတ်ဆက်ရန် ပရောက်စီ။<inlang-LineFeed>\n၎င်းသည် Trojan ကဲ့သို့အလုပ်လုပ်သော်လည်း၊ ၎င်းသည် လက်မှတ်ထိုးရန် မလိုအပ်ပါ။ Firewall သည် သင်ရွေးချယ်သော တရားဝင်လက်မှတ်ဖြင့် tls အစစ်အမှန် လက်ဆွဲနှုတ်ဆက်သည်ကို တွေ့ရလိမ့်မည်။",
       "label": "ShadowTLS"
     },
     "shadowtls_enable": {
@@ -3055,8 +3056,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "SOCKS protocol ကို ဖွင့်ပါ",
-      "label": "SOCKS"
+      "description": "Socks protocol ကို ဖွင့်ပါ",
+      "label": "Socks"
     },
     "special_port": {
       "description": "စနစ်၏ အကျုံးဝင်မှုကို လျှော့ချရန် သင်၏ reality ဆာဗာအတွက် စိတ်ကြိုက် Port တစ်ခုကို သင် သတ်မှတ်နိုင်သည်။ (ပရောက်စီများနှင့် တိုက်ရိုက်ချိတ်ဆက်မှုကို ခွင့်ပြုပါက ဟုတ်သင့်သည်)",
@@ -3291,27 +3292,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray သည် accounting ကို မပံ့ပိုးဘဲ အကြံပြုထားခြင်းမရှိပါ။",
+      "description": "V2Ray သည် accounting ကို မပံ့ပိုးဘဲ အကြံပြုထားခြင်းမရှိပါ။",
       "label": "♈️ V2Ray "
     },
     "validation-error": "အကွက်တစ်ခုတွင် အမှားအယွင်းတစ်ခုရှိသည်။",
     "validation-success": "Configs ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ configs ကိုအသုံးပြုရန် %(link)s ကိုနှိပ်ပါ။ လျှောက်ထားရန် ၂ မိနစ် ကြာနိုင်သည်။",
     "validation-success-no-reset": " ✅ Configs ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။",
     "vless_decryption": {
-      "description": "မျှဝေလင့်ခ်များအတွက် VLESS decryption parameter",
-      "label": "VLESS decryption"
+      "description": "မျှဝေလင့်ခ်များအတွက် VLess decryption parameter",
+      "label": "VLess decryption"
     },
     "vless_enable": {
       "description": "VLess ပရိုတိုကောလ်ကို ဖွင့်ရန်",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "မျှဝေလင့်ခ်များအတွက် VLESS encryption နည်းလမ်း",
-      "label": "VLESS encryption"
+      "description": "မျှဝေလင့်ခ်များအတွက် VLess encryption နည်းလမ်း",
+      "label": "VLess encryption"
     },
     "vless_flow": {
-      "description": "VLESS flow control (ဥပမာ xtls-rprx-vision)",
-      "label": "VLESS flow"
+      "description": "VLess flow control (ဥပမာ xtls-rprx-vision)",
+      "label": "VLess flow"
     },
     "vmess_enable": {
       "description": "အသက်ဝင်သော VMess ပရိုတိုကောလ်",
