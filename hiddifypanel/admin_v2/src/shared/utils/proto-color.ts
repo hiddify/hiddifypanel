@@ -36,3 +36,50 @@ export function protoTagStyle(proto: string | null | undefined): Record<string, 
     border: `1px solid color-mix(in srgb, ${c} 38%, transparent)`,
   }
 }
+
+/**
+ * Proxy categories: one named after a protocol (vless, ss, http, telegram…) has that protocol's color, as in the
+ * Protocol column; the others have their own, each different from the protocols' and from one another's.
+ */
+const CATEGORY_COLORS: Record<string, string> = {
+  additional_config: '#3f6212',
+  custom: '#854d0e',
+  'down:http': '#9f1239',
+  'down:quic': '#0369a1',
+  'down:tls_h1': '#86198f',
+  'down:tls_h2': '#3730a3',
+  faketls: '#065f46',
+  grpc: '#78716c',
+  httpupgrade: '#10b981',
+  node_configs: '#b45309',
+  quic: '#3b82f6',
+  reality: '#65a30d',
+  shadowtls: '#44403c',
+  sni: '#d97706',
+  tcp: '#15803d',
+  telegram_faketls: '#991b1b',
+  telegram_web: '#6b21a8',
+  tls: '#eab308',
+  udp: '#4d7c0f',
+  'up:http': '#ca8a04',
+  'up:quic': '#d946ef',
+  'up:tls_h1': '#166534',
+  'up:tls_h2': '#059669',
+  user_configs: '#155e75',
+  ws: '#14b8a6',
+  xhttp: '#22c55e',
+}
+
+export function categoryColor(category: string | null | undefined): string {
+  const key = String(category ?? '').toLowerCase()
+  return CATEGORY_COLORS[key] ?? protoColor(key)
+}
+
+export function categoryTagStyle(category: string | null | undefined): Record<string, string> {
+  const c = categoryColor(category)
+  return {
+    background: `color-mix(in srgb, ${c} 16%, transparent)`,
+    color: `color-mix(in srgb, ${c} 82%, var(--p-text-color))`,
+    border: `1px solid color-mix(in srgb, ${c} 38%, transparent)`,
+  }
+}

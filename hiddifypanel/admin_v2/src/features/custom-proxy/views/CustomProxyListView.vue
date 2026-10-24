@@ -235,8 +235,8 @@
                 v-for="category in data.categories || []"
                 :key="category"
                 :value="categoryLabel(category)"
-                class="me-1 mb-1"
-                severity="secondary"
+                :style="categoryTagStyle(category)"
+                class="me-1 mb-1 category-tag"
               />
               <Button
                 link
@@ -250,8 +250,8 @@
                 v-for="category in visibleCategories(data.categories || [])"
                 :key="category"
                 :value="categoryLabel(category)"
-                class="me-1 mb-1"
-                severity="secondary"
+                :style="categoryTagStyle(category)"
+                class="me-1 mb-1 category-tag"
               />
               <Button
                 v-if="(data.categories || []).length > 2"
@@ -335,7 +335,11 @@
   <Popover ref="categoriesPopover" @show="focusFirstInput(categoriesPopover)">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('proxy.categories') }}</label>
-      <Listbox v-model="filterCategories" :options="categoryChoices" option-label="label" option-value="value" multiple filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" />
+      <Listbox v-model="filterCategories" :options="categoryChoices" option-label="label" option-value="value" multiple filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: categoryColor(option.value) }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
       <Button v-if="filterCategories.length" :label="t('tags.clear')" icon="pi pi-times" text size="small" severity="secondary" @click="filterCategories = []" />
     </div>
   </Popover>
@@ -410,7 +414,7 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import { categoryName, coreName, protocolName } from '@/shared/utils/protocols'
 import { useHashState, triStateCodec, optionalNumberCodec, type HashCodec } from '@/shared/composables/useHashState'
 import { focusFirstInput } from '@/shared/utils/popover-focus'
-import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
+import { categoryColor, categoryTagStyle, protoColor, protoTagStyle } from '@/shared/utils/proto-color'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import GenerateBundleDialog from '@/features/custom-proxy/components/GenerateBundleDialog.vue'
 import { customProxiesApi, type CustomProxy, type CustomProxyMeta } from '@/core/api/generated'
@@ -1056,6 +1060,9 @@ onActivated(() => {
   border-radius: 999px;
 }
 .proto-tag {
+  font-weight: 600;
+}
+.category-tag {
   font-weight: 600;
 }
 .proxy-name-link,
