@@ -16,9 +16,11 @@ from flask.views import MethodView
 from flask_babel import gettext as _
 from werkzeug.datastructures import MultiDict
 
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
+from hiddifypanel.database import db
 from hiddifypanel.models import ConfigEnum, Role, hconfig, set_hconfig
-from hiddifypanel.models.config_enum import ApplyMode, is_protocol_switch
+from hiddifypanel.models.config_enum import ApplyMode, Lang, is_protocol_switch
 
 # Shown by default; everything else is "advanced" and only shown on request (search always finds it).
 ESSENTIAL_KEYS = frozenset(
@@ -205,6 +207,10 @@ class SettingsApi(MethodView):
         if result.errors:
             return {"errors": result.errors, "field_errors": {}}, 422
 
+        if hconfig(ConfigEnum.admin_lang) != admin_lang:
+            # "Admin Panel Language" also becomes my own language (the top bar's), which otherwise wins over it.
+            g.account.lang = Lang(hconfig(ConfigEnum.admin_lang))
+            db.session.commit()
         new_admin_path = hconfig(ConfigEnum.proxy_path_admin)
         return {
             "categories": describe_settings(get_config_form(formdata=None, meta={"csrf": False})),
