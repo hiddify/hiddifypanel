@@ -68,6 +68,20 @@
             </button>
             <Button icon="pi pi-eye" text rounded size="small" :aria-label="t('apply.logs.view')" v-tooltip.top="t('apply.logs.view')" @click="openLog(f)" />
             <a :href="applyApi.downloadUrl(f.name)" download :aria-label="t('apply.log.download')"><Button icon="pi pi-download" text rounded size="small" severity="secondary" v-tooltip.top="t('apply.log.download')" /></a>
+            <!-- To my Telegram, through the panel's bot (only when the panel has one) -->
+            <span v-if="state?.telegram?.bot" v-tooltip.top="state.telegram.connected ? t('apply.log.telegram') : t('apply.log.telegramConnect')">
+              <Button
+                icon="pi pi-telegram"
+                text
+                rounded
+                size="small"
+                class="ap-file__tg"
+                :aria-label="t('apply.log.telegram')"
+                :disabled="!state.telegram.connected"
+                :loading="sending === f.name"
+                @click="sendToTelegram(f)"
+              />
+            </span>
           </li>
           <li v-if="!files.length" class="ap-empty"><i class="pi pi-inbox" />{{ t('apply.logs.empty') }}</li>
         </ul>
@@ -259,6 +273,19 @@ function clearAll() {
       }
     },
   })
+}
+
+const sending = ref<string | null>(null)
+async function sendToTelegram(f: LogFile) {
+  sending.value = f.name
+  try {
+    await applyApi.sendToTelegram(f.name)
+    toast.add({ severity: 'success', summary: t('apply.log.telegramSent', { name: f.name }), life: 3000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('apply.log.telegramFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    sending.value = null
+  }
 }
 
 function openLog(f: LogFile) {
@@ -483,6 +510,9 @@ onBeforeUnmount(() => feed?.stop())
 }
 .ap-file a {
   text-decoration: none;
+}
+.ap-file__tg:not(:disabled) {
+  color: #229ed9;
 }
 .ap-file__icon {
   flex-shrink: 0;

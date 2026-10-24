@@ -174,13 +174,14 @@ def send_backup_to_telegram(chat_id: int) -> str:
     return name
 
 
-def _telegram() -> dict[str, Any]:
+def telegram_state() -> dict[str, Any]:
+    """Whether the panel has a bot, and whether my account is connected to it (to send me files)."""
     bot = getattr(g, "bot", None)
     return {"bot": bool(bot and getattr(bot, "username", None)), "connected": bool(g.account.telegram_id)}
 
 
 def _state() -> dict[str, Any]:
-    return {"current": current_summary(), "files": list_files(), "telegram": _telegram(), "directory": str(backup_dir())}
+    return {"current": current_summary(), "files": list_files(), "telegram": telegram_state(), "directory": str(backup_dir())}
 
 
 # ---------------------------------------------------------------------------------------------- restore token
@@ -252,7 +253,7 @@ class BackupTelegramApi(MethodView):
 
     def post(self):
         """Make a backup now and send it to my Telegram (not kept on the server)"""
-        telegram = _telegram()
+        telegram = telegram_state()
         if not telegram["bot"]:
             abort(400, "This panel has no Telegram bot")
         if not telegram["connected"]:
