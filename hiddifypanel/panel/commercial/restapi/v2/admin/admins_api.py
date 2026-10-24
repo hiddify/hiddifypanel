@@ -15,7 +15,7 @@ from hiddifypanel import admin_credentials as creds
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
-from hiddifypanel.models import AdminUser, ConfigEnum, Domain, DomainType, User, hconfig
+from hiddifypanel.models import AdminUser, ConfigEnum, Domain, DomainType, User, hconfig, set_hconfig
 from hiddifypanel.models.admin import AdminMode
 from hiddifypanel.models.config_enum import Lang
 from hiddifypanel.models.role import Role
@@ -493,6 +493,9 @@ class MyAdminLanguageApi(MethodView):
         if value and value not in {lang.value for lang in Lang}:
             abort(400, "Unknown language")
         actor.lang = Lang(value) if value else None
+        # The super admin's choice is also the panel's "Admin Panel Language" (Settings), so the two never disagree.
+        if value and _is_super(actor):
+            set_hconfig(ConfigEnum.admin_lang, value, commit=False)
         db.session.commit()
         return {"lang": value}
 
