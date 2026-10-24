@@ -42,6 +42,8 @@ export interface ApplyState extends LogSources {
   files: LogFile[]
   /** This panel is a node. */
   node: boolean
+  /** The panel has a Telegram bot / my account is connected to it (a log can be sent to me). */
+  telegram: { bot: boolean; connected: boolean }
   now: number
 }
 
@@ -87,6 +89,10 @@ export const applyApi = {
   async clearAll(): Promise<{ cleared: number; failed: string[]; skipped: string[]; files: LogFile[] }> {
     const { data } = await getHttp().post<{ cleared: number; failed: string[]; skipped: string[]; files: LogFile[] }>('apply/logs/clear/', {})
     return data
+  },
+  /** Send a whole log to my Telegram, through the panel's bot. */
+  async sendToTelegram(name: string): Promise<void> {
+    await getHttp().post(`apply/logs/${encodeURIComponent(name)}/telegram/`, {})
   },
   downloadUrl(name: string): string {
     return `${getHttp().defaults.baseURL ?? ''}apply/logs/${encodeURIComponent(name)}/download/`

@@ -627,6 +627,10 @@
         "loading": "Chargement…",
         "show": "Afficher le journal",
         "showingEnd": "fin affichée",
+        "telegram": "Envoyer sur mon Telegram",
+        "telegramConnect": "Connectez d'abord votre Telegram dans Mon compte",
+        "telegramFailed": "Impossible d'envoyer sur Telegram",
+        "telegramSent": "{name} envoyé sur votre Telegram",
         "terminal": "journal",
         "wrap": "Retour à la ligne"
       },

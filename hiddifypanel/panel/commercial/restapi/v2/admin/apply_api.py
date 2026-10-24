@@ -25,6 +25,8 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.models import ConfigEnum, Role, hconfig
 from hiddifypanel.panel.run_commander import Command, commander
 
+from .backup_api import telegram_state
+
 ROLES = {Role.super_admin}
 LOG_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 PROGRESS_RE = re.compile(r"####(\d+)####(.*?)####(.*?)####")
@@ -187,6 +189,8 @@ def _state() -> dict[str, Any]:
         "last": _last_runs(),
         "files": _log_files(),
         "node": bool(hutils.node.is_child()),
+        # {"bot", "connected"}: whether a log can be sent to my Telegram
+        "telegram": telegram_state(),
         "now": time.time(),
         **log_sources(),
     }
@@ -361,6 +365,41 @@ class ApplyLogsClearApi(MethodView):
         return {"cleared": cleared, "failed": failed, "skipped": skipped, "files": _log_files()}
 
 
+def _log_text(path: Path) -> str:
+    """A log as the download gives it: no terminal colors, no progress-bar redraws."""
+    return _strip_progress(re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", path.read_text(encoding="utf-8", errors="replace")))
+
+
+class ApplyLogTelegramApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def post(self, name: str):
+        """Send a whole log file to my Telegram, through the panel's bot"""
+        import io
+
+        from telebot.apihelper import ApiTelegramException
+
+        from hiddifypanel.panel.commercial.telegrambot import bot
+
+        path = _log_path(name)
+        telegram = telegram_state()
+        if not telegram["bot"]:
+            abort(400, "This panel has no Telegram bot")
+        if not telegram["connected"]:
+            abort(400, "Connect your Telegram first (My account)")
+        data = _log_text(path).encode()
+        if len(data) > 50 * 1024 * 1024:
+            abort(400, "The log is larger than 50 MB, the most a Telegram bot can send: download it instead")
+        document = io.BytesIO(data)
+        document.name = path.name
+        try:
+            bot.send_document(g.account.telegram_id, document, visible_file_name=path.name, caption=path.name)
+        except ApiTelegramException as e:
+            logger.warning(f"apply: sending {path.name} to Telegram failed: {e}")
+            abort(400, f"Telegram did not take the log: {e.description}")
+        return {"sent": path.name}
+
+
 class ApplyLogDownloadApi(MethodView):
     decorators = [login_required(ROLES)]
 
@@ -369,8 +408,7 @@ class ApplyLogDownloadApi(MethodView):
         from flask import Response
 
         path = _log_path(name)
-        text = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", path.read_text(encoding="utf-8", errors="replace"))
-        resp = Response(_strip_progress(text), mimetype="text/plain")
+        resp = Response(_log_text(path), mimetype="text/plain")
         resp.headers["Content-Disposition"] = f'attachment; filename="{path.name}"'
         resp.headers["Cache-Control"] = "no-store"
         return resp

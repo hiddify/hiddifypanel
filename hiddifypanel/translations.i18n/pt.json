@@ -624,6 +624,10 @@
         "loading": "Carregando…",
         "show": "Mostrar log",
         "showingEnd": "mostrando o final",
+        "telegram": "Enviar para o meu Telegram",
+        "telegramConnect": "Conecte primeiro o seu Telegram em Minha conta",
+        "telegramFailed": "Não foi possível enviar para o Telegram",
+        "telegramSent": "{name} enviado para o seu Telegram",
         "terminal": "log",
         "wrap": "Quebrar linhas"
       },
