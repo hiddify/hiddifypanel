@@ -2015,6 +2015,7 @@
       "unread": "{n} nouvelle notification | {n} nouvelles notifications",
       "new": "Nouveau",
       "dismiss": "Ignorer"
+    },
     "pwa": {
       "guide": {
         "platform": "Votre appareil",
@@ -2221,6 +2222,9 @@
         "namePlaceholder": "ex. Téléphone de Sara",
         "nameRequired": "Un nom est requis",
         "neverExpires": "n'expire jamais",
+        "newAt": "Placer le nouvel utilisateur au début ou à la fin de la liste",
+        "newAtEnd": "Fin de la liste",
+        "newAtTop": "Début de la liste",
         "newUuid": "Nouvel UUID",
         "nextReset": "prochaine réinitialisation {when}",
         "notStarted": "Non démarré",

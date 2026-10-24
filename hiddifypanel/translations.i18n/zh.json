@@ -2015,6 +2015,7 @@
       "unread": "{n} 条新通知 | {n} 条新通知",
       "new": "新",
       "dismiss": "关闭"
+    },
     "pwa": {
       "guide": {
         "platform": "您的设备",
@@ -2202,6 +2203,9 @@
         "namePlaceholder": "例如 Sara 的手机",
         "nameRequired": "名称为必填项",
         "neverExpires": "永不过期",
+        "newAt": "新用户放在列表开头还是末尾",
+        "newAtEnd": "列表末尾",
+        "newAtTop": "列表开头",
         "newUuid": "新 UUID",
         "nextReset": "下次重置 {when}",
         "notStarted": "未开始",

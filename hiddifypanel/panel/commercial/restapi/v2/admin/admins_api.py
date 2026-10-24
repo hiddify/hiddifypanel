@@ -521,11 +521,14 @@ def _users_layout(raw: object) -> dict:
         # a user is pinned or in the order, not both
         "order": [u for u in _uuid_list(data.get("order")) if u not in set(pinned)],
         "guide_seen": bool(data.get("guide_seen")),
+        # where a user I add goes: the top of my order or (as before) the end
+        "new_at": "top" if data.get("new_at") == "top" else "end",
     }
 
 
 class MyAdminUsersLayoutApi(MethodView):
-    """My account: how the Users page lists my users (pinned on top, then my order) and whether I saw its guide."""
+    """My account: how the Users page lists my users (pinned on top, then my order), where a new user goes, and
+    whether I saw its guide."""
 
     decorators = [login_required(ALL_ROLES)]
 
@@ -537,7 +540,7 @@ class MyAdminUsersLayoutApi(MethodView):
         actor: AdminUser = g.account
         body = request.get_json(silent=True)
         if not isinstance(body, dict):
-            abort(400, "Expected {pinned, order, guide_seen}")
+            abort(400, "Expected {pinned, order, guide_seen, new_at}")
         actor.users_layout = _users_layout(body)
         db.session.commit()
         return actor.users_layout

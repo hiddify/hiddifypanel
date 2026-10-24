@@ -86,6 +86,8 @@ export interface UsersLayout {
   pinned: string[]
   order: string[]
   guide_seen: boolean
+  /** Where a user I add goes in my order: the top (after the pinned ones) or the end */
+  new_at: 'top' | 'end'
 }
 
 export const usersApi = {
