@@ -66,8 +66,10 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
 </template>
 
 <style scoped>
+/* On the topbar: its own text color (the primary color would vanish on the primary-colored bar), as the
+   notifications and appearance buttons do when open. */
 .layout-topbar-action--active {
-  color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  color: var(--topbar-text, #fff);
+  background: var(--topbar-hover, rgb(255 255 255 / 14%));
 }
 </style>
