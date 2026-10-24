@@ -2015,6 +2015,7 @@
       "unread": "{n} nouvelle notification | {n} nouvelles notifications",
       "new": "Nouveau",
       "dismiss": "Ignorer"
+    },
     "pwa": {
       "guide": {
         "platform": "Votre appareil",
