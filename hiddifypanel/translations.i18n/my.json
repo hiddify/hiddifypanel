@@ -1172,12 +1172,25 @@
     },
     "donation": {
       "close": "ပိတ်ရန်",
+      "contact": "သင်ကူညီနိုင်ပါက ကျေးဇူးပြု၍ ကျွန်ုပ်တို့အား {email} တွင် ဆက်သွယ်ပါ။",
       "copied": "{name} လိပ်စာကို ကူးယူပြီးပါပြီ",
       "copiedShort": "ကူးယူပြီး",
       "copyAddress": "{name} လိပ်စာကို ကူးယူရန်",
+      "help": {
+        "content": "Content Providers",
+        "flutter": "Flutter Developer",
+        "go": "Go Developer",
+        "python": "Python Developer",
+        "share": "Share Hiddify Manager with Others",
+        "swift": "Swift Developer"
+      },
       "networkHint": "ငွေကြေးတစ်ခုစီကို ၎င်း၏အမည်ဘေးတွင်ပြထားသော network ပေါ်တွင်သာ ပို့ပါ။ အခြား network ပေါ်တွင် ပို့ပါက ဆုံးရှုံးသွားပါမည်။",
+      "otherHelp": "အခြားသော အကူအညီများလည်း ကျွန်ုပ်တို့ လိုအပ်သည်",
+      "paymentMethods": "ငွေပေးချေမှု နည်းလမ်းများ",
       "qr": "QR ကုဒ်",
       "qrOf": "{name} လိပ်စာ၏ QR ကုဒ်",
+      "showLess": "လျှော့ပြရန်",
+      "showMore": "ပိုပြရန်",
       "showQr": "{name} အတွက် QR ကုဒ်ကို ပြရန်",
       "title": "လှူဒါန်းမှု"
     },
