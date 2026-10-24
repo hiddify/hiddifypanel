@@ -1154,12 +1154,25 @@
     },
     "donation": {
       "close": "Fechar",
+      "contact": "Entre em contato conosco em {email} se puder nos ajudar.",
       "copied": "Endereço {name} copiado",
       "copiedShort": "Copiado",
       "copyAddress": "Copiar o endereço {name}",
+      "help": {
+        "content": "Provedores de conteúdo",
+        "flutter": "Desenvolvedor Flutter",
+        "go": "Desenvolvedor Go",
+        "python": "Desenvolvedor Python",
+        "share": "Compartilhe o Hiddify Manager com outras pessoas",
+        "swift": "Desenvolvedor Swift"
+      },
       "networkHint": "Envie cada moeda apenas na rede indicada ao lado do nome: uma transferência em outra rede é perdida.",
+      "otherHelp": "Precisamos também de outra ajuda",
+      "paymentMethods": "Métodos de Pagamento",
       "qr": "QR code",
       "qrOf": "QR code do endereço {name}",
+      "showLess": "Mostrar menos",
+      "showMore": "Mostrar mais",
       "showQr": "Mostrar QR code de {name}",
       "title": "Doação"
     },
