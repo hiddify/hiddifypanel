@@ -256,10 +256,29 @@
     <!-- Phones: compact cards -->
     <div v-else-if="state" class="u-cards">
       <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
-      <label v-if="rows.length && !readOnly" class="u-selectall">
-        <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
-        <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
-      </label>
+      <div v-if="rows.length" class="u-cardbar">
+        <label v-if="!readOnly" class="u-selectall">
+          <Checkbox :model-value="allPicked" :indeterminate="somePicked && !allPicked" binary :aria-label="t('users.selectAll', { n: rows.length }, rows.length)" @update:model-value="(v: boolean) => toggleAll(v)" />
+          <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
+        </label>
+        <!-- The table's column sorts, as small buttons: a tap sorts up, the next down, the third goes back to your own order -->
+        <div class="u-sorts">
+          <button
+            v-for="c in CARD_SORTS"
+            :key="c.field"
+            type="button"
+            class="u-sort"
+            :class="{ 'u-sort--on': sortField === c.field }"
+            :disabled="groupByOwner"
+            :aria-pressed="sortField === c.field"
+            :aria-label="c.label()"
+            @click="cycleSort(c.field)"
+          >
+            <i :class="c.icon" aria-hidden="true" /><span v-if="c.field !== 'id'">{{ c.label() }}</span>
+            <i v-if="sortField === c.field" class="u-sort__dir pi" :class="sortOrder === -1 ? 'pi-arrow-down' : 'pi-arrow-up'" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
       <template v-for="group in cardGroups" :key="group.key">
         <div v-if="groupByOwner" class="users-group users-group--card"><i class="pi pi-sitemap" /><b>{{ group.owner || '—' }}</b><span class="text-muted-color">{{ group.users.length }}</span></div>
         <article v-for="u in group.users" :key="u.uuid" class="u-card" :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u) }]">
@@ -747,6 +766,28 @@ function extrasOf(u: Row): { key: string; icon: string; text: string; title: str
   }
   if (u.telegram_id) out.push({ key: 'telegram', icon: 'pi pi-telegram', text: 'Telegram', title: t('users.extra.telegramHint') })
   return out
+}
+
+/** Phones: the table's sortable columns as buttons above the cards (same fields, same order of taps). */
+const CARD_SORTS = [
+  { field: 'id', icon: 'pi pi-hashtag', label: () => t('users.sortById') },
+  { field: 'status_rank', icon: 'pi pi-check-circle', label: () => t('users.col.status') },
+  { field: 'name', icon: 'pi pi-user', label: () => t('users.col.name') },
+  { field: 'usage_ratio', icon: 'pi pi-chart-bar', label: () => t('users.col.usage') },
+  { field: 'remaining_days', icon: 'pi pi-hourglass', label: () => t('users.col.expire') },
+  { field: 'last_online_ts', icon: 'pi pi-wifi', label: () => t('users.col.lastOnline') },
+] as const
+function cycleSort(field: string) {
+  if (sortField.value !== field) {
+    sortField.value = field
+    sortOrder.value = 1
+  } else if (sortOrder.value === 1) {
+    sortOrder.value = -1
+  } else {
+    sortField.value = undefined
+    sortOrder.value = undefined
+  }
+  first.value = 0
 }
 
 function onSort(e: DataTableSortEvent) {
@@ -1699,17 +1740,73 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 0.4rem;
 }
-.u-selectall {
+.u-cardbar {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0.8rem;
+  padding: 0.45rem 0.6rem 0.45rem 0.8rem;
   border-radius: 12px;
   border: 1px solid var(--p-content-border-color);
   background: var(--p-content-background);
+}
+.u-selectall {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.6rem;
+  padding-inline-end: 0.6rem;
+  border-inline-end: 1px solid var(--p-content-border-color);
   font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
+}
+/* One line: what does not fit scrolls sideways, with the edge fading out */
+.u-sorts {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 0.3rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, #000 calc(100% - 1rem), transparent);
+}
+:global([dir='rtl']) .u-sorts {
+  mask-image: linear-gradient(to left, #000 calc(100% - 1rem), transparent);
+}
+.u-sorts::-webkit-scrollbar {
+  display: none;
+}
+.u-sort {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--p-content-border-color);
+  background: none;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+}
+.u-sort i {
+  font-size: 0.7rem;
+}
+.u-sort--on {
+  color: var(--p-primary-color);
+  border-color: color-mix(in srgb, var(--p-primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.u-sort:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.u-sort:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 1px;
 }
 .u-card {
   --tone: var(--p-green-500, #22c55e);
