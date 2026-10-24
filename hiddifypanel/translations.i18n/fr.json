@@ -1364,7 +1364,7 @@
         "addTitle": "Ajouter un outbound {mode}",
         "config": "JSON",
         "configBridge": "Le panneau l'a nommé « {tag} » ; le routage utilise ce tag et l'autre core s'y connecte sur 127.0.0.1:{port}.",
-        "configBridgeNew": "Le panneau lui attribue un tag (un tag que vous écrivez est ignoré) ; le routage l'utilise et l'autre core s'y connecte via un pont SOCKS local.",
+        "configBridgeNew": "Le panneau lui attribue un tag (un tag que vous écrivez est ignoré) ; le routage l'utilise et l'autre core s'y connecte via un pont Socks local.",
         "configExample": "Insérer un exemple",
         "configHint": {
           "core_endpoint": "Un objet endpoint hiddify-core (sing-box), p. ex. un endpoint WireGuard. Il est vérifié par hiddify-core avant l'enregistrement.",
@@ -1377,8 +1377,8 @@
         "editTitle": "Modifier {name}",
         "endpoint": "Connexion",
         "endpointHint": {
-          "psiphon": "S'exécute dans hiddify-core. xray y accède sur le port SOCKS local {endpoint}.",
-          "tor": "S'exécute dans hiddify-core (le programme `tor` doit être installé sur ce serveur). xray y accède sur le port SOCKS local {endpoint}."
+          "psiphon": "S'exécute dans hiddify-core. xray y accède sur le port Socks local {endpoint}.",
+          "tor": "S'exécute dans hiddify-core (le programme `tor` doit être installé sur ce serveur). xray y accède sur le port Socks local {endpoint}."
         },
         "host": "Hôte",
         "name": "Nom",
@@ -1422,21 +1422,21 @@
         "core_outbound": "Outbound hiddify-core (sing-box)",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "Outbound xray"
       },
       "modeHint": {
         "block": "Abandonné",
-        "core_endpoint": "Votre propre endpoint hiddify-core, p. ex. WireGuard (JSON) ; xray y accède via un pont SOCKS local",
-        "core_outbound": "Votre propre outbound hiddify-core (JSON) ; xray y accède via un pont SOCKS local",
+        "core_endpoint": "Votre propre endpoint hiddify-core, p. ex. WireGuard (JSON) ; xray y accède via un pont Socks local",
+        "core_outbound": "Votre propre outbound hiddify-core (JSON) ; xray y accède via un pont Socks local",
         "direct": "Directement depuis ce serveur",
         "psiphon": "Via Psiphon (géré par hiddify-core)",
         "socks": "Via un proxy SOCKS5",
         "tor": "Via le réseau Tor (géré par hiddify-core)",
         "warp": "Via Cloudflare WARP sur ce serveur",
-        "xray_outbound": "Votre propre outbound xray (JSON) ; hiddify-core y accède via un pont SOCKS local"
+        "xray_outbound": "Votre propre outbound xray (JSON) ; hiddify-core y accède via un pont Socks local"
       },
       "more": "Plus d'actions",
       "moveDown": "Descendre",
@@ -1455,7 +1455,7 @@
       "resetMessage": "Vos modifications de ses sites, geosites et rule-sets sont remplacées par les listes intégrées, que les mises à niveau tiennent ensuite à jour.",
       "resetTitle": "Rétablir {name} aux listes intégrées ?",
       "saved": "{name} enregistré",
-      "subtitle": "Choisissez où le trafic quitte ce serveur, dans l'ordre : via WARP, directement, bloqué, ou via une sortie SOCKS, Tor ou Psiphon.",
+      "subtitle": "Choisissez où le trafic quitte ce serveur, dans l'ordre : via WARP, directement, bloqué, ou via une sortie Socks, Tor ou Psiphon.",
       "title": "Outbounds"
     },
     "passwordRules": {
@@ -1632,7 +1632,7 @@
       "l7ReverseProto": "Protocole de proxy inverse L7",
       "linkSettings": "Paramètres du lien",
       "linkTemplate": "Modèle de lien",
-      "listTitle": "Proxies personnalisés",
+      "listTitle": "Proxies",
       "mode": "Mode",
       "modeLabels": {
         "domain_native": "Domaine natif",
@@ -2372,8 +2372,8 @@
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "Utilisateur",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "Le JSON vmess doit être un objet"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "Le JSON VMess doit être un objet"
     },
     "validation": {
       "errors": "Erreurs",
@@ -2654,7 +2654,7 @@
     },
     "hysteria_port": {
       "description": "Port UDP Hysteria par exemple 5678",
-      "label": "🔍Port Hysteria2"
+      "label": "🔍Port Hysteria 2"
     },
     "hysteria_up_mbps": {
       "description": "Vitesse de téléchargement maximale d’Hysteria",
@@ -3099,7 +3099,7 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray ne prend pas en charge la comptabilité et n'est pas suggéré",
+      "description": "V2Ray ne prend pas en charge la comptabilité et n'est pas suggéré",
       "label": "♈️ V2Ray"
     },
     "validation-error": "Il y a une erreur dans l'un des champs.",
@@ -3195,7 +3195,7 @@
       "label": "Configs supplémentaires pour Singbox"
     },
     "additional_configs_urls": {
-      "description": "Vous pouvez ajouter des proxies http:// https:// ou au format v2ray comme vless://",
+      "description": "Vous pouvez ajouter des proxies http:// https:// ou au format V2Ray comme vless://",
       "label": "URL supplémentaires"
     },
     "additional_configs_xrayjson": {
@@ -3317,8 +3317,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Activer le protocole SOCKS",
-      "label": "SOCKS"
+      "description": "Activer le protocole Socks",
+      "label": "Socks"
     },
     "splithttp_enable": {
       "description": "XHTTP permet des flux de téléchargement et d'envoi séparés, unifie gRPC, H2, H1 et prend aussi en charge Quic.",
@@ -3377,16 +3377,16 @@
       "label": "Utiliser l'IP dans les configs"
     },
     "vless_decryption": {
-      "description": "Paramètre de déchiffrement VLESS pour les liens de partage",
-      "label": "Déchiffrement VLESS"
+      "description": "Paramètre de déchiffrement VLess pour les liens de partage",
+      "label": "Déchiffrement VLess"
     },
     "vless_encryption": {
-      "description": "Méthode de chiffrement VLESS pour les liens de partage",
-      "label": "Chiffrement VLESS"
+      "description": "Méthode de chiffrement VLess pour les liens de partage",
+      "label": "Chiffrement VLess"
     },
     "vless_flow": {
-      "description": "Contrôle de flux VLESS (p. ex. xtls-rprx-vision)",
-      "label": "Flux VLESS"
+      "description": "Contrôle de flux VLess (p. ex. xtls-rprx-vision)",
+      "label": "Flux VLess"
     }
   },
   "copy": "Copie",

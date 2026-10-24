@@ -42,7 +42,7 @@
           <Select id="bc-side" v-model="form.side" :options="meta?.sides ?? []" class="w-full" :disabled="!isNew" @change="onSideChange" />
         </HorizontalField>
         <HorizontalField :label="t('baseConfig.core')" input-id="bc-core">
-          <Select id="bc-core" v-model="form.core" :options="coreOptions" class="w-full" :disabled="!isNew" />
+          <Select id="bc-core" v-model="form.core" :options="coreOptions" :option-label="coreName" class="w-full" :disabled="!isNew" />
         </HorizontalField>
         <HorizontalField :label="t('baseConfig.version')" input-id="bc-version">
           <InputGroup>
@@ -104,6 +104,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
+import { coreName } from '@/shared/utils/protocols'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'

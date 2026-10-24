@@ -1939,7 +1939,7 @@
         "addTitle": "Add {mode} outbound",
         "config": "JSON",
         "configBridge": "The panel named it \"{tag}\"; routing uses that tag and the other core connects to it on 127.0.0.1:{port}.",
-        "configBridgeNew": "The panel gives it a tag (a tag you write is ignored); routing uses it and the other core connects to it through a local SOCKS bridge.",
+        "configBridgeNew": "The panel gives it a tag (a tag you write is ignored); routing uses it and the other core connects to it through a local Socks bridge.",
         "configExample": "Insert an example",
         "configHint": {
           "core_endpoint": "One hiddify-core (sing-box) endpoint object, e.g. a WireGuard endpoint. It is checked by hiddify-core before saving.",
@@ -1952,8 +1952,8 @@
         "editTitle": "Edit {name}",
         "endpoint": "Connection",
         "endpointHint": {
-          "psiphon": "Runs inside hiddify-core. xray reaches it on the local SOCKS port {endpoint}.",
-          "tor": "Runs inside hiddify-core (the `tor` program must be installed on this server). xray reaches it on the local SOCKS port {endpoint}."
+          "psiphon": "Runs inside hiddify-core. xray reaches it on the local Socks port {endpoint}.",
+          "tor": "Runs inside hiddify-core (the `tor` program must be installed on this server). xray reaches it on the local Socks port {endpoint}."
         },
         "host": "Host",
         "name": "Name",
@@ -1997,21 +1997,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "Dropped",
-        "core_endpoint": "Your own hiddify-core endpoint, e.g. WireGuard (JSON); xray reaches it through a local SOCKS bridge",
-        "core_outbound": "Your own hiddify-core outbound (JSON); xray reaches it through a local SOCKS bridge",
+        "core_endpoint": "Your own hiddify-core endpoint, e.g. WireGuard (JSON); xray reaches it through a local Socks bridge",
+        "core_outbound": "Your own hiddify-core outbound (JSON); xray reaches it through a local Socks bridge",
         "direct": "Straight from this server",
         "psiphon": "Through Psiphon (run by hiddify-core)",
         "socks": "Through a SOCKS5 proxy",
         "tor": "Through the Tor network (run by hiddify-core)",
         "warp": "Through Cloudflare WARP on this server",
-        "xray_outbound": "Your own xray outbound (JSON); hiddify-core reaches it through a local SOCKS bridge"
+        "xray_outbound": "Your own xray outbound (JSON); hiddify-core reaches it through a local Socks bridge"
       },
       "more": "More actions",
       "moveDown": "Move down",
@@ -2030,7 +2030,7 @@
       "resetMessage": "Your changes to its sites, geosites and rule-sets are replaced with the built-in lists, which upgrades then keep up to date.",
       "resetTitle": "Reset {name} to the built-in lists?",
       "saved": "{name} saved",
-      "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a SOCKS, Tor or Psiphon exit.",
+      "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a Socks, Tor or Psiphon exit.",
       "title": "Outbounds",
       "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs."
     },
@@ -2208,17 +2208,17 @@
       "l7ReverseProto": "L7 reverse proxy protocol",
       "linkSettings": "Link settings",
       "linkTemplate": "Link template",
-      "listTitle": "Custom Proxies",
+      "listTitle": "Proxies",
       "mode": "Mode",
       "modeLabels": {
         "domain_native": "Domain native",
-        "domains_auto_public_ports": "Multi-domain auto ports",
-        "domains_dns_gateway": "Domain DNS gateway",
-        "domains_l7_gateway": "Domain L7 gateway",
-        "domains_single_public_port": "Multi-domain static port",
-        "domains_sni_gateway": "Domain SNI gateway",
-        "ip": "IP-based",
-        "no_inbound": "No inbound"
+        "domains_auto_public_ports": "Multi-Domain Auto Ports",
+        "domains_dns_gateway": "Domain DNS Gateway",
+        "domains_l7_gateway": "Domain L7 Gateway",
+        "domains_single_public_port": "Multi-Domain Static Port",
+        "domains_sni_gateway": "Domain SNI Gateway",
+        "ip": "IP-Based",
+        "no_inbound": "No Inbound"
       },
       "modeSettings": "Mode & routing",
       "name": "Name",
@@ -3114,8 +3114,8 @@
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "User",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON must be an object"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON must be an object"
     },
     "validation": {
       "errors": "Errors",
@@ -3436,7 +3436,7 @@
       "label": "Additional Configs for Singbox"
     },
     "additional_configs_urls": {
-      "description": "You can add http:// https:// or v2ray format porxies like vless://",
+      "description": "You can add http:// https:// or V2Ray format porxies like vless://",
       "label": "Additional URLs"
     },
     "additional_configs_xrayjson": {
@@ -3642,7 +3642,7 @@
     },
     "hysteria_enable": {
       "description": "To Enable UDP based Hysteria Protocol",
-      "label": "⚫️ Hysteria2"
+      "label": "⚫️ Hysteria 2"
     },
     "hysteria_obfs_enable": {
       "description": " Enables Hysteria Obfuscation (Salamander)",
@@ -3650,7 +3650,7 @@
     },
     "hysteria_port": {
       "description": "Hysteria UDP Port for example 5678",
-      "label": "🔍 Hysteria2 Port"
+      "label": "🔍 Hysteria 2 Port"
     },
     "hysteria_up_mbps": {
       "description": "Hysteria Maximum Upload Speed",
@@ -3871,7 +3871,7 @@
     },
     "path_trojan": {
       "description": "For TROJAN-Links",
-      "label": "ℹ️ TROJAN Path"
+      "label": "ℹ️ Trojan Path"
     },
     "path_v2ray": {
       "description": "Set V2Ray Configs Path",
@@ -3982,7 +3982,7 @@
       "label": "↔️ Shadowsocks 2022 Port"
     },
     "shadowtls": {
-      "description": "A Proxy to expose real tls handshake to the firewall.\n\nIt works like TROJAN but It does not require signing certificate. the firewall will see real tls handshake with valid certificate that you choose.",
+      "description": "A Proxy to expose real tls handshake to the firewall.\n\nIt works like Trojan but It does not require signing certificate. the firewall will see real tls handshake with valid certificate that you choose.",
       "label": "ShadowTLS"
     },
     "shadowtls_enable": {
@@ -4006,8 +4006,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Enable SOCKS protocol",
-      "label": "SOCKS"
+      "description": "Enable Socks protocol",
+      "label": "Socks"
     },
     "special_port": {
       "description": "You can set a customized port for your reality server to reduce the system's overhead. (Allow direct connection to proxies should be yes)",
@@ -4250,27 +4250,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray does not support accounting and not suggested",
+      "description": "V2Ray does not support accounting and not suggested",
       "label": "♈️ V2Ray "
     },
     "validation-error": "There is an error in one of the fields.",
     "validation-success": "Configs have been changed successfully. Click %(link)s to apply the configs. It may take 2 minutes to apply",
     "validation-success-no-reset": " ✅ Configs have been changed successfully",
     "vless_decryption": {
-      "description": "VLESS decryption parameter for share links",
-      "label": "VLESS decryption"
+      "description": "VLess decryption parameter for share links",
+      "label": "VLess decryption"
     },
     "vless_enable": {
       "description": "Enable VLess Protocol",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "VLESS encryption method for share links",
-      "label": "VLESS encryption"
+      "description": "VLess encryption method for share links",
+      "label": "VLess encryption"
     },
     "vless_flow": {
-      "description": "VLESS flow control (e.g. xtls-rprx-vision)",
-      "label": "VLESS flow"
+      "description": "VLess flow control (e.g. xtls-rprx-vision)",
+      "label": "VLess flow"
     },
     "vmess_enable": {
       "description": "Active VMess Protocol",
