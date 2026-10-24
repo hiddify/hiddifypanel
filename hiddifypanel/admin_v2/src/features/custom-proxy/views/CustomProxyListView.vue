@@ -290,7 +290,12 @@
           <span>{{ t('proxy.tlsLayer') }}</span>
         </template>
         <template #body="{ data }">
-          <span>{{ tlsLayerDisplay(data) }}</span>
+          <!-- Upload and download on different TLS layers: each with its arrow -->
+          <span v-if="tlsLayerSplit(data)" class="tls-split">
+            <span v-tooltip.top="t('dashboard.upload')"><i class="pi pi-upload" />{{ tlsLayerShort(data.tls_layer) }}</span>
+            <span v-tooltip.top="t('dashboard.download')"><i class="pi pi-download" />{{ tlsLayerShort(data.download_tls_layer) }}</span>
+          </span>
+          <span v-else>{{ tlsLayerDisplay(data) }}</span>
         </template>
       </Column>
       <Column field="domain_modes">
@@ -792,13 +797,17 @@ function tlsLayerShort(layer: string | null | undefined): string {
   return TLS_LAYER_SHORT[layer] || t(`proxy.tlsLayerLabels.${layer}`, layer)
 }
 
+/** Upload and download use different TLS layers (shown as two, each with its icon) */
+function tlsLayerSplit(row: CustomProxy): boolean {
+  return !!row.tls_layer && !!row.download_tls_layer && row.tls_layer !== row.download_tls_layer
+}
+
+/** One line of text (the cell when not split, and the search) */
 function tlsLayerDisplay(row: CustomProxy): string {
   const up = row.tls_layer
   const down = row.download_tls_layer
   if (!up && !down) return '—'
-  if (down && up && down !== up) {
-    return `📤${tlsLayerShort(up)} 📥${tlsLayerShort(down)}`
-  }
+  if (tlsLayerSplit(row)) return `↑${tlsLayerShort(up)} ↓${tlsLayerShort(down)}`
   return tlsLayerShort(up || down)
 }
 
@@ -1085,5 +1094,19 @@ onActivated(() => {
 .chip-summary-toggle {
   font-size: 0.85rem;
   min-width: auto;
+}
+.tls-split {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.tls-split > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.tls-split .pi {
+  font-size: 0.72rem;
+  color: var(--p-text-muted-color);
 }
 </style>

@@ -46,7 +46,7 @@
           <i :class="e.dir ? 'pi pi-folder sf-dir' : e.link ? 'pi pi-link' : 'pi pi-file'" />
           <span class="sf-name">{{ e.name }}</span>
           <small v-if="!e.dir" class="sf-size">{{ formatSize(e.size) }}</small>
-          <span v-if="e.access" class="sf-perm" :class="`sf-perm--${permKind(shown(e))}`" :title="permTitle(e)">{{ permLabel(shown(e)) }}</span>
+          <span v-if="e.access" class="sf-perm" :class="`sf-perm--${permKind(shown(e))}`" :title="permTitle(e)"><i v-if="!permLabel(shown(e))" class="pi pi-lock" /><template v-else>{{ permLabel(shown(e)) }}</template></span>
         </button>
       </li>
       <li v-if="!loading && !entries.length && !error" class="sf-empty">
@@ -175,11 +175,11 @@ function shown(e: FileEntry): string {
   return e.dir ? `${e.access!.slice(0, 2)}-` : e.access!
 }
 
-/** What the signed-in user may do, as one tag: the letters it has (RWX, RX, R…), a lock when none. */
+/** What the signed-in user may do, as one tag: the letters it has (RWX, RX, R…); '' when none (a lock icon). */
 function permLabel(access: string): string {
   // Writing implies reading here: RW is shown as W, RWX as WX.
   const letters = (access[1] === 'w' ? access.slice(1) : access).replace(/-/g, '').toUpperCase()
-  return letters || '🔒'
+  return letters
 }
 
 /** Its color: writable (green) above runnable (purple) above readable only (blue); none (grey). */

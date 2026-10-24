@@ -124,14 +124,14 @@
                 <span v-else class="dm-badge dm-mode" :class="`dm-mode--${isFakeProxyMode(d.fake_mode) ? 'proxy' : d.fake_mode}`" v-tooltip.top="t('domains.tls.decoyHint')">
                   <i :class="MODE_ICON[d.fake_mode] ?? 'pi pi-eye-slash'" />{{ t(`domains.tlsMode.${d.fake_mode}`) }}
                 </span>
-                <span v-if="d.ech" class="dm-badge dm-badge--soft">🔐 ECH</span>
-                <span v-if="d.resolve_ip" class="dm-badge dm-badge--soft">🔢 {{ t('domains.badge.resolveIp') }}</span>
-                <span v-if="d.cdn_ip && d.fake_mode === 'valid'" class="dm-badge dm-badge--soft" v-tooltip.top="d.cdn_ip">🔂 {{ t('domains.badge.cdnIp') }}</span>
+                <span v-if="d.ech" class="dm-badge dm-badge--soft"><i class="pi pi-envelope" />ECH</span>
+                <span v-if="d.resolve_ip" class="dm-badge dm-badge--soft"><i class="pi pi-search" />{{ t('domains.badge.resolveIp') }}</span>
+                <span v-if="d.cdn_ip && d.fake_mode === 'valid'" class="dm-badge dm-badge--soft" v-tooltip.top="d.cdn_ip"><i class="pi pi-map-marker" />{{ t('domains.badge.cdnIp') }}</span>
                 <span v-if="d.tls_port" class="dm-badge dm-badge--port" dir="ltr">TLS :{{ d.tls_port }}</span>
                 <span v-if="d.http_port" class="dm-badge dm-badge--port" dir="ltr">HTTP :{{ d.http_port }}</span>
-                <span v-if="d.mode === 'cdn' && d.servernames" class="dm-badge dm-badge--soft" dir="ltr" v-tooltip.top="t('domains.badge.frontingHint')">🎭 {{ d.servernames.split(',')[0] }}<template v-if="d.servernames.split(',').length > 1"> +{{ d.servernames.split(',').length - 1 }}</template></span>
+                <span v-if="d.mode === 'cdn' && d.servernames" class="dm-badge dm-badge--soft" dir="ltr" v-tooltip.top="t('domains.badge.frontingHint')"><i class="pi pi-id-card" />{{ d.servernames.split(',')[0] }}<template v-if="d.servernames.split(',').length > 1"> +{{ d.servernames.split(',').length - 1 }}</template></span>
                 <span v-if="d.server_domain_id" class="dm-badge dm-badge--soft" dir="ltr"><i class="pi pi-arrow-right" />{{ domainName(d.server_domain_id) }}</span>
-                <span v-if="d.download_domain_id" class="dm-badge dm-badge--soft" dir="ltr">📈 {{ domainName(d.download_domain_id) }}</span>
+                <span v-if="d.download_domain_id" class="dm-badge dm-badge--soft" dir="ltr"><i class="pi pi-download" />{{ domainName(d.download_domain_id) }}</span>
               </div>
               <!-- Its proxies and the configs it shows, side by side on one wrapping line (no empty room around them) -->
               <!-- Chosen proxies stay under the badges; "automatic" and "show configs of" go to the middle block -->

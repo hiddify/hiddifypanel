@@ -63,15 +63,16 @@ const languages = computed<LanguageOption[]>(() => {
   if (!me.value) return []
   const defaultName = LANGUAGE_LOOK[me.value.default_lang]?.name ?? me.value.default_lang
   return [
-    { value: '', flag: '🌐', label: t('account.languageDefault', { name: defaultName }) },
-    ...me.value.languages.map((value) => ({ value, flag: LANGUAGE_LOOK[value]?.flag ?? '🏳️', label: LANGUAGE_LOOK[value]?.name ?? value })),
+    // '' = no flag of its own (the panel's default, an unknown language): a globe icon
+    { value: '', flag: '', label: t('account.languageDefault', { name: defaultName }) },
+    ...me.value.languages.map((value) => ({ value, flag: LANGUAGE_LOOK[value]?.flag ?? '', label: LANGUAGE_LOOK[value]?.name ?? value })),
   ]
 })
 /** The button shows the language in use: the admin's own, or the panel default's (flag and native name). */
 const current = computed(() => {
   if (!me.value) return null
   const code = me.value.lang || me.value.default_lang
-  return { flag: LANGUAGE_LOOK[code]?.flag ?? '🌐', label: LANGUAGE_LOOK[code]?.name ?? code }
+  return { flag: LANGUAGE_LOOK[code]?.flag ?? '', label: LANGUAGE_LOOK[code]?.name ?? code }
 })
 
 async function pickLanguage(lang: string) {
@@ -127,10 +128,10 @@ function setDark(dark: boolean) {
         >
           <!-- Chosen: only its flag (the name is in the list, the tooltip and for screen readers) -->
           <template #value>
-            <span v-if="current" class="appearance__flag appearance__flag--chosen" role="img" :aria-label="current.label" :title="current.label">{{ current.flag }}</span>
+            <span v-if="current" class="appearance__flag appearance__flag--chosen" role="img" :aria-label="current.label" :title="current.label"><template v-if="current.flag">{{ current.flag }}</template><i v-else class="pi pi-globe" /></span>
           </template>
           <template #option="{ option }">
-            <span class="appearance__lang-value"><span class="appearance__flag">{{ option.flag }}</span>{{ option.label }}</span>
+            <span class="appearance__lang-value"><span class="appearance__flag"><template v-if="option.flag">{{ option.flag }}</template><i v-else class="pi pi-globe" /></span>{{ option.label }}</span>
           </template>
         </Select>
       </section>
