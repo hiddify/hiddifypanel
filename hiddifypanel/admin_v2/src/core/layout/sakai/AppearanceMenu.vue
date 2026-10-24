@@ -102,7 +102,7 @@ function setDark(dark: boolean) {
     :aria-expanded="open"
     @click="toggle"
   >
-    <i class="pi pi-palette" />
+    <i class="pi pi-sliders-h" />
   </button>
 
   <Popover ref="panel" class="appearance-popover" @show="open = true" @hide="open = false">
