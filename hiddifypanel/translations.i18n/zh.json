@@ -1154,12 +1154,25 @@
     },
     "donation": {
       "close": "关闭",
+      "contact": "如果你能帮助我们，请联系 {email}",
       "copied": "已复制 {name} 地址",
       "copiedShort": "已复制",
       "copyAddress": "复制 {name} 地址",
+      "help": {
+        "content": "内容提供者",
+        "flutter": "Flutter 开发者",
+        "go": "Go 开发者",
+        "python": "Python 开发者",
+        "share": "向其他人分享 Hiddify Manager",
+        "swift": "Swift 开发者"
+      },
       "networkHint": "请仅通过名称旁显示的网络发送每种币；在其他网络上的转账将会丢失。",
+      "otherHelp": "我们也需要以下帮助",
+      "paymentMethods": "付款方式",
       "qr": "二维码",
       "qrOf": "{name} 地址的二维码",
+      "showLess": "收起",
+      "showMore": "显示更多",
       "showQr": "显示 {name} 的二维码",
       "title": "捐赠"
     },
@@ -2015,6 +2028,7 @@
       "unread": "{n} 条新通知 | {n} 条新通知",
       "new": "新",
       "dismiss": "关闭"
+    },
     "pwa": {
       "guide": {
         "platform": "您的设备",

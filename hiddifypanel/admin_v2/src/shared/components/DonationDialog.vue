@@ -8,12 +8,23 @@ import Dialog from 'primevue/dialog'
 import CoinIcon from '@/shared/components/CoinIcon.vue'
 import { shellDialog, type DonationWallet } from '@/core/panelShell'
 
-const WALLETS_MARK = '<!--wallets-->'
+const CONTACT_EMAIL = 'info@hiddify.com'
+/** Other ways to help, each with an icon of its own (the old text had emoji). */
+const OTHER_HELP = [
+  { key: 'share', icon: 'pi pi-share-alt' },
+  { key: 'python', icon: 'pi pi-code' },
+  { key: 'swift', icon: 'pi pi-apple' },
+  { key: 'flutter', icon: 'pi pi-mobile' },
+  { key: 'go', icon: 'pi pi-server' },
+  { key: 'content', icon: 'pi pi-video' },
+] as const
 
 const { t } = useI18n()
 const toast = useToast()
 const copied = ref<string | null>(null)
 const openQr = ref<string | null>(null)
+/** "We need also other help" starts closed: the wallets come first. */
+const showOtherHelp = ref(false)
 /** address -> SVG markup, generated on first open. */
 const qrSvgs = reactive<Record<string, string>>({})
 
@@ -40,28 +51,16 @@ const visible = computed({
     if (!open) {
       shellDialog.value = null
       openQr.value = null
+      showOtherHelp.value = false
     }
   },
 })
 
 const wallets = computed(() => (shellDialog.value?.action === 'donation' ? shellDialog.value.wallets : []))
 
-/** The translated text marks where the wallets go (`.donation-wallets`); without the mark they follow the text. */
-const content = computed(() => {
-  const html = shellDialog.value?.action === 'donation' ? shellDialog.value.html : ''
-  const doc = new DOMParser().parseFromString(`<div id="root">${html}</div>`, 'text/html')
-  const root = doc.getElementById('root')!
-  // A catalog compiled before the wallets moved to hutils/donation.py still holds the old list (`data-copy`
-  // buttons): drop it, so no old address is shown, and put the wallets where it was.
-  const mark = root.querySelector('.donation-wallets')
-  const oldList = root.querySelector('a[data-copy]')?.closest('ul')
-  if (mark) {
-    oldList?.remove()
-    mark.replaceWith(doc.createComment('wallets'))
-  } else {
-    oldList?.replaceWith(doc.createComment('wallets'))
-  }
-  const [before = '', after = ''] = root.innerHTML.split(WALLETS_MARK)
+/** "Please contact us at {email} …" around the address, which is a mail link. */
+const contact = computed(() => {
+  const [before = '', after = ''] = t('donation.contact', { email: '\u0000' }).split('\u0000')
   return { before, after }
 })
 
@@ -98,10 +97,8 @@ async function copy(wallet: DonationWallet) {
   >
     <div class="donation">
       <div class="donation__hero" aria-hidden="true"><i class="pi pi-heart-fill" /></div>
-      <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-      <div class="donation__text" v-html="content.before" />
-
       <template v-if="wallets.length">
+        <h3 class="donation__heading">{{ t('donation.paymentMethods') }}</h3>
         <ul class="donation__wallets">
           <li v-for="wallet in wallets" :key="wallet.address" class="donation__wallet" :class="{ 'donation__wallet--open': openQr === wallet.address }">
             <div class="donation__wallet-row">
@@ -149,8 +146,27 @@ async function copy(wallet: DonationWallet) {
         <p class="donation__hint"><i class="pi pi-info-circle" />{{ t('donation.networkHint') }}</p>
       </template>
 
-      <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-      <div class="donation__text" v-html="content.after" />
+      <section class="donation__more" :class="{ 'donation__more--open': showOtherHelp }">
+        <button type="button" class="donation__more-toggle" :aria-expanded="showOtherHelp" aria-controls="donation-other-help" @click="showOtherHelp = !showOtherHelp">
+          <span class="donation__more-title"><i class="pi pi-users" aria-hidden="true" />{{ t('donation.otherHelp') }}</span>
+          <span class="donation__more-action">
+            {{ showOtherHelp ? t('donation.showLess') : t('donation.showMore') }}
+            <i class="pi pi-chevron-down" aria-hidden="true" />
+          </span>
+        </button>
+        <div id="donation-other-help" class="donation__more-wrap">
+          <div class="donation__more-inner">
+            <ul class="donation__help">
+              <li v-for="item in OTHER_HELP" :key="item.key">
+                <span class="donation__help-icon" aria-hidden="true"><i :class="item.icon" /></span>{{ t(`donation.help.${item.key}`) }}
+              </li>
+            </ul>
+            <p class="donation__contact">
+              {{ contact.before }}<a :href="`mailto:${CONTACT_EMAIL}`" dir="ltr">{{ CONTACT_EMAIL }}</a>{{ contact.after }}
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
     <template #footer>
       <Button :label="t('donation.close')" severity="secondary" text @click="visible = false" />
@@ -177,18 +193,10 @@ async function copy(wallet: DonationWallet) {
   background: color-mix(in srgb, #ec4899 14%, transparent);
   animation: donation-beat 1.6s ease-in-out infinite;
 }
-.donation__text :deep(h5),
-.donation__text :deep(h6) {
-  margin: 0.75rem 0 0.25rem;
+.donation__heading {
+  margin: 0;
   font-size: 1rem;
   font-weight: 600;
-}
-.donation__text :deep(ul) {
-  margin: 0.25rem 0;
-  padding-inline-start: 1.25rem;
-}
-.donation__text :deep(a) {
-  color: var(--p-primary-color);
 }
 .donation__wallets {
   display: flex;
@@ -311,6 +319,106 @@ async function copy(wallet: DonationWallet) {
   margin-top: 0.25rem;
   font-size: 0.8rem;
 }
+/* "We need also other help": a header that opens the list, like the QR codes (grid rows 0fr -> 1fr). */
+.donation__more {
+  border-radius: 14px;
+  border: 1px solid var(--p-content-border-color);
+}
+.donation__more-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.donation__more-toggle:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: -2px;
+}
+.donation__more-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 600;
+}
+.donation__more-title i {
+  color: #ec4899;
+}
+.donation__more-action {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--p-primary-color);
+}
+.donation__more-action i {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+}
+.donation__more--open .donation__more-action i {
+  transform: rotate(180deg);
+}
+.donation__more-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+.donation__more--open .donation__more-wrap {
+  grid-template-rows: 1fr;
+}
+.donation__more-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 0.85rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.donation__more--open .donation__more-inner {
+  opacity: 1;
+  padding-bottom: 0.8rem;
+}
+.donation__help {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.45rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.donation__help li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.donation__help-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.donation__contact {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  color: var(--p-text-muted-color);
+}
+.donation__contact a {
+  color: var(--p-primary-color);
+}
 @keyframes donation-beat {
   0%,
   100% {
@@ -340,7 +448,10 @@ async function copy(wallet: DonationWallet) {
     animation: none;
   }
   .donation__qr-wrap,
-  .donation__qr-inner {
+  .donation__qr-inner,
+  .donation__more-wrap,
+  .donation__more-inner,
+  .donation__more-action i {
     transition: none;
   }
 }
