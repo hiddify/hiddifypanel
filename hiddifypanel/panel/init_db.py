@@ -25,6 +25,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v186(child_id):
+    """VLESS has no encryption key. _v133 generated one, which an imported panel never had: Xray then
+    stays activating, and clients from the previous panel cannot connect. ``none`` is what Xray accepts."""
+    set_hconfig(ConfigEnum.vless_encryption, "", child_id, commit=False)
+    set_hconfig(ConfigEnum.vless_decryption, "none", child_id, commit=False)
+
+
 def _v185(child_id):
     """Superseded by _v182 (the old ShadowTLS / SS FakeTLS fake domains are converted, not removed)."""
 
@@ -332,9 +339,10 @@ END
 
 def _v133(child_id):
     set_hconfig(ConfigEnum.vless_flow, value="xtls-rprx-vision")
-    vless_encryption, vless_decryption = hutils.crypto.vless_encryption_decryption(quantum=False)
-    set_hconfig(ConfigEnum.vless_encryption, vless_encryption)
-    set_hconfig(ConfigEnum.vless_decryption, vless_decryption)
+    # Leave encryption unset. A generated key is not in a backup from an older panel, so Xray
+    # stays activating and those clients cannot connect. _v186 clears keys already written.
+    set_hconfig(ConfigEnum.vless_encryption, "")
+    set_hconfig(ConfigEnum.vless_decryption, "none")
 
 
 def _v130(child_id):

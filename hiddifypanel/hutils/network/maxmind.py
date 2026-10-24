@@ -15,6 +15,7 @@ from hiddifypanel.cache import STATIC, cache
 
 _IPASN: Any = None
 _IPCOUNTRY: Any = None
+_IPCITY: Any = None
 _LOADED = False
 _AVAILABLE = False
 
@@ -78,8 +79,18 @@ def normalize_ip(ip: str) -> str:
     return str(addr)
 
 
+def _record(db: Any, ip: str) -> dict | None:
+    if not db:
+        return None
+    try:
+        row = db.get(ip)
+    except BaseException:
+        return None
+    return row if isinstance(row, dict) else None
+
+
 def _ensure_loaded() -> None:
-    global _IPASN, _IPCOUNTRY, _LOADED, _AVAILABLE
+    global _IPASN, _IPCOUNTRY, _IPCITY, _LOADED, _AVAILABLE
     if _LOADED:
         return
     _LOADED = True
@@ -90,10 +101,18 @@ def _ensure_loaded() -> None:
         _IPASN = maxminddb.open_database(str(folder / "GeoLite2-ASN.mmdb"))
         _IPCOUNTRY = maxminddb.open_database(str(folder / "GeoLite2-Country.mmdb"))
         _AVAILABLE = True
+        city_path = folder / "GeoLite2-City.mmdb"
+        if city_path.is_file():
+            try:
+                _IPCITY = maxminddb.open_database(str(city_path))
+            except BaseException as e:
+                logger.error(f"Error can not load GeoLite2-City: {e}")
+                _IPCITY = None
     except BaseException as e:
         logger.error(f"Error can not load maxminddb: {e}")
         _IPASN = {}
         _IPCOUNTRY = {}
+        _IPCITY = None
         _AVAILABLE = False
 
 
@@ -101,6 +120,15 @@ def is_available() -> bool:
     """Whether MaxMind databases were loaded successfully."""
     _ensure_loaded()
     return _AVAILABLE
+
+
+def raw_records(ip: str) -> tuple[dict | None, dict | None, dict | None]:
+    """City, country and ASN rows for ``ip``. City is None when GeoLite2-City is not installed."""
+    ip = normalize_ip(ip)
+    _ensure_loaded()
+    if not ip or not _AVAILABLE:
+        return None, None, None
+    return _record(_IPCITY, ip), _record(_IPCOUNTRY, ip), _record(_IPASN, ip)
 
 
 def get_ip_info(ip: str) -> IpInfo:

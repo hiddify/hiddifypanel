@@ -9,6 +9,6 @@
     {% endfor %}
   ],
   "flow": "{{ ctx.hconfig.vless_flow }}",
-  "decryption": "{{ctx.hconfig.vless_decryption}}"
+  "decryption": "{{ ctx.hconfig.vless_decryption or 'none' }}"
 
 }
