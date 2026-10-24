@@ -1951,7 +1951,7 @@
         "addTitle": "افزودن خروجی {mode}",
         "config": "JSON",
         "configBridge": "پنل نام «{tag}» را به آن داد؛ مسیریابی از همین تگ استفاده می‌کند و هسته‌ی دیگر روی 127.0.0.1:{port} به آن وصل می‌شود.",
-        "configBridgeNew": "پنل خودش برای آن تگ می‌گذارد (تگی که بنویسید نادیده گرفته می‌شود)؛ مسیریابی از آن استفاده می‌کند و هسته‌ی دیگر از طریق پل SOCKS محلی به آن وصل می‌شود.",
+        "configBridgeNew": "پنل خودش برای آن تگ می‌گذارد (تگی که بنویسید نادیده گرفته می‌شود)؛ مسیریابی از آن استفاده می‌کند و هسته‌ی دیگر از طریق پل Socks محلی به آن وصل می‌شود.",
         "configExample": "درج یک نمونه",
         "configHint": {
           "core_endpoint": "یک endpoint هیدیفای‌کور (sing-box) مثل WireGuard. پیش از ذخیره با hiddify-core بررسی می‌شود.",
@@ -1964,8 +1964,8 @@
         "editTitle": "ویرایش {name}",
         "endpoint": "اتصال",
         "endpointHint": {
-          "psiphon": "داخل hiddify-core اجرا می‌شود. xray از طریق پورت SOCKS محلی {endpoint} به آن وصل می‌شود.",
-          "tor": "داخل hiddify-core اجرا می‌شود (برنامه‌ی `tor` باید روی این سرور نصب باشد). xray از طریق پورت SOCKS محلی {endpoint} به آن وصل می‌شود."
+          "psiphon": "داخل hiddify-core اجرا می‌شود. xray از طریق پورت Socks محلی {endpoint} به آن وصل می‌شود.",
+          "tor": "داخل hiddify-core اجرا می‌شود (برنامه‌ی `tor` باید روی این سرور نصب باشد). xray از طریق پورت Socks محلی {endpoint} به آن وصل می‌شود."
         },
         "host": "میزبان",
         "name": "نام",
@@ -2009,21 +2009,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "مستقیم",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "outbound ایکس‌ری"
       },
       "modeHint": {
         "block": "مسدود می‌شود",
-        "core_endpoint": "endpoint دلخواه شما در هیدیفای‌کور مثل WireGuard (JSON)؛ ایکس‌ری از طریق پل SOCKS محلی به آن می‌رسد",
-        "core_outbound": "outbound دلخواه شما در هیدیفای‌کور (JSON)؛ ایکس‌ری از طریق پل SOCKS محلی به آن می‌رسد",
+        "core_endpoint": "endpoint دلخواه شما در هیدیفای‌کور مثل WireGuard (JSON)؛ ایکس‌ری از طریق پل Socks محلی به آن می‌رسد",
+        "core_outbound": "outbound دلخواه شما در هیدیفای‌کور (JSON)؛ ایکس‌ری از طریق پل Socks محلی به آن می‌رسد",
         "direct": "مستقیم از این سرور",
         "psiphon": "از Psiphon (اجرا توسط hiddify-core)",
         "socks": "از یک پروکسی SOCKS5",
         "tor": "از شبکهٔ Tor (اجرا توسط hiddify-core)",
         "warp": "از Cloudflare WARP روی این سرور",
-        "xray_outbound": "outbound دلخواه شما در ایکس‌ری (JSON)؛ هیدیفای‌کور از طریق پل SOCKS محلی به آن می‌رسد"
+        "xray_outbound": "outbound دلخواه شما در ایکس‌ری (JSON)؛ هیدیفای‌کور از طریق پل Socks محلی به آن می‌رسد"
       },
       "more": "کارهای بیشتر",
       "moveDown": "پایین",
@@ -2042,7 +2042,7 @@
       "resetMessage": "تغییرات شما در سایت‌ها، geositeها و rule-setها با فهرست‌های پیش‌فرض جایگزین می‌شود که از آن پس با به‌روزرسانی تازه می‌شوند.",
       "resetTitle": "{name} به فهرست‌های پیش‌فرض برگردد؟",
       "saved": "{name} ذخیره شد",
-      "subtitle": "به ترتیب تعیین کنید ترافیک از کجا از این سرور خارج شود: از WARP، مستقیم، مسدود، یا از یک خروجی SOCKS، Tor یا Psiphon.",
+      "subtitle": "به ترتیب تعیین کنید ترافیک از کجا از این سرور خارج شود: از WARP، مستقیم، مسدود، یا از یک خروجی Socks، Tor یا Psiphon.",
       "title": "خروجی‌ها",
       "torMissing": "Tor روشن است ولی برنامهٔ `tor` روی سرور نصب نیست؛ بنابراین از کانفیگ‌ها حذف می‌شود. Tor را نصب کنید (مثلاً apt install tor) و Apply Configs را بزنید."
     },
@@ -2220,7 +2220,7 @@
       "l7ReverseProto": "پروتکل ریورس پروکسی لایه ۷",
       "linkSettings": "تنظیمات لینک",
       "linkTemplate": "قالب لینک",
-      "listTitle": "پروکسی‌های سفارشی",
+      "listTitle": "پروکسی‌ها",
       "mode": "حالت",
       "modeLabels": {
         "domain_native": "دامنه (بومی)",
@@ -3126,8 +3126,8 @@
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "کاربر",
-      "vmessJson": "JSON مربوط به vmess",
-      "vmessObject": "JSON مربوط به vmess باید یک آبجکت باشد"
+      "vmessJson": "JSON مربوط به VMess",
+      "vmessObject": "JSON مربوط به VMess باید یک آبجکت باشد"
     },
     "validation": {
       "errors": "خطاها",
@@ -3377,7 +3377,7 @@
       "label": "کانفیگ‌های اضافی برای Singbox"
     },
     "additional_configs_urls": {
-      "description": "می‌توانید آدرس‌های http://، https:// یا پروکسی‌های فرمت v2ray مثل vless:// اضافه کنید",
+      "description": "می‌توانید آدرس‌های http://، https:// یا پروکسی‌های فرمت V2Ray مثل vless:// اضافه کنید",
       "label": "آدرس‌های اضافی"
     },
     "additional_configs_xrayjson": {
@@ -3947,8 +3947,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "فعال‌سازی پروتکل SOCKS",
-      "label": "SOCKS"
+      "description": "فعال‌سازی پروتکل Socks",
+      "label": "Socks"
     },
     "special_port": {
       "description": "شما می توانید یک پورت سفارشی برای سرور ریالیتی خود تنظیم کنید تا پردازش سیستم را کاهش دهید. (اجازه اتصال مستقیم به پروکسی ها باید بله باشد)",
@@ -4198,20 +4198,20 @@
     "validation-success": "تنظیمات با موفقیت ذخیره شدند. لطفا بر روی این لینک: %(link)s کلیک کنید تا بر روی سیستم اعمال شوند. این کار ممکن است 2 دقیقه طول بکشد",
     "validation-success-no-reset": " ✅ تنظیمات با موفقیت تغییر کرد",
     "vless_decryption": {
-      "description": "پارامتر decryption در لینک‌های اشتراک VLESS",
-      "label": "VLESS decryption"
+      "description": "پارامتر decryption در لینک‌های اشتراک VLess",
+      "label": "VLess decryption"
     },
     "vless_enable": {
       "description": "فعال کردن پروتکل VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "روش encryption در لینک‌های اشتراک VLESS",
-      "label": "VLESS encryption"
+      "description": "روش encryption در لینک‌های اشتراک VLess",
+      "label": "VLess encryption"
     },
     "vless_flow": {
-      "description": "کنترل flow در VLESS (مثلاً xtls-rprx-vision)",
-      "label": "VLESS flow"
+      "description": "کنترل flow در VLess (مثلاً xtls-rprx-vision)",
+      "label": "VLess flow"
     },
     "vmess_enable": {
       "description": "فعال کردن پروتکل VMess",

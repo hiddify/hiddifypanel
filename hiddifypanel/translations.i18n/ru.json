@@ -1433,7 +1433,7 @@
         "core_outbound": "outbound hiddify-core (sing-box)",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "outbound xray"
@@ -1466,7 +1466,7 @@
       "resetMessage": "Ваши изменения сайтов, геосайтов и наборов правил будут заменены встроенными списками, которые затем обновляются при апгрейдах.",
       "resetTitle": "Сбросить {name} к встроенным спискам?",
       "saved": "{name} сохранено",
-      "subtitle": "Выберите по порядку, куда трафик выходит с этого сервера: через WARP, напрямую, блокировка или выход через SOCKS, Tor или Psiphon.",
+      "subtitle": "Выберите по порядку, куда трафик выходит с этого сервера: через WARP, напрямую, блокировка или выход через Socks, Tor или Psiphon.",
       "title": "Исходящие подключения"
     },
     "passwordRules": {
@@ -1643,7 +1643,7 @@
       "l7ReverseProto": "Протокол L7 reverse proxy",
       "linkSettings": "Настройки ссылки",
       "linkTemplate": "Шаблон ссылки",
-      "listTitle": "Пользовательские прокси",
+      "listTitle": "Прокси",
       "mode": "Режим",
       "modeLabels": {
         "domain_native": "Нативный домен",
@@ -2383,8 +2383,8 @@
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "Пользователь",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON должен быть объектом"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON должен быть объектом"
     },
     "validation": {
       "errors": "Ошибки",
@@ -2514,7 +2514,7 @@
       "label": "Дополнительные конфигурации для Singbox"
     },
     "additional_configs_urls": {
-      "description": "Можно добавить http:// https:// или прокси в формате v2ray, например vless://",
+      "description": "Можно добавить http:// https:// или прокси в формате V2Ray, например vless://",
       "label": "Дополнительные URL"
     },
     "additional_configs_xrayjson": {
@@ -3084,8 +3084,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Включить протокол SOCKS",
-      "label": "SOCKS"
+      "description": "Включить протокол Socks",
+      "label": "Socks"
     },
     "special_port": {
       "description": "Вы можете установить индивидуальный порт для вашего сервера Reality, чтобы снизить нагрузку на систему. (Разрешить прямое подключение к прокси должно быть да)",
@@ -3328,27 +3328,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray не поддерживает учет и не предлагается к использованию",
+      "description": "V2Ray не поддерживает учет и не предлагается к использованию",
       "label": "♈️ V2Ray"
     },
     "validation-error": "В одном из полей ошибка.",
     "validation-success": "Конфигурации успешно изменены. Нажмите %(link)s, чтобы применить их. Это может занять 2 минуты",
     "validation-success-no-reset": "✅ Конфигурации успешно изменены",
     "vless_decryption": {
-      "description": "Параметр расшифровки VLESS для ссылок обмена",
-      "label": "Расшифровка VLESS"
+      "description": "Параметр расшифровки VLess для ссылок обмена",
+      "label": "Расшифровка VLess"
     },
     "vless_enable": {
       "description": "Включить протокол VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "Метод шифрования VLESS для ссылок обмена",
-      "label": "Шифрование VLESS"
+      "description": "Метод шифрования VLess для ссылок обмена",
+      "label": "Шифрование VLess"
     },
     "vless_flow": {
-      "description": "Управление потоком VLESS (например, xtls-rprx-vision)",
-      "label": "VLESS flow"
+      "description": "Управление потоком VLess (например, xtls-rprx-vision)",
+      "label": "VLess flow"
     },
     "vmess_enable": {
       "description": "Несколько человек сообщили, что VMess позволляет правительствам обнаруживать систему.  Не рекомендуется",

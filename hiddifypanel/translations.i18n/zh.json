@@ -1375,7 +1375,7 @@
         "addTitle": "添加 {mode} 出站",
         "config": "JSON",
         "configBridge": "面板将其命名为 \"{tag}\"；路由使用该标签，另一个核心通过 127.0.0.1:{port} 连接到它。",
-        "configBridgeNew": "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 SOCKS 桥接连接到它。",
+        "configBridgeNew": "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 Socks 桥接连接到它。",
         "configExample": "插入示例",
         "configHint": {
           "core_endpoint": "一个 hiddify-core (sing-box) endpoint 对象，例如 WireGuard endpoint。保存前会由 hiddify-core 检查。",
@@ -1388,8 +1388,8 @@
         "editTitle": "编辑 {name}",
         "endpoint": "连接",
         "endpointHint": {
-          "psiphon": "在 hiddify-core 内运行。xray 通过本地 SOCKS 端口 {endpoint} 访问它。",
-          "tor": "在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+          "psiphon": "在 hiddify-core 内运行。xray 通过本地 Socks 端口 {endpoint} 访问它。",
+          "tor": "在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 Socks 端口 {endpoint} 访问它。"
         },
         "host": "主机",
         "name": "名称",
@@ -1433,21 +1433,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "直连",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "丢弃",
-        "core_endpoint": "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 SOCKS 桥接访问它",
-        "core_outbound": "您自己的 hiddify-core outbound (JSON)；xray 通过本地 SOCKS 桥接访问它",
+        "core_endpoint": "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 Socks 桥接访问它",
+        "core_outbound": "您自己的 hiddify-core outbound (JSON)；xray 通过本地 Socks 桥接访问它",
         "direct": "直接从此服务器发出",
         "psiphon": "通过 Psiphon（由 hiddify-core 运行）",
         "socks": "通过 SOCKS5 代理",
         "tor": "通过 Tor 网络（由 hiddify-core 运行）",
         "warp": "通过此服务器上的 Cloudflare WARP",
-        "xray_outbound": "您自己的 xray outbound (JSON)；hiddify-core 通过本地 SOCKS 桥接访问它"
+        "xray_outbound": "您自己的 xray outbound (JSON)；hiddify-core 通过本地 Socks 桥接访问它"
       },
       "more": "更多操作",
       "moveDown": "下移",
@@ -1466,7 +1466,7 @@
       "resetMessage": "您对其站点、geosite 和 rule-set 的更改将被内置列表替换，升级时会使其保持最新。",
       "resetTitle": "将 {name} 重置为内置列表？",
       "saved": "{name} 已保存",
-      "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 SOCKS、Tor 或 Psiphon 出口。",
+      "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 Socks、Tor 或 Psiphon 出口。",
       "title": "出站"
     },
     "passwordRules": {
@@ -1643,7 +1643,7 @@
       "l7ReverseProto": "L7 反向代理协议",
       "linkSettings": "链接设置",
       "linkTemplate": "链接模板",
-      "listTitle": "自定义代理",
+      "listTitle": "代理",
       "mode": "模式",
       "modeLabels": {
         "domain_native": "域名原生",
@@ -2383,8 +2383,8 @@
       "urlSafe": "URL 安全",
       "urlTab": "URL",
       "user": "用户",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON 必须是对象"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON 必须是对象"
     },
     "validation": {
       "errors": "错误",
@@ -2514,7 +2514,7 @@
       "label": "Singbox 附加配置"
     },
     "additional_configs_urls": {
-      "description": "您可以添加 http:// https:// 或 v2ray 格式的代理，如 vless://",
+      "description": "您可以添加 http:// https:// 或 V2Ray 格式的代理，如 vless://",
       "label": "附加 URL"
     },
     "additional_configs_xrayjson": {
@@ -2728,7 +2728,7 @@
     },
     "hysteria_port": {
       "description": "Hysteria UDP 端口，例如 5678",
-      "label": "🔍 Hysteria2 端口"
+      "label": "🔍 Hysteria 2 端口"
     },
     "hysteria_up_mbps": {
       "description": "Hysteria 最大上传速度",
@@ -2956,8 +2956,8 @@
       "label": "V2Ray路径"
     },
     "path_vless": {
-      "description": "对于 VLESS 路径",
-      "label": "ℹ️ VLESS 路径"
+      "description": "对于 VLess 路径",
+      "label": "ℹ️ VLess 路径"
     },
     "path_vmess": {
       "description": "对于 VMess 链接",
@@ -3084,8 +3084,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "启用 SOCKS 协议",
-      "label": "SOCKS"
+      "description": "启用 Socks 协议",
+      "label": "Socks"
     },
     "special_port": {
       "description": "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）",
@@ -3335,20 +3335,20 @@
     "validation-success": "配置已成功更改。单击 %(link)s 应用配置。申请可能需要 2 分钟",
     "validation-success-no-reset": "✅ 配置已成功更改",
     "vless_decryption": {
-      "description": "用于分享链接的 VLESS 解密参数",
-      "label": "VLESS 解密"
+      "description": "用于分享链接的 VLess 解密参数",
+      "label": "VLess 解密"
     },
     "vless_enable": {
       "description": "启用 VLess 协议",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "用于分享链接的 VLESS 加密方式",
-      "label": "VLESS 加密"
+      "description": "用于分享链接的 VLess 加密方式",
+      "label": "VLess 加密"
     },
     "vless_flow": {
-      "description": "VLESS 流控（例如 xtls-rprx-vision）",
-      "label": "VLESS 流控"
+      "description": "VLess 流控（例如 xtls-rprx-vision）",
+      "label": "VLess 流控"
     },
     "vmess_enable": {
       "description": "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐",

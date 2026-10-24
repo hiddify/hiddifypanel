@@ -1375,7 +1375,7 @@
         "addTitle": "Adicionar outbound {mode}",
         "config": "JSON",
         "configBridge": "O painel o chamou de \"{tag}\"; o roteamento usa essa tag e o outro core se conecta a ele em 127.0.0.1:{port}.",
-        "configBridgeNew": "O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o roteamento a usa e o outro core se conecta a ele por uma ponte SOCKS local.",
+        "configBridgeNew": "O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o roteamento a usa e o outro core se conecta a ele por uma ponte Socks local.",
         "configExample": "Inserir um exemplo",
         "configHint": {
           "core_endpoint": "Um objeto de endpoint do hiddify-core (sing-box), ex.: um endpoint WireGuard. É verificado pelo hiddify-core antes de salvar.",
@@ -1388,8 +1388,8 @@
         "editTitle": "Editar {name}",
         "endpoint": "Conexão",
         "endpointHint": {
-          "psiphon": "Executa dentro do hiddify-core. O xray o acessa pela porta SOCKS local {endpoint}.",
-          "tor": "Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste servidor). O xray o acessa pela porta SOCKS local {endpoint}."
+          "psiphon": "Executa dentro do hiddify-core. O xray o acessa pela porta Socks local {endpoint}.",
+          "tor": "Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste servidor). O xray o acessa pela porta Socks local {endpoint}."
         },
         "host": "Host",
         "name": "Nome",
@@ -1433,21 +1433,21 @@
         "core_outbound": "Outbound do hiddify-core (sing-box)",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "Outbound do xray"
       },
       "modeHint": {
         "block": "Descartado",
-        "core_endpoint": "Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa por uma ponte SOCKS local",
-        "core_outbound": "Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte SOCKS local",
+        "core_endpoint": "Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa por uma ponte Socks local",
+        "core_outbound": "Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte Socks local",
         "direct": "Direto deste servidor",
         "psiphon": "Via Psiphon (executado pelo hiddify-core)",
         "socks": "Via um proxy SOCKS5",
         "tor": "Via rede Tor (executada pelo hiddify-core)",
         "warp": "Via Cloudflare WARP neste servidor",
-        "xray_outbound": "Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte SOCKS local"
+        "xray_outbound": "Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte Socks local"
       },
       "more": "Mais ações",
       "moveDown": "Mover para baixo",
@@ -1466,7 +1466,7 @@
       "resetMessage": "Suas alterações nos sites, geosites e rule-sets dele serão substituídas pelas listas integradas, que as atualizações passam a manter em dia.",
       "resetTitle": "Restaurar {name} para as listas integradas?",
       "saved": "{name} salvo",
-      "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída SOCKS, Tor ou Psiphon.",
+      "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída Socks, Tor ou Psiphon.",
       "title": "Outbounds"
     },
     "passwordRules": {
@@ -1643,7 +1643,7 @@
       "l7ReverseProto": "Protocolo de proxy reverso L7",
       "linkSettings": "Configurações do link",
       "linkTemplate": "Template do link",
-      "listTitle": "Proxies personalizados",
+      "listTitle": "Proxies",
       "mode": "Modo",
       "modeLabels": {
         "domain_native": "Nativo de domínio",
@@ -2383,8 +2383,8 @@
       "urlSafe": "Seguro para URL",
       "urlTab": "URL",
       "user": "Usuário",
-      "vmessJson": "JSON vmess",
-      "vmessObject": "O JSON vmess deve ser um objeto"
+      "vmessJson": "JSON VMess",
+      "vmessObject": "O JSON VMess deve ser um objeto"
     },
     "validation": {
       "errors": "Erros",
@@ -2514,7 +2514,7 @@
       "label": "Configs adicionais para Singbox"
     },
     "additional_configs_urls": {
-      "description": "Você pode adicionar proxies http:// https:// ou em formato v2ray como vless://",
+      "description": "Você pode adicionar proxies http:// https:// ou em formato V2Ray como vless://",
       "label": "URLs adicionais"
     },
     "additional_configs_xrayjson": {
@@ -2956,7 +2956,7 @@
       "label": "Pasta V2Ray"
     },
     "path_vless": {
-      "description": "Para o caminho VLESS",
+      "description": "Para o caminho VLess",
       "label": "ℹ️ Caminho VLess"
     },
     "path_vmess": {
@@ -3084,8 +3084,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Ativar o protocolo SOCKS",
-      "label": "SOCKS"
+      "description": "Ativar o protocolo Socks",
+      "label": "Socks"
     },
     "special_port": {
       "description": "Você pode definir uma porta personalizada para seu servidor de Reality para reduzir a sobrecarga do sistema. (Permitir conexão direta com proxies deve ser sim)",
@@ -3328,27 +3328,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray não suporta contabilidade, e não é sugerido",
+      "description": "V2Ray não suporta contabilidade, e não é sugerido",
       "label": "♈️ V2Ray"
     },
     "validation-error": "Há um erro em um dos campos.",
     "validation-success": "As configurações foram alteradas com sucesso. Clique em %(link)s para aplicar as configurações. Pode levar 2 minutos para aplicar",
     "validation-success-no-reset": "✅ As configurações foram alteradas com sucesso",
     "vless_decryption": {
-      "description": "Parâmetro de descriptografia VLESS para links de compartilhamento",
-      "label": "Descriptografia VLESS"
+      "description": "Parâmetro de descriptografia VLess para links de compartilhamento",
+      "label": "Descriptografia VLess"
     },
     "vless_enable": {
       "description": "Habilitar protocolo VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "Método de criptografia VLESS para links de compartilhamento",
-      "label": "Criptografia VLESS"
+      "description": "Método de criptografia VLess para links de compartilhamento",
+      "label": "Criptografia VLess"
     },
     "vless_flow": {
-      "description": "Controle de fluxo VLESS (ex.: xtls-rprx-vision)",
-      "label": "Fluxo VLESS"
+      "description": "Controle de fluxo VLess (ex.: xtls-rprx-vision)",
+      "label": "Fluxo VLess"
     },
     "vmess_enable": {
       "description": "É relatado por várias pessoas que o VMess faz com que o sistema seja detectado pelo governo. Então não é recomendado",

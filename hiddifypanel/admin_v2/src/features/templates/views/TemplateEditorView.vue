@@ -29,7 +29,7 @@
     </HorizontalField>
     <div :class="{ 'builtin-locked': structureLocked }">
     <HorizontalField :label="t('template.core')" input-id="tpl-core">
-      <Select id="tpl-core" v-model="form.core" :options="coreOptions" class="w-full" @change="onCoreCategoryChange" />
+      <Select id="tpl-core" v-model="form.core" :options="coreOptions" :option-label="coreName" class="w-full" @change="onCoreCategoryChange" />
     </HorizontalField>
     <HorizontalField :label="t('template.category')" input-id="tpl-cat">
       <Select id="tpl-cat" v-model="form.category" :options="categoryOptions" class="w-full" @change="onCoreCategoryChange" />
@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
+import { coreName } from '@/shared/utils/protocols'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
