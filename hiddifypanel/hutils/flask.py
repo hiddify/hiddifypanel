@@ -193,6 +193,13 @@ def __parse_user_agent(ua: str) -> dict:
     if res["is_singbox"]:
         if singbox_match:
             res["singbox_version"] = list(map(int, singbox_match.group(1).split(".")))
+        elif re.match(r"^Dart/", ua, re.IGNORECASE):
+            # Hiddify app (4.x) fetches a profile imported from the user page deep link (hiddify://import/...) with the
+            # bare Dart HttpClient, so the UA is "Dart/3.10 (dart:io)" with no sing-box info. That number is the Dart
+            # runtime version, not sing-box: reading it as sing-box 3.10 passes the `>= 1.14.0` gates and sends snell
+            # outbounds, which the bundled sing-box 1.12 rejects ("unknown outbound type: snell").
+            # ponytail: assume the sing-box of the current stable app (1.12); the UA cannot tell app versions apart.
+            res["singbox_version"] = [1, 12, 0]
         else:
             res["singbox_version"] = generic_version
 
