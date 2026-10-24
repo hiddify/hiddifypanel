@@ -348,7 +348,7 @@
             <div :class="{ 'builtin-locked': serverLocked }">
             <Panel :header="t('proxy.tabServer')">
               <HorizontalField :label="t('proxy.serverCore')" input-id="server-core">
-                <Select id="server-core" v-model="form.server_config!.core" :options="meta?.server_cores ?? []" class="w-full" />
+                <Select id="server-core" v-model="form.server_config!.core" :options="meta?.server_cores ?? []" :option-label="coreName" class="w-full" />
               </HorizontalField>
               <HorizontalField v-if="showDirectPortAccess" :label="t('proxy.directPortAccess')" input-id="server-direct-port" :hint="t('proxy.directPortAccessHint')">
                 <Checkbox id="server-direct-port" v-model="form.server_config!.direct_port_access" binary />
@@ -540,6 +540,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { coreName, protocolName } from '@/shared/utils/protocols'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -647,7 +648,7 @@ const clientCoreTabs = computed(() => {
 })
 
 const addClientCoreOptions = computed(() =>
-  (meta.value?.client_cores ?? []).map((core) => ({ label: core, value: core })),
+  (meta.value?.client_cores ?? []).map((core) => ({ label: coreName(core), value: core })),
 )
 
 function clientConfigsForCore(core: string) {
@@ -1114,7 +1115,7 @@ const modeOptions = computed(() =>
 const protoOptions = computed(() =>
   (meta.value?.protos ?? []).map((p) => ({
     value: p,
-    label: p === 'shadowsocks' ? 'Shadowsocks' : p.toUpperCase(),
+    label: protocolName(p),
   })),
 )
 

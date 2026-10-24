@@ -2,6 +2,8 @@
   <MultiSelect
     v-model="selected"
     :options="categoryOptions"
+    option-label="label"
+    option-value="value"
     filter
     display="chip"
     class="w-full"
@@ -49,6 +51,7 @@ import { useI18n } from 'vue-i18n'
 import MultiSelect from 'primevue/multiselect'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import { categoryName } from '@/shared/utils/protocols'
 
 const props = defineProps<{
   modelValue: string[]
@@ -76,7 +79,8 @@ const categoryOptions = computed(() => {
   for (const category of selected.value) {
     set.add(category)
   }
-  return [...set].sort((a, b) => a.localeCompare(b))
+  // Shown by name (stored as they are): "down:tls_h1" → "Down:TLS_H1"
+  return [...set].sort((a, b) => a.localeCompare(b)).map((value) => ({ value, label: categoryName(value) }))
 })
 
 function normalizeCategories(categories: string[] | null | undefined): string[] {
