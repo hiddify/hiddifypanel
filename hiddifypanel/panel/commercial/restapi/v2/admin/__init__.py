@@ -178,11 +178,12 @@ def init_app(app):
         bp.add_url_rule("/domains/options/", view_func=DomainsOptionsApi)
         bp.add_url_rule("/domains/", view_func=DomainsQuickAddApi)
 
-        from .apply_api import ApplyActionApi, ApplyApi, ApplyLogApi, ApplyLogClearApi, ApplyLogDownloadApi, ApplyLogsClearApi
+        from .apply_api import ApplyActionApi, ApplyApi, ApplyLogApi, ApplyLogClearApi, ApplyLogDownloadApi, ApplyLogsClearApi, ApplyLogTelegramApi
 
         bp.add_url_rule("/apply/", view_func=ApplyApi)
         bp.add_url_rule("/apply/log/", view_func=ApplyLogApi)
         bp.add_url_rule("/apply/logs/<string:name>/download/", view_func=ApplyLogDownloadApi)
+        bp.add_url_rule("/apply/logs/<string:name>/telegram/", view_func=ApplyLogTelegramApi, methods=["POST"])
         bp.add_url_rule("/apply/logs/clear/", view_func=ApplyLogsClearApi, methods=["POST"])
         bp.add_url_rule("/apply/logs/<string:name>/", view_func=ApplyLogClearApi, methods=["DELETE"])
         bp.add_url_rule("/apply/<string:action>/", view_func=ApplyActionApi, methods=["POST"])

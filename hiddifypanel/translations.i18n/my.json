@@ -627,6 +627,10 @@
         "loading": "ဖွင့်နေသည်…",
         "show": "log ကို ပြရန်",
         "showingEnd": "အဆုံးကို ပြနေသည်",
+        "telegram": "ကျွန်ုပ်၏ Telegram သို့ ပို့ရန်",
+        "telegramConnect": "My Account တွင် သင့် Telegram ကို ဦးစွာ ချိတ်ဆက်ပါ",
+        "telegramFailed": "Telegram သို့ မပို့နိုင်ပါ",
+        "telegramSent": "{name} ကို သင့် Telegram သို့ ပို့ပြီးပါပြီ",
         "terminal": "log",
         "wrap": "စာကြောင်းခွဲပြရန်"
       },
@@ -2018,6 +2022,7 @@
       "unread": "အသိပေးချက်အသစ် {n} ခု | အသိပေးချက်အသစ် {n} ခု",
       "new": "အသစ်",
       "dismiss": "ပိတ်ရန်"
+    },
     "pwa": {
       "guide": {
         "platform": "သင့်စက်",

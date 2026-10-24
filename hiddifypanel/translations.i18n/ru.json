@@ -624,6 +624,10 @@
         "loading": "Загрузка…",
         "show": "Показать журнал",
         "showingEnd": "показан конец",
+        "telegram": "Отправить в мой Telegram",
+        "telegramConnect": "Сначала подключите Telegram в «Мой аккаунт»",
+        "telegramFailed": "Не удалось отправить в Telegram",
+        "telegramSent": "{name} отправлен в ваш Telegram",
         "terminal": "журнал",
         "wrap": "Переносить строки"
       },
@@ -2015,6 +2019,7 @@
       "unread": "{n} новое уведомление | {n} новых уведомлений",
       "new": "Новое",
       "dismiss": "Скрыть"
+    },
     "pwa": {
       "guide": {
         "platform": "Ваше устройство",
