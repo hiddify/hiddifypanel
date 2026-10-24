@@ -146,10 +146,11 @@
         </Column>
         <Column v-if="!readOnly" selection-mode="multiple" header-style="width: 2.5rem" />
         <!-- No ID column: this one sorts by id -->
-        <Column field="id" sortable header-style="width: 6rem" body-class="u-actions-cell">
+        <Column field="id" sortable header-style="width: 8rem" body-class="u-actions-cell">
           <template #header><span class="u-idhead" v-tooltip.top="t('users.sortById')">#</span></template>
           <template #body="{ data }">
             <div class="u-actions">
+              <NoteButton :note="data.comment" :label="t('users.form.note')" />
               <Button v-if="!readOnly" icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(data)" />
               <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('users.more')" aria-haspopup="true" @click="openMenu($event, data)" />
             </div>
@@ -304,7 +305,10 @@
                 ><i :class="x.icon" />{{ x.text }}</component
               >
             </div>
-            <Button icon="pi pi-ellipsis-h" text rounded size="small" severity="secondary" class="u-card__more" :aria-label="t('users.more')" @click="openMenu($event, u)" />
+            <span class="u-card__acts">
+              <NoteButton :note="u.comment" :label="t('users.form.note')" />
+              <Button icon="pi pi-ellipsis-h" text rounded size="small" severity="secondary" class="u-card__more" :aria-label="t('users.more')" @click="openMenu($event, u)" />
+            </span>
           </div>
         </article>
       </template>
@@ -370,6 +374,7 @@
 import { unitLabel } from '@/shared/utils/format-metrics'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import NoteButton from '@/shared/components/NoteButton.vue'
 import { numberListCodec, optionalNumberCodec, useHashState } from '@/shared/composables/useHashState'
 import { computed, defineAsyncComponent, defineComponent, h, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -1654,6 +1659,8 @@ onBeforeUnmount(() => {
 }
 .u-actions {
   display: flex;
+  /* Edit and the menu keep their place; the note button, when there is a note, comes before them */
+  justify-content: flex-end;
 }
 /* Dragging the column edge: no blue text selection over the rows and cells. */
 .users-table--resizing,
@@ -1837,11 +1844,17 @@ onBeforeUnmount(() => {
   flex: 0 0 6.6rem;
   width: 6.6rem;
 }
-.u-card__more {
+.u-card__acts {
+  display: flex;
+  flex: none;
+  align-items: center;
+  margin-inline-start: auto;
+}
+.u-card__more,
+.u-card__acts :deep(.note-btn) {
   flex: none;
   width: 1.8rem !important;
   height: 1.8rem !important;
-  margin-inline-start: auto;
 }
 .u-card__pills {
   display: flex;

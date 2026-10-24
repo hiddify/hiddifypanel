@@ -120,6 +120,7 @@
                 <!-- Actions sit at the top end of the admin -->
                 <!-- Your own row: only your users' additional configs can be changed here -->
                 <div v-if="row(node).is_me" class="admins-actions">
+                  <NoteButton :note="row(node).comment" :label="t('admins.col.note')" />
                   <Button
                     v-if="!tree?.read_only"
                     icon="pi pi-paperclip"
@@ -133,6 +134,7 @@
                   <span class="admins-you-lock" v-tooltip.top="t('admins.meLocked')"><i class="pi pi-lock" /></span>
                 </div>
                 <div v-else class="admins-actions">
+                  <NoteButton :note="row(node).comment" :label="t('admins.col.note')" />
                   <Button
                     icon="pi pi-pencil"
                     text
@@ -166,13 +168,6 @@
             <UsageMeters :stats="row(node).stats" :limits="row(node).limits" />
           </template>
         </Column>
-
-        <Column :header="t('admins.col.note')" header-class="admins-col--lg" body-class="admins-col--lg admins-col--note">
-          <template #body="{ node }">
-            <span v-if="row(node).comment" class="admins-note" :title="row(node).comment">{{ row(node).comment }}</span>
-            <span v-else class="text-muted-color">—</span>
-          </template>
-        </Column>
       </TreeTable>
 
       <!-- Nobody below the signed-in admin yet -->
@@ -201,6 +196,7 @@
 <script setup lang="ts">
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import NoteButton from '@/shared/components/NoteButton.vue'
 import { useHashState } from '@/shared/composables/useHashState'
 import { computed, defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -644,9 +640,6 @@ onMounted(() => load())
 .admins-table :deep(.admins-col--users) {
   width: 30rem;
 }
-.admins-table :deep(.admins-col--note) {
-  max-width: 14rem;
-}
 
 .admins-actions {
   display: flex;
@@ -874,15 +867,6 @@ button.admins-avatar:focus-visible {
   --mode-color: var(--p-violet-500, #8b5cf6);
 }
 
-.admins-note {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 0.85rem;
-  color: var(--p-text-muted-color);
-  overflow-wrap: anywhere;
-}
 .admins-empty-search {
   display: flex;
   align-items: center;
@@ -985,11 +969,6 @@ button.admins-avatar:focus-visible {
 }
 
 /* Wide columns step out as the screen narrows; their content moves into the name cell. */
-@media (max-width: 1200px) {
-  .admins-table :deep(.admins-col--lg) {
-    display: none;
-  }
-}
 @media (max-width: 860px) {
   .admins-table :deep(.admins-col--md) {
     display: none;
