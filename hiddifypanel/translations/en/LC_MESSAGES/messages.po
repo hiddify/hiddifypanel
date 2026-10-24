@@ -1033,7 +1033,7 @@ msgid "admin.menu.api"
 msgstr "API"
 
 msgid "admin.menu.broadcast"
-msgstr "Send message"
+msgstr "Send Message"
 
 msgid "admin.menu.config"
 msgstr "Settings"
@@ -2464,7 +2464,7 @@ msgid "adminV2.broadcast.subtitle"
 msgstr "Reach your users in Telegram, with text, formatting and an image"
 
 msgid "adminV2.broadcast.title"
-msgstr "Send message"
+msgstr "Send Message"
 
 msgid "adminV2.broadcast.tool.bold"
 msgstr "Bold"
