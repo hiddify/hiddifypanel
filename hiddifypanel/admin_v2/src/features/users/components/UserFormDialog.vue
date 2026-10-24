@@ -53,6 +53,12 @@ const props = defineProps<{
   focus?: 'usage' | 'time' | null
 }>()
 const visible = defineModel<boolean>('visible', { required: true })
+/** New users only: the top or the end of the list (the admin's last choice, kept in their layout) */
+const newAt = defineModel<'top' | 'end'>('newAt', { default: 'end' })
+const NEW_AT_OPTIONS = computed(() => [
+  { value: 'top' as const, label: t('users.form.newAtTop'), icon: 'pi pi-arrow-up' },
+  { value: 'end' as const, label: t('users.form.newAtEnd'), icon: 'pi pi-arrow-down' },
+])
 const emit = defineEmits<{ saved: [user: UserDetail, created: boolean] }>()
 
 const { t, locale } = useI18n()
@@ -301,6 +307,17 @@ async function submit() {
           <div class="uf-field uf-field--wide">
             <label for="uf-note" class="font-medium">{{ t('users.form.note') }} <span class="text-muted-color font-normal">({{ t('users.form.optional') }})</span></label>
             <Textarea id="uf-note" v-model="comment" rows="2" auto-resize maxlength="512" :disabled="busy" :placeholder="t('users.form.notePlaceholder')" />
+          </div>
+          <div v-if="!editing" class="uf-field uf-field--wide">
+            <label for="uf-new-at" class="font-medium uf-newat__label"><i class="pi pi-sort-alt" aria-hidden="true" />{{ t('users.form.newAt') }}</label>
+            <Select v-model="newAt" input-id="uf-new-at" :options="NEW_AT_OPTIONS" option-label="label" option-value="value" :disabled="busy" class="uf-newat">
+              <template #value="{ value }">
+                <span class="uf-newat__opt"><i :class="NEW_AT_OPTIONS.find((o) => o.value === value)?.icon" />{{ NEW_AT_OPTIONS.find((o) => o.value === value)?.label }}</span>
+              </template>
+              <template #option="{ option }">
+                <span class="uf-newat__opt"><i :class="option.icon" />{{ option.label }}</span>
+              </template>
+            </Select>
           </div>
         </div>
       </section>
@@ -601,6 +618,23 @@ async function submit() {
 }
 .uf-field--wide {
   grid-column: 1 / -1;
+}
+.uf-newat__label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.uf-newat__label i {
+  color: var(--p-primary-color);
+}
+.uf-newat__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.uf-newat__opt i {
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
 }
 .uf-error {
   color: var(--p-red-500, #ef4444);

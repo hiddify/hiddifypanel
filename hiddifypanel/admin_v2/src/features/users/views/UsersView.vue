@@ -353,7 +353,7 @@
     </Popover>
 
     <UsersGuideDialog v-model:visible="guideVisible" @got-it="onGuideSeen" />
-    <UserFormDialog v-model:visible="formVisible" :user="editingUser" :focus="formFocus" :state="state" @saved="onSaved" />
+    <UserFormDialog v-model:visible="formVisible" v-model:new-at="newAt" :user="editingUser" :focus="formFocus" :state="state" @saved="onSaved" />
     <LinkShareDialog
       v-if="linkUser && state"
       v-model:visible="linkVisible"
@@ -616,7 +616,7 @@ const filters = computed(() =>
 )
 
 // This admin's order (admins/me/users-layout/): pinned users first, then the order they set by dragging.
-const layout = ref<UsersLayout>({ pinned: [], order: [], guide_seen: true })
+const layout = ref<UsersLayout>({ pinned: [], order: [], guide_seen: true, new_at: 'end' })
 const guideVisible = ref(false)
 const orderedRows = computed(() => orderRows(allRows.value, layout.value))
 const pinnedSet = computed(() => new Set(layout.value.pinned))
@@ -956,8 +956,18 @@ function openLink(u: UserRow) {
   linkUser.value = u
   linkVisible.value = true
 }
+/** Add user: where the new user goes, the admin's last choice (saved in their layout as soon as it changes) */
+const newAt = computed<'top' | 'end'>({
+  get: () => layout.value.new_at ?? 'end',
+  set: (v) => {
+    if (v !== layout.value.new_at) void saveLayout({ ...layout.value, new_at: v })
+  },
+})
+
 function onSaved(user: UserDetail, created: boolean) {
   replaceRow(user)
+  // At the top of my order (after the pinned users); otherwise it is unplaced, which lists it last
+  if (created && newAt.value === 'top') void saveLayout({ ...layout.value, order: [user.uuid, ...layout.value.order.filter((u) => u !== user.uuid)] })
   toast.add({ severity: 'success', summary: created ? t('users.added', { name: user.name }) : t('users.saved', { name: user.name }), life: 3000 })
   if (created) {
     linkUser.value = { ...user, additional_configs: user.additional_configs.length }
