@@ -6,6 +6,7 @@ from typing import TypedDict
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from hiddifypanel import hutils
+from hiddifypanel.cache import cache
 from hiddifypanel.hutils.network.auto_ip_selector import split_pattern
 from hiddifypanel.hutils.proxy import random_or_none
 from hiddifypanel.models import Domain, DomainType, FakeMode
@@ -248,6 +249,24 @@ def _keeps_hostname(domain: DomainIPVar) -> bool:
     return bool(host) and "*" not in host and not is_ip_address(host)
 
 
+@cache.cache(ttl=300)
+def server_dial_hostname(child_id: int) -> str:
+    """A real domain of this node that points to it (direct, valid TLS, not resolved to IPs by the admin): fake and
+    REALITY names, which can not be dialed, are reached through it. Its A/AAAA records let the client pick IPv4 or
+    IPv6 in one profile, instead of one profile per address family. Empty when the node has none."""
+    try:
+        mine = {str(ip) for ip in hutils.network.get_ips()}
+    except Exception:
+        return ""
+    for d in Domain.query.filter(Domain.child_id == child_id, Domain.mode == DomainType.direct, Domain.fake_mode == FakeMode.valid).order_by(*Domain.ordering()).all():
+        name = (d.domain or "").strip().lower()
+        if not name or "*" in name or is_ip_address(name) or d.resolve_ip:
+            continue
+        if {str(ip) for ip in hutils.network.get_domain_ips_cached(name)} & mine:
+            return name
+    return ""
+
+
 def expand_sni_domain_servers(domain: DomainIPVar) -> list[DomainIPVar]:
     """One client domain per server IP when no ``server_domain`` or ``cdn_ip`` is bound
     and the domain's ``resolve_ip`` is on (or its name can't be dialed)."""
@@ -257,6 +276,12 @@ def expand_sni_domain_servers(domain: DomainIPVar) -> list[DomainIPVar]:
     candidates = server_ip_candidates(domain)
     if not candidates:
         return [domain]
+    # A fake / REALITY name (the SNI stays) is dialed through this node's own domain: one profile for IPv4 and IPv6
+    if domain.fake_mode != FakeMode.valid and not domain.resolve_ip and (hostname := server_dial_hostname(domain.child_id)):
+        return [domain.model_copy(update={"dst_server": hostname, "has_server_domain": True})]
+    # Otherwise one profile per IPv4 address; IPv6 ones only when the server has no IPv4 (separate "ip4"/"ip6"
+    # copies of every profile only doubled the list)
+    candidates = [c for c in candidates if c[0] == "ip4"] or candidates
 
     multi = len(candidates) > 1
     expanded: list[DomainIPVar] = []
