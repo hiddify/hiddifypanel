@@ -16,7 +16,9 @@ from flask.views import MethodView
 from flask_babel import gettext as _
 from werkzeug.datastructures import MultiDict
 
+from hiddifypanel import g
 from hiddifypanel.auth import login_required
+from hiddifypanel.database import db
 from hiddifypanel.models import ConfigEnum, Role, hconfig, set_hconfig
 from hiddifypanel.models.config_enum import ApplyMode, is_protocol_switch
 
@@ -206,6 +208,12 @@ class SettingsApi(MethodView):
             return {"errors": result.errors, "field_errors": {}}, 422
 
         new_admin_path = hconfig(ConfigEnum.proxy_path_admin)
+        lang_changed = hconfig(ConfigEnum.admin_lang) != admin_lang
+        if lang_changed and getattr(g.account, "lang", None):
+            # The admin's own language (My account) wins over this one: whoever changes the panel's language here
+            # saw no change at all. They follow the panel's language again (My account can still set their own).
+            g.account.lang = None
+            db.session.commit()
         return {
             "categories": describe_settings(get_config_form(formdata=None, meta={"csrf": False})),
             "restart_mode": _restart_mode(result.old_configs),
@@ -214,7 +222,7 @@ class SettingsApi(MethodView):
             "telegram": result.telegram,
             "changed": sorted(str(k) for k in result.changed_configs),
             # The UI language changed: the page must reload to pick it up.
-            "reload": hconfig(ConfigEnum.admin_lang) != admin_lang,
+            "reload": lang_changed,
             # Takes effect after applying configs; the admin UI then lives here.
             "new_admin_path": f"/{new_admin_path}/admin/v2/" if new_admin_path != admin_path else None,
         }
