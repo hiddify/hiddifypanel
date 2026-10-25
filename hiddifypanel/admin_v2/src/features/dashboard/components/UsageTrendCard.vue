@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { DashboardDailyPoint, DashboardNode, DashboardUsage } from '@/core/api/generated'
+import type { DashboardDailyPoint, DashboardNode, DashboardNodeStats, DashboardUsage } from '@/core/api/generated'
 import { formatBytes, formatDayLabel } from '@/shared/utils/format-metrics'
 import { SERIES, nodeColor } from '../composables/useChartTheme'
 import { rollingAverage } from '../utils/series'
@@ -15,6 +15,8 @@ const props = defineProps<{
   rangeDays: number
   nodes: DashboardNode[]
   stacked: boolean
+  /** The server shown (the chosen node, else the panel itself): its CPU and RAM right now, next to the usage. */
+  health?: DashboardNodeStats | null
 }>()
 
 const { t, locale } = useI18n()
@@ -57,6 +59,23 @@ const chartSeries = computed(() => {
   ]
 })
 
+const cpuLabel = computed(() => {
+  const cpu = props.health?.cpu
+  return cpu ? `${Math.round(cpu.percent)}%` : '—'
+})
+const cpuTitle = computed(() => {
+  const cpu = props.health?.cpu
+  return cpu?.cores ? t('dashboard.cpuCores', { count: cpu.cores }) : t('dashboard.cpu')
+})
+const ramLabel = computed(() => {
+  const mem = props.health?.memory
+  return mem ? `${Math.round(mem.percent)}%` : '—'
+})
+const ramExtra = computed(() => {
+  const mem = props.health?.memory
+  return mem ? `${mem.used_gb.toFixed(1)} / ${mem.total_gb.toFixed(1)} GB` : undefined
+})
+
 const peakLabel = computed(() => {
   const peak = props.usage?.peak
   return peak ? formatBytes(peak.usage) : t('dashboard.noData')
@@ -96,6 +115,8 @@ const peakDay = computed(() => {
         <MiniStat :label="t('dashboard.monthUsage')" :value="formatBytes(usage?.totals.month ?? 0)" icon="pi pi-calendar" :accent="SERIES.users" />
         <MiniStat :label="t('dashboard.weekUsage')" :value="formatBytes(usage?.totals.week ?? 0)" icon="pi pi-calendar-clock" :accent="SERIES.download" />
         <MiniStat :label="t('dashboard.peakDay')" :value="peakLabel" :extra="peakDay" icon="pi pi-bolt" :accent="SERIES.usageAvg" />
+        <MiniStat v-if="health" :label="cpuTitle" :value="cpuLabel" icon="pi pi-microchip" :accent="SERIES.users" />
+        <MiniStat v-if="health" :label="t('dashboard.ram')" :value="ramLabel" :extra="ramExtra" icon="pi pi-server" :accent="SERIES.download" />
       </div>
     </template>
   </DashCard>
