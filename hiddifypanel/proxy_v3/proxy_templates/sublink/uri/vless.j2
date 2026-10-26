@@ -16,14 +16,14 @@
     {% include '__TLS_SLUG__' %}
     {% include '__TRANSPORT_SLUG__' %}
 
-  {% if ctx.proxy.server_core == "xray" %}
-    {% if ctx.hconfig.vless_flow %}
-      {% set qp.flow = ctx.hconfig.vless_flow %}
-    {% endif %}
+  {# Vision (xtls-rprx-vision) is TCP+REALITY only — the Reality terminator inbound. #}
+  {# Do not put flow on WS/gRPC/XHTTP/… links (#5640); those terminate as plain VLESS behind HAProxy. #}
+  {% set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
+  {% if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_flow and reality_terminated %}
+    {% set qp.flow = ctx.hconfig.vless_flow %}
   {% endif %}
   {# Xray needs an explicit encryption; only an xray server can terminate a real one. #}
   {# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
-  {% set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
   {% set enc = ctx.hconfig.vless_encryption if ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption and not reality_terminated else "none" %}
   {{ skip("VLESS encryption needs Hiddify 5+") if enc != "none" and ctx.platform.is_hiddify and ctx.platform.hiddify.version < "5.0.0" }}
 

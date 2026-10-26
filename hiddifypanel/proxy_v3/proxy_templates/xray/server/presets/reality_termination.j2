@@ -12,8 +12,8 @@
                     {
                     "id": "{{ u.uuid }}",
                     "email": "{{ u.uuid }}",
-                    {# raw VLESS clients connect here directly (xray server core: they send this flow) #}
-                    "flow": "{{ ctx.hconfig.vless_flow }}",
+                    {# Vision only when configured; clients connect here directly over REALITY+TCP. #}
+                    {% if ctx.hconfig.vless_flow %}"flow": "{{ ctx.hconfig.vless_flow }}",{% endif %}
                     },
                     {% endfor %}
                 ],

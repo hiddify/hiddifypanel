@@ -4,11 +4,11 @@
     {% for u in ctx.users %}
     {
       "id": "{{ u.uuid }}",
-      "email": "{{ u.uuid }}",
-    },
+      "email": "{{ u.uuid }}"
+    }{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
-  "flow": "{{ ctx.hconfig.vless_flow }}",
+  {# Vision belongs on Reality terminator clients (presets/reality_termination.j2), not here. #}
+  {# Gateway inbounds (WS/gRPC/XHTTP/raw behind HAProxy) are plain VLESS — no settings-level flow (#5640). #}
   "decryption": "{{ ctx.hconfig.vless_decryption or 'none' }}"
-
 }
