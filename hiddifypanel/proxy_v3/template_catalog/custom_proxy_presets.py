@@ -295,7 +295,8 @@ def build_user_configs_preset(child_id: int = 0) -> CustomProxyPreset:
         mode=CustomProxyMode.no_inbound,
         proto="vless",
         transport="other",
-        tls_layer="http",
+        # Not gated by http_proxy_enable: this proxy has no inbound and carries no plain-HTTP traffic (#5622).
+        tls_layer="tls",
         l7_reverse_proto=None,
         categories=("user_configs",),
         domain_modes=(),

@@ -1,10 +1,11 @@
 {#
   Builtin user_configs (hiddify-core / sing-box JSON).
   The user's own additional configs (Users → edit → Additional configs), for this format or "auto".
+  Call user_additional_configs inside each block: client templates render blocks separately,
+  so a top-level {% set %} is invisible inside {% block %} (#5622).
 #}
-{% set user_configs = user_additional_configs("hiddify-core") %}
 {% block outbounds %}
-     {% for conf in user_configs if conf %}
+     {% for conf in user_additional_configs("hiddify-core") if conf %}
           {% for outbound in remote_proxy_outbounds(conf, "hiddify-core") %}
                {{ outbound | tojson }},
           {% endfor %}
@@ -12,7 +13,7 @@
 {% endblock %}
 
 {% block endpoints %}
-     {% for conf in user_configs if conf %}
+     {% for conf in user_additional_configs("hiddify-core") if conf %}
           {% for endpoint in remote_endpoints(conf) %}
                {{ endpoint | tojson }},
           {% endfor %}
