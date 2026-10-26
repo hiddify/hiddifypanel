@@ -25,6 +25,21 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v189(child_id):
+    """no_inbound builtins (node-configs, additional-config) used tls_layer=http and were gated by
+    http_proxy_enable; parent/child subscriptions then omitted node configs. Align with user-configs."""
+    sync_builtin_presets(child_id)
+    from hiddifypanel.models.custom_proxy import CustomProxy, TlsLayer
+    from hiddifypanel.proxy_v3.template_catalog.custom_proxy_builtin import set_field_override
+
+    for slug in ("node-configs", "additional-config", "user-configs"):
+        for row in CustomProxy.query.filter(CustomProxy.child_id == child_id, CustomProxy.slug == slug).all():
+            if row.tls_layer != TlsLayer.tls:
+                row.tls_layer = TlsLayer.tls
+            if (row.builtin_overrides or {}).get("tls_layer"):
+                set_field_override(row, "tls_layer", False)
+
+
 def _v188(child_id):
     """#5622: builtin user-configs used tls_layer=http, so http_proxy_enable=false silently dropped
     Additional configs from every client format; hiddify-core user_configs.j2 also set the list outside

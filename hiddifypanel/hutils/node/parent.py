@@ -293,7 +293,14 @@ def is_child_domain_active(child: Child, domain: Domain) -> bool:
     if not child_admin_proxy_path:
         return False
 
-    return hutils.node.is_panel_active(domain.domain, child_admin_proxy_path)
+    # is_panel_active expects a full panel base URL and returns (ok, msg); a bare domain
+    # raises MissingSchema, and returning the tuple was always truthy (#5596 follow-up).
+    base_url = f"https://{domain.domain}/{child_admin_proxy_path}/"
+    try:
+        ok, _msg = hutils.node.is_panel_active(base_url)
+    except Exception:
+        return False
+    return bool(ok)
 
 
 def get_child_active_domains(child: Child) -> list[Domain]:

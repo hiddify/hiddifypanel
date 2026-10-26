@@ -472,7 +472,12 @@ class CustomProxy(db.Model):  # type: ignore
 
         from hiddifypanel.models.config import hconfig
         from hiddifypanel.models.config_enum import ConfigEnum
-        from hiddifypanel.proxy_v3.context_vars.builder.utils import common_proxy_core_blocks, parent_enable_keys_for, parent_enable_off
+        from hiddifypanel.proxy_v3.context_vars.builder.utils import (
+            common_proxy_core_blocks,
+            parent_enable_keys,
+            parent_enable_keys_for,
+            parent_enable_off,
+        )
 
         child_id = int(self.child_id or 0)
 
@@ -480,7 +485,13 @@ class CustomProxy(db.Model):  # type: ignore
             value = hconfig(key, child_id)
             return value if isinstance(value, bool) else None
 
-        keys = parent_enable_off(parent_enable_keys_for(self), flag)
+        # Client-only proxies have no listener: proto/transport/tls kill-switches must not
+        # hide them (node-configs / user-configs were gated by http_proxy_enable). Category
+        # switches (telegram_web, …) still apply.
+        if self.mode == CustomProxyMode.no_inbound:
+            keys = parent_enable_off(parent_enable_keys(categories=self.categories), flag)
+        else:
+            keys = parent_enable_off(parent_enable_keys_for(self), flag)
         blocked = [{"key": key.name, "label": str(_(f"config.{key.name}.label"))} for key in keys]
         selected = hconfig(ConfigEnum.common_proxy_core, child_id)
         if common_proxy_core_blocks(self.is_common_proxy, self.server_core, selected):

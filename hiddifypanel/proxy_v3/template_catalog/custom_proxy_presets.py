@@ -201,7 +201,8 @@ def build_additional_config_preset(child_id: int = 0) -> CustomProxyPreset:
         mode=CustomProxyMode.no_inbound,
         proto="vless",
         transport="other",
-        tls_layer="http",
+        # no_inbound: not gated by http_proxy_enable (same as user-configs / node-configs).
+        tls_layer="tls",
         l7_reverse_proto=None,
         categories=("additional_config",),
         domain_modes=(),
@@ -261,7 +262,8 @@ def build_node_configs_preset(child_id: int = 0) -> CustomProxyPreset:
         mode=CustomProxyMode.no_inbound,
         proto="vless",
         transport="other",
-        tls_layer="http",
+        # Client-only merge of child configs: must not follow http_proxy_enable.
+        tls_layer="tls",
         l7_reverse_proto=None,
         categories=("node_configs",),
         domain_modes=(),
