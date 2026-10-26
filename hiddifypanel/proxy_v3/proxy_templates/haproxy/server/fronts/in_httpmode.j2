@@ -42,8 +42,9 @@ frontend in-httpmode
   http-request set-var(txn.naive_pass) req.hdr(Proxy-Authorization),field(2," "),b64dec,field(2,":") if { req.hdr(Proxy-Authorization) -m found } { var(txn.backend) -m str default_decoy }
   http-request set-var(txn.backend) var(txn.naive_pass),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.naive_pass) -m found }
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
-  
 
+  # Panel / admin / user pages must not be used over cleartext. ACME HTTP-01 above already returned.
+  http-request redirect scheme https code 301 if !{ ssl_fc } { var(txn.backend) -m str panel }
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
 

@@ -3,7 +3,7 @@ import os
 
 import flask_bootstrap
 import redis
-from flask import request
+from flask import redirect, request
 from flask_babel import Babel
 from flask_session import Session
 from sonora.wsgi import grpcWSGI
@@ -25,7 +25,14 @@ def init_app(app):
         x_prefix=1,
     )
 
-    app.secret_key = "asdsad"
+    # SECRET_KEY comes from data/hiddify-panel/app.cfg (services/panel/run.sh). Never overwrite it with a fixed value.
+    if not app.config.get("SECRET_KEY"):
+        raise RuntimeError("SECRET_KEY is not set in the panel config")
+
+    # Session cookie: only over HTTPS, not readable by JS, Lax CSRF posture for top-level navigations.
+    app.config.setdefault("SESSION_COOKIE_HTTPONLY", True)
+    app.config["SESSION_COOKIE_SECURE"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     app.servers = {
         "name": "current",
         "url": "",
@@ -46,6 +53,23 @@ def init_app(app):
     app.jinja_env.filters["b64encode"] = hutils.encode.do_base_64
     app.view_functions["admin.static"] = {}  # fix bug in apiflask
     flask_bootstrap.Bootstrap4(app)
+
+    @app.before_request
+    def redirect_cleartext_when_proxy_says_http():
+        # Defense in depth: HAProxy should already 301 panel paths. Only when the terminator
+        # explicitly said the client hop was http (not a direct :9000 health check with no header).
+        if request.headers.get("X-Forwarded-Proto", "").lower() != "http":
+            return None
+        url = request.url
+        if url.startswith("http://"):
+            return redirect(url.replace("http://", "https://", 1), code=301)
+        return None
+
+    @app.after_request
+    def security_headers(response):
+        if request.is_secure:
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        return response
 
     def get_locale():
         # Put your logic here. Application can store locale in
