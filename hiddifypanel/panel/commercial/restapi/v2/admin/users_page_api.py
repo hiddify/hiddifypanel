@@ -381,3 +381,78 @@ class UsersBulkApi(MethodView):
         db.session.commit()
         _after_change(users)
         return {"count": len(users)}
+
+
+MAX_BULK_CREATE = 100
+
+
+def _bulk_user_name(prefix: str, index: int, count: int) -> str:
+    """``prefix-01`` … when creating many; the bare prefix when ``count`` is 1."""
+    if count == 1:
+        return prefix[:512]
+    width = len(str(count))
+    suffix = f"-{index:0{width}d}"
+    return f"{prefix[: max(1, 512 - len(suffix))]}{suffix}"
+
+
+class UsersBulkCreateApi(MethodView):
+    decorators = [login_required(ALL_ROLES)]
+
+    def post(self):
+        """Users page: create many users with the same package; names are ``prefix-01`` … ``prefix-N``."""
+        node_read_only.deny_write_on_node()
+        body = request.get_json(silent=True) or {}
+        actor: AdminUser = g.account
+        prefix = str(body.get("name") or "").strip()
+        if not prefix:
+            abort(400, "Name is required")
+        try:
+            count = int(body.get("count") or 0)
+        except (TypeError, ValueError):
+            abort(400, "count must be a number")
+        if not 1 <= count <= MAX_BULK_CREATE:
+            abort(400, f"count must be between 1 and {MAX_BULK_CREATE}")
+
+        template = {
+            "comment": body.get("comment"),
+            "usage_limit_GB": body.get("usage_limit_GB", 100),
+            "package_days": body.get("package_days", 30),
+            "enable": body.get("enable", True),
+            "mode": body.get("mode", UserMode.no_reset),
+            "owner_uuid": body.get("owner_uuid"),
+            "preferred_outbound": body.get("preferred_outbound"),
+            "additional_configs": body.get("additional_configs"),
+            "extra_params": body.get("extra_params"),
+        }
+        # Drop keys the client did not send so _apply_fields keeps its "optional" behaviour.
+        for key in ("comment", "owner_uuid", "preferred_outbound", "additional_configs", "extra_params"):
+            if key not in body:
+                template.pop(key, None)
+
+        created: list[User] = []
+        try:
+            for i in range(1, count + 1):
+                if not actor.can_have_more_users():
+                    db.session.rollback()
+                    abort(
+                        400,
+                        "User limit reached: you (or an admin above you) reached the max users, active users or total traffic"
+                        if i == 1
+                        else f"Not enough room for {count} users",
+                    )
+                user = User(uuid=str(uuid_lib.uuid4()), added_by=actor.id, enable=True, mode=UserMode.no_reset, current_usage=0)
+                row = {**template, "name": _bulk_user_name(prefix, i, count)}
+                _apply_fields(user, row, creating=True)
+                db.session.add(user)
+                db.session.flush()
+                created.append(user)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
+
+        if hconfig(ConfigEnum.first_setup):
+            set_hconfig(ConfigEnum.first_setup, False)
+        _after_change(created)
+        admins = _admins_map()
+        return {"users": [_detail(u, admins) for u in created], "count": len(created)}

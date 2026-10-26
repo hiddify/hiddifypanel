@@ -2,15 +2,25 @@
   <div class="users-page">
     <div class="users-head">
       <PageHeader :title="t('users.title')" :subtitle="t('users.subtitle')" />
-      <Button
-        v-if="!readOnly"
-        icon="pi pi-user-plus"
-        :label="t('users.add')"
-        class="users-head__add"
-        :disabled="state ? !state.can_add : true"
-        v-tooltip.bottom="state && !state.can_add ? t('users.limitReached') : ''"
-        @click="openAdd"
-      />
+      <div v-if="!readOnly" class="users-head__add">
+        <Button
+          icon="pi pi-user-plus"
+          :label="t('users.add')"
+          class="users-head__add-main"
+          :disabled="state ? !state.can_add : true"
+          v-tooltip.bottom="state && !state.can_add ? t('users.limitReached') : ''"
+          @click="openAdd"
+        />
+        <Button
+          icon="pi pi-angle-down"
+          class="users-head__add-more"
+          :aria-label="t('users.bulkCreate.menu')"
+          aria-haspopup="menu"
+          :disabled="state ? !state.can_add : true"
+          @click="(e) => addMenu?.toggle(e)"
+        />
+        <Menu ref="addMenu" :model="addMenuItems" popup />
+      </div>
     </div>
 
     <Message v-if="readOnly" severity="info" :closable="false" size="small" class="mb-3" icon="pi pi-lock">{{ t('users.readOnlyNode') }}</Message>
@@ -373,6 +383,7 @@
 
     <UsersGuideDialog v-model:visible="guideVisible" @got-it="onGuideSeen" />
     <UserFormDialog v-model:visible="formVisible" :user="editingUser" :focus="formFocus" :state="state" @saved="onSaved" />
+    <UserBulkCreateDialog v-model:visible="bulkCreateVisible" :state="state" @created="onBulkCreated" />
     <LinkShareDialog
       v-if="linkUser && state"
       v-model:visible="linkVisible"
@@ -425,6 +436,7 @@ import TagDots from '@/features/tags/components/TagDots.vue'
 import TagFilter from '@/features/tags/components/TagFilter.vue'
 import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
+import UserBulkCreateDialog from '@/features/users/components/UserBulkCreateDialog.vue'
 import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
 import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
 import { localeComparator, resolveFieldData, sort as sortValues } from '@primeuix/utils/object'
@@ -551,13 +563,19 @@ const narrow = ref(narrowQuery.matches)
 const onNarrow = (e: MediaQueryListEvent) => (narrow.value = e.matches)
 
 const formVisible = ref(false)
+const bulkCreateVisible = ref(false)
 const editingUser = ref<UserRow | null>(null)
 /** A quick edit of one section (usage / time) instead of the whole form. */
 const formFocus = ref<'usage' | 'time' | null>(null)
 const linkVisible = ref(false)
 const linkUser = ref<UserRow | null>(null)
 const rowMenu = ref<InstanceType<typeof Menu> | null>(null)
+const addMenu = ref<InstanceType<typeof Menu> | null>(null)
 const menuUser = ref<UserRow | null>(null)
+const addMenuItems = computed<MenuItem[]>(() => [
+  { label: t('users.add'), icon: 'pi pi-user-plus', command: () => openAdd() },
+  { label: t('users.bulkCreate.menu'), icon: 'pi pi-users', command: () => openBulkCreate() },
+])
 
 const modeOptions = computed(() => USER_MODES.map((m) => ({ value: m, label: t(`users.mode.${m}`) })))
 
@@ -953,6 +971,13 @@ function openAdd() {
   formFocus.value = null
   formVisible.value = true
 }
+function openBulkCreate() {
+  if (readOnly.value || (state.value && !state.value.can_add)) return
+  bulkCreateVisible.value = true
+}
+function onBulkCreated(users: UserDetail[]) {
+  for (const user of users) replaceRow(user)
+}
 /** Tap the usage or the remaining time to edit just that; not while cells are edited in place. */
 function openQuick(u: UserRow, focus: 'usage' | 'time') {
   if (inlineEdit.value) return
@@ -1102,7 +1127,7 @@ let feed: Subscription | null = null
 let held: UsersState | null = null
 
 function takeLive(next: UsersState) {
-  if (formVisible.value || inlineEdit.value) {
+  if (formVisible.value || bulkCreateVisible.value || inlineEdit.value) {
     held = next
     return
   }
@@ -1114,7 +1139,7 @@ function takeLive(next: UsersState) {
 }
 
 watch(
-  () => !formVisible.value && !inlineEdit.value,
+  () => !formVisible.value && !bulkCreateVisible.value && !inlineEdit.value,
   (free) => {
     if (free && held) takeLive(held)
   },
@@ -1148,7 +1173,23 @@ onBeforeUnmount(() => {
   gap: 0 1rem;
 }
 .users-head__add {
+  display: inline-flex;
+  align-items: stretch;
   margin-bottom: 1.25rem;
+  border-radius: var(--p-button-border-radius, 6px);
+  overflow: hidden;
+}
+.users-head__add-main {
+  border-start-end-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+}
+.users-head__add-more {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  padding-inline: 0;
+  border-start-start-radius: 0 !important;
+  border-end-start-radius: 0 !important;
+  border-inline-start: 1px solid color-mix(in srgb, #fff 28%, transparent);
 }
 .sr-only {
   position: absolute;
@@ -2017,6 +2058,9 @@ button.u-pill {
 @media (max-width: 640px) {
   .users-head__add {
     width: 100%;
+  }
+  .users-head__add-main {
+    flex: 1;
   }
   .users-filters {
     flex-wrap: nowrap;

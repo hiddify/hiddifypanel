@@ -117,6 +117,11 @@ export const usersApi = {
     const { data } = await getHttp().post<{ user: UserDetail }>('users/', payload)
     return data.user
   },
+  /** Create many users with the same package; names become ``prefix-01`` … ``prefix-N``. */
+  async bulkCreate(payload: UserPayload & { count: number }): Promise<{ users: UserDetail[]; count: number }> {
+    const { data } = await getHttp().post<{ users: UserDetail[]; count: number }>('users/bulk-create/', payload, { timeout: 120_000 })
+    return data
+  },
   async update(uuid: string, payload: UserPayload): Promise<UserDetail> {
     const { data } = await getHttp().patch<{ user: UserDetail }>(`users/${uuid}/`, payload)
     return data.user
@@ -129,6 +134,9 @@ export const usersApi = {
     return data.count
   },
 }
+
+/** Max users one bulk-create request may make (matches the API). */
+export const MAX_BULK_CREATE = 100
 
 export const STATUS_ICON: Record<UserStatus, string> = {
   active: 'pi pi-check-circle',

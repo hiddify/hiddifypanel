@@ -3145,7 +3145,27 @@
         "no_data": "Used all of the usage limit"
       },
       "subtitle": "Everyone who connects through this panel: their data, time left and links.",
-      "title": "Users"
+      "title": "Users",
+      "bulkCreate": {
+        "menu": "Add many users",
+        "title": "Add many users",
+        "subtitle": "Same package for everyone. Names are your prefix plus a number.",
+        "who": "Who",
+        "prefix": "Name prefix",
+        "prefixPlaceholder": "e.g. USER-30d",
+        "prefixHint": "Each user is named prefix-01, prefix-02, …",
+        "count": "How many",
+        "countHint": "Between 1 and {max}",
+        "preview": "Names",
+        "create": "Create {n} user | Create {n} users",
+        "done": "{n} user created | {n} users created",
+        "linksTitle": "User links",
+        "linksSubtitle": "{n} link ready to copy | {n} links ready to copy",
+        "domain": "Link domain",
+        "links": "Links",
+        "copy": "Copy all",
+        "download": "Download .txt"
+      }
     },
     "utils": {
       "addQuery": "Add query",
