@@ -1,5 +1,4 @@
-{# finalmask is an object (sing-box FinalMaskOptions / Xray finalmask), never a quoted string. #}
-{% set finalmask = ctx.proxy.domain.extra.finalmask  if ctx.proxy.domain.extra.finalmask else "" %}
-{% if finalmask and ctx.platform.hiddify.version >= "5.0.0" %}
-  "finalmask": {{ finalmask }},
+{# FinalMask object for Hiddify Core clients (TLS fragment is type "fragment"). Never a quoted string. #}
+{% if ctx.proxy.domain.finalmask and ctx.platform.hiddify.version >= "5.0.0" %}
+  "finalmask": {{ ctx.proxy.domain.finalmask | tojson }},
 {% endif %}

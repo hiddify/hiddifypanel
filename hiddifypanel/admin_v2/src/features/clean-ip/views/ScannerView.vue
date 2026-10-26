@@ -13,12 +13,13 @@ import { domainsApi, type DomainRow } from '@/features/domains/api'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { cleanIpApi, type CleanIpNetwork, type IpReport } from '../api'
 import FullTestCard from '../components/FullTestCard.vue'
+import FragmentPanel from '../components/FragmentPanel.vue'
 import NetworkCard from '../components/NetworkCard.vue'
 import RealitySniPanel from '../components/RealitySniPanel.vue'
 import IpFlow from '../components/IpFlow.vue'
 import { useIpScan, type ScanResult } from '../composables/useIpScan'
 
-type ScannerTab = 'ip' | 'reality'
+type ScannerTab = 'ip' | 'reality' | 'fragment'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -35,9 +36,14 @@ const domainId = ref<number | null>(Number(route.query.domain) || null)
 const perIsp = ref(3)
 const fullOpen = ref(false)
 
-// The tab is in the URL (?tab=reality): a reload or a shared link opens the same one.
+// The tab is in the URL (?tab=reality|fragment): a reload or a shared link opens the same one.
 const tab = computed<ScannerTab>({
-  get: () => (route.query.tab === 'reality' && isSuperAdmin.value ? 'reality' : 'ip'),
+  get: () => {
+    const q = route.query.tab
+    if (q === 'fragment') return 'fragment'
+    if (q === 'reality' && isSuperAdmin.value) return 'reality'
+    return 'ip'
+  },
   set: (value) => router.replace({ query: { ...route.query, tab: value === 'ip' ? undefined : value } }),
 })
 
@@ -53,12 +59,17 @@ async function loadNetwork() {
 
 async function loadDomains() {
   try {
-    domains.value = (await domainsApi.list()).domains
+    const state = await domainsApi.list()
+    domains.value = state.domains
   } catch (e) {
     toast.add({ severity: 'error', summary: apiErrorMessage(e), life: 4000 })
   } finally {
     loaded.value = true
   }
+}
+
+function onDomainsSaved(list: DomainRow[]) {
+  domains.value = list
 }
 
 async function onReports(list: IpReport[]) {
@@ -93,10 +104,11 @@ onMounted(() => {
   <div class="scanner">
     <NetworkCard :net="net" :error="netError" @refresh="loadNetwork" />
 
-    <Tabs v-if="isSuperAdmin" v-model:value="tab" class="scanner__tabs">
+    <Tabs v-model:value="tab" class="scanner__tabs">
       <TabList>
         <Tab value="ip"><i class="pi pi-bolt" /> {{ t('cleanIp.tabIp') }}</Tab>
-        <Tab value="reality"><i class="pi pi-shield" /> {{ t('cleanIp.tabReality') }}</Tab>
+        <Tab value="fragment"><i class="pi pi-objects-column" /> {{ t('cleanIp.tabFragment') }}</Tab>
+        <Tab v-if="isSuperAdmin" value="reality"><i class="pi pi-shield" /> {{ t('cleanIp.tabReality') }}</Tab>
       </TabList>
     </Tabs>
 
@@ -109,7 +121,7 @@ onMounted(() => {
         :net="net"
         :domains="domains"
         :loaded="loaded"
-        @saved="domains = $event"
+        @saved="onDomainsSaved"
         @copy="copy"
       />
 
@@ -123,6 +135,10 @@ onMounted(() => {
         <i class="pi pi-chevron-down scanner__advanced-chevron" />
       </button>
       <FullTestCard v-show="fullOpen" v-model:domain-id="domainId" :domains="domains" :per-isp="perIsp" :ranges="scan.ranges.value" v-model:ranges-text="scan.rangesText.value" @copy="copy" @reports="onReports" @use="useReport" />
+    </div>
+
+    <div v-show="tab === 'fragment'" class="scanner__panel">
+      <FragmentPanel v-model:domain-id="domainId" :domains="domains" :loaded="loaded" @saved="onDomainsSaved" />
     </div>
 
     <div v-if="isSuperAdmin" v-show="tab === 'reality'" class="scanner__panel">

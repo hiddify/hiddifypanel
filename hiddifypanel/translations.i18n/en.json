@@ -1059,7 +1059,37 @@
       "viewScript": "View the script",
       "vpnWarning": "This browser is not in the panel's country: a VPN or proxy is probably on. Turn it off, otherwise you test the VPN, not your ISP.",
       "waiting": "Waiting for a run of the command…",
-      "yourNetwork": "Your network (as the panel sees it)"
+      "yourNetwork": "Your network (as the panel sees it)",
+      "tabFragment": "Fragment",
+      "pickDomain": "Pick a CDN domain",
+      "fragment": {
+        "lead": "CDN domains often need their own TLS Fragment (FinalMask) values. Pick a domain, try a preset, then check with Config Tester or a client on that ISP.",
+        "noCdn": "Add a CDN or worker domain first.",
+        "current": "Current for this domain",
+        "mode": {
+          "inherit": "Off",
+          "on": "On",
+          "off": "Off"
+        },
+        "enabled": "on",
+        "disabled": "off",
+        "presetsTitle": "Presets",
+        "presetsHint": "Applies a FinalMask TLS Fragment trick on this domain. Then test from the ISP you care about.",
+        "apply": "Apply",
+        "currentBtn": "Applied",
+        "applied": "Saved «{name}» on {domain}",
+        "testHint": "Fragment cannot be measured in the browser IP scan. After applying, use Config Tester or a client on that network to see which preset works.",
+        "presets": {
+          "off": "Off",
+          "offHint": "Disable fragment for this domain",
+          "default": "Default",
+          "fine": "Fine / fast interval",
+          "coarse": "Coarse length",
+          "1-3": "Packets 1-3",
+          "tight": "Tight (small & fast)",
+          "multi": "Multi lengths"
+        }
+      }
     },
     "common": {
       "actions": "Actions",
@@ -1464,7 +1494,71 @@
         "showAll": "All domains",
         "showDomains": "Show configs of",
         "showDomainsHint": "Users opening their page on this domain see the configs of these domains. Node REALITY entries need a Node Configs proxy enabled for clients to use them.",
-        "tlsMode": "TLS mode"
+        "tlsMode": "TLS mode",
+        "fragment": "TLS Fragment",
+        "fragmentHint": "Override the panel TLS Fragment setting for this CDN domain only. Different operators and CDNs often need different size / delay values.",
+        "fragmentModeLabel": "Mode",
+        "fragmentMode": {
+          "inherit": "Use panel setting",
+          "on": "Always on",
+          "off": "Always off"
+        },
+        "fragmentModeHint": {
+          "on": "Fragment is forced on for this domain, even if the panel setting is off.",
+          "off": "Fragment is forced off for this domain, even if the panel setting is on."
+        },
+        "fragmentInheritHint": "Follows the panel TLS Fragment setting.",
+        "fragmentInheritDetail": "Panel default: {state} ({size}, {sleep}, {packets}). Leave size/sleep/packets empty to use those values.",
+        "fragmentOn": "on",
+        "fragmentOff": "off",
+        "fragmentSize": "Lengths",
+        "fragmentSleep": "Delays",
+        "fragmentPackets": "Packets",
+        "fragmentPacketsHint": "Usually tlshello, or 1-3.",
+        "fragmentScannerGo": "Try presets in the scanner",
+        "fragmentLengths": "Lengths",
+        "fragmentLengthsHint": "One or more ranges, comma-separated (FinalMask lengths).",
+        "fragmentDelays": "Delays",
+        "fragmentDelaysHint": "One or more intervals, comma-separated (FinalMask delays).",
+        "fragmentMaxSplit": "Max split"
+      },
+      "tricks": {
+        "title": "Tricks",
+        "lead": "Optional client-side FinalMask for this CDN domain. Use a template or paste your own object.",
+        "docs": "FinalMask docs",
+        "off": "None",
+        "offHint": "No trick — normal TLS handshake",
+        "preview": "What clients get",
+        "presets": {
+          "default": "Default",
+          "fine": "Fine",
+          "coarse": "Coarse",
+          "multi": "Multi",
+          "tight": "Tight",
+          "1-3": "Packets 1-3"
+        },
+        "tlsFragment": {
+          "name": "TLS Fragment",
+          "hint": "Splits the TLS ClientHello (FinalMask fragment)",
+          "tune": "Tune fragment",
+          "tuneHint": "Start from a preset, then edit lengths / delays if needed. Values go into finalmask.tcp[].settings.",
+          "packets": "Packets",
+          "packetsHint": "tlshello = first TLS record; 1-3 = first few TCP packets.",
+          "lengths": "Lengths",
+          "lengthsHint": "Byte ranges per piece, comma-separated (e.g. 10-100 or 3-5, 6-8).",
+          "delays": "Delays",
+          "delaysHint": "Milliseconds between pieces, comma-separated (e.g. 50-200).",
+          "maxSplit": "Max split",
+          "maxSplitHint": "How many pieces at most (e.g. 3-6)."
+        },
+        "custom": {
+          "name": "Custom",
+          "hint": "Paste any FinalMaskObject (tcp / udp / quicParams)",
+          "tune": "Custom FinalMask",
+          "tuneHint": "Edit the FinalMask JSON directly. It is stored as tricks.finalmask and sent to clients as-is.",
+          "invalidJson": "Not valid JSON",
+          "mustObject": "Must be a JSON object (not an array)"
+        }
       },
       "getCert": "Get certificate",
       "guide": {

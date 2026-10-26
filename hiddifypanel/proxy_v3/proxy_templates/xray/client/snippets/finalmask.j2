@@ -1,5 +1,4 @@
-{# finalmask is an object, never a quoted string. #}
-{% set finalmask = ctx.proxy.domain.extra.finalmask if ctx.proxy.domain.extra.finalmask else "" %}
-{% if finalmask %}
-  "finalmask": {{ finalmask }},
+{# FinalMask object for Xray clients (TLS fragment is type "fragment"). Never a quoted string. #}
+{% if ctx.proxy.domain.finalmask %}
+  "finalmask": {{ ctx.proxy.domain.finalmask | tojson }},
 {% endif %}

@@ -14,11 +14,13 @@ import KindPicker from '@/features/domains/components/KindPicker.vue'
 import TlsPicker from '@/features/domains/components/TlsPicker.vue'
 import PortField from '@/features/domains/components/PortField.vue'
 import ProxyPicker from '@/features/domains/components/ProxyPicker.vue'
+import DomainTricksPanel from '@/features/domains/components/DomainTricksPanel.vue'
 import OperatorIpEditor from '@/shared/components/OperatorIpEditor.vue'
 import {
   KIND_META,
   KINDS,
   domainsApi,
+  hasDomainTricks,
   isFakeProxyMode,
   kindOf,
   tlsModeSelectable,
@@ -84,8 +86,17 @@ function fillFromRow(r: DomainRow) {
   httpPort.value = r.http_port
   error.value = null
   busy.value = false
-  // Open Advanced right away when something in it is set.
-  showAdvanced.value = !!((r.mode === 'cdn' && r.servernames) || r.tls_port || r.http_port || r.server_domain_id || r.download_domain_id || (r.cdn_ip && r.fake_mode === 'valid') || r.resolve_ip || r.ech || (r.extra_params && r.extra_params !== '{}'))
+  // Open Advanced when something inside it is set (including tricks).
+  let hasExtra = false
+  try {
+    const obj = JSON.parse(r.extra_params || '{}') as Record<string, unknown>
+    if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+      hasExtra = Object.keys(obj).length > 0 || hasDomainTricks(obj)
+    }
+  } catch {
+    hasExtra = !!(r.extra_params && r.extra_params !== '{}')
+  }
+  showAdvanced.value = !!((r.mode === 'cdn' && r.servernames) || r.tls_port || r.http_port || r.server_domain_id || r.download_domain_id || (r.cdn_ip && r.fake_mode === 'valid') || r.resolve_ip || r.ech || hasExtra)
 }
 
 // Same pattern as UserFormDialog: stay mounted, fill when opened (not v-if + immediate).
@@ -111,6 +122,8 @@ const kind = computed<DomainKind>({
 })
 const isSublink = computed(() => mode.value === 'sub_link_only')
 const isCdn = computed(() => mode.value === 'cdn')
+/** CDN edge domains that can use FinalMask tricks (CDN + Cloudflare worker). */
+const canTricks = computed(() => mode.value === 'cdn' || mode.value === 'worker')
 const isReality = computed(() => fakeMode.value === 'reality')
 /** Telegram / ShadowTLS / SS FakeTLS front domain: like Reality, but no custom proxies and no download domain. */
 const isFakeProxy = computed(() => isFakeProxyMode(fakeMode.value))
@@ -363,6 +376,8 @@ async function save() {
             </span>
           </label>
         </div>
+
+        <DomainTricksPanel v-model:extra-text="extraText" :enabled="canTricks" />
 
         <section class="dd__section">
           <h3 class="dd__h"><i class="pi pi-code dd__label-icon" />{{ t('domains.field.extra') }}</h3>

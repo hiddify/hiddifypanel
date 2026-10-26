@@ -1059,7 +1059,37 @@
       "viewScript": "مشاهدهٔ اسکریپت",
       "vpnWarning": "این مرورگر در کشور پنل نیست؛ احتمالاً فیلترشکن یا پروکسی روشن است. خاموشش کنید، وگرنه فیلترشکن را تست می‌کنید نه اپراتورتان را.",
       "waiting": "منتظر اجرای دستور…",
-      "yourNetwork": "اینترنت شما (از دید پنل)"
+      "yourNetwork": "اینترنت شما (از دید پنل)",
+      "tabFragment": "Fragment",
+      "pickDomain": "یک دامنه CDN انتخاب کنید",
+      "fragment": {
+        "lead": "دامنه‌های CDN اغلب به مقادیر TLS Fragment (FinalMask) جدا نیاز دارند. دامنه را انتخاب کنید، یک پیش‌فرض را اعمال کنید، سپس با Config Tester یا کلاینت روی آن اپراتور بسنجید.",
+        "noCdn": "اول یک دامنه CDN یا Worker اضافه کنید.",
+        "current": "وضعیت فعلی این دامنه",
+        "mode": {
+          "inherit": "خاموش",
+          "on": "روشن",
+          "off": "خاموش"
+        },
+        "enabled": "روشن",
+        "disabled": "خاموش",
+        "presetsTitle": "پیش‌فرض‌ها",
+        "presetsHint": "یک ترفند FinalMask TLS Fragment را روی این دامنه ذخیره می‌کند. بعد از شبکهٔ موردنظر تست کنید.",
+        "apply": "اعمال",
+        "currentBtn": "اعمال‌شده",
+        "applied": "«{name}» روی {domain} ذخیره شد",
+        "testHint": "Fragment را نمی‌توان در اسکن IP مرورگر اندازه گرفت. بعد از اعمال، با Config Tester یا کلاینت روی آن شبکه ببینید کدام پیش‌فرض کار می‌کند.",
+        "presets": {
+          "off": "خاموش",
+          "offHint": "Fragment را برای این دامنه غیرفعال می‌کند",
+          "default": "پیش‌فرض",
+          "fine": "ریز / فاصله کوتاه",
+          "coarse": "طول درشت",
+          "1-3": "بسته‌های ۱-۳",
+          "tight": "فشرده (کوچک و سریع)",
+          "multi": "چند طول"
+        }
+      }
     },
     "common": {
       "actions": "عملیات",
@@ -1465,7 +1495,71 @@
         "showAll": "همه دامنه‌ها",
         "showDomains": "نمایش کانفیگ‌های",
         "showDomainsHint": "کاربرانی که صفحه خود را روی این دامنه باز می‌کنند، کانفیگ‌های این دامنه‌ها را می‌بینند. دامنه‌های REALITY نود برای استفاده در اشتراک، به پروکسی «Node Configs» فعال نیاز دارند.",
-        "tlsMode": "حالت TLS"
+        "tlsMode": "حالت TLS",
+        "fragment": "Fragment TLS",
+        "fragmentHint": "تنظیم Fragment پنل را فقط برای این دامنه CDN عوض کنید. اپراتورها و CDNهای مختلف اغلب به طول و تأخیر متفاوت نیاز دارند.",
+        "fragmentModeLabel": "حالت",
+        "fragmentMode": {
+          "inherit": "از تنظیم پنل",
+          "on": "همیشه روشن",
+          "off": "همیشه خاموش"
+        },
+        "fragmentModeHint": {
+          "on": "Fragment برای این دامنه اجباری روشن است، حتی اگر در تنظیمات پنل خاموش باشد.",
+          "off": "Fragment برای این دامنه اجباری خاموش است، حتی اگر در تنظیمات پنل روشن باشد."
+        },
+        "fragmentInheritHint": "از تنظیم Fragment پنل پیروی می‌کند.",
+        "fragmentInheritDetail": "پیش‌فرض پنل: {state} ({size}، {sleep}، {packets}). برای استفاده از همان مقادیر، طول/تأخیر/بسته‌ها را خالی بگذارید.",
+        "fragmentOn": "روشن",
+        "fragmentOff": "خاموش",
+        "fragmentSize": "طول‌ها",
+        "fragmentSleep": "تأخیرها",
+        "fragmentPackets": "بسته‌ها",
+        "fragmentPacketsHint": "معمولاً tlshello یا ۱-۳.",
+        "fragmentScannerGo": "آزمایش پیش‌فرض‌ها در اسکنر",
+        "fragmentLengths": "طول‌ها",
+        "fragmentLengthsHint": "یک یا چند بازه، با ویرگول (FinalMask lengths).",
+        "fragmentDelays": "تأخیرها",
+        "fragmentDelaysHint": "یک یا چند فاصله، با ویرگول (FinalMask delays).",
+        "fragmentMaxSplit": "حداکثر تقسیم"
+      },
+      "tricks": {
+        "title": "ترفندها",
+        "lead": "FinalMask اختیاری سمت کلاینت برای این دامنه CDN. از قالب استفاده کنید یا شیء دلخواه خود را وارد کنید.",
+        "docs": "مستندات FinalMask",
+        "off": "بدون ترفند",
+        "offHint": "بدون ترفند — دست‌دهی TLS عادی",
+        "preview": "آنچه کلاینت‌ها می‌گیرند",
+        "presets": {
+          "default": "پیش‌فرض",
+          "fine": "ریز",
+          "coarse": "درشت",
+          "multi": "چندتایی",
+          "tight": "فشرده",
+          "1-3": "بسته‌های ۱-۳"
+        },
+        "tlsFragment": {
+          "name": "TLS Fragment",
+          "hint": "تقسیم ClientHello (لایه fragment در FinalMask)",
+          "tune": "تنظیم Fragment",
+          "tuneHint": "از یک پیش‌فرض شروع کنید، سپس در صورت نیاز طول و تأخیر را ویرایش کنید. مقادیر در finalmask.tcp[].settings می‌روند.",
+          "packets": "بسته‌ها",
+          "packetsHint": "tlshello = اولین رکورد TLS؛ ۱-۳ = چند بستهٔ اول TCP.",
+          "lengths": "طول‌ها",
+          "lengthsHint": "بازه بایت برای هر تکه، جدا با ویرگول (مثلاً 10-100 یا 3-5, 6-8).",
+          "delays": "تأخیرها",
+          "delaysHint": "میلی‌ثانیه بین تکه‌ها، جدا با ویرگول (مثلاً 50-200).",
+          "maxSplit": "حداکثر تقسیم",
+          "maxSplitHint": "حداکثر تعداد تکه‌ها (مثلاً 3-6)."
+        },
+        "custom": {
+          "name": "سفارشی",
+          "hint": "هر FinalMaskObject دلخواه (tcp / udp / quicParams)",
+          "tune": "FinalMask سفارشی",
+          "tuneHint": "JSON مربوط به FinalMask را مستقیم ویرایش کنید. در tricks.finalmask ذخیره می‌شود و بدون تغییر به کلاینت‌ها می‌رود.",
+          "invalidJson": "JSON معتبر نیست",
+          "mustObject": "باید یک شیء JSON باشد (نه آرایه)"
+        }
       },
       "getCert": "گرفتن گواهی",
       "guide": {

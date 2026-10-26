@@ -206,10 +206,11 @@ class ConfigEnum(metaclass=FastEnum):
     acme_email = _StrConfigDscr(ConfigCategory.tls, ApplyMode.nothing, hide_in_virtual_child=True)
     acme_accounts = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.nothing, hide_in_virtual_child=True)
 
-    tls_fragment_enable = _BoolConfigDscr(ConfigCategory.tls_trick)
-    tls_fragment_size = _StrConfigDscr(ConfigCategory.tls_trick)
-    tls_fragment_sleep = _StrConfigDscr(ConfigCategory.tls_trick)
-    tls_fragment_packets = _StrConfigDscr(ConfigCategory.tls_trick)
+    # Per-domain FinalMask tricks (Domains → Advanced); kept hidden so old DBs still migrate.
+    tls_fragment_enable = _BoolConfigDscr(ConfigCategory.hidden)
+    tls_fragment_size = _StrConfigDscr(ConfigCategory.hidden)
+    tls_fragment_sleep = _StrConfigDscr(ConfigCategory.hidden)
+    tls_fragment_packets = _StrConfigDscr(ConfigCategory.hidden)
     tls_mixed_case = _BoolConfigDscr(ConfigCategory.tls_trick)
     tls_padding_enable = _BoolConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)
     tls_padding_length = _StrConfigDscr(ConfigCategory.tls_trick, ApplyMode.apply_config)

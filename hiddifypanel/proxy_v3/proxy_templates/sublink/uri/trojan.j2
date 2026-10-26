@@ -10,7 +10,7 @@
   {% set uri.fragment %}{%- include 'sublink/tag' -%}{% endset %}
 
   {% set qp = uri.query_params %}
-  {% if ctx.proxy.domain.extra.finalmask %}{% set qp.fm = ctx.proxy.domain.extra.finalmask %}{% endif %}
+  {% if ctx.proxy.domain.finalmask %}{% set qp.fm = ctx.proxy.domain.finalmask %}{% endif %}
 
   {% include '__TLS_SLUG__' %}
   {% include '__TRANSPORT_SLUG__' %}

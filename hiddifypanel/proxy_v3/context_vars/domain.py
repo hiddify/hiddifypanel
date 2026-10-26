@@ -12,6 +12,7 @@ from hiddifypanel.models import Domain, DomainType, FakeMode
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.domain import FAKE_PROXY_MODES
+from hiddifypanel.proxy_v3 import tls_fragment as tls_fragment_mod
 
 from .cert import CertVar
 from .ip import IPVar
@@ -54,6 +55,14 @@ class DomainIPVar(BaseModel):
     dst_server: str | None = None
     extra_params: JsonMap = Field(default_factory=JsonMap)
 
+    #: Resolved TLS fragment → FinalMask (CDN/worker); see ``proxy_v3.tls_fragment``.
+    tls_fragment_mode: str = "inherit"
+    tls_fragment_enable: bool = False
+    tls_fragment_packets: str = tls_fragment_mod.DEFAULT_PACKETS
+    tls_fragment_lengths: list[str] = Field(default_factory=lambda: [tls_fragment_mod.DEFAULT_SIZE])
+    tls_fragment_delays: list[str] = Field(default_factory=lambda: [tls_fragment_mod.DEFAULT_SLEEP])
+    tls_fragment_max_split: str = tls_fragment_mod.DEFAULT_MAX_SPLIT
+
     custom_proxy_ids: set[int] = Field(default_factory=set)
 
     @field_validator("extra_params", mode="before")
@@ -65,6 +74,17 @@ class DomainIPVar(BaseModel):
     def extra(self) -> JsonMap:
         """Alias for ``extra_params`` (legacy templates)."""
         return self.extra_params
+
+    @property
+    def tricks(self) -> JsonMap:
+        """``extra_params.tricks`` (finalmask, tls_fragment, …)."""
+        raw = self.extra_params.get("tricks") if isinstance(self.extra_params, dict) else None
+        return JsonMap.from_any(raw if isinstance(raw, dict) else {})
+
+    @property
+    def finalmask(self) -> object:
+        """FinalMaskObject for hiddify-core / xray clients (``tricks.finalmask``)."""
+        return tls_fragment_mod.finalmask_of(self.extra_params, domain_mode=self.mode)
 
     @property
     def special(self) -> bool:
@@ -135,6 +155,7 @@ class DomainIPVar(BaseModel):
         ips = get_ips(domain_db)
         server_host = domain_db.get_server()
         cert = _client_cert_for_domain(domain_db, hostname=hostname, sni=sni, connect_host=server_host or hostname)
+        frag = tls_fragment_mod.resolve(domain_mode=domain_db.mode, extra=extra)
         var = cls(
             id=domain_db.id,
             name=hostname,
@@ -150,6 +171,12 @@ class DomainIPVar(BaseModel):
             echinfo=_resolve_domain_ech(domain_db, sni=sni),
             cert=cert,
             extra_params=extra,
+            tls_fragment_mode=str(frag["mode"]),
+            tls_fragment_enable=bool(frag["enable"]),
+            tls_fragment_packets=str(frag["packets"]),
+            tls_fragment_lengths=list(frag["lengths"]),
+            tls_fragment_delays=list(frag["delays"]),
+            tls_fragment_max_split=str(frag["maxSplit"]),
             resolve_ip=bool(domain_db.resolve_ip),
             has_server_domain=bool(domain_db.usable_server_domain()),
             has_cdn_ip=bool((domain_db.cdn_ip or "").strip()),

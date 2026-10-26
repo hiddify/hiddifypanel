@@ -79,6 +79,184 @@ export interface DomainsMeta {
   server_ips?: { ip: string; version: 4 | 6; label: string }[]
 }
 
+/** Per-domain trick mode for the TLS Fragment template. */
+export type TlsFragmentMode = 'on' | 'off'
+
+export interface FragmentSettings {
+  packets: string
+  lengths: string[]
+  delays: string[]
+  maxSplit: string
+}
+
+/** ``extra_params.tricks``. */
+export function tricksOf(extra: Record<string, unknown> | null | undefined): Record<string, unknown> {
+  const tricks = extra?.tricks
+  return tricks && typeof tricks === 'object' && !Array.isArray(tricks) ? { ...(tricks as Record<string, unknown>) } : {}
+}
+
+function asStrList(value: unknown, fallback: string[]): string[] {
+  if (typeof value === 'string') {
+    const parts = value
+      .split(/[,;]+/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+    return parts.length ? parts : [...fallback]
+  }
+  if (Array.isArray(value)) {
+    const parts = value.map((p) => String(p).trim()).filter(Boolean)
+    return parts.length ? parts : [...fallback]
+  }
+  return [...fallback]
+}
+
+function buildFragmentFinalmask(frag: Record<string, unknown>): Record<string, unknown> {
+  return {
+    tcp: [
+      {
+        type: 'fragment',
+        settings: {
+          packets: String(frag.packets || 'tlshello').trim() || 'tlshello',
+          lengths: asStrList(frag.lengths ?? frag.size, ['10-100']),
+          delays: asStrList(frag.delays ?? frag.sleep, ['50-200']),
+          maxSplit: String(frag.maxSplit || frag.max_split || '3-6').trim() || '3-6',
+        },
+      },
+    ],
+  }
+}
+
+/** Read TLS Fragment settings from ``tricks.finalmask.tcp`` (or legacy shapes). */
+export function fragmentSettingsOf(extra: Record<string, unknown> | null | undefined): FragmentSettings | null {
+  if (!extra) return null
+  const tricks = tricksOf(extra)
+  const fm = (tricks.finalmask ?? extra.finalmask) as Record<string, unknown> | undefined
+  if (fm && typeof fm === 'object' && !Array.isArray(fm)) {
+    const tcp = fm.tcp
+    if (Array.isArray(tcp)) {
+      for (const layer of tcp) {
+        if (!layer || typeof layer !== 'object' || Array.isArray(layer)) continue
+        const item = layer as Record<string, unknown>
+        if (String(item.type || '').toLowerCase() !== 'fragment') continue
+        const settings = item.settings && typeof item.settings === 'object' && !Array.isArray(item.settings) ? (item.settings as Record<string, unknown>) : {}
+        return {
+          packets: String(settings.packets || 'tlshello'),
+          lengths: asStrList(settings.lengths, ['10-100']),
+          delays: asStrList(settings.delays, ['50-200']),
+          maxSplit: String(settings.maxSplit || settings.max_split || '3-6'),
+        }
+      }
+    }
+    if (String(fm.type || '').toLowerCase() === 'fragment') {
+      const settings = fm.settings && typeof fm.settings === 'object' && !Array.isArray(fm.settings) ? (fm.settings as Record<string, unknown>) : {}
+      return {
+        packets: String(settings.packets || 'tlshello'),
+        lengths: asStrList(settings.lengths, ['10-100']),
+        delays: asStrList(settings.delays, ['50-200']),
+        maxSplit: String(settings.maxSplit || settings.max_split || '3-6'),
+      }
+    }
+  }
+  const legacy = (tricks.tls_fragment ?? extra.tls_fragment) as Record<string, unknown> | undefined
+  if (legacy && typeof legacy === 'object' && !Array.isArray(legacy) && (legacy.packets || legacy.lengths || legacy.size)) {
+    return {
+      packets: String(legacy.packets || 'tlshello'),
+      lengths: asStrList(legacy.lengths ?? legacy.size, ['10-100']),
+      delays: asStrList(legacy.delays ?? legacy.sleep, ['50-200']),
+      maxSplit: String(legacy.maxSplit || legacy.max_split || '3-6'),
+    }
+  }
+  return null
+}
+
+/** @deprecated use fragmentSettingsOf */
+export function tlsFragmentOf(extra: Record<string, unknown> | null | undefined): Record<string, unknown> | null {
+  const s = fragmentSettingsOf(extra)
+  return s ? { ...s, mode: 'on' } : null
+}
+
+/** Raw FinalMask object from ``tricks.finalmask`` (or legacy top-level). */
+export function finalmaskOf(extra: Record<string, unknown> | null | undefined): Record<string, unknown> | null {
+  if (!extra) return null
+  const tricks = tricksOf(extra)
+  for (const candidate of [tricks.finalmask, extra.finalmask]) {
+    if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) return { ...(candidate as Record<string, unknown>) }
+  }
+  return null
+}
+
+/** True when FinalMask is a single TCP fragment layer (the TLS Fragment template). */
+export function isSimpleTlsFragmentFinalmask(fm: Record<string, unknown> | null | undefined): boolean {
+  if (!fm) return false
+  const keys = Object.keys(fm).filter((k) => fm[k] != null && !(Array.isArray(fm[k]) && !(fm[k] as unknown[]).length))
+  if (keys.some((k) => k !== 'tcp')) return false
+  const tcp = fm.tcp
+  if (!Array.isArray(tcp) || tcp.length !== 1) return false
+  const layer = tcp[0]
+  if (!layer || typeof layer !== 'object' || Array.isArray(layer)) return false
+  return String((layer as Record<string, unknown>).type || '').toLowerCase() === 'fragment'
+}
+
+/** Which tricks UI template is active for this domain. */
+export function trickTemplateOf(extra: Record<string, unknown> | null | undefined): 'off' | 'tls_fragment' | 'custom' {
+  if (!extra) return 'off'
+  const tricks = tricksOf(extra)
+  const named = String(tricks.template || '').toLowerCase()
+  if (named === 'custom') return 'custom'
+  if (named === 'tls_fragment') return 'tls_fragment'
+  const fm = finalmaskOf(extra)
+  if (!fm) {
+    if (tricks.tls_fragment || extra.tls_fragment) return 'tls_fragment'
+    return 'off'
+  }
+  return isSimpleTlsFragmentFinalmask(fm) ? 'tls_fragment' : 'custom'
+}
+
+/** Write / clear the TLS Fragment trick as ``tricks.finalmask`` (FinalMaskObject). */
+export function setTlsFragmentInExtra(extra: Record<string, unknown>, frag: Record<string, unknown> | null): Record<string, unknown> {
+  const obj: Record<string, unknown> = { ...extra }
+  const tricks = tricksOf(obj)
+  delete obj.finalmask
+  delete obj.tls_fragment
+  delete tricks.tls_fragment
+
+  if (frag === null || String(frag.mode || '').toLowerCase() === 'off') {
+    delete tricks.template
+    delete tricks.finalmask
+  } else {
+    tricks.template = 'tls_fragment'
+    tricks.finalmask = buildFragmentFinalmask(frag)
+  }
+  if (Object.keys(tricks).length) obj.tricks = tricks
+  else delete obj.tricks
+  return obj
+}
+
+/** Write a custom FinalMask object (or clear tricks). */
+export function setCustomFinalmaskInExtra(extra: Record<string, unknown>, finalmask: Record<string, unknown> | null): Record<string, unknown> {
+  const obj: Record<string, unknown> = { ...extra }
+  const tricks = tricksOf(obj)
+  delete obj.finalmask
+  delete obj.tls_fragment
+  delete tricks.tls_fragment
+
+  if (!finalmask || !Object.keys(finalmask).length) {
+    delete tricks.template
+    delete tricks.finalmask
+  } else {
+    tricks.template = 'custom'
+    tricks.finalmask = finalmask
+  }
+  if (Object.keys(tricks).length) obj.tricks = tricks
+  else delete obj.tricks
+  return obj
+}
+
+/** Whether ``extra_params`` has any tricks / finalmask worth opening Advanced for. */
+export function hasDomainTricks(extra: Record<string, unknown> | null | undefined): boolean {
+  return trickTemplateOf(extra) !== 'off'
+}
+
 /** Loaded separately, after the page: only the edit dialog (and the names of shown domains) need it. */
 export interface DomainsOptions {
   /** Domains whose configs a domain can show: this panel's and its nodes' (`node` = the node's name). */
