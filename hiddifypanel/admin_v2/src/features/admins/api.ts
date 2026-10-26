@@ -3,6 +3,26 @@ import type { AdditionalConfig } from '@/shared/utils/additional-configs'
 
 export type AdminMode = 'super_admin' | 'admin' | 'agent'
 
+/** Grantable actions (see hiddifypanel.admin_capabilities). */
+export type AdminCapability =
+  | 'add_sub_admins'
+  | 'override_preferred_outbound'
+  | 'add_extra_sublinks'
+  | 'modify_user_extra'
+  | 'modify_domains'
+  | 'modify_outbounds'
+
+export const ADMIN_CAPABILITIES: AdminCapability[] = [
+  'add_sub_admins',
+  'override_preferred_outbound',
+  'add_extra_sublinks',
+  'modify_user_extra',
+  'modify_domains',
+  'modify_outbounds',
+]
+
+export type AdminCapabilities = Record<AdminCapability, boolean>
+
 /** Limits of one admin; they count its users and all its sub-admins' users. Null fields: no limit. */
 export interface AdminLimits {
   max_users: number
@@ -35,6 +55,7 @@ export interface AdminRow {
   comment: string
   mode: AdminMode
   can_add_admin: boolean
+  capabilities: AdminCapabilities
   /** Null for the tree root (the signed-in admin). */
   parent_uuid: string | null
   parent_name: string | null
@@ -70,6 +91,7 @@ export interface AdminsTree {
   /** A node: admins come from the parent panel and cannot be changed here. */
   read_only?: boolean
   my_limits: AdminLimits | null
+  my_capabilities: AdminCapabilities
   link_domains: LinkDomain[]
   outbounds: OutboundOption[]
   admins: AdminRow[]
@@ -80,6 +102,7 @@ export interface AdminPayload {
   comment?: string
   uuid?: string
   can_add_admin?: boolean
+  capabilities?: Partial<AdminCapabilities>
   parent_uuid?: string
   max_users?: number
   max_active_users?: number
@@ -115,6 +138,7 @@ export interface MyAccount extends OverrideInfo {
   name: string
   mode: AdminMode
   can_add_admin: boolean
+  capabilities: AdminCapabilities
   parent_name: string | null
   has_password: boolean
   /** Strong enough for an alias (and required for any new password). */

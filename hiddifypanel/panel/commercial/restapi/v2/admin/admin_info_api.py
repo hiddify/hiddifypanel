@@ -25,12 +25,15 @@ class AdminInfoApi(MethodView):
             if parent := AdminUser.by_id(admin.parent_admin_id):
                 parent_admin_uuid = parent.uuid
 
+        from hiddifypanel import admin_capabilities as caps
+
         return AdminSchema(
             name=admin.name,
             comment=admin.comment,
             uuid=admin.uuid,
             mode=admin.mode,
-            can_add_admin=admin.can_add_admin,
+            can_add_admin=caps.has(admin, caps.ADD_SUB_ADMINS),
+            capabilities=caps.of(admin),
             parent_admin_uuid=parent_admin_uuid,
             telegram_id=admin.telegram_id or 0,
             lang=Lang(hconfig(ConfigEnum.admin_lang)),

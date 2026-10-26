@@ -284,15 +284,15 @@ def _as_admin_mode(value) -> AdminMode:
 
 
 def assert_actor_can_create_admin() -> None:
-    """POST /admin_user/ — only super_admin or admin with can_add_admin."""
+    """POST /admin_user/ — only admins with the add_sub_admins capability."""
     from apiflask import abort
+
+    from hiddifypanel import admin_capabilities as caps
 
     actor = g.account
     if actor is None or not hasattr(actor, "mode"):
         abort(403, "Admin account required")
-    if actor.mode == AdminMode.super_admin:
-        return
-    if actor.mode == AdminMode.admin and actor.can_add_admin:
+    if caps.has(actor, caps.ADD_SUB_ADMINS):
         return
     abort(403, "You don't have permission to create admins")
 
@@ -301,12 +301,13 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
     """Reject privilege escalation on admin create/update payloads.
 
     - Assigned ``mode`` must not exceed the caller's mode.
-    - Only ``super_admin`` may assign ``super_admin`` or grant ``can_add_admin``.
-    - Callers cannot raise their own ``mode`` / ``can_add_admin``.
+    - Capabilities / ``can_add_admin``: cannot change your own; cannot grant what you lack.
     - Non-super callers create/update others under themselves; self-patches never
       rewrite ``parent_admin_uuid`` (that would make the admin its own parent).
     """
     from apiflask import abort
+
+    from hiddifypanel import admin_capabilities as caps
 
     actor = g.account
     if actor is None or not hasattr(actor, "mode"):
@@ -322,6 +323,8 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
             abort(403, "Cannot change your own mode")
         if "can_add_admin" in out and out["can_add_admin"] is not None and bool(out["can_add_admin"]) != bool(target.can_add_admin):
             abort(403, "Cannot change your own can_add_admin")
+        if "capabilities" in out and out["capabilities"] is not None:
+            abort(403, "Cannot change your own capabilities")
         out.pop("parent_admin_uuid", None)
 
     if "mode" in out and out["mode"] is not None:
@@ -332,15 +335,13 @@ def validate_admin_write_payload(payload: dict, *, target: AdminUser | None = No
             abort(403, "Only super_admin can assign super_admin")
         out["mode"] = requested
 
-    if "can_add_admin" in out and out["can_add_admin"] is not None:
-        want = bool(out["can_add_admin"])
-        if actor_mode != AdminMode.super_admin:
-            if target is None:
-                out["can_add_admin"] = False
-            elif want and not bool(target.can_add_admin):
-                abort(403, "Only super_admin can grant can_add_admin")
-            else:
-                out["can_add_admin"] = want
+    if "capabilities" in out or "can_add_admin" in out:
+        proposed = dict(out.get("capabilities") or {})
+        if "can_add_admin" in out and out["can_add_admin"] is not None and caps.ADD_SUB_ADMINS not in proposed:
+            proposed[caps.ADD_SUB_ADMINS] = bool(out["can_add_admin"])
+        merged = caps.merge_for_actor(actor, proposed, existing=None if target is None else caps.of(target), creating=target is None)
+        out["capabilities"] = merged
+        out["can_add_admin"] = caps.sync_can_add_admin(merged)
 
     if actor_mode != AdminMode.super_admin:
         if self_target:

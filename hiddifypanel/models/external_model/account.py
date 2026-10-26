@@ -136,6 +136,8 @@ class UserModel(AccountModel):
 class AdminModel(AccountModel):
     mode: AdminMode | None = None
     can_add_admin: bool | None = None
+    capabilities: dict[str, bool] | None = None
+    """Which actions this admin may perform / grant (see hiddifypanel.admin_capabilities)."""
     parent_admin_uuid: str | None = None
     max_users: int | None = None
     max_active_users: int | None = None
@@ -148,3 +150,10 @@ class AdminModel(AccountModel):
     @classmethod
     def _parent_str(cls, value: object) -> str | None:
         return None if value is None else str(value)
+
+    @field_validator("capabilities", mode="before")
+    @classmethod
+    def _capabilities(cls, value: object) -> dict[str, bool] | None:
+        if value is None or not isinstance(value, dict):
+            return None
+        return {str(k): bool(v) for k, v in value.items()}

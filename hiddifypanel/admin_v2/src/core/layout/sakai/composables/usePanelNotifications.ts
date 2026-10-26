@@ -1,7 +1,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
-import { accountMode, isChildPanel, isSuperAdmin, panelNotices, type PanelNotice } from '@/core/panelShell'
+import { hasCapability, isChildPanel, isSuperAdmin, panelNotices, type PanelNotice } from '@/core/panelShell'
 import { domainProblems, domainSaveWarnings, loadDomainProblems } from '@/shared/composables/useDomainNotices'
 import { configHealthProblems, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
 
@@ -98,7 +98,7 @@ export function usePanelNotifications() {
   function refreshHealth() {
     // Config health is the super admin's, and a node's configs are tested by its parent panel; every admin has Domains
     if (isSuperAdmin.value && !isChildPanel.value) void loadConfigHealth()
-    if (isSuperAdmin.value || accountMode.value === 'admin') void loadDomainProblems()
+    if (hasCapability('modify_domains')) void loadDomainProblems()
     healthTimer = window.setTimeout(refreshHealth, HEALTH_REFRESH_MS)
   }
   // Closed notices stay closed in this browser.

@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { isAgent, isChildPanel, isSuperAdmin, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
+import { hasCapability, isAgent, isChildPanel, isSuperAdmin, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
 
 export type { AdminMenuGroup, AdminMenuItem }
 
@@ -78,7 +78,13 @@ export function useAdminMenu() {
       settings: (() => {
         const all = serverItems('settings')
         const first = (to: string) => all.find((item) => item.to === to)
-        const lead = [first('/domains'), ...(isAgent.value ? [] : [protocols.value]), ...(isAgent.value || !isSuperAdmin.value ? [] : [outbounds.value]), first('/settings'), ...(isAgent.value ? [] : [proxyEditor.value])]
+        const lead = [
+          first('/domains'),
+          ...(isAgent.value ? [] : [protocols.value]),
+          ...(hasCapability('modify_outbounds') ? [outbounds.value] : []),
+          first('/settings'),
+          ...(isAgent.value ? [] : [proxyEditor.value]),
+        ]
         const placed = new Set(lead)
         return [...lead.filter((item): item is AdminMenuItem => !!item), ...all.filter((item) => !placed.has(item))]
       })(),

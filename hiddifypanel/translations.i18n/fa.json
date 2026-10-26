@@ -411,7 +411,8 @@
         "empty": "تنظیم نشده",
         "badUrl": "آدرس کامل را وارد کنید (با https:// شروع شود)",
         "saved": "صفحهٔ کاربران ذخیره شد"
-      }
+      },
+      "outboundReadOnly": "توسط ادمین بالاتر تنظیم شده؛ می‌بینید اما نمی‌توانید عوض کنید."
     },
     "actions": {
       "applyConfigs": "اعمال تغییرات",
@@ -532,7 +533,13 @@
         "superNoLimits": "مدیر کل محدودیتی ندارد.",
         "upTo": "تا {max} (محدودیت شما)",
         "uuidHint": "خودکار ساخته می‌شود. فقط برای استفاده از یک شناسهٔ مشخص تغییرش دهید.",
-        "uuidInvalid": "این UUID معتبر نیست"
+        "uuidInvalid": "این UUID معتبر نیست",
+        "capabilities": "مجوزها",
+        "capabilitiesHint": "برای تغییر مجوزها لمس کنید. فقط مجوزهایی را می‌توانید بدهید که خودتان دارید.",
+        "capabilitiesNone": "بدون مجوز ویژه",
+        "capabilitiesCount": "{n} مجوز | {n} مجوز",
+        "capabilitiesEdit": "ویرایش مجوزها",
+        "capabilitiesDone": "تمام"
       },
       "limit": {
         "max_active_users": "حداکثر کاربر فعال",
@@ -588,7 +595,23 @@
         "users": "کاربر | کاربر"
       },
       "title": "ادمین‌ها",
-      "you": "شما"
+      "you": "شما",
+      "capability": {
+        "add_sub_admins": "افزودن زیر‌ادمین",
+        "override_preferred_outbound": "تغییر خروجی ترجیحی",
+        "add_extra_sublinks": "افزودن لینک اشتراک اضافه",
+        "modify_user_extra": "سفارشی‌سازی صفحه کاربر",
+        "modify_domains": "مدیریت دامنه‌ها",
+        "modify_outbounds": "مدیریت خروجی‌ها"
+      },
+      "capabilityHint": {
+        "add_sub_admins": "می‌تواند در محدودهٔ سهمیه، نماینده بسازد.",
+        "override_preferred_outbound": "می‌تواند مسیر خروج ترافیک کاربر را انتخاب کند.",
+        "add_extra_sublinks": "می‌تواند کانفیگ یا لینک اشتراک اضافه برای کاربرانش بگذارد.",
+        "modify_user_extra": "می‌تواند برندینگ و پارامترهای صفحه کاربر را عوض کند.",
+        "modify_domains": "می‌تواند دامنه‌های این پنل را مدیریت کند.",
+        "modify_outbounds": "می‌تواند خروجی‌های سرور (WARP، SOCKS و …) را تنظیم کند."
+      }
     },
     "appTitle": "هیدیفای منیجر",
     "apply": {
@@ -3043,7 +3066,8 @@
         "uuidInvalid": "این UUID معتبر نیست",
         "waitingText": "{n} روز از اولین اتصال شروع می‌شود.",
         "waitingUnlimited": "از اولین اتصال شروع می‌شود و منقضی نمی‌شود.",
-        "who": "مشخصات"
+        "who": "مشخصات",
+        "outboundReadOnly": "خروجی ترجیحی را می‌بینید اما فقط ادمینی با این مجوز می‌تواند آن را عوض کند."
       },
       "groupByOwner": "گروه‌بندی بر اساس ادمین",
       "groupCount": "{n} کاربر | {n} کاربر",

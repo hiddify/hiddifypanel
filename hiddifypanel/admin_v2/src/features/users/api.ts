@@ -58,6 +58,14 @@ export interface UsersState {
   admins: { uuid: string; name: string; parent_uuid: string | null }[]
   outbounds: { id: number; name: string; mode: string; enabled: boolean }[]
   can_add: boolean
+  capabilities?: {
+    add_sub_admins?: boolean
+    override_preferred_outbound?: boolean
+    add_extra_sublinks?: boolean
+    modify_user_extra?: boolean
+    modify_domains?: boolean
+    modify_outbounds?: boolean
+  }
   /** A node: users come from the parent panel and cannot be changed here. */
   read_only?: boolean
 }

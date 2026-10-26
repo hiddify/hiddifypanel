@@ -56,6 +56,9 @@ class AdminUser(BaseAccount):
         """Admins (not deleted) of each mode."""
         return {mode: n for mode, n in db.session.query(cls.mode, func.count()).group_by(cls.mode).all()}
     can_add_admin: Mapped[bool] = mapped_column(default=False)
+    #: Which actions this admin may perform / grant to its sub-admins (see hiddifypanel.admin_capabilities).
+    #: Super admins ignore this and always have every capability.
+    capabilities: Mapped[dict | None] = mapped_column(JSON, default=None, nullable=True)
     max_users: Mapped[int] = mapped_column(default=100)
     max_active_users: Mapped[int] = mapped_column(default=100)
     # None = no limit. Online means seen in the last 24 hours.
@@ -119,6 +122,7 @@ class AdminUser(BaseAccount):
             id=self.id,
             mode=self.mode,
             can_add_admin=self.can_add_admin,
+            capabilities=dict(self.capabilities) if self.capabilities else None,
             parent_admin_uuid=self.parent_admin.uuid if self.parent_admin else None,
             max_users=self.max_users,
             max_active_users=self.max_active_users,
@@ -170,8 +174,19 @@ class AdminUser(BaseAccount):
 
         if row.mode is not None:
             dbuser.mode = row.mode
-        if row.can_add_admin is not None:
+        if row.has("capabilities") and row.capabilities is not None:
+            from hiddifypanel import admin_capabilities as caps
+
+            dbuser.capabilities = caps.normalize(row.capabilities)
+            dbuser.can_add_admin = caps.sync_can_add_admin(dbuser.capabilities)
+        elif row.can_add_admin is not None:
             dbuser.can_add_admin = row.can_add_admin
+            # Keep capabilities.add_sub_admins in sync when only the legacy flag is sent.
+            from hiddifypanel import admin_capabilities as caps
+
+            current = caps.of(dbuser) if dbuser.capabilities else caps.defaults_for_mode(dbuser.mode, can_add_admin=row.can_add_admin)
+            current[caps.ADD_SUB_ADMINS] = bool(row.can_add_admin)
+            dbuser.capabilities = current
         if row.max_users is not None:
             dbuser.max_users = row.max_users
         if row.max_active_users is not None:

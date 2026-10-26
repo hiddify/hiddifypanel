@@ -83,6 +83,9 @@ const resetUsage = ref(false)
 const resetDays = ref(false)
 
 const editing = computed(() => props.user !== null)
+const canOverrideOutbound = computed(() => Boolean(props.state?.capabilities?.override_preferred_outbound))
+const canAddSublinks = computed(() => Boolean(props.state?.capabilities?.add_extra_sublinks))
+const canModifyUserExtra = computed(() => Boolean(props.state?.capabilities?.modify_user_extra))
 
 function randomUuid(): string {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
@@ -190,7 +193,7 @@ const ownerOptions = computed(() => {
 })
 
 // ---- Additional configs
-const configsInvalid = computed(() => configs.value.some((c) => configRowProblem(c)))
+const configsInvalid = computed(() => canAddSublinks.value && configs.value.some((c) => configRowProblem(c)))
 
 /** What is set inside the closed Advanced section, so nothing hides there unnoticed. */
 const advancedSummary = computed(() => {
@@ -218,8 +221,9 @@ const extraError = computed(() => {
 
 async function submit() {
   touched.value = true
-  if (!name.value.trim() || uuidError.value || extraError.value || configsInvalid.value || busy.value) {
-    if (uuidError.value || extraError.value || configsInvalid.value) showAdvanced.value = true
+  const extraBad = canModifyUserExtra.value && !!extraError.value
+  if (!name.value.trim() || uuidError.value || extraBad || configsInvalid.value || busy.value) {
+    if (uuidError.value || extraBad || configsInvalid.value) showAdvanced.value = true
     return
   }
   busy.value = true
@@ -233,11 +237,11 @@ async function submit() {
     mode: mode.value,
     owner_uuid: ownerUuid.value ?? undefined,
     telegram_id: telegramId.value,
-    preferred_outbound: preferredOutbound.value,
-    additional_configs: cleanConfigRows(configs.value),
-    extra_params: extraText.value.trim() || '{}',
     uuid: uuid.value.trim().toLowerCase(),
   }
+  if (canOverrideOutbound.value) payload.preferred_outbound = preferredOutbound.value
+  if (canAddSublinks.value) payload.additional_configs = cleanConfigRows(configs.value)
+  if (canModifyUserExtra.value) payload.extra_params = extraText.value.trim() || '{}'
   if (resetUsage.value) payload.reset_usage = true
   if (resetDays.value) payload.reset_days = true
   try {
@@ -453,11 +457,11 @@ async function submit() {
         <div v-if="showAdvanced" class="uf-grid">
           <div class="uf-field--wide uf-adv-blocks">
           <!-- Routing -->
-          <section class="uf-sub">
+          <section v-if="(state?.outbounds.length ?? 0) > 0" class="uf-sub">
             <h5 class="uf-sub__title"><i class="pi pi-directions" />{{ t('users.form.routing') }}</h5>
             <div class="uf-field">
               <label for="uf-outbound" class="font-medium">{{ t('users.form.outbound') }}</label>
-              <Select v-model="preferredOutbound" :options="outboundOptions" option-label="name" option-value="id" input-id="uf-outbound" :disabled="busy" class="w-full">
+              <Select v-model="preferredOutbound" :options="outboundOptions" option-label="name" option-value="id" input-id="uf-outbound" :disabled="busy || !canOverrideOutbound" class="w-full">
                 <template #option="{ option }">
                   <span class="uf-opt" :class="{ 'uf-opt--off': !option.enabled }">
                     {{ option.name }}
@@ -466,15 +470,15 @@ async function submit() {
                   </span>
                 </template>
               </Select>
-              <small class="text-muted-color">{{ t('users.form.outboundHint') }}</small>
+              <small class="text-muted-color">{{ canOverrideOutbound ? t('users.form.outboundHint') : t('users.form.outboundReadOnly') }}</small>
             </div>
           </section>
 
           <!-- Additional configs -->
-          <section class="uf-sub">
+          <section v-if="canAddSublinks || configs.length || (detail?.inherited_configs ?? 0) > 0" class="uf-sub">
             <h5 class="uf-sub__title"><i class="pi pi-paperclip" />{{ t('users.configs.title') }}<span v-if="configs.length" class="uf-count">{{ configs.length }}</span></h5>
             <p class="uf-hint">{{ t('users.configs.hint') }}</p>
-            <AdditionalConfigsEditor v-model="configs" :disabled="busy" :show-errors="touched" :inherited="detail?.inherited_configs" />
+            <AdditionalConfigsEditor v-model="configs" :disabled="busy || !canAddSublinks" :show-errors="touched" :inherited="detail?.inherited_configs" />
           </section>
           </div>
           <div class="uf-field uf-field--wide">
@@ -493,7 +497,7 @@ async function submit() {
             <label for="uf-tg" class="font-medium">{{ t('users.form.telegram') }} <span class="text-muted-color font-normal">({{ t('users.form.optional') }})</span></label>
             <InputNumber v-model="telegramId" input-id="uf-tg" :use-grouping="false" :min="0" :disabled="busy" fluid />
           </div>
-          <div class="uf-field uf-field--wide">
+          <div v-if="canModifyUserExtra" class="uf-field uf-field--wide">
             <span class="font-medium">{{ t('users.form.extra') }}</span>
             <Json5Editor v-model="extraText" height="140px" />
             <small :class="extraError ? 'uf-error' : 'text-muted-color'">{{ extraError ?? t('users.form.extraHint') }}</small>

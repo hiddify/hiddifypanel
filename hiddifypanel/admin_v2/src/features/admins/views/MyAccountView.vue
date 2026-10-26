@@ -134,17 +134,17 @@
         </section>
 
         <!-- Default outbound -->
-        <section class="account-card">
+        <section v-if="me.outbounds.length || me.capabilities?.override_preferred_outbound" class="account-card">
           <header class="account-card__head">
             <span class="account-card__icon account-card__icon--configs"><i class="pi pi-directions" /></span>
             <div class="flex-1 min-w-0">
               <h3 class="account-card__title">{{ t('account.outboundTitle') }}</h3>
-              <p class="account-card__sub">{{ t('account.outboundSub') }}</p>
+              <p class="account-card__sub">{{ me.capabilities?.override_preferred_outbound ? t('account.outboundSub') : t('account.outboundReadOnly') }}</p>
             </div>
           </header>
           <template v-if="me.outbounds.length">
-            <DefaultOutboundSelect v-model="myOutbound" :outbounds="me.outbounds" :inherited="me.inherited_outbound" :disabled="savingOutbound" input-id="my-outbound" />
-            <div class="account-card__foot">
+            <DefaultOutboundSelect v-model="myOutbound" :outbounds="me.outbounds" :inherited="me.inherited_outbound" :disabled="savingOutbound || !me.capabilities?.override_preferred_outbound" input-id="my-outbound" />
+            <div v-if="me.capabilities?.override_preferred_outbound" class="account-card__foot">
               <small v-if="outboundDirty" class="text-muted-color">{{ t('account.configsUnsaved') }}</small>
               <Button icon="pi pi-check" :label="t('common.save')" :loading="savingOutbound" :disabled="!outboundDirty" @click="saveOutbound" />
             </div>
@@ -153,7 +153,7 @@
         </section>
 
         <!-- Configs for my users -->
-        <section class="account-card">
+        <section v-if="me.capabilities?.add_extra_sublinks" class="account-card">
           <header class="account-card__head">
             <span class="account-card__icon account-card__icon--configs"><i class="pi pi-paperclip" /></span>
             <div class="flex-1 min-w-0">
@@ -172,7 +172,7 @@
       </div>
 
       <!-- My users' page: brand, support, language, custom page -->
-      <section class="account-card account-userpage">
+      <section v-if="me.capabilities?.modify_user_extra" class="account-card account-userpage">
         <header class="account-card__head">
           <span class="account-card__icon account-card__icon--configs"><i class="pi pi-palette" /></span>
           <div class="flex-1 min-w-0">
@@ -187,7 +187,7 @@
           <Button icon="pi pi-pencil" :label="t('account.userPage.edit')" outlined @click="userPageDialog = true" />
         </div>
       </section>
-      <UserPageForm v-model:visible="userPageDialog" :info="me" :languages="me.languages" @saved="onOverridesSaved" />
+      <UserPageForm v-if="me.capabilities?.modify_user_extra" v-model:visible="userPageDialog" :info="me" :languages="me.languages" @saved="onOverridesSaved" />
 
       <!-- Telegram bot (when the panel has one) -->
       <TelegramConnect v-if="telegramInfo" :connected="me.telegram_connected" class="account-telegram" @check="reloadMe" />

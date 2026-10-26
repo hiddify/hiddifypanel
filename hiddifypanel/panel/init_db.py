@@ -25,6 +25,24 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v187(child_id):
+    """Per-admin capabilities JSON (grantable by parents; see hiddifypanel.admin_capabilities). Fills from
+    mode + can_add_admin so existing panels keep their behaviour, except agents lose preferred-outbound
+    write (Hiddify-Manager#5645)."""
+    if child_id != 0:
+        return
+    from hiddifypanel import admin_capabilities as caps
+    from hiddifypanel.models.admin import AdminMode, AdminUser
+
+    add_column(AdminUser.capabilities)
+    for admin in AdminUser.query_with_deleted().all():
+        admin.capabilities = caps.defaults_for_mode(admin.mode, can_add_admin=bool(admin.can_add_admin))
+        if admin.mode == AdminMode.super_admin:
+            admin.can_add_admin = True
+        else:
+            admin.can_add_admin = caps.sync_can_add_admin(admin.capabilities)
+
+
 def _v186(child_id):
     """VLESS has no encryption key. _v133 generated one, which an imported panel never had: Xray then
     stays activating, and clients from the previous panel cannot connect. ``none`` is what Xray accepts."""

@@ -70,9 +70,11 @@ def _help_group() -> dict:
 
 
 def _settings_items(*, node: bool) -> list[dict]:
-    if g.account.mode == "agent":
-        return []
-    items = [{"label": _("admin.menu.domain"), "to": "/domains", "icon": "pi pi-fw pi-link"}]
+    from hiddifypanel import admin_capabilities as caps
+
+    items: list[dict] = []
+    if caps.has(g.account, caps.MODIFY_DOMAINS):
+        items.append({"label": _("admin.menu.domain"), "to": "/domains", "icon": "pi pi-fw pi-link"})
     if g.account.mode == "super_admin":
         items.extend(
             [

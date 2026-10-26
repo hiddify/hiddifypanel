@@ -411,7 +411,8 @@
         "empty": "Not set",
         "badUrl": "Enter a full address starting with https://",
         "saved": "User page saved"
-      }
+      },
+      "outboundReadOnly": "Set by an admin above you; you can see it but not change it."
     },
     "actions": {
       "applyConfigs": "Apply Configs",
@@ -532,7 +533,13 @@
         "superNoLimits": "Super admins have no limits.",
         "upTo": "Up to {max} (your limit)",
         "uuidHint": "Generated automatically. Change it only to reuse a known ID.",
-        "uuidInvalid": "This is not a valid UUID"
+        "uuidInvalid": "This is not a valid UUID",
+        "capabilities": "Permissions",
+        "capabilitiesHint": "Tap to change what this admin is allowed to do. You can only grant permissions you have.",
+        "capabilitiesNone": "No special permissions",
+        "capabilitiesCount": "{n} permission | {n} permissions",
+        "capabilitiesEdit": "Edit permissions",
+        "capabilitiesDone": "Done"
       },
       "limit": {
         "max_active_users": "Max active users",
@@ -588,7 +595,23 @@
         "users": "user | users"
       },
       "title": "Admins",
-      "you": "You"
+      "you": "You",
+      "capability": {
+        "add_sub_admins": "Add sub-admins",
+        "override_preferred_outbound": "Change preferred outbound",
+        "add_extra_sublinks": "Add extra subscription links",
+        "modify_user_extra": "Customize user page",
+        "modify_domains": "Manage domains",
+        "modify_outbounds": "Manage outbounds"
+      },
+      "capabilityHint": {
+        "add_sub_admins": "Create their own agents within the limits you set.",
+        "override_preferred_outbound": "Choose which outbound a user’s traffic leaves through.",
+        "add_extra_sublinks": "Attach extra configs or subscription links for their users.",
+        "modify_user_extra": "Change branding and extra params on the user page.",
+        "modify_domains": "Add and edit domains on this panel.",
+        "modify_outbounds": "Configure server outbounds (WARP, SOCKS, …)."
+      }
     },
     "appTitle": "HiddifyManager",
     "apply": {
@@ -3042,7 +3065,8 @@
         "uuidInvalid": "This is not a valid UUID",
         "waitingText": "The {n} days begin at the first connection.",
         "waitingUnlimited": "Begins at the first connection and never expires.",
-        "who": "Who"
+        "who": "Who",
+        "outboundReadOnly": "You can see the preferred outbound but only an admin with permission can change it."
       },
       "groupByOwner": "Group by admin",
       "groupCount": "{n} user | {n} users",

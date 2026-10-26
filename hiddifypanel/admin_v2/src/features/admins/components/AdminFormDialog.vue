@@ -16,7 +16,16 @@ import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundS
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { unitLabel } from '@/shared/utils/format-metrics'
 import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
-import { adminsApi, type AdminCredentials, type AdminLimits, type AdminPayload, type AdminRow, type AdminsTree } from '@/features/admins/api'
+import {
+  ADMIN_CAPABILITIES,
+  adminsApi,
+  type AdminCapabilities,
+  type AdminCredentials,
+  type AdminLimits,
+  type AdminPayload,
+  type AdminRow,
+  type AdminsTree,
+} from '@/features/admins/api'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const DEFAULT_LIMIT = 100
@@ -40,7 +49,8 @@ const aliasError = computed(() => {
 })
 const comment = ref('')
 const uuid = ref('')
-const canAddAdmin = ref(false)
+const emptyCapabilities = (): AdminCapabilities => Object.fromEntries(ADMIN_CAPABILITIES.map((k) => [k, false])) as AdminCapabilities
+const capabilities = ref<AdminCapabilities>(emptyCapabilities())
 const parent = ref<Record<string, boolean>>({})
 const limits = ref<{ max_users: number | null; max_active_users: number | null; max_online_users: number | null; max_total_usage_GB: number | null }>({
   max_users: DEFAULT_LIMIT,
@@ -49,15 +59,29 @@ const limits = ref<{ max_users: number | null; max_active_users: number | null; 
   max_total_usage_GB: null,
 })
 const showAdvanced = ref(false)
+const showCapabilities = ref(false)
 const touched = ref(false)
 const busy = ref(false)
 const error = ref<string | null>(null)
+
+const CAP_ICON: Record<keyof AdminCapabilities, string> = {
+  add_sub_admins: 'pi-user-plus',
+  override_preferred_outbound: 'pi-directions',
+  add_extra_sublinks: 'pi-paperclip',
+  modify_user_extra: 'pi-palette',
+  modify_domains: 'pi-link',
+  modify_outbounds: 'pi-share-alt',
+}
 
 const editing = computed(() => props.admin !== null)
 const targetIsSuper = computed(() => props.admin?.mode === 'super_admin')
 /** The signed-in admin's own limits cap what it can give (null: super admin, no cap). */
 const myLimits = computed<AdminLimits | null>(() => props.tree?.my_limits ?? null)
-const canGrantSubAdmins = computed(() => props.tree?.can_create ?? false)
+const myCapabilities = computed<AdminCapabilities>(() => props.tree?.my_capabilities ?? emptyCapabilities())
+const grantableCapabilities = computed(() => ADMIN_CAPABILITIES.filter((key) => myCapabilities.value[key]))
+const enabledCapabilities = computed(() => grantableCapabilities.value.filter((key) => capabilities.value[key]))
+const canSetOutbound = computed(() => Boolean(myCapabilities.value.override_preferred_outbound))
+const canSetConfigs = computed(() => Boolean(myCapabilities.value.add_extra_sublinks))
 
 function randomUuid(): string {
   // Non-secure contexts (plain http) have no randomUUID.
@@ -86,7 +110,7 @@ const parentOptions = computed<TreeNode[]>(() => {
       .filter((row) => row.parent_uuid === parentUuid && !excluded.has(row.uuid))
       .map((row) => {
         const children = build(row.uuid)
-        const eligible = row.is_me || row.mode === 'super_admin' || row.can_add_admin
+        const eligible = row.is_me || row.mode === 'super_admin' || row.capabilities?.add_sub_admins || row.can_add_admin
         return {
           key: row.uuid,
           label: row.is_me ? `${row.name} (${t('admins.you')})` : row.name,
@@ -116,13 +140,17 @@ watch(visible, (open) => {
   busy.value = false
   error.value = null
   showAdvanced.value = false
+  showCapabilities.value = false
   name.value = admin?.name ?? ''
   alias.value = admin?.alias ?? ''
   comment.value = admin?.comment ?? ''
   uuid.value = admin?.uuid ?? randomUuid()
   configs.value = (admin?.additional_configs ?? []).map((row) => [...row] as AdditionalConfig)
   defaultOutbound.value = admin?.default_outbound ?? null
-  canAddAdmin.value = admin?.can_add_admin ?? false
+  // New admins start with no permissions; edits keep what they already have.
+  capabilities.value = admin
+    ? { ...emptyCapabilities(), ...(admin.capabilities ?? {}), add_sub_admins: admin.capabilities?.add_sub_admins ?? admin.can_add_admin ?? false }
+    : emptyCapabilities()
   parent.value = { [admin?.parent_uuid ?? props.tree?.me_uuid ?? '']: true }
   const mine = myLimits.value
   limits.value = admin?.limits
@@ -162,7 +190,7 @@ const limitsInvalid = computed(() => !targetIsSuper.value && limitFields.value.s
 
 async function submit() {
   touched.value = true
-  const configsInvalid = configs.value.some((c) => configRowProblem(c))
+  const configsInvalid = canSetConfigs.value && configs.value.some((c) => configRowProblem(c))
   if (configsInvalid) showAdvanced.value = true
   if (!name.value.trim() || uuidError.value || limitsInvalid.value || configsInvalid || aliasError.value || busy.value) return
   busy.value = true
@@ -170,11 +198,12 @@ async function submit() {
   const payload: AdminPayload = {
     name: name.value.trim(),
     comment: comment.value.trim(),
-    can_add_admin: canAddAdmin.value,
+    can_add_admin: capabilities.value.add_sub_admins,
+    capabilities: { ...capabilities.value },
     parent_uuid: Object.keys(parent.value)[0] || undefined,
-    additional_configs: cleanConfigRows(configs.value),
-    default_outbound: defaultOutbound.value,
   }
+  if (canSetConfigs.value) payload.additional_configs = cleanConfigRows(configs.value)
+  if (canSetOutbound.value) payload.default_outbound = defaultOutbound.value
   if (!targetIsSuper.value) payload.alias = alias.value.trim().toLowerCase()
   if (!targetIsSuper.value) {
     payload.max_users = limits.value.max_users ?? DEFAULT_LIMIT
@@ -253,15 +282,59 @@ async function submit() {
         </div>
       </section>
 
-      <!-- Permission -->
-      <section v-if="canGrantSubAdmins || canAddAdmin" class="admin-form__section">
-        <label class="admin-form__switch" for="admin-can-add">
-          <span class="admin-form__switch-text">
-            <span class="font-medium">{{ t('admins.form.canAddAdmin') }}</span>
-            <small class="text-muted-color">{{ t('admins.form.canAddAdminHint') }}</small>
-          </span>
-          <ToggleSwitch v-model="canAddAdmin" input-id="admin-can-add" :disabled="busy || !canGrantSubAdmins" />
-        </label>
+      <!-- Permissions: collapsed summary; expand to edit (only what the signed-in admin may grant) -->
+      <section v-if="grantableCapabilities.length" class="admin-form__section">
+        <div class="admin-caps" :class="{ 'admin-caps--open': showCapabilities }">
+          <button
+            type="button"
+            class="admin-caps__summary"
+            :aria-expanded="showCapabilities"
+            :aria-label="t('admins.form.capabilitiesEdit')"
+            :disabled="busy"
+            @click="showCapabilities = !showCapabilities"
+          >
+            <span class="admin-caps__badge" aria-hidden="true"><i class="pi pi-shield" /></span>
+            <span class="admin-caps__summary-body">
+              <span class="admin-caps__title">{{ t('admins.form.capabilities') }}</span>
+              <span v-if="enabledCapabilities.length" class="admin-caps__chips">
+                <span v-for="key in enabledCapabilities" :key="key" class="admin-caps__chip">
+                  <i class="pi" :class="CAP_ICON[key]" />{{ t(`admins.capability.${key}`) }}
+                </span>
+              </span>
+              <span v-else class="admin-caps__empty">{{ t('admins.form.capabilitiesNone') }}</span>
+            </span>
+            <span class="admin-caps__meta">
+              <span class="admin-caps__count">{{ t('admins.form.capabilitiesCount', { n: enabledCapabilities.length }, enabledCapabilities.length) }}</span>
+              <i class="pi pi-angle-down admin-caps__caret" :class="{ 'admin-caps__caret--open': showCapabilities }" />
+            </span>
+          </button>
+          <div v-if="showCapabilities" class="admin-caps__panel">
+            <p class="admin-caps__hint">{{ t('admins.form.capabilitiesHint') }}</p>
+            <label
+              v-for="key in grantableCapabilities"
+              :key="key"
+              class="admin-caps__row"
+              :class="{ 'admin-caps__row--on': capabilities[key] }"
+              :for="`admin-cap-${key}`"
+            >
+              <span class="admin-caps__row-icon" aria-hidden="true"><i class="pi" :class="CAP_ICON[key]" /></span>
+              <span class="admin-caps__row-text">
+                <span class="admin-caps__row-label">{{ t(`admins.capability.${key}`) }}</span>
+                <small>{{ t(`admins.capabilityHint.${key}`) }}</small>
+              </span>
+              <ToggleSwitch v-model="capabilities[key]" :input-id="`admin-cap-${key}`" :disabled="busy" @click.stop />
+            </label>
+            <Button
+              type="button"
+              class="admin-caps__done"
+              size="small"
+              :label="t('admins.form.capabilitiesDone')"
+              icon="pi pi-check"
+              :disabled="busy"
+              @click="showCapabilities = false"
+            />
+          </div>
+        </div>
       </section>
 
       <!-- Limits -->
@@ -331,13 +404,13 @@ async function submit() {
           <small :class="uuidError ? 'admin-form__error' : 'text-muted-color'">{{ uuidError ? t('admins.form.uuidInvalid') : t('admins.form.uuidHint') }}</small>
         </div>
         <!-- Where this admin's users (and its sub-admins' users) leave through, unless they choose -->
-        <div v-if="showAdvanced && (tree?.outbounds.length ?? 0) > 0" class="admin-form__field">
+        <div v-if="showAdvanced && canSetOutbound && (tree?.outbounds.length ?? 0) > 0" class="admin-form__field">
           <label for="admin-outbound" class="admin-form__limit-label"><i class="pi pi-directions" />{{ t('admins.form.outbound') }}</label>
           <DefaultOutboundSelect v-model="defaultOutbound" :outbounds="tree?.outbounds ?? []" :inherited="admin?.inherited_outbound ?? null" :disabled="busy" input-id="admin-outbound" />
           <small class="text-muted-color">{{ t('admins.form.outboundHint') }}</small>
         </div>
         <!-- Configs every user of this admin (and of its sub-admins) gets -->
-        <div v-if="showAdvanced" class="admin-form__field">
+        <div v-if="showAdvanced && canSetConfigs" class="admin-form__field">
           <span class="admin-form__limit-label"><i class="pi pi-paperclip" />{{ t('admins.form.configs') }}<span v-if="configs.length" class="admin-form__count">{{ configs.length }}</span></span>
           <small class="text-muted-color">{{ t('admins.form.configsHint') }}</small>
           <AdditionalConfigsEditor v-model="configs" :disabled="busy" :show-errors="touched" />
@@ -445,20 +518,167 @@ async function submit() {
 .admin-form__limits :deep(.p-inputnumber-input) {
   text-align: center;
 }
-.admin-form__switch {
+.admin-caps {
+  border-radius: 16px;
+  border: 1px solid var(--p-content-border-color);
+  background: color-mix(in srgb, var(--p-primary-color) 4%, var(--p-content-background, #fff));
+  overflow: hidden;
+}
+.admin-caps--open {
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, var(--p-content-border-color));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.admin-caps__summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 0.9rem;
-  border-radius: 12px;
-  border: 1px solid var(--p-content-border-color);
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
   cursor: pointer;
 }
-.admin-form__switch-text {
+.admin-caps__summary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.admin-caps__summary:hover:not(:disabled) .admin-caps__badge {
+  transform: scale(1.04);
+}
+.admin-caps__badge {
+  flex-shrink: 0;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  transition: transform 0.2s ease;
+}
+.admin-caps__summary-body {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.35rem;
+}
+.admin-caps__title {
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+.admin-caps__empty {
+  font-size: 0.82rem;
+  color: var(--p-text-muted-color);
+}
+.admin-caps__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.admin-caps__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 100%;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-caps__chip i {
+  font-size: 0.7rem;
+}
+.admin-caps__meta {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--p-text-muted-color);
+}
+.admin-caps__count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-caps__caret {
+  transition: transform 0.25s ease;
+}
+.admin-caps__caret--open {
+  transform: rotate(180deg);
+}
+.admin-caps__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0 0.75rem 0.85rem;
+  border-top: 1px solid var(--p-content-border-color);
+}
+.admin-caps__hint {
+  margin: 0.65rem 0.15rem 0.15rem;
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+  line-height: 1.4;
+}
+.admin-caps__row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--p-content-background, #fff);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.admin-caps__row--on {
+  border-color: color-mix(in srgb, var(--p-primary-color) 28%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background, #fff));
+}
+.admin-caps__row-icon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.08));
+}
+.admin-caps__row--on .admin-caps__row-icon {
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+}
+.admin-caps__row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+.admin-caps__row-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+.admin-caps__row-text small {
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+.admin-caps__done {
+  align-self: flex-end;
+  margin-top: 0.15rem;
 }
 .admin-form__toggle {
   display: flex;
@@ -515,6 +735,27 @@ async function submit() {
     grid-template-columns: 1fr;
   }
   .admin-form__reset {
+    width: 100%;
+  }
+  .admin-caps__summary {
+    align-items: flex-start;
+  }
+  .admin-caps__meta {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    padding-top: 0.15rem;
+  }
+  .admin-caps__count {
+    font-size: 0.7rem;
+  }
+  .admin-caps__row {
+    align-items: flex-start;
+  }
+  .admin-caps__row :deep(.p-toggleswitch) {
+    margin-top: 0.15rem;
+  }
+  .admin-caps__done {
     width: 100%;
   }
 }

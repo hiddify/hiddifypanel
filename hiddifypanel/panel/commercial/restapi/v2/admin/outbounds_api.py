@@ -13,6 +13,7 @@ from apiflask import abort
 from flask import request
 from flask.views import MethodView
 
+from hiddifypanel import admin_capabilities as caps
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, ConfigEnum, hconfig
@@ -25,6 +26,15 @@ from hiddifypanel.proxy_v3 import outbounds as ob
 
 #: Tor / Psiphon / SOCKS / WARP changes rewrite hiddify-core and xray server routing — same as Domains.
 APPLY = ApplyMode.apply_config.value
+OUTBOUND_ROLES = {Role.super_admin, Role.admin, Role.agent}
+
+
+class _RequireModifyOutbounds:
+    """Outbounds page: any admin role may open the API, but only with ``modify_outbounds``."""
+
+    def dispatch_request(self, *args, **kwargs):
+        caps.require(caps.MODIFY_OUTBOUNDS)
+        return super().dispatch_request(*args, **kwargs)
 
 
 def _parent_only() -> None:
@@ -197,8 +207,8 @@ def _apply_body(row: Outbound, body: dict[str, Any], *, creating: bool) -> None:
             row.password = ""
 
 
-class OutboundsApi(MethodView):
-    decorators = [login_required({Role.super_admin})]
+class OutboundsApi(_RequireModifyOutbounds, MethodView):
+    decorators = [login_required(OUTBOUND_ROLES)]
 
     def get(self):
         """Outbounds: list in rule order (the last enabled one is the default)"""
@@ -236,8 +246,8 @@ def _get_row(outbound_id: int) -> Outbound:
     return row or abort(404, "Outbound not found")
 
 
-class OutboundApi(MethodView):
-    decorators = [login_required({Role.super_admin})]
+class OutboundApi(_RequireModifyOutbounds, MethodView):
+    decorators = [login_required(OUTBOUND_ROLES)]
 
     def patch(self, outbound_id: int):
         """Outbounds: update one"""
@@ -268,8 +278,8 @@ class OutboundApi(MethodView):
         return _mutated(child_id)
 
 
-class OutboundOrderApi(MethodView):
-    decorators = [login_required({Role.super_admin})]
+class OutboundOrderApi(_RequireModifyOutbounds, MethodView):
+    decorators = [login_required(OUTBOUND_ROLES)]
 
     def put(self):
         """Outbounds: set the order (ids, first checked first; the last enabled one is the default)"""
@@ -288,8 +298,8 @@ class OutboundOrderApi(MethodView):
         return _mutated(child_id)
 
 
-class OutboundDefaultApi(MethodView):
-    decorators = [login_required({Role.super_admin})]
+class OutboundDefaultApi(_RequireModifyOutbounds, MethodView):
+    decorators = [login_required(OUTBOUND_ROLES)]
 
     def post(self, outbound_id: int):
         """Outbounds: make one the default (turns it on and moves it to the end)"""
@@ -305,8 +315,8 @@ class OutboundDefaultApi(MethodView):
         return _mutated(child_id)
 
 
-class OutboundResetApi(MethodView):
-    decorators = [login_required({Role.super_admin})]
+class OutboundResetApi(_RequireModifyOutbounds, MethodView):
+    decorators = [login_required(OUTBOUND_ROLES)]
 
     def post(self, outbound_id: int):
         """Outbounds: put a built-in outbound's lists back to the defaults file (upgrades update them again)"""

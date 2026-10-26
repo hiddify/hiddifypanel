@@ -16,6 +16,7 @@ from apiflask import abort
 from flask import request
 from flask.views import MethodView
 
+from hiddifypanel import admin_capabilities as caps
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.database import db
@@ -134,6 +135,7 @@ def _meta(admins: dict[int, AdminUser]) -> dict[str, Any]:
         ],
         "outbounds": [{"id": o.id, "name": o.name, "mode": str(o.mode), "enabled": bool(o.enabled)} for o in outbounds],
         "can_add": actor.can_have_more_users() and not node_read_only.is_read_only(),
+        "capabilities": caps.of(actor),
         "read_only": node_read_only.is_read_only(),
     }
 
@@ -198,6 +200,7 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
     # Extra params: the JSON editor's keys plus the ones the form manages.
     extra = user.extra_params_json()
     if "extra_params" in body:
+        caps.require(caps.MODIFY_USER_EXTRA)
         raw = body.get("extra_params")
         try:
             parsed = json.loads(raw) if isinstance(raw, str) else (raw or {})
@@ -207,6 +210,7 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
             abort(400, "Extra params must be a JSON object")
         extra = {k: v for k, v in extra.items() if k in MANAGED_EXTRA} | {k: v for k, v in parsed.items() if k not in MANAGED_EXTRA}
     if "preferred_outbound" in body:
+        caps.require(caps.OVERRIDE_PREFERRED_OUTBOUND)
         oid = body.get("preferred_outbound")
         if oid in (None, "", 0):
             extra.pop("preferred_outbound", None)
@@ -216,6 +220,7 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
                 abort(400, "Unknown outbound")
             extra["preferred_outbound"] = int(oid)
     if user_configs.EXTRA_KEY in body:
+        caps.require(caps.ADD_EXTRA_SUBLINKS)
         rows, problems = user_configs.clean_rows(body.get(user_configs.EXTRA_KEY))
         if problems:
             abort(400, "Additional configs: " + "; ".join(problems[:5]))

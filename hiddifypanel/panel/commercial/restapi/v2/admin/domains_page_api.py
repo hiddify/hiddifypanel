@@ -19,6 +19,7 @@ from flask_babel import gettext as _
 from loguru import logger
 from sqlalchemy.orm import selectinload
 
+from hiddifypanel import admin_capabilities as caps
 from hiddifypanel import g, hutils
 from hiddifypanel.acme import renew as acme_renew
 from hiddifypanel.acme import state as acme_state
@@ -35,8 +36,16 @@ from hiddifypanel.proxy_v3.domain_mode_filter import domain_modes_use_reality
 from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG, list_domain_proxy_options, proxy_mode_group
 
 APPLY = "apply_config"
-ROLES = {Role.super_admin, Role.admin}
+ROLES = {Role.super_admin, Role.admin, Role.agent}
 DOMAIN_RE = re.compile(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$")
+
+
+class _RequireModifyDomains:
+    """Domains page: any admin role may open the API, but only with ``modify_domains``."""
+
+    def dispatch_request(self, *args, **kwargs):
+        caps.require(caps.MODIFY_DOMAINS)
+        return super().dispatch_request(*args, **kwargs)
 
 
 def clean_host(value: str) -> str:
@@ -448,7 +457,7 @@ def _save(d: Domain, *, is_created: bool) -> list[str]:
     return warnings
 
 
-class DomainsPageApi(MethodView):
+class DomainsPageApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self):
@@ -474,7 +483,7 @@ class DomainsPageApi(MethodView):
         return {"created_id": d.id, "certificate_requested": cert, "warnings": warnings, "restart_mode": APPLY, **_list_out(child_id)}
 
 
-class DomainsPageOptionsApi(MethodView):
+class DomainsPageOptionsApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self):
@@ -483,7 +492,7 @@ class DomainsPageOptionsApi(MethodView):
         return {"compatible": _compatible_proxies(child_id), "show_options": _show_options(child_id)}
 
 
-class DomainsPageItemApi(MethodView):
+class DomainsPageItemApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def patch(self, domain_id: int):
@@ -544,7 +553,7 @@ def domain_problems(child_id: int) -> list[dict[str, Any]]:
     return out
 
 
-class DomainsPageProblemsApi(MethodView):
+class DomainsPageProblemsApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self):
@@ -552,7 +561,7 @@ class DomainsPageProblemsApi(MethodView):
         return {"problems": domain_problems(_child_id())}
 
 
-class DomainsPageOrderApi(MethodView):
+class DomainsPageOrderApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def put(self):
@@ -570,7 +579,7 @@ class DomainsPageOrderApi(MethodView):
         return {"restart_mode": APPLY, **_list_out(child_id)}
 
 
-class DomainsPageIpsApi(MethodView):
+class DomainsPageIpsApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self, domain_id: int):
@@ -584,7 +593,7 @@ class DomainsPageIpsApi(MethodView):
         return {"domain": d.domain, "target": target, "ips": [{"ip": str(ip), "version": ip.version, "is_server_ip": ip in mine} for ip in ips]}
 
 
-class DomainsPageDetectApi(MethodView):
+class DomainsPageDetectApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def post(self):
@@ -599,7 +608,7 @@ class DomainsPageDetectApi(MethodView):
         return {**result, "domain": name, "already_added": bool(used)}
 
 
-class DomainsPageCertificateApi(MethodView):
+class DomainsPageCertificateApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self, domain_id: int):
@@ -619,7 +628,7 @@ class DomainsPageCertificateApi(MethodView):
         return _tls_out(d)
 
 
-class DomainsPagePortCheckApi(MethodView):
+class DomainsPagePortCheckApi(_RequireModifyDomains, MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self):

@@ -124,6 +124,7 @@ class AdminSchema(ApiModel):
     uuid: FriendlyUUID | None = Field(default=None, description="The unique identifier for the admin")
     mode: AdminMode = Field(description="The mode for the admin")
     can_add_admin: bool = Field(description="Whether the admin can add other admins")
+    capabilities: dict[str, bool] | None = Field(default=None, description="Grantable actions for this admin (see admin_capabilities)")
     parent_admin_uuid: FriendlyUUID | None = Field(default=None, description="The unique identifier for the parent admin")
     telegram_id: int | None = Field(default=None, description="The Telegram ID associated with the admin")
     lang: Lang

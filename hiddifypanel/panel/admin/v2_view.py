@@ -102,6 +102,8 @@ def _admin_locale() -> str:
 
 
 def _admin_v2_bootstrap_payload() -> dict:
+    from hiddifypanel import admin_capabilities as caps
+
     proxy_path = g.proxy_path or hconfig(ConfigEnum.proxy_path_admin)
     return {
         "proxy_path": proxy_path,
@@ -119,6 +121,7 @@ def _admin_v2_bootstrap_payload() -> dict:
         "panel_mode": hutils.node.panel_mode(),
         "node_info": _node_info(),
         "account_mode": str(g.account.mode),
+        "capabilities": caps.of(g.account),
         "needs_quick_setup": _needs_quick_setup(),
         "telegram": _telegram_info(),
     }
@@ -151,6 +154,8 @@ def register_v2_routes(flask_app, admin_bp):
         monaco_base = f"{static_prefix}/{_admin_v2_monaco_vs()}"
         # First setup is handled by the SPA's /quick-setup route (super admins only; see bootstrap).
 
+        from hiddifypanel import admin_capabilities as caps
+
         return render_template(
             "admin_v2.html",
             api_base=f"/{proxy_path}/api/v2/admin/",
@@ -167,6 +172,7 @@ def register_v2_routes(flask_app, admin_bp):
             panel_mode=hutils.node.panel_mode(),
             node_info=_node_info(),
             account_mode=str(g.account.mode),
+            capabilities=caps.of(g.account),
             needs_quick_setup=_needs_quick_setup(),
             telegram=_telegram_info(),
         )

@@ -98,6 +98,28 @@ export const isSuperAdmin = computed(() => accountMode.value === 'super_admin')
 /** Agents only manage users and their own sub-admins: no server or proxy settings. */
 export const isAgent = computed(() => accountMode.value === 'agent')
 
+/** Grantable actions for the signed-in admin (see hiddifypanel.admin_capabilities). */
+export type AdminCapabilities = {
+  add_sub_admins: boolean
+  override_preferred_outbound: boolean
+  add_extra_sublinks: boolean
+  modify_user_extra: boolean
+  modify_domains: boolean
+  modify_outbounds: boolean
+}
+const EMPTY_CAPS: AdminCapabilities = {
+  add_sub_admins: false,
+  override_preferred_outbound: false,
+  add_extra_sublinks: false,
+  modify_user_extra: false,
+  modify_domains: false,
+  modify_outbounds: false,
+}
+export const accountCapabilities = ref<AdminCapabilities>({ ...EMPTY_CAPS, ...(window.__CAPABILITIES__ ?? {}) })
+export function hasCapability(key: keyof AdminCapabilities): boolean {
+  return Boolean(accountCapabilities.value[key])
+}
+
 /** First setup still pending (super admins only): the dashboard opens the quick setup instead. */
 export const needsQuickSetup = ref<boolean>(Boolean(window.__NEEDS_QUICK_SETUP__))
 
@@ -122,6 +144,7 @@ export function applyBootstrapShell(data: {
   panel_mode?: string
   node_info?: NodeInfo | null
   account_mode?: string
+  capabilities?: Partial<AdminCapabilities> | null
   needs_quick_setup?: boolean
   telegram?: TelegramInfo | null
   locale?: string
@@ -157,6 +180,10 @@ export function applyBootstrapShell(data: {
   if (data.account_mode !== undefined) {
     accountMode.value = data.account_mode
     window.__ACCOUNT_MODE__ = data.account_mode
+  }
+  if (data.capabilities !== undefined) {
+    accountCapabilities.value = { ...EMPTY_CAPS, ...(data.capabilities ?? {}) }
+    window.__CAPABILITIES__ = accountCapabilities.value
   }
   if (data.locale) {
     window.__LOCALE__ = data.locale
