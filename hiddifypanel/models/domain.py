@@ -335,13 +335,15 @@ class Domain(db.Model):
 
     @classmethod
     def ordering(cls):
-        """Page order: the admin's drag-and-drop order, then oldest first."""
-        return (cls.sort_order.is_(None), cls.sort_order, cls.id)
+        """Page order: the admin's drag-and-drop order, then oldest first. Each panel's domains stay together (this
+        panel's first, then each node's): every Domains page numbers its rows from 0, so without the panel a parent's
+        subscription interleaved its domains with the nodes' (its 2nd domain after a node's 1st)."""
+        return (cls.child_id, cls.sort_order.is_(None), cls.sort_order, cls.id)
 
     @staticmethod
     def panel_order_key(domain: Domain) -> tuple:
         """Same order as ``ordering()`` for a list already loaded from the database."""
-        return (domain.sort_order is None, domain.sort_order if domain.sort_order is not None else 0, domain.id or 0)
+        return (domain.child_id or 0, domain.sort_order is None, domain.sort_order if domain.sort_order is not None else 0, domain.id or 0)
 
     @classmethod
     def by_mode(cls, mode: DomainType) -> list[Domain]:

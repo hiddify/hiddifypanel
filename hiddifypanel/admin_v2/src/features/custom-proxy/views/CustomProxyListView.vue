@@ -234,9 +234,9 @@
               <Tag
                 v-for="category in data.categories || []"
                 :key="category"
-                :value="category"
-                class="me-1 mb-1"
-                severity="secondary"
+                :value="categoryLabel(category)"
+                :style="categoryTagStyle(category)"
+                class="me-1 mb-1 category-tag"
               />
               <Button
                 link
@@ -249,9 +249,9 @@
               <Tag
                 v-for="category in visibleCategories(data.categories || [])"
                 :key="category"
-                :value="category"
-                class="me-1 mb-1"
-                severity="secondary"
+                :value="categoryLabel(category)"
+                :style="categoryTagStyle(category)"
+                class="me-1 mb-1 category-tag"
               />
               <Button
                 v-if="(data.categories || []).length > 2"
@@ -281,7 +281,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag v-if="data.server_core" :value="data.server_core" />
+          <Tag v-if="data.server_core" :value="coreName(data.server_core)" />
           <span v-else>—</span>
         </template>
       </Column>
@@ -290,7 +290,12 @@
           <span>{{ t('proxy.tlsLayer') }}</span>
         </template>
         <template #body="{ data }">
-          <span>{{ tlsLayerDisplay(data) }}</span>
+          <!-- Upload and download on different TLS layers: each with its arrow -->
+          <span v-if="tlsLayerSplit(data)" class="tls-split">
+            <span v-tooltip.top="t('dashboard.upload')"><i class="pi pi-upload" />{{ tlsLayerShort(data.tls_layer) }}</span>
+            <span v-tooltip.top="t('dashboard.download')"><i class="pi pi-download" />{{ tlsLayerShort(data.download_tls_layer) }}</span>
+          </span>
+          <span v-else>{{ tlsLayerDisplay(data) }}</span>
         </template>
       </Column>
       <Column field="domain_modes">
@@ -335,7 +340,11 @@
   <Popover ref="categoriesPopover" @show="focusFirstInput(categoriesPopover)">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('proxy.categories') }}</label>
-      <Listbox v-model="filterCategories" :options="categoryOptions" multiple filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" />
+      <Listbox v-model="filterCategories" :options="categoryChoices" option-label="label" option-value="value" multiple filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: categoryColor(option.value) }" />{{ option.label }}</span>
+        </template>
+      </Listbox>
       <Button v-if="filterCategories.length" :label="t('tags.clear')" icon="pi pi-times" text size="small" severity="secondary" @click="filterCategories = []" />
     </div>
   </Popover>
@@ -367,7 +376,7 @@
   <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('proxy.serverCore') }}</label>
-      <Listbox v-model="filterCore" :options="coreOptions" class="w-full" @change="corePopover.hide()" />
+      <Listbox v-model="filterCore" :options="coreOptions" :option-label="coreName" class="w-full" @change="corePopover.hide()" />
     </div>
   </Popover>
   <Popover ref="enabledPopover">
@@ -407,9 +416,10 @@ import type { TreeNode } from 'primevue/treenode'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import PageHeader from '@/shared/components/PageHeader.vue'
+import { categoryName, coreName, protocolName } from '@/shared/utils/protocols'
 import { useHashState, triStateCodec, optionalNumberCodec, type HashCodec } from '@/shared/composables/useHashState'
 import { focusFirstInput } from '@/shared/utils/popover-focus'
-import { protoColor, protoTagStyle } from '@/shared/utils/proto-color'
+import { categoryColor, categoryTagStyle, protoColor, protoTagStyle } from '@/shared/utils/proto-color'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import GenerateBundleDialog from '@/features/custom-proxy/components/GenerateBundleDialog.vue'
 import { customProxiesApi, type CustomProxy, type CustomProxyMeta } from '@/core/api/generated'
@@ -455,8 +465,11 @@ function domainModeFamilies(modes: string[]): string[] {
   return families
 }
 
+/** The families in their own spelling (Direct, Relay, CDN), as the tags and the filter show them */
 function domainModesSummary(modes: string[]): string {
-  return domainModeFamilies(modes).join(', ')
+  return domainModeFamilies(modes)
+    .map((family) => t(`proxy.domainModeLabels.${family}`, family))
+    .join(', ')
 }
 
 function domainModesNeedsExpand(modes: string[]): boolean {
@@ -502,6 +515,9 @@ const coreOptions = ref<string[]>([])
 
 const filterCategories = ref<string[]>([])
 const categoryOptions = ref<string[]>([])
+/** A built-in category shows its name ("down:tls_h1" → "Down:TLS_H1"); a tag an admin typed, as written */
+const categoryLabel = categoryName
+const categoryChoices = computed(() => categoryOptions.value.map((value) => ({ value, label: categoryLabel(value) })))
 
 const filterSearch = ref('')
 const filterName = ref('')
@@ -560,9 +576,9 @@ const quickGroups = computed<QuickGroup[]>(() => [
     title: t('proxy.protocol'),
     options: listedOptions(
       [
-        ['vless', 'VLESS', ['vless']],
-        ['vmess', 'VMess', ['vmess']],
-        ['trojan', 'Trojan', ['trojan']],
+        ['vless', protocolName('vless'), ['vless']],
+        ['vmess', protocolName('vmess'), ['vmess']],
+        ['trojan', protocolName('trojan'), ['trojan']],
       ],
       (row) => (isNoInbound(row) ? '' : rowProto(row)),
     ),
@@ -589,10 +605,11 @@ const quickGroups = computed<QuickGroup[]>(() => [
     title: t('proxy.mode'),
     options: listedOptions(
       [
-        ['l7', 'L7 gateway', ['domains_l7_gateway']],
-        ['sni', 'SNI gateway', ['domains_sni_gateway']],
-        ['dns', 'DNS', ['domains_dns_gateway']],
-        ['ip', 'IP based', ['ip']],
+        // the column's names (proxy.modeLabels), so a mode reads the same everywhere
+        ['l7', modeLabel('domains_l7_gateway'), ['domains_l7_gateway']],
+        ['sni', modeLabel('domains_sni_gateway'), ['domains_sni_gateway']],
+        ['dns', modeLabel('domains_dns_gateway'), ['domains_dns_gateway']],
+        ['ip', modeLabel('ip'), ['ip']],
       ],
       (row) => rowMode(row),
     ),
@@ -603,8 +620,8 @@ const quickGroups = computed<QuickGroup[]>(() => [
     title: t('proxy.serverCore'),
     options: listedOptions(
       [
-        ['xray', 'Xray', ['xray']],
-        ['hiddify-core', 'Hiddify Core', ['hiddify-core']],
+        ['xray', coreName('xray'), ['xray']],
+        ['hiddify-core', coreName('hiddify-core'), ['hiddify-core']],
       ],
       (row) => row.server_core ?? undefined,
     ),
@@ -768,9 +785,7 @@ function showsCommonProxy(row: CustomProxy) {
 }
 
 function protoLabel(proto: string | undefined) {
-  if (!proto) return '—'
-  if (proto === 'shadowsocks') return 'Shadowsocks'
-  return proto.toUpperCase()
+  return protocolName(proto)
 }
 
 function modeLabel(mode: string | undefined) {
@@ -792,13 +807,17 @@ function tlsLayerShort(layer: string | null | undefined): string {
   return TLS_LAYER_SHORT[layer] || t(`proxy.tlsLayerLabels.${layer}`, layer)
 }
 
+/** Upload and download use different TLS layers (shown as two, each with its icon) */
+function tlsLayerSplit(row: CustomProxy): boolean {
+  return !!row.tls_layer && !!row.download_tls_layer && row.tls_layer !== row.download_tls_layer
+}
+
+/** One line of text (the cell when not split, and the search) */
 function tlsLayerDisplay(row: CustomProxy): string {
   const up = row.tls_layer
   const down = row.download_tls_layer
   if (!up && !down) return '—'
-  if (down && up && down !== up) {
-    return `📤${tlsLayerShort(up)} 📥${tlsLayerShort(down)}`
-  }
+  if (tlsLayerSplit(row)) return `↑${tlsLayerShort(up)} ↓${tlsLayerShort(down)}`
   return tlsLayerShort(up || down)
 }
 
@@ -857,7 +876,7 @@ async function load() {
       value: m,
     }))
     protoOptions.value = (metaRes.protos ?? []).map((p) => ({
-      label: p === 'shadowsocks' ? 'Shadowsocks' : p.toUpperCase(),
+      label: protocolName(p),
       value: p,
     }))
     const cores = new Set<string>()
@@ -1055,6 +1074,9 @@ onActivated(() => {
 .proto-tag {
   font-weight: 600;
 }
+.category-tag {
+  font-weight: 600;
+}
 .proxy-name-link,
 .list-name-link {
   color: var(--p-primary-color);
@@ -1085,5 +1107,19 @@ onActivated(() => {
 .chip-summary-toggle {
   font-size: 0.85rem;
   min-width: auto;
+}
+.tls-split {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.tls-split > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.tls-split .pi {
+  font-size: 0.72rem;
+  color: var(--p-text-muted-color);
 }
 </style>

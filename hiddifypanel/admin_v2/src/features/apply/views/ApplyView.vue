@@ -43,9 +43,9 @@
 
       <!-- Tools -->
       <section class="ap-tools">
-        <Button :label="t('actions.resetCache')" icon="pi pi-eraser" severity="secondary" outlined size="small" :loading="resetting" @click="resetCache" />
-        <Button :label="t('actions.ports.title')" icon="pi pi-sitemap" severity="secondary" outlined size="small" @click="portsVisible = true" />
-        <Button :label="t('wsTest.button')" icon="pi pi-wifi" severity="secondary" outlined size="small" @click="wsTestVisible = true" />
+        <Button :label="t('actions.resetCache')" icon="pi pi-eraser" outlined class="ap-tool ap-tool--cache" :loading="resetting" @click="resetCache" />
+        <Button :label="t('actions.ports.title')" icon="pi pi-sitemap" outlined class="ap-tool ap-tool--ports" @click="portsVisible = true" />
+        <Button :label="t('wsTest.button')" icon="pi pi-wifi" outlined class="ap-tool ap-tool--live" @click="wsTestVisible = true" />
       </section>
 
       <!-- Logs -->
@@ -68,6 +68,20 @@
             </button>
             <Button icon="pi pi-eye" text rounded size="small" :aria-label="t('apply.logs.view')" v-tooltip.top="t('apply.logs.view')" @click="openLog(f)" />
             <a :href="applyApi.downloadUrl(f.name)" download :aria-label="t('apply.log.download')"><Button icon="pi pi-download" text rounded size="small" severity="secondary" v-tooltip.top="t('apply.log.download')" /></a>
+            <!-- To my Telegram, through the panel's bot (only when the panel has one) -->
+            <span v-if="state?.telegram?.bot" v-tooltip.top="state.telegram.connected ? t('apply.log.telegram') : t('apply.log.telegramConnect')">
+              <Button
+                icon="pi pi-telegram"
+                text
+                rounded
+                size="small"
+                class="ap-file__tg"
+                :aria-label="t('apply.log.telegram')"
+                :disabled="!state.telegram.connected"
+                :loading="sending === f.name"
+                @click="sendToTelegram(f)"
+              />
+            </span>
           </li>
           <li v-if="!files.length" class="ap-empty"><i class="pi pi-inbox" />{{ t('apply.logs.empty') }}</li>
         </ul>
@@ -261,6 +275,19 @@ function clearAll() {
   })
 }
 
+const sending = ref<string | null>(null)
+async function sendToTelegram(f: LogFile) {
+  sending.value = f.name
+  try {
+    await applyApi.sendToTelegram(f.name)
+    toast.add({ severity: 'success', summary: t('apply.log.telegramSent', { name: f.name }), life: 3000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('apply.log.telegramFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    sending.value = null
+  }
+}
+
 function openLog(f: LogFile) {
   logFile.value = f
   logVisible.value = true
@@ -427,8 +454,29 @@ onBeforeUnmount(() => feed?.stop())
 .ap-tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
   margin-bottom: 1.5rem;
+}
+/* The tools: one color each, none of the action cards' (primary, orange, violet, red, green) */
+.ap-tool {
+  --tool: var(--p-teal-600, #0d9488);
+  padding: 0.6rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--tool);
+  border-color: color-mix(in srgb, var(--tool) 45%, transparent);
+  background: color-mix(in srgb, var(--tool) 10%, transparent);
+}
+.ap-tool:not(:disabled):hover {
+  color: var(--tool);
+  border-color: var(--tool);
+  background: color-mix(in srgb, var(--tool) 18%, transparent);
+}
+.ap-tool--ports {
+  --tool: var(--p-pink-500, #ec4899);
+}
+.ap-tool--live {
+  --tool: var(--p-yellow-600, #ca8a04);
 }
 .ap-logs {
   display: flex;
@@ -483,6 +531,9 @@ onBeforeUnmount(() => feed?.stop())
 }
 .ap-file a {
   text-decoration: none;
+}
+.ap-file__tg:not(:disabled) {
+  color: #229ed9;
 }
 .ap-file__icon {
   flex-shrink: 0;

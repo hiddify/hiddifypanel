@@ -85,12 +85,13 @@ def init_app(app):
         bp.add_url_rule("/quick-setup/domains/", view_func=QuickSetupDomainsApi)
         bp.add_url_rule("/quick-setup/finish/", view_func=QuickSetupFinishApi)
 
-        from .nodes_api import NodeApi, NodeJobApi, NodePingApi, NodesApi, NodeSyncApi, NodeSyncReportApi
+        from .nodes_api import NodeApi, NodeIcmpPingApi, NodeJobApi, NodePingApi, NodesApi, NodeSyncApi, NodeSyncReportApi
 
         bp.add_url_rule("/nodes/", view_func=NodesApi)
         bp.add_url_rule("/nodes/jobs/<string:job_id>/", view_func=NodeJobApi)
         bp.add_url_rule("/nodes/<int:node_id>/", view_func=NodeApi)
         bp.add_url_rule("/nodes/<int:node_id>/ping/", view_func=NodePingApi)
+        bp.add_url_rule("/nodes/<int:node_id>/icmp/", view_func=NodeIcmpPingApi)
         bp.add_url_rule("/nodes/<int:node_id>/sync/", view_func=NodeSyncApi)
         bp.add_url_rule("/nodes/<int:node_id>/sync-status/", view_func=NodeSyncReportApi)
 
@@ -178,25 +179,27 @@ def init_app(app):
         bp.add_url_rule("/domains/options/", view_func=DomainsOptionsApi)
         bp.add_url_rule("/domains/", view_func=DomainsQuickAddApi)
 
-        from .apply_api import ApplyActionApi, ApplyApi, ApplyLogApi, ApplyLogClearApi, ApplyLogDownloadApi, ApplyLogsClearApi
+        from .apply_api import ApplyActionApi, ApplyApi, ApplyLogApi, ApplyLogClearApi, ApplyLogDownloadApi, ApplyLogsClearApi, ApplyLogTelegramApi
 
         bp.add_url_rule("/apply/", view_func=ApplyApi)
         bp.add_url_rule("/apply/log/", view_func=ApplyLogApi)
         bp.add_url_rule("/apply/logs/<string:name>/download/", view_func=ApplyLogDownloadApi)
+        bp.add_url_rule("/apply/logs/<string:name>/telegram/", view_func=ApplyLogTelegramApi, methods=["POST"])
         bp.add_url_rule("/apply/logs/clear/", view_func=ApplyLogsClearApi, methods=["POST"])
         bp.add_url_rule("/apply/logs/<string:name>/", view_func=ApplyLogClearApi, methods=["DELETE"])
         bp.add_url_rule("/apply/<string:action>/", view_func=ApplyActionApi, methods=["POST"])
 
-        from .backup_api import BackupApi, BackupDownloadApi, BackupFileApi, BackupFilesApi, BackupRestoreApi, BackupRestoreRunApi
+        from .backup_api import BackupApi, BackupDownloadApi, BackupFileApi, BackupFilesApi, BackupRestoreApi, BackupRestoreRunApi, BackupTelegramApi
 
         bp.add_url_rule("/backup/", view_func=BackupApi)
         bp.add_url_rule("/backup/download/", view_func=BackupDownloadApi)
         bp.add_url_rule("/backup/files/", view_func=BackupFilesApi)
+        bp.add_url_rule("/backup/telegram/", view_func=BackupTelegramApi)
         bp.add_url_rule("/backup/files/<string:name>/", view_func=BackupFileApi)
         bp.add_url_rule("/backup/restore/", view_func=BackupRestoreApi)
         bp.add_url_rule("/backup/restore/run/", view_func=BackupRestoreRunApi, methods=["POST"])
 
-        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi
+        from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi, DomainsPageProblemsApi
 
         from .config_health_api import ConfigHealthApi
 
@@ -216,6 +219,7 @@ def init_app(app):
         bp.add_url_rule("/clean-ip/run/<token>/probe/", view_func=CleanIpProbeApi)
         bp.add_url_rule("/domains-page/", view_func=DomainsPageApi)
         bp.add_url_rule("/domains-page/order/", view_func=DomainsPageOrderApi)
+        bp.add_url_rule("/domains-page/problems/", view_func=DomainsPageProblemsApi)
         bp.add_url_rule("/domains-page/options/", view_func=DomainsPageOptionsApi)
         bp.add_url_rule("/domains-page/detect/", view_func=DomainsPageDetectApi)
         bp.add_url_rule("/domains-page/port-check/", view_func=DomainsPagePortCheckApi)

@@ -83,11 +83,12 @@ _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 # --------------------------------------------------------------------------- fetch and split
 
 
-def fetch(url: str, user_agent: str) -> tuple[str, FetchedHttp]:
-    """The subscription text and what was asked / answered (so the page can show the user agent really sent)."""
+def fetch(url: str, user_agent: str, verify: bool = True) -> tuple[str, FetchedHttp]:
+    """The subscription text and what was asked / answered (so the page can show the user agent really sent).
+    ``verify=False``: no certificate check (the server fetching its own page by its IP, which no certificate names)."""
     ua = user_agent.strip() or DEFAULT_UA
     try:
-        res = requests.get(url, headers={"User-Agent": ua}, timeout=FETCH_TIMEOUT, stream=True)
+        res = requests.get(url, headers={"User-Agent": ua}, timeout=FETCH_TIMEOUT, stream=True, verify=verify)
         res.raise_for_status()
         body = res.raw.read(MAX_BODY + 1, decode_content=True)
     except Exception as e:  # requests, urllib3 and the network all have their own errors: all of them are "could not fetch"
@@ -579,6 +580,7 @@ def run(
     timeout: int = 10,
     repeats: int = DEFAULT_REPEATS,
     should_stop: Callable[[], bool] | None = None,
+    verify: bool = True,
 ) -> Iterator[Event]:
     """Events: ``start`` (once), a ``result`` per config, ``ping`` while nothing finishes, then ``done``."""
     fetched: Fetched
@@ -588,7 +590,7 @@ def run(
             raise TesterError("The contents are too large")
         raw, fetched = content, FetchedPasted(pasted=True, bytes=size)
     else:
-        raw, fetched = fetch(url, user_agent)
+        raw, fetched = fetch(url, user_agent, verify)
     source, items, parsed = split(raw, app)
     if not items:
         raise TesterError("No config found in the subscription")

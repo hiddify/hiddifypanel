@@ -215,7 +215,7 @@ async function save() {
   <Dialog v-model:visible="visible" modal :draggable="false" class="dd" :style="{ width: 'min(46rem, calc(100vw - 1.5rem))' }" :breakpoints="{ '640px': '100vw' }" @after-hide="hideMobileMenu">
     <template #header>
       <div class="dd__head">
-        <span class="dd__emoji" :style="{ '--kind-color': KIND_META[kind].color }">{{ KIND_META[kind].emoji }}</span>
+        <span class="dd__emoji" :style="{ '--kind-color': KIND_META[kind].color, color: KIND_META[kind].color }"><i :class="KIND_META[kind].icon" /></span>
         <div class="dd__head-text">
           <span class="dd__title">{{ t('domains.editTitle') }}</span>
           <span class="dd__sub" dir="ltr">{{ row?.domain || t('domains.noName') }}</span>
@@ -292,7 +292,7 @@ async function save() {
       <div v-if="showAdvanced" class="dd__adv">
         <section v-if="isCdn" class="dd__section">
           <label class="dd__field">
-            <span class="dd__label">{{ t('domains.field.fronting') }}</span>
+            <span class="dd__label"><i class="pi pi-id-card dd__label-icon" />{{ t('domains.field.fronting') }}</span>
             <InputText v-model="servernames" dir="ltr" spellcheck="false" autocomplete="off" :placeholder="t('domains.field.frontingPlaceholder')" :invalid="!!servernamesError" fluid />
             <small v-if="servernamesError" class="dd__err">{{ servernamesError }}</small>
             <small class="dd__hint">{{ t('domains.field.frontingHint') }}</small>
@@ -300,7 +300,7 @@ async function save() {
         </section>
 
         <section v-if="!isSublink" class="dd__section">
-          <h3 class="dd__h">{{ t('domains.field.ports') }}</h3>
+          <h3 class="dd__h"><i class="pi pi-sort-alt dd__label-icon" />{{ t('domains.field.ports') }}</h3>
           <p class="dd__hint dd__hint--top">{{ t('domains.field.portsHint') }}</p>
           <div class="dd__ports">
             <PortField v-model="tlsPort" v-model:valid="tlsPortOk" kind="tls" :default-port="meta?.default_tls_port ?? 443" :domain-id="row.id" input-id="dd-tls-port" />
@@ -310,12 +310,12 @@ async function save() {
 
         <div class="dd__grid">
           <label v-if="!isSublink" class="dd__field">
-            <span class="dd__label">{{ t('domains.field.serverDomain') }}</span>
+            <span class="dd__label"><i class="pi pi-arrow-right dd__label-icon" />{{ t('domains.field.serverDomain') }}</span>
             <Select v-model="serverDomainId" :options="serverDomainOptions" option-label="label" option-value="id" show-clear :placeholder="t('domains.field.none')" class="dd__ltr" fluid />
             <small class="dd__hint">{{ t('domains.field.serverDomainHint') }}</small>
           </label>
           <label v-if="!isSublink && !isFakeProxy" class="dd__field">
-            <span class="dd__label">{{ t('domains.field.downloadDomain') }}</span>
+            <span class="dd__label"><i class="pi pi-download dd__label-icon" />{{ t('domains.field.downloadDomain') }}</span>
             <Select v-model="downloadDomainId" :options="downloadOptions" option-label="label" option-value="id" show-clear filter :placeholder="t('domains.field.none')" class="dd__ltr" fluid />
             <small class="dd__hint">{{ t('domains.field.downloadDomainHint') }}</small>
           </label>
@@ -324,7 +324,7 @@ async function save() {
         <!-- the IPs users' links use, and the scanner that finds them: one panel -->
         <section v-if="!isSublink" class="dd__cdnip" :class="{ 'dd__cdnip--invalid': relayNeedsIp }">
           <header class="dd__cdnip-head">
-            <span class="dd__cdnip-icon"><i class="pi pi-sitemap" /></span>
+            <span class="dd__cdnip-icon"><i class="pi pi-map-marker" /></span>
             <div class="dd__cdnip-title">
               <div class="dd__cdnip-line">
                 <span class="dd__label">{{ t('domains.field.cdnIp') }}</span>
@@ -351,21 +351,21 @@ async function save() {
           <label class="dd__toggle">
             <ToggleSwitch v-model="resolveIp" />
             <span>
-              <b>{{ t('domains.field.resolveIp') }}</b>
+              <b><i class="pi pi-search dd__label-icon" />{{ t('domains.field.resolveIp') }}</b>
               <small>{{ t('domains.field.resolveIpHint') }}</small>
             </span>
           </label>
           <label v-if="isCdn" class="dd__toggle" :class="{ 'dd__toggle--off': !meta?.ech_enabled }">
             <ToggleSwitch v-model="ech" :disabled="!meta?.ech_enabled && !ech" />
             <span>
-              <b>{{ t('domains.field.ech') }}</b>
+              <b><i class="pi pi-envelope dd__label-icon" />{{ t('domains.field.ech') }}</b>
               <small>{{ meta?.ech_enabled ? t('domains.field.echHint') : t('domains.field.echNeedsSetting') }}</small>
             </span>
           </label>
         </div>
 
         <section class="dd__section">
-          <h3 class="dd__h">{{ t('domains.field.extra') }}</h3>
+          <h3 class="dd__h"><i class="pi pi-code dd__label-icon" />{{ t('domains.field.extra') }}</h3>
           <Json5Editor v-model="extraText" height="120px" />
           <small v-if="extraError" class="dd__err">{{ extraError }}</small>
         </section>
@@ -624,5 +624,12 @@ async function save() {
   .dd__grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+/* The Advanced fields' icons (in place of the emoji their labels had) */
+.dd__label-icon {
+  margin-inline-end: 0.4rem;
+  font-size: 0.85em;
+  color: var(--kind-color, var(--p-primary-color));
+  opacity: 0.85;
 }
 </style>

@@ -627,6 +627,10 @@
         "loading": "Chargement…",
         "show": "Afficher le journal",
         "showingEnd": "fin affichée",
+        "telegram": "Envoyer sur mon Telegram",
+        "telegramConnect": "Connectez d'abord votre Telegram dans Mon compte",
+        "telegramFailed": "Impossible d'envoyer sur Telegram",
+        "telegramSent": "{name} envoyé sur votre Telegram",
         "terminal": "journal",
         "wrap": "Retour à la ligne"
       },
@@ -726,7 +730,9 @@
         "downloaded": "Sauvegarde téléchargée",
         "failed": "Impossible de créer la sauvegarde",
         "onServer": "Enregistrer sur le serveur",
+        "onTelegram": "Enregistrer sur Telegram",
         "secret": "Le fichier contient des mots de passe, des liens utilisateur et des clés privées. Conservez-le en lieu sûr.",
+        "sentTelegram": "Sauvegarde envoyée sur votre Telegram",
         "sub": "Tout dans un seul fichier : paramètres, utilisateurs, admins, domaines, proxies et certificats.",
         "title": "Créer une sauvegarde"
       },
@@ -932,20 +938,20 @@
       "field": {
         "alias": "Nom affiché",
         "aliasHint": "Affiché dans les applications des utilisateurs à la place du domaine.",
-        "cdnIp": "🔂 Forcer les configs à utiliser ces IP / domaines",
+        "cdnIp": "Forcer les configs à utiliser ces IP / domaines",
         "cdnIpHint": "Placez-les dans les liens des utilisateurs à la place de l'IP du domaine, séparés par des virgules ou des retours à la ligne. Les modèles d'opérateur fonctionnent aussi.",
         "domain": "Domaine",
         "domainInvalid": "Cela ne ressemble pas à un domaine",
         "domainRequired": "Saisissez un domaine",
-        "downloadDomain": "📈 Domaine de téléchargement",
+        "downloadDomain": "Domaine de téléchargement",
         "downloadDomainHint": "Uniquement pour XHTTP : les téléchargements peuvent provenir d'un autre domaine que les envois. Plus difficile à détecter, souvent plus rapide.",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "Récupère et utilise Encrypted Client Hello pour ce domaine CDN.",
         "echNeedsSetting": "Activez d'abord TLS ECH dans les paramètres du panneau.",
         "extra": "Paramètres supplémentaires",
         "extraInvalid": "JSON non valide",
         "extraObject": "Doit être un objet JSON",
-        "fronting": "🎭 Domain fronting",
+        "fronting": "Domain fronting",
         "frontingHint": "Facultatif. Les applications des utilisateurs affichent l'un de ces noms (SNI) à la place de votre domaine, de sorte qu'un filtre ne voit qu'un autre site. Utilisez des sites sur le même CDN que votre domaine (p. ex. d'autres sites Cloudflare). Vide : pas de fronting.",
         "frontingPlaceholder": "autre-site.com, site-cdn.net",
         "hostnamesInvalid": "Utilisez des noms d'hôte séparés par des virgules, comme site.com",
@@ -955,7 +961,7 @@
         "portsHint": "Où les utilisateurs atteignent les proxies SNI et L7 de ce domaine : un port TLS et un port HTTP. Vide : valeur par défaut. Le pare-feu les redirige vers 443 / 80, donc rien d'autre sur le serveur ne doit y écouter, et un port TLS ne peut pas être le port HTTP d'un autre domaine.",
         "proxies": "Proxies personnalisés",
         "relayNeedsIp": "Un relay qui n'utilise pas de vrai certificat nécessite l'IP du serveur relay dans Avancé → IP forcées.",
-        "resolveIp": "🔢 Résoudre l'IP",
+        "resolveIp": "Résoudre l'IP",
         "resolveIpHint": "Utilise l'IP à la place du nom de domaine dans les proxies. Utile quand le DNS est instable.",
         "serverDomain": "Domaine du serveur",
         "serverDomainHint": "Domaine du serveur amont utilisé pour cette entrée. Doit être un domaine Direct ou Relay valide.",
@@ -967,7 +973,18 @@
         "tlsMode": "Mode TLS"
       },
       "getCert": "Obtenir un certificat",
-      "howto": "L'ordre compte : faites glisser (ou utilisez les flèches) pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
+      "guide": {
+        "dragText": "Les lignes font de la place ; sur ordinateur, vous pouvez aussi focaliser la poignée et appuyer sur ↑ ou ↓.",
+        "dragTitle": "Glissez-le vers le haut ou le bas et lâchez",
+        "gotIt": "Compris",
+        "grabText": "Le ☰ au début de la ligne, à la souris ou au doigt.",
+        "grabTitle": "Prenez un domaine par sa poignée",
+        "lead": "L'ordre compte : les configs listent vos domaines dans cet ordre, et le premier sert aux liens du panneau.",
+        "orderText": "Il est enregistré aussitôt : les configs des utilisateurs le suivent désormais.",
+        "orderTitle": "Voilà le nouvel ordre",
+        "title": "Mettez vos domaines dans l'ordre"
+      },
+      "howto": "L'ordre compte : faites glisser la poignée ☰ pour trier. Les configs listent les domaines dans cet ordre, et le premier sert pour les liens du panneau.",
       "howtoFiltered": "Effacez la recherche et les filtres pour modifier l'ordre.",
       "ips": {
         "elsewhere": "un autre serveur / CDN",
@@ -1003,6 +1020,18 @@
       "noMatch": "Aucun domaine ne correspond aux filtres",
       "noName": "(sans nom)",
       "notChanged": "Inchangé",
+      "notice": {
+        "expired": "Son certificat a expiré : les applications refusent de se connecter.",
+        "failed": "Il n'a pas de certificat valide : l'obtention a échoué.",
+        "invalid": "Son certificat n'est pas valide pour ce domaine.",
+        "missing": "Il n'a pas encore de certificat.",
+        "rate_limited": "L'obtention du certificat est en pause : la limite des autorités de certification est atteinte. Nouvel essai plus tard.",
+        "renew_failed": "Son certificat est encore valide, mais le renouvellement a échoué.",
+        "saved": "Domaines · enregistré avec un avertissement",
+        "self_signed": "Il n'a qu'un certificat auto-signé temporaire : les applications avertissent ou refusent.",
+        "title": "Domaines · {domain}",
+        "where": "Détails : page Domaines."
+      },
       "openPanel": "Ouvrir le panneau sur ce domaine",
       "port": {
         "busy": "un autre programme l'écoute ({name})",
@@ -1140,12 +1169,25 @@
     },
     "donation": {
       "close": "Fermer",
+      "contact": "Veuillez nous contacter à {email} si vous pouvez nous aider.",
       "copied": "Adresse de {name} copiée",
       "copiedShort": "Copié",
       "copyAddress": "Copier l'adresse {name}",
+      "help": {
+        "content": "Fournisseurs de contenu",
+        "flutter": "Développeur Flutter",
+        "go": "Développeur Go",
+        "python": "Développeur Python",
+        "share": "Partagez Hiddify Manager avec d'autres",
+        "swift": "Développeur Swift"
+      },
       "networkHint": "Envoyez chaque monnaie uniquement sur le réseau indiqué à côté de son nom : un transfert sur un autre réseau est perdu.",
+      "otherHelp": "Nous avons également besoin d'autres aides",
+      "paymentMethods": "Méthodes de paiement",
       "qr": "QR code",
       "qrOf": "QR code de l'adresse de {name}",
+      "showLess": "Afficher moins",
+      "showMore": "Afficher plus",
       "showQr": "Afficher le QR code de {name}",
       "title": "Don"
     },
@@ -1284,9 +1326,28 @@
       },
       "justNow": "À l'instant",
       "lastSeen": "Dernier contact",
+      "live": {
+        "collecting": "Collecte des données en direct… les graphiques se remplissent dans les prochaines minutes.",
+        "showLess": "Afficher moins",
+        "showMore": "Afficher plus",
+        "unavailable": "Ce nœud n'a pas répondu"
+      },
       "moreInfo": "Plus d'informations",
       "neverSeen": "Jamais",
       "openAdmin": "Ouvrir",
+      "pingDialog": {
+        "avg": "moy",
+        "button": "Ping",
+        "hint": "{sent} envoyés, {received} réponses · le ping continue jusqu'à la fermeture de cette fenêtre",
+        "loss": "perte",
+        "max": "max",
+        "min": "min",
+        "noAddress": "L'adresse du nœud est inconnue",
+        "running": "ping en cours",
+        "tcp": "TCP (ICMP impossible)",
+        "timeout": "Pas de réponse",
+        "title": "Ping · {name}"
+      },
       "reachable": "Joignable",
       "refresh": "Actualiser",
       "remove": "Supprimer",
@@ -1331,7 +1392,7 @@
         "addTitle": "Ajouter un outbound {mode}",
         "config": "JSON",
         "configBridge": "Le panneau l'a nommé « {tag} » ; le routage utilise ce tag et l'autre core s'y connecte sur 127.0.0.1:{port}.",
-        "configBridgeNew": "Le panneau lui attribue un tag (un tag que vous écrivez est ignoré) ; le routage l'utilise et l'autre core s'y connecte via un pont SOCKS local.",
+        "configBridgeNew": "Le panneau lui attribue un tag (un tag que vous écrivez est ignoré) ; le routage l'utilise et l'autre core s'y connecte via un pont Socks local.",
         "configExample": "Insérer un exemple",
         "configHint": {
           "core_endpoint": "Un objet endpoint hiddify-core (sing-box), p. ex. un endpoint WireGuard. Il est vérifié par hiddify-core avant l'enregistrement.",
@@ -1344,8 +1405,8 @@
         "editTitle": "Modifier {name}",
         "endpoint": "Connexion",
         "endpointHint": {
-          "psiphon": "S'exécute dans hiddify-core. xray y accède sur le port SOCKS local {endpoint}.",
-          "tor": "S'exécute dans hiddify-core (le programme `tor` doit être installé sur ce serveur). xray y accède sur le port SOCKS local {endpoint}."
+          "psiphon": "S'exécute dans hiddify-core. xray y accède sur le port Socks local {endpoint}.",
+          "tor": "S'exécute dans hiddify-core (le programme `tor` doit être installé sur ce serveur). xray y accède sur le port Socks local {endpoint}."
         },
         "host": "Hôte",
         "name": "Nom",
@@ -1389,21 +1450,21 @@
         "core_outbound": "Outbound hiddify-core (sing-box)",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "Outbound xray"
       },
       "modeHint": {
         "block": "Abandonné",
-        "core_endpoint": "Votre propre endpoint hiddify-core, p. ex. WireGuard (JSON) ; xray y accède via un pont SOCKS local",
-        "core_outbound": "Votre propre outbound hiddify-core (JSON) ; xray y accède via un pont SOCKS local",
+        "core_endpoint": "Votre propre endpoint hiddify-core, p. ex. WireGuard (JSON) ; xray y accède via un pont Socks local",
+        "core_outbound": "Votre propre outbound hiddify-core (JSON) ; xray y accède via un pont Socks local",
         "direct": "Directement depuis ce serveur",
         "psiphon": "Via Psiphon (géré par hiddify-core)",
         "socks": "Via un proxy SOCKS5",
         "tor": "Via le réseau Tor (géré par hiddify-core)",
         "warp": "Via Cloudflare WARP sur ce serveur",
-        "xray_outbound": "Votre propre outbound xray (JSON) ; hiddify-core y accède via un pont SOCKS local"
+        "xray_outbound": "Votre propre outbound xray (JSON) ; hiddify-core y accède via un pont Socks local"
       },
       "more": "Plus d'actions",
       "moveDown": "Descendre",
@@ -1422,7 +1483,7 @@
       "resetMessage": "Vos modifications de ses sites, geosites et rule-sets sont remplacées par les listes intégrées, que les mises à niveau tiennent ensuite à jour.",
       "resetTitle": "Rétablir {name} aux listes intégrées ?",
       "saved": "{name} enregistré",
-      "subtitle": "Choisissez où le trafic quitte ce serveur, dans l'ordre : via WARP, directement, bloqué, ou via une sortie SOCKS, Tor ou Psiphon.",
+      "subtitle": "Choisissez où le trafic quitte ce serveur, dans l'ordre : via WARP, directement, bloqué, ou via une sortie Socks, Tor ou Psiphon.",
       "title": "Outbounds"
     },
     "passwordRules": {
@@ -1599,7 +1660,7 @@
       "l7ReverseProto": "Protocole de proxy inverse L7",
       "linkSettings": "Paramètres du lien",
       "linkTemplate": "Modèle de lien",
-      "listTitle": "Proxies personnalisés",
+      "listTitle": "Proxies",
       "mode": "Mode",
       "modeLabels": {
         "domain_native": "Domaine natif",
@@ -1928,6 +1989,9 @@
       "openWeb": "Ouvrir dans le navigateur",
       "promptLead": "Ce panneau a un bot Telegram, {bot}. Liez-le à votre compte :",
       "promptTitle": "Connecter votre Telegram ?",
+      "stepCreate": "Créez un utilisateur directement dans le chat",
+      "stepStart": "Démarrez le bot : son menu s’ouvre",
+      "stepUsers": "Voyez vos utilisateurs et leur consommation",
       "reconnect": "Se reconnecter",
       "scan": "Ou scannez ceci avec l'appareil photo de votre téléphone."
     },
@@ -1973,6 +2037,37 @@
       "loadValues": "Charger les valeurs actuelles",
       "name": "Nom",
       "skipHint": "Produisez SKIP ou appelez skip() pour ignorer le rendu de ce proxy lorsqu'une condition n'est pas remplie"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "unread": "{n} nouvelle notification | {n} nouvelles notifications",
+      "new": "Nouveau",
+      "dismiss": "Ignorer"
+    },
+    "pwa": {
+      "guide": {
+        "platform": "Votre appareil",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "Dans Safari, touchez le bouton ••• de la barre du bas",
+        "ios2": "Touchez Partager",
+        "ios3": "Choisissez « Sur l'écran d'accueil »",
+        "ios4": "Touchez Ajouter : le panneau est sur l'écran d'accueil",
+        "android1": "Dans Chrome, touchez le menu ⋮ en haut",
+        "android2": "Choisissez « Ajouter à l'écran d'accueil » (ou « Installer l'application »)",
+        "android3": "Touchez Installer : le panneau s'ouvre comme une application",
+        "computer": "Ordinateur",
+        "desktop1": "Dans Chrome, cliquez sur l'icône d'installation au bout de la barre d'adresse",
+        "desktop2": "Cliquez sur Installer",
+        "desktop3": "Le panneau s'ouvre dans sa propre fenêtre, comme une application"
+      },
+      "gotIt": "Compris",
+      "installNow": "Installer maintenant",
+      "later": "Plus tard",
+      "never": "Ne plus afficher",
+      "text": "Gardez le panneau à portée d'un geste, comme toute application de votre téléphone ou ordinateur.",
+      "title": "Installer le panneau comme application"
     },
     "theme": {
       "dark": "Mode sombre",
@@ -2305,8 +2400,8 @@
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "Utilisateur",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "Le JSON vmess doit être un objet"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "Le JSON VMess doit être un objet"
     },
     "validation": {
       "errors": "Erreurs",
@@ -2587,7 +2682,7 @@
     },
     "hysteria_port": {
       "description": "Port UDP Hysteria par exemple 5678",
-      "label": "🔍Port Hysteria2"
+      "label": "🔍Port Hysteria 2"
     },
     "hysteria_up_mbps": {
       "description": "Vitesse de téléchargement maximale d’Hysteria",
@@ -3032,7 +3127,7 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray ne prend pas en charge la comptabilité et n'est pas suggéré",
+      "description": "V2Ray ne prend pas en charge la comptabilité et n'est pas suggéré",
       "label": "♈️ V2Ray"
     },
     "validation-error": "Il y a une erreur dans l'un des champs.",
@@ -3128,7 +3223,7 @@
       "label": "Configs supplémentaires pour Singbox"
     },
     "additional_configs_urls": {
-      "description": "Vous pouvez ajouter des proxies http:// https:// ou au format v2ray comme vless://",
+      "description": "Vous pouvez ajouter des proxies http:// https:// ou au format V2Ray comme vless://",
       "label": "URL supplémentaires"
     },
     "additional_configs_xrayjson": {
@@ -3250,8 +3345,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Activer le protocole SOCKS",
-      "label": "SOCKS"
+      "description": "Activer le protocole Socks",
+      "label": "Socks"
     },
     "splithttp_enable": {
       "description": "XHTTP permet des flux de téléchargement et d'envoi séparés, unifie gRPC, H2, H1 et prend aussi en charge Quic.",
@@ -3310,16 +3405,16 @@
       "label": "Utiliser l'IP dans les configs"
     },
     "vless_decryption": {
-      "description": "Paramètre de déchiffrement VLESS pour les liens de partage",
-      "label": "Déchiffrement VLESS"
+      "description": "Paramètre de déchiffrement VLess pour les liens de partage",
+      "label": "Déchiffrement VLess"
     },
     "vless_encryption": {
-      "description": "Méthode de chiffrement VLESS pour les liens de partage",
-      "label": "Chiffrement VLESS"
+      "description": "Méthode de chiffrement VLess pour les liens de partage",
+      "label": "Chiffrement VLess"
     },
     "vless_flow": {
-      "description": "Contrôle de flux VLESS (p. ex. xtls-rprx-vision)",
-      "label": "Flux VLESS"
+      "description": "Contrôle de flux VLess (p. ex. xtls-rprx-vision)",
+      "label": "Flux VLess"
     }
   },
   "copy": "Copie",

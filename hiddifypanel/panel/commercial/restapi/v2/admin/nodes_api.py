@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ipaddress
 from datetime import date, datetime, timedelta
 
 from apiflask import abort
@@ -56,6 +57,44 @@ def _node_details(child: Child) -> dict:
     }
 
 
+def _host_ip(host: str) -> str:
+    """The address of a node's host ("203.0.113.10", "[2001:db8::1]:443", a name): itself, or what its name resolves to."""
+    if host.startswith("["):  # "[IPv6]" or "[IPv6]:port"
+        name = host[1:].split("]", 1)[0]
+    elif host.count(":") == 1:  # "name:port" (a bare IPv6 has more colons)
+        name = host.split(":", 1)[0]
+    else:
+        name = host
+    try:
+        return str(ipaddress.ip_address(name))
+    except ValueError:
+        pass
+    ip = hutils.network.get_domain_ip(name, version=4) or hutils.network.get_domain_ip(name)
+    return str(ip) if ip else ""
+
+
+def node_country(host: str) -> str:
+    """The node's country (ISO code, e.g. "DE") from its address, by the panel's own MaxMind data; "" when unknown.
+    Kept a day: the server does not move, and the Nodes page lists every node each minute."""
+    from hiddifypanel.cache import redis_client
+    from hiddifypanel.hutils.network import maxmind
+
+    if not host:
+        return ""
+    key = f"nodes:country:{host}"
+    cached = redis_client.get(key)
+    if cached is not None:
+        return cached.decode() if isinstance(cached, bytes) else str(cached)
+    try:
+        ip = _host_ip(host)
+        code = maxmind.get_ip_info(ip).country if ip else ""
+    except Exception:
+        code = ""
+    code = code if len(code) == 2 and code.isalpha() else ""
+    redis_client.set(key, code, ex=86400 if code else 3600)
+    return code
+
+
 def _node_row(child: Child) -> dict:
     base = (child.node_base_url or "").strip()
     base = base if base.endswith("/") or not base else base + "/"
@@ -64,6 +103,7 @@ def _node_row(child: Child) -> dict:
         "id": child.id,
         "name": child.name or f"node-{child.id}",
         "host": base.split("://", 1)[-1].split("/", 1)[0] if base else "",
+        "country": node_country(base.split("://", 1)[-1].split("/", 1)[0]) if base else "",
         # Same account on the node (admins are synced), so this signs the admin in there.
         "admin_url": f"{base}{g.account.uuid}/" if base else "",
         "last_seen": last_seen.isoformat() if last_seen else None,
@@ -163,6 +203,54 @@ class NodePingApi(MethodView):
         online, error = hutils.node.is_panel_active(base)
         info = hutils.node.get_panel_info_by_url(base) if online else None
         return {"online": online, "version": getattr(info, "version", "") or "", "error": "" if online else error}
+
+
+def _ping_target(child: Child) -> tuple[str, int]:
+    """The node's address and port from its link (a name is resolved, IPv4 first)."""
+    import ipaddress
+    from urllib.parse import urlparse
+
+    url = urlparse((child.node_base_url or "").strip())
+    host, port = url.hostname or "", url.port or (80 if url.scheme == "http" else 443)
+    try:
+        return str(ipaddress.ip_address(host)), port
+    except ValueError:
+        ip = hutils.network.get_domain_ip(host, version=4) or hutils.network.get_domain_ip(host) if host else None
+        return (str(ip) if ip else ""), port
+
+
+def ping_once(ip: str, port: int) -> dict:
+    """One ICMP echo from this server (round trip in ms); when ICMP is not allowed here or is blocked on the way,
+    the time a TCP connection to the node's panel port takes instead (``method`` says which)."""
+    import re
+    import socket
+    import subprocess
+    import time
+
+    try:
+        res = subprocess.run(["ping", "-c", "1", "-W", "2", "-n", ip], capture_output=True, text=True, timeout=4)
+        found = re.search(r"time[=<]([\d.]+)\s*ms", res.stdout)
+        if res.returncode == 0 and found:
+            return {"ok": True, "ms": round(float(found.group(1)), 1), "method": "icmp", "error": ""}
+    except (OSError, subprocess.SubprocessError):
+        pass
+    start = time.perf_counter()
+    try:
+        with socket.create_connection((ip, port), timeout=3):
+            return {"ok": True, "ms": round((time.perf_counter() - start) * 1000, 1), "method": "tcp", "error": ""}
+    except OSError as e:
+        return {"ok": False, "ms": None, "method": "tcp", "error": e.strerror or type(e).__name__}
+
+
+class NodeIcmpPingApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self, node_id: int):
+        """Nodes: Ping the node's server once from this panel (the page asks again every second)"""
+        ip, port = _ping_target(_remote_or_404(node_id))
+        if not ip:
+            return {"ip": "", "ok": False, "ms": None, "method": "", "error": "no_address"}
+        return {"ip": ip, **ping_once(ip, port)}
 
 
 class NodeSyncApi(MethodView):

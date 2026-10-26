@@ -72,15 +72,33 @@ const stepIndex = computed(() => {
   return STEPS.indexOf(s)
 })
 
+const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/
+
+/** An IPv6 address in its standard short form ("2001:DB8:0::1" → "2001:db8::1"), or null when it is not one. */
+function ipv6(v: string): string | null {
+  if (!v.includes(':') || !/^[0-9a-f:.]+$/.test(v)) return null
+  try {
+    return new URL(`http://[${v}]/`).hostname.slice(1, -1)
+  } catch {
+    return null
+  }
+}
+
 function normalize(raw: string): string {
   let v = raw.trim().toLowerCase()
   v = v.replace(/^[a-z]+:\/\//, '').split('/')[0]!.split('?')[0]!
+  // An IPv6 address: in brackets (perhaps with a port), or bare (its last ":1" is not a port)
+  const bracketed = /^\[([^\]]+)\](:\d+)?$/.exec(v)
+  const six = ipv6(bracketed ? bracketed[1]! : v)
+  if (six) return six
   return v.replace(/:\d+$/, '').replace(/\.$/, '')
 }
 const cleanName = computed(() => normalize(name.value))
+/** A domain name, or an IPv4 / IPv6 address (configs can use the server's address itself) */
 const nameError = computed(() => {
-  if (!cleanName.value) return null
-  return /^(\*\.)?([a-z0-9\-.]+\.[a-z]{2,})$/.test(cleanName.value) ? null : t('domains.field.domainInvalid')
+  const v = cleanName.value
+  if (!v) return null
+  return /^(\*\.)?([a-z0-9\-.]+\.[a-z]{2,})$/.test(v) || IPV4.test(v) || ipv6(v) ? null : t('domains.field.domainInvalid')
 })
 const takenLocally = computed(() => (props.state?.domains ?? []).some((d) => d.domain === cleanName.value))
 
@@ -293,7 +311,7 @@ async function copyIp(ip: string) {
           <button v-for="s in aliasSuggestions" :key="s" type="button" class="wz__chip" :class="{ 'wz__chip--on': alias === s }" :disabled="step === 'saving'" @click="alias = s">{{ s }}</button>
         </div>
         <div class="wz__summary">
-          <span class="wz__summary-emoji">{{ KIND_META[kind].emoji }}</span>
+          <span class="wz__summary-emoji" :style="{ color: KIND_META[kind].color }"><i :class="KIND_META[kind].icon" /></span>
           <span class="wz__summary-text">
             <b dir="ltr">{{ cleanName }}</b>
             <small>{{ t(`domains.kind.${kind}.name`) }}<template v-if="decoy"> · {{ t(`domains.tlsMode.${tlsMode}`) }}</template> · {{ alias || cleanName }}</small>

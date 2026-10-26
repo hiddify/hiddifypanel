@@ -151,13 +151,37 @@ def write_backup_file() -> Path:
     return dst
 
 
-def _telegram() -> dict[str, Any]:
+def send_backup_to_telegram(chat_id: int) -> str:
+    """A backup of the panel as it is now, sent to ``chat_id`` by the panel's bot and kept nowhere else
+    (built in memory, no file on the server). The caption is the one of the automatic backups. Returns the file name."""
+    from telebot.apihelper import ApiTelegramException
+
+    from hiddifypanel.panel.cli import backup_caption
+    from hiddifypanel.panel.commercial.telegrambot import bot
+
+    data = json.dumps(hiddify.dump_db_to_dict(), indent=2, sort_keys=True, default=str).encode()
+    # Same name as the server's backups (a restore recognises it), under Telegram's 50 MB bot upload limit
+    name = f"{datetime.datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.json"
+    if len(data) > 50 * 1024 * 1024:
+        abort(400, "The backup is larger than 50 MB, the most a Telegram bot can send: download it instead")
+    document = io.BytesIO(data)
+    document.name = name
+    try:
+        bot.send_document(chat_id, document, visible_file_name=name, caption=backup_caption(), parse_mode="HTML")
+    except ApiTelegramException as e:
+        logger.warning(f"backup: sending to Telegram failed: {e}")
+        abort(400, f"Telegram did not take the backup: {e.description}")
+    return name
+
+
+def telegram_state() -> dict[str, Any]:
+    """Whether the panel has a bot, and whether my account is connected to it (to send me files)."""
     bot = getattr(g, "bot", None)
     return {"bot": bool(bot and getattr(bot, "username", None)), "connected": bool(g.account.telegram_id)}
 
 
 def _state() -> dict[str, Any]:
-    return {"current": current_summary(), "files": list_files(), "telegram": _telegram(), "directory": str(backup_dir())}
+    return {"current": current_summary(), "files": list_files(), "telegram": telegram_state(), "directory": str(backup_dir())}
 
 
 # ---------------------------------------------------------------------------------------------- restore token
@@ -222,6 +246,19 @@ class BackupFilesApi(MethodView):
         """Make a backup on the server now (kept with the automatic ones)"""
         path = write_backup_file()
         return {"created": path.name, **_state()}
+
+
+class BackupTelegramApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self):
+        """Make a backup now and send it to my Telegram (not kept on the server)"""
+        telegram = telegram_state()
+        if not telegram["bot"]:
+            abort(400, "This panel has no Telegram bot")
+        if not telegram["connected"]:
+            abort(400, "Connect your Telegram first (My account)")
+        return {"sent": send_backup_to_telegram(g.account.telegram_id)}
 
 
 class BackupFileApi(MethodView):

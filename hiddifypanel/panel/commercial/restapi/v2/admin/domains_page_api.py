@@ -7,6 +7,7 @@ rebuilt immediately via ``apply-users``; HAProxy / full gateway still needs Appl
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import re
 from typing import Any
@@ -35,7 +36,25 @@ from hiddifypanel.proxy_v3.domain_proxy_options import REALITY_TERMINATION_SLUG,
 
 APPLY = "apply_config"
 ROLES = {Role.super_admin, Role.admin}
-DOMAIN_RE = re.compile(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$|^(\d{1,3}\.){3}\d{1,3}$|^([0-9a-fA-F]{1,4}:){1,7}(:|[0-9a-fA-F]{1,4})$")
+DOMAIN_RE = re.compile(r"^(\*\.)?([A-Za-z0-9\-\.]+\.[a-zA-Z]{2,})$")
+
+
+def clean_host(value: str) -> str:
+    """A domain as typed (lowercased), or an IPv4 / IPv6 address in its standard form ("[2001:DB8:0::1]" → "2001:db8::1")."""
+    name = (value or "").strip().lower()
+    try:
+        return str(ipaddress.ip_address(name.strip("[]")))
+    except ValueError:
+        return name
+
+
+def is_host(name: str) -> bool:
+    """A domain name, or any IPv4 / IPv6 address (the regex only took IPv6 written out in full)."""
+    try:
+        ipaddress.ip_address(name)
+        return True
+    except ValueError:
+        return bool(DOMAIN_RE.match(name))
 # A domain's own TLS / HTTP port is not served by anything: the firewall redirects it to 443 / 80
 # (services/firewall). So no process may listen on it, not even haproxy or rpxy-l4.
 #: Settings whose ports belong to other services (a domain gateway port must not take them).
@@ -347,8 +366,8 @@ def _port_value(body: dict, key: str) -> int | None:
 
 def _apply_body(d: Domain, body: dict[str, Any], child_id: int) -> None:
     if "domain" in body:
-        name = str(body.get("domain") or "").strip().lower()
-        if name and not DOMAIN_RE.match(name):
+        name = clean_host(str(body.get("domain") or ""))
+        if name and not is_host(name):
             abort(400, _("Should be a valid domain"))
         d.domain = name
     if "alias" in body:
@@ -500,6 +519,39 @@ class DomainsPageItemApi(MethodView):
         return {"warnings": warnings, "restart_mode": APPLY, **_list_out(child_id)}
 
 
+def domain_problems(child_id: int) -> list[dict[str, Any]]:
+    """What the Domains page marks on a row, for the notifications: a domain that needs a real certificate and has none
+    that works (failed, its renewal failed, rate limited, expired, self-signed, missing). Not while one is being asked for."""
+    out: list[dict[str, Any]] = []
+    for d in _domains(child_id):
+        if not d.need_valid_ssl or not d.domain:
+            continue
+        tls = _tls_out(d)
+        job = tls["job"] or {}
+        if job.get("state") == "running":
+            continue
+        error = (job.get("state") == "failed" and job.get("error")) or tls["error"] or ""
+        status = tls["status"]
+        if job.get("rate_limited") or str(error).startswith("rate limited"):
+            kind = "rate_limited"
+        elif error:
+            kind = "renew_failed" if status == "valid" else "failed"
+        elif status in ("expired", "self_signed", "missing", "invalid"):
+            kind = status
+        else:
+            continue
+        out.append({"id": d.id, "domain": d.domain, "kind": kind, "status": status, "error": str(error)[:300]})
+    return out
+
+
+class DomainsPageProblemsApi(MethodView):
+    decorators = [login_required(ROLES)]
+
+    def get(self):
+        """Domains with a certificate problem (for the notifications; light, unlike the page's own list)"""
+        return {"problems": domain_problems(_child_id())}
+
+
 class DomainsPageOrderApi(MethodView):
     decorators = [login_required(ROLES)]
 
@@ -539,8 +591,8 @@ class DomainsPageDetectApi(MethodView):
         """Guess how a domain is set up (points here directly, behind which CDN, or another site for REALITY)"""
         from hiddifypanel.hutils.network.domain_detect import detect_domain
 
-        name = normalize_domain_name(str((request.get_json(silent=True) or {}).get("domain") or ""))
-        if not name or not DOMAIN_RE.match(name):
+        name = clean_host(normalize_domain_name(str((request.get_json(silent=True) or {}).get("domain") or "")))
+        if not name or not is_host(name):
             abort(400, _("Should be a valid domain"))
         result = detect_domain(name.lstrip("*."))
         used = Domain.query.filter(Domain.domain == name, Domain.child_id == _child_id()).first()

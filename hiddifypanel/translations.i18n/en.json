@@ -290,7 +290,7 @@
     "incomplete_setup_warning": "It seems that you have not setup the system completely. <a class='btn btn-success' href='%(quick_setup)s'>Click here</a> to complete setup.",
     "menu": {
       "api": "API",
-      "broadcast": "Send message",
+      "broadcast": "Send Message",
       "config": "Settings",
       "dashboard_v2": "Next",
       "domain": "Domains",
@@ -598,7 +598,7 @@
           "desc": "Puts your settings, users and domain changes into effect. Quick, and the usual choice after you change something.",
           "done": "Changes are applied",
           "running": "Applying changes",
-          "title": "Apply changes"
+          "title": "Apply Changes"
         },
         "install": {
           "button": "Reinstall",
@@ -614,14 +614,14 @@
           "desc": "Restarts all Hiddify services without reinstalling anything. A good first try when something misbehaves.",
           "done": "Services restarted",
           "running": "Restarting services",
-          "title": "Restart services"
+          "title": "Restart Services"
         },
         "status": {
           "button": "Check now",
           "desc": "Shows whether each service is running, plus the server's public IP and Warp. Changes nothing.",
           "done": "Status checked",
           "running": "Checking status",
-          "title": "Check status"
+          "title": "Check Status"
         },
         "update": {
           "button": "Update",
@@ -647,6 +647,10 @@
         "loading": "Loading…",
         "show": "Show log",
         "showingEnd": "showing the end",
+        "telegram": "Send to my Telegram",
+        "telegramConnect": "Connect your Telegram in My Account first",
+        "telegramFailed": "Could not send to Telegram",
+        "telegramSent": "{name} sent to your Telegram",
         "terminal": "log",
         "wrap": "Wrap lines"
       },
@@ -681,7 +685,7 @@
       },
       "subtitle": "Put changes into effect, update the server, and see how everything is doing",
       "takes": "About how long it takes",
-      "title": "Apply & status",
+      "title": "Apply & Status",
       "watch": "Watch it"
     },
     "applyNotice": {
@@ -749,7 +753,9 @@
         "downloaded": "Backup downloaded",
         "failed": "Could not make the backup",
         "onServer": "Save on the server",
+        "onTelegram": "Save on the Telegram",
         "secret": "The file holds passwords, user links and private keys. Keep it somewhere safe.",
+        "sentTelegram": "Backup sent to your Telegram",
         "sub": "Everything in one file: settings, users, admins, domains, proxies and certificates.",
         "title": "Make a backup"
       },
@@ -856,7 +862,7 @@
         "to": "To {n} user | To {n} users"
       },
       "subtitle": "Reach your users in Telegram, with text, formatting and an image",
-      "title": "Send message",
+      "title": "Send Message",
       "tool": {
         "bold": "Bold",
         "code": "Code",
@@ -1176,7 +1182,7 @@
       "summary": "{ok} of {done} work ({total} total)",
       "testUrl": "Test URL",
       "timeout": "Timeout (s)",
-      "title": "Config tester",
+      "title": "Config Tester",
       "ua": "User agent",
       "uaHint": "Sent when fetching the link, so the panel gives the xray or hiddify-core format.",
       "uaPreset": "Preset",
@@ -1213,9 +1219,56 @@
         "checked": "Every config tested from the server · {ago}",
         "firstRun": "The first check is running; it takes a minute or two.",
         "never": "Not checked yet. Press “Check now”.",
+        "notTested": "Not tested",
         "note": "Tested with {user}'s subscription. A config that fails from the server itself never works for anyone; filtering in Iran is not tested here.",
+        "notice": {
+          "failed": "{n} of {total} configs do not work from the server.",
+          "where": "Details: Dashboard › Config health."
+        },
+        "problem": {
+          "certificate": {
+            "hint": "The certificate of {host} is missing, expired or made for another name. Check this domain in Domains and renew its certificate.",
+            "title": "The panel could not open its own subscription: the TLS certificate of {host} is not valid"
+          },
+          "core": {
+            "hint": "hiddify-core or Xray on the server could not read the subscription. Updating the panel usually fixes it.",
+            "title": "The config tester could not run"
+          },
+          "dns": {
+            "hint": "The server could not look up this domain. Check its DNS record: it must point to this server.",
+            "title": "The domain {host} could not be found"
+          },
+          "empty": {
+            "hint": "No usable config was found. Check that this app's protocols are on in Protocols and that the test user is active.",
+            "title": "The subscription has no config for this app"
+          },
+          "http": {
+            "hint": "The panel sent an HTTP error instead of the subscription. The panel's log shows why.",
+            "title": "The subscription page of {host} answered with an error"
+          },
+          "other": {
+            "hint": "The exact message is in the technical details below.",
+            "title": "The subscription could not be tested"
+          },
+          "timeout": {
+            "hint": "The server took too long to send it: it may be busy, or {host} may point to another server. Press “Check now” again in a minute.",
+            "title": "The panel's own subscription ({host}) did not answer in time"
+          },
+          "unreachable": {
+            "hint": "Nothing answered at this address. Check that {host} points to this server and that the panel's services (HAProxy, nginx) are running.",
+            "title": "The panel could not connect to {host}"
+          }
+        },
+        "reason": {
+          "closed": "The server closed the connection",
+          "noExit": "It connects, but traffic does not get out to the internet",
+          "refused": "The connection was refused",
+          "timeout": "No answer in time",
+          "tls": "The TLS handshake failed"
+        },
         "running": "Checking…",
         "subtitle": "Every config, tested from the server every 6 hours",
+        "technical": "Technical details",
         "title": "Config health",
         "working": "{ok} of {total} work"
       },
@@ -1353,23 +1406,23 @@
       "field": {
         "alias": "Display name",
         "aliasHint": "Shown in the users' apps instead of the domain.",
-        "cdnIp": "🔂 Force configs to use these IPs / domains",
+        "cdnIp": "Force configs to use these IPs / domains",
         "cdnIpHint": "Put these in the users' links instead of the domain's IP, separated by commas or new lines. Operator templates work too.",
         "cdnIpScanner": "Find working IPs with the scanner",
         "cdnIpScannerGo": "Open the scanner",
         "cdnIpScannerHint": "Scans Cloudflare IPs on your internet and saves the best ones here, per operator.",
         "domain": "Domain",
-        "domainInvalid": "That does not look like a domain",
+        "domainInvalid": "That does not look like a domain or an IP address",
         "domainRequired": "Enter a domain",
-        "downloadDomain": "📈 Download domain",
+        "downloadDomain": "Download domain",
         "downloadDomainHint": "Only for XHTTP: downloads can come from another domain than uploads. Harder to detect, often faster.",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "Fetch and use Encrypted Client Hello for this CDN domain.",
         "echNeedsSetting": "Turn on TLS ECH in the panel settings first.",
         "extra": "Extra params",
         "extraInvalid": "Not valid JSON",
         "extraObject": "Must be a JSON object",
-        "fronting": "🎭 Domain fronting",
+        "fronting": "Domain fronting",
         "frontingHint": "Optional. Users' apps show one of these names (SNI) instead of your domain, so a filter only sees another site. Use sites on the same CDN as your domain (e.g. other Cloudflare sites). Empty: no fronting.",
         "frontingPlaceholder": "another-site.com, cdn-site.net",
         "hostnamesInvalid": "Use host names separated by commas, like site.com",
@@ -1379,7 +1432,7 @@
         "portsHint": "Where users reach this domain's SNI and L7 proxies: one TLS port and one HTTP port. Empty uses the default. The firewall redirects them to 443 / 80, so nothing on the server may listen on them, and a TLS port can not be another domain's HTTP port.",
         "proxies": "Custom proxies",
         "relayNeedsIp": "A relay that is not on a real certificate needs the relay server's IP in Advanced → Force IPs.",
-        "resolveIp": "🔢 Resolve IP",
+        "resolveIp": "Resolve IP",
         "resolveIpHint": "Use the IP instead of the domain name in the proxies. Useful when DNS is noisy.",
         "serverDomain": "Server domain",
         "serverDomainHint": "Upstream server domain used for this entry. Must be a valid Direct or Relay domain.",
@@ -1391,7 +1444,18 @@
         "tlsMode": "TLS mode"
       },
       "getCert": "Get certificate",
-      "howto": "Order matters: drag (or use the arrows) to sort. Configs list domains in this order, and the first one is used for panel links.",
+      "guide": {
+        "dragText": "The rows make room; on a computer you can also focus the handle and press ↑ or ↓.",
+        "dragTitle": "Drag it up or down and let go",
+        "gotIt": "Got it",
+        "grabText": "The ☰ at the start of the row, with the mouse or your finger.",
+        "grabTitle": "Take a domain by its handle",
+        "lead": "The order matters: configs list your domains in this order, and the first one is used for panel links.",
+        "orderText": "It is saved at once: users' configs follow it from now on.",
+        "orderTitle": "That is the new order",
+        "title": "Put your domains in order"
+      },
+      "howto": "Order matters: drag the ☰ handle to sort. Configs list domains in this order, and the first one is used for panel links.",
       "howtoFiltered": "Clear the search and filters to change the order.",
       "ips": {
         "elsewhere": "another server / CDN",
@@ -1427,6 +1491,18 @@
       "noMatch": "No domain matches the filters",
       "noName": "(no name)",
       "notChanged": "Not changed",
+      "notice": {
+        "expired": "Its certificate has expired: apps refuse to connect.",
+        "failed": "It has no valid certificate: getting one failed.",
+        "invalid": "Its certificate is not valid for this domain.",
+        "missing": "It has no certificate yet.",
+        "rate_limited": "Getting its certificate is paused: the certificate authorities' rate limit was reached. It is tried again later.",
+        "renew_failed": "Its certificate is still valid, but renewing it failed.",
+        "saved": "Domains · saved with a warning",
+        "self_signed": "It has only a temporary self-signed certificate: apps warn or refuse.",
+        "title": "Domains · {domain}",
+        "where": "Details: Domains page."
+      },
       "openPanel": "Open the panel on this domain",
       "port": {
         "busy": "another program listens on it ({name})",
@@ -1546,7 +1622,7 @@
         },
         "modeQ": "How is it set up?",
         "moreSettings": "More settings",
-        "nameLead": "Type the domain or subdomain. We check its DNS to suggest the right mode.",
+        "nameLead": "Type the domain or subdomain, or an IPv4 / IPv6 address. We check its DNS to suggest the right mode.",
         "nameQ": "Which domain?",
         "next": "Next",
         "noCert": "No certificate request was needed.",
@@ -1567,12 +1643,25 @@
     },
     "donation": {
       "close": "Close",
+      "contact": "Please contact us at {email} if you can help us.",
       "copied": "{name} address copied",
       "copiedShort": "Copied",
       "copyAddress": "Copy the {name} address",
+      "help": {
+        "content": "Content Providers",
+        "flutter": "Flutter Developer",
+        "go": "Go Developer",
+        "python": "Python Developer",
+        "share": "Share Hiddify Manager with Others",
+        "swift": "Swift Developer"
+      },
       "networkHint": "Send each coin only on the network shown next to its name: a transfer on another network is lost.",
+      "otherHelp": "We need also other help",
+      "paymentMethods": "Payment Methods",
       "qr": "QR code",
       "qrOf": "QR code of the {name} address",
+      "showLess": "Show Less",
+      "showMore": "Show More",
       "showQr": "Show QR code for {name}",
       "title": "Donation"
     },
@@ -1637,7 +1726,7 @@
     "menu": {
       "baseConfigs": "Base Configs",
       "cleanIp": "Scanner",
-      "configTester": "Config tester",
+      "configTester": "Config Tester",
       "customProxies": "Proxies",
       "dashboard": "Dashboard",
       "group": {
@@ -1651,10 +1740,10 @@
       "protocols": "Protocols",
       "proxyEditor": "Proxy Editor",
       "signOut": "Sign out",
-      "ssh": "SSH terminal",
+      "ssh": "SSH Terminal",
       "templateVariables": "Template Variables",
       "templates": "Templates",
-      "textDecoders": "Text decoders",
+      "textDecoders": "Text Decoders",
       "tools": "Tools",
       "utils": "Utils"
     },
@@ -1799,9 +1888,28 @@
       },
       "justNow": "Just now",
       "lastSeen": "Last contact",
+      "live": {
+        "collecting": "Collecting live data… the charts fill in over the next minutes.",
+        "showLess": "Show less",
+        "showMore": "Show more",
+        "unavailable": "This node did not answer"
+      },
       "moreInfo": "More information",
       "neverSeen": "Never",
       "openAdmin": "Open",
+      "pingDialog": {
+        "avg": "avg",
+        "button": "Ping",
+        "hint": "{sent} sent, {received} answered · it keeps pinging until you close this window",
+        "loss": "loss",
+        "max": "max",
+        "min": "min",
+        "noAddress": "The node's address is not known",
+        "running": "pinging",
+        "tcp": "TCP (ICMP not possible)",
+        "timeout": "No answer",
+        "title": "Ping · {name}"
+      },
       "reachable": "Reachable",
       "refresh": "Refresh",
       "remove": "Remove",
@@ -1882,7 +1990,7 @@
         "addTitle": "Add {mode} outbound",
         "config": "JSON",
         "configBridge": "The panel named it \"{tag}\"; routing uses that tag and the other core connects to it on 127.0.0.1:{port}.",
-        "configBridgeNew": "The panel gives it a tag (a tag you write is ignored); routing uses it and the other core connects to it through a local SOCKS bridge.",
+        "configBridgeNew": "The panel gives it a tag (a tag you write is ignored); routing uses it and the other core connects to it through a local Socks bridge.",
         "configExample": "Insert an example",
         "configHint": {
           "core_endpoint": "One hiddify-core (sing-box) endpoint object, e.g. a WireGuard endpoint. It is checked by hiddify-core before saving.",
@@ -1895,8 +2003,8 @@
         "editTitle": "Edit {name}",
         "endpoint": "Connection",
         "endpointHint": {
-          "psiphon": "Runs inside hiddify-core. xray reaches it on the local SOCKS port {endpoint}.",
-          "tor": "Runs inside hiddify-core (the `tor` program must be installed on this server). xray reaches it on the local SOCKS port {endpoint}."
+          "psiphon": "Runs inside hiddify-core. xray reaches it on the local Socks port {endpoint}.",
+          "tor": "Runs inside hiddify-core (the `tor` program must be installed on this server). xray reaches it on the local Socks port {endpoint}."
         },
         "host": "Host",
         "name": "Name",
@@ -1940,21 +2048,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "Dropped",
-        "core_endpoint": "Your own hiddify-core endpoint, e.g. WireGuard (JSON); xray reaches it through a local SOCKS bridge",
-        "core_outbound": "Your own hiddify-core outbound (JSON); xray reaches it through a local SOCKS bridge",
+        "core_endpoint": "Your own hiddify-core endpoint, e.g. WireGuard (JSON); xray reaches it through a local Socks bridge",
+        "core_outbound": "Your own hiddify-core outbound (JSON); xray reaches it through a local Socks bridge",
         "direct": "Straight from this server",
         "psiphon": "Through Psiphon (run by hiddify-core)",
         "socks": "Through a SOCKS5 proxy",
         "tor": "Through the Tor network (run by hiddify-core)",
         "warp": "Through Cloudflare WARP on this server",
-        "xray_outbound": "Your own xray outbound (JSON); hiddify-core reaches it through a local SOCKS bridge"
+        "xray_outbound": "Your own xray outbound (JSON); hiddify-core reaches it through a local Socks bridge"
       },
       "more": "More actions",
       "moveDown": "Move down",
@@ -1973,7 +2081,7 @@
       "resetMessage": "Your changes to its sites, geosites and rule-sets are replaced with the built-in lists, which upgrades then keep up to date.",
       "resetTitle": "Reset {name} to the built-in lists?",
       "saved": "{name} saved",
-      "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a SOCKS, Tor or Psiphon exit.",
+      "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a Socks, Tor or Psiphon exit.",
       "title": "Outbounds",
       "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs."
     },
@@ -2151,17 +2259,17 @@
       "l7ReverseProto": "L7 reverse proxy protocol",
       "linkSettings": "Link settings",
       "linkTemplate": "Link template",
-      "listTitle": "Custom Proxies",
+      "listTitle": "Proxies",
       "mode": "Mode",
       "modeLabels": {
         "domain_native": "Domain native",
-        "domains_auto_public_ports": "Multi-domain auto ports",
-        "domains_dns_gateway": "Domain DNS gateway",
-        "domains_l7_gateway": "Domain L7 gateway",
-        "domains_single_public_port": "Multi-domain static port",
-        "domains_sni_gateway": "Domain SNI gateway",
-        "ip": "IP-based",
-        "no_inbound": "No inbound"
+        "domains_auto_public_ports": "Multi-Domain Auto Ports",
+        "domains_dns_gateway": "Domain DNS Gateway",
+        "domains_l7_gateway": "Domain L7 Gateway",
+        "domains_single_public_port": "Multi-Domain Static Port",
+        "domains_sni_gateway": "Domain SNI Gateway",
+        "ip": "IP-Based",
+        "no_inbound": "No Inbound"
       },
       "modeSettings": "Mode & routing",
       "name": "Name",
@@ -2266,6 +2374,24 @@
       "wireguardTemplate": "WireGuard .conf template"
     },
     "pwa": {
+      "guide": {
+        "platform": "Your device",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "In Safari, tap the ••• button in the bar at the bottom",
+        "ios2": "Tap Share",
+        "ios3": "Choose “Add to Home Screen”",
+        "ios4": "Tap Add: the panel is on your home screen",
+        "android1": "In Chrome, tap the ⋮ menu at the top",
+        "android2": "Choose “Add to home screen” (or “Install app”)",
+        "android3": "Tap Install: the panel opens like an app",
+        "computer": "Computer",
+        "desktop1": "In Chrome, click the install icon at the end of the address bar",
+        "desktop2": "Click Install",
+        "desktop3": "The panel opens in its own window, like an app"
+      },
+      "installNow": "Install now",
       "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
       "bannerTitle": "Install the panel as an app",
       "gotIt": "Got it",
@@ -2429,7 +2555,7 @@
       "reloading": "Language changed, reloading…",
       "required": "This field is required.",
       "search": "Search all settings…",
-      "showAdvanced": "Show advanced settings",
+      "showAdvanced": "Show Advanced Settings",
       "showAdvancedIn": "Show {count} advanced setting | Show {count} advanced settings",
       "showLess": "Show less",
       "showMore": "Show {count} more advanced setting | Show {count} more advanced settings",
@@ -2568,7 +2694,7 @@
       "subtitle": "Open a terminal on any server and browse its files, right from the panel.",
       "summary": "{ok} succeeded · {failed} failed · {running} running",
       "terminal": "Terminal",
-      "title": "SSH terminal",
+      "title": "SSH Terminal",
       "tooLarge": "This file is {size}: too large to show here.",
       "tooManyTabs": "Too many tabs open: close some and run again",
       "truncated": "Only the first 5000 entries are shown.",
@@ -2645,6 +2771,9 @@
       "openWeb": "Open in browser",
       "promptLead": "This panel has a Telegram bot, {bot}. Link it to your account:",
       "promptTitle": "Connect your Telegram?",
+      "stepCreate": "Create a new user right in the chat",
+      "stepStart": "Start the bot: its menu opens",
+      "stepUsers": "See your users and their usage",
       "reconnect": "Connect again",
       "scan": "Or scan this with your phone's camera."
     },
@@ -2690,6 +2819,12 @@
       "loadValues": "Load current values",
       "name": "Name",
       "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "unread": "{n} new notification | {n} new notifications",
+      "new": "New",
+      "dismiss": "Dismiss"
     },
     "theme": {
       "caddy": "Smart Caddy theme",
@@ -3023,15 +3158,15 @@
       "subtitle": "Encode, decode, and inspect share links in the browser — nothing is sent to the server.",
       "swap": "Swap",
       "textLabel": "Text",
-      "title": "Utils",
+      "title": "Text Decoders",
       "unwrappedSubscription": "Detected a base64 subscription and decoded it into individual links.",
       "urlEncodedLabel": "URL encoded",
       "urlLive": "Edit either side and the other updates as you type. Percent-encoded text pasted into the text side swaps the sides by itself.",
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "User",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON must be an object"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON must be an object"
     },
     "validation": {
       "errors": "Errors",
@@ -3204,6 +3339,7 @@
     "backup_failed": "Backup failed.",
     "backup_working": "Preparing backup…",
     "btn_backup": "💾 Backup",
+    "btn_check": "🩺 Check status",
     "btn_new": "➕ New user",
     "btn_panel": "🖥 Open panel",
     "btn_status": "📊 Server status",
@@ -3351,7 +3487,7 @@
       "label": "Additional Configs for Singbox"
     },
     "additional_configs_urls": {
-      "description": "You can add http:// https:// or v2ray format porxies like vless://",
+      "description": "You can add http:// https:// or V2Ray format porxies like vless://",
       "label": "Additional URLs"
     },
     "additional_configs_xrayjson": {
@@ -3557,7 +3693,7 @@
     },
     "hysteria_enable": {
       "description": "To Enable UDP based Hysteria Protocol",
-      "label": "⚫️ Hysteria2"
+      "label": "⚫️ Hysteria 2"
     },
     "hysteria_obfs_enable": {
       "description": " Enables Hysteria Obfuscation (Salamander)",
@@ -3565,7 +3701,7 @@
     },
     "hysteria_port": {
       "description": "Hysteria UDP Port for example 5678",
-      "label": "🔍 Hysteria2 Port"
+      "label": "🔍 Hysteria 2 Port"
     },
     "hysteria_up_mbps": {
       "description": "Hysteria Maximum Upload Speed",
@@ -3786,7 +3922,7 @@
     },
     "path_trojan": {
       "description": "For TROJAN-Links",
-      "label": "ℹ️ TROJAN Path"
+      "label": "ℹ️ Trojan Path"
     },
     "path_v2ray": {
       "description": "Set V2Ray Configs Path",
@@ -3897,7 +4033,7 @@
       "label": "↔️ Shadowsocks 2022 Port"
     },
     "shadowtls": {
-      "description": "A Proxy to expose real tls handshake to the firewall.\n\nIt works like TROJAN but It does not require signing certificate. the firewall will see real tls handshake with valid certificate that you choose.",
+      "description": "A Proxy to expose real tls handshake to the firewall.\n\nIt works like Trojan but It does not require signing certificate. the firewall will see real tls handshake with valid certificate that you choose.",
       "label": "ShadowTLS"
     },
     "shadowtls_enable": {
@@ -3921,8 +4057,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Enable SOCKS protocol",
-      "label": "SOCKS"
+      "description": "Enable Socks protocol",
+      "label": "Socks"
     },
     "special_port": {
       "description": "You can set a customized port for your reality server to reduce the system's overhead. (Allow direct connection to proxies should be yes)",
@@ -4165,27 +4301,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray does not support accounting and not suggested",
+      "description": "V2Ray does not support accounting and not suggested",
       "label": "♈️ V2Ray "
     },
     "validation-error": "There is an error in one of the fields.",
     "validation-success": "Configs have been changed successfully. Click %(link)s to apply the configs. It may take 2 minutes to apply",
     "validation-success-no-reset": " ✅ Configs have been changed successfully",
     "vless_decryption": {
-      "description": "VLESS decryption parameter for share links",
-      "label": "VLESS decryption"
+      "description": "VLess decryption parameter for share links",
+      "label": "VLess decryption"
     },
     "vless_enable": {
       "description": "Enable VLess Protocol",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "VLESS encryption method for share links",
-      "label": "VLESS encryption"
+      "description": "VLess encryption method for share links",
+      "label": "VLess encryption"
     },
     "vless_flow": {
-      "description": "VLESS flow control (e.g. xtls-rprx-vision)",
-      "label": "VLESS flow"
+      "description": "VLess flow control (e.g. xtls-rprx-vision)",
+      "label": "VLess flow"
     },
     "vmess_enable": {
       "description": "Active VMess Protocol",

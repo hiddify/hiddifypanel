@@ -11,7 +11,9 @@ it from the Telegram bot (when there is one).
 
 from __future__ import annotations
 
+import ipaddress
 import json
+import re
 import threading
 import time
 
@@ -54,11 +56,44 @@ def _probe_user():
     return None
 
 
+def _is_ip(host: str) -> bool:
+    try:
+        ipaddress.ip_address(host.strip("[]"))
+        return True
+    except ValueError:
+        return False
+
+
 def _host() -> str:
+    """The panel's own address for the test: a name first. The server's certificate is for its names (a domain,
+    or the sslip.io name of its IP), so ``https://<bare IP>`` fails the certificate check although nothing is wrong."""
     from hiddifypanel.models import Domain
 
     names = [d.domain for d in Domain.get_domains() if d.domain and "*" not in d.domain] + [Domain.get_panel_link() or ""]
-    return next((n for n in names if n), "")
+    names = [n for n in names if n]
+    return next((n for n in names if not _is_ip(n)), names[0] if names else "")
+
+
+#: why a subscription could not be tested, from the tester's message (the page explains each kind and where to look)
+_KINDS = (
+    ("certificate", re.compile(r"CERTIFICATE|SSLError|certificate verify|doesn't match|hostname mismatch|SSL", re.I)),
+    ("timeout", re.compile(r"timed? ?out|Timeout", re.I)),
+    ("dns", re.compile(r"NameResolution|Name or service not known|getaddrinfo|resolve", re.I)),
+    ("unreachable", re.compile(r"Connection refused|ConnectionError|Max retries|Connection reset|unreachable", re.I)),
+    ("http", re.compile(r"\b[45]\d\d (Client|Server) Error", re.I)),
+    ("empty", re.compile(r"No config found|does not support this subscription|could not find any config", re.I)),
+    ("core", re.compile(r"hiddify-core|xray", re.I)),
+)
+
+
+def _error_kind(message: str) -> str:
+    return next((kind for kind, pattern in _KINDS if pattern.search(message)), "other")
+
+
+def _clean(message: str) -> str:
+    """The tester's message without the subscription's path (the proxy path and the user's UUID are secrets)."""
+    message = re.sub(r"(url: |https?://[^/\s'\"]+)/[^\s'\"]*", r"\1/…", message)
+    return re.sub(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "…", message, flags=re.I)[:500]
 
 
 def _is_status_line(event: dict) -> bool:
@@ -67,14 +102,14 @@ def _is_status_line(event: dict) -> bool:
     return name.startswith("⏳") or "📅" in name
 
 
-def _test_app(url: str, agent: str, app: str) -> dict:
-    """Every config of the subscription as one kind of app gets it: {total, ok, failed, error}."""
+def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
+    """Every config of the subscription as one kind of app gets it: {total, ok, failed, error, error_kind}."""
     from hiddifypanel.proxy_v3 import config_tester
     from hiddifypanel.proxy_v3.config_tester_types import TesterError
 
     summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
     try:
-        for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
+        for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
             if event.get("event") == "start":
                 summary["total"] = int(event.get("total") or 0)
             elif event.get("event") == "result" and _is_status_line(event):
@@ -91,17 +126,17 @@ def _test_app(url: str, agent: str, app: str) -> dict:
             time.sleep(RETRY_AFTER)
             failed = {f["name"] for f in summary["failed"]}
             passed = set()
-            for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS):
+            for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
                 name = str(event.get("name") or "")
                 if event.get("event") == "result" and name in failed and event.get("ok"):
                     passed.add(name)
             summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
             summary["ok"] += len(passed)
     except TesterError as e:
-        summary["error"] = str(e)
+        summary["error"], summary["error_kind"] = _clean(str(e)), _error_kind(str(e))
     except Exception as e:  # one app failing must not lose the other's result
         logger.exception("config health: {} failed", app)
-        summary["error"] = type(e).__name__
+        summary["error"], summary["error_kind"] = type(e).__name__, "other"
     summary["failed"] = summary["failed"][:MAX_FAILED_LISTED]
     return summary
 
@@ -114,13 +149,15 @@ def check() -> dict | None:
     if user is None or not host:
         return None
     page = hiddify.get_account_panel_link(user, host)
-    result: dict = {"at": int(time.time()), "user": user.name, "apps": {}}
+    # Only a bare IP to use: the server asks itself, and no certificate names an IP
+    verify = not _is_ip(host)
+    result: dict = {"at": int(time.time()), "user": user.name, "host": host, "apps": {}}
     for app, path, agent in APPS:
-        summary = _test_app(page + path, agent, app)
+        summary = _test_app(page + path, agent, app, verify)
         if summary["error"]:
             # The subscription could not be fetched (e.g. a reload of the cores right then): once more, later
             time.sleep(RETRY_AFTER)
-            summary = _test_app(page + path, agent, app)
+            summary = _test_app(page + path, agent, app, verify)
         result["apps"][app] = summary
     previous = last()
     redis_client.set(_LAST, json.dumps(result))

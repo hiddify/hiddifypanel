@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLayout } from './composables/layout'
 import AppearanceMenu from './AppearanceMenu.vue'
+import NotificationsMenu from './NotificationsMenu.vue'
 import { getPanelLogoUrl, getPanelVersion } from '@/core/panel-branding'
 import { isChildPanel, submitPostForm } from '@/core/panelShell'
 import { getRouterBase } from '@/core/api/client'
@@ -42,6 +43,8 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
       </router-link>
     </div>
     <div class="layout-topbar-actions">
+      <!-- The panel's notices (only while there are some) -->
+      <NotificationsMenu />
       <!-- My account: limits and password (a node's admins are managed on its parent) -->
       <router-link
         v-if="!isChildPanel"
@@ -63,8 +66,10 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
 </template>
 
 <style scoped>
+/* On the topbar: its own text color (the primary color would vanish on the primary-colored bar), as the
+   notifications and appearance buttons do when open. */
 .layout-topbar-action--active {
-  color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  color: var(--topbar-text, #fff);
+  background: var(--topbar-hover, rgb(255 255 255 / 14%));
 }
 </style>

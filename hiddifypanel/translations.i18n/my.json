@@ -627,6 +627,10 @@
         "loading": "ဖွင့်နေသည်…",
         "show": "log ကို ပြရန်",
         "showingEnd": "အဆုံးကို ပြနေသည်",
+        "telegram": "ကျွန်ုပ်၏ Telegram သို့ ပို့ရန်",
+        "telegramConnect": "My Account တွင် သင့် Telegram ကို ဦးစွာ ချိတ်ဆက်ပါ",
+        "telegramFailed": "Telegram သို့ မပို့နိုင်ပါ",
+        "telegramSent": "{name} ကို သင့် Telegram သို့ ပို့ပြီးပါပြီ",
         "terminal": "log",
         "wrap": "စာကြောင်းခွဲပြရန်"
       },
@@ -729,7 +733,9 @@
         "downloaded": "backup ဒေါင်းလုဒ်လုပ်ပြီးပါပြီ",
         "failed": "backup မဖန်တီးနိုင်ပါ",
         "onServer": "ဆာဗာတွင် သိမ်းရန်",
+        "onTelegram": "Telegram တွင် သိမ်းရန်",
         "secret": "ဖိုင်တွင် စကားဝှက်များ၊ အသုံးပြုသူလင့်ခ်များနှင့် private key များ ပါသည်။ လုံခြုံသောနေရာတွင် သိမ်းထားပါ။",
+        "sentTelegram": "အရန်ကူးယူမှုကို သင့် Telegram သို့ ပို့ပြီးပါပြီ",
         "sub": "ဖိုင်တစ်ခုတည်းတွင် အားလုံး: ဆက်တင်များ၊ အသုံးပြုသူများ၊ အက်ဒမင်များ၊ ဒိုမိန်းများ၊ proxy များနှင့် လက်မှတ်များ။",
         "title": "backup ဖန်တီးရန်"
       },
@@ -935,20 +941,20 @@
       "field": {
         "alias": "ပြသမည့်အမည်",
         "aliasHint": "ဒိုမိန်းအစား အသုံးပြုသူများ၏ app များတွင် ပြသည်။",
-        "cdnIp": "🔂 ကွန်ဖစ်များကို ဤ IP / ဒိုမိန်းများ သုံးရန် အတင်းအကျပ်လုပ်ရန်",
+        "cdnIp": "ကွန်ဖစ်များကို ဤ IP / ဒိုမိန်းများ သုံးရန် အတင်းအကျပ်လုပ်ရန်",
         "cdnIpHint": "ဒိုမိန်း၏ IP အစား အသုံးပြုသူများ၏လင့်ခ်များတွင် ဤတန်ဖိုးများ ထည့်ပါ၊ ကော်မာ သို့မဟုတ် စာကြောင်းသစ်ဖြင့် ခွဲပါ။ Operator template များလည်း ရသည်။",
         "domain": "ဒိုမိန်း",
         "domainInvalid": "၎င်းသည် ဒိုမိန်းနှင့် မတူပါ",
         "domainRequired": "ဒိုမိန်း ထည့်ပါ",
-        "downloadDomain": "📈 ဒေါင်းလုဒ်ဒိုမိန်း",
+        "downloadDomain": "ဒေါင်းလုဒ်ဒိုမိန်း",
         "downloadDomainHint": "XHTTP အတွက်သာ: download များကို upload ထက် အခြားဒိုမိန်းမှ လာနိုင်သည်။ ရှာဖွေတွေ့ရှိရန် ပိုခက်ပြီး မကြာခဏ ပိုမြန်သည်။",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "ဤ CDN ဒိုမိန်းအတွက် Encrypted Client Hello ကို ရယူသုံးသည်။",
         "echNeedsSetting": "ပန်နယ်ဆက်တင်များတွင် TLS ECH ကို အရင်ဖွင့်ပါ။",
         "extra": "အပို parameter များ",
         "extraInvalid": "မှန်ကန်သော JSON မဟုတ်ပါ",
         "extraObject": "JSON object ဖြစ်ရမည်",
-        "fronting": "🎭 Domain fronting",
+        "fronting": "Domain fronting",
         "frontingHint": "ရွေးချယ်နိုင်သည်။ အသုံးပြုသူများ၏ app များတွင် သင့်ဒိုမိန်းအစား ဤအမည် (SNI) တစ်ခုကို ပြသဖြင့် filter က အခြား site ကိုသာ မြင်ရသည်။ သင့်ဒိုမိန်းနှင့် CDN တူသော site များ (ဥပမာ အခြား Cloudflare site များ) ကို သုံးပါ။ ဗလာ: fronting မလုပ်။",
         "frontingPlaceholder": "another-site.com, cdn-site.net",
         "hostnamesInvalid": "site.com ကဲ့သို့ host အမည်များကို ကော်မာဖြင့် ခွဲရေးပါ",
@@ -958,7 +964,7 @@
         "portsHint": "အသုံးပြုသူများ ဤဒိုမိန်း၏ SNI နှင့် L7 proxy များသို့ ရောက်ရာနေရာ: TLS ပို့တ်တစ်ခုနှင့် HTTP ပို့တ်တစ်ခု။ ဗလာဆိုလျှင် မူလကို သုံးသည်။ Firewall က ၎င်းတို့ကို 443 / 80 သို့ redirect လုပ်သဖြင့် ဆာဗာပေါ်တွင် မည်သည့်အရာမျှ listen မလုပ်ရ၊ TLS ပို့တ်သည် အခြားဒိုမိန်း၏ HTTP ပို့တ် မဖြစ်ရ။",
         "proxies": "စိတ်ကြိုက် proxy များ",
         "relayNeedsIp": "အစစ်အမှန်လက်မှတ်မပါသော relay သည် Advanced → Force IPs တွင် relay ဆာဗာ၏ IP လိုအပ်သည်။",
-        "resolveIp": "🔢 IP ဖြေရှင်းရန်",
+        "resolveIp": "IP ဖြေရှင်းရန်",
         "resolveIpHint": "proxy များတွင် ဒိုမိန်းအမည်အစား IP ကို သုံးသည်။ DNS ရှုပ်ထွေးသည့်အခါ အသုံးဝင်သည်။",
         "serverDomain": "ဆာဗာဒိုမိန်း",
         "serverDomainHint": "ဤ entry အတွက် သုံးသော upstream ဆာဗာဒိုမိန်း။ မှန်ကန်သော Direct သို့မဟုတ် Relay ဒိုမိန်း ဖြစ်ရမည်။",
@@ -970,6 +976,17 @@
         "tlsMode": "TLS မုဒ်"
       },
       "getCert": "လက်မှတ် ရယူရန်",
+      "guide": {
+        "dragText": "တန်းများ နေရာပေးသည်; ကွန်ပျူတာတွင် လက်ကိုင်ကို focus လုပ်ပြီး ↑ သို့မဟုတ် ↓ ကိုလည်း နှိပ်နိုင်သည်။",
+        "dragTitle": "အပေါ် သို့မဟုတ် အောက်သို့ ဆွဲပြီး လွှတ်ပါ",
+        "gotIt": "နားလည်ပြီ",
+        "grabText": "တန်း၏ အစရှိ ☰ ကို mouse သို့မဟုတ် လက်ချောင်းဖြင့်။",
+        "grabTitle": "domain ကို လက်ကိုင်မှ ကိုင်ပါ",
+        "lead": "အစီအစဉ်က အရေးကြီးသည်- config များသည် domain များကို ဤအစီအစဉ်အတိုင်း ပြပြီး ပထမ domain ကို panel link အတွက် သုံးသည်။",
+        "orderText": "ချက်ချင်း သိမ်းပြီး ယခုမှစ၍ အသုံးပြုသူများ၏ config များသည် ၎င်းအတိုင်း ဖြစ်မည်။",
+        "orderTitle": "ဒါက အစီအစဉ်အသစ်ပါ",
+        "title": "သင့် domain များကို အစီအစဉ်တကျ စီပါ"
+      },
       "howto": "အစီအစဉ် အရေးကြီးသည်: ဆွဲ၍ (သို့မဟုတ် မြှားများသုံး၍) စီပါ။ ကွန်ဖစ်များသည် ဒိုမိန်းများကို ဤအစီအစဉ်အတိုင်း ပြပြီး ပထမတစ်ခုကို ပန်နယ်လင့်ခ်များအတွက် သုံးသည်။",
       "howtoFiltered": "အစီအစဉ်ပြောင်းရန် ရှာဖွေမှုနှင့် စစ်ထုတ်မှုများကို ရှင်းပါ။",
       "ips": {
@@ -1006,6 +1023,18 @@
       "noMatch": "စစ်ထုတ်မှုနှင့် ကိုက်ညီသောဒိုမိန်း မရှိပါ",
       "noName": "(အမည်မရှိ)",
       "notChanged": "မပြောင်းလဲပါ",
+      "notice": {
+        "expired": "၎င်း၏ လက်မှတ် သက်တမ်းကုန်သွားပြီ- app များ ချိတ်ဆက်မရပါ။",
+        "failed": "မှန်ကန်သော လက်မှတ် မရှိပါ- ရယူခြင်း မအောင်မြင်ပါ။",
+        "invalid": "၎င်း၏ လက်မှတ်သည် ဤ domain အတွက် မမှန်ကန်ပါ။",
+        "missing": "လက်မှတ် မရှိသေးပါ။",
+        "rate_limited": "လက်မှတ်ရယူခြင်းကို ခဏရပ်ထားသည်- ကန့်သတ်ချက်ပြည့်သွားပြီ။ နောက်မှ ထပ်ကြိုးစားပါမည်။",
+        "renew_failed": "လက်မှတ် မှန်ကန်ဆဲဖြစ်သော်လည်း သက်တမ်းတိုးခြင်း မအောင်မြင်ပါ။",
+        "saved": "Domains · သတိပေးချက်ဖြင့် သိမ်းပြီး",
+        "self_signed": "ယာယီ self-signed လက်မှတ်သာ ရှိသည်- app များ သတိပေးသည် သို့မဟုတ် ငြင်းပယ်သည်။",
+        "title": "Domains · {domain}",
+        "where": "အသေးစိတ်- Domains စာမျက်နှာ။"
+      },
       "openPanel": "ဤဒိုမိန်းပေါ်တွင် ပန်နယ်ကို ဖွင့်ရန်",
       "port": {
         "busy": "အခြားပရိုဂရမ်တစ်ခု listen လုပ်နေသည် ({name})",
@@ -1143,12 +1172,25 @@
     },
     "donation": {
       "close": "ပိတ်ရန်",
+      "contact": "သင်ကူညီနိုင်ပါက ကျေးဇူးပြု၍ ကျွန်ုပ်တို့အား {email} တွင် ဆက်သွယ်ပါ။",
       "copied": "{name} လိပ်စာကို ကူးယူပြီးပါပြီ",
       "copiedShort": "ကူးယူပြီး",
       "copyAddress": "{name} လိပ်စာကို ကူးယူရန်",
+      "help": {
+        "content": "Content Providers",
+        "flutter": "Flutter Developer",
+        "go": "Go Developer",
+        "python": "Python Developer",
+        "share": "Share Hiddify Manager with Others",
+        "swift": "Swift Developer"
+      },
       "networkHint": "ငွေကြေးတစ်ခုစီကို ၎င်း၏အမည်ဘေးတွင်ပြထားသော network ပေါ်တွင်သာ ပို့ပါ။ အခြား network ပေါ်တွင် ပို့ပါက ဆုံးရှုံးသွားပါမည်။",
+      "otherHelp": "အခြားသော အကူအညီများလည်း ကျွန်ုပ်တို့ လိုအပ်သည်",
+      "paymentMethods": "ငွေပေးချေမှု နည်းလမ်းများ",
       "qr": "QR ကုဒ်",
       "qrOf": "{name} လိပ်စာ၏ QR ကုဒ်",
+      "showLess": "လျှော့ပြရန်",
+      "showMore": "ပိုပြရန်",
       "showQr": "{name} အတွက် QR ကုဒ်ကို ပြရန်",
       "title": "လှူဒါန်းမှု"
     },
@@ -1287,9 +1329,28 @@
       },
       "justNow": "ယခုပဲ",
       "lastSeen": "နောက်ဆုံးဆက်သွယ်ချိန်",
+      "live": {
+        "collecting": "တိုက်ရိုက်ဒေတာ စုဆောင်းနေသည်… ဇယားများ မိနစ်အနည်းငယ်အတွင်း ပြည့်လာမည်။",
+        "showLess": "လျှော့ပြရန်",
+        "showMore": "ပိုပြရန်",
+        "unavailable": "ဤ node မှ မဖြေကြားပါ"
+      },
       "moreInfo": "နောက်ထပ်အချက်အလက်",
       "neverSeen": "ဘယ်တော့မှ မဟုတ်",
       "openAdmin": "ဖွင့်ရန်",
+      "pingDialog": {
+        "avg": "ပျမ်းမျှ",
+        "button": "Ping",
+        "hint": "{sent} ပို့ပြီး၊ {received} ပြန်ဖြေ · ဤ window ကို ပိတ်သည်အထိ ping ဆက်လုပ်မည်",
+        "loss": "ဆုံးရှုံး",
+        "max": "အများဆုံး",
+        "min": "အနည်းဆုံး",
+        "noAddress": "node ၏ လိပ်စာ မသိပါ",
+        "running": "ping လုပ်နေသည်",
+        "tcp": "TCP (ICMP မဖြစ်နိုင်ပါ)",
+        "timeout": "အဖြေမရှိ",
+        "title": "Ping · {name}"
+      },
       "reachable": "ရောက်နိုင်သည်",
       "refresh": "ပြန်လည်ဆန်းသစ်ရန်",
       "remove": "ဖယ်ရှားရန်",
@@ -1334,7 +1395,7 @@
         "addTitle": "{mode} outbound ထည့်ရန်",
         "config": "JSON",
         "configBridge": "ပန်နယ်က ၎င်းကို \"{tag}\" ဟု အမည်ပေးသည်။ routing က ထို tag ကို သုံးပြီး အခြား core က 127.0.0.1:{port} ဖြင့် ချိတ်ဆက်သည်။",
-        "configBridgeNew": "ပန်နယ်က tag ပေးသည် (သင်ရေးသော tag ကို လျစ်လျူရှုသည်)။ routing က ၎င်းကို သုံးပြီး အခြား core က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်။",
+        "configBridgeNew": "ပန်နယ်က tag ပေးသည် (သင်ရေးသော tag ကို လျစ်လျူရှုသည်)။ routing က ၎င်းကို သုံးပြီး အခြား core က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်။",
         "configExample": "နမူနာတစ်ခု ထည့်ရန်",
         "configHint": {
           "core_endpoint": "hiddify-core (sing-box) endpoint object တစ်ခု၊ ဥပမာ WireGuard endpoint။ မသိမ်းမီ hiddify-core က စစ်ဆေးသည်။",
@@ -1347,8 +1408,8 @@
         "editTitle": "{name} ကို တည်းဖြတ်ရန်",
         "endpoint": "ချိတ်ဆက်မှု",
         "endpointHint": {
-          "psiphon": "hiddify-core အတွင်း လည်ပတ်သည်။ xray က local SOCKS ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။",
-          "tor": "hiddify-core အတွင်း လည်ပတ်သည် (ဤဆာဗာတွင် `tor` ပရိုဂရမ်ကို ထည့်သွင်းထားရမည်)။ xray က local SOCKS ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။"
+          "psiphon": "hiddify-core အတွင်း လည်ပတ်သည်။ xray က local Socks ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။",
+          "tor": "hiddify-core အတွင်း လည်ပတ်သည် (ဤဆာဗာတွင် `tor` ပရိုဂရမ်ကို ထည့်သွင်းထားရမည်)။ xray က local Socks ပို့တ် {endpoint} ဖြင့် ချိတ်ဆက်သည်။"
         },
         "host": "Host",
         "name": "အမည်",
@@ -1392,21 +1453,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "ဖယ်ချ",
-        "core_endpoint": "သင့်ကိုယ်ပိုင် hiddify-core endpoint၊ ဥပမာ WireGuard (JSON); xray က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
-        "core_outbound": "သင့်ကိုယ်ပိုင် hiddify-core outbound (JSON); xray က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
+        "core_endpoint": "သင့်ကိုယ်ပိုင် hiddify-core endpoint၊ ဥပမာ WireGuard (JSON); xray က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
+        "core_outbound": "သင့်ကိုယ်ပိုင် hiddify-core outbound (JSON); xray က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်",
         "direct": "ဤဆာဗာမှ တိုက်ရိုက်",
         "psiphon": "Psiphon မှတစ်ဆင့် (hiddify-core က လည်ပတ်စေသည်)",
         "socks": "SOCKS5 proxy မှတစ်ဆင့်",
         "tor": "Tor ကွန်ရက်မှတစ်ဆင့် (hiddify-core က လည်ပတ်စေသည်)",
         "warp": "ဤဆာဗာပေါ်ရှိ Cloudflare WARP မှတစ်ဆင့်",
-        "xray_outbound": "သင့်ကိုယ်ပိုင် xray outbound (JSON); hiddify-core က local SOCKS bridge မှတစ်ဆင့် ချိတ်ဆက်သည်"
+        "xray_outbound": "သင့်ကိုယ်ပိုင် xray outbound (JSON); hiddify-core က local Socks bridge မှတစ်ဆင့် ချိတ်ဆက်သည်"
       },
       "more": "နောက်ထပ်လုပ်ဆောင်ချက်များ",
       "moveDown": "အောက်သို့ရွှေ့ရန်",
@@ -1425,7 +1486,7 @@
       "resetMessage": "၎င်း၏ site၊ geosite နှင့် rule-set များတွင် သင်ပြောင်းထားသည်များကို built-in စာရင်းများဖြင့် အစားထိုးမည်၊ အဆင့်မြှင့်သည့်အခါ ၎င်းတို့ကို အပ်ဒိတ်ထားမည်။",
       "resetTitle": "{name} ကို built-in စာရင်းများသို့ ပြန်လည်သတ်မှတ်မလား?",
       "saved": "{name} ကို သိမ်းပြီးပါပြီ",
-      "subtitle": "traffic သည် ဤဆာဗာမှ ထွက်ရာနေရာကို အစီအစဉ်အတိုင်း ရွေးပါ: WARP မှတစ်ဆင့်၊ တိုက်ရိုက်၊ ပိတ်ဆို့ သို့မဟုတ် SOCKS၊ Tor၊ Psiphon မှ ထွက်။",
+      "subtitle": "traffic သည် ဤဆာဗာမှ ထွက်ရာနေရာကို အစီအစဉ်အတိုင်း ရွေးပါ: WARP မှတစ်ဆင့်၊ တိုက်ရိုက်၊ ပိတ်ဆို့ သို့မဟုတ် Socks၊ Tor၊ Psiphon မှ ထွက်။",
       "title": "Outbound များ"
     },
     "passwordRules": {
@@ -1602,15 +1663,15 @@
       "l7ReverseProto": "L7 reverse proxy protocol",
       "linkSettings": "လင့်ခ်ဆက်တင်များ",
       "linkTemplate": "လင့်ခ် template",
-      "listTitle": "စိတ်ကြိုက် Proxy များ",
+      "listTitle": "Proxy များ",
       "mode": "မုဒ်",
       "modeLabels": {
         "domain_native": "Domain native",
         "domains_auto_public_ports": "ဒိုမိန်းပေါင်းစုံ auto ပို့တ်များ",
-        "domains_dns_gateway": "Domain DNS gateway",
-        "domains_l7_gateway": "Domain L7 gateway",
+        "domains_dns_gateway": "Domain DNS Gateway",
+        "domains_l7_gateway": "Domain L7 Gateway",
         "domains_single_public_port": "ဒိုမိန်းပေါင်းစုံ static ပို့တ်",
-        "domains_sni_gateway": "Domain SNI gateway",
+        "domains_sni_gateway": "Domain SNI Gateway",
         "ip": "IP အခြေပြု",
         "no_inbound": "Inbound မရှိ"
       },
@@ -1931,6 +1992,9 @@
       "openWeb": "Browser တွင် ဖွင့်ရန်",
       "promptLead": "ဤပန်နယ်တွင် Telegram bot {bot} ရှိသည်။ သင့်အကောင့်နှင့် ချိတ်ပါ:",
       "promptTitle": "သင့် Telegram ကို ချိတ်ဆက်မလား?",
+      "stepCreate": "chat ထဲမှာပဲ အသုံးပြုသူအသစ် ဖန်တီးပါ",
+      "stepStart": "ဘော့ကို စတင်ပါ- မီနူး ပွင့်လာမည်",
+      "stepUsers": "အသုံးပြုသူများနှင့် ၎င်းတို့၏ အသုံးပြုမှုကို ကြည့်ပါ",
       "reconnect": "ပြန်ချိတ်ရန်",
       "scan": "သို့မဟုတ် သင့်ဖုန်းကင်မရာဖြင့် ဤကုဒ်ကို စကန်ဖတ်ပါ။"
     },
@@ -1976,6 +2040,37 @@
       "loadValues": "လက်ရှိတန်ဖိုးများ ဖွင့်ရန်",
       "name": "အမည်",
       "skipHint": "အခြေအနေ မပြည့်မီသောအခါ ဤ proxy ၏ render ကို ကျော်ရန် SKIP ကို output လုပ်ပါ သို့မဟုတ် skip() ကို ခေါ်ပါ"
+    },
+    "notifications": {
+      "title": "အသိပေးချက်များ",
+      "unread": "အသိပေးချက်အသစ် {n} ခု | အသိပေးချက်အသစ် {n} ခု",
+      "new": "အသစ်",
+      "dismiss": "ပိတ်ရန်"
+    },
+    "pwa": {
+      "guide": {
+        "platform": "သင့်စက်",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "Safari တွင် အောက်ဘားရှိ ••• ခလုတ်ကို နှိပ်ပါ",
+        "ios2": "Share ကို နှိပ်ပါ",
+        "ios3": "“Add to Home Screen” ကို ရွေးပါ",
+        "ios4": "Add ကို နှိပ်ပါ။ panel သည် home screen ပေါ်တွင် ရောက်ပါပြီ",
+        "android1": "Chrome တွင် အပေါ်ရှိ ⋮ မီနူးကို နှိပ်ပါ",
+        "android2": "“Add to home screen” (သို့ “Install app”) ကို ရွေးပါ",
+        "android3": "Install ကို နှိပ်ပါ။ panel သည် app ကဲ့သို့ ဖွင့်မည်",
+        "computer": "ကွန်ပျူတာ",
+        "desktop1": "Chrome တွင် လိပ်စာဘား အဆုံးရှိ install icon ကို နှိပ်ပါ",
+        "desktop2": "Install ကို နှိပ်ပါ",
+        "desktop3": "panel သည် ၎င်း၏ ကိုယ်ပိုင် window တွင် app ကဲ့သို့ ဖွင့်မည်"
+      },
+      "gotIt": "နားလည်ပါပြီ",
+      "installNow": "ယခု install လုပ်ရန်",
+      "later": "နောက်မှ",
+      "never": "နောက်ထပ် မပြပါနှင့်",
+      "text": "သင့်ဖုန်း သို့ ကွန်ပျူတာရှိ app များကဲ့သို့ panel ကို တစ်ချက်နှိပ်ရုံဖြင့် ဖွင့်နိုင်ပါသည်။",
+      "title": "panel ကို app အဖြစ် install လုပ်ရန်"
     },
     "theme": {
       "dark": "မှောင်မုဒ်",
@@ -2301,15 +2396,15 @@
       "subtitle": "မျှဝေလင့်ခ်များကို browser တွင် encode၊ decode နှင့် စစ်ဆေးပါ — ဆာဗာသို့ ဘာမျှ မပို့ပါ။",
       "swap": "Swap",
       "textLabel": "စာသား",
-      "title": "Utils",
+      "title": "Text Decoders",
       "unwrappedSubscription": "base64 subscription ကို တွေ့ရှိပြီး လင့်ခ်တစ်ခုချင်းသို့ decode လုပ်ပြီးပါပြီ။",
       "urlEncodedLabel": "URL ကုဒ်ဖြင့်",
       "urlLive": "တစ်ဖက်ကို ပြင်လျှင် အခြားတစ်ဖက် ချက်ချင်း အပ်ဒိတ်ဖြစ်သည်။ စာသားဘက်သို့ ရာခိုင်နှုန်းကုဒ်ထည့်ထားသော စာသား ကူးထည့်လျှင် နှစ်ဖက်ကို အလိုအလျောက် လဲပေးသည်။",
       "urlSafe": "URL-safe",
       "urlTab": "URL",
       "user": "အသုံးပြုသူ",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON သည် object ဖြစ်ရမည်"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON သည် object ဖြစ်ရမည်"
     },
     "validation": {
       "errors": "အမှားများ",
@@ -2431,7 +2526,7 @@
       "label": "Singbox အတွက် အပိုကွန်ဖစ်များ"
     },
     "additional_configs_urls": {
-      "description": "http:// https:// သို့မဟုတ် vless:// ကဲ့သို့ v2ray ဖော်မက် proxy များ ထည့်နိုင်သည်",
+      "description": "http:// https:// သို့မဟုတ် vless:// ကဲ့သို့ V2Ray ဖော်မက် proxy များ ထည့်နိုင်သည်",
       "label": "အပို URL များ"
     },
     "additional_configs_xrayjson": {
@@ -2637,7 +2732,7 @@
     },
     "hysteria_enable": {
       "description": "UDP အခြေပြု Hysteria ပရိုတိုကောလ် ကိုဖွင့်ရန်",
-      "label": "⚫️ Hysteria2"
+      "label": "⚫️ Hysteria 2"
     },
     "hysteria_obfs_enable": {
       "description": " Hysteria Obfuscation (Salamander) ကို ဖွင့်ရန်",
@@ -2645,7 +2740,7 @@
     },
     "hysteria_port": {
       "description": "Hysteria UDP Port ဥပမာ 5678",
-      "label": "🔍 Hysteria2 Port"
+      "label": "🔍 Hysteria 2 Port"
     },
     "hysteria_up_mbps": {
       "description": "Hysteria အများဆုံး အပ်လုပ် အမြန်နှုန်း",
@@ -2862,7 +2957,7 @@
     },
     "path_trojan": {
       "description": "TROJAN-Links အတွက်",
-      "label": "ℹ️ TROJAN လမ်းကြောင်း"
+      "label": "ℹ️ Trojan လမ်းကြောင်း"
     },
     "path_v2ray": {
       "description": "V2Ray Configs လမ်းကြောင်းကို သတ်မှတ်ပါ။",
@@ -2965,7 +3060,7 @@
       "label": "↔️ Shadowsocks 2022 Port"
     },
     "shadowtls": {
-      "description": "tls အစစ်အမှန်များကို firewall သို့ လက်ဆွဲနှုတ်ဆက်ရန် ပရောက်စီ။<inlang-LineFeed>\n၎င်းသည် TROJAN ကဲ့သို့အလုပ်လုပ်သော်လည်း၊ ၎င်းသည် လက်မှတ်ထိုးရန် မလိုအပ်ပါ။ Firewall သည် သင်ရွေးချယ်သော တရားဝင်လက်မှတ်ဖြင့် tls အစစ်အမှန် လက်ဆွဲနှုတ်ဆက်သည်ကို တွေ့ရလိမ့်မည်။",
+      "description": "tls အစစ်အမှန်များကို firewall သို့ လက်ဆွဲနှုတ်ဆက်ရန် ပရောက်စီ။<inlang-LineFeed>\n၎င်းသည် Trojan ကဲ့သို့အလုပ်လုပ်သော်လည်း၊ ၎င်းသည် လက်မှတ်ထိုးရန် မလိုအပ်ပါ။ Firewall သည် သင်ရွေးချယ်သော တရားဝင်လက်မှတ်ဖြင့် tls အစစ်အမှန် လက်ဆွဲနှုတ်ဆက်သည်ကို တွေ့ရလိမ့်မည်။",
       "label": "ShadowTLS"
     },
     "shadowtls_enable": {
@@ -2989,8 +3084,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "SOCKS protocol ကို ဖွင့်ပါ",
-      "label": "SOCKS"
+      "description": "Socks protocol ကို ဖွင့်ပါ",
+      "label": "Socks"
     },
     "special_port": {
       "description": "စနစ်၏ အကျုံးဝင်မှုကို လျှော့ချရန် သင်၏ reality ဆာဗာအတွက် စိတ်ကြိုက် Port တစ်ခုကို သင် သတ်မှတ်နိုင်သည်။ (ပရောက်စီများနှင့် တိုက်ရိုက်ချိတ်ဆက်မှုကို ခွင့်ပြုပါက ဟုတ်သင့်သည်)",
@@ -3225,27 +3320,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray သည် accounting ကို မပံ့ပိုးဘဲ အကြံပြုထားခြင်းမရှိပါ။",
+      "description": "V2Ray သည် accounting ကို မပံ့ပိုးဘဲ အကြံပြုထားခြင်းမရှိပါ။",
       "label": "♈️ V2Ray "
     },
     "validation-error": "အကွက်တစ်ခုတွင် အမှားအယွင်းတစ်ခုရှိသည်။",
     "validation-success": "Configs ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ configs ကိုအသုံးပြုရန် %(link)s ကိုနှိပ်ပါ။ လျှောက်ထားရန် ၂ မိနစ် ကြာနိုင်သည်။",
     "validation-success-no-reset": " ✅ Configs ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။",
     "vless_decryption": {
-      "description": "မျှဝေလင့်ခ်များအတွက် VLESS decryption parameter",
-      "label": "VLESS decryption"
+      "description": "မျှဝေလင့်ခ်များအတွက် VLess decryption parameter",
+      "label": "VLess decryption"
     },
     "vless_enable": {
       "description": "VLess ပရိုတိုကောလ်ကို ဖွင့်ရန်",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "မျှဝေလင့်ခ်များအတွက် VLESS encryption နည်းလမ်း",
-      "label": "VLESS encryption"
+      "description": "မျှဝေလင့်ခ်များအတွက် VLess encryption နည်းလမ်း",
+      "label": "VLess encryption"
     },
     "vless_flow": {
-      "description": "VLESS flow control (ဥပမာ xtls-rprx-vision)",
-      "label": "VLESS flow"
+      "description": "VLess flow control (ဥပမာ xtls-rprx-vision)",
+      "label": "VLess flow"
     },
     "vmess_enable": {
       "description": "အသက်ဝင်သော VMess ပရိုတိုကောလ်",

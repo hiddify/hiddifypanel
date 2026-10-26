@@ -54,8 +54,10 @@ def home_screen(ctx: Ctx) -> Screen:
     )
     rows: list[Sequence[types.InlineKeyboardButton]] = [
         [btn(ctx.tr(T.btn_users), Cb.users, Filter.all.value, 0), btn(ctx.tr(T.btn_new), Cb.new, 0, 0, 0)],
-        [btn(ctx.tr(T.btn_status), Cb.status)] + ([btn(ctx.tr(T.btn_backup), Cb.backup)] if admin.mode == AdminMode.super_admin else []),
+        [btn(ctx.tr(T.btn_status), Cb.status)] + ([btn(ctx.tr(T.btn_check), Cb.check)] if admin.mode != AdminMode.agent else []),
     ]
+    if admin.mode == AdminMode.super_admin:
+        rows.append([btn(ctx.tr(T.btn_backup), Cb.backup)])
     rows.append(app_row(ctx.tr(T.btn_panel), accounts.panel_app_url()))
     return Screen(text, keyboard(*rows))
 

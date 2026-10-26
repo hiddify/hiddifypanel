@@ -624,6 +624,10 @@
         "loading": "Carregando…",
         "show": "Mostrar log",
         "showingEnd": "mostrando o final",
+        "telegram": "Enviar para o meu Telegram",
+        "telegramConnect": "Conecte primeiro o seu Telegram em Minha conta",
+        "telegramFailed": "Não foi possível enviar para o Telegram",
+        "telegramSent": "{name} enviado para o seu Telegram",
         "terminal": "log",
         "wrap": "Quebrar linhas"
       },
@@ -726,7 +730,9 @@
         "downloaded": "Backup baixado",
         "failed": "Não foi possível fazer o backup",
         "onServer": "Salvar no servidor",
+        "onTelegram": "Salvar no Telegram",
         "secret": "O arquivo contém senhas, links de usuários e chaves privadas. Guarde-o em um local seguro.",
+        "sentTelegram": "Backup enviado para o seu Telegram",
         "sub": "Tudo em um único arquivo: configurações, usuários, administradores, domínios, proxies e certificados.",
         "title": "Fazer um backup"
       },
@@ -932,20 +938,20 @@
       "field": {
         "alias": "Nome de exibição",
         "aliasHint": "Exibido nos apps dos usuários em vez do domínio.",
-        "cdnIp": "🔂 Forçar as configs a usar estes IPs / domínios",
+        "cdnIp": "Forçar as configs a usar estes IPs / domínios",
         "cdnIpHint": "Coloque-os nos links dos usuários em vez do IP do domínio, separados por vírgulas ou novas linhas. Templates de operadora também funcionam.",
         "domain": "Domínio",
         "domainInvalid": "Isto não parece um domínio",
         "domainRequired": "Digite um domínio",
-        "downloadDomain": "📈 Domínio de download",
+        "downloadDomain": "Domínio de download",
         "downloadDomainHint": "Somente para XHTTP: os downloads podem vir de um domínio diferente dos uploads. Mais difícil de detectar, geralmente mais rápido.",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "Obtém e usa o Encrypted Client Hello para este domínio CDN.",
         "echNeedsSetting": "Ative primeiro o TLS ECH nas configurações do painel.",
         "extra": "Parâmetros extras",
         "extraInvalid": "JSON inválido",
         "extraObject": "Deve ser um objeto JSON",
-        "fronting": "🎭 Domain fronting",
+        "fronting": "Domain fronting",
         "frontingHint": "Opcional. Os apps dos usuários exibem um destes nomes (SNI) em vez do seu domínio, de modo que um filtro vê apenas outro site. Use sites na mesma CDN do seu domínio (ex.: outros sites da Cloudflare). Vazio: sem fronting.",
         "frontingPlaceholder": "outro-site.com, site-cdn.net",
         "hostnamesInvalid": "Use nomes de host separados por vírgulas, como site.com",
@@ -955,7 +961,7 @@
         "portsHint": "Por onde os usuários acessam os proxies SNI e L7 deste domínio: uma porta TLS e uma porta HTTP. Vazio usa o padrão. O firewall as redireciona para 443 / 80, então nada no servidor pode escutá-las, e uma porta TLS não pode ser a porta HTTP de outro domínio.",
         "proxies": "Proxies personalizados",
         "relayNeedsIp": "Um relay que não usa um certificado real precisa do IP do servidor relay em Avançado → Forçar IPs.",
-        "resolveIp": "🔢 Resolver IP",
+        "resolveIp": "Resolver IP",
         "resolveIpHint": "Usa o IP em vez do nome de domínio nos proxies. Útil quando o DNS é instável.",
         "serverDomain": "Domínio do servidor",
         "serverDomainHint": "Domínio do servidor upstream usado nesta entrada. Deve ser um domínio Direct ou Relay válido.",
@@ -967,7 +973,18 @@
         "tlsMode": "Modo TLS"
       },
       "getCert": "Obter certificado",
-      "howto": "A ordem importa: arraste (ou use as setas) para ordenar. As configs listam os domínios nesta ordem, e o primeiro é usado para os links do painel.",
+      "guide": {
+        "dragText": "As linhas abrem espaço; no computador você também pode focar a alça e usar ↑ ou ↓.",
+        "dragTitle": "Arraste para cima ou para baixo e solte",
+        "gotIt": "Entendi",
+        "grabText": "O ☰ no início da linha, com o mouse ou o dedo.",
+        "grabTitle": "Pegue um domínio pela alça",
+        "lead": "A ordem importa: as configs listam seus domínios nesta ordem, e o primeiro é usado nos links do painel.",
+        "orderText": "Ela é salva na hora: as configs dos usuários seguem essa ordem a partir de agora.",
+        "orderTitle": "Essa é a nova ordem",
+        "title": "Coloque seus domínios em ordem"
+      },
+      "howto": "A ordem importa: arraste a alça ☰ para ordenar. As configs listam os domínios nesta ordem, e o primeiro é usado para os links do painel.",
       "howtoFiltered": "Limpe a pesquisa e os filtros para alterar a ordem.",
       "ips": {
         "elsewhere": "outro servidor / CDN",
@@ -1003,6 +1020,18 @@
       "noMatch": "Nenhum domínio corresponde aos filtros",
       "noName": "(sem nome)",
       "notChanged": "Não alterado",
+      "notice": {
+        "expired": "O certificado expirou: os apps recusam a conexão.",
+        "failed": "Não tem certificado válido: a obtenção falhou.",
+        "invalid": "O certificado não é válido para este domínio.",
+        "missing": "Ainda não tem certificado.",
+        "rate_limited": "A obtenção do certificado está pausada: o limite das autoridades certificadoras foi atingido. Será tentado mais tarde.",
+        "renew_failed": "O certificado ainda é válido, mas a renovação falhou.",
+        "saved": "Domínios · salvo com um aviso",
+        "self_signed": "Tem só um certificado autoassinado temporário: os apps avisam ou recusam.",
+        "title": "Domínios · {domain}",
+        "where": "Detalhes: página Domínios."
+      },
       "openPanel": "Abrir o painel neste domínio",
       "port": {
         "busy": "outro programa a utiliza ({name})",
@@ -1140,12 +1169,25 @@
     },
     "donation": {
       "close": "Fechar",
+      "contact": "Entre em contato conosco em {email} se puder nos ajudar.",
       "copied": "Endereço {name} copiado",
       "copiedShort": "Copiado",
       "copyAddress": "Copiar o endereço {name}",
+      "help": {
+        "content": "Provedores de conteúdo",
+        "flutter": "Desenvolvedor Flutter",
+        "go": "Desenvolvedor Go",
+        "python": "Desenvolvedor Python",
+        "share": "Compartilhe o Hiddify Manager com outras pessoas",
+        "swift": "Desenvolvedor Swift"
+      },
       "networkHint": "Envie cada moeda apenas na rede indicada ao lado do nome: uma transferência em outra rede é perdida.",
+      "otherHelp": "Precisamos também de outra ajuda",
+      "paymentMethods": "Métodos de Pagamento",
       "qr": "QR code",
       "qrOf": "QR code do endereço {name}",
+      "showLess": "Mostrar menos",
+      "showMore": "Mostrar mais",
       "showQr": "Mostrar QR code de {name}",
       "title": "Doação"
     },
@@ -1284,9 +1326,28 @@
       },
       "justNow": "Agora mesmo",
       "lastSeen": "Último contato",
+      "live": {
+        "collecting": "Coletando dados ao vivo… os gráficos se preenchem nos próximos minutos.",
+        "showLess": "Mostrar menos",
+        "showMore": "Mostrar mais",
+        "unavailable": "Este nó não respondeu"
+      },
       "moreInfo": "Mais informações",
       "neverSeen": "Nunca",
       "openAdmin": "Abrir",
+      "pingDialog": {
+        "avg": "média",
+        "button": "Ping",
+        "hint": "{sent} enviados, {received} respondidos · continua até você fechar esta janela",
+        "loss": "perda",
+        "max": "máx",
+        "min": "mín",
+        "noAddress": "O endereço do nó não é conhecido",
+        "running": "pingando",
+        "tcp": "TCP (ICMP indisponível)",
+        "timeout": "Sem resposta",
+        "title": "Ping · {name}"
+      },
       "reachable": "Acessível",
       "refresh": "Atualizar",
       "remove": "Remover",
@@ -1331,7 +1392,7 @@
         "addTitle": "Adicionar outbound {mode}",
         "config": "JSON",
         "configBridge": "O painel o chamou de \"{tag}\"; o roteamento usa essa tag e o outro core se conecta a ele em 127.0.0.1:{port}.",
-        "configBridgeNew": "O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o roteamento a usa e o outro core se conecta a ele por uma ponte SOCKS local.",
+        "configBridgeNew": "O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o roteamento a usa e o outro core se conecta a ele por uma ponte Socks local.",
         "configExample": "Inserir um exemplo",
         "configHint": {
           "core_endpoint": "Um objeto de endpoint do hiddify-core (sing-box), ex.: um endpoint WireGuard. É verificado pelo hiddify-core antes de salvar.",
@@ -1344,8 +1405,8 @@
         "editTitle": "Editar {name}",
         "endpoint": "Conexão",
         "endpointHint": {
-          "psiphon": "Executa dentro do hiddify-core. O xray o acessa pela porta SOCKS local {endpoint}.",
-          "tor": "Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste servidor). O xray o acessa pela porta SOCKS local {endpoint}."
+          "psiphon": "Executa dentro do hiddify-core. O xray o acessa pela porta Socks local {endpoint}.",
+          "tor": "Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste servidor). O xray o acessa pela porta Socks local {endpoint}."
         },
         "host": "Host",
         "name": "Nome",
@@ -1389,21 +1450,21 @@
         "core_outbound": "Outbound do hiddify-core (sing-box)",
         "direct": "Direct",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "Outbound do xray"
       },
       "modeHint": {
         "block": "Descartado",
-        "core_endpoint": "Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa por uma ponte SOCKS local",
-        "core_outbound": "Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte SOCKS local",
+        "core_endpoint": "Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa por uma ponte Socks local",
+        "core_outbound": "Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte Socks local",
         "direct": "Direto deste servidor",
         "psiphon": "Via Psiphon (executado pelo hiddify-core)",
         "socks": "Via um proxy SOCKS5",
         "tor": "Via rede Tor (executada pelo hiddify-core)",
         "warp": "Via Cloudflare WARP neste servidor",
-        "xray_outbound": "Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte SOCKS local"
+        "xray_outbound": "Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte Socks local"
       },
       "more": "Mais ações",
       "moveDown": "Mover para baixo",
@@ -1422,7 +1483,7 @@
       "resetMessage": "Suas alterações nos sites, geosites e rule-sets dele serão substituídas pelas listas integradas, que as atualizações passam a manter em dia.",
       "resetTitle": "Restaurar {name} para as listas integradas?",
       "saved": "{name} salvo",
-      "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída SOCKS, Tor ou Psiphon.",
+      "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída Socks, Tor ou Psiphon.",
       "title": "Outbounds"
     },
     "passwordRules": {
@@ -1599,7 +1660,7 @@
       "l7ReverseProto": "Protocolo de proxy reverso L7",
       "linkSettings": "Configurações do link",
       "linkTemplate": "Template do link",
-      "listTitle": "Proxies personalizados",
+      "listTitle": "Proxies",
       "mode": "Modo",
       "modeLabels": {
         "domain_native": "Nativo de domínio",
@@ -1928,6 +1989,9 @@
       "openWeb": "Abrir no navegador",
       "promptLead": "Este painel tem um bot do Telegram, {bot}. Vincule-o à sua conta:",
       "promptTitle": "Conectar seu Telegram?",
+      "stepCreate": "Crie um novo usuário direto no chat",
+      "stepStart": "Inicie o bot: o menu dele abre",
+      "stepUsers": "Veja seus usuários e o consumo deles",
       "reconnect": "Conectar novamente",
       "scan": "Ou escaneie isto com a câmera do seu celular."
     },
@@ -1973,6 +2037,37 @@
       "loadValues": "Carregar valores atuais",
       "name": "Nome",
       "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
+    },
+    "notifications": {
+      "title": "Notificações",
+      "unread": "{n} nova notificação | {n} novas notificações",
+      "new": "Nova",
+      "dismiss": "Dispensar"
+    },
+    "pwa": {
+      "guide": {
+        "platform": "Seu dispositivo",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "No Safari, toque no botão ••• na barra de baixo",
+        "ios2": "Toque em Compartilhar",
+        "ios3": "Escolha “Adicionar à Tela de Início”",
+        "ios4": "Toque em Adicionar: o painel fica na tela de início",
+        "android1": "No Chrome, toque no menu ⋮ no topo",
+        "android2": "Escolha “Adicionar à tela inicial” (ou “Instalar app”)",
+        "android3": "Toque em Instalar: o painel abre como um app",
+        "computer": "Computador",
+        "desktop1": "No Chrome, clique no ícone de instalar no fim da barra de endereço",
+        "desktop2": "Clique em Instalar",
+        "desktop3": "O painel abre na própria janela, como um app"
+      },
+      "gotIt": "Entendi",
+      "installNow": "Instalar agora",
+      "later": "Agora não",
+      "never": "Não mostrar novamente",
+      "text": "Deixe o painel a um toque, como qualquer app do seu telefone ou computador.",
+      "title": "Instalar o painel como app"
     },
     "theme": {
       "caddy": "Tema Smart Caddy",
@@ -2305,8 +2400,8 @@
       "urlSafe": "Seguro para URL",
       "urlTab": "URL",
       "user": "Usuário",
-      "vmessJson": "JSON vmess",
-      "vmessObject": "O JSON vmess deve ser um objeto"
+      "vmessJson": "JSON VMess",
+      "vmessObject": "O JSON VMess deve ser um objeto"
     },
     "validation": {
       "errors": "Erros",
@@ -2436,7 +2531,7 @@
       "label": "Configs adicionais para Singbox"
     },
     "additional_configs_urls": {
-      "description": "Você pode adicionar proxies http:// https:// ou em formato v2ray como vless://",
+      "description": "Você pode adicionar proxies http:// https:// ou em formato V2Ray como vless://",
       "label": "URLs adicionais"
     },
     "additional_configs_xrayjson": {
@@ -2878,7 +2973,7 @@
       "label": "Pasta V2Ray"
     },
     "path_vless": {
-      "description": "Para o caminho VLESS",
+      "description": "Para o caminho VLess",
       "label": "ℹ️ Caminho VLess"
     },
     "path_vmess": {
@@ -3006,8 +3101,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "Ativar o protocolo SOCKS",
-      "label": "SOCKS"
+      "description": "Ativar o protocolo Socks",
+      "label": "Socks"
     },
     "special_port": {
       "description": "Você pode definir uma porta personalizada para seu servidor de Reality para reduzir a sobrecarga do sistema. (Permitir conexão direta com proxies deve ser sim)",
@@ -3250,27 +3345,27 @@
       "label": "❇️ uTLS"
     },
     "v2ray_enable": {
-      "description": "V2ray não suporta contabilidade, e não é sugerido",
+      "description": "V2Ray não suporta contabilidade, e não é sugerido",
       "label": "♈️ V2Ray"
     },
     "validation-error": "Há um erro em um dos campos.",
     "validation-success": "As configurações foram alteradas com sucesso. Clique em %(link)s para aplicar as configurações. Pode levar 2 minutos para aplicar",
     "validation-success-no-reset": "✅ As configurações foram alteradas com sucesso",
     "vless_decryption": {
-      "description": "Parâmetro de descriptografia VLESS para links de compartilhamento",
-      "label": "Descriptografia VLESS"
+      "description": "Parâmetro de descriptografia VLess para links de compartilhamento",
+      "label": "Descriptografia VLess"
     },
     "vless_enable": {
       "description": "Habilitar protocolo VLess",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "Método de criptografia VLESS para links de compartilhamento",
-      "label": "Criptografia VLESS"
+      "description": "Método de criptografia VLess para links de compartilhamento",
+      "label": "Criptografia VLess"
     },
     "vless_flow": {
-      "description": "Controle de fluxo VLESS (ex.: xtls-rprx-vision)",
-      "label": "Fluxo VLESS"
+      "description": "Controle de fluxo VLess (ex.: xtls-rprx-vision)",
+      "label": "Fluxo VLess"
     },
     "vmess_enable": {
       "description": "É relatado por várias pessoas que o VMess faz com que o sistema seja detectado pelo governo. Então não é recomendado",

@@ -624,6 +624,10 @@
         "loading": "加载中…",
         "show": "显示日志",
         "showingEnd": "显示末尾",
+        "telegram": "发送到我的 Telegram",
+        "telegramConnect": "请先在“我的账户”中连接 Telegram",
+        "telegramFailed": "无法发送到 Telegram",
+        "telegramSent": "{name} 已发送到你的 Telegram",
         "terminal": "终端",
         "wrap": "自动换行"
       },
@@ -726,7 +730,9 @@
         "downloaded": "备份已下载",
         "failed": "无法创建备份",
         "onServer": "保存到服务器",
+        "onTelegram": "保存到 Telegram",
         "secret": "该文件包含密码、用户链接和私钥。请妥善保管。",
+        "sentTelegram": "备份已发送到你的 Telegram",
         "sub": "一个文件包含全部内容：设置、用户、管理员、域名、代理和证书。",
         "title": "创建备份"
       },
@@ -932,20 +938,20 @@
       "field": {
         "alias": "显示名称",
         "aliasHint": "在用户的应用中显示，代替域名。",
-        "cdnIp": "🔂 强制配置使用这些 IP / 域名",
+        "cdnIp": "强制配置使用这些 IP / 域名",
         "cdnIpHint": "将这些放入用户链接中，代替域名的 IP，以逗号或换行分隔。也支持运营商模板。",
         "domain": "域名",
         "domainInvalid": "这看起来不像域名",
         "domainRequired": "请输入域名",
-        "downloadDomain": "📈 下载域名",
+        "downloadDomain": "下载域名",
         "downloadDomainHint": "仅适用于 XHTTP：下载可以来自与上传不同的域名。更难被检测，通常更快。",
-        "ech": "🔐 ECH",
+        "ech": "ECH",
         "echHint": "为此 CDN 域名获取并使用 Encrypted Client Hello。",
         "echNeedsSetting": "请先在面板设置中开启 TLS ECH。",
         "extra": "额外参数",
         "extraInvalid": "不是有效的 JSON",
         "extraObject": "必须是 JSON 对象",
-        "fronting": "🎭 域名前置",
+        "fronting": "域名前置",
         "frontingHint": "可选。用户的应用显示这些名称（SNI）之一而不是您的域名，因此过滤器只会看到另一个站点。请使用与您的域名在同一 CDN 上的站点（例如其他 Cloudflare 站点）。留空：不使用前置。",
         "frontingPlaceholder": "another-site.com, cdn-site.net",
         "hostnamesInvalid": "请使用以逗号分隔的主机名，例如 site.com",
@@ -955,7 +961,7 @@
         "portsHint": "用户访问此域名的 SNI 和 L7 代理所用的端口：一个 TLS 端口和一个 HTTP 端口。留空使用默认值。防火墙会将其重定向到 443 / 80，因此服务器上不能有任何程序监听它们，且 TLS 端口不能是其他域名的 HTTP 端口。",
         "proxies": "自定义代理",
         "relayNeedsIp": "未使用真实证书的中继需要在 高级 → 强制 IP 中填写中继服务器的 IP。",
-        "resolveIp": "🔢 解析 IP",
+        "resolveIp": "解析 IP",
         "resolveIpHint": "在代理中使用 IP 而不是域名。DNS 不稳定时很有用。",
         "serverDomain": "服务器域名",
         "serverDomainHint": "此条目使用的上游服务器域名。必须是有效的直连或中继域名。",
@@ -967,7 +973,18 @@
         "tlsMode": "TLS 模式"
       },
       "getCert": "获取证书",
-      "howto": "顺序很重要：拖动（或使用箭头）进行排序。配置按此顺序列出域名，第一个用于面板链接。",
+      "guide": {
+        "dragText": "其他行会让出位置；在电脑上也可以聚焦拖动柄并按 ↑ 或 ↓。",
+        "dragTitle": "向上或向下拖动后松开",
+        "gotIt": "知道了",
+        "grabText": "行首的 ☰，用鼠标或手指。",
+        "grabTitle": "按住域名的拖动柄",
+        "lead": "顺序很重要：配置会按这个顺序列出域名，第一个用于面板链接。",
+        "orderText": "会立即保存：用户的配置从现在起按此顺序排列。",
+        "orderTitle": "这就是新的顺序",
+        "title": "给你的域名排好顺序"
+      },
+      "howto": "顺序很重要：拖动 ☰ 拖动柄进行排序。配置按此顺序列出域名，第一个用于面板链接。",
       "howtoFiltered": "请清除搜索和筛选后再更改顺序。",
       "ips": {
         "elsewhere": "其他服务器 / CDN",
@@ -1003,6 +1020,18 @@
       "noMatch": "没有域名符合筛选条件",
       "noName": "（无名称）",
       "notChanged": "未更改",
+      "notice": {
+        "expired": "证书已过期：应用会拒绝连接。",
+        "failed": "没有有效证书：申请失败。",
+        "invalid": "证书对此域名无效。",
+        "missing": "还没有证书。",
+        "rate_limited": "证书申请已暂停：已达到证书颁发机构的频率限制，稍后会重试。",
+        "renew_failed": "证书仍然有效，但续期失败。",
+        "saved": "域名 · 已保存但有警告",
+        "self_signed": "只有临时自签名证书：应用会警告或拒绝。",
+        "title": "域名 · {domain}",
+        "where": "详情：域名页面。"
+      },
       "openPanel": "在此域名上打开面板",
       "port": {
         "busy": "另一个程序正在监听该端口（{name}）",
@@ -1140,12 +1169,25 @@
     },
     "donation": {
       "close": "关闭",
+      "contact": "如果你能帮助我们，请联系 {email}",
       "copied": "已复制 {name} 地址",
       "copiedShort": "已复制",
       "copyAddress": "复制 {name} 地址",
+      "help": {
+        "content": "内容提供者",
+        "flutter": "Flutter 开发者",
+        "go": "Go 开发者",
+        "python": "Python 开发者",
+        "share": "向其他人分享 Hiddify Manager",
+        "swift": "Swift 开发者"
+      },
       "networkHint": "请仅通过名称旁显示的网络发送每种币；在其他网络上的转账将会丢失。",
+      "otherHelp": "我们也需要以下帮助",
+      "paymentMethods": "付款方式",
       "qr": "二维码",
       "qrOf": "{name} 地址的二维码",
+      "showLess": "收起",
+      "showMore": "显示更多",
       "showQr": "显示 {name} 的二维码",
       "title": "捐赠"
     },
@@ -1284,9 +1326,28 @@
       },
       "justNow": "刚刚",
       "lastSeen": "最后联系",
+      "live": {
+        "collecting": "正在收集实时数据……图表将在接下来几分钟内填满。",
+        "showLess": "收起",
+        "showMore": "显示更多",
+        "unavailable": "此节点没有响应"
+      },
       "moreInfo": "更多信息",
       "neverSeen": "从未",
       "openAdmin": "打开",
+      "pingDialog": {
+        "avg": "平均",
+        "button": "Ping",
+        "hint": "已发送 {sent}，已应答 {received} · 关闭此窗口前会一直 ping",
+        "loss": "丢包",
+        "max": "最大",
+        "min": "最小",
+        "noAddress": "节点地址未知",
+        "running": "正在 ping",
+        "tcp": "TCP（无法使用 ICMP）",
+        "timeout": "无应答",
+        "title": "Ping · {name}"
+      },
       "reachable": "可连接",
       "refresh": "刷新",
       "remove": "移除",
@@ -1331,7 +1392,7 @@
         "addTitle": "添加 {mode} 出站",
         "config": "JSON",
         "configBridge": "面板将其命名为 \"{tag}\"；路由使用该标签，另一个核心通过 127.0.0.1:{port} 连接到它。",
-        "configBridgeNew": "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 SOCKS 桥接连接到它。",
+        "configBridgeNew": "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 Socks 桥接连接到它。",
         "configExample": "插入示例",
         "configHint": {
           "core_endpoint": "一个 hiddify-core (sing-box) endpoint 对象，例如 WireGuard endpoint。保存前会由 hiddify-core 检查。",
@@ -1344,8 +1405,8 @@
         "editTitle": "编辑 {name}",
         "endpoint": "连接",
         "endpointHint": {
-          "psiphon": "在 hiddify-core 内运行。xray 通过本地 SOCKS 端口 {endpoint} 访问它。",
-          "tor": "在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+          "psiphon": "在 hiddify-core 内运行。xray 通过本地 Socks 端口 {endpoint} 访问它。",
+          "tor": "在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 Socks 端口 {endpoint} 访问它。"
         },
         "host": "主机",
         "name": "名称",
@@ -1389,21 +1450,21 @@
         "core_outbound": "hiddify-core (sing-box) outbound",
         "direct": "直连",
         "psiphon": "Psiphon",
-        "socks": "SOCKS",
+        "socks": "Socks",
         "tor": "Tor",
         "warp": "WARP",
         "xray_outbound": "xray outbound"
       },
       "modeHint": {
         "block": "丢弃",
-        "core_endpoint": "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 SOCKS 桥接访问它",
-        "core_outbound": "您自己的 hiddify-core outbound (JSON)；xray 通过本地 SOCKS 桥接访问它",
+        "core_endpoint": "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 Socks 桥接访问它",
+        "core_outbound": "您自己的 hiddify-core outbound (JSON)；xray 通过本地 Socks 桥接访问它",
         "direct": "直接从此服务器发出",
         "psiphon": "通过 Psiphon（由 hiddify-core 运行）",
         "socks": "通过 SOCKS5 代理",
         "tor": "通过 Tor 网络（由 hiddify-core 运行）",
         "warp": "通过此服务器上的 Cloudflare WARP",
-        "xray_outbound": "您自己的 xray outbound (JSON)；hiddify-core 通过本地 SOCKS 桥接访问它"
+        "xray_outbound": "您自己的 xray outbound (JSON)；hiddify-core 通过本地 Socks 桥接访问它"
       },
       "more": "更多操作",
       "moveDown": "下移",
@@ -1422,7 +1483,7 @@
       "resetMessage": "您对其站点、geosite 和 rule-set 的更改将被内置列表替换，升级时会使其保持最新。",
       "resetTitle": "将 {name} 重置为内置列表？",
       "saved": "{name} 已保存",
-      "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 SOCKS、Tor 或 Psiphon 出口。",
+      "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 Socks、Tor 或 Psiphon 出口。",
       "title": "出站"
     },
     "passwordRules": {
@@ -1599,7 +1660,7 @@
       "l7ReverseProto": "L7 反向代理协议",
       "linkSettings": "链接设置",
       "linkTemplate": "链接模板",
-      "listTitle": "自定义代理",
+      "listTitle": "代理",
       "mode": "模式",
       "modeLabels": {
         "domain_native": "域名原生",
@@ -1928,6 +1989,9 @@
       "openWeb": "在浏览器中打开",
       "promptLead": "此面板有一个 Telegram 机器人 {bot}。将其关联到您的账户：",
       "promptTitle": "连接您的 Telegram？",
+      "stepCreate": "直接在聊天中创建新用户",
+      "stepStart": "启动机器人：打开它的菜单",
+      "stepUsers": "查看用户及其用量",
       "reconnect": "重新连接",
       "scan": "或用手机相机扫描此码。"
     },
@@ -1973,6 +2037,37 @@
       "loadValues": "加载当前值",
       "name": "名称",
       "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
+    },
+    "notifications": {
+      "title": "通知",
+      "unread": "{n} 条新通知 | {n} 条新通知",
+      "new": "新",
+      "dismiss": "关闭"
+    },
+    "pwa": {
+      "guide": {
+        "platform": "您的设备",
+        "tabIos": "iPhone · Safari",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "ios1": "在 Safari 中，轻点底部栏的 ••• 按钮",
+        "ios2": "轻点“共享”",
+        "ios3": "选择“添加到主屏幕”",
+        "ios4": "轻点“添加”：面板就在主屏幕上了",
+        "android1": "在 Chrome 中，轻点顶部的 ⋮ 菜单",
+        "android2": "选择“添加到主屏幕”（或“安装应用”）",
+        "android3": "轻点“安装”：面板会像应用一样打开",
+        "computer": "电脑",
+        "desktop1": "在 Chrome 中，点击地址栏末尾的安装图标",
+        "desktop2": "点击“安装”",
+        "desktop3": "面板会在独立窗口中打开，就像应用一样"
+      },
+      "gotIt": "知道了",
+      "installNow": "立即安装",
+      "later": "以后再说",
+      "never": "不再显示",
+      "text": "像手机或电脑上的其他应用一样，一键打开面板。",
+      "title": "将面板安装为应用"
     },
     "theme": {
       "caddy": "Smart Caddy 主题",
@@ -2305,8 +2400,8 @@
       "urlSafe": "URL 安全",
       "urlTab": "URL",
       "user": "用户",
-      "vmessJson": "vmess JSON",
-      "vmessObject": "vmess JSON 必须是对象"
+      "vmessJson": "VMess JSON",
+      "vmessObject": "VMess JSON 必须是对象"
     },
     "validation": {
       "errors": "错误",
@@ -2436,7 +2531,7 @@
       "label": "Singbox 附加配置"
     },
     "additional_configs_urls": {
-      "description": "您可以添加 http:// https:// 或 v2ray 格式的代理，如 vless://",
+      "description": "您可以添加 http:// https:// 或 V2Ray 格式的代理，如 vless://",
       "label": "附加 URL"
     },
     "additional_configs_xrayjson": {
@@ -2650,7 +2745,7 @@
     },
     "hysteria_port": {
       "description": "Hysteria UDP 端口，例如 5678",
-      "label": "🔍 Hysteria2 端口"
+      "label": "🔍 Hysteria 2 端口"
     },
     "hysteria_up_mbps": {
       "description": "Hysteria 最大上传速度",
@@ -2878,8 +2973,8 @@
       "label": "V2Ray路径"
     },
     "path_vless": {
-      "description": "对于 VLESS 路径",
-      "label": "ℹ️ VLESS 路径"
+      "description": "对于 VLess 路径",
+      "label": "ℹ️ VLess 路径"
     },
     "path_vmess": {
       "description": "对于 VMess 链接",
@@ -3006,8 +3101,8 @@
       "label": "Snell"
     },
     "socks_enable": {
-      "description": "启用 SOCKS 协议",
-      "label": "SOCKS"
+      "description": "启用 Socks 协议",
+      "label": "Socks"
     },
     "special_port": {
       "description": "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）",
@@ -3257,20 +3352,20 @@
     "validation-success": "配置已成功更改。单击 %(link)s 应用配置。申请可能需要 2 分钟",
     "validation-success-no-reset": "✅ 配置已成功更改",
     "vless_decryption": {
-      "description": "用于分享链接的 VLESS 解密参数",
-      "label": "VLESS 解密"
+      "description": "用于分享链接的 VLess 解密参数",
+      "label": "VLess 解密"
     },
     "vless_enable": {
       "description": "启用 VLess 协议",
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "用于分享链接的 VLESS 加密方式",
-      "label": "VLESS 加密"
+      "description": "用于分享链接的 VLess 加密方式",
+      "label": "VLess 加密"
     },
     "vless_flow": {
-      "description": "VLESS 流控（例如 xtls-rprx-vision）",
-      "label": "VLESS 流控"
+      "description": "VLess 流控（例如 xtls-rprx-vision）",
+      "label": "VLess 流控"
     },
     "vmess_enable": {
       "description": "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐",

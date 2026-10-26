@@ -35,7 +35,7 @@
         <div class="sv__head">
           <button type="button" class="sv__line" :aria-expanded="openIndex === i" @click="toggle(i)">
             <i class="pi" :class="openIndex === i ? 'pi-chevron-down' : 'pi-chevron-right'" />
-            <span class="sv__proto" dir="ltr">{{ protocolOf(l.text) }}</span>
+            <span class="sv__proto" dir="ltr">{{ schemeName(protocolOf(l.text)) }}</span>
             <span class="sv__text" dir="ltr">{{ l.text }}</span>
             <Tag v-if="search.trim() && !plainMatch(l)" :value="t('configTester.sub.inDecoded')" severity="warn" class="sv__decoded" />
           </button>
@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
+import { schemeName } from '@/shared/utils/protocols'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -375,7 +376,6 @@ async function copy(text: string) {
   border-radius: 6px;
   font-size: 0.7rem;
   font-weight: 700;
-  text-transform: uppercase;
   color: var(--p-primary-color);
   background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
 }
