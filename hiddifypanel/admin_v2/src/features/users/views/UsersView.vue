@@ -272,6 +272,7 @@
           <span>{{ t('users.selectAll', { n: rows.length }, rows.length) }}</span>
         </label>
         <!-- The table's column sorts, as small buttons: a tap sorts up, the next down, the third goes back to your own order -->
+        <div class="u-sorts-wrap">
         <div class="u-sorts">
           <button
             v-for="c in CARD_SORTS"
@@ -287,6 +288,7 @@
             <i :class="c.icon" aria-hidden="true" /><span v-if="c.field !== 'id'">{{ c.label() }}</span>
             <i v-if="sortField === c.field" class="u-sort__dir pi" :class="sortOrder === -1 ? 'pi-arrow-down' : 'pi-arrow-up'" aria-hidden="true" />
           </button>
+        </div>
         </div>
       </div>
       <template v-for="group in cardGroups" :key="group.key">
@@ -1801,18 +1803,30 @@ onBeforeUnmount(() => {
   font-weight: 500;
   cursor: pointer;
 }
-/* One line: what does not fit scrolls sideways, with the edge fading out */
-.u-sorts {
-  display: flex;
+/* One line: what does not fit scrolls sideways, with the edge fading out. The fade is drawn over the strip, not a
+   mask-image on it: phone browsers stop painting the page below a masked sideways scroller in RTL. */
+.u-sorts-wrap {
+  position: relative;
   flex: 1;
   min-width: 0;
+}
+.u-sorts-wrap::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: 1rem;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--p-content-background));
+}
+html[dir='rtl'] .u-sorts-wrap::after {
+  background: linear-gradient(to left, transparent, var(--p-content-background));
+}
+.u-sorts {
+  display: flex;
   gap: 0.3rem;
   overflow-x: auto;
   scrollbar-width: none;
-  mask-image: linear-gradient(to right, #000 calc(100% - 1rem), transparent);
-}
-:global([dir='rtl']) .u-sorts {
-  mask-image: linear-gradient(to left, #000 calc(100% - 1rem), transparent);
 }
 .u-sorts::-webkit-scrollbar {
   display: none;
