@@ -1980,6 +1980,7 @@
         "invalid_link": "The link is not a valid admin link.",
         "node_auth": "The node did not accept the admin link. Copy the node's admin link again.",
         "node_connection": "The connection between this panel and the node broke while it was registering (the node may have restarted its web server). Try again in a minute.",
+        "node_error": "The node ran into an internal error while registering (a bug or a problem on that server, not a refused link). Update the node's panel and try again; if it happens again, its log has the details under the registration id below.",
         "node_no_domain": "The node has no main domain with a valid certificate. Add one on the node first.",
         "node_no_parent_url": "The node does not know the address of this panel.",
         "node_node_data": "The node failed while saving the data it got from this panel.",

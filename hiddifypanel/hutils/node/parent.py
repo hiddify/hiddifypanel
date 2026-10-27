@@ -133,6 +133,17 @@ def _node_said(res: NodeApiErrorSchema) -> dict[str, object]:
     return detail if isinstance(detail, dict) and detail.get("where") == "node" else {}
 
 
+def _node_message(res: NodeApiErrorSchema) -> str:
+    """What the node said, without the "HTTP 500 | body=" wrapper and the JSON around its message."""
+    head, _, body = res.msg.partition(" | body=")
+    try:
+        said = json.loads(body) if body else None
+    except ValueError:
+        said = None
+    text = str((said.get("message") or said.get("msg") or "") if isinstance(said, dict) else "") or body or head
+    return " ".join(text.split())[:300]
+
+
 def _classify_node_error(res: NodeApiErrorSchema, node_host: str, reg: str) -> NodeRegisterError:
     """Which side failed, doing what, and why, from what came back when this panel asked the node to register."""
     said = _node_said(res)
@@ -151,6 +162,8 @@ def _classify_node_error(res: NodeApiErrorSchema, node_host: str, reg: str) -> N
         return NodeRegisterError("node_auth", f"{node_host} answered HTTP {res.code}", "node", reg)
     if res.code in (404, 405):
         return NodeRegisterError("node_old", f"{node_host} answered HTTP {res.code}: it does not know this call", "node", reg)
+    if 500 <= res.code < 600:  # the node broke while registering: not a refusal, its log says why
+        return NodeRegisterError("node_error", f"{node_host} answered HTTP {res.code}: {_node_message(res)}", "node", reg)
     return NodeRegisterError("rejected", f"{node_host} answered HTTP {res.code}: {res.msg[:300]}", "node", reg)
 
 
