@@ -1308,6 +1308,16 @@
         "text": "Adicione outro servidor Hiddify como nó para gerenciar todos os seus servidores a partir deste painel.",
         "title": "Ainda não há nós"
       },
+      "errorCopied": "Detalhes técnicos copiados. Envie-os ao suporte com o ID do registro.",
+      "errorCopy": "Copiar detalhes técnicos",
+      "errorFixTitle": "O que fazer",
+      "errorRegShort": "ID do registro:",
+      "errorSide": {
+        "between": "Problema na conexão entre os dois painéis",
+        "node": "Problema no servidor do nó",
+        "parent": "Problema neste painel",
+        "unknown": "Falha ao adicionar o nó"
+      },
       "errors": {
         "invalid_link": "O link não é um link de administrador válido.",
         "node_error": "O nó teve um erro interno ao se registrar (uma falha ou problema naquele servidor, não um link recusado). Atualize o painel do nó e tente de novo; se acontecer outra vez, o log do nó tem os detalhes com o ID de registro abaixo.",

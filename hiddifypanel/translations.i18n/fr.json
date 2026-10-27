@@ -1308,6 +1308,16 @@
         "text": "Ajoutez un autre serveur Hiddify comme nœud pour gérer tous vos serveurs depuis ce panneau.",
         "title": "Aucun nœud pour l'instant"
       },
+      "errorCopied": "Détails techniques copiés. Envoyez-les au support avec l'ID d'enregistrement.",
+      "errorCopy": "Copier les détails techniques",
+      "errorFixTitle": "Que faire",
+      "errorRegShort": "ID d'enregistrement :",
+      "errorSide": {
+        "between": "Problème de connexion entre les deux panneaux",
+        "node": "Problème sur le serveur du nœud",
+        "parent": "Problème sur ce panneau",
+        "unknown": "L'ajout du nœud a échoué"
+      },
       "errors": {
         "invalid_link": "Le lien n'est pas un lien admin valide.",
         "node_error": "Le nœud a rencontré une erreur interne pendant l'enregistrement (un bug ou un problème sur ce serveur, pas un lien refusé). Mettez à jour le panneau du nœud et réessayez ; si cela se reproduit, son journal contient les détails sous l'identifiant d'enregistrement ci-dessous.",
