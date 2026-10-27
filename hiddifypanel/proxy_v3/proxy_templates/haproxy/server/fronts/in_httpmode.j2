@@ -4,12 +4,15 @@
 
 frontend in-httpmode-ssl
   # there is a bug in haproxy or xray in which when http/1.1 is set it send alpn as h2 and therefore it makes a confusion for haproxy in http mode so i seperate them
+  # rpxy-l4 (L4 SNI mux) does not terminate TLS: it forwards the TLS bytes here. HAProxy
+  # terminates TLS on :901, then the second hop is plain HTTP — use to_httpmode_from_tls so
+  # in-httpmode does not treat that hop as client cleartext (ssl_fc is false there).
   mode tcp
   bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt {{ haproxy_cert_dir }} alpn h2,http/1.1
   tcp-request inspect-delay 500ms
   tcp-request content accept if HTTP
-  use_backend %[path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_tcp')}},to_httpmode)]
-  default_backend to_httpmode
+  use_backend %[path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_tcp')}},to_httpmode_from_tls)]
+  default_backend to_httpmode_from_tls
 
 frontend in-reality-tcpmode
   bind abns@tcp_in_reality_h1 accept-proxy
@@ -23,13 +26,18 @@ frontend in-reality-tcpmode
 
 
 frontend in-httpmode
-  bind abns@http_in_h2 accept-proxy
+  # hop_clear: true client cleartext (:80 / reality). hop_from_tls: plain HTTP after an
+  # earlier HAProxy TLS terminator (:901). The SSL/QUIC binds terminate TLS on this frontend.
+  bind abns@http_in_h2 accept-proxy name hop_clear
+  bind abns@http_in_from_tls accept-proxy name hop_from_tls
   bind abns@https_in_http_mode accept-proxy allow-0rtt ssl crt {{ haproxy_cert_dir }} alpn h2,http/1.1
   #bind quic4@:{{ port }},quic6@:{{ port }} v4v6 tfo ssl crt {{ haproxy_cert_dir }} alpn h3
   bind quic4@127.0.0.1:902 ssl crt {{ haproxy_cert_dir }} alpn h3
- 
 
   mode http
+
+  acl client_clear so_name hop_clear
+
   # ACME HTTP-01 challenges (panel: hiddifypanel/acme/challenges.py fills this in-memory map only while an order is
   # pending): answered here, before any routing, for every domain and IP — including hosts in http_domain
   # (anytls/naive/hysteria/… SNI decoys). If this ran after map_dom, those hosts would miss the challenge.
@@ -43,8 +51,8 @@ frontend in-httpmode
   http-request set-var(txn.backend) var(txn.naive_pass),map_str({{ include_path(ctx, 'haproxy/server/maps/token_header') }},default_decoy) if { var(txn.naive_pass) -m found }
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
 
-  # Panel / admin / user pages must not be used over cleartext. ACME HTTP-01 above already returned.
-  http-request redirect scheme https code 301 if !{ ssl_fc } { var(txn.backend) -m str panel }
+
+  http-request redirect scheme https code 301 if client_clear { var(txn.backend) -m str panel }
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
 

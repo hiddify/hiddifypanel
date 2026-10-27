@@ -56,8 +56,9 @@ def init_app(app):
 
     @app.before_request
     def redirect_cleartext_when_proxy_says_http():
-        # Defense in depth: HAProxy should already 301 panel paths. Only when the terminator
-        # explicitly said the client hop was http (not a direct :9000 health check with no header).
+        # Defense in depth: HAProxy should already 301 panel paths on the cleartext hop.
+        # Only when the proxy explicitly said the client hop was http (not a direct :9000
+        # health check with no header, and not post-TLS plain after :901 / rpxy-l4).
         if request.headers.get("X-Forwarded-Proto", "").lower() != "http":
             return None
         url = request.url

@@ -6,11 +6,10 @@ backend panel
   mode http
   option forwardfor header X-Forwarded-For
   http-request set-header X-Real-IP %[src]
-  # Scheme the client used on this HAProxy hop (not a fixed "https"): otherwise the panel
-  # treats plain :80 as TLS, skips redirects, and issues non-Secure session cookies.
-  http-request set-header X-Forwarded-Proto https if { ssl_fc }
-  http-request set-header X-Forwarded-Proto http if !{ ssl_fc }
-  http-response set-header Strict-Transport-Security "max-age=31536000; includeSubDomains" if { ssl_fc }
+  # Always https: cleartext panel is 301'd on in-httpmode (hop_clear) before it reaches here.
+  # Do not use ssl_fc — after :901 the second hop is plain and ssl_fc is false (301 loop).
+  http-request set-header X-Forwarded-Proto https
+  http-response set-header Strict-Transport-Security "max-age=31536000; includeSubDomains"
   http-response set-header X-Robots-Tag "noindex, nofollow"
   compression algo gzip
   compression type text/html text/css text/plain text/javascript application/javascript application/json application/manifest+json image/svg+xml image/x-icon image/vnd.microsoft.icon font/ttf font/otf application/vnd.ms-fontobject
@@ -58,7 +57,12 @@ backend to_http_in_h2_http
     server s abns@http_in_h2 send-proxy-v2 tfo proto h2
 
 backend to_httpmode
+    # True client cleartext (:80 / reality h1).
     server s abns@http_in_h2 send-proxy-v2
+
+backend to_httpmode_from_tls
+    # Plain HTTP after HAProxy already terminated TLS (:901 from rpxy-l4, or https_in_ssl).
+    server s abns@http_in_from_tls send-proxy-v2
 
 backend to_https_in_ssl
     server s abns@https_in_ssl send-proxy-v2 tfo
