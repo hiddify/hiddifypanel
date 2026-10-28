@@ -11,7 +11,8 @@ tcp_send_proxy_protocol = "v2"
 tcp_protocol_detection_timeout_msec=1000
 
 udp_target = ["127.0.0.1:902"]
-tcp_target = ["127.0.0.1:901"]
+{#- untyped streams: HAProxy finds the SNI proxies that rpxy-l4 misses (haproxy/server/fronts/untyped_tls) #}
+tcp_target = ["127.0.0.1:903"]
 
 [protocols."quic_service"]
 protocol = "quic"

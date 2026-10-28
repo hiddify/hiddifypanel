@@ -17,6 +17,12 @@
    {% block endpoints %}{% endblock %}
     
   ],
+  {# hiddify-core 5.1 (sing-box 1.14+) refuses to download remote rule-sets without an HTTP client of their own #}
+  {% if ctx.platform.hiddifycore_version >= "5.1.0" and ctx.outbounds.rule_sets %}
+  "http_clients": [
+    {"tag": "rule-set"}
+  ],
+  {% endif %}
   {% include 'hiddify-core/server/base/route' %},
   {% include 'hiddify-core/server/base/experimental' %},
   {% include 'hiddify-core/server/base/dns' %},

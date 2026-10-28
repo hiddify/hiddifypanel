@@ -15,6 +15,8 @@
 {% set naive_path = ns.naive_path or (ctx.hconfig.path_naive ~ ctx.hconfig.path_tcp) %}
 
 {% include 'haproxy/server/fronts/in_httpmode' %}
+{% include 'haproxy/server/fronts/decoy_tls' %}
+{% include 'haproxy/server/fronts/untyped_tls' %}
 {# include 'haproxy/server/fronts/in_httpmode_quic' #}
 {# include 'haproxy/server/fronts/in_tcpmode' #}
 {# include 'haproxy/server/fronts/https_in' #}

@@ -5,6 +5,9 @@
 # =====================
 
 {% for proxy in ctx.proxies if proxy.mode =="domains_l7_gateway" %}
+{# xray's raw HTTP Trojan inbound takes no PROXY protocol: behind it xray's first read is cut at 256 bytes, and its
+   Trojan inbound rejects a request whose first read after the HTTP header is shorter than its 58-byte header #}
+{%- set send_proxy = "" if proxy.proto == "trojan" and proxy.transport == "http" and proxy.server_config.core == "xray" else "send-proxy-v2" %}
 {#backend {{proxy.id}}_{{ proxy.path | slugify}}
     server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo
 #}
@@ -13,14 +16,14 @@ backend http_{{proxy.id}}_{{ proxy.path | slugify }}
 {%-if proxy.l7_reverse_proto == "tls_h3_quic"%}
     server s quic4@127.0.0.1:{{ proxy.udp_port }} ssl verify none 
 {%-elif proxy.l7_reverse_proto %}
-    server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo proto {{ proxy.l7_reverse_proto }}
+    server s 127.0.0.1:{{ proxy.tcp_port }} {{ send_proxy }} tfo proto {{ proxy.l7_reverse_proto }}
 {%-else%}
-    server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo
+    server s 127.0.0.1:{{ proxy.tcp_port }} {{ send_proxy }} tfo
 {%-endif%}
 
 
 backend tcp_{{proxy.id}}_{{ proxy.path | slugify }}
     mode tcp
-    server s 127.0.0.1:{{ proxy.tcp_port }} send-proxy-v2 tfo 
+    server s 127.0.0.1:{{ proxy.tcp_port }} {{ send_proxy }} tfo 
 
 {% endfor %}

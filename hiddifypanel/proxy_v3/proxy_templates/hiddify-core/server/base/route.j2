@@ -13,6 +13,9 @@
     {% endfor %}
   ],
   "final": "{{ ctx.outbounds.default_singbox_tag }}",
+  {% if ctx.platform.hiddifycore_version >= "5.1.0" and ctx.outbounds.rule_sets %}
+  "default_http_client": "rule-set",
+  {% endif %}
   "rules": [
     {"action": "sniff"},
     {# Traffic xray sends into a bridge SOCKS inbound (Tor, Psiphon, the admin's outbounds / endpoints) leaves through that outbound #}

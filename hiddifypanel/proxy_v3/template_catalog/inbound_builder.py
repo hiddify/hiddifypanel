@@ -124,7 +124,10 @@ def supports_xray_preset(combo: ProxyCombination) -> bool:
 def _server_proto_stem(combo: ProxyCombination) -> str | None:
     if _raw_transport(combo.transport) == "shadowtls":
         return "shadowtls"
-    return PROTO_SLUG.get(combo.proto, combo.proto)
+    proto = PROTO_SLUG.get(combo.proto, combo.proto)
+    if proto == "ss" and _raw_transport(combo.transport) == "faketls":
+        return "ss_faketls"
+    return proto
 
 
 def _uses_v2ray_transport_proto(proto: str | None) -> bool:

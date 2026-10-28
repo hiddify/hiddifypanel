@@ -1,0 +1,9 @@
+{% include 'hiddify-core/server/protocols/ss' %},
+{# simple-obfs TLS, the obfs-local plugin of the client. A connection that is not simple-obfs, or then fails
+   Shadowsocks, is passed to the decoy site that :443 shows a stranger (haproxy/server/fronts/decoy_tls). #}
+"obfs_mode": "tls",
+"obfs_host": "{{ ctx.domain.sni }}",
+"obfs_fallback": {
+  "server": "127.0.0.1",
+  "server_port": 904
+}

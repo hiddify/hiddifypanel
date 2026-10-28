@@ -1,6 +1,7 @@
 "network": "tcp",
 "tcpSettings": {
- {% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
+ {# no PROXY protocol for Trojan: see haproxy/server/backends/l7_gateway #}
+ {% if not ctx.proxy.public_access and ctx.proxy.proto != "trojan" %}"acceptProxyProtocol": true,{% endif %}
 
   "header": {
     "type": "http",

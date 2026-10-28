@@ -29,12 +29,11 @@ from .version import TemplateVersion
 _REALITY_TLS_LAYERS: frozenset[TlsLayer] = frozenset({TlsLayer.tls, TlsLayer.tls_h2})
 
 
-#: The port of the SS FakeTLS service (obfs-server in services/ssfaketls).
-SS_FAKETLS_PORT = 1010
 #: telemt's MTProxy listener (telemt/server/base.j2).
 TELEGRAM_FAKETLS_PORT = 1001
 #: SNI proxies served by a service of their own, not a core inbound: category -> its port.
-SERVICE_SNI_PORTS = {"faketls": SS_FAKETLS_PORT, "telegram_faketls": TELEGRAM_FAKETLS_PORT}
+#: SS FakeTLS is a hiddify-core inbound now (its simple-obfs server), not obfs-server.
+SERVICE_SNI_PORTS = {"telegram_faketls": TELEGRAM_FAKETLS_PORT}
 
 
 def _tls_layer_allows_reality(transport: CustomProxyTransport, tls_layer: TlsLayer | None) -> bool:
@@ -260,7 +259,7 @@ class ProxyDomainVar(ProxyVar):
         tcp_ports, udp_ports = list(resolved.tcp_ports), list(resolved.udp_ports)
         service_port = next((port for category, port in SERVICE_SNI_PORTS.items() if category in proxy.categories), None)
         if server_side and proxy.mode == CustomProxyMode.domains_sni_gateway and service_port:
-            # SS FakeTLS (obfs-server) and Telegram MTProxy (telemt) are services of their own, not core inbounds
+            # Telegram MTProxy (telemt) is a service of its own, not a core inbound
             tcp_ports, udp_ports = [service_port], []
         if not server_side and proxy.mode in (CustomProxyMode.domains_l7_gateway, CustomProxyMode.domains_sni_gateway):
             # Clients connect to the domain's own gateway port when it has one.
@@ -318,7 +317,7 @@ class ServerBuilderProxyVar(ProxyVar):
     @classmethod
     def from_custom_proxy(cls, proxy: CustomProxy, hconfig: HConfigVar) -> ServerBuilderProxyVar:
         base = ProxyVar.from_custom_proxy(proxy, hconfig, server_side=True)
-        # SS FakeTLS / Telegram MTProxy SNI proxies: their service (obfs-server, telemt) listens on the service port;
+        # Telegram MTProxy SNI proxies: their service (telemt) listens on the service port;
         # a core inbound of their own would take that port too ("bind: address already in use").
         service_served = proxy.mode == CustomProxyMode.domains_sni_gateway and any(c in SERVICE_SNI_PORTS for c in base.categories)
         return cls(

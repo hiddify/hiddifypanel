@@ -1,4 +1,5 @@
 "sockopt": {
-{% if not ctx.proxy.public_access %}"acceptProxyProtocol": true,{% endif %}
+{# raw HTTP Trojan takes no PROXY protocol: see haproxy/server/backends/l7_gateway #}
+{% if not ctx.proxy.public_access and not (ctx.proxy.proto == "trojan" and ctx.proxy.transport == "http") %}"acceptProxyProtocol": true,{% endif %}
   "tcpFastOpen": true
 }

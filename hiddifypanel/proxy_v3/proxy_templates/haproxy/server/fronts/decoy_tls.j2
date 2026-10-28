@@ -1,0 +1,11 @@
+# =====================
+# The TLS decoy, for inbounds that pass a stranger on (SS FakeTLS: hiddify-core/server/protocols/ss_faketls)
+# =====================
+{#- They connect without a PROXY header, which the TLS terminator on :901 needs: the decoy :443 shows anyone. #}
+frontend decoy-tls
+    bind 127.0.0.1:904
+    mode tcp
+    default_backend to_tls_decoy
+
+backend to_tls_decoy
+    server s 127.0.0.1:901 send-proxy-v2

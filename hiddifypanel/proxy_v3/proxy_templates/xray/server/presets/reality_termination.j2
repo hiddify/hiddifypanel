@@ -20,14 +20,16 @@
 
                 {# xray rejects "decryption" together with "fallbacks": raw VLESS clients here use encryption none #}
                 "decryption": "none",
+                {# Not VLESS: the Trojan inbound of the same ALPN below serves raw Trojan over REALITY and passes the
+                   rest on to the gateway (Trojan clients offer h2 as well, so ALPN alone can not tell them apart). #}
                 "fallbacks": [
                     {
                         "alpn": "h2",
-                        "dest": "@@http_in_h2",
+                        "dest": "@@trojan_in_reality_h2_{{ ctx.proxy.id }}_{{ ctx.proxy.domain.name|slugify }}",
                         "xver":2
-                    },               
+                    },
                     {
-                        "dest": "@@tcp_in_reality_h1",
+                        "dest": "@@trojan_in_reality_h1_{{ ctx.proxy.id }}_{{ ctx.proxy.domain.name|slugify }}",
                         "xver":2
                     },
                 ]
@@ -52,5 +54,31 @@
                 }
             }
         },
+        {# This domain's Trojan inbounds: the socket names hold the domain, each terminator has its own #}
+        {% for alpn, gateway in (("h2", "@@http_in_h2"), ("h1", "@@tcp_in_reality_h1")) %}
+        {
+            "tag": "reality trojan {{ alpn }} {{ctx.proxy.id}} {{ctx.proxy.tag}} {{ ctx.proxy.domain.name }}",
+            "listen": "@@trojan_in_reality_{{ alpn }}_{{ ctx.proxy.id }}_{{ ctx.proxy.domain.name|slugify }}",
+            "protocol": "trojan",
+            "settings": {
+                "clients": [
+                    {% for u in ctx.users %}
+                    {"password": "{{ u.uuid }}", "email": "{{ u.uuid }}"},
+                    {% endfor %}
+                ],
+                "fallbacks": [
+                    {"dest": "{{ gateway }}", "xver": 2}
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "tcpSettings": {
+                    "acceptProxyProtocol": true
+                },
+                "security": "none"
+            }
+        },
+        {% endfor %}
+
     {% endfor %}
 {% endblock %} 

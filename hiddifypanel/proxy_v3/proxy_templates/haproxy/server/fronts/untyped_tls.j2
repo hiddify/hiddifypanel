@@ -1,0 +1,27 @@
+# =====================
+# What rpxy-l4 could not classify (its tcp_target)
+# =====================
+{#- rpxy-l4 takes a stream for TLS only when every record it has read is a handshake record: a ClientHello followed by
+    data in the same read, as simple-obfs (SS FakeTLS) sends it, falls back here. HAProxy's SNI parser reads the
+    ClientHello alone and sends it to its SNI gateway proxy, as rpxy-l4 does; the rest goes on as before. #}
+frontend in-untyped
+    bind 127.0.0.1:903 accept-proxy
+    mode tcp
+    tcp-request inspect-delay 1s
+    tcp-request content accept if { req.ssl_hello_type 1 }
+    tcp-request content accept if { req.len ge 5 } !{ req.payload(0,1) -m bin 16 }
+{%- for p in ctx.proxies if p.mode == "domains_sni_gateway" %}
+{%- for pd in p.iter_proxies_with_domain() if pd.tcp_udp != "udp" and pd.tcp_port %}
+    use_backend untyped_sp_{{ p.id }}_{{ pd.domain.name|slugify }} if { req.ssl_sni -i {{ pd.domain.sni }} }
+{%- endfor %}
+{%- endfor %}
+    default_backend untyped_default
+
+backend untyped_default
+    server s 127.0.0.1:901 send-proxy-v2
+{% for p in ctx.proxies if p.mode == "domains_sni_gateway" %}
+{%- for pd in p.iter_proxies_with_domain() if pd.tcp_udp != "udp" and pd.tcp_port %}
+backend untyped_sp_{{ p.id }}_{{ pd.domain.name|slugify }}
+    server s 127.0.0.1:{{ pd.tcp_port }} send-proxy-v2
+{% endfor %}
+{%- endfor %}
