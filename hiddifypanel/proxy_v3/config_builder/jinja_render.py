@@ -207,13 +207,25 @@ def _jinja_gettext(ctx: dict[str, Any], message: str, **kwargs: Any) -> str:
         nested = ctx["ctx"]
         child_id = int(getattr(nested, "get", lambda *_: 0)("child_id") or getattr(getattr(nested, "hconfig", None), "child_id", 0) or 0)
     if not lang:
-        from hiddifypanel.models import hconfig
+        try:
+            from hiddifypanel.models import hconfig
 
-        lang = hconfig(ConfigEnum.lang, child_id)
-    with force_locale(lang or "en"):
-        text = gettext(message)
+            lang = hconfig(ConfigEnum.lang, child_id)
+        except Exception:
+            lang = "en"
+    # dump-client-configs / some CLI paths have an app context without flask-babel
+    # registered — fall back to the msgid so xray/sublink still render.
+    text = message
+    try:
+        with force_locale(lang or "en"):
+            text = gettext(message)
+    except Exception:
+        pass
     if kwargs:
-        return text % kwargs
+        try:
+            return text % kwargs
+        except Exception:
+            return text
     return text
 
 
