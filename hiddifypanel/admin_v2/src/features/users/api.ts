@@ -58,6 +58,8 @@ export interface UsersState {
   admins: { uuid: string; name: string; parent_uuid: string | null }[]
   outbounds: { id: number; name: string; mode: string; enabled: boolean }[]
   can_add: boolean
+  /** Settings > General: a new user goes to the start of my order (after the pinned ones) or the end */
+  new_user_place?: 'top' | 'end'
   capabilities?: {
     add_sub_admins?: boolean
     override_preferred_outbound?: boolean

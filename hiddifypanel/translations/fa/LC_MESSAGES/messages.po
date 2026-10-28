@@ -10618,6 +10618,18 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.new_user_place.description"
+msgstr "هنگام ساخته شدن، کاربر در ابتدای لیست کاربران باشد یا در انتهای آن. کاربران سنجاق‌شده همیشه بالاتر می‌مانند."
+
+msgid "config.new_user_place.end"
+msgstr "آخر لیست"
+
+msgid "config.new_user_place.label"
+msgstr "↕️ جای کاربر جدید"
+
+msgid "config.new_user_place.top"
+msgstr "اول لیست"
+
 msgid "config.node_name.description"
 msgstr "نام این نود که در پنل مرکزی نمایش داده می‌شود"
 

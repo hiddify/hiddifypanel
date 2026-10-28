@@ -25,6 +25,11 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v190(child_id):
+    """Settings > General: where the Users page puts a new user (the end, as before)."""
+    add_config_if_not_exist(ConfigEnum.new_user_place, "end", child_id)
+
+
 def _v189(child_id):
     """no_inbound builtins (node-configs, additional-config) used tls_layer=http and were gated by
     http_proxy_enable; parent/child subscriptions then omitted node configs. Align with user-configs."""

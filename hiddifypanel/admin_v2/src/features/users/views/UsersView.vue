@@ -1039,6 +1039,8 @@ function openLink(u: UserRow) {
 }
 function onSaved(user: UserDetail, created: boolean) {
   replaceRow(user)
+  // Settings > General: at the top of my order (after the pinned users); otherwise it is unplaced, which lists it last
+  if (created && state.value?.new_user_place === 'top') void saveLayout({ ...layout.value, order: [user.uuid, ...layout.value.order.filter((u) => u !== user.uuid)] })
   toast.add({ severity: 'success', summary: created ? t('users.added', { name: user.name }) : t('users.saved', { name: user.name }), life: 3000 })
   if (created) {
     linkUser.value = { ...user, additional_configs: user.additional_configs.length }

@@ -7717,6 +7717,18 @@ msgstr "Para exibir recursos. usa a CPU do seu servidor, mas não é muito."
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.new_user_place.description"
+msgstr "Colocar o novo usuário no início ou no fim da lista de usuários. Os fixados ficam acima."
+
+msgid "config.new_user_place.end"
+msgstr "Fim da lista"
+
+msgid "config.new_user_place.label"
+msgstr "↕️ Posição do Novo Usuário"
+
+msgid "config.new_user_place.top"
+msgstr "Início da lista"
+
 msgid "config.node_name.description"
 msgstr "O nome deste nó, exibido no painel pai"
 

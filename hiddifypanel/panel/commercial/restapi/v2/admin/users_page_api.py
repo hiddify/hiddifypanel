@@ -137,6 +137,8 @@ def _meta(admins: dict[int, AdminUser]) -> dict[str, Any]:
         "can_add": actor.can_have_more_users() and not node_read_only.is_read_only(),
         "capabilities": caps.of(actor),
         "read_only": node_read_only.is_read_only(),
+        # Settings > General: a new user goes to the start of my order or the end
+        "new_user_place": str(hconfig(ConfigEnum.new_user_place) or "end"),
     }
 
 
