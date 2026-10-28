@@ -1926,6 +1926,7 @@
       "title": "Paramètres"
     },
     "tags": {
+      "note": "Note",
       "pin": "Épingler",
       "addTag": "Tag",
       "bulk": "Tag",
