@@ -169,8 +169,10 @@ def _check_reality(model: Domain, server_ips) -> list[str]:
         domains_to_check.update(d.strip() for d in v.split(",") if d.strip())
 
     for d in domains_to_check:
-        if not hutils.network.is_domain_reality_friendly(d):
+        if not hutils.network.is_domain_support_h2_tls13(d):
             warnings.append(_("Domain is not REALITY friendly!") + f" {d}")
+        elif not hutils.network.is_domain_support_x25519(d):
+            warnings.append(_("domain.reality.no_x25519") + f" {d}")
         try:
             if not hutils.network.is_in_same_asn(d, server_ips[0]):
                 domain_ips = hutils.network.get_domain_ips(d)

@@ -4585,7 +4585,8 @@
     "ip": "IP",
     "mode": "Mode",
     "reality": {
-      "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN"
+      "asn_issue": "Selected Domain for REALITY is not in the same ASN. To better use of the Protocol, it is better to find a Domain in the same ASN",
+      "no_x25519": "This domain does not support the X25519 key exchange that REALITY needs, so it is not REALITY compatible: clients would get the real site's certificate and fail. Use another domain."
     },
     "resolveip": {
       "description": "Use IP instead of domain name in the proxies. Useful when there are huge noise on the DNS.",

@@ -355,8 +355,51 @@ def is_domain_support_h2_tls13(sni: str, server: str = "") -> bool:
         return False
 
 
+# A HelloRetryRequest is a ServerHello with this random (RFC 8446, 4.1.3)
+_TLS13_HELLO_RETRY_RANDOM = bytes.fromhex("cf21ad74e59a6111be1d8c021e65b891c2a211167abb8c5e079e09e2c8a8339c")
+
+
+def is_domain_support_x25519(sni: str, server: str = "") -> bool:
+    """The domain answers a TLS 1.3 ClientHello that offers only the X25519 key exchange, which REALITY's handshake
+    is built on: no alert and no HelloRetryRequest for another group (some sites accept only NIST curves)."""
+
+    def ext(kind: int, body: bytes) -> bytes:
+        return kind.to_bytes(2, "big") + len(body).to_bytes(2, "big") + body
+
+    name = sni.encode()
+    extensions = b"".join(
+        [
+            ext(0x0000, (len(name) + 3).to_bytes(2, "big") + b"\x00" + len(name).to_bytes(2, "big") + name),  # server_name
+            ext(0x000A, b"\x00\x02\x00\x1d"),  # supported_groups: x25519
+            ext(0x000D, b"\x00\x08\x04\x03\x08\x04\x04\x01\x05\x01"),  # signature_algorithms
+            ext(0x0010, b"\x00\x03\x02h2"),  # ALPN: h2
+            ext(0x002B, b"\x02\x03\x04"),  # supported_versions: TLS 1.3
+            ext(0x0033, b"\x00\x24\x00\x1d\x00\x20" + os.urandom(32)),  # key_share: x25519
+        ]
+    )
+    suites = b"\x00\x06\x13\x01\x13\x02\x13\x03"
+    hello = b"\x03\x03" + os.urandom(32) + b"\x20" + os.urandom(32) + suites + b"\x01\x00" + len(extensions).to_bytes(2, "big") + extensions
+    handshake = b"\x01" + len(hello).to_bytes(3, "big") + hello
+    record = b"\x16\x03\x01" + len(handshake).to_bytes(2, "big") + handshake
+    try:
+        with socket.create_connection((server or sni, 443), timeout=3) as sock:
+            sock.sendall(record)
+            sock.settimeout(3)
+            reply = b""
+            while len(reply) < 5 + 4 + 2 + 32:
+                chunk = sock.recv(4096)
+                if not chunk:
+                    break
+                reply += chunk
+    except Exception as e:
+        print(f"{sni} {e}")
+        return False
+    # a handshake record with a ServerHello (type 2) whose random is not the HelloRetryRequest one
+    return len(reply) >= 43 and reply[0] == 0x16 and reply[5] == 0x02 and reply[11:43] != _TLS13_HELLO_RETRY_RANDOM
+
+
 def is_domain_reality_friendly(domain: str) -> bool:
-    return is_domain_support_h2_tls13(domain)
+    return is_domain_support_h2_tls13(domain) and is_domain_support_x25519(domain)
 
 
 def fallback_domain_compatible_with_servernames(fallback_domain: str, servername: str) -> bool:
