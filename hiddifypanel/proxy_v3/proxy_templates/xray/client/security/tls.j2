@@ -22,8 +22,11 @@
         "pinnedPeerCertSha256": "{{",".join(domain.cert.pinnedPeerCertSha256)}}",
       {%endif%}
     {%endif%}
-    {% if tls_layer not in ["quic_tls", "quic_tcp_tls"] and ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
-      "fingerprint": "{{ ctx.hconfig.utls }}",
+    {# Xray's chrome hello (also the default when none is set) offers h2 whatever "alpn" says: a CDN then answers an
+       HTTP/1.1-only xhttp leg in HTTP/2. Xray's "android" hello sends the configured ALPN. #}
+    {% set h1_xhttp = ctx.proxy.transport == "xhttp" and tls_layer == "tls_h1" and domain.mode == "cdn"%}
+    {% if tls_layer not in ["quic_tls", "quic_tcp_tls"] and (h1_xhttp or (ctx.hconfig.utls and ctx.hconfig.utls != 'none')) %}
+      "fingerprint": "{{ 'android' if h1_xhttp else ctx.hconfig.utls }}",
     {% endif %}
 
     

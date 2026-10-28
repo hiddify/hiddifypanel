@@ -2,6 +2,8 @@
 {# https://github.com/XTLS/Xray-core/discussions/716  #}
 {#https://xray-checker.kutovoy.dev/configuration/subscription/#}
 {% for ctx in ctx.iter_ctx_domains() %}
+  {# VLESS without encryption over plain HTTP sends everything in clear: never offered #}
+  {{ skip("VLESS without encryption over plain HTTP") if ctx.proxy.tls_layer == "http" and not (ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption) }}
   {% set proxy = ctx.proxy %}
   {% set uri = namespace(
     protocol = 'vless',

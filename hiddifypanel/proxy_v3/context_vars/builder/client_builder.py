@@ -75,6 +75,10 @@ def get_bases(sublink_domain: str, common_core_token: str = "", domain_names: li
         if not p.enable:
             continue
         child_id = int(p.child_id or 0)
+        # Only this panel's own proxies, as the server builder does: another child's proxies (no-inbound
+        # ones too, e.g. its node configs) are not served here and would come out twice ("tag §1").
+        if child_id != Child.current().id:
+            continue
         proxy_var = ClientBuilderProxyVar.from_custom_proxy(p, child_hconfigs[child_id])
         reality_on = bool(child_hconfigs[child_id].reality_enable)
         proxy_var.domains = [d for d in domains if filter_domain_for_proxy(d, proxy_var, reality_enable=reality_on)]

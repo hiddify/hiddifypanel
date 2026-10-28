@@ -1,5 +1,9 @@
 "transport": {
   "type": "http",
+  {# Xray's raw TCP HTTP header is HTTP/1.1 also over TLS; the http transport would speak h2 there (hiddify-core 5.1+) #}
+  {% if ctx.proxy.tls_layer != "http" %}
+  "version": 1,
+  {% endif %}
   "path": "/{{ proxy.path }}",
   "host": ["{{ proxy.domain.host }}"],
   "idle_timeout": "15s",

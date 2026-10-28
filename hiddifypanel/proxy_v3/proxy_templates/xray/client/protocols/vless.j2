@@ -1,3 +1,5 @@
+{# VLESS without encryption over plain HTTP sends everything in clear: never offered #}
+{{ skip("VLESS without encryption over plain HTTP") if ctx.proxy.tls_layer == "http" and not (ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption) }}
 "protocol": "vless",
 "settings": {
   "vnext": [{

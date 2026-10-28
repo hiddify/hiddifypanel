@@ -1,0 +1,42 @@
+{% block outbounds %}
+{#- Xray's Hysteria 2 outbound (Xray 26): protocol "hysteria" with version 2, salamander as a finalmask. Same server as
+    the hy2:// link: the shared certificate's name, pinned when it is not trusted. #}
+{% set cert = ctx.shared_cert %}
+  {% for ctx in ctx.iter_ctx_domains() %}
+    {% set proxy = ctx.proxy %}
+    {% set tag %}{%- include 'xray/client/tag' -%}{% endset %}
+    {
+      "tag": "{{ tag | trim_no_line }}",
+      "protocol": "hysteria",
+      "settings": {
+        "version": 2,
+        "address": "{{ proxy.server }}",
+        "port": {{ proxy.udp_port or proxy.port }}
+      },
+      "streamSettings": {
+        "network": "hysteria",
+        "hysteriaSettings": {
+          "version": 2,
+          "auth": "{{ ctx.user.uuid }}"
+        },
+        "security": "tls",
+        "tlsSettings": {
+          {% if cert.server_name %}"serverName": "{{ cert.server_name }}",{% endif %}
+          {% if not cert.is_trusted %}
+            {% if ctx.platform.xray.version > "0.0.0" and ctx.platform.xray.version < "26.1.1" %}
+            "allowInsecure": true,
+            {% elif cert.pinnedPeerCertSha256 %}
+            "pinnedPeerCertSha256": "{{ ",".join(cert.pinnedPeerCertSha256) }}",
+            {% endif %}
+          {% endif %}
+          "alpn": ["h3"]
+        },
+        {% if ctx.hconfig.hysteria_obfs_enable %}
+        "finalmask": {
+          "udp": [{"type": "salamander", "settings": {"password": "{{ ctx.hconfig.proxy_path }}"}}]
+        },
+        {% endif %}
+      },
+    },
+  {% endfor %}
+{% endblock %}

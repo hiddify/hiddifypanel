@@ -74,7 +74,10 @@ def _is_plain_ss2022(combo: ProxyCombination) -> bool:
 def _skips_hiddify_client_tls(combo: ProxyCombination) -> bool:
     proto = combo.proto.lower()
     # Snell has its own obfuscation and no TLS section: hiddify-core rejects an unknown "tls" field on it
-    return proto in ("socks", "ssh", "mieru", "wireguard", "snell") or _is_plain_ss2022(combo)
+    if proto in ("socks", "ssh", "mieru", "wireguard", "snell") or _is_plain_ss2022(combo):
+        return True
+    # FakeTLS Shadowsocks looks like TLS through its simple-obfs plugin; a Shadowsocks outbound has no "tls" field
+    return proto in ("shadowsocks", "ss") and _raw_transport(combo.transport) == "faketls"
 
 
 def _hiddify_client_proto_slug(combo: ProxyCombination) -> str | None:
@@ -306,8 +309,10 @@ def build_xray_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]
 # template is needed. Drivers resolve this marker to the proxy's hiddify-core client config.
 USE_HIDDIFY_CORE_PLACEHOLDER = "{# use_hiddify_core() #}"
 SKIP_UNSUPPORTED_PLACEHOLDER = '{# skip("unsupported") #}'
+# rawhttp over TLS needs the http transport's "version": 1 (HTTP/1.1 over TLS), which hiddify-core has since 5.1.0
 HIDDIFY_RAWHTTP_TLS_SKIP = (
-    '{{ skip("singbox send h2 header need to fix client") if "rawhttp" in ctx.proxy.tag|lower and tls_layer != "http" }}'
+    '{{ skip("rawhttp over TLS needs Hiddify 5.1+") if "rawhttp" in ctx.proxy.tag|lower and tls_layer != "http"'
+    ' and not (ctx.platform.is_hiddify and ctx.platform.hiddify.version >= "5.1.0") }}'
 )
 _SKIP_UNSUPPORTED_RE = re.compile(r"""\{#\s*skip\s*\(\s*["']unsupported["']\s*\)\s*#\}""")
 _SINGBOX_UNSUPPORTED_PROTOS = frozenset({"mieru"})
@@ -324,12 +329,13 @@ def singbox_client_is_unsupported(*, proto: str = "", transport: str = "") -> bo
     return _raw_transport(transport) in _SINGBOX_UNSUPPORTED_TRANSPORTS
 
 
-def _hiddify_rawhttp_tls_skip_template() -> str:
-    return (
+def _with_hiddify_rawhttp_tls_skip(content: str) -> str:
+    return content.replace(
+        "{% block outbounds %}",
         "{% block outbounds %}\n"
         "{% set tls_layer = tls_layer if tls_layer is defined else ctx.proxy.tls_layer %}\n"
-        f"{HIDDIFY_RAWHTTP_TLS_SKIP}\n"
-        "{% endblock %}\n"
+        f"{HIDDIFY_RAWHTTP_TLS_SKIP}",
+        1,
     )
 
 
@@ -372,7 +378,12 @@ def _build_mieru_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, 
 
 def build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
     if _is_rawhttp_with_tls(combo):
-        return _hiddify_rawhttp_tls_skip_template(), []
+        content, slugs = _build_hiddify_client_outbound(combo)
+        return _with_hiddify_rawhttp_tls_skip(content), slugs
+    return _build_hiddify_client_outbound(combo)
+
+
+def _build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[str]]:
     if _client_proto_file(combo.proto) == "mieru":
         return _build_mieru_hiddify_client_outbound(combo)
     proto_slug = _hiddify_client_proto_slug(combo)
@@ -550,6 +561,12 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
             configs.append(_builtin_client_core_entry("xray", outbound))
         except ValueError:
             pass
+    elif (combo.proto or "").lower() == "hysteria2":
+        # Xray has Hysteria 2 too (the "hysteria" outbound, version 2), not only the share link
+        configs.append(_builtin_client_core_entry("xray", load_template_slug(preset_shell_slug("xray", "client", "outbound_hysteria2"), normalize=False)))
+    elif _is_plain_ss2022(combo):
+        # and plain Shadowsocks 2022
+        configs.append(_builtin_client_core_entry("xray", load_template_slug(preset_shell_slug("xray", "client", "outbound_ss2022"), normalize=False)))
 
     outbound, _slugs = build_singbox_client_outbound(combo)
     configs.append(_builtin_client_core_entry("singbox", outbound))

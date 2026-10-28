@@ -1,4 +1,6 @@
 {% for ctx in ctx.iter_ctx_domains() %}
+  {# Trojan is meant to run inside TLS: never offered over plain HTTP #}
+  {{ skip("Trojan over plain HTTP") if ctx.proxy.tls_layer == "http" }}
   {% set proxy = ctx.proxy %}
   {% set uri = namespace(
     protocol = 'trojan',

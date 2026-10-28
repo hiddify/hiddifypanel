@@ -1,3 +1,5 @@
+{# Trojan is meant to run inside TLS: never offered over plain HTTP #}
+{{ skip("Trojan over plain HTTP") if ctx.proxy.tls_layer == "http" }}
 "type": "trojan",
 "server": "{{ proxy.server }}",
 "port": {{ ctx.proxy.port }},

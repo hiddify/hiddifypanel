@@ -5,7 +5,10 @@
 
     {# uTLS fingerprint is TCP-only; omit fp on QUIC (h3) links. #}
     {% if tls_layer not in ["quic_tls", "quic_tcp_tls"] %}
-    {% if ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
+    {# Xray's other uTLS hellos offer h2 whatever "alpn" says: a CDN would answer an HTTP/1.1-only xhttp leg in HTTP/2 #}
+    {% if ctx.proxy.transport == "xhttp" and tls_layer == "tls_h1" and domain.mode == "cdn" %}
+        {% set qp.fp = 'android' %}
+    {% elif ctx.hconfig.utls and ctx.hconfig.utls != 'none' %}
         {% set qp.fp = ctx.hconfig.utls %}
     {% elif domain.is_reality() %}
         {% set qp.fp = 'chrome' %}

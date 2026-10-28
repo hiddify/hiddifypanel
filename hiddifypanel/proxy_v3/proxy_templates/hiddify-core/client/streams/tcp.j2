@@ -1,3 +1,2 @@
 {{ skip("tcp_enable = " ~ ctx.hconfig.tcp_enable) if not ctx.hconfig.tcp_enable }}
-{# Raw VLESS over REALITY needs no transport (sing-box: plain TCP); other raw TCP streams are xray only. #}
-{{skip("singbox and   hiddify-core do not support tcp mode") if not ctx.proxy.domain.is_reality() }}
+{# Raw TCP (header none) is a VLESS / VMess / Trojan outbound without a transport: nothing to write here. #}

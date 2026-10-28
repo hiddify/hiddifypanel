@@ -627,6 +627,8 @@ def _build_preset(
         )
     tag = _backend_tag(primary, core)
     l7_reverse = _preset_l7_reverse_proto(transport_value, mode, slot.l7_reverse_proto, proto=proto)
+    # HTTP/2 without TLS (h2c: gRPC over plain HTTP) does not pass CDNs such as Cloudflare: ship it disabled.
+    cleartext_h2 = tls_layer == "http" and l7_reverse == "h2"
     inbound_tcp_ports: tuple[int, ...] = ()
     inbound_udp_ports: tuple[int, ...] = ()
     if mode == CustomProxyMode.ip:
@@ -653,7 +655,7 @@ def _build_preset(
     return CustomProxyPreset(
         name=display_name,
         slug=slug,
-        enable=False if proto == "socks" else bool(primary.enable),
+        enable=False if proto == "socks" or cleartext_h2 else bool(primary.enable),
         mode=mode,
         proto=primary.proto.lower(),
         transport=_parse_transport(primary.transport).value,

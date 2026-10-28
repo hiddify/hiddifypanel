@@ -1,0 +1,15 @@
+{% block outbounds %}
+{#- Plain Shadowsocks 2022 (no plugin), as the ss:// link: Xray has it too #}
+  {% for ctx in ctx.iter_ctx_domains() %}
+    {% set proxy = ctx.proxy %}
+    {% set tag %}{%- include 'xray/client/tag' -%}{% endset %}
+    {
+      "tag": "{{ tag | trim_no_line }}",
+      {% include 'xray/client/protocols/ss' %},
+      "streamSettings": {
+        "network": "raw",
+        "security": "none"
+      },
+    },
+  {% endfor %}
+{% endblock %}

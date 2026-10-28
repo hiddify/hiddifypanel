@@ -1,3 +1,5 @@
+{# VLESS without encryption over plain HTTP sends everything in clear: never offered #}
+{{ skip("VLESS without encryption over plain HTTP") if ctx.proxy.tls_layer == "http" and not (ctx.proxy.server_core == "xray" and ctx.hconfig.vless_encryption) }}
 {# raw VLESS on a REALITY domain ends at the reality termination, which can not use encryption #}
 {%set reality_terminated = ctx.proxy.transport == "tcp" and ctx.proxy.domain.is_reality() %}
 {%set encryption = 'none' if reality_terminated else (ctx.hconfig.vless_encryption or 'none') %}
@@ -14,5 +16,8 @@
 {% if encryption_supported %}
 "encryption": "{{ encryption }}",
 {% endif %}
+{# Vision is TCP+REALITY only (the REALITY terminator), as in the sublink/xray templates (#5640) #}
+{% if ctx.hconfig.vless_flow and reality_terminated %}
 "flow": "{{ ctx.hconfig.vless_flow }}",
+{% endif %}
 {% endif %}
