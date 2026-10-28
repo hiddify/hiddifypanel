@@ -186,7 +186,10 @@
                 <TagDots kind="user" :uuid="data.uuid" :ids="data.tags" :pinned="isPinned(data)" @changed="(ids: number[]) => setTags(data.uuid, ids)" @pin="(on: boolean) => setPinned(data, on)" />
                 <button type="button" class="u-who__name" :title="data.name" @click="openEdit(data)"><MarkText :text="data.name" :query="query" /></button>
               </div>
-              <small v-if="data.comment" class="u-who__note" :title="data.comment"><MarkText :text="data.comment" :query="query" /></small>
+              <!-- The note's first words; the whole note on a notebook sheet on hover -->
+              <small v-if="data.comment" class="u-who__note">
+                <NotePreview v-slot="{ text }" :note="data.comment" :label="t('users.form.note')"><MarkText :text="text" :query="query" /></NotePreview>
+              </small>
               <small v-if="query && data.uuid.includes(query.trim().toLowerCase())" class="u-who__uuid" dir="ltr"><MarkText :text="data.uuid" :query="query" /></small>
             </div>
             <!-- What is special about this user, in the room right of the name -->
@@ -198,6 +201,7 @@
                 :type="x.key === 'telegram' && !readOnly ? 'button' : undefined"
                 class="u-extra"
                 :class="[`u-extra--${x.key}`, { 'u-extra--action': x.key === 'telegram' && !readOnly }]"
+                :aria-label="x.key === 'note' ? t('users.form.note') : undefined"
                 v-tooltip.top="x.key === 'telegram' && !readOnly ? t('users.extra.telegramMessage') : x.title"
                 @click.stop="x.key === 'telegram' && !readOnly && messageUser(data)"
                 ><i :class="x.icon" />{{ x.text }}</component
@@ -300,14 +304,17 @@
               <span class="u-card__badge" :aria-label="t(`users.status.${u.status}`)"><i :class="STATUS_ICON[u.status]" /></span>
             </button>
             <TagDots kind="user" :uuid="u.uuid" :ids="u.tags" :pinned="isPinned(u)" @changed="(ids: number[]) => setTags(u.uuid, ids)" @pin="(on: boolean) => setPinned(u, on)" />
-            <button type="button" class="u-card__title" @click="openEdit(u)">
-              <span class="u-card__name">{{ u.name }}</span>
+            <div class="u-card__who">
+              <!-- The name edits; the note right after it opens the whole note when it was cut (tap) -->
+              <div class="u-card__nameline">
+                <button type="button" class="u-card__title" @click="openEdit(u)"><span class="u-card__name">{{ u.name }}</span></button>
+                <span v-if="u.comment" class="u-card__note"><NotePreview :note="u.comment" :label="t('users.form.note')" /></span>
+              </div>
               <!-- Say the state only when it needs attention (the badge on the QR already says "active") -->
-              <span v-if="u.comment || u.status !== 'active'" class="u-card__sub">
-                <b v-if="u.status !== 'active'" class="u-card__state">{{ t(`users.status.${u.status}`) }}</b>
-                <template v-if="u.comment && u.status !== 'active'"> · </template>{{ u.comment }}
-              </span>
-            </button>
+              <button v-if="u.status !== 'active'" type="button" class="u-card__title u-card__sub" @click="openEdit(u)">
+                <b class="u-card__state">{{ t(`users.status.${u.status}`) }}</b>
+              </button>
+            </div>
             <!-- Usage where the edit button was: tapping the name edits -->
             <MeterBar class="u-card__meter u-tap" role="button" tabindex="0" :aria-label="t('users.form.editUsageTitle', { name: u.name })" @click="openQuick(u, 'usage')" @keydown.enter="openQuick(u, 'usage')" :used="u.current_usage_GB" :max="unlimitedGb(u.usage_limit_GB) ? null : u.usage_limit_GB" :text="usageText(u)" size="xs" />
           </header>
@@ -328,6 +335,7 @@
                 :type="x.key === 'telegram' && !readOnly ? 'button' : undefined"
                 class="u-extra"
                 :class="[`u-extra--${x.key}`, { 'u-extra--action': x.key === 'telegram' && !readOnly }]"
+                :aria-label="x.key === 'note' ? t('users.form.note') : undefined"
                 v-tooltip.top="x.key === 'telegram' && !readOnly ? t('users.extra.telegramMessage') : x.title"
                 @click.stop="x.key === 'telegram' && !readOnly && messageUser(u)"
                 ><i :class="x.icon" />{{ x.text }}</component
@@ -400,6 +408,7 @@
 import { unitLabel } from '@/shared/utils/format-metrics'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import NotePreview from '@/shared/components/NotePreview.vue'
 import { numberListCodec, optionalNumberCodec, useHashState } from '@/shared/composables/useHashState'
 import { computed, defineAsyncComponent, defineComponent, h, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -783,6 +792,8 @@ function extrasOf(u: Row): { key: string; icon: string; text: string; title: str
     out.push({ key: 'subs', icon: 'pi pi-plus-circle', text: t('users.extra.subs', { n: u.additional_configs }, u.additional_configs), title: t('users.extra.subsHint') })
   }
   if (u.telegram_id) out.push({ key: 'telegram', icon: 'pi pi-telegram', text: 'Telegram', title: t('users.extra.telegramHint') })
+  // Only a mark that the user has a note (no text, nothing on hover): the note itself is beside the name
+  if (u.comment?.trim()) out.push({ key: 'note', icon: 'pi pi-book', text: '', title: '' })
   return out
 }
 
@@ -1524,6 +1535,13 @@ onBeforeUnmount(() => {
 .u-extra--subs i {
   color: var(--p-violet-500, #8b5cf6);
 }
+.u-extra--note {
+  padding-inline: 0.35rem;
+}
+.u-extra--note i {
+  font-size: 0.75rem;
+  color: #b45309;
+}
 .u-extra--action {
   border: 0;
   font: inherit;
@@ -1923,9 +1941,34 @@ onBeforeUnmount(() => {
 .u-card__badge i {
   font-size: 0.55rem;
 }
-.u-card__title {
+.u-card__who {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+}
+.u-card__nameline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  max-width: 100%;
+  min-width: 0;
+}
+.u-card__note {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.74rem;
+  color: var(--p-text-muted-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.u-card__title {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.05rem;
