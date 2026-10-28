@@ -3,7 +3,7 @@ import os
 
 import flask_bootstrap
 import redis
-from flask import redirect, request
+from flask import has_request_context, redirect, request
 from flask_babel import Babel
 from flask_session import Session
 from sonora.wsgi import grpcWSGI
@@ -75,6 +75,11 @@ def init_app(app):
     def get_locale():
         # Put your logic here. Application can store locale in
         # user profile, cookie, session, etc.
+        if not has_request_context():
+            # Background work (a node registering with its parent runs as a job, see hutils/node/async_job.py) has no
+            # request to ask: reading one raised "Working outside of request context" at the first translated text,
+            # which then hid the real error. Use what the request chose, else the admin language.
+            return getattr(g, "locale", None) or hconfig(ConfigEnum.admin_lang) or "en"
         if "admin" in request.base_url:
             # An admin's own language (My account) wins over the panel's default admin language.
             own = None

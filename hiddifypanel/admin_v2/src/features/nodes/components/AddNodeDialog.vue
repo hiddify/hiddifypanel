@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
+import { useToast } from 'primevue/usetoast'
 import { apiErrorMessage } from '@/core/api/client'
 import { nodesApi, type NodeRegisterError, type PanelNode } from '@/features/nodes/api'
 
@@ -12,6 +12,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ added: [node: PanelNode | null] }>()
 
 const { t, te } = useI18n()
+const toast = useToast()
 
 // https://host[:port]/<proxy path>/<admin uuid>/...
 const LINK_RE = /^https:\/\/[^/\s:]+(?::\d+)?\/[^/\s]+\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\/.*)?$/i
@@ -21,7 +22,16 @@ const name = ref('')
 const touched = ref(false)
 const busy = ref(false)
 const done = ref(false)
-const error = ref<string | null>(null)
+/** A failed registration, in the panel's language: where, what happened, what to do; the technical text only goes to the clipboard. */
+interface ShownError {
+  side: 'node' | 'between' | 'parent' | ''
+  what: string
+  fix: string
+  reg: string
+  technical: string
+}
+const error = ref<ShownError | null>(null)
+const SIDE_ICON: Record<string, string> = { node: 'pi pi-server', between: 'pi pi-arrows-h', parent: 'pi pi-home', '': 'pi pi-exclamation-triangle' }
 
 const trimmed = computed(() => link.value.trim())
 const linkValid = computed(() => LINK_RE.test(trimmed.value))
@@ -38,17 +48,30 @@ watch(visible, (open) => {
   error.value = null
 })
 
-function errorText(err: unknown): string {
+function shownError(err: unknown): ShownError {
   const body = (err as { response?: { data?: NodeRegisterError } })?.response?.data
-  if (body?.code && te(`nodes.errors.${body.code}`)) {
-    // Which side failed, what it says, the technical reason, and the id to find the log lines of both panels.
-    const lines = [body.side && te(`nodes.errorSide.${body.side}`) ? `${t(`nodes.errorSide.${body.side}`)}: ${t(`nodes.errors.${body.code}`)}` : t(`nodes.errors.${body.code}`)]
-    if (body.message && body.message !== body.code) lines.push(body.message)
-    if (body.reg) lines.push(t('nodes.errorReg', { id: body.reg }))
-    return lines.join('\n')
+  const code = body?.code && te(`nodes.errors.${body.code}`) ? body.code : (err as { code?: string })?.code === 'ECONNABORTED' ? 'timeout' : ''
+  const side = (['node', 'between', 'parent'].includes(String(body?.side)) ? body!.side : '') as ShownError['side']
+  const message = body?.message && body.message !== body.code ? body.message : ''
+  const technical = [code && `code: ${code}`, side && `side: ${side}`, body?.reg && `registration: ${body.reg}`, message || (!code ? apiErrorMessage(err) : '')].filter(Boolean).join('\n')
+  if (!code) return { side, what: t('nodes.errors.unknown'), fix: t('nodes.errorFix.unknown'), reg: body?.reg ?? '', technical }
+  return {
+    side,
+    what: t(`nodes.errors.${code}`),
+    fix: te(`nodes.errorFix.${code}`) ? t(`nodes.errorFix.${code}`) : t('nodes.errorFix.unknown'),
+    reg: body?.reg ?? '',
+    technical,
   }
-  if ((err as { code?: string })?.code === 'ECONNABORTED') return t('nodes.errors.timeout')
-  return apiErrorMessage(err)
+}
+
+async function copyTechnical() {
+  if (!error.value) return
+  try {
+    await navigator.clipboard.writeText(error.value.technical)
+    toast.add({ severity: 'success', summary: t('nodes.errorCopied'), life: 4000 })
+  } catch {
+    toast.add({ severity: 'warn', summary: error.value.technical, life: 10000 })
+  }
 }
 
 async function submit() {
@@ -64,7 +87,7 @@ async function submit() {
       visible.value = false
     }, 1200)
   } catch (err) {
-    error.value = errorText(err)
+    error.value = shownError(err)
   } finally {
     busy.value = false
   }
@@ -122,7 +145,21 @@ async function submit() {
         </div>
 
         <Transition name="add-node-fade">
-          <Message v-if="error" severity="error" :closable="false"><span class="whitespace-pre-line">{{ error }}</span></Message>
+          <div v-if="error" class="add-node-error" role="alert">
+            <div class="add-node-error__head">
+              <span class="add-node-error__icon" aria-hidden="true"><i :class="SIDE_ICON[error.side]" /></span>
+              <b>{{ error.side ? t(`nodes.errorSide.${error.side}`) : t('nodes.errorSide.unknown') }}</b>
+            </div>
+            <p class="add-node-error__what">{{ error.what }}</p>
+            <div class="add-node-error__fix">
+              <span class="add-node-error__label"><i class="pi pi-wrench" aria-hidden="true" />{{ t('nodes.errorFixTitle') }}</span>
+              <p>{{ error.fix }}</p>
+            </div>
+            <div v-if="error.reg || error.technical" class="add-node-error__foot">
+              <span v-if="error.reg">{{ t('nodes.errorRegShort') }} <code dir="ltr">{{ error.reg }}</code></span>
+              <Button v-if="error.technical" type="button" :label="t('nodes.errorCopy')" icon="pi pi-copy" text size="small" class="add-node-error__copy" @click="copyTechnical" />
+            </div>
+          </div>
         </Transition>
         <Transition name="add-node-fade">
           <div v-if="busy" class="add-node-progress">
@@ -141,6 +178,70 @@ async function submit() {
 </template>
 
 <style scoped>
+/* A failed registration: where (header), what happened, what to do, then the id and the technical details to copy */
+.add-node-error {
+  --err: var(--p-red-500, #ef4444);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--err) 35%, transparent);
+  background: color-mix(in srgb, var(--err) 7%, var(--p-content-background));
+}
+.add-node-error__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: color-mix(in srgb, var(--err) 85%, var(--p-text-color));
+}
+.add-node-error__icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--err);
+}
+.add-node-error__what {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--p-text-color);
+}
+.add-node-error__fix {
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: var(--p-content-background);
+  border: 1px solid var(--p-content-border-color);
+}
+.add-node-error__fix p {
+  margin: 0.3rem 0 0;
+  line-height: 1.7;
+}
+.add-node-error__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--p-primary-color);
+}
+.add-node-error__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color);
+}
+.add-node-error__foot code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
 .add-node-steps {
   display: grid;
   gap: 0.5rem;
