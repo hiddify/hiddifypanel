@@ -41,7 +41,7 @@
         <span>{{ t(`users.filter.${f.key}`) }}</span>
       </button>
       <!-- Right after "All" -->
-      <TagFilter v-if="f.key === 'all'" v-model="pickedTags" :items="allRows" :pinned-count="pinnedCount" class="users-tagfilter" />
+      <TagFilter v-if="f.key === 'all'" v-model="pickedTags" :items="allRows" :pinned-count="pinnedCount" :note-count="noteCount" class="users-tagfilter" />
       </template>
     </section>
 
@@ -439,7 +439,7 @@ import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatCount } from '@/shared/utils/format-metrics'
-import { matchesTags, PIN_TAG, useTags } from '@/features/tags/useTags'
+import { matchesTags, NOTE_TAG, PIN_TAG, useTags } from '@/features/tags/useTags'
 import { tagsApi } from '@/features/tags/api'
 import TagDots from '@/features/tags/components/TagDots.vue'
 import TagFilter from '@/features/tags/components/TagFilter.vue'
@@ -674,12 +674,14 @@ function isPinned(u: { uuid: string }): boolean {
   return pinnedSet.value.has(u.uuid)
 }
 const pinnedCount = computed(() => allRows.value.filter((u) => isPinned(u)).length)
-/** The tag filter: any picked tag, or "Pin" (pinned users), like a tag. */
+const hasNote = (u: Row) => !!u.comment?.trim()
+const noteCount = computed(() => allRows.value.filter(hasNote).length)
+/** The tag filter: any picked tag, or "Pin" (pinned users) and "Note" (users with a note), like tags. */
 function matchesPicked(u: Row): boolean {
   const picked = pickedTags.value
   if (!picked.length) return true
-  const tags = picked.filter((id) => id !== PIN_TAG)
-  return (picked.includes(PIN_TAG) && isPinned(u)) || (tags.length > 0 && matchesTags(u.tags, tags))
+  const tags = picked.filter((id) => id !== PIN_TAG && id !== NOTE_TAG)
+  return (picked.includes(PIN_TAG) && isPinned(u)) || (picked.includes(NOTE_TAG) && hasNote(u)) || (tags.length > 0 && matchesTags(u.tags, tags))
 }
 
 const rows = computed<Row[]>(() => {
