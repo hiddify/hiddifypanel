@@ -1849,6 +1849,18 @@ msgstr "显示日志"
 msgid "adminV2.apply.log.showingEnd"
 msgstr "显示末尾"
 
+msgid "adminV2.apply.log.telegram"
+msgstr "发送到我的 Telegram"
+
+msgid "adminV2.apply.log.telegramConnect"
+msgstr "请先在“我的账户”中连接 Telegram"
+
+msgid "adminV2.apply.log.telegramFailed"
+msgstr "无法发送到 Telegram"
+
+msgid "adminV2.apply.log.telegramSent"
+msgstr "{name} 已发送到你的 Telegram"
+
 msgid "adminV2.apply.log.terminal"
 msgstr "终端"
 
@@ -2101,8 +2113,14 @@ msgstr "无法创建备份"
 msgid "adminV2.backup.save.onServer"
 msgstr "保存到服务器"
 
+msgid "adminV2.backup.save.onTelegram"
+msgstr "保存到 Telegram"
+
 msgid "adminV2.backup.save.secret"
 msgstr "该文件包含密码、用户链接和私钥。请妥善保管。"
+
+msgid "adminV2.backup.save.sentTelegram"
+msgstr "备份已发送到你的 Telegram"
 
 msgid "adminV2.backup.save.sub"
 msgstr "一个文件包含全部内容：设置、用户、管理员、域名、代理和证书。"
@@ -2660,7 +2678,7 @@ msgid "adminV2.domains.field.aliasHint"
 msgstr "在用户的应用中显示，代替域名。"
 
 msgid "adminV2.domains.field.cdnIp"
-msgstr "🔂 强制配置使用这些 IP / 域名"
+msgstr "强制配置使用这些 IP / 域名"
 
 msgid "adminV2.domains.field.cdnIpHint"
 msgstr "将这些放入用户链接中，代替域名的 IP，以逗号或换行分隔。也支持运营商模板。"
@@ -2675,13 +2693,13 @@ msgid "adminV2.domains.field.domainRequired"
 msgstr "请输入域名"
 
 msgid "adminV2.domains.field.downloadDomain"
-msgstr "📈 下载域名"
+msgstr "下载域名"
 
 msgid "adminV2.domains.field.downloadDomainHint"
 msgstr "仅适用于 XHTTP：下载可以来自与上传不同的域名。更难被检测，通常更快。"
 
 msgid "adminV2.domains.field.ech"
-msgstr "🔐 ECH"
+msgstr "ECH"
 
 msgid "adminV2.domains.field.echHint"
 msgstr "为此 CDN 域名获取并使用 Encrypted Client Hello。"
@@ -2699,7 +2717,7 @@ msgid "adminV2.domains.field.extraObject"
 msgstr "必须是 JSON 对象"
 
 msgid "adminV2.domains.field.fronting"
-msgstr "🎭 域名前置"
+msgstr "域名前置"
 
 msgid "adminV2.domains.field.frontingHint"
 msgstr ""
@@ -2733,7 +2751,7 @@ msgid "adminV2.domains.field.relayNeedsIp"
 msgstr "未使用真实证书的中继需要在 高级 → 强制 IP 中填写中继服务器的 IP。"
 
 msgid "adminV2.domains.field.resolveIp"
-msgstr "🔢 解析 IP"
+msgstr "解析 IP"
 
 msgid "adminV2.domains.field.resolveIpHint"
 msgstr "在代理中使用 IP 而不是域名。DNS 不稳定时很有用。"
@@ -2765,8 +2783,35 @@ msgstr "TLS 模式"
 msgid "adminV2.domains.getCert"
 msgstr "获取证书"
 
+msgid "adminV2.domains.guide.dragText"
+msgstr "其他行会让出位置；在电脑上也可以聚焦拖动柄并按 ↑ 或 ↓。"
+
+msgid "adminV2.domains.guide.dragTitle"
+msgstr "向上或向下拖动后松开"
+
+msgid "adminV2.domains.guide.gotIt"
+msgstr "知道了"
+
+msgid "adminV2.domains.guide.grabText"
+msgstr "行首的 ☰，用鼠标或手指。"
+
+msgid "adminV2.domains.guide.grabTitle"
+msgstr "按住域名的拖动柄"
+
+msgid "adminV2.domains.guide.lead"
+msgstr "顺序很重要：配置会按这个顺序列出域名，第一个用于面板链接。"
+
+msgid "adminV2.domains.guide.orderText"
+msgstr "会立即保存：用户的配置从现在起按此顺序排列。"
+
+msgid "adminV2.domains.guide.orderTitle"
+msgstr "这就是新的顺序"
+
+msgid "adminV2.domains.guide.title"
+msgstr "给你的域名排好顺序"
+
 msgid "adminV2.domains.howto"
-msgstr "顺序很重要：拖动（或使用箭头）进行排序。配置按此顺序列出域名，第一个用于面板链接。"
+msgstr "顺序很重要：拖动 ☰ 拖动柄进行排序。配置按此顺序列出域名，第一个用于面板链接。"
 
 msgid "adminV2.domains.howtoFiltered"
 msgstr "请清除搜索和筛选后再更改顺序。"
@@ -2830,6 +2875,36 @@ msgstr "（无名称）"
 
 msgid "adminV2.domains.notChanged"
 msgstr "未更改"
+
+msgid "adminV2.domains.notice.expired"
+msgstr "证书已过期：应用会拒绝连接。"
+
+msgid "adminV2.domains.notice.failed"
+msgstr "没有有效证书：申请失败。"
+
+msgid "adminV2.domains.notice.invalid"
+msgstr "证书对此域名无效。"
+
+msgid "adminV2.domains.notice.missing"
+msgstr "还没有证书。"
+
+msgid "adminV2.domains.notice.rate_limited"
+msgstr "证书申请已暂停：已达到证书颁发机构的频率限制，稍后会重试。"
+
+msgid "adminV2.domains.notice.renew_failed"
+msgstr "证书仍然有效，但续期失败。"
+
+msgid "adminV2.domains.notice.saved"
+msgstr "域名 · 已保存但有警告"
+
+msgid "adminV2.domains.notice.self_signed"
+msgstr "只有临时自签名证书：应用会警告或拒绝。"
+
+msgid "adminV2.domains.notice.title"
+msgstr "域名 · {domain}"
+
+msgid "adminV2.domains.notice.where"
+msgstr "详情：域名页面。"
 
 msgid "adminV2.domains.openPanel"
 msgstr "在此域名上打开面板"
@@ -3170,6 +3245,9 @@ msgstr "DNS 不匹配"
 msgid "adminV2.donation.close"
 msgstr "关闭"
 
+msgid "adminV2.donation.contact"
+msgstr "如果你能帮助我们，请联系 {email}"
+
 msgid "adminV2.donation.copied"
 msgstr "已复制 {name} 地址"
 
@@ -3179,14 +3257,44 @@ msgstr "已复制"
 msgid "adminV2.donation.copyAddress"
 msgstr "复制 {name} 地址"
 
+msgid "adminV2.donation.help.content"
+msgstr "内容提供者"
+
+msgid "adminV2.donation.help.flutter"
+msgstr "Flutter 开发者"
+
+msgid "adminV2.donation.help.go"
+msgstr "Go 开发者"
+
+msgid "adminV2.donation.help.python"
+msgstr "Python 开发者"
+
+msgid "adminV2.donation.help.share"
+msgstr "向其他人分享 Hiddify Manager"
+
+msgid "adminV2.donation.help.swift"
+msgstr "Swift 开发者"
+
 msgid "adminV2.donation.networkHint"
 msgstr "请仅通过名称旁显示的网络发送每种币；在其他网络上的转账将会丢失。"
+
+msgid "adminV2.donation.otherHelp"
+msgstr "我们也需要以下帮助"
+
+msgid "adminV2.donation.paymentMethods"
+msgstr "付款方式"
 
 msgid "adminV2.donation.qr"
 msgstr "二维码"
 
 msgid "adminV2.donation.qrOf"
 msgstr "{name} 地址的二维码"
+
+msgid "adminV2.donation.showLess"
+msgstr "收起"
+
+msgid "adminV2.donation.showMore"
+msgstr "显示更多"
 
 msgid "adminV2.donation.showQr"
 msgstr "显示 {name} 的二维码"
@@ -3477,8 +3585,37 @@ msgstr "将另一台 Hiddify 服务器添加为节点，即可在此面板中管
 msgid "adminV2.nodes.empty.title"
 msgstr "暂无节点"
 
+msgid "adminV2.nodes.errorCopied"
+msgstr "技术详情已复制。请连同注册 ID 发送给支持人员。"
+
+msgid "adminV2.nodes.errorCopy"
+msgstr "复制技术详情"
+
+msgid "adminV2.nodes.errorFixTitle"
+msgstr "怎么办"
+
+msgid "adminV2.nodes.errorRegShort"
+msgstr "注册 ID："
+
+msgid "adminV2.nodes.errorSide.between"
+msgstr "两个面板之间的连接出现问题"
+
+msgid "adminV2.nodes.errorSide.node"
+msgstr "节点服务器出现问题"
+
+msgid "adminV2.nodes.errorSide.parent"
+msgstr "本面板出现问题"
+
+msgid "adminV2.nodes.errorSide.unknown"
+msgstr "添加节点失败"
+
 msgid "adminV2.nodes.errors.invalid_link"
 msgstr "该链接不是有效的管理员链接。"
+
+msgid "adminV2.nodes.errors.node_error"
+msgstr ""
+"节点在注册时遇到内部错误（是该服务器上的故障或问题，而不是链接被拒绝）。请更新节点面板后重试；如果再次出现，节点日志中以下方的注册 ID "
+"记录了详细信息。"
 
 msgid "adminV2.nodes.errors.rejected"
 msgstr "节点拒绝连接。它可能已属于另一个父面板，或其版本过旧。"
@@ -3519,6 +3656,18 @@ msgstr "刚刚"
 msgid "adminV2.nodes.lastSeen"
 msgstr "最后联系"
 
+msgid "adminV2.nodes.live.collecting"
+msgstr "正在收集实时数据……图表将在接下来几分钟内填满。"
+
+msgid "adminV2.nodes.live.showLess"
+msgstr "收起"
+
+msgid "adminV2.nodes.live.showMore"
+msgstr "显示更多"
+
+msgid "adminV2.nodes.live.unavailable"
+msgstr "此节点没有响应"
+
 msgid "adminV2.nodes.moreInfo"
 msgstr "更多信息"
 
@@ -3527,6 +3676,39 @@ msgstr "从未"
 
 msgid "adminV2.nodes.openAdmin"
 msgstr "打开"
+
+msgid "adminV2.nodes.pingDialog.avg"
+msgstr "平均"
+
+msgid "adminV2.nodes.pingDialog.button"
+msgstr "Ping"
+
+msgid "adminV2.nodes.pingDialog.hint"
+msgstr "已发送 {sent}，已应答 {received} · 关闭此窗口前会一直 ping"
+
+msgid "adminV2.nodes.pingDialog.loss"
+msgstr "丢包"
+
+msgid "adminV2.nodes.pingDialog.max"
+msgstr "最大"
+
+msgid "adminV2.nodes.pingDialog.min"
+msgstr "最小"
+
+msgid "adminV2.nodes.pingDialog.noAddress"
+msgstr "节点地址未知"
+
+msgid "adminV2.nodes.pingDialog.running"
+msgstr "正在 ping"
+
+msgid "adminV2.nodes.pingDialog.tcp"
+msgstr "TCP（无法使用 ICMP）"
+
+msgid "adminV2.nodes.pingDialog.timeout"
+msgstr "无应答"
+
+msgid "adminV2.nodes.pingDialog.title"
+msgstr "Ping · {name}"
 
 msgid "adminV2.nodes.reachable"
 msgstr "可连接"
@@ -3597,6 +3779,18 @@ msgstr "节点"
 msgid "adminV2.nodes.unreachable"
 msgstr "无法连接"
 
+msgid "adminV2.notifications.dismiss"
+msgstr "关闭"
+
+msgid "adminV2.notifications.new"
+msgstr "新"
+
+msgid "adminV2.notifications.title"
+msgstr "通知"
+
+msgid "adminV2.notifications.unread"
+msgstr "{n} 条新通知 | {n} 条新通知"
+
 msgid "adminV2.outbounds.add"
 msgstr "添加出站"
 
@@ -3640,7 +3834,7 @@ msgid "adminV2.outbounds.dialog.configBridge"
 msgstr "面板将其命名为 \"{tag}\"；路由使用该标签，另一个核心通过 127.0.0.1:{port} 连接到它。"
 
 msgid "adminV2.outbounds.dialog.configBridgeNew"
-msgstr "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 SOCKS 桥接连接到它。"
+msgstr "面板会为其分配标签（您自己写的标签将被忽略）；路由使用该标签，另一个核心通过本地 Socks 桥接连接到它。"
 
 msgid "adminV2.outbounds.dialog.configExample"
 msgstr "插入示例"
@@ -3676,11 +3870,11 @@ msgid "adminV2.outbounds.dialog.endpoint"
 msgstr "连接"
 
 msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
-msgstr "在 hiddify-core 内运行。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+msgstr "在 hiddify-core 内运行。xray 通过本地 Socks 端口 {endpoint} 访问它。"
 
 msgid "adminV2.outbounds.dialog.endpointHint.tor"
 msgstr ""
-"在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 SOCKS 端口 {endpoint} 访问它。"
+"在 hiddify-core 内运行（此服务器上必须安装 `tor` 程序）。xray 通过本地 Socks 端口 {endpoint} 访问它。"
 
 msgid "adminV2.outbounds.dialog.host"
 msgstr "主机"
@@ -3805,7 +3999,7 @@ msgid "adminV2.outbounds.mode.psiphon"
 msgstr "Psiphon"
 
 msgid "adminV2.outbounds.mode.socks"
-msgstr "SOCKS"
+msgstr "Socks"
 
 msgid "adminV2.outbounds.mode.tor"
 msgstr "Tor"
@@ -3820,10 +4014,10 @@ msgid "adminV2.outbounds.modeHint.block"
 msgstr "丢弃"
 
 msgid "adminV2.outbounds.modeHint.core_endpoint"
-msgstr "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 SOCKS 桥接访问它"
+msgstr "您自己的 hiddify-core endpoint，例如 WireGuard (JSON)；xray 通过本地 Socks 桥接访问它"
 
 msgid "adminV2.outbounds.modeHint.core_outbound"
-msgstr "您自己的 hiddify-core outbound (JSON)；xray 通过本地 SOCKS 桥接访问它"
+msgstr "您自己的 hiddify-core outbound (JSON)；xray 通过本地 Socks 桥接访问它"
 
 msgid "adminV2.outbounds.modeHint.direct"
 msgstr "直接从此服务器发出"
@@ -3841,7 +4035,7 @@ msgid "adminV2.outbounds.modeHint.warp"
 msgstr "通过此服务器上的 Cloudflare WARP"
 
 msgid "adminV2.outbounds.modeHint.xray_outbound"
-msgstr "您自己的 xray outbound (JSON)；hiddify-core 通过本地 SOCKS 桥接访问它"
+msgstr "您自己的 xray outbound (JSON)；hiddify-core 通过本地 Socks 桥接访问它"
 
 msgid "adminV2.outbounds.more"
 msgstr "更多操作"
@@ -3889,7 +4083,7 @@ msgid "adminV2.outbounds.saved"
 msgstr "{name} 已保存"
 
 msgid "adminV2.outbounds.subtitle"
-msgstr "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 SOCKS、Tor 或 Psiphon 出口。"
+msgstr "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 Socks、Tor 或 Psiphon 出口。"
 
 msgid "adminV2.outbounds.title"
 msgstr "出站"
@@ -4354,7 +4548,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "链接模板"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "自定义代理"
+msgstr "代理"
 
 msgid "adminV2.proxy.mode"
 msgstr "模式"
@@ -4639,6 +4833,69 @@ msgstr "上传 TCP 或 UDP"
 
 msgid "adminV2.proxy.version"
 msgstr "版本"
+
+msgid "adminV2.pwa.gotIt"
+msgstr "知道了"
+
+msgid "adminV2.pwa.guide.android1"
+msgstr "在 Chrome 中，轻点顶部的 ⋮ 菜单"
+
+msgid "adminV2.pwa.guide.android2"
+msgstr "选择“添加到主屏幕”（或“安装应用”）"
+
+msgid "adminV2.pwa.guide.android3"
+msgstr "轻点“安装”：面板会像应用一样打开"
+
+msgid "adminV2.pwa.guide.computer"
+msgstr "电脑"
+
+msgid "adminV2.pwa.guide.desktop1"
+msgstr "在 Chrome 中，点击地址栏末尾的安装图标"
+
+msgid "adminV2.pwa.guide.desktop2"
+msgstr "点击“安装”"
+
+msgid "adminV2.pwa.guide.desktop3"
+msgstr "面板会在独立窗口中打开，就像应用一样"
+
+msgid "adminV2.pwa.guide.ios1"
+msgstr "在 Safari 中，轻点底部栏的 ••• 按钮"
+
+msgid "adminV2.pwa.guide.ios2"
+msgstr "轻点“共享”"
+
+msgid "adminV2.pwa.guide.ios3"
+msgstr "选择“添加到主屏幕”"
+
+msgid "adminV2.pwa.guide.ios4"
+msgstr "轻点“添加”：面板就在主屏幕上了"
+
+msgid "adminV2.pwa.guide.platform"
+msgstr "您的设备"
+
+msgid "adminV2.pwa.guide.tabAndroid"
+msgstr "Android · Chrome"
+
+msgid "adminV2.pwa.guide.tabDesktop"
+msgstr "{os} · Chrome"
+
+msgid "adminV2.pwa.guide.tabIos"
+msgstr "iPhone · Safari"
+
+msgid "adminV2.pwa.installNow"
+msgstr "立即安装"
+
+msgid "adminV2.pwa.later"
+msgstr "以后再说"
+
+msgid "adminV2.pwa.never"
+msgstr "不再显示"
+
+msgid "adminV2.pwa.text"
+msgstr "像手机或电脑上的其他应用一样，一键打开面板。"
+
+msgid "adminV2.pwa.title"
+msgstr "将面板安装为应用"
 
 msgid "adminV2.qr.clickToCopy"
 msgstr "点击复制图片"
@@ -5065,6 +5322,9 @@ msgstr "新标签"
 msgid "adminV2.tags.none"
 msgstr "暂无标签"
 
+msgid "adminV2.tags.note"
+msgstr "备注"
+
 msgid "adminV2.tags.pick"
 msgstr "选择标签"
 
@@ -5157,6 +5417,15 @@ msgstr "重新连接"
 
 msgid "adminV2.telegram.scan"
 msgstr "或用手机相机扫描此码。"
+
+msgid "adminV2.telegram.stepCreate"
+msgstr "直接在聊天中创建新用户"
+
+msgid "adminV2.telegram.stepStart"
+msgstr "启动机器人：打开它的菜单"
+
+msgid "adminV2.telegram.stepUsers"
+msgstr "查看用户及其用量"
 
 msgid "adminV2.template.builtin"
 msgstr "内置"
@@ -6124,10 +6393,10 @@ msgid "adminV2.utils.user"
 msgstr "用户"
 
 msgid "adminV2.utils.vmessJson"
-msgstr "vmess JSON"
+msgstr "VMess JSON"
 
 msgid "adminV2.utils.vmessObject"
-msgstr "vmess JSON 必须是对象"
+msgstr "VMess JSON 必须是对象"
 
 msgid "adminV2.validation.errors"
 msgstr "错误"
@@ -6342,7 +6611,7 @@ msgid "config.additional_configs_singbox.label"
 msgstr "Singbox 附加配置"
 
 msgid "config.additional_configs_urls.description"
-msgstr "您可以添加 http:// https:// 或 v2ray 格式的代理，如 vless://"
+msgstr "您可以添加 http:// https:// 或 V2Ray 格式的代理，如 vless://"
 
 msgid "config.additional_configs_urls.label"
 msgstr "附加 URL"
@@ -6703,7 +6972,7 @@ msgid "config.hysteria_port.description"
 msgstr "Hysteria UDP 端口，例如 5678"
 
 msgid "config.hysteria_port.label"
-msgstr "🔍 Hysteria2 端口"
+msgstr "🔍 Hysteria 2 端口"
 
 msgid "config.hysteria_up_mbps.description"
 msgstr "Hysteria 最大上传速度"
@@ -7086,10 +7355,10 @@ msgid "config.path_v2ray.label"
 msgstr "V2Ray路径"
 
 msgid "config.path_vless.description"
-msgstr "对于 VLESS 路径"
+msgstr "对于 VLess 路径"
 
 msgid "config.path_vless.label"
-msgstr "ℹ️ VLESS 路径"
+msgstr "ℹ️ VLess 路径"
 
 msgid "config.path_vmess.description"
 msgstr "对于 VMess 链接"
@@ -7282,10 +7551,10 @@ msgid "config.snell_enable.label"
 msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr "启用 SOCKS 协议"
+msgstr "启用 Socks 协议"
 
 msgid "config.socks_enable.label"
-msgstr "SOCKS"
+msgstr "Socks"
 
 msgid "config.special_port.description"
 msgstr "您可以为您的现实服务器设置自定义端口，以减少系统开销。（允许直接连接到代理应该是肯定的）"
@@ -7684,10 +7953,10 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ 配置已成功更改"
 
 msgid "config.vless_decryption.description"
-msgstr "用于分享链接的 VLESS 解密参数"
+msgstr "用于分享链接的 VLess 解密参数"
 
 msgid "config.vless_decryption.label"
-msgstr "VLESS 解密"
+msgstr "VLess 解密"
 
 msgid "config.vless_enable.description"
 msgstr "启用 VLess 协议"
@@ -7696,16 +7965,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "用于分享链接的 VLESS 加密方式"
+msgstr "用于分享链接的 VLess 加密方式"
 
 msgid "config.vless_encryption.label"
-msgstr "VLESS 加密"
+msgstr "VLess 加密"
 
 msgid "config.vless_flow.description"
-msgstr "VLESS 流控（例如 xtls-rprx-vision）"
+msgstr "VLess 流控（例如 xtls-rprx-vision）"
 
 msgid "config.vless_flow.label"
-msgstr "VLESS 流控"
+msgstr "VLess 流控"
 
 msgid "config.vmess_enable.description"
 msgstr "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐"
@@ -7947,6 +8216,9 @@ msgstr "模式"
 
 msgid "domain.reality.asn_issue"
 msgstr "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
+
+msgid "domain.reality.no_x25519"
+msgstr ""
 
 msgid "domain.resolveip.description"
 msgstr "在代理中使用 IP 而不是域名。DNS 噪声很大时有用。"

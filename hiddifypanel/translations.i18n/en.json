@@ -358,6 +358,7 @@
       "noPasswordSub": "You have no password: anyone with your link can sign in. Set one to protect your account.",
       "outboundApply": "Apply the changes to put it into effect.",
       "outboundNone": "No outbounds yet. A super admin sets them up.",
+      "outboundReadOnly": "Set by an admin above you; you can see it but not change it.",
       "outboundSaved": "Default outbound saved",
       "outboundSub": "Where my users, and my sub-admins' users, leave through unless a user (or a nearer admin) chooses another.",
       "outboundTitle": "Default outbound",
@@ -388,31 +389,30 @@
       "title": "My account",
       "under": "Under {name}",
       "unlimited": "No limit",
-      "wrongCurrent": "The current password is wrong",
       "userPage": {
-        "title": "My users' page",
-        "sub": "What your users (and your sub-admins' users) see on their page. Empty fields use the panel's settings.",
-        "none": "Nothing changed: your users see the panel's page.",
-        "count": "{n} item customized | {n} items customized",
-        "edit": "Customize",
-        "intro": "Leave a field empty to keep what your users get now (shown in the field).",
+        "advanced": "Advanced",
+        "badUrl": "Enter a full address starting with https://",
         "brandTitle": "Brand title",
         "brandTitleHint": "Shown at the top of the user page, before the welcome text.",
+        "count": "{n} item customized | {n} items customized",
+        "customPage": "Custom user page",
+        "customPageHint": "The address of a static site shown instead of the user page (e.g. your build of hiddify-user-front on GitHub Pages). The panel serves it from its own domain.",
+        "edit": "Customize",
+        "empty": "Not set",
+        "inherit": "Now: {value}",
+        "intro": "Leave a field empty to keep what your users get now (shown in the field).",
+        "lang": "User page language",
+        "langHint": "For users who have not chosen their own.",
+        "none": "Nothing changed: your users see the panel's page.",
+        "saved": "User page saved",
+        "sub": "What your users (and your sub-admins' users) see on their page. Empty fields use the panel's settings.",
         "supportLink": "Support link",
         "supportLinkHint": "Shown in the support box, e.g. your Telegram channel or chat.",
         "supportText": "Support box text",
         "supportTextHint": "Shown in the support box on the user page. HTML is allowed.",
-        "lang": "User page language",
-        "langHint": "For users who have not chosen their own.",
-        "advanced": "Advanced",
-        "customPage": "Custom user page",
-        "customPageHint": "The address of a static site shown instead of the user page (e.g. your build of hiddify-user-front on GitHub Pages). The panel serves it from its own domain.",
-        "inherit": "Now: {value}",
-        "empty": "Not set",
-        "badUrl": "Enter a full address starting with https://",
-        "saved": "User page saved"
+        "title": "My users' page"
       },
-      "outboundReadOnly": "Set by an admin above you; you can see it but not change it."
+      "wrongCurrent": "The current password is wrong"
     },
     "actions": {
       "applyConfigs": "Apply Configs",
@@ -451,6 +451,22 @@
       "add": "Add admin",
       "canAddHint": "This admin can create its own sub-admins",
       "canAddShort": "Adds sub-admins",
+      "capability": {
+        "add_extra_sublinks": "Add extra subscription links",
+        "add_sub_admins": "Add sub-admins",
+        "modify_domains": "Manage domains",
+        "modify_outbounds": "Manage outbounds",
+        "modify_user_extra": "Customize user page",
+        "override_preferred_outbound": "Change preferred outbound"
+      },
+      "capabilityHint": {
+        "add_extra_sublinks": "Attach extra configs or subscription links for their users.",
+        "add_sub_admins": "Create their own agents within the limits you set.",
+        "modify_domains": "Add and edit domains on this panel.",
+        "modify_outbounds": "Configure server outbounds (WARP, SOCKS, …).",
+        "modify_user_extra": "Change branding and extra params on the user page.",
+        "override_preferred_outbound": "Choose which outbound a user’s traffic leaves through."
+      },
       "clearSearch": "Clear search",
       "col": {
         "link": "Admin link",
@@ -505,6 +521,12 @@
         "aliasHint": "With a username they sign in with username + password, and shared links carry no ID.",
         "canAddAdmin": "Can add sub-admins",
         "canAddAdminHint": "Lets this admin create agents of its own, within its limits.",
+        "capabilities": "Permissions",
+        "capabilitiesCount": "{n} permission | {n} permissions",
+        "capabilitiesDone": "Done",
+        "capabilitiesEdit": "Edit permissions",
+        "capabilitiesHint": "Tap to change what this admin is allowed to do. You can only grant permissions you have.",
+        "capabilitiesNone": "No special permissions",
         "configs": "Configs for this admin's users",
         "configsCount": "{n} config | {n} configs",
         "configsHint": "Added to the subscription of every user of this admin and of its sub-admins.",
@@ -533,13 +555,7 @@
         "superNoLimits": "Super admins have no limits.",
         "upTo": "Up to {max} (your limit)",
         "uuidHint": "Generated automatically. Change it only to reuse a known ID.",
-        "uuidInvalid": "This is not a valid UUID",
-        "capabilities": "Permissions",
-        "capabilitiesHint": "Tap to change what this admin is allowed to do. You can only grant permissions you have.",
-        "capabilitiesNone": "No special permissions",
-        "capabilitiesCount": "{n} permission | {n} permissions",
-        "capabilitiesEdit": "Edit permissions",
-        "capabilitiesDone": "Done"
+        "uuidInvalid": "This is not a valid UUID"
       },
       "limit": {
         "max_active_users": "Max active users",
@@ -595,23 +611,7 @@
         "users": "user | users"
       },
       "title": "Admins",
-      "you": "You",
-      "capability": {
-        "add_sub_admins": "Add sub-admins",
-        "override_preferred_outbound": "Change preferred outbound",
-        "add_extra_sublinks": "Add extra subscription links",
-        "modify_user_extra": "Customize user page",
-        "modify_domains": "Manage domains",
-        "modify_outbounds": "Manage outbounds"
-      },
-      "capabilityHint": {
-        "add_sub_admins": "Create their own agents within the limits you set.",
-        "override_preferred_outbound": "Choose which outbound a user’s traffic leaves through.",
-        "add_extra_sublinks": "Attach extra configs or subscription links for their users.",
-        "modify_user_extra": "Change branding and extra params on the user page.",
-        "modify_domains": "Add and edit domains on this panel.",
-        "modify_outbounds": "Configure server outbounds (WARP, SOCKS, …)."
-      }
+      "you": "You"
     },
     "appTitle": "HiddifyManager",
     "apply": {
@@ -943,6 +943,34 @@
       "flowIps": "IPs to save",
       "flowIpsHint": "The fastest of the scan; remove some, or add IPs, ranges or domains of your own.",
       "flowShowAll": "Show all IPs of this domain (every operator)",
+      "fragment": {
+        "applied": "Saved «{name}» on {domain}",
+        "apply": "Apply",
+        "current": "Current for this domain",
+        "currentBtn": "Applied",
+        "disabled": "off",
+        "enabled": "on",
+        "lead": "CDN domains often need their own TLS Fragment (FinalMask) values. Pick a domain, try a preset, then check with Config Tester or a client on that ISP.",
+        "mode": {
+          "inherit": "Off",
+          "off": "Off",
+          "on": "On"
+        },
+        "noCdn": "Add a CDN or worker domain first.",
+        "presets": {
+          "1-3": "Packets 1-3",
+          "coarse": "Coarse length",
+          "default": "Default",
+          "fine": "Fine / fast interval",
+          "multi": "Multi lengths",
+          "off": "Off",
+          "offHint": "Disable fragment for this domain",
+          "tight": "Tight (small & fast)"
+        },
+        "presetsHint": "Applies a FinalMask TLS Fragment trick on this domain. Then test from the ISP you care about.",
+        "presetsTitle": "Presets",
+        "testHint": "Fragment cannot be measured in the browser IP scan. After applying, use Config Tester or a client on that network to see which preset works."
+      },
       "fullHint": "Some ISPs let a connection open and then cut it after about 1.3 KB of upload. A browser can't test that; this command can. Run it on a computer or phone (Termux) on the ISP you want IPs for, with the VPN off. Through each IP it uploads to this panel and checks the whole upload arrived; the IPs that pass are tested 3 more times, so flaky ones get a loss % and go last. The best ones are saved for that ISP.",
       "fullLead": "For operators that cut connections after a little upload: test from a phone or computer on that operator.",
       "fullTitle": "Full test (with upload)",
@@ -976,6 +1004,7 @@
       "passed": "{count} work",
       "perIsp": "IPs for this ISP",
       "perRange": "Random IPs per range",
+      "pickDomain": "Pick a CDN domain",
       "pickIsp": "Pick the ISP",
       "pickIspFirst": "Pick the ISP these results are for.",
       "platformUnix": "Linux / macOS / Android",
@@ -1046,6 +1075,7 @@
       "subtitle": "Find Cloudflare IPs that work on your internet and give them to the users of your ISP",
       "switch": "Switch",
       "switched": "Now using {sni}; the configs are being applied.",
+      "tabFragment": "Fragment",
       "tabIp": "IP scanner",
       "tabReality": "REALITY SNI",
       "tested": "{done} of {total} tested",
@@ -1059,37 +1089,7 @@
       "viewScript": "View the script",
       "vpnWarning": "This browser is not in the panel's country: a VPN or proxy is probably on. Turn it off, otherwise you test the VPN, not your ISP.",
       "waiting": "Waiting for a run of the command…",
-      "yourNetwork": "Your network (as the panel sees it)",
-      "tabFragment": "Fragment",
-      "pickDomain": "Pick a CDN domain",
-      "fragment": {
-        "lead": "CDN domains often need their own TLS Fragment (FinalMask) values. Pick a domain, try a preset, then check with Config Tester or a client on that ISP.",
-        "noCdn": "Add a CDN or worker domain first.",
-        "current": "Current for this domain",
-        "mode": {
-          "inherit": "Off",
-          "on": "On",
-          "off": "Off"
-        },
-        "enabled": "on",
-        "disabled": "off",
-        "presetsTitle": "Presets",
-        "presetsHint": "Applies a FinalMask TLS Fragment trick on this domain. Then test from the ISP you care about.",
-        "apply": "Apply",
-        "currentBtn": "Applied",
-        "applied": "Saved «{name}» on {domain}",
-        "testHint": "Fragment cannot be measured in the browser IP scan. After applying, use Config Tester or a client on that network to see which preset works.",
-        "presets": {
-          "off": "Off",
-          "offHint": "Disable fragment for this domain",
-          "default": "Default",
-          "fine": "Fine / fast interval",
-          "coarse": "Coarse length",
-          "1-3": "Packets 1-3",
-          "tight": "Tight (small & fast)",
-          "multi": "Multi lengths"
-        }
-      }
+      "yourNetwork": "Your network (as the panel sees it)"
     },
     "common": {
       "actions": "Actions",
@@ -1475,6 +1475,32 @@
         "extra": "Extra params",
         "extraInvalid": "Not valid JSON",
         "extraObject": "Must be a JSON object",
+        "fragment": "TLS Fragment",
+        "fragmentDelays": "Delays",
+        "fragmentDelaysHint": "One or more intervals, comma-separated (FinalMask delays).",
+        "fragmentHint": "Override the panel TLS Fragment setting for this CDN domain only. Different operators and CDNs often need different size / delay values.",
+        "fragmentInheritDetail": "Panel default: {state} ({size}, {sleep}, {packets}). Leave size/sleep/packets empty to use those values.",
+        "fragmentInheritHint": "Follows the panel TLS Fragment setting.",
+        "fragmentLengths": "Lengths",
+        "fragmentLengthsHint": "One or more ranges, comma-separated (FinalMask lengths).",
+        "fragmentMaxSplit": "Max split",
+        "fragmentMode": {
+          "inherit": "Use panel setting",
+          "off": "Always off",
+          "on": "Always on"
+        },
+        "fragmentModeHint": {
+          "off": "Fragment is forced off for this domain, even if the panel setting is on.",
+          "on": "Fragment is forced on for this domain, even if the panel setting is off."
+        },
+        "fragmentModeLabel": "Mode",
+        "fragmentOff": "off",
+        "fragmentOn": "on",
+        "fragmentPackets": "Packets",
+        "fragmentPacketsHint": "Usually tlshello, or 1-3.",
+        "fragmentScannerGo": "Try presets in the scanner",
+        "fragmentSize": "Lengths",
+        "fragmentSleep": "Delays",
         "fronting": "Domain fronting",
         "frontingHint": "Optional. Users' apps show one of these names (SNI) instead of your domain, so a filter only sees another site. Use sites on the same CDN as your domain (e.g. other Cloudflare sites). Empty: no fronting.",
         "frontingPlaceholder": "another-site.com, cdn-site.net",
@@ -1494,71 +1520,7 @@
         "showAll": "All domains",
         "showDomains": "Show configs of",
         "showDomainsHint": "Users opening their page on this domain see the configs of these domains. Node REALITY entries need a Node Configs proxy enabled for clients to use them.",
-        "tlsMode": "TLS mode",
-        "fragment": "TLS Fragment",
-        "fragmentHint": "Override the panel TLS Fragment setting for this CDN domain only. Different operators and CDNs often need different size / delay values.",
-        "fragmentModeLabel": "Mode",
-        "fragmentMode": {
-          "inherit": "Use panel setting",
-          "on": "Always on",
-          "off": "Always off"
-        },
-        "fragmentModeHint": {
-          "on": "Fragment is forced on for this domain, even if the panel setting is off.",
-          "off": "Fragment is forced off for this domain, even if the panel setting is on."
-        },
-        "fragmentInheritHint": "Follows the panel TLS Fragment setting.",
-        "fragmentInheritDetail": "Panel default: {state} ({size}, {sleep}, {packets}). Leave size/sleep/packets empty to use those values.",
-        "fragmentOn": "on",
-        "fragmentOff": "off",
-        "fragmentSize": "Lengths",
-        "fragmentSleep": "Delays",
-        "fragmentPackets": "Packets",
-        "fragmentPacketsHint": "Usually tlshello, or 1-3.",
-        "fragmentScannerGo": "Try presets in the scanner",
-        "fragmentLengths": "Lengths",
-        "fragmentLengthsHint": "One or more ranges, comma-separated (FinalMask lengths).",
-        "fragmentDelays": "Delays",
-        "fragmentDelaysHint": "One or more intervals, comma-separated (FinalMask delays).",
-        "fragmentMaxSplit": "Max split"
-      },
-      "tricks": {
-        "title": "Tricks",
-        "lead": "Optional client-side FinalMask for this CDN domain. Use a template or paste your own object.",
-        "docs": "FinalMask docs",
-        "off": "None",
-        "offHint": "No trick — normal TLS handshake",
-        "preview": "What clients get",
-        "presets": {
-          "default": "Default",
-          "fine": "Fine",
-          "coarse": "Coarse",
-          "multi": "Multi",
-          "tight": "Tight",
-          "1-3": "Packets 1-3"
-        },
-        "tlsFragment": {
-          "name": "TLS Fragment",
-          "hint": "Splits the TLS ClientHello (FinalMask fragment)",
-          "tune": "Tune fragment",
-          "tuneHint": "Start from a preset, then edit lengths / delays if needed. Values go into finalmask.tcp[].settings.",
-          "packets": "Packets",
-          "packetsHint": "tlshello = first TLS record; 1-3 = first few TCP packets.",
-          "lengths": "Lengths",
-          "lengthsHint": "Byte ranges per piece, comma-separated (e.g. 10-100 or 3-5, 6-8).",
-          "delays": "Delays",
-          "delaysHint": "Milliseconds between pieces, comma-separated (e.g. 50-200).",
-          "maxSplit": "Max split",
-          "maxSplitHint": "How many pieces at most (e.g. 3-6)."
-        },
-        "custom": {
-          "name": "Custom",
-          "hint": "Paste any FinalMaskObject (tcp / udp / quicParams)",
-          "tune": "Custom FinalMask",
-          "tuneHint": "Edit the FinalMask JSON directly. It is stored as tricks.finalmask and sent to clients as-is.",
-          "invalidJson": "Not valid JSON",
-          "mustObject": "Must be a JSON object (not an array)"
-        }
+        "tlsMode": "TLS mode"
       },
       "getCert": "Get certificate",
       "guide": {
@@ -1709,6 +1671,44 @@
         "telegramHint": "Fake domain of the Telegram MTProxy.",
         "valid": "Valid TLS",
         "validHint": "A real certificate, issued automatically."
+      },
+      "tricks": {
+        "custom": {
+          "hint": "Paste any FinalMaskObject (tcp / udp / quicParams)",
+          "invalidJson": "Not valid JSON",
+          "mustObject": "Must be a JSON object (not an array)",
+          "name": "Custom",
+          "tune": "Custom FinalMask",
+          "tuneHint": "Edit the FinalMask JSON directly. It is stored as tricks.finalmask and sent to clients as-is."
+        },
+        "docs": "FinalMask docs",
+        "lead": "Optional client-side FinalMask for this CDN domain. Use a template or paste your own object.",
+        "off": "None",
+        "offHint": "No trick — normal TLS handshake",
+        "presets": {
+          "1-3": "Packets 1-3",
+          "coarse": "Coarse",
+          "default": "Default",
+          "fine": "Fine",
+          "multi": "Multi",
+          "tight": "Tight"
+        },
+        "preview": "What clients get",
+        "title": "Tricks",
+        "tlsFragment": {
+          "delays": "Delays",
+          "delaysHint": "Milliseconds between pieces, comma-separated (e.g. 50-200).",
+          "hint": "Splits the TLS ClientHello (FinalMask fragment)",
+          "lengths": "Lengths",
+          "lengthsHint": "Byte ranges per piece, comma-separated (e.g. 10-100 or 3-5, 6-8).",
+          "maxSplit": "Max split",
+          "maxSplitHint": "How many pieces at most (e.g. 3-6).",
+          "name": "TLS Fragment",
+          "packets": "Packets",
+          "packetsHint": "tlshello = first TLS record; 1-3 = first few TCP packets.",
+          "tune": "Tune fragment",
+          "tuneHint": "Start from a preset, then edit lengths / delays if needed. Values go into finalmask.tcp[].settings."
+        }
       },
       "warning": "Saved, with a warning",
       "wizard": {
@@ -2081,6 +2081,12 @@
       "synced": "{name} synced",
       "title": "Nodes",
       "unreachable": "Not reachable"
+    },
+    "notifications": {
+      "dismiss": "Dismiss",
+      "new": "New",
+      "title": "Notifications",
+      "unread": "{n} new notification | {n} new notifications"
     },
     "operatorIps": {
       "add": "Add",
@@ -2517,29 +2523,29 @@
       "wireguardTemplate": "WireGuard .conf template"
     },
     "pwa": {
+      "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
+      "bannerTitle": "Install the panel as an app",
+      "gotIt": "Got it",
       "guide": {
-        "platform": "Your device",
-        "tabIos": "iPhone · Safari",
-        "tabAndroid": "Android · Chrome",
-        "tabDesktop": "{os} · Chrome",
-        "ios1": "In Safari, tap the ••• button in the bar at the bottom",
-        "ios2": "Tap Share",
-        "ios3": "Choose “Add to Home Screen”",
-        "ios4": "Tap Add: the panel is on your home screen",
         "android1": "In Chrome, tap the ⋮ menu at the top",
         "android2": "Choose “Add to home screen” (or “Install app”)",
         "android3": "Tap Install: the panel opens like an app",
         "computer": "Computer",
         "desktop1": "In Chrome, click the install icon at the end of the address bar",
         "desktop2": "Click Install",
-        "desktop3": "The panel opens in its own window, like an app"
+        "desktop3": "The panel opens in its own window, like an app",
+        "ios1": "In Safari, tap the ••• button in the bar at the bottom",
+        "ios2": "Tap Share",
+        "ios3": "Choose “Add to Home Screen”",
+        "ios4": "Tap Add: the panel is on your home screen",
+        "platform": "Your device",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "tabIos": "iPhone · Safari"
       },
-      "installNow": "Install now",
-      "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
-      "bannerTitle": "Install the panel as an app",
-      "gotIt": "Got it",
       "install": "Install",
       "installButton": "Install as an app",
+      "installNow": "Install now",
       "iosAdd": "Choose “Add to Home Screen”",
       "iosShare": "Tap the Share button",
       "later": "Not now",
@@ -2915,11 +2921,11 @@
       "openWeb": "Open in browser",
       "promptLead": "This panel has a Telegram bot, {bot}. Link it to your account:",
       "promptTitle": "Connect your Telegram?",
+      "reconnect": "Connect again",
+      "scan": "Or scan this with your phone's camera.",
       "stepCreate": "Create a new user right in the chat",
       "stepStart": "Start the bot: its menu opens",
-      "stepUsers": "See your users and their usage",
-      "reconnect": "Connect again",
-      "scan": "Or scan this with your phone's camera."
+      "stepUsers": "See your users and their usage"
     },
     "template": {
       "builtin": "Built-in",
@@ -2963,12 +2969,6 @@
       "loadValues": "Load current values",
       "name": "Name",
       "skipHint": "Output SKIP or call skip() to skip rendering this proxy when a condition is not met"
-    },
-    "notifications": {
-      "title": "Notifications",
-      "unread": "{n} new notification | {n} new notifications",
-      "new": "New",
-      "dismiss": "Dismiss"
     },
     "theme": {
       "caddy": "Smart Caddy theme",
@@ -3028,6 +3028,26 @@
         "disable": "They can not connect until enabled again.",
         "reset_days": "Their package starts again at their next connection.",
         "reset_usage": "Their used data goes back to zero."
+      },
+      "bulkCreate": {
+        "copy": "Copy all",
+        "count": "How many",
+        "countHint": "Between 1 and {max}",
+        "create": "Create {n} user | Create {n} users",
+        "domain": "Link domain",
+        "done": "{n} user created | {n} users created",
+        "download": "Download .txt",
+        "links": "Links",
+        "linksSubtitle": "{n} link ready to copy | {n} links ready to copy",
+        "linksTitle": "User links",
+        "menu": "Add many users",
+        "prefix": "Name prefix",
+        "prefixHint": "Each user is named prefix-01, prefix-02, …",
+        "prefixPlaceholder": "e.g. USER-30d",
+        "preview": "Names",
+        "subtitle": "Same package for everyone. Names are your prefix plus a number.",
+        "title": "Add many users",
+        "who": "Who"
       },
       "bulkDone": {
         "add_days": "7 days added to {n} user | 7 days added to {n} users",
@@ -3150,6 +3170,7 @@
         "outboundAuto": "Automatic (follow the outbound rules)",
         "outboundHint": "All of this user's traffic leaves through this outbound (Outbounds page). A turned-off outbound is ignored.",
         "outboundOff": "turned off",
+        "outboundReadOnly": "You can see the preferred outbound but only an admin with permission can change it.",
         "owner": "Sub-admin",
         "ownerMe": "{name} (you)",
         "packageDays": "Package days",
@@ -3186,8 +3207,7 @@
         "uuidInvalid": "This is not a valid UUID",
         "waitingText": "The {n} days begin at the first connection.",
         "waitingUnlimited": "Begins at the first connection and never expires.",
-        "who": "Who",
-        "outboundReadOnly": "You can see the preferred outbound but only an admin with permission can change it."
+        "who": "Who"
       },
       "groupByOwner": "Group by admin",
       "groupCount": "{n} user | {n} users",
@@ -3266,27 +3286,7 @@
         "no_data": "Used all of the usage limit"
       },
       "subtitle": "Everyone who connects through this panel: their data, time left and links.",
-      "title": "Users",
-      "bulkCreate": {
-        "menu": "Add many users",
-        "title": "Add many users",
-        "subtitle": "Same package for everyone. Names are your prefix plus a number.",
-        "who": "Who",
-        "prefix": "Name prefix",
-        "prefixPlaceholder": "e.g. USER-30d",
-        "prefixHint": "Each user is named prefix-01, prefix-02, …",
-        "count": "How many",
-        "countHint": "Between 1 and {max}",
-        "preview": "Names",
-        "create": "Create {n} user | Create {n} users",
-        "done": "{n} user created | {n} users created",
-        "linksTitle": "User links",
-        "linksSubtitle": "{n} link ready to copy | {n} links ready to copy",
-        "domain": "Link domain",
-        "links": "Links",
-        "copy": "Copy all",
-        "download": "Download .txt"
-      }
+      "title": "Users"
     },
     "utils": {
       "addQuery": "Add query",

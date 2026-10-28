@@ -1385,6 +1385,12 @@
       "title": "节点",
       "unreachable": "无法连接"
     },
+    "notifications": {
+      "dismiss": "关闭",
+      "new": "新",
+      "title": "通知",
+      "unread": "{n} 条新通知 | {n} 条新通知"
+    },
     "outbounds": {
       "add": "添加出站",
       "count": {
@@ -1781,6 +1787,31 @@
       "uploadTcpUdp": "上传 TCP 或 UDP",
       "version": "版本"
     },
+    "pwa": {
+      "gotIt": "知道了",
+      "guide": {
+        "android1": "在 Chrome 中，轻点顶部的 ⋮ 菜单",
+        "android2": "选择“添加到主屏幕”（或“安装应用”）",
+        "android3": "轻点“安装”：面板会像应用一样打开",
+        "computer": "电脑",
+        "desktop1": "在 Chrome 中，点击地址栏末尾的安装图标",
+        "desktop2": "点击“安装”",
+        "desktop3": "面板会在独立窗口中打开，就像应用一样",
+        "ios1": "在 Safari 中，轻点底部栏的 ••• 按钮",
+        "ios2": "轻点“共享”",
+        "ios3": "选择“添加到主屏幕”",
+        "ios4": "轻点“添加”：面板就在主屏幕上了",
+        "platform": "您的设备",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "tabIos": "iPhone · Safari"
+      },
+      "installNow": "立即安装",
+      "later": "以后再说",
+      "never": "不再显示",
+      "text": "像手机或电脑上的其他应用一样，一键打开面板。",
+      "title": "将面板安装为应用"
+    },
     "qr": {
       "clickToCopy": "点击复制图片",
       "copiedBoth": "消息和二维码已复制",
@@ -2001,11 +2032,11 @@
       "openWeb": "在浏览器中打开",
       "promptLead": "此面板有一个 Telegram 机器人 {bot}。将其关联到您的账户：",
       "promptTitle": "连接您的 Telegram？",
+      "reconnect": "重新连接",
+      "scan": "或用手机相机扫描此码。",
       "stepCreate": "直接在聊天中创建新用户",
       "stepStart": "启动机器人：打开它的菜单",
-      "stepUsers": "查看用户及其用量",
-      "reconnect": "重新连接",
-      "scan": "或用手机相机扫描此码。"
+      "stepUsers": "查看用户及其用量"
     },
     "template": {
       "builtin": "内置",
@@ -2049,37 +2080,6 @@
       "loadValues": "加载当前值",
       "name": "名称",
       "skipHint": "输出 SKIP 或调用 skip()，可在条件不满足时跳过渲染此代理"
-    },
-    "notifications": {
-      "title": "通知",
-      "unread": "{n} 条新通知 | {n} 条新通知",
-      "new": "新",
-      "dismiss": "关闭"
-    },
-    "pwa": {
-      "guide": {
-        "platform": "您的设备",
-        "tabIos": "iPhone · Safari",
-        "tabAndroid": "Android · Chrome",
-        "tabDesktop": "{os} · Chrome",
-        "ios1": "在 Safari 中，轻点底部栏的 ••• 按钮",
-        "ios2": "轻点“共享”",
-        "ios3": "选择“添加到主屏幕”",
-        "ios4": "轻点“添加”：面板就在主屏幕上了",
-        "android1": "在 Chrome 中，轻点顶部的 ⋮ 菜单",
-        "android2": "选择“添加到主屏幕”（或“安装应用”）",
-        "android3": "轻点“安装”：面板会像应用一样打开",
-        "computer": "电脑",
-        "desktop1": "在 Chrome 中，点击地址栏末尾的安装图标",
-        "desktop2": "点击“安装”",
-        "desktop3": "面板会在独立窗口中打开，就像应用一样"
-      },
-      "gotIt": "知道了",
-      "installNow": "立即安装",
-      "later": "以后再说",
-      "never": "不再显示",
-      "text": "像手机或电脑上的其他应用一样，一键打开面板。",
-      "title": "将面板安装为应用"
     },
     "theme": {
       "caddy": "Smart Caddy 主题",
@@ -3503,7 +3503,8 @@
     "ip": "知识产权",
     "mode": "模式",
     "reality": {
-      "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域"
+      "asn_issue": "REALITY 的所选域不在同一 ASN 中。为了更好地使用该协议，最好在同一 ASN 中找到一个域",
+      "no_x25519": ""
     },
     "resolveip": {
       "description": "在代理中使用 IP 而不是域名。DNS 噪声很大时有用。",

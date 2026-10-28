@@ -11,6 +11,463 @@
 
 #### Other
 
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #116 from Hiddify-Official/fix/users-rtl-sort-mask. 
+  _fix(users): blank Users page on phones in RTL_
+
+* Fix(users): blank Users page on phones in RTL (sort strip mask on the whole page) 
+  _":global([dir='rtl']) .u-sorts" compiles to a bare [dir='rtl'] {} in scoped CSS, so in RTL the
+sort strip's fade mask was applied to the page itself; phone browsers then stopped painting the
+page part way down. The fade is now a gradient drawn over the strip's end (html[dir='rtl'] for
+its direction), with no mask-image._
+
+* Merge pull request #117 from Hiddify-Official/fix/node-register-locale. 
+  _fix(nodes): adding a node fails with "outside of request context"_
+
+* Feat(nodes): Add node errors in the panel's language: where, what happened, what to do. 
+  _The error box shows which side failed (icon and title), one sentence on what
+happened and a "What to do" box, all translated; the registration id and a
+"Copy technical details" button stay for support. The node's raw (English)
+message is no longer shown, only copied. Texts are split into nodes.errors
+(what) and nodes.errorFix (what to do) for every code, in English and Persian._
+
+* Fix(nodes): "Working outside of request context" when adding a node. 
+  _The node registers in a background job (no request), and the locale selector
+read request.base_url: the first translated text in the job raised, so a
+registration that failed for a real reason came back as a bare HTTP 500.
+get_locale now falls back to the request's choice or the admin language
+outside a request.
+
+The parent shows a 5xx from the node as its own error (node_error: an internal
+error on the node, see its log under the registration id) with the node's
+message, instead of "the node refused" and the raw JSON body._
+
+* Merge pull request #118 from Hiddify-Official/feat/users-note-filter. 
+  _feat(users): "Note" in Filter by tag_
+
+* Feat(users): "Note" in Filter by tag. 
+  _Filter by tag gets a "Note" entry after "Pin" (notebook icon, with its count): it lists the
+users an admin wrote a note for, alone or together with tags, like "Pin"._
+
+* Merge pull request #119 from Hiddify-Official/feat/note-preview. 
+  _feat(users): short note beside the name, a note mark next to Telegram_
+
+* Feat(users): a note's first three words beside the name, a note mark next to Telegram. 
+  _The note beside a user's name shows its first three words and "…" when there is more;
+hovering, focusing or tapping them opens the whole note on the ruled notebook sheet, kept
+open while the pointer is on it. Users with a note also get a notebook mark in the row's
+extras, next to Telegram (table and phone cards): only a mark, nothing on hover. The sheet
+is its own component (NoteSheet), shared with the Admins page's notebook button._
+
+* Feat(admin): notes on a notebook sheet next to Edit on the Admins page. 
+  _A notebook button before Edit, only on admins with a note, opens the note on a small
+pale-yellow ruled sheet (NoteButton). The Admins page loses its Note column._
+
+* Fix(render): render the gettext helper without flask-babel. 
+  _dump-client-configs and some CLI paths have an app context without flask-babel
+registered: the translation helper fell back to the message id and failed on a
+missing locale, which broke xray and sublink rendering there._
+
+* Feat(domain): warn when a REALITY domain does not support X25519. 
+  _REALITY authenticates through the client's X25519 key share. A site that only
+accepts NIST curves (x1.com) answers with a HelloRetryRequest, the server then
+relays the real site and every client fails. A REALITY domain is now checked
+with a TLS 1.3 ClientHello offering only X25519; saving one that fails shows a
+warning, and the domain wizard and picker treat it as not REALITY friendly._
+
+* Fix(client): config fixes found testing every config in hiddify-core and Xray. 
+  _- VLESS (hiddify-core / sing-box): Vision flow only on TCP+REALITY, as in the
+  sublink and Xray templates; it was set on WS/gRPC/XHTTP too and broke them.
+- A subscription has the panel's own proxies only: another child's proxies (its
+  node configs too) were rendered on this panel's domains, not served, and came
+  out twice ("tag §1").
+- VLESS without encryption and Trojan over plain HTTP are never offered.
+- gRPC over plain HTTP (h2c) presets start disabled: CDNs do not pass it.
+- hiddify-core: raw TCP (VLESS / VMess / Trojan without a transport) and raw
+  HTTP over TLS / REALITY ("version": 1 of the http transport, Hiddify 5.1+).
+- SS FakeTLS client: no "tls" field (the simple-obfs plugin makes the TLS look).
+- Xray: Hysteria 2 and plain Shadowsocks 2022 outbounds; WebSocket "host"
+  instead of the deprecated Host header; an HTTP/1.1 xhttp leg uses the
+  "android" uTLS hello, since Xray's chrome hello offers h2 whatever "alpn"
+  says and a CDN then answered in HTTP/2._
+
+* Fix(server): raw Trojan over REALITY, SS FakeTLS in hiddify-core, rpxy-l4 untyped streams. 
+  _- REALITY termination: what is not VLESS goes, per ALPN, to a Trojan inbound of
+  its own domain, which serves raw Trojan over REALITY and passes the rest on to
+  the gateway as before (Trojan clients offer h2 too, so ALPN alone could not
+  tell them apart).
+- SS FakeTLS is a hiddify-core inbound with its simple-obfs server (obfs_mode
+  tls) instead of the obfs-server service; a stranger is passed to the TLS decoy
+  of :443 through the decoy-tls front (no PROXY header needed).
+- rpxy-l4 takes a stream for TLS only when every record it read is a handshake
+  record, so a simple-obfs ClientHello followed by data in the same read was
+  sent to the default route. Its untyped streams now go to HAProxy, which finds
+  the SNI proxies again.
+- Xray's raw HTTP Trojan inbound takes no PROXY protocol: behind it Xray's first
+  read is cut at 256 bytes and the Trojan inbound rejected a short request (400).
+- hiddify-core 5.1 (sing-box 1.14+): remote rule-sets get an HTTP client of
+  their own, else the core refuses to start._
+
+* Fix(proxy): improve handling of HTTP and HTTPS traffic in HAProxy configurations. 
+  _- Updated comments for clarity on HAProxy's handling of cleartext and TLS traffic.
+- Adjusted backend routing to ensure proper handling of plain HTTP after TLS termination.
+- Enhanced frontend configurations to differentiate between cleartext and post-TLS traffic.
+- Ensured that redirects to HTTPS are correctly applied based on client connection type._
+
+* Fix(proxy): keep node-configs when HTTP proxies are off; fix legacy child ping. 
+
+* Fix(proxy): keep User Configs when HTTP proxies are off (#5622) 
+
+* Fix(proxy): omit VLESS Vision flow on non-REALITY links (#5640) 
+  _Only emit xtls-rprx-vision for TCP+REALITY (terminator); WS/gRPC/XHTTP
+subscription and client configs no longer get a bogus flow._
+
+* Feat(domains): per-domain FinalMask tricks with TLS Fragment + custom JSON. 
+  _Move tricks into Advanced, hide panel tls_fragment settings, and emit
+FinalMask {tcp:[{type:fragment,...}]} for clients instead of dialerProxy._
+
+* Feat(users): bulk-create users from Add menu and export their links. 
+  _Add a split-button action to generate many users with a shared package
+and name prefix, then show copy/downloadable subscription links (#4918)._
+
+* Feat(admins): add grantable capabilities  for sub-admins. 
+  _Let parents control what agents can do (preferred outbound, sublinks,
+domains, outbounds, …) and block granting capabilities they lack (#5645)._
+
+* Feat(security): enhance session security and enforce HTTPS redirects. 
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #105 from Hiddify-Official/feat/donation-icons. 
+  _feat(donation): icons instead of emoji, other help behind Show More_
+
+* Feat(donation): icons instead of emoji, no intro text, other help behind Show More. 
+  _The dialog builds its own text from admin_v2 keys instead of the server's
+Donation.description HTML: a Payment Methods heading, the wallets, then
+"We need also other help" (closed by default) with an icon per item and
+the contact address._
+
+* Merge pull request #108 from Hiddify-Official/feat/users-mobile-sort. 
+  _feat(users): sort buttons for the phone cards_
+
+* Feat(users): sort the phone cards like the table's columns. 
+  _Small buttons next to Select all, one per sortable column (ID, status,
+name, usage, expiry, last connection): a tap sorts ascending, the next
+descending, the third goes back to the admin's own order._
+
+* Merge pull request #111 from Hiddify-Official/feat/apply-log-telegram. 
+  _feat(apply): send a log to my Telegram from the Actions page_
+
+* Feat(apply): send a log to my Telegram from the Actions page. 
+  _A Telegram button next to View and Download sends the whole log (as the
+download gives it) to the admin's Telegram through the panel's bot. It shows
+only when the panel has a bot, and stays disabled until the admin has
+connected Telegram (My account)._
+
+* Merge pull request #109 from Hiddify-Official/fix/account-topbar-active. 
+  _fix(admin): My Account stays visible in the top bar when open_
+
+* Fix(admin): My Account stays visible in the top bar while its page is open. 
+  _The active style used the primary color, which is the default themes' top
+bar color, so the icon faded into it. It now uses the bar's own text color,
+as the notifications and appearance buttons do; the glass theme keeps its own._
+
+* Merge pull request #104 from Hiddify-Official/fix/title-case-names. 
+  _fix(admin): menu and page names in title case_
+
+* Fix(admin): Send Message in the sidebar (server menu translations) 
+  _The sidebar item comes from the server's compiled catalog, not from the
+admin UI's JSON: the English .po and .mo get the same text as en.json._
+
+* Fix(admin): Send Message, Config Tester, Text Decoders, SSH Terminal in title case. 
+  _The Tools and Manager menu items, their page titles and the Settings
+"Show Advanced Settings" switch; the Text Decoders page was titled "Utils"._
+
+* Merge pull request #103 from Hiddify-Official/fix/domain-mode-names. 
+  _fix(admin): Domain modes column as Direct, Relay, CDN_
+
+* Fix(admin): domain modes column in their own spelling (Direct, Relay, CDN) 
+  _The collapsed summary showed the raw keys; it now uses the same labels as the
+expanded tags and the Domain modes filter._
+
+* Merge pull request #102 from Hiddify-Official/fix/category-colors. 
+  _feat(admin): proxy categories in their own colours_
+
+* Feat(admin): proxy category colors. 
+
+* Fix(admin): protocol, category, core and mode names in their own spelling. 
+  _Protocols were shown in capitals (VLESS, HYSTERIA2, WIREGUARD…) or in
+whatever case a text happened to use, and proxy categories as their raw
+tags (down:tls_h1, node_configs). They now have one spelling:
+- Protocols: VLess, Trojan, VMess, Shadowsocks, Socks, V2Ray, SSR, SSH,
+  TUIC, Hysteria, Hysteria 2, WireGuard, Naive, Mieru, AnyTLS, DNSTT,
+  Slipstream, MasterDNS, Snell, Telegram.
+- Cores: DNS Proxy, HAProxy, Hiddify Core, rust-rpxy-L4, Telegram, XRay
+  (Proxies, Base Configs and Templates: columns, filters, editors).
+- Modes: Domain L7 Gateway, Domain SNI Gateway, Domain DNS Gateway,
+  Multi-Domain Auto Ports, Multi-Domain Static Port, IP-Based, No Inbound
+  (English; the quick filter uses the same names as the column).
+- Built-in categories by name (Down:TLS_H1, Node Configs, gRPC,
+  HTTPUpgrade…); a category an admin typed is shown as written, and the
+  stored values do not change.
+shared/utils/protocols.ts holds the name maps (and a share link's scheme:
+ss, hy2, wg… → its protocol); the Proxies list (column, categories,
+filters), the proxy editor and the config tester's viewer use them. The
+texts (admin UI and setting labels, all languages) use the same spelling;
+link schemes (vless://) and JSON samples stay as they are. The Proxies
+page is titled "Proxies", as in the menu._
+
+* Merge pull request #100 from Hiddify-Official/feat/no-emoji. 
+  _feat(admin): icons in place of emoji_
+
+* Feat(admin): icons in place of emoji. 
+  _The page's own emoji are icons now, chosen for what they stand for:
+- Domains row extras: ECH (envelope), resolve IP (search), forced IPs (map
+  marker), fronting (ID card), download domain (download), as in the
+  domain dialog.
+- Custom proxies: split upload / download TLS layers get the upload and
+  download icons.
+- User form: "unlimited" is an infinity icon (inline SVG; PrimeIcons has none).
+- SSH files: no rights at all is a lock icon.
+- Language and country pickers: the panel default, an unknown language
+  and "other country" get a globe icon (real flags stay).
+
+Kept on purpose: flags, the drawings of Telegram messages (what the bot
+really sends), the type emoji that go into config names, and names that
+are data (built-in proxy names)._
+
+* Merge pull request #99 from Hiddify-Official/feat/domains-guide. 
+  _feat(domains): a one-time spotlight on reordering domains_
+
+* Feat(domains): a one-time spotlight on how to reorder domains. 
+  _The first time the Domains page shows two domains or more, a spotlight
+loops a small list drawn like the real rows: a finger takes row 3 by its
+handle and drags it to the top, the others move down, the numbers stay.
+Three steps are lit with it (grab the handle, drag and drop, the order is
+saved and configs follow it); "Got it" and it does not come back in this
+browser. It follows the page's direction (mirrored in Persian)._
+
+* Feat(domains): icons in place of emoji in the domain dialog. 
+  _The TLS modes (Valid, Fake, Reality, DNS, Telegram, ShadowTLS, SS FakeTLS)
+have the icons of their badges on the Domains page, in their colours (Fake
+orange as there). The Advanced fields have icons too, and their labels
+lose the emoji they started with (fronting, download domain, forced IPs,
+resolve IP, ECH) in all languages._
+
+* Feat(domains): a roomier, mirrored domain row: type icons, copy, touch drag. 
+  _The row used a narrow column for everything, so on wide screens most of
+the card was empty while its details were squeezed together:
+- The head holds the order, the type's icon, the address with a copy
+  button before it, the alias and the TLS badges, with the certificate
+  button and the actions at the far side.
+- The details (custom proxies, "show configs of", ports, server and
+  download domain, fronting) are tiles across the card's whole width,
+  one column on a phone.
+- The types have their own icons (server, cloud, relay, bolt, link) in
+  place of emoji, also in the type picker, the wizard and the dialog (the
+  emoji stays for the suggested config names).
+
+The row was kept left-to-right in right-to-left languages, so in Persian
+only the text moved: the whole row now follows the page's direction (the
+domain name itself stays left-to-right).
+
+The Move up / Move down buttons are gone. The handle drags with a mouse,
+and now with a finger or pen too (pointer events: the browser's own drag
+needs a mouse), and takes the keyboard (focus it, ↑ / ↓)._
+
+* Merge pull request #110 from Hiddify-Official/fix/apply-title-case. 
+  _fix(admin): Actions page names in title case_
+
+* Fix(admin): Apply & Status, Apply Changes, Restart Services, Check Status. 
+
+* Fix(i18n): close the notifications block in five translation files. 
+  _Merging dev into feat/notifications lost the "}," that ends the adminV2
+notifications block in fr, my, pt, ru and zh: those files were not valid
+JSON. The brace is back; nothing else changes._
+
+* Merge pull request #112 from Hiddify-Official/feat/apply-tools-colors. 
+  _feat(admin): Actions tools bigger, each in its own color_
+
+* Feat(admin): Actions tools bigger, each in its own color. 
+  _Reset Cache (teal), Public ports (pink) and Live connection test (gold), at
+normal size; none of them uses an action card's color._
+
+* Merge pull request #113 from Hiddify-Official/feat/theme-icon-sliders. 
+  _feat(admin): sliders icon for the top bar's appearance menu_
+
+* Feat(admin): sliders icon for the top bar's appearance menu. 
+
+* Merge pull request #93 from Hiddify-Official/feat/domain-notices. 
+  _feat(domains): certificate problems in the notifications_
+
+* Feat(domains): certificate problems and save warnings in the notifications. 
+  _Domains whose certificate does not work (getting it failed, its renewal
+failed, rate limited, expired, self-signed, missing) show in the topbar
+notifications on every page, errors first, from a light
+domains-page/problems/ endpoint. The warnings a save answers with (a toast
+on the page) also stay there for three days or until dismissed._
+
+* Merge pull request #92 from Hiddify-Official/fix/sub-domain-order. 
+  _fix(sub): configs follow the Domains page order_
+
+* Fix(sub): configs follow the Domains page order. 
+  _Two things broke the order. Domain.ordering() sorted every panel's domains
+together by sort_order, and each Domains page numbers its rows from 0: a
+parent's domains interleaved with its nodes'. And the no-inbound proxies
+(the nodes' configs, user configs, Telegram web) sat at the first domain,
+so hundreds of node configs came between the first domain and the second.
+Each panel's domains now stay together, this panel first, and no-inbound
+proxies come after the domains' configs._
+
+* Merge pull request #91 from Hiddify-Official/feat/domain-tls-colors. 
+  _feat(domains): Reality, Fake and Valid TLS in their own colours_
+
+* Feat(domains): Reality, Fake and Valid TLS in their own colours. 
+  _The TLS mode was part of the green domain-type badge ("Direct · Reality")
+next to a generic "Decoy TLS" badge. The mode now has its own badge in
+place of that one: Reality violet, Fake orange, DNS slate, built-in
+fake-TLS servers sky; Valid stays the green certificate badge._
+
+* Merge pull request #90 from Hiddify-Official/fix/domain-add-ip. 
+  _fix(domains): Add domain accepts IPv4 and IPv6 addresses_
+
+* Fix(domains): Add domain accepts IPv4 and IPv6 addresses. 
+  _The wizard only took names ("That does not look like a domain"), and its
+port stripping cut the end off an IPv6 address ("::1"). The API's regex
+took IPv6 only when written out in full. Addresses are now checked as
+addresses and kept in their standard form (brackets removed, IPv6
+shortened)._
+
+* Merge pull request #89 from Hiddify-Official/feat/bot-check-status. 
+  _feat(telegram-bot): "Check status" with address and services_
+
+* Feat(telegram-bot): "Check status" shows the server's address and services. 
+  _A "🩺 Check status" button in the admin bot's menu (not for agents) answers
+with the server's public IP, its country (with the flag), city and
+organisation, and the state of the Hiddify services: ✅ active,
+⚠️ activating, ❌ failed or not running. Monospaced so the columns line up;
+the address lookup is cached for an hour._
+
+* Merge pull request #88 from Hiddify-Official/feat/backup-telegram. 
+  _feat(backup): "Save on the Telegram" sends a backup to Telegram_
+
+* Feat(backup): "Save on the Telegram" sends a backup to the admin's Telegram. 
+  _With the admin's Telegram linked to the panel's bot, the Backup & restore
+page has a "Save on the Telegram" button next to "Save on the server".
+The backup is built in memory and sent by the bot with the automatic
+backups' caption; no file is kept on the server._
+
+* Merge pull request #87 from Hiddify-Official/fix/config-health. 
+  _fix(config-health): test via the domain, explain errors, notify_
+
+* Fix(config-health): test via the panel's domain; explain errors, also in the bell. 
+  _The check fetched the subscription from the first domain, which can be the
+server's bare IP: its certificate names the server's hostname, so the fetch
+failed with an SSL hostname mismatch although nothing was wrong. A domain
+name is now preferred; with only an IP the server asks itself without the
+certificate check.
+
+Errors get a kind (certificate, timeout, dns, unreachable, http, empty,
+core) and the dashboard card explains each one and where to look, with the
+technical message (subscription path removed) on demand and wrapped inside
+the card. Failed configs get a reason in words. Config health problems also
+show in the topbar notifications, errors first._
+
+* Merge pull request #86 from Hiddify-Official/feat/notifications. 
+  _feat(admin): panel notices in a top-bar notifications bell_
+
+* Merge branch 'dev' into feat/notifications. 
+
+* Merge pull request #85 from Hiddify-Official/feat/pwa-guide. 
+  _feat(admin): animated install guide and Telegram spotlight_
+
+* Feat(admin): Telegram prompt as an animated spotlight. 
+  _The dashboard's Telegram prompt shows the bot in a looping chat: its
+menu, the users with their usage, a user created from the chat, with
+the three steps lit in sync. The install guide waits for the next
+visit while the prompt is due, so only one spotlight shows at a time._
+
+* Feat(admin_v2): animated "install as an app" guide on the dashboard. 
+  _The install dialog listed two static steps and appeared once per visit on
+any page, only when the browser offered an install. Now:
+
+- A looping animation of the browser's own controls shows how to install:
+  Safari on iPhone / iPad, Chrome on Android, Chrome on Windows, macOS or
+  Linux (PwaInstallGuide.vue). The detected platform comes first; the
+  others are one tap away, and the step being shown is lit in the list.
+- It opens on the dashboard only (a node: its home), each time the panel
+  is opened (once per page load), never when the panel already runs as
+  the installed app.
+- "Got it" closes it; with "Do not show this again" ticked it stays
+  closed. Where the browser can install right away, "Install now" too.
+- Strings in all 7 languages (fr, my, pt, ru, zh had none for it).
+
+The user panel gets the same guide (hiddify-user-front)._
+
+* Merge pull request #84 from Hiddify-Official/feat/menu-icons. 
+  _feat(admin_v2): coloured menu icons and page title icons_
+
+* Feat(admin_v2): coloured menu icons, and the page's icon before its title. 
+  _- Each menu icon gets a vivid colour by what it is (menu-icons.ts), on a
+  soft chip of that colour: Donation a red heart, Bug/Feature yellow,
+  Users violet, Backup green, … Icons without a colour stay as before.
+- PageHeader shows the icon of the page's menu item (found from the
+  route, deepest match) before the title, in the same colour; an `icon`
+  prop overrides it. All 21 pages that use PageHeader get it._
+
+* Merge pull request #95 from Hiddify-Official/feat/node-ping. 
+  _feat(nodes): a Ping panel on each node's card_
+
+* Feat(nodes): a Ping panel on the node's card that pings until it is closed. 
+  _A "Ping" button on each node card opens a panel over that card, under its
+name: this panel pings the node's server once a second (ICMP, or the time
+of a TCP connect to its panel port when ICMP is not possible) until the
+panel is closed, with the latest time, min / avg / max / loss, a bar per
+answer and the last lines. Each card has its own, so several nodes can be
+pinged at once._
+
+* Feat(nodes): "Show more" with the node's live network, CPU and RAM charts. 
+  _Each node card has a "Show more" toggle under its buttons that opens the
+node's live charts: network up/down, CPU and RAM, drawn like the
+dashboard's Node health but for that node only. One feed (the dashboard's
+system snapshot, which lists every node) runs every 5 s while a card is
+open and keeps 60 samples: the last 5 minutes._
+
+* Merge pull request #96 from Hiddify-Official/feat/node-flags. 
+  _feat(nodes): the node's country flag before its name_
+
+* Feat(nodes): the node's country flag before its name. 
+  _The Nodes API gives each node's country (ISO code), from its address and
+the panel's own MaxMind data (a name is resolved first), kept a day. The
+card shows the flag before the node's name, the country's name on hover._
+
+* Feat(admin_v2): panel notices in a topbar bell instead of page banners. 
+  _The panel's notices (default domain, SSH password login, …) were banners
+above every page.
+
+- A bell in the topbar, next to the account icon, lists them; it is
+  shown only while there are notices.
+- A blinking red dot while some have not been seen; opening the list
+  marks them seen (kept per browser, like dismissals). A notice whose
+  text changes counts as new again. New ones are tagged until it closes.
+- Each notice can be dismissed from the list, as from the banner; with
+  none left the bell goes away.
+- The banner component is removed; toasts for toast notices still show.
+- Strings in all 7 languages._
+
+* Feat(ip-lookup): add IP lookup functionality and integrate with API. 
+
+* Feat(admin): implement user page customization for admins. 
+  _- Introduced `admin_overrides.py` to manage settings that admins can customize for their users, including branding title, support link, language, and custom user page URL.
+- Updated the API to allow admins to save their override settings.
+- Added a new `UserPageForm` component for admins to edit their users' page settings.
+- Enhanced the `MyAccountView` to display and manage user page customizations.
+- Updated translations for user page customization features.
+- Added unit tests for the new functionality in `test_admin_overrides.py`._
+
+* Feat(proxy): add tcp_protocol_detection_timeout_msec configuration option. 
+
 * Fix(proxy): handle service port conflicts for SNI proxies. 
 
 * Feat(rawhttp): implement safe headers for rawhttp requests and enhance jinja rendering. 

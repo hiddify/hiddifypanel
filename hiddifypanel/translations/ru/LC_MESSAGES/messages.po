@@ -1965,6 +1965,18 @@ msgstr "Показать журнал"
 msgid "adminV2.apply.log.showingEnd"
 msgstr "показан конец"
 
+msgid "adminV2.apply.log.telegram"
+msgstr "Отправить в мой Telegram"
+
+msgid "adminV2.apply.log.telegramConnect"
+msgstr "Сначала подключите Telegram в «Мой аккаунт»"
+
+msgid "adminV2.apply.log.telegramFailed"
+msgstr "Не удалось отправить в Telegram"
+
+msgid "adminV2.apply.log.telegramSent"
+msgstr "{name} отправлен в ваш Telegram"
+
 msgid "adminV2.apply.log.terminal"
 msgstr "журнал"
 
@@ -2236,10 +2248,16 @@ msgstr "Не удалось создать резервную копию"
 msgid "adminV2.backup.save.onServer"
 msgstr "Сохранить на сервере"
 
+msgid "adminV2.backup.save.onTelegram"
+msgstr "Сохранить в Telegram"
+
 msgid "adminV2.backup.save.secret"
 msgstr ""
 "Файл содержит пароли, ссылки пользователей и приватные ключи. Храните его в "
 "безопасном месте."
+
+msgid "adminV2.backup.save.sentTelegram"
+msgstr "Резервная копия отправлена в ваш Telegram"
 
 msgid "adminV2.backup.save.sub"
 msgstr ""
@@ -2817,7 +2835,7 @@ msgid "adminV2.domains.field.aliasHint"
 msgstr "Показывается в приложениях пользователей вместо домена."
 
 msgid "adminV2.domains.field.cdnIp"
-msgstr "🔂 Принудительно использовать в конфигурациях эти IP / домены"
+msgstr "Принудительно использовать в конфигурациях эти IP / домены"
 
 msgid "adminV2.domains.field.cdnIpHint"
 msgstr ""
@@ -2834,7 +2852,7 @@ msgid "adminV2.domains.field.domainRequired"
 msgstr "Введите домен"
 
 msgid "adminV2.domains.field.downloadDomain"
-msgstr "📈 Домен загрузки"
+msgstr "Домен загрузки"
 
 msgid "adminV2.domains.field.downloadDomainHint"
 msgstr ""
@@ -2842,7 +2860,7 @@ msgstr ""
 "обнаружить, часто быстрее."
 
 msgid "adminV2.domains.field.ech"
-msgstr "🔐 ECH"
+msgstr "ECH"
 
 msgid "adminV2.domains.field.echHint"
 msgstr "Получать и использовать Encrypted Client Hello для этого домена CDN."
@@ -2860,7 +2878,7 @@ msgid "adminV2.domains.field.extraObject"
 msgstr "Должен быть JSON-объект"
 
 msgid "adminV2.domains.field.fronting"
-msgstr "🎭 Domain fronting"
+msgstr "Domain fronting"
 
 msgid "adminV2.domains.field.frontingHint"
 msgstr ""
@@ -2900,7 +2918,7 @@ msgstr ""
 "«Дополнительно» → «Принудительные IP»."
 
 msgid "adminV2.domains.field.resolveIp"
-msgstr "🔢 Разрешать IP"
+msgstr "Разрешать IP"
 
 msgid "adminV2.domains.field.resolveIpHint"
 msgstr ""
@@ -2938,11 +2956,42 @@ msgstr "Режим TLS"
 msgid "adminV2.domains.getCert"
 msgstr "Получить сертификат"
 
+msgid "adminV2.domains.guide.dragText"
+msgstr ""
+"Строки раздвигаются; на компьютере можно также выбрать ручку и нажать ↑ или "
+"↓."
+
+msgid "adminV2.domains.guide.dragTitle"
+msgstr "Перетащите вверх или вниз и отпустите"
+
+msgid "adminV2.domains.guide.gotIt"
+msgstr "Понятно"
+
+msgid "adminV2.domains.guide.grabText"
+msgstr "Значок ☰ в начале строки — мышью или пальцем."
+
+msgid "adminV2.domains.guide.grabTitle"
+msgstr "Возьмите домен за ручку"
+
+msgid "adminV2.domains.guide.lead"
+msgstr ""
+"Порядок важен: конфиги перечисляют домены в этом порядке, а первый "
+"используется для ссылок на панель."
+
+msgid "adminV2.domains.guide.orderText"
+msgstr ""
+"Он сохраняется сразу: конфиги пользователей теперь идут в этом порядке."
+
+msgid "adminV2.domains.guide.orderTitle"
+msgstr "Это новый порядок"
+
+msgid "adminV2.domains.guide.title"
+msgstr "Расставьте домены по порядку"
+
 msgid "adminV2.domains.howto"
 msgstr ""
-"Порядок важен: перетащите (или используйте стрелки) для сортировки. "
-"Конфигурации перечисляют домены в этом порядке, а первый используется для "
-"ссылок панели."
+"Порядок важен: перетащите за ручку ☰, чтобы отсортировать. Конфигурации "
+"перечисляют домены в этом порядке, а первый используется для ссылок панели."
 
 msgid "adminV2.domains.howtoFiltered"
 msgstr "Очистите поиск и фильтры, чтобы изменить порядок."
@@ -3016,6 +3065,40 @@ msgstr "(без имени)"
 
 msgid "adminV2.domains.notChanged"
 msgstr "Не изменено"
+
+msgid "adminV2.domains.notice.expired"
+msgstr "Срок действия сертификата истёк: приложения не подключаются."
+
+msgid "adminV2.domains.notice.failed"
+msgstr "Нет действительного сертификата: получить его не удалось."
+
+msgid "adminV2.domains.notice.invalid"
+msgstr "Сертификат недействителен для этого домена."
+
+msgid "adminV2.domains.notice.missing"
+msgstr "Сертификата пока нет."
+
+msgid "adminV2.domains.notice.rate_limited"
+msgstr ""
+"Получение сертификата приостановлено: достигнут лимит центров сертификации. "
+"Попытка будет позже."
+
+msgid "adminV2.domains.notice.renew_failed"
+msgstr "Сертификат ещё действует, но продлить его не удалось."
+
+msgid "adminV2.domains.notice.saved"
+msgstr "Домены · сохранено с предупреждением"
+
+msgid "adminV2.domains.notice.self_signed"
+msgstr ""
+"Есть только временный самоподписанный сертификат: приложения предупреждают "
+"или отказывают."
+
+msgid "adminV2.domains.notice.title"
+msgstr "Домены · {domain}"
+
+msgid "adminV2.domains.notice.where"
+msgstr "Подробнее: страница «Домены»."
 
 msgid "adminV2.domains.openPanel"
 msgstr "Открыть панель на этом домене"
@@ -3391,6 +3474,9 @@ msgstr "DNS не совпадает"
 msgid "adminV2.donation.close"
 msgstr "Закрыть"
 
+msgid "adminV2.donation.contact"
+msgstr "Если можете помочь, свяжитесь с нами: {email}"
+
 msgid "adminV2.donation.copied"
 msgstr "Адрес {name} скопирован"
 
@@ -3400,16 +3486,46 @@ msgstr "Скопировано"
 msgid "adminV2.donation.copyAddress"
 msgstr "Скопировать адрес {name}"
 
+msgid "adminV2.donation.help.content"
+msgstr "Авторы контента"
+
+msgid "adminV2.donation.help.flutter"
+msgstr "Flutter-разработчик"
+
+msgid "adminV2.donation.help.go"
+msgstr "Go-разработчик"
+
+msgid "adminV2.donation.help.python"
+msgstr "Python-разработчик"
+
+msgid "adminV2.donation.help.share"
+msgstr "Поделиться Hiddify Manager с друзьями"
+
+msgid "adminV2.donation.help.swift"
+msgstr "Swift-разработчик"
+
 msgid "adminV2.donation.networkHint"
 msgstr ""
 "Отправляйте каждую монету только в сети, указанной рядом с её названием: "
 "перевод в другой сети будет потерян."
+
+msgid "adminV2.donation.otherHelp"
+msgstr "Другая помощь"
+
+msgid "adminV2.donation.paymentMethods"
+msgstr "Способы оплаты"
 
 msgid "adminV2.donation.qr"
 msgstr "QR-код"
 
 msgid "adminV2.donation.qrOf"
 msgstr "QR-код адреса {name}"
+
+msgid "adminV2.donation.showLess"
+msgstr "Свернуть"
+
+msgid "adminV2.donation.showMore"
+msgstr "Показать больше"
 
 msgid "adminV2.donation.showQr"
 msgstr "Показать QR-код для {name}"
@@ -3711,8 +3827,41 @@ msgstr ""
 msgid "adminV2.nodes.empty.title"
 msgstr "Узлов пока нет"
 
+msgid "adminV2.nodes.errorCopied"
+msgstr ""
+"Технические детали скопированы. Отправьте их в поддержку вместе с ID "
+"регистрации."
+
+msgid "adminV2.nodes.errorCopy"
+msgstr "Скопировать технические детали"
+
+msgid "adminV2.nodes.errorFixTitle"
+msgstr "Что сделать"
+
+msgid "adminV2.nodes.errorRegShort"
+msgstr "ID регистрации:"
+
+msgid "adminV2.nodes.errorSide.between"
+msgstr "Проблема со связью между панелями"
+
+msgid "adminV2.nodes.errorSide.node"
+msgstr "Проблема на сервере узла"
+
+msgid "adminV2.nodes.errorSide.parent"
+msgstr "Проблема в этой панели"
+
+msgid "adminV2.nodes.errorSide.unknown"
+msgstr "Не удалось добавить узел"
+
 msgid "adminV2.nodes.errors.invalid_link"
 msgstr "Ссылка не является действительной админ-ссылкой."
+
+msgid "adminV2.nodes.errors.node_error"
+msgstr ""
+"Во время регистрации на узле произошла внутренняя ошибка (сбой или проблема "
+"на этом сервере, а не отказ ссылки). Обновите панель узла и попробуйте "
+"снова; если повторится, подробности есть в журнале узла под идентификатором "
+"регистрации ниже."
 
 msgid "adminV2.nodes.errors.rejected"
 msgstr ""
@@ -3758,6 +3907,19 @@ msgstr "Только что"
 msgid "adminV2.nodes.lastSeen"
 msgstr "Последний контакт"
 
+msgid "adminV2.nodes.live.collecting"
+msgstr ""
+"Собираем данные в реальном времени… графики заполнятся в ближайшие минуты."
+
+msgid "adminV2.nodes.live.showLess"
+msgstr "Показать меньше"
+
+msgid "adminV2.nodes.live.showMore"
+msgstr "Показать больше"
+
+msgid "adminV2.nodes.live.unavailable"
+msgstr "Этот узел не ответил"
+
 msgid "adminV2.nodes.moreInfo"
 msgstr "Дополнительная информация"
 
@@ -3766,6 +3928,40 @@ msgstr "Никогда"
 
 msgid "adminV2.nodes.openAdmin"
 msgstr "Открыть"
+
+msgid "adminV2.nodes.pingDialog.avg"
+msgstr "сред."
+
+msgid "adminV2.nodes.pingDialog.button"
+msgstr "Пинг"
+
+msgid "adminV2.nodes.pingDialog.hint"
+msgstr ""
+"Отправлено {sent}, ответов {received} · пинг идёт, пока вы не закроете окно"
+
+msgid "adminV2.nodes.pingDialog.loss"
+msgstr "потери"
+
+msgid "adminV2.nodes.pingDialog.max"
+msgstr "макс."
+
+msgid "adminV2.nodes.pingDialog.min"
+msgstr "мин."
+
+msgid "adminV2.nodes.pingDialog.noAddress"
+msgstr "Адрес узла неизвестен"
+
+msgid "adminV2.nodes.pingDialog.running"
+msgstr "пинг идёт"
+
+msgid "adminV2.nodes.pingDialog.tcp"
+msgstr "TCP (ICMP недоступен)"
+
+msgid "adminV2.nodes.pingDialog.timeout"
+msgstr "Нет ответа"
+
+msgid "adminV2.nodes.pingDialog.title"
+msgstr "Пинг · {name}"
 
 msgid "adminV2.nodes.reachable"
 msgstr "Доступен"
@@ -3845,6 +4041,18 @@ msgstr "Узлы"
 
 msgid "adminV2.nodes.unreachable"
 msgstr "Недоступен"
+
+msgid "adminV2.notifications.dismiss"
+msgstr "Скрыть"
+
+msgid "adminV2.notifications.new"
+msgstr "Новое"
+
+msgid "adminV2.notifications.title"
+msgstr "Уведомления"
+
+msgid "adminV2.notifications.unread"
+msgstr "{n} новое уведомление | {n} новых уведомлений"
 
 msgid "adminV2.outbounds.add"
 msgstr "Добавить исходящее подключение"
@@ -4081,7 +4289,7 @@ msgid "adminV2.outbounds.mode.psiphon"
 msgstr "Psiphon"
 
 msgid "adminV2.outbounds.mode.socks"
-msgstr "SOCKS"
+msgstr "Socks"
 
 msgid "adminV2.outbounds.mode.tor"
 msgstr "Tor"
@@ -4175,7 +4383,7 @@ msgstr "{name} сохранено"
 msgid "adminV2.outbounds.subtitle"
 msgstr ""
 "Выберите по порядку, куда трафик выходит с этого сервера: через WARP, "
-"напрямую, блокировка или выход через SOCKS, Tor или Psiphon."
+"напрямую, блокировка или выход через Socks, Tor или Psiphon."
 
 msgid "adminV2.outbounds.title"
 msgstr "Исходящие подключения"
@@ -4659,7 +4867,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "Шаблон ссылки"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "Пользовательские прокси"
+msgstr "Прокси"
 
 msgid "adminV2.proxy.mode"
 msgstr "Режим"
@@ -4949,6 +5157,71 @@ msgstr "TCP или UDP для отдачи"
 
 msgid "adminV2.proxy.version"
 msgstr "Версия"
+
+msgid "adminV2.pwa.gotIt"
+msgstr "Понятно"
+
+msgid "adminV2.pwa.guide.android1"
+msgstr "В Chrome нажмите меню ⋮ вверху"
+
+msgid "adminV2.pwa.guide.android2"
+msgstr "Выберите «Добавить на главный экран» (или «Установить приложение»)"
+
+msgid "adminV2.pwa.guide.android3"
+msgstr "Нажмите «Установить»: панель откроется как приложение"
+
+msgid "adminV2.pwa.guide.computer"
+msgstr "Компьютер"
+
+msgid "adminV2.pwa.guide.desktop1"
+msgstr "В Chrome нажмите значок установки в конце адресной строки"
+
+msgid "adminV2.pwa.guide.desktop2"
+msgstr "Нажмите «Установить»"
+
+msgid "adminV2.pwa.guide.desktop3"
+msgstr "Панель откроется в своём окне, как приложение"
+
+msgid "adminV2.pwa.guide.ios1"
+msgstr "В Safari нажмите кнопку ••• на нижней панели"
+
+msgid "adminV2.pwa.guide.ios2"
+msgstr "Нажмите «Поделиться»"
+
+msgid "adminV2.pwa.guide.ios3"
+msgstr "Выберите «На экран «Домой»»"
+
+msgid "adminV2.pwa.guide.ios4"
+msgstr "Нажмите «Добавить»: панель появится на экране «Домой»"
+
+msgid "adminV2.pwa.guide.platform"
+msgstr "Ваше устройство"
+
+msgid "adminV2.pwa.guide.tabAndroid"
+msgstr "Android · Chrome"
+
+msgid "adminV2.pwa.guide.tabDesktop"
+msgstr "{os} · Chrome"
+
+msgid "adminV2.pwa.guide.tabIos"
+msgstr "iPhone · Safari"
+
+msgid "adminV2.pwa.installNow"
+msgstr "Установить сейчас"
+
+msgid "adminV2.pwa.later"
+msgstr "Не сейчас"
+
+msgid "adminV2.pwa.never"
+msgstr "Больше не показывать"
+
+msgid "adminV2.pwa.text"
+msgstr ""
+"Панель будет в одном касании, как любое приложение на телефоне или "
+"компьютере."
+
+msgid "adminV2.pwa.title"
+msgstr "Установить панель как приложение"
 
 msgid "adminV2.qr.clickToCopy"
 msgstr "Нажмите, чтобы скопировать изображение"
@@ -5432,6 +5705,9 @@ msgstr "Новый тег"
 msgid "adminV2.tags.none"
 msgstr "Тегов пока нет"
 
+msgid "adminV2.tags.note"
+msgstr "Заметка"
+
 msgid "adminV2.tags.pick"
 msgstr "Выбрать теги"
 
@@ -5527,6 +5803,15 @@ msgstr "Подключить снова"
 
 msgid "adminV2.telegram.scan"
 msgstr "Или отсканируйте это камерой телефона."
+
+msgid "adminV2.telegram.stepCreate"
+msgstr "Создавайте пользователя прямо в чате"
+
+msgid "adminV2.telegram.stepStart"
+msgstr "Запустите бота: откроется его меню"
+
+msgid "adminV2.telegram.stepUsers"
+msgstr "Смотрите пользователей и их трафик"
 
 msgid "adminV2.template.builtin"
 msgstr "Встроенный"
@@ -6551,10 +6836,10 @@ msgid "adminV2.utils.user"
 msgstr "Пользователь"
 
 msgid "adminV2.utils.vmessJson"
-msgstr "vmess JSON"
+msgstr "VMess JSON"
 
 msgid "adminV2.utils.vmessObject"
-msgstr "vmess JSON должен быть объектом"
+msgstr "VMess JSON должен быть объектом"
 
 msgid "adminV2.validation.errors"
 msgstr "Ошибки"
@@ -6780,7 +7065,7 @@ msgstr "Дополнительные конфигурации для Singbox"
 
 msgid "config.additional_configs_urls.description"
 msgstr ""
-"Можно добавить http:// https:// или прокси в формате v2ray, например "
+"Можно добавить http:// https:// или прокси в формате V2Ray, например "
 "vless://"
 
 msgid "config.additional_configs_urls.label"
@@ -7811,10 +8096,10 @@ msgid "config.snell_enable.label"
 msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr "Включить протокол SOCKS"
+msgstr "Включить протокол Socks"
 
 msgid "config.socks_enable.label"
-msgstr "SOCKS"
+msgstr "Socks"
 
 msgid "config.special_port.description"
 msgstr ""
@@ -8248,7 +8533,7 @@ msgid "config.utls.label"
 msgstr "❇️ uTLS"
 
 msgid "config.v2ray_enable.description"
-msgstr "V2ray не поддерживает учет и не предлагается к использованию"
+msgstr "V2Ray не поддерживает учет и не предлагается к использованию"
 
 msgid "config.v2ray_enable.label"
 msgstr "♈️ V2Ray"
@@ -8265,10 +8550,10 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ Конфигурации успешно изменены"
 
 msgid "config.vless_decryption.description"
-msgstr "Параметр расшифровки VLESS для ссылок обмена"
+msgstr "Параметр расшифровки VLess для ссылок обмена"
 
 msgid "config.vless_decryption.label"
-msgstr "Расшифровка VLESS"
+msgstr "Расшифровка VLess"
 
 msgid "config.vless_enable.description"
 msgstr "Включить протокол VLess"
@@ -8277,16 +8562,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "Метод шифрования VLESS для ссылок обмена"
+msgstr "Метод шифрования VLess для ссылок обмена"
 
 msgid "config.vless_encryption.label"
-msgstr "Шифрование VLESS"
+msgstr "Шифрование VLess"
 
 msgid "config.vless_flow.description"
-msgstr "Управление потоком VLESS (например, xtls-rprx-vision)"
+msgstr "Управление потоком VLess (например, xtls-rprx-vision)"
 
 msgid "config.vless_flow.label"
-msgstr "VLESS flow"
+msgstr "VLess flow"
 
 msgid "config.vmess_enable.description"
 msgstr ""
@@ -8563,6 +8848,9 @@ msgid "domain.reality.asn_issue"
 msgstr ""
 "Выбранный домен для REALITY не находится в том же ASN. Для более "
 "эффективного использования протокола лучше найти Домен в том же ASN"
+
+msgid "domain.reality.no_x25519"
+msgstr ""
 
 msgid "domain.resolveip.description"
 msgstr ""

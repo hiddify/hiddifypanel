@@ -1947,6 +1947,18 @@ msgstr "Mostrar log"
 msgid "adminV2.apply.log.showingEnd"
 msgstr "mostrando o final"
 
+msgid "adminV2.apply.log.telegram"
+msgstr "Enviar para o meu Telegram"
+
+msgid "adminV2.apply.log.telegramConnect"
+msgstr "Conecte primeiro o seu Telegram em Minha conta"
+
+msgid "adminV2.apply.log.telegramFailed"
+msgstr "Não foi possível enviar para o Telegram"
+
+msgid "adminV2.apply.log.telegramSent"
+msgstr "{name} enviado para o seu Telegram"
+
 msgid "adminV2.apply.log.terminal"
 msgstr "log"
 
@@ -2214,10 +2226,16 @@ msgstr "Não foi possível fazer o backup"
 msgid "adminV2.backup.save.onServer"
 msgstr "Salvar no servidor"
 
+msgid "adminV2.backup.save.onTelegram"
+msgstr "Salvar no Telegram"
+
 msgid "adminV2.backup.save.secret"
 msgstr ""
 "O arquivo contém senhas, links de usuários e chaves privadas. Guarde-o em um"
 " local seguro."
+
+msgid "adminV2.backup.save.sentTelegram"
+msgstr "Backup enviado para o seu Telegram"
 
 msgid "adminV2.backup.save.sub"
 msgstr ""
@@ -2794,7 +2812,7 @@ msgid "adminV2.domains.field.aliasHint"
 msgstr "Exibido nos apps dos usuários em vez do domínio."
 
 msgid "adminV2.domains.field.cdnIp"
-msgstr "🔂 Forçar as configs a usar estes IPs / domínios"
+msgstr "Forçar as configs a usar estes IPs / domínios"
 
 msgid "adminV2.domains.field.cdnIpHint"
 msgstr ""
@@ -2811,7 +2829,7 @@ msgid "adminV2.domains.field.domainRequired"
 msgstr "Digite um domínio"
 
 msgid "adminV2.domains.field.downloadDomain"
-msgstr "📈 Domínio de download"
+msgstr "Domínio de download"
 
 msgid "adminV2.domains.field.downloadDomainHint"
 msgstr ""
@@ -2819,7 +2837,7 @@ msgstr ""
 "uploads. Mais difícil de detectar, geralmente mais rápido."
 
 msgid "adminV2.domains.field.ech"
-msgstr "🔐 ECH"
+msgstr "ECH"
 
 msgid "adminV2.domains.field.echHint"
 msgstr "Obtém e usa o Encrypted Client Hello para este domínio CDN."
@@ -2837,7 +2855,7 @@ msgid "adminV2.domains.field.extraObject"
 msgstr "Deve ser um objeto JSON"
 
 msgid "adminV2.domains.field.fronting"
-msgstr "🎭 Domain fronting"
+msgstr "Domain fronting"
 
 msgid "adminV2.domains.field.frontingHint"
 msgstr ""
@@ -2876,7 +2894,7 @@ msgstr ""
 "Avançado → Forçar IPs."
 
 msgid "adminV2.domains.field.resolveIp"
-msgstr "🔢 Resolver IP"
+msgstr "Resolver IP"
 
 msgid "adminV2.domains.field.resolveIpHint"
 msgstr ""
@@ -2916,10 +2934,43 @@ msgstr "Modo TLS"
 msgid "adminV2.domains.getCert"
 msgstr "Obter certificado"
 
+msgid "adminV2.domains.guide.dragText"
+msgstr ""
+"As linhas abrem espaço; no computador você também pode focar a alça e usar ↑"
+" ou ↓."
+
+msgid "adminV2.domains.guide.dragTitle"
+msgstr "Arraste para cima ou para baixo e solte"
+
+msgid "adminV2.domains.guide.gotIt"
+msgstr "Entendi"
+
+msgid "adminV2.domains.guide.grabText"
+msgstr "O ☰ no início da linha, com o mouse ou o dedo."
+
+msgid "adminV2.domains.guide.grabTitle"
+msgstr "Pegue um domínio pela alça"
+
+msgid "adminV2.domains.guide.lead"
+msgstr ""
+"A ordem importa: as configs listam seus domínios nesta ordem, e o primeiro é"
+" usado nos links do painel."
+
+msgid "adminV2.domains.guide.orderText"
+msgstr ""
+"Ela é salva na hora: as configs dos usuários seguem essa ordem a partir de "
+"agora."
+
+msgid "adminV2.domains.guide.orderTitle"
+msgstr "Essa é a nova ordem"
+
+msgid "adminV2.domains.guide.title"
+msgstr "Coloque seus domínios em ordem"
+
 msgid "adminV2.domains.howto"
 msgstr ""
-"A ordem importa: arraste (ou use as setas) para ordenar. As configs listam "
-"os domínios nesta ordem, e o primeiro é usado para os links do painel."
+"A ordem importa: arraste a alça ☰ para ordenar. As configs listam os "
+"domínios nesta ordem, e o primeiro é usado para os links do painel."
 
 msgid "adminV2.domains.howtoFiltered"
 msgstr "Limpe a pesquisa e os filtros para alterar a ordem."
@@ -2994,6 +3045,39 @@ msgstr "(sem nome)"
 
 msgid "adminV2.domains.notChanged"
 msgstr "Não alterado"
+
+msgid "adminV2.domains.notice.expired"
+msgstr "O certificado expirou: os apps recusam a conexão."
+
+msgid "adminV2.domains.notice.failed"
+msgstr "Não tem certificado válido: a obtenção falhou."
+
+msgid "adminV2.domains.notice.invalid"
+msgstr "O certificado não é válido para este domínio."
+
+msgid "adminV2.domains.notice.missing"
+msgstr "Ainda não tem certificado."
+
+msgid "adminV2.domains.notice.rate_limited"
+msgstr ""
+"A obtenção do certificado está pausada: o limite das autoridades "
+"certificadoras foi atingido. Será tentado mais tarde."
+
+msgid "adminV2.domains.notice.renew_failed"
+msgstr "O certificado ainda é válido, mas a renovação falhou."
+
+msgid "adminV2.domains.notice.saved"
+msgstr "Domínios · salvo com um aviso"
+
+msgid "adminV2.domains.notice.self_signed"
+msgstr ""
+"Tem só um certificado autoassinado temporário: os apps avisam ou recusam."
+
+msgid "adminV2.domains.notice.title"
+msgstr "Domínios · {domain}"
+
+msgid "adminV2.domains.notice.where"
+msgstr "Detalhes: página Domínios."
 
 msgid "adminV2.domains.openPanel"
 msgstr "Abrir o painel neste domínio"
@@ -3367,6 +3451,9 @@ msgstr "O DNS não corresponde"
 msgid "adminV2.donation.close"
 msgstr "Fechar"
 
+msgid "adminV2.donation.contact"
+msgstr "Entre em contato conosco em {email} se puder nos ajudar."
+
 msgid "adminV2.donation.copied"
 msgstr "Endereço {name} copiado"
 
@@ -3376,16 +3463,46 @@ msgstr "Copiado"
 msgid "adminV2.donation.copyAddress"
 msgstr "Copiar o endereço {name}"
 
+msgid "adminV2.donation.help.content"
+msgstr "Provedores de conteúdo"
+
+msgid "adminV2.donation.help.flutter"
+msgstr "Desenvolvedor Flutter"
+
+msgid "adminV2.donation.help.go"
+msgstr "Desenvolvedor Go"
+
+msgid "adminV2.donation.help.python"
+msgstr "Desenvolvedor Python"
+
+msgid "adminV2.donation.help.share"
+msgstr "Compartilhe o Hiddify Manager com outras pessoas"
+
+msgid "adminV2.donation.help.swift"
+msgstr "Desenvolvedor Swift"
+
 msgid "adminV2.donation.networkHint"
 msgstr ""
 "Envie cada moeda apenas na rede indicada ao lado do nome: uma transferência "
 "em outra rede é perdida."
+
+msgid "adminV2.donation.otherHelp"
+msgstr "Precisamos também de outra ajuda"
+
+msgid "adminV2.donation.paymentMethods"
+msgstr "Métodos de Pagamento"
 
 msgid "adminV2.donation.qr"
 msgstr "QR code"
 
 msgid "adminV2.donation.qrOf"
 msgstr "QR code do endereço {name}"
+
+msgid "adminV2.donation.showLess"
+msgstr "Mostrar menos"
+
+msgid "adminV2.donation.showMore"
+msgstr "Mostrar mais"
 
 msgid "adminV2.donation.showQr"
 msgstr "Mostrar QR code de {name}"
@@ -3692,8 +3809,39 @@ msgstr ""
 msgid "adminV2.nodes.empty.title"
 msgstr "Ainda não há nós"
 
+msgid "adminV2.nodes.errorCopied"
+msgstr "Detalhes técnicos copiados. Envie-os ao suporte com o ID do registro."
+
+msgid "adminV2.nodes.errorCopy"
+msgstr "Copiar detalhes técnicos"
+
+msgid "adminV2.nodes.errorFixTitle"
+msgstr "O que fazer"
+
+msgid "adminV2.nodes.errorRegShort"
+msgstr "ID do registro:"
+
+msgid "adminV2.nodes.errorSide.between"
+msgstr "Problema na conexão entre os dois painéis"
+
+msgid "adminV2.nodes.errorSide.node"
+msgstr "Problema no servidor do nó"
+
+msgid "adminV2.nodes.errorSide.parent"
+msgstr "Problema neste painel"
+
+msgid "adminV2.nodes.errorSide.unknown"
+msgstr "Falha ao adicionar o nó"
+
 msgid "adminV2.nodes.errors.invalid_link"
 msgstr "O link não é um link de administrador válido."
+
+msgid "adminV2.nodes.errors.node_error"
+msgstr ""
+"O nó teve um erro interno ao se registrar (uma falha ou problema naquele "
+"servidor, não um link recusado). Atualize o painel do nó e tente de novo; se"
+" acontecer outra vez, o log do nó tem os detalhes com o ID de registro "
+"abaixo."
 
 msgid "adminV2.nodes.errors.rejected"
 msgstr ""
@@ -3739,6 +3887,19 @@ msgstr "Agora mesmo"
 msgid "adminV2.nodes.lastSeen"
 msgstr "Último contato"
 
+msgid "adminV2.nodes.live.collecting"
+msgstr ""
+"Coletando dados ao vivo… os gráficos se preenchem nos próximos minutos."
+
+msgid "adminV2.nodes.live.showLess"
+msgstr "Mostrar menos"
+
+msgid "adminV2.nodes.live.showMore"
+msgstr "Mostrar mais"
+
+msgid "adminV2.nodes.live.unavailable"
+msgstr "Este nó não respondeu"
+
 msgid "adminV2.nodes.moreInfo"
 msgstr "Mais informações"
 
@@ -3747,6 +3908,41 @@ msgstr "Nunca"
 
 msgid "adminV2.nodes.openAdmin"
 msgstr "Abrir"
+
+msgid "adminV2.nodes.pingDialog.avg"
+msgstr "média"
+
+msgid "adminV2.nodes.pingDialog.button"
+msgstr "Ping"
+
+msgid "adminV2.nodes.pingDialog.hint"
+msgstr ""
+"{sent} enviados, {received} respondidos · continua até você fechar esta "
+"janela"
+
+msgid "adminV2.nodes.pingDialog.loss"
+msgstr "perda"
+
+msgid "adminV2.nodes.pingDialog.max"
+msgstr "máx"
+
+msgid "adminV2.nodes.pingDialog.min"
+msgstr "mín"
+
+msgid "adminV2.nodes.pingDialog.noAddress"
+msgstr "O endereço do nó não é conhecido"
+
+msgid "adminV2.nodes.pingDialog.running"
+msgstr "pingando"
+
+msgid "adminV2.nodes.pingDialog.tcp"
+msgstr "TCP (ICMP indisponível)"
+
+msgid "adminV2.nodes.pingDialog.timeout"
+msgstr "Sem resposta"
+
+msgid "adminV2.nodes.pingDialog.title"
+msgstr "Ping · {name}"
 
 msgid "adminV2.nodes.reachable"
 msgstr "Acessível"
@@ -3827,6 +4023,18 @@ msgstr "Nós"
 msgid "adminV2.nodes.unreachable"
 msgstr "Inacessível"
 
+msgid "adminV2.notifications.dismiss"
+msgstr "Dispensar"
+
+msgid "adminV2.notifications.new"
+msgstr "Nova"
+
+msgid "adminV2.notifications.title"
+msgstr "Notificações"
+
+msgid "adminV2.notifications.unread"
+msgstr "{n} nova notificação | {n} novas notificações"
+
 msgid "adminV2.outbounds.add"
 msgstr "Adicionar outbound"
 
@@ -3876,7 +4084,7 @@ msgstr ""
 msgid "adminV2.outbounds.dialog.configBridgeNew"
 msgstr ""
 "O painel lhe atribui uma tag (uma tag que você escrever é ignorada); o "
-"roteamento a usa e o outro core se conecta a ele por uma ponte SOCKS local."
+"roteamento a usa e o outro core se conecta a ele por uma ponte Socks local."
 
 msgid "adminV2.outbounds.dialog.configExample"
 msgstr "Inserir um exemplo"
@@ -3914,13 +4122,13 @@ msgstr "Conexão"
 
 msgid "adminV2.outbounds.dialog.endpointHint.psiphon"
 msgstr ""
-"Executa dentro do hiddify-core. O xray o acessa pela porta SOCKS local "
+"Executa dentro do hiddify-core. O xray o acessa pela porta Socks local "
 "{endpoint}."
 
 msgid "adminV2.outbounds.dialog.endpointHint.tor"
 msgstr ""
 "Executa dentro do hiddify-core (o programa `tor` deve estar instalado neste "
-"servidor). O xray o acessa pela porta SOCKS local {endpoint}."
+"servidor). O xray o acessa pela porta Socks local {endpoint}."
 
 msgid "adminV2.outbounds.dialog.host"
 msgstr "Host"
@@ -4054,7 +4262,7 @@ msgid "adminV2.outbounds.mode.psiphon"
 msgstr "Psiphon"
 
 msgid "adminV2.outbounds.mode.socks"
-msgstr "SOCKS"
+msgstr "Socks"
 
 msgid "adminV2.outbounds.mode.tor"
 msgstr "Tor"
@@ -4071,12 +4279,12 @@ msgstr "Descartado"
 msgid "adminV2.outbounds.modeHint.core_endpoint"
 msgstr ""
 "Seu próprio endpoint do hiddify-core, ex.: WireGuard (JSON); o xray o acessa"
-" por uma ponte SOCKS local"
+" por uma ponte Socks local"
 
 msgid "adminV2.outbounds.modeHint.core_outbound"
 msgstr ""
 "Seu próprio outbound do hiddify-core (JSON); o xray o acessa por uma ponte "
-"SOCKS local"
+"Socks local"
 
 msgid "adminV2.outbounds.modeHint.direct"
 msgstr "Direto deste servidor"
@@ -4096,7 +4304,7 @@ msgstr "Via Cloudflare WARP neste servidor"
 msgid "adminV2.outbounds.modeHint.xray_outbound"
 msgstr ""
 "Seu próprio outbound do xray (JSON); o hiddify-core o acessa por uma ponte "
-"SOCKS local"
+"Socks local"
 
 msgid "adminV2.outbounds.more"
 msgstr "Mais ações"
@@ -4148,7 +4356,7 @@ msgstr "{name} salvo"
 msgid "adminV2.outbounds.subtitle"
 msgstr ""
 "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto,"
-" bloqueado ou por uma saída SOCKS, Tor ou Psiphon."
+" bloqueado ou por uma saída Socks, Tor ou Psiphon."
 
 msgid "adminV2.outbounds.title"
 msgstr "Outbounds"
@@ -4634,7 +4842,7 @@ msgid "adminV2.proxy.linkTemplate"
 msgstr "Template do link"
 
 msgid "adminV2.proxy.listTitle"
-msgstr "Proxies personalizados"
+msgstr "Proxies"
 
 msgid "adminV2.proxy.mode"
 msgstr "Modo"
@@ -4924,6 +5132,70 @@ msgstr "Upload TCP ou UDP"
 
 msgid "adminV2.proxy.version"
 msgstr "Versão"
+
+msgid "adminV2.pwa.gotIt"
+msgstr "Entendi"
+
+msgid "adminV2.pwa.guide.android1"
+msgstr "No Chrome, toque no menu ⋮ no topo"
+
+msgid "adminV2.pwa.guide.android2"
+msgstr "Escolha “Adicionar à tela inicial” (ou “Instalar app”)"
+
+msgid "adminV2.pwa.guide.android3"
+msgstr "Toque em Instalar: o painel abre como um app"
+
+msgid "adminV2.pwa.guide.computer"
+msgstr "Computador"
+
+msgid "adminV2.pwa.guide.desktop1"
+msgstr "No Chrome, clique no ícone de instalar no fim da barra de endereço"
+
+msgid "adminV2.pwa.guide.desktop2"
+msgstr "Clique em Instalar"
+
+msgid "adminV2.pwa.guide.desktop3"
+msgstr "O painel abre na própria janela, como um app"
+
+msgid "adminV2.pwa.guide.ios1"
+msgstr "No Safari, toque no botão ••• na barra de baixo"
+
+msgid "adminV2.pwa.guide.ios2"
+msgstr "Toque em Compartilhar"
+
+msgid "adminV2.pwa.guide.ios3"
+msgstr "Escolha “Adicionar à Tela de Início”"
+
+msgid "adminV2.pwa.guide.ios4"
+msgstr "Toque em Adicionar: o painel fica na tela de início"
+
+msgid "adminV2.pwa.guide.platform"
+msgstr "Seu dispositivo"
+
+msgid "adminV2.pwa.guide.tabAndroid"
+msgstr "Android · Chrome"
+
+msgid "adminV2.pwa.guide.tabDesktop"
+msgstr "{os} · Chrome"
+
+msgid "adminV2.pwa.guide.tabIos"
+msgstr "iPhone · Safari"
+
+msgid "adminV2.pwa.installNow"
+msgstr "Instalar agora"
+
+msgid "adminV2.pwa.later"
+msgstr "Agora não"
+
+msgid "adminV2.pwa.never"
+msgstr "Não mostrar novamente"
+
+msgid "adminV2.pwa.text"
+msgstr ""
+"Deixe o painel a um toque, como qualquer app do seu telefone ou computador."
+
+msgid "adminV2.pwa.title"
+msgstr "Instalar o painel como app"
 
 msgid "adminV2.qr.clickToCopy"
 msgstr "Clique para copiar a imagem"
@@ -5409,6 +5681,9 @@ msgstr "Nova tag"
 msgid "adminV2.tags.none"
 msgstr "Ainda não há tags"
 
+msgid "adminV2.tags.note"
+msgstr "Nota"
+
 msgid "adminV2.tags.pick"
 msgstr "Escolher tags"
 
@@ -5502,6 +5777,15 @@ msgstr "Conectar novamente"
 
 msgid "adminV2.telegram.scan"
 msgstr "Ou escaneie isto com a câmera do seu celular."
+
+msgid "adminV2.telegram.stepCreate"
+msgstr "Crie um novo usuário direto no chat"
+
+msgid "adminV2.telegram.stepStart"
+msgstr "Inicie o bot: o menu dele abre"
+
+msgid "adminV2.telegram.stepUsers"
+msgstr "Veja seus usuários e o consumo deles"
 
 msgid "adminV2.template.builtin"
 msgstr "Integrado"
@@ -6519,10 +6803,10 @@ msgid "adminV2.utils.user"
 msgstr "Usuário"
 
 msgid "adminV2.utils.vmessJson"
-msgstr "JSON vmess"
+msgstr "JSON VMess"
 
 msgid "adminV2.utils.vmessObject"
-msgstr "O JSON vmess deve ser um objeto"
+msgstr "O JSON VMess deve ser um objeto"
 
 msgid "adminV2.validation.errors"
 msgstr "Erros"
@@ -6746,7 +7030,7 @@ msgstr "Configs adicionais para Singbox"
 
 msgid "config.additional_configs_urls.description"
 msgstr ""
-"Você pode adicionar proxies http:// https:// ou em formato v2ray como "
+"Você pode adicionar proxies http:// https:// ou em formato V2Ray como "
 "vless://"
 
 msgid "config.additional_configs_urls.label"
@@ -7553,7 +7837,7 @@ msgid "config.path_v2ray.label"
 msgstr "Pasta V2Ray"
 
 msgid "config.path_vless.description"
-msgstr "Para o caminho VLESS"
+msgstr "Para o caminho VLess"
 
 msgid "config.path_vless.label"
 msgstr "ℹ️ Caminho VLess"
@@ -7769,10 +8053,10 @@ msgid "config.snell_enable.label"
 msgstr "Snell"
 
 msgid "config.socks_enable.description"
-msgstr "Ativar o protocolo SOCKS"
+msgstr "Ativar o protocolo Socks"
 
 msgid "config.socks_enable.label"
-msgstr "SOCKS"
+msgstr "Socks"
 
 msgid "config.special_port.description"
 msgstr ""
@@ -8201,7 +8485,7 @@ msgid "config.utls.label"
 msgstr "❇️ uTLS"
 
 msgid "config.v2ray_enable.description"
-msgstr "V2ray não suporta contabilidade, e não é sugerido"
+msgstr "V2Ray não suporta contabilidade, e não é sugerido"
 
 msgid "config.v2ray_enable.label"
 msgstr "♈️ V2Ray"
@@ -8218,10 +8502,10 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ As configurações foram alteradas com sucesso"
 
 msgid "config.vless_decryption.description"
-msgstr "Parâmetro de descriptografia VLESS para links de compartilhamento"
+msgstr "Parâmetro de descriptografia VLess para links de compartilhamento"
 
 msgid "config.vless_decryption.label"
-msgstr "Descriptografia VLESS"
+msgstr "Descriptografia VLess"
 
 msgid "config.vless_enable.description"
 msgstr "Habilitar protocolo VLess"
@@ -8230,16 +8514,16 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "Método de criptografia VLESS para links de compartilhamento"
+msgstr "Método de criptografia VLess para links de compartilhamento"
 
 msgid "config.vless_encryption.label"
-msgstr "Criptografia VLESS"
+msgstr "Criptografia VLess"
 
 msgid "config.vless_flow.description"
-msgstr "Controle de fluxo VLESS (ex.: xtls-rprx-vision)"
+msgstr "Controle de fluxo VLess (ex.: xtls-rprx-vision)"
 
 msgid "config.vless_flow.label"
-msgstr "Fluxo VLESS"
+msgstr "Fluxo VLess"
 
 msgid "config.vmess_enable.description"
 msgstr ""
@@ -8520,6 +8804,9 @@ msgid "domain.reality.asn_issue"
 msgstr ""
 "O domínio selecionado para REALITY não está no mesmo ASN.\n"
 "Para melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN"
+
+msgid "domain.reality.no_x25519"
+msgstr ""
 
 msgid "domain.resolveip.description"
 msgstr ""

@@ -1385,6 +1385,12 @@
       "title": "Nós",
       "unreachable": "Inacessível"
     },
+    "notifications": {
+      "dismiss": "Dispensar",
+      "new": "Nova",
+      "title": "Notificações",
+      "unread": "{n} nova notificação | {n} novas notificações"
+    },
     "outbounds": {
       "add": "Adicionar outbound",
       "count": {
@@ -1781,6 +1787,31 @@
       "uploadTcpUdp": "Upload TCP ou UDP",
       "version": "Versão"
     },
+    "pwa": {
+      "gotIt": "Entendi",
+      "guide": {
+        "android1": "No Chrome, toque no menu ⋮ no topo",
+        "android2": "Escolha “Adicionar à tela inicial” (ou “Instalar app”)",
+        "android3": "Toque em Instalar: o painel abre como um app",
+        "computer": "Computador",
+        "desktop1": "No Chrome, clique no ícone de instalar no fim da barra de endereço",
+        "desktop2": "Clique em Instalar",
+        "desktop3": "O painel abre na própria janela, como um app",
+        "ios1": "No Safari, toque no botão ••• na barra de baixo",
+        "ios2": "Toque em Compartilhar",
+        "ios3": "Escolha “Adicionar à Tela de Início”",
+        "ios4": "Toque em Adicionar: o painel fica na tela de início",
+        "platform": "Seu dispositivo",
+        "tabAndroid": "Android · Chrome",
+        "tabDesktop": "{os} · Chrome",
+        "tabIos": "iPhone · Safari"
+      },
+      "installNow": "Instalar agora",
+      "later": "Agora não",
+      "never": "Não mostrar novamente",
+      "text": "Deixe o painel a um toque, como qualquer app do seu telefone ou computador.",
+      "title": "Instalar o painel como app"
+    },
     "qr": {
       "clickToCopy": "Clique para copiar a imagem",
       "copiedBoth": "Mensagem e QR code copiados",
@@ -2001,11 +2032,11 @@
       "openWeb": "Abrir no navegador",
       "promptLead": "Este painel tem um bot do Telegram, {bot}. Vincule-o à sua conta:",
       "promptTitle": "Conectar seu Telegram?",
+      "reconnect": "Conectar novamente",
+      "scan": "Ou escaneie isto com a câmera do seu celular.",
       "stepCreate": "Crie um novo usuário direto no chat",
       "stepStart": "Inicie o bot: o menu dele abre",
-      "stepUsers": "Veja seus usuários e o consumo deles",
-      "reconnect": "Conectar novamente",
-      "scan": "Ou escaneie isto com a câmera do seu celular."
+      "stepUsers": "Veja seus usuários e o consumo deles"
     },
     "template": {
       "builtin": "Integrado",
@@ -2049,37 +2080,6 @@
       "loadValues": "Carregar valores atuais",
       "name": "Nome",
       "skipHint": "Emita SKIP ou chame skip() para pular a renderização deste proxy quando uma condição não for atendida"
-    },
-    "notifications": {
-      "title": "Notificações",
-      "unread": "{n} nova notificação | {n} novas notificações",
-      "new": "Nova",
-      "dismiss": "Dispensar"
-    },
-    "pwa": {
-      "guide": {
-        "platform": "Seu dispositivo",
-        "tabIos": "iPhone · Safari",
-        "tabAndroid": "Android · Chrome",
-        "tabDesktop": "{os} · Chrome",
-        "ios1": "No Safari, toque no botão ••• na barra de baixo",
-        "ios2": "Toque em Compartilhar",
-        "ios3": "Escolha “Adicionar à Tela de Início”",
-        "ios4": "Toque em Adicionar: o painel fica na tela de início",
-        "android1": "No Chrome, toque no menu ⋮ no topo",
-        "android2": "Escolha “Adicionar à tela inicial” (ou “Instalar app”)",
-        "android3": "Toque em Instalar: o painel abre como um app",
-        "computer": "Computador",
-        "desktop1": "No Chrome, clique no ícone de instalar no fim da barra de endereço",
-        "desktop2": "Clique em Instalar",
-        "desktop3": "O painel abre na própria janela, como um app"
-      },
-      "gotIt": "Entendi",
-      "installNow": "Instalar agora",
-      "later": "Agora não",
-      "never": "Não mostrar novamente",
-      "text": "Deixe o painel a um toque, como qualquer app do seu telefone ou computador.",
-      "title": "Instalar o painel como app"
     },
     "theme": {
       "caddy": "Tema Smart Caddy",
@@ -3503,7 +3503,8 @@
     "ip": "IP",
     "mode": "Modo",
     "reality": {
-      "asn_issue": "O domínio selecionado para REALITY não está no mesmo ASN.\nPara melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN"
+      "asn_issue": "O domínio selecionado para REALITY não está no mesmo ASN.\nPara melhor aproveitamento do Protocolo, é melhor encontrar um Domínio com o mesmo ASN",
+      "no_x25519": ""
     },
     "resolveip": {
       "description": "Usa o IP em vez do nome de domínio nos proxies. Útil quando há muito ruído no DNS.",
