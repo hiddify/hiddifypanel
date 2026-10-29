@@ -104,15 +104,29 @@ export function categoryName(category: string): string {
 
 /** Cores as the panel writes them ("hiddify-core" → "Hiddify Core", "xray" → "XRay"); another core as it comes. */
 export const CORE_NAMES: Record<string, string> = {
+  clash: 'Clash',
   dns_proxy: 'DNS Proxy',
+  firewall: 'Firewall',
   haproxy: 'HAProxy',
   'hiddify-core': 'Hiddify Core',
-  'rust-rpxy-l4': 'rust-rpxy-L4',
+  ip_scanner: 'IP Scanner',
+  'rust-rpxy-l4': 'Rust-rpxy-L4',
+  singbox: 'SingBox',
+  sni_scanner: 'SNI Scanner',
+  sublink: 'SubLink',
   telegram: 'Telegram',
+  telemt: 'Telemt',
+  wireguard: 'WireGuard',
   xray: 'XRay',
 }
 
 export function coreName(core: string | null | undefined): string {
   if (!core) return ''
   return CORE_NAMES[core.toLowerCase()] ?? core
+}
+
+/** A base config's side as a name ("server" → "Server"). */
+export function sideName(side: string | null | undefined): string {
+  if (!side) return ''
+  return side.charAt(0).toUpperCase() + side.slice(1)
 }
