@@ -3222,7 +3222,7 @@
     "warp-https-domain-for-warp-site": "config.warp-https-domain-pour-warp-site",
     "warp": {
       "description": "Warp est un outil qui masque l'adresse IP de votre serveur dans le trafic sortant. Cela signifie que si les utilisateurs visitent un site Web, l'adresse IP Warp est exposée à la place de l'adresse IP de notre serveur.<inlang-LineFeed><br>\nPar exemple, si vous rencontrez un problème avec le captcha sur Google, il peut être résolu de cette manière.",
-      "label": "WARP➕"
+      "label": "WARP"
     },
     "warp_enable": {
       "description": "WARP vous aide à contourner les restrictions de Google, Spotify et Netflix en masquant l'adresse IP du serveur ",

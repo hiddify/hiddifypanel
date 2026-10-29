@@ -4602,7 +4602,7 @@
     "warp-https-domain-for-warp-site": "HTTPS domain used for WARP site routing",
     "warp": {
       "description": "Warp is a tool that hides your server IP in outbound traffic. It means if the users are visiting a website the Warp IP is exposed instead of our server IP.\n<br>\nFor example, if you have a problem with captcha on Google, it might be fixed this way.",
-      "label": "WARP➕"
+      "label": "WARP"
     },
     "warp_enable": {
       "description": "WARP helps you bypass Google, Spotify and Netflix restrictions by hiding server IP ",
