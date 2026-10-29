@@ -1652,6 +1652,45 @@
       "generateExampleOk": "Exemple généré avec succès",
       "generateExamplePartial": "Exemple généré avec des avertissements ou des erreurs",
       "goToSettings": "Aller aux paramètres",
+      "enableBlock": {
+        "lead": "Ce proxy utilise une fonction désactivée dans les réglages. Activez-la ici et le proxy est activé aussitôt.",
+        "leadManual": "Ce proxy utilise une fonction désactivée dans les réglages. Activez-la là-bas, puis activez le proxy.",
+        "where": "Réglages › {category}",
+        "whereUnknown": "Dans les réglages",
+        "error": {
+          "load": "Impossible de charger ces réglages",
+          "save": "Impossible d'enregistrer ces réglages",
+          "fixTitle": "Que faire",
+          "details": "Détails techniques",
+          "copy": "Copier",
+          "copied": "Copié",
+          "newer": {
+            "why": "La base de données contient un réglage que cette version du panneau ne connaît pas. Il a été enregistré par une version plus récente, souvent une bêta, avant un retour à une version plus ancienne.",
+            "fix1": "Mettez le panneau à jour vers la dernière version, ou revenez à la version utilisée auparavant.",
+            "fix2": "Rouvrez ensuite cette fenêtre ; le réglage se chargera normalement."
+          },
+          "network": {
+            "why": "Le panneau n'a pas répondu : la connexion a été coupée ou le serveur redémarre.",
+            "fix1": "Vérifiez votre connexion et patientez quelques secondes.",
+            "fix2": "Rechargez la page et réessayez."
+          },
+          "auth": {
+            "why": "Votre session a expiré, ou votre compte ne peut pas modifier les réglages du serveur.",
+            "fix1": "Reconnectez-vous avec votre lien d'administration.",
+            "fix2": "Seul le propriétaire du panneau (super admin) peut modifier ces réglages."
+          },
+          "invalid": {
+            "why": "Le panneau a refusé l'une des valeurs.",
+            "fix1": "Ouvrez les réglages et vérifiez ce réglage et ceux dont il dépend.",
+            "fix2": "Corrigez la valeur indiquée dans les détails techniques, puis réessayez."
+          },
+          "server": {
+            "why": "Le panneau a rencontré une erreur inattendue.",
+            "fix1": "Réessayez dans un instant.",
+            "fix2": "Si cela se reproduit, consultez le journal du panneau et signalez-le avec les détails techniques ci-dessous."
+          }
+        }
+      },
       "ignoreSkip": "Ignorer les tags skip",
       "ignoreSkipHint": "Rend la config même lorsqu'un bloc skip du modèle ignorerait normalement un fragment",
       "import": "Importer",

@@ -2389,6 +2389,45 @@
       "generateExampleOk": "Example generated successfully",
       "generateExamplePartial": "Example generated with warnings or errors",
       "goToSettings": "Go to settings",
+      "enableBlock": {
+        "lead": "This proxy uses a feature that is turned off in Settings. Turn it on here and the proxy is enabled right away.",
+        "leadManual": "This proxy uses a feature that is turned off in Settings. Turn it on there, then enable the proxy.",
+        "where": "Settings › {category}",
+        "whereUnknown": "In Settings",
+        "error": {
+          "load": "Couldn't load these settings",
+          "save": "Couldn't save these settings",
+          "fixTitle": "What to do",
+          "details": "Technical details",
+          "copy": "Copy",
+          "copied": "Copied",
+          "newer": {
+            "why": "The database holds a setting this panel version does not know. It was saved by a newer version, usually a beta, before going back to an older one.",
+            "fix1": "Update the panel to the latest version, or go back to the version you used before.",
+            "fix2": "Then open this window again; the setting will load normally."
+          },
+          "network": {
+            "why": "The panel did not answer: the connection dropped or the server is busy restarting.",
+            "fix1": "Check your internet connection and wait a few seconds.",
+            "fix2": "Reload the page and try again."
+          },
+          "auth": {
+            "why": "Your sign-in has ended, or your account may not change server settings.",
+            "fix1": "Sign in again with your admin link.",
+            "fix2": "Only the panel owner (super admin) can change these settings."
+          },
+          "invalid": {
+            "why": "The panel rejected one of the values.",
+            "fix1": "Open Settings and check this setting and the ones it depends on.",
+            "fix2": "Fix the value shown in the technical details, then try again."
+          },
+          "server": {
+            "why": "The panel ran into an unexpected error.",
+            "fix1": "Try again in a moment.",
+            "fix2": "If it keeps happening, check the panel log and report it with the technical details below."
+          }
+        }
+      },
       "ignoreSkip": "Ignore skip tags",
       "ignoreSkipHint": "Render config even when a template skip block would normally skip a fragment",
       "import": "Import",

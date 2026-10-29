@@ -1658,6 +1658,45 @@
       "generateExampleOk": "Exemplo gerado com sucesso",
       "generateExamplePartial": "Exemplo gerado com avisos ou erros",
       "goToSettings": "Ir para as configurações",
+      "enableBlock": {
+        "lead": "Este proxy usa um recurso desativado nas configurações. Ative-o aqui e o proxy será ativado em seguida.",
+        "leadManual": "Este proxy usa um recurso desativado nas configurações. Ative-o lá e depois ative o proxy.",
+        "where": "Configurações › {category}",
+        "whereUnknown": "Nas configurações",
+        "error": {
+          "load": "Não foi possível carregar estas configurações",
+          "save": "Não foi possível salvar estas configurações",
+          "fixTitle": "O que fazer",
+          "details": "Detalhes técnicos",
+          "copy": "Copiar",
+          "copied": "Copiado",
+          "newer": {
+            "why": "O banco de dados tem uma configuração que esta versão do painel não conhece. Ela foi salva por uma versão mais nova, geralmente uma beta, antes de voltar para uma mais antiga.",
+            "fix1": "Atualize o painel para a versão mais recente, ou volte para a versão usada antes.",
+            "fix2": "Depois abra esta janela de novo; a configuração carregará normalmente."
+          },
+          "network": {
+            "why": "O painel não respondeu: a conexão caiu ou o servidor está reiniciando.",
+            "fix1": "Verifique sua conexão e aguarde alguns segundos.",
+            "fix2": "Recarregue a página e tente de novo."
+          },
+          "auth": {
+            "why": "Sua sessão expirou, ou sua conta não pode alterar as configurações do servidor.",
+            "fix1": "Entre novamente com seu link de administrador.",
+            "fix2": "Somente o dono do painel (super admin) pode alterar estas configurações."
+          },
+          "invalid": {
+            "why": "O painel recusou um dos valores.",
+            "fix1": "Abra as configurações e confira esta configuração e as que ela depende.",
+            "fix2": "Corrija o valor mostrado nos detalhes técnicos e tente de novo."
+          },
+          "server": {
+            "why": "O painel encontrou um erro inesperado.",
+            "fix1": "Tente de novo daqui a pouco.",
+            "fix2": "Se continuar, verifique o log do painel e relate com os detalhes técnicos abaixo."
+          }
+        }
+      },
       "ignoreSkip": "Ignorar tags skip",
       "ignoreSkipHint": "Renderiza a config mesmo quando um bloco skip do template normalmente ignoraria um fragmento",
       "import": "Importar",
