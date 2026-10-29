@@ -1388,6 +1388,7 @@
       "contact": {
         "hint": "por quê e como resolver",
         "liveTitle": "Gráficos ao vivo indisponíveis",
+        "syncTitle": "Detalhes de sincronização indisponíveis",
         "auth": {
           "title": "O nó não reconhece este painel",
           "why": "O nó respondeu, mas recusou a chave deste painel. Este painel não é mais o painel principal dele: o nó foi reinstalado, restaurado de um backup ou ligado a outro painel principal. Ele ainda pode enviar seus próprios relatórios para cá, por isso pode aparecer Online.",

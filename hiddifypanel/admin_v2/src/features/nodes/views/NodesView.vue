@@ -307,7 +307,7 @@ import Dialog from 'primevue/dialog'
 import Popover from 'primevue/popover'
 import NodeContactError from '@/features/nodes/components/NodeContactError.vue'
 import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
-import type { NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
+import { NodeContactFailure, type NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
 import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
 
 interface PingState {
@@ -350,7 +350,7 @@ const syncInfoNode = ref<PanelNode | null>(null)
 function syncReportLoader(id: number): NodeSyncLoader {
   return async () => {
     const res = await nodesApi.syncReport(id)
-    if (!res.report) throw new Error(res.error || t('nodes.syncInfoUnavailable'))
+    if (!res.report) throw res.error_code ? new NodeContactFailure(res.error_code, res.error) : new Error(res.error || t('nodes.syncInfoUnavailable'))
     return res.report
   }
 }

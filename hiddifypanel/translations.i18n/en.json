@@ -2085,6 +2085,7 @@
       "contact": {
         "hint": "why, and how to fix it",
         "liveTitle": "Live charts are not available",
+        "syncTitle": "Sync details are not available",
         "auth": {
           "title": "The node does not recognise this panel",
           "why": "The node answered, but refused this panel's key. It no longer has this panel as its main panel: it was reinstalled, restored from a backup, or linked to another main panel. It can still send its own reports here, which is why it can show Online.",

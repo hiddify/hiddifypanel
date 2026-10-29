@@ -31,6 +31,8 @@ export interface PanelNode {
 export interface NodeSyncReportOut {
   /** null when the node could not be asked (offline, or too old for this call): see `error`. */
   report: NodeSyncStatus | null
+  /** Why not (auth, timeout, refused, ...): the page explains it; `error` is the technical text */
+  error_code?: string
   error: string
   /** This panel's side of the link. */
   websocket_connected: boolean

@@ -7,17 +7,30 @@ const REFRESH_MS = 10_000
 /** Gets a sync report: this node's own, or a node's through the parent. */
 export type NodeSyncLoader = () => Promise<NodeSyncStatus>
 
+/** The parent could not ask the node: why (hutils.node.contact_error code) and the technical text. */
+export class NodeContactFailure extends Error {
+  constructor(
+    readonly code: string,
+    readonly detail: string,
+  ) {
+    super(detail || code)
+  }
+}
+
 /** A sync report, reloaded every 10 s while `auto` is on and the tab is visible. */
 export function useNodeSyncStatus(loader: NodeSyncLoader): {
   data: Ref<NodeSyncStatus | null>
   loading: Ref<boolean>
   error: Ref<string>
+  /** Set instead of `error` when the node could not be asked: the page explains it */
+  failure: Ref<NodeContactFailure | null>
   auto: Ref<boolean>
   load: () => Promise<void>
 } {
   const data = ref<NodeSyncStatus | null>(null)
   const loading = ref(false)
   const error = ref('')
+  const failure = ref<NodeContactFailure | null>(null)
   const auto = ref(true)
   let timer: number | undefined
 
@@ -26,8 +39,10 @@ export function useNodeSyncStatus(loader: NodeSyncLoader): {
     try {
       data.value = await loader()
       error.value = ''
+      failure.value = null
     } catch (err) {
-      error.value = apiErrorMessage(err)
+      failure.value = err instanceof NodeContactFailure ? err : null
+      error.value = failure.value ? '' : apiErrorMessage(err)
     } finally {
       loading.value = false
     }
@@ -45,5 +60,5 @@ export function useNodeSyncStatus(loader: NodeSyncLoader): {
   })
   onBeforeUnmount(() => window.clearInterval(timer))
 
-  return { data, loading, error, auto, load }
+  return { data, loading, error, failure, auto, load }
 }

@@ -19,6 +19,12 @@
       </div>
     </header>
 
+    <!-- The node could not be asked: why and what to do, in the panel's language -->
+    <NodeContactError v-if="failure" :code="failure.code" :detail="failure.detail" :title="t('nodes.contact.syncTitle')" class="mb-3">
+      <template #actions>
+        <Button :label="t('nodes.checkAgain')" icon="pi pi-refresh" size="small" outlined :loading="loading" @click="load" />
+      </template>
+    </NodeContactError>
     <Message v-if="error" severity="error" :closable="false" class="mb-3">{{ error }}</Message>
     <Message v-if="data?.error" severity="warn" :closable="false" class="mb-3">{{ data.error }}</Message>
 
@@ -173,6 +179,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
+import NodeContactError from '@/features/nodes/components/NodeContactError.vue'
 import SelectButton from 'primevue/selectbutton'
 import Skeleton from 'primevue/skeleton'
 import Tag from 'primevue/tag'
@@ -185,7 +192,7 @@ import { buildTiles, type SyncTile } from '@/features/node-home/sync-tiles'
 const props = withDefaults(defineProps<{ loader?: NodeSyncLoader; embedded?: boolean }>(), { loader: () => nodeSyncApi.status(), embedded: false })
 
 const { t, locale } = useI18n()
-const { data, loading, error, auto, load } = useNodeSyncStatus(props.loader)
+const { data, loading, error, failure, auto, load } = useNodeSyncStatus(props.loader)
 const { ago, absolute, age } = useServerClock(computed(() => data.value?.server_time))
 
 const loadingKinds = SYNC_KINDS

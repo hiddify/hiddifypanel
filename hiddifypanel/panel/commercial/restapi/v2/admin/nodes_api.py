@@ -268,6 +268,8 @@ class NodeSyncApi(MethodView):
 class NodeSyncStatusOut(ApiModel):
     #: None when the node could not be asked (offline, too old for this call)
     report: NodeSyncReport | None = None
+    #: why not (hutils.node.contact_error; the page explains it) and the technical text, without the node's secret path
+    error_code: str = ""
     error: str = ""
     #: the parent's side of the link
     websocket_connected: bool
@@ -284,9 +286,11 @@ class NodeSyncReportApi(MethodView):
         child = _remote_or_404(node_id)
         last_seen = _last_seen(child)
         report = hutils.node.parent.node_sync_report(child)
+        failed = report if isinstance(report, tuple) else ("", "")
         return NodeSyncStatusOut(
             report=report if isinstance(report, NodeSyncReport) else None,
-            error=report if isinstance(report, str) else "",
+            error_code=failed[0],
+            error=failed[1],
             websocket_connected=ws_server.is_connected(child.unique_id),
             last_seen=last_seen.isoformat() if last_seen else None,
         )

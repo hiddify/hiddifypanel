@@ -1388,6 +1388,7 @@
       "contact": {
         "hint": "pourquoi et comment corriger",
         "liveTitle": "Graphiques en direct indisponibles",
+        "syncTitle": "Les détails de synchronisation sont indisponibles",
         "auth": {
           "title": "Le nœud ne reconnaît pas ce panneau",
           "why": "Le nœud a répondu, mais a refusé la clé de ce panneau. Ce panneau n'est plus son panneau principal : le nœud a été réinstallé, restauré depuis une sauvegarde ou relié à un autre panneau principal. Il peut encore envoyer ses propres rapports ici, c'est pourquoi il peut apparaître En ligne.",
