@@ -1499,6 +1499,18 @@ msgstr "ရင်းမြစ်များအား ဖော်ပြရန�
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.new_user_place.description"
+msgstr "အသုံးပြုသူအသစ်ကို စာရင်း၏ အစ သို့မဟုတ် အဆုံးတွင် ထားရန်"
+
+msgid "config.new_user_place.end"
+msgstr "စာရင်း၏ အဆုံး"
+
+msgid "config.new_user_place.label"
+msgstr "↕️ အသုံးပြုသူအသစ် နေရာ"
+
+msgid "config.new_user_place.top"
+msgstr "စာရင်း၏ အစ"
+
 msgid "config.not_found.description"
 msgstr "Config အား မတွေ့ရှိပါ"
 

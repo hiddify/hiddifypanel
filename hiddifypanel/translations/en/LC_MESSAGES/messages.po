@@ -10817,6 +10817,18 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.new_user_place.description"
+msgstr "Put a new user at the start or the end of the users list. Pinned users stay above the start."
+
+msgid "config.new_user_place.end"
+msgstr "End of the list"
+
+msgid "config.new_user_place.label"
+msgstr "↕️ New User Position"
+
+msgid "config.new_user_place.top"
+msgstr "Start of the list"
+
 msgid "config.node_name.description"
 msgstr "The name of this node, shown in the parent panel"
 

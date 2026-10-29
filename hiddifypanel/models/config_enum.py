@@ -55,6 +55,11 @@ class CommonProxyCore(HEnum):
     both = auto()
 
 
+class NewUserPlace(HEnum):
+    top = auto()
+    end = auto()
+
+
 class ConfigCategory(StrEnum):
     admin = auto()
     branding = auto()
@@ -164,6 +169,8 @@ class ConfigEnum(metaclass=FastEnum):
     restls1_2_domain = _StrConfigDscr(ConfigCategory.hidden)
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
     show_usage_in_sublink = _BoolConfigDscr(ConfigCategory.general)
+    # Users page: a new user goes to the start of the admin's order (after the pinned ones) or the end
+    new_user_place = _TypedConfigDscr(NewUserPlace, ConfigCategory.general)
     cloudflare = _StrConfigDscr(ConfigCategory.too_advanced)
     license = _StrConfigDscr(ConfigCategory.hidden)
     country = _StrConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)

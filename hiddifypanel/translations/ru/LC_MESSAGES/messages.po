@@ -7760,6 +7760,18 @@ msgstr ""
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.new_user_place.description"
+msgstr "Новый пользователь — в начало или в конец списка пользователей. Закреплённые остаются выше."
+
+msgid "config.new_user_place.end"
+msgstr "В конец списка"
+
+msgid "config.new_user_place.label"
+msgstr "↕️ Место нового пользователя"
+
+msgid "config.new_user_place.top"
+msgstr "В начало списка"
+
 msgid "config.node_name.description"
 msgstr "Имя этого узла, показываемое в родительской панели"
 

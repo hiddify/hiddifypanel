@@ -7237,6 +7237,18 @@ msgstr "用于显示资源。使用您服务器的 CPU，但不会太多。"
 msgid "config.netdata.label"
 msgstr "Netdata"
 
+msgid "config.new_user_place.description"
+msgstr "新用户放在用户列表开头还是末尾。置顶的用户始终在最上面。"
+
+msgid "config.new_user_place.end"
+msgstr "列表末尾"
+
+msgid "config.new_user_place.label"
+msgstr "↕️ 新用户位置"
+
+msgid "config.new_user_place.top"
+msgstr "列表开头"
+
 msgid "config.node_name.description"
 msgstr "此节点的名称，显示在父面板中"
 
