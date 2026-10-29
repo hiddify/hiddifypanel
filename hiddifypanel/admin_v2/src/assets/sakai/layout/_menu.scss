@@ -94,6 +94,13 @@
                 transform: scale(1.06);
             }
 
+            /* With a mouse the icon comes alive: a soft pop and sway, then it rests a little bigger */
+            @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+                &:hover .layout-menuitem-icon {
+                    animation: menu-icon-alive 0.6s ease-out forwards;
+                }
+            }
+
             .layout-submenu-toggler {
                 font-size: 75%;
                 margin-inline-start: auto;
@@ -185,4 +192,12 @@
 .layout-submenu-enter-active {
     overflow: hidden;
     transition: max-height 1s ease-in-out;
+}
+
+@keyframes menu-icon-alive {
+    0% { transform: scale(1) rotate(0); }
+    30% { transform: scale(1.18) rotate(-10deg); }
+    55% { transform: scale(0.97) rotate(6deg); }
+    80% { transform: scale(1.08) rotate(-2deg); }
+    100% { transform: scale(1.06) rotate(0); }
 }
