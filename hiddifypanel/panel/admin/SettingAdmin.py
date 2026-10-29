@@ -1,3 +1,4 @@
+import datetime
 import re
 from dataclasses import dataclass
 from dataclasses import field as dc_field
@@ -153,6 +154,12 @@ def save_config_form(form) -> SettingsSaveResult:
         else:
             changed_configs[ConfigEnum.parent_panel] = parent_baseurl
             parent_apikey = uuid
+
+    if ConfigEnum.admin_lang in changed_configs:
+        # "Admin Panel Language" is the language of every admin and agent: a new one clears the language each picked for
+        # themselves in the top bar, so they all follow it (a later top bar choice is theirs only). The modified time
+        # sends the change to the nodes.
+        AdminUser.query.filter(AdminUser.lang.isnot(None)).update({"lang": None, "last_modified_time": datetime.datetime.now()}, synchronize_session=False)
 
     for k, v in changed_configs.items():
         # html inputs santitizing
