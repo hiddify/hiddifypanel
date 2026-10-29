@@ -99,38 +99,19 @@
     <article class="ns__card">
       <h3 class="ns__card-title"><i class="pi pi-history" /> {{ t('nodeSync.recent') }}</h3>
       <p v-if="data && !data.log.length" class="text-muted-color m-0">{{ t('nodeSync.noLog') }}</p>
+      <!-- Each sync in words; opened: what it carried, by name (the JSON behind "Technical data") -->
       <ol v-else class="ns__log">
-        <li
-          v-for="(e, i) in data?.log ?? []"
-          :key="i"
-          class="ns__log-row"
-          :class="{ 'ns__log-row--bad': !e.ok, 'ns__log-row--open': openRow === entryKey(e) }"
-        >
-          <button v-if="hasData(e)" type="button" class="ns__log-toggle" :aria-expanded="openRow === entryKey(e)" :aria-label="t('nodeSync.showData')" @click="toggleRow(e)">
-            <i :class="openRow === entryKey(e) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
-          </button>
-          <i :class="e.ok ? 'pi pi-check-circle' : 'pi pi-times-circle'" />
-          <span class="ns__log-kind">{{ t(`nodeSync.kind.${e.kind}`) }}</span>
-          <span class="ns__chip">{{ t(`nodeSync.source.${e.source}`) }}</span>
-          <span v-if="e.count !== null" class="ns__mono">{{ e.count }}</span>
-          <span v-if="Object.keys(e.detail).length" class="ns__log-detail ns__mono">{{ detailText(e.detail) }}</span>
-          <span class="ns__log-time" :title="absolute(e.at)">{{ ago(e.at) }}</span>
-          <!-- What was exchanged (kept with the log in redis, not in the database) -->
-          <div v-if="openRow === entryKey(e)" class="ns__items">
-            <template v-if="e.items?.length">
-              <b>{{ t('nodeSync.items', { n: e.items.length + (e.items_more ?? 0) }) }}</b>
-              <ul class="ns__items-list ns__mono">
-                <li v-for="(item, j) in e.items" :key="j">{{ item }}</li>
-                <li v-if="e.items_more" class="text-muted-color">{{ t('nodeSync.itemsMore', { n: e.items_more }) }}</li>
-              </ul>
-            </template>
-            <template v-if="e.raw_z">
-              <b>{{ t('nodeSync.rawData', { size: sizeText(e.raw_size ?? 0) }) }}</b>
-              <span v-if="e.raw_truncated" class="text-muted-color"> · {{ t('nodeSync.rawTruncated') }}</span>
-              <pre class="ns__raw ns__mono">{{ rawText }}</pre>
-            </template>
-          </div>
-        </li>
+        <SyncLogEntry
+          v-for="e in data?.log ?? []"
+          :key="entryKey(e)"
+          :entry="e"
+          :open="openRow === entryKey(e)"
+          :users="data?.users"
+          :admins="data?.admins"
+          :ago="ago(e.at)"
+          :at="absolute(e.at)"
+          @toggle="openRow = openRow === entryKey(e) ? '' : entryKey(e)"
+        />
       </ol>
     </article>
 
@@ -184,6 +165,7 @@ import SelectButton from 'primevue/selectbutton'
 import Skeleton from 'primevue/skeleton'
 import Tag from 'primevue/tag'
 import NodeSyncTile from '@/features/node-home/components/NodeSyncTile.vue'
+import SyncLogEntry from '@/features/node-home/components/SyncLogEntry.vue'
 import { NAME_MAX, PHONE_NAME_MAX, isLongName, shortName } from '@/shared/utils/short-name'
 import { SYNC_KINDS, nodeSyncApi, rawJson, type FeedCursor, type NodeSyncEntry } from '@/features/node-home/api'
 import { useNodeSyncStatus, type NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
@@ -198,28 +180,9 @@ const { ago, absolute, age } = useServerClock(computed(() => data.value?.server_
 
 const loadingKinds = SYNC_KINDS
 
-// A recent sync opened: its items and the data it carried. Keyed by time + kind + source, as the log refreshes.
+// A recent sync opened. Keyed by time + kind + source, as the log refreshes.
 const openRow = ref('')
-const rawText = ref('')
 const entryKey = (e: NodeSyncEntry) => `${e.at}:${e.kind}:${e.source}`
-const hasData = (e: NodeSyncEntry) => !!(e.items?.length || e.raw_z)
-async function toggleRow(e: NodeSyncEntry) {
-  const key = entryKey(e)
-  if (openRow.value === key) {
-    openRow.value = ''
-    return
-  }
-  openRow.value = key
-  rawText.value = '…'
-  try {
-    rawText.value = await rawJson(e)
-  } catch {
-    rawText.value = t('nodeSync.rawUnreadable')
-  }
-}
-function sizeText(bytes: number): string {
-  return bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`
-}
 
 // The node's users / admins (in the report of nodes new enough to send them).
 type ListKind = 'users' | 'admins'
@@ -272,12 +235,6 @@ const tiles = computed<SyncTile[]>(() => {
     deleted: (n) => t('nodeSync.deleted', { n }),
   })
 })
-
-function detailText(detail: NodeSyncEntry['detail']): string {
-  return Object.entries(detail)
-    .map(([k, v]) => `${k}=${v}`)
-    .join(' ')
-}
 
 function cursorPart(part: FeedCursor['u']): string {
   return part ? part.join(' / ') : '—'
@@ -341,14 +298,6 @@ const cursorText = computed(() => {
   padding: 1rem;
   min-width: 0;
 }
-.ns__chip {
-  font-size: 0.72rem;
-  padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  background: var(--p-content-hover-background);
-  color: var(--p-text-muted-color);
-  white-space: nowrap;
-}
 .ns__cols {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
@@ -391,31 +340,7 @@ const cursorText = computed(() => {
   padding: 0;
   display: flex;
   flex-direction: column;
-}
-.ns__log-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem 0.6rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--p-content-border-color);
-  font-size: 0.85rem;
-}
-.ns__log-row:last-child {
-  border-bottom: 0;
-}
-.ns__log-row > .pi {
-  color: var(--p-green-500);
-}
-.ns__log-row--bad > .pi {
-  color: var(--p-red-500);
-}
-.ns__log-kind {
-  font-weight: 600;
-}
-.ns__log-detail {
-  color: var(--p-text-muted-color);
-  overflow-wrap: anywhere;
+  gap: 0.45rem;
 }
 .ns__list-bar {
   display: flex;
@@ -454,45 +379,6 @@ const cursorText = computed(() => {
 .ns__list-foot {
   margin: 0.6rem 0 0;
   font-size: 0.8rem;
-}
-.ns__items {
-  flex-basis: 100%;
-  font-size: 0.8rem;
-}
-.ns__log-toggle {
-  border: 0;
-  background: none;
-  padding: 0.1rem;
-  color: var(--p-text-muted-color);
-  cursor: pointer;
-}
-.ns__log-toggle:hover,
-.ns__log-toggle:focus-visible {
-  color: var(--p-primary-color);
-}
-.ns__raw {
-  margin: 0.35rem 0 0;
-  padding: 0.6rem;
-  max-height: 20rem;
-  overflow: auto;
-  background: var(--p-content-hover-background);
-  border-radius: 8px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  font-size: 0.75rem;
-}
-.ns__items-list {
-  margin: 0.35rem 0 0;
-  padding-inline-start: 1.1rem;
-  max-height: 14rem;
-  overflow: auto;
-  overflow-wrap: anywhere;
-}
-.ns__log-time {
-  margin-inline-start: auto;
-  color: var(--p-text-muted-color);
-  font-size: 0.78rem;
-  white-space: nowrap;
 }
 @media (max-width: 575px) {
   .ns__grid {

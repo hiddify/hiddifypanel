@@ -1937,7 +1937,48 @@
       "title": "Sync with the parent",
       "took": "{ms} ms",
       "usersOnNode": "Users on this node",
-      "websocket": "Live connection"
+      "websocket": "Live connection",
+      "noun": {
+        "users": "1 user | {n} users",
+        "admins": "1 admin | {n} admins",
+        "outbounds": "1 outbound | {n} outbounds",
+        "domains": "1 domain | {n} domains"
+      },
+      "say": {
+        "received": "{what} received from the main panel",
+        "receivedRegister": "{what} received when the node connected",
+        "receivedHttp": "{what} received by the backup sync",
+        "sent": "{what} sent to the main panel",
+        "checked": "{what} compared with the main panel",
+        "usageSent": "Traffic of {what} sent to the main panel",
+        "usageNone": "No new traffic to send",
+        "failed": "{what}: the exchange failed"
+      },
+      "x": {
+        "matched": "everything matched",
+        "missing": "{n} missing, asked again | {n} missing, asked again",
+        "removed": "{n} removed here | {n} removed here",
+        "more": "more are on the way",
+        "missingSent": "{n} user the main panel lacked was sent | {n} users the main panel lacked were sent",
+        "usersBack": "the main panel sent back 1 user's totals | the main panel sent back {n} users' totals"
+      },
+      "dir": {
+        "in": "From the main panel",
+        "out": "To the main panel",
+        "check": "Compared"
+      },
+      "sourceHint": {
+        "ws_feed": "Changes the main panel pushes at once over the live connection",
+        "inventory": "A regular check that the node has the same list as the main panel",
+        "register": "Everything the node got when it connected to the main panel",
+        "http_sync": "The backup sync over HTTP, used when the live connection is down",
+        "usage_report": "The node sends its users' traffic every few minutes"
+      },
+      "on": "Enabled",
+      "unknownName": "Not on this node",
+      "tech": "Technical data",
+      "techHidden": "secret values hidden",
+      "rawPartial": "Only the beginning of the data is kept."
     },
     "nodes": {
       "add": {
