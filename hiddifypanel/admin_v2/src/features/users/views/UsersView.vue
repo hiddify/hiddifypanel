@@ -408,6 +408,7 @@
 
 <script setup lang="ts">
 import { unitLabel } from '@/shared/utils/format-metrics'
+import { PHONE_NAME_MAX, isLongName, shortName } from '@/shared/utils/short-name'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import NotePreview from '@/shared/components/NotePreview.vue'
@@ -677,11 +678,8 @@ function isPinned(u: { uuid: string }): boolean {
 }
 const pinnedCount = computed(() => allRows.value.filter((u) => isPinned(u)).length)
 const hasNote = (u: Row) => !!u.comment?.trim()
-/** Names longer than this show their first letters and "…"; the whole name on hover. Phone cards are narrower. */
-const NAME_MAX = 20
-const CARD_NAME_MAX = 15
-const isLongName = (name: string, max = NAME_MAX) => Array.from(name).length > max
-const shortName = (name: string, max = NAME_MAX) => (isLongName(name, max) ? Array.from(name).slice(0, max).join('').trimEnd() + '…' : name)
+/** Phone cards are narrower: their names are cut sooner */
+const CARD_NAME_MAX = PHONE_NAME_MAX
 const noteCount = computed(() => allRows.value.filter(hasNote).length)
 /** The tag filter: any picked tag, or "Pin" (pinned users) and "Note" (users with a note), like tags. */
 function matchesPicked(u: Row): boolean {

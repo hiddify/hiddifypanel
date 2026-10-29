@@ -141,7 +141,7 @@
         <template v-if="listKind === 'users'">
           <li v-for="u in shownUsers" :key="u.uuid" class="ns__list-row">
             <Tag :severity="u.is_active ? 'success' : u.enable ? 'warn' : 'secondary'" :value="u.is_active ? t('nodeSync.active') : u.enable ? t('nodeSync.inactive') : t('nodeSync.disabled')" />
-            <b class="ns__list-name">{{ u.name }}</b>
+            <b class="ns__list-name" dir="auto" v-tooltip.top="isLongName(u.name, nameMax) ? u.name : null">{{ shortName(u.name, nameMax) }}</b>
             <span class="ns__mono text-muted-color">{{ u.uuid.slice(0, 8) }}</span>
             <span v-if="u.owner" class="ns__list-extra"><i class="pi pi-sitemap" /> {{ u.owner }}</span>
           </li>
@@ -149,7 +149,7 @@
         <template v-else>
           <li v-for="a in shownAdmins" :key="a.uuid" class="ns__list-row">
             <Tag severity="info" :value="a.mode" />
-            <b class="ns__list-name">{{ a.name }}</b>
+            <b class="ns__list-name" dir="auto" v-tooltip.top="isLongName(a.name, nameMax) ? a.name : null">{{ shortName(a.name, nameMax) }}</b>
             <span class="ns__mono text-muted-color">{{ a.uuid.slice(0, 8) }}</span>
             <span v-if="a.parent" class="ns__list-extra"><i class="pi pi-sitemap" /> {{ a.parent }}</span>
           </li>
@@ -165,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -177,6 +177,7 @@ import SelectButton from 'primevue/selectbutton'
 import Skeleton from 'primevue/skeleton'
 import Tag from 'primevue/tag'
 import NodeSyncTile from '@/features/node-home/components/NodeSyncTile.vue'
+import { NAME_MAX, PHONE_NAME_MAX, isLongName, shortName } from '@/shared/utils/short-name'
 import { SYNC_KINDS, nodeSyncApi, rawJson, type FeedCursor, type NodeSyncEntry } from '@/features/node-home/api'
 import { useNodeSyncStatus, type NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
 import { useServerClock } from '@/features/node-home/composables/useServerClock'
@@ -244,6 +245,12 @@ const shownAdmins = computed(() => {
   const q = listQuery.value.trim().toLowerCase()
   return (data.value?.admins ?? []).filter((a) => matches(q, a.name, a.uuid, a.mode, a.parent))
 })
+// Long names: 20 letters, 15 on a phone (the full name on hover)
+const phoneMq = window.matchMedia('(max-width: 575px)')
+const nameMax = ref(phoneMq.matches ? PHONE_NAME_MAX : NAME_MAX)
+const onPhoneChange = () => (nameMax.value = phoneMq.matches ? PHONE_NAME_MAX : NAME_MAX)
+phoneMq.addEventListener('change', onPhoneChange)
+onBeforeUnmount(() => phoneMq.removeEventListener('change', onPhoneChange))
 const listCount = computed(() => (listKind.value === 'users' ? shownUsers.value.length : shownAdmins.value.length))
 const listTotal = computed(() => (listKind.value === 'users' ? data.value?.users?.length : data.value?.admins?.length) ?? 0)
 const ws = computed(() => data.value?.websocket ?? null)
