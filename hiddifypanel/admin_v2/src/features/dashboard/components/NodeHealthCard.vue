@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import Dialog from 'primevue/dialog'
+import NodeContactError from '@/features/nodes/components/NodeContactError.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -427,7 +428,9 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
           />
         </div>
         <p v-else class="disk-dialog__empty">{{ t('dashboard.noData') }}</p>
-        <p v-if="diskDetail.error" class="disk-dialog__error">{{ diskDetail.error }}</p>
+        <!-- The node could not be asked: why and what to do, in the panel's language -->
+        <NodeContactError v-if="diskDetail.error_code" :code="diskDetail.error_code" :detail="diskDetail.error" />
+        <p v-else-if="diskDetail.error" class="disk-dialog__error">{{ diskDetail.error }}</p>
       </template>
     </Dialog>
   </DashCard>

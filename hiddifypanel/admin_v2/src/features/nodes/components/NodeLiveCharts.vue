@@ -5,13 +5,16 @@
  */
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import Button from 'primevue/button'
 import MetricChart from '@/features/dashboard/components/MetricChart.vue'
+import NodeContactError from '@/features/nodes/components/NodeContactError.vue'
 import { SERIES } from '@/features/dashboard/composables/useChartTheme'
 import type { NodeSample } from '@/features/dashboard/composables/useMetricHistory'
 import { timeLabels } from '@/features/dashboard/utils/series'
 import { formatBitRate, formatGb, formatPercent } from '@/shared/utils/format-metrics'
 
-const props = defineProps<{ samples: NodeSample[]; error?: string }>()
+const props = defineProps<{ samples: NodeSample[]; error?: { code: string; detail: string } | null }>()
+const emit = defineEmits<{ retry: [] }>()
 
 const { t, locale } = useI18n()
 
@@ -51,7 +54,12 @@ const memoryTooltip = (_d: number, i: number, formatted: string) => {
 
 <template>
   <div class="nlc">
-    <p v-if="error" class="nlc__note nlc__note--error"><i class="pi pi-exclamation-triangle" />{{ error }}</p>
+    <!-- The node could not be asked: why and what to do, in the panel's language -->
+    <NodeContactError v-if="error" :code="error.code" :detail="error.detail" :title="t('nodes.contact.liveTitle')">
+      <template #actions>
+        <Button :label="t('nodes.checkAgain')" icon="pi pi-refresh" size="small" outlined @click="emit('retry')" />
+      </template>
+    </NodeContactError>
     <p v-else-if="samples.length < 2" class="nlc__note"><i class="pi pi-spin pi-spinner" />{{ t('nodes.live.collecting') }}</p>
     <div class="nlc__grid">
       <div class="nlc__chart">
@@ -124,8 +132,5 @@ const memoryTooltip = (_d: number, i: number, formatted: string) => {
   margin: 0;
   font-size: 0.8rem;
   color: var(--p-text-muted-color);
-}
-.nlc__note--error {
-  color: var(--p-orange-500);
 }
 </style>

@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import ipaddress
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta
 
 from apiflask import abort
-from flask import jsonify, request
+from flask import copy_current_request_context, jsonify, request
 from flask.views import MethodView
 
 import hiddifypanel
@@ -191,6 +194,35 @@ class NodeApi(MethodView):
         return {"status": 200, "msg": "ok", "node_unlinked": unlinked}
 
 
+#: Nodes that cannot be asked, for the top bar's notifications: every open admin page asks, so the answer is kept a while.
+_PROBLEMS_TTL = 120
+_problems: dict = {"at": 0.0, "rows": []}
+_problems_lock = threading.Lock()
+
+
+def _node_problem(child: Child) -> dict | None:
+    base = (child.node_base_url or "").strip()
+    code, detail = ("no_url", "") if not base else hutils.node.panel_contact(base, max_retry=1, timeout=6)[1:]
+    return {"id": child.id, "name": child.name or f"node-{child.id}", "code": code, "detail": detail} if code else None
+
+
+class NodeProblemsApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self):
+        """Nodes: The nodes this panel cannot reach now, and why (for the notifications)"""
+        if hutils.node.is_child():
+            return {"problems": []}
+        with _problems_lock:
+            if time.monotonic() - _problems["at"] > _PROBLEMS_TTL:
+                nodes = Child.query.filter(Child.mode == ChildMode.remote).order_by(Child.id).all()
+                checks = [copy_current_request_context(_node_problem) for _ in nodes]
+                with ThreadPoolExecutor(max_workers=8) as pool:
+                    rows = list(pool.map(lambda pair: pair[0](pair[1]), zip(checks, nodes)))
+                _problems.update(at=time.monotonic(), rows=[r for r in rows if r])
+            return {"problems": _problems["rows"]}
+
+
 class NodePingApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
@@ -199,10 +231,11 @@ class NodePingApi(MethodView):
         child = _remote_or_404(node_id)
         base = (child.node_base_url or "").strip()
         if not base:
-            return {"online": False, "version": "", "error": "no_url"}
-        online, error = hutils.node.is_panel_active(base)
+            return {"online": False, "version": "", "error": "", "error_code": "no_url"}
+        # error_code says why (the page explains it and how to fix it); error is the technical text, without the secret path
+        online, code, detail = hutils.node.panel_contact(base)
         info = hutils.node.get_panel_info_by_url(base) if online else None
-        return {"online": online, "version": getattr(info, "version", "") or "", "error": "" if online else error}
+        return {"online": online, "version": getattr(info, "version", "") or "", "error": detail, "error_code": code}
 
 
 def _ping_target(child: Child) -> tuple[str, int]:
@@ -259,14 +292,20 @@ class NodeSyncApi(MethodView):
     def post(self, node_id: int):
         """Nodes: Ask a node to sync (users, admins and its domains) now"""
         _only_on_parent_or_standalone()
-        if not hutils.node.parent.request_child_to_sync(_remote_or_404(node_id)):
-            abort(502, "The node did not answer the sync request")
+        child = _remote_or_404(node_id)
+        if not hutils.node.parent.request_child_to_sync(child):
+            # why: asked again the way the connection check does, so the page can explain it (error_code)
+            base = (child.node_base_url or "").strip()
+            code, detail = ("no_url", "") if not base else hutils.node.panel_contact(base, max_retry=1, timeout=6)[1:]
+            return {"message": "The node did not answer the sync request", "error_code": code or "unknown", "error": detail}, 502
         return {"status": 200, "msg": "ok"}
 
 
 class NodeSyncStatusOut(ApiModel):
     #: None when the node could not be asked (offline, too old for this call)
     report: NodeSyncReport | None = None
+    #: why not (hutils.node.contact_error; the page explains it) and the technical text, without the node's secret path
+    error_code: str = ""
     error: str = ""
     #: the parent's side of the link
     websocket_connected: bool
@@ -283,9 +322,11 @@ class NodeSyncReportApi(MethodView):
         child = _remote_or_404(node_id)
         last_seen = _last_seen(child)
         report = hutils.node.parent.node_sync_report(child)
+        failed = report if isinstance(report, tuple) else ("", "")
         return NodeSyncStatusOut(
             report=report if isinstance(report, NodeSyncReport) else None,
-            error=report if isinstance(report, str) else "",
+            error_code=failed[0],
+            error=failed[1],
             websocket_connected=ws_server.is_connected(child.unique_id),
             last_seen=last_seen.isoformat() if last_seen else None,
         )

@@ -85,10 +85,11 @@ def init_app(app):
         bp.add_url_rule("/quick-setup/domains/", view_func=QuickSetupDomainsApi)
         bp.add_url_rule("/quick-setup/finish/", view_func=QuickSetupFinishApi)
 
-        from .nodes_api import NodeApi, NodeIcmpPingApi, NodeJobApi, NodePingApi, NodesApi, NodeSyncApi, NodeSyncReportApi
+        from .nodes_api import NodeApi, NodeIcmpPingApi, NodeJobApi, NodePingApi, NodeProblemsApi, NodesApi, NodeSyncApi, NodeSyncReportApi
 
         bp.add_url_rule("/nodes/", view_func=NodesApi)
         bp.add_url_rule("/nodes/jobs/<string:job_id>/", view_func=NodeJobApi)
+        bp.add_url_rule("/nodes/problems/", view_func=NodeProblemsApi)
         bp.add_url_rule("/nodes/<int:node_id>/", view_func=NodeApi)
         bp.add_url_rule("/nodes/<int:node_id>/ping/", view_func=NodePingApi)
         bp.add_url_rule("/nodes/<int:node_id>/icmp/", view_func=NodeIcmpPingApi)

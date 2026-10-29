@@ -240,16 +240,17 @@ def register_node(node_admin_link: str, name: str = "") -> Child | None:
     return child
 
 
-def node_sync_report(child: Child) -> "NodeSyncReport | str":
-    """The node's own sync report (``sync_report.build`` there), or why it could not be read."""
+def node_sync_report(child: Child) -> "NodeSyncReport | tuple[str, str]":
+    """The node's own sync report (``sync_report.build`` there), or why it could not be read: ``contact_error``'s (code, detail)."""
+    from .shared import contact_error
     from .sync_report import NodeSyncReport
 
     base_url = (child.node_base_url or "").strip()
     if not base_url:
-        return "The node has no address"
+        return contact_error("no_url")
     res = NodeApiClient(base_url, max_retry=1).get("/api/v2/child/sync-status/", NodeSyncReport)
     if isinstance(res, NodeApiErrorSchema):
-        return str(res.msg) or "The node did not answer"
+        return contact_error(res)
     return res
 
 

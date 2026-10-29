@@ -1383,7 +1383,72 @@
       "syncNow": "Sincronizar agora",
       "synced": "{name} sincronizado",
       "title": "Nós",
-      "unreachable": "Inacessível"
+      "unreachable": "Inacessível",
+      "checkAgain": "Verificar de novo",
+      "contact": {
+        "hint": "por quê e como resolver",
+        "liveTitle": "Gráficos ao vivo indisponíveis",
+        "syncTitle": "Detalhes de sincronização indisponíveis",
+        "auth": {
+          "title": "O nó não reconhece este painel",
+          "why": "O nó respondeu, mas recusou a chave deste painel. Este painel não é mais o painel principal dele: o nó foi reinstalado, restaurado de um backup ou ligado a outro painel principal. Ele ainda pode enviar seus próprios relatórios para cá, por isso pode aparecer Online.",
+          "fix": "Remova este nó aqui (botão da lixeira) e adicione-o de novo com \"Adicionar nó\" e o link de administrador do nó."
+        },
+        "not_found": {
+          "title": "O painel do nó não está mais neste endereço",
+          "why": "O nó respondeu, mas não há um painel Hiddify neste endereço: o caminho de administração ou o domínio mudou, ou ele usa uma versão muito antiga.",
+          "fix": "Atualize o nó para a mesma versão deste painel. Se o link de administrador mudou, remova o nó aqui e adicione-o de novo com o novo link."
+        },
+        "timeout": {
+          "title": "O nó não respondeu a tempo",
+          "why": "O servidor do nó não respondeu em alguns segundos: pode estar desligado, sobrecarregado ou reiniciando, ou um firewall descarta o tráfego entre os dois servidores.",
+          "fix": "Verifique se o servidor do nó está ligado e se o painel abre com \"Abrir\". Se abrir, garanta que o firewall do nó libere este servidor na porta 443 e verifique de novo."
+        },
+        "refused": {
+          "title": "O nó recusou a conexão",
+          "why": "Este servidor chegou ao endereço do nó, mas nada aceitou a conexão: os serviços web do nó estão parados ou um firewall a rejeita.",
+          "fix": "No servidor do nó, reinicie os serviços (página Ações do painel do nó ou reinicie o servidor) e garanta que a porta 443 esteja aberta; depois verifique de novo."
+        },
+        "dns": {
+          "title": "O domínio do nó não foi encontrado",
+          "why": "O domínio no endereço do nó não aponta para nenhum IP: expirou, o registro DNS foi removido ou alterado, ou o DNS deste servidor falha.",
+          "fix": "Verifique se o registro DNS do domínio aponta para o servidor do nó. Se o endereço do nó mudou, remova o nó aqui e adicione-o de novo com o novo link."
+        },
+        "tls": {
+          "title": "Falha na conexão segura com o nó",
+          "why": "O nó respondeu, mas o certificado HTTPS não é válido para este endereço: expirou, ainda não foi emitido ou é de outro nome.",
+          "fix": "No painel do nó, verifique o certificado do domínio na página Domínios (um domínio novo recebe um em poucos minutos) e verifique de novo."
+        },
+        "gateway": {
+          "title": "A CDN não alcançou o nó",
+          "why": "O endereço do nó passa por uma CDN ou proxy (por exemplo Cloudflare), e ela não alcançou o painel do nó: ele está reiniciando ou parado.",
+          "fix": "Aguarde um minuto e verifique de novo. Se continuar, reinicie os serviços no servidor do nó e garanta que a CDN aponte para o IP atual do nó."
+        },
+        "not_panel": {
+          "title": "Outra coisa respondeu no endereço do nó",
+          "why": "A resposta não veio de um painel Hiddify: outro site, uma página de erro da CDN ou um filtro de rede respondeu no lugar.",
+          "fix": "Abra o nó com \"Abrir\" e veja se o painel abre. Se o endereço do nó mudou, remova o nó aqui e adicione-o de novo com o link certo."
+        },
+        "server_error": {
+          "title": "O painel do nó teve um erro",
+          "why": "O painel do nó respondeu, mas com um erro interno: algo no nó falhou ao responder.",
+          "fix": "Abra o painel do nó e veja o log na página Ações, ou reinicie os serviços por lá, e verifique de novo."
+        },
+        "no_url": {
+          "title": "Este painel não tem o endereço do nó",
+          "why": "O nó nunca informou a este painel como alcançá-lo, então este painel não consegue consultá-lo.",
+          "fix": "Remova o nó aqui e adicione-o de novo com \"Adicionar nó\" e o link de administrador do nó."
+        },
+        "unknown": {
+          "title": "Não foi possível verificar o nó",
+          "why": "Algo inesperado deu errado ao consultar o nó.",
+          "fix": "Verifique de novo em um minuto. Se continuar, copie os detalhes técnicos e envie ao suporte."
+        }
+      },
+      "notice": {
+        "title": "O nó \"{name}\" está inacessível",
+        "where": "Mais na página Nós: passe o mouse sobre \"Inacessível\"."
+      }
     },
     "notifications": {
       "dismiss": "Dispensar",
