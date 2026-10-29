@@ -1819,6 +1819,40 @@
       "link": "Link",
       "open": "Open"
     },
+    "loadError": {
+      "auth": {
+        "lead": "The panel refused this request: your session has ended, or your admin account can't open this page.",
+        "step1": "Reload the page and sign in again.",
+        "step2": "If it keeps happening, ask the owner admin for access.",
+        "title": "Not allowed"
+      },
+      "details": "Technical details",
+      "howToFix": "How to fix it",
+      "network": {
+        "lead": "Your browser couldn't reach the panel, so this page couldn't be loaded.",
+        "step1": "Check your internet connection, and whether a VPN or proxy is blocking the panel.",
+        "step2": "If the panel was just restarted or updated, wait a minute and try again.",
+        "title": "The panel didn't answer"
+      },
+      "retry": "Try again",
+      "server": {
+        "lead": "Something went wrong on the server while loading this page.",
+        "step1": "Try again in a moment.",
+        "step2": "If it keeps happening, update the panel. If it still fails, send the technical details below to Hiddify support.",
+        "title": "The panel hit an error"
+      },
+      "unknownSetting": {
+        "lead": "The database holds a setting named {key} that this version of the panel doesn't recognise, so the settings can't be read. It is usually left behind by a newer or test version of the panel that ran on this server before.",
+        "openBackup": "Backup",
+        "openTerminal": "Server terminal",
+        "openUpdate": "Update",
+        "step1": "Update the panel to the latest version. If the setting comes from a newer version, the update brings it back and this page opens again.",
+        "step2": "If this server should stay on this version, take a backup first.",
+        "step3": "Then remove the leftover setting: run this command on the server, in its terminal or over SSH.",
+        "step4": "Reload this page.",
+        "title": "A saved setting is unknown to this panel version"
+      }
+    },
     "login": {
       "brand": "Hiddify",
       "error_expired": "This page was open for too long. Please sign in again.",

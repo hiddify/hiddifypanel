@@ -1228,6 +1228,40 @@
       "link": "Lien",
       "open": "Ouvrir"
     },
+    "loadError": {
+      "auth": {
+        "lead": "Le panneau a refusé cette requête : votre session a expiré, ou votre compte admin ne peut pas ouvrir cette page.",
+        "step1": "Rechargez la page et reconnectez-vous.",
+        "step2": "Si cela se reproduit, demandez l'accès à l'admin propriétaire.",
+        "title": "Accès refusé"
+      },
+      "details": "Détails techniques",
+      "howToFix": "Comment corriger",
+      "network": {
+        "lead": "Votre navigateur n'a pas pu joindre le panneau, cette page n'a donc pas pu être chargée.",
+        "step1": "Vérifiez votre connexion internet, et qu'un VPN ou un proxy ne bloque pas le panneau.",
+        "step2": "Si le panneau vient d'être redémarré ou mis à jour, attendez une minute et réessayez.",
+        "title": "Le panneau n'a pas répondu"
+      },
+      "retry": "Réessayer",
+      "server": {
+        "lead": "Un problème est survenu sur le serveur pendant le chargement de cette page.",
+        "step1": "Réessayez dans un instant.",
+        "step2": "Si cela se reproduit, mettez le panneau à jour. Si l'erreur persiste, envoyez les détails techniques ci-dessous au support Hiddify.",
+        "title": "Le panneau a rencontré une erreur"
+      },
+      "unknownSetting": {
+        "lead": "La base de données contient un paramètre nommé {key} que cette version du panneau ne reconnaît pas, les paramètres ne peuvent donc pas être lus. Il provient généralement d'une version plus récente ou de test du panneau installée auparavant sur ce serveur.",
+        "openBackup": "Sauvegarde",
+        "openTerminal": "Terminal du serveur",
+        "openUpdate": "Mise à jour",
+        "step1": "Mettez le panneau à jour vers la dernière version. Si le paramètre vient d'une version plus récente, la mise à jour le reconnaît et cette page s'ouvre à nouveau.",
+        "step2": "Si ce serveur doit rester sur cette version, faites d'abord une sauvegarde.",
+        "step3": "Supprimez ensuite le paramètre restant : lancez cette commande sur le serveur, dans son terminal ou par SSH.",
+        "step4": "Rechargez cette page.",
+        "title": "Un paramètre enregistré est inconnu de cette version"
+      }
+    },
     "login": {
       "brand": "Hiddify",
       "error_expired": "Cette page est restée ouverte trop longtemps. Veuillez vous reconnecter.",

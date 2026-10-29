@@ -1228,6 +1228,40 @@
       "link": "Link",
       "open": "Abrir"
     },
+    "loadError": {
+      "auth": {
+        "lead": "O painel recusou este pedido: a sua sessão terminou, ou a sua conta de admin não pode abrir esta página.",
+        "step1": "Recarregue a página e entre novamente.",
+        "step2": "Se continuar a acontecer, peça acesso ao admin proprietário.",
+        "title": "Acesso negado"
+      },
+      "details": "Detalhes técnicos",
+      "howToFix": "Como corrigir",
+      "network": {
+        "lead": "O seu navegador não conseguiu chegar ao painel, por isso esta página não pôde ser carregada.",
+        "step1": "Verifique a sua ligação à internet e se uma VPN ou proxy está a bloquear o painel.",
+        "step2": "Se o painel acabou de ser reiniciado ou atualizado, aguarde um minuto e tente novamente.",
+        "title": "O painel não respondeu"
+      },
+      "retry": "Tentar novamente",
+      "server": {
+        "lead": "Algo correu mal no servidor ao carregar esta página.",
+        "step1": "Tente novamente daqui a pouco.",
+        "step2": "Se continuar a acontecer, atualize o painel. Se ainda falhar, envie os detalhes técnicos abaixo ao suporte Hiddify.",
+        "title": "O painel encontrou um erro"
+      },
+      "unknownSetting": {
+        "lead": "A base de dados tem uma configuração chamada {key} que esta versão do painel não reconhece, por isso as configurações não podem ser lidas. Normalmente fica de uma versão mais recente ou de teste do painel que esteve antes neste servidor.",
+        "openBackup": "Backup",
+        "openTerminal": "Terminal do servidor",
+        "openUpdate": "Atualizar",
+        "step1": "Atualize o painel para a versão mais recente. Se a configuração vier de uma versão mais recente, a atualização reconhece-a e esta página volta a abrir.",
+        "step2": "Se este servidor deve ficar nesta versão, faça primeiro um backup.",
+        "step3": "Depois remova a configuração que sobrou: execute este comando no servidor, no seu terminal ou por SSH.",
+        "step4": "Recarregue esta página.",
+        "title": "Uma configuração guardada é desconhecida para esta versão"
+      }
+    },
     "login": {
       "brand": "Hiddify",
       "error_expired": "Esta página ficou aberta por muito tempo. Entre novamente.",
