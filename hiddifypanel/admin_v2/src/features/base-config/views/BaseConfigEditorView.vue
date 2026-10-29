@@ -39,7 +39,7 @@
         </HorizontalField>
         <div :class="{ 'builtin-locked': structureLocked }">
         <HorizontalField :label="t('baseConfig.side')" input-id="bc-side">
-          <Select id="bc-side" v-model="form.side" :options="meta?.sides ?? []" class="w-full" :disabled="!isNew" @change="onSideChange" />
+          <Select id="bc-side" v-model="form.side" :options="meta?.sides ?? []" :option-label="sideName" class="w-full" :disabled="!isNew" @change="onSideChange" />
         </HorizontalField>
         <HorizontalField :label="t('baseConfig.core')" input-id="bc-core">
           <Select id="bc-core" v-model="form.core" :options="coreOptions" :option-label="coreName" class="w-full" :disabled="!isNew" />
@@ -86,7 +86,7 @@
       list-scope="core"
       :template-text="effectiveTemplateText"
       :explicit-slugs="referencedTemplateSlugs"
-      :section-label="`${form.side}/${form.core}`"
+      :section-label="`${sideName(form.side)} / ${coreName(form.core)}`"
       :allow-create="!structureLocked || form.builtin_override"
       :read-only="contentLocked"
       @insert="onInsertTemplate"
@@ -104,7 +104,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
-import { coreName } from '@/shared/utils/protocols'
+import { coreName, sideName } from '@/shared/utils/protocols'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'

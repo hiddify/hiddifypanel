@@ -282,7 +282,7 @@
           </div>
         </template>
         <template #body="{ data }">
-          <Tag v-if="data.server_core" :value="coreName(data.server_core)" />
+          <Tag v-if="data.server_core" :value="coreName(data.server_core)" :style="protoTagStyle(data.server_core)" />
           <span v-else>—</span>
         </template>
       </Column>
@@ -377,7 +377,11 @@
   <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
     <div class="filter-pop">
       <label class="filter-pop__title">{{ t('proxy.serverCore') }}</label>
-      <Listbox v-model="filterCore" :options="coreOptions" :option-label="coreName" class="w-full" @change="corePopover.hide()" />
+      <Listbox v-model="filterCore" :options="coreOptions" :option-label="coreName" class="w-full" @change="corePopover.hide()">
+        <template #option="{ option }">
+          <span class="proto-option"><span class="proto-dot" :style="{ background: protoColor(option) }" />{{ coreName(option) }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
   <Popover ref="enabledPopover">
@@ -887,7 +891,7 @@ async function load() {
       for (const category of p.categories ?? []) categories.add(category)
     }
     for (const c of metaRes.server_cores ?? []) cores.add(c)
-    coreOptions.value = [...cores].sort()
+    coreOptions.value = [...cores].sort((a, b) => coreName(a).localeCompare(coreName(b)))
     categoryOptions.value = [...categories].sort()
   } catch {
     toast.add({ severity: 'error', summary: t('common.loadFailed'), life: 5000 })

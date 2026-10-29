@@ -108,6 +108,7 @@
             />
           </div>
         </template>
+        <template #body="{ data }">{{ sideName(data.side) }}</template>
       </Column>
       <Column field="core" sortable>
         <template #header>
@@ -171,13 +172,17 @@
   <Popover ref="sidePopover" @show="focusFirstInput(sidePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('baseConfig.side') }}</label>
-      <Listbox v-model="filterSide" :options="sideOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="sidePopover.hide()" />
+      <Listbox v-model="filterSide" :options="sideOptions" :option-label="sideName" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="sidePopover.hide()" />
     </div>
   </Popover>
   <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('baseConfig.core') }}</label>
-      <Listbox v-model="filterCore" :options="coreFilterOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="corePopover.hide()" />
+      <Listbox v-model="filterCore" :options="coreFilterOptions" :option-label="coreName" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="corePopover.hide()">
+        <template #option="{ option }">
+          <span class="core-option"><span class="core-dot" :style="{ background: protoColor(option) }" />{{ coreName(option) }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
   <Popover ref="versionPopover" @show="focusFirstInput(versionPopover)">
@@ -202,7 +207,7 @@ import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import { triStateCodec, useHashState } from '@/shared/composables/useHashState'
 import { computed, onMounted, ref } from 'vue'
-import { coreName } from '@/shared/utils/protocols'
+import { coreName, sideName } from '@/shared/utils/protocols'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
@@ -275,7 +280,7 @@ const coreFilterOptions = computed(() => {
     if (filterSide.value && row.side !== filterSide.value) continue
     if (row.core) set.add(row.core)
   }
-  return [...set].sort()
+  return [...set].sort((a, b) => coreName(a).localeCompare(coreName(b)))
 })
 
 const enabledOptions = [
@@ -364,5 +369,16 @@ onMounted(load)
 }
 .list-name-link:hover {
   text-decoration: underline;
+}
+/* The core filter: each core's color before its name, as on its tag */
+.core-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.core-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
 }
 </style>

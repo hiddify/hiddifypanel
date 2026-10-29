@@ -115,6 +115,9 @@
             />
           </div>
         </template>
+        <template #body="{ data }">
+          <Tag v-if="data.category" :value="templateCategoryName(data.category)" :style="templateCategoryTagStyle(data.category)" class="core-tag" />
+        </template>
       </Column>
     </DataTable>
   </Panel>
@@ -140,13 +143,21 @@
   <Popover ref="corePopover" @show="focusFirstInput(corePopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('template.core') }}</label>
-      <Listbox v-model="filterCore" :options="coreOptions" :option-label="coreName" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="corePopover.hide()" />
+      <Listbox v-model="filterCore" :options="coreOptions" :option-label="coreName" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="corePopover.hide()">
+        <template #option="{ option }">
+          <span class="core-option"><span class="core-dot" :style="{ background: protoColor(option) }" />{{ coreName(option) }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
   <Popover ref="categoryPopover" @show="focusFirstInput(categoryPopover)">
     <div class="flex flex-col gap-2 min-w-44">
       <label class="text-sm font-medium">{{ t('template.category') }}</label>
-      <Listbox v-model="filterCategory" :options="categoryOptions" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="categoryPopover.hide()" />
+      <Listbox v-model="filterCategory" :options="categoryOptions" :option-label="templateCategoryName" filter :filter-placeholder="t('common.search')" list-style="max-height: 16rem" class="w-full" @change="categoryPopover.hide()">
+        <template #option="{ option }">
+          <span class="core-option"><span class="core-dot" :style="{ background: templateCategoryColor(option) }" />{{ templateCategoryName(option) }}</span>
+        </template>
+      </Listbox>
     </div>
   </Popover>
 </template>
@@ -156,7 +167,7 @@ import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import { useHashState } from '@/shared/composables/useHashState'
 import { computed, onMounted, ref } from 'vue'
-import { coreName } from '@/shared/utils/protocols'
+import { coreName, templateCategoryName } from '@/shared/utils/protocols'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
@@ -172,7 +183,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Popover from 'primevue/popover'
 import { focusFirstInput } from '@/shared/utils/popover-focus'
-import { protoColor } from '@/shared/utils/proto-color'
+import { protoColor, templateCategoryColor, templateCategoryTagStyle } from '@/shared/utils/proto-color'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import SysBadge from '@/shared/components/SysBadge.vue'
 import { customProxiesApi, proxyTemplatesApi, type ProxyTemplate } from '@/core/api/generated'
@@ -232,7 +243,7 @@ async function load() {
   loading.value = true
   try {
     const meta = await customProxiesApi.meta()
-    coreOptions.value = [...new Set([...meta.server_cores, ...meta.client_cores])].sort()
+    coreOptions.value = [...new Set([...meta.server_cores, ...meta.client_cores])].sort((a, b) => coreName(a).localeCompare(coreName(b)))
     categoryOptions.value = meta.template_categories ?? []
     templates.value = await proxyTemplatesApi.list()
   } catch {
@@ -280,5 +291,16 @@ onMounted(load)
 }
 .list-name-link:hover {
   text-decoration: underline;
+}
+/* The core and category filters: each one's color before its name, as on its tag */
+.core-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.core-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
 }
 </style>
