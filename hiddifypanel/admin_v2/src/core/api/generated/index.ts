@@ -468,6 +468,7 @@ export interface DashboardNodeStats {
   panel_url?: string | null
   ok: boolean
   error?: string | null
+  error_code?: string | null
   cpu?: DashboardCpu
   memory?: DashboardMemory
   disk?: DashboardDisk

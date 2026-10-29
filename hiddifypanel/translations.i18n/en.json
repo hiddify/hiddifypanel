@@ -2080,7 +2080,67 @@
       "syncNow": "Sync now",
       "synced": "{name} synced",
       "title": "Nodes",
-      "unreachable": "Not reachable"
+      "unreachable": "Not reachable",
+      "checkAgain": "Check again",
+      "contact": {
+        "hint": "why, and how to fix it",
+        "liveTitle": "Live charts are not available",
+        "auth": {
+          "title": "The node does not recognise this panel",
+          "why": "The node answered, but refused this panel's key. It no longer has this panel as its main panel: it was reinstalled, restored from a backup, or linked to another main panel. It can still send its own reports here, which is why it can show Online.",
+          "fix": "Remove this node here (the trash button), then add it again with \"Add node\" and the node's admin link."
+        },
+        "not_found": {
+          "title": "The node's panel is not at this address any more",
+          "why": "The node answered, but not as a Hiddify panel at this address: its admin path or domain changed, or it runs a much older version.",
+          "fix": "Update the node to the same version as this panel. If its admin link changed, remove the node here and add it again with the new link."
+        },
+        "timeout": {
+          "title": "The node did not answer in time",
+          "why": "The node's server did not answer within a few seconds: it may be off, overloaded or restarting, or a firewall drops the traffic between the two servers.",
+          "fix": "Check that the node's server is on and its panel opens with \"Open\". If it opens, make sure the node's firewall lets this server in on port 443, then check again."
+        },
+        "refused": {
+          "title": "The node refused the connection",
+          "why": "This server reached the node's address, but nothing there accepted the connection: the node's web services are stopped, or a firewall rejects it.",
+          "fix": "On the node's server, restart the services (Actions page of the node, or reboot the server) and make sure port 443 is open, then check again."
+        },
+        "dns": {
+          "title": "The node's domain cannot be found",
+          "why": "The domain in the node's address does not point to any IP: it expired, its DNS record was removed or changed, or DNS on this server fails.",
+          "fix": "Check that the domain's DNS record points to the node's server. If the node's address changed, remove the node here and add it again with the new link."
+        },
+        "tls": {
+          "title": "Secure connection to the node failed",
+          "why": "The node answered, but its HTTPS certificate is not valid for this address: it expired, is not issued yet, or belongs to another name.",
+          "fix": "On the node, check the certificate of its domain on the Domains page (a new domain gets one within a few minutes), then check again."
+        },
+        "gateway": {
+          "title": "The CDN could not reach the node",
+          "why": "The node's address goes through a CDN or proxy (for example Cloudflare), and it could not reach the node's panel: the panel is restarting or stopped.",
+          "fix": "Wait a minute and check again. If it stays like this, restart the services on the node's server and make sure the CDN points to the node's current IP."
+        },
+        "not_panel": {
+          "title": "Something else answered at the node's address",
+          "why": "The answer did not come from a Hiddify panel: another website, an error page of a CDN, or a network filter answered instead.",
+          "fix": "Open the node with \"Open\" and check that its panel opens. If the node's address changed, remove the node here and add it again with the right link."
+        },
+        "server_error": {
+          "title": "The node's panel had an error",
+          "why": "The node's panel answered, but with an internal error: something on the node failed while answering.",
+          "fix": "Open the node's panel and look at its log on the Actions page, or restart its services there, then check again."
+        },
+        "no_url": {
+          "title": "This panel has no address for the node",
+          "why": "The node never told this panel where to reach it, so this panel cannot ask it anything.",
+          "fix": "Remove the node here and add it again with \"Add node\" and the node's admin link."
+        },
+        "unknown": {
+          "title": "The node could not be checked",
+          "why": "Something unexpected went wrong while asking the node.",
+          "fix": "Check again in a minute. If it stays like this, copy the technical details and send them to support."
+        }
+      }
     },
     "notifications": {
       "dismiss": "Dismiss",

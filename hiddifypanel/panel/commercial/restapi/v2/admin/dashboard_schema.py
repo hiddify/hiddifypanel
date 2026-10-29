@@ -213,6 +213,8 @@ class DashboardNodeStats(ApiModel):
     panel_url: str | None = None
     ok: bool = True
     error: str | None = None
+    # Why the node could not be asked (hutils.node.contact_error): the Nodes page explains it and how to fix it.
+    error_code: str | None = None
     cpu: DashboardCpu | None = None
     memory: DashboardMemory | None = None
     disk: DashboardDisk | None = None

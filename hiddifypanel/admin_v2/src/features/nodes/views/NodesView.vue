@@ -116,8 +116,20 @@
                   v{{ pings[node.id]?.version }}
                 </span>
               </span>
-              <span v-else-if="pings[node.id]?.state === 'fail'" class="node-check node-check--fail" :title="pings[node.id]?.error">
-                <i class="pi pi-times-circle" />{{ t('nodes.unreachable') }}
+              <!-- Not reachable: why and what to do on hover (mouse) or a click; the button next to it checks again -->
+              <span v-else-if="pings[node.id]?.state === 'fail'" class="node-check node-check--fail">
+                <button
+                  type="button"
+                  class="node-check__why"
+                  aria-haspopup="dialog"
+                  :aria-label="`${t('nodes.unreachable')}: ${t('nodes.contact.hint')}`"
+                  @pointerenter="(e: PointerEvent) => e.pointerType === 'mouse' && showWhy(e, node.id)"
+                  @pointerleave="(e: PointerEvent) => e.pointerType === 'mouse' && hideWhySoon()"
+                  @click="(e: MouseEvent) => toggleWhy(e, node.id)"
+                >
+                  <i class="pi pi-times-circle" />{{ t('nodes.unreachable') }}<i class="pi pi-info-circle node-check__info" aria-hidden="true" />
+                </button>
+                <Button icon="pi pi-refresh" text rounded size="small" class="node-check__again" :aria-label="t('nodes.checkAgain')" v-tooltip.top="t('nodes.checkAgain')" @click="pingNode(node)" />
               </span>
               <span v-else class="text-muted-color">—</span>
             </dd>
@@ -233,7 +245,7 @@
         <!-- Slides open and closed; kept once opened so it can slide closed (the feed stops when no card is open) -->
         <div class="node-card__live-wrap" :class="{ 'node-card__live-wrap--open': liveOpen.has(node.id) }">
           <div class="node-card__live" :class="{ 'node-card__live--settled': liveSettled.has(node.id) }">
-            <NodeLiveCharts v-if="liveSeen.has(node.id)" :samples="liveHistory.nodeSamples.value[node.id] ?? []" :error="liveErrors[node.id]" />
+            <NodeLiveCharts v-if="liveSeen.has(node.id)" :samples="liveHistory.nodeSamples.value[node.id] ?? []" :error="liveErrors[node.id]" @retry="retryLive(node)" />
           </div>
         </div>
         <!-- Ping: over this card, under its name (each card its own: several nodes at once) -->
@@ -248,6 +260,15 @@
     </TransitionGroup>
 
     <AddNodeDialog v-model:visible="addVisible" @added="onAdded" />
+    <Popover ref="whyPop" class="node-why-pop" @show="whyOpen = true" @hide="whyOpen = false">
+      <div @pointerenter="(e: PointerEvent) => e.pointerType === 'mouse' && showWhy(e, whyNodeId!)" @pointerleave="(e: PointerEvent) => e.pointerType === 'mouse' && hideWhySoon()">
+        <NodeContactError v-if="whyNodeId !== null && pings[whyNodeId]" :code="pings[whyNodeId]?.code" :detail="pings[whyNodeId]?.error">
+          <template #actions>
+            <Button :label="t('nodes.checkAgain')" icon="pi pi-refresh" size="small" outlined @click="checkAgainFromSheet" />
+          </template>
+        </NodeContactError>
+      </div>
+    </Popover>
     <Dialog
       :visible="syncInfoNode !== null"
       modal
@@ -264,7 +285,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, onUpdated, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
@@ -283,6 +304,8 @@ import { SYSTEM_REFRESH_MS } from '@/features/dashboard/composables/useDashboard
 import type { DashboardSnapshot } from '@/core/api/generated'
 import NodePingPanel from '@/features/nodes/components/NodePingPanel.vue'
 import Dialog from 'primevue/dialog'
+import Popover from 'primevue/popover'
+import NodeContactError from '@/features/nodes/components/NodeContactError.vue'
 import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
 import type { NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
 import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
@@ -290,6 +313,8 @@ import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
 interface PingState {
   state: 'checking' | 'ok' | 'fail'
   version?: string
+  /** Why it failed (hutils.node.contact_error) and the technical text */
+  code?: string
   error?: string
 }
 
@@ -452,10 +477,44 @@ async function pingNode(node: PanelNode) {
   pings[node.id] = { state: 'checking' }
   try {
     const res = await nodesApi.ping(node.id)
-    pings[node.id] = res.online ? { state: 'ok', version: res.version } : { state: 'fail', error: res.error }
+    pings[node.id] = res.online ? { state: 'ok', version: res.version } : { state: 'fail', code: res.error_code, error: res.error }
   } catch (err) {
-    pings[node.id] = { state: 'fail', error: apiErrorMessage(err) }
+    pings[node.id] = { state: 'fail', code: 'unknown', error: apiErrorMessage(err) }
   }
+}
+
+// "Not reachable": one sheet for the page, for the node the mouse is over (or that was clicked)
+const whyPop = ref<InstanceType<typeof Popover> | null>(null)
+const whyNodeId = ref<number | null>(null)
+const whyOpen = ref(false)
+let whyHideTimer: number | undefined
+function showWhy(e: Event, id: number) {
+  window.clearTimeout(whyHideTimer)
+  if (whyOpen.value && whyNodeId.value === id) return
+  if (whyOpen.value) whyPop.value?.hide()
+  whyNodeId.value = id
+  // the sheet changes node after the old one closed, so it opens next to this one (currentTarget is gone by then)
+  const target = e.currentTarget as HTMLElement
+  void nextTick(() => whyPop.value?.show(e, target))
+}
+function hideWhySoon() {
+  window.clearTimeout(whyHideTimer)
+  whyHideTimer = window.setTimeout(() => whyPop.value?.hide(), 220)
+}
+function toggleWhy(e: MouseEvent, id: number) {
+  // With a mouse the hover already opened it: a click keeps it open. A tap opens and closes it.
+  if ((e as PointerEvent).pointerType !== 'mouse' && whyOpen.value && whyNodeId.value === id) whyPop.value?.hide()
+  else showWhy(e, id)
+}
+/** "Check again" under the live charts: the connection check, and the charts asked again now */
+function retryLive(node: PanelNode) {
+  void pingNode(node)
+  liveFeed?.restart()
+}
+function checkAgainFromSheet() {
+  const node = nodes.value.find((n) => n.id === whyNodeId.value)
+  whyPop.value?.hide()
+  if (node) void pingNode(node)
 }
 
 /**
@@ -495,7 +554,7 @@ const liveSeen = ref<Set<number>>(new Set())
 /** Fully open: the section stops clipping, so a chart's tooltip can go over its neighbours (clipped while sliding) */
 const liveSettled = ref<Set<number>>(new Set())
 const liveHistory = useMetricHistory(60)
-const liveErrors = reactive<Record<number, string>>({})
+const liveErrors = reactive<Record<number, { code: string; detail: string } | null>>({})
 let liveFeed: Subscription | null = null
 
 function toggleLive(id: number) {
@@ -514,7 +573,7 @@ function toggleLive(id: number) {
       onData: (snapshot) => {
         const stats = snapshot.node_stats ?? []
         liveHistory.pushNodes(stats)
-        for (const node of stats) liveErrors[node.id] = node.ok ? '' : node.error || t('nodes.live.unavailable')
+        for (const node of stats) liveErrors[node.id] = node.ok ? null : { code: node.error_code || 'unknown', detail: node.error || '' }
       },
       onError: () => {},
     })
@@ -852,6 +911,28 @@ onBeforeUnmount(() => {
 }
 .node-check--fail {
   color: var(--p-red-500, #ef4444);
+}
+.node-check__why {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: help;
+  text-decoration: underline dotted color-mix(in srgb, currentColor 55%, transparent);
+  text-underline-offset: 3px;
+}
+.node-check__info {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+.node-check__again {
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  margin-inline-start: -0.15rem;
 }
 .node-check--checking {
   color: var(--p-text-muted-color);
@@ -1282,5 +1363,15 @@ onBeforeUnmount(() => {
   .node-card:hover {
     transform: none;
   }
+}
+</style>
+
+<style>
+/* "Not reachable" sheet (teleported to the body, so not scoped) */
+.node-why-pop {
+  max-width: min(26rem, calc(100vw - 2rem));
+}
+.node-why-pop .p-popover-content {
+  padding: 0.35rem;
 }
 </style>

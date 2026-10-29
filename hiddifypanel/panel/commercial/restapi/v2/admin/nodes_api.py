@@ -199,10 +199,11 @@ class NodePingApi(MethodView):
         child = _remote_or_404(node_id)
         base = (child.node_base_url or "").strip()
         if not base:
-            return {"online": False, "version": "", "error": "no_url"}
-        online, error = hutils.node.is_panel_active(base)
+            return {"online": False, "version": "", "error": "", "error_code": "no_url"}
+        # error_code says why (the page explains it and how to fix it); error is the technical text, without the secret path
+        online, code, detail = hutils.node.panel_contact(base)
         info = hutils.node.get_panel_info_by_url(base) if online else None
-        return {"online": online, "version": getattr(info, "version", "") or "", "error": "" if online else error}
+        return {"online": online, "version": getattr(info, "version", "") or "", "error": detail, "error_code": code}
 
 
 def _ping_target(child: Child) -> tuple[str, int]:

@@ -40,7 +40,10 @@ export interface NodeSyncReportOut {
 export interface NodePing {
   online: boolean
   version: string
+  /** Technical text, without the node's secret path */
   error: string
+  /** Why it is not reachable (auth, timeout, refused, dns, tls, not_found, gateway, not_panel, server_error, no_url, unknown) */
+  error_code?: string
 }
 
 export interface NodeIcmpPing {

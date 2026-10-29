@@ -1383,7 +1383,67 @@
       "syncNow": "Synchroniser maintenant",
       "synced": "{name} synchronisé",
       "title": "Nœuds",
-      "unreachable": "Injoignable"
+      "unreachable": "Injoignable",
+      "checkAgain": "Vérifier à nouveau",
+      "contact": {
+        "hint": "pourquoi et comment corriger",
+        "liveTitle": "Graphiques en direct indisponibles",
+        "auth": {
+          "title": "Le nœud ne reconnaît pas ce panneau",
+          "why": "Le nœud a répondu, mais a refusé la clé de ce panneau. Ce panneau n'est plus son panneau principal : le nœud a été réinstallé, restauré depuis une sauvegarde ou relié à un autre panneau principal. Il peut encore envoyer ses propres rapports ici, c'est pourquoi il peut apparaître En ligne.",
+          "fix": "Supprimez ce nœud ici (bouton corbeille), puis ajoutez-le de nouveau avec « Ajouter un nœud » et le lien d'administration du nœud."
+        },
+        "not_found": {
+          "title": "Le panneau du nœud n'est plus à cette adresse",
+          "why": "Le nœud a répondu, mais il n'y a pas de panneau Hiddify à cette adresse : le chemin d'administration ou le domaine a changé, ou sa version est très ancienne.",
+          "fix": "Mettez le nœud à la même version que ce panneau. Si son lien d'administration a changé, supprimez le nœud ici et ajoutez-le de nouveau avec le nouveau lien."
+        },
+        "timeout": {
+          "title": "Le nœud n'a pas répondu à temps",
+          "why": "Le serveur du nœud n'a pas répondu en quelques secondes : il est peut-être éteint, surchargé ou en redémarrage, ou un pare-feu bloque le trafic entre les deux serveurs.",
+          "fix": "Vérifiez que le serveur du nœud est allumé et que son panneau s'ouvre avec « Ouvrir ». Si oui, assurez-vous que le pare-feu du nœud autorise ce serveur sur le port 443, puis vérifiez à nouveau."
+        },
+        "refused": {
+          "title": "Le nœud a refusé la connexion",
+          "why": "Ce serveur a atteint l'adresse du nœud, mais rien n'a accepté la connexion : les services web du nœud sont arrêtés ou un pare-feu la rejette.",
+          "fix": "Sur le serveur du nœud, redémarrez les services (page Actions du panneau du nœud, ou redémarrez le serveur) et vérifiez que le port 443 est ouvert, puis vérifiez à nouveau."
+        },
+        "dns": {
+          "title": "Le domaine du nœud est introuvable",
+          "why": "Le domaine de l'adresse du nœud ne pointe vers aucune IP : il a expiré, son enregistrement DNS a été supprimé ou modifié, ou le DNS de ce serveur échoue.",
+          "fix": "Vérifiez que l'enregistrement DNS du domaine pointe vers le serveur du nœud. Si l'adresse du nœud a changé, supprimez le nœud ici et ajoutez-le de nouveau avec le nouveau lien."
+        },
+        "tls": {
+          "title": "La connexion sécurisée au nœud a échoué",
+          "why": "Le nœud a répondu, mais son certificat HTTPS n'est pas valide pour cette adresse : expiré, pas encore émis ou pour un autre nom.",
+          "fix": "Dans le panneau du nœud, vérifiez le certificat de son domaine sur la page Domaines (un nouveau domaine en obtient un en quelques minutes), puis vérifiez à nouveau."
+        },
+        "gateway": {
+          "title": "Le CDN n'a pas pu joindre le nœud",
+          "why": "L'adresse du nœud passe par un CDN ou un proxy (par exemple Cloudflare), qui n'a pas pu joindre le panneau du nœud : il redémarre ou est arrêté.",
+          "fix": "Attendez une minute et vérifiez à nouveau. Si cela persiste, redémarrez les services du serveur du nœud et vérifiez que le CDN pointe vers l'IP actuelle du nœud."
+        },
+        "not_panel": {
+          "title": "Autre chose a répondu à l'adresse du nœud",
+          "why": "La réponse ne venait pas d'un panneau Hiddify : un autre site, une page d'erreur du CDN ou un filtre réseau a répondu à sa place.",
+          "fix": "Ouvrez le nœud avec « Ouvrir » et vérifiez que son panneau s'ouvre. Si l'adresse du nœud a changé, supprimez le nœud ici et ajoutez-le de nouveau avec le bon lien."
+        },
+        "server_error": {
+          "title": "Le panneau du nœud a rencontré une erreur",
+          "why": "Le panneau du nœud a répondu, mais avec une erreur interne : quelque chose a échoué sur le nœud.",
+          "fix": "Ouvrez le panneau du nœud et consultez son journal sur la page Actions, ou redémarrez-y les services, puis vérifiez à nouveau."
+        },
+        "no_url": {
+          "title": "Ce panneau n'a pas l'adresse du nœud",
+          "why": "Le nœud n'a jamais indiqué à ce panneau comment le joindre ; ce panneau ne peut donc rien lui demander.",
+          "fix": "Supprimez le nœud ici et ajoutez-le de nouveau avec « Ajouter un nœud » et le lien d'administration du nœud."
+        },
+        "unknown": {
+          "title": "Impossible de vérifier le nœud",
+          "why": "Une erreur inattendue s'est produite en interrogeant le nœud.",
+          "fix": "Vérifiez à nouveau dans une minute. Si cela persiste, copiez les détails techniques et envoyez-les au support."
+        }
+      }
     },
     "outbounds": {
       "add": "Ajouter un outbound",
