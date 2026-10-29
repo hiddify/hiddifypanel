@@ -184,7 +184,7 @@
                 <!-- The link first: every row's QR button lines up -->
                 <Button icon="pi pi-qrcode" text rounded size="small" class="u-who__link" :aria-label="t('users.showLink')" v-tooltip.top="t('users.showLink')" @click.stop="openLink(data)" />
                 <TagDots kind="user" :uuid="data.uuid" :ids="data.tags" :pinned="isPinned(data)" @changed="(ids: number[]) => setTags(data.uuid, ids)" @pin="(on: boolean) => setPinned(data, on)" />
-                <button type="button" class="u-who__name" :title="data.name" @click="openEdit(data)"><MarkText :text="data.name" :query="query" /></button>
+                <button type="button" class="u-who__name" dir="auto" v-tooltip.top="isLongName(data.name) ? data.name : null" @click="openEdit(data)"><MarkText :text="shortName(data.name)" :query="query" /></button>
               </div>
               <!-- The note's first words; the whole note on a notebook sheet on hover -->
               <small v-if="data.comment" class="u-who__note">
@@ -309,7 +309,7 @@
             <div class="u-card__who">
               <!-- The name edits; the note right after it opens the whole note when it was cut (tap) -->
               <div class="u-card__nameline">
-                <button type="button" class="u-card__title" @click="openEdit(u)"><span class="u-card__name">{{ u.name }}</span></button>
+                <button type="button" class="u-card__title" v-tooltip.top="isLongName(u.name, CARD_NAME_MAX) ? u.name : null" @click="openEdit(u)"><span class="u-card__name" dir="auto">{{ shortName(u.name, CARD_NAME_MAX) }}</span></button>
                 <span v-if="u.comment" class="u-card__note"><NotePreview :note="u.comment" :label="t('users.form.note')" /></span>
               </div>
               <!-- Say the state only when it needs attention (the badge on the QR already says "active") -->
@@ -408,6 +408,7 @@
 
 <script setup lang="ts">
 import { unitLabel } from '@/shared/utils/format-metrics'
+import { PHONE_NAME_MAX, isLongName, shortName } from '@/shared/utils/short-name'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import NotePreview from '@/shared/components/NotePreview.vue'
@@ -677,6 +678,8 @@ function isPinned(u: { uuid: string }): boolean {
 }
 const pinnedCount = computed(() => allRows.value.filter((u) => isPinned(u)).length)
 const hasNote = (u: Row) => !!u.comment?.trim()
+/** Phone cards are narrower: their names are cut sooner */
+const CARD_NAME_MAX = PHONE_NAME_MAX
 const noteCount = computed(() => allRows.value.filter(hasNote).length)
 /** The tag filter: any picked tag, or "Pin" (pinned users) and "Note" (users with a note), like tags. */
 function matchesPicked(u: Row): boolean {
