@@ -4,6 +4,7 @@ import { useToast } from 'primevue/usetoast'
 import { hasCapability, isChildPanel, isSuperAdmin, panelNotices, type PanelNotice } from '@/core/panelShell'
 import { domainProblems, domainSaveWarnings, loadDomainProblems } from '@/shared/composables/useDomainNotices'
 import { configHealthProblems, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
+import { loadNodeProblems, nodeProblems } from '@/shared/composables/useNodeNotices'
 
 export type PanelNoticeSeverity = PanelNotice['severity']
 
@@ -49,7 +50,7 @@ const HEALTH_REFRESH_MS = 10 * 60_000
 
 export function usePanelNotifications() {
   const toast = useToast()
-  const { t } = useI18n()
+  const { t, te } = useI18n()
 
   /** Config health problems as notices: where it fails and what to look at (the dashboard card has the details). */
   const healthNotices = computed<PanelNotice[]>(() =>
@@ -91,13 +92,29 @@ export function usePanelNotifications() {
     }
     return out
   })
-  const extra = computed(() => [...healthNotices.value, ...domainNotices.value])
+  /** Nodes this panel cannot reach: which one, why, and what to do (the Nodes page has the details). */
+  const nodeNotices = computed<PanelNotice[]>(() =>
+    nodeProblems.value.map((p) => {
+      const code = te(`nodes.contact.${p.code}.title`) ? p.code : 'unknown'
+      return {
+        // the node and the reason in the id: another reason is news again
+        id: `nodes:${p.id}:${code}`,
+        severity: 'error',
+        summary: `<b>${escapeHtml(t('nodes.notice.title', { name: p.name }))}</b><br>${escapeHtml(t(`nodes.contact.${code}.title`))}`,
+        detail: `${escapeHtml(t(`nodes.contact.${code}.fix`))}<br>${escapeHtml(t('nodes.notice.where'))}`,
+      }
+    }),
+  )
+  const extra = computed(() => [...healthNotices.value, ...domainNotices.value, ...nodeNotices.value])
   // Errors first: a config or a certificate that does not work matters more than the panel's advice
   const notices = computed(() => [...extra.value.filter((n) => n.severity === 'error'), ...panelNotices.value, ...extra.value.filter((n) => n.severity !== 'error')])
   let healthTimer = 0
   function refreshHealth() {
     // Config health is the super admin's, and a node's configs are tested by its parent panel; every admin has Domains
-    if (isSuperAdmin.value && !isChildPanel.value) void loadConfigHealth()
+    if (isSuperAdmin.value && !isChildPanel.value) {
+      void loadConfigHealth()
+      void loadNodeProblems()
+    }
     if (hasCapability('modify_domains')) void loadDomainProblems()
     healthTimer = window.setTimeout(refreshHealth, HEALTH_REFRESH_MS)
   }

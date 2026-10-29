@@ -14,6 +14,13 @@ const props = defineProps<{ node: PanelNode }>()
 const emit = defineEmits<{ close: [] }>()
 
 const { t } = useI18n()
+/** A ping's error (the server's TCP error) in the panel's words when it is a known one */
+function pingError(error: string): string {
+  if (/refused/i.test(error)) return t('nodes.contact.refused.title')
+  if (/timed? ?out|timeout/i.test(error)) return t('nodes.pingDialog.timeout')
+  if (/name or service|getaddrinfo|resolv/i.test(error)) return t('nodes.contact.dns.title')
+  return error
+}
 
 interface Reply {
   seq: number
@@ -39,7 +46,7 @@ async function loop(id: number, mine: number) {
       const res = await nodesApi.icmp(id)
       ip.value = res.ip
       if (res.method) method.value = res.method
-      reply = { seq, ok: res.ok, ms: res.ms, error: res.error === 'no_address' ? t('nodes.pingDialog.noAddress') : res.error }
+      reply = { seq, ok: res.ok, ms: res.ms, error: res.error === 'no_address' ? t('nodes.pingDialog.noAddress') : pingError(res.error) }
     } catch (err) {
       reply = { seq, ok: false, ms: null, error: apiErrorMessage(err) }
     }

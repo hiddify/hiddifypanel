@@ -8,6 +8,7 @@ import hiddifypanel
 from hiddifypanel import hutils
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.hutils.node.api_client import NodeApiClient, NodeApiErrorSchema
+from hiddifypanel.hutils.node.shared import contact_error
 from hiddifypanel.models import ConfigEnum, hconfig
 from hiddifypanel.models.child import Child, ChildMode
 from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import (
@@ -58,8 +59,9 @@ def _node_from_snapshot(node_id: int, name: str, mode: str, metrics: MetricsSnap
     )
 
 
-def _failed_node(node_id: int, name: str, mode: str, error: str) -> DashboardNodeStats:
-    return DashboardNodeStats(id=node_id, name=name, mode=mode, ok=False, error=error)
+def _failed_node(node_id: int, name: str, mode: str, error: NodeApiErrorSchema | str) -> DashboardNodeStats:
+    code, detail = contact_error(error)
+    return DashboardNodeStats(id=node_id, name=name, mode=mode, ok=False, error=detail, error_code=code)
 
 
 def _local_node(metrics: MetricsSnapshot) -> DashboardNodeStats:
@@ -76,7 +78,7 @@ def _fetch_child(child: Child, process_limit: int, parent_key: str) -> Dashboard
         client = NodeApiClient(base, timeout=_NODE_TIMEOUT, max_retry=_NODE_RETRIES, apikey=parent_key)
         res = client.get(f"/api/v2/admin/dashboard/?include=system&processes={process_limit}", DashboardOutputSchema)
         if isinstance(res, NodeApiErrorSchema):
-            return _failed_node(child.id, name, mode, res.msg)
+            return _failed_node(child.id, name, mode, res)
         return DashboardNodeStats(
             id=child.id,
             name=name,
@@ -102,16 +104,17 @@ def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
 
     child = Child.by_id(child_id)
     if not child or child.mode != ChildMode.remote:
-        return DashboardDiskDetail(node_id=child_id, error="unknown_node")
+        return DashboardDiskDetail(node_id=child_id, error="", error_code="unknown")
 
     base = (child.node_base_url or "").strip()
     if not base:
-        return DashboardDiskDetail(node_id=child_id, error="no_url")
+        return DashboardDiskDetail(node_id=child_id, error="", error_code="no_url")
 
     client = NodeApiClient(base, timeout=_DISK_DETAIL_TIMEOUT, max_retry=1)
     res = client.get("/api/v2/admin/dashboard/disk/", DashboardDiskDetail)
     if isinstance(res, NodeApiErrorSchema):
-        return DashboardDiskDetail(node_id=child_id, error=res.msg)
+        code, detail = contact_error(res)
+        return DashboardDiskDetail(node_id=child_id, error=detail, error_code=code)
     res.node_id = child_id
     return res
 

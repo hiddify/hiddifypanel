@@ -28,6 +28,7 @@ const props = defineProps<{
   testable?: boolean
 }>()
 const visible = defineModel<boolean>('visible', { required: true })
+const longName = computed(() => Array.from(props.name).length > 20)
 
 const { t } = useI18n()
 const toast = useToast()
@@ -129,10 +130,13 @@ function downloadQr() {
   <Dialog
     v-model:visible="visible"
     modal
-    :header="title"
     :style="{ width: 'min(42rem, calc(100vw - 2rem))' }"
     :breakpoints="{ '640px': 'calc(100vw - 1rem)' }"
   >
+    <!-- One line: a long name ends in "…", the whole title on hover -->
+    <template #header>
+      <span class="p-dialog-title link-dlg__title" v-tooltip.bottom="longName ? title : null">{{ title }}</span>
+    </template>
     <div class="link-dlg">
       <!-- Domain -->
       <div class="link-dlg__field">
@@ -185,6 +189,13 @@ function downloadQr() {
 </template>
 
 <style scoped>
+.link-dlg__title {
+  min-width: 0;
+  margin-inline-end: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .link-dlg {
   display: flex;
   flex-direction: column;
