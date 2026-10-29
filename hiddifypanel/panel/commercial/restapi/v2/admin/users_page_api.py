@@ -174,7 +174,7 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
         if want and not user.enable:
             actor = g.account
             if actor and not actor.can_activate_more_users():
-                abort(400, "Active user limit reached: disable another user or raise max active users")
+                abort(400, "Active or online user limit reached: disable another user or raise max active / online users")
         user.enable = want
     if "mode" in body:
         try:
@@ -264,7 +264,7 @@ class UsersPageApi(MethodView):
         body = request.get_json(silent=True) or {}
         actor: AdminUser = g.account
         if not actor.can_have_more_users():
-            abort(400, "User limit reached: you (or an admin above you) reached the max users, active users or total traffic")
+            abort(400, "User limit reached: you (or an admin above you) reached the max users, active users, online users or total traffic")
         new_uuid = str(body.get("uuid") or uuid_lib.uuid4()).strip().lower()
         if not _UUID_RE.match(new_uuid):
             abort(400, "UUID is not valid")
@@ -364,7 +364,7 @@ class UsersBulkApi(MethodView):
         for user in users:
             if action in ("enable", "disable"):
                 if action == "enable" and not user.enable and not actor.can_activate_more_users():
-                    abort(400, "Active user limit reached: disable another user or raise max active users")
+                    abort(400, "Active or online user limit reached: disable another user or raise max active / online users")
                 user.enable = action == "enable"
             elif action == "reset_usage":
                 user.reset_usage()
@@ -436,7 +436,7 @@ class UsersBulkCreateApi(MethodView):
                     db.session.rollback()
                     abort(
                         400,
-                        "User limit reached: you (or an admin above you) reached the max users, active users or total traffic"
+                        "User limit reached: you (or an admin above you) reached the max users, active users, online users or total traffic"
                         if i == 1
                         else f"Not enough room for {count} users",
                     )

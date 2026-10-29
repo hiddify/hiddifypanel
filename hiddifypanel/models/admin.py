@@ -234,9 +234,24 @@ class AdminUser(BaseAccount):
         used = db.session.query(func.coalesce(func.sum(User.current_usage), 0)).filter(User.added_by.in_(self.recursive_sub_admins_ids()), User.deleted.is_(False)).scalar()
         return (used or 0) / 1024**3
 
+    def _online_limit_reached(self, *, excluding_user_id: int | None = None) -> bool:
+        """max_online_users (None: no limit): users seen in the last 24 hours, as the admin list counts them. Once it
+        is reached, no user is added or turned on again (#5606); users already active are not cut off."""
+        if not self.max_online_users:
+            return False
+        from .user import User
+
+        since = datetime.datetime.now() - datetime.timedelta(days=1)
+        online = self.recursive_users_query().filter(User.last_online >= since)
+        if excluding_user_id is not None:
+            online = online.filter(User.id != excluding_user_id)
+        return online.count() >= self.max_online_users
+
     def _has_room_for_one_more_user(self) -> bool:
-        """Room to *create* another user (max_users and max_active_users)."""
+        """Room to *create* another user (max_users, max_active_users and max_online_users)."""
         if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
+            return False
+        if self._online_limit_reached():
             return False
         users_count = self.recursive_users_query().count()
         max_users = self.max_users if self.max_users is not None else 10**9
@@ -250,12 +265,14 @@ class AdminUser(BaseAccount):
         return actives < max_active
 
     def _has_room_to_activate_user(self, *, excluding_user_id: int | None = None) -> bool:
-        """Room to turn an existing inactive user on again (max_active_users + traffic only).
+        """Room to turn an existing inactive user on again (max_active_users, max_online_users and traffic only).
 
         The user already counts toward max_users, so that ceiling must not block edits or re-enable.
         ``excluding_user_id`` skips a row that is already ``is_active`` in-session after the form applied.
         """
         if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
+            return False
+        if self._online_limit_reached(excluding_user_id=excluding_user_id):
             return False
         max_active = self.max_active_users if self.max_active_users is not None else 10**9
         actives = sum(1 for u in self.recursive_users_query().all() if u.is_active and u.id != excluding_user_id)

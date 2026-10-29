@@ -35,7 +35,7 @@ class UserApi(MethodView):
         payload = data.model_dump(exclude_unset=True)
         # Re-enable respects max_active_users only; max_users must not block edits.
         if payload.get("enable") and not user.enable and g.account and not g.account.can_activate_more_users():
-            abort(400, "Active user limit reached: disable another user or raise max active users")
+            abort(400, "Active or online user limit reached: disable another user or raise max active / online users")
         if "added_by_uuid" in payload:
             payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
         user_driver.remove_client(user)
