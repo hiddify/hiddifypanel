@@ -64,6 +64,7 @@
       :value="filteredProxies"
       :loading="loading"
       striped-rows
+      :row-class="(p: CustomProxy) => (isEffectivelyEnabled(p) ? '' : 'proxy-row--off')"
       paginator
       :rows="10"
       :rows-per-page-options="[10, 25, 50]"
@@ -967,6 +968,28 @@ onActivated(() => {
 </script>
 
 <style scoped>
+/* A proxy that is off (or kept off by a parent setting): faded, so on and off read at a glance. A veil of the row's
+   own colour over its cells (not opacity, which would fade the line between the rows too); its switch and buttons
+   stay clear, and the whole row comes back on hover. */
+:deep(tr.proxy-row--off > td:not(:first-child)) {
+  position: relative;
+}
+:deep(tr.proxy-row--off > td:not(:first-child)::after) {
+  content: '';
+  position: absolute;
+  inset: 0 0 1px;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--p-datatable-row-background, var(--p-content-background)) 55%, transparent);
+  backdrop-filter: grayscale(0.7);
+  -webkit-backdrop-filter: grayscale(0.7);
+  transition: opacity 0.15s ease;
+}
+:deep(tr.proxy-row--off.p-row-odd > td:not(:first-child)::after) {
+  background: color-mix(in srgb, var(--p-datatable-row-striped-background, var(--p-content-background)) 55%, transparent);
+}
+:deep(tr.proxy-row--off:hover > td:not(:first-child)::after) {
+  opacity: 0.2;
+}
 .qf {
   display: flex;
   flex-wrap: wrap;
