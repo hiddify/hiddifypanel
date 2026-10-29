@@ -11,8 +11,10 @@ it from the Telegram bot (when there is one).
 
 from __future__ import annotations
 
+import hmac
 import ipaddress
 import json
+import secrets
 import re
 import threading
 import time
@@ -23,12 +25,20 @@ from hiddifypanel.cache import redis_client
 
 _LAST = "hiddify:config-health:last"
 _RUNNING = "hiddify:config-health:running"
+#: the check's own subscription request carries this token (?health_check=): it gets every config, the hidden ones too,
+#: so a hidden config is tested again and comes back when it works
+_TOKEN = "hiddify:config-health:token"
+TOKEN_PARAM = "health_check"
 #: (app name, path after the user's page, user agent): what each kind of app downloads
 APPS = (
     ("xray", "xray/", "v2rayN/7.0"),
     ("hiddify", "", "HiddifyNext/5.0.2 (linux) like ClashMeta v2ray sing-box"),
 )
 MAX_FAILED_LISTED = 60
+#: names of the configs that passed, kept to tell a failed config from a working one with the same name
+MAX_PASSED_LISTED = 1000
+#: a check older than this is not used to hide configs (the scheduled one runs every 6 hours)
+HIDE_MAX_AGE = 24 * 3600
 #: Cloudflare's, not Google's: panels often send Google through WARP, and a WARP hiccup is not a broken config
 TEST_URL = "https://cp.cloudflare.com/generate_204"
 #: two requests per config: one dropped request is not an alarm
@@ -107,7 +117,7 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
     from hiddifypanel.proxy_v3 import config_tester
     from hiddifypanel.proxy_v3.config_tester_types import TesterError
 
-    summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
+    summary: dict = {"total": 0, "ok": 0, "failed": [], "passed": [], "error": ""}
     try:
         for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
             if event.get("event") == "start":
@@ -117,6 +127,7 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
             elif event.get("event") == "result":
                 if event.get("ok"):
                     summary["ok"] += 1
+                    summary["passed"].append(str(event.get("name") or ""))
                 else:
                     summary["failed"].append({"name": str(event.get("name") or ""), "error": str(event.get("error") or "")[:200]})
         if summary["failed"]:
@@ -132,12 +143,14 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
                     passed.add(name)
             summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
             summary["ok"] += len(passed)
+            summary["passed"] += sorted(passed)
     except TesterError as e:
         summary["error"], summary["error_kind"] = _clean(str(e)), _error_kind(str(e))
     except Exception as e:  # one app failing must not lose the other's result
         logger.exception("config health: {} failed", app)
         summary["error"], summary["error_kind"] = type(e).__name__, "other"
     summary["failed"] = summary["failed"][:MAX_FAILED_LISTED]
+    summary["passed"] = summary["passed"][:MAX_PASSED_LISTED]
     return summary
 
 
@@ -152,12 +165,15 @@ def check() -> dict | None:
     # Only a bare IP to use: the server asks itself, and no certificate names an IP
     verify = not _is_ip(host)
     result: dict = {"at": int(time.time()), "user": user.name, "host": host, "apps": {}}
+    token = secrets.token_urlsafe(24)
+    redis_client.set(_TOKEN, token, ex=3600)
+    query = f"?{TOKEN_PARAM}={token}"
     for app, path, agent in APPS:
-        summary = _test_app(page + path, agent, app, verify)
+        summary = _test_app(page + path + query, agent, app, verify)
         if summary["error"]:
             # The subscription could not be fetched (e.g. a reload of the cores right then): once more, later
             time.sleep(RETRY_AFTER)
-            summary = _test_app(page + path, agent, app, verify)
+            summary = _test_app(page + path + query, agent, app, verify)
         result["apps"][app] = summary
     previous = last()
     redis_client.set(_LAST, json.dumps(result))
@@ -217,3 +233,67 @@ def _notify(previous: dict | None, current: dict) -> None:
                 logger.warning("config health: telegram to {} failed: {}", admin.id, e)
     except Exception:
         logger.exception("config health: notify failed")
+
+
+# --- Hiding failed configs from the users (setting config_health_hide_failed) ---
+
+_hidden_cache: tuple[float, dict[str, frozenset[str]]] | None = None
+_HIDDEN_CACHE_SECONDS = 30
+
+
+def config_name(name: str) -> str:
+    """A config's name as the check and the renderer both see it: spaces collapsed, without the " §2" a client config
+    adds to a repeated name."""
+    return re.sub(r"\s+", " ", re.sub(r"\s*§\d+\s*$", "", name or "")).strip()
+
+
+def _hidden_for_app(summary: dict) -> frozenset[str]:
+    """The failed configs of one app that are safe to hide. Nothing when the subscription could not be tested, or when
+    no config passed (then the test itself is broken, e.g. the server can not reach the test URL, and hiding would leave
+    the users with nothing). A name that also passed (two configs with one name) is kept."""
+    if summary.get("error") or not summary.get("failed") or not summary.get("ok"):
+        return frozenset()
+    passed = {config_name(n) for n in summary.get("passed") or []}
+    return frozenset(n for f in summary["failed"] if (n := config_name(f.get("name", ""))) and n not in passed)
+
+
+def hidden_configs() -> dict[str, frozenset[str]]:
+    """App ("xray", "hiddify") → the names of the configs to leave out of the users' configs; empty when the setting is
+    off or the last check is too old. Kept for a few seconds: it is asked for every proxy of every subscription."""
+    global _hidden_cache
+    from hiddifypanel.models import ConfigEnum, hconfig
+
+    if not hconfig(ConfigEnum.config_health_hide_failed):
+        return {}
+    now = time.monotonic()
+    if _hidden_cache and now - _hidden_cache[0] < _HIDDEN_CACHE_SECONDS:
+        return _hidden_cache[1]
+    result: dict[str, frozenset[str]] = {}
+    try:
+        current = last()
+    except Exception:
+        current = None
+    if current and time.time() - int(current.get("at") or 0) < HIDE_MAX_AGE:
+        result = {app: names for app, summary in (current.get("apps") or {}).items() if (names := _hidden_for_app(summary))}
+    _hidden_cache = (now, result)
+    return result
+
+
+def is_check_request() -> bool:
+    """The current request is the check's own subscription download (it must see the hidden configs too)."""
+    try:
+        from flask import has_request_context, request
+
+        if not has_request_context() or not (got := request.args.get(TOKEN_PARAM)):
+            return False
+        want = redis_client.get(_TOKEN)
+    except Exception:
+        return False
+    want = want.decode() if isinstance(want, bytes) else str(want or "")
+    return bool(want) and hmac.compare_digest(got, want)
+
+
+def health_app(app_group: str) -> str:
+    """The checked app whose results apply to a client: the Xray apps get the "xray" check, every other client (the
+    Hiddify app, sing-box, Clash) the "hiddify" one."""
+    return "xray" if str(app_group or "").lower() == "xray" else "hiddify"

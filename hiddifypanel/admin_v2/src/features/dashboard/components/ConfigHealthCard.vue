@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import { getHttp } from '@/core/api/client'
-import { CONFIG_HEALTH_APPS as APP_NAMES, configHealth as state, configReason, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
+import { CONFIG_HEALTH_APPS as APP_NAMES, configHealth as state, configReason, healthConfigName, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
 import { SERIES } from '../composables/useChartTheme'
 import DashCard from './DashCard.vue'
 
@@ -20,6 +20,15 @@ function toggleDetails(name: string) {
 }
 
 const apps = computed(() => Object.entries(state.value?.last?.apps ?? {}))
+/** App → the failed configs left out of the users' configs */
+const hidden = computed(() => {
+  const out: Record<string, Set<string>> = {}
+  for (const [app, names] of Object.entries(state.value?.hidden ?? {})) out[app] = new Set(names)
+  return out
+})
+function isHidden(app: string, name: string): boolean {
+  return hidden.value[app]?.has(healthConfigName(name)) ?? false
+}
 const allOk = computed(() => apps.value.length > 0 && apps.value.every(([, a]) => !a.failed.length && !a.error))
 const ago = computed(() => {
   const at = state.value?.last?.at
@@ -93,11 +102,13 @@ onBeforeUnmount(() => window.clearTimeout(timer))
         <ul v-if="open === name" class="health__failed">
           <li v-for="f in app.failed" :key="f.name">
             <span class="ltr health__cfg">{{ f.name }}</span>
+            <span v-if="isHidden(name, f.name)" class="health__hidden"><i class="pi pi-eye-slash" aria-hidden="true" />{{ t('dashboard.health.hiddenFromUsers') }}</span>
             <span v-if="configReason(f.error)" class="health__reason">{{ t(`dashboard.health.reason.${configReason(f.error)}`) }}</span>
             <small class="text-muted-color ltr health__wrap">{{ f.error }}</small>
           </li>
         </ul>
       </div>
+      <p v-if="state.hide_failed" class="text-muted-color text-xs m-0">{{ t('dashboard.health.hideFailedOn') }}</p>
       <p class="text-muted-color text-xs m-0">{{ t('dashboard.health.note', { user: state.last.user }) }}</p>
     </div>
   </DashCard>
@@ -191,6 +202,14 @@ onBeforeUnmount(() => window.clearTimeout(timer))
 }
 .health__reason {
   color: var(--p-orange-500);
+  font-size: 0.82rem;
+}
+.health__hidden {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-inline-start: 0.5rem;
+  color: var(--text-color-secondary);
   font-size: 0.82rem;
 }
 .health__wrap {

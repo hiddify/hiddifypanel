@@ -2623,6 +2623,10 @@
       "label": "🎛️ Core de proxy comum",
       "xray": "Xray"
     },
+    "config_health_hide_failed": {
+      "description": "Configs that failed the last config health check (every config tested from the server, every 6 hours) are left out of the users' subscriptions and pages, until a check finds them working again. Nothing is hidden when no config passed (the test itself failed) or the last check is older than a day. The dashboard's Config health card shows which ones and why.",
+      "label": "🩺 Hide configs that fail the health check"
+    },
     "core_type": {
       "description": "☢️ XRay: é um núcleo completo\n<br>\n📦 Singbox: Desenvolvido por SagerNet. Também é um bom núcleo",
       "label": "🎛️ Núcleo"
