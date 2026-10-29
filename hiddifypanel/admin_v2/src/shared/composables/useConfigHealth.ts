@@ -16,6 +16,15 @@ export interface AppHealth {
 export interface HealthState {
   last: { at: number; user: string; host?: string; apps: Record<string, AppHealth> } | null
   running: boolean
+  /** The setting "hide failed configs from the users" is on */
+  hide_failed?: boolean
+  /** App → names of the failed configs the users do not get */
+  hidden?: Record<string, string[]>
+}
+
+/** A config's name as the panel compares it: spaces collapsed, without the " §2" added to a repeated name. */
+export function healthConfigName(name: string): string {
+  return name.replace(/\s*§\d+\s*$/, '').replace(/\s+/g, ' ').trim()
 }
 
 export const CONFIG_HEALTH_APPS: Record<string, string> = { xray: 'Xray (v2rayN, v2rayNG, Happ…)', hiddify: 'Hiddify / sing-box' }

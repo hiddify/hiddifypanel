@@ -37,7 +37,10 @@ class ClientContextVar(BaseModel):
     def iter_ctx_domains(self) -> Iterator[ClientContextDomainVar]:
         domains = [domain for domain in self.proxy.domains if _client_domain_allowed(domain, self.proxy)]
         domains = expand_client_domains(self.proxy, domains)
+        hidden = _hidden_config_names(self.platform)
         for domain in domains:
+            if hidden and _config_name(self.proxy, domain) in hidden:
+                continue  # failed the last config health check (setting config_health_hide_failed)
             yield ClientContextDomainVar(
                 user=self.user,
                 hconfig=self.hconfig,
@@ -55,6 +58,25 @@ class ClientContextDomainVar(ClientContextVar):
     """Client context bound to one domain (``ctx.proxy.domain``)."""
 
     proxy: ClientProxyDomainVar
+
+
+def _hidden_config_names(platform: PlatformVar) -> frozenset[str]:
+    """Names of the configs to leave out for this client: the ones that failed the last config health check for its
+    kind of app (empty unless the setting is on)."""
+    from hiddifypanel.proxy_v3 import config_health
+
+    hidden = config_health.hidden_configs()
+    if not hidden or config_health.is_check_request():
+        return frozenset()
+    return hidden.get(config_health.health_app(getattr(platform.app_group, "name", platform.app_group)), frozenset())
+
+
+def _config_name(proxy: ClientBuilderProxyVar, domain: DomainIPVar) -> str:
+    """The config's name as the builtin client/tag template writes it (tag, domain alias or name, IP version, ALPN)."""
+    from hiddifypanel.proxy_v3 import config_health
+
+    parts = [proxy.tag, domain.alias or domain.name, domain.ip_version, getattr(proxy, "alpn", "") or ""]
+    return config_health.config_name(" ".join(str(p) for p in parts if p))
 
 
 def _client_domain_allowed(domain: DomainIPVar, proxy: ClientBuilderProxyVar) -> bool:

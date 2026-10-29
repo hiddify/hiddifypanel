@@ -2653,6 +2653,10 @@
       "description": "Veuillez suivre <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>les instructions</a> et coller la clé API Cloudflare",
       "label": "🔑API Cloudflare"
     },
+    "config_health_hide_failed": {
+      "description": "Configs that failed the last config health check (every config tested from the server, every 6 hours) are left out of the users' subscriptions and pages, until a check finds them working again. Nothing is hidden when no config passed (the test itself failed) or the last check is older than a day. The dashboard's Config health card shows which ones and why.",
+      "label": "🩺 Hide configs that fail the health check"
+    },
     "core_type": {
       "description": "☢️ XRay : est un noyau complet<inlang-LineFeed><br>\n📦 Singbox : Développé par SagerNet. C'est aussi un bon noyau",
       "label": "🎛️ Noyau"

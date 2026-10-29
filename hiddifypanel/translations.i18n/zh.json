@@ -2688,6 +2688,10 @@
       "label": "🎛️ 通用代理核心",
       "xray": "Xray"
     },
+    "config_health_hide_failed": {
+      "description": "Configs that failed the last config health check (every config tested from the server, every 6 hours) are left out of the users' subscriptions and pages, until a check finds them working again. Nothing is hidden when no config passed (the test itself failed) or the last check is older than a day. The dashboard's Config health card shows which ones and why.",
+      "label": "🩺 Hide configs that fail the health check"
+    },
     "core_type": {
       "description": "☢️ XRay：是一个完整的核心\n<br>\n📦 Singbox：由 SagerNet 开发。也是一个不错的核心",
       "label": "🎛️核心"
