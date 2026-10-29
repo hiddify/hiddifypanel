@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppMenu from './AppMenu.vue'
 import { useLayout } from './composables/layout'
@@ -18,6 +18,36 @@ watch(
     layoutState.menuHoverActive = false
   },
   { immediate: true },
+)
+
+/**
+ * The open page's entry in the menu, in view: a reload starts the menu scrolled to the top, so it is brought to the
+ * middle then (and when the phone's menu opens); after a move from within a page, only when it is out of view.
+ */
+function revealActive(center: boolean, tries = 30) {
+  const box = sidebarRef.value
+  const items = box?.querySelectorAll<HTMLElement>('a.active-route')
+  // The menu can fill in a moment after the page (the admin's own pages): wait for the entry a few frames.
+  if (!box || !items?.length) {
+    if (tries > 0) requestAnimationFrame(() => revealActive(center, tries - 1))
+    return
+  }
+  if (box.scrollHeight <= box.clientHeight) return
+  const item = items[items.length - 1]!
+  const top = item.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop
+  const bottom = top + item.offsetHeight
+  if (!center && top >= box.scrollTop && bottom <= box.scrollTop + box.clientHeight) return
+  box.scrollTo({ top: center ? top - (box.clientHeight - item.offsetHeight) / 2 : top < box.scrollTop ? top - 16 : bottom - box.clientHeight + 16 })
+}
+
+onMounted(() => revealActive(true))
+watch(
+  () => route.path,
+  () => void nextTick(() => revealActive(false)),
+)
+watch(
+  () => layoutState.mobileMenuActive || layoutState.overlayMenuActive,
+  (open) => open && void nextTick(() => revealActive(true)),
 )
 
 watch(hasOpenOverlay, (open) => {
