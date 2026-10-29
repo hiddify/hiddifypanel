@@ -122,14 +122,14 @@
         removable-sort
         size="small"
         class="users-table"
-        :class="{ 'users-table--resizing': resizing }"
+        :class="{ 'users-table--resizing': resizing, 'users-table--moving': userDrag.moving.value, 'users-table--settling': userDrag.settling.value }"
         @mousedown.capture="onTableMouseDown"
         :row-class="rowClass"
+        :row-style="(u: Row) => userDrag.styleOf(u.uuid)"
         resizable-columns
         column-resize-mode="fit"
         @sort="onSort"
         @cell-edit-complete="onCellEdit"
-        @row-reorder="onRowReorder"
         @column-resize-start="resizing = true"
         @column-resize-end="onColumnResize"
       >
@@ -150,9 +150,11 @@
         </template>
 
         <!-- Drag a row to move it (the admin's own order, pinned users on top); off while a column sort or grouping orders the rows -->
-        <Column v-if="canReorder" row-reorder row-reorder-icon="pi pi-bars u-drag" header-style="width: 2.25rem" body-class="u-drag-cell" />
-        <Column v-else header-style="width: 2.25rem" body-class="u-drag-cell">
-          <template #body><i class="pi pi-bars u-drag u-drag--off" v-tooltip.top="t('users.layout.dragOff')" /></template>
+        <Column header-style="width: 2.25rem" body-class="u-drag-cell">
+          <template #body="{ data }">
+            <i v-if="canReorder" class="pi pi-bars u-drag" role="button" :aria-label="t('users.layout.dragHandle')" :data-drag-key="data.uuid" @pointerdown="startRowDrag($event, data)" />
+            <i v-else class="pi pi-bars u-drag u-drag--off" v-tooltip.top="t('users.layout.dragOff')" />
+          </template>
         </Column>
         <Column v-if="!readOnly" selection-mode="multiple" header-style="width: 2.5rem" />
         <!-- No ID column: this one sorts by id -->
@@ -268,7 +270,7 @@
     </div>
 
     <!-- Phones: compact cards -->
-    <div v-else-if="state" class="u-cards" :class="{ 'u-cards--dragging': cardDrag.dragging.value, 'u-cards--settling': cardDrag.settling.value }">
+    <div v-else-if="state" class="u-cards" :class="{ 'u-cards--moving': userDrag.moving.value, 'u-cards--settling': userDrag.settling.value }">
       <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
       <div v-if="rows.length" class="u-cardbar">
         <label v-if="!readOnly" class="u-selectall">
@@ -301,9 +303,9 @@
           v-for="u in group.users"
           :key="u.uuid"
           class="u-card"
-          :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u), 'u-card--lifted': cardDrag.dragging.value === u.uuid }]"
-          :data-card-uuid="u.uuid"
-          :style="cardDrag.styleOf(u.uuid)"
+          :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u), 'u-card--lifted': userDrag.lifted.value === u.uuid, 'u-card--held': userDrag.held.value === u.uuid }]"
+          :data-drag-key="u.uuid"
+          :style="userDrag.styleOf(u.uuid)"
         >
           <header class="u-card__head">
             <!-- Drag handle, as on the table: the admin's order; muted (a tap says why) while a sort orders the cards -->
@@ -312,7 +314,7 @@
               :class="{ 'u-card__drag--off': !canReorder }"
               role="button"
               :aria-label="t('users.layout.dragHandle')"
-              @pointerdown="canReorder ? cardDrag.start($event, u.uuid, group.users.map((g) => g.uuid)) : dragOffHint()"
+              @pointerdown="canReorder ? userDrag.start($event, u.uuid, group.users.map((g) => g.uuid)) : dragOffHint()"
               ><i class="pi pi-bars"
             /></span>
             <Checkbox v-if="!readOnly" :model-value="isSelected(u)" binary class="u-card__check" :aria-label="t('users.select')" @update:model-value="(v: boolean) => toggleSelect(u, v)" />
@@ -436,7 +438,7 @@ import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
-import DataTable, { type DataTableCellEditCompleteEvent, type DataTableColumnResizeEndEvent, type DataTableRowReorderEvent, type DataTableSortEvent } from 'primevue/datatable'
+import DataTable, { type DataTableCellEditCompleteEvent, type DataTableColumnResizeEndEvent, type DataTableSortEvent } from 'primevue/datatable'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputNumber from 'primevue/inputnumber'
@@ -467,7 +469,7 @@ import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import UserBulkCreateDialog from '@/features/users/components/UserBulkCreateDialog.vue'
 import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
 import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
-import { useCardDrag } from '@/features/users/useCardDrag'
+import { useDragSort } from '@/shared/composables/useDragSort'
 import { localeComparator, resolveFieldData, sort as sortValues } from '@primeuix/utils/object'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersLayout, type UsersState } from '@/features/users/api'
 import { sizeText, exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
@@ -803,7 +805,8 @@ function seen(u: UserRow) {
 }
 function rowClass(u: Row) {
   const pinned = canReorder.value && isPinned(u) ? ` u-row--pinned${u.uuid === lastPinned.value ? ' u-row--pinned-last' : ''}` : ''
-  return (u.status === 'active' ? '' : `u-row--${u.status}`) + pinned
+  const lifted = userDrag.lifted.value === u.uuid ? ` u-row--lifted${userDrag.held.value === u.uuid ? ' u-row--held' : ''}` : ''
+  return (u.status === 'active' ? '' : `u-row--${u.status}`) + pinned + lifted
 }
 /** Short facts shown beside the name: a chosen outbound, extra subscription configs, a linked Telegram. */
 function extrasOf(u: Row): { key: string; icon: string; text: string; title: string }[] {
@@ -873,25 +876,42 @@ function setPinned(u: Row, on: boolean) {
   if (on !== isPinned(u)) void saveLayout(togglePin(layout.value, orderedRows.value.map((r) => r.uuid), u.uuid))
 }
 
-function onRowReorder(e: DataTableRowReorderEvent) {
-  applyReorder(e.value as Row[], e.dropIndex)
-}
-
-/** Phones: a card moved within its group (the page's cards, or one admin's) to the place of `uuids[to]`. */
-const cardDrag = useCardDrag((uuids, from, to) => {
-  const moved = groupByOwner.value ? [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : [...rows.value]
-  const a = moved.findIndex((u) => u.uuid === uuids[from])
-  const b = moved.findIndex((u) => u.uuid === uuids[to])
-  if (a < 0 || b < 0) return
-  moved.splice(b, 0, ...moved.splice(a, 1))
-  applyReorder(moved, b)
+/**
+ * Moving a user, live, by its handle: a table row (desktop) or a card (phones), within the rows shown together (the
+ * page, or one admin's group), to the place of `keys[to]`.
+ */
+const userDrag = useDragSort({
+  // A card carries the key; in the table the handle does, and the row moves.
+  item: (key) => {
+    const el = document.querySelector<HTMLElement>(`[data-drag-key="${key}"]`)
+    return el?.closest<HTMLElement>('tr') ?? el
+  },
+  onDrop: (keys, from, to) => {
+    const moved = groupByOwner.value ? [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : [...rows.value]
+    const a = moved.findIndex((u) => u.uuid === keys[from])
+    const b = moved.findIndex((u) => u.uuid === keys[to])
+    if (a < 0 || b < 0) return false
+    moved.splice(b, 0, ...moved.splice(a, 1))
+    return applyReorder(moved, b)
+  },
 })
+/** A table row's handle: the rows of this page (of the same admin, when grouped), in their order on screen. */
+function startRowDrag(e: PointerEvent, u: Row) {
+  const owner = new Map(rows.value.map((r) => [r.uuid, r.owner_key]))
+  const keys = [...document.querySelectorAll<HTMLElement>('.users-table [data-drag-key]')]
+    .map((el) => el.dataset.dragKey!)
+    .filter((k) => !groupByOwner.value || owner.get(k) === u.owner_key)
+  userDrag.start(e, u.uuid, keys)
+}
 function dragOffHint() {
   toast.add({ severity: 'info', summary: t('users.layout.dragOff'), life: 4000 })
 }
 
-/** A drag result (the listed users in their new order; `dropIndex`: where the moved one landed) saved as the order. */
-function applyReorder(moved: Row[], dropIndex: number) {
+/**
+ * A drag result (the listed users in their new order; `dropIndex`: where the moved one landed) saved as the order.
+ * False when the move is not allowed (a hint says why).
+ */
+function applyReorder(moved: Row[], dropIndex: number): boolean {
   let shown = moved.map((u) => u.uuid)
   if (groupByOwner.value) {
     // Grouped by admin: a user moves only among the users of the same admin. The list comes sorted by admin, so
@@ -899,7 +919,7 @@ function applyReorder(moved: Row[], dropIndex: number) {
     const before = [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)).map((u) => u.owner_key)
     if (moved.some((u, i) => u.owner_key !== before[i])) {
       toast.add({ severity: 'info', summary: t('users.layout.crossOwners'), life: 5000 })
-      return
+      return false
     }
     const group = moved[dropIndex]!.owner_key
     shown = moved.filter((u) => u.owner_key === group).map((u) => u.uuid)
@@ -907,9 +927,10 @@ function applyReorder(moved: Row[], dropIndex: number) {
   const next = reorder(layout.value, orderedRows.value.map((r) => r.uuid), shown)
   if (!next) {
     toast.add({ severity: 'info', summary: t('users.layout.crossGroups'), life: 5000 })
-    return
+    return false
   }
   void saveLayout(next)
+  return true
 }
 
 function onGuideSeen() {
@@ -1826,6 +1847,34 @@ onBeforeUnmount(() => {
   cursor: help;
   opacity: 0.3;
 }
+/* A row moved by its handle: it rides above the others (which slide to make room) and glides into place */
+.u-drag:not(.u-drag--off) {
+  touch-action: none;
+}
+.users-table--moving {
+  user-select: none;
+  -webkit-user-select: none;
+}
+.users-table--moving :deep(tbody > tr) {
+  transition: translate 0.2s ease;
+}
+.users-table--moving :deep(tr.u-row--lifted) {
+  position: relative;
+  z-index: 5;
+  cursor: grabbing;
+  box-shadow: 0 14px 30px -12px rgb(15 23 42 / 40%);
+}
+.users-table--moving :deep(tr.u-row--lifted > td) {
+  background: var(--p-datatable-row-background, var(--p-content-background));
+}
+.users-table--moving :deep(tr.u-row--lifted .u-drag) {
+  color: var(--p-primary-color);
+  cursor: grabbing;
+}
+.users-table--moving :deep(tr.u-row--held),
+.users-table--settling :deep(tbody > tr) {
+  transition: none !important;
+}
 /* Pinned users: a light tint, and a line under the last one parts them from the rest */
 .users-table :deep(tr.u-row--pinned > td) {
   background: color-mix(in srgb, var(--p-primary-color) 5%, transparent);
@@ -1854,26 +1903,26 @@ onBeforeUnmount(() => {
   cursor: help;
   opacity: 0.3;
 }
-/* While a card is moved: it rides above the others, which slide to make room */
-.u-cards--dragging {
+/* While a card is moved: it rides above the others, which slide to make room; on release it glides into place */
+.u-cards--moving {
   user-select: none;
   -webkit-user-select: none;
 }
-.u-cards--dragging .u-card {
-  transition: transform 0.18s ease;
+.u-cards--moving .u-card {
+  transition: translate 0.2s ease;
 }
-.u-cards--dragging .u-card--lifted {
+.u-cards--moving .u-card--lifted {
   z-index: 5;
-  transition: none;
   cursor: grabbing;
   box-shadow: 0 18px 36px -14px rgb(15 23 42 / 45%);
 }
-.u-cards--dragging .u-card--lifted .u-card__drag {
+.u-cards--moving .u-card--lifted .u-card__drag {
   color: var(--p-primary-color);
   cursor: grabbing;
 }
+.u-cards--moving .u-card--held,
 .u-cards--settling .u-card {
-  transition: none;
+  transition: none !important;
 }
 .u-cards {
   display: flex;
