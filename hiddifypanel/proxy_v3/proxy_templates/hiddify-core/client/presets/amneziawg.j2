@@ -1,0 +1,15 @@
+{# AmneziaWG for the Hiddify app: hiddify-core 5.1+ has the "awg" endpoint (the app's version is its core's). Other apps
+   get it from the .conf download (/amneziawg, client core "amneziawg") for the AmneziaVPN / AmneziaWG apps. #}
+{% block endpoints %}
+  {{ skip("AmneziaWG needs the Hiddify app 5.1+") if not (ctx.platform.is_hiddify and ctx.platform.hiddify.version >= "5.1.0") }}
+  {% for ctx in ctx.iter_ctx_domains() %}
+    {% set proxy = ctx.proxy %}
+    {% set domain = ctx.proxy.domain %}
+    {% set tag %}{%- include 'hiddify-core/client/tag' -%}{% endset %}
+    {
+      "tag": "{{ tag | trim_no_line }}",
+      {% include 'hiddify-core/client/protocols/amneziawg' %}
+      {% include 'hiddify-core/client/snippets/finalmask' %},
+    },
+  {% endfor %}
+{% endblock %}

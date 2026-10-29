@@ -1,0 +1,31 @@
+{# An AmneziaWG .conf (client core "amneziawg", for the AmneziaVPN / AmneziaWG apps): one [Interface]/[Peer] pair per
+   domain of the proxy. The keys are the user's WireGuard keys; the address is in the AmneziaWG subnet. #}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set proxy = ctx.proxy %}
+{% set host = proxy.server|string %}
+[Interface]
+{% set name |trim_no_line %}{%- include 'sublink/tag' -%}{% endset %}
+# Name = {{ name }}
+Address = {{ ctx.user.awg_ipv4 }}/32{% if ctx.user.awg_ipv6 %}, {{ ctx.user.awg_ipv6 }}/128{% endif %}
+PrivateKey = {{ ctx.user.wg_pk }}
+MTU = 1380
+DNS = 1.1.1.1
+Jc = {{ ctx.hconfig.amneziawg_jc }}
+Jmin = {{ ctx.hconfig.amneziawg_jmin }}
+Jmax = {{ ctx.hconfig.amneziawg_jmax }}
+S1 = {{ ctx.hconfig.amneziawg_s1 }}
+S2 = {{ ctx.hconfig.amneziawg_s2 }}
+H1 = {{ ctx.hconfig.amneziawg_h1 }}
+H2 = {{ ctx.hconfig.amneziawg_h2 }}
+H3 = {{ ctx.hconfig.amneziawg_h3 }}
+H4 = {{ ctx.hconfig.amneziawg_h4 }}
+
+[Peer]
+PublicKey = {{ ctx.hconfig.amneziawg_public_key }}
+PresharedKey = {{ ctx.user.wg_psk }}
+{# an IPv6 server goes in brackets: [2001:db8::10]:51820 #}
+Endpoint = {% if ':' in host and not host.startswith('[') %}[{{ host }}]{% else %}{{ host }}{% endif %}:{{ proxy.udp_port or proxy.port }}
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25
+
+{% endfor %}

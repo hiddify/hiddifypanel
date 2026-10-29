@@ -166,6 +166,7 @@ const CATEGORY_LOOK: Record<string, { icon: string; accent: string }> = {
   warp: { icon: 'pi pi-cloud', accent: '#f97316' },
   reality: { icon: 'pi pi-eye-slash', accent: '#ef4444' },
   wireguard: { icon: 'pi pi-key', accent: '#22c55e' },
+  amneziawg: { icon: 'pi pi-key', accent: '#15803d' },
   dnstt: { icon: 'pi pi-server', accent: '#64748b' },
   advanced: { icon: 'pi pi-sliders-h', accent: '#f59e0b' },
   too_advanced: { icon: 'pi pi-exclamation-triangle', accent: '#ef4444' },

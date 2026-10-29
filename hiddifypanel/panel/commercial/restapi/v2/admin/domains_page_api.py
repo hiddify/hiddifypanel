@@ -69,6 +69,7 @@ def is_host(name: str) -> bool:
 #: Settings whose ports belong to other services (a domain gateway port must not take them).
 OTHER_SERVICE_PORTS = (
     ConfigEnum.wireguard_port,
+    ConfigEnum.amneziawg_port,
     ConfigEnum.reality_port,
     ConfigEnum.special_port,
     ConfigEnum.shadowsocks2022_port,

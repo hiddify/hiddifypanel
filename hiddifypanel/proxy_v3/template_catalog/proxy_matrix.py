@@ -94,6 +94,9 @@ EXTRA_PROXY_ROWS: list[dict[str, Any]] = [
     {"l3": "snell_v6", "transport": "custom", "cdn": "relay", "proto": "snell", "name": "Snell v6 Relay"},
     {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.wireguard, "name": "WireGuard"},
     {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.relay, "proto": ProxyProto.wireguard, "name": "WireGuard Relay"},
+    # AmneziaWG: an "awg" endpoint of hiddify-core 5.1+ on amneziawg_port (the direct row serves it, the relay row reaches it)
+    {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.amneziawg, "name": "AmneziaWG"},
+    {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.relay, "proto": ProxyProto.amneziawg, "name": "AmneziaWG Relay"},
     {"l3": "tls", "transport": "custom", "cdn": "direct", "proto": "naive", "name": "Naive"},
     {"l3": "tls", "transport": "custom", "cdn": "relay", "proto": "naive", "name": "Naive Relay"},
     {"l3": "tls", "transport": "tcp", "cdn": "direct", "proto": "mieru", "name": "Mieru TCP"},

@@ -25,6 +25,23 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v190(child_id):
+    """AmneziaWG (WireGuard with junk packets and changed headers, served by hiddify-core 5.1+): its own port, subnet,
+    server keys and obfuscation values, off by default. Users reuse their WireGuard keys. The sync adds its presets."""
+    if child_id == 0:
+        add_config_if_not_exist(ConfigEnum.amneziawg_enable, False, child_id)
+        add_config_if_not_exist(ConfigEnum.amneziawg_port, hutils.random.get_random_unused_port(), child_id)
+        add_config_if_not_exist(ConfigEnum.amneziawg_ipv4, "10.91.0.1", child_id)
+        add_config_if_not_exist(ConfigEnum.amneziawg_ipv6, "fd42:42:91::1", child_id)
+        awg_pk, awg_pub, _ = hutils.crypto.get_wg_private_public_psk_pair()
+        add_config_if_not_exist(ConfigEnum.amneziawg_private_key, awg_pk, child_id)
+        add_config_if_not_exist(ConfigEnum.amneziawg_public_key, awg_pub, child_id)
+        for name, value in hutils.random.get_amneziawg_obfuscation().items():
+            add_config_if_not_exist(ConfigEnum[f"amneziawg_{name}"], value, child_id)
+    seed_proxy_catalog(child_id, refresh_builtin_base_configs=True)
+    sync_builtin_presets(child_id)
+
+
 def _v189(child_id):
     """no_inbound builtins (node-configs, additional-config) used tls_layer=http and were gated by
     http_proxy_enable; parent/child subscriptions then omitted node configs. Align with user-configs."""

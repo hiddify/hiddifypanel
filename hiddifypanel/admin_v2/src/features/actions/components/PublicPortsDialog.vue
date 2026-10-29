@@ -80,6 +80,7 @@ const SERVICE_ICON: Record<string, string> = {
   quic: 'pi pi-bolt',
   ssh: 'pi pi-desktop',
   wireguard: 'pi pi-shield',
+  amneziawg: 'pi pi-shield',
 }
 </script>
 

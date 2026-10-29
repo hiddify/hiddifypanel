@@ -2642,6 +2642,70 @@
       "description": "如果您允许无效的SNI，您可以使用任何域而不是原始域来访问代理（不推荐）",
       "label": "🆗 允许无效的 SNI"
     },
+    "amneziawg": {
+      "description": "AmneziaWG 是带有垃圾数据包和修改过的包头的 WireGuard，使 DPI 无法识别为 WireGuard。需要 AmneziaVPN 或 AmneziaWG 应用（从 /amneziawg 链接导入 .conf）。",
+      "label": "AmneziaWG"
+    },
+    "amneziawg_enable": {
+      "description": "带有抗 DPI 混淆的 WireGuard，由 hiddify-core（5.1+）在独立的 UDP 端口上提供。客户端：Hiddify 应用 5.1+（订阅中）以及 AmneziaVPN / AmneziaWG 应用（从 /amneziawg 链接导入 .conf）；不支持 WireGuard 应用。",
+      "label": "🐲 AmneziaWG"
+    },
+    "amneziawg_h1": {
+      "description": "Header of the handshake init message: a number above 4, different from H2-H4. Every client must reimport its config after a change",
+      "label": "H1 (init header)"
+    },
+    "amneziawg_h2": {
+      "description": "Header of the handshake response message: a number above 4, different from H1, H3, H4",
+      "label": "H2 (response header)"
+    },
+    "amneziawg_h3": {
+      "description": "Header of the cookie message: a number above 4, different from H1, H2, H4",
+      "label": "H3 (cookie header)"
+    },
+    "amneziawg_h4": {
+      "description": "Header of the data messages: a number above 4, different from H1-H3",
+      "label": "H4 (data header)"
+    },
+    "amneziawg_ipv4": {
+      "description": "IPv4 subnet base of AmneziaWG",
+      "label": "IPv4 in AmneziaWG"
+    },
+    "amneziawg_ipv6": {
+      "description": "IPv6 subnet base of AmneziaWG",
+      "label": "IPv6 in AmneziaWG"
+    },
+    "amneziawg_jc": {
+      "description": "Junk packets sent before each handshake (1-128, usually 4-12)",
+      "label": "Jc (junk packet count)"
+    },
+    "amneziawg_jmax": {
+      "description": "Largest junk packet in bytes; at most 1280",
+      "label": "Jmax (junk packet max size)"
+    },
+    "amneziawg_jmin": {
+      "description": "Smallest junk packet in bytes; less than Jmax",
+      "label": "Jmin (junk packet min size)"
+    },
+    "amneziawg_port": {
+      "description": "AmneziaWG 的 UDP 端口",
+      "label": "↔️ AmneziaWG 端口"
+    },
+    "amneziawg_private_key": {
+      "description": "The server's AmneziaWG private key",
+      "label": "AmneziaWG Private Key"
+    },
+    "amneziawg_public_key": {
+      "description": "The server's AmneziaWG public key",
+      "label": "AmneziaWG Public Key"
+    },
+    "amneziawg_s1": {
+      "description": "Random bytes added to the handshake init message (15-150). S1 + 56 must not equal S2. Every client must reimport its config after a change",
+      "label": "S1 (init padding)"
+    },
+    "amneziawg_s2": {
+      "description": "Random bytes added to the handshake response message (15-150). Every client must reimport its config after a change",
+      "label": "S2 (response padding)"
+    },
     "anytls_enable": {
       "description": "启用 AnyTLS 协议",
       "label": "AnyTLS"

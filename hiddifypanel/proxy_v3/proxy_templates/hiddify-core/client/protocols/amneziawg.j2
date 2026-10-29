@@ -1,0 +1,23 @@
+"type": "awg",
+"private_key": "{{ ctx.user.wg_pk }}",
+"mtu": 1380,
+"address": ["{{ ctx.user.awg_ipv4 }}/32"],
+"awg": {
+  "jc": {{ ctx.hconfig.amneziawg_jc | int }},
+  "jmin": {{ ctx.hconfig.amneziawg_jmin | int }},
+  "jmax": {{ ctx.hconfig.amneziawg_jmax | int }},
+  "s1": {{ ctx.hconfig.amneziawg_s1 | int }},
+  "s2": {{ ctx.hconfig.amneziawg_s2 | int }},
+  "h1": "{{ ctx.hconfig.amneziawg_h1 }}",
+  "h2": "{{ ctx.hconfig.amneziawg_h2 }}",
+  "h3": "{{ ctx.hconfig.amneziawg_h3 }}",
+  "h4": "{{ ctx.hconfig.amneziawg_h4 }}"
+},
+"peers": [{
+  "address": "{{ proxy.server }}",
+  "port": {{ ctx.proxy.udp_port or ctx.proxy.port }},
+  "public_key": "{{ ctx.hconfig.amneziawg_public_key }}",
+  "pre_shared_key": "{{ ctx.user.wg_psk }}",
+  "allowed_ips": ["0.0.0.0/0", "::/0"],
+  "persistent_keepalive_interval": 25
+}],

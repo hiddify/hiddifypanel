@@ -15,6 +15,7 @@ export const PROTOCOL_NAMES: Record<string, string> = {
   hysteria: 'Hysteria',
   hysteria2: 'Hysteria 2',
   wireguard: 'WireGuard',
+  amneziawg: 'AmneziaWG',
   naive: 'Naive',
   mieru: 'Mieru',
   anytls: 'AnyTLS',
@@ -51,6 +52,7 @@ export function schemeName(scheme: string): string {
  */
 export const CATEGORY_NAMES: Record<string, string> = {
   additional_config: 'Additional Config',
+  amneziawg: 'AmneziaWG',
   anytls: 'AnyTLS',
   custom: 'Custom',
   dnstt: 'DNSTT',
@@ -104,6 +106,7 @@ export function categoryName(category: string): string {
 
 /** Cores as the panel writes them ("hiddify-core" → "Hiddify Core", "xray" → "XRay"); another core as it comes. */
 export const CORE_NAMES: Record<string, string> = {
+  amneziawg: 'AmneziaWG',
   clash: 'Clash',
   dns_proxy: 'DNS Proxy',
   firewall: 'Firewall',
