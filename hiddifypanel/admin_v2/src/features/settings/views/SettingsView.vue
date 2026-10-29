@@ -566,6 +566,19 @@ onBeforeUnmount(() => {
   text-align: center;
   color: var(--settings-accent);
 }
+/* With a mouse the icon comes alive (as in the side menu): a soft pop and sway, then it rests a little bigger */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .settings-nav__item:hover .settings-nav__icon {
+    animation: settings-icon-alive 0.6s ease-out forwards;
+  }
+}
+@keyframes settings-icon-alive {
+  0% { transform: scale(1) rotate(0); }
+  30% { transform: scale(1.22) rotate(-10deg); }
+  55% { transform: scale(0.96) rotate(6deg); }
+  80% { transform: scale(1.1) rotate(-2deg); }
+  100% { transform: scale(1.08) rotate(0); }
+}
 .settings-nav__label {
   flex: 1;
   min-width: 0;
