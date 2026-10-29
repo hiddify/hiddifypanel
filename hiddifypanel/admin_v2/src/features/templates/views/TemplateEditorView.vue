@@ -32,7 +32,7 @@
       <Select id="tpl-core" v-model="form.core" :options="coreOptions" :option-label="coreName" class="w-full" @change="onCoreCategoryChange" />
     </HorizontalField>
     <HorizontalField :label="t('template.category')" input-id="tpl-cat">
-      <Select id="tpl-cat" v-model="form.category" :options="categoryOptions" class="w-full" @change="onCoreCategoryChange" />
+      <Select id="tpl-cat" v-model="form.category" :options="categoryOptions" :option-label="templateCategoryName" class="w-full" @change="onCoreCategoryChange" />
     </HorizontalField>
     <HorizontalField :label="t('template.slug')" input-id="tpl-slug" :hint="t('template.slugHint')">
       <InputGroup>
@@ -88,7 +88,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
-import { coreName } from '@/shared/utils/protocols'
+import { coreName, templateCategoryName } from '@/shared/utils/protocols'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'

@@ -83,3 +83,23 @@ export function categoryTagStyle(category: string | null | undefined): Record<st
     border: `1px solid color-mix(in srgb, ${c} 38%, transparent)`,
   }
 }
+
+/** Template categories: a color of their own each, unlike the cores beside them (sky, orange, pink). */
+const TEMPLATE_CATEGORY_COLORS: Record<string, string> = {
+  server_inbound: '#0284c7',
+  client_outbound: '#ea580c',
+  base_config: '#db2777',
+}
+
+export function templateCategoryColor(category: string | null | undefined): string {
+  return TEMPLATE_CATEGORY_COLORS[String(category ?? '').toLowerCase()] ?? protoColor(category)
+}
+
+export function templateCategoryTagStyle(category: string | null | undefined): Record<string, string> {
+  const c = templateCategoryColor(category)
+  return {
+    background: `color-mix(in srgb, ${c} 16%, transparent)`,
+    color: `color-mix(in srgb, ${c} 82%, var(--p-text-color))`,
+    border: `1px solid color-mix(in srgb, ${c} 38%, transparent)`,
+  }
+}

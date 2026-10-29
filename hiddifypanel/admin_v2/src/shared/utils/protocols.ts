@@ -125,6 +125,18 @@ export function coreName(core: string | null | undefined): string {
   return CORE_NAMES[core.toLowerCase()] ?? core
 }
 
+/** Template categories as names ("server_inbound" → "Server Inbound"); another one as it comes. */
+export const TEMPLATE_CATEGORY_NAMES: Record<string, string> = {
+  base_config: 'Base Config',
+  client_outbound: 'Client Outbound',
+  server_inbound: 'Server Inbound',
+}
+
+export function templateCategoryName(category: string | null | undefined): string {
+  if (!category) return ''
+  return TEMPLATE_CATEGORY_NAMES[category.toLowerCase()] ?? category
+}
+
 /** A base config's side as a name ("server" → "Server"). */
 export function sideName(side: string | null | undefined): string {
   if (!side) return ''
