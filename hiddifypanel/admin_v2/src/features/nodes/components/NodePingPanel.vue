@@ -136,6 +136,14 @@ const fmt = (ms: number) => (ms < 10 ? ms.toFixed(1) : Math.round(ms).toString()
   overflow: hidden auto;
   animation: nping-in 0.18s ease-out;
 }
+/* The colour themes make --p-content-background see-through glass: this panel lies over the card's own text,
+   so it gets a solid surface there */
+html.theme-caddy .nping {
+  background: var(--p-surface-0);
+}
+html.theme-caddy.app-dark .nping {
+  background: var(--p-surface-900);
+}
 .nping__close {
   margin-inline-start: -0.25rem;
 }
