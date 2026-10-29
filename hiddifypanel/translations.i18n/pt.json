@@ -2377,6 +2377,7 @@
         "crossOwners": "Agrupado por admin: um usuário só se move entre os usuários desse admin.",
         "drag": "Arraste para mover este usuário",
         "dragOff": "Remova a ordenação da coluna para mover usuários",
+        "dragHandle": "Arraste para mover este usuário",
         "pin": "Fixar no topo",
         "unpin": "Desafixar"
       },
