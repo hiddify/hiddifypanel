@@ -1444,6 +1444,10 @@
           "why": "Une erreur inattendue s'est produite en interrogeant le nœud.",
           "fix": "Vérifiez à nouveau dans une minute. Si cela persiste, copiez les détails techniques et envoyez-les au support."
         }
+      },
+      "notice": {
+        "title": "Le nœud « {name} » est injoignable",
+        "where": "Plus de détails sur la page Nœuds : survolez « Injoignable »."
       }
     },
     "outbounds": {

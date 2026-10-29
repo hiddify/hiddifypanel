@@ -116,9 +116,9 @@ def contact_error(res: NodeApiErrorSchema | str) -> tuple[str, str]:
     return code, detail
 
 
-def panel_contact(base_url: str, apikey: str | None = None) -> tuple[bool, str, str]:
+def panel_contact(base_url: str, apikey: str | None = None, max_retry: int = 3, timeout: float = 8) -> tuple[bool, str, str]:
     """Ask a node whether its panel answers: ``(online, error code, detail)`` (see ``contact_error``)."""
-    res = NodeApiClient(base_url, apikey).get("/api/v2/panel/ping/", PongOutputSchema)
+    res = NodeApiClient(base_url, apikey, max_retry=max_retry, timeout=timeout).get("/api/v2/panel/ping/", PongOutputSchema)
     if isinstance(res, NodeApiErrorSchema):
         logger.error(f"Error while checking if panel is active: {res.msg}")
         return (False, *contact_error(res))

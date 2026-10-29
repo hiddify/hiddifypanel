@@ -587,6 +587,7 @@ export interface DashboardDiskDetail {
   disk: DashboardDisk
   top_folders: DiskFolderUsage[]
   error?: string | null
+  error_code?: string | null
 }
 
 export const dashboardApi = {

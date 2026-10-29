@@ -1444,6 +1444,10 @@
           "why": "Algo inesperado deu errado ao consultar o nó.",
           "fix": "Verifique de novo em um minuto. Se continuar, copie os detalhes técnicos e envie ao suporte."
         }
+      },
+      "notice": {
+        "title": "O nó \"{name}\" está inacessível",
+        "where": "Mais na página Nós: passe o mouse sobre \"Inacessível\"."
       }
     },
     "notifications": {

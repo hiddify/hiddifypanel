@@ -104,16 +104,17 @@ def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
 
     child = Child.by_id(child_id)
     if not child or child.mode != ChildMode.remote:
-        return DashboardDiskDetail(node_id=child_id, error="unknown_node")
+        return DashboardDiskDetail(node_id=child_id, error="", error_code="unknown")
 
     base = (child.node_base_url or "").strip()
     if not base:
-        return DashboardDiskDetail(node_id=child_id, error="no_url")
+        return DashboardDiskDetail(node_id=child_id, error="", error_code="no_url")
 
     client = NodeApiClient(base, timeout=_DISK_DETAIL_TIMEOUT, max_retry=1)
     res = client.get("/api/v2/admin/dashboard/disk/", DashboardDiskDetail)
     if isinstance(res, NodeApiErrorSchema):
-        return DashboardDiskDetail(node_id=child_id, error=res.msg)
+        code, detail = contact_error(res)
+        return DashboardDiskDetail(node_id=child_id, error=detail, error_code=code)
     res.node_id = child_id
     return res
 

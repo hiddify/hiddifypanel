@@ -2141,6 +2141,10 @@
           "why": "Something unexpected went wrong while asking the node.",
           "fix": "Check again in a minute. If it stays like this, copy the technical details and send them to support."
         }
+      },
+      "notice": {
+        "title": "Node \"{name}\" is not reachable",
+        "where": "More on the Nodes page: hover over \"Not reachable\"."
       }
     },
     "notifications": {

@@ -306,6 +306,7 @@ import NodePingPanel from '@/features/nodes/components/NodePingPanel.vue'
 import Dialog from 'primevue/dialog'
 import Popover from 'primevue/popover'
 import NodeContactError from '@/features/nodes/components/NodeContactError.vue'
+import { nodeProblems } from '@/shared/composables/useNodeNotices'
 import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
 import { NodeContactFailure, type NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
 import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
@@ -326,7 +327,7 @@ const FEW_NODES = 3
 /** `embedded`: shown inside another page (quick setup), without the page header. */
 defineProps<{ embedded?: boolean }>()
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 
@@ -478,6 +479,9 @@ async function pingNode(node: PanelNode) {
   try {
     const res = await nodesApi.ping(node.id)
     pings[node.id] = res.online ? { state: 'ok', version: res.version } : { state: 'fail', code: res.error_code, error: res.error }
+    // the top bar's notifications follow what was just found
+    const others = nodeProblems.value.filter((p) => p.id !== node.id)
+    nodeProblems.value = res.online ? others : [...others, { id: node.id, name: node.name, code: res.error_code || 'unknown', detail: res.error }]
   } catch (err) {
     pings[node.id] = { state: 'fail', code: 'unknown', error: apiErrorMessage(err) }
   }
@@ -616,7 +620,13 @@ async function syncNode(node: PanelNode) {
     toast.add({ severity: 'success', summary: t('nodes.synced', { name: node.name }), life: 3000 })
     await load(true)
   } catch (err) {
-    toast.add({ severity: 'error', summary: t('nodes.syncFailed', { name: node.name }), detail: apiErrorMessage(err), life: 6000 })
+    // The node could not be asked: say why and what to do (the "Not reachable" sheet has the rest)
+    const why = (err as { response?: { data?: { error_code?: string; error?: string } } })?.response?.data
+    if (why?.error_code) {
+      pings[node.id] = { state: 'fail', code: why.error_code, error: why.error ?? '' }
+      const code = te(`nodes.contact.${why.error_code}.title`) ? why.error_code : 'unknown'
+      toast.add({ severity: 'error', summary: t('nodes.syncFailed', { name: node.name }), detail: `${t(`nodes.contact.${code}.title`)}. ${t(`nodes.contact.${code}.fix`)}`, life: 10000 })
+    } else toast.add({ severity: 'error', summary: t('nodes.syncFailed', { name: node.name }), detail: apiErrorMessage(err), life: 6000 })
   } finally {
     syncing.value = null
   }

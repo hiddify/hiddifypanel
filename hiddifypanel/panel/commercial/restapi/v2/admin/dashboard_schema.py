@@ -151,6 +151,8 @@ class DashboardDiskDetail(ApiModel):
     disk: DashboardDisk = Field(default_factory=DashboardDisk)
     top_folders: list[DiskFolderUsage] = Field(default_factory=list)
     error: str | None = None
+    # Why the node could not be asked (hutils.node.contact_error)
+    error_code: str | None = None
 
 
 class DashboardNetwork(ApiModel):

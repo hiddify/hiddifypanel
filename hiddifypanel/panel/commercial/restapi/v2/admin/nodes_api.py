@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import ipaddress
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta
 
 from apiflask import abort
-from flask import jsonify, request
+from flask import copy_current_request_context, jsonify, request
 from flask.views import MethodView
 
 import hiddifypanel
@@ -191,6 +194,35 @@ class NodeApi(MethodView):
         return {"status": 200, "msg": "ok", "node_unlinked": unlinked}
 
 
+#: Nodes that cannot be asked, for the top bar's notifications: every open admin page asks, so the answer is kept a while.
+_PROBLEMS_TTL = 120
+_problems: dict = {"at": 0.0, "rows": []}
+_problems_lock = threading.Lock()
+
+
+def _node_problem(child: Child) -> dict | None:
+    base = (child.node_base_url or "").strip()
+    code, detail = ("no_url", "") if not base else hutils.node.panel_contact(base, max_retry=1, timeout=6)[1:]
+    return {"id": child.id, "name": child.name or f"node-{child.id}", "code": code, "detail": detail} if code else None
+
+
+class NodeProblemsApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self):
+        """Nodes: The nodes this panel cannot reach now, and why (for the notifications)"""
+        if hutils.node.is_child():
+            return {"problems": []}
+        with _problems_lock:
+            if time.monotonic() - _problems["at"] > _PROBLEMS_TTL:
+                nodes = Child.query.filter(Child.mode == ChildMode.remote).order_by(Child.id).all()
+                checks = [copy_current_request_context(_node_problem) for _ in nodes]
+                with ThreadPoolExecutor(max_workers=8) as pool:
+                    rows = list(pool.map(lambda pair: pair[0](pair[1]), zip(checks, nodes)))
+                _problems.update(at=time.monotonic(), rows=[r for r in rows if r])
+            return {"problems": _problems["rows"]}
+
+
 class NodePingApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
@@ -260,8 +292,12 @@ class NodeSyncApi(MethodView):
     def post(self, node_id: int):
         """Nodes: Ask a node to sync (users, admins and its domains) now"""
         _only_on_parent_or_standalone()
-        if not hutils.node.parent.request_child_to_sync(_remote_or_404(node_id)):
-            abort(502, "The node did not answer the sync request")
+        child = _remote_or_404(node_id)
+        if not hutils.node.parent.request_child_to_sync(child):
+            # why: asked again the way the connection check does, so the page can explain it (error_code)
+            base = (child.node_base_url or "").strip()
+            code, detail = ("no_url", "") if not base else hutils.node.panel_contact(base, max_retry=1, timeout=6)[1:]
+            return {"message": "The node did not answer the sync request", "error_code": code or "unknown", "error": detail}, 502
         return {"status": 200, "msg": "ok"}
 
 
