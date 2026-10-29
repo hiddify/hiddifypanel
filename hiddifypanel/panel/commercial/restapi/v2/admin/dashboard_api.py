@@ -70,6 +70,7 @@ class AdminDashboardApi(MethodView):
         live = node_system.collect_system_stats(child_id, process_limit=_process_limit(), debug_nodes=debug_nodes)
         admin_base = hiddify.get_account_panel_link(g.account, request.host, prefere_path_only=True) + "admin/"
         node_system.attach_panel_urls(live.node_stats, g.account.uuid, admin_base)
+        node_system.attach_countries(live.node_stats)
 
         dto = DashboardOutputSchema(
             generated_at=datetime.datetime.now(datetime.UTC).isoformat(),
