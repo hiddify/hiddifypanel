@@ -52,21 +52,19 @@
       <ListFilterStatus :shown="rows.length" :total="state.domains.length" :active="filtering" @reset="resetFilters" />
       <p class="dm-howto"><i class="pi pi-sort-alt" />{{ filtering ? t('domains.howtoFiltered') : t('domains.howto') }}</p>
 
-      <TransitionGroup name="dm-row" tag="ol" class="dm-list" :class="{ 'dm-list--dragging': dragId !== null }">
+      <TransitionGroup name="dm-row" tag="ol" class="dm-list" :class="{ 'dm-list--moving': rowDrag.moving.value, 'dm-list--settling': rowDrag.settling.value }">
         <li
           v-for="d in rows"
           :key="d.id"
           class="dm-row"
           :data-domain-id="d.id"
-          :style="{ '--kind-color': KIND_META[kindOf(d.mode)].color }"
+          :style="[{ '--kind-color': KIND_META[kindOf(d.mode)].color }, rowDrag.styleOf(d.id)]"
           :class="{
             'dm-row--minor': isFakeProxyMode(d.fake_mode),
             'dm-row--new': d.id === justChanged,
-            'dm-row--drag': d.id === dragId,
-            'dm-row--over': d.id === overId && d.id !== dragId,
+            'dm-row--lifted': d.id === rowDrag.lifted.value,
+            'dm-row--held': d.id === rowDrag.held.value,
           }"
-          @dragover.prevent="onDragOver(d)"
-          @drop.prevent="onDrop(d)"
         >
           <!-- Head: order, type, the address (copy) and its badges; the actions at the far side -->
           <div class="dm-row__head" :class="{ 'dm-row__head--chosen': hasChosenProxies(d) }">
@@ -74,18 +72,12 @@
               <span
                 v-if="!filtering"
                 class="dm-row__handle"
-                draggable="true"
                 role="button"
                 tabindex="0"
                 :aria-label="t('domains.drag')"
                 aria-keyshortcuts="ArrowUp ArrowDown"
                 v-tooltip.top="t('domains.drag')"
-                @dragstart="onDragStart($event, d)"
-                @dragend="onDragEnd"
-                @pointerdown="onHandleDown($event, d)"
-                @pointermove="onHandleMove"
-                @pointerup="onHandleUp"
-                @pointercancel="onDragEnd"
+                @pointerdown="!busy && rowDrag.start($event, d.id, rows.map((r) => r.id))"
                 @keydown.up.prevent="!busy && position(d) > 0 && move(d, -1)"
                 @keydown.down.prevent="!busy && position(d) < state.domains.length - 1 && move(d, 1)"
               ><i class="pi pi-bars" /></span>
@@ -211,6 +203,7 @@
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import { useHashState } from '@/shared/composables/useHashState'
+import { useDragSort } from '@/shared/composables/useDragSort'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -306,8 +299,6 @@ const certDone = ref(false)
 /** Ask for a certificate when the dialog opens (false: one was just asked for by saving). */
 const certStart = ref(true)
 
-const dragId = ref<number | null>(null)
-const overId = ref<number | null>(null)
 
 const byId = computed(() => new Map((state.value?.domains ?? []).map((d) => [d.id, d])))
 const proxyById = computed(() => new Map((state.value?.meta.proxies ?? []).map((p) => [p.id, p])))
@@ -503,41 +494,22 @@ function move(d: DomainRow, delta: number) {
   void reorder(ids, d.id)
 }
 
-function onDragStart(e: DragEvent, d: DomainRow) {
-  dragId.value = d.id
-  e.dataTransfer?.setData('text/plain', String(d.id))
-  if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
-}
-function onDragOver(d: DomainRow) {
-  if (dragId.value !== null) overId.value = d.id
-}
-function onDragEnd() {
-  dragId.value = null
-  overId.value = null
-}
-/** Touch and pen drag the handle with pointer events (the browser's own drag needs a mouse); the mouse keeps that one. */
-function onHandleDown(e: PointerEvent, d: DomainRow) {
-  if (e.pointerType === 'mouse' || filtering.value || busy.value) return
-  e.preventDefault()
-  ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
-  dragId.value = d.id
-  overId.value = d.id
-}
-function onHandleMove(e: PointerEvent) {
-  if (e.pointerType === 'mouse' || dragId.value === null) return
-  const row = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>('[data-domain-id]')
-  if (row) overId.value = Number(row.dataset.domainId)
-  // Near the top or bottom of the screen the page scrolls on, to reach rows out of view
-  const edge = 70
-  if (e.clientY < edge) window.scrollBy(0, -14)
-  else if (e.clientY > window.innerHeight - edge) window.scrollBy(0, 14)
-}
-function onHandleUp(e: PointerEvent) {
-  if (e.pointerType === 'mouse' || dragId.value === null) return
-  const target = (state.value?.domains ?? []).find((r) => r.id === overId.value)
-  if (target) onDrop(target)
-  else onDragEnd()
-}
+/**
+ * Moving a domain by its handle, live (mouse, finger or pen): it follows the pointer, the others make room, and on
+ * release it glides into its place and the new order is saved.
+ */
+const rowDrag = useDragSort({
+  item: (id) => document.querySelector<HTMLElement>(`[data-domain-id="${id}"]`),
+  onDrop: (ids, from, to) => {
+    if (filtering.value) return false
+    const id = ids[from] as number
+    const all = (state.value?.domains ?? []).map((r) => r.id).filter((x) => x !== id)
+    const target = ids[to] as number
+    all.splice(all.indexOf(target) + (to > from ? 1 : 0), 0, id)
+    void reorder(all, id)
+    return true
+  },
+})
 
 /** A domain with proxies picked for it (not "automatic"): that list stays under its badges */
 function hasChosenProxies(d: DomainRow): boolean {
@@ -550,17 +522,6 @@ async function copyAddress(d: DomainRow) {
   await copy(d.domain)
   copiedId.value = d.id
   window.setTimeout(() => copiedId.value === d.id && (copiedId.value = null), 1500)
-}
-
-function onDrop(target: DomainRow) {
-  const id = dragId.value
-  onDragEnd()
-  if (id === null || id === target.id || filtering.value) return
-  const all = (state.value?.domains ?? []).map((r) => r.id)
-  const movingDown = all.indexOf(id) < all.indexOf(target.id)
-  const ids = all.filter((x) => x !== id)
-  ids.splice(ids.indexOf(target.id) + (movingDown ? 1 : 0), 0, id)
-  void reorder(ids, id)
 }
 
 function openMenu(e: Event, d: DomainRow) {
@@ -826,12 +787,31 @@ onBeforeUnmount(() => feed?.stop())
 .dm-row--new {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
 }
-.dm-row--drag {
-  opacity: 0.45;
+/* A row moved by its handle: it rides above the others, which slide to make room, and glides into its place */
+.dm-list--moving {
+  user-select: none;
+  -webkit-user-select: none;
 }
-.dm-row--over {
-  transform: translateY(2px);
-  box-shadow: 0 -3px 0 0 var(--p-primary-color);
+.dm-list--moving .dm-row {
+  transition:
+    opacity 0.2s ease,
+    box-shadow 0.2s ease,
+    translate 0.2s ease;
+}
+.dm-list--moving .dm-row--lifted {
+  position: relative;
+  z-index: 5;
+  opacity: 1;
+  background: var(--p-content-background);
+  box-shadow: 0 18px 36px -14px rgb(15 23 42 / 45%);
+}
+.dm-list--moving .dm-row--lifted .dm-row__handle {
+  color: var(--p-primary-color);
+  cursor: grabbing;
+}
+.dm-list--moving .dm-row--held,
+.dm-list--settling .dm-row {
+  transition: none !important;
 }
 .dm-row__order {
   display: flex;
