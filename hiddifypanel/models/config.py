@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Any
 
 from loguru import logger
-from sqlalchemy import Boolean, Enum, ForeignKey, String
+from sqlalchemy import Boolean, Enum, ForeignKey, String, event
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, ORMExecuteState, Session, mapped_column, with_loader_criteria
 
 from hiddifypanel import Events
 from hiddifypanel.cache import CacheMode, cache
@@ -63,6 +63,26 @@ class StrConfig(db.Model):
         from hiddifypanel.panel.commercial.restapi.v2.parent.schema import HConfigSchema
 
         return HConfigSchema.model_validate(conf_dict)
+
+
+_KNOWN_KEYS = list(ConfigEnum)
+
+
+@event.listens_for(Session, "do_orm_execute")
+def _known_config_keys_only(state: ORMExecuteState):
+    """
+    Reads of the settings tables skip a row whose key this version does not know: one written by a newer panel (a
+    beta, before going back to the release) would otherwise fail every read of the settings, with
+    "'<key>' is not among the defined enum values". The row stays, for when the newer version comes back.
+    """
+    if not state.is_select or state.is_column_load or state.is_relationship_load:
+        return
+    if not any(m.class_ in (BoolConfig, StrConfig) for m in state.all_mappers):
+        return
+    state.statement = state.statement.options(
+        with_loader_criteria(BoolConfig, BoolConfig.key.in_(_KNOWN_KEYS), include_aliases=True),
+        with_loader_criteria(StrConfig, StrConfig.key.in_(_KNOWN_KEYS), include_aliases=True),
+    )
 
 
 @cache.cache(ttl=500, modes=(CacheMode.settings, CacheMode.nodes))
