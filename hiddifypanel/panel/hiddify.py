@@ -169,6 +169,15 @@ def child_id_from_row(row: dict, force_child_unique_id: str | None = None) -> in
     return get_child(unique_id=uid)
 
 
+def _restorable_server_ips(rows: list[dict]) -> list[dict]:
+    """The backup's server IPs without this server's auto-detected ones. Those are the addresses of the machine the
+    backup was made on: restored on another server, they were offered as this server's IPs (e.g. for a new domain's
+    DNS record) next to its real ones. This server finds its own again (sync_server_ips). IPs added by hand and the
+    other nodes' IPs are kept."""
+    current = Child.current().id
+    return [row for row in rows if not (isinstance(row, dict) and row.get("is_auto") and child_id_from_row(row) == current)]
+
+
 def _custom_proxies_for_backup(CustomProxy) -> list[dict]:
     """Your own proxies in full; built-ins only with what you changed (nothing for an untouched one)."""
     defaults: dict[tuple[int, str], bool] = {}
@@ -323,7 +332,7 @@ def set_db_from_json(
         if "custom_proxies" in json_data:
             CustomProxy.bulk_register(json_data["custom_proxies"], commit=False)
         if "server_ips" in json_data:
-            ServerIp.bulk_register(json_data["server_ips"], commit=False)
+            ServerIp.bulk_register(_restorable_server_ips(json_data["server_ips"]), commit=False)
         if set_domains and "domains" in json_data:
             # Second pass: show_domains / download / server_domain / custom_proxy_slugs
             Domain.bulk_apply_links(json_data["domains"], commit=False)
