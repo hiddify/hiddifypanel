@@ -225,7 +225,35 @@ export function createAppRouter(base: string): Router {
     }
     return true
   })
+  // A tab left open across an update still asks for the old build's page files, which are gone: the click
+  // did nothing. Load the page it was going to from the server instead (the new build), once.
+  router.onError((error, to) => {
+    if (!isStaleBuildError(error)) return
+    const href = router.resolve(to.fullPath).href
+    if (reloadedJustNow(href)) return
+    window.location.assign(href)
+  })
   return router
+}
+
+const STALE_RELOAD_KEY = 'hiddify.staleBuildReload'
+
+function isStaleBuildError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  // Chrome/Edge, Firefox, Safari, and Vite's preload of the page's CSS
+  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed|Unable to preload CSS/i.test(message)
+}
+
+/** True when this address was already reloaded in the last 10 s (a file really missing on the server: no reload loop). */
+function reloadedJustNow(href: string): boolean {
+  try {
+    const last = JSON.parse(sessionStorage.getItem(STALE_RELOAD_KEY) || 'null') as { href: string; at: number } | null
+    if (last && last.href === href && Date.now() - last.at < 10_000) return true
+    sessionStorage.setItem(STALE_RELOAD_KEY, JSON.stringify({ href, at: Date.now() }))
+  } catch {
+    // No session storage (blocked): reload anyway; a file missing from the new build is the rare case
+  }
+  return false
 }
 
 export default createAppRouter(import.meta.env.BASE_URL)
