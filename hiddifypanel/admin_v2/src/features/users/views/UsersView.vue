@@ -268,7 +268,7 @@
     </div>
 
     <!-- Phones: compact cards -->
-    <div v-else-if="state" class="u-cards">
+    <div v-else-if="state" class="u-cards" :class="{ 'u-cards--dragging': cardDrag.dragging.value, 'u-cards--settling': cardDrag.settling.value }">
       <!-- Select every user the current filter / search shows (all pages), as the table's header checkbox does on a wider screen -->
       <div v-if="rows.length" class="u-cardbar">
         <label v-if="!readOnly" class="u-selectall">
@@ -297,8 +297,24 @@
       </div>
       <template v-for="group in cardGroups" :key="group.key">
         <div v-if="groupByOwner" class="users-group users-group--card"><i class="pi pi-sitemap" /><b>{{ group.owner || '—' }}</b><span class="text-muted-color">{{ group.users.length }}</span></div>
-        <article v-for="u in group.users" :key="u.uuid" class="u-card" :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u) }]">
+        <article
+          v-for="u in group.users"
+          :key="u.uuid"
+          class="u-card"
+          :class="[`u-card--${u.status}`, { 'u-card--picked': isSelected(u), 'u-card--lifted': cardDrag.dragging.value === u.uuid }]"
+          :data-card-uuid="u.uuid"
+          :style="cardDrag.styleOf(u.uuid)"
+        >
           <header class="u-card__head">
+            <!-- Drag handle, as on the table: the admin's order; muted (a tap says why) while a sort orders the cards -->
+            <span
+              class="u-card__drag"
+              :class="{ 'u-card__drag--off': !canReorder }"
+              role="button"
+              :aria-label="t('users.layout.dragHandle')"
+              @pointerdown="canReorder ? cardDrag.start($event, u.uuid, group.users.map((g) => g.uuid)) : dragOffHint()"
+              ><i class="pi pi-bars"
+            /></span>
             <Checkbox v-if="!readOnly" :model-value="isSelected(u)" binary class="u-card__check" :aria-label="t('users.select')" @update:model-value="(v: boolean) => toggleSelect(u, v)" />
             <!-- Status-tinted QR button: the link, first, on every card -->
             <button type="button" class="u-card__qr" :aria-label="t('users.showLink')" @click="openLink(u)">
@@ -450,6 +466,7 @@ import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import UserBulkCreateDialog from '@/features/users/components/UserBulkCreateDialog.vue'
 import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
 import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
+import { useCardDrag } from '@/features/users/useCardDrag'
 import { localeComparator, resolveFieldData, sort as sortValues } from '@primeuix/utils/object'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersLayout, type UsersState } from '@/features/users/api'
 import { sizeText, exactDate, exactDateTime, expireTone, gb, lastSeen, relativeDays, shortDate, type Tone } from '@/features/users/format'
@@ -854,7 +871,24 @@ function setPinned(u: Row, on: boolean) {
 }
 
 function onRowReorder(e: DataTableRowReorderEvent) {
-  const moved = e.value as Row[]
+  applyReorder(e.value as Row[], e.dropIndex)
+}
+
+/** Phones: a card moved within its group (the page's cards, or one admin's) to the place of `uuids[to]`. */
+const cardDrag = useCardDrag((uuids, from, to) => {
+  const moved = groupByOwner.value ? [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key)) : [...rows.value]
+  const a = moved.findIndex((u) => u.uuid === uuids[from])
+  const b = moved.findIndex((u) => u.uuid === uuids[to])
+  if (a < 0 || b < 0) return
+  moved.splice(b, 0, ...moved.splice(a, 1))
+  applyReorder(moved, b)
+})
+function dragOffHint() {
+  toast.add({ severity: 'info', summary: t('users.layout.dragOff'), life: 4000 })
+}
+
+/** A drag result (the listed users in their new order; `dropIndex`: where the moved one landed) saved as the order. */
+function applyReorder(moved: Row[], dropIndex: number) {
   let shown = moved.map((u) => u.uuid)
   if (groupByOwner.value) {
     // Grouped by admin: a user moves only among the users of the same admin. The list comes sorted by admin, so
@@ -864,7 +898,7 @@ function onRowReorder(e: DataTableRowReorderEvent) {
       toast.add({ severity: 'info', summary: t('users.layout.crossOwners'), life: 5000 })
       return
     }
-    const group = moved[e.dropIndex]!.owner_key
+    const group = moved[dropIndex]!.owner_key
     shown = moved.filter((u) => u.owner_key === group).map((u) => u.uuid)
   }
   const next = reorder(layout.value, orderedRows.value.map((r) => r.uuid), shown)
@@ -1798,6 +1832,46 @@ onBeforeUnmount(() => {
 }
 
 /* Cards (phones) */
+/* Drag handle: the admin's order, as on the table. The page does not scroll from it, so a finger drags. */
+.u-card__drag {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 2.1rem;
+  margin-inline: -0.2rem -0.25rem;
+  color: var(--p-text-muted-color);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.u-card__drag--off {
+  cursor: help;
+  opacity: 0.3;
+}
+/* While a card is moved: it rides above the others, which slide to make room */
+.u-cards--dragging {
+  user-select: none;
+  -webkit-user-select: none;
+}
+.u-cards--dragging .u-card {
+  transition: transform 0.18s ease;
+}
+.u-cards--dragging .u-card--lifted {
+  z-index: 5;
+  transition: none;
+  cursor: grabbing;
+  box-shadow: 0 18px 36px -14px rgb(15 23 42 / 45%);
+}
+.u-cards--dragging .u-card--lifted .u-card__drag {
+  color: var(--p-primary-color);
+  cursor: grabbing;
+}
+.u-cards--settling .u-card {
+  transition: none;
+}
 .u-cards {
   display: flex;
   flex-direction: column;

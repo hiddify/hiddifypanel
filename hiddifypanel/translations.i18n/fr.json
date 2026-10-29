@@ -2119,6 +2119,7 @@
       "layout": {
         "drag": "Glisser pour déplacer cet utilisateur",
         "dragOff": "Retirez le tri de colonne pour déplacer les utilisateurs",
+        "dragHandle": "Faites glisser pour déplacer cet utilisateur",
         "pin": "Épingler en haut",
         "unpin": "Désépingler",
         "crossGroups": "Les utilisateurs épinglés restent au-dessus des autres : épinglez ou désépinglez pour passer de l'un à l'autre.",
