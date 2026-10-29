@@ -1,0 +1,247 @@
+/* The side menu's and the Settings page's icons come alive under the mouse: the chip stays as it is and only the glyph
+   inside moves, each in its own way (the gear turns, the plane flies off and comes back, the heart beats, …). The motion
+   repeats, with a short rest, while the mouse stays on the item. The glyph is the icon's ::before (PrimeIcons); the
+   icon clips it (overflow: hidden in _menu.scss / SettingsView.vue), so a glyph that leaves comes back in cleanly. */
+
+/* Where an icon is hovered */
+$icon-hovers: '.layout-menu a:hover', '.settings-nav__item:hover';
+
+/* The motion of each icon; an icon not listed gets the hop */
+$icon-motions: (
+    'pi-home': icon-hop 1.4s ease-in-out,
+    'pi-user': icon-nod 1.4s ease-in-out,
+    'pi-users': icon-nod 1.4s ease-in-out,
+    'pi-user-edit': icon-nod 1.4s ease-in-out,
+    'pi-sitemap': icon-branch 1.5s ease-in-out,
+    'pi-send': icon-fly 1.5s ease-in-out,
+    'pi-telegram': icon-fly 1.5s ease-in-out,
+    'pi-server': icon-blink 1.4s ease-in-out,
+    'pi-wrench': icon-twist 1.4s ease-in-out,
+    'pi-key': icon-twist 1.4s ease-in-out,
+    'pi-bolt': icon-flash 1.4s ease-in-out,
+    'pi-wifi': icon-signal 1.4s ease-in-out,
+    'pi-code': icon-type 1.4s ease-in-out,
+    'pi-desktop': icon-power 1.6s ease-in-out,
+    'pi-link': icon-swing 1.4s ease-in-out,
+    'pi-palette': icon-swing 1.4s ease-in-out,
+    'pi-question-circle': icon-swing 1.4s ease-in-out,
+    'pi-sliders-h': icon-slide 1.4s ease-in-out,
+    'pi-directions': icon-turn 1.6s ease-in-out,
+    'pi-globe': icon-turn 1.6s ease-in-out,
+    'pi-cog': icon-spin 1.8s linear,
+    'pi-share-alt': icon-pulse 1.4s ease-in-out,
+    'pi-shield': icon-pulse 1.4s ease-in-out,
+    'pi-clone': icon-pulse 1.4s ease-in-out,
+    'pi-file-edit': icon-write 1.4s ease-in-out,
+    'pi-list': icon-type 1.4s ease-in-out,
+    'pi-save': icon-press 1.4s ease-in-out,
+    'pi-exclamation-circle': icon-shake 1.4s ease-in-out,
+    'pi-exclamation-triangle': icon-shake 1.4s ease-in-out,
+    'pi-lock': icon-shake 1.4s ease-in-out,
+    'pi-heart': icon-beat 1.2s ease-in-out,
+    'pi-chart-bar': icon-grow 1.5s ease-in-out,
+    'pi-wave-pulse': icon-scroll 1.6s linear,
+    'pi-forward': icon-dash 1.4s ease-in-out,
+    'pi-cloud': icon-drift 2s ease-in-out,
+    'pi-eye-slash': icon-blink-eye 1.6s ease-in-out,
+);
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    @each $hover in $icon-hovers {
+        #{$hover} :is(.layout-menuitem-icon, .settings-nav__icon)::before {
+            display: inline-block;
+            animation: icon-hop 1.4s ease-in-out infinite;
+        }
+
+        @each $icon, $motion in $icon-motions {
+            #{$hover} .#{$icon}:is(.layout-menuitem-icon, .settings-nav__icon)::before {
+                animation: $motion infinite;
+            }
+        }
+    }
+}
+
+/* A little jump that lands with a squash */
+@keyframes icon-hop {
+    0%, 60%, 100% { transform: translateY(0) scale(1, 1); }
+    20% { transform: translateY(-28%) scale(0.95, 1.06); }
+    40% { transform: translateY(0) scale(1.1, 0.88); }
+    50% { transform: translateY(-6%) scale(1, 1); }
+}
+
+/* A friendly nod */
+@keyframes icon-nod {
+    0%, 60%, 100% { transform: translateY(0) rotate(0); }
+    15% { transform: translateY(-14%) rotate(-8deg); }
+    32% { transform: translateY(6%) rotate(5deg); }
+    46% { transform: translateY(-4%) rotate(-2deg); }
+}
+
+/* The branches spread out and gather again */
+@keyframes icon-branch {
+    0%, 65%, 100% { transform: scale(1, 1); }
+    25% { transform: scale(1.22, 0.9); }
+    45% { transform: scale(0.92, 1.06); }
+}
+
+/* The plane flies off up and away, and glides back in from the other corner */
+@keyframes icon-fly {
+    0%, 55%, 100% { transform: translate(0, 0); opacity: 1; }
+    14% { transform: translate(85%, -85%) scale(0.8); opacity: 0.4; }
+    15% { transform: translate(-85%, 85%) scale(0.8); opacity: 0.4; }
+    36% { transform: translate(0, 0) scale(1.08); opacity: 1; }
+}
+
+/* The server's lights blink */
+@keyframes icon-blink {
+    0%, 70%, 100% { opacity: 1; transform: translateY(0); }
+    12% { opacity: 0.35; transform: translateY(-6%); }
+    24% { opacity: 1; transform: translateY(0); }
+    36% { opacity: 0.35; transform: translateY(-6%); }
+    48% { opacity: 1; transform: translateY(0); }
+}
+
+/* Turned like a wrench (or a key) */
+@keyframes icon-twist {
+    0%, 65%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-35deg); }
+    40% { transform: rotate(18deg); }
+    55% { transform: rotate(-6deg); }
+}
+
+/* A flash of lightning */
+@keyframes icon-flash {
+    0%, 60%, 100% { opacity: 1; transform: scale(1); }
+    10% { opacity: 0.2; transform: scale(0.9); }
+    20% { opacity: 1; transform: scale(1.22); }
+    30% { opacity: 0.4; transform: scale(1); }
+    42% { opacity: 1; transform: scale(1.1); }
+}
+
+/* The signal grows out from the bottom */
+@keyframes icon-signal {
+    0%, 65%, 100% { transform: scale(1); opacity: 1; }
+    15% { transform: scale(0.45); opacity: 0.5; transform-origin: 50% 85%; }
+    45% { transform: scale(1.1); opacity: 1; transform-origin: 50% 85%; }
+}
+
+/* Lines being typed: a quick step right and back */
+@keyframes icon-type {
+    0%, 60%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-14%); }
+    20% { transform: translateX(14%); }
+    30% { transform: translateX(-8%); }
+    40% { transform: translateX(8%); }
+    50% { transform: translateX(0); }
+}
+
+/* The screen switches on like an old monitor */
+@keyframes icon-power {
+    0%, 60%, 100% { transform: scale(1, 1); opacity: 1; }
+    15% { transform: scale(1.1, 0.08); opacity: 0.6; }
+    25% { transform: scale(0.08, 0.08); opacity: 0; }
+    40% { transform: scale(1.12, 0.9); opacity: 1; }
+}
+
+/* Swung like a pendulum */
+@keyframes icon-swing {
+    0%, 65%, 100% { transform: rotate(0); }
+    15% { transform: rotate(-24deg); }
+    32% { transform: rotate(18deg); }
+    48% { transform: rotate(-8deg); }
+}
+
+/* The sliders slide */
+@keyframes icon-slide {
+    0%, 65%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-22%); }
+    45% { transform: translateX(22%); }
+}
+
+/* Turned around once, like a globe or a sign on its post */
+@keyframes icon-turn {
+    0% { transform: perspective(40px) rotateY(0); }
+    55%, 100% { transform: perspective(40px) rotateY(360deg); }
+}
+
+/* The gear keeps turning */
+@keyframes icon-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* A soft pulse outwards */
+@keyframes icon-pulse {
+    0%, 60%, 100% { transform: scale(1); }
+    20% { transform: scale(1.25); }
+    40% { transform: scale(0.94); }
+}
+
+/* The pen writes a little line */
+@keyframes icon-write {
+    0%, 65%, 100% { transform: translate(0, 0) rotate(0); }
+    15% { transform: translate(-10%, 8%) rotate(-10deg); }
+    30% { transform: translate(10%, 8%) rotate(-4deg); }
+    45% { transform: translate(-6%, 10%) rotate(-10deg); }
+}
+
+/* Pressed down, like a save button */
+@keyframes icon-press {
+    0%, 60%, 100% { transform: translateY(0) scale(1); }
+    20% { transform: translateY(16%) scale(0.85); }
+    40% { transform: translateY(-6%) scale(1.06); }
+}
+
+/* An alert that shakes */
+@keyframes icon-shake {
+    0%, 55%, 100% { transform: translateX(0) rotate(0); }
+    8% { transform: translateX(-12%) rotate(-8deg); }
+    18% { transform: translateX(12%) rotate(8deg); }
+    28% { transform: translateX(-9%) rotate(-5deg); }
+    38% { transform: translateX(6%) rotate(3deg); }
+    48% { transform: translateX(0) rotate(0); }
+}
+
+/* A heartbeat: two beats, then rest */
+@keyframes icon-beat {
+    0%, 50%, 100% { transform: scale(1); }
+    12% { transform: scale(1.28); }
+    24% { transform: scale(1); }
+    36% { transform: scale(1.18); }
+}
+
+/* The bars grow from the bottom */
+@keyframes icon-grow {
+    0% { transform: scaleY(1); transform-origin: 50% 90%; }
+    15% { transform: scaleY(0.2); transform-origin: 50% 90%; }
+    45% { transform: scaleY(1.12); transform-origin: 50% 90%; }
+    60%, 100% { transform: scaleY(1); transform-origin: 50% 90%; }
+}
+
+/* The wave runs through, like on a monitor */
+@keyframes icon-scroll {
+    0% { transform: translateX(0); }
+    45% { transform: translateX(-120%); }
+    46% { transform: translateX(120%); }
+    90%, 100% { transform: translateX(0); }
+}
+
+/* Forward: a dash ahead and back */
+@keyframes icon-dash {
+    0%, 55%, 100% { transform: translateX(0); opacity: 1; }
+    18% { transform: translateX(120%); opacity: 0; }
+    19% { transform: translateX(-120%); opacity: 0; }
+    40% { transform: translateX(0); opacity: 1; }
+}
+
+/* The cloud drifts */
+@keyframes icon-drift {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-14%, -6%); }
+    75% { transform: translate(14%, 4%); }
+}
+
+/* The eye blinks */
+@keyframes icon-blink-eye {
+    0%, 30%, 50%, 100% { transform: scaleY(1); }
+    40% { transform: scaleY(0.1); }
+}

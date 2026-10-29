@@ -82,6 +82,8 @@
                 width: 1.75rem;
                 height: 1.75rem;
                 flex: none;
+                /* the glyph's hover motion (_icon-motion.scss) stays inside the chip */
+                overflow: hidden;
                 border-radius: 8px;
                 font-size: 0.95rem;
                 color: var(--mi);
@@ -92,13 +94,6 @@
             &:hover .layout-menuitem-icon[style*='--mi'] {
                 background: color-mix(in srgb, var(--mi) 22%, transparent);
                 transform: scale(1.06);
-            }
-
-            /* With a mouse the icon comes alive: a soft pop and sway, then it rests a little bigger */
-            @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-                &:hover .layout-menuitem-icon {
-                    animation: menu-icon-alive 0.6s ease-out forwards;
-                }
             }
 
             .layout-submenu-toggler {
@@ -192,12 +187,4 @@
 .layout-submenu-enter-active {
     overflow: hidden;
     transition: max-height 1s ease-in-out;
-}
-
-@keyframes menu-icon-alive {
-    0% { transform: scale(1) rotate(0); }
-    30% { transform: scale(1.18) rotate(-10deg); }
-    55% { transform: scale(0.97) rotate(6deg); }
-    80% { transform: scale(1.08) rotate(-2deg); }
-    100% { transform: scale(1.06) rotate(0); }
 }
