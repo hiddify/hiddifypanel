@@ -466,6 +466,8 @@ export interface DashboardNodeStats {
   name: string
   mode: string
   panel_url?: string | null
+  /** The server's country (ISO code) from its address; '' when unknown. */
+  country?: string
   ok: boolean
   error?: string | null
   error_code?: string | null

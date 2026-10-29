@@ -285,6 +285,7 @@
 </template>
 
 <script setup lang="ts">
+import { countryFlag, countryName as countryNameIn } from '@/shared/utils/country'
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
@@ -455,19 +456,8 @@ async function saveName(node: PanelNode) {
   }
 }
 
-/** The flag emoji of a country code (two regional indicator letters); '' when there is none. */
-function flag(code: string | undefined): string {
-  const c = (code ?? '').toUpperCase()
-  if (!/^[A-Z]{2}$/.test(c)) return ''
-  return String.fromCodePoint(...[...c].map((ch) => 0x1f1e6 + ch.charCodeAt(0) - 65))
-}
-function countryName(code: string): string {
-  try {
-    return new Intl.DisplayNames([locale.value], { type: 'region' }).of(code.toUpperCase()) ?? code
-  } catch {
-    return code
-  }
-}
+const flag = countryFlag
+const countryName = (code: string) => countryNameIn(code, locale.value)
 
 function versionTitle(version?: string): string {
   if (!version) return ''

@@ -213,6 +213,8 @@ class DashboardNodeStats(ApiModel):
     mode: str
     # Admin panel of the node for the current account; None for this server.
     panel_url: str | None = None
+    # The server's country (ISO code, e.g. "DE") from its address; "" when unknown.
+    country: str = ""
     ok: bool = True
     error: str | None = None
     # Why the node could not be asked (hutils.node.contact_error): the Nodes page explains it and how to fix it.

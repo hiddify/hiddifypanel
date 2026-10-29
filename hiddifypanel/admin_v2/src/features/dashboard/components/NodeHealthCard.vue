@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { countryFlag, countryName } from '@/shared/utils/country'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
@@ -31,11 +32,16 @@ const visibleNodes = computed(() =>
 const multiNode = computed(() => visibleNodes.value.length > 1)
 
 const nodeTitle = (node: DashboardNodeStats) => (node.id === 0 ? t('dashboard.thisServer') : node.name)
+/** The node's country, by its address: the flag before its name, as on the Nodes page. */
+const nodeFlag = (node: DashboardNodeStats) => countryFlag(node.country)
+const nodeCountry = (node: DashboardNodeStats) => (node.country ? countryName(node.country, locale.value) : '')
 
 const tableRows = computed(() =>
   visibleNodes.value.map((node) => ({
     id: node.id,
     title: nodeTitle(node),
+    flag: nodeFlag(node),
+    country: nodeCountry(node),
     color: nodeColor(node.id),
     panelUrl: node.panel_url ?? null,
     ok: node.ok,
@@ -225,6 +231,7 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
     <div v-if="multiNode" class="node-health__legend">
       <span v-for="node in tableRows" :key="node.id" class="node-health__legend-item">
         <span class="node-health__dot" :style="{ background: node.color }" />
+        <span v-if="node.flag" class="node-flag" :title="node.country" :aria-label="node.country">{{ node.flag }}</span>
         {{ node.title }}
       </span>
     </div>
@@ -301,11 +308,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <template #body="{ data }">
           <span class="node-cell__dot" :style="{ background: data.color }" />
           <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
-            <strong>{{ data.title }} <i class="pi pi-external-link" /></strong>
+            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }} <i class="pi pi-external-link" /></strong>
             <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
           </a>
           <div v-else class="min-w-0 node-cell__title">
-            <strong>{{ data.title }}</strong>
+            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }}</strong>
             <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
           </div>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
@@ -347,11 +354,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
         <div class="node-list__head">
           <span class="node-cell__dot" :style="{ background: data.color }" />
           <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
-            <strong>{{ data.title }} <i class="pi pi-external-link" /></strong>
+            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }} <i class="pi pi-external-link" /></strong>
             <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
           </a>
           <div v-else class="min-w-0 node-cell__title">
-            <strong>{{ data.title }}</strong>
+            <strong><span v-if="data.flag" class="node-flag" :title="data.country" :aria-label="data.country">{{ data.flag }}</span>{{ data.title }}</strong>
             <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
           </div>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
@@ -437,6 +444,14 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 </template>
 
 <style scoped>
+/* The node's country flag before its name; colour emoji fonts first, so the flag shows, not its two letters */
+.node-flag {
+  display: inline-block;
+  margin-inline-end: 0.35rem;
+  font-size: 1.1em;
+  line-height: 1;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
 .node-health__legend {
   display: flex;
   flex-wrap: wrap;
