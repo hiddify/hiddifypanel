@@ -2795,6 +2795,20 @@
       "unsaved": "{count} unsaved change | {count} unsaved changes"
     },
     "settings": {
+      "dns": {
+        "custom": "Custom",
+        "customHelp": "Up to four IP addresses (IPv4 or IPv6), separated by commas. The server also uses them for its own DNS.",
+        "customHint": "Your own DNS addresses",
+        "customPlaceholder": "e.g. 1.1.1.1, 1.0.0.1",
+        "group": {
+          "adblock": "Ad Block DNS",
+          "custom": "Custom DNS",
+          "family": "Ad Block + Adult Filter",
+          "normal": "Normal DNS"
+        },
+        "invalid": "Enter one to four IP addresses separated by commas, e.g. 1.1.1.1, 1.0.0.1",
+        "placeholder": "Choose a DNS server"
+      },
       "adminPathChanged": "The admin path changed. After applying the configs, the admin panel will be at",
       "advancedBadge": "Advanced",
       "categories": "Setting categories",
@@ -3868,7 +3882,7 @@
       "label": "🪪 Default User Agent"
     },
     "dns_server": {
-      "description": "✳️ Default 1.1.1.1 <br>\n🚧 Block Malware 1.1.1.2 <br>\n🔞 Block Porn 1.1.1.3\n",
+      "description": "The DNS the server and its proxies use. Pick a public DNS from the list, or your own with “Custom”. The server's system DNS changes with it.",
       "label": "🖥 DNS Server"
     },
     "dnstt": {
