@@ -268,6 +268,8 @@ export interface DomainsOptions {
 export interface DomainsState {
   domains: DomainRow[]
   meta: DomainsMeta
+  /** Whose configs a domain can show (this panel's and its nodes' domains), with every list */
+  show_options?: DomainsOptions['show_options']
   restart_mode?: RestartMode
   warnings?: string[]
   created_id?: number

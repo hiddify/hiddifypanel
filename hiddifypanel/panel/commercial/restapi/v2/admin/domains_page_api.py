@@ -261,6 +261,9 @@ def _list_out(child_id: int) -> dict[str, Any]:
             "proxies": _proxies_list(child_id),
             "server_ips": _server_ips(child_id),
         },
+        # Whose configs a domain can show: with every list (it is quick), so a domain just added is offered at once;
+        # the options call takes seconds (the proxies that fit each kind of domain)
+        "show_options": _show_options(child_id),
     }
 
 
