@@ -3441,6 +3441,22 @@
       "vmessObject": "VMess JSON must be an object"
     },
     "validation": {
+      "details": "Technical details",
+      "howToFix": "How to fix it",
+      "kind": {
+        "internal": {
+          "lead": "The check itself failed inside the panel: this is a fault in the panel, not in this proxy's settings. The proxy can still be saved.",
+          "step1": "Update the panel to the latest version (Apply › Update); the fault may already be fixed.",
+          "step2": "If it still happens, send the technical details below to Hiddify support.",
+          "title": "The panel could not check this proxy"
+        },
+        "template": {
+          "lead": "This proxy's template has an error at the place shown below, so its config could not be made.",
+          "step1": "Open the Server or Client tab and fix the line shown below (a missing bracket, quote or {'{%'} end {'%}'} is common).",
+          "step2": "Or turn off the custom content to go back to the built-in template, then validate again.",
+          "title": "The template could not be built"
+        }
+      },
       "errors": "Errors",
       "preview": "Compiled preview",
       "title": "Validation",

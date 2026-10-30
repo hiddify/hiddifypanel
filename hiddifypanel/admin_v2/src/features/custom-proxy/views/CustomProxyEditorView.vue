@@ -1704,14 +1704,14 @@ async function runValidate() {
     toast.add({
       severity: 'error',
       summary: t('common.validationFailed'),
-      detail: validationToastDetail(validation.value),
+      detail: validationToastDetail(validation.value, 5, t),
       life: 8000,
     })
   } else if (validation.value?.warnings?.length) {
     toast.add({
       severity: 'warn',
       summary: t('validation.warnings'),
-      detail: validationToastDetail(validation.value),
+      detail: validationToastDetail(validation.value, 5, t),
       life: 8000,
     })
   }

@@ -2482,6 +2482,22 @@
       "vmessObject": "Le JSON VMess doit être un objet"
     },
     "validation": {
+      "details": "Détails techniques",
+      "howToFix": "Comment corriger",
+      "kind": {
+        "internal": {
+          "lead": "La vérification elle-même a échoué dans le panneau : c'est un défaut du panneau, pas des paramètres de ce proxy. Le proxy peut toujours être enregistré.",
+          "step1": "Mettez le panneau à jour (Appliquer › Mise à jour) ; le défaut est peut-être déjà corrigé.",
+          "step2": "Si cela se reproduit, envoyez les détails techniques ci-dessous au support Hiddify.",
+          "title": "Le panneau n'a pas pu vérifier ce proxy"
+        },
+        "template": {
+          "lead": "Le modèle de ce proxy contient une erreur à l'endroit indiqué ci-dessous ; sa config n'a donc pas pu être générée.",
+          "step1": "Ouvrez l'onglet Serveur ou Client et corrigez la ligne indiquée (une parenthèse, un guillemet ou un {'{%'} end {'%}'} manquant est fréquent).",
+          "step2": "Ou désactivez le contenu personnalisé pour revenir au modèle intégré, puis validez de nouveau.",
+          "title": "Le modèle n'a pas pu être construit"
+        }
+      },
       "errors": "Erreurs",
       "preview": "Aperçu compilé",
       "title": "Validation",
