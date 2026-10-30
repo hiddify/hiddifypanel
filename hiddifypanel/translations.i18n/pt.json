@@ -1080,6 +1080,18 @@
       },
       "subtitle": "Os endereços aos quais os usuários se conectam, como cada um chega a este servidor e seus certificados",
       "title": "Domínios",
+      "tip": {
+        "autoRenew": "Renovação automática",
+        "certificate": "Certificado",
+        "covers": "Abrange",
+        "fingerprint": "Impressão digital",
+        "issuedBy": "Emitido por",
+        "key": "Chave",
+        "noCertNeeded": "Não é preciso: o TLS é emprestado ou falso",
+        "off": "Desligado",
+        "on": "Ligado",
+        "sni": "Nome mostrado (SNI)"
+      },
       "tls": {
         "decoy": "TLS isca",
         "decoyHint": "Domínios TLS Fake e Reality não precisam de certificado próprio.",

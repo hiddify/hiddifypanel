@@ -7,6 +7,7 @@ rebuilt immediately via ``apply-users``; HAProxy / full gateway still needs Appl
 
 from __future__ import annotations
 
+import functools
 import ipaddress
 import json
 import re
@@ -99,9 +100,52 @@ def _enum(value):
 # ---------------------------------------------------------------------------------------------- rows
 
 
+_CURVES = {"secp256r1": "P-256", "secp384r1": "P-384", "secp521r1": "P-521"}
+
+
+@functools.lru_cache(maxsize=256)
+def _cert_facts(pem: str) -> dict[str, Any]:
+    """What the Domains page shows of a stored certificate beyond issuer and expiry: when it was issued, the names it
+    covers, its key and the organisation that issued it. Empty when the PEM does not read."""
+    try:
+        from cryptography import x509
+        from cryptography.hazmat.primitives.asymmetric import ec, rsa
+        from cryptography.x509.oid import NameOID
+
+        c = x509.load_pem_x509_certificate(pem.encode())
+    except Exception:
+        return {}
+    try:
+        san = c.extensions.get_extension_for_class(x509.SubjectAlternativeName).value
+        names = [*san.get_values_for_type(x509.DNSName), *(str(ip) for ip in san.get_values_for_type(x509.IPAddress))]
+    except x509.ExtensionNotFound:
+        names = []
+    key = c.public_key()
+    if isinstance(key, ec.EllipticCurvePublicKey):
+        key_name = f"ECDSA {_CURVES.get(key.curve.name, key.curve.name)}"
+    elif isinstance(key, rsa.RSAPublicKey):
+        key_name = f"RSA {key.key_size}"
+    else:
+        key_name = type(key).__name__.replace("PublicKey", "").lstrip("_")
+    org = c.issuer.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)
+    return {
+        "issued_at": c.not_valid_before_utc.replace(tzinfo=None).isoformat() + "Z",
+        "names": names[:20],
+        "key": key_name,
+        "ca": str(org[0].value) if org else "",
+    }
+
+
 def _tls_out(d: Domain) -> dict[str, Any]:
     cert = d.certificate
+    facts = _cert_facts(cert.certificate) if cert and cert.certificate else {}
     return {
+        "issued_at": facts.get("issued_at"),
+        "names": facts.get("names", []),
+        "key": facts.get("key", ""),
+        "ca": facts.get("ca", ""),
+        "fingerprint": (cert.fingerprint if cert else "") or "",
+        "auto_renew": bool(cert.auto_renew) if cert else False,
         "status": d.tls_status,
         "needs_valid": bool(d.need_valid_ssl),
         "issuer": (cert.issuer if cert else "") or "",
