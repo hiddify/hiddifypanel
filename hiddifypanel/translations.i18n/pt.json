@@ -2028,7 +2028,38 @@
       "showLess": "Mostrar menos",
       "showMore": "Mostrar mais {count} configuração avançada | Mostrar mais {count} configurações avançadas",
       "subtitle": "Tudo sobre como este painel funciona. Configurações comuns primeiro; as avançadas sob demanda.",
-      "telegramConnected": "Bot do Telegram conectado: @{username}",
+      "tgError": {
+        "badToken": {
+          "lead": "O Telegram diz que este token não pertence a nenhum bot: pode estar mal escrito, incompleto ou revogado.",
+          "step1": "No Telegram, abra {'@'}BotFather, envie /mybots, escolha o seu bot e toque em “API Token”.",
+          "step2": "Copie o token inteiro (parecido com 123456789:AAE…) e cole-o aqui, sem espaços.",
+          "step3": "Clique novamente em Guardar.",
+          "title": "O Telegram não aceitou este token de bot"
+        },
+        "details": "Detalhes técnicos",
+        "howToFix": "Como corrigir",
+        "network": {
+          "lead": "O servidor não conseguiu ligar-se a api.telegram.org, por isso o bot não pôde ser verificado. Onde o Telegram é filtrado (ex.: Irão), a própria rede do servidor também o bloqueia.",
+          "step1": "Verifique se este servidor tem acesso à internet e se o DNS funciona.",
+          "step2": "Se o Telegram é filtrado onde este servidor está, o bot não funciona a partir dele: use um servidor fora da filtragem.",
+          "step3": "Clique novamente em Guardar para tentar outra vez.",
+          "title": "Este servidor não chega ao Telegram"
+        },
+        "other": {
+          "lead": "O Telegram recusou o pedido; os detalhes técnicos abaixo dizem porquê.",
+          "step1": "Verifique o token com {'@'}BotFather.",
+          "step2": "Clique novamente em Guardar; se ainda falhar, envie os detalhes técnicos ao suporte Hiddify.",
+          "title": "O bot do Telegram não conseguiu ligar-se"
+        },
+        "seeAbove": "O motivo e a solução aparecem acima das configurações.",
+        "webhook": {
+          "lead": "O token está correto, mas o Telegram não conseguiu definir este painel como endereço do bot: é preciso um domínio com certificado válido.",
+          "step1": "Na página Domínios, confirme que um domínio tem um certificado válido (não autoassinado).",
+          "step2": "Depois clique novamente em Guardar.",
+          "title": "O Telegram não consegue usar o endereço deste painel"
+        }
+      },
+      "telegramConnected": "Bot do Telegram conectado: {'@'}{username}",
       "telegramFailed": "Não foi possível conectar o bot do Telegram",
       "title": "Configurações"
     },

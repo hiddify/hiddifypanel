@@ -2815,7 +2815,38 @@
       "showLess": "Show less",
       "showMore": "Show {count} more advanced setting | Show {count} more advanced settings",
       "subtitle": "Everything about how this panel runs. Common settings first; advanced ones on request.",
-      "telegramConnected": "Telegram bot connected: @{username}",
+      "tgError": {
+        "badToken": {
+          "lead": "Telegram says this token does not belong to any bot: it may be mistyped, cut short, or revoked.",
+          "step1": "In Telegram, open {'@'}BotFather, send /mybots, pick your bot and tap “API Token”.",
+          "step2": "Copy the whole token (it looks like 123456789:AAE…) and paste it here, without spaces.",
+          "step3": "Press Save again.",
+          "title": "Telegram did not accept this bot token"
+        },
+        "details": "Technical details",
+        "howToFix": "How to fix it",
+        "network": {
+          "lead": "The server could not connect to api.telegram.org, so the bot could not be checked. Where Telegram is filtered (e.g. in Iran), the server's own network blocks it too.",
+          "step1": "Check that this server has internet access and that DNS works.",
+          "step2": "If Telegram is filtered where this server is, the bot cannot work from it: use a server outside the filtering.",
+          "step3": "Press Save again to retry.",
+          "title": "This server cannot reach Telegram"
+        },
+        "other": {
+          "lead": "Telegram refused the request; the technical details below say why.",
+          "step1": "Check the token with {'@'}BotFather.",
+          "step2": "Press Save again; if it still fails, send the technical details to Hiddify support.",
+          "title": "The Telegram bot could not connect"
+        },
+        "seeAbove": "Why, and how to fix it, is shown above the settings.",
+        "webhook": {
+          "lead": "The token is fine, but Telegram could not set this panel as the bot's address: it needs a domain with a valid certificate.",
+          "step1": "On the Domains page, make sure a domain has a valid (not self-signed) certificate.",
+          "step2": "Then press Save again.",
+          "title": "Telegram cannot use this panel's address"
+        }
+      },
+      "telegramConnected": "Telegram bot connected: {'@'}{username}",
       "telegramFailed": "Telegram bot could not connect",
       "title": "Settings"
     },

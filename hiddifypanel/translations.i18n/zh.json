@@ -2028,7 +2028,38 @@
       "showLess": "显示较少",
       "showMore": "再显示 {count} 项高级设置 | 再显示 {count} 项高级设置",
       "subtitle": "关于此面板运行方式的一切。常用设置在前；高级设置按需显示。",
-      "telegramConnected": "Telegram 机器人已连接：@{username}",
+      "tgError": {
+        "badToken": {
+          "lead": "Telegram 表示此令牌不属于任何机器人：可能输错、不完整或已被撤销。",
+          "step1": "在 Telegram 中打开 {'@'}BotFather，发送 /mybots，选择您的机器人并点击“API Token”。",
+          "step2": "复制完整令牌（形如 123456789:AAE…），不带空格粘贴到这里。",
+          "step3": "再次点击保存。",
+          "title": "Telegram 不接受此机器人令牌"
+        },
+        "details": "技术细节",
+        "howToFix": "如何修复",
+        "network": {
+          "lead": "服务器无法连接 api.telegram.org，因此无法验证机器人。在 Telegram 被过滤的地方（例如伊朗），服务器自身的网络也会屏蔽它。",
+          "step1": "检查此服务器能否访问互联网以及 DNS 是否正常。",
+          "step2": "如果服务器所在地过滤了 Telegram，机器人无法在此服务器上工作：请使用过滤范围之外的服务器。",
+          "step3": "再次点击保存以重试。",
+          "title": "此服务器无法访问 Telegram"
+        },
+        "other": {
+          "lead": "Telegram 拒绝了请求；原因见下方技术细节。",
+          "step1": "使用 {'@'}BotFather 检查令牌。",
+          "step2": "再次点击保存；如果仍然失败，请将技术细节发送给 Hiddify 支持。",
+          "title": "Telegram 机器人无法连接"
+        },
+        "seeAbove": "原因和解决方法显示在设置上方。",
+        "webhook": {
+          "lead": "令牌正确，但 Telegram 无法将此面板设为机器人的地址：需要一个带有效证书的域名。",
+          "step1": "在“域名”页面确认有一个域名拥有有效（非自签名）证书。",
+          "step2": "然后再次点击保存。",
+          "title": "Telegram 无法使用此面板的地址"
+        }
+      },
+      "telegramConnected": "Telegram 机器人已连接：{'@'}{username}",
       "telegramFailed": "Telegram 机器人连接失败",
       "title": "设置"
     },
