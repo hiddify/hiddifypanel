@@ -53,7 +53,8 @@ const hoverParts = computed(() => {
 const tipStyle = computed(() => {
   if (!hover.value) return {}
   const { clientX, clientY } = hover.value
-  const top = `${Math.max(8, clientY - 36)}px`
+  // Under the pointer: above it the tip would cover the tile's big number
+  const top = `${Math.min(window.innerHeight - 40, clientY + 18)}px`
   return clientX > window.innerWidth / 2
     ? { right: `${window.innerWidth - clientX + 12}px`, top }
     : { left: `${clientX + 12}px`, top }
@@ -112,10 +113,14 @@ onBeforeUnmount(() => clearTimeout(hideTimer))
         vector-effect="non-scaling-stroke"
       />
     </svg>
-    <div v-if="hoverParts" class="sparkline-tip" :style="[tipStyle, { '--spark-color': color }]">
-      <span v-if="hoverParts.label" class="sparkline-tip__label">{{ hoverParts.label }}</span>
-      <span class="sparkline-tip__value">{{ hoverParts.value }}</span>
-    </div>
+    <!-- In <body>: the tile lifts on hover (a transform), which would place a fixed tip from the tile, not the screen,
+         and under the cards below it -->
+    <Teleport to="body">
+      <div v-if="hoverParts" class="sparkline-tip" :style="[tipStyle, { '--spark-color': color }]">
+        <span v-if="hoverParts.label" class="sparkline-tip__label">{{ hoverParts.label }}</span>
+        <span class="sparkline-tip__value">{{ hoverParts.value }}</span>
+      </div>
+    </Teleport>
   </div>
 </template>
 
