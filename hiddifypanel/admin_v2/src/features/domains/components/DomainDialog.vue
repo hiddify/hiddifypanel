@@ -139,7 +139,7 @@ watch(compatibleIds, (ids) => {
 const showDomainsAllowed = computed(() => isSublink.value || (!meta.value?.has_sublink && fakeMode.value === 'valid'))
 /** Like the classic page: `Node[name] alias [domain] mode(tls)` for nodes' domains. */
 const showOptions = computed(() =>
-  (props.options?.show_options ?? []).map((d) => {
+  (props.state?.show_options ?? props.options?.show_options ?? []).map((d) => {
     const name = d.alias && d.alias !== d.domain ? `${d.alias} [${d.domain || t('domains.noName')}]` : d.domain || t('domains.noName')
     const kind = `${t(`domains.kind.${kindOf(d.mode)}.name`)} (${t(`domains.tlsMode.${d.fake_mode}`)})`
     return { id: d.id, label: `${d.node ? `Node[${d.node}] ` : ''}${name} ${kind}` }
