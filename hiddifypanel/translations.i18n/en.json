@@ -1427,6 +1427,50 @@
         "frontingHint": "Domain fronting: configs show this name instead of the domain",
         "resolveIp": "IP"
       },
+      "certError": {
+        "badName": {
+          "lead": "“{domain}” is not a name a certificate can be issued for (for example it has no dot), so Let's Encrypt and ZeroSSL refuse it.",
+          "step1": "Edit this domain and enter its full name, e.g. sub.example.com.",
+          "step2": "If it is not used, delete it from the ⋮ menu.",
+          "title": "Not a real domain name"
+        },
+        "caDown": {
+          "lead": "Let's Encrypt or ZeroSSL was busy or unreachable just now; nothing is wrong with “{domain}”.",
+          "step1": "Wait a few minutes and press Try again; the panel also retries by itself.",
+          "step2": "If it keeps failing, check that this server can open HTTPS connections to the internet.",
+          "title": "The certificate authority did not answer"
+        },
+        "caa": {
+          "lead": "The DNS of “{domain}” has a CAA record that does not allow Let's Encrypt or ZeroSSL.",
+          "step1": "At your DNS provider, add a CAA record that allows letsencrypt.org, or remove the CAA records.",
+          "step2": "Wait a few minutes, then press Try again.",
+          "title": "A CAA record blocks the certificate"
+        },
+        "details": "Technical details",
+        "howToFix": "How to fix it",
+        "showLess": "Show less",
+        "showMore": "Show more",
+        "dns": {
+          "lead": "The certificate authority looked up “{domain}” and found no address for it, or an address that is not this server.",
+          "step1": "At your DNS provider, add an A record (IPv4) or an AAAA record (IPv6) for this name with this server's IP.",
+          "step2": "Wait a few minutes for the change to spread, then press Try again.",
+          "step3": "If a CDN such as Cloudflare is in front of it, set this domain's type to CDN.",
+          "title": "The domain does not point to this server"
+        },
+        "other": {
+          "lead": "The certificate authority refused the request for “{domain}”; the technical details below say why.",
+          "step1": "Check that the domain points to this server's IP.",
+          "step2": "Check that port 80 is open to the internet.",
+          "step3": "Then press Try again; if it still fails, send the technical details to Hiddify support.",
+          "title": "The certificate could not be issued"
+        },
+        "port80": {
+          "lead": "The certificate authority could not reach this server on port 80 to check “{domain}”.",
+          "step1": "Open port 80 (TCP) in the server's firewall and in your cloud provider's firewall.",
+          "step2": "Then press Try again.",
+          "title": "Port 80 is not reachable"
+        }
+      },
       "cert": {
         "failed": "Could not get a certificate",
         "failedHint": "A self-signed certificate is used until a real one can be issued.",

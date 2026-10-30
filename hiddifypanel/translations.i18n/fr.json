@@ -908,6 +908,50 @@
         "frontingHint": "Domain fronting : les configs affichent ce nom à la place du domaine",
         "resolveIp": "IP"
       },
+      "certError": {
+        "badName": {
+          "lead": "« {domain} » n'est pas un nom pour lequel un certificat peut être émis (par exemple il n'a pas de point), donc Let's Encrypt et ZeroSSL le refusent.",
+          "step1": "Modifiez ce domaine et saisissez son nom complet, par ex. sub.example.com.",
+          "step2": "S'il ne sert pas, supprimez-le depuis le menu ⋮.",
+          "title": "Ce n'est pas un vrai nom de domaine"
+        },
+        "caDown": {
+          "lead": "Let's Encrypt ou ZeroSSL était occupé ou injoignable à l'instant ; « {domain} » n'a aucun problème.",
+          "step1": "Attendez quelques minutes et cliquez sur Réessayer ; le panneau réessaie aussi tout seul.",
+          "step2": "Si cela échoue encore, vérifiez que ce serveur peut ouvrir des connexions HTTPS vers Internet.",
+          "title": "L'autorité de certification n'a pas répondu"
+        },
+        "caa": {
+          "lead": "Le DNS de « {domain} » a un enregistrement CAA qui n'autorise ni Let's Encrypt ni ZeroSSL.",
+          "step1": "Chez votre fournisseur DNS, ajoutez un enregistrement CAA autorisant letsencrypt.org, ou supprimez les enregistrements CAA.",
+          "step2": "Attendez quelques minutes, puis cliquez sur Réessayer.",
+          "title": "Un enregistrement CAA bloque le certificat"
+        },
+        "details": "Détails techniques",
+        "howToFix": "Comment corriger",
+        "showLess": "Afficher moins",
+        "showMore": "Afficher plus",
+        "dns": {
+          "lead": "L'autorité de certification a cherché « {domain} » et n'a trouvé aucune adresse, ou une adresse qui n'est pas ce serveur.",
+          "step1": "Chez votre fournisseur DNS, ajoutez un enregistrement A (IPv4) ou AAAA (IPv6) pour ce nom avec l'IP de ce serveur.",
+          "step2": "Attendez quelques minutes que le changement se propage, puis cliquez sur Réessayer.",
+          "step3": "Si un CDN comme Cloudflare est devant, réglez le type de ce domaine sur CDN.",
+          "title": "Le domaine ne pointe pas vers ce serveur"
+        },
+        "other": {
+          "lead": "L'autorité de certification a refusé la demande pour « {domain} » ; les détails techniques ci-dessous expliquent pourquoi.",
+          "step1": "Vérifiez que le domaine pointe vers l'IP de ce serveur.",
+          "step2": "Vérifiez que le port 80 est ouvert sur Internet.",
+          "step3": "Puis cliquez sur Réessayer ; si cela échoue encore, envoyez les détails techniques au support Hiddify.",
+          "title": "Le certificat n'a pas pu être émis"
+        },
+        "port80": {
+          "lead": "L'autorité de certification n'a pas pu joindre ce serveur sur le port 80 pour vérifier « {domain} ».",
+          "step1": "Ouvrez le port 80 (TCP) dans le pare-feu du serveur et dans celui de votre fournisseur cloud.",
+          "step2": "Puis cliquez sur Réessayer.",
+          "title": "Le port 80 n'est pas joignable"
+        }
+      },
       "cert": {
         "failed": "Impossible d'obtenir un certificat",
         "failedHint": "Un certificat auto-signé est utilisé jusqu'à ce qu'un vrai puisse être émis.",

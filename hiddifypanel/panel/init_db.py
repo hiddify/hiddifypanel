@@ -25,6 +25,30 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v191(child_id):
+    """A server whose public IPv4 was not found at its first setup got the domains "none" and "none.sslip.io"
+    (str(None)): no CA issues a certificate for them and no client reaches them, so they go. Only when they are the
+    server's only domains do its own names (_default_domains) take their place first, as a domain always stays."""
+    broken_names = ["none", "none.sslip.io"]
+    broken = Domain.query.filter(Domain.child_id == child_id, Domain.domain.in_(broken_names)).all()
+    if not broken:
+        return
+    if not Domain.query.filter(Domain.child_id == child_id, Domain.domain.notin_(broken_names)).count():
+        names = _default_domains()
+        if not names:
+            return  # nothing better known yet
+        for name in names:
+            db.session.add(Domain(domain=name, mode=DomainType.direct, child_id=child_id))
+        db.session.flush()
+    for d in broken:
+        for other in Domain.query.filter(Domain.child_id == child_id, Domain.server_domain_id == d.id).all():
+            other.server_domain = None
+        d.showed_by_domains = []
+        logger.info(f"domain {d.domain} removed: it is not a real name of this server")
+        db.session.delete(d)
+    db.session.flush()
+
+
 def _v189(child_id):
     """no_inbound builtins (node-configs, additional-config) used tls_layer=http and were gated by
     http_proxy_enable; parent/child subscriptions then omitted node configs. Align with user-configs."""
@@ -1049,15 +1073,24 @@ def _v19():
 #             u.expiry_time = None
 
 
+def _default_domains() -> list[str]:
+    """This server's own names for a first setup: its IPv4 and <IPv4>.sslip.io, or <IPv6>.sslip.io when it has no IPv4
+    (an IPv6-only server). None when no public IP is found: str(None) made the domains "none" and "none.sslip.io",
+    which can never get a certificate."""
+    if ip4 := hutils.network.get_ip_str(4):
+        return [ip4, f"{ip4}.sslip.io"]
+    if ip6 := hutils.network.get_ip(6):
+        return [f"{ip6.exploded.replace(':', '-')}.sslip.io"]
+    return []
+
+
 def _v1():
-    external_ip = str(hutils.network.get_ip_str(4))
     # rnd_domains = hutils.network.get_random_domains(5)
 
     data = [
         StrConfig(key=ConfigEnum.db_version, value=1),
         User(name="default", usage_limit_GB=3000, package_days=3650, mode=UserMode.weekly),
-        Domain(domain=external_ip, mode=DomainType.direct),
-        Domain(domain=external_ip + ".sslip.io", mode=DomainType.direct),
+        *[Domain(domain=name, mode=DomainType.direct) for name in _default_domains()],
         StrConfig(key=ConfigEnum.admin_secret, value=uuid.uuid4()),
         StrConfig(key=ConfigEnum.http_ports, value="80"),
         StrConfig(key=ConfigEnum.tls_ports, value="443"),

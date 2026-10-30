@@ -112,6 +112,19 @@
                   {{ certLabel(d) }}
                   <template v-if="d.tls.status === 'valid' && expiresIn(d) !== null"> · {{ t('domains.tls.expiresIn', { n: expiresIn(d) }) }}</template>
                 </span>
+                <!-- A failed certificate: why, in a few words; the rest opens under the row (the row keeps its height) -->
+                <button
+                  v-if="certFailed(d)"
+                  type="button"
+                  class="dm-cert-why"
+                  :class="{ 'dm-cert-why--open': certOpen.has(d.id) }"
+                  :aria-expanded="certOpen.has(d.id)"
+                  :aria-controls="`dm-cert-${d.id}`"
+                  @click="toggleCert(d.id)"
+                >
+                  <span class="dm-cert-why__kind">{{ isRateLimited(d) ? t('domains.tls.rateLimited') : t(`domains.certError.${certKind(d)}.title`) }}</span>
+                  <span class="dm-cert-why__more">{{ certOpen.has(d.id) ? t('domains.certError.showLess') : t('domains.certError.showMore') }}<i class="pi pi-chevron-down" /></span>
+                </button>
                 <!-- No certificate of its own: its TLS mode, each in its own colour (Valid is the certificate badge above) -->
                 <span v-else class="dm-badge dm-mode" :class="`dm-mode--${isFakeProxyMode(d.fake_mode) ? 'proxy' : d.fake_mode}`" v-tooltip.top="t('domains.tls.decoyHint')">
                   <i :class="MODE_ICON[d.fake_mode] ?? 'pi pi-eye-slash'" />{{ t(`domains.tlsMode.${d.fake_mode}`) }}
@@ -170,14 +183,33 @@
           </div>
 
           <!-- The last certificate request failed: shown on the row, not only in the badge's tooltip -->
-          <div v-if="certFailed(d)" class="dm-row__cert-error" role="alert">
-            <i :class="isRateLimited(d) ? 'pi pi-hourglass' : 'pi pi-exclamation-triangle'" />
-            <span class="dm-row__cert-error-text">
-              <b>{{ t(isRateLimited(d) ? 'domains.tls.rateLimited' : d.tls.status === 'valid' ? 'domains.tls.renewFailed' : 'domains.tls.failed') }}</b>
-              <span v-if="certError(d)" dir="ltr" :title="certError(d)">{{ certError(d) }}</span>
-            </span>
-            <Button :label="t('domains.cert.retry')" icon="pi pi-refresh" size="small" text @click.stop="openCert(d)" />
-          </div>
+          <!-- The whole story, opened from "Show more": why it failed, the steps that fix it, the CA's own message -->
+          <Transition name="dm-cert">
+            <section v-if="certFailed(d) && certOpen.has(d.id)" :id="`dm-cert-${d.id}`" class="dm-cert" role="region" :aria-label="t('domains.tls.failed')">
+              <div class="dm-cert__in">
+                <header class="dm-cert__head">
+                  <span class="dm-cert__icon"><i :class="isRateLimited(d) ? 'pi pi-hourglass' : 'pi pi-exclamation-triangle'" /></span>
+                  <div class="min-w-0">
+                    <h3 class="dm-cert__title">{{ isRateLimited(d) ? t('domains.tls.rateLimited') : t(`domains.certError.${certKind(d)}.title`) }}</h3>
+                    <p class="dm-cert__lead">{{ isRateLimited(d) ? t('domains.cert.rateLimitedHint') : t(`domains.certError.${certKind(d)}.lead`, { domain: d.domain }) }}</p>
+                  </div>
+                </header>
+                <template v-if="!isRateLimited(d)">
+                  <h4 class="dm-cert__how">{{ t('domains.certError.howToFix') }}</h4>
+                  <ol class="dm-cert__steps">
+                    <li v-for="n in CERT_ERROR_STEPS[certKind(d)]" :key="n">{{ t(`domains.certError.${certKind(d)}.step${n}`) }}</li>
+                  </ol>
+                </template>
+                <div class="dm-cert__foot">
+                  <details v-if="certError(d)" class="dm-cert__details">
+                    <summary>{{ t('domains.certError.details') }}</summary>
+                    <code dir="ltr">{{ certError(d) }}</code>
+                  </details>
+                  <Button :label="t('domains.cert.retry')" icon="pi pi-refresh" size="small" class="dm-cert__retry" @click.stop="openCert(d)" />
+                </div>
+              </div>
+            </section>
+          </Transition>
 
         </li>
       </TransitionGroup>
@@ -229,6 +261,7 @@ import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
 import { loadDomainProblems, rememberDomainWarnings } from '@/shared/composables/useDomainNotices'
 import DomainsGuideDialog from '@/features/domains/components/DomainsGuideDialog.vue'
+import { CERT_ERROR_STEPS, certErrorKind } from '@/features/domains/cert-error'
 import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type TlsStatus, type DomainsState } from '@/features/domains/api'
 
 const { t, locale } = useI18n()
@@ -371,6 +404,16 @@ function isRateLimited(d: DomainRow): boolean {
 }
 function certError(d: DomainRow): string {
   return (d.tls.job?.state === 'failed' && d.tls.job.error) || d.tls.error || ''
+}
+function certKind(d: DomainRow) {
+  return certErrorKind(certError(d))
+}
+/** Rows whose certificate error is opened ("Show more"); closed by default so every row keeps the same height. */
+const certOpen = ref(new Set<number>())
+function toggleCert(id: number) {
+  const next = new Set(certOpen.value)
+  if (!next.delete(id)) next.add(id)
+  certOpen.value = next
 }
 type CertState = TlsStatus | 'running' | 'failed' | 'renew_failed'
 function certState(d: DomainRow): CertState {
@@ -725,7 +768,11 @@ onBeforeUnmount(() => feed?.stop())
 }
 /* Desktop: name and badges, then the proxies and "show configs of" one above the other in the middle (the card's
    empty room), then the buttons. The phone layout is in the media query below. */
+/* Every row as tall as the tallest kind (name, badges and a line of chosen proxies), so the boxes match; the lines stay
+   together in the middle (the extra room is not shared out between them) */
 .dm-row__head {
+  min-height: 4.7rem;
+  align-content: center;
   display: grid;
   /* the middle block has a column of its own share (not just its width at the far side): it starts near the middle */
   grid-template-columns: auto auto minmax(0, 1.1fr) minmax(0, 1fr) auto;
@@ -759,30 +806,12 @@ onBeforeUnmount(() => feed?.stop())
 .dm-row__chosen {
   grid-area: chosen;
 }
-/* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: smaller and quieter than real domains. */
+/* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: the same box, only quieter. */
 .dm-row.dm-row--minor {
-  gap: 0.35rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 10px;
-  border-inline-start-width: 3px;
-  background: transparent;
   opacity: 0.72;
 }
 .dm-row.dm-row--minor:hover {
   opacity: 1;
-  box-shadow: none;
-}
-.dm-row--minor .dm-row__head {
-  gap: 0.6rem;
-}
-.dm-row--minor .dm-row__icon {
-  width: 1.9rem;
-  height: 1.9rem;
-  font-size: 0.85rem;
-}
-.dm-row--minor .dm-row__domain {
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 .dm-row--new {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
@@ -1014,29 +1043,174 @@ a.dm-row__domain:hover {
 .dm-tls--running {
   --tone: var(--p-primary-color);
 }
-.dm-row__cert-error {
-  display: flex;
+.dm-cert-why {
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 10px;
-  font-size: 0.82rem;
-  color: var(--p-red-600, #dc2626);
-  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--p-red-500, #ef4444) 30%, transparent);
+  gap: 0.4rem;
+  max-width: 100%;
+  padding: 0.1rem 0.15rem 0.1rem 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
 }
-.dm-row__cert-error-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-.dm-row__cert-error-text span {
+.dm-cert-why__kind {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
+  color: var(--p-red-600, #dc2626);
+}
+.dm-cert-why__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: none;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  transition: background-color 0.15s ease;
+}
+.dm-cert-why:hover .dm-cert-why__more {
+  background: color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+}
+.dm-cert-why__more i {
+  font-size: 0.65rem;
+  transition: transform 0.25s ease;
+}
+.dm-cert-why--open .dm-cert-why__more i {
+  transform: rotate(180deg);
+}
+.dm-cert-why:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 1px;
+}
+/* The opened error: a soft card under the row, its parts as in a guide (icon, title, numbered steps, details) */
+.dm-cert {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+.dm-cert__in {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--p-red-500, #ef4444) 22%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--p-red-500, #ef4444) 7%, transparent), color-mix(in srgb, var(--p-red-500, #ef4444) 2%, transparent));
+  font-size: 0.84rem;
+}
+.dm-cert__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+.dm-cert__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 10px;
+  color: var(--p-red-500, #ef4444);
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 13%, transparent);
+}
+.dm-cert__title {
+  margin: 0.1rem 0 0.2rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.dm-cert__lead {
+  margin: 0;
+  line-height: 1.55;
   color: var(--p-text-muted-color);
+}
+.dm-cert__how {
+  margin: 0.15rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.dm-cert__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.dm-cert__steps li {
+  position: relative;
+  padding-inline-start: 1.85rem;
+  line-height: 1.55;
+  counter-increment: step;
+}
+.dm-cert__steps li::before {
+  content: counter(step);
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.05rem;
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--p-primary-contrast-color, #fff);
+  background: var(--p-primary-color);
+}
+.dm-cert__foot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.55rem;
+  border-top: 1px dashed color-mix(in srgb, var(--p-red-500, #ef4444) 22%, transparent);
+}
+.dm-cert__details {
+  min-width: 0;
+  flex: 1;
+}
+.dm-cert__details summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--p-text-muted-color);
+}
+.dm-cert__details code {
+  display: block;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.08));
+}
+.dm-cert__retry {
+  flex: none;
+}
+/* Opening: the card unfolds (its height from 0) and fades in */
+.dm-cert-enter-active,
+.dm-cert-leave-active {
+  transition:
+    grid-template-rows 0.28s ease,
+    opacity 0.28s ease;
+}
+.dm-cert-enter-from,
+.dm-cert-leave-to {
+  grid-template-rows: 0fr;
+  opacity: 0;
 }
 /* TLS modes without a certificate of their own: Reality, Fake, DNS, the built-in fake-TLS servers */
 .dm-mode--reality {
@@ -1117,6 +1291,8 @@ a.dm-row__domain:hover {
     border-radius: 14px;
   }
   .dm-row__head {
+    /* the phone layout's lines already make every card as tall: no desktop minimum here */
+    min-height: 0;
     grid-template-columns: auto auto minmax(0, 1fr) auto;
     grid-template-areas:
       'order icon title title'
