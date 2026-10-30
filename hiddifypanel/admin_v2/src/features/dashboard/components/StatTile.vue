@@ -45,7 +45,6 @@ const tip = computed(() => {
   <article
     v-tooltip.top="tip"
     class="tile"
-    :class="{ 'tile--hoverable': details.length }"
     :style="{ '--tile-accent': accent }"
   >
     <div class="tile__top">
@@ -92,9 +91,6 @@ const tip = computed(() => {
     transform: translateY(-2px);
     box-shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 20px 38px -24px rgb(15 23 42 / 45%);
   }
-}
-.tile--hoverable {
-  cursor: help;
 }
 .tile__top {
   display: flex;
