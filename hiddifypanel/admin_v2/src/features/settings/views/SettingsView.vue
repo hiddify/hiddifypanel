@@ -19,6 +19,25 @@
     </section>
 
     <ApplyNotice v-model="pendingApply" />
+    <!-- The bot did not connect: why, in plain words, and the steps that fix it; Telegram's own message under the details -->
+    <section v-if="telegramProblem" ref="telegramCard" class="tg-error" role="alert">
+      <header class="tg-error__head">
+        <span class="tg-error__icon"><i class="pi pi-telegram" /></span>
+        <div class="min-w-0">
+          <h3 class="tg-error__title">{{ t(`settings.tgError.${telegramKind}.title`) }}</h3>
+          <p class="tg-error__lead">{{ t(`settings.tgError.${telegramKind}.lead`) }}</p>
+        </div>
+        <Button icon="pi pi-times" text rounded size="small" severity="secondary" class="tg-error__close" :aria-label="t('common.close')" @click="telegramProblem = null" />
+      </header>
+      <h4 class="tg-error__how">{{ t('settings.tgError.howToFix') }}</h4>
+      <ol class="tg-error__steps">
+        <li v-for="n in TELEGRAM_ERROR_STEPS[telegramKind]" :key="n">{{ t(`settings.tgError.${telegramKind}.step${n}`) }}</li>
+      </ol>
+      <details class="tg-error__details">
+        <summary>{{ t('settings.tgError.details') }}</summary>
+        <code dir="ltr">{{ telegramProblem }}</code>
+      </details>
+    </section>
     <Message v-if="newAdminPath" severity="warn" class="mb-4" :closable="false">
       {{ t('settings.adminPathChanged') }}
       <code class="settings-code">{{ newAdminPath }}</code>
@@ -134,6 +153,7 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import ApplyNotice from '@/shared/components/ApplyNotice.vue'
 import StickySaveBar from '@/shared/components/StickySaveBar.vue'
 import SettingFieldRow from '@/features/settings/components/SettingFieldRow.vue'
+import { TELEGRAM_ERROR_STEPS, telegramErrorKind } from '@/features/settings/telegram-error'
 import { apiErrorMessage } from '@/core/api/client'
 import { displayConfigLabel, htmlToText } from '@/shared/utils/config-labels'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
@@ -179,6 +199,10 @@ const route = useRoute()
 const categories = ref<SettingCategory[]>([])
 const draft = reactive<Record<string, SettingValue>>({})
 const loading = ref(true)
+/** Telegram's error when the bot did not connect on the last save (null: none, or the card was closed) */
+const telegramProblem = ref<string | null>(null)
+const telegramCard = ref<HTMLElement | null>(null)
+const telegramKind = computed(() => telegramErrorKind(telegramProblem.value ?? ''))
 const loadError = ref<string | null>(null)
 const saving = ref(false)
 const search = ref('')
@@ -378,10 +402,15 @@ async function save() {
     if (res.new_admin_path) newAdminPath.value = res.new_admin_path
     for (const warning of res.warnings) toast.add({ severity: 'warn', summary: warning, life: 8000 })
     toast.add({ severity: 'success', summary: t('common.saved'), life: 3000 })
+    if (res.telegram) telegramProblem.value = null
     if (res.telegram?.ok) {
       toast.add({ severity: 'success', summary: t('settings.telegramConnected', { username: res.telegram.username }), life: 8000 })
     } else if (res.telegram) {
-      toast.add({ severity: 'error', summary: t('settings.telegramFailed'), detail: res.telegram.error, life: 12000 })
+      // The card above the settings says why and how to fix it; the toast only points to it
+      telegramProblem.value = res.telegram.error || t('settings.telegramFailed')
+      toast.add({ severity: 'error', summary: t('settings.telegramFailed'), detail: t('settings.tgError.seeAbove'), life: 8000 })
+      await nextTick()
+      telegramCard.value?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
     if (res.reload) {
       toast.add({ severity: 'info', summary: t('settings.reloading'), life: 2000 })
@@ -503,6 +532,114 @@ onBeforeUnmount(() => {
   display: block;
   font-size: 0.78rem;
   color: var(--p-text-muted-color);
+}
+.tg-error {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  padding: 0.95rem 1.1rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--p-red-500, #ef4444) 25%, transparent);
+  border-top: 3px solid var(--p-red-500, #ef4444);
+  background: var(--p-content-background);
+  box-shadow: 0 12px 30px -22px rgb(15 23 42 / 40%);
+  font-size: 0.86rem;
+}
+.tg-error__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.tg-error__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 11px;
+  color: #229ed9;
+  background: color-mix(in srgb, #229ed9 14%, transparent);
+  font-size: 1.05rem;
+}
+.tg-error__title {
+  margin: 0.1rem 0 0.2rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+.tg-error__lead {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--p-text-muted-color);
+}
+.tg-error__close {
+  margin-inline-start: auto;
+  flex: none;
+}
+.tg-error__how {
+  margin: 0.2rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.tg-error__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.tg-error__steps li {
+  position: relative;
+  padding-inline-start: 1.85rem;
+  line-height: 1.55;
+  counter-increment: step;
+}
+.tg-error__steps li::before {
+  content: counter(step);
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.05rem;
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--p-primary-contrast-color, #fff);
+  background: var(--p-primary-color);
+}
+.tg-error__details {
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--p-content-border-color);
+}
+.tg-error__details summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--p-text-muted-color);
+}
+.tg-error__details code {
+  display: block;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.08));
+}
+/* The colour themes make the content background see-through glass */
+html.theme-caddy .tg-error {
+  background: var(--p-surface-0);
+}
+html.theme-caddy.app-dark .tg-error {
+  background: var(--p-surface-900);
 }
 .settings-errors {
   margin: 0;

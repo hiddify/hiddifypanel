@@ -1990,7 +1990,38 @@
       "reinstallBadge": "Réinstaller",
       "reinstallHint": "Modifier ceci nécessite une réinstallation pour prendre effet",
       "reloading": "Langue modifiée, rechargement…",
-      "telegramConnected": "Bot Telegram connecté : @{username}",
+      "tgError": {
+        "badToken": {
+          "lead": "Telegram indique que ce jeton n'appartient à aucun bot : il est peut-être mal saisi, incomplet ou révoqué.",
+          "step1": "Dans Telegram, ouvrez {'@'}BotFather, envoyez /mybots, choisissez votre bot et touchez « API Token ».",
+          "step2": "Copiez le jeton entier (du type 123456789:AAE…) et collez-le ici, sans espaces.",
+          "step3": "Cliquez de nouveau sur Enregistrer.",
+          "title": "Telegram n'a pas accepté ce jeton de bot"
+        },
+        "details": "Détails techniques",
+        "howToFix": "Comment corriger",
+        "network": {
+          "lead": "Le serveur n'a pas pu se connecter à api.telegram.org, le bot n'a donc pas pu être vérifié. Là où Telegram est filtré (par ex. en Iran), le réseau du serveur le bloque aussi.",
+          "step1": "Vérifiez que ce serveur a accès à Internet et que le DNS fonctionne.",
+          "step2": "Si Telegram est filtré là où se trouve ce serveur, le bot ne peut pas y fonctionner : utilisez un serveur hors du filtrage.",
+          "step3": "Cliquez de nouveau sur Enregistrer pour réessayer.",
+          "title": "Ce serveur ne joint pas Telegram"
+        },
+        "other": {
+          "lead": "Telegram a refusé la demande ; les détails techniques ci-dessous expliquent pourquoi.",
+          "step1": "Vérifiez le jeton avec {'@'}BotFather.",
+          "step2": "Cliquez de nouveau sur Enregistrer ; si cela échoue encore, envoyez les détails techniques au support Hiddify.",
+          "title": "Le bot Telegram n'a pas pu se connecter"
+        },
+        "seeAbove": "La cause et la solution sont affichées au-dessus des paramètres.",
+        "webhook": {
+          "lead": "Le jeton est bon, mais Telegram n'a pas pu définir ce panneau comme adresse du bot : il faut un domaine avec un certificat valide.",
+          "step1": "Sur la page Domaines, vérifiez qu'un domaine a un certificat valide (pas auto-signé).",
+          "step2": "Puis cliquez de nouveau sur Enregistrer.",
+          "title": "Telegram ne peut pas utiliser l'adresse de ce panneau"
+        }
+      },
+      "telegramConnected": "Bot Telegram connecté : {'@'}{username}",
       "telegramFailed": "Impossible de connecter le bot Telegram",
       "required": "Ce champ est obligatoire.",
       "search": "Rechercher dans tous les paramètres…",
