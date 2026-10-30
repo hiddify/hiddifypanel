@@ -2171,6 +2171,7 @@
     },
     "users": {
       "add": "Adicionar usuário",
+      "addAtEnd": "Adicionar usuário no fim da lista",
       "addLimits": {
         "apply": "Adicionar",
         "days": "Dias a adicionar",

@@ -9,7 +9,7 @@
           class="users-head__add-main"
           :disabled="state ? !state.can_add : true"
           v-tooltip.bottom="state && !state.can_add ? t('users.limitReached') : ''"
-          @click="openAdd"
+          @click="openAdd()"
         />
         <Button
           icon="pi pi-angle-down"
@@ -138,7 +138,7 @@
           <div v-else class="users-empty">
             <i class="pi pi-users" />
             <span>{{ t('users.none') }}</span>
-            <Button v-if="!state.users.length && state.can_add" icon="pi pi-user-plus" :label="t('users.add')" size="small" @click="openAdd" />
+            <Button v-if="!state.users.length && state.can_add" icon="pi pi-user-plus" :label="t('users.add')" size="small" @click="openAdd()" />
           </div>
         </template>
         <template #groupheader="{ data }">
@@ -468,7 +468,7 @@ import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import UserBulkCreateDialog from '@/features/users/components/UserBulkCreateDialog.vue'
 import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
-import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
+import { orderRows, placeNew, reorder, togglePin } from '@/features/users/layout-order'
 import { useDragSort } from '@/shared/composables/useDragSort'
 import { localeComparator, resolveFieldData, sort as sortValues } from '@primeuix/utils/object'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersLayout, type UsersState } from '@/features/users/api'
@@ -605,6 +605,7 @@ const addMenu = ref<InstanceType<typeof Menu> | null>(null)
 const menuUser = ref<UserRow | null>(null)
 const addMenuItems = computed<MenuItem[]>(() => [
   { label: t('users.add'), icon: 'pi pi-user-plus', command: () => openAdd() },
+  { label: t('users.addAtEnd'), icon: 'pi pi-arrow-down', command: () => openAdd('end') },
   { label: t('users.bulkCreate.menu'), icon: 'pi pi-users', command: () => openBulkCreate() },
 ])
 
@@ -1038,8 +1039,11 @@ function quick(u: UserRow, action: 'reset_usage' | 'reset_days') {
   void patch(u, { [action]: true }, t(`users.done.${action}`, { name: u.name }))
 }
 
-function openAdd() {
+/** Where the user being added goes in the list: Add user puts it at the top, "at the end of the list" at the end. */
+const addPlace = ref<'top' | 'end'>('top')
+function openAdd(place: 'top' | 'end' = 'top') {
   if (readOnly.value) return
+  addPlace.value = place
   editingUser.value = null
   formFocus.value = null
   formVisible.value = true
@@ -1097,6 +1101,7 @@ function openLink(u: UserRow) {
 }
 function onSaved(user: UserDetail, created: boolean) {
   replaceRow(user)
+  if (created) void saveLayout(placeNew(layout.value, orderedRows.value.map((r) => r.uuid), user.uuid, addPlace.value))
   toast.add({ severity: 'success', summary: created ? t('users.added', { name: user.name }) : t('users.saved', { name: user.name }), life: 3000 })
   if (created) {
     linkUser.value = { ...user, additional_configs: user.additional_configs.length }

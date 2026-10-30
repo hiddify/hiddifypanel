@@ -2171,6 +2171,7 @@
     },
     "users": {
       "add": "添加用户",
+      "addAtEnd": "在列表末尾添加用户",
       "addLimits": {
         "apply": "添加",
         "days": "要增加的天数",

@@ -49,3 +49,12 @@ export function togglePin(layout: UsersLayout, allOrdered: string[], uuid: strin
   }
   return { ...layout, pinned: [uuid, ...layout.pinned], order: unpinnedAll }
 }
+
+/**
+ * A user just added, placed in the order: at the top (just below the pinned users) or at the end. Saved in the order,
+ * so where it goes does not depend on the users added after it.
+ */
+export function placeNew(layout: UsersLayout, allOrdered: string[], uuid: string, where: 'top' | 'end'): UsersLayout {
+  const others = allOrdered.filter((u) => !layout.pinned.includes(u) && u !== uuid)
+  return { ...layout, order: where === 'top' ? [uuid, ...others] : [...others, uuid] }
+}

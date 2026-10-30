@@ -3100,7 +3100,8 @@
       "retry": "Try again"
     },
     "users": {
-      "add": "Add user",
+      "add": "Add User",
+      "addAtEnd": "Add User at End",
       "addLimits": {
         "apply": "Add",
         "days": "Days to add",
@@ -3146,7 +3147,7 @@
         "links": "Links",
         "linksSubtitle": "{n} link ready to copy | {n} links ready to copy",
         "linksTitle": "User links",
-        "menu": "Add many users",
+        "menu": "Add Many Users",
         "prefix": "Name prefix",
         "prefixHint": "Each user is named prefix-01, prefix-02, …",
         "prefixPlaceholder": "e.g. USER-30d",

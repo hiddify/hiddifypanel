@@ -2191,6 +2191,7 @@
         "crossOwners": "Groupé par admin : un utilisateur se déplace seulement parmi les utilisateurs de cet admin."
       },
       "add": "Ajouter un utilisateur",
+      "addAtEnd": "Ajouter un utilisateur en fin de liste",
       "addLimits": {
         "apply": "Ajouter",
         "days": "Jours à ajouter",
