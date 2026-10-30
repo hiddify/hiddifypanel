@@ -41,13 +41,12 @@ const area = computed(() => {
   return `${line.value} L${last.x.toFixed(2)},${props.height} L${first.x.toFixed(2)},${props.height} Z`
 })
 
-const hoverText = computed(() => {
-  if (!hover.value) return ''
+/** The hovered day and its value, apart: the day quiet, the value bold in the line's colour */
+const hoverParts = computed(() => {
+  if (!hover.value) return null
   const value = props.values[hover.value.index]
-  if (value === undefined) return ''
-  const label = props.labels[hover.value.index]
-  const formatted = props.formatter(value)
-  return label ? `${label} · ${formatted}` : formatted
+  if (value === undefined) return null
+  return { label: props.labels[hover.value.index] ?? '', value: props.formatter(value) }
 })
 
 /** Keeps the tip on screen: it flips to the pointer's left past mid-viewport. */
@@ -113,12 +112,9 @@ onBeforeUnmount(() => clearTimeout(hideTimer))
         vector-effect="non-scaling-stroke"
       />
     </svg>
-    <div
-      v-if="hover && hoverText"
-      class="sparkline-tip"
-      :style="tipStyle"
-    >
-      {{ hoverText }}
+    <div v-if="hoverParts" class="sparkline-tip" :style="[tipStyle, { '--spark-color': color }]">
+      <span v-if="hoverParts.label" class="sparkline-tip__label">{{ hoverParts.label }}</span>
+      <span class="sparkline-tip__value">{{ hoverParts.value }}</span>
     </div>
   </div>
 </template>
@@ -136,15 +132,25 @@ onBeforeUnmount(() => clearTimeout(hideTimer))
   position: fixed;
   z-index: 40;
   pointer-events: none;
-  padding: 0.35rem 0.55rem;
-  border-radius: 0.45rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 10px;
   border: 1px solid var(--p-content-border-color);
+  border-top: 2px solid var(--spark-color);
   background: var(--p-content-background);
   color: var(--p-text-color);
-  font-size: 0.72rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  box-shadow: 0 8px 24px -12px rgb(15 23 42 / 45%);
+  font-size: 0.75rem;
+  box-shadow: 0 14px 30px -14px rgb(15 23 42 / 40%);
   white-space: nowrap;
+}
+.sparkline-tip__label {
+  color: var(--p-text-muted-color);
+}
+.sparkline-tip__value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--spark-color);
 }
 </style>
