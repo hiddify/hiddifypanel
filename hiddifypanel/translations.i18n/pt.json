@@ -928,6 +928,9 @@
           "title": "Um registo CAA bloqueia o certificado"
         },
         "details": "Detalhes técnicos",
+        "howToFix": "Como corrigir",
+        "showLess": "Mostrar menos",
+        "showMore": "Mostrar mais",
         "dns": {
           "lead": "A autoridade de certificação procurou “{domain}” e não encontrou endereço, ou encontrou um que não é este servidor.",
           "step1": "No seu fornecedor de DNS, adicione um registo A (IPv4) ou AAAA (IPv6) para este nome com o IP deste servidor.",

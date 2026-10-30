@@ -928,6 +928,9 @@
           "title": "Un enregistrement CAA bloque le certificat"
         },
         "details": "Détails techniques",
+        "howToFix": "Comment corriger",
+        "showLess": "Afficher moins",
+        "showMore": "Afficher plus",
         "dns": {
           "lead": "L'autorité de certification a cherché « {domain} » et n'a trouvé aucune adresse, ou une adresse qui n'est pas ce serveur.",
           "step1": "Chez votre fournisseur DNS, ajoutez un enregistrement A (IPv4) ou AAAA (IPv6) pour ce nom avec l'IP de ce serveur.",

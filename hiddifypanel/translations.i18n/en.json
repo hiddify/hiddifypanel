@@ -1447,6 +1447,9 @@
           "title": "A CAA record blocks the certificate"
         },
         "details": "Technical details",
+        "howToFix": "How to fix it",
+        "showLess": "Show less",
+        "showMore": "Show more",
         "dns": {
           "lead": "The certificate authority looked up “{domain}” and found no address for it, or an address that is not this server.",
           "step1": "At your DNS provider, add an A record (IPv4) or an AAAA record (IPv6) for this name with this server's IP.",

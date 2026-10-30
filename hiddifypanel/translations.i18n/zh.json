@@ -928,6 +928,9 @@
           "title": "CAA 记录阻止了证书"
         },
         "details": "技术细节",
+        "howToFix": "如何修复",
+        "showLess": "收起",
+        "showMore": "显示更多",
         "dns": {
           "lead": "证书颁发机构查询了“{domain}”，但没有找到地址，或找到的地址不是此服务器。",
           "step1": "在您的 DNS 服务商处为此名称添加指向此服务器 IP 的 A 记录（IPv4）或 AAAA 记录（IPv6）。",
