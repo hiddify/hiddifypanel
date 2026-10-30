@@ -784,6 +784,13 @@
       "yes": "Oui"
     },
     "dashboard": {
+      "tip": {
+        "dailyAverage": "Moyenne par jour",
+        "last30Days": "30 derniers jours",
+        "last7Days": "7 derniers jours",
+        "previous30Days": "30 jours précédents",
+        "previous7Days": "7 jours précédents"
+      },
       "allNodes": "Tous les nœuds",
       "available": "Disponible",
       "averageHint": "Moyenne d'utilisateurs en ligne par jour, seulement les jours où quelqu'un l'était.",
