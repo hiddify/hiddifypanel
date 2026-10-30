@@ -1278,6 +1278,14 @@
       "titleNamed": "Nó: {name}"
     },
     "nodes": {
+      "os": {
+        "arch": "Arquitetura",
+        "kernel": "Kernel",
+        "system": "Sistema",
+        "title": "Sistema operativo",
+        "unknown": "O nó não indicou que sistema operativo usa (não está acessível agora, ou o painel é de uma versão mais antiga).",
+        "version": "Versão"
+      },
       "add": {
         "connecting": "Conectando ao nó… isso pode levar até um minuto.",
         "linkHint": "Parece com https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",

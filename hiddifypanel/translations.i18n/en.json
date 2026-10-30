@@ -1981,6 +1981,14 @@
       "rawPartial": "Only the beginning of the data is kept."
     },
     "nodes": {
+      "os": {
+        "arch": "Architecture",
+        "kernel": "Kernel",
+        "system": "System",
+        "title": "Operating system",
+        "unknown": "The node did not say which operating system it runs (it is not reachable now, or its panel is of an older version).",
+        "version": "Version"
+      },
       "add": {
         "connecting": "Connecting to the node… this can take up to a minute.",
         "linkHint": "Looks like https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",

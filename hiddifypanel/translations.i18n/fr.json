@@ -1278,6 +1278,14 @@
       "titleNamed": "Nœud : {name}"
     },
     "nodes": {
+      "os": {
+        "arch": "Architecture",
+        "kernel": "Noyau",
+        "system": "Système",
+        "title": "Système d'exploitation",
+        "unknown": "Le nœud n'a pas indiqué son système d'exploitation (il est injoignable pour l'instant, ou son panneau est d'une version plus ancienne).",
+        "version": "Version"
+      },
       "add": {
         "connecting": "Connexion au nœud… cela peut prendre jusqu'à une minute.",
         "linkHint": "Ressemble à https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",

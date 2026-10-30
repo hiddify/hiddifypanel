@@ -171,6 +171,14 @@ class DashboardHost(ApiModel):
     boot_time: float = 0.0
     uptime_s: int = 0
     panel_version: str | None = None
+    # The operating system (/etc/os-release: ID, NAME, VERSION_ID, PRETTY_NAME), kernel and CPU architecture; empty
+    # from a node of an older version
+    os_id: str = ""
+    os_name: str = ""
+    os_version: str = ""
+    os_pretty: str = ""
+    kernel: str = ""
+    arch: str = ""
 
 
 class DashboardProcess(ApiModel):

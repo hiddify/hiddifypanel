@@ -1281,6 +1281,14 @@
       "titleNamed": "Node: {name}"
     },
     "nodes": {
+      "os": {
+        "arch": "Architecture",
+        "kernel": "Kernel",
+        "system": "စနစ်",
+        "title": "Operating system",
+        "unknown": "node က မည်သည့် operating system သုံးကြောင်း မပြောပါ (ယခု မရောက်နိုင်ပါ သို့မဟုတ် ၎င်း၏ ပန်နယ် ဗားရှင်းဟောင်း ဖြစ်သည်)။",
+        "version": "ဗားရှင်း"
+      },
       "add": {
         "connecting": "node သို့ ချိတ်ဆက်နေသည်… တစ်မိနစ်အထိ ကြာနိုင်သည်။",
         "linkHint": "https://node.example.com/…/xxxxxxxx-xxxx-…/admin/ ကဲ့သို့ ဖြစ်သည်",
