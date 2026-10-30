@@ -1278,6 +1278,14 @@
       "titleNamed": "节点：{name}"
     },
     "nodes": {
+      "os": {
+        "arch": "架构",
+        "kernel": "内核",
+        "system": "系统",
+        "title": "操作系统",
+        "unknown": "该节点未提供其操作系统（当前无法访问，或其面板版本较旧）。",
+        "version": "版本"
+      },
       "add": {
         "connecting": "正在连接节点…可能需要一分钟。",
         "linkHint": "形如 https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",

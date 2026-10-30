@@ -223,6 +223,44 @@ class NodeProblemsApi(MethodView):
             return {"problems": _problems["rows"]}
 
 
+def node_os(child: Child) -> dict:
+    """The node's operating system (name, version, kernel, architecture; os_id names its logo), asked from the node's own
+    dashboard with the parent's key. Kept an hour (the Nodes page shows it on every card); empty when the node does not
+    answer or is of a version that does not send it."""
+    import json
+
+    from hiddifypanel.cache import redis_client
+    from hiddifypanel.hutils.node.api_client import NodeApiClient, NodeApiErrorSchema
+    from hiddifypanel.models import ConfigEnum, hconfig
+    from hiddifypanel.panel.commercial.restapi.v2.admin.dashboard_schema import DashboardOutputSchema
+
+    key = f"nodes:os:{child.id}"
+    cached = redis_client.get(key)
+    if cached is not None:
+        return json.loads(cached)
+    fields = ("os_id", "os_name", "os_version", "os_pretty", "kernel", "arch")
+    out = dict.fromkeys(fields, "")
+    base = (child.node_base_url or "").strip()
+    if base:
+        try:
+            client = NodeApiClient(base, timeout=8, max_retry=0, apikey=hconfig(ConfigEnum.unique_id))
+            res = client.get("/api/v2/admin/dashboard/?include=system&processes=1", DashboardOutputSchema)
+            if not isinstance(res, NodeApiErrorSchema) and res.system and res.system.host:
+                out = {f: str(getattr(res.system.host, f, "") or "") for f in fields}
+        except Exception:
+            pass  # not reachable now: the card keeps the generic icon
+    redis_client.set(key, json.dumps(out), ex=3600 if out["os_id"] else 300)
+    return out
+
+
+class NodeOsApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self, node_id: int):
+        """Nodes: The node's operating system (for its logo and details on the card)"""
+        return node_os(_remote_or_404(node_id))
+
+
 class NodePingApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
