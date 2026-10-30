@@ -725,7 +725,11 @@ onBeforeUnmount(() => feed?.stop())
 }
 /* Desktop: name and badges, then the proxies and "show configs of" one above the other in the middle (the card's
    empty room), then the buttons. The phone layout is in the media query below. */
+/* Every row as tall as the tallest kind (name, badges and a line of chosen proxies), so the boxes match; the lines stay
+   together in the middle (the extra room is not shared out between them) */
 .dm-row__head {
+  min-height: 4.7rem;
+  align-content: center;
   display: grid;
   /* the middle block has a column of its own share (not just its width at the far side): it starts near the middle */
   grid-template-columns: auto auto minmax(0, 1.1fr) minmax(0, 1fr) auto;
@@ -759,30 +763,12 @@ onBeforeUnmount(() => feed?.stop())
 .dm-row__chosen {
   grid-area: chosen;
 }
-/* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: smaller and quieter than real domains. */
+/* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: the same box, only quieter. */
 .dm-row.dm-row--minor {
-  gap: 0.35rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 10px;
-  border-inline-start-width: 3px;
-  background: transparent;
   opacity: 0.72;
 }
 .dm-row.dm-row--minor:hover {
   opacity: 1;
-  box-shadow: none;
-}
-.dm-row--minor .dm-row__head {
-  gap: 0.6rem;
-}
-.dm-row--minor .dm-row__icon {
-  width: 1.9rem;
-  height: 1.9rem;
-  font-size: 0.85rem;
-}
-.dm-row--minor .dm-row__domain {
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 .dm-row--new {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
@@ -1117,6 +1103,8 @@ a.dm-row__domain:hover {
     border-radius: 14px;
   }
   .dm-row__head {
+    /* the phone layout's lines already make every card as tall: no desktop minimum here */
+    min-height: 0;
     grid-template-columns: auto auto minmax(0, 1fr) auto;
     grid-template-areas:
       'order icon title title'
