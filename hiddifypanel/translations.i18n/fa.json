@@ -1244,6 +1244,13 @@
       "workers": "تعداد همزمان"
     },
     "dashboard": {
+      "tip": {
+        "dailyAverage": "میانگین روزانه",
+        "last30Days": "۳۰ روز اخیر",
+        "last7Days": "۷ روز اخیر",
+        "previous30Days": "۳۰ روز قبل از آن",
+        "previous7Days": "۷ روز قبل از آن"
+      },
       "allNodes": "همه نودها",
       "available": "در دسترس",
       "averageHint": "میانگین کاربران آنلاین در روز، فقط روزهایی که کسی آنلاین بوده.",

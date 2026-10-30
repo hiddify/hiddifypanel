@@ -784,6 +784,13 @@
       "yes": "是"
     },
     "dashboard": {
+      "tip": {
+        "dailyAverage": "日均",
+        "last30Days": "最近 30 天",
+        "last7Days": "最近 7 天",
+        "previous30Days": "之前 30 天",
+        "previous7Days": "之前 7 天"
+      },
       "allNodes": "所有节点",
       "available": "可用",
       "averageHint": "每天在线用户的平均数，仅统计有人在线的日子。",

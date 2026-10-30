@@ -68,10 +68,12 @@ interface ExternalTooltipContext {
 }
 
 /**
- * Tooltip as real page text. Canvas text mixes Persian and Latin (server names, units) in the wrong order;
- * the browser's own layout of a right-to-left element gets it right.
+ * Tooltip as real page text, drawn as a small card (_chart-tip.scss): the hovered point's label on top, then one row per
+ * series (its colour, its name at the start, its value at the end) and the totals under a line. Canvas text mixes
+ * Persian and Latin (server names, units) in the wrong order; the browser's own layout of a right-to-left element gets
+ * it right, so it is used in every language.
  */
-function domTooltip(theme: { text: string; muted: string; surface: string; border: string }, above = false) {
+function domTooltip(above = false) {
   return ({ chart, tooltip }: ExternalTooltipContext) => {
     const holder = chart.canvas.parentElement
     if (!holder) return
@@ -79,36 +81,36 @@ function domTooltip(theme: { text: string; muted: string; surface: string; borde
     if (!el) {
       el = document.createElement('div')
       el.className = 'chart-tip'
-      el.style.cssText =
-        'position:absolute;z-index:5;pointer-events:none;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.7;max-width:90%;white-space:nowrap;transition:opacity .1s;box-shadow:0 4px 14px rgba(0,0,0,.25)'
       holder.appendChild(el)
     }
     if (tooltip.opacity === 0) {
       el.style.opacity = '0'
       return
     }
-    // The page's direction (it is also used in English now: the short charts of the Nodes page)
     el.dir = document.documentElement.dir === 'rtl' ? 'rtl' : 'ltr'
-    el.style.background = theme.surface
-    el.style.border = `1px solid ${theme.border}`
-    el.style.color = theme.text
     el.replaceChildren()
-    const add = (text: string, style: string, swatch?: string) => {
-      const row = document.createElement('div')
-      row.style.cssText = `display:flex;align-items:center;gap:6px;${style}`
-      if (swatch) {
-        const dot = document.createElement('span')
-        dot.style.cssText = `width:9px;height:9px;border-radius:50%;flex:none;background:${swatch}`
-        row.appendChild(dot)
-      }
-      const label = document.createElement('bdi')
-      label.textContent = text
-      row.appendChild(label)
-      el!.appendChild(row)
+    const part = (tag: string, cls: string, text?: string) => {
+      const node = document.createElement(tag)
+      node.className = cls
+      if (text !== undefined) node.textContent = text
+      return node
     }
-    ;(tooltip.title ?? []).forEach((line) => add(line, 'font-weight:700;margin-bottom:4px'))
-    ;(tooltip.body ?? []).forEach((body, i) => body.lines.forEach((line) => add(line, '', tooltip.labelColors?.[i]?.backgroundColor ?? tooltip.labelColors?.[i]?.borderColor)))
-    ;(tooltip.footer ?? []).forEach((line) => add(line, `color:${theme.muted};margin-top:4px`))
+    /** "name: value" as two parts (the last ": " splits them); a line without one stays whole */
+    const row = (line: string, cls: string, swatch?: string) => {
+      const r = part('div', `chart-tip__row ${cls}`)
+      const cut = line.lastIndexOf(': ')
+      const name = r.appendChild(part('span', 'chart-tip__name'))
+      if (swatch) {
+        const dot = name.appendChild(part('span', 'chart-tip__dot'))
+        dot.style.background = swatch
+      }
+      name.appendChild(part('bdi', '', cut > 0 ? line.slice(0, cut) : line))
+      if (cut > 0) r.appendChild(part('bdi', 'chart-tip__value', line.slice(cut + 2)))
+      el!.appendChild(r)
+    }
+    ;(tooltip.title ?? []).forEach((line) => el!.appendChild(part('div', 'chart-tip__title', line)))
+    ;(tooltip.body ?? []).forEach((body, i) => body.lines.forEach((line) => row(line, '', tooltip.labelColors?.[i]?.backgroundColor ?? tooltip.labelColors?.[i]?.borderColor)))
+    ;(tooltip.footer ?? []).forEach((line) => row(line, 'chart-tip__row--foot'))
     el.style.opacity = '1'
     const x = Math.max(0, Math.min(chart.width - el.offsetWidth, tooltip.caretX - el.offsetWidth / 2))
     const y = tooltip.caretY - el.offsetHeight - 14
@@ -226,9 +228,9 @@ export function useChartTheme() {
           },
         },
         tooltip: {
-          // Right-to-left: the page-text tooltip below (canvas text scrambles Persian next to Latin)
-          enabled: !rtl && !options.pageTooltip,
-          external: rtl || options.pageTooltip ? domTooltip({ text, muted, surface, border }, !!options.pageTooltip) : undefined,
+          // The page-text card (domTooltip), in every language
+          enabled: false,
+          external: domTooltip(!!options.pageTooltip),
           rtl,
           textDirection: rtl ? 'rtl' : 'ltr',
           backgroundColor: surface,
