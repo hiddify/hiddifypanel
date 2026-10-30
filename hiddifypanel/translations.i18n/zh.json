@@ -1250,6 +1250,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… 或您的用户名"
     },
     "menu": {
+      "close": "关闭菜单",
+      "open": "打开菜单",
       "baseConfigs": "基础配置",
       "customProxies": "代理",
       "dashboard": "仪表盘",

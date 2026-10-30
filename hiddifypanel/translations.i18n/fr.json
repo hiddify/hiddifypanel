@@ -1250,6 +1250,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… ou votre nom d'utilisateur"
     },
     "menu": {
+      "close": "Fermer le menu",
+      "open": "Ouvrir le menu",
       "baseConfigs": "Configs de base",
       "customProxies": "Proxies",
       "dashboard": "Tableau de bord",
