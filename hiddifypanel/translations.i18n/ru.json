@@ -2642,6 +2642,70 @@
       "description": "Если вы разрешите неверный SNI, вы можете использовать любой домен, а не исходный домен, для доступа к прокси (не рекомендуется).",
       "label": "🆗 Разрешить неверный SNI"
     },
+    "amneziawg": {
+      "description": "AmneziaWG — это WireGuard с мусорными пакетами и изменёнными заголовками, чтобы DPI не распознал его как WireGuard. Нужно приложение AmneziaVPN или AmneziaWG (.conf по ссылке /amneziawg).",
+      "label": "AmneziaWG"
+    },
+    "amneziawg_enable": {
+      "description": "WireGuard с обфускацией против DPI; работает в hiddify-core (5.1+) на отдельном UDP-порту. Клиенты: приложение Hiddify 5.1+ (в подписке) и AmneziaVPN / AmneziaWG (.conf по ссылке /amneziawg); не приложение WireGuard.",
+      "label": "🐲 AmneziaWG"
+    },
+    "amneziawg_h1": {
+      "description": "Header of the handshake init message: a number above 4, different from H2-H4. Every client must reimport its config after a change",
+      "label": "H1 (init header)"
+    },
+    "amneziawg_h2": {
+      "description": "Header of the handshake response message: a number above 4, different from H1, H3, H4",
+      "label": "H2 (response header)"
+    },
+    "amneziawg_h3": {
+      "description": "Header of the cookie message: a number above 4, different from H1, H2, H4",
+      "label": "H3 (cookie header)"
+    },
+    "amneziawg_h4": {
+      "description": "Header of the data messages: a number above 4, different from H1-H3",
+      "label": "H4 (data header)"
+    },
+    "amneziawg_ipv4": {
+      "description": "IPv4 subnet base of AmneziaWG",
+      "label": "IPv4 in AmneziaWG"
+    },
+    "amneziawg_ipv6": {
+      "description": "IPv6 subnet base of AmneziaWG",
+      "label": "IPv6 in AmneziaWG"
+    },
+    "amneziawg_jc": {
+      "description": "Junk packets sent before each handshake (1-128, usually 4-12)",
+      "label": "Jc (junk packet count)"
+    },
+    "amneziawg_jmax": {
+      "description": "Largest junk packet in bytes; at most 1280",
+      "label": "Jmax (junk packet max size)"
+    },
+    "amneziawg_jmin": {
+      "description": "Smallest junk packet in bytes; less than Jmax",
+      "label": "Jmin (junk packet min size)"
+    },
+    "amneziawg_port": {
+      "description": "UDP-порт AmneziaWG",
+      "label": "↔️ Порт AmneziaWG"
+    },
+    "amneziawg_private_key": {
+      "description": "The server's AmneziaWG private key",
+      "label": "AmneziaWG Private Key"
+    },
+    "amneziawg_public_key": {
+      "description": "The server's AmneziaWG public key",
+      "label": "AmneziaWG Public Key"
+    },
+    "amneziawg_s1": {
+      "description": "Random bytes added to the handshake init message (15-150). S1 + 56 must not equal S2. Every client must reimport its config after a change",
+      "label": "S1 (init padding)"
+    },
+    "amneziawg_s2": {
+      "description": "Random bytes added to the handshake response message (15-150). Every client must reimport its config after a change",
+      "label": "S2 (response padding)"
+    },
     "anytls_enable": {
       "description": "Включить протокол AnyTLS",
       "label": "AnyTLS"

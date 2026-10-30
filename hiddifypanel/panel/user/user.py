@@ -64,7 +64,7 @@ def client_config_has_proxies(core: str, text: str) -> bool:
         return False
     if core == "sublink":
         return any("://" in line and not line.lstrip().startswith("#") for line in raw.splitlines() if line.strip())
-    if core == "wireguard":
+    if core in ("wireguard", "amneziawg"):
         return "[Peer]" in raw
     if core == "clash":
         try:
@@ -99,7 +99,7 @@ def client_config_has_proxies(core: str, text: str) -> bool:
 
 def error_status_config(core: str, title: str, detail: str = "") -> str:
     label = f"{title}\n{detail}".strip() if detail else title
-    if core == "wireguard":  # comments only: no tunnel to import
+    if core in ("wireguard", "amneziawg"):  # comments only: no tunnel to import
         return "\n".join(f"# {line}" if line else "#" for line in label.splitlines()) + "\n"
     if core == "sublink":
         lines = [f"#{title}"]
@@ -215,10 +215,21 @@ class UserView(FlaskView):
     def wireguard(self):
         """The user's WireGuard configs (their proxies' "wireguard" client config): one as its .conf, several as a zip of
         .conf files (a .conf holds one tunnel)"""
+        return self._conf_download("wireguard")
+
+    @route("/amneziawg/")
+    @route("/amneziawg")
+    @login_required(roles={Role.user})
+    def amneziawg(self):
+        """The user's AmneziaWG configs (their proxies' "amneziawg" client config), for the AmneziaVPN / AmneziaWG apps:
+        one as its .conf, several as a zip"""
+        return self._conf_download("amneziawg")
+
+    def _conf_download(self, core: str):
         from hiddifypanel.proxy_v3.wireguard_files import split_configs, zip_configs
 
         c = get_common_data(g.account.uuid, "new")
-        files = split_configs(self._render_core_config("wireguard", c, pretty=False))
+        files = split_configs(self._render_core_config(core, c, pretty=False))
         if not files:
             abort(404)
         if len(files) == 1:
@@ -226,7 +237,7 @@ class UserView(FlaskView):
             resp.headers["Content-Disposition"] = f'attachment; filename="{files[0].filename}"'
             return resp
         resp = add_headers(zip_configs(files), c, mimetype="application/zip")
-        resp.headers["Content-Disposition"] = 'attachment; filename="wireguard.zip"'
+        resp.headers["Content-Disposition"] = f'attachment; filename="{core}.zip"'
         return resp
 
     @route("/clash/")

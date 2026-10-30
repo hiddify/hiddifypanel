@@ -485,7 +485,7 @@ class CustomProxyMetaApi(MethodView):
                 "cdn",
             ],
             "server_cores": ["hiddify-core", "xray", "haproxy", "rust-rpxy-l4", "telegram"],
-            "client_cores": ["sublink", "xray", "singbox", "hiddify-core", "clash", "wireguard"],
+            "client_cores": ["sublink", "xray", "singbox", "hiddify-core", "clash", "wireguard", "amneziawg"],
             "template_categories": [c.value for c in TEMPLATE_CATEGORIES_ACTIVE],
             "suggested_categories": _collect_suggested_categories(_child_id()),
             "default_sublink_link": default_sublink_link_template(),

@@ -155,6 +155,7 @@ const GROUP_OF: Record<string, GroupId> = {
   hysteria_enable: 'protocols',
   mieru_enable: 'protocols',
   wireguard_enable: 'protocols',
+  amneziawg_enable: 'protocols',
   ssh_server_enable: 'protocols',
   telegram_enable: 'protocols',
   telegram_webproxy_enable: 'protocols',

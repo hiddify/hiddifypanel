@@ -13,6 +13,8 @@ from .json_map import JsonMap
 
 _DEFAULT_WG_IPV4 = "10.90.0.1"
 _DEFAULT_WG_IPV6 = "fd42:42:90::1"
+_DEFAULT_AWG_IPV4 = "10.91.0.1"
+_DEFAULT_AWG_IPV6 = "fd42:42:91::1"
 
 
 def _wireguard_client_ips(user_id: int | None) -> tuple[str, str]:
@@ -21,6 +23,18 @@ def _wireguard_client_ips(user_id: int | None) -> tuple[str, str]:
         return "", ""
     base_v4 = str(hconfig(ConfigEnum.wireguard_ipv4) or _DEFAULT_WG_IPV4)
     base_v6 = str(hconfig(ConfigEnum.wireguard_ipv6) or _DEFAULT_WG_IPV6)
+    return (
+        hutils.network.add_number_to_ipv4(base_v4, user_id),
+        hutils.network.add_number_to_ipv6(base_v6, user_id),
+    )
+
+
+def _amneziawg_client_ips(user_id: int | None) -> tuple[str, str]:
+    """Per-user AmneziaWG addresses: the same scheme as WireGuard, in the AmneziaWG subnet (its own interface)."""
+    if user_id is None:
+        return "", ""
+    base_v4 = str(hconfig(ConfigEnum.amneziawg_ipv4) or _DEFAULT_AWG_IPV4)
+    base_v6 = str(hconfig(ConfigEnum.amneziawg_ipv6) or _DEFAULT_AWG_IPV6)
     return (
         hutils.network.add_number_to_ipv4(base_v4, user_id),
         hutils.network.add_number_to_ipv6(base_v6, user_id),
@@ -48,6 +62,8 @@ class UserVar(BaseModel):
     wg_psk: str = ""
     wg_ipv4: str = ""
     wg_ipv6: str = ""
+    awg_ipv4: str = ""
+    awg_ipv6: str = ""
     password: str = ""
     extra_params: JsonMap = Field(default_factory=JsonMap)
 
@@ -70,6 +86,7 @@ class UserVar(BaseModel):
         uuid = user.uuid or ""
         lang = user.lang.value if getattr(user.lang, "value", None) else (str(user.lang) if user.lang else "")
         wg_ipv4, wg_ipv6 = _wireguard_client_ips(user.id)
+        awg_ipv4, awg_ipv6 = _amneziawg_client_ips(user.id)
         var = cls(
             uuid=uuid,
             uuid_hex=uuid.replace("-", ""),
@@ -89,6 +106,8 @@ class UserVar(BaseModel):
             wg_psk=user.wg_psk or "",
             wg_ipv4=wg_ipv4,
             wg_ipv6=wg_ipv6,
+            awg_ipv4=awg_ipv4,
+            awg_ipv6=awg_ipv6,
             password=uuid,
             extra_params=JsonMap.from_any(user.extra_params_json()),
         )

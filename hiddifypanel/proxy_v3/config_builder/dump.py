@@ -378,12 +378,13 @@ CLIENT_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("xray", "xray.json"),
     ("sublink", "sublink.txt"),
     ("wireguard", "wireguard.conf"),
+    ("amneziawg", "amneziawg.conf"),
     ("clash", "clash.yaml"),
     ("singbox", "singbox.json"),
 )
 
-# Client WireGuard .conf only exists when the user has a wireguard client core; empty is not a failure.
-_OPTIONAL_EMPTY_CLIENT_CORES = frozenset({"wireguard"})
+# Client WireGuard / AmneziaWG .conf only exists when the user has such a client core; empty is not a failure.
+_OPTIONAL_EMPTY_CLIENT_CORES = frozenset({"wireguard", "amneziawg"})
 
 DEFAULT_CLIENT_UA = "HiddifyNext/3.0.0 (android) like ClashMeta v2ray sing-box"
 
@@ -444,7 +445,7 @@ def summarize_client_dumped_config(core: str, filename: str, rendered: str) -> d
         stats["proxies"] = len(proxies) if isinstance(proxies, list) else 0
     elif core == "sublink":
         stats["links"] = len([line for line in text.splitlines() if line.strip() and "://" in line])
-    elif core == "wireguard":
+    elif core in ("wireguard", "amneziawg"):
         stats["peers"] = text.count("[Peer]")
 
     return stats
@@ -627,13 +628,15 @@ def render_client_configs(
                 }
             )
 
-    if "wireguard" in wanted:
+    for conf_core in ("wireguard", "amneziawg"):
+        if conf_core not in wanted:
+            continue
         try:
-            wg_text, wg_msgs = render_wireguard_conf(child_id, contexts)
-            _append_render_messages(result, "wireguard", wg_msgs)
-            result.configs["wireguard"] = wg_text
+            wg_text, wg_msgs = render_wireguard_conf(child_id, contexts, core=conf_core)
+            _append_render_messages(result, conf_core, wg_msgs)
+            result.configs[conf_core] = wg_text
         except Exception as exc:
-            result.messages.append({"core": "wireguard", "level": "error", "message": str(exc), "data": {"stacktrace": traceback.format_exc()}})
+            result.messages.append({"core": conf_core, "level": "error", "message": str(exc), "data": {"stacktrace": traceback.format_exc()}})
 
     if "sublink" in wanted:
         try:
@@ -793,8 +796,8 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
 
 
-def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
-    """The WireGuard .conf of every proxy with a "wireguard" client config, one after another (client core "wireguard")."""
+def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar], *, core: str = "wireguard") -> tuple[str, list[MessageModel]]:
+    """The .conf of every proxy with a ``core`` client config ("wireguard" or "amneziawg"), one after another."""
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
@@ -804,8 +807,8 @@ def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar]) -> tu
     messages: list[MessageModel] = []
     sections: list[str] = []
     for ctx in contexts:
-        ctx.render_core = TemplateCore.wireguard.value
-        client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.wireguard, ctx.platform.app_version)
+        ctx.render_core = TemplateCore(core).value
+        client_config = select_client_config(ctx.proxy.client_configs, TemplateCore(core), ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():
             continue
         section = render_section(client_config.content, child_id, make_jinja_context(ctx), as_json_object=False, parse_json=False)

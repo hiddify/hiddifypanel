@@ -60,6 +60,7 @@ export type ProxyProto =
   | 'hysteria'
   | 'hysteria2'
   | 'wireguard'
+  | 'amneziawg'
   | 'naive'
   | 'mieru'
   | 'anytls'

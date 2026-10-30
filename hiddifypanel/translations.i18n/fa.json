@@ -2413,6 +2413,7 @@
         "tls_h2": "TLS H2",
         "tls_h3": "QUIC"
       },
+      "amneziawgTemplate": "قالب فایل ‎.conf‎ AmneziaWG",
       "autoClient": "خودکار",
       "baseConfigTemplate": "بازنویسی کانفیگ پایه",
       "baseConfigTemplateHint": "اختیاری: پوسته کامل کانفیگ کلاینت xray داخل {% block base_config %}. خالی بگذارید تا از کانفیگ پایه سراسری استفاده شود.",
@@ -3721,6 +3722,70 @@
     "allow_invalid_sni": {
       "description": "اگر به SNI نامعتبر اجازه دهید، می‌توانید از هر دامنه‌ای به جای دامنه اصلی خود برای دسترسی به پروکسی استفاده کنید (توصیه نمی‌شود)",
       "label": "🆗 اجازه دادن به SNI نامعتبر"
+    },
+    "amneziawg": {
+      "description": "AmneziaWG همان وایرگارد است با بسته‌های بی‌معنی (junk) و هدرهای تغییر یافته، تا DPI آن را وایرگارد تشخیص ندهد. به برنامه AmneziaVPN یا AmneziaWG نیاز دارد (فایل ‎.conf‎ از لینک ‎/amneziawg‎).",
+      "label": "AmneziaWG"
+    },
+    "amneziawg_enable": {
+      "description": "وایرگارد با مبهم‌سازی در برابر DPI که hiddify-core (نسخه 5.1 به بعد) روی پورت UDP جداگانه اجرا می‌کند. کلاینت‌ها: برنامه Hiddify نسخه 5.1 به بعد (در ساب) و برنامه‌های AmneziaVPN / AmneziaWG (فایل ‎.conf‎ از لینک ‎/amneziawg‎)؛ برنامه وایرگارد پشتیبانی نمی‌شود.",
+      "label": "🐲 AmneziaWG"
+    },
+    "amneziawg_h1": {
+      "description": "هدر پیام init: عددی بزرگ‌تر از ۴ و متفاوت با H2 تا H4. پس از تغییر، همه کاربران باید کانفیگ را دوباره وارد کنند",
+      "label": "H1 (هدر init)"
+    },
+    "amneziawg_h2": {
+      "description": "هدر پیام response: عددی بزرگ‌تر از ۴ و متفاوت با H1، H3 و H4",
+      "label": "H2 (هدر response)"
+    },
+    "amneziawg_h3": {
+      "description": "هدر پیام cookie: عددی بزرگ‌تر از ۴ و متفاوت با H1، H2 و H4",
+      "label": "H3 (هدر cookie)"
+    },
+    "amneziawg_h4": {
+      "description": "هدر پیام‌های داده: عددی بزرگ‌تر از ۴ و متفاوت با H1 تا H3",
+      "label": "H4 (هدر داده)"
+    },
+    "amneziawg_ipv4": {
+      "description": "آدرس پایه زیرشبکه IPv4 در AmneziaWG",
+      "label": "IPv4 در AmneziaWG"
+    },
+    "amneziawg_ipv6": {
+      "description": "آدرس پایه زیرشبکه IPv6 در AmneziaWG",
+      "label": "IPv6 در AmneziaWG"
+    },
+    "amneziawg_jc": {
+      "description": "تعداد بسته‌های junk پیش از هر handshake (۱ تا ۱۲۸، معمولاً ۴ تا ۱۲)",
+      "label": "Jc (تعداد بسته‌های junk)"
+    },
+    "amneziawg_jmax": {
+      "description": "بزرگ‌ترین بسته junk به بایت؛ حداکثر ۱۲۸۰",
+      "label": "Jmax (بیشترین اندازه junk)"
+    },
+    "amneziawg_jmin": {
+      "description": "کوچک‌ترین بسته junk به بایت؛ کمتر از Jmax",
+      "label": "Jmin (کمترین اندازه junk)"
+    },
+    "amneziawg_port": {
+      "description": "پورت UDP برای AmneziaWG",
+      "label": "↔️ پورت AmneziaWG"
+    },
+    "amneziawg_private_key": {
+      "description": "کلید خصوصی AmneziaWG سرور",
+      "label": "کلید خصوصی AmneziaWG"
+    },
+    "amneziawg_public_key": {
+      "description": "کلید عمومی AmneziaWG سرور",
+      "label": "کلید عمومی AmneziaWG"
+    },
+    "amneziawg_s1": {
+      "description": "بایت‌های تصادفی که به پیام init در handshake اضافه می‌شود (۱۵ تا ۱۵۰). S1 + 56 نباید با S2 برابر باشد. پس از تغییر، همه کاربران باید کانفیگ را دوباره وارد کنند",
+      "label": "S1 (پدینگ پیام init)"
+    },
+    "amneziawg_s2": {
+      "description": "بایت‌های تصادفی که به پیام response در handshake اضافه می‌شود (۱۵ تا ۱۵۰). پس از تغییر، همه کاربران باید کانفیگ را دوباره وارد کنند",
+      "label": "S2 (پدینگ پیام response)"
     },
     "anytls_enable": {
       "description": "فعال‌سازی پروتکل AnyTLS",

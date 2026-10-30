@@ -73,6 +73,7 @@ protocol_config_map: dict[ProxyProto, ConfigEnum] = {
     ProxyProto.hysteria: ConfigEnum.hysteria_enable,
     ProxyProto.hysteria2: ConfigEnum.hysteria_enable,
     ProxyProto.wireguard: ConfigEnum.wireguard_enable,
+    ProxyProto.amneziawg: ConfigEnum.amneziawg_enable,
     ProxyProto.naive: ConfigEnum.naive_enable,
     ProxyProto.mieru: ConfigEnum.mieru_enable,
     ProxyProto.anytls: ConfigEnum.anytls_enable,
