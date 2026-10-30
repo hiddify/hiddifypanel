@@ -1841,6 +1841,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… or your username"
     },
     "menu": {
+      "close": "Close menu",
+      "open": "Open menu",
       "baseConfigs": "Base Configs",
       "cleanIp": "Scanner",
       "configTester": "Config Tester",

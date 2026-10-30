@@ -1253,6 +1253,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… သို့မဟုတ် သင့်အသုံးပြုသူအမည်"
     },
     "menu": {
+      "close": "မီနူး ပိတ်ရန်",
+      "open": "မီနူး ဖွင့်ရန်",
       "baseConfigs": "Base ကွန်ဖစ်များ",
       "customProxies": "Proxy များ",
       "dashboard": "ဒက်ရှ်ဘုတ်",

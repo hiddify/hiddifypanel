@@ -1842,6 +1842,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… یا نام کاربری شما"
     },
     "menu": {
+      "close": "بستن منو",
+      "open": "باز کردن منو",
       "baseConfigs": "کانفیگ‌های پایه",
       "cleanIp": "اسکنر",
       "configTester": "تست کانفیگ",
