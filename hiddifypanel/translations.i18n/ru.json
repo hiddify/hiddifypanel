@@ -3452,7 +3452,7 @@
     "warp-https-domain-for-warp-site": "config.warp-https-домен-для-варп-сайта",
     "warp": {
       "description": "Warp — это инструмент, который скрывает IP-адрес вашего сервера от сайтов, которые посещают ваши пользователи.\n<br>\nНапример, если у вас возникла проблема с Google, ее можно исправить.",
-      "label": "WARP➕"
+      "label": "WARP"
     },
     "warp_enable": {
       "description": "WARP поможет вам обойти блокировку Google, Spotify и Netflix",

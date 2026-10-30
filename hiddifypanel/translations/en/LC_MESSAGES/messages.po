@@ -11637,7 +11637,7 @@ msgstr ""
 "For example, if you have a problem with captcha on Google, it might be fixed this way."
 
 msgid "config.warp.label"
-msgstr "WARP➕"
+msgstr "WARP"
 
 msgid "config.warp_enable.description"
 msgstr ""

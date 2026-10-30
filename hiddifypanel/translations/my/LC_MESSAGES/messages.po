@@ -2108,7 +2108,7 @@ msgstr ""
 "ဥပမာအားဖြင့်၊ သင်သည် Google တွင် captcha နှင့် ပြဿနာရှိပါက၊ ၎င်းကို ဤနည်းဖြင့် ဖြေရှင်းနိုင်သည်။"
 
 msgid "config.warp.label"
-msgstr "WARP➕"
+msgstr "WARP"
 
 msgid "config.warp_enable.description"
 msgstr "WARP သည် သင့်အား ဆာဗာ အိုင်ပီကိုဝှက်ထားခြင်းဖြင့် Google၊ Spotify နှင့် Netflix ကန့်သတ်ချက်များကို ကျော်လွှားရန် ကူညီပေးသည်။"

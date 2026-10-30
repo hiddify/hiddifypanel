@@ -7992,7 +7992,7 @@ msgstr ""
 "例如，如果您在 Google 上遇到验证码问题，则可能会通过这种方式修复。"
 
 msgid "config.warp.label"
-msgstr "WARP➕"
+msgstr "WARP"
 
 msgid "config.warp_enable.description"
 msgstr "WARP 通过隐藏服务器 IP 帮助您绕过 Google、Spotify 和 Netflix 限制"

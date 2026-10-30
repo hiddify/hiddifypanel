@@ -8591,7 +8591,7 @@ msgstr ""
 "Например, если у вас возникла проблема с Google, ее можно исправить."
 
 msgid "config.warp.label"
-msgstr "WARP➕"
+msgstr "WARP"
 
 msgid "config.warp_enable.description"
 msgstr "WARP поможет вам обойти блокировку Google, Spotify и Netflix"

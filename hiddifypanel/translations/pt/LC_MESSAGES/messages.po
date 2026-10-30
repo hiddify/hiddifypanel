@@ -8543,7 +8543,7 @@ msgstr ""
 "Por exemplo, se você tiver um problema com o Google, ele pode ser corrigido."
 
 msgid "config.warp.label"
-msgstr "WARP➕"
+msgstr "WARP"
 
 msgid "config.warp_enable.description"
 msgstr ""
