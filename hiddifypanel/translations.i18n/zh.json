@@ -1080,6 +1080,18 @@
       },
       "subtitle": "用户连接的地址、每个地址如何到达此服务器，以及它们的证书",
       "title": "域名",
+      "tip": {
+        "autoRenew": "自动续期",
+        "certificate": "证书",
+        "covers": "覆盖",
+        "fingerprint": "指纹",
+        "issuedBy": "签发者",
+        "key": "密钥",
+        "noCertNeeded": "不需要：TLS 是借用或伪造的",
+        "off": "关",
+        "on": "开",
+        "sni": "显示的名称 (SNI)"
+      },
       "tls": {
         "decoy": "伪装 TLS",
         "decoyHint": "Fake 和 Reality TLS 域名不需要自己的证书。",

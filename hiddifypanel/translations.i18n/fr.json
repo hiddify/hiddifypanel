@@ -1080,6 +1080,18 @@
       },
       "subtitle": "Les adresses auxquelles les utilisateurs se connectent, comment chacune atteint ce serveur, et leurs certificats",
       "title": "Domaines",
+      "tip": {
+        "autoRenew": "Renouvellement auto",
+        "certificate": "Certificat",
+        "covers": "Couvre",
+        "fingerprint": "Empreinte",
+        "issuedBy": "Émis par",
+        "key": "Clé",
+        "noCertNeeded": "Inutile : le TLS est emprunté ou simulé",
+        "off": "Désactivé",
+        "on": "Activé",
+        "sni": "Nom affiché (SNI)"
+      },
       "tls": {
         "decoy": "TLS leurre",
         "decoyHint": "Les domaines TLS Fake et Reality n'ont pas besoin de certificat propre.",

@@ -1630,6 +1630,18 @@
       },
       "subtitle": "The addresses users connect to, how each one reaches this server, and their certificates",
       "title": "Domains",
+      "tip": {
+        "autoRenew": "Auto-renew",
+        "certificate": "Certificate",
+        "covers": "Covers",
+        "fingerprint": "Fingerprint",
+        "issuedBy": "Issued by",
+        "key": "Key",
+        "noCertNeeded": "Not needed: TLS is borrowed or faked",
+        "off": "Off",
+        "on": "On",
+        "sni": "Name shown (SNI)"
+      },
       "tls": {
         "decoy": "Decoy TLS",
         "decoyHint": "Fake and Reality TLS domains do not need a certificate of their own.",
