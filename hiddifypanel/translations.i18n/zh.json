@@ -908,6 +908,47 @@
         "frontingHint": "域名前置：配置中显示此名称而非域名",
         "resolveIp": "IP"
       },
+      "certError": {
+        "badName": {
+          "lead": "无法为“{domain}”签发证书（例如它没有点），因此 Let's Encrypt 和 ZeroSSL 拒绝了它。",
+          "step1": "编辑此域名并输入完整名称，例如 sub.example.com。",
+          "step2": "如果不再使用，请从 ⋮ 菜单中删除它。",
+          "title": "这不是真实的域名"
+        },
+        "caDown": {
+          "lead": "Let's Encrypt 或 ZeroSSL 刚才繁忙或无法访问；“{domain}”本身没有问题。",
+          "step1": "等待几分钟后点击重试；面板也会自动重试。",
+          "step2": "如果仍然失败，请检查此服务器能否向互联网发起 HTTPS 连接。",
+          "title": "证书颁发机构没有响应"
+        },
+        "caa": {
+          "lead": "“{domain}”的 DNS 中有一条 CAA 记录，不允许 Let's Encrypt 或 ZeroSSL。",
+          "step1": "在您的 DNS 服务商处添加允许 letsencrypt.org 的 CAA 记录，或删除 CAA 记录。",
+          "step2": "等待几分钟，然后点击重试。",
+          "title": "CAA 记录阻止了证书"
+        },
+        "details": "技术细节",
+        "dns": {
+          "lead": "证书颁发机构查询了“{domain}”，但没有找到地址，或找到的地址不是此服务器。",
+          "step1": "在您的 DNS 服务商处为此名称添加指向此服务器 IP 的 A 记录（IPv4）或 AAAA 记录（IPv6）。",
+          "step2": "等待几分钟让更改生效，然后点击重试。",
+          "step3": "如果前面有 Cloudflare 等 CDN，请将此域名的类型设为 CDN。",
+          "title": "域名没有指向此服务器"
+        },
+        "other": {
+          "lead": "证书颁发机构拒绝了“{domain}”的请求；原因见下方技术细节。",
+          "step1": "检查域名是否指向此服务器的 IP。",
+          "step2": "检查 80 端口是否对互联网开放。",
+          "step3": "然后点击重试；如果仍然失败，请将技术细节发送给 Hiddify 支持。",
+          "title": "无法签发证书"
+        },
+        "port80": {
+          "lead": "证书颁发机构无法通过 80 端口连接到此服务器来验证“{domain}”。",
+          "step1": "在服务器防火墙和云服务商防火墙中开放 80 端口（TCP）。",
+          "step2": "然后点击重试。",
+          "title": "无法访问 80 端口"
+        }
+      },
       "cert": {
         "failed": "无法获取证书",
         "failedHint": "在签发真实证书之前，将使用自签名证书。",

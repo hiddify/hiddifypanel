@@ -908,6 +908,47 @@
         "frontingHint": "Domain fronting: as configs mostram este nome em vez do domínio",
         "resolveIp": "IP"
       },
+      "certError": {
+        "badName": {
+          "lead": "“{domain}” não é um nome para o qual se possa emitir um certificado (por exemplo, não tem ponto), por isso a Let's Encrypt e a ZeroSSL recusam-no.",
+          "step1": "Edite este domínio e escreva o nome completo, por ex. sub.example.com.",
+          "step2": "Se não for usado, apague-o no menu ⋮.",
+          "title": "Não é um nome de domínio real"
+        },
+        "caDown": {
+          "lead": "A Let's Encrypt ou a ZeroSSL estava ocupada ou inacessível agora; “{domain}” não tem nenhum problema.",
+          "step1": "Aguarde alguns minutos e clique em Tentar novamente; o painel também tenta de novo sozinho.",
+          "step2": "Se continuar a falhar, verifique se este servidor consegue abrir ligações HTTPS para a internet.",
+          "title": "A autoridade de certificação não respondeu"
+        },
+        "caa": {
+          "lead": "O DNS de “{domain}” tem um registo CAA que não permite a Let's Encrypt nem a ZeroSSL.",
+          "step1": "No seu fornecedor de DNS, adicione um registo CAA que permita letsencrypt.org, ou remova os registos CAA.",
+          "step2": "Aguarde alguns minutos e clique em Tentar novamente.",
+          "title": "Um registo CAA bloqueia o certificado"
+        },
+        "details": "Detalhes técnicos",
+        "dns": {
+          "lead": "A autoridade de certificação procurou “{domain}” e não encontrou endereço, ou encontrou um que não é este servidor.",
+          "step1": "No seu fornecedor de DNS, adicione um registo A (IPv4) ou AAAA (IPv6) para este nome com o IP deste servidor.",
+          "step2": "Aguarde alguns minutos para a alteração se propagar e clique em Tentar novamente.",
+          "step3": "Se houver uma CDN como a Cloudflare à frente, defina o tipo deste domínio como CDN.",
+          "title": "O domínio não aponta para este servidor"
+        },
+        "other": {
+          "lead": "A autoridade de certificação recusou o pedido para “{domain}”; os detalhes técnicos abaixo dizem porquê.",
+          "step1": "Verifique se o domínio aponta para o IP deste servidor.",
+          "step2": "Verifique se a porta 80 está aberta para a internet.",
+          "step3": "Depois clique em Tentar novamente; se ainda falhar, envie os detalhes técnicos ao suporte Hiddify.",
+          "title": "Não foi possível emitir o certificado"
+        },
+        "port80": {
+          "lead": "A autoridade de certificação não conseguiu chegar a este servidor pela porta 80 para verificar “{domain}”.",
+          "step1": "Abra a porta 80 (TCP) na firewall do servidor e na do seu fornecedor de cloud.",
+          "step2": "Depois clique em Tentar novamente.",
+          "title": "A porta 80 não está acessível"
+        }
+      },
       "cert": {
         "failed": "Não foi possível obter um certificado",
         "failedHint": "Um certificado autoassinado é usado até que um real possa ser emitido.",

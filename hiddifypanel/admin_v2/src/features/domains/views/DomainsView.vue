@@ -170,12 +170,28 @@
           </div>
 
           <!-- The last certificate request failed: shown on the row, not only in the badge's tooltip -->
+          <!-- In plain words: why it failed and what fixes it; the CA's own message under Technical details -->
           <div v-if="certFailed(d)" class="dm-row__cert-error" role="alert">
             <i :class="isRateLimited(d) ? 'pi pi-hourglass' : 'pi pi-exclamation-triangle'" />
-            <span class="dm-row__cert-error-text">
-              <b>{{ t(isRateLimited(d) ? 'domains.tls.rateLimited' : d.tls.status === 'valid' ? 'domains.tls.renewFailed' : 'domains.tls.failed') }}</b>
-              <span v-if="certError(d)" dir="ltr" :title="certError(d)">{{ certError(d) }}</span>
-            </span>
+            <div class="dm-row__cert-error-text">
+              <div class="dm-row__cert-error-head">
+                <b>{{ t(isRateLimited(d) ? 'domains.tls.rateLimited' : d.tls.status === 'valid' ? 'domains.tls.renewFailed' : 'domains.tls.failed') }}</b>
+                <span v-if="!isRateLimited(d)" class="dm-row__cert-error-kind">{{ t(`domains.certError.${certKind(d)}.title`) }}</span>
+              </div>
+              <template v-if="isRateLimited(d)">
+                <p class="dm-row__cert-error-lead">{{ t('domains.cert.rateLimitedHint') }}</p>
+              </template>
+              <template v-else>
+                <p class="dm-row__cert-error-lead">{{ t(`domains.certError.${certKind(d)}.lead`, { domain: d.domain }) }}</p>
+                <ol class="dm-row__cert-error-steps">
+                  <li v-for="n in CERT_ERROR_STEPS[certKind(d)]" :key="n">{{ t(`domains.certError.${certKind(d)}.step${n}`) }}</li>
+                </ol>
+              </template>
+              <details v-if="certError(d)" class="dm-row__cert-error-details">
+                <summary>{{ t('domains.certError.details') }}</summary>
+                <code dir="ltr">{{ certError(d) }}</code>
+              </details>
+            </div>
             <Button :label="t('domains.cert.retry')" icon="pi pi-refresh" size="small" text @click.stop="openCert(d)" />
           </div>
 
@@ -229,6 +245,7 @@ import DomainIpsDialog from '@/features/domains/components/DomainIpsDialog.vue'
 import DomainDialog from '@/features/domains/components/DomainDialog.vue'
 import { loadDomainProblems, rememberDomainWarnings } from '@/shared/composables/useDomainNotices'
 import DomainsGuideDialog from '@/features/domains/components/DomainsGuideDialog.vue'
+import { CERT_ERROR_STEPS, certErrorKind } from '@/features/domains/cert-error'
 import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type TlsStatus, type DomainsState } from '@/features/domains/api'
 
 const { t, locale } = useI18n()
@@ -371,6 +388,9 @@ function isRateLimited(d: DomainRow): boolean {
 }
 function certError(d: DomainRow): string {
   return (d.tls.job?.state === 'failed' && d.tls.job.error) || d.tls.error || ''
+}
+function certKind(d: DomainRow) {
+  return certErrorKind(certError(d))
 }
 type CertState = TlsStatus | 'running' | 'failed' | 'renew_failed'
 function certState(d: DomainRow): CertState {
@@ -1002,27 +1022,63 @@ a.dm-row__domain:hover {
 }
 .dm-row__cert-error {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: flex-start;
+  gap: 0.6rem;
   margin-top: 0.4rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  border-radius: 12px;
   font-size: 0.82rem;
   color: var(--p-red-600, #dc2626);
-  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--p-red-500, #ef4444) 30%, transparent);
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p-red-500, #ef4444) 28%, transparent);
+}
+.dm-row__cert-error > i {
+  margin-top: 0.15rem;
 }
 .dm-row__cert-error-text {
   display: flex;
   flex-direction: column;
+  gap: 0.3rem;
   min-width: 0;
   flex: 1;
 }
-.dm-row__cert-error-text span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.dm-row__cert-error-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+}
+.dm-row__cert-error-kind {
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+.dm-row__cert-error-lead {
+  margin: 0;
+  line-height: 1.5;
   color: var(--p-text-muted-color);
+}
+.dm-row__cert-error-steps {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  list-style: decimal;
+  line-height: 1.55;
+  color: var(--p-text-color);
+}
+.dm-row__cert-error-details summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--p-text-muted-color);
+}
+.dm-row__cert-error-details code {
+  display: block;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.08));
 }
 /* TLS modes without a certificate of their own: Reality, Fake, DNS, the built-in fake-TLS servers */
 .dm-mode--reality {
