@@ -7953,7 +7953,7 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ 配置已成功更改"
 
 msgid "config.vless_decryption.description"
-msgstr "用于分享链接的 VLess 解密参数"
+msgstr "VLESS 加密的服务端密钥。留空即关闭加密，或在此粘贴 <code>xray vlessenc</code> 输出的 decryption 行，并把同一输出的 encryption 行粘贴到 VLESS encryption。"
 
 msgid "config.vless_decryption.label"
 msgstr "VLess 解密"
@@ -7965,7 +7965,7 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "用于分享链接的 VLess 加密方式"
+msgstr "VLESS 加密的客户端密钥，写入分享链接。留空即关闭加密，或粘贴与 decryption 同一次 <code>xray vlessenc</code> 输出中的 encryption 行。"
 
 msgid "config.vless_encryption.label"
 msgstr "VLess 加密"
@@ -8812,3 +8812,12 @@ msgstr "📅每周"
 
 msgid "worker"
 msgstr "✴️ Cloudflare Worker"
+
+msgid "config.invalid_vless_decryption"
+msgstr "Xray 无法识别此 decryption，使用它将无法启动。请留空，或粘贴 xray vlessenc 输出的 decryption 行。"
+
+msgid "config.invalid_vless_encryption"
+msgstr "VLESS encryption 无效。请留空，或粘贴同一次 xray vlessenc 输出的 encryption 行。"
+
+msgid "config.vless_encryption_pair_mismatch"
+msgstr "VLESS encryption 和 decryption 必须来自同一次 xray vlessenc 输出，或都留空。"

@@ -2831,6 +2831,8 @@
     },
     "invalid-pattern-for-warp-sites": "⚠️ O Site inserido para o Warp não corresponde ao modelo especificado",
     "invalid_uuid": "Secret UUID inválido. exemplo: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
+    "invalid_vless_decryption": "O Xray não consegue ler este decryption e não iniciaria com ele. Deixe vazio, ou cole a linha decryption de uma saída do xray vlessenc.",
+    "invalid_vless_encryption": "VLESS encryption inválido. Deixe vazio, ou cole a linha encryption da mesma saída do xray vlessenc.",
     "is_parent": {
       "description": "Se este painel atua como painel pai",
       "label": "Painel pai"
@@ -3430,7 +3432,7 @@
     "validation-success": "As configurações foram alteradas com sucesso. Clique em %(link)s para aplicar as configurações. Pode levar 2 minutos para aplicar",
     "validation-success-no-reset": "✅ As configurações foram alteradas com sucesso",
     "vless_decryption": {
-      "description": "Parâmetro de descriptografia VLess para links de compartilhamento",
+      "description": "Chave do servidor da criptografia VLESS. Deixe vazio para desativar a criptografia, ou cole aqui a linha decryption do <code>xray vlessenc</code> e a linha encryption da mesma saída em VLESS encryption.",
       "label": "Descriptografia VLess"
     },
     "vless_enable": {
@@ -3438,9 +3440,10 @@
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "Método de criptografia VLess para links de compartilhamento",
+      "description": "Chave do cliente da criptografia VLESS, enviada nos links de compartilhamento. Deixe vazio para desativar a criptografia, ou cole a linha encryption da mesma saída <code>xray vlessenc</code> do decryption.",
       "label": "Criptografia VLess"
     },
+    "vless_encryption_pair_mismatch": "VLESS encryption e decryption devem vir da mesma saída do xray vlessenc, ou ficar ambos vazios.",
     "vless_flow": {
       "description": "Controle de fluxo VLess (ex.: xtls-rprx-vision)",
       "label": "Fluxo VLess"
@@ -3449,11 +3452,11 @@
       "description": "É relatado por várias pessoas que o VMess faz com que o sistema seja detectado pelo governo. Então não é recomendado",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "config.warp-https-domínio-para-site-warp",
     "warp": {
       "description": "Warp é uma ferramenta que esconde o IP do seu servidor dos sites onde os usuários navegam \n<br>\nPor exemplo, se você tiver um problema com o Google, ele pode ser corrigido.",
       "label": "WARP➕"
     },
+    "warp-https-domain-for-warp-site": "config.warp-https-domínio-para-site-warp",
     "warp_enable": {
       "description": "O WARP ajuda você a contornar o bloqueio do Google, Spotify e Netflix .",
       "label": "Habilitar WARP+"
