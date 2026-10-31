@@ -10,6 +10,7 @@ import { CADDY_ACCENTS, useLayout, type CaddyAccent } from './composables/layout
 import { apiErrorMessage } from '@/core/api/client'
 import { adminsApi, type MyAccount } from '@/features/admins/api'
 import { LANGUAGE_LOOK } from '@/shared/utils/languages'
+import FlagIcon from '@/shared/components/FlagIcon.vue'
 
 /** Top bar: one button for the admin's language, light/dark and the theme (the panel's own, or Smart Caddy glass
  *  in a color: _theme-caddy.scss). */
@@ -128,10 +129,10 @@ function setDark(dark: boolean) {
         >
           <!-- Chosen: only its flag (the name is in the list, the tooltip and for screen readers) -->
           <template #value>
-            <span v-if="current" class="appearance__flag appearance__flag--chosen" role="img" :aria-label="current.label" :title="current.label"><template v-if="current.flag">{{ current.flag }}</template><i v-else class="pi pi-globe" /></span>
+            <span v-if="current" class="appearance__flag appearance__flag--chosen" role="img" :aria-label="current.label" :title="current.label"><FlagIcon v-if="current.flag" :code="current.flag" /><i v-else class="pi pi-globe" /></span>
           </template>
           <template #option="{ option }">
-            <span class="appearance__lang-value"><span class="appearance__flag"><template v-if="option.flag">{{ option.flag }}</template><i v-else class="pi pi-globe" /></span>{{ option.label }}</span>
+            <span class="appearance__lang-value"><span class="appearance__flag"><FlagIcon v-if="option.flag" :code="option.flag" /><i v-else class="pi pi-globe" /></span>{{ option.label }}</span>
           </template>
         </Select>
       </section>

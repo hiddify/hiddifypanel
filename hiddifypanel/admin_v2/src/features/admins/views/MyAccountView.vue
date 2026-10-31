@@ -88,10 +88,10 @@
                 @update:model-value="saveLanguage"
               >
                 <template #value="{ value }">
-                  <span class="account-lang__opt"><span class="account-lang__flag"><template v-if="flagOf(value)">{{ flagOf(value) }}</template><i v-else class="pi pi-globe" /></span>{{ labelOf(value) }}</span>
+                  <span class="account-lang__opt"><span class="account-lang__flag"><FlagIcon v-if="flagOf(value)" :code="flagOf(value)" /><i v-else class="pi pi-globe" /></span>{{ labelOf(value) }}</span>
                 </template>
                 <template #option="{ option }">
-                  <span class="account-lang__opt"><span class="account-lang__flag"><template v-if="option.flag">{{ option.flag }}</template><i v-else class="pi pi-globe" /></span>{{ option.label }}</span>
+                  <span class="account-lang__opt"><span class="account-lang__flag"><FlagIcon v-if="option.flag" :code="option.flag" /><i v-else class="pi pi-globe" /></span>{{ option.label }}</span>
                 </template>
                 <template #dropdownicon><i class="pi pi-language" /></template>
               </Select>
@@ -265,6 +265,7 @@ import { ALIAS_MIN, aliasProblem, generatePassword, isStrongPassword } from '@/s
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { adminsApi, meterTone, type MyAccount, type OverrideInfo } from '@/features/admins/api'
 import UserPageForm from '@/features/admins/components/UserPageForm.vue'
+import FlagIcon from '@/shared/components/FlagIcon.vue'
 
 
 const { t } = useI18n()

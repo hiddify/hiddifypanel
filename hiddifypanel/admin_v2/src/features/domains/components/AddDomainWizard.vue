@@ -29,6 +29,7 @@ import {
   type DomainRow,
   type DomainsState,
 } from '@/features/domains/api'
+import IconText from '@/shared/components/IconText.vue'
 
 const props = defineProps<{ state: DomainsState | null }>()
 const visible = defineModel<boolean>('visible', { required: true })
@@ -308,7 +309,7 @@ async function copyIp(ip: string) {
         <p class="wz__lead">{{ t('domains.wizard.aliasLead') }}</p>
         <InputText v-model="alias" :placeholder="cleanName" :disabled="step === 'saving'" fluid autofocus />
         <div class="wz__suggest">
-          <button v-for="s in aliasSuggestions" :key="s" type="button" class="wz__chip" :class="{ 'wz__chip--on': alias === s }" :disabled="step === 'saving'" @click="alias = s">{{ s }}</button>
+          <button v-for="s in aliasSuggestions" :key="s" type="button" class="wz__chip" :class="{ 'wz__chip--on': alias === s }" :disabled="step === 'saving'" @click="alias = s"><IconText :text="s" /></button>
         </div>
         <div class="wz__summary">
           <span class="wz__summary-emoji" :style="{ color: KIND_META[kind].color }"><i :class="KIND_META[kind].icon" /></span>

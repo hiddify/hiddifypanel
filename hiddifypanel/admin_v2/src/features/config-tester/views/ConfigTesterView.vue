@@ -116,7 +116,7 @@
           <i v-else class="pi pi-minus-circle" />
         </span>
         <div class="ct-main">
-          <div class="ct-name" dir="ltr">{{ r.name }}</div>
+          <div class="ct-name" dir="ltr"><IconText :text="r.name" /></div>
           <div class="ct-sub">
             <Tag :value="r.kind === 'xray' ? 'xray' : r.kind === 'clash' ? 'clash' : 'hiddify-core'" severity="secondary" class="ct-kind" />
             <Tag v-if="edits[r.index]" :value="t('configTester.sub.edited')" severity="warn" class="ct-kind" />
@@ -225,6 +225,7 @@ import JsonTree from '@/features/config-tester/components/JsonTree.vue'
 import UserLinkPicker from '@/features/config-tester/components/UserLinkPicker.vue'
 import { unwrapSubscriptionText } from '@/shared/utils/sublink-pretty'
 import CodeBlock from '@/features/config-tester/components/CodeBlock.vue'
+import IconText from '@/shared/components/IconText.vue'
 
 const { t, locale } = useI18n()
 const rtl = computed(() => ['fa', 'ar'].includes(locale.value))

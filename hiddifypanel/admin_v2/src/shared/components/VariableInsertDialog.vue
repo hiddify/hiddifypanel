@@ -9,6 +9,7 @@ import Tag from 'primevue/tag'
 import { useTemplateVariableCatalog } from '@/shared/composables/useTemplateVariableCatalog'
 import { variableInsertSnippet } from '@/shared/utils/variable-insert-snippet'
 import type { TemplateVariable } from '@/core/api/generated'
+import { iconizeHtml } from '@/shared/utils/emoji-icons'
 
 const visible = defineModel<boolean>('visible', { default: false })
 
@@ -80,7 +81,7 @@ watch(visible, (open) => {
         >
           = {{ typeof v.value === 'object' ? JSON.stringify(v.value) : String(v.value) }}
         </div>
-        <div v-if="v.description" class="text-xs text-muted-color mt-1 variable-desc-html" v-html="v.description" />
+        <div v-if="v.description" class="text-xs text-muted-color mt-1 variable-desc-html" v-html="iconizeHtml(v.description)" />
       </li>
       <li v-if="!filtered.length" class="text-muted-color text-sm py-4 text-center">{{ t('editor.noVariables') }}</li>
     </ul>

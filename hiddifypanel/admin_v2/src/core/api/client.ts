@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import { applyBootstrapResponse, legacyMenu } from '@/core/panelShell'
+import { stripEmoji } from '@/shared/utils/emoji-icons'
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -220,9 +221,10 @@ export function apiErrorMessage(error: unknown): string {
     const body = data as { message?: unknown; msg?: unknown; detail?: unknown }
     const message = [body.message, body.msg].find((m) => typeof m === 'string' && m.trim()) as string | undefined
     const details = flattenErrorDetail(body.detail)
-    if (message || details.length) return [message, ...details].filter(Boolean).join('\n')
+    // Server messages may start with a legacy emoji ("⚠️ …"); the toast or card shows its own icon
+    if (message || details.length) return stripEmoji([message, ...details].filter(Boolean).join('\n'))
   }
-  if (typeof data === 'string' && data.trim() && data.length < 500) return data
+  if (typeof data === 'string' && data.trim() && data.length < 500) return stripEmoji(data)
   return error instanceof Error ? error.message : String(error ?? '')
 }
 
