@@ -66,7 +66,7 @@ CSS_PROPERTIES = frozenset(
         "font-style", "font-variant", "font-weight", "line-height", "letter-spacing", "word-spacing", "text-align",
         "text-decoration", "text-decoration-color", "text-decoration-line", "text-decoration-style", "text-indent",
         "text-transform", "text-shadow", "text-overflow", "white-space", "word-break", "overflow-wrap", "direction",
-        "unicode-bidi", "vertical-align", "list-style-type", "list-style-position",
+        "unicode-bidi", "vertical-align", "list-style", "list-style-type", "list-style-position",
         # box
         "margin", "padding", "border", "border-width", "border-style", "border-color", "border-radius", "border-collapse",
         "border-spacing", "box-shadow", "box-sizing", "outline", "display", "width", "height", "min-width", "max-width",
@@ -75,6 +75,9 @@ CSS_PROPERTIES = frozenset(
         *(f"{prop}-{side}" for prop in ("margin", "padding", "border") for side in _SIDES),
         *(f"border-{side}-{part}" for side in _SIDES for part in ("width", "style", "color")),
         *(f"border-{v}-{h}-radius" for v in ("top", "bottom") for h in ("left", "right")),
+        # the same by writing direction (right-to-left pages): margin-inline-start, border-inline-start…
+        *(f"{prop}-{axis}{end}" for prop in ("margin", "padding", "border") for axis in ("inline", "block") for end in ("", "-start", "-end")),
+        *(f"border-{axis}-{end}-{part}" for axis in ("inline", "block") for end in ("start", "end") for part in ("width", "style", "color")),
         # flex and grid
         "flex", "flex-direction", "flex-wrap", "flex-flow", "flex-grow", "flex-shrink", "flex-basis", "order",
         "justify-content", "justify-items", "align-items", "align-self", "align-content", "place-items", "place-content",

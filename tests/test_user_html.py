@@ -32,6 +32,10 @@ class UserHtmlTest(unittest.TestCase):
         out = clean_user_html('<div style="position: fixed; inset: 0; z-index: 9; background: url(https://example.com/t.png); background-image: u\\rl(x); color: red">x</div>')
         self.assertEqual(out, '<div style="color: red">x</div>')
 
+    def test_logical_properties(self):
+        html = '<ul style="list-style: disc; padding-inline-start: 1.5em"><li>a</li></ul><blockquote style="border-inline-start: 4px solid #455fe9; margin-inline-end: 8px">q</blockquote>'
+        self.assertEqual(clean_user_html(html), html)
+
     def test_empty(self):
         self.assertEqual(clean_user_html(None), "")
         self.assertEqual(clean_user_html("plain <b>text</b>"), "plain <b>text</b>")
