@@ -15,6 +15,13 @@ permissions:
 jobs:
   unittest:
     runs-on: ubuntu-latest
+    # Importing the panel needs REDIS_URI_MAIN (hiddifypanel/cache.py); a Redis service backs it
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+    env:
+      REDIS_URI_MAIN: redis://localhost:6379/0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
