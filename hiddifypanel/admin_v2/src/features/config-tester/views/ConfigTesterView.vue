@@ -1,5 +1,6 @@
 <template>
   <PageHeader :title="t('configTester.title')" :subtitle="t('configTester.subtitle')" />
+  <TesterRestoreBar />
 
   <!-- 1. What to test -->
   <Panel class="ct-form">
@@ -106,6 +107,8 @@
         <Button icon="pi pi-replay" :label="t('configTester.rerunAll')" size="small" severity="secondary" outlined :disabled="busy" @click="rerunMany(rows)" />
       </div>
     </div>
+
+    <ProxyHealthCard :results="finishedResults" />
 
     <ul class="ct-list">
       <li v-for="r in shown" :key="r.index" class="ct-row" :class="`ct-row--${r.state}`">
@@ -225,6 +228,8 @@ import JsonTree from '@/features/config-tester/components/JsonTree.vue'
 import UserLinkPicker from '@/features/config-tester/components/UserLinkPicker.vue'
 import { unwrapSubscriptionText } from '@/shared/utils/sublink-pretty'
 import CodeBlock from '@/features/config-tester/components/CodeBlock.vue'
+import ProxyHealthCard from '@/features/config-tester/components/ProxyHealthCard.vue'
+import TesterRestoreBar from '@/features/config-tester/components/TesterRestoreBar.vue'
 
 const { t, locale } = useI18n()
 const rtl = computed(() => ['fa', 'ar'].includes(locale.value))
@@ -329,6 +334,12 @@ const counts = computed(() => ({
 }))
 const doneCount = computed(() => rows.value.filter((r) => r.state === 'ok' || r.state === 'failed' || r.state === 'idle').length)
 const pending = computed(() => rows.value.some((r) => r.state === 'waiting'))
+/** The results once every config has one (null while testing): the panel's own configs are judged from them. */
+const finishedResults = computed(() => {
+  if (pending.value || busy.value || !rows.value.length) return null
+  const done = rows.value.filter((r) => r.state === 'ok' || r.state === 'failed')
+  return done.length ? done.map((r) => ({ name: r.name, ok: r.state === 'ok' })) : null
+})
 const sourceLabel = computed(() =>
   t(
     `configTester.source${
