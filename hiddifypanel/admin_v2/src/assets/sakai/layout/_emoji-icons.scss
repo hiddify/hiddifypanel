@@ -31,3 +31,46 @@
 .ui-flag--inline {
     margin-inline: 0.1em 0.3em;
 }
+
+/* A settings option's icon (OptionIcon.vue, option-icons.ts): the icon on a soft tile of its colour */
+.ui-opt-icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 15%, transparent);
+
+    .ui-flag {
+        font-size: 0.85rem;
+    }
+
+    /* in a description, next to the option's name */
+    &--inline {
+        width: 1.3rem;
+        height: 1.3rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        vertical-align: -0.35em;
+        margin-inline-end: 0.3em;
+    }
+}
+.ui-opt-icon__level {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.9rem;
+
+    i {
+        width: 3px;
+        border-radius: 2px;
+        background: color-mix(in srgb, var(--c) 30%, transparent);
+
+        &.on {
+            background: var(--c);
+        }
+    }
+}

@@ -9,6 +9,8 @@ import { displayConfigLabel } from '@/shared/utils/config-labels'
 import type { SettingField, SettingValue } from '@/features/settings/api'
 import IconText from '@/shared/components/IconText.vue'
 import { iconizeHtml, stripEmoji } from '@/shared/utils/emoji-icons'
+import OptionIcon from '@/features/settings/components/OptionIcon.vue'
+import { DESCRIPTION_ICONS, optionIcon } from '@/features/settings/option-icons'
 
 const props = defineProps<{
   field: SettingField
@@ -67,7 +69,7 @@ const checked = computed({
         </Transition>
       </label>
       <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-      <p v-if="field.description" class="setting-row__desc" v-html="iconizeHtml(field.description)" />
+      <p v-if="field.description" class="setting-row__desc" v-html="iconizeHtml(field.description, DESCRIPTION_ICONS[field.key])" />
     </div>
 
     <div class="setting-row__control">
@@ -83,9 +85,17 @@ const checked = computed({
         :invalid="Boolean(errors?.length)"
       >
         <template #value="{ value, placeholder }">
-          <IconText :text="(field.choices?.find((c) => c.value === value)?.label ?? value) || placeholder || '\u00a0'" />
+          <span v-if="optionIcon(field.key, value)" class="setting-option">
+            <OptionIcon :icon="optionIcon(field.key, value)!" />{{ choices.find((c) => c.value === value)?.text ?? value }}
+          </span>
+          <IconText v-else :text="(field.choices?.find((c) => c.value === value)?.label ?? value) || placeholder || '\u00a0'" />
         </template>
-        <template #option="{ option }"><IconText :text="option.label" /></template>
+        <template #option="{ option }">
+          <span v-if="optionIcon(field.key, option.value)" class="setting-option">
+            <OptionIcon :icon="optionIcon(field.key, option.value)!" />{{ option.text }}
+          </span>
+          <IconText v-else :text="option.label" />
+        </template>
       </Select>
       <Textarea
         v-else-if="wide"
@@ -121,6 +131,12 @@ const checked = computed({
 </template>
 
 <style scoped>
+.setting-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
 .setting-row {
   position: relative;
   display: grid;
