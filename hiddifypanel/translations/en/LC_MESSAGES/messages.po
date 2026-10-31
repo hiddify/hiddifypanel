@@ -10346,10 +10346,7 @@ msgid "config.default_useragent_string.label"
 msgstr "🪪 Default User Agent"
 
 msgid "config.dns_server.description"
-msgstr ""
-"✳️ Default 1.1.1.1 <br>\n"
-"🚧 Block Malware 1.1.1.2 <br>\n"
-"🔞 Block Porn 1.1.1.3\n"
+msgstr "The DNS the server and its proxies use. Pick a public DNS from the list, or your own with “Custom”. The server's system DNS changes with it."
 
 msgid "config.dns_server.label"
 msgstr "🖥 DNS Server"

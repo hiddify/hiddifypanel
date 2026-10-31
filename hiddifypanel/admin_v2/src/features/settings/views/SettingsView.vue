@@ -134,6 +134,7 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import ApplyNotice from '@/shared/components/ApplyNotice.vue'
 import StickySaveBar from '@/shared/components/StickySaveBar.vue'
 import SettingFieldRow from '@/features/settings/components/SettingFieldRow.vue'
+import { isDnsValue } from '@/features/settings/dns-presets'
 import { apiErrorMessage } from '@/core/api/client'
 import { displayConfigLabel, htmlToText } from '@/shared/utils/config-labels'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
@@ -221,6 +222,7 @@ function localErrors(field: SettingField): string[] {
   if (field.type === 'bool' || !isChanged(field)) return []
   const value = String(draft[field.key] ?? '')
   if (field.required && !value.trim()) return [t('settings.required')]
+  if (field.key === 'dns_server' && value.trim() && !isDnsValue(value)) return [t('settings.dns.invalid')]
   if (field.pattern && value) {
     try {
       if (!new RegExp(`^(?:${field.pattern})$`).test(value)) return [field.pattern_message || t('settings.invalid')]

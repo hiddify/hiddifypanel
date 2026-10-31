@@ -3,7 +3,8 @@
     {
       "tag": "cloudflare",
       "type": "udp",
-      "server": "{{ ctx.hconfig.dns_server or '1.1.1.1' }}"
+      {#- dns_server: one or more IPs separated by commas (the first one here) #}
+      "server": "{{ ((ctx.hconfig.dns_server or '1.1.1.1').split(',')[0] | trim) or '1.1.1.1' }}"
     }
   ],
   "final": "cloudflare",

@@ -2008,6 +2008,20 @@
       "unsaved": "{count} alteração não salva | {count} alterações não salvas"
     },
     "settings": {
+      "dns": {
+        "custom": "Personalizado",
+        "customHelp": "Até quatro endereços IP (IPv4 ou IPv6), separados por vírgulas. O servidor também os usa para o seu próprio DNS.",
+        "customHint": "Os seus próprios endereços DNS",
+        "customPlaceholder": "ex.: 1.1.1.1, 1.0.0.1",
+        "group": {
+          "adblock": "DNS bloqueador de anúncios",
+          "custom": "DNS personalizado",
+          "family": "Bloqueio de anúncios + filtro adulto",
+          "normal": "DNS normal"
+        },
+        "invalid": "Introduza de um a quatro endereços IP separados por vírgulas, ex.: 1.1.1.1, 1.0.0.1",
+        "placeholder": "Escolha um servidor DNS"
+      },
       "adminPathChanged": "O caminho de administração mudou. Depois de aplicar as configs, o painel de administração estará em",
       "advancedBadge": "Avançado",
       "categories": "Categorias de configurações",
@@ -2718,7 +2732,7 @@
       "label": "🪪 User-Agent padrão"
     },
     "dns_server": {
-      "description": "✳️ Padrão 1.1.1.1 <br>\n🚧 Bloquear Malware 1.1.1.2 <br>\n🔞 Bloquear pornografia 1.1.1.3",
+      "description": "O DNS usado pelo servidor e seus proxies. Escolha um DNS público da lista ou o seu com “Personalizado”. O DNS do sistema do servidor também muda.",
       "label": "🖥 Servidor DNS"
     },
     "dnstt": {

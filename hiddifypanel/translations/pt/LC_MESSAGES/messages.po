@@ -7245,10 +7245,7 @@ msgid "config.default_useragent_string.label"
 msgstr "🪪 User-Agent padrão"
 
 msgid "config.dns_server.description"
-msgstr ""
-"✳️ Padrão 1.1.1.1 <br>\n"
-"🚧 Bloquear Malware 1.1.1.2 <br>\n"
-"🔞 Bloquear pornografia 1.1.1.3"
+msgstr "O DNS usado pelo servidor e seus proxies. Escolha um DNS público da lista ou o seu com “Personalizado”. O DNS do sistema do servidor também muda."
 
 msgid "config.dns_server.label"
 msgstr "🖥 Servidor DNS"

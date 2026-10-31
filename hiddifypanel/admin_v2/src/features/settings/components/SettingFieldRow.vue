@@ -5,6 +5,7 @@ import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
+import DnsPicker from '@/features/settings/components/DnsPicker.vue'
 import { displayConfigLabel } from '@/shared/utils/config-labels'
 import type { SettingField, SettingValue } from '@/features/settings/api'
 
@@ -68,6 +69,7 @@ const checked = computed({
 
     <div class="setting-row__control">
       <ToggleSwitch v-if="field.type === 'bool'" v-model="checked" :input-id="inputId" />
+      <DnsPicker v-else-if="field.key === 'dns_server'" v-model="text" :input-id="inputId" :invalid="Boolean(errors?.length)" />
       <Select
         v-else-if="field.type === 'select'"
         v-model="text"
