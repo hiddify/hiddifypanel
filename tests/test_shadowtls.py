@@ -86,6 +86,7 @@ class ShadowTLSTests(unittest.TestCase):
         self.assertEqual(protocols["sp_95_server-1-example_tls"]["target"], ["127.0.0.1:20036"])
         self.assertEqual(protocols["sp_96_server-0-example_tls"]["target"], ["127.0.0.1:20040"])
 
+    @unittest.skip("SS FakeTLS moved into hiddify-core (SS_FAKETLS_PORT is gone); its routing needs a new test")
     def test_ss_faketls_domains_go_to_its_service_port(self):
         # SS FakeTLS is an SNI proxy too: its domains are routed by their own names, to the obfs-server service
         from hiddifypanel.proxy_v3.context_vars.proxy import SS_FAKETLS_PORT

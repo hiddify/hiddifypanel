@@ -59,8 +59,8 @@ class DomainIPVar(BaseModel):
     tls_fragment_mode: str = "inherit"
     tls_fragment_enable: bool = False
     tls_fragment_packets: str = tls_fragment_mod.DEFAULT_PACKETS
-    tls_fragment_lengths: list[str] = Field(default_factory=lambda: [tls_fragment_mod.DEFAULT_SIZE])
-    tls_fragment_delays: list[str] = Field(default_factory=lambda: [tls_fragment_mod.DEFAULT_SLEEP])
+    tls_fragment_lengths: list[str] = Field(default_factory=lambda: list(tls_fragment_mod.DEFAULT_LENGTHS))
+    tls_fragment_delays: list[str] = Field(default_factory=lambda: list(tls_fragment_mod.DEFAULT_DELAYS))
     tls_fragment_max_split: str = tls_fragment_mod.DEFAULT_MAX_SPLIT
 
     custom_proxy_ids: set[int] = Field(default_factory=set)
