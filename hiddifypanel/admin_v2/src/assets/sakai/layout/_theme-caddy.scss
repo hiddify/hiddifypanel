@@ -20,6 +20,13 @@ $caddy-accents: (
 );
 $caddy-steps: 50 100 200 300 400 500 600 700 800 900 950;
 
+/* A bar over scrolling content: opaque enough to read, still glass. */
+@mixin caddy-bar {
+    background: var(--caddy-glass-strong);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+
 /* The color: in both modes (light uses the palette's 500, as PrimeVue does; dark picks lighter steps below). */
 @each $name, $a in $caddy-accents {
     html.theme-caddy[data-caddy-accent='#{$name}'] {
@@ -92,6 +99,27 @@ html.theme-caddy {
     .p-toast-message {
         backdrop-filter: blur(18px);
         -webkit-backdrop-filter: blur(18px);
+    }
+
+    /* Bars that stay over the page while it scrolls beneath them (sticky or fixed): with the thin card glass, that
+       text showed through their buttons. They take the strong glass with a blur, like the top bar. */
+    .savebar__inner,
+    .bc-sendbar,
+    .uf-actions,
+    .ssh-dock--overlay {
+        @include caddy-bar;
+    }
+
+    /* the settings categories stick under the top bar on phones, Quick setup's buttons to the bottom of the screen */
+    @media (max-width: 991px) {
+        .settings-nav {
+            @include caddy-bar;
+        }
+    }
+    @media (max-width: 720px) {
+        .qs-nav {
+            @include caddy-bar;
+        }
     }
 }
 

@@ -57,6 +57,11 @@
             min-width: 0;
         }
 
+        // set by AppTopbar when the name would not fit whole: only the logo stays
+        .layout-topbar-logo-text--hidden {
+            display: none;
+        }
+
         .layout-topbar-title {
             font-size: 1rem;
             line-height: 1.2;
@@ -144,6 +149,9 @@
 
         .layout-topbar-logo-container {
             width: auto;
+            // the logo gives way to the actions (the title ends in "…"): they must stay on screen
+            min-width: 0;
+            flex: 0 1 auto;
         }
 
         .layout-menu-button {
@@ -196,6 +204,21 @@
 
         .layout-topbar-menu-content {
             flex-direction: column;
+        }
+    }
+}
+
+/* Small phones (320–420 px): the menu button, the logo and the four actions on one row, inside the screen */
+@media (max-width: 420px) {
+    .layout-topbar {
+        padding: 0 0.75rem;
+
+        .layout-topbar-actions {
+            gap: 0.25rem;
+        }
+
+        .layout-topbar-logo {
+            gap: 0.5rem;
         }
     }
 }

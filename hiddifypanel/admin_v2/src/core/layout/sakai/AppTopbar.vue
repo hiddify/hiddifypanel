@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useLayout } from './composables/layout'
 import AppearanceMenu from './AppearanceMenu.vue'
@@ -20,15 +20,36 @@ function signOut() {
   submitPostForm(`${getRouterBase().replace(/admin\/v2\/?$/, '')}logout/?next=${encodeURIComponent(here)}`)
 }
 const panelLogoUrl = computed(() => getPanelLogoUrl())
+
+/** The panel's name only when it fits whole: where it would end in "…" (a narrow phone), only the logo stays. */
+const topbarEl = ref<HTMLElement | null>(null)
+const logoTextEl = ref<HTMLElement | null>(null)
+const titleEl = ref<HTMLElement | null>(null)
+function fitName() {
+  const box = logoTextEl.value
+  const title = titleEl.value
+  if (!box || !title) return
+  // measured with the name shown, in the same frame (nothing is painted in between)
+  box.classList.remove('layout-topbar-logo-text--hidden')
+  box.classList.toggle('layout-topbar-logo-text--hidden', title.scrollWidth > title.clientWidth + 1)
+}
+let resizeObserver: ResizeObserver | null = null
+onMounted(() => {
+  fitName()
+  resizeObserver = new ResizeObserver(fitName)
+  if (topbarEl.value) resizeObserver.observe(topbarEl.value)
+})
+onBeforeUnmount(() => resizeObserver?.disconnect())
+watch(() => t('appTitle'), () => nextTick(fitName))
 </script>
 
 <template>
-  <div class="layout-topbar">
+  <div ref="topbarEl" class="layout-topbar">
     <div class="layout-topbar-logo-container">
       <button type="button" class="layout-menu-button layout-topbar-action" @click="toggleMenu">
         <i class="pi pi-bars" />
       </button>
-      <router-link to="/" class="layout-topbar-logo">
+      <router-link to="/" class="layout-topbar-logo" :aria-label="t('appTitle')">
         <img
           v-if="panelLogoUrl"
           :src="panelLogoUrl"
@@ -36,8 +57,8 @@ const panelLogoUrl = computed(() => getPanelLogoUrl())
           class="layout-topbar-logo-image"
         />
         <i v-else class="pi pi-shield" />
-        <span class="layout-topbar-logo-text">
-          <span class="layout-topbar-title">{{ t('appTitle') }}</span>
+        <span ref="logoTextEl" class="layout-topbar-logo-text">
+          <span ref="titleEl" class="layout-topbar-title">{{ t('appTitle') }}</span>
           <span v-if="panelVersion" class="layout-topbar-version ltr">{{ panelVersion }}</span>
         </span>
       </router-link>
