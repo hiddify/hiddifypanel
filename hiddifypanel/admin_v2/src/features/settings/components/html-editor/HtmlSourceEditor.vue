@@ -64,6 +64,7 @@ onBeforeUnmount(() => {
 
 defineExpose({
   format: () => editor?.getAction('editor.action.formatDocument')?.run(),
+  find: () => editor?.getAction('editor.action.startFindReplaceAction')?.run(),
   undo: () => editor?.trigger('toolbar', 'undo', null),
   redo: () => editor?.trigger('toolbar', 'redo', null),
 })

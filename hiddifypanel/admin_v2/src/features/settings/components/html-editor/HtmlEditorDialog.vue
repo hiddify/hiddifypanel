@@ -2,18 +2,22 @@
 /**
  * The panel's own HTML editor for the support box (no outside site): Preview edits the text as it looks on the user
  * page, Source shows its HTML. Lite has the everyday tools, Full all of them. OK and Apply put the text in the setting
- * (saved with the settings), Cancel drops what was not applied.
+ * (saved with the settings), Cancel drops what was not applied. Full adds the advanced tools: a template gallery, a
+ * block style panel, table rows and columns, find & replace, code clean-up, HTML import/export and the element path.
  */
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Popover from 'primevue/popover'
 import Select from 'primevue/select'
+import BlockStylePanel from './BlockStylePanel.vue'
 import EditorIcon, { type EditorIconName } from './EditorIcon.vue'
 import HtmlSourceEditor from './HtmlSourceEditor.vue'
 import SupportFrame from './SupportFrame.vue'
+import TemplateGallery from './TemplateGallery.vue'
+import { cleanUp, closestIn, countMatches, replaceAll, selectNext, tableAction, type TableAction } from './dom-tools'
 import { BLOCK_STYLES, SNIPPETS, caretBlock, escapeAttr } from './support-frame'
 
 const props = defineProps<{ modelValue: string; title: string; maxlength?: number }>()
@@ -52,7 +56,17 @@ watch(visible, (open) => {
   if (!open) return
   draft.value = props.modelValue ?? ''
   mode.value = 'preview'
+  notice.value = ''
 })
+
+/** A short note in the footer after a tool that changes nothing visible (copied, cleaned…). */
+const notice = ref('')
+let noticeTimer: ReturnType<typeof setTimeout> | undefined
+function note(text: string) {
+  notice.value = text
+  clearTimeout(noticeTimer)
+  noticeTimer = setTimeout(() => (notice.value = ''), 3500)
+}
 
 const length = computed(() => draft.value.length)
 const tooLong = computed(() => Boolean(props.maxlength && length.value > props.maxlength))
@@ -176,6 +190,167 @@ function refreshState() {
   }
   const value = String(doc.queryCommandValue('formatBlock') || 'p').toLowerCase()
   block.value = BLOCKS.value.some((b) => b.value === value) ? value : 'p'
+  const parts = frameParts()
+  const range = doc.getSelection()?.rangeCount ? doc.getSelection()!.getRangeAt(0) : null
+  let anchor: Node | null = range?.startContainer ?? null
+  // a whole element selected (picked in the path bar): the selection starts on its parent, at its index
+  if (anchor && anchor.nodeType === 1 && range && range.startOffset < anchor.childNodes.length && !range.collapsed) anchor = anchor.childNodes[range.startOffset]
+  const els: HTMLElement[] = []
+  if (parts && anchor && parts.content.contains(anchor)) {
+    for (let el = anchor.nodeType === 1 ? (anchor as HTMLElement) : anchor.parentElement; el && el !== parts.content; el = el.parentElement) els.unshift(el)
+  }
+  path.value = els
+  cell.value = parts ? (closestIn(anchor, 'td, th', parts.content) as HTMLTableCellElement | null) : null
+  if (!stylePinned) styleTarget.value = parts ? caretBlock(doc, parts.content) : null
+}
+
+// ---- Full: element path, block style, tables ----
+
+const path = shallowRef<HTMLElement[]>([])
+const cell = shallowRef<HTMLTableCellElement | null>(null)
+const styleTarget = shallowRef<HTMLElement | null>(null)
+const stylePop = ref<InstanceType<typeof Popover> | null>(null)
+/** an element picked in the path bar stays the style panel's target until the caret moves */
+let stylePinned = false
+
+function pickPath(el: HTMLElement) {
+  const doc = frameParts()?.doc
+  if (!doc) return
+  const range = doc.createRange()
+  range.selectNode(el)
+  doc.getSelection()?.removeAllRanges()
+  doc.getSelection()?.addRange(range)
+  styleTarget.value = el
+  stylePinned = true
+  setTimeout(() => (stylePinned = false), 300)
+}
+function openStyle(event: MouseEvent) {
+  refreshState()
+  stylePop.value?.toggle(event)
+}
+function styleParent() {
+  const content = frameParts()?.content
+  const parent = styleTarget.value?.parentElement
+  if (parent && parent !== content && content?.contains(parent)) styleTarget.value = parent
+}
+function styled() {
+  frame.value?.sync()
+}
+
+function runTable(action: TableAction) {
+  const parts = frameParts()
+  if (!parts || !cell.value) return
+  const next = tableAction(cell.value, action)
+  if (next) {
+    const range = parts.doc.createRange()
+    range.selectNodeContents(next)
+    range.collapse(true)
+    parts.doc.getSelection()?.removeAllRanges()
+    parts.doc.getSelection()?.addRange(range)
+  }
+  done(parts.content)
+}
+const TABLE_TOOLS: { action: TableAction; icon: EditorIconName }[] = [
+  { action: 'rowAbove', icon: 'rowAbove' },
+  { action: 'rowBelow', icon: 'rowBelow' },
+  { action: 'colBefore', icon: 'colBefore' },
+  { action: 'colAfter', icon: 'colAfter' },
+  { action: 'rowDelete', icon: 'rowDelete' },
+  { action: 'colDelete', icon: 'colDelete' },
+  { action: 'tableDelete', icon: 'tableDelete' },
+]
+
+// ---- Full: templates, find & replace, clean-up, import/export ----
+
+const galleryVisible = ref(false)
+function useTemplate(html: string, replace: boolean) {
+  if (replace) {
+    const content = frameParts()?.content
+    if (content) {
+      content.innerHTML = html
+      done(content)
+    } else draft.value = html
+  } else insertHtml(html)
+}
+
+const findPop = ref<InstanceType<typeof Popover> | null>(null)
+const finder = reactive({ find: '', replace: '', matchCase: false })
+const matches = computed(() => {
+  void draft.value // recount after edits
+  const content = frameParts()?.content
+  return content ? countMatches(content, finder.find, finder.matchCase) : 0
+})
+function openFind(event: MouseEvent) {
+  if (mode.value === 'source') {
+    source.value?.find()
+    return
+  }
+  const text = selectedText()
+  if (text && !text.includes('\n')) finder.find = text
+  findPop.value?.toggle(event)
+}
+function findNext() {
+  const content = frameParts()?.content
+  if (content) selectNext(content, finder.find, finder.matchCase)
+}
+function replaceEverywhere() {
+  const content = frameParts()?.content
+  if (!content) return
+  const n = replaceAll(content, finder.find, finder.replace, finder.matchCase)
+  done(content)
+  note(t('settings.htmlEditor.find.replaced', { n }, n))
+}
+
+function cleanCode() {
+  if (mode.value === 'source') {
+    const doc = new DOMParser().parseFromString(`<body>${draft.value}</body>`, 'text/html')
+    const n = cleanUp(doc.body)
+    draft.value = doc.body.innerHTML
+    note(t('settings.htmlEditor.cleaned', { n }, n))
+    return
+  }
+  const content = frameParts()?.content
+  if (!content) return
+  const n = cleanUp(content)
+  done(content)
+  note(t('settings.htmlEditor.cleaned', { n }, n))
+}
+
+function currentHtml(): string {
+  if (mode.value === 'preview') {
+    const content = frameParts()?.content
+    if (content) return content.innerHTML
+  }
+  return draft.value
+}
+async function copyHtml() {
+  try {
+    await navigator.clipboard.writeText(currentHtml())
+    note(t('settings.htmlEditor.copied'))
+  } catch {
+    note(t('settings.htmlEditor.copyFailed'))
+  }
+}
+function downloadHtml() {
+  const blob = new Blob([`<!doctype html>\n<meta charset="utf-8">\n${currentHtml()}\n`], { type: 'text/html' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'support-box.html'
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+}
+const fileInput = ref<HTMLInputElement | null>(null)
+async function onFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  const text = await file.text()
+  // a whole page: only what is in its <body>
+  const doc = new DOMParser().parseFromString(text, 'text/html')
+  useTemplate(doc.body.innerHTML.trim(), true)
+  if (mode.value === 'source') draft.value = doc.body.innerHTML.trim()
+  note(t('settings.htmlEditor.opened', { name: file.name }))
 }
 
 // ---- toolbar ----
@@ -256,6 +431,18 @@ const tools = computed<Tool[][]>(() => {
       { id: 'ltr', icon: 'ltr', label: t('settings.htmlEditor.tools.ltr'), run: () => setDirection('ltr'), full: true },
       { id: 'rtl', icon: 'rtl', label: t('settings.htmlEditor.tools.rtl'), run: () => setDirection('rtl'), full: true },
     ],
+    [
+      { id: 'templates', icon: 'template', label: t('settings.htmlEditor.tools.templates'), run: () => (galleryVisible.value = true), full: true },
+      { id: 'style', icon: 'palette', label: t('settings.htmlEditor.tools.blockStyle'), run: (e) => openStyle(e), full: true },
+      { id: 'faq', icon: 'faq', label: t('settings.htmlEditor.tools.faq'), run: () => insertHtml(SNIPPETS.faq(t('settings.htmlEditor.sampleQuestion'), t('settings.htmlEditor.sampleAnswer'))), full: true },
+    ],
+    [
+      { id: 'find', icon: 'search', label: t('settings.htmlEditor.tools.find'), run: (e) => openFind(e), full: true },
+      { id: 'clean', icon: 'broom', label: t('settings.htmlEditor.tools.clean'), run: () => cleanCode(), full: true },
+      { id: 'copy', icon: 'copy', label: t('settings.htmlEditor.tools.copy'), run: () => copyHtml(), full: true },
+      { id: 'download', icon: 'download', label: t('settings.htmlEditor.tools.download'), run: () => downloadHtml(), full: true },
+      { id: 'open', icon: 'upload', label: t('settings.htmlEditor.tools.open'), run: () => fileInput.value?.click(), full: true },
+    ],
   ]
   return all.map((group) => group.filter((tool) => level.value === 'full' || !tool.full)).filter((group) => group.length)
 })
@@ -285,12 +472,12 @@ const SIZES = ['12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px']
 const fontName = ref('')
 const fontSize = ref('')
 
-/** A chosen format brings its own look: the new block drops the style it copied from the old one (a box, a heading). */
 /** After a list choice: the caret back in the text (the Select takes the focus while it closes). */
 function refocus() {
   frameParts()?.content.focus()
 }
 
+/** A chosen format brings its own look: the new block drops the style it copied from the old one (a box, a heading). */
 function onBlock(value: string) {
   const parts = focusContent()
   if (!parts) return
@@ -405,6 +592,7 @@ function redo() {
     modal
     maximizable
     :draggable="false"
+    :close-on-escape="false"
     class="hed-dialog"
     :style="{ width: 'min(64rem, calc(100vw - 2rem))' }"
     :breakpoints="{ '720px': '100vw' }"
@@ -469,11 +657,34 @@ function redo() {
               <EditorIcon :name="tool.icon" :color="tool.color" />
             </button>
           </div>
+          <Transition name="hed-pop-in">
+            <div v-if="level === 'full' && cell" class="hed-group hed-group--table" :aria-label="t('settings.htmlEditor.tools.tableTools')">
+              <button
+                v-for="tool in TABLE_TOOLS"
+                :key="tool.action"
+                v-tooltip.bottom="t(`settings.htmlEditor.tools.${tool.action}`)"
+                type="button"
+                class="hed-tool"
+                :class="{ 'hed-tool--danger': tool.action.endsWith('Delete') }"
+                :aria-label="t(`settings.htmlEditor.tools.${tool.action}`)"
+                @click="runTable(tool.action)"
+              >
+                <EditorIcon :name="tool.icon" />
+              </button>
+            </div>
+          </Transition>
         </template>
         <template v-else>
           <div class="hed-group">
             <button type="button" class="hed-tool hed-tool--text" @click="source?.format()"><EditorIcon name="format" />{{ t('settings.htmlEditor.formatCode') }}</button>
             <button type="button" class="hed-tool hed-tool--text" :class="{ 'hed-tool--on': wrap }" :aria-pressed="wrap" @click="wrap = !wrap"><EditorIcon name="wrap" />{{ t('settings.htmlEditor.wrap') }}</button>
+          </div>
+          <div v-if="level === 'full'" class="hed-group">
+            <button v-tooltip.bottom="t('settings.htmlEditor.tools.find')" type="button" class="hed-tool" :aria-label="t('settings.htmlEditor.tools.find')" @click="openFind"><EditorIcon name="search" /></button>
+            <button v-tooltip.bottom="t('settings.htmlEditor.tools.clean')" type="button" class="hed-tool" :aria-label="t('settings.htmlEditor.tools.clean')" @click="cleanCode"><EditorIcon name="broom" /></button>
+            <button v-tooltip.bottom="t('settings.htmlEditor.tools.copy')" type="button" class="hed-tool" :aria-label="t('settings.htmlEditor.tools.copy')" @click="copyHtml"><EditorIcon name="copy" /></button>
+            <button v-tooltip.bottom="t('settings.htmlEditor.tools.download')" type="button" class="hed-tool" :aria-label="t('settings.htmlEditor.tools.download')" @click="downloadHtml"><EditorIcon name="download" /></button>
+            <button v-tooltip.bottom="t('settings.htmlEditor.tools.open')" type="button" class="hed-tool" :aria-label="t('settings.htmlEditor.tools.open')" @click="fileInput?.click()"><EditorIcon name="upload" /></button>
           </div>
           <span class="hed-toolbar__hint">{{ t('settings.htmlEditor.sourceHint') }}</span>
         </template>
@@ -483,14 +694,25 @@ function redo() {
         <SupportFrame v-if="mode === 'preview'" ref="frame" v-model:html="draft" editable @selectionchange="refreshState" />
         <HtmlSourceEditor v-else ref="source" v-model="draft" :wrap="wrap" />
       </div>
+      <div v-if="mode === 'preview' && level === 'full'" class="hed-path" dir="ltr" :aria-label="t('settings.htmlEditor.path')">
+        <span class="hed-path__root">body</span>
+        <template v-for="el in path" :key="el">
+          <i class="pi pi-angle-right" />
+          <button type="button" class="hed-path__el" :class="{ 'hed-path__el--on': el === styleTarget }" @mousedown.prevent @click="pickPath(el)">{{ el.tagName.toLowerCase() }}</button>
+        </template>
+      </div>
     </div>
+    <input ref="fileInput" type="file" accept=".html,.htm,.txt,text/html,text/plain" hidden @change="onFile" />
 
     <template #footer>
       <div class="hed-foot">
         <div class="hed-foot__info">
           <span class="hed-count" :class="{ 'hed-count--over': tooLong }" dir="ltr">{{ length }}<template v-if="maxlength"> / {{ maxlength }}</template></span>
+          <Transition name="hed-pop-in">
+            <span v-if="notice" class="hed-notice"><i class="pi pi-check-circle" />{{ notice }}</span>
+          </Transition>
           <span v-if="tooLong" class="hed-foot__warn"><i class="pi pi-exclamation-circle" />{{ t('settings.htmlEditor.tooLong') }}</span>
-          <span v-else class="hed-foot__hint">{{ unapplied ? t('settings.htmlEditor.unapplied') : t('settings.htmlEditor.saveHint') }}</span>
+          <span v-else-if="!notice" class="hed-foot__hint">{{ unapplied ? t('settings.htmlEditor.unapplied') : t('settings.htmlEditor.saveHint') }}</span>
         </div>
         <div class="hed-foot__actions">
           <Button :label="t('settings.htmlEditor.cancel')" severity="secondary" text @click="cancel" />
@@ -571,6 +793,31 @@ function redo() {
       </div>
     </div>
   </Popover>
+
+  <Popover ref="stylePop">
+    <div class="hed-pop">
+      <div class="hed-pop__title">{{ t('settings.htmlEditor.tools.blockStyle') }}</div>
+      <BlockStylePanel :target="styleTarget" @change="styled" @parent="styleParent" />
+    </div>
+  </Popover>
+
+  <Popover ref="findPop">
+    <form class="hed-pop hed-form" @submit.prevent="findNext">
+      <div class="hed-pop__title">{{ t('settings.htmlEditor.tools.find') }}</div>
+      <label>{{ t('settings.htmlEditor.find.find') }}<InputText v-model="finder.find" size="small" autofocus /></label>
+      <label>{{ t('settings.htmlEditor.find.replace') }}<InputText v-model="finder.replace" size="small" /></label>
+      <div class="hed-find__row">
+        <label class="hed-check"><input v-model="finder.matchCase" type="checkbox" />{{ t('settings.htmlEditor.find.matchCase') }}</label>
+        <span class="hed-find__count">{{ t('settings.htmlEditor.find.matches', { n: matches }, matches) }}</span>
+      </div>
+      <div class="hed-find__row">
+        <Button type="submit" :label="t('settings.htmlEditor.find.next')" icon="pi pi-arrow-down" size="small" severity="secondary" outlined :disabled="!matches" />
+        <Button :label="t('settings.htmlEditor.find.replaceAll')" size="small" :disabled="!matches" @click="replaceEverywhere" />
+      </div>
+    </form>
+  </Popover>
+
+  <TemplateGallery v-model:visible="galleryVisible" @pick="useTemplate" />
 
   <Popover ref="symbolPop">
     <div class="hed-pop">
@@ -729,6 +976,74 @@ function redo() {
 }
 .hed-tool--text {
   padding: 0 0.6rem;
+}
+.hed-group--table {
+  padding: 2px 0.35rem 2px 2px;
+  border-radius: 10px;
+  border-inline-end: 0;
+  background: color-mix(in srgb, var(--p-primary-color) 8%, transparent);
+}
+.hed-tool--danger:hover {
+  color: var(--p-red-600, #dc2626);
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 12%, transparent);
+}
+.hed-path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem;
+  min-height: 1.9rem;
+  padding: 0.2rem 0.6rem;
+  border-top: 1px solid var(--p-content-border-color);
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--p-text-muted-color);
+}
+.hed-path i {
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
+.hed-path__root {
+  padding: 0.05rem 0.3rem;
+}
+.hed-path__el {
+  padding: 0.05rem 0.4rem;
+  border: 0;
+  border-radius: 5px;
+  font: inherit;
+  color: var(--p-text-color);
+  background: transparent;
+  cursor: pointer;
+}
+.hed-path__el:hover,
+.hed-path__el--on {
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.hed-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--p-green-600, #16a34a);
+}
+.hed-find__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.hed-find__count {
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+}
+.hed-pop-in-enter-active,
+.hed-pop-in-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.hed-pop-in-enter-from,
+.hed-pop-in-leave-to {
+  opacity: 0;
+  transform: translateY(-2px);
 }
 .hed-toolbar__hint {
   margin-inline-start: auto;

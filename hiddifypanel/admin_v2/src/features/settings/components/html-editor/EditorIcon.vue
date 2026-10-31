@@ -43,6 +43,21 @@ export const PATHS = {
   eye: 'M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
   sparkle: 'M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9z M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z',
   layers: 'M12 3l9 5-9 5-9-5z M3 13l9 5 9-5',
+  template: 'M5 4h14a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z M5 14h5a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z M15 14h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z',
+  palette: 'M12 3a9 9 0 0 0 0 18c1 0 1.6-.7 1.6-1.5 0-.4-.2-.8-.4-1.1-.3-.3-.4-.6-.4-1 0-.8.7-1.4 1.5-1.4H16a5 5 0 0 0 5-5c0-4.4-4-8-9-8z M7.5 11.5h.01 M10.5 7.5h.01 M15.5 8.5h.01',
+  search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M20 20l-4-4',
+  copy: 'M9 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1z M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1',
+  download: 'M12 4v11 M7 10l5 5 5-5 M4 20h16',
+  upload: 'M12 15V4 M7 9l5-5 5 5 M4 20h16',
+  broom: 'M14 3l-3.5 8 M6 12h9l1.5 9h-12z M8.5 16v5 M12.5 16v5',
+  faq: 'M5 6l3 3-3 3 M11 9h9 M5 16h15 M5 20h9',
+  rowAbove: 'M4 13h16v7H4z M4 16.5h16 M12 3v6 M9 6h6',
+  rowBelow: 'M4 4h16v7H4z M4 7.5h16 M12 15v6 M9 18h6',
+  colBefore: 'M13 4h7v16h-7z M16.5 4v16 M3 12h6 M6 9v6',
+  colAfter: 'M4 4h7v16H4z M7.5 4v16 M15 12h6 M18 9v6',
+  rowDelete: 'M4 4h16v7H4z M4 7.5h16 M9.5 15.5l5 5 M14.5 15.5l-5 5',
+  colDelete: 'M4 4h7v16H4z M7.5 4v16 M15 9.5l5 5 M20 9.5l-5 5',
+  tableDelete: 'M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M9 9l6 6 M15 9l-6 6',
 } as const
 
 export type EditorIconName = keyof typeof PATHS

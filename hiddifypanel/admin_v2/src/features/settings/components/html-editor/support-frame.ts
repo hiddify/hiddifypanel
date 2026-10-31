@@ -41,6 +41,8 @@ export const SNIPPETS = {
     const row = `<tr>${cell.repeat(cols)}</tr>`
     return `<table style="width: 100%; border-collapse: collapse; margin: 0 0 8px"><tbody>${row.repeat(rows)}</tbody></table>`
   },
+  faq: (question: string, answer: string) =>
+    `<details style="margin: 0 0 8px; padding: 10px 12px; border-radius: 10px; background: #ffffff; border: 1px solid #dee2e6"><summary style="font-weight: 600">${escapeText(question)}</summary><p style="margin: 8px 0 0">${escapeText(answer)}</p></details>`,
   image: (src: string, alt: string, width: string) =>
     `<img src="${escapeAttr(src)}" alt="${escapeAttr(alt)}"${width ? ` width="${escapeAttr(width)}"` : ''} style="max-width: 100%; height: auto; border-radius: 8px">`,
 }
