@@ -93,6 +93,16 @@ html.theme-caddy {
         backdrop-filter: blur(18px);
         -webkit-backdrop-filter: blur(18px);
     }
+
+    /* Phones: the settings categories stick under the top bar while the page scrolls beneath them. The thin glass
+       let that text show through the chips: strong glass with a blur, like the other bars. */
+    @media (max-width: 991px) {
+        .settings-nav {
+            background: var(--caddy-glass-strong);
+            backdrop-filter: blur(18px) saturate(1.2);
+            -webkit-backdrop-filter: blur(18px) saturate(1.2);
+        }
+    }
 }
 
 /* Dark: dark glass on plum-navy surfaces. */
