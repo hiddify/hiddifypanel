@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from contextlib import nullcontext
+
 from hiddifypanel.proxy_v3.config_builder.base import BaseConfigBuilderDriver
 from hiddifypanel.proxy_v3.config_builder.base_config import extract_base_config_shell, resolve_base_config_content
+from hiddifypanel.proxy_v3.config_builder.jinja_render import builtin_templates_only
 from hiddifypanel.proxy_v3.config_builder.models import ConfigBuilderModel, MessageModel
 from hiddifypanel.proxy_v3.config_builder.render import render_section
 from hiddifypanel.proxy_v3.context_vars.builder.utils import make_jinja_context
@@ -18,9 +21,10 @@ class TextServerDriver(BaseConfigBuilderDriver):
     def extra_jinja(self, ctx: ServerContextVar) -> dict:
         return {}
 
-    def build(self, child_id: int, ctx: ServerContextVar) -> ConfigBuilderModel:
+    def build(self, child_id: int, ctx: ServerContextVar, *, builtin_only: bool = False) -> ConfigBuilderModel:
+        """``builtin_only``: the shipped base and templates, ignoring the admin's overrides (see builtin_templates_only)."""
         messages: list[MessageModel] = []
-        base = resolve_base_config_content(child_id, self.side, self.core, TemplateVersion("0.0.0"))
+        base = "" if builtin_only else resolve_base_config_content(child_id, self.side, self.core, TemplateVersion("0.0.0"))
         if not (base or "").strip():
             try:
                 base = default_base_content(self.side.value, self.core.value)
@@ -39,13 +43,14 @@ class TextServerDriver(BaseConfigBuilderDriver):
 
         jinja_ctx = make_jinja_context(ctx)
         jinja_ctx.update(self.extra_jinja(ctx))
-        section = render_section(
-            base,
-            child_id,
-            jinja_ctx,
-            as_json_object=False,
-            parse_json=False,
-        )
+        with builtin_templates_only() if builtin_only else nullcontext():
+            section = render_section(
+                base,
+                child_id,
+                jinja_ctx,
+                as_json_object=False,
+                parse_json=False,
+            )
         if section.error:
             data: dict = {}
             if section.error_detail is not None:
