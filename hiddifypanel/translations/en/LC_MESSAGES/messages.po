@@ -10233,9 +10233,7 @@ msgid "config.branding.label"
 msgstr "Customizing User Page"
 
 msgid "config.branding_freetext.description"
-msgstr ""
-"Branding Text. this box's text will be shown on support section of User's Page. you can use HTML tags\n"
-"<p><br /><a href=\"https://htmleditor.online/full\" target=\"_blank\">HTML Editor</a></p>"
+msgstr "Branding Text. this box's text will be shown on support section of User's Page. you can use HTML tags"
 
 msgid "config.branding_freetext.label"
 msgstr "📢 Support Section Text"

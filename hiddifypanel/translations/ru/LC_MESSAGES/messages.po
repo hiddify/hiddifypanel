@@ -7167,9 +7167,7 @@ msgid "config.branding.label"
 msgstr "Настройки страницы пользователя"
 
 msgid "config.branding_freetext.description"
-msgstr ""
-"Брендинговый текст. текст этого поля будет показан в разделе поддержки на странице пользователя. вы можете использовать HTML-теги\n"
-"<p><br /><a href=\"https://htmleditor.online/full\" target=\"_blank\">HTML Editor</a></p>"
+msgstr "Брендинговый текст. текст этого поля будет показан в разделе поддержки на странице пользователя. вы можете использовать HTML-теги"
 
 msgid "config.branding_freetext.label"
 msgstr "📢 Текст раздела поддержки"

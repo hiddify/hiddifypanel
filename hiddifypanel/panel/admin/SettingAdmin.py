@@ -156,8 +156,10 @@ def save_config_form(form) -> SettingsSaveResult:
 
     for k, v in changed_configs.items():
         # html inputs santitizing
-        if k in {ConfigEnum.branding_title, ConfigEnum.branding_site, ConfigEnum.branding_freetext}:
+        if k in {ConfigEnum.branding_title, ConfigEnum.branding_site}:
             v = bleach_clean(v, tags=ALLOWED_TAGS)
+        elif k == ConfigEnum.branding_freetext:  # the users' support box: HTML5 with inline styles
+            v = hutils.user_html.clean_user_html(v)
         set_hconfig(k, v, commit=False)
 
     db.session.commit()
