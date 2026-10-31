@@ -2,6 +2,7 @@
  * Country flags as SVG images (flag-icons), in place of flag emoji: the same look on every system (Windows has no
  * flag emoji and shows two letters). Each flag is a separate small file, fetched only when shown.
  */
+import irLionAndSun from '@/assets/flags/ir-lion-and-sun.svg?no-inline'
 const FLAG_URLS = import.meta.glob('../../../node_modules/flag-icons/flags/4x3/*.svg', {
   eager: true,
   query: '?no-inline',
@@ -11,6 +12,8 @@ const FLAG_URLS = import.meta.glob('../../../node_modules/flag-icons/flags/4x3/*
 const BY_CODE: Record<string, string> = Object.fromEntries(
   Object.entries(FLAG_URLS).map(([file, url]) => [file.replace(/^.*\/([a-z0-9-]+)\.svg$/, '$1'), url]),
 )
+// Iran: the Lion and Sun flag
+BY_CODE.ir = irLionAndSun
 
 /** The flag image of a two-letter country code (any case), or '' when there is none. */
 export function flagUrl(code: string | null | undefined): string {
