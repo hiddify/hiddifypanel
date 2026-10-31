@@ -1147,9 +1147,7 @@ msgid "config.branding.label"
 msgstr "စိတ်ကြိုက် အသုံးပြုသူ စာမျက်နှာ"
 
 msgid "config.branding_freetext.description"
-msgstr ""
-"အမှတ်တံဆိပ် စာသား။ ဤအကွက်သည် အသုံးပြုသူ စာမျက်နှာရှိ ထောက်ပံ့မှုအပိုင်းတွင် ဖော်ပြမည့် စာသားများ ဖြစ်သည်။ HTML အား အသုံးပြုနိုင်သည်။\n"
-"<p><br /><a href=\"https://htmleditor.online/full\" target=\"_blank\">HTML Editor</a></p>"
+msgstr "Branding စာသား။ ဤအကွက်၏ စာသားကို အသုံးပြုသူ၏ စာမျက်နှာ၏ ပံ့ပိုးမှုကဏ္ဍတွင် ပြသမည်ဖြစ်သည်။ HTML tags များကို သုံးစွဲနိုင်သည်။"
 
 msgid "config.branding_freetext.label"
 msgstr "📢 ထောက်ပံ့မှု အပိုင်း စာသား"
