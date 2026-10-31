@@ -25,6 +25,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v193(child_id):
+    """Config tester's Restore list (custom proxies it turned off): a new config key, so the str_config enum grows
+    (only done when a migration runs). (_v190 to _v192 are taken by open pull requests.)"""
+    add_config_if_not_exist(ConfigEnum.config_tester_disabled, "[]", child_id=child_id)
+
+
 def _v189(child_id):
     """no_inbound builtins (node-configs, additional-config) used tls_layer=http and were gated by
     http_proxy_enable; parent/child subscriptions then omitted node configs. Align with user-configs."""
