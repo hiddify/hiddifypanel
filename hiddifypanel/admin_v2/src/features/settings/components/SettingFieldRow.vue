@@ -7,6 +7,8 @@ import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { displayConfigLabel } from '@/shared/utils/config-labels'
 import type { SettingField, SettingValue } from '@/features/settings/api'
+import IconText from '@/shared/components/IconText.vue'
+import { iconizeHtml, stripEmoji } from '@/shared/utils/emoji-icons'
 
 const props = defineProps<{
   field: SettingField
@@ -25,6 +27,8 @@ const { t } = useI18n()
 
 const inputId = computed(() => `setting-${props.field.key}`)
 const label = computed(() => displayConfigLabel(props.field.label))
+// text: the option without emoji (screen readers, typing to search); label: shown, its emoji as icons
+const choices = computed(() => (props.field.choices ?? []).map((c) => ({ ...c, text: stripEmoji(c.label) })))
 const wide = computed(() => props.field.type === 'textarea' || props.field.type === 'html')
 const text = computed({
   get: () => String(model.value ?? ''),
@@ -53,7 +57,7 @@ const checked = computed({
   >
     <div class="setting-row__info">
       <label :for="inputId" class="setting-row__label">
-        {{ label }}
+        <IconText :text="label" />
         <span v-if="markAdvanced && !field.essential" class="setting-badge">{{ t('settings.advancedBadge') }}</span>
         <span v-if="field.apply_mode === 'reinstall'" class="setting-badge setting-badge--warn setting-badge--on-hover" :title="t('settings.reinstallHint')">
           <i class="pi pi-refresh" />{{ t('settings.reinstallBadge') }}
@@ -63,7 +67,7 @@ const checked = computed({
         </Transition>
       </label>
       <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-      <p v-if="field.description" class="setting-row__desc" v-html="field.description" />
+      <p v-if="field.description" class="setting-row__desc" v-html="iconizeHtml(field.description)" />
     </div>
 
     <div class="setting-row__control">
@@ -72,12 +76,17 @@ const checked = computed({
         v-else-if="field.type === 'select'"
         v-model="text"
         :input-id="inputId"
-        :options="field.choices ?? []"
-        option-label="label"
+        :options="choices"
+        option-label="text"
         option-value="value"
         class="w-full"
         :invalid="Boolean(errors?.length)"
-      />
+      >
+        <template #value="{ value, placeholder }">
+          <IconText :text="(field.choices?.find((c) => c.value === value)?.label ?? value) || placeholder || '\u00a0'" />
+        </template>
+        <template #option="{ option }"><IconText :text="option.label" /></template>
+      </Select>
       <Textarea
         v-else-if="wide"
         :id="inputId"

@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Popover from 'primevue/popover'
 import { noticeKey, usePanelNotifications, type PanelNoticeSeverity } from './composables/usePanelNotifications'
+import { iconizeHtml } from '@/shared/utils/emoji-icons'
 
 /** Top bar: the panel's notices (default domain, SSH password login, …) behind a bell, instead of banners above
  *  every page. Shown only while there are notices; a blinking red dot while some have not been seen yet. */
@@ -80,9 +81,9 @@ watch(
           <div class="notifications__body">
             <span v-if="freshKeys.has(noticeKey(notice))" class="notifications__new">{{ t('notifications.new') }}</span>
             <!-- eslint-disable-next-line vue/no-v-html -- the panel's own notice HTML, as in the banners before -->
-            <div class="notifications__text" v-html="notice.summary" />
+            <div class="notifications__text" v-html="iconizeHtml(notice.summary)" />
             <!-- eslint-disable-next-line vue/no-v-html -- idem -->
-            <p v-if="notice.detail" class="notifications__detail" v-html="notice.detail" />
+            <p v-if="notice.detail" class="notifications__detail" v-html="iconizeHtml(notice.detail)" />
           </div>
           <button type="button" class="notifications__close" :aria-label="t('notifications.dismiss')" v-tooltip.left="t('notifications.dismiss')" @click="dismiss(notice)">
             <i class="pi pi-times" />

@@ -53,7 +53,7 @@
           @click="scrollToCategory(cat.id)"
         >
           <i :class="cat.icon" class="settings-nav__icon" />
-          <span class="settings-nav__label">{{ cat.title }}</span>
+          <span class="settings-nav__label"><IconText :text="cat.title" /></span>
           <span v-if="cat.changed" class="settings-nav__dot" :title="t('settings.changed')" />
         </button>
       </nav>
@@ -73,9 +73,9 @@
             <header class="settings-card__header">
               <span class="settings-card__icon"><i :class="cat.icon" /></span>
               <div class="min-w-0 flex-1">
-                <h3 class="settings-card__title">{{ cat.title }}</h3>
+                <h3 class="settings-card__title"><IconText :text="cat.title" /></h3>
                 <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-                <p v-if="cat.description" class="settings-card__desc" v-html="cat.description" />
+                <p v-if="cat.description" class="settings-card__desc" v-html="iconizeHtml(cat.description)" />
               </div>
               <RouterLink v-if="cat.hasProtocolSwitches" :to="{ name: 'protocols' }" class="settings-card__link">
                 <i class="pi pi-sliders-h" />{{ t('settings.openProtocols') }}
@@ -138,6 +138,8 @@ import { apiErrorMessage } from '@/core/api/client'
 import { displayConfigLabel, htmlToText } from '@/shared/utils/config-labels'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import { settingsApi, type SettingCategory, type SettingField, type SettingsErrorBody, type SettingValue } from '@/features/settings/api'
+import { iconizeHtml } from '@/shared/utils/emoji-icons'
+import IconText from '@/shared/components/IconText.vue'
 
 const ADVANCED_STORAGE_KEY = 'hiddify.settings.showAdvanced'
 

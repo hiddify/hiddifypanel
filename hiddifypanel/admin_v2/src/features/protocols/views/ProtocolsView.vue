@@ -73,11 +73,11 @@
               @keydown.space.prevent="toggle(item)"
             >
               <div class="proto-tile__top">
-                <span class="proto-tile__name">{{ displayLabel(item.label) }}</span>
+                <span class="proto-tile__name"><IconText :text="displayLabel(item.label)" /></span>
                 <ToggleSwitch :model-value="draft[item.key]" :input-id="`proto-${item.key}`" @click.stop @update:model-value="draft[item.key] = $event" />
               </div>
               <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-              <p v-if="item.description" class="proto-tile__desc" @click="onDescriptionClick" v-html="item.description" />
+              <p v-if="item.description" class="proto-tile__desc" @click="onDescriptionClick" v-html="iconizeHtml(item.description)" />
               <div class="proto-tile__meta">
                 <RouterLink
                   :to="{ name: 'settings', query: { category: item.category } }"
@@ -129,6 +129,8 @@ import { apiErrorMessage } from '@/core/api/client'
 import { displayConfigLabel as displayLabel, htmlToText as plainText } from '@/shared/utils/config-labels'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import { protocolsApi, type ProtocolSwitch } from '@/features/protocols/api'
+import { iconizeHtml } from '@/shared/utils/emoji-icons'
+import IconText from '@/shared/components/IconText.vue'
 
 type GroupId = 'protocols' | 'transports' | 'security' | 'other'
 type Filter = 'all' | 'on' | 'off'

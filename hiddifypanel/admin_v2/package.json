@@ -17,6 +17,7 @@
     "@xterm/xterm": "^6.0.0",
     "axios": "^1.7.9",
     "chart.js": "^4.5.1",
+    "flag-icons": "^7.6.0",
     "json5": "^2.2.3",
     "monaco-editor": "^0.52.2",
     "pinia": "^2.3.0",

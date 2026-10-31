@@ -13,6 +13,8 @@ import { apiErrorMessage } from '@/core/api/client'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import { settingsApi, type SettingField, type SettingValue } from '@/features/settings/api'
 import { parentEnablePrompt } from '@/features/custom-proxy/parent-enable'
+import IconText from '@/shared/components/IconText.vue'
+import { stripEmoji } from '@/shared/utils/emoji-icons'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -93,20 +95,23 @@ function openSettings() {
     <div v-if="loading" class="flex justify-center py-4"><i class="pi pi-spin pi-spinner text-2xl" /></div>
     <div v-else class="flex flex-col gap-3">
       <div v-for="field in fields" :key="field.key" class="flex items-center justify-between gap-3">
-        <label :for="`pe-${field.key}`" class="font-medium">{{ field.label }}</label>
+        <label :for="`pe-${field.key}`" class="font-medium"><IconText :text="field.label" /></label>
         <ToggleSwitch v-if="field.type === 'bool'" :input-id="`pe-${field.key}`" v-model="values[field.key] as boolean" />
         <Select
           v-else-if="field.choices?.length"
           :input-id="`pe-${field.key}`"
           v-model="values[field.key]"
-          :options="field.choices"
-          option-label="label"
+          :options="field.choices.map((c) => ({ ...c, text: stripEmoji(c.label) }))"
+          option-label="text"
           option-value="value"
           class="min-w-48"
-        />
+        >
+          <template #value="{ value }"><IconText :text="field.choices.find((c) => c.value === value)?.label ?? String(value ?? '')" /></template>
+          <template #option="{ option }"><IconText :text="option.label" /></template>
+        </Select>
       </div>
       <ul v-if="!canQuickEnable" class="list-disc ps-5">
-        <li v-for="b in parentEnablePrompt.blocked" :key="b.key">{{ b.label }}</li>
+        <li v-for="b in parentEnablePrompt.blocked" :key="b.key"><IconText :text="b.label" /></li>
       </ul>
     </div>
     <Message v-if="error" severity="error" class="mt-3" :closable="false">{{ error }}</Message>

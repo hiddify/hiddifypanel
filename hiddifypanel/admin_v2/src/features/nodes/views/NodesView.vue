@@ -89,7 +89,7 @@
               <Button type="button" icon="pi pi-times" size="small" text rounded severity="secondary" :disabled="renaming" :aria-label="t('common.cancel')" @click="cancelRename" />
             </form>
             <button v-else type="button" class="node-card__name" :title="t('nodes.rename')" @click="startRename(node)">
-              <span v-if="flag(node.country)" class="node-card__flag" :title="countryName(node.country)" :aria-label="countryName(node.country)">{{ flag(node.country) }}</span>
+              <FlagIcon v-if="node.country" class="node-card__flag" :code="node.country" :label="countryName(node.country)" />
               <span class="node-card__name-text">{{ node.name }}</span>
               <i class="pi pi-pencil node-card__name-edit" />
             </button>
@@ -310,6 +310,7 @@ import { nodeProblems } from '@/shared/composables/useNodeNotices'
 import NodeSyncPanel from '@/features/node-home/components/NodeSyncPanel.vue'
 import { NodeContactFailure, type NodeSyncLoader } from '@/features/node-home/composables/useNodeSyncStatus'
 import { nodesApi, type NodeStatus, type PanelNode } from '@/features/nodes/api'
+import FlagIcon from '@/shared/components/FlagIcon.vue'
 
 interface PingState {
   state: 'checking' | 'ok' | 'fail'
@@ -455,12 +456,6 @@ async function saveName(node: PanelNode) {
   }
 }
 
-/** The flag emoji of a country code (two regional indicator letters); '' when there is none. */
-function flag(code: string | undefined): string {
-  const c = (code ?? '').toUpperCase()
-  if (!/^[A-Z]{2}$/.test(c)) return ''
-  return String.fromCodePoint(...[...c].map((ch) => 0x1f1e6 + ch.charCodeAt(0) - 65))
-}
 function countryName(code: string): string {
   try {
     return new Intl.DisplayNames([locale.value], { type: 'region' }).of(code.toUpperCase()) ?? code
@@ -847,9 +842,6 @@ onBeforeUnmount(() => {
 .node-card__flag {
   flex: none;
   font-size: 1.15em;
-  line-height: 1;
-  /* colour emoji fonts first: the flag, not its two letters, where the system has one */
-  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
 .node-card__name-text {
   overflow: hidden;

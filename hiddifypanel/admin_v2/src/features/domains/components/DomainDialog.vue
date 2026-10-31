@@ -32,6 +32,8 @@ import {
   type DomainsState,
   type TlsMode,
 } from '@/features/domains/api'
+import IconText from '@/shared/components/IconText.vue'
+import { stripEmoji } from '@/shared/utils/emoji-icons'
 
 const Json5Editor = defineAsyncComponent(() => import('@/shared/components/Json5Editor.vue'))
 
@@ -142,7 +144,9 @@ const showOptions = computed(() =>
   (props.options?.show_options ?? []).map((d) => {
     const name = d.alias && d.alias !== d.domain ? `${d.alias} [${d.domain || t('domains.noName')}]` : d.domain || t('domains.noName')
     const kind = `${t(`domains.kind.${kindOf(d.mode)}.name`)} (${t(`domains.tlsMode.${d.fake_mode}`)})`
-    return { id: d.id, label: `${d.node ? `Node[${d.node}] ` : ''}${name} ${kind}` }
+    const text = `${d.node ? `Node[${d.node}] ` : ''}${name} ${kind}`
+    // label: the chips and the filter, without emoji; text: the list, its emoji as icons
+    return { id: d.id, label: stripEmoji(text), text }
   }),
 )
 const serverDomainOptions = computed(() =>
@@ -292,7 +296,9 @@ async function save() {
           :max-selected-labels="4"
           class="dd__ltr"
           fluid
-        />
+        >
+          <template #option="{ option }"><IconText :text="option.text" /></template>
+        </MultiSelect>
         <small class="dd__hint">{{ t('domains.field.showDomainsHint') }}</small>
       </section>
 
