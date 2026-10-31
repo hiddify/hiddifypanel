@@ -3405,7 +3405,7 @@
     "validation-success": "Configs ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ configs ကိုအသုံးပြုရန် %(link)s ကိုနှိပ်ပါ။ လျှောက်ထားရန် ၂ မိနစ် ကြာနိုင်သည်။",
     "validation-success-no-reset": " ✅ Configs ကို အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။",
     "vless_decryption": {
-      "description": "မျှဝေလင့်ခ်များအတွက် VLess decryption parameter",
+      "description": "VLESS encryption ၏ server key။ encryption ပိတ်ရန် အလွတ်ထားပါ၊ သို့မဟုတ် <code>xray vlessenc</code> ၏ decryption လိုင်းကို ဤနေရာတွင်၊ ထို output ၏ encryption လိုင်းကို VLESS encryption တွင် ထည့်ပါ။",
       "label": "VLess decryption"
     },
     "vless_enable": {
@@ -3413,7 +3413,7 @@
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "မျှဝေလင့်ခ်များအတွက် VLess encryption နည်းလမ်း",
+      "description": "VLESS encryption ၏ client key ဖြစ်ပြီး share link များတွင် ပါဝင်သည်။ encryption ပိတ်ရန် အလွတ်ထားပါ၊ သို့မဟုတ် decryption ယူခဲ့သော <code>xray vlessenc</code> output တစ်ခုတည်းမှ encryption လိုင်းကို ထည့်ပါ။",
       "label": "VLess encryption"
     },
     "vless_flow": {
@@ -3500,7 +3500,10 @@
     "user_page_url": {
       "description": "အသုံးပြုသူ စာမျက်နှာအဖြစ် ပြသမည့် static site လိပ်စာ (ဥပမာ GitHub Pages ပေါ်ရှိ hiddify-user-front build)။ Panel က ဒေါင်းလုဒ်လုပ်ပြီး မိမိ domain မှ ပြသပေးသည်။ မူလ စာမျက်နှာအတွက် ဗလာထားပါ။",
       "label": "🎨 စိတ်ကြိုက် အသုံးပြုသူ စာမျက်နှာ"
-    }
+    },
+    "invalid_vless_decryption": "Xray သည် ဤ decryption ကို မဖတ်နိုင်သဖြင့် စတင်မည်မဟုတ်ပါ။ အလွတ်ထားပါ၊ သို့မဟုတ် xray vlessenc output ၏ decryption လိုင်းကို ထည့်ပါ။",
+    "invalid_vless_encryption": "VLESS encryption မမှန်ကန်ပါ။ အလွတ်ထားပါ၊ သို့မဟုတ် တူညီသော xray vlessenc output ၏ encryption လိုင်းကို ထည့်ပါ။",
+    "vless_encryption_pair_mismatch": "VLESS encryption နှင့် decryption သည် xray vlessenc output တစ်ခုတည်းမှ ဖြစ်ရမည်၊ သို့မဟုတ် နှစ်ခုလုံး အလွတ်ဖြစ်ရမည်။"
   },
   "copy": "ကူးယူ",
   "daily": "⏰ နေ့စဉ်",

@@ -3981,6 +3981,8 @@
     },
     "invalid-pattern-for-warp-sites": "⚠️ The Site entered for the Warp does not match the specified template",
     "invalid_uuid": "Invalid UUID secret. example: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6\n\n",
+    "invalid_vless_decryption": "Xray can't read this decryption and would not start with it. Leave it empty, or paste the decryption line of an xray vlessenc output.",
+    "invalid_vless_encryption": "Invalid VLESS encryption. Leave it empty, or paste the encryption line of the same xray vlessenc output.",
     "is_parent": {
       "description": "Whether this panel acts as a parent panel",
       "label": "Parent Panel"
@@ -4580,7 +4582,7 @@
     "validation-success": "Configs have been changed successfully. Click %(link)s to apply the configs. It may take 2 minutes to apply",
     "validation-success-no-reset": " ✅ Configs have been changed successfully",
     "vless_decryption": {
-      "description": "VLess decryption parameter for share links",
+      "description": "Server key of VLESS encryption. Leave it empty to turn encryption off, or paste the decryption line from <code>xray vlessenc</code> and the encryption line of the same output into VLESS encryption.",
       "label": "VLess decryption"
     },
     "vless_enable": {
@@ -4588,9 +4590,10 @@
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "VLess encryption method for share links",
+      "description": "Client key of VLESS encryption, sent in share links. Leave it empty to turn encryption off, or paste the encryption line from the same <code>xray vlessenc</code> output as the decryption.",
       "label": "VLess encryption"
     },
+    "vless_encryption_pair_mismatch": "VLESS encryption and decryption must come from the same xray vlessenc output, or both be empty.",
     "vless_flow": {
       "description": "VLess flow control (e.g. xtls-rprx-vision)",
       "label": "VLess flow"
@@ -4599,11 +4602,11 @@
       "description": "Active VMess Protocol",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "HTTPS domain used for WARP site routing",
     "warp": {
       "description": "Warp is a tool that hides your server IP in outbound traffic. It means if the users are visiting a website the Warp IP is exposed instead of our server IP.\n<br>\nFor example, if you have a problem with captcha on Google, it might be fixed this way.",
       "label": "WARP➕"
     },
+    "warp-https-domain-for-warp-site": "HTTPS domain used for WARP site routing",
     "warp_enable": {
       "description": "WARP helps you bypass Google, Spotify and Netflix restrictions by hiding server IP ",
       "label": "Enables WARP+"

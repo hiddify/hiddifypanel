@@ -11409,7 +11409,7 @@ msgid "config.validation-success-no-reset"
 msgstr " ✅ تنظیمات با موفقیت تغییر کرد"
 
 msgid "config.vless_decryption.description"
-msgstr "پارامتر decryption در لینک‌های اشتراک VLess"
+msgstr "کلید سرور برای رمزنگاری VLESS. برای خاموش بودن رمزنگاری خالی بگذارید، یا خط decryption خروجی <code>xray vlessenc</code> را اینجا و خط encryption همان خروجی را در «VLESS encryption» بچسبانید."
 
 msgid "config.vless_decryption.label"
 msgstr "VLess decryption"
@@ -11421,7 +11421,7 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "روش encryption در لینک‌های اشتراک VLess"
+msgstr "کلید کاربر برای رمزنگاری VLESS که در لینک‌های اشتراک قرار می‌گیرد. برای خاموش بودن رمزنگاری خالی بگذارید، یا خط encryption همان خروجی <code>xray vlessenc</code> را که decryption از آن آمده بچسبانید."
 
 msgid "config.vless_encryption.label"
 msgstr "VLess encryption"
@@ -12335,3 +12335,12 @@ msgstr "📅 هفتگی"
 
 msgid "worker"
 msgstr "✴️ ورکر کلودفلر"
+
+msgid "config.invalid_vless_decryption"
+msgstr "ایکس‌ری این decryption را نمی‌شناسد و با آن اجرا نمی‌شود. آن را خالی بگذارید یا خط decryption خروجی xray vlessenc را بچسبانید."
+
+msgid "config.invalid_vless_encryption"
+msgstr "مقدار VLESS encryption نامعتبر است. آن را خالی بگذارید یا خط encryption همان خروجی xray vlessenc را بچسبانید."
+
+msgid "config.vless_encryption_pair_mismatch"
+msgstr "VLESS encryption و decryption باید هر دو از یک خروجی xray vlessenc باشند، یا هر دو خالی بمانند."

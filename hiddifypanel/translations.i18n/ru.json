@@ -2831,6 +2831,8 @@
     },
     "invalid-pattern-for-warp-sites": "⚠️ Сайт, введенный в Варп, не соответствует указанному шаблону.",
     "invalid_uuid": "Неверный UUID пользователя. пример: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
+    "invalid_vless_decryption": "Xray не может прочитать этот decryption и не запустится с ним. Оставьте пустым или вставьте строку decryption из вывода xray vlessenc.",
+    "invalid_vless_encryption": "Неверный VLESS encryption. Оставьте пустым или вставьте строку encryption из того же вывода xray vlessenc.",
     "is_parent": {
       "description": "Выступает ли эта панель в роли родительской",
       "label": "Главная панель"
@@ -3430,7 +3432,7 @@
     "validation-success": "Конфигурации успешно изменены. Нажмите %(link)s, чтобы применить их. Это может занять 2 минуты",
     "validation-success-no-reset": "✅ Конфигурации успешно изменены",
     "vless_decryption": {
-      "description": "Параметр расшифровки VLess для ссылок обмена",
+      "description": "Серверный ключ шифрования VLESS. Оставьте пустым, чтобы выключить шифрование, или вставьте сюда строку decryption из <code>xray vlessenc</code>, а строку encryption того же вывода — в VLESS encryption.",
       "label": "Расшифровка VLess"
     },
     "vless_enable": {
@@ -3438,9 +3440,10 @@
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "Метод шифрования VLess для ссылок обмена",
+      "description": "Клиентский ключ шифрования VLESS, передаётся в ссылках подписки. Оставьте пустым, чтобы выключить шифрование, или вставьте строку encryption из того же вывода <code>xray vlessenc</code>, что и decryption.",
       "label": "Шифрование VLess"
     },
+    "vless_encryption_pair_mismatch": "VLESS encryption и decryption должны быть из одного вывода xray vlessenc или оба пустыми.",
     "vless_flow": {
       "description": "Управление потоком VLess (например, xtls-rprx-vision)",
       "label": "VLess flow"
@@ -3449,11 +3452,11 @@
       "description": "Несколько человек сообщили, что VMess позволляет правительствам обнаруживать систему.  Не рекомендуется",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "config.warp-https-домен-для-варп-сайта",
     "warp": {
       "description": "Warp — это инструмент, который скрывает IP-адрес вашего сервера от сайтов, которые посещают ваши пользователи.\n<br>\nНапример, если у вас возникла проблема с Google, ее можно исправить.",
       "label": "WARP➕"
     },
+    "warp-https-domain-for-warp-site": "config.warp-https-домен-для-варп-сайта",
     "warp_enable": {
       "description": "WARP поможет вам обойти блокировку Google, Spotify и Netflix",
       "label": "Включение WARP+"

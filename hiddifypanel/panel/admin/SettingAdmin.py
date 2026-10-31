@@ -204,6 +204,17 @@ def save_config_form(form) -> SettingsSaveResult:
     return result
 
 
+def validate_vless_encryption(form, field):
+    """VLESS encryption and decryption: empty, or both from one ``xray vlessenc`` output. Xray does not start with a
+    decryption it can't read, and clients can't connect when the two don't belong together."""
+    encryption, decryption = form.vless_encryption.data, form.vless_decryption.data
+    error = hutils.crypto.vless_encryption_error(encryption or "", decryption or "")
+    if error == "pair":
+        raise wtf.ValidationError(_("config.vless_encryption_pair_mismatch"))
+    if error and field.short_name == f"vless_{error}":
+        raise wtf.ValidationError(_(f"config.invalid_vless_{error}"))
+
+
 def get_config_form(**form_kwargs):
     """The settings form; ``form_kwargs`` go to the form (e.g. explicit ``formdata`` and ``meta`` for the API)."""
     strconfigs = StrConfig.query.filter(StrConfig.child_id == Child.current().id).all()
@@ -369,6 +380,8 @@ def get_config_form(**form_kwargs):
                     validators.append(wtf.validators.Regexp("^\\d+-\\d+$", re.IGNORECASE, _("config.Invalid_The_pattern_is_number-number") + f" {c.key}"))
                 if c.key == ConfigEnum.tls_fragment_packets:
                     validators.append(wtf.validators.Regexp("^(tlshello|\\d+-\\d+)$", re.IGNORECASE, _("config.Invalid_The_pattern_is_number-number") + f" {c.key}"))
+                if c.key in (ConfigEnum.vless_encryption, ConfigEnum.vless_decryption):
+                    validators.append(validate_vless_encryption)
                 # mux and hysteria validations
                 if c.key in [
                     ConfigEnum.hysteria_up_mbps,
@@ -392,7 +405,9 @@ def get_config_form(**form_kwargs):
                 label = _(f"config.{c.key}.label")
                 description = _(f"config.{c.key}.description")
 
-                field = wtf.StringField(label, validators, default=c.value, description=description + extra_info, render_kw=render_kw)
+                # a pasted key often brings a space or line break along
+                filters = [lambda v: v.strip() if isinstance(v, str) else v] if c.key in (ConfigEnum.vless_encryption, ConfigEnum.vless_decryption) else []
+                field = wtf.StringField(label, validators, filters=filters, default=c.value, description=description + extra_info, render_kw=render_kw)
             setattr(CategoryForm, f"{c.key}", field)
 
         multifield = wtf.FormField(CategoryForm, Markup('<i class="fa-solid fa-plus"></i>&nbsp' + _(f"config.{cat}.label")))

@@ -8550,7 +8550,7 @@ msgid "config.validation-success-no-reset"
 msgstr "✅ Конфигурации успешно изменены"
 
 msgid "config.vless_decryption.description"
-msgstr "Параметр расшифровки VLess для ссылок обмена"
+msgstr "Серверный ключ шифрования VLESS. Оставьте пустым, чтобы выключить шифрование, или вставьте сюда строку decryption из <code>xray vlessenc</code>, а строку encryption того же вывода — в VLESS encryption."
 
 msgid "config.vless_decryption.label"
 msgstr "Расшифровка VLess"
@@ -8562,7 +8562,7 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "Метод шифрования VLess для ссылок обмена"
+msgstr "Клиентский ключ шифрования VLESS, передаётся в ссылках подписки. Оставьте пустым, чтобы выключить шифрование, или вставьте строку encryption из того же вывода <code>xray vlessenc</code>, что и decryption."
 
 msgid "config.vless_encryption.label"
 msgstr "Шифрование VLess"
@@ -9477,3 +9477,12 @@ msgstr "📅 Еженедельно"
 
 msgid "worker"
 msgstr "✴️ Cloudflare Worker"
+
+msgid "config.invalid_vless_decryption"
+msgstr "Xray не может прочитать этот decryption и не запустится с ним. Оставьте пустым или вставьте строку decryption из вывода xray vlessenc."
+
+msgid "config.invalid_vless_encryption"
+msgstr "Неверный VLESS encryption. Оставьте пустым или вставьте строку encryption из того же вывода xray vlessenc."
+
+msgid "config.vless_encryption_pair_mismatch"
+msgstr "VLESS encryption и decryption должны быть из одного вывода xray vlessenc или оба пустыми."

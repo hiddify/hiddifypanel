@@ -3483,17 +3483,20 @@
       "label": "Utiliser l'IP dans les configs"
     },
     "vless_decryption": {
-      "description": "Paramètre de déchiffrement VLess pour les liens de partage",
+      "description": "Clé serveur du chiffrement VLESS. Laissez vide pour désactiver le chiffrement, ou collez ici la ligne decryption de <code>xray vlessenc</code> et la ligne encryption de la même sortie dans VLESS encryption.",
       "label": "Déchiffrement VLess"
     },
     "vless_encryption": {
-      "description": "Méthode de chiffrement VLess pour les liens de partage",
+      "description": "Clé client du chiffrement VLESS, envoyée dans les liens de partage. Laissez vide pour désactiver le chiffrement, ou collez la ligne encryption de la même sortie <code>xray vlessenc</code> que le decryption.",
       "label": "Chiffrement VLess"
     },
     "vless_flow": {
       "description": "Contrôle de flux VLess (p. ex. xtls-rprx-vision)",
       "label": "Flux VLess"
-    }
+    },
+    "invalid_vless_decryption": "Xray ne peut pas lire ce decryption et ne démarrerait pas avec. Laissez vide, ou collez la ligne decryption d'une sortie xray vlessenc.",
+    "invalid_vless_encryption": "VLESS encryption invalide. Laissez vide, ou collez la ligne encryption de la même sortie xray vlessenc.",
+    "vless_encryption_pair_mismatch": "VLESS encryption et decryption doivent provenir de la même sortie xray vlessenc, ou être vides tous les deux."
   },
   "copy": "Copie",
   "daily": "⏰ Quotidiennement",

@@ -11598,7 +11598,7 @@ msgid "config.validation-success-no-reset"
 msgstr " ✅ Configs have been changed successfully"
 
 msgid "config.vless_decryption.description"
-msgstr "VLess decryption parameter for share links"
+msgstr "Server key of VLESS encryption. Leave it empty to turn encryption off, or paste the decryption line from <code>xray vlessenc</code> and the encryption line of the same output into VLESS encryption."
 
 msgid "config.vless_decryption.label"
 msgstr "VLess decryption"
@@ -11610,7 +11610,7 @@ msgid "config.vless_enable.label"
 msgstr "⚫️ VLess"
 
 msgid "config.vless_encryption.description"
-msgstr "VLess encryption method for share links"
+msgstr "Client key of VLESS encryption, sent in share links. Leave it empty to turn encryption off, or paste the encryption line from the same <code>xray vlessenc</code> output as the decryption."
 
 msgid "config.vless_encryption.label"
 msgstr "VLess encryption"
@@ -12521,3 +12521,12 @@ msgstr "📅 Weekly"
 
 msgid "worker"
 msgstr "✴️ Cloudflare Worker"
+
+msgid "config.invalid_vless_decryption"
+msgstr "Xray can't read this decryption and would not start with it. Leave it empty, or paste the decryption line of an xray vlessenc output."
+
+msgid "config.invalid_vless_encryption"
+msgstr "Invalid VLESS encryption. Leave it empty, or paste the encryption line of the same xray vlessenc output."
+
+msgid "config.vless_encryption_pair_mismatch"
+msgstr "VLESS encryption and decryption must come from the same xray vlessenc output, or both be empty."

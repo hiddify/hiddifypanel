@@ -2786,3 +2786,18 @@ msgstr "📅 အပတ်စဉ်"
 
 msgid "worker"
 msgstr "✴️ Cloudflare Worker"
+
+msgid "config.vless_encryption.description"
+msgstr "VLESS encryption ၏ client key ဖြစ်ပြီး share link များတွင် ပါဝင်သည်။ encryption ပိတ်ရန် အလွတ်ထားပါ၊ သို့မဟုတ် decryption ယူခဲ့သော <code>xray vlessenc</code> output တစ်ခုတည်းမှ encryption လိုင်းကို ထည့်ပါ။"
+
+msgid "config.vless_decryption.description"
+msgstr "VLESS encryption ၏ server key။ encryption ပိတ်ရန် အလွတ်ထားပါ၊ သို့မဟုတ် <code>xray vlessenc</code> ၏ decryption လိုင်းကို ဤနေရာတွင်၊ ထို output ၏ encryption လိုင်းကို VLESS encryption တွင် ထည့်ပါ။"
+
+msgid "config.invalid_vless_decryption"
+msgstr "Xray သည် ဤ decryption ကို မဖတ်နိုင်သဖြင့် စတင်မည်မဟုတ်ပါ။ အလွတ်ထားပါ၊ သို့မဟုတ် xray vlessenc output ၏ decryption လိုင်းကို ထည့်ပါ။"
+
+msgid "config.invalid_vless_encryption"
+msgstr "VLESS encryption မမှန်ကန်ပါ။ အလွတ်ထားပါ၊ သို့မဟုတ် တူညီသော xray vlessenc output ၏ encryption လိုင်းကို ထည့်ပါ။"
+
+msgid "config.vless_encryption_pair_mismatch"
+msgstr "VLESS encryption နှင့် decryption သည် xray vlessenc output တစ်ခုတည်းမှ ဖြစ်ရမည်၊ သို့မဟုတ် နှစ်ခုလုံး အလွတ်ဖြစ်ရမည်။"

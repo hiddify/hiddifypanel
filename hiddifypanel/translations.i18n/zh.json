@@ -2831,6 +2831,8 @@
     },
     "invalid-pattern-for-warp-sites": "⚠️ 输入的 Warp 站点与指定的模板不匹配",
     "invalid_uuid": "UUID 秘密无效。示例：6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
+    "invalid_vless_decryption": "Xray 无法识别此 decryption，使用它将无法启动。请留空，或粘贴 xray vlessenc 输出的 decryption 行。",
+    "invalid_vless_encryption": "VLESS encryption 无效。请留空，或粘贴同一次 xray vlessenc 输出的 encryption 行。",
     "is_parent": {
       "description": "此面板是否作为父面板",
       "label": "家长小组"
@@ -3430,7 +3432,7 @@
     "validation-success": "配置已成功更改。单击 %(link)s 应用配置。申请可能需要 2 分钟",
     "validation-success-no-reset": "✅ 配置已成功更改",
     "vless_decryption": {
-      "description": "用于分享链接的 VLess 解密参数",
+      "description": "VLESS 加密的服务端密钥。留空即关闭加密，或在此粘贴 <code>xray vlessenc</code> 输出的 decryption 行，并把同一输出的 encryption 行粘贴到 VLESS encryption。",
       "label": "VLess 解密"
     },
     "vless_enable": {
@@ -3438,9 +3440,10 @@
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "用于分享链接的 VLess 加密方式",
+      "description": "VLESS 加密的客户端密钥，写入分享链接。留空即关闭加密，或粘贴与 decryption 同一次 <code>xray vlessenc</code> 输出中的 encryption 行。",
       "label": "VLess 加密"
     },
+    "vless_encryption_pair_mismatch": "VLESS encryption 和 decryption 必须来自同一次 xray vlessenc 输出，或都留空。",
     "vless_flow": {
       "description": "VLess 流控（例如 xtls-rprx-vision）",
       "label": "VLess 流控"
@@ -3449,11 +3452,11 @@
       "description": "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "用于 WARP 站点路由的 HTTPS 域名",
     "warp": {
       "description": "Warp 是一种在出站流量中隐藏服务器 IP 的工具。这意味着如果用户访问网站，则暴露的是 Warp IP，而不是我们的服务器 IP。\n<br>\n例如，如果您在 Google 上遇到验证码问题，则可能会通过这种方式修复。",
       "label": "WARP➕"
     },
+    "warp-https-domain-for-warp-site": "用于 WARP 站点路由的 HTTPS 域名",
     "warp_enable": {
       "description": "WARP 通过隐藏服务器 IP 帮助您绕过 Google、Spotify 和 Netflix 限制",
       "label": "启用 WARP+"

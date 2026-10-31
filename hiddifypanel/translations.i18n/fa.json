@@ -3911,6 +3911,8 @@
     },
     "invalid-pattern-for-warp-sites": "⚠️ سایت وارد شده برای وارپ با الگوی تعیین شده مطابقت ندارد",
     "invalid_uuid": "رمز UUID نامعتبر است. به عنوان مثال: 6098ea35-8cb2-4a08-ba15-2be25bc49cb6",
+    "invalid_vless_decryption": "ایکس‌ری این decryption را نمی‌شناسد و با آن اجرا نمی‌شود. آن را خالی بگذارید یا خط decryption خروجی xray vlessenc را بچسبانید.",
+    "invalid_vless_encryption": "مقدار VLESS encryption نامعتبر است. آن را خالی بگذارید یا خط encryption همان خروجی xray vlessenc را بچسبانید.",
     "is_parent": {
       "description": "آیا این پنل به‌عنوان پنل مرکزی عمل می‌کند",
       "label": "پنل مرکزی"
@@ -4510,7 +4512,7 @@
     "validation-success": "تنظیمات با موفقیت ذخیره شدند. لطفا بر روی این لینک: %(link)s کلیک کنید تا بر روی سیستم اعمال شوند. این کار ممکن است 2 دقیقه طول بکشد",
     "validation-success-no-reset": " ✅ تنظیمات با موفقیت تغییر کرد",
     "vless_decryption": {
-      "description": "پارامتر decryption در لینک‌های اشتراک VLess",
+      "description": "کلید سرور برای رمزنگاری VLESS. برای خاموش بودن رمزنگاری خالی بگذارید، یا خط decryption خروجی <code>xray vlessenc</code> را اینجا و خط encryption همان خروجی را در «VLESS encryption» بچسبانید.",
       "label": "VLess decryption"
     },
     "vless_enable": {
@@ -4518,9 +4520,10 @@
       "label": "⚫️ VLess"
     },
     "vless_encryption": {
-      "description": "روش encryption در لینک‌های اشتراک VLess",
+      "description": "کلید کاربر برای رمزنگاری VLESS که در لینک‌های اشتراک قرار می‌گیرد. برای خاموش بودن رمزنگاری خالی بگذارید، یا خط encryption همان خروجی <code>xray vlessenc</code> را که decryption از آن آمده بچسبانید.",
       "label": "VLess encryption"
     },
+    "vless_encryption_pair_mismatch": "VLESS encryption و decryption باید هر دو از یک خروجی xray vlessenc باشند، یا هر دو خالی بمانند.",
     "vless_flow": {
       "description": "کنترل flow در VLess (مثلاً xtls-rprx-vision)",
       "label": "VLess flow"
@@ -4529,11 +4532,11 @@
       "description": "فعال کردن پروتکل VMess",
       "label": "🟣 VMess"
     },
-    "warp-https-domain-for-warp-site": "دامنه HTTPS برای مسیریابی سایت‌های WARP",
     "warp": {
       "description": "وارپ ابزاری هست که آی پی سرور شما را در ترافیک خروجی مخفی می‌کند. بدین صورت وقتی کاربران از وبسایتی بازدید می‌کنند، آیپی وارپ به جای آیپی سرور شما نمایش داده می‌شود.\n<br>\nبرای مثال اگر با کپچای گوگل مشکل دارید با استفاده از این ابزار مشکل رفع شود",
       "label": "WARP"
     },
+    "warp-https-domain-for-warp-site": "دامنه HTTPS برای مسیریابی سایت‌های WARP",
     "warp_enable": {
       "description": "WARP به شما کمک می کند تا محدودیت‌های گوگل، اسپاتیفای و نتفلیکس را با مخفی‌سازی آیپی سرور دور بزنید.",
       "label": "+WARP را فعال می‌کند"
