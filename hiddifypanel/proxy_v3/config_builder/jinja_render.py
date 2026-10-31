@@ -6,6 +6,9 @@ import os
 import random
 import re
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import datetime, timedelta
 from typing import Any
 from urllib.parse import quote, urlencode
@@ -229,9 +232,26 @@ def _jinja_gettext(ctx: dict[str, Any], message: str, **kwargs: Any) -> str:
     return text
 
 
-_template_map_cache: dict[int, tuple[float, dict[str, str]]] = {}
-_jinja_env_cache: dict[int, tuple[float, Environment]] = {}
+_template_map_cache: dict[tuple[int, bool], tuple[float, dict[str, str]]] = {}
+_jinja_env_cache: dict[tuple[int, bool], tuple[float, Environment]] = {}
 _JINJA_CACHE_TTL = 60.0
+
+#: While set, built-in templates render with their shipped text, not the admin's override (see builtin_templates_only).
+_builtin_only: ContextVar[bool] = ContextVar("hiddify_builtin_templates_only", default=False)
+
+
+@contextmanager
+def builtin_templates_only() -> Iterator[None]:
+    """Render with the shipped text of every built-in template, ignoring overrides.
+
+    For a server config that an override from an older version breaks (e.g. one that no longer defines a
+    backend the new templates use): the server must still start.
+    """
+    token = _builtin_only.set(True)
+    try:
+        yield
+    finally:
+        _builtin_only.reset(token)
 
 
 def clear_jinja_template_caches() -> None:
@@ -239,28 +259,33 @@ def clear_jinja_template_caches() -> None:
     _jinja_env_cache.clear()
 
 
-def _template_map(child_id: int = 0) -> dict[str, str]:
+def _template_map(child_id: int = 0, builtin_only: bool = False) -> dict[str, str]:
+    from hiddifypanel.proxy_v3.builtin_proxy_sync.sync import builtin_template_content
+
     templates = ProxyTemplate.query.filter((ProxyTemplate.child_id == child_id) | (ProxyTemplate.child_id == 0)).all()
+    if builtin_only:
+        return {template.slug: builtin_template_content(template) for template in templates}
     return {template.slug: template.effective_content() for template in templates}
 
 
-def _cached_template_map(child_id: int = 0) -> dict[str, str]:
+def _cached_template_map(child_id: int = 0, builtin_only: bool = False) -> dict[str, str]:
     now = time.monotonic()
-    cached = _template_map_cache.get(child_id)
+    cached = _template_map_cache.get((child_id, builtin_only))
     if cached and now - cached[0] < _JINJA_CACHE_TTL:
         return cached[1]
-    mapping = _template_map(child_id)
-    _template_map_cache[child_id] = (now, mapping)
+    mapping = _template_map(child_id, builtin_only)
+    _template_map_cache[(child_id, builtin_only)] = (now, mapping)
     return mapping
 
 
 def jinja_env(child_id: int = 0) -> Environment:
+    builtin_only = _builtin_only.get()
     now = time.monotonic()
-    cached = _jinja_env_cache.get(child_id)
+    cached = _jinja_env_cache.get((child_id, builtin_only))
     if cached and now - cached[0] < _JINJA_CACHE_TTL:
         return cached[1]
     env = Environment(
-        loader=DictLoader(_cached_template_map(child_id)),
+        loader=DictLoader(_cached_template_map(child_id, builtin_only)),
         keep_trailing_newline=True,
         extensions=[],
     )
@@ -294,7 +319,7 @@ def jinja_env(child_id: int = 0) -> Environment:
     from slugify import slugify as _slugify
 
     env.filters["slugify"] = lambda value: _slugify(str(value or ""), lowercase=True)
-    _jinja_env_cache[child_id] = (now, env)
+    _jinja_env_cache[(child_id, builtin_only)] = (now, env)
     return env
 
 

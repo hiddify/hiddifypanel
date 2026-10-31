@@ -183,6 +183,13 @@ def effective_template_content(row) -> str:
         return row.content or ""
     if row.builtin_override and (row.content or "").strip():
         return row.content or ""
+    return builtin_template_content(row)
+
+
+def builtin_template_content(row) -> str:
+    """The shipped text of a built-in template, whatever the admin's override says (other templates: their content)."""
+    if not row.is_builtin:
+        return row.content or ""
     from hiddifypanel.proxy_v3.template_catalog.fragment_loader import load_template_slug
 
     try:
