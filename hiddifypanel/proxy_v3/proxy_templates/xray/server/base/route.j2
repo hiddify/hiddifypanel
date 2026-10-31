@@ -82,9 +82,11 @@
         {
           "type": "field", "outboundTag": "blackhole", "ip": ["geoip:private"]
         },
-        {// Block BitTorrent protocol
+        {% if ctx.hconfig.torrent_block %}
+        {// Block BitTorrent (Settings > General: Block BitTorrent)
           "type": "field", "outboundTag": "blackhole", "protocol": ["bittorrent"]
         },
+        {% endif %}
         {
           "type": "field",
           "port": "0-65535",

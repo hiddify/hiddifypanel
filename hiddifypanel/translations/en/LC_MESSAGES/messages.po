@@ -11516,10 +11516,10 @@ msgid "config.too_advanced.label"
 msgstr "Very Advanced Settings"
 
 msgid "config.torrent_block.description"
-msgstr "Torrent Block Configurations could be set in this section."
+msgstr "On: users' BitTorrent (torrent) traffic is blocked on every protocol, in Xray and Hiddify Core. Off: it is allowed. Torrents are recognized by their handshake, whatever the port; encrypted torrent connections may not be recognized."
 
 msgid "config.torrent_block.label"
-msgstr "Torrent Block Configuration"
+msgstr "🚫 Block BitTorrent"
 
 msgid "config.trojan_enable.description"
 msgstr "Enables Trojan Protocol"

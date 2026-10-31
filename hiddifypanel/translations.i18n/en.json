@@ -4537,8 +4537,8 @@
       "label": "Very Advanced Settings"
     },
     "torrent_block": {
-      "description": "Torrent Block Configurations could be set in this section.",
-      "label": "Torrent Block Configuration"
+      "description": "On: users' BitTorrent (torrent) traffic is blocked on every protocol, in Xray and Hiddify Core. Off: it is allowed. Torrents are recognized by their handshake, whatever the port; encrypted torrent connections may not be recognized.",
+      "label": "🚫 Block BitTorrent"
     },
     "trojan_enable": {
       "description": "Enables Trojan Protocol",

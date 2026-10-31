@@ -11328,10 +11328,10 @@ msgid "config.too_advanced.label"
 msgstr "تنظیمات خیلی پیشرفته"
 
 msgid "config.torrent_block.description"
-msgstr "در این قسمت تنظیمات Torrent Block قابل انجام است."
+msgstr "روشن: ترافیک تورنت (BitTorrent) کاربران در همهٔ پروتکل‌ها، در Xray و Hiddify Core، مسدود می‌شود. خاموش: مجاز است. تورنت از روی شروع ارتباطش شناخته می‌شود، با هر پورتی؛ اتصال‌های رمزنگاری‌شدهٔ تورنت ممکن است شناخته نشوند."
 
 msgid "config.torrent_block.label"
-msgstr "تنظیمات Torrent Block"
+msgstr "🚫 مسدود کردن تورنت"
 
 msgid "config.trojan_enable.description"
 msgstr "پروتکل Trojan  را فعال می کند"

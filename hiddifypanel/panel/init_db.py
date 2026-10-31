@@ -25,6 +25,13 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v192(child_id):
+    """Block BitTorrent (Settings > General, advanced) for real: the row was never created, so the switch was not
+    shown, while Xray always blocked BitTorrent and Hiddify Core never did. On by default, as Xray did.
+    (_v190 and _v191 are taken by open pull requests.)"""
+    add_config_if_not_exist(ConfigEnum.torrent_block, True, child_id=child_id)
+
+
 def _v189(child_id):
     """no_inbound builtins (node-configs, additional-config) used tls_layer=http and were gated by
     http_proxy_enable; parent/child subscriptions then omitted node configs. Align with user-configs."""
