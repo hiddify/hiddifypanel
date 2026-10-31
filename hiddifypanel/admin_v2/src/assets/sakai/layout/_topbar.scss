@@ -57,6 +57,11 @@
             min-width: 0;
         }
 
+        // set by AppTopbar when the name would not fit whole: only the logo stays
+        .layout-topbar-logo-text--hidden {
+            display: none;
+        }
+
         .layout-topbar-title {
             font-size: 1rem;
             line-height: 1.2;
