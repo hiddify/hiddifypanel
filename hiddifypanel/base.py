@@ -27,6 +27,8 @@ def create_app(*args, app_mode="web", **config):
             json_errors=False,
             enable_openapi=True,
         )
+        # API docs (Stoplight Elements): the sidebar on wide screens, a menu on phones ("sidebar" squeezed the page)
+        app.config["ELEMENTS_LAYOUT"] = "responsive"
     else:
         from flask import Flask
 
