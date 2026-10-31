@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { apiErrorMessage } from '@/core/api/client'
 import { LANGUAGE_LOOK } from '@/shared/utils/languages'
 import { quickSetupApi, type QuickSetupState } from '@/features/quick-setup/api'
+import FlagIcon from '@/shared/components/FlagIcon.vue'
 
 const props = defineProps<{ state: QuickSetupState }>()
 const emit = defineEmits<{ error: [message: string] }>()
@@ -11,7 +12,7 @@ const emit = defineEmits<{ error: [message: string] }>()
 const { t } = useI18n()
 
 /** Countries' flags; "other" (and an unknown one) gets a globe icon */
-const COUNTRY_FLAG: Record<string, string> = { ir: '🇮🇷', zh: '🇨🇳', ru: '🇷🇺' }
+const COUNTRY_FLAG: Record<string, string> = { ir: 'ir', zh: 'cn', ru: 'ru' }
 
 const lang = ref(props.state.admin_lang)
 const country = ref(props.state.country)
@@ -53,7 +54,7 @@ defineExpose({ submit })
           :class="{ 'qs-option--on': lang === code }"
           @click="lang = code"
         >
-          <span class="qs-option__flag"><template v-if="LANGUAGE_LOOK[code]?.flag">{{ LANGUAGE_LOOK[code]?.flag }}</template><i v-else class="pi pi-globe" /></span>
+          <span class="qs-option__flag"><FlagIcon v-if="LANGUAGE_LOOK[code]?.flag" :code="LANGUAGE_LOOK[code]?.flag" /><i v-else class="pi pi-globe" /></span>
           <span class="qs-option__name">{{ LANGUAGE_LOOK[code]?.name ?? code }}</span>
           <i v-if="lang === code" class="pi pi-check-circle qs-option__check" />
         </button>
@@ -74,7 +75,7 @@ defineExpose({ submit })
           :class="{ 'qs-option--on': country === code }"
           @click="country = code"
         >
-          <span class="qs-option__flag"><template v-if="COUNTRY_FLAG[code]">{{ COUNTRY_FLAG[code] }}</template><i v-else class="pi pi-globe" /></span>
+          <span class="qs-option__flag"><FlagIcon v-if="COUNTRY_FLAG[code]" :code="COUNTRY_FLAG[code]" /><i v-else class="pi pi-globe" /></span>
           <span class="qs-option__name">{{ t(`quickSetup.countries.${code}`) }}</span>
           <i v-if="country === code" class="pi pi-check-circle qs-option__check" />
         </button>

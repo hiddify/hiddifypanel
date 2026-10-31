@@ -1,0 +1,76 @@
+/* Icons and flags that stand in for emoji in server text (emoji-icons.ts): sized and aligned like the text around them */
+.ui-emoji-icon {
+    font-size: 0.9em;
+    line-height: 1;
+    vertical-align: -0.05em;
+    margin-inline: 0.1em;
+
+    &--warn { color: var(--p-orange-500); }
+    &--danger, &--red { color: var(--p-red-500); }
+    &--success, &--green { color: var(--p-green-500); }
+    &--info, &--blue { color: var(--p-sky-500); }
+    &--yellow { color: var(--p-yellow-500); }
+    &--orange { color: var(--p-orange-500); }
+    &--purple { color: var(--p-purple-500); }
+    &--brown { color: var(--p-amber-800); }
+    &--gray { color: var(--p-surface-400); }
+    &--black { color: var(--p-surface-900); }
+}
+.app-dark .ui-emoji-icon--black { color: var(--p-surface-0); }
+
+.ui-flag {
+    display: inline-block;
+    width: 1.33em;
+    height: 1em;
+    border-radius: 3px;
+    object-fit: cover;
+    vertical-align: -0.15em;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--p-text-color) 12%, transparent);
+}
+/* a flag inside text (in place of a flag emoji) */
+.ui-flag--inline {
+    margin-inline: 0.1em 0.3em;
+}
+
+/* A settings option's icon (OptionIcon.vue, option-icons.ts): the icon on a soft tile of its colour */
+.ui-opt-icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 15%, transparent);
+
+    .ui-flag {
+        font-size: 0.85rem;
+    }
+
+    /* in a description, next to the option's name */
+    &--inline {
+        width: 1.3rem;
+        height: 1.3rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        vertical-align: -0.35em;
+        margin-inline-end: 0.3em;
+    }
+}
+.ui-opt-icon__level {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 0.9rem;
+
+    i {
+        width: 3px;
+        border-radius: 2px;
+        background: color-mix(in srgb, var(--c) 30%, transparent);
+
+        &.on {
+            background: var(--c);
+        }
+    }
+}

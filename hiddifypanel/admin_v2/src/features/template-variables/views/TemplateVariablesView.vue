@@ -56,7 +56,7 @@
       <Column field="label" :header="t('templateVariables.label')" sortable :show-filter-menu="false" />
       <Column field="description" :header="t('templateVariables.description')" :show-filter-menu="false">
         <template #body="{ data }">
-          <div class="text-sm text-muted-color variable-desc-html" v-html="data.description" />
+          <div class="text-sm text-muted-color variable-desc-html" v-html="iconizeHtml(data.description)" />
         </template>
       </Column>
     </DataTable>
@@ -81,6 +81,7 @@ import InputIcon from 'primevue/inputicon'
 import PageHeader from '@/shared/components/PageHeader.vue'
 import { templateVariablesApi, type TemplateVariable, type TemplateVariableGroup } from '@/core/api/generated'
 import { flattenTemplateVariableGroups } from '@/shared/utils/template-variables'
+import { iconizeHtml } from '@/shared/utils/emoji-icons'
 
 const { t } = useI18n()
 
