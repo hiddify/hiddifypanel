@@ -2027,10 +2027,10 @@ msgid "config.too_advanced.label"
 msgstr "အလွန်အဆင့်မြင့် အပြင်အဆင်များ"
 
 msgid "config.torrent_block.description"
-msgstr "တောရန့် ပိတ်ပင်မှု အပြင်အဆင်များကို ဤကဏ္ဍတွင် သတ်မှတ်နိုင်သည်။"
+msgstr "ဖွင့်: အသုံးပြုသူများ၏ BitTorrent (torrent) traffic ကို protocol အားလုံးတွင် (Xray နှင့် Hiddify Core) ပိတ်သည်။ ပိတ်: ခွင့်ပြုသည်။ Torrent ကို port မရွေး handshake ဖြင့် သိရှိသည်; စာဝှက်ထားသော torrent ချိတ်ဆက်မှုများကို မသိနိုင်ပါ။"
 
 msgid "config.torrent_block.label"
-msgstr "တောရန့် ပိတ်ပင်မှု အပြင်အဆင်များ"
+msgstr "🚫 BitTorrent ပိတ်ရန်"
 
 msgid "config.trojan_enable.description"
 msgstr "Trojan ပရိုတိုကောလ်ကို ဖွင့်ရန်"

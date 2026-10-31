@@ -3177,8 +3177,8 @@
       "label": "Paramètres très avancés"
     },
     "torrent_block": {
-      "description": "Les configurations des blocs Torrent  peuvent être définies dans cette section.",
-      "label": "Configuration du bloc Torrent "
+      "description": "Activé : le trafic BitTorrent (torrent) des utilisateurs est bloqué sur tous les protocoles, dans Xray et Hiddify Core. Désactivé : il est autorisé. Les torrents sont reconnus à leur négociation, quel que soit le port ; les connexions torrent chiffrées peuvent ne pas être reconnues.",
+      "label": "🚫 Bloquer BitTorrent"
     },
     "trojan_enable": {
       "description": "Activer le protocole Trojan ",

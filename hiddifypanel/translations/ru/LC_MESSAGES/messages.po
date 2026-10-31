@@ -8468,10 +8468,10 @@ msgid "config.too_advanced.label"
 msgstr "Очень расширенные настройки"
 
 msgid "config.torrent_block.description"
-msgstr "В этом разделе можно настроить блокировку Torrent"
+msgstr "Вкл.: трафик BitTorrent (торренты) пользователей блокируется во всех протоколах, в Xray и Hiddify Core. Выкл.: разрешён. Торренты распознаются по рукопожатию на любом порту; зашифрованные торрент-соединения могут не распознаваться."
 
 msgid "config.torrent_block.label"
-msgstr "Конфигурация блокировки Torrent"
+msgstr "🚫 Блокировать BitTorrent"
 
 msgid "config.trojan_enable.description"
 msgstr "Включить Trojan протокол"

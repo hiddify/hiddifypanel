@@ -3387,8 +3387,8 @@
       "label": "非常高级的设置"
     },
     "torrent_block": {
-      "description": "可以在此部分设置 Torrent 阻止配置。",
-      "label": "Torrent 块配置"
+      "description": "开启：在所有协议（Xray 和 Hiddify Core）中阻止用户的 BitTorrent（种子）流量。关闭：允许。通过握手识别种子流量，与端口无关；加密的种子连接可能无法识别。",
+      "label": "🚫 阻止 BitTorrent"
     },
     "trojan_enable": {
       "description": "启用 Trojan 协议",

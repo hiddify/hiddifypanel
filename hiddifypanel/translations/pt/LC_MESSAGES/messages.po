@@ -8419,10 +8419,10 @@ msgid "config.too_advanced.label"
 msgstr "Configurações muito avançadas"
 
 msgid "config.torrent_block.description"
-msgstr "As configurações do bloco de Torrent podem ser definidas nesta seção."
+msgstr "Ligado: o tráfego BitTorrent (torrent) dos usuários é bloqueado em todos os protocolos, no Xray e no Hiddify Core. Desligado: é permitido. Torrents são reconhecidos pelo handshake, em qualquer porta; conexões torrent criptografadas podem não ser reconhecidas."
 
 msgid "config.torrent_block.label"
-msgstr "Configuração do Bloco de Torrent"
+msgstr "🚫 Bloquear BitTorrent"
 
 msgid "config.trojan_enable.description"
 msgstr "Ativa o protocolo Trojan"
