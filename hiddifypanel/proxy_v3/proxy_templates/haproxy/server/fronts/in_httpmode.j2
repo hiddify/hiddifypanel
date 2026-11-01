@@ -52,7 +52,15 @@ frontend in-httpmode
   http-request set-var(txn.backend) req.hdr(host),map_dom({{ include_path(ctx, 'haproxy/server/maps/http_domain') }},default_decoy) if { var(txn.backend) -m str default_decoy }
 
 
+  # Nothing above took the request: the decoy. Cleartext goes to https first; over TLS, a Host other than the TLS SNI
+  # (domain fronting) gets the plain "421 Misdirected Request" any server answers, not the decoy.
+  acl to_decoy var(txn.backend) -m str default_decoy
   http-request redirect scheme https code 301 if client_clear { var(txn.backend) -m str panel }
+  http-request redirect scheme https code 301 if client_clear to_decoy
+  http-request set-var(txn.sni) ssl_fc_sni,lower if to_decoy { ssl_fc }
+  http-request set-var(txn.sni) fc_pp_authority,lower if to_decoy { so_name hop_from_tls } { fc_pp_authority -m found }
+  http-request set-var(txn.req_host) req.hdr(host),field(1,:),lower if to_decoy
+  http-request return status 421 content-type "text/html" hdr cache-control "no-cache" string "<html><body><h1>421 Misdirected Request</h1>\nRequest sent to a non-authoritative server.\n</body></html>\n" if to_decoy { var(txn.sni) -m found } !{ var(txn.sni),strcmp(txn.req_host) eq 0 }
 
   http-after-response set-header Alt-Svc 'h3=":443"; ma=2592000'
 

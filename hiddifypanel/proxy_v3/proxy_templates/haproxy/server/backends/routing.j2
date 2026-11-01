@@ -61,8 +61,9 @@ backend to_httpmode
     server s abns@http_in_h2 send-proxy-v2
 
 backend to_httpmode_from_tls
-    # Plain HTTP after HAProxy already terminated TLS (:901 from rpxy-l4, or https_in_ssl).
-    server s abns@http_in_from_tls send-proxy-v2
+    # Plain HTTP after HAProxy already terminated TLS (:901 from rpxy-l4, or https_in_ssl). The client's TLS SNI goes
+    # along as the PROXY v2 authority (fc_pp_authority in in-httpmode): the decoy checks it against Host.
+    server s abns@http_in_from_tls send-proxy-v2 proxy-v2-options authority
 
 backend to_https_in_ssl
     server s abns@https_in_ssl send-proxy-v2 tfo
