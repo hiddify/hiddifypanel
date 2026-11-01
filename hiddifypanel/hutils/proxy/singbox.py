@@ -131,7 +131,8 @@ def to_singbox(proxy: dict) -> list[dict] | dict:
 
     if proxy["proto"] == "vmess":
         base["alter_id"] = 0
-        base["security"] = proxy["cipher"]
+        # "auto" from sing-box 1.15 is a cipher id xray 26.10 rejects ("unknown security type"): name it
+        base["security"] = "aes-128-gcm" if proxy["cipher"] in ("auto", "none", "zero", "", None) else proxy["cipher"]
 
     # base["udp"] = True
     if proxy["proto"] in ["vmess", "vless"]:

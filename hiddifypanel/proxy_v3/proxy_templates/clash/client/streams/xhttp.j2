@@ -8,6 +8,9 @@
   "host": "{{ domain.host }}",
   "mode": "auto",
   {% if proxy.is_download_upload_different() %}
+  {% set up_alpns = ctx.proxy.tls_layer.alpns() if ctx.proxy.tls_layer and ctx.proxy.tls_layer != "http" else [] %}
+  {#- mihomo 1.19.32: an HTTP/1.1 upload through one server with the download on another never connects (every mode) #}
+  {{ skip("Mihomo: xhttp H1 upload with the download on another server") if up_alpns == ["http/1.1"] and domain.download.server() != proxy.server }}
   "download-settings": {
     "path": "/{{ proxy.path }}",
     "host": "{{ domain.download.host }}",
@@ -15,6 +18,12 @@
     "port": {{ domain.download.port or proxy.download_port }},
     {% with domain=domain.download, tls_layer=proxy.effective_download_tls_layer() %}
       {% include 'clash/client/tls/tls' %}
+      {#- mihomo takes the upload's ALPN for a download that names none (h3 on a cleartext :80, http/1.1 on REALITY) #}
+      {% if (tls_layer or "http") == "http" %}
+      "alpn": ["http/1.1"],
+      {% elif domain.is_reality() %}
+      "alpn": ["h2"],
+      {% endif %}
     {% endwith %}
   },
   {% endif %}

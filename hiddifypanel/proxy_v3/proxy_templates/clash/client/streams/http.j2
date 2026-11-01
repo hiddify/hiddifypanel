@@ -1,3 +1,5 @@
+{# Mihomo's trojan has no http / h2 network (only ws and grpc): it sends the trojan header bare ("wrong version number") #}
+{{ skip("Mihomo trojan has no http network") if ctx.proxy.proto == "trojan" }}
 {% set tls_layer = (tls_layer if tls_layer is defined else ctx.proxy.tls_layer) or "http" %}
 {% set alpns = tls_layer.alpns() if tls_layer != "http" else [] %}
 {% if "h2" in alpns and "http/1.1" not in alpns %}

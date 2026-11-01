@@ -56,7 +56,7 @@ from hiddifypanel.proxy_v3.config_tester_types import (
 )
 from hiddifypanel.proxy_v3.outbound_custom import CLASH_BIN, CORE_BIN, CORE_DIR, XRAY_BIN
 
-__all__ = ["DEFAULT_REPEATS", "DEFAULT_TEST_URL", "TesterError", "rerun", "run"]
+__all__ = ["DEFAULT_REPEATS", "DEFAULT_TEST_URL", "TesterError", "client_apps", "default_user_agent", "rerun", "run"]
 
 MAX_CONFIGS = 300
 MAX_BODY = 20_000_000
@@ -65,7 +65,6 @@ FETCH_TIMEOUT = 30
 STARTUP_TIMEOUT = 8
 MAX_REPEATS = 10
 MAX_WORKERS = 32
-DEFAULT_UA = "HiddifyNext/5.0.2 (linux) like ClashMeta v2ray sing-box"
 DEFAULT_REPEATS = 3
 DEFAULT_TEST_URL = "https://www.gstatic.com/generate_204"
 PORT_RANGE = (21000, 29000)
@@ -80,13 +79,52 @@ _LINK = re.compile(r"^[a-z][a-z0-9+.-]*://", re.IGNORECASE)
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 
 
+# --------------------------------------------------------------------------- the clients tested for
+
+#: (app, label, binary, --version argument, user agent with ``{v}``): a subscription is asked for as the cores on this
+#: server would ask for it, so what they cannot read shows up here before users see it
+_CLIENTS = (
+    ("hiddify", "Hiddify", CORE_BIN, "version", "HiddifyNext/{v} (linux) like ClashMeta v2ray sing-box"),
+    ("xray", "Xray", XRAY_BIN, "version", "xray/{v}"),
+    ("clash", "Clash Mihomo", CLASH_BIN, "-v", "clash.meta/{v}"),
+)
+#: when a binary is missing or says nothing usable
+_FALLBACK_VERSIONS = {"hiddify": "5.3.0", "xray": "26.10.31", "clash": "1.19.32"}
+_VERSION = re.compile(r"v?(\d+\.\d+\.\d+)")
+_versions: dict[str, str] = {}
+
+
+def _binary_version(app: str, binary: Path, arg: str) -> str:
+    if app not in _versions:
+        try:
+            out = subprocess.run([str(binary), arg], capture_output=True, text=True, timeout=5).stdout
+            m = _VERSION.search(out)
+        except (OSError, subprocess.SubprocessError):
+            m = None
+        _versions[app] = m.group(1) if m else _FALLBACK_VERSIONS[app]
+    return _versions[app]
+
+
+def client_apps() -> list[dict[str, str]]:
+    """The clients the page offers: ``key``, ``label`` (with the version) and ``ua``, from the installed cores."""
+    out = []
+    for app, label, binary, arg, ua in _CLIENTS:
+        v = _binary_version(app, binary, arg)
+        out.append({"key": app, "label": f"{label} v{v}", "ua": ua.format(v=v)})
+    return out
+
+
+def default_user_agent(app: str = "hiddify") -> str:
+    return next((a["ua"] for a in client_apps() if a["key"] == app), client_apps()[0]["ua"])
+
+
 # --------------------------------------------------------------------------- fetch and split
 
 
 def fetch(url: str, user_agent: str, verify: bool = True) -> tuple[str, FetchedHttp]:
     """The subscription text and what was asked / answered (so the page can show the user agent really sent).
     ``verify=False``: no certificate check (the server fetching its own page by its IP, which no certificate names)."""
-    ua = user_agent.strip() or DEFAULT_UA
+    ua = user_agent.strip() or default_user_agent()
     try:
         res = requests.get(url, headers={"User-Agent": ua}, timeout=FETCH_TIMEOUT, stream=True, verify=verify)
         res.raise_for_status()

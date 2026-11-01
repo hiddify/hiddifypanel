@@ -1,6 +1,7 @@
 """Config tester (super admins): run every config of a subscription through xray / hiddify-core and time requests through each.
 
 A test is a job (config_tester_jobs): POST starts it, the page reads its events with GET and can stop it with DELETE.
+GET ``/config-tester/apps/`` lists the clients (user agents from the installed cores).
 GET ``/config-tester/user-link/?q=…`` searches users by name/uuid and returns their subscription URLs for the typeahead.
 ``/config-tester/proxies/`` maps results to the panel's custom proxies (down / partly down), ``…/disable/`` turns the down
 ones off and ``…/restore/`` turns them back on, only when the admin asks.
@@ -115,6 +116,14 @@ def _search_users(q: str, *, limit: int = USER_SEARCH_LIMIT) -> list[User]:
         .limit(limit)
         .all()
     )
+
+
+class ConfigTesterAppsApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self) -> dict[str, Any]:
+        """Config tester: the clients to test for, with the user agents of the cores installed on this server"""
+        return {"apps": config_tester.client_apps()}
 
 
 class ConfigTesterUserLinkApi(MethodView):

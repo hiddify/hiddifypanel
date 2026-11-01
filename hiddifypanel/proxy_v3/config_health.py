@@ -23,10 +23,10 @@ from hiddifypanel.cache import redis_client
 
 _LAST = "hiddify:config-health:last"
 _RUNNING = "hiddify:config-health:running"
-#: (app name, path after the user's page, user agent): what each kind of app downloads
+#: (app name, path after the user's page): what each kind of app downloads; the user agent is the installed core's
 APPS = (
-    ("xray", "xray/", "v2rayN/7.0"),
-    ("hiddify", "", "HiddifyNext/5.0.2 (linux) like ClashMeta v2ray sing-box"),
+    ("xray", "xray/"),
+    ("hiddify", ""),
 )
 MAX_FAILED_LISTED = 60
 #: Cloudflare's, not Google's: panels often send Google through WARP, and a WARP hiccup is not a broken config
@@ -152,7 +152,10 @@ def check() -> dict | None:
     # Only a bare IP to use: the server asks itself, and no certificate names an IP
     verify = not _is_ip(host)
     result: dict = {"at": int(time.time()), "user": user.name, "host": host, "apps": {}}
-    for app, path, agent in APPS:
+    from hiddifypanel.proxy_v3.config_tester import default_user_agent
+
+    for app, path in APPS:
+        agent = default_user_agent(app)
         summary = _test_app(page + path, agent, app, verify)
         if summary["error"]:
             # The subscription could not be fetched (e.g. a reload of the cores right then): once more, later

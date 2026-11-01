@@ -5,7 +5,10 @@
 {% set tls_layer = (tls_layer if tls_layer is defined else ctx.proxy.tls_layer) or "http" %}
 {% set transport = (ctx.proxy.transport or "")|string|lower %}
 
-{% if tls_layer != 'http' %}
+{% if tls_layer == 'http' %}
+{# said out loud: xhttp's download-settings take the upload's TLS when they say nothing (a cleartext download on :80) #}
+"tls": false,
+{% else %}
 "tls": true,
 {% if ctx.proxy.proto == "trojan" %}
 "sni": "{{ domain.sni }}",
@@ -33,7 +36,9 @@
 {% if domain.is_reality() %}
 "reality-opts": {
   "public-key": "{{ ctx.hconfig.reality_public_key }}",
-  "short-id": "{{ ctx.hconfig.reality_short_ids | choose_random }}"
+  "short-id": "{{ ctx.hconfig.reality_short_ids | choose_random }}",
+  {# xray 26.10's REALITY fails mihomo's X25519-only hello ("REALITY authentication failed") #}
+  "support-x25519mlkem768": true
 },
 {% elif domain.allow_insecure %}
 "skip-cert-verify": true,

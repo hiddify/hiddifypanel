@@ -2,7 +2,8 @@
 "server": "{{ proxy.server }}",
 "server_port": {{ ctx.proxy.port }},
 "uuid": "{{ ctx.user.uuid }}",
-"security": "auto",
+{#- not "auto": hiddify-core 5.3 (sing-box 1.15) sends "auto" as a cipher id xray 26.10 rejects ("unknown security type") #}
+"security": "aes-128-gcm",
 "alter_id": 0,
 "global_padding": false,
 "authenticated_length": true,
