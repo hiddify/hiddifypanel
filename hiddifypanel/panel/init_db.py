@@ -14,6 +14,7 @@ from hiddifypanel import Events, g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db, db_execute, db_execute_ddl
 from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
+from hiddifypanel.models.config_enum import DomainLabelMode
 from hiddifypanel.models import *
 from hiddifypanel.models import ConfigEnum
 from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_catalog
@@ -23,6 +24,21 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
 MAX_DB_VERSION = 200
+
+
+def _v194(child_id):
+    """The support box of the user page: its title and "View More" button can be renamed or hidden (in the HTML
+    editor of the support text). Shown with the default texts, as before."""
+    add_config_if_not_exist(ConfigEnum.branding_support_title, "", child_id=child_id)
+    add_config_if_not_exist(ConfigEnum.branding_support_title_show, True, child_id=child_id)
+    add_config_if_not_exist(ConfigEnum.branding_support_more, "", child_id=child_id)
+    add_config_if_not_exist(ConfigEnum.branding_support_more_show, True, child_id=child_id)
+
+
+def _v195(child_id):
+    """Config names no longer show a domain without an alias: the kind and a code (``☁️ CDN K7Q``). An admin who wants
+    the old names picks "Full domain name" (Settings > General)."""
+    add_config_if_not_exist(ConfigEnum.domain_label_mode, DomainLabelMode.private, child_id=child_id)
 
 
 def _v193(child_id):

@@ -2304,7 +2304,14 @@
           "shadow_glow": "Brilho",
           "fullWidth": "Largura total",
           "reset": "Remover estilos"
-        }
+        },
+        "boxParts": "Título e botão",
+        "showTitle": "Mostrar o título",
+        "showMore": "Mostrar o botão",
+        "titleText": "Título",
+        "moreText": "Texto do botão",
+        "defaultText": "Padrão: {text}",
+        "moreLink": "Abre o link da configuração \"Site de suporte\""
       }
     },
     "tags": {
@@ -2941,6 +2948,22 @@
       "description": "Texto de marca. o texto desta caixa será mostrado na seção de suporte da página do usuário. você pode usar tags HTML",
       "label": "📢 Texto da seção de suporte"
     },
+    "branding_support_title": {
+      "description": "O título acima do texto de suporte. Vazio: \"Support\".",
+      "label": "Título da caixa de suporte"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "Mostrar o título da caixa de suporte"
+    },
+    "branding_support_more": {
+      "description": "Abre o link do site de suporte. Vazio: \"View More\".",
+      "label": "Texto do botão \"View More\""
+    },
+    "branding_support_more_show": {
+      "description": "",
+      "label": "Mostrar o botão \"View More\""
+    },
     "branding_site": {
       "description": "O link a ser mostrado na seção de suporte da página do usuário.\nVocê também pode colocar seu Canal Telegram ou Telegram PV aqui.",
       "label": "🆔 Link de suporte (vai tanto no título da marca quanto na seção de suporte da página do usuário)"
@@ -3031,6 +3054,13 @@
     "domain_fronting_tls_enable": {
       "description": "No CloudFlare, TLS Domain Fronting não é suportado. ele usará a porta 443 para se conectar ao CDN",
       "label": "🔒 Habilitar fronting de domínio TLS"
+    },
+    "domain_label_mode": {
+      "description": "Como um domínio sem apelido é nomeado nas configurações, no título do perfil e no nome da assinatura dos usuários.<br>🔒 Privado: o tipo e um código que não o revela (☁️ CDN K7Q)<br>🫥 Mascarado: a maioria das letras oculta (⚡ h*y.com)<br>🌐 Nome de domínio completo",
+      "full": "🌐 Nome de domínio completo",
+      "label": "🏷️ Nomes das configurações",
+      "masked": "🫥 Mascarado (⚡ h*y.com)",
+      "private": "🔒 Privado: tipo e código (☁️ CDN K7Q)"
     },
     "firewall": {
       "description": "A ativação do Firewall abrirá as portas usadas (pelo menos 22.443.80 e SSH) e fechará todas as outras portas",

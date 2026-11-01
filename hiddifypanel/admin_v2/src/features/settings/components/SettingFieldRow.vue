@@ -8,6 +8,8 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import DnsPicker from '@/features/settings/components/DnsPicker.vue'
 import { displayConfigLabel } from '@/shared/utils/config-labels'
 import HtmlFieldControl from './html-editor/HtmlFieldControl.vue'
+import type { BoxParts } from './html-editor/support-frame'
+import { SUPPORT_TEXT_KEY, partSettings, readParts } from '@/features/settings/support-box'
 import type { SettingField, SettingValue } from '@/features/settings/api'
 import IconText from '@/shared/components/IconText.vue'
 import { iconizeHtml, stripEmoji } from '@/shared/utils/emoji-icons'
@@ -23,7 +25,10 @@ const props = defineProps<{
   highlighted?: boolean
   /** Show the "advanced" badge (only when advanced items are mixed with essential ones). */
   markAdvanced?: boolean
+  /** All values being edited: the support box's editor also edits its title and button. */
+  values?: Record<string, SettingValue>
 }>()
+const emit = defineEmits<{ companion: [key: string, value: SettingValue] }>()
 
 const model = defineModel<SettingValue>({ required: true })
 
@@ -38,6 +43,12 @@ const text = computed({
   get: () => String(model.value ?? ''),
   set: (value: string) => {
     model.value = value
+  },
+})
+const parts = computed({
+  get: (): BoxParts | undefined => (props.field.key === SUPPORT_TEXT_KEY && props.values ? readParts(props.values) : undefined),
+  set: (value: BoxParts | undefined) => {
+    if (value) for (const [key, v] of partSettings(value)) emit('companion', key, v)
   },
 })
 const checked = computed({
@@ -100,7 +111,7 @@ const checked = computed({
           <IconText v-else :text="option.label" />
         </template>
       </Select>
-      <HtmlFieldControl v-else-if="field.type === 'html'" v-model="text" :input-id="inputId" :title="label" :maxlength="field.maxlength" :invalid="Boolean(errors?.length)" />
+      <HtmlFieldControl v-else-if="field.type === 'html'" v-model="text" v-model:parts="parts" :input-id="inputId" :title="label" :maxlength="field.maxlength" :invalid="Boolean(errors?.length)" />
       <Textarea
         v-else-if="wide"
         :id="inputId"

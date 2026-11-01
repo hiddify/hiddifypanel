@@ -5,17 +5,22 @@
  */
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { caretBlock, frameDocument } from './support-frame'
+import { caretBlock, frameDocument, paintParts, type BoxParts, type FrameLabels } from './support-frame'
 
-const props = defineProps<{ html: string; editable?: boolean }>()
+const props = defineProps<{ html: string; editable?: boolean; parts?: BoxParts }>()
 const emit = defineEmits<{ 'update:html': [value: string]; selectionchange: [] }>()
 
 const { t } = useI18n()
 const frame = ref<HTMLIFrameElement | null>(null)
 const dir = (document.documentElement.getAttribute('dir') === 'rtl' ? 'rtl' : 'ltr') as 'ltr' | 'rtl'
-const srcdoc = computed(() =>
-  frameDocument({ title: t('settings.htmlEditor.boxTitle'), more: t('settings.htmlEditor.boxMore'), placeholder: t('settings.htmlEditor.placeholder') }, dir, Boolean(props.editable)),
-)
+const labels = computed<FrameLabels>(() => ({ title: t('settings.htmlEditor.boxTitle'), more: t('settings.htmlEditor.boxMore'), placeholder: t('settings.htmlEditor.placeholder') }))
+const srcdoc = computed(() => frameDocument(labels.value, dir, Boolean(props.editable)))
+
+function repaintParts() {
+  const doc = frame.value?.contentDocument
+  if (doc) paintParts(doc, props.parts, labels.value)
+}
+watch(() => props.parts, repaintParts, { deep: true })
 
 let content: HTMLElement | null = null
 let lastEmitted: string | null = null
@@ -47,6 +52,7 @@ function onLoad() {
   content = doc?.getElementById('content') ?? null
   if (!doc || !content) return
   content.innerHTML = props.html
+  repaintParts()
   if (!props.editable) return
   doc.execCommand('styleWithCSS', false, 'true')
   doc.execCommand('defaultParagraphSeparator', false, 'p')

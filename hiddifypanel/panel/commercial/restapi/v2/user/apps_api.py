@@ -9,6 +9,7 @@ from flask_babel import gettext as _
 from pydantic import Field
 from strenum import StrEnum
 
+from hiddifypanel.hutils import domain_label
 from hiddifypanel import current_app as app
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
@@ -82,7 +83,7 @@ class AppAPI(MethodView):
         self.user_panel_url = f"https://{urlparse(request.base_url).hostname}/{g.proxy_path}/{g.account.uuid}/"
         self.user_panel_encoded_url = hutils.encode.url_encode(self.user_panel_url)
         c = get_common_data(g.account.uuid, "new")
-        self.subscription_link_url = f"{self.user_panel_url}all.txt?name={c['db_domain'].alias or c['db_domain'].domain}-{c['asn']}&asn={c['asn']}&mode={c['mode']}"
+        self.subscription_link_url = f"{self.user_panel_url}all.txt?name={hutils.encode.url_encode(domain_label.for_domain(c['db_domain']) + '-' + str(c['asn']))}&asn={c['asn']}&mode={c['mode']}"
         self.subscription_link_encoded_url = hutils.encode.do_base_64(self.subscription_link_url)
         domain = c["db_domain"].alias or c["db_domain"].domain
         self.profile_title = hutils.encode.url_encode(c["profile_title"])

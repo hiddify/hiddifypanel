@@ -5,6 +5,7 @@ from typing import TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from hiddifypanel.hutils import domain_label
 from hiddifypanel import hutils
 from hiddifypanel.hutils.network.auto_ip_selector import split_pattern
 from hiddifypanel.hutils.proxy import random_or_none
@@ -164,7 +165,7 @@ class DomainIPVar(BaseModel):
             dst_server=server_host,
             mode=domain_db.mode,
             fake_mode=domain_db.fake_mode,
-            alias=domain_db.alias or domain_db.name,
+            alias=domain_label.for_domain(domain_db),
             need_valid_ssl=bool(domain_db.need_valid_ssl),
             child_id=int(domain_db.child_id or 0),
             ech=bool(domain_db.ech) and domain_db.mode.is_cdn(),

@@ -5,8 +5,9 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import EditorIcon from './EditorIcon.vue'
 import SupportFrame from './SupportFrame.vue'
+import type { BoxParts } from './support-frame'
 
-defineProps<{ html: string; title: string }>()
+defineProps<{ html: string; title: string; parts?: BoxParts }>()
 const visible = defineModel<boolean>('visible', { required: true })
 
 const { t } = useI18n()
@@ -24,7 +25,7 @@ const { t } = useI18n()
       </div>
     </template>
     <div class="hpv">
-      <SupportFrame :html="html" />
+      <SupportFrame :html="html" :parts="parts" />
     </div>
     <p class="hpv-note"><i class="pi pi-info-circle" />{{ t('settings.htmlEditor.previewNote') }}</p>
     <template #footer>

@@ -39,6 +39,14 @@ class MieruHandshake(HEnum):
     HANDSHAKE_STANDARD = auto()
 
 
+class DomainLabelMode(HEnum):
+    """How a domain without an alias is named in the users' configs (hutils/domain_label.py)."""
+
+    private = auto()
+    masked = auto()
+    full = auto()
+
+
 class LogLevel(HEnum):
     TRACE = auto()
     DEBUG = auto()
@@ -335,6 +343,13 @@ class ConfigEnum(metaclass=FastEnum):
     branding_title = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     branding_site = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     branding_freetext = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
+    #: how domains without an alias are named in config names, profile titles and subscription names
+    domain_label_mode = _TypedConfigDscr(DomainLabelMode, ConfigCategory.general)
+    # the support box's title and "View More" button (edited in branding_freetext's HTML editor): empty text: the default
+    branding_support_title = _StrConfigDscr(ConfigCategory.branding)
+    branding_support_title_show = _BoolConfigDscr(ConfigCategory.branding)
+    branding_support_more = _StrConfigDscr(ConfigCategory.branding)
+    branding_support_more_show = _BoolConfigDscr(ConfigCategory.branding)
     # the user page: a static site (e.g. a hiddify-user-front build on GitHub Pages) the panel serves; empty: built-in
     user_page_url = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     not_found = _StrConfigDscr(ConfigCategory.hidden)

@@ -5,9 +5,12 @@ import { useI18n } from 'vue-i18n'
 import EditorIcon from './EditorIcon.vue'
 import HtmlEditorDialog from './HtmlEditorDialog.vue'
 import HtmlPreviewDialog from './HtmlPreviewDialog.vue'
+import type { BoxParts } from './support-frame'
 
 defineProps<{ inputId: string; title: string; maxlength?: number; invalid?: boolean }>()
 const model = defineModel<string>({ required: true })
+/** The box's title and button, when this setting has them (the support box). */
+const parts = defineModel<BoxParts | undefined>('parts')
 
 const { t } = useI18n()
 const viewing = ref(false)
@@ -25,8 +28,8 @@ const editing = ref(false)
       <span>{{ t('settings.htmlEditor.editButton') }}</span>
     </button>
   </div>
-  <HtmlPreviewDialog v-model:visible="viewing" :html="model" :title="title" />
-  <HtmlEditorDialog v-model:visible="editing" v-model="model" :title="title" :maxlength="maxlength" />
+  <HtmlPreviewDialog v-model:visible="viewing" :html="model" :title="title" :parts="parts" />
+  <HtmlEditorDialog v-model:visible="editing" v-model="model" v-model:parts="parts" :title="title" :maxlength="maxlength" />
 </template>
 
 <style scoped>

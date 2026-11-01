@@ -2276,7 +2276,14 @@
           "shadow_glow": "အလင်း",
           "fullWidth": "အကျယ် အပြည့်",
           "reset": "ပုံစံ ဖယ်ရန်"
-        }
+        },
+        "boxParts": "Title and button",
+        "showTitle": "Show the title",
+        "showMore": "Show the button",
+        "titleText": "Title",
+        "moreText": "Button text",
+        "defaultText": "Default: {text}",
+        "moreLink": "Opens the \"Support Website\" setting"
       }
     },
     "tags": {
@@ -2936,6 +2943,22 @@
       "description": "Branding စာသား။ ဤအကွက်၏ စာသားကို အသုံးပြုသူ၏ စာမျက်နှာ၏ ပံ့ပိုးမှုကဏ္ဍတွင် ပြသမည်ဖြစ်သည်။ HTML tags များကို သုံးစွဲနိုင်သည်။",
       "label": "📢 အထောက်အကူ အပိုင်း စာသား"
     },
+    "branding_support_title": {
+      "description": "The title above the support text. Empty: \"Support\".",
+      "label": "Support box title"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "Show the support box title"
+    },
+    "branding_support_more": {
+      "description": "Opens the Support Website link. Empty: \"View More\".",
+      "label": "\"View More\" button text"
+    },
+    "branding_support_more_show": {
+      "description": "",
+      "label": "Show the \"View More\" button"
+    },
     "branding_site": {
       "description": "အသုံးပြုသူ၏စာမျက်နှာ၏ ပံ့ပိုးကူညီမှုကဏ္ဍတွင် ပြသမည့်လင့်ခ်။\nသင်၏ တယ်လီဂရမ်ချန်နယ် သို့မဟုတ် တယ်လီဂရမ် PV ကိုလည်း ဤနေရာတွင် ထည့်နိုင်သည်။",
       "label": "🆔 ပံ့ပိုးမှုလင့်ခ် (အမှတ်တံဆိပ်ခေါင်းစဉ်နှင့် အသုံးပြုသူစာမျက်နှာ၏ ပံ့ပိုးမှုကဏ္ဍတွင်ပါရှိသည်)"
@@ -3026,6 +3049,13 @@
     "domain_fronting_tls_enable": {
       "description": "CloudFlare တွင် TLS Domain Fronting ကို ပံ့ပိုးမထားပါ။ CDN သို့ ချိတ်ဆက်ရန် Port 443 ကို အသုံးပြုပါမည်။",
       "label": "🔒 TLS ဒိုမိန်း Fronting"
+    },
+    "domain_label_mode": {
+      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (☁️ CDN K7Q)<br>🫥 Masked: most letters hidden (⚡ h*y.com)<br>🌐 Full domain name",
+      "full": "🌐 Full domain name",
+      "label": "🏷️ Config names",
+      "masked": "🫥 Masked (⚡ h*y.com)",
+      "private": "🔒 Private: kind and code (☁️ CDN K7Q)"
     },
     "firewall": {
       "description": "Firewall ကိုဖွင့်ခြင်းဖြင့် အသုံးပြုထားသော Ports (အနည်းဆုံး 22,443,80 နှင့် SSH) ကိုဖွင့်ပြီး အခြား Port အားလုံးကို ပိတ်ပါမည်။",

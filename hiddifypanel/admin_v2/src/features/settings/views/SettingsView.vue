@@ -89,9 +89,11 @@
                 v-model="draft[field.key]"
                 :field="field"
                 :errors="fieldErrors[field.key]"
-                :changed="isChanged(field)"
+                :changed="isChanged(field) || companionsChanged(field.key)"
                 :highlighted="highlightKey === field.key"
                 :mark-advanced="cat.mixed"
+                :values="draft"
+                @companion="(key: string, value: SettingValue) => (draft[key] = value)"
               />
             </TransitionGroup>
 
@@ -235,6 +237,10 @@ function localErrors(field: SettingField): string[] {
   return []
 }
 
+function companionsChanged(key: string): boolean {
+  return allFields.value.some((f) => f.companion_of === key && isChanged(f))
+}
+
 const dirtyCount = computed(() => allFields.value.filter(isChanged).length)
 const hasLocalErrors = computed(() => allFields.value.some((field) => localErrors(field).length > 0))
 
@@ -248,17 +254,19 @@ const visibleCategories = computed(() => {
     .map((cat) => {
       const look = CATEGORY_LOOK[cat.id] ?? DEFAULT_LOOK
       const isExpanded = expanded.value.has(cat.id)
+      // fields edited inside another field's editor are not rows
+      const rows = cat.fields.filter((field) => !field.companion_of)
       let fields: SettingField[]
       let hidden = 0
       if (query) {
         const catMatches = displayConfigLabel(cat.label).toLowerCase().includes(query)
-        fields = catMatches ? cat.fields : cat.fields.filter((field) => matches(field, query))
+        fields = catMatches ? rows : rows.filter((field) => matches(field, query))
       } else if (showAdvanced.value || isExpanded) {
-        fields = cat.fields
+        fields = rows
       } else {
         // Keep changed and invalid fields visible even when they are advanced.
-        fields = cat.fields.filter((field) => field.essential || isChanged(field) || fieldErrors.value[field.key])
-        hidden = cat.fields.length - fields.length
+        fields = rows.filter((field) => field.essential || isChanged(field) || companionsChanged(field.key) || fieldErrors.value[field.key])
+        hidden = rows.length - fields.length
       }
       return {
         id: cat.id,
@@ -269,7 +277,7 @@ const visibleCategories = computed(() => {
         fields,
         hidden,
         expanded: isExpanded,
-        mixed: cat.fields.some((f) => f.essential) && cat.fields.some((f) => !f.essential),
+        mixed: rows.some((f) => f.essential) && rows.some((f) => !f.essential),
         changed: cat.fields.some(isChanged),
         hasProtocolSwitches: cat.fields.some((f) => f.protocol_switch),
       }

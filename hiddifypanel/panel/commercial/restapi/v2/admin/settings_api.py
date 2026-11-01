@@ -43,6 +43,13 @@ ESSENTIAL_KEYS = frozenset(
 _HTML_TAGS = frozenset({"a", "br", "strong", "b", "em", "i", "code", "p", "ul", "ol", "li", "span"})
 _HTML_ATTRS = {"a": ["href", "target", "rel"]}
 _APPLY_RANK = {ApplyMode.nothing: 0, ApplyMode.apply_config: 1, ApplyMode.reinstall: 2}
+#: Edited inside another field's editor (the support box's HTML editor), not as rows of their own.
+COMPANION_OF = {
+    ConfigEnum.branding_support_title: ConfigEnum.branding_freetext,
+    ConfigEnum.branding_support_title_show: ConfigEnum.branding_freetext,
+    ConfigEnum.branding_support_more: ConfigEnum.branding_freetext,
+    ConfigEnum.branding_support_more_show: ConfigEnum.branding_freetext,
+}
 _SKIP_FIELDS = frozenset({"description_for_fieldset", "csrf_token", "submit"})
 
 
@@ -91,6 +98,8 @@ def _describe_field(field: wtf.Field) -> dict[str, Any]:
         row["pattern_message"] = str(render_kw.get("title") or "")
     if maxlength := render_kw.get("maxlength"):
         row["maxlength"] = int(maxlength)
+    if owner := COMPANION_OF.get(key):
+        row["companion_of"] = str(owner)
     return row
 
 

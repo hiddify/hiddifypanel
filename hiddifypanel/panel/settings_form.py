@@ -100,7 +100,7 @@ def save_config_form(form) -> SettingsSaveResult:
 
     for k, v in changed_configs.items():
         # html inputs santitizing
-        if k in {ConfigEnum.branding_title, ConfigEnum.branding_site}:
+        if k in {ConfigEnum.branding_title, ConfigEnum.branding_site, ConfigEnum.branding_support_title, ConfigEnum.branding_support_more}:
             v = bleach_clean(v, tags=ALLOWED_TAGS)
         elif k == ConfigEnum.branding_freetext:  # the users' support box: HTML5 with inline styles
             v = hutils.user_html.clean_user_html(v)

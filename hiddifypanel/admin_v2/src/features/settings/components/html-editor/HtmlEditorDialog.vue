@@ -12,16 +12,17 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Popover from 'primevue/popover'
 import Select from 'primevue/select'
+import ToggleSwitch from 'primevue/toggleswitch'
 import BlockStylePanel from './BlockStylePanel.vue'
 import EditorIcon, { type EditorIconName } from './EditorIcon.vue'
 import HtmlSourceEditor from './HtmlSourceEditor.vue'
 import SupportFrame from './SupportFrame.vue'
 import TemplateGallery from './TemplateGallery.vue'
 import { cleanUp, closestIn, countMatches, replaceAll, selectNext, tableAction, type TableAction } from './dom-tools'
-import { BLOCK_STYLES, SNIPPETS, caretBlock, escapeAttr } from './support-frame'
+import { BLOCK_STYLES, SNIPPETS, caretBlock, escapeAttr, type BoxParts } from './support-frame'
 
-const props = defineProps<{ modelValue: string; title: string; maxlength?: number }>()
-const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+const props = defineProps<{ modelValue: string; title: string; maxlength?: number; parts?: BoxParts }>()
+const emit = defineEmits<{ 'update:modelValue': [value: string]; 'update:parts': [value: BoxParts] }>()
 const visible = defineModel<boolean>('visible', { required: true })
 
 const { t } = useI18n()
@@ -31,6 +32,8 @@ type Level = 'lite' | 'full'
 const LEVEL_KEY = 'admin_v2_html_editor_level'
 
 const draft = ref('')
+/** The box's title and button being edited (null: this setting has none). */
+const draftParts = ref<BoxParts | null>(null)
 const mode = ref<Mode>('preview')
 const level = ref<Level>(readLevel())
 const wrap = ref(true)
@@ -55,6 +58,7 @@ watch(level, (value) => {
 watch(visible, (open) => {
   if (!open) return
   draft.value = props.modelValue ?? ''
+  draftParts.value = props.parts ? { ...props.parts } : null
   mode.value = 'preview'
   notice.value = ''
 })
@@ -70,11 +74,14 @@ function note(text: string) {
 
 const length = computed(() => draft.value.length)
 const tooLong = computed(() => Boolean(props.maxlength && length.value > props.maxlength))
-const unapplied = computed(() => draft.value !== (props.modelValue ?? ''))
+const PART_KEYS = ['titleShow', 'title', 'moreShow', 'more'] as const
+const partsChanged = computed(() => Boolean(draftParts.value && props.parts && PART_KEYS.some((k) => draftParts.value![k] !== props.parts![k])))
+const unapplied = computed(() => draft.value !== (props.modelValue ?? '') || partsChanged.value)
 
 function apply() {
   if (tooLong.value) return
   emit('update:modelValue', draft.value)
+  if (draftParts.value && partsChanged.value) emit('update:parts', { ...draftParts.value })
 }
 function ok() {
   if (tooLong.value) return
@@ -691,7 +698,7 @@ function redo() {
       </div>
 
       <div class="hed-canvas" :class="{ 'hed-canvas--source': mode === 'source' }">
-        <SupportFrame v-if="mode === 'preview'" ref="frame" v-model:html="draft" editable @selectionchange="refreshState" />
+        <SupportFrame v-if="mode === 'preview'" ref="frame" v-model:html="draft" :parts="draftParts ?? undefined" editable @selectionchange="refreshState" />
         <HtmlSourceEditor v-else ref="source" v-model="draft" :wrap="wrap" />
       </div>
       <div v-if="mode === 'preview' && level === 'full'" class="hed-path" dir="ltr" :aria-label="t('settings.htmlEditor.path')">
@@ -702,6 +709,41 @@ function redo() {
         </template>
       </div>
     </div>
+    <section v-if="draftParts" class="hed-parts" :aria-label="t('settings.htmlEditor.boxParts')">
+      <div class="hed-part" :class="{ 'hed-part--off': !draftParts.titleShow }">
+        <div class="hed-part__head">
+          <span class="hed-part__icon" aria-hidden="true"><i class="pi pi-tag" /></span>
+          <label for="hed-part-title-show" class="hed-part__label">{{ t('settings.htmlEditor.showTitle') }}</label>
+          <ToggleSwitch v-model="draftParts.titleShow" input-id="hed-part-title-show" />
+        </div>
+        <InputText
+          v-model="draftParts.title"
+          :aria-label="t('settings.htmlEditor.titleText')"
+          :placeholder="t('settings.htmlEditor.defaultText', { text: t('settings.htmlEditor.boxTitle') })"
+          :disabled="!draftParts.titleShow"
+          maxlength="100"
+          size="small"
+          fluid
+        />
+      </div>
+      <div class="hed-part" :class="{ 'hed-part--off': !draftParts.moreShow }">
+        <div class="hed-part__head">
+          <span class="hed-part__icon" aria-hidden="true"><i class="pi pi-external-link" /></span>
+          <label for="hed-part-more-show" class="hed-part__label">{{ t('settings.htmlEditor.showMore') }}</label>
+          <ToggleSwitch v-model="draftParts.moreShow" input-id="hed-part-more-show" />
+        </div>
+        <InputText
+          v-model="draftParts.more"
+          :aria-label="t('settings.htmlEditor.moreText')"
+          :placeholder="t('settings.htmlEditor.defaultText', { text: t('settings.htmlEditor.boxMore') })"
+          :disabled="!draftParts.moreShow"
+          maxlength="100"
+          size="small"
+          fluid
+        />
+        <small class="hed-part__hint">{{ t('settings.htmlEditor.moreLink') }}</small>
+      </div>
+    </section>
     <input ref="fileInput" type="file" accept=".html,.htm,.txt,text/html,text/plain" hidden @change="onFile" />
 
     <template #footer>
@@ -987,6 +1029,63 @@ function redo() {
   color: var(--p-red-600, #dc2626);
   background: color-mix(in srgb, var(--p-red-500, #ef4444) 12%, transparent);
 }
+.hed-parts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+@media (max-width: 640px) {
+  .hed-parts {
+    grid-template-columns: 1fr;
+  }
+}
+.hed-part {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  background: var(--p-content-background);
+  transition:
+    border-color 0.15s,
+    opacity 0.15s;
+}
+.hed-part:focus-within {
+  border-color: var(--p-primary-color);
+}
+.hed-part__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.hed-part__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: none;
+  border-radius: 9px;
+  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+}
+.hed-part__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hed-part__hint {
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+}
+.hed-part--off .hed-part__icon {
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background);
+}
+
 .hed-path {
   display: flex;
   flex-wrap: wrap;

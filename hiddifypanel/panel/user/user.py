@@ -11,6 +11,7 @@ from flask_babel import gettext as _
 from flask_classful import FlaskView, route
 from loguru import logger
 
+from hiddifypanel.hutils import domain_label
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import admin_session_is_exist, login_required
 from hiddifypanel.cache import STATIC, cache
@@ -509,7 +510,7 @@ def get_common_data(user_uuid, mode, no_domain=False, filter_domain=None):
     user_ip = hutils.network.auto_ip_selector.get_real_user_ip()
     ip_info = hutils.network.maxmind.get_ip_info(user_ip)
     asn = ip_info.short_name
-    profile_title = f"{db_domain.alias or db_domain.domain} {user.name}"
+    profile_title = f"{domain_label.for_domain(db_domain)} {user.name}"
     profile_url = hiddify.get_account_panel_link(user, request.host)
     if has_auto_cdn and asn != "unknown":
         profile_title += f" {asn}"

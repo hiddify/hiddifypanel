@@ -14,6 +14,28 @@ export interface FrameLabels {
 
 export const USER_PAGE_BOX_WIDTH = 360
 
+/** The box's title and "View More" button: shown or not, and their text (empty: the default label). */
+export interface BoxParts {
+  titleShow: boolean
+  title: string
+  moreShow: boolean
+  more: string
+}
+
+/** Shows ``parts`` in a frame made by ``frameDocument`` (changed in place: the text being edited keeps its caret). */
+export function paintParts(doc: Document, parts: BoxParts | undefined, labels: FrameLabels): void {
+  const title = doc.getElementById('box-title')
+  const more = doc.getElementById('box-more')
+  if (title) {
+    title.textContent = parts?.title.trim() || labels.title
+    title.hidden = parts ? !parts.titleShow : false
+  }
+  if (more) {
+    more.firstElementChild!.textContent = parts?.more.trim() || labels.more
+    more.hidden = parts ? !parts.moreShow : false
+  }
+}
+
 /** Inline styles the tools give to what they create, so the user page shows them like the editor does. */
 export const BLOCK_STYLES: Record<string, string> = {
   h1: 'font-size: 2em; font-weight: 700; line-height: 1.25; margin: 0 0 0.5em',
@@ -78,6 +100,7 @@ body { min-height: 100vh; box-sizing: border-box; padding: 28px 16px; display: f
   background: radial-gradient(circle at 1px 1px, #dfe3f0 1px, transparent 0) 0 0 / 16px 16px, #f4f5fa;
   font: 14px/1.5 Roboto, "Segoe UI", system-ui, -apple-system, Vazirmatn, Tahoma, sans-serif; color: #495057; }
 *, ::before, ::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 .card { width: ${USER_PAGE_BOX_WIDTH}px; max-width: 100%; padding: 16px; border-radius: 16px; background: #e9ebf6;
   box-shadow: 0 1px 2px rgb(15 23 42 / 6%), 0 12px 32px -18px rgb(15 23 42 / 30%); }
 .title { font-size: 18px; font-weight: 500; color: #000; margin-bottom: 16px; }
@@ -93,7 +116,7 @@ table { border-collapse: collapse; }
 #content { min-height: 72px; outline: none; overflow-wrap: anywhere; caret-color: #455fe9; }
 #content:empty::before { content: attr(data-placeholder); color: #adb5bd; pointer-events: none; }
 ${editable ? '#content { border-radius: 8px; box-shadow: 0 0 0 1px transparent; transition: box-shadow .2s; } #content:focus { box-shadow: 0 0 0 2px rgb(69 95 233 / 25%); } #content a { cursor: text; } #content td { min-width: 2em; }' : ''}
-</style></head><body><div class="card"><div class="title">${escapeText(labels.title)}</div>
+</style></head><body><div class="card"><div id="box-title" class="title">${escapeText(labels.title)}</div>
 <div id="content"${editable ? ' contenteditable="true" spellcheck="false"' : ''} data-placeholder="${escapeAttr(labels.placeholder)}"></div>
-<div class="more"><span>${escapeText(labels.more)}</span></div></div></body></html>`
+<div id="box-more" class="more"><span>${escapeText(labels.more)}</span></div></div></body></html>`
 }

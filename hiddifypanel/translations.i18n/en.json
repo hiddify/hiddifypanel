@@ -3122,7 +3122,14 @@
           "shadow_glow": "Glow",
           "fullWidth": "Full width",
           "reset": "Remove styles"
-        }
+        },
+        "boxParts": "Title and button",
+        "showTitle": "Show the title",
+        "showMore": "Show the button",
+        "titleText": "Title",
+        "moreText": "Button text",
+        "defaultText": "Default: {text}",
+        "moreLink": "Opens the \"Support Website\" setting"
       }
     },
     "ssh": {
@@ -4122,6 +4129,22 @@
       "description": "Branding Text. this box's text will be shown on support section of User's Page. you can use HTML tags",
       "label": "📢 Support Section Text"
     },
+    "branding_support_title": {
+      "description": "The title above the support text. Empty: \"Support\".",
+      "label": "Support box title"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "Show the support box title"
+    },
+    "branding_support_more": {
+      "description": "Opens the Support Website link. Empty: \"View More\".",
+      "label": "\"View More\" button text"
+    },
+    "branding_support_more_show": {
+      "description": "",
+      "label": "Show the \"View More\" button"
+    },
     "branding_site": {
       "description": "The link to be shown on support section of user's page.\nYou can put also your Telegram Channel or Telegram PV here",
       "label": "🆔 Support Link (goes both on branding title and also on support section of user page)"
@@ -4212,6 +4235,13 @@
     "domain_fronting_tls_enable": {
       "description": "In CloudFlare, TLS Domain Fronting is not supported. it will use Port 443 to connect to CDN",
       "label": "🔒 TLS Domain Fronting"
+    },
+    "domain_label_mode": {
+      "description": "How a domain without an alias is named in the users' configs, profile title and subscription name.<br>🔒 Private: its kind and a code that does not reveal it (☁️ CDN K7Q)<br>🫥 Masked: most letters hidden (⚡ h*y.com)<br>🌐 Full domain name",
+      "full": "🌐 Full domain name",
+      "label": "🏷️ Config names",
+      "masked": "🫥 Masked (⚡ h*y.com)",
+      "private": "🔒 Private: kind and code (☁️ CDN K7Q)"
     },
     "firewall": {
       "description": "Enabling Firewall will open used Ports (at least 22,443,80 and SSH) and close all other Ports",

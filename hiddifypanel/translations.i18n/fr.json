@@ -2273,7 +2273,14 @@
           "shadow_glow": "Halo",
           "fullWidth": "Pleine largeur",
           "reset": "Retirer les styles"
-        }
+        },
+        "boxParts": "Titre et bouton",
+        "showTitle": "Afficher le titre",
+        "showMore": "Afficher le bouton",
+        "titleText": "Titre",
+        "moreText": "Texte du bouton",
+        "defaultText": "Par défaut : {text}",
+        "moreLink": "Ouvre le lien du réglage « Site d'assistance »"
       }
     },
     "tags": {
@@ -2913,6 +2920,22 @@
       "description": "Texte de marque. le texte de cette boîte sera affiché dans la section d'assistance de la page de l'utilisateur. vous pouvez utiliser des balises HTML<inlang-LineFeed>",
       "label": "📢 Texte de la section d'assistance"
     },
+    "branding_support_title": {
+      "description": "Le titre au-dessus du texte d'assistance. Vide : « Support ».",
+      "label": "Titre de la zone d'assistance"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "Afficher le titre de la zone d'assistance"
+    },
+    "branding_support_more": {
+      "description": "Ouvre le lien du site d'assistance. Vide : « View More ».",
+      "label": "Texte du bouton « View More »"
+    },
+    "branding_support_more_show": {
+      "description": "",
+      "label": "Afficher le bouton « View More »"
+    },
     "branding_site": {
       "description": "Le lien à afficher dans la section d'assistance de la page de l'utilisateur.\nVous pouvez également mettre votre chaîne Telegram ou Telegram PV ici",
       "label": "🆔 Lien d'assistance (va à la fois sur le titre de la marque et également sur la section d'assistance de la page utilisateur)"
@@ -2972,6 +2995,13 @@
     "domain_fronting_tls_enable": {
       "description": "Dans CloudFlare, TLS Domain Fronting n'est pas pris en charge. il utilisera le port 443 pour se connecter au CDN",
       "label": "🔒 Frontage de domaine TLS"
+    },
+    "domain_label_mode": {
+      "description": "Comment un domaine sans alias est nommé dans les configurations, le titre du profil et le nom de l'abonnement des utilisateurs.<br>🔒 Privé : son type et un code qui ne le révèle pas (☁️ CDN K7Q)<br>🫥 Masqué : la plupart des lettres cachées (⚡ h*y.com)<br>🌐 Nom de domaine complet",
+      "full": "🌐 Nom de domaine complet",
+      "label": "🏷️ Noms des configurations",
+      "masked": "🫥 Masqué (⚡ h*y.com)",
+      "private": "🔒 Privé : type et code (☁️ CDN K7Q)"
     },
     "firewall": {
       "description": "L'activation du pare-feu ouvrira les ports utilisés (au moins 22 443,80 et SSH) et fermera tous les autres ports.",

@@ -2304,7 +2304,14 @@
           "shadow_glow": "光晕",
           "fullWidth": "全宽",
           "reset": "清除样式"
-        }
+        },
+        "boxParts": "标题和按钮",
+        "showTitle": "显示标题",
+        "showMore": "显示按钮",
+        "titleText": "标题",
+        "moreText": "按钮文字",
+        "defaultText": "默认：{text}",
+        "moreLink": "打开“支持网站”设置中的链接"
       }
     },
     "tags": {
@@ -2941,6 +2948,22 @@
       "description": "品牌文字。此框的文本将显示在用户页面的支持部分。你可以使用 HTML 标签",
       "label": "📢 支持部分文本"
     },
+    "branding_support_title": {
+      "description": "显示在支持文本上方的标题。留空：“Support”。",
+      "label": "支持框标题"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "显示支持框标题"
+    },
+    "branding_support_more": {
+      "description": "打开“支持网站”链接。留空：“View More”。",
+      "label": "“View More”按钮文字"
+    },
+    "branding_support_more_show": {
+      "description": "",
+      "label": "显示“View More”按钮"
+    },
     "branding_site": {
       "description": "将在用户页面的支持部分显示的链接。\n您还可以将您的 Telegram Channel 或 Telegram PV 放在这里。",
       "label": "🆔 支持链接（既出现在品牌标题上，也出现在用户页面的支持部分）"
@@ -3031,6 +3054,13 @@
     "domain_fronting_tls_enable": {
       "description": "在 CloudFlare 中，不支持 TLS 域前置。它将使用端口 443 连接到 CDN",
       "label": "🔒 启用 TLS 域前置"
+    },
+    "domain_label_mode": {
+      "description": "没有别名的域名在用户配置、配置文件标题和订阅名称中的显示方式。<br>🔒 私密：类型和不泄露域名的代码（☁️ CDN K7Q）<br>🫥 遮盖：隐藏大部分字母（⚡ h*y.com）<br>🌐 完整域名",
+      "full": "🌐 完整域名",
+      "label": "🏷️ 配置名称",
+      "masked": "🫥 遮盖（⚡ h*y.com）",
+      "private": "🔒 私密：类型和代码（☁️ CDN K7Q）"
     },
     "firewall": {
       "description": "启用防火墙将打开已使用的端口（至少 22,443,80 和 SSH）并关闭所有其他端口",

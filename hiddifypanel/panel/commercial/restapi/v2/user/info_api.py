@@ -27,6 +27,11 @@ class ProfileSchema(ApiModel):
     telegram_id: int | None = None
     admin_message_html: str = ""
     admin_message_url: str = ""
+    #: the support box's title and "View More" button: shown or not, and their text (empty: the page's default)
+    admin_message_title_show: bool = True
+    admin_message_title: str = ""
+    admin_message_more_show: bool = True
+    admin_message_more: str = ""
     brand_title: str = ""
     brand_icon_url: str = ""
     doh: str = ""
@@ -67,6 +72,10 @@ class InfoAPI(MethodView):
             dto.admin_message_html += "<p style='font-style: italic;font-size:8px'>" + \
                 _("[Admin only visible message:] You can change this message from settings") + "</p>"
         dto.admin_message_url = user_hconfig(ConfigEnum.branding_site, c['user']) or "https://t.me/hiddify"
+        dto.admin_message_title_show = hconfig(ConfigEnum.branding_support_title_show) is not False
+        dto.admin_message_title = hconfig(ConfigEnum.branding_support_title) or ""
+        dto.admin_message_more_show = hconfig(ConfigEnum.branding_support_more_show) is not False
+        dto.admin_message_more = hconfig(ConfigEnum.branding_support_more) or ""
         dto.brand_title = user_hconfig(ConfigEnum.branding_title, c['user']) or _("Hiddify")
 
         dto.speedtest_enable = hconfig(ConfigEnum.speed_test)

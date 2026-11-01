@@ -6,6 +6,7 @@ from ipaddress import IPv4Address, IPv6Address
 
 from flask import request
 
+from hiddifypanel.hutils import domain_label
 from hiddifypanel import g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.models import ConfigEnum, Domain, DomainType, FakeMode, Proxy, ProxyCDN, ProxyL3, ProxyProto, ProxyTransport, get_hconfigs, hconfig
@@ -424,7 +425,7 @@ def make_proxy(hconfigs: dict, proxy: Proxy, domain_db: Domain, phttp=80, ptls=4
         "transport": proxy.transport,
         "proxy_path": hconfigs[ConfigEnum.proxy_path],
         "alpn": alpn,
-        "extra_info": f"{domain_db.alias or domain_db.domain}",
+        "extra_info": domain_label.for_domain(domain_db),
         "fingerprint": hconfigs[ConfigEnum.utls],
         # 'allow_insecure': domain_db.mode == DomainType.fake or "Fake" in proxy.cdn,
         "dbe": proxy,

@@ -21,6 +21,8 @@ export interface SettingField {
   pattern?: string
   pattern_message?: string
   maxlength?: number
+  /** Edited inside that field's editor (the support box's title and button), not as a row of its own. */
+  companion_of?: string
 }
 
 export interface SettingCategory {
