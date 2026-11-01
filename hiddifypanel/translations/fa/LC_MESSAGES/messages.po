@@ -10145,10 +10145,7 @@ msgid "config.default_useragent_string.label"
 msgstr "🪪 یوزرایجنت پیش‌فرض"
 
 msgid "config.dns_server.description"
-msgstr ""
-"✳️ پیش فرض 1.1.1.1 <br>\n"
-"🚧 مسدود کردن بدافزار 1.1.1.2 <br>\n"
-"🔞 مسدود کردن پورن 1.1.1.3"
+msgstr "DNSی که سرور و پروکسی‌های آن استفاده می‌کنند. یکی از DNSهای عمومی فهرست را انتخاب کنید یا با «دلخواه» DNS خودتان را وارد کنید. DNS سیستم‌عامل سرور هم همراه آن عوض می‌شود."
 
 msgid "config.dns_server.label"
 msgstr "🖥 سرور DNS"

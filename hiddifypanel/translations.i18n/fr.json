@@ -784,6 +784,13 @@
       "yes": "Oui"
     },
     "dashboard": {
+      "tip": {
+        "dailyAverage": "Moyenne par jour",
+        "last30Days": "30 derniers jours",
+        "last7Days": "7 derniers jours",
+        "previous30Days": "30 jours précédents",
+        "previous7Days": "7 jours précédents"
+      },
       "allNodes": "Tous les nœuds",
       "available": "Disponible",
       "averageHint": "Moyenne d'utilisateurs en ligne par jour, seulement les jours où quelqu'un l'était.",
@@ -1080,6 +1087,18 @@
       },
       "subtitle": "Les adresses auxquelles les utilisateurs se connectent, comment chacune atteint ce serveur, et leurs certificats",
       "title": "Domaines",
+      "tip": {
+        "autoRenew": "Renouvellement auto",
+        "certificate": "Certificat",
+        "covers": "Couvre",
+        "fingerprint": "Empreinte",
+        "issuedBy": "Émis par",
+        "key": "Clé",
+        "noCertNeeded": "Inutile : le TLS est emprunté ou simulé",
+        "off": "Désactivé",
+        "on": "Activé",
+        "sni": "Nom affiché (SNI)"
+      },
       "tls": {
         "decoy": "TLS leurre",
         "decoyHint": "Les domaines TLS Fake et Reality n'ont pas besoin de certificat propre.",
@@ -1250,6 +1269,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… ou votre nom d'utilisateur"
     },
     "menu": {
+      "close": "Fermer le menu",
+      "open": "Ouvrir le menu",
       "baseConfigs": "Configs de base",
       "customProxies": "Proxies",
       "dashboard": "Tableau de bord",
@@ -1278,6 +1299,14 @@
       "titleNamed": "Nœud : {name}"
     },
     "nodes": {
+      "os": {
+        "arch": "Architecture",
+        "kernel": "Noyau",
+        "system": "Système",
+        "title": "Système d'exploitation",
+        "unknown": "Le nœud n'a pas indiqué son système d'exploitation (il est injoignable pour l'instant, ou son panneau est d'une version plus ancienne).",
+        "version": "Version"
+      },
       "add": {
         "connecting": "Connexion au nœud… cela peut prendre jusqu'à une minute.",
         "linkHint": "Ressemble à https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
@@ -1977,6 +2006,20 @@
       "unsaved": "{count} modification non enregistrée | {count} modifications non enregistrées"
     },
     "settings": {
+      "dns": {
+        "custom": "Personnalisé",
+        "customHelp": "Jusqu'à quatre adresses IP (IPv4 ou IPv6), séparées par des virgules. Le serveur les utilise aussi pour son propre DNS.",
+        "customHint": "Vos propres adresses DNS",
+        "customPlaceholder": "ex. 1.1.1.1, 1.0.0.1",
+        "group": {
+          "adblock": "DNS anti-pub",
+          "custom": "DNS personnalisé",
+          "family": "Anti-pub + filtre adulte",
+          "normal": "DNS normal"
+        },
+        "invalid": "Saisissez une à quatre adresses IP séparées par des virgules, ex. 1.1.1.1, 1.0.0.1",
+        "placeholder": "Choisir un serveur DNS"
+      },
       "adminPathChanged": "Le chemin d'administration a changé. Après l'application des configs, le panneau d'administration sera à",
       "advancedBadge": "Avancé",
       "categories": "Catégories de paramètres",
@@ -2679,7 +2722,7 @@
       "label": "📺 Site leurre"
     },
     "dns_server": {
-      "description": "✳️ Par défaut 1.1.1.1<br>\n🚧 Bloquer les logiciels malveillants 1.1.1.2<br>\n🔞 Bloquer le porno 1.1.1.3<inlang-LineFeed>",
+      "description": "Le DNS utilisé par le serveur et ses proxys. Choisissez un DNS public dans la liste, ou le vôtre avec « Personnalisé ». Le DNS système du serveur change aussi.",
       "label": "🖥 Serveur DNS"
     },
     "domain_fronting": {

@@ -61,6 +61,17 @@ html.theme-caddy {
         -webkit-backdrop-filter: blur(14px);
     }
 
+    /* Phones and tablets: the menu slides in over the page and its dark mask, which showed through the light glass and
+       made it murky; there the light theme takes a glass between the light and the dense one (about 70%): the page
+       still glows through, the text reads clearly. The dark theme keeps its glass. */
+    @media (max-width: 991px) {
+        &:not(.app-dark) .layout-sidebar {
+            background: color-mix(in srgb, var(--caddy-glass-strong) 55%, var(--caddy-glass));
+            backdrop-filter: blur(22px) saturate(1.2);
+            -webkit-backdrop-filter: blur(22px) saturate(1.2);
+        }
+    }
+
     .layout-topbar {
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);

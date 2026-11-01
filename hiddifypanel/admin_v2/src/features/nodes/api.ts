@@ -39,6 +39,16 @@ export interface NodeSyncReportOut {
   last_seen: string | null
 }
 
+/** The node server's operating system (os_id: /etc/os-release ID, for its logo); empty fields when not known. */
+export interface NodeOs {
+  os_id: string
+  os_name: string
+  os_version: string
+  os_pretty: string
+  kernel: string
+  arch: string
+}
+
 export interface NodePing {
   online: boolean
   version: string
@@ -142,6 +152,10 @@ export const nodesApi = {
   async remove(id: number): Promise<boolean> {
     const { data } = await getHttp().delete<{ node_unlinked?: boolean }>(`nodes/${id}/`, { timeout: 30_000 })
     return data.node_unlinked !== false
+  },
+  async os(id: number): Promise<NodeOs> {
+    const { data } = await getHttp().get<NodeOs>(`nodes/${id}/os/`, { timeout: 20_000 })
+    return data
   },
   async ping(id: number): Promise<NodePing> {
     const { data } = await getHttp().get<NodePing>(`nodes/${id}/ping/`, { timeout: 30_000 })

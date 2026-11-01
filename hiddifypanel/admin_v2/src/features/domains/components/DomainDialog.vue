@@ -141,7 +141,7 @@ watch(compatibleIds, (ids) => {
 const showDomainsAllowed = computed(() => isSublink.value || (!meta.value?.has_sublink && fakeMode.value === 'valid'))
 /** Like the classic page: `Node[name] alias [domain] mode(tls)` for nodes' domains. */
 const showOptions = computed(() =>
-  (props.options?.show_options ?? []).map((d) => {
+  (props.state?.show_options ?? props.options?.show_options ?? []).map((d) => {
     const name = d.alias && d.alias !== d.domain ? `${d.alias} [${d.domain || t('domains.noName')}]` : d.domain || t('domains.noName')
     const kind = `${t(`domains.kind.${kindOf(d.mode)}.name`)} (${t(`domains.tlsMode.${d.fake_mode}`)})`
     const text = `${d.node ? `Node[${d.node}] ` : ''}${name} ${kind}`
@@ -624,10 +624,16 @@ async function save() {
   border: 1px solid var(--p-content-border-color);
   cursor: pointer;
 }
+/* The switch keeps its width (its handle slides by the switch's set width: squeezed, the handle left the track and the
+   card); the text wraps instead */
+.dd__toggle :deep(.p-toggleswitch) {
+  flex: none;
+}
 .dd__toggle span {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  min-width: 0;
 }
 .dd__toggle b {
   font-size: 0.86rem;

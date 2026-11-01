@@ -784,6 +784,13 @@
       "yes": "Sim"
     },
     "dashboard": {
+      "tip": {
+        "dailyAverage": "Média diária",
+        "last30Days": "Últimos 30 dias",
+        "last7Days": "Últimos 7 dias",
+        "previous30Days": "30 dias anteriores",
+        "previous7Days": "7 dias anteriores"
+      },
       "allNodes": "Todos os nós",
       "available": "Disponível",
       "averageHint": "Média de usuários online por dia, só nos dias em que alguém esteve online.",
@@ -1080,6 +1087,18 @@
       },
       "subtitle": "Os endereços aos quais os usuários se conectam, como cada um chega a este servidor e seus certificados",
       "title": "Domínios",
+      "tip": {
+        "autoRenew": "Renovação automática",
+        "certificate": "Certificado",
+        "covers": "Abrange",
+        "fingerprint": "Impressão digital",
+        "issuedBy": "Emitido por",
+        "key": "Chave",
+        "noCertNeeded": "Não é preciso: o TLS é emprestado ou falso",
+        "off": "Desligado",
+        "on": "Ligado",
+        "sni": "Nome mostrado (SNI)"
+      },
       "tls": {
         "decoy": "TLS isca",
         "decoyHint": "Domínios TLS Fake e Reality não precisam de certificado próprio.",
@@ -1250,6 +1269,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… ou seu nome de usuário"
     },
     "menu": {
+      "close": "Fechar menu",
+      "open": "Abrir menu",
       "baseConfigs": "Configs base",
       "customProxies": "Proxies",
       "dashboard": "Painel",
@@ -1278,6 +1299,14 @@
       "titleNamed": "Nó: {name}"
     },
     "nodes": {
+      "os": {
+        "arch": "Arquitetura",
+        "kernel": "Kernel",
+        "system": "Sistema",
+        "title": "Sistema operativo",
+        "unknown": "O nó não indicou que sistema operativo usa (não está acessível agora, ou o painel é de uma versão mais antiga).",
+        "version": "Versão"
+      },
       "add": {
         "connecting": "Conectando ao nó… isso pode levar até um minuto.",
         "linkHint": "Parece com https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
@@ -2008,6 +2037,20 @@
       "unsaved": "{count} alteração não salva | {count} alterações não salvas"
     },
     "settings": {
+      "dns": {
+        "custom": "Personalizado",
+        "customHelp": "Até quatro endereços IP (IPv4 ou IPv6), separados por vírgulas. O servidor também os usa para o seu próprio DNS.",
+        "customHint": "Os seus próprios endereços DNS",
+        "customPlaceholder": "ex.: 1.1.1.1, 1.0.0.1",
+        "group": {
+          "adblock": "DNS bloqueador de anúncios",
+          "custom": "DNS personalizado",
+          "family": "Bloqueio de anúncios + filtro adulto",
+          "normal": "DNS normal"
+        },
+        "invalid": "Introduza de um a quatro endereços IP separados por vírgulas, ex.: 1.1.1.1, 1.0.0.1",
+        "placeholder": "Escolha um servidor DNS"
+      },
       "adminPathChanged": "O caminho de administração mudou. Depois de aplicar as configs, o painel de administração estará em",
       "advancedBadge": "Avançado",
       "categories": "Categorias de configurações",
@@ -2718,7 +2761,7 @@
       "label": "🪪 User-Agent padrão"
     },
     "dns_server": {
-      "description": "✳️ Padrão 1.1.1.1 <br>\n🚧 Bloquear Malware 1.1.1.2 <br>\n🔞 Bloquear pornografia 1.1.1.3",
+      "description": "O DNS usado pelo servidor e seus proxies. Escolha um DNS público da lista ou o seu com “Personalizado”. O DNS do sistema do servidor também muda.",
       "label": "🖥 Servidor DNS"
     },
     "dnstt": {

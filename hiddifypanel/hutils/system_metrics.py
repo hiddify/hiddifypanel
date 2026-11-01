@@ -8,11 +8,14 @@ have to convert units.
 
 from __future__ import annotations
 
+import functools
 import os
+import platform
 import socket
 import subprocess
 import time
 from collections.abc import Callable, Mapping, Sequence
+from pathlib import Path
 from typing import NamedTuple, Protocol
 
 import psutil
@@ -337,12 +340,35 @@ def process_metrics(limit: int = 8) -> DashboardProcesses:
     )
 
 
+@functools.lru_cache(maxsize=1)
+def os_info() -> dict[str, str]:
+    """This server's operating system (from /etc/os-release), kernel and architecture: read once, they do not change
+    while the panel runs."""
+    fields: dict[str, str] = {}
+    try:
+        for line in Path("/etc/os-release").read_text(encoding="utf-8", errors="replace").splitlines():
+            key, sep, value = line.partition("=")
+            if sep:
+                fields[key.strip()] = value.strip().strip('"').strip("'")
+    except OSError:
+        pass
+    return {
+        "os_id": fields.get("ID", "").lower(),
+        "os_name": fields.get("NAME", ""),
+        "os_version": fields.get("VERSION_ID", "") or fields.get("VERSION", ""),
+        "os_pretty": fields.get("PRETTY_NAME", ""),
+        "kernel": platform.release(),
+        "arch": platform.machine(),
+    }
+
+
 def host_metrics() -> DashboardHost:
     boot_time = psutil.boot_time()
     return DashboardHost(
         hostname=socket.gethostname(),
         boot_time=boot_time,
         uptime_s=int(max(0, time.time() - boot_time)),
+        **os_info(),
     )
 
 

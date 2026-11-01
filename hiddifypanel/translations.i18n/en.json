@@ -1245,6 +1245,13 @@
       "workers": "Parallel workers"
     },
     "dashboard": {
+      "tip": {
+        "dailyAverage": "Daily average",
+        "last30Days": "Last 30 days",
+        "last7Days": "Last 7 days",
+        "previous30Days": "Previous 30 days",
+        "previous7Days": "Previous 7 days"
+      },
       "allNodes": "All nodes",
       "available": "Available",
       "averageHint": "Average users online per day, counting only days when someone was online.",
@@ -1276,7 +1283,7 @@
         "note": "Tested with {user}'s subscription. A config that fails from the server itself never works for anyone; filtering in Iran is not tested here.",
         "notice": {
           "failed": "{n} of {total} configs do not work from the server.",
-          "where": "Details: Dashboard › Config health."
+          "where": "Details: Dashboard › Config Health."
         },
         "problem": {
           "certificate": {
@@ -1322,7 +1329,7 @@
         "running": "Checking…",
         "subtitle": "Every config, tested from the server every 6 hours",
         "technical": "Technical details",
-        "title": "Config health",
+        "title": "Config Health",
         "working": "{ok} of {total} work"
       },
       "hiddify": "Hiddify",
@@ -1350,7 +1357,7 @@
       "network": "Network",
       "noData": "No data yet",
       "node": "Node",
-      "nodeHealth": "Node health",
+      "nodeHealth": "Node Health",
       "nodeHealthHint": "Live CPU, RAM and disk from each node API",
       "nodeHealthStackedHint": "Stacked CPU, RAM and disk per node",
       "nodeNetworkHint": "Live upload and download per node",
@@ -1393,16 +1400,16 @@
       "upload": "Upload",
       "uploadSinceBoot": "Uptime Upload",
       "uptime": "Uptime",
-      "usageComparison": "Usage comparison",
+      "usageComparison": "Usage Comparison",
       "usageComparisonHint": "Today and yesterday against the weekly and monthly daily average",
       "usageOnDay": "Usage: {value}",
       "usageStackedHint": "Stacked usage per node · total is the filled area",
-      "usageTrend": "Usage trend",
+      "usageTrend": "Usage Trend",
       "used": "Used",
-      "usersComparison": "Users comparison",
+      "usersComparison": "Users Comparison",
       "usersComparisonHint": "Distinct users seen per period",
       "usersSummary": "{total} users · {enabled} enabled",
-      "usersTrend": "Users trend",
+      "usersTrend": "Users Trend",
       "vsPreviousMonth": "vs previous 30 days",
       "vsPreviousWeek": "vs previous 7 days",
       "vsYesterday": "vs yesterday",
@@ -1630,6 +1637,18 @@
       },
       "subtitle": "The addresses users connect to, how each one reaches this server, and their certificates",
       "title": "Domains",
+      "tip": {
+        "autoRenew": "Auto-renew",
+        "certificate": "Certificate",
+        "covers": "Covers",
+        "fingerprint": "Fingerprint",
+        "issuedBy": "Issued by",
+        "key": "Key",
+        "noCertNeeded": "Not needed: TLS is borrowed or faked",
+        "off": "Off",
+        "on": "On",
+        "sni": "Name shown (SNI)"
+      },
       "tls": {
         "decoy": "Decoy TLS",
         "decoyHint": "Fake and Reality TLS domains do not need a certificate of their own.",
@@ -1841,6 +1860,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… or your username"
     },
     "menu": {
+      "close": "Close menu",
+      "open": "Open menu",
       "baseConfigs": "Base Configs",
       "cleanIp": "Scanner",
       "configTester": "Config Tester",
@@ -1981,6 +2002,14 @@
       "rawPartial": "Only the beginning of the data is kept."
     },
     "nodes": {
+      "os": {
+        "arch": "Architecture",
+        "kernel": "Kernel",
+        "system": "System",
+        "title": "Operating system",
+        "unknown": "The node did not say which operating system it runs (it is not reachable now, or its panel is of an older version).",
+        "version": "Version"
+      },
       "add": {
         "connecting": "Connecting to the node… this can take up to a minute.",
         "linkHint": "Looks like https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
@@ -2795,6 +2824,20 @@
       "unsaved": "{count} unsaved change | {count} unsaved changes"
     },
     "settings": {
+      "dns": {
+        "custom": "Custom",
+        "customHelp": "Up to four IP addresses (IPv4 or IPv6), separated by commas. The server also uses them for its own DNS.",
+        "customHint": "Your own DNS addresses",
+        "customPlaceholder": "e.g. 1.1.1.1, 1.0.0.1",
+        "group": {
+          "adblock": "Ad Block DNS",
+          "custom": "Custom DNS",
+          "family": "Ad Block + Adult Filter",
+          "normal": "Normal DNS"
+        },
+        "invalid": "Enter one to four IP addresses separated by commas, e.g. 1.1.1.1, 1.0.0.1",
+        "placeholder": "Choose a DNS server"
+      },
       "adminPathChanged": "The admin path changed. After applying the configs, the admin panel will be at",
       "advancedBadge": "Advanced",
       "categories": "Setting categories",
@@ -3868,7 +3911,7 @@
       "label": "🪪 Default User Agent"
     },
     "dns_server": {
-      "description": "✳️ Default 1.1.1.1 <br>\n🚧 Block Malware 1.1.1.2 <br>\n🔞 Block Porn 1.1.1.3\n",
+      "description": "The DNS the server and its proxies use. Pick a public DNS from the list, or your own with “Custom”. The server's system DNS changes with it.",
       "label": "🖥 DNS Server"
     },
     "dnstt": {
