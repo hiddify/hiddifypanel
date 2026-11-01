@@ -65,12 +65,34 @@ web_client_ip_source = "x_forwarded_for"
 web_trusted_proxy_cidrs = ["127.0.0.1/32"]
 
 
+{#- telemt's wildcard hosts (allow_wildcard_hosts, telemt >= 3.5.16): the domains on the main public IP share one "*"
+    group, so the users' profiles are kept once instead of once per domain. A domain on another IP keeps an exact group
+    (public_addr is fixed per group; an exact host is matched before "*"). Unknown hosts get the decoy in the outer
+    layer (HAProxy's domain routing), before telemt. #}
+{%- set w = namespace(addrs=[], main='') %}
+{%- for d in webdomains %}{% set _ = w.addrs.append((d.ips.ips or ['127.0.0.1'])[0] ~ ':443') %}{% endfor %}
+{%- for a in w.addrs %}{% if not w.main or w.addrs.count(a) > w.addrs.count(w.main) %}{% set w.main = a %}{% endif %}{% endfor %}
+{%- set others = [] %}{% for d in webdomains %}{% if w.addrs[loop.index0] != w.main and d.name not in others | map(attribute='name') | list %}{% set _ = others.append(d) %}{% endif %}{% endfor %}
+{%- set n_users = ctx.users | selectattr('uuid_hex') | list | length %}
+
 [web]
 enabled = true 
 carriers = ["websocket-lanes", "websocket", "https-lanes", "https"]
 decoy_fasttrack_mode = "off"
-limits.max_profiles = {{ (ctx.users | length)*((webdomains| length)+2) }}
-limits.max_vhosts = {{ webdomains | length }}
+allow_wildcard_hosts = true
+
+[web.limits]
+max_profiles = {{ [n_users * ((others | length) + 2), 1] | max }}
+max_vhosts = {{ [others | length, 1] | max }}
+memory_envelope_bytes = 1610612736
+
+[web.limits.wildcard]
+max_rules = 32
+max_profiles_per_request = {{ [n_users, 256] | max }}
+cache_hosts = 256
+cache_bytes = 8388608
+cold_hmac_per_minute = {{ [n_users * 1000, 1000000] | max }}
+cold_hmac_burst = {{ [n_users, 65536] | max }}
 
 {%- set decoy = '{ mode = "http_upstream", upstream = "http://127.0.0.1:18081" }' %}
 {%- set profiles %}[
@@ -79,8 +101,15 @@ limits.max_vhosts = {{ webdomains | length }}
 {%- endfor %}
 ]{%- endset %}
 
+[[web.vhosts]]
+hosts = ["*"]
+base_path = "{{ ctx.hconfig.telegram_base_path }}"
+public_addr = "{{ w.main }}"
+decoy = {{ decoy }}
+profiles = {{ profiles }}
+
 {#- telemt refuses a duplicate vhost host: each domain name once #}
-{%- for d in webdomains %}
+{%- for d in others %}
 
 [[web.vhosts]]
 host = "{{ d.name }}"
