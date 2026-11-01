@@ -784,13 +784,6 @@
       "yes": "是"
     },
     "dashboard": {
-      "tip": {
-        "dailyAverage": "日均",
-        "last30Days": "最近 30 天",
-        "last7Days": "最近 7 天",
-        "previous30Days": "之前 30 天",
-        "previous7Days": "之前 7 天"
-      },
       "allNodes": "所有节点",
       "available": "可用",
       "averageHint": "每天在线用户的平均数，仅统计有人在线的日子。",
@@ -866,6 +859,13 @@
       "subtitle": "流量、用户和服务器健康状况一目了然",
       "swap": "交换分区",
       "thisServer": "此服务器",
+      "tip": {
+        "dailyAverage": "日均",
+        "last30Days": "最近 30 天",
+        "last7Days": "最近 7 天",
+        "previous30Days": "之前 30 天",
+        "previous7Days": "之前 7 天"
+      },
       "title": "仪表盘",
       "today": "今天",
       "todayOnline": "今日在线",
@@ -915,50 +915,6 @@
         "frontingHint": "域名前置：配置中显示此名称而非域名",
         "resolveIp": "IP"
       },
-      "certError": {
-        "badName": {
-          "lead": "无法为“{domain}”签发证书（例如它没有点），因此 Let's Encrypt 和 ZeroSSL 拒绝了它。",
-          "step1": "编辑此域名并输入完整名称，例如 sub.example.com。",
-          "step2": "如果不再使用，请从 ⋮ 菜单中删除它。",
-          "title": "这不是真实的域名"
-        },
-        "caDown": {
-          "lead": "Let's Encrypt 或 ZeroSSL 刚才繁忙或无法访问；“{domain}”本身没有问题。",
-          "step1": "等待几分钟后点击重试；面板也会自动重试。",
-          "step2": "如果仍然失败，请检查此服务器能否向互联网发起 HTTPS 连接。",
-          "title": "证书颁发机构没有响应"
-        },
-        "caa": {
-          "lead": "“{domain}”的 DNS 中有一条 CAA 记录，不允许 Let's Encrypt 或 ZeroSSL。",
-          "step1": "在您的 DNS 服务商处添加允许 letsencrypt.org 的 CAA 记录，或删除 CAA 记录。",
-          "step2": "等待几分钟，然后点击重试。",
-          "title": "CAA 记录阻止了证书"
-        },
-        "details": "技术细节",
-        "howToFix": "如何修复",
-        "showLess": "收起",
-        "showMore": "显示更多",
-        "dns": {
-          "lead": "证书颁发机构查询了“{domain}”，但没有找到地址，或找到的地址不是此服务器。",
-          "step1": "在您的 DNS 服务商处为此名称添加指向此服务器 IP 的 A 记录（IPv4）或 AAAA 记录（IPv6）。",
-          "step2": "等待几分钟让更改生效，然后点击重试。",
-          "step3": "如果前面有 Cloudflare 等 CDN，请将此域名的类型设为 CDN。",
-          "title": "域名没有指向此服务器"
-        },
-        "other": {
-          "lead": "证书颁发机构拒绝了“{domain}”的请求；原因见下方技术细节。",
-          "step1": "检查域名是否指向此服务器的 IP。",
-          "step2": "检查 80 端口是否对互联网开放。",
-          "step3": "然后点击重试；如果仍然失败，请将技术细节发送给 Hiddify 支持。",
-          "title": "无法签发证书"
-        },
-        "port80": {
-          "lead": "证书颁发机构无法通过 80 端口连接到此服务器来验证“{domain}”。",
-          "step1": "在服务器防火墙和云服务商防火墙中开放 80 端口（TCP）。",
-          "step2": "然后点击重试。",
-          "title": "无法访问 80 端口"
-        }
-      },
       "cert": {
         "failed": "无法获取证书",
         "failedHint": "在签发真实证书之前，将使用自签名证书。",
@@ -979,6 +935,50 @@
           "port80": "80 端口必须可从互联网访问。"
         },
         "waiting": "正在获取证书…"
+      },
+      "certError": {
+        "badName": {
+          "lead": "无法为“{domain}”签发证书（例如它没有点），因此 Let's Encrypt 和 ZeroSSL 拒绝了它。",
+          "step1": "编辑此域名并输入完整名称，例如 sub.example.com。",
+          "step2": "如果不再使用，请从 ⋮ 菜单中删除它。",
+          "title": "这不是真实的域名"
+        },
+        "caDown": {
+          "lead": "Let's Encrypt 或 ZeroSSL 刚才繁忙或无法访问；“{domain}”本身没有问题。",
+          "step1": "等待几分钟后点击重试；面板也会自动重试。",
+          "step2": "如果仍然失败，请检查此服务器能否向互联网发起 HTTPS 连接。",
+          "title": "证书颁发机构没有响应"
+        },
+        "caa": {
+          "lead": "“{domain}”的 DNS 中有一条 CAA 记录，不允许 Let's Encrypt 或 ZeroSSL。",
+          "step1": "在您的 DNS 服务商处添加允许 letsencrypt.org 的 CAA 记录，或删除 CAA 记录。",
+          "step2": "等待几分钟，然后点击重试。",
+          "title": "CAA 记录阻止了证书"
+        },
+        "details": "技术细节",
+        "dns": {
+          "lead": "证书颁发机构查询了“{domain}”，但没有找到地址，或找到的地址不是此服务器。",
+          "step1": "在您的 DNS 服务商处为此名称添加指向此服务器 IP 的 A 记录（IPv4）或 AAAA 记录（IPv6）。",
+          "step2": "等待几分钟让更改生效，然后点击重试。",
+          "step3": "如果前面有 Cloudflare 等 CDN，请将此域名的类型设为 CDN。",
+          "title": "域名没有指向此服务器"
+        },
+        "howToFix": "如何修复",
+        "other": {
+          "lead": "证书颁发机构拒绝了“{domain}”的请求；原因见下方技术细节。",
+          "step1": "检查域名是否指向此服务器的 IP。",
+          "step2": "检查 80 端口是否对互联网开放。",
+          "step3": "然后点击重试；如果仍然失败，请将技术细节发送给 Hiddify 支持。",
+          "title": "无法签发证书"
+        },
+        "port80": {
+          "lead": "证书颁发机构无法通过 80 端口连接到此服务器来验证“{domain}”。",
+          "step1": "在服务器防火墙和云服务商防火墙中开放 80 端口（TCP）。",
+          "step2": "然后点击重试。",
+          "title": "无法访问 80 端口"
+        },
+        "showLess": "收起",
+        "showMore": "显示更多"
       },
       "copyDomain": "复制域名",
       "deleteMessage": "其配置将对所有用户失效。至少必须保留一个域名。",
@@ -1123,6 +1123,33 @@
       "renewCert": "更新证书",
       "saved": "{name} 已保存",
       "search": "搜索域名或名称",
+      "show": {
+        "all": "所有域名",
+        "allHint": "用户可看到所有域名的配置，包括以后添加的。",
+        "clear": "清除",
+        "clearSearch": "清除搜索",
+        "empty": "暂无其他域名。",
+        "filter": {
+          "all": "全部",
+          "cdn": "CDN",
+          "direct": "真实证书",
+          "fake": "伪装和 Reality",
+          "selected": "已选"
+        },
+        "group": {
+          "cdn": "CDN",
+          "direct": "真实证书",
+          "fake": "伪装 TLS 和 Reality"
+        },
+        "noMatch": "没有匹配的域名",
+        "node": "节点",
+        "noneTicked": "尚未勾选：用户仍可看到所有域名。",
+        "pickHint": "用户只看到您勾选的域名。",
+        "search": "搜索域名、名称或节点",
+        "selected": "已选 {n} / {total}",
+        "thisServer": "本服务器",
+        "tickServer": "勾选此服务器的所有域名"
+      },
       "stats": {
         "all": "域名",
         "attention": "需要证书",
@@ -1130,7 +1157,6 @@
         "valid": "证书正常"
       },
       "subtitle": "用户连接的地址、每个地址如何到达此服务器，以及它们的证书",
-      "title": "域名",
       "tip": {
         "autoRenew": "自动续期",
         "certificate": "证书",
@@ -1143,6 +1169,7 @@
         "on": "开",
         "sni": "显示的名称 (SNI)"
       },
+      "title": "域名",
       "tls": {
         "decoy": "伪装 TLS",
         "decoyHint": "Fake 和 Reality TLS 域名不需要自己的证书。",
@@ -1228,33 +1255,6 @@
         "title": "添加域名",
         "tlsQ": "哪种 TLS？",
         "unlikely": "DNS 不匹配"
-      },
-      "show": {
-        "all": "所有域名",
-        "allHint": "用户可看到所有域名的配置，包括以后添加的。",
-        "pickHint": "用户只看到您勾选的域名。",
-        "search": "搜索域名、名称或节点",
-        "clearSearch": "清除搜索",
-        "filter": {
-          "all": "全部",
-          "fake": "伪装和 Reality",
-          "cdn": "CDN",
-          "direct": "真实证书",
-          "selected": "已选"
-        },
-        "group": {
-          "fake": "伪装 TLS 和 Reality",
-          "cdn": "CDN",
-          "direct": "真实证书"
-        },
-        "selected": "已选 {n} / {total}",
-        "noneTicked": "尚未勾选：用户仍可看到所有域名。",
-        "clear": "清除",
-        "thisServer": "本服务器",
-        "tickServer": "勾选此服务器的所有域名",
-        "noMatch": "没有匹配的域名",
-        "empty": "暂无其他域名。",
-        "node": "节点"
       }
     },
     "donation": {
@@ -1340,9 +1340,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… 或您的用户名"
     },
     "menu": {
-      "close": "关闭菜单",
-      "open": "打开菜单",
       "baseConfigs": "基础配置",
+      "close": "关闭菜单",
       "customProxies": "代理",
       "dashboard": "仪表盘",
       "group": {
@@ -1352,6 +1351,7 @@
       },
       "myAccount": "我的账户",
       "nodeHome": "节点",
+      "open": "打开菜单",
       "outbounds": "出站",
       "protocols": "协议",
       "proxyEditor": "代理编辑器",
@@ -1370,14 +1370,6 @@
       "titleNamed": "节点：{name}"
     },
     "nodes": {
-      "os": {
-        "arch": "架构",
-        "kernel": "内核",
-        "system": "系统",
-        "title": "操作系统",
-        "unknown": "该节点未提供其操作系统（当前无法访问，或其面板版本较旧）。",
-        "version": "版本"
-      },
       "add": {
         "connecting": "正在连接节点…可能需要一分钟。",
         "linkHint": "形如 https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
@@ -1396,9 +1388,70 @@
       },
       "addNode": "添加节点",
       "addTileText": "连接另一台 Hiddify 服务器，并在这里统一管理。",
+      "checkAgain": "重新检查",
       "checkConnection": "检查连接",
       "checking": "检查中…",
       "connection": "连接",
+      "contact": {
+        "auth": {
+          "fix": "在这里删除此节点（垃圾桶按钮），然后通过“添加节点”并使用节点的管理链接重新添加。",
+          "title": "节点不认识此面板",
+          "why": "节点有响应，但拒绝了此面板的密钥。此面板已不再是它的主面板：节点被重装、从备份恢复，或已连接到另一个主面板。它仍可向这里发送自己的报告，所以可能显示为“在线”。"
+        },
+        "dns": {
+          "fix": "确认该域名的 DNS 记录指向节点服务器。如果节点地址已更改，请在这里删除节点并用新链接重新添加。",
+          "title": "找不到节点的域名",
+          "why": "节点地址中的域名没有指向任何 IP：已过期、DNS 记录被删除或更改，或此服务器的 DNS 出现故障。"
+        },
+        "gateway": {
+          "fix": "等待一分钟后重新检查。如果仍然如此，请重启节点服务器上的服务，并确认 CDN 指向节点当前的 IP。",
+          "title": "CDN 无法连接到节点",
+          "why": "节点地址经过 CDN 或代理（例如 Cloudflare），它无法连接到节点面板：面板正在重启或已停止。"
+        },
+        "hint": "原因及解决方法",
+        "liveTitle": "实时图表不可用",
+        "no_url": {
+          "fix": "在这里删除节点，然后通过“添加节点”并使用节点的管理链接重新添加。",
+          "title": "此面板没有节点的地址",
+          "why": "节点从未告诉此面板如何访问它，因此此面板无法向它查询。"
+        },
+        "not_found": {
+          "fix": "将节点更新到与此面板相同的版本。如果管理链接已更改，请在这里删除节点并用新链接重新添加。",
+          "title": "节点面板已不在此地址",
+          "why": "节点有响应，但此地址上不是 Hiddify 面板：管理路径或域名已更改，或节点版本过旧。"
+        },
+        "not_panel": {
+          "fix": "使用“打开”访问节点，检查其面板能否打开。如果节点地址已更改，请在这里删除节点并用正确的链接重新添加。",
+          "title": "节点地址上响应的不是面板",
+          "why": "响应并非来自 Hiddify 面板：其他网站、CDN 错误页面或网络过滤器代替它做出了响应。"
+        },
+        "refused": {
+          "fix": "在节点服务器上重启服务（节点面板的“操作”页面，或重启服务器），并确认 443 端口已开放，然后重新检查。",
+          "title": "节点拒绝了连接",
+          "why": "此服务器到达了节点地址，但没有服务接受连接：节点的 Web 服务已停止，或被防火墙拒绝。"
+        },
+        "server_error": {
+          "fix": "打开节点面板，在“操作”页面查看日志或在那里重启服务，然后重新检查。",
+          "title": "节点面板出错",
+          "why": "节点面板有响应，但返回了内部错误：节点在响应时出现了故障。"
+        },
+        "syncTitle": "同步详情不可用",
+        "timeout": {
+          "fix": "确认节点服务器已开机，并且可以通过“打开”访问其面板。如果可以，确认节点防火墙允许此服务器访问 443 端口，然后重新检查。",
+          "title": "节点未及时响应",
+          "why": "节点服务器在几秒内没有响应：可能已关机、负载过高或正在重启，或者防火墙丢弃了两台服务器之间的流量。"
+        },
+        "tls": {
+          "fix": "在节点面板的“域名”页面检查其域名的证书（新域名几分钟内会获得证书），然后重新检查。",
+          "title": "与节点的安全连接失败",
+          "why": "节点有响应，但其 HTTPS 证书对此地址无效：已过期、尚未签发或属于其他名称。"
+        },
+        "unknown": {
+          "fix": "一分钟后重新检查。如果仍然如此，请复制技术详情并发送给支持人员。",
+          "title": "无法检查节点",
+          "why": "查询节点时发生了意外错误。"
+        }
+      },
       "differentVersion": "节点运行 {node}，此面板运行 {panel}。请保持版本一致。",
       "empty": {
         "cta": "添加您的第一个节点",
@@ -1445,7 +1498,19 @@
       },
       "moreInfo": "更多信息",
       "neverSeen": "从未",
+      "notice": {
+        "title": "节点“{name}”无法连接",
+        "where": "详情见“节点”页面：将鼠标悬停在“无法连接”上。"
+      },
       "openAdmin": "打开",
+      "os": {
+        "arch": "架构",
+        "kernel": "内核",
+        "system": "系统",
+        "title": "操作系统",
+        "unknown": "该节点未提供其操作系统（当前无法访问，或其面板版本较旧）。",
+        "version": "版本"
+      },
       "pingDialog": {
         "avg": "平均",
         "button": "Ping",
@@ -1483,72 +1548,7 @@
       "syncNow": "立即同步",
       "synced": "{name} 已同步",
       "title": "节点",
-      "unreachable": "无法连接",
-      "checkAgain": "重新检查",
-      "contact": {
-        "hint": "原因及解决方法",
-        "liveTitle": "实时图表不可用",
-        "syncTitle": "同步详情不可用",
-        "auth": {
-          "title": "节点不认识此面板",
-          "why": "节点有响应，但拒绝了此面板的密钥。此面板已不再是它的主面板：节点被重装、从备份恢复，或已连接到另一个主面板。它仍可向这里发送自己的报告，所以可能显示为“在线”。",
-          "fix": "在这里删除此节点（垃圾桶按钮），然后通过“添加节点”并使用节点的管理链接重新添加。"
-        },
-        "not_found": {
-          "title": "节点面板已不在此地址",
-          "why": "节点有响应，但此地址上不是 Hiddify 面板：管理路径或域名已更改，或节点版本过旧。",
-          "fix": "将节点更新到与此面板相同的版本。如果管理链接已更改，请在这里删除节点并用新链接重新添加。"
-        },
-        "timeout": {
-          "title": "节点未及时响应",
-          "why": "节点服务器在几秒内没有响应：可能已关机、负载过高或正在重启，或者防火墙丢弃了两台服务器之间的流量。",
-          "fix": "确认节点服务器已开机，并且可以通过“打开”访问其面板。如果可以，确认节点防火墙允许此服务器访问 443 端口，然后重新检查。"
-        },
-        "refused": {
-          "title": "节点拒绝了连接",
-          "why": "此服务器到达了节点地址，但没有服务接受连接：节点的 Web 服务已停止，或被防火墙拒绝。",
-          "fix": "在节点服务器上重启服务（节点面板的“操作”页面，或重启服务器），并确认 443 端口已开放，然后重新检查。"
-        },
-        "dns": {
-          "title": "找不到节点的域名",
-          "why": "节点地址中的域名没有指向任何 IP：已过期、DNS 记录被删除或更改，或此服务器的 DNS 出现故障。",
-          "fix": "确认该域名的 DNS 记录指向节点服务器。如果节点地址已更改，请在这里删除节点并用新链接重新添加。"
-        },
-        "tls": {
-          "title": "与节点的安全连接失败",
-          "why": "节点有响应，但其 HTTPS 证书对此地址无效：已过期、尚未签发或属于其他名称。",
-          "fix": "在节点面板的“域名”页面检查其域名的证书（新域名几分钟内会获得证书），然后重新检查。"
-        },
-        "gateway": {
-          "title": "CDN 无法连接到节点",
-          "why": "节点地址经过 CDN 或代理（例如 Cloudflare），它无法连接到节点面板：面板正在重启或已停止。",
-          "fix": "等待一分钟后重新检查。如果仍然如此，请重启节点服务器上的服务，并确认 CDN 指向节点当前的 IP。"
-        },
-        "not_panel": {
-          "title": "节点地址上响应的不是面板",
-          "why": "响应并非来自 Hiddify 面板：其他网站、CDN 错误页面或网络过滤器代替它做出了响应。",
-          "fix": "使用“打开”访问节点，检查其面板能否打开。如果节点地址已更改，请在这里删除节点并用正确的链接重新添加。"
-        },
-        "server_error": {
-          "title": "节点面板出错",
-          "why": "节点面板有响应，但返回了内部错误：节点在响应时出现了故障。",
-          "fix": "打开节点面板，在“操作”页面查看日志或在那里重启服务，然后重新检查。"
-        },
-        "no_url": {
-          "title": "此面板没有节点的地址",
-          "why": "节点从未告诉此面板如何访问它，因此此面板无法向它查询。",
-          "fix": "在这里删除节点，然后通过“添加节点”并使用节点的管理链接重新添加。"
-        },
-        "unknown": {
-          "title": "无法检查节点",
-          "why": "查询节点时发生了意外错误。",
-          "fix": "一分钟后重新检查。如果仍然如此，请复制技术详情并发送给支持人员。"
-        }
-      },
-      "notice": {
-        "title": "节点“{name}”无法连接",
-        "where": "详情见“节点”页面：将鼠标悬停在“无法连接”上。"
-      }
+      "unreachable": "无法连接"
     },
     "notifications": {
       "dismiss": "关闭",
@@ -2108,6 +2108,10 @@
       "unsaved": "{count} 项未保存的更改 | {count} 项未保存的更改"
     },
     "settings": {
+      "adminPathChanged": "管理路径已更改。应用配置后，管理面板将位于",
+      "advancedBadge": "高级",
+      "categories": "设置分类",
+      "changed": "已更改",
       "dns": {
         "custom": "自定义",
         "customHelp": "最多四个 IP 地址（IPv4 或 IPv6），用逗号分隔。服务器自身的 DNS 也会使用它们。",
@@ -2122,12 +2126,176 @@
         "invalid": "请输入一到四个用逗号分隔的 IP 地址，例如 1.1.1.1, 1.0.0.1",
         "placeholder": "选择 DNS 服务器"
       },
-      "adminPathChanged": "管理路径已更改。应用配置后，管理面板将位于",
-      "advancedBadge": "高级",
-      "categories": "设置分类",
-      "changed": "已更改",
       "fixErrors": "请修正高亮的字段。",
       "hiddenCount": "已隐藏 {count} 项高级设置 | 已隐藏 {count} 项高级设置",
+      "htmlEditor": {
+        "alt": "替代文字",
+        "apply": "应用",
+        "blockFormat": "段落格式",
+        "blocks": {
+          "h": "标题 {n}",
+          "p": "段落",
+          "pre": "代码块",
+          "quote": "引用"
+        },
+        "boxMore": "查看更多",
+        "boxParts": "标题和按钮",
+        "boxTitle": "支持",
+        "buttonText": "按钮文字",
+        "cancel": "取消",
+        "cleaned": "清理完成：移除了 {n} 项",
+        "close": "关闭",
+        "copied": "已复制 HTML",
+        "copyFailed": "此处不允许复制",
+        "customColor": "自定义颜色",
+        "defaultText": "默认：{text}",
+        "editButton": "HTML 编辑器",
+        "find": {
+          "find": "查找",
+          "matchCase": "区分大小写",
+          "matches": "找到 {n} 处",
+          "next": "下一个",
+          "replace": "替换为",
+          "replaceAll": "全部替换",
+          "replaced": "已替换 {n} 处"
+        },
+        "font": "字体",
+        "fonts": {
+          "default": "默认字体"
+        },
+        "formatCode": "格式化代码",
+        "full": "完整",
+        "imageUrl": "图片地址 (URL)",
+        "insert": "插入",
+        "linkText": "文字",
+        "linkTextHint": "留空：使用选中的文字或链接",
+        "lite": "简洁",
+        "loadingSource": "正在加载代码编辑器…",
+        "moreLink": "打开“支持网站”设置中的链接",
+        "moreText": "按钮文字",
+        "newTab": "在新标签页打开",
+        "ok": "确定",
+        "opened": "已打开 {name}",
+        "path": "元素路径",
+        "placeholder": "编写用户在支持框中看到的文字…",
+        "preview": "预览",
+        "previewNote": "用户页面上的样子。保存设置后发布更改。",
+        "previewTitle": "支持框预览",
+        "sampleAnswer": "答案。",
+        "sampleButton": "联系我们",
+        "sampleQuestion": "你的问题？",
+        "sampleText": "你的文字",
+        "saveHint": "应用的文字在保存设置后发布",
+        "showMore": "显示按钮",
+        "showTitle": "显示标题",
+        "size": "字号",
+        "source": "源码",
+        "sourceFailed": "代码编辑器加载失败",
+        "sourceHint": "格式工具在预览模式中",
+        "style": {
+          "angle": "角度",
+          "background": "背景",
+          "border": "边框",
+          "color": "颜色",
+          "dashed": "虚线",
+          "dotted": "点线",
+          "fullWidth": "全宽",
+          "gradient": "渐变",
+          "margin": "下方间距",
+          "noTarget": "请先把光标放进一个区块",
+          "none": "无",
+          "padding": "内边距",
+          "parent": "父级",
+          "radius": "圆角",
+          "reset": "清除样式",
+          "shadow": "阴影",
+          "shadow_glow": "光晕",
+          "shadow_none": "无",
+          "shadow_soft": "柔和",
+          "shadow_strong": "强烈",
+          "solid": "实线",
+          "textColor": "文字颜色"
+        },
+        "templates": {
+          "insert": "插入",
+          "names": {
+            "alerts": "状态消息",
+            "announcement": "公告",
+            "columns": "两栏",
+            "contacts": "联系方式列表",
+            "faq": "常见问题",
+            "hero": "支持横幅",
+            "hours": "支持时间",
+            "plan": "套餐卡片",
+            "social": "社交按钮",
+            "steps": "快速开始"
+          },
+          "note": "现成的设计：选一个，然后编辑文字。",
+          "replace": "全部替换",
+          "title": "模板"
+        },
+        "title": "HTML 编辑器",
+        "titleText": "标题",
+        "tooLong": "超出此设置的长度",
+        "toolbar": "格式工具",
+        "tools": {
+          "alignCenter": "居中",
+          "alignJustify": "两端对齐",
+          "alignLeft": "左对齐",
+          "alignRight": "右对齐",
+          "blockStyle": "区块样式",
+          "bold": "粗体",
+          "box": "方框",
+          "bulletList": "项目符号列表",
+          "button": "按钮",
+          "clean": "清理代码",
+          "clear": "清除格式",
+          "colAfter": "在后面插入列",
+          "colBefore": "在前面插入列",
+          "colDelete": "删除列",
+          "copy": "复制 HTML",
+          "download": "下载 .html",
+          "emoji": "表情",
+          "faq": "问答项",
+          "find": "查找和替换",
+          "highlight": "高亮",
+          "hr": "分隔线",
+          "image": "图片",
+          "indent": "增加缩进",
+          "italic": "斜体",
+          "lineHeight": "行高",
+          "link": "链接",
+          "ltr": "从左到右",
+          "numberList": "编号列表",
+          "open": "打开 HTML 文件",
+          "outdent": "减少缩进",
+          "quote": "引用",
+          "redo": "重做",
+          "rowAbove": "在上方插入行",
+          "rowBelow": "在下方插入行",
+          "rowDelete": "删除行",
+          "rtl": "从右到左",
+          "strike": "删除线",
+          "subscript": "下标",
+          "superscript": "上标",
+          "symbol": "特殊字符",
+          "table": "表格",
+          "tableDelete": "删除表格",
+          "tableTools": "表格工具",
+          "templates": "模板",
+          "textColor": "文字颜色",
+          "underline": "下划线",
+          "undo": "撤销",
+          "unlink": "移除链接"
+        },
+        "toolset": "工具集",
+        "unapplied": "尚未应用",
+        "url": "链接 (URL)",
+        "view": "编辑器模式",
+        "viewButton": "查看",
+        "width": "宽度 (px)",
+        "wrap": "自动换行"
+      },
       "invalid": "此值无效。",
       "leaveUnsaved": "您有未保存的更改。仍要离开吗？",
       "noMatch": "没有符合您搜索的设置。",
@@ -2144,175 +2312,7 @@
       "subtitle": "关于此面板运行方式的一切。常用设置在前；高级设置按需显示。",
       "telegramConnected": "Telegram 机器人已连接：@{username}",
       "telegramFailed": "Telegram 机器人连接失败",
-      "title": "设置",
-      "htmlEditor": {
-        "title": "HTML 编辑器",
-        "viewButton": "查看",
-        "editButton": "HTML 编辑器",
-        "preview": "预览",
-        "source": "源码",
-        "lite": "简洁",
-        "full": "完整",
-        "view": "编辑器模式",
-        "toolset": "工具集",
-        "toolbar": "格式工具",
-        "boxTitle": "支持",
-        "boxMore": "查看更多",
-        "placeholder": "编写用户在支持框中看到的文字…",
-        "loadingSource": "正在加载代码编辑器…",
-        "sourceFailed": "代码编辑器加载失败",
-        "blockFormat": "段落格式",
-        "font": "字体",
-        "size": "字号",
-        "formatCode": "格式化代码",
-        "wrap": "自动换行",
-        "sourceHint": "格式工具在预览模式中",
-        "tooLong": "超出此设置的长度",
-        "unapplied": "尚未应用",
-        "saveHint": "应用的文字在保存设置后发布",
-        "cancel": "取消",
-        "apply": "应用",
-        "ok": "确定",
-        "customColor": "自定义颜色",
-        "url": "链接 (URL)",
-        "linkText": "文字",
-        "linkTextHint": "留空：使用选中的文字或链接",
-        "newTab": "在新标签页打开",
-        "insert": "插入",
-        "imageUrl": "图片地址 (URL)",
-        "alt": "替代文字",
-        "width": "宽度 (px)",
-        "buttonText": "按钮文字",
-        "sampleText": "你的文字",
-        "sampleButton": "联系我们",
-        "previewTitle": "支持框预览",
-        "previewNote": "用户页面上的样子。保存设置后发布更改。",
-        "close": "关闭",
-        "tools": {
-          "undo": "撤销",
-          "redo": "重做",
-          "bold": "粗体",
-          "italic": "斜体",
-          "underline": "下划线",
-          "strike": "删除线",
-          "subscript": "下标",
-          "superscript": "上标",
-          "clear": "清除格式",
-          "textColor": "文字颜色",
-          "highlight": "高亮",
-          "alignLeft": "左对齐",
-          "alignCenter": "居中",
-          "alignRight": "右对齐",
-          "alignJustify": "两端对齐",
-          "bulletList": "项目符号列表",
-          "numberList": "编号列表",
-          "outdent": "减少缩进",
-          "indent": "增加缩进",
-          "quote": "引用",
-          "link": "链接",
-          "unlink": "移除链接",
-          "image": "图片",
-          "table": "表格",
-          "hr": "分隔线",
-          "box": "方框",
-          "button": "按钮",
-          "emoji": "表情",
-          "symbol": "特殊字符",
-          "ltr": "从左到右",
-          "rtl": "从右到左",
-          "templates": "模板",
-          "blockStyle": "区块样式",
-          "faq": "问答项",
-          "find": "查找和替换",
-          "clean": "清理代码",
-          "copy": "复制 HTML",
-          "download": "下载 .html",
-          "open": "打开 HTML 文件",
-          "lineHeight": "行高",
-          "tableTools": "表格工具",
-          "rowAbove": "在上方插入行",
-          "rowBelow": "在下方插入行",
-          "colBefore": "在前面插入列",
-          "colAfter": "在后面插入列",
-          "rowDelete": "删除行",
-          "colDelete": "删除列",
-          "tableDelete": "删除表格"
-        },
-        "fonts": {
-          "default": "默认字体"
-        },
-        "blocks": {
-          "p": "段落",
-          "h": "标题 {n}",
-          "pre": "代码块",
-          "quote": "引用"
-        },
-        "path": "元素路径",
-        "cleaned": "清理完成：移除了 {n} 项",
-        "copied": "已复制 HTML",
-        "copyFailed": "此处不允许复制",
-        "opened": "已打开 {name}",
-        "sampleQuestion": "你的问题？",
-        "sampleAnswer": "答案。",
-        "find": {
-          "find": "查找",
-          "replace": "替换为",
-          "matchCase": "区分大小写",
-          "matches": "找到 {n} 处",
-          "next": "下一个",
-          "replaceAll": "全部替换",
-          "replaced": "已替换 {n} 处"
-        },
-        "templates": {
-          "title": "模板",
-          "note": "现成的设计：选一个，然后编辑文字。",
-          "insert": "插入",
-          "replace": "全部替换",
-          "names": {
-            "hero": "支持横幅",
-            "contacts": "联系方式列表",
-            "announcement": "公告",
-            "alerts": "状态消息",
-            "faq": "常见问题",
-            "columns": "两栏",
-            "plan": "套餐卡片",
-            "hours": "支持时间",
-            "social": "社交按钮",
-            "steps": "快速开始"
-          }
-        },
-        "style": {
-          "noTarget": "请先把光标放进一个区块",
-          "parent": "父级",
-          "background": "背景",
-          "none": "无",
-          "color": "颜色",
-          "gradient": "渐变",
-          "angle": "角度",
-          "textColor": "文字颜色",
-          "padding": "内边距",
-          "margin": "下方间距",
-          "radius": "圆角",
-          "border": "边框",
-          "solid": "实线",
-          "dashed": "虚线",
-          "dotted": "点线",
-          "shadow": "阴影",
-          "shadow_none": "无",
-          "shadow_soft": "柔和",
-          "shadow_strong": "强烈",
-          "shadow_glow": "光晕",
-          "fullWidth": "全宽",
-          "reset": "清除样式"
-        },
-        "boxParts": "标题和按钮",
-        "showTitle": "显示标题",
-        "showMore": "显示按钮",
-        "titleText": "标题",
-        "moreText": "按钮文字",
-        "defaultText": "默认：{text}",
-        "moreLink": "打开“支持网站”设置中的链接"
-      }
+      "title": "设置"
     },
     "tags": {
       "addTag": "标签",
@@ -2658,8 +2658,8 @@
         "crossGroups": "置顶用户始终在其他用户之上：置顶或取消置顶即可在两组之间移动。",
         "crossOwners": "按管理员分组时，用户只能在该管理员的用户之间移动。",
         "drag": "拖动以移动此用户",
-        "dragOff": "取消列排序后即可移动用户",
         "dragHandle": "拖动以移动此用户",
+        "dragOff": "取消列排序后即可移动用户",
         "pin": "置顶",
         "unpin": "取消置顶"
       },
@@ -2948,13 +2948,9 @@
       "description": "品牌文字。此框的文本将显示在用户页面的支持部分。你可以使用 HTML 标签",
       "label": "📢 支持部分文本"
     },
-    "branding_support_title": {
-      "description": "显示在支持文本上方的标题。留空：“Support”。",
-      "label": "支持框标题"
-    },
-    "branding_support_title_show": {
-      "description": "",
-      "label": "显示支持框标题"
+    "branding_site": {
+      "description": "将在用户页面的支持部分显示的链接。\n您还可以将您的 Telegram Channel 或 Telegram PV 放在这里。",
+      "label": "🆔 支持链接（既出现在品牌标题上，也出现在用户页面的支持部分）"
     },
     "branding_support_more": {
       "description": "打开“支持网站”链接。留空：“View More”。",
@@ -2964,9 +2960,13 @@
       "description": "",
       "label": "显示“View More”按钮"
     },
-    "branding_site": {
-      "description": "将在用户页面的支持部分显示的链接。\n您还可以将您的 Telegram Channel 或 Telegram PV 放在这里。",
-      "label": "🆔 支持链接（既出现在品牌标题上，也出现在用户页面的支持部分）"
+    "branding_support_title": {
+      "description": "显示在支持文本上方的标题。留空：“Support”。",
+      "label": "支持框标题"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "显示支持框标题"
     },
     "branding_title": {
       "description": "输入要在用户页面上显示的自定义标题。 （在 yser 的欢迎文字之前）",
@@ -2986,6 +2986,10 @@
       "hiddify_core": "Hiddify Core (singbox)",
       "label": "🎛️ 通用代理核心",
       "xray": "Xray"
+    },
+    "config_tester_disabled": {
+      "description": "",
+      "label": ""
     },
     "core_type": {
       "description": "☢️ XRay：是一个完整的核心\n<br>\n📦 Singbox：由 SagerNet 开发。也是一个不错的核心",
@@ -3757,11 +3761,11 @@
       "description": "据多位人士透露，VMess 导致该系统被政府检测到。所以不推荐",
       "label": "🟣 VMess"
     },
+    "warp-https-domain-for-warp-site": "用于 WARP 站点路由的 HTTPS 域名",
     "warp": {
       "description": "Warp 是一种在出站流量中隐藏服务器 IP 的工具。这意味着如果用户访问网站，则暴露的是 Warp IP，而不是我们的服务器 IP。\n<br>\n例如，如果您在 Google 上遇到验证码问题，则可能会通过这种方式修复。",
       "label": "WARP"
     },
-    "warp-https-domain-for-warp-site": "用于 WARP 站点路由的 HTTPS 域名",
     "warp_enable": {
       "description": "WARP 通过隐藏服务器 IP 帮助您绕过 Google、Spotify 和 Netflix 限制",
       "label": "启用 WARP+"

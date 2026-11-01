@@ -784,13 +784,6 @@
       "yes": "Sim"
     },
     "dashboard": {
-      "tip": {
-        "dailyAverage": "Média diária",
-        "last30Days": "Últimos 30 dias",
-        "last7Days": "Últimos 7 dias",
-        "previous30Days": "30 dias anteriores",
-        "previous7Days": "7 dias anteriores"
-      },
       "allNodes": "Todos os nós",
       "available": "Disponível",
       "averageHint": "Média de usuários online por dia, só nos dias em que alguém esteve online.",
@@ -866,6 +859,13 @@
       "subtitle": "Tráfego, usuários e saúde do servidor num relance",
       "swap": "Swap",
       "thisServer": "Este servidor",
+      "tip": {
+        "dailyAverage": "Média diária",
+        "last30Days": "Últimos 30 dias",
+        "last7Days": "Últimos 7 dias",
+        "previous30Days": "30 dias anteriores",
+        "previous7Days": "7 dias anteriores"
+      },
       "title": "Painel",
       "today": "Hoje",
       "todayOnline": "Online hoje",
@@ -915,50 +915,6 @@
         "frontingHint": "Domain fronting: as configs mostram este nome em vez do domínio",
         "resolveIp": "IP"
       },
-      "certError": {
-        "badName": {
-          "lead": "“{domain}” não é um nome para o qual se possa emitir um certificado (por exemplo, não tem ponto), por isso a Let's Encrypt e a ZeroSSL recusam-no.",
-          "step1": "Edite este domínio e escreva o nome completo, por ex. sub.example.com.",
-          "step2": "Se não for usado, apague-o no menu ⋮.",
-          "title": "Não é um nome de domínio real"
-        },
-        "caDown": {
-          "lead": "A Let's Encrypt ou a ZeroSSL estava ocupada ou inacessível agora; “{domain}” não tem nenhum problema.",
-          "step1": "Aguarde alguns minutos e clique em Tentar novamente; o painel também tenta de novo sozinho.",
-          "step2": "Se continuar a falhar, verifique se este servidor consegue abrir ligações HTTPS para a internet.",
-          "title": "A autoridade de certificação não respondeu"
-        },
-        "caa": {
-          "lead": "O DNS de “{domain}” tem um registo CAA que não permite a Let's Encrypt nem a ZeroSSL.",
-          "step1": "No seu fornecedor de DNS, adicione um registo CAA que permita letsencrypt.org, ou remova os registos CAA.",
-          "step2": "Aguarde alguns minutos e clique em Tentar novamente.",
-          "title": "Um registo CAA bloqueia o certificado"
-        },
-        "details": "Detalhes técnicos",
-        "howToFix": "Como corrigir",
-        "showLess": "Mostrar menos",
-        "showMore": "Mostrar mais",
-        "dns": {
-          "lead": "A autoridade de certificação procurou “{domain}” e não encontrou endereço, ou encontrou um que não é este servidor.",
-          "step1": "No seu fornecedor de DNS, adicione um registo A (IPv4) ou AAAA (IPv6) para este nome com o IP deste servidor.",
-          "step2": "Aguarde alguns minutos para a alteração se propagar e clique em Tentar novamente.",
-          "step3": "Se houver uma CDN como a Cloudflare à frente, defina o tipo deste domínio como CDN.",
-          "title": "O domínio não aponta para este servidor"
-        },
-        "other": {
-          "lead": "A autoridade de certificação recusou o pedido para “{domain}”; os detalhes técnicos abaixo dizem porquê.",
-          "step1": "Verifique se o domínio aponta para o IP deste servidor.",
-          "step2": "Verifique se a porta 80 está aberta para a internet.",
-          "step3": "Depois clique em Tentar novamente; se ainda falhar, envie os detalhes técnicos ao suporte Hiddify.",
-          "title": "Não foi possível emitir o certificado"
-        },
-        "port80": {
-          "lead": "A autoridade de certificação não conseguiu chegar a este servidor pela porta 80 para verificar “{domain}”.",
-          "step1": "Abra a porta 80 (TCP) na firewall do servidor e na do seu fornecedor de cloud.",
-          "step2": "Depois clique em Tentar novamente.",
-          "title": "A porta 80 não está acessível"
-        }
-      },
       "cert": {
         "failed": "Não foi possível obter um certificado",
         "failedHint": "Um certificado autoassinado é usado até que um real possa ser emitido.",
@@ -979,6 +935,50 @@
           "port80": "A porta 80 deve estar acessível pela internet."
         },
         "waiting": "Obtendo um certificado…"
+      },
+      "certError": {
+        "badName": {
+          "lead": "“{domain}” não é um nome para o qual se possa emitir um certificado (por exemplo, não tem ponto), por isso a Let's Encrypt e a ZeroSSL recusam-no.",
+          "step1": "Edite este domínio e escreva o nome completo, por ex. sub.example.com.",
+          "step2": "Se não for usado, apague-o no menu ⋮.",
+          "title": "Não é um nome de domínio real"
+        },
+        "caDown": {
+          "lead": "A Let's Encrypt ou a ZeroSSL estava ocupada ou inacessível agora; “{domain}” não tem nenhum problema.",
+          "step1": "Aguarde alguns minutos e clique em Tentar novamente; o painel também tenta de novo sozinho.",
+          "step2": "Se continuar a falhar, verifique se este servidor consegue abrir ligações HTTPS para a internet.",
+          "title": "A autoridade de certificação não respondeu"
+        },
+        "caa": {
+          "lead": "O DNS de “{domain}” tem um registo CAA que não permite a Let's Encrypt nem a ZeroSSL.",
+          "step1": "No seu fornecedor de DNS, adicione um registo CAA que permita letsencrypt.org, ou remova os registos CAA.",
+          "step2": "Aguarde alguns minutos e clique em Tentar novamente.",
+          "title": "Um registo CAA bloqueia o certificado"
+        },
+        "details": "Detalhes técnicos",
+        "dns": {
+          "lead": "A autoridade de certificação procurou “{domain}” e não encontrou endereço, ou encontrou um que não é este servidor.",
+          "step1": "No seu fornecedor de DNS, adicione um registo A (IPv4) ou AAAA (IPv6) para este nome com o IP deste servidor.",
+          "step2": "Aguarde alguns minutos para a alteração se propagar e clique em Tentar novamente.",
+          "step3": "Se houver uma CDN como a Cloudflare à frente, defina o tipo deste domínio como CDN.",
+          "title": "O domínio não aponta para este servidor"
+        },
+        "howToFix": "Como corrigir",
+        "other": {
+          "lead": "A autoridade de certificação recusou o pedido para “{domain}”; os detalhes técnicos abaixo dizem porquê.",
+          "step1": "Verifique se o domínio aponta para o IP deste servidor.",
+          "step2": "Verifique se a porta 80 está aberta para a internet.",
+          "step3": "Depois clique em Tentar novamente; se ainda falhar, envie os detalhes técnicos ao suporte Hiddify.",
+          "title": "Não foi possível emitir o certificado"
+        },
+        "port80": {
+          "lead": "A autoridade de certificação não conseguiu chegar a este servidor pela porta 80 para verificar “{domain}”.",
+          "step1": "Abra a porta 80 (TCP) na firewall do servidor e na do seu fornecedor de cloud.",
+          "step2": "Depois clique em Tentar novamente.",
+          "title": "A porta 80 não está acessível"
+        },
+        "showLess": "Mostrar menos",
+        "showMore": "Mostrar mais"
       },
       "copyDomain": "Copiar domínio",
       "deleteMessage": "As configs dele deixam de funcionar para todos os usuários. Pelo menos um domínio deve permanecer.",
@@ -1123,6 +1123,33 @@
       "renewCert": "Renovar certificado",
       "saved": "{name} salvo",
       "search": "Pesquisar domínio ou nome",
+      "show": {
+        "all": "Todos os domínios",
+        "allHint": "Os usuários veem as configs de todos os domínios, inclusive os adicionados depois.",
+        "clear": "Limpar",
+        "clearSearch": "Limpar busca",
+        "empty": "Ainda não há outros domínios.",
+        "filter": {
+          "all": "Todos",
+          "cdn": "CDN",
+          "direct": "Certificado real",
+          "fake": "Fake e Reality",
+          "selected": "Selecionados"
+        },
+        "group": {
+          "cdn": "CDN",
+          "direct": "Certificado real",
+          "fake": "Fake TLS e Reality"
+        },
+        "noMatch": "Nenhum domínio encontrado",
+        "node": "Nó",
+        "noneTicked": "Nada marcado: os usuários ainda veem todos os domínios.",
+        "pickHint": "Os usuários veem apenas os domínios marcados.",
+        "search": "Buscar domínio, nome ou nó",
+        "selected": "{n} de {total} selecionados",
+        "thisServer": "Este servidor",
+        "tickServer": "Marcar todos os domínios deste servidor"
+      },
       "stats": {
         "all": "domínios",
         "attention": "precisam de certificado",
@@ -1130,7 +1157,6 @@
         "valid": "certificados OK"
       },
       "subtitle": "Os endereços aos quais os usuários se conectam, como cada um chega a este servidor e seus certificados",
-      "title": "Domínios",
       "tip": {
         "autoRenew": "Renovação automática",
         "certificate": "Certificado",
@@ -1143,6 +1169,7 @@
         "on": "Ligado",
         "sni": "Nome mostrado (SNI)"
       },
+      "title": "Domínios",
       "tls": {
         "decoy": "TLS isca",
         "decoyHint": "Domínios TLS Fake e Reality não precisam de certificado próprio.",
@@ -1228,33 +1255,6 @@
         "title": "Adicionar um domínio",
         "tlsQ": "Qual TLS?",
         "unlikely": "O DNS não corresponde"
-      },
-      "show": {
-        "all": "Todos os domínios",
-        "allHint": "Os usuários veem as configs de todos os domínios, inclusive os adicionados depois.",
-        "pickHint": "Os usuários veem apenas os domínios marcados.",
-        "search": "Buscar domínio, nome ou nó",
-        "clearSearch": "Limpar busca",
-        "filter": {
-          "all": "Todos",
-          "fake": "Fake e Reality",
-          "cdn": "CDN",
-          "direct": "Certificado real",
-          "selected": "Selecionados"
-        },
-        "group": {
-          "fake": "Fake TLS e Reality",
-          "cdn": "CDN",
-          "direct": "Certificado real"
-        },
-        "selected": "{n} de {total} selecionados",
-        "noneTicked": "Nada marcado: os usuários ainda veem todos os domínios.",
-        "clear": "Limpar",
-        "thisServer": "Este servidor",
-        "tickServer": "Marcar todos os domínios deste servidor",
-        "noMatch": "Nenhum domínio encontrado",
-        "empty": "Ainda não há outros domínios.",
-        "node": "Nó"
       }
     },
     "donation": {
@@ -1340,9 +1340,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… ou seu nome de usuário"
     },
     "menu": {
-      "close": "Fechar menu",
-      "open": "Abrir menu",
       "baseConfigs": "Configs base",
+      "close": "Fechar menu",
       "customProxies": "Proxies",
       "dashboard": "Painel",
       "group": {
@@ -1352,6 +1351,7 @@
       },
       "myAccount": "Minha conta",
       "nodeHome": "Nó",
+      "open": "Abrir menu",
       "outbounds": "Outbounds",
       "protocols": "Protocolos",
       "proxyEditor": "Editor de proxy",
@@ -1370,14 +1370,6 @@
       "titleNamed": "Nó: {name}"
     },
     "nodes": {
-      "os": {
-        "arch": "Arquitetura",
-        "kernel": "Kernel",
-        "system": "Sistema",
-        "title": "Sistema operativo",
-        "unknown": "O nó não indicou que sistema operativo usa (não está acessível agora, ou o painel é de uma versão mais antiga).",
-        "version": "Versão"
-      },
       "add": {
         "connecting": "Conectando ao nó… isso pode levar até um minuto.",
         "linkHint": "Parece com https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
@@ -1396,9 +1388,70 @@
       },
       "addNode": "Adicionar nó",
       "addTileText": "Conecte outro servidor Hiddify e gerencie-o daqui.",
+      "checkAgain": "Verificar de novo",
       "checkConnection": "Verificar conexão",
       "checking": "Verificando…",
       "connection": "Conexão",
+      "contact": {
+        "auth": {
+          "fix": "Remova este nó aqui (botão da lixeira) e adicione-o de novo com \"Adicionar nó\" e o link de administrador do nó.",
+          "title": "O nó não reconhece este painel",
+          "why": "O nó respondeu, mas recusou a chave deste painel. Este painel não é mais o painel principal dele: o nó foi reinstalado, restaurado de um backup ou ligado a outro painel principal. Ele ainda pode enviar seus próprios relatórios para cá, por isso pode aparecer Online."
+        },
+        "dns": {
+          "fix": "Verifique se o registro DNS do domínio aponta para o servidor do nó. Se o endereço do nó mudou, remova o nó aqui e adicione-o de novo com o novo link.",
+          "title": "O domínio do nó não foi encontrado",
+          "why": "O domínio no endereço do nó não aponta para nenhum IP: expirou, o registro DNS foi removido ou alterado, ou o DNS deste servidor falha."
+        },
+        "gateway": {
+          "fix": "Aguarde um minuto e verifique de novo. Se continuar, reinicie os serviços no servidor do nó e garanta que a CDN aponte para o IP atual do nó.",
+          "title": "A CDN não alcançou o nó",
+          "why": "O endereço do nó passa por uma CDN ou proxy (por exemplo Cloudflare), e ela não alcançou o painel do nó: ele está reiniciando ou parado."
+        },
+        "hint": "por quê e como resolver",
+        "liveTitle": "Gráficos ao vivo indisponíveis",
+        "no_url": {
+          "fix": "Remova o nó aqui e adicione-o de novo com \"Adicionar nó\" e o link de administrador do nó.",
+          "title": "Este painel não tem o endereço do nó",
+          "why": "O nó nunca informou a este painel como alcançá-lo, então este painel não consegue consultá-lo."
+        },
+        "not_found": {
+          "fix": "Atualize o nó para a mesma versão deste painel. Se o link de administrador mudou, remova o nó aqui e adicione-o de novo com o novo link.",
+          "title": "O painel do nó não está mais neste endereço",
+          "why": "O nó respondeu, mas não há um painel Hiddify neste endereço: o caminho de administração ou o domínio mudou, ou ele usa uma versão muito antiga."
+        },
+        "not_panel": {
+          "fix": "Abra o nó com \"Abrir\" e veja se o painel abre. Se o endereço do nó mudou, remova o nó aqui e adicione-o de novo com o link certo.",
+          "title": "Outra coisa respondeu no endereço do nó",
+          "why": "A resposta não veio de um painel Hiddify: outro site, uma página de erro da CDN ou um filtro de rede respondeu no lugar."
+        },
+        "refused": {
+          "fix": "No servidor do nó, reinicie os serviços (página Ações do painel do nó ou reinicie o servidor) e garanta que a porta 443 esteja aberta; depois verifique de novo.",
+          "title": "O nó recusou a conexão",
+          "why": "Este servidor chegou ao endereço do nó, mas nada aceitou a conexão: os serviços web do nó estão parados ou um firewall a rejeita."
+        },
+        "server_error": {
+          "fix": "Abra o painel do nó e veja o log na página Ações, ou reinicie os serviços por lá, e verifique de novo.",
+          "title": "O painel do nó teve um erro",
+          "why": "O painel do nó respondeu, mas com um erro interno: algo no nó falhou ao responder."
+        },
+        "syncTitle": "Detalhes de sincronização indisponíveis",
+        "timeout": {
+          "fix": "Verifique se o servidor do nó está ligado e se o painel abre com \"Abrir\". Se abrir, garanta que o firewall do nó libere este servidor na porta 443 e verifique de novo.",
+          "title": "O nó não respondeu a tempo",
+          "why": "O servidor do nó não respondeu em alguns segundos: pode estar desligado, sobrecarregado ou reiniciando, ou um firewall descarta o tráfego entre os dois servidores."
+        },
+        "tls": {
+          "fix": "No painel do nó, verifique o certificado do domínio na página Domínios (um domínio novo recebe um em poucos minutos) e verifique de novo.",
+          "title": "Falha na conexão segura com o nó",
+          "why": "O nó respondeu, mas o certificado HTTPS não é válido para este endereço: expirou, ainda não foi emitido ou é de outro nome."
+        },
+        "unknown": {
+          "fix": "Verifique de novo em um minuto. Se continuar, copie os detalhes técnicos e envie ao suporte.",
+          "title": "Não foi possível verificar o nó",
+          "why": "Algo inesperado deu errado ao consultar o nó."
+        }
+      },
       "differentVersion": "O nó executa {node}, este painel executa {panel}. Mantenha-os na mesma versão.",
       "empty": {
         "cta": "Adicione seu primeiro nó",
@@ -1445,7 +1498,19 @@
       },
       "moreInfo": "Mais informações",
       "neverSeen": "Nunca",
+      "notice": {
+        "title": "O nó \"{name}\" está inacessível",
+        "where": "Mais na página Nós: passe o mouse sobre \"Inacessível\"."
+      },
       "openAdmin": "Abrir",
+      "os": {
+        "arch": "Arquitetura",
+        "kernel": "Kernel",
+        "system": "Sistema",
+        "title": "Sistema operativo",
+        "unknown": "O nó não indicou que sistema operativo usa (não está acessível agora, ou o painel é de uma versão mais antiga).",
+        "version": "Versão"
+      },
       "pingDialog": {
         "avg": "média",
         "button": "Ping",
@@ -1483,72 +1548,7 @@
       "syncNow": "Sincronizar agora",
       "synced": "{name} sincronizado",
       "title": "Nós",
-      "unreachable": "Inacessível",
-      "checkAgain": "Verificar de novo",
-      "contact": {
-        "hint": "por quê e como resolver",
-        "liveTitle": "Gráficos ao vivo indisponíveis",
-        "syncTitle": "Detalhes de sincronização indisponíveis",
-        "auth": {
-          "title": "O nó não reconhece este painel",
-          "why": "O nó respondeu, mas recusou a chave deste painel. Este painel não é mais o painel principal dele: o nó foi reinstalado, restaurado de um backup ou ligado a outro painel principal. Ele ainda pode enviar seus próprios relatórios para cá, por isso pode aparecer Online.",
-          "fix": "Remova este nó aqui (botão da lixeira) e adicione-o de novo com \"Adicionar nó\" e o link de administrador do nó."
-        },
-        "not_found": {
-          "title": "O painel do nó não está mais neste endereço",
-          "why": "O nó respondeu, mas não há um painel Hiddify neste endereço: o caminho de administração ou o domínio mudou, ou ele usa uma versão muito antiga.",
-          "fix": "Atualize o nó para a mesma versão deste painel. Se o link de administrador mudou, remova o nó aqui e adicione-o de novo com o novo link."
-        },
-        "timeout": {
-          "title": "O nó não respondeu a tempo",
-          "why": "O servidor do nó não respondeu em alguns segundos: pode estar desligado, sobrecarregado ou reiniciando, ou um firewall descarta o tráfego entre os dois servidores.",
-          "fix": "Verifique se o servidor do nó está ligado e se o painel abre com \"Abrir\". Se abrir, garanta que o firewall do nó libere este servidor na porta 443 e verifique de novo."
-        },
-        "refused": {
-          "title": "O nó recusou a conexão",
-          "why": "Este servidor chegou ao endereço do nó, mas nada aceitou a conexão: os serviços web do nó estão parados ou um firewall a rejeita.",
-          "fix": "No servidor do nó, reinicie os serviços (página Ações do painel do nó ou reinicie o servidor) e garanta que a porta 443 esteja aberta; depois verifique de novo."
-        },
-        "dns": {
-          "title": "O domínio do nó não foi encontrado",
-          "why": "O domínio no endereço do nó não aponta para nenhum IP: expirou, o registro DNS foi removido ou alterado, ou o DNS deste servidor falha.",
-          "fix": "Verifique se o registro DNS do domínio aponta para o servidor do nó. Se o endereço do nó mudou, remova o nó aqui e adicione-o de novo com o novo link."
-        },
-        "tls": {
-          "title": "Falha na conexão segura com o nó",
-          "why": "O nó respondeu, mas o certificado HTTPS não é válido para este endereço: expirou, ainda não foi emitido ou é de outro nome.",
-          "fix": "No painel do nó, verifique o certificado do domínio na página Domínios (um domínio novo recebe um em poucos minutos) e verifique de novo."
-        },
-        "gateway": {
-          "title": "A CDN não alcançou o nó",
-          "why": "O endereço do nó passa por uma CDN ou proxy (por exemplo Cloudflare), e ela não alcançou o painel do nó: ele está reiniciando ou parado.",
-          "fix": "Aguarde um minuto e verifique de novo. Se continuar, reinicie os serviços no servidor do nó e garanta que a CDN aponte para o IP atual do nó."
-        },
-        "not_panel": {
-          "title": "Outra coisa respondeu no endereço do nó",
-          "why": "A resposta não veio de um painel Hiddify: outro site, uma página de erro da CDN ou um filtro de rede respondeu no lugar.",
-          "fix": "Abra o nó com \"Abrir\" e veja se o painel abre. Se o endereço do nó mudou, remova o nó aqui e adicione-o de novo com o link certo."
-        },
-        "server_error": {
-          "title": "O painel do nó teve um erro",
-          "why": "O painel do nó respondeu, mas com um erro interno: algo no nó falhou ao responder.",
-          "fix": "Abra o painel do nó e veja o log na página Ações, ou reinicie os serviços por lá, e verifique de novo."
-        },
-        "no_url": {
-          "title": "Este painel não tem o endereço do nó",
-          "why": "O nó nunca informou a este painel como alcançá-lo, então este painel não consegue consultá-lo.",
-          "fix": "Remova o nó aqui e adicione-o de novo com \"Adicionar nó\" e o link de administrador do nó."
-        },
-        "unknown": {
-          "title": "Não foi possível verificar o nó",
-          "why": "Algo inesperado deu errado ao consultar o nó.",
-          "fix": "Verifique de novo em um minuto. Se continuar, copie os detalhes técnicos e envie ao suporte."
-        }
-      },
-      "notice": {
-        "title": "O nó \"{name}\" está inacessível",
-        "where": "Mais na página Nós: passe o mouse sobre \"Inacessível\"."
-      }
+      "unreachable": "Inacessível"
     },
     "notifications": {
       "dismiss": "Dispensar",
@@ -2108,6 +2108,10 @@
       "unsaved": "{count} alteração não salva | {count} alterações não salvas"
     },
     "settings": {
+      "adminPathChanged": "O caminho de administração mudou. Depois de aplicar as configs, o painel de administração estará em",
+      "advancedBadge": "Avançado",
+      "categories": "Categorias de configurações",
+      "changed": "Alterado",
       "dns": {
         "custom": "Personalizado",
         "customHelp": "Até quatro endereços IP (IPv4 ou IPv6), separados por vírgulas. O servidor também os usa para o seu próprio DNS.",
@@ -2122,12 +2126,176 @@
         "invalid": "Introduza de um a quatro endereços IP separados por vírgulas, ex.: 1.1.1.1, 1.0.0.1",
         "placeholder": "Escolha um servidor DNS"
       },
-      "adminPathChanged": "O caminho de administração mudou. Depois de aplicar as configs, o painel de administração estará em",
-      "advancedBadge": "Avançado",
-      "categories": "Categorias de configurações",
-      "changed": "Alterado",
       "fixErrors": "Corrija os campos destacados.",
       "hiddenCount": "{count} configuração avançada oculta | {count} configurações avançadas ocultas",
+      "htmlEditor": {
+        "alt": "Texto alternativo",
+        "apply": "Aplicar",
+        "blockFormat": "Formato do parágrafo",
+        "blocks": {
+          "h": "Título {n}",
+          "p": "Parágrafo",
+          "pre": "Bloco de código",
+          "quote": "Citação"
+        },
+        "boxMore": "Ver mais",
+        "boxParts": "Título e botão",
+        "boxTitle": "Suporte",
+        "buttonText": "Texto do botão",
+        "cancel": "Cancelar",
+        "cleaned": "Limpeza concluída: {n} removido(s)",
+        "close": "Fechar",
+        "copied": "HTML copiado",
+        "copyFailed": "Copiar não é permitido aqui",
+        "customColor": "Cor personalizada",
+        "defaultText": "Padrão: {text}",
+        "editButton": "Editor HTML",
+        "find": {
+          "find": "Localizar",
+          "matchCase": "Diferenciar maiúsculas",
+          "matches": "{n} encontrado(s)",
+          "next": "Próximo",
+          "replace": "Substituir por",
+          "replaceAll": "Substituir tudo",
+          "replaced": "{n} substituído(s)"
+        },
+        "font": "Fonte",
+        "fonts": {
+          "default": "Fonte padrão"
+        },
+        "formatCode": "Formatar código",
+        "full": "Completo",
+        "imageUrl": "Endereço da imagem (URL)",
+        "insert": "Inserir",
+        "linkText": "Texto",
+        "linkTextHint": "Vazio: o texto selecionado ou o link",
+        "lite": "Simples",
+        "loadingSource": "Carregando o editor de código…",
+        "moreLink": "Abre o link da configuração \"Site de suporte\"",
+        "moreText": "Texto do botão",
+        "newTab": "Abrir em nova aba",
+        "ok": "OK",
+        "opened": "{name} aberto",
+        "path": "Caminho do elemento",
+        "placeholder": "Escreva o texto que os usuários veem na caixa de suporte…",
+        "preview": "Pré-visualização",
+        "previewNote": "Como aparece na página dos usuários. As alterações são publicadas ao salvar as configurações.",
+        "previewTitle": "Pré-visualização da caixa de suporte",
+        "sampleAnswer": "A resposta.",
+        "sampleButton": "Fale conosco",
+        "sampleQuestion": "Sua pergunta?",
+        "sampleText": "Seu texto",
+        "saveHint": "O texto aplicado é publicado ao salvar as configurações",
+        "showMore": "Mostrar o botão",
+        "showTitle": "Mostrar o título",
+        "size": "Tamanho",
+        "source": "Código",
+        "sourceFailed": "Não foi possível carregar o editor de código",
+        "sourceHint": "As ferramentas de formatação estão na pré-visualização",
+        "style": {
+          "angle": "Ângulo",
+          "background": "Fundo",
+          "border": "Borda",
+          "color": "Cor",
+          "dashed": "Tracejada",
+          "dotted": "Pontilhada",
+          "fullWidth": "Largura total",
+          "gradient": "Gradiente",
+          "margin": "Espaço abaixo",
+          "noTarget": "Coloque o cursor em um bloco primeiro",
+          "none": "Nenhum",
+          "padding": "Espaçamento interno",
+          "parent": "Pai",
+          "radius": "Cantos",
+          "reset": "Remover estilos",
+          "shadow": "Sombra",
+          "shadow_glow": "Brilho",
+          "shadow_none": "Nenhuma",
+          "shadow_soft": "Suave",
+          "shadow_strong": "Forte",
+          "solid": "Sólida",
+          "textColor": "Cor do texto"
+        },
+        "templates": {
+          "insert": "Inserir",
+          "names": {
+            "alerts": "Mensagens de status",
+            "announcement": "Aviso",
+            "columns": "Duas colunas",
+            "contacts": "Lista de contatos",
+            "faq": "Perguntas frequentes",
+            "hero": "Banner de suporte",
+            "hours": "Horário de suporte",
+            "plan": "Cartão de plano",
+            "social": "Botões sociais",
+            "steps": "Primeiros passos"
+          },
+          "note": "Designs prontos: escolha um e depois edite o texto.",
+          "replace": "Substituir tudo",
+          "title": "Modelos"
+        },
+        "title": "Editor HTML",
+        "titleText": "Título",
+        "tooLong": "Longo demais para esta configuração",
+        "toolbar": "Ferramentas de formatação",
+        "tools": {
+          "alignCenter": "Centralizar",
+          "alignJustify": "Justificar",
+          "alignLeft": "Alinhar à esquerda",
+          "alignRight": "Alinhar à direita",
+          "blockStyle": "Estilo do bloco",
+          "bold": "Negrito",
+          "box": "Caixa",
+          "bulletList": "Lista com marcadores",
+          "button": "Botão",
+          "clean": "Limpar código",
+          "clear": "Limpar formatação",
+          "colAfter": "Inserir coluna depois",
+          "colBefore": "Inserir coluna antes",
+          "colDelete": "Excluir coluna",
+          "copy": "Copiar HTML",
+          "download": "Baixar .html",
+          "emoji": "Emoji",
+          "faq": "Pergunta e resposta",
+          "find": "Localizar e substituir",
+          "highlight": "Destacar",
+          "hr": "Divisor",
+          "image": "Imagem",
+          "indent": "Aumentar recuo",
+          "italic": "Itálico",
+          "lineHeight": "Altura da linha",
+          "link": "Link",
+          "ltr": "Da esquerda para a direita",
+          "numberList": "Lista numerada",
+          "open": "Abrir arquivo HTML",
+          "outdent": "Diminuir recuo",
+          "quote": "Citação",
+          "redo": "Refazer",
+          "rowAbove": "Inserir linha acima",
+          "rowBelow": "Inserir linha abaixo",
+          "rowDelete": "Excluir linha",
+          "rtl": "Da direita para a esquerda",
+          "strike": "Tachado",
+          "subscript": "Subscrito",
+          "superscript": "Sobrescrito",
+          "symbol": "Caractere especial",
+          "table": "Tabela",
+          "tableDelete": "Excluir tabela",
+          "tableTools": "Ferramentas de tabela",
+          "templates": "Modelos",
+          "textColor": "Cor do texto",
+          "underline": "Sublinhado",
+          "undo": "Desfazer",
+          "unlink": "Remover link"
+        },
+        "toolset": "Conjunto de ferramentas",
+        "unapplied": "Ainda não aplicado",
+        "url": "Link (URL)",
+        "view": "Modo do editor",
+        "viewButton": "Ver",
+        "width": "Largura (px)",
+        "wrap": "Quebrar linhas"
+      },
       "invalid": "Este valor não é válido.",
       "leaveUnsaved": "Você tem alterações não salvas. Sair mesmo assim?",
       "noMatch": "Nenhuma configuração corresponde à sua pesquisa.",
@@ -2144,175 +2312,7 @@
       "subtitle": "Tudo sobre como este painel funciona. Configurações comuns primeiro; as avançadas sob demanda.",
       "telegramConnected": "Bot do Telegram conectado: @{username}",
       "telegramFailed": "Não foi possível conectar o bot do Telegram",
-      "title": "Configurações",
-      "htmlEditor": {
-        "title": "Editor HTML",
-        "viewButton": "Ver",
-        "editButton": "Editor HTML",
-        "preview": "Pré-visualização",
-        "source": "Código",
-        "lite": "Simples",
-        "full": "Completo",
-        "view": "Modo do editor",
-        "toolset": "Conjunto de ferramentas",
-        "toolbar": "Ferramentas de formatação",
-        "boxTitle": "Suporte",
-        "boxMore": "Ver mais",
-        "placeholder": "Escreva o texto que os usuários veem na caixa de suporte…",
-        "loadingSource": "Carregando o editor de código…",
-        "sourceFailed": "Não foi possível carregar o editor de código",
-        "blockFormat": "Formato do parágrafo",
-        "font": "Fonte",
-        "size": "Tamanho",
-        "formatCode": "Formatar código",
-        "wrap": "Quebrar linhas",
-        "sourceHint": "As ferramentas de formatação estão na pré-visualização",
-        "tooLong": "Longo demais para esta configuração",
-        "unapplied": "Ainda não aplicado",
-        "saveHint": "O texto aplicado é publicado ao salvar as configurações",
-        "cancel": "Cancelar",
-        "apply": "Aplicar",
-        "ok": "OK",
-        "customColor": "Cor personalizada",
-        "url": "Link (URL)",
-        "linkText": "Texto",
-        "linkTextHint": "Vazio: o texto selecionado ou o link",
-        "newTab": "Abrir em nova aba",
-        "insert": "Inserir",
-        "imageUrl": "Endereço da imagem (URL)",
-        "alt": "Texto alternativo",
-        "width": "Largura (px)",
-        "buttonText": "Texto do botão",
-        "sampleText": "Seu texto",
-        "sampleButton": "Fale conosco",
-        "previewTitle": "Pré-visualização da caixa de suporte",
-        "previewNote": "Como aparece na página dos usuários. As alterações são publicadas ao salvar as configurações.",
-        "close": "Fechar",
-        "tools": {
-          "undo": "Desfazer",
-          "redo": "Refazer",
-          "bold": "Negrito",
-          "italic": "Itálico",
-          "underline": "Sublinhado",
-          "strike": "Tachado",
-          "subscript": "Subscrito",
-          "superscript": "Sobrescrito",
-          "clear": "Limpar formatação",
-          "textColor": "Cor do texto",
-          "highlight": "Destacar",
-          "alignLeft": "Alinhar à esquerda",
-          "alignCenter": "Centralizar",
-          "alignRight": "Alinhar à direita",
-          "alignJustify": "Justificar",
-          "bulletList": "Lista com marcadores",
-          "numberList": "Lista numerada",
-          "outdent": "Diminuir recuo",
-          "indent": "Aumentar recuo",
-          "quote": "Citação",
-          "link": "Link",
-          "unlink": "Remover link",
-          "image": "Imagem",
-          "table": "Tabela",
-          "hr": "Divisor",
-          "box": "Caixa",
-          "button": "Botão",
-          "emoji": "Emoji",
-          "symbol": "Caractere especial",
-          "ltr": "Da esquerda para a direita",
-          "rtl": "Da direita para a esquerda",
-          "templates": "Modelos",
-          "blockStyle": "Estilo do bloco",
-          "faq": "Pergunta e resposta",
-          "find": "Localizar e substituir",
-          "clean": "Limpar código",
-          "copy": "Copiar HTML",
-          "download": "Baixar .html",
-          "open": "Abrir arquivo HTML",
-          "lineHeight": "Altura da linha",
-          "tableTools": "Ferramentas de tabela",
-          "rowAbove": "Inserir linha acima",
-          "rowBelow": "Inserir linha abaixo",
-          "colBefore": "Inserir coluna antes",
-          "colAfter": "Inserir coluna depois",
-          "rowDelete": "Excluir linha",
-          "colDelete": "Excluir coluna",
-          "tableDelete": "Excluir tabela"
-        },
-        "fonts": {
-          "default": "Fonte padrão"
-        },
-        "blocks": {
-          "p": "Parágrafo",
-          "h": "Título {n}",
-          "pre": "Bloco de código",
-          "quote": "Citação"
-        },
-        "path": "Caminho do elemento",
-        "cleaned": "Limpeza concluída: {n} removido(s)",
-        "copied": "HTML copiado",
-        "copyFailed": "Copiar não é permitido aqui",
-        "opened": "{name} aberto",
-        "sampleQuestion": "Sua pergunta?",
-        "sampleAnswer": "A resposta.",
-        "find": {
-          "find": "Localizar",
-          "replace": "Substituir por",
-          "matchCase": "Diferenciar maiúsculas",
-          "matches": "{n} encontrado(s)",
-          "next": "Próximo",
-          "replaceAll": "Substituir tudo",
-          "replaced": "{n} substituído(s)"
-        },
-        "templates": {
-          "title": "Modelos",
-          "note": "Designs prontos: escolha um e depois edite o texto.",
-          "insert": "Inserir",
-          "replace": "Substituir tudo",
-          "names": {
-            "hero": "Banner de suporte",
-            "contacts": "Lista de contatos",
-            "announcement": "Aviso",
-            "alerts": "Mensagens de status",
-            "faq": "Perguntas frequentes",
-            "columns": "Duas colunas",
-            "plan": "Cartão de plano",
-            "hours": "Horário de suporte",
-            "social": "Botões sociais",
-            "steps": "Primeiros passos"
-          }
-        },
-        "style": {
-          "noTarget": "Coloque o cursor em um bloco primeiro",
-          "parent": "Pai",
-          "background": "Fundo",
-          "none": "Nenhum",
-          "color": "Cor",
-          "gradient": "Gradiente",
-          "angle": "Ângulo",
-          "textColor": "Cor do texto",
-          "padding": "Espaçamento interno",
-          "margin": "Espaço abaixo",
-          "radius": "Cantos",
-          "border": "Borda",
-          "solid": "Sólida",
-          "dashed": "Tracejada",
-          "dotted": "Pontilhada",
-          "shadow": "Sombra",
-          "shadow_none": "Nenhuma",
-          "shadow_soft": "Suave",
-          "shadow_strong": "Forte",
-          "shadow_glow": "Brilho",
-          "fullWidth": "Largura total",
-          "reset": "Remover estilos"
-        },
-        "boxParts": "Título e botão",
-        "showTitle": "Mostrar o título",
-        "showMore": "Mostrar o botão",
-        "titleText": "Título",
-        "moreText": "Texto do botão",
-        "defaultText": "Padrão: {text}",
-        "moreLink": "Abre o link da configuração \"Site de suporte\""
-      }
+      "title": "Configurações"
     },
     "tags": {
       "addTag": "Tag",
@@ -2658,8 +2658,8 @@
         "crossGroups": "Usuários fixados ficam acima dos outros: fixe ou desafixe para mover entre os grupos.",
         "crossOwners": "Agrupado por admin: um usuário só se move entre os usuários desse admin.",
         "drag": "Arraste para mover este usuário",
-        "dragOff": "Remova a ordenação da coluna para mover usuários",
         "dragHandle": "Arraste para mover este usuário",
+        "dragOff": "Remova a ordenação da coluna para mover usuários",
         "pin": "Fixar no topo",
         "unpin": "Desafixar"
       },
@@ -2948,13 +2948,9 @@
       "description": "Texto de marca. o texto desta caixa será mostrado na seção de suporte da página do usuário. você pode usar tags HTML",
       "label": "📢 Texto da seção de suporte"
     },
-    "branding_support_title": {
-      "description": "O título acima do texto de suporte. Vazio: \"Support\".",
-      "label": "Título da caixa de suporte"
-    },
-    "branding_support_title_show": {
-      "description": "",
-      "label": "Mostrar o título da caixa de suporte"
+    "branding_site": {
+      "description": "O link a ser mostrado na seção de suporte da página do usuário.\nVocê também pode colocar seu Canal Telegram ou Telegram PV aqui.",
+      "label": "🆔 Link de suporte (vai tanto no título da marca quanto na seção de suporte da página do usuário)"
     },
     "branding_support_more": {
       "description": "Abre o link do site de suporte. Vazio: \"View More\".",
@@ -2964,9 +2960,13 @@
       "description": "",
       "label": "Mostrar o botão \"View More\""
     },
-    "branding_site": {
-      "description": "O link a ser mostrado na seção de suporte da página do usuário.\nVocê também pode colocar seu Canal Telegram ou Telegram PV aqui.",
-      "label": "🆔 Link de suporte (vai tanto no título da marca quanto na seção de suporte da página do usuário)"
+    "branding_support_title": {
+      "description": "O título acima do texto de suporte. Vazio: \"Support\".",
+      "label": "Título da caixa de suporte"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "Mostrar o título da caixa de suporte"
     },
     "branding_title": {
       "description": "Insira um título personalizado para ser exibido na página do usuário. (antes do texto de boas-vindas de yser)",
@@ -2986,6 +2986,10 @@
       "hiddify_core": "Hiddify Core (singbox)",
       "label": "🎛️ Core de proxy comum",
       "xray": "Xray"
+    },
+    "config_tester_disabled": {
+      "description": "",
+      "label": ""
     },
     "core_type": {
       "description": "☢️ XRay: é um núcleo completo\n<br>\n📦 Singbox: Desenvolvido por SagerNet. Também é um bom núcleo",
@@ -3757,11 +3761,11 @@
       "description": "É relatado por várias pessoas que o VMess faz com que o sistema seja detectado pelo governo. Então não é recomendado",
       "label": "🟣 VMess"
     },
+    "warp-https-domain-for-warp-site": "config.warp-https-domínio-para-site-warp",
     "warp": {
       "description": "Warp é uma ferramenta que esconde o IP do seu servidor dos sites onde os usuários navegam \n<br>\nPor exemplo, se você tiver um problema com o Google, ele pode ser corrigido.",
       "label": "WARP"
     },
-    "warp-https-domain-for-warp-site": "config.warp-https-domínio-para-site-warp",
     "warp_enable": {
       "description": "O WARP ajuda você a contornar o bloqueio do Google, Spotify e Netflix .",
       "label": "Habilitar WARP+"

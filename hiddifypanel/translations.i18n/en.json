@@ -1174,6 +1174,37 @@
       "original": "Original config",
       "parsed": "Parsed by hiddify-core",
       "pasted": "Pasted contents",
+      "proxies": {
+        "allGood": "No config of this panel is down in this test.",
+        "alreadyOff": "Already off",
+        "checking": "Checking this panel's configs…",
+        "confirmMessage": "They leave users' subscriptions after Apply. You can turn them back on any time with Restore at the top of this page.",
+        "confirmTitle": "Turn off {n} config? | Turn off {n} configs?",
+        "disable": "Turn off {n} config | Turn off {n} configs",
+        "disabledDone": "{n} config turned off | {n} configs turned off",
+        "down": "Down",
+        "failedOf": "{failed} of {tested} failed",
+        "hideList": "Hide",
+        "hidePartial": "Hide partly down configs",
+        "noneDown": "No config of this panel is completely down. {n} is partly down: some of its links failed, others work. | No config of this panel is completely down. {n} are partly down: some of their links failed, others work.",
+        "notOurs": "None of the tested configs belong to this panel.",
+        "partial": "Partly down",
+        "partialHint": "Some domains still work: it stays on unless you pick it.",
+        "restore": "Restore all",
+        "restoreConfirmMessage": "They are turned back on and return to users' subscriptions after Apply.",
+        "restoreConfirmTitle": "Restore {n} config? | Restore {n} configs?",
+        "restoreHint": "Since {date}. Nothing comes back by itself: restore them when you want.",
+        "restoreTitle": "{n} config turned off by the config tester | {n} configs turned off by the config tester",
+        "restored": "{n} config turned back on | {n} configs turned back on",
+        "showList": "Show",
+        "showPartial": "Show {n} partly down config (pick to turn off) | Show {n} partly down configs (pick to turn off)",
+        "showUp": "Show {n} working config | Show {n} working configs",
+        "stillOff": "Still off, their protocol is off in Settings: {names}",
+        "subtitle": "From this test: a config is down when every one of its tested links failed.",
+        "title": "This panel's configs",
+        "up": "Working",
+        "workingOf": "{ok} of {tested} working"
+      },
       "raw": "Original (as received)",
       "reconnecting": "Reconnecting… the test goes on in the panel.",
       "repeats": "Tests per config",
@@ -1242,47 +1273,9 @@
       "url": "Subscription link",
       "urlPlaceholder": "Paste a link, or pick a user…",
       "waiting": "Waiting",
-      "workers": "Parallel workers",
-      "proxies": {
-        "title": "This panel's configs",
-        "subtitle": "From this test: a config is down when every one of its tested links failed.",
-        "down": "Down",
-        "partial": "Partly down",
-        "up": "Working",
-        "checking": "Checking this panel's configs…",
-        "notOurs": "None of the tested configs belong to this panel.",
-        "allGood": "No config of this panel is down in this test.",
-        "failedOf": "{failed} of {tested} failed",
-        "workingOf": "{ok} of {tested} working",
-        "alreadyOff": "Already off",
-        "partialHint": "Some domains still work: it stays on unless you pick it.",
-        "showUp": "Show {n} working config | Show {n} working configs",
-        "disable": "Turn off {n} config | Turn off {n} configs",
-        "confirmTitle": "Turn off {n} config? | Turn off {n} configs?",
-        "confirmMessage": "They leave users' subscriptions after Apply. You can turn them back on any time with Restore at the top of this page.",
-        "disabledDone": "{n} config turned off | {n} configs turned off",
-        "restoreTitle": "{n} config turned off by the config tester | {n} configs turned off by the config tester",
-        "restoreHint": "Since {date}. Nothing comes back by itself: restore them when you want.",
-        "showList": "Show",
-        "hideList": "Hide",
-        "restore": "Restore all",
-        "restoreConfirmTitle": "Restore {n} config? | Restore {n} configs?",
-        "restoreConfirmMessage": "They are turned back on and return to users' subscriptions after Apply.",
-        "restored": "{n} config turned back on | {n} configs turned back on",
-        "stillOff": "Still off, their protocol is off in Settings: {names}",
-        "showPartial": "Show {n} partly down config (pick to turn off) | Show {n} partly down configs (pick to turn off)",
-        "hidePartial": "Hide partly down configs",
-        "noneDown": "No config of this panel is completely down. {n} is partly down: some of its links failed, others work. | No config of this panel is completely down. {n} are partly down: some of their links failed, others work."
-      }
+      "workers": "Parallel workers"
     },
     "dashboard": {
-      "tip": {
-        "dailyAverage": "Daily average",
-        "last30Days": "Last 30 days",
-        "last7Days": "Last 7 days",
-        "previous30Days": "Previous 30 days",
-        "previous7Days": "Previous 7 days"
-      },
       "allNodes": "All nodes",
       "available": "Available",
       "averageHint": "Average users online per day, counting only days when someone was online.",
@@ -1416,6 +1409,13 @@
       "subtitle": "Traffic, users and server health at a glance",
       "swap": "Swap",
       "thisServer": "This server",
+      "tip": {
+        "dailyAverage": "Daily average",
+        "last30Days": "Last 30 days",
+        "last7Days": "Last 7 days",
+        "previous30Days": "Previous 30 days",
+        "previous7Days": "Previous 7 days"
+      },
       "title": "Dashboard",
       "today": "Today",
       "todayOnline": "Today online",
@@ -1465,50 +1465,6 @@
         "frontingHint": "Domain fronting: configs show this name instead of the domain",
         "resolveIp": "IP"
       },
-      "certError": {
-        "badName": {
-          "lead": "“{domain}” is not a name a certificate can be issued for (for example it has no dot), so Let's Encrypt and ZeroSSL refuse it.",
-          "step1": "Edit this domain and enter its full name, e.g. sub.example.com.",
-          "step2": "If it is not used, delete it from the ⋮ menu.",
-          "title": "Not a real domain name"
-        },
-        "caDown": {
-          "lead": "Let's Encrypt or ZeroSSL was busy or unreachable just now; nothing is wrong with “{domain}”.",
-          "step1": "Wait a few minutes and press Try again; the panel also retries by itself.",
-          "step2": "If it keeps failing, check that this server can open HTTPS connections to the internet.",
-          "title": "The certificate authority did not answer"
-        },
-        "caa": {
-          "lead": "The DNS of “{domain}” has a CAA record that does not allow Let's Encrypt or ZeroSSL.",
-          "step1": "At your DNS provider, add a CAA record that allows letsencrypt.org, or remove the CAA records.",
-          "step2": "Wait a few minutes, then press Try again.",
-          "title": "A CAA record blocks the certificate"
-        },
-        "details": "Technical details",
-        "howToFix": "How to fix it",
-        "showLess": "Show less",
-        "showMore": "Show more",
-        "dns": {
-          "lead": "The certificate authority looked up “{domain}” and found no address for it, or an address that is not this server.",
-          "step1": "At your DNS provider, add an A record (IPv4) or an AAAA record (IPv6) for this name with this server's IP.",
-          "step2": "Wait a few minutes for the change to spread, then press Try again.",
-          "step3": "If a CDN such as Cloudflare is in front of it, set this domain's type to CDN.",
-          "title": "The domain does not point to this server"
-        },
-        "other": {
-          "lead": "The certificate authority refused the request for “{domain}”; the technical details below say why.",
-          "step1": "Check that the domain points to this server's IP.",
-          "step2": "Check that port 80 is open to the internet.",
-          "step3": "Then press Try again; if it still fails, send the technical details to Hiddify support.",
-          "title": "The certificate could not be issued"
-        },
-        "port80": {
-          "lead": "The certificate authority could not reach this server on port 80 to check “{domain}”.",
-          "step1": "Open port 80 (TCP) in the server's firewall and in your cloud provider's firewall.",
-          "step2": "Then press Try again.",
-          "title": "Port 80 is not reachable"
-        }
-      },
       "cert": {
         "failed": "Could not get a certificate",
         "failedHint": "A self-signed certificate is used until a real one can be issued.",
@@ -1531,6 +1487,50 @@
           "port80": "Port 80 must be reachable from the internet."
         },
         "waiting": "Getting a certificate…"
+      },
+      "certError": {
+        "badName": {
+          "lead": "“{domain}” is not a name a certificate can be issued for (for example it has no dot), so Let's Encrypt and ZeroSSL refuse it.",
+          "step1": "Edit this domain and enter its full name, e.g. sub.example.com.",
+          "step2": "If it is not used, delete it from the ⋮ menu.",
+          "title": "Not a real domain name"
+        },
+        "caDown": {
+          "lead": "Let's Encrypt or ZeroSSL was busy or unreachable just now; nothing is wrong with “{domain}”.",
+          "step1": "Wait a few minutes and press Try again; the panel also retries by itself.",
+          "step2": "If it keeps failing, check that this server can open HTTPS connections to the internet.",
+          "title": "The certificate authority did not answer"
+        },
+        "caa": {
+          "lead": "The DNS of “{domain}” has a CAA record that does not allow Let's Encrypt or ZeroSSL.",
+          "step1": "At your DNS provider, add a CAA record that allows letsencrypt.org, or remove the CAA records.",
+          "step2": "Wait a few minutes, then press Try again.",
+          "title": "A CAA record blocks the certificate"
+        },
+        "details": "Technical details",
+        "dns": {
+          "lead": "The certificate authority looked up “{domain}” and found no address for it, or an address that is not this server.",
+          "step1": "At your DNS provider, add an A record (IPv4) or an AAAA record (IPv6) for this name with this server's IP.",
+          "step2": "Wait a few minutes for the change to spread, then press Try again.",
+          "step3": "If a CDN such as Cloudflare is in front of it, set this domain's type to CDN.",
+          "title": "The domain does not point to this server"
+        },
+        "howToFix": "How to fix it",
+        "other": {
+          "lead": "The certificate authority refused the request for “{domain}”; the technical details below say why.",
+          "step1": "Check that the domain points to this server's IP.",
+          "step2": "Check that port 80 is open to the internet.",
+          "step3": "Then press Try again; if it still fails, send the technical details to Hiddify support.",
+          "title": "The certificate could not be issued"
+        },
+        "port80": {
+          "lead": "The certificate authority could not reach this server on port 80 to check “{domain}”.",
+          "step1": "Open port 80 (TCP) in the server's firewall and in your cloud provider's firewall.",
+          "step2": "Then press Try again.",
+          "title": "Port 80 is not reachable"
+        },
+        "showLess": "Show less",
+        "showMore": "Show more"
       },
       "copyDomain": "Copy domain",
       "deleteMessage": "Its configs stop working for every user. At least one domain must stay.",
@@ -1704,6 +1704,33 @@
       "renewCert": "Renew certificate",
       "saved": "{name} saved",
       "search": "Search domain or name",
+      "show": {
+        "all": "All domains",
+        "allHint": "Users see every domain's configs, including ones added later.",
+        "clear": "Clear",
+        "clearSearch": "Clear search",
+        "empty": "No other domains yet.",
+        "filter": {
+          "all": "All",
+          "cdn": "CDN",
+          "direct": "Real certificate",
+          "fake": "Fake & Reality",
+          "selected": "Selected"
+        },
+        "group": {
+          "cdn": "CDN",
+          "direct": "Real certificate",
+          "fake": "Fake TLS & Reality"
+        },
+        "noMatch": "No domain matches",
+        "node": "Node",
+        "noneTicked": "Nothing ticked yet: users still see all domains.",
+        "pickHint": "Users see only the domains you tick.",
+        "search": "Search domain, name or node",
+        "selected": "{n} of {total} selected",
+        "thisServer": "This server",
+        "tickServer": "Tick all domains of this server"
+      },
       "stats": {
         "all": "domains",
         "attention": "need a certificate",
@@ -1711,7 +1738,6 @@
         "valid": "certificates OK"
       },
       "subtitle": "The addresses users connect to, how each one reaches this server, and their certificates",
-      "title": "Domains",
       "tip": {
         "autoRenew": "Auto-renew",
         "certificate": "Certificate",
@@ -1724,6 +1750,7 @@
         "on": "On",
         "sni": "Name shown (SNI)"
       },
+      "title": "Domains",
       "tls": {
         "decoy": "Decoy TLS",
         "decoyHint": "Fake and Reality TLS domains do not need a certificate of their own.",
@@ -1850,33 +1877,6 @@
         "title": "Add a domain",
         "tlsQ": "Which TLS?",
         "unlikely": "DNS does not match"
-      },
-      "show": {
-        "all": "All domains",
-        "allHint": "Users see every domain's configs, including ones added later.",
-        "pickHint": "Users see only the domains you tick.",
-        "search": "Search domain, name or node",
-        "clearSearch": "Clear search",
-        "filter": {
-          "all": "All",
-          "fake": "Fake & Reality",
-          "cdn": "CDN",
-          "direct": "Real certificate",
-          "selected": "Selected"
-        },
-        "group": {
-          "fake": "Fake TLS & Reality",
-          "cdn": "CDN",
-          "direct": "Real certificate"
-        },
-        "selected": "{n} of {total} selected",
-        "noneTicked": "Nothing ticked yet: users still see all domains.",
-        "clear": "Clear",
-        "thisServer": "This server",
-        "tickServer": "Tick all domains of this server",
-        "noMatch": "No domain matches",
-        "empty": "No other domains yet.",
-        "node": "Node"
       }
     },
     "donation": {
@@ -1962,10 +1962,9 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… or your username"
     },
     "menu": {
-      "close": "Close menu",
-      "open": "Open menu",
       "baseConfigs": "Base Configs",
       "cleanIp": "Scanner",
+      "close": "Close menu",
       "configTester": "Config Tester",
       "customProxies": "Proxies",
       "dashboard": "Dashboard",
@@ -1976,6 +1975,7 @@
       },
       "myAccount": "My account",
       "nodeHome": "Node",
+      "open": "Open menu",
       "outbounds": "Outbounds",
       "protocols": "Protocols",
       "proxyEditor": "Proxy Editor",
@@ -2006,6 +2006,11 @@
       "connectedSince": "Connected since",
       "cursor": "Feed cursor",
       "deleted": "{n} deleted",
+      "dir": {
+        "check": "Compared",
+        "in": "From the main panel",
+        "out": "To the main panel"
+      },
       "disabled": "Disabled",
       "disconnected": "Disconnected",
       "enabled": "{n} enabled",
@@ -2032,14 +2037,32 @@
       "noLog": "No syncs noted yet.",
       "noWs": "No state yet",
       "nodeId": "This node's unique id",
+      "noun": {
+        "admins": "1 admin | {n} admins",
+        "domains": "1 domain | {n} domains",
+        "outbounds": "1 outbound | {n} outbounds",
+        "users": "1 user | {n} users"
+      },
+      "on": "Enabled",
       "parentId": "Parent unique id",
       "parentUrl": "Parent address",
       "rawData": "Data ({size})",
+      "rawPartial": "Only the beginning of the data is kept.",
       "rawTruncated": "only its beginning is kept",
       "rawUnreadable": "The data could not be read.",
       "recent": "Recent syncs",
       "refresh": "Refresh",
       "rows": "{n} rows",
+      "say": {
+        "checked": "{what} compared with the main panel",
+        "failed": "{what}: the exchange failed",
+        "received": "{what} received from the main panel",
+        "receivedHttp": "{what} received by the backup sync",
+        "receivedRegister": "{what} received when the node connected",
+        "sent": "{what} sent to the main panel",
+        "usageNone": "No new traffic to send",
+        "usageSent": "Traffic of {what} sent to the main panel"
+      },
       "search": "Search",
       "showData": "Show what was exchanged",
       "showList": "Show the list",
@@ -2050,6 +2073,13 @@
         "usage_report": "usage report",
         "ws_feed": "live feed"
       },
+      "sourceHint": {
+        "http_sync": "The backup sync over HTTP, used when the live connection is down",
+        "inventory": "A regular check that the node has the same list as the main panel",
+        "register": "Everything the node got when it connected to the main panel",
+        "usage_report": "The node sends its users' traffic every few minutes",
+        "ws_feed": "Changes the main panel pushes at once over the live connection"
+      },
       "state": {
         "error": "The last try failed",
         "fresh": "Synced in the last 10 minutes",
@@ -2057,61 +2087,23 @@
         "stale": "Last sync is older than 10 minutes"
       },
       "subtitle": "Read only, for debugging: what this node holds and when each kind of data last came from the parent.",
+      "tech": "Technical data",
+      "techHidden": "secret values hidden",
       "title": "Sync with the parent",
       "took": "{ms} ms",
+      "unknownName": "Not on this node",
       "usersOnNode": "Users on this node",
       "websocket": "Live connection",
-      "noun": {
-        "users": "1 user | {n} users",
-        "admins": "1 admin | {n} admins",
-        "outbounds": "1 outbound | {n} outbounds",
-        "domains": "1 domain | {n} domains"
-      },
-      "say": {
-        "received": "{what} received from the main panel",
-        "receivedRegister": "{what} received when the node connected",
-        "receivedHttp": "{what} received by the backup sync",
-        "sent": "{what} sent to the main panel",
-        "checked": "{what} compared with the main panel",
-        "usageSent": "Traffic of {what} sent to the main panel",
-        "usageNone": "No new traffic to send",
-        "failed": "{what}: the exchange failed"
-      },
       "x": {
         "matched": "everything matched",
         "missing": "{n} missing, asked again | {n} missing, asked again",
-        "removed": "{n} removed here | {n} removed here",
-        "more": "more are on the way",
         "missingSent": "{n} user the main panel lacked was sent | {n} users the main panel lacked were sent",
+        "more": "more are on the way",
+        "removed": "{n} removed here | {n} removed here",
         "usersBack": "the main panel sent back 1 user's totals | the main panel sent back {n} users' totals"
-      },
-      "dir": {
-        "in": "From the main panel",
-        "out": "To the main panel",
-        "check": "Compared"
-      },
-      "sourceHint": {
-        "ws_feed": "Changes the main panel pushes at once over the live connection",
-        "inventory": "A regular check that the node has the same list as the main panel",
-        "register": "Everything the node got when it connected to the main panel",
-        "http_sync": "The backup sync over HTTP, used when the live connection is down",
-        "usage_report": "The node sends its users' traffic every few minutes"
-      },
-      "on": "Enabled",
-      "unknownName": "Not on this node",
-      "tech": "Technical data",
-      "techHidden": "secret values hidden",
-      "rawPartial": "Only the beginning of the data is kept."
+      }
     },
     "nodes": {
-      "os": {
-        "arch": "Architecture",
-        "kernel": "Kernel",
-        "system": "System",
-        "title": "Operating system",
-        "unknown": "The node did not say which operating system it runs (it is not reachable now, or its panel is of an older version).",
-        "version": "Version"
-      },
       "add": {
         "connecting": "Connecting to the node… this can take up to a minute.",
         "linkHint": "Looks like https://node.example.com/…/xxxxxxxx-xxxx-…/admin/",
@@ -2130,9 +2122,70 @@
       },
       "addNode": "Add node",
       "addTileText": "Connect another Hiddify server and manage it from here.",
+      "checkAgain": "Check again",
       "checkConnection": "Check connection",
       "checking": "Checking…",
       "connection": "Connection",
+      "contact": {
+        "auth": {
+          "fix": "Remove this node here (the trash button), then add it again with \"Add node\" and the node's admin link.",
+          "title": "The node does not recognise this panel",
+          "why": "The node answered, but refused this panel's key. It no longer has this panel as its main panel: it was reinstalled, restored from a backup, or linked to another main panel. It can still send its own reports here, which is why it can show Online."
+        },
+        "dns": {
+          "fix": "Check that the domain's DNS record points to the node's server. If the node's address changed, remove the node here and add it again with the new link.",
+          "title": "The node's domain cannot be found",
+          "why": "The domain in the node's address does not point to any IP: it expired, its DNS record was removed or changed, or DNS on this server fails."
+        },
+        "gateway": {
+          "fix": "Wait a minute and check again. If it stays like this, restart the services on the node's server and make sure the CDN points to the node's current IP.",
+          "title": "The CDN could not reach the node",
+          "why": "The node's address goes through a CDN or proxy (for example Cloudflare), and it could not reach the node's panel: the panel is restarting or stopped."
+        },
+        "hint": "why, and how to fix it",
+        "liveTitle": "Live charts are not available",
+        "no_url": {
+          "fix": "Remove the node here and add it again with \"Add node\" and the node's admin link.",
+          "title": "This panel has no address for the node",
+          "why": "The node never told this panel where to reach it, so this panel cannot ask it anything."
+        },
+        "not_found": {
+          "fix": "Update the node to the same version as this panel. If its admin link changed, remove the node here and add it again with the new link.",
+          "title": "The node's panel is not at this address any more",
+          "why": "The node answered, but not as a Hiddify panel at this address: its admin path or domain changed, or it runs a much older version."
+        },
+        "not_panel": {
+          "fix": "Open the node with \"Open\" and check that its panel opens. If the node's address changed, remove the node here and add it again with the right link.",
+          "title": "Something else answered at the node's address",
+          "why": "The answer did not come from a Hiddify panel: another website, an error page of a CDN, or a network filter answered instead."
+        },
+        "refused": {
+          "fix": "On the node's server, restart the services (Actions page of the node, or reboot the server) and make sure port 443 is open, then check again.",
+          "title": "The node refused the connection",
+          "why": "This server reached the node's address, but nothing there accepted the connection: the node's web services are stopped, or a firewall rejects it."
+        },
+        "server_error": {
+          "fix": "Open the node's panel and look at its log on the Actions page, or restart its services there, then check again.",
+          "title": "The node's panel had an error",
+          "why": "The node's panel answered, but with an internal error: something on the node failed while answering."
+        },
+        "syncTitle": "Sync details are not available",
+        "timeout": {
+          "fix": "Check that the node's server is on and its panel opens with \"Open\". If it opens, make sure the node's firewall lets this server in on port 443, then check again.",
+          "title": "The node did not answer in time",
+          "why": "The node's server did not answer within a few seconds: it may be off, overloaded or restarting, or a firewall drops the traffic between the two servers."
+        },
+        "tls": {
+          "fix": "On the node, check the certificate of its domain on the Domains page (a new domain gets one within a few minutes), then check again.",
+          "title": "Secure connection to the node failed",
+          "why": "The node answered, but its HTTPS certificate is not valid for this address: it expired, is not issued yet, or belongs to another name."
+        },
+        "unknown": {
+          "fix": "Check again in a minute. If it stays like this, copy the technical details and send them to support.",
+          "title": "The node could not be checked",
+          "why": "Something unexpected went wrong while asking the node."
+        }
+      },
       "differentVersion": "Node runs {node}, this panel runs {panel}. Keep them on the same version.",
       "empty": {
         "cta": "Add your first node",
@@ -2211,7 +2264,19 @@
       },
       "moreInfo": "More information",
       "neverSeen": "Never",
+      "notice": {
+        "title": "Node \"{name}\" is not reachable",
+        "where": "More on the Nodes page: hover over \"Not reachable\"."
+      },
       "openAdmin": "Open",
+      "os": {
+        "arch": "Architecture",
+        "kernel": "Kernel",
+        "system": "System",
+        "title": "Operating system",
+        "unknown": "The node did not say which operating system it runs (it is not reachable now, or its panel is of an older version).",
+        "version": "Version"
+      },
       "pingDialog": {
         "avg": "avg",
         "button": "Ping",
@@ -2252,72 +2317,7 @@
       "syncNow": "Sync now",
       "synced": "{name} synced",
       "title": "Nodes",
-      "unreachable": "Not reachable",
-      "checkAgain": "Check again",
-      "contact": {
-        "hint": "why, and how to fix it",
-        "liveTitle": "Live charts are not available",
-        "syncTitle": "Sync details are not available",
-        "auth": {
-          "title": "The node does not recognise this panel",
-          "why": "The node answered, but refused this panel's key. It no longer has this panel as its main panel: it was reinstalled, restored from a backup, or linked to another main panel. It can still send its own reports here, which is why it can show Online.",
-          "fix": "Remove this node here (the trash button), then add it again with \"Add node\" and the node's admin link."
-        },
-        "not_found": {
-          "title": "The node's panel is not at this address any more",
-          "why": "The node answered, but not as a Hiddify panel at this address: its admin path or domain changed, or it runs a much older version.",
-          "fix": "Update the node to the same version as this panel. If its admin link changed, remove the node here and add it again with the new link."
-        },
-        "timeout": {
-          "title": "The node did not answer in time",
-          "why": "The node's server did not answer within a few seconds: it may be off, overloaded or restarting, or a firewall drops the traffic between the two servers.",
-          "fix": "Check that the node's server is on and its panel opens with \"Open\". If it opens, make sure the node's firewall lets this server in on port 443, then check again."
-        },
-        "refused": {
-          "title": "The node refused the connection",
-          "why": "This server reached the node's address, but nothing there accepted the connection: the node's web services are stopped, or a firewall rejects it.",
-          "fix": "On the node's server, restart the services (Actions page of the node, or reboot the server) and make sure port 443 is open, then check again."
-        },
-        "dns": {
-          "title": "The node's domain cannot be found",
-          "why": "The domain in the node's address does not point to any IP: it expired, its DNS record was removed or changed, or DNS on this server fails.",
-          "fix": "Check that the domain's DNS record points to the node's server. If the node's address changed, remove the node here and add it again with the new link."
-        },
-        "tls": {
-          "title": "Secure connection to the node failed",
-          "why": "The node answered, but its HTTPS certificate is not valid for this address: it expired, is not issued yet, or belongs to another name.",
-          "fix": "On the node, check the certificate of its domain on the Domains page (a new domain gets one within a few minutes), then check again."
-        },
-        "gateway": {
-          "title": "The CDN could not reach the node",
-          "why": "The node's address goes through a CDN or proxy (for example Cloudflare), and it could not reach the node's panel: the panel is restarting or stopped.",
-          "fix": "Wait a minute and check again. If it stays like this, restart the services on the node's server and make sure the CDN points to the node's current IP."
-        },
-        "not_panel": {
-          "title": "Something else answered at the node's address",
-          "why": "The answer did not come from a Hiddify panel: another website, an error page of a CDN, or a network filter answered instead.",
-          "fix": "Open the node with \"Open\" and check that its panel opens. If the node's address changed, remove the node here and add it again with the right link."
-        },
-        "server_error": {
-          "title": "The node's panel had an error",
-          "why": "The node's panel answered, but with an internal error: something on the node failed while answering.",
-          "fix": "Open the node's panel and look at its log on the Actions page, or restart its services there, then check again."
-        },
-        "no_url": {
-          "title": "This panel has no address for the node",
-          "why": "The node never told this panel where to reach it, so this panel cannot ask it anything.",
-          "fix": "Remove the node here and add it again with \"Add node\" and the node's admin link."
-        },
-        "unknown": {
-          "title": "The node could not be checked",
-          "why": "Something unexpected went wrong while asking the node.",
-          "fix": "Check again in a minute. If it stays like this, copy the technical details and send them to support."
-        }
-      },
-      "notice": {
-        "title": "Node \"{name}\" is not reachable",
-        "where": "More on the Nodes page: hover over \"Not reachable\"."
-      }
+      "unreachable": "Not reachable"
     },
     "notifications": {
       "dismiss": "Dismiss",
@@ -2926,6 +2926,10 @@
       "unsaved": "{count} unsaved change | {count} unsaved changes"
     },
     "settings": {
+      "adminPathChanged": "The admin path changed. After applying the configs, the admin panel will be at",
+      "advancedBadge": "Advanced",
+      "categories": "Setting categories",
+      "changed": "Changed",
       "dns": {
         "custom": "Custom",
         "customHelp": "Up to four IP addresses (IPv4 or IPv6), separated by commas. The server also uses them for its own DNS.",
@@ -2940,12 +2944,176 @@
         "invalid": "Enter one to four IP addresses separated by commas, e.g. 1.1.1.1, 1.0.0.1",
         "placeholder": "Choose a DNS server"
       },
-      "adminPathChanged": "The admin path changed. After applying the configs, the admin panel will be at",
-      "advancedBadge": "Advanced",
-      "categories": "Setting categories",
-      "changed": "Changed",
       "fixErrors": "Please fix the highlighted fields.",
       "hiddenCount": "{count} advanced setting hidden | {count} advanced settings hidden",
+      "htmlEditor": {
+        "alt": "Alternative text",
+        "apply": "Apply",
+        "blockFormat": "Paragraph format",
+        "blocks": {
+          "h": "Heading {n}",
+          "p": "Paragraph",
+          "pre": "Code block",
+          "quote": "Quote"
+        },
+        "boxMore": "View More",
+        "boxParts": "Title and button",
+        "boxTitle": "Support",
+        "buttonText": "Button text",
+        "cancel": "Cancel",
+        "cleaned": "Clean-up done: {n} removed",
+        "close": "Close",
+        "copied": "HTML copied",
+        "copyFailed": "Copying is not allowed here",
+        "customColor": "Custom colour",
+        "defaultText": "Default: {text}",
+        "editButton": "HTML Editor",
+        "find": {
+          "find": "Find",
+          "matchCase": "Match case",
+          "matches": "{n} found",
+          "next": "Next",
+          "replace": "Replace with",
+          "replaceAll": "Replace all",
+          "replaced": "{n} replaced"
+        },
+        "font": "Font",
+        "fonts": {
+          "default": "Default font"
+        },
+        "formatCode": "Format code",
+        "full": "Full",
+        "imageUrl": "Image address (URL)",
+        "insert": "Insert",
+        "linkText": "Text",
+        "linkTextHint": "Empty: the selected text or the link",
+        "lite": "Lite",
+        "loadingSource": "Loading the code editor…",
+        "moreLink": "Opens the \"Support Website\" setting",
+        "moreText": "Button text",
+        "newTab": "Open in a new tab",
+        "ok": "OK",
+        "opened": "Opened {name}",
+        "path": "Element path",
+        "placeholder": "Write the text users see in the support box…",
+        "preview": "Preview",
+        "previewNote": "As it looks on the users' page. Changes are published when the settings are saved.",
+        "previewTitle": "Support box preview",
+        "sampleAnswer": "The answer.",
+        "sampleButton": "Contact us",
+        "sampleQuestion": "Your question?",
+        "sampleText": "Your text",
+        "saveHint": "Applied text is published when you save the settings",
+        "showMore": "Show the button",
+        "showTitle": "Show the title",
+        "size": "Size",
+        "source": "Source",
+        "sourceFailed": "The code editor could not load",
+        "sourceHint": "The formatting tools are in Preview",
+        "style": {
+          "angle": "Angle",
+          "background": "Background",
+          "border": "Border",
+          "color": "Colour",
+          "dashed": "Dashed",
+          "dotted": "Dotted",
+          "fullWidth": "Full width",
+          "gradient": "Gradient",
+          "margin": "Space below",
+          "noTarget": "Put the caret in a block first",
+          "none": "None",
+          "padding": "Padding",
+          "parent": "Parent",
+          "radius": "Corners",
+          "reset": "Remove styles",
+          "shadow": "Shadow",
+          "shadow_glow": "Glow",
+          "shadow_none": "None",
+          "shadow_soft": "Soft",
+          "shadow_strong": "Strong",
+          "solid": "Solid",
+          "textColor": "Text colour"
+        },
+        "templates": {
+          "insert": "Insert",
+          "names": {
+            "alerts": "Status messages",
+            "announcement": "Announcement",
+            "columns": "Two columns",
+            "contacts": "Contact list",
+            "faq": "FAQ",
+            "hero": "Support banner",
+            "hours": "Support hours",
+            "plan": "Plan card",
+            "social": "Social buttons",
+            "steps": "Getting started"
+          },
+          "note": "Ready-made designs: pick one, then edit its text.",
+          "replace": "Replace all",
+          "title": "Templates"
+        },
+        "title": "HTML Editor",
+        "titleText": "Title",
+        "tooLong": "Too long for this setting",
+        "toolbar": "Formatting tools",
+        "tools": {
+          "alignCenter": "Center",
+          "alignJustify": "Justify",
+          "alignLeft": "Align left",
+          "alignRight": "Align right",
+          "blockStyle": "Block style",
+          "bold": "Bold",
+          "box": "Box",
+          "bulletList": "Bulleted list",
+          "button": "Button",
+          "clean": "Clean up code",
+          "clear": "Clear formatting",
+          "colAfter": "Insert column after",
+          "colBefore": "Insert column before",
+          "colDelete": "Delete column",
+          "copy": "Copy HTML",
+          "download": "Download .html",
+          "emoji": "Emoji",
+          "faq": "FAQ item",
+          "find": "Find & replace",
+          "highlight": "Highlight",
+          "hr": "Divider",
+          "image": "Image",
+          "indent": "Increase indent",
+          "italic": "Italic",
+          "lineHeight": "Line height",
+          "link": "Link",
+          "ltr": "Left to right",
+          "numberList": "Numbered list",
+          "open": "Open an HTML file",
+          "outdent": "Decrease indent",
+          "quote": "Quote",
+          "redo": "Redo",
+          "rowAbove": "Insert row above",
+          "rowBelow": "Insert row below",
+          "rowDelete": "Delete row",
+          "rtl": "Right to left",
+          "strike": "Strikethrough",
+          "subscript": "Subscript",
+          "superscript": "Superscript",
+          "symbol": "Special character",
+          "table": "Table",
+          "tableDelete": "Delete table",
+          "tableTools": "Table tools",
+          "templates": "Templates",
+          "textColor": "Text colour",
+          "underline": "Underline",
+          "undo": "Undo",
+          "unlink": "Remove link"
+        },
+        "toolset": "Tool set",
+        "unapplied": "Not applied yet",
+        "url": "Link (URL)",
+        "view": "Editor view",
+        "viewButton": "View",
+        "width": "Width (px)",
+        "wrap": "Wrap lines"
+      },
       "invalid": "This value is not valid.",
       "leaveUnsaved": "You have unsaved changes. Leave anyway?",
       "noMatch": "No setting matches your search.",
@@ -2962,175 +3130,7 @@
       "subtitle": "Everything about how this panel runs. Common settings first; advanced ones on request.",
       "telegramConnected": "Telegram bot connected: @{username}",
       "telegramFailed": "Telegram bot could not connect",
-      "title": "Settings",
-      "htmlEditor": {
-        "title": "HTML Editor",
-        "viewButton": "View",
-        "editButton": "HTML Editor",
-        "preview": "Preview",
-        "source": "Source",
-        "lite": "Lite",
-        "full": "Full",
-        "view": "Editor view",
-        "toolset": "Tool set",
-        "toolbar": "Formatting tools",
-        "boxTitle": "Support",
-        "boxMore": "View More",
-        "placeholder": "Write the text users see in the support box…",
-        "loadingSource": "Loading the code editor…",
-        "sourceFailed": "The code editor could not load",
-        "blockFormat": "Paragraph format",
-        "font": "Font",
-        "size": "Size",
-        "formatCode": "Format code",
-        "wrap": "Wrap lines",
-        "sourceHint": "The formatting tools are in Preview",
-        "tooLong": "Too long for this setting",
-        "unapplied": "Not applied yet",
-        "saveHint": "Applied text is published when you save the settings",
-        "cancel": "Cancel",
-        "apply": "Apply",
-        "ok": "OK",
-        "customColor": "Custom colour",
-        "url": "Link (URL)",
-        "linkText": "Text",
-        "linkTextHint": "Empty: the selected text or the link",
-        "newTab": "Open in a new tab",
-        "insert": "Insert",
-        "imageUrl": "Image address (URL)",
-        "alt": "Alternative text",
-        "width": "Width (px)",
-        "buttonText": "Button text",
-        "sampleText": "Your text",
-        "sampleButton": "Contact us",
-        "previewTitle": "Support box preview",
-        "previewNote": "As it looks on the users' page. Changes are published when the settings are saved.",
-        "close": "Close",
-        "tools": {
-          "undo": "Undo",
-          "redo": "Redo",
-          "bold": "Bold",
-          "italic": "Italic",
-          "underline": "Underline",
-          "strike": "Strikethrough",
-          "subscript": "Subscript",
-          "superscript": "Superscript",
-          "clear": "Clear formatting",
-          "textColor": "Text colour",
-          "highlight": "Highlight",
-          "alignLeft": "Align left",
-          "alignCenter": "Center",
-          "alignRight": "Align right",
-          "alignJustify": "Justify",
-          "bulletList": "Bulleted list",
-          "numberList": "Numbered list",
-          "outdent": "Decrease indent",
-          "indent": "Increase indent",
-          "quote": "Quote",
-          "link": "Link",
-          "unlink": "Remove link",
-          "image": "Image",
-          "table": "Table",
-          "hr": "Divider",
-          "box": "Box",
-          "button": "Button",
-          "emoji": "Emoji",
-          "symbol": "Special character",
-          "ltr": "Left to right",
-          "rtl": "Right to left",
-          "templates": "Templates",
-          "blockStyle": "Block style",
-          "faq": "FAQ item",
-          "find": "Find & replace",
-          "clean": "Clean up code",
-          "copy": "Copy HTML",
-          "download": "Download .html",
-          "open": "Open an HTML file",
-          "lineHeight": "Line height",
-          "tableTools": "Table tools",
-          "rowAbove": "Insert row above",
-          "rowBelow": "Insert row below",
-          "colBefore": "Insert column before",
-          "colAfter": "Insert column after",
-          "rowDelete": "Delete row",
-          "colDelete": "Delete column",
-          "tableDelete": "Delete table"
-        },
-        "fonts": {
-          "default": "Default font"
-        },
-        "blocks": {
-          "p": "Paragraph",
-          "h": "Heading {n}",
-          "pre": "Code block",
-          "quote": "Quote"
-        },
-        "path": "Element path",
-        "cleaned": "Clean-up done: {n} removed",
-        "copied": "HTML copied",
-        "copyFailed": "Copying is not allowed here",
-        "opened": "Opened {name}",
-        "sampleQuestion": "Your question?",
-        "sampleAnswer": "The answer.",
-        "find": {
-          "find": "Find",
-          "replace": "Replace with",
-          "matchCase": "Match case",
-          "matches": "{n} found",
-          "next": "Next",
-          "replaceAll": "Replace all",
-          "replaced": "{n} replaced"
-        },
-        "templates": {
-          "title": "Templates",
-          "note": "Ready-made designs: pick one, then edit its text.",
-          "insert": "Insert",
-          "replace": "Replace all",
-          "names": {
-            "hero": "Support banner",
-            "contacts": "Contact list",
-            "announcement": "Announcement",
-            "alerts": "Status messages",
-            "faq": "FAQ",
-            "columns": "Two columns",
-            "plan": "Plan card",
-            "hours": "Support hours",
-            "social": "Social buttons",
-            "steps": "Getting started"
-          }
-        },
-        "style": {
-          "noTarget": "Put the caret in a block first",
-          "parent": "Parent",
-          "background": "Background",
-          "none": "None",
-          "color": "Colour",
-          "gradient": "Gradient",
-          "angle": "Angle",
-          "textColor": "Text colour",
-          "padding": "Padding",
-          "margin": "Space below",
-          "radius": "Corners",
-          "border": "Border",
-          "solid": "Solid",
-          "dashed": "Dashed",
-          "dotted": "Dotted",
-          "shadow": "Shadow",
-          "shadow_none": "None",
-          "shadow_soft": "Soft",
-          "shadow_strong": "Strong",
-          "shadow_glow": "Glow",
-          "fullWidth": "Full width",
-          "reset": "Remove styles"
-        },
-        "boxParts": "Title and button",
-        "showTitle": "Show the title",
-        "showMore": "Show the button",
-        "titleText": "Title",
-        "moreText": "Button text",
-        "defaultText": "Default: {text}",
-        "moreLink": "Opens the \"Support Website\" setting"
-      }
+      "title": "Settings"
     },
     "ssh": {
       "add": "New / upload",
@@ -3647,8 +3647,8 @@
         "crossGroups": "Pinned users stay above the others: unpin or pin a user to move it between them.",
         "crossOwners": "Grouped by admin: a user moves only among that admin's users.",
         "drag": "Drag to move this user",
-        "dragOff": "Clear the column sort to move users",
         "dragHandle": "Drag to move this user",
+        "dragOff": "Clear the column sort to move users",
         "pin": "Pin to the top",
         "unpin": "Unpin"
       },
@@ -4129,13 +4129,9 @@
       "description": "Branding Text. this box's text will be shown on support section of User's Page. you can use HTML tags",
       "label": "📢 Support Section Text"
     },
-    "branding_support_title": {
-      "description": "The title above the support text. Empty: \"Support\".",
-      "label": "Support box title"
-    },
-    "branding_support_title_show": {
-      "description": "",
-      "label": "Show the support box title"
+    "branding_site": {
+      "description": "The link to be shown on support section of user's page.\nYou can put also your Telegram Channel or Telegram PV here",
+      "label": "🆔 Support Link (goes both on branding title and also on support section of user page)"
     },
     "branding_support_more": {
       "description": "Opens the Support Website link. Empty: \"View More\".",
@@ -4145,9 +4141,13 @@
       "description": "",
       "label": "Show the \"View More\" button"
     },
-    "branding_site": {
-      "description": "The link to be shown on support section of user's page.\nYou can put also your Telegram Channel or Telegram PV here",
-      "label": "🆔 Support Link (goes both on branding title and also on support section of user page)"
+    "branding_support_title": {
+      "description": "The title above the support text. Empty: \"Support\".",
+      "label": "Support box title"
+    },
+    "branding_support_title_show": {
+      "description": "",
+      "label": "Show the support box title"
     },
     "branding_title": {
       "description": "Enter a customized title to be shown on user page. (Before User's Welcome Text)",
@@ -4167,6 +4167,10 @@
       "hiddify_core": "Hiddify Core (singbox)",
       "label": "🎛️ Common Proxy Core",
       "xray": "Xray"
+    },
+    "config_tester_disabled": {
+      "description": "config.config_tester_disabled.description",
+      "label": "config.config_tester_disabled.label"
     },
     "core_type": {
       "description": "☢️ XRay : Is a Complete Core\n<br>\n📦 Singbox : Developed by SagerNet. It is also a good core",
@@ -4938,11 +4942,11 @@
       "description": "Active VMess Protocol",
       "label": "🟣 VMess"
     },
+    "warp-https-domain-for-warp-site": "HTTPS domain used for WARP site routing",
     "warp": {
       "description": "Warp is a tool that hides your server IP in outbound traffic. It means if the users are visiting a website the Warp IP is exposed instead of our server IP.\n<br>\nFor example, if you have a problem with captcha on Google, it might be fixed this way.",
       "label": "WARP"
     },
-    "warp-https-domain-for-warp-site": "HTTPS domain used for WARP site routing",
     "warp_enable": {
       "description": "WARP helps you bypass Google, Spotify and Netflix restrictions by hiding server IP ",
       "label": "Enables WARP+"
