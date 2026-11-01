@@ -302,11 +302,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
           <span class="node-cell__dot" :style="{ background: data.color }" />
           <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
             <strong>{{ data.title }} <i class="pi pi-external-link" /></strong>
-            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+            <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </a>
           <div v-else class="min-w-0 node-cell__title">
             <strong>{{ data.title }}</strong>
-            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+            <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </template>
@@ -348,11 +348,11 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
           <span class="node-cell__dot" :style="{ background: data.color }" />
           <a v-if="data.panelUrl" :href="data.panelUrl" target="_blank" rel="noopener" class="min-w-0 node-cell__title node-cell__link">
             <strong>{{ data.title }} <i class="pi pi-external-link" /></strong>
-            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+            <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </a>
           <div v-else class="min-w-0 node-cell__title">
             <strong>{{ data.title }}</strong>
-            <p v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</p>
+            <span v-if="data.hostname" class="node-cell__host">{{ data.hostname }}</span>
           </div>
           <Tag v-if="!data.ok" :value="t('dashboard.nodeOffline')" severity="danger" class="node-cell__tag" />
         </div>
@@ -520,8 +520,12 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   margin-inline-end: 0.5rem;
   flex-shrink: 0;
 }
+/* One line: the name, then the machine's host name, small and grey; every row is as tall and the name in its middle */
 .node-cell__title {
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 0.45rem;
   vertical-align: middle;
 }
 .node-cell__link {
@@ -536,13 +540,18 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
   color: var(--p-text-muted-color);
 }
 .node-cell__host {
-  margin: 0.1rem 0 0;
+  margin: 0;
   font-size: 0.7rem;
   font-weight: 400;
   color: var(--p-text-muted-color);
 }
+/* No taller than a line of text: the offline node's row is as tall as the others */
 .node-cell__tag {
   margin-inline-start: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  vertical-align: middle;
 }
 .disk-cell {
   display: inline-flex;
