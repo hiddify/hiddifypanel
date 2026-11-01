@@ -1,0 +1,82 @@
+/* The dashboard charts' hover card (useChartTheme.ts domTooltip), in the look of the KPI tiles' card (StatTile.vue):
+   the hovered point's label on top, one row per series (colour, name at the start, value at the end), totals under a
+   line. */
+.chart-tip {
+    position: absolute;
+    z-index: 5;
+    min-width: 11rem;
+    max-width: 90%;
+    padding: 0.55rem 0.75rem 0.45rem;
+    border-radius: 12px;
+    border: 1px solid var(--p-content-border-color);
+    background: var(--p-content-background);
+    color: var(--p-text-color);
+    box-shadow: 0 18px 40px -16px rgb(15 23 42 / 35%), 0 2px 6px rgb(15 23 42 / 6%);
+    font-size: 0.8rem;
+    line-height: 1.45;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.1s;
+}
+
+.chart-tip__title {
+    margin-bottom: 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--p-text-muted-color);
+}
+
+.chart-tip__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 0.28rem 0;
+}
+
+.chart-tip__row + .chart-tip__row {
+    border-top: 1px solid var(--p-content-border-color);
+}
+
+.chart-tip__name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--p-text-muted-color);
+}
+
+.chart-tip__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    flex: none;
+    border-radius: 50%;
+}
+
+.chart-tip__value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--p-text-color);
+}
+
+/* Totals and extra lines: under a firmer line */
+.chart-tip__row--foot .chart-tip__name {
+    font-weight: 600;
+    color: var(--p-text-color);
+}
+
+.chart-tip__row--foot:not(.chart-tip__row--foot + .chart-tip__row--foot) {
+    margin-top: 0.15rem;
+    border-top: 1px dashed var(--p-content-border-color);
+}
+
+/* The colour themes make --p-content-background see-through glass: a hover card lies over the page's own text, so it
+   gets a solid surface there (the charts' card, the KPI tiles' card, a sparkline's tip) */
+html.theme-caddy :is(.chart-tip, .p-tooltip.kpi-tip .p-tooltip-text, .sparkline-tip) {
+    background: var(--p-surface-0);
+}
+
+html.theme-caddy.app-dark :is(.chart-tip, .p-tooltip.kpi-tip .p-tooltip-text, .sparkline-tip) {
+    background: var(--p-surface-900);
+}
