@@ -31,6 +31,13 @@ def _v193(child_id):
     add_config_if_not_exist(ConfigEnum.config_tester_disabled, "[]", child_id=child_id)
 
 
+def _v192(child_id):
+    """Block BitTorrent (Settings > General, advanced) for real: the row was never created, so the switch was not
+    shown, while Xray always blocked BitTorrent and Hiddify Core never did. On by default, as Xray did.
+    (_v190 and _v191 are taken by open pull requests.)"""
+    add_config_if_not_exist(ConfigEnum.torrent_block, True, child_id=child_id)
+
+
 def _v191(child_id):
     """A server whose public IPv4 was not found at its first setup got the domains "none" and "none.sslip.io"
     (str(None)): no CA issues a certificate for them and no client reaches them, so they go. Only when they are the

@@ -32,7 +32,6 @@ ESSENTIAL_KEYS = frozenset(
         ConfigEnum.country,
         ConfigEnum.auto_update,
         ConfigEnum.firewall,
-        ConfigEnum.torrent_block,
         ConfigEnum.block_iran_sites,
         ConfigEnum.decoy_domain,
         ConfigEnum.telegram_bot_token,
