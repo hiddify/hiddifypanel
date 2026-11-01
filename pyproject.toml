@@ -114,10 +114,8 @@ exclude = ["tests*", ".github", "hiddifypanel.admin_v2*", "hiddifypanel.user_fro
 
 [tool.setuptools.package-data]
 "hiddifypanel" = [
-    "translations/*/LC_MESSAGES/*.mo",
     "translations.i18n/*.json"
 ]
-#"" = ["hiddifypanel/translations/*/LC_MESSAGES/*.mo"]
 
 
 [uv]

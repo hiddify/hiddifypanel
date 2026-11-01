@@ -1,8 +1,6 @@
 import click
-import sys
 import json
 import polib
-import os
 
 
 def loadI18N(json_path):
@@ -43,47 +41,8 @@ def convert_to_nested(data):
     return nested_data
 
 
-def po_to_json(po_file_path, json_file_path):
-    po = polib.pofile(po_file_path)
-    translations = {}
-    translations = loadI18N(json_file_path)
-    for entry in po:
-        translations[entry.msgid] = entry.msgstr
-    translations = convert_to_nested(translations)
-
-    with open(json_file_path, 'w', encoding='utf-8') as json_file:
-        json.dump(translations, json_file, ensure_ascii=False, indent=2)
-
-
-def json_to_po(json_path, po_path):
-    # Load JSON data
-    json_data = loadI18N(json_path)
-    flattened_data = flatten(json_data)
-
-    lang = os.path.basename(json_path).removesuffix(".json")
-    po = polib.POFile(encoding="utf-8")
-    # Full header is required: without charset=UTF-8, gettext defaults to ascii and
-    # crashes on emoji / non-ascii msgstr values when loading messages.mo.
-    po.metadata = {
-        "Project-Id-Version": "hiddifypanel",
-        "Language": lang,
-        "Language-Team": lang,
-        "MIME-Version": "1.0",
-        "Content-Type": "text/plain; charset=UTF-8",
-        "Content-Transfer-Encoding": "8bit",
-        "Plural-Forms": "nplurals=2; plural=(n != 1);",
-    }
-    for key, value in flattened_data.items():
-        if isinstance(value, str) and key.strip():
-            # Skip corrupt/empty msgids that can overwrite the PO header in .mo files.
-            if key == "" or (key.startswith(" ") and "\n" in key):
-                continue
-            entry = polib.POEntry(msgid=key, msgstr=value)
-            po.append(entry)
-    po.save(po_path)
-
-
 def update_json_from_po(json_path, po_path):
+    """Add the msgids of messages.pot (pybabel extract) to a translations.i18n JSON file."""
     po = polib.pofile(po_path)
     translations = flatten(loadI18N(json_path))
     for entry in po:
@@ -100,20 +59,6 @@ def update_json_from_po(json_path, po_path):
 @click.group()
 def main():
     pass
-
-
-@main.command()
-@click.argument('po_file_path', type=click.Path(exists=True))
-@click.argument('json_file_path', type=click.Path())
-def to_json(po_file_path, json_file_path):
-    po_to_json(po_file_path, json_file_path)
-
-
-@main.command()
-@click.argument('json_file_path', type=click.Path(exists=True))
-@click.argument('po_file_path', type=click.Path())
-def to_po(json_file_path, po_file_path):
-    json_to_po(json_file_path, po_file_path)
 
 
 @main.command()

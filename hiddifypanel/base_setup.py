@@ -10,6 +10,7 @@ from sonora.wsgi import grpcWSGI
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # from hiddifypanel.cache import cache
+from hiddifypanel import json_translations
 from hiddifypanel.models import *
 
 
@@ -94,6 +95,7 @@ def init_app(app):
 
     app.jinja_env.globals["get_locale"] = get_locale
     babel = Babel(app, locale_selector=get_locale)
+    json_translations.init_app(babel)
 
     app.config["SESSION_TYPE"] = "redis"
 
