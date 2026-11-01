@@ -135,6 +135,25 @@ def attach_panel_urls(node_stats: list[DashboardNodeStats], account_uuid: str, a
         row.panel_url = f"{base}/{account_uuid}/" if base else hurl_for('flask.node.edit_view', id=row.id)
 
 
+def attach_countries(node_stats: list[DashboardNodeStats]) -> None:
+    """Each node's country from its address, as on the Nodes page (cached a day); this server's from its own public IP."""
+    from hiddifypanel.panel.commercial.restapi.v2.admin.nodes_api import node_country
+
+    remote_ids = [row.id for row in node_stats if row.id != 0 and not is_debug_node(row.id)]
+    hosts = {}
+    if remote_ids:
+        for child in Child.query.filter(Child.id.in_(remote_ids)).all():
+            base = (child.node_base_url or "").strip()
+            hosts[child.id] = base.split("://", 1)[-1].split("/", 1)[0] if base else ""
+    own = ""
+    if any(row.id == 0 or is_debug_node(row.id) for row in node_stats):
+        # The known public addresses, without waiting for the network on a dashboard poll.
+        own = next((str(ip) for ip in hutils.network.get_ips_lazy() if ip.is_global), "")
+    for row in node_stats:
+        host = own if row.id == 0 or is_debug_node(row.id) else hosts.get(row.id, "")
+        row.country = node_country(host) if host else ""
+
+
 def collect_system_stats(child_id: int | None, process_limit: int = 8, debug_nodes: bool = False) -> NodeSystemCollection:
     """Local + every remote node, in parallel.
 
