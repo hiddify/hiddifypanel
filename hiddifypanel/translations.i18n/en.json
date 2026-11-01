@@ -1276,7 +1276,7 @@
         "note": "Tested with {user}'s subscription. A config that fails from the server itself never works for anyone; filtering in Iran is not tested here.",
         "notice": {
           "failed": "{n} of {total} configs do not work from the server.",
-          "where": "Details: Dashboard › Config health."
+          "where": "Details: Dashboard › Config Health."
         },
         "problem": {
           "certificate": {
@@ -1322,7 +1322,7 @@
         "running": "Checking…",
         "subtitle": "Every config, tested from the server every 6 hours",
         "technical": "Technical details",
-        "title": "Config health",
+        "title": "Config Health",
         "working": "{ok} of {total} work"
       },
       "hiddify": "Hiddify",
@@ -1350,7 +1350,7 @@
       "network": "Network",
       "noData": "No data yet",
       "node": "Node",
-      "nodeHealth": "Node health",
+      "nodeHealth": "Node Health",
       "nodeHealthHint": "Live CPU, RAM and disk from each node API",
       "nodeHealthStackedHint": "Stacked CPU, RAM and disk per node",
       "nodeNetworkHint": "Live upload and download per node",
@@ -1393,16 +1393,16 @@
       "upload": "Upload",
       "uploadSinceBoot": "Uptime Upload",
       "uptime": "Uptime",
-      "usageComparison": "Usage comparison",
+      "usageComparison": "Usage Comparison",
       "usageComparisonHint": "Today and yesterday against the weekly and monthly daily average",
       "usageOnDay": "Usage: {value}",
       "usageStackedHint": "Stacked usage per node · total is the filled area",
-      "usageTrend": "Usage trend",
+      "usageTrend": "Usage Trend",
       "used": "Used",
-      "usersComparison": "Users comparison",
+      "usersComparison": "Users Comparison",
       "usersComparisonHint": "Distinct users seen per period",
       "usersSummary": "{total} users · {enabled} enabled",
-      "usersTrend": "Users trend",
+      "usersTrend": "Users Trend",
       "vsPreviousMonth": "vs previous 30 days",
       "vsPreviousWeek": "vs previous 7 days",
       "vsYesterday": "vs yesterday",

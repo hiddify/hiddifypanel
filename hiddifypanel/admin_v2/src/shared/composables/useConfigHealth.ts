@@ -18,7 +18,7 @@ export interface HealthState {
   running: boolean
 }
 
-export const CONFIG_HEALTH_APPS: Record<string, string> = { xray: 'Xray (v2rayN, v2rayNG, Happ…)', hiddify: 'Hiddify / sing-box' }
+export const CONFIG_HEALTH_APPS: Record<string, string> = { xray: 'XRay (v2rayN, v2rayNG, Happ, …)', hiddify: 'Hiddify / Sing-Box' }
 
 export const configHealth = ref<HealthState | null>(null)
 
