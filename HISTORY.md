@@ -11,6 +11,741 @@
 
 #### Other
 
+* Fix(haproxy): no https redirect loop behind a CDN that ends TLS and comes in on :80. 
+  _Cloudflare Flexible SSL sends the request to :80 with X-Forwarded-Proto: https / cf-visitor; the 301 to https came
+back on :80 again (ERR_TOO_MANY_REDIRECTS on the panel and the subscription links)._
+
+* Fix(sublink): configs that failed on xray 26.10 / hiddify-core 5.3 / mihomo 1.19.32; config tester uses the installed cores' versions. 
+  _- hiddify-core: VMess cipher named (aes-128-gcm); its "auto" is a cipher id xray 26.10 rejects
+- Mihomo: REALITY with X25519MLKEM768 (xray 26.10 refuses the X25519-only hello)
+- Mihomo: xhttp download-settings say tls:false and their ALPN instead of taking the upload's
+- Mihomo: no trojan over http/h2 (unsupported) and no H1 upload with the download on another server
+- config tester and health check: user agents from the installed xray, hiddify-core and mihomo (GET config-tester/apps/)_
+
+* Feat(haproxy): decoy requests go to https first; a Host other than the TLS SNI gets 421. 
+  _Only requests no proxy map took (default_decoy): cleartext is redirected to https (301); over TLS, a Host that differs
+from the SNI (domain fronting) gets the plain "421 Misdirected Request" other servers answer, instead of the decoy.
+The SNI of TLS ended on an earlier hop (:901) comes along as the PROXY v2 authority._
+
+* Feat(telegram): serve the Telegram web proxy domains with telemt's wildcard hosts. 
+  _telemt 3.5.16 (allow_wildcard_hosts): the domains on the main public IP share one "*" vhost group, so every user's profile is kept once instead of once per domain (6 domains x 137 users: 1 group instead of 6). A domain on another public IP keeps an exact group (public_addr is fixed per group). Unknown hosts get the decoy in the outer layer, before telemt._
+
+* Feat(branding): support box title/button settings and private config names for domains without an alias. 
+  _Support box (user page): its title and View More button can be renamed or hidden, edited in the support text's HTML
+editor (branding_support_title/_more and their _show switches, _v194). user_front follows them.
+
+Config names: a domain without an alias is no longer named by its domain in config names, profile titles and
+subscription names (domain_label_mode, Settings > General, _v195):
+- private (default): its kind and a keyed-hash code, e.g. '☁️ CDN K7Q', which does not reveal the name
+- masked: e.g. '⚡ h*y.com', '⚡ 94.*.*.*'
+- full: the domain name, as before_
+
+* Refactor(admin): remove the deprecated Flask-Admin pages; admin is admin_v2 only. 
+  _admin_v2 (Vue) and its API replaced every legacy page, which were only reachable in
+debug mode. Removed:
+- panel/admin: the Flask-Admin model views (users, domains, admins, nodes), the old
+  Dashboard, Settings, Proxies, Quick setup, Backup, Actions, Terminal and AdminLTE glue,
+  and their templates; templates/ admin layouts and hiddify-flask-admin.
+- panel/commercial: ProxyDetailsAdmin, ParentDomainAdmin and their templates; the
+  admin_prehook event; panel/admin_2.py.
+- hiddify.reinstall_action / check_need_reset and hutils.flask.flash_config_success
+  (only the old pages used them); the legacy endpoint map in hurl_for.
+- flask-admin and flask-adminlte3 dependencies.
+
+Kept and moved: the settings form the admin API builds on, from
+panel/admin/SettingAdmin.py to panel/settings_form.py. /admin/ redirects to admin_v2;
+a node without a base URL links to admin_v2's Nodes page._
+
+* Refactor(i18n): read Flask translations from translations.i18n JSON, drop .po/.mo. 
+  _The .po files were generated from translations.i18n/<lang>.json (flattened keys as
+msgids) and compiled to .mo, so they were a stale copy of the JSON (en and my
+already differed). Flask-Babel now reads the JSON directly through a JsonDomain:
+every _() / gettext / lazy_gettext call in Python and Jinja works as before, with
+English as the fallback for keys a language lacks.
+
+- hiddifypanel/json_translations.py: JSON catalogs, loaded once per process.
+- remove hiddifypanel/translations (*.po, *.mo) and scripts/auto_translate.py.
+- update_translations.sh: only adds new msgids to the JSON files.
+
+scripts/translate_utils.py keeps only update-json (new msgids from pybabel extract into the JSON files); its .po conversion commands are gone._
+
+* Merge pull request #167 from Hiddify-Official/fix/vless-encryption-guard. 
+  _# Conflicts:
+#	hiddifypanel/translations/en/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/fa/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/my/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/pt/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/ru/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/zh/LC_MESSAGES/messages.mo_
+
+* Fix(proxies): a wrong VLESS encryption key no longer stops Xray. 
+  _Xray refuses to start on a VLESS "decryption" it can't parse, and stays
+"activating" until the setting is cleared. The panel saved both
+settings as free text and put the decryption into every VLESS inbound.
+
+- Settings: VLESS encryption/decryption are checked as Xray parses them
+  (method, mode, ticket time or 0rtt/1rtt, padding, key sizes) and must
+  come from the same `xray vlessenc` output (the client key is derived
+  from the server key), or both be empty. Pasted spaces are trimmed.
+  The error says what to paste; the descriptions explain both fields.
+- Configs: a stored value that fails those checks (older panel, backup,
+  node sync) turns VLESS encryption off for the server and the clients,
+  with a warning in the log, instead of breaking Xray._
+
+* Merge pull request #169 from Hiddify-Official/feat/html-editor. 
+  _# Conflicts:
+#	hiddifypanel/admin_v2/src/features/settings/components/SettingFieldRow.vue
+#	hiddifypanel/translations/en/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/fa/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/my/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/ru/LC_MESSAGES/messages.mo_
+
+* Feat(admin): advanced tools in the HTML editor's Full mode. 
+  _So nothing needs an outside site, Full mode adds:
+
+- Template gallery: ten ready-made support box designs (banner,
+  contacts, announcement, status messages, FAQ, two columns, plan
+  card, support hours, social buttons, getting started) with a live
+  preview, inserted at the caret or replacing the text.
+- Block style: background (colour, or a gradient with its angle), text
+  colour, padding, space below, corners, border, shadow, full width
+  and line height of the block at the caret, or of its parent.
+- Element path under the text (body > div > ul > li): picking an
+  element selects it for the block style.
+- Table tools while the caret is in a table: rows above/below, columns
+  before/after, delete row, column or table.
+- Find & replace with a match count (Source: the code editor's own).
+- Clean up code: empty and attribute-less spans, empty styles, class
+  and data attributes, trailing empty lines.
+- Copy the HTML, download it as a file, open an HTML file.
+- FAQ item (details/summary).
+
+Escape no longer closes the editor (it closed it from a tool's popup,
+losing what was not applied); the window closes with Cancel or ×._
+
+* Feat(admin): built-in HTML editor for the users' support box. 
+  _Settings > Customizing User Page > Support Section Text linked to an
+outside site to write HTML. The row now has two buttons:
+
+- View: the box as users see it (their page's look, read only).
+- HTML Editor: a window with the panel's own editor.
+  - Preview / Source: edit the text in place as it looks on the user
+    page, or its HTML in the code editor (highlighting, tag
+    completion, Format code, line wrap).
+  - Lite / Full (remembered): everyday tools, or all of them:
+    paragraph and heading formats, font and size, bold to
+    superscript, text colour and highlight, alignment, lists, indent,
+    quote, link, image, table, divider, box, button, emoji, special
+    characters, text direction.
+  - OK / Apply / Cancel, a length counter against the setting's limit.
+
+The text is edited in a sandboxed iframe (nothing in it runs). The
+user page resets headings, lists and links to plain text, so the frame
+does too and the tools write inline styles for them: what looks right
+in the editor looks the same on the user page. Enter after a styled
+block starts a plain line instead of repeating the block._
+
+* Fix(admin): Monaco language workers load; ship the HTML service. 
+  _Monaco's workers got "<ui>/monaco/<hash>/vs/" as their base URL, but
+their modules are named "vs/…", so a language worker was looked up
+under vs/vs/ and failed (an [object Event] page error). The base is now
+the directory above vs/.
+
+The HTML language service (480 KB, loaded only when an HTML editor
+opens) is copied with the rest of the prebuilt Monaco, for formatting
+and tag completion in the support box's HTML editor. JSON, CSS and
+TypeScript services stay out._
+
+* Merge pull request #170 from Hiddify-Official/feat/torrent-block-toggle. 
+  _# Conflicts:
+#	hiddifypanel/panel/init_db.py
+#	hiddifypanel/translations/en/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/fa/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/my/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/pt/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/ru/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/zh/LC_MESSAGES/messages.mo_
+
+* Feat(settings): Block BitTorrent switch that works on every core. 
+  _Settings > General had a torrent_block setting that did nothing: its
+row was never created (so the switch was not shown), Xray always
+blocked BitTorrent and Hiddify Core never did.
+
+- _v192 creates the setting, on by default (as Xray behaved).
+- Xray: the bittorrent -> blackhole rule only when it is on.
+- Hiddify Core: after the sniff action, BitTorrent is rejected when it
+  is on (sing-box recognizes the handshake on any port).
+- The switch is an advanced General setting (not essential), with a
+  label and description saying what it does, in all languages._
+
+* Merge pull request #172 from Hiddify-Official/feat/config-tester-disable-down. 
+  _# Conflicts:
+#	hiddifypanel/admin_v2/src/features/config-tester/views/ConfigTesterView.vue
+#	hiddifypanel/panel/init_db.py_
+
+* Feat(config-tester): turn off the panel's down configs, restore them later. 
+  _After a test, a new card shows this panel's own configs (custom
+proxies) the test reached. A tested config belongs to the proxy whose
+name its name starts with (the longest one; client/tag.j2 names
+configs after their proxy, then the domain…).
+
+- Down (every tested link of the proxy failed) are picked to be turned
+  off; partly down ones (some domains still work) stay on unless the
+  admin picks them; working ones are listed on request.
+- "Turn off" asks first, turns the picked proxies off and shows the
+  Apply notice.
+- What the tester turned off is kept (config_tester_disabled, a hidden
+  config: [[proxy id, time], ...]) and shown at the top of the page
+  with "Restore all", which turns them back on only when the admin
+  asks. One that cannot be on now (its protocol is off in Settings)
+  stays in the list.
+- API: GET/POST config-tester/proxies/, POST .../disable/,
+  POST .../restore/ (super admins).
+- _v193 adds the config key (the str_config key enum only grows when a
+  migration runs)._
+
+* Merge pull request #143 from Hiddify-Official/fix/warp-title-plus. 
+  _# Conflicts:
+#	hiddifypanel/translations/en/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/my/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/pt/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/ru/LC_MESSAGES/messages.mo
+#	hiddifypanel/translations/zh/LC_MESSAGES/messages.mo_
+
+* Fix(admin): the WARP settings section is called "WARP", without "➕" 
+  _The section's title (config.warp.label) read "WARP➕" in the Settings list
+and on its card. The Persian title was already "WARP". The JSON sources
+and the server's .po/.mo catalogs get the same text; the catalogs were
+recompiled with pybabel (only that entry and the header change)._
+
+* Merge pull request #142 from Hiddify-Official/feat/icon-hover-motion. 
+  _# Conflicts:
+#	hiddifypanel/admin_v2/src/assets/sakai/layout/layout.scss_
+
+* Feat(admin): the side menu and Settings icons come alive on hover. 
+  _The icons only wobbled a little on hover. Now the icon stays as it is and
+only its glyph moves, each in its own way: the house hops, the users nod,
+the plane flies off and comes back, the gear turns, the heart beats, the
+lock shakes, the cloud drifts, ... (_icon-motion.scss, one map of icon ->
+keyframes for both places). The motion repeats with a short rest while the
+mouse stays on the item; the icon clips the glyph, so a glyph that leaves
+comes back in cleanly. Nothing moves on touch or with reduced motion._
+
+* Merge pull request #139 from Hiddify-Official/feat/dashboard-node-flags. 
+  _# Conflicts:
+#	hiddifypanel/admin_v2/src/features/dashboard/components/NodeHealthCard.vue
+#	hiddifypanel/admin_v2/src/features/nodes/views/NodesView.vue_
+
+* Feat(admin): country flags beside the nodes in the dashboard's Node health. 
+  _Each node's country comes from its address, by the same cached MaxMind
+lookup as the Nodes page; This server's from its own public IP. The flag
+shows before the name in the legend, the table and the phone cards; the
+flag helpers move to shared/utils/country.ts for both pages._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #164 from Hiddify-Official/fix/api-docs-mobile. 
+  _fix(api-docs): readable API page on phones_
+
+* Fix(api-docs): readable API page on phones. 
+  _The API page (Stoplight Elements, APIFlask's docs) always used its
+"sidebar" layout: on a phone the sidebar took the screen and squeezed the
+content into a narrow column. Elements' "responsive" layout keeps the
+sidebar on wide screens and turns it into a menu (☰) on narrow ones._
+
+* Merge pull request #146 from Hiddify-Official/fix/node-health-rows. 
+  _fix(dashboard): Node health rows the same height, names centred_
+
+* Fix(dashboard): Node health rows the same height, each name in the middle. 
+  _A node without a known host name (an offline one) had no second line under
+its name, so its row was shorter, and in the others the two lines put the
+name above the middle. The host name now follows the name on the same line,
+small and grey, so every row is one line with the name centred; the Offline
+tag is no taller than a line of text._
+
+* Merge pull request #145 from Hiddify-Official/fix/domain-cert-errors. 
+  _fix(domains): no "none" domains; certificate errors in plain words_
+
+* Feat(domains): a failed certificate opens with "Show more" 
+  _The certificate error took a block under the row, so a row with an error
+was twice as tall as the others. The badge line now says why in a few words
+("Not a real domain name") with a "Show more" button; the full story
+(plain-words lead, numbered steps, Try again, the CA's message under
+Technical details) unfolds under the row in a card of its own, and "Show
+less" closes it. Closed, the row keeps the height of the others (#152)._
+
+* Fix(domains): no "none" domains when the IPv4 is not found; plain-words certificate errors. 
+  _The first setup named the server's default domains after
+str(get_ip_str(4)): on a server whose public IPv4 was not found (an
+IPv6-only server) that made "none" and "none.sslip.io", which never get a
+certificate, so the Domains page showed "Certificate failed" on them for
+good.
+
+- _default_domains(): the IPv4 and <IPv4>.sslip.io, else <IPv6>.sslip.io,
+  else none at all.
+- _v191 removes "none" and "none.sslip.io"; only when they are the
+  server's only domains do its default names take their place first.
+- Domains page: a failed certificate says why in plain words (not a real
+  domain name, the domain does not point here, port 80 closed, CAA record,
+  the CA did not answer, other) with numbered steps; the CA's message is
+  under Technical details._
+
+* Merge pull request #140 from Hiddify-Official/fix/note-peek-flash. 
+  _fix(users): note sheet no longer flashes at the page's top left_
+
+* Fix(users): the note sheet no longer jumps to the page's top left. 
+  _Moving the mouse over the sheet's border or arrow left the inner box that
+listened for it, so the sheet started closing. Coming back reopened it
+anchored to that inner box, which is removed once the sheet closes, so it
+showed at the page's top left corner for a moment and closed.
+
+The sheet now always opens under the note's words, and the whole popover
+(border and arrow included) counts as being on the sheet._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #171 from DrvpnTM/fix/infer-proto-missing. 
+  _fix(custom-proxy): restore infer_proto_from_categories_
+
+* Fix(custom-proxy): restore infer_proto_from_categories. 
+  _The helper was removed in acb69a0d but is still called when a proxy is
+saved without a protocol, so saving a new proxy failed with NameError._
+
+* Merge pull request #168 from Hiddify-Official/feat/support-box-html5. 
+  _feat(admin): HTML5 and inline styles in the users' support box_
+
+* Fix(admin): keep logical CSS properties in the support box. 
+  _margin/padding/border-inline-start and the like (what right-to-left
+pages use) and the list-style shorthand were dropped on save._
+
+* Feat(admin): HTML5 and inline styles in the users' support box. 
+  _The support box text (branding_freetext) was cleaned with bleach's
+defaults: div, section, table and the like were escaped and shown as
+code on the user page, and style/align and other attributes were
+dropped. The per-admin user page setting was not cleaned at all.
+
+Both now go through hutils/user_html.clean_user_html:
+- HTML5 text, block, list, table and media tags with their usual
+  attributes (style, align, dir, class, colspan, width…);
+- inline CSS limited to text, colour, box, flex and grid properties,
+  with no positioning and no url(), so the box can't cover the page or
+  load anything;
+- no scripts, handlers, frames, forms or <style> (removed with their
+  content); links and media only over http(s), mailto, tel and tg.
+
+bleach's CSS sanitizer needs tinycss2: bleach[css]._
+
+* Merge pull request #166 from Hiddify-Official/fix/responsive-audit. 
+  _fix(admin): responsive and glass-theme layout fixes across the panel_
+
+* Fix(admin): only the logo in the top bar when the name does not fit. 
+  _On a narrow phone the panel's name ended in "…" (HiddifyM…). It is now
+shown only when it fits whole: the top bar measures it on every resize
+(and language change) and hides the name and version otherwise, so only
+the logo stays. The link keeps the name as its aria-label._
+
+* Fix(admin): glass theme bars cover what scrolls beneath them. 
+  _Sticky and fixed bars took the thin card glass (52-58 % opaque, most
+with no blur), so the page passing under them showed through their
+buttons: the Settings save bar, the Send message bar, the user dialog's
+actions, the SSH commands panel, and on phones the settings categories
+and Quick setup's buttons. One mixin (caddy-bar: the strong glass with
+a blur, like the top bar) is used by all of them; the default theme and
+the glass cards are unchanged._
+
+* Fix(admin): top bar actions stay on screen on small phones. 
+  _At 320 px the top bar (2rem padding, menu button, logo, four 2.5rem
+actions 1rem apart) was wider than the screen: the last actions were cut
+off on every page. On phones the logo now gives way (its title ends in
+"…"), and up to 420 px the padding and the gaps are smaller._
+
+* Fix(admin): switches keep their size next to long labels. 
+  _On phones a ToggleSwitch in a flex row with a long label (Send message's
+"Add each user's usage and buttons", the domain dialog's Resolve IP and
+ECH) was shrunk by flex: the track got narrower than the knob, which
+stuck out of it when on. One global rule keeps every switch at its size
+(flex-shrink: 0), so no other row can do it again._
+
+* Merge pull request #165 from Hiddify-Official/fix/settings-nav-glass. 
+  _fix(admin): readable settings bar on phones in the glass theme_
+
+* Fix(admin): readable settings category bar on phones in the glass theme. 
+  _On phones the settings categories stick under the top bar while the page
+scrolls beneath them. In the glass theme their background is the thin
+card glass with no blur, so the settings' text showed through the chips.
+Below 992 px the bar now uses the strong glass with a blur, like the
+other bars of the theme; desktop and the default theme are unchanged._
+
+* Merge pull request #162 from Hiddify-Official/feat/settings-option-icons. 
+  _feat(admin): coloured icons for settings options_
+
+* Feat(admin): coloured icons for settings options. 
+  _Each select option in Settings now has an icon that says what the option
+says, on a soft tile of its own colour: Low / Middle / High as one, two
+and three level bars, No Wait a bolt, Standard a shield, WARP's Disable /
+All / Only Blocked and Local a ban / globe / filter, uTLS the browser or
+system, the proxy cores, Release / Beta, and the countries' flags (Russia
+included). The WARP mode description uses the same icons as its options.
+Options without an entry keep their label as before._
+
+* Merge pull request #161 from Hiddify-Official/feat/no-emoji-all. 
+  _feat(admin): icons and SVG flags in place of emoji_
+
+* Merge branch 'dev' into feat/no-emoji-all. 
+
+* Merge pull request #160 from Hiddify-Official/feat/dns-presets. 
+  _feat(admin): DNS server picker with presets_
+
+* Feat(admin): DNS server picker with presets, applied to the OS too. 
+  _Settings > DNS Server is now a grouped dropdown: normal DNS (Cloudflare,
+Google, Quad9, OpenDNS, Control D), ad blocking (AdGuard, Control D,
+Comodo) and ad blocking + adult filter (AdGuard Family, Control D), each
+with its two addresses, plus "Custom" for up to four IPv4/IPv6 addresses
+(checked before saving). The old single "1.1.1.1" value shows as
+Cloudflare.
+
+dns_server may now hold several comma-separated IPs: hiddify-core uses
+the first one and masterdns all of them before its defaults._
+
+* Merge pull request #159 from Hiddify-Official/feat/ios-rounded-fields. 
+  _feat(admin): iOS-style rounded corners on every field and dropdown_
+
+* Feat(admin): iOS-style rounded corners on every form field and dropdown. 
+  _Form fields had Aura's 6px corners. The theme preset now gives every form
+field one soft radius (12px: text, number, password, search, date, Select,
+MultiSelect, AutoComplete, Textarea, input groups, and the chip inputs that
+follow --p-inputtext-border-radius), their dropdown panels 14px and the
+options in them 8px. Rounded but not a pill; elements that were pills stay
+so. Sizes and behaviour are unchanged._
+
+* Merge pull request #158 from Hiddify-Official/fix/caddy-mobile-menu. 
+  _fix(admin): the phone menu reads clearly on the light glass themes_
+
+* Fix(admin): the phone menu reads clearly on the light glass themes. 
+  _On a light glass (colour) theme the side menu is the light glass of the
+cards. On phones it slides in over the page and its dark mask, which showed
+through and made the menu grey and murky. Below the desktop layout the
+light theme now takes a glass between the light and the dense one (about
+70%) with a stronger blur: the page still glows through, the text reads
+clearly. The dark theme and desktops are unchanged._
+
+* Merge pull request #157 from Hiddify-Official/feat/mobile-menu-tab. 
+  _feat(admin): a tab on the screen's edge opens the menu on phones_
+
+* Feat(admin): a tab on the screen's edge opens and closes the menu on phones. 
+  _On phones and tablets the side menu opened only from the top bar's ☰. A
+small tab now sits at the middle of the screen's start edge: a tap slides
+the menu in (the sidebar's own transition), the tab rides along at its edge
+with its arrow turned back, and a second tap slides it out. RTL follows the
+start edge; desktops do not show it. Solid on the glass themes._
+
+* Merge pull request #156 from Hiddify-Official/fix/domain-switch-rtl. 
+  _fix(domains): the edit dialog's switches stay inside their cards_
+
+* Fix(domains): the edit dialog's switches stay inside their cards. 
+  _In the domain dialog's Advanced, the "Resolve IP" and ECH switches sat in a
+flex row with their text and shrank when the text was long (Persian, two
+cards side by side). PrimeVue slides the handle by the switch's set width,
+so a squeezed switch put its handle outside the track and the card. The
+switch keeps its width now and the text wraps._
+
+* Feat(admin): Lion and Sun flag for Iran. 
+  _Iran's flag in the panel (country setting, the Persian language, nodes
+in Iran) is the Lion and Sun flag: the public-domain state flag of
+1964–1980 from Wikimedia Commons, cropped to 4:3 around the emblem like
+the other flags._
+
+* Feat(admin): icons and SVG flags in place of emoji. 
+  _Emoji still reached the admin panel through text from the server (setting
+descriptions, option names, labels with a mid-text warning, notices,
+template-variable help, generated proxy names, domain aliases) and from
+the UI itself (language and node flags, the Telegram demo, the broadcast
+preview buttons, the drag-handle glyph in the domains help).
+
+- emoji-icons.ts maps every emoji used in the translations to a PrimeIcon
+  of the same meaning (warnings orange, bans red, coloured dots keep
+  their colour); IconText renders plain text with them, iconizeHtml does
+  the same for sanitized HTML. The strings keep their emoji for the
+  legacy pages and the Telegram bot.
+- Flags are SVG images from flag-icons (one small file each, never
+  inlined), so they look the same on Windows, which has no flag emoji.
+- Select options keep an emoji-free text for screen readers and typing;
+  toasts and server error messages drop the emoji, since they show their
+  own severity icon._
+
+* Feat(admin_v2): grouped, searchable "Show configs of" picker on the Domains page. 
+  _- New ShowDomainsPicker: an "All domains" switch, then one section per server
+  (this server first, then nodes), each grouped as Fake TLS & Reality, CDN, then
+  real certificate; search, quick filters with counts, tick a server or group at
+  once; rows show each domain's alias and download domain.
+- domains-page API: show_options now include each domain's download domain.
+- "Show configs of" is offered on sub-link domains, or on every domain while no
+  sub-link domain exists (no longer limited to real-certificate domains)._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #155 from Hiddify-Official/fix/show-domains-cdn. 
+  _fix(domains): a new domain is offered in "Show configs of" at once_
+
+* Fix(domains): a domain just added is offered in "Show configs of" at once. 
+  _The edit dialog's "Show configs of" list came only with the options call,
+which takes seconds (it works out the proxies that fit each kind of
+domain: about 5 s on the test server) and was asked again after every
+change. A domain just added (e.g. a CDN domain with valid TLS) was missing
+from the list, or the list was empty, when the dialog was opened before
+that answer.
+
+The list is quick to build (10 ms), so it now comes with every domains
+list (load, add, edit, delete, reorder) and the dialog uses it; the options
+call still sends it for older pages._
+
+* Merge pull request #154 from Hiddify-Official/feat/node-os-logo. 
+  _feat(nodes): the node's OS as its card's logo, details on a click_
+
+* Feat(nodes): each node's operating system, as its card's logo and on a tap. 
+  _The card's icon was the same server glyph for every node. A node's panel now
+reports its operating system in the dashboard's host info (/etc/os-release:
+ID, NAME, VERSION_ID, PRETTY_NAME; kernel and architecture), and the new
+nodes/<id>/os/ asks a node for it with the parent's key (kept an hour).
+
+The card shows the OS as an app icon in the panel's soft style (Ubuntu,
+Debian, CentOS, Rocky, Alma, Fedora, Alpine, Arch, openSUSE, Red Hat, Mint,
+Gentoo, FreeBSD; Tux for any other Linux; the old glyph when not known): a
+tile tinted with the brand colour, a gloss and a fine border, the logo in
+the brand colour (a lighter one in the dark theme for black / navy brands).
+With the mouse on it the logo turns and bounces and a band of light sweeps
+the tile. A tap opens a small popover with the OS, its version, the kernel
+and the architecture. Logos from Simple Icons (CC0)._
+
+* Fix(server_ip): prevent auto-discovered IPs from being registered to the same machine. 
+  _Added a check in the bulk_register method to skip registering auto-discovered IPs if they belong to the current machine. This ensures that only unique child IDs are processed, improving data integrity during bulk operations._
+
+* Refactor(domains): simplify domain row structure and improve layout consistency. 
+  _Updated the DomainsView component to streamline the rendering of domain rows. Removed the conditional class for chosen proxies and adjusted the layout logic to ensure all proxies and configurations are displayed consistently. This change enhances the visual alignment of domain rows, maintaining uniform height and improving overall readability._
+
+* Merge pull request #152 from Hiddify-Official/fix/domain-row-height. 
+  _fix(domains): every domain row the same height_
+
+* Fix(domains): every domain row the same height. 
+  _A row without a line of chosen proxies was shorter than one with it (65 vs
+87 px), and the fake-TLS front domains were drawn smaller. Every row's head
+is now at least as tall as a row with that line, with its lines kept
+together in the middle, so nothing moves inside a row; the fronts keep
+their quieter look at the same size. Phones are unchanged (the cards were
+already the same height there)._
+
+* Merge pull request #151 from Hiddify-Official/feat/domain-badge-cards. 
+  _feat(domains): certificate details and TLS modes on hover cards_
+
+* Feat(domains): a certificate's full details and the TLS modes on hover cards. 
+  _Hovering a domain's certificate badge showed a few lines of text (a hint,
+the issuer, the expiry), and a Reality / Fake badge only "Fake and Reality
+TLS domains do not need a certificate of their own".
+
+- The domains API reads the stored certificate (cached per PEM): when it
+  was issued, the names it covers, its key and the issuing organisation;
+  with the stored fingerprint and auto-renew.
+- The certificate badge opens a card in the badge's colour: its state and
+  hint, a bar of the life left with the issue and expiry dates (amber under
+  three weeks, red under one), then issued by, covers, key, auto-renew,
+  fingerprint, and the last error when it failed.
+- A TLS mode badge (Reality, Fake, DNS, a built-in server's fake-TLS name)
+  opens a card that says what the mode does, that it needs no certificate
+  and which name (SNI) it shows. Solid on the glass themes._
+
+* Merge pull request #147 from Hiddify-Official/feat/dashboard-tile-tips. 
+  _feat(dashboard): readable hover cards for tiles and charts_
+
+* Fix(dashboard): the usual pointer over the top tiles. 
+  _A tile with a hover card set cursor: help, so the pointer turned into a
+question mark over the four tiles; it stays the usual pointer now._
+
+* Fix(dashboard): a tile's sparkline tip next to the pointer. 
+  _The tip (day and value) is position: fixed, but the tile lifts on hover with
+a transform, which makes the tile its containing block: the tip landed as
+far below as the tile is from the top of the page, often behind the cards
+below. It is rendered in <body> now (Teleport), and under the pointer so
+it does not cover the tile's big number._
+
+* Feat(dashboard): the charts' hover card like the tiles'; solid on glass themes. 
+  _- Every dashboard chart shows the page-text tooltip (it was the canvas one
+  in left-to-right languages) as the tiles' card: the hovered point on top,
+  a row per series (its colour, its name, the value in bold at the end),
+  totals under a dashed line (_chart-tip.scss).
+- A tile's sparkline tip: the day quiet, the value bold in the line's
+  colour.
+- The colour (glass) themes make the content background see-through, so
+  the page's text showed through these cards; they get a solid surface
+  there._
+
+* Feat(dashboard): the KPI tiles' hover card, readable. 
+  _Hovering a top tile showed its numbers as wrapped "label: value" lines of
+white text on the dark tooltip. It is now a light card in the page's
+colours: the tile's icon and name, then one row per number with the label
+at the start and the value, bold, at the end. The tile's own number comes
+first in the tile's colour; dark mode and RTL follow the theme._
+
+* Merge pull request #148 from Hiddify-Official/fix/config-health-labels. 
+  _fix(dashboard): card titles and Config Health app names in title case_
+
+* Fix(dashboard): card titles in title case. 
+  _The dashboard's cards read Usage Trend, Usage Comparison, Users Trend,
+Users Comparison, Config Health and Node Health (the notice that points to
+Config Health too). The Config Health card's apps read "Hiddify / Sing-Box"
+and "XRay (v2rayN, v2rayNG, Happ, …)"._
+
+* Merge pull request #138 from Hiddify-Official/fix/sidebar-keep-active. 
+  _fix(admin): keep the open page's menu entry in view after a reload_
+
+* Fix(admin): keep the open page's menu entry in view after a reload. 
+  _A reload started the side menu scrolled to the top, so a page low in it
+(Templates, Backup, …) was out of sight. The menu now scrolls its entry to
+the middle on load and when the phone's menu opens; after a move from within
+a page it only scrolls when the entry is out of view (no jump on a click in
+the menu)._
+
+* Merge pull request #137 from Hiddify-Official/fix/base-config-labels. 
+  _fix(admin): proper names and colors for cores, sides, template categories_
+
+* Feat(admin): names and colors for template categories. 
+  _Server Inbound, Client Outbound and Base Config instead of the raw values,
+each with a color of its own: a tag in the Category column, a dot in its
+filter, and the name in the editor's select._
+
+* Feat(admin): core colors in the templates' core filter. 
+  _Like Base Configs and Proxies: each core's color before its name, sorted by
+name._
+
+* Feat(admin): core colors in the core filters. 
+  _The Core filter of Base Configs and the Server core filter of Proxies show
+each core's color before its name, like the Categories filter; the proxies'
+Server core tags get that color too (they were all plain), and the filter
+lists sort by name._
+
+* Fix(admin): proper names for base config sides and cores. 
+  _Side shows "Server" / "Client" and every core its name (Clash, DNS Proxy,
+Firewall, HAProxy, Hiddify Core, IP Scanner, Rust-rpxy-L4, SingBox, SNI
+Scanner, SubLink, Telemt, WireGuard, XRay) in the list, its filters (sorted
+by name) and the editor, instead of the raw values._
+
+* Merge pull request #135 from Hiddify-Official/feat/proxy-off-dim. 
+  _feat(admin): fade switched-off proxies in the proxy list_
+
+* Feat(admin): fade switched-off proxies in the proxy list. 
+  _A proxy that is off (or kept off by a parent setting) gets a veil of its
+row's colour over its cells, so on and off read at a glance; its switch and
+buttons stay clear, and the row comes back on hover._
+
+* Merge pull request #134 from Hiddify-Official/feat/smooth-reorder. 
+  _feat(admin): live, smooth drag to reorder domains and users_
+
+* Feat(admin): live, smooth drag to reorder domains and users. 
+  _Domains (desktop and phone) and the users table now move like the phone
+user cards: the dragged row follows the pointer, the rows it passes slide
+aside, and on release it glides into place (Escape puts it back). One
+shared composable, useDragSort, replaces the browser's own drag (which only
+showed a drop line) and PrimeVue's row reorder; the order is saved as before._
+
+* Merge pull request #133 from Hiddify-Official/feat/mobile-user-reorder. 
+  _feat(admin): move users by a drag handle on phones too_
+
+* Feat(admin): move users by a drag handle on phones too. 
+  _The users page's cards get the table's drag handle: a finger (or mouse) on
+it lifts the card, the cards it passes make room, and the page scrolls near
+the screen edges. The drop is saved like a table row reorder (pinned users
+stay above the others, a group stays within its admin); muted with a hint
+while a sort orders the cards._
+
+* Merge pull request #132 from Hiddify-Official/fix/ping-panel-opaque. 
+  _fix(admin): solid ping panel in the colour themes_
+
+* Fix(admin): solid ping panel in the colour themes. 
+  _The Smart Caddy themes turn --p-content-background into see-through glass,
+so the node card's text showed through the ping panel lying over it._
+
+* Merge pull request #131 from Hiddify-Official/feat/login-animated-bg. 
+  _feat(login): flowing colour waves behind the admin sign-in card_
+
+* Feat(login): flowing colour waves behind the admin sign-in card. 
+  _A WebGL canvas draws soft, never-repeating colour waves (domain-warped
+simplex noise, light and dark palettes) at half resolution, paused while
+the tab is hidden and still under reduced motion. The CSS blobs stay as
+the fallback when WebGL is missing, and drift faster._
+
+* Merge pull request #129 from DrvpnTM/fix/backup-server-ips. 
+  _fix(backup): do not restore the old server's auto-detected IPs_
+
+* Fix(backup): do not restore the old server's auto-detected IPs. 
+  _A backup carries the server IPs found on the machine it was made on
+(is_auto). Restored on another server they were added to its IP list,
+so the new-domain dialog offered the old server's IPs for the DNS
+record next to the real ones. Skip this server's auto-detected IPs when
+restoring: the server finds its own again; IPs added by hand and other
+nodes' IPs are restored as before._
+
+* Merge pull request #126 from Hiddify-Official/feat/sync-log-readable. 
+  _feat(nodes): recent syncs in words, with names, secrets hidden_
+
+* Merge branch 'dev' into feat/sync-log-readable. 
+
+* Merge pull request #125 from Hiddify-Official/fix/node-unreachable-error. 
+  _fix(nodes): explain unreachable nodes, re-check, notify_
+
+* Feat(nodes): an unreachable node in the notifications; other node errors explained. 
+  _The top bar's notifications list each node this panel cannot reach, with the
+reason and what to do (nodes/problems/, checked at most every 2 minutes); a
+check on the Nodes page updates it at once. "Sync now", the dashboard's disk
+details of a node and the Ping window say why in the panel's words too._
+
+* Fix(nodes): Sync details explains why the node could not be asked. 
+  _The dialog showed the raw HTTP error with the node's secret path. It now shows
+the same explanation card as the Nodes page (what happened, why, what to do,
+technical details to copy) with a Check again button._
+
+* Fix(nodes): explain why a node is not reachable and how to fix it, check again. 
+  _"Not reachable" and the live charts showed the raw HTTP error, with the node's
+secret admin path. The panel now sorts the failure (key refused, timeout,
+refused, DNS, TLS, CDN, not the panel, node error, no address) and the Nodes
+page explains it in the panel's language: what happened, why, what to do, and
+the technical text behind a copy button. A refresh button next to "Not
+reachable" checks the node again._
+
+* Merge pull request #124 from Hiddify-Official/feat/icon-hover. 
+  _feat(admin): menu and Settings icons come alive on hover_
+
+* Feat(admin): menu and Settings icons come alive on hover. 
+  _A soft pop and sway when the mouse is over a side menu item or a Settings
+category; only with a mouse, and not when reduced motion is asked for._
+
+* Merge pull request #122 from Hiddify-Official/fix/idle-navigation. 
+  _fix(admin): menu clicks do nothing after the panel was updated_
+
+* Fix(admin): a menu click does nothing after the panel was updated. 
+  _A tab left open across an update still asks for the old build's page files,
+which are gone (404), and the router dropped the error: the click did nothing.
+On such an error, load the page it was going to from the server (the new
+build); once per address within 10 s, so a really missing file cannot loop._
+
+* Merge pull request #120 from Hiddify-Official/feat/short-names. 
+  _feat(admin): shorten long user names, full name on hover_
+
+* Feat(nodes): long names shortened in Sync details' user and admin lists. 
+  _The lists behind the Users and Admins tiles in Sync details cut a name after
+20 letters (15 on a phone) with "…", the full name on hover, like the Users
+page. The cut is in shared/utils/short-name.ts for both._
+
+* Fix(admin): keep a long name inside the link dialog's title. 
+
+* Feat(admin): shorten long user names (20 letters, 15 on phones), full name on hover. 
+
+* Feat(nodes): recent syncs in words, with names, secrets hidden. 
+  _Each recent sync in Sync details was a kind, a source tag, a number and
+key=value pairs; opened, short ids and the raw JSON. Now it says what
+happened ("5 users received from the main panel", "Traffic of 2 users sent
+to the main panel") with its direction, and opened it lists the users,
+admins, outbounds or domains by name with their state. The JSON stays behind
+"Technical data", with secret values (keys, passwords, tokens) hidden._
+
 * Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
 
 * Merge pull request #116 from Hiddify-Official/fix/users-rtl-sort-mask. 
