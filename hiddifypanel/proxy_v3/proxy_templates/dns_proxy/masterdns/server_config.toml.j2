@@ -130,7 +130,9 @@ TERMINAL_STREAM_RETENTION_SECONDS = 45.0
 # ------------------------------------------------------------------------------
 
 # Upstream resolvers used when the client sends DNS_QUERY_REQ through the tunnel.
-DNS_UPSTREAM_SERVERS = ["{{ctx.hconfig.dns_server}}","1.1.1.1:53", "1.0.0.1:53"]
+{#- dns_server: one or more IPs separated by commas, then the defaults not already in it #}
+{%- set dns_ups = (((ctx.hconfig.dns_server or '').split(',') | map('trim') | select | list) + ['1.1.1.1:53', '1.0.0.1:53']) | unique | list %}
+DNS_UPSTREAM_SERVERS = [{% for ip in dns_ups %}"{{ ip }}"{{ ", " if not loop.last }}{% endfor %}]
 
 # Timeout for each upstream DNS exchange attempt.
 DNS_UPSTREAM_TIMEOUT = 4.0

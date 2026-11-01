@@ -71,21 +71,21 @@ const steps = ['stepStart', 'stepUsers', 'stepCreate'] as const
             <div class="tgs__scene tgs__scene--1">
               <div class="tgs__msg tgs__msg--me">/start</div>
               <div class="tgs__msg tgs__msg--bot">
-                <b>👋 Admin</b>
-                <div class="tgs__kb"><span class="tgs__key tgs__key--users">👥 Users</span><span class="tgs__key">➕ New user</span><span class="tgs__key">💾 Backup</span><span class="tgs__key">📊 Status</span></div>
+                <b><i class="pi pi-user ui-emoji-icon" />Admin</b>
+                <div class="tgs__kb"><span class="tgs__key tgs__key--users"><i class="pi pi-users ui-emoji-icon" />Users</span><span class="tgs__key"><i class="pi pi-plus ui-emoji-icon" />New user</span><span class="tgs__key"><i class="pi pi-save ui-emoji-icon" />Backup</span><span class="tgs__key"><i class="pi pi-chart-bar ui-emoji-icon" />Status</span></div>
               </div>
             </div>
             <!-- 2. the users, with their usage -->
             <div class="tgs__scene tgs__scene--2">
               <div class="tgs__msg tgs__msg--bot tgs__users">
-                <b>👥 Users</b>
-                <span v-for="(w, i) in [70, 35, 90]" :key="i" class="tgs__user"><span class="tgs__uname" /><span class="tgs__ubar"><i :style="{ width: `${w}%` }" /></span><span class="tgs__uedit">✏️</span></span>
+                <b><i class="pi pi-users ui-emoji-icon" />Users</b>
+                <span v-for="(w, i) in [70, 35, 90]" :key="i" class="tgs__user"><span class="tgs__uname" /><span class="tgs__ubar"><i :style="{ width: `${w}%` }" /></span><span class="tgs__uedit"><i class="pi pi-pencil ui-emoji-icon" /></span></span>
               </div>
             </div>
             <!-- 3. a new user, created in the chat -->
             <div class="tgs__scene tgs__scene--3">
-              <div class="tgs__msg tgs__msg--me">➕ 30 GB · 30 days</div>
-              <div class="tgs__msg tgs__msg--bot"><b>✅ User created</b><span class="tgs__link">🔗 link</span></div>
+              <div class="tgs__msg tgs__msg--me"><i class="pi pi-plus ui-emoji-icon" />30 GB · 30 days</div>
+              <div class="tgs__msg tgs__msg--bot"><b><i class="pi pi-check-circle ui-emoji-icon ui-emoji-icon--success" />User created</b><span class="tgs__link"><i class="pi pi-link ui-emoji-icon" />link</span></div>
             </div>
           </div>
           <span class="tgs__finger">●</span>

@@ -7,6 +7,7 @@
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import IconText from '@/shared/components/IconText.vue'
 
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ gotIt: [] }>()
@@ -62,7 +63,7 @@ function gotIt() {
           <span>{{ i + 1 }}</span>
           <div>
             <b>{{ t(`domains.guide.${s}Title`) }}</b>
-            <small>{{ t(`domains.guide.${s}Text`) }}</small>
+            <small><IconText :text="t(`domains.guide.${s}Text`)" /></small>
           </div>
         </li>
       </ol>

@@ -16,6 +16,11 @@
   white-space: pre-line;
 }
 
+// A switch next to a long label (a flex row on a phone) must keep its size: shrunk, its knob ends up outside the track
+.p-toggleswitch {
+  flex-shrink: 0;
+}
+
 // Page content must never be wider than the viewport: on phones that widens the
 // layout viewport, so the page pans sideways and the off-canvas sidebar peeks in.
 .layout-main-container,

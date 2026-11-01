@@ -153,8 +153,8 @@
                 <div v-if="previewHtml" class="bc-bubble__text" dir="auto" v-html="previewHtml" />
                 <div v-if="addUsage" class="bc-bubble__usage"><i class="pi pi-chart-bar" />{{ t('broadcast.preview.usage') }}</div>
                 <div v-if="addUsage" class="bc-bubble__buttons">
-                  <span>{{ t('broadcast.preview.buttonUsage') }}</span>
-                  <span>{{ t('broadcast.preview.buttonLink') }}</span>
+                  <span><IconText :text="t('broadcast.preview.buttonUsage')" /></span>
+                  <span><IconText :text="t('broadcast.preview.buttonLink')" /></span>
                 </div>
                 <span class="bc-bubble__time">{{ now }}</span>
               </div>
@@ -201,6 +201,7 @@ import { apiErrorMessage } from '@/core/api/client'
 import { liveWatch, type Subscription } from '@/core/live/live'
 import { IMAGE_TYPES, broadcastApi, type Audience, type BroadcastJob, type BroadcastState, type MessageFormat, type Recipient } from '@/features/broadcast/api'
 import RecipientList from '@/features/broadcast/components/RecipientList.vue'
+import IconText from '@/shared/components/IconText.vue'
 
 /**
  * The whole "send a message" form: audience, text, image, preview and the sending's progress. The page shows it, and the

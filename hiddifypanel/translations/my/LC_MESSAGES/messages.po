@@ -1228,10 +1228,7 @@ msgid "config.decoy_domain.label"
 msgstr "📺 တည်ကြက် ဝဘ်ဆိုဒ်"
 
 msgid "config.dns_server.description"
-msgstr ""
-"✳️ ပုံသေ 1.1.1.1 <br>\n"
-"🚧 မဲရ်ဝဲ ပိတ်ပင် 1.1.1.2 <br>\n"
-"🔞 ညစ်ညမ်း ပိတ်ပင် 1.1.1.3"
+msgstr "ဆာဗာနှင့် ၎င်း၏ proxy များ အသုံးပြုသော DNS။ စာရင်းမှ အများသုံး DNS ကို ရွေးပါ၊ သို့မဟုတ် “စိတ်ကြိုက်” ဖြင့် သင့်ကိုယ်ပိုင်ကို ထည့်ပါ။ ဆာဗာ၏ စနစ် DNS လည်း လိုက်ပြောင်းပါမည်။"
 
 msgid "config.dns_server.label"
 msgstr "🖥 DNS ဆာဗာ"

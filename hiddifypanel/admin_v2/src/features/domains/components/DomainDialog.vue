@@ -32,7 +32,6 @@ import {
   type DomainsState,
   type TlsMode,
 } from '@/features/domains/api'
-
 const Json5Editor = defineAsyncComponent(() => import('@/shared/components/Json5Editor.vue'))
 
 const props = defineProps<{ row: DomainRow | null; state: DomainsState | null; options: DomainsOptions | null }>()
@@ -599,10 +598,16 @@ async function save() {
   border: 1px solid var(--p-content-border-color);
   cursor: pointer;
 }
+/* The switch keeps its width (its handle slides by the switch's set width: squeezed, the handle left the track and the
+   card); the text wraps instead */
+.dd__toggle :deep(.p-toggleswitch) {
+  flex: none;
+}
 .dd__toggle span {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  min-width: 0;
 }
 .dd__toggle b {
   font-size: 0.86rem;

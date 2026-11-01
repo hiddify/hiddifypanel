@@ -6,6 +6,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DomainProxy } from '@/features/domains/api'
+import IconText from '@/shared/components/IconText.vue'
 
 const props = defineProps<{ proxies: DomainProxy[]; compatibleIds: number[]; reality: boolean }>()
 const model = defineModel<number[]>({ required: true })
@@ -122,7 +123,7 @@ function blocked(p: DomainProxy): boolean {
             @click="toggle(p)"
           >
             <i class="pi" :class="g.kind === 'sni' ? (model.includes(p.id) ? 'pi-circle-fill' : 'pi-circle') : model.includes(p.id) ? 'pi-check-square' : 'pi-stop'" />
-            <span class="pp__name">{{ p.name }}</span>
+            <span class="pp__name"><IconText :text="p.name" /></span>
             <span v-if="!p.enabled" class="pp__tag pp__tag--off">{{ t('domains.proxies.off') }}</span>
           </button>
         </div>

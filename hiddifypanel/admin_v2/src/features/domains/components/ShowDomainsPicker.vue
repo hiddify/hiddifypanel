@@ -12,6 +12,7 @@ import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { KIND_META, kindOf, type DomainsOptions } from '@/features/domains/api'
+import IconText from '@/shared/components/IconText.vue'
 
 type ShowOption = DomainsOptions['show_options'][number]
 type Group = 'fake' | 'cdn' | 'direct'
@@ -176,7 +177,7 @@ function clear() {
                 <span class="sd__name">
                   <span class="sd__domain" dir="ltr">{{ o.domain || t('domains.noName') }}</span>
                   <span v-if="(o.alias && o.alias !== o.domain) || o.download" class="sd__sub">
-                    <span v-if="o.alias && o.alias !== o.domain">{{ o.alias }}</span>
+                    <span v-if="o.alias && o.alias !== o.domain"><IconText :text="o.alias" /></span>
                     <span v-if="o.download" dir="ltr" v-tooltip.top="t('domains.field.downloadDomain')"><i class="pi pi-download" />{{ o.download }}</span>
                   </span>
                 </span>

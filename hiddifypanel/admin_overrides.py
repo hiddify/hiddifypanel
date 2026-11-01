@@ -35,6 +35,10 @@ def clean(value: Any) -> tuple[dict[str, str], list[str]]:
         if len(text) > _MAX_LENGTH or (key == str(ConfigEnum.lang) and text not in {lang.value for lang in Lang}) or (key in _URL_KEYS and not _URL.match(text)):
             problems.append(key)
             continue
+        if key == str(ConfigEnum.branding_freetext):  # shown as HTML on the users' page
+            from hiddifypanel.hutils.user_html import clean_user_html
+
+            text = clean_user_html(text)
         out[key] = text
     return out, problems
 

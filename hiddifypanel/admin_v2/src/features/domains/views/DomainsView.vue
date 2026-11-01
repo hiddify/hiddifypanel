@@ -43,14 +43,14 @@
             :aria-pressed="kindFilter === k"
             @click="kindFilter = kindFilter === k ? null : k"
           >
-            <span>{{ KIND_META[k].emoji }}</span>
+            <i :class="KIND_META[k].icon" aria-hidden="true" />
             <span>{{ t(`domains.kind.${k}.name`) }}</span>
           </button>
         </template>
       </div>
 
       <ListFilterStatus :shown="rows.length" :total="state.domains.length" :active="filtering" @reset="resetFilters" />
-      <p class="dm-howto"><i class="pi pi-sort-alt" />{{ filtering ? t('domains.howtoFiltered') : t('domains.howto') }}</p>
+      <p class="dm-howto"><i class="pi pi-sort-alt" /><IconText :text="filtering ? t('domains.howtoFiltered') : t('domains.howto')" /></p>
 
       <TransitionGroup name="dm-row" tag="ol" class="dm-list" :class="{ 'dm-list--moving': rowDrag.moving.value, 'dm-list--settling': rowDrag.settling.value }">
         <li
@@ -98,7 +98,7 @@
                 ><i :class="copiedId === d.id ? 'pi pi-check' : 'pi pi-copy'" /></button>
                 <a v-if="d.panel_link" :href="d.panel_link" class="dm-row__domain" dir="ltr" target="_blank" rel="noopener" v-tooltip.top="t('domains.openPanel')">{{ d.domain }}</a>
                 <span v-else class="dm-row__domain" dir="ltr">{{ d.domain || t('domains.noName') }}</span>
-                <span v-if="d.alias && d.alias !== d.domain" class="dm-row__alias">{{ d.alias }}</span>
+                <span v-if="d.alias && d.alias !== d.domain" class="dm-row__alias"><IconText :text="d.alias" /></span>
               </div>
               <div class="dm-row__chips">
                 <span class="dm-badge dm-badge--kind">{{ t(`domains.kind.${kindOf(d.mode)}.name`) }}</span>
@@ -230,6 +230,7 @@ import DomainDialog from '@/features/domains/components/DomainDialog.vue'
 import { loadDomainProblems, rememberDomainWarnings } from '@/shared/composables/useDomainNotices'
 import DomainsGuideDialog from '@/features/domains/components/DomainsGuideDialog.vue'
 import { KIND_META, KINDS, TLS_ICON, domainsApi, isFakeProxyMode, kindOf, type DomainKind, type DomainProxy, type DomainRow, type DomainTls, type DomainsOptions, type TlsStatus, type DomainsState } from '@/features/domains/api'
+import IconText from '@/shared/components/IconText.vue'
 
 const { t, locale } = useI18n()
 const toast = useToast()

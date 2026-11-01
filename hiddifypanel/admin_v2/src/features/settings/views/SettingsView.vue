@@ -53,7 +53,7 @@
           @click="scrollToCategory(cat.id)"
         >
           <i :class="cat.icon" class="settings-nav__icon" />
-          <span class="settings-nav__label">{{ cat.title }}</span>
+          <span class="settings-nav__label"><IconText :text="cat.title" /></span>
           <span v-if="cat.changed" class="settings-nav__dot" :title="t('settings.changed')" />
         </button>
       </nav>
@@ -73,9 +73,9 @@
             <header class="settings-card__header">
               <span class="settings-card__icon"><i :class="cat.icon" /></span>
               <div class="min-w-0 flex-1">
-                <h3 class="settings-card__title">{{ cat.title }}</h3>
+                <h3 class="settings-card__title"><IconText :text="cat.title" /></h3>
                 <!-- eslint-disable-next-line vue/no-v-html -- sanitized server-side -->
-                <p v-if="cat.description" class="settings-card__desc" v-html="cat.description" />
+                <p v-if="cat.description" class="settings-card__desc" v-html="iconizeHtml(cat.description)" />
               </div>
               <RouterLink v-if="cat.hasProtocolSwitches" :to="{ name: 'protocols' }" class="settings-card__link">
                 <i class="pi pi-sliders-h" />{{ t('settings.openProtocols') }}
@@ -134,10 +134,13 @@ import PageHeader from '@/shared/components/PageHeader.vue'
 import ApplyNotice from '@/shared/components/ApplyNotice.vue'
 import StickySaveBar from '@/shared/components/StickySaveBar.vue'
 import SettingFieldRow from '@/features/settings/components/SettingFieldRow.vue'
+import { isDnsValue } from '@/features/settings/dns-presets'
 import { apiErrorMessage } from '@/core/api/client'
 import { displayConfigLabel, htmlToText } from '@/shared/utils/config-labels'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import { settingsApi, type SettingCategory, type SettingField, type SettingsErrorBody, type SettingValue } from '@/features/settings/api'
+import { iconizeHtml } from '@/shared/utils/emoji-icons'
+import IconText from '@/shared/components/IconText.vue'
 
 const ADVANCED_STORAGE_KEY = 'hiddify.settings.showAdvanced'
 
@@ -221,6 +224,7 @@ function localErrors(field: SettingField): string[] {
   if (field.type === 'bool' || !isChanged(field)) return []
   const value = String(draft[field.key] ?? '')
   if (field.required && !value.trim()) return [t('settings.required')]
+  if (field.key === 'dns_server' && value.trim() && !isDnsValue(value)) return [t('settings.dns.invalid')]
   if (field.pattern && value) {
     try {
       if (!new RegExp(`^(?:${field.pattern})$`).test(value)) return [field.pattern_message || t('settings.invalid')]
