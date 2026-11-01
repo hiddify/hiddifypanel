@@ -24,12 +24,16 @@ const cut = computed(() => parts.value.length > props.words)
 const preview = computed(() => parts.value.slice(0, props.words).join(' '))
 
 const sheet = ref<InstanceType<typeof Popover> | null>(null)
+/** The words: the sheet always opens under them, also when the pointer comes back onto a sheet that is closing */
+const anchor = ref<HTMLElement | null>(null)
 const open = ref(false)
 let closing: number | undefined
 function show(e: Event) {
   if (!cut.value) return
   window.clearTimeout(closing)
-  if (!open.value) sheet.value?.show(e, e.currentTarget as HTMLElement)
+  // Not the event's own element: from the sheet that is the sheet itself, removed once it closes, and the sheet would
+  // open again at the page's top left corner
+  if (!open.value && anchor.value) sheet.value?.show(e, anchor.value)
 }
 /** A short delay: the pointer can move from the words onto the sheet (to scroll a long note) without it closing. */
 function hideSoon() {
@@ -56,6 +60,7 @@ onBeforeUnmount(() => window.clearTimeout(closing))
 <template>
   <span
     v-if="text"
+    ref="anchor"
     class="note-preview"
     :class="{ 'note-preview--open': open, 'note-preview--cut': cut }"
     :tabindex="cut ? 0 : undefined"
@@ -72,10 +77,9 @@ onBeforeUnmount(() => window.clearTimeout(closing))
   >
     <slot :text="preview">{{ preview }}</slot><span v-if="cut" class="note-preview__more" aria-hidden="true"> …</span>
   </span>
-  <Popover v-if="cut" ref="sheet" class="note-pop" @show="open = true" @hide="open = false">
-    <div @pointerenter="hoverIn" @pointerleave="hoverOut">
-      <NoteSheet :label="label" :text="text" />
-    </div>
+  <!-- On the whole popover, its border and arrow included: crossing them is not leaving the sheet -->
+  <Popover v-if="cut" ref="sheet" class="note-pop" @show="open = true" @hide="open = false" @pointerenter="hoverIn" @pointerleave="hoverOut">
+    <NoteSheet :label="label" :text="text" />
   </Popover>
 </template>
 
