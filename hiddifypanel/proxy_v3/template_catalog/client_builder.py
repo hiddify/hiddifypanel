@@ -137,6 +137,7 @@ _STANDALONE_URI_BODIES = frozenset(
         "sublink/uri/hysteria2",
         "sublink/uri/snell",
         "sublink/uri/wireguard",
+        "sublink/uri/amneziawg",
         "sublink/uri/ss",
         "sublink/uri/ssh",
     }
@@ -158,6 +159,7 @@ _SUBLINK_PROTO_BODIES: dict[str, str] = {
     "hysteria2": "sublink/uri/hysteria2",
     "snell": "sublink/uri/snell",
     "wireguard": "sublink/uri/wireguard",
+    "amneziawg": "sublink/uri/amneziawg",
     "ssh": "sublink/uri/ssh",
 }
 
@@ -389,8 +391,8 @@ def _build_hiddify_client_outbound(combo: ProxyCombination) -> tuple[str, list[s
     proto_slug = _hiddify_client_proto_slug(combo)
     if not proto_slug:
         raise ValueError(f"Unsupported hiddify-core client preset: {combo.name}")
-    if _client_proto_file(combo.proto) == "wireguard":
-        content = _render_shell(_HIDDIFY_CLIENT_ROOT, "wireguard", {})
+    if _client_proto_file(combo.proto) in ("wireguard", "amneziawg"):
+        content = _render_shell(_HIDDIFY_CLIENT_ROOT, _client_proto_file(combo.proto), {})
         return content, [proto_slug]
     if not _uses_v2ray_transport_client(combo):
         tls_slug = _hiddify_client_tls_slug(combo)
@@ -552,7 +554,8 @@ def _builtin_client_core_entry(core: str, outbound: str) -> dict[str, Any]:
 
 
 def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[dict[str, Any]]:
-    """The client cores of a builtin preset: xray, singbox, hiddify-core, sublink, clash; WireGuard also gets its .conf."""
+    """The client cores of a builtin preset: xray, singbox, hiddify-core, sublink, clash; WireGuard and AmneziaWG also get
+    their .conf."""
     configs: list[dict[str, Any]] = []
 
     if supports_xray_preset(combo):
@@ -574,7 +577,7 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
     # Pair singbox's use_hiddify_core() stub with a real hiddify-core client config.
     if (
         supports_hiddify_preset(combo)
-        or combo.proto in ("wireguard", "mieru")
+        or combo.proto in ("wireguard", "amneziawg", "mieru")
         or supports_xray_preset(combo)
         or _is_rawhttp_with_tls(combo)
     ):
@@ -593,6 +596,8 @@ def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[
 
     if combo.proto == "wireguard":  # the WireGuard apps' own format (/wireguard, client core "wireguard")
         configs.append(_builtin_client_core_entry("wireguard", load_template_slug("wireguard/client/conf")))
+    if combo.proto == "amneziawg":  # the AmneziaVPN / AmneziaWG apps' .conf (/amneziawg, client core "amneziawg")
+        configs.append(_builtin_client_core_entry("amneziawg", load_template_slug("amneziawg/client/conf")))
 
     if supports_clash_preset(combo):
         try:

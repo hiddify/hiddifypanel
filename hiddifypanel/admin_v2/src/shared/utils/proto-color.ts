@@ -10,6 +10,7 @@ const PROTO_COLORS: Record<string, string> = {
   tuic: '#db2777',
   wireguard: '#16a34a',
   wg: '#16a34a',
+  amneziawg: '#15803d',
   ssh: '#475569',
   socks: '#0891b2',
   http: '#0ea5e9',

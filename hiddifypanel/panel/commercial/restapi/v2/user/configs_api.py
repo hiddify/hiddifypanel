@@ -262,6 +262,20 @@ class AllConfigsAPI(MethodView):
                 )
             )
 
+        if hconfig(ConfigEnum.amneziawg_enable):
+            subscriptions.append(
+                create_item(
+                    "AmneziaWG",
+                    "AmneziaWG",
+                    "",
+                    "",
+                    "",
+                    "",
+                    f"{base_url}amneziawg/#{config_name}",
+                    category="subscription",
+                )
+            )
+
         for row in iter_proxy_v3_config_items(
             c["user"],
             sublink_domain=request.host,

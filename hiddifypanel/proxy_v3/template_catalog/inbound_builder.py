@@ -140,7 +140,7 @@ def _is_standalone_hiddify_server(combo: ProxyCombination) -> bool:
 
 
 def supports_hiddify_preset(combo: ProxyCombination) -> bool:
-    if combo.proto == "wireguard":
+    if combo.proto in ("wireguard", "amneziawg"):
         return False
     # DNS tunnels are OS services (dns_proxy), not hiddify-core inbounds.
     if str(combo.proto).lower() in {"dnstt", "slipstream", "masterdns"}:
@@ -306,11 +306,31 @@ def build_hiddify_wireguard_endpoint() -> tuple[str, list[str]]:
     return content, ["hiddify-core/server/tag", proto_slug]
 
 
+def build_hiddify_amneziawg_endpoint() -> tuple[str, list[str]]:
+    """hiddify-core 5.1+ serves AmneziaWG as an "awg" endpoint: the ``endpoint_other`` preset around the ``amneziawg``
+    protocol."""
+    proto_slug = fragment_slug("hiddify-core", "protocols", "amneziawg", side="server")
+    content = _render_preset_shell(
+        "hiddify-core",
+        shell_name="endpoint_other",
+        proto_slug=proto_slug,
+        stream_slug="",
+        security_slug=None,
+        proto_key="amneziawg",
+        transport_key="",
+    )
+    return content, ["hiddify-core/server/tag", proto_slug]
+
+
 def build_hiddify_wireguard_server_stub() -> tuple[str, list[str]]:
     return "{% block inbounds %}\n{{ skip() if true }}\n{% endblock %}", []
 
 
 def build_hiddify_inbound_template(combo: ProxyCombination, *, l7_gateway: bool = False) -> tuple[str, list[str]]:
+    if combo.proto == "amneziawg":
+        # One endpoint on amneziawg_port: the relay row's clients reach the same one (through the relay), so only the
+        # direct row serves it.
+        return build_hiddify_amneziawg_endpoint() if str(combo.cdn) == "direct" else build_hiddify_wireguard_server_stub()
     if combo.proto == "wireguard":
         from .proxy_matrix import is_wireguard_endpoint
 

@@ -163,6 +163,8 @@ class ClientCore(JinjaEnum):
     clash = "clash"
     #: a WireGuard .conf for the WireGuard apps (/wireguard)
     wireguard = "wireguard"
+    #: an AmneziaWG .conf for the AmneziaVPN / AmneziaWG apps (/amneziawg)
+    amneziawg = "amneziawg"
 
     def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)
@@ -172,7 +174,7 @@ class ClientCore(JinjaEnum):
 
 
 #: Client cores whose output is plain text, rendered whole (no JSON / YAML blocks)
-TEXT_CLIENT_CORES = frozenset({"sublink", "wireguard"})
+TEXT_CLIENT_CORES = frozenset({"sublink", "wireguard", "amneziawg"})
 
 
 class TemplateCore(JinjaEnum):
@@ -188,6 +190,7 @@ class TemplateCore(JinjaEnum):
     dns_gateway = "dns_gateway"
     dns_proxy = "dns_proxy"
     wireguard = "wireguard"
+    amneziawg = "amneziawg"
     telemt = "telemt"
     firewall = "firewall"
     ip_scanner = "ip_scanner"

@@ -997,7 +997,7 @@ def validate_proxy_payload(
             tpl = cc.get("outbounds_template") or ""
             if not tpl.strip():
                 continue
-            if core_name == "wireguard":  # a .conf: it only has to render
+            if core_name in ("wireguard", "amneziawg"):  # a .conf: it only has to render
                 try:
                     _render_section(tpl, child_id, ctx_client, as_json_object=False, parse_json=False)
                 except TemplateSkip:
@@ -3031,7 +3031,7 @@ def generate_proxy_example(
             elif formats.get("parse_error"):
                 warnings.append({"code": "sublink_parse", "message": f"{label}: {formats['parse_error']}"})
             continue
-        if core_name == "wireguard":  # the .conf as it is
+        if core_name in ("wireguard", "amneziawg"):  # the .conf as it is
             section = _render_section(cc.get("outbounds_template") or "", child_id, client_ctx, as_json_object=False, parse_json=False)
             clients.append(
                 {"core": core_name, "version": version or None, "label": label, "index": idx, "auto": _client_is_auto(core_name), **section}
@@ -3939,7 +3939,7 @@ def _collect_sublink_links(entry: dict[str, Any]) -> list[str]:
 
 
 def _merge_text_client_entries(entries: list[dict[str, Any]]) -> dict[str, Any]:
-    """Text outputs (a WireGuard .conf of each proxy): one after another."""
+    """Text outputs (a WireGuard / AmneziaWG .conf of each proxy): one after another."""
     base = copy.deepcopy(entries[0])
     base["rendered"] = "\n\n".join(text for e in entries if (text := str(e.get("rendered") or "").strip()))
     return base
@@ -4030,7 +4030,7 @@ def _merge_bundle_client_entries(
         return _merge_xray_client_entries(entries)
     if core == "sublink":
         return _merge_sublink_client_entries(entries)
-    if core == "wireguard":
+    if core in ("wireguard", "amneziawg"):
         return _merge_text_client_entries(entries)
     if core == "clash":
         return _merge_clash_client_entries(entries)

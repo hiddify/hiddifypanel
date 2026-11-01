@@ -1,0 +1,29 @@
+{# AmneziaWG (hiddify-core 5.1+: the "awg" endpoint). The users are its peers, with their WireGuard keys and an address in
+   the AmneziaWG subnet; a peer's "name" makes its connections count for that user (usage, limits). S1, S2 and H1-H4
+   must be the same in every client config (the .conf and the Hiddify app's endpoint). #}
+{{ skip("hiddify-core " ~ ctx.platform.hiddifycore_version ~ " has no AmneziaWG (needs 5.1.0)") if ctx.platform.hiddifycore_version < "5.1.0" }}
+"type": "awg",
+"mtu": 1380,
+"address": ["{{ ctx.hconfig.amneziawg_ipv4 }}/16"{% if ctx.hconfig.ipv6_enabled %}, "{{ ctx.hconfig.amneziawg_ipv6 }}/90"{% endif %}],
+"private_key": "{{ ctx.hconfig.amneziawg_private_key }}",
+"awg": {
+  "jc": {{ ctx.hconfig.amneziawg_jc | int }},
+  "jmin": {{ ctx.hconfig.amneziawg_jmin | int }},
+  "jmax": {{ ctx.hconfig.amneziawg_jmax | int }},
+  "s1": {{ ctx.hconfig.amneziawg_s1 | int }},
+  "s2": {{ ctx.hconfig.amneziawg_s2 | int }},
+  "h1": "{{ ctx.hconfig.amneziawg_h1 }}",
+  "h2": "{{ ctx.hconfig.amneziawg_h2 }}",
+  "h3": "{{ ctx.hconfig.amneziawg_h3 }}",
+  "h4": "{{ ctx.hconfig.amneziawg_h4 }}"
+},
+"peers": [
+  {% for user in ctx.users if user.wg_pub %}
+  {
+    "name": "{{ user.uuid }}",
+    "public_key": "{{ user.wg_pub }}",
+    "pre_shared_key": "{{ user.wg_psk }}",
+    "allowed_ips": ["{{ user.awg_ipv4 }}/32"{% if ctx.hconfig.ipv6_enabled %}, "{{ user.awg_ipv6 }}/128"{% endif %}]
+  },
+  {% endfor %}
+]

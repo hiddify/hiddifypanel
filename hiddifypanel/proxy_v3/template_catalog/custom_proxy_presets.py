@@ -52,7 +52,7 @@ DNS_GATEWAY_PROTOS = frozenset({"dnstt", "slipstream", "masterdns"})
 IP_BASED_UDP_PROTOS = frozenset({"tuic", "hysteria", "hysteria2"})
 DIRECT_RELAY_DOMAIN_MODES = VALID_DIRECT_RELAY_DOMAIN_MODES
 DIRECT_DNS_DOMAIN_MODES = DNS_DIRECT_DOMAIN_MODES
-UDP_ONLY_PROTOS = frozenset({"tuic", "hysteria", "hysteria2", "wireguard", "dnstt", "slipstream", "masterdns"})
+UDP_ONLY_PROTOS = frozenset({"tuic", "hysteria", "hysteria2", "wireguard", "amneziawg", "dnstt", "slipstream", "masterdns"})
 TCP_ONLY_PROTOS = frozenset({"ssh", "anytls"})
 TCP_ONLY_TRANSPORTS = frozenset({"grpc", "http", "httpupgrade", "tcp", "ws"})
 BOTH_PROTOS = frozenset({"mieru", "socks", "shadowsocks", "ss"})
@@ -457,7 +457,7 @@ def _preset_protocol(combo) -> CustomProxyMode:
         return CustomProxyMode.domains_sni_gateway
     if proto in DNS_GATEWAY_PROTOS:
         return CustomProxyMode.domains_dns_gateway
-    if proto in IP_BASED_UDP_PROTOS or proto in ("shadowsocks", "ss", "socks", "wireguard", "ssh", "mieru", "snell") or raw_transport == "tcp":
+    if proto in IP_BASED_UDP_PROTOS or proto in ("shadowsocks", "ss", "socks", "wireguard", "amneziawg", "ssh", "mieru", "snell") or raw_transport == "tcp":
         return CustomProxyMode.ip
     return CustomProxyMode.domains_l7_gateway
 
@@ -635,6 +635,9 @@ def _build_preset(
         if proto == "wireguard" and not is_wireguard_endpoint(primary):
             # WireGuard listens on hconfig.wireguard_port (wg-quick / firewall), not a slug port.
             public_port = _hconfig_port(ConfigEnum.wireguard_port, child_id, fallback_slug=slug)
+        elif proto == "amneziawg":
+            # AmneziaWG (hiddify-core's awg endpoint) listens on hconfig.amneziawg_port.
+            public_port = _hconfig_port(ConfigEnum.amneziawg_port, child_id, fallback_slug=slug)
         else:
             public_port = _stable_public_port(slug)
         if tcp_udp != InboundTcpUdp.udp:
@@ -742,7 +745,7 @@ def iter_custom_proxy_presets(child_id: int = 0) -> list[CustomProxyPreset]:
                 xray_built = build_xray_inbound_template(primary, l7_gateway=l7_gateway)
             except ValueError:
                 pass
-        if supports_hiddify_preset(primary) or primary.proto == "wireguard":
+        if supports_hiddify_preset(primary) or primary.proto in ("wireguard", "amneziawg"):
             try:
                 hiddify_built = build_hiddify_inbound_template(primary, l7_gateway=l7_gateway)
             except ValueError:

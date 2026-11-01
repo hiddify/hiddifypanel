@@ -729,6 +729,8 @@ def all_public_ports():
 
     if hconfig(ConfigEnum.wireguard_enable):
         add(udp_ports, ConfigEnum.wireguard_port, "wireguard")
+    if hconfig(ConfigEnum.amneziawg_enable):
+        add(udp_ports, ConfigEnum.amneziawg_port, "amneziawg")
 
     # The gateway listens on 80 / 443 only (above); the old tls_ports / http_ports settings (hidden) would still open the
     # ports a server had in them. A domain's own ports are added below.

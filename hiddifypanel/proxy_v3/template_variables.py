@@ -131,6 +131,8 @@ USER_DICT_KEYS: list[tuple[str, str]] = [
     ("wg_psk", "WireGuard pre-shared key"),
     ("wg_ipv4", "Per-user WireGuard IPv4 (base + user id)"),
     ("wg_ipv6", "Per-user WireGuard IPv6 (base + user id)"),
+    ("awg_ipv4", "Per-user AmneziaWG IPv4 (base + user id; keys are the WireGuard ones)"),
+    ("awg_ipv6", "Per-user AmneziaWG IPv6 (base + user id)"),
     ("added_by_uuid", "Admin who created the user"),
 ]
 
@@ -454,6 +456,8 @@ def build_user_context(
         "wg_psk": "wg-psk-sample",
         "wg_ipv4": "10.90.0.2",
         "wg_ipv6": "fd42:42:90::2",
+        "awg_ipv4": "10.91.0.2",
+        "awg_ipv6": "fd42:42:91::2",
     }
     return sample, [sample]
 
