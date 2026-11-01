@@ -346,7 +346,7 @@ function domainName(id: number | null): string {
 }
 /** A shown domain, also a node's (as `Node[name] domain`). */
 function showName(id: number): string {
-  const o = options.value?.show_options.find((x) => x.id === id)
+  const o = (state.value?.show_options ?? options.value?.show_options)?.find((x) => x.id === id)
   if (!o) return domainName(id)
   return o.node ? `Node[${o.node}] ${o.domain}` : o.domain
 }
