@@ -106,14 +106,14 @@
                   v-if="d.tls.needs_valid"
                   class="dm-badge"
                   :class="`dm-tls--${certState(d)}`"
-                  v-tooltip.top="tlsTooltip(d)"
+                  v-tooltip.top="tlsTip(d)"
                 >
                   <i :class="certIcon(d)" />
                   {{ certLabel(d) }}
                   <template v-if="d.tls.status === 'valid' && expiresIn(d) !== null"> · {{ t('domains.tls.expiresIn', { n: expiresIn(d) }) }}</template>
                 </span>
                 <!-- No certificate of its own: its TLS mode, each in its own colour (Valid is the certificate badge above) -->
-                <span v-else class="dm-badge dm-mode" :class="`dm-mode--${isFakeProxyMode(d.fake_mode) ? 'proxy' : d.fake_mode}`" v-tooltip.top="t('domains.tls.decoyHint')">
+                <span v-else class="dm-badge dm-mode" :class="`dm-mode--${isFakeProxyMode(d.fake_mode) ? 'proxy' : d.fake_mode}`" v-tooltip.top="modeTip(d)">
                   <i :class="MODE_ICON[d.fake_mode] ?? 'pi pi-eye-slash'" />{{ t(`domains.tlsMode.${d.fake_mode}`) }}
                 </span>
                 <span v-if="d.ech" class="dm-badge dm-badge--soft"><i class="pi pi-envelope" />ECH</span>
@@ -395,12 +395,64 @@ function certLabel(d: DomainRow): string {
 function expiresIn(d: DomainRow): number | null {
   return daysUntil(d.tls.expires_at)
 }
-function tlsTooltip(d: DomainRow): string {
-  const parts = [t(`domains.tls.${d.tls.status}Hint`)]
-  if (d.tls.issuer) parts.push(`${t('domains.tls.issuer')}: ${d.tls.issuer}`)
-  if (d.tls.expires_at) parts.push(`${t('domains.tls.expires')}: ${longDate(d.tls.expires_at, locale.value)} (${t('domains.tls.expiresIn', { n: expiresIn(d) })})`)
-  if (d.tls.error) parts.push(d.tls.error)
-  return parts.join('\n')
+const esc = (text: string) => text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
+const TIP_TONE: Record<string, string> = {
+  valid: '#16a34a',
+  renew_failed: '#d97706',
+  self_signed: '#d97706',
+  running: 'var(--p-primary-color)',
+  expired: '#dc2626',
+  invalid: '#dc2626',
+  failed: '#dc2626',
+  missing: '#64748b',
+  reality: '#8b5cf6',
+  fake: '#f97316',
+  dns: '#64748b',
+  proxy: '#0ea5e9',
+}
+/** A hover card (PrimeVue tooltip with HTML, styled in the unscoped block below): an icon, a title and a line, then rows */
+function tipCard(tone: string, icon: string, title: string, sub: string, body: string) {
+  const value = `<div class="dm-tip__card" style="--tip-tone:${tone}"><div class="dm-tip__head"><span class="dm-tip__icon"><i class="${icon}"></i></span><div><div class="dm-tip__title">${esc(title)}</div><div class="dm-tip__sub">${esc(sub)}</div></div></div>${body}</div>`
+  return { value, escape: false, class: 'dm-tip' }
+}
+const tipRow = (label: string, value: string, raw = false) => `<div class="dm-tip__row"><dt>${esc(label)}</dt><dd>${raw ? value : esc(value)}</dd></div>`
+
+/** The certificate badge's card: its state, how much of its life is left, and what the certificate is */
+function tlsTip(d: DomainRow) {
+  const state = certState(d)
+  const tls = d.tls
+  const days = expiresIn(d)
+  let life = ''
+  if (tls.issued_at && tls.expires_at) {
+    const start = Date.parse(tls.issued_at)
+    const end = Date.parse(tls.expires_at)
+    const left = Math.max(0, Math.min(1, (end - Date.now()) / Math.max(1, end - start)))
+    const urgency = days === null ? '' : days < 7 ? ' dm-tip__life--urgent' : days < 21 ? ' dm-tip__life--soon' : ''
+    life = `<div class="dm-tip__life${urgency}"><div class="dm-tip__bar"><span style="width:${(left * 100).toFixed(1)}%"></span></div><div class="dm-tip__dates"><span>${esc(longDate(tls.issued_at, locale.value))}</span><b>${esc(days !== null && days >= 0 ? t('domains.tls.expiresIn', { n: days }) : t('domains.tls.expired'))}</b><span>${esc(longDate(tls.expires_at, locale.value))}</span></div></div>`
+  } else if (tls.expires_at) {
+    life = `<dl class="dm-tip__rows">${tipRow(t('domains.tls.expires'), `${longDate(tls.expires_at, locale.value)} · ${t('domains.tls.expiresIn', { n: days ?? 0 })}`)}</dl>`
+  }
+  const rows: string[] = []
+  if (tls.ca || tls.issuer) rows.push(tipRow(t('domains.tip.issuedBy'), [tls.ca, tls.issuer].filter(Boolean).join(' · ')))
+  if (tls.names?.length) {
+    const chips = tls.names.slice(0, 4).map((n) => `<span class="dm-tip__chip" dir="ltr">${esc(n)}</span>`).join('') + (tls.names.length > 4 ? `<span class="dm-tip__more">+${tls.names.length - 4}</span>` : '')
+    rows.push(tipRow(t('domains.tip.covers'), `<span class="dm-tip__chips">${chips}</span>`, true))
+  }
+  if (tls.key) rows.push(tipRow(t('domains.tip.key'), tls.key))
+  if (tls.expires_at) rows.push(tipRow(t('domains.tip.autoRenew'), t(tls.auto_renew ? 'domains.tip.on' : 'domains.tip.off')))
+  if (tls.fingerprint) rows.push(tipRow(t('domains.tip.fingerprint'), `<code dir="ltr">${esc(tls.fingerprint.slice(0, 23))}…</code>`, true))
+  const error = tls.error && state !== 'valid' ? `<div class="dm-tip__note">${esc(tls.error.length > 160 ? `${tls.error.slice(0, 160)}…` : tls.error)}</div>` : ''
+  const hint = state === 'running' ? t('domains.cert.waiting') : state === 'failed' || state === 'renew_failed' ? t('domains.cert.failedHint') : t(`domains.tls.${tls.status}Hint`)
+  return tipCard(TIP_TONE[state] ?? '#64748b', certIcon(d), certLabel(d), hint, `${life}${rows.length ? `<dl class="dm-tip__rows">${rows.join('')}</dl>` : ''}${error}`)
+}
+
+/** A decoy TLS mode's card (Reality, Fake, DNS, a built-in server's fake-TLS name): what it does, no certificate of its own */
+function modeTip(d: DomainRow) {
+  const key = isFakeProxyMode(d.fake_mode) ? 'proxy' : d.fake_mode
+  const hint = t(`domains.tlsMode.${d.fake_mode}Hint`)
+  const rows = [tipRow(t('domains.tip.certificate'), t('domains.tip.noCertNeeded'))]
+  if (d.domain) rows.push(tipRow(t('domains.tip.sni'), `<span class="dm-tip__chip" dir="ltr">${esc(d.domain)}</span>`, true))
+  return tipCard(TIP_TONE[key] ?? '#64748b', MODE_ICON[d.fake_mode] ?? 'pi pi-eye-slash', t(`domains.tlsMode.${d.fake_mode}`), hint, `<dl class="dm-tip__rows">${rows.join('')}</dl>`)
 }
 
 const rowItems = computed<MenuItem[]>(() => {
@@ -1188,6 +1240,147 @@ a.dm-row__domain:hover {
 </style>
 
 <style>
+/* The badges' hover cards (tlsTip / modeTip; PrimeVue puts the tooltip in <body>): a light card in the page's
+   colours with the badge's own colour on its top edge and icon */
+.p-tooltip.dm-tip {
+  max-width: 22rem;
+}
+.p-tooltip.dm-tip .p-tooltip-text {
+  padding: 0;
+  border-radius: 14px;
+  background: var(--p-content-background);
+  color: var(--p-text-color);
+  border: 1px solid var(--p-content-border-color);
+  box-shadow: 0 18px 40px -16px rgb(15 23 42 / 35%), 0 2px 6px rgb(15 23 42 / 6%);
+  white-space: normal;
+  overflow: hidden;
+}
+html.theme-caddy .p-tooltip.dm-tip .p-tooltip-text {
+  background: var(--p-surface-0);
+}
+html.theme-caddy.app-dark .p-tooltip.dm-tip .p-tooltip-text {
+  background: var(--p-surface-900);
+}
+.p-tooltip.dm-tip.p-tooltip-top .p-tooltip-arrow {
+  border-top-color: var(--p-content-border-color);
+}
+.dm-tip__card {
+  min-width: 17rem;
+  border-top: 3px solid var(--tip-tone);
+  font-size: 0.8rem;
+}
+.dm-tip__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.7rem 0.85rem 0.55rem;
+}
+.dm-tip__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 9px;
+  color: var(--tip-tone);
+  background: color-mix(in srgb, var(--tip-tone) 14%, transparent);
+}
+.dm-tip__title {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.dm-tip__sub {
+  margin-top: 0.1rem;
+  line-height: 1.45;
+  color: var(--p-text-muted-color);
+}
+.dm-tip__life {
+  --life: var(--tip-tone);
+  padding: 0 0.85rem 0.55rem;
+}
+.dm-tip__life--soon {
+  --life: #d97706;
+}
+.dm-tip__life--urgent {
+  --life: #dc2626;
+}
+.dm-tip__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--life) 15%, transparent);
+  overflow: hidden;
+}
+.dm-tip__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--life);
+}
+.dm-tip__dates {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  color: var(--p-text-muted-color);
+}
+.dm-tip__dates b {
+  color: var(--life);
+}
+.dm-tip__rows {
+  margin: 0;
+  padding: 0 0.85rem 0.6rem;
+}
+.dm-tip__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--p-content-border-color);
+}
+.dm-tip__row dt {
+  flex: none;
+  color: var(--p-text-muted-color);
+}
+.dm-tip__row dd {
+  margin: 0;
+  min-width: 0;
+  font-weight: 600;
+  text-align: end;
+}
+.dm-tip__row code {
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+.dm-tip__chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+.dm-tip__chip {
+  padding: 0.05rem 0.4rem;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.1));
+}
+.dm-tip__more {
+  font-size: 0.7rem;
+  color: var(--p-text-muted-color);
+}
+.dm-tip__note {
+  margin: 0 0.85rem 0.65rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #b91c1c;
+  background: color-mix(in srgb, #dc2626 8%, transparent);
+  overflow-wrap: anywhere;
+}
 .dm-menu--danger .p-menu-item-icon,
 .dm-menu--danger .p-menu-item-label {
   color: var(--p-red-500, #ef4444);

@@ -24,7 +24,16 @@ export interface DomainTls {
   /** The domain needs a real certificate (valid TLS mode). */
   needs_valid: boolean
   issuer: string
+  /** The issuing organisation (e.g. Let's Encrypt), read from the certificate; issuer is its short name (E7, YE1). */
+  ca: string
+  issued_at: string | null
   expires_at: string | null
+  /** The names the certificate covers. */
+  names: string[]
+  /** e.g. "ECDSA P-256", "RSA 2048" */
+  key: string
+  fingerprint: string
+  auto_renew: boolean
   updated_at: string | null
   error: string
   /** The last certificate request from this page (kept for 10 minutes). */
