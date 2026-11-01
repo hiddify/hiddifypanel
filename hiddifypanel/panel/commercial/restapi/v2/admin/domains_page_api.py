@@ -259,11 +259,17 @@ def _compatible_proxies(child_id: int) -> dict[str, list[int]]:
 
 def _show_options(child_id: int) -> list[dict[str, Any]]:
     """Domains whose configs a domain can show: this panel's and its nodes' (not subscription-only ones)."""
-    rows = Domain.query.filter(Domain.mode != DomainType.sub_link_only).order_by(Domain.child_id, Domain.domain).all()
+    rows = (
+        Domain.query.filter(Domain.mode != DomainType.sub_link_only)
+        .options(selectinload(Domain.download_domain))
+        .order_by(Domain.child_id, Domain.domain)
+        .all()
+    )
     out = []
     for d in rows:
         node = None if d.child_id == child_id else (d.child.name if d.child else str(d.child_id))
-        out.append({"id": d.id, "domain": d.domain or "", "alias": d.alias or "", "mode": _enum(d.mode), "fake_mode": _enum(d.fake_mode), "node": node})
+        download = d.download_domain.domain if d.download_domain else ""
+        out.append({"id": d.id, "domain": d.domain or "", "alias": d.alias or "", "mode": _enum(d.mode), "fake_mode": _enum(d.fake_mode), "node": node, "download": download})
     return out
 
 

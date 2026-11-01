@@ -353,9 +353,9 @@ function showName(id: number): string {
 function proxiesOf(d: DomainRow): DomainProxy[] {
   return d.custom_proxy_ids.map((id) => proxyById.value.get(id)).filter(Boolean) as DomainProxy[]
 }
-/** Same rule as the editor: sub-link domains, or real-certificate domains while there is no sub-link domain. */
+/** Same rule as the editor: sub-link domains, or every domain while there is no sub-link domain. */
 function showsConfigs(d: DomainRow): boolean {
-  return d.mode === 'sub_link_only' || (!state.value?.meta.has_sublink && d.fake_mode === 'valid')
+  return d.mode === 'sub_link_only' || !state.value?.meta.has_sublink
 }
 function canGetCert(d: DomainRow): boolean {
   return d.tls.needs_valid && !!d.domain && !d.domain.includes('*') && d.tls.status !== 'valid'

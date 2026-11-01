@@ -1187,6 +1187,33 @@
         "title": "ဒိုမိန်းတစ်ခု ထည့်ရန်",
         "tlsQ": "ဘယ် TLS လဲ?",
         "unlikely": "DNS မကိုက်ညီပါ"
+      },
+      "show": {
+        "all": "All domains",
+        "allHint": "Users see every domain's configs, including ones added later.",
+        "pickHint": "Users see only the domains you tick.",
+        "search": "Search domain, name or node",
+        "clearSearch": "Clear search",
+        "filter": {
+          "all": "All",
+          "fake": "Fake & Reality",
+          "cdn": "CDN",
+          "direct": "Real certificate",
+          "selected": "Selected"
+        },
+        "group": {
+          "fake": "Fake TLS & Reality",
+          "cdn": "CDN",
+          "direct": "Real certificate"
+        },
+        "selected": "{n} of {total} selected",
+        "noneTicked": "Nothing ticked yet: users still see all domains.",
+        "clear": "Clear",
+        "thisServer": "This server",
+        "tickServer": "Tick all domains of this server",
+        "noMatch": "No domain matches",
+        "empty": "No other domains yet.",
+        "node": "Node"
       }
     },
     "donation": {

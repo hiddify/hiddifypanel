@@ -1184,6 +1184,33 @@
         "title": "Ajouter un domaine",
         "tlsQ": "Quel TLS ?",
         "unlikely": "Le DNS ne correspond pas"
+      },
+      "show": {
+        "all": "Tous les domaines",
+        "allHint": "Les utilisateurs voient les configs de tous les domaines, y compris ceux ajoutés plus tard.",
+        "pickHint": "Les utilisateurs ne voient que les domaines cochés.",
+        "search": "Rechercher un domaine, nom ou nœud",
+        "clearSearch": "Effacer la recherche",
+        "filter": {
+          "all": "Tous",
+          "fake": "Fake et Reality",
+          "cdn": "CDN",
+          "direct": "Certificat réel",
+          "selected": "Sélectionnés"
+        },
+        "group": {
+          "fake": "Fake TLS et Reality",
+          "cdn": "CDN",
+          "direct": "Certificat réel"
+        },
+        "selected": "{n} sur {total} sélectionnés",
+        "noneTicked": "Rien de coché : les utilisateurs voient tous les domaines.",
+        "clear": "Effacer",
+        "thisServer": "Ce serveur",
+        "tickServer": "Cocher tous les domaines de ce serveur",
+        "noMatch": "Aucun domaine ne correspond",
+        "empty": "Pas encore d'autres domaines.",
+        "node": "Nœud"
       }
     },
     "donation": {

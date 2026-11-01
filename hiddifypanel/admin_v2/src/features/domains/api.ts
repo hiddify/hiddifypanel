@@ -269,7 +269,7 @@ export function hasDomainTricks(extra: Record<string, unknown> | null | undefine
 /** Loaded separately, after the page: only the edit dialog (and the names of shown domains) need it. */
 export interface DomainsOptions {
   /** Domains whose configs a domain can show: this panel's and its nodes' (`node` = the node's name). */
-  show_options: { id: number; domain: string; alias: string; mode: DomainMode; fake_mode: TlsMode; node: string | null }[]
+  show_options: { id: number; domain: string; alias: string; mode: DomainMode; fake_mode: TlsMode; node: string | null; download?: string }[]
   /** `mode:fake_mode` → ids of the custom proxies that fit that kind of domain. */
   compatible: Record<string, number[]>
 }

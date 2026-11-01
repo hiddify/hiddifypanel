@@ -1184,6 +1184,33 @@
         "title": "添加域名",
         "tlsQ": "哪种 TLS？",
         "unlikely": "DNS 不匹配"
+      },
+      "show": {
+        "all": "所有域名",
+        "allHint": "用户可看到所有域名的配置，包括以后添加的。",
+        "pickHint": "用户只看到您勾选的域名。",
+        "search": "搜索域名、名称或节点",
+        "clearSearch": "清除搜索",
+        "filter": {
+          "all": "全部",
+          "fake": "伪装和 Reality",
+          "cdn": "CDN",
+          "direct": "真实证书",
+          "selected": "已选"
+        },
+        "group": {
+          "fake": "伪装 TLS 和 Reality",
+          "cdn": "CDN",
+          "direct": "真实证书"
+        },
+        "selected": "已选 {n} / {total}",
+        "noneTicked": "尚未勾选：用户仍可看到所有域名。",
+        "clear": "清除",
+        "thisServer": "本服务器",
+        "tickServer": "勾选此服务器的所有域名",
+        "noMatch": "没有匹配的域名",
+        "empty": "暂无其他域名。",
+        "node": "节点"
       }
     },
     "donation": {
