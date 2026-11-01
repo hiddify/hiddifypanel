@@ -14,6 +14,7 @@ import Textarea from 'primevue/textarea'
 import { apiErrorMessage } from '@/core/api/client'
 import { LANGUAGE_LOOK } from '@/shared/utils/languages'
 import { adminsApi, type OverrideInfo, type OverrideKey, type OverrideSettings } from '@/features/admins/api'
+import FlagIcon from '@/shared/components/FlagIcon.vue'
 
 const props = defineProps<{ info: OverrideInfo; languages: string[] }>()
 const visible = defineModel<boolean>('visible', { required: true })
@@ -49,9 +50,11 @@ const langOptions = computed(() => [
   { value: '', label: t('account.userPage.inherit', { value: look(props.info.override_defaults.lang) }) },
   ...props.languages.map((code) => ({ value: code, label: look(code) })),
 ])
+/** The flag of a language; the inherited one ("") has the panel default's */
+const flagOf = (code: string) => LANGUAGE_LOOK[code || props.info.override_defaults.lang || '']?.flag ?? ''
 function look(code: string | undefined): string {
   const l = code ? LANGUAGE_LOOK[code] : undefined
-  return l ? `${l.flag} ${l.name}` : code || '—'
+  return l ? l.name : code || '—'
 }
 function placeholder(k: OverrideKey): string {
   const inherited = props.info.override_defaults[k]
@@ -99,7 +102,10 @@ async function save() {
 
       <div class="upf__field">
         <label for="upf-lang" class="font-medium">{{ t('account.userPage.lang') }}</label>
-        <Select v-model="form.lang" input-id="upf-lang" :options="langOptions" option-label="label" option-value="value" :disabled="saving" fluid />
+        <Select v-model="form.lang" input-id="upf-lang" :options="langOptions" option-label="label" option-value="value" :disabled="saving" fluid>
+          <template #value="{ value }"><span class="upf__lang"><FlagIcon :code="flagOf(value)" />{{ langOptions.find((o) => o.value === value)?.label }}</span></template>
+          <template #option="{ option }"><span class="upf__lang"><FlagIcon :code="flagOf(option.value)" />{{ option.label }}</span></template>
+        </Select>
         <small class="upf__hint">{{ t('account.userPage.langHint') }}</small>
       </div>
 
@@ -139,5 +145,10 @@ async function save() {
 }
 .upf__error {
   color: var(--p-red-500);
+}
+.upf__lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 </style>

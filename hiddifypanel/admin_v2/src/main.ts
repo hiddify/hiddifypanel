@@ -15,6 +15,7 @@ import '@/shared/composables/usePwaInstall'
 import { createAppRouter } from './router'
 import { i18n, primeVueLocale, setLocale } from './core/i18n'
 import { initApiClient, getRouterBase } from './core/api/client'
+import { stripEmoji } from '@/shared/utils/emoji-icons'
 
 async function bootstrap() {
   await initApiClient()
@@ -39,6 +40,15 @@ async function bootstrap() {
   app.directive('tooltip', Tooltip)
   app.use(ConfirmationService)
   app.use(ToastService)
+  // Toast text from the server can carry a legacy emoji ("⚠️ …"); the toast has its own severity icon
+  const toast = app.config.globalProperties.$toast
+  const add = toast.add
+  toast.add = (message) =>
+    add({
+      ...message,
+      summary: typeof message.summary === 'string' ? stripEmoji(message.summary) : message.summary,
+      detail: typeof message.detail === 'string' ? stripEmoji(message.detail) : message.detail,
+    })
   app.mount('#app')
 }
 

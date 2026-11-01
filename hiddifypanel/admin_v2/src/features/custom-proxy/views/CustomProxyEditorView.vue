@@ -8,7 +8,7 @@
           :label="t('common.back')"
           @click="router.push({ name: 'custom-proxy-list' })"
         />
-        <h2 class="text-2xl font-semibold m-0">{{ isNew ? t('proxy.new') : form.name }}</h2>
+        <h2 class="text-2xl font-semibold m-0"><IconText :text="isNew ? t('proxy.new') : form.name" /></h2>
         <SysBadge v-if="isBuiltin" :customized="isCustomizedBuiltin" />
         <Tag v-if="isCommonProxy" :value="t('proxy.commonProxyBadge')" severity="info" />
       </div>
@@ -597,6 +597,7 @@ import {
   type ValidationResult,
 } from '@/core/api/generated'
 import { apiErrorMessage } from '@/core/api/client'
+import IconText from '@/shared/components/IconText.vue'
 
 const props = defineProps<{ id?: string }>()
 const { t } = useI18n()
