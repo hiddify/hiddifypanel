@@ -108,37 +108,6 @@ def get_html_user_link(model: BaseAccount, domain: Domain):
     return res
 
 
-def reinstall_action(complete_install=False, domain_changed=False, do_update=False):
-    from hiddifypanel.panel.admin.Actions import Actions
-
-    action = Actions()
-    if do_update:
-        return action.update()
-    return action.reinstall(complete_install=complete_install, domain_changed=domain_changed)
-
-
-def check_need_reset(old_configs, do=False):
-    restart_mode = ApplyMode.nothing
-    for c in old_configs:
-        if c.apply_mode == ApplyMode.nothing:
-            continue
-        # c=ConfigEnum(c)
-        if restart_mode == ApplyMode.reinstall:
-            break
-        if old_configs[c] != hconfig(c):
-            restart_mode = c.apply_mode
-    if old_configs[ConfigEnum.proxy_path_admin] != hconfig(ConfigEnum.proxy_path_admin):
-        g.new_proxy_path = hconfig(ConfigEnum.proxy_path_admin)
-        g.force_proxy_path = g.proxy_path
-    # do_full_install=old_config[ConfigEnum.telegram_lib]!=hconfig(ConfigEnum.telegram_lib)
-    if old_configs[ConfigEnum.package_mode] != hconfig(ConfigEnum.package_mode):
-        return reinstall_action(do_update=True)
-    if not (do and restart_mode == ApplyMode.reinstall):
-        return hutils.flask.flash_config_success(restart_mode=restart_mode, domain_changed=False)
-
-    return reinstall_action(complete_install=True, domain_changed=False)
-
-
 def get_child(unique_id):
     child_id = Child.current().id
     if unique_id is None or unique_id in ["self", "default", str(hconfig(ConfigEnum.unique_id))]:

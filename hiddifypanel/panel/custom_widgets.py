@@ -1,6 +1,5 @@
 import datetime
 
-from flask_admin.contrib.sqla import ModelView
 from flask_babel import lazy_gettext as _
 from wtforms import TextAreaField
 from wtforms.fields import IntegerField, SelectField, DecimalField
@@ -65,12 +64,6 @@ class CKTextAreaWidget(TextArea):
 class CKTextAreaField(TextAreaField):
     extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
     widget = CKTextAreaWidget()
-
-
-class MessageAdmin(ModelView):
-    extra_js = ["//cdn.ckeditor.com/4.6.0/standard/ckeditor.js"]
-
-    form_overrides = {"body": CKTextAreaField}
 
 
 class EnumSelectField(SelectField):

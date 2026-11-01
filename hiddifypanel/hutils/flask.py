@@ -20,7 +20,7 @@ from wtforms.validators import ValidationError
 
 from hiddifypanel import current_app, g, hutils
 from hiddifypanel.cache import STATIC, cache
-from hiddifypanel.models import AdminUser, ApplyMode, Child, ConfigEnum, Role, hconfig
+from hiddifypanel.models import AdminUser, Child, ConfigEnum, Role, hconfig
 
 
 def flash(message: str | Markup | LazyString, category: str = "message"):
@@ -29,32 +29,12 @@ def flash(message: str | Markup | LazyString, category: str = "message"):
     return flask_flash(message, category)
 
 
-def flash_config_success(restart_mode: ApplyMode = ApplyMode.nothing, domain_changed=True):
-    if restart_mode != ApplyMode.nothing:
-        url = hurl_for("admin.Actions:reinstall", complete_install=restart_mode == ApplyMode.reinstall, domain_changed=domain_changed)
-        apply_btn = f"<a href='{url}' class='btn btn-primary form_post'>" + _("admin.config.apply_configs") + "</a>"
-        flash((_("config.validation-success", link=apply_btn)), "success")
-    else:
-        flash((_("config.validation-success-no-reset")), "success")
-
-
 def static_url_for(**values):
     orig = url_for("static", **values)
     return orig.split("user_secret")[0]
 
 
 def hurl_for(endpoint, **values):
-    # Legacy pages can still render their sidebar when debug-only views are absent.
-    # Keep registered legacy views in debug mode; otherwise link to Admin V2.
-    legacy_sections = {
-        "admin.Dashboard:index": "",
-        "admin.ProxyAdmin:index": "custom-proxies",
-        "admin.SettingAdmin:index": "settings",
-        "admin.Backup:index": "backup",
-    }
-    if endpoint in legacy_sections and endpoint not in current_app.view_functions:
-        values.setdefault("subpath", legacy_sections[endpoint])
-        endpoint = "admin.admin_v2"
     if Child.current().id != 0:
         new_endpoint = "child_" + endpoint
         if new_endpoint in current_app.view_functions:

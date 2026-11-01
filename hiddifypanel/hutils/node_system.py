@@ -122,7 +122,7 @@ def fetch_disk_detail(child_id: int | None) -> DashboardDiskDetail:
 def attach_panel_urls(node_stats: list[DashboardNodeStats], account_uuid: str, admin_base: str) -> None:
     """Link each remote node (online or offline) to its panel, same link as the legacy Node admin.
 
-    Nodes without a base URL fall back to their edit page in this panel's Node admin.
+    Nodes without a base URL fall back to this panel's Nodes page.
     """
     remote_ids = [row.id for row in node_stats if row.id != 0]
     if not remote_ids:
@@ -132,7 +132,7 @@ def attach_panel_urls(node_stats: list[DashboardNodeStats], account_uuid: str, a
         if row.id == 0 or is_debug_node(row.id):
             continue
         base = bases.get(row.id)
-        row.panel_url = f"{base}/{account_uuid}/" if base else hurl_for('flask.node.edit_view', id=row.id)
+        row.panel_url = f"{base}/{account_uuid}/" if base else hurl_for("admin.admin_v2", subpath="nodes")
 
 
 def attach_countries(node_stats: list[DashboardNodeStats]) -> None:

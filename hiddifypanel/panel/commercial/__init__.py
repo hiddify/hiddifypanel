@@ -36,15 +36,6 @@ def is_valid():
 # Events.db_init_event.subscribe(db_init_event)
 
 
-def admin_prehook(flaskadmin, admin_bp):
-    # from .ParentDomainAdmin import ParentDomainAdmin
-    # flaskadmin.add_view(ParentDomainAdmin(ParentDomain, db.session))
-    from .ProxyDetailsAdmin import ProxyDetailsAdmin
-    flaskadmin.add_view(ProxyDetailsAdmin(Proxy, db.session))
-    # CommercialSettings.register(admin_bp)
-
-
-Events.admin_prehook.subscribe(admin_prehook)
 
 
 # def db_prehook():

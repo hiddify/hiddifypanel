@@ -1,3 +1,5 @@
+"""The settings form (WTForms): built and saved for the admin API (restapi/v2/admin/settings_api.py)."""
+
 import re
 from dataclasses import dataclass
 from dataclasses import field as dc_field
@@ -8,80 +10,22 @@ from bleach import ALLOWED_TAGS as BLEACH_ALLOWED_TAGS
 from bleach import clean as bleach_clean
 
 # from flask_babelex import gettext as _
-from flask import render_template
 from flask_babel import lazy_gettext as _
 from flask_bootstrap import SwitchField
 
 # from gettext import gettext as _
-from flask_classful import FlaskView
 from flask_wtf import FlaskForm
 from loguru import logger
 from markupsafe import Markup
 
-from hiddifypanel import g, hutils
-from hiddifypanel.auth import login_required
+from hiddifypanel import hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db
-from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import *
 from hiddifypanel.models import BoolConfig, ConfigCategory, ConfigEnum, StrConfig, hconfig
-from hiddifypanel.panel import custom_widgets, hiddify
+from hiddifypanel.panel import custom_widgets
 
 ALLOWED_TAGS = set([*BLEACH_ALLOWED_TAGS, "h1", "h2", "h3", "h4", "p"])
-
-
-class SettingAdmin(FlaskView):
-    @login_required(roles={Role.super_admin})
-    def index(self):
-        form = get_config_form()
-        return render_template("config.html", form=form)
-
-    @login_required(roles={Role.super_admin})
-    def post(self):
-        set_hconfig(ConfigEnum.first_setup, False)
-        form = get_config_form()
-        reset_action = None
-        if form.validate_on_submit():
-            result = save_config_form(form)
-            if result.errors:
-                for error in result.errors:
-                    hutils.flask.flash(error, "error")
-                return render_template("config.html", form=form)
-            for warning in result.warnings:
-                hutils.flask.flash(warning, "danger")
-
-            reset_action = hiddify.check_need_reset(result.old_configs)
-
-            if result.old_configs[ConfigEnum.admin_lang] != hconfig(ConfigEnum.admin_lang):
-                form = get_config_form()
-        else:
-            hutils.flask.flash(_("config.validation-error"), "danger")
-            for field, errors in form.errors.items():
-                for error in errors:
-                    hutils.flask.flash(error, "danger")
-
-        return reset_action or render_template("config.html", form=form)
-
-    def get_babel_string(self):
-        res = ""
-        strconfigs = StrConfig.query.all()
-        boolconfigs = BoolConfig.query.all()
-        bool_types = {c.key: "bool" for c in boolconfigs}
-
-        configs = [*boolconfigs, *strconfigs]
-        for cat in ConfigCategory:
-            if cat == "hidden":
-                continue
-
-            cat_configs = [c for c in configs if c.key.category == cat]
-
-            for c in cat_configs:
-                res += f'{{{{_("config.{c.key}.label")}}}} {{{{_("config.{c.key}.description")}}}}'
-
-            res += f'{{{{_("config.{cat}.label")}}}}{{{{_("config.{cat}.description")}}}}'
-        for c in ConfigEnum:
-            res += f'{{{{_("config.{c}.label")}}}} {{{{_("config.{c}.description")}}}}'
-        return res
 
 
 @dataclass
@@ -400,9 +344,6 @@ def get_config_form(**form_kwargs):
                     if hasattr(val, "regex"):
                         render_kw["pattern"] = val.regex.pattern
                         render_kw["title"] = val.message
-
-                if c.key == ConfigEnum.reality_public_key and g.account.mode in [AdminMode.super_admin]:
-                    extra_info = f" <a href='{hurl_for('admin.Actions:change_reality_keys')}'>{_('Change')}</a>"
 
                 label = _(f"config.{c.key}.label")
                 description = _(f"config.{c.key}.description")

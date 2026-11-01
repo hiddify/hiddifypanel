@@ -22,8 +22,6 @@ dependencies = [
     "bleach[css]>=6.4.0",
     "bootstrap-flask==2.5.0",
     "celery>=5.6.3,<6.0.0",
-    "flask-admin==1.6.1",
-    "flask-adminlte3==1.0.9",
     "flask-classful==0.16.0",
     "flask-login==0.6.3",
     "flask-restful==0.3.10",

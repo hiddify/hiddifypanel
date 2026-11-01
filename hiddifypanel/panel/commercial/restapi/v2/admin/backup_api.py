@@ -1,8 +1,7 @@
 """Backup page API (admin v2, super admins): download a backup, the server's automatic backups, and restore.
 
 Restoring is two steps: ``POST backup/restore/`` checks the backup and keeps it (with the chosen parts)
-under a one-time token; the page then opens ``admin.Backup:restore_run`` in the action dialog, which
-restores and runs the reinstall with its live log in the same request (the admin path may change).
+under a one-time token; ``POST backup/restore/run/`` then takes the token, restores and runs the reinstall.
 """
 
 from __future__ import annotations

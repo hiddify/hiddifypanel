@@ -1,6 +1,6 @@
 """Panel settings for Admin V2, described from (and saved through) the classic settings form.
 
-The WTForms form in ``panel/admin/SettingAdmin.py`` stays the single source of
+The WTForms form in ``panel/settings_form.py`` stays the single source of
 truth for which settings exist, their widgets, choices and validators; this API
 only translates it to JSON and back.
 """
@@ -134,7 +134,7 @@ def _formdata(current_form, values: dict[str, Any]) -> MultiDict:
 
 
 def _restart_mode(old_configs: dict) -> str:
-    """Same decision as ``hiddify.check_need_reset``, without flashing or running anything."""
+    """Which apply the changed settings need (nothing, apply configs or reinstall), without running anything."""
     if old_configs.get(ConfigEnum.package_mode) != hconfig(ConfigEnum.package_mode):
         return "update"
     mode = ApplyMode.nothing
@@ -163,13 +163,13 @@ class SettingsApi(MethodView):
 
     def get(self):
         """Settings: All panel settings grouped by category"""
-        from hiddifypanel.panel.admin.SettingAdmin import get_config_form
+        from hiddifypanel.panel.settings_form import get_config_form
 
         return {"categories": describe_settings(get_config_form(formdata=None, meta={"csrf": False}))}
 
     def put(self):
         """Settings: Save changed settings (`{"values": {key: value}}`)"""
-        from hiddifypanel.panel.admin.SettingAdmin import get_config_form, save_config_form
+        from hiddifypanel.panel.settings_form import get_config_form, save_config_form
 
         body = request.get_json(silent=True) or {}
         values = body.get("values")
