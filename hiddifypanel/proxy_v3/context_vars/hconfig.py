@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import functools
 from typing import Any
+
+from loguru import logger
 
 _HCONFIG_BLOCKED = frozenset(
     {
@@ -8,6 +11,11 @@ _HCONFIG_BLOCKED = frozenset(
         # "proxy_path_admin",
     }
 )
+
+
+@functools.lru_cache(maxsize=4)
+def _warn_vless_encryption_off(error: str) -> None:
+    logger.warning(f"VLESS encryption is off in the configs: the {error} setting is invalid")
 
 
 class HConfigVar:
@@ -19,6 +27,18 @@ class HConfigVar:
         for key, value in (raw or {}).items():
             name = getattr(key, "name", None) or str(key)
             self._values[name] = value
+        self._vless_encryption_safe()
+
+    def _vless_encryption_safe(self) -> None:
+        """A VLESS encryption Xray would refuse (it then stays "activating") or a pair the clients can't use: off."""
+        enc, dec = self._values.get("vless_encryption") or "", self._values.get("vless_decryption") or ""
+        if not enc and not dec:
+            return
+        from hiddifypanel.hutils.crypto import vless_encryption_error, vless_encryption_pair
+
+        if error := vless_encryption_error(enc, dec):
+            _warn_vless_encryption_off(error)
+        self._values["vless_encryption"], self._values["vless_decryption"] = vless_encryption_pair(enc, dec)
 
     @property
     def ipv6_enabled(self) -> bool:
