@@ -55,8 +55,13 @@ frontend in-httpmode
   # Nothing above took the request: the decoy. Cleartext goes to https first; over TLS, a Host other than the TLS SNI
   # (domain fronting) gets the plain "421 Misdirected Request" any server answers, not the decoy.
   acl to_decoy var(txn.backend) -m str default_decoy
-  http-request redirect scheme https code 301 if client_clear { var(txn.backend) -m str panel }
-  http-request redirect scheme https code 301 if client_clear to_decoy
+  # A CDN that ends the user's TLS and comes in on :80 (Cloudflare "Flexible") says so in these headers: a redirect
+  # to https would come back here on :80 again (ERR_TOO_MANY_REDIRECTS). Nothing to gain from faking them: the
+  # request is then only answered in cleartext, as asked.
+  acl ssl_forwarded req.hdr(x-forwarded-proto) -i https
+  acl ssl_forwarded req.hdr(cf-visitor) -m sub "https"
+  http-request redirect scheme https code 301 if client_clear !ssl_forwarded { var(txn.backend) -m str panel }
+  http-request redirect scheme https code 301 if client_clear !ssl_forwarded to_decoy
   http-request set-var(txn.sni) ssl_fc_sni,lower if to_decoy { ssl_fc }
   http-request set-var(txn.sni) fc_pp_authority,lower if to_decoy { so_name hop_from_tls } { fc_pp_authority -m found }
   http-request set-var(txn.req_host) req.hdr(host),field(1,:),lower if to_decoy
