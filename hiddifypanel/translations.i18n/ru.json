@@ -1269,6 +1269,8 @@
       "usernamePlaceholder": "xxxxxxxx-xxxx-… или ваше имя пользователя"
     },
     "menu": {
+      "close": "Закрыть меню",
+      "open": "Открыть меню",
       "baseConfigs": "Базовые конфигурации",
       "customProxies": "Прокси",
       "dashboard": "Панель управления",
