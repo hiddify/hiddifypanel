@@ -1039,6 +1039,19 @@ def normalize_custom_path(path: str | None) -> str:
     return (path or "").strip().lstrip("/")
 
 
+def infer_proto_from_categories(categories: list[str] | None) -> ProxyProto:
+    """First category that names a protocol wins; vless when none does."""
+    for tag in categories or []:
+        key = _normalize_proto_key(str(tag).strip().lower())
+        if not key:
+            continue
+        try:
+            return ProxyProto(key)
+        except ValueError:
+            continue
+    return ProxyProto.vless
+
+
 def _normalize_proto_key(value: str) -> str:
     aliases = {"ss": "shadowsocks"}
     return aliases.get(value, value)
