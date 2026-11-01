@@ -6805,10 +6805,7 @@ msgid "config.default_useragent_string.label"
 msgstr "🪪 默认 User Agent"
 
 msgid "config.dns_server.description"
-msgstr ""
-"✳️默认1.1.1.1 <br>\n"
-"🚧 阻止恶意软件 1.1.1.2 <br>\n"
-"🔞 阻止色情 1.1.1.3"
+msgstr "服务器及其代理使用的 DNS。从列表中选择公共 DNS，或通过“自定义”输入您自己的。服务器的系统 DNS 也会随之更改。"
 
 msgid "config.dns_server.label"
 msgstr "🖥 DNS 服务器"
