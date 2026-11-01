@@ -7,6 +7,7 @@ import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import DnsPicker from '@/features/settings/components/DnsPicker.vue'
 import { displayConfigLabel } from '@/shared/utils/config-labels'
+import HtmlFieldControl from './html-editor/HtmlFieldControl.vue'
 import type { SettingField, SettingValue } from '@/features/settings/api'
 import IconText from '@/shared/components/IconText.vue'
 import { iconizeHtml, stripEmoji } from '@/shared/utils/emoji-icons'
@@ -32,7 +33,7 @@ const inputId = computed(() => `setting-${props.field.key}`)
 const label = computed(() => displayConfigLabel(props.field.label))
 // text: the option without emoji (screen readers, typing to search); label: shown, its emoji as icons
 const choices = computed(() => (props.field.choices ?? []).map((c) => ({ ...c, text: stripEmoji(c.label) })))
-const wide = computed(() => props.field.type === 'textarea' || props.field.type === 'html')
+const wide = computed(() => props.field.type === 'textarea')
 const text = computed({
   get: () => String(model.value ?? ''),
   set: (value: string) => {
@@ -99,13 +100,13 @@ const checked = computed({
           <IconText v-else :text="option.label" />
         </template>
       </Select>
+      <HtmlFieldControl v-else-if="field.type === 'html'" v-model="text" :input-id="inputId" :title="label" :maxlength="field.maxlength" :invalid="Boolean(errors?.length)" />
       <Textarea
         v-else-if="wide"
         :id="inputId"
         v-model="text"
-        class="w-full setting-row__textarea"
-        :class="{ 'font-mono': field.type === 'html' || field.type === 'textarea' }"
-        :rows="field.type === 'html' ? 6 : 4"
+        class="w-full setting-row__textarea font-mono"
+        :rows="4"
         auto-resize
         dir="ltr"
         :maxlength="field.maxlength"

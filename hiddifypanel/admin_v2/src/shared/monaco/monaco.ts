@@ -56,10 +56,12 @@ export function loadMonaco(): Promise<typeof Monaco> {
   if (window.monaco) return Promise.resolve(window.monaco)
   loading ??= (async () => {
     const vs = vsBaseUrl()
-    // Workers load through a data: URL so they get the right base URL on any path.
+    // Workers load through a data: URL so they get the right base URL on any path. Their modules are named
+    // "vs/…" (e.g. the HTML language worker), so the base is the directory above vs/.
+    const root = vs.replace(/\/vs\/?$/, '/')
     self.MonacoEnvironment = {
       getWorkerUrl() {
-        const source = `self.MonacoEnvironment = { baseUrl: ${JSON.stringify(`${vs}/`)} };\nimportScripts(${JSON.stringify(`${vs}/base/worker/workerMain.js`)});`
+        const source = `self.MonacoEnvironment = { baseUrl: ${JSON.stringify(root)} };\nimportScripts(${JSON.stringify(`${vs}/base/worker/workerMain.js`)});`
         return `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`
       },
     }

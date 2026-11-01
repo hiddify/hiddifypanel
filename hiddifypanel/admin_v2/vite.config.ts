@@ -18,10 +18,12 @@ const python = '/opt/hiddify-manager/.venv313/bin/python'
 const monacoMinDir = path.resolve(adminV2Dir, 'node_modules/monaco-editor/min/vs')
 const MONACO_URL_MARKER = '/monaco/vs/'
 
-/** Left out of the copy: JSON/CSS/HTML/TypeScript language services (~7 MB, unused) and UI translations. */
+/** Left out of the copy: the JSON/CSS/TypeScript language services (~6.5 MB, unused) and UI translations. The HTML one
+ * (480 KB) stays: the support box's HTML editor formats and completes tags with it. */
 function monacoFileWanted(relative: string): boolean {
   const rel = relative.split(path.sep).join('/')
-  return !(rel === 'language' || rel.startsWith('language/') || /^nls\.messages\./.test(rel))
+  if (rel === 'language' || rel === 'language/html' || rel.startsWith('language/html/')) return true
+  return !(rel.startsWith('language/') || /^nls\.messages\./.test(rel))
 }
 
 /** Content hash of the prebuilt Monaco files that get copied: the URL changes exactly when they do. */
