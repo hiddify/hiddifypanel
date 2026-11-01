@@ -200,10 +200,15 @@ export function stripEmoji(text: string): string {
 
 const escapeAttr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
-/** An HTML string (already sanitized by the server) with each emoji replaced by its icon's markup. */
-export function iconizeHtml(html: string | null | undefined): string {
+/**
+ * An HTML string (already sanitized by the server) with each emoji replaced by its icon's markup. `own`: icons of
+ * this text's own (emoji without U+FE0F → icon class and colour), drawn on a coloured tile.
+ */
+export function iconizeHtml(html: string | null | undefined, own?: Record<string, { icon?: string; color: string }>): string {
   if (!html || !hasEmoji(html)) return html ?? ''
   return html.replace(EMOJI, (emoji) => {
+    const mine = own?.[emoji.replace(/\uFE0F/g, '')]
+    if (mine?.icon) return `<span class="ui-opt-icon ui-opt-icon--inline" style="--c: ${escapeAttr(mine.color)}" aria-hidden="true"><i class="${escapeAttr(mine.icon)}"></i></span>`
     const seg = lookup(emoji)
     if (!seg) return ''
     if ('flag' in seg) return `<img class="ui-flag ui-flag--inline" src="${escapeAttr(seg.url)}" alt="" aria-hidden="true">`
