@@ -93,6 +93,7 @@ class ServerIp(db.Model):  # type: ignore
     @classmethod
     def bulk_register(cls, ips, commit: bool = True, force_child_unique_id: str | None = None) -> None:
         from hiddifypanel.models.external_model.network import ServerIpModel
+        from hiddifypanel.models.child import Child
         from hiddifypanel.panel import hiddify
 
         for item in ips:
@@ -101,6 +102,9 @@ class ServerIp(db.Model):  # type: ignore
             except ValueError:
                 continue
             child_id = hiddify.child_id_from_row({"child_unique_id": data.child_unique_id}, force_child_unique_id)
+            # Auto-discovered IPs belong to the machine the backup came from; this server finds its own.
+            if data.is_auto and child_id == Child.current().id:
+                continue
             cls.upsert(data, child_id=child_id, commit=False)
         if commit:
             db.session.commit()
