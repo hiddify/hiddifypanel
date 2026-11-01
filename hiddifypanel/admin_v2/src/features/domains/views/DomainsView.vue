@@ -67,7 +67,7 @@
           }"
         >
           <!-- Head: order, type, the address (copy) and its badges; the actions at the far side -->
-          <div class="dm-row__head" :class="{ 'dm-row__head--chosen': hasChosenProxies(d) }">
+          <div class="dm-row__head">
             <div class="dm-row__order">
               <span
                 v-if="!filtering"
@@ -126,19 +126,19 @@
                 <span v-if="d.download_domain_id" class="dm-badge dm-badge--soft" dir="ltr"><i class="pi pi-download" />{{ domainName(d.download_domain_id) }}</span>
               </div>
               <!-- Its proxies and the configs it shows, side by side on one wrapping line (no empty room around them) -->
-              <!-- Chosen proxies stay under the badges; "automatic" and "show configs of" go to the middle block -->
-              <div v-if="hasChosenProxies(d)" class="dm-row__line dm-row__chosen">
-                <span class="dm-row__key"><i class="pi pi-sitemap" />{{ t('domains.field.proxies') }}</span>
-                <span v-for="p in proxiesOf(d)" :key="p.id" class="dm-proxy" :class="{ 'dm-proxy--off': !p.enabled }">
-                  <span class="dm-proxy__kind">{{ p.kind === 'sni' ? 'SNI' : p.kind === 'ip' ? 'IP' : 'L7' }}</span>{{ p.name }}
-                </span>
-              </div>
-              <div v-if="!isFakeProxyMode(d.fake_mode) && ((d.mode !== 'sub_link_only' && !hasChosenProxies(d)) || showsConfigs(d))" class="dm-row__lines">
-                <div v-if="d.mode !== 'sub_link_only' && !hasChosenProxies(d)" class="dm-row__line">
+              <!-- Proxies (chosen or "automatic") and "show configs of", all in the middle block -->
+              <div v-if="hasChosenProxies(d) || (!isFakeProxyMode(d.fake_mode) && (d.mode !== 'sub_link_only' || showsConfigs(d)))" class="dm-row__lines">
+                <div v-if="hasChosenProxies(d)" class="dm-row__line">
+                  <span class="dm-row__key"><i class="pi pi-sitemap" />{{ t('domains.field.proxies') }}</span>
+                  <span v-for="p in proxiesOf(d)" :key="p.id" class="dm-proxy" :class="{ 'dm-proxy--off': !p.enabled }">
+                    <span class="dm-proxy__kind">{{ p.kind === 'sni' ? 'SNI' : p.kind === 'ip' ? 'IP' : 'L7' }}</span>{{ p.name }}
+                  </span>
+                </div>
+                <div v-else-if="!isFakeProxyMode(d.fake_mode) && d.mode !== 'sub_link_only'" class="dm-row__line">
                   <span class="dm-row__key"><i class="pi pi-sitemap" />{{ t('domains.field.proxies') }}</span>
                   <span class="dm-row__auto">{{ t('domains.proxies.autoShort') }}</span>
                 </div>
-                <div v-if="showsConfigs(d)" class="dm-row__line">
+                <div v-if="!isFakeProxyMode(d.fake_mode) && showsConfigs(d)" class="dm-row__line">
                   <span class="dm-row__key"><i class="pi pi-eye" />{{ t('domains.field.showDomains') }}</span>
                   <template v-if="d.show_domain_ids.length">
                     <span v-for="id in d.show_domain_ids.slice(0, 4)" :key="id" class="dm-proxy" dir="ltr">{{ showName(id) }}</span>
@@ -777,7 +777,7 @@ onBeforeUnmount(() => feed?.stop())
 }
 /* Desktop: name and badges, then the proxies and "show configs of" one above the other in the middle (the card's
    empty room), then the buttons. The phone layout is in the media query below. */
-/* Every row as tall as the tallest kind (name, badges and a line of chosen proxies), so the boxes match; the lines stay
+/* Every row as tall as the tallest kind (name, badges and two middle lines), so the boxes match; the lines stay
    together in the middle (the extra room is not shared out between them) */
 .dm-row__head {
   min-height: 4.7rem;
@@ -805,15 +805,6 @@ onBeforeUnmount(() => feed?.stop())
 }
 .dm-row__side {
   grid-area: side;
-}
-.dm-row__head--chosen {
-  grid-template-areas:
-    'order icon title lines side'
-    'order icon chips lines side'
-    'order icon chosen lines side';
-}
-.dm-row__chosen {
-  grid-area: chosen;
 }
 /* Telegram / ShadowTLS / SS FakeTLS front domains follow their own setting: the same box, only quieter. */
 .dm-row.dm-row--minor {
@@ -1193,14 +1184,6 @@ a.dm-row__domain:hover {
   }
   .dm-row__line {
     font-size: 0.8rem;
-  }
-  /* chosen proxies take the last line, beside the buttons, as the other lines do */
-  .dm-row__head--chosen {
-    grid-template-areas:
-      'order icon title title'
-      'order icon chips chips'
-      'chosen chosen chosen side'
-      'lines lines lines side';
   }
   .dm-row__side {
     grid-area: side;
