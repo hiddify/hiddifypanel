@@ -267,6 +267,8 @@ class ConfigEnum(metaclass=FastEnum):
     telegram_fakedomain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall, hide_in_virtual_child=True)
     telegram_webproxy_enable = _BoolConfigDscr(ConfigCategory.telegram, ApplyMode.apply_config)
     telegram_base_path = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    #: Custom proxies the config tester turned off, for Restore: JSON ``[[proxy id, unix time], …]`` (proxy_v3/config_tester_proxies)
+    config_tester_disabled = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.nothing, hide_in_virtual_child=True)
 
     v2ray_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall)
     torrent_block = _BoolConfigDscr(ConfigCategory.general, ApplyMode.apply_config)

@@ -25,6 +25,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v193(child_id):
+    """Config tester's Restore list (custom proxies it turned off): a new config key, so the str_config enum grows
+    (only done when a migration runs). (_v190 to _v192 are taken by open pull requests.)"""
+    add_config_if_not_exist(ConfigEnum.config_tester_disabled, "[]", child_id=child_id)
+
+
 def _v191(child_id):
     """A server whose public IPv4 was not found at its first setup got the domains "none" and "none.sslip.io"
     (str(None)): no CA issues a certificate for them and no client reaches them, so they go. Only when they are the

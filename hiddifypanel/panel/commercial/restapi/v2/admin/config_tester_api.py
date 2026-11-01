@@ -2,6 +2,8 @@
 
 A test is a job (config_tester_jobs): POST starts it, the page reads its events with GET and can stop it with DELETE.
 GET ``/config-tester/user-link/?q=…`` searches users by name/uuid and returns their subscription URLs for the typeahead.
+``/config-tester/proxies/`` maps results to the panel's custom proxies (down / partly down), ``…/disable/`` turns the down
+ones off and ``…/restore/`` turns them back on, only when the admin asks.
 """
 
 from __future__ import annotations
@@ -17,7 +19,7 @@ from hiddifypanel.auth import login_required
 from hiddifypanel.cache import redis_client
 from hiddifypanel.models import ConfigEnum, User, hconfig
 from hiddifypanel.models.role import Role
-from hiddifypanel.proxy_v3 import config_tester, config_tester_jobs
+from hiddifypanel.proxy_v3 import config_tester, config_tester_jobs, config_tester_proxies
 from hiddifypanel.proxy_v3.config_tester_types import Event, JobPage, TesterError
 
 PAGE_SIZE = 100
@@ -185,3 +187,41 @@ class ConfigTesterJobApi(MethodView):
         """Config tester: stop a test"""
         config_tester_jobs.cancel(job_id, redis_client)
         return {"status": "stopping"}
+
+
+class ConfigTesterProxiesApi(MethodView):
+    """The panel's custom proxies seen through a test: which are down, turning them off, Restore."""
+
+    decorators = [login_required({Role.super_admin})]
+
+    def get(self) -> dict[str, Any]:
+        """Config tester: the custom proxies the tester turned off (what Restore turns back on)"""
+        return {"disabled": config_tester_proxies.disabled()}
+
+    def post(self) -> dict[str, Any]:
+        """Config tester: the health of each custom proxy in these results (`{"results": [{name, ok}]}`), down first"""
+        results = _body().get("results")
+        if not isinstance(results, list):
+            _bad("results is required")
+        tested = [config_tester_proxies.TestedConfig(name=str(r.get("name") or ""), ok=bool(r.get("ok"))) for r in results if isinstance(r, dict) and r.get("name")]
+        return {"proxies": config_tester_proxies.health(tested), "disabled": config_tester_proxies.disabled()}
+
+
+class ConfigTesterDisableApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self) -> dict[str, Any]:
+        """Config tester: turn these custom proxies off (`{"ids": [...]}`); Restore can turn them back on"""
+        ids = _body().get("ids")
+        if not isinstance(ids, list) or not all(isinstance(i, int) for i in ids) or not ids:
+            _bad("ids is required")
+        return {"disabled": config_tester_proxies.disable(ids), "restart_mode": "apply_config"}
+
+
+class ConfigTesterRestoreApi(MethodView):
+    decorators = [login_required({Role.super_admin})]
+
+    def post(self) -> dict[str, Any]:
+        """Config tester: turn back on every custom proxy the tester turned off"""
+        restored = config_tester_proxies.restore()
+        return {"restored": restored, "disabled": config_tester_proxies.disabled(), "restart_mode": "apply_config" if restored else "nothing"}
