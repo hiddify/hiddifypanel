@@ -34,14 +34,16 @@ def get_ed25519_private_public_pair():
 
 
 def get_wg_private_public_psk_pair():
-    try:
-        private_key = subprocess.run(["wg", "genkey"], capture_output=True, text=True, check=True).stdout.strip()
-        public_key = subprocess.run(["wg", "pubkey"], input=private_key, capture_output=True, text=True, check=True).stdout.strip()
-        psk = subprocess.run(["wg", "genpsk"], capture_output=True, text=True, check=True).stdout.strip()
-        return private_key, public_key, psk
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
-        return None, None, None
+    """WireGuard keys as ``wg genkey`` / ``wg pubkey`` / ``wg genpsk`` print them (standard base64 of 32 bytes).
+
+    In-process: three ``wg`` processes per user made a bulk create of thousands of users take minutes."""
+    raw = bytearray(os.urandom(32))
+    # Clamped like wg genkey (curve25519_clamp_secret)
+    raw[0] &= 248
+    raw[31] = (raw[31] & 127) | 64
+    private = x25519.X25519PrivateKey.from_private_bytes(bytes(raw))
+    public = private.public_key().public_bytes(encoding=serialization.Encoding.Raw, format=serialization.PublicFormat.Raw)
+    return base64.b64encode(bytes(raw)).decode(), base64.b64encode(public).decode(), base64.b64encode(os.urandom(32)).decode()
 
 
 def generate_x25519_keys(base_64_encode=True):

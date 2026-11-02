@@ -15,6 +15,7 @@ from typing import Any
 from apiflask import abort
 from flask import request
 from flask.views import MethodView
+from sqlalchemy import case, func
 
 from hiddifypanel import admin_capabilities as caps
 from hiddifypanel import g, hutils
@@ -24,8 +25,8 @@ from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import AdminUser, ConfigEnum, User, UserMode, hconfig, set_hconfig
 from hiddifypanel.models.outbound import Outbound
 from hiddifypanel.models.role import Role
-from hiddifypanel.models.tag import tags_of
-from hiddifypanel.models.user import package_mode_dic
+from hiddifypanel.models.tag import Tag, TagLink, tags_of
+from hiddifypanel.models.user import ONE_GIG, package_mode_dic
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import outbounds as ob
 from hiddifypanel.proxy_v3 import user_configs
@@ -105,15 +106,15 @@ def _row(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]]
     }
 
 
-def _detail(user: User, admins: dict[int, AdminUser]) -> dict[str, Any]:
+def _detail(user: User, admins: dict[int, AdminUser], tag_map: dict[str, list[int]] | None = None, inherited: int | None = None) -> dict[str, Any]:
     extra = user.extra_params_json()
     rows, _problems = user_configs.clean_rows(extra.get(user_configs.EXTRA_KEY))
     rest = {k: v for k, v in extra.items() if k not in MANAGED_EXTRA}
     return {
-        **_row(user, admins),
+        **_row(user, admins, tag_map),
         "additional_configs": rows,
         # Rows the user also gets from its admin and the admins above.
-        "inherited_configs": len(user_configs.inherited_rows(user.uuid)),
+        "inherited_configs": inherited if inherited is not None else len(user_configs.inherited_rows(user.uuid)),
         "extra_params": json.dumps(rest, indent=2, ensure_ascii=False) if rest else "{}",
     }
 
@@ -231,14 +232,25 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
     user.extra_params = json.dumps(extra, ensure_ascii=False) if extra else "{}"
 
 
-def _after_change(users: list[User]) -> None:
-    for user in users:
-        if user.is_active:
-            user_driver.add_client(user)
-        else:
-            user_driver.remove_client(user)
+#: A bulk change bigger than this reaches the cores after the response (see user_driver.add_clients).
+BACKGROUND_AFTER = 100
+
+
+def _after_change(users: list[User], *, created: bool = False) -> bool:
+    """Give the changed users to the cores' APIs, then write the configs (no xray reload: live connections stay).
+    Many users go in one batch per driver; ``created``: new users, none is in a core yet (nothing to remove).
+    Returns whether that batch is still running (in the background) when this returns."""
+    background = len(users) > BACKGROUND_AFTER
+    if len(users) == 1 and not created:
+        user = users[0]
+        user_driver.add_client(user) if user.is_active else user_driver.remove_client(user)
+    else:
+        user_driver.add_clients([user for user in users if user.is_active], background=background)
+        if not created:
+            user_driver.remove_clients([user for user in users if not user.is_active], background=background)
     hiddify.quick_apply_users(users_only=True)
     hutils.node.parent.notify_childs_users_changed()
+    return background
 
 
 def _get_user(uuid: str) -> User:
@@ -329,6 +341,37 @@ class UserPageApi(MethodView):
 BULK_ACTIONS = ("enable", "disable", "delete", "reset_usage", "reset_days", "add_days", "add_limits")
 
 
+def _chunks(items: list, size: int = 900) -> list[list]:
+    """Pieces small enough for one IN (...) (SQLite allows 999 parameters by default)."""
+    return [items[i : i + size] for i in range(0, len(items), size)]
+
+
+def _capped_add(column, amount, cap):
+    """``min(cap, column + amount)``, and a value already at ``cap`` ("unlimited") stays as it is."""
+    current = func.coalesce(column, 0)
+    return case((current >= cap, current), (current + amount >= cap, cap), else_=current + amount)
+
+
+def _bulk_values(action: str, days: int, add_gb: float) -> dict:
+    """The columns a bulk action sets, as SQL (the same results the per-user code gave)."""
+    values: dict = {User.last_modified_time: datetime.datetime.now()}  # what the before_update listener would set
+    if action in ("enable", "disable"):
+        values[User.enable] = action == "enable"
+    elif action == "reset_usage":
+        values[User.current_usage] = 0
+        values[User.last_reset_time] = datetime.date.today()
+    elif action == "reset_days":
+        values[User.start_date] = None
+    elif action == "add_days":
+        values[User.package_days] = _capped_add(User.package_days, days, MAX_PACKAGE_DAYS)
+    elif action == "add_limits":
+        if add_gb:
+            values[User.usage_limit] = _capped_add(User.usage_limit, int(add_gb * ONE_GIG), MAX_USAGE_GB * ONE_GIG)
+        if days:
+            values[User.package_days] = _capped_add(User.package_days, days, MAX_PACKAGE_DAYS)
+    return values
+
+
 class UsersBulkApi(MethodView):
     decorators = [login_required(ALL_ROLES)]
 
@@ -347,11 +390,14 @@ class UsersBulkApi(MethodView):
             if User.query.filter(User.deleted.is_(False)).count() - len(users) < 1:
                 abort(400, "At least one user must exist")
             for user in users:
-                user.remove(commit=False)
+                user.remove(commit=False, drivers=False)
             db.session.commit()
+            # Out of the cores in one batch (per user it was ~50 xray calls each, one after the other)
+            background = len(users) > BACKGROUND_AFTER
+            user_driver.remove_clients(users, background=background)
             hiddify.quick_apply_users(users_only=True)
             hutils.node.parent.notify_childs_users_changed()
-            return {"count": len(users)}
+            return {"count": len(users), "activating": background}
         days = _number(body, "days", low=1, high=3650, integer=True) if action == "add_days" else 0
         add_gb = 0.0
         if action == "add_limits":
@@ -361,29 +407,24 @@ class UsersBulkApi(MethodView):
             if not add_gb and not days:
                 abort(400, "Give some data (GB) or days to add")
         actor = g.account
-        for user in users:
-            if action in ("enable", "disable"):
-                if action == "enable" and not user.enable and not actor.can_activate_more_users():
-                    abort(400, "Active user limit reached: disable another user or raise max active users")
-                user.enable = action == "enable"
-            elif action == "reset_usage":
-                user.reset_usage()
-            elif action == "reset_days":
-                user.start_date = None
-            elif action == "add_days":
-                user.package_days = min(MAX_PACKAGE_DAYS, (user.package_days or 0) + days)
-            elif action == "add_limits":
-                # "Unlimited" (the highest value) stays unlimited.
-                if add_gb and user.usage_limit_GB < MAX_USAGE_GB:
-                    user.usage_limit_GB = min(MAX_USAGE_GB, user.usage_limit_GB + add_gb)
-                if days and (user.package_days or 0) < MAX_PACKAGE_DAYS:
-                    user.package_days = min(MAX_PACKAGE_DAYS, (user.package_days or 0) + days)
+        if action == "enable":
+            # The active ceiling once for all of them (per user it counted every user again: minutes for thousands)
+            turning_on = sum(1 for user in users if not user.enable)
+            if turning_on and actor.room_to_activate(turning_on) < turning_on:
+                abort(400, "Active user limit reached: disable another user or raise max active users")
+        # One UPDATE per chunk of users, in SQL: per user it was an UPDATE each, and reading the users back after the
+        # commit one SELECT each (20 000 queries for 10 000 users).
+        values = _bulk_values(action, days, add_gb)
+        ids = [user.id for user in users]
+        for part in _chunks(ids):
+            User.query.filter(User.id.in_(part)).update(values, synchronize_session=False)
         db.session.commit()
-        _after_change(users)
-        return {"count": len(users)}
+        users = [user for part in _chunks(ids) for user in User.query.filter(User.id.in_(part)).populate_existing().all()]
+        background = _after_change(users)
+        return {"count": len(users), "activating": background}
 
 
-MAX_BULK_CREATE = 100
+MAX_BULK_CREATE = 10000
 
 
 def _bulk_user_name(prefix: str, index: int, count: int) -> str:
@@ -412,6 +453,11 @@ class UsersBulkCreateApi(MethodView):
             abort(400, "count must be a number")
         if not 1 <= count <= MAX_BULK_CREATE:
             abort(400, f"count must be between 1 and {MAX_BULK_CREATE}")
+        try:
+            wanted_tags = [int(i) for i in body.get("tag_ids") or []]
+        except (TypeError, ValueError):
+            abort(400, "Invalid tags")
+        tag_ids = [t.id for t in Tag.query.filter(Tag.id.in_(wanted_tags)).order_by(Tag.position, Tag.id).all()] if wanted_tags else []
 
         template = {
             "comment": body.get("comment"),
@@ -429,23 +475,34 @@ class UsersBulkCreateApi(MethodView):
             if key not in body:
                 template.pop(key, None)
 
+        # The owner once for the batch (not looked up and checked again for every user).
+        owner = actor
+        if template.pop("owner_uuid", None):
+            owner = AdminUser.by_uuid(str(body["owner_uuid"]))
+            if not owner or owner.id not in _visible_admin_ids():
+                abort(403, "The owner must be you or one of your sub-admins")
+        # The limits once for the whole batch (per user it was a count query each time: slow for thousands).
+        # The owner's chain: its own limits and those of the admins above it, the signed-in one among them.
+        room = owner.room_for_users(count)
+        if room < count:
+            abort(
+                400,
+                "User limit reached: you (or an admin above you) reached the max users, active users or total traffic"
+                if room == 0
+                else f"Not enough room for {count} users: {room} more fit",
+            )
+
         created: list[User] = []
         try:
             for i in range(1, count + 1):
-                if not actor.can_have_more_users():
-                    db.session.rollback()
-                    abort(
-                        400,
-                        "User limit reached: you (or an admin above you) reached the max users, active users or total traffic"
-                        if i == 1
-                        else f"Not enough room for {count} users",
-                    )
-                user = User(uuid=str(uuid_lib.uuid4()), added_by=actor.id, enable=True, mode=UserMode.no_reset, current_usage=0)
+                user = User(uuid=str(uuid_lib.uuid4()), added_by=owner.id, enable=True, mode=UserMode.no_reset, current_usage=0)
                 row = {**template, "name": _bulk_user_name(prefix, i, count)}
                 _apply_fields(user, row, creating=True)
                 db.session.add(user)
-                db.session.flush()
                 created.append(user)
+                # Tags with the users, in the same commit (the dialog used to send one request per user).
+                for tag_id in tag_ids:
+                    db.session.add(TagLink(tag_id=tag_id, kind="user", account_uuid=user.uuid))
             db.session.commit()
         except Exception:
             db.session.rollback()
@@ -453,6 +510,13 @@ class UsersBulkCreateApi(MethodView):
 
         if hconfig(ConfigEnum.first_setup):
             set_hconfig(ConfigEnum.first_setup, False)
-        _after_change(created)
+        activating = _after_change(created, created=True)
         admins = _admins_map()
-        return {"users": [_detail(u, admins) for u in created], "count": len(created)}
+        tag_map = {u.uuid: tag_ids for u in created} if tag_ids else {}
+        # The users of a batch share their owner, so they inherit the same rows (counted once per owner).
+        inherited: dict[int | None, int] = {}
+        for u in created:
+            if u.added_by not in inherited:
+                inherited[u.added_by] = len(user_configs.inherited_rows(u.uuid))
+        # activating: the servers are still getting the users; their links work once that is done (a minute or two)
+        return {"users": [_detail(u, admins, tag_map, inherited[u.added_by]) for u in created], "count": len(created), "activating": activating}

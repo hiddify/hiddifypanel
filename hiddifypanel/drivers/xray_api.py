@@ -13,8 +13,26 @@ from .abstract_driver import DriverABS
 _USER_PROTOCOLS = {"vless", "vmess", "trojan", "shadowsocks"}
 
 
-def _account(uuid: str, protocol: str, method: str):
-    """The xray account of a user, as the server templates write it (proxy_templates/xray/server/protocols)."""
+#: Calls in flight at once while a batch is added (more does not go faster; see XrayApi.add_clients).
+_PIPELINE_WINDOW = 512
+
+
+def _takes_users(info: dict) -> bool:
+    """Inbounds whose users the panel adds live (shadowsocks: only 2022)."""
+    return info["protocol"] in _USER_PROTOCOLS and not (info["protocol"] == "shadowsocks" and not info["method"].startswith("2022-"))
+
+
+def _account(uuid: str, protocol: str, method: str, flow: str = ""):
+    """The xray account of a user, as the server templates write it (proxy_templates/xray/server/protocols).
+    vmess / vless as xtlsapi's add_client builds them (an empty flow is left out: xray rejects "\\0")."""
+    if protocol == "vmess":
+        from xtlsapi.xray_api.proxy.vmess import account_pb2
+
+        return account_pb2.Account(id=uuid)
+    if protocol == "vless":
+        from xtlsapi.xray_api.proxy.vless import account_pb2
+
+        return account_pb2.Account(id=uuid, flow=flow or None, encryption="none")
     if protocol == "trojan":
         from xtlsapi.xray_api.proxy.trojan import config_pb2
 
@@ -97,11 +115,76 @@ class XrayApi(DriverABS):
         self.get_xray_client().handler_stub.AlterInbound(command_pb2.AlterInboundRequest(tag=tag, operation=operation))
 
     def add_client(self, user):
-        uuid = user.uuid
-        meta = self._inbound_meta()
+        self._add_to_inbounds(user.uuid, self._inbound_meta())
+
+    def add_clients(self, users):
+        """A batch (bulk create / enable): every user on every inbound is one call, so 10 000 users on 50 inbounds
+        are 500 000 calls. They are pipelined (`.future`, a window at a time): about 3x what one call after the other
+        does (Python threads barely help), so minutes become about two."""
+        from xtlsapi.ext import utils
+        from xtlsapi.xray_api.app.proxyman.command import command_pb2
+        from xtlsapi.xray_api.common.protocol import user_pb2
+
+        meta = {t: info for t, info in self._inbound_meta().items() if _takes_users(info)}
+
+        def requests():
+            for user in users:
+                uuid = str(user.uuid)
+                for tag, info in meta.items():
+                    account = _account(uuid, info["protocol"], info["method"], info.get("flow") or "")
+                    operation = utils.to_typed_message(command_pb2.AddUserOperation(user=user_pb2.User(email=uuid, account=utils.to_typed_message(account))))
+                    yield uuid, command_pb2.AlterInboundRequest(tag=tag, operation=operation)
+
+        self._pipeline("add", requests(), ignore="already exists")
+
+    def remove_clients(self, users):
+        """A batch (bulk disable / delete), pipelined like add_clients; the inbound list is asked for once."""
+        from xtlsapi.ext import utils
+        from xtlsapi.xray_api.app.proxyman.command import command_pb2
+
+        tags = self.get_inbound_tags()
+
+        def requests():
+            for user in users:
+                uuid = str(user.uuid)
+                operation = utils.to_typed_message(command_pb2.RemoveUserOperation(email=uuid))
+                for tag in tags:
+                    yield uuid, command_pb2.AlterInboundRequest(tag=tag, operation=operation)
+
+        # Not there (never added, or on an inbound that does not take users): nothing to remove
+        self._pipeline("remove", requests(), ignore="not found")
+
+    def _pipeline(self, what: str, requests, *, ignore: str) -> None:
+        """Send AlterInbound requests ``_PIPELINE_WINDOW`` at a time without waiting for each answer."""
+        stub = self.get_xray_client().handler_stub
+        pending: list = []
+        failed = sent = 0
+
+        def drain() -> None:
+            nonlocal failed
+            for uuid, tag, future in pending:
+                try:
+                    future.result()
+                except Exception as e:
+                    if ignore not in str(e):
+                        failed += 1
+                        if failed <= 5:
+                            logger.warning(f"xray: could not {what} user {uuid} on {tag}: {e}")
+            pending.clear()
+
+        for uuid, request in requests:
+            pending.append((uuid, request.tag, stub.AlterInbound.future(request)))
+            sent += 1
+            if len(pending) >= _PIPELINE_WINDOW:
+                drain()
+        drain()
+        if failed:
+            logger.warning(f"xray: {failed} of {sent} user {what} calls failed")
+
+    def _add_to_inbounds(self, uuid: str, meta: dict[str, dict]) -> None:
         # The inbounds of the generated config: the stats list misses inbounds without traffic yet.
         for t, info in meta.items():
-            if info["protocol"] not in _USER_PROTOCOLS or (info["protocol"] == "shadowsocks" and not info["method"].startswith("2022-")):
+            if not _takes_users(info):
                 continue
             try:
                 self.__add_uuid_to_tag(uuid, t, protocol=info["protocol"], flow=info.get("flow") or "", method=info["method"])

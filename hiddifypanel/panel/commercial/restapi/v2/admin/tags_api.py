@@ -102,6 +102,11 @@ def _visible_uuid(kind: str, uuid: str) -> str:
     return user.uuid if user else abort(404, "Not found")
 
 
+def _chunks(items: list[str], size: int = 900) -> list[list[str]]:
+    """Pieces small enough for one IN (...) (SQLite allows 999 parameters by default)."""
+    return [items[i : i + size] for i in range(0, len(items), size)]
+
+
 class TagAssignApi(MethodView):
     decorators = [login_required(ALL_ROLES)]
 
@@ -131,10 +136,26 @@ class TagAssignApi(MethodView):
             remove = {int(i) for i in body.get("remove") or []}
         except (TypeError, ValueError):
             abort(400, "Invalid tags")
-        uuids = [_visible_uuid(kind, str(u)) for u in body.get("uuids") or []]
-        current = tags_of(kind, uuids)
-        for uuid in uuids:
-            ids = [i for i in current.get(uuid, []) if i not in remove]
-            set_tags(kind, uuid, [*ids, *[i for i in add if i not in ids]])
+        uuids = list(dict.fromkeys(str(u) for u in body.get("uuids") or []))
+        # Set-wise, not per user: "select all" sends thousands of uuids, and per user it was a visibility query, a tag
+        # query and a delete + insert each (minutes). Every uuid must be one the admin sees, as before (404 otherwise).
+        admin_ids = g.account.recursive_sub_admins_ids()
+        seen: set[str] = set()
+        for part in _chunks(uuids):
+            seen.update(u for (u,) in db.session.query(User.uuid).filter(User.uuid.in_(part), User.deleted.is_(False), User.added_by.in_(admin_ids)))
+        if len(seen) != len(uuids):
+            abort(404, "Not found")
+        valid = {t for (t,) in db.session.query(Tag.id).filter(Tag.id.in_(add))} if add else set()
+        add = [i for i in dict.fromkeys(add) if i in valid]
+        have: set[tuple[str, int]] = set()
+        for part in _chunks(uuids):
+            if remove:
+                TagLink.query.filter(TagLink.kind == kind, TagLink.account_uuid.in_(part), TagLink.tag_id.in_(remove)).delete(synchronize_session=False)
+            if add:
+                have.update(db.session.query(TagLink.account_uuid, TagLink.tag_id).filter(TagLink.kind == kind, TagLink.account_uuid.in_(part), TagLink.tag_id.in_(add)))
+        # New tags after the ones the user has, in the order given, as set_tags left them (a tag in both lists is added)
+        rows = [{"tag_id": tag_id, "kind": kind, "account_uuid": uuid} for uuid in uuids for tag_id in add if (uuid, tag_id) not in have]
+        if rows:
+            db.session.execute(TagLink.__table__.insert(), rows)
         db.session.commit()
         return {"count": len(uuids)}

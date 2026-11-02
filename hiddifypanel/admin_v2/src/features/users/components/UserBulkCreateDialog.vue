@@ -11,15 +11,19 @@ import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import TagSelect from '@/features/tags/components/TagSelect.vue'
-import { saveFormTags } from '@/features/tags/useTags'
+import FormSection from '@/features/users/components/package/FormSection.vue'
+import PackageTimeLine from '@/features/users/components/package/PackageTimeLine.vue'
+import PresetChips from '@/features/users/components/package/PresetChips.vue'
+import ResetModePicker from '@/features/users/components/package/ResetModePicker.vue'
+import { useTags } from '@/features/tags/useTags'
 import { apiErrorMessage } from '@/core/api/client'
+import FormError from '@/shared/components/FormError.vue'
+import { scrollToFirstInvalid } from '@/shared/utils/scroll-to-invalid'
 import { unitLabel } from '@/shared/utils/format-metrics'
 import {
   MAX_BULK_CREATE,
-  MODE_ICON,
   UNLIMITED_DAYS,
   UNLIMITED_GB,
-  USER_MODES,
   userLinkPath,
   usersApi,
   type UserDetail,
@@ -28,20 +32,12 @@ import {
   type UsersState,
 } from '@/features/users/api'
 
-const LIMIT_PRESETS = [10, 50, 100, 200, 500, 1000, UNLIMITED_GB]
-const DAY_PRESETS = [
-  { days: 7, key: 'week' },
-  { days: 30, key: 'month' },
-  { days: 90, key: 'months3' },
-  { days: 180, key: 'months6' },
-  { days: 365, key: 'year' },
-  { days: UNLIMITED_DAYS, key: 'unlimited' },
-] as const
 const COUNT_PRESETS = [5, 10, 20, 50, 100]
 
 const props = defineProps<{ state: UsersState | null }>()
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ created: [users: UserDetail[]] }>()
+const { load: loadTags } = useTags()
 
 const { t } = useI18n()
 const toast = useToast()
@@ -52,6 +48,7 @@ const step = ref<Step>('form')
 const busy = ref(false)
 const error = ref<string | null>(null)
 const touched = ref(false)
+const formEl = ref<HTMLFormElement | null>(null)
 
 const prefix = ref('')
 const count = ref<number | null>(10)
@@ -63,8 +60,13 @@ const mode = ref<UserMode>('no_reset')
 const ownerUuid = ref<string | null>(null)
 const preferredOutbound = ref<number | null>(null)
 const tagIds = ref<number[]>([])
+/** Closed like on the single-user form; a line says what is set inside. */
+const showAdvanced = ref(false)
+const unlimitedTime = computed(() => (packageDays.value ?? 0) >= UNLIMITED_DAYS)
 
 const created = ref<UserDetail[]>([])
+/** A big batch: the servers get the users after the response, for a minute or two. */
+const activating = ref(false)
 const domain = ref('')
 const linksText = ref('')
 const copied = ref(false)
@@ -72,10 +74,14 @@ let copiedTimer: number | undefined
 
 const canOverrideOutbound = computed(() => Boolean(props.state?.capabilities?.override_preferred_outbound))
 const nameError = computed(() => touched.value && !prefix.value.trim())
-const countError = computed(() => {
+/** The server refused the count (e.g. an older panel with a lower maximum): the field shows it too, until it changes. */
+const countRefused = ref(false)
+watch(count, () => (countRefused.value = false))
+const countInvalid = computed(() => {
   const n = count.value
   return touched.value && (n == null || n < 1 || n > MAX_BULK_CREATE)
 })
+const countError = computed(() => countRefused.value || countInvalid.value)
 const previewNames = computed(() => {
   const p = prefix.value.trim() || t('users.bulkCreate.prefixPlaceholder')
   const n = Math.min(Math.max(count.value || 0, 0), MAX_BULK_CREATE)
@@ -88,7 +94,6 @@ const previewNames = computed(() => {
   return names
 })
 
-const modeOptions = computed(() => USER_MODES.map((value) => ({ value, label: t(`users.mode.${value}`), icon: MODE_ICON[value] })))
 const outboundOptions = computed(() => [
   { id: null as number | null, name: t('users.form.outboundAuto'), mode: '', enabled: true },
   ...(props.state?.outbounds ?? []),
@@ -107,6 +112,17 @@ const ownerOptions = computed(() => {
   }))
 })
 const domains = computed(() => props.state?.link_domains ?? [])
+/** What is set inside the closed Advanced section, so nothing hides there unnoticed. */
+const advancedSummary = computed(() => {
+  const parts: string[] = []
+  if (ownerUuid.value && ownerUuid.value !== props.state?.me_uuid) {
+    const owner = props.state?.admins.find((a) => a.uuid === ownerUuid.value)
+    if (owner) parts.push(`${t('users.form.owner')}: ${owner.name}`)
+  }
+  const ob = props.state?.outbounds.find((o) => o.id === preferredOutbound.value)
+  if (ob) parts.push(t('users.form.summaryOutbound', { name: ob.name }))
+  return parts.join(' · ')
+})
 const selectedDomain = computed(() => domains.value.find((d) => d.domain === domain.value) ?? domains.value[0] ?? null)
 
 function rebuildLinks() {
@@ -131,7 +147,9 @@ watch(visible, (open) => {
   ownerUuid.value = props.state?.me_uuid ?? null
   preferredOutbound.value = null
   tagIds.value = []
+  showAdvanced.value = false
   created.value = []
+  activating.value = false
   linksText.value = ''
   domain.value = domains.value[0]?.domain ?? ''
 })
@@ -142,10 +160,15 @@ watch(domain, () => {
 
 async function submit() {
   touched.value = true
-  if (!prefix.value.trim() || countError.value || busy.value) return
+  if (busy.value) return
+  if (!prefix.value.trim() || countInvalid.value) {
+    void scrollToFirstInvalid(formEl.value, '.ubc-error')
+    return
+  }
+  countRefused.value = false
   busy.value = true
   error.value = null
-  const payload: UserPayload & { count: number } = {
+  const payload: UserPayload & { count: number; tag_ids?: number[] } = {
     name: prefix.value.trim(),
     count: count.value!,
     comment: comment.value.trim(),
@@ -156,18 +179,20 @@ async function submit() {
     owner_uuid: ownerUuid.value ?? undefined,
   }
   if (canOverrideOutbound.value) payload.preferred_outbound = preferredOutbound.value
+  // The tags go with the users, in the same request (not one request per user)
+  if (tagIds.value.length) payload.tag_ids = [...tagIds.value]
   try {
     const res = await usersApi.bulkCreate(payload)
     created.value = res.users
-    if (tagIds.value.length) {
-      await Promise.all(res.users.map((u) => saveFormTags('user', u.uuid, tagIds.value, [])))
-    }
+    activating.value = Boolean(res.activating)
+    if (tagIds.value.length) void loadTags(true)
     rebuildLinks()
     step.value = 'done'
     emit('created', res.users)
     toast.add({ severity: 'success', summary: t('users.bulkCreate.done', { n: res.count }, res.count), life: 4000 })
   } catch (err) {
-    error.value = apiErrorMessage(err)
+    error.value = apiErrorMessage(err) || t('users.bulkCreate.failed')
+    countRefused.value = /\bcount\b/i.test(error.value)
   } finally {
     busy.value = false
   }
@@ -213,9 +238,8 @@ function downloadTxt() {
       </div>
     </template>
 
-    <form v-if="step === 'form'" class="ubc" @submit.prevent="submit">
-      <section class="ubc-sec">
-        <h4 class="ubc-sec__title"><i class="pi pi-user" />{{ t('users.bulkCreate.who') }}</h4>
+    <form v-if="step === 'form'" ref="formEl" class="ubc" @submit.prevent="submit">
+      <FormSection icon="pi pi-user" :title="t('users.bulkCreate.who')">
         <div class="ubc-grid">
           <div class="ubc-field ubc-field--wide">
             <label for="ubc-prefix" class="font-medium">{{ t('users.bulkCreate.prefix') }}</label>
@@ -243,56 +267,35 @@ function downloadTxt() {
             <Textarea id="ubc-note" v-model="comment" rows="2" auto-resize maxlength="512" :disabled="busy" :placeholder="t('users.form.notePlaceholder')" />
           </div>
         </div>
-      </section>
+      </FormSection>
 
-      <section class="ubc-sec">
-        <h4 class="ubc-sec__title"><i class="pi pi-database" />{{ t('users.form.data') }}</h4>
+      <FormSection icon="pi pi-database" :title="t('users.form.data')">
         <div class="ubc-field">
-          <label for="ubc-limit" class="font-medium">{{ t('users.form.limit') }}</label>
+          <label for="ubc-limit" class="ubc-label">{{ t('users.form.limit') }}</label>
           <InputNumber v-model="usageLimit" input-id="ubc-limit" :min="0" :max="UNLIMITED_GB" :max-fraction-digits="3" :suffix="` ${unitLabel('GB')}`" :disabled="busy" fluid />
         </div>
-        <div class="ubc-chips">
-          <button v-for="v in LIMIT_PRESETS" :key="v" type="button" class="ubc-chip" :class="{ 'ubc-chip--on': usageLimit === v }" :disabled="busy" @click="usageLimit = v">
-            <template v-if="v === UNLIMITED_GB">∞</template>
-            <template v-else>{{ v >= 1000 ? `${v / 1000} ${unitLabel('TB')}` : `${v} ${unitLabel('GB')}` }}</template>
-          </button>
-        </div>
-        <div class="ubc-field">
-          <span class="font-medium">{{ t('users.form.mode') }}</span>
-          <div class="ubc-modes" role="radiogroup">
-            <button
-              v-for="m in modeOptions"
-              :key="m.value"
-              type="button"
-              role="radio"
-              class="ubc-mode"
-              :class="{ 'ubc-mode--on': mode === m.value }"
-              :aria-checked="mode === m.value"
-              :disabled="busy"
-              @click="mode = m.value"
-            >
-              <i :class="m.icon" /><span>{{ m.label }}</span>
-            </button>
-          </div>
-        </div>
-      </section>
+        <PresetChips v-model="usageLimit" kind="usage" :disabled="busy" />
+        <ResetModePicker v-model="mode" :disabled="busy" />
+      </FormSection>
 
-      <section class="ubc-sec">
-        <h4 class="ubc-sec__title"><i class="pi pi-calendar" />{{ t('users.form.time') }}</h4>
+      <FormSection icon="pi pi-calendar" :title="t('users.form.time')">
         <div class="ubc-field">
-          <label for="ubc-days" class="font-medium">{{ t('users.form.packageLength') }}</label>
+          <label for="ubc-days" class="ubc-label">{{ t('users.form.packageLength') }}</label>
           <InputNumber v-model="packageDays" input-id="ubc-days" :min="0" :max="UNLIMITED_DAYS" :suffix="` ${t('users.form.daysUnit')}`" :disabled="busy" fluid />
         </div>
-        <div class="ubc-chips">
-          <button v-for="p in DAY_PRESETS" :key="p.days" type="button" class="ubc-chip" :class="{ 'ubc-chip--on': packageDays === p.days }" :disabled="busy" @click="packageDays = p.days">
-            <template v-if="p.key === 'unlimited'">∞</template>
-            <template v-else>{{ t(`users.form.period.${p.key}`) }}</template>
-          </button>
-        </div>
-      </section>
+        <PresetChips v-model="packageDays" kind="days" :disabled="busy" />
+        <!-- New users: the package starts at each one's first connection -->
+        <PackageTimeLine state="waiting">{{ unlimitedTime ? t('users.form.waitingUnlimited') : t('users.form.waitingText', { n: packageDays ?? 0 }) }}</PackageTimeLine>
+      </FormSection>
 
-      <section v-if="(state?.admins.length ?? 0) > 1 || (canOverrideOutbound && (state?.outbounds.length ?? 0) > 0)" class="ubc-sec">
-        <h4 class="ubc-sec__title"><i class="pi pi-sliders-h" />{{ t('users.form.advanced') }}</h4>
+      <FormSection
+        v-if="(state?.admins.length ?? 0) > 1 || (canOverrideOutbound && (state?.outbounds.length ?? 0) > 0)"
+        v-model:open="showAdvanced"
+        icon="pi pi-sliders-h"
+        :title="t('users.form.advanced')"
+        collapsible
+        :summary="advancedSummary"
+      >
         <div class="ubc-grid">
           <div v-if="(state?.admins.length ?? 0) > 1" class="ubc-field">
             <label for="ubc-owner" class="font-medium">{{ t('users.form.owner') }}</label>
@@ -303,17 +306,18 @@ function downloadTxt() {
             <Select v-model="preferredOutbound" :options="outboundOptions" option-label="name" option-value="id" input-id="ubc-outbound" :disabled="busy" class="w-full" />
           </div>
         </div>
-      </section>
+      </FormSection>
 
-      <Message v-if="error" severity="error" :closable="false"><span class="whitespace-pre-line">{{ error }}</span></Message>
+      <FormError :error="error" :title="t('users.bulkCreate.failed')" />
 
       <div class="ubc-actions">
         <Button type="button" :label="t('common.cancel')" severity="secondary" text :disabled="busy" @click="visible = false" />
-        <Button type="submit" icon="pi pi-users" :label="t('users.bulkCreate.create', { n: count || 0 }, count || 0)" :loading="busy" :disabled="countError" />
+        <Button type="submit" icon="pi pi-users" :label="t('users.bulkCreate.create', { n: count || 0 }, count || 0)" :loading="busy" :disabled="countInvalid" />
       </div>
     </form>
 
     <div v-else class="ubc ubc--done">
+      <Message v-if="activating" severity="info" :closable="false" icon="pi pi-clock">{{ t('users.bulkCreate.activating') }}</Message>
       <div v-if="domains.length > 1" class="ubc-field">
         <label for="ubc-domain" class="font-medium">{{ t('users.bulkCreate.domain') }}</label>
         <Select
@@ -377,31 +381,13 @@ function downloadTxt() {
 .ubc {
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
+  gap: 1rem;
 }
-.ubc-sec {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding-top: 0.25rem;
-}
-.ubc-sec + .ubc-sec {
-  border-top: 1px solid var(--p-content-border-color);
-  padding-top: 1.1rem;
-}
-.ubc-sec__title {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+/* Field labels inside a card, as on the single-user form */
+.ubc-label {
+  font-size: 0.74rem;
+  font-weight: 600;
   color: var(--p-text-muted-color);
-}
-.ubc-sec__title i {
-  color: var(--p-primary-color);
 }
 .ubc-grid {
   display: grid;
@@ -441,30 +427,6 @@ function downloadTxt() {
   background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
   color: var(--p-primary-color);
 }
-.ubc-modes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-}
-.ubc-mode {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.55rem 0.7rem;
-  border-radius: 12px;
-  border: 1px solid var(--p-content-border-color);
-  background: transparent;
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-  text-align: start;
-}
-.ubc-mode--on {
-  border-color: color-mix(in srgb, var(--p-primary-color) 40%, transparent);
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  color: var(--p-primary-color);
-  font-weight: 600;
-}
 .ubc-preview {
   display: flex;
   flex-wrap: wrap;
@@ -500,8 +462,7 @@ function downloadTxt() {
   gap: 0.5rem;
 }
 @media (max-width: 640px) {
-  .ubc-grid,
-  .ubc-modes {
+  .ubc-grid {
     grid-template-columns: 1fr;
   }
   .ubc-title {

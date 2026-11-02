@@ -33,6 +33,14 @@ class SSHLibertyBridgeApi(DriverABS):
         redis_client.sadd(USERS_SET, f"{user.uuid}::{user.ed25519_public_key}")
         redis_client.save()
 
+    def add_clients(self, users):
+        # One SADD and one save for the batch: a save writes the whole Redis database to disk.
+        if not users:
+            return
+        redis_client = self.get_ssh_redis_client()
+        redis_client.sadd(USERS_SET, *[f"{user.uuid}::{user.ed25519_public_key}" for user in users])
+        redis_client.save()
+
     def remove_client(self, user):
         redis_client = self.get_ssh_redis_client()
         if user.ed25519_public_key is None:

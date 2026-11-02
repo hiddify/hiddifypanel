@@ -236,18 +236,21 @@ class AdminUser(BaseAccount):
 
     def _has_room_for_one_more_user(self) -> bool:
         """Room to *create* another user (max_users and max_active_users)."""
+        return self._room_for_users(1) >= 1
+
+    def _room_for_users(self, wanted: int) -> int:
+        """How many of ``wanted`` new users fit under this admin's max_users, max_active_users and traffic."""
         if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
-            return False
+            return 0
         users_count = self.recursive_users_query().count()
         max_users = self.max_users if self.max_users is not None else 10**9
         max_active = self.max_active_users if self.max_active_users is not None else 10**9
-        if users_count >= max_users:
-            return False
-        if users_count < max_active:
-            return True
-
-        actives = sum(1 for u in self.recursive_users_query().all() if u.is_active)
-        return actives < max_active
+        room = min(wanted, max_users - users_count)
+        # Every user counts as active at most, so the active ceiling needs a look only when the users alone pass it.
+        if users_count + room > max_active:
+            actives = sum(1 for u in self.recursive_users_query().all() if u.is_active)
+            room = min(room, max_active - actives)
+        return max(0, room)
 
     def _has_room_to_activate_user(self, *, excluding_user_id: int | None = None) -> bool:
         """Room to turn an existing inactive user on again (max_active_users + traffic only).
@@ -264,6 +267,21 @@ class AdminUser(BaseAccount):
     def can_have_more_users(self) -> bool:
         # A sub-admin's users also count against its parents' limits.
         return all(admin._has_room_for_one_more_user() for admin in self.limited_ancestors())
+
+    def room_for_users(self, wanted: int) -> int:
+        """How many of ``wanted`` new users this admin may create now (its parents' limits too): one check for a whole batch."""
+        return min([wanted, *(admin._room_for_users(wanted) for admin in self.limited_ancestors())])
+
+    def room_to_activate(self, wanted: int) -> int:
+        """How many of ``wanted`` inactive users may be turned on now (this admin's and its parents' limits)."""
+        room = wanted
+        for admin in self.limited_ancestors():
+            if admin.max_total_usage_GB and admin.total_usage_GB() >= admin.max_total_usage_GB:
+                return 0
+            if admin.max_active_users is not None:
+                actives = sum(1 for u in admin.recursive_users_query().all() if u.is_active)
+                room = min(room, admin.max_active_users - actives)
+        return max(0, room)
 
     def can_activate_more_users(self, *, excluding_user_id: int | None = None) -> bool:
         """Whether this admin may re-enable / activate an existing user under max_active_users."""

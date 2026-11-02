@@ -1104,6 +1104,7 @@
       "delete": "Delete",
       "deleted": "Deleted successfully",
       "disabled": "Disabled",
+      "done": "Done",
       "duplicate": "Duplicate",
       "edit": "Edit",
       "enabled": "Enabled",
@@ -3436,6 +3437,7 @@
         "reset_days": "Reset days",
         "reset_usage": "Reset usage"
       },
+      "bulkActivating": "The servers get this change over the next minute or two.",
       "bulkConfirm": {
         "delete": "Delete {n} user? | Delete {n} users?",
         "disable": "Disable {n} user? | Disable {n} users?",
@@ -3449,6 +3451,7 @@
         "reset_usage": "Their used data goes back to zero."
       },
       "bulkCreate": {
+        "activating": "The servers are getting these users now: their links work in a minute or two.",
         "copy": "Copy all",
         "count": "How many",
         "countHint": "Between 1 and {max}",
@@ -3456,6 +3459,7 @@
         "domain": "Link domain",
         "done": "{n} user created | {n} users created",
         "download": "Download .txt",
+        "failed": "Could not create the users",
         "links": "Links",
         "linksSubtitle": "{n} link ready to copy | {n} links ready to copy",
         "linksTitle": "User links",
@@ -3477,6 +3481,7 @@
         "reset_days": "Days reset for {n} user | Days reset for {n} users",
         "reset_usage": "Usage reset for {n} user | Usage reset for {n} users"
       },
+      "bulkWorking": "Working on {n} user… | Working on {n} users…",
       "clearSearch": "Clear search",
       "clearSelection": "Clear selection",
       "col": {

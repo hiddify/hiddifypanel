@@ -41,18 +41,21 @@ def _format(raw: object) -> MessageFormat:
         abort(400, "Unknown message format")
 
 
+def _state(selected: list[int]) -> dict:
+    return {
+        "bot": _bot_ready(),
+        "bot_username": _bot_username(),
+        "counts": {**broadcast.audience_counts(g.account), "selected": len(broadcast.reachable_ids(g.account, selected))},
+        "limits": {"text": TEXT_LIMIT, "caption": CAPTION_LIMIT, "image_bytes": MAX_IMAGE_BYTES},
+    }
+
+
 class BroadcastApi(MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self):
         """Send message: is the bot ready, and how many users each audience reaches (``?ids=`` for selected users)"""
-        selected = _ids(request.args.get("ids"))
-        return {
-            "bot": _bot_ready(),
-            "bot_username": _bot_username(),
-            "counts": {**broadcast.audience_counts(g.account), "selected": len(broadcast.reachable_ids(g.account, selected))},
-            "limits": {"text": TEXT_LIMIT, "caption": CAPTION_LIMIT, "image_bytes": MAX_IMAGE_BYTES},
-        }
+        return _state(_ids(request.args.get("ids")))
 
     def post(self):
         """Send message: send it in the background (multipart: text, format, audience, ids, add_usage, image)"""
@@ -88,28 +91,46 @@ class BroadcastApi(MethodView):
         return job.to_dict()
 
 
+class BroadcastSelectionApi(MethodView):
+    """The selected-users versions of the two GETs, with the ids in the body: thousands of ids do not fit in a URL."""
+
+    decorators = [login_required(ROLES)]
+
+    def post(self):
+        """Send message: state (``what: "state"``) or recipients (``what: "recipients"``) of the selected ``ids``"""
+        body = request.get_json(silent=True) or {}
+        ids = _ids(body.get("ids") or [])
+        if body.get("what") == "recipients":
+            return _recipients(str(body.get("audience") or "selected"), ids)
+        return _state(ids)
+
+
+def _recipients(raw_audience: str, ids: list[int]) -> dict:
+    try:
+        audience = broadcast.Audience(raw_audience or "all")
+    except ValueError:
+        abort(400, "Unknown audience")
+    users = broadcast.recipients(g.account, audience, ids)
+    return {
+        "users": [
+            {
+                "id": u.id,
+                "name": u.name or "",
+                "active": bool(u.is_active),
+                "last_online": u.last_online.isoformat() if u.last_online and u.last_online.year > 2000 else None,  # datetime.min: never
+                "telegram_id": str(u.telegram_id),
+            }
+            for u in sorted(users, key=lambda u: (u.name or "").lower())
+        ]
+    }
+
+
 class BroadcastRecipientsApi(MethodView):
     decorators = [login_required(ROLES)]
 
     def get(self):
         """Send message: the users an audience reaches (``?audience=``, ``?ids=`` for selected users), to see and pick"""
-        try:
-            audience = broadcast.Audience(request.args.get("audience") or "all")
-        except ValueError:
-            abort(400, "Unknown audience")
-        users = broadcast.recipients(g.account, audience, _ids(request.args.get("ids")))
-        return {
-            "users": [
-                {
-                    "id": u.id,
-                    "name": u.name or "",
-                    "active": bool(u.is_active),
-                    "last_online": u.last_online.isoformat() if u.last_online and u.last_online.year > 2000 else None,  # datetime.min: never
-                    "telegram_id": str(u.telegram_id),
-                }
-                for u in sorted(users, key=lambda u: (u.name or "").lower())
-            ]
-        }
+        return _recipients(str(request.args.get("audience") or "all"), _ids(request.args.get("ids")))
 
 
 class BroadcastPreviewApi(MethodView):

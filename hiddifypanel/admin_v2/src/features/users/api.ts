@@ -118,8 +118,10 @@ export const usersApi = {
     return data.user
   },
   /** Create many users with the same package; names become ``prefix-01`` … ``prefix-N``. */
-  async bulkCreate(payload: UserPayload & { count: number }): Promise<{ users: UserDetail[]; count: number }> {
-    const { data } = await getHttp().post<{ users: UserDetail[]; count: number }>('users/bulk-create/', payload, { timeout: 120_000 })
+  /** `activating`: the servers are still getting the new users (a big batch); their links work once that is done. */
+  async bulkCreate(payload: UserPayload & { count: number; tag_ids?: number[] }): Promise<{ users: UserDetail[]; count: number; activating?: boolean }> {
+    // Up to MAX_BULK_CREATE users in one request: thousands take a while on a small server.
+    const { data } = await getHttp().post<{ users: UserDetail[]; count: number; activating?: boolean }>('users/bulk-create/', payload, { timeout: 600_000 })
     return data
   },
   async update(uuid: string, payload: UserPayload): Promise<UserDetail> {
@@ -129,14 +131,15 @@ export const usersApi = {
   async remove(uuid: string): Promise<void> {
     await getHttp().delete(`users/${uuid}/`)
   },
-  async bulk(action: BulkAction, uuids: string[], days?: number, gb?: number): Promise<number> {
-    const { data } = await getHttp().post<{ count: number }>('users/bulk/', { action, uuids, days, gb })
-    return data.count
+  /** `activating`: many users changed, the servers get the change after the response (a minute or two). */
+  async bulk(action: BulkAction, uuids: string[], days?: number, gb?: number): Promise<{ count: number; activating: boolean }> {
+    const { data } = await getHttp().post<{ count: number; activating?: boolean }>('users/bulk/', { action, uuids, days, gb }, { timeout: 600_000 })
+    return { count: data.count, activating: Boolean(data.activating) }
   },
 }
 
 /** Max users one bulk-create request may make (matches the API). */
-export const MAX_BULK_CREATE = 100
+export const MAX_BULK_CREATE = 10000
 
 export const STATUS_ICON: Record<UserStatus, string> = {
   active: 'pi pi-check-circle',

@@ -222,11 +222,13 @@ class User(BaseAccount):
             res = self.package_days
         return min(res, 10000)
 
-    def remove(self, commit: bool = True) -> None:
-        """Soft-delete the user (keep the row; hide from admin/API lists)."""
+    def remove(self, commit: bool = True, *, drivers: bool = True) -> None:
+        """Soft-delete the user (keep the row; hide from admin/API lists).
+        ``drivers=False``: the caller takes it out of the cores itself (a bulk delete does it in one batch)."""
         from hiddifypanel.drivers import user_driver
 
-        user_driver.remove_client(self)
+        if drivers:
+            user_driver.remove_client(self)
         super().remove(commit=commit)
 
     def removed_by_sync(self) -> None:

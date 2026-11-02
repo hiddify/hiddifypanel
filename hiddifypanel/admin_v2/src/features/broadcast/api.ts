@@ -41,12 +41,23 @@ export interface SendInput {
   image: File | null
 }
 
+/** More selected users than this go in a POST body: thousands of ids do not fit in a URL (the proxy refuses it). */
+const IDS_IN_URL_MAX = 200
+
 export const broadcastApi = {
   async state(ids: number[]): Promise<BroadcastState> {
+    if (ids.length > IDS_IN_URL_MAX) {
+      const { data } = await getHttp().post<BroadcastState>('broadcast/selection/', { what: 'state', ids })
+      return data
+    }
     const { data } = await getHttp().get<BroadcastState>('broadcast/', { params: ids.length ? { ids: ids.join(',') } : {} })
     return data
   },
   async recipients(audience: Audience, ids: number[]): Promise<Recipient[]> {
+    if (ids.length > IDS_IN_URL_MAX) {
+      const { data } = await getHttp().post<{ users: Recipient[] }>('broadcast/selection/', { what: 'recipients', audience, ids })
+      return data.users
+    }
     const params: Record<string, string> = { audience }
     if (ids.length) params.ids = ids.join(',')
     const { data } = await getHttp().get<{ users: Recipient[] }>('broadcast/recipients/', { params })
