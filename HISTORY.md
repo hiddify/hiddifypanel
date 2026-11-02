@@ -11,6 +11,46 @@
 
 #### Other
 
+* Feat(panel): RAM notice for the proxy cores' users, more panel workers on a big parent panel. 
+  _xray and hiddify-core keep every user in every inbound (40 000 users x 106 inbounds = 4 million entries,
+~200 MB configs), and a server with too little RAM gets them killed by the OOM killer again and again.
+
+- The server config dump counts the user entries of xray / hiddify-core (generated/core-load.json; the user
+  list is dumped again on every change). The admin notices estimate the RAM: 3 KB per entry, 50 MB per core,
+  and the panel at 200 MB + 2 MB per user (up to 1 GB). A warning from 50% of the RAM, an error (also as a
+  toast) from 80%: reduce the active protocols, disable users or add RAM.
+- `panel-workers` CLI: granian workers for hiddify-panel.service, one per 10 000 users on a parent panel
+  (at most the CPUs, 2 GB of RAM each, and 4); 1 everywhere else.
+- With several workers each one has the scheduler: the backup and the Telegram expiry notices run in one
+  of them (run_once: a redis lock kept for an hour).
+- The admin notices count the users instead of loading them all._
+
+* Perf(users): users page and bulk actions stay fast with thousands of users. 
+  _Users page (admin_v2):
+- "All" mounts only the rows / cards on screen (windowed list on phones, PrimeVue virtual scroller on the table);
+  selection is a Set lookup instead of a scan per row.
+- Bulk actions show what is running: the clicked button spins, the others wait, the bar says "Working on N users…".
+
+Bulk create, up to 10 000 users:
+- Limits checked once for the batch, against the chosen owner and the admins above it; owner resolved once.
+- WireGuard keys made in-process (three `wg` processes per user before); tags saved with the users.
+- New users go to the cores in one batch per driver: xray calls pipelined, the generated config read once,
+  one Redis save for SSH. Batches over 100 run after the response; the dialog says links work in a minute or two.
+
+Bulk enable / disable / resets / add days / add limits / delete / tag:
+- One UPDATE per chunk in SQL and the users read back in a few queries (one query per user before).
+- Active ceiling checked once; cores updated in one pipelined batch, in the background for big ones. A user
+  changed again while a batch runs gets that last change once it ends.
+- Bulk tag is set-wise (visibility, validation, delete, insert once).
+- Telegram message to a big selection sends the ids in the body (broadcast/selection/), not the URL.
+
+User forms:
+- Add many users uses the same cards, reset period picker, quick picks, time line and collapsible Advanced
+  as the single-user form (shared components in users/components/package/).
+- A wrong field or a server error scrolls into view and takes the focus; missing common.done translation added._
+
+* Feat(settings): fix port conflict detection for configuration settings. 
+
 * Fix(haproxy): no https redirect loop behind a CDN that ends TLS and comes in on :80. 
   _Cloudflare Flexible SSL sends the request to :80 with X-Forwarded-Proto: https / cf-visitor; the 301 to https came
 back on :80 again (ERR_TOO_MANY_REDIRECTS on the panel and the subscription links)._
