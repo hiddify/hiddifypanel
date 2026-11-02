@@ -42,6 +42,31 @@ class SettingsSaveResult:
         return self
 
 
+def _port_conflict(key, value, sections) -> tuple[str, str] | None:
+    """A port rule this value breaks: ``("", port)`` for 80/443 outside the http/tls lists, or ``(other_key, port)``.
+
+    Only keys ending in ``_port`` or ``_ports`` are port lists. Matching the substring ``port`` also selects text
+    settings such as ``branding_support_title`` ("support" contains "port"); two empty ones then look like the same port.
+    """
+    if not isinstance(value, str) or not key.endswith(("_port", "_ports")):
+        return None
+    for raw in value.split(","):
+        port = raw.strip()
+        if not port:
+            continue
+        if (key != ConfigEnum.tls_ports and port == "443") or (key != ConfigEnum.http_ports and port == "80"):
+            return ("", port)
+        for items in sections.values():
+            if not isinstance(items, dict):
+                continue
+            for other, other_value in items.items():
+                if other == key.name or not isinstance(other, str) or not other.endswith(("_port", "_ports")) or not isinstance(other_value, str):
+                    continue
+                if port in [part.strip() for part in other_value.split(",") if part.strip()]:
+                    return (other, port)
+    return None
+
+
 def save_config_form(form) -> SettingsSaveResult:
     """Cross-field checks + save for an already validated settings form (classic page and Admin V2 API).
 
@@ -67,16 +92,12 @@ def save_config_form(form) -> SettingsSaveResult:
                         v = v.lower()
                     if k == ConfigEnum.warp_sites and "https://" in v:
                         return result.fail(_("config.warp-https-domain-for-warp-site"))
-                    if "port" in k:
-                        for p in v.split(","):
-                            if (k != ConfigEnum.tls_ports and p == "443") or (k != ConfigEnum.http_ports and p == "80"):
-                                return result.fail(_("Port 80 and 443 can not be selected"))
-                            for c_, c_items2 in form.data.items():
-                                if not isinstance(c_items2, dict):
-                                    continue
-                                for k2, v2 in c_items2.items():
-                                    if "port" in k2 and k.name != k2 and isinstance(v2, str) and p in v2.strip().split(","):
-                                        return result.fail(_("Port is already used! in") + f" {k2} {k}")
+                    conflict = _port_conflict(k, v, form.data)
+                    if conflict:
+                        other, _port = conflict
+                        if not other:
+                            return result.fail(_("Port 80 and 443 can not be selected"))
+                        return result.fail(_("Port is already used! in") + f" {other} {k}")
 
                 if old_configs[k] != v:
                     changed_configs[k] = v
