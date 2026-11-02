@@ -152,7 +152,7 @@ def build_admin_v2_notices() -> list[dict]:
             }
         )
 
-    def_user = None if len(User.query.all()) > 1 else User.query.filter(User.name == "default").first()
+    def_user = None if User.query.count() > 1 else User.query.filter(User.name == "default").first()  # not .all(): thousands of users
     domains = Domain.get_domains()
     sslip_domains = [d.domain for d in domains if "sslip.io" in d.domain]
 
@@ -187,6 +187,10 @@ def build_admin_v2_notices() -> list[dict]:
                 }
             )
 
+    core_load = _core_load_notice()
+    if core_load:
+        notices.append(core_load)
+
     if hutils.network.is_ssh_password_authentication_enabled():
         notices.append(
             {
@@ -196,3 +200,29 @@ def build_admin_v2_notices() -> list[dict]:
         )
 
     return notices
+
+
+def _core_load_notice() -> dict | None:
+    """xray and hiddify-core keep every user in every inbound: warn before they need more RAM than the server has."""
+    try:
+        load = hutils.core_load.estimate()
+    except Exception:  # never break the shell for an estimate
+        return None
+    if not load or not load.level:
+        return None
+    gb = 1024**3
+    key = "admin.core_load.error" if load.level == "error" else "admin.core_load.warning"
+    return {
+        # the level in the id: a warning that becomes an error is news again
+        "id": f"core-load:{load.level}",
+        "severity": load.level,
+        "summary": _(
+            key,
+            estimate=f"{load.estimate_bytes / gb:.1f} GB",
+            ram=f"{load.ram_bytes / gb:.1f} GB",
+            percent=round(load.ratio * 100),
+            users=f"{load.users:,}",
+            inbounds=load.inbounds,
+        ),
+        "toast": load.level == "error",
+    }

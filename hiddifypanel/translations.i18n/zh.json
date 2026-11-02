@@ -288,6 +288,10 @@
       "title": "设置"
     },
     "define_mode": "🥇🥈🥉 定义管理模式",
+    "core_load": {
+      "error": "<b>代理核心内存不足</b><br>面板、xray 和 hiddify-core 需要服务器 %(ram)s 内存中的约 %(estimate)s（%(percent)s%%）：%(users)s 个活跃用户 × %(inbounds)s 个入站，因为每个用户都保存在每个入站中。服务器可能内存耗尽，xray / hiddify-core 会被反复终止。请减少启用的协议、禁用用户或增加服务器内存。",
+      "warning": "<b>代理核心的内存即将不足</b><br>面板、xray 和 hiddify-core 可能需要服务器 %(ram)s 内存中的约 %(estimate)s（%(percent)s%%）：%(users)s 个活跃用户 × %(inbounds)s 个入站，因为每个用户都保存在每个入站中。用户再增加可能导致内存耗尽。请减少启用的协议、禁用不需要的用户或增加服务器内存。"
+    },
     "incomplete_setup_warning": "看来你还没有完全安装系统。 <a class='btn btn-success' href='%(quick_setup)s'>单击此处</a>完成设置。",
     "menu": {
       "api": "应用程序编程接口",

@@ -149,6 +149,11 @@ def admin_path():
     print(hiddify.get_account_panel_link(admin, domain, prefere_path_only=True))
 
 
+def panel_workers():
+    """Granian workers for hiddify-panel.service (services/panel/run.sh writes them to GRANIAN_WORKERS)."""
+    print(hutils.system.panel_workers(User.query.count(), hutils.node.is_parent()))
+
+
 def hysteria_domain_port():
     if not hconfig(ConfigEnum.hysteria_enable):
         return
@@ -174,7 +179,7 @@ def tuic_domain_port():
 
 
 def init_app(app):
-    for command in [hysteria_domain_port, tuic_domain_port, init_db, drop_db, all_configs, update_usage, admin_links, admin_path, backup, downgrade]:
+    for command in [hysteria_domain_port, tuic_domain_port, init_db, drop_db, all_configs, update_usage, admin_links, admin_path, backup, downgrade, panel_workers]:
         app.cli.add_command(app.cli.command()(command))
 
     @app.cli.command()

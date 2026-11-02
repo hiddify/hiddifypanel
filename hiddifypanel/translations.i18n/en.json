@@ -287,6 +287,10 @@
       "title": "Settings"
     },
     "define_mode": "🥇🥈🥉 Define the Admin Mode",
+    "core_load": {
+      "error": "<b>Not enough RAM for the proxy cores</b><br>The panel, xray and hiddify-core need about %(estimate)s of the server's %(ram)s RAM (%(percent)s%%): %(users)s active users × %(inbounds)s inbounds, since every user is kept in every inbound. The server can run out of memory and xray / hiddify-core get killed again and again. Reduce the number of active protocols, disable users, or increase the server's RAM.",
+      "warning": "<b>RAM is getting low for the proxy cores</b><br>The panel, xray and hiddify-core may need about %(estimate)s of the server's %(ram)s RAM (%(percent)s%%): %(users)s active users × %(inbounds)s inbounds, since every user is kept in every inbound. With more users they can run out of memory. Reduce the number of active protocols, disable users you do not need, or increase the server's RAM."
+    },
     "incomplete_setup_warning": "It seems that you have not setup the system completely. <a class='btn btn-success' href='%(quick_setup)s'>Click here</a> to complete setup.",
     "menu": {
       "api": "API",

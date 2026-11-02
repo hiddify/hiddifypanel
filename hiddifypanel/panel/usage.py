@@ -49,6 +49,15 @@ def locked_execute(lock_key: str, func: Callable[..., Any], *args: Any, wait: fl
         cache.redis_client.delete(lock_key)
 
 
+def run_once(lock_key: str, ttl: int, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    """Run ``func`` in only one of the panel's workers for a scheduled time: the first to take the redis lock runs it,
+    and the lock is kept for ``ttl`` seconds (not released at the end, unlike ``locked_execute``), so a worker whose
+    timer fires a moment later does not run it again. ``BUSY`` when another worker had it."""
+    if not cache.redis_client.set(lock_key, "locked", nx=True, ex=ttl):
+        return dict(BUSY)
+    return func(*args, **kwargs)
+
+
 def update_local_usage_not_lock():
     try:
         res = user_driver.get_users_usage(reset=True)

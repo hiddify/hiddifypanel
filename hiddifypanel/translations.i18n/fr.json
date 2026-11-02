@@ -291,6 +291,10 @@
       "title": "Paramètres"
     },
     "define_mode": "🥇🥈🥉 Définir le mode administrateur",
+    "core_load": {
+      "error": "<b>Pas assez de RAM pour les cœurs proxy</b><br>Le panneau, xray et hiddify-core ont besoin d'environ %(estimate)s sur les %(ram)s de RAM du serveur (%(percent)s%%) : %(users)s utilisateurs actifs × %(inbounds)s entrées, car chaque utilisateur est gardé dans chaque entrée. Le serveur peut manquer de mémoire et xray / hiddify-core être tués à répétition. Réduisez le nombre de protocoles actifs, désactivez des utilisateurs ou augmentez la RAM du serveur.",
+      "warning": "<b>La RAM devient insuffisante pour les cœurs proxy</b><br>Le panneau, xray et hiddify-core peuvent avoir besoin d'environ %(estimate)s sur les %(ram)s de RAM du serveur (%(percent)s%%) : %(users)s utilisateurs actifs × %(inbounds)s entrées, car chaque utilisateur est gardé dans chaque entrée. Avec plus d'utilisateurs, la mémoire peut manquer. Réduisez le nombre de protocoles actifs, désactivez les utilisateurs inutiles ou augmentez la RAM du serveur."
+    },
     "incomplete_setup_warning": "Il semble que vous n'ayez pas complètement configuré le système. <a class='btn btn-success' href='%(quick_setup)s'>Cliquez ici</a> pour terminer la configuration.",
     "menu": {
       "api": "API",

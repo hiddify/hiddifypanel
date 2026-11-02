@@ -16,7 +16,7 @@ def init_app(app):
 
     from hiddifypanel.panel import usage
     from hiddifypanel.panel.cli import backup_task
-    from hiddifypanel.panel.usage import locked_execute
+    from hiddifypanel.panel.usage import run_once
 
     def run_in_app_context(func, *args, **kwargs):
         with app.app_context():
@@ -31,11 +31,11 @@ def init_app(app):
         id="update_usage",
         name="update usage",
     )
-    # backup_task has no lock of its own (unlike update_local_usage); wrap it the
-    # same way so a future move to multiple granian workers can't run it twice.
+    # Several granian workers (a parent panel with many users) each have this scheduler: the backup and the Telegram
+    # notices run in one of them (run_once: the lock stays an hour, so a worker a moment late does not run them again).
     scheduler.add_job(
         run_in_app_context,
-        args=(locked_execute, "lock-backup-task", backup_task),
+        args=(run_once, "once-backup-task", 3600, backup_task),
         trigger=CronTrigger(hour="*/6", minute="0"),
         id="backup_task",
         name="backup_task",
@@ -51,7 +51,9 @@ def init_app(app):
             notify.run()
 
     # Telegram: users whose package is ending hear about it, and their admins get one summary.
-    scheduler.add_job(run_in_app_context, args=(telegram_notify,), trigger=CronTrigger(hour="10", minute="0"), id="tgbot_notify", name="telegram expiry notices")
+    scheduler.add_job(
+        run_in_app_context, args=(run_once, "once-tgbot-notify", 3600, telegram_notify), trigger=CronTrigger(hour="10", minute="0"), id="tgbot_notify", name="telegram expiry notices"
+    )
 
     from hiddifypanel.proxy_v3 import config_health
 

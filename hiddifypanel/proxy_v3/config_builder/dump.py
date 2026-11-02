@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from hiddifypanel.hutils.core_load import CORES, LOAD_FILE, count_user_entries
+from hiddifypanel.hutils.core_load import save as save_core_load
 from hiddifypanel.proxy_v3.config_builder.dns_proxy.server import DnsProxyServerDriver
 from hiddifypanel.proxy_v3.config_builder.firewall.server import FirewallServerDriver
 from hiddifypanel.proxy_v3.config_builder.haproxy.server import HaproxyServerDriver
@@ -137,6 +139,7 @@ def summarize_dumped_config(core: str, rendered: str) -> dict[str, int]:
                 for key in ("inbounds", "outbounds", "endpoints"):
                     value = data.get(key)
                     stats[key] = len(value) if isinstance(value, list) else 0
+                stats["user_entries"] = count_user_entries(data)
         else:
             if core == "dns_proxy":
                 stats["tunnels"] = 0
@@ -337,6 +340,14 @@ def dump_all_server_configs(
 
         if core == "dns_proxy":
             _collect_dns_proxy_sidecars(dump, target)
+
+    # For the RAM notice (hutils/core_load.py): the user entries each core loads
+    entries = {core: dump.stats[filename].get("user_entries", 0) for core, filename in SERVER_CONFIG_FILES if core in CORES and filename in dump.stats}
+    if entries and child_id in ctx_cache:
+        try:
+            save_core_load(target, len(ctx_cache[child_id].users), entries)
+        except OSError as exc:
+            dump.messages.append({"core": "core-load", "level": "warning", "message": f"{LOAD_FILE} not written: {exc}", "data": {}})
 
     return dump
 
