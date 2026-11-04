@@ -258,7 +258,7 @@
         <!-- Slides open and closed; kept once opened so it can slide closed (the feed stops when no card is open) -->
         <div class="node-card__live-wrap" :class="{ 'node-card__live-wrap--open': liveOpen.has(node.id) }">
           <div class="node-card__live" :class="{ 'node-card__live--settled': liveSettled.has(node.id) }">
-            <NodeLiveCharts v-if="liveSeen.has(node.id)" :samples="liveHistory.nodeSamples.value[node.id] ?? []" :error="liveErrors[node.id]" @retry="retryLive(node)" />
+            <NodeLiveCharts v-if="liveSeen.has(node.id)" :samples="liveHistory.nodeSamples.value[node.id] ?? []" :color="nodeColor(node.id)" :error="liveErrors[node.id]" @retry="retryLive(node)" />
           </div>
         </div>
         <!-- Ping: over this card, under its name (each card its own: several nodes at once) -->
@@ -335,6 +335,7 @@ import { liveWatch, type Subscription } from '@/core/live/live'
 import { formatBytes, formatCount } from '@/shared/utils/format-metrics'
 import AddNodeDialog from '@/features/nodes/components/AddNodeDialog.vue'
 import NodeLiveCharts from '@/features/nodes/components/NodeLiveCharts.vue'
+import { nodeColor } from '@/features/dashboard/composables/useChartTheme'
 import { useMetricHistory } from '@/features/dashboard/composables/useMetricHistory'
 import { SYSTEM_REFRESH_MS } from '@/features/dashboard/composables/useDashboard'
 import type { DashboardSnapshot } from '@/core/api/generated'

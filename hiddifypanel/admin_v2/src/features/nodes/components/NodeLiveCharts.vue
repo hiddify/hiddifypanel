@@ -13,7 +13,8 @@ import type { NodeSample } from '@/features/dashboard/composables/useMetricHisto
 import { timeLabels } from '@/features/dashboard/utils/series'
 import { formatBitRate, formatGb, formatPercent } from '@/shared/utils/format-metrics'
 
-const props = defineProps<{ samples: NodeSample[]; error?: { code: string; detail: string } | null }>()
+/** ``color``: the node's own colour (as on the dashboard), for its network chart */
+const props = defineProps<{ samples: NodeSample[]; error?: { code: string; detail: string } | null; color?: string }>()
 const emit = defineEmits<{ retry: [] }>()
 
 const { t, locale } = useI18n()
@@ -25,8 +26,8 @@ const labels = computed(() =>
   ),
 )
 const network = computed(() => [
-  { label: t('dashboard.upload'), values: props.samples.map((sample) => sample.up), color: SERIES.upload, type: 'line' as const, area: true },
-  { label: t('dashboard.download'), values: props.samples.map((sample) => -sample.down), color: SERIES.download, type: 'line' as const, area: true },
+  { label: t('dashboard.upload'), values: props.samples.map((sample) => sample.up), color: props.color ?? SERIES.upload, type: 'line' as const, area: true },
+  { label: t('dashboard.download'), values: props.samples.map((sample) => -sample.down), color: props.color ?? SERIES.download, type: 'line' as const, area: true, dashed: true },
 ])
 const cpu = computed(() => [{ label: t('dashboard.cpu'), values: props.samples.map((sample) => sample.cpu), color: SERIES.cpu, type: 'line' as const, area: true }])
 const memory = computed(() => [{ label: t('dashboard.ram'), values: props.samples.map((sample) => sample.memory), color: SERIES.memory, type: 'line' as const, area: true }])
