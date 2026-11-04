@@ -24,6 +24,10 @@ BASE_CONFIG_MATRIX: dict[str, list[str]] = {
     BaseConfigSide.client.value: ['xray', 'singbox', 'hiddify-core', 'sublink', 'clash'],
 }
 
+#: Server base configs that render to plain text (HAProxy config, TOML, a WireGuard .conf, shell and Python scripts),
+#: never to JSON: config_builder writes them with TextServerDriver, and the scanners are scripts served by the panel.
+TEXT_SERVER_BASE_CORES: frozenset[str] = frozenset({'haproxy', 'rust-rpxy-l4', 'wireguard', 'telemt', 'firewall', 'ip_scanner', 'sni_scanner'})
+
 
 def default_base_content(side: str, core: str) -> str:
     """Builtin base shell from proxy_templates/{core}/{side}/base.j2 only."""

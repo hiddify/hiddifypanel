@@ -17,7 +17,7 @@ from hiddifypanel.models.custom_proxy import TEXT_CLIENT_CORES
 from hiddifypanel.models.config import hconfig
 from hiddifypanel.models.config_enum import ConfigEnum
 from hiddifypanel.models.domain import Domain
-from hiddifypanel.models.proxy_base_config import BaseConfigSide
+from hiddifypanel.models.proxy_base_config import TEXT_SERVER_BASE_CORES, BaseConfigSide
 from hiddifypanel.proxy_v3 import fast_json5
 from hiddifypanel.proxy_v3.config_builder.base_config import resolve_base_config_content
 from hiddifypanel.proxy_v3.config_builder.jinja_render import render_template_text as _render_template_text
@@ -110,6 +110,40 @@ def _singbox_skip_warning(label: str, data: dict[str, Any], template: str) -> st
 SAMPLE_UUID = "00000000-0000-0000-0000-000000000001"
 
 SERVER_BUNDLE_CORES: tuple[str, ...] = ("hiddify-core", "xray", "haproxy", "rust-rpxy-l4")
+
+#: Sample values for the variables the Scanner page passes to its scripts (clean_ip_api.render_script), so the template
+#: editor can validate and preview them: the panel's proxy context has none of them.
+SCRIPT_SAMPLE_VARIABLES: dict[str, dict[str, Any]] = {
+    "ip_scanner": {
+        "host": "cdn.example.com",
+        "probe_path": "/proxy-path/api/v2/admin/clean-ip/run/token/probe/",
+        "marker": "hiddify-scan-ok",
+        "report_url": "https://panel.example.com/proxy-path/api/v2/admin/clean-ip/run/token/report/",
+        "size": 1000,
+        "per_range": 2,
+        "ranges": ["104.16.0.0/13"],
+    },
+    "sni_scanner": {
+        "report_url": "https://panel.example.com/proxy-path/api/v2/admin/clean-ip/run/token/report/",
+        "snis": ["www.example.com"],
+        "watched": ["www.example.com"],
+        "server_ip": "203.0.113.1",
+        "control": "panel.example.com",
+    },
+}
+
+
+def _base_config_extra_variables(core: str, ctx: dict[str, Any]) -> dict[str, Any]:
+    """The variables a text base config gets on top of the proxy context: what config_builder adds when it writes the
+    config (TextServerDriver.extra_jinja, e.g. the firewall's public_ports), or sample values for a scanner script."""
+    from hiddifypanel.proxy_v3.config_builder.dump import SERVER_CONFIG_DRIVERS
+    from hiddifypanel.proxy_v3.config_builder.text_server import TextServerDriver
+
+    variables = dict(SCRIPT_SAMPLE_VARIABLES.get(core, {}))
+    driver = SERVER_CONFIG_DRIVERS.get(core)
+    if driver is not None and issubclass(driver, TextServerDriver):
+        variables.update(driver().extra_jinja(ctx.get("ctx")))
+    return variables
 
 
 def _keep_common_proxy_client_core(is_common_proxy: bool, core_name: str, child_id: int) -> bool:
@@ -1189,7 +1223,9 @@ def validate_base_config_content(data: dict[str, Any], child_id: int = 0) -> dic
     if not content.strip():
         return {"ok": True, "errors": errors, "warnings": warnings}
     ctx = build_sample_context(child_id=child_id)
-    if core in TEXT_CLIENT_CORES:
+    ctx.update(_base_config_extra_variables(core, ctx))
+    # Plain text (share links, TOML, HAProxy config, scripts): render to catch template errors, but there is no JSON to parse.
+    if core in TEXT_CLIENT_CORES or core in TEXT_SERVER_BASE_CORES:
         try:
             render_template_text(content, child_id, ctx)
         except TemplateSkip:
@@ -1469,6 +1505,8 @@ def preview_base_config_content(
         domain_host=domain,
         server_side=server_side,
     )
+    if server_side:
+        ctx.update(_base_config_extra_variables(core, ctx))
 
     if core in TEXT_CLIENT_CORES:
         try:
@@ -1480,8 +1518,8 @@ def preview_base_config_content(
             return {"ok": False, "rendered": "", "parsed": None, "skipped": False, "error": str(e), "warnings": []}
 
     base = _extract_block_body(content, "base_config") or content
-    as_json = core not in ("haproxy", "rust-rpxy-l4")
-    section = _render_section(base, child_id, ctx, as_json_object=as_json)
+    as_json = core not in TEXT_SERVER_BASE_CORES
+    section = _render_section(base, child_id, ctx, as_json_object=as_json, parse_json=as_json)
     parsed = section.get("parsed")
     if isinstance(parsed, dict):
         sanitized = _sanitize_parsed_config(copy.deepcopy(parsed))
@@ -1998,8 +2036,8 @@ def _render_base_section(
 ) -> dict[str, Any]:
     base = resolve_base_config_content(child_id, side, core, version)
     base = _extract_block_body(base, "base_config") or base
-    as_json = core not in ("haproxy", "rust-rpxy-l4")
-    section = _render_section(base, child_id, context, as_json_object=as_json)
+    as_json = core not in TEXT_SERVER_BASE_CORES
+    section = _render_section(base, child_id, context, as_json_object=as_json, parse_json=as_json)
     parsed = section.get("parsed")
     if isinstance(parsed, dict):
         section = {
