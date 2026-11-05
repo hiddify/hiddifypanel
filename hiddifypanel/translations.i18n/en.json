@@ -3047,42 +3047,42 @@
           "textColor": "Text colour"
         },
         "templates": {
+          "groups": {
+            "contact": "Contact & support",
+            "guide": "Guides",
+            "news": "News & status",
+            "sales": "Plans & offers"
+          },
           "insert": "Insert",
           "names": {
             "alerts": "Status messages",
             "announcement": "Announcement",
+            "apps": "Download the app",
+            "changelog": "What's new",
             "columns": "Two columns",
             "contacts": "Contact list",
+            "darkCard": "Dark contact card",
             "faq": "FAQ",
             "hero": "Support banner",
             "hours": "Support hours",
-            "plan": "Plan card",
-            "social": "Social buttons",
-            "steps": "Getting started",
-            "darkCard": "Dark contact card",
             "minimal": "Minimal signature",
-            "persian": "Persian support banner",
-            "serverStatus": "Server status",
-            "changelog": "What's new",
-            "renew": "Renewal reminder",
-            "plans": "Two plans",
             "offer": "Discount offer",
+            "persian": "Persian support banner",
+            "plan": "Plan card",
+            "plans": "Two plans",
             "referral": "Invite a friend",
-            "stats": "Numbers",
-            "testimonial": "Customer review",
-            "apps": "Download the app",
+            "renew": "Renewal reminder",
             "rules": "Rules",
+            "serverStatus": "Server status",
+            "social": "Social buttons",
+            "stats": "Numbers",
+            "steps": "Getting started",
+            "testimonial": "Customer review",
             "tips": "Troubleshooting tip"
           },
           "note": "Ready-made designs: pick one, then edit its text.",
           "replace": "Replace all",
-          "title": "Templates",
-          "groups": {
-            "contact": "Contact & support",
-            "news": "News & status",
-            "sales": "Plans & offers",
-            "guide": "Guides"
-          }
+          "title": "Templates"
         },
         "title": "HTML Editor",
         "titleText": "Title",
@@ -3141,19 +3141,19 @@
         "toolset": "Tool set",
         "unapplied": "Not applied yet",
         "url": "Link (URL)",
+        "variant": {
+          "copyLite": "Copy the Lite text",
+          "full": "Full",
+          "fullEmpty": "No Full text: “Read More” shows the Lite text when it does not fit in the box.",
+          "fullHint": "shown by “Read More”",
+          "label": "Which text",
+          "lite": "Lite",
+          "liteHint": "shown in the box"
+        },
         "view": "Editor view",
         "viewButton": "View",
         "width": "Width (px)",
-        "wrap": "Wrap lines",
-        "variant": {
-          "label": "Which text",
-          "lite": "Lite",
-          "liteHint": "shown in the box",
-          "full": "Full",
-          "fullHint": "shown by “Read More”",
-          "fullEmpty": "No Full text: “Read More” shows the Lite text when it does not fit in the box.",
-          "copyLite": "Copy the Lite text"
-        }
+        "wrap": "Wrap lines"
       },
       "invalid": "This value is not valid.",
       "leaveUnsaved": "You have unsaved changes. Leave anyway?",
@@ -4176,6 +4176,10 @@
       "description": "Branding Text. this box's text will be shown on support section of User's Page. you can use HTML tags",
       "label": "📢 Support Section Text"
     },
+    "branding_freetext_full": {
+      "description": "Shown by “Read More” on the user page. Empty: “Read More” shows the support text when it does not fit.",
+      "label": "Support text, Full"
+    },
     "branding_site": {
       "description": "The link to be shown on support section of user's page.\nYou can put also your Telegram Channel or Telegram PV here",
       "label": "🆔 Support Link (goes both on branding title and also on support section of user page)"
@@ -5061,10 +5065,6 @@
     "xtls_enable": {
       "description": "Enables XTLS Protocol",
       "label": "🟢 XTLS"
-    },
-    "branding_freetext_full": {
-      "description": "Shown by “Read More” on the user page. Empty: “Read More” shows the support text when it does not fit.",
-      "label": "Support text, Full"
     }
   },
   "copy": "Copy",

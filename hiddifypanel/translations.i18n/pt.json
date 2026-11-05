@@ -2229,42 +2229,42 @@
           "textColor": "Cor do texto"
         },
         "templates": {
+          "groups": {
+            "contact": "Contato e suporte",
+            "guide": "Guias",
+            "news": "Novidades e status",
+            "sales": "Planos e ofertas"
+          },
           "insert": "Inserir",
           "names": {
             "alerts": "Mensagens de status",
             "announcement": "Aviso",
+            "apps": "Baixe o app",
+            "changelog": "Novidades",
             "columns": "Duas colunas",
             "contacts": "Lista de contatos",
+            "darkCard": "Cartão de contato escuro",
             "faq": "Perguntas frequentes",
             "hero": "Banner de suporte",
             "hours": "Horário de suporte",
-            "plan": "Cartão de plano",
-            "social": "Botões sociais",
-            "steps": "Primeiros passos",
-            "darkCard": "Cartão de contato escuro",
             "minimal": "Assinatura minimalista",
-            "persian": "Banner de suporte em persa",
-            "serverStatus": "Status dos servidores",
-            "changelog": "Novidades",
-            "renew": "Lembrete de renovação",
-            "plans": "Dois planos",
             "offer": "Oferta de desconto",
+            "persian": "Banner de suporte em persa",
+            "plan": "Cartão de plano",
+            "plans": "Dois planos",
             "referral": "Convide um amigo",
-            "stats": "Números",
-            "testimonial": "Avaliação de cliente",
-            "apps": "Baixe o app",
+            "renew": "Lembrete de renovação",
             "rules": "Regras",
+            "serverStatus": "Status dos servidores",
+            "social": "Botões sociais",
+            "stats": "Números",
+            "steps": "Primeiros passos",
+            "testimonial": "Avaliação de cliente",
             "tips": "Dica de solução"
           },
           "note": "Designs prontos: escolha um e depois edite o texto.",
           "replace": "Substituir tudo",
-          "title": "Modelos",
-          "groups": {
-            "contact": "Contato e suporte",
-            "news": "Novidades e status",
-            "sales": "Planos e ofertas",
-            "guide": "Guias"
-          }
+          "title": "Modelos"
         },
         "title": "Editor HTML",
         "titleText": "Título",
@@ -2323,19 +2323,19 @@
         "toolset": "Conjunto de ferramentas",
         "unapplied": "Ainda não aplicado",
         "url": "Link (URL)",
+        "variant": {
+          "copyLite": "Copiar o texto Lite",
+          "full": "Full",
+          "fullEmpty": "Sem texto Full: “Ler mais” mostra o texto Lite quando ele não cabe no quadro.",
+          "fullHint": "em “Ler mais”",
+          "label": "Qual texto",
+          "lite": "Lite",
+          "liteHint": "no quadro"
+        },
         "view": "Modo do editor",
         "viewButton": "Ver",
         "width": "Largura (px)",
-        "wrap": "Quebrar linhas",
-        "variant": {
-          "label": "Qual texto",
-          "lite": "Lite",
-          "liteHint": "no quadro",
-          "full": "Full",
-          "fullHint": "em “Ler mais”",
-          "fullEmpty": "Sem texto Full: “Ler mais” mostra o texto Lite quando ele não cabe no quadro.",
-          "copyLite": "Copiar o texto Lite"
-        }
+        "wrap": "Quebrar linhas"
       },
       "invalid": "Este valor não é válido.",
       "leaveUnsaved": "Você tem alterações não salvas. Sair mesmo assim?",
@@ -2989,6 +2989,10 @@
     "branding_freetext": {
       "description": "Texto de marca. o texto desta caixa será mostrado na seção de suporte da página do usuário. você pode usar tags HTML",
       "label": "📢 Texto da seção de suporte"
+    },
+    "branding_freetext_full": {
+      "description": "Mostrado por “Ler mais” na página do usuário. Vazio: “Ler mais” mostra o texto de suporte quando ele não cabe.",
+      "label": "Texto de suporte, completo"
     },
     "branding_site": {
       "description": "O link a ser mostrado na seção de suporte da página do usuário.\nVocê também pode colocar seu Canal Telegram ou Telegram PV aqui.",
@@ -3875,10 +3879,6 @@
     "xtls_enable": {
       "description": "Ativa o protocolo XTLS",
       "label": "🟢XTLS"
-    },
-    "branding_freetext_full": {
-      "description": "Mostrado por “Ler mais” na página do usuário. Vazio: “Ler mais” mostra o texto de suporte quando ele não cabe.",
-      "label": "Texto de suporte, completo"
     }
   },
   "copy": "cópia de",

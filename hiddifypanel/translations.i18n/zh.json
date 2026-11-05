@@ -2229,42 +2229,42 @@
           "textColor": "文字颜色"
         },
         "templates": {
+          "groups": {
+            "contact": "联系与支持",
+            "guide": "指南",
+            "news": "公告与状态",
+            "sales": "套餐与优惠"
+          },
           "insert": "插入",
           "names": {
             "alerts": "状态消息",
             "announcement": "公告",
+            "apps": "下载应用",
+            "changelog": "最新动态",
             "columns": "两栏",
             "contacts": "联系方式列表",
+            "darkCard": "深色联系卡片",
             "faq": "常见问题",
             "hero": "支持横幅",
             "hours": "支持时间",
-            "plan": "套餐卡片",
-            "social": "社交按钮",
-            "steps": "快速开始",
-            "darkCard": "深色联系卡片",
             "minimal": "简约签名",
-            "persian": "波斯语支持横幅",
-            "serverStatus": "服务器状态",
-            "changelog": "最新动态",
-            "renew": "续费提醒",
-            "plans": "两种套餐",
             "offer": "优惠活动",
+            "persian": "波斯语支持横幅",
+            "plan": "套餐卡片",
+            "plans": "两种套餐",
             "referral": "邀请好友",
-            "stats": "数据亮点",
-            "testimonial": "用户评价",
-            "apps": "下载应用",
+            "renew": "续费提醒",
             "rules": "使用规则",
+            "serverStatus": "服务器状态",
+            "social": "社交按钮",
+            "stats": "数据亮点",
+            "steps": "快速开始",
+            "testimonial": "用户评价",
             "tips": "故障排除提示"
           },
           "note": "现成的设计：选一个，然后编辑文字。",
           "replace": "全部替换",
-          "title": "模板",
-          "groups": {
-            "contact": "联系与支持",
-            "news": "公告与状态",
-            "sales": "套餐与优惠",
-            "guide": "指南"
-          }
+          "title": "模板"
         },
         "title": "HTML 编辑器",
         "titleText": "标题",
@@ -2323,19 +2323,19 @@
         "toolset": "工具集",
         "unapplied": "尚未应用",
         "url": "链接 (URL)",
+        "variant": {
+          "copyLite": "复制 Lite 文字",
+          "full": "Full",
+          "fullEmpty": "没有 Full 文字：框内放不下时，“阅读更多”显示 Lite 文字。",
+          "fullHint": "点“阅读更多”显示",
+          "label": "哪段文字",
+          "lite": "Lite",
+          "liteHint": "显示在框内"
+        },
         "view": "编辑器模式",
         "viewButton": "查看",
         "width": "宽度 (px)",
-        "wrap": "自动换行",
-        "variant": {
-          "label": "哪段文字",
-          "lite": "Lite",
-          "liteHint": "显示在框内",
-          "full": "Full",
-          "fullHint": "点“阅读更多”显示",
-          "fullEmpty": "没有 Full 文字：框内放不下时，“阅读更多”显示 Lite 文字。",
-          "copyLite": "复制 Lite 文字"
-        }
+        "wrap": "自动换行"
       },
       "invalid": "此值无效。",
       "leaveUnsaved": "您有未保存的更改。仍要离开吗？",
@@ -2989,6 +2989,10 @@
     "branding_freetext": {
       "description": "品牌文字。此框的文本将显示在用户页面的支持部分。你可以使用 HTML 标签",
       "label": "📢 支持部分文本"
+    },
+    "branding_freetext_full": {
+      "description": "在用户页面点“阅读更多”时显示。留空：放不下时“阅读更多”显示支持文字。",
+      "label": "支持文字（完整版）"
     },
     "branding_site": {
       "description": "将在用户页面的支持部分显示的链接。\n您还可以将您的 Telegram Channel 或 Telegram PV 放在这里。",
@@ -3875,10 +3879,6 @@
     "xtls_enable": {
       "description": "启用 XTLS 协议",
       "label": "🟢XTLS"
-    },
-    "branding_freetext_full": {
-      "description": "在用户页面点“阅读更多”时显示。留空：放不下时“阅读更多”显示支持文字。",
-      "label": "支持文字（完整版）"
     }
   },
   "copy": "复制",
