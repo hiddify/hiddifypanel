@@ -1,7 +1,6 @@
-{# Shared HTTP decoy upstream. Expects decoy_host (hostname of the site to mirror).
-   defaults use init-addr none, so hostname servers never get an address without
-   resolvers + an init-addr override. Also rewrite Host — probing with the
-   original Host hits an empty vhost even after DNS works. #}
+
 mode http
 http-request set-header Host {{ decoy_host }}
-server s {{ decoy_host }}:80 resolvers dns resolve-prefer ipv4 init-addr last,libc,none
+default-server resolvers dns resolve-prefer ipv4 resolve-opts allow-dup-ip init-addr last,libc,none check inter 1m fall 2 rise 1 observe layer4 error-limit 3 on-error mark-down
+server s {{ decoy_host }}:443 ssl verify required ca-file @system-ca sni str({{ decoy_host }}) check-sni {{ decoy_host }}
+server s_http {{ decoy_host }}:80 backup
