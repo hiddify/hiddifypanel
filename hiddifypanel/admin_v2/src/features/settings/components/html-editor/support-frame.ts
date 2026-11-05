@@ -20,6 +20,13 @@ export interface BoxParts {
   title: string
   moreShow: boolean
   more: string
+  /** The Full text, shown by "Read More" on the user page; undefined when the server has not got this setting. */
+  full?: string
+}
+
+/** The "Read More" window on the user page: the box's title, no "View More" button. */
+export function fullParts(parts?: BoxParts): BoxParts {
+  return { titleShow: true, title: parts?.titleShow === false ? '' : (parts?.title ?? ''), moreShow: false, more: '' }
 }
 
 /** Shows ``parts`` in a frame made by ``frameDocument`` (changed in place: the text being edited keeps its caret). */

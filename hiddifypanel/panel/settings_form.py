@@ -123,7 +123,7 @@ def save_config_form(form) -> SettingsSaveResult:
         # html inputs santitizing
         if k in {ConfigEnum.branding_title, ConfigEnum.branding_site, ConfigEnum.branding_support_title, ConfigEnum.branding_support_more}:
             v = bleach_clean(v, tags=ALLOWED_TAGS)
-        elif k == ConfigEnum.branding_freetext:  # the users' support box: HTML5 with inline styles
+        elif k in {ConfigEnum.branding_freetext, ConfigEnum.branding_freetext_full}:  # the users' support box: HTML5 with inline styles
             v = hutils.user_html.clean_user_html(v)
         set_hconfig(k, v, commit=False)
 
@@ -278,9 +278,11 @@ def get_config_form(**form_kwargs):
             elif c.key in {ConfigEnum.additional_configs_xrayjson, ConfigEnum.additional_configs_singbox, ConfigEnum.additional_configs_urls}:
                 render_kw = {"class": "ltr", "maxlength": 20480}
                 field = wtf.TextAreaField(_(f"config.{c.key}.label"), default=c.value, description=_(f"config.{c.key}.description"), render_kw=render_kw)
-            elif c.key == ConfigEnum.branding_freetext:
-                validators = [wtf.validators.Length(max=2048)]
-                render_kw = {"class": "ltr", "maxlength": 2048}
+            elif c.key in {ConfigEnum.branding_freetext, ConfigEnum.branding_freetext_full}:
+                # the Full text (Read More) has room for more than the box itself
+                limit = 8192 if c.key == ConfigEnum.branding_freetext_full else 2048
+                validators = [wtf.validators.Length(max=limit)]
+                render_kw = {"class": "ltr", "maxlength": limit}
                 field = custom_widgets.CKTextAreaField(_(f"config.{c.key}.label"), validators, default=c.value, description=_(f"config.{c.key}.description"), render_kw=render_kw)
             elif isinstance(c2.type, type) and issubclass(c2.type, config_enum.HEnum) and c2.type != str:
                 items = [(f"{k}", _(f"config.{c.key}.{k}")) for k in c2.type]

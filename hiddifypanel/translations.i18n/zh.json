@@ -2176,12 +2176,12 @@
           "default": "默认字体"
         },
         "formatCode": "格式化代码",
-        "full": "完整",
+        "full": "全部工具",
         "imageUrl": "图片地址 (URL)",
         "insert": "插入",
         "linkText": "文字",
         "linkTextHint": "留空：使用选中的文字或链接",
-        "lite": "简洁",
+        "lite": "基础工具",
         "loadingSource": "正在加载代码编辑器…",
         "moreLink": "打开“支持网站”设置中的链接",
         "moreText": "按钮文字",
@@ -2326,7 +2326,16 @@
         "view": "编辑器模式",
         "viewButton": "查看",
         "width": "宽度 (px)",
-        "wrap": "自动换行"
+        "wrap": "自动换行",
+        "variant": {
+          "label": "哪段文字",
+          "lite": "Lite",
+          "liteHint": "显示在框内",
+          "full": "Full",
+          "fullHint": "点“阅读更多”显示",
+          "fullEmpty": "没有 Full 文字：框内放不下时，“阅读更多”显示 Lite 文字。",
+          "copyLite": "复制 Lite 文字"
+        }
       },
       "invalid": "此值无效。",
       "leaveUnsaved": "您有未保存的更改。仍要离开吗？",
@@ -3866,6 +3875,10 @@
     "xtls_enable": {
       "description": "启用 XTLS 协议",
       "label": "🟢XTLS"
+    },
+    "branding_freetext_full": {
+      "description": "在用户页面点“阅读更多”时显示。留空：放不下时“阅读更多”显示支持文字。",
+      "label": "支持文字（完整版）"
     }
   },
   "copy": "复制",

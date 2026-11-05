@@ -2176,12 +2176,12 @@
           "default": "Fonte padrão"
         },
         "formatCode": "Formatar código",
-        "full": "Completo",
+        "full": "Todas as ferramentas",
         "imageUrl": "Endereço da imagem (URL)",
         "insert": "Inserir",
         "linkText": "Texto",
         "linkTextHint": "Vazio: o texto selecionado ou o link",
-        "lite": "Simples",
+        "lite": "Ferramentas básicas",
         "loadingSource": "Carregando o editor de código…",
         "moreLink": "Abre o link da configuração \"Site de suporte\"",
         "moreText": "Texto do botão",
@@ -2326,7 +2326,16 @@
         "view": "Modo do editor",
         "viewButton": "Ver",
         "width": "Largura (px)",
-        "wrap": "Quebrar linhas"
+        "wrap": "Quebrar linhas",
+        "variant": {
+          "label": "Qual texto",
+          "lite": "Lite",
+          "liteHint": "no quadro",
+          "full": "Full",
+          "fullHint": "em “Ler mais”",
+          "fullEmpty": "Sem texto Full: “Ler mais” mostra o texto Lite quando ele não cabe no quadro.",
+          "copyLite": "Copiar o texto Lite"
+        }
       },
       "invalid": "Este valor não é válido.",
       "leaveUnsaved": "Você tem alterações não salvas. Sair mesmo assim?",
@@ -3866,6 +3875,10 @@
     "xtls_enable": {
       "description": "Ativa o protocolo XTLS",
       "label": "🟢XTLS"
+    },
+    "branding_freetext_full": {
+      "description": "Mostrado por “Ler mais” na página do usuário. Vazio: “Ler mais” mostra o texto de suporte quando ele não cabe.",
+      "label": "Texto de suporte, completo"
     }
   },
   "copy": "cópia de",

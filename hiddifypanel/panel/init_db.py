@@ -14,9 +14,9 @@ from hiddifypanel import Events, g, hutils
 from hiddifypanel.cache import cache
 from hiddifypanel.database import db, db_execute, db_execute_ddl
 from hiddifypanel.hutils.network.server_ip_sync import sync_server_ips
-from hiddifypanel.models.config_enum import DomainLabelMode
 from hiddifypanel.models import *
 from hiddifypanel.models import ConfigEnum
+from hiddifypanel.models.config_enum import DomainLabelMode
 from hiddifypanel.proxy_v3.builtin_proxy_sync.orchestrator import seed_proxy_catalog
 from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
     sync_builtin_presets,
@@ -26,7 +26,7 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
-def _v196(child_id):
+def _v197(child_id):
     """Admins count their own traffic (their users' and their sub-admins' users'), with a reset period like users:
     it starts from what those users show now, so a traffic limit already set stays where it was."""
     if child_id != 0:
@@ -45,6 +45,8 @@ def _v196(child_id):
         admin.current_usage = totals.get(admin.id, 0)
         admin.usage_mode = admin.usage_mode or UserMode.no_reset
         admin.last_reset_time = admin.last_reset_time or today
+
+    add_config_if_not_exist(ConfigEnum.branding_freetext_full, "", child_id=child_id)
 
 
 def _v194(child_id):

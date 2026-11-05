@@ -28,6 +28,8 @@ class ProfileSchema(ApiModel):
     admin_message_html: str = ""
     admin_message_url: str = ""
     #: the support box's title and "View More" button: shown or not, and their text (empty: the page's default)
+    #: the support box's Full text, shown by "Read More" (empty: Read More shows admin_message_html when it does not fit)
+    admin_message_full_html: str = ""
     admin_message_title_show: bool = True
     admin_message_title: str = ""
     admin_message_more_show: bool = True
@@ -71,6 +73,11 @@ class InfoAPI(MethodView):
         if not user_hconfig(ConfigEnum.branding_freetext, c['user']) and auth.admin_session_is_exist():
             dto.admin_message_html += "<p style='font-style: italic;font-size:8px'>" + \
                 _("[Admin only visible message:] You can change this message from settings") + "</p>"
+        # the Full text (Read More); not the panel's one when this user's admin has a Lite text of their own
+        full = user_hconfig(ConfigEnum.branding_freetext_full, c['user']) or ""
+        own_lite = user_hconfig(ConfigEnum.branding_freetext, c['user']) != hconfig(ConfigEnum.branding_freetext)
+        own_full = full != (hconfig(ConfigEnum.branding_freetext_full) or "")
+        dto.admin_message_full_html = full if own_full or not own_lite else ""
         dto.admin_message_url = user_hconfig(ConfigEnum.branding_site, c['user']) or "https://t.me/hiddify"
         dto.admin_message_title_show = hconfig(ConfigEnum.branding_support_title_show) is not False
         dto.admin_message_title = hconfig(ConfigEnum.branding_support_title) or ""
