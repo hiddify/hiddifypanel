@@ -5,8 +5,8 @@ It runs the config tester (``config_tester.run``) on the subscription of one act
 the server never works for anyone (a wrong template, a core that rejects it, an inbound that is missing), so these
 are the ones worth an admin's attention; filtering in Iran is another matter and is not tested here.
 
-The last result is kept in redis; when configs break that worked in the previous check, the super admins hear about
-it from the Telegram bot (when there is one).
+The last result is kept in redis. A config that fails is tested again in a quarter of an hour; when it fails in two checks
+in a row (a moment's hiccup does not), the super admins hear about it from the Telegram bot (when there is one).
 """
 
 from __future__ import annotations
@@ -35,6 +35,8 @@ TEST_URL = "https://cp.cloudflare.com/generate_204"
 REPEATS = 2
 #: seconds before the failed configs are tested once more (a reload of the cores takes a few seconds)
 RETRY_AFTER = 30
+#: seconds before a check that found new failures is run again: the alert waits for two failed checks in a row
+CONFIRM_AFTER = 15 * 60
 
 
 def last() -> dict | None:
@@ -102,6 +104,13 @@ def _is_status_line(event: dict) -> bool:
     return name.startswith("⏳") or "📅" in name
 
 
+def _is_group(event: dict) -> bool:
+    """Xray's "Auto": the subscription's entry that balances over all the configs (each one is tested on its own)."""
+    original = event.get("original")
+    routing = original.get("routing") if isinstance(original, dict) else None
+    return isinstance(routing, dict) and bool(routing.get("balancers"))
+
+
 def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
     """Every config of the subscription as one kind of app gets it: {total, ok, failed, error, error_kind}."""
     from hiddifypanel.proxy_v3 import config_tester
@@ -112,7 +121,7 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
         for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
             if event.get("event") == "start":
                 summary["total"] = int(event.get("total") or 0)
-            elif event.get("event") == "result" and _is_status_line(event):
+            elif event.get("event") == "result" and (_is_status_line(event) or _is_group(event)):
                 summary["total"] -= 1
             elif event.get("event") == "result":
                 if event.get("ok"):
@@ -163,8 +172,11 @@ def check() -> dict | None:
             summary = _test_app(page + path, agent, app, verify)
         result["apps"][app] = summary
     previous = last()
+    send, suspects = _confirmed(previous, result)
     redis_client.set(_LAST, json.dumps(result))
-    _notify(previous, result)
+    _notify(send)
+    if suspects:
+        _confirm_later()
     return result
 
 
@@ -191,14 +203,46 @@ def start_in_background(app) -> bool:
     return True
 
 
-def _notify(previous: dict | None, current: dict) -> None:
-    """The super admins hear when configs break that worked before (not every time the same ones are still broken)."""
-    if previous is None:
+def _failed(result: dict | None) -> set[str]:
+    return {f"{f['name']} ({app})" for app, summary in ((result or {}).get("apps") or {}).items() for f in summary.get("failed") or []}
+
+
+def _confirmed(previous: dict | None, current: dict) -> tuple[list[str], set[str]]:
+    """(configs to tell the admins about, configs that failed for the first time).
+
+    A config is told about once it failed in this check and the one before, and only once: ``current["confirmed"]``
+    keeps the ones told about while they still fail. A check from before ``confirmed`` existed: its failures count as
+    told about (they were, then)."""
+    now = _failed(current)
+    before = _failed(previous)
+    told = set((previous or {}).get("confirmed", before)) & now
+    confirmed = now & before
+    current["confirmed"] = sorted(confirmed | told)
+    send = sorted(confirmed - told) if previous is not None else []
+    return send, now - before
+
+
+def _confirm_later() -> None:
+    """The check once more in a quarter of an hour, not at the next scheduled one in 6 hours. A restart of the panel
+    loses it, and the scheduled check confirms then."""
+    from flask import current_app
+
+    try:
+        app = current_app._get_current_object()
+    except RuntimeError:
         return
-    newly: list[str] = []
-    for app, summary in current["apps"].items():
-        before = {f["name"] for f in (previous.get("apps", {}).get(app, {}).get("failed") or [])}
-        newly += [f"{f['name']} ({app})" for f in summary["failed"] if f["name"] not in before]
+
+    def work():
+        with app.app_context():
+            run_locked()
+
+    timer = threading.Timer(CONFIRM_AFTER, work)
+    timer.name, timer.daemon = "config-health-confirm", True
+    timer.start()
+
+
+def _notify(newly: list[str]) -> None:
+    """The super admins hear when configs break that worked before (not every time the same ones are still broken)."""
     if not newly:
         return
     try:
