@@ -63,16 +63,6 @@ const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.m
   --fill: linear-gradient(90deg, #fb923c, #f43f5e 55%, #e11d48);
   --fill-glow: rgba(244, 63, 94, 0.5);
 }
-/* Fill still grows from the start of the line: the right side when the page is RTL. */
-.mbar:dir(rtl) {
-  --fill: linear-gradient(to left, #34d399, #10b981 55%, #059669);
-}
-.mbar--warn:dir(rtl) {
-  --fill: linear-gradient(to left, #fde047, #facc15 50%, #f59e0b);
-}
-.mbar--danger:dir(rtl) {
-  --fill: linear-gradient(to left, #fb923c, #f43f5e 55%, #e11d48);
-}
 .mbar--none {
   background: repeating-linear-gradient(
     -45deg,
@@ -95,7 +85,8 @@ const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.m
 .mbar__fill {
   position: absolute;
   inset-block: 0;
-  inset-inline-start: 0;
+  /* Fills left to right in every language (RTL too), like the usage bars people know. */
+  left: 0;
   overflow: hidden;
   border-radius: inherit;
   background: var(--fill);
@@ -121,7 +112,8 @@ const percent = computed(() => (props.max ? (props.used > 0 ? Math.max(4, Math.m
 .mbar__text {
   position: absolute;
   inset-block: 0;
-  inset-inline-start: 0;
+  /* Same edge as the fill, so the clipped copy lines up; the text keeps the page direction. */
+  left: 0;
   width: 100cqw;
   display: grid;
   place-items: center;
