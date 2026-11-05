@@ -28,7 +28,8 @@ backend panel
   server s_ws 127.0.0.1:9000 weight 0
 
 backend default_decoy
-  {% with decoy_host = ctx.hconfig.decoy_domain %}
+  {#- Reached over TLS only (cleartext is redirected to https in in-httpmode): fetch the site over https too #}
+  {% with decoy_host = ctx.hconfig.decoy_domain, decoy_tls = true %}
     {% include 'haproxy/server/snippets/decoy_upstream' %}
   {% endwith %}
 

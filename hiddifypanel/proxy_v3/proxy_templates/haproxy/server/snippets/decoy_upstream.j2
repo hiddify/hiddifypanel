@@ -1,7 +1,9 @@
 {# Shared HTTP decoy upstream. Expects decoy_host (hostname of the site to mirror).
    defaults use init-addr none, so hostname servers never get an address without
    resolvers + an init-addr override. Also rewrite Host — probing with the
-   original Host hits an empty vhost even after DNS works. #}
+   original Host hits an empty vhost even after DNS works.
+   decoy_tls: fetch the site over https (SNI decoy_host). Over :80 an https-only site answers
+   with a redirect to itself, which would send the visitor to the real site. #}
 mode http
 http-request set-header Host {{ decoy_host }}
-server s {{ decoy_host }}:80 resolvers dns resolve-prefer ipv4 init-addr last,libc,none
+server s {{ decoy_host }}:{% if decoy_tls | default(false) %}443 ssl verify none sni str({{ decoy_host }}){% else %}80{% endif %} resolvers dns resolve-prefer ipv4 init-addr last,libc,none
