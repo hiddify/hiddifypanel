@@ -33,7 +33,10 @@
         {% elif domain.ech and domain.echinfo %}
             {% set qp.ech = domain.echinfo %}
         {% endif %}
-        {# TLS fragment is FinalMask (``fm`` query from domain.finalmask), not a separate fragment= param. #}
+        {# TLS fragment: ``fm`` (FinalMask) for Xray / hiddify-core, and the older fragment= for apps that do not read fm (Karing, v2rayNG before FinalMask; Hiddify > 5.0.0 reads fm). #}
+        {% if ctx.platform.hiddify.version < "5.5.0" and domain.link_fragment %}
+            {% set qp.fragment = domain.link_fragment %}
+        {% endif %}
     {% endif %}
 
 {% else %}

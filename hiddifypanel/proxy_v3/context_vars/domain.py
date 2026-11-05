@@ -88,6 +88,11 @@ class DomainIPVar(BaseModel):
         return tls_fragment_mod.finalmask_of(self.extra_params, domain_mode=self.mode)
 
     @property
+    def link_fragment(self) -> str | None:
+        """The finalmask's TLS fragment as the share-link ``fragment=`` value, for apps that do not read ``fm``."""
+        return tls_fragment_mod.link_fragment_of(self.finalmask)
+
+    @property
     def special(self) -> bool:
         return self.fake_mode == FakeMode.reality
 

@@ -185,6 +185,22 @@ def finalmask_of(extra: Any, *, domain_mode: object | None = None) -> Any:
     return None
 
 
+def link_fragment_of(finalmask: Any) -> str | None:
+    """The share-link ``fragment=<length>,<delay>,<packets>`` (e.g. ``10-100,50-200,tlshello``) of a FinalMask's TCP
+    fragment layer, or None. Apps that do not read ``fm`` (Karing, older v2rayNG / Hiddify) only know this one, and
+    only one length and one delay: the first of each."""
+    if not isinstance(finalmask, Mapping):
+        return None
+    for layer in finalmask.get("tcp") or []:
+        if not isinstance(layer, Mapping) or str(layer.get("type") or "").lower() != "fragment":
+            continue
+        settings = layer.get("settings") if isinstance(layer.get("settings"), Mapping) else {}
+        lengths = _str_list(settings.get("lengths"), fallback=DEFAULT_LENGTHS)
+        delays = _str_list(settings.get("delays"), fallback=DEFAULT_DELAYS)
+        return f"{lengths[0]},{delays[0]},{_str(settings.get('packets'), DEFAULT_PACKETS)}"
+    return None
+
+
 def set_tls_fragment(extra: MutableMapping[str, Any] | dict[str, Any], frag: Mapping[str, Any] | None) -> dict[str, Any]:
     """Enable/update/clear the TLS Fragment trick → writes ``tricks.finalmask``."""
     obj: dict[str, Any] = dict(extra) if isinstance(extra, Mapping) else {}
