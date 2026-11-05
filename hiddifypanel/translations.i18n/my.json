@@ -289,11 +289,11 @@
       "apply_configs": "Configs များ အတည်ပြု",
       "title": "အပြင်အဆင်များ"
     },
-    "define_mode": "🥇🥈🥉 စီမံခန့်ခွဲမုဒ်ကို သတ်မှတ်ပါ။",
     "core_load": {
       "error": "<b>Proxy core များအတွက် RAM မလုံလောက်ပါ</b><br>Panel၊ xray နှင့် hiddify-core တို့သည် ဆာဗာ၏ RAM %(ram)s အနက် %(estimate)s ခန့် (%(percent)s%%) လိုအပ်သည်- အသုံးပြုသူ %(users)s ဦး × inbound %(inbounds)s ခု၊ အသုံးပြုသူတိုင်းကို inbound တိုင်းတွင် သိမ်းထားသောကြောင့်ဖြစ်သည်။ ဆာဗာ memory ကုန်ပြီး xray / hiddify-core ကို ထပ်ခါထပ်ခါ ရပ်တန့်ခံရနိုင်သည်။ အသုံးပြုနေသော protocol အရေအတွက်ကို လျှော့ပါ၊ အသုံးပြုသူများကို ပိတ်ပါ သို့မဟုတ် ဆာဗာ RAM ကို တိုးပါ။",
       "warning": "<b>Proxy core များအတွက် RAM နည်းလာနေသည်</b><br>Panel၊ xray နှင့် hiddify-core တို့သည် ဆာဗာ၏ RAM %(ram)s အနက် %(estimate)s ခန့် (%(percent)s%%) လိုအပ်နိုင်သည်- အသုံးပြုသူ %(users)s ဦး × inbound %(inbounds)s ခု၊ အသုံးပြုသူတိုင်းကို inbound တိုင်းတွင် သိမ်းထားသောကြောင့်ဖြစ်သည်။ အသုံးပြုသူများ ထပ်တိုးပါက memory ကုန်နိုင်သည်။ အသုံးပြုနေသော protocol အရေအတွက်ကို လျှော့ပါ၊ မလိုအပ်သော အသုံးပြုသူများကို ပိတ်ပါ သို့မဟုတ် ဆာဗာ RAM ကို တိုးပါ။"
     },
+    "define_mode": "🥇🥈🥉 စီမံခန့်ခွဲမုဒ်ကို သတ်မှတ်ပါ။",
     "incomplete_setup_warning": "သင်စနစ်အား အပြည့်အဝ မတပ်ဆင်ရသေးပုံရသည်။ စနစ်ထည့်သွင်းမှု အပြီးသတ်ရန် <a class='btn btn-success' href='%(quick_setup)s'>ဤနေရာကိုနှိပ်ပါ</a> ။",
     "menu": {
       "api": "API",

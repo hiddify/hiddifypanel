@@ -287,11 +287,11 @@
       "apply_configs": "Aplicar configurações",
       "title": "Configurações"
     },
-    "define_mode": "Definir o Modo Admin",
     "core_load": {
       "error": "<b>RAM insuficiente para os núcleos de proxy</b><br>O painel, xray e hiddify-core precisam de cerca de %(estimate)s dos %(ram)s de RAM do servidor (%(percent)s%%): %(users)s usuários ativos × %(inbounds)s inbounds, pois cada usuário é mantido em cada inbound. O servidor pode ficar sem memória e o xray / hiddify-core ser encerrado repetidamente. Reduza o número de protocolos ativos, desative usuários ou aumente a RAM do servidor.",
       "warning": "<b>A RAM está ficando baixa para os núcleos de proxy</b><br>O painel, xray e hiddify-core podem precisar de cerca de %(estimate)s dos %(ram)s de RAM do servidor (%(percent)s%%): %(users)s usuários ativos × %(inbounds)s inbounds, pois cada usuário é mantido em cada inbound. Com mais usuários a memória pode acabar. Reduza o número de protocolos ativos, desative usuários desnecessários ou aumente a RAM do servidor."
     },
+    "define_mode": "Definir o Modo Admin",
     "incomplete_setup_warning": "Parece que você não configurou o sistema completamente. <a class='btn btn-success' href='%(quick_setup)s'>Clique aqui</a> para concluir a configuração.",
     "menu": {
       "api": "API",
