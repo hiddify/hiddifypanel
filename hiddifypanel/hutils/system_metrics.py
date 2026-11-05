@@ -233,9 +233,35 @@ def disk_detail(node_id: int = 0) -> DashboardDiskDetail:
     return DashboardDiskDetail(node_id=node_id, disk=disk_metrics(), top_folders=disk_top_folders())
 
 
+#: Interfaces whose traffic is also counted on a real one, or is the server talking to itself: loopback (HAProxy,
+#: Xray and Hiddify Core pass every connection to each other over it, the same bytes in and out) and tunnels (WARP,
+#: WireGuard, Docker): counting them doubled the download and showed upload as big as download.
+_VIRTUAL_NIC_PREFIXES = ("lo", "warp", "hiddifywg", "wg", "tun", "tap", "docker", "veth", "br-", "virbr", "tailscale", "zt", "ip6tnl", "sit", "gre")
+
+
+class _NetCounters(NamedTuple):
+    bytes_sent: int
+    bytes_recv: int
+
+
+def _is_physical_nic(name: str) -> bool:
+    # A hardware (or virtio) NIC has a device; tunnels, bridges and loopback do not.
+    return os.path.exists(f"/sys/class/net/{name}/device")
+
+
+def wire_counters(per_nic: Mapping[str, NamedTuple] | None = None, physical: Callable[[str], bool] = _is_physical_nic) -> _NetCounters:
+    """Bytes the server really sent and received on its network: its physical interfaces, or (no physical one, e.g.
+    an OpenVZ venet) every interface but loopback and tunnels."""
+    nics = per_nic if per_nic is not None else psutil.net_io_counters(pernic=True)
+    real = [name for name in nics if physical(name)]
+    if not real:
+        real = [name for name in nics if not name.startswith(_VIRTUAL_NIC_PREFIXES)]
+    return _NetCounters(sum(int(nics[n].bytes_sent) for n in real), sum(int(nics[n].bytes_recv) for n in real))
+
+
 def network_metrics(include_connections: bool = True) -> DashboardNetwork:
-    """Cumulative traffic counters; clients derive throughput from two samples."""
-    net = psutil.net_io_counters()
+    """Cumulative traffic counters of the real interfaces; clients derive throughput from two samples."""
+    net = wire_counters()
     total_connections = 0
     unique_ips = 0
 
