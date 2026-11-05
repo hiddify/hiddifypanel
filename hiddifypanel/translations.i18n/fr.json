@@ -2125,8 +2125,8 @@
         "editButton": "Éditeur HTML",
         "preview": "Aperçu",
         "source": "Source",
-        "lite": "Simple",
-        "full": "Complet",
+        "lite": "Outils de base",
+        "full": "Tous les outils",
         "view": "Mode de l'éditeur",
         "toolset": "Jeu d'outils",
         "toolbar": "Outils de mise en forme",
@@ -2305,7 +2305,16 @@
         "titleText": "Titre",
         "moreText": "Texte du bouton",
         "defaultText": "Par défaut : {text}",
-        "moreLink": "Ouvre le lien du réglage « Site d'assistance »"
+        "moreLink": "Ouvre le lien du réglage « Site d'assistance »",
+        "variant": {
+          "label": "Quel texte",
+          "lite": "Lite",
+          "liteHint": "dans l’encadré",
+          "full": "Full",
+          "fullHint": "via « Lire la suite »",
+          "fullEmpty": "Pas de texte Full : « Lire la suite » affiche le texte Lite s’il ne tient pas dans l’encadré.",
+          "copyLite": "Copier le texte Lite"
+        }
       }
     },
     "tags": {
@@ -3826,7 +3835,11 @@
     },
     "invalid_vless_decryption": "Xray ne peut pas lire ce decryption et ne démarrerait pas avec. Laissez vide, ou collez la ligne decryption d'une sortie xray vlessenc.",
     "invalid_vless_encryption": "VLESS encryption invalide. Laissez vide, ou collez la ligne encryption de la même sortie xray vlessenc.",
-    "vless_encryption_pair_mismatch": "VLESS encryption et decryption doivent provenir de la même sortie xray vlessenc, ou être vides tous les deux."
+    "vless_encryption_pair_mismatch": "VLESS encryption et decryption doivent provenir de la même sortie xray vlessenc, ou être vides tous les deux.",
+    "branding_freetext_full": {
+      "description": "Affiché par « Lire la suite » sur la page utilisateur. Vide : « Lire la suite » affiche le texte d’assistance s’il ne tient pas.",
+      "label": "Texte d’assistance, version complète"
+    }
   },
   "copy": "Copie",
   "daily": "⏰ Quotidiennement",

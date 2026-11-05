@@ -350,6 +350,9 @@ class ConfigEnum(metaclass=FastEnum):
     branding_support_title_show = _BoolConfigDscr(ConfigCategory.branding)
     branding_support_more = _StrConfigDscr(ConfigCategory.branding)
     branding_support_more_show = _BoolConfigDscr(ConfigCategory.branding)
+    # the support box's Full text, shown by "Read More" on the user page (branding_freetext is the Lite text shown in the
+    # box); empty: Read More shows the Lite text when it does not fit. Edited in branding_freetext's HTML editor.
+    branding_freetext_full = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     # the user page: a static site (e.g. a hiddify-user-front build on GitHub Pages) the panel serves; empty: built-in
     user_page_url = _StrConfigDscr(ConfigCategory.branding, admin_overridable=True)
     not_found = _StrConfigDscr(ConfigCategory.hidden)

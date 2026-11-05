@@ -26,6 +26,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v197(child_id):
+    """The support box of the user page gets a Full text, shown by "Read More" (the box shows the Lite text, as
+    before). Empty: Read More shows the Lite text when it does not fit, as before."""
+    add_config_if_not_exist(ConfigEnum.branding_freetext_full, "", child_id=child_id)
+
+
 def _v194(child_id):
     """The support box of the user page: its title and "View More" button can be renamed or hidden (in the HTML
     editor of the support text). Shown with the default texts, as before."""

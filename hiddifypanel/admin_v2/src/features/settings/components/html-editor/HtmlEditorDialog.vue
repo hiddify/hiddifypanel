@@ -20,7 +20,7 @@ import HtmlSourceEditor from './HtmlSourceEditor.vue'
 import SupportFrame from './SupportFrame.vue'
 import TemplateGallery from './TemplateGallery.vue'
 import { cleanUp, closestIn, countMatches, replaceAll, selectNext, tableAction, type TableAction } from './dom-tools'
-import { BLOCK_STYLES, SNIPPETS, caretBlock, escapeAttr, type BoxParts } from './support-frame'
+import { BLOCK_STYLES, SNIPPETS, caretBlock, escapeAttr, fullParts, type BoxParts } from './support-frame'
 
 const props = defineProps<{ modelValue: string; title: string; maxlength?: number; parts?: BoxParts }>()
 const emit = defineEmits<{ 'update:modelValue': [value: string]; 'update:parts': [value: BoxParts] }>()
@@ -30,9 +30,16 @@ const { t } = useI18n()
 
 type Mode = 'preview' | 'source'
 type Level = 'lite' | 'full'
+/** Which text of the support box is edited: Lite (shown in the box) or Full (shown by "Read More"). */
+type Variant = 'lite' | 'full'
+/** The Full text's limit (the server's: settings_form.py). */
+const FULL_MAXLENGTH = 8192
 const LEVEL_KEY = 'admin_v2_html_editor_level'
 
+/** The text being edited: the Lite or the Full one (``variant``); ``spare`` holds the other. */
 const draft = ref('')
+const spare = ref('')
+const variant = ref<Variant>('lite')
 /** The box's title and button being edited (null: this setting has none). */
 const draftParts = ref<BoxParts | null>(null)
 const mode = ref<Mode>('preview')
@@ -60,6 +67,8 @@ watch(visible, (open) => {
   if (!open) return
   draft.value = props.modelValue ?? ''
   draftParts.value = props.parts ? { ...props.parts } : null
+  spare.value = props.parts?.full ?? ''
+  variant.value = 'lite'
   mode.value = 'preview'
   notice.value = ''
 })
@@ -73,19 +82,51 @@ function note(text: string) {
   noticeTimer = setTimeout(() => (notice.value = ''), 3500)
 }
 
+/** This setting has a Full text (the support box, on a server that has it). */
+const hasFull = computed(() => draftParts.value?.full !== undefined)
+const liteText = computed(() => (variant.value === 'lite' ? draft.value : spare.value))
+const fullText = computed(() => (variant.value === 'full' ? draft.value : spare.value))
+const maxFor = (v: Variant) => (v === 'full' ? FULL_MAXLENGTH : props.maxlength)
+const over = (v: Variant, text: string) => Boolean(maxFor(v) && text.length > maxFor(v)!)
 const length = computed(() => draft.value.length)
-const tooLong = computed(() => Boolean(props.maxlength && length.value > props.maxlength))
+const limit = computed(() => maxFor(variant.value))
+const tooLong = computed(() => over(variant.value, draft.value))
+/** Either text is over its limit: nothing can be applied. */
+const blocked = computed(() => over('lite', liteText.value) || (hasFull.value && over('full', fullText.value)))
 const PART_KEYS = ['titleShow', 'title', 'moreShow', 'more'] as const
-const partsChanged = computed(() => Boolean(draftParts.value && props.parts && PART_KEYS.some((k) => draftParts.value![k] !== props.parts![k])))
-const unapplied = computed(() => draft.value !== (props.modelValue ?? '') || partsChanged.value)
+const partsChanged = computed(
+  () =>
+    Boolean(draftParts.value && props.parts) &&
+    (PART_KEYS.some((k) => draftParts.value![k] !== props.parts![k]) || (hasFull.value && fullText.value !== (props.parts!.full ?? ''))),
+)
+const unapplied = computed(() => liteText.value !== (props.modelValue ?? '') || partsChanged.value)
+
+/** Takes what the preview holds into ``draft`` (the frame edits its own document). */
+function syncDraft() {
+  if (mode.value !== 'preview') return
+  const content = frameParts()?.content
+  if (content) draft.value = content.innerHTML
+}
+
+function switchVariant(next: Variant) {
+  if (next === variant.value) return
+  syncDraft()
+  ;[draft.value, spare.value] = [spare.value, draft.value]
+  variant.value = next
+  if (mode.value === 'preview') nextTick(refreshState)
+}
+function copyLiteToFull() {
+  if (variant.value === 'full') draft.value = spare.value
+}
 
 function apply() {
-  if (tooLong.value) return
-  emit('update:modelValue', draft.value)
-  if (draftParts.value && partsChanged.value) emit('update:parts', { ...draftParts.value })
+  if (blocked.value) return
+  syncDraft()
+  emit('update:modelValue', liteText.value)
+  if (draftParts.value && partsChanged.value) emit('update:parts', { ...draftParts.value, ...(hasFull.value ? { full: fullText.value } : {}) })
 }
 function ok() {
-  if (tooLong.value) return
+  if (blocked.value) return
   apply()
   visible.value = false
 }
@@ -271,7 +312,8 @@ const TABLE_TOOLS: { action: TableAction; icon: EditorIconName }[] = [
 // ---- Full: templates, find & replace, clean-up, import/export ----
 
 const galleryVisible = ref(false)
-function useTemplate(html: string, replace: boolean) {
+/** Puts ``html`` in the text being edited: replacing it, or at the caret. */
+function putHtml(html: string, replace: boolean) {
   if (replace) {
     const content = frameParts()?.content
     if (content) {
@@ -280,6 +322,14 @@ function useTemplate(html: string, replace: boolean) {
     } else draft.value = html
   } else if (mode.value === 'source') draft.value = draft.value ? `${draft.value}\n${html}` : html
   else insertHtml(html)
+}
+/** A template has a Lite and a Full version: each goes in its own text (when this setting has a Full text). */
+function useTemplate(tpl: { lite: string; full: string }, replace: boolean) {
+  if (hasFull.value) {
+    const other = variant.value === 'lite' ? tpl.full : tpl.lite
+    spare.value = replace || !spare.value ? other : `${spare.value}\n${other}`
+    putHtml(variant.value === 'lite' ? tpl.lite : tpl.full, replace)
+  } else putHtml(tpl.lite, replace)
 }
 
 const findPop = ref<InstanceType<typeof Popover> | null>(null)
@@ -357,7 +407,7 @@ async function onFile(event: Event) {
   const text = await file.text()
   // a whole page: only what is in its <body>
   const doc = new DOMParser().parseFromString(text, 'text/html')
-  useTemplate(doc.body.innerHTML.trim(), true)
+  putHtml(doc.body.innerHTML.trim(), true)
   if (mode.value === 'source') draft.value = doc.body.innerHTML.trim()
   note(t('settings.htmlEditor.opened', { name: file.name }))
 }
@@ -617,6 +667,29 @@ function redo() {
     </template>
 
     <div class="hed">
+      <div v-if="hasFull" class="hed-variants" role="tablist" :aria-label="t('settings.htmlEditor.variant.label')">
+        <button
+          v-for="v in (['lite', 'full'] as const)"
+          :key="v"
+          type="button"
+          role="tab"
+          class="hed-variant"
+          :class="{ 'hed-variant--on': variant === v }"
+          :aria-selected="variant === v"
+          @click="switchVariant(v)"
+        >
+          <i :class="v === 'lite' ? 'pi pi-id-card' : 'pi pi-book'" aria-hidden="true" />
+          <span class="hed-variant__text">
+            <span class="hed-variant__name">{{ t(`settings.htmlEditor.variant.${v}`) }}</span>
+            <span class="hed-variant__hint">{{ t(`settings.htmlEditor.variant.${v}Hint`) }}</span>
+          </span>
+        </button>
+      </div>
+      <div v-if="variant === 'full' && !draft.trim()" class="hed-empty-full">
+        <i class="pi pi-info-circle" aria-hidden="true" />
+        <span>{{ t('settings.htmlEditor.variant.fullEmpty') }}</span>
+        <Button :label="t('settings.htmlEditor.variant.copyLite')" icon="pi pi-copy" size="small" text :disabled="!spare.trim()" @click="copyLiteToFull" />
+      </div>
       <div class="hed-bar">
         <div class="hed-seg" role="tablist" :aria-label="t('settings.htmlEditor.view')">
           <button type="button" role="tab" autofocus class="hed-seg__btn" :class="{ 'hed-seg__btn--on': mode === 'preview' }" :aria-selected="mode === 'preview'" @click="switchMode('preview')">
@@ -700,8 +773,17 @@ function redo() {
       </div>
 
       <div class="hed-canvas" :class="{ 'hed-canvas--source': mode === 'source' }">
-        <SupportFrame v-if="mode === 'preview'" ref="frame" v-model:html="draft" :parts="draftParts ?? undefined" editable @selectionchange="refreshState" />
-        <HtmlSourceEditor v-else ref="source" v-model="draft" :wrap="wrap" />
+        <!-- keyed by the text being edited, so each has its own undo history -->
+        <SupportFrame
+          v-if="mode === 'preview'"
+          :key="`frame-${variant}`"
+          ref="frame"
+          v-model:html="draft"
+          :parts="variant === 'lite' ? (draftParts ?? undefined) : fullParts(draftParts ?? undefined)"
+          editable
+          @selectionchange="refreshState"
+        />
+        <HtmlSourceEditor v-else :key="`source-${variant}`" ref="source" v-model="draft" :wrap="wrap" />
       </div>
       <div v-if="mode === 'preview' && level === 'full'" class="hed-path" dir="ltr" :aria-label="t('settings.htmlEditor.path')">
         <span class="hed-path__root">body</span>
@@ -711,7 +793,7 @@ function redo() {
         </template>
       </div>
     </div>
-    <section v-if="draftParts" class="hed-parts" :aria-label="t('settings.htmlEditor.boxParts')">
+    <section v-if="draftParts && variant === 'lite'" class="hed-parts" :aria-label="t('settings.htmlEditor.boxParts')">
       <div class="hed-part" :class="{ 'hed-part--off': !draftParts.titleShow }">
         <div class="hed-part__head">
           <span class="hed-part__icon" aria-hidden="true"><i class="pi pi-tag" /></span>
@@ -751,17 +833,17 @@ function redo() {
     <template #footer>
       <div class="hed-foot">
         <div class="hed-foot__info">
-          <span class="hed-count" :class="{ 'hed-count--over': tooLong }" dir="ltr">{{ length }}<template v-if="maxlength"> / {{ maxlength }}</template></span>
+          <span class="hed-count" :class="{ 'hed-count--over': tooLong }" dir="ltr">{{ length }}<template v-if="limit"> / {{ limit }}</template></span>
           <Transition name="hed-pop-in">
             <span v-if="notice" class="hed-notice"><i class="pi pi-check-circle" />{{ notice }}</span>
           </Transition>
-          <span v-if="tooLong" class="hed-foot__warn"><i class="pi pi-exclamation-circle" />{{ t('settings.htmlEditor.tooLong') }}</span>
+          <span v-if="blocked" class="hed-foot__warn"><i class="pi pi-exclamation-circle" />{{ t('settings.htmlEditor.tooLong') }}</span>
           <span v-else-if="!notice" class="hed-foot__hint">{{ unapplied ? t('settings.htmlEditor.unapplied') : t('settings.htmlEditor.saveHint') }}</span>
         </div>
         <div class="hed-foot__actions">
           <Button :label="t('settings.htmlEditor.cancel')" severity="secondary" text @click="cancel" />
-          <Button :label="t('settings.htmlEditor.apply')" icon="pi pi-check-circle" severity="secondary" outlined :disabled="!unapplied || tooLong" @click="apply" />
-          <Button :label="t('settings.htmlEditor.ok')" icon="pi pi-check" :disabled="tooLong" @click="ok" />
+          <Button :label="t('settings.htmlEditor.apply')" icon="pi pi-check-circle" severity="secondary" outlined :disabled="!unapplied || blocked" @click="apply" />
+          <Button :label="t('settings.htmlEditor.ok')" icon="pi pi-check" :disabled="blocked" @click="ok" />
         </div>
       </div>
     </template>
@@ -861,7 +943,7 @@ function redo() {
     </form>
   </Popover>
 
-  <TemplateGallery v-model:visible="galleryVisible" @pick="useTemplate" />
+  <TemplateGallery v-model:visible="galleryVisible" :variant="variant" @pick="useTemplate" />
 
   <Popover ref="symbolPop">
     <div class="hed-pop">
@@ -921,6 +1003,74 @@ function redo() {
   padding: 0.6rem 0.75rem;
   border-bottom: 1px solid var(--p-content-border-color);
   background: color-mix(in srgb, var(--p-primary-color) 4%, var(--p-content-background));
+}
+.hed-variants {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem 0;
+  background: color-mix(in srgb, var(--p-primary-color) 4%, var(--p-content-background));
+}
+.hed-variant {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 12px;
+  font: inherit;
+  text-align: start;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-background);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    color 0.15s;
+}
+.hed-variant .pi {
+  font-size: 1.1rem;
+}
+.hed-variant:hover {
+  color: var(--p-text-color);
+}
+.hed-variant:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 1px;
+}
+.hed-variant--on {
+  color: var(--p-primary-color);
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+}
+.hed-variant__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.hed-variant__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.hed-variant__hint {
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+}
+.hed-empty-full {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.6rem 0.75rem 0;
+  padding: 0.4rem;
+  padding-inline-start: 0.75rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  color: var(--p-text-color);
+  background: color-mix(in srgb, var(--p-primary-color) 8%, var(--p-content-background));
+}
+.hed-empty-full .pi-info-circle {
+  color: var(--p-primary-color);
 }
 .hed-seg--level {
   margin-inline-start: auto;
