@@ -88,7 +88,7 @@
                 :key="field.key"
                 v-model="draft[field.key]"
                 :field="field"
-                :errors="fieldErrors[field.key]"
+                :errors="rowErrors(field.key)"
                 :changed="isChanged(field) || companionsChanged(field.key)"
                 :highlighted="highlightKey === field.key"
                 :mark-advanced="cat.mixed"
@@ -237,6 +237,12 @@ function localErrors(field: SettingField): string[] {
   return []
 }
 
+/** A row's errors, with those of the settings edited in its editor (the support box's title and button): they have no row. */
+function rowErrors(key: string): string[] | undefined {
+  const errors = [key, ...allFields.value.filter((f) => f.companion_of === key).map((f) => f.key)].flatMap((k) => fieldErrors.value[k] ?? [])
+  return errors.length ? errors : undefined
+}
+
 function companionsChanged(key: string): boolean {
   return allFields.value.some((f) => f.companion_of === key && isChanged(f))
 }
@@ -265,7 +271,7 @@ const visibleCategories = computed(() => {
         fields = rows
       } else {
         // Keep changed and invalid fields visible even when they are advanced.
-        fields = rows.filter((field) => field.essential || isChanged(field) || companionsChanged(field.key) || fieldErrors.value[field.key])
+        fields = rows.filter((field) => field.essential || isChanged(field) || companionsChanged(field.key) || rowErrors(field.key))
         hidden = rows.length - fields.length
       }
       return {
@@ -414,7 +420,9 @@ async function save() {
 }
 
 async function focusFirstError() {
-  const key = Object.keys(fieldErrors.value)[0]
+  const first = Object.keys(fieldErrors.value)[0]
+  // a setting edited in another one's editor has no row: its owner's
+  const key = first ? (allFields.value.find((f) => f.key === first)?.companion_of ?? first) : undefined
   const category = key ? categories.value.find((cat) => cat.fields.some((f) => f.key === key))?.id : undefined
   if (category) expandCategory(category)
   await nextTick()

@@ -334,7 +334,8 @@ def get_config_form(**form_kwargs):
                     validators.append(wtf.validators.Regexp("^[a-zA-Z0-9]*$", re.IGNORECASE, _("config.Invalid_proxy_path")))
                     render_kw["required"] = ""
 
-                if "port" in c.key:
+                # not `"port" in c.key`: "support" has it too, and the support box's title and button text are no ports
+                if c.key.endswith(("_port", "_ports")):
                     if c.key in [ConfigEnum.http_ports, ConfigEnum.tls_ports]:
                         validators.append(wtf.validators.Regexp("^(\\d+)(,\\d+)*$", re.IGNORECASE, _("config.Invalid_port")))
                         render_kw["required"] = ""
