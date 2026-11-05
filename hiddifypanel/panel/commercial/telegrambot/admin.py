@@ -290,6 +290,10 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             accounts.add_gb(user, gb)
             note = ctx.tr(T.added_gb, n=gb)
         case "renew", _:
+            # Renewing turns a disabled user on: the same active-user limit as "on"
+            assert ctx.admin
+            if not user.enable and not ctx.admin.can_activate_more_users():
+                return ctx.toast(ctx.tr(T.limit_reached), alert=True)
             accounts.renew(user)
             note = ctx.tr(T.renewed)
         case "reset", _:
