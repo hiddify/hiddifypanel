@@ -138,10 +138,11 @@ def _limits(admin: AdminUser) -> dict | None:
 
 
 def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
-    """Users of each admin and all its sub-admins: total, active, online, traffic used."""
+    """Users of each admin and all its sub-admins: total, active, online, traffic used, and traffic given out (their
+    limits plus what they used before a reset or a delete: what max_total_usage_GB limits)."""
     ids = [a.id for a in admins]
     since = datetime.datetime.now() - ONLINE_WINDOW
-    direct = {i: {"total": 0, "active": 0, "online": 0, "usage_GB": 0.0} for i in ids}
+    direct = {a.id: {"total": 0, "active": 0, "online": 0, "usage_GB": 0.0, "given_GB": (a.spent_traffic or 0) / 1024**3} for a in admins}
     for user in User.query.filter(User.added_by.in_(ids), User.deleted.is_(False)).all():
         row = direct.get(user.added_by)
         if row is None:
@@ -150,6 +151,7 @@ def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
         row["active"] += 1 if user.is_active else 0
         row["online"] += 1 if user.last_online and user.last_online >= since else 0
         row["usage_GB"] += user.current_usage_GB or 0
+        row["given_GB"] += user.usage_limit_GB or 0
 
     children: dict[int, list[int]] = {}
     for a in admins:
@@ -176,6 +178,7 @@ def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
         walk(admin_id, set())
     for row in totals.values():
         row["usage_GB"] = round(row["usage_GB"], 3)
+        row["given_GB"] = round(row["given_GB"], 3)
     return totals
 
 

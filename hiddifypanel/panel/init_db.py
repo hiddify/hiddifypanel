@@ -26,6 +26,19 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v198(child_id):
+    """Admins' traffic limit (max_total_usage_GB) is the traffic they give out: their users' limits, plus what users used
+    before a usage reset or a delete (AdminUser.spent_traffic, from 0 here). It only stops new users and more data;
+    the users an admin has keep working until their own traffic or days end."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.admin import AdminUser
+
+    add_column(AdminUser.spent_traffic)
+    for admin in AdminUser.query_with_deleted().all():
+        admin.spent_traffic = 0
+
+
 def _v194(child_id):
     """The support box of the user page: its title and "View More" button can be renamed or hidden (in the HTML
     editor of the support text). Shown with the default texts, as before."""

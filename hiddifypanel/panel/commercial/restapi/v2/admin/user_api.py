@@ -5,7 +5,7 @@ from hiddifypanel import current_app as app
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import Role, User
+from hiddifypanel.models import AdminUser, Role, User
 
 from . import has_permission, resolve_added_by_uuid
 from .schema import PatchUserSchema, SuccessfulSchema, UserSchema
@@ -35,6 +35,13 @@ class UserApi(MethodView):
         # Re-enable respects max_active_users only; max_users must not block edits.
         if payload.get("enable") and not user.enable and g.account and not g.account.can_activate_more_users():
             abort(400, "Active user limit reached: disable another user or raise max active users")
+        # More traffic given out (a higher limit, or less usage: a reset) must fit in what the owner may still give out.
+        extra = max(0.0, (payload.get("usage_limit_GB") or 0) - (user.usage_limit_GB or 0)) if payload.get("usage_limit_GB") is not None else 0.0
+        reset = max(0.0, (user.current_usage_GB or 0) - payload["current_usage_GB"]) if payload.get("current_usage_GB") is not None else 0.0
+        if extra + reset > 0 and not AdminUser.traffic_fits({user.added_by: extra + reset}):
+            abort(400, "Not enough traffic: you (or an admin above you) can not give out this much more")
+        if reset:
+            AdminUser.spend_traffic(user.added_by, int(reset * 1024**3))
         if "added_by_uuid" in payload:
             payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
         user_driver.remove_client(user)

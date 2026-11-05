@@ -63,6 +63,41 @@ def _status(user: User) -> str:
     return "active"
 
 
+def _gb(value: Any, default: float) -> float:
+    """A GB amount from the request for the limit checks (bad input fails later, in _apply_fields)."""
+    try:
+        return max(0.0, float(value if value is not None else default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _deny_new_users(owner: AdminUser, count: int, gb_each: float) -> None:
+    """Stop the creation when ``count`` users of ``gb_each`` GB do not all fit under the owner's limits (and those of the
+    admins above it): max users, max active users, max online users, and the traffic it may still give out."""
+    room = owner.room_for_users(count, gb_each)
+    if room >= count:
+        return
+    left = owner.traffic_left_GB()
+    if left is not None and left < max(gb_each * count, 1e-6) - 1e-6:
+        abort(400, f"Not enough traffic: you (or an admin above you) can give out {left:g} GB more" + (f", room for {room} of these users" if room else ""))
+    abort(
+        400,
+        "User limit reached: you (or an admin above you) reached the max users, active users or online users"
+        if room == 0
+        else f"Not enough room for {count} users: {room} more fit",
+    )
+
+
+def _deny_more_traffic(extra_GB_by_owner: dict[int, float]) -> None:
+    """Stop an edit that gives out more traffic (a higher limit, a usage reset) than the owners (and the admins above
+    them) have left."""
+    if AdminUser.traffic_fits(extra_GB_by_owner):
+        return
+    owners = [db.session.get(AdminUser, o) for o, gb in extra_GB_by_owner.items() if gb > 0]
+    left = [x for x in (o.traffic_left_GB() for o in owners if o) if x is not None]
+    abort(400, f"Not enough traffic: you (or an admin above you) can give out {min(left) if left else 0:g} GB more")
+
+
 def _iso(value: datetime.date | datetime.datetime | None) -> str | None:
     if value is None:
         return None
@@ -164,7 +199,10 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
     # Limits/days before enable: is_active compares usage_limit, which is still None until flush
     # (and until these fields are applied on create).
     if "usage_limit_GB" in body:
-        user.usage_limit_GB = _number(body, "usage_limit_GB", low=0, high=MAX_USAGE_GB, integer=False)
+        limit = _number(body, "usage_limit_GB", low=0, high=MAX_USAGE_GB, integer=False)
+        if not creating and limit > (user.usage_limit_GB or 0):
+            _deny_more_traffic({user.added_by: limit - (user.usage_limit_GB or 0)})
+        user.usage_limit_GB = limit
     if "package_days" in body:
         user.package_days = _number(body, "package_days", low=0, high=MAX_PACKAGE_DAYS, integer=True)
     if "enable" in body:
@@ -195,6 +233,10 @@ def _apply_fields(user: User, body: dict[str, Any], *, creating: bool) -> None:
     if body.get("reset_days"):
         user.start_date = None
     if body.get("reset_usage"):
+        # A reset gives the user its whole limit again: what it used is given out once more.
+        if user.current_usage:
+            _deny_more_traffic({user.added_by: user.current_usage_GB})
+            AdminUser.spend_traffic(user.added_by, user.current_usage)
         user.reset_usage()
 
     # Extra params: the JSON editor's keys plus the ones the form manages.
@@ -274,8 +316,7 @@ class UsersPageApi(MethodView):
         node_read_only.deny_write_on_node()
         body = request.get_json(silent=True) or {}
         actor: AdminUser = g.account
-        if not actor.can_have_more_users():
-            abort(400, "User limit reached: you (or an admin above you) reached the max users, active users or total traffic")
+        _deny_new_users(actor, 1, _gb(body.get("usage_limit_GB"), 100))
         new_uuid = str(body.get("uuid") or uuid_lib.uuid4()).strip().lower()
         if not _UUID_RE.match(new_uuid):
             abort(400, "UUID is not valid")
@@ -406,6 +447,16 @@ class UsersBulkApi(MethodView):
             if not add_gb and not days:
                 abort(400, "Give some data (GB) or days to add")
         actor = g.account
+        # More traffic given out: the data added, or (a reset) what the users used, per owner.
+        extra: dict[int, float] = {}
+        if action == "reset_usage" or (action == "add_limits" and add_gb):
+            for user in users:
+                gb = add_gb if action == "add_limits" else (user.current_usage or 0) / ONE_GIG
+                extra[user.added_by] = extra.get(user.added_by, 0.0) + gb
+            _deny_more_traffic(extra)
+        if action == "reset_usage":
+            for user in users:
+                AdminUser.spend_traffic(user.added_by, user.current_usage or 0)
         if action == "enable":
             # The active ceiling once for all of them (per user it counted every user again: minutes for thousands)
             turning_on = sum(1 for user in users if not user.enable)
@@ -482,14 +533,7 @@ class UsersBulkCreateApi(MethodView):
                 abort(403, "The owner must be you or one of your sub-admins")
         # The limits once for the whole batch (per user it was a count query each time: slow for thousands).
         # The owner's chain: its own limits and those of the admins above it, the signed-in one among them.
-        room = owner.room_for_users(count)
-        if room < count:
-            abort(
-                400,
-                "User limit reached: you (or an admin above you) reached the max users, active users or total traffic"
-                if room == 0
-                else f"Not enough room for {count} users: {room} more fit",
-            )
+        _deny_new_users(owner, count, _gb(template.get("usage_limit_GB"), 100))
 
         created: list[User] = []
         try:

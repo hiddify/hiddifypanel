@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import datetime
+import math
 from enum import auto
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import Enum, ForeignKey, String, event, func
+from sqlalchemy import BigInteger, Enum, ForeignKey, String, event, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 from strenum import StrEnum
@@ -63,8 +64,11 @@ class AdminUser(BaseAccount):
     max_active_users: Mapped[int] = mapped_column(default=100)
     # None = no limit. Online means seen in the last 24 hours.
     max_online_users: Mapped[int | None] = mapped_column(default=None, nullable=True)
-    # Traffic (GB) all users of this admin and its sub-admins may use together; None = no limit.
+    # Traffic (GB) this admin and its sub-admins may give out to their users (see given_traffic_GB); None = no limit.
     max_total_usage_GB: Mapped[float | None] = mapped_column(default=None, nullable=True)
+    #: Traffic (bytes) this admin's users used that is no longer in their limits: wiped by a usage reset or renew the
+    #: admin made, or used by a user it deleted. With the users' limits it is the traffic this admin gave out.
+    spent_traffic: Mapped[int | None] = mapped_column(BigInteger, default=0, nullable=True)
     #: Sign-in username instead of the UUID (lowercase, unique; never for super admins; needs a strong
     #: password). See hiddifypanel.admin_credentials.
     alias: Mapped[str | None] = mapped_column(String(64), default=None, nullable=True, index=True)
@@ -128,6 +132,7 @@ class AdminUser(BaseAccount):
             max_active_users=self.max_active_users,
             max_online_users=self.max_online_users,
             max_total_usage_GB=self.max_total_usage_GB,
+            spent_traffic=self.spent_traffic or 0,
             **({"default_outbound_slug": slug} if (slug := _outbound_slug(self.default_outbound_id)) else {}),
             # Only a deleted admin carries it (it travels to the nodes); backups never see one, since queries hide them.
             **({"deleted": True} if self.deleted else {}),
@@ -196,6 +201,13 @@ class AdminUser(BaseAccount):
             dbuser.max_online_users = row.max_online_users if row.max_online_users > 0 else None
         if row.max_total_usage_GB is not None:
             dbuser.max_total_usage_GB = row.max_total_usage_GB if row.max_total_usage_GB > 0 else None
+        # The parent keeps the count: a node takes the parent's, a parent keeps its own (a node registering sends a copy
+        # that may be older) unless it has none yet (an admin restored from a backup).
+        if row.spent_traffic is not None:
+            from hiddifypanel import hutils
+
+            if hutils.node.is_child() or not dbuser.spent_traffic:
+                dbuser.spent_traffic = max(0, int(row.spent_traffic))
         if row.has("default_outbound_slug"):
             from hiddifypanel.models.outbound import Outbound
 
@@ -227,21 +239,72 @@ class AdminUser(BaseAccount):
 
     def total_usage_GB(self) -> float:
         """Traffic used by this admin's users and all its sub-admins' users."""
-        from sqlalchemy import func
-
         from .user import User
 
         used = db.session.query(func.coalesce(func.sum(User.current_usage), 0)).filter(User.added_by.in_(self.recursive_sub_admins_ids()), User.deleted.is_(False)).scalar()
         return (used or 0) / 1024**3
 
+    def given_traffic_GB(self) -> float:
+        """Traffic this admin and its sub-admins gave out (what max_total_usage_GB limits): their users' limits, plus what
+        those users used before the admins reset their usage or deleted them."""
+        from .user import User
+
+        ids = self.recursive_sub_admins_ids()
+        limits = db.session.query(func.coalesce(func.sum(User.usage_limit), 0)).filter(User.added_by.in_(ids), User.deleted.is_(False)).scalar()
+        spent = db.session.query(func.coalesce(func.sum(AdminUser.spent_traffic), 0)).filter(AdminUser.id.in_(ids)).scalar()
+        # MySQL sums come back as Decimal: int, or a float limit minus this fails
+        return (int(limits or 0) + int(spent or 0)) / 1024**3
+
+    def online_users_count(self) -> int:
+        """This admin's and its sub-admins' users seen in the last 24 hours (what max_online_users counts)."""
+        from .user import User
+
+        since = datetime.datetime.now() - datetime.timedelta(hours=24)
+        return self.recursive_users_query().filter(User.last_online >= since).count()
+
+    def traffic_left_GB(self) -> float | None:
+        """Traffic this admin may still give out: the least left under its own limit and the limits above it (None: no limit)."""
+        left = [a.max_total_usage_GB - a.given_traffic_GB() for a in self.limited_ancestors() if a.max_total_usage_GB]
+        return max(0.0, min(left)) if left else None
+
+    @classmethod
+    def traffic_fits(cls, extra_GB_by_owner: dict[int, float]) -> bool:
+        """Whether giving out this much more traffic (GB per owning admin id: a higher limit, a usage reset) stays within
+        the traffic limit of every admin it counts for (the owners and the admins above them)."""
+        need: dict[int, float] = {}
+        limited: dict[int, AdminUser] = {}
+        for owner_id, gb in extra_GB_by_owner.items():
+            owner = db.session.get(cls, owner_id) if gb > 0 else None
+            for admin in owner.limited_ancestors() if owner else []:
+                if admin.max_total_usage_GB:
+                    need[admin.id] = need.get(admin.id, 0.0) + gb
+                    limited[admin.id] = admin
+        # a little slack: GB values go through float conversions on the way
+        return all(limited[i].given_traffic_GB() + gb <= limited[i].max_total_usage_GB + 1e-6 for i, gb in need.items())
+
+    @classmethod
+    def spend_traffic(cls, owner_id: int | None, used_bytes: int) -> None:
+        """Usage of an owner's user leaves its limit (an admin reset or renew, or a delete): it stays given out."""
+        if not used_bytes or owner_id is None:
+            return
+        if owner := db.session.get(cls, owner_id):
+            owner.spent_traffic = (owner.spent_traffic or 0) + int(used_bytes)
+
     def _has_room_for_one_more_user(self) -> bool:
-        """Room to *create* another user (max_users and max_active_users)."""
+        """Room to *create* another user (max_users, max_active_users, max_online_users and traffic)."""
         return self._room_for_users(1) >= 1
 
-    def _room_for_users(self, wanted: int) -> int:
-        """How many of ``wanted`` new users fit under this admin's max_users, max_active_users and traffic."""
-        if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
+    def _room_for_users(self, wanted: int, gb_each: float = 0) -> int:
+        """How many of ``wanted`` new users (``gb_each`` GB each) fit under this admin's max_users, max_active_users,
+        max_online_users and max_total_usage_GB. The users it already has are not affected by any of these."""
+        if self.max_online_users and self.online_users_count() >= self.max_online_users:
             return 0
+        if self.max_total_usage_GB:
+            left = self.max_total_usage_GB - self.given_traffic_GB()
+            if left <= 1e-6:
+                return 0
+            if gb_each > 0:
+                wanted = min(wanted, math.floor(left / gb_each + 1e-6))
         users_count = self.recursive_users_query().count()
         max_users = self.max_users if self.max_users is not None else 10**9
         max_active = self.max_active_users if self.max_active_users is not None else 10**9
@@ -253,31 +316,28 @@ class AdminUser(BaseAccount):
         return max(0, room)
 
     def _has_room_to_activate_user(self, *, excluding_user_id: int | None = None) -> bool:
-        """Room to turn an existing inactive user on again (max_active_users + traffic only).
+        """Room to turn an existing inactive user on again (max_active_users only).
 
-        The user already counts toward max_users, so that ceiling must not block edits or re-enable.
+        The user already counts toward max_users and the traffic given out, so those must not block edits or re-enable.
         ``excluding_user_id`` skips a row that is already ``is_active`` in-session after the form applied.
         """
-        if self.max_total_usage_GB and self.total_usage_GB() >= self.max_total_usage_GB:
-            return False
         max_active = self.max_active_users if self.max_active_users is not None else 10**9
         actives = sum(1 for u in self.recursive_users_query().all() if u.is_active and u.id != excluding_user_id)
         return actives < max_active
 
-    def can_have_more_users(self) -> bool:
-        # A sub-admin's users also count against its parents' limits.
-        return all(admin._has_room_for_one_more_user() for admin in self.limited_ancestors())
+    def can_have_more_users(self, gb: float = 0) -> bool:
+        """Room to create one more user (``gb`` GB): a sub-admin's users also count against its parents' limits."""
+        return self.room_for_users(1, gb) >= 1
 
-    def room_for_users(self, wanted: int) -> int:
-        """How many of ``wanted`` new users this admin may create now (its parents' limits too): one check for a whole batch."""
-        return min([wanted, *(admin._room_for_users(wanted) for admin in self.limited_ancestors())])
+    def room_for_users(self, wanted: int, gb_each: float = 0) -> int:
+        """How many of ``wanted`` new users (``gb_each`` GB each) this admin may create now (its parents' limits too):
+        one check for a whole batch."""
+        return min([wanted, *(admin._room_for_users(wanted, gb_each) for admin in self.limited_ancestors())])
 
     def room_to_activate(self, wanted: int) -> int:
         """How many of ``wanted`` inactive users may be turned on now (this admin's and its parents' limits)."""
         room = wanted
         for admin in self.limited_ancestors():
-            if admin.max_total_usage_GB and admin.total_usage_GB() >= admin.max_total_usage_GB:
-                return 0
             if admin.max_active_users is not None:
                 actives = sum(1 for u in admin.recursive_users_query().all() if u.is_active)
                 room = min(room, admin.max_active_users - actives)

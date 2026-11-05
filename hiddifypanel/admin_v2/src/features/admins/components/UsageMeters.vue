@@ -46,7 +46,8 @@ const rows = computed(() =>
       { key: 'online', icon: 'pi pi-wifi', used: props.stats.online, max: props.limits?.max_online_users },
       { key: 'active', icon: 'pi pi-bolt', used: props.stats.active, max: props.limits?.max_active_users },
       { key: 'total', icon: 'pi pi-users', used: props.stats.total, max: props.limits?.max_users },
-      { key: 'traffic', icon: 'pi pi-arrow-right-arrow-left', used: props.stats.usage_GB, max: props.limits?.max_total_usage_GB },
+      // the traffic limit counts the traffic given out to users (their limits), not what they used
+      { key: 'traffic', icon: 'pi pi-arrow-right-arrow-left', used: props.stats.given_GB ?? props.stats.usage_GB, max: props.limits?.max_total_usage_GB },
     ] as const
   ).map((row) => ({
     ...row,

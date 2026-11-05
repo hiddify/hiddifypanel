@@ -519,7 +519,7 @@
       "limit": {
         "max_active_users": "最大活跃用户数",
         "max_online_users": "最大在线用户数",
-        "max_total_usage_GB": "最大已用流量（总计）",
+        "max_total_usage_GB": "分配给用户的最大流量（总计）",
         "max_users": "最大用户总数"
       },
       "linkDialog": {
@@ -539,7 +539,7 @@
         "total": "总计",
         "totalHint": "全部用户，占允许数量",
         "traffic": "流量",
-        "trafficHint": "所有这些用户已用的流量，占允许总量"
+        "trafficHint": "分配给这些用户的流量（其限额，加上重置或删除前已用的流量），占允许总量"
       },
       "mode": {
         "admin": "管理员",
@@ -2873,7 +2873,8 @@
   "auto_cdn_ip": "☑️ 自动 CDN IP 选择器",
   "bot": {
     "admin_welcome": "欢迎使用管理机器人。选择你的行动",
-    "welcome": "万岁🎉🎉🎉\n欢迎使用 Hiddify 机器人\n首先单击面板上的链接或输入您的 UUID。"
+    "welcome": "万岁🎉🎉🎉\n欢迎使用 Hiddify 机器人\n首先单击面板上的链接或输入您的 UUID。",
+    "traffic_used_up": "可分配的流量不足：请申请更多流量。"
   },
   "cdn": "🔀 CDN（Cloudflare 代理，...）",
   "cf-delete": {

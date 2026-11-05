@@ -38,6 +38,8 @@ export interface AdminStats {
   active: number
   online: number
   usage_GB: number
+  /** Traffic given out: the users' limits plus what they used before a reset or a delete (what the traffic limit counts). */
+  given_GB?: number
 }
 
 /** A domain an admin link can use; the link is `${base}${uuid}/`. */

@@ -229,6 +229,13 @@ class User(BaseAccount):
 
         if drivers:
             user_driver.remove_client(self)
+        # What it used stays given out by its admin (max_total_usage_GB): deleting a user frees only the unused rest.
+        from hiddifypanel import hutils
+
+        if not self.deleted and not hutils.node.is_child():
+            from .admin import AdminUser
+
+            AdminUser.spend_traffic(self.added_by, self.current_usage or 0)
         super().remove(commit=commit)
 
     def removed_by_sync(self) -> None:

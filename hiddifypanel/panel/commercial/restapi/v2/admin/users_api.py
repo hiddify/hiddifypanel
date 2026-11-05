@@ -5,7 +5,7 @@ from hiddifypanel import current_app as app
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
-from hiddifypanel.models import User
+from hiddifypanel.models import AdminUser, User
 from hiddifypanel.models.role import Role
 
 from . import resolve_added_by_uuid
@@ -31,12 +31,6 @@ class UsersApi(MethodView):
         """User: Create a user"""
         payload = data.model_dump(exclude_none=True)
 
-        if not g.account.can_have_more_users():
-            abort(
-                400,
-                "User limit reached: you (or an admin above you) reached the max users, active users or total traffic",
-            )
-
         if payload.get("uuid"):
             existing = User.query.filter(User.uuid == payload["uuid"]).first()
             if existing and not existing.deleted:
@@ -45,6 +39,15 @@ class UsersApi(MethodView):
                 existing.purge(commit=False)
 
         payload["added_by_uuid"] = resolve_added_by_uuid(payload.get("added_by_uuid"))
+        # The owner's limits (and those above it): max users / active / online, and the traffic it may still give out.
+        owner = AdminUser.by_uuid(str(payload["added_by_uuid"])) if payload.get("added_by_uuid") else g.account
+        gb = float(payload.get("usage_limit_GB", 1000) or 0)  # 1000 GB: User.usage_limit's default
+        owner = owner or g.account
+        if not owner.can_have_more_users(gb):
+            left = owner.traffic_left_GB()
+            if left is not None and left < max(gb, 1e-6) - 1e-6:
+                abort(400, f"Not enough traffic: you (or an admin above you) can give out {left:g} GB more")
+            abort(400, "User limit reached: you (or an admin above you) reached the max users, active users or online users")
 
         dbuser = User.add_or_update(**payload) or abort(502, "Unknown issue: User is not added")
         user_driver.add_client(dbuser)

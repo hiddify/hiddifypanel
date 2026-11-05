@@ -143,6 +143,8 @@ class AdminModel(AccountModel):
     max_active_users: int | None = None
     max_online_users: int | None = None
     max_total_usage_GB: float | None = None
+    spent_traffic: int | None = None
+    """Bytes this admin's users used that left their limits (reset or deleted); counts as traffic given out."""
     default_outbound_slug: str | None = None
     """Slug of the outbound this admin's users leave through by default (``None``: automatic)."""
 

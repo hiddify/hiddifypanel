@@ -522,7 +522,7 @@
       "limit": {
         "max_active_users": "Utilisateurs actifs max",
         "max_online_users": "Utilisateurs en ligne max",
-        "max_total_usage_GB": "Trafic utilisé max (total)",
+        "max_total_usage_GB": "Trafic max attribué aux utilisateurs (total)",
         "max_users": "Total d'utilisateurs max"
       },
       "linkDialog": {
@@ -542,7 +542,7 @@
         "total": "Total",
         "totalHint": "Tous les utilisateurs, sur le nombre autorisé",
         "traffic": "Trafic",
-        "trafficHint": "Trafic utilisé par tous ces utilisateurs, sur le total autorisé"
+        "trafficHint": "Trafic attribué à tous ces utilisateurs (leurs limites, plus ce qu’ils ont utilisé avant une remise à zéro ou une suppression), sur le total autorisé"
       },
       "mode": {
         "admin": "Admin",
@@ -2873,7 +2873,8 @@
   "auto_cdn_ip": "☑️ Sélecteur IP CDN automatique",
   "bot": {
     "admin_welcome": "Hourra 🎉 🎉 🎉 Bienvenue sur le bot administrateur. Choisissez votre action",
-    "welcome": "Hourra 🎉 🎉 🎉\nBienvenue sur le bot Hiddify\nCommencez par cliquer sur le lien sur le panneau ou entrez votre utilisateur UUID."
+    "welcome": "Hourra 🎉 🎉 🎉\nBienvenue sur le bot Hiddify\nCommencez par cliquer sur le lien sur le panneau ou entrez votre utilisateur UUID.",
+    "traffic_used_up": "Plus assez de trafic à attribuer : demandez plus de trafic."
   },
   "cdn": "🔀CDN (Proxy Cloudflare, ...)",
   "cf-delete": {

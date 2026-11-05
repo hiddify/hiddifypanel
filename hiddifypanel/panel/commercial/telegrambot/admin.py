@@ -287,6 +287,8 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             accounts.add_days(user, days)
             note = ctx.tr(T.added_days, n=days)
         case "gb", gb:
+            if not AdminUser.traffic_fits({user.added_by: gb}):
+                return ctx.toast(ctx.tr(T.traffic_used_up), alert=True)
             accounts.add_gb(user, gb)
             note = ctx.tr(T.added_gb, n=gb)
         case "renew", _:
@@ -294,9 +296,16 @@ def user_action(ctx: Ctx, args: list[str]) -> None:
             assert ctx.admin
             if not user.enable and not ctx.admin.can_activate_more_users():
                 return ctx.toast(ctx.tr(T.limit_reached), alert=True)
+            # Renewing zeroes the usage: what it used is given out again
+            if user.current_usage and not AdminUser.traffic_fits({user.added_by: user.current_usage_GB}):
+                return ctx.toast(ctx.tr(T.traffic_used_up), alert=True)
+            AdminUser.spend_traffic(user.added_by, user.current_usage or 0)
             accounts.renew(user)
             note = ctx.tr(T.renewed)
         case "reset", _:
+            if user.current_usage and not AdminUser.traffic_fits({user.added_by: user.current_usage_GB}):
+                return ctx.toast(ctx.tr(T.traffic_used_up), alert=True)
+            AdminUser.spend_traffic(user.added_by, user.current_usage or 0)
             user.reset_usage()
             note = ctx.tr(T.usage_reset)
         case "on", _:
@@ -382,8 +391,11 @@ def create_users(ctx: Ctx, args: list[str]) -> None:
     count = min(max(_int(args, 2), 1), max(COUNT_CHOICES))
     if accounts.is_read_only():
         return ctx.toast(ctx.tr(T.read_only_node), alert=True)
-    if not admin.can_have_more_users():
+    # Room for the whole batch (not only one more user): users / active / online, and the traffic still to give out
+    if admin.room_for_users(count) < count:
         return ctx.toast(ctx.tr(T.limit_reached), alert=True)
+    if admin.room_for_users(count, gb) < count:
+        return ctx.toast(ctx.tr(T.traffic_used_up), alert=True)
     ctx.toast(ctx.tr(T.new_working))
     ctx.show(Screen(f"⏳ {ctx.tr(T.new_working)}"))
     name = str(ctx.state.get("new_name") or _default_name(admin))

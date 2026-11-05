@@ -96,6 +96,7 @@ class T(StrEnum):
     deleted = "deleted"
     last_user = "last_user"
     limit_reached = "limit_reached"
+    traffic_used_up = "traffic_used_up"
     pick_days = "pick_days"
     pick_gb = "pick_gb"
     # create

@@ -564,7 +564,7 @@
       "limit": {
         "max_active_users": "Max active users",
         "max_online_users": "Max online users",
-        "max_total_usage_GB": "Max used traffic (total)",
+        "max_total_usage_GB": "Max traffic given to users (total)",
         "max_users": "Max total users"
       },
       "linkDialog": {
@@ -584,7 +584,7 @@
         "total": "Total",
         "totalHint": "All users, out of the allowed number",
         "traffic": "Traffic",
-        "trafficHint": "Traffic used by all these users, out of the allowed total"
+        "trafficHint": "Traffic given to all these users (their limits, plus what they used before a reset or a delete), out of the allowed total"
       },
       "mode": {
         "admin": "Admin",
@@ -4058,7 +4058,8 @@
     "users_empty": "No users here.",
     "users_line": "Total <b>{total}</b> · active <b>{active}</b>",
     "users_title": "Users",
-    "welcome": "👋 <b>Welcome to Hiddify!</b>\n\nOpen your account page in the panel and tap the Telegram button, or just send me your subscription link or UUID."
+    "welcome": "👋 <b>Welcome to Hiddify!</b>\n\nOpen your account page in the panel and tap the Telegram button, or just send me your subscription link or UUID.",
+    "traffic_used_up": "Not enough traffic left to give out: ask for more traffic."
   },
   "cdn": "🔀 CDN (Cloudflare Proxy, ...)",
   "cf-delete": {

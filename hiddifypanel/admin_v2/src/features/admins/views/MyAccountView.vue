@@ -361,7 +361,7 @@ const nearLimit = computed(() => {
     meterTone(m.stats.online, m.limits.max_online_users),
     meterTone(m.stats.active, m.limits.max_active_users),
     meterTone(m.stats.total, m.limits.max_users),
-    meterTone(m.stats.usage_GB, m.limits.max_total_usage_GB),
+    meterTone(m.stats.given_GB ?? m.stats.usage_GB, m.limits.max_total_usage_GB),
   ].some((tone) => tone === 'danger')
 })
 /** A new password may not contain these (same rule as the server). */
