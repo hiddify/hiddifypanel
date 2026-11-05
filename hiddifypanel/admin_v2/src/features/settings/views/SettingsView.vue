@@ -304,22 +304,56 @@ function collapseCategory(id: string) {
 }
 
 // --- scroll spy + deep links ---
-const sections = new Map<string, Element>()
-let observer: IntersectionObserver | null = null
+// The highlighted category is the last card whose top has passed the line under the top bar (its scroll-margin), or
+// the last one once the page can't scroll further. A category picked in the menu (or by a deep link) stays highlighted
+// until the admin scrolls themselves: on the way there the smooth scroll passes other cards, and a card near the end
+// of the page can't reach the line at all.
+const sections = new Map<string, HTMLElement>()
+let pinned = false
 
 function registerSection(id: string, el: Element | null) {
-  const previous = sections.get(id)
-  if (previous && previous !== el) observer?.unobserve(previous)
-  if (el) {
-    sections.set(id, el)
-    observer?.observe(el)
+  if (el) sections.set(id, el as HTMLElement)
+  else sections.delete(id)
+}
+
+function spy() {
+  if (pinned || !sections.size) return
+  const cards = visibleCategories.value.map((cat) => sections.get(cat.id)).filter((el): el is HTMLElement => !!el)
+  if (!cards.length) return
+  const doc = document.scrollingElement ?? document.documentElement
+  let current = cards[0]
+  if (window.innerHeight + window.scrollY >= doc.scrollHeight - 2) {
+    current = cards[cards.length - 1]
   } else {
-    sections.delete(id)
+    for (const el of cards) {
+      const line = (parseFloat(getComputedStyle(el).scrollMarginTop) || 0) + 24
+      if (el.getBoundingClientRect().top <= line) current = el
+      else break
+    }
   }
+  if (current.dataset.category) activeCategory.value = current.dataset.category
+}
+
+let spyFrame = 0
+function onScroll() {
+  if (!spyFrame) spyFrame = requestAnimationFrame(() => ((spyFrame = 0), spy()))
+}
+
+/** The admin scrolls or clicks in the page: the highlight follows the scroll again. */
+function unpin(event: Event) {
+  if (event.type === 'keydown' && !['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes((event as KeyboardEvent).key)) return
+  if (event.type === 'pointerdown' && (event.target as Element | null)?.closest?.('.settings-nav')) return
+  pinned = false
+}
+const UNPIN_EVENTS = ['wheel', 'touchmove', 'keydown', 'pointerdown'] as const
+
+function pin(id: string) {
+  pinned = true
+  activeCategory.value = id
 }
 
 function scrollToCategory(id: string) {
-  activeCategory.value = id
+  pin(id)
   document.getElementById(`settings-cat-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
@@ -341,7 +375,7 @@ async function openDeepLink() {
   await nextTick()
   const target = key ? document.getElementById(`setting-row-${key}`) : document.getElementById(`settings-cat-${targetCategory}`)
   target?.scrollIntoView({ behavior: 'smooth', block: key ? 'center' : 'start' })
-  activeCategory.value = targetCategory
+  pin(targetCategory)
   flash({ category: key ? undefined : targetCategory, key: key || undefined })
 }
 
@@ -370,6 +404,7 @@ async function load() {
   }
   await nextTick()
   await openDeepLink()
+  spy()
 }
 
 async function save() {
@@ -465,21 +500,16 @@ watch(
 )
 
 onMounted(() => {
-  observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-      const first = visible[0]?.target as HTMLElement | undefined
-      if (first?.dataset.category) activeCategory.value = first.dataset.category
-    },
-    { rootMargin: '-80px 0px -60% 0px' },
-  )
-  for (const el of sections.values()) observer.observe(el)
+  window.addEventListener('scroll', onScroll, { passive: true })
+  for (const name of UNPIN_EVENTS) window.addEventListener(name, unpin, { passive: true, capture: true })
   window.addEventListener('beforeunload', onBeforeUnload)
   void load()
 })
 
 onBeforeUnmount(() => {
-  observer?.disconnect()
+  window.removeEventListener('scroll', onScroll)
+  for (const name of UNPIN_EVENTS) window.removeEventListener(name, unpin, { capture: true })
+  if (spyFrame) cancelAnimationFrame(spyFrame)
   window.removeEventListener('beforeunload', onBeforeUnload)
 })
 </script>
