@@ -1,5 +1,6 @@
+{# Hiddify <= 5.5.5 fails when it cannot resolve the mieru server's name: give it the IP #}
 "type": "mieru",
-"server": "{{ proxy.server }}",
+"server": "{{ proxy.domain.server_ip() if ctx.platform.is_hiddify and ctx.platform.hiddify.version <= "5.5.5" else proxy.server }}",
 "multiplexing": "{{ ctx.hconfig.mieru_multiplexing }}",
 "handshake_mode": "{{ ctx.hconfig.mieru_handshake }}",
 "username": "{{ ctx.user.uuid }}",

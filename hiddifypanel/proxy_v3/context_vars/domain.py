@@ -213,6 +213,12 @@ class DomainIPVar(BaseModel):
             return prefer_ipv4_server(self.ips, dst_domain)
         return dst_domain
 
+    def server_ip(self) -> str:
+        """The client's address as an IP when one is known, for clients that fail when they cannot resolve the name
+        (mieru in Hiddify <= 5.5.5)."""
+        server = self.server(force_ip=True)
+        return server if is_ip_address(server) else prefer_ipv4_server(self.ips, server)
+
     @property
     def keeps_dst_server(self) -> bool:
         return self.has_server_domain or self.has_cdn_ip
