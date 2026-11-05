@@ -192,19 +192,20 @@ class AllConfigsAPI(MethodView):
                 )
             )
 
-        if hconfig(ConfigEnum.sub_full_xray_json_enable):
-            subscriptions.append(
-                create_item(
-                    "Full Xray",
-                    "ALL",
-                    "",
-                    "",
-                    "",
-                    "",
-                    f"{base_url}xray/#{config_name}",
-                    category="subscription",
-                )
+        # Always listed: /xray/ gives the full Xray JSON whatever the setting; sub_full_xray_json_enable only decides
+        # whether /auto/ sends it to v2rayNG / Streisand.
+        subscriptions.append(
+            create_item(
+                "Full Xray",
+                "ALL",
+                "",
+                "",
+                "",
+                "",
+                f"{base_url}xray/?asn={c['asn']}#{config_name}",
+                category="subscription",
             )
+        )
 
         if hconfig(ConfigEnum.sub_full_links_enable):
             subscriptions.append(
