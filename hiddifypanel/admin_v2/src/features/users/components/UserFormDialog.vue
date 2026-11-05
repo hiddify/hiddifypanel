@@ -7,6 +7,7 @@ import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
+import SplitButton from 'primevue/splitbutton'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import Json5Editor from '@/shared/components/Json5Editor.vue'
@@ -46,7 +47,8 @@ const props = defineProps<{
   focus?: 'usage' | 'time' | null
 }>()
 const visible = defineModel<boolean>('visible', { required: true })
-const emit = defineEmits<{ saved: [user: UserDetail, created: boolean] }>()
+/** atEnd: a new user goes to the end of the users list (the add button's menu), not to the top. */
+const emit = defineEmits<{ saved: [user: UserDetail, created: boolean, atEnd: boolean] }>()
 
 const { t, locale } = useI18n()
 
@@ -56,6 +58,16 @@ const busy = ref(false)
 const error = ref<string | null>(null)
 const touched = ref(false)
 const formEl = ref<HTMLFormElement | null>(null)
+/** Which add was asked: the button (top of the list, also Enter in a field) or its "at end" entry. */
+const addAtEnd = ref(false)
+const addMenu = computed(() => [
+  { label: t('users.form.add'), icon: 'pi pi-user-plus', command: () => addAt(false) },
+  { label: t('users.form.addAtEnd'), icon: 'pi pi-arrow-down', command: () => addAt(true) },
+])
+function addAt(end: boolean) {
+  addAtEnd.value = end
+  formEl.value?.requestSubmit()
+}
 const showAdvanced = ref(false)
 
 const name = ref('')
@@ -242,7 +254,7 @@ async function submit() {
     const saved = props.user ? await usersApi.update(props.user.uuid, payload) : await usersApi.create(payload)
     if (await saveFormTags('user', saved.uuid, tagIds.value, initialTags.value)) saved.tags = [...tagIds.value]
     else toast.add({ severity: 'warn', summary: t('tags.saveFailed'), life: 5000 })
-    emit('saved', saved, !props.user)
+    emit('saved', saved, !props.user, !props.user && addAtEnd.value)
     visible.value = false
   } catch (err) {
     error.value = apiErrorMessage(err)
@@ -450,7 +462,18 @@ async function submit() {
 
       <div class="uf-actions">
         <Button type="button" :label="t('common.cancel')" severity="secondary" text :disabled="busy" @click="visible = false" />
-        <Button type="submit" :icon="editing ? 'pi pi-check' : 'pi pi-user-plus'" :label="editing ? t('common.save') : t('users.form.add')" :loading="busy" />
+        <Button v-if="editing" type="submit" icon="pi pi-check" :label="t('common.save')" :loading="busy" />
+        <!-- Add: on top of the users list; the menu adds it at the end instead. The button stays the form's submit (Enter). -->
+        <SplitButton
+          v-else
+          :label="t('users.form.add')"
+          :icon="busy ? 'pi pi-spin pi-spinner' : 'pi pi-user-plus'"
+          :model="addMenu"
+          :disabled="busy"
+          :button-props="{ type: 'submit' }"
+          :menu-button-props="{ 'aria-label': t('users.form.addAtEnd') }"
+          @click="addAtEnd = false"
+        />
       </div>
     </form>
   </Dialog>

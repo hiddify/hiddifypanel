@@ -478,7 +478,7 @@ import TagPicker from '@/features/tags/components/TagPicker.vue'
 import UserFormDialog from '@/features/users/components/UserFormDialog.vue'
 import UserBulkCreateDialog from '@/features/users/components/UserBulkCreateDialog.vue'
 import UsersGuideDialog from '@/features/users/components/UsersGuideDialog.vue'
-import { orderRows, reorder, togglePin } from '@/features/users/layout-order'
+import { orderRows, placeNew, reorder, togglePin } from '@/features/users/layout-order'
 import { useDragSort } from '@/shared/composables/useDragSort'
 import { localeComparator, resolveFieldData, sort as sortValues } from '@primeuix/utils/object'
 import { STATUS_ICON, UNLIMITED_DAYS, UNLIMITED_GB, USER_MODES, userLinkPath, usersApi, type BulkAction, type UserDetail, type UserPayload, type UserRow, type UserStatus, type UsersLayout, type UsersState } from '@/features/users/api'
@@ -1132,8 +1132,14 @@ function openBulkCreate() {
   bulkCreateVisible.value = true
 }
 /** Thousands of new users at once: one pass over the list (replaceRow per user searched it every time). */
-function onBulkCreated(users: UserDetail[]) {
+/** New users on top of the list, or at the end ("… at end" in the add buttons' menus): saved in this admin's order. */
+function placeAdded(uuids: string[], atEnd: boolean) {
+  const next = placeNew(layout.value, uuids, atEnd)
+  if (next) void saveLayout(next)
+}
+function onBulkCreated(users: UserDetail[], atEnd: boolean) {
   if (!state.value || !users.length) return
+  placeAdded(users.map((u) => u.uuid), atEnd)
   const fresh = new Map(users.map((user): [string, UserRow] => [user.uuid, { ...user, additional_configs: user.additional_configs.length }]))
   const kept = state.value.users.map((u) => {
     const row = fresh.get(u.uuid)
@@ -1187,8 +1193,9 @@ function openLink(u: UserRow) {
   linkUser.value = u
   linkVisible.value = true
 }
-function onSaved(user: UserDetail, created: boolean) {
+function onSaved(user: UserDetail, created: boolean, atEnd: boolean) {
   replaceRow(user)
+  if (created) placeAdded([user.uuid], atEnd)
   toast.add({ severity: 'success', summary: created ? t('users.added', { name: user.name }) : t('users.saved', { name: user.name }), life: 3000 })
   if (created) {
     linkUser.value = { ...user, additional_configs: user.additional_configs.length }

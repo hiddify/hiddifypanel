@@ -2569,6 +2569,7 @@
       "filtersLabel": "Filtrar usuários",
       "form": {
         "add": "Adicionar usuário",
+        "addAtEnd": "Adicionar usuário no final",
         "addSubtitle": "Depois de salvar, o link e o QR code do usuário abrem, prontos para enviar.",
         "addTitle": "Novo usuário",
         "advanced": "Avançado",

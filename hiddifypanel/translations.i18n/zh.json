@@ -2569,6 +2569,7 @@
       "filtersLabel": "筛选用户",
       "form": {
         "add": "添加用户",
+        "addAtEnd": "添加用户到末尾",
         "addSubtitle": "保存后，将打开用户的链接和二维码，可随时发送。",
         "addTitle": "新建用户",
         "advanced": "高级",

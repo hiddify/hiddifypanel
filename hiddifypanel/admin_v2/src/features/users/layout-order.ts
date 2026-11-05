@@ -49,3 +49,16 @@ export function togglePin(layout: UsersLayout, allOrdered: string[], uuid: strin
   }
   return { ...layout, pinned: [uuid, ...layout.pinned], order: unpinnedAll }
 }
+
+/**
+ * Users just added: on top of the others (just below the pinned users), or at the end, where the users not placed
+ * yet go (by id: the new ones last). `null` when the layout stays as it is.
+ */
+export function placeNew(layout: UsersLayout, uuids: string[], atEnd: boolean): UsersLayout | null {
+  const fresh = new Set(uuids)
+  const pinned = layout.pinned.filter((u) => !fresh.has(u))
+  const order = layout.order.filter((u) => !fresh.has(u))
+  if (!atEnd) return { ...layout, pinned, order: [...uuids, ...order] }
+  if (pinned.length === layout.pinned.length && order.length === layout.order.length) return null
+  return { ...layout, pinned, order }
+}

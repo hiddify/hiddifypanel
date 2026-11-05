@@ -3460,6 +3460,7 @@
         "count": "How many",
         "countHint": "Between 1 and {max}",
         "create": "Create {n} user | Create {n} users",
+        "createAtEnd": "Create {n} user at end | Create {n} users at end",
         "domain": "Link domain",
         "done": "{n} user created | {n} users created",
         "download": "Download .txt",
@@ -3561,6 +3562,7 @@
       "filtersLabel": "Filter users",
       "form": {
         "add": "Add user",
+        "addAtEnd": "Add user at end",
         "addSubtitle": "After saving, the user's link and QR code open, ready to send.",
         "addTitle": "New user",
         "advanced": "Advanced",

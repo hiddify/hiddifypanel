@@ -8,6 +8,7 @@ import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
+import SplitButton from 'primevue/splitbutton'
 import Textarea from 'primevue/textarea'
 import ToggleSwitch from 'primevue/toggleswitch'
 import TagSelect from '@/features/tags/components/TagSelect.vue'
@@ -36,7 +37,8 @@ const COUNT_PRESETS = [5, 10, 20, 50, 100]
 
 const props = defineProps<{ state: UsersState | null }>()
 const visible = defineModel<boolean>('visible', { required: true })
-const emit = defineEmits<{ created: [users: UserDetail[]] }>()
+/** atEnd: the new users go to the end of the users list (the create button's menu), not to the top. */
+const emit = defineEmits<{ created: [users: UserDetail[], atEnd: boolean] }>()
 const { load: loadTags } = useTags()
 
 const { t } = useI18n()
@@ -49,6 +51,16 @@ const busy = ref(false)
 const error = ref<string | null>(null)
 const touched = ref(false)
 const formEl = ref<HTMLFormElement | null>(null)
+/** Which create was asked: the button (top of the list, also Enter in a field) or its "at end" entry. */
+const addAtEnd = ref(false)
+const createMenu = computed(() => [
+  { label: t('users.bulkCreate.create', { n: count.value || 0 }, count.value || 0), icon: 'pi pi-users', command: () => createAt(false) },
+  { label: t('users.bulkCreate.createAtEnd', { n: count.value || 0 }, count.value || 0), icon: 'pi pi-arrow-down', command: () => createAt(true) },
+])
+function createAt(end: boolean) {
+  addAtEnd.value = end
+  formEl.value?.requestSubmit()
+}
 
 const prefix = ref('')
 const count = ref<number | null>(10)
@@ -188,7 +200,7 @@ async function submit() {
     if (tagIds.value.length) void loadTags(true)
     rebuildLinks()
     step.value = 'done'
-    emit('created', res.users)
+    emit('created', res.users, addAtEnd.value)
     toast.add({ severity: 'success', summary: t('users.bulkCreate.done', { n: res.count }, res.count), life: 4000 })
   } catch (err) {
     error.value = apiErrorMessage(err) || t('users.bulkCreate.failed')
@@ -312,7 +324,16 @@ function downloadTxt() {
 
       <div class="ubc-actions">
         <Button type="button" :label="t('common.cancel')" severity="secondary" text :disabled="busy" @click="visible = false" />
-        <Button type="submit" icon="pi pi-users" :label="t('users.bulkCreate.create', { n: count || 0 }, count || 0)" :loading="busy" :disabled="countInvalid" />
+        <!-- Create: on top of the users list; the menu adds them at the end instead. The button stays the form's submit (Enter). -->
+        <SplitButton
+          :label="t('users.bulkCreate.create', { n: count || 0 }, count || 0)"
+          :icon="busy ? 'pi pi-spin pi-spinner' : 'pi pi-users'"
+          :model="createMenu"
+          :disabled="busy || countInvalid"
+          :button-props="{ type: 'submit' }"
+          :menu-button-props="{ 'aria-label': t('users.bulkCreate.createAtEnd', { n: count || 0 }, count || 0) }"
+          @click="addAtEnd = false"
+        />
       </div>
     </form>
 
