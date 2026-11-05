@@ -69,8 +69,10 @@ web_trusted_proxy_cidrs = ["127.0.0.1/32"]
     group, so the users' profiles are kept once instead of once per domain. A domain on another IP keeps an exact group
     (public_addr is fixed per group; an exact host is matched before "*"). Unknown hosts get the decoy in the outer
     layer (HAProxy's domain routing), before telemt. #}
+{#- ip:443, an IPv6 address in brackets ([2001:db8::1]:443): telemt cannot split "2001:db8::1:443" #}
+{%- macro public_addr(d) %}{% set ip = (d.ips.ips or ['127.0.0.1'])[0] | string %}{{ ('[' ~ ip ~ ']') if (':' in ip and not ip.startswith('[')) else ip }}:443{% endmacro %}
 {%- set w = namespace(addrs=[], main='') %}
-{%- for d in webdomains %}{% set _ = w.addrs.append((d.ips.ips or ['127.0.0.1'])[0] ~ ':443') %}{% endfor %}
+{%- for d in webdomains %}{% set _ = w.addrs.append(public_addr(d)) %}{% endfor %}
 {%- for a in w.addrs %}{% if not w.main or w.addrs.count(a) > w.addrs.count(w.main) %}{% set w.main = a %}{% endif %}{% endfor %}
 {%- set others = [] %}{% for d in webdomains %}{% if w.addrs[loop.index0] != w.main and d.name not in others | map(attribute='name') | list %}{% set _ = others.append(d) %}{% endif %}{% endfor %}
 {%- set n_users = ctx.users | selectattr('uuid_hex') | list | length %}
@@ -114,7 +116,7 @@ profiles = {{ profiles }}
 [[web.vhosts]]
 host = "{{ d.name }}"
 base_path = "{{ ctx.hconfig.telegram_base_path }}"
-public_addr = "{{ (d.ips.ips or ['127.0.0.1'])[0] }}:443"
+public_addr = "{{ public_addr(d) }}"
 decoy = {{ decoy }}
 profiles = {{ profiles }}
 {%- endfor %}
