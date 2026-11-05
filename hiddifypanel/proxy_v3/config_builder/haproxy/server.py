@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ipaddress
 import re
 
 from hiddifypanel.models.custom_proxy import TemplateCore
@@ -24,12 +25,27 @@ def rewrite_haproxy_cert_paths(config: str) -> str:
     return _SSL_CRT_LEGACY_RE.sub(rf"\1{_HAPROXY_CERT_DIR}", config)
 
 
+def ip_default_certs() -> dict[int, str]:
+    """This server's IP certificates in data/cert, by IP version (4 / 6): the panel opened by IP sends no SNI, so HAProxy
+    serves the bind's default certificate. Without one, that is the first file of the folder: the IPv4 certificate for a
+    visitor who dialled the IPv6 address (or the other way round), and the browser says the name does not match."""
+    out: dict[int, str] = {}
+    for path in sorted(CERT_ROOT.glob("*.crt")):
+        try:
+            ip = ipaddress.ip_address(path.name[: -len(".crt")])
+        except ValueError:
+            continue
+        if path.with_name(path.name + ".key").is_file():
+            out.setdefault(ip.version, str(path))
+    return out
+
+
 class HaproxyServerDriver(TextServerDriver):
     core = TemplateCore.haproxy
     side = BaseConfigSide.server
 
     def extra_jinja(self, ctx: ServerContextVar) -> dict:
-        return {"haproxy_cert_dir": _HAPROXY_CERT_DIR}
+        return {"haproxy_cert_dir": _HAPROXY_CERT_DIR, "haproxy_ip_crt": ip_default_certs()}
 
     def build(self, child_id: int, ctx: ServerContextVar) -> ConfigBuilderModel:
         result = super().build(child_id, ctx)

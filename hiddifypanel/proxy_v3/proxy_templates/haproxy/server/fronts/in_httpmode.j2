@@ -2,13 +2,42 @@
 # HTTP/2 Frontend
 # =====================
 
+{#- Opened by IP, a browser sends no SNI and gets the bind's default certificate. With an IPv4 and an IPv6 certificate,
+    :901 first sorts the connections by the address the visitor dialled (the PROXY header's destination), so each one
+    gets the certificate of its own IP; with only one of them, that one is the default. #}
+{%- set ip_crt = haproxy_ip_crt if haproxy_ip_crt is defined else {} %}
+{%- set crt4 = ip_crt.get(4) %}
+{%- set crt6 = ip_crt.get(6) %}
+{%- if crt4 and crt6 %}
+frontend in-tls-by-ip
+  mode tcp
+  bind 127.0.0.1:901 accept-proxy
+  use_backend tls_ip6 if { dst -m ip ::/0 } !{ dst -m ip 0.0.0.0/0 }
+  default_backend tls_ip4
+
+backend tls_ip4
+  mode tcp
+  server s abns@https_in_ip4 send-proxy-v2
+
+backend tls_ip6
+  mode tcp
+  server s abns@https_in_ip6 send-proxy-v2
+
+{% endif %}
 frontend in-httpmode-ssl
   # there is a bug in haproxy or xray in which when http/1.1 is set it send alpn as h2 and therefore it makes a confusion for haproxy in http mode so i seperate them
   # rpxy-l4 (L4 SNI mux) does not terminate TLS: it forwards the TLS bytes here. HAProxy
   # terminates TLS on :901, then the second hop is plain HTTP — use to_httpmode_from_tls so
   # in-httpmode does not treat that hop as client cleartext (ssl_fc is false there).
   mode tcp
+{%- if crt4 and crt6 %}
+  bind abns@https_in_ip4 accept-proxy allow-0rtt ssl default-crt {{ crt4 }} crt {{ haproxy_cert_dir }} alpn h2,http/1.1
+  bind abns@https_in_ip6 accept-proxy allow-0rtt ssl default-crt {{ crt6 }} crt {{ haproxy_cert_dir }} alpn h2,http/1.1
+{%- elif crt4 or crt6 %}
+  bind 127.0.0.1:901 accept-proxy allow-0rtt ssl default-crt {{ crt4 or crt6 }} crt {{ haproxy_cert_dir }} alpn h2,http/1.1
+{%- else %}
   bind 127.0.0.1:901 accept-proxy allow-0rtt ssl crt {{ haproxy_cert_dir }} alpn h2,http/1.1
+{%- endif %}
   tcp-request inspect-delay 500ms
   tcp-request content accept if HTTP
   use_backend %[path,map_beg({{ include_path(ctx, 'haproxy/server/maps/path_tcp')}},to_httpmode_from_tls)]
