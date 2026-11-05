@@ -26,6 +26,27 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v196(child_id):
+    """Admins count their own traffic (their users' and their sub-admins' users'), with a reset period like users:
+    it starts from what those users show now, so a traffic limit already set stays where it was."""
+    if child_id != 0:
+        return
+    from sqlalchemy import func
+
+    from hiddifypanel.models.admin import AdminUser
+    from hiddifypanel.models.reset_mode import UserMode
+    from hiddifypanel.models.user import User
+
+    # The columns are there already (migrate() adds every model column first).
+    by_admin = dict(db.session.query(User.added_by, func.sum(User.current_usage)).filter(User.deleted.is_(False)).group_by(User.added_by).all())
+    totals = AdminUser.usage_with_ancestors({admin_id: int(used or 0) for admin_id, used in by_admin.items()})
+    today = datetime.now().date()
+    for admin in AdminUser.query_with_deleted().all():
+        admin.current_usage = totals.get(admin.id, 0)
+        admin.usage_mode = admin.usage_mode or UserMode.no_reset
+        admin.last_reset_time = admin.last_reset_time or today
+
+
 def _v194(child_id):
     """The support box of the user page: its title and "View More" button can be renamed or hidden (in the HTML
     editor of the support text). Shown with the default texts, as before."""

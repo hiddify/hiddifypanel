@@ -145,6 +145,37 @@ class AdminModel(AccountModel):
     max_total_usage_GB: float | None = None
     default_outbound_slug: str | None = None
     """Slug of the outbound this admin's users leave through by default (``None``: automatic)."""
+    usage_mode: UserMode | None = None
+    """How often ``current_usage_GB`` goes back to zero."""
+    current_usage_GB: float | None = None
+    """Traffic of this admin's users and its sub-admins' users since the last reset."""
+    start_date: datetime.date | None = None
+    """Start of the reset periods (the first traffic)."""
+    last_reset_time: datetime.date | None = None
+
+    @field_validator("start_date", "last_reset_time", mode="before")
+    @classmethod
+    def _dates(cls, value: object) -> datetime.date | None:
+        if not value:
+            return None
+        try:
+            return parse_date(value)
+        except (TypeError, ValueError):
+            return None
+
+    @field_validator("usage_mode", mode="before")
+    @classmethod
+    def _usage_mode(cls, value: object) -> UserMode | None:
+        try:
+            return UserMode(str(getattr(value, "value", value))) if value else None
+        except ValueError:
+            return None
+
+    @field_serializer("start_date", "last_reset_time")
+    def _json_dates(self, value: datetime.date | None, info: FieldSerializationInfo) -> str | datetime.date | None:
+        if value is None or not (info.context or {}).get("convert_date", True):
+            return value
+        return value.strftime("%Y-%m-%d")
 
     @field_validator("parent_admin_uuid", mode="before")
     @classmethod

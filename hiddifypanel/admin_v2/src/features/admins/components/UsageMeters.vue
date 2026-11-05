@@ -13,15 +13,18 @@ import { useI18n } from 'vue-i18n'
 import MeterBar from '@/shared/components/MeterBar.vue'
 import { formatCount, formatGb } from '@/shared/utils/format-metrics'
 import type { AdminLimits, AdminStats } from '@/features/admins/api'
+import { relativeDays } from '@/features/users/format'
 
 const props = defineProps<{
   stats: AdminStats
   /** Null: no limits (super admin). */
   limits: AdminLimits | null
+  /** Days to the next reset of the traffic (null or left out: it never resets). */
+  daysToReset?: number | null
   large?: boolean
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 function gb(value: number): string {
   return formatGb(value, value >= 100 ? 0 : 1)
@@ -51,7 +54,10 @@ const rows = computed(() =>
   ).map((row) => ({
     ...row,
     label: t(`admins.meter.${row.key}`),
-    title: t(`admins.meter.${row.key}Hint`),
+    title:
+      row.key === 'traffic' && props.daysToReset != null
+        ? `${t('admins.meter.trafficHint')} · ${t('users.form.nextReset', { when: relativeDays(props.daysToReset, locale.value) })}`
+        : t(`admins.meter.${row.key}Hint`),
     text: row.key === 'traffic' ? trafficText(row.used, row.max) : countText(row.used, row.max),
   })),
 )

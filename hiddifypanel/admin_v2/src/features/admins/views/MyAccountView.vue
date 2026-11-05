@@ -55,7 +55,7 @@
             </div>
             <span class="account-chip" v-tooltip.top="t('account.subAdmins')"><i class="pi pi-sitemap" />{{ formatCount(me.sub_admins) }}</span>
           </header>
-          <UsageMeters :stats="me.stats" :limits="me.limits" />
+          <UsageMeters :stats="me.stats" :limits="me.limits" :days-to-reset="me.days_to_reset" />
           <Message v-if="nearLimit" severity="warn" :closable="false" size="small">{{ t('account.nearLimit') }}</Message>
         </section>
 

@@ -1,5 +1,6 @@
 import { getHttp } from '@/core/api/client'
 import type { AdditionalConfig } from '@/shared/utils/additional-configs'
+import type { UserMode } from '@/features/users/api'
 
 export type AdminMode = 'super_admin' | 'admin' | 'agent'
 
@@ -37,7 +38,15 @@ export interface AdminStats {
   total: number
   active: number
   online: number
+  /** The admin's own traffic counter: its users' and its sub-admins' users' traffic since its last reset. */
   usage_GB: number
+}
+
+/** When the admin's traffic counter goes back to zero (as for users). */
+export interface AdminUsagePeriod {
+  usage_mode: UserMode
+  /** Null without a reset period. */
+  days_to_reset: number | null
 }
 
 /** A domain an admin link can use; the link is `${base}${uuid}/`. */
@@ -49,7 +58,7 @@ export interface LinkDomain {
   base: string
 }
 
-export interface AdminRow {
+export interface AdminRow extends AdminUsagePeriod {
   uuid: string
   name: string
   comment: string
@@ -109,6 +118,9 @@ export interface AdminPayload {
   /** 0 or null: no limit. */
   max_online_users?: number | null
   max_total_usage_GB?: number | null
+  usage_mode?: UserMode
+  /** Sets the admin's used traffic back to zero (edit only). */
+  reset_usage?: boolean
   additional_configs?: AdditionalConfig[]
   /** Null: automatic. */
   default_outbound?: number | null
@@ -133,7 +145,7 @@ export interface OverrideInfo {
   override_defaults: OverrideSettings
 }
 
-export interface MyAccount extends OverrideInfo {
+export interface MyAccount extends OverrideInfo, AdminUsagePeriod {
   uuid: string
   name: string
   mode: AdminMode

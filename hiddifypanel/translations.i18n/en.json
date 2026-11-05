@@ -558,6 +558,7 @@
         "placement": "Place in the team",
         "superNoLimits": "Super admins have no limits.",
         "upTo": "Up to {max} (your limit)",
+        "used": "Used traffic",
         "uuidHint": "Generated automatically. Change it only to reuse a known ID.",
         "uuidInvalid": "This is not a valid UUID"
       },
@@ -584,12 +585,18 @@
         "total": "Total",
         "totalHint": "All users, out of the allowed number",
         "traffic": "Traffic",
-        "trafficHint": "Traffic used by all these users, out of the allowed total"
+        "trafficHint": "Traffic used by all these users since the last reset, out of the allowed total"
       },
       "mode": {
         "admin": "Admin",
         "agent": "Agent",
         "super_admin": "Super admin"
+      },
+      "modeHint": {
+        "daily": "The traffic resets every day.",
+        "monthly": "The traffic resets every 30 days from its first use.",
+        "no_reset": "The traffic never resets: the limit is for all time.",
+        "weekly": "The traffic resets every 7 days from its first use."
       },
       "more": "More actions",
       "myConfigs": "Configs for my users",

@@ -513,6 +513,7 @@
         "placement": "在团队中的位置",
         "superNoLimits": "超级管理员没有限制。",
         "upTo": "最多 {max}（您的限制）",
+        "used": "已用流量",
         "uuidHint": "自动生成。仅在需要重用已知 ID 时才修改。",
         "uuidInvalid": "这不是有效的 UUID"
       },
@@ -539,12 +540,18 @@
         "total": "总计",
         "totalHint": "全部用户，占允许数量",
         "traffic": "流量",
-        "trafficHint": "所有这些用户已用的流量，占允许总量"
+        "trafficHint": "所有这些用户自上次重置以来已用的流量，占允许总量"
       },
       "mode": {
         "admin": "管理员",
         "agent": "代理",
         "super_admin": "超级管理员"
+      },
+      "modeHint": {
+        "daily": "流量每天重置。",
+        "monthly": "流量从首次使用起每 30 天重置。",
+        "no_reset": "流量从不重置：限制永久有效。",
+        "weekly": "流量从首次使用起每 7 天重置。"
       },
       "more": "更多操作",
       "myConfigs": "我的用户的配置",

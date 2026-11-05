@@ -15,6 +15,9 @@ import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor
 import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundSelect.vue'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
 import { unitLabel } from '@/shared/utils/format-metrics'
+import ResetModePicker from '@/features/users/components/package/ResetModePicker.vue'
+import { relativeDays, sizeText } from '@/features/users/format'
+import type { UserMode } from '@/features/users/api'
 import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
 import {
   ADMIN_CAPABILITIES,
@@ -39,7 +42,7 @@ const emit = defineEmits<{
   resetPassword: [admin: AdminRow]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const name = ref('')
 const alias = ref('')
@@ -58,6 +61,13 @@ const limits = ref<{ max_users: number | null; max_active_users: number | null; 
   max_online_users: null,
   max_total_usage_GB: null,
 })
+/** When the admin's traffic counter goes back to zero; resetUsage: set it to zero on save. */
+const usageMode = ref<UserMode>('no_reset')
+const resetUsage = ref(false)
+const usedGb = computed(() => (resetUsage.value ? 0 : props.admin?.stats.usage_GB ?? 0))
+const nextReset = computed(() =>
+  usageMode.value !== 'no_reset' && usageMode.value === props.admin?.usage_mode && props.admin.days_to_reset != null ? props.admin.days_to_reset : null,
+)
 const showAdvanced = ref(false)
 const showCapabilities = ref(false)
 const touched = ref(false)
@@ -141,6 +151,8 @@ watch(visible, (open) => {
   error.value = null
   showAdvanced.value = false
   showCapabilities.value = false
+  usageMode.value = admin?.usage_mode ?? 'no_reset'
+  resetUsage.value = false
   name.value = admin?.name ?? ''
   alias.value = admin?.alias ?? ''
   comment.value = admin?.comment ?? ''
@@ -210,6 +222,8 @@ async function submit() {
     payload.max_active_users = limits.value.max_active_users ?? DEFAULT_LIMIT
     payload.max_online_users = limits.value.max_online_users ?? 0
     payload.max_total_usage_GB = limits.value.max_total_usage_GB ?? 0
+    payload.usage_mode = usageMode.value
+    if (resetUsage.value) payload.reset_usage = true
   }
   try {
     if (props.admin) {
@@ -367,6 +381,29 @@ async function submit() {
               <small v-else-if="field.optional" class="text-muted-color">{{ t('admins.form.emptyNoLimit') }}</small>
             </div>
           </div>
+          <!-- Traffic used by this admin's users (and its sub-admins' users): can be reset, and resets on a period -->
+          <div v-if="editing" class="admin-used" :class="{ 'admin-used--reset': resetUsage }">
+            <span class="admin-used__label">{{ t('admins.form.used') }}</span>
+            <b class="admin-used__value" dir="ltr">{{ sizeText(usedGb, locale) }}</b>
+            <button
+              type="button"
+              class="admin-used__reset"
+              :disabled="busy || (!resetUsage && !admin?.stats.usage_GB)"
+              v-tooltip.top="resetUsage ? t('users.form.resetUsagePending') : t('users.form.resetUsage')"
+              :aria-label="resetUsage ? t('users.form.undo') : t('users.form.resetUsage')"
+              @click="resetUsage = !resetUsage"
+            >
+              <i class="pi" :class="resetUsage ? 'pi-undo' : 'pi-refresh'" />
+              <span>{{ resetUsage ? t('users.form.undo') : t('users.form.reset') }}</span>
+            </button>
+          </div>
+          <small v-if="resetUsage" class="admin-used__pending"><i class="pi pi-clock" />{{ t('users.form.resetUsagePending') }}</small>
+          <ResetModePicker
+            v-model="usageMode"
+            hint-key="admins.modeHint"
+            :disabled="busy"
+            :after="nextReset !== null ? t('users.form.nextReset', { when: relativeDays(nextReset, locale) }) : null"
+          />
         </template>
       </section>
 
@@ -758,5 +795,70 @@ async function submit() {
   .admin-caps__done {
     width: 100%;
   }
+}
+.admin-used {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 0.4rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.75rem;
+  min-height: 2.6rem;
+  border-radius: 10px;
+  background: var(--p-content-hover-background, rgba(127, 127, 127, 0.07));
+}
+.admin-used__label {
+  grid-column: 1;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+}
+.admin-used__value {
+  grid-column: 1;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  text-align: start;
+}
+.admin-used--reset .admin-used__value {
+  text-decoration: line-through;
+  color: var(--p-text-muted-color);
+}
+.admin-used__reset {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 1.9rem;
+  padding: 0 0.7rem;
+  border: 0;
+  border-radius: 999px;
+  color: var(--p-amber-700, #b45309);
+  background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 14%, transparent);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.admin-used__reset:not(:disabled):hover {
+  background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 24%, transparent);
+}
+.admin-used__reset i {
+  font-size: 0.75rem;
+}
+.admin-used--reset .admin-used__reset {
+  color: var(--p-text-muted-color);
+  background: var(--p-content-background);
+}
+.admin-used__reset:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.admin-used__pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--p-amber-700, #b45309);
 }
 </style>

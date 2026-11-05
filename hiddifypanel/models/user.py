@@ -3,16 +3,15 @@ from __future__ import annotations
 import datetime
 import json
 from collections.abc import Iterable
-from enum import auto
 from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import BigInteger, Date, DateTime, Enum, ForeignKey, String, Text, event
 from sqlalchemy.orm import DynamicMapped, Mapped, mapped_column, relationship, validates
-from strenum import StrEnum
 
 from hiddifypanel.database import db
 from hiddifypanel.models.admin import AdminUser
 from hiddifypanel.models.base_account import BaseAccount
+from hiddifypanel.models.reset_mode import UserMode, days_to_reset, package_mode_dic, should_reset  # noqa: F401 (re-exported)
 from hiddifypanel.models.role import Role
 from hiddifypanel.proxy_v3 import fast_json5
 
@@ -20,24 +19,6 @@ if TYPE_CHECKING:
     from hiddifypanel.models.external_model.account import AccountModel, UserModel
 
 ONE_GIG = 1024 * 1024 * 1024
-
-
-class UserMode(StrEnum):
-    """
-    The "UserMode" class is an enumeration that defines five possible modes: "no_reset", "monthly", "weekly",
-    "daily", and "disable". These modes represent different settings that can be applied to a user account,
-    such as the frequency at which data is reset or whether the account is currently disabled. The class is
-    implemented using the "StrEnum" base class and the "auto()" function to generate unique values for each mode.
-    """
-
-    no_reset = auto()
-    monthly = auto()
-    weekly = auto()
-    daily = auto()
-    # disable = auto()
-
-
-package_mode_dic = {UserMode.daily: 1, UserMode.weekly: 7, UserMode.monthly: 30}
 
 
 class UserDetail(db.Model):
@@ -168,14 +149,7 @@ class User(BaseAccount):
         return list(res.keys())
 
     def user_should_reset(self) -> bool:
-        # print("start_date",user.start_date, "pack",package_mode_dic.get(user.mode,10000), "total",(datetime.date.today()-user.start_date).days)
-        # if user.mode==UserMode.daily:
-        #     return 0
-        if not self.last_reset_time:
-            return True
-        elif not self.start_date or (datetime.date.today() - self.last_reset_time).days == 0:
-            return False
-        return ((datetime.date.today() - self.start_date).days % package_mode_dic.get(self.mode, 10000)) == 0
+        return should_reset(self.mode, self.start_date, self.last_reset_time)
 
     def reset_usage(self, commit: bool = False):
         """Resets the user usages"""
@@ -190,19 +164,8 @@ class User(BaseAccount):
             db.session.commit()
 
     def days_to_reset(self):
-        """
-        The "days_to_reset" function calculates the number of days until the user's data usage is reset, based on the
-        user's start date and mode of usage. The function returns the remaining days as an integer value. If the start
-        date is not available, the function returns the total days for the user's mode.
-        """
-        # print("start_date",user.start_date, "pack",package_mode_dic.get(user.mode,10000), "total",(datetime.date.today()-user.start_date).days)
-        # if user.mode==UserMode.daily:
-        #     return 0
-        if self.start_date:
-            days = package_mode_dic.get(self.mode, 10000) - (datetime.date.today() - self.start_date).days % package_mode_dic.get(self.mode, 10000)
-        else:
-            days = package_mode_dic.get(self.mode, 10000)
-        return max(-100000, min(days, 100000))
+        """Days until the user's data usage is reset (the whole period when the package has not started)."""
+        return days_to_reset(self.mode, self.start_date)
 
     @property
     def remaining_days(self) -> int:

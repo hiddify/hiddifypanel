@@ -62,7 +62,9 @@ class RegisterApi(MethodView):
             endpoints.remember_node_hosts(child.unique_id, (endpoints.PanelHost(h.domain, h.mode) for h in data.panel_hosts))
         try:
             with steplog.step(reg, "parent", "store the node's admins, users and domains", admins=len(panel_data.admin_users), users=len(panel_data.users), domains=len(panel_data.domains)):
-                AdminUser.bulk_register([a.model_dump(exclude={"default_outbound_slug"}) for a in panel_data.admin_users], commit=False)
+                # The admins' traffic counters are this panel's (it adds the nodes' usage to them): a node's copy would set them back.
+                admin_exclude = {"default_outbound_slug", "usage_mode", "current_usage_GB", "start_date", "last_reset_time"}
+                AdminUser.bulk_register([a.model_dump(exclude=admin_exclude) for a in panel_data.admin_users], commit=False)
                 User.bulk_register([u.model_dump(exclude={"preferred_outbound_slug"}) for u in panel_data.users], commit=False)
                 Domain.bulk_register(panel_data.domains, remove=True, commit=False, force_child_unique_id=child.unique_id)
                 db.session.commit()

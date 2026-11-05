@@ -133,6 +133,10 @@ class AdminSchema(ApiModel):
     max_online_users: int | None = Field(default=None, description="The maximum number of users online in the last 24 hours (empty: no limit)")
     max_total_usage_GB: float | None = Field(default=None, description="The traffic in GB all users of the admin and its sub-admins may use together (empty: no limit)")
     default_outbound_slug: str | None = Field(default=None, description="Slug of the outbound this admin's users leave through unless they choose another (empty: automatic)")
+    usage_mode: UserMode | None = Field(default=None, description="How often the admin's used traffic goes back to zero")
+    current_usage_GB: float | None = Field(default=None, description="Traffic in GB used by the admin's users and its sub-admins' users since the last reset")
+    start_date: FriendlyDate | None = Field(default=None, description="Start of the reset periods (the first traffic)")
+    last_reset_time: FriendlyDate | None = Field(default=None, description="The last time the admin's used traffic was reset")
 
 
 class PatchAdminSchema(ApiModel):
@@ -148,6 +152,8 @@ class PatchAdminSchema(ApiModel):
     max_active_users: int | None = None
     max_online_users: int | None = None
     max_total_usage_GB: float | None = None
+    usage_mode: UserMode | None = None
+    current_usage_GB: float | None = None
 
 
 class SuccessfulSchema(ApiModel):

@@ -158,14 +158,14 @@
                 </div>
               </div>
               <!-- The users column moves here on small screens, using the full width -->
-              <UsageMeters class="admins-who__meters" :stats="row(node).stats" :limits="row(node).limits" />
+              <UsageMeters class="admins-who__meters" :stats="row(node).stats" :limits="row(node).limits" :days-to-reset="row(node).days_to_reset" />
             </div>
           </template>
         </Column>
 
         <Column :header="t('admins.col.users')" header-class="admins-col--md" body-class="admins-col--md admins-col--users">
           <template #body="{ node }">
-            <UsageMeters :stats="row(node).stats" :limits="row(node).limits" />
+            <UsageMeters :stats="row(node).stats" :limits="row(node).limits" :days-to-reset="row(node).days_to_reset" />
           </template>
         </Column>
       </TreeTable>

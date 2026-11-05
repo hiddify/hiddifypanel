@@ -4,7 +4,16 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MODE_ICON, USER_MODES, type UserMode } from '@/features/users/api'
 
-defineProps<{ disabled?: boolean; /** Said after the meaning, e.g. when the next reset is */ after?: string | null }>()
+const props = withDefaults(
+  defineProps<{
+    disabled?: boolean
+    /** Said after the meaning, e.g. when the next reset is */
+    after?: string | null
+    /** Translation keys of the meanings (`<hintKey>.<mode>`): admins count their users' traffic, not a package. */
+    hintKey?: string
+  }>(),
+  { after: null, hintKey: 'users.modeHint' },
+)
 const mode = defineModel<UserMode>({ required: true })
 const { t } = useI18n()
 const options = computed(() => USER_MODES.map((value) => ({ value, label: t(`users.mode.${value}`), icon: MODE_ICON[value] })))
@@ -29,7 +38,7 @@ const options = computed(() => USER_MODES.map((value) => ({ value, label: t(`use
       </button>
     </div>
     <small class="text-muted-color">
-      {{ t(`users.modeHint.${mode}`) }}
+      {{ t(`${props.hintKey}.${mode}`) }}
       <template v-if="after"> · {{ after }}</template>
     </small>
   </div>

@@ -102,6 +102,13 @@ def _reset_priodic_usage() -> bool:
                 apply_changes = True
                 send_bot_message(user)
 
+    # Admins: the traffic of their users and their sub-admins' users, on its own period (counted from its first traffic).
+    for admin in db.session.query(AdminUser).filter(AdminUser.usage_mode != UserMode.no_reset, AdminUser.start_date != None).all():
+        if admin.usage_should_reset():
+            logger.info(f"reseting admin usage for {admin.uuid}")
+            admin.reset_usage()
+            db_change = True
+
     if db_change:
         db.session.commit()
 
@@ -169,6 +176,7 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
 
     users = db.session.query(User).filter(User.uuid.in_(set(usage_map.keys()))).all()
 
+    usage_by_admin: dict[int | None, int] = {}  # bytes per admin of the users: added to the admins (and those above) at once
     all_users_uuids = set()
     for user in users:
         all_users_uuids.add(user.uuid)
@@ -188,7 +196,9 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
             apply_changes = True
 
         daily_usage.get(user.added_by, daily_usage[1]).usage += usage_map[user.uuid].usage
+        usage_by_admin[user.added_by] = usage_by_admin.get(user.added_by, 0) + usage_map[user.uuid].usage
 
+    AdminUser.add_usages(usage_by_admin, today)
     db.session.commit()
 
     if len(users) != len(usage_map):

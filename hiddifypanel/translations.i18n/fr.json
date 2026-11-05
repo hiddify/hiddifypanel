@@ -516,6 +516,7 @@
         "placement": "Placer dans l'équipe",
         "superNoLimits": "Les super admins n'ont aucune limite.",
         "upTo": "Jusqu'à {max} (votre limite)",
+        "used": "Trafic utilisé",
         "uuidHint": "Généré automatiquement. Ne le modifiez que pour réutiliser un ID connu.",
         "uuidInvalid": "Ceci n'est pas un UUID valide"
       },
@@ -542,12 +543,18 @@
         "total": "Total",
         "totalHint": "Tous les utilisateurs, sur le nombre autorisé",
         "traffic": "Trafic",
-        "trafficHint": "Trafic utilisé par tous ces utilisateurs, sur le total autorisé"
+        "trafficHint": "Trafic utilisé par tous ces utilisateurs depuis la dernière remise à zéro, sur le total autorisé"
       },
       "mode": {
         "admin": "Admin",
         "agent": "Agent",
         "super_admin": "Super admin"
+      },
+      "modeHint": {
+        "daily": "Le trafic est remis à zéro chaque jour.",
+        "monthly": "Le trafic est remis à zéro tous les 30 jours depuis sa première utilisation.",
+        "no_reset": "Le trafic n'est jamais remis à zéro : la limite vaut pour toujours.",
+        "weekly": "Le trafic est remis à zéro tous les 7 jours depuis sa première utilisation."
       },
       "more": "Plus d'actions",
       "myConfigs": "Configs pour mes utilisateurs",

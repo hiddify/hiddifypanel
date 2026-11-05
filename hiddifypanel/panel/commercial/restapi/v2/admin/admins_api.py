@@ -20,6 +20,7 @@ from hiddifypanel import admin_overrides
 from hiddifypanel.models import AdminUser, ConfigEnum, Domain, DomainType, User, hconfig
 from hiddifypanel.models.admin import AdminMode
 from hiddifypanel.models.config_enum import Lang
+from hiddifypanel.models.reset_mode import UserMode
 from hiddifypanel.models.role import Role
 from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import user_configs
@@ -137,11 +138,16 @@ def _limits(admin: AdminUser) -> dict | None:
     }
 
 
+def _usage(admin: AdminUser) -> dict:
+    """The admin's traffic counter: its reset period and the days to the next reset (null: never)."""
+    return {"usage_mode": str(admin.usage_mode or UserMode.no_reset), "days_to_reset": admin.days_to_reset()}
+
+
 def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
-    """Users of each admin and all its sub-admins: total, active, online, traffic used."""
+    """Users of each admin and all its sub-admins: total, active, online; traffic: the admin's own counter (since its reset)."""
     ids = [a.id for a in admins]
     since = datetime.datetime.now() - ONLINE_WINDOW
-    direct = {i: {"total": 0, "active": 0, "online": 0, "usage_GB": 0.0} for i in ids}
+    direct = {i: {"total": 0, "active": 0, "online": 0} for i in ids}
     for user in User.query.filter(User.added_by.in_(ids), User.deleted.is_(False)).all():
         row = direct.get(user.added_by)
         if row is None:
@@ -149,7 +155,6 @@ def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
         row["total"] += 1
         row["active"] += 1 if user.is_active else 0
         row["online"] += 1 if user.last_online and user.last_online >= since else 0
-        row["usage_GB"] += user.current_usage_GB or 0
 
     children: dict[int, list[int]] = {}
     for a in admins:
@@ -174,8 +179,8 @@ def _tree_stats(admins: list[AdminUser]) -> dict[int, dict]:
 
     for admin_id in ids:
         walk(admin_id, set())
-    for row in totals.values():
-        row["usage_GB"] = round(row["usage_GB"], 3)
+    for admin in admins:
+        totals[admin.id]["usage_GB"] = round(admin.current_usage_GB, 3)
     return totals
 
 
@@ -207,6 +212,7 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         "admin_link": _admin_link(admin),
         "limits": _limits(admin),
         "stats": stats,
+        **_usage(admin),
         "sub_admins": sub_admins,
         # Added to the subscription of every user of this admin and its sub-admins.
         "additional_configs": user_configs.clean_rows(admin.additional_configs or [])[0],
@@ -299,6 +305,11 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
             if mine and (value > mine or (key in OPTIONAL_LIMITS and value == 0)):
                 abort(400, f"{key} can be at most {mine:g} (your own limit)")
             out[key] = value
+        if "usage_mode" in body:
+            try:
+                out["usage_mode"] = UserMode(str(body.get("usage_mode") or UserMode.no_reset))
+            except ValueError:
+                abort(400, "usage_mode is not valid")
 
     if creating or "parent_uuid" in body:
         parent_uuid = body.get("parent_uuid") or actor.uuid
@@ -430,6 +441,8 @@ class AdminTreeItemApi(MethodView):
             payload["can_add_admin"] = admin.can_add_admin
         if "comment" in payload:
             admin.comment = payload.pop("comment")  # upsert skips empty text
+        if body.get("reset_usage") and not _is_super(admin):
+            admin.reset_usage()
         AdminUser.add_or_update(commit=False, old_uuid=admin.uuid, uuid=admin.uuid, **payload)
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
@@ -487,6 +500,7 @@ class MyAdminAccountApi(MethodView):
             "admin_link": _admin_link(actor),
             "limits": _limits(actor),
             "stats": stats[actor.id],
+            **_usage(actor),
             "sub_admins": len(admins) - 1,
             "additional_configs": user_configs.clean_rows(actor.additional_configs or [])[0],
             **_override_info(actor),
