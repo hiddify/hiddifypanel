@@ -490,9 +490,7 @@ def _apply_body(d: Domain, body: dict[str, Any], child_id: int) -> None:
 
 def _cores_after_domain_change() -> None:
     """Dump + reload xray / hiddify-core / … so new or changed domains (and their certs) are live in the cores."""
-    from hiddifypanel.panel import hiddify
-
-    hiddify.quick_apply_users(domain=True)
+    hutils.apply_users.quick_apply_users(domain=True)
 
 
 def _save(d: Domain, *, is_created: bool) -> list[str]:

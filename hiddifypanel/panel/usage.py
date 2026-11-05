@@ -11,7 +11,6 @@ from hiddifypanel import cache, hutils
 from hiddifypanel.database import db, db_execute
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import AdminUser, ConfigEnum, DailyUsage, UsageData, User, UserMode, hconfig, set_hconfig
-from hiddifypanel.panel import hiddify
 
 to_gig_d = 1024**3
 
@@ -204,7 +203,7 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
             apply_changes = True
 
     if apply_changes:
-        hiddify.quick_apply_users(users_only=True)
+        hutils.apply_users.quick_apply_users(users_only=True)
 
     return {"status": "success", "comments": usage_payload, "date": hutils.convert.time_to_json(cur_time)}
 
@@ -305,7 +304,7 @@ def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[st
 #     # print("------------------", res)
 #     # Apply the changes to the drivers
 #     if have_change:
-#         hiddify.quick_apply_users()
+#         hutils.apply_users.quick_apply_users()
 
 #     # Sync the new data with the parent node if the data has not been set by the parent node itself and the current panel is a child panel
 #     if not sync and hutils.node.is_child():

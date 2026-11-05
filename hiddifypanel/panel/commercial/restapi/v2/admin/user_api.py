@@ -6,7 +6,6 @@ from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import Role, User
-from hiddifypanel.panel import hiddify
 
 from . import has_permission, resolve_added_by_uuid
 from .schema import PatchUserSchema, SuccessfulSchema, UserSchema
@@ -42,7 +41,7 @@ class UserApi(MethodView):
         dbuser = User.add_or_update(old_uuid=uuid, **payload) or abort(502, "Unknown issue! User is not patched")
         if dbuser.is_active:
             user_driver.add_client(dbuser)
-        hiddify.quick_apply_users(users_only=True)
+        hutils.apply_users.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return dbuser.to_schema()
 
@@ -51,6 +50,6 @@ class UserApi(MethodView):
         """User: Delete a User"""
         user = self._scoped_user(uuid)
         user.remove()
-        hiddify.quick_apply_users(users_only=True)
+        hutils.apply_users.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return {"status": 200, "msg": "ok"}

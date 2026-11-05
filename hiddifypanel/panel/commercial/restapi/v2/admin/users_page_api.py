@@ -27,7 +27,6 @@ from hiddifypanel.models.outbound import Outbound
 from hiddifypanel.models.role import Role
 from hiddifypanel.models.tag import Tag, TagLink, tags_of
 from hiddifypanel.models.user import ONE_GIG, package_mode_dic
-from hiddifypanel.panel import hiddify
 from hiddifypanel.proxy_v3 import outbounds as ob
 from hiddifypanel.proxy_v3 import user_configs
 
@@ -248,7 +247,7 @@ def _after_change(users: list[User], *, created: bool = False) -> bool:
         user_driver.add_clients([user for user in users if user.is_active], background=background)
         if not created:
             user_driver.remove_clients([user for user in users if not user.is_active], background=background)
-    hiddify.quick_apply_users(users_only=True)
+    hutils.apply_users.quick_apply_users(users_only=True)
     hutils.node.parent.notify_childs_users_changed()
     return background
 
@@ -333,7 +332,7 @@ class UserPageApi(MethodView):
             abort(400, "At least one user must exist")
         user.remove(commit=False)
         db.session.commit()
-        hiddify.quick_apply_users(users_only=True)
+        hutils.apply_users.quick_apply_users(users_only=True)
         hutils.node.parent.notify_childs_users_changed()
         return {"status": 200, "msg": "ok"}
 
@@ -395,7 +394,7 @@ class UsersBulkApi(MethodView):
             # Out of the cores in one batch (per user it was ~50 xray calls each, one after the other)
             background = len(users) > BACKGROUND_AFTER
             user_driver.remove_clients(users, background=background)
-            hiddify.quick_apply_users(users_only=True)
+            hutils.apply_users.quick_apply_users(users_only=True)
             hutils.node.parent.notify_childs_users_changed()
             return {"count": len(users), "activating": background}
         days = _number(body, "days", low=1, high=3650, integer=True) if action == "add_days" else 0

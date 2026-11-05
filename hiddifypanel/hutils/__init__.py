@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from . import donation
     from . import user_html
     from . import core_load
+    from . import apply_users
 else:
     # Define modules for lazy loading
     network = LazyLoader(".network", __name__)
@@ -56,3 +57,4 @@ else:
     donation = LazyLoader(".donation", __name__)
     user_html = LazyLoader(".user_html", __name__)
     core_load = LazyLoader(".core_load", __name__)
+    apply_users = LazyLoader(".apply_users", __name__)

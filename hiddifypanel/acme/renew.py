@@ -187,10 +187,10 @@ def start(domain_id: int) -> bool:
 
 def refresh_cores() -> None:
     """hiddify-core has the certificates inline: rebuild its config (apply-users: dump + reload, no panel restart)."""
-    from hiddifypanel.panel import hiddify
+    from hiddifypanel import hutils
 
     try:
-        hiddify.quick_apply_users()
+        hutils.apply_users.quick_apply_users()
         logger.info("ACME: certificates changed; rebuilding the cores' configs (apply-users)")
     except Exception as e:
         logger.warning(f"ACME: could not refresh the cores after a certificate change: {e}")

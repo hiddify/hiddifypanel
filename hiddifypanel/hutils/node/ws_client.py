@@ -115,7 +115,7 @@ def _welcomed(welcome: dict[str, Any]) -> None:
 
 def _after_batches(users_changed: bool, outbounds_changed: bool, admins_changed: bool) -> None:
     from hiddifypanel.cache import cache
-    from hiddifypanel.panel import hiddify
+    from hiddifypanel import hutils
 
     from . import child
 
@@ -123,7 +123,7 @@ def _after_batches(users_changed: bool, outbounds_changed: bool, admins_changed:
         cache.invalidate_all_cached_functions()
     if users_changed:
         logger.info("node-ws: users from the parent changed who is active: applying users")
-        hiddify.quick_apply_users()
+        hutils.apply_users.quick_apply_users()
     if outbounds_changed:
         child._apply_server_config()
 

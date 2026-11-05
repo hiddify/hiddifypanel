@@ -51,10 +51,9 @@ def _changed() -> None:
     Server routing (Tor/Psiphon/WARP) still needs Apply Configs — responses include ``restart_mode``.
     """
     from hiddifypanel import hutils
-    from hiddifypanel.panel import hiddify
 
     hutils.node.parent.notify_childs_users_changed()
-    hiddify.quick_apply_users()
+    hutils.apply_users.quick_apply_users()
 
 
 def _mutated(child_id: int, **extra: Any) -> dict[str, Any]:

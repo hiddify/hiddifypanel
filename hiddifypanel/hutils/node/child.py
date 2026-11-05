@@ -83,7 +83,7 @@ def _apply_users_if_changed(before: set[str]) -> None:
     after = _active_user_uuids()
     if after != before:
         logger.info(f"Users from parent changed ({len(after - before)} activated, {len(before - after)} deactivated): applying users")
-        hiddify.quick_apply_users()
+        hutils.apply_users.quick_apply_users()
 
 
 def _apply_outbounds(items) -> bool:

@@ -400,7 +400,7 @@ class AdminsTreeApi(MethodView):
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
         if "default_outbound" in body:
-            hiddify.quick_apply_users()
+            hutils.apply_users.quick_apply_users()
         return {"uuid": admin.uuid, "name": admin.name, **_credentials(admin, password)}
 
 
@@ -434,7 +434,7 @@ class AdminTreeItemApi(MethodView):
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
         if "default_outbound" in body:
-            hiddify.quick_apply_users()
+            hutils.apply_users.quick_apply_users()
         return {"status": 200, "msg": "ok"}
 
     def delete(self, uuid):
@@ -535,7 +535,7 @@ class MyAdminOutboundApi(MethodView):
         _apply_default_outbound(actor, (request.get_json(silent=True) or {}).get("default_outbound"))
         db.session.commit()
         hutils.node.parent.notify_childs_users_changed()
-        hiddify.quick_apply_users()
+        hutils.apply_users.quick_apply_users()
         return {"default_outbound": actor.default_outbound_id}
 
 
