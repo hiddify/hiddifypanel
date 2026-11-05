@@ -8,10 +8,12 @@ one is added to the folder's crt-list), so nothing needs a reload. A domain's fi
 
 from __future__ import annotations
 
+import fcntl
 import os
 import tempfile
 import threading
 import time
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -46,6 +48,24 @@ def ensure_folder() -> bool:
         return False
 
 
+@contextmanager
+def _folder_lock():
+    """An exclusive lock on the folder while a certificate and its key are written or removed. HAProxy's run.sh takes it
+    too before a reload / restart, so HAProxy never loads a certificate with the key of another one (it would not
+    start). Without the lock (the folder can not be opened) the write goes on."""
+    fd = None
+    try:
+        fd = os.open(CERT_ROOT, os.O_RDONLY)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+    except OSError as e:
+        logger.debug(f"certificates: no lock on {CERT_ROOT}: {e}")
+    try:
+        yield
+    finally:
+        if fd is not None:
+            os.close(fd)  # releases the lock
+
+
 def _write(path: Path, content: str) -> None:
     """Atomic write (HAProxy never reads half a file), mode 640; the group comes from the setgid folder."""
     fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp-", suffix=path.suffix)
@@ -75,30 +95,33 @@ def write_files(name: str, cert_pem: str, key_pem: str) -> bool:
         raise OSError(f"{CERT_ROOT} can not be created")
     cert_path, key_path = cert_paths_for_domain(name)
     changed = False
-    for path, content in ((key_path, key_pem), (cert_path, cert_pem)):  # the key first: HAProxy reads the pair
-        want = normalize_pem(content)
-        if path.is_file() and path.read_text(encoding="utf-8") == want:
-            continue
-        _write(path, want)
-        changed = True
+    with _folder_lock():
+        for path, content in ((key_path, key_pem), (cert_path, cert_pem)):  # the key first: HAProxy reads the pair
+            want = normalize_pem(content)
+            if path.is_file() and path.read_text(encoding="utf-8") == want:
+                continue
+            _write(path, want)
+            changed = True
     if changed:
         logger.debug(f"certificates: wrote {cert_path}")
     return changed
 
 
 def remove_files(name: str) -> None:
-    for path in cert_paths_for_domain(name):
-        try:
-            path.unlink(missing_ok=True)
-        except OSError as e:
-            logger.warning(f"certificates: can not remove {path}: {e}")
+    with _folder_lock():
+        for path in cert_paths_for_domain(name):
+            try:
+                path.unlink(missing_ok=True)
+            except OSError as e:
+                logger.warning(f"certificates: can not remove {path}: {e}")
     logger.debug(f"certificates: removed the files of {name}")
 
 
 def file_names() -> set[str]:
-    """Names (file stem) of the certificates in the folder."""
+    """Names (file stem) of the certificates in the folder. Not the ``.tmp-*`` files of a write in progress (another
+    process's): they are not certificates yet, and removing one would break that write."""
     try:
-        return {p.name[: -len(".crt")] for p in CERT_ROOT.glob("*.crt") if p.is_file()}
+        return {p.name[: -len(".crt")] for p in CERT_ROOT.glob("*.crt") if p.is_file() and not p.name.startswith(".")}
     except OSError:
         return set()
 
@@ -266,19 +289,49 @@ def domains_of_this_server() -> list[Domain]:
     return Domain.query.filter(Domain.child_id == Child.current().id).order_by(Domain.id).all()
 
 
+def names_in_use() -> set[str]:
+    """File names of every domain served from this machine: this server's and its virtual children's (they share its
+    HAProxy). A certificate file is removed only when no domain here uses its name, whichever child the caller is in."""
+    from hiddifypanel.models.child import ChildMode
+
+    child_ids = {Child.current().id} | {c.id for c in Child.query.filter(Child.mode == ChildMode.virtual).all()}
+    rows = Domain.query.with_entities(Domain.domain).filter(Domain.child_id.in_(child_ids)).all()
+    return {key for (name,) in rows if (key := domain_file_key(name or ""))}
+
+
+def remove_unused(*, install: bool) -> int:
+    """Remove the certificates no domain uses any more (and only those). Nothing is removed while no domain is found:
+    an empty list is a wrong read, not "remove every certificate"."""
+    used = names_in_use()
+    if not used:
+        logger.warning("certificates: no domain found; keeping every certificate file")
+        return 0
+    removed = 0
+    for name in sorted(file_names() - used - {"localhost"}):
+        logger.info(f"certificates: {name} is no longer a domain of this server; removing its certificate")
+        if install:
+            haproxy_remove(name)
+        remove_files(name)
+        removed += 1
+    if "localhost" in file_names() and file_names() - {"localhost"}:
+        # the stand-in of a server without domains: a real certificate is there now
+        if install:
+            haproxy_remove("localhost")
+        remove_files("localhost")
+    return removed
+
+
 def export_all(*, install: bool = False) -> ExportStats:
-    """Make data/cert match tls_store: every domain has a usable certificate (a self-signed one when it has none),
-    every certificate is written, the files of removed domains are deleted. ``install``: also update the running
-    HAProxy (the panel at runtime; at apply HAProxy is (re)started after this anyway)."""
+    """Make data/cert match tls_store: every domain has a usable certificate (a self-signed one when it has none), a
+    file is written only when its content differs, and only the files no domain uses any more are deleted.
+    ``install``: also update the running HAProxy (the panel at runtime; at apply HAProxy is (re)started after this)."""
     stats = ExportStats()
     if not ensure_folder():
         return stats
-    wanted: set[str] = set()
     for d in domains_of_this_server():
         host = domain_file_key(d.domain or "")
         if not host:
             continue
-        wanted.add(host)
         try:
             if "*" not in host and ensure_self_signed(d, install=install):
                 stats.self_signed += 1
@@ -291,14 +344,7 @@ def export_all(*, install: bool = False) -> ExportStats:
                         haproxy_install(host, row.certificate, row.private_key)
         except Exception as e:
             logger.exception(f"certificates: export of {host} failed: {e}")
-    if not wanted:
-        wanted.add("localhost")  # the stand-in below, while there is no domain
-    for name in file_names() - wanted:
-        logger.info(f"certificates: {name} is no longer a domain of this server; removing its certificate")
-        if install:
-            haproxy_remove(name)
-        remove_files(name)
-        stats.removed += 1
+    stats.removed = remove_unused(install=install)
     if not file_names():
         # HAProxy does not start without a certificate (no domain at all yet)
         cert_pem, key_pem = selfsigned.make("localhost")
@@ -309,7 +355,11 @@ def export_all(*, install: bool = False) -> ExportStats:
 
 
 def remove_domain(name: str) -> None:
-    """A domain was deleted (its tls_store row goes with it): reconcile, so its certificate leaves HAProxy and the folder
-    (unless another domain still has the same file name)."""
-    logger.debug(f"certificates: domain {name} deleted")
-    export_all(install=True)
+    """A domain was deleted (its tls_store row goes with it): only its certificate leaves HAProxy and the folder, and
+    only when no other domain here has the same file name. The other certificates are not touched."""
+    host = domain_file_key(name)
+    logger.debug(f"certificates: domain {host} deleted")
+    if not host or host in names_in_use():
+        return
+    haproxy_remove(host)
+    remove_files(host)
