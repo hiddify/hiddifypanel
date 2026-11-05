@@ -11,6 +11,164 @@
 
 #### Other
 
+* Feat(store): implement folder locking for certificate operations and add unused certificate removal functionality. 
+  _- Introduced a context manager for exclusive folder locking during certificate writes and removals to prevent conflicts.
+- Updated `write_files` and `remove_files` functions to utilize the new locking mechanism.
+- Added `names_in_use` and `remove_unused` functions to manage and clean up unused certificates based on domain usage.
+- Enhanced `export_all` to call `remove_unused` for better certificate management._
+
+* Feat(admins): filter the admins page by any permission. 
+  _The permission filter lists every permission of the edit dialog (with the
+same icons) and "No special permissions", instead of only can / can't add
+sub-admins._
+
+* Merge. 
+
+* Merge pull request #181 from Hiddify-Official/feat/support-full-text. 
+  _feat(branding): support box Lite and Full texts, templates with both_
+
+* Feat(branding): support box Lite and Full texts, templates with both. 
+  _The support box gets a Full text (branding_freetext_full, _v197), shown by
+"Read More" on the user page; branding_freetext is the Lite text shown in the
+box. Empty Full: Read More shows the Lite text when it does not fit, as before.
+
+Admin: the HTML editor edits both (Lite / Full tabs; the toolset switch is now
+Basic tools / All tools), View previews both, and every template has a short
+Lite version and a Full one; Insert / Replace fills both texts. The user API
+sends admin_message_full_html (not the panel's when an admin overrides only
+the Lite text)._
+
+* Feat(admins): each admin counts its users' traffic with a reset period like users. 
+  _The usage update groups the users' traffic by admin, walks up the admin tree
+once per admin and adds it to the admins and all their parents in a single
+UPDATE. Admins get a reset period (daily/weekly/monthly/never) and a reset
+button in admin_v2; the traffic limit uses this counter. Migration _v196
+starts each counter from its users' current usage._
+
+* Fix(mieru): give Hiddify <= 5.5.5 the server IP, it fails when it cannot resolve the name. 
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+
+* Merge pull request #180 from Hiddify-Official/feat/html-editor-templates. 
+  _feat(admin_v2): templates button in HTML editor top bar, 14 more designs_
+
+* Feat(admin_v2): templates button in the HTML editor's top bar, 14 more designs. 
+  _The template gallery opens from a button next to Preview / Source, in Lite and
+Full and in Source mode too (Insert appends to the code there), instead of a
+Full-only toolbar icon. The gallery is grouped (contact, news, sales, guides)
+and has 14 new support box designs, all within the setting's length limit and
+kept unchanged by the panel's HTML sanitizer._
+
+* Merge pull request #179 from Hiddify-Official/fix/meter-ltr. 
+  _fix(admin_v2): fill usage bars left to right in RTL languages_
+
+* Fix(admin_v2): fill usage bars left to right in RTL languages. 
+
+* Merge pull request #178 from Dv2Corn/fix/telegram-renew-active-limit. 
+  _fix(telegram): Renew no longer turns a user on past max active users_
+
+* Fix(telegram): Renew no longer turns a user on past max active users. 
+  _The bot user card checks max_active_users on "Turn on", but "Renew" sets enable as well and skipped
+the check, so an admin at the limit could turn disabled users on again by renewing them. Renew now
+asks can_activate_more_users() when the user is disabled; renewing a user that is already on is not
+one more active user and stays allowed._
+
+* Merge pull request #176 from Dv2Corn/fix/http-switch-non-http-protos. 
+  _fix(proxies): turning off HTTP connections no longer drops Shadowsocks 2022 and Mieru_
+
+* Fix(proxies): turning off HTTP connections no longer drops Shadowsocks 2022 and Mieru. 
+  _Shadowsocks 2022, Mieru and the DNS tunnels are stored with tls_layer
+"http", which for them only means "no TLS layer". parent_enable_keys()
+mapped every tls_layer "http" to http_proxy_enable, so turning off
+"Allow HTTP Connection" also turned these proxies off. The switch now
+applies to them only through their own protocol switches; plain HTTP
+proxies (VLESS/VMess/Trojan over WS, HTTPUpgrade, raw HTTP, gRPC,
+xHTTP, raw TCP without TLS) still follow it.
+
+Fixes hiddify/Hiddify-Manager#5666_
+
+* Merge pull request #175 from ShawnJim/fix/foxray-subscription-privacy. 
+  _fix(user): avoid external HTTPS helpers for Foxray subscriptions_
+
+* Fix(user): avoid external HTTPS helpers for Foxray subscriptions. 
+
+* Merge pull request #174 from miladosos/fix/validate-non-json-server-templates. 
+  _fix(templates): overrides of text server templates can be saved_
+
+* Fix(templates): overrides of text server templates can be saved. 
+  _The template editor validates a base config before saving it, and the
+validator parsed the rendered output of every server base config except
+wireguard as JSON5. Seven server templates are plain text: haproxy (HAProxy
+config), rust-rpxy-l4 and telemt (TOML), wireguard (.conf), firewall (bash)
+and ip_scanner / sni_scanner (Python). Their overrides could not be saved,
+even unchanged: validation failed with json5_parse.
+
+- TEXT_SERVER_BASE_CORES (next to BASE_CONFIG_MATRIX) lists them. Validation
+  renders them (Jinja errors are still reported) without parsing JSON, and the
+  two previews render them as text, as TextServerDriver does when it writes
+  the config.
+- Validation and preview give these templates the variables they get outside
+  the editor: the text driver's extra_jinja (the firewall's public_ports, the
+  HAProxy cert dir, the WireGuard NICs) and sample values for the scanner
+  scripts. Without them the built-in firewall and ip_scanner templates failed
+  with "'public_ports' is undefined" / "'size' is undefined".
+
+Tests render every built-in text server template through the validator and
+check that the list stays in sync with the TextServerDriver cores._
+
+* Merge pull request #173 from Hiddify-Official/fix/dashboard-network-rate. 
+  _fix(dashboard): network chart shows the server's real upload/download_
+
+* Fix(dashboard): network chart shows the server's real upload/download. 
+  _The chart summed every interface. HAProxy, Xray and Hiddify Core pass
+each connection to each other over loopback, so the same bytes counted
+in both directions (and WARP/WireGuard tunnels counted traffic a second
+time): a 40 Mb/s proxied download showed about 40 Mb/s of upload and
+85 Mb/s of download, a symmetric chart.
+
+- network_metrics() (and the legacy system_stats()) count only the
+  server's physical interfaces (those with a device), or every
+  interface but loopback and tunnels when there is none.
+- Node health keeps upload in the top half and download in the bottom
+  half, with the same range on both sides (the peak rounded to
+  1/2/5 x 10^n bits/s, so zero is in the middle and ticks are round).
+- Every node in its own colour (upload solid, download dashed; several
+  nodes stack per side), labels on the two halves, and a legend with
+  each node's current rates (a dash for a node the panel cannot reach).
+- The nodes page's live chart uses the node's colour._
+
+* Feat(users): implement functionality to place newly created users at the top or end of the list, enhancing user management experience. 
+
+* Refactor(decoy_upstream): update server configuration for improved SSL handling and backup server setup. 
+
+* Refactor(config_health): enhance config failure notification logic and add retry mechanism. 
+
+* Fix(domain): do not resolve ip if domain is entered in forced cdn ip. 
+
+* Fix(sublink): send fragment= again for apps that do not read FinalMask. 
+  _Karing, older v2rayNG and Hiddify <= 5.0.0 only read the share-link
+fragment=<length>,<delay>,<packets>; since FinalMask they got only fm= and
+imported no fragment. Build it from the domain's finalmask (first length and
+delay); Hiddify > 5.0.0 reads fm and does not get it._
+
+* Refactor(configs_api): update Full Xray subscription URL to include ASN parameter and simplify logic. 
+
+* Refactor(apply_users): move quick_apply_users to hutils and update references. 
+
+* Fix(user_driver): handle connection errors gracefully when checking enabled users. 
+
+* Fix(translations): restore "define_mode" key in multiple language files. 
+
+* Fix(telemt): IPv6 public_addr in brackets. 
+  _A domain on an IPv6 address gave public_addr = "2001:db8::1:443", which telemt cannot split into
+address and port, and the Telegram proxy service failed. Now "[2001:db8::1]:443"._
+
+* Fix(settings): support box title and button text are not ports. 
+  _"port" in the key matched "support": branding_support_title and branding_support_more got the
+port-number pattern, so typing any text in the HTML editor failed with only "fix the marked fields".
+Only keys ending in _port/_ports are ports now; errors of a field edited in another field's editor
+show on that owner's row._
+
 * Feat(panel): RAM notice for the proxy cores' users, more panel workers on a big parent panel. 
   _xray and hiddify-core keep every user in every inbound (40 000 users x 106 inbounds = 4 million entries,
 ~200 MB configs), and a server with too little RAM gets them killed by the OOM killer again and again.
