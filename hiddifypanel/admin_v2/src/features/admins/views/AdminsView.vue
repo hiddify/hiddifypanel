@@ -34,8 +34,8 @@
           </template>
         </Select>
         <Select
-          v-model="subFilter"
-          :options="subOptions"
+          v-model="permFilter"
+          :options="permOptions"
           option-label="label"
           option-value="value"
           :placeholder="t('admins.filter.anySub')"
@@ -44,7 +44,12 @@
           :aria-label="t('admins.filter.sub')"
         >
           <template #value="{ value, placeholder }">
-            <span class="admins-bar__filter-value"><i class="pi pi-sitemap" />{{ value ? subOptions.find((o) => o.value === value)?.label : placeholder }}</span>
+            <span class="admins-bar__filter-value">
+              <i class="pi" :class="permOptions.find((o) => o.value === value)?.icon ?? 'pi-key'" />{{ value ? permOptions.find((o) => o.value === value)?.label : placeholder }}
+            </span>
+          </template>
+          <template #option="{ option }">
+            <span class="admins-bar__filter-value"><i class="pi" :class="option.icon" />{{ option.label }}</span>
           </template>
         </Select>
       </div>
@@ -223,7 +228,7 @@ import AdminFormDialog from '@/features/admins/components/AdminFormDialog.vue'
 import MyConfigsDialog from '@/features/admins/components/MyConfigsDialog.vue'
 import AdminLinkDialog from '@/features/admins/components/AdminLinkDialog.vue'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
-import { adminsApi, type AdminCredentials, type AdminMode, type AdminRow, type AdminsTree } from '@/features/admins/api'
+import { ADMIN_CAPABILITIES, CAPABILITY_ICON, adminsApi, type AdminCapability, type AdminCredentials, type AdminMode, type AdminRow, type AdminsTree } from '@/features/admins/api'
 
 /** Highlights the search match inside a name or UUID. */
 const MarkText = defineComponent({
@@ -250,8 +255,9 @@ const loadError = ref<string | null>(null)
 const query = ref('')
 const expandedKeys = ref<Record<string, boolean>>({})
 const modeFilter = ref<AdminMode | null>(null)
-const subFilter = ref<'yes' | 'no' | null>(null)
-useHashState({ q: query, mode: modeFilter, sub: subFilter })
+/** Admins that have this permission (super admins have all); `none`: admins without any. */
+const permFilter = ref<AdminCapability | 'none' | null>(null)
+useHashState({ q: query, mode: modeFilter, perm: permFilter })
 const linkAdmin = ref<AdminRow | null>(null)
 const linkVisible = ref(false)
 const justChanged = ref<string | null>(null)
@@ -283,22 +289,24 @@ const modeOptions = computed(() => {
   const present = new Set<AdminMode>(['super_admin', 'agent', ...(tree.value?.admins ?? []).map((a) => a.mode)])
   return MODE_ORDER.filter((mode) => present.has(mode)).map((mode) => ({ value: mode, label: t(`admins.mode.${mode}`) }))
 })
-const subOptions = computed(() => [
-  { value: 'yes' as const, label: t('admins.filter.canAdd') },
-  { value: 'no' as const, label: t('admins.filter.cannotAdd') },
+/** Every permission, as in the edit dialog, then "none". */
+const permOptions = computed<{ value: AdminCapability | 'none'; label: string; icon: string }[]>(() => [
+  ...ADMIN_CAPABILITIES.map((key) => ({ value: key, label: t(`admins.capability.${key}`), icon: CAPABILITY_ICON[key] })),
+  { value: 'none', label: t('admins.form.capabilitiesNone'), icon: 'pi-ban' },
 ])
-const filtering = computed(() => Boolean(query.value.trim() || modeFilter.value || subFilter.value))
+const filtering = computed(() => Boolean(query.value.trim() || modeFilter.value || permFilter.value))
 
-
-function canAddSubs(admin: AdminRow): boolean {
-  return admin.mode === 'super_admin' || admin.can_add_admin
+function hasPermission(admin: AdminRow, perm: AdminCapability | 'none'): boolean {
+  const caps = admin.capabilities ?? {}
+  if (perm === 'none') return admin.mode !== 'super_admin' && !ADMIN_CAPABILITIES.some((key) => caps[key])
+  return admin.mode === 'super_admin' || Boolean(caps[perm]) || (perm === 'add_sub_admins' && admin.can_add_admin)
 }
 
 function matches(admin: AdminRow): boolean {
   const q = query.value.trim().toLowerCase()
   if (q && !admin.name.toLowerCase().includes(q) && !admin.uuid.toLowerCase().includes(q)) return false
   if (modeFilter.value && admin.mode !== modeFilter.value) return false
-  if (subFilter.value && canAddSubs(admin) !== (subFilter.value === 'yes')) return false
+  if (permFilter.value && !hasPermission(admin, permFilter.value)) return false
   return true
 }
 
@@ -307,7 +315,7 @@ const visibleAdmins = computed(() => (tree.value?.admins ?? []).filter(matches).
 function clearFilters() {
   query.value = ''
   modeFilter.value = null
-  subFilter.value = null
+  permFilter.value = null
 }
 
 /** Tree depth of each admin (0 = the signed-in admin). */

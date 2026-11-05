@@ -24,6 +24,16 @@ export const ADMIN_CAPABILITIES: AdminCapability[] = [
 
 export type AdminCapabilities = Record<AdminCapability, boolean>
 
+/** PrimeIcons class (without `pi `) of each permission, wherever permissions are shown. */
+export const CAPABILITY_ICON: Record<AdminCapability, string> = {
+  add_sub_admins: 'pi-user-plus',
+  override_preferred_outbound: 'pi-directions',
+  add_extra_sublinks: 'pi-paperclip',
+  modify_user_extra: 'pi-palette',
+  modify_domains: 'pi-link',
+  modify_outbounds: 'pi-share-alt',
+}
+
 /** Limits of one admin; they count its users and all its sub-admins' users. Null fields: no limit. */
 export interface AdminLimits {
   max_users: number

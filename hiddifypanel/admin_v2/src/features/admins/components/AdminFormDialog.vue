@@ -21,6 +21,7 @@ import type { UserMode } from '@/features/users/api'
 import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
 import {
   ADMIN_CAPABILITIES,
+  CAPABILITY_ICON,
   adminsApi,
   type AdminCapabilities,
   type AdminCredentials,
@@ -74,14 +75,7 @@ const touched = ref(false)
 const busy = ref(false)
 const error = ref<string | null>(null)
 
-const CAP_ICON: Record<keyof AdminCapabilities, string> = {
-  add_sub_admins: 'pi-user-plus',
-  override_preferred_outbound: 'pi-directions',
-  add_extra_sublinks: 'pi-paperclip',
-  modify_user_extra: 'pi-palette',
-  modify_domains: 'pi-link',
-  modify_outbounds: 'pi-share-alt',
-}
+const CAP_ICON = CAPABILITY_ICON
 
 const editing = computed(() => props.admin !== null)
 const targetIsSuper = computed(() => props.admin?.mode === 'super_admin')
