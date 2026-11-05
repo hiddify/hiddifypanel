@@ -4,6 +4,7 @@ import threading
 from collections import defaultdict
 from types import SimpleNamespace
 
+import requests
 from flask import current_app
 from loguru import logger
 
@@ -60,6 +61,9 @@ def get_enabled_users():
                     continue
                 d[u] += 1
             total += 1
+        except requests.ConnectionError as e:
+            # its service is stopped or restarting (a config it refuses): one line, not a traceback every minute
+            logger.warning(f"{driver.__class__.__name__} unavailable, its users are not checked: {e}")
         except Exception as e:
             print(driver)
             hiddify.error(f"ERROR! {driver.__class__.__name__} has error in get_enabled users {e}")
