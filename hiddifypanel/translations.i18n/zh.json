@@ -2233,11 +2233,31 @@
             "hours": "支持时间",
             "plan": "套餐卡片",
             "social": "社交按钮",
-            "steps": "快速开始"
+            "steps": "快速开始",
+            "darkCard": "深色联系卡片",
+            "minimal": "简约签名",
+            "persian": "波斯语支持横幅",
+            "serverStatus": "服务器状态",
+            "changelog": "最新动态",
+            "renew": "续费提醒",
+            "plans": "两种套餐",
+            "offer": "优惠活动",
+            "referral": "邀请好友",
+            "stats": "数据亮点",
+            "testimonial": "用户评价",
+            "apps": "下载应用",
+            "rules": "使用规则",
+            "tips": "故障排除提示"
           },
           "note": "现成的设计：选一个，然后编辑文字。",
           "replace": "全部替换",
-          "title": "模板"
+          "title": "模板",
+          "groups": {
+            "contact": "联系与支持",
+            "news": "公告与状态",
+            "sales": "套餐与优惠",
+            "guide": "指南"
+          }
         },
         "title": "HTML 编辑器",
         "titleText": "标题",

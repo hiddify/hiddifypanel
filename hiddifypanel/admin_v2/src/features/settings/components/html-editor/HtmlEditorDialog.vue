@@ -2,8 +2,9 @@
 /**
  * The panel's own HTML editor for the support box (no outside site): Preview edits the text as it looks on the user
  * page, Source shows its HTML. Lite has the everyday tools, Full all of them. OK and Apply put the text in the setting
- * (saved with the settings), Cancel drops what was not applied. Full adds the advanced tools: a template gallery, a
- * block style panel, table rows and columns, find & replace, code clean-up, HTML import/export and the element path.
+ * (saved with the settings), Cancel drops what was not applied. The template gallery opens from the top bar in every
+ * mode. Full adds the advanced tools: a block style panel, table rows and columns, find & replace, code clean-up,
+ * HTML import/export and the element path.
  */
 import { computed, nextTick, reactive, ref, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -277,7 +278,8 @@ function useTemplate(html: string, replace: boolean) {
       content.innerHTML = html
       done(content)
     } else draft.value = html
-  } else insertHtml(html)
+  } else if (mode.value === 'source') draft.value = draft.value ? `${draft.value}\n${html}` : html
+  else insertHtml(html)
 }
 
 const findPop = ref<InstanceType<typeof Popover> | null>(null)
@@ -439,7 +441,6 @@ const tools = computed<Tool[][]>(() => {
       { id: 'rtl', icon: 'rtl', label: t('settings.htmlEditor.tools.rtl'), run: () => setDirection('rtl'), full: true },
     ],
     [
-      { id: 'templates', icon: 'template', label: t('settings.htmlEditor.tools.templates'), run: () => (galleryVisible.value = true), full: true },
       { id: 'style', icon: 'palette', label: t('settings.htmlEditor.tools.blockStyle'), run: (e) => openStyle(e), full: true },
       { id: 'faq', icon: 'faq', label: t('settings.htmlEditor.tools.faq'), run: () => insertHtml(SNIPPETS.faq(t('settings.htmlEditor.sampleQuestion'), t('settings.htmlEditor.sampleAnswer'))), full: true },
     ],
@@ -625,6 +626,7 @@ function redo() {
             <EditorIcon name="code" />{{ t('settings.htmlEditor.source') }}
           </button>
         </div>
+        <button type="button" class="hed-templates" @click="galleryVisible = true"><EditorIcon name="template" />{{ t('settings.htmlEditor.tools.templates') }}</button>
         <div class="hed-seg hed-seg--level" role="radiogroup" :aria-label="t('settings.htmlEditor.toolset')">
           <button type="button" role="radio" class="hed-seg__btn" :class="{ 'hed-seg__btn--on': level === 'lite' }" :aria-checked="level === 'lite'" @click="level = 'lite'">
             <EditorIcon name="sparkle" />{{ t('settings.htmlEditor.lite') }}
@@ -919,6 +921,42 @@ function redo() {
   padding: 0.6rem 0.75rem;
   border-bottom: 1px solid var(--p-content-border-color);
   background: color-mix(in srgb, var(--p-primary-color) 4%, var(--p-content-background));
+}
+.hed-seg--level {
+  margin-inline-start: auto;
+}
+/* Templates: next to Preview / Source, in every mode and toolset */
+.hed-templates {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid color-mix(in srgb, #e8590c 35%, transparent);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d9480f;
+  background: color-mix(in srgb, #f59f00 12%, var(--p-content-background));
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+.hed-templates :deep(.editor-icon) {
+  width: 16px;
+  height: 16px;
+}
+.hed-templates:hover {
+  background: color-mix(in srgb, #f59f00 20%, var(--p-content-background));
+  box-shadow: 0 4px 12px -6px #e8590c;
+}
+.hed-templates:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 1px;
+}
+html.app-dark .hed-templates {
+  color: #ffa94d;
 }
 .hed-seg {
   display: inline-flex;

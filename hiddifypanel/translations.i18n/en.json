@@ -3051,11 +3051,31 @@
             "hours": "Support hours",
             "plan": "Plan card",
             "social": "Social buttons",
-            "steps": "Getting started"
+            "steps": "Getting started",
+            "darkCard": "Dark contact card",
+            "minimal": "Minimal signature",
+            "persian": "Persian support banner",
+            "serverStatus": "Server status",
+            "changelog": "What's new",
+            "renew": "Renewal reminder",
+            "plans": "Two plans",
+            "offer": "Discount offer",
+            "referral": "Invite a friend",
+            "stats": "Numbers",
+            "testimonial": "Customer review",
+            "apps": "Download the app",
+            "rules": "Rules",
+            "tips": "Troubleshooting tip"
           },
           "note": "Ready-made designs: pick one, then edit its text.",
           "replace": "Replace all",
-          "title": "Templates"
+          "title": "Templates",
+          "groups": {
+            "contact": "Contact & support",
+            "news": "News & status",
+            "sales": "Plans & offers",
+            "guide": "Guides"
+          }
         },
         "title": "HTML Editor",
         "titleText": "Title",
