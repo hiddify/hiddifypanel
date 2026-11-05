@@ -1680,6 +1680,18 @@
       "subtitle": "Escolha, em ordem, por onde o tráfego sai deste servidor: pelo WARP, direto, bloqueado ou por uma saída Socks, Tor ou Psiphon.",
       "title": "Outbounds"
     },
+    "pager": {
+      "first": "Primeira página",
+      "jump": "Ir para a página",
+      "label": "Páginas",
+      "last": "Última página",
+      "next": "Próxima",
+      "of": "de {pages}",
+      "pageOf": "Página {page} de {pages}",
+      "prev": "Anterior",
+      "report": "Mostrando {first}–{last} de {total}",
+      "slider": "Arraste para mudar de página"
+    },
     "passwordRules": {
       "common": "não ser uma senha comum",
       "digit": "um dígito",
@@ -2727,7 +2739,6 @@
       "none": "Ainda não há usuários",
       "of": "de",
       "online": "Online",
-      "pageReport": "{first}–{last} de {totalRecords}",
       "perPage": "Usuários por página",
       "refresh": "Atualizar",
       "resetTag": {
