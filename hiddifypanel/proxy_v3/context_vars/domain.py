@@ -200,12 +200,16 @@ class DomainIPVar(BaseModel):
         return var
 
     def server(self, force_ip: bool = False) -> str:
+        """The client's address: the domain name, unless "Resolve IP" is on or the name can't be dialed (a fake/reality
+        domain, or, with ``force_ip`` for the IP-mode proxies, a wildcard or empty name)."""
         dst_domain = self.dst_server if isinstance(self.dst_server, str) and self.dst_server else (self.host or self.name or "")
         if self.has_server_domain:
             return dst_domain
         if is_ip_address(dst_domain):
             return strip_ip_brackets(dst_domain)
-        if force_ip or self.resolve_ip or self.fake_mode != FakeMode.valid:
+        if self.resolve_ip or self.fake_mode != FakeMode.valid:
+            return prefer_ipv4_server(self.ips, dst_domain)
+        if force_ip and (not dst_domain or "*" in dst_domain):
             return prefer_ipv4_server(self.ips, dst_domain)
         return dst_domain
 
