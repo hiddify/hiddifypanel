@@ -49,6 +49,7 @@ COMPANION_OF = {
     ConfigEnum.branding_support_title_show: ConfigEnum.branding_freetext,
     ConfigEnum.branding_support_more: ConfigEnum.branding_freetext,
     ConfigEnum.branding_support_more_show: ConfigEnum.branding_freetext,
+    ConfigEnum.branding_freetext_full: ConfigEnum.branding_freetext,
 }
 _SKIP_FIELDS = frozenset({"description_for_fieldset", "csrf_token", "submit"})
 

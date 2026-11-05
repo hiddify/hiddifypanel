@@ -1,22 +1,32 @@
 <script setup lang="ts">
-/** Full mode's template gallery: ready-made support box designs, inserted at the caret or replacing the text. */
-import { computed, ref } from 'vue'
+/**
+ * The template gallery: ready-made support box designs, inserted at the caret or replacing the text. Each has a Lite
+ * version (the box) and a Full one ("Read More"); both are previewed, and each goes in its own text.
+ */
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import EditorIcon from './EditorIcon.vue'
 import SupportFrame from './SupportFrame.vue'
 import { TEMPLATE_GROUPS, TEMPLATES, type SupportTemplate } from './templates'
+import { fullParts } from './support-frame'
 
 const visible = defineModel<boolean>('visible', { required: true })
-const emit = defineEmits<{ pick: [html: string, replace: boolean] }>()
+/** The text being edited: its version is previewed first. */
+const props = withDefaults(defineProps<{ variant?: 'lite' | 'full' }>(), { variant: 'lite' })
+const emit = defineEmits<{ pick: [template: SupportTemplate, replace: boolean] }>()
 
 const { t } = useI18n()
 const chosen = ref<SupportTemplate>(TEMPLATES[0])
+const showing = ref<'lite' | 'full'>(props.variant)
+watch(visible, (open) => {
+  if (open) showing.value = props.variant
+})
 const sections = computed(() => TEMPLATE_GROUPS.map((group) => ({ group, items: TEMPLATES.filter((tpl) => tpl.group === group) })).filter((s) => s.items.length))
 
 function pick(replace: boolean) {
-  emit('pick', chosen.value.html, replace)
+  emit('pick', chosen.value, replace)
   visible.value = false
 }
 </script>
@@ -51,8 +61,24 @@ function pick(replace: boolean) {
           </button>
         </template>
       </div>
-      <div class="tg__preview">
-        <SupportFrame :key="chosen.id" :html="chosen.html" />
+      <div class="tg__side">
+        <div class="tg__tabs" role="tablist">
+          <button
+            v-for="v in (['lite', 'full'] as const)"
+            :key="v"
+            type="button"
+            role="tab"
+            class="tg__tab"
+            :class="{ 'tg__tab--on': showing === v }"
+            :aria-selected="showing === v"
+            @click="showing = v"
+          >
+            {{ t(`settings.htmlEditor.variant.${v}`) }} <span class="tg__tab-hint">· {{ t(`settings.htmlEditor.variant.${v}Hint`) }}</span>
+          </button>
+        </div>
+        <div class="tg__preview">
+          <SupportFrame :key="`${chosen.id}-${showing}`" :html="chosen[showing]" :parts="showing === 'full' ? fullParts() : undefined" />
+        </div>
       </div>
     </div>
     <template #footer>
@@ -133,7 +159,42 @@ function pick(replace: boolean) {
   border-color: color-mix(in srgb, var(--p-primary-color) 35%, transparent);
   background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
 }
+.tg__side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+.tg__tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--p-text-color) 7%, transparent);
+}
+.tg__tab {
+  padding: 0.35rem 0.8rem;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+  background: transparent;
+  cursor: pointer;
+}
+.tg__tab--on {
+  color: var(--p-primary-color);
+  background: var(--p-content-background);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 12%);
+}
+.tg__tab-hint {
+  font-weight: 400;
+}
 .tg__preview {
+  flex: 1;
+  min-height: 0;
   border: 1px solid var(--p-content-border-color);
   border-radius: 14px;
   overflow: hidden;

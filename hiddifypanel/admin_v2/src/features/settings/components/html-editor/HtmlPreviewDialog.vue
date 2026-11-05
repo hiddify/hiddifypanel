@@ -1,16 +1,23 @@
 <script setup lang="ts">
-/** "View": the support box as users see it, nothing to edit. */
+/** "View": the support box as users see it (and its Full text, shown by "Read More"), nothing to edit. */
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import EditorIcon from './EditorIcon.vue'
 import SupportFrame from './SupportFrame.vue'
-import type { BoxParts } from './support-frame'
+import { fullParts, type BoxParts } from './support-frame'
 
-defineProps<{ html: string; title: string; parts?: BoxParts }>()
+const props = defineProps<{ html: string; title: string; parts?: BoxParts }>()
 const visible = defineModel<boolean>('visible', { required: true })
 
 const { t } = useI18n()
+const showing = ref<'lite' | 'full'>('lite')
+watch(visible, (open) => {
+  if (open) showing.value = 'lite'
+})
+/** The Full text is shown only when there is one. */
+const hasFull = () => Boolean(props.parts?.full?.trim())
 </script>
 
 <template>
@@ -24,8 +31,23 @@ const { t } = useI18n()
         </div>
       </div>
     </template>
+    <div v-if="hasFull()" class="hpv-tabs" role="tablist">
+      <button
+        v-for="v in (['lite', 'full'] as const)"
+        :key="v"
+        type="button"
+        role="tab"
+        class="hpv-tab"
+        :class="{ 'hpv-tab--on': showing === v }"
+        :aria-selected="showing === v"
+        @click="showing = v"
+      >
+        {{ t(`settings.htmlEditor.variant.${v}`) }} <span class="hpv-tab__hint">· {{ t(`settings.htmlEditor.variant.${v}Hint`) }}</span>
+      </button>
+    </div>
     <div class="hpv">
-      <SupportFrame :html="html" :parts="parts" />
+      <SupportFrame v-if="showing === 'full' && hasFull()" key="full" :html="parts!.full!" :parts="fullParts(parts)" />
+      <SupportFrame v-else key="lite" :html="html" :parts="parts" />
     </div>
     <p class="hpv-note"><i class="pi pi-info-circle" />{{ t('settings.htmlEditor.previewNote') }}</p>
     <template #footer>
@@ -59,6 +81,33 @@ const { t } = useI18n()
 .hpv-head__sub {
   font-size: 0.8rem;
   color: var(--p-text-muted-color);
+}
+.hpv-tabs {
+  display: inline-flex;
+  margin-bottom: 0.6rem;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--p-text-color) 7%, transparent);
+}
+.hpv-tab {
+  padding: 0.35rem 0.8rem;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+  background: transparent;
+  cursor: pointer;
+}
+.hpv-tab--on {
+  color: var(--p-primary-color);
+  background: var(--p-content-background);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 12%);
+}
+.hpv-tab__hint {
+  font-weight: 400;
 }
 .hpv {
   height: min(60vh, 32rem);

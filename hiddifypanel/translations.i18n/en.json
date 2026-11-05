@@ -2987,12 +2987,12 @@
           "default": "Default font"
         },
         "formatCode": "Format code",
-        "full": "Full",
+        "full": "All tools",
         "imageUrl": "Image address (URL)",
         "insert": "Insert",
         "linkText": "Text",
         "linkTextHint": "Empty: the selected text or the link",
-        "lite": "Lite",
+        "lite": "Basic tools",
         "loadingSource": "Loading the code editor…",
         "moreLink": "Opens the \"Support Website\" setting",
         "moreText": "Button text",
@@ -3137,7 +3137,16 @@
         "view": "Editor view",
         "viewButton": "View",
         "width": "Width (px)",
-        "wrap": "Wrap lines"
+        "wrap": "Wrap lines",
+        "variant": {
+          "label": "Which text",
+          "lite": "Lite",
+          "liteHint": "shown in the box",
+          "full": "Full",
+          "fullHint": "shown by “Read More”",
+          "fullEmpty": "No Full text: “Read More” shows the Lite text when it does not fit in the box.",
+          "copyLite": "Copy the Lite text"
+        }
       },
       "invalid": "This value is not valid.",
       "leaveUnsaved": "You have unsaved changes. Leave anyway?",
@@ -5043,6 +5052,10 @@
     "xtls_enable": {
       "description": "Enables XTLS Protocol",
       "label": "🟢 XTLS"
+    },
+    "branding_freetext_full": {
+      "description": "Shown by “Read More” on the user page. Empty: “Read More” shows the support text when it does not fit.",
+      "label": "Support text, Full"
     }
   },
   "copy": "Copy",
