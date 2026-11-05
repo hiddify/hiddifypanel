@@ -1,18 +1,19 @@
 <script setup lang="ts">
 /** Full mode's template gallery: ready-made support box designs, inserted at the caret or replacing the text. */
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import EditorIcon from './EditorIcon.vue'
 import SupportFrame from './SupportFrame.vue'
-import { TEMPLATES, type SupportTemplate } from './templates'
+import { TEMPLATE_GROUPS, TEMPLATES, type SupportTemplate } from './templates'
 
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ pick: [html: string, replace: boolean] }>()
 
 const { t } = useI18n()
 const chosen = ref<SupportTemplate>(TEMPLATES[0])
+const sections = computed(() => TEMPLATE_GROUPS.map((group) => ({ group, items: TEMPLATES.filter((tpl) => tpl.group === group) })).filter((s) => s.items.length))
 
 function pick(replace: boolean) {
   emit('pick', chosen.value.html, replace)
@@ -33,19 +34,22 @@ function pick(replace: boolean) {
     </template>
     <div class="tg">
       <div class="tg__list" role="listbox" :aria-label="t('settings.htmlEditor.templates.title')">
-        <button
-          v-for="tpl in TEMPLATES"
-          :key="tpl.id"
-          type="button"
-          role="option"
-          class="tg__item"
-          :class="{ 'tg__item--on': chosen.id === tpl.id }"
-          :aria-selected="chosen.id === tpl.id"
-          @click="chosen = tpl"
-          @dblclick="pick(false)"
-        >
-          {{ t(`settings.htmlEditor.templates.names.${tpl.id}`) }}
-        </button>
+        <template v-for="section in sections" :key="section.group">
+          <div class="tg__group" role="presentation">{{ t(`settings.htmlEditor.templates.groups.${section.group}`) }}</div>
+          <button
+            v-for="tpl in section.items"
+            :key="tpl.id"
+            type="button"
+            role="option"
+            class="tg__item"
+            :class="{ 'tg__item--on': chosen.id === tpl.id }"
+            :aria-selected="chosen.id === tpl.id"
+            @click="chosen = tpl"
+            @dblclick="pick(false)"
+          >
+            {{ t(`settings.htmlEditor.templates.names.${tpl.id}`) }}
+          </button>
+        </template>
       </div>
       <div class="tg__preview">
         <SupportFrame :key="chosen.id" :html="chosen.html" />
@@ -97,8 +101,19 @@ function pick(replace: boolean) {
   gap: 0.25rem;
   overflow-y: auto;
 }
+.tg__group {
+  padding: 0.75rem 0.8rem 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--p-text-muted-color);
+}
+.tg__group:first-child {
+  padding-top: 0;
+}
 .tg__item {
-  padding: 0.6rem 0.8rem;
+  padding: 0.5rem 0.8rem;
   border: 1px solid transparent;
   border-radius: 10px;
   font: inherit;
@@ -135,6 +150,9 @@ function pick(replace: boolean) {
   }
   .tg__item {
     white-space: nowrap;
+  }
+  .tg__group {
+    display: none;
   }
 }
 </style>

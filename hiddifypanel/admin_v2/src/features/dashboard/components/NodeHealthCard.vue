@@ -91,16 +91,8 @@ function resourceSeries(metric: 'cpu' | 'memory', label: string, color: string) 
   })
 }
 
-/** Mirrored upload(+)/download(-); one node's pair, or every node's pair stacked. */
+/** Upload above zero, download below (mirrored), in each node's own colour; several nodes stack per side. */
 const networkOverview = computed(() => {
-  if (!multiNode.value) {
-    const node = visibleNodes.value[0]
-    const samples = node ? (props.history[node.id] ?? []) : []
-    return [
-      { label: t('dashboard.upload'), values: samples.map((sample) => sample.up), color: SERIES.upload, type: 'line' as const, area: true },
-      { label: t('dashboard.download'), values: samples.map((sample) => -sample.down), color: SERIES.download, type: 'line' as const, area: true },
-    ]
-  }
   const width = overviewLabels.value.length
   return visibleNodes.value.flatMap((node) => {
     const samples = props.history[node.id] ?? []
@@ -108,11 +100,46 @@ const networkOverview = computed(() => {
     const color = nodeColor(node.id)
     const title = nodeTitle(node)
     return [
-      { label: `${title} ↑`, values: [...Array(pad).fill(0), ...samples.map((sample) => sample.up)], color, type: 'line' as const, area: true },
-      { label: `${title} ↓`, values: [...Array(pad).fill(0), ...samples.map((sample) => -sample.down)], color, type: 'line' as const, area: true },
+      { label: `${title} · ${t('dashboard.upload')}`, values: [...Array(pad).fill(0), ...samples.map((sample) => sample.up)], color, type: 'line' as const, area: true },
+      { label: `${title} · ${t('dashboard.download')}`, values: [...Array(pad).fill(0), ...samples.map((sample) => -sample.down)], color, type: 'line' as const, area: true, dashed: true },
     ]
   })
 })
+
+/** The same range above and below zero (zero in the middle: upload's half and download's half), from the peak. */
+const networkPeak = computed(() => {
+  const series = networkOverview.value
+  let peak = 0
+  for (let i = 0; i < overviewLabels.value.length; i++) {
+    let up = 0
+    let down = 0
+    for (const s of series) {
+      const v = s.values[i] ?? 0
+      if (v > 0) up += v
+      else down -= v
+    }
+    peak = Math.max(peak, up, down)
+  }
+  return peak > 0 ? niceRate(peak * 1.1) : undefined
+})
+
+/** A round rate at or above ``bytesPerSecond`` (1, 2 or 5 × 10ⁿ bits/s), so the ticks read 20 / 40 Mb/s, not 68.8. */
+function niceRate(bytesPerSecond: number): number {
+  const bits = bytesPerSecond * 8
+  const magnitude = 10 ** Math.floor(Math.log10(bits))
+  const step = [1, 2, 5, 10].find((m) => m * magnitude >= bits) ?? 10
+  return (step * magnitude) / 8
+}
+
+/** Each node's colour and its latest rates, under the network chart. */
+const networkLegend = computed(() =>
+  visibleNodes.value.map((node) => {
+    const samples = props.history[node.id] ?? []
+    const last = samples[samples.length - 1]
+    // no sample: the node could not be asked (shown as —, not as 0 b/s)
+    return { id: node.id, title: nodeTitle(node), color: nodeColor(node.id), last }
+  }),
+)
 
 const cpuOverview = computed(() => resourceSeries('cpu', t('dashboard.cpu'), SERIES.cpu))
 const memoryOverview = computed(() => resourceSeries('memory', t('dashboard.ram'), SERIES.memory))
@@ -267,17 +294,34 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
       </button>
       <div class="node-health__overview-chart node-health__overview-chart--static">
         <p class="node-health__heading">{{ t('dashboard.network') }}</p>
-        <MetricChart
-          :labels="overviewLabels"
-          :series="networkOverview"
-          type="line"
-          :stacked="true"
-          mirror
-          :legend="false"
-          :value-formatter="bitRateFormatter"
-          :height="140"
-          :max-x-ticks="6"
-        />
+        <div class="node-health__net">
+          <span class="node-health__net-side node-health__net-side--up"><i class="pi pi-arrow-up" />{{ t('dashboard.upload') }}</span>
+          <span class="node-health__net-side node-health__net-side--down"><i class="pi pi-arrow-down" />{{ t('dashboard.download') }}</span>
+          <MetricChart
+            :labels="overviewLabels"
+            :series="networkOverview"
+            type="line"
+            :stacked="true"
+            mirror
+            :y-max="networkPeak"
+            :y-min="networkPeak ? -networkPeak : undefined"
+            :legend="false"
+            :value-formatter="bitRateFormatter"
+            :height="140"
+            :max-x-ticks="6"
+          />
+        </div>
+        <ul class="node-health__net-legend">
+          <li v-for="n in networkLegend" :key="n.id">
+            <span class="node-health__net-dot" :style="{ background: n.color }" />
+            <span class="node-health__net-name">{{ n.title }}</span>
+            <template v-if="n.last">
+              <span class="node-health__net-rate" dir="ltr"><i class="pi pi-arrow-up" />{{ bitRateFormatter(n.last.up) }}</span>
+              <span class="node-health__net-rate" dir="ltr"><i class="pi pi-arrow-down" />{{ bitRateFormatter(n.last.down) }}</span>
+            </template>
+            <span v-else class="node-health__net-rate">—</span>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -495,6 +539,73 @@ const largestFolder = computed(() => diskDetail.value?.top_folders[0]?.size_gb ?
 }
 .node-health__overview-chart--static {
   cursor: default;
+}
+.node-health__net {
+  position: relative;
+}
+/* which half is which: upload on top, download below zero */
+.node-health__net-side {
+  position: absolute;
+  inset-inline-end: 0.25rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+  background: color-mix(in srgb, var(--p-content-background) 80%, transparent);
+  pointer-events: none;
+}
+.node-health__net-side i {
+  font-size: 0.55rem;
+}
+.node-health__net-side--up {
+  top: 0;
+}
+.node-health__net-side--down {
+  /* above the time labels */
+  bottom: 2.15rem;
+}
+.node-health__net-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.72rem;
+}
+.node-health__net-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.node-health__net-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: none;
+  border-radius: 999px;
+}
+.node-health__net-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 9rem;
+}
+.node-health__net-rate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  color: var(--p-text-muted-color);
+  font-variant-numeric: tabular-nums;
+}
+.node-health__net-rate i {
+  font-size: 0.55rem;
 }
 .node-health__heading {
   margin: 0 0 0.35rem;

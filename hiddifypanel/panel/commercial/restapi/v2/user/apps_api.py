@@ -273,7 +273,9 @@ class AppAPI(MethodView):
         dto.description = _("app.foxray.description")
         dto.icon_url = self.__get_app_icon_url(_("app.foxray.title"))
         dto.guide_url = ""
-        dto.deeplink = f"https://yiguo.dev/sub/add/?url={hutils.encode.do_base_64(self.subscription_link_encoded_url)}#{self.profile_title}"
+        # Use the user front's Copy Link fallback. An HTTPS import helper can
+        # receive the subscription URL when the app does not handle the link.
+        dto.deeplink = ""
 
         ins_url = "https://apps.apple.com/us/app/foxray/id6448898396"
         dto.install = [

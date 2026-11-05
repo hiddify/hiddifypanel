@@ -79,8 +79,10 @@ def system_stats() -> dict:
 
     hiddify_used = get_folder_size('/opt/hiddify-manager/') / 1024**3
 
-    # Network usage
-    net_stats = psutil.net_io_counters()
+    # Network usage (the real interfaces only, as on the dashboard)
+    from .system_metrics import wire_counters
+
+    net_stats = wire_counters()
     bytes_sent_cumulative = net_stats.bytes_sent
     bytes_recv_cumulative = net_stats.bytes_recv
     bytes_sent = net_stats.bytes_sent - getattr(system_stats, 'prev_bytes_sent', 0)

@@ -2233,11 +2233,31 @@
             "hours": "Horário de suporte",
             "plan": "Cartão de plano",
             "social": "Botões sociais",
-            "steps": "Primeiros passos"
+            "steps": "Primeiros passos",
+            "darkCard": "Cartão de contato escuro",
+            "minimal": "Assinatura minimalista",
+            "persian": "Banner de suporte em persa",
+            "serverStatus": "Status dos servidores",
+            "changelog": "Novidades",
+            "renew": "Lembrete de renovação",
+            "plans": "Dois planos",
+            "offer": "Oferta de desconto",
+            "referral": "Convide um amigo",
+            "stats": "Números",
+            "testimonial": "Avaliação de cliente",
+            "apps": "Baixe o app",
+            "rules": "Regras",
+            "tips": "Dica de solução"
           },
           "note": "Designs prontos: escolha um e depois edite o texto.",
           "replace": "Substituir tudo",
-          "title": "Modelos"
+          "title": "Modelos",
+          "groups": {
+            "contact": "Contato e suporte",
+            "news": "Novidades e status",
+            "sales": "Planos e ofertas",
+            "guide": "Guias"
+          }
         },
         "title": "Editor HTML",
         "titleText": "Título",

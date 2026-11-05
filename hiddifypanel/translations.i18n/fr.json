@@ -2252,7 +2252,27 @@
             "plan": "Carte d'abonnement",
             "hours": "Horaires du support",
             "social": "Boutons sociaux",
-            "steps": "Pour commencer"
+            "steps": "Pour commencer",
+            "darkCard": "Carte de contact sombre",
+            "minimal": "Signature minimaliste",
+            "persian": "Bannière d’assistance en persan",
+            "serverStatus": "État des serveurs",
+            "changelog": "Nouveautés",
+            "renew": "Rappel de renouvellement",
+            "plans": "Deux forfaits",
+            "offer": "Offre promotionnelle",
+            "referral": "Parrainer un ami",
+            "stats": "Chiffres clés",
+            "testimonial": "Avis client",
+            "apps": "Télécharger l’application",
+            "rules": "Règles",
+            "tips": "Astuce de dépannage"
+          },
+          "groups": {
+            "contact": "Contact et assistance",
+            "news": "Actualités et état",
+            "sales": "Offres et forfaits",
+            "guide": "Guides"
           }
         },
         "style": {
