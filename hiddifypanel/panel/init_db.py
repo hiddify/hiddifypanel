@@ -26,6 +26,18 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v198(child_id):
+    """OpenVPN (hiddify-core's openvpn-server endpoint): off, and its self-signed server certificate. The preset sync adds
+    the OpenVPN proxy."""
+    if child_id != 0:
+        return
+    add_config_if_not_exist(ConfigEnum.openvpn_enable, False)
+    if not hconfig(ConfigEnum.openvpn_certificate):
+        cert_pem, key_pem = hutils.crypto.get_openvpn_certificate()
+        set_hconfig(ConfigEnum.openvpn_certificate, cert_pem, commit=False)
+        set_hconfig(ConfigEnum.openvpn_private_key, key_pem, commit=False)
+
+
 def _v197(child_id):
     """Admins count their own traffic (their users' and their sub-admins' users'), with a reset period like users:
     it starts from what those users show now, so a traffic limit already set stays where it was."""

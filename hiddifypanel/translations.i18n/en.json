@@ -4530,6 +4530,10 @@
       "description": "It will Disable IPv6",
       "label": "ℹ️ Only IPv4"
     },
+    "openvpn_enable": {
+      "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
+      "label": "OpenVPN"
+    },
     "package_mode": {
       "description": "Specify whether you want Released Package or Beta one",
       "label": "🔄 Package Update Mode"

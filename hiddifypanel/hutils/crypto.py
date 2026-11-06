@@ -33,6 +33,41 @@ def get_ed25519_private_public_pair():
     return priv_bytes.decode(), pub_bytes.decode()
 
 
+def get_openvpn_certificate() -> tuple[str, str]:
+    """(certificate PEM, private key PEM): the OpenVPN server's self-signed certificate, valid 20 years. The clients trust
+    it as their CA (it is in their config), so it is a CA too; ``remote-cert-tls server`` needs the serverAuth usage."""
+    from datetime import UTC, datetime, timedelta
+
+    from cryptography import x509
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import ec
+    from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
+
+    key = ec.generate_private_key(ec.SECP256R1())
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "openvpn-server")])
+    now = datetime.now(UTC)
+    usage = x509.KeyUsage(
+        digital_signature=True, content_commitment=False, key_encipherment=False, data_encipherment=False, key_agreement=True,
+        key_cert_sign=True, crl_sign=False, encipher_only=False, decipher_only=False,
+    )  # fmt: skip
+    cert = (
+        x509.CertificateBuilder()
+        .subject_name(name)
+        .issuer_name(name)
+        .public_key(key.public_key())
+        .serial_number(x509.random_serial_number())
+        .not_valid_before(now - timedelta(days=1))
+        .not_valid_after(now + timedelta(days=20 * 365))
+        .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
+        .add_extension(usage, critical=True)
+        .add_extension(x509.ExtendedKeyUsage([ExtendedKeyUsageOID.SERVER_AUTH]), critical=False)
+        .sign(key, hashes.SHA256())
+    )
+    cert_pem = cert.public_bytes(serialization.Encoding.PEM).decode()
+    key_pem = key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()).decode()
+    return cert_pem, key_pem
+
+
 def get_wg_private_public_psk_pair():
     """WireGuard keys as ``wg genkey`` / ``wg pubkey`` / ``wg genpsk`` print them (standard base64 of 32 bytes).
 

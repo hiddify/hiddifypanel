@@ -389,12 +389,13 @@ CLIENT_CONFIG_FILES: tuple[tuple[str, str], ...] = (
     ("xray", "xray.json"),
     ("sublink", "sublink.txt"),
     ("wireguard", "wireguard.conf"),
+    ("openvpn", "openvpn.ovpn"),
     ("clash", "clash.yaml"),
     ("singbox", "singbox.json"),
 )
 
-# Client WireGuard .conf only exists when the user has a wireguard client core; empty is not a failure.
-_OPTIONAL_EMPTY_CLIENT_CORES = frozenset({"wireguard"})
+# Client WireGuard .conf / OpenVPN .ovpn only exist when the user has such a client core; empty is not a failure.
+_OPTIONAL_EMPTY_CLIENT_CORES = frozenset({"wireguard", "openvpn"})
 
 DEFAULT_CLIENT_UA = "HiddifyNext/3.0.0 (android) like ClashMeta v2ray sing-box"
 
@@ -457,6 +458,8 @@ def summarize_client_dumped_config(core: str, filename: str, rendered: str) -> d
         stats["links"] = len([line for line in text.splitlines() if line.strip() and "://" in line])
     elif core == "wireguard":
         stats["peers"] = text.count("[Peer]")
+    elif core == "openvpn":
+        stats["profiles"] = text.count("<ca>")
 
     return stats
 
@@ -638,13 +641,15 @@ def render_client_configs(
                 }
             )
 
-    if "wireguard" in wanted:
+    for file_core in ("wireguard", "openvpn"):
+        if file_core not in wanted:
+            continue
         try:
-            wg_text, wg_msgs = render_wireguard_conf(child_id, contexts)
-            _append_render_messages(result, "wireguard", wg_msgs)
-            result.configs["wireguard"] = wg_text
+            file_text, file_msgs = render_file_configs(child_id, contexts, file_core)
+            _append_render_messages(result, file_core, file_msgs)
+            result.configs[file_core] = file_text
         except Exception as exc:
-            result.messages.append({"core": "wireguard", "level": "error", "message": str(exc), "data": {"stacktrace": traceback.format_exc()}})
+            result.messages.append({"core": file_core, "level": "error", "message": str(exc), "data": {"stacktrace": traceback.format_exc()}})
 
     if "sublink" in wanted:
         try:
@@ -697,7 +702,7 @@ def dump_all_client_configs(
     for core, filename in CLIENT_CONFIG_FILES:
         text = rendered.configs.get(core) or ""
         if not text.strip():
-            # No wireguard proxies → no .conf; do not treat that as a dump failure.
+            # No wireguard / openvpn proxies → no .conf / .ovpn; do not treat that as a dump failure.
             if core not in _OPTIONAL_EMPTY_CLIENT_CORES:
                 dump.missing.append(filename)
             continue
@@ -804,8 +809,9 @@ def _build_clash_client_config(child_id: int, contexts: list[ClientContextVar]) 
     return yaml.dump(parsed, sort_keys=False, allow_unicode=True) or "", messages
 
 
-def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar]) -> tuple[str, list[MessageModel]]:
-    """The WireGuard .conf of every proxy with a "wireguard" client config, one after another (client core "wireguard")."""
+def render_file_configs(child_id: int, contexts: list[ClientContextVar], core: str) -> tuple[str, list[MessageModel]]:
+    """The client file of every proxy with a ``core`` client config, one after another: the WireGuard .conf (client core
+    "wireguard") or the OpenVPN .ovpn ("openvpn")."""
     from hiddifypanel.models.custom_proxy import TemplateCore
     from hiddifypanel.proxy_v3.config_builder.client_selection import select_client_config
     from hiddifypanel.proxy_v3.config_builder.models import MessageModel
@@ -815,8 +821,8 @@ def render_wireguard_conf(child_id: int, contexts: list[ClientContextVar]) -> tu
     messages: list[MessageModel] = []
     sections: list[str] = []
     for ctx in contexts:
-        ctx.render_core = TemplateCore.wireguard.value
-        client_config = select_client_config(ctx.proxy.client_configs, TemplateCore.wireguard, ctx.platform.app_version)
+        ctx.render_core = TemplateCore(core).value
+        client_config = select_client_config(ctx.proxy.client_configs, TemplateCore(core), ctx.platform.app_version)
         if client_config is None or not (client_config.content or "").strip():
             continue
         section = render_section(client_config.content, child_id, make_jinja_context(ctx), as_json_object=False, parse_json=False)

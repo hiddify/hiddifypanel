@@ -391,6 +391,11 @@ class ConfigEnum(metaclass=FastEnum):
 
     anytls_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
     snell_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    # OpenVPN, served by hiddify-core (an "openvpn-server" endpoint). The server certificate is self-signed: the clients
+    # get it in their config (no CA, no domain needed). Users log in with their uuid.
+    openvpn_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
+    openvpn_certificate = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
+    openvpn_private_key = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     socks_enable = _BoolConfigDscr(ConfigCategory.proxies, ApplyMode.apply_config)
 
     hiddifycli_enable = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.reinstall)

@@ -140,7 +140,7 @@ def _is_standalone_hiddify_server(combo: ProxyCombination) -> bool:
 
 
 def supports_hiddify_preset(combo: ProxyCombination) -> bool:
-    if combo.proto == "wireguard":
+    if combo.proto in ("wireguard", "openvpn"):  # endpoints (build_hiddify_endpoint), not inbounds
         return False
     # DNS tunnels are OS services (dns_proxy), not hiddify-core inbounds.
     if str(combo.proto).lower() in {"dnstt", "slipstream", "masterdns"}:
@@ -291,16 +291,16 @@ def build_hiddify_standalone_inbound(combo: ProxyCombination) -> tuple[str, list
     return content, slugs
 
 
-def build_hiddify_wireguard_endpoint() -> tuple[str, list[str]]:
-    """hiddify-core serves WireGuard itself, as an endpoint: the ``endpoint_other`` preset around the ``wireguard`` protocol."""
-    proto_slug = fragment_slug("hiddify-core", "protocols", "wireguard", side="server")
+def build_hiddify_endpoint(proto: str) -> tuple[str, list[str]]:
+    """hiddify-core serves WireGuard and OpenVPN itself, as endpoints: the ``endpoint_other`` preset around the protocol."""
+    proto_slug = fragment_slug("hiddify-core", "protocols", proto, side="server")
     content = _render_preset_shell(
         "hiddify-core",
         shell_name="endpoint_other",
         proto_slug=proto_slug,
         stream_slug="",
         security_slug=None,
-        proto_key="wireguard",
+        proto_key=proto,
         transport_key="",
     )
     return content, ["hiddify-core/server/tag", proto_slug]
@@ -314,7 +314,9 @@ def build_hiddify_inbound_template(combo: ProxyCombination, *, l7_gateway: bool 
     if combo.proto == "wireguard":
         from .proxy_matrix import is_wireguard_endpoint
 
-        return build_hiddify_wireguard_endpoint() if is_wireguard_endpoint(combo) else build_hiddify_wireguard_server_stub()
+        return build_hiddify_endpoint("wireguard") if is_wireguard_endpoint(combo) else build_hiddify_wireguard_server_stub()
+    if combo.proto == "openvpn":
+        return build_hiddify_endpoint("openvpn")
     if _is_standalone_hiddify_server(combo):
         content, slugs = build_hiddify_standalone_inbound(combo)
         return with_snell_version(content, combo), slugs

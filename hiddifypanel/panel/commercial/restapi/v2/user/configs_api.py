@@ -263,6 +263,9 @@ class AllConfigsAPI(MethodView):
                 )
             )
 
+        if hconfig(ConfigEnum.openvpn_enable):
+            subscriptions.append(create_item("OpenVPN", "OpenVPN", "", "", "", "", f"{base_url}openvpn/#{config_name}", category="subscription"))
+
         for row in iter_proxy_v3_config_items(
             c["user"],
             sublink_domain=request.host,

@@ -94,6 +94,10 @@ EXTRA_PROXY_ROWS: list[dict[str, Any]] = [
     {"l3": "snell_v6", "transport": "custom", "cdn": "relay", "proto": "snell", "name": "Snell v6 Relay"},
     {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.direct, "proto": ProxyProto.wireguard, "name": "WireGuard"},
     {"l3": ProxyL3.udp, "transport": ProxyTransport.custom, "cdn": ProxyCDN.relay, "proto": ProxyProto.wireguard, "name": "WireGuard Relay"},
+    # OpenVPN: hiddify-core's openvpn-server endpoint on its own port; one endpoint serves one network, so UDP and TCP
+    # are two proxies (as Mieru's)
+    {"l3": "tls", "transport": "udp", "cdn": "direct", "proto": "openvpn", "name": "OpenVPN UDP"},
+    {"l3": "tls", "transport": "tcp", "cdn": "direct", "proto": "openvpn", "name": "OpenVPN TCP"},
     {"l3": "tls", "transport": "custom", "cdn": "direct", "proto": "naive", "name": "Naive"},
     {"l3": "tls", "transport": "custom", "cdn": "relay", "proto": "naive", "name": "Naive Relay"},
     {"l3": "tls", "transport": "tcp", "cdn": "direct", "proto": "mieru", "name": "Mieru TCP"},

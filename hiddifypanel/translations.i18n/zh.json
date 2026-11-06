@@ -3344,6 +3344,10 @@
       "description": "它将禁用 IPv6",
       "label": "ℹ️仅限IPv4"
     },
+    "openvpn_enable": {
+      "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
+      "label": "OpenVPN"
+    },
     "package_mode": {
       "description": "指定您想要发布的包还是开发的包",
       "label": "🔄 包更新模式"

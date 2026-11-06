@@ -1,0 +1,22 @@
+{# OpenVPN for the Hiddify app 5+ and sing-box 1.14+ (an "openvpn-client" endpoint). The OpenVPN apps get the .ovpn
+   from /openvpn (client core "openvpn") instead. #}
+{% block endpoints %}
+  {{ skip("OpenVPN needs the Hiddify app 5+ or sing-box 1.14+") if ctx.platform.singbox.version < "1.14.0" }}
+  {% for ctx in ctx.iter_ctx_domains() %}
+    {% set proxy = ctx.proxy %}
+    {% set domain = ctx.proxy.domain %}
+    {% set tag %}{%- include 'hiddify-core/client/tag' -%}{% endset %}
+    {
+      "tag": "{{ tag | trim_no_line }}",
+      "type": "openvpn-client",
+      "server": "{{ proxy.server }}",
+      "server_port": {{ proxy.udp_port or proxy.tcp_port or proxy.port }},
+      "network": "{{ 'udp' if proxy.udp_port else 'tcp' }}",
+      "username": "{{ ctx.user.uuid }}",
+      "password": "{{ ctx.user.uuid }}",
+      "tls": {
+        "certificate": {{ ctx.hconfig.openvpn_certificate.strip().splitlines() | tojson }}
+      },
+    },
+  {% endfor %}
+{% endblock %}

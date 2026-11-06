@@ -1,0 +1,27 @@
+{# An OpenVPN .ovpn (client core "openvpn", for the OpenVPN apps): one profile per domain of the proxy. The login is
+   inline (OpenVPN 2.6+ and OpenVPN Connect); older clients ask for it: the username and password are both the uuid. #}
+{% for ctx in ctx.iter_ctx_domains() %}
+{% set proxy = ctx.proxy %}
+{% set host = proxy.server|string %}
+{% set name |trim_no_line %}{%- include 'sublink/tag' -%}{% endset %}
+# Name = {{ name }}
+client
+dev tun
+proto {{ 'udp' if proxy.udp_port else 'tcp-client' }}
+remote {{ host.strip('[]') }} {{ proxy.udp_port or proxy.tcp_port or proxy.port }}
+nobind
+persist-key
+persist-tun
+resolv-retry infinite
+remote-cert-tls server
+data-ciphers AES-256-GCM:AES-128-GCM:CHACHA20-POLY1305
+verb 3
+<auth-user-pass>
+{{ ctx.user.uuid }}
+{{ ctx.user.uuid }}
+</auth-user-pass>
+<ca>
+{{ ctx.hconfig.openvpn_certificate.strip() }}
+</ca>
+
+{% endfor %}

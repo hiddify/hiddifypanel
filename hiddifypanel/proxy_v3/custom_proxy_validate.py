@@ -1031,7 +1031,7 @@ def validate_proxy_payload(
             tpl = cc.get("outbounds_template") or ""
             if not tpl.strip():
                 continue
-            if core_name == "wireguard":  # a .conf: it only has to render
+            if core_name in ("wireguard", "openvpn"):  # a .conf / .ovpn: it only has to render
                 try:
                     _render_section(tpl, child_id, ctx_client, as_json_object=False, parse_json=False)
                 except TemplateSkip:
@@ -1817,7 +1817,7 @@ def _infer_proxy_l3(data: dict[str, Any]) -> str:
 
 
 _TRANSPORT_CATEGORIES = frozenset({"ws", "grpc", "tcp", "http", "httpupgrade", "xhttp", "shadowtls", "faketls", "udp", "custom"})
-_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "slipstream", "masterdns", "snell", "telegram"})
+_PROTO_CATEGORIES = frozenset({"vless", "vmess", "trojan", "shadowsocks", "ss", "v2ray", "tuic", "hysteria", "hysteria2", "wireguard", "openvpn", "ssh", "socks", "naive", "mieru", "anytls", "dnstt", "slipstream", "masterdns", "snell", "telegram"})
 
 
 def _infer_proxy_transport(data: dict[str, Any]) -> str:
@@ -3069,7 +3069,7 @@ def generate_proxy_example(
             elif formats.get("parse_error"):
                 warnings.append({"code": "sublink_parse", "message": f"{label}: {formats['parse_error']}"})
             continue
-        if core_name == "wireguard":  # the .conf as it is
+        if core_name in ("wireguard", "openvpn"):  # the .conf / .ovpn as it is
             section = _render_section(cc.get("outbounds_template") or "", child_id, client_ctx, as_json_object=False, parse_json=False)
             clients.append(
                 {"core": core_name, "version": version or None, "label": label, "index": idx, "auto": _client_is_auto(core_name), **section}
@@ -4068,7 +4068,7 @@ def _merge_bundle_client_entries(
         return _merge_xray_client_entries(entries)
     if core == "sublink":
         return _merge_sublink_client_entries(entries)
-    if core == "wireguard":
+    if core in ("wireguard", "openvpn"):
         return _merge_text_client_entries(entries)
     if core == "clash":
         return _merge_clash_client_entries(entries)

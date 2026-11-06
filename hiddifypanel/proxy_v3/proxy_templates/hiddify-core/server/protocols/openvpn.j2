@@ -1,0 +1,25 @@
+{# OpenVPN over UDP or TCP (hiddify-core's "openvpn-server" endpoint): the proxy has a UDP port ("OpenVPN UDP") or a TCP
+   one ("OpenVPN TCP"); each endpoint serves one network and needs its own subnet. The clients log in with their uuid as username and
+   password, and trust the server's self-signed certificate (it is in their config); no client certificate.
+   Without users the server would let anyone with the certificate in, so it is not served then. #}
+{{ skip("OpenVPN has no user to serve") if not ctx.users }}
+"type": "openvpn-server",
+{# its listen fields default to 127.0.0.1 (the endpoint shell only sets the port) #}
+"listen": "::",
+{% set udp = ctx.proxy.udp_port|int > 0 %}
+"network": "{{ 'udp' if udp else 'tcp' }}",
+"address": ["{{ '10.93.0.1/16' if udp else '10.94.0.1/16' }}"],
+"users": [
+  {% for user in ctx.users %}
+  {"username": "{{ user.uuid }}", "password": "{{ user.uuid }}"},
+  {% endfor %}
+],
+"tls": {
+  "certificate": {{ ctx.hconfig.openvpn_certificate.strip().splitlines() | tojson }},
+  "key": {{ ctx.hconfig.openvpn_private_key.strip().splitlines() | tojson }},
+  "verify_client_certificate": "none"
+},
+"push": {
+  "redirect_gateway": true,
+  "dns": ["1.1.1.1", "8.8.8.8"]
+}

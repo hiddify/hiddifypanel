@@ -3216,6 +3216,10 @@
       "description": "Cela désactivera IPv6",
       "label": "ℹ️ Uniquement IPv4"
     },
+    "openvpn_enable": {
+      "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
+      "label": "OpenVPN"
+    },
     "package_mode": {
       "description": "Spécifiez si vous souhaitez le package publié ou la version bêta.",
       "label": "🔄 Mode de mise à jour du package"

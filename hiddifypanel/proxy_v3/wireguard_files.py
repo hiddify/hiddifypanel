@@ -1,5 +1,5 @@
-"""The /wireguard download: a WireGuard .conf holds one tunnel ([Interface] + its peers), so several configs go out as a zip
-of .conf files, one config as its .conf.
+"""The /wireguard and /openvpn downloads: a WireGuard .conf holds one tunnel ([Interface] + its peers) and an OpenVPN .ovpn
+one profile, so several configs go out as a zip of files, one config as its file.
 
 File names become tunnel names: wg-quick (Linux) takes at most 15 characters of ``A-Z a-z 0-9 _ = + . -``, so a name
 is the config's tag cut to that, unique within the download.
@@ -19,12 +19,13 @@ _NAME_LINE = re.compile(r"^\s*#\s*Name\s*=\s*(.+?)\s*$", re.MULTILINE)
 
 @dataclass(frozen=True, slots=True)
 class WireguardFile:
-    name: str  # without ".conf"
+    name: str  # without the extension
     content: str
+    ext: str = "conf"
 
     @property
     def filename(self) -> str:
-        return f"{self.name}.conf"
+        return f"{self.name}.{self.ext}"
 
 
 def _safe_name(label: str, fallback: str) -> str:
@@ -42,17 +43,21 @@ def _unique(name: str, used: set[str]) -> str:
     return unique
 
 
-def split_configs(text: str) -> list[WireguardFile]:
-    """The rendered .conf text (configs one after another) → one file per [Interface]."""
-    parts = re.split(r"(?m)^(?=\[Interface\]\s*$)", text or "")
+def split_configs(text: str, core: str = "wireguard") -> list[WireguardFile]:
+    """The rendered text (configs one after another) → one file per WireGuard [Interface] (core "wireguard"), or per
+    OpenVPN profile (core "openvpn": each starts with its "# Name = " line)."""
+    if core == "openvpn":
+        start, needed, ext, fallback = r"(?m)^(?=#\s*Name\s*=)", ("<ca>",), "ovpn", "ovpn"
+    else:
+        start, needed, ext, fallback = r"(?m)^(?=\[Interface\]\s*$)", ("[Interface]", "[Peer]"), "conf", "wg"
     files: list[WireguardFile] = []
     used: set[str] = set()
-    for part in parts:
-        if "[Interface]" not in part or "[Peer]" not in part:
+    for part in re.split(start, text or ""):
+        if not all(marker in part for marker in needed):
             continue
         label = m.group(1) if (m := _NAME_LINE.search(part)) else ""
-        name = _unique(_safe_name(label, f"wg{len(files) + 1}"), used)
-        files.append(WireguardFile(name=name, content=part.strip() + "\n"))
+        name = _unique(_safe_name(label, f"{fallback}{len(files) + 1}"), used)
+        files.append(WireguardFile(name=name, content=part.strip() + "\n", ext=ext))
     return files
 
 

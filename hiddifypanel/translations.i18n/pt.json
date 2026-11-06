@@ -3344,6 +3344,10 @@
       "description": "Ele desabilitará o IPv6",
       "label": "4⃣ Somente IPv4"
     },
+    "openvpn_enable": {
+      "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
+      "label": "OpenVPN"
+    },
     "package_mode": {
       "description": "Especifique se você deseja um pacote lançado ou desenvolvido",
       "label": "🔄 Modo de atualização de pacotes"

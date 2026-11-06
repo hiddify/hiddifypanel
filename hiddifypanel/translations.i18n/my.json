@@ -3346,6 +3346,10 @@
       "description": "IPv6 ကို Disable လုပ်ပါလိမ့်မည်",
       "label": "ℹ️ IPv4 သာလျှင်"
     },
+    "openvpn_enable": {
+      "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
+      "label": "OpenVPN"
+    },
     "package_mode": {
       "description": "ဖြန့်ချိထားသော ပက်ကေ့ခ်ျ သို့မဟုတ် စမ်းသပ်ဆော့ဖ်ဝဲတစ်ခုကို သင်အလိုရှိမရှိ သတ်မှတ်ပါ။",
       "label": "🔄 Package မွမ်းမံ မုဒ်"

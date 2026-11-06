@@ -551,8 +551,25 @@ def _builtin_client_core_entry(core: str, outbound: str) -> dict[str, Any]:
     }
 
 
+def _openvpn_client_configs() -> list[dict[str, Any]]:
+    """OpenVPN: the Hiddify app / sing-box get an openvpn-client endpoint (sing-box reuses hiddify-core's), the OpenVPN
+    apps a .ovpn (/openvpn, client core "openvpn"). No share link: no subscription app reads one."""
+    return [
+        _builtin_client_core_entry("singbox", _singbox_outbound_stub(USE_HIDDIFY_CORE_PLACEHOLDER)),
+        _builtin_client_core_entry("hiddify-core", load_template_slug(preset_shell_slug(_HIDDIFY_CLIENT_ROOT, "client", "openvpn"), normalize=False)),
+        _builtin_client_core_entry("sublink", "{# OpenVPN has no share link: its apps import the .ovpn from /openvpn #}"),
+        _builtin_client_core_entry("openvpn", load_template_slug("openvpn/client/conf")),
+        _builtin_client_core_entry("xray", "[]"),
+        _builtin_client_core_entry("clash", "[]"),
+    ]
+
+
 def build_all_client_configs(combo: ProxyCombination, server_core: str) -> list[dict[str, Any]]:
-    """The client cores of a builtin preset: xray, singbox, hiddify-core, sublink, clash; WireGuard also gets its .conf."""
+    """The client cores of a builtin preset: xray, singbox, hiddify-core, sublink, clash; WireGuard and OpenVPN also get
+    their own file (.conf, .ovpn)."""
+    if combo.proto == "openvpn":
+        order = {name: idx for idx, name in enumerate(CLIENT_CORES)}
+        return sorted(_openvpn_client_configs(), key=lambda c: order.get(c["core"], 99))
     configs: list[dict[str, Any]] = []
 
     if supports_xray_preset(combo):
