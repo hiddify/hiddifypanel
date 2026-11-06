@@ -1313,6 +1313,18 @@
       "health": {
         "checkNow": "Check now",
         "checked": "Every config tested from the server · {ago}",
+        "disable": {
+          "button": "Disable failing",
+          "hint": "Turn off the configs that fail in both XRay and Hiddify",
+          "none": "No config fails in both XRay and Hiddify",
+          "unknown": "Run a check first: it finds the configs that fail in both apps",
+          "wait": "Wait for the check to finish",
+          "title": "Turn off configs that work nowhere?",
+          "text": "This config fails in both XRay and Hiddify, so it works for no one. It will be turned off for every user: | These {n} configs fail in both XRay and Hiddify, so they work for no one. They will be turned off for every user:",
+          "kept": "Configs that work in XRay or in Hiddify stay on. Restore turns these back on.",
+          "confirm": "Turn off 1 config | Turn off {n} configs",
+          "done": "1 config turned off | {n} configs turned off"
+        },
         "firstRun": "The first check is running; it takes a minute or two.",
         "never": "Not checked yet. Press “Check now”.",
         "notTested": "Not tested",
@@ -1361,6 +1373,11 @@
           "refused": "The connection was refused",
           "timeout": "No answer in time",
           "tls": "The TLS handshake failed"
+        },
+        "restore": {
+          "button": "Restore",
+          "hint": "Turn back on the configs turned off here or by the config tester",
+          "done": "1 config turned back on | {n} configs turned back on"
         },
         "running": "Checking…",
         "subtitle": "Every config, tested from the server every 6 hours",
