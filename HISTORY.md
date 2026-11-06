@@ -1,7 +1,7 @@
 # Changelog
 
 
-## (unreleased)
+## v14.2.0 (2026-11-06)
 
 #### New
 
@@ -10,6 +10,25 @@
 * Add advanced ip/sni scanner. 
 
 #### Other
+
+* Feat(openvpn): add OpenVPN UDP and TCP, served by hiddify-core. 
+  _Two proxies, "OpenVPN UDP" and "OpenVPN TCP": hiddify-core openvpn-server
+endpoints on their own ports (one network per endpoint, separate subnets
+10.93.0.0/16 and 10.94.0.0/16), listening on all addresses. Users log in
+with their uuid; with no user the endpoint is not served. A self-signed
+server certificate (migration _v198) is pinned in the client configs.
+
+Clients: an openvpn-client endpoint for the Hiddify app 5+ / sing-box
+1.14+, and a .ovpn for the OpenVPN apps from /openvpn (new client core
+"openvpn", listed on the user page). No share link.
+
+One switch, openvpn_enable (off by default). The WireGuard endpoint
+builder and the .conf download are shared with OpenVPN.
+
+Not counted per user yet: hiddify-core does not tag the connections of
+an OpenVPN user, so usage stats and limits do not see them._
+
+* Feat(translations): update template translations and add new branding text fields. 
 
 * Feat(store): implement folder locking for certificate operations and add unused certificate removal functionality. 
   _- Introduced a context manager for exclusive folder locking during certificate writes and removals to prevent conflicts.
