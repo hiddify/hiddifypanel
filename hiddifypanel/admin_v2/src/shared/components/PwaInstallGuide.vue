@@ -7,6 +7,10 @@ import { detectPwaPlatform, desktopOsName, type PwaPlatform } from '@/shared/com
  * How to install the panel as an app, as a looping animation of the browser's own controls: Safari on iPhone / iPad,
  * Chrome on Android, Chrome on a computer. The detected platform is shown first; the others are one tap away.
  */
+/** The installed app's icon, drawn where the animation shows the app (home screen, install prompt, window title). */
+const props = defineProps<{ icon?: string }>()
+const iconStyle = computed(() => (props.icon ? { '--app-icon-img': `url("${props.icon}")` } : undefined))
+
 const { t } = useI18n()
 const detected = detectPwaPlatform()
 const platform = ref<PwaPlatform>(detected)
@@ -26,7 +30,7 @@ function tabLabel(p: PwaPlatform): string {
 </script>
 
 <template>
-  <div class="guide">
+  <div class="guide" :style="iconStyle">
     <div class="guide__tabs" role="tablist" :aria-label="t('pwa.guide.platform')">
       <button
         v-for="p in PLATFORMS"
@@ -213,7 +217,8 @@ function tabLabel(p: PwaPlatform): string {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 0.4rem;
-  background: linear-gradient(135deg, var(--p-primary-400, #60a5fa), var(--p-primary-700, #1d4ed8));
+  background: var(--app-icon-img, none) center / cover no-repeat,
+    linear-gradient(135deg, var(--p-primary-400, #60a5fa), var(--p-primary-700, #1d4ed8));
 }
 .app-icon--tiny {
   width: 0.7rem;
