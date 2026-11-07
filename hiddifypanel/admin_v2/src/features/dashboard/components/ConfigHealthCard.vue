@@ -2,7 +2,12 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
-import { getHttp } from '@/core/api/client'
+import Dialog from 'primevue/dialog'
+import { useToast } from 'primevue/usetoast'
+import { apiErrorMessage, getHttp } from '@/core/api/client'
+import ApplyNotice from '@/shared/components/ApplyNotice.vue'
+import type { RestartMode } from '@/shared/utils/restart-mode'
+import type { HealthProxy } from '@/shared/composables/useConfigHealth'
 import { CONFIG_HEALTH_APPS as APP_NAMES, configHealth as state, configReason, loadConfigHealth, problemKind } from '@/shared/composables/useConfigHealth'
 import { SERIES } from '../composables/useChartTheme'
 import DashCard from './DashCard.vue'
@@ -36,6 +41,55 @@ async function load() {
   timer = window.setTimeout(load, state.value?.running ? 10_000 : 60_000)
 }
 
+// --- turning off what fails in both apps, and Restore ---
+const toast = useToast()
+const dead = computed(() => state.value?.dead ?? [])
+const disabled = computed(() => state.value?.disabled ?? [])
+const confirmVisible = ref(false)
+const busy = ref<'' | 'disable' | 'restore'>('')
+const pendingApply = ref<RestartMode>('nothing')
+const disableHint = computed(() => {
+  if (state.value?.running) return t('dashboard.health.disable.wait')
+  if (!state.value?.dead_known) return t('dashboard.health.disable.unknown')
+  return dead.value.length ? t('dashboard.health.disable.hint') : t('dashboard.health.disable.none')
+})
+
+type ActionAnswer = { dead: HealthProxy[]; disabled: HealthProxy[]; restart_mode: RestartMode }
+function take(data: ActionAnswer) {
+  if (state.value) {
+    state.value.dead = data.dead
+    state.value.disabled = data.disabled
+  }
+  if (data.restart_mode !== 'nothing') pendingApply.value = data.restart_mode
+}
+
+async function disableDead() {
+  busy.value = 'disable'
+  try {
+    const { data } = await getHttp().post<ActionAnswer & { turned_off: HealthProxy[] }>('config-health/disable/')
+    take(data)
+    confirmVisible.value = false
+    toast.add({ severity: 'success', summary: t('dashboard.health.disable.done', { n: data.turned_off.length }, data.turned_off.length), life: 4000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    busy.value = ''
+  }
+}
+
+async function restore() {
+  busy.value = 'restore'
+  try {
+    const { data } = await getHttp().post<ActionAnswer & { restored: HealthProxy[] }>('config-health/restore/')
+    take(data)
+    toast.add({ severity: 'success', summary: t('dashboard.health.restore.done', { n: data.restored.length }, data.restored.length), life: 4000 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('common.saveFailed'), detail: apiErrorMessage(err), life: 6000 })
+  } finally {
+    busy.value = ''
+  }
+}
+
 async function checkNow() {
   await getHttp().post('config-health/')
   if (state.value) state.value.running = true
@@ -64,7 +118,40 @@ onBeforeUnmount(() => window.clearTimeout(timer))
         :disabled="state?.running"
         @click="checkNow"
       />
+      <!-- Small on phones: the icon and the count; the words are its tooltip -->
+      <span v-tooltip.top="disableHint" class="health__act-wrap">
+      <Button
+        class="health__act"
+        :label="t('dashboard.health.disable.button')"
+        :aria-label="t('dashboard.health.disable.button')"
+        icon="pi pi-ban"
+        :badge="dead.length ? String(dead.length) : undefined"
+        badge-severity="danger"
+        size="small"
+        severity="danger"
+        text
+        :disabled="!dead.length || !!state?.running || !!busy"
+        @click="confirmVisible = true"
+      />
+      </span>
+      <Button
+        v-tooltip.top="t('dashboard.health.restore.hint')"
+        class="health__act"
+        :label="t('dashboard.health.restore.button')"
+        :aria-label="t('dashboard.health.restore.button')"
+        icon="pi pi-undo"
+        :badge="disabled.length ? String(disabled.length) : undefined"
+        badge-severity="secondary"
+        size="small"
+        severity="secondary"
+        text
+        :loading="busy === 'restore'"
+        :disabled="!disabled.length || !!busy"
+        @click="restore"
+      />
     </template>
+
+    <ApplyNotice v-model="pendingApply" class="health__apply" />
 
     <p v-if="!state?.last" class="text-muted-color text-sm m-0">{{ state?.running ? t('dashboard.health.firstRun') : t('dashboard.health.never') }}</p>
     <div v-else class="health">
@@ -100,10 +187,68 @@ onBeforeUnmount(() => window.clearTimeout(timer))
       </div>
       <p class="text-muted-color text-xs m-0">{{ t('dashboard.health.note', { user: state.last.user }) }}</p>
     </div>
+
+    <!-- Asks first: what will be turned off, and that nothing else is -->
+    <Dialog v-model:visible="confirmVisible" modal :draggable="false" :header="t('dashboard.health.disable.title')" :style="{ width: 'min(30rem, calc(100vw - 2rem))' }">
+      <div class="health__confirm">
+        <p class="m-0">{{ t('dashboard.health.disable.text', { n: dead.length }, dead.length) }}</p>
+        <ul class="health__dead">
+          <li v-for="p in dead" :key="p.id"><i class="pi pi-ban" aria-hidden="true" /><span class="ltr">{{ p.name }}</span></li>
+        </ul>
+        <p class="m-0 text-muted-color text-sm">{{ t('dashboard.health.disable.kept') }}</p>
+      </div>
+      <template #footer>
+        <Button :label="t('common.cancel')" severity="secondary" outlined autofocus @click="confirmVisible = false" />
+        <Button :label="t('dashboard.health.disable.confirm', { n: dead.length }, dead.length)" icon="pi pi-ban" severity="danger" :loading="busy === 'disable'" @click="disableDead" />
+      </template>
+    </Dialog>
   </DashCard>
 </template>
 
 <style scoped>
+.health__act-wrap {
+  display: inline-flex;
+}
+.health__apply {
+  margin-bottom: 0.85rem;
+}
+.health__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.health__dead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 14rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  list-style: none;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 10px;
+  background: var(--p-content-hover-background);
+  font-size: 0.875rem;
+}
+.health__dead li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  word-break: break-word;
+}
+.health__dead i {
+  flex: none;
+  font-size: 0.8rem;
+  color: var(--p-red-500, #ef4444);
+}
+/* Phones: the extra actions as icon + count, so the header keeps one row */
+@media (max-width: 575px) {
+  .health__act :deep(.p-button-label) {
+    display: none;
+  }
+}
 .health {
   display: flex;
   flex-direction: column;

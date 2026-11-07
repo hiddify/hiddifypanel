@@ -208,9 +208,11 @@ def init_app(app):
 
         from .domains_page_api import DomainsPageApi, DomainsPageCertificateApi, DomainsPageDetectApi, DomainsPageIpsApi, DomainsPageItemApi, DomainsPageOptionsApi, DomainsPageOrderApi, DomainsPagePortCheckApi, DomainsPageProblemsApi
 
-        from .config_health_api import ConfigHealthApi
+        from .config_health_api import ConfigHealthApi, ConfigHealthDisableApi, ConfigHealthRestoreApi
 
         bp.add_url_rule("/config-health/", view_func=ConfigHealthApi)
+        bp.add_url_rule("/config-health/disable/", view_func=ConfigHealthDisableApi)
+        bp.add_url_rule("/config-health/restore/", view_func=ConfigHealthRestoreApi)
         from .clean_ip_api import AsnNamesApi, CleanIpNetworkApi, CleanIpProbeApi, SniCandidatesApi, CleanIpReportApi, CleanIpScriptApi, CleanIpTokenApi, CleanIpTokenStatusApi, RealitySniApi, RealitySniSwitchApi
 
         bp.add_url_rule("/clean-ip/reality/", view_func=RealitySniApi)

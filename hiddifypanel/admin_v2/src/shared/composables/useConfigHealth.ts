@@ -13,9 +13,20 @@ export interface AppHealth {
   /** Why the subscription could not be tested (certificate, timeout, dns, unreachable, http, empty, core, other) */
   error_kind?: string
 }
+/** A custom proxy (a config on every domain), by id and name. */
+export interface HealthProxy {
+  id: number
+  name: string
+}
 export interface HealthState {
   last: { at: number; user: string; host?: string; apps: Record<string, AppHealth> } | null
   running: boolean
+  /** The proxies still on whose every config failed in both Xray and Hiddify (the last check) */
+  dead?: HealthProxy[]
+  /** The last check can tell (every app tested, by a panel that records each proxy) */
+  dead_known?: boolean
+  /** Turned off here or by the config tester, still off: what Restore turns back on */
+  disabled?: HealthProxy[]
 }
 
 export const CONFIG_HEALTH_APPS: Record<string, string> = { xray: 'XRay (v2rayN, v2rayNG, Happ, …)', hiddify: 'Hiddify / Sing-Box' }

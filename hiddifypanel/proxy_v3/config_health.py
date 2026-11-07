@@ -117,6 +117,8 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
     from hiddifypanel.proxy_v3.config_tester_types import TesterError
 
     summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
+    #: every tested config's name → it works (the failed list is cut short; the proxies' health needs all of them)
+    tested: dict[str, bool] = {}
     try:
         for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
             if event.get("event") == "start":
@@ -124,6 +126,7 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
             elif event.get("event") == "result" and (_is_status_line(event) or _is_group(event)):
                 summary["total"] -= 1
             elif event.get("event") == "result":
+                tested[str(event.get("name") or "")] = bool(event.get("ok"))
                 if event.get("ok"):
                     summary["ok"] += 1
                 else:
@@ -141,13 +144,56 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
                     passed.add(name)
             summary["failed"] = [f for f in summary["failed"] if f["name"] not in passed]
             summary["ok"] += len(passed)
+            tested.update(dict.fromkeys(passed, True))
     except TesterError as e:
         summary["error"], summary["error_kind"] = _clean(str(e)), _error_kind(str(e))
     except Exception as e:  # one app failing must not lose the other's result
         logger.exception("config health: {} failed", app)
         summary["error"], summary["error_kind"] = type(e).__name__, "other"
     summary["failed"] = summary["failed"][:MAX_FAILED_LISTED]
+    if not summary["error"]:
+        summary["proxies"] = _proxy_status(tested)
     return summary
+
+
+def _proxy_status(tested: dict[str, bool]) -> dict[str, str]:
+    """Each custom proxy with tested configs → down (every config of it failed) / partial / up."""
+    from hiddifypanel.proxy_v3 import config_tester_proxies
+
+    try:
+        results = [config_tester_proxies.TestedConfig(name=name, ok=ok) for name, ok in tested.items() if name]
+        return {str(h["id"]): h["status"] for h in config_tester_proxies.health(results)}
+    except Exception:  # the counts above stay useful without it
+        logger.exception("config health: proxy status failed")
+        return {}
+
+
+def proxies_known(result: dict | None = None) -> bool:
+    """The last check can tell which proxies are down: every app was tested, with this version's per-proxy record."""
+    apps = ((last() if result is None else result) or {}).get("apps") or {}
+    return all(not (apps.get(app) or {}).get("error") and "proxies" in (apps.get(app) or {}) for app, _path in APPS)
+
+
+def dead_proxies(result: dict | None = None) -> list[dict]:
+    """The custom proxies that work for nobody: every config of theirs failed as the Xray apps AND as the Hiddify app
+    get it, in the last check. A proxy with one working config in either app stays out (it works somewhere), and so
+    does everything when an app could not be tested at all. Only the ones still on: [{id, name}]."""
+    from hiddifypanel.models import Child
+    from hiddifypanel.models.custom_proxy import CustomProxy
+
+    result = last() if result is None else result
+    apps = (result or {}).get("apps") or {}
+    statuses = []
+    for app, _path in APPS:
+        summary = apps.get(app) or {}
+        if summary.get("error") or "proxies" not in summary:
+            return []
+        statuses.append(summary["proxies"])
+    down = set.intersection(*({int(i) for i, status in s.items() if status == "down"} for s in statuses))
+    if not down:
+        return []
+    proxies = CustomProxy.query.filter(CustomProxy.child_id == Child.current().id, CustomProxy.id.in_(down)).all()
+    return [{"id": p.id, "name": p.name} for p in sorted(proxies, key=lambda p: p.name or "") if p.enable]
 
 
 def check() -> dict | None:
