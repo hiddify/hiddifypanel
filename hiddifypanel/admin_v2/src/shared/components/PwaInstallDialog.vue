@@ -12,25 +12,28 @@
     <div class="pwa">
       <button type="button" class="pwa__close" :aria-label="t('pwa.later')" @click="close"><i class="pi pi-times" /></button>
 
-      <!-- The app as it will look on the home screen -->
-      <div class="pwa__hero">
-        <div class="pwa__app">
-          <img v-if="icon" :src="icon" alt="" class="pwa__icon" />
-          <i v-else class="pi pi-mobile pwa__icon pwa__icon--fallback" />
+      <!-- Only this part scrolls: on a short screen "Got it" below stays in view -->
+      <div ref="body" class="pwa__body" @scroll.passive="measure">
+        <!-- The app as it will look on the home screen -->
+        <div class="pwa__hero">
+          <div class="pwa__app">
+            <img v-if="icon" :src="icon" alt="" class="pwa__icon" />
+            <i v-else class="pi pi-mobile pwa__icon pwa__icon--fallback" />
+          </div>
+          <h2 class="pwa__title">{{ t('pwa.title') }}</h2>
+          <p class="pwa__text">{{ t('pwa.text') }}</p>
         </div>
-        <h2 class="pwa__title">{{ t('pwa.title') }}</h2>
-        <p class="pwa__text">{{ t('pwa.text') }}</p>
+
+        <!-- How to install, animated for this device (Safari on iPhone, Chrome on Android or a computer) -->
+        <PwaInstallGuide />
+
+        <label class="pwa__never">
+          <Checkbox v-model="never" binary input-id="pwa-never" />
+          <span>{{ t('pwa.never') }}</span>
+        </label>
       </div>
 
-      <!-- How to install, animated for this device (Safari on iPhone, Chrome on Android or a computer) -->
-      <PwaInstallGuide />
-
-      <label class="pwa__never">
-        <Checkbox v-model="never" binary input-id="pwa-never" />
-        <span>{{ t('pwa.never') }}</span>
-      </label>
-
-      <div class="pwa__actions">
+      <div class="pwa__actions" :class="{ 'pwa__actions--line': more }">
         <Button :label="t('pwa.gotIt')" icon="pi pi-check" size="large" class="pwa__got" autofocus @click="close" />
         <!-- The browser can install it right away: one click instead of the steps -->
         <Button v-if="canPrompt" icon="pi pi-download" :label="t('pwa.installNow')" severity="secondary" outlined class="pwa__install" :loading="busy" @click="doInstall" />
@@ -40,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
@@ -64,6 +67,23 @@ const route = useRoute()
 const never = ref(false)
 const busy = ref(false)
 const icon = ref('')
+
+// More of the guide below the fold: a line over the buttons says so.
+const body = ref<HTMLElement | null>(null)
+const more = ref(false)
+function measure() {
+  const el = body.value
+  more.value = !!el && el.scrollTop + el.clientHeight < el.scrollHeight - 2
+}
+const sizeObserver = new ResizeObserver(() => measure())
+watch(body, (el, old) => {
+  if (old) sizeObserver.unobserve(old)
+  if (el) {
+    sizeObserver.observe(el)
+    if (el.firstElementChild) sizeObserver.observe(el.firstElementChild)
+    nextTick(measure)
+  }
+})
 
 // Phones: a sheet from the bottom.
 const narrowQuery = window.matchMedia('(max-width: 575px)')
@@ -93,7 +113,10 @@ onMounted(() => {
   narrowQuery.addEventListener('change', onNarrow)
   window.setTimeout(offer, 1200) // after the page has drawn (the browser's install event can come a little later too)
 })
-onBeforeUnmount(() => narrowQuery.removeEventListener('change', onNarrow))
+onBeforeUnmount(() => {
+  narrowQuery.removeEventListener('change', onNarrow)
+  sizeObserver.disconnect()
+})
 // Opened on another page first: the guide waits for the dashboard.
 watch(() => route.name, () => window.setTimeout(offer, 600))
 watch(visible, (open) => open && readIcon())
@@ -122,7 +145,17 @@ async function doInstall() {
   position: relative;
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.pwa__body {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.25rem 1.25rem 0.25rem;
 }
 .pwa__close {
   position: absolute;
@@ -197,8 +230,15 @@ async function doInstall() {
 
 .pwa__actions {
   display: flex;
+  flex: none;
   flex-direction: column;
   gap: 0.25rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+  border-top: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+.pwa__actions--line {
+  border-top-color: var(--p-content-border-color);
 }
 .pwa__got,
 .pwa__install {
@@ -213,6 +253,29 @@ async function doInstall() {
   font-size: 0.82rem;
   color: var(--p-text-muted-color);
   cursor: pointer;
+}
+
+/* Phones and short screens: the line under the title goes, so the guide has the room */
+@media (max-width: 575px), (max-height: 760px) {
+  .pwa__text {
+    display: none;
+  }
+}
+@media (max-height: 640px) {
+  .pwa__hero {
+    padding-top: 1.25rem;
+    padding-bottom: 0.75rem;
+  }
+  .pwa__app {
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 1.1rem;
+  }
+  .pwa__icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.85rem;
+  }
 }
 
 @keyframes pwa-pop {
@@ -231,11 +294,17 @@ async function doInstall() {
 <style>
 /* The dialog itself (not scoped: PrimeVue renders it outside this component) */
 .pwa-dialog .pwa-dialog__content {
-  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
   overflow: hidden;
   border-radius: inherit;
 }
+/* the visible screen (dvh: without a phone browser's bars), so the bottom is never under them */
 .pwa-dialog {
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
   border-radius: 22px;
   overflow: hidden;
 }
@@ -244,9 +313,9 @@ async function doInstall() {
   margin: 0;
   border-radius: 22px 22px 0 0;
   max-height: 92vh;
+  max-height: 92dvh;
 }
-.pwa-dialog.pwa-dialog--sheet .pwa-dialog__content {
-  overflow: auto;
+.pwa-dialog.pwa-dialog--sheet .pwa__actions {
   padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
 </style>

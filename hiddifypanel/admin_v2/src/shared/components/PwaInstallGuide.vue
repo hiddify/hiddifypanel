@@ -723,6 +723,15 @@ function tabLabel(p: PwaPlatform): string {
 }
 
 /* No motion: the first frame, every step plain */
+/* Short screens: a smaller scene, so the steps and the dialog's buttons fit */
+@media (max-height: 640px) {
+  .stage {
+    height: 10.4rem;
+  }
+  .stage > * {
+    zoom: 0.8;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .stage *,
   .guide__step {
