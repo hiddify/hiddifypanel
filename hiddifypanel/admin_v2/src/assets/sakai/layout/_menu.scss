@@ -112,13 +112,20 @@
                 white-space: nowrap;
             }
 
+            &:hover {
+                background-color: var(--surface-hover);
+            }
+
+            /* The page open now: a soft box in the panel colour, there without the mouse too */
             &.active-route {
                 font-weight: 700;
                 color: var(--primary-color);
-            }
+                background-color: color-mix(in srgb, var(--primary-color) 12%, transparent);
+                box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-color) 28%, transparent);
 
-            &:hover {
-                background-color: var(--surface-hover);
+                &:hover {
+                    background-color: color-mix(in srgb, var(--primary-color) 17%, transparent);
+                }
             }
 
             &:focus {
