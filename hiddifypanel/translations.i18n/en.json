@@ -2483,6 +2483,18 @@
       "title": "Outbounds",
       "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs."
     },
+    "pager": {
+      "first": "First page",
+      "jump": "Go to page",
+      "label": "Pages",
+      "last": "Last page",
+      "next": "Next",
+      "of": "of {pages}",
+      "pageOf": "Page {page} of {pages}",
+      "prev": "Previous",
+      "report": "Showing {first}–{last} of {total}",
+      "slider": "Drag to change the page"
+    },
     "passwordRules": {
       "common": "not a common password",
       "digit": "a digit",
@@ -3721,7 +3733,6 @@
       "none": "No users yet",
       "of": "of",
       "online": "Online",
-      "pageReport": "{first}–{last} of {totalRecords}",
       "perPage": "Users per page",
       "readOnlyNode": "Users are managed on the parent panel: here they are shown read-only.",
       "refresh": "Refresh",

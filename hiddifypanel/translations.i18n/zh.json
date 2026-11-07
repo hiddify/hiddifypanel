@@ -1680,6 +1680,18 @@
       "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 Socks、Tor 或 Psiphon 出口。",
       "title": "出站"
     },
+    "pager": {
+      "first": "第一页",
+      "jump": "跳转到页面",
+      "label": "分页",
+      "last": "最后一页",
+      "next": "下一页",
+      "of": "共 {pages} 页",
+      "pageOf": "第 {page} 页，共 {pages} 页",
+      "prev": "上一页",
+      "report": "显示第 {first}–{last} 条，共 {total} 条",
+      "slider": "拖动以切换页面"
+    },
     "passwordRules": {
       "common": "不是常见密码",
       "digit": "一个数字",
@@ -2727,7 +2739,6 @@
       "none": "暂无用户",
       "of": "/",
       "online": "在线",
-      "pageReport": "{first}–{last} / {totalRecords}",
       "perPage": "每页用户数",
       "refresh": "刷新",
       "resetTag": {

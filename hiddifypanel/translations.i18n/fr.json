@@ -2727,7 +2727,6 @@
       "none": "Aucun utilisateur pour l'instant",
       "of": "sur",
       "online": "En ligne",
-      "pageReport": "{first}–{last} sur {totalRecords}",
       "perPage": "Utilisateurs par page",
       "refresh": "Actualiser",
       "resetTag": {
@@ -2810,6 +2809,18 @@
       "preview": "Aperçu compilé",
       "title": "Validation",
       "warnings": "Avertissements"
+    },
+    "pager": {
+      "label": "Pages",
+      "report": "Affichage de {first} à {last} sur {total}",
+      "first": "Première page",
+      "last": "Dernière page",
+      "slider": "Faites glisser pour changer de page",
+      "pageOf": "Page {page} sur {pages}",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "jump": "Aller à la page",
+      "of": "sur {pages}"
     }
   },
   "adminuser": {

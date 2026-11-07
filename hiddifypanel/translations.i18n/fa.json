@@ -2484,6 +2484,18 @@
       "title": "خروجی‌ها",
       "torMissing": "Tor روشن است ولی برنامهٔ `tor` روی سرور نصب نیست؛ بنابراین از کانفیگ‌ها حذف می‌شود. Tor را نصب کنید (مثلاً apt install tor) و Apply Configs را بزنید."
     },
+    "pager": {
+      "first": "صفحهٔ اول",
+      "jump": "رفتن به صفحه",
+      "label": "صفحه‌ها",
+      "last": "صفحهٔ آخر",
+      "next": "بعدی",
+      "of": "از {pages}",
+      "pageOf": "صفحهٔ {page} از {pages}",
+      "prev": "قبلی",
+      "report": "نمایش {first}–{last} از {total}",
+      "slider": "برای عوض کردن صفحه بکشید"
+    },
     "passwordRules": {
       "common": "رمز رایج نباشد",
       "digit": "یک رقم",
@@ -3722,7 +3734,6 @@
       "none": "هنوز کاربری ندارید",
       "of": "از",
       "online": "آنلاین",
-      "pageReport": "{first}–{last} از {totalRecords}",
       "perPage": "تعداد کاربر در صفحه",
       "readOnlyNode": "کاربران در پنل اصلی مدیریت می‌شوند: اینجا فقط قابل مشاهده‌اند.",
       "refresh": "بارگذاری دوباره",
