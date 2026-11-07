@@ -25,7 +25,7 @@
         </div>
 
         <!-- How to install, animated for this device (Safari on iPhone, Chrome on Android or a computer) -->
-        <PwaInstallGuide />
+        <PwaInstallGuide :icon="icon" />
 
         <label class="pwa__never">
           <Checkbox v-model="never" binary input-id="pwa-never" />

@@ -25,7 +25,7 @@
     <link rel="icon" type="image/x-icon" href="{{ static_url_for(filename='images/favicon.ico') }}">
     <!-- Installed app (PWA): Hiddify's icon. Without these the browser asks /apple-touch-icon.png and /favicon.ico at the
          site root, which the decoy site answers (so the app got the decoy site's icon). -->
-    <link rel="apple-touch-icon" href="{{ static_url_for(filename='images/hiddify-dark.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ static_url_for(filename='images/app-icon-apple-180.png') }}">
     <link rel="manifest" href="{{ hurl_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '') }}">
     <meta name="theme-color" content="#1a1b21">
   </head>

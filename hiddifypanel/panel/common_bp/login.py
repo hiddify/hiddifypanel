@@ -240,7 +240,9 @@ class LoginView(FlaskView):
         account = AdminUser.by_uuid(g.uuid) if admin_call else User.by_uuid(g.uuid)
         name = domain if admin_call else account.name
         start_url = hiddify.get_account_panel_link(account, domain)
-        icon = hutils.flask.static_url_for(filename="images/hiddify-dark.png")
+        def icon(name):
+            return hutils.flask.static_url_for(filename=f"images/{name}")
+
         response = jsonify(
             {
                 # A stable id per account and panel, so the installed app is not mixed up with the decoy site at the root.
@@ -254,9 +256,12 @@ class LoginView(FlaskView):
                 "start_url": start_url + "?pwa=true",
                 "description": "Hiddify, for a free Internet",
                 "orientation": "any",
+                # "any": rounded corners of its own (computers show it as it is); "maskable": edge to edge, for the
+                # phone to cut to its own shape.
                 "icons": [
-                    {"src": icon, "sizes": "512x512", "type": "image/png", "purpose": "any"},
-                    {"src": icon, "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+                    {"src": icon("app-icon-192.png"), "sizes": "192x192", "type": "image/png", "purpose": "any"},
+                    {"src": icon("app-icon-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "any"},
+                    {"src": icon("app-icon-maskable-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
                 ],
             }
         )
