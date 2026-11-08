@@ -1570,6 +1570,15 @@
       "title": "通知",
       "unread": "{n} 条新通知 | {n} 条新通知"
     },
+    "operatorIps": {
+      "name": {
+        "CBN": "中国广电",
+        "CER": "中国教育网 (CERNET)",
+        "CMC": "中国移动",
+        "CTC": "中国电信",
+        "CUC": "中国联通"
+      }
+    },
     "outbounds": {
       "add": "添加出站",
       "count": {
