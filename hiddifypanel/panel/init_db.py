@@ -26,6 +26,12 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v199(child_id):
+    """Built-in proxy names spelled as the panel writes protocols and transports ("xhttp vless TLS H1" →
+    "XHTTP VLess TLS H1"): the users' apps show them. Slugs and server tags stay; a name an admin typed is kept."""
+    sync_builtin_presets(child_id)
+
+
 def _v198(child_id):
     """OpenVPN (hiddify-core's openvpn-server endpoint): off, and its self-signed server certificate. The preset sync adds
     the OpenVPN proxy."""

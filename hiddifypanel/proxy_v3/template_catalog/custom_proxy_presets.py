@@ -41,7 +41,7 @@ from .inbound_builder import (
     supports_hiddify_preset,
     supports_xray_preset,
 )
-from .preset_slots import H3_PROTOS, PresetSlot, iter_grouped_preset_slots, preset_display_name, preset_slug_name, tls_layer_for_xhttp_alpn
+from .preset_slots import H3_PROTOS, PresetSlot, iter_grouped_preset_slots, preset_display_name, preset_slug_name, preset_tag_name, tls_layer_for_xhttp_alpn
 from .proxy_matrix import is_wireguard_endpoint
 
 V2RAY_GATEWAY_PROTOS = frozenset({"vless", "vmess", "trojan"})
@@ -577,8 +577,8 @@ def _build_preset(
     slug = legacy_slug
     if core == "hiddify-core":
         display_name = f"{display_name} HC"
-        # "snell HC" (not "hiddify-core-custom-snell"): the slug is the name's.
-        slug = proxy_slug(display_name)
+        # "snell HC" (not "hiddify-core-custom-snell"): the slug is the name's, in its original spelling.
+        slug = proxy_slug(f"{preset_tag_name(slot)} HC")
     mode = _preset_protocol(primary)
     custom_path = _preset_custom_path(primary, child_id)
     domain_modes = _group_domain_modes(slot.related)
@@ -713,7 +713,7 @@ def _build_dns_gateway_preset(slot, child_id: int = 0) -> CustomProxyPreset:
             core="dns_proxy",
             inbound_template=inbound,
             template_slugs=(f"dns_proxy/{proto}/server", f"dns_proxy/{proto}/args"),
-            tag=proxy_slug(display_name),
+            tag=proxy_slug(preset_tag_name(slot)),
             inbound_tcp_ports=(),
             inbound_udp_ports=(),
         ),

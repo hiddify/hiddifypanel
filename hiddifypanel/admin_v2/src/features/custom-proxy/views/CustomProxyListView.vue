@@ -172,7 +172,7 @@
             class="proxy-name-link"
             :href="editProxyHref(data.id)"
             @click.exact.prevent="openEdit(data.id)"
-          ><IconText :text="data.name" /></a>
+          >{{ data.name }}</a>
         </template>
       </Column>
       <Column field="proto" sortable>
@@ -397,7 +397,6 @@
 
 <script setup lang="ts">
 import { apiErrorMessage } from '@/core/api/client'
-import IconText from '@/shared/components/IconText.vue'
 defineOptions({ name: 'CustomProxyListView' })
 
 import { computed, onActivated, onMounted, ref } from 'vue'
