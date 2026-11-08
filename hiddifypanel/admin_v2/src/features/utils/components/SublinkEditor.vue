@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col gap-3">
     <p v-if="!links.length" class="text-muted-color m-0">{{ t('utils.emptyLinks') }}</p>
+    <!-- min-width 0: a fieldset is otherwise as wide as its widest content (a long link name), past a phone's screen -->
     <Fieldset
       v-for="(link, index) in links"
       :key="index"
+      class="sublink-card"
       :legend="linkTitle(link, index)"
       :toggleable="links.length > 1"
     >
@@ -24,28 +26,28 @@
       </template>
       <template v-else>
         <HorizontalField :label="t('utils.protocol')" :input-id="`${idPrefix}proto-${index}`">
-          <InputText :id="`${idPrefix}proto-${index}`" class="w-full" :readonly="readonly" :model-value="link.protocol" @update:model-value="(value: string) => patchUri(index, { protocol: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}proto-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.protocol" @update:model-value="(value: string) => patchUri(index, { protocol: value })" />
         </HorizontalField>
         <HorizontalField :label="t('utils.server')" :input-id="`${idPrefix}server-${index}`">
-          <InputText :id="`${idPrefix}server-${index}`" class="w-full" :readonly="readonly" :model-value="link.server" @update:model-value="(value: string) => patchUri(index, { server: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}server-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.server" @update:model-value="(value: string) => patchUri(index, { server: value })" />
         </HorizontalField>
         <HorizontalField :label="t('utils.port')" :input-id="`${idPrefix}port-${index}`">
-          <InputText :id="`${idPrefix}port-${index}`" class="w-full" :readonly="readonly" :model-value="link.port" @update:model-value="(value: string) => patchUri(index, { port: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}port-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.port" @update:model-value="(value: string) => patchUri(index, { port: value })" />
         </HorizontalField>
         <HorizontalField :label="t('utils.user')" :input-id="`${idPrefix}user-${index}`">
-          <InputText :id="`${idPrefix}user-${index}`" class="w-full" :readonly="readonly" :model-value="link.user" @update:model-value="(value: string) => patchUri(index, { user: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}user-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.user" @update:model-value="(value: string) => patchUri(index, { user: value })" />
         </HorizontalField>
         <HorizontalField :label="t('utils.pass')" :input-id="`${idPrefix}pass-${index}`">
-          <InputText :id="`${idPrefix}pass-${index}`" class="w-full" :readonly="readonly" :model-value="link.password" @update:model-value="(value: string) => patchUri(index, { password: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}pass-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.password" @update:model-value="(value: string) => patchUri(index, { password: value })" />
         </HorizontalField>
         <HorizontalField v-if="link.protocol === 'ss' || link.method" :label="t('utils.method')" :input-id="`${idPrefix}method-${index}`">
-          <InputText :id="`${idPrefix}method-${index}`" class="w-full" :readonly="readonly" :model-value="link.method" @update:model-value="(value: string) => patchUri(index, { method: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}method-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.method" @update:model-value="(value: string) => patchUri(index, { method: value })" />
         </HorizontalField>
         <HorizontalField :label="t('utils.path')" :input-id="`${idPrefix}path-${index}`">
-          <InputText :id="`${idPrefix}path-${index}`" class="w-full" :readonly="readonly" :model-value="link.path" @update:model-value="(value: string) => patchUri(index, { path: value })" />
+          <InputText dir="ltr" :id="`${idPrefix}path-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.path" @update:model-value="(value: string) => patchUri(index, { path: value })" />
         </HorizontalField>
         <HorizontalField :label="t('utils.fragment')" :input-id="`${idPrefix}frag-${index}`">
-          <InputText :id="`${idPrefix}frag-${index}`" class="w-full" :readonly="readonly" :model-value="link.fragment" @update:model-value="(value: string) => patchUri(index, { fragment: value })" />
+          <InputText dir="auto" :id="`${idPrefix}frag-${index}`" class="w-full sublink-code" :readonly="readonly" :model-value="link.fragment" @update:model-value="(value: string) => patchUri(index, { fragment: value })" />
         </HorizontalField>
 
         <div class="flex items-center justify-between mb-2 mt-3">
@@ -53,8 +55,8 @@
           <Button v-if="!readonly" icon="pi pi-plus" size="small" :label="t('utils.addQuery')" @click="addParam(index)" />
         </div>
         <div v-for="(param, pIndex) in link.params" :key="pIndex" class="flex gap-2 mb-2 items-start">
-          <InputText class="w-36 shrink-0" :placeholder="t('utils.queryKey')" :readonly="readonly" :model-value="param.key" @update:model-value="(value: string) => patchParam(index, pIndex, 'key', value)" />
-          <InputText class="flex-auto min-w-0" :placeholder="t('utils.queryValue')" :readonly="readonly" :model-value="param.value" @update:model-value="(value: string) => patchParam(index, pIndex, 'value', value)" />
+          <InputText dir="ltr" class="w-36 shrink-0 sublink-code sublink-key" :placeholder="t('utils.queryKey')" :readonly="readonly" :model-value="param.key" @update:model-value="(value: string) => patchParam(index, pIndex, 'key', value)" />
+          <InputText dir="ltr" class="flex-auto min-w-0 sublink-code" :placeholder="t('utils.queryValue')" :readonly="readonly" :model-value="param.value" @update:model-value="(value: string) => patchParam(index, pIndex, 'value', value)" />
           <Button v-if="!readonly" icon="pi pi-times" text rounded severity="danger" :aria-label="t('common.delete')" @click="removeParam(index, pIndex)" />
         </div>
         <p v-if="!link.params.length" class="text-muted-color text-sm mt-0 mb-3">{{ t('utils.noQuery') }}</p>
@@ -195,6 +197,43 @@ function updateExtra(index: number, extra: string) {
 .sublink-json {
   min-height: 16rem;
   field-sizing: fixed;
+  /* monospace with Latin digits, in Persian too (also on the config tester, which has no UtilsView styles) */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'Vazirmatn', monospace;
+}
+.sublink-card,
+.sublink-card :deep(.p-fieldset-content-container),
+.sublink-card :deep(.p-fieldset-content-wrapper),
+.sublink-card :deep(.p-fieldset-content) {
+  min-width: 0;
+}
+/* A long link name is cut with "…" instead of widening the card */
+.sublink-card :deep(.p-fieldset-legend) {
+  max-width: 100%;
+  min-width: 0;
+}
+.sublink-card :deep(.p-fieldset-legend > *) {
+  max-width: 100%;
+  min-width: 0;
+}
+.sublink-card :deep(.p-fieldset-legend-label) {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* a Latin link name reads (and is cut) from its own start in RTL too, with Latin digits */
+  unicode-bidi: plaintext;
+  font-family: 'Vazirmatn', 'Lato', sans-serif;
+}
+/* Ports, paths, UUIDs and parameters keep Latin digits in Persian too (the page font draws Persian digits) */
+.sublink-code {
+  font-family: 'Vazirmatn', 'Lato', sans-serif;
+}
+/* Phones: the parameter name narrower, so its value keeps room */
+@media (max-width: 575px) {
+  .sublink-key {
+    width: 7.5rem;
+  }
 }
 </style>
 
