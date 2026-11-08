@@ -102,8 +102,8 @@
               @update:model-value="(v: boolean) => toggleEnabled(o, v)"
             />
             <div class="ob-row__actions">
-              <Button icon="pi pi-arrow-up" text rounded size="small" severity="secondary" :disabled="busy || i === 0" :aria-label="t('outbounds.moveUp')" v-tooltip.top="t('outbounds.moveUp')" @click="move(o, -1)" />
-              <Button icon="pi pi-arrow-down" text rounded size="small" severity="secondary" :disabled="busy || i === rows.length - 1" :aria-label="t('outbounds.moveDown')" v-tooltip.top="t('outbounds.moveDown')" @click="move(o, 1)" />
+              <Button icon="pi pi-arrow-up" class="ob-row__step" text rounded size="small" severity="secondary" :disabled="busy || i === 0" :aria-label="t('outbounds.moveUp')" v-tooltip.top="t('outbounds.moveUp')" @click="move(o, -1)" />
+              <Button icon="pi pi-arrow-down" class="ob-row__step" text rounded size="small" severity="secondary" :disabled="busy || i === rows.length - 1" :aria-label="t('outbounds.moveDown')" v-tooltip.top="t('outbounds.moveDown')" @click="move(o, 1)" />
               <Button icon="pi pi-pencil" text rounded size="small" :aria-label="t('common.edit')" v-tooltip.top="t('common.edit')" @click="openEdit(o)" />
               <Button icon="pi pi-ellipsis-v" text rounded size="small" severity="secondary" :aria-label="t('outbounds.more')" aria-haspopup="true" @click="openMenu($event, o)" />
             </div>
@@ -775,8 +775,23 @@ html[dir='rtl'] .ob-row__body {
     padding-inline: 0.4rem 0.75rem;
     border-radius: 14px;
   }
+  /* Phones: the handle is dragged with a finger (the same smooth drag); the ↑/↓ buttons go */
   .ob-row__handle {
-    display: none; /* touch: use the arrows */
+    width: 2rem;
+    height: 2.75rem;
+    font-size: 1.1rem;
+    color: var(--p-text-color);
+  }
+  .ob-row__order {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .ob-row__step {
+    display: none;
+  }
+  .ob-row__dir {
+    inset-inline-start: 1.85rem;
+    top: 0.5rem;
   }
   .ob-row__side {
     grid-column: 1 / -1;
