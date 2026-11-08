@@ -2485,6 +2485,7 @@
     },
     "theme": {
       "caddy": "Smart Caddy 主题",
+      "caddyShort": "Smart Caddy",
       "color": "主题",
       "colors": {
         "blue": "蓝色",
@@ -2500,8 +2501,14 @@
       },
       "dark": "深色模式",
       "default": "Hiddify 主题（默认）",
+      "glass": "玻璃",
       "glassHint": "每种颜色都可用于浅色和深色：浅色为其光晕上的磨砂玻璃，深色为 Smart Caddy 深色玻璃。",
+      "glassLess": "更实",
+      "glassMore": "更通透",
+      "hiddify": "Hiddify",
       "light": "浅色模式",
+      "liquid": "液态玻璃",
+      "liquidHint": "类似 iOS 的外观：圆润的控件，缓缓流动的色彩上覆盖玻璃。支持浅色和深色，使用上方选择的颜色。",
       "menu": "外观与语言",
       "mode": "浅色或深色",
       "retry": "重试"

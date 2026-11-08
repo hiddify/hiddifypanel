@@ -3463,6 +3463,7 @@
     },
     "theme": {
       "caddy": "Smart Caddy theme",
+      "caddyShort": "Smart Caddy",
       "color": "Theme",
       "colors": {
         "blue": "Blue",
@@ -3478,8 +3479,14 @@
       },
       "dark": "Dark mode",
       "default": "Hiddify theme (default)",
+      "glass": "Glass",
       "glassHint": "Each color works in light and dark: light gives frosted glass over its glow, dark gives the Smart Caddy dark glass.",
+      "glassLess": "More solid",
+      "glassMore": "More glass",
+      "hiddify": "Hiddify",
       "light": "Light mode",
+      "liquid": "Liquid Glass",
+      "liquidHint": "An iOS-like look: rounded controls, glass over slowly flowing color. Works in light and dark, in the color picked above.",
       "menu": "Appearance & language",
       "mode": "Light or dark",
       "retry": "Try again"

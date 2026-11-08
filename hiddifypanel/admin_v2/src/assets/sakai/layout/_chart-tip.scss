@@ -73,10 +73,10 @@
 
 /* The colour themes make --p-content-background see-through glass: a hover card lies over the page's own text, so it
    gets a solid surface there (the charts' card, the KPI tiles' card, a sparkline's tip) */
-html.theme-caddy :is(.chart-tip, .p-tooltip.kpi-tip .p-tooltip-text, .sparkline-tip) {
+html.theme-glass :is(.chart-tip, .p-tooltip.kpi-tip .p-tooltip-text, .sparkline-tip) {
     background: var(--p-surface-0);
 }
 
-html.theme-caddy.app-dark :is(.chart-tip, .p-tooltip.kpi-tip .p-tooltip-text, .sparkline-tip) {
+html.theme-glass.app-dark :is(.chart-tip, .p-tooltip.kpi-tip .p-tooltip-text, .sparkline-tip) {
     background: var(--p-surface-900);
 }

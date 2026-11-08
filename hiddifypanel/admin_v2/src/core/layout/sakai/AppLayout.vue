@@ -95,10 +95,10 @@ const containerClass = computed(() => ({
       background-color 0.2s ease,
       width 0.2s ease;
   }
-  html.theme-caddy .menu-tab {
+  html.theme-glass .menu-tab {
     background: var(--p-surface-0);
   }
-  html.theme-caddy.app-dark .menu-tab {
+  html.theme-glass.app-dark .menu-tab {
     background: var(--p-surface-900);
   }
   .menu-tab:active {

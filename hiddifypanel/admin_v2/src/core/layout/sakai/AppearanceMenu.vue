@@ -6,17 +6,32 @@ import Button from 'primevue/button'
 import Popover from 'primevue/popover'
 import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
-import { CADDY_ACCENTS, useLayout, type CaddyAccent } from './composables/layout'
+import { CADDY_ACCENTS, useLayout, type CaddyAccent, type ThemeName } from './composables/layout'
 import { apiErrorMessage } from '@/core/api/client'
 import { adminsApi, type MyAccount } from '@/features/admins/api'
 import { LANGUAGE_LOOK } from '@/shared/utils/languages'
 import FlagIcon from '@/shared/components/FlagIcon.vue'
 
-/** Top bar: one button for the admin's language, light/dark and the theme (the panel's own, or Smart Caddy glass
- *  in a color: _theme-caddy.scss). */
+/** Top bar: one button for the admin's language, light/dark and the theme: the panel's own, Smart Caddy glass
+ *  (_theme-caddy.scss) or Liquid Glass (_theme-liquid.scss), the two glass ones in a color; Liquid Glass with its
+ *  glass strength. */
 const { t } = useI18n()
 const toast = useToast()
-const { isDarkTheme, toggleDarkMode, caddyAccent, setCaddyAccent } = useLayout()
+const { isDarkTheme, toggleDarkMode, themeName, setTheme, layoutConfig, setAccent, glass, setGlass } = useLayout()
+
+const THEME_CHOICES: { value: ThemeName; label: string; icon: string }[] = [
+  { value: 'hiddify', label: 'theme.hiddify', icon: 'pi pi-circle-fill' },
+  { value: 'caddy', label: 'theme.caddyShort', icon: 'pi pi-th-large' },
+  { value: 'liquid', label: 'theme.liquid', icon: 'pi pi-sparkles' },
+]
+/** The color picked for the glass themes (the swatch marked), none on the Hiddify theme */
+const accent = computed<CaddyAccent | null>(() => (themeName.value === 'hiddify' ? null : layoutConfig.accent))
+
+/** The slider runs from the most glass (left) to the most solid (right): its value is the inverse of the strength */
+const solidness = computed(() => 100 - glass.value)
+function onGlassInput(event: Event) {
+  setGlass(100 - Number((event.target as HTMLInputElement).value))
+}
 
 /** The swatch of each Smart Caddy color: the two ends of its accent gradient (as in _theme-caddy.scss). */
 const SWATCH: Record<CaddyAccent, string> = {
@@ -150,37 +165,73 @@ function setDark(dark: boolean) {
         </div>
       </section>
 
-      <!-- Theme: the panel's own, or Smart Caddy glass in a color, in the light or dark chosen above; this browser only -->
+      <!-- Theme: the panel's own, Smart Caddy or Liquid Glass (the two glass ones in a color), in the light or dark chosen
+           above; this browser only -->
       <section class="appearance__section">
         <span class="appearance__title"><i class="pi pi-palette" />{{ t('theme.color') }}</span>
-        <button
-          type="button"
-          role="radio"
-          class="appearance__choice appearance__default"
-          :class="{ 'appearance__choice--active': caddyAccent === null }"
-          :aria-checked="caddyAccent === null"
-          @click="setCaddyAccent(null)"
-        >
-          <span class="appearance__default-dot" aria-hidden="true" />{{ t('theme.default') }}
-        </button>
-        <div class="appearance__swatches" role="radiogroup" :aria-label="t('theme.caddy')">
+        <div class="appearance__themes" role="radiogroup" :aria-label="t('theme.color')">
           <button
-            v-for="item in CADDY_ACCENTS"
-            :key="item"
+            v-for="choice in THEME_CHOICES"
+            :key="choice.value"
             type="button"
             role="radio"
-            class="appearance__swatch"
-            :class="{ 'appearance__swatch--active': caddyAccent === item }"
-            :style="{ '--swatch': SWATCH[item] }"
-            :aria-checked="caddyAccent === item"
-            :aria-label="`${t('theme.caddy')}: ${t(`theme.colors.${item}`)}`"
-            v-tooltip.bottom="t(`theme.colors.${item}`)"
-            @click="setCaddyAccent(item)"
+            class="appearance__theme"
+            :class="[`appearance__theme--${choice.value}`, { 'appearance__theme--active': themeName === choice.value }]"
+            :aria-checked="themeName === choice.value"
+            @click="setTheme(choice.value)"
           >
-            <i v-if="caddyAccent === item" class="pi pi-check" />
+            <span class="appearance__theme-preview" aria-hidden="true"><i :class="choice.icon" /></span>
+            <span class="appearance__theme-label">{{ t(choice.label) }}</span>
           </button>
         </div>
-        <small class="appearance__hint">{{ t('theme.glassHint') }}</small>
+        <template v-if="themeName !== 'hiddify'">
+          <div class="appearance__swatches" role="radiogroup" :aria-label="t('theme.caddy')">
+            <button
+              v-for="item in CADDY_ACCENTS"
+              :key="item"
+              type="button"
+              role="radio"
+              class="appearance__swatch"
+              :class="{ 'appearance__swatch--active': accent === item }"
+              :style="{ '--swatch': SWATCH[item] }"
+              :aria-checked="accent === item"
+              :aria-label="t(`theme.colors.${item}`)"
+              v-tooltip.bottom="t(`theme.colors.${item}`)"
+              @click="setAccent(item)"
+            >
+              <i v-if="accent === item" class="pi pi-check" />
+            </button>
+          </div>
+        </template>
+        <small class="appearance__hint">{{ t(themeName === 'liquid' ? 'theme.liquidHint' : 'theme.glassHint') }}</small>
+      </section>
+
+      <!-- Liquid Glass: how much glass. Left the most, right the most solid (an iOS volume-like slider) -->
+      <section v-if="themeName === 'liquid'" class="appearance__section">
+        <span class="appearance__title appearance__title--spread">
+          <span><i class="pi pi-sparkles" />{{ t('theme.glass') }}</span>
+          <span class="appearance__glass-value">{{ glass }}%</span>
+        </span>
+        <div class="appearance__glass" dir="ltr">
+          <i class="pi pi-sparkles appearance__glass-end" :title="t('theme.glassMore')" aria-hidden="true" />
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            class="appearance__range"
+            :value="solidness"
+            :style="{ '--glass-fill': `${solidness}%` }"
+            :aria-label="t('theme.glass')"
+            :aria-valuetext="`${t('theme.glass')} ${glass}%`"
+            @input="onGlassInput"
+          />
+          <i class="pi pi-stop appearance__glass-end" :title="t('theme.glassLess')" aria-hidden="true" />
+        </div>
+        <div class="appearance__glass-ends" dir="ltr" aria-hidden="true">
+          <span>{{ t('theme.glassMore') }}</span>
+          <span>{{ t('theme.glassLess') }}</span>
+        </div>
       </section>
     </div>
   </Popover>
@@ -292,17 +343,6 @@ function setDark(dark: boolean) {
   outline: 2px solid var(--p-primary-color);
   outline-offset: 2px;
 }
-.appearance__default {
-  justify-content: flex-start;
-}
-/* The panel's own look: its blue. */
-.appearance__default-dot {
-  width: 0.9rem;
-  height: 0.9rem;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-}
 .appearance__swatches {
   display: grid;
   /* Ten colors: two rows of five, so each tile stays a comfortable size. */
@@ -368,6 +408,157 @@ function setDark(dark: boolean) {
 .appearance__hint {
   font-size: 0.75rem;
   color: var(--p-text-muted-color);
+}
+.appearance__title--spread {
+  justify-content: space-between;
+}
+.appearance__title--spread > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.appearance__glass-value {
+  font-variant-numeric: tabular-nums;
+  color: var(--p-text-color);
+  text-transform: none;
+}
+/* The three themes, each with a small preview of its look */
+.appearance__themes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+.appearance__theme {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.5rem 0.3rem 0.45rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--p-text-color);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+.appearance__theme:hover {
+  border-color: color-mix(in srgb, var(--p-primary-color) 50%, var(--p-content-border-color));
+  transform: translateY(-1px);
+}
+.appearance__theme--active {
+  border-color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  color: var(--p-primary-color);
+  font-weight: 600;
+}
+.appearance__theme:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 2px;
+}
+.appearance__theme-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.appearance__theme-preview {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 2.1rem;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.8rem;
+  overflow: hidden;
+}
+.appearance__theme--hiddify .appearance__theme-preview {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+.appearance__theme--caddy .appearance__theme-preview {
+  background: radial-gradient(80% 90% at 20% 20%, #ff8a6e, transparent), radial-gradient(70% 80% at 90% 80%, #7c3aed, transparent), #2a2037;
+}
+.appearance__theme--liquid .appearance__theme-preview {
+  color: #1d4ed8;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 70%), rgb(255 255 255 / 35%)) padding-box,
+    radial-gradient(70% 90% at 15% 20%, #7dd3fc, transparent), radial-gradient(70% 90% at 90% 80%, #f9a8d4, transparent), #e0e7ff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 90%), inset 0 0 0 1px rgb(255 255 255 / 60%);
+}
+/* Glass strength: an iOS volume-like slider (a capsule track and a round white knob). The color fills the part that is
+   glass: from the knob to the "more glass" end, so it grows as the knob goes left */
+.appearance__glass {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.appearance__glass-end {
+  font-size: 0.85rem;
+  color: var(--p-text-muted-color);
+}
+.appearance__glass-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--p-text-muted-color);
+}
+.appearance__range {
+  --track: color-mix(in srgb, var(--p-text-color) 14%, transparent);
+  flex: 1;
+  min-width: 0;
+  height: 1.75rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.appearance__range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--track) 0 var(--glass-fill), var(--p-primary-color) var(--glass-fill) 100%);
+}
+.appearance__range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--track) 0 var(--glass-fill), var(--p-primary-color) var(--glass-fill) 100%);
+}
+.appearance__range::-webkit-slider-thumb {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-top: calc(3px - 0.8rem);
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.2),
+    0 0 0 0.5px rgb(0 0 0 / 0.08);
+  transition: transform 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.appearance__range::-moz-range-thumb {
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.2),
+    0 0 0 0.5px rgb(0 0 0 / 0.08);
+}
+.appearance__range:active::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+.appearance__range:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 4px;
+  border-radius: 999px;
 }
 @media (prefers-reduced-motion: reduce) {
   .appearance__swatch {

@@ -2485,6 +2485,7 @@
     },
     "theme": {
       "caddy": "Tema Smart Caddy",
+      "caddyShort": "Smart Caddy",
       "color": "Tema",
       "colors": {
         "blue": "Azul",
@@ -2500,8 +2501,14 @@
       },
       "dark": "Modo escuro",
       "default": "Tema Hiddify (padrão)",
+      "glass": "Vidro",
       "glassHint": "Cada cor funciona no claro e no escuro: vidro fosco sobre o seu brilho no claro, o vidro escuro Smart Caddy no escuro.",
+      "glassLess": "Mais sólido",
+      "glassMore": "Mais vidro",
+      "hiddify": "Hiddify",
       "light": "Modo claro",
+      "liquid": "Liquid Glass",
+      "liquidHint": "Um visual como o do iOS: controles arredondados, vidro sobre cores que fluem devagar. Claro ou escuro, na cor escolhida acima.",
       "menu": "Aparência e idioma",
       "mode": "Claro ou escuro",
       "retry": "Tentar de novo"
