@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-wrapper" :class="containerClass">
+  <div ref="wrapper" class="layout-wrapper" :class="containerClass">
     <AppTopbar />
     <AppSidebar />
     <div class="layout-main-container">
@@ -14,14 +14,18 @@
     </div>
     <div class="layout-mask animate-fadein" @click="hideMobileMenu" />
     <!-- Phones and tablets: a small tab at the middle of the screen's edge opens the menu, rides with it as it slides in,
-         and closes it again -->
+         and closes it again; it can also be dragged, the menu following the finger (useMenuSwipe) -->
     <button
       type="button"
       class="menu-tab"
       :class="{ 'menu-tab--open': layoutState.mobileMenuActive }"
       :aria-label="layoutState.mobileMenuActive ? t('menu.close') : t('menu.open')"
       :aria-expanded="layoutState.mobileMenuActive"
-      @click="toggleMenu"
+      @click="onTabClick"
+      @pointerdown="onTabPointerDown"
+      @pointermove="onTabPointerMove"
+      @pointerup="onTabPointerUp"
+      @pointercancel="onTabPointerUp"
     >
       <i class="pi pi-chevron-right" />
     </button>
@@ -47,9 +51,20 @@ import AppSidebar from './AppSidebar.vue'
 const pwaVisible = ref(false)
 import AppTopbar from './AppTopbar.vue'
 import { useLayout } from './composables/layout'
+import { useMenuSwipe } from './composables/useMenuSwipe'
 
 const { layoutConfig, layoutState, hideMobileMenu, toggleMenu } = useLayout()
 const { t } = useI18n()
+
+const wrapper = ref<HTMLElement | null>(null)
+const { dragging, settling, onTabPointerDown, onTabPointerMove, onTabPointerUp, tabClickToggles } = useMenuSwipe({
+  wrapper,
+  isOpen: () => layoutState.mobileMenuActive,
+  setOpen: (open) => (layoutState.mobileMenuActive = open),
+})
+function onTabClick() {
+  if (tabClickToggles()) toggleMenu()
+}
 
 /** Keep list filters/search when navigating to editor and back. */
 const keptViews = ['CustomProxyListView']
@@ -60,6 +75,8 @@ const containerClass = computed(() => ({
   'layout-overlay-active': layoutState.overlayMenuActive,
   'layout-mobile-active': layoutState.mobileMenuActive,
   'layout-static-inactive': layoutState.staticMenuInactive,
+  'layout-menu-dragging': dragging.value,
+  'layout-menu-settling': settling.value,
 }))
 </script>
 
@@ -101,8 +118,22 @@ const containerClass = computed(() => ({
   html.theme-caddy.app-dark .menu-tab {
     background: var(--p-surface-900);
   }
+  .menu-tab {
+    touch-action: none; /* a drag on the tab moves the menu, not the page */
+  }
   .menu-tab:active {
     width: 1.6rem;
+  }
+  /* Dragged: at the menu's edge wherever the finger has it, without the slide */
+  .layout-menu-dragging .menu-tab {
+    transition: none;
+    inset-inline-start: calc(var(--menu-drag, 0) * min(20rem, 100vw - 1.4rem));
+  }
+  .layout-menu-dragging .menu-tab i {
+    transform: rotate(calc(var(--menu-drag, 0) * 180deg));
+  }
+  html[dir='rtl'] .layout-menu-dragging .menu-tab i {
+    transform: scaleX(-1) rotate(calc(var(--menu-drag, 0) * 180deg));
   }
   .menu-tab i {
     font-size: 0.75rem;
