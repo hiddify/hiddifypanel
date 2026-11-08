@@ -42,7 +42,7 @@
 
     <div v-else class="settings-layout">
       <!-- Category navigation: sidebar on desktop, scrollable chips on mobile -->
-      <nav class="settings-nav" :aria-label="t('settings.categories')">
+      <nav ref="navEl" class="settings-nav" :aria-label="t('settings.categories')">
         <button
           v-for="cat in visibleCategories"
           :key="cat.id"
@@ -194,6 +194,22 @@ const formErrors = ref<string[]>([])
 const pendingApply = ref<RestartMode>('nothing')
 const newAdminPath = ref<string | null>(null)
 const activeCategory = ref<string | null>(null)
+
+// Phones: the chip bar scrolls sideways to keep the section on screen in view (its icon moves, _icon-motion.scss).
+// By the rectangles, not scrollLeft, so it is the same in RTL; the page itself is not scrolled.
+const navEl = ref<HTMLElement | null>(null)
+const chipBarQuery = window.matchMedia('(max-width: 991px)')
+watch(activeCategory, async () => {
+  if (!chipBarQuery.matches) return
+  await nextTick()
+  const nav = navEl.value
+  const chip = nav?.querySelector<HTMLElement>('.settings-nav__item--active')
+  if (!nav || !chip) return
+  const n = nav.getBoundingClientRect()
+  const c = chip.getBoundingClientRect()
+  if (c.left >= n.left + 8 && c.right <= n.right - 8) return
+  nav.scrollBy({ left: c.left + c.width / 2 - (n.left + n.width / 2), behavior: 'smooth' })
+})
 useHashState({ q: search, cat: activeCategory })
 const highlightCategory = ref<string | null>(null)
 const highlightKey = ref<string | null>(null)

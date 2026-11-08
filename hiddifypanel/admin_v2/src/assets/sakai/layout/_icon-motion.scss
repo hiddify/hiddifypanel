@@ -61,6 +61,21 @@ $icon-motions: (
     }
 }
 
+/* Phones: the Settings chip bar has no mouse, so the section on screen plays its icon's motion instead: scrolling the
+   page shows which part you are in (the chip bar is a phone layout below 992px, SettingsView.vue) */
+@media (max-width: 991px) and (prefers-reduced-motion: no-preference) {
+    .settings-nav__item--active .settings-nav__icon::before {
+        display: inline-block;
+        animation: icon-hop 1.4s ease-in-out infinite;
+    }
+
+    @each $icon, $motion in $icon-motions {
+        .settings-nav__item--active .#{$icon}.settings-nav__icon::before {
+            animation: $motion infinite;
+        }
+    }
+}
+
 /* A little jump that lands with a squash */
 @keyframes icon-hop {
     0%, 60%, 100% { transform: translateY(0) scale(1, 1); }
