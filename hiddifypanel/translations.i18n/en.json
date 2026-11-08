@@ -1952,7 +1952,9 @@
       "previewTitle": "Template preview"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify on the web",
+      "text": "HiddifyManager",
+      "website": "Website"
     },
     "legacy": {
       "loading": "Loading…",

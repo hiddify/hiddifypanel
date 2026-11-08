@@ -1313,7 +1313,9 @@
       "previewTitle": "Предпросмотр шаблона"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify в сети",
+      "text": "HiddifyManager",
+      "website": "Сайт"
     },
     "legacy": {
       "loading": "Загрузка…",

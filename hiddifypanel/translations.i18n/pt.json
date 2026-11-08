@@ -1313,7 +1313,9 @@
       "previewTitle": "Pré-visualização do template"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify na web",
+      "text": "HiddifyManager",
+      "website": "Site"
     },
     "legacy": {
       "loading": "Carregando…",
