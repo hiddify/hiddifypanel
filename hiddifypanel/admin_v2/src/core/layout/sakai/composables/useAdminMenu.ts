@@ -42,7 +42,7 @@ export function useAdminMenu() {
     ],
   }))
 
-  // Opens and closes like the proxy editor: config tester, text decoders, SSH terminal.
+  // Opens and closes like the proxy editor: config tester, text decoders, QR code, SSH terminal.
   const tools = computed<AdminMenuItem>(() => ({
     label: t('menu.tools'),
     icon: 'pi pi-fw pi-wrench',
@@ -50,6 +50,7 @@ export function useAdminMenu() {
       ...(isSuperAdmin.value ? [{ label: t('menu.configTester'), icon: 'pi pi-fw pi-bolt', to: '/config-tester' }] : []),
       { label: t('menu.cleanIp'), icon: 'pi pi-fw pi-wifi', to: '/scanner' },
       { label: t('menu.textDecoders'), icon: 'pi pi-fw pi-code', to: '/utils' },
+      { label: t('menu.qrCode'), icon: 'pi pi-fw pi-qrcode', to: '/qr' },
       ...(isSuperAdmin.value ? [{ label: t('menu.ssh'), icon: 'pi pi-fw pi-desktop', to: '/ssh' }] : []),
     ],
   }))

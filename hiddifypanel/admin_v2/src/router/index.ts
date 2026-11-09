@@ -154,6 +154,11 @@ const routes = [
         component: () => import('@/features/utils/views/UtilsView.vue'),
       },
       {
+        path: 'qr',
+        name: 'qr',
+        component: () => import('@/features/qr-tool/views/QrToolView.vue'),
+      },
+      {
         path: 'scanner',
         name: 'scanner',
         component: () => import('@/features/clean-ip/views/ScannerView.vue'),
