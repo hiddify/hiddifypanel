@@ -78,14 +78,14 @@
           <template #body="{ node }">
             <!-- Tree lines, in the colour of the admin they come from: through the rows of later siblings, an elbow into
                  this admin, and down to its own sub-admins while they are open -->
-            <span v-if="guideOf(node).depth" class="admins-guides" aria-hidden="true">
+            <span v-if="guideOf(node).depth" class="admins-guides" aria-hidden="true" :style="{ '--pulse-delay': pulseDelay(node) }">
               <template v-for="(h, i) in guideOf(node).pass" :key="i">
                 <span v-if="h !== null" class="admins-guide admins-guide--pass" :style="{ '--lvl': i, '--line-h': h }" />
               </template>
               <span v-if="!guideOf(node).last" class="admins-guide admins-guide--pass" :style="{ '--lvl': guideOf(node).depth - 1, '--line-h': guideOf(node).parentHue }" />
               <span class="admins-guide admins-guide--elbow" :style="{ '--lvl': guideOf(node).depth - 1, '--line-h': guideOf(node).parentHue }" />
             </span>
-            <span v-if="node.children?.length && isExpanded(node)" class="admins-guide admins-guide--down" aria-hidden="true" :style="{ '--lvl': guideOf(node).depth, '--line-h': hueOf(row(node)) }" />
+            <span v-if="node.children?.length && isExpanded(node)" class="admins-guide admins-guide--down" aria-hidden="true" :style="{ '--lvl': guideOf(node).depth, '--line-h': hueOf(row(node)), '--pulse-delay': pulseDelay(node) }" />
             <div class="admins-who" :style="{ '--depth': depthOf(node) }">
               <div class="admins-who__top">
                 <!-- The avatar doubles as the expand/collapse toggle of an admin with sub-admins -->
@@ -465,23 +465,36 @@ interface Guide {
   /** Per level above: the colour of a line passing through this row (an earlier admin has later siblings), or null. */
   pass: (number | null)[]
   parentHue: number
+  /** Position among the shown rows (-1: inside a collapsed admin), for the timing of the pulses. */
+  row: number
+}
+/** A faint pulse runs down each admin's own line to its sub-admins every PULSE_PERIOD seconds, PULSE_ROW seconds per
+ *  row; a sub-admin's own pulse leaves as the one from above reaches it, so the signal flows down like a nerve. */
+const PULSE_PERIOD = 15
+const PULSE_ROW = 0.4
+/** The animation delay of the pulses in a row (negative, so they are already running when the page opens). */
+function pulseDelay(node: TreeNode): string {
+  const row = Math.max(0, guideOf(node).row)
+  return `${(((row * PULSE_ROW) % PULSE_PERIOD) - PULSE_PERIOD).toFixed(2)}s`
 }
 /** The tree lines of each shown row (after filtering): which lines run through it and where they end. */
 const guides = computed(() => {
   const out = new Map<string, Guide>()
-  const walk = (list: TreeNode[], depth: number, pass: (number | null)[], parentHue: number) => {
+  let shown = 0
+  const walk = (list: TreeNode[], depth: number, pass: (number | null)[], parentHue: number, visible: boolean) => {
     list.forEach((node, i) => {
       const last = i === list.length - 1
-      out.set(String(node.key), { depth, last, pass, parentHue })
+      out.set(String(node.key), { depth, last, pass, parentHue, row: visible ? shown++ : -1 })
       // Its children see a line at this level while this admin has later siblings
-      if (node.children?.length) walk(node.children, depth + 1, depth ? [...pass, last ? null : parentHue] : [], hueOf(row(node)))
+      if (node.children?.length)
+        walk(node.children, depth + 1, depth ? [...pass, last ? null : parentHue] : [], hueOf(row(node)), visible && isExpanded(node))
     })
   }
-  walk(nodes.value, 0, [], ROOT_HUE)
+  walk(nodes.value, 0, [], ROOT_HUE, true)
   return out
 })
 function guideOf(node: TreeNode): Guide {
-  return guides.value.get(String(node.key)) ?? { depth: 0, last: true, pass: [], parentHue: ROOT_HUE }
+  return guides.value.get(String(node.key)) ?? { depth: 0, last: true, pass: [], parentHue: ROOT_HUE, row: -1 }
 }
 
 async function load(silent = false) {
@@ -829,6 +842,58 @@ onMounted(() => load())
   top: calc(var(--row-pad) + var(--avatar) + 4px);
   bottom: 0;
   border-inline-start: 2px solid hsl(var(--line-h) 70% 55% / 0.55);
+}
+/* The pulse: a faint dot in the line's colour that runs down an admin's own line to its sub-admins, every
+   --pulse-period. Each segment runs during its row's slot (--pulse-delay), so the dots of one admin join up. */
+.admins-guide {
+  --pulse-period: 15s;
+}
+.admins-guide--pass::before,
+.admins-guide--elbow::before,
+.admins-guide--down::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -4px;
+  top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--line-h) 85% 62%);
+  box-shadow: 0 0 6px 2px hsl(var(--line-h) 90% 65% / 0.45);
+  opacity: 0;
+  animation: admins-pulse-pass var(--pulse-period) linear infinite;
+  animation-delay: var(--pulse-delay, 0s);
+}
+.admins-guide--elbow::before {
+  animation-name: admins-pulse-elbow;
+}
+.admins-guide--down::before {
+  animation-name: admins-pulse-down;
+}
+/* One row (2.667% of 15 s = 0.4 s) from the top of the row to its bottom */
+@keyframes admins-pulse-pass {
+  0% { top: -3px; opacity: 0; }
+  0.333% { opacity: 0.7; }
+  2.333% { opacity: 0.7; }
+  2.667% { top: calc(100% - 3px); opacity: 0; }
+  100% { top: calc(100% - 3px); opacity: 0; }
+}
+/* Down to the turn in the first half of the row, then along into the avatar */
+@keyframes admins-pulse-elbow {
+  0% { top: -3px; inset-inline-start: -4px; opacity: 0; }
+  0.333% { opacity: 0.7; }
+  1.133% { top: calc(100% - 4px); inset-inline-start: -4px; }
+  1.533% { top: calc(100% - 4px); inset-inline-start: calc(100% - 4px); opacity: 0.7; }
+  1.733% { top: calc(100% - 4px); inset-inline-start: calc(100% - 4px); opacity: 0; }
+  100% { top: calc(100% - 4px); inset-inline-start: calc(100% - 4px); opacity: 0; }
+}
+/* The admin's own pulse leaves from under its avatar in the second half of its row */
+@keyframes admins-pulse-down {
+  0%, 1.333% { top: -3px; opacity: 0; }
+  1.533% { opacity: 0.7; }
+  2.333% { opacity: 0.7; }
+  2.667% { top: calc(100% - 3px); opacity: 0; }
+  100% { top: calc(100% - 3px); opacity: 0; }
 }
 .admins-who__top {
   display: flex;
@@ -1242,6 +1307,9 @@ button.admins-avatar:focus-visible {
   .admins-dot::after,
   .admins-empty__leaf {
     animation: none;
+  }
+  .admins-guide::before {
+    display: none;
   }
 }
 </style>
