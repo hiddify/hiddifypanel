@@ -16,6 +16,8 @@ export interface AppHealth {
 export interface HealthState {
   last: { at: number; user: string; host?: string; apps: Record<string, AppHealth> } | null
   running: boolean
+  /** The automatic checks (after a start, every 6 hours) are on; "Check now" works either way */
+  enabled?: boolean
 }
 
 export const CONFIG_HEALTH_APPS: Record<string, string> = { xray: 'XRay (v2rayN, v2rayNG, Happ, …)', hiddify: 'Hiddify / Sing-Box' }

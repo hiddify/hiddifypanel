@@ -3033,6 +3033,10 @@
       "label": "🎛️ Core de proxy comum",
       "xray": "Xray"
     },
+    "config_health_enable": {
+      "description": "Testa todas as configs da assinatura a partir do próprio servidor após cada início e a cada 6 horas, e avisa os admins (Telegram) quando configs param de funcionar. Cada verificação conecta ao servidor por todas as configs: alguns provedores consideram isso um flood. “Verificar agora” no painel sempre funciona.",
+      "label": "🩺 Verificação automática das configs"
+    },
     "config_tester_disabled": {
       "description": "",
       "label": ""

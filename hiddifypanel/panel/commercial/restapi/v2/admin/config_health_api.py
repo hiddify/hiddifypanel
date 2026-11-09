@@ -14,8 +14,8 @@ class ConfigHealthApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
     def get(self):
-        """Config health: the last check, and whether one is running"""
-        return {"last": config_health.last(), "running": config_health.is_running()}
+        """Config health: the last check, whether one is running, and whether the automatic checks are on"""
+        return {"last": config_health.last(), "running": config_health.is_running(), "enabled": config_health.enabled()}
 
     def post(self):
         """Config health: check every config now (in the background; read the result with GET)"""

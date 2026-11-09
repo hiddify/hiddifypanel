@@ -1321,6 +1321,7 @@
           "failed": "{n} of {total} configs do not work from the server.",
           "where": "Details: Dashboard › Config Health."
         },
+        "off": "Automatic checks are off: each one connects through every config to the server, which some hosting providers take for a flood. Turn them on in Settings › General, or press “Check now”.",
         "problem": {
           "certificate": {
             "hint": "The certificate of {host} is missing, expired or made for another name. Check this domain in Domains and renew its certificate.",
@@ -4218,6 +4219,10 @@
       "hiddify_core": "Hiddify Core (singbox)",
       "label": "🎛️ Common Proxy Core",
       "xray": "Xray"
+    },
+    "config_health_enable": {
+      "description": "Test every config of the subscription from the server after a start and every 6 hours, and warn the admins (Telegram) when configs stop working. Each check connects through every config to the server: some hosting providers take that for a flood. “Check now” on the dashboard always works.",
+      "label": "🩺 Automatic config health checks"
     },
     "config_tester_disabled": {
       "description": "config.config_tester_disabled.description",

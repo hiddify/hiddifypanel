@@ -58,11 +58,11 @@ def init_app(app):
     from hiddifypanel.proxy_v3 import config_health
 
     # Config health: every config of the subscription tested from the server, a few minutes after a start and every
-    # 6 hours; the super admins hear (Telegram) when configs break.
-    scheduler.add_job(run_in_app_context, args=(config_health.run_locked,), trigger=IntervalTrigger(hours=6, jitter=600), id="config_health", name="config health")
+    # 6 hours; the super admins hear (Telegram) when configs break. Only when an admin turned it on (config_health_enable).
+    scheduler.add_job(run_in_app_context, args=(config_health.run_scheduled,), trigger=IntervalTrigger(hours=6, jitter=600), id="config_health", name="config health")
     scheduler.add_job(
         run_in_app_context,
-        args=(config_health.run_locked,),
+        args=(config_health.run_scheduled,),
         trigger=DateTrigger(run_date=datetime.now() + timedelta(minutes=5)),
         id="config_health_startup",
         name="config health after start",

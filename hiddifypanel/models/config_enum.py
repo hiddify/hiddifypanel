@@ -172,6 +172,8 @@ class ConfigEnum(metaclass=FastEnum):
     restls1_2_domain = _StrConfigDscr(ConfigCategory.hidden)
     restls1_3_domain = _StrConfigDscr(ConfigCategory.hidden)
     show_usage_in_sublink = _BoolConfigDscr(ConfigCategory.general)
+    # automatic config health checks (proxy_v3/config_health): off unless turned on, they can look like a flood
+    config_health_enable = _BoolConfigDscr(ConfigCategory.general, hide_in_virtual_child=True)
     cloudflare = _StrConfigDscr(ConfigCategory.too_advanced)
     license = _StrConfigDscr(ConfigCategory.hidden)
     country = _StrConfigDscr(ConfigCategory.general, ApplyMode.reinstall, hide_in_virtual_child=True)

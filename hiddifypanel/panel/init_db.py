@@ -26,6 +26,14 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v199(child_id):
+    """The automatic config health checks are off: each one connects through every config to the server, which some
+    hosting providers take for a flood (hiddify/Hiddify-Manager#5672). An admin can turn them on."""
+    if child_id != 0:
+        return
+    add_config_if_not_exist(ConfigEnum.config_health_enable, False)
+
+
 def _v198(child_id):
     """OpenVPN (hiddify-core's openvpn-server endpoint): off, and its self-signed server certificate. The preset sync adds
     the OpenVPN proxy."""

@@ -619,8 +619,11 @@ def run(
     repeats: int = DEFAULT_REPEATS,
     should_stop: Callable[[], bool] | None = None,
     verify: bool = True,
+    select: Callable[[Item], bool] | None = None,
 ) -> Iterator[Event]:
-    """Events: ``start`` (once), a ``result`` per config, ``ping`` while nothing finishes, then ``done``."""
+    """Events: ``start`` (once), a ``result`` per config, ``ping`` while nothing finishes, then ``done``.
+
+    ``select``: only the configs it keeps are run (and counted); the others are not started at all."""
     fetched: Fetched
     if content is not None:  # pasted: nothing to fetch
         size = len(content.encode())
@@ -632,6 +635,8 @@ def run(
     source, items, parsed = split(raw, app)
     if not items:
         raise TesterError("No config found in the subscription")
+    if select is not None:
+        items = [i for i in items if select(i)]
     yield StartEvent(
         event="start",
         source=source,

@@ -5,6 +5,10 @@ It runs the config tester (``config_tester.run``) on the subscription of one act
 the server never works for anyone (a wrong template, a core that rejects it, an inbound that is missing), so these
 are the ones worth an admin's attention; filtering in Iran is another matter and is not tested here.
 
+It is off unless an admin turns it on (``config_health_enable``): each check starts a core for every config and
+connects through it to the server (hundreds of connections in a few minutes on a big subscription), which some hosting
+providers take for a flood and suspend the server for (hiddify/Hiddify-Manager#5672). "Check now" always works.
+
 The last result is kept in redis. A config that fails is tested again in a quarter of an hour; when it fails in two checks
 in a row (a moment's hiccup does not), the super admins hear about it from the Telegram bot (when there is one).
 """
@@ -31,12 +35,21 @@ APPS = (
 MAX_FAILED_LISTED = 60
 #: Cloudflare's, not Google's: panels often send Google through WARP, and a WARP hiccup is not a broken config
 TEST_URL = "https://cp.cloudflare.com/generate_204"
-#: two requests per config: one dropped request is not an alarm
-REPEATS = 2
+#: one request per config: a config that fails is tested once more (``RETRY_AFTER``), so a dropped request is no alarm
+REPEATS = 1
+#: configs tested at the same time: few, so the server is not a burst of connections to itself
+WORKERS = 4
 #: seconds before the failed configs are tested once more (a reload of the cores takes a few seconds)
 RETRY_AFTER = 30
 #: seconds before a check that found new failures is run again: the alert waits for two failed checks in a row
 CONFIRM_AFTER = 15 * 60
+
+
+def enabled() -> bool:
+    """The automatic checks (after a start, every 6 hours): only when an admin turned them on."""
+    from hiddifypanel.models import ConfigEnum, hconfig
+
+    return bool(hconfig(ConfigEnum.config_health_enable))
 
 
 def last() -> dict | None:
@@ -106,7 +119,10 @@ def _is_status_line(event: dict) -> bool:
 
 def _is_group(event: dict) -> bool:
     """Xray's "Auto": the subscription's entry that balances over all the configs (each one is tested on its own)."""
-    original = event.get("original")
+    return _balances(event.get("original"))
+
+
+def _balances(original: object) -> bool:
     routing = original.get("routing") if isinstance(original, dict) else None
     return isinstance(routing, dict) and bool(routing.get("balancers"))
 
@@ -117,8 +133,9 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
     from hiddifypanel.proxy_v3.config_tester_types import TesterError
 
     summary: dict = {"total": 0, "ok": 0, "failed": [], "error": ""}
+    # Xray's "Auto" is not even started: its observatory probes every config at once, and its result is not used
     try:
-        for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
+        for event in config_tester.run(url, agent, test_url=TEST_URL, workers=WORKERS, timeout=10, repeats=REPEATS, verify=verify, select=lambda item: not _balances(item.original)):
             if event.get("event") == "start":
                 summary["total"] = int(event.get("total") or 0)
             elif event.get("event") == "result" and (_is_status_line(event) or _is_group(event)):
@@ -130,12 +147,12 @@ def _test_app(url: str, agent: str, app: str, verify: bool = True) -> dict:
                     summary["failed"].append({"name": str(event.get("name") or ""), "error": str(event.get("error") or "")[:200]})
         if summary["failed"]:
             # The failed configs get a second chance a little later: the cores reload when an admin saves a domain
-            # or applies, and the configs tested at that moment fail although nothing is wrong with them. The whole
-            # subscription is fetched and run again (its configs can not be re-run from the results alone).
+            # or applies, and the configs tested at that moment fail although nothing is wrong with them. The
+            # subscription is fetched again and only the failed configs run.
             time.sleep(RETRY_AFTER)
             failed = {f["name"] for f in summary["failed"]}
             passed = set()
-            for event in config_tester.run(url, agent, test_url=TEST_URL, workers=8, timeout=10, repeats=REPEATS, verify=verify):
+            for event in config_tester.run(url, agent, test_url=TEST_URL, workers=WORKERS, timeout=10, repeats=REPEATS, verify=verify, select=lambda item: item.name in failed):
                 name = str(event.get("name") or "")
                 if event.get("event") == "result" and name in failed and event.get("ok"):
                     passed.add(name)
@@ -190,6 +207,11 @@ def run_locked() -> dict | None:
         redis_client.delete(_RUNNING)
 
 
+def run_scheduled() -> dict | None:
+    """The automatic check: nothing unless an admin turned it on."""
+    return run_locked() if enabled() else None
+
+
 def start_in_background(app) -> bool:
     """"Check now" from the page: the test takes a minute or two, the request does not wait for it."""
     if is_running():
@@ -234,7 +256,7 @@ def _confirm_later() -> None:
 
     def work():
         with app.app_context():
-            run_locked()
+            run_scheduled()
 
     timer = threading.Timer(CONFIRM_AFTER, work)
     timer.name, timer.daemon = "config-health-confirm", True

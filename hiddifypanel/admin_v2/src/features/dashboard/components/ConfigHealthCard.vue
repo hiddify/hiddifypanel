@@ -66,6 +66,7 @@ onBeforeUnmount(() => window.clearTimeout(timer))
       />
     </template>
 
+    <p v-if="state && state.enabled === false" class="text-muted-color text-sm mt-0 mb-3">{{ t('dashboard.health.off') }}</p>
     <p v-if="!state?.last" class="text-muted-color text-sm m-0">{{ state?.running ? t('dashboard.health.firstRun') : t('dashboard.health.never') }}</p>
     <div v-else class="health">
       <div v-for="[name, app] in apps" :key="name" class="health__app">

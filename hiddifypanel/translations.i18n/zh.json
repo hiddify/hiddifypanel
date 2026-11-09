@@ -3033,6 +3033,10 @@
       "label": "🎛️ 通用代理核心",
       "xray": "Xray"
     },
+    "config_health_enable": {
+      "description": "在启动后及每 6 小时从服务器本身测试订阅中的所有配置，并在配置失效时（通过 Telegram）通知管理员。每次检查都会通过每个配置连接到服务器：部分主机商会将其视为洪水攻击。仪表盘上的“立即检查”始终可用。",
+      "label": "🩺 自动检查配置健康"
+    },
     "config_tester_disabled": {
       "description": "",
       "label": ""

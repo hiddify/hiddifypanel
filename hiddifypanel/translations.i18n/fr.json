@@ -2994,6 +2994,10 @@
       "description": "Veuillez suivre <a href='https://github.com/hiddify/hiddify-config/wiki/Get-Cloudflare-API' target='_blank'>les instructions</a> et coller la clé API Cloudflare",
       "label": "🔑API Cloudflare"
     },
+    "config_health_enable": {
+      "description": "Teste toutes les configs de l’abonnement depuis le serveur après chaque démarrage et toutes les 6 heures, et prévient les admins (Telegram) quand des configs ne marchent plus. Chaque vérification se connecte au serveur par toutes les configs : certains hébergeurs y voient un flood. « Vérifier maintenant » sur le tableau de bord marche toujours.",
+      "label": "🩺 Vérification automatique des configs"
+    },
     "core_type": {
       "description": "☢️ XRay : est un noyau complet<inlang-LineFeed><br>\n📦 Singbox : Développé par SagerNet. C'est aussi un bon noyau",
       "label": "🎛️ Noyau"
