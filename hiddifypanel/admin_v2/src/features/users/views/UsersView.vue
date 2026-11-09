@@ -106,18 +106,12 @@
         v-model:selection="selected"
         :select-all="allPicked"
         @select-all-change="onSelectAllChange"
-        v-model:first="first"
         :value="tableRows"
         data-key="uuid"
         :lazy="virtualTable || (!groupByOwner && !!sortField)"
         :scrollable="virtualTable"
         :scroll-height="virtualTable ? 'calc(100dvh - 16rem)' : undefined"
         :virtual-scroller-options="virtualTable ? { itemSize: rowPx, numToleratedItems: 12 } : undefined"
-        :paginator="paged && rows.length > pageSize"
-        :rows="paged ? pageSize : Math.max(rows.length, 1)"
-        :total-records="rows.length"
-        paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-        :current-page-report-template="pageReport"
         :sort-field="groupByOwner ? 'owner_key' : sortField"
         :sort-order="groupByOwner ? 1 : sortOrder"
         :row-group-mode="groupByOwner ? 'subheader' : undefined"
@@ -271,6 +265,7 @@
         </Column>
 
       </DataTable>
+      <PageScrubber v-if="paged && rows.length > pageSize" v-model:first="first" :rows="pageSize" :total-records="rows.length" />
     </div>
 
     <!-- Phones: compact cards -->
@@ -375,7 +370,7 @@
       </div>
       <ListNoMatch v-if="!rows.length && usersFiltered && state.users.length" @reset="resetUserFilters" />
       <div v-else-if="!rows.length" class="users-empty"><i class="pi pi-users" /><span>{{ t('users.none') }}</span></div>
-      <Paginator v-if="paged && rows.length > pageSize" v-model:first="first" :rows="pageSize" :total-records="rows.length" template="PrevPageLink CurrentPageReport NextPageLink" :current-page-report-template="pageReport" />
+      <PageScrubber v-if="paged && rows.length > pageSize" v-model:first="first" :rows="pageSize" :total-records="rows.length" scroll-top-on-step />
     </div>
 
     <Menu ref="rowMenu" :model="menuItems" popup />
@@ -437,6 +432,7 @@ import { unitLabel } from '@/shared/utils/format-metrics'
 import { PHONE_NAME_MAX, isLongName, shortName } from '@/shared/utils/short-name'
 import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
+import PageScrubber from '@/shared/components/PageScrubber.vue'
 import NotePreview from '@/shared/components/NotePreview.vue'
 import { numberListCodec, optionalNumberCodec, useHashState } from '@/shared/composables/useHashState'
 import { useWindowSlice } from '@/shared/composables/useWindowSlice'
@@ -456,7 +452,6 @@ import InputText from 'primevue/inputtext'
 import Menu from 'primevue/menu'
 import type { MenuItem } from 'primevue/menuitem'
 import Message from 'primevue/message'
-import Paginator from 'primevue/paginator'
 import Popover from 'primevue/popover'
 import Select from 'primevue/select'
 import Skeleton from 'primevue/skeleton'
@@ -576,8 +571,6 @@ watch([groupByOwner, showDates, pageSize, autoRefresh, usageWidthPx], () => {
   }
 })
 const paged = computed(() => pageSize.value > 0)
-/** PrimeVue fills {first} {last} {totalRecords}: hand them through vue-i18n untouched. */
-const pageReport = computed(() => t('users.pageReport', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' }))
 const pageOptions = computed(() => [
   { value: 10, label: '10' },
   { value: 100, label: '100' },
@@ -749,8 +742,9 @@ const sortedRows = computed<Row[]>(() => {
   const by = (list: Row[]) => [...list].sort((a, b) => sortValues(resolveFieldData(a, field), resolveFieldData(b, field), dir, comparer, 1))
   return [...by(rows.value.filter((u) => isPinned(u))), ...by(rows.value.filter((u) => !isPinned(u)))]
 })
-/** A lazy table (a column sort) shows its rows as given: hand it the current page of the sorted list. */
+/** The table shows its rows as given (PageScrubber below it picks the page): the current page when paged. */
 const tableRows = computed<Row[]>(() => {
+  if (paged.value) return pageRows.value
   if (groupByOwner.value) {
     if (!virtualTable.value) return rows.value
     return [...rows.value].sort((a, b) => a.owner_key.localeCompare(b.owner_key))

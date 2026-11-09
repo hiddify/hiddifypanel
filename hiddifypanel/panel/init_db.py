@@ -23,20 +23,33 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 201
+MAX_DB_VERSION = 202
 
 
-def _v200(child_id):
+def _v202(child_id):
     """Cloudflare WARP stays off until an admin accepts Cloudflare's terms. An upgrade does not accept them."""
     add_config_if_not_exist(ConfigEnum.warp_tos_accepted, False, child_id)
 
 
-def _v199(child_id):
+def _v201(child_id):
     """The automatic config health checks are off: each one connects through every config to the server, which some
     hosting providers take for a flood (hiddify/Hiddify-Manager#5672). An admin can turn them on."""
     if child_id != 0:
         return
     add_config_if_not_exist(ConfigEnum.config_health_enable, False)
+
+
+def _v200(child_id):
+    """Built-in proxy names spelled as the panel writes protocols and transports ("xhttp vless TLS H1" →
+    "XHTTP VLess TLS H1"): the users' apps show them. Slugs and server tags stay; a name an admin typed is kept."""
+    sync_builtin_presets(child_id)
+
+    """Settings longer than 3072 characters failed to save on MySQL/MariaDB ("Data too long for column 'value'"): the
+    spare REALITY SNIs after a scan, a long Full support text. str_config.value becomes TEXT, as the model now says
+    (SQLite never enforced the length)."""
+    if child_id != 0:
+        return
+    alter_column(StrConfig.value)
 
 
 def _v198(child_id):

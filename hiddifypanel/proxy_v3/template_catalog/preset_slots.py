@@ -284,8 +284,48 @@ def _preset_title(slot: PresetSlot, *, include_custom_transport: bool = True) ->
     return base
 
 
-def preset_display_name(slot: PresetSlot) -> str:
+# The words of a preset's name spelled as the panel writes protocols, transports and categories (admin_v2
+# shared/utils/protocols.ts), e.g. "xhttp vless TLS H1" → "XHTTP VLess TLS H1". The name is what users' apps show.
+PRESET_NAME_WORDS = {
+    "anytls": "AnyTLS",
+    "dnstt": "DNSTT",
+    "faketls": "FakeTLS",
+    "grpc": "gRPC",
+    "httpupgrade": "HTTPUpgrade",
+    "hysteria": "Hysteria",
+    "hysteria2": "Hysteria 2",
+    "masterdns": "MasterDNS",
+    "mieru": "Mieru",
+    "naive": "Naive",
+    "openvpn": "OpenVPN",
+    "raw": "Raw",
+    "rawhttp": "RawHTTP",
+    "shadowsocks": "Shadowsocks",
+    "shadowsocks2022": "Shadowsocks2022",
+    "shadowtls": "ShadowTLS",
+    "slipstream": "Slipstream",
+    "snell": "Snell",
+    "ss": "SS",
+    "ssh": "SSH",
+    "trojan": "Trojan",
+    "tuic": "TUIC",
+    "v2ray": "V2Ray",
+    "vless": "VLess",
+    "vmess": "VMess",
+    "wireguard": "WireGuard",
+    "ws": "WS",
+    "xhttp": "XHTTP",
+}
+
+
+def preset_tag_name(slot: PresetSlot) -> str:
+    """The name in its original spelling ("xhttp vless TLS H1"): slugs and server tags are made from it, so they
+    stay the same when only the display spelling changes."""
     return _preset_title(slot, include_custom_transport=False)
+
+
+def preset_display_name(slot: PresetSlot) -> str:
+    return " ".join(PRESET_NAME_WORDS.get(word.lower(), word) for word in preset_tag_name(slot).split(" "))
 
 
 def preset_slug_name(slot: PresetSlot) -> str:

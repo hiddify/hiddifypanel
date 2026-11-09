@@ -771,6 +771,7 @@
       "confirmDelete": "Voulez-vous vraiment supprimer cet élément ?",
       "copied": "Copié",
       "copy": "Copier",
+      "decrease": "Diminuer",
       "delete": "Supprimer",
       "deleted": "Supprimé avec succès",
       "disabled": "Désactivé",
@@ -781,6 +782,7 @@
       "filter": "Filtrer",
       "filteredOf": "Filtré : {n} sur {total}",
       "format": "Format",
+      "increase": "Augmenter",
       "loadFailed": "Échec du chargement des données",
       "no": "Non",
       "noMatch": "Aucun résultat pour ces filtres",
@@ -1311,7 +1313,9 @@
       "previewTitle": "Aperçu du modèle"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify sur le web",
+      "text": "HiddifyManager",
+      "website": "Site web"
     },
     "legacy": {
       "loading": "Chargement…",
@@ -2507,7 +2511,14 @@
         "graphite": "Graphite",
         "spacegray": "Gris sidéral",
         "brown": "Brun foncé"
-      }
+      },
+      "hiddify": "Hiddify",
+      "caddyShort": "Smart Caddy",
+      "liquid": "Liquid Glass",
+      "liquidHint": "Un style proche d'iOS : commandes arrondies, verre sur des couleurs qui ondulent lentement. Clair ou sombre, dans la couleur choisie ci-dessus.",
+      "glass": "Verre",
+      "glassMore": "Plus de verre",
+      "glassLess": "Plus opaque"
     },
     "users": {
       "guide": {
@@ -2744,7 +2755,6 @@
       "none": "Aucun utilisateur pour l'instant",
       "of": "sur",
       "online": "En ligne",
-      "pageReport": "{first}–{last} sur {totalRecords}",
       "perPage": "Utilisateurs par page",
       "refresh": "Actualiser",
       "resetTag": {
@@ -2827,6 +2837,18 @@
       "preview": "Aperçu compilé",
       "title": "Validation",
       "warnings": "Avertissements"
+    },
+    "pager": {
+      "label": "Pages",
+      "report": "Affichage de {first} à {last} sur {total}",
+      "first": "Première page",
+      "last": "Dernière page",
+      "slider": "Faites glisser pour changer de page",
+      "pageOf": "Page {page} sur {pages}",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "jump": "Aller à la page",
+      "of": "sur {pages}"
     }
   },
   "adminuser": {

@@ -138,10 +138,10 @@ const fmt = (ms: number) => (ms < 10 ? ms.toFixed(1) : Math.round(ms).toString()
 }
 /* The colour themes make --p-content-background see-through glass: this panel lies over the card's own text,
    so it gets a solid surface there */
-html.theme-caddy .nping {
+html.theme-glass .nping {
   background: var(--p-surface-0);
 }
-html.theme-caddy.app-dark .nping {
+html.theme-glass.app-dark .nping {
   background: var(--p-surface-900);
 }
 .nping__close {

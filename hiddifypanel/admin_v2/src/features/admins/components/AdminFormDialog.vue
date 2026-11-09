@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
-import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Textarea from 'primevue/textarea'
@@ -11,6 +10,7 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import TreeSelect from 'primevue/treeselect'
 import type { TreeNode } from 'primevue/treenode'
 import { apiErrorMessage } from '@/core/api/client'
+import NumberStepper from '@/shared/components/NumberStepper.vue'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundSelect.vue'
 import { cleanConfigRows, configRowProblem, type AdditionalConfig } from '@/shared/utils/additional-configs'
@@ -179,7 +179,7 @@ const limitFields = computed(() =>
       { key: 'max_online_users', icon: 'pi pi-wifi', optional: true, suffix: '' },
       { key: 'max_active_users', icon: 'pi pi-bolt', optional: false, suffix: '' },
       { key: 'max_users', icon: 'pi pi-users', optional: false, suffix: '' },
-      { key: 'max_total_usage_GB', icon: 'pi pi-arrow-right-arrow-left', optional: true, suffix: ` ${unitLabel('GB')}` },
+      { key: 'max_total_usage_GB', icon: 'pi pi-arrow-right-arrow-left', optional: true, suffix: unitLabel('GB') },
     ] as const
   ).map((field) => {
     const mine = myLimits.value?.[field.key] ?? null
@@ -354,23 +354,17 @@ async function submit() {
           <div class="admin-form__limits">
             <div v-for="field in limitFields" :key="field.key" class="admin-form__field">
               <label :for="`admin-${field.key}`" class="admin-form__limit-label"><i :class="field.icon" />{{ t(`admins.limit.${field.key}`) }}</label>
-              <InputNumber
+              <NumberStepper
                 v-model="limits[field.key]"
                 :input-id="`admin-${field.key}`"
                 :min="0"
                 :max="field.mine ?? undefined"
-                :max-fraction-digits="field.key === 'max_total_usage_GB' ? 2 : 0"
+                :fraction-digits="field.key === 'max_total_usage_GB' ? 2 : 0"
                 :suffix="field.suffix"
                 :placeholder="field.optional ? t('admins.form.noLimit') : ''"
                 :invalid="field.invalid"
                 :disabled="busy"
-                show-buttons
-                button-layout="horizontal"
-                fluid
-              >
-                <template #incrementicon><span class="pi pi-plus" /></template>
-                <template #decrementicon><span class="pi pi-minus" /></template>
-              </InputNumber>
+              />
               <small v-if="field.mine !== null" class="text-muted-color" :class="{ 'admin-form__error': field.invalid }">{{ t('admins.form.upTo', { max: field.mine }) }}</small>
               <small v-else-if="field.optional" class="text-muted-color">{{ t('admins.form.emptyNoLimit') }}</small>
             </div>
@@ -545,9 +539,6 @@ async function submit() {
 .admin-form__limit-label i {
   font-size: 0.8rem;
   color: var(--p-primary-color);
-}
-.admin-form__limits :deep(.p-inputnumber-input) {
-  text-align: center;
 }
 .admin-caps {
   border-radius: 16px;

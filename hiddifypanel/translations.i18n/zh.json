@@ -771,6 +771,7 @@
       "confirmDelete": "确定要删除此项吗？",
       "copied": "已复制",
       "copy": "复制",
+      "decrease": "减少",
       "delete": "删除",
       "deleted": "删除成功",
       "disabled": "已禁用",
@@ -781,6 +782,7 @@
       "filter": "筛选",
       "filteredOf": "已筛选：显示 {n} / {total}",
       "format": "格式",
+      "increase": "增加",
       "loadFailed": "加载数据失败",
       "no": "否",
       "noMatch": "没有符合这些筛选条件的内容",
@@ -1311,7 +1313,9 @@
       "previewTitle": "模板预览"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify 官方渠道",
+      "text": "HiddifyManager",
+      "website": "网站"
     },
     "legacy": {
       "loading": "加载中…",
@@ -1569,6 +1573,15 @@
       "title": "通知",
       "unread": "{n} 条新通知 | {n} 条新通知"
     },
+    "operatorIps": {
+      "name": {
+        "CBN": "中国广电",
+        "CER": "中国教育网 (CERNET)",
+        "CMC": "中国移动",
+        "CTC": "中国电信",
+        "CUC": "中国联通"
+      }
+    },
     "outbounds": {
       "add": "添加出站",
       "count": {
@@ -1696,6 +1709,18 @@
         "termsLink": "服务条款",
         "title": "Cloudflare WARP 条款"
       }
+    },
+    "pager": {
+      "first": "第一页",
+      "jump": "跳转到页面",
+      "label": "分页",
+      "last": "最后一页",
+      "next": "下一页",
+      "of": "共 {pages} 页",
+      "pageOf": "第 {page} 页，共 {pages} 页",
+      "prev": "上一页",
+      "report": "显示第 {first}–{last} 条，共 {total} 条",
+      "slider": "拖动以切换页面"
     },
     "passwordRules": {
       "common": "不是常见密码",
@@ -2488,6 +2513,7 @@
     },
     "theme": {
       "caddy": "Smart Caddy 主题",
+      "caddyShort": "Smart Caddy",
       "color": "主题",
       "colors": {
         "blue": "蓝色",
@@ -2503,8 +2529,14 @@
       },
       "dark": "深色模式",
       "default": "Hiddify 主题（默认）",
+      "glass": "玻璃",
       "glassHint": "每种颜色都可用于浅色和深色：浅色为其光晕上的磨砂玻璃，深色为 Smart Caddy 深色玻璃。",
+      "glassLess": "更实",
+      "glassMore": "更通透",
+      "hiddify": "Hiddify",
       "light": "浅色模式",
+      "liquid": "液态玻璃",
+      "liquidHint": "类似 iOS 的外观：圆润的控件，缓缓流动的色彩上覆盖玻璃。支持浅色和深色，使用上方选择的颜色。",
       "menu": "外观与语言",
       "mode": "浅色或深色",
       "retry": "重试"
@@ -2744,7 +2776,6 @@
       "none": "暂无用户",
       "of": "/",
       "online": "在线",
-      "pageReport": "{first}–{last} / {totalRecords}",
       "perPage": "每页用户数",
       "refresh": "刷新",
       "resetTag": {

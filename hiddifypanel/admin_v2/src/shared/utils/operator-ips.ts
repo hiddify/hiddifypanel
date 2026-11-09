@@ -4,7 +4,8 @@
  * (hutils/network/auto_ip_selector.py). Only "OTHER" addresses are written as a plain list, without codes.
  */
 
-/** Operators the panel detects (hutils/network/maxmind.py ASN map), then "OTHER" (auto_ip_selector.OTHER_OPERATOR). */
+/** Operators the panel detects (hutils/network/maxmind.py: its ASN map and, for China and Russia, AS names), then "OTHER"
+ * (auto_ip_selector.OTHER_OPERATOR). */
 export const OPERATORS = [
   { code: 'MCI', ircf: 'mci.ircf.space' },
   { code: 'MTN', ircf: 'mtn.ircf.space' },
@@ -21,6 +22,19 @@ export const OPERATORS = [
   { code: 'ZTL', ircf: 'ztl.ircf.space' },
   { code: 'PSM', ircf: 'psm.ircf.space' },
   { code: 'ITC', ircf: null },
+  // China and Russia (no ircf.space host)
+  { code: 'CTC', ircf: null },
+  { code: 'CUC', ircf: null },
+  { code: 'CMC', ircf: null },
+  { code: 'CBN', ircf: null },
+  { code: 'CER', ircf: null },
+  { code: 'RTK', ircf: null },
+  { code: 'MTS', ircf: null },
+  { code: 'MGF', ircf: null },
+  { code: 'BLN', ircf: null },
+  { code: 'T2R', ircf: null },
+  { code: 'ERT', ircf: null },
+  { code: 'TTK', ircf: null },
   { code: 'OTHER', ircf: null },
 ] as const
 

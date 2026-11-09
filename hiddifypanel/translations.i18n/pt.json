@@ -771,6 +771,7 @@
       "confirmDelete": "Tem certeza de que deseja excluir este item?",
       "copied": "Copiado",
       "copy": "Copiar",
+      "decrease": "Diminuir",
       "delete": "Excluir",
       "deleted": "Excluído com sucesso",
       "disabled": "Desativado",
@@ -781,6 +782,7 @@
       "filter": "Filtrar",
       "filteredOf": "Filtrado: mostrando {n} de {total}",
       "format": "Formatar",
+      "increase": "Aumentar",
       "loadFailed": "Falha ao carregar os dados",
       "no": "Não",
       "noMatch": "Nada corresponde a estes filtros",
@@ -1311,7 +1313,9 @@
       "previewTitle": "Pré-visualização do template"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify na web",
+      "text": "HiddifyManager",
+      "website": "Site"
     },
     "legacy": {
       "loading": "Carregando…",
@@ -1696,6 +1700,18 @@
         "termsLink": "Termos de Serviço",
         "title": "Termos do Cloudflare WARP"
       }
+    },
+    "pager": {
+      "first": "Primeira página",
+      "jump": "Ir para a página",
+      "label": "Páginas",
+      "last": "Última página",
+      "next": "Próxima",
+      "of": "de {pages}",
+      "pageOf": "Página {page} de {pages}",
+      "prev": "Anterior",
+      "report": "Mostrando {first}–{last} de {total}",
+      "slider": "Arraste para mudar de página"
     },
     "passwordRules": {
       "common": "não ser uma senha comum",
@@ -2488,6 +2504,7 @@
     },
     "theme": {
       "caddy": "Tema Smart Caddy",
+      "caddyShort": "Smart Caddy",
       "color": "Tema",
       "colors": {
         "blue": "Azul",
@@ -2503,8 +2520,14 @@
       },
       "dark": "Modo escuro",
       "default": "Tema Hiddify (padrão)",
+      "glass": "Vidro",
       "glassHint": "Cada cor funciona no claro e no escuro: vidro fosco sobre o seu brilho no claro, o vidro escuro Smart Caddy no escuro.",
+      "glassLess": "Mais sólido",
+      "glassMore": "Mais vidro",
+      "hiddify": "Hiddify",
       "light": "Modo claro",
+      "liquid": "Liquid Glass",
+      "liquidHint": "Um visual como o do iOS: controles arredondados, vidro sobre cores que fluem devagar. Claro ou escuro, na cor escolhida acima.",
       "menu": "Aparência e idioma",
       "mode": "Claro ou escuro",
       "retry": "Tentar de novo"
@@ -2744,7 +2767,6 @@
       "none": "Ainda não há usuários",
       "of": "de",
       "online": "Online",
-      "pageReport": "{first}–{last} de {totalRecords}",
       "perPage": "Usuários por página",
       "refresh": "Atualizar",
       "resetTag": {

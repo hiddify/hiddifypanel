@@ -1112,6 +1112,7 @@
       "confirmDelete": "Are you sure you want to delete this item?",
       "copied": "Copied",
       "copy": "Copy",
+      "decrease": "Decrease",
       "delete": "Delete",
       "deleted": "Deleted successfully",
       "disabled": "Disabled",
@@ -1122,6 +1123,7 @@
       "filter": "Filter",
       "filteredOf": "Filtered: showing {n} of {total}",
       "format": "Format",
+      "increase": "Increase",
       "loadFailed": "Failed to load data",
       "no": "No",
       "noMatch": "Nothing matches these filters",
@@ -1313,6 +1315,18 @@
       "health": {
         "checkNow": "Check now",
         "checked": "Every config tested from the server · {ago}",
+        "disable": {
+          "button": "Disable failing",
+          "hint": "Turn off the configs that fail in both XRay and Hiddify",
+          "none": "No config fails in both XRay and Hiddify",
+          "unknown": "Run a check first: it finds the configs that fail in both apps",
+          "wait": "Wait for the check to finish",
+          "title": "Turn off configs that work nowhere?",
+          "text": "This config fails in both XRay and Hiddify, so it works for no one. It will be turned off for every user: | These {n} configs fail in both XRay and Hiddify, so they work for no one. They will be turned off for every user:",
+          "kept": "Configs that work in XRay or in Hiddify stay on. Restore turns these back on.",
+          "confirm": "Turn off 1 config | Turn off {n} configs",
+          "done": "1 config turned off | {n} configs turned off"
+        },
         "firstRun": "The first check is running; it takes a minute or two.",
         "never": "Not checked yet. Press “Check now”.",
         "notTested": "Not tested",
@@ -1362,6 +1376,11 @@
           "refused": "The connection was refused",
           "timeout": "No answer in time",
           "tls": "The TLS handshake failed"
+        },
+        "restore": {
+          "button": "Restore",
+          "hint": "Turn back on the configs turned off here or by the config tester",
+          "done": "1 config turned back on | {n} configs turned back on"
         },
         "running": "Checking…",
         "subtitle": "Every config, tested from the server every 6 hours",
@@ -1934,7 +1953,9 @@
       "previewTitle": "Template preview"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify on the web",
+      "text": "HiddifyManager",
+      "website": "Website"
     },
     "legacy": {
       "loading": "Loading…",
@@ -2354,18 +2375,30 @@
         "AFR": "Afranet",
         "ASK": "Andishe Sabz",
         "AST": "Asiatech",
+        "BLN": "Beeline",
+        "CBN": "China Broadnet",
+        "CER": "CERNET",
+        "CMC": "China Mobile",
+        "CTC": "China Telecom",
+        "CUC": "China Unicom",
+        "ERT": "ER-Telecom (Dom.ru)",
         "HWB": "HiWeb",
         "ITC": "Zirsakht (ITC)",
         "MBT": "Mobinnet",
         "MCI": "Hamrah-e Aval",
+        "MGF": "MegaFon",
         "MKH": "Mokhaberat",
         "MTN": "Irancell",
+        "MTS": "MTS",
         "OTHER": "Other",
         "PRS": "ParsOnline",
         "PSM": "Pishgaman",
         "RSP": "Respina",
+        "RTK": "Rostelecom",
         "RTL": "Rightel",
         "SHT": "Shatel",
+        "T2R": "T2 (Tele2)",
+        "TTK": "TTK (TransTeleCom)",
         "ZTL": "Zitel"
       },
       "operator": "Operator",
@@ -2500,6 +2533,18 @@
         "termsLink": "Terms of Service",
         "title": "Cloudflare WARP terms"
       }
+    },
+    "pager": {
+      "first": "First page",
+      "jump": "Go to page",
+      "label": "Pages",
+      "last": "Last page",
+      "next": "Next",
+      "of": "of {pages}",
+      "pageOf": "Page {page} of {pages}",
+      "prev": "Previous",
+      "report": "Showing {first}–{last} of {total}",
+      "slider": "Drag to change the page"
     },
     "passwordRules": {
       "common": "not a common password",
@@ -3494,6 +3539,7 @@
     },
     "theme": {
       "caddy": "Smart Caddy theme",
+      "caddyShort": "Smart Caddy",
       "color": "Theme",
       "colors": {
         "blue": "Blue",
@@ -3509,8 +3555,14 @@
       },
       "dark": "Dark mode",
       "default": "Hiddify theme (default)",
+      "glass": "Glass",
       "glassHint": "Each color works in light and dark: light gives frosted glass over its glow, dark gives the Smart Caddy dark glass.",
+      "glassLess": "More solid",
+      "glassMore": "More glass",
+      "hiddify": "Hiddify",
       "light": "Light mode",
+      "liquid": "Liquid Glass",
+      "liquidHint": "An iOS-like look: rounded controls, glass over slowly flowing color. Works in light and dark, in the color picked above.",
       "menu": "Appearance & language",
       "mode": "Light or dark",
       "retry": "Try again"
@@ -3783,7 +3835,6 @@
       "none": "No users yet",
       "of": "of",
       "online": "Online",
-      "pageReport": "{first}–{last} of {totalRecords}",
       "perPage": "Users per page",
       "readOnlyNode": "Users are managed on the parent panel: here they are shown read-only.",
       "refresh": "Refresh",
