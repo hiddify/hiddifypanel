@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
 from loguru import logger
-from sqlalchemy import Boolean, Enum, ForeignKey, String
+from sqlalchemy import Boolean, Enum, ForeignKey, Text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -44,7 +44,7 @@ class StrConfig(db.Model):
     child_id: Mapped[int] = mapped_column(ForeignKey("child.id"), primary_key=True, default=0)
     # category = db.Column(db.String(128), primary_key=True)
     key: Mapped[ConfigEnum] = mapped_column(Enum(ConfigEnum), primary_key=True, default=ConfigEnum.admin_secret)
-    value: Mapped[str | None] = mapped_column(String(3072))
+    value: Mapped[str | None] = mapped_column(Text)
 
     def to_model(self) -> "HConfigModel":
         from hiddifypanel.models.external_model.node import HConfigModel
