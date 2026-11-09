@@ -48,7 +48,7 @@ watch(
     loading.value = true
     try {
       const keys = new Set(parentEnablePrompt.blocked.map((b) => b.key))
-      const all = (await settingsApi.list()).flatMap((c) => c.fields)
+      const all = (await settingsApi.list()).categories.flatMap((c) => c.fields)
       fields.value = all.filter((f) => keys.has(f.key))
       values.value = Object.fromEntries(fields.value.map((f) => [f.key, unblockingValue(f)]))
     } catch (err) {

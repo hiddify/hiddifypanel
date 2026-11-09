@@ -196,6 +196,31 @@ def _mark_default(rows: list[Outbound]) -> None:
         r.is_default = r is default
 
 
+#: Shown when an API or settings save tries to turn WARP on before the terms dialog has been accepted.
+WARP_TOS_MESSAGE = "Accept Cloudflare's WARP terms before turning WARP on."
+
+
+def warp_may_route(mode: str | None, accepted: object) -> bool:
+    """Traffic uses the WARP outbound only when WARP is on and an admin accepted Cloudflare's terms.
+
+    ``accepted`` must be the boolean ``True``. The string ``"true"`` does not count.
+    """
+    return str(mode or "disable") != "disable" and accepted is True
+
+
+def warp_terms_accepted(child_id: int | None = None) -> bool:
+    from hiddifypanel.models import ConfigEnum, hconfig
+
+    return hconfig(ConfigEnum.warp_tos_accepted, child_id) is True
+
+
+def accept_warp_terms(child_id: int | None = None) -> None:
+    """Record acceptance. Callers commit. Sending anything but an explicit accept does not get here."""
+    from hiddifypanel.models import ConfigEnum, set_hconfig
+
+    set_hconfig(ConfigEnum.warp_tos_accepted, True, child_id, commit=False)
+
+
 def warp_mode_for(rows: list[Outbound]) -> str | None:
     """The settings' WARP mode matching the outbounds: disable / all (WARP is the default) / custom."""
     warp = next((r for r in rows if r.mode == OutboundMode.warp), None)
@@ -403,18 +428,41 @@ def _is_child_panel() -> bool:
 
 
 def export_rows() -> list[OutboundModel]:
-    """The outbounds in order, as the parent hands them to its nodes and backups (slugs, no ids)."""
-    return [r.to_model() for r in ordered_rows()]
+    """The outbounds in order, as the parent hands them to its nodes and backups (slugs, no ids).
+
+    The WARP row also carries whether an admin accepted Cloudflare's terms, so a node does not
+    start WARP on its own.
+    """
+    models = [r.to_model() for r in ordered_rows()]
+    accepted = warp_terms_accepted(0)
+    for model in models:
+        if model.mode == OutboundMode.warp:
+            model.tos_accepted = accepted
+    return models
+
+
+def _sync_warp_terms(items: list[OutboundModel]) -> bool:
+    """Copy the parent's acceptance onto this node. An older parent omits the field: leave the node alone."""
+    from hiddifypanel.models import ConfigEnum, set_hconfig
+
+    warp = next((item for item in items if item.mode == OutboundMode.warp and item.has("tos_accepted")), None)
+    if warp is None or not isinstance(warp.tos_accepted, bool):
+        return False
+    if warp_terms_accepted(0) == warp.tos_accepted:
+        return False
+    set_hconfig(ConfigEnum.warp_tos_accepted, warp.tos_accepted, 0, commit=False)
+    return True
 
 
 def import_rows(items: list[OutboundModel]) -> bool:
     """Make this panel's outbounds equal to the parent's, matched by slug. Returns whether anything changed; commits nothing."""
     changed = Outbound.bulk_register(items, commit=False, remove=True)
+    terms_changed = _sync_warp_terms(items)
     if changed:
         rows = ordered_rows()
         _mark_default(rows)
         _sync_warp_setting(0, rows)
-    return changed
+    return changed or terms_changed
 
 
 def reset_builtin_lists(row: Outbound) -> None:
@@ -868,7 +916,7 @@ def build_outbounds_var(child_id: int = 0, hconfig: Any = None) -> OutboundsVar:
 
     region = REGION_BY_COUNTRY.get(str(conf(ConfigEnum.country) or ""), "cn")
     domestic = (load_defaults().get("domestic") or {}).get(region) or {}
-    warp_available = str(conf(ConfigEnum.warp_mode) or "disable") != "disable"
+    warp_available = warp_may_route(conf(ConfigEnum.warp_mode), conf(ConfigEnum.warp_tos_accepted))
     allow_sites, allow_ips = _panel_routing_allowlist(child_id)
 
     # In the admin's order; the last enabled one is the default (route final).

@@ -41,6 +41,13 @@ export interface SettingsSaveOut {
   new_admin_path: string | null
   /** Set when the Telegram bot token changed: whether the bot connected. */
   telegram: { ok: boolean; username: string; error: string } | null
+  /** Whether an admin has accepted Cloudflare's WARP terms. */
+  warp_tos_accepted?: boolean
+}
+
+export interface SettingsList {
+  categories: SettingCategory[]
+  warp_tos_accepted?: boolean
 }
 
 /** 400/422 body: form-level messages and per-setting messages. */
@@ -50,9 +57,9 @@ export interface SettingsErrorBody {
 }
 
 export const settingsApi = {
-  async list(): Promise<SettingCategory[]> {
-    const { data } = await getHttp().get<{ categories: SettingCategory[] }>('settings/')
-    return data.categories
+  async list(): Promise<SettingsList> {
+    const { data } = await getHttp().get<SettingsList>('settings/')
+    return data
   },
   async update(values: Record<string, SettingValue>): Promise<SettingsSaveOut> {
     const { data } = await getHttp().put<SettingsSaveOut>('settings/', { values })

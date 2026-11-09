@@ -168,6 +168,13 @@ def _field_errors(form) -> dict[str, list[str]]:
     return errors
 
 
+def _warp_terms_flag() -> dict[str, bool]:
+    """Whether an admin has accepted Cloudflare's WARP terms. The field is hidden, so it is not in the form."""
+    from hiddifypanel.proxy_v3.outbounds import warp_terms_accepted
+
+    return {"warp_tos_accepted": warp_terms_accepted()}
+
+
 class SettingsApi(MethodView):
     decorators = [login_required({Role.super_admin})]
 
@@ -175,7 +182,7 @@ class SettingsApi(MethodView):
         """Settings: All panel settings grouped by category"""
         from hiddifypanel.panel.settings_form import get_config_form
 
-        return {"categories": describe_settings(get_config_form(formdata=None, meta={"csrf": False}))}
+        return {"categories": describe_settings(get_config_form(formdata=None, meta={"csrf": False})), **_warp_terms_flag()}
 
     def put(self):
         """Settings: Save changed settings (`{"values": {key: value}}`)"""
@@ -226,4 +233,5 @@ class SettingsApi(MethodView):
             "reload": hconfig(ConfigEnum.admin_lang) != admin_lang,
             # Takes effect after applying configs; the admin UI then lives here.
             "new_admin_path": f"/{new_admin_path}/admin/v2/" if new_admin_path != admin_path else None,
+            **_warp_terms_flag(),
         }

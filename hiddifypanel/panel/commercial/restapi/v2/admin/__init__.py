@@ -61,9 +61,10 @@ def init_app(app):
 
         from hiddifypanel.proxy_v3.outbounds import subscribe_events as subscribe_outbound_events
 
-        from .outbounds_api import OutboundApi, OutboundDefaultApi, OutboundOrderApi, OutboundResetApi, OutboundsApi
+        from .outbounds_api import OutboundApi, OutboundDefaultApi, OutboundOrderApi, OutboundResetApi, OutboundsApi, OutboundWarpTermsApi
 
         bp.add_url_rule("/outbounds/", view_func=OutboundsApi)
+        bp.add_url_rule("/outbounds/warp-terms/", view_func=OutboundWarpTermsApi)
         bp.add_url_rule("/outbounds/order/", view_func=OutboundOrderApi)
         bp.add_url_rule("/outbounds/<int:outbound_id>/", view_func=OutboundApi)
         bp.add_url_rule("/outbounds/<int:outbound_id>/default/", view_func=OutboundDefaultApi)

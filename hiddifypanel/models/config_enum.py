@@ -156,6 +156,8 @@ class ConfigEnum(metaclass=FastEnum):
     warp_mode = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)
     warp_plus_code = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)
     warp_sites = _StrConfigDscr(ConfigCategory.warp, ApplyMode.apply_config, hide_in_virtual_child=True)
+    # Recorded from the terms dialog. Hidden so it is not a switch that skips the question.
+    warp_tos_accepted = _BoolConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config, hide_in_virtual_child=True)
     dns_server = _StrConfigDscr(ConfigCategory.general, ApplyMode.apply_config, hide_in_virtual_child=True)
     reality_fallback_domain = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)  # removed
     reality_server_names = _StrConfigDscr(ConfigCategory.hidden, ApplyMode.apply_config)  # removed

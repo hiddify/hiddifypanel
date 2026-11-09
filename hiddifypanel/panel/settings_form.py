@@ -104,6 +104,15 @@ def save_config_form(form) -> SettingsSaveResult:
 
         # print(cat,vs)
 
+    # Turning WARP on is refused until an admin has accepted Cloudflare's terms. A save that does not
+    # change warp_mode (it was already on) is not refused here; routing still stays off until they accept.
+    new_warp = changed_configs.get(ConfigEnum.warp_mode)
+    if new_warp is not None and str(new_warp) != "disable" and str(old_configs.get(ConfigEnum.warp_mode) or "disable") == "disable":
+        from hiddifypanel.proxy_v3.outbounds import WARP_TOS_MESSAGE, warp_terms_accepted
+
+        if not warp_terms_accepted():
+            return result.fail(WARP_TOS_MESSAGE)
+
     merged_configs = {**old_configs, **changed_configs}
     if len(set([merged_configs[ConfigEnum.proxy_path], merged_configs[ConfigEnum.proxy_path_client], merged_configs[ConfigEnum.proxy_path_admin]])) != 3:
         return result.fail(_("ProxyPath is already used! use different proxy path"))

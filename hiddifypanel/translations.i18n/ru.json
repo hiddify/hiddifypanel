@@ -1679,7 +1679,23 @@
       "resetTitle": "Сбросить {name} к встроенным спискам?",
       "saved": "{name} сохранено",
       "subtitle": "Выберите по порядку, куда трафик выходит с этого сервера: через WARP, напрямую, блокировка или выход через Socks, Tor или Psiphon.",
-      "title": "Исходящие подключения"
+      "title": "Исходящие подключения",
+      "terms": {
+        "accept": "Принять",
+        "accepted": "Условия Cloudflare приняты. Примените конфигурацию, чтобы WARP заработал.",
+        "acceptedSave": "Условия Cloudflare приняты. Сохраните настройки, затем примените конфигурацию, чтобы WARP заработал.",
+        "badge": "Нужно ваше согласие",
+        "banner": "WARP включён, но условия Cloudflare не приняты, поэтому трафик через WARP не идёт.",
+        "bannerParent": "WARP включён, но условия Cloudflare не приняты на родительской панели, поэтому трафик через WARP не идёт.",
+        "body": "Трафик, который уходит через исходящий WARP, обрабатывает Cloudflare по своим условиям использования и политике конфиденциальности. Hiddify не принимает их за вас. Прочитайте их на сайте Cloudflare и примите здесь, если WARP должен работать.",
+        "cancel": "Отмена",
+        "check": "Я прочитал и принимаю условия использования и политику конфиденциальности Cloudflare для WARP.",
+        "lead": "WARP отправляет исходящий трафик этого сервера через Cloudflare. Он не работает, пока вы не примете условия Cloudflare.",
+        "privacyLink": "Политика конфиденциальности",
+        "review": "Прочитать условия",
+        "termsLink": "Условия использования",
+        "title": "Условия Cloudflare WARP"
+      }
     },
     "passwordRules": {
       "common": "не распространённый пароль",
@@ -3349,9 +3365,17 @@
       "description": "Это отключит IPv6",
       "label": "ℹ️ Только IPv4"
     },
+    "openvpn_certificate": {
+      "description": "",
+      "label": ""
+    },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
+    },
+    "openvpn_private_key": {
+      "description": "",
+      "label": ""
     },
     "package_mode": {
       "description": "Укажите, хотите ли вы релиз версию пакета или версию в стадии разработки.",
@@ -3836,6 +3860,10 @@
     "warp_sites": {
       "description": "Добавление дополнительных сайтов для направления через WARP (только если Warp включен)",
       "label": "🆚 Дополнительные сайты WARP"
+    },
+    "warp_tos_accepted": {
+      "description": "WARP отправляет трафик через Cloudflare только после того, как администратор принял условия Cloudflare. Это записывается из того вопроса и здесь не редактируется.",
+      "label": "Условия Cloudflare WARP приняты"
     },
     "wireguard": {
       "description": "WireGuard - это легковесный UDP-протокол, известный своей простотой, эффективностью и высокой безопасност. Он предлагает простоту, кроссплатформенность, быструю настройку и прозрачный код.",

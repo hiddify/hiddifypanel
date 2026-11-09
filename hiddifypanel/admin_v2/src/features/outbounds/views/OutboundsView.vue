@@ -30,6 +30,19 @@
       >
         {{ t('outbounds.torMissing') }}
       </Message>
+      <Message v-if="warpNeedsTerms" severity="warn" :closable="false" class="mb-3">
+        <div class="ob-terms-note">
+          <span>{{ t(state.managed_by_parent ? 'outbounds.terms.bannerParent' : 'outbounds.terms.banner') }}</span>
+          <Button
+            v-if="!state.managed_by_parent"
+            type="button"
+            size="small"
+            :label="t('outbounds.terms.review')"
+            :disabled="busy"
+            @click="reviewWarpTerms"
+          />
+        </div>
+      </Message>
 
       <TransitionGroup name="ob-row" tag="ol" class="ob-list" :class="{ 'ob-list--dragging': dragId !== null }">
         <li
@@ -69,6 +82,9 @@
             <div class="ob-row__name">
               <span class="ob-row__name-text" :title="o.name">{{ o.name }}</span>
               <span class="ob-badge">{{ t(`outbounds.mode.${o.mode}`) }}</span>
+              <span v-if="o.mode === 'warp' && o.enabled && state.warp_tos_accepted !== true" class="ob-badge ob-badge--warn" v-tooltip.top="t('outbounds.terms.banner')">
+                <i class="pi pi-exclamation-triangle" />{{ t('outbounds.terms.badge') }}
+              </span>
               <span v-if="o.is_default" class="ob-badge ob-badge--default" v-tooltip.top="t('outbounds.defaultHint')"><i class="pi pi-crown" />{{ t('outbounds.default') }}</span>
               <span v-else-if="!o.enabled" class="ob-badge ob-badge--off">{{ t('outbounds.off') }}</span>
               <span v-else-if="!o.active" class="ob-badge ob-badge--off" v-tooltip.top="t('outbounds.idleHint')"><i class="pi pi-minus-circle" />{{ t('outbounds.idle') }}</span>
@@ -114,6 +130,7 @@
 
     <Menu ref="rowMenu" :model="rowItems" popup />
     <OutboundDialog v-model:visible="dialogVisible" :outbound="editing" :mode="addMode" :state="state" @saved="onSaved" />
+    <WarpTermsDialog v-model:visible="termsOpen" @accept="onWarpTermsAccepted" @cancel="onWarpTermsCancelled" />
   </div>
 </template>
 
@@ -134,6 +151,7 @@ import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import { apiErrorMessage } from '@/core/api/client'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import OutboundDialog from '@/features/outbounds/components/OutboundDialog.vue'
+import WarpTermsDialog from '@/features/outbounds/components/WarpTermsDialog.vue'
 import { MODE_ICON, outboundsApi, type Outbound, type OutboundMode, type OutboundsState } from '@/features/outbounds/api'
 
 const { t } = useI18n()
@@ -149,6 +167,10 @@ const busy = ref(false)
 const justChanged = ref<number | null>(null)
 
 const dialogVisible = ref(false)
+const termsOpen = ref(false)
+/** Runs after the admin accepts. Null when the dialog was closed without accepting. */
+const afterTerms = ref<(() => void) | null>(null)
+const askedWarpTerms = ref(false)
 const editing = ref<Outbound | null>(null)
 const addMode = ref<OutboundMode>('socks')
 const addMenu = ref<InstanceType<typeof Menu> | null>(null)
@@ -160,6 +182,13 @@ const overId = ref<number | null>(null)
 
 /** The server's order: first checked first; the last enabled one is the default. */
 const rows = computed(() => state.value?.outbounds ?? [])
+
+/** WARP is switched on, but Cloudflare's terms are not accepted, so it is not actually in use. */
+const warpNeedsTerms = computed(() => {
+  const current = state.value
+  if (!current || current.warp_tos_accepted === true) return false
+  return current.warp_mode !== 'disable' || current.outbounds.some((o) => o.mode === 'warp' && o.enabled)
+})
 
 const addItems = computed<MenuItem[]>(() =>
   (state.value?.addable_modes ?? []).map((mode) => ({ label: t(`outbounds.mode.${mode}`), icon: MODE_ICON[mode], command: () => openAdd(mode) })),
@@ -202,6 +231,7 @@ async function load() {
   loadError.value = null
   try {
     state.value = await outboundsApi.list()
+    maybeAskWarpTerms()
   } catch (err) {
     loadError.value = apiErrorMessage(err) || t('common.loadFailed')
   } finally {
@@ -294,12 +324,49 @@ function onSaved(next: OutboundsState, name: string) {
   toast.add({ severity: 'success', summary: t('outbounds.saved', { name }), life: 3000 })
 }
 
+function warpNeedsAcceptance(o: Outbound): boolean {
+  return o.mode === 'warp' && state.value?.warp_tos_accepted !== true
+}
+
+function requireWarpTerms(then: () => void) {
+  if (state.value?.warp_tos_accepted === true) {
+    then()
+    return
+  }
+  afterTerms.value = then
+  termsOpen.value = true
+}
+
+function onWarpTermsAccepted() {
+  const next = afterTerms.value
+  afterTerms.value = null
+  next?.()
+}
+
+function onWarpTermsCancelled() {
+  afterTerms.value = null
+}
+
+function reviewWarpTerms() {
+  requireWarpTerms(() => void run(() => outboundsApi.acceptWarpTerms(), undefined, t('outbounds.terms.accepted')))
+}
+
+function maybeAskWarpTerms() {
+  if (askedWarpTerms.value || !warpNeedsTerms.value || state.value?.managed_by_parent) return
+  askedWarpTerms.value = true
+  reviewWarpTerms()
+}
+
 function toggleEnabled(o: Outbound, enabled: boolean) {
-  void run(() => outboundsApi.update(o.id, { enabled }), o.id)
+  const go = () => void run(() => outboundsApi.update(o.id, { enabled, accept_warp_tos: enabled && o.mode === 'warp' ? true : undefined }), o.id)
+  if (enabled && warpNeedsAcceptance(o)) requireWarpTerms(go)
+  else go()
 }
 
 function makeDefault(o: Outbound) {
-  void run(() => outboundsApi.makeDefault(o.id), o.id, t('outbounds.nowDefault', { name: o.name }))
+  const go = () => void run(() => outboundsApi.makeDefault(o.id, o.mode === 'warp'), o.id, t('outbounds.nowDefault', { name: o.name }))
+  if (warpNeedsAcceptance(o)) requireWarpTerms(go)
+  else go()
 }
 
 function confirmReset(o: Outbound) {
@@ -551,6 +618,16 @@ html[dir='rtl'] .ob-row__body {
 .ob-badge--off {
   color: var(--p-text-muted-color);
   background: var(--p-content-hover-background, rgba(127, 127, 127, 0.12));
+}
+.ob-badge--warn {
+  color: var(--p-orange-700);
+  background: color-mix(in srgb, var(--p-orange-500) 16%, transparent);
+}
+.ob-terms-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
 }
 .ob-count {
   display: inline-flex;

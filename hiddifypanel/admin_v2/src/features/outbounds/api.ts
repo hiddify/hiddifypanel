@@ -60,6 +60,10 @@ export interface OutboundsState {
   domestic: { sites: string[]; geosites: string[]; rule_sets: string[] }
   /** The WARP setting (kept in step with the WARP outbound): disable | all | custom. */
   warp_mode: string
+  /** An admin accepted Cloudflare's WARP terms. Until then WARP does not route or start. */
+  warp_tos_accepted?: boolean
+  /** A node shows the parent's outbounds and cannot accept the terms itself. */
+  managed_by_parent?: boolean
   addable_modes: OutboundMode[]
   endpoints: Partial<Record<OutboundMode, { host?: string; port?: number }>>
   restart_mode?: RestartMode
@@ -82,6 +86,8 @@ export interface OutboundPayload extends Partial<OutboundLists> {
   config?: string
   clear_password?: boolean
   is_default?: boolean
+  /** Sent with the request that turns WARP on, after the admin accepts in the dialog. */
+  accept_warp_tos?: boolean
 }
 
 export const outboundsApi = {
@@ -106,9 +112,14 @@ export const outboundsApi = {
     const { data } = await getHttp().put<OutboundsState>('outbounds/order/', { ids })
     return data
   },
-  /** Turns it on and moves it to the end. */
-  async makeDefault(id: number): Promise<OutboundsState> {
-    const { data } = await getHttp().post<OutboundsState>(`outbounds/${id}/default/`)
+  /** Turns it on and moves it to the end. ``acceptWarpTos`` records Cloudflare's terms in the same request. */
+  async makeDefault(id: number, acceptWarpTos = false): Promise<OutboundsState> {
+    const { data } = await getHttp().post<OutboundsState>(`outbounds/${id}/default/`, acceptWarpTos ? { accept_warp_tos: true } : {})
+    return data
+  },
+  /** Records acceptance when WARP is already switched on. Does not turn it on by itself. */
+  async acceptWarpTerms(): Promise<OutboundsState> {
+    const { data } = await getHttp().post<OutboundsState>('outbounds/warp-terms/', { accepted: true })
     return data
   },
   async reset(id: number): Promise<OutboundsState> {

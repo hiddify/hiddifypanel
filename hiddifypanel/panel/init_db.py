@@ -23,7 +23,12 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 200
+MAX_DB_VERSION = 201
+
+
+def _v200(child_id):
+    """Cloudflare WARP stays off until an admin accepts Cloudflare's terms. An upgrade does not accept them."""
+    add_config_if_not_exist(ConfigEnum.warp_tos_accepted, False, child_id)
 
 
 def _v199(child_id):

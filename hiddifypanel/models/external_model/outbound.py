@@ -35,6 +35,8 @@ class OutboundModel(HBaseModel):
     is_builtin: bool = False
     builtin_lists: dict[str, Any] = Field(default_factory=dict)
     lists_override: bool = False
+    #: Parent → node only, and only meaningful on the WARP row. Not a column: import copies it into ``warp_tos_accepted``.
+    tos_accepted: bool | None = None
 
     @field_validator("slug", mode="before")
     @classmethod

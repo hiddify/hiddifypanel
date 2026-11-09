@@ -82,6 +82,13 @@
               </RouterLink>
             </header>
 
+            <Message v-if="cat.id === 'warp' && warpNeedsTerms" severity="warn" :closable="false" class="settings-warp-terms">
+              <div class="settings-warp-terms__row">
+                <span>{{ t('outbounds.terms.banner') }}</span>
+                <Button type="button" size="small" :label="t('outbounds.terms.review')" :disabled="saving" @click="reviewWarpTerms" />
+              </div>
+            </Message>
+
             <TransitionGroup v-if="cat.fields.length" name="settings-row" tag="div" class="settings-card__fields">
               <SettingFieldRow
                 v-for="field in cat.fields"
@@ -116,6 +123,7 @@
     </div>
 
     <StickySaveBar :count="dirtyCount" :saving="saving" @save="save" @discard="discard" />
+    <WarpTermsDialog v-model:visible="termsOpen" @accept="acceptWarpTerms" @cancel="cancelWarpTerms" />
   </div>
 </template>
 
@@ -141,6 +149,8 @@ import { apiErrorMessage } from '@/core/api/client'
 import { displayConfigLabel, htmlToText } from '@/shared/utils/config-labels'
 import { strongerRestartMode, type RestartMode } from '@/shared/utils/restart-mode'
 import { settingsApi, type SettingCategory, type SettingField, type SettingsErrorBody, type SettingValue } from '@/features/settings/api'
+import { outboundsApi } from '@/features/outbounds/api'
+import WarpTermsDialog from '@/features/outbounds/components/WarpTermsDialog.vue'
 import { iconizeHtml } from '@/shared/utils/emoji-icons'
 import IconText from '@/shared/components/IconText.vue'
 
@@ -183,6 +193,11 @@ const route = useRoute()
 
 const categories = ref<SettingCategory[]>([])
 const draft = reactive<Record<string, SettingValue>>({})
+const warpTermsAccepted = ref(false)
+const termsOpen = ref(false)
+/** The WARP mode the admin picked, held until they accept Cloudflare's terms. */
+const pendingWarpMode = ref<string | null>(null)
+let fillingDraft = false
 const loading = ref(true)
 const loadError = ref<string | null>(null)
 const saving = ref(false)
@@ -215,6 +230,7 @@ watch(showAdvanced, (value) => {
 })
 
 const allFields = computed(() => categories.value.flatMap((cat) => cat.fields))
+const warpNeedsTerms = computed(() => !warpTermsAccepted.value && draft.warp_mode != null && String(draft.warp_mode) !== 'disable')
 const searching = computed(() => search.value.trim().length > 0)
 
 function isChanged(field: SettingField): boolean {
@@ -347,8 +363,48 @@ async function openDeepLink() {
 
 // --- data ---
 function resetDraft() {
+  fillingDraft = true
   for (const key of Object.keys(draft)) delete draft[key]
   for (const field of allFields.value) draft[field.key] = field.value
+  fillingDraft = false
+}
+
+watch(
+  () => draft.warp_mode,
+  (value, old) => {
+    if (fillingDraft || warpTermsAccepted.value || termsOpen.value) return
+    if (old == null || value == null) return
+    if (String(old) === 'disable' && String(value) !== 'disable') {
+      pendingWarpMode.value = String(value)
+      fillingDraft = true
+      draft.warp_mode = 'disable'
+      fillingDraft = false
+      termsOpen.value = true
+    }
+  },
+)
+
+function reviewWarpTerms() {
+  pendingWarpMode.value = null
+  termsOpen.value = true
+}
+
+async function acceptWarpTerms() {
+  const chosen = pendingWarpMode.value
+  pendingWarpMode.value = null
+  try {
+    const res = await outboundsApi.acceptWarpTerms()
+    warpTermsAccepted.value = true
+    if (chosen) draft.warp_mode = chosen
+    pendingApply.value = strongerRestartMode(pendingApply.value, res.restart_mode ?? 'apply_config')
+    toast.add({ severity: 'success', summary: t(chosen ? 'outbounds.terms.acceptedSave' : 'outbounds.terms.accepted'), life: 6000 })
+  } catch (error) {
+    toast.add({ severity: 'error', summary: apiErrorMessage(error) || t('common.saveFailed'), life: 6000 })
+  }
+}
+
+function cancelWarpTerms() {
+  pendingWarpMode.value = null
 }
 
 function discard() {
@@ -361,7 +417,9 @@ async function load() {
   loading.value = true
   loadError.value = null
   try {
-    categories.value = await settingsApi.list()
+    const listed = await settingsApi.list()
+    categories.value = listed.categories
+    warpTermsAccepted.value = listed.warp_tos_accepted === true
     resetDraft()
   } catch (error) {
     loadError.value = apiErrorMessage(error) || t('common.loadFailed')
@@ -391,6 +449,7 @@ async function save() {
     fieldErrors.value = {}
     formErrors.value = []
     categories.value = res.categories
+    if (typeof res.warp_tos_accepted === 'boolean') warpTermsAccepted.value = res.warp_tos_accepted
     resetDraft()
     pendingApply.value = strongerRestartMode(pendingApply.value, res.restart_mode)
     if (res.new_admin_path) newAdminPath.value = res.new_admin_path
@@ -490,6 +549,15 @@ onBeforeUnmount(() => {
 }
 .settings-page--dirty {
   padding-bottom: 5.5rem;
+}
+.settings-warp-terms {
+  margin: 0 1rem 0.25rem;
+}
+.settings-warp-terms__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
 }
 
 /* Toolbar */

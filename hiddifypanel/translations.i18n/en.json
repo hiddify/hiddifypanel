@@ -2483,7 +2483,23 @@
       "saved": "{name} saved",
       "subtitle": "Choose where traffic leaves this server, in order: through WARP, directly, blocked, or through a Socks, Tor or Psiphon exit.",
       "title": "Outbounds",
-      "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs."
+      "torMissing": "Tor is enabled but the `tor` program is not installed on this server, so it is left out of the configs. Install Tor (e.g. apt install tor) and Apply Configs.",
+      "terms": {
+        "accept": "Accept",
+        "accepted": "Cloudflare's terms are accepted. Apply configs for WARP to start.",
+        "acceptedSave": "Cloudflare's terms are accepted. Save settings, then apply configs for WARP to start.",
+        "badge": "Needs your acceptance",
+        "banner": "WARP is switched on, but Cloudflare's terms have not been accepted, so traffic is not sent through WARP.",
+        "bannerParent": "WARP is switched on, but Cloudflare's terms have not been accepted on the parent panel, so traffic is not sent through WARP.",
+        "body": "Traffic that leaves through the WARP outbound is handled by Cloudflare under their Terms of Service and Privacy Policy. Hiddify does not accept those terms for you. Read them on Cloudflare's site, then accept here if you want WARP to run.",
+        "cancel": "Cancel",
+        "check": "I have read and accept Cloudflare's Terms of Service and Privacy Policy for WARP.",
+        "lead": "WARP sends this server's outbound traffic through Cloudflare. It does not run until you accept Cloudflare's terms.",
+        "privacyLink": "Privacy Policy",
+        "review": "Review terms",
+        "termsLink": "Terms of Service",
+        "title": "Cloudflare WARP terms"
+      }
     },
     "passwordRules": {
       "common": "not a common password",
@@ -4580,9 +4596,17 @@
       "description": "It will Disable IPv6",
       "label": "ℹ️ Only IPv4"
     },
+    "openvpn_certificate": {
+      "description": "config.openvpn_certificate.description",
+      "label": "config.openvpn_certificate.label"
+    },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
+    },
+    "openvpn_private_key": {
+      "description": "config.openvpn_private_key.description",
+      "label": "config.openvpn_private_key.label"
     },
     "package_mode": {
       "description": "Specify whether you want Released Package or Beta one",
@@ -5067,6 +5091,10 @@
     "warp_sites": {
       "description": "Add additional sites to pass through WARP (only when warp mode is not None)",
       "label": "🆚 Additional WARP Sites"
+    },
+    "warp_tos_accepted": {
+      "description": "WARP sends traffic through Cloudflare only after an admin accepts Cloudflare's terms. This is recorded from that question, not edited here.",
+      "label": "Cloudflare WARP terms accepted"
     },
     "wireguard": {
       "description": "WireGuard is a lightweight, UDP  based protocol known for its simplicity, efficiency, and strong security. It offers quick setup, transparent code, and has gained popularity for its ease of use across various operating systems",

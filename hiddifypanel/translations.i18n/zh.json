@@ -1679,7 +1679,23 @@
       "resetTitle": "将 {name} 重置为内置列表？",
       "saved": "{name} 已保存",
       "subtitle": "按顺序选择流量从此服务器流出的位置：通过 WARP、直连、屏蔽，或通过 Socks、Tor 或 Psiphon 出口。",
-      "title": "出站"
+      "title": "出站",
+      "terms": {
+        "accept": "接受",
+        "accepted": "已接受 Cloudflare 的条款。应用配置后 WARP 才会开始。",
+        "acceptedSave": "已接受 Cloudflare 的条款。先保存设置，再应用配置，WARP 才会开始。",
+        "badge": "需要你接受",
+        "banner": "WARP 已打开，但尚未接受 Cloudflare 的条款，因此流量不会经 WARP 发出。",
+        "bannerParent": "WARP 已打开，但父面板尚未接受 Cloudflare 的条款，因此流量不会经 WARP 发出。",
+        "body": "经 WARP 出站的流量由 Cloudflare 按其服务条款和隐私政策处理。Hiddify 不会代替你接受这些条款。请在 Cloudflare 的网站上阅读，若要让 WARP 运行，再在这里接受。",
+        "cancel": "取消",
+        "check": "我已阅读并接受 Cloudflare 关于 WARP 的服务条款和隐私政策。",
+        "lead": "WARP 会把这台服务器的出站流量发给 Cloudflare。在你接受 Cloudflare 的条款之前，它不会运行。",
+        "privacyLink": "隐私政策",
+        "review": "查看条款",
+        "termsLink": "服务条款",
+        "title": "Cloudflare WARP 条款"
+      }
     },
     "passwordRules": {
       "common": "不是常见密码",
@@ -3349,9 +3365,17 @@
       "description": "它将禁用 IPv6",
       "label": "ℹ️仅限IPv4"
     },
+    "openvpn_certificate": {
+      "description": "",
+      "label": ""
+    },
     "openvpn_enable": {
       "description": "Enable OpenVPN (served by hiddify-core). The OpenVPN apps import the profile from the user page; the Hiddify app 5+ gets it in the subscription",
       "label": "OpenVPN"
+    },
+    "openvpn_private_key": {
+      "description": "",
+      "label": ""
     },
     "package_mode": {
       "description": "指定您想要发布的包还是开发的包",
@@ -3836,6 +3860,10 @@
     "warp_sites": {
       "description": "添加要通过 WARP 的其他站点（仅当 Warp 模式不为 None 时）",
       "label": "🆚 其他 WARP 站点"
+    },
+    "warp_tos_accepted": {
+      "description": "只有管理员接受 Cloudflare 的条款后，WARP 才会经 Cloudflare 发送流量。此值由该确认记录，不在此处修改。",
+      "label": "已接受 Cloudflare WARP 条款"
     },
     "wireguard": {
       "description": "WireGuard 是一种轻量级的基于 UDP 的协议，以其简单、高效和强大的安全性而闻名。它提供快速设置、透明代码，并因其在各种操作系统中的易用性而广受欢迎",

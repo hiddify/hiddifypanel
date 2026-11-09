@@ -120,12 +120,25 @@ def _list_out(child_id: int) -> dict[str, Any]:
         "region": var.region,
         "domestic": {k: list(domestic.get(k) or []) for k in ("sites", "geosites", "rule_sets")},
         "warp_mode": str(hconfig(ConfigEnum.warp_mode, child_id) or "disable"),
+        # False until an admin accepts Cloudflare's terms. Routing and the WARP service stay off until then.
+        "warp_tos_accepted": ob.warp_terms_accepted(child_id),
         # Modes that can still be added (single-instance ones only once).
         "addable_modes": [str(m) for m in OutboundMode if m not in BUILTIN_MODES and (m in MULTI_MODES or str(m) not in used_single)],
         "endpoints": {str(m): ob.default_endpoint(m) for m in ENDPOINT_MODES},
         # False: Tor outbound is on in the DB but left out of server configs (no `tor` binary).
         "tor_available": ob.tor_available(),
     }
+
+
+def _note_warp_terms(child_id: int, body: dict[str, Any]) -> None:
+    """``accept_warp_tos: true`` records acceptance in this same request, before the enable is checked."""
+    if body.get("accept_warp_tos") is True:
+        ob.accept_warp_terms(child_id)
+
+
+def _block_warp_until_terms(child_id: int, row: Outbound, enabling: bool) -> None:
+    if enabling and row.mode == OutboundMode.warp and not ob.warp_terms_accepted(child_id):
+        abort(400, ob.WARP_TOS_MESSAGE)
 
 
 def _finalize_or_400(child_id: int, rows: list[Outbound]) -> None:
@@ -253,7 +266,11 @@ class OutboundApi(_RequireModifyOutbounds, MethodView):
         _parent_only()
         child_id = _child_id()
         row = _get_row(outbound_id)
-        _apply_body(row, request.get_json(silent=True) or {}, creating=False)
+        body = request.get_json(silent=True) or {}
+        _note_warp_terms(child_id, body)
+        turning_on = row.mode == OutboundMode.warp and body.get("enabled") is True and not row.enabled
+        _block_warp_until_terms(child_id, row, turning_on)
+        _apply_body(row, body, creating=False)
         _finalize_or_400(child_id, ob.ordered_rows(child_id))
         db.session.commit()
         _changed()
@@ -307,8 +324,27 @@ class OutboundDefaultApi(_RequireModifyOutbounds, MethodView):
         row = _get_row(outbound_id)
         if row.mode == OutboundMode.block:
             abort(400, "Block can not be the default: it would block everything")
+        body = request.get_json(silent=True) or {}
+        _note_warp_terms(child_id, body)
+        _block_warp_until_terms(child_id, row, row.mode == OutboundMode.warp)
         row.enabled = True
         _finalize_or_400(child_id, ob.move_to_end(ob.ordered_rows(child_id), row))
+        db.session.commit()
+        _changed()
+        return _mutated(child_id)
+
+
+class OutboundWarpTermsApi(_RequireModifyOutbounds, MethodView):
+    decorators = [login_required(OUTBOUND_ROLES)]
+
+    def post(self):
+        """Outbounds: record that an admin accepted Cloudflare's WARP terms. Only ``{"accepted": true}`` is stored."""
+        _parent_only()
+        child_id = _child_id()
+        body = request.get_json(silent=True) or {}
+        if body.get("accepted") is not True:
+            abort(400, ob.WARP_TOS_MESSAGE)
+        ob.accept_warp_terms(child_id)
         db.session.commit()
         _changed()
         return _mutated(child_id)

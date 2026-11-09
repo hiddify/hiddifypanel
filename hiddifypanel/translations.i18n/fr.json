@@ -1673,7 +1673,23 @@
       "resetTitle": "Rétablir {name} aux listes intégrées ?",
       "saved": "{name} enregistré",
       "subtitle": "Choisissez où le trafic quitte ce serveur, dans l'ordre : via WARP, directement, bloqué, ou via une sortie Socks, Tor ou Psiphon.",
-      "title": "Outbounds"
+      "title": "Outbounds",
+      "terms": {
+        "accept": "Accepter",
+        "accepted": "Les conditions de Cloudflare sont acceptées. Appliquez la configuration pour démarrer WARP.",
+        "acceptedSave": "Les conditions de Cloudflare sont acceptées. Enregistrez les paramètres, puis appliquez la configuration pour démarrer WARP.",
+        "badge": "Votre acceptation est requise",
+        "banner": "WARP est activé, mais les conditions de Cloudflare n'ont pas été acceptées, donc le trafic ne passe pas par WARP.",
+        "bannerParent": "WARP est activé, mais les conditions de Cloudflare n'ont pas été acceptées sur le panneau parent, donc le trafic ne passe pas par WARP.",
+        "body": "Le trafic qui sort par la sortie WARP est traité par Cloudflare selon ses conditions d'utilisation et sa politique de confidentialité. Hiddify ne les accepte pas à votre place. Lisez-les sur le site de Cloudflare, puis acceptez ici si vous voulez que WARP fonctionne.",
+        "cancel": "Annuler",
+        "check": "J'ai lu et j'accepte les conditions d'utilisation et la politique de confidentialité de Cloudflare pour WARP.",
+        "lead": "WARP envoie le trafic sortant de ce serveur via Cloudflare. Il ne fonctionne pas tant que vous n'acceptez pas les conditions de Cloudflare.",
+        "privacyLink": "Politique de confidentialité",
+        "review": "Lire les conditions",
+        "termsLink": "Conditions d'utilisation",
+        "title": "Conditions de Cloudflare WARP"
+      }
     },
     "passwordRules": {
       "common": "pas un mot de passe courant",
@@ -3595,6 +3611,10 @@
     "warp_sites": {
       "description": "Ajoutez des sites supplémentaires pour passer par WARP (uniquement lorsque le mode Warp n'est pas Aucun)",
       "label": "🆚 Sites WARP supplémentaires"
+    },
+    "warp_tos_accepted": {
+      "description": "WARP n'envoie le trafic via Cloudflare qu'après qu'un administrateur a accepté les conditions de Cloudflare. Ceci est enregistré depuis cette question, pas modifié ici.",
+      "label": "Conditions Cloudflare WARP acceptées"
     },
     "wireguard": {
       "description": "WireGuard est un protocole léger basé sur UDP, connu pour sa simplicité, son efficacité et sa sécurité renforcée. Il offre une configuration rapide, un code transparent et a gagné en popularité grâce à sa facilité d'utilisation sur différents systèmes d'exploitation.",
