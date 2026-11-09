@@ -108,6 +108,35 @@
                 display: block;
             }
         }
+ 
+        // Dragged with a finger (useMenuSwipe): the menu and the mask follow --menu-drag (0 closed … 1 open) with no
+        // transition; on release the class goes and the open / closed transition finishes the move from there
+        &.layout-menu-dragging {
+            .layout-sidebar {
+                transform: translateX(calc((var(--menu-drag, 0) - 1) * 100% * var(--layout-dir-sign)));
+                visibility: visible;
+                transition: none;
+            }
+
+            .layout-mask {
+                display: block;
+                opacity: var(--menu-drag, 0);
+                animation: none;
+            }
+        }
+
+        &.layout-menu-settling .layout-mask {
+            display: block;
+            opacity: var(--menu-drag, 0);
+            animation: none;
+            transition: opacity 0.35s ease;
+        }
+    }
+
+    // The browser's own sideways swipe (back / forward) would fight the menu swipe
+    html,
+    body {
+        overscroll-behavior-x: none;
     }
 }
 
