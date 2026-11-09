@@ -27,6 +27,10 @@ MAX_DB_VERSION = 200
 
 
 def _v200(child_id):
+    """Built-in proxy names spelled as the panel writes protocols and transports ("xhttp vless TLS H1" →
+    "XHTTP VLess TLS H1"): the users' apps show them. Slugs and server tags stay; a name an admin typed is kept."""
+    sync_builtin_presets(child_id)
+
     """Settings longer than 3072 characters failed to save on MySQL/MariaDB ("Data too long for column 'value'"): the
     spare REALITY SNIs after a scan, a long Full support text. str_config.value becomes TEXT, as the model now says
     (SQLite never enforced the length)."""
