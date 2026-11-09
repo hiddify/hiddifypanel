@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ipaddress
+import re
 import os
 import threading
 from dataclasses import dataclass
@@ -38,9 +39,82 @@ _ASN_SHORT_MAP: dict[str, str] = {
     "394510": "ZTL",
     "206065": "ZTL",
     "49100": "PSM",
+    # China: the backbones; their regional networks are found by name below
+    "4134": "CTC",
+    "4809": "CTC",
+    "4811": "CTC",
+    "4812": "CTC",
+    "23724": "CTC",
+    "4837": "CUC",
+    "4808": "CUC",
+    "9929": "CUC",
+    "17621": "CUC",
+    "17816": "CUC",
+    "9808": "CMC",
+    "56040": "CMC",
+    "56041": "CMC",
+    "56042": "CMC",
+    "56044": "CMC",
+    "56045": "CMC",
+    "56046": "CMC",
+    "56047": "CMC",
+    "56048": "CMC",
+    "24138": "CMC",  # China TieTong, part of China Mobile
+    "9394": "CMC",
+    "7641": "CBN",
+    "4538": "CER",
+    # Russia
+    "12389": "RTK",
+    "42610": "RTK",
+    "8359": "MTS",
+    "31133": "MGF",
+    "12714": "MGF",
+    "20632": "MGF",
+    "25159": "MGF",
+    "3216": "BLN",
+    "8402": "BLN",
+    "16345": "BLN",
+    "12958": "T2R",
+    "15378": "T2R",
+    "48190": "T2R",
+    "9049": "ERT",
+    "41733": "ERT",
+    "20485": "TTK",
+    "21127": "TTK",
+    "15774": "TTK",
 }
 
-ASN_SHORT_NAMES: frozenset[str] = frozenset(_ASN_SHORT_MAP.values())
+# An AS not listed above, by the name of the company it is registered to (GeoLite2-ASN "organization"), only for an
+# address in that operator's country: China Telecom alone has hundreds of provincial ASes, and the same names abroad
+# are other companies (Tele2 Sweden, MTS Belarus, China Mobile Hong Kong…).
+_ORG_SHORT_RULES: dict[str, tuple[tuple[re.Pattern[str], str], ...]] = {
+    "CN": (
+        (re.compile(r"\b(chinanet|china ?telecom|chinatelecom)\b|china telecommunications corporation", re.I), "CTC"),
+        (re.compile(r"china ?unicom|^unicom\b|china169|cncgroup|china netcom", re.I), "CUC"),
+        (re.compile(r"\bchina mobile\b|china tietong", re.I), "CMC"),
+        (re.compile(r"^china broadcasting tv net|^china broadcast network", re.I), "CBN"),
+        (re.compile(r"china education and research network|^cernet\b", re.I), "CER"),
+    ),
+    "RU": (
+        (re.compile(r"^(pjsc )?rostelecom\b", re.I), "RTK"),
+        (re.compile(r"^mts (pjsc|ojsc)$|^mobile telesystems", re.I), "MTS"),
+        (re.compile(r"^pjsc megafon\b", re.I), "MGF"),
+        (re.compile(r"^p?vimpelcom\b|^pjsc vimpelcom|^corbina telecom", re.I), "BLN"),
+        (re.compile(r"^t2 mobile\b|^tele2 russia", re.I), "T2R"),
+        (re.compile(r"^jsc er-telecom holding", re.I), "ERT"),
+        (re.compile(r"transtelecom$|^limited liability company ttk-svyaz", re.I), "TTK"),
+    ),
+}
+
+ASN_SHORT_NAMES: frozenset[str] = frozenset([*_ASN_SHORT_MAP.values(), *(code for rules in _ORG_SHORT_RULES.values() for _p, code in rules)])
+
+
+def short_name_by_org(country: str, org: str) -> str:
+    """An operator's short name by its AS organisation, for the countries in ``_ORG_SHORT_RULES``; "unknown" else."""
+    for pattern, code in _ORG_SHORT_RULES.get(str(country).upper(), ()):
+        if pattern.search(org or ""):
+            return code
+    return "unknown"
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,7 +221,9 @@ def get_ip_info(ip: str) -> IpInfo:
     return _lookup(ip)
 
 
-@cache.cache(modes=STATIC)
+# Its own namespace: answers cached before the China / Russia operators (kept with no expiry) would else stay
+# "unknown". A week, so a newer GeoLite database or rule is picked up too.
+@cache.cache(ttl=7 * 24 * 3600, namespace="maxmind_lookup_v2", modes=STATIC)
 def _lookup(ip: str) -> IpInfo:
 
     country = "unknown"
@@ -168,6 +244,8 @@ def _lookup(ip: str) -> IpInfo:
             asn = str(asn_num)
             short_name = _ASN_SHORT_MAP.get(asn, "unknown")
         asn_org = str(asn_rec.get("autonomous_system_organization") or "unknown")
+        if short_name == "unknown":
+            short_name = short_name_by_org(country, asn_org)
     except BaseException:
         pass
 
