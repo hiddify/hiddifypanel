@@ -75,6 +75,8 @@
             line-height: 1;
             color: var(--topbar-text-muted);
             font-weight: 400;
+            // Latin digits also in Persian (its font draws Persian digits): "DEV 1a2b3c4" is a commit hash
+            font-family: 'Lato', 'Vazirmatn', sans-serif;
         }
 
         &:focus-visible {

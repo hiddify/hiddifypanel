@@ -6,6 +6,7 @@ from flask import jsonify, redirect, render_template
 import hiddifypanel
 from hiddifypanel import g, hutils
 from hiddifypanel.auth import login_required
+from hiddifypanel.build_info import dev_version_label
 from hiddifypanel.hutils import flask as hutils_flask
 from hiddifypanel.hutils.flask import hurl_for
 from hiddifypanel.models import ConfigEnum, Role, hconfig
@@ -15,7 +16,8 @@ from .v2_menu import build_admin_v2_menu, build_admin_v2_notices
 
 def _panel_version() -> str:
     if not hiddifypanel.is_released_version:
-        return "DEV"
+        # "DEV 11-09T19:14 · 1a2b3c4": which commit a development panel runs, when the installer or the checkout tells it
+        return dev_version_label()
     return hiddifypanel.__version__
 
 
