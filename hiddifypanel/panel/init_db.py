@@ -26,6 +26,15 @@ from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, mig
 MAX_DB_VERSION = 200
 
 
+def _v200(child_id):
+    """Settings longer than 3072 characters failed to save on MySQL/MariaDB ("Data too long for column 'value'"): the
+    spare REALITY SNIs after a scan, a long Full support text. str_config.value becomes TEXT, as the model now says
+    (SQLite never enforced the length)."""
+    if child_id != 0:
+        return
+    alter_column(StrConfig.value)
+
+
 def _v198(child_id):
     """OpenVPN (hiddify-core's openvpn-server endpoint): off, and its self-signed server certificate. The preset sync adds
     the OpenVPN proxy."""
