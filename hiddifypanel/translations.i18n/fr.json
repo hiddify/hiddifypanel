@@ -2494,7 +2494,14 @@
         "graphite": "Graphite",
         "spacegray": "Gris sidéral",
         "brown": "Brun foncé"
-      }
+      },
+      "hiddify": "Hiddify",
+      "caddyShort": "Smart Caddy",
+      "liquid": "Liquid Glass",
+      "liquidHint": "Un style proche d'iOS : commandes arrondies, verre sur des couleurs qui ondulent lentement. Clair ou sombre, dans la couleur choisie ci-dessus.",
+      "glass": "Verre",
+      "glassMore": "Plus de verre",
+      "glassLess": "Plus opaque"
     },
     "users": {
       "guide": {

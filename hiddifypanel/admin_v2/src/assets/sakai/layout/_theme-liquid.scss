@@ -1,0 +1,607 @@
+/* Liquid Glass: an iOS-like design on top of the panel's components. Only with html.theme-liquid (picked in the topbar's
+   appearance menu), in light or dark and in one of the Smart Caddy colors (their palettes are in _theme-caddy.scss).
+   Nothing here applies to the Hiddify or Smart Caddy themes.
+
+   One number drives the glass: --lg-strength (0 nearly solid … 1 the most glass), set by the appearance menu's slider
+   (layout.ts). Every surface derives its see-through, blur, edge and depth from it, in three levels:
+
+     1. cards, the side menu   most glass: the page's colors glow through
+     2. bars over content      top bar, save bars: denser, so what scrolls beneath does not show through text
+     3. floating windows       dialogs, popovers, dropdowns, toasts, tooltips: nearly solid at any strength, with a
+                               strong blur, and dialogs blur and dim the page behind them; text behind never mixes
+                               with the text in front
+
+   Text, icons and controls are never made see-through: only backgrounds are. The selectors outrank PrimeVue's
+   :root / .app-dark tokens (as _theme-caddy.scss does). */
+
+/* The background's colors, registered so a change of color (or theme mode) flows over instead of jumping */
+@property --lg-wave-1 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+}
+@property --lg-wave-2 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+}
+@property --lg-wave-3 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+}
+@property --lg-base {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #eef0f6;
+}
+
+/* ---------- The system: strength → alpha, blur, edge, depth ---------- */
+html.theme-liquid {
+    --lg-strength: 0.6;
+    /* the surfaces' own color (white glass in light, iOS's dark gray glass in dark) and the ink for hairlines */
+    --lg-tint: 255 255 255;
+    --lg-ink: 15 23 42;
+
+    /* 1. cards: 94% (solid end) … 44% (most glass) */
+    --lg-a-card: calc(0.94 - 0.5 * var(--lg-strength));
+    /* 2. bars: 97% … 66% */
+    --lg-a-bar: calc(0.97 - 0.31 * var(--lg-strength));
+    /* 3. floating windows: 98% … 86%, never thin enough for the page to read through */
+    --lg-a-float: calc(0.98 - 0.12 * var(--lg-strength));
+    /* fields: 90% … 55% */
+    --lg-a-field: calc(0.9 - 0.35 * var(--lg-strength));
+
+    --lg-blur: calc(6px + 22px * var(--lg-strength));
+    --lg-blur-float: calc(18px + 18px * var(--lg-strength));
+    --lg-saturate: calc(1 + 0.6 * var(--lg-strength));
+
+    /* the glass's rim: a light inner edge (stronger with more glass) and a faint outline */
+    --lg-rim: rgb(255 255 255 / calc(0.25 + 0.5 * var(--lg-strength)));
+    --lg-hairline: rgb(var(--lg-ink) / 0.08);
+    --lg-shadow: 0 1px 1px rgb(var(--lg-ink) / 0.04), 0 calc(6px + 10px * var(--lg-strength)) calc(18px + 22px * var(--lg-strength)) -12px rgb(var(--lg-ink) / calc(0.14 + 0.1 * var(--lg-strength)));
+    --lg-shadow-float: 0 24px 60px -18px rgb(var(--lg-ink) / 0.35), 0 2px 8px rgb(var(--lg-ink) / 0.08);
+
+    --lg-card: rgb(var(--lg-tint) / var(--lg-a-card));
+    --lg-bar: rgb(var(--lg-tint) / var(--lg-a-bar));
+    --lg-float: rgb(var(--lg-tint) / var(--lg-a-float));
+    --lg-field: rgb(var(--lg-tint) / var(--lg-a-field));
+
+    /* iOS radii */
+    --lg-r-card: 22px;
+    --lg-r-float: 20px;
+    --lg-r-modal: 28px;
+    --lg-r-field-multiline: 18px;
+
+    /* the background's waves, from the color */
+    --lg-base: #eef0f6;
+    --lg-wave-1: color-mix(in srgb, var(--p-primary-300) 85%, transparent);
+    --lg-wave-2: color-mix(in srgb, var(--p-primary-500) 55%, #7dd3fc 25%);
+    --lg-wave-3: color-mix(in srgb, var(--p-primary-200) 80%, #f9a8d4 20%);
+
+    /* ---------- PrimeVue tokens: one design for every component ---------- */
+    --p-content-background: var(--lg-card);
+    --p-content-border-color: var(--lg-hairline);
+    --p-content-border-radius: var(--lg-r-card);
+    --content-border-radius: var(--lg-r-card);
+    --surface-ground: transparent;
+    --surface-overlay: var(--lg-float);
+
+    /* fields, buttons, selects: iOS capsules */
+    --p-form-field-border-radius: 999px;
+    --p-form-field-background: var(--lg-field);
+    --p-form-field-filled-background: var(--lg-field);
+    --p-form-field-disabled-background: rgb(var(--lg-ink) / 0.04);
+    --p-form-field-border-color: rgb(var(--lg-ink) / 0.1);
+    --p-form-field-hover-border-color: rgb(var(--lg-ink) / 0.2);
+    --p-form-field-focus-border-color: var(--p-primary-color);
+    --p-form-field-padding-x: 0.95rem;
+    --p-form-field-shadow: 0 1px 2px rgb(var(--lg-ink) / 0.05) inset;
+    --p-form-field-focus-ring-width: 0;
+    --p-form-field-focus-ring-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-color) 22%, transparent);
+
+    /* floating windows */
+    --p-overlay-select-background: var(--lg-float);
+    --p-overlay-select-border-color: var(--lg-hairline);
+    --p-overlay-select-border-radius: var(--lg-r-float);
+    --p-overlay-select-shadow: var(--lg-shadow-float);
+    --p-overlay-popover-background: var(--lg-float);
+    --p-overlay-popover-border-color: var(--lg-hairline);
+    --p-overlay-popover-border-radius: var(--lg-r-float);
+    --p-overlay-popover-shadow: var(--lg-shadow-float);
+    --p-overlay-modal-background: var(--lg-float);
+    --p-overlay-modal-border-color: var(--lg-hairline);
+    --p-overlay-modal-border-radius: var(--lg-r-modal);
+    --p-overlay-modal-shadow: var(--lg-shadow-float);
+    --p-overlay-navigation-shadow: var(--lg-shadow-float);
+    --p-list-option-border-radius: 12px;
+    --p-navigation-item-border-radius: 12px;
+
+    /* switches: iOS proportions and its green */
+    --p-toggleswitch-width: 2.9rem;
+    --p-toggleswitch-height: 1.75rem;
+    --p-toggleswitch-border-radius: 999px;
+    --p-toggleswitch-gap: 0.15rem;
+    --p-toggleswitch-handle-size: 1.45rem;
+    --p-toggleswitch-background: rgb(120 120 128 / 0.22);
+    --p-toggleswitch-hover-background: rgb(120 120 128 / 0.3);
+    --p-toggleswitch-border-color: transparent;
+    --p-toggleswitch-hover-border-color: transparent;
+    --p-toggleswitch-checked-background: #34c759;
+    --p-toggleswitch-checked-hover-background: #30b552;
+    --p-toggleswitch-checked-border-color: transparent;
+    --p-toggleswitch-checked-hover-border-color: transparent;
+    --p-toggleswitch-handle-background: #ffffff;
+    --p-toggleswitch-handle-hover-background: #ffffff;
+    --p-toggleswitch-handle-checked-background: #ffffff;
+    --p-toggleswitch-handle-checked-hover-background: #ffffff;
+    --p-toggleswitch-slide-duration: 0.25s;
+
+    /* checkboxes round, like iOS's selection circles */
+    --p-checkbox-border-radius: 50%;
+    --p-checkbox-width: 1.35rem;
+    --p-checkbox-height: 1.35rem;
+    --p-radiobutton-width: 1.35rem;
+    --p-radiobutton-height: 1.35rem;
+
+    --p-tooltip-background: rgb(28 28 30 / 0.92);
+    --p-tooltip-color: #ffffff;
+    --p-tooltip-border-radius: 10px;
+
+    /* the slider (PrimeVue's): a thin capsule track and a white knob */
+    --p-slider-track-border-radius: 999px;
+    --p-slider-track-size: 4px;
+    --p-slider-handle-width: 1.5rem;
+    --p-slider-handle-height: 1.5rem;
+    --p-slider-handle-background: #ffffff;
+    --p-slider-handle-hover-background: #ffffff;
+    --p-slider-handle-content-background: #ffffff;
+    --p-slider-handle-content-hover-background: #ffffff;
+    --p-slider-handle-content-width: 1.5rem;
+    --p-slider-handle-content-height: 1.5rem;
+
+    --p-paginator-nav-button-border-radius: 999px;
+
+    /* Apple's system font where there is one; the panel's fonts elsewhere and for Persian */
+    font-synthesis: none;
+}
+
+html.theme-liquid:not([lang='fa']) body {
+    font-family: 'Twemoji Country Flags', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'Lato', 'Vazirmatn', sans-serif;
+    letter-spacing: -0.005em;
+}
+
+/* Dark: iOS's dark glass */
+html.theme-liquid.app-dark {
+    --lg-tint: 28 28 32;
+    --lg-ink: 0 0 0;
+    --lg-a-card: calc(0.9 - 0.42 * var(--lg-strength));
+    --lg-a-bar: calc(0.95 - 0.27 * var(--lg-strength));
+    --lg-a-float: calc(0.97 - 0.1 * var(--lg-strength));
+    --lg-a-field: calc(0.75 - 0.3 * var(--lg-strength));
+    --lg-rim: rgb(255 255 255 / calc(0.06 + 0.12 * var(--lg-strength)));
+    --lg-hairline: rgb(255 255 255 / 0.09);
+    --lg-shadow: 0 calc(6px + 10px * var(--lg-strength)) calc(18px + 22px * var(--lg-strength)) -12px rgb(0 0 0 / 0.55);
+    --lg-shadow-float: 0 24px 60px -18px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.06);
+
+    --p-form-field-border-color: rgb(255 255 255 / 0.1);
+    --p-form-field-hover-border-color: rgb(255 255 255 / 0.2);
+    --p-form-field-disabled-background: rgb(255 255 255 / 0.04);
+    --p-form-field-shadow: none;
+    --p-toggleswitch-background: rgb(120 120 128 / 0.36);
+    --p-toggleswitch-hover-background: rgb(120 120 128 / 0.44);
+    --p-toggleswitch-checked-background: #30d158;
+    --p-toggleswitch-checked-hover-background: #2cbf50;
+
+    --lg-base: #0b0b10;
+    --lg-wave-1: color-mix(in srgb, var(--p-primary-700) 70%, transparent);
+    --lg-wave-2: color-mix(in srgb, var(--p-primary-500) 40%, #1e3a8a 25%);
+    --lg-wave-3: color-mix(in srgb, var(--p-primary-900) 70%, #581c87 30%);
+}
+
+/* No backdrop blur in this browser: the glass would only be see-through, so every surface is nearly solid instead */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    html.theme-liquid {
+        --lg-a-card: 0.95;
+        --lg-a-bar: 0.97;
+        --lg-a-float: 0.99;
+        --lg-a-field: 0.92;
+    }
+}
+
+/* ---------- The page: the base color and slow waves of the color behind everything ---------- */
+html.theme-liquid {
+    background-color: var(--lg-base);
+    transition:
+        --lg-base 0.8s ease,
+        --lg-wave-1 1.2s ease,
+        --lg-wave-2 1.2s ease,
+        --lg-wave-3 1.2s ease;
+
+    body {
+        background: transparent;
+    }
+
+    /* Two fixed layers of soft color; only their transform moves (GPU), slowly, behind the page */
+    body::before,
+    body::after {
+        content: '';
+        position: fixed;
+        inset: -25vmax;
+        z-index: -1;
+        pointer-events: none;
+        will-change: transform;
+    }
+    body::before {
+        background:
+            radial-gradient(45vmax 35vmax at 18% 28%, var(--lg-wave-1), transparent 70%),
+            radial-gradient(40vmax 32vmax at 82% 22%, var(--lg-wave-2), transparent 70%);
+        animation: lg-flow-a 46s ease-in-out infinite alternate;
+    }
+    body::after {
+        background:
+            radial-gradient(42vmax 30vmax at 60% 85%, var(--lg-wave-3), transparent 70%),
+            radial-gradient(30vmax 26vmax at 30% 70%, color-mix(in srgb, var(--lg-wave-2) 60%, transparent), transparent 70%);
+        animation: lg-flow-b 58s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes lg-flow-a {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translate3d(4vmax, 3vmax, 0) rotate(8deg) scale(1.06);
+    }
+    100% {
+        transform: translate3d(-3vmax, 5vmax, 0) rotate(-6deg) scale(1.02);
+    }
+}
+@keyframes lg-flow-b {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1.04);
+    }
+    50% {
+        transform: translate3d(-5vmax, -3vmax, 0) rotate(-9deg) scale(1);
+    }
+    100% {
+        transform: translate3d(3vmax, -5vmax, 0) rotate(5deg) scale(1.07);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.theme-liquid {
+        transition: none;
+
+        body::before,
+        body::after {
+            animation: none;
+        }
+    }
+}
+
+/* ---------- Surfaces ---------- */
+@mixin lg-glass($fill: var(--lg-card), $blur: var(--lg-blur)) {
+    background: $fill;
+    -webkit-backdrop-filter: blur($blur) saturate(var(--lg-saturate));
+    backdrop-filter: blur($blur) saturate(var(--lg-saturate));
+}
+
+html.theme-liquid {
+    /* 1. cards and the side menu */
+    .card,
+    .p-card,
+    .p-panel,
+    .p-fieldset,
+    .layout-sidebar {
+        @include lg-glass;
+        border: 1px solid var(--lg-hairline);
+        border-radius: var(--lg-r-card);
+        box-shadow:
+            inset 0 1px 0 var(--lg-rim),
+            var(--lg-shadow);
+    }
+    /* a card inside a card does not blur again (one backdrop-filter per layer is enough, and cheaper) */
+    :is(.card, .p-card, .p-panel, .p-fieldset, .p-dialog) :is(.card, .p-card, .p-panel, .p-fieldset) {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        background: rgb(var(--lg-tint) / 0.35);
+        box-shadow: inset 0 1px 0 var(--lg-rim);
+    }
+
+    /* 2. bars over scrolling content */
+    .layout-topbar {
+        --topbar-bg: var(--lg-bar);
+        --topbar-text: var(--p-text-color);
+        --topbar-text-muted: var(--p-text-muted-color);
+        --topbar-hover: rgb(var(--lg-ink) / 0.06);
+        @include lg-glass(var(--lg-bar), calc(var(--lg-blur) + 6px));
+        border-bottom: 1px solid var(--lg-hairline);
+        box-shadow: 0 1px 0 var(--lg-rim) inset, 0 10px 30px -22px rgb(var(--lg-ink) / 0.5);
+    }
+    /* the panel's logo is drawn for a colored bar (white); on the glass bar it sits on a tile of the color, as an app
+       icon does (a custom logo too) */
+    .layout-topbar .layout-topbar-logo-image {
+        opacity: 1;
+        padding: 4px;
+        border-radius: 10px;
+        background: linear-gradient(160deg, var(--p-primary-400), var(--p-primary-600));
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.35),
+            0 4px 10px -4px color-mix(in srgb, var(--p-primary-600) 70%, transparent);
+    }
+    .layout-topbar .layout-topbar-action--active {
+        color: var(--p-primary-contrast-color);
+        background: var(--p-primary-color);
+    }
+    .savebar__inner,
+    .bc-sendbar,
+    .uf-actions,
+    .ssh-dock--overlay {
+        @include lg-glass(var(--lg-bar), calc(var(--lg-blur) + 6px));
+        border-radius: var(--lg-r-float);
+    }
+    @media (max-width: 991px) {
+        .settings-nav {
+            @include lg-glass(var(--lg-bar), calc(var(--lg-blur) + 6px));
+        }
+        /* the phone menu slides over the page and its mask: a bar's density, so the page does not read through */
+        .layout-sidebar {
+            @include lg-glass(var(--lg-bar), calc(var(--lg-blur) + 10px));
+        }
+        .menu-tab {
+            @include lg-glass(var(--lg-bar));
+        }
+    }
+    @media (max-width: 720px) {
+        .qs-nav {
+            @include lg-glass(var(--lg-bar));
+        }
+    }
+
+    /* 3. floating windows: nearly solid, a strong blur, a deep shadow */
+    .p-dialog,
+    .p-popover,
+    .p-select-overlay,
+    .p-multiselect-overlay,
+    .p-autocomplete-overlay,
+    .p-cascadeselect-overlay,
+    .p-treeselect-overlay,
+    .p-datepicker-panel,
+    .p-menu-overlay,
+    .p-tieredmenu-overlay,
+    .p-contextmenu,
+    .p-drawer,
+    .p-toast-message,
+    .p-confirmpopup {
+        @include lg-glass(var(--lg-float), var(--lg-blur-float));
+        border: 1px solid var(--lg-hairline);
+        box-shadow:
+            inset 0 1px 0 var(--lg-rim),
+            var(--lg-shadow-float);
+    }
+    .p-dialog {
+        border-radius: var(--lg-r-modal);
+        overflow: hidden;
+    }
+    .p-dialog-header,
+    .p-dialog-content,
+    .p-dialog-footer {
+        background: transparent;
+    }
+    /* What is behind a dialog: dimmed and blurred, so its text never mixes with the dialog's */
+    .p-dialog-mask.p-overlay-mask,
+    .p-drawer-mask,
+    .layout-mask {
+        background: rgb(var(--lg-ink) / 0.22);
+        -webkit-backdrop-filter: blur(8px) saturate(1.1);
+        backdrop-filter: blur(8px) saturate(1.1);
+    }
+    &.app-dark :is(.p-dialog-mask.p-overlay-mask, .p-drawer-mask, .layout-mask) {
+        background: rgb(0 0 0 / 0.45);
+    }
+    /* inside a floating window the fields are nearly solid too */
+    :is(.p-dialog, .p-popover, .p-drawer) {
+        --p-form-field-background: rgb(var(--lg-tint) / 0.9);
+    }
+    .p-toast-message {
+        border-radius: var(--lg-r-float);
+    }
+    .p-tooltip .p-tooltip-text {
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 8px 24px -10px rgb(0 0 0 / 0.45);
+        font-weight: 500;
+    }
+
+    /* ---------- Fields ---------- */
+    .p-inputtext,
+    .p-select,
+    .p-multiselect,
+    .p-autocomplete-input-multiple,
+    .p-inputnumber-input,
+    .p-password-input,
+    .p-datepicker-input,
+    .p-cascadeselect,
+    .p-treeselect,
+    .p-inputchips,
+    .p-checkbox-box,
+    .p-radiobutton-box {
+        transition:
+            background-color 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+    .p-inputtext:enabled:focus,
+    .p-select.p-focus,
+    .p-multiselect.p-focus,
+    .p-autocomplete.p-focus .p-autocomplete-input-multiple,
+    .p-cascadeselect.p-focus,
+    .p-treeselect.p-focus {
+        box-shadow: var(--p-form-field-focus-ring-shadow);
+        background: rgb(var(--lg-tint) / 0.95);
+    }
+    /* several lines: a soft rounded rectangle, not a capsule */
+    .p-textarea,
+    textarea.p-inputtext,
+    .p-editor-container,
+    .monaco-editor-wrapper {
+        border-radius: var(--lg-r-field-multiline);
+    }
+    /* fields grouped with an addon or a button: the group is the capsule */
+    .p-inputgroup > :first-child {
+        border-start-start-radius: 999px;
+        border-end-start-radius: 999px;
+    }
+    .p-inputgroup > :last-child {
+        border-start-end-radius: 999px;
+        border-end-end-radius: 999px;
+    }
+    .p-toggleswitch-slider {
+        box-shadow: none;
+    }
+    .p-toggleswitch-handle {
+        box-shadow:
+            0 3px 8px rgb(0 0 0 / 0.15),
+            0 1px 1px rgb(0 0 0 / 0.16);
+    }
+    .p-checkbox-checked .p-checkbox-box,
+    .p-radiobutton-checked .p-radiobutton-box {
+        box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--p-primary-color) 70%, transparent);
+    }
+    .p-slider-handle {
+        box-shadow:
+            0 3px 8px rgb(0 0 0 / 0.18),
+            0 0 0 0.5px rgb(0 0 0 / 0.06);
+    }
+    .p-select-overlay .p-select-option,
+    .p-multiselect-overlay .p-multiselect-option,
+    .p-autocomplete-overlay .p-autocomplete-option {
+        margin-inline: 0.25rem;
+    }
+
+    /* ---------- Buttons: capsules; the main one a solid color with a soft glow ---------- */
+    .p-button {
+        transition:
+            background-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.15s ease,
+            filter 0.2s ease;
+        font-weight: 600;
+    }
+    .p-button:not(:disabled):active {
+        transform: scale(0.97);
+    }
+    .p-button:not(.p-button-secondary):not(.p-button-text):not(.p-button-outlined):not(.p-button-link):not(.p-button-danger):not(.p-button-success):not(.p-button-warn):not(.p-button-info):not(.p-button-help):not(.p-button-contrast) {
+        box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--p-primary-600) 80%, transparent);
+    }
+    .p-button-secondary:not(.p-button-text):not(.p-button-outlined) {
+        background: rgb(var(--lg-ink) / 0.06);
+        border-color: transparent;
+    }
+    &.app-dark .p-button-secondary:not(.p-button-text):not(.p-button-outlined) {
+        background: rgb(255 255 255 / 0.1);
+    }
+
+    /* ---------- Tabs: iOS's segmented control ---------- */
+    .p-tablist-tab-list {
+        gap: 2px;
+        padding: 3px;
+        border: 0;
+        border-radius: 999px;
+        background: rgb(var(--lg-ink) / 0.06);
+        width: fit-content;
+        max-width: 100%;
+    }
+    &.app-dark .p-tablist-tab-list {
+        background: rgb(255 255 255 / 0.08);
+    }
+    .p-tablist-content {
+        overflow-x: auto;
+    }
+    .p-tablist-active-bar {
+        display: none;
+    }
+    .p-tab {
+        border: 0;
+        border-radius: 999px;
+        padding: 0.45rem 1rem;
+        background: transparent;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+    .p-tab-active {
+        background: rgb(var(--lg-tint) / 0.95);
+        color: var(--p-text-color);
+        box-shadow: 0 2px 8px -2px rgb(var(--lg-ink) / 0.25);
+    }
+    &.app-dark .p-tab-active {
+        background: rgb(255 255 255 / 0.16);
+    }
+    .p-tabpanels {
+        background: transparent;
+    }
+
+    /* ---------- Tables, lists, pages ---------- */
+    .p-datatable {
+        --p-datatable-header-cell-background: transparent;
+        --p-datatable-row-background: transparent;
+        --p-datatable-header-background: transparent;
+        --p-datatable-footer-background: transparent;
+        --p-datatable-row-hover-background: color-mix(in srgb, var(--p-primary-color) 6%, transparent);
+        --p-datatable-row-selected-background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+    }
+    .p-datatable .p-datatable-thead > tr > th {
+        background: rgb(var(--lg-tint) / 0.35);
+        font-size: 0.82rem;
+        color: var(--p-text-muted-color);
+    }
+    .p-paginator {
+        background: transparent;
+    }
+    .p-paginator-page.p-paginator-page-selected {
+        background: var(--p-primary-color);
+        color: var(--p-primary-contrast-color);
+    }
+
+    /* ---------- Messages, tags, badges: soft and rounded ---------- */
+    .p-message {
+        border-radius: 16px;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+    .p-tag,
+    .p-badge,
+    .p-chip {
+        border-radius: 999px;
+    }
+
+    /* ---------- The side menu: rounded rows, the current page tinted ---------- */
+    .layout-menu ul a {
+        border-radius: 12px;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+
+        &.active-route {
+            background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+        }
+    }
+
+    /* thin, rounded scrollbars */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgb(var(--lg-ink) / 0.25) transparent;
+    }
+    &.app-dark * {
+        scrollbar-color: rgb(255 255 255 / 0.22) transparent;
+    }
+}
+
+/* The cross-fade of a theme switch (layout.ts, where the browser has view transitions) */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.35s;
+}

@@ -1561,10 +1561,10 @@ html.app-dark .node-card__icon--os::before {
 .node-os-pop .p-popover-content {
   padding: 0;
 }
-html.theme-caddy .node-os-pop.p-popover {
+html.theme-glass .node-os-pop.p-popover {
   background: var(--p-surface-0);
 }
-html.theme-caddy.app-dark .node-os-pop.p-popover {
+html.theme-glass.app-dark .node-os-pop.p-popover {
   background: var(--p-surface-900);
 }
 .node-os {
