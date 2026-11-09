@@ -1313,7 +1313,9 @@
       "previewTitle": "Aperçu du modèle"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify sur le web",
+      "text": "HiddifyManager",
+      "website": "Site web"
     },
     "legacy": {
       "loading": "Chargement…",

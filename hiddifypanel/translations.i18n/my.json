@@ -1315,7 +1315,9 @@
       "previewTitle": "Template နမူနာ"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "ဝက်ဘ်ပေါ်ရှိ Hiddify",
+      "text": "HiddifyManager",
+      "website": "ဝက်ဘ်ဆိုက်"
     },
     "legacy": {
       "loading": "ဖွင့်နေသည်…",

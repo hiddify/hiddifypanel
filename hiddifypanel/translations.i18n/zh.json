@@ -1313,7 +1313,9 @@
       "previewTitle": "模板预览"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify 官方渠道",
+      "text": "HiddifyManager",
+      "website": "网站"
     },
     "legacy": {
       "loading": "加载中…",
