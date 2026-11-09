@@ -29,7 +29,8 @@ $caddy-steps: 50 100 200 300 400 500 600 700 800 900 950;
 
 /* The color: in both modes (light uses the palette's 500, as PrimeVue does; dark picks lighter steps below). */
 @each $name, $a in $caddy-accents {
-    html.theme-caddy[data-caddy-accent='#{$name}'] {
+    // the palette also colors Liquid Glass (_theme-liquid.scss), which shares the colors
+    html:is(.theme-caddy, .theme-liquid)[data-caddy-accent='#{$name}'] {
         $palette: list.nth($a, 1);
         @for $i from 1 through list.length($caddy-steps) {
             --p-primary-#{list.nth($caddy-steps, $i)}: #{list.nth($palette, $i)};
@@ -38,7 +39,7 @@ $caddy-steps: 50 100 200 300 400 500 600 700 800 900 950;
         --caddy-accent: linear-gradient(135deg, #{list.nth($a, 2)} 0%, #{list.nth($a, 3)} 100%);
         --caddy-glow: #{list.nth($a, 4)};
     }
-    html.theme-caddy.app-dark[data-caddy-accent='#{$name}'] {
+    html:is(.theme-caddy, .theme-liquid).app-dark[data-caddy-accent='#{$name}'] {
         $palette: list.nth($a, 1);
         --p-primary-color: #{list.nth($palette, 5)};
         --p-primary-hover-color: #{list.nth($palette, 4)};

@@ -1415,10 +1415,10 @@ a.dm-row__domain:hover {
   white-space: normal;
   overflow: hidden;
 }
-html.theme-caddy .p-tooltip.dm-tip .p-tooltip-text {
+html.theme-glass .p-tooltip.dm-tip .p-tooltip-text {
   background: var(--p-surface-0);
 }
-html.theme-caddy.app-dark .p-tooltip.dm-tip .p-tooltip-text {
+html.theme-glass.app-dark .p-tooltip.dm-tip .p-tooltip-text {
   background: var(--p-surface-900);
 }
 .p-tooltip.dm-tip.p-tooltip-top .p-tooltip-arrow {

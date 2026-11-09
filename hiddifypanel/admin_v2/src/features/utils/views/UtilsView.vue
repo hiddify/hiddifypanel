@@ -110,6 +110,11 @@ async function copy(value: string) {
 </script>
 
 <style>
+/* Links, Base64, JSON: a monospace font with Latin digits, in Persian too (the page font draws Persian digits, and
+   PrimeVue's own font rule wins over the font-mono class; two classes to win over it) */
+.p-textarea.util-textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'Vazirmatn', monospace;
+}
 .util-textarea {
   min-height: 14rem;
   field-sizing: fixed;

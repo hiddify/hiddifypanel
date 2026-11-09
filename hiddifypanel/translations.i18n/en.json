@@ -1952,7 +1952,9 @@
       "previewTitle": "Template preview"
     },
     "footer": {
-      "text": "HiddifyManager"
+      "links": "Hiddify on the web",
+      "text": "HiddifyManager",
+      "website": "Website"
     },
     "legacy": {
       "loading": "Loading…",
@@ -2371,18 +2373,30 @@
         "AFR": "Afranet",
         "ASK": "Andishe Sabz",
         "AST": "Asiatech",
+        "BLN": "Beeline",
+        "CBN": "China Broadnet",
+        "CER": "CERNET",
+        "CMC": "China Mobile",
+        "CTC": "China Telecom",
+        "CUC": "China Unicom",
+        "ERT": "ER-Telecom (Dom.ru)",
         "HWB": "HiWeb",
         "ITC": "Zirsakht (ITC)",
         "MBT": "Mobinnet",
         "MCI": "Hamrah-e Aval",
+        "MGF": "MegaFon",
         "MKH": "Mokhaberat",
         "MTN": "Irancell",
+        "MTS": "MTS",
         "OTHER": "Other",
         "PRS": "ParsOnline",
         "PSM": "Pishgaman",
         "RSP": "Respina",
+        "RTK": "Rostelecom",
         "RTL": "Rightel",
         "SHT": "Shatel",
+        "T2R": "T2 (Tele2)",
+        "TTK": "TTK (TransTeleCom)",
         "ZTL": "Zitel"
       },
       "operator": "Operator",
@@ -3463,6 +3477,7 @@
     },
     "theme": {
       "caddy": "Smart Caddy theme",
+      "caddyShort": "Smart Caddy",
       "color": "Theme",
       "colors": {
         "blue": "Blue",
@@ -3478,8 +3493,14 @@
       },
       "dark": "Dark mode",
       "default": "Hiddify theme (default)",
+      "glass": "Glass",
       "glassHint": "Each color works in light and dark: light gives frosted glass over its glow, dark gives the Smart Caddy dark glass.",
+      "glassLess": "More solid",
+      "glassMore": "More glass",
+      "hiddify": "Hiddify",
       "light": "Light mode",
+      "liquid": "Liquid Glass",
+      "liquidHint": "An iOS-like look: rounded controls, glass over slowly flowing color. Works in light and dark, in the color picked above.",
       "menu": "Appearance & language",
       "mode": "Light or dark",
       "retry": "Try again"

@@ -18,12 +18,21 @@ const operatorName = computed(() => (props.net ? operatorLabel(t, props.net.shor
 const asKnown = computed(() => !!props.net && /^\d+$/.test(props.net.asn))
 // Another country than the panel's: a VPN is on, so the scan would test the VPN, not the users' operator
 const vpnOn = computed(() => !!props.net?.panel_country && props.net.country !== 'unknown' && props.net.country !== props.net.panel_country)
+
+// The detected operator's logo (assets/operators/<code>.png, sources in CREDITS.md); an operator without one, an
+// unknown network or a VPN keeps the icon
+const LOGOS = import.meta.glob<string>('@/assets/operators/*.png', { eager: true, query: '?url', import: 'default' })
+const logo = computed(() => {
+  if (!known.value || vpnOn.value) return ''
+  return LOGOS[`/src/assets/operators/${props.net!.short_name}.png`] ?? ''
+})
 </script>
 
 <template>
   <section class="net card">
     <div class="net__main">
-      <span class="net__icon" :class="{ 'net__icon--warn': vpnOn }"><i class="pi" :class="vpnOn ? 'pi-exclamation-triangle' : 'pi-wifi'" /></span>
+      <span v-if="logo" class="net__icon net__icon--logo"><img :src="logo" :alt="operatorName" /></span>
+      <span v-else class="net__icon" :class="{ 'net__icon--warn': vpnOn }"><i class="pi" :class="vpnOn ? 'pi-exclamation-triangle' : 'pi-wifi'" /></span>
       <div class="net__body">
         <div class="net__label">{{ t('cleanIp.yourNetwork') }}</div>
         <template v-if="net">
@@ -68,6 +77,19 @@ const vpnOn = computed(() => !!props.net?.panel_country && props.net.country !==
   color: var(--p-primary-contrast-color);
   background: var(--p-primary-color);
   box-shadow: 0 6px 16px color-mix(in srgb, var(--p-primary-color) 35%, transparent);
+}
+.net__icon--logo {
+  overflow: hidden;
+  /* each logo brings its own square background (white, or the brand colour) */
+  background: #fff;
+  box-shadow:
+    0 6px 16px color-mix(in srgb, var(--p-primary-color) 22%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--p-content-border-color) 80%, transparent);
+}
+.net__icon--logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .net__icon--warn {
   background: var(--p-orange-500);
