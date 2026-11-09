@@ -431,6 +431,7 @@
     },
     "admins": {
       "add": "Adicionar administrador",
+      "owner": "Proprietário",
       "canAddHint": "Este administrador pode criar seus próprios subadministradores",
       "canAddShort": "Adiciona subadministradores",
       "clearSearch": "Limpar pesquisa",

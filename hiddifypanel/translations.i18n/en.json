@@ -511,6 +511,7 @@
     },
     "admins": {
       "add": "Add Admin",
+      "owner": "Owner",
       "canAddHint": "This admin can create its own sub-admins",
       "canAddShort": "Adds Sub-admins",
       "capability": {

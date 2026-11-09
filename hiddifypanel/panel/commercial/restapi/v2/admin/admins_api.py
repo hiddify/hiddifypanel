@@ -227,6 +227,8 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
         "parent_uuid": parent.uuid if parent and not is_me and parent.id in visible_ids else None,
         "parent_name": parent.name if parent else None,
         "is_me": is_me,
+        # The panel's owner (the first admin): shown apart from every other admin.
+        "is_owner": admin.id == 1,
         "has_password": bool(admin.password),
         "alias": admin.alias or "",
         "admin_link": _admin_link(admin),

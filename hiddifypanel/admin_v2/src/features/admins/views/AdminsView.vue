@@ -76,21 +76,33 @@
 
         <Column field="name" :header="t('admins.col.name')" header-class="admins-col--name" body-class="admins-col--name">
           <template #body="{ node }">
-            <div class="admins-who" :class="{ 'admins-who--nested': depthOf(node) > 0 }" :style="{ '--depth': depthOf(node) }">
+            <!-- Tree lines, in the colour of the admin they come from: through the rows of later siblings, an elbow into
+                 this admin, and down to its own sub-admins while they are open -->
+            <span v-if="guideOf(node).depth" class="admins-guides" aria-hidden="true">
+              <template v-for="(h, i) in guideOf(node).pass" :key="i">
+                <span v-if="h !== null" class="admins-guide admins-guide--pass" :style="{ '--lvl': i, '--line-h': h }" />
+              </template>
+              <span v-if="!guideOf(node).last" class="admins-guide admins-guide--pass" :style="{ '--lvl': guideOf(node).depth - 1, '--line-h': guideOf(node).parentHue }" />
+              <span class="admins-guide admins-guide--elbow" :style="{ '--lvl': guideOf(node).depth - 1, '--line-h': guideOf(node).parentHue }" />
+            </span>
+            <span v-if="node.children?.length && isExpanded(node)" class="admins-guide admins-guide--down" aria-hidden="true" :style="{ '--lvl': guideOf(node).depth, '--line-h': hueOf(row(node)) }" />
+            <div class="admins-who" :style="{ '--depth': depthOf(node) }">
               <div class="admins-who__top">
                 <!-- The avatar doubles as the expand/collapse toggle of an admin with sub-admins -->
                 <component
                   :is="node.children?.length ? 'button' : 'span'"
                   :type="node.children?.length ? 'button' : undefined"
                   class="admins-avatar"
-                  :class="[`admins-avatar--${row(node).mode}`, { 'admins-avatar--toggle': node.children?.length }]"
-                  :style="{ '--avatar-hue': hue(row(node).uuid) }"
+                  :class="[row(node).is_owner ? 'admins-avatar--owner' : `admins-avatar--l${shadeOf(node)}`, { 'admins-avatar--toggle': node.children?.length }]"
+                  :style="{ '--avatar-hue': hueOf(row(node)) }"
+                  v-tooltip.top="row(node).is_owner ? t('admins.owner') : t(`admins.mode.${row(node).mode}`)"
                   :aria-expanded="node.children?.length ? isExpanded(node) : undefined"
                   :aria-label="node.children?.length ? t(isExpanded(node) ? 'admins.collapse' : 'admins.expand', { name: row(node).name }) : undefined"
                   @click="node.children?.length && toggle(node)"
                 >
-                  <i v-if="row(node).mode === 'super_admin'" class="pi pi-crown" />
-                  <template v-else>{{ initials(row(node).name) }}</template>
+                  <!-- The owner's own crown; everyone else the icon of their role, in their own colour -->
+                  <OwnerCrown v-if="row(node).is_owner" />
+                  <i v-else class="pi" :class="ROLE_ICON[row(node).mode]" />
                   <span v-if="node.children?.length" class="admins-avatar__caret" :class="{ 'admins-avatar__caret--open': isExpanded(node) }">
                     <i class="pi pi-chevron-down" />
                   </span>
@@ -101,8 +113,9 @@
                     <span v-if="row(node).is_me" class="admins-chip admins-chip--me">{{ t('admins.you') }}</span>
                   </div>
                   <div class="admins-who__tags">
-                    <span class="admins-mode" :class="`admins-mode--${row(node).mode}`">
-                      <i class="pi" :class="row(node).mode === 'super_admin' ? 'pi-crown' : row(node).mode === 'admin' ? 'pi-shield' : 'pi-user'" />{{ t(`admins.mode.${row(node).mode}`) }}
+                    <span v-if="row(node).is_owner" class="admins-mode admins-mode--owner"><OwnerCrown />{{ t('admins.owner') }}</span>
+                    <span v-else class="admins-mode" :class="`admins-mode--${row(node).mode}`">
+                      <i class="pi" :class="ROLE_ICON[row(node).mode]" />{{ t(`admins.mode.${row(node).mode}`) }}
                     </span>
                     <span
                       v-if="row(node).mode !== 'super_admin' && row(node).can_add_admin"
@@ -250,6 +263,7 @@ import AdminFormDialog from '@/features/admins/components/AdminFormDialog.vue'
 import MyConfigsDialog from '@/features/admins/components/MyConfigsDialog.vue'
 import AdminLinkDialog from '@/features/admins/components/AdminLinkDialog.vue'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
+import OwnerCrown from '@/features/admins/components/OwnerCrown.vue'
 import { ADMIN_CAPABILITIES, CAPABILITY_ICON, adminsApi, type AdminCapability, type AdminCredentials, type AdminMode, type AdminRow, type AdminsTree } from '@/features/admins/api'
 
 /** Highlights the search match inside a name or UUID. */
@@ -401,17 +415,73 @@ watch(filtering, (on) => {
   if (on) expandAll()
 })
 
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  const letters = parts.length > 1 ? parts[0]![0]! + parts[1]![0]! : (parts[0] ?? '?').slice(0, 2)
-  return letters.toUpperCase()
+/** The icon of each role, on the avatar and on the role tag. */
+const ROLE_ICON: Record<AdminMode, string> = { super_admin: 'pi-crown', admin: 'pi-shield', agent: 'pi-user' }
+
+/** The owner's gold, kept for the owner: no other admin gets a colour near it. */
+const OWNER_HUE = 40
+/** A root that is not the owner (a sub-admin signed in): blue. */
+const ROOT_HUE = 215
+/** Sub-admins of the root: one colour each, spread by the golden ratio over 62°–332° in the order they were made (each
+ * new one falls in the widest gap left), outside the owner's gold-to-rose. */
+function topHue(index: number): number {
+  return 62 + 270 * ((0.5 + index * 0.618034) % 1)
+}
+/** Sub-admins further down: the colour of the admin above, a little turned for each sibling, and lighter (shadeOf). */
+const SIBLING_TURN = [0, 14, -14, 28, -28, 7, -7, 21, -21]
+
+/** Each admin's colour (hue). The rows come in the order the admins were made, so a colour stays when one is added. */
+const hues = computed(() => {
+  const rows = tree.value?.admins ?? []
+  const kids = new Map<string | null, AdminRow[]>()
+  for (const admin of rows) kids.set(admin.parent_uuid, [...(kids.get(admin.parent_uuid) ?? []), admin])
+  const out = new Map<string, number>()
+  const walk = (parent: AdminRow, depth: number) => {
+    ;(kids.get(parent.uuid) ?? []).forEach((child, i) => {
+      if (out.has(child.uuid)) return
+      const h = depth === 0 ? topHue(i) : out.get(parent.uuid)! + SIBLING_TURN[i % SIBLING_TURN.length]!
+      out.set(child.uuid, ((h % 360) + 360) % 360)
+      walk(child, depth + 1)
+    })
+  }
+  for (const root of kids.get(null) ?? []) {
+    out.set(root.uuid, root.is_owner ? OWNER_HUE : ROOT_HUE)
+    walk(root, 0)
+  }
+  return out
+})
+function hueOf(admin: AdminRow): number {
+  return hues.value.get(admin.uuid) ?? ROOT_HUE
+}
+/** 1: the full colour (the root and the admins right under it), 2 and 3: lighter, further down the tree. */
+function shadeOf(node: TreeNode): number {
+  return Math.max(1, Math.min(3, depthOf(node)))
 }
 
-/** A stable color per admin. */
-function hue(uuid: string): number {
-  let sum = 0
-  for (const ch of uuid) sum = (sum * 31 + ch.charCodeAt(0)) % 360
-  return sum
+interface Guide {
+  depth: number
+  /** Last of its siblings: the line from the admin above ends at it. */
+  last: boolean
+  /** Per level above: the colour of a line passing through this row (an earlier admin has later siblings), or null. */
+  pass: (number | null)[]
+  parentHue: number
+}
+/** The tree lines of each shown row (after filtering): which lines run through it and where they end. */
+const guides = computed(() => {
+  const out = new Map<string, Guide>()
+  const walk = (list: TreeNode[], depth: number, pass: (number | null)[], parentHue: number) => {
+    list.forEach((node, i) => {
+      const last = i === list.length - 1
+      out.set(String(node.key), { depth, last, pass, parentHue })
+      // Its children see a line at this level while this admin has later siblings
+      if (node.children?.length) walk(node.children, depth + 1, depth ? [...pass, last ? null : parentHue] : [], hueOf(row(node)))
+    })
+  }
+  walk(nodes.value, 0, [], ROOT_HUE)
+  return out
+})
+function guideOf(node: TreeNode): Guide {
+  return guides.value.get(String(node.key)) ?? { depth: 0, last: true, pass: [], parentHue: ROOT_HUE }
 }
 
 async function load(silent = false) {
@@ -674,6 +744,18 @@ onMounted(() => load())
 .admins-table :deep(.admins-col--name .p-treetable-body-cell-content) {
   align-items: flex-start;
 }
+/* The tree lines are drawn from the cell's edges (full row height), so the name cell holds them and starts at the top */
+.admins-table :deep(td.admins-col--name) {
+  position: relative;
+  vertical-align: top;
+  padding-inline-start: var(--cell-pad);
+}
+.admins-table {
+  --cell-pad: 1rem;
+  --row-pad: 0.7rem;
+  --avatar: 2.35rem;
+  --indent: 2rem;
+}
 .admins-table :deep(.admins-col--users) {
   width: 30rem;
 }
@@ -695,7 +777,6 @@ onMounted(() => load())
 
 /* Name cell */
 .admins-who {
-  --indent: 1.35rem;
   position: relative;
   flex: 1;
   display: flex;
@@ -704,17 +785,50 @@ onMounted(() => load())
   min-width: 0;
   padding-inline-start: calc(var(--depth, 0) * var(--indent));
 }
-/* Guide: an elbow from the parent's column into this admin's avatar. */
-.admins-who--nested::before {
+/* Tree lines. Level n runs down the middle of the avatars at depth n; its colour is the admin it comes from. */
+.admins-guides {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.admins-guide {
+  --line: hsl(var(--line-h) 65% 58% / 0.45);
+  --x: calc(var(--cell-pad) + var(--lvl) * var(--indent) + var(--avatar) / 2 - 1px);
+  position: absolute;
+  inset-inline-start: var(--x);
+  pointer-events: none;
+}
+/* Straight through the row: an admin above has more sub-admins further down */
+.admins-guide--pass {
+  top: 0;
+  bottom: 0;
+  border-inline-start: 2px solid var(--line);
+}
+/* Into this admin: down from the row's top, then a rounded turn into the side of its avatar */
+.admins-guide--elbow {
+  top: 0;
+  height: calc(var(--row-pad) + var(--avatar) / 2 + 1px);
+  width: calc(var(--indent) - var(--avatar) / 2 - 3px);
+  border-inline-start: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  border-end-start-radius: 10px;
+}
+/* A small dot where the line meets the avatar */
+.admins-guide--elbow::after {
   content: '';
   position: absolute;
-  top: -0.7rem;
-  height: calc(0.7rem + 1.15rem);
-  inset-inline-start: calc((var(--depth) - 1) * var(--indent) + 0.55rem);
-  width: calc(var(--indent) - 0.55rem);
-  border-inline-start: 2px solid var(--p-content-border-color);
-  border-bottom: 2px solid var(--p-content-border-color);
-  border-end-start-radius: 8px;
+  inset-inline-end: -3px;
+  bottom: -4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--line-h) 70% 55%);
+}
+/* From under this admin's avatar down to its first sub-admin */
+.admins-guide--down {
+  top: calc(var(--row-pad) + var(--avatar) + 4px);
+  bottom: 0;
+  border-inline-start: 2px solid hsl(var(--line-h) 70% 55% / 0.55);
 }
 .admins-who__top {
   display: flex;
@@ -766,34 +880,64 @@ onMounted(() => load())
   font-size: 0.75rem;
 }
 .admins-avatar {
+  position: relative;
+  z-index: 1;
   flex-shrink: 0;
-  width: 2.35rem;
-  height: 2.35rem;
+  width: var(--avatar);
+  height: var(--avatar);
   border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: hsl(var(--avatar-hue) 60% 42%);
-  background: hsl(var(--avatar-hue) 70% 50% / 0.14);
+}
+/* Each admin's own colour as a soft tint, like the panel's other icon tiles: clearest at the top of the tree and fainter
+   for each step down, so a family reads as one colour */
+.admins-avatar--l1 {
+  color: hsl(var(--avatar-hue) 62% 44%);
+  background: linear-gradient(145deg, hsl(var(--avatar-hue) 85% 60% / 0.2), hsl(var(--avatar-hue) 80% 52% / 0.3));
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--avatar-hue) 70% 55% / 0.3),
+    0 3px 8px -5px hsl(var(--avatar-hue) 70% 45% / 0.6);
+}
+.admins-avatar--l2 {
+  color: hsl(var(--avatar-hue) 55% 54%);
+  background: linear-gradient(145deg, hsl(var(--avatar-hue) 85% 62% / 0.12), hsl(var(--avatar-hue) 80% 55% / 0.18));
+  box-shadow: inset 0 0 0 1px hsl(var(--avatar-hue) 70% 60% / 0.24);
+}
+.admins-avatar--l3 {
+  color: hsl(var(--avatar-hue) 45% 62%);
+  background: hsl(var(--avatar-hue) 80% 62% / 0.09);
+  box-shadow: inset 0 0 0 1px hsl(var(--avatar-hue) 70% 65% / 0.2);
+}
+/* The owner: gold to rose with a soft glow and its own crown, unlike any other admin */
+.admins-avatar--owner {
+  --owner-gem: #fde68a;
+  color: #fff;
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #e11d48 100%);
+  box-shadow:
+    0 0 0 2px var(--p-content-background),
+    0 0 0 4px rgba(251, 191, 36, 0.55),
+    0 6px 16px -4px rgba(225, 29, 72, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 button.admins-avatar {
-  position: relative;
   border: 0;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
 }
-button.admins-avatar--super_admin {
-  font-size: 1rem;
+button.admins-avatar--owner {
+  font-size: 1.25rem;
 }
 button.admins-avatar:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+  filter: brightness(1.05);
 }
 button.admins-avatar:focus-visible {
   outline: 2px solid var(--p-primary-color);
@@ -833,14 +977,16 @@ button.admins-avatar:focus-visible {
 .admins-chip--toggle i {
   font-size: 0.65rem;
 }
-.admins-avatar--super_admin {
-  color: var(--p-amber-600, #d97706);
-  background: color-mix(in srgb, var(--p-amber-500, #f59e0b) 16%, transparent);
-  font-size: 1rem;
+/* ":global(.app-dark) .x" compiled to ".app-dark {}" (the whole page took the avatar color in dark mode): the lighter
+   shades as see-through colour on the dark page */
+.app-dark .admins-avatar--l1 {
+  color: hsl(var(--avatar-hue) 80% 72%);
 }
-/* ":global(.app-dark) .x" compiled to ".app-dark {}" (the whole page took the avatar color in dark mode) */
-.app-dark .admins-avatar:not(.admins-avatar--super_admin) {
-  color: hsl(var(--avatar-hue) 70% 70%);
+.app-dark .admins-avatar--l2 {
+  color: hsl(var(--avatar-hue) 65% 70%);
+}
+.app-dark .admins-avatar--l3 {
+  color: hsl(var(--avatar-hue) 50% 66%);
 }
 .admins-who__name {
   display: flex;
@@ -932,6 +1078,17 @@ button.admins-avatar:focus-visible {
 }
 .admins-mode--admin {
   --mode-color: var(--p-violet-500, #8b5cf6);
+}
+/* The owner's tag: filled with the owner's gold-to-rose, unlike every role tag */
+.admins-mode--owner {
+  --owner-gem: rgba(255, 255, 255, 0.6);
+  color: #fff;
+  background: linear-gradient(90deg, #f59e0b, #f97316 55%, #e11d48);
+  box-shadow: 0 2px 8px -3px rgba(225, 29, 72, 0.6);
+  letter-spacing: 0.02em;
+}
+.admins-mode--owner .owner-crown {
+  font-size: 0.85rem;
 }
 
 .admins-empty-search {
@@ -1071,11 +1228,13 @@ button.admins-avatar:focus-visible {
     padding: 0.15rem;
     border-radius: 14px;
   }
-  .admins-table :deep(.admins-col--name) {
-    padding-inline: 0.6rem;
+  .admins-table {
+    --cell-pad: 0.6rem;
+    --avatar: 2.1rem;
+    --indent: 1.6rem;
   }
-  .admins-who {
-    --indent: 0.9rem;
+  .admins-table :deep(.admins-col--name) {
+    padding-inline-end: 0.6rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
