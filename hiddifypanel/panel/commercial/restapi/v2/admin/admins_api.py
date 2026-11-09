@@ -250,6 +250,10 @@ def _visible_admins(actor: AdminUser) -> list[AdminUser]:
     return AdminUser.query.filter(AdminUser.id.in_(ids)).order_by(AdminUser.id).all()
 
 
+# Roles in order of power: an admin can give the roles up to its own (only a super admin makes super admins).
+_MODE_RANK = {AdminMode.agent: 1, AdminMode.admin: 2, AdminMode.super_admin: 3}
+
+
 def _managed_target(uuid) -> AdminUser:
     actor: AdminUser = g.account
     admin = AdminUser.by_uuid(str(uuid))
@@ -292,6 +296,18 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
     if "telegram_id" in body:
         out["telegram_id"] = _telegram_id_or_400(body.get("telegram_id"), target)
 
+    # Role (agent / admin / super admin): never above the caller's own. The owner and the caller's own account
+    # never reach here (_managed_target).
+    if "mode" in body:
+        try:
+            mode = AdminMode(str(body.get("mode")))
+        except ValueError:
+            abort(400, "mode is not valid")
+        if _MODE_RANK[mode] > _MODE_RANK[AdminMode(str(actor.mode))]:
+            abort(403, "You can not give a role above your own")
+        out["mode"] = mode
+    becomes_super = out.get("mode", target.mode if target is not None else AdminMode.agent) == AdminMode.super_admin
+
     if creating and body.get("uuid"):
         value = str(body["uuid"]).strip().lower()
         if not hutils.auth.is_uuid_valid(value):
@@ -311,9 +327,9 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
         out["capabilities"] = merged
         out["can_add_admin"] = caps.sync_can_add_admin(merged)
 
-    if not (target is not None and _is_super(target)):
+    if not becomes_super:
         for key in (*REQUIRED_LIMITS, *OPTIONAL_LIMITS):
-            if not creating and key not in body:
+            if not creating and key not in body and not _is_super(target):
                 continue
             value = _number(body, key, integer=key != "max_total_usage_GB")
             mine = None if _is_super(actor) else getattr(actor, key)
@@ -396,7 +412,7 @@ class AdminsTreeApi(MethodView):
         }
 
     def post(self):
-        """Admins page: create an agent with a generated password"""
+        """Admins page: create a sub-admin (an agent unless another role is given) with a generated password"""
         node_read_only.deny_write_on_node()
         actor: AdminUser = g.account
         if not _can_create(actor):
@@ -416,7 +432,7 @@ class AdminsTreeApi(MethodView):
             payload["capabilities"] = caps.merge_for_actor(actor, {}, existing=None, creating=True)
             payload["can_add_admin"] = caps.sync_can_add_admin(payload["capabilities"])
         payload.setdefault("uuid", str(uuid_lib.uuid4()))
-        payload["mode"] = AdminMode.agent
+        payload.setdefault("mode", AdminMode.agent)
         admin = AdminUser.add_or_update(commit=False, **payload)
         admin.capabilities = payload.get("capabilities") or caps.of(admin)
         admin.can_add_admin = caps.sync_can_add_admin(admin.capabilities)

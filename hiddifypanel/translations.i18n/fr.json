@@ -538,7 +538,7 @@
         "configsCount": "{n} configuration | {n} configurations",
         "configsHint": "Ajoutées à l'abonnement de chaque utilisateur de cet administrateur et de ses sous-administrateurs.",
         "create": "Créer l'administrateur",
-        "createSubtitle": "Crée un agent. Un mot de passe sécurisé est généré pour lui.",
+        "createSubtitle": "Un mot de passe sécurisé est généré pour lui.",
         "createTitle": "Nouvel administrateur",
         "editSubtitle": "Les modifications s'appliquent immédiatement.",
         "editTitle": "Modifier {name}",
@@ -606,6 +606,14 @@
       "myConfigs": "Configurations pour mes utilisateurs",
       "myConfigsHint": "Configurations pour mes utilisateurs : ajoutées à l'abonnement de tous vos utilisateurs et de ceux de vos sous-administrateurs",
       "noMatch": "Aucun administrateur ne correspond à ces filtres",
+      "role": {
+        "hint": {
+          "admin": "Voit aussi les protocoles et l'éditeur de proxy du panneau ; le reste dépend des autorisations.",
+          "agent": "Gère ses propres utilisateurs dans les limites que vous fixez.",
+          "super_admin": "Tout le panneau, sans aucune limite."
+        },
+        "label": "Rôle"
+      },
       "outbound": {
         "auto": "Automatique",
         "inherit": "Identique au niveau supérieur : {name}"

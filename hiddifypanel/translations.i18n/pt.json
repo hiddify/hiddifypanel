@@ -491,7 +491,7 @@
         "configsCount": "{n} config | {n} configs",
         "configsHint": "Adicionadas à assinatura de todos os usuários deste administrador e de seus subadministradores.",
         "create": "Criar administrador",
-        "createSubtitle": "Cria um agente. Uma senha segura é gerada para ele.",
+        "createSubtitle": "Uma senha segura é gerada para ele.",
         "createTitle": "Novo administrador",
         "editSubtitle": "As alterações são aplicadas imediatamente.",
         "editTitle": "Editar {name}",
@@ -559,6 +559,14 @@
       "myConfigs": "Configs para meus usuários",
       "myConfigsHint": "Configs para meus usuários: adicionadas à assinatura de todos os seus usuários e dos usuários dos seus subadministradores",
       "noMatch": "Nenhum administrador corresponde a estes filtros",
+      "role": {
+        "hint": {
+          "admin": "Também acessa os protocolos e o editor de proxy do painel; o resto depende das permissões.",
+          "agent": "Gerencia os próprios usuários dentro dos limites que você define.",
+          "super_admin": "Todo o painel, sem limites."
+        },
+        "label": "Função"
+      },
       "outbound": {
         "auto": "Automático",
         "inherit": "Igual ao acima: {name}"
