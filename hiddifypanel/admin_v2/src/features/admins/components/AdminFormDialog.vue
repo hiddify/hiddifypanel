@@ -97,7 +97,10 @@ const targetIsSuper = computed(() => role.value === 'super_admin')
 /** The signed-in admin's own limits cap what it can give (null: super admin, no cap). */
 const myLimits = computed<AdminLimits | null>(() => props.tree?.my_limits ?? null)
 const myCapabilities = computed<AdminCapabilities>(() => props.tree?.my_capabilities ?? emptyCapabilities())
-const grantableCapabilities = computed(() => ADMIN_CAPABILITIES.filter((key) => myCapabilities.value[key]))
+/** What the signed-in admin can give; an agent never adds sub-admins (that is for admins and super admins). */
+const grantableCapabilities = computed(() =>
+  ADMIN_CAPABILITIES.filter((key) => myCapabilities.value[key] && !(key === 'add_sub_admins' && role.value === 'agent')),
+)
 const enabledCapabilities = computed(() => grantableCapabilities.value.filter((key) => capabilities.value[key]))
 const canSetOutbound = computed(() => Boolean(myCapabilities.value.override_preferred_outbound))
 const canSetConfigs = computed(() => Boolean(myCapabilities.value.add_extra_sublinks))
@@ -222,8 +225,8 @@ async function submit() {
     name: name.value.trim(),
     comment: comment.value.trim(),
     telegram_id: telegramId.value || null,
-    can_add_admin: capabilities.value.add_sub_admins,
-    capabilities: { ...capabilities.value },
+    can_add_admin: role.value !== 'agent' && capabilities.value.add_sub_admins,
+    capabilities: { ...capabilities.value, ...(role.value === 'agent' ? { add_sub_admins: false } : {}) },
     parent_uuid: Object.keys(parent.value)[0] || undefined,
   }
   if (roleOptions.value.length > 1) payload.mode = role.value

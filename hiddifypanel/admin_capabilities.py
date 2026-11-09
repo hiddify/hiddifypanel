@@ -61,7 +61,7 @@ def defaults_for_mode(mode: AdminMode | str | None, *, can_add_admin: bool = Fal
             MODIFY_FREE_PACKAGE: True,
         }
     return {
-        ADD_SUB_ADMINS: bool(can_add_admin),
+        ADD_SUB_ADMINS: False,  # agents never have sub-admins
         OVERRIDE_PREFERRED_OUTBOUND: False,
         ADD_EXTRA_SUBLINKS: True,
         MODIFY_USER_EXTRA: True,
@@ -72,7 +72,7 @@ def defaults_for_mode(mode: AdminMode | str | None, *, can_add_admin: bool = Fal
 
 
 def of(admin: Any) -> dict[str, bool]:
-    """Effective capabilities of ``admin`` (super admin: all True)."""
+    """Effective capabilities of ``admin`` (super admin: all True; agent: never add_sub_admins)."""
     if admin is None:
         return empty()
     if getattr(admin, "mode", None) == AdminMode.super_admin or str(getattr(admin, "mode", "")) == AdminMode.super_admin:
@@ -81,7 +81,14 @@ def of(admin: Any) -> dict[str, bool]:
     if not caps:
         # Pre-migration / empty: fall back from can_add_admin + mode so old rows keep working.
         return defaults_for_mode(getattr(admin, "mode", None), can_add_admin=bool(getattr(admin, "can_add_admin", False)))
-    return normalize(caps)
+    return for_mode(getattr(admin, "mode", None), normalize(caps))
+
+
+def for_mode(mode: Any, capabilities: dict[str, bool]) -> dict[str, bool]:
+    """``capabilities`` as the role allows them: an agent can never add sub-admins (only admins and super admins)."""
+    if str(getattr(mode, "value", mode) or AdminMode.agent) == AdminMode.agent:
+        return {**capabilities, ADD_SUB_ADMINS: False}
+    return capabilities
 
 
 def has(admin: Any, capability: str) -> bool:

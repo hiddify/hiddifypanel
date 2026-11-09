@@ -326,6 +326,11 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
             abort(403, "You can not allow adding sub-admins")
         out["capabilities"] = merged
         out["can_add_admin"] = caps.sync_can_add_admin(merged)
+    # An agent never adds sub-admins: also taken away when an admin becomes an agent.
+    final_mode = out.get("mode", target.mode if target is not None else AdminMode.agent)
+    if final_mode == AdminMode.agent and (creating or "capabilities" in out or "mode" in out):
+        out["capabilities"] = caps.for_mode(final_mode, out.get("capabilities") or (caps.empty() if creating else caps.of(target)))
+        out["can_add_admin"] = False
 
     if not becomes_super:
         for key in (*REQUIRED_LIMITS, *OPTIONAL_LIMITS):
@@ -356,7 +361,8 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
             abort(403, "The parent must be you or one of your sub-admins")
         if target is not None and parent.id in target.recursive_sub_admins_ids():
             abort(400, "An admin can not be moved under itself or its sub-admins")
-        if not caps.has(parent, caps.ADD_SUB_ADMINS) and parent.id != actor.id:
+        moved = target is None or target.parent_admin_id != parent.id
+        if moved and not caps.has(parent, caps.ADD_SUB_ADMINS) and parent.id != actor.id:
             abort(400, "The parent admin is not allowed to have sub-admins")
         out["parent_admin_uuid"] = parent.uuid
     return out
