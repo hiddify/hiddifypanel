@@ -82,6 +82,7 @@ class UsageInputOutputSchema(ApiModel):
     usages: list[UsageData] = Field(default_factory=list, description="The list of usages")
     request_time: FriendlyDateTime = Field(default_factory=datetime.now, description="The date of the usage")
     last_users_sync: FriendlyDateTime = Field(description="The date of the latest users sync")
+    batch_id: str | None = Field(default=None, description="Id of this report: the same report is sent again with the same id until answered, and the parent applies an id once")
 
     def by_uuid(self) -> dict[str, UsageData]:
         """Index usages by uuid string (last wins on duplicates)."""

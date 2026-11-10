@@ -13,6 +13,7 @@ from hiddifypanel import cache, hutils
 from hiddifypanel.database import db, db_execute
 from hiddifypanel.drivers import user_driver
 from hiddifypanel.models import AdminUser, ConfigEnum, DailyUsage, UsageData, User, UserMode, hconfig, set_hconfig
+from hiddifypanel.panel import usage_batch
 
 to_gig_d = 1024**3
 
@@ -144,11 +145,22 @@ def _reset_priodic_usage() -> bool:
     return apply_changes
 
 
-def add_users_usage_new(usages: list[UsageData], child_id: int) -> dict[str, Any]:
-    """Apply usage deltas under the globzal usage lock."""
+def add_users_usage_new(usages: list[UsageData], child_id: int, batch_id: str | None = None) -> dict[str, Any]:
+    """Apply usage deltas under the global usage lock. ``batch_id``: the node's id of this report; a report whose id was
+    already applied is not added again (see usage_batch)."""
     # Wait for the running update instead of dropping the deltas (a node's report, or the parent's own run). A node's report
     # waits this long over HTTP: HAProxy's panel backend and the node's request time out later (USAGE_REPORT_TIMEOUT).
-    return locked_execute(USAGE_LOCK, _add_users_usage_new_impl, usages, child_id, wait=USAGE_LOCK_WAIT)
+    return locked_execute(USAGE_LOCK, _add_users_usage_once, usages, child_id, batch_id, wait=USAGE_LOCK_WAIT)
+
+
+def _add_users_usage_once(usages: list[UsageData], child_id: int, batch_id: str | None) -> dict[str, Any]:
+    if batch_id and usage_batch.already_applied(cache.redis_client, child_id, batch_id):
+        logger.warning(f"usage batch {batch_id} of node {child_id} was already applied: not adding it again")
+        return {"status": "success", "comments": [], "duplicate": True, "date": hutils.convert.time_to_json(datetime.datetime.now())}
+    res = _add_users_usage_new_impl(usages, child_id)
+    if batch_id:
+        usage_batch.mark_applied(cache.redis_client, child_id, batch_id)
+    return res
 
 
 def _add_users_usage_new_impl(usages: list[UsageData], child_id: int) -> dict[str, Any]:
