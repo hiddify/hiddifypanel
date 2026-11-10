@@ -22,6 +22,7 @@ import { ALIAS_MIN, aliasProblem } from '@/shared/utils/password-strength'
 import {
   ADMIN_CAPABILITIES,
   CAPABILITY_ICON,
+  CAPABILITY_COLOR,
   adminsApi,
   type AdminCapabilities,
   type AdminCredentials,
@@ -76,6 +77,7 @@ const busy = ref(false)
 const error = ref<string | null>(null)
 
 const CAP_ICON = CAPABILITY_ICON
+const CAP_COLOR = CAPABILITY_COLOR
 
 const editing = computed(() => props.admin !== null)
 const targetIsSuper = computed(() => props.admin?.mode === 'super_admin')
@@ -305,7 +307,7 @@ async function submit() {
             <span class="admin-caps__summary-body">
               <span class="admin-caps__title">{{ t('admins.form.capabilities') }}</span>
               <span v-if="enabledCapabilities.length" class="admin-caps__chips">
-                <span v-for="key in enabledCapabilities" :key="key" class="admin-caps__chip">
+                <span v-for="key in enabledCapabilities" :key="key" class="admin-caps__chip" :style="{ '--cap': CAP_COLOR[key] }">
                   <i class="pi" :class="CAP_ICON[key]" />{{ t(`admins.capability.${key}`) }}
                 </span>
               </span>
@@ -323,6 +325,7 @@ async function submit() {
               :key="key"
               class="admin-caps__row"
               :class="{ 'admin-caps__row--on': capabilities[key] }"
+              :style="{ '--cap': CAP_COLOR[key] }"
               :for="`admin-cap-${key}`"
             >
               <span class="admin-caps__row-icon" aria-hidden="true"><i class="pi" :class="CAP_ICON[key]" /></span>
@@ -611,8 +614,8 @@ async function submit() {
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+  color: var(--cap, var(--p-primary-color));
+  background: color-mix(in srgb, var(--cap, var(--p-primary-color)) 12%, transparent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -663,8 +666,8 @@ async function submit() {
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 .admin-caps__row--on {
-  border-color: color-mix(in srgb, var(--p-primary-color) 28%, transparent);
-  background: color-mix(in srgb, var(--p-primary-color) 6%, var(--p-content-background, #fff));
+  border-color: color-mix(in srgb, var(--cap, var(--p-primary-color)) 28%, transparent);
+  background: color-mix(in srgb, var(--cap, var(--p-primary-color)) 6%, var(--p-content-background, #fff));
 }
 .admin-caps__row-icon {
   flex-shrink: 0;
@@ -678,8 +681,8 @@ async function submit() {
   background: var(--p-content-hover-background, rgba(127, 127, 127, 0.08));
 }
 .admin-caps__row--on .admin-caps__row-icon {
-  color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  color: var(--cap, var(--p-primary-color));
+  background: color-mix(in srgb, var(--cap, var(--p-primary-color)) 14%, transparent);
 }
 .admin-caps__row-text {
   flex: 1;

@@ -34,6 +34,16 @@ export const CAPABILITY_ICON: Record<AdminCapability, string> = {
   modify_outbounds: 'pi-share-alt',
 }
 
+/** One colour per permission: its icon is grey while the permission is off and turns this colour when it is on. */
+export const CAPABILITY_COLOR: Record<AdminCapability, string> = {
+  add_sub_admins: '#6366f1',
+  override_preferred_outbound: '#0ea5e9',
+  add_extra_sublinks: '#f59e0b',
+  modify_user_extra: '#ec4899',
+  modify_domains: '#10b981',
+  modify_outbounds: '#8b5cf6',
+}
+
 /** Limits of one admin; they count its users and all its sub-admins' users. Null fields: no limit. */
 export interface AdminLimits {
   max_users: number
