@@ -34,7 +34,9 @@
       </Message>
       <template v-else>
         <div class="qr-maker__card">
-          <canvas ref="canvas" :aria-label="t('qrTool.preview')" role="img" />
+          <!-- Size inline too: if this page's stylesheet fails to load, the canvas must not show at its pixel size
+               (wider than a phone, and the page clips sideways overflow so it can't be scrolled back). -->
+          <canvas ref="canvas" :aria-label="t('qrTool.preview')" role="img" :style="CANVAS_STYLE" />
         </div>
         <div class="flex flex-wrap justify-center gap-2">
           <Button :label="t('qrTool.download')" icon="pi pi-download" @click="download" />
@@ -64,6 +66,7 @@ const { t } = useI18n()
 const toast = useToast()
 
 const PREVIEW_SIZE = 240
+const CANVAS_STYLE = { display: 'block', width: `${PREVIEW_SIZE}px`, maxWidth: '100%', height: 'auto' }
 const style = ref<QrStyle>('hiddify')
 const canvas = ref<HTMLCanvasElement | null>(null)
 const styleOptions = computed(() => [
@@ -145,9 +148,6 @@ async function share() {
   background: #fff;
 }
 .qr-maker__card canvas {
-  display: block;
-  width: min(240px, 100%);
-  height: auto;
   aspect-ratio: 1;
 }
 .qr-maker__empty {
