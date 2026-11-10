@@ -10,6 +10,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   tk: { flag: 'tm', name: 'Türkmençe' },
   be: { flag: 'by', name: 'Беларуская' },
   es: { flag: 'cu', name: 'Español' },
+  am: { flag: 'et', name: 'አማርኛ' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
