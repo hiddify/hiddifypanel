@@ -3660,11 +3660,11 @@
         },
         "offlinePlaceholder": "vless://…  or a JSON / YAML config",
         "target": {
-          "auto": "Auto (all formats)",
+          "auto": "Auto (All Formats)",
           "clash": "Clash",
-          "hiddify-core": "Hiddify / sing-box",
-          "sublink": "Share links",
-          "xray": "Xray"
+          "hiddify-core": "Hiddify / Sing-Box",
+          "sublink": "Share Links",
+          "xray": "XRay"
         },
         "title": "Additional configs",
         "urlPlaceholder": "https://example.com/sub/…"
