@@ -8,6 +8,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   my: { flag: 'mm', name: 'မြန်မာ' },
   ko: { flag: 'kp', name: '한국어' },
   tk: { flag: 'tm', name: 'Türkmençe' },
+  be: { flag: 'by', name: 'Беларуская' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */

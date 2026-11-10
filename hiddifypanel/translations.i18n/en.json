@@ -4396,6 +4396,7 @@
       "label": "Admin Settings"
     },
     "admin_lang": {
+      "be": "🇧🇾 Belarusian",
       "description": "Choose Language For Admin Area",
       "en": "🇺🇸 English",
       "fa": "🇮🇷 Persian - فارسی",
@@ -4662,6 +4663,7 @@
       "label": "KCP Ports"
     },
     "lang": {
+      "be": "🇧🇾 Belarusian",
       "description": "Select the language for the user interface to personalize your experience in the user area.",
       "en": "🇺🇸 English",
       "fa": "🇮🇷 Persian - فارسی",

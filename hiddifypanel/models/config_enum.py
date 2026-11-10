@@ -20,6 +20,7 @@ class Lang(HEnum):
     my = auto()
     ko = auto()
     tk = auto()
+    be = auto()
 
 
 #: Languages written right to left
