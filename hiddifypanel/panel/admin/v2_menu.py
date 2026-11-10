@@ -121,6 +121,7 @@ def _manager_items() -> list[dict]:
             {"label": _("admin.menu.user"), "to": "/users", "icon": "pi pi-fw pi-users"},
             {"label": _("Admins"), "to": "/admins", "icon": "pi pi-fw pi-sitemap"},
             {"label": _("admin.menu.broadcast"), "to": "/message", "icon": "pi pi-fw pi-send"},
+            {"label": _("admin.menu.inbox"), "to": "/inbox", "icon": "pi pi-fw pi-inbox"},
         ]
     if g.account.mode == "super_admin":
         items.append({"label": _("Nodes"), "to": "/nodes", "icon": "pi pi-fw pi-server"})

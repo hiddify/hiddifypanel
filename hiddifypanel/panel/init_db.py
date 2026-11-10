@@ -23,7 +23,25 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 203
+MAX_DB_VERSION = 204
+
+
+def _v204(child_id):
+    """The free test package of the Telegram bot (hiddifypanel.free_test): each admin's package, the capability to
+    define one (admins get it, agents use their parent's until it is granted), and the conversations with the people
+    who write to the bot."""
+    if child_id != 0:
+        return
+    from hiddifypanel import admin_capabilities as caps
+    from hiddifypanel.models.admin import AdminMode, AdminUser
+    from hiddifypanel.models.message import Conversation, Message
+
+    add_column(AdminUser.free_package)
+    for model in (Conversation, Message):
+        model.__table__.create(db.engine, checkfirst=True)
+    for admin in AdminUser.query_with_deleted().all():
+        if admin.mode == AdminMode.admin and admin.capabilities:
+            admin.capabilities = {**admin.capabilities, caps.MODIFY_FREE_PACKAGE: True}
 
 
 def _v203(child_id):

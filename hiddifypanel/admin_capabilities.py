@@ -16,6 +16,9 @@ ADD_EXTRA_SUBLINKS = "add_extra_sublinks"
 MODIFY_USER_EXTRA = "modify_user_extra"
 MODIFY_DOMAINS = "modify_domains"
 MODIFY_OUTBOUNDS = "modify_outbounds"
+#: Define the free test package people get from the Telegram bot (see hiddifypanel.free_test); without it the
+#: nearest parent's package applies.
+MODIFY_FREE_PACKAGE = "modify_free_package"
 
 ALL: tuple[str, ...] = (
     ADD_SUB_ADMINS,
@@ -24,6 +27,7 @@ ALL: tuple[str, ...] = (
     MODIFY_USER_EXTRA,
     MODIFY_DOMAINS,
     MODIFY_OUTBOUNDS,
+    MODIFY_FREE_PACKAGE,
 )
 
 
@@ -54,6 +58,7 @@ def defaults_for_mode(mode: AdminMode | str | None, *, can_add_admin: bool = Fal
             MODIFY_USER_EXTRA: True,
             MODIFY_DOMAINS: True,
             MODIFY_OUTBOUNDS: False,
+            MODIFY_FREE_PACKAGE: True,
         }
     return {
         ADD_SUB_ADMINS: bool(can_add_admin),
@@ -62,6 +67,7 @@ def defaults_for_mode(mode: AdminMode | str | None, *, can_add_admin: bool = Fal
         MODIFY_USER_EXTRA: True,
         MODIFY_DOMAINS: False,
         MODIFY_OUTBOUNDS: False,
+        MODIFY_FREE_PACKAGE: False,
     }
 
 

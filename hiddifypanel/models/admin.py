@@ -88,6 +88,9 @@ class AdminUser(BaseAccount):
     #: {ConfigEnum key: value} for this admin's users and its sub-admins' users (the user page's customization);
     #: see hiddifypanel.admin_overrides. Not synced to nodes, like additional_configs.
     override_settings: Mapped[dict | None] = mapped_column(JSON, default=None, nullable=True)
+    #: The free test package of this admin's Telegram link: {"enabled", "days", "usage_gb", "approval"}; None = the
+    #: nearest parent's (see hiddifypanel.free_test). Not synced to nodes, like override_settings.
+    free_package: Mapped[dict | None] = mapped_column(JSON, default=None, nullable=True)
     users: Mapped[list[User]] = relationship("User", backref="admin")
     usages: Mapped[list[DailyUsage]] = relationship("DailyUsage", backref="admin")
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)

@@ -12,6 +12,7 @@ export type AdminCapability =
   | 'modify_user_extra'
   | 'modify_domains'
   | 'modify_outbounds'
+  | 'modify_free_package'
 
 export const ADMIN_CAPABILITIES: AdminCapability[] = [
   'add_sub_admins',
@@ -20,6 +21,7 @@ export const ADMIN_CAPABILITIES: AdminCapability[] = [
   'modify_user_extra',
   'modify_domains',
   'modify_outbounds',
+  'modify_free_package',
 ]
 
 export type AdminCapabilities = Record<AdminCapability, boolean>
@@ -32,6 +34,7 @@ export const CAPABILITY_ICON: Record<AdminCapability, string> = {
   modify_user_extra: 'pi-palette',
   modify_domains: 'pi-link',
   modify_outbounds: 'pi-share-alt',
+  modify_free_package: 'pi-gift',
 }
 
 /** Limits of one admin; they count its users and all its sub-admins' users. Null fields: no limit. */

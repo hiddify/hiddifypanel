@@ -122,6 +122,13 @@ def init_app(app):
         bp.add_url_rule("/tags/", view_func=TagsApi)
         bp.add_url_rule("/tags/assign/", view_func=TagAssignApi)
         bp.add_url_rule("/tags/<int:tag_id>/", view_func=TagApi)
+        from .inbox_api import ConversationApi, FreeAnswerApi, FreePackageApi, InboxApi, InboxCountsApi
+
+        bp.add_url_rule("/inbox/", view_func=InboxApi)
+        bp.add_url_rule("/inbox/counts/", view_func=InboxCountsApi)
+        bp.add_url_rule("/inbox/free-test/", view_func=FreePackageApi)
+        bp.add_url_rule("/inbox/<int:conversation_id>/", view_func=ConversationApi)
+        bp.add_url_rule("/inbox/<int:conversation_id>/free/", view_func=FreeAnswerApi)
         bp.add_url_rule("/users/", view_func=UsersPageApi)
         bp.add_url_rule("/users/bulk/", view_func=UsersBulkApi)
         bp.add_url_rule("/users/bulk-create/", view_func=UsersBulkCreateApi)
