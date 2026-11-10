@@ -35,10 +35,9 @@ const color = computed(() => COLORS[props.target] ?? '#64748b')
       <path d="M14 10.5a4.5 4.5 0 0 0-6.6-.4l-2.9 2.9a4.6 4.6 0 0 0 6.5 6.5l1.6-1.6" />
     </svg>
 
-    <!-- Xray (Project X): the bold split "X" -->
+    <!-- Xray (Project X): the official four-pointed star, split by a thin cross -->
     <svg v-else-if="target === 'xray'" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M4.2 3.5h4.3l3.5 5.3 3.5-5.3h4.3l-5.6 8.5 5.6 8.5h-4.3L12 15.2l-3.5 5.3H4.2l5.6-8.5z" />
-      <path d="M12 10.3 13.1 12 12 13.7 10.9 12z" fill="#fff" />
+      <path d="M11.45 .6V11.45H.6L8.7 8.7zM12.55 .6V11.45H23.4L15.3 8.7zM11.45 23.4V12.55H.6L8.7 15.3zM12.55 23.4V12.55H23.4L15.3 15.3z" />
     </svg>
 
     <!-- Hiddify: the official logo -->
@@ -88,8 +87,5 @@ const color = computed(() => COLORS[props.target] ?? '#64748b')
 html.app-dark .cti--xray {
   color: #e2e8f0;
   background: color-mix(in srgb, #e2e8f0 14%, transparent);
-}
-html.app-dark .cti--xray svg path + path {
-  fill: #0f172a;
 }
 </style>
