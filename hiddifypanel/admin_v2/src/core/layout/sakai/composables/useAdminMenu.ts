@@ -1,5 +1,6 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useInboxCounts } from '@/features/inbox/useInboxCounts'
 import { hasCapability, isAgent, isChildPanel, isSuperAdmin, legacyMenu, type AdminMenuGroup, type AdminMenuItem } from '@/core/panelShell'
 
 export type { AdminMenuGroup, AdminMenuItem }
@@ -30,6 +31,9 @@ type GroupId = (typeof GROUP_ORDER)[number]
 
 export function useAdminMenu() {
   const { t } = useI18n()
+  const inbox = useInboxCounts()
+  /** The inbox shows how many conversations wait for this admin (unread, or a free test request). */
+  const badged = (item: AdminMenuItem): AdminMenuItem => (item.to === '/inbox' && inbox.value.waiting ? { ...item, badge: String(inbox.value.waiting) } : item)
 
   const proxyEditor = computed<AdminMenuItem>(() => ({
     label: t('menu.proxyEditor'),
@@ -61,7 +65,7 @@ export function useAdminMenu() {
 
   const menuGroups = computed<AdminMenuGroup[]>(() => {
     // Same-origin classic pages open inside the new shell (legacy frame); external links stay as they are.
-    const server = new Map(legacyMenu.value.map((group) => [group.id ?? '', group.items.map(framed)]))
+    const server = new Map(legacyMenu.value.map((group) => [group.id ?? '', group.items.map(framed).map(badged)]))
     const serverItems = (id: GroupId) => server.get(id) ?? []
 
     const items: Record<GroupId, AdminMenuItem[]> = {

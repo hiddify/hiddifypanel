@@ -106,6 +106,7 @@ export type AdminCapabilities = {
   modify_user_extra: boolean
   modify_domains: boolean
   modify_outbounds: boolean
+  modify_free_package: boolean
 }
 const EMPTY_CAPS: AdminCapabilities = {
   add_sub_admins: false,
@@ -114,6 +115,7 @@ const EMPTY_CAPS: AdminCapabilities = {
   modify_user_extra: false,
   modify_domains: false,
   modify_outbounds: false,
+  modify_free_package: false,
 }
 export const accountCapabilities = ref<AdminCapabilities>({ ...EMPTY_CAPS, ...(window.__CAPABILITIES__ ?? {}) })
 export function hasCapability(key: keyof AdminCapabilities): boolean {

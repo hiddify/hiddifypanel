@@ -65,6 +65,7 @@ export interface UsersState {
     modify_user_extra?: boolean
     modify_domains?: boolean
     modify_outbounds?: boolean
+    modify_free_package?: boolean
   }
   /** A node: users come from the parent panel and cannot be changed here. */
   read_only?: boolean

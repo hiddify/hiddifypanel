@@ -44,6 +44,12 @@ class Cb(StrEnum):
     backup = "bk"
     me = "me"  # the user's own account
     me_links = "ml"
+    free = "fo"  # fo:<conversation id>  (the free test offer, for whoever opened an admin's link)
+    free_ask = "fa"  # fa:<conversation id>  (ask for it)
+    free_write = "fw"  # how to write to the admin
+    free_link = "fl"  # the admin's own free test link and package
+    free_answer = "fr"  # fr:<conversation id>:<a|d>  (the admin approves / declines)
+    reply = "rp"  # rp:<conversation id>  (the admin's next text goes to that chat)
     close = "x"  # delete this message (QR photos, files)
 
 
@@ -241,14 +247,15 @@ Handler = Callable[[Ctx, list[str]], None]
 class Route:
     handler: Handler
     admin: bool  # needs a linked admin; otherwise a linked user
+    anyone: bool = False  # also someone the bot does not know yet (the free test offer)
 
 
 ROUTES: dict[Cb, Route] = {}
 
 
-def route(kind: Cb, *, admin: bool) -> Callable[[Handler], Handler]:
+def route(kind: Cb, *, admin: bool, anyone: bool = False) -> Callable[[Handler], Handler]:
     def register(fn: Handler) -> Handler:
-        ROUTES[kind] = Route(fn, admin)
+        ROUTES[kind] = Route(fn, admin, anyone)
         return fn
 
     return register
@@ -271,6 +278,13 @@ def fmt_gb(value_gb: float, lang: str) -> str:
     if value_gb >= 10 or value_gb == int(value_gb):
         return f"{value_gb:.1f}".removesuffix(".0") + f" {t(T.gb, lang)}"
     return f"{value_gb:.2f} {t(T.gb, lang)}"
+
+
+def fmt_data(value_gb: float, lang: str) -> str:
+    """Like ``fmt_gb``, with megabytes under one gigabyte (a 500 MB test package)."""
+    if value_gb < 1:
+        return f"{round(value_gb * 1024)} {t(T.mb, lang)}"
+    return fmt_gb(value_gb, lang)
 
 
 def fmt_bytes(value: int, lang: str) -> str:

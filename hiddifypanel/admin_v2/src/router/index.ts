@@ -59,6 +59,13 @@ const routes = [
         beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
       },
       {
+        // The people who wrote to the Telegram bot, their free test requests, and this admin's free test package
+        path: 'inbox',
+        name: 'inbox',
+        component: () => import('@/features/inbox/views/InboxView.vue'),
+        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+      },
+      {
         path: 'admins',
         name: 'admins',
         component: () => import('@/features/admins/views/AdminsView.vue'),

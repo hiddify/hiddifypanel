@@ -56,8 +56,7 @@ def home_screen(ctx: Ctx) -> Screen:
         [btn(ctx.tr(T.btn_users), Cb.users, Filter.all.value, 0), btn(ctx.tr(T.btn_new), Cb.new, 0, 0, 0)],
         [btn(ctx.tr(T.btn_status), Cb.status)] + ([btn(ctx.tr(T.btn_check), Cb.check)] if admin.mode != AdminMode.agent else []),
     ]
-    if admin.mode == AdminMode.super_admin:
-        rows.append([btn(ctx.tr(T.btn_backup), Cb.backup)])
+    rows.append([btn(ctx.tr(T.btn_free), Cb.free_link)] + ([btn(ctx.tr(T.btn_backup), Cb.backup)] if admin.mode == AdminMode.super_admin else []))
     rows.append(app_row(ctx.tr(T.btn_panel), accounts.panel_app_url()))
     return Screen(text, keyboard(*rows))
 
@@ -413,6 +412,10 @@ def on_text(ctx: Ctx, text: str) -> None:
     """A typed message: the answer to a prompt, otherwise a search."""
     awaiting = ctx.state.get("awaiting")
     ctx.state.update(awaiting=None)
+    if awaiting == "reply":
+        from . import free
+
+        return free.admin_reply(ctx, text)
     if awaiting == "new_name":
         ctx.state.update(new_name=text.strip()[:60])
         args = ctx.state.get("new_args") or [0, 0, 0]

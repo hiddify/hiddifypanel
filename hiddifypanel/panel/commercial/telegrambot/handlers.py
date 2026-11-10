@@ -12,7 +12,9 @@ from telebot.apihelper import ApiTelegramException
 from hiddifypanel.database import db
 from hiddifypanel.models import AdminUser, User
 
-from . import accounts, admin, bot, status, user  # noqa: F401  (status registers its routes)
+from hiddifypanel import free_test
+
+from . import accounts, admin, bot, free, status, user  # noqa: F401  (status registers its routes)
 from .texts import T, t
 from .ui import ROUTES, Cb, Ctx, Screen, btn, keyboard, lang_of
 
@@ -72,6 +74,10 @@ def _delete(chat_id: int, message_id: int) -> None:
 def on_start(message: types.Message) -> None:
     chat_id = message.chat.id
     payload = (message.text or "").partition(" ")[2].strip()
+    if payload.startswith("free_"):
+        # An admin's free test link: the offer, for anyone (an admin sees what its customers see).
+        if host := free_test.admin_by_code(payload.removeprefix("free_")):
+            return free.open_offer(context(chat_id), host, message.from_user)
     if payload.startswith("admin_") and (match := _UUID.search(payload)):
         _link_admin(chat_id, match.group(0).lower())
     elif match := _UUID.search(payload):
@@ -97,7 +103,10 @@ def on_text(message: types.Message) -> None:
         if _link_user(chat_id, match.group(0).lower()):
             ctx = context(chat_id)
             bot.send_message(chat_id, f"✅ {ctx.tr(T.linked)}")
-    _open_home(ctx)
+            return _open_home(ctx)
+    # Anything else is a message to the admin this chat talks to (kept in its inbox).
+    if not free.on_user_text(ctx, message):
+        _open_home(ctx)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -119,7 +128,7 @@ def on_button(call: types.CallbackQuery) -> None:
         _delete(message.chat.id, message.message_id)
         return
     target = ROUTES.get(kind)
-    if target is None or (target.admin and not ctx.admin) or (not target.admin and not ctx.user):
+    if target is None or (target.admin and not ctx.admin) or (not target.admin and not target.anyone and not ctx.user):
         ctx.toast(ctx.tr(T.not_allowed), alert=True)
         return
     # A message too old for Telegram to show us (48 h+), or a file: answer under it. A photo is a card: its caption
