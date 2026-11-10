@@ -19,6 +19,7 @@ class Lang(HEnum):
     zh = auto()
     my = auto()
     ko = auto()
+    tk = auto()
 
 
 #: Languages written right to left
