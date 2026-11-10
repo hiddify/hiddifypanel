@@ -786,7 +786,7 @@
       },
       "save": {
         "created": "Backup saved on the server",
-        "download": "Download backup",
+        "download": "Download Backup",
         "downloaded": "Backup downloaded",
         "failed": "Could not make the backup",
         "onServer": "Save on the server",
@@ -794,10 +794,10 @@
         "secret": "The file holds passwords, user links and private keys. Keep it somewhere safe.",
         "sentTelegram": "Backup sent to your Telegram",
         "sub": "Everything in one file: settings, users, admins, domains, proxies and certificates.",
-        "title": "Make a backup"
+        "title": "Make a Backup"
       },
       "subtitle": "Keep a copy of your whole panel, and bring one back when you need it",
-      "title": "Backup & restore"
+      "title": "Backup & Restore"
     },
     "baseConfig": {
       "builtinDefaultHint": "Built-in base config synced from catalog. Enable custom content to edit it.",
