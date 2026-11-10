@@ -21,6 +21,7 @@ class Lang(HEnum):
     ko = auto()
     tk = auto()
     be = auto()
+    es = auto()
 
 
 #: Languages written right to left
