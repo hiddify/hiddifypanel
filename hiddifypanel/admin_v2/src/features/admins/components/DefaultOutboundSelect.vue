@@ -35,7 +35,6 @@ const selected = computed(() => options.value.find((o) => o.id === inner.value) 
       <div class="flex items-center gap-2">
         <OutboundModeIcon :mode="option.mode || 'auto'" :off="!option.enabled" />
         <span>{{ option.name }}</span>
-        <small v-if="option.mode" class="text-muted-color">{{ t(`outbounds.mode.${option.mode}`) }}</small>
         <small v-if="!option.enabled" class="text-muted-color">· {{ t('users.form.outboundOff') }}</small>
       </div>
     </template>

@@ -3749,7 +3749,7 @@
         "outbound": "Preferred outbound",
         "outboundAuto": "Automatic (follow the outbound rules)",
         "outboundHint": "All of this user's traffic leaves through this outbound (Outbounds page). A turned-off outbound is ignored.",
-        "outboundOff": "turned off",
+        "outboundOff": "Turned Off",
         "outboundReadOnly": "You can see the preferred outbound but only an admin with permission can change it.",
         "owner": "Sub-admin",
         "ownerMe": "{name} (you)",
