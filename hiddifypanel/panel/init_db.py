@@ -23,7 +23,7 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 204
+MAX_DB_VERSION = 205
 
 
 def _v204(child_id):
@@ -42,6 +42,10 @@ def _v204(child_id):
     for admin in AdminUser.query_with_deleted().all():
         if admin.mode == AdminMode.admin and admin.capabilities:
             admin.capabilities = {**admin.capabilities, caps.MODIFY_FREE_PACKAGE: True}
+
+
+def _v205(child_id):
+    """New panel languages (Lang): the account ``lang`` enum columns grow, which only happens when a migration runs."""
 
 
 def _v203(child_id):

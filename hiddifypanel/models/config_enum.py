@@ -20,6 +20,10 @@ class Lang(HEnum):
     my = auto()
 
 
+#: Languages written right to left
+RTL_LANGS = frozenset({"fa", "ar", "ur", "ps"})
+
+
 class PanelMode(HEnum):
     standalone = auto()
     parent = auto()

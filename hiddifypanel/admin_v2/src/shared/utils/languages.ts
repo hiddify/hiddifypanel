@@ -7,3 +7,10 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   ru: { flag: 'ru', name: 'Русский' },
   my: { flag: 'mm', name: 'မြန်မာ' },
 }
+
+/** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
+export const RTL_LANGUAGES = new Set(['fa', 'ar', 'ur', 'ps'])
+
+export function isRtlLanguage(code: string): boolean {
+  return RTL_LANGUAGES.has(code)
+}
