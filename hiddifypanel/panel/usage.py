@@ -1,6 +1,8 @@
 import datetime
 import json
+import threading
 import time
+import uuid as uuidlib
 from collections.abc import Callable
 from typing import Any
 
@@ -34,18 +36,38 @@ def update_local_usage(wait: float = 0):
     return locked_execute(USAGE_LOCK, update_local_usage_not_lock, wait=wait)
 
 
+LOCK_TTL = 60  # seconds; kept alive while the locked work runs, so it only runs out when the process died
+_EXTEND_LOCK = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('expire', KEYS[1], ARGV[2]) end return 0"
+_RELEASE_LOCK = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) end return 0"
+
+
 def locked_execute(lock_key: str, func: Callable[..., Any], *args: Any, wait: float = 0, **kwargs: Any) -> Any:
     """Run ``func`` holding the redis lock ``lock_key``; when another run holds it, wait up to ``wait`` seconds for it,
-    then give up with ``BUSY`` (nothing done). Not re-entrant: code already inside the lock calls the function directly."""
+    then give up with ``BUSY`` (nothing done). Not re-entrant: code already inside the lock calls the function directly.
+
+    The lock is renewed while ``func`` runs (a report to the parent can take longer than the TTL) and only its owner
+    releases it, so a slow run can neither be overlapped nor delete the lock of the run that came after it."""
+    token = uuidlib.uuid4().hex
     deadline = time.monotonic() + wait
-    while not cache.redis_client.set(lock_key, "locked", nx=True, ex=60):
+    while not cache.redis_client.set(lock_key, token, nx=True, ex=LOCK_TTL):
         if time.monotonic() >= deadline:
             return dict(BUSY)
         time.sleep(0.5)
+    done = threading.Event()
+
+    def keep_alive() -> None:
+        while not done.wait(LOCK_TTL / 3):
+            try:
+                cache.redis_client.eval(_EXTEND_LOCK, 1, lock_key, token, LOCK_TTL)
+            except Exception as e:
+                logger.warning(f"could not renew lock {lock_key}: {e}")
+
+    threading.Thread(target=keep_alive, name=f"keep-{lock_key}", daemon=True).start()
     try:
         return func(*args, **kwargs)
     finally:
-        cache.redis_client.delete(lock_key)
+        done.set()
+        cache.redis_client.eval(_RELEASE_LOCK, 1, lock_key, token)
 
 
 def run_once(lock_key: str, ttl: int, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
