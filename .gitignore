@@ -161,3 +161,5 @@ hiddifypanel/user_front/node_modules/
 hiddifypanel/user_front/dist/
 
 node_modules
+# the commit a development install came from (written by the manager installer)
+hiddifypanel/COMMIT
