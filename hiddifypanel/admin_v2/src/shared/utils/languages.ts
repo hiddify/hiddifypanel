@@ -12,6 +12,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   es: { flag: 'cu', name: 'Español' },
   am: { flag: 'et', name: 'አማርኛ' },
   ar: { flag: 'sa', name: 'العربية' },
+  ur: { flag: 'pk', name: 'اردو' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
