@@ -2,7 +2,7 @@
 
 Each admin has a link to the bot (``/start free_<code>``; the code is a keyed hash of the admin's uuid, so it is the
 same after every restart and does not give the uuid away). Whoever opens it sees the admin's package (say 7 days,
-500 MB) and asks for it:
+500 MB) and asks for it; they are never shown who the admin is (its name stays in the panel):
 
 - approval ``auto``: the account is created at once, for a Telegram account that never had a free test on this panel
   and has no account yet;

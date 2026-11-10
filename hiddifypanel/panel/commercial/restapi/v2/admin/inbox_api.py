@@ -150,7 +150,7 @@ class ConversationApi(MethodView):
         from hiddifypanel.panel.commercial.telegrambot import free
 
         try:
-            free.deliver(conv, g.account, text)
+            free.deliver(conv, text)
         except Exception as e:
             db.session.rollback()
             abort(400, f"Telegram did not deliver the message: {e}")

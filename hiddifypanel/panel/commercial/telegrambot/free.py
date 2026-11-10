@@ -50,7 +50,6 @@ def offer_screen(conv: Conversation, lang: str) -> Screen:
 
     head = [
         f"🎁 <b>{t(T.free_title, lang)}</b>  ·  🏷 <b>{t(T.free_tag, lang)}</b>",
-        t(T.free_from, lang, name=h(admin.name)),
         "",
         _package_lines(package, lang),
         "",
@@ -267,11 +266,12 @@ def ask_reply(ctx: Ctx, args: list[str]) -> None:
     ctx.toast(ctx.tr(T.reply_prompt, name=conv.name), alert=True)
 
 
-def deliver(conv: Conversation, admin: AdminUser, text: str) -> None:
+def deliver(conv: Conversation, text: str) -> None:
     """The admin's message to the chat (from the inbox or from Telegram), kept in the conversation. Raises when Telegram
     refuses it (the person blocked the bot). Commits."""
     lang = lang_of(None, admin=False)
-    bot.send_message(conv.telegram_id, f"💬 {t(T.msg_from, lang, name=h(admin.name))}\n\n{h(text)}")
+    # The person is never shown who the admin is: the answer comes from "support".
+    bot.send_message(conv.telegram_id, f"💬 <b>{t(T.msg_from, lang)}</b>\n\n{h(text)}")
     free_test.add_message(conv, Sender.admin, text)
     conv.unread = 0
     db.session.commit()
@@ -286,7 +286,7 @@ def admin_reply(ctx: Ctx, text: str) -> None:
     if admin is None or conv is None or conv.admin_id != admin.id:
         return ctx.show(Screen(f"⚠️ {ctx.tr(T.gone)}", menu))
     try:
-        deliver(conv, admin, text.strip()[: free_test.MAX_TEXT])
+        deliver(conv, text.strip()[: free_test.MAX_TEXT])
     except Exception as e:
         db.session.rollback()
         return ctx.show(Screen(f"⚠️ {ctx.tr(T.reply_failed, name=h(conv.name))}\n<code>{h(e)}</code>", menu))

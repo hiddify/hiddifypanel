@@ -139,7 +139,6 @@ class T(StrEnum):
     # free test: the person asking
     free_title = "free_title"
     free_tag = "free_tag"
-    free_from = "free_from"
     free_days = "free_days"
     free_data = "free_data"
     free_get = "free_get"
