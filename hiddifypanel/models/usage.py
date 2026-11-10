@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import datetime
+import uuid as uuidlib
 from datetime import date, timedelta
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Date, ForeignKey, String, func
+from sqlalchemy import BigInteger, Date, DateTime, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from hiddifypanel import g
@@ -230,3 +231,69 @@ class UnsyncedUsage(db.Model):
         cls.query.delete()
         if commit:
             db.session.commit()
+
+
+class UsageBatchItem(db.Model):
+    """Node: the usage report in flight to the parent, one row per user, all with one ``batch_id``.
+
+    The report is sent again unchanged, with the same id, until the parent answers: the parent may have applied it and
+    only its answer got lost, so a changed or merged report would be counted twice. New usage waits in ``UnsyncedUsage``
+    meanwhile. Both are in the database, so a restart or a crash loses nothing."""
+
+    __tablename__ = "usage_batch_items"
+
+    uuid: Mapped[str] = mapped_column(String(36), primary_key=True)
+    batch_id: Mapped[str] = mapped_column(String(32), index=True)
+    upload: Mapped[int] = mapped_column(BigInteger, default=0)
+    download: Mapped[int] = mapped_column(BigInteger, default=0)
+
+    @classmethod
+    def take(cls, new: list[UsageData]) -> tuple[str | None, list[UsageData]]:
+        """``new`` joins the waiting usage, and the report to send comes back: the one in flight, else everything waiting
+        as a new report. One commit, so a usage delta is always in exactly one of the two tables."""
+        UnsyncedUsage.add_usages(new, commit=False)
+        rows = cls.query.all()
+        if not rows:
+            waiting = [w for w in UnsyncedUsage.query.all() if int(w.upload or 0) + int(w.download or 0) > 0]
+            if waiting:
+                batch_id = uuidlib.uuid4().hex
+                rows = [cls(uuid=w.uuid, batch_id=batch_id, upload=int(w.upload or 0), download=int(w.download or 0)) for w in waiting]
+                db.session.add_all(rows)
+            UnsyncedUsage.query.delete()
+        db.session.commit()
+        if not rows:
+            return None, []
+        # One report at a time: every row has the same id (a new one starts only after the last one was answered)
+        return rows[0].batch_id, [UsageData(uuid=r.uuid, upload=int(r.upload or 0), download=int(r.download or 0)) for r in rows]
+
+    @classmethod
+    def answered(cls, batch_id: str | None) -> None:
+        """The parent answered: the report is applied there, it is not sent again."""
+        if batch_id:
+            cls.query.filter(cls.batch_id == batch_id).delete()
+            db.session.commit()
+
+
+class AppliedUsageBatch(db.Model):
+    """Parent: the last usage report applied from each node. Written in the transaction that adds the usage, so a report
+    is either applied and recorded, or neither; one sent again (its answer was lost) is answered without adding it."""
+
+    __tablename__ = "applied_usage_batches"
+
+    child_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    batch_id: Mapped[str] = mapped_column(String(64))
+    applied_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.now)
+
+    @classmethod
+    def is_applied(cls, child_id: int, batch_id: str) -> bool:
+        row = db.session.get(cls, child_id)
+        return row is not None and row.batch_id == batch_id
+
+    @classmethod
+    def record(cls, child_id: int, batch_id: str, when: datetime.datetime) -> None:
+        """Not committed: part of the transaction that applies the report."""
+        row = db.session.get(cls, child_id)
+        if row is None:
+            db.session.add(cls(child_id=child_id, batch_id=batch_id, applied_at=when))
+        else:
+            row.batch_id, row.applied_at = batch_id, when

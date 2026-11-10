@@ -23,7 +23,17 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 202
+MAX_DB_VERSION = 203
+
+
+def _v203(child_id):
+    """Usage reports from nodes are applied once: a node keeps its report in flight in usage_batch_items until the parent
+    answers, and the parent records the last report applied from each node in applied_usage_batches (in the same
+    transaction as the usage). The usage waiting in unsynced_usages goes into the first report."""
+    if child_id != 0:
+        return
+    for model in (UsageBatchItem, AppliedUsageBatch):
+        model.__table__.create(db.engine, checkfirst=True)
 
 
 def _v202(child_id):
