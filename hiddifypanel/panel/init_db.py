@@ -1477,6 +1477,8 @@ enum_columns = [
     CustomProxy.server_core,
     CustomProxyClientCore.core,
     Outbound.mode,  # new modes (core_outbound, ...) must be added to the MySQL ENUM too
+    User.lang,  # a new panel language (Lang) must be in the accounts' ENUM too, or saving it fails
+    AdminUser.lang,
 ]
 
 # Tables where DELETE of legacy enum rows is unsafe (FK / data loss). Remap instead.

@@ -18,6 +18,7 @@ class Lang(HEnum):
     pt = auto()
     zh = auto()
     my = auto()
+    ko = auto()
 
 
 #: Languages written right to left
