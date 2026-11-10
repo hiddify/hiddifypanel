@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Select from 'primevue/select'
 import type { OutboundOption } from '@/features/admins/api'
+import OutboundModeIcon from '@/features/outbounds/components/OutboundModeIcon.vue'
 
 const props = defineProps<{ outbounds: OutboundOption[]; inherited: number | null; disabled?: boolean; inputId?: string }>()
 const model = defineModel<number | null>({ required: true })
@@ -19,14 +20,21 @@ const options = computed(() => [
   { id: 0, name: inheritedName.value ? t('admins.outbound.inherit', { name: inheritedName.value }) : t('admins.outbound.auto'), mode: '', enabled: true },
   ...props.outbounds,
 ])
+const selected = computed(() => options.value.find((o) => o.id === inner.value) ?? options.value[0])
 </script>
 
 <template>
   <Select v-model="inner" :options="options" option-label="name" option-value="id" :input-id="inputId" :disabled="disabled" class="w-full">
+    <template #value>
+      <div class="flex items-center gap-2 min-w-0">
+        <OutboundModeIcon :mode="selected.mode || 'auto'" :off="!selected.enabled" size="1.5rem" />
+        <span class="truncate">{{ selected.name }}</span>
+      </div>
+    </template>
     <template #option="{ option }">
       <div class="flex items-center gap-2">
+        <OutboundModeIcon :mode="option.mode || 'auto'" :off="!option.enabled" />
         <span>{{ option.name }}</span>
-        <small v-if="option.mode" class="text-muted-color">{{ t(`outbounds.mode.${option.mode}`) }}</small>
         <small v-if="!option.enabled" class="text-muted-color">· {{ t('users.form.outboundOff') }}</small>
       </div>
     </template>
