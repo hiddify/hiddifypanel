@@ -23,6 +23,7 @@ class Lang(HEnum):
     be = auto()
     es = auto()
     am = auto()
+    ar = auto()
 
 
 #: Languages written right to left

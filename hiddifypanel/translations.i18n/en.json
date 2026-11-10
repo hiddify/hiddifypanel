@@ -4397,6 +4397,7 @@
     },
     "admin_lang": {
       "am": "🇪🇹 Amharic",
+      "ar": "🇸🇦 Arabic",
       "be": "🇧🇾 Belarusian",
       "description": "Choose Language For Admin Area",
       "en": "🇺🇸 English",
@@ -4666,6 +4667,7 @@
     },
     "lang": {
       "am": "🇪🇹 Amharic",
+      "ar": "🇸🇦 Arabic",
       "be": "🇧🇾 Belarusian",
       "description": "Select the language for the user interface to personalize your experience in the user area.",
       "en": "🇺🇸 English",
