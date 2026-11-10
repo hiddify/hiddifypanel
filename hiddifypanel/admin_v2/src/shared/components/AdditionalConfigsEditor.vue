@@ -6,6 +6,7 @@ import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import SelectButton from 'primevue/selectbutton'
 import Textarea from 'primevue/textarea'
+import ConfigTargetIcon from '@/shared/components/ConfigTargetIcon.vue'
 import { CONFIG_TARGETS, configRowProblem, type AdditionalConfig, type ConfigKind } from '@/shared/utils/additional-configs'
 
 /**
@@ -35,7 +36,14 @@ function remove(i: number) {
       <div v-for="(row, i) in rows" :key="i" class="ace__row">
         <div class="ace__head">
           <SelectButton v-model="row[0]" :options="kindOptions" option-label="label" option-value="value" :allow-empty="false" size="small" :disabled="disabled" />
-          <Select v-model="row[1]" :options="targetOptions" option-label="label" option-value="value" size="small" :disabled="disabled" class="ace__target" />
+          <Select v-model="row[1]" :options="targetOptions" option-label="label" option-value="value" size="small" :disabled="disabled" class="ace__target">
+            <template #value="{ value }">
+              <span class="ace__opt"><ConfigTargetIcon :target="value" />{{ t(`users.configs.target.${value}`) }}</span>
+            </template>
+            <template #option="{ option }">
+              <span class="ace__opt"><ConfigTargetIcon :target="option.value" />{{ option.label }}</span>
+            </template>
+          </Select>
           <Button type="button" icon="pi pi-trash" text rounded severity="danger" size="small" :aria-label="t('common.delete')" :disabled="disabled" @click="remove(i)" />
         </div>
         <InputText
@@ -103,6 +111,11 @@ function remove(i: number) {
 .ace__target {
   min-width: 9rem;
   flex: 1;
+}
+.ace__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 .ace__mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
