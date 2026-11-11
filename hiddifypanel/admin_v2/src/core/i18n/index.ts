@@ -1,4 +1,5 @@
 import { createI18n, type I18nOptions } from 'vue-i18n'
+import { isRtlLanguage } from '@/shared/utils/languages'
 
 type LocaleBundle = { adminV2?: Record<string, unknown> }
 
@@ -24,7 +25,7 @@ export const i18n = createI18n({
 } as I18nOptions)
 
 export function applyDocumentLocale(loc: string) {
-  const rtl = loc === 'fa' || loc === 'ar'
+  const rtl = isRtlLanguage(loc)
   const dir = rtl ? 'rtl' : 'ltr'
   document.documentElement.lang = loc
   document.documentElement.dir = dir

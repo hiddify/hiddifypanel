@@ -202,6 +202,7 @@
 import { computed, onBeforeUnmount, onErrorCaptured, onMounted, ref, shallowRef, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { isRtlLanguage } from '@/shared/utils/languages'
 import Panel from 'primevue/panel'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
@@ -232,7 +233,7 @@ import ProxyHealthCard from '@/features/config-tester/components/ProxyHealthCard
 import TesterRestoreBar from '@/features/config-tester/components/TesterRestoreBar.vue'
 
 const { t, locale } = useI18n()
-const rtl = computed(() => ['fa', 'ar'].includes(locale.value))
+const rtl = computed(() => isRtlLanguage(locale.value))
 const route = useRoute()
 const router = useRouter()
 
