@@ -71,7 +71,7 @@ async function copy() {
 </script>
 
 <template>
-  <section class="ft-card" :class="{ 'ft-card--off': isDefault ? !pkg.enabled : true }">
+  <section class="ft-card" :class="{ 'ft-card--off': isDefault && !pkg.enabled, 'ft-card--default': multi && isDefault }">
     <div class="ft-head">
       <span class="ft-icon" aria-hidden="true"><i class="pi pi-gift" /></span>
       <div class="ft-title">
@@ -180,6 +180,15 @@ async function copy() {
 .ft-card--off {
   background: var(--surface-card);
 }
+/* The default package (when there are several): a warm gold, so it stands out from the ones waiting. */
+.ft-card--default {
+  --ft-gold: var(--p-amber-500);
+  border-color: color-mix(in srgb, var(--ft-gold) 45%, var(--surface-border));
+  background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--ft-gold) 16%, transparent), transparent 60%),
+    linear-gradient(color-mix(in srgb, var(--ft-gold) 5%, var(--surface-card)), color-mix(in srgb, var(--ft-gold) 5%, var(--surface-card)));
+  box-shadow: 0 10px 28px -18px color-mix(in srgb, var(--ft-gold) 70%, transparent);
+}
 .ft-head {
   display: flex;
   align-items: center;
@@ -200,6 +209,64 @@ async function copy() {
 .ft-card--off .ft-icon {
   background: var(--p-content-hover-background, var(--surface-hover));
   color: var(--text-color-secondary);
+}
+.ft-card--default .ft-icon {
+  background: linear-gradient(135deg, var(--p-amber-400), var(--p-orange-500));
+  color: #fff;
+}
+/* Alive: the tile floats softly and the gift rocks a little; the default one also breathes a gold glow. */
+.ft-card:not(.ft-card--off) .ft-icon {
+  animation: ft-float 3.4s ease-in-out infinite;
+}
+.ft-card:not(.ft-card--off) .ft-icon .pi {
+  animation: ft-rock 3.4s ease-in-out infinite;
+}
+.ft-card--default .ft-icon {
+  animation:
+    ft-float 3.4s ease-in-out infinite,
+    ft-glow 2.8s ease-in-out infinite;
+}
+@keyframes ft-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes ft-rock {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  70% {
+    transform: rotate(-10deg) scale(1.08);
+  }
+  80% {
+    transform: rotate(8deg) scale(1.08);
+  }
+  90% {
+    transform: rotate(-3deg) scale(1.02);
+  }
+}
+@keyframes ft-glow {
+  0%,
+  100% {
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--p-amber-500) 45%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 6px 18px -4px color-mix(in srgb, var(--p-amber-500) 70%, transparent),
+      0 0 0 4px color-mix(in srgb, var(--p-amber-400) 22%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ft-icon,
+  .ft-icon .pi {
+    animation: none !important;
+  }
 }
 .ft-title {
   flex: 1;
