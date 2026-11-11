@@ -109,6 +109,7 @@
                       class="admins-chip admins-chip--sub"
                       v-tooltip.top="t('admins.canAddHint')"
                     ><i class="pi pi-sitemap" />{{ t('admins.canAddShort') }}</span>
+                    <span v-if="row(node).telegram_id" class="admins-chip admins-chip--tg" v-tooltip.top="t('users.extra.telegramHint')"><i class="pi pi-telegram" />Telegram</span>
                     <button
                       v-if="node.children?.length"
                       type="button"
@@ -847,6 +848,10 @@ button.admins-avatar:focus-visible {
 .admins-chip--sub {
   color: var(--p-green-600, #16a34a);
   background: color-mix(in srgb, var(--p-green-500, #22c55e) 12%, transparent);
+}
+.admins-chip--tg {
+  color: #1e88c7;
+  background: color-mix(in srgb, #2aabee 14%, transparent);
 }
 .admins-chip--me {
   color: var(--p-primary-color);

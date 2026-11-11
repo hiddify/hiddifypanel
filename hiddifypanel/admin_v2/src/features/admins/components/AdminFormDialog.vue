@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Textarea from 'primevue/textarea'
@@ -53,6 +54,7 @@ const aliasError = computed(() => {
   return problem ? t(`account.aliasProblem.${problem}`, { n: ALIAS_MIN }) : null
 })
 const comment = ref('')
+const telegramId = ref<number | null>(null)
 const uuid = ref('')
 const emptyCapabilities = (): AdminCapabilities => Object.fromEntries(ADMIN_CAPABILITIES.map((k) => [k, false])) as AdminCapabilities
 const capabilities = ref<AdminCapabilities>(emptyCapabilities())
@@ -152,6 +154,7 @@ watch(visible, (open) => {
   name.value = admin?.name ?? ''
   alias.value = admin?.alias ?? ''
   comment.value = admin?.comment ?? ''
+  telegramId.value = admin?.telegram_id ?? null
   uuid.value = admin?.uuid ?? randomUuid()
   configs.value = (admin?.additional_configs ?? []).map((row) => [...row] as AdditionalConfig)
   defaultOutbound.value = admin?.default_outbound ?? null
@@ -206,6 +209,7 @@ async function submit() {
   const payload: AdminPayload = {
     name: name.value.trim(),
     comment: comment.value.trim(),
+    telegram_id: telegramId.value || null,
     can_add_admin: capabilities.value.add_sub_admins,
     capabilities: { ...capabilities.value },
     parent_uuid: Object.keys(parent.value)[0] || undefined,
@@ -442,6 +446,10 @@ async function submit() {
           <span class="admin-form__limit-label"><i class="pi pi-paperclip" />{{ t('admins.form.configs') }}<span v-if="configs.length" class="admin-form__count">{{ configs.length }}</span></span>
           <small class="text-muted-color">{{ t('admins.form.configsHint') }}</small>
           <AdditionalConfigsEditor v-model="configs" :disabled="busy" :show-errors="touched" />
+        </div>
+        <div v-if="showAdvanced" class="admin-form__field">
+          <label for="admin-tg" class="font-medium">{{ t('users.form.telegram') }} <span class="text-muted-color font-normal">({{ t('users.form.optional') }})</span></label>
+          <InputNumber v-model="telegramId" input-id="admin-tg" :use-grouping="false" :min="0" :disabled="busy" fluid />
         </div>
       </section>
 

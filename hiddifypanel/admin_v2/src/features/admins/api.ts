@@ -85,6 +85,7 @@ export interface AdminRow extends AdminUsagePeriod {
   uuid: string
   name: string
   comment: string
+  telegram_id: number | null
   mode: AdminMode
   can_add_admin: boolean
   capabilities: AdminCapabilities
@@ -132,6 +133,8 @@ export interface AdminsTree {
 export interface AdminPayload {
   name?: string
   comment?: string
+  /** Null clears it. */
+  telegram_id?: number | null
   uuid?: string
   can_add_admin?: boolean
   capabilities?: Partial<AdminCapabilities>
