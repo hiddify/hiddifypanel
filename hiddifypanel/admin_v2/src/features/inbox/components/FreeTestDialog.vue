@@ -30,9 +30,10 @@ const approval = ref<Approval>('manual')
 const busy = ref(false)
 
 const units = computed(() => (['mb', 'gb'] as const).map((value) => ({ value, label: t(`inbox.free.unit.${value}`) })))
-const approvals: { value: Approval; icon: string }[] = [
-  { value: 'manual', icon: 'pi pi-user-edit' },
-  { value: 'auto', icon: 'pi pi-bolt' },
+// Each mode has its own soft colour when chosen: amber for "waits for you", green for "given at once".
+const approvals: { value: Approval; icon: string; color: string }[] = [
+  { value: 'manual', icon: 'pi pi-user-edit', color: 'var(--p-amber-500)' },
+  { value: 'auto', icon: 'pi pi-bolt', color: 'var(--p-emerald-500)' },
 ]
 
 watch(visible, (shown) => {
@@ -120,6 +121,7 @@ async function save(inherit = false) {
               role="radio"
               class="ftd-mode"
               :class="{ 'ftd-mode--on': approval === mode.value }"
+              :style="{ '--ftd-mode-color': mode.color }"
               :aria-checked="approval === mode.value"
               @click="approval = mode.value"
             >
@@ -360,11 +362,11 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
   color: var(--text-color-secondary);
 }
 .ftd-mode--on {
-  border-color: var(--primary-color);
-  background: color-mix(in srgb, var(--primary-color) 8%, var(--surface-card));
+  border-color: color-mix(in srgb, var(--ftd-mode-color) 70%, var(--surface-border));
+  background: color-mix(in srgb, var(--ftd-mode-color) 9%, var(--surface-card));
 }
 .ftd-mode--on > .pi {
-  color: var(--primary-color);
+  color: var(--ftd-mode-color);
 }
 .ftd-preview {
   display: flex;
