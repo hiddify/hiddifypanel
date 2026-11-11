@@ -73,7 +73,7 @@ async function copy() {
 </script>
 
 <template>
-  <section class="ft-card" :class="{ 'ft-card--off': isDefault && !pkg.enabled, 'ft-card--default': multi && isDefault }">
+  <section class="ft-card" :class="{ 'ft-card--off': isDefault && !pkg.enabled, 'ft-card--default': multi && isDefault, 'ft-card--private': multi && !isDefault }">
     <div class="ft-head">
       <span class="ft-icon" aria-hidden="true"><i class="pi pi-gift" /></span>
       <div class="ft-title">
@@ -214,6 +214,11 @@ async function copy() {
 }
 .ft-card--default .ft-icon {
   background: linear-gradient(135deg, var(--p-amber-400), var(--p-orange-500));
+  color: #fff;
+}
+/* A private package: the violet of its "Private" tag. */
+.ft-card--private .ft-icon {
+  background: linear-gradient(135deg, var(--p-violet-400), var(--p-violet-600));
   color: #fff;
 }
 /* Alive: the tile floats softly and the gift rocks a little; the default one also breathes a gold glow. */
