@@ -16,7 +16,7 @@
   "Active Users": "Utenti attivi",
   "Add": "Aggiungi",
   "Add some text that is only visible to super_admin.": "Aggiungere un testo visibile solo ai super amministratori.",
-  "Add some text that is only visible to you.": "Aggiungere un testo visibile solo a Lei.",
+  "Add some text that is only visible to you.": "Aggiungere un testo visibile solo a te.",
   "Added by": "Aggiunto da",
   "Admin Links": "Link di amministrazione",
   "Admins": "Amministratori",
@@ -42,20 +42,20 @@
   "China": "🇨🇳 Cina",
   "Click here to see the complete log": "Clicca qui per vedere il log completo",
   "Click to Import": "Toccare per importare",
-  "Click to Start Anti-Filter.": "<i class='fa-solid fa-play'></i> Toccare per configurare l'anti-filtro",
+  "Click to Start Anti-Filter.": "<i class='fa-solid fa-play'></i> Tocca per configurare l'anti-filtro",
   "Close": "Chiudi",
   "Commercial use": "Uso commerciale",
   "Config file is incorrect": "Il file di configurazione non è corretto.",
   "Copy Link": "Copia link",
   "Copy QR image": "Copia l'immagine QR",
-  "Couldn't find your ip addresses": "Impossibile trovare i suoi indirizzi IP",
+  "Couldn't find your ip addresses": "Impossibile trovare i tuoi indirizzi IP",
   "Count:": "Numero:",
   "Create": "Crea",
   "Create Directory": "Crea cartella",
   "Create New Record": "Crea nuovo record",
   "Create Package": "Crea pacchetto",
   "Current Domain": "Dominio attuale",
-  "Dear {}\n\nYour hiddify information is\nUUID: {}\nLast online date: {}\nExpire time: {}\nUsage class: {}\n": "Gentile {}\n\nLe informazioni su Hiddify\nUUID: {}\nUltimo accesso online: {}\nScadenza: {}\nClasse di consumo: {}\n",
+  "Dear {}\n\nYour hiddify information is\nUUID: {}\nLast online date: {}\nExpire time: {}\nUsage class: {}\n": "Ciao {}\n\nLe informazioni su Hiddify\nUUID: {}\nUltimo accesso online: {}\nScadenza: {}\nClasse di consumo: {}\n",
   "Delete?": "Eliminare?",
   "Develop": "⚠️ Sviluppo",
   "Direct": "➖ Diretto",
@@ -63,14 +63,14 @@
   "Disable": "Disattiva",
   "Disk": "Disco rigido",
   "Domain": "Dominio",
-  "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "Il dominio (%(domain)s)-> IP = %(domain_ip)s non coincide con il suo IP = %(server_ip)s. Ciò è richiesto nella modalità Diretto",
-  "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "L'IP del dominio=%(domain_ip)s non coincide con il suo IP=%(server_ip)s, richiesto nella modalità Diretto",
+  "Domain (%(domain)s)-> IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "Il dominio (%(domain)s)-> IP = %(domain_ip)s non coincide con il tuo IP = %(server_ip)s. Ciò è richiesto nella modalità Diretto",
+  "Domain IP=%(domain_ip)s is not matched with your ip=%(server_ip)s which is required in direct mode": "L'IP del dominio=%(domain_ip)s non coincide con il tuo IP=%(server_ip)s, richiesto nella modalità Diretto",
   "Domain can not be resolved! there is a problem in your domain": "Impossibile risolvere il dominio! C'è un problema nel dominio. Controllare le configurazioni del dominio.",
   "Domain cannot be resolved! Please check DNS settings": "Impossibile risolvere il dominio! Controllare le impostazioni DNS",
   "Domain is not REALITY friendly!": "Il dominio non è adatto a REALITY!",
   "Domain?": "Dominio?",
   "Donation": {
-    "description": "✳️ Abbiamo bisogno del suo aiuto per sviluppare questo progetto\n    <br>\n    Se è uno sviluppatore o un produttore di contenuti, ci contatti a <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ Abbiamo inoltre bisogno di un aiuto economico per sviluppare ulteriormente questo pannello e il nostro servizio (siamo senza scopo di lucro).\n    <br>\n    <h5>Metodi di pagamento:</h5>\n    <div class='donation-wallets'></div>\n    \n    <br>\n    \n    Abbiamo bisogno anche di altri aiuti:\n    <ul>\n    <li>👥 Condividere Hiddify Manager con altri</li>\n   <li>📝Sviluppatore Python</li>\n    <li>📝Sviluppatore Swift</li>\n    <li>📝Sviluppatore Flutter</li>\n    <li>📝Sviluppatore Go</li>\n    <li>🖥Fornitori di contenuti</li>\n    </ul>\n\n\n    Ci contatti a <a href='mailto:info@hiddify.com'>info@hiddify.com</a> se può aiutarci.",
+    "description": "✳️ Abbiamo bisogno del tuo aiuto per sviluppare questo progetto\n    <br>\n    Se sei uno sviluppatore o un produttore di contenuti, contattaci a <a href='mailto:info@hiddify.com'>info@hiddify.com</a>\n    <br><br>\n    \n    ℹ️ Abbiamo inoltre bisogno di un aiuto economico per sviluppare ulteriormente questo pannello e il nostro servizio (siamo senza scopo di lucro).\n    <br>\n    <h5>Metodi di pagamento:</h5>\n    <div class='donation-wallets'></div>\n    \n    <br>\n    \n    Abbiamo bisogno anche di altri aiuti:\n    <ul>\n    <li>👥 Condividere Hiddify Manager con altri</li>\n   <li>📝Sviluppatore Python</li>\n    <li>📝Sviluppatore Swift</li>\n    <li>📝Sviluppatore Flutter</li>\n    <li>📝Sviluppatore Go</li>\n    <li>🖥Fornitori di contenuti</li>\n    </ul>\n\n\n    Contattaci a <a href='mailto:info@hiddify.com'>info@hiddify.com</a> se puoi aiutarci.",
     "title": "Donazione"
   },
   "Download App": "<i class='fa-solid fa-download'></i> Scarica l'app",
@@ -95,20 +95,20 @@
   "Hiddify": "Hiddify",
   "Hiddify Android": "Hiddify Android ",
   "HiddifyClash": "HiddifyClash",
-  "HiddifyN intro": "Installare HiddifyN da %(dl_link)s.\nPoi cliccare sul link qui sotto. Farà tutto automaticamente.\n<br />",
+  "HiddifyN intro": "Installa HiddifyN da %(dl_link)s.\nPoi clicca sul link qui sotto. Farà tutto automaticamente.\n<br />",
   "HiddifyNG": "HiddifyNG <span class='badge badge-success'>Consigliato</span>",
-  "HiddifyNG intro": "📌 Installare HiddifyNG da uno di questi link:\n<br />\n %(dl_link)s  %(play_link)s\n<br />\nPoi cliccare sul link qui sotto e aprirlo in HiddifyNG.\n<br />",
+  "HiddifyNG intro": "📌 Installa HiddifyNG da uno di questi link:\n<br />\n %(dl_link)s  %(play_link)s\n<br />\nPoi clicca sul link qui sotto e aprilo in HiddifyNG.\n<br />",
   "HiddigyN": "HiddifyN <span class='badge badge-success'>Consigliato</span>",
   "Home Link": "Link della home",
   "Hover the user to see the reason": "Passare il mouse sull'utente per vedere il motivo",
   "How many days this package should be available?": "Per quanti giorni è disponibile questo pacchetto?",
   "How many?": "Quanti?",
   "If monthly is enabled, the usage will be reset after 30 days from this date.": "Se l'opzione mensile è attiva, il consumo viene azzerato 30 giorni dopo questa data.",
-  "If the application do not open automatically, please click <a class='btn btn-primary copy-link'\n                    href='%(sub)s'>this universal link</a> to copy and paste it on\n                your application, or:": "Se l'applicazione non si apre automaticamente, cliccare <a class='btn btn-primary copy-link'\n                    href='%(sub)s'>questo link universale</a> per copiarlo e incollarlo nell'applicazione, oppure:",
+  "If the application do not open automatically, please click <a class='btn btn-primary copy-link'\n                    href='%(sub)s'>this universal link</a> to copy and paste it on\n                your application, or:": "Se l'applicazione non si apre automaticamente, clicca <a class='btn btn-primary copy-link'\n                    href='%(sub)s'>questo link universale</a> per copiarlo e incollarlo nell'applicazione, oppure:",
   "Import": "Importa nell'app",
   "Import in": "Importa in",
   "In 5 minutes": "Tra 5 minuti",
-  "In CDN mode, Domain IP=%(domain_ip)s should be different to your ip=%(server_ip)s": "In modalità CDN, l'IP del dominio=%(domain_ip)s dovrebbe essere diverso dal suo IP=%(server_ip)s",
+  "In CDN mode, Domain IP=%(domain_ip)s should be different to your ip=%(server_ip)s": "In modalità CDN, l'IP del dominio=%(domain_ip)s dovrebbe essere diverso dal tuo IP=%(server_ip)s",
   "Incorrect Password": "⚠️ Password errata",
   "Install": "Installa",
   "Install Hiddify Application": "Installazione di Hiddify Manager",
@@ -117,9 +117,9 @@
   "Invalid REALITY hostnames": "Nomi host REALITY non validi",
   "Invalid admin link": "Link di amministrazione non valido",
   "Iran": "🇮🇷 Iran",
-  "It seems that you are using default domain (%(domain)s) which is not recommended.": "Sembra che si stia usando il dominio predefinito (%(domain)s), cosa non consigliata. Cambiarlo o rimuoverlo dalla sezione domini.",
+  "It seems that you are using default domain (%(domain)s) which is not recommended.": "Sembra che tu stia usando il dominio predefinito (%(domain)s), cosa non consigliata. Cambiarlo o rimuoverlo dalla sezione domini.",
   "It will override the root admin to the current user": "Sostituirà con l'amministratore attuale il proprietario del file di backup.",
-  "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Si unisca al canale Telegram di Hiddify per ricevere le ultime novità su Hiddify.",
+  "Join our Hiddify Telegram channel to get the latest updates on Hiddify.": "Unisciti al canale Telegram di Hiddify per ricevere le ultime novità su Hiddify.",
   "Last Online": "Ultima connessione",
   "Last node to parent": "Ultimo dal nodo al pannello principale",
   "Last parent to node": "Ultimo dal pannello principale al nodo",
@@ -159,15 +159,15 @@
   "Panel Link": "➖ Link del pannello",
   "Parent Panel": "Pannello principale",
   "Please Wait": "Attendere...",
-  "Please click on %(install)s to save the user page.": "Cliccare %(install)s per salvare la pagina utente.",
-  "Please connect your telegram account to the panel to be informed about latest news.": "Collegare il proprio account Telegram al pannello per essere informati sulle ultime novità",
+  "Please click on %(install)s to save the user page.": "Clicca %(install)s per salvare la pagina utente.",
+  "Please connect your telegram account to the panel to be informed about latest news.": "Collega il tuo account Telegram al pannello per essere informato sulle ultime novità",
   "Please create an issue on Github.": "Creare una segnalazione su Github",
   "Please select at least one file.": "Selezionare almeno un file.",
   "Please select at least one record.": "Selezionare almeno un record.",
   "Please select at least one user": "Selezionare almeno un utente",
-  "Please select one of the following applications:": "📍 Selezionare una delle seguenti applicazioni:\n<br />\n<br />",
-  "Please type your message to send to the telegram:": "✏️  Scrivere il messaggio da inviare su Telegram:",
-  "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "Si tenga presente che il pannello principale è in fase di test e il piano e le condizioni d'uso potrebbero cambiare in qualsiasi momento.",
+  "Please select one of the following applications:": "📍 Seleziona una delle seguenti applicazioni:\n<br />\n<br />",
+  "Please type your message to send to the telegram:": "✏️  Scrivi il messaggio da inviare su Telegram:",
+  "Please understand that parent panel is under test and the plan and the condition of use maybe change at anytime.": "Tieni presente che il pannello principale è in fase di test e il piano e le condizioni d'uso potrebbero cambiare in qualsiasi momento.",
   "Please wait ": "Attendere ",
   "Port 80 and 443 can not be selected": "Le porte 80 e 443 non possono essere selezionate",
   "Port is already used! in": "La porta è già usata in:",
@@ -249,11 +249,11 @@
   "User activated!": "Utente attivato",
   "User is inactive": "L'utente è inattivo",
   "V2rayNG": "Alternativa v2rayNG <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>\n<br />\n<br />",
-  "V2rayNG intro": "Installare v2rayNG da uno di questi link: %(dl_link)s  %(play_link)s.\nPoi copiare il link qui sotto e incollarlo in v2rayNG seguendo il video tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>.\n<br />",
+  "V2rayNG intro": "Installa v2rayNG da uno di questi link: %(dl_link)s  %(play_link)s.\nPoi copia il link qui sotto e incollalo in v2rayNG seguendo il video tutorial <button class='btn btn-sm btn-default' onclick='show_video('android-v2rayng')'><i class='fa-solid fa-question'></i> </button>.\n<br />",
   "Valid": "Valido",
   "View in Telegram": "Visualizza su Telegram",
   "Waiting for the process to start...": "In attesa dell'avvio del processo...",
-  "Want to enjoy more with telegram?": "ℹ️ Colleghi il suo account a Telegram",
+  "Want to enjoy more with telegram?": "ℹ️ Collega il tuo account a Telegram",
   "Welcome %(user)s": "Benvenuto %(user)s",
   "Why Going to Premium?": "Perché passare a Premium?",
   "Will Start in %(days)s days": "Inizierà tra %(days)s giorni",
@@ -263,10 +263,10 @@
   "Yesterday Usage": "Ieri",
   "You can download a json formated of configurations by clicking <a href='%(link)s' class='btn btn-primary'>here</a>": "🔄 Hiddify Manager esegue automaticamente un backup ogni 6 ore. Il percorso dei file di backup sul server: ⬇️\n<br>\n💿 /opt/hiddify-manager/data/backup/\n<br>\n<br>\n<br>\n⚠️ È possibile scaricare un file JSON delle configurazioni cliccando sul pulsante qui sotto\n<br>\n<br>\n<a href='%(link)s' class='btn btn-primary'>Scarica il file di backup</a>",
   "You can restore your configs from previously downloaded configs": "ℹ️ È possibile ripristinare le configurazioni da un file di backup scaricato in precedenza",
-  "You have too much users! You can have only %(active)s active users and %(total)s users": "Ci sono troppi utenti! Si possono avere solo %(active)s utenti attivi e %(total)s utenti",
+  "You have too much users! You can have only %(active)s active users and %(total)s users": "Hai troppi utenti! Puoi avere solo %(active)s utenti attivi e %(total)s utenti",
   "You have used this domain in: ": "Questo dominio è già stato usato in: ",
   "You need to enable %(names)s globally to enable this proxy.": "Per attivare questo proxy è necessario attivare %(names)s a livello globale.",
-  "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Informazioni sulla sua istanza Hiddify \nDominio: {} \nLimite di consumo: {} GB\nConsumo attuale: {} GB\nScade il: {} \nGiorni rimanenti: {} \n\n\nBuon utilizzo! 🎉 🎉 🎉 \n",
+  "Your hiddify instance information \nDomain: {} \nUsage limit: {} GB\nCurrent usage: {} GB\nExpires at: {} \nRemaining days: {} \n\n\n Happy using 🎉 🎉 🎉 \n": "Informazioni sulla tua istanza Hiddify \nDominio: {} \nLimite di consumo: {} GB\nConsumo attuale: {} GB\nScade il: {} \nGiorni rimanenti: {} \n\n\nBuon utilizzo! 🎉 🎉 🎉 \n",
   "[Admin only visible message:] You can change this message from settings": "[Messaggio visibile solo all'amministratore]: personalizzabile dalle Impostazioni",
   "actions": "Azioni",
   "admin": {
@@ -313,8 +313,8 @@
     "quicksetup": {
       "title": "Configurazione rapida"
     },
-    "quicksetup_intro": "Gli IP del suo server sono: \n<div >\nIPv4: %(ipv4)s <br> IPv6: %(ipv6)s\n</div>\nImpostare questi IP sul proprio dominio o sottodominio e inserire il dominio o sottodominio nel riquadro qui sotto.\n",
-    "save_panel_link": "Si tenga presente che il pannello è accessibile solo tramite il seguente link. Salvare questo link.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p> ",
+    "quicksetup_intro": "Gli IP del tuo server sono: \n<div >\nIPv4: %(ipv4)s <br> IPv6: %(ipv6)s\n</div>\nImposta questi IP sul tuo dominio o sottodominio e inserisci il dominio o sottodominio nel riquadro qui sotto.\n",
+    "save_panel_link": "Tieni presente che il pannello è accessibile solo tramite il seguente link. Salvare questo link.\n<p><a href='%(adminlink)s' class='btn btn-secondary copy-link'><i class='fa-solid fa-copy'></i></a>\n<a href='%(adminlink)s' class='copy-link' style='word-break: break-all;'>%(adminlink)s</a></p> ",
     "waiting_for_update": "⚠️ Attendere circa 5 minuti per essere certi che tutto sia aggiornato. Durante questo tempo, copiare e salvare i link dei proxy, che sono:"
   },
   "admin link": "Amministratore",
@@ -337,10 +337,10 @@
       "canAddAdmins": "Può aggiungere sub-amministratori",
       "changePassword": "Cambia password",
       "configsCount": "{n} configurazione per tutti i miei utenti | {n} configurazioni per tutti i miei utenti",
-      "configsEmpty": "Nessuna configurazione. Aggiungere un link di abbonamento o incollare una configurazione: tutti i suoi utenti la riceveranno.",
+      "configsEmpty": "Nessuna configurazione. Aggiungere un link di abbonamento o incollare una configurazione: tutti i tuoi utenti la riceveranno.",
       "configsSave": "Salva configurazioni",
       "configsSaved": "Configurazioni salvate",
-      "configsSub": "Aggiunte all'abbonamento di tutti i suoi utenti e degli utenti dei suoi sub-amministratori, oltre a quelle di ciascun utente.",
+      "configsSub": "Aggiunte all'abbonamento di tutti i tuoi utenti e degli utenti dei tuoi sub-amministratori, oltre a quelle di ciascun utente.",
       "configsTitle": "Configurazioni per i miei utenti",
       "configsUnsaved": "Non ancora salvato",
       "copyLink": "Copia il mio link di amministrazione",
@@ -350,24 +350,24 @@
       "generatedCopied": "È stata generata e copiata una password complessa",
       "inheritedConfigs": "+ {n} ereditate dagli amministratori superiori",
       "languageDefault": "Predefinita del pannello ({name})",
-      "languageHint": "La lingua delle sue pagine di amministrazione",
+      "languageHint": "La lingua delle tue pagine di amministrazione",
       "languageTitle": "Lingua",
-      "limitsSub": "I suoi utenti e quelli di tutti i suoi sub-amministratori contano per questi limiti.",
+      "limitsSub": "I tuoi utenti e quelli di tutti i tuoi sub-amministratori contano per questi limiti.",
       "limitsTitle": "I miei limiti",
       "loginHint": "Dopo il salvataggio, accedere con il link di amministrazione e questa password.",
       "minLength": "Almeno {n} caratteri",
       "mismatch": "Le password non coincidono",
-      "nearLimit": "Si sta avvicinando a un limite. Chieda all'amministratore superiore di aumentarlo, oppure disattivi gli utenti che non servono più.",
+      "nearLimit": "Stai per raggiungere un limite. Chiedi all'amministratore superiore di aumentarlo, oppure disattiva gli utenti che non ti servono più.",
       "new": "Nuova password",
       "noLimits": "I super amministratori non hanno limiti.",
-      "noPasswordSub": "Non ha una password: chiunque abbia il suo link può accedere. Ne imposti una per proteggere l'account.",
+      "noPasswordSub": "Non hai una password: chiunque abbia il tuo link può accedere. Impostane una per proteggere l'account.",
       "outboundApply": "Applicare le modifiche per renderlo operativo.",
       "outboundNone": "Ancora nessun outbound. Li configura un super amministratore.",
       "outboundReadOnly": "Impostato da un amministratore superiore: può vederlo ma non modificarlo.",
       "outboundSaved": "Outbound predefinito salvato",
       "outboundSub": "Il punto di uscita dei miei utenti e di quelli dei miei sub-amministratori, a meno che un utente (o un amministratore più vicino) ne scelga un altro.",
       "outboundTitle": "Outbound predefinito",
-      "passwordNone": "Nessuna password: chiunque abbia il suo link può accedere",
+      "passwordNone": "Nessuna password: chiunque abbia il tuo link può accedere",
       "passwordSet": "L'account è protetto da una password",
       "passwordSub": "Cambiare la password usata per accedere.",
       "passwordTitle": "Password",
@@ -384,7 +384,7 @@
         "weak": "Debole"
       },
       "subAdmins": "Sub-amministratori",
-      "subtitle": "I suoi limiti, quanto ne utilizza e la sua password.",
+      "subtitle": "I tuoi limiti, quanto ne utilizza e la tua password.",
       "superText": "Può aggiungere tutti gli utenti e gli amministratori che servono.",
       "tabs": {
         "overview": "Panoramica",
@@ -401,18 +401,18 @@
         "brandTitleHint": "Mostrato in cima alla pagina utente, prima del testo di benvenuto.",
         "count": "{n} elemento personalizzato | {n} elementi personalizzati",
         "customPage": "Pagina utente personalizzata",
-        "customPageHint": "L'indirizzo di un sito statico mostrato al posto della pagina utente (es. la sua build di hiddify-user-front su GitHub Pages). Il pannello lo serve dal proprio dominio.",
+        "customPageHint": "L'indirizzo di un sito statico mostrato al posto della pagina utente (es. la tua build di hiddify-user-front su GitHub Pages). Il pannello lo serve dal proprio dominio.",
         "edit": "Personalizza",
         "empty": "Non impostato",
         "inherit": "Ora: {value}",
-        "intro": "Lasciare un campo vuoto per mantenere ciò che i suoi utenti ricevono ora (mostrato nel campo).",
+        "intro": "Lasciare un campo vuoto per mantenere ciò che i tuoi utenti ricevono ora (mostrato nel campo).",
         "lang": "Lingua della pagina utente",
         "langHint": "Per gli utenti che non ne hanno scelta una propria.",
-        "none": "Nessuna modifica: i suoi utenti vedono la pagina del pannello.",
+        "none": "Nessuna modifica: i tuoi utenti vedono la pagina del pannello.",
         "saved": "Pagina utente salvata",
-        "sub": "Ciò che i suoi utenti (e quelli dei suoi sub-amministratori) vedono nella loro pagina. I campi vuoti usano le impostazioni del pannello.",
+        "sub": "Ciò che i tuoi utenti (e quelli dei tuoi sub-amministratori) vedono nella loro pagina. I campi vuoti usano le impostazioni del pannello.",
         "supportLink": "Link di assistenza",
-        "supportLinkHint": "Mostrato nel riquadro di assistenza, es. il suo canale o la sua chat Telegram.",
+        "supportLinkHint": "Mostrato nel riquadro di assistenza, es. il tuo canale o la tua chat Telegram.",
         "supportText": "Testo del riquadro di assistenza",
         "supportTextHint": "Mostrato nel riquadro di assistenza della pagina utente. È consentito l'HTML.",
         "title": "Pagina dei miei utenti"
@@ -492,8 +492,8 @@
         "done": "Fatto",
         "lead": "Inviare questi dati all'amministratore. Aprirà il link e accederà con la password.",
         "link": "Link amministratore",
-        "message": "Per accedere, apra il seguente link:\n{link}\ne acceda con la password: {password}",
-        "messageAlias": "Per accedere, apra il seguente link:\n{link}\ne acceda con il nome utente: {alias}\ne la password: {password}",
+        "message": "Per accedere, apri il seguente link:\n{link}\ne accedi con la password: {password}",
+        "messageAlias": "Per accedere, apri il seguente link:\n{link}\ne accedi con il nome utente: {alias}\ne la password: {password}",
         "messageLabel": "Messaggio da inviare",
         "once": "La password viene mostrata solo ora. Copiarla prima di chiudere; altrimenti andrà reimpostata di nuovo.",
         "password": "Password",
@@ -501,14 +501,14 @@
         "show": "Mostra password",
         "username": "Nome utente"
       },
-      "deleteMessage": "Questo amministratore viene eliminato e i suoi utenti passano a Lei.",
-      "deleteMessageWithSubs": "Questo amministratore e il suo {count} sub-amministratore vengono eliminati e i loro utenti passano a Lei. | Questo amministratore e i suoi {count} sub-amministratori vengono eliminati e i loro utenti passano a Lei.",
+      "deleteMessage": "Questo amministratore viene eliminato e i suoi utenti passano a te.",
+      "deleteMessageWithSubs": "Questo amministratore e il suo {count} sub-amministratore vengono eliminati e i loro utenti passano a te. | Questo amministratore e i suoi {count} sub-amministratori vengono eliminati e i loro utenti passano a te.",
       "deleteTitle": "Eliminare {name}?",
       "deleted": "{name} eliminato",
       "empty": {
         "cta": "Aggiungi il primo amministratore",
-        "text": "Aggiunga degli agenti per condividere il lavoro. Ognuno riceve il proprio link, la propria password e i propri limiti.",
-        "textNoPermission": "Non ha il permesso di aggiungere amministratori. Lo chieda all'amministratore superiore se serve.",
+        "text": "Aggiungi degli agenti per condividere il lavoro. Ognuno riceve il proprio link, la propria password e i propri limiti.",
+        "textNoPermission": "Non hai il permesso di aggiungere amministratori. Chiedilo all'amministratore superiore se serve.",
         "title": "Ancora nessun sub-amministratore"
       },
       "expand": "Mostra i sub-amministratori di {name}",
@@ -560,7 +560,7 @@
         "passwordInfo": "Una password sicura viene creata automaticamente. È possibile copiarla insieme al link di accesso subito dopo il salvataggio.",
         "placement": "Posizione nel team",
         "superNoLimits": "I super amministratori non hanno limiti.",
-        "upTo": "Fino a {max} (il suo limite)",
+        "upTo": "Fino a {max} (il tuo limite)",
         "used": "Traffico utilizzato",
         "uuidHint": "Generato automaticamente. Modificarlo solo per riutilizzare un ID noto.",
         "uuidInvalid": "Questo non è un UUID valido"
@@ -579,7 +579,7 @@
         "username": "Nome utente",
         "usernameHint": "Questo link apre la pagina di accesso; si accede con questo nome utente e la propria password."
       },
-      "meLocked": "Questo è il suo account: qui si possono modificare solo le configurazioni dei suoi utenti. Cambi la password in Il mio account.",
+      "meLocked": "Questo è il tuo account: qui puoi modificare solo le configurazioni dei tuoi utenti. Cambia la password in Il mio account.",
       "meter": {
         "active": "Attivi",
         "activeHint": "Utenti abilitati che hanno ancora giorni e traffico, sul numero consentito",
@@ -603,7 +603,7 @@
       },
       "more": "Altre azioni",
       "myConfigs": "Configurazioni per i miei utenti",
-      "myConfigsHint": "Configurazioni per i miei utenti: aggiunte all'abbonamento di tutti i suoi utenti e degli utenti dei suoi sub-amministratori",
+      "myConfigsHint": "Configurazioni per i miei utenti: aggiunte all'abbonamento di tutti i tuoi utenti e degli utenti dei tuoi sub-amministratori",
       "noMatch": "Nessun amministratore corrisponde a questi filtri",
       "outbound": {
         "auto": "Automatico",
@@ -618,7 +618,7 @@
       "search": "Cerca per nome o UUID",
       "showLink": "Link amministratore",
       "subCount": "{n} sub-amministratore | {n} sub-amministratori",
-      "subtitle": "Il suo team di amministrazione ad albero. I limiti di ogni amministratore comprendono i suoi utenti e tutti quelli sotto di lui.",
+      "subtitle": "Il tuo team di amministrazione ad albero. I limiti di ogni amministratore comprendono i suoi utenti e tutti quelli sotto di lui.",
       "summary": {
         "admins": "amministratore | amministratori",
         "online": "online",
@@ -687,7 +687,7 @@
         "telegram": "Invia al mio Telegram",
         "telegramConnect": "Collegare prima il proprio Telegram in Il mio account",
         "telegramFailed": "Impossibile inviare a Telegram",
-        "telegramSent": "{name} inviato al suo Telegram",
+        "telegramSent": "{name} inviato al tuo Telegram",
         "terminal": "log",
         "wrap": "A capo automatico"
       },
@@ -710,7 +710,7 @@
         "hide": "Nascondi",
         "insecure": "Non sicuro",
         "linkCopied": "Link amministratore copiato",
-        "links": "Link amministratore sui suoi domini (potrebbero essere cambiati)",
+        "links": "Link amministratore sui tuoi domini (potrebbero essere cambiati)",
         "reconnecting": "Il pannello si sta riavviando, riconnessione in corso…",
         "reload": "Il pannello è stato aggiornato. Ricaricare per usare la nuova versione.",
         "reloadBtn": "Ricarica",
@@ -761,9 +761,9 @@
         "change": "Scegline un altro",
         "confirmMessage": "Queste parti del pannello vengono sostituite: {parts}. Fare prima un backup se potrebbe servire recuperarle.",
         "confirmTitle": "Ripristinare questo backup?",
-        "drop": "Trascini qui un file di backup",
-        "dropHint": "oppure clicchi per scegliere un backup .json",
-        "fromFile": "Dal suo dispositivo",
+        "drop": "Trascina qui un file di backup",
+        "dropHint": "oppure clicca per scegliere un backup .json",
+        "fromFile": "Dal tuo dispositivo",
         "fromServer": "Da questo server",
         "notJson": "Scegliere un file di backup .json",
         "part": {
@@ -776,7 +776,7 @@
         },
         "pathChanges": "Questo backup proviene da un altro pannello: dopo il ripristino il link di amministrazione cambia. I nuovi link vengono mostrati al termine.",
         "replaceOwner": "Mantieni il GUID del proprietario del backup",
-        "replaceOwnerHint": "Il proprietario di questo pannello assume il GUID del proprietario del backup, così i vecchi link di amministrazione continuano a funzionare. Funziona anche senza ripristinare gli utenti. Il suo link di amministrazione attuale cambia.",
+        "replaceOwnerHint": "Il proprietario di questo pannello assume il GUID del proprietario del backup, così i vecchi link di amministrazione continuano a funzionare. Funziona anche senza ripristinare gli utenti. Il tuo link di amministrazione attuale cambia.",
         "run": "Ripristina",
         "running": "Ripristino del backup",
         "sub": "Recupera un backup di questo pannello o di un altro.",
@@ -792,7 +792,7 @@
         "onServer": "Salva sul server",
         "onTelegram": "Salva su Telegram",
         "secret": "Il file contiene password, link degli utenti e chiavi private. Conservarlo in un luogo sicuro.",
-        "sentTelegram": "Backup inviato al suo Telegram",
+        "sentTelegram": "Backup inviato al tuo Telegram",
         "sub": "Tutto in un unico file: impostazioni, utenti, amministratori, domini, proxy e certificati.",
         "title": "Crea un backup"
       },
@@ -816,7 +816,7 @@
         "active": "Attivi",
         "all": "Tutti",
         "expired": "Scaduti o disattivati",
-        "hint": "Vengono contati solo gli utenti che hanno avviato il suo bot; gli utenti eliminati non ricevono mai messaggi.",
+        "hint": "Vengono contati solo gli utenti che hanno avviato il tuo bot; gli utenti eliminati non ricevono mai messaggi.",
         "offline_1d": "Offline da 1 giorno+",
         "offline_1h": "Offline da 1 ora+",
         "offline_1w": "Offline da 1 settimana+",
@@ -850,8 +850,8 @@
         },
         "placeholder": {
           "html": "<b>Ciao</b> <i>a tutti</i>…",
-          "markdown": "Scriva il messaggio… **grassetto**, _corsivo_, [link](https://…)",
-          "plain": "Scriva il messaggio…"
+          "markdown": "Scrivi il messaggio… **grassetto**, _corsivo_, [link](https://…)",
+          "plain": "Scrivi il messaggio…"
         },
         "title": "Messaggio",
         "toolbar": "Formattazione"
@@ -862,7 +862,7 @@
         "title": "Il bot di Telegram non è configurato"
       },
       "preview": {
-        "bot": "Il suo bot",
+        "bot": "Il tuo bot",
         "botLabel": "bot",
         "buttonLink": "🔗 Il mio pannello",
         "buttonUsage": "📊 Consumo",
@@ -1028,10 +1028,10 @@
       "qHowMany": "Quanti IP?",
       "qHowManyHint": "I più veloci della scansione.",
       "qWhere": "In quale dominio?",
-      "qWhereHint": "Il dominio CDN nei link dei suoi utenti.",
+      "qWhereHint": "Il dominio CDN nei link dei tuoi utenti.",
       "qWho": "Per gli utenti di quale operatore?",
       "qWhoHint": "Gli utenti che si connettono con questo operatore ricevono questi IP.",
-      "qWhoMulti": "Parte dall'AS della sua connessione; aggiungere altri operatori o numeri AS. Nessuno: ogni altro operatore.",
+      "qWhoMulti": "Parte dall'AS della tua connessione; aggiungere altri operatori o numeri AS. Nessuno: ogni altro operatore.",
       "ranges": "Intervalli IP",
       "rangesCloudflare": "Cloudflare",
       "rangesCount": "{count} intervalli",
@@ -1103,7 +1103,7 @@
       "viewScript": "Visualizza lo script",
       "vpnWarning": "Questo browser non si trova nel paese del pannello: probabilmente è attiva una VPN o un proxy. Disattivarlo, altrimenti si testa la VPN e non il proprio ISP.",
       "waiting": "In attesa dell'esecuzione del comando…",
-      "yourNetwork": "La sua rete (come la vede il pannello)"
+      "yourNetwork": "La tua rete (come la vede il pannello)"
     },
     "common": {
       "actions": "Azioni",
@@ -1619,7 +1619,7 @@
         "fragmentSize": "Lunghezze",
         "fragmentSleep": "Ritardi",
         "fronting": "Domain fronting",
-        "frontingHint": "Facoltativo. Le app degli utenti mostrano uno di questi nomi (SNI) al posto del suo dominio, così un filtro vede solo un altro sito. Usare siti sulla stessa CDN del dominio (es. altri siti Cloudflare). Vuoto: nessun fronting.",
+        "frontingHint": "Facoltativo. Le app degli utenti mostrano uno di questi nomi (SNI) al posto del tuo dominio, così un filtro vede solo un altro sito. Usare siti sulla stessa CDN del dominio (es. altri siti Cloudflare). Vuoto: nessun fronting.",
         "frontingPlaceholder": "altro-sito.com, sito-cdn.net",
         "hostnamesInvalid": "Usare nomi host separati da virgole, come site.com",
         "mode": "Modalità",
@@ -1916,7 +1916,7 @@
     },
     "donation": {
       "close": "Chiudi",
-      "contact": "Ci contatti a {email} se può aiutarci.",
+      "contact": "Contattaci a {email} se puoi aiutarci.",
       "copied": "Indirizzo {name} copiato",
       "copiedShort": "Copiato",
       "copyAddress": "Copia l'indirizzo {name}",
@@ -1988,7 +1988,7 @@
       },
       "free": {
         "auto": "Concessa automaticamente",
-        "autoHint": "Subito, a un account Telegram che non ha mai avuto una prova gratuita né un account qui. Tutti gli altri attendono la sua approvazione.",
+        "autoHint": "Subito, a un account Telegram che non ha mai avuto una prova gratuita né un account qui. Tutti gli altri attendono la tua approvazione.",
         "copied": "Link copiato",
         "copy": "Copia link",
         "copyFailed": "Impossibile copiare. Copiarlo manualmente:",
@@ -2006,7 +2006,7 @@
         "openTelegram": "Apri in Telegram",
         "qr": "Codice QR",
         "setup": "Attiva",
-        "shareHint": "Condividere questo link. Chi lo apre vede il pacchetto nel bot e può richiederlo.",
+        "shareHint": "Condividi questo link. Chi lo apre vede il pacchetto nel bot e può richiederlo.",
         "tag": "GRATIS",
         "title": "Prova gratuita",
         "unit": {
@@ -2026,11 +2026,11 @@
         "requests": "Richieste",
         "unread": "Non lette",
         "unreadCount": "{n} non lette",
-        "you": "Lei:"
+        "you": "Tu:"
       },
       "noBot": {
         "action": "Impostazioni di Telegram",
-        "text": "Gli utenti la contattano, e ottengono la prova gratuita, tramite il bot Telegram del pannello.",
+        "text": "Gli utenti ti contattano, e ottengono la prova gratuita, tramite il bot Telegram del pannello.",
         "title": "Configurare prima il bot Telegram"
       },
       "retry": "Riprova",
@@ -2056,7 +2056,7 @@
         "request": {
           "again": "Ha già avuto una prova gratuita oppure ha un account.",
           "first": "Prima volta: non ha mai avuto una prova gratuita né un account qui.",
-          "title": "{name} desidera la prova gratuita"
+          "title": "{name} vuole la prova gratuita"
         },
         "send": "Invia",
         "sendFailed": "Il messaggio non è stato inviato"
@@ -2084,22 +2084,22 @@
       "brand": "Hiddify",
       "error_expired": "Questa pagina è rimasta aperta troppo a lungo. Accedere di nuovo.",
       "error_invalid": "L'ID, il nome utente o la password non sono corretti. Controllarli e riprovare.",
-      "error_locked": "Troppi tentativi dalla sua rete. Attendere 15 minuti, poi riprovare.",
+      "error_locked": "Troppi tentativi dalla tua rete. Attendere 15 minuti, poi riprovare.",
       "hide": "Nascondi password",
       "pageTitle": "Accedi",
       "password": "Password",
       "passwordHint": "Lasciare vuoto se il link di amministrazione non ha una password.",
-      "passwordPlaceholder": "La sua password",
+      "passwordPlaceholder": "La tua password",
       "show": "Mostra password",
       "signingIn": "Accesso in corso…",
       "submit": "Accedi",
       "subtitle": "Pannello di amministrazione",
       "tipLink": "Aprendo il link di amministrazione, l'ID viene inserito automaticamente.",
-      "tipLost": "Password dimenticata? Chieda all'amministratore che l'ha aggiunta di reimpostarla.",
+      "tipLost": "Hai dimenticato la password? Chiedi all'amministratore che ti ha aggiunto di reimpostarla.",
       "title": "Bentornato",
       "username": "ID o nome utente dell'amministratore",
-      "usernameHint": "L'ID nel suo link di amministrazione, oppure il nome utente che le è stato assegnato.",
-      "usernamePlaceholder": "xxxxxxxx-xxxx-… o il suo nome utente"
+      "usernameHint": "L'ID nel tuo link di amministrazione, oppure il nome utente che ti è stato assegnato.",
+      "usernamePlaceholder": "xxxxxxxx-xxxx-… o il tuo nome utente"
     },
     "menu": {
       "baseConfigs": "Configurazioni di base",
@@ -2110,7 +2110,7 @@
       "dashboard": "Dashboard",
       "group": {
         "help": "Aiuto",
-        "manager": "Gestione",
+        "manager": "Manager",
         "settings": "Impostazioni"
       },
       "myAccount": "Il mio account",
@@ -2560,7 +2560,7 @@
       "disable": "Disattiva",
       "domesticChip": "Nazionali ({region})",
       "drag": "Trascinare per cambiare l'ordine",
-      "edited": "Modificato qui: gli aggiornamenti mantengono i suoi elenchi",
+      "edited": "Modificato qui: gli aggiornamenti mantengono i tuoi elenchi",
       "enable": "Attiva",
       "enabled": "Attivato",
       "everythingElse": "Tutto il resto passa da qui",
@@ -2611,7 +2611,7 @@
       "region": {
         "cn": "Cina",
         "ir": "Iran",
-        "other": "la sua regione",
+        "other": "la tua regione",
         "ru": "Russia"
       },
       "reset": "Ripristina i valori predefiniti",
@@ -2624,7 +2624,7 @@
         "accept": "Accetta",
         "accepted": "I termini di Cloudflare sono stati accettati. Applicare le configurazioni per avviare WARP.",
         "acceptedSave": "I termini di Cloudflare sono stati accettati. Salvare le impostazioni, poi applicare le configurazioni per avviare WARP.",
-        "badge": "Richiede la sua accettazione",
+        "badge": "Richiede la tua accettazione",
         "banner": "WARP è attivato, ma i termini di Cloudflare non sono stati accettati, quindi il traffico non viene inviato tramite WARP.",
         "bannerParent": "WARP è attivato, ma i termini di Cloudflare non sono stati accettati sul pannello principale, quindi il traffico non viene inviato tramite WARP.",
         "body": "Il traffico che esce dall'outbound WARP è gestito da Cloudflare secondo i suoi Termini di servizio e la sua Informativa sulla privacy. Hiddify non accetta tali termini per conto dell'utente. Leggerli sul sito di Cloudflare, poi accettare qui se si vuole che WARP funzioni.",
@@ -2657,7 +2657,7 @@
       "label": "Una password complessa richiede",
       "length": "{n}+ caratteri",
       "lower": "una lettera minuscola",
-      "name": "non il suo nome né il suo ID",
+      "name": "non il tuo nome né il tuo ID",
       "upper": "una lettera maiuscola"
     },
     "primevue": {
@@ -2868,7 +2868,7 @@
       "renderErrorRenderedSource": "Output generato",
       "renderErrorTemplateSource": "Sorgente del modello",
       "resetAll": "Ripristina tutto ai valori predefiniti",
-      "resetAllConfirm": "Annullare tutte le modifiche apportate ai proxy integrati (tag, modalità dei domini, TLS, configurazioni server e client) e ripristinare i valori predefiniti del catalogo? I proxy creati da lei non vengono toccati.",
+      "resetAllConfirm": "Annullare tutte le modifiche apportate ai proxy integrati (tag, modalità dei domini, TLS, configurazioni server e client) e ripristinare i valori predefiniti del catalogo? I proxy creati da te non vengono toccati.",
       "resetAllDone": "{n} proxy ripristinati ai valori predefiniti",
       "resetTagName": "Ripristina il nome del tag predefinito",
       "resetToBuiltin": "Ripristina il valore predefinito del catalogo",
@@ -2944,7 +2944,7 @@
         "ios2": "Toccare Condividi",
         "ios3": "Scegliere «Aggiungi alla schermata Home»",
         "ios4": "Toccare Aggiungi: il pannello è nella schermata Home",
-        "platform": "Il suo dispositivo",
+        "platform": "Il tuo dispositivo",
         "tabAndroid": "Android · Chrome",
         "tabDesktop": "{os} · Chrome",
         "tabIos": "iPhone · Safari"
@@ -3043,7 +3043,7 @@
         "domainsHint": "Qui si possono aggiungere domini di qualsiasi tipo: diretti, CDN, REALITY, relay… Ognuno viene controllato automaticamente; toccare il suo tipo per cambiarlo. Serve almeno un dominio diretto, CDN o di link di abbonamento (l'IP di questo server conta come diretto).",
         "how1": "Far puntare il dominio o il sottodominio a questi IP (un record A per IPv4, AAAA per IPv6).",
         "how2": "Poi inserire il dominio qui sotto. È possibile aggiungerne diversi; premere Invio o virgola dopo ciascuno.",
-        "ipsTitle": "Gli IP del suo server",
+        "ipsTitle": "Gli IP del tuo server",
         "modeHelp": {
           "cdn": "Dietro una CDN (Cloudflare, Fastly, ArvanCloud, Akamai, …) che inoltra a questo server. Nasconde l'IP del server.",
           "direct": "Punta direttamente all'IP di questo server. Il più veloce; rilevato quando il dominio si risolve in questo server.",
@@ -3077,7 +3077,7 @@
         "ready": "Tutto è pronto",
         "readyHint": "Rivedere le scelte, poi terminare la configurazione.",
         "running": "Conclusione della configurazione",
-        "whatHappens": "Termina applica la configurazione e reinstalla i servizi con i suoi domini. Richiede qualche minuto; durante l'operazione vengono mostrati il log e i nuovi link di amministrazione."
+        "whatHappens": "Termina applica la configurazione e reinstalla i servizi con i tuoi domini. Richiede qualche minuto; durante l'operazione vengono mostrati il log e i nuovi link di amministrazione."
       },
       "language": {
         "adminLang": "Lingua del pannello di amministrazione",
@@ -3087,7 +3087,7 @@
       },
       "next": "Avanti",
       "nodes": {
-        "question": "Vuole aggiungere altri nodi? Aggiungere il link di amministrazione completo di ogni altro pannello; dopo la connessione compare qui. È possibile farlo anche più tardi.",
+        "question": "Vuoi aggiungere altri nodi? Aggiungere il link di amministrazione completo di ogni altro pannello; dopo la connessione compare qui. È possibile farlo anche più tardi.",
         "skip": "Salta"
       },
       "optional": "facoltativo",
@@ -3101,7 +3101,7 @@
         "prompt": "Almeno {min} caratteri",
         "strong": "Robusta",
         "weak": "Debole",
-        "why": "Userà questa password per accedere all'area di amministrazione. Usare almeno 8 caratteri."
+        "why": "Userai questa password per accedere all'area di amministrazione. Usare almeno 8 caratteri."
       },
       "skip": "Salta per ora",
       "stepOf": "Passaggio {n} di {total}",
@@ -3146,7 +3146,7 @@
       "dns": {
         "custom": "Personalizzato",
         "customHelp": "Fino a quattro indirizzi IP (IPv4 o IPv6), separati da virgole. Il server li usa anche per il proprio DNS.",
-        "customHint": "I suoi indirizzi DNS",
+        "customHint": "I tuoi indirizzi DNS",
         "customPlaceholder": "es. 1.1.1.1, 1.0.0.1",
         "group": {
           "adblock": "DNS con blocco pubblicità",
@@ -3214,8 +3214,8 @@
         "previewTitle": "Anteprima del riquadro di assistenza",
         "sampleAnswer": "La risposta.",
         "sampleButton": "Contattaci",
-        "sampleQuestion": "La sua domanda?",
-        "sampleText": "Il suo testo",
+        "sampleQuestion": "La tua domanda?",
+        "sampleText": "Il tuo testo",
         "saveHint": "Il testo applicato viene pubblicato al salvataggio delle impostazioni",
         "showMore": "Mostra il pulsante",
         "showTitle": "Mostra il titolo",
@@ -3400,7 +3400,7 @@
       "conflictTitle": "Esiste un file con questo nome",
       "connect": "Connetti",
       "copyLink": "Copia link",
-      "copyLinkHint": "Un link che riapre questa connessione, solo per il suo account",
+      "copyLinkHint": "Un link che riapre questa connessione, solo per il tuo account",
       "couldNotConnect": "Impossibile connettersi",
       "create": "Crea",
       "discard": "Chiudere senza salvare le modifiche?",
@@ -3421,7 +3421,7 @@
         "notDir": "{name} non è una cartella.",
         "notEmpty": "La cartella non è vuota.",
         "notFound": "{name} non è presente (potrebbe essere stato spostato o eliminato). Aggiornare l'elenco.",
-        "permission": "Permesso negato: il suo utente potrebbe non poter eseguire questa operazione su {name}. Accedere come utente autorizzato, oppure modificare i permessi.",
+        "permission": "Permesso negato: il tuo utente potrebbe non poter eseguire questa operazione su {name}. Accedere come utente autorizzato, oppure modificare i permessi.",
         "readonly": "Il file system qui è di sola lettura.",
         "timeout": "Il server ha impiegato troppo tempo a rispondere.",
         "tooLarge": "Il file è troppo grande."
@@ -3466,7 +3466,7 @@
       "noSecret": "Nessuna password o chiave salvata",
       "none": "Nessuna",
       "note": "Il pannello si connette dal proprio server. Password e chiavi vengono usate solo per questa connessione e non vengono mai salvate.",
-      "noteSaved": "Il pannello si connette dal proprio server. La connessione, con la sua password o chiave, viene conservata in questo browser, cifrata per il suo account.",
+      "noteSaved": "Il pannello si connette dal proprio server. La connessione, con la sua password o chiave, viene conservata in questo browser, cifrata per il tuo account.",
       "openTab": "Apri scheda",
       "optional": "Solo se la chiave ne ha una",
       "passphrase": "Passphrase della chiave",
@@ -3846,7 +3846,7 @@
         "outboundOff": "disattivato",
         "outboundReadOnly": "È possibile vedere l'outbound preferito, ma solo un amministratore con il permesso può cambiarlo.",
         "owner": "Sub-amministratore",
-        "ownerMe": "{name} (Lei)",
+        "ownerMe": "{name} (tu)",
         "packageDays": "Giorni del pacchetto",
         "packageLength": "Durata del pacchetto",
         "period": {
@@ -3907,7 +3907,7 @@
         "pin": "Fissa in alto",
         "unpin": "Rimuovi fissaggio"
       },
-      "limitReached": "Ha raggiunto il limite di utenti. Chieda all'amministratore superiore di aumentarlo.",
+      "limitReached": "Hai raggiunto il limite di utenti. Chiedi all'amministratore superiore di aumentarlo.",
       "link": "Link",
       "linkTitle": "Link di {name}",
       "mode": {
@@ -4169,7 +4169,7 @@
     "added_gb": "{n} GB aggiunti",
     "admin_hello": "👋 Salve <b>{name}</b>",
     "admin_summary": "👥 Utenti  <b>{total}</b>\n🟢 Attivi  <b>{active}</b>\n⚡️ Online  <b>{online}</b>\n⏳ In scadenza  <b>{expiring}</b>",
-    "admin_welcome": "Evviva 🎉 🎉 🎉 Benvenuto nel bot di amministrazione. Scelga l'azione",
+    "admin_welcome": "Evviva 🎉 🎉 🎉 Benvenuto nel bot di amministrazione. Scegli l'azione",
     "ago_days": "{n} giorni fa",
     "ago_hours": "{n} h fa",
     "ago_minutes": "{n} min fa",
@@ -4209,19 +4209,19 @@
     "free_again": "📨 Richiedi un'altra prova gratuita",
     "free_data": "<b>{amount}</b> di dati",
     "free_days": "<b>{n}</b> giorni",
-    "free_declined": "La richiesta di prova gratuita non è stata approvata. È possibile scrivere qui un messaggio per chiedere informazioni.",
+    "free_declined": "La richiesta di prova gratuita non è stata approvata. Puoi scrivere qui un messaggio per chiedere informazioni.",
     "free_get": "🎁 Ottieni la mia prova gratuita",
-    "free_hint_auto": "Toccare il pulsante e l'account sarà pronto in pochi secondi. Nessun pagamento richiesto.",
-    "free_hint_manual": "Toccare il pulsante per inviare la richiesta. L'account arriverà qui non appena approvata.",
+    "free_hint_auto": "Tocca il pulsante e l'account sarà pronto in pochi secondi. Nessun pagamento richiesto.",
+    "free_hint_manual": "Tocca il pulsante per inviare la richiesta. L'account arriverà qui non appena approvata.",
     "free_hint_used": "Su questo account Telegram è già stata usata una prova gratuita, oppure esiste già un account. Un'altra richiede approvazione.",
     "free_link_auto": "⚡️ Concessa automaticamente, una volta per account Telegram.",
     "free_link_inherited": "Impostata da <b>{name}</b>.",
-    "free_link_manual": "✋ Ogni richiesta attende la sua approvazione.",
-    "free_link_off": "La prova gratuita è disattivata. Attivarla nel pannello: Posta in arrivo → Prova gratuita.",
-    "free_link_share": "Condividere questo link. Chi lo apre vede questo pacchetto e può richiederlo.",
+    "free_link_manual": "✋ Ogni richiesta attende la tua approvazione.",
+    "free_link_off": "La prova gratuita è disattivata. Attivala nel pannello: Posta in arrivo → Prova gratuita.",
+    "free_link_share": "Condividi questo link. Chi lo apre vede questo pacchetto e può richiederlo.",
     "free_link_title": "Prova gratuita",
     "free_link_waiting": "<b>{n}</b> richieste sono in attesa.",
-    "free_off": "La prova gratuita al momento non è disponibile. È comunque possibile scrivere qui un messaggio.",
+    "free_off": "La prova gratuita al momento non è disponibile. Puoi comunque scrivere qui un messaggio.",
     "free_pending": "Richiesta inviata",
     "free_ready": "La prova gratuita è pronta!",
     "free_request": "📨 Richiedi la prova gratuita",
@@ -4229,7 +4229,7 @@
     "free_title": "Prova gratuita",
     "free_wait": "L'account arriverà in questa chat non appena la richiesta sarà approvata.",
     "free_write": "💬 Scrivi un messaggio",
-    "free_write_hint": "Scrivere il messaggio in questa chat e inviarlo. Arriva direttamente al supporto e la risposta arriva qui.",
+    "free_write_hint": "Scrivi il messaggio in questa chat e invialo. Arriva direttamente al supporto e la risposta arriva qui.",
     "gb": "GB",
     "gone": "Questo utente non esiste più.",
     "last_online": "Ultima connessione",
@@ -4238,7 +4238,7 @@
     "link_hiddify": "Importa nell'app Hiddify",
     "link_home": "Pagina personale",
     "link_sub": "Link di abbonamento",
-    "linked": "Il suo Telegram è ora collegato.",
+    "linked": "Il tuo Telegram è ora collegato.",
     "links": "🔗 Link",
     "links_hint": "Toccare un link per copiarlo.",
     "links_title": "Link",
@@ -4248,7 +4248,7 @@
     "msg_from": "Supporto",
     "msg_new": "{name} ha scritto:",
     "msg_sent": "Il messaggio è stato inviato.",
-    "msg_slow": "Troppi messaggi. Attendere un minuto.",
+    "msg_slow": "Troppi messaggi. Attendi un minuto.",
     "my_page": "🌐 La mia pagina",
     "never": "mai",
     "new_count": "👥 Quanti utenti?",
@@ -4258,16 +4258,16 @@
     "new_done_one": "Utente creato: la sua scheda è qui sopra, pronta da inoltrare.",
     "new_gb": "📦 Quanti dati?",
     "new_name": "✏️ Nome",
-    "new_name_prompt": "Inviare un nome per i nuovi utenti. Se sono più utenti, dopo il nome vengono aggiunti dei numeri.",
+    "new_name_prompt": "Invia un nome per i nuovi utenti. Se sono più utenti, dopo il nome vengono aggiunti dei numeri.",
     "new_summary": "📦 Dati  <b>{gb}</b>\n📅 Giorni  <b>{days}</b>\n👥 Quantità  <b>{count}</b>\n🏷 Nome  <b>{name}</b>",
     "new_title": "Nuovo utente",
     "new_working": "Creazione in corso…",
-    "not_allowed": "Non ha accesso a questa funzione.",
+    "not_allowed": "Non hai accesso a questa funzione.",
     "notify_admin": "⏳ <b>{n} utenti stanno per scadere</b>",
     "notify_admin_line": "• {name} · {days}g · {used}/{total} GB",
     "notify_admin_more": "…e altri {n}",
-    "notify_data": "<b>{name}</b>, restano solo <b>{left}</b> di dati. Contattare il proprio fornitore per rinnovare.",
-    "notify_days": "<b>{name}</b>, il suo pacchetto scade tra <b>{n} giorni</b>. Contattare il proprio fornitore per rinnovare.",
+    "notify_data": "<b>{name}</b>, restano solo <b>{left}</b> di dati. Contatta il tuo fornitore per rinnovare.",
+    "notify_days": "<b>{name}</b>, il tuo pacchetto scade tra <b>{n} giorni</b>. Contatta il tuo fornitore per rinnovare.",
     "online_line": "Online ora <b>{now}</b> · oggi <b>{today}</b>",
     "online_now": "Online ora",
     "owner": "Proprietario",
@@ -4276,13 +4276,13 @@
     "pick_gb": "Quanti dati aggiungere?",
     "qr": "📷 Codice QR",
     "ram": "RAM",
-    "read_only_node": "Questo è un nodo: gestire gli utenti sul pannello principale.",
+    "read_only_node": "Questo è un nodo: gestisci gli utenti sul pannello principale.",
     "refresh": "🔄 Aggiorna",
     "renew": "♻️ Rinnova",
     "renewed": "Pacchetto rinnovato",
     "reply": "↩️ Rispondi",
     "reply_failed": "La risposta a <b>{name}</b> non è stata recapitata.",
-    "reply_prompt": "Scrivere la risposta per {name} e inviarla.",
+    "reply_prompt": "Scrivi la risposta per {name} e inviala.",
     "reply_sent": "La risposta è stata inviata a <b>{name}</b>.",
     "req_approve": "✅ Approva",
     "req_approved": "Approvata: {name} ha ottenuto la prova gratuita.",
@@ -4296,7 +4296,7 @@
     "resets_in": "Il consumo si azzera tra {n} giorni",
     "search": "🔍 Cerca",
     "search_clear": "✖️ Cancella",
-    "search_prompt": "Inviare un nome, un UUID, un commento o un ID Telegram.",
+    "search_prompt": "Invia un nome, un UUID, un commento o un ID Telegram.",
     "search_results": "Risultati per «{q}»",
     "sending": "Invio di {n} schede utente…",
     "status_active": "<b>Attivo</b>",
@@ -4314,7 +4314,7 @@
     "unit_d": "g",
     "unit_h": "h",
     "unit_m": "m",
-    "unknown": "Non ho capito. Usare i pulsanti qui sotto 👇",
+    "unknown": "Non ho capito. Usa i pulsanti qui sotto 👇",
     "updated": "Aggiornato ✓",
     "updated_at": "Aggiornato {time}",
     "uptime": "Uptime",
@@ -4325,7 +4325,7 @@
     "users_empty": "Nessun utente qui.",
     "users_line": "Totale <b>{total}</b> · attivi <b>{active}</b>",
     "users_title": "Utenti",
-    "welcome": "👋 <b>Benvenuto in Hiddify!</b>\n\nAprire la pagina del proprio account nel pannello e toccare il pulsante Telegram, oppure inviarmi il link di abbonamento o l'UUID."
+    "welcome": "👋 <b>Benvenuto in Hiddify!</b>\n\nApri la pagina del tuo account nel pannello e tocca il pulsante Telegram, oppure inviami il link di abbonamento o l'UUID."
   },
   "cdn": "🔀 CDN (proxy Cloudflare, ...)",
   "cf-delete": {
@@ -4782,7 +4782,7 @@
       "label": "OpenVPN"
     },
     "package_mode": {
-      "description": "Specificare se si desidera il pacchetto rilasciato o quello beta",
+      "description": "Specifica se vuoi il pacchetto rilasciato o quello beta",
       "label": "🔄 Modalità di aggiornamento del pacchetto"
     },
     "panel_mode": {
@@ -5109,7 +5109,7 @@
       "label": "📺 Dominio fittizio Telegram"
     },
     "telegram_lib": {
-      "description": "È possibile passare da una libreria Telegram all'altra. Si noti che solo Python funziona su tutti i server, le altre possono avere dei problemi. Testare il proxy dopo averla cambiata",
+      "description": "È possibile passare da una libreria Telegram all'altra. Tieni presente che solo Python funziona su tutti i server, le altre possono avere dei problemi. Testare il proxy dopo averla cambiata",
       "label": "🔢  Libreria del proxy Telegram"
     },
     "telegram_webproxy_enable": {
@@ -5387,7 +5387,7 @@
   "fake": "🆎 Sito fake",
   "gRPC": "➿ gRPC",
   "grpc-proxy": {
-    "description": "ℹ️ gRPC è un protocollo basato su H2. Forse per lei è più veloce!"
+    "description": "ℹ️ gRPC è un protocollo basato su H2. Forse per te è più veloce!"
   },
   "in\n          parent panel": "nel\n          pannello principale",
   "in parent panel": "Nel pannello centrale",
@@ -5418,7 +5418,7 @@
       "label": "Password"
     },
     "secret": {
-      "description": "Per accedere a questa pagina, inserire il proprio codice segreto (UUID)",
+      "description": "Per accedere a questa pagina, inserisci il tuo codice segreto (UUID)",
       "label": "Codice segreto (UUID)"
     }
   },
@@ -5508,7 +5508,7 @@
         "expect_vless": "Tranne VLess"
       },
       "android": {
-        "intro": "Installare Hiddify Android da %(dl_link)s  %(play_link)s. \n\n<!--\n<div class='callout callout-danger'>\n    <b>Update Hiddify Android to Version 0.14</b>\n</div>-->\n<details>\n<summary>Perché Hiddify Android?</summary>\n<div class='callout callout-info'>\n\n        Hiddify Android è un fork open source di Clash che supporta più protocolli.\n        <br>\n        Il suo codice sorgente si trova su\n        <a href='https://github.com/hiddify/HiddifyProxyAndroid'>GitHub</a>.\n        \n        <br>\n        Pertanto è sicuro.\n\n        <details>\n            <summary>Alternativa: Clash normale</summary>\n            <div class='btn-group'>\n                <a href='https://play.google.com/store/apps/details?id=com.github.kr328.clash'\n                    class='btn btn-warning orig-link'>Clash su Google Play</a>\n            </div>\n            <div class='btn-group'>\n                <a href='/{{hconfigs[ConfigEnum.proxy_path]}}/gh/Kr328/ClashForAndroid/releases/download/v2.5.12/cfa-2.5.12-premium-universal-release.apk'\n                    class='btn btn-warning orig-link'>Download diretto</a>\n            </div>\n\n            <div class='alert alert-danger'>\n            \tClash non supporta il protocollo VLess. Pertanto dobbiamo aggiungere un altro link per esso.\n            </div>\n            \n\n        </details>\n    </div>\n</details>"
+        "intro": "Installa Hiddify Android da %(dl_link)s  %(play_link)s. \n\n<!--\n<div class='callout callout-danger'>\n    <b>Update Hiddify Android to Version 0.14</b>\n</div>-->\n<details>\n<summary>Perché Hiddify Android?</summary>\n<div class='callout callout-info'>\n\n        Hiddify Android è un fork open source di Clash che supporta più protocolli.\n        <br>\n        Il suo codice sorgente si trova su\n        <a href='https://github.com/hiddify/HiddifyProxyAndroid'>GitHub</a>.\n        \n        <br>\n        Pertanto è sicuro.\n\n        <details>\n            <summary>Alternativa: Clash normale</summary>\n            <div class='btn-group'>\n                <a href='https://play.google.com/store/apps/details?id=com.github.kr328.clash'\n                    class='btn btn-warning orig-link'>Clash su Google Play</a>\n            </div>\n            <div class='btn-group'>\n                <a href='/{{hconfigs[ConfigEnum.proxy_path]}}/gh/Kr328/ClashForAndroid/releases/download/v2.5.12/cfa-2.5.12-premium-universal-release.apk'\n                    class='btn btn-warning orig-link'>Download diretto</a>\n            </div>\n\n            <div class='alert alert-danger'>\n            \tClash non supporta il protocollo VLess. Pertanto dobbiamo aggiungere un altro link per esso.\n            </div>\n            \n\n        </details>\n    </div>\n</details>"
       },
       "branding": {
         "linktitle": "Link della pagina di assistenza",
@@ -5526,18 +5526,18 @@
           "description": "Usa il proxy per tutti i siti esteri (anche quelli non bloccati).\n<div class='callout callout-warning'>\n\tQuesta modalità è utile per accedere ad alcuni siti sotto sanzioni.\n</div>\n",
           "title": "Proxy per i siti esteri"
         },
-        "intro": "Ora, in base alle proprie esigenze, cliccare su uno dei link seguenti.\n<br />",
+        "intro": "Ora, in base alle tue esigenze, clicca su uno dei link seguenti.\n<br />",
         "link_for_normal_clash": "Installa Clash",
         "only_for_blocked_sites": {
           "btn": "Installa solo per i siti bloccati",
-          "description": "Questa modalità è consigliata. Inoltra tramite proxy solo i siti bloccati.\n            <div class='callout callout-success'>\n                In questa modalità non si noterà alcun cambiamento nella velocità.\n            </div>",
+          "description": "Questa modalità è consigliata. Inoltra tramite proxy solo i siti bloccati.\n            <div class='callout callout-success'>\n                In questa modalità non noterai alcun cambiamento nella velocità.\n            </div>",
           "title": "Solo per i siti bloccati"
         }
       },
       "doh": "DNS over HTTPS",
       "ios": {
         "others": {
-          "intro": "Prima installare una delle seguenti applicazioni:\n\n<div class='btn-group'>\n\n\t<a href='https://apps.apple.com/us/app/foxray/id6448898396'\n        class='btn btn-primary orig-link'>FoXray</a>\n\n</div>\n\n<div class='btn-group'>\n\n\t<a href='https://apps.apple.com/us/app/fair-vpn/id1533873488'\n        class='btn btn-primary orig-link'>Fair VPN</a>\n</div>\n\n<br />\nPoi applicare le configurazioni seguenti:\n<br />",
+          "intro": "Prima installa una delle seguenti applicazioni:\n\n<div class='btn-group'>\n\n\t<a href='https://apps.apple.com/us/app/foxray/id6448898396'\n        class='btn btn-primary orig-link'>FoXray</a>\n\n</div>\n\n<div class='btn-group'>\n\n\t<a href='https://apps.apple.com/us/app/fair-vpn/id1533873488'\n        class='btn btn-primary orig-link'>Fair VPN</a>\n</div>\n\n<br />\nPoi applica le configurazioni seguenti:\n<br />",
           "title": "FoXray e Fair VPN"
         },
         "stash": {
@@ -5550,22 +5550,22 @@
         "success-copy": "Link copiato negli appunti. "
       },
       "qr-code": {
-        "description": "Per copiare o condividere i link, cliccare sul campo grigio <i class='fa-solid fa-qrcode'></i> per mostrarne il codice QR.",
+        "description": "Per copiare o condividere i link, clicca sul campo grigio <i class='fa-solid fa-qrcode'></i> per mostrarne il codice QR.",
         "display": "Mostra il codice QR"
       },
-      "select_os": "Selezionare il proprio sistema operativo.",
+      "select_os": "Seleziona il tuo sistema operativo.",
       "select_tool": "Selezionare la voce.",
       "share-title": "Condividi sui social media",
       "speedtest": {
         "download": "Download",
-        "intro": "Prima testare la velocità <b>senza</b> il proxy. Se la velocità non è buona, significa che questo IP è, per così dire, \"sporco\" presso l'ISP.\nSe la velocità era bassa senza proxy, non conviene perdere tempo a testare questo proxy.\nAltrimenti, testare con proxy diversi di questo sito e, se la velocità è simile a quella senza proxy, si è trovato il protocollo migliore.\n<br />",
+        "intro": "Prima testa la velocità <b>senza</b> il proxy. Se la velocità non è buona, significa che questo IP è, per così dire, \"sporco\" presso l'ISP.\nSe la velocità era bassa senza proxy, non conviene perdere tempo a testare questo proxy.\nAltrimenti, testa con proxy diversi di questo sito e, se la velocità è simile a quella senza proxy, hai trovato il protocollo migliore.\n<br />",
         "title": "Speed Test (rileva IP sporchi)",
         "two_ways": "In entrambe le direzioni",
         "upload": "Upload"
       },
       "telegram": {
         "clickbtn": "Proxy Telegram",
-        "description": "Cliccare su uno dei link seguenti: in Telegram comparirà una finestra con <b>Connetti proxy</b>. Cliccarci sopra e funzionerà.\n<br />"
+        "description": "Clicca su uno dei link seguenti: in Telegram comparirà una finestra con <b>Connetti proxy</b>. Cliccaci sopra e funzionerà.\n<br />"
       },
       "title": "HiddifyManager",
       "tool": {
@@ -5583,7 +5583,7 @@
         "title": "⏳ Consumo di traffico"
       },
       "windows": {
-        "intro": "Prima, scaricare e installare il software Hiddify Desktop in base al proprio sistema operativo.\n<br />\n%(hiddify_desktop_links)s\n\n<details>\n<summary>Perché Hiddify Desktop?</summary>\n<div class='callout callout-info'>\n\n        Hiddify Desktop è un fork sicuro e open source di Clash che supporta più VLESS e il fingerprinting UTLS.\n        <br>\n<br />\n        Il suo codice sorgente si trova su\n        <a href='https://github.com/hiddify/HiddifyDesktop'>GitHub</a>.\n        \n\n        <details>\n            <summary>Alternativa: Clash normale</summary>\n            %(normal_clash_link)s\n\n            <div class='alert alert-danger'>\n            \tClash non supporta il fingerprinting del browser né il protocollo VLESS. Pertanto dobbiamo aggiungere un altro link per esso.\n            </div>\n            \n\n        </details>\n</div>\n        </details>\n<br />\nOra, in base alle proprie esigenze, cliccare su uno dei pulsanti. Visualizzando la finestra nel browser, basta cliccare sull'opzione <b>Apri</b> per aggiungere automaticamente il link del server a Hiddify Desktop."
+        "intro": "Prima scarica e installa il software Hiddify Desktop in base al tuo sistema operativo.\n<br />\n%(hiddify_desktop_links)s\n\n<details>\n<summary>Perché Hiddify Desktop?</summary>\n<div class='callout callout-info'>\n\n        Hiddify Desktop è un fork sicuro e open source di Clash che supporta più VLESS e il fingerprinting UTLS.\n        <br>\n<br />\n        Il suo codice sorgente si trova su\n        <a href='https://github.com/hiddify/HiddifyDesktop'>GitHub</a>.\n        \n\n        <details>\n            <summary>Alternativa: Clash normale</summary>\n            %(normal_clash_link)s\n\n            <div class='alert alert-danger'>\n            \tClash non supporta il fingerprinting del browser né il protocollo VLESS. Pertanto dobbiamo aggiungere un altro link per esso.\n            </div>\n            \n\n        </details>\n</div>\n        </details>\n<br />\nOra, in base alle tue esigenze, clicca su uno dei pulsanti. Quando vedi la finestra nel browser, ti basta cliccare sull'opzione <b>Apri</b> per aggiungere automaticamente il link del server a Hiddify Desktop."
       }
     },
     "last_reset_time": "Data dell'ultimo azzeramento del consumo",
@@ -5592,13 +5592,13 @@
       "description": "La password verrà usata per maggiore sicurezza. Si potrà accedere a HiddifyManager solo dopo aver inserito la password.",
       "title": "Password",
       "validation-lenght": "La password deve contenere almeno 8 caratteri per una maggiore sicurezza.",
-      "validation-required": "La password è obbligatoria. Inserire la password per continuare."
+      "validation-required": "La password è obbligatoria. Inserisci la password per continuare."
     },
     "usage_limit_GB": "⌛️ Limite di consumo (GB)",
     "user_links": "Link degli utenti"
   },
   "vpn": {
-    "notallowed": "Visitare questa pagina senza usare una VPN. È necessario accedervi dal paese %(expected_country)s, ma attualmente la si sta aprendo da %(your_country)s."
+    "notallowed": "Visita questa pagina senza usare una VPN. Devi accedervi dal paese %(expected_country)s, ma al momento la stai aprendo da %(your_country)s."
   },
   "weekly": "📅 Settimanale",
   "worker": "✴️ Cloudflare Worker"
