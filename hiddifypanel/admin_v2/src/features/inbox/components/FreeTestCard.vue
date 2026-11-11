@@ -126,7 +126,7 @@ async function copy() {
     </div>
 
     <template v-if="pkg.enabled || !isDefault">
-      <PackageChips :days="pkg.days" :usage-gb="pkg.usage_gb" tag class="ft-chips" />
+      <PackageChips :days="pkg.days" :usage-gb="pkg.usage_gb" tag :approval="pkg.approval" class="ft-chips" />
 
       <!-- The default package: the public link, what everyone in the bot gets. Another one: its private link -->
       <div v-if="link" class="ft-link">

@@ -2008,6 +2008,8 @@
         "copied": "Link copied",
         "copy": "Copy Link",
         "copyFailed": "Could not copy. Copy it by hand:",
+        "autoShort": "Automatic",
+        "manualShort": "Manual",
         "privateHint": "Give this link only to the people who should get this package. Everyone else in the bot sees the default one.",
         "privateLinkLabel": "Private Link",
         "copyShort": "Copy",
