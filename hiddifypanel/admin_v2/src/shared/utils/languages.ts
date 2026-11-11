@@ -22,6 +22,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   ky: { flag: 'kg', name: 'Кыргызча' },
   tg: { flag: 'tj', name: 'Тоҷикӣ' },
   hy: { flag: 'am', name: 'Հայերեն' },
+  uk: { flag: 'ua', name: 'Українська' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
