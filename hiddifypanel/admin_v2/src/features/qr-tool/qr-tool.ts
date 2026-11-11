@@ -31,6 +31,10 @@ export async function drawQr(canvas: HTMLCanvasElement, text: string, style: QrS
     width: Math.round(size * scale),
     color: { dark: '#000000', light: QR_CARD_COLOR },
   })
+  // qrcode sets the canvas's CSS size to its pixel size (size × devicePixelRatio): on a phone that is 3× the
+  // preview, filling the page. Show it at `size` CSS pixels like the Hiddify style.
+  canvas.style.width = `${size}px`
+  canvas.style.height = 'auto'
 }
 
 /** A PNG of the code with a white quiet zone, ready to save or copy. */
