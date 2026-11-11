@@ -215,6 +215,7 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
     manageable = not is_me and admin.id != 1 and admin.id in visible_ids
     parent = admin.parent_admin
     return {
+        "id": admin.id,
         "uuid": admin.uuid,
         "name": admin.name,
         "comment": admin.comment or "",

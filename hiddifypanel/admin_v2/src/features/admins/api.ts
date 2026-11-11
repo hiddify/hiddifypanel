@@ -82,6 +82,7 @@ export interface LinkDomain {
 }
 
 export interface AdminRow extends AdminUsagePeriod {
+  id: number
   uuid: string
   name: string
   comment: string

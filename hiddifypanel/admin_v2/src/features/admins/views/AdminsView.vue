@@ -109,7 +109,15 @@
                       class="admins-chip admins-chip--sub"
                       v-tooltip.top="t('admins.canAddHint')"
                     ><i class="pi pi-sitemap" />{{ t('admins.canAddShort') }}</span>
-                    <span v-if="row(node).telegram_id" class="admins-chip admins-chip--tg" v-tooltip.top="t('users.extra.telegramHint')"><i class="pi pi-telegram" />Telegram</span>
+                    <component
+                      :is="tree?.read_only ? 'span' : 'button'"
+                      v-if="row(node).telegram_id"
+                      :type="tree?.read_only ? undefined : 'button'"
+                      class="admins-tg"
+                      :class="{ 'admins-tg--action': !tree?.read_only }"
+                      v-tooltip.top="tree?.read_only ? t('users.extra.telegramHint') : t('admins.telegramMessage')"
+                      @click.stop="!tree?.read_only && messageAdmin(row(node))"
+                    ><i class="pi pi-telegram" />Telegram</component>
                     <button
                       v-if="node.children?.length"
                       type="button"
@@ -194,6 +202,18 @@
 
     <MyConfigsDialog v-model:visible="myConfigsVisible" :admin="myRow" @saved="onMyConfigsSaved" />
     <AdminFormDialog v-model:visible="formVisible" :admin="editingAdmin" :tree="tree" @created="onCreated" @saved="onSaved" @reset-password="confirmReset" />
+    <!-- Send a Telegram message to one admin (the users page's message dialog) -->
+    <Dialog
+      v-model:visible="messageVisible"
+      modal
+      maximizable
+      :draggable="false"
+      :header="t('admins.messageTitle', { name: messageAdmin_?.name ?? '' })"
+      :style="{ width: 'min(72rem, 96vw)' }"
+      :breakpoints="{ '767px': '100vw' }"
+    >
+      <BroadcastComposer v-if="messageVisible && messageAdmin_" :ids="[messageAdmin_.id]" admins in-dialog />
+    </Dialog>
     <AdminLinkDialog v-model:visible="linkVisible" :admin="linkAdmin" :domains="tree?.link_domains ?? []" @reset-password="confirmReset" />
     <AdminCredentialsDialog v-model:visible="credentialsVisible" :name="credentialsName" :credentials="credentials" :kind="credentialsKind" />
   </div>
@@ -204,12 +224,13 @@ import ListFilterStatus from '@/shared/components/ListFilterStatus.vue'
 import ListNoMatch from '@/shared/components/ListNoMatch.vue'
 import NoteButton from '@/shared/components/NoteButton.vue'
 import { useHashState } from '@/shared/composables/useHashState'
-import { computed, defineComponent, h, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
+import Dialog from 'primevue/dialog'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
@@ -260,6 +281,13 @@ const modeFilter = ref<AdminMode | null>(null)
 const permFilter = ref<AdminCapability | 'none' | null>(null)
 useHashState({ q: query, mode: modeFilter, perm: permFilter })
 const linkAdmin = ref<AdminRow | null>(null)
+const BroadcastComposer = defineAsyncComponent(() => import('@/features/broadcast/components/BroadcastComposer.vue'))
+const messageVisible = ref(false)
+const messageAdmin_ = ref<AdminRow | null>(null)
+function messageAdmin(admin: AdminRow) {
+  messageAdmin_.value = admin
+  messageVisible.value = true
+}
 const linkVisible = ref(false)
 const justChanged = ref<string | null>(null)
 
@@ -849,9 +877,35 @@ button.admins-avatar:focus-visible {
   color: var(--p-green-600, #16a34a);
   background: color-mix(in srgb, var(--p-green-500, #22c55e) 12%, transparent);
 }
-.admins-chip--tg {
+.admins-tg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--p-content-border-color);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--p-text-muted-color);
+}
+.admins-tg i {
+  font-size: 0.7rem;
+  color: var(--p-blue-500, #3b82f6);
+}
+.admins-tg--action {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.admins-tg--action:hover,
+.admins-tg--action:focus-visible {
+  background: color-mix(in srgb, #2aabee 18%, transparent);
   color: #1e88c7;
-  background: color-mix(in srgb, #2aabee 14%, transparent);
+  outline: none;
 }
 .admins-chip--me {
   color: var(--p-primary-color);

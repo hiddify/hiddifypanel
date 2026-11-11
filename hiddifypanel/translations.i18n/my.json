@@ -431,6 +431,8 @@
       "viewlogsHint": "စနစ် log ဖိုင်များကို ကြည့်ရှုပါ။"
     },
     "admins": {
+      "messageTitle": "{name} ထံ မက်ဆေ့ချ်",
+      "telegramMessage": "ဤ admin ထံ Telegram မက်ဆေ့ချ် ပို့ရန်",
       "add": "အက်ဒမင် ထည့်ရန်",
       "canAddHint": "ဤအက်ဒမင်သည် ကိုယ်ပိုင် sub-admin များ ဖန်တီးနိုင်သည်",
       "canAddShort": "Sub-admin ထည့်နိုင်",

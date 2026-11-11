@@ -17,10 +17,10 @@
       <li v-for="u in shown" :key="u.id" role="option" :aria-selected="checked.has(u.id)">
         <label class="rl__row" :class="{ 'rl__row--off': !checked.has(u.id) }">
           <Checkbox :model-value="checked.has(u.id)" binary :input-id="`rl-${u.id}`" @update:model-value="toggle(u.id)" />
-          <span class="rl__dot" :class="u.active ? 'rl__dot--on' : 'rl__dot--off'" :title="u.active ? t('broadcast.recipients.active') : t('broadcast.recipients.inactive')" />
+          <span v-if="!admins" class="rl__dot" :class="u.active ? 'rl__dot--on' : 'rl__dot--off'" :title="u.active ? t('broadcast.recipients.active') : t('broadcast.recipients.inactive')" />
           <!-- bdi: a Latin name in a Persian page reads right, but stays where the page's direction puts it -->
           <span class="rl__name"><bdi>{{ u.name || `#${u.id}` }}</bdi></span>
-          <span class="rl__seen">{{ seen(u.last_online) }}</span>
+          <span v-if="!admins" class="rl__seen">{{ seen(u.last_online) }}</span>
         </label>
       </li>
     </ul>
@@ -40,7 +40,7 @@ import { relativeDays } from '@/features/users/format'
 import type { Recipient } from '@/features/broadcast/api'
 
 /** The users an audience reaches, to see before sending and to leave some out (or pick a few). ``v-model``: the checked ids. */
-const props = defineProps<{ users: Recipient[]; loading?: boolean }>()
+const props = defineProps<{ users: Recipient[]; loading?: boolean; /** Admins: no status or last seen. */ admins?: boolean }>()
 const modelValue = defineModel<number[]>({ required: true })
 
 const { t, locale } = useI18n()
