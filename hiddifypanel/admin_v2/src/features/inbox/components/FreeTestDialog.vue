@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
 import SelectButton from 'primevue/selectbutton'
 import ToggleSwitch from 'primevue/toggleswitch'
 import { useToast } from 'primevue/usetoast'
@@ -23,6 +24,7 @@ const { t } = useI18n()
 const toast = useToast()
 
 type Unit = 'mb' | 'gb'
+const name = ref('')
 const enabled = ref(false)
 const days = ref<number | null>(7)
 const amount = ref<number | null>(500)
@@ -43,6 +45,7 @@ watch(visible, (shown) => {
   const data = splitData(pkg.usage_gb)
   // Opening the dialog of a package that is off is the way to turn it on.
   enabled.value = true
+  name.value = pkg.name ?? ''
   days.value = pkg.days
   amount.value = data.amount
   unit.value = data.unit
@@ -65,7 +68,7 @@ async function save(inherit = false) {
     if (inherit) saved = await inboxApi.savePackage(null)
     else {
       const id = props.target?.id || undefined
-      const value: FreePackage = { ...(id ? { id } : {}), enabled: enabled.value, days: days.value ?? 7, usage_gb: usageGb.value, approval: approval.value }
+      const value: FreePackage = { ...(id ? { id } : {}), name: name.value.trim(), enabled: enabled.value, days: days.value ?? 7, usage_gb: usageGb.value, approval: approval.value }
       const list = props.free.packages
       const next = id && list.some((p) => p.id === id) ? list.map((p) => (p.id === id ? value : p)) : [...list, value]
       saved = await inboxApi.savePackages(next, props.free.default_id)
@@ -91,6 +94,12 @@ async function save(inherit = false) {
         </span>
         <ToggleSwitch v-model="enabled" input-id="ftd-enabled" :disabled="busy" />
       </label>
+
+      <div class="ftd-field">
+        <label for="ftd-name">{{ t('inbox.dialog.name') }}</label>
+        <InputText id="ftd-name" v-model="name" :placeholder="t('inbox.free.title')" :maxlength="40" :disabled="busy" fluid />
+        <small>{{ t('inbox.dialog.nameHint') }}</small>
+      </div>
 
       <fieldset class="ftd-fields" :disabled="!enabled || busy">
         <div class="ftd-grid">

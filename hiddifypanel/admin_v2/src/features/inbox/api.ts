@@ -10,6 +10,8 @@ export type FreeAction = 'approve' | 'decline' | 'grant'
 export interface FreePackage {
   /** Its id among the admin's packages; missing on a new one ("" for the defaults). */
   id?: string
+  /** The admin's own name for it ("": none, shown as "Free Test"); the bot does not show it. */
+  name?: string
   enabled: boolean
   days: number
   usage_gb: number

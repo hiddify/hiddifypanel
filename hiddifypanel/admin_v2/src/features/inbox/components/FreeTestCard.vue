@@ -78,7 +78,7 @@ async function copy() {
       <span class="ft-icon" aria-hidden="true"><i class="pi pi-gift" /></span>
       <div class="ft-title">
         <h3>
-          {{ t('inbox.free.title') }}
+          <span class="ft-name">{{ pkg.name || t('inbox.free.title') }}</span>
           <span v-if="multi && isDefault" class="ft-state ft-state--default"><i class="pi pi-star-fill" />{{ t('inbox.free.default') }}</span>
           <span v-if="isDefault" class="ft-state" :class="pkg.enabled ? 'ft-state--on' : 'ft-state--off'">{{ pkg.enabled ? t('inbox.free.on') : t('inbox.free.off') }}</span>
           <span v-else class="ft-state ft-state--private" :title="t('inbox.free.standbyHint')"><i class="pi pi-lock" />{{ t('inbox.free.standby') }}</span>
@@ -282,6 +282,7 @@ async function copy() {
 .ft-title h3 {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin: 0;
   font-size: 1.1rem;
@@ -294,6 +295,10 @@ async function copy() {
 .ft-title p .pi {
   font-size: 0.8rem;
   margin-inline-end: 0.2rem;
+}
+.ft-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .ft-state {
   padding: 0.1rem 0.55rem;

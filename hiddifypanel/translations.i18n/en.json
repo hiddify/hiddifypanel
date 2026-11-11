@@ -1970,6 +1970,8 @@
         "close": "Hide Conversations"
       },
       "dialog": {
+        "name": "Name",
+        "nameHint": "Only you see it, in the panel. The bot calls every package Free Test.",
         "newTitle": "New Free Test Package",
         "approval": "How It Is Given",
         "data": "Data",

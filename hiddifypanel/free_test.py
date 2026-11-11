@@ -43,6 +43,7 @@ APPROVALS = ("auto", "manual")
 DEFAULT: dict[str, Any] = {"enabled": False, "days": 7, "usage_gb": 0.5, "approval": "manual"}
 #: How many packages one admin may keep. Only the default one is offered in the bot; the others wait.
 MAX_PACKAGES = 20
+MAX_NAME = 40
 _ID = re.compile(r"^[A-Za-z0-9_-]{1,16}$")
 #: The id a package stored before there were several gets.
 LEGACY_ID = "main"
@@ -69,9 +70,11 @@ class Package:
     owner: AdminUser | None
     #: Its id among the owner's packages ("" for the defaults).
     id: str = ""
+    #: The admin's name for it ("": none), shown in the panel only.
+    name: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        return {"id": self.id, "enabled": self.enabled, "days": self.days, "usage_gb": self.usage_gb, "approval": self.approval}
+        return {"id": self.id, "name": self.name, "enabled": self.enabled, "days": self.days, "usage_gb": self.usage_gb, "approval": self.approval}
 
 
 def clean(value: Any) -> dict[str, Any]:
@@ -90,6 +93,8 @@ def clean(value: Any) -> dict[str, Any]:
         "days": int(number("days", 1, MAX_DAYS)),
         "usage_gb": round(number("usage_gb", MIN_USAGE_GB, MAX_USAGE_GB), 3),
         "approval": approval if approval in APPROVALS else DEFAULT["approval"],
+        # The admin's own name for it, shown in the panel only (the bot says "Free test"); one line, no control chars.
+        "name": " ".join("".join(ch for ch in str(src.get("name") or "") if ch.isprintable()).split())[:MAX_NAME],
     }
 
 
