@@ -1966,17 +1966,17 @@
     },
     "inbox": {
       "dialog": {
-        "approval": "How it is given",
+        "approval": "How It Is Given",
         "data": "Data",
         "days": "Duration",
         "daysUnit": "days",
         "enabled": "Offer a Free Test",
         "enabledHint": "People who open your link can ask for this package, once.",
-        "inherit": "Use my parent's package",
-        "preview": "What people see in the bot",
+        "inherit": "Use My Parent's Package",
+        "preview": "What People See in the Bot",
         "save": "Save",
         "saveFailed": "Could not save the package",
-        "saved": "Free test package saved",
+        "saved": "Free Test Package saved",
         "title": "Free Test Package"
       },
       "error": {
@@ -1991,16 +1991,23 @@
         "request": "Asked for the free test"
       },
       "free": {
-        "auto": "Given automatically",
+        "auto": "Given Automatically",
         "autoHint": "At once, to a Telegram account that never had a free test or an account here. Everyone else waits for you.",
         "copied": "Link copied",
-        "copy": "Copy link",
+        "copy": "Copy Link",
         "copyFailed": "Could not copy. Copy it by hand:",
+        "copyShort": "Copy",
+        "delete": "Delete",
+        "deleteTitle": "Delete Package",
+        "deleteConfirm": "Delete this free test package? The free test turns off and your link no longer offers it.",
+        "deleted": "Package deleted",
+        "deleteFailed": "Could not delete the package",
+        "openShort": "Telegram",
         "days": "{n} day | {n} days",
-        "edit": "Edit package",
+        "edit": "Edit Package",
         "inherited": "set by {name}",
-        "linkLabel": "Your free test link",
-        "manual": "You approve each request",
+        "linkLabel": "Your Free Test Link",
+        "manual": "You Approve Each Request",
         "manualHint": "Every request waits in your inbox until you approve or decline it.",
         "noRoom": "You have reached your user limit: requests wait until there is room.",
         "off": "Off",
@@ -2008,8 +2015,8 @@
         "offNoEdit": "The free test is off. Only your parent admin can turn it on.",
         "on": "On",
         "openTelegram": "Open in Telegram",
-        "qr": "QR code",
-        "setup": "Turn on",
+        "qr": "QR Code",
+        "setup": "Turn On",
         "shareHint": "Share this link. Whoever opens it sees the package in the bot and can ask for it.",
         "tag": "FREE",
         "title": "Free Test",
@@ -2022,10 +2029,10 @@
         "all": "All",
         "empty": {
           "text": "When someone opens your free test link or writes to the bot, they appear here.",
-          "title": "No conversations yet"
+          "title": "No Conversations Yet"
         },
         "filter": "Show",
-        "noMatch": "Nothing here",
+        "noMatch": "Nothing Here",
         "request": "Request",
         "requests": "Requests",
         "unread": "Unread",
@@ -2033,34 +2040,34 @@
         "you": "You:"
       },
       "noBot": {
-        "action": "Telegram settings",
+        "action": "Telegram Settings",
         "text": "People reach you, and get the free test, through the panel's Telegram bot.",
-        "title": "Set up the Telegram bot first"
+        "title": "Set Up the Telegram Bot First"
       },
-      "retry": "Try again",
+      "retry": "Try Again",
       "subtitle": "Messages from people who write to your Telegram bot, and their free test requests.",
       "thread": {
         "actionFailed": "That did not work",
         "approve": "Approve",
         "approved": "Free test given: the account was sent on Telegram",
-        "back": "Back to conversations",
+        "back": "Back to Conversations",
         "decline": "Decline",
         "declined": "Request declined",
-        "delete": "Delete conversation",
+        "delete": "Delete Conversation",
         "deleteConfirm": "Delete this conversation and its messages? The person's account stays.",
-        "empty": "No messages yet",
-        "give": "Give a free test",
+        "empty": "No Messages Yet",
+        "give": "Give a Free Test",
         "giveConfirm": "Create a free test account for {name} and send it on Telegram?",
         "more": "More",
         "pick": {
           "text": "Open a conversation to read it, answer, or decide on a free test request.",
-          "title": "Pick a conversation"
+          "title": "Pick a Conversation"
         },
         "placeholder": "Write a message…",
         "request": {
           "again": "Already had a free test, or has an account.",
           "first": "First time: never had a free test or an account here.",
-          "title": "{name} wants the free test"
+          "title": "{name} Wants the Free Test"
         },
         "send": "Send",
         "sendFailed": "The message was not sent"

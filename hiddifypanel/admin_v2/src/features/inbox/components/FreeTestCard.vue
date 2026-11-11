@@ -4,18 +4,43 @@ import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { useToast } from 'primevue/usetoast'
+import { apiErrorMessage } from '@/core/api/client'
+import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import HiddifyQrCode from '@/shared/components/HiddifyQrCode.vue'
 import PackageChips from '@/features/inbox/components/PackageChips.vue'
-import type { FreeTest } from '@/features/inbox/api'
+import { inboxApi, type FreeTest } from '@/features/inbox/api'
 
 /** This admin's free test: the package people get, whether it is on, and the link to share. */
 const props = defineProps<{ free: FreeTest }>()
-defineEmits<{ edit: [] }>()
+const emit = defineEmits<{ edit: []; saved: [free: FreeTest] }>()
 
 const { t } = useI18n()
 const toast = useToast()
+const dangerConfirm = useDangerConfirm()
 const qrVisible = ref(false)
+const deleting = ref(false)
 const pkg = computed(() => props.free.package)
+/** Only a package of this admin's own can be deleted (a parent's one is not theirs). */
+const canDelete = computed(() => props.free.can_edit && !!props.free.own && pkg.value.enabled)
+
+function askDelete() {
+  dangerConfirm({
+    header: t('inbox.free.deleteTitle'),
+    message: t('inbox.free.deleteConfirm'),
+    acceptLabel: t('inbox.free.delete'),
+    accept: async () => {
+      deleting.value = true
+      try {
+        emit('saved', await inboxApi.deletePackage())
+        toast.add({ severity: 'success', summary: t('inbox.free.deleted'), life: 2500 })
+      } catch (err) {
+        toast.add({ severity: 'error', summary: t('inbox.free.deleteFailed'), detail: apiErrorMessage(err), life: 5000 })
+      } finally {
+        deleting.value = false
+      }
+    },
+  })
+}
 
 async function copy() {
   if (!props.free.link) return
@@ -44,16 +69,29 @@ async function copy() {
         </p>
         <p v-else>{{ free.can_edit ? t('inbox.free.offHint') : t('inbox.free.offNoEdit') }}</p>
       </div>
-      <Button
-        v-if="free.can_edit"
-        :label="pkg.enabled ? t('inbox.free.edit') : t('inbox.free.setup')"
-        :icon="pkg.enabled ? 'pi pi-pencil' : 'pi pi-play'"
-        :severity="pkg.enabled ? 'secondary' : undefined"
-        :outlined="pkg.enabled"
-        size="small"
-        class="ft-edit"
-        @click="$emit('edit')"
-      />
+      <div v-if="free.can_edit" class="ft-actions">
+        <Button
+          :label="pkg.enabled ? t('inbox.free.edit') : t('inbox.free.setup')"
+          :icon="pkg.enabled ? 'pi pi-pencil' : 'pi pi-play'"
+          :severity="pkg.enabled ? 'secondary' : undefined"
+          :outlined="pkg.enabled"
+          size="small"
+          class="ft-edit"
+          @click="emit('edit')"
+        />
+        <Button
+          v-if="canDelete"
+          :label="t('inbox.free.delete')"
+          icon="pi pi-trash"
+          severity="danger"
+          outlined
+          size="small"
+          class="ft-delete"
+          :title="t('inbox.free.deleteTitle')"
+          :loading="deleting"
+          @click="askDelete"
+        />
+      </div>
     </div>
 
     <template v-if="pkg.enabled">
@@ -65,9 +103,23 @@ async function copy() {
           <button type="button" class="ft-link__url" dir="ltr" :title="t('inbox.free.copy')" @click="copy">
             <i class="pi pi-link" /><span>{{ free.link }}</span>
           </button>
-          <Button icon="pi pi-copy" severity="secondary" outlined :aria-label="t('inbox.free.copy')" :title="t('inbox.free.copy')" @click="copy" />
-          <Button icon="pi pi-qrcode" severity="secondary" outlined :aria-label="t('inbox.free.qr')" :title="t('inbox.free.qr')" @click="qrVisible = true" />
-          <Button as="a" :href="free.link" target="_blank" rel="noopener" icon="pi pi-send" severity="secondary" outlined :aria-label="t('inbox.free.openTelegram')" :title="t('inbox.free.openTelegram')" />
+        </div>
+        <!-- Each action says what it does: an icon alone was hard to tell apart -->
+        <div class="ft-link__actions">
+          <Button :label="t('inbox.free.copyShort')" icon="pi pi-copy" severity="secondary" outlined size="small" :title="t('inbox.free.copy')" @click="copy" />
+          <Button :label="t('inbox.free.qr')" icon="pi pi-qrcode" severity="secondary" outlined size="small" @click="qrVisible = true" />
+          <Button
+            as="a"
+            :href="free.link"
+            target="_blank"
+            rel="noopener"
+            :label="t('inbox.free.openShort')"
+            icon="pi pi-send"
+            severity="secondary"
+            outlined
+            size="small"
+            :title="t('inbox.free.openTelegram')"
+          />
         </div>
         <small>{{ t('inbox.free.shareHint') }}</small>
       </div>
@@ -153,10 +205,41 @@ async function copy() {
   background: var(--p-content-hover-background, var(--surface-hover));
   color: var(--text-color-secondary);
 }
+.ft-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+/* Outlines that show on every theme: the frosted Caddy and Liquid themes make the default ones near-white. */
+.ft-card :deep(.p-button-outlined.p-button-secondary) {
+  border-color: color-mix(in srgb, var(--p-text-color) 22%, transparent);
+  background: color-mix(in srgb, var(--p-content-background) 55%, transparent);
+  color: var(--p-text-color);
+}
+.ft-card :deep(.p-button-outlined.p-button-secondary:not(:disabled):hover) {
+  border-color: color-mix(in srgb, var(--p-text-color) 35%, transparent);
+  background: color-mix(in srgb, var(--p-text-color) 6%, var(--p-content-background));
+}
+.ft-delete {
+  background: color-mix(in srgb, var(--p-content-background) 55%, transparent);
+}
 .ft-link {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
+}
+.ft-link__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.ft-link__actions :deep(.p-button) {
+  min-width: 0;
+  text-decoration: none;
+}
+.ft-link__actions :deep(.p-button-label) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .ft-link__label {
   font-size: 0.8rem;
@@ -174,9 +257,10 @@ async function copy() {
   flex: 1;
   min-width: 0;
   padding: 0 0.8rem;
-  border: 1px dashed var(--surface-border);
+  min-height: 2.6rem;
+  border: 1px dashed color-mix(in srgb, var(--p-text-color) 28%, transparent);
   border-radius: 10px;
-  background: var(--surface-ground);
+  background: color-mix(in srgb, var(--p-content-background) 55%, transparent);
   color: var(--text-color);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.85rem;
@@ -192,7 +276,9 @@ async function copy() {
   white-space: nowrap;
 }
 .ft-link small {
+  margin-top: 0.15rem;
   color: var(--text-color-secondary);
+  line-height: 1.45;
 }
 .ft-warn {
   display: flex;
@@ -210,17 +296,10 @@ async function copy() {
   padding-bottom: 0.5rem;
 }
 @media (max-width: 575px) {
-  .ft-edit {
+  .ft-actions {
     width: 100%;
   }
-  .ft-link__row {
-    flex-wrap: wrap;
-  }
-  .ft-link__url {
-    flex-basis: 100%;
-    min-height: 2.6rem;
-  }
-  .ft-link__row :deep(.p-button) {
+  .ft-edit {
     flex: 1;
   }
 }

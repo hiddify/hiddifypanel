@@ -79,7 +79,7 @@ function onSaved(free: FreeTest) {
         <RouterLink :to="{ path: '/settings', hash: '#cat=telegram' }" class="inbox-nobot__link">{{ t('inbox.noBot.action') }} <i class="pi pi-arrow-right" /></RouterLink>
       </section>
 
-      <FreeTestCard v-else :free="inbox.free" @edit="editing = true" />
+      <FreeTestCard v-else :free="inbox.free" @edit="editing = true" @saved="onSaved" />
 
       <section class="inbox-panel" :class="{ 'inbox-panel--open': selected }">
         <aside class="inbox-list">

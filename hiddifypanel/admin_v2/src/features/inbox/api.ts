@@ -90,6 +90,11 @@ export const inboxApi = {
     const { data } = await getHttp().put<FreeTest>('inbox/free-test/', value ?? { inherit: true })
     return data
   },
+  /** Delete this admin's own package: it turns off and goes back to the defaults. */
+  async deletePackage(): Promise<FreeTest> {
+    const { data } = await getHttp().put<FreeTest>('inbox/free-test/', { enabled: false })
+    return data
+  },
   /** Opening a conversation marks it read. */
   async thread(id: number): Promise<Thread> {
     const { data } = await getHttp().get<Thread>(`inbox/${id}/`)
