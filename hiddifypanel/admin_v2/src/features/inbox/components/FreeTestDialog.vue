@@ -137,45 +137,60 @@ async function save(inherit = false) {
           <div class="ftd-bubble">
             <!-- A red satin ribbon across the box's top end corner with a bow on it; the tails sway, the loops breathe -->
             <span class="ftd-wrap" aria-hidden="true">
-              <svg class="ftd-bow" viewBox="0 0 100 80">
+              <svg class="ftd-bow" viewBox="60 95 440 380">
                 <defs>
-                  <linearGradient id="ftd-band" gradientUnits="userSpaceOnUse" x1="52" y1="40" x2="60" y2="30">
+                  <linearGradient id="ftd-band" gradientUnits="userSpaceOnUse" x1="300" y1="320" x2="268" y2="358">
                     <stop offset="0" stop-color="#991b1b" />
-                    <stop offset=".35" stop-color="#dc2626" />
-                    <stop offset=".6" stop-color="#f87171" />
-                    <stop offset="1" stop-color="#b91c1c" />
+                    <stop offset=".3" stop-color="#dc2626" />
+                    <stop offset=".55" stop-color="#f87171" />
+                    <stop offset=".8" stop-color="#dc2626" />
+                    <stop offset="1" stop-color="#991b1b" />
                   </linearGradient>
                   <linearGradient id="ftd-satin" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0" stop-color="#fca5a5" />
-                    <stop offset=".45" stop-color="#ef4444" />
+                    <stop offset=".4" stop-color="#ef4444" />
                     <stop offset="1" stop-color="#991b1b" />
                   </linearGradient>
-                  <linearGradient id="ftd-tail" x1="0" y1="0" x2="1" y2="0">
+                  <linearGradient id="ftd-satin-r" x1="1" y1="0" x2="0" y2="1">
                     <stop offset="0" stop-color="#b91c1c" />
-                    <stop offset=".5" stop-color="#f87171" />
+                    <stop offset=".45" stop-color="#f87171" />
+                    <stop offset="1" stop-color="#991b1b" />
+                  </linearGradient>
+                  <linearGradient id="ftd-knot" gradientUnits="userSpaceOnUse" x1="258" y1="300" x2="310" y2="338">
+                    <stop offset="0" stop-color="#b91c1c" />
+                    <stop offset=".45" stop-color="#fca5a5" />
                     <stop offset="1" stop-color="#991b1b" />
                   </linearGradient>
                 </defs>
-                <line x1="2" y1="-11" x2="114" y2="79" stroke="url(#ftd-band)" stroke-width="12" />
-                <g class="ftd-tail ftd-tail--a">
-                  <path d="M54 35 C48 45 44 55 36 68 L42 66 L44 72 C50 58 55 46 57.5 36 Z" fill="url(#ftd-tail)" />
-                </g>
-                <g class="ftd-tail ftd-tail--b">
-                  <path d="M58 36 C60 47 58 58 62 72 L66 67 L71 70 C65 57 63 46 60.5 35 Z" fill="url(#ftd-tail)" />
-                </g>
-                <g class="ftd-loops">
-                  <path d="M56 33 C46 18 30 14 27 22 C24 31 40 38 56 33 Z" fill="url(#ftd-satin)" />
-                  <path d="M56 33 C47 26 37 23 32 24.5 C38 30 48 33 56 33 Z" fill="#7f1d1d" fill-opacity=".45" />
-                  <path d="M56 33 C70 36 86 44 82 53 C78 61 63 47 56 33 Z" fill="url(#ftd-satin)" />
-                  <path d="M56 33 C66 40 75 47 78 51.5 C70 48 62 41 56 33 Z" fill="#7f1d1d" fill-opacity=".4" />
-                  <path d="M30 20 C34 16.5 41 18 46 22" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.2" stroke-linecap="round" />
-                  <path d="M66 39 C73 41 79 45 80.5 49" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.1" stroke-linecap="round" />
-                </g>
-                <g transform="rotate(-40 56 33)">
-                  <rect x="48.5" y="24.5" width="15" height="17" rx="5.5" fill="url(#ftd-satin)" stroke="#991b1b" stroke-width=".9" />
-                  <path d="M52 26 C50.5 30 50.5 36 52 40" fill="none" stroke="#7f1d1d" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round" />
-                  <path d="M60 26 C61.5 30 61.5 36 60 40" fill="none" stroke="#7f1d1d" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round" />
-                  <path d="M55 27 C54.2 31 54.2 35 55 39" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.3" stroke-linecap="round" />
+                <!-- the ribbon across the box (it runs past the viewBox; the box clips it) -->
+                <line x1="-400" y1="-336" x2="900" y2="782" stroke="url(#ftd-band)" stroke-width="52" />
+                <g class="ftd-knotted">
+                  <!-- tails: one to the left, one down; both cut in a V and swaying -->
+                  <g class="ftd-tail ftd-tail--a">
+                    <path d="M252 296 C210 268 150 250 96 244 L110 290 L78 336 C140 344 202 338 258 330 Z" fill="url(#ftd-satin)" />
+                    <path d="M252 300 C205 290 150 288 110 290 C160 300 210 312 256 322 Z" fill="#7f1d1d" fill-opacity=".25" />
+                  </g>
+                  <g class="ftd-tail ftd-tail--b">
+                    <path d="M268 336 C262 390 252 440 238 498 L270 478 L290 504 C304 452 320 402 336 350 Z" fill="url(#ftd-satin-r)" />
+                    <path d="M300 345 C292 400 282 450 270 478 C286 440 300 395 318 348 Z" fill="#7f1d1d" fill-opacity=".22" />
+                  </g>
+                  <!-- loops: up-left and right, each showing its dark inside at the open end -->
+                  <g class="ftd-loops">
+                    <path d="M262 298 C252 240 236 180 206 140 C190 126 160 130 145 150 C134 166 132 190 137 212 C172 242 222 272 254 306 Z" fill="url(#ftd-satin)" />
+                    <path d="M137 212 C150 198 176 202 194 222 C174 228 152 226 137 212 Z" fill="#7f1d1d" fill-opacity=".7" />
+                    <path d="M150 156 C168 140 192 142 206 156" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="5" stroke-linecap="round" />
+                    <path d="M304 300 C350 288 420 298 455 340 C463 362 452 402 440 440 C400 420 350 382 306 346 Z" fill="url(#ftd-satin-r)" />
+                    <path d="M455 340 C440 372 436 406 440 440 C425 410 430 372 455 340 Z" fill="#7f1d1d" fill-opacity=".7" />
+                    <path d="M330 300 C380 296 420 308 446 336" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="5" stroke-linecap="round" />
+                  </g>
+                  <!-- the thick gathered knot with its folds -->
+                  <g transform="rotate(40 283 318)">
+                    <rect x="253" y="284" width="60" height="68" rx="20" fill="url(#ftd-knot)" stroke="#7f1d1d" stroke-opacity=".5" stroke-width="2" />
+                    <path d="M262 292 C256 308 256 328 262 344" fill="none" stroke="#7f1d1d" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" />
+                    <path d="M304 292 C310 308 310 328 304 344" fill="none" stroke="#7f1d1d" stroke-opacity=".5" stroke-width="3" stroke-linecap="round" />
+                    <path d="M276 290 C272 306 272 330 276 346" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round" />
+                    <path d="M291 291 C294 306 294 330 291 345" fill="none" stroke="#7f1d1d" stroke-opacity=".3" stroke-width="2.5" stroke-linecap="round" />
+                  </g>
                 </g>
               </svg>
             </span>
@@ -358,14 +373,15 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
   gap: 0.6rem;
   align-self: flex-start;
   max-width: 100%;
-  padding: 0.8rem 5.6rem 0.8rem 1rem;
+  min-height: 5.9rem;
+  padding: 0.8rem 6.6rem 0.8rem 1rem;
   border-radius: 16px;
   border: 1px solid color-mix(in srgb, var(--ftd-gift-color) 25%, var(--surface-border));
   background: linear-gradient(135deg, color-mix(in srgb, var(--ftd-gift-color) 5%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
   box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--ftd-gift-color) 55%, transparent);
 }
 html[dir='rtl'] .ftd-bubble {
-  padding: 0.8rem 1rem 0.8rem 5.6rem;
+  padding: 0.8rem 1rem 0.8rem 6.6rem;
 }
 /* The ribbon layer: clipped to the box's rounded corners. The ribbon crosses the top end corner at 45 degrees. */
 .ftd-wrap {
@@ -377,12 +393,15 @@ html[dir='rtl'] .ftd-bubble {
 }
 .ftd-bow {
   position: absolute;
-  /* nudged toward the corner: the box clips what passes its edges */
-  top: -0.55rem;
-  inset-inline-end: -0.45rem;
-  width: 6.5rem;
-  height: 5.2rem;
-  filter: drop-shadow(0 2px 2px rgb(127 29 29 / 0.25));
+  top: 0;
+  inset-inline-end: 0;
+  width: 6.8rem;
+  height: 5.9rem;
+  /* the ribbon runs on to the box's edges, the wrap clips it */
+  overflow: visible;
+}
+.ftd-knotted {
+  filter: drop-shadow(0 4px 4px rgb(127 29 29 / 0.3));
 }
 html[dir='rtl'] .ftd-bow {
   transform: scaleX(-1);
@@ -391,7 +410,7 @@ html[dir='rtl'] .ftd-bow {
 .ftd-tail,
 .ftd-loops {
   transform-box: view-box;
-  transform-origin: 56px 33px;
+  transform-origin: 283px 318px;
 }
 .ftd-tail {
   animation: ftd-tail-sway 3.2s ease-in-out infinite;
@@ -406,10 +425,10 @@ html[dir='rtl'] .ftd-bow {
 @keyframes ftd-tail-sway {
   0%,
   100% {
-    transform: rotate(-5deg) skewX(2deg);
+    transform: rotate(-4deg) skewX(1.5deg);
   }
   50% {
-    transform: rotate(6deg) skewX(-3deg);
+    transform: rotate(4deg) skewX(-1.5deg);
   }
 }
 @keyframes ftd-loops-breathe {
