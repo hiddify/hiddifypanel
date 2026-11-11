@@ -173,15 +173,22 @@ async function save(inherit = false) {
   padding: 0;
   border: 0;
   min-width: 0;
+  container: ftd-fields / inline-size;
   transition: opacity 0.15s;
 }
 .ftd-fields:disabled {
   opacity: 0.5;
 }
+/* Days and data side by side only when both fit; on a phone they stack, so the data stepper keeps its width. */
 .ftd-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  grid-template-columns: 1fr;
   gap: 1rem;
+}
+@container ftd-fields (min-width: 28rem) {
+  .ftd-grid {
+    grid-template-columns: 1fr 1.3fr;
+  }
 }
 .ftd-field {
   display: flex;
@@ -196,11 +203,13 @@ async function save(inherit = false) {
 }
 .ftd-data {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
 }
+/* On a very narrow screen the unit picker wraps under the stepper instead of squeezing it. */
 .ftd-data > :first-child {
-  flex: 1;
+  flex: 1 1 8rem;
   min-width: 0;
 }
 .ftd-modes {
