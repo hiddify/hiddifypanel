@@ -135,7 +135,8 @@ async function save(inherit = false) {
         <div class="ftd-preview">
           <span class="ftd-label">{{ t('inbox.dialog.preview') }}</span>
           <div class="ftd-bubble">
-            <b><i class="pi pi-gift" /> {{ t('inbox.free.title') }}</b>
+            <span class="ftd-bow" aria-hidden="true" />
+            <b><i class="pi pi-gift ftd-gift" aria-hidden="true" /> {{ t('inbox.free.title') }}</b>
             <PackageChips :days="days ?? 0" :usage-gb="usageGb" tag />
           </div>
         </div>
@@ -250,7 +251,24 @@ async function save(inherit = false) {
 }
 /* Dark: the chosen segment is lighter than the track, as on iOS. */
 html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
-  background: color-mix(in srgb, var(--p-text-color) 22%, var(--p-content-background));
+  background: color-mix(in srgb, var(--ftd-unit-color) 26%, var(--p-content-background));
+}
+/* Each unit has its own soft colour (MB blue, GB violet): faint when off, a light tint of it when chosen. */
+.ftd-unit :deep(.p-togglebutton:nth-child(1)) {
+  --ftd-unit-color: var(--p-blue-500);
+}
+.ftd-unit :deep(.p-togglebutton:nth-child(2)) {
+  --ftd-unit-color: var(--p-violet-500);
+}
+.ftd-unit :deep(.p-togglebutton) {
+  color: color-mix(in srgb, var(--ftd-unit-color) 65%, var(--p-text-muted-color));
+}
+.ftd-unit :deep(.p-togglebutton:not(.p-togglebutton-checked):hover) {
+  background: color-mix(in srgb, var(--ftd-unit-color) 8%, transparent);
+}
+.ftd-unit :deep(.p-togglebutton.p-togglebutton-checked) {
+  color: var(--ftd-unit-color);
+  background: color-mix(in srgb, var(--ftd-unit-color) 14%, var(--p-content-background));
 }
 .ftd-modes {
   display: grid;
@@ -288,17 +306,91 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
   flex-direction: column;
   gap: 0.4rem;
 }
+/* The preview is a gift box: a soft rose box, a ribbon down its end side and a bow on top. */
 .ftd-bubble {
+  --ftd-gift-color: var(--p-pink-500);
+  --ftd-ribbon: color-mix(in srgb, var(--ftd-gift-color) 22%, transparent);
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   align-self: flex-start;
   max-width: 100%;
-  padding: 0.8rem 1rem;
+  margin-top: 0.5rem;
+  padding: 0.8rem 3.4rem 0.8rem 1rem;
   border-radius: 16px;
-  border-end-start-radius: 4px;
-  background: var(--surface-ground);
-  border: 1px solid var(--surface-border);
+  border: 1px solid color-mix(in srgb, var(--ftd-gift-color) 28%, var(--surface-border));
+  background:
+    linear-gradient(90deg, transparent calc(100% - 2.55rem), var(--ftd-ribbon) 0 calc(100% - 1.75rem), transparent 0),
+    linear-gradient(135deg, color-mix(in srgb, var(--ftd-gift-color) 7%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
+  box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--ftd-gift-color) 45%, transparent);
+}
+html[dir='rtl'] .ftd-bubble {
+  padding: 0.8rem 1rem 0.8rem 3.4rem;
+  background:
+    linear-gradient(270deg, transparent calc(100% - 2.55rem), var(--ftd-ribbon) 0 calc(100% - 1.75rem), transparent 0),
+    linear-gradient(225deg, color-mix(in srgb, var(--ftd-gift-color) 7%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
+}
+/* The bow: two loops sitting on the ribbon, at the box's top edge. */
+.ftd-bow {
+  position: absolute;
+  top: -0.55rem;
+  inset-inline-end: 2.15rem;
+  width: 0;
+  height: 0;
+}
+.ftd-bow::before,
+.ftd-bow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0.85rem;
+  height: 0.6rem;
+  border: 2px solid color-mix(in srgb, var(--ftd-gift-color) 70%, transparent);
+  border-radius: 60% 60% 60% 60% / 70% 70% 50% 50%;
+  background: color-mix(in srgb, var(--ftd-gift-color) 16%, var(--p-content-background));
+}
+.ftd-bow::before {
+  right: 0;
+  transform: rotate(-22deg);
+  transform-origin: right center;
+}
+.ftd-bow::after {
+  left: 0;
+  transform: rotate(22deg);
+  transform-origin: left center;
+}
+/* A lively gift icon: its colour, a soft glow and a little shake every few seconds. */
+.ftd-gift {
+  display: inline-block;
+  color: var(--ftd-gift-color);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ftd-gift-color) 45%, transparent));
+  transform-origin: 50% 80%;
+  animation: ftd-gift-wiggle 3.2s ease-in-out infinite;
+}
+@keyframes ftd-gift-wiggle {
+  0%,
+  72%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  78% {
+    transform: rotate(-14deg) scale(1.12);
+  }
+  84% {
+    transform: rotate(11deg) scale(1.12);
+  }
+  90% {
+    transform: rotate(-6deg) scale(1.05);
+  }
+  95% {
+    transform: rotate(3deg) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ftd-gift {
+    animation: none;
+  }
 }
 .ftd-inherit {
   margin-inline-end: auto;

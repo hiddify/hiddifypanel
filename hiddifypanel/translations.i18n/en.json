@@ -1970,14 +1970,14 @@
         "data": "Data",
         "days": "Duration",
         "daysUnit": "days",
-        "enabled": "Offer a free test",
+        "enabled": "Offer a Free Test",
         "enabledHint": "People who open your link can ask for this package, once.",
         "inherit": "Use my parent's package",
         "preview": "What people see in the bot",
         "save": "Save",
         "saveFailed": "Could not save the package",
         "saved": "Free test package saved",
-        "title": "Free test package"
+        "title": "Free Test Package"
       },
       "error": {
         "disabled": "The free test is off.",
