@@ -28,6 +28,7 @@ class Lang(HEnum):
     ps = auto()
     bn = auto()
     tr = auto()
+    uz = auto()
 
 
 #: Languages written right to left
