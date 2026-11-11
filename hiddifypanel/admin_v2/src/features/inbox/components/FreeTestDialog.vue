@@ -171,7 +171,12 @@ async function save(inherit = false) {
                   <path d="M30 20 C34 16.5 41 18 46 22" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.2" stroke-linecap="round" />
                   <path d="M66 39 C73 41 79 45 80.5 49" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.1" stroke-linecap="round" />
                 </g>
-                <ellipse cx="56" cy="33" rx="5" ry="6.2" transform="rotate(-40 56 33)" fill="url(#ftd-satin)" stroke="#991b1b" stroke-width=".8" />
+                <g transform="rotate(-40 56 33)">
+                  <rect x="48.5" y="24.5" width="15" height="17" rx="5.5" fill="url(#ftd-satin)" stroke="#991b1b" stroke-width=".9" />
+                  <path d="M52 26 C50.5 30 50.5 36 52 40" fill="none" stroke="#7f1d1d" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round" />
+                  <path d="M60 26 C61.5 30 61.5 36 60 40" fill="none" stroke="#7f1d1d" stroke-opacity=".45" stroke-width="1.1" stroke-linecap="round" />
+                  <path d="M55 27 C54.2 31 54.2 35 55 39" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.3" stroke-linecap="round" />
+                </g>
               </svg>
             </span>
             <b><i class="pi pi-gift ftd-gift" aria-hidden="true" /> {{ t('inbox.free.title') }}</b>
@@ -372,8 +377,9 @@ html[dir='rtl'] .ftd-bubble {
 }
 .ftd-bow {
   position: absolute;
-  top: 0;
-  inset-inline-end: 0;
+  /* nudged toward the corner: the box clips what passes its edges */
+  top: -0.55rem;
+  inset-inline-end: -0.45rem;
   width: 6.5rem;
   height: 5.2rem;
   filter: drop-shadow(0 2px 2px rgb(127 29 29 / 0.25));
