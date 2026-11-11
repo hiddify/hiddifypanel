@@ -61,11 +61,11 @@
                 @click="audience = a.key"
               >
                 <i :class="a.icon" class="bc-aud__icon" />
-                <span class="bc-aud__label">{{ t(`broadcast.audience.${a.key}`) }}</span>
+                <span class="bc-aud__label">{{ audienceLabel(a.key) }}</span>
                 <span class="bc-aud__count">{{ state.counts[a.key].toLocaleString() }}</span>
               </button>
             </div>
-            <p class="bc-hint"><i class="pi pi-info-circle" />{{ t('broadcast.audience.hint') }}</p>
+            <p class="bc-hint"><i class="pi pi-info-circle" />{{ t(admins ? 'broadcast.audience.hintAdmins' : 'broadcast.audience.hint') }}</p>
 
             <!-- The users it reaches: seen before sending, and any of them left out -->
             <template v-if="audience">
@@ -75,7 +75,7 @@
                 <span class="bc-who__n">{{ checkedIds.length.toLocaleString() }} / {{ recipientList.length.toLocaleString() }}</span>
                 <i class="pi bc-who__chev" :class="showRecipients ? 'pi-chevron-up' : 'pi-chevron-down'" />
               </button>
-              <RecipientList v-if="showRecipients" v-model="checkedIds" :users="recipientList" :loading="recipientsLoading" />
+              <RecipientList v-if="showRecipients" v-model="checkedIds" :users="recipientList" :loading="recipientsLoading" :admins="admins" />
             </template>
           </section>
 
@@ -126,7 +126,7 @@
             <input ref="fileEl" type="file" :accept="IMAGE_TYPES.join(',')" hidden @change="onPick" />
             <p v-if="imageError" class="bc-error"><i class="pi pi-exclamation-triangle" />{{ imageError }}</p>
 
-            <label class="bc-option">
+            <label v-if="!admins" class="bc-option">
               <ToggleSwitch v-model="addUsage" input-id="bc-usage" />
               <span>
                 <b>{{ t('broadcast.extra.usage') }}</b>
@@ -177,7 +177,7 @@
     </template>
 
     <Dialog v-model:visible="confirmVisible" modal :draggable="false" :header="t('broadcast.confirm.title')" :style="{ width: '26rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
-      <p class="bc-confirm">{{ t('broadcast.confirm.text', { n: recipients, audience: audience ? t(`broadcast.audience.${audience}`) : '' }, recipients) }}</p>
+      <p class="bc-confirm">{{ t('broadcast.confirm.text', { n: recipients, audience: audience ? audienceLabel(audience) : '' }, recipients) }}</p>
       <template #footer>
         <Button :label="t('common.cancel')" severity="secondary" text @click="confirmVisible = false" />
         <Button :label="t('broadcast.send.button')" icon="pi pi-send" :loading="sending" @click="send" />
@@ -207,7 +207,7 @@ import IconText from '@/shared/components/IconText.vue'
  * The whole "send a message" form: audience, text, image, preview and the sending's progress. The page shows it, and the
  * users page in a dialog for the users selected there (``ids``).
  */
-const props = withDefaults(defineProps<{ ids?: number[]; inDialog?: boolean }>(), { ids: () => [], inDialog: false })
+const props = withDefaults(defineProps<{ ids?: number[]; inDialog?: boolean; admins?: boolean }>(), { ids: () => [], inDialog: false, admins: false })
 const emit = defineEmits<{ sent: [job: BroadcastJob] }>()
 
 const { t } = useI18n()
@@ -221,7 +221,12 @@ const state = ref<BroadcastState | null>(null)
 const audience = ref<Audience | null>(null)
 const format = ref<MessageFormat>('markdown')
 const text = ref('')
-const addUsage = ref(true)
+// Admins (admins page) get the text only: the usage report is a user's
+const addUsage = ref(!props.admins)
+const kind = computed(() => (props.admins ? 'admins' : 'users'))
+function audienceLabel(key: Audience) {
+  return props.admins && key === 'selected' ? t('broadcast.audience.selectedAdmins') : t(`broadcast.audience.${key}`)
+}
 const image = ref<File | null>(null)
 const imageUrl = ref('')
 const imageError = ref('')
@@ -253,6 +258,7 @@ const audiences = computed(() => {
     { key: 'offline_1d', icon: 'pi pi-calendar' },
     { key: 'offline_1w', icon: 'pi pi-calendar-times' },
   ]
+  if (props.admins) return [{ key: 'selected' as Audience, icon: 'pi pi-shield' }]
   return selectedIds.value.length ? [{ key: 'selected' as Audience, icon: 'pi pi-check-square' }, ...list] : list
 })
 
@@ -271,7 +277,7 @@ watch(audience, async (next) => {
   if (!next) return
   recipientsLoading.value = true
   try {
-    const users = await broadcastApi.recipients(next, selectedIds.value)
+    const users = await broadcastApi.recipients(next, selectedIds.value, kind.value)
     if (seq !== recipientsSeq) return // another audience was chosen meanwhile
     recipientList.value = users
     checkedIds.value = users.map((u) => u.id)
@@ -428,6 +434,7 @@ async function send() {
       ids: everyone ? [] : checkedIds.value,
       addUsage: addUsage.value,
       image: image.value,
+      kind: kind.value,
     })
     confirmVisible.value = false
     emit('sent', job.value)
@@ -454,7 +461,7 @@ function follow(id: string) {
 
 onMounted(async () => {
   try {
-    state.value = await broadcastApi.state(selectedIds.value)
+    state.value = await broadcastApi.state(selectedIds.value, kind.value)
     if (selectedIds.value.length && state.value.counts.selected) audience.value = 'selected'
   } catch (err) {
     loadError.value = apiErrorMessage(err)

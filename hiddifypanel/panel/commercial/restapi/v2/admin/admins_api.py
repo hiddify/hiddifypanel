@@ -71,6 +71,24 @@ def _outbound_options() -> list[dict]:
     return [{"id": o.id, "name": o.name, "mode": str(o.mode), "enabled": bool(o.enabled)} for o in ob.ordered_rows(0)]
 
 
+def _telegram_id_or_400(value, target: AdminUser | None) -> int | None:
+    """A Telegram chat id, or None (cleared). One admin per Telegram account: the bot finds the admin by it."""
+    if value in (None, "", 0, "0"):
+        return None
+    try:
+        tid = int(value)
+    except (TypeError, ValueError):
+        abort(400, "Telegram ID is not valid")
+    if tid <= 0:
+        abort(400, "Telegram ID is not valid")
+    other = AdminUser.query.filter(AdminUser.telegram_id == tid)
+    if target is not None:
+        other = other.filter(AdminUser.id != target.id)
+    if other.first():
+        abort(400, "This Telegram ID is already used by another admin")
+    return tid
+
+
 def _apply_default_outbound(admin: AdminUser, value) -> None:
     """Set (or clear, with null / 0 / "") the outbound this admin's users leave through by default."""
     from hiddifypanel.models.outbound import Outbound
@@ -197,9 +215,11 @@ def _row(admin: AdminUser, actor: AdminUser, stats: dict, sub_admins: int, visib
     manageable = not is_me and admin.id != 1 and admin.id in visible_ids
     parent = admin.parent_admin
     return {
+        "id": admin.id,
         "uuid": admin.uuid,
         "name": admin.name,
         "comment": admin.comment or "",
+        "telegram_id": admin.telegram_id or None,
         "mode": str(admin.mode),
         "can_add_admin": caps.has(admin, caps.ADD_SUB_ADMINS),
         "capabilities": caps.of(admin),
@@ -269,6 +289,8 @@ def _clean_payload(body: dict, *, target: AdminUser | None) -> dict:
         out["name"] = name[:512]
     if "comment" in body:
         out["comment"] = str(body.get("comment") or "")[:512]
+    if "telegram_id" in body:
+        out["telegram_id"] = _telegram_id_or_400(body.get("telegram_id"), target)
 
     if creating and body.get("uuid"):
         value = str(body["uuid"]).strip().lower()
@@ -441,6 +463,8 @@ class AdminTreeItemApi(MethodView):
             payload["can_add_admin"] = admin.can_add_admin
         if "comment" in payload:
             admin.comment = payload.pop("comment")  # upsert skips empty text
+        if "telegram_id" in payload:
+            admin.telegram_id = payload.pop("telegram_id")  # upsert skips None: set it here so it can be cleared
         if body.get("reset_usage") and not _is_super(admin):
             admin.reset_usage()
         AdminUser.add_or_update(commit=False, old_uuid=admin.uuid, uuid=admin.uuid, **payload)

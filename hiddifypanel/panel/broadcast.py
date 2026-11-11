@@ -1,7 +1,8 @@
 """Sending a message to users over the Telegram bot: who gets it, and the sending itself (in the background, with its
 progress in redis for the page).
 
-Only users of the admin (and their sub-admins) who started the bot (a telegram id), never deleted ones.
+Only users of the admin (and their sub-admins) who started the bot (a telegram id), never deleted ones. The admins page
+sends to selected sub-admins the same way (``kind="admins"``): only ones with a telegram id, never with usage.
 """
 
 from __future__ import annotations
@@ -77,6 +78,21 @@ def _reachable_users(admin: AdminUser) -> Query:
         User.telegram_id.isnot(None),
         User.telegram_id != 0,
     )
+
+
+def _reachable_admins(admin: AdminUser) -> Query:
+    """``admin`` and its sub-admins that can get a message: not deleted, with a telegram id."""
+    return AdminUser.query.filter(
+        AdminUser.id.in_(admin.recursive_sub_admins_ids()),
+        AdminUser.deleted.isnot(True),
+        AdminUser.telegram_id.isnot(None),
+        AdminUser.telegram_id != 0,
+    )
+
+
+def admin_recipients(admin: AdminUser, admin_ids: list[int]) -> list[AdminUser]:
+    """Which of the selected sub-admins (and ``admin`` itself) can get a message."""
+    return _reachable_admins(admin).filter(AdminUser.id.in_(admin_ids)).all() if admin_ids else []
 
 
 def _offline_since(delta: datetime.timedelta) -> Callable[[User], bool]:
@@ -155,12 +171,12 @@ class Message:
     add_usage: bool = True  # each user's usage and their buttons after the text (as the bot's own messages)
 
 
-def _send_one(bot: Any, user: User, message: Message) -> None:
+def _send_one(bot: Any, user: User | AdminUser, message: Message) -> None:
     from hiddifypanel.panel.commercial.telegrambot import Usage
 
     text = message.html
     keyboard = None
-    if message.add_usage:
+    if message.add_usage and isinstance(user, User):
         keyboard = Usage.user_keyboard(user.uuid)
         text = f"{text}\n\n{Usage.get_usage_msg(user.uuid)}".strip()
     if message.image is not None:
@@ -186,19 +202,20 @@ def _with_retry(call: Callable[[], Any]) -> None:
         call()
 
 
-def start(app: Flask, admin: AdminUser, users: list[User], message: Message) -> BroadcastJob:
-    """Send ``message`` to ``users`` in the background; the job (in redis) tells the page how far it got."""
+def start(app: Flask, admin: AdminUser, users: list[User] | list[AdminUser], message: Message) -> BroadcastJob:
+    """Send ``message`` to ``users`` (or admins) in the background; the job (in redis) tells the page how far it got."""
     from hiddifypanel.panel.commercial.restapi.v1.tgbot import bot
 
     job = BroadcastJob(id=uuid_lib.uuid4().hex[:12], admin_id=admin.id, total=len(users))
     _save(job)
     user_ids = [u.id for u in users]
+    model = AdminUser if users and isinstance(users[0], AdminUser) else User
 
     def run() -> None:
         with app.app_context():
             try:
                 for uid in user_ids:
-                    user = db.session.get(User, uid)
+                    user = db.session.get(model, uid)
                     if user is None:
                         job.failed += 1
                         continue
@@ -209,7 +226,7 @@ def start(app: Flask, admin: AdminUser, users: list[User], message: Message) -> 
                         job.failed += 1
                         if len(job.errors) < MAX_ERRORS_KEPT:
                             job.errors.append({"name": user.name or str(user.id), "error": str(e)[:300]})
-                        logger.info(f"broadcast {job.id}: not sent to user {user.id}: {e}")
+                        logger.info(f"broadcast {job.id}: not sent to {model.__name__} {user.id}: {e}")
                     _save(job)
                     time.sleep(SEND_INTERVAL)
                 job.state = JobState.done

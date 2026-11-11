@@ -432,6 +432,8 @@
       "viewlogsHint": "Parcourir les fichiers journaux du système."
     },
     "admins": {
+      "messageTitle": "Message à {name}",
+      "telegramMessage": "Envoyer un message Telegram à cet admin",
       "add": "Ajouter un admin",
       "canAddHint": "Cet admin peut créer ses propres sous-admins",
       "canAddShort": "Ajoute des sous-admins",

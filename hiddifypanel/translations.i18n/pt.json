@@ -429,6 +429,8 @@
       "viewlogsHint": "Navegue pelos arquivos de log do sistema."
     },
     "admins": {
+      "messageTitle": "Mensagem para {name}",
+      "telegramMessage": "Enviar uma mensagem do Telegram a este admin",
       "add": "Adicionar administrador",
       "canAddHint": "Este administrador pode criar seus próprios subadministradores",
       "canAddShort": "Adiciona subadministradores",

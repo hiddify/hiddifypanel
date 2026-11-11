@@ -429,6 +429,8 @@
       "viewlogsHint": "浏览系统日志文件。"
     },
     "admins": {
+      "messageTitle": "发送给 {name} 的消息",
+      "telegramMessage": "向此管理员发送 Telegram 消息",
       "add": "添加管理员",
       "canAddHint": "该管理员可以创建自己的子管理员",
       "canAddShort": "添加子管理员",

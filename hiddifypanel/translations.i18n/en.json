@@ -453,6 +453,8 @@
       "viewlogsHint": "Browse the system log files."
     },
     "admins": {
+      "messageTitle": "Message to {name}",
+      "telegramMessage": "Send a Telegram message to this admin",
       "add": "Add admin",
       "canAddHint": "This admin can create its own sub-admins",
       "canAddShort": "Adds sub-admins",
@@ -813,6 +815,8 @@
     },
     "broadcast": {
       "audience": {
+        "hintAdmins": "Only admins with a Telegram ID who started your bot get the message; it has no usage report.",
+        "selectedAdmins": "Selected admins",
         "active": "Active",
         "all": "Everyone",
         "expired": "Expired or disabled",
