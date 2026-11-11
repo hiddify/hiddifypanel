@@ -135,9 +135,9 @@ async function save(inherit = false) {
         <div class="ftd-preview">
           <span class="ftd-label">{{ t('inbox.dialog.preview') }}</span>
           <div class="ftd-bubble">
-            <!-- A red satin ribbon across the box's top end corner with a bow on it; the tails sway, the loops breathe -->
+            <!-- A red satin ribbon round the box's top end corner, the box clips it; the tails sway, the loops breathe -->
             <span class="ftd-wrap" aria-hidden="true">
-              <svg class="ftd-bow" viewBox="60 95 440 380">
+              <svg class="ftd-art" viewBox="60 95 440 380">
                 <defs>
                   <linearGradient id="ftd-band" gradientUnits="userSpaceOnUse" x1="300" y1="320" x2="268" y2="358">
                     <stop offset="0" stop-color="#991b1b" />
@@ -146,6 +146,15 @@ async function save(inherit = false) {
                     <stop offset=".8" stop-color="#dc2626" />
                     <stop offset="1" stop-color="#991b1b" />
                   </linearGradient>
+                </defs>
+                <!-- the ribbon across the box (it runs past the viewBox; the box clips it) -->
+                <line x1="-400" y1="-336" x2="900" y2="782" stroke="url(#ftd-band)" stroke-width="52" />
+              </svg>
+            </span>
+            <!-- The bow sits on the corner itself, free of the box's clip: loops and tails reach past its edges -->
+            <svg class="ftd-art ftd-bow" aria-hidden="true" viewBox="60 95 440 380">
+                <defs>
+                  
                   <linearGradient id="ftd-satin" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0" stop-color="#fca5a5" />
                     <stop offset=".4" stop-color="#ef4444" />
@@ -162,8 +171,7 @@ async function save(inherit = false) {
                     <stop offset="1" stop-color="#991b1b" />
                   </linearGradient>
                 </defs>
-                <!-- the ribbon across the box (it runs past the viewBox; the box clips it) -->
-                <line x1="-400" y1="-336" x2="900" y2="782" stroke="url(#ftd-band)" stroke-width="52" />
+                
                 <g class="ftd-knotted">
                   <!-- tails: one to the left, one down; both cut in a V and swaying -->
                   <g class="ftd-tail ftd-tail--a">
@@ -193,7 +201,6 @@ async function save(inherit = false) {
                   </g>
                 </g>
               </svg>
-            </span>
             <b><i class="pi pi-gift ftd-gift" aria-hidden="true" /> {{ t('inbox.free.title') }}</b>
             <PackageChips :days="days ?? 0" :usage-gb="usageGb" tag />
           </div>
@@ -373,15 +380,15 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
   gap: 0.6rem;
   align-self: flex-start;
   max-width: 100%;
-  min-height: 5.9rem;
-  padding: 0.8rem 6.6rem 0.8rem 1rem;
+  margin-top: 1rem;
+  padding: 0.8rem 3.6rem 0.8rem 1rem;
   border-radius: 16px;
   border: 1px solid color-mix(in srgb, var(--ftd-gift-color) 25%, var(--surface-border));
   background: linear-gradient(135deg, color-mix(in srgb, var(--ftd-gift-color) 5%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
   box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--ftd-gift-color) 55%, transparent);
 }
 html[dir='rtl'] .ftd-bubble {
-  padding: 0.8rem 1rem 0.8rem 6.6rem;
+  padding: 0.8rem 1rem 0.8rem 3.6rem;
 }
 /* The ribbon layer: clipped to the box's rounded corners. The ribbon crosses the top end corner at 45 degrees. */
 .ftd-wrap {
@@ -391,19 +398,23 @@ html[dir='rtl'] .ftd-bubble {
   border-radius: inherit;
   pointer-events: none;
 }
-.ftd-bow {
+/* Band and bow share one frame, so the ribbon runs right under the knot. The knot sits just inside the corner. */
+.ftd-art {
   position: absolute;
-  top: 0;
-  inset-inline-end: 0;
-  width: 6.8rem;
-  height: 5.9rem;
-  /* the ribbon runs on to the box's edges, the wrap clips it */
+  top: -1.63rem;
+  inset-inline-end: -1.57rem;
+  width: 5rem;
+  height: 4.32rem;
   overflow: visible;
+}
+.ftd-bow {
+  z-index: 1;
+  pointer-events: none;
 }
 .ftd-knotted {
   filter: drop-shadow(0 4px 4px rgb(127 29 29 / 0.3));
 }
-html[dir='rtl'] .ftd-bow {
+html[dir='rtl'] .ftd-art {
   transform: scaleX(-1);
 }
 /* Each tail swings from the knot, softly and out of step with the other, like satin in a light breeze. */
@@ -442,7 +453,7 @@ html[dir='rtl'] .ftd-bow {
 }
 /* The box's content stays above the ribbon. */
 .ftd-bubble > b,
-.ftd-bubble > :not(.ftd-wrap) {
+.ftd-bubble > :not(.ftd-wrap, .ftd-bow) {
   position: relative;
 }
 /* A lively gift icon: its colour, a soft glow and a little shake every few seconds. */
