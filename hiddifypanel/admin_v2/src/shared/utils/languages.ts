@@ -25,6 +25,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   uk: { flag: 'ua', name: 'Українська' },
   hi: { flag: 'in', name: 'हिन्दी' },
   de: { flag: 'de', name: 'Deutsch' },
+  fr: { flag: 'fr', name: 'Français' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
