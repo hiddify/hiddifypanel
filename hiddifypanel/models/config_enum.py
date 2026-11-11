@@ -36,6 +36,7 @@ class Lang(HEnum):
     hy = auto()
     uk = auto()
     hi = auto()
+    de = auto()
 
 
 #: Languages written right to left
