@@ -31,6 +31,7 @@ class Lang(HEnum):
     uz = auto()
     az = auto()
     kk = auto()
+    ky = auto()
 
 
 #: Languages written right to left

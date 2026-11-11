@@ -19,6 +19,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   uz: { flag: 'uz', name: 'Oʻzbekcha' },
   az: { flag: 'az', name: 'Azərbaycanca' },
   kk: { flag: 'kz', name: 'Қазақша' },
+  ky: { flag: 'kg', name: 'Кыргызча' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
