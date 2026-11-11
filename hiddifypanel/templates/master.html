@@ -71,6 +71,13 @@
 
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Installed app (PWA): iOS zooms the page into any focused field under 16px. maximum-scale=1 stops that
+    // auto-zoom (iOS still allows pinch zoom); in a browser tab the viewport stays as it is.
+    if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) {
+      document.querySelector('meta[name=viewport]').content += ', maximum-scale=1'
+    }
+  </script>
   {% endblock %}
   <!-- Bootstrap 4 -->
   {% block styles %}
