@@ -15,6 +15,7 @@ export const LANGUAGE_LOOK: Record<string, { flag: string; name: string }> = {
   ur: { flag: 'pk', name: 'اردو' },
   ps: { flag: 'af', name: 'پښتو' },
   bn: { flag: 'bd', name: 'বাংলা' },
+  tr: { flag: 'tr', name: 'Türkçe' },
 }
 
 /** Languages written right to left (as RTL_LANGS in models/config_enum.py). */
