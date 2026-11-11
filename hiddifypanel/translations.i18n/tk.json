@@ -298,6 +298,7 @@
       "dashboard_v2": "Indiki",
       "domain": "Domenler",
       "home": "Dolandyryş paneli",
+      "inbox": "Gelen guty",
       "proxy": "Proksiler",
       "proxy_stats": "Proksileriň ýagdaýy",
       "support": "Kömek",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Goşmaça abuna salgylaryny goş",
         "add_sub_admins": "Kömekçi adminleri goş",
         "modify_domains": "Domenleri dolandyr",
+        "modify_free_package": "Mugt synagy kesgitlemek",
         "modify_outbounds": "Çykyşlary dolandyr",
         "modify_user_extra": "Ulanyjy sahypasyny ýöriteleşdir",
         "override_preferred_outbound": "Saýlanan çykyşy üýtget"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Olaryň ulanyjylary üçin goşmaça konfigleri ýa-da abuna salgylaryny dakyň.",
         "add_sub_admins": "Siziň goýan çäkleriňizde öz agentlerini dörediň.",
         "modify_domains": "Bu panelde domenleri goşuň we üýtgediň.",
+        "modify_free_package": "Telegram boty üçin öz mugt synag paketini sazlaýar; ol bolmasa, siziňki ulanylýar.",
         "modify_outbounds": "Serweriň çykyşlaryny sazlaň (WARP, SOCKS, …).",
         "modify_user_extra": "Ulanyjy sahypasynda markany we goşmaça parametrleri üýtgediň.",
         "override_preferred_outbound": "Ulanyjynyň trafiginiň haýsy çykyşdan geçjekdigini saýlaň."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify web-de",
       "text": "HiddifyManager",
       "website": "Web sahypa"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Nädip berilýär",
+        "data": "Maglumat",
+        "days": "Dowamlylygy",
+        "daysUnit": "gün",
+        "enabled": "Mugt synag hödürle",
+        "enabledHint": "Salgyňyzy açan adamlar bu paketi bir gezek sorap bilerler.",
+        "inherit": "Ata adminimiň paketini ulan",
+        "preview": "Botda adamlaryň görýän zady",
+        "save": "Ýatda sakla",
+        "saveFailed": "Paketi ýatda saklap bolmady",
+        "saved": "Mugt synag paketi ýatda saklandy",
+        "title": "Mugt synag paketi"
+      },
+      "error": {
+        "disabled": "Mugt synag öçük.",
+        "no_room": "Ýene bir ulanyjy üçin ýer ýok (ulanyjy çägiňiz).",
+        "not_pending": "Bu soraga eýýäm jogap berildi.",
+        "read_only": "Ulanyjylar esasy panelde dolandyrylýar."
+      },
+      "event": {
+        "declined": "Haýyş ret edildi",
+        "granted": "Mugt synagy aldy",
+        "request": "Mugt synag sorady"
+      },
+      "free": {
+        "auto": "Awtomatik berilýär",
+        "autoHint": "Mugt synag ýa-da bu ýerde hasaby bolmadyk Telegram hasabyna derrew berilýär. Galanlar siziň jogabyňyzy garaşýar.",
+        "copied": "Salga göçürildi",
+        "copy": "Salgyny göçür",
+        "copyFailed": "Göçürip bolmady. Ony özüňiz göçüriň:",
+        "days": "{n} gün | {n} gün",
+        "edit": "Paketi üýtget",
+        "inherited": "{name} tarapyndan sazlanan",
+        "linkLabel": "Mugt synag salgyňyz",
+        "manual": "Her haýyşy özüňiz tassyklaýarsyňyz",
+        "manualHint": "Her haýyş siziň tassyklamagyňyzy ýa-da ret etmegiňizi gelen gutuda garaşýar.",
+        "noRoom": "Ulanyjy çägiňize ýetdiňiz: haýyşlar ýer boşanýança garaşýar.",
+        "off": "Öçük",
+        "offHint": "Salgyňyzy açan adamlara mugt synagyň elýeterli däldigi aýdylýar.",
+        "offNoEdit": "Mugt synag öçük. Ony diňe ata adminiňiz açyp biler.",
+        "on": "Açyk",
+        "openTelegram": "Telegram-da aç",
+        "qr": "QR kod",
+        "setup": "Aç",
+        "shareHint": "Bu salgyny paýlaşyň. Ony açan adam botda paketi görýär we ony sorap biler.",
+        "tag": "MUGT",
+        "title": "Mugt synag",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Hemmesi",
+        "empty": {
+          "text": "Kimdir biri mugt synag salgyňyzy açanda ýa-da bota ýazanda, şu ýerde peýda bolýar.",
+          "title": "Entek ýazyşma ýok"
+        },
+        "filter": "Görkez",
+        "noMatch": "Bu ýerde hiç zat ýok",
+        "request": "Haýyş",
+        "requests": "Haýyşlar",
+        "unread": "Okalmadyk",
+        "unreadCount": "{n} okalmadyk",
+        "you": "Siz:"
+      },
+      "noBot": {
+        "action": "Telegram sazlamalary",
+        "text": "Adamlar size we mugt synaga panelin Telegram boty arkaly ýetýärler.",
+        "title": "Ilki Telegram botuny guruň"
+      },
+      "retry": "Ýene synanyş",
+      "subtitle": "Telegram botyňyza ýazýan adamlaryň habarlary we olaryň mugt synag haýyşlary.",
+      "thread": {
+        "actionFailed": "Bu şowly bolmady",
+        "approve": "Tassykla",
+        "approved": "Mugt synag berildi: hasap Telegram-da iberildi",
+        "back": "Ýazyşmalara dolan",
+        "decline": "Ret et",
+        "declined": "Haýyş ret edildi",
+        "delete": "Ýazyşmany poz",
+        "deleteConfirm": "Bu ýazyşma we onuň habarlary pozulsunmy? Adamyň hasaby galýar.",
+        "empty": "Entek habar ýok",
+        "give": "Mugt synag ber",
+        "giveConfirm": "{name} üçin mugt synag hasaby döredilip, Telegram-da iberilsinmi?",
+        "more": "Başga",
+        "pick": {
+          "text": "Okamak, jogap bermek ýa-da mugt synag haýyşy barada karar bermek üçin ýazyşmany açyň.",
+          "title": "Ýazyşma saýlaň"
+        },
+        "placeholder": "Habar ýazyň…",
+        "request": {
+          "again": "Eýýäm mugt synag alypdyr ýa-da hasaby bar.",
+          "first": "Ilkinji gezek: bu ýerde mugt synag ýa-da hasap hiç haçan bolmandyr.",
+          "title": "{name} mugt synag isleýär"
+        },
+        "send": "Iber",
+        "sendFailed": "Habar iberilmedi"
+      },
+      "title": "Gelen guty"
     },
     "legacy": {
       "loading": "Ýüklenýär…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Ätiýaçlyk nusga taýýarlanýar…",
     "btn_backup": "💾 Ätiýaçlyk nusga",
     "btn_check": "🩺 Ýagdaýy barla",
+    "btn_free": "🎁 Mugt synag",
     "btn_new": "➕ Täze ulanyjy",
     "btn_panel": "🖥 Paneli aç",
     "btn_status": "📊 Serwer ýagdaýy",
@@ -4099,6 +4206,30 @@
     "f_ended": "Gutardy",
     "f_expiring": "Gutarmaga ýakyn",
     "f_online": "Onlaýn",
+    "free_again": "📨 Ýene bir mugt synag sora",
+    "free_data": "<b>{amount}</b> maglumat",
+    "free_days": "<b>{n}</b> gün",
+    "free_declined": "Mugt synag haýyşyňyz tassyklanmady. Bu barada soramak üçin şu ýere habar ýazyp bilersiňiz.",
+    "free_get": "🎁 Mugt synagymy al",
+    "free_hint_auto": "Düwmä basyň, hasabyňyz birnäçe sekuntda taýýar bolar. Töleg gerek däl.",
+    "free_hint_manual": "Haýyşyňyzy ibermek üçin düwmä basyň. Hasabyňyz tassyklanan badyna şu ýere gelýär.",
+    "free_hint_used": "Bu Telegram hasabynda mugt synag eýýäm ulanyldy ýa-da onuň hasaby bar. Ýene biri üçin tassyklama gerek.",
+    "free_link_auto": "⚡️ Awtomatik berilýär, her Telegram hasabyna bir gezek.",
+    "free_link_inherited": "<b>{name}</b> tarapyndan sazlanan.",
+    "free_link_manual": "✋ Her haýyş siziň tassyklamagyňyzy garaşýar.",
+    "free_link_off": "Mugt synag öçük. Ony panelde açyň: Gelen guty → Mugt synag.",
+    "free_link_share": "Bu salgyny paýlaşyň. Ony açan adam bu paketi görýär we ony sorap biler.",
+    "free_link_title": "Mugt synag",
+    "free_link_waiting": "<b>{n}</b> haýyş sizi garaşýar.",
+    "free_off": "Mugt synag häzir elýeterli däl. Şeýle-de bolsa, şu ýere habar ýazyp bilersiňiz.",
+    "free_pending": "Haýyşyňyz iberildi",
+    "free_ready": "Mugt synagyňyz taýýar!",
+    "free_request": "📨 Mugt synag sora",
+    "free_tag": "MUGT",
+    "free_title": "Mugt synag",
+    "free_wait": "Hasabyňyz tassyklanan badyna şu çata gelýär.",
+    "free_write": "💬 Habar ýaz",
+    "free_write_hint": "Habaryňyzy şu çatda ýazyp iberiň. Ol göni goldaw hyzmatyna barýar, jogap bolsa şu ýere gelýär.",
     "gb": "GB",
     "gone": "Bu ulanyjy indi ýok.",
     "last_online": "Soňky onlaýn",
@@ -4112,7 +4243,12 @@
     "links_hint": "Göçürmek üçin salga basyň.",
     "links_title": "Salgylar",
     "manage": "⚙️ Dolandyr",
+    "mb": "MB",
     "menu": "🏠 Menýu",
+    "msg_from": "Goldaw",
+    "msg_new": "{name} ýazdy:",
+    "msg_sent": "Habaryňyz iberildi.",
+    "msg_slow": "Habar gaty köp. Bir minut garaşyň.",
     "my_page": "🌐 Meniň sahypam",
     "never": "hiç haçan",
     "new_count": "👥 Näçe ulanyjy?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Täzele",
     "renew": "♻️ Täzele",
     "renewed": "Paket täzelendi",
+    "reply": "↩️ Jogap ber",
+    "reply_failed": "<b>{name}</b> adama jogabyňyz ýetirilmedi.",
+    "reply_prompt": "{name} adama jogabyňyzy ýazyp iberiň.",
+    "reply_sent": "Jogabyňyz <b>{name}</b> adama iberildi.",
+    "req_approve": "✅ Tassykla",
+    "req_approved": "Tassyklandy: {name} mugt synagy aldy.",
+    "req_auto": "Mugt synag berildi",
+    "req_decline": "✖️ Ret et",
+    "req_declined": "Ret edildi: {name} habarly edildi.",
+    "req_done": "Bu soraga eýýäm jogap berildi.",
+    "req_no_room": "Ýene bir ulanyjy üçin ýeriňiz ýok (ulanyjy çägiňiz).",
+    "req_title": "Mugt synag haýyşy",
     "reset_usage": "🔄 Ulanyşy täzeden sazla",
     "resets_in": "Ulanyş {n} günden täzeden sazlanýar",
     "search": "🔍 Gözle",
@@ -4287,6 +4435,7 @@
       "label": "\"Has köp gör\" düwmesiniň teksti"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "\"Has köp gör\" düwmesini görkez"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Goldaw gutusynyň ady"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Goldaw gutusynyň adyny görkez"
     },
     "branding_title": {

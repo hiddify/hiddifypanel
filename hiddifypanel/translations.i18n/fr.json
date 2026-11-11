@@ -298,6 +298,7 @@
       "dashboard_v2": "Nouveau",
       "domain": "Domaines",
       "home": "Tableau de bord",
+      "inbox": "Boîte de réception",
       "proxy": "Proxys",
       "proxy_stats": "État des proxys",
       "support": "Aide",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Ajouter des liens d'abonnement supplémentaires",
         "add_sub_admins": "Ajouter des sous-administrateurs",
         "modify_domains": "Gérer les domaines",
+        "modify_free_package": "Définir l'essai gratuit",
         "modify_outbounds": "Gérer les sorties",
         "modify_user_extra": "Personnaliser la page utilisateur",
         "override_preferred_outbound": "Changer la sortie préférée"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Joindre des configurations ou des liens d'abonnement supplémentaires pour leurs utilisateurs.",
         "add_sub_admins": "Créer leurs propres agents dans les limites que vous définissez.",
         "modify_domains": "Ajouter et modifier les domaines de ce panneau.",
+        "modify_free_package": "Définit son propre forfait d'essai gratuit pour le bot Telegram ; sans cela, le vôtre s'applique.",
         "modify_outbounds": "Configurer les sorties du serveur (WARP, SOCKS, …).",
         "modify_user_extra": "Modifier l'image de marque et les paramètres supplémentaires de la page utilisateur.",
         "override_preferred_outbound": "Choisir par quelle sortie passe le trafic d’un utilisateur."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify sur le web",
       "text": "HiddifyManager",
       "website": "Site web"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Mode d'attribution",
+        "data": "Données",
+        "days": "Durée",
+        "daysUnit": "jours",
+        "enabled": "Proposer un essai gratuit",
+        "enabledHint": "Les personnes qui ouvrent votre lien peuvent demander ce forfait, une seule fois.",
+        "inherit": "Utiliser le forfait de mon parent",
+        "preview": "Ce que les gens voient dans le bot",
+        "save": "Enregistrer",
+        "saveFailed": "Impossible d'enregistrer le forfait",
+        "saved": "Forfait d'essai gratuit enregistré",
+        "title": "Forfait d'essai gratuit"
+      },
+      "error": {
+        "disabled": "L'essai gratuit est désactivé.",
+        "no_room": "Plus de place pour un autre utilisateur (votre limite d'utilisateurs).",
+        "not_pending": "Cette demande a déjà reçu une réponse.",
+        "read_only": "Les utilisateurs sont gérés sur le panneau parent."
+      },
+      "event": {
+        "declined": "Demande refusée",
+        "granted": "A reçu l'essai gratuit",
+        "request": "A demandé l'essai gratuit"
+      },
+      "free": {
+        "auto": "Attribué automatiquement",
+        "autoHint": "Immédiatement, à un compte Telegram qui n'a jamais eu d'essai gratuit ni de compte ici. Les autres attendent votre décision.",
+        "copied": "Lien copié",
+        "copy": "Copier le lien",
+        "copyFailed": "Copie impossible. Copiez-le manuellement :",
+        "days": "{n} jour | {n} jours",
+        "edit": "Modifier le forfait",
+        "inherited": "défini par {name}",
+        "linkLabel": "Votre lien d'essai gratuit",
+        "manual": "Vous approuvez chaque demande",
+        "manualHint": "Chaque demande reste dans votre boîte de réception jusqu'à ce que vous l'approuviez ou la refusiez.",
+        "noRoom": "Vous avez atteint votre limite d'utilisateurs : les demandes attendent qu'une place se libère.",
+        "off": "Désactivé",
+        "offHint": "Les personnes qui ouvrent votre lien apprennent que l'essai gratuit n'est pas disponible.",
+        "offNoEdit": "L'essai gratuit est désactivé. Seul votre administrateur parent peut l'activer.",
+        "on": "Activé",
+        "openTelegram": "Ouvrir dans Telegram",
+        "qr": "Code QR",
+        "setup": "Activer",
+        "shareHint": "Partagez ce lien. Toute personne qui l'ouvre voit le forfait dans le bot et peut le demander.",
+        "tag": "GRATUIT",
+        "title": "Essai gratuit",
+        "unit": {
+          "gb": "Go",
+          "mb": "Mo"
+        }
+      },
+      "list": {
+        "all": "Tout",
+        "empty": {
+          "text": "Lorsque quelqu'un ouvre votre lien d'essai gratuit ou écrit au bot, il apparaît ici.",
+          "title": "Aucune conversation pour l'instant"
+        },
+        "filter": "Afficher",
+        "noMatch": "Rien ici",
+        "request": "Demande",
+        "requests": "Demandes",
+        "unread": "Non lus",
+        "unreadCount": "{n} non lu(s)",
+        "you": "Vous :"
+      },
+      "noBot": {
+        "action": "Paramètres Telegram",
+        "text": "Les gens vous contactent, et obtiennent l'essai gratuit, via le bot Telegram du panneau.",
+        "title": "Configurez d'abord le bot Telegram"
+      },
+      "retry": "Réessayer",
+      "subtitle": "Messages des personnes qui écrivent à votre bot Telegram, et leurs demandes d'essai gratuit.",
+      "thread": {
+        "actionFailed": "Cela n'a pas fonctionné",
+        "approve": "Approuver",
+        "approved": "Essai gratuit attribué : le compte a été envoyé sur Telegram",
+        "back": "Retour aux conversations",
+        "decline": "Refuser",
+        "declined": "Demande refusée",
+        "delete": "Supprimer la conversation",
+        "deleteConfirm": "Supprimer cette conversation et ses messages ? Le compte de la personne est conservé.",
+        "empty": "Aucun message pour l'instant",
+        "give": "Donner un essai gratuit",
+        "giveConfirm": "Créer un compte d'essai gratuit pour {name} et l'envoyer sur Telegram ?",
+        "more": "Plus",
+        "pick": {
+          "text": "Ouvrez une conversation pour la lire, répondre ou décider d'une demande d'essai gratuit.",
+          "title": "Choisissez une conversation"
+        },
+        "placeholder": "Écrire un message…",
+        "request": {
+          "again": "A déjà eu un essai gratuit, ou possède un compte.",
+          "first": "Première fois : n'a jamais eu d'essai gratuit ni de compte ici.",
+          "title": "{name} souhaite l'essai gratuit"
+        },
+        "send": "Envoyer",
+        "sendFailed": "Le message n'a pas été envoyé"
+      },
+      "title": "Boîte de réception"
     },
     "legacy": {
       "loading": "Chargement…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Préparation de la sauvegarde…",
     "btn_backup": "💾 Sauvegarde",
     "btn_check": "🩺 Vérifier l'état",
+    "btn_free": "🎁 Essai gratuit",
     "btn_new": "➕ Nouvel utilisateur",
     "btn_panel": "🖥 Ouvrir le panneau",
     "btn_status": "📊 État du serveur",
@@ -4099,6 +4206,30 @@
     "f_ended": "Terminés",
     "f_expiring": "Bientôt expirés",
     "f_online": "En ligne",
+    "free_again": "📨 Demander un autre essai gratuit",
+    "free_data": "<b>{amount}</b> de données",
+    "free_days": "<b>{n}</b> jours",
+    "free_declined": "Votre demande d'essai gratuit n'a pas été approuvée. Vous pouvez écrire un message ici pour vous renseigner.",
+    "free_get": "🎁 Obtenir mon essai gratuit",
+    "free_hint_auto": "Appuyez sur le bouton et votre compte est prêt en quelques secondes. Aucun paiement n'est nécessaire.",
+    "free_hint_manual": "Appuyez sur le bouton pour envoyer votre demande. Votre compte arrive ici dès qu'elle est approuvée.",
+    "free_hint_used": "Un essai gratuit a déjà été utilisé sur ce compte Telegram, ou celui-ci possède un compte. Un autre nécessite une approbation.",
+    "free_link_auto": "⚡️ Attribué automatiquement, une fois par compte Telegram.",
+    "free_link_inherited": "Défini par <b>{name}</b>.",
+    "free_link_manual": "✋ Chaque demande attend votre approbation.",
+    "free_link_off": "L'essai gratuit est désactivé. Activez-le dans le panneau : Boîte de réception → Essai gratuit.",
+    "free_link_share": "Partagez ce lien. Toute personne qui l'ouvre voit ce forfait et peut le demander.",
+    "free_link_title": "Essai gratuit",
+    "free_link_waiting": "<b>{n}</b> demandes vous attendent.",
+    "free_off": "L'essai gratuit n'est pas disponible pour le moment. Vous pouvez toujours écrire un message ici.",
+    "free_pending": "Votre demande a été envoyée",
+    "free_ready": "Votre essai gratuit est prêt !",
+    "free_request": "📨 Demander l'essai gratuit",
+    "free_tag": "GRATUIT",
+    "free_title": "Essai gratuit",
+    "free_wait": "Votre compte arrive dans cette conversation dès que la demande est approuvée.",
+    "free_write": "💬 Écrire un message",
+    "free_write_hint": "Tapez simplement votre message dans cette conversation et envoyez-le. Il va directement au support, et la réponse arrive ici.",
     "gb": "GB",
     "gone": "Cet utilisateur n'existe plus.",
     "last_online": "Dernière connexion",
@@ -4112,7 +4243,12 @@
     "links_hint": "Touchez un lien pour le copier.",
     "links_title": "Liens",
     "manage": "⚙️ Gérer",
+    "mb": "Mo",
     "menu": "🏠 Menu",
+    "msg_from": "Assistance",
+    "msg_new": "{name} a écrit :",
+    "msg_sent": "Votre message a été envoyé.",
+    "msg_slow": "Trop de messages. Veuillez patienter une minute.",
     "my_page": "🌐 Ma page",
     "never": "jamais",
     "new_count": "👥 Combien d'utilisateurs ?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Actualiser",
     "renew": "♻️ Renouveler",
     "renewed": "Forfait renouvelé",
+    "reply": "↩️ Répondre",
+    "reply_failed": "Votre réponse à <b>{name}</b> n'a pas été remise.",
+    "reply_prompt": "Saisissez votre réponse à {name} et envoyez-la.",
+    "reply_sent": "Votre réponse a été envoyée à <b>{name}</b>.",
+    "req_approve": "✅ Approuver",
+    "req_approved": "Approuvé : {name} a reçu l'essai gratuit.",
+    "req_auto": "Essai gratuit attribué",
+    "req_decline": "✖️ Refuser",
+    "req_declined": "Refusé : {name} en a été informé.",
+    "req_done": "Cette demande a déjà reçu une réponse.",
+    "req_no_room": "Vous n'avez plus de place pour un autre utilisateur (votre limite d'utilisateurs).",
+    "req_title": "Demande d'essai gratuit",
     "reset_usage": "🔄 Réinitialiser la consommation",
     "resets_in": "La consommation est réinitialisée dans {n} jours",
     "search": "🔍 Rechercher",
@@ -4287,6 +4435,7 @@
       "label": "Texte du bouton « Voir plus »"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "Afficher le bouton « Voir plus »"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Titre de l'encadré d'assistance"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Afficher le titre de l'encadré d'assistance"
     },
     "branding_title": {

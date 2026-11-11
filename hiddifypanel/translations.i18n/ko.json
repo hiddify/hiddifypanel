@@ -298,6 +298,7 @@
       "dashboard_v2": "차세대",
       "domain": "도메인",
       "home": "대시보드",
+      "inbox": "받은 메시지함",
       "proxy": "프록시",
       "proxy_stats": "프록시 상태",
       "support": "도움말",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "추가 구독 링크 추가",
         "add_sub_admins": "하위 관리자 추가",
         "modify_domains": "도메인 관리",
+        "modify_free_package": "무료 체험 설정",
         "modify_outbounds": "아웃바운드 관리",
         "modify_user_extra": "사용자 페이지 사용자 지정",
         "override_preferred_outbound": "선호 아웃바운드 변경"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "사용자를 위한 추가 구성이나 구독 링크를 붙입니다.",
         "add_sub_admins": "설정한 한도 안에서 자신의 에이전트를 만듭니다.",
         "modify_domains": "이 패널에서 도메인을 추가하고 편집합니다.",
+        "modify_free_package": "Telegram 봇의 무료 체험 패키지를 직접 설정합니다. 설정하지 않으면 내 패키지가 적용됩니다.",
         "modify_outbounds": "서버 아웃바운드(WARP, SOCKS 등)를 설정합니다.",
         "modify_user_extra": "사용자 페이지의 브랜딩과 추가 매개변수를 변경합니다.",
         "override_preferred_outbound": "사용자의 트래픽이 어느 아웃바운드로 나갈지 선택합니다."
@@ -1956,6 +1959,109 @@
       "links": "웹에서 만나는 Hiddify",
       "text": "HiddifyManager",
       "website": "웹사이트"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "지급 방식",
+        "data": "데이터",
+        "days": "기간",
+        "daysUnit": "일",
+        "enabled": "무료 체험 제공",
+        "enabledHint": "내 링크를 여는 사람은 이 패키지를 한 번 요청할 수 있습니다.",
+        "inherit": "상위 관리자의 패키지 사용",
+        "preview": "봇에 표시되는 내용",
+        "save": "저장",
+        "saveFailed": "패키지를 저장하지 못했습니다",
+        "saved": "무료 체험 패키지를 저장했습니다",
+        "title": "무료 체험 패키지"
+      },
+      "error": {
+        "disabled": "무료 체험이 꺼져 있습니다.",
+        "no_room": "사용자를 더 추가할 수 없습니다(사용자 한도).",
+        "not_pending": "이미 답변한 요청입니다.",
+        "read_only": "사용자는 상위 패널에서 관리됩니다."
+      },
+      "event": {
+        "declined": "요청이 거절되었습니다",
+        "granted": "무료 체험을 받았습니다",
+        "request": "무료 체험을 요청했습니다"
+      },
+      "free": {
+        "auto": "자동 지급",
+        "autoHint": "무료 체험이나 이곳 계정이 없었던 Telegram 계정에는 즉시 지급됩니다. 그 외 사람은 내 승인을 기다립니다.",
+        "copied": "링크를 복사했습니다",
+        "copy": "링크 복사",
+        "copyFailed": "복사하지 못했습니다. 직접 복사하세요:",
+        "days": "{n}일 | {n}일",
+        "edit": "패키지 편집",
+        "inherited": "{name} 설정",
+        "linkLabel": "내 무료 체험 링크",
+        "manual": "요청마다 직접 승인",
+        "manualHint": "모든 요청은 내가 승인하거나 거절할 때까지 받은 메시지함에서 기다립니다.",
+        "noRoom": "사용자 한도에 도달했습니다. 여유가 생길 때까지 요청은 대기합니다.",
+        "off": "꺼짐",
+        "offHint": "내 링크를 여는 사람에게는 무료 체험을 이용할 수 없다고 안내됩니다.",
+        "offNoEdit": "무료 체험이 꺼져 있습니다. 상위 관리자만 켤 수 있습니다.",
+        "on": "켜짐",
+        "openTelegram": "Telegram에서 열기",
+        "qr": "QR 코드",
+        "setup": "켜기",
+        "shareHint": "이 링크를 공유하세요. 링크를 연 사람은 봇에서 패키지를 보고 요청할 수 있습니다.",
+        "tag": "무료",
+        "title": "무료 체험",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "전체",
+        "empty": {
+          "text": "누군가 무료 체험 링크를 열거나 봇에 메시지를 보내면 여기에 표시됩니다.",
+          "title": "아직 대화가 없습니다"
+        },
+        "filter": "보기",
+        "noMatch": "표시할 내용이 없습니다",
+        "request": "요청",
+        "requests": "요청",
+        "unread": "읽지 않음",
+        "unreadCount": "읽지 않음 {n}개",
+        "you": "나:"
+      },
+      "noBot": {
+        "action": "Telegram 설정",
+        "text": "사람들은 패널의 Telegram 봇을 통해 나에게 연락하고 무료 체험을 받습니다.",
+        "title": "먼저 Telegram 봇을 설정하세요"
+      },
+      "retry": "다시 시도",
+      "subtitle": "내 Telegram 봇으로 보낸 메시지와 무료 체험 요청입니다.",
+      "thread": {
+        "actionFailed": "처리하지 못했습니다",
+        "approve": "승인",
+        "approved": "무료 체험을 지급했습니다. 계정을 Telegram으로 보냈습니다",
+        "back": "대화 목록으로 돌아가기",
+        "decline": "거절",
+        "declined": "요청이 거절되었습니다",
+        "delete": "대화 삭제",
+        "deleteConfirm": "이 대화와 메시지를 삭제할까요? 상대방의 계정은 그대로 유지됩니다.",
+        "empty": "아직 메시지가 없습니다",
+        "give": "무료 체험 지급",
+        "giveConfirm": "{name}님에게 무료 체험 계정을 만들어 Telegram으로 보낼까요?",
+        "more": "더 보기",
+        "pick": {
+          "text": "대화를 열어 읽고, 답장하고, 무료 체험 요청을 처리하세요.",
+          "title": "대화를 선택하세요"
+        },
+        "placeholder": "메시지를 입력하세요…",
+        "request": {
+          "again": "이미 무료 체험을 받았거나 계정이 있습니다.",
+          "first": "처음 요청: 무료 체험이나 이곳 계정이 없었습니다.",
+          "title": "{name}님이 무료 체험을 원합니다"
+        },
+        "send": "보내기",
+        "sendFailed": "메시지를 보내지 못했습니다"
+      },
+      "title": "받은 메시지함"
     },
     "legacy": {
       "loading": "불러오는 중…",
@@ -4073,6 +4179,7 @@
     "backup_working": "백업을 준비하는 중…",
     "btn_backup": "💾 백업",
     "btn_check": "🩺 상태 확인",
+    "btn_free": "🎁 무료 체험",
     "btn_new": "➕ 새 사용자",
     "btn_panel": "🖥 패널 열기",
     "btn_status": "📊 서버 상태",
@@ -4099,6 +4206,30 @@
     "f_ended": "종료됨",
     "f_expiring": "곧 종료",
     "f_online": "온라인",
+    "free_again": "📨 무료 체험 다시 요청",
+    "free_data": "데이터 <b>{amount}</b>",
+    "free_days": "<b>{n}</b>일",
+    "free_declined": "무료 체험 요청이 승인되지 않았습니다. 이곳에 메시지를 보내 문의할 수 있습니다.",
+    "free_get": "🎁 무료 체험 받기",
+    "free_hint_auto": "버튼을 누르면 몇 초 안에 계정이 준비됩니다. 결제는 필요 없습니다.",
+    "free_hint_manual": "버튼을 눌러 요청을 보내세요. 승인되는 대로 계정이 이곳으로 전달됩니다.",
+    "free_hint_used": "이 Telegram 계정은 이미 무료 체험을 사용했거나 계정이 있습니다. 다시 받으려면 승인이 필요합니다.",
+    "free_link_auto": "⚡️ 자동 지급, Telegram 계정당 한 번.",
+    "free_link_inherited": "<b>{name}</b> 설정.",
+    "free_link_manual": "✋ 요청마다 내 승인을 기다립니다.",
+    "free_link_off": "무료 체험이 꺼져 있습니다. 패널에서 켜세요: 받은 메시지함 → 무료 체험.",
+    "free_link_share": "이 링크를 공유하세요. 링크를 연 사람은 이 패키지를 보고 요청할 수 있습니다.",
+    "free_link_title": "무료 체험",
+    "free_link_waiting": "요청 <b>{n}</b>건이 기다리고 있습니다.",
+    "free_off": "지금은 무료 체험을 이용할 수 없습니다. 메시지는 계속 보낼 수 있습니다.",
+    "free_pending": "요청을 보냈습니다",
+    "free_ready": "무료 체험이 준비되었습니다!",
+    "free_request": "📨 무료 체험 요청",
+    "free_tag": "무료",
+    "free_title": "무료 체험",
+    "free_wait": "승인되는 대로 계정이 이 채팅으로 전달됩니다.",
+    "free_write": "💬 메시지 보내기",
+    "free_write_hint": "이 채팅에 메시지를 입력해서 보내세요. 지원팀에 바로 전달되고, 답변은 이곳으로 옵니다.",
     "gb": "GB",
     "gone": "이 사용자는 더 이상 존재하지 않습니다.",
     "last_online": "마지막 접속",
@@ -4112,7 +4243,12 @@
     "links_hint": "링크를 누르면 복사됩니다.",
     "links_title": "링크",
     "manage": "⚙️ 관리",
+    "mb": "MB",
     "menu": "🏠 메뉴",
+    "msg_from": "지원팀",
+    "msg_new": "{name}님의 메시지:",
+    "msg_sent": "메시지를 보냈습니다.",
+    "msg_slow": "메시지가 너무 많습니다. 1분 뒤에 다시 시도해 주세요.",
     "my_page": "🌐 내 페이지",
     "never": "없음",
     "new_count": "👥 몇 명을 만들까요?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 새로고침",
     "renew": "♻️ 갱신",
     "renewed": "패키지를 갱신했습니다",
+    "reply": "↩️ 답장",
+    "reply_failed": "<b>{name}</b>님에게 보낸 답장이 전달되지 않았습니다.",
+    "reply_prompt": "{name}님에게 보낼 답장을 입력해서 보내세요.",
+    "reply_sent": "<b>{name}</b>님에게 답장을 보냈습니다.",
+    "req_approve": "✅ 승인",
+    "req_approved": "승인됨: {name}님이 무료 체험을 받았습니다.",
+    "req_auto": "무료 체험 지급됨",
+    "req_decline": "✖️ 거절",
+    "req_declined": "거절됨: {name}님에게 알렸습니다.",
+    "req_done": "이미 답변한 요청입니다.",
+    "req_no_room": "사용자를 더 추가할 수 없습니다(사용자 한도).",
+    "req_title": "무료 체험 요청",
     "reset_usage": "🔄 사용량 초기화",
     "resets_in": "사용량이 {n}일 후 초기화됩니다",
     "search": "🔍 검색",
@@ -4287,6 +4435,7 @@
       "label": "\"더 보기\" 버튼 문구"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "\"더 보기\" 버튼 표시"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "지원 상자 제목"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "지원 상자 제목 표시"
     },
     "branding_title": {

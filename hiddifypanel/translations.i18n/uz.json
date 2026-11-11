@@ -298,6 +298,7 @@
       "dashboard_v2": "Keyingi",
       "domain": "Domenlar",
       "home": "Boshqaruv paneli",
+      "inbox": "Kiruvchi xabarlar",
       "proxy": "Proksilar",
       "proxy_stats": "Proksilar holati",
       "support": "Yordam",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Qoʻshimcha obuna havolalarini qoʻshish",
         "add_sub_admins": "Quyi admin qoʻshish",
         "modify_domains": "Domenlarni boshqarish",
+        "modify_free_package": "Bepul sinovni belgilash",
         "modify_outbounds": "Chiquvchi kanallarni boshqarish",
         "modify_user_extra": "Foydalanuvchi sahifasini moslashtirish",
         "override_preferred_outbound": "Afzal chiquvchi kanalni oʻzgartirish"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Foydalanuvchilari uchun qoʻshimcha konfiguratsiya yoki obuna havolalarini biriktirish.",
         "add_sub_admins": "Siz belgilagan limitlar doirasida oʻz agentlarini yaratish.",
         "modify_domains": "Ushbu panelda domenlarni qoʻshish va tahrirlash.",
+        "modify_free_package": "Telegram boti uchun oʻzining bepul sinov paketini belgilaydi; belgilanmasa, sizniki qoʻllanadi.",
         "modify_outbounds": "Server chiquvchi kanallarini (WARP, SOCKS, …) sozlash.",
         "modify_user_extra": "Foydalanuvchi sahifasidagi brending va qoʻshimcha parametrlarni oʻzgartirish.",
         "override_preferred_outbound": "Foydalanuvchi trafigi qaysi chiquvchi kanal orqali chiqishini tanlash."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify internetda",
       "text": "HiddifyManager",
       "website": "Veb-sayt"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Qanday beriladi",
+        "data": "Trafik",
+        "days": "Muddat",
+        "daysUnit": "kun",
+        "enabled": "Bepul sinovni taklif qilish",
+        "enabledHint": "Havolangizni ochgan odamlar bu paketni bir marta soʻray oladi.",
+        "inherit": "Yuqori adminimning paketidan foydalanish",
+        "preview": "Botda odamlar nimani koʻradi",
+        "save": "Saqlash",
+        "saveFailed": "Paketni saqlab boʻlmadi",
+        "saved": "Bepul sinov paketi saqlandi",
+        "title": "Bepul sinov paketi"
+      },
+      "error": {
+        "disabled": "Bepul sinov oʻchirilgan.",
+        "no_room": "Yana bitta foydalanuvchi uchun joy yoʻq (foydalanuvchi limitingiz).",
+        "not_pending": "Bu soʻrovga allaqachon javob berilgan.",
+        "read_only": "Foydalanuvchilar asosiy panelda boshqariladi."
+      },
+      "event": {
+        "declined": "Soʻrov rad etildi",
+        "granted": "Bepul sinov oldi",
+        "request": "Bepul sinov soʻradi"
+      },
+      "free": {
+        "auto": "Avtomatik beriladi",
+        "autoHint": "Darhol, hech qachon bepul sinov olmagan va bu yerda hisobi yoʻq Telegram hisobiga. Qolganlar sizning javobingizni kutadi.",
+        "copied": "Havola nusxalandi",
+        "copy": "Havolani nusxalash",
+        "copyFailed": "Nusxalab boʻlmadi. Uni qoʻlda nusxalang:",
+        "days": "{n} kun | {n} kun",
+        "edit": "Paketni tahrirlash",
+        "inherited": "{name} belgilagan",
+        "linkLabel": "Bepul sinov havolangiz",
+        "manual": "Har bir soʻrovni oʻzingiz tasdiqlaysiz",
+        "manualHint": "Har bir soʻrov siz tasdiqlaguncha yoki rad etguncha kiruvchi xabarlarda kutadi.",
+        "noRoom": "Foydalanuvchi limitingizga yetdingiz: joy boʻshaguncha soʻrovlar kutadi.",
+        "off": "Oʻchiq",
+        "offHint": "Havolangizni ochgan odamlarga bepul sinov mavjud emasligi aytiladi.",
+        "offNoEdit": "Bepul sinov oʻchiq. Uni faqat yuqori adminingiz yoqa oladi.",
+        "on": "Yoniq",
+        "openTelegram": "Telegramda ochish",
+        "qr": "QR kod",
+        "setup": "Yoqish",
+        "shareHint": "Bu havolani ulashing. Uni ochgan kishi botda paketni koʻradi va uni soʻray oladi.",
+        "tag": "BEPUL",
+        "title": "Bepul sinov",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Hammasi",
+        "empty": {
+          "text": "Kimdir bepul sinov havolangizni ochsa yoki botga yozsa, shu yerda koʻrinadi.",
+          "title": "Hozircha suhbatlar yoʻq"
+        },
+        "filter": "Koʻrsatish",
+        "noMatch": "Bu yerda hech narsa yoʻq",
+        "request": "Soʻrov",
+        "requests": "Soʻrovlar",
+        "unread": "Oʻqilmagan",
+        "unreadCount": "{n} ta oʻqilmagan",
+        "you": "Siz:"
+      },
+      "noBot": {
+        "action": "Telegram sozlamalari",
+        "text": "Odamlar sizga yozadi va bepul sinovni panelning Telegram boti orqali oladi.",
+        "title": "Avval Telegram botini sozlang"
+      },
+      "retry": "Qayta urinish",
+      "subtitle": "Telegram botingizga yozgan odamlarning xabarlari va ularning bepul sinov soʻrovlari.",
+      "thread": {
+        "actionFailed": "Bu amalga oshmadi",
+        "approve": "Tasdiqlash",
+        "approved": "Bepul sinov berildi: hisob Telegram orqali yuborildi",
+        "back": "Suhbatlarga qaytish",
+        "decline": "Rad etish",
+        "declined": "Soʻrov rad etildi",
+        "delete": "Suhbatni oʻchirish",
+        "deleteConfirm": "Bu suhbat va undagi xabarlar oʻchirilsinmi? Odamning hisobi saqlanib qoladi.",
+        "empty": "Hozircha xabarlar yoʻq",
+        "give": "Bepul sinov berish",
+        "giveConfirm": "{name} uchun bepul sinov hisobi yaratilib, Telegram orqali yuborilsinmi?",
+        "more": "Yana",
+        "pick": {
+          "text": "Oʻqish, javob berish yoki bepul sinov soʻrovi boʻyicha qaror qilish uchun suhbatni oching.",
+          "title": "Suhbatni tanlang"
+        },
+        "placeholder": "Xabar yozing…",
+        "request": {
+          "again": "Bepul sinov olgan yoki hisobi bor.",
+          "first": "Birinchi marta: hech qachon bepul sinov olmagan va bu yerda hisobi yoʻq.",
+          "title": "{name} bepul sinov soʻramoqda"
+        },
+        "send": "Yuborish",
+        "sendFailed": "Xabar yuborilmadi"
+      },
+      "title": "Kiruvchi xabarlar"
     },
     "legacy": {
       "loading": "Yuklanmoqda…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Zaxira nusxa tayyorlanmoqda…",
     "btn_backup": "💾 Zaxira nusxa",
     "btn_check": "🩺 Holatni tekshirish",
+    "btn_free": "🎁 Bepul sinov",
     "btn_new": "➕ Yangi foydalanuvchi",
     "btn_panel": "🖥 Panelni ochish",
     "btn_status": "📊 Server holati",
@@ -4099,6 +4206,30 @@
     "f_ended": "Tugagan",
     "f_expiring": "Tez orada tugaydi",
     "f_online": "Onlayn",
+    "free_again": "📨 Yana bepul sinov soʻrash",
+    "free_data": "<b>{amount}</b> trafik",
+    "free_days": "<b>{n}</b> kun",
+    "free_declined": "Bepul sinov soʻrovingiz tasdiqlanmadi. Bu haqda soʻrash uchun shu yerga xabar yozishingiz mumkin.",
+    "free_get": "🎁 Bepul sinovimni olish",
+    "free_hint_auto": "Tugmani bosing va hisobingiz bir necha soniyada tayyor boʻladi. Toʻlov kerak emas.",
+    "free_hint_manual": "Soʻrovingizni yuborish uchun tugmani bosing. Hisobingiz tasdiqlanishi bilan shu yerga keladi.",
+    "free_hint_used": "Bu Telegram hisobida bepul sinov allaqachon ishlatilgan yoki hisobi bor. Yana bittasi uchun tasdiq kerak.",
+    "free_link_auto": "⚡️ Avtomatik beriladi, har bir Telegram hisobiga bir marta.",
+    "free_link_inherited": "<b>{name}</b> belgilagan.",
+    "free_link_manual": "✋ Har bir soʻrov sizning tasdigʻingizni kutadi.",
+    "free_link_off": "Bepul sinov oʻchiq. Uni panelda yoqing: Kiruvchi xabarlar → Bepul sinov.",
+    "free_link_share": "Bu havolani ulashing. Uni ochgan kishi shu paketni koʻradi va uni soʻray oladi.",
+    "free_link_title": "Bepul sinov",
+    "free_link_waiting": "<b>{n}</b> ta soʻrov sizni kutmoqda.",
+    "free_off": "Bepul sinov hozir mavjud emas. Baribir shu yerga xabar yozishingiz mumkin.",
+    "free_pending": "Soʻrovingiz yuborildi",
+    "free_ready": "Bepul sinovingiz tayyor!",
+    "free_request": "📨 Bepul sinovni soʻrash",
+    "free_tag": "BEPUL",
+    "free_title": "Bepul sinov",
+    "free_wait": "Hisobingiz tasdiqlanishi bilan shu suhbatga keladi.",
+    "free_write": "💬 Xabar yozish",
+    "free_write_hint": "Xabaringizni shu suhbatga yozib yuboring. U toʻgʻridan-toʻgʻri yordam xizmatiga boradi, javob esa shu yerga keladi.",
     "gb": "GB",
     "gone": "Bu foydalanuvchi endi mavjud emas.",
     "last_online": "Oxirgi onlayn",
@@ -4112,7 +4243,12 @@
     "links_hint": "Nusxalash uchun havolani bosing.",
     "links_title": "Havolalar",
     "manage": "⚙️ Boshqarish",
+    "mb": "MB",
     "menu": "🏠 Menyu",
+    "msg_from": "Yordam",
+    "msg_new": "{name} yozdi:",
+    "msg_sent": "Xabaringiz yuborildi.",
+    "msg_slow": "Xabarlar juda koʻp. Iltimos, bir daqiqa kuting.",
     "my_page": "🌐 Sahifam",
     "never": "hech qachon",
     "new_count": "👥 Nechta foydalanuvchi?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Yangilash",
     "renew": "♻️ Yangilash (uzaytirish)",
     "renewed": "Paket yangilandi",
+    "reply": "↩️ Javob berish",
+    "reply_failed": "<b>{name}</b> ga javobingiz yetkazilmadi.",
+    "reply_prompt": "{name} ga javobingizni yozib yuboring.",
+    "reply_sent": "Javobingiz <b>{name}</b> ga yuborildi.",
+    "req_approve": "✅ Tasdiqlash",
+    "req_approved": "Tasdiqlandi: {name} bepul sinov oldi.",
+    "req_auto": "Bepul sinov berildi",
+    "req_decline": "✖️ Rad etish",
+    "req_declined": "Rad etildi: {name} ga xabar berildi.",
+    "req_done": "Bu soʻrovga allaqachon javob berilgan.",
+    "req_no_room": "Yana bitta foydalanuvchi uchun joyingiz yoʻq (foydalanuvchi limitingiz).",
+    "req_title": "Bepul sinov soʻrovi",
     "reset_usage": "🔄 Sarfni tiklash",
     "resets_in": "Sarf {n} kundan keyin tiklanadi",
     "search": "🔍 Qidirish",
@@ -4287,6 +4435,7 @@
       "label": "«Batafsil» tugmasi matni"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "«Batafsil» tugmasini koʻrsatish"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Yordam qutisi sarlavhasi"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Yordam qutisi sarlavhasini koʻrsatish"
     },
     "branding_title": {

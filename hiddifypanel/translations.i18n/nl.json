@@ -298,6 +298,7 @@
       "dashboard_v2": "Volgende",
       "domain": "Domeinen",
       "home": "Dashboard",
+      "inbox": "Inbox",
       "proxy": "Proxy's",
       "proxy_stats": "Status van proxy's",
       "support": "Help",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Extra abonnementslinks toevoegen",
         "add_sub_admins": "Subbeheerders toevoegen",
         "modify_domains": "Domeinen beheren",
+        "modify_free_package": "De gratis proef instellen",
         "modify_outbounds": "Uitgaande verbindingen beheren",
         "modify_user_extra": "Gebruikerspagina aanpassen",
         "override_preferred_outbound": "Voorkeursuitgang wijzigen"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Voeg extra configuraties of abonnementslinks toe voor hun gebruikers.",
         "add_sub_admins": "Maak eigen agenten aan binnen de limieten die u instelt.",
         "modify_domains": "Domeinen op dit paneel toevoegen en bewerken.",
+        "modify_free_package": "Stel een eigen gratis proefpakket in voor de Telegram-bot; zonder dit geldt dat van u.",
         "modify_outbounds": "Uitgaande verbindingen van de server instellen (WARP, SOCKS, …).",
         "modify_user_extra": "Branding en extra parameters op de gebruikerspagina wijzigen.",
         "override_preferred_outbound": "Kies via welke uitgang het verkeer van een gebruiker vertrekt."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify op het web",
       "text": "HiddifyManager",
       "website": "Website"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Hoe het wordt gegeven",
+        "data": "Data",
+        "days": "Duur",
+        "daysUnit": "dagen",
+        "enabled": "Een gratis proef aanbieden",
+        "enabledHint": "Mensen die uw link openen, kunnen dit pakket eenmalig aanvragen.",
+        "inherit": "Het pakket van mijn bovenliggende beheerder gebruiken",
+        "preview": "Wat mensen in de bot zien",
+        "save": "Opslaan",
+        "saveFailed": "Het pakket kon niet worden opgeslagen",
+        "saved": "Gratis proefpakket opgeslagen",
+        "title": "Gratis proefpakket"
+      },
+      "error": {
+        "disabled": "De gratis proef staat uit.",
+        "no_room": "Geen ruimte voor nog een gebruiker (uw gebruikerslimiet).",
+        "not_pending": "Dit verzoek is al beantwoord.",
+        "read_only": "Gebruikers worden beheerd op het bovenliggende paneel."
+      },
+      "event": {
+        "declined": "Verzoek afgewezen",
+        "granted": "Heeft de gratis proef gekregen",
+        "request": "Heeft de gratis proef aangevraagd"
+      },
+      "free": {
+        "auto": "Automatisch gegeven",
+        "autoHint": "Direct, aan een Telegram-account dat nog nooit een gratis proef of een account hier had. Alle anderen wachten op u.",
+        "copied": "Link gekopieerd",
+        "copy": "Link kopiëren",
+        "copyFailed": "Kopiëren mislukt. Kopieer hem zelf:",
+        "days": "{n} dag | {n} dagen",
+        "edit": "Pakket bewerken",
+        "inherited": "ingesteld door {name}",
+        "linkLabel": "Uw link voor de gratis proef",
+        "manual": "U keurt elk verzoek goed",
+        "manualHint": "Elk verzoek wacht in uw inbox tot u het goedkeurt of afwijst.",
+        "noRoom": "U hebt uw gebruikerslimiet bereikt: verzoeken wachten tot er ruimte is.",
+        "off": "Uit",
+        "offHint": "Mensen die uw link openen, krijgen te horen dat de gratis proef niet beschikbaar is.",
+        "offNoEdit": "De gratis proef staat uit. Alleen uw bovenliggende beheerder kan hem aanzetten.",
+        "on": "Aan",
+        "openTelegram": "Openen in Telegram",
+        "qr": "QR-code",
+        "setup": "Aanzetten",
+        "shareHint": "Deel deze link. Wie hem opent, ziet het pakket in de bot en kan het aanvragen.",
+        "tag": "GRATIS",
+        "title": "Gratis proef",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Alle",
+        "empty": {
+          "text": "Wanneer iemand uw link voor de gratis proef opent of de bot een bericht stuurt, verschijnt die persoon hier.",
+          "title": "Nog geen gesprekken"
+        },
+        "filter": "Tonen",
+        "noMatch": "Niets hier",
+        "request": "Verzoek",
+        "requests": "Verzoeken",
+        "unread": "Ongelezen",
+        "unreadCount": "{n} ongelezen",
+        "you": "U:"
+      },
+      "noBot": {
+        "action": "Telegram-instellingen",
+        "text": "Mensen bereiken u, en krijgen de gratis proef, via de Telegram-bot van het paneel.",
+        "title": "Stel eerst de Telegram-bot in"
+      },
+      "retry": "Opnieuw proberen",
+      "subtitle": "Berichten van mensen die uw Telegram-bot schrijven, en hun verzoeken voor een gratis proef.",
+      "thread": {
+        "actionFailed": "Dat is niet gelukt",
+        "approve": "Goedkeuren",
+        "approved": "Gratis proef gegeven: het account is via Telegram verstuurd",
+        "back": "Terug naar gesprekken",
+        "decline": "Afwijzen",
+        "declined": "Verzoek afgewezen",
+        "delete": "Gesprek verwijderen",
+        "deleteConfirm": "Dit gesprek en de berichten verwijderen? Het account van de persoon blijft bestaan.",
+        "empty": "Nog geen berichten",
+        "give": "Gratis proef geven",
+        "giveConfirm": "Een gratis proefaccount voor {name} aanmaken en via Telegram versturen?",
+        "more": "Meer",
+        "pick": {
+          "text": "Open een gesprek om het te lezen, te beantwoorden of te beslissen over een verzoek voor een gratis proef.",
+          "title": "Kies een gesprek"
+        },
+        "placeholder": "Schrijf een bericht…",
+        "request": {
+          "again": "Heeft al een gratis proef gehad, of heeft een account.",
+          "first": "Eerste keer: nog nooit een gratis proef of een account hier gehad.",
+          "title": "{name} wil de gratis proef"
+        },
+        "send": "Versturen",
+        "sendFailed": "Het bericht is niet verstuurd"
+      },
+      "title": "Inbox"
     },
     "legacy": {
       "loading": "Laden…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Back-up wordt voorbereid…",
     "btn_backup": "💾 Back-up",
     "btn_check": "🩺 Status controleren",
+    "btn_free": "🎁 Gratis proef",
     "btn_new": "➕ Nieuwe gebruiker",
     "btn_panel": "🖥 Paneel openen",
     "btn_status": "📊 Serverstatus",
@@ -4099,6 +4206,30 @@
     "f_ended": "Beëindigd",
     "f_expiring": "Verloopt binnenkort",
     "f_online": "Online",
+    "free_again": "📨 Nog een gratis proef aanvragen",
+    "free_data": "<b>{amount}</b> aan data",
+    "free_days": "<b>{n}</b> dagen",
+    "free_declined": "Uw verzoek voor een gratis proef is niet goedgekeurd. U kunt hier een bericht schrijven om ernaar te vragen.",
+    "free_get": "🎁 Mijn gratis proef ophalen",
+    "free_hint_auto": "Tik op de knop en uw account is binnen enkele seconden klaar. Geen betaling nodig.",
+    "free_hint_manual": "Tik op de knop om uw verzoek te versturen. Uw account komt hier zodra het is goedgekeurd.",
+    "free_hint_used": "Met dit Telegram-account is al een gratis proef gebruikt, of het heeft een account. Voor nog een proef is goedkeuring nodig.",
+    "free_link_auto": "⚡️ Automatisch gegeven, eenmaal per Telegram-account.",
+    "free_link_inherited": "Ingesteld door <b>{name}</b>.",
+    "free_link_manual": "✋ Elk verzoek wacht op uw goedkeuring.",
+    "free_link_off": "De gratis proef staat uit. Zet hem aan in het paneel: Inbox → Gratis proef.",
+    "free_link_share": "Deel deze link. Wie hem opent, ziet dit pakket en kan het aanvragen.",
+    "free_link_title": "Gratis proef",
+    "free_link_waiting": "<b>{n}</b> verzoeken wachten op u.",
+    "free_off": "De gratis proef is nu niet beschikbaar. U kunt hier nog wel een bericht schrijven.",
+    "free_pending": "Uw verzoek is verstuurd",
+    "free_ready": "Uw gratis proef is klaar!",
+    "free_request": "📨 De gratis proef aanvragen",
+    "free_tag": "GRATIS",
+    "free_title": "Gratis proef",
+    "free_wait": "Uw account komt in deze chat zodra het is goedgekeurd.",
+    "free_write": "💬 Een bericht schrijven",
+    "free_write_hint": "Typ gewoon uw bericht in deze chat en verstuur het. Het gaat rechtstreeks naar de support en het antwoord komt hier.",
     "gb": "GB",
     "gone": "Deze gebruiker bestaat niet meer.",
     "last_online": "Laatst online",
@@ -4112,7 +4243,12 @@
     "links_hint": "Tik op een link om hem te kopiëren.",
     "links_title": "Links",
     "manage": "⚙️ Beheren",
+    "mb": "MB",
     "menu": "🏠 Menu",
+    "msg_from": "Support",
+    "msg_new": "{name} schreef:",
+    "msg_sent": "Uw bericht is verstuurd.",
+    "msg_slow": "Te veel berichten. Wacht een minuut.",
     "my_page": "🌐 Mijn pagina",
     "never": "nooit",
     "new_count": "👥 Hoeveel gebruikers?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Vernieuwen",
     "renew": "♻️ Verlengen",
     "renewed": "Pakket verlengd",
+    "reply": "↩️ Antwoorden",
+    "reply_failed": "Uw antwoord aan <b>{name}</b> is niet afgeleverd.",
+    "reply_prompt": "Typ uw antwoord aan {name} en verstuur het.",
+    "reply_sent": "Uw antwoord is verstuurd aan <b>{name}</b>.",
+    "req_approve": "✅ Goedkeuren",
+    "req_approved": "Goedgekeurd: {name} heeft de gratis proef gekregen.",
+    "req_auto": "Gratis proef gegeven",
+    "req_decline": "✖️ Afwijzen",
+    "req_declined": "Afgewezen: {name} is op de hoogte gesteld.",
+    "req_done": "Dit verzoek is al beantwoord.",
+    "req_no_room": "U hebt geen ruimte voor nog een gebruiker (uw gebruikerslimiet).",
+    "req_title": "Verzoek voor gratis proef",
     "reset_usage": "🔄 Verbruik resetten",
     "resets_in": "Het verbruik wordt over {n} dagen gereset",
     "search": "🔍 Zoeken",
@@ -4287,6 +4435,7 @@
       "label": "Tekst van de knop \"Meer bekijken\""
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "De knop \"Meer bekijken\" tonen"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Titel van het supportvak"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "De titel van het supportvak tonen"
     },
     "branding_title": {

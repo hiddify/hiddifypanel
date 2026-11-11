@@ -298,6 +298,7 @@
       "dashboard_v2": "Yeni",
       "domain": "Alan Adları",
       "home": "Gösterge Paneli",
+      "inbox": "Gelen kutusu",
       "proxy": "Proxy'ler",
       "proxy_stats": "Proxy'lerin Durumu",
       "support": "Yardım",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Ek abonelik bağlantıları ekle",
         "add_sub_admins": "Alt yönetici ekle",
         "modify_domains": "Alan adlarını yönet",
+        "modify_free_package": "Ücretsiz denemeyi belirleme",
         "modify_outbounds": "Çıkışları yönet",
         "modify_user_extra": "Kullanıcı sayfasını özelleştir",
         "override_preferred_outbound": "Tercih edilen çıkışı değiştir"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Kullanıcıları için ek yapılandırmalar veya abonelik bağlantıları ekleyin.",
         "add_sub_admins": "Belirlediğiniz sınırlar içinde kendi temsilcilerini oluşturun.",
         "modify_domains": "Bu panele alan adı ekleyin ve düzenleyin.",
+        "modify_free_package": "Telegram botu için kendi ücretsiz deneme paketini belirler; yoksa sizinki geçerli olur.",
         "modify_outbounds": "Sunucu çıkışlarını yapılandırın (WARP, SOCKS, …).",
         "modify_user_extra": "Kullanıcı sayfasındaki markayı ve ek parametreleri değiştirin.",
         "override_preferred_outbound": "Bir kullanıcının trafiğinin hangi çıkıştan çıkacağını seçin."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify web'de",
       "text": "HiddifyManager",
       "website": "Web sitesi"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Nasıl verilir",
+        "data": "Veri",
+        "days": "Süre",
+        "daysUnit": "gün",
+        "enabled": "Ücretsiz deneme sun",
+        "enabledHint": "Bağlantınızı açan kişiler bu paketi bir kez isteyebilir.",
+        "inherit": "Üst yöneticimin paketini kullan",
+        "preview": "Kişilerin botta gördüğü",
+        "save": "Kaydet",
+        "saveFailed": "Paket kaydedilemedi",
+        "saved": "Ücretsiz deneme paketi kaydedildi",
+        "title": "Ücretsiz deneme paketi"
+      },
+      "error": {
+        "disabled": "Ücretsiz deneme kapalı.",
+        "no_room": "Yeni bir kullanıcı için yer yok (kullanıcı sınırınız).",
+        "not_pending": "Bu istek zaten yanıtlandı.",
+        "read_only": "Kullanıcılar ana panelde yönetilir."
+      },
+      "event": {
+        "declined": "İstek reddedildi",
+        "granted": "Ücretsiz denemeyi aldı",
+        "request": "Ücretsiz deneme istedi"
+      },
+      "free": {
+        "auto": "Otomatik verilir",
+        "autoHint": "Daha önce ücretsiz deneme almamış veya burada hesabı olmayan Telegram hesaplarına hemen verilir. Diğerleri sizi bekler.",
+        "copied": "Bağlantı kopyalandı",
+        "copy": "Bağlantıyı kopyala",
+        "copyFailed": "Kopyalanamadı. Elle kopyalayın:",
+        "days": "{n} gün | {n} gün",
+        "edit": "Paketi düzenle",
+        "inherited": "{name} tarafından belirlendi",
+        "linkLabel": "Ücretsiz deneme bağlantınız",
+        "manual": "Her isteği siz onaylarsınız",
+        "manualHint": "Her istek, siz onaylayana veya reddedene kadar gelen kutunuzda bekler.",
+        "noRoom": "Kullanıcı sınırınıza ulaştınız: istekler yer açılana kadar bekler.",
+        "off": "Kapalı",
+        "offHint": "Bağlantınızı açan kişilere ücretsiz denemenin mevcut olmadığı söylenir.",
+        "offNoEdit": "Ücretsiz deneme kapalı. Yalnızca üst yöneticiniz açabilir.",
+        "on": "Açık",
+        "openTelegram": "Telegram'da aç",
+        "qr": "QR kodu",
+        "setup": "Aç",
+        "shareHint": "Bu bağlantıyı paylaşın. Açan kişi paketi botta görür ve isteyebilir.",
+        "tag": "ÜCRETSİZ",
+        "title": "Ücretsiz deneme",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Tümü",
+        "empty": {
+          "text": "Biri ücretsiz deneme bağlantınızı açtığında veya bota yazdığında burada görünür.",
+          "title": "Henüz görüşme yok"
+        },
+        "filter": "Göster",
+        "noMatch": "Burada hiçbir şey yok",
+        "request": "İstek",
+        "requests": "İstekler",
+        "unread": "Okunmamış",
+        "unreadCount": "{n} okunmamış",
+        "you": "Siz:"
+      },
+      "noBot": {
+        "action": "Telegram ayarları",
+        "text": "İnsanlar size ve ücretsiz denemeye panelin Telegram botu üzerinden ulaşır.",
+        "title": "Önce Telegram botunu kurun"
+      },
+      "retry": "Tekrar dene",
+      "subtitle": "Telegram botunuza yazan kişilerin mesajları ve ücretsiz deneme istekleri.",
+      "thread": {
+        "actionFailed": "İşlem başarısız oldu",
+        "approve": "Onayla",
+        "approved": "Ücretsiz deneme verildi: hesap Telegram'dan gönderildi",
+        "back": "Görüşmelere dön",
+        "decline": "Reddet",
+        "declined": "İstek reddedildi",
+        "delete": "Görüşmeyi sil",
+        "deleteConfirm": "Bu görüşme ve mesajları silinsin mi? Kişinin hesabı kalır.",
+        "empty": "Henüz mesaj yok",
+        "give": "Ücretsiz deneme ver",
+        "giveConfirm": "{name} için ücretsiz deneme hesabı oluşturulup Telegram'dan gönderilsin mi?",
+        "more": "Daha fazla",
+        "pick": {
+          "text": "Okumak, yanıtlamak veya ücretsiz deneme isteğine karar vermek için bir görüşme açın.",
+          "title": "Bir görüşme seçin"
+        },
+        "placeholder": "Bir mesaj yazın…",
+        "request": {
+          "again": "Daha önce ücretsiz deneme aldı veya hesabı var.",
+          "first": "İlk kez: daha önce ücretsiz deneme almadı ve burada hesabı yok.",
+          "title": "{name} ücretsiz deneme istiyor"
+        },
+        "send": "Gönder",
+        "sendFailed": "Mesaj gönderilemedi"
+      },
+      "title": "Gelen kutusu"
     },
     "legacy": {
       "loading": "Yükleniyor…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Yedek hazırlanıyor…",
     "btn_backup": "💾 Yedek",
     "btn_check": "🩺 Durumu denetle",
+    "btn_free": "🎁 Ücretsiz deneme",
     "btn_new": "➕ Yeni kullanıcı",
     "btn_panel": "🖥 Paneli aç",
     "btn_status": "📊 Sunucu durumu",
@@ -4099,6 +4206,30 @@
     "f_ended": "Bitmiş",
     "f_expiring": "Yakında bitecek",
     "f_online": "Çevrimiçi",
+    "free_again": "📨 Bir ücretsiz deneme daha iste",
+    "free_data": "<b>{amount}</b> veri",
+    "free_days": "<b>{n}</b> gün",
+    "free_declined": "Ücretsiz deneme isteğiniz onaylanmadı. Bu konuda sormak için buraya mesaj yazabilirsiniz.",
+    "free_get": "🎁 Ücretsiz denememi al",
+    "free_hint_auto": "Düğmeye dokunun, hesabınız birkaç saniye içinde hazır olsun. Ödeme gerekmez.",
+    "free_hint_manual": "İsteğinizi göndermek için düğmeye dokunun. Hesabınız onaylanır onaylanmaz buraya gelir.",
+    "free_hint_used": "Bu Telegram hesabında daha önce ücretsiz deneme kullanıldı veya bir hesabı var. Bir tane daha onay gerektirir.",
+    "free_link_auto": "⚡️ Otomatik verilir, Telegram hesabı başına bir kez.",
+    "free_link_inherited": "<b>{name}</b> tarafından belirlendi.",
+    "free_link_manual": "✋ Her istek onayınızı bekler.",
+    "free_link_off": "Ücretsiz deneme kapalı. Panelden açın: Gelen kutusu → Ücretsiz deneme.",
+    "free_link_share": "Bu bağlantıyı paylaşın. Açan kişi bu paketi görür ve isteyebilir.",
+    "free_link_title": "Ücretsiz deneme",
+    "free_link_waiting": "<b>{n}</b> istek sizi bekliyor.",
+    "free_off": "Ücretsiz deneme şu anda mevcut değil. Yine de buraya mesaj yazabilirsiniz.",
+    "free_pending": "İsteğiniz gönderildi",
+    "free_ready": "Ücretsiz denemeniz hazır!",
+    "free_request": "📨 Ücretsiz deneme iste",
+    "free_tag": "ÜCRETSİZ",
+    "free_title": "Ücretsiz deneme",
+    "free_wait": "Hesabınız onaylanır onaylanmaz bu sohbete gelir.",
+    "free_write": "💬 Mesaj yaz",
+    "free_write_hint": "Mesajınızı bu sohbete yazıp gönderin. Doğrudan destek ekibine gider, yanıt buraya gelir.",
     "gb": "GB",
     "gone": "Bu kullanıcı artık yok.",
     "last_online": "Son çevrimiçi",
@@ -4112,7 +4243,12 @@
     "links_hint": "Kopyalamak için bir bağlantıya dokunun.",
     "links_title": "Bağlantılar",
     "manage": "⚙️ Yönet",
+    "mb": "MB",
     "menu": "🏠 Menü",
+    "msg_from": "Destek",
+    "msg_new": "{name} yazdı:",
+    "msg_sent": "Mesajınız gönderildi.",
+    "msg_slow": "Çok fazla mesaj. Lütfen bir dakika bekleyin.",
     "my_page": "🌐 Sayfam",
     "never": "hiç",
     "new_count": "👥 Kaç kullanıcı?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Yenile",
     "renew": "♻️ Yenile",
     "renewed": "Paket yenilendi",
+    "reply": "↩️ Yanıtla",
+    "reply_failed": "<b>{name}</b> kişisine yanıtınız iletilemedi.",
+    "reply_prompt": "{name} kişisine yanıtınızı yazıp gönderin.",
+    "reply_sent": "Yanıtınız <b>{name}</b> kişisine gönderildi.",
+    "req_approve": "✅ Onayla",
+    "req_approved": "Onaylandı: {name} ücretsiz denemeyi aldı.",
+    "req_auto": "Ücretsiz deneme verildi",
+    "req_decline": "✖️ Reddet",
+    "req_declined": "Reddedildi: {name} bilgilendirildi.",
+    "req_done": "Bu istek zaten yanıtlandı.",
+    "req_no_room": "Yeni bir kullanıcı için yeriniz yok (kullanıcı sınırınız).",
+    "req_title": "Ücretsiz deneme isteği",
     "reset_usage": "🔄 Kullanımı sıfırla",
     "resets_in": "Kullanım {n} gün içinde sıfırlanır",
     "search": "🔍 Ara",
@@ -4287,6 +4435,7 @@
       "label": "\"Daha Fazla Göster\" düğmesi metni"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "\"Daha Fazla Göster\" düğmesini göster"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Destek kutusu başlığı"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Destek kutusu başlığını göster"
     },
     "branding_title": {

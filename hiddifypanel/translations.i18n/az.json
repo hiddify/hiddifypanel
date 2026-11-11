@@ -298,6 +298,7 @@
       "dashboard_v2": "Növbəti",
       "domain": "Domenlər",
       "home": "İdarə paneli",
+      "inbox": "Gələn qutusu",
       "proxy": "Proksilər",
       "proxy_stats": "Proksilərin vəziyyəti",
       "support": "Kömək",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Əlavə abunəlik keçidləri əlavə et",
         "add_sub_admins": "Alt admin əlavə et",
         "modify_domains": "Domenləri idarə et",
+        "modify_free_package": "Pulsuz sınağı təyin et",
         "modify_outbounds": "Çıxışları idarə et",
         "modify_user_extra": "İstifadəçi səhifəsini fərdiləşdir",
         "override_preferred_outbound": "Üstünlük verilən çıxışı dəyiş"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "İstifadəçiləri üçün əlavə konfiqurasiyalar və ya abunəlik keçidləri əlavə edin.",
         "add_sub_admins": "Qoyduğunuz limitlər daxilində öz agentlərini yaradın.",
         "modify_domains": "Bu paneldə domenlər əlavə edin və redaktə edin.",
+        "modify_free_package": "Telegram botu üçün öz pulsuz sınaq paketini təyin edin; olmasa, sizin paketiniz keçərli olur.",
         "modify_outbounds": "Server çıxışlarını (WARP, SOCKS, …) quraşdırın.",
         "modify_user_extra": "İstifadəçi səhifəsində brendi və əlavə parametrləri dəyişin.",
         "override_preferred_outbound": "İstifadəçinin trafikinin hansı çıxışdan keçəcəyini seçin."
@@ -606,7 +609,7 @@
         "auto": "Avtomatik",
         "inherit": "Yuxarıdakı kimi: {name}"
       },
-      "readOnlyNode": "Adminlər əsas paneldə idarə olunur: burada yalnız oxumaq üçün göstərilir.",
+      "readOnlyNode": "Adminlər ana paneldə idarə olunur: burada yalnız oxumaq üçün göstərilir.",
       "refresh": "Yenilə",
       "resetMessage": "Yeni parol yaradılır və köhnəsi dərhal işləməyi dayandırır.",
       "resetPassword": "Parolu sıfırla",
@@ -1956,6 +1959,109 @@
       "links": "Hiddify internetdə",
       "text": "HiddifyManager",
       "website": "Vebsayt"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Necə verilir",
+        "data": "Data",
+        "days": "Müddət",
+        "daysUnit": "gün",
+        "enabled": "Pulsuz sınaq təklif et",
+        "enabledHint": "Keçidinizi açan şəxslər bu paketi bir dəfə istəyə bilər.",
+        "inherit": "Yuxarıdakı adminin paketindən istifadə et",
+        "preview": "İnsanların botda gördüyü",
+        "save": "Yadda saxla",
+        "saveFailed": "Paketi yadda saxlamaq alınmadı",
+        "saved": "Pulsuz sınaq paketi yadda saxlanıldı",
+        "title": "Pulsuz sınaq paketi"
+      },
+      "error": {
+        "disabled": "Pulsuz sınaq söndürülüb.",
+        "no_room": "Başqa istifadəçi üçün yer yoxdur (istifadəçi limitiniz).",
+        "not_pending": "Bu sorğuya artıq cavab verilib.",
+        "read_only": "İstifadəçilər ana paneldə idarə olunur."
+      },
+      "event": {
+        "declined": "Sorğu rədd edildi",
+        "granted": "Pulsuz sınaq aldı",
+        "request": "Pulsuz sınaq istədi"
+      },
+      "free": {
+        "auto": "Avtomatik verilir",
+        "autoHint": "Heç vaxt pulsuz sınaq almamış və ya burada hesabı olmayan Telegram hesabına dərhal verilir. Qalanları sizin cavabınızı gözləyir.",
+        "copied": "Keçid kopyalandı",
+        "copy": "Keçidi kopyala",
+        "copyFailed": "Kopyalamaq alınmadı. Əllə kopyalayın:",
+        "days": "{n} gün | {n} gün",
+        "edit": "Paketi redaktə et",
+        "inherited": "{name} təyin edib",
+        "linkLabel": "Pulsuz sınaq keçidiniz",
+        "manual": "Hər sorğunu özünüz təsdiqləyirsiniz",
+        "manualHint": "Hər sorğu siz təsdiqləyənə və ya rədd edənə qədər gələn qutunuzda gözləyir.",
+        "noRoom": "İstifadəçi limitinizə çatmısınız: sorğular yer açılana qədər gözləyir.",
+        "off": "Söndürülüb",
+        "offHint": "Keçidinizi açan şəxslərə pulsuz sınağın mövcud olmadığı bildirilir.",
+        "offNoEdit": "Pulsuz sınaq söndürülüb. Yalnız yuxarıdakı admin onu işə sala bilər.",
+        "on": "Aktiv",
+        "openTelegram": "Telegram'da aç",
+        "qr": "QR kod",
+        "setup": "İşə sal",
+        "shareHint": "Bu keçidi paylaşın. Onu açan hər kəs botda paketi görür və onu istəyə bilər.",
+        "tag": "PULSUZ",
+        "title": "Pulsuz sınaq",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Hamısı",
+        "empty": {
+          "text": "Kimsə pulsuz sınaq keçidinizi açdıqda və ya bota yazdıqda burada görünür.",
+          "title": "Hələ söhbət yoxdur"
+        },
+        "filter": "Göstər",
+        "noMatch": "Burada heç nə yoxdur",
+        "request": "Sorğu",
+        "requests": "Sorğular",
+        "unread": "Oxunmamış",
+        "unreadCount": "{n} oxunmamış",
+        "you": "Siz:"
+      },
+      "noBot": {
+        "action": "Telegram ayarları",
+        "text": "İnsanlar sizə və pulsuz sınağa panelin Telegram botu vasitəsilə çatır.",
+        "title": "Əvvəlcə Telegram botunu qurun"
+      },
+      "retry": "Yenidən cəhd edin",
+      "subtitle": "Telegram botunuza yazan insanların mesajları və onların pulsuz sınaq sorğuları.",
+      "thread": {
+        "actionFailed": "Bu alınmadı",
+        "approve": "Təsdiq et",
+        "approved": "Pulsuz sınaq verildi: hesab Telegram'da göndərildi",
+        "back": "Söhbətlərə qayıt",
+        "decline": "Rədd et",
+        "declined": "Sorğu rədd edildi",
+        "delete": "Söhbəti sil",
+        "deleteConfirm": "Bu söhbət və mesajları silinsin? Şəxsin hesabı qalır.",
+        "empty": "Hələ mesaj yoxdur",
+        "give": "Pulsuz sınaq ver",
+        "giveConfirm": "{name} üçün pulsuz sınaq hesabı yaradılıb Telegram'da göndərilsin?",
+        "more": "Daha çox",
+        "pick": {
+          "text": "Oxumaq, cavab vermək və ya pulsuz sınaq sorğusu barədə qərar vermək üçün söhbəti açın.",
+          "title": "Söhbət seçin"
+        },
+        "placeholder": "Mesaj yazın…",
+        "request": {
+          "again": "Əvvəllər pulsuz sınaq alıb və ya hesabı var.",
+          "first": "İlk dəfədir: heç vaxt pulsuz sınaq almayıb və burada hesabı yoxdur.",
+          "title": "{name} pulsuz sınaq istəyir"
+        },
+        "send": "Göndər",
+        "sendFailed": "Mesaj göndərilmədi"
+      },
+      "title": "Gələn qutusu"
     },
     "legacy": {
       "loading": "Yüklənir…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Ehtiyat nüsxə hazırlanır…",
     "btn_backup": "💾 Ehtiyat nüsxə",
     "btn_check": "🩺 Vəziyyəti yoxla",
+    "btn_free": "🎁 Pulsuz sınaq",
     "btn_new": "➕ Yeni istifadəçi",
     "btn_panel": "🖥 Paneli aç",
     "btn_status": "📊 Server vəziyyəti",
@@ -4099,6 +4206,30 @@
     "f_ended": "Bitmiş",
     "f_expiring": "Tezliklə bitir",
     "f_online": "Onlayn",
+    "free_again": "📨 Başqa pulsuz sınaq istə",
+    "free_data": "<b>{amount}</b> data",
+    "free_days": "<b>{n}</b> gün",
+    "free_declined": "Pulsuz sınaq sorğunuz təsdiqlənmədi. Bu barədə soruşmaq üçün burada mesaj yaza bilərsiniz.",
+    "free_get": "🎁 Pulsuz sınağımı al",
+    "free_hint_auto": "Düyməyə toxunun, hesabınız bir neçə saniyəyə hazır olacaq. Ödəniş lazım deyil.",
+    "free_hint_manual": "Sorğunuzu göndərmək üçün düyməyə toxunun. Hesabınız təsdiqlənən kimi buraya gələcək.",
+    "free_hint_used": "Bu Telegram hesabında pulsuz sınaq artıq istifadə olunub və ya hesab mövcuddur. Başqa sınaq üçün təsdiq lazımdır.",
+    "free_link_auto": "⚡️ Avtomatik verilir, hər Telegram hesabına bir dəfə.",
+    "free_link_inherited": "<b>{name}</b> təyin edib.",
+    "free_link_manual": "✋ Hər sorğu sizin təsdiqinizi gözləyir.",
+    "free_link_off": "Pulsuz sınaq söndürülüb. Panelda işə salın: Gələn qutusu → Pulsuz sınaq.",
+    "free_link_share": "Bu keçidi paylaşın. Onu açan hər kəs bu paketi görür və onu istəyə bilər.",
+    "free_link_title": "Pulsuz sınaq",
+    "free_link_waiting": "<b>{n}</b> sorğu sizi gözləyir.",
+    "free_off": "Pulsuz sınaq hazırda mövcud deyil. Yenə də burada mesaj yaza bilərsiniz.",
+    "free_pending": "Sorğunuz göndərildi",
+    "free_ready": "Pulsuz sınağınız hazırdır!",
+    "free_request": "📨 Pulsuz sınaq istə",
+    "free_tag": "PULSUZ",
+    "free_title": "Pulsuz sınaq",
+    "free_wait": "Hesabınız təsdiqlənən kimi bu söhbətə gələcək.",
+    "free_write": "💬 Mesaj yaz",
+    "free_write_hint": "Mesajınızı bu söhbətdə yazıb göndərin. O, birbaşa dəstəyə gedir, cavab isə buraya gəlir.",
     "gb": "GB",
     "gone": "Bu istifadəçi artıq mövcud deyil.",
     "last_online": "Son onlayn",
@@ -4112,7 +4243,12 @@
     "links_hint": "Kopyalamaq üçün keçidə toxunun.",
     "links_title": "Keçidlər",
     "manage": "⚙️ İdarə et",
+    "mb": "MB",
     "menu": "🏠 Menyu",
+    "msg_from": "Dəstək",
+    "msg_new": "{name} yazdı:",
+    "msg_sent": "Mesajınız göndərildi.",
+    "msg_slow": "Çox mesaj göndərilib. Bir dəqiqə gözləyin.",
     "my_page": "🌐 Mənim səhifəm",
     "never": "heç vaxt",
     "new_count": "👥 Neçə istifadəçi?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Yenilə",
     "renew": "♻️ Yenilə (paket)",
     "renewed": "Paket yeniləndi",
+    "reply": "↩️ Cavab ver",
+    "reply_failed": "<b>{name}</b> üçün cavabınız çatdırılmadı.",
+    "reply_prompt": "{name} üçün cavabınızı yazıb göndərin.",
+    "reply_sent": "Cavabınız <b>{name}</b> üçün göndərildi.",
+    "req_approve": "✅ Təsdiq et",
+    "req_approved": "Təsdiqləndi: {name} pulsuz sınaq aldı.",
+    "req_auto": "Pulsuz sınaq verildi",
+    "req_decline": "✖️ Rədd et",
+    "req_declined": "Rədd edildi: {name} məlumatlandırıldı.",
+    "req_done": "Bu sorğuya artıq cavab verilib.",
+    "req_no_room": "Başqa istifadəçi üçün yeriniz yoxdur (istifadəçi limitiniz).",
+    "req_title": "Pulsuz sınaq sorğusu",
     "reset_usage": "🔄 İstifadəni sıfırla",
     "resets_in": "İstifadə {n} gün sonra sıfırlanır",
     "search": "🔍 Axtar",
@@ -4287,6 +4435,7 @@
       "label": "\"Daha çox bax\" düyməsinin mətni"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "\"Daha çox bax\" düyməsini göstər"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Dəstək qutusunun başlığı"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Dəstək qutusunun başlığını göstər"
     },
     "branding_title": {
@@ -5199,7 +5349,7 @@
       "allowed_for_fake_only": "Boş domenə yalnız saxta rejimdə icazə verilir"
     },
     "fake_mode": {
-      "description": "Valid real sertifikatdan istifadə edir. Fake və Reality saxta TLS və REALITY protokolları üçündür.",
+      "description": "Etibarlı rejim real sertifikatdan istifadə edir. Saxta və Reality saxta TLS və REALITY protokolları üçündür.",
       "label": "TLS rejimi"
     },
     "intro": "1️⃣ Bu bölmədə domeninizi əlavə edə bilərsiniz. \n<br>\n2️⃣ Çirkli IP olma ehtimalını azaltmaq istəyirsinizsə, bir neçə Relay serveri əlavə edə bilərsiniz <a href='https://github.com/hiddify/hiddify-config/discussions/129'>Ardını oxu</a>.\n<br>\n3️⃣ Panelinizdə bir neçə IPv4 və ya IPv6 varsa, onlara yönələn domeni Relay kimi əlavə etməlisiniz.",
@@ -5207,7 +5357,7 @@
     "mode": "Rejim",
     "reality": {
       "asn_issue": "REALITY üçün seçilmiş domen eyni ASN'də deyil. Protokoldan daha yaxşı istifadə etmək üçün eyni ASN'də domen tapmaq daha yaxşıdır",
-      "no_x25519": "Bu domen REALITY'nin tələb etdiyi X25519 açar mübadiləsini dəstəkləmir, buna görə REALITY ilə uyğun deyil: klientlər real saytın sertifikatını alıb alınmayacaq. Başqa domen istifadə edin."
+      "no_x25519": "Bu domen REALITY'nin tələb etdiyi X25519 açar mübadiləsini dəstəkləmir, buna görə REALITY ilə uyğun deyil: klientlər real saytın sertifikatını alıb qoşula bilməyəcək. Başqa domen istifadə edin."
     },
     "resolveip": {
       "description": "Proksilərdə domen adı əvəzinə IP istifadə edin. DNS'də böyük küy olduqda faydalıdır.",

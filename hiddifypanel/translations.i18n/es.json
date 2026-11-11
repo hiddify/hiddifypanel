@@ -298,6 +298,7 @@
       "dashboard_v2": "Siguiente",
       "domain": "Dominios",
       "home": "Panel de control",
+      "inbox": "Bandeja de entrada",
       "proxy": "Proxies",
       "proxy_stats": "Estado de los proxies",
       "support": "Ayuda",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Agregar enlaces de suscripción adicionales",
         "add_sub_admins": "Agregar subadministradores",
         "modify_domains": "Gestionar dominios",
+        "modify_free_package": "Definir la prueba gratuita",
         "modify_outbounds": "Gestionar salidas",
         "modify_user_extra": "Personalizar la página del usuario",
         "override_preferred_outbound": "Cambiar la salida preferida"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Adjuntar configuraciones o enlaces de suscripción adicionales para sus usuarios.",
         "add_sub_admins": "Crear sus propios agentes dentro de los límites que usted establezca.",
         "modify_domains": "Agregar y editar dominios en este panel.",
+        "modify_free_package": "Establece su propio paquete de prueba gratuita para el bot de Telegram; sin esto, se aplica el suyo.",
         "modify_outbounds": "Configurar las salidas del servidor (WARP, SOCKS, …).",
         "modify_user_extra": "Cambiar la marca y los parámetros adicionales en la página del usuario.",
         "override_preferred_outbound": "Elegir por qué salida sale el tráfico de un usuario."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify en la web",
       "text": "HiddifyManager",
       "website": "Sitio web"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Cómo se entrega",
+        "data": "Datos",
+        "days": "Duración",
+        "daysUnit": "días",
+        "enabled": "Ofrecer una prueba gratuita",
+        "enabledHint": "Las personas que abran su enlace pueden solicitar este paquete, una sola vez.",
+        "inherit": "Usar el paquete de mi administrador superior",
+        "preview": "Lo que ven las personas en el bot",
+        "save": "Guardar",
+        "saveFailed": "No se pudo guardar el paquete",
+        "saved": "Paquete de prueba gratuita guardado",
+        "title": "Paquete de prueba gratuita"
+      },
+      "error": {
+        "disabled": "La prueba gratuita está desactivada.",
+        "no_room": "No hay espacio para otro usuario (su límite de usuarios).",
+        "not_pending": "Esta solicitud ya fue respondida.",
+        "read_only": "Los usuarios se gestionan en el panel principal."
+      },
+      "event": {
+        "declined": "Solicitud rechazada",
+        "granted": "Recibió la prueba gratuita",
+        "request": "Solicitó la prueba gratuita"
+      },
+      "free": {
+        "auto": "Se entrega automáticamente",
+        "autoHint": "De inmediato, a una cuenta de Telegram que nunca tuvo una prueba gratuita ni una cuenta aquí. Todos los demás esperan su decisión.",
+        "copied": "Enlace copiado",
+        "copy": "Copiar enlace",
+        "copyFailed": "No se pudo copiar. Cópielo a mano:",
+        "days": "{n} día | {n} días",
+        "edit": "Editar paquete",
+        "inherited": "definido por {name}",
+        "linkLabel": "Su enlace de prueba gratuita",
+        "manual": "Usted aprueba cada solicitud",
+        "manualHint": "Cada solicitud espera en su bandeja de entrada hasta que la apruebe o la rechace.",
+        "noRoom": "Alcanzó su límite de usuarios: las solicitudes esperan hasta que haya espacio.",
+        "off": "Desactivada",
+        "offHint": "A las personas que abran su enlace se les informa que la prueba gratuita no está disponible.",
+        "offNoEdit": "La prueba gratuita está desactivada. Solo su administrador superior puede activarla.",
+        "on": "Activada",
+        "openTelegram": "Abrir en Telegram",
+        "qr": "Código QR",
+        "setup": "Activar",
+        "shareHint": "Comparta este enlace. Quien lo abra verá el paquete en el bot y podrá solicitarlo.",
+        "tag": "GRATIS",
+        "title": "Prueba gratuita",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Todas",
+        "empty": {
+          "text": "Cuando alguien abra su enlace de prueba gratuita o escriba al bot, aparecerá aquí.",
+          "title": "Aún no hay conversaciones"
+        },
+        "filter": "Mostrar",
+        "noMatch": "No hay nada aquí",
+        "request": "Solicitud",
+        "requests": "Solicitudes",
+        "unread": "No leídas",
+        "unreadCount": "{n} sin leer",
+        "you": "Usted:"
+      },
+      "noBot": {
+        "action": "Ajustes de Telegram",
+        "text": "Las personas se comunican con usted, y reciben la prueba gratuita, a través del bot de Telegram del panel.",
+        "title": "Primero configure el bot de Telegram"
+      },
+      "retry": "Intentar de nuevo",
+      "subtitle": "Mensajes de las personas que escriben a su bot de Telegram y sus solicitudes de prueba gratuita.",
+      "thread": {
+        "actionFailed": "Eso no funcionó",
+        "approve": "Aprobar",
+        "approved": "Prueba gratuita entregada: la cuenta se envió por Telegram",
+        "back": "Volver a las conversaciones",
+        "decline": "Rechazar",
+        "declined": "Solicitud rechazada",
+        "delete": "Eliminar conversación",
+        "deleteConfirm": "¿Eliminar esta conversación y sus mensajes? La cuenta de la persona se conserva.",
+        "empty": "Aún no hay mensajes",
+        "give": "Dar una prueba gratuita",
+        "giveConfirm": "¿Crear una cuenta de prueba gratuita para {name} y enviarla por Telegram?",
+        "more": "Más",
+        "pick": {
+          "text": "Abra una conversación para leerla, responder o decidir sobre una solicitud de prueba gratuita.",
+          "title": "Elija una conversación"
+        },
+        "placeholder": "Escriba un mensaje…",
+        "request": {
+          "again": "Ya tuvo una prueba gratuita o tiene una cuenta.",
+          "first": "Primera vez: nunca tuvo una prueba gratuita ni una cuenta aquí.",
+          "title": "{name} quiere la prueba gratuita"
+        },
+        "send": "Enviar",
+        "sendFailed": "No se envió el mensaje"
+      },
+      "title": "Bandeja de entrada"
     },
     "legacy": {
       "loading": "Cargando…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Preparando la copia de seguridad…",
     "btn_backup": "💾 Copia de seguridad",
     "btn_check": "🩺 Comprobar el estado",
+    "btn_free": "🎁 Prueba gratuita",
     "btn_new": "➕ Usuario nuevo",
     "btn_panel": "🖥 Abrir el panel",
     "btn_status": "📊 Estado del servidor",
@@ -4099,6 +4206,30 @@
     "f_ended": "Terminados",
     "f_expiring": "Por vencer",
     "f_online": "En línea",
+    "free_again": "📨 Pedir otra prueba gratuita",
+    "free_data": "<b>{amount}</b> de datos",
+    "free_days": "<b>{n}</b> días",
+    "free_declined": "Su solicitud de prueba gratuita no fue aprobada. Puede escribir un mensaje aquí para consultar al respecto.",
+    "free_get": "🎁 Obtener mi prueba gratuita",
+    "free_hint_auto": "Pulse el botón y su cuenta estará lista en unos segundos. No se necesita pago.",
+    "free_hint_manual": "Pulse el botón para enviar su solicitud. Su cuenta llegará aquí en cuanto sea aprobada.",
+    "free_hint_used": "Ya se usó una prueba gratuita en esta cuenta de Telegram, o ya tiene una cuenta. Otra requiere aprobación.",
+    "free_link_auto": "⚡️ Se entrega automáticamente, una vez por cuenta de Telegram.",
+    "free_link_inherited": "Definido por <b>{name}</b>.",
+    "free_link_manual": "✋ Cada solicitud espera su aprobación.",
+    "free_link_off": "La prueba gratuita está desactivada. Actívela en el panel: Bandeja de entrada → Prueba gratuita.",
+    "free_link_share": "Comparta este enlace. Quien lo abra verá este paquete y podrá solicitarlo.",
+    "free_link_title": "Prueba gratuita",
+    "free_link_waiting": "<b>{n}</b> solicitudes lo están esperando.",
+    "free_off": "La prueba gratuita no está disponible por ahora. Aun así, puede escribir un mensaje aquí.",
+    "free_pending": "Su solicitud fue enviada",
+    "free_ready": "¡Su prueba gratuita está lista!",
+    "free_request": "📨 Solicitar la prueba gratuita",
+    "free_tag": "GRATIS",
+    "free_title": "Prueba gratuita",
+    "free_wait": "Su cuenta llegará a este chat en cuanto sea aprobada.",
+    "free_write": "💬 Escribir un mensaje",
+    "free_write_hint": "Escriba su mensaje en este chat y envíelo. Llega directamente a soporte y la respuesta llega aquí.",
     "gb": "GB",
     "gone": "Este usuario ya no existe.",
     "last_online": "Última vez en línea",
@@ -4112,7 +4243,12 @@
     "links_hint": "Toque un enlace para copiarlo.",
     "links_title": "Enlaces",
     "manage": "⚙️ Gestionar",
+    "mb": "MB",
     "menu": "🏠 Menú",
+    "msg_from": "Soporte",
+    "msg_new": "{name} escribió:",
+    "msg_sent": "Su mensaje fue enviado.",
+    "msg_slow": "Demasiados mensajes. Espere un minuto, por favor.",
     "my_page": "🌐 Mi página",
     "never": "nunca",
     "new_count": "👥 ¿Cuántos usuarios?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Actualizar",
     "renew": "♻️ Renovar",
     "renewed": "Paquete renovado",
+    "reply": "↩️ Responder",
+    "reply_failed": "Su respuesta a <b>{name}</b> no fue entregada.",
+    "reply_prompt": "Escriba su respuesta para {name} y envíela.",
+    "reply_sent": "Su respuesta fue enviada a <b>{name}</b>.",
+    "req_approve": "✅ Aprobar",
+    "req_approved": "Aprobado: {name} recibió la prueba gratuita.",
+    "req_auto": "Prueba gratuita entregada",
+    "req_decline": "✖️ Rechazar",
+    "req_declined": "Rechazado: se informó a {name}.",
+    "req_done": "Esta solicitud ya fue respondida.",
+    "req_no_room": "No tiene espacio para otro usuario (su límite de usuarios).",
+    "req_title": "Solicitud de prueba gratuita",
     "reset_usage": "🔄 Restablecer consumo",
     "resets_in": "El consumo se restablece en {n} días",
     "search": "🔍 Buscar",
@@ -4287,6 +4435,7 @@
       "label": "Texto del botón «Ver más»"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "Mostrar el botón «Ver más»"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Título del cuadro de soporte"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Mostrar el título del cuadro de soporte"
     },
     "branding_title": {

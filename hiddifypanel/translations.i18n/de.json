@@ -298,6 +298,7 @@
       "dashboard_v2": "Weiter",
       "domain": "Domains",
       "home": "Dashboard",
+      "inbox": "Posteingang",
       "proxy": "Proxys",
       "proxy_stats": "Status der Proxys",
       "support": "Hilfe",
@@ -459,6 +460,7 @@
         "add_extra_sublinks": "Zusätzliche Abo-Links hinzufügen",
         "add_sub_admins": "Unteradmins hinzufügen",
         "modify_domains": "Domains verwalten",
+        "modify_free_package": "Gratis-Test festlegen",
         "modify_outbounds": "Outbounds verwalten",
         "modify_user_extra": "Benutzerseite anpassen",
         "override_preferred_outbound": "Bevorzugten Outbound ändern"
@@ -467,6 +469,7 @@
         "add_extra_sublinks": "Zusätzliche Konfigurationen oder Abo-Links für ihre Benutzer anhängen.",
         "add_sub_admins": "Eigene Agenten innerhalb der von Ihnen festgelegten Limits erstellen.",
         "modify_domains": "Domains in diesem Panel hinzufügen und bearbeiten.",
+        "modify_free_package": "Legt ein eigenes Gratis-Testpaket für den Telegram-Bot fest; ohne dieses gilt Ihres.",
         "modify_outbounds": "Outbounds des Servers konfigurieren (WARP, SOCKS, …).",
         "modify_user_extra": "Branding und zusätzliche Parameter auf der Benutzerseite ändern.",
         "override_preferred_outbound": "Festlegen, über welchen Outbound der Datenverkehr eines Benutzers das Netz verlässt."
@@ -1956,6 +1959,109 @@
       "links": "Hiddify im Web",
       "text": "HiddifyManager",
       "website": "Website"
+    },
+    "inbox": {
+      "dialog": {
+        "approval": "Wie es vergeben wird",
+        "data": "Datenvolumen",
+        "days": "Dauer",
+        "daysUnit": "Tage",
+        "enabled": "Gratis-Test anbieten",
+        "enabledHint": "Personen, die Ihren Link öffnen, können dieses Paket einmalig anfordern.",
+        "inherit": "Paket des übergeordneten Admins verwenden",
+        "preview": "Das sehen Personen im Bot",
+        "save": "Speichern",
+        "saveFailed": "Das Paket konnte nicht gespeichert werden",
+        "saved": "Gratis-Testpaket gespeichert",
+        "title": "Gratis-Testpaket"
+      },
+      "error": {
+        "disabled": "Der Gratis-Test ist deaktiviert.",
+        "no_room": "Kein Platz für einen weiteren Benutzer (Ihr Benutzerlimit).",
+        "not_pending": "Diese Anfrage wurde bereits beantwortet.",
+        "read_only": "Benutzer werden im übergeordneten Panel verwaltet."
+      },
+      "event": {
+        "declined": "Anfrage abgelehnt",
+        "granted": "Hat den Gratis-Test erhalten",
+        "request": "Hat den Gratis-Test angefordert"
+      },
+      "free": {
+        "auto": "Automatisch vergeben",
+        "autoHint": "Sofort, an ein Telegram-Konto, das noch nie einen Gratis-Test oder ein Konto hier hatte. Alle anderen warten auf Sie.",
+        "copied": "Link kopiert",
+        "copy": "Link kopieren",
+        "copyFailed": "Kopieren nicht möglich. Kopieren Sie ihn von Hand:",
+        "days": "{n} Tag | {n} Tage",
+        "edit": "Paket bearbeiten",
+        "inherited": "festgelegt von {name}",
+        "linkLabel": "Ihr Gratis-Test-Link",
+        "manual": "Sie genehmigen jede Anfrage",
+        "manualHint": "Jede Anfrage wartet in Ihrem Posteingang, bis Sie sie genehmigen oder ablehnen.",
+        "noRoom": "Sie haben Ihr Benutzerlimit erreicht: Anfragen warten, bis wieder Platz ist.",
+        "off": "Aus",
+        "offHint": "Personen, die Ihren Link öffnen, erfahren, dass der Gratis-Test nicht verfügbar ist.",
+        "offNoEdit": "Der Gratis-Test ist deaktiviert. Nur Ihr übergeordneter Admin kann ihn aktivieren.",
+        "on": "An",
+        "openTelegram": "In Telegram öffnen",
+        "qr": "QR-Code",
+        "setup": "Aktivieren",
+        "shareHint": "Teilen Sie diesen Link. Wer ihn öffnet, sieht das Paket im Bot und kann es anfordern.",
+        "tag": "GRATIS",
+        "title": "Gratis-Test",
+        "unit": {
+          "gb": "GB",
+          "mb": "MB"
+        }
+      },
+      "list": {
+        "all": "Alle",
+        "empty": {
+          "text": "Wenn jemand Ihren Gratis-Test-Link öffnet oder dem Bot schreibt, erscheint die Person hier.",
+          "title": "Noch keine Unterhaltungen"
+        },
+        "filter": "Anzeigen",
+        "noMatch": "Hier ist nichts",
+        "request": "Anfrage",
+        "requests": "Anfragen",
+        "unread": "Ungelesen",
+        "unreadCount": "{n} ungelesen",
+        "you": "Sie:"
+      },
+      "noBot": {
+        "action": "Telegram-Einstellungen",
+        "text": "Personen erreichen Sie und erhalten den Gratis-Test über den Telegram-Bot des Panels.",
+        "title": "Richten Sie zuerst den Telegram-Bot ein"
+      },
+      "retry": "Erneut versuchen",
+      "subtitle": "Nachrichten von Personen, die Ihrem Telegram-Bot schreiben, und ihre Gratis-Test-Anfragen.",
+      "thread": {
+        "actionFailed": "Das hat nicht funktioniert",
+        "approve": "Genehmigen",
+        "approved": "Gratis-Test vergeben: Das Konto wurde per Telegram gesendet",
+        "back": "Zurück zu den Unterhaltungen",
+        "decline": "Ablehnen",
+        "declined": "Anfrage abgelehnt",
+        "delete": "Unterhaltung löschen",
+        "deleteConfirm": "Diese Unterhaltung und ihre Nachrichten löschen? Das Konto der Person bleibt bestehen.",
+        "empty": "Noch keine Nachrichten",
+        "give": "Gratis-Test vergeben",
+        "giveConfirm": "Ein Gratis-Testkonto für {name} erstellen und per Telegram senden?",
+        "more": "Mehr",
+        "pick": {
+          "text": "Öffnen Sie eine Unterhaltung, um sie zu lesen, zu antworten oder über eine Gratis-Test-Anfrage zu entscheiden.",
+          "title": "Unterhaltung auswählen"
+        },
+        "placeholder": "Nachricht schreiben…",
+        "request": {
+          "again": "Hatte schon einen Gratis-Test oder hat ein Konto.",
+          "first": "Erstes Mal: noch nie einen Gratis-Test oder ein Konto hier gehabt.",
+          "title": "{name} möchte den Gratis-Test"
+        },
+        "send": "Senden",
+        "sendFailed": "Die Nachricht wurde nicht gesendet"
+      },
+      "title": "Posteingang"
     },
     "legacy": {
       "loading": "Wird geladen…",
@@ -4073,6 +4179,7 @@
     "backup_working": "Backup wird vorbereitet…",
     "btn_backup": "💾 Backup",
     "btn_check": "🩺 Status prüfen",
+    "btn_free": "🎁 Gratis-Test",
     "btn_new": "➕ Neuer Benutzer",
     "btn_panel": "🖥 Panel öffnen",
     "btn_status": "📊 Serverstatus",
@@ -4099,6 +4206,30 @@
     "f_ended": "Abgelaufen",
     "f_expiring": "Laufen bald ab",
     "f_online": "Online",
+    "free_again": "📨 Weiteren Gratis-Test anfragen",
+    "free_data": "<b>{amount}</b> Datenvolumen",
+    "free_days": "<b>{n}</b> Tage",
+    "free_declined": "Ihre Anfrage für den Gratis-Test wurde nicht genehmigt. Sie können hier eine Nachricht schreiben, um nachzufragen.",
+    "free_get": "🎁 Meinen Gratis-Test holen",
+    "free_hint_auto": "Tippen Sie auf die Schaltfläche, und Ihr Konto ist in wenigen Sekunden bereit. Keine Zahlung nötig.",
+    "free_hint_manual": "Tippen Sie auf die Schaltfläche, um Ihre Anfrage zu senden. Ihr Konto kommt hier an, sobald sie genehmigt wurde.",
+    "free_hint_used": "Mit diesem Telegram-Konto wurde bereits ein Gratis-Test genutzt, oder es hat ein Konto. Ein weiterer muss genehmigt werden.",
+    "free_link_auto": "⚡️ Automatisch vergeben, einmal pro Telegram-Konto.",
+    "free_link_inherited": "Festgelegt von <b>{name}</b>.",
+    "free_link_manual": "✋ Jede Anfrage wartet auf Ihre Genehmigung.",
+    "free_link_off": "Der Gratis-Test ist deaktiviert. Aktivieren Sie ihn im Panel: Posteingang → Gratis-Test.",
+    "free_link_share": "Teilen Sie diesen Link. Wer ihn öffnet, sieht dieses Paket und kann es anfordern.",
+    "free_link_title": "Gratis-Test",
+    "free_link_waiting": "<b>{n}</b> Anfragen warten auf Sie.",
+    "free_off": "Der Gratis-Test ist derzeit nicht verfügbar. Sie können hier trotzdem eine Nachricht schreiben.",
+    "free_pending": "Ihre Anfrage wurde gesendet",
+    "free_ready": "Ihr Gratis-Test ist bereit!",
+    "free_request": "📨 Gratis-Test anfordern",
+    "free_tag": "GRATIS",
+    "free_title": "Gratis-Test",
+    "free_wait": "Ihr Konto kommt in diesem Chat an, sobald es genehmigt wurde.",
+    "free_write": "💬 Nachricht schreiben",
+    "free_write_hint": "Schreiben Sie Ihre Nachricht einfach in diesen Chat und senden Sie sie ab. Sie geht direkt an den Support, und die Antwort kommt hierher.",
     "gb": "GB",
     "gone": "Diesen Benutzer gibt es nicht mehr.",
     "last_online": "Zuletzt online",
@@ -4112,7 +4243,12 @@
     "links_hint": "Tippen Sie auf einen Link, um ihn zu kopieren.",
     "links_title": "Links",
     "manage": "⚙️ Verwalten",
+    "mb": "MB",
     "menu": "🏠 Menü",
+    "msg_from": "Support",
+    "msg_new": "{name} hat geschrieben:",
+    "msg_sent": "Ihre Nachricht wurde gesendet.",
+    "msg_slow": "Zu viele Nachrichten. Bitte warten Sie eine Minute.",
     "my_page": "🌐 Meine Seite",
     "never": "nie",
     "new_count": "👥 Wie viele Benutzer?",
@@ -4144,6 +4280,18 @@
     "refresh": "🔄 Aktualisieren",
     "renew": "♻️ Verlängern",
     "renewed": "Paket verlängert",
+    "reply": "↩️ Antworten",
+    "reply_failed": "Ihre Antwort an <b>{name}</b> wurde nicht zugestellt.",
+    "reply_prompt": "Schreiben Sie Ihre Antwort an {name} und senden Sie sie ab.",
+    "reply_sent": "Ihre Antwort wurde an <b>{name}</b> gesendet.",
+    "req_approve": "✅ Genehmigen",
+    "req_approved": "Genehmigt: {name} hat den Gratis-Test erhalten.",
+    "req_auto": "Gratis-Test vergeben",
+    "req_decline": "✖️ Ablehnen",
+    "req_declined": "Abgelehnt: {name} wurde informiert.",
+    "req_done": "Diese Anfrage wurde bereits beantwortet.",
+    "req_no_room": "Sie haben keinen Platz für einen weiteren Benutzer (Ihr Benutzerlimit).",
+    "req_title": "Anfrage für Gratis-Test",
     "reset_usage": "🔄 Nutzung zurücksetzen",
     "resets_in": "Die Nutzung wird in {n} Tagen zurückgesetzt",
     "search": "🔍 Suchen",
@@ -4287,6 +4435,7 @@
       "label": "Text der Schaltfläche „Mehr ansehen“"
     },
     "branding_support_more_show": {
+      "description": "",
       "label": "Schaltfläche „Mehr ansehen“ anzeigen"
     },
     "branding_support_title": {
@@ -4294,6 +4443,7 @@
       "label": "Titel des Support-Felds"
     },
     "branding_support_title_show": {
+      "description": "",
       "label": "Titel des Support-Felds anzeigen"
     },
     "branding_title": {
