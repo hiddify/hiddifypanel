@@ -8,6 +8,8 @@ export type FreeAction = 'approve' | 'decline' | 'grant'
 
 /** What someone gets from the free test link. */
 export interface FreePackage {
+  /** Its id among the admin's packages; missing on a new one ("" for the defaults). */
+  id?: string
   enabled: boolean
   days: number
   usage_gb: number
@@ -18,8 +20,12 @@ export interface FreePackage {
 export interface FreeTest {
   /** The package in effect: this admin's own, else its nearest parent's. */
   package: FreePackage
-  /** This admin's own definition; null: it uses its parent's. */
+  /** This admin's own default package; null: it uses its parent's. */
   own: FreePackage | null
+  /** All of this admin's own packages; only the default one is offered in the bot. */
+  packages: FreePackage[]
+  default_id: string | null
+  max_packages: number
   can_edit: boolean
   /** The parent whose package applies; null when it is this admin's own (or nobody defined one). */
   inherited_from: string | null
@@ -38,6 +44,8 @@ export interface Conversation {
   /** The account this person has from this admin. */
   account: { uuid: string; name: string; active: boolean } | null
   free_status: FreeStatus
+  /** The package this person asked for or got; null: not yet (shown with the default one). */
+  package_id: string | null
   free_grants: number
   /** A waiting request from someone who never had a free test or an account here. */
   first_time: boolean
@@ -90,9 +98,9 @@ export const inboxApi = {
     const { data } = await getHttp().put<FreeTest>('inbox/free-test/', value ?? { inherit: true })
     return data
   },
-  /** Delete this admin's own package: it turns off and goes back to the defaults. */
-  async deletePackage(): Promise<FreeTest> {
-    const { data } = await getHttp().put<FreeTest>('inbox/free-test/', { enabled: false })
+  /** Set all of this admin's own packages and which one is the default (a package without an id is a new one). */
+  async savePackages(packages: FreePackage[], defaultId: string | null): Promise<FreeTest> {
+    const { data } = await getHttp().put<FreeTest>('inbox/free-test/', { packages, default: defaultId })
     return data
   },
   /** Opening a conversation marks it read. */

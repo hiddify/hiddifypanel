@@ -1965,7 +1965,12 @@
       "website": "Website"
     },
     "inbox": {
+      "drawer": {
+        "open": "Show Conversations",
+        "close": "Hide Conversations"
+      },
       "dialog": {
+        "newTitle": "New Free Test Package",
         "approval": "How It Is Given",
         "data": "Data",
         "days": "Duration",
@@ -1991,6 +1996,13 @@
         "request": "Asked for the free test"
       },
       "free": {
+        "add": "Add Package",
+        "default": "Default",
+        "makeDefault": "Make Default",
+        "madeDefault": "Default package changed",
+        "standby": "Standby",
+        "standbyHint": "Not offered in the bot. Make it the default to offer it.",
+        "deleteConfirmOne": "Delete this package? People who got it keep their accounts.",
         "auto": "Given Automatically",
         "autoHint": "At once, to a Telegram account that never had a free test or an account here. Everyone else waits for you.",
         "copied": "Link copied",

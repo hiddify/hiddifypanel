@@ -11,10 +11,11 @@ import { isSuperAdmin } from '@/core/panelShell'
 import NumberStepper from '@/shared/components/NumberStepper.vue'
 import PackageChips from '@/features/inbox/components/PackageChips.vue'
 import { splitData } from '@/features/inbox/format'
-import { inboxApi, type Approval, type FreeTest } from '@/features/inbox/api'
+import { inboxApi, type Approval, type FreePackage, type FreeTest } from '@/features/inbox/api'
 
-/** Define the free test: on or off, how long, how much data, and whether each request needs the admin. */
-const props = defineProps<{ free: FreeTest }>()
+/** Define a free test package: on or off, how long, how much data, and whether each request needs the admin.
+ *  `target`: the package to edit; null: a new one, added to the admin's packages. */
+const props = defineProps<{ free: FreeTest; target: FreePackage | null }>()
 const emit = defineEmits<{ saved: [free: FreeTest] }>()
 const visible = defineModel<boolean>('visible', { required: true })
 
@@ -38,7 +39,7 @@ const approvals: { value: Approval; icon: string; color: string }[] = [
 
 watch(visible, (shown) => {
   if (!shown) return
-  const pkg = props.free.package
+  const pkg = props.target ?? { enabled: true, days: 7, usage_gb: 0.5, approval: 'manual' as Approval }
   const data = splitData(pkg.usage_gb)
   // Opening the dialog of a package that is off is the way to turn it on.
   enabled.value = true
@@ -60,7 +61,15 @@ const valid = computed(
 async function save(inherit = false) {
   busy.value = true
   try {
-    const saved = await inboxApi.savePackage(inherit ? null : { enabled: enabled.value, days: days.value ?? 7, usage_gb: usageGb.value, approval: approval.value })
+    let saved: FreeTest
+    if (inherit) saved = await inboxApi.savePackage(null)
+    else {
+      const id = props.target?.id || undefined
+      const value: FreePackage = { ...(id ? { id } : {}), enabled: enabled.value, days: days.value ?? 7, usage_gb: usageGb.value, approval: approval.value }
+      const list = props.free.packages
+      const next = id && list.some((p) => p.id === id) ? list.map((p) => (p.id === id ? value : p)) : [...list, value]
+      saved = await inboxApi.savePackages(next, props.free.default_id)
+    }
     toast.add({ severity: 'success', summary: t('inbox.dialog.saved'), life: 2500 })
     emit('saved', saved)
     visible.value = false
@@ -73,7 +82,7 @@ async function save(inherit = false) {
 </script>
 
 <template>
-  <Dialog v-model:visible="visible" modal :draggable="false" :header="t('inbox.dialog.title')" :style="{ width: '32rem' }" :breakpoints="{ '575px': 'calc(100vw - 1.5rem)' }">
+  <Dialog v-model:visible="visible" modal :draggable="false" :header="target ? t('inbox.dialog.title') : t('inbox.dialog.newTitle')" :style="{ width: '32rem' }" :breakpoints="{ '575px': 'calc(100vw - 1.5rem)' }">
     <div class="ftd">
       <label class="ftd-switch" for="ftd-enabled">
         <span>

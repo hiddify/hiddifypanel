@@ -7,22 +7,67 @@ import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 import { liveWatch, type LiveError } from '@/core/live/live'
 import PageHeader from '@/shared/components/PageHeader.vue'
-import ConversationList, { type InboxFilter } from '@/features/inbox/components/ConversationList.vue'
-import ConversationThread from '@/features/inbox/components/ConversationThread.vue'
 import FreeTestCard from '@/features/inbox/components/FreeTestCard.vue'
 import FreeTestDialog from '@/features/inbox/components/FreeTestDialog.vue'
-import type { Conversation, FreeTest, Inbox } from '@/features/inbox/api'
+import InboxPanel from '@/features/inbox/components/InboxPanel.vue'
+import PackageDrawer from '@/features/inbox/components/PackageDrawer.vue'
+import type { Conversation, FreePackage, FreeTest, Inbox } from '@/features/inbox/api'
 
 const { t } = useI18n()
 
 const inbox = ref<Inbox | null>(null)
 const loadError = ref('')
 const selectedId = ref<number | null>(null)
-const filter = ref<InboxFilter>('all')
 const editing = ref(false)
+/** The package the dialog edits; null: a new one. */
+const target = ref<FreePackage | null>(null)
 let feed: ReturnType<typeof liveWatch> | null = null
 
-const selected = computed(() => inbox.value?.conversations.find((c) => c.id === selectedId.value) ?? null)
+/** The admin's own packages, the default one first; else the one in effect (a parent's, or the defaults). */
+const packages = computed<FreePackage[]>(() => {
+  const free = inbox.value?.free
+  if (!free) return []
+  if (!free.packages.length) return [free.package]
+  return [...free.packages].sort((a, b) => Number(b.id === free.default_id) - Number(a.id === free.default_id))
+})
+const defaultId = computed(() => (inbox.value?.free.packages.length ? inbox.value.free.default_id : packages.value[0]?.id) ?? '')
+/** Several packages: each gets its own card, with its conversations in a drawer under it. */
+const multi = computed(() => packages.value.length > 1)
+const canAdd = computed(() => {
+  const free = inbox.value?.free
+  return !!free && free.can_edit && free.packages.length > 0 && free.packages.length < free.max_packages
+})
+
+/** A conversation goes with the package it asked for, while it exists; else with the default one. */
+function groupOf(conversation: Conversation): string {
+  const id = conversation.package_id
+  return id && packages.value.some((p) => p.id === id) ? id : defaultId.value
+}
+const groups = computed(() => {
+  const by = new Map<string, Conversation[]>()
+  for (const c of inbox.value?.conversations ?? []) by.set(groupOf(c), [...(by.get(groupOf(c)) ?? []), c])
+  return by
+})
+function conversationsOf(pkg: FreePackage): Conversation[] {
+  return groups.value.get(pkg.id ?? '') ?? []
+}
+function needsAttention(list: Conversation[]): boolean {
+  return list.some((c) => c.unread > 0 || c.free_status === 'pending')
+}
+function packageOf(conversation: Conversation): FreePackage {
+  return packages.value.find((p) => p.id === groupOf(conversation)) ?? inbox.value!.free.package
+}
+
+function openEdit(pkg: FreePackage) {
+  const free = inbox.value!.free
+  // A package of the admin's own, or the parent's one to start its own from; with no packages left, a new one.
+  target.value = free.packages.some((p) => p.id === pkg.id) || !free.own ? pkg : null
+  editing.value = true
+}
+function openAdd() {
+  target.value = null
+  editing.value = true
+}
 
 function watchInbox() {
   feed?.stop()
@@ -79,28 +124,42 @@ function onSaved(free: FreeTest) {
         <RouterLink :to="{ path: '/settings', hash: '#cat=telegram' }" class="inbox-nobot__link">{{ t('inbox.noBot.action') }} <i class="pi pi-arrow-right" /></RouterLink>
       </section>
 
-      <FreeTestCard v-else :free="inbox.free" @edit="editing = true" @saved="onSaved" />
-
-      <section class="inbox-panel" :class="{ 'inbox-panel--open': selected }">
-        <aside class="inbox-list">
-          <div v-if="!inbox.conversations.length" class="inbox-empty">
-            <span class="inbox-empty__icon"><i class="pi pi-inbox" /></span>
-            <h3>{{ t('inbox.list.empty.title') }}</h3>
-            <p>{{ t('inbox.list.empty.text') }}</p>
+      <template v-else>
+        <!-- One package: its card, then every conversation -->
+        <template v-if="!multi">
+          <FreeTestCard :free="inbox.free" :pkg="packages[0]" :is-default="true" :multi="false" @edit="openEdit" @saved="onSaved" />
+          <button v-if="canAdd" type="button" class="inbox-add" @click="openAdd"><i class="pi pi-plus" />{{ t('inbox.free.add') }}</button>
+        </template>
+        <!-- Several: each card with its own conversations in a drawer under it -->
+        <div v-else class="inbox-groups">
+          <div v-for="pkg in packages" :key="pkg.id" class="inbox-group">
+            <FreeTestCard :free="inbox.free" :pkg="pkg" :is-default="pkg.id === defaultId" :multi="true" @edit="openEdit" @saved="onSaved" />
+            <PackageDrawer :count="conversationsOf(pkg).length" :attention="needsAttention(conversationsOf(pkg))">
+              <InboxPanel
+                :conversations="conversationsOf(pkg)"
+                :selected-id="selectedId"
+                :package-of="packageOf"
+                @select="selectedId = $event"
+                @changed="onChanged"
+                @removed="onRemoved"
+              />
+            </PackageDrawer>
           </div>
-          <ConversationList v-else v-model:filter="filter" :conversations="inbox.conversations" :selected-id="selectedId" @select="selectedId = $event" />
-        </aside>
-        <div class="inbox-thread">
-          <ConversationThread v-if="selected" :conversation="selected" :package="inbox.free.package" @back="selectedId = null" @changed="onChanged" @removed="onRemoved" />
-          <div v-else class="inbox-empty">
-            <span class="inbox-empty__icon"><i class="pi pi-comments" /></span>
-            <h3>{{ t('inbox.thread.pick.title') }}</h3>
-            <p>{{ t('inbox.thread.pick.text') }}</p>
-          </div>
+          <button v-if="canAdd" type="button" class="inbox-add" @click="openAdd"><i class="pi pi-plus" />{{ t('inbox.free.add') }}</button>
         </div>
-      </section>
+      </template>
 
-      <FreeTestDialog v-model:visible="editing" :free="inbox.free" @saved="onSaved" />
+      <InboxPanel
+        v-if="!multi || !inbox.bot_username"
+        :conversations="inbox.conversations"
+        :selected-id="selectedId"
+        :package-of="packageOf"
+        @select="selectedId = $event"
+        @changed="onChanged"
+        @removed="onRemoved"
+      />
+
+      <FreeTestDialog v-model:visible="editing" :free="inbox.free" :target="target" @saved="onSaved" />
     </template>
   </div>
 </template>
@@ -139,8 +198,7 @@ function onSaved(free: FreeTest) {
   margin-top: 0.2rem;
   color: var(--text-color-secondary);
 }
-.inbox-nobot__icon,
-.inbox-empty__icon {
+.inbox-nobot__icon {
   display: grid;
   place-items: center;
   width: 3rem;
@@ -161,58 +219,35 @@ function onSaved(free: FreeTest) {
 html[dir='rtl'] .inbox-nobot__link .pi {
   transform: scaleX(-1);
 }
-.inbox-panel {
-  display: grid;
-  grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
-  height: clamp(26rem, calc(100dvh - 24rem), 46rem);
-  border-radius: 18px;
-  border: 1px solid var(--surface-border);
-  background: var(--surface-card);
-  overflow: hidden;
-}
-.inbox-list {
-  min-height: 0;
-  border-inline-end: 1px solid var(--surface-border);
-}
-.inbox-thread {
-  min-width: 0;
-  min-height: 0;
-}
-.inbox-empty {
+.inbox-groups {
   display: flex;
   flex-direction: column;
+  gap: 1.4rem;
+}
+.inbox-group {
+  display: flex;
+  flex-direction: column;
+}
+.inbox-add {
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  height: 100%;
-  padding: 2rem 1.5rem;
-  text-align: center;
-}
-.inbox-empty h3 {
-  margin: 0.4rem 0 0;
-  font-size: 1.05rem;
-}
-.inbox-empty p {
-  max-width: 24rem;
-  margin: 0;
+  padding: 0.85rem;
+  border: 1.5px dashed color-mix(in srgb, var(--p-text-color) 24%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--p-content-background) 45%, transparent);
   color: var(--text-color-secondary);
-  line-height: 1.5;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
-/* A phone shows one pane at a time: the list, then the conversation over it. */
-@media (max-width: 899px) {
-  .inbox-panel {
-    grid-template-columns: minmax(0, 1fr);
-    height: clamp(24rem, calc(100dvh - 12rem), 46rem);
-  }
-  .inbox-list {
-    border-inline-end: 0;
-  }
-  .inbox-thread,
-  .inbox-panel--open .inbox-list {
-    display: none;
-  }
-  .inbox-panel--open .inbox-thread {
-    display: block;
-  }
+.inbox-add:hover,
+.inbox-add:focus-visible {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 </style>

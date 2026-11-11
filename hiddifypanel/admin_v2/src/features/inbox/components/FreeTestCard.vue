@@ -8,30 +8,47 @@ import { apiErrorMessage } from '@/core/api/client'
 import { useDangerConfirm } from '@/shared/composables/useDangerConfirm'
 import HiddifyQrCode from '@/shared/components/HiddifyQrCode.vue'
 import PackageChips from '@/features/inbox/components/PackageChips.vue'
-import { inboxApi, type FreeTest } from '@/features/inbox/api'
+import { inboxApi, type FreePackage, type FreeTest } from '@/features/inbox/api'
 
-/** This admin's free test: the package people get, whether it is on, and the link to share. */
-const props = defineProps<{ free: FreeTest }>()
-const emit = defineEmits<{ edit: []; saved: [free: FreeTest] }>()
+/** One of this admin's free test packages. The default one is what the bot offers: it carries the link to share; the
+ *  others wait (`multi`: the admin has several, each can be made the default). */
+const props = defineProps<{ free: FreeTest; pkg: FreePackage; isDefault: boolean; multi: boolean }>()
+const emit = defineEmits<{ edit: [pkg: FreePackage]; saved: [free: FreeTest] }>()
 
 const { t } = useI18n()
 const toast = useToast()
 const dangerConfirm = useDangerConfirm()
 const qrVisible = ref(false)
 const deleting = ref(false)
-const pkg = computed(() => props.free.package)
-/** Only a package of this admin's own can be deleted (a parent's one is not theirs). */
-const canDelete = computed(() => props.free.can_edit && !!props.free.own && pkg.value.enabled)
+const defaulting = ref(false)
+const pkg = computed(() => props.pkg)
+/** One of this admin's own packages (a parent's one is not theirs to delete). */
+const isOwn = computed(() => !!props.pkg.id && props.free.packages.some((p) => p.id === props.pkg.id))
+const canDelete = computed(() => props.free.can_edit && isOwn.value && (props.multi || props.pkg.enabled))
+
+async function makeDefault() {
+  defaulting.value = true
+  try {
+    emit('saved', await inboxApi.savePackages(props.free.packages, props.pkg.id ?? null))
+    toast.add({ severity: 'success', summary: t('inbox.free.madeDefault'), life: 2500 })
+  } catch (err) {
+    toast.add({ severity: 'error', summary: t('inbox.dialog.saveFailed'), detail: apiErrorMessage(err), life: 5000 })
+  } finally {
+    defaulting.value = false
+  }
+}
 
 function askDelete() {
   dangerConfirm({
     header: t('inbox.free.deleteTitle'),
-    message: t('inbox.free.deleteConfirm'),
+    // The last package: the free test turns off. One of several: the others stay (the first one becomes the default).
+    message: props.multi ? t('inbox.free.deleteConfirmOne') : t('inbox.free.deleteConfirm'),
     acceptLabel: t('inbox.free.delete'),
     accept: async () => {
       deleting.value = true
       try {
-        emit('saved', await inboxApi.deletePackage())
+        const rest = props.free.packages.filter((p) => p.id !== props.pkg.id)
+        emit('saved', await inboxApi.savePackages(rest, props.isDefault ? null : props.free.default_id))
         toast.add({ severity: 'success', summary: t('inbox.free.deleted'), life: 2500 })
       } catch (err) {
         toast.add({ severity: 'error', summary: t('inbox.free.deleteFailed'), detail: apiErrorMessage(err), life: 5000 })
@@ -54,15 +71,17 @@ async function copy() {
 </script>
 
 <template>
-  <section class="ft-card" :class="{ 'ft-card--off': !pkg.enabled }">
+  <section class="ft-card" :class="{ 'ft-card--off': isDefault ? !pkg.enabled : true }">
     <div class="ft-head">
       <span class="ft-icon" aria-hidden="true"><i class="pi pi-gift" /></span>
       <div class="ft-title">
         <h3>
           {{ t('inbox.free.title') }}
-          <span class="ft-state" :class="pkg.enabled ? 'ft-state--on' : 'ft-state--off'">{{ pkg.enabled ? t('inbox.free.on') : t('inbox.free.off') }}</span>
+          <span v-if="multi && isDefault" class="ft-state ft-state--default"><i class="pi pi-star-fill" />{{ t('inbox.free.default') }}</span>
+          <span v-if="isDefault" class="ft-state" :class="pkg.enabled ? 'ft-state--on' : 'ft-state--off'">{{ pkg.enabled ? t('inbox.free.on') : t('inbox.free.off') }}</span>
+          <span v-else class="ft-state ft-state--off" :title="t('inbox.free.standbyHint')">{{ t('inbox.free.standby') }}</span>
         </h3>
-        <p v-if="pkg.enabled">
+        <p v-if="pkg.enabled || !isDefault">
           <i class="pi" :class="pkg.approval === 'auto' ? 'pi-bolt' : 'pi-user-edit'" />
           {{ pkg.approval === 'auto' ? t('inbox.free.auto') : t('inbox.free.manual') }}
           <template v-if="free.inherited_from"> · {{ t('inbox.free.inherited', { name: free.inherited_from }) }}</template>
@@ -71,13 +90,23 @@ async function copy() {
       </div>
       <div v-if="free.can_edit" class="ft-actions">
         <Button
-          :label="pkg.enabled ? t('inbox.free.edit') : t('inbox.free.setup')"
-          :icon="pkg.enabled ? 'pi pi-pencil' : 'pi pi-play'"
-          :severity="pkg.enabled ? 'secondary' : undefined"
-          :outlined="pkg.enabled"
+          :label="isDefault && !pkg.enabled ? t('inbox.free.setup') : t('inbox.free.edit')"
+          :icon="isDefault && !pkg.enabled ? 'pi pi-play' : 'pi pi-pencil'"
+          :severity="isDefault && !pkg.enabled ? undefined : 'secondary'"
+          :outlined="!isDefault || pkg.enabled"
           size="small"
           class="ft-edit"
-          @click="emit('edit')"
+          @click="emit('edit', pkg)"
+        />
+        <Button
+          v-if="multi && !isDefault && isOwn"
+          :label="t('inbox.free.makeDefault')"
+          icon="pi pi-star"
+          severity="secondary"
+          outlined
+          size="small"
+          :loading="defaulting"
+          @click="makeDefault"
         />
         <Button
           v-if="canDelete"
@@ -94,10 +123,11 @@ async function copy() {
       </div>
     </div>
 
-    <template v-if="pkg.enabled">
+    <template v-if="pkg.enabled || !isDefault">
       <PackageChips :days="pkg.days" :usage-gb="pkg.usage_gb" tag class="ft-chips" />
 
-      <div v-if="free.link" class="ft-link">
+      <!-- Only the default package is offered: the link is on its card -->
+      <div v-if="isDefault && free.link" class="ft-link">
         <span class="ft-link__label">{{ t('inbox.free.linkLabel') }}</span>
         <div class="ft-link__row">
           <button type="button" class="ft-link__url" dir="ltr" :title="t('inbox.free.copy')" @click="copy">
@@ -123,7 +153,7 @@ async function copy() {
         </div>
         <small>{{ t('inbox.free.shareHint') }}</small>
       </div>
-      <p v-if="!free.has_room" class="ft-warn"><i class="pi pi-exclamation-triangle" />{{ t('inbox.free.noRoom') }}</p>
+      <p v-if="isDefault && !free.has_room" class="ft-warn"><i class="pi pi-exclamation-triangle" />{{ t('inbox.free.noRoom') }}</p>
     </template>
 
     <Dialog v-model:visible="qrVisible" modal dismissable-mask :draggable="false" :header="t('inbox.free.linkLabel')" :style="{ width: '22rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
@@ -205,8 +235,19 @@ async function copy() {
   background: var(--p-content-hover-background, var(--surface-hover));
   color: var(--text-color-secondary);
 }
+.ft-state--default {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: color-mix(in srgb, var(--p-amber-500) 16%, transparent);
+  color: var(--p-amber-700, #b45309);
+}
+.ft-state--default .pi {
+  font-size: 0.65rem;
+}
 .ft-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 /* Outlines that show on every theme: the frosted Caddy and Liquid themes make the default ones near-white. */
