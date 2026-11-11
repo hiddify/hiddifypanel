@@ -26,6 +26,7 @@ class Lang(HEnum):
     ar = auto()
     ur = auto()
     ps = auto()
+    bn = auto()
 
 
 #: Languages written right to left
