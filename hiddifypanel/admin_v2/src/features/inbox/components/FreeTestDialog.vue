@@ -135,21 +135,31 @@ async function save(inherit = false) {
         <div class="ftd-preview">
           <span class="ftd-label">{{ t('inbox.dialog.preview') }}</span>
           <div class="ftd-bubble">
-            <!-- A red bow on the box's top end corner, on the ribbon that runs down its side -->
-            <svg class="ftd-bow" viewBox="0 0 48 34" aria-hidden="true">
+            <!-- A tilted red bow on the box's top end corner; its two tails hang down and sway -->
+            <svg class="ftd-bow" viewBox="0 0 60 84" aria-hidden="true">
               <defs>
                 <linearGradient id="ftd-bow-red" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0" stop-color="#f87171" />
                   <stop offset="1" stop-color="#dc2626" />
                 </linearGradient>
+                <linearGradient id="ftd-tail-red" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#b91c1c" />
+                  <stop offset=".5" stop-color="#ef4444" />
+                  <stop offset="1" stop-color="#b91c1c" />
+                </linearGradient>
               </defs>
-              <path d="M22 16 L14 32 L18 30 L20 33.5 L24.5 17 Z" fill="#b91c1c" />
-              <path d="M26 16 L34 32 L30 30 L28 33.5 L23.5 17 Z" fill="#b91c1c" />
-              <path d="M24 15 C15 1 1 3 5 14 C8 22 18 19 24 15 Z" fill="url(#ftd-bow-red)" />
-              <path d="M24 15 C33 1 47 3 43 14 C40 22 30 19 24 15 Z" fill="url(#ftd-bow-red)" />
-              <path d="M22 14 C17 8 10 7 9 12" fill="none" stroke="#7f1d1d" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round" />
-              <path d="M26 14 C31 8 38 7 39 12" fill="none" stroke="#7f1d1d" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round" />
-              <rect x="19.5" y="10" width="9" height="10" rx="3.5" fill="#ef4444" stroke="#b91c1c" stroke-width="1" />
+              <g class="ftd-tail ftd-tail--a">
+                <path d="M27 20 C22 34 31 48 21 66 C19 70 18 74 17 79 L22 75.5 L25 81 C27 72 30 66 32 58 C35 46 28 34 31 21 Z" fill="url(#ftd-tail-red)" />
+              </g>
+              <g class="ftd-tail ftd-tail--b">
+                <path d="M29 21 C33 34 28 46 36 60 C38 64 40 70 41 76 L44 71.5 L48 75 C46 66 44 61 42 56 C37 44 36 32 33 20 Z" fill="url(#ftd-tail-red)" />
+              </g>
+              <path d="M30 18 C21 4 6 5 9 16 C11 24 23 22 30 18 Z" fill="url(#ftd-bow-red)" />
+              <path d="M30 18 C39 4 54 5 51 16 C49 24 37 22 30 18 Z" fill="url(#ftd-bow-red)" />
+              <path d="M28 17 C23 11 16 10 14 14.5" fill="none" stroke="#7f1d1d" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round" />
+              <path d="M32 17 C37 11 44 10 46 14.5" fill="none" stroke="#7f1d1d" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round" />
+              <path d="M14 11 C17 8.5 21 9 23 11" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.3" stroke-linecap="round" />
+              <rect x="25.5" y="13" width="9" height="10" rx="3.5" fill="#ef4444" stroke="#b91c1c" stroke-width="1" />
             </svg>
             <b><i class="pi pi-gift ftd-gift" aria-hidden="true" /> {{ t('inbox.free.title') }}</b>
             <PackageChips :days="days ?? 0" :usage-gb="usageGb" tag />
@@ -321,17 +331,16 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
   flex-direction: column;
   gap: 0.4rem;
 }
-/* The preview is a gift box: a soft warm box, a red ribbon down its end side and a red bow on its top end corner. */
+/* The preview is a gift box: a soft warm box with a red bow tied on its top end corner. */
 .ftd-bubble {
   --ftd-gift-color: var(--p-red-500);
-  --ftd-ribbon: linear-gradient(90deg, #dc2626, #ef4444 45%, #f87171 55%, #dc2626);
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   align-self: flex-start;
   max-width: 100%;
-  margin-top: 0.9rem;
+  margin-top: 1.1rem;
   padding: 0.8rem 3.6rem 0.8rem 1rem;
   border-radius: 16px;
   border: 1px solid color-mix(in srgb, var(--ftd-gift-color) 25%, var(--surface-border));
@@ -341,24 +350,38 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
 html[dir='rtl'] .ftd-bubble {
   padding: 0.8rem 1rem 0.8rem 3.6rem;
 }
-/* The ribbon: a red band from the top edge to the bottom one, under the bow. */
-.ftd-bubble::before {
-  content: '';
-  position: absolute;
-  inset-block: -1px;
-  inset-inline-end: 1.45rem;
-  width: 0.6rem;
-  background: var(--ftd-ribbon);
-  box-shadow: 0 0 0 0.5px rgb(127 29 29 / 0.25);
-}
+/* The bow: tilted on the top end corner, half over the edge; the tails hang down over the box's end side. */
 .ftd-bow {
   position: absolute;
-  top: -1.05rem;
-  inset-inline-end: calc(1.75rem - 1.5rem);
-  width: 3rem;
-  height: 2.15rem;
+  top: -1.35rem;
+  inset-inline-end: -0.35rem;
+  width: 3.3rem;
+  height: 4.6rem;
+  transform: rotate(16deg);
   filter: drop-shadow(0 2px 2px rgb(127 29 29 / 0.3));
   pointer-events: none;
+}
+html[dir='rtl'] .ftd-bow {
+  transform: scaleX(-1) rotate(16deg);
+}
+/* Each tail swings from the knot, softly and out of step with the other, like ribbon in a light breeze. */
+.ftd-tail {
+  transform-box: view-box;
+  transform-origin: 30px 19px;
+  animation: ftd-tail-sway 3.2s ease-in-out infinite;
+}
+.ftd-tail--b {
+  animation-duration: 3.8s;
+  animation-delay: -1.4s;
+}
+@keyframes ftd-tail-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg) skewX(2deg);
+  }
+  50% {
+    transform: rotate(5deg) skewX(-3deg);
+  }
 }
 /* The box's content stays above the ribbon. */
 .ftd-bubble > b,
@@ -393,7 +416,8 @@ html[dir='rtl'] .ftd-bubble {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ftd-gift {
+  .ftd-gift,
+  .ftd-tail {
     animation: none;
   }
 }
