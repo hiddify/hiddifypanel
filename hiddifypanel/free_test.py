@@ -163,6 +163,10 @@ def set_package(admin: AdminUser, value: Any | None) -> None:
 # --------------------------------------------------------------------------- the link
 
 
+#: The length of an admin's start code: 12 bytes in url-safe base64.
+CODE_LEN = 16
+
+
 def code_of(admin: AdminUser) -> str:
     """The admin's start code: a keyed hash of its uuid (the panel's secret key), stable between runs."""
     key = str(current_app.config["SECRET_KEY"]).encode()
@@ -177,8 +181,30 @@ def admin_by_code(code: str) -> AdminUser | None:
     return None
 
 
-def start_payload(admin: AdminUser) -> str:
-    return f"free_{code_of(admin)}"
+def private_token(admin: AdminUser, package_id: str) -> str:
+    """The private part of a package's link: a keyed hash, so the public link does not lead to the private ones."""
+    key = str(current_app.config["SECRET_KEY"]).encode()
+    digest = hmac.new(key, f"free-test:{admin.uuid}:{package_id}".encode(), hashlib.sha256).digest()
+    return base64.urlsafe_b64encode(digest[:8]).decode().rstrip("=")
+
+
+def start_payload(admin: AdminUser, package_id: str | None = None) -> str:
+    """``free_<code>`` offers the admin's default package (the public link); ``free_<code><token>`` offers one of its
+    other packages (a private link, given only by the admin)."""
+    return f"free_{code_of(admin)}{private_token(admin, package_id) if package_id else ''}"
+
+
+def resolve_payload(rest: str) -> tuple[AdminUser | None, str | None]:
+    """The admin and package a ``/start free_...`` names (what follows ``free_``). The package is None for the public
+    link, and for a private one whose package is gone (then the default one is offered)."""
+    admin = admin_by_code(rest[:CODE_LEN])
+    token = rest[CODE_LEN:]
+    if admin is None or not token or (own := own_set(admin)) is None:
+        return admin, None
+    for item in own["packages"]:
+        if hmac.compare_digest(private_token(admin, item["id"]), token):
+            return admin, item["id"]
+    return admin, None
 
 
 # --------------------------------------------------------------------------- conversations
@@ -262,7 +288,8 @@ def ask(conv: Conversation) -> User | None:
     """The chat asks for the free test. The new account when it is given at once, None when the request now waits for
     the admin. Commits."""
     admin = AdminUser.by_id(conv.admin_id)
-    package = package_of(admin) if admin else None
+    # The package this chat was offered: a private one through its link, else the default one.
+    package = package_of(admin, conv.free_package_id) if admin else None
     if admin is None or package is None or not package.enabled:
         raise FreeTestError("disabled")
     if not can_ask(conv):

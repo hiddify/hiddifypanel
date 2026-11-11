@@ -75,6 +75,12 @@ def _free_out() -> dict[str, Any]:
         "packages": own["packages"] if own is not None else [],
         "default_id": own["default"] if own is not None else None,
         "max_packages": free_test.MAX_PACKAGES,
+        #: The private link of each package but the default one: only the people the admin gives it to see that package.
+        "private_links": (
+            {item["id"]: f"https://t.me/{username}?start={free_test.start_payload(admin, item['id'])}" for item in own["packages"] if item["id"] != own["default"]}
+            if own is not None and username
+            else {}
+        ),
         "can_edit": free_test.can_define(admin) and not hutils.node.is_child(),
         "inherited_from": package.owner.name if inherited and package.owner else None,
         "link": f"https://t.me/{username}?start={payload}" if username else None,

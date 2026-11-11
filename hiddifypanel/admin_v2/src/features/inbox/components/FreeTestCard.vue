@@ -22,6 +22,8 @@ const qrVisible = ref(false)
 const deleting = ref(false)
 const defaulting = ref(false)
 const pkg = computed(() => props.pkg)
+/** The default package's public link; another package's private one. */
+const link = computed(() => (props.isDefault ? props.free.link : (props.free.private_links[props.pkg.id ?? ''] ?? null)))
 /** One of this admin's own packages (a parent's one is not theirs to delete). */
 const isOwn = computed(() => !!props.pkg.id && props.free.packages.some((p) => p.id === props.pkg.id))
 const canDelete = computed(() => props.free.can_edit && isOwn.value && (props.multi || props.pkg.enabled))
@@ -60,12 +62,12 @@ function askDelete() {
 }
 
 async function copy() {
-  if (!props.free.link) return
+  if (!link.value) return
   try {
-    await navigator.clipboard.writeText(props.free.link)
+    await navigator.clipboard.writeText(link.value)
     toast.add({ severity: 'success', summary: t('inbox.free.copied'), life: 2000 })
   } catch {
-    toast.add({ severity: 'warn', summary: t('inbox.free.copyFailed'), detail: props.free.link, life: 6000 })
+    toast.add({ severity: 'warn', summary: t('inbox.free.copyFailed'), detail: link.value, life: 6000 })
   }
 }
 </script>
@@ -79,7 +81,7 @@ async function copy() {
           {{ t('inbox.free.title') }}
           <span v-if="multi && isDefault" class="ft-state ft-state--default"><i class="pi pi-star-fill" />{{ t('inbox.free.default') }}</span>
           <span v-if="isDefault" class="ft-state" :class="pkg.enabled ? 'ft-state--on' : 'ft-state--off'">{{ pkg.enabled ? t('inbox.free.on') : t('inbox.free.off') }}</span>
-          <span v-else class="ft-state ft-state--off" :title="t('inbox.free.standbyHint')">{{ t('inbox.free.standby') }}</span>
+          <span v-else class="ft-state ft-state--private" :title="t('inbox.free.standbyHint')"><i class="pi pi-lock" />{{ t('inbox.free.standby') }}</span>
         </h3>
         <p v-if="pkg.enabled || !isDefault">
           <i class="pi" :class="pkg.approval === 'auto' ? 'pi-bolt' : 'pi-user-edit'" />
@@ -126,12 +128,12 @@ async function copy() {
     <template v-if="pkg.enabled || !isDefault">
       <PackageChips :days="pkg.days" :usage-gb="pkg.usage_gb" tag class="ft-chips" />
 
-      <!-- Only the default package is offered: the link is on its card -->
-      <div v-if="isDefault && free.link" class="ft-link">
-        <span class="ft-link__label">{{ t('inbox.free.linkLabel') }}</span>
+      <!-- The default package: the public link, what everyone in the bot gets. Another one: its private link -->
+      <div v-if="link" class="ft-link">
+        <span class="ft-link__label">{{ isDefault ? t('inbox.free.linkLabel') : t('inbox.free.privateLinkLabel') }}</span>
         <div class="ft-link__row">
           <button type="button" class="ft-link__url" dir="ltr" :title="t('inbox.free.copy')" @click="copy">
-            <i class="pi pi-link" /><span>{{ free.link }}</span>
+            <i class="pi" :class="isDefault ? 'pi-link' : 'pi-lock'" /><span>{{ link }}</span>
           </button>
         </div>
         <!-- Each action says what it does: an icon alone was hard to tell apart -->
@@ -140,7 +142,7 @@ async function copy() {
           <Button :label="t('inbox.free.qr')" icon="pi pi-qrcode" severity="secondary" outlined size="small" @click="qrVisible = true" />
           <Button
             as="a"
-            :href="free.link"
+            :href="link"
             target="_blank"
             rel="noopener"
             :label="t('inbox.free.openShort')"
@@ -151,14 +153,14 @@ async function copy() {
             :title="t('inbox.free.openTelegram')"
           />
         </div>
-        <small>{{ t('inbox.free.shareHint') }}</small>
+        <small>{{ isDefault ? t('inbox.free.shareHint') : t('inbox.free.privateHint') }}</small>
       </div>
       <p v-if="isDefault && !free.has_room" class="ft-warn"><i class="pi pi-exclamation-triangle" />{{ t('inbox.free.noRoom') }}</p>
     </template>
 
-    <Dialog v-model:visible="qrVisible" modal dismissable-mask :draggable="false" :header="t('inbox.free.linkLabel')" :style="{ width: '22rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
-      <div v-if="free.link" class="ft-qr">
-        <HiddifyQrCode :value="free.link" :size="220" />
+    <Dialog v-model:visible="qrVisible" modal dismissable-mask :draggable="false" :header="isDefault ? t('inbox.free.linkLabel') : t('inbox.free.privateLinkLabel')" :style="{ width: '22rem' }" :breakpoints="{ '575px': 'calc(100vw - 2rem)' }">
+      <div v-if="link" class="ft-qr">
+        <HiddifyQrCode :value="link" :size="220" />
         <PackageChips :days="pkg.days" :usage-gb="pkg.usage_gb" tag />
       </div>
     </Dialog>
@@ -301,6 +303,16 @@ async function copy() {
 .ft-state--off {
   background: var(--p-content-hover-background, var(--surface-hover));
   color: var(--text-color-secondary);
+}
+.ft-state--private {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: color-mix(in srgb, var(--p-violet-500) 14%, transparent);
+  color: var(--p-violet-600, #7c3aed);
+}
+.ft-state--private .pi {
+  font-size: 0.65rem;
 }
 .ft-state--default {
   display: inline-flex;

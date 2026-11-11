@@ -26,6 +26,8 @@ export interface FreeTest {
   packages: FreePackage[]
   default_id: string | null
   max_packages: number
+  /** The private link of each package but the default one (by id): only people given it see that package. */
+  private_links: Record<string, string>
   can_edit: boolean
   /** The parent whose package applies; null when it is this admin's own (or nobody defined one). */
   inherited_from: string | null
