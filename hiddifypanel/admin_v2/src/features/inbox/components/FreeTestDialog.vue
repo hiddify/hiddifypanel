@@ -85,15 +85,28 @@ async function save(inherit = false) {
       <fieldset class="ftd-fields" :disabled="!enabled || busy">
         <div class="ftd-grid">
           <div class="ftd-field">
-            <label for="ftd-days">{{ t('inbox.dialog.days') }}</label>
+            <div class="ftd-head">
+              <label for="ftd-days">{{ t('inbox.dialog.days') }}</label>
+            </div>
             <NumberStepper v-model="days" input-id="ftd-days" :min="1" :max="limits.max_days" :suffix="t('inbox.dialog.daysUnit')" :disabled="!enabled || busy" />
           </div>
           <div class="ftd-field">
-            <label for="ftd-data">{{ t('inbox.dialog.data') }}</label>
-            <div class="ftd-data">
-              <NumberStepper v-model="amount" input-id="ftd-data" :min="1" :max="unit === 'mb' ? 1023 : limits.max_usage_gb" :step="unit === 'mb' ? 50 : 1" :disabled="!enabled || busy" />
-              <SelectButton v-model="unit" :options="units" option-label="label" option-value="value" :allow-empty="false" :disabled="!enabled || busy" :aria-label="t('inbox.dialog.data')" />
+            <!-- The unit is a small segmented control beside the label, so both steppers keep the same width -->
+            <div class="ftd-head">
+              <label for="ftd-data">{{ t('inbox.dialog.data') }}</label>
+              <SelectButton
+                v-model="unit"
+                class="ftd-unit"
+                size="small"
+                :options="units"
+                option-label="label"
+                option-value="value"
+                :allow-empty="false"
+                :disabled="!enabled || busy"
+                :aria-label="t('inbox.dialog.data')"
+              />
             </div>
+            <NumberStepper v-model="amount" input-id="ftd-data" :min="1" :max="unit === 'mb' ? 1023 : limits.max_usage_gb" :step="unit === 'mb' ? 50 : 1" :disabled="!enabled || busy" />
           </div>
         </div>
 
@@ -187,7 +200,7 @@ async function save(inherit = false) {
 }
 @container ftd-fields (min-width: 28rem) {
   .ftd-grid {
-    grid-template-columns: 1fr 1.3fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 .ftd-field {
@@ -201,16 +214,43 @@ async function save(inherit = false) {
   font-size: 0.85rem;
   font-weight: 600;
 }
-.ftd-data {
+/* Same height on both columns, so the two steppers line up whether or not the head holds the unit picker. */
+.ftd-head {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 1.9rem;
 }
-/* On a very narrow screen the unit picker wraps under the stepper instead of squeezing it. */
-.ftd-data > :first-child {
-  flex: 1 1 8rem;
-  min-width: 0;
+/* An iOS-style segmented control: a tinted track, the chosen segment a raised white pill. */
+.ftd-unit {
+  padding: 2px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--p-text-color) 7%, transparent);
+}
+.ftd-unit :deep(.p-togglebutton) {
+  min-width: 2.6rem;
+  padding: 0.15rem 0.6rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.ftd-unit :deep(.p-togglebutton-content) {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.ftd-unit :deep(.p-togglebutton-checked) {
+  background: var(--p-content-background);
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.12),
+    0 0 0 0.5px rgb(0 0 0 / 0.04);
+}
+/* Dark: the chosen segment is lighter than the track, as on iOS. */
+html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
+  background: color-mix(in srgb, var(--p-text-color) 22%, var(--p-content-background));
 }
 .ftd-modes {
   display: grid;
