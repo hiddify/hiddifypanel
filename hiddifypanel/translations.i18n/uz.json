@@ -580,6 +580,7 @@
         "usernameHint": "Bu havola kirish sahifasini ochadi; ular shu foydalanuvchi nomi va oʻz parolini kiritib kiradi."
       },
       "meLocked": "Bu siz: bu yerda faqat foydalanuvchilaringiz konfiguratsiyalarini oʻzgartirish mumkin. Parolingizni «Hisobim» boʻlimida oʻzgartiring.",
+      "messageTitle": "{name} uchun xabar",
       "meter": {
         "active": "Faol",
         "activeHint": "Yoqilgan va kunlari hamda trafigi qolgan foydalanuvchilar, ruxsat etilgan sondan",
@@ -624,6 +625,7 @@
         "online": "onlayn",
         "users": "foydalanuvchi | foydalanuvchi"
       },
+      "telegramMessage": "Bu adminga Telegram xabarini yuboring",
       "title": "Adminlar",
       "you": "Siz"
     },
@@ -817,10 +819,12 @@
         "all": "Hamma",
         "expired": "Muddati tugagan yoki oʻchirilgan",
         "hint": "Faqat botingizni ishga tushirgan foydalanuvchilar hisoblanadi; oʻchirilgan foydalanuvchilarga xabar hech qachon bormaydi.",
+        "hintAdmins": "Xabarni faqat Telegram ID'si bor va botingizni ishga tushirgan adminlar oladi; unda sarf hisoboti yoʻq.",
         "offline_1d": "1 kun+ oflayn",
         "offline_1h": "1 soat+ oflayn",
         "offline_1w": "1 hafta+ oflayn",
         "selected": "Tanlangan foydalanuvchilar",
+        "selectedAdmins": "Tanlangan adminlar",
         "title": "Kim oladi"
       },
       "confirm": {

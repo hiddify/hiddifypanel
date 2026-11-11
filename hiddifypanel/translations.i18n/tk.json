@@ -580,6 +580,7 @@
         "usernameHint": "Bu salgy giriş sahypasyny açýar; olar şu ulanyjy ady we öz parollary bilen girýär."
       },
       "meLocked": "Bu siz: bu ýerde diňe ulanyjylaryňyzyň konfiglerini üýtgedip bolýar. Paroly Meniň hasabymda üýtgediň.",
+      "messageTitle": "{name} üçin habar",
       "meter": {
         "active": "Işjeň",
         "activeHint": "Işjeň, günleri we trafigi galan ulanyjylar, rugsat berlen sandan",
@@ -624,6 +625,7 @@
         "online": "onlaýn",
         "users": "ulanyjy | ulanyjy"
       },
+      "telegramMessage": "Bu admine Telegram habaryny iber",
       "title": "Adminler",
       "you": "Siz"
     },
@@ -817,10 +819,12 @@
         "all": "Hemmeler",
         "expired": "Möhleti geçen ýa-da öçürilen",
         "hint": "Diňe botuňyzy başladan ulanyjylar sanalýar; pozulan ulanyjylar hiç haçan habar almaýar.",
+        "hintAdmins": "Diňe Telegram ID-si bolan we botyňyzy başlan adminler habary alýar; onda ulanyş hasabaty ýok.",
         "offline_1d": "1 gün+ oflaýn",
         "offline_1h": "1 sagat+ oflaýn",
         "offline_1w": "1 hepde+ oflaýn",
         "selected": "Saýlanan ulanyjylar",
+        "selectedAdmins": "Saýlanan adminler",
         "title": "Kim alýar"
       },
       "confirm": {

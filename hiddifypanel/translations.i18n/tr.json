@@ -580,6 +580,7 @@
         "usernameHint": "Bu bağlantı giriş sayfasını açar; bu kullanıcı adı ve parolalarıyla giriş yaparlar."
       },
       "meLocked": "Bu sizsiniz: burada yalnızca kullanıcılarınızın yapılandırmaları değiştirilebilir. Parolanızı Hesabım bölümünden değiştirin.",
+      "messageTitle": "{name} için mesaj",
       "meter": {
         "active": "Etkin",
         "activeHint": "Etkin, süresi ve trafiği kalan kullanıcılar (izin verilen sayı içinde)",
@@ -624,6 +625,7 @@
         "online": "çevrimiçi",
         "users": "kullanıcı | kullanıcı"
       },
+      "telegramMessage": "Bu yöneticiye Telegram mesajı gönderin",
       "title": "Yöneticiler",
       "you": "Siz"
     },
@@ -817,10 +819,12 @@
         "all": "Herkes",
         "expired": "Süresi dolmuş veya devre dışı",
         "hint": "Yalnızca botunuzu başlatan kullanıcılar sayılır; silinmiş kullanıcılar asla mesaj almaz.",
+        "hintAdmins": "Mesajı yalnızca Telegram ID'si olan ve botunuzu başlatan yöneticiler alır; kullanım raporu içermez.",
         "offline_1d": "1+ gündür çevrimdışı",
         "offline_1h": "1+ saattir çevrimdışı",
         "offline_1w": "1+ haftadır çevrimdışı",
         "selected": "Seçilen kullanıcılar",
+        "selectedAdmins": "Seçilen yöneticiler",
         "title": "Kim alır"
       },
       "confirm": {

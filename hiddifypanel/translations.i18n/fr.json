@@ -580,6 +580,7 @@
         "usernameHint": "Ce lien ouvre la page de connexion ; ils se connectent avec ce nom d'utilisateur et leur mot de passe."
       },
       "meLocked": "C'est vous : seules les configurations de vos utilisateurs peuvent être modifiées ici. Changez votre mot de passe dans Mon compte.",
+      "messageTitle": "Message à {name}",
       "meter": {
         "active": "Actifs",
         "activeHint": "Utilisateurs activés qui ont encore des jours et du trafic, sur le nombre autorisé",
@@ -624,6 +625,7 @@
         "online": "en ligne",
         "users": "utilisateur | utilisateurs"
       },
+      "telegramMessage": "Envoyer un message Telegram à cet admin",
       "title": "Administrateurs",
       "you": "Vous"
     },
@@ -817,10 +819,12 @@
         "all": "Tout le monde",
         "expired": "Expirés ou désactivés",
         "hint": "Seuls les utilisateurs qui ont démarré votre bot sont comptés ; les utilisateurs supprimés ne reçoivent jamais de messages.",
+        "hintAdmins": "Seuls les administrateurs ayant un identifiant Telegram et ayant démarré votre bot reçoivent le message ; il ne contient pas de rapport de consommation.",
         "offline_1d": "Hors ligne depuis 1 jour ou plus",
         "offline_1h": "Hors ligne depuis 1 heure ou plus",
         "offline_1w": "Hors ligne depuis 1 semaine ou plus",
         "selected": "Utilisateurs sélectionnés",
+        "selectedAdmins": "Administrateurs sélectionnés",
         "title": "Qui le reçoit"
       },
       "confirm": {

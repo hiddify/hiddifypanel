@@ -580,6 +580,7 @@
         "usernameHint": "Deze link opent de aanmeldpagina; ze melden zich aan met deze gebruikersnaam en hun wachtwoord."
       },
       "meLocked": "Dit bent u: hier kunnen alleen de configuraties van uw gebruikers worden gewijzigd. Wijzig uw wachtwoord in Mijn account.",
+      "messageTitle": "Bericht aan {name}",
       "meter": {
         "active": "Actief",
         "activeHint": "Gebruikers die zijn ingeschakeld en nog dagen en verkeer over hebben, van het toegestane aantal",
@@ -624,6 +625,7 @@
         "online": "online",
         "users": "gebruiker | gebruikers"
       },
+      "telegramMessage": "Stuur een Telegram-bericht naar deze beheerder",
       "title": "Beheerders",
       "you": "U"
     },
@@ -817,10 +819,12 @@
         "all": "Iedereen",
         "expired": "Verlopen of uitgeschakeld",
         "hint": "Alleen gebruikers die uw bot hebben gestart worden meegeteld; verwijderde gebruikers krijgen nooit berichten.",
+        "hintAdmins": "Alleen beheerders met een Telegram-ID die uw bot hebben gestart, krijgen het bericht; het bevat geen verbruiksrapport.",
         "offline_1d": "1 dag+ offline",
         "offline_1h": "1 uur+ offline",
         "offline_1w": "1 week+ offline",
         "selected": "Geselecteerde gebruikers",
+        "selectedAdmins": "Geselecteerde beheerders",
         "title": "Wie ontvangt het"
       },
       "confirm": {

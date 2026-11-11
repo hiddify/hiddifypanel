@@ -580,6 +580,7 @@
         "usernameHint": "Bu keçid giriş səhifəsini açır; onlar bu istifadəçi adı və parolla daxil olurlar."
       },
       "meLocked": "Bu sizsiniz: burada yalnız istifadəçilərinizin konfiqurasiyalarını dəyişmək olar. Parolunuzu Hesabım bölməsində dəyişin.",
+      "messageTitle": "{name} adminə mesaj",
       "meter": {
         "active": "Aktiv",
         "activeHint": "Aktiv olan, günü və trafiki qalan istifadəçilər, icazə verilən saydan",
@@ -624,6 +625,7 @@
         "online": "onlayn",
         "users": "istifadəçi | istifadəçi"
       },
+      "telegramMessage": "Bu admına Telegram mesajı göndər",
       "title": "Adminlər",
       "you": "Siz"
     },
@@ -817,10 +819,12 @@
         "all": "Hamı",
         "expired": "Müddəti bitmiş və ya deaktiv",
         "hint": "Yalnız botunuzu başladan istifadəçilər sayılır; silinmiş istifadəçilər mesaj almır.",
+        "hintAdmins": "Mesajı yalnız Telegram ID-si olan və botunuzu işə salmış adminlər alır; istifadə hesabatı daxil deyil.",
         "offline_1d": "1 gün+ oflayn",
         "offline_1h": "1 saat+ oflayn",
         "offline_1w": "1 həftə+ oflayn",
         "selected": "Seçilmiş istifadəçilər",
+        "selectedAdmins": "Seçilmiş adminlər",
         "title": "Kim alır"
       },
       "confirm": {

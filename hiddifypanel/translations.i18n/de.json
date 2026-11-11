@@ -580,6 +580,7 @@
         "usernameHint": "Dieser Link öffnet die Anmeldeseite; sie melden sich mit diesem Benutzernamen und ihrem Passwort an."
       },
       "meLocked": "Das sind Sie: Hier können nur die Konfigurationen Ihrer Benutzer geändert werden. Ändern Sie Ihr Passwort unter Mein Konto.",
+      "messageTitle": "Nachricht an {name}",
       "meter": {
         "active": "Aktiv",
         "activeHint": "Benutzer, die aktiviert sind und noch Tage und Datenvolumen übrig haben, von der erlaubten Anzahl",
@@ -624,6 +625,7 @@
         "online": "online",
         "users": "Benutzer | Benutzer"
       },
+      "telegramMessage": "Telegram-Nachricht an diesen Admin senden",
       "title": "Admins",
       "you": "Sie"
     },
@@ -817,10 +819,12 @@
         "all": "Alle",
         "expired": "Abgelaufen oder deaktiviert",
         "hint": "Es werden nur Benutzer gezählt, die Ihren Bot gestartet haben; gelöschte Benutzer erhalten nie Nachrichten.",
+        "hintAdmins": "Nur Admins mit einer Telegram-ID, die Ihren Bot gestartet haben, erhalten die Nachricht; sie enthält keinen Verbrauchsbericht.",
         "offline_1d": "Seit mind. 1 Tag offline",
         "offline_1h": "Seit mind. 1 Stunde offline",
         "offline_1w": "Seit mind. 1 Woche offline",
         "selected": "Ausgewählte Benutzer",
+        "selectedAdmins": "Ausgewählte Admins",
         "title": "Wer sie erhält"
       },
       "confirm": {
