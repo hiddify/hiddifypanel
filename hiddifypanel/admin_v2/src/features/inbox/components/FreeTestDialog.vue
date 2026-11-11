@@ -135,7 +135,22 @@ async function save(inherit = false) {
         <div class="ftd-preview">
           <span class="ftd-label">{{ t('inbox.dialog.preview') }}</span>
           <div class="ftd-bubble">
-            <span class="ftd-bow" aria-hidden="true" />
+            <!-- A red bow on the box's top end corner, on the ribbon that runs down its side -->
+            <svg class="ftd-bow" viewBox="0 0 48 34" aria-hidden="true">
+              <defs>
+                <linearGradient id="ftd-bow-red" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f87171" />
+                  <stop offset="1" stop-color="#dc2626" />
+                </linearGradient>
+              </defs>
+              <path d="M22 16 L14 32 L18 30 L20 33.5 L24.5 17 Z" fill="#b91c1c" />
+              <path d="M26 16 L34 32 L30 30 L28 33.5 L23.5 17 Z" fill="#b91c1c" />
+              <path d="M24 15 C15 1 1 3 5 14 C8 22 18 19 24 15 Z" fill="url(#ftd-bow-red)" />
+              <path d="M24 15 C33 1 47 3 43 14 C40 22 30 19 24 15 Z" fill="url(#ftd-bow-red)" />
+              <path d="M22 14 C17 8 10 7 9 12" fill="none" stroke="#7f1d1d" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round" />
+              <path d="M26 14 C31 8 38 7 39 12" fill="none" stroke="#7f1d1d" stroke-opacity=".35" stroke-width="1.4" stroke-linecap="round" />
+              <rect x="19.5" y="10" width="9" height="10" rx="3.5" fill="#ef4444" stroke="#b91c1c" stroke-width="1" />
+            </svg>
             <b><i class="pi pi-gift ftd-gift" aria-hidden="true" /> {{ t('inbox.free.title') }}</b>
             <PackageChips :days="days ?? 0" :usage-gb="usageGb" tag />
           </div>
@@ -306,59 +321,49 @@ html.app-dark .ftd-unit :deep(.p-togglebutton-checked) {
   flex-direction: column;
   gap: 0.4rem;
 }
-/* The preview is a gift box: a soft rose box, a ribbon down its end side and a bow on top. */
+/* The preview is a gift box: a soft warm box, a red ribbon down its end side and a red bow on its top end corner. */
 .ftd-bubble {
-  --ftd-gift-color: var(--p-pink-500);
-  --ftd-ribbon: color-mix(in srgb, var(--ftd-gift-color) 22%, transparent);
+  --ftd-gift-color: var(--p-red-500);
+  --ftd-ribbon: linear-gradient(90deg, #dc2626, #ef4444 45%, #f87171 55%, #dc2626);
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   align-self: flex-start;
   max-width: 100%;
-  margin-top: 0.5rem;
-  padding: 0.8rem 3.4rem 0.8rem 1rem;
+  margin-top: 0.9rem;
+  padding: 0.8rem 3.6rem 0.8rem 1rem;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--ftd-gift-color) 28%, var(--surface-border));
-  background:
-    linear-gradient(90deg, transparent calc(100% - 2.55rem), var(--ftd-ribbon) 0 calc(100% - 1.75rem), transparent 0),
-    linear-gradient(135deg, color-mix(in srgb, var(--ftd-gift-color) 7%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
-  box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--ftd-gift-color) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ftd-gift-color) 25%, var(--surface-border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ftd-gift-color) 5%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
+  box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--ftd-gift-color) 55%, transparent);
 }
 html[dir='rtl'] .ftd-bubble {
-  padding: 0.8rem 1rem 0.8rem 3.4rem;
-  background:
-    linear-gradient(270deg, transparent calc(100% - 2.55rem), var(--ftd-ribbon) 0 calc(100% - 1.75rem), transparent 0),
-    linear-gradient(225deg, color-mix(in srgb, var(--ftd-gift-color) 7%, var(--p-content-background)), color-mix(in srgb, var(--p-amber-400) 7%, var(--p-content-background)));
+  padding: 0.8rem 1rem 0.8rem 3.6rem;
 }
-/* The bow: two loops sitting on the ribbon, at the box's top edge. */
-.ftd-bow {
-  position: absolute;
-  top: -0.55rem;
-  inset-inline-end: 2.15rem;
-  width: 0;
-  height: 0;
-}
-.ftd-bow::before,
-.ftd-bow::after {
+/* The ribbon: a red band from the top edge to the bottom one, under the bow. */
+.ftd-bubble::before {
   content: '';
   position: absolute;
-  top: 0;
-  width: 0.85rem;
-  height: 0.6rem;
-  border: 2px solid color-mix(in srgb, var(--ftd-gift-color) 70%, transparent);
-  border-radius: 60% 60% 60% 60% / 70% 70% 50% 50%;
-  background: color-mix(in srgb, var(--ftd-gift-color) 16%, var(--p-content-background));
+  inset-block: -1px;
+  inset-inline-end: 1.45rem;
+  width: 0.6rem;
+  background: var(--ftd-ribbon);
+  box-shadow: 0 0 0 0.5px rgb(127 29 29 / 0.25);
 }
-.ftd-bow::before {
-  right: 0;
-  transform: rotate(-22deg);
-  transform-origin: right center;
+.ftd-bow {
+  position: absolute;
+  top: -1.05rem;
+  inset-inline-end: calc(1.75rem - 1.5rem);
+  width: 3rem;
+  height: 2.15rem;
+  filter: drop-shadow(0 2px 2px rgb(127 29 29 / 0.3));
+  pointer-events: none;
 }
-.ftd-bow::after {
-  left: 0;
-  transform: rotate(22deg);
-  transform-origin: left center;
+/* The box's content stays above the ribbon. */
+.ftd-bubble > b,
+.ftd-bubble > :not(.ftd-bow) {
+  position: relative;
 }
 /* A lively gift icon: its colour, a soft glow and a little shake every few seconds. */
 .ftd-gift {
