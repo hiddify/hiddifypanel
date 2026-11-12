@@ -8,11 +8,13 @@ const ICON_COLOR: Record<string, string> = {
   'pi-sitemap': '#6366f1', // admins
   'pi-user-edit': '#6366f1',
   'pi-send': '#0ea5e9', // send message
+  'pi-inbox': '#0ea5e9', // inbox (messages, like send message)
   'pi-server': '#14b8a6', // nodes, node home, proxy editor
   'pi-wrench': '#f97316', // tools
   'pi-bolt': '#f59e0b', // config tester, actions
   'pi-wifi': '#06b6d4', // clean IP scanner
   'pi-code': '#10b981', // decoders, API
+  'pi-qrcode': '#f43f5e', // QR code
   'pi-desktop': '#a855f7', // SSH
   'pi-link': '#2563eb', // domains
   'pi-sliders-h': '#ec4899', // protocols

@@ -15,12 +15,14 @@ $icon-motions: (
     'pi-sitemap': icon-branch 1.5s ease-in-out,
     'pi-send': icon-fly 1.5s ease-in-out,
     'pi-telegram': icon-fly 1.5s ease-in-out,
+    'pi-inbox': icon-drop 1.5s ease-in-out,
     'pi-server': icon-blink 1.4s ease-in-out,
     'pi-wrench': icon-twist 1.4s ease-in-out,
     'pi-key': icon-twist 1.4s ease-in-out,
     'pi-bolt': icon-flash 1.4s ease-in-out,
     'pi-wifi': icon-signal 1.4s ease-in-out,
     'pi-code': icon-type 1.4s ease-in-out,
+    'pi-qrcode': icon-scan 1.6s ease-in-out,
     'pi-desktop': icon-power 1.6s ease-in-out,
     'pi-link': icon-swing 1.4s ease-in-out,
     'pi-palette': icon-swing 1.4s ease-in-out,
@@ -274,4 +276,22 @@ $icon-motions: (
 @keyframes icon-blink-eye {
     0%, 30%, 50%, 100% { transform: scaleY(1); }
     40% { transform: scaleY(0.1); }
+}
+
+/* A message drops in from above and the tray settles under it */
+@keyframes icon-drop {
+    0%, 60%, 100% { transform: translateY(0) scale(1, 1); opacity: 1; }
+    14% { transform: translateY(-90%) scale(0.85); opacity: 0; }
+    15% { transform: translateY(-90%) scale(0.85); opacity: 0; }
+    32% { transform: translateY(8%) scale(1.08, 0.9); opacity: 1; }
+    44% { transform: translateY(-4%) scale(0.97, 1.03); }
+}
+
+/* The code is scanned: it zooms out, snaps into focus and settles */
+@keyframes icon-scan {
+    0%, 62%, 100% { transform: scale(1); opacity: 1; }
+    18% { transform: scale(0.78); opacity: 0.55; }
+    34% { transform: scale(1.18); opacity: 1; }
+    46% { transform: scale(0.96); }
+    54% { transform: scale(1.03); }
 }
