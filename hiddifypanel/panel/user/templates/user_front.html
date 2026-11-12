@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       // Installed app (PWA): iOS zooms the page into any focused field under 16px. maximum-scale=1 stops that
-      // auto-zoom (iOS still allows pinch zoom); in a browser tab the viewport stays as it is.
+      // auto-zoom (iOS still allows pinch zoom). In a browser tab the viewport stays as it is.
       if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) {
         document.querySelector('meta[name=viewport]').content += ', maximum-scale=1'
       }
@@ -15,6 +15,10 @@
     <link rel="icon" type="image/x-icon" href="{{ static_url_for(filename='images/favicon.ico') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ static_url_for(filename='images/app-icon-apple-180.png') }}">
     <link rel="manifest" href="{{ url_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '') }}">
+    <!-- Installed app on iOS: no black-translucent status bar here. With it iOS 26 moves the page up under the status bar
+         but draws nothing in the last status-bar-high strip at the bottom of the screen. The status bar takes the page's
+         background instead, which index.css makes the header's color in the installed app. -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Hiddify | Panel</title>
     <script>
       window.appVersion = {{ version | tojson }};
