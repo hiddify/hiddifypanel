@@ -36,7 +36,7 @@ def static_url_for(**values):
 
 # The panel's own icons (static/images/app-icon-*.png and favicon-*.png). The proxy serves static images as immutable
 # for a year, so a changed picture reaches browsers only under a new URL: raise this number with every change to them.
-APP_ICON_VERSION = 3
+APP_ICON_VERSION = 7
 
 
 def app_icon_url(name: str) -> str:
