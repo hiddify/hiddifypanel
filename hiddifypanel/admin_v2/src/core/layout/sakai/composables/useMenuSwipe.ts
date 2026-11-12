@@ -7,6 +7,10 @@
  *   same way; on the open menu or its mask, a swipe back closes it. A swipe that is more vertical stays a scroll, and
  *   one that starts on something of its own (a field, a slider, a drag handle, a row that scrolls sideways) is left to
  *   it.
+ * - A swipe that starts on the start edge of the screen (EDGE) always opens the menu, whatever it starts on (a field, a
+ *   slider, a row that scrolls sideways), as long as no dialog is open. A touch on either edge is never handed to the
+ *   browser: iOS reads it as "back" (or "forward") the moment it starts, so it is cancelled at touchstart and a tap
+ *   there is replayed as a click.
  *
  * While dragging, the wrapper gets `layout-menu-dragging` and `--menu-drag` (0 closed … 1 open), which the layout's
  * styles use instead of their transitions; on release the class goes and the normal open / closed transition finishes
@@ -25,6 +29,10 @@ const FLICK = 0.35
 const SPEED_WINDOW = 90
 /** Where a swipe that opens may start: this share of the screen, from its start edge */
 const START_ZONE = 0.34
+/** The strip at each side of the screen (px) whose touches the browser never gets: no swipe back or forward from it */
+const EDGE = 28
+/** An open dialog or drawer: a swipe from the edge does not open the menu behind it */
+const MODAL_OPEN = '.p-dialog-mask, .p-drawer-mask'
 /** Things that keep their own touch: no menu swipe from them */
 const OWN_GESTURE = 'input, textarea, select, [contenteditable="true"], .p-slider, .ob-row__handle, .menu-tab, .p-dialog, .p-drawer, [data-no-menu-swipe]'
 
@@ -36,6 +44,15 @@ interface Drag {
   decided: boolean // the gesture is ours (else still deciding or given up)
   width: number
   samples: { x: number; t: number }[] // recent positions, for the speed at release
+  edge: boolean // started on the start edge: opens the menu whatever it started on
+}
+
+/** A touch on an edge, held back from the browser: replayed as a click if it was a tap */
+interface EdgeTouch {
+  target: Element | null
+  x: number
+  y: number
+  moved: boolean
 }
 
 export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen: () => boolean; setOpen: (open: boolean) => void }) {
@@ -46,15 +63,16 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
   const progress = ref(0)
   let drag: Drag | null = null
   let tabDragged = false
+  let edgeTouch: EdgeTouch | null = null
   const phone = window.matchMedia(PHONE_QUERY)
 
   /** +1 when "open" is towards the right of the screen (LTR), -1 in RTL */
   const sign = () => (document.documentElement.dir === 'rtl' ? -1 : 1)
   const menuWidth = () => (document.querySelector<HTMLElement>('.layout-sidebar')?.offsetWidth || 320)
 
-  function begin(x: number, y: number, pointerId: number | null) {
+  function begin(x: number, y: number, pointerId: number | null, edge = false) {
     const open = options.isOpen()
-    drag = { pointerId, startX: x, startY: y, from: open ? 1 : 0, decided: false, width: menuWidth(), samples: [{ x, t: performance.now() }] }
+    drag = { pointerId, startX: x, startY: y, from: open ? 1 : 0, decided: false, width: menuWidth(), samples: [{ x, t: performance.now() }], edge }
   }
 
   function follow(x: number) {
@@ -134,14 +152,26 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
   }
 
   function onTouchStart(e: TouchEvent) {
-    if (!phone.matches || e.touches.length !== 1 || drag) return
+    if (!phone.matches || e.touches.length !== 1) return
     const t = e.touches[0]
     const target = e.target as Element | null
-    if (target?.closest(OWN_GESTURE)) return
+    // the edges: the browser must not see this touch, or it swipes back (iOS decides at touchstart)
+    const fromStart = sign() > 0 ? t.clientX : window.innerWidth - t.clientX
+    const fromEnd = window.innerWidth - fromStart
+    edgeTouch = null
+    if ((fromStart < EDGE || fromEnd < EDGE) && e.cancelable) {
+      e.preventDefault()
+      edgeTouch = { target, x: t.clientX, y: t.clientY, moved: false }
+    }
+    if (drag) return
     const open = options.isOpen()
+    if (!open && fromStart < EDGE && !document.querySelector(MODAL_OPEN)) {
+      begin(t.clientX, t.clientY, null, true)
+      return
+    }
+    if (target?.closest(OWN_GESTURE)) return
     if (!open) {
       // only from the start part of the screen
-      const fromStart = sign() > 0 ? t.clientX : window.innerWidth - t.clientX
       if (fromStart > window.innerWidth * START_ZONE) return
     } else if (!target?.closest('.layout-sidebar, .layout-mask')) {
       return
@@ -150,15 +180,16 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
   }
 
   function onTouchMove(e: TouchEvent) {
-    if (!drag || drag.pointerId !== null) return
     const t = e.touches[0]
+    if (edgeTouch && Math.hypot(t.clientX - edgeTouch.x, t.clientY - edgeTouch.y) >= SLOP) edgeTouch.moved = true
+    if (!drag || drag.pointerId !== null) return
     const dx = t.clientX - drag.startX
     const dy = t.clientY - drag.startY
     if (!drag.decided) {
       if (Math.abs(dx) < SLOP && Math.abs(dy) < SLOP) return
       const towardsOpen = Math.sign(dx * sign())
       const wanted = drag.from === 0 ? towardsOpen > 0 : towardsOpen < 0
-      if (Math.abs(dx) < Math.abs(dy) * SIDEWAYS || !wanted || scrollsSideways(e.target as Element, towardsOpen)) {
+      if (Math.abs(dx) < Math.abs(dy) * SIDEWAYS || !wanted || (!drag.edge && scrollsSideways(e.target as Element, towardsOpen))) {
         drag = null // a scroll, or the wrong way: not ours
         return
       }
@@ -170,12 +201,20 @@ export function useMenuSwipe(options: { wrapper: Ref<HTMLElement | null>; isOpen
   }
 
   function onTouchEnd(e: TouchEvent) {
+    // a tap on an edge lost its click with the cancelled touchstart: give it back
+    const tap = edgeTouch
+    edgeTouch = null
+    if (tap && !tap.moved && e.type === 'touchend' && tap.target?.isConnected) {
+      const el = tap.target.closest<HTMLElement>('input, textarea, select, [contenteditable="true"]')
+      el?.focus()
+      ;(tap.target as HTMLElement).click?.()
+    }
     if (!drag || drag.pointerId !== null) return
     finish(e.type === 'touchcancel')
   }
 
   onMounted(() => {
-    document.addEventListener('touchstart', onTouchStart, { passive: true })
+    document.addEventListener('touchstart', onTouchStart, { passive: false })
     document.addEventListener('touchmove', onTouchMove, { passive: false })
     document.addEventListener('touchend', onTouchEnd)
     document.addEventListener('touchcancel', onTouchEnd)
