@@ -657,7 +657,7 @@ onBeforeUnmount(() => {
 }
 .settings-nav {
   position: sticky;
-  top: 5.5rem;
+  top: calc(5.5rem + var(--safe-top));
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -724,7 +724,7 @@ onBeforeUnmount(() => {
 /* Cards */
 .settings-card {
   --settings-accent: var(--p-primary-color);
-  scroll-margin-top: 5.5rem;
+  scroll-margin-top: calc(5.5rem + var(--safe-top));
   padding: 1rem 1.1rem 0.75rem;
   border-radius: 16px;
   background: var(--p-content-background);
@@ -869,7 +869,7 @@ onBeforeUnmount(() => {
     grid-template-columns: minmax(0, 1fr);
   }
   .settings-nav {
-    top: 4.25rem;
+    top: calc(4.25rem + var(--safe-top));
     z-index: 5;
     flex-direction: row;
     max-height: none;
@@ -894,7 +894,7 @@ onBeforeUnmount(() => {
     overflow: visible;
   }
   .settings-card {
-    scroll-margin-top: 8rem;
+    scroll-margin-top: calc(8rem + var(--safe-top));
   }
 }
 @media (max-width: 640px) {

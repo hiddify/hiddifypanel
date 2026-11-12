@@ -2,7 +2,7 @@
 <html lang="{{ locale }}" dir="{{ 'rtl' if locale in ('fa', 'ar') else 'ltr' }}">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <script>
       // Installed app (PWA): iOS zooms the page into any focused field under 16px. maximum-scale=1 stops that
       // auto-zoom (iOS still allows pinch zoom); in a browser tab the viewport stays as it is.
@@ -36,6 +36,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ static_url_for(filename='images/app-icon-apple-180.png') }}">
     <link rel="manifest" href="{{ hurl_for('common_bp.LoginView:create_pwa_manifest', secret_uuid=g.account.uuid or '') }}">
     <meta name="theme-color" content="#1a1b21">
+    <!-- Installed app on iOS: the page draws under the status bar, so the topbar's color runs up behind the clock
+         (the topbar adds env(safe-area-inset-top) to its height). Without it iOS paints its own plain strip there. -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   </head>
   <body>
     <div id="app"></div>

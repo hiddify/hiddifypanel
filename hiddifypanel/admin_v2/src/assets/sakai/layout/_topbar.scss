@@ -1,5 +1,12 @@
 @use 'mixins' as *;
 
+/* The status bar's height on a phone with a notch, in the installed app (0 elsewhere): the topbar grows by it, so its
+   color runs up behind the clock, and everything placed under the topbar moves down by it. Plus 20% of it: iOS 26
+   blurs a band below the status bar too, and the bar's title and icons must sit under that band, not in it. */
+:root {
+    --safe-top: calc(env(safe-area-inset-top, 0px) * 1.2);
+}
+
 .layout-topbar {
     /* The same vivid blue as the buttons, with a light sweep so the bar feels alive */
     --topbar-bg: linear-gradient(100deg, var(--p-primary-700) 0%, var(--p-primary-600) 45%, var(--p-primary-500) 100%);
@@ -8,14 +15,16 @@
     --topbar-hover: rgba(255, 255, 255, 0.14);
 
     position: fixed;
-    height: 4rem;
+    height: calc(4rem + var(--safe-top));
     z-index: 997;
     inset-inline-start: 0;
     top: 0;
     width: 100%;
-    padding: 0 2rem;
+    padding: var(--safe-top) 2rem 0;
     background: var(--topbar-bg);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 12%) inset, 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
+    /* no light line along the top edge: Safari paints the status bar above with the bar's color, and the two must
+       read as one surface */
+    box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
     color: var(--topbar-text);
     transition: inset-inline-start var(--layout-section-transition-duration);
     display: flex;
@@ -145,9 +154,18 @@
     }
 }
 
+/* The installed app only: a plain color under the gradient. iOS 26 paints the app's status bar from the background-color
+   of the bar at the top edge; with none (only a gradient) it lays its own blur there, which turns the clock black.
+   In a browser tab the bar leaves Safari's top bar to Safari. */
+@media (display-mode: standalone) {
+    .layout-topbar {
+        background-color: var(--topbar-solid, var(--p-primary-600));
+    }
+}
+
 @media (max-width: 991px) {
     .layout-topbar {
-        padding: 0 2rem;
+        padding-inline: 2rem;
 
         .layout-topbar-logo-container {
             width: auto;
@@ -176,7 +194,7 @@
             border-radius: var(--content-border-radius);
             padding: 1rem;
             inset-inline-end: 2rem;
-            top: 4rem;
+            top: calc(4rem + var(--safe-top));
             min-width: 15rem;
             border: 1px solid var(--surface-border);
 
@@ -213,7 +231,7 @@
 /* Small phones (320–420 px): the menu button, the logo and the four actions on one row, inside the screen */
 @media (max-width: 420px) {
     .layout-topbar {
-        padding: 0 0.75rem;
+        padding-inline: 0.75rem;
 
         .layout-topbar-actions {
             gap: 0.25rem;
