@@ -1,10 +1,16 @@
 @use 'mixins' as *;
 
-/* The status bar's height on a phone with a notch, in the installed app (0 elsewhere): the topbar grows by it, so its
-   color runs up behind the clock, and everything placed under the topbar moves down by it. Plus 20% of it: iOS 26
-   blurs a band below the status bar too, and the bar's title and icons must sit under that band, not in it. */
+/* The status bar's height on a phone with a notch, in the installed app only (0 in a browser tab): the topbar grows by
+   it, so its color runs up behind the clock, and everything placed under the topbar moves down by it. Plus 20% of it:
+   iOS 26 blurs a band below the status bar too, and the bar's title and icons must sit under that band, not in it. */
 :root {
-    --safe-top: calc(env(safe-area-inset-top, 0px) * 1.2);
+    --safe-top: 0px;
+}
+
+@media (display-mode: standalone) {
+    :root {
+        --safe-top: calc(env(safe-area-inset-top, 0px) * 1.2);
+    }
 }
 
 .layout-topbar {
@@ -22,9 +28,7 @@
     width: 100%;
     padding: var(--safe-top) 2rem 0;
     background: var(--topbar-bg);
-    /* no light line along the top edge: Safari paints the status bar above with the bar's color, and the two must
-       read as one surface */
-    box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 12%) inset, 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
     color: var(--topbar-text);
     transition: inset-inline-start var(--layout-section-transition-duration);
     display: flex;
@@ -156,10 +160,12 @@
 
 /* The installed app only: a plain color under the gradient. iOS 26 paints the app's status bar from the background-color
    of the bar at the top edge; with none (only a gradient) it lays its own blur there, which turns the clock black.
+   No light line along its top edge there: the status bar and the bar must read as one surface.
    In a browser tab the bar leaves Safari's top bar to Safari. */
 @media (display-mode: standalone) {
     .layout-topbar {
         background-color: var(--topbar-solid, var(--p-primary-600));
+        box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--p-primary-700) 70%, transparent);
     }
 }
 
