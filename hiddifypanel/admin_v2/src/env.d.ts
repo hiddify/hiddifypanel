@@ -31,6 +31,7 @@ declare global {
     __ACCOUNT_MODE__?: string
     __CAPABILITIES__?: Partial<Record<string, boolean>>
     __NEEDS_QUICK_SETUP__?: boolean
+    __PASSKEY_SUGGESTION__?: { domain: string | null; missing: string[] } | null
     __TELEGRAM__?: { bot_username: string; connect_url: string; web_url: string; connected: boolean } | null
     __NODE_INFO__?: { node_name: string; parent_host: string; parent_dashboard_url: string } | null
   }

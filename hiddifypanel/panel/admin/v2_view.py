@@ -88,6 +88,13 @@ def _telegram_info() -> dict | None:
     }
 
 
+def _passkey_suggestion() -> dict | None:
+    """Right after a password sign-in, without a passkey yet: offer one (once)."""
+    from hiddifypanel.panel.commercial.restapi.v2.admin.passkeys_api import take_suggestion
+
+    return take_suggestion(g.account)
+
+
 def _needs_quick_setup() -> bool:
     # Quick setup is owner-only: other admins never see it.
     if g.account.mode != "super_admin":
@@ -126,6 +133,7 @@ def _admin_v2_bootstrap_payload() -> dict:
         "capabilities": caps.of(g.account),
         "needs_quick_setup": _needs_quick_setup(),
         "telegram": _telegram_info(),
+        "passkey_suggestion": _passkey_suggestion(),
     }
 
 
@@ -177,4 +185,5 @@ def register_v2_routes(flask_app, admin_bp):
             capabilities=caps.of(g.account),
             needs_quick_setup=_needs_quick_setup(),
             telegram=_telegram_info(),
+            passkey_suggestion=_passkey_suggestion(),
         )

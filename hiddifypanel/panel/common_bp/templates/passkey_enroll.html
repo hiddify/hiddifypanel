@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ 'rtl' if rtl else 'ltr' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light dark">
+  <title>{{ texts.get('enrollPageTitle', 'Add passkey') }} · {{ title }}</title>
+  <script>
+    // In the dashboard's frame only the button shows, in the dashboard's look, passed in the URL's hash (a frame can not
+    // read the other domain's setting): m=dark|light, c/f = button colour/text (hex), r = corner radius. Else this
+    // domain's own dark setting, else the system's.
+    (function () {
+      var root = document.documentElement;
+      var hash = new URLSearchParams(location.hash.slice(1));
+      var framed = window.top !== window.self;
+      if (framed) root.classList.add('framed');
+      var mode = hash.get('m') || (location.hash === '#dark' ? 'dark' : location.hash === '#light' ? 'light' : '');
+      var dark = mode === 'dark' ? true : mode === 'light' ? false : null;
+      try {
+        if (dark === null) {
+          var saved = localStorage.getItem('admin_v2_dark');
+          dark = saved === '1' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+      } catch (e) {}
+      if (dark) root.classList.add('dark');
+      // The same colour scheme as the frame's page: then the frame stays see-through.
+      root.style.colorScheme = dark ? 'dark' : 'light';
+      var hex = /^[0-9a-fA-F]{3,8}$/, size = /^\d{1,2}(\.\d{1,2})?(px|rem)$/;
+      if (hex.test(hash.get('c') || '')) root.style.setProperty('--primary', '#' + hash.get('c')), root.style.setProperty('--primary-2', '#' + hash.get('c'));
+      if (hex.test(hash.get('f') || '')) root.style.setProperty('--on-primary', '#' + hash.get('f'));
+      if (size.test(hash.get('r') || '')) root.style.setProperty('--radius', hash.get('r'));
+    })();
+  </script>
+  <style>
+    :root { --primary: #4f6df5; --primary-2: #8b5cf6; --on-primary: #fff; --radius: 14px; --bg: #eef2fb; --card: #ffffff; --text: #1e2333; --muted: #6b7280; --line: #d9deea; --danger: #e5484d; --ok: #16a34a; }
+    .dark { --bg: #0f1221; --card: #181c2e; --text: #e8eaf3; --muted: #9aa3b8; --line: #2b3250; --ok: #4ade80; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 1rem;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Vazirmatn, Tahoma, sans-serif; color: var(--text); background: var(--bg);
+    }
+    main { width: min(100%, 24rem); padding: 1.75rem 1.5rem 1.4rem; border-radius: 22px; background: var(--card); border: 1px solid var(--line); text-align: center; }
+    /* Framed: only the button, filling the frame (the dashboard shows the rest around it). */
+    .framed, .framed body { background: transparent; }
+    .framed body { display: block; min-height: 0; padding: 3px; overflow: hidden; }
+    .framed main { width: 100%; padding: 0; border: 0; background: transparent; }
+    .framed .icon, .framed h1, .framed p.sub, .framed .msg { display: none; }
+    .framed button { height: calc(100vh - 6px); border-radius: var(--radius); font-size: 0.95rem; font-weight: 600; }
+    .framed .done button { display: flex; background: var(--ok); }
+    .icon { width: 3.25rem; height: 3.25rem; margin: 0 auto 0.85rem; border-radius: 18px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .icon svg { width: 1.6rem; height: 1.6rem; }
+    .done .icon { background: var(--ok); }
+    h1 { margin: 0 0 0.5rem; font-size: 1.15rem; line-height: 1.35; overflow-wrap: anywhere; }
+    h1 bdi { color: var(--primary); }
+    p.sub { margin: 0 0 1.2rem; font-size: 0.9rem; line-height: 1.5; color: var(--muted); }
+    button {
+      width: 100%; height: 3rem; border-radius: var(--radius); border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      font: inherit; font-size: 1rem; font-weight: 650; color: var(--on-primary); background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    }
+    button[disabled] { opacity: 0.7; cursor: default; }
+    button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .framed button:focus-visible { outline-offset: -4px; outline-color: var(--on-primary); }
+    .ok-mark { display: none; }
+    .done .ok-mark { display: inline; }
+    .done .label { display: none; }
+    .msg { min-height: 1.2rem; margin: 0.75rem 0 0; font-size: 0.85rem; line-height: 1.45; }
+    .msg.err { color: var(--danger); }
+    .msg.ok { color: var(--ok); }
+    .spin { display: none; width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.45); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .busy .spin { display: inline-block; }
+    .done button { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main id="main">
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4M18 5l2 2M15 8l2 2"/></svg></div>
+    {% if step %}
+    {% set dom %}<bdi dir="ltr">{{ domain }}</bdi>{% endset %}
+    <h1>{{ (texts.get('enrollTitle', 'Add your passkey for {domain}')|e).replace('{domain}', dom) }}</h1>
+    <p class="sub">{{ texts.get('enrollHint', 'Confirm with your fingerprint, face or screen lock. Then you can sign in on this domain without a password too.') }}</p>
+    <button type="button" id="create"><span class="spin" aria-hidden="true"></span><span class="label">{{ texts.get('enrollButton', 'Create passkey') }}</span><span class="ok-mark">✓ {{ texts.get('enrollDoneFramed', 'Passkey added.') }}</span></button>
+    <p class="msg" id="msg" role="status"></p>
+    {% else %}
+    <h1>{{ texts.get('enrollExpiredTitle', 'This link has expired') }}</h1>
+    <p class="sub">{{ texts.get('enrollExpired', 'Open My account in the panel and add the passkey again.') }}</p>
+    {% endif %}
+  </main>
+  {% if step %}
+  <script>
+    (function () {
+      var main = document.getElementById('main');
+      var btn = document.getElementById('create');
+      var msg = document.getElementById('msg');
+      var base = {{ base|tojson }};
+      var token = {{ token|tojson }};
+      var parentOrigin = {{ parent|tojson }};
+      var framed = window.top !== window.self;
+      var texts = {{ {
+        'cancelled': texts.get('enrollCancelled', 'The passkey was not made. Try again, or skip this domain.'),
+        'unsupported': texts.get('passkeyUnsupported', 'This browser can not use passkeys. Sign in with your password.'),
+        'frame': texts.get('enrollFrame', 'This browser does not allow it inside the panel. Open this domain in a new tab instead.'),
+        'expired': texts.get('enrollExpired', 'Open My account in the panel and add the passkey again.'),
+        'failed': texts.get('enrollFailed', 'The passkey could not be added here. Try again, or skip this domain.'),
+        'done': texts.get('enrollDoneFramed', 'Passkey added.'),
+        'closeTab': texts.get('enrollDoneTab', 'Passkey added. You can close this tab.')
+      }|tojson }};
+      function say(key, cls) { msg.textContent = texts[key] || texts.failed; msg.className = 'msg ' + (cls || 'err'); }
+      // My account (only the page that asked for this step) moves on to the next domain.
+      function tell(status) { if (framed) { try { window.parent.postMessage({ type: 'hiddify-passkey', status: status }, parentOrigin); } catch (e) {} } }
+      function b64(buf) {
+        var bytes = new Uint8Array(buf), s = '';
+        for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+        return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+      function unb64(s) {
+        var bin = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4));
+        var out = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+        return out.buffer;
+      }
+      function post(url, body) {
+        return fetch(url, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+          .then(function (r) { return r.json().catch(function () { return {}; }).then(function (data) { data.ok = r.ok; return data; }); });
+      }
+      function finished() {
+        try { localStorage.setItem('hiddify_passkey', '1'); } catch (e) {}
+        main.classList.add('done');
+        btn.disabled = true;
+        say(framed ? 'done' : 'closeTab', 'ok');
+        tell('added');
+      }
+      if (!window.PublicKeyCredential || !navigator.credentials || !window.isSecureContext) { btn.disabled = true; say('unsupported'); tell('unsupported'); return; }
+      var busy = false, attempt = 0, pending = null;
+      // auto: tried when opened in its own tab (a frame of another domain needs a click in it first).
+      function create(auto) {
+        if (busy) return;
+        // A tap replaces the try made by itself (still waiting in some browsers).
+        if (pending) pending.abort();
+        var mine = ++attempt, ctl = window.AbortController ? new AbortController() : null;
+        pending = ctl;
+        if (!auto) { busy = true; btn.classList.add('busy'); tell('busy'); }
+        msg.textContent = '';
+        post(base + 'options/', { t: token })
+          .then(function (o) {
+            if (!o.ok) throw { code: o.code };
+            var publicKey = Object.assign({}, o, {
+              challenge: unb64(o.challenge),
+              user: Object.assign({}, o.user, { id: unb64(o.user.id) }),
+              excludeCredentials: (o.excludeCredentials || []).map(function (c) { return { type: c.type, id: unb64(c.id) }; })
+            });
+            return navigator.credentials.create(ctl ? { publicKey: publicKey, signal: ctl.signal } : { publicKey: publicKey });
+          })
+          .then(function (cred) {
+            if (!cred) throw { code: 'cancelled' };
+            var r = cred.response, key = r.getPublicKey ? r.getPublicKey() : null;
+            return post(base, {
+              t: token,
+              credential: {
+                id: cred.id, type: cred.type,
+                response: {
+                  clientDataJSON: b64(r.clientDataJSON), authenticatorData: b64(r.getAuthenticatorData()),
+                  publicKey: key ? b64(key) : null, publicKeyAlgorithm: r.getPublicKeyAlgorithm()
+                }
+              }
+            });
+          })
+          .then(function (res) {
+            if (!res.ok) throw { code: res.code };
+            finished();
+          })
+          .catch(function (e) {
+            if (mine !== attempt) return;
+            busy = false;
+            btn.classList.remove('busy');
+            // InvalidStateError: this device has a passkey here already, nothing to add.
+            if (e && e.name === 'InvalidStateError') { finished(); return; }
+            if (e && e.code === 'expired') { btn.disabled = true; say('expired'); tell('expired'); return; }
+            // Tried by itself and the browser wants a tap first (or the admin closed it): the button waits.
+            if (auto) { tell('ready'); return; }
+            // A frame the browser does not let make passkeys: the dashboard offers a new tab instead.
+            if (framed && e && (e.name === 'SecurityError' || e.name === 'NotSupportedError')) { say('frame'); tell('frame'); return; }
+            var why = e && e.name === 'NotAllowedError' ? 'cancelled' : 'failed';
+            say(why === 'cancelled' ? 'cancelled' : (e && e.code) || 'failed');
+            tell(why);
+          });
+      }
+      btn.addEventListener('click', function () { create(false); });
+      // Asked for right away (some browsers allow it in a frame without a tap); else Enter or a tap on the button.
+      btn.focus();
+      create(true);
+    })();
+  </script>
+  {% endif %}
+</body>
+</html>

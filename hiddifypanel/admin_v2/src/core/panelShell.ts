@@ -137,6 +137,14 @@ export interface TelegramInfo {
 }
 export const telegramInfo = ref<TelegramInfo | null>(window.__TELEGRAM__ ?? null)
 
+/** Right after a password sign-in, when I have no passkey yet on some of the panel's domains (null: do not offer one). */
+export interface PasskeySuggestion {
+  /** This page's domain (null on an IP). */
+  domain: string | null
+  missing: string[]
+}
+export const passkeySuggestion = ref<PasskeySuggestion | null>(window.__PASSKEY_SUGGESTION__ ?? null)
+
 export const legacyMenu = ref<AdminMenuGroup[]>(window.__ADMIN_MENU__ ?? [])
 export const panelNotices = ref<PanelNotice[]>(window.__ADMIN_NOTICES__ ?? [])
 
@@ -149,6 +157,7 @@ export function applyBootstrapShell(data: {
   capabilities?: Partial<AdminCapabilities> | null
   needs_quick_setup?: boolean
   telegram?: TelegramInfo | null
+  passkey_suggestion?: PasskeySuggestion | null
   locale?: string
   panel_version?: string
   panel_logo_url?: string
@@ -178,6 +187,10 @@ export function applyBootstrapShell(data: {
   if (data.telegram !== undefined) {
     telegramInfo.value = data.telegram
     window.__TELEGRAM__ = data.telegram
+  }
+  if (data.passkey_suggestion !== undefined) {
+    passkeySuggestion.value = data.passkey_suggestion
+    window.__PASSKEY_SUGGESTION__ = data.passkey_suggestion
   }
   if (data.account_mode !== undefined) {
     accountMode.value = data.account_mode
@@ -221,6 +234,7 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
     pwa_manifest_url: data.pwa_manifest_url as string | undefined,
     pwa_icon_url: data.pwa_icon_url as string | undefined,
     telegram: data.telegram as TelegramInfo | null | undefined,
+    passkey_suggestion: data.passkey_suggestion as PasskeySuggestion | null | undefined,
     locale: data.locale as string | undefined,
     panel_version: data.panel_version as string | undefined,
     panel_logo_url: data.panel_logo_url as string | undefined,

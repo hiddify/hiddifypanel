@@ -105,6 +105,9 @@
               <Button :label="me.has_password ? t('account.changePassword') : t('account.setPassword')" icon="pi pi-pencil" size="small" outlined @click="openPassword" />
             </div>
             <div class="account-row account-row--col">
+              <PasskeysRow />
+            </div>
+            <div class="account-row account-row--col">
               <div class="account-row__line">
                 <span class="account-row__icon account-row__icon--sky"><i class="pi pi-at" /></span>
                 <div class="account-row__text">
@@ -257,6 +260,7 @@ import { formatCount } from '@/shared/utils/format-metrics'
 import UsageMeters from '@/features/admins/components/UsageMeters.vue'
 import AdditionalConfigsEditor from '@/shared/components/AdditionalConfigsEditor.vue'
 import PasswordRules from '@/shared/components/PasswordRules.vue'
+import PasskeysRow from '@/features/admins/components/PasskeysRow.vue'
 import DefaultOutboundSelect from '@/features/admins/components/DefaultOutboundSelect.vue'
 import TelegramConnect from '@/shared/components/TelegramConnect.vue'
 import { telegramInfo } from '@/core/panelShell'

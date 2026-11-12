@@ -146,6 +146,25 @@
     form.busy button.submit .spin { display: inline-block; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    .or { display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0 0.9rem; font-size: 0.78rem; color: var(--muted); }
+    .or::before, .or::after { content: ""; flex: 1; border-top: 1px solid var(--field-border); }
+    .passkey {
+      width: 100%; height: 3rem; border-radius: 14px; display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+      border: 1px solid var(--field-border); background: var(--field); color: var(--text); cursor: pointer;
+      font: inherit; font-size: 0.95rem; font-weight: 600; text-decoration: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    }
+    .passkey:hover { border-color: var(--primary); transform: translateY(-1px); }
+    .passkey:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 109, 245, 0.18); }
+    .passkey svg { width: 1.2rem; height: 1.2rem; color: var(--primary); }
+    .passkey[disabled] { opacity: 0.6; cursor: default; transform: none; }
+    .passkey .spin { display: none; width: 1rem; height: 1rem; border: 2px solid var(--field-border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .passkey.busy .spin { display: inline-block; }
+    .passkey.busy svg { display: none; }
+    .passkey-note { margin: 0.5rem 0 0; font-size: 0.78rem; color: var(--muted); text-align: center; line-height: 1.45; overflow-wrap: anywhere; }
+    .passkey-note[data-error] { color: var(--danger); }
+    .back-note { margin-bottom: 1rem; }
+
     .foot { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--field-border); display: flex; flex-direction: column; gap: 0.5rem; }
     .foot p { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0; font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
     .foot svg { flex-shrink: 0; width: 0.95rem; height: 0.95rem; margin-top: 0.1rem; color: var(--primary); }
@@ -187,7 +206,7 @@
           <div class="field">
             <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <input type="text" id="username" name="username" value="{{ form.username.data or '' }}"
-                   autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required
+                   autocomplete="{{ 'username webauthn' if passkey else 'username' }}" autocapitalize="none" autocorrect="off" spellcheck="false" required
                    placeholder="{{ texts.get('usernamePlaceholder', '') }}"
                    {% if error == 'invalid' %}aria-invalid="true"{% endif %}
                    {% if not form.username.data %}autofocus{% endif %}>
@@ -212,6 +231,12 @@
 
         <button type="submit" class="submit"><span class="spin" aria-hidden="true"></span><span id="submit-text">{{ texts.get('submit', 'Sign in') }}</span></button>
       </form>
+
+      {% if passkey %}
+      <div class="or" aria-hidden="true">{{ texts.get('or', 'or') }}</div>
+      <button type="button" class="passkey" id="passkey-btn"><span class="spin" aria-hidden="true"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4M18 5l2 2M15 8l2 2"/></svg><span>{{ texts.get('passkey', 'Sign in with a passkey') }}</span></button>
+      <p class="passkey-note" id="passkey-msg" role="status" hidden></p>
+      {% endif %}
 
       <div class="foot">
         <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>{{ texts.get('tipLink', '') }}</p>
@@ -346,6 +371,104 @@
         document.getElementById('submit-text').textContent = {{ texts.get('signingIn', 'Signing in…')|tojson }};
       });
     })();
+
+    {% if passkey %}
+    // Passkeys of this domain: offered in the username field's suggestions, by the button, and started right away in a
+    // browser that used one here before (remembered in this browser). Without one, the password form is the way in.
+    (function () {
+      var btn = document.getElementById('passkey-btn');
+      var note = document.getElementById('passkey-msg');
+      var REMEMBER = 'hiddify_passkey';
+      var texts = {{ {
+        'cancelled': texts.get('passkeyCancelled', 'The passkey was not used. Try again, or sign in with your password.'),
+        'unsupported': texts.get('passkeyUnsupported', 'This browser can not use passkeys. Sign in with your password.'),
+        'locked': texts.get('error_locked', 'Too many tries from your network. Wait 15 minutes, then try again.'),
+        'unknown': texts.get('passkeyUnknown', 'This passkey was removed from the panel. Sign in with your password.'),
+        'failed': texts.get('passkeyFailed', 'The passkey could not be checked. Try again, or sign in with your password.')
+      }|tojson }};
+      var base = {{ passkey_base|tojson }};
+      var pending = null; // the running request (aborted before starting another)
+      function say(key) { note.textContent = texts[key] || texts.failed; note.hidden = false; note.setAttribute('data-error', ''); }
+      function remember(on) { try { on ? localStorage.setItem(REMEMBER, '1') : localStorage.removeItem(REMEMBER); } catch (e) {} }
+      function remembered() { try { return localStorage.getItem(REMEMBER) === '1'; } catch (e) { return false; } }
+      function b64(buf) {
+        var bytes = new Uint8Array(buf), s = '';
+        for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+        return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+      function unb64(s) {
+        var bin = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4));
+        var out = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+        return out.buffer;
+      }
+      function post(url, body) {
+        return fetch(url, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
+          .then(function (r) { return r.json().catch(function () { return {}; }).then(function (data) { data.ok = r.ok; return data; }); });
+      }
+      if (!window.PublicKeyCredential || !navigator.credentials) { btn.disabled = true; say('unsupported'); return; }
+
+      // mode: 'conditional' (in the username suggestions, waits quietly), 'modal' (the button: the device's prompt now)
+      // or 'auto' (the prompt on opening the page; when it does not work, nothing is said).
+      function signIn(mode) {
+        if (pending) pending.abort();
+        var ctl = new AbortController();
+        pending = ctl;
+        if (mode !== 'conditional') { btn.classList.add('busy'); note.hidden = true; }
+        return post(base + 'options/')
+          .then(function (opts) {
+            if (!opts.ok) throw { code: opts.code };
+            opts.challenge = unb64(opts.challenge);
+            var req = { publicKey: opts, signal: ctl.signal };
+            if (mode === 'conditional') req.mediation = 'conditional';
+            return navigator.credentials.get(req);
+          })
+          .then(function (cred) {
+            if (!cred) throw { code: 'cancelled' };
+            btn.classList.add('busy');
+            var r = cred.response;
+            return post(base, {
+              credential: {
+                id: cred.id, type: cred.type,
+                response: {
+                  clientDataJSON: b64(r.clientDataJSON), authenticatorData: b64(r.authenticatorData),
+                  signature: b64(r.signature), userHandle: r.userHandle ? b64(r.userHandle) : null
+                }
+              },
+              next: {{ next_url|tojson }}
+            });
+          })
+          .then(function (res) {
+            if (!res.ok || !res.redirect) throw { code: res.code };
+            remember(true);
+            window.location.assign(res.redirect);
+          })
+          .catch(function (e) {
+            if (ctl.signal.aborted) return; // replaced by another request
+            pending = null;
+            btn.classList.remove('busy');
+            var code = e && e.name === 'NotAllowedError' ? 'cancelled' : (e && e.code) || 'failed';
+            if (code === 'unknown') remember(false);
+            // A quiet attempt that did not work: say nothing, the suggestions, the button and the password stay.
+            if (mode === 'modal') say(code);
+            if (mode !== 'conditional') startConditional();
+          });
+      }
+      function startConditional() {
+        if (!PublicKeyCredential.isConditionalMediationAvailable) return;
+        PublicKeyCredential.isConditionalMediationAvailable().then(function (ok) { if (ok && !pending) signIn('conditional'); }).catch(function () {});
+      }
+      btn.addEventListener('click', function () { signIn('modal'); });
+      // The form's own sign in: stop waiting for a passkey.
+      document.getElementById('login-form').addEventListener('submit', function () { if (pending) pending.abort(); });
+      if (remembered()) {
+        // Used a passkey here before: ask for it right away (a browser that needs a click first refuses quietly).
+        signIn('auto');
+      } else {
+        startConditional();
+      }
+    })();
+    {% endif %}
   </script>
 </body>
 </html>

@@ -23,7 +23,16 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 204
+MAX_DB_VERSION = 205
+
+
+def _v205(child_id):
+    """Admins can sign in with a passkey: their passkeys' public keys (admin_passkey)."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.passkey import AdminPasskey
+
+    AdminPasskey.__table__.create(db.engine, checkfirst=True)
 
 
 def _v204(child_id):

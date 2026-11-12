@@ -32,6 +32,7 @@
   </div>
   <Toast />
   <ConfirmDialog />
+  <PasskeySuggest />
   <DonationDialog />
   <LegacyActionDialog />
   <!-- Offers to install the panel as an app, once per visit, until "do not show again" -->
@@ -42,6 +43,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ConfirmDialog from 'primevue/confirmdialog'
+import PasskeySuggest from '@/features/admins/components/PasskeySuggest.vue'
 import DonationDialog from '@/shared/components/DonationDialog.vue'
 import LegacyActionDialog from '@/shared/components/LegacyActionDialog.vue'
 import PwaInstallDialog from '@/shared/components/PwaInstallDialog.vue'

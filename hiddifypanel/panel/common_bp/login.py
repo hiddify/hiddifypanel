@@ -13,6 +13,8 @@ import wtforms as wtf
 
 import re
 
+from loguru import logger
+
 
 class LoginForm(FlaskForm):
     secret_textbox = wtf.fields.StringField(
@@ -37,14 +39,16 @@ class AdminLoginForm(FlaskForm):
 _TEXTS_CACHE: dict[str, dict] = {}
 
 
-def _login_texts() -> dict:
-    """The page's texts from translations.i18n (adminV2.login), in the admin language, English as fallback."""
+def _login_texts(lang: str | None = None) -> dict:
+    """The page's texts from translations.i18n (adminV2.login), in ``lang`` (when there is such a file) or the admin
+    language, English as fallback."""
     import json
     from pathlib import Path
 
-    lang = str(hconfig(ConfigEnum.admin_lang) or "en")
+    root = Path(__file__).resolve().parents[2] / "translations.i18n"
+    if not lang or not (root / f"{lang}.json").is_file():
+        lang = str(hconfig(ConfigEnum.admin_lang) or "en")
     if lang not in _TEXTS_CACHE:
-        root = Path(__file__).resolve().parents[2] / "translations.i18n"
 
         def load(code: str) -> dict:
             try:
@@ -72,8 +76,21 @@ def _client_ip() -> str:
         return request.remote_addr or "?"
 
 
+def _passkey_context() -> dict | None:
+    """The sign-in page offers a passkey when someone has one for this domain (None: only the password form)."""
+    from hiddifypanel import passkeys
+
+    rp_id = passkeys.rp_id_for(request.host)
+    return {"domain": rp_id} if passkeys.has_passkeys(rp_id) else None
+
+
 def _render_admin_login(form: AdminLoginForm, *, error: str | None = None, status: int = 200):
     texts = _login_texts()
+    try:
+        passkey = _passkey_context()
+    except Exception as e:  # the password form works without it
+        logger.warning(f"passkey sign-in unavailable: {e}")
+        passkey = None
     return (
         render_template(
             "admin_login.html",
@@ -85,6 +102,8 @@ def _render_admin_login(form: AdminLoginForm, *, error: str | None = None, statu
             rtl=str(hconfig(ConfigEnum.admin_lang) or "en") in ("fa", "ar"),
             title=hconfig(ConfigEnum.branding_title) or texts.get("brand") or "Hiddify",
             logo_url=hutils.flask.static_url_for(filename="images/WhiteLogo.png"),
+            passkey=passkey,
+            passkey_base=hurl_for("common_bp.LoginView:passkey_login"),
         ),
         status,
     )
@@ -158,7 +177,112 @@ class LoginView(FlaskView):
             return _render_admin_login(form, error="invalid", status=401)
         creds.clear_failures(ip)
         login_user(admin, force=True)
+        from hiddifypanel.panel.commercial.restapi.v2.admin.passkeys_api import after_password_login
+
+        after_password_login(admin)
         return redirect(_safe_next(request.form.get("next")) or hurl_for("admin.admin_v2"))
+
+    @route("/passkey/options/", methods=["POST"])
+    def passkey_options(self):
+        """Sign in with a passkey, step 1: a challenge for any passkey of this domain."""
+        from hiddifypanel import passkeys
+
+        if not hutils.flask.is_admin_proxy_path():
+            abort(404)
+        rp_id = passkeys.rp_id_for(request.host)
+        if not rp_id:
+            return {"code": "unsupported"}, 400
+        return passkeys.request_options(rp_id)
+
+    @route("/passkey/", methods=["POST"])
+    def passkey_login(self):
+        """Sign in with a passkey, step 2: check it and sign in."""
+        from hiddifypanel import admin_credentials as creds
+        from hiddifypanel import passkeys
+
+        if not hutils.flask.is_admin_proxy_path():
+            abort(404)
+        body = request.get_json(silent=True)  # JSON only: a plain cross-site form can not post here
+        if not isinstance(body, dict):
+            return {"code": "invalid"}, 400
+        ip = _client_ip()
+        if creds.login_locked(ip):
+            return {"code": "locked"}, 429
+        try:
+            admin = passkeys.authenticate(body.get("credential"), origin=f"https://{request.host}")
+        except passkeys.PasskeyError as e:
+            logger.info(f"passkey sign-in refused from {ip}: {e}")
+            if e.code in ("invalid", "unknown", "cloned"):
+                creds.record_failure(ip)
+            return {"code": e.code}, 401 if e.code == "unknown" else 400
+        creds.clear_failures(ip)
+        login_user(admin, force=True)
+        return {"redirect": _safe_next(body.get("next")) or hurl_for("admin.admin_v2")}
+
+    @route("/passkey/enroll/")
+    def passkey_enroll(self):
+        """Adding an admin's passkey on every domain: this domain's step, shown in a frame of My account on another one.
+
+        The page works with its one-time token alone (a frame of another domain gets no cookies), and only that page
+        may frame it."""
+        from hiddifypanel import passkeys
+
+        if not hutils.flask.is_admin_proxy_path():
+            abort(404)
+        token = request.args.get("t") or ""
+        try:
+            step = passkeys.peek_enrollment(token, request.host)
+        except Exception as e:
+            logger.warning(f"passkey enrollment unavailable: {e}")
+            step = None
+        # The dashboard's language (kept with the step): the frame reads as part of it.
+        lang = (step or {}).get("lang") or str(hconfig(ConfigEnum.admin_lang) or "en")
+        texts = _login_texts(lang)
+        response = app.make_response(
+            (
+                render_template(
+                    "passkey_enroll.html",
+                    step=step,
+                    token=token if step else "",
+                    parent=step["parent"] if step else "",
+                    domain=passkeys.split_host(request.host)[0],
+                    texts=texts,
+                    lang=lang,
+                    rtl=lang.split("_")[0] in ("fa", "ar"),
+                    title=hconfig(ConfigEnum.branding_title) or texts.get("brand") or "Hiddify",
+                    base=hurl_for("common_bp.LoginView:passkey_enroll"),
+                ),
+                200 if step else 410,
+            )
+        )
+        response.headers["Content-Security-Policy"] = f"frame-ancestors {step['parent']}" if step else "frame-ancestors 'none'"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Cache-Control"] = "no-store"
+        return response
+
+    @route("/passkey/enroll/options/", methods=["POST"])
+    def passkey_enroll_options(self):
+        from hiddifypanel import passkeys
+
+        body = request.get_json(silent=True) or {}
+        try:
+            return passkeys.enrollment_options(str(body.get("t") or ""), request.host, str(hconfig(ConfigEnum.branding_title) or "Hiddify"))
+        except passkeys.PasskeyError as e:
+            return {"code": e.code}, 410
+
+    @route("/passkey/enroll/", methods=["POST"])
+    def passkey_enroll_save(self):
+        from hiddifypanel import passkeys
+
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            return {"code": "invalid"}, 400
+        try:
+            passkeys.finish_enrollment(str(body.get("t") or ""), request.host, body.get("credential"), user_agent=request.user_agent.string)
+        except passkeys.PasskeyError as e:
+            if e.code != "exists":
+                return {"code": e.code}, 400
+        return {"ok": True}
 
     @route("/l/<path:path>/")
     @route("/l/<path:path>")

@@ -36,6 +36,12 @@ def init_app(app):
         bp.add_url_rule("/admins/me/language/", view_func=MyAdminLanguageApi)
         bp.add_url_rule("/admins/me/users-layout/", view_func=MyAdminUsersLayoutApi)
         bp.add_url_rule("/admins/me/default-outbound/", view_func=MyAdminOutboundApi)
+        from .passkeys_api import MyPasskeyItemApi, MyPasskeyOptionsApi, MyPasskeysApi, MyPasskeyTourApi
+
+        bp.add_url_rule("/admins/me/passkeys/", view_func=MyPasskeysApi)
+        bp.add_url_rule("/admins/me/passkeys/options/", view_func=MyPasskeyOptionsApi)
+        bp.add_url_rule("/admins/me/passkeys/tour/", view_func=MyPasskeyTourApi)
+        bp.add_url_rule("/admins/me/passkeys/<int:passkey_id>/", view_func=MyPasskeyItemApi)
         bp.add_url_rule("/admins/<uuid:uuid>/", view_func=AdminTreeItemApi)
         bp.add_url_rule("/admins/<uuid:uuid>/reset-password/", view_func=AdminResetPasswordApi)
 
