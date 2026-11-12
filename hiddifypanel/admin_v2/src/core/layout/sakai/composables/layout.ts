@@ -77,6 +77,58 @@ function applyTheme() {
   else root.removeAttribute('data-caddy-accent')
   applyDarkClass(layoutConfig.darkTheme)
   applyGlass()
+  syncThemeColor()
+}
+
+/**
+ * The installed app (PWA) only: the system's status bar above it (Android paints it with `<meta name="theme-color">`)
+ * takes the topbar's color, also after a change of theme, color or mode. A see-through bar (glass themes) is laid
+ * over the page's color, as the eye sees it; a bar drawn by its gradient alone takes the theme's color. In a browser
+ * tab the page's own theme-color stays as it is.
+ */
+export function syncThemeColor() {
+  if (typeof document === 'undefined') return
+  const app = window.matchMedia?.('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true
+  if (!app) return
+  // now, and again when a cross-fade (0.5s) and Liquid Glass's flowing page color (up to 1.2s) have settled
+  requestAnimationFrame(applyThemeColor)
+  setTimeout(applyThemeColor, 700)
+  setTimeout(applyThemeColor, 1500)
+}
+
+function applyThemeColor() {
+  const bar = document.querySelector('.layout-topbar')
+  if (!bar) return
+  const style = getComputedStyle(bar)
+  let fill: Layer = style.backgroundColor
+  // a bar drawn by its gradient alone (Smart Caddy, light: the theme's color at about 83%, _theme-caddy.scss)
+  if (flatten([fill]) === '#ffffff' && style.backgroundImage !== 'none') fill = [style.getPropertyValue('--p-primary-600').trim() || '#fff', 0.83]
+  // what shows through a see-through bar: the page's own color (body, else html: Liquid Glass paints it there)
+  const opaque = (c: string) => !/rgba\(.*,\s*0\)$|transparent/.test(c)
+  const body = getComputedStyle(document.body).backgroundColor
+  const html = getComputedStyle(document.documentElement).backgroundColor
+  const page = opaque(body) ? body : opaque(html) ? html : '#fff'
+  const color = flatten([page, fill])
+  const meta = document.head.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+  if (color && meta) meta.content = color
+}
+
+/** A CSS color, or a color with an extra opacity. */
+type Layer = string | [string, number]
+
+/** CSS colors (any syntax, any alpha) laid over white, bottom first, as one opaque `#rrggbb`. */
+function flatten(layers: Layer[]): string | null {
+  const ctx = document.createElement('canvas').getContext('2d')
+  if (!ctx) return null
+  ctx.canvas.width = ctx.canvas.height = 1
+  for (const layer of ['#fff', ...layers]) {
+    const [fill, alpha] = typeof layer === 'string' ? [layer, 1] : layer
+    ctx.globalAlpha = alpha
+    ctx.fillStyle = fill
+    ctx.fillRect(0, 0, 1, 1)
+  }
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+  return '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')
 }
 
 /** A change of theme, mode or color cross-fades (where the browser can, and motion is welcome) instead of jumping */
