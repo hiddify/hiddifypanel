@@ -50,6 +50,8 @@ class Conversation(db.Model):  # type: ignore
     #: Free tests this chat got from this admin.
     free_grants: Mapped[int] = mapped_column(default=0)
     requested_at: Mapped[datetime.datetime | None] = mapped_column(DateTime, default=None, nullable=True)
+    #: The id of the admin's package this chat asked for or got (hiddifypanel.free_test); None: not yet.
+    free_package_id: Mapped[str | None] = mapped_column(String(16), default=None, nullable=True)
     #: Messages the admin has not opened yet.
     unread: Mapped[int] = mapped_column(default=0)
     last_text: Mapped[str] = mapped_column(String(200), default="")

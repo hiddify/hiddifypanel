@@ -71,6 +71,13 @@
 
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    // Installed app (PWA): iOS zooms the page into any focused field under 16px. maximum-scale=1 stops that
+    // auto-zoom (iOS still allows pinch zoom); in a browser tab the viewport stays as it is.
+    if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) {
+      document.querySelector('meta[name=viewport]').content += ', maximum-scale=1'
+    }
+  </script>
   {% endblock %}
   <!-- Bootstrap 4 -->
   {% block styles %}
@@ -90,7 +97,7 @@
     href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.bootstrap4.min.css">
 
   <link rel="stylesheet" href="{{ static_url_for( filename='css/custom.css',version=5.23 ) }}">
-  {% if get_locale()=='fa' %}
+  {% if is_rtl() %}
   <link rel="stylesheet" href="{{static_url_for(filename='css/bootstrap4-rtl.min.css')}}">
   <link rel="stylesheet" href="{{static_url_for(filename='css/adminlte.fa.css')}}">
   <link rel="stylesheet" href="{{static_url_for(filename='css/custom-rtl.css',version=3)}}">
@@ -383,7 +390,7 @@
       {% for cat, msg in get_flashed_messages(with_categories = True) %}
       $(document).Toasts('create', {
         class: 'bg-{{cats.get(cat,cat)}}',
-        position: "{{'topLeft' if get_locale()=='fa' else 'topRight'}}",
+        position: "{{'topLeft' if is_rtl() else 'topRight'}}",
 
 
         body: `{{msg|safe}}`
@@ -513,7 +520,7 @@
     function show_prompt() {
       toast = $(document).Toasts('create', {
         class: 'bg-',
-        position: "{{'bottomRight' if get_locale()=='fa' else 'bottomLeft'}}",
+        position: "{{'bottomRight' if is_rtl() else 'bottomLeft'}}",
         image: "{{static_url_for( filename='images/pwa-icon.png')}}",
         title: `{{_('Install Hiddify Application')}} <button class='btn btn-xs btn-default' onclick='show_video(is_ios?"webapp-ios":"webapp-android")'><i class='fa-solid fa-question'></i></button>`,
         class: "toast-full",
@@ -620,7 +627,7 @@
     }
   </script>
 
-  {% if get_locale()=='fa' %}
+  {% if is_rtl() %}
   <script src="{{static_url_for(filename='js/custom-rtl.js',version=5.1)}}"> </script>
   {% endif %}
 

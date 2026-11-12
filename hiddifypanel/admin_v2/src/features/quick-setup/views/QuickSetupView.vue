@@ -103,6 +103,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { isRtlLanguage } from '@/shared/utils/languages'
 import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
@@ -155,7 +156,7 @@ function centerCurrentStep(smooth = true) {
   list.scrollBy({ left: delta, behavior: smooth ? 'smooth' : 'auto' })
 }
 const logoUrl = window.__PANEL_LOGO_URL__ || ''
-const rtl = computed(() => locale.value === 'fa' || locale.value === 'ar')
+const rtl = computed(() => isRtlLanguage(locale.value))
 
 const STEP_ICONS: Record<StepId, string> = {
   language: 'pi pi-language',

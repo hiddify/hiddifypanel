@@ -23,10 +23,10 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 205
+MAX_DB_VERSION = 207
 
 
-def _v205(child_id):
+def _v207(child_id):
     """Admins can sign in with a passkey: their passkeys' public keys (admin_passkey)."""
     if child_id != 0:
         return
@@ -51,6 +51,19 @@ def _v204(child_id):
     for admin in AdminUser.query_with_deleted().all():
         if admin.mode == AdminMode.admin and admin.capabilities:
             admin.capabilities = {**admin.capabilities, caps.MODIFY_FREE_PACKAGE: True}
+
+
+def _v206(child_id):
+    """Several free test packages per admin: each conversation keeps the id of the package it asked for or got."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.message import Conversation
+
+    add_column(Conversation.free_package_id)
+
+
+def _v205(child_id):
+    """New panel languages (Lang): the account ``lang`` enum columns grow, which only happens when a migration runs."""
 
 
 def _v203(child_id):
@@ -1482,6 +1495,8 @@ enum_columns = [
     CustomProxy.server_core,
     CustomProxyClientCore.core,
     Outbound.mode,  # new modes (core_outbound, ...) must be added to the MySQL ENUM too
+    User.lang,  # a new panel language (Lang) must be in the accounts' ENUM too, or saving it fails
+    AdminUser.lang,
 ]
 
 # Tables where DELETE of legacy enum rows is unsafe (FK / data loss). Remap instead.

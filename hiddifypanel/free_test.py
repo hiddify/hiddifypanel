@@ -19,6 +19,8 @@ import base64
 import datetime
 import hashlib
 import hmac
+import re
+import secrets
 import uuid as uuid_lib
 from dataclasses import dataclass
 from typing import Any
@@ -39,6 +41,12 @@ MAX_TEXT = 2000
 RETRY_AFTER = datetime.timedelta(days=1)
 APPROVALS = ("auto", "manual")
 DEFAULT: dict[str, Any] = {"enabled": False, "days": 7, "usage_gb": 0.5, "approval": "manual"}
+#: How many packages one admin may keep. Only the default one is offered in the bot; the others wait.
+MAX_PACKAGES = 20
+MAX_NAME = 40
+_ID = re.compile(r"^[A-Za-z0-9_-]{1,16}$")
+#: The id a package stored before there were several gets.
+LEGACY_ID = "main"
 
 
 class FreeTestError(Exception):
@@ -60,9 +68,13 @@ class Package:
     approval: str
     #: The admin who defined it (None: nobody did, the defaults).
     owner: AdminUser | None
+    #: Its id among the owner's packages ("" for the defaults).
+    id: str = ""
+    #: The admin's name for it ("": none), shown in the panel only.
+    name: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        return {"enabled": self.enabled, "days": self.days, "usage_gb": self.usage_gb, "approval": self.approval}
+        return {"id": self.id, "name": self.name, "enabled": self.enabled, "days": self.days, "usage_gb": self.usage_gb, "approval": self.approval}
 
 
 def clean(value: Any) -> dict[str, Any]:
@@ -81,6 +93,8 @@ def clean(value: Any) -> dict[str, Any]:
         "days": int(number("days", 1, MAX_DAYS)),
         "usage_gb": round(number("usage_gb", MIN_USAGE_GB, MAX_USAGE_GB), 3),
         "approval": approval if approval in APPROVALS else DEFAULT["approval"],
+        # The admin's own name for it, shown in the panel only (the bot says "Free test"); one line, no control chars.
+        "name": " ".join("".join(ch for ch in str(src.get("name") or "") if ch.isprintable()).split())[:MAX_NAME],
     }
 
 
@@ -88,24 +102,74 @@ def can_define(admin: AdminUser) -> bool:
     return caps.has(admin, caps.MODIFY_FREE_PACKAGE)
 
 
-def package_of(admin: AdminUser) -> Package:
-    """The admin's own package when it may define one and did, else the nearest parent's, else the defaults (off)."""
+def _clean_one(value: Any, taken: set[str]) -> dict[str, Any]:
+    """One package with its id: a new or clashing id gets a fresh one."""
+    src = value if isinstance(value, dict) else {}
+    pid = str(src.get("id") or "")
+    while not _ID.match(pid) or pid in taken:
+        pid = secrets.token_hex(4)
+    taken.add(pid)
+    return {"id": pid, **clean(src)}
+
+
+def clean_set(value: Any) -> dict[str, Any]:
+    """The admin's packages as they are stored: ``{"packages": [...], "default": id}``. The default is one of them (the
+    first when the given one is gone); no packages means the free test is off. A package stored before there were
+    several (a single package dict) becomes the only one, and the default."""
+    src = value if isinstance(value, dict) else {}
+    if "packages" not in src:
+        src = {"packages": [{**src, "id": LEGACY_ID}], "default": LEGACY_ID}
+    taken: set[str] = set()
+    items = src.get("packages") if isinstance(src.get("packages"), list) else []
+    packages = [_clean_one(item, taken) for item in items[:MAX_PACKAGES]]
+    ids = [item["id"] for item in packages]
+    default = str(src.get("default") or "")
+    return {"packages": packages, "default": default if default in ids else (ids[0] if ids else None)}
+
+
+def own_set(admin: AdminUser) -> dict[str, Any] | None:
+    """The admin's own packages, or None when it uses its parent's (or may not define any)."""
+    return clean_set(admin.free_package) if isinstance(admin.free_package, dict) and can_define(admin) else None
+
+
+def _package(item: dict[str, Any], owner: AdminUser) -> Package:
+    return Package(**{k: v for k, v in item.items() if k != "id"}, owner=owner, id=item["id"])
+
+
+def package_of(admin: AdminUser, package_id: str | None = None) -> Package:
+    """The package offered for the admin: its own default one when it may define packages and did (``package_id``: that
+    one of them instead, while it exists), else the nearest parent's, else the defaults (off)."""
     seen: set[int] = set()
     current: AdminUser | None = admin
     while current is not None and current.id not in seen:  # the owner is its own parent
         seen.add(current.id)
-        if isinstance(current.free_package, dict) and can_define(current):
-            return Package(**clean(current.free_package), owner=current)
+        if (own := own_set(current)) is not None:
+            by_id = {item["id"]: item for item in own["packages"]}
+            item = by_id.get(package_id or "") or by_id.get(own["default"] or "")
+            return _package(item, current) if item else Package(**clean(None), owner=current)
         current = current.parent_admin
     return Package(**clean(None), owner=None)
 
 
 def set_package(admin: AdminUser, value: Any | None) -> None:
-    """``None`` goes back to the parent's package. Not committed."""
-    admin.free_package = clean(value) if value is not None else None
+    """``None`` goes back to the parent's package; ``{"packages": [...], "default": id}`` sets them all; a single
+    package (the form before there were several) replaces the default one. Not committed."""
+    if value is None:
+        admin.free_package = None
+        return
+    if isinstance(value, dict) and "packages" not in value:
+        current = own_set(admin) or {"packages": [], "default": None}
+        default = current["default"] or LEGACY_ID
+        rest = [item for item in current["packages"] if item["id"] != default]
+        value = {"packages": [{**value, "id": default}, *rest], "default": default}
+    admin.free_package = clean_set(value)
 
 
 # --------------------------------------------------------------------------- the link
+
+
+#: The length of an admin's start code: 12 bytes in url-safe base64.
+CODE_LEN = 16
 
 
 def code_of(admin: AdminUser) -> str:
@@ -122,8 +186,30 @@ def admin_by_code(code: str) -> AdminUser | None:
     return None
 
 
-def start_payload(admin: AdminUser) -> str:
-    return f"free_{code_of(admin)}"
+def private_token(admin: AdminUser, package_id: str) -> str:
+    """The private part of a package's link: a keyed hash, so the public link does not lead to the private ones."""
+    key = str(current_app.config["SECRET_KEY"]).encode()
+    digest = hmac.new(key, f"free-test:{admin.uuid}:{package_id}".encode(), hashlib.sha256).digest()
+    return base64.urlsafe_b64encode(digest[:8]).decode().rstrip("=")
+
+
+def start_payload(admin: AdminUser, package_id: str | None = None) -> str:
+    """``free_<code>`` offers the admin's default package (the public link); ``free_<code><token>`` offers one of its
+    other packages (a private link, given only by the admin)."""
+    return f"free_{code_of(admin)}{private_token(admin, package_id) if package_id else ''}"
+
+
+def resolve_payload(rest: str) -> tuple[AdminUser | None, str | None]:
+    """The admin and package a ``/start free_...`` names (what follows ``free_``). The package is None for the public
+    link, and for a private one whose package is gone (then the default one is offered)."""
+    admin = admin_by_code(rest[:CODE_LEN])
+    token = rest[CODE_LEN:]
+    if admin is None or not token or (own := own_set(admin)) is None:
+        return admin, None
+    for item in own["packages"]:
+        if hmac.compare_digest(private_token(admin, item["id"]), token):
+            return admin, item["id"]
+    return admin, None
 
 
 # --------------------------------------------------------------------------- conversations
@@ -207,12 +293,14 @@ def ask(conv: Conversation) -> User | None:
     """The chat asks for the free test. The new account when it is given at once, None when the request now waits for
     the admin. Commits."""
     admin = AdminUser.by_id(conv.admin_id)
-    package = package_of(admin) if admin else None
+    # The package this chat was offered: a private one through its link, else the default one.
+    package = package_of(admin, conv.free_package_id) if admin else None
     if admin is None or package is None or not package.enabled:
         raise FreeTestError("disabled")
     if not can_ask(conv):
         raise FreeTestError("not_pending")
     conv.requested_at = datetime.datetime.now()
+    conv.free_package_id = package.id or None
     add_message(conv, Sender.user, "", MessageKind.request)
     if package.approval == "auto" and is_first_time(conv) and _has_room(admin):
         return grant(conv)
@@ -233,7 +321,8 @@ def grant(conv: Conversation) -> User:
         raise FreeTestError("read_only")
     if not admin.can_have_more_users():
         raise FreeTestError("no_room")
-    package = package_of(admin)
+    # The package that was asked for, while the admin still has it; else the one offered now.
+    package = package_of(admin, conv.free_package_id)
     comment = "Free test · Telegram " + (f"@{conv.username}" if conv.username else str(conv.telegram_id))
     user = User(uuid=str(uuid_lib.uuid4()), name=(conv.name or str(conv.telegram_id))[:100], package_days=package.days, added_by=admin.id, enable=True, comment=comment)
     user.usage_limit_GB = package.usage_gb
@@ -245,6 +334,7 @@ def grant(conv: Conversation) -> User:
         set_tags("user", user.uuid, [tag.id])
     conv.user_uuid = user.uuid
     conv.free_status = FreeStatus.approved.value
+    conv.free_package_id = package.id or None
     conv.free_grants = (conv.free_grants or 0) + 1
     add_message(conv, Sender.system, f"{package.days}|{package.usage_gb:g}", MessageKind.granted)
     db.session.commit()

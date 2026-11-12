@@ -18,6 +18,32 @@ class Lang(HEnum):
     pt = auto()
     zh = auto()
     my = auto()
+    ko = auto()
+    tk = auto()
+    be = auto()
+    es = auto()
+    am = auto()
+    ar = auto()
+    ur = auto()
+    ps = auto()
+    bn = auto()
+    tr = auto()
+    uz = auto()
+    az = auto()
+    kk = auto()
+    ky = auto()
+    tg = auto()
+    hy = auto()
+    uk = auto()
+    hi = auto()
+    de = auto()
+    fr = auto()
+    nl = auto()
+    it = auto()
+
+
+#: Languages written right to left
+RTL_LANGS = frozenset({"fa", "ar", "ur", "ps"})
 
 
 class PanelMode(HEnum):
