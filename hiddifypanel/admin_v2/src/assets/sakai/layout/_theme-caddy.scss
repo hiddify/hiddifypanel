@@ -167,6 +167,7 @@ html.theme-caddy.app-dark {
 
     .layout-topbar {
         --topbar-bg: rgb(17 12 27 / 62%);
+        --topbar-solid: rgb(17 12 27 / 62%);
         --topbar-hover: rgb(255 255 255 / 8%);
         box-shadow: 0 8px 24px -16px rgb(0 0 0 / 80%);
     }
@@ -208,6 +209,7 @@ html.theme-caddy:not(.app-dark) {
 
     .layout-topbar {
         --topbar-bg: linear-gradient(100deg, color-mix(in srgb, var(--p-primary-700) 86%, transparent) 0%, color-mix(in srgb, var(--p-primary-500) 80%, transparent) 100%);
+        --topbar-solid: transparent; /* the bar is see-through here: a solid color under it would hide the glow */
         box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--p-primary-700) 60%, transparent);
     }
 

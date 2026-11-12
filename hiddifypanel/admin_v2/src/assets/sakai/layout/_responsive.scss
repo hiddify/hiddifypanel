@@ -17,6 +17,7 @@
                 inset-inline-start: 0;
                 top: 0;
                 height: 100vh;
+                padding-top: calc(0.5rem + var(--safe-top));
                 border-start-start-radius: 0;
                 border-end-start-radius: 0;
                 border-inline-end: 1px solid var(--surface-border);
@@ -76,6 +77,7 @@
             inset-inline-start: 0;
             top: 0;
             height: 100vh;
+            padding-top: calc(0.5rem + var(--safe-top));
             border-start-start-radius: 0;
             border-end-start-radius: 0;
             // Hidden once slid out so it can't be panned into view or focused.
@@ -146,6 +148,6 @@
     }
 
     .layout-wrapper .layout-topbar {
-        padding: 0 1rem;
+        padding-inline: 1rem;
     }
 }

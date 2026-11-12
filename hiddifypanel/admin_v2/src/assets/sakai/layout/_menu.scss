@@ -3,11 +3,11 @@
 .layout-sidebar {
     position: fixed;
     width: 20rem;
-    height: calc(100vh - 8rem);
+    height: calc(100vh - 8rem - var(--safe-top));
     z-index: 999;
     overflow-y: auto;
     user-select: none;
-    top: 6rem;
+    top: calc(6rem + var(--safe-top));
     inset-inline-start: 2rem;
     transition:
         transform var(--layout-section-transition-duration),
