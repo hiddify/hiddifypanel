@@ -2038,7 +2038,7 @@
         "title": "Set up the Telegram bot first"
       },
       "retry": "Try again",
-      "subtitle": "Messages from people who write to your Telegram bot, and their free test requests.",
+      "subtitle": "Messages from people who write to your Telegram bot, their free test requests, and messages you send to your users.",
       "thread": {
         "actionFailed": "That did not work",
         "approve": "Approve",

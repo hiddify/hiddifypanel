@@ -52,14 +52,13 @@ const routes = [
         beforeEnter: () => (isChildPanel.value && !isSuperAdmin.value ? { name: 'node-home' } : true),
       },
       {
-        // A message to users over the Telegram bot (?ids=1,2,3: the users selected on the users page)
+        // Sending a message is part of the inbox now: old links (?ids=1,2,3) open its send window.
         path: 'message',
-        name: 'broadcast',
-        component: () => import('@/features/broadcast/views/BroadcastView.vue'),
-        beforeEnter: () => (isChildPanel.value ? { name: 'node-home' } : true),
+        redirect: (to: RouteLocation) => ({ name: 'inbox', query: { compose: '1', ...(to.query.ids ? { ids: to.query.ids } : {}) } }),
       },
       {
-        // The people who wrote to the Telegram bot, their free test requests, and this admin's free test package
+        // The people who wrote to the Telegram bot, their free test requests, this admin's free test package, and
+        // sending a message to users
         path: 'inbox',
         name: 'inbox',
         component: () => import('@/features/inbox/views/InboxView.vue'),

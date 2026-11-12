@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 import { liveWatch, type LiveError } from '@/core/live/live'
@@ -11,9 +12,31 @@ import ConversationList, { type InboxFilter } from '@/features/inbox/components/
 import ConversationThread from '@/features/inbox/components/ConversationThread.vue'
 import FreeTestCard from '@/features/inbox/components/FreeTestCard.vue'
 import FreeTestDialog from '@/features/inbox/components/FreeTestDialog.vue'
+import BroadcastComposer from '@/features/broadcast/components/BroadcastComposer.vue'
 import type { Conversation, FreeTest, Inbox } from '@/features/inbox/api'
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
+
+/** Sending a message to users over the bot (it was its own page, /message: links to it open this window). */
+const composing = ref(false)
+const composeIds = ref<number[]>([])
+
+function openComposer() {
+  // ?compose=1&ids=1,2,3: from an old /message link, with the users chosen there as the audience.
+  if (route.query.compose) {
+    composeIds.value = String(route.query.ids ?? '')
+      .split(',')
+      .map((x) => Number(x))
+      .filter((x) => Number.isInteger(x) && x > 0)
+    const { compose: _c, ids: _i, ...rest } = route.query
+    void router.replace({ query: rest })
+  } else {
+    composeIds.value = []
+  }
+  composing.value = true
+}
 
 const inbox = ref<Inbox | null>(null)
 const loadError = ref('')
@@ -40,7 +63,10 @@ function watchInbox() {
     },
   })
 }
-onMounted(watchInbox)
+onMounted(() => {
+  watchInbox()
+  if (route.query.compose) openComposer()
+})
 
 function onChanged(conversation: Conversation) {
   if (!inbox.value) return
@@ -57,7 +83,10 @@ function onSaved(free: FreeTest) {
 
 <template>
   <div class="inbox-page">
-    <PageHeader :title="t('inbox.title')" :subtitle="t('inbox.subtitle')" />
+    <div class="inbox-head">
+      <PageHeader :title="t('inbox.title')" :subtitle="t('inbox.subtitle')" />
+      <Button :label="t('broadcast.title')" icon="pi pi-send" class="inbox-head__send" :disabled="!!inbox && !inbox.bot_username" @click="openComposer" />
+    </div>
 
     <template v-if="!inbox && !loadError">
       <Skeleton height="9rem" border-radius="18px" />
@@ -102,6 +131,20 @@ function onSaved(free: FreeTest) {
 
       <FreeTestDialog v-model:visible="editing" :free="inbox.free" @saved="onSaved" />
     </template>
+
+    <!-- Send a Telegram message to users (everyone, a group, or the users chosen on the users page) -->
+    <Dialog
+      v-model:visible="composing"
+      modal
+      maximizable
+      :draggable="false"
+      :header="composeIds.length ? t('broadcast.dialogTitle', { n: composeIds.length }, composeIds.length) : t('broadcast.title')"
+      :style="{ width: 'min(72rem, 96vw)' }"
+      :breakpoints="{ '767px': '100vw' }"
+      :pt="{ root: { class: 'inbox-compose-dialog' } }"
+    >
+      <BroadcastComposer v-if="composing" :ids="composeIds" in-dialog />
+    </Dialog>
   </div>
 </template>
 
@@ -110,6 +153,20 @@ function onSaved(free: FreeTest) {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+.inbox-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+}
+.inbox-head > :first-child {
+  flex: 1;
+  min-width: 14rem;
+}
+.inbox-head__send {
+  flex: none;
 }
 .inbox-error {
   display: flex;
@@ -213,6 +270,19 @@ html[dir='rtl'] .inbox-nobot__link .pi {
   }
   .inbox-panel--open .inbox-thread {
     display: block;
+  }
+}
+</style>
+
+<style>
+/* The send-message window: the whole screen on a phone */
+@media (max-width: 767px) {
+  .inbox-compose-dialog.p-dialog {
+    width: 100vw !important;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
   }
 }
 </style>
