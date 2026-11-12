@@ -8,7 +8,7 @@ import { detectPwaPlatform, desktopOsName, type PwaPlatform } from '@/shared/com
  * Chrome on Android, Chrome on a computer. The detected platform is shown first; the others are one tap away.
  */
 /** The installed app's icon, drawn where the animation shows the app (home screen, install prompt, window title). */
-const props = defineProps<{ icon?: string }>()
+const props = defineProps<{ icon?: string; ownShape?: boolean }>()
 const iconStyle = computed(() => (props.icon ? { '--app-icon-img': `url("${props.icon}")` } : undefined))
 
 const { t } = useI18n()
@@ -30,7 +30,7 @@ function tabLabel(p: PwaPlatform): string {
 </script>
 
 <template>
-  <div class="guide" :style="iconStyle">
+  <div class="guide" :class="{ 'guide--own-icon': ownShape }" :style="iconStyle">
     <div class="guide__tabs" role="tablist" :aria-label="t('pwa.guide.platform')">
       <button
         v-for="p in PLATFORMS"
@@ -224,6 +224,11 @@ function tabLabel(p: PwaPlatform): string {
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 0.2rem;
+}
+/* The panel's own icon is already cut to its shape: no corner radius, nothing behind it */
+.guide--own-icon .app-icon {
+  border-radius: 0;
+  background: var(--app-icon-img) center / contain no-repeat;
 }
 .finger {
   position: absolute;

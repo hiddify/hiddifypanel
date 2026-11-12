@@ -34,6 +34,16 @@ def static_url_for(**values):
     return orig.split("user_secret")[0]
 
 
+# The panel's own icons (static/images/app-icon-*.png and favicon-*.png). The proxy serves static images as immutable
+# for a year, so a changed picture reaches browsers only under a new URL: raise this number with every change to them.
+APP_ICON_VERSION = 2
+
+
+def app_icon_url(name: str) -> str:
+    """The URL of one of the panel's own icons, e.g. `app-icon-admin-192.png` or `favicon-user-32.png`."""
+    return static_url_for(filename=f"images/{name}", version=APP_ICON_VERSION)
+
+
 def hurl_for(endpoint, **values):
     if Child.current().id != 0:
         new_endpoint = "child_" + endpoint

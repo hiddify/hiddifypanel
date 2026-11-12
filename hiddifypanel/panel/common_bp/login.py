@@ -368,7 +368,7 @@ class LoginView(FlaskView):
         icon_set = "admin" if admin_call else "user"
 
         def icon(size):
-            return hutils.flask.static_url_for(filename=f"images/app-icon-{icon_set}-{size}.png")
+            return hutils.flask.app_icon_url(f"app-icon-{icon_set}-{size}.png")
 
         response = jsonify(
             {

@@ -163,6 +163,7 @@ export function applyBootstrapShell(data: {
   panel_logo_url?: string
   pwa_manifest_url?: string
   pwa_icon_url?: string
+  app_icon_url?: string
 }) {
   if (data.menu?.length) {
     legacyMenu.value = data.menu
@@ -212,13 +213,16 @@ export function applyBootstrapShell(data: {
   }
   ensureHeadLink('manifest', data.pwa_manifest_url)
   ensureHeadLink('apple-touch-icon', data.pwa_icon_url)
+  ensureHeadLink('icon', data.app_icon_url, '256x256')
 }
 
 /** Add `<link rel=…>` when the page has none (the production template has them; the Vite dev page does not). */
-function ensureHeadLink(rel: string, href: string | undefined) {
-  if (!href || typeof document === 'undefined' || document.head.querySelector(`link[rel="${rel}"]`)) return
+function ensureHeadLink(rel: string, href: string | undefined, sizes?: string) {
+  const own = `link[rel="${rel}"]` + (sizes ? `[sizes="${sizes}"]` : '')
+  if (!href || typeof document === 'undefined' || document.head.querySelector(own)) return
   const link = document.createElement('link')
   link.rel = rel
+  if (sizes) link.setAttribute('sizes', sizes)
   link.href = href
   document.head.appendChild(link)
 }
@@ -233,6 +237,7 @@ export function applyBootstrapResponse(data: Record<string, unknown>) {
     needs_quick_setup: data.needs_quick_setup as boolean | undefined,
     pwa_manifest_url: data.pwa_manifest_url as string | undefined,
     pwa_icon_url: data.pwa_icon_url as string | undefined,
+    app_icon_url: data.app_icon_url as string | undefined,
     telegram: data.telegram as TelegramInfo | null | undefined,
     passkey_suggestion: data.passkey_suggestion as PasskeySuggestion | null | undefined,
     locale: data.locale as string | undefined,

@@ -16,7 +16,7 @@
       <div ref="body" class="pwa__body" @scroll.passive="measure">
         <!-- The app as it will look on the home screen -->
         <div class="pwa__hero">
-          <div class="pwa__app">
+          <div class="pwa__app" :class="{ 'pwa__app--own': ownIcon }">
             <img v-if="icon" :src="icon" alt="" class="pwa__icon" />
             <i v-else class="pi pi-mobile pwa__icon pwa__icon--fallback" />
           </div>
@@ -25,7 +25,7 @@
         </div>
 
         <!-- How to install, animated for this device (Safari on iPhone, Chrome on Android or a computer) -->
-        <PwaInstallGuide :icon="icon" />
+        <PwaInstallGuide :icon="icon" :own-shape="ownIcon" />
 
         <label class="pwa__never">
           <Checkbox v-model="never" binary input-id="pwa-never" />
@@ -67,6 +67,8 @@ const route = useRoute()
 const never = ref(false)
 const busy = ref(false)
 const icon = ref('')
+/** The icon is the panel's own app icon, already cut to its shape: shown as it is, without a frame around it. */
+const ownIcon = ref(false)
 
 // More of the guide below the fold: a line over the buttons says so.
 const body = ref<HTMLElement | null>(null)
@@ -92,7 +94,9 @@ const onNarrow = (e: MediaQueryListEvent) => (narrow.value = e.matches)
 
 /** The app icon the page declares (production template, or added from the bootstrap in dev). */
 function readIcon() {
-  icon.value = document.head.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')?.href || window.__PANEL_LOGO_URL__ || ''
+  const own = document.head.querySelector<HTMLLinkElement>('link[rel="icon"][sizes="256x256"]')?.href
+  ownIcon.value = !!own
+  icon.value = own || document.head.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')?.href || window.__PANEL_LOGO_URL__ || ''
 }
 
 /** Offered once per page load (module state): coming back to the dashboard in the same visit does not repeat it. */
@@ -206,6 +210,18 @@ async function doInstall() {
   height: 4.1rem;
   border-radius: 1.1rem;
   object-fit: contain;
+}
+/* The panel's own app icon: as on the home screen (its own shape and glass edge), with a soft glow under it */
+.pwa__app--own {
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.pwa__app--own .pwa__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  filter: drop-shadow(0 10px 16px color-mix(in srgb, var(--p-primary-color) 45%, transparent));
 }
 .pwa__icon--fallback {
   display: grid;
