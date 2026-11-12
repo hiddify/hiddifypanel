@@ -512,7 +512,7 @@ class MyAdminAccountApi(MethodView):
             "capabilities": caps.of(actor),
             "parent_name": parent.name if parent and parent.id != actor.id else None,
             "has_password": bool(actor.password),
-            "strong_password": creds.is_strong(actor.password, avoid=creds.admin_avoid(actor)),
+            "strong_password": bool(actor.password and actor.password_strong),
             "telegram_connected": bool(actor.telegram_id),
             "alias": actor.alias or "",
             # My own interface language ("" = the panel's default admin language).
@@ -657,7 +657,7 @@ class MyAdminPasswordApi(MethodView):
         body = request.get_json(silent=True) or {}
         current = str(body.get("current_password") or "")
         new = str(body.get("new_password") or "")
-        if actor.password and not secrets.compare_digest(current, actor.password):
+        if actor.password and not actor.check_password(current):
             return {"message": "The current password is wrong", "code": "wrong_current"}, 400
         problems = creds.password_problems(new, avoid=creds.admin_avoid(actor))
         if problems:

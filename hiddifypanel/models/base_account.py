@@ -10,8 +10,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Self
 
 from flask_login import UserMixin as FlaskLoginUserMixin
 from sqlalchemy import BigInteger, DateTime, Enum, String, event, func
-from sqlalchemy.orm import Mapped, ORMExecuteState, Query, Session, mapped_column, with_loader_criteria
+from sqlalchemy.orm import Mapped, ORMExecuteState, Query, Session, mapped_column, validates, with_loader_criteria
 
+from hiddifypanel import passwords
 from hiddifypanel.database import db
 from hiddifypanel.models.config_enum import Lang
 from hiddifypanel.models.role import Role
@@ -36,7 +37,9 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
     uuid: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(512), default="")
     username: Mapped[str | None] = mapped_column(String(100), default="", index=True)
-    password: Mapped[str | None] = mapped_column(String(100), default="")
+    #: A salted scrypt hash of the sign-in password ("" = none: the account signs in with its link). Assigning a password
+    #: stores its hash (``_hash_password``); check one with ``check_password``. See hiddifypanel.passwords.
+    password: Mapped[str | None] = mapped_column(String(255), default="")
     comment: Mapped[str | None] = mapped_column(String(512), default="")
     telegram_id: Mapped[int | None] = mapped_column(BigInteger, default=None, index=True)
     lang: Mapped[Lang | None] = mapped_column(Enum(Lang), default=None)
@@ -115,6 +118,27 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
     def to_dict(self, convert_date=True) -> dict:
         return self.to_model().to_dict()
 
+    @validates("password")
+    def _hash_password(self, key: str, value: str | None) -> str:
+        """Every assignment stores the hash (a value that already is one, e.g. copied from another row, is kept)."""
+        if passwords.is_hashed(value):
+            return value or ""
+        self._password_set(value or "")
+        return passwords.hash_password(value)
+
+    def _password_set(self, password: str) -> None:
+        """Called with a new password before only its hash is kept (an admin notes whether it is strong)."""
+
+    def check_password(self, password: str | None) -> bool:
+        """Whether ``password`` signs this account in ("" only when it has none). A password kept from before hashing is
+        replaced by its hash here (the caller commits)."""
+        stored = self.password or ""
+        if not passwords.verify_password(stored, password):
+            return False
+        if passwords.needs_rehash(stored):
+            self.password = password
+        return True
+
     def update_password(self, new_password):
         self.password = new_password
         db.session.commit()
@@ -188,7 +212,14 @@ class BaseAccount(db.Model, FlaskLoginUserMixin):
 
     @classmethod
     def by_username_password(cls, username: str, password: str):
-        return cls.query.filter(cls.username == username, cls.password == password).first()
+        if not username or not password:
+            return None
+        for account in cls.query.filter(cls.username == username, cls.password != "").limit(5):
+            if account.check_password(password):
+                if db.session.dirty:
+                    db.session.commit()  # its old password was just replaced by the hash
+                return account
+        return None
 
     @classmethod
     def external_model(cls) -> type[AccountModel]:

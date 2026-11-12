@@ -10,7 +10,6 @@
 from __future__ import annotations
 
 import re
-import secrets
 from typing import TYPE_CHECKING
 
 from loguru import logger
@@ -91,7 +90,7 @@ def alias_problem(alias: str, admin: AdminUser) -> str | None:
     taken = AdminUser.query.filter(AdminUser.alias == alias, AdminUser.id != (admin.id or 0)).first()
     if taken:
         return "taken"
-    if not is_strong(admin.password, avoid=admin_avoid(admin)):
+    if not admin.password or not admin.password_strong:
         return "weak_password"
     return None
 
@@ -130,16 +129,18 @@ def check_admin_login(identifier: str, password: str) -> AdminUser | None:
     UUID: the password must match (an admin without a password signs in with an empty one, as before).
     Alias: the password must match and be strong; super admins have no alias.
     """
+    from hiddifypanel.database import db
     from hiddifypanel.models import AdminMode
 
     admin = find_admin(identifier)
     if admin is None or admin.deleted:
         return None
-    stored = admin.password or ""
-    if not secrets.compare_digest(stored.encode(), (password or "").encode()):
+    if not admin.check_password(password):
         return None
+    if db.session.dirty:
+        db.session.commit()  # its old password was just replaced by the hash
     by_alias = not _UUID_RE.match((identifier or "").strip())
-    if by_alias and (admin.mode == AdminMode.super_admin or not is_strong(stored, avoid=admin_avoid(admin))):
+    if by_alias and (admin.mode == AdminMode.super_admin or not is_strong(password, avoid=admin_avoid(admin))):
         return None
     return admin
 

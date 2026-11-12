@@ -76,6 +76,8 @@ class AdminUser(BaseAccount):
     #: Sign-in username instead of the UUID (lowercase, unique; never for super admins; needs a strong
     #: password). See hiddifypanel.admin_credentials.
     alias: Mapped[str | None] = mapped_column(String(64), default=None, nullable=True, index=True)
+    #: Whether the password was strong when it was set (only its hash is kept): an alias needs a strong one.
+    password_strong: Mapped[bool | None] = mapped_column(default=False, nullable=True)
     #: [kind, target, value] rows added to the subscription of every user of this admin and its
     #: sub-admins (merged with the users' own; see proxy_v3.user_configs).
     additional_configs: Mapped[list | None] = mapped_column(JSON, default=list, nullable=True)
@@ -96,6 +98,11 @@ class AdminUser(BaseAccount):
     parent_admin_id: Mapped[int | None] = mapped_column(ForeignKey("admin_user.id"), default=1)
     # post_update: the owner is its own parent; a row that depends on itself can only be written with its parent set after it.
     parent_admin: Mapped[AdminUser | None] = relationship("AdminUser", remote_side=[id], backref="sub_admins", post_update=True)
+
+    def _password_set(self, password: str) -> None:
+        from hiddifypanel import admin_credentials as creds
+
+        self.password_strong = creds.is_strong(password, avoid=creds.admin_avoid(self))
 
     @property
     def role(self) -> Role | None:

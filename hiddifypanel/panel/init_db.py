@@ -23,7 +23,35 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 207
+MAX_DB_VERSION = 208
+
+
+def _v208(child_id):
+    """Passwords are kept as salted scrypt hashes (hiddifypanel.passwords): the column grows to fit one, each password
+    still kept as typed is replaced by its hash, and admins note whether theirs is strong (an alias needs a strong one).
+
+    Users' passwords get a lighter scrypt here, so a panel with many of them upgrades quickly (they are mostly long
+    generated ones); each is hashed at full strength at its next sign-in (passwords.needs_rehash)."""
+    from werkzeug.security import generate_password_hash
+
+    from hiddifypanel import passwords
+    from hiddifypanel.models.admin import AdminUser
+    from hiddifypanel.models.user import User
+
+    alter_column(User.password)
+    alter_column(AdminUser.password)
+    add_column(AdminUser.password_strong)
+    for admin in AdminUser.query_with_deleted().filter(AdminUser.password != "", AdminUser.password.isnot(None)).all():
+        if not passwords.is_hashed(admin.password):
+            admin.password = admin.password  # the model stores the hash and notes its strength
+    db.session.commit()
+    while True:
+        batch = User.query_with_deleted().filter(User.password != "", User.password.isnot(None), ~User.password.like("scrypt:%"), ~User.password.like("pbkdf2:%")).limit(500).all()
+        if not batch:
+            break
+        for user in batch:
+            user.password = generate_password_hash(user.password, method="scrypt:4096:8:1")
+        db.session.commit()
 
 
 def _v207(child_id):

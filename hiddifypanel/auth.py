@@ -193,8 +193,12 @@ def login_by_uuid(uuid, password: str, is_admin: bool) -> bool:
     account = get_account_by_uuid(uuid, is_admin)
     if not account:
         return False
-    if account.password != password:
+    if not account.check_password(password):
         return False
+    from hiddifypanel.database import db
+
+    if db.session.dirty:
+        db.session.commit()  # its old password was just replaced by the hash
     return login_user(account, force=True)
 
 

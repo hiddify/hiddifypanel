@@ -24,9 +24,8 @@ def verify_basic_auth_password(username, password) -> AdminUser | User | None:
     # username = username.strip()
     # password = password.strip()
     if username and password:
-        return User.query.filter(
-            User.username == username, User.password == password).first() or AdminUser.query.filter(
-            AdminUser.username == username, AdminUser.password == password).first()
+        # Checked against the stored hash (hiddifypanel.passwords), never compared as stored.
+        return User.by_username_password(username, password) or AdminUser.by_username_password(username, password)
 
 
 @api_auth.verify_token
