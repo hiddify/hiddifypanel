@@ -38,6 +38,8 @@ def _conversation_out(conv: Conversation, accounts: dict[str, User]) -> dict[str
         "username": conv.username or "",
         "account": {"uuid": account.uuid, "name": account.name, "active": bool(account.is_active)} if account else None,
         "free_status": conv.free_status,
+        #: The admin's package this chat asked for or got; null: not yet (it goes with the default one).
+        "package_id": conv.free_package_id,
         "free_grants": conv.free_grants or 0,
         #: Never had a free test or an account on this panel.
         "first_time": free_test.is_first_time(conv) if conv.free_status == FreeStatus.pending else False,
@@ -63,10 +65,22 @@ def _free_out() -> dict[str, Any]:
     username = _bot_username()
     payload = free_test.start_payload(admin)
     inherited = package.owner is not None and package.owner.id != admin.id
+    own = free_test.own_set(admin)
     return {
+        #: The package offered in the bot: the default one.
         "package": package.to_dict(),
-        #: The admin's own definition (null: it uses its parent's).
-        "own": free_test.clean(admin.free_package) if isinstance(admin.free_package, dict) and free_test.can_define(admin) else None,
+        #: The admin's own default package (null: it uses its parent's).
+        "own": package.to_dict() if own is not None else None,
+        #: All of the admin's own packages, the default one included; only the default one is offered.
+        "packages": own["packages"] if own is not None else [],
+        "default_id": own["default"] if own is not None else None,
+        "max_packages": free_test.MAX_PACKAGES,
+        #: The private link of each package but the default one: only the people the admin gives it to see that package.
+        "private_links": (
+            {item["id"]: f"https://t.me/{username}?start={free_test.start_payload(admin, item['id'])}" for item in own["packages"] if item["id"] != own["default"]}
+            if own is not None and username
+            else {}
+        ),
         "can_edit": free_test.can_define(admin) and not hutils.node.is_child(),
         "inherited_from": package.owner.name if inherited and package.owner else None,
         "link": f"https://t.me/{username}?start={payload}" if username else None,
@@ -115,7 +129,7 @@ class FreePackageApi(MethodView):
     decorators = [login_required(ROLES)]
 
     def put(self):
-        """Free test: define this admin's package (``{"inherit": true}`` goes back to the parent's)"""
+        """Free test: set this admin's packages (``{"packages": [...], "default": id}``; ``{"inherit": true}`` goes back to the parent's)"""
         if not free_test.can_define(g.account):
             abort(403, "Missing capability: modify_free_package")
         if hutils.node.is_child():

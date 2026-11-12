@@ -153,32 +153,34 @@ function stepBy(dir: 1 | -1) {
 </template>
 
 <style scoped>
+/* The global form-field tokens, not --p-inputtext-*: those exist only once an InputText was mounted, so on a page
+   without one the box and its dividers had no colour and vanished in light themes. */
 .nstep {
   display: flex;
   align-items: stretch;
   width: 100%;
   min-height: 2.75rem;
-  border: 1px solid var(--p-inputtext-border-color);
-  border-radius: var(--p-inputtext-border-radius, 6px);
-  background: var(--p-inputtext-background);
-  color: var(--p-inputtext-color);
-  box-shadow: var(--p-inputtext-shadow);
+  border: 1px solid var(--p-form-field-border-color);
+  border-radius: var(--p-form-field-border-radius, 6px);
+  background: var(--p-form-field-background);
+  color: var(--p-form-field-color);
+  box-shadow: var(--p-form-field-shadow);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .nstep:hover:not(.nstep--disabled) {
-  border-color: var(--p-inputtext-hover-border-color);
+  border-color: var(--p-form-field-hover-border-color);
 }
 .nstep:focus-within {
-  border-color: var(--p-inputtext-focus-border-color);
-  box-shadow: 0 0 0 1px var(--p-inputtext-focus-border-color);
+  border-color: var(--p-form-field-focus-border-color);
+  box-shadow: 0 0 0 1px var(--p-form-field-focus-border-color);
 }
 .nstep--invalid,
 .nstep--invalid:hover:not(.nstep--disabled) {
-  border-color: var(--p-inputtext-invalid-border-color);
+  border-color: var(--p-form-field-invalid-border-color);
 }
 .nstep--disabled {
-  background: var(--p-inputtext-disabled-background);
-  color: var(--p-inputtext-disabled-color);
+  background: var(--p-form-field-disabled-background);
+  color: var(--p-form-field-disabled-color);
 }
 .nstep__btn {
   display: inline-flex;
@@ -198,12 +200,12 @@ function stepBy(dir: 1 | -1) {
   -webkit-tap-highlight-color: transparent;
 }
 .nstep__btn:first-child {
-  border-inline-end: 1px solid var(--p-inputtext-border-color);
+  border-inline-end: 1px solid var(--p-form-field-border-color);
   border-start-start-radius: inherit;
   border-end-start-radius: inherit;
 }
 .nstep__btn:last-child {
-  border-inline-start: 1px solid var(--p-inputtext-border-color);
+  border-inline-start: 1px solid var(--p-form-field-border-color);
   border-start-end-radius: inherit;
   border-end-end-radius: inherit;
 }
@@ -251,7 +253,7 @@ function stepBy(dir: 1 | -1) {
   width: 100%;
 }
 .nstep__input::placeholder {
-  color: var(--p-inputtext-placeholder-color);
+  color: var(--p-form-field-placeholder-color);
 }
 .nstep__suffix {
   flex: none;

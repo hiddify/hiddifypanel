@@ -43,7 +43,7 @@ def _package_lines(package: free_test.Package, lang: str) -> str:
 def offer_screen(conv: Conversation, lang: str) -> Screen:
     """The package and the one thing to do next, by where this chat's free test stands."""
     admin = AdminUser.by_id(conv.admin_id)
-    package = free_test.package_of(admin) if admin else None
+    package = free_test.package_of(admin, conv.free_package_id) if admin else None
     write = btn(t(T.free_write, lang), Cb.free_write, conv.id)
     if admin is None or package is None or not package.enabled:
         return Screen(f"🎁 <b>{t(T.free_title, lang)}</b>\n\n{t(T.free_off, lang)}", keyboard([write]))
@@ -68,10 +68,13 @@ def offer_screen(conv: Conversation, lang: str) -> Screen:
     return Screen("\n".join([*head, f"<i>{t(T.free_hint_manual, lang)}</i>"]), keyboard([btn(t(T.free_request, lang), Cb.free_ask, conv.id)], [write]))
 
 
-def open_offer(ctx: Ctx, admin: AdminUser, tg_user: types.User | None) -> None:
-    """``/start free_<code>``: this chat now talks to ``admin``, and sees its offer."""
+def open_offer(ctx: Ctx, admin: AdminUser, tg_user: types.User | None, package_id: str | None = None) -> None:
+    """``/start free_<code>``: this chat now talks to ``admin``, and sees its offer: the default package, or the
+    private one its link names (``package_id``)."""
     name, username = _person(tg_user)
     conv = free_test.conversation(admin, ctx.chat_id, name=name, username=username)
+    if conv.free_status != FreeStatus.pending:  # a request waiting keeps the package it asked for
+        conv.free_package_id = package_id
     db.session.commit()
     ctx.message_id = None
     ctx.show(offer_screen(conv, ctx.lang))
@@ -199,7 +202,7 @@ def notify_request(conv: Conversation, *, given: bool = False) -> None:
     """A request to approve or decline; ``given``: it was given at once (automatic approval), for the record."""
 
     def build(admin: AdminUser, lang: str):
-        package = free_test.package_of(admin)
+        package = free_test.package_of(admin, conv.free_package_id)
         lines = [f"🎁 <b>{t(T.req_auto if given else T.req_title, lang)}</b>", f"👤 {_who(conv)}", _package_lines(package, lang)]
         if given:
             return "\n".join(lines), keyboard(_reply_row(conv, lang))

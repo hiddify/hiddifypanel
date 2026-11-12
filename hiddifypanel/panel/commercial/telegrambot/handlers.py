@@ -76,8 +76,9 @@ def on_start(message: types.Message) -> None:
     payload = (message.text or "").partition(" ")[2].strip()
     if payload.startswith("free_"):
         # An admin's free test link: the offer, for anyone (an admin sees what its customers see).
-        if host := free_test.admin_by_code(payload.removeprefix("free_")):
-            return free.open_offer(context(chat_id), host, message.from_user)
+        host, package_id = free_test.resolve_payload(payload.removeprefix("free_"))
+        if host:
+            return free.open_offer(context(chat_id), host, message.from_user, package_id)
     if payload.startswith("admin_") and (match := _UUID.search(payload)):
         _link_admin(chat_id, match.group(0).lower())
     elif match := _UUID.search(payload):

@@ -23,7 +23,7 @@ from hiddifypanel.proxy_v3.template_catalog.custom_proxy_presets import (
 )
 from hiddifypanel.proxy_v3.tls_store_sync import import_legacy_certificates, migrate_certs_to_data_cert
 
-MAX_DB_VERSION = 205
+MAX_DB_VERSION = 206
 
 
 def _v204(child_id):
@@ -42,6 +42,15 @@ def _v204(child_id):
     for admin in AdminUser.query_with_deleted().all():
         if admin.mode == AdminMode.admin and admin.capabilities:
             admin.capabilities = {**admin.capabilities, caps.MODIFY_FREE_PACKAGE: True}
+
+
+def _v206(child_id):
+    """Several free test packages per admin: each conversation keeps the id of the package it asked for or got."""
+    if child_id != 0:
+        return
+    from hiddifypanel.models.message import Conversation
+
+    add_column(Conversation.free_package_id)
 
 
 def _v205(child_id):
