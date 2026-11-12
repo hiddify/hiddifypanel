@@ -53,6 +53,7 @@ import AppSidebar from './AppSidebar.vue'
 const pwaVisible = ref(false)
 import AppTopbar from './AppTopbar.vue'
 import { useLayout } from './composables/layout'
+import { useBackOpensMenu } from './composables/useBackOpensMenu'
 import { useMenuSwipe } from './composables/useMenuSwipe'
 
 const { layoutConfig, layoutState, hideMobileMenu, toggleMenu } = useLayout()
@@ -64,6 +65,7 @@ const { dragging, settling, onTabPointerDown, onTabPointerMove, onTabPointerUp, 
   isOpen: () => layoutState.mobileMenuActive,
   setOpen: (open) => (layoutState.mobileMenuActive = open),
 })
+useBackOpensMenu({ setOpen: (open) => (layoutState.mobileMenuActive = open) })
 function onTabClick() {
   if (tabClickToggles()) toggleMenu()
 }
