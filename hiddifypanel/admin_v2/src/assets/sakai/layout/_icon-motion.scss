@@ -61,6 +61,21 @@ $icon-motions: (
     }
 }
 
+/* Touch screens have no mouse to hover: in the side menu, the page you are on plays its icon's motion instead, so
+   opening the menu shows where you are (only page links get .active-route, AppMenuItem.vue, not their groups) */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+    .layout-menu a.active-route .layout-menuitem-icon::before {
+        display: inline-block;
+        animation: icon-hop 1.4s ease-in-out infinite;
+    }
+
+    @each $icon, $motion in $icon-motions {
+        .layout-menu a.active-route .#{$icon}.layout-menuitem-icon::before {
+            animation: $motion infinite;
+        }
+    }
+}
+
 /* Phones: the Settings chip bar has no mouse, so the section on screen plays its icon's motion instead: scrolling the
    page shows which part you are in (the chip bar is a phone layout below 992px, SettingsView.vue) */
 @media (max-width: 991px) and (prefers-reduced-motion: no-preference) {
