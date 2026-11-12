@@ -373,7 +373,9 @@ class LoginView(FlaskView):
                 "id": start_url,
                 "name": f"Hiddify {name}",
                 "short_name": f"{name}"[:12],
-                "theme_color": "#f2f4fb",
+                # The installed app's status bar on Android: the user page's header color (Chrome ignores a
+                # theme-color this light from the page, but takes the manifest's); the admin page sets its own.
+                "theme_color": "#eaecf7",
                 "background_color": "#1a1b21",
                 "display": "standalone",
                 "scope": f"/",
