@@ -1,6 +1,865 @@
 # Changelog
 
 
+## (unreleased)
+
+#### Other
+
+* Fix(auth): keep account passwords as salted scrypt hashes. 
+  _Admin and user passwords were stored and compared as typed. Now only a
+salted scrypt hash is kept (hiddifypanel.passwords), and every sign-in path
+checks the password against it.
+
+- Assigning a password stores its hash; "" still means no password.
+- Link + password, alias, basic auth and the current-password check use
+  check_password (constant time). A correct check is remembered for a few
+  minutes in memory, keyed by the stored hash, for API clients that send
+  their password on each request.
+- Admins keep a password_strong flag (an alias needs a strong password).
+- Migration _v208 widens the column and hashes the passwords kept as typed
+  (users' with a lighter scrypt, raised at their next sign-in). One kept as
+  typed that comes back later, e.g. from an old backup, is hashed at its
+  next sign-in._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+  _# Conflicts:
+#	hiddifypanel/admin_v2/src/features/inbox/views/InboxView.vue
+#	hiddifypanel/panel/init_db.py
+#	hiddifypanel/translations.i18n/en.json_
+
+* Merge pull request #213 from Hiddify-Official/fix/inbox-free-test-card. 
+  _feat(inbox): several free test packages with private links_
+
+* Feat(inbox): name each free test package. 
+  _A Name field in Add Package and Edit Package (one line, up to 40
+characters). The card shows the name instead of "Free Test"; the bot
+still calls every package Free test, so the admin's own names stay in
+the panel._
+
+* Feat(admin_v2): show how each free test package is given on its card. 
+  _A chip beside FREE: Manual (amber) or Automatic (green), the colours of
+the choice in the package dialog._
+
+* Style(admin_v2): violet icon for private free test packages. 
+
+* Feat(inbox): private links for the packages that are not the default. 
+  _Everyone in the bot, and the public link, still get the default package.
+Each other package is private: it has its own link (Copy, QR Code,
+Telegram on its card) that the admin gives to whom it chooses, and only
+that link offers it. The private part of the link is a keyed hash, so the
+public link does not lead to the private ones; an unknown one falls back
+to the default package. A request waiting keeps the package it asked for._
+
+* Style(admin_v2): gold default package card, coloured live gift icons. 
+  _With several packages, the default one's card is a warm gold with a gold
+icon that glows; the others keep a coloured icon instead of a grey one.
+The icons float softly and the gift rocks now and then (off with reduced
+motion)._
+
+* Feat(inbox): several free test packages, the default one offered in the bot. 
+  _An admin can keep several free test packages and pick the default one: the
+bot and the link offer only the default; the others wait until made the
+default. A person still gets one free test in total.
+
+- free_test: the admin's packages are stored as {packages, default} in
+  free_package (a single package stored before becomes the only one, and
+  the default). A request keeps the id of the package it asked for, and
+  approving it later gives that package while it exists.
+- Conversation.free_package_id, added by migration _v206.
+- Inbox: with one package the page is as before (plus Add Package). With
+  several, each package has its own card (Default badge, Make Default,
+  Delete) and its conversations in a drawer under it: a live handle that
+  opens on a tap or when pulled down, the drawer following the finger._
+
+* Feat(admin_v2): delete the free test package, clearer inbox card. 
+  _- Delete Package: turns the admin's own package off and back to the
+  defaults, after a confirmation. Shown only for a package of their own.
+- The link actions (Copy, QR Code, Telegram) get labels, in their own row.
+- Outlines that show on the frosted Caddy and Liquid themes.
+- Title case for the inbox's titles and buttons (Edit Package, Copy Link…)._
+
+* Style(admin_v2): give each free test approval mode its own soft colour. 
+  _The chosen mode was always a light blue; now "You approve each request"
+is a soft amber and "Given automatically" a soft green._
+
+* Style(admin_v2): sit the free test bow on the preview box's corner. 
+  _The bow now sits on the top end corner and reaches past the box's edges;
+only the ribbon under it stays clipped to the box._
+
+* Style(admin_v2): redraw the free test bow as a satin bow on a diagonal ribbon. 
+  _Two loops (up-left, right), two V-cut tails (left, down) and a thick
+gathered knot with folds, on a wide ribbon that crosses the box's top end
+corner. The tails sway softly and the loops breathe._
+
+* Style(admin_v2): move the free test bow toward the corner, thicken its knot. 
+
+* Style(admin_v2): tie a satin ribbon and bow across the free test preview's corner. 
+  _A red satin ribbon now crosses the gift box's top end corner at 45 degrees,
+with a two-loop bow on it: the tails sway and the loops breathe softly
+(still with reduced motion)._
+
+* Style(admin_v2): hang swaying tails from a tilted bow on the free test preview. 
+  _The ribbon band goes; the red bow now sits tilted on the box's top end
+corner, and its two tails hang down and sway softly, each at its own pace
+(still with reduced motion)._
+
+* Style(admin_v2): tie a red bow on the free test preview. 
+  _The gift box preview gets a red ribbon down its end side and a red bow on
+its top end corner. "Free test" becomes "Free Test" in the preview and
+in the bot's matching titles._
+
+* Style(admin_v2): make the free test preview a gift box. 
+  _- Title-case the dialog title and the switch label.
+- Give MB and GB their own soft colours in the unit picker.
+- Draw the bot preview as a gift box (rose tint, ribbon, bow) with a
+  coloured gift icon that shakes now and then (off with reduced motion)._
+
+* Style(admin_v2): give the free test duration and data steppers the same width. 
+  _The MB/GB picker sat beside the data stepper and shrank it next to the
+duration one. It is now a small iOS-style segmented control in the Data
+label row, and the two fields share the row in equal columns._
+
+* Fix(admin_v2): draw the number stepper's border in every theme. 
+  _The stepper took its colours from the --p-inputtext-* tokens, which PrimeVue
+defines only after an InputText was mounted. On a page without one (the free
+test dialog in the inbox) the box and its dividers had no colour and vanished
+in light themes. It now uses the global --p-form-field-* tokens._
+
+* Fix(admin_v2): stack the free test duration and data fields on phones. 
+  _The two fields stayed side by side on narrow screens, squeezing the data
+stepper next to the MB/GB picker. They now share a row only when the
+dialog is wide enough, and the unit picker wraps under the stepper on
+very small screens._
+
+* Merge pull request #208 from Hiddify-Official/feat/more-languages-v2. 
+  _feat(i18n): 22 more panel languages_
+
+* Feat(i18n): translate the admin Telegram message texts in the added languages. 
+  _The texts of "message an admin over Telegram" and the "admins" audience of the
+broadcast were added to the panel after the new languages were translated.
+They are translated in the 22 added languages (the French ones are the
+upstream strings)._
+
+* Fix(i18n): keep "Manager" in the menu and use the informal tu in Italian. 
+  _- The first menu group is "Manager" (like the HiddifyManager name in the top
+  bar), so it is no longer translated in the added languages.
+- Italian now uses the informal "tu", as the popular Italian apps and VPN
+  clients do, instead of a mix of Lei and impersonal forms._
+
+* Feat(i18n): translate the new Inbox and free-test texts in all added languages. 
+  _The Inbox page, the free test package of the Telegram bot and a few proxy
+and setting texts were added to the panel after the new languages were
+translated. They are now translated in the 22 added languages (150 texts
+each). "Hiddify" and technical names stay as they are._
+
+* Feat(i18n): Italian panel language. 
+  _Adds Italian (it) for the admin panel and the Lang list:
+translations.i18n/it.json, Lang.it, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Dutch panel language. 
+  _Adds Dutch (nl) for the admin panel and the Lang list:
+translations.i18n/nl.json, Lang.nl, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): French panel language. 
+  _Adds French (fr) for the admin panel and the Lang list:
+translations.i18n/fr.json, Lang.fr, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): German panel language. 
+  _Adds German (de) for the admin panel and the Lang list:
+translations.i18n/de.json, Lang.de, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Hindi panel language. 
+  _Adds Hindi (hi, Devanagari) for the admin panel and the Lang list:
+translations.i18n/hi.json, Lang.hi, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Ukrainian panel language. 
+  _Adds Ukrainian (uk) for the admin panel and the Lang list:
+translations.i18n/uk.json, Lang.uk, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Armenian panel language. 
+  _Adds Armenian (hy) for the admin panel and the Lang list:
+translations.i18n/hy.json, Lang.hy, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Tajik panel language. 
+  _Adds Tajik (tg, Cyrillic) for the admin panel and the Lang list:
+translations.i18n/tg.json, Lang.tg, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Kyrgyz panel language. 
+  _Adds Kyrgyz (ky, Cyrillic) for the admin panel and the Lang list:
+translations.i18n/ky.json, Lang.ky, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Kazakh panel language. 
+  _Adds Kazakh (kk, Cyrillic) for the admin panel and the Lang list:
+translations.i18n/kk.json, Lang.kk, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Azerbaijani panel language. 
+  _Adds Azerbaijani (az) for the admin panel and the Lang list:
+translations.i18n/az.json, Lang.az, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Uzbek panel language. 
+  _Adds Uzbek (uz, Latin script) for the admin panel and the Lang list:
+translations.i18n/uz.json, Lang.uz, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Turkish panel language. 
+  _Adds Turkish (tr) for the admin panel and the Lang list:
+translations.i18n/tr.json, Lang.tr, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Bengali panel language. 
+  _Adds Bengali (bn) for the admin panel and the Lang list:
+translations.i18n/bn.json, Lang.bn, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Pashto panel language. 
+  _Adds Pashto (ps, right to left) for the admin panel and the Lang list:
+translations.i18n/ps.json, Lang.ps, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Urdu panel language. 
+  _Adds Urdu (ur, right to left) for the admin panel and the Lang list:
+translations.i18n/ur.json, Lang.ur, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Arabic panel language. 
+  _Adds Arabic (ar, right to left) for the admin panel and the Lang list:
+translations.i18n/ar.json, Lang.ar, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Amharic panel language. 
+  _Adds Amharic (am, Ge'ez script) for the admin panel and the Lang list:
+translations.i18n/am.json, Lang.am, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Spanish panel language. 
+  _Adds Spanish (es, neutral Latin American) for the admin panel and the
+Lang list: translations.i18n/es.json, Lang.es, its name and flag in the
+language lists. "Hiddify" and technical names stay as they are;
+placeholders and HTML are kept._
+
+* Feat(i18n): Belarusian panel language. 
+  _Adds Belarusian (be, Cyrillic) for the admin panel and the Lang list:
+translations.i18n/be.json, Lang.be, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Turkmen panel language. 
+  _Adds Turkmen (tk, Latin script) for the admin panel and the Lang list:
+translations.i18n/tk.json, Lang.tk, its name and flag in the language
+lists. "Hiddify" and technical names stay as they are; placeholders and
+HTML are kept._
+
+* Feat(i18n): Korean panel language. 
+  _Adds Korean (ko) for the admin panel (admin_v2, settings, the older
+server-side messages) and the Lang list. "Hiddify" and technical names
+(VLESS, Reality, …) stay as they are; placeholders and HTML are kept.
+
+- translations.i18n/ko.json: the admin UI, settings and server-side
+  messages. Texts that are only a code identifier (uri.password) have
+  no entry: the panel falls back to English per key.
+- Lang.ko, its name and flag in the language lists (admin_v2, settings
+  language choices).
+- init_db: _v204 expands the accounts' `lang` ENUM columns. Those two
+  columns were not in `enum_columns`, so a language added to Lang never
+  reached an existing database and saving it as an account's language
+  failed ("Data truncated")._
+
+* Refactor(i18n): one list of right-to-left languages. 
+  _Right-to-left was decided by `== 'fa'` in several places (the legacy
+templates) or by ['fa', 'ar'] (admin_v2), so a new right-to-left
+language would have been laid out left to right.
+
+- models.config_enum.RTL_LANGS is the list (fa, ar, ur, ps); the
+  templates ask `is_rtl()` instead of comparing with 'fa'.
+- admin_v2: isRtlLanguage() in shared/utils/languages.ts, used by the
+  document direction, Quick setup and the config tester.
+
+No language is added yet; behaviour is unchanged for the existing ones._
+
+* Merge pull request #210 from Hiddify-Official/fix/pwa-input-zoom. 
+  _fix: stop iOS focus zoom in the installed admin and user panels (PWA)_
+
+* Fix(user): stop the iOS focus zoom in the installed user panel (PWA) 
+
+* Fix(admin): stop the iOS focus zoom on every admin page of the installed app. 
+  _The served admin_v2 page, the admin login and the legacy Flask-Admin pages
+each have their own <head>; add the PWA-only maximum-scale=1 to all of them._
+
+* Fix(admin_v2): stop iOS zooming into focused fields in the installed app (PWA) 
+
+* Feat(auth): sign in to the panel with a passkey. 
+  _Admins can sign in with a passkey (fingerprint, face or screen lock) instead
+of a password, on every domain of the panel.
+
+- WebAuthn checked in-house with `cryptography` (ES256, EdDSA, RS256; user
+  verification required, signature counter checked, one-time challenges).
+- One passkey per domain: the sign-in page asks for it by itself when this
+  browser has one, and the password form stays as the fallback. An IP gets
+  none (browsers only allow passkeys on domain names).
+- After a password sign-in, and once on a domain without my passkey, the
+  dashboard offers to add one, named after the device.
+- My account adds it here, then on the panel's other domains (the sub-link
+  domains when there are any) in a frame of each domain's own page, one after
+  the other. Each step works with a one-time token kept hashed in Redis, can
+  only be framed by the page that asked for it, and signs nobody in.
+- Migration _v205 adds the admin_passkey table._
+
+* Feat(inbox): send messages from the inbox. 
+  _The Send Message page is merged into Inbox: a Send message button opens the
+same composer (everyone, a group or chosen users) in a window. Old /message
+links, with their user ids, open the inbox with the window open._
+
+* Merge pull request #209 from Hiddify-Official/fix/qr-plain-size. 
+  _fix(admin): plain QR preview no longer fills the page on phones_
+
+* Fix(admin): plain QR preview no longer fills the page on phones. 
+  _qrcode sets the canvas's CSS size to its pixel size (preview size x
+devicePixelRatio), overriding the 240px preview: 720px tall on a 3x
+phone, 480px on a 2x desktop screen. Reset it after drawing._
+
+* Merge pull request #211 from Hiddify-Official/feat/admin-telegram-id. 
+  _feat(admins): set an admin's Telegram ID and message admins_
+
+* Feat(admins): message an admin over Telegram from the admins list. 
+  _The Telegram chip of an admin now looks like the users page's one and opens
+the send-message dialog for that admin. The broadcast API takes
+kind=admins: the selected ids are the actor's own sub-admins (or itself)
+with a Telegram ID, and the message is sent without a usage report._
+
+* Feat(admins): set an admin's Telegram ID and show it in the admins list. 
+  _The admins API now returns and saves telegram_id (validated, one admin per
+Telegram account, null clears it). The admin form has the field at the end
+of Advanced, like the user form, and admins that have one get a Telegram
+chip in the list. The bot already uses it for admin notifications._
+
+* Merge pull request #200 from Hiddify-Official/feat/version-commit. 
+  _feat(admin): show the dev version and commit next to DEV_
+
+* Feat(admin): show the dev version and commit next to DEV. 
+  _A development panel showed only "DEV" in the top bar, so it was not
+clear which code it runs. It now shows "DEV <version> · <short commit>":
+the version is the manager's get_commit_version text for that commit
+(MM-DDTHH:MM of its commit date in UTC, what the dev update check
+compares). Read from hiddifypanel/COMMIT (written by the manager
+installer) or, failing that, from the panel's own git checkout. The
+label keeps Latin digits in Persian._
+
+* Merge pull request #202 from Hiddify-Official/fix/backup-texts. 
+  _fix(admin): title-case the backup page texts_
+
+* Fix(admin): title-case the backup page texts. 
+
+* Merge pull request #203 from Hiddify-Official/feat/admin-permission-colors. 
+  _feat(admin): each permission has its own colour in the admin dialog_
+
+* Feat(admin): each permission has its own colour in the admin dialog. 
+  _The icon is grey while the permission is off and takes its colour when on;
+the summary chips use the same colours._
+
+* Merge pull request #204 from Hiddify-Official/fix/qr-tool-size. 
+  _fix(qr-tool): the QR preview never grows past 240px or the screen_
+
+* Fix(qr-tool): the QR preview never grows past 240px or the screen width. 
+  _Its size was only in the page's stylesheet: when that file did not load,
+the canvas showed at its pixel size (about 630px on a phone), wider than
+the screen, and the page clips sideways overflow so it could not be
+scrolled or zoomed back. The size is now set on the canvas itself._
+
+* Merge pull request #205 from Hiddify-Official/feat/outbound-option-icons. 
+  _feat(admin): coloured vector icons for the default outbound choices_
+
+* Fix(admin): default outbound list shows only the name, "Turned Off" in title case. 
+  _The icon already tells the mode, so the small mode label next to each name is gone._
+
+* Feat(admin): coloured vector icons for the default outbound choices. 
+  _Each outbound mode has its own SVG icon and colour (Automatic: sparkles,
+Direct: arrow, Block: no-entry, WARP: cloud, Socks, Tor, Psiphon, hiddify-core,
+Xray) in the admin dialog's and My Account's default outbound picker, in the
+list and on the chosen value. A turned-off outbound's icon is grey._
+
+* Merge pull request #206 from Hiddify-Official/fix/config-target-icons. 
+  _feat(admin): icons for the additional-config formats_
+
+* Fix(admin): use the official Xray star for the Xray format. 
+
+* Feat(admin): icons for the additional-config formats, labels in title case. 
+  _Each format in the additional-configs picker gets a vector mark (the
+Hiddify logo, the Xray X, a link, layers for Auto, the Clash cat), in
+the list and in the chosen value._
+
+* Merge pull request #207 from Hiddify-Official/feat/free-test-package. 
+  _feat(bot): free test package per admin with an inbox_
+
+* Fix(bot): do not show the admin's name to people asking for the free test. 
+  _The offer no longer says whose it is, and an admin's answer arrives as "Support".
+The name stays in the panel and in the admin's own bot screens._
+
+* Feat(bot): free test package per admin, with an inbox for requests and messages. 
+  _Each admin has a link to the Telegram bot (/start free_<code>; the code is a keyed
+hash of the admin's uuid, the same after every restart). Whoever opens it sees the
+admin's package (for example 7 days, 500 MB, tagged FREE) and asks for it:
+
+- automatic approval gives the account at once, to a Telegram account that never
+  had a free test or an account on this panel;
+- otherwise the request waits in the admin's inbox until it is approved or declined.
+
+The account is created under that admin, tagged "free" and linked to the chat. A
+second free test always needs the admin.
+
+The package is the admin's own when it has the new modify_free_package capability,
+else the nearest parent's. Admins get the capability on upgrade; agents use their
+parent's package until it is granted.
+
+Everything a non-admin writes to the bot is kept in the new message table and shown
+in the new Inbox page of Admin V2, where the admin answers, approves or declines;
+the same can be done from Telegram._
+
+* Fix(usage): keep node usage reports in the database and apply each once. 
+  _- the node keeps the report in flight in usage_batch_items and resends it
+  unchanged until the parent answers; new usage waits in unsynced_usages
+- the parent records the last applied report per node in
+  applied_usage_batches, in the same transaction as the usage
+- replace the per-user committing add_usage_json call with one bulk update
+- update the cores and send messages after the commit; failures there are
+  logged and do not fail a saved report
+- keep the parent's own usage in unsynced_usages when saving fails
+- stop renewing the usage lock after 15 minutes
+- limit batch_id to 64 characters; migration _v203 creates the tables_
+
+* Fix(usage): apply a node's usage report to the parent only once. 
+  _A child node reports its users' traffic to the parent with PUT
+/api/v2/parent/usage/. The parent adds the bytes to user.current_usage (the
+add_usage_json procedure) and commits, and only then builds and sends its
+answer. The report had no identity and the parent never checked for repeats
+(request_time was never read).
+
+What went wrong:
+- If anything failed after the parent had applied the report (a slow or
+  oversized answer, a 5xx, a proxy or CDN cutting the connection, an answer that
+  did not parse), the node treated the whole report as failed and kept it in
+  unsynced_usages.
+- The next report then merged that old usage with the new one and sent it again.
+  The parent added it again, and again every minute while syncs kept failing.
+  last_users_sync only moves on success, so the parent's answer (every user
+  changed since that time) kept growing, which made further failures more likely.
+- The HTTP client also resends the same PUT itself: up to 5 times on 502/503/52x,
+  up to 3 times on connection errors, and on the next address (direct, relay,
+  CDN) when one looks unreachable, each of which can be applied again.
+
+The result is user traffic that grows by the same bytes every minute, which shows
+up as gigabytes used by a user who connected twice briefly.
+
+How this fixes it:
+- A report is one batch with an id (UsageInputOutputSchema.batch_id). The node
+  stores the batch in flight in Redis and resends exactly that batch, unchanged,
+  until the parent answers; new usage meanwhile collects in unsynced_usages for
+  the next batch instead of being merged into one that may already be applied.
+  After a successful answer the batch is dropped; unsynced_usages is no longer
+  cleared wholesale, because it may hold usage for the next batch.
+- The parent remembers the last applied batch id per node and, under the usage
+  lock, skips a batch it already applied (it still answers normally, so the node
+  gets its users and moves on). The id is marked after the usage was committed.
+- batch_id is optional. An older node sends none and is treated as before, an
+  older parent ignores the extra field, so mixed versions keep working (without
+  the protection).
+
+Logic lives in panel/usage_batch.py, with tests in tests/test_usage_batch.py._
+
+* Fix(usage): keep the usage lock alive while it runs and release only your own. 
+  _The usage update runs under a Redis lock ("lock-update-local-usage") that was set
+with a fixed 60 second TTL and released with a plain DEL. A node's report to the
+parent can take much longer than that: the client waits up to 90 seconds, and
+retries on gateway errors and on other addresses make it longer still.
+
+What went wrong:
+- When the lock expired during a slow run, the next scheduler tick (or another
+  worker; every granian worker has the scheduler) took the lock and started a
+  second run while the first was still in progress. On a node both runs read the
+  same unsent usage and sent it to the parent.
+- When the first run then finished, its DEL removed the lock the second run was
+  holding, letting a third run start on top of it.
+
+How this fixes it:
+- The lock value is now a random token owned by the run that took it.
+- A small daemon thread renews the TTL every LOCK_TTL / 3 seconds while the
+  locked function runs, so the lock only expires when the process died.
+- The lock is released with a compare-and-delete Lua script, so a run can only
+  delete its own lock.
+
+The TTL stays 60 seconds, so a crashed process still frees the lock within a
+minute._
+
+* Merge branch 'dev' of github.com:hiddify/hiddifypanel into dev. 
+  _Config health: the automatic checks being opt-in and the dashboard's Disable failing / Restore work together; the
+API returns both `enabled` and `dead` / `disabled`.
+
+Migrations: dev already has _v200 (built-in proxy names, str_config.value as TEXT), so the local ones move above it:
+_v201 config_health_enable, _v202 warp_tos_accepted._
+
+* Merge pull request #189 from Hiddify-Official/feat/pwa-new-icon. 
+  _feat(pwa): new app icon for the installed panel and install guide_
+
+* Feat(pwa): new app icon for the installed panel and its install guide. 
+  _The installed app (phone home screen, computer) and the install guide use the
+new "Hi" icon instead of hiddify-dark.png:
+- manifest: 192 and 512 icons with rounded corners ("any") and an edge-to-edge
+  512 one ("maskable") for the phone to cut to its own shape
+- apple-touch-icon (180x180) on the admin and user pages; the guide's header
+  shows it
+- the guide's animation draws the same icon where it shows the app_
+
+* Merge pull request #190 from Hiddify-Official/feat/proxy-name-casing. 
+  _feat(proxy): built-in proxy names spelled like their protocols_
+
+* Merge branch 'dev' into feat/proxy-name-casing. 
+
+* Merge pull request #191 from Hiddify-Official/feat/settings-nav-live-icon. 
+  _feat(settings): live icon of the current section in the phone chip bar_
+
+* Feat(settings): live icon of the section on screen in the phone chip bar. 
+  _On phones the Settings categories are a chip bar with no mouse, so the icons
+never played their hover motion and the bar did not follow the page: scrolled
+down to TUIC, the bar still showed its first chips.
+
+- _icon-motion.scss: below 992px the active chip's icon plays its own motion
+  (TUIC's plane flies, the gear turns, …), respecting reduced motion
+- SettingsView: the chip bar scrolls sideways to keep the active chip in view
+  (by rectangles, so the same in RTL; the page itself is not scrolled)_
+
+* Merge pull request #193 from Hiddify-Official/feat/outbounds-touch-drag. 
+  _feat(outbounds): drag handle on phones instead of the up/down buttons_
+
+* Feat(outbounds): drag handle on phones instead of the up/down buttons. 
+  _On phones the outbound rows had ↑/↓ buttons and no handle. The handle is now
+shown there too (a larger touch target, above the number) and drives the
+same smooth drag with a finger: the row lifts and follows it, the others
+slide out of its way, and the page does not scroll while dragging. The ↑/↓
+buttons are hidden on phones; desktop keeps both._
+
+* Feat(outbounds): smooth, animated drag to reorder. 
+  _Dragging an outbound by its handle used the browser's drag and drop: a faded
+ghost, the other rows stood still and one line marked the drop place (above
+the target even when the row went below it).
+
+The handle now drives a pointer drag (mouse, pen or touch): the row lifts and
+follows the pointer, the rows it passes slide out of its way, its number shows
+the place it will take and an arrow which way it goes; on release it settles
+into place and the order is saved, Escape puts it back. Near the window edge
+the page scrolls. Rows move by transform only; the real order switches once,
+with transitions off. The row entrance animation no longer holds its end
+state, which overrode those transforms. Reduced motion is respected._
+
+* Merge pull request #194 from Hiddify-Official/feat/scanner-operator-logo. 
+  _feat(scanner): operator logos, Chinese and Russian operators_
+
+* Feat(network): detect Chinese and Russian operators, with their logos. 
+  _The panel only named Iranian operators; any other network was "unknown", so
+the Scanner card showed no logo and the CDN IP field could not name them.
+
+- maxmind: the main backbone ASes of China Telecom (CTC), China Unicom (CUC),
+  China Mobile (CMC, with TieTong), China Broadnet (CBN), CERNET (CER),
+  Rostelecom (RTK), MTS, MegaFon (MGF), Beeline (BLN), T2/Tele2 (T2R),
+  ER-Telecom/Dom.ru (ERT) and TTK; any other AS by its registered organisation
+  name, only for an address in that country (China Telecom alone has hundreds
+  of provincial ASes; the same names abroad are other companies)
+- the lookup cache gets its own namespace and a one-week expiry: answers
+  cached for good before this would else stay "unknown"
+- names in en/fa, local names in zh and ru; the admin's operator list
+  (CDN IP field) has the new codes
+- the 12 logos (Commons and Wikipedia vectors, CERNET's site, Broadnet's
+  emblem cut from a Commons photo) with their sources in CREDITS.md
+
+Checked against the panel's GeoLite2-ASN data: every China Telecom, Unicom,
+Mobile, CERNET, Broadnet, Rostelecom, MTS, MegaFon, Beeline, T2, ER-Telecom
+and TTK AS in China/Russia is named; MTS Bank, Toyota, Tele2 Sweden, MTS
+Belarus, China Mobile Hong Kong and the Iranian operators are unchanged._
+
+* Feat(scanner): the detected operator's logo on the network card. 
+  _The Scanner's network card showed the same wifi icon for every operator. When
+the panel recognises the operator, the card now shows its colour logo, for
+all 15 operators the panel names: Hamrah-e Aval (MCI), Irancell (on the MTN
+yellow), Rightel, Mokhaberat (TCI), Zirsakht (ITC), ParsOnline, Shatel,
+Mobinnet, Asiatech, HiWEB, Respina, Afranet, Andishe Sabz, Pishgaman and
+Zitel. Each logo is a 192x192 tile with its own background; an unknown
+network or a VPN keeps the icon.
+
+Sources (Wikimedia Commons, Wikipedia, the operators' own sites or their
+Internet Archive copies), licenses and authors are in
+assets/operators/CREDITS.md._
+
+* Merge pull request #195 from Hiddify-Official/feat/mobile-menu-swipe. 
+  _feat(admin): drag and swipe the phone menu open and closed_
+
+* Feat(admin): drag the phone menu with a finger, swipe from the side to open it. 
+  _On phones the menu only opened and closed with a tap on its tab, and a
+sideways swipe from the left went back a page.
+
+- The tab can be dragged: the menu slides with the finger (the mask dims with
+  it), and on release opens or closes by how far it went or how fast it was
+  flicked. A tap still toggles it.
+- A sideways swipe starting on the start third of the page (the right in RTL)
+  opens the menu the same way; a swipe back on the open menu or its mask
+  closes it. A mostly vertical swipe stays a scroll; a swipe starting on a
+  field, a slider, a drag handle or a row that can scroll sideways is left to
+  it.
+- overscroll-behavior-x: none on phones, so the browser's own sideways swipe
+  (back/forward) does not fight it. The system edge-swipe of iOS cannot be
+  taken over by a page._
+
+* Merge pull request #199 from Dv2Corn/fix/str-config-text. 
+  _fix(settings): settings longer than 3072 characters save on MariaDB_
+
+* Fix(settings): settings longer than 3072 characters save on MariaDB. 
+  _str_config.value was VARCHAR(3072). In strict mode (the default) MariaDB
+rejects a longer value with error 1406 "Data too long for column value",
+so saving failed with a 500: the spare REALITY SNIs after a scan (up to
+300 names, about 10 KB) and a Full support text over 3072 characters (the
+form allows 8192). SQLite does not enforce the length.
+
+The column becomes TEXT in the model (new installs) and _v200 alters it on
+existing databases with alter_column(), as _v156 did for user.extra_params.
+_v199 is left to an open pull request._
+
+* Merge pull request #196 from Hiddify-Official/fix/text-decoders-mobile. 
+  _fix(utils): Text Decoders fits a phone; Latin digits in its fields_
+
+* Fix(utils): Text Decoders fits a phone; links and fields keep Latin digits. 
+  _On a phone the decoded link ran off the screen: a <fieldset> is as wide as
+its widest content by default (here the long link name in its legend), and
+PrimeVue's fieldset content is a grid item with the same default, so every
+field, the parameter rows and their delete buttons went past the edge. In
+Persian the technical values also showed Persian digits (port ۴۴۳, "%۲F" in
+links) and right-to-left order (path "api/v1/stream/").
+
+- SublinkEditor: min-width 0 on the fieldset and its content; a long link
+  name is cut with "…" (from its own start in RTL); a narrower parameter
+  name column on phones
+- the fields (protocol, server, port, user, password, method, path,
+  parameters) are LTR with Latin digits; the name follows its own text
+- the link, Base64/URL and JSON boxes get a monospace font with Latin
+  digits (PrimeVue's font rule had overridden the font-mono class)
+
+The editor is also the Config Tester's subscription viewer, fixed with it._
+
+* Merge pull request #197 from Hiddify-Official/feat/liquid-glass-theme. 
+  _feat(admin): Liquid Glass theme with adjustable glass strength_
+
+* Feat(admin): Liquid Glass theme, an iOS-like design with a glass strength. 
+  _A third theme next to Hiddify and Smart Caddy, in the topbar's appearance
+menu. Like the others it works in light and dark and is kept per browser;
+it takes one of the Smart Caddy colors.
+
+- layout.ts: theme 'liquid' (html.theme-liquid), the shared html.theme-glass
+  of both glass themes, and the glass strength (admin_v2_glass, 0…100) as one
+  CSS variable, --lg-strength. A change of theme, mode or color cross-fades
+  (view transitions; not with reduced motion).
+- _theme-liquid.scss, all under html.theme-liquid: one strength drives the
+  see-through, blur, rim and depth of three levels: cards and the side menu
+  (most glass), bars over content (denser), floating windows (dialogs,
+  popovers, dropdowns, toasts: 86-98% opaque at any strength, and the page
+  behind a dialog is blurred and dimmed, so text never mixes). Text, icons
+  and controls are never see-through. Without backdrop-filter every surface
+  is nearly solid.
+- iOS design through PrimeVue's tokens, so every page follows: capsule
+  fields, selects and buttons (soft rounded rectangle for multi-line
+  fields), round checkboxes, iOS switches, segmented-control tabs, rounded
+  dropdowns, menus, tables, tags, messages; the logo on a tile of the color.
+- The background: slow waves of the color on two fixed layers (transform
+  only); their colors are registered @property values, so a new color flows
+  over. Still with prefers-reduced-motion.
+- Appearance menu: the three themes as tiles with a preview, the colors for
+  the glass themes, and an iOS volume-like "Glass" slider (left: most glass,
+  right: most solid) with its percentage, live and kept.
+- The floating parts that take a solid surface under Smart Caddy (chart and
+  domain tips, node popovers, the menu tab) now key on theme-glass, and the
+  color palettes also apply to Liquid Glass: Smart Caddy itself unchanged._
+
+* Merge pull request #198 from Hiddify-Official/feat/footer-social-links. 
+  _feat(admin): footer wordmark with Hiddify's website and channels_
+
+* Feat(admin): footer logo with Hiddify's website and channels. 
+  _The footer only showed the text "HiddifyManager". It is now a wordmark
+("Hiddify" strong, "Manager" in the color; a translated name stays whole);
+under the mouse a light sweeps across it from left to right (not while its
+window is open). A click opens a small window above it with Hiddify's
+website, GitHub, X, Telegram, YouTube and Instagram as round tiles in their
+brand colors; each opens in a new tab (rel="noopener noreferrer"). The
+channel under the mouse, and only it, comes alive: the globe turns, the cat
+waves, the X spins, the plane flies off and back, the play button beats, the
+camera flashes. The window closes on a link, a click outside or Escape (focus
+back on the name); light, dark, RTL, phones and reduced motion.
+
+The brand marks are inline SVG paths from Simple Icons 13.21.0 (CC0-1.0) in
+shared/utils/brand-icons.ts: sharp at any size, no image files._
+
+* Feat(proxy): built-in proxy names spelled like their protocols. 
+  _Built-in proxy names are what users' apps show for each config, but they kept
+the lowercase catalog words ("xhttp vless TLS H1") while the panel writes the
+protocols as "VLess", "XHTTP", "gRPC"... Their words now take the same
+spelling: "XHTTP VLess TLS H1", "gRPC VMess HC", "Hysteria 2 QUIC HC".
+
+- preset_slots: preset_display_name spells the words; preset_tag_name keeps
+  the original spelling, which the hiddify-core slugs and the DNS gateway
+  server tags are still made from (no slug or tag changes)
+- _v199 runs the preset sync, so existing servers rename their built-in
+  proxies (a name an admin typed is kept)
+- admin_v2: proxy names are shown as written, emoji included (📤 📥), as the
+  users' apps show them, instead of as panel icons_
+
+* Merge pull request #188 from Hiddify-Official/feat/health-disable-failing. 
+  _feat(dashboard): Config Health turns off configs failing in both apps_
+
+* Feat(dashboard): Config Health turns off configs that fail in both apps. 
+  _Next to "Check now", two small buttons:
+- Disable failing: after a confirmation that lists them, turns off the
+  custom proxies whose every config failed both as the Xray apps and as the
+  Hiddify app get them, in the last check. A proxy with one working config
+  in either app stays on, and nothing is offered when an app could not be
+  tested. The count is on the button; the Apply notice follows.
+- Restore: turns them back on.
+On phones both show only their icon and count.
+
+Each check now also keeps, per app, every custom proxy's status (down /
+partial / up, from config_tester_proxies.health over all tested configs, not
+the shortened failed list). GET config-health/ adds `dead`, `dead_known` and
+`disabled`; POST config-health/disable/ and config-health/restore/ reuse the
+config tester's disable/restore and its record, so either page's Restore
+brings back what either turned off._
+
+* Merge pull request #187 from Hiddify-Official/feat/menu-active-box. 
+  _feat(menu): the open page's menu item has a box without hovering_
+
+* Feat(menu): the open page's menu item has a box without hovering. 
+  _The sidebar showed the current page only as bold coloured text; the box
+appeared only on hover. The active item now has a soft box in the panel
+colour (tint and a 1px ring), a little stronger on hover. Parents of the
+open page (e.g. Tools) stay plain._
+
+* Merge pull request #183 from Hiddify-Official/fix/admin-number-stepper. 
+  _fix(admins): − / + and typing in limit fields work on phones_
+
+* Fix(admins): limit fields' − and + react to every tap on phones, typing works. 
+  _The admin form's limit fields used PrimeVue's InputNumber. Its buttons step on
+mousedown and focus the input first, so on a phone the keyboard opens, the
+dialog resizes and the tap misses: the buttons needed several taps. It types
+through keypress, which Android keyboards don't send, so typed digits mixed
+with its formatting and only counted on blur.
+
+NumberStepper (shared): the buttons step on click without taking the focus,
+the field is a plain text input with a numeric keyboard that reads what was
+typed on every change (Persian and Arabic digits too, decimals up to the
+field's precision) and clamps to the allowed range on blur._
+
+* Merge pull request #184 from Hiddify-Official/fix/pwa-dialog-small-screens. 
+  _fix(pwa): install guide keeps "Got it" in view on small screens_
+
+* Fix(pwa): install guide keeps "Got it" in view on small screens. 
+  _The dialog's content had overflow hidden and no height of its own: on a short
+window the bottom (Got it) or, once the button took the focus, the top was cut
+off with no way to scroll to it. On phones the sheet was 92vh, which includes
+the part under the browser's bars.
+
+Only the guide scrolls now; the buttons stay at the bottom, with a line over
+them while there is more above. The dialog is sized to the visible screen
+(dvh). Phones and short screens drop the line under the title, and below
+640px of height the app icon and the animated scene are smaller._
+
+* Merge pull request #185 from Hiddify-Official/fix/settings-nav-active. 
+  _fix(settings): the category picked in the menu stays highlighted_
+
+* Fix(settings): the category picked in the menu stays highlighted. 
+  _Clicking a category (e.g. TUIC) often highlighted another one (Advanced
+Settings). The IntersectionObserver callback only gets the cards whose
+visibility just changed, and the smooth scroll to the clicked card passes
+others, so the last card to cross the band won; a card near the end of the
+page can't reach the band at all.
+
+The spy now reads the scroll position: the highlighted category is the last
+card whose top passed the line under the top bar (or the last card at the
+bottom of the page). A category picked in the menu or by a deep link stays
+highlighted until the admin scrolls, clicks in the page or uses the keys._
+
+* Merge pull request #186 from Hiddify-Official/feat/users-page-scrubber. 
+  _feat(users): drag through the pages of the users list_
+
+* Feat(users): drag through the pages of the users list. 
+  _The users list's paginator (a row of PrimeVue links on desktop, only ‹ x–y ›
+on phones) becomes PageScrubber, a shared component:
+- a bar to drag through the pages: far left the first page, far right the
+  last, in every language; a bubble shows the page while dragging; « and »
+  at its ends; arrow, Home and End keys work on it. On a wide list it is a
+  quarter of the window, between the report and Previous / Next.
+- the page numbers around the current one (1 2 3 … 24)
+- Previous / Next and a "page [n] of N" field to jump to (Persian digits too)
+- "Showing x–y of N"
+On a narrow list the parts stack (bar, numbers, then Previous · page · Next).
+
+Dragging the bar keeps the pager where it is on screen: the phone list
+measures its cards while they are swapped, which made the browser drop the
+scroll to the top on every page change. On phones, Previous / Next, a page
+number or a typed page scroll to the top of the page.
+
+The table no longer paginates itself: it gets the current page's rows, as
+the phone cards already did, so both use the same pager._
+
+* Feat(warp): WARP routes only after an admin accepts Cloudflare's terms. 
+  _- warp_tos_accepted (hidden), off; _v200 keeps it off on upgrades. Traffic goes through WARP only when WARP is on and
+  the terms are accepted; turning WARP on in the settings is refused until then.
+- admin_v2: a terms dialog in Outbounds and Settings (POST outbounds/warp-terms/), and a banner while WARP is on but
+  the terms are not accepted. GET settings/ returns warp_tos_accepted with the categories.
+- a parent hands its acceptance to its nodes on the WARP outbound row; an older parent leaves the node alone.
+- empty translation entries for openvpn_certificate and openvpn_private_key._
+
+* Feat(admin): add a QR code tool. 
+  _Tools > QR code: scan a code from the camera or an image (zxing-wasm) and make one from a link, in the plain or the
+Hiddify style. Scanned subscription links open in Text decoders through the navigation state, not the address._
+
+* Ci: remove the Ninja i18n workflow. 
+  _Its trigger was commented out, so it never ran._
+
+* Fix(config-health): make the automatic checks opt-in and lighter. 
+  _Each check started a core for every config of the subscription and connected through it to the server, after every
+start and every 6 hours: hundreds of connections in a few minutes, which hosting providers took for a flood and
+suspended servers for (hiddify/Hiddify-Manager#5672).
+
+- new setting config_health_enable (Settings > General), off; _v199 sets it off on existing panels. The scheduled,
+  start-up and follow-up checks run only when it is on; "Check now" always works, and the dashboard card says the
+  automatic checks are off.
+- Xray's "Auto" balancer is not started (its observatory probed every config at once and its result was not used).
+- the retry runs only the configs that failed, not the whole subscription (config_tester.run takes a `select` filter).
+- one request per config and 4 configs at a time (were 2 and 8)._
+
+
+
 ## v14.2.0 (2026-11-06)
 
 #### New
