@@ -367,8 +367,12 @@ class LoginView(FlaskView):
         # The admin panel and the user page each have their own icon, so both can be installed side by side.
         icon_set = "admin" if admin_call else "user"
 
+        # The admin's icon in the color chosen with "PWA Color": the manifest's own URL names it (?icon=RRGGBB),
+        # because a browser fetches the manifest without the page's cookies.
+        color = hutils.app_icon.normalize(request.args.get("icon")) if admin_call else None
+
         def icon(size):
-            return hutils.flask.app_icon_url(f"app-icon-{icon_set}-{size}.png")
+            return hutils.flask.app_icon_url(f"app-icon-{icon_set}-{size}.png", color)
 
         response = jsonify(
             {

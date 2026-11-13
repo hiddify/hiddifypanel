@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from flask import jsonify, redirect, render_template
+from flask import jsonify, redirect, render_template, url_for
 
 import hiddifypanel
 from hiddifypanel import g, hutils
@@ -110,6 +110,27 @@ def _admin_locale() -> str:
     return (str(getattr(own, "value", own)) if own else "") or hconfig(ConfigEnum.admin_lang) or "en"
 
 
+def _app_icon_info(proxy_path: str) -> dict:
+    """What the page needs to offer the app icon in other colors (PWA Color; hutils.app_icon)."""
+    icon = hutils.app_icon
+    drawn = url_for("app_icon", proxy_path=proxy_path, kind="admin", color="COLOR", name="NAME", version=hutils.flask.APP_ICON_VERSION)
+    return {
+        "enabled": icon.available(),
+        "color": hutils.flask.admin_icon_color() or icon.DEFAULT,
+        "default": icon.DEFAULT,
+        "cookie": hutils.flask.ADMIN_ICON_COOKIE,
+        "cookie_path": f"/{proxy_path}/",
+        # The drawn icon of a color: the page fills in {color} (RRGGBB) and {name}.
+        "url": drawn.replace("COLOR", "{color}").replace("NAME", "{name}"),
+        # The stock icon's files and manifest, for when the stock color is chosen again.
+        "stock": {
+            "apple-180": hutils.flask.app_icon_url("app-icon-admin-apple-180.png", icon.DEFAULT),
+            "tile-256": hutils.flask.app_icon_url("favicon-admin-256.png"),
+            "manifest": hurl_for("common_bp.LoginView:create_pwa_manifest", secret_uuid=g.account.uuid or ""),
+        },
+    }
+
+
 def _admin_v2_bootstrap_payload() -> dict:
     from hiddifypanel import admin_capabilities as caps
 
@@ -123,10 +144,11 @@ def _admin_v2_bootstrap_payload() -> dict:
         "panel_logo_url": _panel_logo_url(proxy_path),
         # The installed-app (PWA) manifest and icon: the frontend adds the <link>s when the page lacks them (the Vite dev
         # server's index.html has none, so without these the browser never offered to install the panel).
-        "pwa_manifest_url": hurl_for("common_bp.LoginView:create_pwa_manifest", secret_uuid=g.account.uuid or ""),
+        "pwa_manifest_url": hurl_for("common_bp.LoginView:create_pwa_manifest", secret_uuid=g.account.uuid or "", icon=hutils.flask.admin_icon_color()),
         "pwa_icon_url": hutils.flask.app_icon_url("app-icon-admin-apple-180.png"),
         # The same icon cut to its shape: the browser tab icon, and the picture the install guide shows.
         "app_icon_url": hutils.flask.app_icon_url("favicon-admin-256.png"),
+        "app_icon": _app_icon_info(proxy_path),
         "menu": build_admin_v2_menu(),
         "notices": build_admin_v2_notices(),
         "panel_mode": hutils.node.panel_mode(),
@@ -188,4 +210,5 @@ def register_v2_routes(flask_app, admin_bp):
             needs_quick_setup=_needs_quick_setup(),
             telegram=_telegram_info(),
             passkey_suggestion=_passkey_suggestion(),
+            app_icon=_app_icon_info(proxy_path),
         )

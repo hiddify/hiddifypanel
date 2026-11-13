@@ -39,8 +39,27 @@ def static_url_for(**values):
 APP_ICON_VERSION = 7
 
 
-def app_icon_url(name: str) -> str:
-    """The URL of one of the panel's own icons, e.g. `app-icon-admin-192.png` or `favicon-user-32.png`."""
+# The admin app icon comes in other colors too (hutils.app_icon): the color a browser chose (PWA Color) is in this
+# cookie. The browser tab's icon (favicon-admin-*.png) never follows it.
+ADMIN_ICON_COOKIE = "hiddify_admin_icon"
+
+
+def admin_icon_color() -> str | None:
+    """The color this browser chose for the admin app icon, or None for the stock icon."""
+    color = hutils.app_icon.normalize(request.cookies.get(ADMIN_ICON_COOKIE))
+    return color if color and color != hutils.app_icon.DEFAULT and hutils.app_icon.available() else None
+
+
+def app_icon_url(name: str, color: str | None = None) -> str:
+    """The URL of one of the panel's own icons, e.g. `app-icon-admin-192.png` or `favicon-user-32.png`.
+
+    An admin app icon (never the tab icon) comes in `color` when one is given (the manifest names it in its URL),
+    else in the color this browser chose; the stock color is the plain file."""
+    drawn = next((k for k, v in hutils.app_icon.STOCK.items() if v == name), None) if name.startswith("app-icon-admin-") else None
+    if drawn:
+        color = hutils.app_icon.normalize(color) if color else admin_icon_color()
+        if color and color != hutils.app_icon.DEFAULT:
+            return url_for("app_icon", proxy_path=g.proxy_path, kind="admin", color=color, name=drawn, version=APP_ICON_VERSION)
     return static_url_for(filename=f"images/{name}", version=APP_ICON_VERSION)
 
 

@@ -3043,6 +3043,9 @@
     "pwa": {
       "bannerText": "Open it from your home screen or desktop, in its own window, like an app.",
       "bannerTitle": "Install the panel as an app",
+      "colorButton": "PWA Color",
+      "colorHint": "The color of the admin panel's icon when it is installed as an app (PWA).",
+      "colorTitle": "PWA app icon color",
       "gotIt": "Got it",
       "guide": {
         "android1": "In Chrome, tap the ⋮ menu at the top",
@@ -3061,6 +3064,9 @@
         "tabDesktop": "{os} · Chrome",
         "tabIos": "iPhone · Safari"
       },
+      "iconColor": "Icon color",
+      "iconColorCustom": "Your own color",
+      "iconColorHint": "Choose it before you install: an iPhone keeps the icon it was installed with.",
       "install": "Install",
       "installButton": "Install as an app",
       "installNow": "Install now",
